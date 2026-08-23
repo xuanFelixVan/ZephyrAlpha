@@ -8177,3 +8177,339 @@ entries:
   estimated_complexity: 中
   acquisition_method: constructed
   last_review_outcome: '2026-08-23 骨架建成（testing）；真训练待 B-007+数据积累'
+
+- id: CAND-SIM-008
+  name: '蒙特卡洛路径模拟引擎（个股级 20 日路径分布+胜率+90% 置信上下限，GBM/重采样）'
+  aliases: []
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: ''
+  description: '蒙特卡洛路径模拟引擎（个股级 20 日路径分布+胜率+90% 置信上下限，GBM/重采样）'
+  capability: MOD-SIG-074
+  problem_it_solves: '蒙特卡洛路径模拟引擎（个股级 20 日路径分布+胜率+90% 置信上下限，GBM/重采样）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 MOD-SIG-074（testing，2026-08-23）（GAP-F-36）'
+
+- id: CAND-SIG-033
+  name: '缠论笔/段/中枢自动识别（包含处理→分型→严格笔→线段→中枢三级链）'
+  aliases: []
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: ''
+  description: '缠论笔/段/中枢自动识别（包含处理→分型→严格笔→线段→中枢三级链）'
+  capability: MOD-SIG-072
+  problem_it_solves: '缠论笔/段/中枢自动识别（包含处理→分型→严格笔→线段→中枢三级链）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 MOD-SIG-072（testing，2026-08-23）（GAP-F-37）'
+
+- id: CAND-FAC-004
+  name: '因子相似度聚类器（IC 相关矩阵+层次/DBSCAN+组内代表排名）'
+  aliases: []
+  domain: D_FACTOR
+  domain_status: active
+  sub_layer: ''
+  description: '因子相似度聚类器（IC 相关矩阵+层次/DBSCAN+组内代表排名）'
+  capability: MOD-L02_ANA_cluster
+  problem_it_solves: '因子相似度聚类器（IC 相关矩阵+层次/DBSCAN+组内代表排名）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 MOD-L02_ANA_cluster（testing，2026-08-23）（GAP-F-38）'
+
+- id: CAND-SIG-032
+  name: '个股级信号强度合成器（MACD/RSI/量能/均线/AI NLP 五维 0~100）'
+  aliases: []
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: ''
+  description: '个股级信号强度合成器（MACD/RSI/量能/均线/AI NLP 五维 0~100）'
+  capability: MOD-SIG-073
+  problem_it_solves: '个股级信号强度合成器（MACD/RSI/量能/均线/AI NLP 五维 0~100）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 MOD-SIG-073（testing，2026-08-23）（GAP-F-39）'
+
+- id: CAND-RPT-007
+  name: 'AI 复盘结语生成器（LLM 模型网关抽象+战报模板注入+降级兜底）'
+  aliases: []
+  domain: D_REPORTING
+  domain_status: active
+  sub_layer: ''
+  description: 'AI 复盘结语生成器（LLM 模型网关抽象+战报模板注入+降级兜底）'
+  capability: MOD-RPT-009_summary
+  problem_it_solves: 'AI 复盘结语生成器（LLM 模型网关抽象+战报模板注入+降级兜底）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 MOD-RPT-009_summary（testing，2026-08-23）（GAP-F-40）'
+
+- id: CAND-SIG-034
+  name: '跨资产比价衍生计算（金银比/金油比/铜金比/金铜比+z-score+宏观标注）'
+  aliases: []
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: ''
+  description: '跨资产比价衍生计算（金银比/金油比/铜金比/金铜比+z-score+宏观标注）'
+  capability: MOD-SIG-075
+  problem_it_solves: '跨资产比价衍生计算（金银比/金油比/铜金比/金铜比+z-score+宏观标注）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 MOD-SIG-075（testing，2026-08-23）（GAP-F-41）'
+
+- id: CAND-PLAN-009
+  name: '证据链决策数据结构（thesis/catalyst/invalidation/evidence_for/evidence_against 五字段强制+填充校验）'
+  aliases: []
+  domain: D_PLAN
+  domain_status: active
+  sub_layer: ''
+  description: '证据链决策数据结构（thesis/catalyst/invalidation/evidence_for/evidence_against 五字段强制+填充校验）'
+  capability: MOD-SIG-076
+  problem_it_solves: '证据链决策数据结构（thesis/catalyst/invalidation/evidence_for/evidence_against 五字段强制+填充校验）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 MOD-SIG-076（testing，2026-08-23）（GAP-F-42）'
+
+- id: CAND-FAC-005
+  name: 'LLM 因子挖掘流水线（论文搜索→PDF→LLM 假说→沙箱→入因子库草稿）'
+  aliases: []
+  domain: D_FACTOR
+  domain_status: active
+  sub_layer: ''
+  description: 'LLM 因子挖掘流水线（论文搜索→PDF→LLM 假说→沙箱→入因子库草稿）'
+  capability: MOD-EVIDENCE_CHAIN_mining
+  problem_it_solves: 'LLM 因子挖掘流水线（论文搜索→PDF→LLM 假说→沙箱→入因子库草稿）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 MOD-EVIDENCE_CHAIN_mining（testing，2026-08-23）（GAP-F-43）'
+
+- id: CAND-PLAN-010
+  name: '交易域多 Analyst Agent 五角色实例化（GAP-F-03 扩展，复用 trading_debate）'
+  aliases: []
+  domain: D_PLAN
+  domain_status: active
+  sub_layer: ''
+  description: '交易域多 Analyst Agent 五角色实例化（GAP-F-03 扩展，复用 trading_debate）'
+  capability: MOD-PLAN-013_agents
+  problem_it_solves: '交易域多 Analyst Agent 五角色实例化（GAP-F-03 扩展，复用 trading_debate）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 MOD-PLAN-013_agents（testing，2026-08-23）（GAP-F-44）'
+
+- id: CAND-SIG-035
+  name: '板块属性标注规则库（进攻/防御/平衡三分类）'
+  aliases: []
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: ''
+  description: '静态映射表+config/sector_attribute_mapping.yaml 真源；与 sector_attribute_labels.yaml（两族 rs_ratio 专用）粒度边界已留痕'
+  capability: src/zephyr/signal_ashare/sector_attribute_rules.py
+  problem_it_solves: '板块属性标注规则库（进攻/防御/平衡三分类）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 built_testing（GAP-F-18）'
+
+- id: CAND-SIG-036
+  name: '昨日涨停今表现+炸板率统计（日频任务）'
+  aliases: []
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: ''
+  description: 'MOD-SIG-025 YesterdayLimitUpPerformance 消费侧的生产侧补齐'
+  capability: src/zephyr/signal_ashare/limit_up_followthrough.py
+  problem_it_solves: '昨日涨停今表现+炸板率统计（日频任务）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 built_testing（GAP-F-19）'
+
+- id: CAND-SIG-037
+  name: '板块量能异动检测（成交额 vs N 日均值偏离度）'
+  aliases: []
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: ''
+  description: '板块量能异动检测（成交额 vs N 日均值偏离度）'
+  capability: src/zephyr/signal_ashare/sector_volume_anomaly.py
+  problem_it_solves: '板块量能异动检测（成交额 vs N 日均值偏离度）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 built_testing（GAP-F-20）'
+
+- id: CAND-SIG-038
+  name: '逆势榜 4 卡（分钟级逆势上涨/资金流入/率先反弹/最抗跌）'
+  aliases: []
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: ''
+  description: '资金流入卡为注入位（板块级分钟资金流源未接，接入后仅换注入）'
+  capability: src/zephyr/signal_ashare/counter_trend_board.py
+  problem_it_solves: '逆势榜 4 卡（分钟级逆势上涨/资金流入/率先反弹/最抗跌）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 built_testing（GAP-F-16）'
+
+- id: CAND-SIG-039
+  name: '板块详情补充维度（TDX 周期定位状态机+拉升原因聚合）'
+  aliases: []
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: ''
+  description: 'analyst_forecast 约 1 个月覆盖窗限制已内建超窗守卫（GAP-F-D1）'
+  capability: src/zephyr/signal_ashare/sector_detail_enricher.py
+  problem_it_solves: '板块详情补充维度（TDX 周期定位状态机+拉升原因聚合）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 built_testing（GAP-F-17）'
+
+- id: CAND-REGIME-001
+  name: '四指数分市场分析组合卡（regime/情绪/预判）'
+  aliases: []
+  domain: D_REGIME
+  domain_status: active
+  sub_layer: ''
+  description: 'MOD-REGIME-008+MOD-SIG-037 复用组合层；L14 四指数（含科创综指 000680）'
+  capability: src/zephyr/regime/index_market_brief.py
+  problem_it_solves: '四指数分市场分析组合卡（regime/情绪/预判）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 built_testing（GAP-F-10）'
+
+- id: CAND-NLP-002
+  name: '新闻影响评估分级（A/B/C）+热点聚类（主题计数）'
+  aliases: []
+  domain: D_DATA
+  domain_status: active
+  sub_layer: ''
+  description: '新闻影响评估分级（A/B/C）+热点聚类（主题计数）'
+  capability: src/zephyr/nlp/news_impact_grader.py
+  problem_it_solves: '新闻影响评估分级（A/B/C）+热点聚类（主题计数）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 built_testing（GAP-F-22）'
+
+- id: CAND-SIG-040
+  name: '跨市场传导规则判定层（对 A 股影响引擎，12 标的×6 通道）'
+  aliases: []
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: ''
+  description: 'CAND-RSK-021 语义落码：MOD-SIG-038 系数层的规则判定姊妹层；行业通道 MVP 预留'
+  capability: src/zephyr/signal_ashare/foreign_impact_judge.py
+  problem_it_solves: '跨市场传导规则判定层（对 A 股影响引擎，12 标的×6 通道）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 built_testing（GAP-F-24）'
+
+- id: CAND-PLAN-011
+  name: '执行偏差归因器（计划 vs 实际六类归因）'
+  aliases: []
+  domain: D_PLAN
+  domain_status: active
+  sub_layer: ''
+  description: '消费 MOD-PLAN-011 计划产出；实际侧 ExecutionRecord 消费方映射 CTR-005'
+  capability: src/zephyr/plan_engine/execution_deviation_attributor.py
+  problem_it_solves: '执行偏差归因器（计划 vs 实际六类归因）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 built_testing（GAP-F-26）'
+
+- id: CAND-POS-001
+  name: '实盘净值曲线序列（miniQMT 模拟净值源先行）'
+  aliases: []
+  domain: D_POSITION
+  domain_status: active
+  sub_layer: ''
+  description: 'CTR-P1-008 券商未接；account_nav_daily 表 DDL 草稿见本片段 ddl_draft（禁直建）'
+  capability: src/zephyr/position/live_nav_recorder.py
+  problem_it_solves: '实盘净值曲线序列（miniQMT 模拟净值源先行）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 built_testing（GAP-F-29）'
+
+- id: CAND-SIG-041
+  name: '趋势线/压力支撑自动识别（分形聚类+双锚点连线）'
+  aliases: []
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: ''
+  description: 'regime_detector 颗粒度核查裁定=无点位级输出→独立新建（裁定见 GAP7 报告）'
+  capability: src/zephyr/signal_ashare/trendline_sr_detector.py
+  problem_it_solves: '趋势线/压力支撑自动识别（分形聚类+双锚点连线）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 built_testing（GAP-F-33）'
+
+- id: CAND-CMP-001
+  name: '行为审计专职引擎（MOD-INF-033 转候选库）'
+  aliases: ['behavioral_auditor', '行为审计器']
+  domain: D_COMPLIANCE
+  domain_status: active
+  sub_layer: compliance 行为审计层
+  description: 'backlog 实测：behavioral_auditor/ 仅 __init__ 壳（gov_drift 40+ 子模块符号再导出聚合， 非独立行为审计引擎）；行为采样/信任检查职能已由 gov_code_quality/code_dedup/ behavioral_trust_checker.py + behavioral_sampler.py 部分承载。行为审计专职引擎 边际价值低，14.4 按派单不补代码转候选库待裁定。'
+  capability: behavioral_auditor
+  problem_it_solves: '行为审计专职引擎边际价值评估后待定'
+  keywords: ['behavioral', 'audit']
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: 中
+  acquisition_method: candidate
+  last_review_outcome: '2026-08-23 转候选库待 Owner 终裁（#ARCH-191）'

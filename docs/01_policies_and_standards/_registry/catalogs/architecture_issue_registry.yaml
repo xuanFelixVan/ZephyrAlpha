@@ -19104,3 +19104,102 @@ entries:
   - 'D1查重纪律'
   created: '2026-08-23'
   last_updated: '2026-08-23'
+
+- issue_id: '#ARCH-188'
+  title: '波次6截图反推族九件落地（GAP-F-42/36/39/37/38/40/41/43/44）'
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    九件一次落码全 testing 封顶：GAP-F-42 证据链五字段强制结构化+填充校验 fail-closed 先建；
+    GAP-F-36 MC 路径模拟 GBM/重采样双法纯 numpy 种子可复现；GAP-F-39 个股信号强度五维归一
+    加权；GAP-F-37 缠论包含处理→分型→严格笔→线段→中枢（注册表顶底分型 code_path 空一并补建
+    分型级）；GAP-F-38 因子聚类 Pearson+层次/DBSCAN（sklearn lazy import）；GAP-F-40 AI 复盘
+    结语 LLM 走模型网关抽象+report_publisher 模板；GAP-F-41 跨资产比价四比率 z-score（注入位
+    禁真连外网）；GAP-F-43 LLM 因子挖掘全链骨架（入因子库仅产 candidate 草稿）；GAP-F-44
+    五角色 Analyst 复用 trading_debate 框架。并发观察：GAP6 期间 test_counter_trend_board 2 失败
+    系 GAP7 并发在建所致，GAP7 完工后全绿闭环零残余。
+  impact:
+    - 'plan_engine 两件 + signal_ashare 四件 + factor/analysis + reporting + research 各一件（testing）'
+    - '9 测试文件 141 用例全绿；plan_engine+research+reporting 883 零失败'
+  fix_phase: '已落地（2026-08-23，AI-K3-GW-GAP6）；权重/阈值初拍待实盘标定'
+  status: resolved
+  related_rules:
+  - 'GAP-F-36~44'
+  created: '2026-08-23'
+  last_updated: '2026-08-23'
+
+- issue_id: '#ARCH-189'
+  title: '波次7 P2 长尾十一件落地（GAP-F-10/16/17/18/19/20/22/24/26/29/33）'
+  severity: P2
+  category: 功能施工
+  adjudication: >-
+    11 件全观测层不接交易、testing 封顶：F-18 板块属性标注静态映射表+config yaml；F-19 昨涨停
+    今表现+炸板率（复用 market_breadth_snapshot）；F-20 量能异动偏离度；F-10 四指数分市场面板
+    （复用 MOD-REGIME-008+SIG-037）；F-16 逆势榜4卡（复用071重采样，资金流注入位）；F-17 板块
+    详情维度（analyst_forecast 超窗守卫内建）；F-22 新闻分级+聚类 MVP；F-24 对A股影响判定
+    （消费 foreign_market_coverage）；F-26 执行偏差归因（消费 MOD-PLAN-011）；F-29 实盘净值
+    记录器+模拟源（DDL 三件套 Owner 窗口）；F-33 趋势线/压力支撑核查裁定新建（regime_detector
+    无点位级契约，分形聚类算法）。
+  impact:
+    - 'signal_ashare 八件 + nlp/regime/plan_engine/position 各一件 + config/sector_attribute_mapping.yaml（testing）'
+    - '160 新用例全绿 + 2977 域回归零失败'
+  fix_phase: '已落地（2026-08-23，AI-K3-GW-GAP7）；GAP-F-29 DDL 三件套 Owner 窗口待办'
+  status: resolved
+  related_rules:
+  - 'GAP-F-10~33'
+  created: '2026-08-23'
+  last_updated: '2026-08-23'
+
+- issue_id: '#ARCH-190'
+  title: MOD-INF-049 venra_double_lock_anchor 无蓝图最小语义施工（待 Owner 裁定补蓝图）
+  severity: P2
+  category: 架构议题
+  adjudication: >-
+    全库 grep venra/double_lock 零蓝图命中（仅 path_ownership_map 节点声明）。按派单最小语义
+    施工：关键状态变更双锁确认（两名不同操作者）+ sha256 哈希链锚定留痕（只追加可离线校验）。
+    待裁定：补正式蓝图或维持最小语义。
+  impact:
+    - 'src/zephyr/intelligence/venra_double_lock_anchor.py（testing，13 测）'
+  fix_phase: '最小语义已落地（2026-08-23，AI-K3-GW-INFRA）'
+  status: open
+  related_rules:
+  - '设计态账波次5'
+  created: '2026-08-23'
+  last_updated: '2026-08-23'
+
+- issue_id: '#ARCH-191'
+  title: MOD-INF-033 behavioral_auditor 转候选库（CAND-CMP-001）+ EX-036 测试桩不存在实证
+  severity: P3
+  category: 架构议题
+  adjudication: >-
+    ①INF-033：behavioral_auditor/ 仅 __init__ 壳（gov_drift 符号再导出聚合非独立引擎），
+    职能已由 code_dedup behavioral_trust_checker+behavioral_sampler 部分承载，专职引擎边际
+    价值低——不补代码转 CAND-CMP-001 待 Owner 终裁（__init__ 头部已标注）。②EX-036：
+    设计态账称"有 1 测试桩待激活"，全库实测无，已新写 15 测试替代——账单口径偏差留痕。
+  impact:
+    - 'compliance/behavioral_auditor/__init__.py（标注）+ ex_core/performance_monitor.py（testing，15 测）'
+  fix_phase: '已落地（2026-08-23，AI-K3-GW-INFRA）'
+  status: open
+  related_rules:
+  - '设计态账汇总表'
+  created: '2026-08-23'
+  last_updated: '2026-08-23'
+
+- issue_id: '#ARCH-192'
+  title: 波次6大模型族五件按"接口契约+轻量占位"施工（真训练/推理属 B-007 闸门）
+  severity: P2
+  category: 架构决策
+  adjudication: >-
+    MOD-SIG-050/051/052/053/055（Kronos/Mamba/共形TCP/xLSTM/供应链GNN）大模型真依赖不引入；
+    统一 predict 接口+输入校验+未训练 fail-closed 占位+单测（对齐 ML 域候选骨架纪律）。
+    MOD-ML-005/006/008 轻量可测；MOD-INF-048 投票优先编排复用 orchestrator 纯函数可测。
+    骨架仅 numpy/标准库零 DB/网络/大模型依赖。
+  impact:
+    - 'signal_ashare 五骨架 + ml_train 三件 + orchestrator/voting_first_multi_agent.py（testing，90 测）'
+  fix_phase: '已落地（2026-08-23，AI-K3-GW-INFRA）'
+  status: resolved
+  related_rules:
+  - 'B-007'
+  - 'B-009'
+  created: '2026-08-23'
+  last_updated: '2026-08-23'

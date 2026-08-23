@@ -42241,6 +42241,329 @@ entries:
   desc_zh: 'MOD-ML-009。预测 vs 实际算 Spearman IC 与 IC 衰减；衰减超阈值产 retrain 信号；triggered_training 恒 False——真训练触发权属 Owner（B-007）。'
   desc_en: 'MOD-ML-009. Spearman IC and IC decay of predictions vs actuals; retrain signal above decay threshold; triggered_training always False (B-007).'
   plain_zh: '学习效果体温计。模型考分差了就举"该重训了"的牌子，但举牌子不等于自己去按训练按钮。'
+# --- 2026-08-23 GW-B4 plain_zh ---
+- module_path: src/zephyr/plan_engine/evidence_chain_decision.py
+  domain_id: D_PLAN
+  name_zh: 证据链决策数据结构
+  name_en: 'Evidence Chain Decision'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '给每个交易预案/候选股配上"证据卡"：核心论点、催化剂、失效条件、支持证据、 反对证据五项强制写全，缺一项就打回并一次列全缺了啥——杜绝只给结论不给证据的决策卡。'
+- module_path: src/zephyr/signal_ashare/mc_path_simulator.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 蒙特卡洛路径模拟引擎
+  name_en: 'Monte Carlo Path Simulator'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '拿历史行情当骰子，给一只票的未来 20 天模拟上千条走势，告诉你上涨概率、 最好最坏到哪（90% 置信上下限）、每天的价格分布带——画的是概率栏杆，不是算命点位。'
+- module_path: src/zephyr/signal_ashare/stock_signal_strength.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 个股信号强度合成器
+  name_en: 'Stock Signal Strength Composer'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '把 MACD、RSI、量能、均线、AI 舆情五路信号各打成 0~100 分再按权重合成一个 总分，哪维缺席就剔除重算权重；总分高只说明状态强，不构成买卖指令。'
+- module_path: src/zephyr/signal_ashare/chanlun_structure.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 缠论笔段中枢识别器
+  name_en: 'Chanlun Structure Analyzer'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '把 K 线先做包含合并，再自动找顶底分型、连笔、组线段、圈中枢（三段重叠的 价格密集区），全部标回原始 K 线位置，供行情页画缠论叠加层用。'
+- module_path: src/zephyr/factor/analysis/factor_similarity_cluster.py
+  domain_id: D_FACTOR
+  name_zh: 因子相似度聚类器
+  name_en: 'Factor Similarity Cluster'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '算因子两两之间的 IC 相关性，用层次或 DBSCAN 把高度相似的因子聚成一簇， 每簇挑质量最好的当代表——因子库去重、避拥挤就用它。'
+- module_path: src/zephyr/reporting/ai_review_summary.py
+  domain_id: D_REPORTING
+  name_zh: AI 复盘结语生成器
+  name_en: 'AI Review Summary Generator'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '盘后一键生成战报：把今日行情、板块亮点、预案执行、风险事件喂给大模型写 一句结语嵌进五段战报模板；大模型挂了就自动换成模板兜底，页面绝不空白。'
+- module_path: src/zephyr/signal_ashare/cross_asset_ratio_monitor.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 跨资产比价监控器
+  name_en: 'Cross Asset Ratio Monitor'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '盯金银比、金油比、铜金比、金铜比四个跨资产价格比，算它偏离历史多少 （z-score 分五档），极端时给出宏观含义标注（避险升温还是增长回暖）。'
+- module_path: src/zephyr/research/factor_mining_pipeline.py
+  domain_id: D_KNOWLEDGE
+  name_zh: LLM 因子挖掘流水线
+  name_en: 'LLM Factor Mining Pipeline'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '让大模型读论文挖因子：搜论文、解析 PDF、提炼因子假说、回测沙箱验证， 通过的只生成"候选草稿"交治理流程审批入库——挖出来的因子绝不直接上实盘。'
+- module_path: src/zephyr/plan_engine/trading_analyst_agents.py
+  domain_id: D_PLAN
+  name_zh: 交易域五角色分析师议事
+  name_en: 'Trading Analyst Council'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '五个 AI 分析师开会：趋势派、反转派、基本面派、情绪猎手各摆论点（看多归 多方、看空归空方），风控防守员高置信看空有一票否决权；最后复用多空辩论链出 执行/降档/放弃结论。'
+- module_path: src/zephyr/signal_ashare/sector_attribute_rules.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 板块属性标注规则库
+  name_en: 'Sector Attribute Rules'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '给每个板块贴"进攻/防御/平衡"标签的小词典——银行、电力这类算防御， 半导体、券商这类算进攻，白酒、家电这类算平衡。规则写在配置文件里，先按 板块代码精确查，查不到再按名字关键词猜，猜不到就老实说"未标注"，不硬归类。'
+- module_path: src/zephyr/signal_ashare/limit_up_followthrough.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 昨日涨停今表现与炸板率统计
+  name_en: 'Limit-Up Followthrough Stats'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '每天收盘后算两笔账：昨天涨停的股票今天平均赚赔多少（封板池）， 昨天盘中摸到涨停但没封住的股票今天又怎么样（炸板池）；再算上全市场 "曾涨停但没封住"的比例（炸板率），用的是宽度快照里现成的字段。'
+- module_path: src/zephyr/signal_ashare/sector_volume_anomaly.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 板块量能异动检测器
+  name_en: 'Sector Volume Anomaly Detector'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '看每个板块今天成交额跟它前 20 天的平均量差多少——翻倍以上叫 显著放量，差三成叫温和放量，腰斩以下叫显著缩量，用来找资金突然涌入或 撤离的板块。历史不够或当天缺数据的板块直接跳过并写明原因。'
+- module_path: src/zephyr/signal_ashare/counter_trend_board.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 逆势榜四卡生成器
+  name_en: 'Counter-Trend Board'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '大盘跳水那段谁最硬气——找出指数从高点跌到谷底的"主下跌段"， 然后数四张榜：下跌段里还在涨的板块（逆势上涨）、有钱净流入的板块 （下跌段资金流入）、触底后最快弹起来的板块（率先反弹）、跌得最少的 板块（最抗跌）。资金流数据没接就只空那一张卡。'
+- module_path: src/zephyr/signal_ashare/sector_detail_enricher.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 板块详情补充维度生成器
+  name_en: 'Sector Detail Enricher'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '回答两个问题的规则机：这个板块现在处于周期的哪一段（蛰伏/ 启动/发酵/高潮/退潮，看涨幅、涨停家数和量能定）；这波拉升是为什么 （政策/业绩/题材新闻命中，或者干脆是资金硬拉）。业绩证据超过一个月 就不算数——因为分析师预测数据只覆盖最近一个月左右。'
+- module_path: src/zephyr/signal_ashare/foreign_impact_judge.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 外盘对A股影响判定引擎
+  name_en: 'Foreign Impact Judge'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '把 12 个外盘标的（美股、A50、美元、人民币、原油、黄金、美债等） 的涨跌翻成对 A 股的"利好/利空"标签——美股涨是利好，美元和美债收益率涨 是利空，黄金只标注避险情绪不定多空；再按情绪/资金/利率/成本/避险五个 通道加权汇总成一句话，比如"偏空·弱影响"。'
+- module_path: src/zephyr/signal_ashare/trendline_sr_detector.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 趋势线与压力支撑识别器
+  name_en: 'Trendline & S/R Detector'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '在 K 线图上自动画"地板"和"天花板"——先找局部最高最低点，把 差不多的价位归一堆算出被市场多次验证的支撑/压力位（摸过几次算强度）， 再用最近两个低点或高点连出趋势线。数据不够就明说不出图，不硬画。'
+- module_path: src/zephyr/regime/index_market_brief.py
+  domain_id: D_REGIME
+  name_zh: 四指数分市场分析组合卡
+  name_en: 'Index Market Brief'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '上证、深成、创业板指、科创综指四个指数各出一张卡：各自的 regime 状态（复用四指数面板）、各自的次日 8 态概率（复用同一套马尔可夫 引擎按各指数自己的 K 线算）、加上全市场共用的情绪标签。只给概率不给 点位预测（铁律）。'
+- module_path: src/zephyr/nlp/news_impact_grader.py
+  domain_id: D_DATA
+  name_zh: 新闻影响分级与热点聚类器
+  name_en: 'News Impact Grader & Clusterer'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '给新闻分三六九等：央行降准这种宏观大事直接定 A 级，题材行业 新闻定 B 级，家长里短定 C 级；再数一数每个题材被多少条新闻提到 （"半导体 ×48"那种热点榜），同一题材被多家媒体报道就标"多源共振"。'
+- module_path: src/zephyr/plan_engine/execution_deviation_attributor.py
+  domain_id: D_PLAN
+  name_zh: 执行偏差归因器
+  name_en: 'Execution Deviation Attributor'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '收盘后对账"说要买的"和"真买到的"——每条计划归到六类之一： 按计划成交、买贵/卖便宜了（滑点）、只成交一部分（流动性）、被风控 拦下、被券商拒单、或者压根没动静。多笔成交按成交量加权均价算。'
+- module_path: src/zephyr/position/live_nav_recorder.py
+  domain_id: D_POSITION
+  name_zh: 实盘净值记录器
+  name_en: 'Live NAV Recorder'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '每天把账户的现金加股票市值记成一个净值点，连成曲线跟沪深300 比——现在券商还没接，先用 miniQMT 模拟账户的资产出数，接口留好了以后 换真券商只用换数据源。落库表还没建（DDL 草稿已备，等 Owner 窗口）。'
+- module_path: src/zephyr/intelligence/venra_double_lock_anchor.py
+  domain_id: D_INTELLIGENCE
+  name_zh: VENRA 双锁锚定器
+  name_en: 'Venra Double Lock Anchor'
+  desc_zh: 'MOD-INF-049。关键状态变更双锁确认（两名不同操作者）+ sha256 哈希链锚定留痕（只追加，可离线校验篡改）；空字段/重复提案/同人双锁/终态后操作 fail-closed。'
+  desc_en: 'MOD-INF-049. Double-lock confirmation for critical state changes (two distinct actors) + sha256 hash-chain anchored audit trail (append-only, offline verifiable); fail-closed on empty fields/duplicate proposals/same-actor locks/post-terminal ops.'
+  plain_zh: '关键改动必须两个人都点头才算数，每次裁定都记进一条改不了的链上，事后谁改了记录一查就知道。'
+- module_path: src/zephyr/intelligence/sentinel_hallucination_detector.py
+  domain_id: D_INTELLIGENCE
+  name_zh: sentinel 幻觉检测器
+  name_en: 'Sentinel Hallucination Detector'
+  desc_zh: 'MOD-INF-050。不另立重复引擎——委托 orchestrator CoVe 检测引擎，本层只做包装+审计留痕增强（claim 只存指纹，哈希链防篡改）+ stats 观测。'
+  desc_en: 'MOD-INF-050. No duplicate engine — delegates to orchestrator CoVe detector; wrapper adds hash-chained audit trail (claim hash only) + stats.'
+  plain_zh: '幻觉检测的哨兵。真检测还是老引擎干，它只负责把每次检测结果盖章记账，账本想偷偷改一页都会被发现。'
+- module_path: src/zephyr/ex_core/performance_monitor.py
+  domain_id: D_EX_CORE
+  name_zh: 性能监控器
+  name_en: 'Performance Monitor'
+  desc_zh: 'MOD-EX-036。单机轻量实现——滑动窗口记录执行链路延迟样本（count/mean/min/max/p95），阈值越线经注入 alerter 回调外发；无 DB/网络/后台线程。'
+  desc_en: 'MOD-EX-036. Single-machine lightweight perf monitor — sliding-window latency samples (count/mean/min/max/p95), threshold breach via injected alerter; no DB/network/threads.'
+  plain_zh: '执行核心的体温计。下单快不快它实时记账，超过红线就按铃，全在一台机器内存里跑。'
+- module_path: src/zephyr/orchestrator/voting_first_multi_agent.py
+  domain_id: D_ORCHESTRATOR
+  name_zh: 投票优先多智能体编排器
+  name_en: 'Voting First Multi Agent'
+  desc_zh: 'MOD-INF-048。多 agent 独立提案，tally_votes 纯函数加权聚票，平票确定性裁决（字典序小者胜）；单 agent 失败容错，全部失败 fail-closed winner=None。'
+  desc_en: 'MOD-INF-048. Agents propose independently; pure-function weighted plurality voting with deterministic tie-break; single-agent failure tolerated, all-failed fail-closed winner=None.'
+  plain_zh: '几个 AI 投票表决，票多者赢，平票按字典序定胜负——规则写在明处，单个 AI 掉链子不影响开票。'
+- module_path: src/zephyr/signal_ashare/kronos_tsfm_predictor.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: Kronos TSFM 预测器骨架
+  name_en: 'Kronos Tsfm Predictor Skeleton'
+  desc_zh: 'MOD-SIG-050。时序基础模型接口契约（predict 签名+输入校验+未训练 fail-closed）+ last-value 朴素基线占位（显式 is_baseline 标记）；不引 torch，真训练/真推理属 B-007。'
+  desc_en: 'MOD-SIG-050. TSFM interface contract (predict signature + input validation + untrained fail-closed) + last-value naive baseline (explicit is_baseline flag); no torch, real training/inference gated by B-007.'
+  plain_zh: 'Kronos 大模型的空壳插座。接口和校验门都装好了，真模型要等 Owner 批，现在只给个"沿用昨天值"的垫底答案并明确标注是垫底。'
+- module_path: src/zephyr/signal_ashare/mamba_ssm_temporal_enhancer.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: Mamba-SSM 时序增强器骨架
+  name_en: 'Mamba Ssm Temporal Enhancer Skeleton'
+  desc_zh: 'MOD-SIG-051。Mamba/SSM 远期候选接口契约（enhance 签名+未训练 fail-closed）+ z-score/EMA 占位增强（形状恒等）；不引 mamba_ssm 依赖，真模型属 B-007。'
+  desc_en: 'MOD-SIG-051. Mamba/SSM far-future candidate interface contract (enhance signature + untrained fail-closed) + z-score/EMA placeholder (shape-preserving); no mamba_ssm dep, real model gated by B-007.'
+  plain_zh: 'Mamba 模型的占位替身。先把"特征进去增强出来"的口子留好，现在里面装的是标准化加平滑的小算法，真模型另行审批。'
+- module_path: src/zephyr/signal_ashare/adaptive_conformal_tcp_rm_ddci.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 自适应保形 TCP-RM/DDCI
+  name_en: 'Adaptive Conformal Tcp Rm Ddci'
+  desc_zh: 'MOD-SIG-052（91 号 memo BM-SEL-14-A）。SIG-044 rolling 基线的加权变体——校准残差带权重（近期/regime 加权），q̂ 取加权 conformal 分位；未校准 fail-closed。'
+  desc_en: 'MOD-SIG-052 (memo 91 BM-SEL-14-A). Weighted variant of SIG-044 rolling baseline — weighted residuals, weighted conformal quantile margin; uncalibrated fail-closed.'
+  plain_zh: '保形区间的加权版。最近的误差说话更大声，区间跟着近期行情宽窄自动伸缩；没校准过就不给区间。'
+- module_path: src/zephyr/signal_ashare/xlstm_long_memory.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: xLSTM 长记忆骨架
+  name_en: 'Xlstm Long Memory Skeleton'
+  desc_zh: 'MOD-SIG-053。xLSTM 远期候选接口契约（predict 签名+未训练 fail-closed）+ EMA level/trend 长程记忆占位（阻尼外推）；不引 torch，真训练属 B-007。'
+  desc_en: 'MOD-SIG-053. xLSTM far-future candidate interface contract (predict signature + untrained fail-closed) + EMA level/trend memory placeholder (damped extrapolation); no torch, real training gated by B-007.'
+  plain_zh: 'xLSTM 的占位替身。长记忆现在用指数加权的小账本顶着，预测只敢按趋势小步外推，真模型等审批。'
+- module_path: src/zephyr/signal_ashare/supply_chain_gnn.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 供应链 GNN 骨架
+  name_en: 'Supply Chain Gnn Skeleton'
+  desc_zh: 'MOD-SIG-055。供应链图神经网络接口契约（图校验：节点唯一/边不悬空/边权∈(0,1]）+ BFS 边权衰减风险传播占位；不引 torch_geometric，真训练属 B-007。'
+  desc_en: 'MOD-SIG-055. Supply-chain GNN interface contract (graph validation: unique nodes/no dangling edges/weights in (0,1]) + BFS edge-weight-decay risk propagation placeholder; no torch_geometric, real training gated by B-007.'
+  plain_zh: '供应链风险传导的占位图。哪家出事风险沿供应链一条条边打折往外传，真图神经网络等审批后再换芯。'
+- module_path: src/zephyr/ml_train/adversarial_robustness_validator.py
+  domain_id: D_ML_TRAIN
+  name_zh: 对抗鲁棒性验证器
+  name_en: 'Adversarial Robustness Validator'
+  desc_zh: 'MOD-ML-005。黑盒噪声鲁棒性基线——注入 predict_fn，多档 epsilon 蒙特卡洛扰动测预测漂移（mean/max shift），供标签时报准确率降级；同 seed 可复现。'
+  desc_en: 'MOD-ML-005. Black-box noise robustness baseline — injected predict_fn, multi-epsilon Monte-Carlo perturbation measuring prediction shift, optional accuracy drop; seed-reproducible.'
+  plain_zh: '模型抗压测试仪。给输入掺不同程度的噪声看预测飘多少，飘得离谱的模型不准上岗。'
+- module_path: src/zephyr/ml_train/strategy_digital_twin.py
+  domain_id: D_ML_TRAIN
+  name_zh: 策略数字孪生
+  name_en: 'Strategy Digital Twin'
+  desc_zh: 'MOD-ML-006。策略上线前沙盘镜像——T+1 无未来函数（当日信号次日生效）推演权益曲线，产出总收益/最大回撤/Sharpe/换手次数。'
+  desc_en: 'MOD-ML-006. Pre-launch strategy sandbox twin — T+1 no-lookahead equity simulation yielding total return/max drawdown/Sharpe/trade count.'
+  plain_zh: '策略的影子分身。信号先让它在沙盘里跑一遍看看赚钱还是亏钱，严格今天发信号明天才成交，不偷看未来。'
+- module_path: src/zephyr/ml_train/meta_learning_rsi.py
+  domain_id: D_ML_TRAIN
+  name_zh: 元学习 RSI
+  name_en: 'Meta Learning Rsi'
+  desc_zh: 'MOD-ML-008。Wilder RSI 纯 numpy 实现 + 按 regime 元学习推荐周期（历史均分最优，无记录 fail-closed 回默认 14）。'
+  desc_en: 'MOD-ML-008. Pure-numpy Wilder RSI + regime-conditioned meta-learning period recommendation (best historical mean score, fail-closed default 14).'
+  plain_zh: '会挑参数的 RSI。记住每种市况下哪个周期 historically 考得最好，没见过的市况就老实回默认 14。'
+- module_path: tests/intelligence/test_venra_double_lock_anchor.py
+  domain_id: 
+  name_zh: VENRA 双锁锚定测试
+  name_en: 'Test Venra Double Lock Anchor'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '测试：双锁确认/拒绝留痕/哈希链防篡改。'
+- module_path: tests/intelligence/test_sentinel_hallucination_detector.py
+  domain_id: 
+  name_zh: sentinel 幻觉检测测试
+  name_en: 'Test Sentinel Hallucination Detector'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '测试：委托语义/审计链/统计/空 claim fail-closed。'
+- module_path: tests/context/test_context_engine_pipeline.py
+  domain_id: 
+  name_zh: CE 四段流水线测试
+  name_en: 'Test Context Engine Pipeline'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '测试：build/compress/validate/inject + 规则注入 + 反馈调参 TTL。'
+- module_path: tests/trading/test_auto_runtime_ops_layers.py
+  domain_id: 
+  name_zh: AutoRuntime 三层骨架测试
+  name_en: 'Test Auto Runtime Ops Layers'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '测试：监控/调度/自愈三层接口位与降级语义。'
+- module_path: tests/ex_core/test_performance_monitor.py
+  domain_id: 
+  name_zh: 性能监控器测试
+  name_en: 'Test Performance Monitor'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '测试：窗口统计/p95/阈值告警/输入校验。'
+- module_path: tests/signal_ashare/test_kronos_tsfm_predictor.py
+  domain_id: 
+  name_zh: Kronos TSFM 骨架测试
+  name_en: 'Test Kronos Tsfm Predictor'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '测试：接口契约/未训练 fail-closed/基线标记。'
+- module_path: tests/signal_ashare/test_mamba_ssm_temporal_enhancer.py
+  domain_id: 
+  name_zh: Mamba-SSM 骨架测试
+  name_en: 'Test Mamba Ssm Temporal Enhancer'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '测试：形状恒等/维度校验/未训练 fail-closed。'
+- module_path: tests/signal_ashare/test_adaptive_conformal_tcp_rm_ddci.py
+  domain_id: 
+  name_zh: 自适应保形测试
+  name_en: 'Test Adaptive Conformal'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '测试：加权分位数/权重校验/未校准 fail-closed。'
+- module_path: tests/signal_ashare/test_xlstm_long_memory.py
+  domain_id: 
+  name_zh: xLSTM 骨架测试
+  name_en: 'Test Xlstm Long Memory'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '测试：阻尼外推/参数边界/未训练 fail-closed。'
+- module_path: tests/signal_ashare/test_supply_chain_gnn.py
+  domain_id: 
+  name_zh: 供应链 GNN 骨架测试
+  name_en: 'Test Supply Chain Gnn'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '测试：图校验/传播衰减/未训练 fail-closed。'
+- module_path: tests/ml_train/test_adversarial_robustness_validator.py
+  domain_id: 
+  name_zh: 对抗鲁棒性测试
+  name_en: 'Test Adversarial Robustness Validator'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '测试：扰动漂移/准确率降级/可复现性。'
+- module_path: tests/ml_train/test_strategy_digital_twin.py
+  domain_id: 
+  name_zh: 策略数字孪生测试
+  name_en: 'Test Strategy Digital Twin'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '测试：T+1 无未来函数/回撤/换手计数。'
+- module_path: tests/ml_train/test_meta_learning_rsi.py
+  domain_id: 
+  name_zh: 元学习 RSI 测试
+  name_en: 'Test Meta Learning Rsi'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '测试：RSI 边界/regime 隔离/默认回退。'
+- module_path: tests/orchestrator/test_voting_first_multi_agent.py
+  domain_id: 
+  name_zh: 投票编排测试
+  name_en: 'Test Voting First Multi Agent'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '测试：纯函数聚票/平票确定性/容错与全灭 fail-closed。'
 battle_map_steps:
 - step_id: BM-BUY-04
   flow_stage: buy_flow
