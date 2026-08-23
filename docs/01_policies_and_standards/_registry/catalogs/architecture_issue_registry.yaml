@@ -18783,3 +18783,108 @@ entries:
   - 'CREATE-GUARD'
   created: '2026-08-23'
   last_updated: '2026-08-23'
+
+- issue_id: '#ARCH-172'
+  title: 'MOD-PLAN-008~012 作战室波次2五件——预案落库回写/三维归因/Brier校准/今日计划/批量边界（GAP-F-07/09/02）'
+  severity: P0
+  category: 功能施工
+  adjudication: >-
+    缺口总账波次2 P0 作战室核心链三件一次落码：①GAP-F-07 scenario_plan_recorder 接通
+    MOD-PLAN-005→prediction_log 落库（计算核零改动，组合入口）+ outcome 盘后回写
+    （指数开盘桶×30分钟VWAP走势桶→9格实际情景）；scenario_attribution_stats 三维归因
+    （情景分支×维度×信号源，纯函数核）；brier_calibration（二值/多分类 Brier+校准分桶
+    reliability curve+ECE，多分类口径为 GAP-F-01 预留）。②GAP-F-09 daily_trade_plan
+    决策链末端规则模板生成（非 LLM）——拟买 min(boundary.max_add×档位缩放, firm 8% 硬顶)
+    折算整手；拟卖止盈/减仓双条件规则。③GAP-F-02 batch_boundary_runner 批量调度
+    （单 SQL 取数+线程池≤8+ok/error/no_data 分桶留痕）+复用 prediction_log 落库。
+    全部新模块 testing 封顶（B-007 production 须 Owner 审批）；落库 append-only 经
+    prediction_log_writer 公共 API 零裸 SQL；回写失败 fail-open；输入校验 fail-closed。
+  impact:
+    - 'src/zephyr/plan_engine/scenario_plan_recorder.py / scenario_attribution_stats.py / brier_calibration.py / daily_trade_plan.py / batch_boundary_runner.py（新建，testing）'
+    - 'tests/plan_engine/ 五测试文件 94 用例全绿 + plan_engine 全量 227 passed 零回归'
+  fix_phase: '已落地（2026-08-23，AI-K3-GW-WARROOM）'
+  status: resolved
+  related_rules:
+  - '45号 §4 W0/W2/W2b/W6'
+  - 'GAP-F-07/09/02'
+  created: '2026-08-23'
+  last_updated: '2026-08-23'
+
+- issue_id: '#ARCH-173'
+  title: 波次0 regime 六件统一"规则判定优先+纯函数可测+DB注入隔离"架构
+  severity: P1
+  category: 架构决策
+  adjudication: >-
+    宪章§3约束三把 regime 识别列为命门环节；regime/ 域 12 态 HMM 已 production，
+    波次0六件在 signal_ashare 落地且不重复建设、不过拟合。裁定：六件统一取规则/状态机/
+    马尔可夫频次估计等简单可解释算法（禁模型拟合）；核心逻辑全部纯函数（序列进→快照出），
+    DB 访问收敛到 loader 薄封装（query_fn 依赖注入，表名经 TableRegistry 派生）；
+    输出一律状态/概率/置信度快照，禁出择时买卖信号（regime=市场级风险节流红线）。
+  impact:
+    - 'src/zephyr/signal_ashare/ market_state_sensor / regime_change_detector / next_day_8state_forecast / cross_market_conduction_sensor / adjustment_cycle_tracker / market_lifecycle_phase（新建，testing）'
+    - 'tests/signal_ashare/ 六测试文件 128 用例全绿零 DB 依赖'
+  fix_phase: '已落地（2026-08-23，AI-K3-GW-REGIME）；阈值全部初拟待实盘标定（防过拟合）'
+  status: resolved
+  related_rules:
+  - '宪章§3约束三'
+  - '90号 §22.4 / §7'
+  created: '2026-08-23'
+  last_updated: '2026-08-23'
+
+- issue_id: '#ARCH-174'
+  title: regime 三件套边界消歧在信号域的落地口径（state_sensor/change_detector/lifecycle 不抢 regime/ HMM 饭碗）
+  severity: P2
+  category: 架构决策
+  adjudication: >-
+    regime/ 域已有 MOD-REGIME-001（4态HMM+3overlay，Shrinkage 链源头）；signal_ashare 新增
+    market_state_sensor（3×3规则9网格）/regime_change_detector（牛熊2态+变点）/
+    market_lifecycle_phase（春夏秋冬4季）三件状态标签件，存在标签冲突仲裁风险。
+    裁定：三件定位为轻量规则版传感器/低频overlay，时间尺度与消费方式各不相同，
+    不并入 regime/ HMM 概率分布，下游仲裁由消费方按低频→高频优先级处理。
+  impact:
+    - 'signal_ashare 三传感器与 regime/ HMM 并存无冲突；未来 4 态颗粒度不足时生命周期相位可作低频 overlay 接入'
+  fix_phase: '已落地（2026-08-23）'
+  status: resolved
+  related_rules:
+  - '90号 §22.4'
+  created: '2026-08-23'
+  last_updated: '2026-08-23'
+
+- issue_id: '#ARCH-175'
+  title: 风控统一快照 RiskSnapshot 为风控消费唯一数据入口
+  severity: P1
+  category: 架构决策
+  adjudication: >-
+    MOD-RK-25/22/24 与 MOD-EX-024 四件同批落地，风控判定全链路改由 RiskSnapshot 单源喂数
+    （此前各风控件各自取数）。裁定：风险判定消费方（veto/monitor/pre-exec）统一经
+    MOD-RK-25 快照取数；数据真源经 provider 协议注入（行情 CTR-001/持仓 CTR-006/
+    成交 CTR-005/限额 CTR-003），禁自造数据管道；缺数 degraded 不补零；
+    T+1 可卖数量留 sellable_quantity 接口位。
+  impact:
+    - 'src/zephyr/risk/core/ risk_data_pipeline / agent_risk_monitor / risk_veto_engine + ex_core/pre_execution_checker（新建，testing）'
+    - 'MOD-EX-007 施工时直接消费 RiskSnapshot+VetoDecision，无需重建数据链'
+  fix_phase: '已落地（2026-08-23，AI-K3-GW-RISK）'
+  status: resolved
+  related_rules:
+  - '宪章§6'
+  created: '2026-08-23'
+  last_updated: '2026-08-23'
+
+- issue_id: '#ARCH-176'
+  title: 风控/合规新件全链路 Fail-Closed 语义统一
+  severity: P1
+  category: 架构决策
+  adjudication: >-
+    宪章 §6 安全性 P0 + C-004 默认拒绝原则的工程化口径统一：本批 8 件执行——真源缺失/
+    探针异常/规则执行异常/队列满/留存不可验证一律按最保守方向处理（拒单/BLOCK/CRITICAL），
+    减仓方向（SELL）在限额真源缺失时放行（风险收敛不拦）。误拦侧成本=交易机会损失，
+    漏拦侧成本=本金风险，取舍符合 §6 冲突表。
+  impact:
+    - 'risk/core 三件 + compliance 三件 + ex_core 一件 + frontend 两件（新建，testing，133 用例全绿）'
+  fix_phase: '已落地（2026-08-23，AI-K3-GW-RISK）'
+  status: resolved
+  related_rules:
+  - '宪章§6'
+  - 'C-004'
+  created: '2026-08-23'
+  last_updated: '2026-08-23'

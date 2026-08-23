@@ -41699,6 +41699,147 @@ entries:
   desc_en: ""
   plain_zh: "提交前检查：你认领（claim）的热注册表文件，在你认领之后有没有被别人抢先提交过新版本。如果被抢先了，说明你的修改是基于旧版本做的，直接提交会把别人的新改动覆盖掉——门禁会拦下这次提交，让你确认文件已包含别人的修改后重新认领再提交。和你写文件时的 CAS 校验（safe_write_text）是两层互补防线：CAS 管写盘那一刻，本门禁管提交那一刻。"
 
+# --- 2026-08-23 长城任务批1 plain_zh 翻译（REGIME/RISK/WARROOM） ---
+- module_path: src/zephyr/signal_ashare/market_state_sensor.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 市场状态传感器
+  name_en: 'Market State Sensor'
+  desc_zh: '规则驱动3×3市场状态分类（趋势×波动率9网格）+分解得分+置信度'
+  desc_en: ''
+  plain_zh: '市场的体感温度计，看指数价量回答"现在是什么市"——涨还是跌、颠簸还是平稳，二合一给出9宫格状态和把握度；只报状态不出买卖建议，给下游风控当节流依据。'
+- module_path: src/zephyr/signal_ashare/regime_change_detector.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 体制转换检测器
+  name_en: 'Regime Change Detector'
+  desc_zh: '牛/熊2态+CUSUM变点预警+触发→确认状态机（BM-BUY-02-A-1-d）'
+  desc_en: ''
+  plain_zh: '盯着市场脾气会不会变——跌破60日线或从高点回撤两成就判熊，刚翻转先挂"待确认"，连跌三天以上才坐实切换；切换概率随确认天数爬升，给风控提前拉警报。'
+- module_path: src/zephyr/signal_ashare/next_day_8state_forecast.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 次日8状态预测
+  name_en: 'Next Day 8-State Forecast'
+  desc_zh: '8种T+1走势形态（高开高走等）马尔可夫转移矩阵概率分布预测'
+  desc_en: ''
+  plain_zh: '用历史"今天什么走势→明天什么走势"的转移频率，给出明天8种走势形态的概率分布；只出概率不出点位（90号裁定点预测暂缓），给下游修正信号权重用。'
+- module_path: src/zephyr/signal_ashare/cross_market_conduction_sensor.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 跨市场传导传感器
+  name_en: 'Cross-Market Conduction Sensor'
+  desc_zh: '外盘指数→A股领先滞后相关+回归传导系数+隔夜冲击影响幅度量化'
+  desc_en: ''
+  plain_zh: '美股一异动，立刻算出对A股的传导系数和影响幅度——外盘昨夜涨跌乘以历史回归系数就是预估冲击，分市场汇总成总影响预测；只量化幅度，不喊买喊卖。'
+- module_path: src/zephyr/signal_ashare/adjustment_cycle_tracker.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 调整周期追踪器
+  name_en: 'Adjustment Cycle Tracker'
+  desc_zh: '市场级调整周期追踪——自动找峰/算持续天数/回撤深度，复用板块级进度引擎'
+  desc_en: ''
+  plain_zh: '追踪大盘这波调整走到哪了——从最高点跌了多久、多深、广度修复几成，合成进度百分比：不到四成拦截低吸，超过八成允许分批接，创新高宣布调整结束。'
+- module_path: src/zephyr/signal_ashare/market_lifecycle_phase.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 市场生命周期相位
+  name_en: 'Market Lifecycle Phase'
+  desc_zh: '春夏秋冬4阶段判定（板块新高占比水位×趋势2×2）+季节禁为约束'
+  desc_en: ''
+  plain_zh: '给行情分春夏秋冬——看板块创新高的比例水位和走势：低位回升是春、高位扩张是夏、高位滞涨是秋、低位阴跌是冬；冬天禁抄底、秋天强制离场，约束交给风控执行。'
+- module_path: src/zephyr/risk/core/risk_data_pipeline.py
+  domain_id: D_RISK
+  name_zh: 风控数据管道
+  name_en: 'risk_data_pipeline'
+  desc_zh: '风控数据底座——汇总行情/持仓/成交/限额为统一风控快照(RiskSnapshot)'
+  desc_en: ''
+  plain_zh: '风控的数据底座，把行情、持仓、成交、限额四路真源数据装配成一张统一快照，供否决引擎、agent监控、执行前检查消费；缺数据就标记降级，绝不静默补零。'
+- module_path: src/zephyr/risk/core/agent_risk_monitor.py
+  domain_id: D_RISK
+  name_zh: agent风险监控器
+  name_en: 'agent_risk_monitor'
+  desc_zh: '监控AI交易agent活动窗口风险(下单爆发/拒单率/撤单率/置信度/数据降级/限额逼近)'
+  desc_en: ''
+  plain_zh: 'AI交易员的行为哨兵，盯着它下单猛不猛、被拒多不多、撤单勤不勤、信心足不足；反常就亮灯，严重就建议暂停新开仓。'
+- module_path: src/zephyr/risk/core/risk_veto_engine.py
+  domain_id: D_RISK
+  name_zh: 风险否决引擎
+  name_en: 'risk_veto_engine'
+  desc_zh: '硬规则veto清单+优先级+否决理由结构化输出'
+  desc_en: ''
+  plain_zh: '下单前的风险裁判，按一票否决的硬规则逐条核：缺价、停牌、卖超、T+1、单仓超限、杠杆超限，谁碰线就拦下并给出结构化理由；规则自己出错也按拦截处理。'
+- module_path: src/zephyr/ex_core/pre_execution_checker.py
+  domain_id: D_EX_CORE
+  name_zh: 执行前检查器
+  name_en: 'pre_execution_checker'
+  desc_zh: '下单前四级硬检查(熔断→交易时段→风控快照→否决引擎)，全环节Fail-Closed'
+  desc_en: ''
+  plain_zh: '订单出门前的最后一道岗：先看熔断拉没拉、是不是交易时间、风控数据齐不齐、风险裁判放不放行；任何一环出问题都默认拒单。'
+- module_path: src/zephyr/compliance/async_intercept_queue.py
+  domain_id: D_COMPLIANCE
+  name_zh: 异步拦截队列
+  name_en: 'async_intercept_queue'
+  desc_zh: 'SecurityGateway同步拦截延迟的异步化升级(GAP-L10-001)+内容缓存'
+  desc_en: ''
+  plain_zh: '合规安检的异步传送带，AI生成的内容先排队再过安检，相同内容直接走缓存；队伍满了或安检机故障都按拦截处理，不放行。'
+- module_path: src/zephyr/compliance/compliance_tech_enabler.py
+  domain_id: D_COMPLIANCE
+  name_zh: 合规技术使能器
+  name_en: 'compliance_tech_enabler'
+  desc_zh: '声明式合规规则定义→ComplianceRule(CTR-P1-012)生效规则集物化器'
+  desc_en: ''
+  plain_zh: '合规规则的装配工，把配置里写的规则一条条验明正身（处理方式、严重级别合法才收），装配成合规引擎能直接用的规则集；看不懂的规则宁可拒收也不降级。'
+- module_path: src/zephyr/compliance/compliance_continuous_ops.py
+  domain_id: D_COMPLIANCE
+  name_zh: 合规持续运营
+  name_en: 'compliance_continuous_ops'
+  desc_zh: '合规常态巡检(审计留存B-016/规则新鲜度/拦截队列积压)输出健康报告'
+  desc_en: ''
+  plain_zh: '合规的日常体检医生，定期查审计日志留没留够年头、规则有没有过时、拦截队列堵不堵；查不到数据的按违规处理，出具体检报告。'
+- module_path: src/zephyr/frontend/implementations/default_approval_gateway.py
+  domain_id: D_FRONTEND
+  name_zh: 默认审批网关
+  name_en: 'default_approval_gateway'
+  desc_zh: 'B-007人工审批载体——submit/decide/pending闭环+决策留痕'
+  desc_en: ''
+  plain_zh: '人工审批的收发室，AI要上新策略先在这里挂单，人批准或打回都留痕；过期的单子自动作废，不许补批。'
+- module_path: src/zephyr/frontend/implementations/default_notification_manager.py
+  domain_id: D_FRONTEND
+  name_zh: 默认通知管理器
+  name_en: 'default_notification_manager'
+  desc_zh: '通知分发管理器——log内建渠道+外部渠道注册(微信通知能力③接线位)'
+  desc_en: ''
+  plain_zh: '系统的传话筒，内置日志渠道，微信等外部渠道留好接线口；多个渠道有一个没送达就如实报失败，不装成都送到了。'
+- module_path: src/zephyr/plan_engine/scenario_plan_recorder.py
+  domain_id: D_PLAN
+  name_zh: 预案落库与实际回写器
+  name_en: 'Scenario Plan Recorder'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '把每天盘前算好的三情景预案记进 prediction_log 台账，第二天盘后再拿真实行情 判定"实际走了哪一格"回写命中结果——预测说了什么、实际走了什么，都能回查对账。'
+- module_path: src/zephyr/plan_engine/scenario_attribution_stats.py
+  domain_id: D_PLAN
+  name_zh: 预案三维归因统计器
+  name_en: 'Scenario Attribution Stats'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '按"哪一格情景、哪个维度（预测/执行/盈亏）、哪路信号源"三个角度分开数命中率， 让作战室 W0 看清到底是预测不准、执行走样、还是预案本身不赚钱。'
+- module_path: src/zephyr/plan_engine/brier_calibration.py
+  domain_id: D_PLAN
+  name_zh: 预案概率校准计算器
+  name_en: 'Brier Calibration'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '用布赖尔评分和分桶校准曲线回答"系统说七成把握的事是不是真七成发生"， 说 22% 的格子实际中 40% 这种系统性低估也能被揪出来。'
+- module_path: src/zephyr/plan_engine/daily_trade_plan.py
+  domain_id: D_PLAN
+  name_zh: 今日交易计划生成器
+  name_en: 'Daily Trade Plan'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '决策链最后一棒：把边界和档位变成人看得懂的今日计划——拟买谁、买多少股、 什么价位买、为什么（一句话模板）；持仓票冲哪全出、破哪减半，都提前写好。'
+- module_path: src/zephyr/plan_engine/batch_boundary_runner.py
+  domain_id: D_PLAN
+  name_zh: 候选股边界批量计算器
+  name_en: 'Batch Boundary Runner'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '把"明日边界"从一次算一只升级成一次算一篮子：候选清单批量并发计算， 哪只缺数据、哪只算失败都留痕，算完统一落库供作战室 W2/W2b 取用。'
 battle_map_steps:
 - step_id: BM-BUY-04
   flow_stage: buy_flow
@@ -47554,12 +47695,11 @@ algo_submodules:
   name_en: __all__ = []
   plain_zh: 仅声明空导出列表，占位保留 models 子包结构
 - module_path: src/zephyr/research/__init__.py
-  build_status: active  # 2026-08-22 #ARCH-143 R4：包内首个真实实现（research/evidence/ 四件，#ARCH-165）落地，DORMANT 摘标回写
   module_id: __unmanaged__src/zephyr/research/__init__.py
   node_id: A1
-  name_zh: ① 研究创新核心包占位
+  name_zh: ① 研究创新核心包命名空间声明
   name_en: __init__（模块级 __all__）
-  plain_zh: docstring 声明 MOD-L09-001 Research Innovation Core，但尚无任何实现
+  plain_zh: 声明 MOD-L09-001 研究域包入口；子包 evidence/ 为包内首个真实实现
 - module_path: src/zephyr/autonomy_core/context/memory_bank.py
   module_id: MOD-CONTEXT_ENGINE
   node_id: A1
@@ -47609,7 +47749,6 @@ algo_submodules:
   name_en: FindingAggregator
   plain_zh: 把各检测引擎的 findings 聚成统一结果（Phase A 单引擎 Echo-Guard）
 - module_path: src/zephyr/cross_asset/__init__.py
-  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   module_id: MOD-CROSS_ASSET
   node_id: A1
   name_zh: ① 规划态占位 空导出
@@ -47676,7 +47815,6 @@ algo_submodules:
   name_en: CodecRegistry/get_registry
   plain_zh: 按段文件开头的 magic number 自动选对应 codec 解码，不认识的按 TSV 兜底
 - module_path: src/zephyr/digital_twin/__init__.py
-  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   module_id: MOD-DIGITAL_TWIN
   node_id: A1
   name_zh: ① 规划态占位 空导出
@@ -48455,7 +48593,7 @@ algo_submodules:
   node_id: A1
   name_zh: ① 最优参数选择
   name_en: analyze(选优段)
-  plain_zh: 按目标值取最大的那组参数当最优
+  plain_zh: 默认按目标值取最大的那组参数当最优; 开关开时选稳定区代表点
 - module_path: src/zephyr/backtest/services/param_analyzer.py
   module_id: MOD-BT-021
   node_id: A2
@@ -49253,7 +49391,7 @@ algo_submodules:
   node_id: A2
   name_zh: ② 并发闸门
   name_en: _count_inflight_workers
-  plain_zh: 在途 worker（已注册会话 ∪ 新鲜 pending/running 状态文件）达到上限就跳过本次 spawn，防止进程爆炸；launch 临界区由跨进程文件锁互斥
+  plain_zh: 在途 worker（已注册 ∪ 新鲜 pending/running status）达到上限就跳过本次 spawn，防止进程爆炸
 - module_path: src/zephyr/governance/audit/reconcile_runner.py
   module_id: MOD-GOV_RECONCILE_RUNNER
   node_id: A3
@@ -50119,7 +50257,6 @@ algo_submodules:
   name_en: get/query/exists
   plain_zh: 命中更新 LRU 顺序，范围查询按日期升序返回
 - module_path: src/zephyr/ml_serve/__init__.py
-  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   module_id: MOD-ML_SERVE
   node_id: A1
   name_zh: ① 包命名空间占位初始化
@@ -52670,21 +52807,18 @@ algo_submodules:
   name_en: zephyr.runtime.__init__
   plain_zh: ZephyrAlpha 交易运行时入口层。
 - module_path: src/zephyr/alt_data/__init__.py
-  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   module_id: MOD-ALT_DATA
   node_id: A1
   name_zh: ① 模块命名空间声明
   name_en: __init__
   plain_zh: 声明 MOD-ALT_DATA 另类数据域包入口并初始化空导出列表
 - module_path: src/zephyr/data_eng/__init__.py
-  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   module_id: MOD-DATA_ENG
   node_id: A1
   name_zh: ① 模块命名空间声明
   name_en: __init__
   plain_zh: 声明 MOD-DATA_ENG 数据工程域包入口并初始化空导出列表
 - module_path: src/zephyr/data_security/__init__.py
-  build_status: dormant  # 2026-08-22 STR-01：真空壳占位模板，勿当实现引用（架构审查报告 §3.2，#ARCH-143）
   module_id: MOD-DATA_SEC
   node_id: A1
   name_zh: ① 模块命名空间声明
@@ -52696,322 +52830,3 @@ algo_submodules:
   name_zh: ① 包命名空间初始化 空导出
   name_en: __all__空列表
   plain_zh: 包级init不聚合再导出任何符号，消费者须显式导入具体子模块
-- module_path: src/zephyr/regime/cross_sectional_features.py
-  domain_id: D_REGIME
-  module_id: MOD-REGIME-007
-  name_zh: 横截面结构特征
-  name_en: Cross-Sectional Structure Features
-  desc_zh: 4 横截面结构特征纯函数（截面收益离散度/平均成对相关/波动率离散/动量宽度），PIT 严格，分层抽样约 200 只
-  desc_en: ''
-  plain_zh: 横截面结构特征——从全市场个股横切面看市场结构：个股涨跌有多分化（离散度）、个股之间有多联动（平均相关）、波动率有多不齐（波动率离散）、上涨有多普遍（动量宽度）；补既有 6 特征只有指数时序维度的盲区
-- module_path: src/zephyr/factor/casebook/casebook.py
-  domain_id: D_FACTOR
-  module_id: MOD-L02-027
-  name_zh: 因子研究案例库
-  name_en: casebook
-  desc_zh: 因子研究案例库：沉淀因子假设+表达式+IC/ICIR/换手率统计量+结论（成功/失败/失败转修复）与失败诊断，按因子族标签检索；只存统计量不存持仓金额（B-011）
-  desc_en: ''
-  plain_zh: 因子研究案例库：把每次因子假设、表达式、IC/ICIR/换手率统计量和结论记进 SQLite，挖因子前先查库，做过的不再重复做，失败过的看诊断，省 token 并为数据期 LLM 挖因子打底
-- module_path: src/zephyr/factor/casebook/__init__.py
-  domain_id: D_FACTOR
-  module_id: MOD-L02-027
-  name_zh: 包入口
-  name_en: __init__
-  desc_zh: 因子研究案例库包入口，导出 record_case/query_similar/get_case
-  desc_en: ''
-  plain_zh: 因子研究案例库 包入口，整合案例库读写接口导出
-- module_path: scripts/start_trading.ps1
-  domain_id: D_SHARED
-  name_zh: 交易主进程看门狗
-  name_en: start_trading
-  desc_zh: 交易主进程（python -m zephyr.trading）崩溃自愈看门狗：进程退出后 5 分钟内自动拉起，15 秒心跳落盘，僵尸守护可被接管；计划任务 Disabled 态注册（92号 D3 裁定）
-  desc_en: ''
-  plain_zh: 交易主进程的崩溃自愈看门狗——数据域三个常驻进程都有看门狗，唯独交易主进程没有，它一旦崩溃会静默停摆直到人工发现；当前注册为 Disabled（没有常驻交易进程在跑，enabled 会凭空拉起一个），翻开是 Owner 一键的事
-- module_path: src/zephyr/plan_engine/overnight_boundary_reviser.py
-  domain_id: D_PLAN
-  module_id: MOD-PLAN-004
-  name_zh: 盘前边界修正器
-  name_en: overnight_boundary_reviser
-  desc_zh: 盘前综合预判修正核心（44号 M3-①a⑦⑧）：外盘隔夜 gap_adj 四档修正+盘后资金面四件套确认/否决+事件日历联动（FOMC 夜敏感度升半档/期权到期阈值×0.8/交割周基差降权/A50 交割），fail-open 不阻塞主流程
-  desc_en: ''
-  plain_zh: 盘前边界修正器——昨夜生成的明日边界档位不是死的：今晨用隔夜外盘涨跌、昨日两融/主力资金/大宗交易资金面、今天是不是特殊日子（FOMC 夜/期权到期/交割周）三件套把边界收紧或放宽半档到一档；任何一路数据缺失就跳过那一路，绝不阻塞盘前加载主流程
-- module_path: src/zephyr/signal_ashare/lhb_premium_analyzer.py
-  domain_id: D_ASHARE_SIGNAL
-  module_id: MOD-SIG-057
-  name_zh: 龙虎榜盘后溢价分析器
-  name_en: lhb_premium_analyzer
-  desc_zh: 龙虎榜次日溢价预判（44号 M3-⑤）：机构+一线游资净买入>5%且≥2席→次日高开候选；独食/一日游降权×0.3；机构净卖>5%→低开风险；跌停股知名游资抄底→反核观察名单
-  desc_en: ''
-  plain_zh: 龙虎榜盘后溢价分析器——前一交易日龙虎榜里谁在买决定明天大概率高开还是低开：机构和一线游资抱团大买=高开候选，单席位独食或一日游游资要打折，机构大额卖出=低开风险，跌停股有知名游资抄底=放进反核观察名单
-- module_path: src/zephyr/signal_ashare/futures_basis_monitor.py
-  domain_id: D_ASHARE_SIGNAL
-  module_id: MOD-SIG-058
-  name_zh: 期指基差情绪监测器
-  name_en: futures_basis_monitor
-  desc_zh: 国内股指期货基差情绪（44号 M1-⑧/M3-⑥）：IF/IC/IM/IH 主力基差率+贴水变化速率，贴水急扩=机构对冲避险急增（M2 降档触发）；交割周降权 0.5+持仓激增确认
-  desc_en: ''
-  plain_zh: 期指基差情绪监测器——股指期货是机构带杠杆的实时投票机，价格发现领先现货：期货比现货贴水急剧扩大=机构在疯狂买保护，情绪转差的领先信号；IM 看中证1000 中小盘情绪（打板主看），IF 看大盘蓝筹
-- module_path: src/zephyr/signal_ashare/option_sentiment.py
-  domain_id: D_ASHARE_SIGNAL
-  module_id: MOD-SIG-059
-  name_zh: 期权情绪三件套
-  name_en: option_sentiment
-  desc_zh: 期权情绪三件套（44号 M1-⑨，华泰 2026-03 机构范式）：成交量 PCR（无 OI 列降级口径）+300ETF IV Rank 分位（≥60 日守卫）+25Δ Skew 尾部偏度；PCR 低×Skew 高=多空分歧最大警示；到期日 M1 阈值×0.8
-  desc_en: ''
-  plain_zh: 期权情绪三件套——从期权市场读机构的真实恐惧程度：认沽/认购成交比太极端=情绪反转前兆，隐含波动率分位飙高=恐慌，尾部偏度左偏=机构在抢尾部保护；PCR 低（散户乐观）+Skew 高（机构买保护）的背离组合是最危险的多空分歧形态
-- module_path: src/zephyr/signal_ashare/sector_divergence.py
-  domain_id: D_ASHARE_SIGNAL
-  module_id: MOD-SIG-060
-  name_zh: 板块分歧度与轮动速度计
-  name_en: sector_divergence
-  desc_zh: 板块分歧度体系（44号 M1-⑩+SEC-03 合并）：消费 5 状态/虹吸态+电风扇速度计（周度行业排名变化均值>75 分位）+Top3 次日重合率+个股分歧度四件+5 状态×后续 3/5 日条件概率标定器；只出状态+风险清单不出方向
-  desc_en: ''
-  plain_zh: 板块分歧度与轮动速度计——板块涨得太一致（共识高潮/派发）=见顶风险，行业排名一天一变（电风扇行情）+没有连续领涨板块=无主线混沌，个股高位巨量长上影+炸板+游资对打=进风险清单；还给每个状态标历史条件概率（这个状态出现后 3 日跌超 2% 的历史频率和样本量），可复算不瞎编
-- module_path: src/zephyr/signal_ashare/mainline_candidates.py
-  domain_id: D_ASHARE_SIGNAL
-  module_id: MOD-SIG-061
-  name_zh: 主线候选榜
-  name_en: mainline_candidates
-  desc_zh: 最可能成主线板块 Top3-5（SEC-05）：HEALTHY_MAINLINE 判定+lead_streak 连续领涨+q3 动量前排+RRG 改善象限综合评分，附理由标签；无主线混沌态空榜+注解
-  desc_en: ''
-  plain_zh: 主线候选榜——每天盘后回答"哪几个板块最可能成为接下来的市场主线"：健康主线状态、连续领涨天数、动量前排、RRG 改善象限四个证据打分，每个候选都带理由标签；市场一片混沌就出空榜不硬凑
-- module_path: src/zephyr/signal_ashare/sector_leader.py
-  domain_id: D_ASHARE_SIGNAL
-  module_id: MOD-SIG-062
-  name_zh: 板块龙头识别器
-  name_en: sector_leader
-  desc_zh: 板块内个股角色四档识别（SEC-04，22号 §3.1⑦ 落码）：连板高度+成交额+涨幅辨识度→龙头×1.5/中军×1.2/跟风×0.8/中位股×0；观测先行不接交易
-  desc_en: ''
-  plain_zh: 板块龙头识别器——一个板块里谁是带头大哥（连板最高+成交额最大+涨幅最有辨识度=龙头）、谁是压阵的中军、谁是跟风小弟、谁是没人理的中位股；只看榜不下单
-- module_path: src/zephyr/data/sector_report_builder.py
-  domain_id: D_DATA
-  module_id: MOD-L00-009
-  name_zh: 板块盘后全景报告器
-  name_en: sector_report_builder
-  desc_zh: 板块盘后全景报告（SEC-01）：编排已落码板块库模块→Top10 板块榜（涨幅+五层资金流）+5 状态标签+涨停梯队+主线候选；落 .runtime/reports/ JSON+CLI 摘要
-  desc_en: ''
-  plain_zh: 板块盘后全景报告器——每天收盘后把全市场板块排个队：涨幅前 10 是谁、钱往哪里流、涨停梯队几连板、当前是什么结构状态、主线候选有哪几个；一份 JSON 报告供展示层消费
-- module_path: src/zephyr/data/sector_intraday_aggregator.py
-  domain_id: D_DATA
-  module_id: MOD-DATA-061
-  name_zh: 盘中板块实时聚合器
-  name_en: sector_intraday_aggregator
-  desc_zh: 盘中板块实时聚合（SEC-02）：sector_snapshot 30s 快照→板块资金流/涨跌家数/涨速榜/新开板聚合，18-30s 刷新级；调度挂接点=M1-④ 载体预留
-  desc_en: ''
-  plain_zh: 盘中板块实时聚合器——盘中最快 18 秒刷新一次板块榜单：钱在往哪个板块流、哪个板块涨速最快、哪些涨停板刚打开；给盘中监控和 M1-④ 调度回路当数据装配工
-- module_path: src/zephyr/regime/index_regime_panel.py
-  domain_id: D_REGIME
-  module_id: MOD-REGIME-008
-  name_zh: 四指数 regime 面板
-  name_en: index_regime_panel
-  desc_zh: 四指数 regime 面板（IDX-01，1 引擎×4 代理裁定）：沪深300/上证/创业板/科创50 各出 regime 概率分布+强弱排序+背离警示；只出概率不建点预测模型（90号 §7 铁律）
-  desc_en: ''
-  plain_zh: 四指数 regime 面板——四个大盘指数同屏看状态：各自处于哪种市场状态的概率多大、谁强谁弱、有没有权重掩护的背离假象；用同一个引擎四套配置，不给点位预测
-- module_path: src/zephyr/plan_engine/scenario_planner.py
-  domain_id: D_PLAN
-  module_id: MOD-PLAN-005
-  name_zh: 盘前多情景预案器
-  name_en: scenario_planner
-  desc_zh: 盘前多情景方案（44号 M3-③）：9:00 输出高开/平开/低开三情景操作预案+9:25 竞价实况二次匹配修正；竞价三细节（虚拟开盘偏离/匹配量放大/9:20 撤单识别虚假申报）；竞价仅验证不作下单通道（40号决策⑧）
-  desc_en: ''
-  plain_zh: 盘前多情景预案器——9 点先按外盘和资金面备好高开/平开/低开三套操作预案，9:25 集合竞价结果出来再校验一次：竞价量是平时的 1.2 倍以上且方向一致=确认，9:20 之前巨量挂撤=主力诱多诱空信号作废；竞价只看不动手
-- module_path: src/zephyr/reporting/prediction_log_writer.py
-  domain_id: D_REPORTING
-  module_id: MOD-RPT-028
-  name_zh: 预测输出统一落库写入器
-  name_en: prediction_log_writer
-  desc_zh: 每日预测类输出统一落库（44号 M4-②）：prediction_log 表（governance.db）——情绪分/边界修正/三情景/LLM 分析等每天预测了什么可回查可验证；幂等键同键跳过保首条，input_hash 内容寻址
-  desc_en: ''
-  plain_zh: 预测输出统一落库写入器——系统每天做的所有预测（情绪分、边界档位、三情景、LLM 分析）统一记进一张表，带模型版本和输入哈希，以后回查"那天到底预测了什么、准不准"全靠它
-- module_path: src/zephyr/signal_ashare/similar_day_inference.py
-  domain_id: D_ASHARE_SIGNAL
-  module_id: MOD-SIG-063
-  name_zh: 相似日剩余走势推演器
-  name_en: similar_day_inference
-  desc_zh: 剩余走势推演（44号 M1-③）：当日盘中曲线族（宽度速度/涨停净增/量能外推/黄白线/IF基差）重采样 30 时点，KNN k=10 历史相似日→尾盘走强/持平/转弱三档概率；D<60 或距离超阈退化五阶段转移先验；只出档位概率不出点位
-  desc_en: ''
-  plain_zh: 相似日剩余走势推演器——把今天盘中到现在的走势曲线和历史上每个交易日同时刻比一比，找最像的 10 天，看它们尾盘收涨/走平/收跌各占多少，给尾盘决策一个三档概率参考；历史数据不够就用情绪周期阶段转移的先验概率兜底；只说概率不说点位
-- module_path: src/zephyr/data/market_breadth_collector.py
-  domain_id: D_DATA
-  module_id: MOD-DATA-062
-  name_zh: 全市场宽度快照采集器
-  name_en: market_breadth_collector
-  desc_zh: 全市场分钟级快照采集（44号 M1-④ 数据地基）：miniqmt 全市场 tick 聚合涨跌家数/涨跌停/曾涨停/封板/成交额→market_breadth_snapshot 表；板块四档幅度复用 stk_limit 单一真源
-  desc_en: ''
-  plain_zh: 全市场宽度快照采集器——盘中每分钟数一遍全市场：多少家涨多少家跌、多少涨停多少跌停、多少炸板多少封死、成交了多少钱，存进数据库给情绪加速度/相似日推演当数据地基
-- module_path: src/zephyr/data/intraday_sentiment_loop.py
-  domain_id: D_DATA
-  module_id: MOD-DATA-063
-  name_zh: 盘中情绪调度回路
-  name_en: intraday_sentiment_loop
-  desc_zh: 盘中实时调度回路（44号 M1-④）：分钟级单拍 run_once——读最新快照装配 BreadthTimeSeries→MOD-SIG-025 增量分析→prediction_log 落库+SEC-02 板块聚合挂接同载体；常驻节拍交 APScheduler 不写 while True
-  desc_en: ''
-  plain_zh: 盘中情绪调度回路——每分钟把最新的全市场快照喂给情绪分析器算出最新情绪分和拐点信号，写进预测日志表，顺带驱动板块盘中聚合；只干单拍，分钟节拍由调度器管
-- module_path: src/zephyr/plan_engine/boundary_revision_engine.py
-  domain_id: D_PLAN
-  module_id: MOD-PLAN-006
-  name_zh: 盘中边界修正引擎
-  name_en: boundary_revision_engine
-  desc_zh: 盘中次日预案边界修正（44号 M2）：14:00/14:45 双时点评估，七降档触发+防抖 15min+当日各 1 次冷却；保守=上限×0.5+禁加仓价位下移 0.5×ATR（2026-08-22 裁定下移）/进攻=×1.2 封顶 firm 硬约束；仅当日有效次日覆盖；修正事件落 prediction_log
-  desc_en: ''
-  plain_zh: 盘中边界修正引擎——盘中情绪显著恶化就把今晚的加仓边界收紧一档（上限砍半、禁追高线压低），显著改善就放宽一点（不超过公司硬约束）；信号要持续 15 分钟才算数防毛刺，一天最多升降各一次，修正只管今天，明天盘前重新生成
-- module_path: src/zephyr/intelligence/news_symbol_linker.py
-  domain_id: D_INTELLIGENCE
-  module_id: MOD-INT-NEWS-LINK
-  name_zh: 新闻标的关联器
-  name_en: news_symbol_linker
-  desc_zh: 新闻/公告→标的关联层（tracker #139）：公告标的字段直用/6 位代码显式命中/简称归一化最长匹配/一词多标的标 ambiguous/零命中 market 级；词表载 stock_basic 最新快照
-  desc_en: ''
-  plain_zh: 新闻标的关联器——一条新闻说的是哪几只股票：公告自带标的直接用，新闻正文里的股票代码和简称用词表匹配，一个词对多只股票的标出来不瞎猜，关联不上的算全市场级消息
-- module_path: src/zephyr/intelligence/nightly_sentiment_window.py
-  domain_id: D_INTELLIGENCE
-  module_id: MOD-INT-NEWS-NIGHT
-  name_zh: 夜间新闻情绪聚合器
-  name_en: nightly_sentiment_window
-  desc_zh: 夜间新闻情绪聚合（tracker #138+44号 M3-②）：18:00-次日 8:00 窗口新闻情绪聚合→news_sentiment_window 表落库+plan004_input 对接预留字段（MOD-PLAN-004 消费接线后续裁定）
-  desc_en: ''
-  plain_zh: 夜间新闻情绪聚合器——每天傍晚 6 点到次日早 8 点的新闻和公告汇总出一个夜间情绪分，落库存档，供盘前边界修正器参考要不要微调今天的操作边界
-- module_path: src/zephyr/plan_engine/llm_premarket_analysis.py
-  domain_id: D_PLAN
-  module_id: MOD-PLAN-007
-  name_zh: LLM 盘前综合分析
-  name_en: llm_premarket_analysis
-  desc_zh: LLM 盘前综合复盘与当日情景分析（44号 M3-⑨）：次日 8:00 七族数据打包（PIT 铁律 cutoff 后数据拒入）+prompt 版本化+v2 多空辩论编排+输出三情景/风险点/关键位契约+llm_daily_analysis 落库（模型/prompt 版本+input_hash 冻结）；注解层不改档位；LLM 客户端注入式（阶段三 gateway 接线）
-  desc_en: ''
-  plain_zh: LLM 盘前综合分析——每天早上 8 点把昨天 A 股收盘、隔夜美股、A50 夜盘、夜间新闻、两融资金面打包喂给大模型，输出今天高开/平开/低开三套情景加风险点和关键价位；模型版本和输入哈希都存库以后能复现；它只写注解不改操作档位，防止 AI 幻觉直接指挥交易
-- module_path: src/zephyr/reporting/prediction_calibration_monitor.py
-  domain_id: D_REPORTING
-  module_id: MOD-RPT-029
-  name_zh: 预测校准监控器
-  name_en: prediction_calibration_monitor
-  desc_zh: 日志→参数校准反馈闭环骨架（44号 M4-④）：读 prediction_log 算命中率/窗口趋势，样本<30 不触发，命中率<0.55 且样本够→出人审校准评审工单（落 .runtime/calibration_review/）；只出建议永不自治改参
-  desc_en: ''
-  plain_zh: 预测校准监控器——盯着预测日志表算每个模块的预测命中率，哪个模块持续不准（样本够 30 条且命中率跌破阈值）就开一张参数校准评审工单等人来审；它只提建议，永远不会自己动手改参数
-- module_path: src/zephyr/integration/local_model/lsg_gate.py
-  domain_id: D_INTEGRATION
-  module_id: MOD-INF-052
-  name_zh: 本地模型 LSG 统一注入闸门
-  name_en: lsg_gate
-  desc_zh: 三层运行时客户端统一注入 LSG 安全栈（09号文 P0-1）：OllamaChat/DeepSeekChat/scheduler/embedding_router 构造点统一过闸，判决 BLOCK/DENY 即拒调用并落 L6 审计；开关默认开
-  desc_en: ''
-  plain_zh: 本地模型 LSG 统一注入闸门——所有本地/远程模型客户端调用大模型前必须先过安全检查这道闸，恶意输入直接拦截不发起调用；以前各客户端自己裸奔，现在三通道同一闸门没有旁路
-- module_path: src/zephyr/autonomy_core/autonomy_boundary_gate.py
-  domain_id: D_AUTONOMY_CORE
-  module_id: MOD-AU-001
-  name_zh: 运行时自治边界三分类门
-  name_en: autonomy_boundary_gate
-  desc_zh: 运行时三分类写操作判定（15号文 S0.2）：写操作前查 GOV-AI-001 注册表——ai_modifiable 放行留痕/human_gated 拦截出人审工单/immutable_core 物理拦截告警；注册表不可读 fail-closed
-  desc_en: ''
-  plain_zh: 运行时自治边界三分类门——AI 每次要写文件/改东西之前先查权限表：能自己改的放行留痕，要人审的拦下来出工单，硬边界的一律物理拦截报警；权限表读不出来时一律按拒绝处理
-- module_path: src/zephyr/autonomy_core/kill_switch_orchestrator.py
-  domain_id: D_AUTONOMY_CORE
-  module_id: MOD-AU-002
-  name_zh: Kill Switch 两级编排器
-  name_en: kill_switch_orchestrator
-  desc_zh: Kill Switch 两级编排（15号文 S0.3）：系统级+域级五套开关统一编排 trip/reset/route_incident；系统级跳闸域级一致生效；复位须 Owner 批准标记；编排器不持态故障时各开关独立可用
-  desc_en: ''
-  plain_zh: Kill Switch 两级编排器——项目里有五套各自独立的急停开关，这个编排器把它们统一指挥：系统级急停时该联动的域级一起停，复位必须有人批准，编排器自己坏了各开关照样能单独用
-- module_path: src/zephyr/security/security_event_bus.py
-  domain_id: D_SECURITY
-  module_id: MOD-SEC-EVENTBUS
-  name_zh: 统一安全事件总线
-  name_en: security_event_bus
-  desc_zh: 统一安全事件流（16号文 P0-1/P0-3）：四域事件统一 schema 落盘 jsonl（LSG/自治边界/治理门禁/运行时四 adapter 独立降级）；高危事件飞书告警+不可达本地持久化不丢
-  desc_en: ''
-  plain_zh: 统一安全事件总线——安全栈、自治边界、治理门禁、运行时四个来源的安全事件统一格式记到一个地方，谁出问题都能查；高危事件发飞书告警，发不出去就存本地队列绝不丢
-- module_path: src/zephyr/integration/llm_runtime_gateway.py
-  domain_id: D_INTEGRATION
-  module_id: MOD-INF-051
-  name_zh: LLM 运行时网关
-  name_en: llm_runtime_gateway
-  desc_zh: LLM 统一推理入口（10号文 GP0 最小 MVP）：单一 infer 签名+DeepSeek/Qwen/Ollama 三通道降级链+每次调用登记 llm_call_log（模型/token/成本/延迟）供日终对账+LSG 注入点（不过闸不调用）；预算门/路由级联属 GP1 不做
-  desc_en: ''
-  plain_zh: LLM 运行时网关——项目里所有大模型调用的统一大门：一个 infer 接口，先走 DeepSeek，失败自动切 Qwen，再失败切本地模型；每次调用花多少 token、多少钱、多快都记账，每天能对账防超额；不过安全检查的调用一律不出门
-- module_path: src/zephyr/research/evidence/hypothesis_registry.py
-  domain_id: D_KNOWLEDGE
-  module_id: MOD-EVIDENCE_CHAIN
-  name_zh: 假设注册表
-  name_en: hypothesis_registry
-  desc_zh: 证据关联三件套之一（11号文 P0-1）：研究假设条目+五态状态机（proposed→testing→supported/refuted→archived 非法迁移拒）+迁移留痕
-  desc_en: ''
-  plain_zh: 假设注册表——每个研究假设（这个因子可能有用）登记在册，状态流转有规矩：没经过测试不能直接标有效，每步状态变化都留痕
-- module_path: src/zephyr/research/evidence/evidence_chain.py
-  domain_id: D_KNOWLEDGE
-  module_id: MOD-EVIDENCE_CHAIN
-  name_zh: 证据链
-  name_en: evidence_chain
-  desc_zh: 证据关联三件套之二（11号文 P0-2）：证据条目（支持/反驳/中立三态+假设外键+SHA-256 固化篡改可检）
-  desc_en: ''
-  plain_zh: 证据链——每条证据挂在哪个假设下、是支持还是反驳、来源是什么，内容哈希固化，事后篡改能被发现
-- module_path: src/zephyr/research/evidence/iteration_guide.py
-  domain_id: D_KNOWLEDGE
-  module_id: MOD-EVIDENCE_CHAIN
-  name_zh: 迭代引导器
-  name_en: iteration_guide
-  desc_zh: 证据关联三件套之三（11号文 P0-3）：规则化继续/转向/放弃建议，每条建议带命中规则 id 与证据计数可追溯
-  desc_en: ''
-  plain_zh: 迭代引导器——根据假设攒了多少支持/反驳证据，按规则表给出继续做、换方向还是放弃的建议，每条建议都能查到是哪条规则触发的
-- module_path: src/zephyr/research/evidence/batch_entry.py
-  domain_id: D_KNOWLEDGE
-  module_id: MOD-EVIDENCE_CHAIN
-  name_zh: 证据批量评估入口
-  name_en: evidence_batch_entry
-  desc_zh: 日/周频批量评估入口（11号文 P0-4）：盘中 09:30-15:00 拒执行守卫
-  desc_en: ''
-  plain_zh: 证据批量评估入口——每天或每周批量把所有在册假设过一遍出建议清单；盘中时间一律不跑
-- module_path: src/zephyr/intelligence/reflexion/reflection_schema.py
-  domain_id: D_INTELLIGENCE
-  module_id: MOD-REFLEXION_AGENT
-  name_zh: 反思记录基座
-  name_en: reflection_schema
-  desc_zh: 自反 Agent Phase 0（12号文 P0-1）：ReflectionRecord 严格校验+落盘 data/brain/reflections/
-  desc_en: ''
-  plain_zh: 反思记录基座——每次任务失败的反思记录（败在哪类、怎么改进）严格校验后落盘，缺字段不收
-- module_path: src/zephyr/intelligence/reflexion/roles.py
-  domain_id: D_INTELLIGENCE
-  module_id: MOD-REFLEXION_AGENT
-  name_zh: 自反三角色骨架
-  name_en: reflexion_roles
-  desc_zh: Actor→Evaluator→SelfReflection 三角色协议化骨架（12号文 P0-2），同任务分角色跑通
-  desc_en: ''
-  plain_zh: 自反三角色骨架——干活的、打分的、写反思的三种角色分开跑同一个任务，为以后自动复盘改进打底
-- module_path: src/zephyr/intelligence/reflexion/l1_reflector.py
-  domain_id: D_INTELLIGENCE
-  module_id: MOD-REFLEXION_AGENT
-  name_zh: L1 单轨迹反思器
-  name_en: l1_reflector
-  desc_zh: L1 单轨迹反思（12号文 P0-3）：失败轨迹→规则化归因六类+改进建议非空锚定归因；不调 LLM（GP0 手动形态）
-  desc_en: ''
-  plain_zh: L1 单轨迹反思器——一条失败的任务轨迹进来，按规则分出是哪类错（数据/逻辑/契约/环境/需求），给出对应的改进建议
-- module_path: src/zephyr/autonomy_core/agents/governance_agent_entry.py
-  domain_id: D_AUTONOMY_CORE
-  module_id: MOD-EXE-GOV-001
-  name_zh: 治理 Agent 薄入口
-  name_en: governance_agent_entry
-  desc_zh: 执行层四类薄入口之一（14号文 S0.2）：gate 检查工单端到端+审计落盘，人工手动触发
-  desc_en: ''
-  plain_zh: 治理 Agent 薄入口——人手动触发跑一趟治理检查工单，结果落盘可审计
-- module_path: src/zephyr/autonomy_core/agents/business_agent_entry.py
-  domain_id: D_AUTONOMY_CORE
-  module_id: MOD-EXE-BIZ-001
-  name_zh: 业务 Agent 薄入口
-  name_en: business_agent_entry
-  desc_zh: 执行层四类薄入口之二（14号文 S0.3）：注册状态查询+因子候选评估工单，产出 100% 标仅建议，无下单调用
-  desc_en: ''
-  plain_zh: 业务 Agent 薄入口——查注册表状态、评估因子候选，只出建议不碰交易
-- module_path: src/zephyr/autonomy_core/agents/algorithm_agent_entry.py
-  domain_id: D_AUTONOMY_CORE
-  module_id: MOD-EXE-ALGO-001
-  name_zh: 算法 Agent 薄入口
-  name_en: algorithm_agent_entry
-  desc_zh: 执行层四类薄入口之三（14号文 S0.4）：实验登记先于执行+显存≥90% 拒启动守卫
-  desc_en: ''
-  plain_zh: 算法 Agent 薄入口——跑算法实验前先登记，显存快满了就不启动
-- module_path: src/zephyr/autonomy_core/agents/self_iteration_agent_entry.py
-  domain_id: D_AUTONOMY_CORE
-  module_id: MOD-EXE-ITER-001
-  name_zh: 自我迭代 Agent 薄入口
-  name_en: self_iteration_agent_entry
-  desc_zh: 执行层四类薄入口之四（14号文 S0.5）：只读形态，读证据出 human_gated 建议工单，无代码自改路径
-  desc_en: ''
-  plain_zh: 自我迭代 Agent 薄入口——只能读不能写，看完证据产出改进建议工单等人审，自己改不了代码
