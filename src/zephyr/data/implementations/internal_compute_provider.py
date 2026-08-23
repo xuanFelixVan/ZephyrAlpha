@@ -35,14 +35,18 @@ tasks.yaml 中 source=internal 的任务（technical_indicator_incremental/full_
 
 from __future__ import annotations
 
+import csv
 import datetime
+import io
 import logging
 import time
-from typing import Iterator
+from pathlib import Path
+from typing import Final, Iterator
 
 import pandas as pd
 
 from zephyr.data.provider_base import (
+    CapabilityContract,
     FetchPayload,
     FetchResult,
     IngestProviderBase,
@@ -216,6 +220,71 @@ def _dedupe_and_sort_events(rows: list[tuple]) -> list[tuple]:
     return unique_rows
 
 
+# ---- manual 手工录入日历事件（17号 §6.3 定稿：CSV 录入 + 一次性 IMPORT 标准填充路径）----
+# 低频事件（FOMC 每年 8 次/两会每年 1 次/印花税调整）手工维护台账，可复查、可增量追加，
+# 随 calendar_event_refresh 任务同批合并入库（同表同批一次回填）。
+# 目录裁定：src/zephyr/ 契约仅许 .py/.yaml/.md（directory_contract.yaml DCR-005），
+# CSV 台账放 data/manual/（data/ 兜底规则允许 .csv，git 跟踪，运行时数据区）。
+_MANUAL_EVENT_CSV: Final = Path(__file__).resolve().parents[4] / "data" / "manual" / "calendar_event_manual.csv"
+
+# manual event_type 白名单（与 schemas/categories/market_calendar_event.py DDL 注释 12 类对齐：
+# 派生类 9 类由规则计算，manual 类仅此 3 类——白名单防台账误写派生类造成双源冲突）
+_MANUAL_EVENT_TYPES: Final = frozenset({"fomc_meeting", "major_meeting", "stamp_duty_change"})
+
+
+def _load_manual_calendar_events(
+    range_start: datetime.date,
+    range_end: datetime.date,
+    csv_path: Path | None = None,
+) -> list[tuple]:
+    """读取 manual 日历事件台账 CSV，返回 (event_date, event_type, description, "manual") 行。
+
+    行格式：event_date,event_type,description（# 开头为注释行；首行表头自动跳过；
+    event_type 限 _MANUAL_EVENT_TYPES 白名单）。
+
+    降级（fail-visible 不阻断派生类填充，与 17号 §2.5 降级哲学一致）：
+      - 文件缺失/读取异常 → 告警并返回空列表；
+      - 坏行（列数不足/日期非法/event_type 非白名单）→ 逐条跳过并计数告警。
+    范围过滤：[range_start, range_end]，与派生类事件同口径（范围外存量不告警）。
+    """
+    path = csv_path if csv_path is not None else _MANUAL_EVENT_CSV
+    if not path.exists():
+        log.warning("manual 日历事件台账不存在，跳过 manual 事件合并: %s", path)
+        return []
+    try:
+        text = path.read_text(encoding="utf-8")
+    except OSError as e:
+        log.warning("manual 日历事件台账读取失败，跳过: %s", e)
+        return []
+    rows: list[tuple] = []
+    skipped = 0
+    for fields in csv.reader(io.StringIO(text)):
+        if not fields or fields[0].strip().startswith("#"):
+            continue  # 空行/注释行
+        if fields[0].strip().lower() == "event_date":
+            continue  # 表头
+        if len(fields) < 3:
+            skipped += 1
+            continue
+        try:
+            d = datetime.date.fromisoformat(fields[0].strip())
+        except ValueError:
+            skipped += 1
+            continue
+        etype = fields[1].strip()
+        if etype not in _MANUAL_EVENT_TYPES:
+            skipped += 1
+            continue
+        if not (range_start <= d <= range_end):
+            continue  # 范围外存量不计（台账允许超前/超旧追加，非坏行）
+        desc = fields[2].strip() or f"{d.isoformat()} {etype}（manual 手工录入）"
+        rows.append((d, etype, desc, "manual"))
+    if skipped:
+        log.warning("manual 日历事件台账跳过 %d 条坏行（列数/日期/event_type 非法）", skipped)
+    log.info("manual 日历事件合并：%d 条（%s）", len(rows), path.name)
+    return rows
+
+
 def _nth_weekday_of_month(year: int, month: int, weekday: int, n: int) -> datetime.date | None:
     """计算某年某月第 n 个星期 weekday 的日期。
 
@@ -280,7 +349,12 @@ class InternalComputeProvider(IngestProviderBase):
         requires_process=False,
         thread_safety="shared",
         rate_limit_default=0,  # 不限流（本地计算）
-        capabilities=["technical_indicator", "calendar_event", "hk_trade_calendar"],
+        capabilities=[
+            "technical_indicator",
+            # #ARCH-DATA-002 施工项1 语义锚试点（17号 §5.2）：日历类能力标市场/品种
+            CapabilityContract("calendar_event", expected_market="a_share", expected_variety="calendar"),
+            CapabilityContract("hk_trade_calendar", expected_market="hk", expected_variety="calendar"),
+        ],
         known_issues=[],
     )
 
@@ -337,7 +411,22 @@ class InternalComputeProvider(IngestProviderBase):
         if payload.table == "c1_market.hk_trade_calendar":
             yield from self._fetch_hk_trade_calendar(payload)
             return
+        yield from self._fetch_technical_indicator(payload)
 
+    def _fetch_technical_indicator(self, payload: FetchPayload) -> Iterator[FetchResult]:
+        """技术指标默认分支（technical_indicator capability 的命名约定实现）。
+
+        #ARCH-DATA-002 施工项4 接线治本（2026-08-24 G3 批）：frozenset 声明
+        technical_indicator 但原默认分支无 _fetch_<cap> 命名方法，声明-实现
+        符号一致性双向 gate 接线后会误报"声明残留"——将默认分支收进本命名
+        方法，满足命名约定（行为等价：纯移动，逻辑零改动）。
+
+        流程：
+        1. 从 payload.extra["period"] 读取周期（默认 daily，"all" 遍历 9 周期）
+        2. 每个 period：从 c1_market.kline_{period} 读取 OHLCV（120min 从 kline_60min 聚合）
+        3. 按标的分组，调用所有已注册 TechnicalIndicatorBase 子类计算指标
+        4. 合并所有指标列为宽表行，返回 FetchResult
+        """
         extra = payload.extra or {}
         period = extra.get("period", "daily")
         periods = ALL_PERIODS if period == "all" else [period]
@@ -508,12 +597,16 @@ class InternalComputeProvider(IngestProviderBase):
         从 c1_market.trade_calendar 读取交易日列表，按规则派生全市场日历事件。
         全量重算幂等（ReplacingMergeTree 按 event_date+event_type 去重）。
 
-        事件类型：
+        事件类型（12 类全覆盖，17号 §3.5 + §6.3）：
             month_end / quarter_end / half_year_end / year_end  月末/季末/半年末/年末
             futures_delivery      股指期货交割日（每月第3个周五，非交易日顺延下一交易日）
             index_option_expiry   股指期权到期日（每月第3个周五）
             etf_option_expiry     ETF期权到期日（每月第4个周三，非交易日顺延）
             lpr_announcement      LPR公布日（每月20日，遇周末顺延下一工作日）
+            hk_connect_closed     港股通休市日（A股开盘但港股休市）
+            fomc_meeting          美联储FOMC议息日（manual CSV 台账合并）
+            major_meeting         重要会议（两会/中央经济工作会议，manual CSV）
+            stamp_duty_change     印花税调整日（manual CSV）
 
         Args:
             payload: 下载请求。payload.start/end 为事件日期范围。
@@ -558,6 +651,9 @@ class InternalComputeProvider(IngestProviderBase):
             rows += _derive_etf_option_expiry(by_month, trading_days_set, range_start, range_end)
             rows += _derive_lpr_announcement(by_month, range_start, range_end)
             rows += self._derive_hk_connect_closed(trading_days_set, range_start, range_end)
+            # manual 三类（fomc_meeting/major_meeting/stamp_duty_change，17号 §6.3）：
+            # CSV 台账合并，同表同批一次回填，calendar_event 覆盖 12 类 event_type
+            rows += _load_manual_calendar_events(range_start, range_end)
 
             unique_rows = _dedupe_and_sort_events(rows)
 

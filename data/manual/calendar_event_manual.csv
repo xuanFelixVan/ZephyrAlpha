@@ -1,0 +1,66 @@
+# calendar_event manual 手工录入台账（17号 §6.3 定稿：CSV 录入 + 一次性 IMPORT 标准填充路径）
+# 消费通道：internal_compute_provider._load_manual_calendar_events ← calendar_event_refresh 任务同批合并
+# event_type 白名单：fomc_meeting / major_meeting / stamp_duty_change（派生类 9 类禁入本台账，防双源冲突）
+# 维护纪律：低频可复查增量追加——FOMC 每年 8 次（美联储公布日程，公告日=会议次日）；两会（全国人大开幕日 3月5日）；
+#           中央经济工作会议（开幕日，随官方公告追加）；印花税调整（生效日）
+# 口径说明：2026 年 FOMC 为美联储已公布日程；2025-12 及其后中央经济工作会议待官方公告后追加
+event_date,event_type,description
+2021-01-27,fomc_meeting,美联储FOMC议息会议公告日（2021年第1次）
+2021-03-17,fomc_meeting,美联储FOMC议息会议公告日（2021年第2次）
+2021-04-28,fomc_meeting,美联储FOMC议息会议公告日（2021年第3次）
+2021-06-16,fomc_meeting,美联储FOMC议息会议公告日（2021年第4次）
+2021-07-28,fomc_meeting,美联储FOMC议息会议公告日（2021年第5次）
+2021-09-22,fomc_meeting,美联储FOMC议息会议公告日（2021年第6次）
+2021-11-03,fomc_meeting,美联储FOMC议息会议公告日（2021年第7次）
+2021-12-15,fomc_meeting,美联储FOMC议息会议公告日（2021年第8次）
+2022-01-26,fomc_meeting,美联储FOMC议息会议公告日（2022年第1次）
+2022-03-16,fomc_meeting,美联储FOMC议息会议公告日（2022年第2次）
+2022-05-04,fomc_meeting,美联储FOMC议息会议公告日（2022年第3次）
+2022-06-15,fomc_meeting,美联储FOMC议息会议公告日（2022年第4次）
+2022-07-27,fomc_meeting,美联储FOMC议息会议公告日（2022年第5次）
+2022-09-21,fomc_meeting,美联储FOMC议息会议公告日（2022年第6次）
+2022-11-02,fomc_meeting,美联储FOMC议息会议公告日（2022年第7次）
+2022-12-14,fomc_meeting,美联储FOMC议息会议公告日（2022年第8次）
+2023-02-01,fomc_meeting,美联储FOMC议息会议公告日（2023年第1次）
+2023-03-22,fomc_meeting,美联储FOMC议息会议公告日（2023年第2次）
+2023-05-03,fomc_meeting,美联储FOMC议息会议公告日（2023年第3次）
+2023-06-14,fomc_meeting,美联储FOMC议息会议公告日（2023年第4次）
+2023-07-26,fomc_meeting,美联储FOMC议息会议公告日（2023年第5次）
+2023-09-20,fomc_meeting,美联储FOMC议息会议公告日（2023年第6次）
+2023-11-01,fomc_meeting,美联储FOMC议息会议公告日（2023年第7次）
+2023-12-13,fomc_meeting,美联储FOMC议息会议公告日（2023年第8次）
+2024-01-31,fomc_meeting,美联储FOMC议息会议公告日（2024年第1次）
+2024-03-20,fomc_meeting,美联储FOMC议息会议公告日（2024年第2次）
+2024-05-01,fomc_meeting,美联储FOMC议息会议公告日（2024年第3次）
+2024-06-12,fomc_meeting,美联储FOMC议息会议公告日（2024年第4次）
+2024-07-31,fomc_meeting,美联储FOMC议息会议公告日（2024年第5次）
+2024-09-18,fomc_meeting,美联储FOMC议息会议公告日（2024年第6次）
+2024-11-07,fomc_meeting,美联储FOMC议息会议公告日（2024年第7次）
+2024-12-18,fomc_meeting,美联储FOMC议息会议公告日（2024年第8次）
+2025-01-29,fomc_meeting,美联储FOMC议息会议公告日（2025年第1次）
+2025-03-19,fomc_meeting,美联储FOMC议息会议公告日（2025年第2次）
+2025-05-07,fomc_meeting,美联储FOMC议息会议公告日（2025年第3次）
+2025-06-18,fomc_meeting,美联储FOMC议息会议公告日（2025年第4次）
+2025-07-30,fomc_meeting,美联储FOMC议息会议公告日（2025年第5次）
+2025-09-17,fomc_meeting,美联储FOMC议息会议公告日（2025年第6次）
+2025-10-29,fomc_meeting,美联储FOMC议息会议公告日（2025年第7次）
+2025-12-10,fomc_meeting,美联储FOMC议息会议公告日（2025年第8次）
+2026-01-28,fomc_meeting,美联储FOMC议息会议公告日（2026年第1次，美联储公布日程）
+2026-03-18,fomc_meeting,美联储FOMC议息会议公告日（2026年第2次，美联储公布日程）
+2026-04-29,fomc_meeting,美联储FOMC议息会议公告日（2026年第3次，美联储公布日程）
+2026-06-17,fomc_meeting,美联储FOMC议息会议公告日（2026年第4次，美联储公布日程）
+2026-07-29,fomc_meeting,美联储FOMC议息会议公告日（2026年第5次，美联储公布日程）
+2026-09-16,fomc_meeting,美联储FOMC议息会议公告日（2026年第6次，美联储公布日程）
+2026-10-28,fomc_meeting,美联储FOMC议息会议公告日（2026年第7次，美联储公布日程）
+2026-12-09,fomc_meeting,美联储FOMC议息会议公告日（2026年第8次，美联储公布日程）
+2021-03-05,major_meeting,十三届全国人大四次会议开幕（两会）
+2021-12-08,major_meeting,中央经济工作会议（2021-12-08~10）
+2022-03-05,major_meeting,十三届全国人大五次会议开幕（两会）
+2022-12-15,major_meeting,中央经济工作会议（2022-12-15~16）
+2023-03-05,major_meeting,十四届全国人大一次会议开幕（两会）
+2023-12-11,major_meeting,中央经济工作会议（2023-12-11~12）
+2024-03-05,major_meeting,十四届全国人大二次会议开幕（两会）
+2024-12-11,major_meeting,中央经济工作会议（2024-12-11~12）
+2025-03-05,major_meeting,十四届全国人大三次会议开幕（两会）
+2026-03-05,major_meeting,十四届全国人大四次会议开幕（两会）
+2023-08-28,stamp_duty_change,证券交易印花税减半征收生效（0.1%→0.05%卖出方，2023-08-27公告）

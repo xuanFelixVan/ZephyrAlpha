@@ -652,7 +652,10 @@ class AkshareIngestProvider(IngestProviderBase):
             # #ARCH-OPTION-AKSHARE-FALLBACK: 新浪源期权日K线（QMT无期权权限时fallback）
             CapabilityContract("option_kline", supports_symbols_null=True),
             # #ARCH-DATA-015: baostock 黑名单治本——死 fallback 能力补全（全量接口，无 symbols）
-            CapabilityContract("trade_calendar", supports_symbols_null=True),
+            # #ARCH-DATA-002 施工项1 语义锚试点（17号 §5.2）：A股日历 market=a_share/variety=calendar
+            CapabilityContract(
+                "trade_calendar", supports_symbols_null=True, expected_market="a_share", expected_variety="calendar"
+            ),
             CapabilityContract("index_constituent", supports_symbols_null=True),
             # JOB-077 市场元数据与约束接入（DS-081~083，2026-08-15，全量接口无 symbols）
             CapabilityContract("stock_basic", supports_symbols_null=True),

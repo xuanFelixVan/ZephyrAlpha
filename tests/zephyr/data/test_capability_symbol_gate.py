@@ -258,3 +258,68 @@ class TestDegenerate:
 
     def test_file_missing_fail_open(self, tmp_path):
         assert check_declaration_impl_consistency(tmp_path / "nope.py") == []
+
+
+class TestCommitGateWiring:
+    """CAP-CONSISTENCY commit gate 接线锁定（2026-08-24 G3 批）：
+
+    施工项 4 的既有真源（本模块）此前未接入任何执行点——接线进
+    capability_consistency_gate._check_provider_content，与路由-meta 校验同 gate 双检查。
+    """
+
+    def test_wiring_catches_declaration_residue(self):
+        from zephyr.gov_enforcement.commit_gates.capability_consistency_gate import _check_provider_content
+
+        violations = _check_provider_content(FORWARD_VIOLATION, "x_provider.py")
+        assert any("_fetch_hk_trade_calendar" in v for v in violations)
+
+    def test_wiring_catches_route_meta_drift_too(self):
+        """接线后原路由-meta 校验不回归（双检查同 gate）。"""
+        from zephyr.gov_enforcement.commit_gates.capability_consistency_gate import _check_provider_content
+
+        route_meta_drift = """
+_KLINE_CAPABILITIES = {"kline_daily": "_fetch_kline_daily"}
+
+
+class P:
+    meta = IngestProviderMeta(name="x", capabilities=["money_flow"])
+
+    def _fetch_kline_daily(self, payload):
+        return []
+"""
+        violations = _check_provider_content(route_meta_drift, "x_provider.py")
+        assert any("meta" in v for v in violations)
+
+    def test_wiring_clean_provider_passes(self):
+        from zephyr.gov_enforcement.commit_gates.capability_consistency_gate import _check_provider_content
+
+        # 双检查均 clean 的形态：if-elif 路由与 meta 声明一致 + 方法全定义
+        both_clean = """
+class P:
+    meta = IngestProviderMeta(name="x", capabilities=["kline_daily", "trade_calendar"])
+
+    def fetch(self, capability, payload):
+        if capability == "kline_daily":
+            return self._fetch_kline_daily(payload)
+        elif capability == "trade_calendar":
+            return self._fetch_trade_calendar(payload)
+
+    def _fetch_kline_daily(self, payload):
+        return []
+
+    def _fetch_trade_calendar(self, payload):
+        return []
+"""
+        assert _check_provider_content(both_clean, "x_provider.py") == []
+
+    def test_real_ingest_providers_zero_violation(self):
+        """4 个真实 ingest provider 经 gate 全链零违规（防误报守门）。"""
+        from src.zephyr.shared.io.paths import REPO_ROOT
+        from zephyr.gov_enforcement.commit_gates.capability_consistency_gate import _check_provider_content
+
+        for name in ("akshare", "miniqmt", "tushare", "internal_compute"):
+            path = REPO_ROOT / "src" / "zephyr" / "data" / "implementations" / f"{name}_provider.py"
+            if not path.exists():
+                continue
+            violations = _check_provider_content(path.read_text(encoding="utf-8"), path.name)
+            assert violations == [], f"{name} provider 经 commit gate 检出违规: {violations}"

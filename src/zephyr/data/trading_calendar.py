@@ -85,6 +85,64 @@ def is_trading_day(date: datetime.date | None = None) -> bool:
     return date.weekday() < 5
 
 
+def trading_days_in_range(
+    start: datetime.date,
+    end: datetime.date,
+) -> list[datetime.date]:
+    """返回 [start, end] 闭区间内 A 股交易日列表（XSHG 真日历，升序）。
+
+    用途：回测 PIT Embargo 真交易日历注入（15号 §7③ BDay→真日历切换）——
+    ``PITManager.apply_embargo(..., trading_calendar=trading_days_in_range(s, e))``。
+    pit_manager 保持纯 pandas 不连数据源（分层不倒灌），日历获取统一走本真源。
+
+    与 c1_market.trade_calendar 表同源语义（该表由 baostock/exchange_calendars XSHG
+    填充，17号 §2.2）；本函数纯本地计算，不依赖网络/DB，回测/实盘口径一致。
+
+    降级链：exchange_calendars sessions_in_range（主路径）
+        → is_session 逐日判断（老版本无 sessions_in_range）
+        → weekday<5（exchange_calendars 不可用，与 is_trading_day 回退同源）。
+
+    Args:
+        start: 区间首日（含）
+        end: 区间末日（含）；end < start 时返回空列表
+
+    Returns:
+        list[datetime.date]: 交易日列表（升序、去重）
+    """
+    if end < start:
+        return []
+    cal = _get_xshg_calendar()
+    if cal is not None:
+        try:
+            sessions = cal.sessions_in_range(start.isoformat(), end.isoformat())
+            return sorted({pd_ts.date() for pd_ts in sessions})
+        except AttributeError:
+            # 老版本 exchange_calendars 无 sessions_in_range → 逐日回退（与
+            # internal_compute_provider._fetch_hk_trade_calendar 同款防御）
+            pass
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            log.warning("XSHG sessions_in_range 查询失败，回退逐日判断: %s", e)
+        try:
+            days: list[datetime.date] = []
+            cur = start
+            while cur <= end:
+                if bool(cal.is_session(cur.isoformat())):
+                    days.append(cur)
+                cur += datetime.timedelta(days=1)
+            return days
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            log.warning("XSHG is_session 逐日查询失败，回退 weekday 判断: %s", e)
+
+    # 回退：周一~周五视为交易日（无法区分节假日）
+    days = []
+    cur = start
+    while cur <= end:
+        if cur.weekday() < 5:
+            days.append(cur)
+        cur += datetime.timedelta(days=1)
+    return days
+
+
 # 需要交易日历守卫的调度时段（盘中/盘后/夜间/巡检）
 # 事件驱动(event_driven)/周末校准(weekend_calibration)/月初静态(monthly_static)/周末补下载(weekend_backfill)不需要守卫
 TRADING_DAY_GUARDED_SCHEDULES = frozenset(

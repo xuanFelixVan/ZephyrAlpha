@@ -593,3 +593,29 @@ class TestCheckRouteMetaConsistency:
                 pytest.skip(f"{name} provider 文件不存在: {path}")
             violations = check_route_meta_consistency(path)
             assert violations == [], f"{name} provider 路由-meta 不一致: {violations}"
+
+
+# ===========================================================================
+# CapabilityContract 语义锚字段（#ARCH-DATA-002 施工项1，17号 §5.2/§5.8）
+# ===========================================================================
+
+
+class TestCapabilityContractSemanticFields:
+    """expected_market / expected_variety：可选、未填不校验、向后兼容零迁移。"""
+
+    def test_defaults_are_none(self):
+        cc = CapabilityContract("kline_daily")
+        assert cc.expected_market is None
+        assert cc.expected_variety is None
+
+    def test_explicit_values_stored(self):
+        cc = CapabilityContract("hk_trade_calendar", expected_market="hk", expected_variety="calendar")
+        assert cc.expected_market == "hk"
+        assert cc.expected_variety == "calendar"
+
+    def test_existing_flags_unaffected(self):
+        """新增字段不影响既有行为标志默认值（向后兼容）。"""
+        cc = CapabilityContract("trade_calendar", supports_symbols_null=True, expected_market="a_share")
+        assert cc.supports_symbols_null is True
+        assert cc.supports_incremental is True
+        assert cc.expected_variety is None

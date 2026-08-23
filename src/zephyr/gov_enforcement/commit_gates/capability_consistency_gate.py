@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.gov_enforcement.commit_gates.capability_consistency_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.data.capability_validator (check_route_meta_consistency_content); zephyr.gov_enforcement.commit_gates._diff_helpers (_get_staged_py_files, _read_staged_file); zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec)
+# [DEPENDENCIES] zephyr.data.capability_validator (check_route_meta_consistency_content); zephyr.data.capability_symbol_gate (check_declaration_impl_consistency_content); zephyr.gov_enforcement.commit_gates._diff_helpers (_get_staged_py_files, _read_staged_file); zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged *_provider.py 文件中"fetch 路由能力集"与"meta.capabilities 声明集"不一致时阻断 commit（passed=False）；治本本次 8 条 ERROR 根因：路由支持某 capability 但 meta 遗漏声明（miniqmt 8 个 CapabilityContract 漏声明）；检测 staged 内 *_provider.py 文件（如 akshare/miniqmt/tushare）；AST 解析失败 fail-open（passed=True，其他 gate 处理）；git diff 不可达 fail-open（logger.warning）
+# [INVARIANTS] 硬阻断——staged *_provider.py 文件中"fetch 路由能力集"与"meta.capabilities 声明集"不一致时阻断 commit（passed=False）；治本本次 8 条 ERROR 根因：路由支持某 capability 但 meta 遗漏声明（miniqmt 8 个 CapabilityContract 漏声明）；#ARCH-DATA-002 施工项4（17号 §5.5）并入：路由引用/声明的 _fetch_* 方法无真实定义亦阻断（防"半截工程"声明残留）；检测 staged 内 *_provider.py 文件（如 akshare/miniqmt/tushare）；AST 解析失败 fail-open（passed=True，其他 gate 处理）；git diff 不可达 fail-open（logger.warning）
 # [MODIFY-GUARD] gate_id="CAP-CONSISTENCY"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
@@ -58,6 +58,7 @@ from __future__ import annotations
 
 import logging
 
+from zephyr.data.capability_symbol_gate import check_declaration_impl_consistency_content
 from zephyr.data.capability_validator import check_route_meta_consistency_content
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _get_staged_py_files,
@@ -87,9 +88,10 @@ def _is_provider_file(file_rel_path: str) -> bool:
 
 
 def _check_provider_content(content: str, provider_file: str) -> list[str]:
-    """检查 provider 文件内容的路由-meta 一致性，返回违规列表。
+    """检查 provider 文件内容的路由-meta 一致性 + 声明-实现符号一致性，返回违规列表。
 
-    直接调用 ``check_route_meta_consistency_content``（pure AST，无文件 I/O），
+    直接调用 ``check_route_meta_consistency_content`` 与
+    ``check_declaration_impl_consistency_content``（pure AST，无文件 I/O），
     无需写临时文件——staged 内容可能与工作区不同（部分暂存场景），故必须用
     index 版本内容而非工作区文件。
 
@@ -101,7 +103,11 @@ def _check_provider_content(content: str, provider_file: str) -> list[str]:
         违规描述列表（空列表表示一致或解析失败 fail-open）。
     """
     try:
-        return check_route_meta_consistency_content(content)
+        violations = check_route_meta_consistency_content(content)
+        # #ARCH-DATA-002 施工项4（17号 §5.5/§5.8）：声明-实现符号一致性双向校验
+        # （复用既有真源 zephyr.data.capability_symbol_gate，MOD-GOV-capability_symbol_gate）
+        violations += check_declaration_impl_consistency_content(content)
+        return violations
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "CAP-CONSISTENCY: 解析 %s 失败（fail-open）: %s",
@@ -143,12 +149,13 @@ def make_capability_consistency_gate() -> GateSpec:
         # 4. 硬阻断
         if violations:
             detail = (
-                "CAP-CONSISTENCY (裁定 #ARCH-CH-022 Phase 4.4)：检测到 Provider 路由-meta 不一致\n"
-                "  fetch 路由能力集与 meta.capabilities 声明集不一致（治本本次 8 条 ERROR 根因）。\n"
+                "CAP-CONSISTENCY (裁定 #ARCH-CH-022 Phase 4.4 + #ARCH-DATA-002 施工项4)：检测到 Provider 一致性违规\n"
+                "  fetch 路由能力集 vs meta.capabilities 声明集不一致，或路由引用/声明的 _fetch_* 方法无真实定义。\n"
                 + "\n".join(violations)
                 + "\n-> 修复方案：在对应 *_provider.py 的 meta.capabilities 中补全漏声明的 capability"
                 + "\n   字符串声明用 'xxx'；需声明行为契约时用 CapabilityContract('xxx', supports_symbols_null=True)"
                 + "\n   删除路由不支持的死声明（meta.capabilities 声明但 fetch 路由不支持）"
+                + "\n   补齐路由引用/声明缺失的 _fetch_<cap> 方法定义，或删除无实现的声明残留（#ARCH-DATA-002）"
             )
             logger.error("CAP-CONSISTENCY gate block:\n%s", detail)
             return False, detail

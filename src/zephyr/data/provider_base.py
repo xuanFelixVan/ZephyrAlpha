@@ -114,6 +114,10 @@ class CapabilityContract:
         supports_incremental: 是否支持增量模式（payload.incremental=True）
         supports_full_refresh: 是否支持全量刷新（payload.incremental=False）
         requires_date_range: 是否需要 start/end 日期（宏观数据可能不需要）
+        expected_market: 语义锚——预期市场（#ARCH-DATA-002 施工项1，17号 §5.2）。
+            可选：a_share / hk / us / futures / macro / cross；None=未填不校验，零迁移成本
+        expected_variety: 语义锚——预期品种（#ARCH-DATA-002 施工项1，17号 §5.2）。
+            可选：stock / etf / index / calendar / news / classification / ...；None=未填不校验
     """
 
     capability_id: str
@@ -121,6 +125,9 @@ class CapabilityContract:
     supports_incremental: bool = True
     supports_full_refresh: bool = True
     requires_date_range: bool = True
+    # #ARCH-DATA-002 施工项1（17号 §5.2/§5.8）：语义锚字段，可选、未填不校验、向后兼容零迁移
+    expected_market: str | None = None
+    expected_variety: str | None = None
 
 
 def _normalize_capabilities(items: list) -> list[CapabilityContract]:
