@@ -2427,6 +2427,17 @@ error_codes:
   module: zephyr.compliance.intraday_manipulation_detector
   file: src/zephyr/compliance/intraday_manipulation_detector.py
   introduced: '2026-08-24: AI-K3-T4-P2A 清单 §P2-8 新增'
+# --- 2026-08-24 GW-T4-G errcode ---
+- code: ZA-RPT-0033
+  class: InvalidDeviationAttributionError
+  module: zephyr.reporting.deviation_attribution_decomposer
+  file: src/zephyr/reporting/deviation_attribution_decomposer.py
+  introduced: '2026-08-24: AI-K3-T4-G1 新增（55 号 §6 残余四件批，MOD-RPT-031）'
+- code: ZA-RPT-0034
+  class: ReviewTemplateRegistryError
+  module: zephyr.reporting.review_template_registry
+  file: src/zephyr/reporting/review_template_registry.py
+  introduced: '2026-08-24: AI-K3-T4-G1 新增（55 号 §6 残余四件批，MOD-RPT-032）'
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）
