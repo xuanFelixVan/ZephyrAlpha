@@ -5,7 +5,7 @@
 # [CONSUMERS] 全部 AI session（drain_queue(landing=...) 真落盘注入点）；zephyr.gov_enforcement.rule_bridge.git_commit_gateway._commit_auto（flag ON 时 reroute 目标，延迟 import）
 # [STARTUP] imported
 # [MATURITY] testing
-# [INVARIANTS] 永不改主工作区文件（66 号 §9.7：只写专用 worktree + 对象库 + dev ref CAS）；单写者（仅 Serializer lease 持有者经 drain 调用）；幂等不双落（done/landed_id + is-ancestor + 标记 grep 三重判定）；门禁一套不裁（GitCommitGateway 全门禁链零适配，worktree 形态 100 门禁天然生效）；CAS 冲突/基底冲突→死信不卡队
+# [INVARIANTS] 永不改主工作区脏文件（66 号 §9.7 受控放松 2026-08-23：只写专用 worktree + 对象库 + dev ref CAS；landing 后主工作区受限收敛——仅当文件与旧 HEAD 逐字节一致才快进写入新内容，脏/缺失/删除冲突一律跳过留痕，零 WIP 丢失风险）；单写者（仅 Serializer lease 持有者经 drain 调用）；幂等不双落（done/landed_id + is-ancestor + 标记 grep 三重判定）；门禁一套不裁（GitCommitGateway 全门禁链零适配，worktree 形态 100 门禁天然生效）；CAS 冲突/基底冲突→死信不卡队；主工作区收敛 fail-open（landing 已成功，收敛异常仅留痕不改变结果）
 # [MODIFY-GUARD] 66 号备忘 §6.3 MVP 形态 + §8 幂等算法 + §9 边界；08 号文 §4.2 步骤 3/5；[GW:{sid}:{qid}] 标记格式（POST-COMMIT-GUARD / REFERENCE-TRANSACTION-GUARD 消费方）
 # [STABILITY] evolving
 # [SAFETY] M
@@ -93,10 +93,12 @@ flag OFF 灰度期已知过渡语义（如实记录，非缺陷）：队列落�
 
 from __future__ import annotations
 
+import json
 import logging
 import os
 import re
 import subprocess
+import time
 from pathlib import Path
 
 import scripts.commit_queue as cq
@@ -110,6 +112,7 @@ _SERIALIZER_BRANCH = "serializer/commit-queue"  # 专用 worktree 检出的分�
 _WORKTREE_DIR_NAME = "worktree"  # <queue_root>/worktree——任务口径专用目录（08 号文 §4.2 步骤 3）
 _MAX_CAS_RETRIES = 3  # dev CAS 冲突重试上限（66 号 §8：重放产生同内容 commit，CAS 保护不分叉）
 _GIT_TIMEOUT_SECONDS = 120  # 与 worktree_pool.run_git 同款
+_MAIN_WS_SYNC_AUDIT_NAME = "main_workspace_sync.jsonl"  # <queue_root>/ 下——主工作区收敛跳过/异常留痕（66 号 §9.7 受控放松 2026-08-23）
 
 # 队列标记正则：[GW:{sid}:{qid}]——sid 字符集 [A-Za-z0-9._-]（入队校验保证无冒号/右括号）
 _QUEUE_MARKER_RE = re.compile(r"\[GW:[^\]:\s]+:q-[^\]\s]+\]")
@@ -353,9 +356,9 @@ class WorktreeLanding:
         """`git update-ref refs/heads/<dev> <new> <old>` CAS；失败抛 CasConflict。
 
         git 2.48.1 实证：对已 checkout 的 dev 亦可用（plumbing update-ref 不做
-        branch -f 的 checkout 保护）。主工作区文件/索引不被触碰（66 号 §9.7；
-        主工作区相对新 HEAD 的陈旧由「会话 worktree 独立工作区 + 死信重新入队」
-        机制覆盖，共享 index 同步属 66 号 §6.3 P2 修正 5 的 P2 形态范畴，MVP 不做）。
+        branch -f 的 checkout 保护）。共享 index 不被触碰（66 号 §9.7 保留）；
+        主工作区文件由 ``_converge_main_workspace`` 受限收敛（仅快进干净文件），
+        脏文件陈旧由「会话 worktree 独立工作区 + 死信重新入队」机制覆盖。
         """
         r = self._git_repo(
             "update-ref", f"refs/heads/{self.target_branch}", new_sha, old_sha, check=False
@@ -364,6 +367,124 @@ class WorktreeLanding:
             raise CasConflict(
                 f"dev CAS 推进失败（期望 {old_sha[:12]}）: {(r.stderr or r.stdout).strip()[:300]}"
             )
+
+    # ------------------------------------------------------------------
+    # 主工作区受限收敛（2026-08-23 裁定：66 号 §9.7 受控放松）
+    # ------------------------------------------------------------------
+    # 病根：landing 只 update-ref 推进 dev，主工作区文件停在旧内容——共享工作区
+    # 会话读到陈旧字节，是陈旧快照覆写事故的温床（2026-08-23 实证）。
+    # 放松边界：永不改主工作区的**脏**文件——仅当工作区文件与 old_sha 逐字节
+    # 一致（无任何 WIP）才写入 new_sha 内容（纯快进，零丢失）；脏/缺失/删除
+    # 冲突一律跳过并留痕 .runtime/commit_queue/main_workspace_sync.jsonl。
+    # 幂等：重放时文件已等于 new_sha → already_synced 跳过。fail-open：
+    # 收敛是 landing 成功后的补强，异常仅留痕不改变 LandingResult。
+
+    def _worktree_matches(self, sha: str, rel: str) -> bool:
+        """主工作区文件与 <sha>:<rel> 是否一致（git diff --quiet 语义，属性过滤器生效）。
+
+        rc=0 → 一致；rc=1 → 有差异（含工作区缺失=删除态差异）；rc>1 → 错误抛异常。
+        """
+        r = self._git_repo("diff", "--quiet", sha, "--", rel, check=False)
+        if r.returncode == 0:
+            return True
+        if r.returncode == 1:
+            return False
+        raise RuntimeError(
+            f"git diff --quiet {sha[:12]} -- {rel} -> rc={r.returncode}: {(r.stderr or '').strip()[:200]}"
+        )
+
+    def _read_blob_bytes(self, sha: str, rel: str) -> bytes:
+        """读取 <sha>:<rel> 的原始 blob 字节（bytes 模式，二进制安全）。"""
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden  # noqa: PLC0415
+
+        r = run_subprocess_hidden(
+            ["git", "cat-file", "blob", f"{sha}:{rel}"],
+            cwd=str(self.repo_root),
+            text=False,
+            timeout=_GIT_TIMEOUT_SECONDS,
+            env=_trusted_git_env(),
+        )
+        if r.returncode != 0:
+            raise RuntimeError(f"cat-file blob {sha[:12]}:{rel} -> rc={r.returncode}")
+        return r.stdout
+
+    def _tree_has_path(self, sha: str, rel: str) -> bool:
+        """<sha> 树中是否含 <rel>（cat-file -e 语义；对象异常按「无」处理——保守方向=跳过快进）。"""
+        r = self._git_repo("cat-file", "-e", f"{sha}:{rel}", check=False)
+        return r.returncode == 0
+
+    def _converge_one(self, rel: str, old_sha: str, new_sha: str, is_delete: bool) -> str:
+        """单文件收敛，返回动作 token（already_*/fast_forwarded/deleted/skipped_*）。"""
+        target = self.repo_root / rel
+        if self._worktree_matches(new_sha, rel):
+            return "already_deleted" if is_delete else "already_synced"
+        if not self._worktree_matches(old_sha, rel):
+            if is_delete and not target.exists():
+                return "already_deleted"  # 删除项 + 工作区已缺失：语义已达成
+            return "skipped_missing" if not target.exists() else "skipped_dirty"
+        # 未跟踪 WIP 补盲：git diff 对 untracked 不可见——「old_sha 无此路径 + 盘上
+        # 有同名未跟踪文件」会被上方误判为双方一致。此时快进写入会覆写他人 WIP，
+        # 违反零丢失铁律 → 按脏处理跳过（66 号 §9.7 放松边界以逐字节一致为前提，
+        # untracked 文件对 old_sha 而言不是「一致」是「凭空多出」）。
+        if not is_delete and target.exists() and not self._tree_has_path(old_sha, rel):
+            return "skipped_dirty"
+        # 干净（== old_sha）：快进
+        if is_delete:
+            try:
+                os.remove(target)
+            except FileNotFoundError:
+                return "already_deleted"
+            return "deleted"
+        data = self._read_blob_bytes(new_sha, rel)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        tmp = target.with_name(target.name + ".converge_tmp")
+        tmp.write_bytes(data)
+        os.replace(tmp, target)  # 原子替换，并发读者不见半成品
+        return "fast_forwarded"
+
+    def _converge_main_workspace(self, item: dict, old_sha: str, new_sha: str) -> None:
+        """landing 后主工作区受限收敛：干净文件快进 / 脏文件跳过留痕（fail-open）。"""
+        qid = item.get("qid", "?")
+        counts: dict[str, int] = {}
+        audit_records: list[dict] = []
+        for entry in item.get("files") or []:
+            rel = entry.get("path", "")
+            if not rel:
+                continue
+            try:
+                action = self._converge_one(
+                    rel, old_sha, new_sha, entry.get("action") == "delete"
+                )
+            except Exception as exc:  # noqa: BLE001 — 收敛 fail-open（landing 已成功）
+                action = "error"
+                logger.warning("[landing] 主工作区收敛异常 qid=%s %s: %s", qid, rel, exc)
+            counts[action] = counts.get(action, 0) + 1
+            if action in ("skipped_dirty", "skipped_missing", "error"):
+                audit_records.append(
+                    {
+                        "ts": time.time(),
+                        "qid": qid,
+                        "path": rel,
+                        "action": action,
+                        "old": old_sha[:12],
+                        "new": new_sha[:12],
+                    }
+                )
+        if audit_records:
+            try:
+                audit_path = self.queue_root / _MAIN_WS_SYNC_AUDIT_NAME
+                audit_path.parent.mkdir(parents=True, exist_ok=True)
+                with audit_path.open("a", encoding="utf-8") as fh:
+                    for rec in audit_records:
+                        fh.write(json.dumps(rec, ensure_ascii=False) + "\n")
+            except OSError as exc:
+                logger.warning("[landing] 主工作区收敛审计写入失败（non-blocking）: %s", exc)
+            logger.warning(
+                "[landing] qid=%s 主工作区收敛存在跳过项（留痕 %d 条）: %s",
+                qid, len(audit_records), counts,
+            )
+        else:
+            logger.info("[landing] qid=%s 主工作区收敛完成: %s", qid, counts)
 
     # ------------------------------------------------------------------
     # 网关（惰性构造一次，跨项复用）
@@ -394,6 +515,14 @@ class WorktreeLanding:
         landed = self._already_landed(item)
         if landed:
             logger.info("[landing] qid=%s 已落盘（%s），幂等跳过", qid, landed[:12])
+            # 崩溃 Completion：若崩溃发生在 update-ref 之后、主工作区收敛之前，
+            # 重放走到这里——补跑收敛（幂等，已同步文件 already_synced 短路）。
+            try:
+                parent = self._git_repo("rev-parse", f"{landed}^", check=False)
+                if parent.returncode == 0:
+                    self._converge_main_workspace(item, parent.stdout.strip(), landed)
+            except Exception as exc:  # noqa: BLE001 — 收敛 fail-open
+                logger.warning("[landing] qid=%s 重放收敛异常（non-blocking）: %s", qid, exc)
             return cq.LandingResult(ok=True, landed_id=landed)
 
         self.ensure_worktree()
@@ -468,6 +597,11 @@ class WorktreeLanding:
                 )
                 continue
             logger.info("[landing] qid=%s 落盘完成 commit=%s", qid, result.commit_hash[:12])
+            # 5) 主工作区受限收敛（干净文件快进/脏跳过留痕；fail-open 不改变落盘结果）
+            try:
+                self._converge_main_workspace(item, old_dev, result.commit_hash)
+            except Exception as exc:  # noqa: BLE001 — 收敛 fail-open
+                logger.warning("[landing] qid=%s 主工作区收敛异常（non-blocking）: %s", qid, exc)
             return cq.LandingResult(ok=True, landed_id=result.commit_hash)
 
         return cq.LandingResult(
