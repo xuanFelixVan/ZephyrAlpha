@@ -266,3 +266,100 @@ class TestValueFactorPIT:
         assert len(signal) == 65
         # PE = 10/5.0 = 2, value = 1/2 = 0.5
         assert signal.iloc[-1] == pytest.approx(0.5, abs=0.01)
+
+
+class TestDeliberateFutureDateProbe:
+    """90 号 Phase2 项（#14 PIT）：deliberate future-date 泄漏探针自动化。
+
+    裁定真源：90_methodology_open_questions.md §14（v2.0.0）——
+      PIT 自动化校验 Phase 2 增强：deliberate future-date test
+      （label_date=tomorrow 确认零特征 join）自动化纳入 BT-10 体系；
+      时间精度陷阱（date vs timestamp 粒度统一用 date_trunc）加入校验 checklist。
+    """
+
+    @staticmethod
+    def _fundamental(rows: list[tuple[str, str, float]]) -> pd.DataFrame:
+        return pd.DataFrame(
+            [
+                {
+                    "symbol": sym,
+                    "report_period": "2025-12-31",
+                    "announce_date": ann,
+                    "eps_basic": eps,
+                    "eps_diluted": eps,
+                }
+                for sym, ann, eps in rows
+            ]
+        )
+
+    def test_all_future_announce_zero_feature_join(self):
+        """label_date=tomorrow 探针：全部特征行公告日在查询日之后 → 零特征 join。"""
+        fund = self._fundamental(
+            [
+                ("000001.SZ", "2026-03-02", 0.99),  # 相对 3月1日 bar 是未来
+                ("600000.SH", "2026-03-02", 9.99),
+            ]
+        )
+        handler = BacktestDataHandler(data=_make_ohlcv(), fundamental_data=fund)
+        bar = handler.get_bar(pd.Timestamp("2026-03-01"))
+        assert "eps_basic" not in bar.columns, (
+            "deliberate future-date 探针失败：未来公告特征被 join 进 3月1日 bar（前视偏差！）"
+        )
+
+    def test_mixed_past_future_only_past_visible(self):
+        """混合探针：同 bar 日内，未来行不可见、历史行正常 join。"""
+        fund = self._fundamental(
+            [
+                ("000001.SZ", "2026-02-28", 0.50),  # 历史可见
+                ("600000.SH", "2026-03-02", 9.99),  # 未来不可见
+            ]
+        )
+        handler = BacktestDataHandler(data=_make_ohlcv(), fundamental_data=fund)
+        bar = handler.get_bar(pd.Timestamp("2026-03-01"))
+        eps_000001 = bar[bar["symbol"] == "000001.SZ"]["eps_basic"].iloc[0]
+        eps_600000 = bar[bar["symbol"] == "600000.SH"]["eps_basic"].iloc[0]
+        assert eps_000001 == pytest.approx(0.50)
+        assert pd.isna(eps_600000), f"未来公告特征泄漏: eps={eps_600000}"
+
+    def test_query_timestamp_truncated_to_date(self):
+        """时间精度 checklist：查询时点含日内时分秒须先 date_trunc 统一到日粒度。
+
+        合并层以 strftime('%Y-%m-%d') 截断比较；调用方将 15:30 时间戳
+        normalize 到日期后，行为与纯日期完全一致——同日已公告可见、次日公告不可见。
+        """
+        fund = self._fundamental(
+            [
+                ("000001.SZ", "2026-03-02", 0.66),  # 同日公告 → date 粒度下可见
+                ("600000.SH", "2026-03-03", 9.99),  # 次日公告 → 不可见
+            ]
+        )
+        handler = BacktestDataHandler(data=_make_ohlcv(), fundamental_data=fund)
+        bar_ts = handler.get_bar(pd.Timestamp("2026-03-02 15:30:00").normalize())
+        bar_d = handler.get_bar(pd.Timestamp("2026-03-02"))
+        eps_ts = bar_ts[bar_ts["symbol"] == "000001.SZ"]["eps_basic"].iloc[0]
+        eps_d = bar_d[bar_d["symbol"] == "000001.SZ"]["eps_basic"].iloc[0]
+        assert eps_ts == eps_d == pytest.approx(0.66)
+        assert pd.isna(bar_ts[bar_ts["symbol"] == "600000.SH"]["eps_basic"].iloc[0])
+
+    def test_sweep_all_bar_dates_no_future_join(self):
+        """全窗口扫描探针：任一 bar 日 T 合入的特征 announce_date 均须 ≤ T。"""
+        fund = self._fundamental(
+            [
+                ("000001.SZ", "2026-02-28", 0.50),
+                ("000001.SZ", "2026-03-03", 0.88),
+                ("600000.SH", "2026-03-04", 9.99),  # 全 bar 窗口外的未来公告
+            ]
+        )
+        handler = BacktestDataHandler(data=_make_ohlcv(), fundamental_data=fund)
+        for dt in ["2026-03-01", "2026-03-02", "2026-03-03"]:
+            bar = handler.get_bar(pd.Timestamp(dt))
+            if "eps_basic" not in bar.columns:
+                continue
+            # 逐 symbol 反查：合入值必须来自 announce_date <= dt 的版本
+            for _, row in bar.dropna(subset=["eps_basic"]).iterrows():
+                visible = fund[
+                    (fund["symbol"] == row["symbol"]) & (fund["announce_date"] <= dt)
+                ]
+                assert row["eps_basic"] in set(visible["eps_basic"]), (
+                    f"{dt} bar 合入了未来公告值 {row['eps_basic']}（{row['symbol']}）"
+                )
