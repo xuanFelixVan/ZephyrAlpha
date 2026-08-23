@@ -137,6 +137,16 @@ class TradingComplianceDetector:
         self._t = thresholds or ComplianceThresholds()
         self._logger = logger or ComplianceLogger()
 
+    @property
+    def thresholds(self) -> ComplianceThresholds:
+        """阈值只读访问（§7.3 SSoT；MOD-CMP-011 批处理窗口口径对齐消费）。"""
+        return self._t
+
+    @property
+    def logger(self) -> ComplianceLogger:
+        """落库器只读访问（MOD-CMP-011 批处理汇总事件共用同一证据链）。"""
+        return self._logger
+
     # ── §7.2 异常交易行为（拉抬打压 / 大额成交）──
 
     def check_ramp_dump(self, price_change_pct: float, our_volume_share: float) -> ManipulationVerdict | None:
