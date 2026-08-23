@@ -112,6 +112,7 @@ __all__ = [
     "_base_server",
     "audit_logger",
     "blueprint_search_server",
+    "client_discovery",
     "doc_guard_server",
     "error_codes",
     "gate_engine_server",

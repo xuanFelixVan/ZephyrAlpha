@@ -80,10 +80,26 @@ class TaskGate:
 
     # ── 查询 ────────────────────────────────────────────
 
+    def _resolve_key(self, model_id: str) -> str | None:
+        """护照 ID 口径双向兼容查询（GP0 #255④ 裁定：真源=护照 JSON 内 model_id
+        原样；文件名 `:`→`_` 为有损安全编码不可反推）。
+
+        查询侧冒号/下划线形态互认（dispatch 链可能持任一形态）；存储键不改写、
+        归一化只发生在查询侧（命中面不放大：两变体均不在册仍 miss）。
+        """
+        if model_id in self._passports:
+            return model_id
+        variants = [model_id.replace(":", "_"), model_id.replace("_", ":")]
+        for alt in variants:
+            if alt != model_id and alt in self._passports:
+                return alt
+        return None
+
     def can_dispatch(self, model_id: str, capability: str) -> tuple[bool, str]:
-        passport = self._passports.get(model_id)
-        if passport is None:
+        key = self._resolve_key(model_id)
+        if key is None:
             return (False, "no_passport")
+        passport = self._passports[key]
 
         depth = passport.depth
         if not depth or not depth.capabilities:
@@ -99,28 +115,29 @@ class TaskGate:
         return (True, "ok")
 
     def can_do_any(self, model_id: str) -> bool:
-        passport = self._passports.get(model_id)
-        if passport is None:
+        key = self._resolve_key(model_id)
+        if key is None:
             return False
-        return len(passport.recommendations.safe_capabilities) > 0
+        return len(self._passports[key].recommendations.safe_capabilities) > 0
 
     def get_safe_capabilities(self, model_id: str) -> list[str]:
-        passport = self._passports.get(model_id)
-        if passport is None:
+        key = self._resolve_key(model_id)
+        if key is None:
             return []
-        return list(passport.recommendations.safe_capabilities)
+        return list(self._passports[key].recommendations.safe_capabilities)
 
     def get_unsafe_capabilities(self, model_id: str) -> list[str]:
-        passport = self._passports.get(model_id)
-        if passport is None:
+        key = self._resolve_key(model_id)
+        if key is None:
             return []
-        return list(passport.recommendations.unsafe_capabilities)
+        return list(self._passports[key].recommendations.unsafe_capabilities)
 
     def get_passport(self, model_id: str) -> CapabilityPassport | None:
-        return self._passports.get(model_id)
+        key = self._resolve_key(model_id)
+        return self._passports.get(key) if key is not None else None
 
     def has_passport(self, model_id: str) -> bool:
-        return model_id in self._passports
+        return self._resolve_key(model_id) is not None
 
     # ── 统计 ────────────────────────────────────────────
 

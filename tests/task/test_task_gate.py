@@ -219,3 +219,66 @@ class TestRepr:
         assert repr(gate) == "TaskGate(models=0)"
         gate.passports["m1"] = _make_passport("m1")
         assert repr(gate) == "TaskGate(models=1)"
+
+
+class TestPassportIdCaliber:
+    """护照 ID 口径统一（清单 2.9 / GP0 #255④ 裁定口径）双向兼容读取。
+
+    口径裁定（2026-08-22 #255④ + 2026-08-24 H2 核查）：
+    - 真源 = 护照 JSON 内 model_id 字段（Ollama 名保留冒号，如 qwen3:8b）；
+    - 文件名是 `:`/`/`→`_` 有损安全编码（qwen3_8b.json），不可反推；
+    - TaskGate dict 键 = 真源形态；dispatch 链可能持任一形态查询——
+      冒号形态与下划线形态 MUST 命中同一本护照（双向兼容读取）。
+    """
+
+    def _gate_with_colon_model(self) -> TaskGate:
+        gate = TaskGate()
+        # 真源键 = 冒号形态（Ollama qwen3:8b 落盘 qwen3_8b.json 的同款场景）
+        gate.passports["qwen3:8b"] = _make_passport("qwen3:8b")
+        return gate
+
+    def test_can_dispatch_colon_form(self):
+        gate = self._gate_with_colon_model()
+        ok, reason = gate.can_dispatch("qwen3:8b", "task_classification")
+        assert ok is True
+        assert reason == "ok"
+
+    def test_can_dispatch_underscore_form_hits_same_passport(self):
+        """dispatch 链持文件名/下划线形态查询，不得 no_passport 假阴性。"""
+        gate = self._gate_with_colon_model()
+        ok, reason = gate.can_dispatch("qwen3_8b", "task_classification")
+        assert ok is True
+        assert reason == "ok"
+
+    def test_has_passport_both_forms(self):
+        gate = self._gate_with_colon_model()
+        assert gate.has_passport("qwen3:8b") is True
+        assert gate.has_passport("qwen3_8b") is True
+
+    def test_get_passport_both_forms_same_object(self):
+        gate = self._gate_with_colon_model()
+        assert gate.get_passport("qwen3_8b") is gate.get_passport("qwen3:8b")
+
+    def test_get_safe_capabilities_underscore_form(self):
+        gate = self._gate_with_colon_model()
+        caps = gate.get_safe_capabilities("qwen3_8b")
+        assert "task_classification" in caps
+
+    def test_can_do_any_underscore_form(self):
+        gate = self._gate_with_colon_model()
+        assert gate.can_do_any("qwen3_8b") is True
+
+    def test_unknown_model_still_misses(self):
+        """归一化不得放大命中面——不相关模型仍 no_passport。"""
+        gate = self._gate_with_colon_model()
+        ok, reason = gate.can_dispatch("qwen2.5-coder_14b", "task_classification")
+        assert ok is False
+        assert reason == "no_passport"
+        assert gate.has_passport("other_model") is False
+
+    def test_canonical_key_preserved(self):
+        """存储键保持真源形态（冒号），归一化只发生在查询侧。"""
+        gate = self._gate_with_colon_model()
+        gate.can_dispatch("qwen3_8b", "task_classification")
+        assert "qwen3:8b" in gate.passports
+        assert "qwen3_8b" not in gate.passports
