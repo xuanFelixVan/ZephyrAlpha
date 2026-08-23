@@ -234,6 +234,11 @@ EXCEPTIONS = frozenset(
         # [存量活跃 reconciler——重命名须跨域同步 manifest/registry/引用方，
         #  与上方 d8_doc_sync 两个 *_reconciler.py 爷爷条款豁免同类别]
         "agents_cheatsheet_drift_reconciler.py",  # d8_doc_sync/
+        # --- 测试债清偿登记（2026-08-23 AI-K3-GW-T0FIX，延续 #ARCH-114 裁定路径 C 机制）---
+        # [存量活跃核心件——commit_queue landing 机制核心脚本，被 scripts/commit_queue.py
+        #  以 landing_fn 引用；四个建议前缀（validate_/detect_/audit_/check_）语义均不符其
+        #  "落地执行"职能，改名需全链路引用排查，与上方爷爷条款豁免同类别]
+        "commit_queue_landing.py",  # governance/
     }
 )
 

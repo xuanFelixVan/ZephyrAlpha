@@ -135,11 +135,25 @@ class TestTokenBucket:
         assert b.consume(1.0) is True
         assert b.consume(1.0) is False
 
-    def test_refill_over_time(self):
+    def test_refill_over_time(self, monkeypatch):
+        # 固化（2026-08-23）：原实现 time.sleep(0.01) 依赖真实时钟——
+        # consume() 与 tokens getter 之间 elapsed>0 即补充 >0 令牌，
+        # `tokens == 0.0` 断言在簇内负载下假性失败。改用注入假时钟
+        # （对齐项目 clock= 注入模式，monkeypatch 模块级 time 引用，函数级自动复位）
+        import zephyr.trading.admission_controller as ac_mod
+
+        now = [1000.0]
+
+        class _FakeTime:
+            @staticmethod
+            def monotonic() -> float:
+                return now[0]
+
+        monkeypatch.setattr(ac_mod, "time", _FakeTime)
         b = _TokenBucket(rate=1000.0, burst=10.0)
-        b.consume(10.0)
-        assert b.tokens == 0.0
-        time.sleep(0.01)
+        assert b.consume(10.0) is True
+        assert b.tokens == 0.0  # 时钟冻结 → elapsed=0 → 严格为 0
+        now[0] += 0.01  # 推进 10ms → 补充 1000*0.01=10 个令牌（封顶 burst）
         assert b.tokens > 0.0
 
     def test_tokens_capped_at_burst(self):

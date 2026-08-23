@@ -43,6 +43,7 @@ import os
 import re
 import shutil
 import subprocess
+import tempfile
 import threading
 from pathlib import Path
 
@@ -66,13 +67,41 @@ _HOOKS_SRC = REPO_ROOT / "scripts" / "governance" / "git_hooks"
 
 
 def _git(cwd: Path, *args: str, check: bool = True) -> subprocess.CompletedProcess:
-    """tmp 仓 git 执行（字节安全：commit 内容比对走 bytes）。"""
-    r = subprocess.run(
-        ["git", *args],
-        cwd=str(cwd),
-        capture_output=True,
-        timeout=60,
-    )
+    """tmp 仓 git 执行（字节安全：commit 内容比对走 bytes）。
+
+    无管道模式（2026-08-23 假死治本）：stdout/stderr 落临时文件而非 PIPE——
+    Windows 下 git worktree/hook 链衍生的孙进程（sh.exe 等）继承管道写句柄
+    且可能活得比 git 久，PIPE 模式 communicate() 等 EOF 永不返回（C 级阻塞，
+    pytest-timeout thread 法杀不动；run 超时 kill 直子后的二次 communicate
+    同样堵死）。文件读取不依赖句柄继承链，kill 后无需二次 communicate。
+    """
+    out_fd, out_path = tempfile.mkstemp(prefix="zcqt_git_out_", suffix=".log")
+    err_fd, err_path = tempfile.mkstemp(prefix="zcqt_git_err_", suffix=".log")
+    proc: subprocess.Popen | None = None
+    try:
+        with os.fdopen(out_fd, "wb") as out_f, os.fdopen(err_fd, "wb") as err_f:
+            proc = subprocess.Popen(
+                ["git", *args],
+                cwd=str(cwd),
+                stdin=subprocess.DEVNULL,
+                stdout=out_f,
+                stderr=err_f,
+            )
+            try:
+                proc.wait(timeout=60)
+            except subprocess.TimeoutExpired:
+                proc.kill()
+                proc.wait(timeout=10)
+                raise AssertionError(f"git {' '.join(args)} -> timeout after 60s (killed)") from None
+        stdout = Path(out_path).read_bytes()
+        stderr = Path(err_path).read_bytes()
+    finally:
+        for p in (out_path, err_path):
+            try:
+                os.unlink(p)
+            except OSError:  # 孙进程仍持有句柄时 Windows 禁删——留 %TEMP% 由系统清理
+                pass
+    r = subprocess.CompletedProcess(["git", *args], proc.returncode, stdout, stderr)
     if check and r.returncode != 0:
         raise AssertionError(
             f"git {' '.join(args)} -> rc={r.returncode}: {r.stderr.decode('utf-8', errors='replace')[:400]}"

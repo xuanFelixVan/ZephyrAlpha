@@ -207,8 +207,10 @@ class TestOllamaEmbedder:
         assert emb.dim == 0
 
     def test_available_false_when_not_reachable(self):
+        # available 内部走 _verify()（非 verify()），真探活 requests.get /api/tags；
+        # 在 requests 层 mock 连接拒绝，与本机 Ollama 服务是否在跑解耦
         emb = OllamaEmbedder()
-        with patch.object(emb, "verify", side_effect=RuntimeError("not reachable")):
+        with patch("requests.get", side_effect=ConnectionError("connection refused")):
             assert emb.available is False
 
     def test_encode_empty_list(self):
@@ -235,8 +237,10 @@ class TestOllamaChat:
         assert chat.temperature == 0.1
 
     def test_available_false_when_not_reachable(self):
+        # available 内部走 _verify()（非 verify()），真探活 requests.get /api/tags；
+        # 在 requests 层 mock 连接拒绝，与本机 Ollama 服务是否在跑解耦
         chat = OllamaChat()
-        with patch.object(chat, "verify", side_effect=RuntimeError("not reachable")):
+        with patch("requests.get", side_effect=ConnectionError("connection refused")):
             assert chat.available is False
 
     def test_supported_work_types(self):

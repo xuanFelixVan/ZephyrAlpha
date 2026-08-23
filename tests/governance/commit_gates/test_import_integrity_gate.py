@@ -836,7 +836,10 @@ class TestSysPathInjectionResolvable:
 
         file_abs = os.path.abspath(py_file)
         expected = str(Path(file_abs).resolve().parents[4])
-        assert expected in dirs, f"expected {expected} in {dirs}"
+        # 固化（2026-08-23）：normcase 归一大小写后比较——实现侧走 abspath/dirname
+        # 纯字符串运算（保留 cwd 盘符大小写），预言机 resolve() 会按文件系统规范化
+        # 盘符为大写；启动 shell 的 cwd 盘符为小写时（d:\...）两侧大小写不一致 → 假性失败
+        assert os.path.normcase(expected) in {os.path.normcase(d) for d in dirs}, f"expected {expected} in {dirs}"
 
     def test_extract_variable_reference(self):
         """变量引用回溯：VAR = str(Path(__file__).resolve().parent); sys.path.insert(0, VAR)。"""
@@ -929,7 +932,9 @@ class TestSysPathInjectionResolvable:
         dirs = _extract_sys_path_dirs(tree, py_file)
         file_abs = os.path.abspath(py_file)
         expected = str(Path(file_abs).resolve().parents[3])
-        assert expected in dirs, f"expected {expected} in {dirs}"
+        # 固化（2026-08-23）：normcase 归一大小写后比较——同 test_extract_path_parents_n，
+        # 实现侧保留 cwd 盘符大小写，resolve() 预言机规范化为大写，小写盘符 cwd 下假性失败
+        assert os.path.normcase(expected) in {os.path.normcase(d) for d in dirs}, f"expected {expected} in {dirs}"
 
     def test_extract_next_parents_search_found(self):
         """next(p for p in _THIS_FILE.parents if (p/'_shared').exists()) → 找到治理根目录。"""

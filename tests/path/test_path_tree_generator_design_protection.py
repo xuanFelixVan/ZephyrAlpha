@@ -26,12 +26,36 @@ def red_team_tests():
     conn = get_depgraph_pg_connection()
     cursor = conn.cursor()
 
+    try:
+        return _run_red_blue(conn, cursor)
+    finally:
+        # 清理测试数据（无论成功失败）：先删 arch_directory_tree 测试行，再删播种的测试域
+        # （FK 顺序约束——arch_directory_tree.domain_id REFERENCES domains(domain_id)）
+        print("\n[清理] 删除测试节点与测试域...")
+        cursor.execute("DELETE FROM arch_directory_tree WHERE path LIKE 'test/%'")
+        cursor.execute("DELETE FROM domains WHERE domain_id = 'D_TEST'")
+        conn.commit()
+        conn.close()
+
+
+def _run_red_blue(conn, cursor):
+    # 0. 播种测试域（治本：arch_directory_tree.domain_id 有 FK 到 domains，
+    #    原 'D-TEST' 未播种触发 ForeignKeyViolation；且 domains CHECK 要求
+    #    domain_id 匹配 ^D_[A-Z][A-Z0-9_]*$，连字符不合法，故用 'D_TEST'）
+    print("\n[播种] 插入测试域 D_TEST...")
+    cursor.execute("""
+        INSERT INTO domains (domain_id, domain_name, domain_group, description, created_at, updated_at)
+        VALUES ('D_TEST', 'Test Domain', 'test', 'red/blue test seed', '2026-08-23T00:00:00', '2026-08-23T00:00:00')
+        ON CONFLICT (domain_id) DO NOTHING
+    """)
+    conn.commit()
+
     # 1. 插入测试设计态目录节点（state 列 v5 已删除，改用 design_maturity）
     print("\n[红方] 插入设计态测试目录节点...")
     cursor.execute("""
         INSERT INTO arch_directory_tree
         (path, parent_path, path_type, domain_id, design_maturity, blueprint_id, change_policy, modification_permission)
-        VALUES ('test/design/directory', 'test/design', 'directory', 'D-TEST', 'design', 'TEST-BLUEPRINT', 'stable', 'human_gated')
+        VALUES ('test/design/directory', 'test/design', 'directory', 'D_TEST', 'design', 'TEST-BLUEPRINT', 'stable', 'human_gated')
         ON CONFLICT (path) DO UPDATE SET
             parent_path=EXCLUDED.parent_path,
             path_type=EXCLUDED.path_type,
@@ -67,7 +91,6 @@ def red_team_tests():
 
     if count == 0:
         print("  ✗ 失败: 设计态目录节点被删除！")
-        conn.close()
         return False
 
     print(f"  ✓ 设计态目录节点仍存在: {count} 个")
@@ -86,7 +109,6 @@ def red_team_tests():
 
         if design_maturity != "design":
             print("  ✗ 失败: 字段被覆盖！")
-            conn.close()
             return False
 
     # 5. 连续运行10次测试
@@ -107,17 +129,10 @@ def red_team_tests():
 
     if count == 0:
         print("  ✗ 失败: 连续运行后设计态目录节点被删除！")
-        conn.close()
         return False
 
     print(f"  ✓ 连续运行10次后设计态目录节点仍存在: {count} 个")
 
-    # 7. 清理测试数据
-    print("\n[清理] 删除测试节点...")
-    cursor.execute("DELETE FROM arch_directory_tree WHERE path LIKE 'test/%'")
-    conn.commit()
-
-    conn.close()
     return True
 
 

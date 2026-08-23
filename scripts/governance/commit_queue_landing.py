@@ -98,6 +98,7 @@ import logging
 import os
 import re
 import subprocess
+import tempfile
 import time
 from pathlib import Path
 
@@ -142,19 +143,54 @@ def _trusted_git_env() -> dict:
 
 
 def _run_git(repo_or_wt: Path, args: list[str], *, check: bool = True) -> subprocess.CompletedProcess:
-    """落地 git 执行（统一 utf-8/隐藏窗口/超时；stderr 进异常消息，报错非静默）。"""
-    from zephyr.shared.infra.process_pool import run_subprocess_hidden
+    """落地 git 执行（统一 utf-8/隐藏窗口/超时；stderr 进异常消息，报错非静默）。
 
-    r = run_subprocess_hidden(
-        ["git", *args],
-        cwd=str(repo_or_wt),
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-        timeout=_GIT_TIMEOUT_SECONDS,
-        env=_trusted_git_env(),
-    )
+    治本（2026-08-23 假死修复）：stdout/stderr 不走 PIPE 改落临时文件——Windows 下
+    git 衍生的孙进程（worktree/hook 链上的 sh.exe 等）继承管道写句柄且可能活得
+    比 git 久，PIPE 模式 communicate() 等 EOF 永不返回（C 级阻塞，pytest-timeout
+    thread 法杀不动；subprocess.run 超时 kill 直子后的二次 communicate 同样堵死
+    在 EOF 等待上）。临时文件读取不依赖句柄继承链，wait() 只等直子退出，kill 后
+    无需二次 communicate，根除此类管道 join 假死。
+    """
+    creationflags = 0
+    if os.name == "nt":
+        creationflags = getattr(subprocess, "CREATE_NO_WINDOW", 0x08000000) | getattr(
+            subprocess, "CREATE_NEW_PROCESS_GROUP", 0x00000200
+        )
+
+    out_fd, out_path = tempfile.mkstemp(prefix="zcq_git_out_", suffix=".log")
+    err_fd, err_path = tempfile.mkstemp(prefix="zcq_git_err_", suffix=".log")
+    proc: subprocess.Popen | None = None
+    try:
+        with os.fdopen(out_fd, "wb") as out_f, os.fdopen(err_fd, "wb") as err_f:
+            proc = subprocess.Popen(
+                ["git", *args],
+                cwd=str(repo_or_wt),
+                stdin=subprocess.DEVNULL,
+                stdout=out_f,
+                stderr=err_f,
+                creationflags=creationflags,
+                env=_trusted_git_env(),
+            )
+            try:
+                proc.wait(timeout=_GIT_TIMEOUT_SECONDS)
+            except subprocess.TimeoutExpired:
+                # Popen 级墙钟强杀——输出在文件不在管道，kill 直子即返，
+                # 绝无 PIPE 模式的 kill 后 EOF 等待
+                proc.kill()
+                proc.wait(timeout=10)
+                raise RuntimeError(
+                    f"git {' '.join(args)} -> timeout after {_GIT_TIMEOUT_SECONDS}s (killed)"
+                ) from None
+        stdout = Path(out_path).read_bytes().decode("utf-8", errors="replace")
+        stderr = Path(err_path).read_bytes().decode("utf-8", errors="replace")
+    finally:
+        for p in (out_path, err_path):
+            try:
+                os.unlink(p)
+            except OSError:  # 孙进程仍持有句柄时 Windows 禁删——留 %TEMP% 由系统清理
+                pass
+    r = subprocess.CompletedProcess(["git", *args], proc.returncode, stdout, stderr)
     if check and r.returncode != 0:
         raise RuntimeError(f"git {' '.join(args)} -> rc={r.returncode}: {(r.stderr or r.stdout).strip()[:400]}")
     return r
