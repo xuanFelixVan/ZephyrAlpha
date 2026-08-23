@@ -41,7 +41,9 @@ autonomy_core 包结构指引（ARCH-033 治本）：
 
 __all__ = [
     "agent_observability",
+    "agentic_drift_guard",
     "all_skill_modules",
+    "drift_semantic_reviewer",
     "file_autoregister",
     "ide_watcher",
     "phase_planner",
