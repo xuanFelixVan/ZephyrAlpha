@@ -7841,6 +7841,6 @@ entries:
   blocked_by: []
   next_review_date: '2026-09-23'
   review_frequency: monthly
-  last_review_outcome: "首次登记（2026-08-23 P0 安全事件）——src 误删取证落地，建议优先评审（非 yearly——安全缺口）"
+  last_review_outcome: "四件套已落地（2026-08-23 批1-4 施工完成）：①safe_rmtree 删除前三件套硬断言（resolve+is_relative_to+reparse 检测+session_id 白名单，4 处删除点接入+红队单测）②ops_guard install_inprocess_enforcement 推广五治理入口（git_commit/session_worktree CLI/commit_queue drain/pytest conftest/sweep 库入口，audit-only 观测期，helper=install_inprocess_enforcement_audit_only）③sweep 删除遥测前置（phase=begin 含调用栈，与 done 成对）④worker 并发闸门文件锁互斥+inflight 计数口径（新鲜 pending status 闭合 TOCTOU 缝隙）；附修 GATE-GIT-GUARD-BYPASS same-sha 自指 reset 误报排除。后续：遥测证明零误伤后观测期翻硬拦"
   acquisition_method: self_build
   acquisition_source: ''

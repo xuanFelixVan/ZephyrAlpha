@@ -49252,8 +49252,8 @@ algo_submodules:
   module_id: MOD-GOV_RECONCILE_RUNNER
   node_id: A2
   name_zh: ② 并发闸门
-  name_en: _count_active_workers
-  plain_zh: 活跃 worker 达到上限就跳过本次 spawn，防止进程爆炸
+  name_en: _count_inflight_workers
+  plain_zh: 在途 worker（已注册会话 ∪ 新鲜 pending/running 状态文件）达到上限就跳过本次 spawn，防止进程爆炸；launch 临界区由跨进程文件锁互斥
 - module_path: src/zephyr/governance/audit/reconcile_runner.py
   module_id: MOD-GOV_RECONCILE_RUNNER
   node_id: A3
