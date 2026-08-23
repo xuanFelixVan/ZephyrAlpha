@@ -1,0 +1,187 @@
+# --- 治理锚定 ---
+# blueprint: MOD-SIG-077 | 待统筹登记（blueprint 未建，真源=缺口总账 GAP-F-18 行） | §
+# module_id: MOD-SIG-077
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# sector_attribute_mapping.yaml — 板块属性标注规则库（进攻/防御/平衡 三分类静态映射真源）
+#
+# 用途：板块页 Top10「属性」列与下游策略语境（GAP-F-18）；由
+# zephyr.signal_ashare.sector_attribute_rules 消费（load_attribute_mapping）。
+#
+# 与 config/sector_attribute_labels.yaml 的边界（防双轨）：
+#   - sector_attribute_labels.yaml = 攻/防「两族」清单，专供 MOD-SIG-060 相对强度
+#     雷达 rs_ratio = mean_ret(进攻族) − mean_ret(防御族)，族内板块须成分锚定；
+#   - 本文件 = 攻/防/平衡「三分类」属性标注规则库，面向展示与语境标注，覆盖面更宽，
+#     未锚定板块走名称关键词兜底（match_via=keyword 留痕）。
+# 实证锚定（2026-08-22，同 sector_attribute_labels.yaml 口径，881xxx 行业板 SCD-2）：
+#   银行=881386 / 保险=881395 / 公用事业(电力)=881459 / 煤炭=881002 /
+#   半导体=881319 / 通信设备=881338 / 券商=881394；其余板块 code 留空=待锚定，
+#   仅靠名称关键词匹配（match_via=keyword，精度低于 code 锚定，消费端可按需过滤）。
+# 口径：属性为静态规则标注（行业贝塔属性常识分类，初拍待实盘标定），非动态计算；
+#   同一板块只属一类（rules 自上而下首命中生效）；未命中→「未标注」（不强行归类）。
+
+version: "0.1.0"
+asof: "2026-08-23"
+source: "缺口总账 GAP-F-18 行；881xxx 锚定码同 config/sector_attribute_labels.yaml（2026-08-22 实证）"
+
+attributes:
+  offensive:
+    label: "进攻"
+    desc: "高贝塔/顺周期弹性板块——市场风险偏好上升期领涨，下跌期回撤放大"
+  defensive:
+    label: "防御"
+    desc: "低贝塔/刚需现金流板块——市场下跌期相对抗跌，风险偏好上升期跑输"
+  balanced:
+    label: "平衡"
+    desc: "攻守兼备或属性不极端板块——涨跌弹性居中"
+
+# 规则表：自上而下首命中生效；code 命中优先于 keywords 命中（代码内实现）。
+rules:
+  # ---- 防御（defensive）----
+  - key: bank
+    name: "银行"
+    attribute: defensive
+    code: "881386.SH"
+    keywords: ["银行"]
+    evidence: "2026-08-22 锚定：成分 15 家全为银行（15/15）"
+  - key: insurance
+    name: "保险"
+    attribute: defensive
+    code: "881395.SH"
+    keywords: ["保险"]
+    evidence: "2026-08-22 锚定：成分 5 家（5/6 锚中）"
+  - key: utilities_power
+    name: "公用事业(电力)"
+    attribute: defensive
+    code: "881459.SH"
+    keywords: ["电力", "公用事业", "水务", "燃气"]
+    evidence: "2026-08-22 锚定：成分 103 家，电力锚 10/10"
+  - key: coal
+    name: "煤炭"
+    attribute: defensive
+    code: "881002.SH"
+    keywords: ["煤炭"]
+    evidence: "2026-08-22 锚定：成分 25 家，煤炭锚 10/10"
+  - key: pharma
+    name: "医药"
+    attribute: defensive
+    code: ""
+    keywords: ["医药", "创新药", "中药", "医疗器械", "生物制品", "CXO"]
+    evidence: "刚需防御属性（初拍）；881xxx 代码待锚定"
+  - key: telecom_operator
+    name: "电信运营商"
+    attribute: defensive
+    code: ""
+    keywords: ["电信运营商", "运营商"]
+    evidence: "高分红低贝塔（初拍）；代码待锚定"
+  - key: transport_infra
+    name: "交通运输基建"
+    attribute: defensive
+    code: ""
+    keywords: ["高速公路", "港口", "机场", "铁路"]
+    evidence: "收费现金流防御（初拍）；代码待锚定"
+  # ---- 进攻（offensive）----
+  - key: tech_semiconductor
+    name: "半导体"
+    attribute: offensive
+    code: "881319.SH"
+    keywords: ["半导体", "芯片", "晶圆", "光刻", "集成电路"]
+    evidence: "2026-08-22 锚定：成分 182 家，半导体锚 10/10"
+  - key: tech_telecom
+    name: "通信设备"
+    attribute: offensive
+    code: "881338.SH"
+    keywords: ["通信设备", "光模块", "5G"]
+    evidence: "2026-08-22 锚定：成分 90 家，通信锚 8/10"
+  - key: broker
+    name: "证券(券商)"
+    attribute: offensive
+    code: "881394.SH"
+    keywords: ["证券", "券商"]
+    evidence: "2026-08-22 锚定：成分 50 家，券商锚 9/10"
+  - key: military
+    name: "军工"
+    attribute: offensive
+    code: ""
+    keywords: ["军工", "国防", "航天", "船舶", "兵器"]
+    evidence: "主题高弹性（初拍）；代码待锚定"
+  - key: computer
+    name: "计算机"
+    attribute: offensive
+    code: ""
+    keywords: ["计算机", "软件", "信创", "人工智能", "算力", "云计算"]
+    evidence: "成长高贝塔（初拍）；代码待锚定"
+  - key: new_energy
+    name: "新能源"
+    attribute: offensive
+    code: ""
+    keywords: ["新能源", "锂电", "光伏", "储能", "风电", "电池"]
+    evidence: "成长高贝塔（初拍）；代码待锚定"
+  - key: electronics
+    name: "消费电子"
+    attribute: offensive
+    code: ""
+    keywords: ["消费电子", "电子", "元器件"]
+    evidence: "成长高贝塔（初拍）；代码待锚定"
+  - key: media_games
+    name: "传媒游戏"
+    attribute: offensive
+    code: ""
+    keywords: ["传媒", "游戏", "影视", "短剧"]
+    evidence: "主题高弹性（初拍）；代码待锚定"
+  # ---- 平衡（balanced）----
+  - key: liquor
+    name: "白酒"
+    attribute: balanced
+    code: ""
+    keywords: ["白酒", "酿酒"]
+    evidence: "消费龙头攻守兼备（初拍）；代码待锚定"
+  - key: food_beverage
+    name: "食品饮料"
+    attribute: balanced
+    code: ""
+    keywords: ["食品", "饮料", "乳制品", "调味"]
+    evidence: "消费刚需偏防御但弹性高于公用（初拍）；代码待锚定"
+  - key: home_appliance
+    name: "家电"
+    attribute: balanced
+    code: ""
+    keywords: ["家电", "白色家电"]
+    evidence: "消费+地产链双重属性（初拍）；代码待锚定"
+  - key: auto
+    name: "汽车"
+    attribute: balanced
+    code: ""
+    keywords: ["汽车", "整车", "汽车零部件"]
+    evidence: "消费+制造双重属性（初拍）；代码待锚定"
+  - key: construction
+    name: "建筑建材"
+    attribute: balanced
+    code: ""
+    keywords: ["建筑", "建材", "水泥"]
+    evidence: "顺周期但弹性中等（初拍）；代码待锚定"
+  - key: steel
+    name: "钢铁"
+    attribute: balanced
+    code: ""
+    keywords: ["钢铁"]
+    evidence: "顺周期但弹性中等（初拍）；代码待锚定"
+  - key: nonferrous
+    name: "有色金属"
+    attribute: balanced
+    code: ""
+    keywords: ["有色", "铜", "铝", "稀土", "黄金"]
+    evidence: "资源品攻守双向（初拍）；代码待锚定"
+  - key: chemical
+    name: "基础化工"
+    attribute: balanced
+    code: ""
+    keywords: ["化工", "化学"]
+    evidence: "顺周期弹性中等（初拍）；代码待锚定"
+
+params:
+  unlabeled_fallback: "未标注"   # 未命中兜底标签（不强行归类）
+  first_match_wins: true          # 规则自上而下首命中生效
