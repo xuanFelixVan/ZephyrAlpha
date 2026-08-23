@@ -3,6 +3,10 @@
 # [MODULE] zephyr.compliance.behavioral_auditor
 # [DOMAIN] D_COMPLIANCE
 # [TTL] permanent
+# [处置标注 2026-08-23 AI-K3-GW-INFRA] 转 CAND 待裁定——行为审计专职引擎边际价值低：
+# 本包实测为 gov_drift 符号再导出聚合壳（非独立审计引擎），行为采样/信任检查职能已由
+# gov_code_quality/code_dedup/behavioral_trust_checker.py + behavioral_sampler.py 部分承载。
+# 候选库草稿条目见 .runtime/construction_20260823/fragments/INFRA_registry.yaml [CAND] 段，待 Owner 裁定。
 """
 
 

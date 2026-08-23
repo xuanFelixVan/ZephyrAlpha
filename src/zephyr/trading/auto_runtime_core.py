@@ -673,6 +673,47 @@ class AutoRuntimeCore:
     def a2a_registry(self) -> A2ARegistry | None:
         return self._a2a_registry
 
+    # ── 三层运行时运营中心（轻量骨架：监控/调度/自愈接口位+最小实现，INF-035 缩减补齐 2026-08-23） ──
+    # 补齐口径：不新增子系统、不改动 boot/shutdown 编排（MODIFY-GUARD），仅把既有组件
+    # （HealthMonitor / LocalModelScheduler|FeedbackLoopScheduler / ResourceOptimizationEngine）
+    # 按"监控/调度/自愈"三层语义暴露统一接口位，供运营面消费。
+    def ops_layer(self, name: str) -> object | None:
+        """三层运营接口位。name ∈ {monitor, scheduler, self_heal}；未知层 → ValueError。"""
+        if name == "monitor":
+            return self._health_monitor
+        if name == "scheduler":
+            return self.local_scheduler or self.fle_scheduler
+        if name == "self_heal":
+            if getattr(self, "_resource_engine_degraded", False):
+                return None
+            try:
+                return ResourceOptimizationEngine()
+            except Exception:  # noqa: BLE001 — 自愈层不可用即降级为 None（fail-visible 经 ops_layers_status）
+                logger.warning("ops_layer(self_heal): ResourceOptimizationEngine 不可用", exc_info=True)
+                return None
+        raise ValueError(f"未知运营层: {name}（monitor/scheduler/self_heal）")
+
+    def ops_layers_status(self) -> dict[str, dict[str, object]]:
+        """三层运营状态快照（可用性/组件名/降级标记）。"""
+        degraded = bool(getattr(self, "_resource_engine_degraded", False))
+        scheduler = self.local_scheduler or self.fle_scheduler
+        self_heal = self.ops_layer("self_heal")
+        return {
+            "monitor": {
+                "available": self._health_monitor is not None,
+                "component": type(self._health_monitor).__name__ if self._health_monitor is not None else None,
+            },
+            "scheduler": {
+                "available": scheduler is not None,
+                "component": type(scheduler).__name__ if scheduler is not None else None,
+            },
+            "self_heal": {
+                "available": self_heal is not None,
+                "component": "ResourceOptimizationEngine",
+                "degraded": degraded,
+            },
+        }
+
 
 # 5.150.2 Extract Class 协作者（God Class 治本：高内聚零耦合职责簇）
 #   - 依赖 core 状态的方法由 core 同名薄封装委托（实例级 patch 面不变）
