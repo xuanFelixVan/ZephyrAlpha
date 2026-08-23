@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-GOV_ALGO_FLOW_TRANSLATION_SYNC | docs/03_modules/_cross_layer/gov_scripts/blueprint.md
 # [MODULE] scripts.governance._shared.algo_flow_translation_sync
 # [DOMAIN] D_GOV_SCRIPTS
-# [DEPENDENCIES] scripts.governance._shared.code_algorithm_extractor
+# [DEPENDENCIES] scripts.governance._shared.code_algorithm_extractor; zephyr.shared.io.file_utils
 # [CONSUMERS] algorithm_map_rollout（步骤⑥ 翻译真源同步）；后续 reconciler 可复用检测漂移
 # [STARTUP] event_driven
 # [MATURITY] production
-# [INVARIANTS] 幂等（重复运行同结果）; 只回填空缺不覆盖人工curated字段; mtr algo_submodules 段整体派生重建; 指标注册表按 name_en 去重; 段级文本替换保人工段字节（B7 治本，禁整文件重序列化）; 运行即写审计日志
+# [INVARIANTS] 幂等（重复运行同结果）; 只回填空缺不覆盖人工curated字段; mtr algo_submodules 段整体派生重建; 指标注册表按 name_en 去重; 段级文本替换保人工段字节（B7 治本，禁整文件重序列化）; 运行即写审计日志; 注册表写入走 safe_write_text CAS（base 陈旧拒写防吞并发改）
 # [MODIFY-GUARD] 无
 # [STABILITY] evolving
 # [SAFETY] M
@@ -89,10 +89,24 @@ def _yaml_scalar_inline(value: str) -> str:
     return dumped.split(":", 1)[1].strip()
 
 
-def _validated_write(path: Path, new_text: str) -> None:
-    """ERROR_CONTRACT 落地：写前 YAML 可解析校验，损坏→报错不部分写入。"""
+def _validated_write(path: Path, new_text: str, *, base_text: str) -> None:
+    """ERROR_CONTRACT + CAS 落地（2026-08-23 陈旧快照覆写事故治本）：
+
+    1. 写前 YAML 可解析校验，损坏→报错不部分写入；
+    2. 注册表写入走 ``safe_write_text`` CAS——``base_text``（调用方读到的原文）
+       与磁盘不符即 StaleWriteRefused 拒写不落盘，防陈旧缓冲区吞掉并发改动；
+    3. ``newline="\\n"`` 保 .gitattributes eol=lf 字节级行尾约定。
+    """
+    from zephyr.shared.io.file_utils import content_sha256, safe_write_text  # noqa: PLC0415
+
     yaml.safe_load(new_text)  # 解析失败抛异常，不写文件
-    path.write_text(new_text, encoding="utf-8", newline="\n")
+    safe_write_text(
+        path,
+        new_text,
+        expected_base_sha256=content_sha256(base_text),
+        repo_root=REPO_ROOT,
+        newline="\n",
+    )
 
 
 def _fill_factor_fields_textual(text: str, fills: dict[tuple[str, str], str]) -> tuple[str, dict[str, int]]:
@@ -209,7 +223,7 @@ def _sync_factor_registry(features: list[dict]) -> dict:
         filled_zh = filled_by_field.get("name_zh", 0)
         filled_alpha = filled_by_field.get("alpha_source", 0)
         if filled_zh or filled_alpha:
-            _validated_write(_FACTOR_REGISTRY, new_text)
+            _validated_write(_FACTOR_REGISTRY, new_text, base_text=text)
     return {
         "fct_matched": sum(1 for f in features if _FCT_RE.search(f["registry"] or "")),
         "filled_name_zh": filled_zh,
@@ -269,10 +283,10 @@ def _sync_technical_indicator_registry(indicators: list[dict]) -> dict:
         "unique_key": ["name_en"],
         "indicators": entries,
     }
-    _TI_REGISTRY.write_text(
+    _validated_write(
+        _TI_REGISTRY,
         yaml.safe_dump(doc, allow_unicode=True, sort_keys=False, width=120),
-        encoding="utf-8",
-        newline="\n",
+        base_text=_TI_REGISTRY.read_text(encoding="utf-8") if _TI_REGISTRY.exists() else "",
     )
     return {"indicators": len(entries)}
 
@@ -299,7 +313,7 @@ def _sync_mtr_algo_submodules(algos: list[dict]) -> dict:
         )
     new_section = yaml.safe_dump({"algo_submodules": entries}, allow_unicode=True, sort_keys=False, width=120)
     text = _MTR.read_text(encoding="utf-8")
-    _validated_write(_MTR, _replace_top_level_section(text, "algo_submodules", new_section))
+    _validated_write(_MTR, _replace_top_level_section(text, "algo_submodules", new_section), base_text=text)
     return {"algo_submodules": len(entries)}
 
 

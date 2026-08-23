@@ -2,11 +2,11 @@
 # [BLUEPRINT] MOD-GOV_SCRIPTS
 # [MODULE] scripts.governance.harvest_candidates_from_drafts
 # [DOMAIN] D_GOV_SCRIPTS
-# [DEPENDENCIES] zephyr.shared.infra.process_pool; scripts.governance.extract_depgraph
+# [DEPENDENCIES] zephyr.shared.infra.process_pool; zephyr.shared.io.file_utils; scripts.governance.extract_depgraph
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 双注册表幂等（existing_harvest_keys候选库+existing_translation_keys翻译真源+max_harvest_seq扫描双注册表防seq碰撞）
+# [INVARIANTS] 双注册表幂等（existing_harvest_keys候选库+existing_translation_keys翻译真源+max_harvest_seq扫描双注册表防seq碰撞）; 追加写入走 safe_write_text CAS（base 陈旧拒写防吞并发追加）
 # [MODIFY-GUARD]
 # [STABILITY] evolving
 # [SAFETY] M
@@ -398,11 +398,24 @@ def build_candidate_entry(
 
 
 def append_to_file(path: Path, block: str) -> None:
-    """追加 YAML 块到文件末尾（保注释，不重写）。"""
-    with open(path, "a", encoding="utf-8") as f:
-        if not path.read_text(encoding="utf-8").endswith("\n"):
-            f.write("\n")
-        f.write(block + "\n")
+    """追加 YAML 块到文件末尾（保注释，不重写）。
+
+    CAS 接入（2026-08-23 陈旧快照覆写事故治本）：base=追加前读到的原文，
+    磁盘已被他人推进即 StaleWriteRefused 拒写不落盘，防吞并发追加；
+    newline="\\n" 保 .gitattributes eol=lf 行尾约定（原 open("a") 文本模式
+    在 Windows 写出 CRLF，随本写入一并归一到 LF）。
+    """
+    from zephyr.shared.io.file_utils import content_sha256, safe_write_text  # noqa: PLC0415
+
+    base = path.read_text(encoding="utf-8")
+    sep = "" if base.endswith("\n") else "\n"
+    safe_write_text(
+        path,
+        base + sep + block + "\n",
+        expected_base_sha256=content_sha256(base),
+        repo_root=REPO,
+        newline="\n",
+    )
 
 
 def main() -> int:
