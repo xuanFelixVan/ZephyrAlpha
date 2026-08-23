@@ -46,6 +46,7 @@ __all__ = [
     "drift_semantic_reviewer",
     "file_autoregister",
     "ide_watcher",
+    "killswitch_response_levels",
     "phase_planner",
     "progressive_disclosure_injector",
     "prompt_registry",

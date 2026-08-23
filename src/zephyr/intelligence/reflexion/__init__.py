@@ -15,10 +15,11 @@
 # [A_module] module_id=MOD-REFLEXION_AGENT | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""自反Agent 包 —— 12号文 Phase 0(P0-1~P0-4): 反思 schema/三角色骨架/L1 反思器/盘后批量入口。
+"""自反Agent 包 —— 12号文 Phase 0(P0-1~P0-4) + Phase 1(P1-1/P1-3)。
 
-Phase 0 范围: L1 单轨迹反思(规则化归因 MVP)+三角色骨架。L2(N=5 累积)/
-L3(远期)/PreFlect/ReflCtrl/投票评审壳归 Phase 1+, 本包不含。
+Phase 0 范围: L1 单轨迹反思(规则化归因 MVP)+三角色骨架。
+Phase 1 已落地: ReflCtrl 频率闸门(P1-1)+PreFlect 失败模式库(P1-3)。
+L2(N=5 累积)/L3(远期)/投票评审壳归 Phase 1+, 本包不含。
 """
 
 from __future__ import annotations
@@ -28,6 +29,8 @@ from typing import Final
 __all__: Final = [
     "batch_runner",
     "l1_reflector",
+    "preflect_store",
+    "reflctrl_gate",
     "reflection_schema",
     "roles",
 ]
