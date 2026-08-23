@@ -2359,6 +2359,42 @@ error_codes:
   module: zephyr.ml_train.learning_effect_feedback
   file: src/zephyr/ml_train/learning_effect_feedback.py
   introduced: '2026-08-23: AI-K3-GW-ML2 MOD-ML-009 新增'
+# --- 2026-08-23 GW-B4 errcode INFRA 7 ---
+- code: ZA-IT-0009
+  class: VenraDoubleLockError
+  module: zephyr.intelligence.venra_double_lock_anchor
+  file: src/zephyr/intelligence/venra_double_lock_anchor.py
+  introduced: '2026-08-23: AI-K3-GW-INFRA 阶段14 MOD-INF-049 新增'
+- code: ZA-IT-0010
+  class: SentinelDetectorError
+  module: zephyr.intelligence.sentinel_hallucination_detector
+  file: src/zephyr/intelligence/sentinel_hallucination_detector.py
+  introduced: '2026-08-23: AI-K3-GW-INFRA 阶段14 MOD-INF-050 新增'
+- code: ZA-EX-0022
+  class: InvalidPerformanceInputError
+  module: zephyr.ex_core.performance_monitor
+  file: src/zephyr/ex_core/performance_monitor.py
+  introduced: '2026-08-23: AI-K3-GW-INFRA 阶段14 MOD-EX-036 新增'
+- code: ZA-MLT-0009
+  class: AdversarialValidationError
+  module: zephyr.ml_train.adversarial_robustness_validator
+  file: src/zephyr/ml_train/adversarial_robustness_validator.py
+  introduced: '2026-08-23: AI-K3-GW-INFRA 阶段14 MOD-ML-005 新增'
+- code: ZA-MLT-0010
+  class: DigitalTwinError
+  module: zephyr.ml_train.strategy_digital_twin
+  file: src/zephyr/ml_train/strategy_digital_twin.py
+  introduced: '2026-08-23: AI-K3-GW-INFRA 阶段14 MOD-ML-006 新增'
+- code: ZA-MLT-0011
+  class: MetaLearningRsiError
+  module: zephyr.ml_train.meta_learning_rsi
+  file: src/zephyr/ml_train/meta_learning_rsi.py
+  introduced: '2026-08-23: AI-K3-GW-INFRA 阶段14 MOD-ML-008 新增'
+- code: ZA-TR-0022
+  class: VoteConfigError
+  module: zephyr.orchestrator.voting_first_multi_agent
+  file: src/zephyr/orchestrator/voting_first_multi_agent.py
+  introduced: '2026-08-23: AI-K3-GW-INFRA 阶段14 MOD-INF-048 新增'
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）
