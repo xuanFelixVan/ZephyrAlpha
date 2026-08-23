@@ -42030,6 +42030,217 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: '用内存 mock 数据验证九条查询接口的输出结构与异常纪律，不连真实数据库。'
+# --- 2026-08-23 长城任务批3 plain_zh 翻译 ---
+- module_path: src/zephyr/ex_core/miniqmt_channel_manager.py
+  domain_id: D_EX_CORE
+  name_zh: miniQMT通道管理器
+  name_en: 'miniqmt_channel_manager'
+  desc_zh: 'xtquant通道底座——连接生命周期/心跳/断线重连状态机，通道不可用全Fail-Closed'
+  desc_en: ''
+  plain_zh: 'miniQMT下单通道的看门人：负责连上、心跳探活、断了有界重连；通道没连好时任何下单调用一律拦下，绝不放行；它自己不真连QMT，传输层是注入的，测试用假货就能全验。'
+- module_path: src/zephyr/ex_core/order_splitter.py
+  domain_id: D_EX_CORE
+  name_zh: 拆单器
+  name_en: 'order_splitter'
+  desc_zh: 'TWAP/VWAP拆单（无Level-2依赖，日线/分钟线历史量能曲线权重注入），整手对齐+Decimal守恒'
+  desc_en: ''
+  plain_zh: '把大单切成小单的纯函数：TWAP平均分，VWAP按历史量能曲线分；每片都对齐到合法申报股数，末片兜底零股；量能曲线没给就拒单，绝不偷偷降级。'
+- module_path: src/zephyr/ex_core/live_simulation_switcher.py
+  domain_id: D_EX_CORE
+  name_zh: 实盘/模拟切换开关
+  name_en: 'live_simulation_switcher'
+  desc_zh: '默认模拟盘；切实盘须显式确认令牌+留痕（令牌只存指纹）；切回模拟免令牌'
+  desc_en: ''
+  plain_zh: '实盘和模拟盘的总闸门：生下来就是模拟盘；想切实盘必须掏出Owner签发的令牌，验证不过就原地不动；切回模拟随时放行；每次切换都留痕，但令牌原文绝不落盘。'
+- module_path: src/zephyr/ex_core/execution_strategy_selector.py
+  domain_id: D_EX_CORE
+  name_zh: 执行策略选择器
+  name_en: 'execution_strategy_selector'
+  desc_zh: '按订单占ADV比例分档选限价直发/TWAP/VWAP，>15%ADV拒判须上游拆分'
+  desc_en: ''
+  plain_zh: '给订单挑执行方式的分诊台：小单（<1%日均量）直接限价发，中单走TWAP，大单走VWAP，超过15%日均量的巨单直接拒收让上游先拆；没有日均量数据就拒判，不拍脑袋。'
+- module_path: src/zephyr/ex_core/services/live_portfolio.py
+  domain_id: D_EX_CORE
+  name_zh: 实盘组合服务
+  name_en: 'live_portfolio'
+  desc_zh: '持仓/可用资金/净值视图，数据唯一入口=MOD-RK-25 RiskSnapshot注入'
+  desc_en: ''
+  plain_zh: '实盘账户的读数窗口：持仓、可用资金、净值都从一个统一快照来；快照供不上就拒绝出视图，绝不给你看一个假空仓；缺价的持仓如实标缺，不补零。'
+- module_path: src/zephyr/plan_engine/trading_debate.py
+  domain_id: D_PLAN
+  name_zh: 交易域多空辩论编排器
+  name_en: 'Trading Debate Orchestrator'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '作战室 W4 辩论台的四角色链：牛研究员和熊研究员各摆最多三条论点吵一架， 交易员听完决定照做还是降半档，风控官最后一票否决——竞价撤单率超 0.6 的进攻 方案直接枪毙标红。本身不调大模型，论点全部从外面喂进来。'
+- module_path: src/zephyr/plan_engine/sit_out_list.py
+  domain_id: D_PLAN
+  name_zh: 禁做清单生成器
+  name_en: 'Sit-Out List Generator'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '把"今天坚决不碰什么"列成清单：议息交割等 blackout 事件时段不交易、 当天止损的票不许当天追回、跌停板不撬、作战池之外不新开仓。违反就等于 预案外操作，复盘时记一笔"执行不一致"。'
+- module_path: src/zephyr/plan_engine/auction_hit_recorder.py
+  domain_id: D_PLAN
+  name_zh: 竞价命中分支判定记录器
+  name_en: 'Auction Hit Recorder'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '盘中 10 点判定"今天实际走了 9 格预案里的哪一格"并记账：开盘涨跌幅 定高中低开、前 30 分钟走势定高中低走，再捎上竞价三细节（偏离/量比/撤单）， 供作战室观察哨点亮格子、盘后复盘对账。'
+- module_path: src/zephyr/signal_ashare/war_pool_generator.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 作战池生成器
+  name_en: 'War Pool Generator'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '每天挑 2~3 只"今天就盯它"的票：必须是主线板块的龙头（结构）， 又必须有业绩预告/新闻等催化剂（催化），两腿交集才入池。交集是空就空着， 绝不硬凑——池外的票不碰，注意力也是风险预算。'
+- module_path: src/zephyr/signal_ashare/screening_funnel_report.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 筛选漏斗全链计数器
+  name_en: 'Screening Funnel Report'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '把选股漏斗每一层（几千只→1200→300→50→…→作战池）的进数、出数、 通过率、每层因为什么理由踢掉了多少只，全部结构化成一张报表，供盘中实时页 决策链展示。只管计数，不动筛选本身。'
+- module_path: src/zephyr/signal_ashare/limit_up_reason_attribution.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 涨停原因归因器
+  name_en: 'Limit-Up Reason Attribution'
+  desc_zh: 'news_data×涨停股 join 归因：个股新闻直命中/板块主题聚合双条件联动/无明确归因三级封闭（GAP-F-14 MVP）。'
+  desc_en: 'Limit-up reason attribution via news_data join (direct news hit / sector linkage / unattributed).'
+  plain_zh: '涨停原因归因器。查涨停股票有没有新闻点名、板块有没有共同题材，给出"为什么涨停"的三级答案，查不到就老实说不知道。'
+- module_path: src/zephyr/signal_ashare/index_contribution_decomposer.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 大盘分时贡献度拆解器
+  name_en: 'Index Intraday Contribution Decomposer'
+  desc_zh: '分钟级板块-指数贡献管线：板块分钟收益×权重分摊指数涨跌，恒等式残差留痕（GAP-F-15）。'
+  desc_en: 'Minute-level sector-to-index contribution decomposition with identity residual tracking.'
+  plain_zh: '贡献度拆解器。把大盘每一分钟的涨跌拆成"各板块各贡献了多少"，拆不干净的部分单独记账不硬塞。'
+- module_path: src/zephyr/signal_ashare/t0_point_analyzer.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 做T点位分析器
+  name_en: 'T0 Intraday Point Analyzer'
+  desc_zh: '做T点位（回踩均价/偏离回归/量价背离三族+MOD-SIG-024适配腿）+10/30分钟命中回验统计（GAP-F-25）。'
+  desc_en: 'T0 intraday point signals (VWAP pullback / deviation revert / volume-price divergence + MOD-SIG-024 leg) with +10/+30min hit-rate verification.'
+  plain_zh: '做T点位分析器。分时图上标"何时买何时卖"，事后统计每个信号10/30分钟后灵不灵。'
+- module_path: src/zephyr/signal_ashare/index_resonance_scorer.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 指数共振综合评分器
+  name_en: 'Index Resonance Scorer'
+  desc_zh: '指数级七族投票（MACD/KDJ/RSI/量能/均线/BOLL/趋势）加权合成买/卖/中性+置信度+共振x/7（GAP-F-31）。'
+  desc_en: 'Index-level 7-family weighted voting (MACD/KDJ/RSI/volume/MA/BOLL/trend) to buy/sell/neutral + confidence + resonance x/7.'
+  plain_zh: '指数共振评分器。七个指标家族投票，几票看多几票看空，合成"买/卖/中性"结论和共振强度。'
+- module_path: src/zephyr/nlp/news_dual_tagger.py
+  domain_id: D_DATA
+  name_zh: 新闻双标签生成器
+  name_en: 'News Dual Tagger'
+  desc_zh: '可预测性标签（日历+资金痕迹）+预期差标签（实际 vs analyst_forecast 一致预期锚）双封闭集合打标（GAP-F-21）。'
+  desc_en: 'News dual tagging: predictability (calendar + capital trace) and expectation gap (actual vs consensus anchor).'
+  plain_zh: '新闻双标签器。给每条新闻贴两个签——"这事能不能提前知道"和"比大家预期好还是差"，没锚就标无锚不瞎编。'
+- module_path: src/zephyr/data/foreign_market_coverage.py
+  domain_id: D_DATA
+  name_zh: 外盘标的覆盖核查器
+  name_en: 'Foreign Market Coverage Checker'
+  desc_zh: '外盘12标的库内覆盖只读核查（covered/stale/missing三态）+缺口标的采集配置位（禁真连外网采集）（GAP-F-23/D3）。'
+  desc_en: 'Read-only coverage check for 12 foreign-market targets plus collector config slots for gaps.'
+  plain_zh: '外盘覆盖核查器。盘点道指纳指恒生等12个外盘标的哪些有数据哪些没有，缺的只留采集配置草案不动手抓。'
+- module_path: src/zephyr/reporting/alert_aggregator.py
+  domain_id: D_REPORTING
+  name_zh: 告警聚合器
+  name_en: 'Alert Aggregator'
+  desc_zh: '风控事件+数据质量门+回测完成三源→统一告警流+四级严重度+通知管理器渠道派发（GAP-F-28）。'
+  desc_en: 'Unify risk/data-quality/backtest alerts into one stream with severity grading and notification dispatch.'
+  plain_zh: '告警聚合器。风控报警、数据质量报警、回测完成消息收进一条流，按严重程度排序，重要的才推送。'
+- module_path: src/zephyr/ml_train/implementations/density_quantile_trainer.py
+  domain_id: D_ML_TRAIN
+  name_zh: 轻量密度头训练器
+  name_en: 'Density Quantile Trainer'
+  desc_zh: 'GAP-F-34 密度预测主路线 MVP（ML-DENSITY-001）。sklearn HGB 分位数头（lightgbm 无依赖降级），逐分位数拟合次日收益分布 q10~q90，分位数序列单调修正输出供 GAP-F-01 消费。'
+  desc_en: 'GAP-F-34 density prediction MVP (ML-DENSITY-001). sklearn HGB quantile head (lightgbm absent), per-quantile fits for next-day return distribution q10~q90, monotone-corrected quantile series for GAP-F-01.'
+  plain_zh: '轻量密度头。不猜涨跌一个点，而是给出明天收益的一条分布带（q10到q90五条线），作战室 W2 概率矩阵的输入源。'
+- module_path: src/zephyr/ml_train/implementations/limit_up_classifier.py
+  domain_id: D_ML_TRAIN
+  name_zh: 打板涨停分类器骨架
+  name_en: 'Limit-Up Classifier Skeleton'
+  desc_zh: 'GAP-F-35 候选 ML-CLS-001 骨架。特征接口位（封单比/首封分钟/开板次数等）+ 校验门；train 恒抛 ZA-MLT-0003 禁真训练（B-007）。'
+  desc_en: 'GAP-F-35 candidate ML-CLS-001 skeleton. Feature interface slots (seal ratio/first-seal minutes/open-board count) + validation gate; train always raises ZA-MLT-0003 (B-007).'
+  plain_zh: '打板分类器骨架。特征清单和校验门已就位，真训练被锁死，等 Owner 批准和数据源就绪。'
+- module_path: src/zephyr/ml_train/implementations/seat_pattern_classifier.py
+  domain_id: D_ML_TRAIN
+  name_zh: 席位形态分类器骨架
+  name_en: 'Seat Pattern Classifier Skeleton'
+  desc_zh: 'GAP-F-35 候选 ML-CLS-002 骨架。龙虎榜席位特征接口位；train 恒抛 ZA-MLT-0003（前提 JOB-076 数据积累）。'
+  desc_en: 'GAP-F-35 candidate ML-CLS-002 skeleton. Dragon-tiger seat feature slots; train always raises ZA-MLT-0003 (pending JOB-076 data).'
+  plain_zh: '席位分类器骨架。跟着哪些席位买能吃肉这件事先立了数据接口，真训练等龙虎榜数据攒够再说。'
+- module_path: src/zephyr/ml_train/services/sentiment_sft_entry.py
+  domain_id: D_ML_TRAIN
+  name_zh: 舆情 SFT 训练入口桩
+  name_en: 'Sentiment SFT Training Entry'
+  desc_zh: 'GAP-F-35 候选 ML-SFT-001 统一训练入口。dry_run 产训练计划（样本校验/标签分布）；dry_run=False 恒抛 ZA-MLT-0003——大模型真训练属 B-007 人工闸门。'
+  desc_en: 'GAP-F-35 candidate ML-SFT-001 unified training entry. dry_run yields plan (sample validation/label distribution); dry_run=False raises ZA-MLT-0003 (B-007 gate).'
+  plain_zh: '舆情大模型微调的总开关。AI 只能出训练计划清单，按真训练按钮的必须是 Owner。'
+- module_path: src/zephyr/ml_train/training_pipeline/__init__.py
+  domain_id: D_ML_TRAIN
+  name_zh: 训练管线包入口
+  name_en: 'Training Pipeline Package'
+  desc_zh: 'MOD-ML-001 训练管线编排包入口（四段编排器导出）。'
+  desc_en: 'MOD-ML-001 training pipeline package entry (four-stage orchestrator exports).'
+  plain_zh: '训练管线包入口，导出"数据到登记"四段编排器。'
+- module_path: src/zephyr/ml_train/training_pipeline/pipeline_orchestrator.py
+  domain_id: D_ML_TRAIN
+  name_zh: 训练管线编排器
+  name_en: 'Training Pipeline Orchestrator'
+  desc_zh: 'MOD-ML-001。load→train→evaluate→register 四段顺序编排；失败短路；register 只产 candidate 晋升草稿禁直改注册表。'
+  desc_en: 'MOD-ML-001. Four-stage load/train/evaluate/register orchestration; failure short-circuits; register emits candidate draft only.'
+  plain_zh: '训练流水线管家。数据、训练、评估、登记四步按顺序走，任何一步炸了就停，登记只出草稿不动真注册表。'
+- module_path: src/zephyr/ml_train/ai_operator/__init__.py
+  domain_id: D_ML_TRAIN
+  name_zh: AI 操作员包入口
+  name_en: 'AI Operator Package'
+  desc_zh: 'MOD-ML-002 AI 操作员包入口（操作员/批准令牌/留痕记录导出）。'
+  desc_en: 'MOD-ML-002 AI operator package entry (operator/approval token/audit record exports).'
+  plain_zh: 'AI 操作员包入口。'
+- module_path: src/zephyr/ml_train/ai_operator/operator.py
+  domain_id: D_ML_TRAIN
+  name_zh: AI 操作员
+  name_en: 'AI Operator'
+  desc_zh: 'MOD-ML-002。模型上线/下线/巡检三封装；批准令牌 scope 校验；全操作留痕（含拒绝）；testing 封顶——online 只产申请记录永不真生效。'
+  desc_en: 'MOD-ML-002. Model online/offline/inspection wrappers; approval-token scope check; full audit trail incl. rejections; testing-capped — online never takes effect.'
+  plain_zh: 'AI 操作员。上下线只写申请单等 Owner 执行，巡检随便做；每一次动作包括被拒的都记账。'
+- module_path: src/zephyr/ml_train/training_dataset_manager/__init__.py
+  domain_id: D_ML_TRAIN
+  name_zh: 训练数据集管理包入口
+  name_en: 'Training Dataset Manager Package'
+  desc_zh: 'MOD-ML-003 训练数据集管理包入口（快照/血缘导出）。'
+  desc_en: 'MOD-ML-003 training dataset manager package entry (snapshot/lineage exports).'
+  plain_zh: '训练数据集管理包入口。'
+- module_path: src/zephyr/ml_train/training_dataset_manager/manager.py
+  domain_id: D_ML_TRAIN
+  name_zh: 训练数据集管理器
+  name_en: 'Training Dataset Manager'
+  desc_zh: 'MOD-ML-003。数据集版本化（单调递增）/sha256 内容快照/parent_version 血缘链回溯；内存态默认，DB 注入位预留。'
+  desc_en: 'MOD-ML-003. Dataset versioning (monotonic)/sha256 snapshots/parent_version lineage walk; in-memory default with DB injection slot.'
+  plain_zh: '训练数据账本。每版数据按内容算指纹、记谁从哪版改来，可按版本号取回任何历史快照。'
+- module_path: src/zephyr/ml_train/gray_release_shadow_deployer.py
+  domain_id: D_ML_TRAIN
+  name_zh: 灰度/影子部署器
+  name_en: 'Gray Release Shadow Deployer'
+  desc_zh: 'MOD-ML-004。影子会话只记录预测用于观测对比，effective 恒 False 永不生效（B-009）；同模型单活跃会话；聚合报告供效果回喂。'
+  desc_en: 'MOD-ML-004. Shadow sessions record predictions for observation only, effective always False (B-009); one active session per model; aggregate report for feedback.'
+  plain_zh: '影子部署器。新模型上场先只看不碰——预测全记下来做对比，绝不进真实决策。'
+- module_path: src/zephyr/ml_train/meta_learning_evolution.py
+  domain_id: D_ML_TRAIN
+  name_zh: 元学习演进经验库
+  name_en: 'Meta Learning Evolution Store'
+  desc_zh: 'MOD-ML-007。跨任务经验库（任务/上下文/指标三要素）；按上下文精确匹配推荐历史最佳配置作训练先验；纯标准库轻量实现。'
+  desc_en: 'MOD-ML-007. Cross-task experience store (task/context/metrics); exact-context-match recommendation of best historical config as training prior; stdlib-only.'
+  plain_zh: '元学习经验库。记住每个任务在什么市况下什么配置考得最好，新任务开局先翻历史答案。'
+- module_path: src/zephyr/ml_train/learning_effect_feedback.py
+  domain_id: D_ML_TRAIN
+  name_zh: 学习效果反馈回喂器
+  name_en: 'Learning Effect Feedback'
+  desc_zh: 'MOD-ML-009。预测 vs 实际算 Spearman IC 与 IC 衰减；衰减超阈值产 retrain 信号；triggered_training 恒 False——真训练触发权属 Owner（B-007）。'
+  desc_en: 'MOD-ML-009. Spearman IC and IC decay of predictions vs actuals; retrain signal above decay threshold; triggered_training always False (B-007).'
+  plain_zh: '学习效果体温计。模型考分差了就举"该重训了"的牌子，但举牌子不等于自己去按训练按钮。'
 battle_map_steps:
 - step_id: BM-BUY-04
   flow_stage: buy_flow

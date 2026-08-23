@@ -18987,3 +18987,120 @@ entries:
   - '设计态账波次3'
   created: '2026-08-23'
   last_updated: '2026-08-23'
+
+- issue_id: '#ARCH-182'
+  title: 真单通道调用统一经 MOD-EX-058 通道管理器 Fail-Closed 闸门
+  severity: P1
+  category: 架构决策
+  adjudication: >-
+    约束三（miniQMT 唯一实盘通道）+ KS-L3 通道断开检测收敛单一工程落点：通道生命周期/心跳/
+    重连状态机收敛到 MiniQmtChannelManager（ChannelTransport 协议注入不真连 QMT）；真单调用方
+    须经 require_ready/run_channel_call 过闸，非 CONNECTED 一律拒出；重连上限 3 次对齐 55 号
+    §3.1A。MiniQmtBroker 生产接线时把 xttrader 会话适配为 ChannelTransport 实现。
+  impact:
+    - 'src/zephyr/ex_core/miniqmt_channel_manager.py（testing）'
+  fix_phase: '已落地（2026-08-23，AI-K3-GW-EXEC）'
+  status: resolved
+  related_rules:
+  - '宪章§3约束三'
+  created: '2026-08-23'
+  last_updated: '2026-08-23'
+
+- issue_id: '#ARCH-183'
+  title: 执行算法集门禁降级为 {限价直发, TWAP, VWAP}（无 Level-2/IS 依赖）
+  severity: P1
+  category: 架构决策
+  adjudication: >-
+    EX-014 原门禁依赖 Level-2 订单簿深度撞硬边界约束三；EX-035 原门禁含 OKX/XTP/CTP 超约束三。
+    已修正依赖图真源（docs/_working/依赖图/08-D-EX-CORE-执行核心域.md 行级两处）。
+    裁定：拆单器只实现 TWAP/VWAP（VWAP 权重调用方注入历史量能曲线，缺曲线 Fail-Closed）；
+    策略选择器按 ADV 分档（<1% 限价直发/1-5% TWAP/5-15% VWAP/>15% 拒判）；IS/Almgren-Chriss
+    等由 ex_sor AlgoTradingEngine 既有件承载不重造。Level-2 开通后恢复门禁须走架构裁定。
+  impact:
+    - 'src/zephyr/ex_core/order_splitter.py / live_simulation_switcher.py / execution_strategy_selector.py（testing）'
+    - 'docs/_working/依赖图/08-D-EX-CORE-执行核心域.md（门禁描述两处修正）'
+  fix_phase: '已落地（2026-08-23，AI-K3-GW-EXEC）'
+  status: resolved
+  related_rules:
+  - '宪章§3约束三'
+  - '40_execution_broker §决策②'
+  created: '2026-08-23'
+  last_updated: '2026-08-23'
+
+- issue_id: '#ARCH-184'
+  title: 'MOD-PLAN-013/014/015 + MOD-SIG-066/067 波次4五件——交易辩论/禁做清单/竞价命中/作战池/漏斗计数（GAP-F-03/05/06/08/11）'
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    缺口总账波次4 P1 作战室补全五件：①GAP-F-03 trading_debate 四角色链复用 agent_debate
+    裁决引擎（交易域零 LLM 调用，角色全注入位），D3 fake_ratio>0.6 且进攻→风控自动 VETO
+    （45号 W4 硬规则）；②GAP-F-06 war_pool_generator 主线龙头×催化剂交集 2~3 票，空交集
+    不强行出池；③GAP-F-05 sit_out_list blackout/止损/跌停/池外四源合成纯函数零 DB；
+    ④GAP-F-08 auction_hit_recorder 盘中 10:00 命中格判定复用 MOD-PLAN-008 口径零分叉，
+    prediction_log auction_hit 族幂等保首条；GAP-F-D2 实测 auction_snapshot 31,261 行/6 日 +
+    auction_book 144 万行/13 日，数据底座可用按真实源施工；⑤GAP-F-11 screening_funnel_report
+    只读适配批2漏斗四件产出 L1-L6 全链计数。
+  impact:
+    - 'plan_engine 三件 + signal_ashare 两件（testing）；83 新用例全绿 + plan_engine 310 / signal_ashare 1109 零回归'
+  fix_phase: '已落地（2026-08-23，AI-K3-GW-GAPP1A）'
+  status: resolved
+  related_rules:
+  - 'GAP-F-03/05/06/08/11'
+  - '45号 W1/W3/W4/W5'
+  created: '2026-08-23'
+  last_updated: '2026-08-23'
+
+- issue_id: '#ARCH-185'
+  title: 外盘 12 标的覆盖缺口 8 项 + kline_us_daily 垃圾数据处置（GAP-F-D3 实证）
+  severity: P2
+  category: 数据缺口
+  adjudication: >-
+    GAP-F-D3 只读核查（2026-08-23）：覆盖 4/12（DJI/IXIC/SPX us_index 各 29 行；A50 仅 08-22
+    单日盘中快照）；缺口 8/12（恒生/日经/KOSPI/DXY/USDCNH/WTI/黄金/美债10Y——全库无，
+    美债10Y 可经 fred_provider DGS10 接线）；kline_us_daily 仅 1 空 symbol 19 行垃圾数据建议清理。
+    裁定：缺口采集接线走 tasks.yaml+CTR（Owner 窗口）；FOREIGN_COLLECTOR_SLOTS 8 条配置位
+    已在 MOD-DAT-foreign_coverage 备好；本任务不真连外网采集。
+  impact:
+    - 'src/zephyr/data/foreign_market_coverage.py（testing，核查器+配置位）'
+  fix_phase: '核查已落地；采集接线待 Owner 窗口'
+  status: open
+  related_rules:
+  - 'GAP-F-23/D3'
+  created: '2026-08-23'
+  last_updated: '2026-08-23'
+
+- issue_id: '#ARCH-186'
+  title: sklearn 隐式依赖显式化裁定（lightgbm 缺失降级链）
+  severity: P2
+  category: 技术债
+  adjudication: >-
+    GAP-F-34 派单首选 LightGBM 分位数头；实测 lightgbm 无安装且 pyproject 无声明，按派单
+    降级条款用 sklearn HistGradientBoostingRegressor(loss='quantile')（sklearn 1.8.0 环境已装
+    但 pyproject 未声明——ml_train 域 sentiment_sft_trainer 用 sklearn.metrics 同属隐式依赖先例）。
+    待裁定：是否将 sklearn 显式入 pyproject dependencies（ml_train 全域已事实依赖）。
+  impact:
+    - 'src/zephyr/ml_train/implementations/density_quantile_trainer.py（testing，HGB 分位数头）'
+  fix_phase: '降级已落地；依赖声明显式化待 Owner 裁定'
+  status: open
+  related_rules:
+  - 'GAP-F-34'
+  created: '2026-08-23'
+  last_updated: '2026-08-23'
+
+- issue_id: '#ARCH-187'
+  title: MOD-SIG-066/067 并发撞号事件——片段登记编号预分配收归主代理
+  severity: P2
+  category: 治理教训
+  adjudication: >-
+    长城任务批3 并发施工中 GAPP1A（war_pool_generator/screening_funnel_report）与 GAPP1B
+    （limit_up_reason_attribution/index_contribution_decomposer）同时占用 MOD-SIG-066/067。
+    处置：GAPP1B 两件改号 MOD-SIG-070/071（文件头×4+depgraph 四节点 UPDATE 完成）。
+    治本：后续并发批次的 MOD 编号由主代理派单时预分配号段，子代理禁自选号。
+  impact:
+    - 'signal_ashare/limit_up_reason_attribution.py / index_contribution_decomposer.py 及测试件头部改号'
+  fix_phase: '已落地（2026-08-23 主代理改号+depgraph 同步）'
+  status: resolved
+  related_rules:
+  - 'D1查重纪律'
+  created: '2026-08-23'
+  last_updated: '2026-08-23'

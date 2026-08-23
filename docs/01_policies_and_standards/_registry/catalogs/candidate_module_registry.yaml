@@ -7966,3 +7966,214 @@ entries:
   estimated_complexity: 中
   acquisition_method: in_progress
   last_review_outcome: '2026-08-23 65/256（+26），持续工程'
+
+- id: CAND-PLAN-006
+  name: 交易域多空辩论四角色链实例化（GAP-F-03）
+  aliases: ['多空辩论', 'trading debate']
+  domain: D_PLAN
+  domain_status: active
+  sub_layer: plan_engine 决策层
+  description: 牛/熊研究员→交易员→风控四角色链，复用 agent_debate 裁决引擎（零 LLM 调用，全注入位）；D3 fake_ratio>0.6 进攻方案风控自动 VETO。
+  capability: trading_debate
+  problem_it_solves: 作战室 W4 辩论台无交易域实例
+  keywords: ['debate', 'warroom']
+  upstream_deps: ['agent_debate']
+  downstream_consumers: ['作战室 W4', 'GAP-F-44']
+  estimated_complexity: 中
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-PLAN-013，testing），#ARCH-184'
+- id: CAND-SIG-026
+  name: 作战池生成器（GAP-F-06）
+  aliases: ['作战池']
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: signal_ashare 作战池
+  description: 主线板块龙头（064/062）×个股催化剂交集→2~3 票；空交集不强行出池。
+  capability: war_pool_generator
+  problem_it_solves: 每日作战焦点无生成器
+  keywords: ['war pool', 'catalyst']
+  upstream_deps: ['MOD-SIG-064', 'MOD-SIG-062']
+  downstream_consumers: ['作战室', 'GAP-F-05']
+  estimated_complexity: 中
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-SIG-066，testing），#ARCH-184'
+- id: CAND-PLAN-007
+  name: 禁做清单生成器（GAP-F-05）
+  aliases: ['禁做清单', 'sit-out list']
+  domain: D_PLAN
+  domain_status: active
+  sub_layer: plan_engine 风控规则层
+  description: blackout 事件禁交易+当日止损禁反手+跌停不撬板+池外不碰四源合成 sit-out list。
+  capability: sit_out_list
+  problem_it_solves: 预案外操作无事前拦截清单
+  keywords: ['sit out', 'blackout']
+  upstream_deps: ['event_calendar', 'GAP-F-06']
+  downstream_consumers: ['作战室 W5', '复盘页']
+  estimated_complexity: 低
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-PLAN-014，testing），#ARCH-184'
+- id: CAND-PLAN-008
+  name: 竞价命中分支判定持久化（GAP-F-08）
+  aliases: ['竞价命中']
+  domain: D_PLAN
+  domain_status: active
+  sub_layer: plan_engine 盘中判定层
+  description: 盘中 10:00 判定 9 格预案命中格+竞价三细节，prediction_log auction_hit 族幂等落库；复用 MOD-PLAN-008 判定口径。
+  capability: auction_hit_recorder
+  problem_it_solves: 预案命中无盘中持久化，W0/W3/复盘页无数据
+  keywords: ['auction', 'hit', 'scenario']
+  upstream_deps: ['MOD-PLAN-008', 'auction_snapshot/auction_book']
+  downstream_consumers: ['作战室 W0/W3', '复盘页']
+  estimated_complexity: 中
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-PLAN-015，testing），#ARCH-184'
+- id: CAND-SIG-027
+  name: 筛选漏斗 L1-L6 全链计数（GAP-F-11）
+  aliases: ['漏斗计数']
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: signal_ashare 漏斗观测层
+  description: 决策链每层命中明细结构化（进/出/通过率/剔除理由），只读适配 046/047/048/049 产出。
+  capability: screening_funnel_report
+  problem_it_solves: 漏斗各层无量化观测，无法回答"票在哪层被踢"
+  keywords: ['funnel', 'screening']
+  upstream_deps: ['MOD-SIG-046', 'MOD-SIG-047', 'MOD-SIG-048', 'MOD-SIG-049']
+  downstream_consumers: ['盘中实时页决策链']
+  estimated_complexity: 低
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-SIG-067，testing），#ARCH-184'
+- id: CAND-SIG-028
+  name: 涨停原因归因（GAP-F-14）
+  aliases: ['涨停归因']
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: signal_ashare 归因层
+  description: news_data×涨停股 join：个股新闻直命中/板块主题聚合双条件联动/无明确归因三级封闭。
+  capability: limit_up_reason_attribution
+  problem_it_solves: 板块页梯队缺"涨停原因"列
+  keywords: ['limit up', 'attribution', 'news']
+  upstream_deps: ['news_data', 'limit_up_down']
+  downstream_consumers: ['板块页']
+  estimated_complexity: 低
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-SIG-070，testing）'
+- id: CAND-SIG-029
+  name: 大盘分时贡献度拆解（GAP-F-15）
+  aliases: ['贡献度拆解']
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: signal_ashare 指数层
+  description: 分钟级板块-指数贡献管线：板块分钟收益×权重分摊指数涨跌，恒等式残差留痕。
+  capability: index_contribution_decomposition
+  problem_it_solves: 大盘涨跌拆不到板块贡献
+  keywords: ['index', 'contribution', 'intraday']
+  upstream_deps: ['板块分钟线', '指数分钟线']
+  downstream_consumers: ['大盘页', 'GAP-F-16']
+  estimated_complexity: 中
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-SIG-071，testing）'
+- id: CAND-NLP-001
+  name: 新闻双标签生成器（GAP-F-21）
+  aliases: ['新闻双标签', '预期差']
+  domain: D_DATA
+  domain_status: active
+  sub_layer: nlp 标签层
+  description: 可预测性标签（日历+资金痕迹）+预期差标签（实际 vs analyst_forecast 一致预期锚）双封闭集合；GAP-F-D1 实测锚可用（53,918 行/2,519 标的/约 1 月窗）。
+  capability: news_dual_tagging
+  problem_it_solves: 新闻缺"可预测性/预期差"结构化标签
+  keywords: ['news', 'predictability', 'expectation gap']
+  upstream_deps: ['analyst_forecast', 'event_calendar']
+  downstream_consumers: ['新闻页', '复盘页']
+  estimated_complexity: 中
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-NLP-DUALTAG-001，testing）'
+- id: CAND-DAT-005
+  name: 外盘 12 标的覆盖核查与补齐（GAP-F-23）
+  aliases: ['外盘覆盖']
+  domain: D_DATA
+  domain_status: active
+  sub_layer: data 覆盖核查层
+  description: 12 标的库内覆盖只读核查（covered/stale/missing 三态）；实测覆盖 4/12 缺口 8/12；FOREIGN_COLLECTOR_SLOTS 配置位备好，采集接线走 tasks.yaml+CTR（Owner 窗口）。
+  capability: foreign_market_coverage
+  problem_it_solves: 外盘标的覆盖不清，跨市场传导数据底座不全
+  keywords: ['foreign market', 'coverage']
+  upstream_deps: ['us_index', 'fred_provider']
+  downstream_consumers: ['跨市场传导传感器', 'GAP-F-24']
+  estimated_complexity: 低
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 核查器建成（MOD-DAT-foreign_coverage，testing）；采集接线 Owner 窗口，#ARCH-185'
+- id: CAND-SIG-030
+  name: 做T点位算法+信号回验管线（GAP-F-25）
+  aliases: ['做T点位']
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: signal_ashare 日内层
+  description: 做T点位三族（回踩均价/偏离回归/量价背离）+MOD-SIG-024 适配腿 MVP；10/30 分钟命中回验统计（信号方向回验，成本归执行层）。
+  capability: t0_point_analysis
+  problem_it_solves: 做T 无点位算法与命中回验
+  keywords: ['t0', 'intraday', 'hit rate']
+  upstream_deps: ['MOD-SIG-024']
+  downstream_consumers: ['T分析页']
+  estimated_complexity: 中
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-SIG-068，testing）'
+- id: CAND-RPT-006
+  name: 告警聚合器（GAP-F-28）
+  aliases: ['告警聚合']
+  domain: D_REPORTING
+  domain_status: active
+  sub_layer: reporting 告警层
+  description: 风控事件+数据质量门+回测完成三源→统一告警流+四级严重度+通知管理器渠道派发；告警 id 确定性哈希幂等。
+  capability: alert_aggregation
+  problem_it_solves: 三类告警散落无统一流
+  keywords: ['alert', 'aggregation', 'severity']
+  upstream_deps: ['风控事件源', 'MOD-L08-001']
+  downstream_consumers: ['通知渠道', '风控实时页']
+  estimated_complexity: 低
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-RPT-030，testing）'
+- id: CAND-SIG-031
+  name: 指数级多指标共振综合评分（GAP-F-31）
+  aliases: ['共振评分']
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: signal_ashare 指数层
+  description: 七族投票（MACD/KDJ/RSI/量能/均线/BOLL/趋势）加权合成买/卖/中性+置信度+共振 x/7；置信度=启发式映射非校准概率（只画栏杆不算命）。
+  capability: index_resonance_scoring
+  problem_it_solves: 指数级多空共振无综合分
+  keywords: ['resonance', 'index', 'indicator voting']
+  upstream_deps: ['技术指标注册表七族']
+  downstream_consumers: ['大盘页']
+  estimated_complexity: 中
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-SIG-069，testing）'
+- id: CAND-MLT-011
+  name: 密度预测主路线模型 MVP（GAP-F-34）
+  aliases: ['密度预测', 'density head']
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: ml_train 密度头
+  description: 轻量密度头 sklearn HGB quantile（lightgbm 缺失降级，#ARCH-186）；predict_quantiles 输出 q10~q90 单调修正序列+pinball/coverage 校准指标，供 GAP-F-01 W2 概率分布。
+  capability: prediction_family
+  problem_it_solves: 作战室 W2 概率分布无模型产出
+  keywords: ['density', 'quantile', 'ml']
+  upstream_deps: ['DS-074']
+  downstream_consumers: ['GAP-F-01']
+  estimated_complexity: 中
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 MVP 建成（MOD-ML-DENSITY，testing 封顶，B-009）'
+- id: CAND-MLT-012
+  name: ML 外围三候选骨架（GAP-F-35：舆情SFT/打板分类/席位形态）
+  aliases: ['ML三候选']
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: ml_train 候选骨架
+  description: 三候选训练管线骨架+特征接口位+校验门；train 恒抛 ZA-MLT-0003（B-007 人工闸门）；配套 MOD-ML-001~004/007/009 训练基础设施六件同批建成。
+  capability: ml_candidate_skeleton
+  problem_it_solves: ML 候选模型无训练管线骨架与治理闸门
+  keywords: ['sft', 'classifier', 'skeleton']
+  upstream_deps: ['MOD-ML-001', 'DS-074/DS-080']
+  downstream_consumers: ['model_registry']
+  estimated_complexity: 中
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 骨架建成（testing）；真训练待 B-007+数据积累'
