@@ -8182,6 +8182,11 @@ creation_tokens:
   token: auto-model-digests-20260822
   created_by: AI-RESIDUAL-255C
   capability: l0_supply_chain_boot_verify
+# --- 2026-08-23 长城任务施工顺序总清单 creation_token ---
+- file: docs/_working/2026-08-23-construction-order-master.md
+  token: auto-construction-order-master-20260823
+  created_by: AI-K3-GW-0823
+  capability: construction_order_master
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
