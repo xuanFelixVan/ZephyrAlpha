@@ -42834,6 +42834,99 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: '用假日历验证"交易日判定器"：XSHG 真历查得到就走真历、查不到就逐日问、 再不行就按周一到周五估算；还验证回测隔离期按真交易日回数、国庆长假不算数。'
+- module_path: src/zephyr/integration/mcp/client_discovery.py
+  domain_id: D_INTEGRATION
+  name_zh: "MCP客户端动态发现与契约漂移对账"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "MCP Client 连接后 list_tools 拉取实况与 tool_contracts.yaml 契约 diff：未知工具告警且默认拒绝写操作，safety_level M/H 必须契约命中才放行；传输层仅 localhost HTTP+SSE、STDIO 禁用；工具注册执行 MCP-Scan 剥离指令性语言；diff 结果 emit 遥测指标，漂移超24小时升级告警。"
+
+# --- 2026-08-24 GW-T4-H/H3/NLP plain_zh ---
+- module_path: src/zephyr/autonomy_core/killswitch_response_levels.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: KILLSWITCH 三级响应策略层（level_1 降级+技能熔断/level_2 单 Agent 阻断/level_3 全局熔断+交易联动）
+  name_en: 'Killswitch Response Levels (Strategy Tier)'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '出事先定"这次该停多大范围"的裁判层：小事（P1）只把惹事的 AI 降级成"看得动不得" 模式——能读能查但写操作一律交人审批，顺带把它用的技能熔断掉；中事（P0）在系统 总开关上单独拉黑这个 AI；大事（global_critical）拉全局总闸并确认交易熔断也一起 拉上，绝不允许"只停了次要回路"。它自己一个开关都不碰，全经既有编排器下单；任何 复位都必须 Owner 点头，没批准一律拒绝且状态原样不动。还负责生成根目录的 KILLSWITCH.md 紧急停止协议文件，每次改动都记进审计链。'
+- module_path: src/zephyr/intelligence/reflexion/reflctrl_gate.py
+  domain_id: D_INTELLIGENCE
+  name_zh: ReflCtrl 反思频率闸门（显式触发规则集+轮次上限+token 统计）
+  name_en: 'ReflCtrl Frequency Gate'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '防止 AI"动不动就反思"把 token 烧光的门卫：想反思必须报上哪条规则让你来的—— 结果跑偏超两成、被风控否决、执行彻底失败这三种情况必须反思；信号异常、滑点 翻倍、风控参数漂移、市场突变没人管这四种异常也得反思；信心不足七成触发轻反思、 不足五成触发重反思。平时执行层没异常不反思、战术层每五次同类任务反思一次、 战略层每次必反思；连续做得好五次以上只记账不反思。一个任务最多反思三轮，到顶 谁来都不好使。每次放行和拒绝都落盘留痕，放行了才计 token 账。'
+- module_path: src/zephyr/intelligence/reflexion/preflect_store.py
+  domain_id: D_INTELLIGENCE
+  name_zh: PreFlect 失败模式库（任务启动前检索注入"上次怎么死的"）
+  name_en: 'PreFlect Failure Pattern Store'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '一本"死法大全"：每条记录写清楚失败长什么样、什么情况下会再犯、怎么躲开、是哪次 反思沉淀下来的。新任务开工前先翻这本账，撞上的坑提前摆进上下文。入库两条路—— 失败反思记录自动生成条目，或人手工写种子条目；人改条目必须署名留痕。检索按 关键词重叠打分，被停用的条目不再命中，注入内容一定带着来源反思编号可追溯。'
+- module_path: tests/autonomy_core/test_killswitch_response_levels.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: KILLSWITCH 三级响应策略层验收测试
+  name_en: 'Killswitch Response Levels Tests'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '用合成开关当探针验收五件事：三级各自触发链走对（降级+技能熔断/单 Agent 拉黑/ 全局+交易联动含传播漏网时的显式兜底）；level_3 拉闸后收敛状态一致；三级复位没 Owner 批准一律拒且状态零改变；响应复位和 KILLSWITCH.md 变更都写审计链；编排器 故障时动作面不抛异常只记账。'
+- module_path: tests/intelligence/test_reflctrl_gate.py
+  domain_id: D_INTELLIGENCE
+  name_zh: ReflCtrl 频率闸门验收测试
+  name_en: 'ReflCtrl Gate Tests'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '验收四件事：规则之外的反思请求一律被拒；每次放行都能说出是哪条规则放的（强制 三条件/Agent-R 四场景/低置信/分层频率/决策矩阵逐条过）；反思轮次到顶强制规则 也不好使；token 只给放行的记账且全部裁决落盘；阈值换个配置立即生效。'
+- module_path: tests/intelligence/test_preflect_store.py
+  domain_id: D_INTELLIGENCE
+  name_zh: PreFlect 失败模式库验收测试
+  name_en: 'PreFlect Store Tests'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '验收三件事：失败反思记录能自动生成条目入库读回（成功记录拒收）；任务文案检索 命中条目且注入载荷带来源反思编号；人工编辑接口可用——不署名不让改、改完留痕 可停用；缺字段、多字段、空模式、重复编号一律拒收。'
+- module_path: src/zephyr/integration/mcp/client_discovery.py
+  domain_id: D_INTEGRATION
+  name_zh: MCP客户端动态发现与契约漂移对账
+  name_en: ''
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: ''
+- module_path: src/zephyr/data/ch_parts_monitor.py
+  domain_id: D_DATA
+  name_zh: CH 数据分片爆炸监控器
+  name_en: 'CH Parts Explosion Monitor'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '盯着 ClickHouse 每张表的活跃分片数，哪张表超过 100 个分片就记进违规 清单交给告警链——防 2026-07-09 分片爆炸把 CH 合并线程压垮的事故重演； 查询失败宁可漏报也不阻断。'
+- module_path: src/zephyr/data/fetch_perf_recorder.py
+  domain_id: D_DATA
+  name_zh: 抓取性能被动记录器
+  name_en: 'Fetch Perf Passive Recorder'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '调度器每跑完一个数据任务就顺手记一行流水（耗时/行数/成败/报错）， 按天滚成 JSONL 文件——让数据源健康状态反映真实运行而不是只靠测速抽样； 记录失败只告警绝不耽误调度。'
+- module_path: src/zephyr/data/source_circuit_breaker.py
+  domain_id: D_DATA
+  name_zh: 数据源自动熔断器
+  name_en: 'Per-Source Auto Circuit Breaker'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '每个数据源一个自动保险丝：连续失败 5 次或滑窗错误率超六成就跳闸 30 分钟，冷却到点放单探针试探，探针成功自动复位、失败重新计时—— 某接口突然被封时避免整日任务雪崩重试；和手动 pause 互补不替代。'
+- module_path: src/zephyr/governance/lifecycle_governance/ai_behavior_baseline.py
+  domain_id: D_GOVERNANCE
+  name_zh: AI 会话行为基线异常检测器
+  name_en: 'AI Behavior Baseline Anomaly Detector'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '从 git 提交历史给 AI 会话画「行为画像」：每小时提交频率、文档/代码/注册表 修改占比、碰过哪些模块；新会话偏离画像（z-score 超阈）或第一次碰从没碰过的 模块就产出异常记录——只告警不阻断，样本少于 3 个会话不判。'
+- module_path: src/zephyr/nlp/sentiment_pipeline.py
+  domain_id: D_DATA
+  name_zh: 舆情情感离线批量管道
+  name_en: 'Sentiment Offline Pipeline'
+  desc_zh: 'MOD-NLP-SENT-PIPE（13 号 Phase 7）。离线批量端到端接线件——news dict → infer_batch（chat 注入）→ aggregate_daily → daily_sink 注入下沉；空输入空 outcome、单条失败降级不阻断、chat=None 契约传播；write_daily_jsonl 默认产物落盘。'
+  desc_en: 'MOD-NLP-SENT-PIPE (memo 13 Phase 7). Offline batch end-to-end wiring — news dicts to infer_batch (injected chat) to aggregate_daily to injected daily_sink; empty input yields empty outcome, per-item failure degrades without blocking, chat=None propagates contract error; write_daily_jsonl default sink.'
+  plain_zh: '舆情管道接线员。把"喂新闻、算情绪、按日汇总、落盘"四步串成一条可注入的流水线，测试时用假模型就能整链跑通。'
 battle_map_steps:
 - step_id: BM-BUY-04
   flow_stage: buy_flow

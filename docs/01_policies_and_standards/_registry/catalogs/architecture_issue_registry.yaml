@@ -19480,3 +19480,110 @@ entries:
   - 'RUN-05'
   created: '2026-08-24'
   last_updated: '2026-08-24'
+
+- issue_id: '#ARCH-205'
+  title: MOD-AU-004 KILLSWITCH 三级响应 + ReflCtrl 频率闸门 + PreFlect 失败模式库（含灾后重建）
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    ①KILLSWITCH 三级响应策略层：level_1 自治降级+技能熔断（IM 模式读写分治）/level_2 单 Agent
+    阻断/level_3 全局熔断+交易联动；复位需 Owner 批准不变量（三级空 approver 全拒且状态零改变）；
+    KILLSWITCH.md 落盘+渲染逐字相等实测；MOD-AU-002 零改动。②ReflCtrl 频率闸门：L1 强制三条件/
+    Agent-R 四场景/分层频率 80/50/20%/轮次上限，规则外拒、放行可溯、token 统计落盘。③PreFlect
+    失败模式库：schema 四字段+检索注入+人工编辑接口。
+    灾后重建注记：2026-08-24 工作区事故删除 3197 跟踪文件+4 未跟踪新件（本批三件源+
+    client_discovery.py）；跟踪件 git restore 全恢复；未跟踪件按幸存测试契约重建（测试即契约
+    先红后绿，98 契约测全绿，REBUILD_report 留档）——教训：新件须尽快提交入 git 防丢。
+  impact:
+    - 'autonomy_core/killswitch_response_levels.py + intelligence/reflexion/reflctrl_gate.py + preflect_store.py + KILLSWITCH.md（testing）'
+    - '68 用例全绿 + 域回归 1581（1 失败系并行会话数据污染非本批）'
+  fix_phase: '已落地（2026-08-24，AI-K3-T4-H1 + REBUILD 重建）'
+  status: resolved
+  related_rules:
+  - '16号文 §3.4'
+  - '12号文 §3.4'
+  created: '2026-08-24'
+  last_updated: '2026-08-24'
+
+- issue_id: '#ARCH-206'
+  title: MOD-INF-058 MCP Client 动态发现+漂移对账入遥测 + task_gate 护照 ID 口径统一
+  severity: P2
+  category: 功能施工
+  adjudication: >-
+    ①client_discovery：传输层闸门 fail-closed（STDIO/非 localhost 一律拒）；发现即校验（未知
+    工具告警+默认拒绝写，M/H 必须契约命中）；MCP-Scan 按句剥离 15 条指令性模式；漂移指标
+    mcp.contract_drift.* 经 MetricsFacade 入 ring 遥测可见；漂移>24h 升级告警。
+    ②护照 ID 口径：核查 7 件文件名全下划线、内部 model_id 冒号 1/无冒号 6；按 GP0 #255④
+    裁定口径（真源=JSON 内 model_id 原样），TaskGate 查询侧 _resolve_key() 双向兼容互认
+    （存储键不改写、命中面不放大，两条反向锁测试）；护照文件零改动。CE 边缺口 7 项复核=
+    tracker #255⑤ 已闭环无需补登。
+  impact:
+    - 'integration/mcp/client_discovery.py（testing，30 测）+ trading/task_gate.py 查询侧演进（8 测）'
+    - '267 域回归零失败 + MCP 域 283 passed'
+  fix_phase: '已落地（2026-08-24，AI-K3-T4-H2）；真实 HTTP+SSE transport 协议注入待业务侧落地'
+  status: resolved
+  related_rules:
+  - '10号文 §4 Phase 2'
+  - 'GP0 #255'
+  created: '2026-08-24'
+  last_updated: '2026-08-24'
+
+- issue_id: '#ARCH-207'
+  title: 64号韧性三件+BM-RC-04-F 核销——清单滞后教训（AI-NIGHT-001 已在码）
+  severity: P3
+  category: 功能核销
+  adjudication: >-
+    Q8 parts>100 告警（ch_parts_monitor）/Q16 fetch_perf 被动记录（scheduler 四挂点）/Q17
+    per-source 自动熔断器（三态机+故障注入测试在）/BM-RC-04-F 行为基线告警（ai_behavior_baseline
+    fail-visible）四件实证均已先行落码（72e422a463/b843aba06e/615df5b90c/710b5966ff），本批
+    零新建纯核销+验收口径实证留档。教训：派单前 grep 实证必须落到清单状态列，避免重复派单。
+  impact:
+    - '零新件；四件验收实证（48 定向测全绿）'
+  fix_phase: '核销（2026-08-24，AI-K3-T4-H3）'
+  status: resolved
+  related_rules:
+  - '64号文 §16.2'
+  - '61号文 BM-RC-04-F'
+  created: '2026-08-24'
+  last_updated: '2026-08-24'
+
+- issue_id: '#ARCH-208'
+  title: boot watchdog 核销+冷启动 SLA breach 新发现（16_model_benchmark 同步跑分）+63号达标 68.0%
+  severity: P2
+  category: 架构议题
+  adjudication: >-
+    ①09a watchdog NoneType 修复已在码（lifecycle_manager.py:181-186 sys.modules 预注册），复测
+    10/10 绿核销。②冷启动 SLA 实测 P99=433.9s 远超 <10s 口径（n=3 留痕）：根因=boot 第 16 步
+    16_model_benchmark 同步跑 ModelProfiler 全量 benchmark（无缓存/quick 档）+DeepSeek 402 致
+    Ollama 兜底+profiler CG-005/CF-001 非法正则——存量项，建议 benchmark 移出 boot 关键路径
+    （待裁定）。③AutoEvolution 3 项复跑全绿核销（tests/automation 279 passed）。④63 号文档批
+    复测达标：消费层覆盖率 35.9%→68.0%（70/103），工具链可重跑产 CSV 快照。
+  impact:
+    - 'scripts/audit_data_utilization.ps1 演进 + docs/_audit/data_utilization_audit_2026-08-24.csv'
+  fix_phase: '核销+留痕（2026-08-24，AI-K3-T4-H4）；boot benchmark 移出关键路径待裁定'
+  status: open
+  related_rules:
+  - 'GP0 #255'
+  - '63号文 §7.2'
+  created: '2026-08-24'
+  last_updated: '2026-08-24'
+
+- issue_id: '#ARCH-209'
+  title: NLP 管道断点接线（benchmark/metrics 生产者+离线批量件+验收报告落盘）+ P2-E8 mock 扫描
+  severity: P2
+  category: 功能施工
+  adjudication: >-
+    复核六环节：Phase 7 采集/推理/聚合在码，断点=benchmark.json 与 sft_metrics.json 无生产者、
+    验收报告不落盘。补缺：sentiment_pipeline.py 离线批量端到端接线件（MOD-NLP-SENT-PIPE）+
+    run_sentiment_batch 自动落 benchmark + run_sft_train --metrics-out 默认落盘 +
+    accept_nlp_pipeline --report-out 报告生成。P2-E8 mock 扫描：fd=40 ECE 0.071 最优（合成数据
+    仅证链路，方向提示长窗口更优，真扫描前不具裁定效力）。RLSP 护栏实验待 Owner GPU 闸门。
+  impact:
+    - 'nlp/sentiment_pipeline.py 新建 + scripts/ml/ 三件演进（testing）'
+    - '172 测全绿（基线 153+新增 19）'
+  fix_phase: '已落地（2026-08-24，AI-K3-T4-NLP）；三项验收 FAIL 产物待真数据跑批（接线已闭环）'
+  status: resolved
+  related_rules:
+  - '13号文 Phase 5-8'
+  created: '2026-08-24'
+  last_updated: '2026-08-24'
