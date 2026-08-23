@@ -1,0 +1,11 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §14
+# module_id: MOD-INF-053
+# stability: evolving
+# safety_level: H
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+schema_version: '1.0'
+kind: fix_pattern_index
+records: []

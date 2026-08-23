@@ -1,0 +1,26 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §14
+# module_id: MOD-INF-053
+# stability: evolving
+# safety_level: H
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+schema_version: '1.0'
+kind: fixer_registry
+fixers:
+- fixer_id: template_channel
+  channel: auto_template
+  level: l1_rule
+  fault_class: structural
+  description: 结构类直通模板化修复（100% 确定）
+- fixer_id: llm_bridge_channel
+  channel: auto_llm
+  level: l2_llm
+  fault_class: semantic
+  description: 语义类过 LLM Bridge 修复（必经 LSG 闸）
+- fixer_id: block_alert_channel
+  channel: block_alert
+  level: none
+  fault_class: behavioral
+  description: 行为类 Block+Alert（永不自动修复）
