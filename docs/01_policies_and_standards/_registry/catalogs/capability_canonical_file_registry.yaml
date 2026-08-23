@@ -9290,6 +9290,47 @@ creation_tokens:
   token: auto-test-intraday-manipulation-detector-20260824
   created_by: AI-K3-T4-P2A
   capability: intraday_manipulation_batch_detection
+# --- 2026-08-24 GW-T4-G（G1/G3）creation_token ---
+- file: src/zephyr/frontend/implementations/notification_channel_senders.py
+  token: auto-notification-channel-senders-20260824
+  created_by: AI-K3-T4-G1
+  capability: notification_channel_senders
+- file: tests/frontend/test_notification_channel_senders.py
+  token: auto-test-notification-channel-senders-20260824
+  created_by: AI-K3-T4-G1
+  capability: notification_channel_senders
+- file: src/zephyr/reporting/miniqmt_order_link_probe.py
+  token: auto-miniqmt-order-link-probe-20260824
+  created_by: AI-K3-T4-G1
+  capability: order_link_health_probe
+- file: tests/reporting/test_miniqmt_order_link_probe.py
+  token: auto-test-miniqmt-order-link-probe-20260824
+  created_by: AI-K3-T4-G1
+  capability: order_link_health_probe
+- file: src/zephyr/reporting/deviation_attribution_decomposer.py
+  token: auto-deviation-attribution-decomposer-20260824
+  created_by: AI-K3-T4-G1
+  capability: deviation_attribution_decomposition
+- file: tests/reporting/test_deviation_attribution_decomposer.py
+  token: auto-test-deviation-attribution-decomposer-20260824
+  created_by: AI-K3-T4-G1
+  capability: deviation_attribution_decomposition
+- file: src/zephyr/reporting/review_template_registry.py
+  token: auto-review-template-registry-20260824
+  created_by: AI-K3-T4-G1
+  capability: review_template_registry
+- file: tests/reporting/test_review_template_registry.py
+  token: auto-test-review-template-registry-20260824
+  created_by: AI-K3-T4-G1
+  capability: review_template_registry
+- file: config/review_templates.yaml
+  token: auto-review-templates-config-20260824
+  created_by: AI-K3-T4-G1
+  capability: review_template_registry
+- file: tests/zephyr/data/test_trading_calendar.py
+  token: auto-test-trading-calendar-20260824
+  created_by: AI-K3-T4-G3
+  capability: trading_calendar_test
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

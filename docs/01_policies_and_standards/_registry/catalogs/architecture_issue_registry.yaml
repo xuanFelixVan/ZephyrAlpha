@@ -19388,3 +19388,95 @@ entries:
   - '36号文 §3.11'
   created: '2026-08-24'
   last_updated: '2026-08-24'
+
+- issue_id: '#ARCH-201'
+  title: 55号 §6 四件落地——sender 注册位/miniQMT 探针/MOD-RPT-031 偏离归因/MOD-RPT-032 模板外化
+  severity: P2
+  category: 功能施工
+  adjudication: >-
+    A. Email/WeChat sender 注册位实装（webhook/SMTP 走注入位凭据 Owner 窗口，未注入显式失败
+    False 不静默）；B. miniQMT 下单链路探针纳入 source_health 族（非交易时段 closed 不误报）；
+    C. MOD-RPT-031 偏离归因分解——口径裁定：取 battle_map BM-BT-05-H 四因子（H-A 滑点/H-B
+    数据滞后/H-C 前瞻残留/H-D 延迟差异），与 risk/core/deviation_attribution.py 边界 docstring
+    明文化并存不互替；D. MOD-RPT-032 复盘模板外化 config/review_templates.yaml 真源（版本可切换+
+    默认回退，在档 v1↔打包默认一致性测试锁防双真源漂移）。
+  impact:
+    - 'frontend/implementations/notification_channel_senders.py + reporting/miniqmt_order_link_probe.py / deviation_attribution_decomposer.py / review_template_registry.py + config/review_templates.yaml + ai_review_summary.py 模板迁出改造（testing）'
+    - '101 新用例全绿 + frontend/reporting 649 零回归'
+  fix_phase: '已落地（2026-08-24，AI-K3-T4-G1）；sender 实发凭据与看板集成留 Owner/编排批'
+  status: resolved
+  related_rules:
+  - '55号文 §6'
+  created: '2026-08-24'
+  last_updated: '2026-08-24'
+
+- issue_id: '#ARCH-202'
+  title: 90号 P2 十一项清偿专项——2 落码（BHY FDR 嵌入/泄漏测试自动化）+ 9 核销
+  severity: P2
+  category: 功能核销
+  adjudication: >-
+    逐件二分闭环：#2 BHY FDR 嵌入 decay_monitor 落码（rolling_relative_quantile 前50%+
+    screen_significance_bhy q=10%+monitor_decay(relative=) 接线，向后兼容）；#14 deliberate
+    future-date 泄漏测试自动化落码（四例：全未来零 join/混合仅历史/date_trunc 粒度/全窗口扫描）。
+    核销九件留证：#1 策略族归属（治理门禁测试化）/#8 LVaR+跌停ST（liquidity_monitor 四维）/
+    #9 半衰期样本权重（sample_weights 口径全合，生产接线挂 B-007）/#15 universe 两维字段/
+    #16 生存线监控/#17 单一订单出口静态扫描+RLM-POSITION-027/#18 Instrument Master 轻量表/
+    #20 指纹库 DTW+持久化/#21 做T四规则 TRulesConfig。
+  impact:
+    - 'factor/analysis/decay_monitor.py 扩建 + tests/backtest/test_data_handler_pit.py 追加（testing）'
+    - '落码 42 例绿 + 核销批 137 + factor 全量 695 零回归'
+  fix_phase: '已闭环（2026-08-24，AI-K3-T4-G2）；遗留三件（#9 生产接线/#18 xtdata 编排/#2 消费端接线）'
+  status: resolved
+  related_rules:
+  - '90号文 v2.0.0 P2'
+  created: '2026-08-24'
+  last_updated: '2026-08-24'
+
+- issue_id: '#ARCH-203'
+  title: 15/17号数据治理核销与接线——DQ八维已码/Embargo 真日历补链/符号双向 gate 接线/manual 台账 12 类
+  severity: P2
+  category: 功能施工
+  adjudication: >-
+    A① DQ_SPECS 八维 check_func 核销（data_quality.py 8 函数族前期已落码，抽样跑通出报告）；
+    A② Embargo 真日历补链：trading_calendar.trading_days_in_range 真源 helper（XSHG sessions
+    主路径三级降级纯本地）接 pit_manager.apply_embargo 注入位；B① akshare 声明残留核销（08-20
+    已删）；B② 六条品类核销（已在册 124 条目复核全命中）；B③ CapabilityContract 增
+    expected_market/expected_variety 可选字段+日历类三试点；双向 gate 裁定复用既有真源
+    capability_symbol_gate.py（回滚自研重复实现治本），接线进 CAP-CONSISTENCY 门禁双检查，
+    顺带收编 internal_compute technical_indicator 命名盲区（行为等价）；B④ manual 台账
+    data/manual/calendar_event_manual.csv 59 行（FOMC 21-26 全 48+两会/中经 10+印花税）白名单
+    合并，calendar_event 覆盖 12 类。business_data_categories 裁定=共享注册表性质禁直改。
+  impact:
+    - 'data/trading_calendar.py + capability_contract + capability_symbol_gate 接线 + data/manual/calendar_event_manual.csv + tests/zephyr/data/test_trading_calendar.py（testing）'
+    - '2308 passed 1 skipped（data 1144+data&backtest 1160）零新增红'
+  fix_phase: '已落地（2026-08-24，AI-K3-T4-G3）；FOMC 2027+ 年度手工追加口径已写 CSV 头注释'
+  status: resolved
+  related_rules:
+  - '15号文'
+  - '17号文 §5.8'
+  created: '2026-08-24'
+  last_updated: '2026-08-24'
+
+- issue_id: '#ARCH-204'
+  title: 52号四模块单测核销（141 例已在码）+ 66号死信标签 + 00_index v2.12.0 对齐 + 57号 RUN-05 SOP §9
+  severity: P2
+  category: 功能施工
+  adjudication: >-
+    A. 52 号四模块单测核销：walk_forward 31/decision_gate 46/overfitting_detector 32/
+    pit_manager 32=141 例前批已建含边界，复核锁证（DSR 双实现 Owner 裁定未触）。
+    B. task_board deadletter 子命令（metadata_json 不改表，completed 禁标 exit 2，重复以最新
+    为准+事件留痕）+list --label deadletter。C. 00_index v2.11.13→v2.12.0 全量对齐 94 处
+    （92 号补登/44→v1.3.0/68→active 等）。D. 57 号 v1.1.0 新增 §9 断网断电断点恢复演练
+    （K1 KillSwitch/K2 持仓 RPO=0/K3 fill 去重集自 state_store 重建核对；真实演练 Owner 窗口）。
+    并发写冲突提醒：scripts/task_board.py 编辑期间两次落盘被覆盖（疑并发会话同写），终态已复核。
+  impact:
+    - 'scripts/task_board.py + tests/governance/test_task_board.py 追加 + 00_index/57 文档演进'
+    - '792 passed 零红（backtest+task_board）'
+  fix_phase: '已落地（2026-08-24，AI-K3-T4-G4）'
+  status: resolved
+  related_rules:
+  - '52号文 §7'
+  - '66号文'
+  - 'RUN-05'
+  created: '2026-08-24'
+  last_updated: '2026-08-24'

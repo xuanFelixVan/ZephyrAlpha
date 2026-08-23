@@ -42798,6 +42798,42 @@ entries:
   desc_zh: 'Spoofing/Layering/WashTrade 三规则离线批处理 MVP（43 号 §7.3）：全日订单/成交按 placed_at 时间序重放经 30min 滚动窗口，规则唯一真源=TradingComplianceDetector 零重实现；首命中去重报告 + compliance_log 双类事件。'
   desc_en: 'Offline batch MVP for Spoofing/Layering/WashTrade (memo-43 §7.3): time-ordered replay over 30min rolling windows; rules delegated to TradingComplianceDetector; first-hit-dedup report plus compliance_log events.'
   plain_zh: '盘中操纵检测批处理器。每天收盘后把全天挂单撤单成交回放一遍，查有没有虚假挂单、分层压单、自成交，查到的留证据，没查到也留''今天扫过了''的记录。'
+# --- 2026-08-24 GW-T4-G plain_zh ---
+- module_path: src/zephyr/frontend/implementations/notification_channel_senders.py
+  domain_id: D_FRONTEND
+  name_zh: Email/WeChat 通知渠道发送器
+  name_en: 'Notification Channel Senders'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '告警要真能发到邮箱和企业微信群——这两个通道类插在通知管理器的 注册位上，SMTP/微信 webhook 的实际发送动作走注入位（凭据 Owner 窗口接线）， 没接线时显式报失败不装死，本批零真实发送。'
+- module_path: src/zephyr/reporting/miniqmt_order_link_probe.py
+  domain_id: D_REPORTING
+  name_zh: miniQMT 下单链路探针
+  name_en: 'miniQMT Order Link Probe'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '盯下单通道活没活：通道就绪=健康，交易时段断了=告警，收盘后断了 =正常不误报；下单/回报延迟走注入位测量——纳入数据源健康检查一族的结果口径。'
+- module_path: src/zephyr/reporting/deviation_attribution_decomposer.py
+  domain_id: D_REPORTING
+  name_zh: 回测-实盘偏离归因分解器
+  name_en: 'Deviation Attribution Decomposer'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '实盘跑输回测时回答"差在哪"：按 battle_map 四因子拆——滑点偏差、 数据滞后偏差、前瞻偏差残留、延迟差异偏差；哪个因子没测量就降级只看总偏差， 残差太大说明四因子解释力不够，提醒复盘深挖。'
+- module_path: src/zephyr/reporting/review_template_registry.py
+  domain_id: D_REPORTING
+  name_zh: 复盘模板注册表
+  name_en: 'Review Template Registry'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '战报/复盘提示词模板从代码里搬到配置文件：多版本并存可切换， 要的版本没有就回退默认版，文件丢了用打包内置版——复盘页永不空白； 模板缺占位符或乱加占位符直接拒收。'
+- module_path: tests/zephyr/data/test_trading_calendar.py
+  domain_id: D_DATA
+  name_zh: A股交易日历守卫测试
+  name_en: 'Trading Calendar Test'
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: '用假日历验证"交易日判定器"：XSHG 真历查得到就走真历、查不到就逐日问、 再不行就按周一到周五估算；还验证回测隔离期按真交易日回数、国庆长假不算数。'
 battle_map_steps:
 - step_id: BM-BUY-04
   flow_stage: buy_flow

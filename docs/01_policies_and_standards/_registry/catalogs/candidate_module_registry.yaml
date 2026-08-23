@@ -18293,3 +18293,34 @@ entries:
   source_draft: A9运维架构
   original_id: B14-04639
   source_section: §8.3.2
+
+- id: CAND-RPT-011
+  name: '偏离归因分解 H-A~D（55号 §6）'
+  aliases: ['偏离归因分解']
+  domain: D_REPORTING
+  domain_status: active
+  sub_layer: reporting 归因层
+  description: '计划 vs 实际偏离四层归因（H-A 滑点/H-B 数据滞后/H-C 前瞻残留/H-D 延迟差异，battle_map BM-BT-05-H 口径），与 risk/core/deviation_attribution.py 并存不互替。'
+  capability: deviation_attribution_decomposition
+  problem_it_solves: '战报偏离缺结构化四层归因'
+  keywords: ['deviation', 'attribution']
+  upstream_deps: ['MOD-PLAN-011']
+  downstream_consumers: ['复盘页', '战报']
+  estimated_complexity: 中
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-24 已建成（MOD-RPT-031，testing），#ARCH-201'
+- id: CAND-RPT-012
+  name: '复盘模板引擎外化注册位（55号 §6）'
+  aliases: ['复盘模板外化']
+  domain: D_REPORTING
+  domain_status: active
+  sub_layer: reporting 模板层
+  description: 'ai_review_summary 模板迁出代码常量至 config/review_templates.yaml 注册位，版本可切换+默认回退，一致性测试锁防双真源漂移。'
+  capability: review_template_registry
+  problem_it_solves: '复盘模板硬编码不可版本化'
+  keywords: ['template', 'review']
+  upstream_deps: ['MOD-RPT-009']
+  downstream_consumers: ['战报']
+  estimated_complexity: 低
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-24 已建成（MOD-RPT-032，testing），#ARCH-201'
