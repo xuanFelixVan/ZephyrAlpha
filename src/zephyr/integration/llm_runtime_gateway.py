@@ -1,16 +1,16 @@
 # [BLUEPRINT] MOD-INF-051 | 待统筹登记（10号文 §4 Phase 0/1.1 + 18号清单 §5 波2 E1 裁定 llm_runtime_gateway MVP）
 # [MODULE] zephyr.integration.llm_runtime_gateway
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.integration.local_model.deepseek_chat; zephyr.integration.local_model.ollama_chat; zephyr.integration.local_model.lsg_gate; zephyr.shared.foundation.constants; zephyr.shared.io.paths(DB_PATH SSoT); zephyr.shared.io.sqlite_factory(get_db_connection); zephyr.shared.security.secrets(get_required_secret)
+# [DEPENDENCIES] zephyr.integration.local_model.deepseek_chat; zephyr.integration.local_model.ollama_chat; zephyr.integration.local_model.lsg_gate; zephyr.shared.foundation.constants; zephyr.shared.io.paths(DB_PATH SSoT); zephyr.shared.io.sqlite_factory(get_db_connection); zephyr.shared.security.secrets(get_required_secret); zephyr.governance.ops_governance.budget_engine(pre_flight_check); zephyr.governance.ops_governance.budget_models(GateResult/GateDecision/BudgetLevel/ModelTier); zephyr.governance.intelligence_governance.model_router(ModelRouter perf-aware)
 # [CONSUMERS] 波5 统筹接线（44号 M3-⑨ MOD-PLAN-007 客户端注入）
 # [STARTUP] imported
 # [MATURITY] testing
-# [INVARIANTS] 调用必登记（每次 infer 含失败/被拦均落 llm_call_log，append-only 仅 INSERT）; LSG 不过不调用（enforce_input 判决 BLOCK/DENY 或 LSG 异常 -> 不发起任何通道调用）; 降级链留痕（每一通道尝试各落一行）; infer 不承载业务语义（task_type 仅登记/对账维度）; SQL 参数化+常量（NO-BARE-SQL）; db_path 默认 None 走 DB_PATH SSoT（测试注入临时库，prediction_log_writer 同款隔离先例）
+# [INVARIANTS] 调用必登记（每次 infer 含失败/被拦均落 llm_call_log，append-only 仅 INSERT）; LSG 不过不调用（enforce_input 判决 BLOCK/DENY 或 LSG 异常 -> 不发起任何通道调用）; 预算硬门（pre_flight_check DENY -> 不发起任何通道调用；预算引擎解析/调用异常 -> fail-closed 同径 blocked）; LLMDeg-0~4 降级注入路由决策（10号文 §3.6 降级表：1=非关键本地优先，2=仅关键任务用 API，3/4=仅本地，显式 API 钉死在 2+非关键/3+ 被拒）; L2 无旁路（无 L2 专属 LSG/预算旁路配置项，Ollama 与 API 通道同一 LSG+预算闸门）; 降级链留痕（每一通道尝试各落一行）; infer 不承载业务语义（task_type 仅登记/对账维度，critical 仅成本治理降级维度）; SQL 参数化+常量（NO-BARE-SQL）; db_path 默认 None 走 DB_PATH SSoT（测试注入临时库，prediction_log_writer 同款隔离先例）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] 未知 channel -> ValueError（fail-closed 输入校验）; 通道异常（超时/非200/SecretsError 等）不抛 -> 降级下一通道，全失败返回 InferResult(status=error); LSG 判决/异常 -> 捕获 LSGBlockedError 返回 InferResult(status=blocked) 且不发起调用; 登记落库 sqlite3.Error 透传（审计 fail-closed，同 prediction_log_writer 先例）
+# [ERROR_CONTRACT] 未知 channel -> ValueError（fail-closed 输入校验）; 通道异常（超时/非200/SecretsError 等）不抛 -> 降级下一通道，全失败返回 InferResult(status=error); LSG 判决/异常 -> 捕获 LSGBlockedError 返回 InferResult(status=blocked) 且不发起调用; 预算 DENY/预算引擎异常/LLMDeg 熔断期显式 API 钉死 -> InferResult(status=blocked) 落库不抛; 登记落库 sqlite3.Error 透传（审计 fail-closed，同 prediction_log_writer 先例）
 # [TESTS] tests/model/test_llm_runtime_gateway.py
 # [A_module] module_id=MOD-INF-051 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -27,7 +27,13 @@ llm_runtime_gateway — L2/L3 统一 LLM 推理门面 MVP（10号文 §4 + 18号
 职责边界（纯网关）
 ------------------
 - infer 不承载业务语义：task_type 只是落库登记/日终对账维度，不参与任何路由决策。
-- 不做预算硬门（GP1 范围）；只做登记与对账（reconcile_daily_calls 供 44号 §9.14 防超额口径）。
+- 预算硬门（10号文 §4 Phase 1.2，GP1 落地）：infer 入口统一调 BudgetEngine.pre_flight_check，
+  DENY 阻断不发起调用；LLMDeg-0~4 降级级别（§3.6）注入路由决策——
+  级别由 GateResult.budget_level 映射（L0→0 … L4/L5/L6→4），驱动通道链重排/收窄。
+- route() 接 MOD-INF-024 ModelRouter perf-aware 决策（10号文 §4 Phase 1.4），
+  返回 RoutingDecision（含 tier/reason/performance_score 字段）；LLMDeg 级别对 tier 封顶。
+- L2 无旁路：Ollama（L2）与 API 通道过同一 LSG 入口闸门 + 同一预算硬门，
+  代码中无 L2 专属旁路配置项（10号文 §4 Phase 1.3 对齐验证）。
 
 三通道优先级链
 --------------
@@ -91,6 +97,18 @@ from pathlib import Path
 from typing import Any, Final
 from zoneinfo import ZoneInfo
 
+from zephyr.governance.intelligence_governance.model_router import (
+    ModelRouter,
+    RoutingDecision,
+    TaskComplexity,
+)
+from zephyr.governance.ops_governance.budget_engine import BudgetEngine, BudgetEngineProtocol
+from zephyr.governance.ops_governance.budget_models import (
+    BudgetLevel,
+    GateDecision,
+    GateResult,
+    ModelTier,
+)
 from zephyr.integration.local_model import deepseek_chat as _deepseek_chat
 from zephyr.integration.local_model.deepseek_chat import DeepSeekChat
 from zephyr.integration.local_model.lsg_gate import (
@@ -116,6 +134,7 @@ __all__: Final = [
     "compute_cost_yuan",
     "ensure_llm_call_log_table",
     "is_valley_period",
+    "llmdeg_from_budget_level",
     "reconcile_daily_calls",
 ]
 
@@ -126,6 +145,34 @@ CHANNEL_DEEPSEEK: Final[str] = "deepseek"
 CHANNEL_QWEN: Final[str] = "qwen"
 CHANNEL_OLLAMA: Final[str] = "ollama"
 DEFAULT_CHANNEL_CHAIN: Final[tuple[str, ...]] = (CHANNEL_DEEPSEEK, CHANNEL_QWEN, CHANNEL_OLLAMA)
+
+# ── LLMDeg-0~4 五级降级（10号文 §3.6 降级表的运行时镜像，数值不另立）──
+# 通道分桶：API 通道（计费）vs 本地通道（零费用兜底）；L2 无旁路——本地通道同过 LSG+预算门
+_API_CHANNELS: Final[frozenset[str]] = frozenset({CHANNEL_DEEPSEEK, CHANNEL_QWEN})
+_LOCAL_CHANNELS: Final[frozenset[str]] = frozenset({CHANNEL_OLLAMA})
+LLMDEG_MIN: Final[int] = 0
+LLMDEG_MAX: Final[int] = 4
+# LLMDeg 级别 -> route() tier 封顶（§3.6：2=仅战略/反思用 API，3/4=仅本地+规则引擎 -> API tier 压到底）
+_LLM_DEG_TIER_CAP: Final[dict[int, ModelTier]] = {
+    0: ModelTier.PREMIUM,
+    1: ModelTier.PREMIUM,
+    2: ModelTier.ECONOMY,
+    3: ModelTier.MINIMAL,
+    4: ModelTier.MINIMAL,
+}
+_TIER_RANK: Final[dict[ModelTier, int]] = {
+    ModelTier.MINIMAL: 0,
+    ModelTier.ECONOMY: 1,
+    ModelTier.STANDARD: 2,
+    ModelTier.PREMIUM: 3,
+}
+# 预算消费回填策略（记录 token 维；成本元/美元口径未校准，成本维走 reconcile_daily_calls 对账件）
+_BUDGET_TOKEN_POLICY_ID: Final[str] = "BP-TOKEN-001"
+
+
+def llmdeg_from_budget_level(level: BudgetLevel) -> int:
+    """BudgetLevel -> LLMDeg-0~4 映射（10号文 §3.6：L0→0 正常 … L4/L5/L6→4 熔断，封顶 4）。"""
+    return max(LLMDEG_MIN, min(int(level.value), LLMDEG_MAX))
 
 # ── 峰谷计价（Asia/Shanghai；DeepSeek 官网 2026-08-17 调价口径，2026-08-22 校准登记 tracker #254）──
 _BEIJING_TZ: Final = ZoneInfo("Asia/Shanghai")
@@ -369,9 +416,12 @@ class QwenChat:
 
 
 class LLMRuntimeGateway:
-    """L2/L3 统一推理门面——单一 infer 签名 + 三通道降级链 + 调用登记落库 + LSG 注入点。
+    """L2/L3 统一推理门面——单一 infer 签名 + 三通道降级链 + 调用登记落库 + LSG 注入点 + 预算硬门。
 
     clients 参数支持测试注入假通道（通道名 -> 具 ask/model 的对象）；缺省懒构造真实客户端。
+    budget_engine 支持测试注入假预算门（BudgetEngineProtocol）；缺省懒解析 BudgetEngine 单例
+    （生产路径预算硬门恒开，无旁路配置项——引擎解析失败 fail-closed blocked）。
+    model_router 支持测试注入；缺省构造 MOD-INF-024 ModelRouter（只消费不改其源文件）。
     """
 
     def __init__(
@@ -381,12 +431,128 @@ class LLMRuntimeGateway:
         db_path: Path | str | None = None,
         lsg_enabled: bool | None = None,
         chain: tuple[str, ...] | None = None,
+        budget_engine: BudgetEngineProtocol | None = None,
+        model_router: ModelRouter | None = None,
     ) -> None:
         self._clients: dict[str, Any] = dict(clients) if clients else {}
         self._db_path = db_path
         self._lsg_enabled: bool = resolve_lsg_enabled(lsg_enabled)
         self._chain: tuple[str, ...] = tuple(chain) if chain else DEFAULT_CHANNEL_CHAIN
+        self._budget_engine: BudgetEngineProtocol | None = budget_engine
+        self._router: ModelRouter = model_router if model_router is not None else ModelRouter()
+        self._last_llmdeg: int = LLMDEG_MIN  # 最近一次预算门映射的 LLMDeg 级别（route() 消费）
         ensure_llm_call_log_table(self._db_path)
+
+    def _resolve_budget_engine(self) -> BudgetEngineProtocol:
+        """懒解析预算引擎（生产=BudgetEngine 单例；测试经构造注入）。异常透传由调用方 fail-closed。"""
+        if self._budget_engine is None:
+            self._budget_engine = BudgetEngine.ensure_initialized()
+        return self._budget_engine
+
+    @property
+    def last_llmdeg(self) -> int:
+        """最近一次 infer 预算门映射出的 LLMDeg 级别（只读视图，供 route()/对账观测）。"""
+        return self._last_llmdeg
+
+    def _budget_gate(
+        self,
+        task_type: str,
+        est_tokens: int,
+        *,
+        entry_ts: datetime,
+        entry_start: float,
+    ) -> InferResult | None:
+        """预算硬门（10号文 §4 Phase 1.2）：DENY/引擎异常 -> InferResult(status=blocked)，否则 None。
+
+        每次调用同步刷新 _last_llmdeg（GateResult.budget_level -> LLMDeg-0~4，§3.6 注入点）。
+        estimated_cost 恒 0：登记成本为元、BudgetEngine 默认 COST 策略为美元口径，
+        单位未校准前成本维不双写（成本硬门=TOKEN 维+drift 预算，元成本对账归 reconcile）。
+        """
+        try:
+            engine = self._resolve_budget_engine()
+            gate: GateResult = engine.pre_flight_check(
+                request_id=f"gw-{task_type}-{int(entry_start * 1000)}",
+                estimated_tokens=est_tokens,
+                estimated_cost=0.0,
+            )
+        except Exception as exc:  # noqa: BLE001 — 预算门故障=fail-closed（成本刹车不可静默缺失）
+            summary = f"budget_gate_unavailable: {type(exc).__name__}: {exc}"[:_ERR_MAX_LEN]
+            _log.warning("llm_runtime_gateway 预算门不可用，fail-closed 阻断: %s", summary)
+            result = InferResult(
+                text="",
+                model_version="",
+                provider="",
+                tokens_in=0,
+                tokens_out=0,
+                cost_yuan=0.0,
+                latency_ms=int((time.monotonic() - entry_start) * 1000),
+                status="blocked",
+                error=summary,
+            )
+            self._record(task_type, result, ts=entry_ts)
+            return result
+        self._last_llmdeg = llmdeg_from_budget_level(gate.budget_level)
+        if gate.decision is GateDecision.DENY:
+            result = InferResult(
+                text="",
+                model_version="",
+                provider="",
+                tokens_in=0,
+                tokens_out=0,
+                cost_yuan=0.0,
+                latency_ms=int((time.monotonic() - entry_start) * 1000),
+                status="blocked",
+                error=f"budget_denied: {gate.reason}"[:_ERR_MAX_LEN],
+            )
+            self._record(task_type, result, ts=entry_ts)
+            return result
+        return None
+
+    def _effective_chain(self, critical: bool) -> tuple[str, ...]:
+        """LLMDeg-0~4 注入通道链（10号文 §3.6 降级表）。
+
+        0=原链；1=非关键本地优先（关键任务原链）；2=仅关键任务用 API（非关键仅本地）；
+        3/4=仅本地（全部任务）。链内无本地通道时保留原链并告警（降级不能造出不存在的通道）。
+        """
+        level = self._last_llmdeg
+        base = self._chain
+        if level <= 0:
+            return base
+        local = tuple(c for c in base if c in _LOCAL_CHANNELS)
+        api = tuple(c for c in base if c in _API_CHANNELS)
+        other = tuple(c for c in base if c not in _API_CHANNELS and c not in _LOCAL_CHANNELS)
+        if level == 1:
+            return base if critical else local + api + other
+        if level == 2 and critical:
+            return base
+        if local:
+            return local
+        _log.warning("LLMDeg-%d 生效但链内无本地通道，保留原链 %s", level, base)
+        return base
+
+    def _api_pin_blocked(self, channel: str, critical: bool) -> bool:
+        """显式 API 钉死在 LLMDeg 熔断期的阻断判定（§3.6：2+ 仅关键任务 API，3+ 全部仅本地）。"""
+        if channel not in _API_CHANNELS:
+            return False
+        level = self._last_llmdeg
+        if level >= 3:
+            return True
+        return level >= 2 and not critical
+
+    def _record_budget_consumption(self, result: InferResult) -> None:
+        """成功调用后回填 token 维消费（预算闭环；失败不阻断 infer 返回，仅告警留痕）。"""
+        recorder = getattr(self._budget_engine, "record_consumption", None)
+        if not callable(recorder):
+            return
+        try:
+            recorder(
+                _BUDGET_TOKEN_POLICY_ID,
+                result.tokens_in + result.tokens_out,
+                0.0,
+                0.0,
+            )
+        except Exception as exc:  # noqa: BLE001 — 回填失败不破坏已成功的推理结果
+            _log.warning("llm_runtime_gateway 预算消费回填失败: %s", exc)
 
     def _get_client(self, channel: str, model: str | None) -> Any:
         """取通道客户端：注入优先（假通道不解释 model 覆盖）；真实客户端默认缓存复用，model 覆盖时临时构造。"""
@@ -416,12 +582,14 @@ class LLMRuntimeGateway:
         max_tokens: int = 4096,
         temperature: float = 0.2,
         channel: str | None = None,
+        critical: bool = False,
         **kw: Any,
     ) -> InferResult:
-        """统一推理入口（纯网关，不承载业务语义；task_type 仅登记维度）。
+        """统一推理入口（纯网关，不承载业务语义；task_type 仅登记维度，critical 仅成本治理维度）。
 
-        流程：LSG 入口闸门（fail-closed）-> 按链/显式通道尝试 -> 成功即返回；
-        单通道失败降级留痕；全失败 status=error；LSG 判决 status=blocked 不降级。
+        流程：LSG 入口闸门（fail-closed）-> 预算硬门（pre_flight_check，DENY/异常 blocked）
+        -> LLMDeg 级别注入通道链（§3.6）-> 按链/显式通道尝试 -> 成功即返回并回填 token 消费；
+        单通道失败降级留痕；全失败 status=error；LSG/预算判决 status=blocked 不降级。
         """
         if channel is not None and channel not in DEFAULT_CHANNEL_CHAIN:
             raise ValueError(f"未知通道: {channel}")
@@ -447,7 +615,31 @@ class LLMRuntimeGateway:
             self._record(task_type, result, ts=entry_ts)
             return result
 
-        chain = (channel,) if channel else self._chain
+        # 预算硬门（10号文 §4 Phase 1.2）：DENY/引擎异常 -> blocked 不发起调用
+        est_tokens = _estimate_tokens(system + prompt) + max_tokens
+        budget_blocked = self._budget_gate(task_type, est_tokens, entry_ts=entry_ts, entry_start=entry_start)
+        if budget_blocked is not None:
+            return budget_blocked
+
+        # LLMDeg 熔断期显式 API 钉死被拒（§3.6 降级表优先于显式指定；本地通道显式指定仍放行）
+        if channel is not None and self._api_pin_blocked(channel, critical):
+            result = InferResult(
+                text="",
+                model_version=model or "",
+                provider=channel,
+                tokens_in=0,
+                tokens_out=0,
+                cost_yuan=0.0,
+                latency_ms=int((time.monotonic() - entry_start) * 1000),
+                status="blocked",
+                error=(
+                    f"llmdeg-{self._last_llmdeg} 生效：显式 API 通道 {channel} 已熔断，仅本地通道可用"
+                )[:_ERR_MAX_LEN],
+            )
+            self._record(task_type, result, ts=entry_ts)
+            return result
+
+        chain = (channel,) if channel else self._effective_chain(critical)
         attempt_errors: list[str] = []
         for ch in chain:
             attempt_ts = _now_beijing()
@@ -512,6 +704,7 @@ class LLMRuntimeGateway:
                 status="ok",
             )
             self._record(task_type, result, ts=attempt_ts)
+            self._record_budget_consumption(result)
             return result
 
         return InferResult(
@@ -525,6 +718,51 @@ class LLMRuntimeGateway:
             status="error",
             error=("all channels failed: " + " | ".join(attempt_errors))[:_ERR_MAX_LEN],
         )
+
+    def route(
+        self,
+        complexity: TaskComplexity = TaskComplexity.MODERATE,
+        *,
+        tier: ModelTier | None = None,
+        max_cost_per_1k: float = float("inf"),
+        prefer_provider: str = "",
+        critical: bool = False,
+    ) -> RoutingDecision:
+        """MOD-INF-024 perf-aware 路由决策查询（10号文 §4 Phase 1.4；只消费不改 ModelRouter 源文件）。
+
+        返回 RoutingDecision（含 tier/reason/performance_score 字段）。LLMDeg 注入点：
+        - tier 封顶 = min(§3.6 级别封顶, BudgetEngine 降级阶梯推荐 tier)；关键任务在级别 <3 不封顶。
+        - 级别 >=3 时 reason 标注 api-suspended-local-only（此时 infer 已走仅本地链，
+          route() 返回的 API 决策仅供对账观测，不构成调用许可）。
+        """
+        llmdeg = self._last_llmdeg
+        cap = _LLM_DEG_TIER_CAP.get(llmdeg, ModelTier.MINIMAL)
+        if critical and llmdeg < 3:
+            cap = ModelTier.PREMIUM
+        try:
+            engine_tier, _engine_max_tokens = self._resolve_budget_engine().get_model_router_recommendation()
+            if _TIER_RANK[engine_tier] < _TIER_RANK[cap]:
+                cap = engine_tier
+        except Exception as exc:  # noqa: BLE001 — 推荐查询失败不阻断路由查询（封顶退回 §3.6 级别表）
+            _log.warning("llm_runtime_gateway 预算引擎 tier 推荐查询失败: %s", exc)
+
+        decision = self._router.route(
+            complexity=complexity,
+            tier=tier,
+            max_cost_per_1k=max_cost_per_1k,
+            prefer_provider=prefer_provider,
+        )
+        if _TIER_RANK[decision.tier] > _TIER_RANK[cap]:
+            decision = self._router.route(
+                complexity=complexity,
+                tier=cap,
+                max_cost_per_1k=max_cost_per_1k,
+                prefer_provider=prefer_provider,
+            )
+            decision.reason = f"{decision.reason}|llmdeg-{llmdeg}-tier-cap:{cap.value}"
+        if llmdeg >= 3:
+            decision.reason = f"{decision.reason}|llmdeg-{llmdeg}:api-suspended-local-only"
+        return decision
 
     def _record(self, task_type: str, result: InferResult, *, ts: datetime) -> None:
         """落库（append-only 仅 INSERT；sqlite3.Error 透传 fail-closed）。"""

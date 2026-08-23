@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | (auto-injected by S4 reconciler) | §
 # [TTL] permanent
 """
-test_llm_runtime_gateway.py — llm_runtime_gateway MVP 单测（10号文 §4 + 18号清单 §5 E1，2026-08-22）
+test_llm_runtime_gateway.py — llm_runtime_gateway MVP + GP1 预算门/LLMDeg/route 单测
 =====================================================================================================
 全 mock 通道（不真调 API；真跑在波5 由统筹执行）。覆盖：
 - 三通道优先级链：DeepSeek 成功 / Qwen 备用降级 / Ollama 兜底 / 全失败 status=error / 显式 channel 钉死
@@ -10,6 +10,11 @@ test_llm_runtime_gateway.py — llm_runtime_gateway MVP 单测（10号文 §4 + 
   qwen 无峰谷平价/ollama 零价、未知模型通道兜底、无 tz 信息保守按峰时计价（防低估）
 - reconcile_daily_calls 日终对账汇总（by_status/by_provider/重算 delta/防超额判定/非法日期 fail-closed）
 - LSG：入口判决 BLOCK -> 不发起任何通道调用 + status=blocked 落库；LSG 异常 -> fail-closed 同径
+- 预算硬门（10号文 §4 Phase 1.2）：DENY 阻断不发起调用+落库；引擎异常 fail-closed；token 消费回填闭环
+- LLMDeg-0~4 降级注入（10号文 §3.6 降级表）：1=非关键本地优先 / 2=仅关键任务 API / 3|4=仅本地；
+  显式 API 钉死在 2+非关键与 3+ 被拒
+- route()（10号文 §4 Phase 1.4）：返回含 tier/reason/performance_score；LLMDeg tier 封顶与熔断标注
+- L2 无旁路：源码无 bypass 配置项；Ollama 链与 API 链同过 LSG+预算闸门
 """
 
 from __future__ import annotations
@@ -24,11 +29,19 @@ import pytest
 
 gw_mod = pytest.importorskip("zephyr.integration.llm_runtime_gateway")
 secrets_mod = pytest.importorskip("zephyr.shared.security.secrets")
+budget_models = pytest.importorskip("zephyr.governance.ops_governance.budget_models")
 
 InferResult = gw_mod.InferResult
 LLMRuntimeGateway = gw_mod.LLMRuntimeGateway
 QwenChat = gw_mod.QwenChat
 LSGBlockedError = gw_mod.LSGBlockedError
+BudgetLevel = budget_models.BudgetLevel
+GateDecision = budget_models.GateDecision
+GateResult = budget_models.GateResult
+ModelTier = budget_models.ModelTier
+TaskComplexity = pytest.importorskip(
+    "zephyr.governance.intelligence_governance.model_router"
+).TaskComplexity
 
 _BEIJING = ZoneInfo("Asia/Shanghai")
 
@@ -49,7 +62,43 @@ class _FakeClient:
         return self._reply
 
 
+class _FakeBudgetEngine:
+    """假预算门（BudgetEngineProtocol 最小面）：可配 DENY/ALLOW×BudgetLevel；exc 非空时 pre_flight 即抛。"""
+
+    def __init__(
+        self,
+        decision: GateDecision = GateDecision.ALLOW,
+        level: BudgetLevel = BudgetLevel.L0_NORMAL,
+        reason: str = "OK",
+        exc: Exception | None = None,
+    ):
+        self._decision = decision
+        self._level = level
+        self._reason = reason
+        self._exc = exc
+        self.calls: list[dict] = []
+        self.recorded: list[tuple] = []
+
+    def pre_flight_check(self, request_id, estimated_tokens=0, estimated_cost=0.0, prompt=""):
+        self.calls.append({"request_id": request_id, "estimated_tokens": estimated_tokens})
+        if self._exc is not None:
+            raise self._exc
+        return GateResult(
+            request_id=request_id,
+            decision=self._decision,
+            reason=self._reason,
+            budget_level=self._level,
+        )
+
+    def get_model_router_recommendation(self):
+        return (ModelTier.PREMIUM, 16000)
+
+    def record_consumption(self, policy_id, tokens, cost, time_minutes):
+        self.recorded.append((policy_id, tokens, cost, time_minutes))
+
+
 def _make_gateway(tmp_path, clients, **kw):
+    kw.setdefault("budget_engine", _FakeBudgetEngine())
     return LLMRuntimeGateway(clients=clients, db_path=tmp_path / "test.db", lsg_enabled=False, **kw)
 
 
@@ -394,3 +443,214 @@ class TestQwenChat:
     def test_repr_hides_api_key(self):
         chat = QwenChat(api_key="sk-secret-xxx", lsg_enabled=False)
         assert "sk-secret-xxx" not in repr(chat)
+
+
+class TestBudgetGate:
+    """预算硬门（10号文 §4 Phase 1.2）：门面入口统一 pre_flight_check，DENY 阻断。"""
+
+    def test_deny_blocks_before_any_channel_and_logged(self, tmp_path):
+        db = tmp_path / "test.db"
+        ds = _FakeClient()
+        engine = _FakeBudgetEngine(
+            decision=GateDecision.DENY,
+            level=BudgetLevel.L5_HARD_STOP,
+            reason="COST hard stop: daily 120%",
+        )
+        gw = _make_gateway(tmp_path, {"deepseek": ds, "ollama": _FakeClient()}, budget_engine=engine)
+        r = gw.infer("summary_extraction", "文本")
+        assert r.status == "blocked"
+        assert "budget_denied" in r.error and "hard stop" in r.error
+        assert ds.calls == 0  # DENY -> 不发起任何通道调用
+        assert engine.calls and engine.calls[0]["estimated_tokens"] > 0
+        assert gw.last_llmdeg == 4  # L5_HARD_STOP -> LLMDeg-4 熔断
+        rows = _rows(db)
+        assert len(rows) == 1 and rows[0][6] == "blocked"
+        assert engine.recorded == []  # 被拦调用不回填消费
+
+    def test_engine_exception_fail_closed(self, tmp_path):
+        db = tmp_path / "test.db"
+        ds = _FakeClient()
+        engine = _FakeBudgetEngine(exc=RuntimeError("budget store down"))
+        gw = _make_gateway(tmp_path, {"deepseek": ds}, budget_engine=engine)
+        r = gw.infer("summary_extraction", "文本")
+        assert r.status == "blocked"
+        assert "budget_gate_unavailable" in r.error
+        assert ds.calls == 0
+        assert _rows(db)[0][6] == "blocked"
+
+    def test_llmdeg_level_refreshed_from_budget_level(self, tmp_path):
+        engine = _FakeBudgetEngine(level=BudgetLevel.L2_THROTTLED)
+        gw = _make_gateway(tmp_path, {"ollama": _FakeClient()}, budget_engine=engine)
+        assert gw.last_llmdeg == 0
+        gw.infer("tag_completion", "打标签")
+        assert gw.last_llmdeg == 2
+
+    def test_consumption_recorded_on_ok(self, tmp_path):
+        engine = _FakeBudgetEngine()
+        gw = _make_gateway(tmp_path, {"deepseek": _FakeClient()}, budget_engine=engine)
+        r = gw.infer("summary_extraction", "文本")
+        assert r.status == "ok"
+        assert len(engine.recorded) == 1
+        policy_id, tokens, _cost, _minutes = engine.recorded[0]
+        assert policy_id == "BP-TOKEN-001"
+        assert tokens == r.tokens_in + r.tokens_out > 0
+
+
+class TestLLMDegRouting:
+    """LLMDeg-0~4 注入路由决策（10号文 §3.6 降级表走向逐条对应）。"""
+
+    @staticmethod
+    def _clients():
+        return {
+            "deepseek": _FakeClient(model="deepseek-v4-flash", reply="ok-deepseek"),
+            "qwen": _FakeClient(model="qwen-flash", reply="ok-qwen"),
+            "ollama": _FakeClient(model="qwen3:8b", reply="ok-ollama"),
+        }
+
+    def test_level0_default_chain_api_first(self, tmp_path):
+        clients = self._clients()
+        gw = _make_gateway(tmp_path, clients, budget_engine=_FakeBudgetEngine(level=BudgetLevel.L0_NORMAL))
+        r = gw.infer("summary_extraction", "文本")
+        assert r.provider == "deepseek"
+        assert clients["deepseek"].calls == 1 and clients["ollama"].calls == 0
+
+    def test_level1_noncritical_local_first(self, tmp_path):
+        clients = self._clients()
+        gw = _make_gateway(tmp_path, clients, budget_engine=_FakeBudgetEngine(level=BudgetLevel.L1_WARNING))
+        r = gw.infer("summary_extraction", "文本")  # 非关键任务
+        assert r.status == "ok" and r.provider == "ollama"  # LLMDeg-1：非关键 API->本地降级
+        assert clients["ollama"].calls == 1 and clients["deepseek"].calls == 0
+
+    def test_level1_critical_keeps_api_first(self, tmp_path):
+        clients = self._clients()
+        gw = _make_gateway(tmp_path, clients, budget_engine=_FakeBudgetEngine(level=BudgetLevel.L1_WARNING))
+        r = gw.infer("summary_extraction", "文本", critical=True)
+        assert r.provider == "deepseek"
+        assert clients["deepseek"].calls == 1 and clients["ollama"].calls == 0
+
+    def test_level2_noncritical_local_only(self, tmp_path):
+        clients = self._clients()
+        gw = _make_gateway(tmp_path, clients, budget_engine=_FakeBudgetEngine(level=BudgetLevel.L2_THROTTLED))
+        r = gw.infer("tag_completion", "文本")
+        assert r.provider == "ollama"
+        assert clients["deepseek"].calls == 0 and clients["qwen"].calls == 0
+
+    def test_level2_critical_api_allowed(self, tmp_path):
+        clients = self._clients()
+        gw = _make_gateway(tmp_path, clients, budget_engine=_FakeBudgetEngine(level=BudgetLevel.L2_THROTTLED))
+        r = gw.infer("reflection_l3", "深度反思", critical=True)  # LLMDeg-2：仅战略层+反思 L2/L3 用 API
+        assert r.provider == "deepseek"
+        assert clients["deepseek"].calls == 1
+
+    def test_level3_all_local_only_even_critical(self, tmp_path):
+        clients = self._clients()
+        gw = _make_gateway(tmp_path, clients, budget_engine=_FakeBudgetEngine(level=BudgetLevel.L3_DEGRADED))
+        r = gw.infer("reflection_l3", "深度反思", critical=True)  # LLMDeg-3：全部 API->本地降级
+        assert r.provider == "ollama"
+        assert clients["deepseek"].calls == 0 and clients["qwen"].calls == 0
+
+    def test_level4_local_only(self, tmp_path):
+        clients = self._clients()
+        gw = _make_gateway(tmp_path, clients, budget_engine=_FakeBudgetEngine(level=BudgetLevel.L4_EMERGENCY))
+        r = gw.infer("summary_extraction", "文本")
+        assert gw.last_llmdeg == 4
+        assert r.provider == "ollama"
+        assert clients["deepseek"].calls == 0
+
+    def test_explicit_api_pin_blocked_at_level2_noncritical(self, tmp_path):
+        db = tmp_path / "test.db"
+        clients = self._clients()
+        gw = _make_gateway(tmp_path, clients, budget_engine=_FakeBudgetEngine(level=BudgetLevel.L2_THROTTLED))
+        r = gw.infer("summary_extraction", "文本", channel="deepseek")
+        assert r.status == "blocked" and "llmdeg-2" in r.error
+        assert clients["deepseek"].calls == 0
+        assert _rows(db)[0][6] == "blocked"
+
+    def test_explicit_api_pin_allowed_at_level0(self, tmp_path):
+        clients = self._clients()
+        gw = _make_gateway(tmp_path, clients, budget_engine=_FakeBudgetEngine(level=BudgetLevel.L0_NORMAL))
+        r = gw.infer("summary_extraction", "文本", channel="qwen")
+        assert r.status == "ok" and r.provider == "qwen"
+
+    def test_explicit_local_pin_allowed_at_level3(self, tmp_path):
+        clients = self._clients()
+        gw = _make_gateway(tmp_path, clients, budget_engine=_FakeBudgetEngine(level=BudgetLevel.L3_DEGRADED))
+        r = gw.infer("summary_extraction", "文本", channel="ollama")
+        assert r.status == "ok" and r.provider == "ollama"
+
+
+class TestRouteMethod:
+    """route() 接 MOD-INF-024 perf-aware 决策（10号文 §4 Phase 1.4）。"""
+
+    def test_route_returns_tier_reason_performance_score(self, tmp_path):
+        gw = _make_gateway(tmp_path, {"deepseek": _FakeClient()})
+        d = gw.route(complexity=TaskComplexity.COMPLEX)
+        assert d.tier is ModelTier.STANDARD  # COMPLEX -> STANDARD（无 LLMDeg 封顶）
+        assert isinstance(d.reason, str) and d.reason
+        assert isinstance(d.performance_score, float)
+        assert isinstance(d.model_key, str) and d.model_key
+
+    def test_route_llmdeg2_caps_tier_for_noncritical(self, tmp_path):
+        gw = _make_gateway(
+            tmp_path,
+            {"ollama": _FakeClient()},
+            budget_engine=_FakeBudgetEngine(level=BudgetLevel.L2_THROTTLED),
+        )
+        gw.infer("tag_completion", "文本")  # 刷新 LLMDeg-2
+        d = gw.route(complexity=TaskComplexity.COMPLEX)
+        assert d.tier is ModelTier.ECONOMY  # STANDARD 被 LLMDeg-2 封顶到 ECONOMY
+        assert "llmdeg-2-tier-cap" in d.reason
+
+    def test_route_llmdeg2_critical_not_capped(self, tmp_path):
+        gw = _make_gateway(
+            tmp_path,
+            {"deepseek": _FakeClient()},
+            budget_engine=_FakeBudgetEngine(level=BudgetLevel.L2_THROTTLED),
+        )
+        gw.infer("reflection_l3", "深度反思", critical=True)
+        d = gw.route(complexity=TaskComplexity.COMPLEX, critical=True)
+        assert d.tier is ModelTier.STANDARD  # 关键任务在级别 <3 不封顶
+
+    def test_route_llmdeg3_marks_api_suspended(self, tmp_path):
+        gw = _make_gateway(
+            tmp_path,
+            {"ollama": _FakeClient()},
+            budget_engine=_FakeBudgetEngine(level=BudgetLevel.L3_DEGRADED),
+        )
+        gw.infer("tag_completion", "文本")
+        d = gw.route(complexity=TaskComplexity.MODERATE)
+        assert "api-suspended-local-only" in d.reason
+
+
+class TestNoL2Bypass:
+    """L2 无旁路（10号文 §4 Phase 1.3 对齐验证）：代码中无 L2 旁路配置项；L2 与 L3 同一闸门。"""
+
+    def test_source_has_no_bypass_config_token(self):
+        import inspect
+
+        src = inspect.getsource(gw_mod).lower()
+        assert "bypass" not in src  # 源码零英文 bypass 配置项（中文“旁路”仅出现在否定性注释）
+
+    def test_gateway_has_no_bypass_attribute(self, tmp_path):
+        gw = _make_gateway(tmp_path, {"ollama": _FakeClient()})
+        assert not any("bypass" in name.lower() for name in dir(gw))
+
+    def test_ollama_chain_blocked_by_same_lsg_gate(self, tmp_path):
+        db = tmp_path / "test.db"
+        ol = _FakeClient()
+        gw = _make_gateway(tmp_path, {"ollama": ol}, chain=("ollama",))
+        with patch.object(gw_mod, "enforce_input", side_effect=LSGBlockedError("LSG 判决 block")):
+            r = gw.infer("summary_extraction", "恶意 prompt")
+        assert r.status == "blocked"
+        assert ol.calls == 0  # L2 路径同过 LSG 入口闸门
+        assert _rows(db)[0][6] == "blocked"
+
+    def test_ollama_chain_blocked_by_same_budget_gate(self, tmp_path):
+        db = tmp_path / "test.db"
+        ol = _FakeClient()
+        engine = _FakeBudgetEngine(decision=GateDecision.DENY, level=BudgetLevel.L5_HARD_STOP)
+        gw = _make_gateway(tmp_path, {"ollama": ol}, chain=("ollama",), budget_engine=engine)
+        r = gw.infer("summary_extraction", "文本")
+        assert r.status == "blocked" and "budget_denied" in r.error
+        assert ol.calls == 0  # L2 路径同过预算硬门，无本地豁免
+        assert _rows(db)[0][6] == "blocked"

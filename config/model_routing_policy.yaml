@@ -1,0 +1,122 @@
+# --- 治理锚定 ---
+# blueprint: MOD-MODEL_ROUTER_ORCH | docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/11_evidence_skill_router.md | §4.3 P1-5
+# module_id: MOD-MODEL_ROUTER_ORCH
+# stability: evolving
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# 模型路由级联策略（11号文 §4.3 P1-5：规则化落配置，配置变更不改代码）
+# 真源：附表 A（任务类型×场景路由表 12 类）/ 附表 B（分时段路由）/ 附表 C（成本规则，口径归 10号文 BudgetEngine）
+
+# L2 融合权重（JobMatcher match_score × w_job + task_model_learner composite_score × w_learn）
+fusion:
+  job_match_weight: 0.5
+  learner_weight: 0.5
+
+# 通道分桶（候选模型 provider 前缀判定；不在 api_providers 的前缀一律视为本地）
+local_providers: ["ollama", "local"]
+api_providers: ["zhipu", "deepseek", "openai_azure", "anthropic"]
+
+# 风控类任务外部 API 兜底模型（HB-09：必须外部 API 不可降级；L3 故障时仍落 API，绝不落本地/规则引擎）
+risk_api_default: "deepseek:pro"
+rule_engine_provider: "rule_engine"
+default_local_model: "qwen3:8b"
+
+# 附表 A：任务类型×场景路由表（12 类）
+task_routes:
+  risk_veto:              # 1 风控否决判定
+    preferred: rule_engine
+    fallbacks: []
+    kind: risk
+    reason: "确定性规则，<1ms（无 LLM）"
+  risk_diagnosis:         # 2 风控异常诊断
+    preferred: api
+    fallbacks: []
+    kind: risk
+    non_degradable: true  # HB-09：风控必须外部 API，成本规则硬门不适用
+    reason: "风控必须外部 API（HB-09 不可降级）"
+  compliance_review:      # 2 合规审查（同属风控不可降级行）
+    preferred: api
+    fallbacks: []
+    kind: risk
+    non_degradable: true
+    reason: "合规审查必须外部 API（HB-09 不可降级）"
+  signal_generation:      # 3 信号生成
+    preferred: local
+    fallbacks: [rule_engine]
+    kind: general
+    reason: "规则+少量推理，本地优先规则引擎兜底"
+  param_tuning:           # 4 参数微调
+    preferred: local
+    fallbacks: []
+    kind: general
+    reason: "简单数值/参数优化"
+  anomaly_classification: # 5 异常分类
+    preferred: local
+    fallbacks: []
+    kind: general
+    reason: "分类任务本地 7B 足够"
+  market_regime:          # 6 市场状态判定
+    preferred: hybrid
+    fallbacks: [local]
+    kind: general
+    reason: "API+本地混合，简单状态本地处理"
+  attribution:            # 7 归因分析
+    preferred: local
+    fallbacks: []
+    kind: general
+    reason: "结构化分析本地足够"
+  reflection_l1:          # 8 自反反思 L1
+    preferred: local
+    fallbacks: []
+    kind: reflection
+    reason: "即时反思，低延迟优先"
+  reflection_l23:         # 9 自反反思 L2/L3
+    preferred: api
+    fallbacks: [local]
+    kind: reflection
+    reason: "深度反思高质量优先（LLMDeg>=2 时降级本地）"
+  strategy_codegen:       # 10 策略代码生成/因子公式推导
+    preferred: local
+    fallbacks: [api]
+    kind: strategic
+    reason: "创意+复杂推理，显存>80%/OOM 降级 DeepSeek API"
+  paper_reading:          # 11 研报/论文解读
+    preferred: api
+    fallbacks: [local]
+    kind: general
+    reason: "语种适配（中文 GLM/英文 Claude，异常降级本地/DeepSeek）"
+  cross_validation:       # 12 多 AI 交叉验证
+    preferred: api
+    fallbacks: [local]
+    kind: general
+    reason: "三路并行任一 API 熔断降级两路+本地"
+
+# 附表 B：分时段路由（api: allowed=允许 / restricted=限制；restricted 时仅 api_allowed_kinds 可用 API）
+period_rules:
+  pre_open:      {api: allowed}                                  # 盘前 8:00-9:15
+  call_auction:  {api: restricted, api_allowed_kinds: [strategic, reflection]}  # 集合竞价 9:15-9:30（仅紧急任务）
+  trading:       {api: restricted, api_allowed_kinds: [strategic, reflection]}  # 盘中 9:30-15:00（仅战略层+反思 L2/L3）
+  post_close:    {api: allowed}                                  # 盘后 15:00-24:00
+
+# L2 JobMatcher 岗位映射（task_type -> job_matrix.yaml job_id；无映射的任务 match_score 不参与融合）
+task_job_map:
+  strategy_codegen: code_generator
+  paper_reading: doc_organizer
+  anomaly_classification: rule_gatekeeper
+  compliance_review: architecture_reviewer
+
+# 样本=0 静态映射兜底（task_model_learner 静态映射先例；按优先序排列，命中候选即选）
+static_mapping:
+  signal_generation: ["qwen3:8b"]
+  param_tuning: ["qwen3:8b"]
+  anomaly_classification: ["qwen3:8b"]
+  market_regime: ["qwen3:8b"]
+  attribution: ["qwen3:8b"]
+  reflection_l1: ["qwen3:8b"]
+  reflection_l23: ["deepseek:pro"]
+  strategy_codegen: ["qwen2.5-coder:14b", "qwen3:8b"]
+  paper_reading: ["deepseek:pro"]
+  cross_validation: ["deepseek:pro"]
+  default: ["qwen3:8b"]
