@@ -2182,6 +2182,41 @@ error_codes:
 #   连带=2 处测试断言（test_pnl_calculator:216/test_corporate_action_processor:513）+4 处蓝图同步+头注同步。
 #   裁定证据（git 首引入/同 commit 分析）随改号前版本留存 git 历史（v3.0.0 本段全文）。
 # ============================================================
+- code: ZA-RK-0069
+  class: RiskDataPipelineError
+  module: zephyr.risk.core.risk_data_pipeline
+  file: src/zephyr/risk/core/risk_data_pipeline.py
+  introduced: '2026-08-23: 长城任务批1 设计态波次1 MOD-RK-25（原 ZA-RISK-DP-001 改号复用 RK 前缀，D1 查重）'
+- code: ZA-RK-0070
+  class: InvalidAgentActivityError
+  module: zephyr.risk.core.agent_risk_monitor
+  file: src/zephyr/risk/core/agent_risk_monitor.py
+  introduced: '2026-08-23: 长城任务批1 设计态波次1 MOD-RK-22（原 ZA-RISK-AM-001 改号）'
+- code: ZA-RK-0071
+  class: InvalidVetoRequestError
+  module: zephyr.risk.core.risk_veto_engine
+  file: src/zephyr/risk/core/risk_veto_engine.py
+  introduced: '2026-08-23: 长城任务批1 设计态波次1 MOD-RK-24（原 ZA-RISK-VE-001 改号）'
+- code: ZA-CMP-0012
+  class: InterceptQueueFullError
+  module: zephyr.compliance.async_intercept_queue
+  file: src/zephyr/compliance/async_intercept_queue.py
+  introduced: '2026-08-23: 长城任务批1 MOD-L10-001（原 ZA-CMP-AIQ-001 改号为 4 位段）'
+- code: ZA-CMP-0013
+  class: ComplianceEnablementError
+  module: zephyr.compliance.compliance_tech_enabler
+  file: src/zephyr/compliance/compliance_tech_enabler.py
+  introduced: '2026-08-23: 长城任务批1 MOD-CMP-003（原 ZA-CMP-TE-001 改号）'
+- code: ZA-FE-0003
+  class: InvalidApprovalRequestError
+  module: zephyr.frontend.implementations.default_approval_gateway
+  file: src/zephyr/frontend/implementations/default_approval_gateway.py
+  introduced: '2026-08-23: 长城任务批1 MOD-L08-001（原 ZA-HMI-AG-001 改号复用 FE 前缀）'
+- code: ZA-FE-0004
+  class: InvalidNotificationError
+  module: zephyr.frontend.implementations.default_notification_manager
+  file: src/zephyr/frontend/implementations/default_notification_manager.py
+  introduced: '2026-08-23: 长城任务批1 MOD-L08-001（原 ZA-HMI-NM-001 改号）'
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）
