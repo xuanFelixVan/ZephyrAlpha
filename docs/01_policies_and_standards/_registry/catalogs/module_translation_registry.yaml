@@ -42983,6 +42983,83 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "用合成盘口数据验证 RL 下单环境骨架：随机策略能跑通整个回合、越界价格被夹回涨跌停带、越界数量被砍到 POV 上限、禁市价时市价动作被拒、奖励等于负的实现短缺、同种子 reset 结果完全可复现。"
+- module_path: src/zephyr/signal_ashare/selection_funnel_skeleton.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "选股漏斗共享骨架"
+  name_en: "Selection Funnel Skeleton"
+  desc_zh: "BM-SEL-16/17/18 选股漏斗的层序、接口与数据流唯一真源；板块幅度自推导、容量截断、密度鸭子类型等域特性经钩子/参数注入，两域各留薄适配层。"
+  desc_en: "Single source of truth for the BM-SEL-16/17/18 selection funnel layer sequence, interfaces and data flow; domain features (board limit-pct derivation, capacity truncation, density duck-typing) injected via hooks; each domain keeps a thin adapter."
+  plain_zh: "选股漏斗三层的公共骨架。把先按硬规则排除、再五维初筛、最后六要素打分排序这套流程抽成一份真源；两个信号域只把自己的字段取法、阈值和板块涨跌停推导等特性当参数塞进来，同一份漏斗逻辑不再写两遍。"
+- module_path: src/zephyr/shared/contracts/execution_report_contract.py
+  domain_id: D_SHARED
+  name_zh: "ExecutionReport契约层"
+  name_en: "ExecutionReport Contract Kit"
+  desc_zh: "CTR-P1-007 执行报告的Fail-Closed校验、序列化往返与消费方Protocol对接位"
+  desc_en: ""
+  plain_zh: "给执行报告这份成交成绩单做收货体检和快递打包：下游收货前先把关（方向错、数量超、价格负、时间倒、非整手、破涨跌停都拒收），还能把它打包成可入库可发网络的字典并原样拆回；同时给绩效归因和mSPRT晋升两个下游留好标准取货口和配对比价器。"
+- module_path: tests/signal_ashare/test_selection_funnel_skeleton.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "选股漏斗共享骨架单元测试"
+  name_en: "Selection Funnel Skeleton Tests"
+  desc_zh: "MOD-SIG-086 共享骨架单元测试：三层排除/放行语义、降级链路、extra_tier_checks/容量截断/密度鸭子类型注入位、tie_break 双口径、链式数据流（合成数据不触库）。"
+  desc_en: "Unit tests for MOD-SIG-086 selection funnel skeleton: layer semantics, degraded paths, hook injection points (extra tier checks, capacity truncation, density duck-typing), tie-break modes and chain data flow (synthetic data, no DB)."
+  plain_zh: "选股漏斗共享骨架的测试。用假数据验证骨架三层流程：该排除的排除、该放行的放行、降级路径不炸、各域特性注入位都能正确塞进参数。"
+- module_path: tests/zephyr/data/test_backfill_checker_kline_index.py
+  domain_id: D_DATA
+  name_zh: "kline_index补下载层单元测试"
+  name_en: "backfill_checker kline_index unit tests"
+  desc_zh: "backfill_checker 指数日K线补下载专用路径（symbol级差集检测+显式窗口回填）的单元测试"
+  desc_en: ""
+  plain_zh: "给补下载检测器的指数K线新功能配的体检表：模拟缺数和满数场景，确认缺口能被查出来、补数请求带对日期窗口和标的清单、写库失败不算进补回行数、主循环里指数表走新通道而不是老的重跑任务通道。"
+- module_path: tests/zephyr/data/test_index_constituent_scd2.py
+  domain_id: D_DATA
+  name_zh: "指数成分SCD-2闭旧开新测试"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "GAP-B3-03：验证指数成分日快照写入时闭旧开新——新快照到达产出同键闭合行（旧版本valid_to=新快照生效日），两版本连续写入后每标的仅一行open；含空快照不闭旧、查询失败不阻断开新、同日重跑互不闭合三重护栏。全mock不触网不触库。"
+- module_path: src/zephyr/data/implementations/sector_code_bridge.py
+  domain_id: D_DATA
+  name_zh: "881转880板块代码桥接适配器"
+  name_en: "Sector Code Bridge 881 to 880"
+  desc_zh: "同花顺行业资金流按通达信880行业指数重钥"
+  desc_en: "Rekey THS industry fund flow onto TDX 880 industry codes"
+  plain_zh: "同花顺和通达信各有一套板块代码，资金流是同花顺那套（881 开头 90 个行业），可逆势榜用的是通达信那套（880 开头）。这个适配器手里有一张 90 行的对照表，把每个同花顺行业对到对应的通达信行业指数，再把资金流数字按通达信代码重新归拢——几个同花顺小行业对到同一个通达信大行业时直接加总。对不上的名字、空数值、概念板块都跳过并记下名字。输出就是逆势榜资金卡要的那包 {880代码: 净流入}。"
+- module_path: src/zephyr/data/implementations/sector_fund_flow_collector.py
+  domain_id: D_DATA
+  name_zh: "板块资金流快照采集器"
+  name_en: "Sector Fund Flow Collector"
+  desc_zh: "同花顺即时板块资金流快照采集解析与落盘"
+  desc_en: "THS realtime sector fund flow snapshot collector"
+  plain_zh: "定时给 90 个行业和三百多个概念板块拍资金快照：今天累计流入多少、流出多少、净进多少，连带板块指数、涨跌幅、领涨股一起存。东财分钟级接口被反爬封了，所以用同花顺即时快照轮询，相邻两次快照相减就是这一分钟区间的净流入。源接口抽风只缺那一类不炸锅，表还没建就先写 CSV 文件垫底。"
+- module_path: tests/zephyr/data/test_sector_code_bridge.py
+  domain_id: D_DATA
+  name_zh: "板块代码桥接适配器单元测试"
+  name_en: "Sector Code Bridge Tests"
+  desc_zh: "881转880映射覆盖率重钥语义与消费契约测试"
+  desc_en: "Bridge mapping coverage rekey and consumer contract tests"
+  plain_zh: "给 881 转 880 适配器把四道关：对照表必须 90 行一行不少且每个 880 目标都真实存在于通达信行业指数名单；重钥时同目标的几个行业资金要加总、概念板块和空值要跳过且留名；输出塞进逆势榜资金卡能真跑出榜单；映射表写成 CSV 再读回来必须一字不差。全程假数据不碰网络不碰库。"
+- module_path: tests/zephyr/data/test_sector_fund_flow_collector.py
+  domain_id: D_DATA
+  name_zh: "板块资金流采集器单元测试"
+  name_en: "Sector Fund Flow Collector Tests"
+  desc_zh: "THS板块资金流采集解析落库落盘测试"
+  desc_en: "Sector fund flow collector parse collect csv tests"
+  plain_zh: "用假的同花顺数据源喂采集器：字段一个不少地映射成快照行、行业概念两类都出、空名字和全空数值的烂行要跳过、一类源挂了另一类照出、落库 SQL 是参数化的、表名没注册要报明白的错、写 CSV 追加不重复表头。全程不碰真接口不碰真库。"
+- module_path: src/zephyr/data/implementations/daban_board_event_deriver.py
+  domain_id: D_DATA
+  name_zh: "打板回测历史事件推导器"
+  name_en: "DabanBoardEventDeriver"
+  desc_zh: "从库内日K/分钟K/tick盘口/涨跌停价三级解析推导打板回测所需历史事件（触板/封住/一字/首触时刻/开板次数/封单代理/连板），CSV 中间层落地，DDL 待 Owner 窗口"
+  desc_en: ""
+  plain_zh: "打板策略回测需要封单、封板时间、开板次数这些历史数据，但免费数据源只保留最近三周。这个模块不花钱买数据，而是用仓库里已有的日K线、分钟K线和盘口快照反推出这些字段：哪只票哪天摸了涨停、几点几分第一次封上、中间炸开几次、收盘封单有多少钱，全部推出来写成CSV，等审批建新表后再入库存档。"
+- module_path: tests/zephyr/data/test_daban_board_event_deriver.py
+  domain_id: D_DATA
+  name_zh: "打板回测历史事件推导器单测"
+  name_en: "TestDabanBoardEventDeriver"
+  desc_zh: "daban_board_event_deriver 单元测试（36 用例，假数据不触网不触库）"
+  desc_en: ""
+  plain_zh: "给打板事件推导器配的单元测试，全部用编造的数据离线跑，覆盖板块分类、涨停价计算、触板封板判断、连板计数、分钟级首封和炸板次数推导、尾盘封单代理、CSV 写出这些逻辑是否正确。"
 
 battle_map_steps:
 - step_id: BM-BUY-04

@@ -9401,6 +9401,22 @@ creation_tokens:
   token: auto-test-selection-funnel-skeleton-20260824
   created_by: AI-K3-A4-FUNNEL
   capability: signal_screening_funnel
+- file: src/zephyr/data/implementations/daban_board_event_deriver.py
+  token: auto-scaffold-daban_board_event_deriver-20260824
+  created_by: scaffold.py
+  capability: daban_board_event_deriver
+- file: src/zephyr/data/implementations/sector_code_bridge.py
+  token: auto-scaffold-sector_code_bridge-20260824
+  created_by: scaffold.py
+  capability: sector_code_bridge
+- file: src/zephyr/data/implementations/sector_fund_flow_collector.py
+  token: manual-sector_fund_flow_collector-20260824
+  created_by: AI-K3-GW2-MAIN（D3 批历史文件补登，F16 核验缺失）
+  capability: sector_fund_flow_collector
+- file: tests/zephyr/data/test_sector_fund_flow_collector.py
+  token: manual-test-sector_fund_flow_collector-20260824
+  created_by: AI-K3-GW2-MAIN（D3 批历史文件补登，tests/ 豁免自愿补登随 SELL-001 先例）
+  capability: sector_fund_flow_collector
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
