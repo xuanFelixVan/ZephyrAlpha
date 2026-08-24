@@ -304,3 +304,16 @@ class TestMainEntry:
         assert rc == 1
         out = capsys.readouterr().out
         assert "获取调度器失败" in out
+
+    def test_start_exits_when_instance_lock_held(self, capsys):
+        """start 在单实例锁被持有时返回 1，不创建调度器（#SCHED-DUAL-INSTANCE）。"""
+        with (
+            patch("zephyr.data.scheduler.acquire_single_instance_lock", return_value=None) as m_lock,
+            patch("zephyr.data.cli.IntegratorScheduler") as m_sched,
+        ):
+            rc = main(["start"])
+        assert rc == 1
+        m_lock.assert_called_once()
+        m_sched.assert_not_called()
+        out = capsys.readouterr().out
+        assert "单实例锁" in out

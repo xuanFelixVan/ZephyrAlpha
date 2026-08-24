@@ -79,41 +79,63 @@ function Write-Heartbeat {
 }
 
 # ============== Single-instance lock (with watchdog heartbeat, fix #ARCH-BOOT-001) ==============
-if (Test-Path $LockFile) {
-    $lockPid = (Get-Content $LockFile -ErrorAction SilentlyContinue | Select-Object -First 1).Trim()
-    if ($lockPid -match '^\d+$' -and (Get-Process -Id ([int]$lockPid) -ErrorAction SilentlyContinue)) {
-        # fix: PID alive but heartbeat stale (>5min) => zombie guard, force takeover
-        $stale = $true
-        if (Test-Path $HeartbeatFile) {
-            try {
-                $hb = (Get-Content $HeartbeatFile -ErrorAction SilentlyContinue | Select-Object -First 1).Trim()
-                $hbTs = ($hb -split '\|')[0]
-                if (((Get-Date) - ([datetime]$hbTs)).TotalMinutes -lt 5) { $stale = $false }
-            } catch { }
-        }
-        if ($stale) {
-            Write-GuardLog "Guard PID=$lockPid alive but heartbeat stale (>5min), force takeover (kill zombie guard)"
-            Stop-Process -Id ([int]$lockPid) -Force -ErrorAction SilentlyContinue
-            Start-Sleep -Seconds 2
-            Remove-Item $LockFile, $HeartbeatFile -Force -ErrorAction SilentlyContinue
-        } else {
-            Write-GuardLog "Guard already running (PID=$lockPid, heartbeat fresh), exit"
-            exit 0
-        }
-    } else {
-        Write-GuardLog "Cleaning stale lock (old PID=$lockPid no longer alive)"
-        Remove-Item $LockFile -Force -ErrorAction SilentlyContinue
+# fix #SCHED-DUAL-INSTANCE (2026-08-25): named mutex serializes the check-then-act critical
+# section. Root cause of dual schedulers: the task has TWO 5-min triggers (AtLogOn + Once)
+# with MultipleInstances=Parallel, so two guards routinely launch within the same second;
+# the old Test-Path->write-lock sequence let both pass before either wrote (guard log
+# 2026-08-24 14:42:12-13: THREE guards started in 2s) -> dual python schedulers ->
+# duplicate task_runs for every task. The mutex is OS-managed: auto-released on process
+# death (abandoned => next waiter acquires), no stale state.
+$guardMutex = New-Object System.Threading.Mutex($false, 'Local\ZephyrAlphaSchedulerGuardLock')
+$mutexHeld = $false
+try {
+    try { $mutexHeld = $guardMutex.WaitOne(30000) }
+    catch [System.Threading.AbandonedMutexException] { $mutexHeld = $true }
+    if (-not $mutexHeld) {
+        Write-GuardLog "Guard mutex wait timeout (30s), exit"
+        exit 1
     }
-    # Invariant: no guard => no business process. Kill orphaned business python from the dead/zombie guard.
-    Get-CimInstance Win32_Process -Filter "Name='python.exe'" -ErrorAction SilentlyContinue |
-        Where-Object { $_.CommandLine -and $_.CommandLine.Contains("-m $BizModule") } |
-        ForEach-Object {
-            Write-GuardLog "Killing orphaned $BizModule (PID=$($_.ProcessId))"
-            Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue
-        }
-}
 
-"$PID" | Out-File -FilePath $LockFile -Encoding utf8 -NoNewline
+    if (Test-Path $LockFile) {
+        $lockPid = (Get-Content $LockFile -ErrorAction SilentlyContinue | Select-Object -First 1).Trim()
+        if ($lockPid -match '^\d+$' -and (Get-Process -Id ([int]$lockPid) -ErrorAction SilentlyContinue)) {
+            # fix: PID alive but heartbeat stale (>5min) => zombie guard, force takeover
+            $stale = $true
+            if (Test-Path $HeartbeatFile) {
+                try {
+                    $hb = (Get-Content $HeartbeatFile -ErrorAction SilentlyContinue | Select-Object -First 1).Trim()
+                    $hbTs = ($hb -split '\|')[0]
+                    if (((Get-Date) - ([datetime]$hbTs)).TotalMinutes -lt 5) { $stale = $false }
+                } catch { }
+            }
+            if ($stale) {
+                Write-GuardLog "Guard PID=$lockPid alive but heartbeat stale (>5min), force takeover (kill zombie guard)"
+                Stop-Process -Id ([int]$lockPid) -Force -ErrorAction SilentlyContinue
+                Start-Sleep -Seconds 2
+                Remove-Item $LockFile, $HeartbeatFile -Force -ErrorAction SilentlyContinue
+            } else {
+                Write-GuardLog "Guard already running (PID=$lockPid, heartbeat fresh), exit"
+                exit 0
+            }
+        } else {
+            Write-GuardLog "Cleaning stale lock (old PID=$lockPid no longer alive)"
+            Remove-Item $LockFile -Force -ErrorAction SilentlyContinue
+        }
+        # Invariant: no guard => no business process. Kill orphaned business python from the dead/zombie guard.
+        Get-CimInstance Win32_Process -Filter "Name='python.exe'" -ErrorAction SilentlyContinue |
+            Where-Object { $_.CommandLine -and $_.CommandLine.Contains("-m $BizModule") } |
+            ForEach-Object {
+                Write-GuardLog "Killing orphaned $BizModule (PID=$($_.ProcessId))"
+                Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue
+            }
+    }
+
+    "$PID" | Out-File -FilePath $LockFile -Encoding utf8 -NoNewline
+}
+finally {
+    if ($mutexHeld) { $guardMutex.ReleaseMutex() }
+    $guardMutex.Dispose()
+}
 
 try {
     Write-GuardLog "=== Guard started (guard PID=$PID) ==="
@@ -167,5 +189,17 @@ finally {
         Where-Object { $_.CommandLine -and $_.CommandLine.Contains("-m $BizModule") } |
         ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
     Write-GuardLog "=== Guard stopped (guard PID=$PID) ==="
-    Remove-Item $LockFile, $HeartbeatFile -Force -ErrorAction SilentlyContinue
+    # fix #SCHED-DUAL-INSTANCE (2026-08-25): delete lock/heartbeat ONLY if owned by THIS guard.
+    # Root cause of the self-perpetuating dual state: the old unconditional delete let an
+    # exiting co-guard wipe the ACTIVE guard's lock; the active guard never rewrites it, so
+    # the next watchdog fire saw "no lock" and launched yet another guard (guard log
+    # 2026-08-24 20:56->20:57:44 chain; current live state: lock=17680 but guard 15268 alive).
+    $ownedPid = (Get-Content $LockFile -ErrorAction SilentlyContinue | Select-Object -First 1)
+    if ($ownedPid -and $ownedPid.Trim() -eq "$PID") {
+        Remove-Item $LockFile -Force -ErrorAction SilentlyContinue
+    }
+    $hbLine = (Get-Content $HeartbeatFile -ErrorAction SilentlyContinue | Select-Object -First 1)
+    if ($hbLine -and (($hbLine -split '\|')[1]) -eq "$PID") {
+        Remove-Item $HeartbeatFile -Force -ErrorAction SilentlyContinue
+    }
 }

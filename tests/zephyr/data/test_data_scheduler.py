@@ -192,9 +192,11 @@ class TestCreateProvider:
         provider.connect()
         assert provider._connected is True
         # tasks.yaml 中 source=internal 任务（hk_trade_calendar_refresh）声明的能力须被覆盖
-        assert "hk_trade_calendar" in provider.meta.capabilities
-        assert "calendar_event" in provider.meta.capabilities
-        assert "technical_indicator" in provider.meta.capabilities
+        # （#ARCH-DATA-002 施工项1 后声明可为 str 或 CapabilityContract，统一走字符串视图断言）
+        caps = provider.meta.capabilities_as_strings()
+        assert "hk_trade_calendar" in caps
+        assert "calendar_event" in caps
+        assert "technical_indicator" in caps
 
     def test_internal_get_provider_end_to_end(self, scheduler):
         """#222：经 _get_provider 懒初始化通路构造+连接+缓存 internal provider。"""
@@ -460,3 +462,99 @@ class TestQueries:
         tasks = scheduler.list_tasks()
         assert len(tasks) == 1
         assert tasks[0]["task_id"] == "kline_daily_incremental"
+
+
+# ============== 单实例锁（#SCHED-DUAL-INSTANCE 治本） ==============
+# 复现场景（D1 遗留，2026-08-24 实证）：看门狗 start_scheduler.ps1 的 PID 文件锁
+# 存在 check-then-act 竞态 + finally 无条件删共享锁，双 guard 并行拉起两个
+# python -m zephyr.data.scheduler，每任务产生双份 task_runs（当日 303 组）、
+# 源请求翻倍。修复：进程入口 OS 级单实例锁，第二实例获取失败即退出。
+
+import subprocess  # noqa: E402
+import sys  # noqa: E402
+from pathlib import Path  # noqa: E402
+
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+
+# 子进程：尝试获取锁，0=成功，3=被其他实例持有
+_CHILD_ACQUIRE_CODE = (
+    "import sys;"
+    "from src.zephyr.data.scheduler import acquire_single_instance_lock as _a;"
+    "_h = _a(sys.argv[1]);"
+    "sys.exit(0 if _h is not None else 3)"
+)
+# 子进程：获取锁后不清场直接退出（模拟进程被杀/崩溃；OS 须自动释放锁）
+_CHILD_CRASH_CODE = (
+    "import os,sys;"
+    "from src.zephyr.data.scheduler import acquire_single_instance_lock as _a;"
+    "_h = _a(sys.argv[1]);"
+    "os._exit(0 if _h is not None else 3)"
+)
+
+
+def _child_exit_code(code: str, lock_path: Path) -> int:
+    result = subprocess.run(
+        [sys.executable, "-c", code, str(lock_path)],
+        cwd=_REPO_ROOT,
+        capture_output=True,
+        text=True,
+        timeout=110,
+    )
+    return result.returncode
+
+
+class TestSingleInstanceLock:
+    """acquire_single_instance_lock 跨进程互斥语义（OS 级文件锁）。"""
+
+    def test_lock_free_then_acquired(self, tmp_path):
+        """空闲锁可获取，返回持锁句柄。"""
+        from src.zephyr.data.scheduler import acquire_single_instance_lock
+
+        handle = acquire_single_instance_lock(tmp_path / "inst.lock")
+        assert handle is not None
+        handle.close()
+
+    def test_lock_held_blocks_second_instance(self, tmp_path):
+        """父进程持锁时，第二进程获取失败（exit=3）——双实例复现场景的治本断言。"""
+        from src.zephyr.data.scheduler import acquire_single_instance_lock
+
+        lock_path = tmp_path / "inst.lock"
+        handle = acquire_single_instance_lock(lock_path)
+        assert handle is not None
+        try:
+            assert _child_exit_code(_CHILD_ACQUIRE_CODE, lock_path) == 3
+        finally:
+            handle.close()
+
+    def test_lock_reacquirable_after_release(self, tmp_path):
+        """持锁者关闭句柄（=进程退出）后锁可再获取（exit=0）。"""
+        from src.zephyr.data.scheduler import acquire_single_instance_lock
+
+        lock_path = tmp_path / "inst.lock"
+        handle = acquire_single_instance_lock(lock_path)
+        assert handle is not None
+        handle.close()
+        assert _child_exit_code(_CHILD_ACQUIRE_CODE, lock_path) == 0
+
+    def test_lock_released_on_process_crash(self, tmp_path):
+        """持锁进程崩溃（os._exit 无清理）后 OS 自动释放锁，新实例可获取。"""
+        lock_path = tmp_path / "inst.lock"
+        assert _child_exit_code(_CHILD_CRASH_CODE, lock_path) == 0
+        assert _child_exit_code(_CHILD_ACQUIRE_CODE, lock_path) == 0
+
+
+class TestMainSingleInstanceWiring:
+    """main() 入口接线：锁被持有时直接退出，不启动调度器。"""
+
+    def test_main_exits_when_lock_held(self):
+        from src.zephyr.data import scheduler as sched_mod
+
+        with (
+            patch.object(sched_mod, "acquire_single_instance_lock", return_value=None) as m_lock,
+            patch.object(sched_mod, "_setup_file_logging"),
+            patch.object(sched_mod, "IntegratorScheduler") as m_sched,
+            patch("zephyr.data.ch_config.ensure_ch_env_loaded"),
+        ):
+            assert sched_mod.main() is None
+        m_lock.assert_called_once()
+        m_sched.assert_not_called()

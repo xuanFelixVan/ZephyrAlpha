@@ -5,7 +5,7 @@
 # [CONSUMERS] CLI(zephyr.data.cli 阶段3+); main()入口
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] APScheduler BackgroundScheduler常驻进程; 5档cron时段; DAG依赖(task_queue); per-source串行+跨源并行; 断点续传(progress_store); 失败告警(alerter); subscribe()事件订阅支持热更新
+# [INVARIANTS] APScheduler BackgroundScheduler常驻进程; 5档cron时段; DAG依赖(task_queue); per-source串行+跨源并行; 断点续传(progress_store); 失败告警(alerter); subscribe()事件订阅支持热更新; main()入口OS级单实例锁(#SCHED-DUAL-INSTANCE)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -75,6 +75,7 @@ import datetime
 import http.server
 import json
 import logging
+import os
 import threading
 import time
 from pathlib import Path
@@ -102,6 +103,54 @@ log = logging.getLogger(__name__)
 
 _DEFAULT_CONFIG_DIR = Path(__file__).parent / "config"
 _DEFAULT_JOBS_DB = "sqlite:///" + str(REPO_ROOT / "data" / "integrator_jobs.db")
+# 单实例锁默认路径（#SCHED-DUAL-INSTANCE 治本，2026-08-25）
+_DEFAULT_INSTANCE_LOCK = REPO_ROOT / "tmp" / "scheduler_instance.lock"
+
+
+def acquire_single_instance_lock(lock_path: str | Path | None = None):
+    """获取调度器进程级单实例锁（OS 级文件锁）。
+
+    根因（D1 遗留，2026-08-24 实证）：看门狗 start_scheduler.ps1 的 PID 文件锁存在
+    check-then-act 竞态，且 finally 无条件删除共享锁文件——双 guard 并行拉起两个
+    python -m zephyr.data.scheduler，每任务产生双份 task_runs（当日 303 组）、
+    源请求翻倍。APScheduler max_instances=1 仅约束进程内，跨进程无屏障。
+    本锁在进程入口兜底：无论由谁（看门狗/手工/IDE）拉起，第二实例获取失败即退出。
+
+    语义：msvcrt.locking（Windows）/ fcntl.flock（POSIX）字节排他锁，随文件句柄
+    生命周期持有——进程退出/崩溃/被强杀时 OS 自动释放，无 stale 残留锁。
+
+    Args:
+        lock_path: 锁文件路径。None 用默认 tmp/scheduler_instance.lock。
+
+    Returns:
+        持有锁的文件对象（调用方须保持引用直至进程结束）；
+        None 表示锁已被其他实例持有。
+    """
+    path = Path(lock_path) if lock_path else _DEFAULT_INSTANCE_LOCK
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fh = open(path, "a+b")  # noqa: SIM115 — 句柄须随进程生命周期保持打开（锁即句柄）
+    try:
+        if os.name == "nt":
+            import msvcrt
+
+            fh.seek(0)
+            msvcrt.locking(fh.fileno(), msvcrt.LK_NBLCK, 1)
+        else:
+            import fcntl
+
+            fcntl.flock(fh.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        fh.close()
+        return None
+    # 诊断信息：写入持锁者 PID（便于运维定位；非协议依赖，失败无碍）
+    try:
+        fh.seek(0)
+        fh.truncate()
+        fh.write(str(os.getpid()).encode("ascii"))
+        fh.flush()
+    except OSError:
+        pass
+    return fh
 
 # SQL 模板常量（NO-BARE-SQL gate 豁免：_SQL_* 前缀，裁定 #ARCH-CH-015）
 _SQL_FIND_PART = "SELECT database, table FROM system.parts WHERE name='{part_name}' AND active=1 LIMIT 1"
@@ -2064,6 +2113,20 @@ def start_monitor(scheduler: IntegratorScheduler, port: int = 9100) -> None:
 # ============== 入口 ==============
 
 
+def _setup_file_logging() -> None:
+    """日志落盘（RotatingFileHandler 轮转，避免无限增长）。"""
+    from logging.handlers import RotatingFileHandler
+
+    _log_path = REPO_ROOT / "tmp" / "scheduler_run.log"
+    _log_path.parent.mkdir(parents=True, exist_ok=True)
+    _fh = RotatingFileHandler(_log_path, maxBytes=10 * 1024 * 1024, backupCount=5, encoding="utf-8")
+    _fh.setFormatter(logging.Formatter("%(asctime)s %(levelname)s [%(name)s] %(message)s"))
+    _root = logging.getLogger()
+    _root.setLevel(logging.INFO)  # 确保 INFO 级别日志能写入文件（默认 WARNING 会过滤掉 INFO）
+    _root.addHandler(_fh)
+    log.info("日志落盘: %s", _log_path)
+
+
 def main() -> None:
     """调度器入口：启动常驻进程。
 
@@ -2079,17 +2142,18 @@ def main() -> None:
 
     ensure_ch_env_loaded()
 
-    # 日志落盘（RotatingFileHandler 轮转，避免无限增长）
-    from logging.handlers import RotatingFileHandler
+    _setup_file_logging()
 
-    _log_path = REPO_ROOT / "tmp" / "scheduler_run.log"
-    _log_path.parent.mkdir(parents=True, exist_ok=True)
-    _fh = RotatingFileHandler(_log_path, maxBytes=10 * 1024 * 1024, backupCount=5, encoding="utf-8")
-    _fh.setFormatter(logging.Formatter("%(asctime)s %(levelname)s [%(name)s] %(message)s"))
-    _root = logging.getLogger()
-    _root.setLevel(logging.INFO)  # 确保 INFO 级别日志能写入文件（默认 WARNING 会过滤掉 INFO）
-    _root.addHandler(_fh)
-    log.info("日志落盘: %s", _log_path)
+    # 单实例锁（#SCHED-DUAL-INSTANCE 治本）：OS 级文件锁，进程死亡自动释放。
+    # 第二实例（看门狗双 guard 竞态拉起/手工误启）获取失败即退出，
+    # 防止双调度器并行导致每任务双份 task_runs、源请求翻倍。
+    _instance_lock = acquire_single_instance_lock(_DEFAULT_INSTANCE_LOCK)
+    if _instance_lock is None:
+        log.error(
+            "另一调度器实例已持有单实例锁（%s），本实例退出（#SCHED-DUAL-INSTANCE）",
+            _DEFAULT_INSTANCE_LOCK,
+        )
+        return
 
     global _global_scheduler
     sched = IntegratorScheduler()

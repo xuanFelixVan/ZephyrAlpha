@@ -264,6 +264,14 @@ def _cmd_speed_test(args: argparse.Namespace) -> int:
 
 def _cmd_start(args: argparse.Namespace) -> int:
     """start — 启动常驻调度进程。"""
+    # 单实例锁（#SCHED-DUAL-INSTANCE 治本）：与 scheduler.main() 同一 OS 级文件锁，
+    # 防止经 CLI 拉起第二常驻实例导致每任务双份 task_runs。
+    from zephyr.data.scheduler import acquire_single_instance_lock
+
+    _instance_lock = acquire_single_instance_lock()
+    if _instance_lock is None:
+        print("另一调度器实例已在运行（单实例锁被持有），本实例退出（#SCHED-DUAL-INSTANCE）")
+        return 1
     # start 是常驻进程，直接 new 实例（不依赖单例，进程结束即销毁）
     sched = IntegratorScheduler()
     # 注册为全局单例（供 APScheduler _run_schedule_callback 使用）
