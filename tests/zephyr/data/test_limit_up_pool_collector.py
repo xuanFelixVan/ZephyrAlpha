@@ -36,6 +36,7 @@ from src.zephyr.data.implementations.limit_up_pool_collector import (
     collect_limit_up_pool,
     fetch_limit_up_pool,
     parse_zt_pool_rows,
+    to_csv,
 )
 
 D = datetime.date
@@ -224,3 +225,39 @@ class TestEntryContract:
         e = parse_zt_pool_rows([_row()], TD)[0]
         json.dumps(asdict(e), ensure_ascii=False)
         assert isinstance(e, LimitUpPoolEntry)
+
+
+# ---------- CSV 中间层（D3FUND 批模式） ----------
+
+
+class TestToCsv:
+    def test_csv_three_states(self, tmp_path):
+        entries = parse_zt_pool_rows([_row(), _row(代码="600001")], TD)
+        p = tmp_path / "pool.csv"
+        # 空 → 空串不建文件
+        assert to_csv([], p) == ""
+        assert not p.exists()
+        # 覆盖写：header + 2 行，列序对齐 INSERT_COLUMNS
+        out = to_csv(entries, p)
+        assert out == str(p)
+        lines = p.read_text(encoding="utf-8").splitlines()
+        assert lines[0].split(",") == list(INSERT_COLUMNS)
+        assert len(lines) == 3
+        # 追加：不重复 header
+        to_csv(entries[:1], p, append=True)
+        lines = p.read_text(encoding="utf-8").splitlines()
+        assert len(lines) == 4
+        assert sum(1 for x in lines if x.startswith("trade_date,")) == 1
+
+    def test_csv_field_values(self, tmp_path):
+        entries = parse_zt_pool_rows([_row()], TD)
+        p = tmp_path / "pool.csv"
+        to_csv(entries, p)
+        import csv as csvmod
+
+        with p.open(encoding="utf-8") as f:
+            row = next(csvmod.DictReader(f))
+        assert row["symbol"] == "600000"
+        assert row["seal_amount"] == str(1.5e9)
+        assert row["first_seal_time"] == "09:25:00"
+        assert row["open_board_count"] == "2"

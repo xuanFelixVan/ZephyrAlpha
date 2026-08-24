@@ -93,10 +93,12 @@ DDL 草稿（待统筹 CTR 评审后 apply_schema 执行）::
 
 from __future__ import annotations
 
+import csv
 import logging
 import re
 from dataclasses import dataclass
 from datetime import date, datetime
+from pathlib import Path
 from typing import Any, Final, Iterable, Mapping
 
 logger = logging.getLogger(__name__)
@@ -108,6 +110,7 @@ __all__: Final = [
     "collect_limit_up_pool",
     "fetch_limit_up_pool",
     "parse_zt_pool_rows",
+    "to_csv",
 ]
 
 #: 品类真源 category_id（business_data_categories.yaml 登记=Owner 窗口待办）
@@ -355,3 +358,36 @@ def collect_limit_up_pool(
     rows = [tuple(getattr(e, c) for c in INSERT_COLUMNS) for e in entries]
     ch_client.execute(f"INSERT INTO {full_table} ({cols}) VALUES", rows)
     return len(rows)
+
+
+def to_csv(
+    entries: Iterable[LimitUpPoolEntry],
+    path: str | Path,
+    append: bool = False,
+) -> str:
+    """CSV 中间层（DDL 建表前的落地通道；幂等追加，header 不重复）。
+
+    对齐 D3FUND 批模式（sector_fund_flow_collector.to_csv）：limit_up_pool 表
+    DDL 待 Owner 窗口期间，涨停池明细（封板资金/首封/炸板次数）经本通道落地。
+
+    Args:
+        entries: 涨停池明细行迭代。
+        path: 目标 CSV 路径（父目录自动创建）。
+        append: True 追加（已有文件不重复写 header）；False 覆盖。
+
+    Returns:
+        写入的文件路径；entries 空 → 空串不建文件。
+    """
+    rows = list(entries)
+    if not rows:
+        return ""
+    p = Path(path)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    write_header = not (append and p.exists())
+    with p.open("a" if append else "w", encoding="utf-8", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=list(INSERT_COLUMNS))
+        if write_header:
+            writer.writeheader()
+        for e in rows:
+            writer.writerow({c: getattr(e, c) for c in INSERT_COLUMNS})
+    return str(p)
