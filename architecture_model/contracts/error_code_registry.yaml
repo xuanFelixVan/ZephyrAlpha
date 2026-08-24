@@ -2454,6 +2454,11 @@ error_codes:
   module: zephyr.backtest.core.overfitting_adjudicator
   file: src/zephyr/backtest/core/overfitting_adjudicator.py
   introduced: '2026-08-24: P-5 过拟合检测协议组件施工（长城任务二-4，MOD-BT-001，depgraph node 10554136 testing）'
+- code: ZA-SH-0054
+  class: ExecutionReportContractError
+  module: zephyr.shared.contracts.execution_report_contract
+  file: src/zephyr/shared/contracts/execution_report_contract.py
+  introduced: '2026-08-24: CTR-P1-007 ExecutionReport 数据契约层施工（长城任务三-7，MOD-INF-016，depgraph node 10561088 testing）'
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）

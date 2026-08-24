@@ -9389,6 +9389,18 @@ creation_tokens:
   token: auto-scaffold-msprt_champion_challenger-20260824
   created_by: scaffold.py
   capability: msprt_champion_challenger
+- file: src/zephyr/shared/contracts/execution_report_contract.py
+  token: auto-scaffold-execution_report_contract-20260824
+  created_by: scaffold.py
+  capability: execution_report_contract
+- file: src/zephyr/signal_ashare/selection_funnel_skeleton.py
+  token: auto-scaffold-selection_funnel_skeleton-20260824
+  created_by: scaffold.py
+  capability: selection_funnel_skeleton
+- file: tests/signal_ashare/test_selection_funnel_skeleton.py
+  token: auto-test-selection-funnel-skeleton-20260824
+  created_by: AI-K3-A4-FUNNEL
+  capability: signal_screening_funnel
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

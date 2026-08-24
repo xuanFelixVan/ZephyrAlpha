@@ -19668,3 +19668,60 @@ entries:
   - 'T0FIX_report §0.5'
   created: '2026-08-24'
   last_updated: '2026-08-24'
+
+- issue_id: '#ARCH-214'
+  title: CTR-P1-007 ExecutionReport 数据契约层建成（GAP-L06-003 闭环）——BM-REC-02-B/A1③ 阻塞链解除条件达成
+  severity: P0
+  category: 功能施工
+  adjudication: >-
+    CTR-P1-007 ExecutionReport 数据契约建设完成（D_SHARED / src/zephyr/shared/contracts/
+    execution_report_contract.py，MOD-INF-016）。①codegen frozen 契约（execution_report.py v1.0，
+    15 字段，SSoT=cross_layer_contracts.yaml）保持不动，伴生契约层补三缺口：Fail-Closed 入站校验
+    （标识非空/方向枚举/量正不超量/价佣非负有限/有量必有正 VWAP/UTC 时区强制/时序不倒/滑点有限/
+    版本匹配 + A 股特性注入：BUY 整手、涨跌停物理边界）、序列化往返（to_payload/from_payload，
+    Decimal→str 保精度拒 float）、消费方 Protocol 对接位（ExecutionReportSource=A1③ 归因/TCA
+    拉取口；ExecutionReportDeltaExtractor=A8 mSPRT 对接位，默认实现 NetPnlDeltaExtractor 鸭子类型
+    结构满足 pf_core ChampionChallengerDeltaExtractor 实证）。②FIX 5.0 对标取舍：exec_id/
+    liquidity_flag/OrdStatus/ExecType 属逐笔事件语义归 CTR-005 Fill 不纳入订单级聚合。③与既有
+    ex_core.execution_report（ZA-EX-0012 产出侧）并存互补零破坏。新错误码 ZA-SH-0054 在册。
+    阻塞链解除留痕：BM-REC-02-B 数据模型+产出逻辑+契约层三段齐备；残余阻塞=消费落库 DDL
+    （Owner 窗口，申请草稿 .runtime/construction_20260825/fragments/CTR_P1_007_ddl_draft.yaml）
+    与 V2 codegen 字段扩展（cross_layer_contracts.yaml Owner 窗口）。
+  impact:
+    - 'src/zephyr/shared/contracts/execution_report_contract.py（testing，depgraph node 10561088，47 契约测全绿）'
+    - 'tests/ex_core 1001 passed + 1 xfailed 零回归'
+  fix_phase: '已落地（2026-08-24，长城任务三-7）；DDL/V2 扩展 Owner 窗口待办'
+  status: resolved
+  related_rules:
+  - '54号 §7 开放问题'
+  - 'BM-REC-02-B'
+  - 'GAP-L06-003'
+  - '#ARCH-210'
+  created: '2026-08-24'
+  last_updated: '2026-08-24'
+
+- issue_id: '#ARCH-215'
+  title: A4 选股漏斗双域归并落地（SIGNAL-ARCH-001，MOD-SIG-086 骨架唯一真源）+ 047/048 迁移留裁定
+  severity: P2
+  category: 功能施工
+  adjudication: >-
+    BM-SEL-16/17/18 双域实现归并完成（2026-08-24 Owner 裁定 A4 落地）：共享四层骨架唯一真源=
+    src/zephyr/signal_ashare/selection_funnel_skeleton.py（MOD-SIG-086，depgraph node 10561086
+    testing）；signal_fundamental/selection_funnel.py 与 signal_ashare/tiered_screening_filter.py
+    各留薄适配层，A 股特性不丢——板块幅度自推导经 GradedExclusionHooks.is_limit_locked 闭包注入、
+    容量截断经 CapacityTruncation 参数注入、密度鸭子类型经 FineScoreHooks.density_penalty 钩子注入；
+    两域公开 API 零变更，既有测试零适配全绿（1448→1469，+21 骨架测）。留裁定①：MOD-SIG-047/048
+    未迁移薄适配（范围外），骨架注入位已保真可无损平移，迁移留 Owner 后续裁定。留痕②：depgraph
+    节点 blueprint_path 机械推导缺失（与 MOD-SIG-066/075/077~081 同态， sanctioned CLI 无更新
+    通道），文件头 [BLUEPRINT] 锚真实路径，待统筹登记。
+  impact:
+    - 'src/zephyr/signal_ashare/selection_funnel_skeleton.py + tests 21 例（testing）'
+    - 'docs/03_modules/_domain_signal/selection_funnel_skeleton/blueprint.md（MOD-SIG-086）'
+    - '两域适配层各 1 件改造（signal_fundamental/selection_funnel.py、signal_ashare/tiered_screening_filter.py）'
+  fix_phase: '已落地（2026-08-24，长城任务二-1）；047/048 迁移与 blueprint_path 统筹留后续'
+  status: resolved
+  related_rules:
+  - 'SIGNAL-ARCH-001'
+  - 'BM-SEL-16/17/18'
+  created: '2026-08-24'
+  last_updated: '2026-08-24'
