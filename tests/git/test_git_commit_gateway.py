@@ -2112,3 +2112,145 @@ class TestIntentToAddSweep:
             check=True,
         ).stdout
         assert "wip2.py" not in show, f"ita 文件不得入 merge commit tree: {show}"
+
+
+# ---------------------------------------------------------------------------
+# A11 治本（2026-08-24）：run_git Windows 匿名管道假死族治理——
+# 临时文件重定向 + 读回（GBK/UTF-16 双解码兜底）验收测试。
+# ---------------------------------------------------------------------------
+
+
+class TestRunGitPipeRedirect:
+    """A11：run_git 改临时文件重定向，根除 Windows 匿名管道假死族。
+
+    背景：Windows subprocess capture_output 匿名管道（64KB 缓冲）在高负载下存在
+    C 级阻塞假死（缓冲区填满 join 死锁，pytest-timeout 杀不动——tests/governance
+    保活测试四轮 sweep 实证签名 stdout=None）。治本=临时文件重定向+读回。
+    本类锚定：
+      1. >64KB 大 stdout 完整返回（填爆匿名管道缓冲区场景语义锚定）；
+      2. >64KB 大 stderr 完整返回 + returncode/stdout/stderr 契约不变；
+      3. stdout/stderr 双通道同时大输出（匿名管道教科书级死锁触发场景）；
+      4. GBK 中文输出正确解码（Windows OEM 码页原生输出兜底支路）；
+      5. UTF-8 中文输出语义不变（旧契约 encoding="utf-8" 锚定）；
+      6. UTF-16 BOM 输出兜底解码（双解码第二支路）；
+      7. 不再使用匿名管道（capture_output != True 且 stdout/stderr 非 PIPE）；
+      8. 临时文件 try/finally 必清理（无 zephyr_gw_git_* 残留）。
+    """
+
+    @staticmethod
+    def _gw(project_root: Path) -> GitCommitGateway:
+        """最小化构造（跳过 __init__ 重量级注册），仅设置 run_git 需要的属性。
+
+        run_git 本体只读 self.project_root（cwd）与 in_commit_flow（getattr 默认
+        False，非 git commit 命令不触守卫分支），__new__ 构造足够且保持测试密闭。
+        """
+        gw = GitCommitGateway.__new__(GitCommitGateway)
+        gw.project_root = project_root
+        return gw
+
+    def test_large_stdout_over_64kb_complete(self, tmp_path: Path) -> None:
+        """256KB stdout（4 倍管道缓冲区）完整读回——无截断、无假死。"""
+        gw = self._gw(tmp_path)
+        size = 256 * 1024
+        r = gw.run_git([sys.executable, "-c", f"import sys; sys.stdout.write('Z' * {size})"])
+        assert r.returncode == 0, r.stderr[:200]
+        assert len(r.stdout) == size, f"stdout 截断: {len(r.stdout)} != {size}"
+        assert set(r.stdout) == {"Z"}
+
+    def test_large_stderr_over_64kb_complete(self, tmp_path: Path) -> None:
+        """256KB stderr 完整读回 + 非零 returncode 契约不变。"""
+        gw = self._gw(tmp_path)
+        size = 256 * 1024
+        r = gw.run_git(
+            [sys.executable, "-c", f"import sys; sys.stderr.write('E' * {size}); sys.exit(3)"]
+        )
+        assert r.returncode == 3, f"returncode 契约破坏: {r.returncode}"
+        assert len(r.stderr) == size, f"stderr 截断: {len(r.stderr)} != {size}"
+        assert set(r.stderr) == {"E"}
+        assert r.stdout == ""
+
+    def test_large_both_streams_no_deadlock(self, tmp_path: Path) -> None:
+        """stdout/stderr 双通道同时 >64KB——匿名管道 join 死锁的教科书触发形态。"""
+        gw = self._gw(tmp_path)
+        size = 128 * 1024
+        code = (
+            "import sys;"
+            f"sys.stdout.write('O' * {size}); sys.stdout.flush();"
+            f"sys.stderr.write('E' * {size}); sys.stderr.flush();"
+            f"sys.stdout.write('O' * {size})"
+        )
+        r = gw.run_git([sys.executable, "-c", code])
+        assert r.returncode == 0, r.stderr[:200]
+        assert len(r.stdout) == size * 2, f"stdout 不完整: {len(r.stdout)}"
+        assert len(r.stderr) == size, f"stderr 不完整: {len(r.stderr)}"
+
+    def test_gbk_chinese_stdout_decoded(self, tmp_path: Path) -> None:
+        """GBK（Windows OEM 码页）中文输出必须正确解码。
+
+        风险暴露：旧实现 encoding="utf-8"+errors="replace" 下 GBK 字节全部变
+        U+FFFD 替换符（网关审计/gate 消息中的中文被静默损毁），本用例在旧实现下红。
+        """
+        gw = self._gw(tmp_path)
+        text = "网关中文输出解码验证"
+        code = f"import sys; sys.stdout.buffer.write({text.encode('gbk')!r})"
+        r = gw.run_git([sys.executable, "-c", code])
+        assert r.returncode == 0, r.stderr[:200]
+        assert r.stdout == text, f"GBK 解码失败: {r.stdout!r}"
+
+    def test_utf8_chinese_stdout_unchanged(self, tmp_path: Path) -> None:
+        """UTF-8 中文输出契约锚定：与旧实现（encoding="utf-8"）解码结果逐字一致。"""
+        gw = self._gw(tmp_path)
+        text = "网关UTF8中文契约锚定"
+        code = f"import sys; sys.stdout.buffer.write({text.encode('utf-8')!r})"
+        r = gw.run_git([sys.executable, "-c", code])
+        assert r.returncode == 0, r.stderr[:200]
+        assert r.stdout == text, f"UTF-8 契约回归: {r.stdout!r}"
+
+    def test_utf16_bom_stdout_decoded(self, tmp_path: Path) -> None:
+        """UTF-16（BOM）输出兜底解码——双解码第二支路（Windows 重定向原生格式）。"""
+        gw = self._gw(tmp_path)
+        text = "网关UTF16兜底验证"
+        code = f"import sys; sys.stdout.buffer.write({text.encode('utf-16')!r})"
+        r = gw.run_git([sys.executable, "-c", code])
+        assert r.returncode == 0, r.stderr[:200]
+        assert r.stdout == text, f"UTF-16 兜底失败: {r.stdout!r}"
+
+    def test_run_git_avoids_anonymous_pipes(self, tmp_path: Path, monkeypatch) -> None:
+        """实现锚定：run_git 不得使用匿名管道（capture_output/PIPE 禁止）。
+
+        本用例在旧实现（capture_output=True）下红——直接锁定治本落点。
+        """
+        gw = self._gw(tmp_path)
+        captured: dict = {}
+        real_run = subprocess.run
+
+        def _spy(*args, **kwargs):
+            captured.update(kwargs)
+            return real_run(*args, **kwargs)
+
+        monkeypatch.setattr(subprocess, "run", _spy)
+        r = gw.run_git([sys.executable, "-c", "print('pipe-check')"])
+        assert r.returncode == 0 and "pipe-check" in r.stdout
+        assert captured.get("capture_output") is not True, "禁止 capture_output 匿名管道"
+        assert captured.get("stdout") is not subprocess.PIPE, "禁止 stdout=PIPE"
+        assert captured.get("stderr") is not subprocess.PIPE, "禁止 stderr=PIPE"
+
+    def test_failing_command_contract(self, tmp_path: Path) -> None:
+        """returncode/stdout/stderr 契约锚定：非零退出 + stderr 消息语义不变。"""
+        gw = self._gw(tmp_path)
+        r = gw.run_git([sys.executable, "-c", "import sys; sys.stderr.write('boom'); sys.exit(7)"])
+        assert r.returncode == 7
+        assert r.stdout == ""
+        assert "boom" in r.stderr
+
+    def test_temp_files_cleaned_up(self, tmp_path: Path) -> None:
+        """临时文件 try/finally 必清理——运行前后 TEMP 无 zephyr_gw_git_* 新增残留。"""
+        import tempfile
+
+        gw = self._gw(tmp_path)
+        tmpdir = Path(tempfile.gettempdir())
+        before = set(tmpdir.glob("zephyr_gw_git_*"))
+        r = gw.run_git([sys.executable, "-c", "print('cleanup')"])
+        assert r.returncode == 0
+        after = set(tmpdir.glob("zephyr_gw_git_*"))
+        assert after == before, f"临时文件未清理: {sorted(after - before)}"

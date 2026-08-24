@@ -441,6 +441,28 @@ def _classify_git_timeout(cmd: list[str]) -> int:
 classify_git_timeout = _classify_git_timeout
 
 
+def _decode_gateway_output(raw: bytes) -> str:
+    """网关子进程输出解码——GBK/UTF-16 双解码兜底（A11 临时文件读回配套）。
+
+    解码链：BOM→UTF-16；否则 UTF-8 strict → GBK strict → UTF-16(errors=replace)。
+    契约锚定：原实现 encoding="utf-8", errors="replace"——凡合法 UTF-8 输出（含
+    纯 ASCII），解码结果与旧实现逐字一致；GBK（Windows OEM 码页原生中文输出）
+    与 UTF-16（BOM 重定向输出）为新增兜底支路。
+    注意不可 GBK 优先：UTF-8 三字节中文序列常落在 GBK 合法区间内，GBK 优先会把
+    合法 UTF-8 输出静默误判为 GBK 乱码（不抛异常），违反返回契约不变要求。
+    """
+    if not raw:
+        return ""
+    if raw[:2] in (b"\xff\xfe", b"\xfe\xff"):
+        return raw.decode("utf-16", errors="replace")
+    for enc in ("utf-8", "gbk"):
+        try:
+            return raw.decode(enc)
+        except UnicodeDecodeError:
+            continue
+    return raw.decode("utf-16", errors="replace")
+
+
 class GitCommitGateway:
     """全项目唯一合法 git commit 入口。
 
@@ -2687,6 +2709,9 @@ class GitCommitGateway:
           - read 类（rev-parse/show/status/diff/log/ls-tree/merge-base/config）: 15s
           - write 类（commit/merge/checkout/reset/update-ref/rebase）: 60s
           - 其他默认: 30s
+
+        A11 治本（2026-08-24）：Windows 匿名管道假死族根除——capture_output 改
+        临时文件重定向 + 读回（_decode_gateway_output 双解码兜底），返回契约不变。
         """
         if len(cmd) >= 2 and cmd[0] == "git" and cmd[1] == "commit" and not getattr(self, "in_commit_flow", False):
             return subprocess.CompletedProcess(
@@ -2705,15 +2730,38 @@ class GitCommitGateway:
 
         # P2-2b 治本：timeout 按命令类型分级（原硬编码 120s）
         timeout = _classify_git_timeout(cmd)
-        return run_subprocess_hidden(
-            cmd,
-            cwd=cwd or str(self.project_root),
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            timeout=timeout,
-            env=env,
+        # A11 治本（2026-08-24）：Windows 匿名管道假死族根除——capture_output 走
+        # 匿名管道（64KB 缓冲），高负载下缓冲区填满触发 C 级 join 死锁（pytest-timeout
+        # 杀不动，tests/governance 保活测试四轮 sweep 实证 stdout=None）。改临时文件
+        # 重定向 + 读回：子进程直写文件、全程无管道，一次性消除该类假死。
+        # 返回契约不变：CompletedProcess(returncode/stdout(str)/stderr(str))。
+        out_fd, out_path = tempfile.mkstemp(prefix="zephyr_gw_git_", suffix=".out")
+        err_fd, err_path = tempfile.mkstemp(prefix="zephyr_gw_git_", suffix=".err")
+        try:
+            with os.fdopen(out_fd, "wb") as out_fh, os.fdopen(err_fd, "wb") as err_fh:
+                proc = run_subprocess_hidden(
+                    cmd,
+                    cwd=cwd or str(self.project_root),
+                    capture_output=False,
+                    stdout=out_fh,
+                    stderr=err_fh,
+                    text=False,
+                    timeout=timeout,
+                    env=env,
+                )
+            stdout = _decode_gateway_output(Path(out_path).read_bytes())
+            stderr = _decode_gateway_output(Path(err_path).read_bytes())
+        finally:
+            for _tmp in (out_path, err_path):
+                try:
+                    os.unlink(_tmp)
+                except OSError:
+                    pass
+        return subprocess.CompletedProcess(
+            args=cmd,
+            returncode=proc.returncode,
+            stdout=stdout,
+            stderr=stderr,
         )
 
     def _run_git(self, cmd: list[str], cwd: str | None = None) -> subprocess.CompletedProcess:
