@@ -6935,12 +6935,12 @@ entries:
   domain_status: active
   sub_layer: 对账归因
   problem: reporting/default_attribution_engine.py 全桩（三方法 return 0.0）与 pf_core/core/performance_attribution_engine.py（真实 BHB）双实现冲突未收敛，须 Owner 裁定基底/canonical/契约接线方向。
-  proposal: Owner 裁定后收敛施工=未来工程-小型（桩实现退役或接线 canonical）；裁定前维持现状不消费桩实现。
+  proposal: Owner 裁定后收敛施工=未来工程-小型（桩实现退役或接线 canonical）；裁定前维持现状不消费桩实现。【Owner 终裁 2026-08-24（A1③）】整体暂缓：待 CTR-P1-007 ExecutionReport 数据契约建成后，以 pf_core BHB 真算法（performance_attribution_engine）为基底收敛，reporting 空壳（default_attribution_engine）退役；契约建成前维持现状不消费桩实现。
   status: deferred
   priority: P1
-  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 54号节（待 Owner 裁定项）'
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 54号节（待 Owner 裁定项）；2026-08-24 Owner 终裁（A1③）'
   created: '2026-08-20'
-  last_updated: '2026-08-20'
+  last_updated: '2026-08-24'
 - id: CAND-RSK-023
   name: 机构级数据维度管道与评分（10号 §4.7.6/§4.8.5/§4.11.10/§4.12.10）
   aliases: [IV/COT/信用利差/期权异动/CAPE/巴菲特指标/Margin Debt/Put-Call 数据管道]
@@ -8513,7 +8513,8 @@ entries:
   downstream_consumers: []
   estimated_complexity: 中
   acquisition_method: candidate
-  last_review_outcome: '2026-08-23 转候选库待 Owner 终裁（#ARCH-191）'
+  status: rejected
+  last_review_outcome: '2026-08-24 Owner 终裁（A2②）：不立项 behavioral_auditor 专职引擎，维持现状关闭（#ARCH-191 同闭）'
 
 - id: CAND-PLAN-012
   name: '情景概率分布模型（GAP-F-01，作战室 W2 九格概率）'

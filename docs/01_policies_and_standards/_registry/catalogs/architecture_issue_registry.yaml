@@ -19160,8 +19160,8 @@ entries:
     待裁定：补正式蓝图或维持最小语义。
   impact:
     - 'src/zephyr/intelligence/venra_double_lock_anchor.py（testing，13 测）'
-  fix_phase: '最小语义已落地（2026-08-23，AI-K3-GW-INFRA）'
-  status: open
+  fix_phase: '最小语义已落地（2026-08-23，AI-K3-GW-INFRA）；2026-08-24 Owner 终裁（A3②）：不补正式蓝图，维持最小语义，本议题关闭'
+  status: resolved
   related_rules:
   - '设计态账波次5'
   created: '2026-08-23'
@@ -19178,8 +19178,8 @@ entries:
     设计态账称"有 1 测试桩待激活"，全库实测无，已新写 15 测试替代——账单口径偏差留痕。
   impact:
     - 'compliance/behavioral_auditor/__init__.py（标注）+ ex_core/performance_monitor.py（testing，15 测）'
-  fix_phase: '已落地（2026-08-23，AI-K3-GW-INFRA）'
-  status: open
+  fix_phase: '已落地（2026-08-23，AI-K3-GW-INFRA）；2026-08-24 Owner 终裁（A2②）：不立项 behavioral_auditor 专职引擎（CAND-CMP-001 status=rejected），本议题关闭'
+  status: resolved
   related_rules:
   - '设计态账汇总表'
   created: '2026-08-23'

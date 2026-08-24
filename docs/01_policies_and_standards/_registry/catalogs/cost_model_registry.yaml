@@ -77,7 +77,7 @@ cost_models:
     cost_model_type: astock_standard
     components:
       commission:
-        rate: 0.0003
+        rate: 0.0000854
         min: 5.0
         mode: both_sides
       stamp_duty:
@@ -103,13 +103,13 @@ cost_models:
     status: active
     version: 1.1.0
     created_at: '2026-08-10'
-    updated_at: '2026-08-10'
+    updated_at: '2026-08-24'
     owner: MOD-EX-CORE
     entry_role: "rule"
     applies_to: ["stock"]
     tags: ["成本", "规则"]
     algorithm_status: "not_applicable"
-    evidence: ""
+    evidence: "2026-08-24 佣金费率校准：0.0003(万3)→0.0000854(万0.854)，对齐 matching_logic/pnl_calculator 代码口径（#233 裁定回测以实盘费率为准，BTRUN report 5.1 漂移核销）"
     code_symbol: null
     code_fingerprint: null
 
