@@ -9417,6 +9417,10 @@ creation_tokens:
   token: manual-test-sector_fund_flow_collector-20260824
   created_by: AI-K3-GW2-MAIN（D3 批历史文件补登，tests/ 豁免自愿补登随 SELL-001 先例）
   capability: sector_fund_flow_collector
+- file: src/zephyr/pf_core/strategy_engine/event_sentiment_adapter.py
+  token: auto-scaffold-event_sentiment_adapter-20260825
+  created_by: scaffold.py
+  capability: event_sentiment_adapter
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

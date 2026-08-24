@@ -43060,6 +43060,20 @@ entries:
   desc_zh: "daban_board_event_deriver 单元测试（36 用例，假数据不触网不触库）"
   desc_en: ""
   plain_zh: "给打板事件推导器配的单元测试，全部用编造的数据离线跑，覆盖板块分类、涨停价计算、触板封板判断、连板计数、分钟级首封和炸板次数推导、尾盘封单代理、CSV 写出这些逻辑是否正确。"
+- module_path: src/zephyr/pf_core/strategy_engine/event_sentiment_adapter.py
+  domain_id: D_PF_CORE
+  name_zh: "事件策略情绪分适配层"
+  name_en: "Event Sentiment Adapter"
+  desc_zh: "把news_sentiment_window情绪分按eventdriven-sleeve富负载契约组装并产出回测权重面板"
+  desc_en: ""
+  plain_zh: "事件策略回测原先拿不到情绪分信号。这个模块负责从情绪窗口表读出每个标的的情绪分，包装成事件策略要的富负载格式，再逐交易日生成目标权重面板喂给回测引擎，让事件策略能真正跑起来。"
+- module_path: tests/pf_core/test_event_sentiment_adapter.py
+  domain_id: D_PF_CORE
+  name_zh: "事件情绪分适配层测试"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "这是事件策略情绪分适配层的测试集，用假数据源验证窗口日期映射、富负载组装、权重面板生成和标的白名单，不连数据库也能跑。"
 
 battle_map_steps:
 - step_id: BM-BUY-04

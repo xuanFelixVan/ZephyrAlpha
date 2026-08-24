@@ -19725,3 +19725,61 @@ entries:
   - 'BM-SEL-16/17/18'
   created: '2026-08-24'
   last_updated: '2026-08-24'
+
+- issue_id: '#ARCH-216'
+  title: 事件策略回测接线建成（runner 契约适配层 MOD-L05-001）+ STR-EVENT-001 真实回测 bt-2e42a507 根因裁定
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    4.1 runner 契约适配层建成：src/zephyr/pf_core/strategy_engine/event_sentiment_adapter.py
+    （SentimentWindowSource 协议+ClickHouse 默认实现/情绪行→eventdriven-sleeve 富负载纯函数/
+    build_event_weight_panel 对齐 StrategyRunner 输出契约/门面类；PIT 口径 T 日消费 T-1 夜间窗
+    无未来函数；17 测全绿，depgraph node 10575000/10575001 testing）。4.2 STR-EVENT-001 回测
+    重跑完成（bt-2e42a507，窗 2026-02-23~08-21，universe N=5169，trades 1318）：总收益 -53.02%、
+    夏普 -5.563、超额 vs 沪深300 -51.13%。亏损根因裁定（实证非 bug）：规则法情绪分=T 日同步
+    指标（高情绪组 T 日 +4.31% spike 当日兑现），T+1 起衰竭——Top-10 极端尾部 T+1 mean=-0.269%
+    （26号 §2.7"情绪分作触发维度非截面排序"警示实证）+日频近全换手成本拖曳；成交价 300/300
+    对账一致、月度均匀亏损排除数据/代码缺陷。留策略 Owner 裁定：事件策略消费口径（触发/方向
+    维度+class_ 真源，Top-N 截面排序）。DQ-KLINE-20260823-BATCH 核查：批次 78,054 行与回测窗
+    交集非空但三重实证零值污染（6,392 键比对 0 差异/60min 独立聚合 5,203 键 0 不符/内部一致性
+    0 违例），裁定不删行（删除反致 ~4,748 键/日空洞），备份留痕；登记方 42/54 口径库内不可复现，
+    根因存疑留外部对账凭证待补。
+  impact:
+    - 'src/zephyr/pf_core/strategy_engine/event_sentiment_adapter.py + 17 测（testing）'
+    - 'data/backtest_artifacts/bt-2e42a507.json（净值 124 点+trades 1318）'
+    - '回归簇 pf_core 391 + intelligence 342 + backtest 802 全绿'
+  fix_phase: '已落地（2026-08-25，长城任务四-1/2）；事件策略消费口径留策略 Owner 裁定'
+  status: resolved
+  related_rules:
+  - 'BTRUN_report §3.1/§3.3'
+  - '26号 §2.7'
+  - 'D4SENT_report'
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-217'
+  title: 调度器双实例并行根因钉死（四缺陷链）+ 单实例锁治本修复——线上收敛 runbook 留 Owner 窗口
+  severity: P1
+  category: 技术债
+  adjudication: >-
+    D1 遗留"每任务双份 task_runs"实证：08-22~08-24 双记录组 240/238/303（相邻 run_id+同刻
+    started_at+rows 完全相同=双进程铁证；锁文件与心跳分属双 guard 现场活证）。根因四缺陷链：
+    RC1 python 调度器零跨进程单实例屏障（max_instances=1 仅进程内）；RC2 start_scheduler.ps1
+    PID 锁 check-then-act 竞态（双 5min 触发器相位叠加，日志实证三 guard 2 秒内启动）；RC3
+    guard finally 无条件删共享锁/心跳（在役 guard 失锁不自知，双实例态自续）；RC4 孤儿清理
+    无差别杀全部 scheduler python（互杀互拉震荡自锁）。触发=08-24 14:29:55 心跳过期强接管。
+    修复：scheduler.py acquire_single_instance_lock()（msvcrt/fcntl OS 级排他锁，进程死亡自动
+    释放零 stale）接入 main() 与 cli.py _cmd_start 双常驻入口；start_scheduler.ps1 命名互斥体
+    串行化临界区+finally 归属校验后删锁。6 新测+127 簇测全绿；ps1 解析 0 错。
+    线上收敛（旧代码进程不含修复）=Owner 窗口 OWN-1 runbook（杀双 guard/孤儿→清三锁→
+    schtasks /run 或重启）/OWN-2 双触发器收敛可选/OWN-3 次日复核归零。
+  impact:
+    - 'src/zephyr/data/scheduler.py + cli.py + scripts/start_scheduler.ps1 + 6 测'
+    - 'task_runs 双记录（写幂等 ReplacingMergeTree 去重，危害=源请求翻倍+记录污染+guard 震荡）'
+  fix_phase: '代码已落地（2026-08-25，长城任务六-4）；线上收敛 OWN-1~3 留 Owner 窗口'
+  status: resolved
+  related_rules:
+  - 'D1DATA_report §1.4'
+  - '#ARCH-BOOT-001'
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
