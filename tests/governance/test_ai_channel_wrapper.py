@@ -23,6 +23,7 @@ from __future__ import annotations
 import re
 import shutil
 import subprocess
+import time
 from pathlib import Path
 
 import pytest
@@ -257,11 +258,26 @@ def test_ai_channel_audit_channel_field(tmp_path: Path):
 
 
 def test_keepalive_scheduled_task_registered():
-    r = subprocess.run(
-        ["schtasks", "/query", "/tn", TASK_NAME],
-        capture_output=True,
-        text=True,
-        timeout=30,
-    )
+    """保活计划任务注册核验（环境断言，OS 调用在高并发 sweep 下偶发 pipe 异常——重试一次）。
+
+    2026-08-24 三轮全量 sweep 实证：隔离 15/15 全绿，三路并发 sweep 下 schtasks
+    管道偶发 stdout=None/超时（负载性 flake 非代码缺陷），加重试+超时放宽收敛。
+    """
+    r = None
+    last_err: Exception | None = None
+    for _attempt in range(3):
+        try:
+            r = subprocess.run(
+                ["schtasks", "/query", "/tn", TASK_NAME],
+                capture_output=True,
+                text=True,
+                timeout=90,
+            )
+            if r.returncode == 0 and r.stdout is not None:
+                break
+        except (subprocess.TimeoutExpired, OSError) as e:
+            last_err = e
+            time.sleep(2)
+    assert r is not None, f"keepalive task query failed after retries: {last_err}"
     assert r.returncode == 0, f"keepalive task missing: {r.stdout}{r.stderr}"
-    assert TASK_NAME in r.stdout
+    assert r.stdout is not None and TASK_NAME in r.stdout
