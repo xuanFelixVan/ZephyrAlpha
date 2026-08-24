@@ -1,7 +1,7 @@
 # [BLUEPRINT] docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/21_stock_selection_engine.md §3.6
 # [MODULE] zephyr.signal_fundamental.selection_funnel
 # [DOMAIN] D_FUNDAMENTAL_SIGNAL
-# [DEPENDENCIES]
+# [DEPENDENCIES] zephyr.signal_ashare.selection_funnel_skeleton（MOD-SIG-086 共享骨架）
 # [CONSUMERS] (待 G08/G09/G10 sleeve 接线)
 # [STARTUP] imported
 # [MATURITY] new
@@ -23,19 +23,30 @@
 # 层: 算法
 # - id: A1
 #   name: BM-SEL-16 分级指标过滤 filter_graded_indicators（~7000→~1200）
-#   desc: 四排除机制——物理排除(涨跌停/停牌/ST) / 门禁排除(上市<30天) / 分级排除(成交额<500万、AUM≤100万) / 概率排除(弃庄概率>95%)；降级=仅排除涨跌停/停牌
+#   desc: 委托骨架 run_graded_exclusion；四排除机制——物理(涨跌停/停牌/ST)/门禁(上市<30天)/分级(成交额<500万、AUM≤100万经 extra_tier_checks 注入)/概率(弃庄>95%)；降级=仅排除涨跌停/停牌
 # - id: A2
 #   name: BM-SEL-17 五维初筛 screen_preliminary（~1200→~300）
-#   desc: 技术(布尔) + 量价(量比>1.5、换手率门槛) + 板块(强度排名前30%) + 主力(C-011布尔) + 状态(C-021布尔)；降级=全量放行
+#   desc: 委托骨架 run_preliminary_gates（不注入容量截断）；技术+量价+板块+主力+状态五维；降级=全量放行
 # - id: A3
 #   name: BM-SEL-18 六要素精筛评分 score_fine_selection（~300→~50）
-#   desc: 基础评分(价值40/动量30/质量20/情绪10)×(1+状态偏移±10%) + 主力×0.20 - 拥挤×0.10 - 密度×0.15（8态修正置0，90号§7暂缓）→ 横截面 Z-score 降序 Top-N；降级=等权综合
+#   desc: 委托骨架 run_fine_scoring（tie_break=stable 同分保持输入序）；密度扣分直取记录字段同式计算；降级=等权综合
 # 层: 输出
 # - id: O1
 #   name: GradedFilterResult / PreliminaryScreenResult / FineSelectionResult
 #   intro: 三级结果含保留/排除清单、排除归因、降级标记；Z-score 排名 Top-N 喂 sleeve 排序
 # [/ALGO_FLOW]
-"""选股漏斗三层级（21 号 memo §3.6，BM-SEL-16/17/18，规则层批处理模块）。
+"""选股漏斗三层级——基本面信号域薄适配层（21 号 memo §3.6，BM-SEL-16/17/18）。
+
+SIGNAL-ARCH-001 归并裁定落地：层序/接口/数据流唯一真源为
+zephyr.signal_ashare.selection_funnel_skeleton（MOD-SIG-086 共享骨架），
+本模块只保留本域记录/结果类型、阈值常量与钩子装配，全部过滤/初筛/评分
+执行委托骨架，对外公开 API 签名不变（既有调用方/测试零适配）。
+
+本域注入特性：
+- 涨跌停封死消费**预计算** is_limit_locked 布尔标记（A 股域为板块幅度自推导）。
+- AUM≤100 万分级排除经骨架 extra_tier_checks 注入（位于成交额与弃庄概率之间）。
+- 密度扣分直取记录字段（neg_skewness×10 + excess_kurtosis×5 + forward_var_pct）。
+- 精筛同分保持输入序（骨架 tie_break="stable"）。
 
 执行频率裁定（memo v1.1.19）：日线级选股盘前批处理；作战地图 trigger 的
 "3 秒 Tick / 60 秒级"语义登记远期，盘中不滚动。
@@ -52,8 +63,22 @@
 
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass, field
+from operator import attrgetter
+from typing import Final
+
+from zephyr.signal_ashare.selection_funnel_skeleton import (
+    FineScoreHooks,
+    FineScoreWeights,
+    GradedExclusionHooks,
+    GradedFilterThresholds,
+    PreliminaryGateHooks,
+    PreliminaryThresholds,
+    run_fine_scoring,
+    run_funnel_chain,
+    run_graded_exclusion,
+    run_preliminary_gates,
+)
 
 # ------------------------------------------------------------------
 # BM-SEL-16 分级指标过滤阈值（memo §3.6 ① 契约——四排除机制语义）
@@ -162,7 +187,75 @@ class SelectionFunnelResult:
 
 
 # ------------------------------------------------------------------
-# BM-SEL-16 分级指标过滤（~7000→~1200）
+# 本域钩子/阈值装配（骨架注入件，模块级单例）
+# ------------------------------------------------------------------
+_SYMBOL_OF: Final = attrgetter("symbol")
+
+_GRADED_THRESHOLDS: Final = GradedFilterThresholds(
+    new_stock_min_list_days=NEW_STOCK_MIN_LIST_DAYS,
+    min_avg_daily_amount=MIN_AVG_DAILY_AMOUNT,
+    dealer_abandon_prob_max=DEALER_ABANDON_PROB_MAX,
+)
+
+_GRADED_HOOKS: Final = GradedExclusionHooks(
+    is_limit_locked=attrgetter("is_limit_locked"),  # 预计算布尔标记（区别于 A 股域板块幅度自推导）
+    is_suspended=attrgetter("is_suspended"),
+    is_st=attrgetter("is_st"),
+    list_days=attrgetter("list_days"),
+    avg_daily_amount=attrgetter("avg_daily_amount"),
+    dealer_abandon_prob=attrgetter("dealer_abandon_prob"),
+    extra_tier_checks=(
+        lambda rec: "tier:low_aum" if rec.aum <= MIN_AUM else None,  # 本域特有 AUM 分级排除
+    ),
+)
+
+_SCREEN_THRESHOLDS: Final = PreliminaryThresholds(
+    volume_ratio_min=VOLUME_RATIO_MIN,
+    turnover_rate_min_pct=TURNOVER_RATE_MIN_PCT,
+    sector_rank_max_pct=SECTOR_STRENGTH_RANK_MAX_PCT,
+)
+
+_SCREEN_HOOKS: Final = PreliminaryGateHooks(
+    technical_pass=attrgetter("technical_pass"),
+    volume_ratio=attrgetter("volume_ratio"),
+    turnover_rate_pct=attrgetter("turnover_rate_pct"),
+    sector_strength_rank_pct=attrgetter("sector_strength_rank_pct"),
+    main_force_pass=attrgetter("main_force_pass"),
+    market_state_pass=attrgetter("market_state_pass"),
+)
+
+_SCORE_WEIGHTS: Final = FineScoreWeights(
+    value=BASE_SCORE_WEIGHTS["value"],
+    momentum=BASE_SCORE_WEIGHTS["momentum"],
+    quality=BASE_SCORE_WEIGHTS["quality"],
+    sentiment=BASE_SCORE_WEIGHTS["sentiment"],
+    regime_shift_max=REGIME_SHIFT_MAX,
+    main_force=MAIN_FORCE_WEIGHT,
+    crowding=CROWDING_WEIGHT,
+    density=DENSITY_WEIGHT,
+    eight_state=EIGHT_STATE_WEIGHT,
+)
+
+_SCORE_HOOKS: Final = FineScoreHooks(
+    base_value_score=attrgetter("base_value_score"),
+    base_momentum_score=attrgetter("base_momentum_score"),
+    base_quality_score=attrgetter("base_quality_score"),
+    base_sentiment_score=attrgetter("base_sentiment_score"),
+    regime_shift=attrgetter("regime_shift"),
+    main_force_score=attrgetter("main_force_score"),
+    crowding_score=attrgetter("crowding_score"),
+    density_penalty=lambda rec: rec.neg_skewness * 10.0 + rec.excess_kurtosis * 5.0 + rec.forward_var_pct,
+    eight_state_score=attrgetter("eight_state_score"),
+)
+
+
+def _wrap_scored(items: tuple) -> tuple[ScoredSymbol, ...]:
+    """骨架 ScoredItem → 本域 ScoredSymbol 包装。"""
+    return tuple(ScoredSymbol(symbol=t.symbol, raw_score=t.raw_score, z_score=t.z_score, rank=t.rank) for t in items)
+
+
+# ------------------------------------------------------------------
+# BM-SEL-16 分级指标过滤（~7000→~1200）——委托骨架
 # ------------------------------------------------------------------
 def filter_graded_indicators(
     records: list[FunnelSymbolRecord],
@@ -173,43 +266,18 @@ def filter_graded_indicators(
 
     degraded=True（过滤模块未就绪）：仅排除涨跌停/停牌，其余放行。
     """
-    kept: list[str] = []
-    excluded: dict[str, str] = {}
-    for rec in records:
-        # 物理排除（降级路径也保留：涨跌停/停牌硬剔除）
-        if rec.is_limit_locked:
-            excluded[rec.symbol] = "physical:limit_locked"
-            continue
-        if rec.is_suspended:
-            excluded[rec.symbol] = "physical:suspended"
-            continue
-        if degraded:
-            kept.append(rec.symbol)
-            continue
-        if rec.is_st:
-            excluded[rec.symbol] = "physical:st"
-            continue
-        # 门禁排除
-        if rec.list_days < NEW_STOCK_MIN_LIST_DAYS:
-            excluded[rec.symbol] = f"gate:new_stock({rec.list_days}d<{NEW_STOCK_MIN_LIST_DAYS}d)"
-            continue
-        # 分级排除（流动性失效保护）
-        if rec.avg_daily_amount < MIN_AVG_DAILY_AMOUNT:
-            excluded[rec.symbol] = "tier:low_amount"
-            continue
-        if rec.aum <= MIN_AUM:
-            excluded[rec.symbol] = "tier:low_aum"
-            continue
-        # 概率排除
-        if rec.dealer_abandon_prob > DEALER_ABANDON_PROB_MAX:
-            excluded[rec.symbol] = "prob:dealer_abandon"
-            continue
-        kept.append(rec.symbol)
-    return GradedFilterResult(kept=tuple(kept), excluded=excluded, degraded=degraded)
+    out = run_graded_exclusion(
+        records,
+        symbol_of=_SYMBOL_OF,
+        hooks=_GRADED_HOOKS,
+        thresholds=_GRADED_THRESHOLDS,
+        degraded=degraded,
+    )
+    return GradedFilterResult(kept=out.kept, excluded=out.excluded, degraded=degraded)
 
 
 # ------------------------------------------------------------------
-# BM-SEL-17 五维初筛（~1200→~300）
+# BM-SEL-17 五维初筛（~1200→~300）——委托骨架（不注入容量截断）
 # ------------------------------------------------------------------
 def screen_preliminary(
     records: list[FunnelSymbolRecord],
@@ -223,67 +291,23 @@ def screen_preliminary(
 
     degraded=True（初筛未就绪）：全量放行进精筛。
     """
-    if degraded:
-        return PreliminaryScreenResult(
-            kept=tuple(r.symbol for r in records),
-            excluded={},
-            degraded=True,
-        )
-    kept: list[str] = []
-    excluded: dict[str, str] = {}
-    for rec in records:
-        if not rec.technical_pass:
-            excluded[rec.symbol] = "dim:technical"
-            continue
-        if rec.volume_ratio <= volume_ratio_min:
-            excluded[rec.symbol] = f"dim:volume_ratio({rec.volume_ratio:.2f}<={volume_ratio_min})"
-            continue
-        if rec.turnover_rate_pct < turnover_rate_min_pct:
-            excluded[rec.symbol] = "dim:turnover_rate"
-            continue
-        if rec.sector_strength_rank_pct > sector_rank_max_pct:
-            excluded[rec.symbol] = "dim:sector_rank"
-            continue
-        if not rec.main_force_pass:
-            excluded[rec.symbol] = "dim:main_force"
-            continue
-        if not rec.market_state_pass:
-            excluded[rec.symbol] = "dim:market_state"
-            continue
-        kept.append(rec.symbol)
-    return PreliminaryScreenResult(kept=tuple(kept), excluded=excluded, degraded=False)
+    out = run_preliminary_gates(
+        records,
+        symbol_of=_SYMBOL_OF,
+        hooks=_SCREEN_HOOKS,
+        thresholds=PreliminaryThresholds(
+            volume_ratio_min=volume_ratio_min,
+            turnover_rate_min_pct=turnover_rate_min_pct,
+            sector_rank_max_pct=sector_rank_max_pct,
+        ),
+        degraded=degraded,
+    )
+    return PreliminaryScreenResult(kept=out.kept, excluded=out.excluded, degraded=degraded)
 
 
 # ------------------------------------------------------------------
-# BM-SEL-18 六要素精筛评分（~300→~50）
+# BM-SEL-18 六要素精筛评分（~300→~50）——委托骨架（tie_break=stable）
 # ------------------------------------------------------------------
-def _composite_raw_score(rec: FunnelSymbolRecord, *, degraded: bool) -> float:
-    """六要素合成原始分。degraded=True → 等权综合评分。"""
-    if degraded:
-        return (
-            rec.base_value_score
-            + rec.base_momentum_score
-            + rec.base_quality_score
-            + rec.base_sentiment_score
-            + rec.main_force_score
-        ) / 5.0
-    base = (
-        BASE_SCORE_WEIGHTS["value"] * rec.base_value_score
-        + BASE_SCORE_WEIGHTS["momentum"] * rec.base_momentum_score
-        + BASE_SCORE_WEIGHTS["quality"] * rec.base_quality_score
-        + BASE_SCORE_WEIGHTS["sentiment"] * rec.base_sentiment_score
-    )
-    shift = max(-REGIME_SHIFT_MAX, min(REGIME_SHIFT_MAX, rec.regime_shift))
-    density_penalty = rec.neg_skewness * 10.0 + rec.excess_kurtosis * 5.0 + rec.forward_var_pct
-    return (
-        base * (1.0 + shift)
-        + MAIN_FORCE_WEIGHT * rec.main_force_score
-        - CROWDING_WEIGHT * rec.crowding_score
-        - DENSITY_WEIGHT * density_penalty
-        + EIGHT_STATE_WEIGHT * rec.eight_state_score
-    )
-
-
 def score_fine_selection(
     records: list[FunnelSymbolRecord],
     *,
@@ -295,21 +319,20 @@ def score_fine_selection(
     Z-score：std=0（全体同分）时全部置 0（无区分度，按 raw 降序兜底排名）。
     top_n<=0 或空输入 → 空结果。
     """
-    if not records or top_n <= 0:
-        return FineSelectionResult(top=(), degraded=degraded)
-    raws = {r.symbol: _composite_raw_score(r, degraded=degraded) for r in records}
-    values = list(raws.values())
-    mean = sum(values) / len(values)
-    var = sum((v - mean) ** 2 for v in values) / len(values)
-    std = math.sqrt(var)
-    zs = {s: (0.0 if std < 1e-12 else (v - mean) / std) for s, v in raws.items()}
-    ordered = sorted(raws, key=lambda s: (zs[s], raws[s]), reverse=True)[:top_n]
-    top = tuple(ScoredSymbol(symbol=s, raw_score=raws[s], z_score=zs[s], rank=i + 1) for i, s in enumerate(ordered))
-    return FineSelectionResult(top=top, degraded=degraded)
+    items = run_fine_scoring(
+        records,
+        symbol_of=_SYMBOL_OF,
+        hooks=_SCORE_HOOKS,
+        weights=_SCORE_WEIGHTS,
+        top_n=top_n,
+        degraded=degraded,
+        tie_break="stable",
+    )
+    return FineSelectionResult(top=_wrap_scored(items), degraded=degraded)
 
 
 # ------------------------------------------------------------------
-# 三级串联便捷入口
+# 三级串联便捷入口——委托骨架 run_funnel_chain
 # ------------------------------------------------------------------
 def run_selection_funnel(
     records: list[FunnelSymbolRecord],
@@ -320,10 +343,35 @@ def run_selection_funnel(
     score_degraded: bool = False,
 ) -> SelectionFunnelResult:
     """BM-SEL-16 → 17 → 18 盘前批处理串联。"""
-    by_symbol = {r.symbol: r for r in records}
-    graded = filter_graded_indicators(records, degraded=graded_degraded)
-    stage2 = [by_symbol[s] for s in graded.kept]
-    screened = screen_preliminary(stage2, degraded=screen_degraded)
-    stage3 = [by_symbol[s] for s in screened.kept]
-    scored = score_fine_selection(stage3, top_n=top_n, degraded=score_degraded)
-    return SelectionFunnelResult(graded=graded, screened=screened, scored=scored)
+    chain = run_funnel_chain(
+        records,
+        symbol_of=_SYMBOL_OF,
+        run_graded=lambda recs: run_graded_exclusion(
+            recs,
+            symbol_of=_SYMBOL_OF,
+            hooks=_GRADED_HOOKS,
+            thresholds=_GRADED_THRESHOLDS,
+            degraded=graded_degraded,
+        ),
+        run_screen=lambda recs: run_preliminary_gates(
+            recs,
+            symbol_of=_SYMBOL_OF,
+            hooks=_SCREEN_HOOKS,
+            thresholds=_SCREEN_THRESHOLDS,
+            degraded=screen_degraded,
+        ),
+        run_score=lambda recs: run_fine_scoring(
+            recs,
+            symbol_of=_SYMBOL_OF,
+            hooks=_SCORE_HOOKS,
+            weights=_SCORE_WEIGHTS,
+            top_n=top_n,
+            degraded=score_degraded,
+            tie_break="stable",
+        ),
+    )
+    return SelectionFunnelResult(
+        graded=GradedFilterResult(kept=chain.graded.kept, excluded=chain.graded.excluded, degraded=graded_degraded),
+        screened=PreliminaryScreenResult(kept=chain.screened.kept, excluded=chain.screened.excluded, degraded=screen_degraded),
+        scored=FineSelectionResult(top=_wrap_scored(chain.scored), degraded=score_degraded),
+    )
