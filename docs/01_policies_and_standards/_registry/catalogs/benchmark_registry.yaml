@@ -222,10 +222,10 @@ benchmarks:
     module_id: MOD-MKT-DATA
     doc_ref: 90_methodology_open_questions.md §13（v2.0.0 裁定：sleeve 级多基准，多因子偏小盘机会集）
     code_path: src/zephyr/data/implementations/akshare_provider.py
-    status: candidate
+    status: active
     version: 1.0.0
     created_at: '2026-08-19'
-    updated_at: '2026-08-19'
+    updated_at: '2026-08-24'
     owner: MOD-MKT-DATA
     annual_return: null
     sharpe: null
@@ -238,7 +238,7 @@ benchmarks:
     applies_to: ["index"]
     tags: ["指数", "基准"]
     algorithm_status: "not_applicable"
-    evidence: "90 号 Phase1 项②"
+    evidence: "90 号 Phase1 项②；2026-08-24 Owner 裁定 candidate→active（多因子 sleeve 基准转正）"
     code_symbol: null
     code_fingerprint: null
 
@@ -254,10 +254,10 @@ benchmarks:
     module_id: MOD-MKT-DATA
     doc_ref: 90_methodology_open_questions.md §13（v2.0.0 裁定：打板/事件驱动小盘机会集基准）
     code_path: src/zephyr/data/implementations/akshare_provider.py
-    status: candidate
+    status: active
     version: 1.0.0
     created_at: '2026-08-19'
-    updated_at: '2026-08-19'
+    updated_at: '2026-08-24'
     owner: MOD-MKT-DATA
     annual_return: null
     sharpe: null
@@ -270,7 +270,7 @@ benchmarks:
     applies_to: ["index"]
     tags: ["指数", "基准"]
     algorithm_status: "not_applicable"
-    evidence: "90 号 Phase1 项②"
+    evidence: "90 号 Phase1 项②；2026-08-24 Owner 裁定 candidate→active（多因子 sleeve 基准转正）"
     code_symbol: null
     code_fingerprint: null
 
@@ -286,10 +286,10 @@ benchmarks:
     module_id: MOD-MKT-DATA
     doc_ref: 90_methodology_open_questions.md §13（v2.0.0 裁定：全市场选股机会集基准）
     code_path: src/zephyr/data/implementations/akshare_provider.py
-    status: candidate
+    status: active
     version: 1.0.0
     created_at: '2026-08-19'
-    updated_at: '2026-08-19'
+    updated_at: '2026-08-24'
     owner: MOD-MKT-DATA
     annual_return: null
     sharpe: null
@@ -302,7 +302,7 @@ benchmarks:
     applies_to: ["index"]
     tags: ["指数", "基准"]
     algorithm_status: "not_applicable"
-    evidence: "90 号 Phase1 项②"
+    evidence: "90 号 Phase1 项②；2026-08-24 Owner 裁定 candidate→active（多因子 sleeve 基准转正）"
     code_symbol: null
     code_fingerprint: null
 

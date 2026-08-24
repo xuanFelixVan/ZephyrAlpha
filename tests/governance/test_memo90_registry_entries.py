@@ -61,7 +61,8 @@ class TestMemo90P1Benchmarks:
             assert bmk_id in entries, f"{bmk_id} 未登记"
             assert any(code in str(a) for a in entries[bmk_id]["aliases"]), f"{bmk_id} aliases 缺代码 {code}"
             assert entries[bmk_id]["benchmark_type"] == "index"
-            assert entries[bmk_id]["status"] == "candidate"
+            # 跟进：2026-08-24 Owner 裁定 candidate→active（sleeve 基准转正，evidence 留痕）
+            assert entries[bmk_id]["status"] == "active"
 
 
 class TestMemo90P2UniverseTwoDim:
