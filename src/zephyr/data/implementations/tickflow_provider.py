@@ -146,7 +146,7 @@ class TickFlowProvider(IngestProviderBase):
         免费版支持 A股/美股/港股日K线，用 period+count 参数（不支持 start_time/end_time）。
         """
         table = payload.table or _TBL_KLINE_US_DAILY
-        columns = ["trade_date", "code", "open", "high", "low", "close", "volume"]
+        columns = ["trade_date", "symbol", "open", "high", "low", "close", "volume"]  # 列名对齐 kline_us_daily DDL（原 code 致写入列过滤丢 symbol 值，空 symbol 行每日再生，D1 修复）
         symbols = payload.symbols or _DEFAULT_US_SYMBOLS
         start = payload.start or datetime.date.today() - datetime.timedelta(days=365)
         end = payload.end or datetime.date.today()

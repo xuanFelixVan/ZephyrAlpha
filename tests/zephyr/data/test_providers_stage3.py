@@ -331,6 +331,51 @@ class TestTickFlowProvider:
             assert len(results[0].rows) == 1
             assert results[0].rows[0][1] == "AAPL.US"
 
+    def test_fetch_us_daily_kline_columns_match_ddl(self):
+        """D1 回归：kline_us_daily 产出列名必须与 DDL 真源一致。
+
+        原列名 code 与 kline_us_daily DDL 列名 symbol 不匹配，写入侧列过滤
+        （BufferedWriter/ch_writer 按表列交集）丢弃 code 列值，symbol 落空串，
+        致空 symbol 行每日 18:00 再生。锚定口径同 tracker #247（us_index）。
+        """
+        import pandas as pd
+
+        tf = MagicMock()
+        mock_df = pd.DataFrame(
+            {
+                "date": ["2026-07-05"],
+                "open": [150.0],
+                "high": [155.0],
+                "low": [149.0],
+                "close": [153.0],
+                "volume": [1000000],
+            }
+        )
+        tf.TickFlow.free.return_value.klines.get.return_value = mock_df
+
+        with patch.dict("sys.modules", {"tickflow": tf}):
+            p = self._make_provider()
+            p.connect()
+            payload = FetchPayload(
+                table="c1_market.kline_us_daily",
+                symbols=["AAPL.US"],
+                start=datetime.date(2026, 7, 1),
+                end=datetime.date(2026, 7, 5),
+                extra={"capability": "kline_us_daily"},
+            )
+            results = list(p.fetch(payload, SourcePolicy()))
+            assert len(results) == 1
+            assert results[0].error is None
+
+            from schemas.categories.market_kline_us_daily import INSERT_COLUMNS
+
+            ddl_cols = {c.strip() for c in INSERT_COLUMNS.strip("()").split(",")}
+            r = results[0]
+            # 产出列必须全部为 DDL 真实列名（写入列过滤不丢任何列）
+            assert set(r.columns) <= ddl_cols
+            assert r.columns[1] == "symbol"
+            assert all(row[1] for row in r.rows)  # symbol 列非空
+
     def test_fetch_us_index(self):
         """获取美股指数（ETF替代）。"""
         import pandas as pd
