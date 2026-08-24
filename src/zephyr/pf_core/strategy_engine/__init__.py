@@ -17,6 +17,8 @@
 
 实现清单：
   - StrategyRunner : 策略运行器（因子→合成→策略→回测 胶水层，盘后回测入口）
+  - EventSentimentAdapter : 事件策略情绪分适配层
+    （news_sentiment_window 情绪分 → eventdriven-sleeve 富负载 → 权重面板）
   - DefaultEquityStrategy : StrategyBase 的具体实现（等权/信号加权/最小方差配置）
   - 路径 B tick 级做T策略（TickStrategyBase 子类，@TickStrategyBase.register 注册，
     经 StrategyRunner.run_tick_strategy_backtest 显式 import + autodiscover 注册）：
@@ -29,6 +31,9 @@ from zephyr.pf_core.default_equity_strategy import (
     DefaultEquityStrategy,
     RebalanceMode,
 )
+from zephyr.pf_core.strategy_engine.event_sentiment_adapter import (
+    EventSentimentAdapter,
+)
 from zephyr.pf_core.strategy_engine.strategy_runner import (
     StrategyRunner,
     StrategyRunnerConfig,
@@ -36,6 +41,7 @@ from zephyr.pf_core.strategy_engine.strategy_runner import (
 
 __all__ = [
     "DefaultEquityStrategy",
+    "EventSentimentAdapter",
     "RebalanceMode",
     "StrategyRunner",
     "StrategyRunnerConfig",
