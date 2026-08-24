@@ -6961,12 +6961,12 @@ entries:
   domain_status: active
   sub_layer: regime 检测引擎
   problem: 4 态 HMM 当前满足生产；15 种升级路径（HMM 引擎重写级/新基础设施级）维持备查。
-  proposal: 触发=4 态 HMM 实证失效（walk-forward 持续不达标）或对应基础设施因他项落地；逐法独立评估，不打包施工。
+  proposal: 触发=4 态 HMM 实证失效（walk-forward 持续不达标）或对应基础设施因他项落地；逐法独立评估，不打包施工。【2026-08-24 长城任务六-1 P-3 复核裁定=远期】Student-t 厚尾发射变体成本收益分析：收益端=A2 已过（OOS/IS=1.042）无失效痛点、memo90 评 Student-t 只解 emission 不解 label-switching、3 overlay 已覆盖极端行情节流；成本端=ν 标定不稳+重过 A2 不退化硬约束+全治理流程；边际收益≈0 于有痛点驱动项之外——维持备查包不施工，触发条件（walk-forward 持续不达标）未达前不重估。
   status: candidate
   priority: P2
   source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 10号节'
   created: '2026-08-20'
-  last_updated: '2026-08-20'
+  last_updated: '2026-08-24'
 - id: CAND-RSK-025
   name: Kill Switch L3 看门狗独立进程（35号 §6.11）
   aliases: [watchdog 独立进程, kill switch 第三层]
