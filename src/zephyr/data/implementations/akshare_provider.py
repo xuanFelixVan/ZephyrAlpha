@@ -163,6 +163,15 @@ _TBL_ETF_BENCHMARK = get_registry().table("market_etf_benchmark")
 _TBL_ETF_LIST = get_registry().table("market_etf_list")
 _TBL_TRADE_CALENDAR = get_registry().table("market_trade_calendar")
 _TBL_INDEX_CONSTITUENT = get_registry().table("market_index_constituent")
+# GAP-B3-03（2026-08-24）指数成分日快照 SCD-2 闭旧：index_member 日快照每日新开
+# 版本，旧版本 valid_to 恒 NULL 从不闭合（BTDATA §B3 实证 @2026-08-20 同键 5 版本
+# 并存 1,500 行）。同构 #209④ stock_list 闭旧先例：新快照产出前查该指数 open 版本
+# （valid_to IS NULL 且 trade_date < 新快照生效日），逐行产同键闭合行
+# （valid_to=新快照生效日，对齐 pit_query "valid_to > qt=有效" 语义）。
+_SQL_INDEX_CONSTITUENT_OPEN = (
+    f"SELECT trade_date, symbol, weight, action, data_source FROM {_TBL_INDEX_CONSTITUENT} "
+    "WHERE index_code = '{index_code}' AND valid_to IS NULL AND trade_date < toDate('{as_of}')"
+)
 _TBL_ETF_NAV = get_registry().table("market_etf_nav")
 _TBL_HOG_SPOT_INDEX = get_registry().table("market_hog_spot_index")
 _TBL_HOG_FUTURES_CORE = get_registry().table("market_hog_futures_core")
@@ -5539,12 +5548,13 @@ class AkshareIngestProvider(IngestProviderBase):
 
     # ---- 30c. 沪深300成分股（index_constituent，#ARCH-DATA-015） ----
 
-    # JOB-077 DS-084：指数成分覆盖范围（沪深300/中证500/中证1000/中证全指）
+    # JOB-077 DS-084：指数成分覆盖范围（沪深300/中证500/中证1000/中证全指）+ GAP-B3-02（2026-08-24）：中证800
     _INDEX_MEMBER_CODES: tuple[tuple[str, str], ...] = (
         ("000300", "000300.SH"),  # 沪深300
         ("000905", "000905.SH"),  # 中证500
         ("000852", "000852.SH"),  # 中证1000
         ("000985", "000985.SH"),  # 中证全指
+        ("000906", "000906.SH"),  # 中证800（GAP-B3-02：日快照段 CSI800 补丁）
     )
 
     def _fetch_index_weight_map(self, ak, policy: SourcePolicy, raw_code: str) -> dict[str, float]:
@@ -5599,6 +5609,45 @@ class AkshareIngestProvider(IngestProviderBase):
             )
         return trade_date, rows
 
+    def _index_constituent_closure_rows(self, l3_code: str, new_trade_date: str) -> list[tuple]:
+        """GAP-B3-03（2026-08-24）SCD-2 闭旧行：该指数 open 旧版本同键闭合。
+
+        背景（BTDATA §B3 实证）：index_member 日快照每日以新 trade_date 开新版本，
+        旧版本 valid_to 恒 NULL 从不闭合 → 同 (index_code, symbol) 多版本并存，
+        PIT 时点查询重复（000300.SH @2026-08-20 返回 5 版本×300=1,500 行）。
+        同构 #209④ stock_list 闭旧先例：查 CH open 版本（valid_to IS NULL 且
+        trade_date < 新快照生效日），逐行产出同键 (index_code, trade_date, symbol)
+        闭合行（valid_to=新快照生效日，对齐 pit_query "valid_to > qt=有效" 语义），
+        ReplacingMergeTree 同键合并后旧版本闭合；新行不携 valid_to（NULL=开新）。
+        安全口径：仅闭合 CH 返回的 open 行本身；查询失败/空=无可闭合并返回 []，
+        不阻断开新（次日快照自愈——闭旧查询覆盖全部历史 open 版本）。
+        """
+        from zephyr.data import ch_reader as _chr
+
+        sql = _SQL_INDEX_CONSTITUENT_OPEN.format(index_code=l3_code, as_of=new_trade_date)
+        try:
+            tsv = _chr.query(sql, timeout=60)
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"index_constituent {l3_code} open 版本查询失败（跳过闭旧）: {e}")
+            return []
+        rows: list[tuple] = []
+        for line in (tsv or "").strip().split("\n"):
+            parts = line.split("\t")
+            if len(parts) < 5 or not parts[0].strip():
+                continue
+            rows.append(
+                (
+                    parts[0].strip(),  # trade_date（旧版本键，同键闭合）
+                    l3_code,
+                    parts[1].strip(),  # symbol
+                    parts[2].strip(),  # weight（原值透传）
+                    parts[3],  # action
+                    parts[4],  # data_source
+                    new_trade_date,  # valid_to=新快照生效日（闭旧）
+                )
+            )
+        return rows
+
     def _fetch_index_constituent(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """指数成分及权重（akshare 中证指数官网源，JOB-077 DS-084 扩展）。
 
@@ -5609,6 +5658,9 @@ class AkshareIngestProvider(IngestProviderBase):
         权重接口按月末发布权重日快照（row级日期），成分按当前清单日——成员资格
         以成分接口日期为准（universe 用途），权重为最近可得月频值。
         列名对齐 index_constituent 表 schema。每指数 yield 一批。
+        GAP-B3-03（2026-08-24）：新快照非空时先 yield 闭旧批（旧 open 版本同键
+        闭合行，valid_to=新快照生效日）再 yield 开新批（valid_to=NULL），
+        修复日快照 SCD-2 从不闭合缺陷；空快照不闭旧（无可接续版本）。
         """
         import akshare as ak
 
@@ -5622,6 +5674,19 @@ class AkshareIngestProvider(IngestProviderBase):
                 weight_map = self._fetch_index_weight_map(ak, policy, raw_code)
                 trade_date, rows = self._index_constituent_rows(df_cons, l3_code, weight_map, fallback_date)
                 self._log.info(f"index_constituent {l3_code}: {len(rows)} 行（akshare 中证官网）")
+                if rows:
+                    closure_rows = self._index_constituent_closure_rows(l3_code, trade_date)
+                    if closure_rows:
+                        self._log.info(
+                            f"index_constituent {l3_code} SCD-2 闭旧 {len(closure_rows)} 行（valid_to={trade_date}）"
+                        )
+                        yield FetchResult(
+                            table=table,
+                            columns=[*columns, "valid_to"],
+                            rows=closure_rows,
+                            last_key=trade_date,
+                            elapsed_sec=time.monotonic() - t0,
+                        )
                 yield FetchResult(
                     table=table,
                     columns=columns,

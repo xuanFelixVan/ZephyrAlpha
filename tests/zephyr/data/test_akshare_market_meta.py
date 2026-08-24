@@ -596,8 +596,8 @@ class TestFetchIndexConstituent:
         monkeypatch.setitem(sys.modules, "akshare", mock_ak)
 
         results = _call_fetch(p, "index_constituent", _payload(D(2026, 8, 14), D(2026, 8, 14)))
-        assert len(results) == 4  # 每指数一批
-        assert cons_calls == ["000300", "000905", "000852", "000985"]
+        assert len(results) == 5  # 每指数一批（GAP-B3-02：+中证800）
+        assert cons_calls == ["000300", "000905", "000852", "000985", "000906"]
         r0 = results[0]
         assert not r0.error and len(r0.rows) == 2
         # (trade_date, index_code, symbol, weight, action, data_source)
@@ -628,7 +628,7 @@ class TestFetchIndexConstituent:
         monkeypatch.setitem(sys.modules, "akshare", mock_ak)
 
         results = _call_fetch(p, "index_constituent", _payload(D(2026, 8, 14), D(2026, 8, 14)))
-        assert len(results) == 4
+        assert len(results) == 5
         assert all(not r.error for r in results)
         assert results[0].rows[0][3] == 0  # weight 降级为 0
 
