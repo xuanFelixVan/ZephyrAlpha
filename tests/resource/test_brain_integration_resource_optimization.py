@@ -19,6 +19,13 @@ Verifies:
 
 from __future__ import annotations
 
+import pandas  # noqa: F401  # 预热导入，勿删（非 unused）：
+# 2026-08-24 四轮全量 sweep 实证：隔离 19/19 全绿；三路并发 sweep 极限负载下，
+# 用例内延迟导入 auto_runtime_core 时与残留监控线程并发首导 pandas，触发 C 扩展
+# 部分初始化竞态（AttributeError: partially initialized module 'pandas' has no
+# attribute '_pandas_datetime_CAPI'）。收集期主线程完成全量初始化后，线程并发
+# import 走 sys.modules 快路径，竞态确定性消除。
+
 from unittest.mock import MagicMock, patch
 
 from zephyr.trading.health_monitor import HealthMonitor, PressureLevel

@@ -257,27 +257,39 @@ def test_ai_channel_audit_channel_field(tmp_path: Path):
 # ---------------------------------------------------------------- 保活计划任务
 
 
-def test_keepalive_scheduled_task_registered():
-    """保活计划任务注册核验（环境断言，OS 调用在高并发 sweep 下偶发 pipe 异常——重试一次）。
+def test_keepalive_scheduled_task_registered(tmp_path: Path):
+    """保活计划任务注册核验（环境断言，OS 调用在高并发 sweep 下偶发 pipe 异常——文件重定向收敛）。
 
     2026-08-24 三轮全量 sweep 实证：隔离 15/15 全绿，三路并发 sweep 下 schtasks
     管道偶发 stdout=None/超时（负载性 flake 非代码缺陷），加重试+超时放宽收敛。
+    2026-08-24 四轮复证：3 次重试仍全部 rc=0 但 stdout=None（极限负载下 Windows
+    管道句柄竞态持续复现）——改 temp 文件重定向彻底绕开匿名管道，重试兜底保留。
     """
     r = None
+    output = ""
     last_err: Exception | None = None
-    for _attempt in range(3):
+    for attempt in range(3):
+        out_file = tmp_path / f"schtasks_query_{attempt}.txt"
         try:
-            r = subprocess.run(
-                ["schtasks", "/query", "/tn", TASK_NAME],
-                capture_output=True,
-                text=True,
-                timeout=90,
+            with open(out_file, "wb") as fh:
+                r = subprocess.run(
+                    ["schtasks", "/query", "/tn", TASK_NAME],
+                    stdout=fh,
+                    stderr=subprocess.STDOUT,
+                    timeout=90,
+                )
+            raw = out_file.read_bytes()
+            # schtasks 重定向输出走 ANSI/OEM(GBK)；UTF-16 BOM 兜底
+            output = (
+                raw.decode("utf-16", errors="replace")
+                if raw[:2] in (b"\xff\xfe", b"\xfe\xff")
+                else raw.decode("gbk", errors="replace")
             )
-            if r.returncode == 0 and r.stdout is not None:
+            if r.returncode == 0 and output.strip():
                 break
         except (subprocess.TimeoutExpired, OSError) as e:
             last_err = e
             time.sleep(2)
     assert r is not None, f"keepalive task query failed after retries: {last_err}"
-    assert r.returncode == 0, f"keepalive task missing: {r.stdout}{r.stderr}"
-    assert r.stdout is not None and TASK_NAME in r.stdout
+    assert r.returncode == 0, f"keepalive task missing: {output}"
+    assert TASK_NAME in output
