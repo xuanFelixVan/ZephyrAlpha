@@ -102,6 +102,7 @@ from zephyr.shared.contracts.telemetry_emitter import TelemetryEmitter
 
 # DM-367: re-export module names for audit registration
 from . import llm_gateway_protocol, orchestration_protocol, skill_protocol
+from zephyr.shared.contracts.execution_report_contract import ExecutionReportContract
 
 # Lazy imports for trading-domain symbols (upward dependency from L0 shared -> L3 trading)
 _TRADING_SYMBOLS = {
@@ -285,3 +286,5 @@ __all__ = [
     "rollback_types",
     "runtime_types",
 ]
+
+__all__.append("ExecutionReportContract")
