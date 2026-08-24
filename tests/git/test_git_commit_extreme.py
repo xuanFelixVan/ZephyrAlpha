@@ -236,6 +236,10 @@ class TestLockFailureInjection:
 class TestHighConcurrency:
     """高并发压力测试。"""
 
+    # 2026-08-24 六轮 sweep 实证：三路并发极限负载下整簇耗时 378s（隔离 163s），
+    # 5 串行 commit 真实墙钟可超 pytest 全局 120s 墙钟 + 锁等待窗口 60s 持续不足——
+    # 显式放宽本用例墙钟至 900s、网关锁超时至 300s（测串行化语义非超时行为）。
+    @pytest.mark.timeout(900)
     def test_5_session_concurrent_different_files(self, tmp_path: Path) -> None:
         """场景4: 5 session 并发提交不同文件——全部串行化成功。"""
         _init_repo(tmp_path)
@@ -252,23 +256,31 @@ class TestHighConcurrency:
             return (sess, r.status, r.commit_hash)
 
         # 2026-08-24 四轮全量 sweep 实证：隔离全绿；三路并发 sweep 极限负载下全局锁
-        # 60s 超时偶发 LOCK_TIMEOUT（实测仅 2/5 成功）。负载性可用性抖动非串行化缺陷——
+        # 超时偶发 LOCK_TIMEOUT（实测仅 2/5 成功）。负载性可用性抖动非串行化缺陷——
         # 未成功 session（锁未取到、变更未落库）按轮安全重入；无跨 session 捡拾断言不变。
+        # 六轮复证：60s 锁窗口+3 轮重试仍收敛不足——Gateway 不暴露锁超时参数，
+        # 测试域内 partial patch _GlobalCommitLock 放宽至 300s（产品行为不改写）。
+        from functools import partial
+
+        from zephyr.gov_enforcement.rule_bridge import git_commit_gateway as _gw_mod
+
+        lock_300 = partial(_gw_mod._GlobalCommitLock, timeout=300.0)
         results: dict[str, tuple[str, CommitStatus, str]] = {}
         last_statuses: dict[str, CommitStatus] = {}
-        for round_i in range(3):
-            pending = [i for i in range(5) if f"S{i}" not in results]
-            if not pending:
-                break
-            if round_i:
-                time.sleep(2)
-            with ThreadPoolExecutor(max_workers=len(pending)) as ex:
-                futures = [ex.submit(commit, f"S{i}", f"f{i}.py") for i in pending]
-                for f in as_completed(futures):
-                    sess, status, h = f.result()
-                    last_statuses[sess] = status
-                    if status == CommitStatus.OK:
-                        results[sess] = (sess, status, h)
+        with patch.object(_gw_mod, "_GlobalCommitLock", lock_300):
+            for round_i in range(3):
+                pending = [i for i in range(5) if f"S{i}" not in results]
+                if not pending:
+                    break
+                if round_i:
+                    time.sleep(2)
+                with ThreadPoolExecutor(max_workers=len(pending)) as ex:
+                    futures = [ex.submit(commit, f"S{i}", f"f{i}.py") for i in pending]
+                    for f in as_completed(futures):
+                        sess, status, h = f.result()
+                        last_statuses[sess] = status
+                        if status == CommitStatus.OK:
+                            results[sess] = (sess, status, h)
 
         ok_count = len(results)
         assert ok_count == 5, f"5 session 应全部成功, 实际 {ok_count}/5 (末轮状态: {last_statuses})"
