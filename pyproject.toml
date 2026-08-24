@@ -32,6 +32,9 @@ dependencies = [
     "pydantic>=2.0.0,<3.0.0",
     "pyyaml>=6.0,<7.0",
     "pandas>=2.0.0,<3.0.0",
+    # ML-ARCH-001 裁定显式化（2026-08-24 Owner 裁定）：DensityQuantileTrainer/
+    # sentiment_sft_trainer 已在用 sklearn——幽灵依赖同 python-dotenv 案，不得靠传递依赖兜底
+    "scikit-learn>=1.5.0,<2.0.0",
     "psutil>=5.9.0,<7.0",
     "chromadb>=0.4.24,<1.0.0",
     "mcp>=1.0.0,<2.0.0",
