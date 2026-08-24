@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] zephyr.data.backfill_checker
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] zephyr.data.ch_reader; zephyr.data.tick_subscriber
+# [DEPENDENCIES] zephyr.data.ch_reader; zephyr.data.tick_subscriber; zephyr.data.provider_base; zephyr.data.policy_registry; zephyr.data.implementations.akshare_provider
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 查CH实际行数发现缺口; 只补缺失不重复下载; 写入tick_data走ch_writer统一通道(TCP→HTTP→本地落盘); 查询走ch_reader自动注入FINAL; run_known_gap_backfill()读取known_data_gaps.yaml检测已登记历史缺口(不受7天窗口限制, audit 2.7/3.8治本); 慢变化表(静态重建schedule或业务事件日期列)threshold强制0跳过日频缺口检测(#ARCH-DATA-017)
+# [INVARIANTS] 查CH实际行数发现缺口; 只补缺失不重复下载; 写入tick_data走ch_writer统一通道(TCP→HTTP→本地落盘); 查询走ch_reader自动注入FINAL; run_known_gap_backfill()读取known_data_gaps.yaml检测已登记历史缺口(不受7天窗口限制, audit 2.7/3.8治本); 慢变化表(静态重建schedule或业务事件日期列)threshold强制0跳过日频缺口检测(#ARCH-DATA-017); kline_index走专用补下载路径(symbol级差集检测+显式缺失日期窗口经akshare provider回填,绕开last_key超前推进致部分覆盖日补不回缺口, 2026-08-24 D1)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -64,6 +64,7 @@ _BATCH_SYMBOLS = 50
 _TBL_TRADE_CALENDAR = get_registry().table("market_trade_calendar")
 _TBL_KLINE_DAILY = get_registry().table("market_kline_daily")
 _TBL_TICK_DATA = get_registry().table("market_tick")
+_TBL_KLINE_INDEX = get_registry().table("market_index_kline")
 
 _SQL_TRADE_CALENDAR = (
     f"SELECT cal_date FROM {_TBL_TRADE_CALENDAR} "
@@ -595,6 +596,201 @@ def _backfill_tick_range(
     return total_rows
 
 
+# ========== 指数日K线（kline_index）补下载 ==========
+
+# SQL 模板常量（NO-BARE-SQL gate 豁免：_SQL_* 前缀）
+_SQL_INDEX_SYMBOLS_BY_DATE = "SELECT DISTINCT symbol FROM {table} WHERE trade_date=toDate('{d_str}')"
+
+
+def _query_index_symbols(table: str, d: datetime.date) -> set[str]:
+    """查询 kline_index 某日已有 symbol 集合。"""
+    raw = ch_reader.query(_SQL_INDEX_SYMBOLS_BY_DATE.format(table=table, d_str=d.isoformat()))
+    if not raw:
+        return set()
+    return {line.strip() for line in raw.strip().split("\n") if line.strip()}
+
+
+def _detect_index_symbol_gap(
+    table: str,
+    dates: list[datetime.date],
+    threshold: int,
+) -> dict[datetime.date, list[str] | None]:
+    """kline_index symbol 级缺口检测。
+
+    表级行数检测（count < threshold）之外再做 symbol 级差集：
+    基线 = 窗口内最后一个达标日（count >= threshold）的 symbol 集合；
+    缺失日的缺口 = 基线 - 当日已有 symbol（sorted list）。
+    窗口内无达标日（全缺失）时缺口记 None（调用方按全量清单补下载）。
+
+    Returns:
+        {缺失日期: 缺失 symbol 列表 或 None（全量）}；无缺失返回空 dict。
+    """
+    if not dates or threshold <= 0:
+        return {}
+
+    counts: dict[datetime.date, int] = {}
+    for d in dates:
+        cnt = ch_reader.query(
+            _SQL_COUNT_BY_CUSTOM_DATE.format(table=table, date_col="trade_date", d_str=d.isoformat())
+        )
+        try:
+            counts[d] = int(cnt.strip()) if cnt and cnt.strip() else 0
+        except ValueError:
+            counts[d] = 0
+
+    baseline_date = None
+    for d in dates:
+        if counts[d] >= threshold:
+            baseline_date = d  # 取最后一个达标日
+    baseline = _query_index_symbols(table, baseline_date) if baseline_date else None
+
+    gaps: dict[datetime.date, list[str] | None] = {}
+    for d in dates:
+        if counts[d] >= threshold:
+            continue
+        log.info("检测到缺失: %s %s 行数=%d 阈值=%d", table, d.isoformat(), counts[d], threshold)
+        if baseline is None:
+            gaps[d] = None
+        else:
+            gaps[d] = sorted(baseline - _query_index_symbols(table, d))
+    return gaps
+
+
+def _get_index_backfill_provider():
+    """获取指数补下载 provider（akshare，新浪指数日线源）。
+
+    复用既有指数采集能力，不重造：akshare `_fetch_kline_index` 支持显式
+    [start, end] 窗口 + symbols 限定（tasks.yaml kline_index_incremental
+    fallback 实证通道；miniqmt 近期持续拒连，akshare 为事实主通道）。
+    """
+    try:
+        from zephyr.data.implementations.akshare_provider import AkshareIngestProvider
+
+        provider = AkshareIngestProvider()
+        provider.connect()
+        return provider
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        log.error("akshare provider 不可用，无法补下载 kline_index: %s", e)
+        return None
+
+
+def backfill_kline_index(
+    missing_dates: list[datetime.date],
+    symbols: list[str] | None = None,
+) -> int:
+    """补下载 kline_index 指定缺失日期（显式窗口，绕开 last_key）。
+
+    与 scheduler.run_task 增量重跑的本质区别：run_task 窗口下限 = last_key，
+    last_key 只要 rows>0 即推进至 end（部分覆盖也超前推进），导致 last_key
+    之前的部分覆盖日永远补不回；本函数以检测到的缺失日期为显式窗口
+    [min(missing), max(missing)] 直接驱动 provider 回填，写幂等由
+    kline_index ReplacingMergeTree 同键去重保证（D1DATA 实证）。
+
+    Args:
+        missing_dates: 缺失日期列表
+        symbols: 缺失 symbol 限定（None=provider 全量指数清单）
+
+    Returns:
+        总写入行数
+    """
+    if not missing_dates:
+        log.info("无需补下载 kline_index")
+        return 0
+
+    provider = _get_index_backfill_provider()
+    if provider is None:
+        return 0
+
+    from zephyr.data.policy_registry import get_registry as _get_policy_registry
+    from zephyr.data.provider_base import FetchPayload
+
+    start, end = min(missing_dates), max(missing_dates)
+    payload = FetchPayload(
+        table=_TBL_KLINE_INDEX,
+        symbols=symbols,
+        start=start,
+        end=end,
+        incremental=True,
+        extra={"capability": "kline_index"},
+    )
+    log.info(
+        "补下载 kline_index: 窗口=[%s, %s] symbols=%s",
+        start,
+        end,
+        "全量" if symbols is None else f"{len(symbols)}只",
+    )
+
+    policy = _get_policy_registry().get_policy("akshare")
+    total_rows = 0
+    try:
+        for result in provider.fetch(payload, policy):
+            if result.error:
+                log.error("kline_index 补下载 FetchResult.error: %s", result.error)
+                continue
+            n = len(result.rows or [])
+            if n and ch_writer.write_result(result):
+                total_rows += n
+            elif n:
+                log.warning("kline_index 补下载批次写入失败（%d行）", n)
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        log.error("kline_index 补下载异常: %s", e)
+    log.info("kline_index 补下载完成: %d行", total_rows)
+    return total_rows
+
+
+def _backfill_kline_index_table(
+    info: dict,
+    trade_dates: list[datetime.date],
+    all_missing_tables: list[dict],
+) -> int:
+    """检测并补下载 kline_index 缺失日期（专用路径，替代 generic run_task）。
+
+    缺失记录追加到 all_missing_tables，返回写入行数。
+    """
+    threshold = info.get("threshold", 0)
+    if threshold <= 0:
+        log.debug("表 %s 跳过（阈值为0）", info["table"])
+        return 0
+
+    gaps = _detect_index_symbol_gap(info["table"], trade_dates, threshold)
+    if not gaps:
+        log.debug("表 %s 无缺失", info["table"])
+        return 0
+
+    missing_dates = sorted(gaps)
+    # symbols 并集；任一缺失日无基线（None）→ 全量清单
+    if any(v is None for v in gaps.values()):
+        symbols = None
+    else:
+        symbols = sorted({s for v in gaps.values() for s in v})
+
+    log.info(
+        "kline_index 缺失日期: %s 缺失标的: %s",
+        [d.isoformat() for d in missing_dates],
+        "全量" if symbols is None else f"{len(symbols)}只",
+    )
+
+    rows = 0
+    if symbols is None or symbols:
+        rows = backfill_kline_index(missing_dates, symbols=symbols)
+    else:
+        log.info("kline_index 缺失日 symbol 差集为空，无需补下载")
+
+    all_missing_tables.append(
+        {
+            "table": info["table"],
+            "missing_dates": [d.isoformat() for d in missing_dates],
+            "rows_backfilled": rows,
+        }
+    )
+    # 验证
+    for d in missing_dates:
+        d_str = d.isoformat()
+        cnt = _ch_query(_SQL_COUNT_BY_DATE.format(table=info["table"], d_str=d_str))
+        log.info("  kline_index %s: %s行", d_str, cnt or "0")
+    return rows
+
+
 # ========== 主入口 ==========
 
 
@@ -951,6 +1147,12 @@ def run_weekend_backfill(
         # tick_data 用专门的补下载逻辑（分时段+批量写入）
         if table == _TBL_TICK_DATA:
             total_rows += _backfill_tick_table(trade_dates, all_missing_tables)
+            continue
+        # kline_index 用专用路径（symbol 级差集 + 显式缺失日期窗口经 akshare
+        # provider 回填），绕开 run_task 增量窗口下限=last_key 导致的
+        # "部分覆盖日补不回"缺口（2026-08-24 D1）
+        if table == _TBL_KLINE_INDEX:
+            total_rows += _backfill_kline_index_table(info, trade_dates, all_missing_tables)
             continue
         _backfill_generic_table(info, trade_dates, scheduler, all_missing_tables)
 
