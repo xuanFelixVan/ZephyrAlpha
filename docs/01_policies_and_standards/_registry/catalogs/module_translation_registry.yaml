@@ -42927,6 +42927,63 @@ entries:
   desc_zh: 'MOD-NLP-SENT-PIPE（13 号 Phase 7）。离线批量端到端接线件——news dict → infer_batch（chat 注入）→ aggregate_daily → daily_sink 注入下沉；空输入空 outcome、单条失败降级不阻断、chat=None 契约传播；write_daily_jsonl 默认产物落盘。'
   desc_en: 'MOD-NLP-SENT-PIPE (memo 13 Phase 7). Offline batch end-to-end wiring — news dicts to infer_batch (injected chat) to aggregate_daily to injected daily_sink; empty input yields empty outcome, per-item failure degrades without blocking, chat=None propagates contract error; write_daily_jsonl default sink.'
   plain_zh: '舆情管道接线员。把"喂新闻、算情绪、按日汇总、落盘"四步串成一条可注入的流水线，测试时用假模型就能整链跑通。'
+- module_path: src/zephyr/backtest/core/overfitting_adjudicator.py
+  domain_id: D_BACKTEST
+  name_zh: "过拟合裁定器"
+  name_en: "Overfitting Adjudicator"
+  desc_zh: "P-5 过拟合检测协议组件: walk-forward OOS/IS 衰减比汇总、Deflated Sharpe Ratio 折减判定、参数扰动 ±20% 收益稳定性三检验器, 上线门禁挂钩点 Protocol 预留"
+  desc_en: "P-5 overfitting adjudication protocol: walk-forward OOS/IS decay summary, Deflated Sharpe Ratio, parameter perturbation stability, gate hook Protocol reserved"
+  plain_zh: "给策略上线前把三道过拟合关: 一看样本外收益比样本内衰减多少(各折最差也要守住七折线), 二用 DSR 公式把试了 N 次碰运气的 Sharpe 水分挤掉(低于显著线就算运气), 三把参数上下扰动两成看收益是否断崖(衰减超三成就报警)。三道都过才算不过拟合, 结果通过预留接口交给上线门禁, 本身不直接阻断。"
+- module_path: tests/backtest/test_overfitting_adjudicator.py
+  domain_id: D_BACKTEST
+  name_zh: "过拟合裁定器单测"
+  name_en: "Overfitting Adjudicator Tests"
+  desc_zh: "P-5 过拟合裁定组件合成数据单测: DSR 手算解析解对拍、试验膨胀对比、扰动衰减语义、walk-forward 汇总口径、门禁挂钩点形态"
+  desc_en: "Synthetic-data tests for P-5 overfitting adjudicator: DSR analytic cross-check, trial inflation, perturbation decay semantics, walk-forward summary, gate hook"
+  plain_zh: "用假数据验证过拟合裁定器算得对不对: 手算过的 DSR 答案跟程序对一遍、试一次和试一千次的 Sharpe 折减对比、参数扰动后收益衰减率和稳健占比的口径、以及门禁挂钩点插上假钩子能收到裁定报告。"
+- module_path: src/zephyr/pf_core/core/msprt_champion_challenger.py
+  domain_id: D_PF_CORE
+  name_zh: "mSPRT Champion-Challenger 序贯晋升组件"
+  name_en: "mSPRT Champion-Challenger Sequential Promotion"
+  desc_zh: "高斯 mixture 闭式边际似然比累加 + tau 标定 + Ville 边界 1/α=20 + 30 笔滚动窗的序贯晋升统计组件（61 号 memo §3.3）"
+  desc_en: ""
+  plain_zh: "新旧两个策略每成交一笔就比一次收益差，把证据逐笔攒成一个分数；分数涨到 20 倍就证明新策略真的更好、允许上岗，跌到 1/20 就证明没戏、让新策略下课；证据不够就继续让老策略顶着。不用提前定看多少笔，随时看都不算偷看。"
+- module_path: tests/pf_core/test_msprt_champion_challenger.py
+  domain_id: D_PF_CORE
+  name_zh: "mSPRT Champion-Challenger 序贯晋升组件单元测试"
+  name_en: "mSPRT Champion-Challenger Unit Tests"
+  desc_zh: "合成数据单测：零效应不误晋升/正效应晋升/负效应淘汰/阈值 20/30 笔滚动窗/空序列与 tau 标定"
+  desc_en: ""
+  plain_zh: "用编造的收益差数据考验这个裁判组件：新老策略一样强时不能乱晋升，新策略真强时要晋升，真差时要淘汰，还要检查它只数最近 30 笔账、没数据时不乱动。"
+- module_path: src/zephyr/ex_sor/core/rl_exec_contract.py
+  domain_id: D_EX_SOR
+  name_zh: "RL下单参数契约"
+  name_en: "RL Execution Contract"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "定死 RL 下单环境的规则参数：涨跌停限价带、单步 POV 上限、切片数、禁市价开关、偏移档位表。解决训练环境和将来真实下单两边参数口径不一致的问题——同一份冻结契约两边共用，训练时什么约束、生产就是什么约束。"
+- module_path: src/zephyr/ex_sor/core/rl_exec_boundary.py
+  domain_id: D_EX_SOR
+  name_zh: "RL下单硬边界包裹层"
+  name_en: "RL Execution Hard Boundary"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给 RL 策略动作套上不可绕过的硬边界：限价超出涨跌停带就夹回边界、数量超过 POV 上限乘盘口量就砍到上限、禁市价时市价类动作直接拒单本步不成交。环境每一步都必须先过它再到撮合，策略层无法绕过，保证学出来的行为永远合规。"
+- module_path: src/zephyr/ex_sor/core/rl_exec_env.py
+  domain_id: D_EX_SOR
+  name_zh: "RL下单训练环境"
+  name_en: "RL Execution Training Env"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "gym 风格的 RL 下单训练环境骨架：reset 开新回合、step 喂动作返回状态奖励结束位。状态是盘口加持仓加剩余量快照，动作是价格偏移档位加数量比例，奖励取实现短缺的负值。只搭骨架不真训练，真训练要等 B-007 人工审批闸门放行。"
+- module_path: tests/ex_sor/test_rl_exec_env.py
+  domain_id: D_EX_SOR
+  name_zh: "RL下单环境单元测试"
+  name_en: "RL Execution Env Tests"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "用合成盘口数据验证 RL 下单环境骨架：随机策略能跑通整个回合、越界价格被夹回涨跌停带、越界数量被砍到 POV 上限、禁市价时市价动作被拒、奖励等于负的实现短缺、同种子 reset 结果完全可复现。"
+
 battle_map_steps:
 - step_id: BM-BUY-04
   flow_stage: buy_flow

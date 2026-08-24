@@ -3137,12 +3137,11 @@ capabilities:
   - depgraph_node_tags
   - ai_layer_tag
   - 横切标签词表
-  description: "depgraph nodes.tags 横切标签受控词表（#ARCH-169，2026-08-22，PS-VOC-036）。
-    canonical = docs/01_policies_and_standards/_registry/vocabularies/depgraph_tags_vocabulary.yaml。
-    当前 1 值：ai_layer（AI 层横切标签——03号文 E0-8 选项C 混合方案：AI 层视图=8 核心域∪标签节点）。
-    写路径=scripts/governance/apply_depgraph.py --tag-nodes/--untag-nodes。
-    解决发现性：新 AI 搜 \"横切标签/ai_layer/depgraph tags\" 可定位真源。
-    解决防重建：新增横切标签必须先入本词表再打标，禁止别处新建 tags 词表。"
+  description: depgraph nodes.tags 横切标签受控词表（#ARCH-169，2026-08-22，PS-VOC-036）。 canonical
+    = docs/01_policies_and_standards/_registry/vocabularies/depgraph_tags_vocabulary.yaml。
+    当前 1 值：ai_layer（AI 层横切标签——03号文 E0-8 选项C 混合方案：AI 层视图=8 核心域∪标签节点）。 写路径=scripts/governance/apply_depgraph.py
+    --tag-nodes/--untag-nodes。 解决发现性：新 AI 搜 "横切标签/ai_layer/depgraph tags" 可定位真源。 解决防重建：新增横切标签必须先入本词表再打标，禁止别处新建
+    tags 词表。
   integrity_anchors:
   - total_values
 - capability_id: decisiongraph_reader
@@ -4684,14 +4683,12 @@ capabilities:
   - MOD-INT-AISA
   - CAND-AISA-001
   description: A 股舆情分析器 MVP（CAND-AISA-001 转正，2026-08-18 AI-AISA-001 施工，#ARCH-AISA-001）。复用已建数据与推理基础（news_collector
-    取 fund_news_data 多源新闻 / nlp_inference 作 LLM 打分扩展口），新建舆情聚合信号层：①规则法情绪打分桩（A
-    股政策语境关键词词典，标题权重高于正文，去重防刷分，[-1,1] 有向极性）②时间窗口聚合器（整点对齐，默认
-    60min，产出窗口 sentiment_index/正负占比）③舆情事件信号（sentiment_index 突破正负阈值产
-    positive_spike/negative_spike，连续同向窗口防抖）④LLM 打分扩展口（构造注入 llm_scorer
-    callable，异常自动降级 llm_fallback 不阻断）。与 market_sentiment_analyzer（MOD-SIG-025
-    价格行为情绪周期）正交——本模块是新闻文本舆情维度。MVP 不建表不持久化（内存态输出，下游决定落盘）。canonical
-    = src/zephyr/intelligence/news_sentiment_analyzer.py。解决发现性：新 AI 搜
-    "舆情/新闻情绪/news sentiment/政策舆情/sentiment事件" 可定位真源。解决防重建：check_file_canonical()
+    取 fund_news_data 多源新闻 / nlp_inference 作 LLM 打分扩展口），新建舆情聚合信号层：①规则法情绪打分桩（A 股政策语境关键词词典，标题权重高于正文，去重防刷分，[-1,1]
+    有向极性）②时间窗口聚合器（整点对齐，默认 60min，产出窗口 sentiment_index/正负占比）③舆情事件信号（sentiment_index
+    突破正负阈值产 positive_spike/negative_spike，连续同向窗口防抖）④LLM 打分扩展口（构造注入 llm_scorer callable，异常自动降级
+    llm_fallback 不阻断）。与 market_sentiment_analyzer（MOD-SIG-025 价格行为情绪周期）正交——本模块是新闻文本舆情维度。MVP
+    不建表不持久化（内存态输出，下游决定落盘）。canonical = src/zephyr/intelligence/news_sentiment_analyzer.py。解决发现性：新
+    AI 搜 "舆情/新闻情绪/news sentiment/政策舆情/sentiment事件" 可定位真源。解决防重建：check_file_canonical()
     反查阻止重建同类舆情信号层。
   integrity_anchors:
   - NewsSentimentAnalyzer
@@ -4706,14 +4703,14 @@ capabilities:
   - Filtered Historical Simulation
   - GARCH残差重采样
   - CAND-AUTONOMYCORE-002
-  description: FHS（Filtered Historical Simulation）引擎能力（D_RISK 域，MOD-RK-26，memo 36 §3.16 施工规约落地，CAND-AUTONOMYCORE-002
-    远期候选转正，2026-08-18 AI-FHS-001 施工）。canonical = src/zephyr/risk/core/fhs_engine.py。GARCH(1,1)
-    QMLE（自研 L-BFGS-B+持续性罚项不引 arch 库）拟合收益序列→标准化残差→有放回重采样→逐日递归乘条件波动率预测→产出
-    FHS VaR/ES；与 var_calculator（MOD-RK-05）并列方法论零代码耦合（避让 R3 审查线契约冻结）；GARCH
-    不收敛回退 historical + garch_converged=False 标记（memo §3.16）；小样本守卫 garch_min_history=60
-    不尝试拟合直接回退；ES method='lower' 口径 ES≥VaR 构造性成立；historical_var/es 对照始终产出供偏离度审计。解决
-    Christoffersen 独立性失败时历史模拟法无自相关破缺手段的问题（memo §3.9.2 远期第 5 法）。解决发现性：新 AI
-    搜 "FHS/GARCH/残差重采样/Filtered Historical Simulation/VaR 第三方法" 可定位真源。解决防重建：check_file_canonical()
+  description: FHS（Filtered Historical Simulation）引擎能力（D_RISK 域，MOD-RK-26，memo 36
+    §3.16 施工规约落地，CAND-AUTONOMYCORE-002 远期候选转正，2026-08-18 AI-FHS-001 施工）。canonical
+    = src/zephyr/risk/core/fhs_engine.py。GARCH(1,1) QMLE（自研 L-BFGS-B+持续性罚项不引 arch
+    库）拟合收益序列→标准化残差→有放回重采样→逐日递归乘条件波动率预测→产出 FHS VaR/ES；与 var_calculator（MOD-RK-05）并列方法论零代码耦合（避让
+    R3 审查线契约冻结）；GARCH 不收敛回退 historical + garch_converged=False 标记（memo §3.16）；小样本守卫
+    garch_min_history=60 不尝试拟合直接回退；ES method='lower' 口径 ES≥VaR 构造性成立；historical_var/es
+    对照始终产出供偏离度审计。解决 Christoffersen 独立性失败时历史模拟法无自相关破缺手段的问题（memo §3.9.2 远期第 5 法）。解决发现性：新
+    AI 搜 "FHS/GARCH/残差重采样/Filtered Historical Simulation/VaR 第三方法" 可定位真源。解决防重建：check_file_canonical()
     反查。
   integrity_anchors:
   - FHSEngine
@@ -4729,14 +4726,13 @@ capabilities:
   - CAND-SIG-013
   - 选股统一结果契约
   description: 选股统一结果契约（CAND-SIG-013 晋升，2026-08-21 P0-4① 施工，#ARCH-132）。canonical =
-    src/zephyr/shared/contracts/selection_result.py（auto 派生：basename selection_result 匹配 capability_id）。
-    CTR-P1-018 手工维护（SSoT=21号设计备忘录 §3.5，非 cross_layer_contracts.yaml，故非 codegen 托管）：
-    TargetPosition（urgency∈{immediate,next_open,gradual} 枚举校验）/ SignalInput（as_of_date/universe/
-    regime_budget + v1.1.1 扩展 signals/metadata）/ SelectionResult（轻量 4 字段，confidence∈[0,1] 校验），
-    全 frozen dataclass。3 个 sleeve（打板/多因子/事件驱动）select() 统一返回，对接 firm 层
-    FirmRiskAggregator（Model A 统一风险框架工程落地）。[MATURITY] testing（宪章 B-007 新模块封顶）。
-    解决发现性：新 AI 搜 "SelectionResult/选股统一接口/TargetPosition/urgency" 可定位真源。
-    解决防重建：check_file_canonical() 反查阻止重建第二份选股结果契约。
+    src/zephyr/shared/contracts/selection_result.py（auto 派生：basename selection_result
+    匹配 capability_id）。 CTR-P1-018 手工维护（SSoT=21号设计备忘录 §3.5，非 cross_layer_contracts.yaml，故非
+    codegen 托管）： TargetPosition（urgency∈{immediate,next_open,gradual} 枚举校验）/ SignalInput（as_of_date/universe/
+    regime_budget + v1.1.1 扩展 signals/metadata）/ SelectionResult（轻量 4 字段，confidence∈[0,1]
+    校验）， 全 frozen dataclass。3 个 sleeve（打板/多因子/事件驱动）select() 统一返回，对接 firm 层 FirmRiskAggregator（Model
+    A 统一风险框架工程落地）。[MATURITY] testing（宪章 B-007 新模块封顶）。 解决发现性：新 AI 搜 "SelectionResult/选股统一接口/TargetPosition/urgency"
+    可定位真源。 解决防重建：check_file_canonical() 反查阻止重建第二份选股结果契约。
   integrity_anchors:
   - TargetPosition
   - SignalInput
@@ -4750,13 +4746,12 @@ capabilities:
   - CAND-SIG-012
   - 打板sleeve组装策略
   description: 打板 sleeve 组装策略（CAND-SIG-012 晋升，2026-08-21 P0-4① 施工，#ARCH-132，STR-DABAN-022）。
-    canonical = src/zephyr/pf_core/strategies/daban_sleeve_strategy.py（auto 派生：basename 匹配）。
-    组装 signal_ashare 四引擎（全 production 不重复造轮子）：short_term_stock_selector（BM-SEL-22
+    canonical = src/zephyr/pf_core/strategies/daban_sleeve_strategy.py（auto 派生：basename
+    匹配）。 组装 signal_ashare 四引擎（全 production 不重复造轮子）：short_term_stock_selector（BM-SEL-22
     资格门）+ youzi_relay_emotion_engine（BM-SEL-23）+ quant_short_term_strength_engine（BM-SEL-24）
-    + dual_engine_fusion_decision_engine（BM-SEL-25）；final_score=融合分×6类决策优先级
-    （主升龙头1.0/二进三0.85/跟风0.65/复苏0.50/伪强0.30/地天反包0.20）降序 Top-N（N≤10 容量硬约束），
-    权重比例归一化≤1.0；urgency=immediate。经 strategies/__init__.py lazy 映射导出防双注册。
-    [MATURITY] testing（宪章 B-007）。解决发现性：新 AI 搜 "打板sleeve/daban-sleeve/双引擎融合策略"
+    + dual_engine_fusion_decision_engine（BM-SEL-25）；final_score=融合分×6类决策优先级 （主升龙头1.0/二进三0.85/跟风0.65/复苏0.50/伪强0.30/地天反包0.20）降序
+    Top-N（N≤10 容量硬约束）， 权重比例归一化≤1.0；urgency=immediate。经 strategies/__init__.py lazy
+    映射导出防双注册。 [MATURITY] testing（宪章 B-007）。解决发现性：新 AI 搜 "打板sleeve/daban-sleeve/双引擎融合策略"
     可定位真源。解决防重建：check_file_canonical() 反查。
   integrity_anchors:
   - DabanSleeveStrategy
@@ -4770,15 +4765,13 @@ capabilities:
   - STR-MULTIFACTOR-096
   - CAND-SIG-012
   - 多因子sleeve组装策略
-  description: 多因子 sleeve 组装策略（CAND-SIG-012 晋升，2026-08-21 P0-4① 施工，#ARCH-132，
-    STR-MULTIFACTOR-096）。canonical = src/zephyr/pf_core/strategies/multifactor_sleeve_strategy.py
-    （auto 派生：basename 匹配）。组装 factor 域 production 组件：multifactor_synthesis
-    （synthesize_equal_weight/synthesize_ic_weighted 横截面合成 pd.Series 产出）+ ic_ir_calc
-    （compute_ic_ir_table 离线 IC 权重，compute_ic_weights 薄封装注入 constraints）；
-    横截面降序 Top-N 等权归一化 min(1/N,max_single)≤1.0；urgency=gradual。
-    经 strategies/__init__.py lazy 映射导出防双注册。[MATURITY] testing（宪章 B-007）。
-    解决发现性：新 AI 搜 "多因子sleeve/multifactor-sleeve/横截面合成策略" 可定位真源。
-    解决防重建：check_file_canonical() 反查。
+  description: 多因子 sleeve 组装策略（CAND-SIG-012 晋升，2026-08-21 P0-4① 施工，#ARCH-132， STR-MULTIFACTOR-096）。canonical
+    = src/zephyr/pf_core/strategies/multifactor_sleeve_strategy.py （auto 派生：basename
+    匹配）。组装 factor 域 production 组件：multifactor_synthesis （synthesize_equal_weight/synthesize_ic_weighted
+    横截面合成 pd.Series 产出）+ ic_ir_calc （compute_ic_ir_table 离线 IC 权重，compute_ic_weights
+    薄封装注入 constraints）； 横截面降序 Top-N 等权归一化 min(1/N,max_single)≤1.0；urgency=gradual。
+    经 strategies/__init__.py lazy 映射导出防双注册。[MATURITY] testing（宪章 B-007）。 解决发现性：新 AI
+    搜 "多因子sleeve/multifactor-sleeve/横截面合成策略" 可定位真源。 解决防重建：check_file_canonical() 反查。
   integrity_anchors:
   - MultifactorSleeveStrategy
   - generate_target_weights
@@ -4791,15 +4784,14 @@ capabilities:
   - STR-EVENT-001
   - CAND-SIG-012
   - 事件驱动sleeve组装策略
-  description: 事件驱动 sleeve 组装策略（CAND-SIG-012 晋升，2026-08-21 P0-4① 施工，#ARCH-132，
-    STR-EVENT-001）。canonical = src/zephyr/pf_core/strategies/event_driven_sleeve_strategy.py
-    （auto 派生：basename 匹配）。组装 intelligence 域组件：event_score（compute_event_score 族，
-    [MATURITY] design——事件链 NLP 管道未闭环（#ARCH-NLP-PIPELINE-001），依赖成熟度如实标注）
-    + event_anomaly_detector（detect_anomaly 异动确认，负向异动剔除）；|score|<0.2 噪声不动作、
-    利空剔除（A股不能做空），评分降序 Top-N 比例归一化≤1.0；urgency=next_open。
-    经 strategies/__init__.py lazy 映射导出防双注册。[MATURITY] testing（宪章 B-007）。
-    解决发现性：新 AI 搜 "事件驱动sleeve/eventdriven-sleeve/事件冲击评分策略" 可定位真源。
-    解决防重建：check_file_canonical() 反查。
+  description: 事件驱动 sleeve 组装策略（CAND-SIG-012 晋升，2026-08-21 P0-4① 施工，#ARCH-132， STR-EVENT-001）。canonical
+    = src/zephyr/pf_core/strategies/event_driven_sleeve_strategy.py （auto 派生：basename
+    匹配）。组装 intelligence 域组件：event_score（compute_event_score 族， [MATURITY] design——事件链
+    NLP 管道未闭环（#ARCH-NLP-PIPELINE-001），依赖成熟度如实标注） + event_anomaly_detector（detect_anomaly
+    异动确认，负向异动剔除）；|score|<0.2 噪声不动作、 利空剔除（A股不能做空），评分降序 Top-N 比例归一化≤1.0；urgency=next_open。
+    经 strategies/__init__.py lazy 映射导出防双注册。[MATURITY] testing（宪章 B-007）。 解决发现性：新 AI
+    搜 "事件驱动sleeve/eventdriven-sleeve/事件冲击评分策略" 可定位真源。 解决防重建：check_file_canonical()
+    反查。
   integrity_anchors:
   - EventDrivenSleeveStrategy
   - generate_target_weights
@@ -4813,22 +4805,17 @@ capabilities:
   - agents_cheatsheet_drift
   - AGENTS.md 速查表数字漂移检测
   - CAND-REGSYNC-001
-  description: >-
-    AGENTS.md 速查区硬编码数字漂移检测 reconciler（tracker #41/#83 裁定承接，
-    2026-08-21 P0-6①，CAND-REGSYNC-001/#ARCH-133，warn-only MVP）。post-commit 事件触发
-    （priority=250，file_ops=read 只读不写），机械校验 AGENTS.md 速查表计数（业务资产
-    18 表体系总数+18 行明细/告警阈值条数/能力计数"时点 N 条"）与真源（ROOR #ARCH-BREG-001
-    区段条目数+各条目 entry_count、capability 注册表 `- capability_id:` 行数）一致性，
-    漂移时 action=warn 逐行报告「AGENTS.md L<行号> 写 X，实测 Y（真源=<文件>），请更新」，
-    不 auto-fix——AGENTS.md 属 PROTECTED-PATHS（#83 人工回填需 Owner 审批通道），并发会话期
-    reconciler auto-commit 曾引发 TRACKED-DRIFT 风暴；fix-in-place 自动重写升级路径登记在
-    CAND-REGSYNC-001（触发=warn 档稳定 ≥2 周+Owner 批准保护区通道）。解析失败 fail-visible
-    warn"速查区格式已变，检测器需跟进"。canonical = scripts/governance/d8_doc_sync/
-    agents_cheatsheet_drift_reconciler.py（MOD-agents_cheatsheet_drift，D_GOV_DOCS，
-    [MATURITY] testing）。注册点：git_commit_gateway.py _register_default_reconcilers
-    （d8_doc_sync 插件 sys.path 动态 import+ImportError 守卫）。解决发现性：新 AI 搜
-    "AGENTS.md 速查表数字漂移/硬编码计数检测/REGSYNC" 可定位真源。解决防重建：
-    check_file_canonical() 反查。
+  description: 'AGENTS.md 速查区硬编码数字漂移检测 reconciler（tracker #41/#83 裁定承接， 2026-08-21
+    P0-6①，CAND-REGSYNC-001/#ARCH-133，warn-only MVP）。post-commit 事件触发 （priority=250，file_ops=read
+    只读不写），机械校验 AGENTS.md 速查表计数（业务资产 18 表体系总数+18 行明细/告警阈值条数/能力计数"时点 N 条"）与真源（ROOR #ARCH-BREG-001
+    区段条目数+各条目 entry_count、capability 注册表 `- capability_id:` 行数）一致性， 漂移时 action=warn
+    逐行报告「AGENTS.md L<行号> 写 X，实测 Y（真源=<文件>），请更新」， 不 auto-fix——AGENTS.md 属 PROTECTED-PATHS（#83
+    人工回填需 Owner 审批通道），并发会话期 reconciler auto-commit 曾引发 TRACKED-DRIFT 风暴；fix-in-place
+    自动重写升级路径登记在 CAND-REGSYNC-001（触发=warn 档稳定 ≥2 周+Owner 批准保护区通道）。解析失败 fail-visible
+    warn"速查区格式已变，检测器需跟进"。canonical = scripts/governance/d8_doc_sync/ agents_cheatsheet_drift_reconciler.py（MOD-agents_cheatsheet_drift，D_GOV_DOCS，
+    [MATURITY] testing）。注册点：git_commit_gateway.py _register_default_reconcilers （d8_doc_sync
+    插件 sys.path 动态 import+ImportError 守卫）。解决发现性：新 AI 搜 "AGENTS.md 速查表数字漂移/硬编码计数检测/REGSYNC"
+    可定位真源。解决防重建： check_file_canonical() 反查。'
   integrity_anchors:
   - make_agents_cheatsheet_drift_reconciler
   - _parse_agents_cheatsheet
@@ -4842,19 +4829,15 @@ capabilities:
   - try_bootstrap_drain
   - 提交队列串行化
   - ARCH-COMMIT-QUEUE-MVP-001
-  description: >-
-    提交队列串行化 MVP（A 段：队列协议+CLI+Serializer 自举排空+死信+compaction，
-    2026-08-21 P0-6④，#ARCH-COMMIT-QUEUE-MVP-001，66 号备忘 §6 协议真源+08 号文 §4.2
-    Phase 0）。enqueue/status/drain 三命令 CLI；快照入袋即返回（blob 内容寻址 sha256 存
-    blobs/，防多会话并发内容丢失）；入队轻检五类红队全拦 fail-closed（路径穿越/超大
-    blob/空 message/.git 路径）；单写者 Serializer（serializer.lease：O_EXCL+TTL 300s+
-    僵尸 PID 检测）纯 FIFO（qid 单调序）；入队自举排空无常驻进程，drain 崩溃下次自举
-    幂等续跑；死信附 dead_reason 不卡队；同键 (session_id,path) compaction 整体覆盖+
-    supersedes 传递累积审计链；landing callable 注入点（B 段接专用 worktree 真落盘+
-    _commit_auto flag 改道，flag 默认关，启用=Owner 窗口）。canonical =
-    scripts/commit_queue.py（MOD-GOV-046，D_GOVERNANCE，[MATURITY] testing，宪章 B-007
-    封顶）。解决发现性：新 AI 搜 "提交队列/commit queue/多会话并发提交/内容丢失"
-    可定位真源。解决防重建：check_file_canonical() 反查。
+  description: 提交队列串行化 MVP（A 段：队列协议+CLI+Serializer 自举排空+死信+compaction， 2026-08-21
+    P0-6④，#ARCH-COMMIT-QUEUE-MVP-001，66 号备忘 §6 协议真源+08 号文 §4.2 Phase 0）。enqueue/status/drain
+    三命令 CLI；快照入袋即返回（blob 内容寻址 sha256 存 blobs/，防多会话并发内容丢失）；入队轻检五类红队全拦 fail-closed（路径穿越/超大
+    blob/空 message/.git 路径）；单写者 Serializer（serializer.lease：O_EXCL+TTL 300s+ 僵尸 PID
+    检测）纯 FIFO（qid 单调序）；入队自举排空无常驻进程，drain 崩溃下次自举 幂等续跑；死信附 dead_reason 不卡队；同键 (session_id,path)
+    compaction 整体覆盖+ supersedes 传递累积审计链；landing callable 注入点（B 段接专用 worktree 真落盘+
+    _commit_auto flag 改道，flag 默认关，启用=Owner 窗口）。canonical = scripts/commit_queue.py（MOD-GOV-046，D_GOVERNANCE，[MATURITY]
+    testing，宪章 B-007 封顶）。解决发现性：新 AI 搜 "提交队列/commit queue/多会话并发提交/内容丢失" 可定位真源。解决防重建：check_file_canonical()
+    反查。
   integrity_anchors:
   - enqueue_item
   - drain_queue
@@ -7556,42 +7539,44 @@ creation_tokens:
   token: auto-seat-pattern-analyzer-bp-20260818
   created_by: AI-SEAT-001
   capability: seat_pattern_analyzer
-  note: "MOD-SIG-056 模块蓝图（CAND-SEAT-001 转正 MVP），随源文件一并登记"
+  note: MOD-SIG-056 模块蓝图（CAND-SEAT-001 转正 MVP），随源文件一并登记
 - file: tests/signal_ashare/test_seat_pattern_analyzer.py
   token: auto-seat-pattern-analyzer-test-20260818
   created_by: AI-SEAT-001
   capability: seat_pattern_analyzer
-  note: "tests/ 豁免规则下自愿补登（17 用例两轮全绿）"
+  note: tests/ 豁免规则下自愿补登（17 用例两轮全绿）
 - file: src/zephyr/intelligence/news_sentiment_analyzer.py
   token: auto-news-sentiment-analyzer-20260818
   created_by: AI-AISA-001
   capability: news_sentiment_analyzer
-  note: "CAND-AISA-001 AI 舆情分析器 MVP 主模块（#ARCH-AISA-001）"
+  note: CAND-AISA-001 AI 舆情分析器 MVP 主模块（#ARCH-AISA-001）
 - file: docs/03_modules/_domain_intelligence/news_sentiment_analyzer/blueprint.md
   token: auto-news-sentiment-analyzer-bp-20260818
   created_by: AI-AISA-001
   capability: news_sentiment_analyzer
-  note: "MOD-INT-AISA 模块蓝图，随源文件一并登记"
+  note: MOD-INT-AISA 模块蓝图，随源文件一并登记
 - file: tests/intelligence/test_news_sentiment_analyzer.py
   token: auto-news-sentiment-analyzer-test-20260818
   created_by: AI-AISA-001
   capability: news_sentiment_analyzer
-  note: "tests/ 豁免规则下按 SELL-001 先例补登（37 用例两轮全绿）"
+  note: tests/ 豁免规则下按 SELL-001 先例补登（37 用例两轮全绿）
 - file: src/zephyr/risk/core/fhs_engine.py
   token: fhs001-fhs-engine-20260818
   created_by: AI-FHS-001
   capability: fhs_var_es_engine
-  note: "GARCH(1,1) QMLE 标准化残差重采样 FHS VaR/ES（自研 L-BFGS-B+罚项不引 arch 库，#ARCH-121；SLSQP 早停病灶经 Qwen 审查线 P0 勘正）；与 var_calculator 并列方法论零耦合（避让 R3 审查线）；GARCH 不收敛回退 historical"
+  note: GARCH(1,1) QMLE 标准化残差重采样 FHS VaR/ES（自研 L-BFGS-B+罚项不引 arch 库，#ARCH-121；SLSQP
+    早停病灶经 Qwen 审查线 P0 勘正）；与 var_calculator 并列方法论零耦合（避让 R3 审查线）；GARCH 不收敛回退 historical
 - file: tests/risk/test_fhs_engine.py
   token: fhs001-fhs-engine-test-20260818
   created_by: AI-FHS-001
   capability: fhs_var_es_engine
-  note: "27 用例：GARCH 拟合/参数恢复/regime shift FHS>HS/平静尾 FHS<HS/iid FHS≈HS/回退三路径/Fail-Closed（tests/ 豁免但自愿补登）"
+  note: 27 用例：GARCH 拟合/参数恢复/regime shift FHS>HS/平静尾 FHS<HS/iid FHS≈HS/回退三路径/Fail-Closed（tests/
+    豁免但自愿补登）
 - file: docs/03_modules/_domain_risk/fhs_engine/blueprint.md
   token: fhs001-fhs-engine-blueprint-20260818
   created_by: AI-FHS-001
   capability: fhs_var_es_engine
-  note: "MOD-RK-26 模块蓝图（memo 36 §3.16 施工规约落地）"
+  note: MOD-RK-26 模块蓝图（memo 36 §3.16 施工规约落地）
 - file: src/zephyr/regime/regime_cycle_analyzer.py
   token: auto-scaffold-regime_cycle_analyzer-20260818
   created_by: scaffold.py
@@ -7624,17 +7609,14 @@ creation_tokens:
   token: auto-architecture-review-module-upgrade-audit-20260821
   created_by: AI-ARCH-AUDIT-001
   capability: architecture_review_module_upgrade_audit
-# --- 2026-08-23 长城任务进度核对报告 creation_token（INT-01 收官批） ---
 - file: docs/_working/reports/2026-08-23-greatwall-progress-reconciliation.md
   token: auto-greatwall-progress-reconciliation-20260823
   created_by: AI-M258-001
   capability: greatwall_progress_reconciliation
-# --- 2026-08-23 src 误删取证报告 creation_token（P0 安全事件） ---
 - file: docs/_working/reports/2026-08-23-src-accidental-deletion-forensics.md
   token: auto-src-accidental-deletion-forensics-20260823
   created_by: AI-M258-001
   capability: src_accidental_deletion_forensics
-# --- 2026-08-23 HOT-FILE-BASE-FRESHNESS gate creation_token（陈旧快照覆写事故治本 批2c） ---
 - file: src/zephyr/gov_enforcement/commit_gates/hot_file_base_freshness_gate.py
   token: auto-hot-file-base-freshness-gate-20260823
   created_by: AI-M258-001
@@ -7643,12 +7625,10 @@ creation_tokens:
   token: auto-test-hot-file-base-freshness-gate-20260823
   created_by: AI-M258-001
   capability: hot_file_base_freshness_gate
-# --- 2026-08-23 GATE-BLUEPRINT-CODE-INDEX-SYNC reconciler creation_token（autogen 段 auto-commit 通道 批3b） ---
 - file: tests/governance/audit/test_blueprint_code_index_reconciler_post_commit.py
   token: auto-test-blueprint-code-index-reconciler-20260823
   created_by: AI-K3-GOVSEC-001
   capability: blueprint_code_index_sync_reconciler
-# --- 2026-08-22 阶段二波2（92号清单）新建文件 creation_token ---
 - file: src/zephyr/regime/cross_sectional_features.py
   token: auto-cross-sectional-features-20260822
   created_by: AI-P2-ALG01
@@ -7689,7 +7669,6 @@ creation_tokens:
   token: auto-cross-sectional-features-blueprint-20260822
   created_by: AI-P2-001
   capability: regime_cross_sectional_features
-# --- 2026-08-22 阶段二波3（92号清单 44号 Phase 1）creation_token ---
 - file: src/zephyr/plan_engine/overnight_boundary_reviser.py
   token: auto-overnight-boundary-reviser-20260822
   created_by: AI-P2-M3PKG
@@ -7714,7 +7693,6 @@ creation_tokens:
   token: auto-foreign-interface-evaluation-20260822
   created_by: AI-P2-IFEVAL
   capability: foreign_interface_evaluation
-# --- 2026-08-22 阶段二波4（92号清单 44号 Phase 2+观测层）creation_token ---
 - file: src/zephyr/signal_ashare/futures_basis_monitor.py
   token: auto-futures-basis-monitor-20260822
   created_by: AI-P2-W4B
@@ -7815,7 +7793,6 @@ creation_tokens:
   token: auto-test-us-futures-intraday-20260822
   created_by: AI-P2-W4A
   capability: us_futures_intraday
-# --- 2026-08-22 阶段二波5（92号清单 数据期项）creation_token ---
 - file: src/zephyr/signal_ashare/similar_day_inference.py
   token: auto-similar-day-inference-20260822
   created_by: AI-P2-W5A
@@ -7888,7 +7865,6 @@ creation_tokens:
   token: auto-test-prediction-calibration-monitor-20260822
   created_by: AI-P2-W5F
   capability: prediction_calibration_monitor
-# --- 2026-08-22 阶段二波7 蓝图批+E2E creation_token ---
 - file: docs/03_modules/_domain_plan_engine/overnight_boundary_reviser/blueprint.md
   token: auto-blueprint-batch-p2-20260822
   created_by: AI-P2-001
@@ -7969,7 +7945,6 @@ creation_tokens:
   token: auto-test-phase2-e2e-20260822
   created_by: AI-P2-W6E2E
   capability: phase2_e2e_integration
-# --- 2026-08-22 阶段三波1（18号清单 保障四件套）creation_token ---
 - file: src/zephyr/integration/local_model/lsg_gate.py
   token: auto-lsg-gate-20260822
   created_by: AI-P3-W1A
@@ -8022,7 +7997,6 @@ creation_tokens:
   token: auto-emergency-runbook-20260822
   created_by: AI-P3-W1C
   capability: security_event_bus
-# --- 2026-08-22 阶段三波2+3 creation_token ---
 - file: src/zephyr/integration/llm_runtime_gateway.py
   token: auto-llm-runtime-gateway-20260822
   created_by: AI-P3-W2GW
@@ -8051,7 +8025,6 @@ creation_tokens:
   token: auto-model-profiling-p0-walkthrough-20260822
   created_by: AI-P3-W3-06
   capability: model_profiling_pipeline
-# --- 2026-08-22 阶段三波4（进化能力手动形态）creation_token ---
 - file: src/zephyr/research/evidence/__init__.py
   token: auto-research-evidence-init-20260822
   created_by: AI-P3-W4-11
@@ -8140,7 +8113,6 @@ creation_tokens:
   token: auto-test-execution-layer-agent-entries-20260822
   created_by: AI-P3-W4-14
   capability: execution_layer_agents
-# --- 2026-08-22 阶段三波7 蓝图批 creation_token ---
 - file: docs/03_modules/_domain_integration/lsg_gate/blueprint.md
   token: auto-blueprint-batch-p3-20260822
   created_by: AI-P2-001
@@ -8173,7 +8145,6 @@ creation_tokens:
   token: auto-blueprint-batch-p3-20260822
   created_by: AI-P2-001
   capability: reflexion_agent
-# --- 2026-08-22 E0-8 域边界裁定批 creation_token（#ARCH-169） ---
 - file: docs/01_policies_and_standards/_registry/vocabularies/depgraph_tags_vocabulary.yaml
   token: auto-depgraph-tags-vocabulary-20260822
   created_by: AI-P2-001
@@ -8182,12 +8153,10 @@ creation_tokens:
   token: auto-model-digests-20260822
   created_by: AI-RESIDUAL-255C
   capability: l0_supply_chain_boot_verify
-# --- 2026-08-23 长城任务施工顺序总清单 creation_token ---
 - file: docs/_working/2026-08-23-construction-order-master.md
   token: auto-construction-order-master-20260823
   created_by: AI-K3-GW-0823
   capability: construction_order_master
-# --- 2026-08-23 长城任务批1（REGIME/RISK/WARROOM）creation_token ---
 - file: src/zephyr/signal_ashare/market_state_sensor.py
   token: auto-market-state-sensor-20260823
   created_by: AI-K3-GW-REGIME
@@ -8352,7 +8321,6 @@ creation_tokens:
   token: auto-test-batch-boundary-runner-20260823
   created_by: AI-K3-GW-WARROOM
   capability: batch_boundary_runner
-# --- 2026-08-23 长城任务批2（SECTOR/SIGNAL/POSSELL/CWIRE）creation_token ---
 - file: src/zephyr/signal_ashare/mainline_probability.py
   token: auto-mainline-probability-20260823
   created_by: AI-K3-GW-SECTOR
@@ -8641,7 +8609,6 @@ creation_tokens:
   token: auto-test-dashboard-feeds-20260823
   created_by: AI-K3-GW-CWIRE
   capability: dashboard_feeds
-# --- 2026-08-23 长城任务批3（EXEC/GAPP1A/GAPP1B/ML）creation_token ---
 - file: src/zephyr/ex_core/miniqmt_channel_manager.py
   token: auto-miniqmt-channel-manager-20260823
   created_by: AI-K3-GW-EXEC
@@ -8862,7 +8829,6 @@ creation_tokens:
   token: auto-test-learning-effect-feedback-20260823
   created_by: AI-K3-GW-ML2
   capability: ml_learning_feedback
-# --- 2026-08-23 GW-B4 creation_token ---
 - file: src/zephyr/plan_engine/evidence_chain_decision.py
   token: auto-evidence-chain-decision-20260823
   created_by: AI-K3-GW-GAP6
@@ -9131,7 +9097,6 @@ creation_tokens:
   token: auto-test-voting-first-multi-agent-20260823
   created_by: AI-K3-GW-INFRA
   capability: voting_orchestration
-# --- 2026-08-23 GW-B5 GAP-F-01 creation_token ---
 - file: src/zephyr/plan_engine/scenario_probability_model.py
   token: auto-scenario-probability-model-20260823
   created_by: AI-K3-GW-GAPF01
@@ -9140,7 +9105,6 @@ creation_tokens:
   token: auto-test-scenario-probability-model-20260823
   created_by: AI-K3-GW-GAPF01
   capability: scenario_probability_model
-# --- 2026-08-24 GW-T4（AU003/INF053/ROUTER/CELSG）creation_token ---
 - file: src/zephyr/autonomy_core/agentic_drift_guard.py
   token: auto-agentic-drift-guard-20260824
   created_by: AI-K3-T4-AU003
@@ -9249,7 +9213,6 @@ creation_tokens:
   token: auto-test-doc-compressor-tiered-20260823
   created_by: AI-K3-T4-CELSG
   capability: doc_compression
-# --- 2026-08-24 GW-T4-EF（OBS002/P2A，含 adapters 补登） creation_token ---
 - file: src/zephyr/plan_engine/daily_warroom_pipeline.py
   token: auto-daily-warroom-pipeline-20260824
   created_by: AI-K3-T4-OBS002
@@ -9290,7 +9253,6 @@ creation_tokens:
   token: auto-test-intraday-manipulation-detector-20260824
   created_by: AI-K3-T4-P2A
   capability: intraday_manipulation_batch_detection
-# --- 2026-08-24 GW-T4-G（G1/G3）creation_token ---
 - file: src/zephyr/frontend/implementations/notification_channel_senders.py
   token: auto-notification-channel-senders-20260824
   created_by: AI-K3-T4-G1
@@ -9331,7 +9293,6 @@ creation_tokens:
   token: auto-test-trading-calendar-20260824
   created_by: AI-K3-T4-G3
   capability: trading_calendar_test
-# --- 2026-08-24 GW-T4-H/H3/NLP（含灾后重建）creation_token ---
 - file: src/zephyr/autonomy_core/killswitch_response_levels.py
   token: auto-killswitch-response-levels-20260824
   created_by: AI-K3-T4-H1
@@ -9408,6 +9369,26 @@ creation_tokens:
   token: auto-test-ml-run-sft-train-20260824
   created_by: AI-K3-T4-NLP
   capability: nlp_sentiment_pipeline
+- file: src/zephyr/backtest/core/overfitting_adjudicator.py
+  token: auto-scaffold-overfitting_adjudicator-20260824
+  created_by: scaffold.py
+  capability: overfitting_adjudicator
+- file: src/zephyr/ex_sor/core/rl_exec_env.py
+  token: auto-scaffold-rl_exec_env-20260824
+  created_by: scaffold.py
+  capability: rl_exec_env
+- file: src/zephyr/ex_sor/core/rl_exec_contract.py
+  token: auto-scaffold-rl_exec_contract-20260824
+  created_by: scaffold.py
+  capability: rl_exec_contract
+- file: src/zephyr/ex_sor/core/rl_exec_boundary.py
+  token: auto-scaffold-rl_exec_boundary-20260824
+  created_by: scaffold.py
+  capability: rl_exec_boundary
+- file: src/zephyr/pf_core/core/msprt_champion_challenger.py
+  token: auto-scaffold-msprt_champion_challenger-20260824
+  created_by: scaffold.py
+  capability: msprt_champion_challenger
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

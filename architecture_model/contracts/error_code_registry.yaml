@@ -2449,6 +2449,11 @@ error_codes:
   module: zephyr.integration.mcp.client_discovery
   file: src/zephyr/integration/mcp/client_discovery.py
   introduced: '2026-08-24: AI-K3-T4-H2 清单 §2.6 新增（MOD-INF-058，10号文 Phase 2 步骤 2.1/2.2）'
+- code: ZA-BT-0036
+  class: OverfittingAdjudicationError
+  module: zephyr.backtest.core.overfitting_adjudicator
+  file: src/zephyr/backtest/core/overfitting_adjudicator.py
+  introduced: '2026-08-24: P-5 过拟合检测协议组件施工（长城任务二-4，MOD-BT-001，depgraph node 10554136 testing）'
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）

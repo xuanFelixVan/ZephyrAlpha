@@ -19587,3 +19587,84 @@ entries:
   - '13号文 Phase 5-8'
   created: '2026-08-24'
   last_updated: '2026-08-24'
+
+- issue_id: '#ARCH-210'
+  title: A8 mSPRT Champion-Challenger 序贯晋升组件建成（MOD-PF-008）+ ExecutionReport delta 源阻塞链 BM-REC-02-B
+  severity: P2
+  category: 功能施工
+  adjudication: >-
+    61号 memo §3.3 mSPRT 序贯晋升组件施工完成；memo 伪代码 3 处歧义按统计第一性原理裁定（蓝图 §3.2 留痕）：
+    ①lr 公式维度不一致（n→∞ 永不越界）→ Johari et al. 2022 标准闭式形；②max_sample_size 未定义且实证
+    n=2 误晋升 → 终局判定最小样本=满窗 30 笔（对齐 memo 30-50 笔口径）；③双侧统计量 vs 单侧假设 → 决策层
+    符号门控（晋升须 x̄>0）。α=0.05→Ville 阈值 20、τ 构造注入标定（mlflow 依赖随退役剔除）、30 笔滚动窗
+    均按 memo。delta 输入=ChampionChallengerDeltaExtractor Protocol 预留不实现——BM-REC-02-B：
+    ExecutionReport 契约建成前 delta 为合成/外部源。
+  impact:
+    - 'src/zephyr/pf_core/core/msprt_champion_challenger.py（testing，depgraph node 10554138，25 单测）'
+    - 'docs/03_modules/_domain_portfolio_core/msprt_champion_challenger/blueprint.md（MOD-PF-008）'
+  fix_phase: '已落地（2026-08-24，长城任务二-2）；tests/pf_core 374 passed 零回归'
+  status: resolved
+  related_rules:
+  - '61号文 §3.3'
+  - 'BM-REC-02-B'
+  created: '2026-08-24'
+  last_updated: '2026-08-24'
+
+- issue_id: '#ARCH-211'
+  title: P-4 RL 执行层骨架建成（MOD-XS-008 新模块登记）+ B-007 真训练闸门留痕
+  severity: P2
+  category: 功能施工
+  adjudication: >-
+    gym 风格训练环境+硬边界包裹层（限价/限量/禁市价越界动作直接裁剪或拒绝，硬约束层独立于策略层不可绕过）
+    +冻结参数契约三件套建成，零训练逻辑（无策略网络/梯度/回放/训练入口）。90号 P-4 Owner 裁定方向①=放弃
+    RL 执行，本骨架仅工程留痕；真训练三前置=GATE-XS08（训练基础设施+仿真环境+L2 数据）∩ 宪章 §4.2 B-007
+    逐阶段人工审批 ∩ Owner 正式裁定。
+  impact:
+    - 'src/zephyr/ex_sor/core/rl_exec_contract.py + rl_exec_boundary.py + rl_exec_env.py（testing，depgraph 10554140-10554142，15 单测）'
+    - 'docs/03_modules/_domain_ex_sor/rl_execution_training_env/blueprint.md（MOD-XS-008）'
+  fix_phase: '已落地（2026-08-24，长城任务二-3）；tests/ex_sor 529 passed + tests/ex_core 954 passed 零回归'
+  status: resolved
+  related_rules:
+  - '90号文 P-4'
+  - '宪章 §4.2 B-007'
+  - 'GATE-XS08'
+  created: '2026-08-24'
+  last_updated: '2026-08-24'
+
+- issue_id: '#ARCH-212'
+  title: P-5 过拟合检测协议组件建成（MOD-BT-001 下 overfitting_adjudicator，门禁挂钩点预留）
+  severity: P2
+  category: 功能施工
+  adjudication: >-
+    三检验器建成：walk-forward 汇总（复用 backtest/core 既有件口径）+ Deflated Sharpe Ratio（López de Prado
+    Φ⁻¹ 闭式，试验膨胀折减）+ 参数扰动 ±20% 收益稳定性；上线门禁挂钩点 OverfitGateHook Protocol 预留不接真门禁。
+    阈值全复用 SSoT（OOS/IS 0.70=overfitting_detector、扰动容忍 0.30、DSR 显著线 0.95=MOD-SIM-024）零新增；
+    DSR Φ⁻¹ 闭式与既有件 Euler-Maclaurin 近似口径差异为任务书指定（P5_overfit_report 留痕）。
+  impact:
+    - 'src/zephyr/backtest/core/overfitting_adjudicator.py（testing，depgraph node 10554136，33 单测，错误码 ZA-BT-0036）'
+  fix_phase: '已落地（2026-08-24，长城任务二-4）；tests/backtest 802 passed 零回归'
+  status: resolved
+  related_rules:
+  - '90号文 P-5'
+  created: '2026-08-24'
+  last_updated: '2026-08-24'
+
+- issue_id: '#ARCH-213'
+  title: GitCommitGateway run_git 管道治本——临时文件重定向+读回消除 Windows 管道假死族（T0FIX §0.5 裁定落地）
+  severity: P2
+  category: 技术债
+  adjudication: >-
+    run_git subprocess capture_output 匿名管道 → mkstemp 双临时文件重定向+读回（try/finally 必清理），
+    一次性消除管道缓冲填满 C 级阻塞假死；解码链 BOM→UTF-16 / UTF-8 strict → GBK strict → UTF-16(replace)
+    （UTF-8 优先于 GBK——UTF-8 三字节中文常落 GBK 合法区间，GBK 优先会静默误判乱码，A11_gateway_pipe_report
+    已论证）；CompletedProcess 返回契约不变。同文件另 5 处小输出 capture_output 残留（低频非单点范围，
+    如需管道面清零另案登记）。
+  impact:
+    - 'src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py + tests/git 9 新测（>64KB 大输出/GBK/UTF-16 锚定）'
+    - 'tests/git 172 passed + 网关/commit 相关 2803 passed 零回归'
+  fix_phase: '已落地（2026-08-24，长城任务二-5）'
+  status: resolved
+  related_rules:
+  - 'T0FIX_report §0.5'
+  created: '2026-08-24'
+  last_updated: '2026-08-24'
