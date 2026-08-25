@@ -22,4 +22,9 @@
 # + __all__.append("LineageParser")——已归一移除，恢复本包"空导出、子模块显式导入"
 # 约定（与 zephyr.data_governance 包级一致）。
 
+# NOTE(P1W18): scaffold 注册器对本子包再次写入非法行首 eager import
+# （static_lineage_analyzer / runtime_lineage_collector / column_lineage_analyzer /
+# record_lineage_tracker 四次，斜杠非点号）+ __all__.append——均已归一移除，维持
+# "空导出、子模块显式导入"约定（同 P1W17 处置，见 #ARCH-242 族）。
+
 __all__: list[str] = []
