@@ -47,4 +47,11 @@
 # A1 --> O1
 """
 
-__all__ = []
+# NOTE(P1W15 2026-08-25): scaffold 注册器写入行首 eager import + 类名 append
+# （#ARCH-228/238 同款 bug 复发），按各域包"纯模块名导出、无导入无初始化逻辑"
+# 约定归一为模块名条目。
+__all__ = [
+    "filing_nlp_engine",
+    "social_sentiment_collector",
+    "web_scraper_engine",
+]
