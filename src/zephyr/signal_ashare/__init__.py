@@ -17,6 +17,9 @@ from zephyr.signal_ashare.sector_momentum_persistence import SectorMomentumPersi
 from zephyr.signal_ashare.extreme_sentiment_reversal_detector import ExtremeSentimentReversalDetector
 from zephyr.signal_ashare.false_breakout_trap_detector import FalseBreakoutTrapDetector
 from zephyr.signal_ashare.sentiment_price_divergence import SentimentPriceDivergence
+from zephyr.signal_ashare.limit_up_potential_scorer import LimitUpPotentialScorer
+from zephyr.signal_ashare.bottom_confirmation_entry import BottomConfirmationEntry
+from zephyr.signal_ashare.next_day_probability_gate import NextDayProbabilityGate
 # NOTE(P1W06 2026-08-25): P1W01 窗口期可逆注释的两行 export 已按 NOTE 约定恢复
 # （FactorResultBridge/RiskEventConsumer 实现就位，88 测全绿）。
 # [BLUEPRINT] MOD-SIGNAL_ASHARE | (pending)
@@ -105,3 +108,9 @@ __all__.append("ExtremeSentimentReversalDetector")
 __all__.append("FalseBreakoutTrapDetector")
 
 __all__.append("SentimentPriceDivergence")
+
+__all__.append("LimitUpPotentialScorer")
+
+__all__.append("BottomConfirmationEntry")
+
+__all__.append("NextDayProbabilityGate")
