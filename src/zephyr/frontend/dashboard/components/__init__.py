@@ -33,6 +33,14 @@ except ImportError:
     tick_replay = None  # type: ignore[assignment]
     trade_panel = None  # type: ignore[assignment]
 
+# NOTE(P1W24 并行协调): scaffold 注册器 eager import bug 第九次复发（斜杠变种
+# `zephyr.frontend/dashboard/components.alert_center`），按可逆模式归一为本文件
+# 既有守卫式导入约定（MOD-FE-003 告警中心面板）。
+try:
+    from zephyr.frontend.dashboard.components import alert_center
+except ImportError:
+    alert_center = None  # type: ignore[assignment]
+
 __all__ = [
     "fitness_functions",
     "gate_statistics",
@@ -47,4 +55,6 @@ __all__ = [
     "trade_panel",
     # v3.0.0 新增（#ARCH-047）
     "chart_factory",
+    # MOD-FE-003 新增（P1W24）
+    "alert_center",
 ]

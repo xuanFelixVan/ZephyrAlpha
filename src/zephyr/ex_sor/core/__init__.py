@@ -70,6 +70,10 @@ from zephyr.ex_sor.core.optimal_order_router import (
 from zephyr.ex_sor.core.rl_exec_boundary import RlExecBoundary
 from zephyr.ex_sor.core.rl_exec_contract import RlExecContract
 from zephyr.ex_sor.core.rl_exec_env import RlExecEnv
+# NOTE(P1W24 并行协调): scaffold 注册器 eager import bug 第十次复发（斜杠变种
+# `zephyr.ex_sor/core.sor_agent`），按可逆模式归一为点号合法 import
+# （与 #ARCH-228/235/238/242/246/250 同族）。
+from zephyr.ex_sor.core.sor_agent import SorAgent
 
 __all__: Final = [
     # XS-002 Broker Adapter Manager
@@ -96,3 +100,5 @@ __all__.append("RlExecEnv")
 __all__.append("RlExecContract")
 
 __all__.append("RlExecBoundary")
+
+__all__.append("SorAgent")

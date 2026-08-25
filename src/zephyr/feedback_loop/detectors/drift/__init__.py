@@ -1,3 +1,7 @@
+# NOTE(P1W24 并行协调): scaffold 注册器 eager import bug 第八次复发（斜杠变种
+# `zephyr.feedback_loop/detectors/drift.distribution_drift_monitor`），按可逆模式归一
+# 为点号合法 import 并将模块名入列 _SUBMODULES/__all__（与 #ARCH-228/235/238/242/246/250 同族）。
+from zephyr.feedback_loop.detectors.drift.distribution_drift_monitor import DistributionDriftMonitor
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.feedback_loop.detectors.drift
 # [DOMAIN] D_FBL_DETECTORS
@@ -19,6 +23,7 @@
 _SUBMODULES = [
     "concept_drift",
     "config_drift",
+    "distribution_drift_monitor",
     "ensemble_drift",
     "gradual_poisoning_detector",
     "diminishing_returns_detector",
@@ -31,7 +36,9 @@ __all__ = [
     "config_drift",
     "context_window_contamination_detector",
     "diminishing_returns_detector",
+    "distribution_drift_monitor",
     "ensemble_drift",
     "gradual_poisoning_detector",
     "trend_cycle_separator",
+    "DistributionDriftMonitor",
 ]
