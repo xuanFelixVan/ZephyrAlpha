@@ -9722,11 +9722,12 @@ entries:
       evidence: '深挖场内对账: 无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/pattern_match_strategy_library.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-25'
   source_draft: A1交易决策架构
   original_id: B10-01416
   source_section: §4模块44
@@ -9748,11 +9749,12 @@ entries:
       evidence: '深挖场内对账: 无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/sell_news_overdraft_detector.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-25'
   source_draft: A1交易决策架构
   original_id: B10-01453
   source_section: §7模块28
@@ -9773,11 +9775,12 @@ entries:
       evidence: '深挖场内对账: 无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/overnight_return_expectancy.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-25'
   source_draft: A1交易决策架构
   original_id: B10-01464
   source_section: §8模块13
@@ -9799,11 +9802,12 @@ entries:
       evidence: '深挖场内对账: 无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/multi_factor_timing_overlay.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-25'
   source_draft: A1交易决策架构
   original_id: B10-01482
   source_section: 决策编排器模块57
@@ -9824,11 +9828,12 @@ entries:
       evidence: '深挖场内对账: 无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/strategy_cross_vote_funnel.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-25'
   source_draft: A1交易决策架构
   original_id: B10-01504
   source_section: §13
@@ -11357,11 +11362,12 @@ entries:
       evidence: '深挖场内对账: 部分：src/zephyr/shared/contracts/factor_signal.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/shared/contracts/ctr002_consumer_adapter.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-25'
   source_draft: A3数据架构
   original_id: B13-04308
   source_section: §17.12
@@ -11384,10 +11390,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-25，P1W16）——canonical=MOD-EX-055 multi_contract_adapter（stable/production，CTR-004/005/006 注册+版本演进+变更通知全覆盖；深挖批'未收口'被实证推翻）"
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-25'
   source_draft: A3数据架构
   original_id: B13-04317
   source_section: §17.14
@@ -11410,11 +11417,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/factor/core/ctr002_producer/'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/shared/contracts/ctr002_producer_validator.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-25'
   source_draft: D-SIGNAL
   original_id: B2-05118
   source_section: §1.1
@@ -14789,11 +14797,12 @@ entries:
       evidence: '深挖场内对账: 部分：src/zephyr/plan_engine/llm_premarket_analysis.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/intelligence/llm_fundamental_analysis.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-25'
   source_draft: A1交易决策架构
   original_id: B10-01840
   source_section: §29.11
@@ -14816,11 +14825,12 @@ entries:
       evidence: '深挖场内对账: 部分：src/zephyr/autonomy_core/context/memory_bank.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/intelligence/agent_memory_architecture.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-25'
   source_draft: A7-Agent架构
   original_id: B11-02457
   source_section: §0边界声明/§7
@@ -14842,11 +14852,12 @@ entries:
       evidence: '深挖场内对账: 部分：src/zephyr/infrastructure/pipeline/llm_gateway.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/intelligence/llm_agent_router.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-25'
   source_draft: A7-Agent架构
   original_id: B11-02458
   source_section: §0边界声明/§8
@@ -14869,11 +14880,12 @@ entries:
       evidence: '深挖场内对账: 部分：src/zephyr/intelligence/reflexion/roles.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/intelligence/episodic_memory_store.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-25'
   source_draft: A7-Agent架构
   original_id: B11-02613
   source_section: §6.1
@@ -14894,11 +14906,12 @@ entries:
       evidence: '深挖场内对账: 部分：src/zephyr/integration/local_model/ollama_chat.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/intelligence/local_llm_pool.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-25'
   source_draft: A7-Agent架构
   original_id: B11-02628
   source_section: §8.1
@@ -15655,11 +15668,12 @@ entries:
       evidence: '深挖场内对账: 部分:schemas/categories/market_auction.py;market_auction_book.py;src/zephyr/plan_engine/auction_hit_recorder.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/market_data/auction_data_manager.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-25'
   source_draft: D-DATA-32
   original_id: B10-02234
   source_section: §30.3.1
@@ -15682,10 +15696,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-25，P1W16）——canonical=MOD-MKT-007 auction_data_manager（同号 D-DATA-32 同一建设项；miniQMT 源/3 秒节奏/尾盘竞价/字段校验四面已并入）"
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-25'
   source_draft: A3数据架构
   original_id: B13-04251
   source_section: §17.1
@@ -15841,11 +15856,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/ml_train/implementations/density_quantile_trainer.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/ml_train/implementations/qnn_two_stage.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-25'
   source_draft: A1交易决策架构
   original_id: B10-01408
   source_section: §4.5.1-A2
@@ -15869,11 +15885,12 @@ entries:
       evidence: '深挖场内对账: 无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/ml_train/implementations/patchtst_density_encoder.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-25'
   source_draft: A1交易决策架构
   original_id: B10-01831
   source_section: §29.7
@@ -16925,11 +16942,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/position/core/cash_manager.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/position/core/cash_manager.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-25'
   source_draft: A1交易决策架构
   original_id: B10-01307
   source_section: §1.1
@@ -16950,11 +16968,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/position/core/calendar_position_constraint.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/position/core/calendar_position_constraint.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-25'
   source_draft: A1交易决策架构
   original_id: B10-01316
   source_section: §1.1
@@ -16976,11 +16995,12 @@ entries:
       evidence: '深挖场内对账: 无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/position/core/core_satellite_allocator.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-25'
   source_draft: A1交易决策架构
   original_id: B10-01465
   source_section: §8模块24

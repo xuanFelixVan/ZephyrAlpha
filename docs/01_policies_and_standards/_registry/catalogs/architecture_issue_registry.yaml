@@ -20347,3 +20347,78 @@ entries:
   related_rules: ['AUD-DRAFT-001-DIGEST']
   created: '2026-08-25'
   last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-246'
+  title: DIGEST P1 R5W05：信号漏斗族 5 候选晋升（MOD-SIG-105~109）
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    pattern_match_strategy_library（模块44 模式→执行策略映射，与 unified_pattern 图形库分工）/
+    sell_news_overdraft_detector（模块28 利好落地变利空预期透支）/overnight_return_expectancy
+    （模块13 隔夜收益预测，消费 MOD-SIG-104）/multi_factor_timing_overlay（模块57 多因子叠加
+    择时，与 MOD-AU-010 分工）/strategy_cross_vote_funnel（筛选漏斗第五层在线 60 秒级投票面，
+    与 MOD-BT-028 离线 CPCV 双视图裁定兑现）。97 新测全绿，tests/signal_ashare 1885 零回归。
+  impact:
+    - 'src/zephyr/signal_ashare/{pattern_match_strategy_library,sell_news_overdraft_detector,overnight_return_expectancy,multi_factor_timing_overlay,strategy_cross_vote_funnel}.py（node 10631527~10631541）'
+  fix_phase: '已落地（2026-08-25，P1 R5W05）'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-247'
+  title: DIGEST P1 R5W10：LLM 基本面/记忆架构/Agent 路由/情景记忆/本地 LLM 池五候选晋升（D_INTELLIGENCE）
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    llm_fundamental_analysis（三 Agent 架构+定性定量加权融合）/agent_memory_architecture（四层
+    统一模型）/llm_agent_router（Agent 级路由门面：日预算门+延迟预算+路由审计，模型选择委托
+    cascade_orchestrator——其建于 2026-08-24 晚于审计日，TSV 缺口已被覆盖故按门面施工）/
+    episodic_memory_store（轨迹级情景记忆流水线）/local_llm_pool（本地池与 API 池对称分工，
+    ollama_chat/scheduler/monitor 全注入）。78 新测全绿，tests/intelligence 466 零回归。
+    错误码裁定：INT 前缀属 D_INFRASTRUCTURE，智能域正式码用 ZA-IT 段（0013~0022）。
+  impact:
+    - 'src/zephyr/intelligence/{llm_fundamental_analysis,agent_memory_architecture,llm_agent_router,episodic_memory_store,local_llm_pool}.py（node 10631522~10631540）'
+  fix_phase: '已落地（2026-08-25，P1 R5W10）'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST', '#ARCH-196']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-248'
+  title: DIGEST P1 R5W16：竞价数据管理器/CTR-002 消费适配器/生产验证器三候选晋升（MOD-MKT-007/MOD-CON-001/002）+ 双 D-DATA-32 合并与 EX-55 归并
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    auction_data_manager（竞价供数管理面，miniQMT 源/3 秒节奏/尾盘窗口/字段校验，与 MOD-SIG-089
+    分析面分工=其"竞价快照源接 W-P1-16"留档兑现；双 D-DATA-32 同号同项合并 1 canonical+1 归并）/
+    ctr002_consumer_adapter（factor_result_bridge 预留前瞻兼容件，消费面）/
+    ctr002_producer_validator（生产面，与 adapter 共用同一 Schema 源断言）。归并：
+    B13-04317→MOD-EX-055（production 全覆盖，深挖批"未收口"被实证推翻）。117 新测全绿，
+    五域 4163+zephyr/data 1430 零回归。共享契约码用 ZA-SH 段（0055/0056），未铸 CON 新前缀。
+  impact:
+    - 'src/zephyr/market_data/auction_data_manager.py + shared/contracts/{ctr002_consumer_adapter,ctr002_producer_validator}.py（node 10631510~10631515）'
+  fix_phase: '已落地（2026-08-25，P1 R5W16）；两归并同批'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-249'
+  title: DIGEST P1 R5W20：资金管理扩展/日历约束扩展/核心-卫星/QNN 两阶段/PatchTST 五候选晋升（MOD-POS-025/MOD-ML-010/011）
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    cash_manager 就地扩展（逆回购标的池+节假日连息+出入金台账 T+N，MOD-POS-006 stable 不动）/
+    calendar_position_constraint 就地扩展（股指期货交割检查+节假日效应，INDEX_FUTURE_EXPIRY
+    在码未接线缺口收口）/core_satellite_allocator（核心 Kelly+卫星≤30% 硬帽+止损分轨+RS 换仓）/
+    qnn_two_stage（A2：Stage1 跨标的 HGB 基座+Stage2 per-symbol 仿射缩放+冻结重训，
+    density_quantile_trainer 零触碰）/patchtst_density_encoder（§29.7：PatchTST 作 QNN Stage1
+    前置特征编码器，双路线互补，numpy MVP 不引 torch）。53 新测全绿，position+ml_train 790 零回归。
+  impact:
+    - 'src/zephyr/position/core/{cash_manager,calendar_position_constraint,core_satellite_allocator}.py + ml_train/implementations/{qnn_two_stage,patchtst_density_encoder}.py（node 10626632~10631521）'
+  fix_phase: '已落地（2026-08-25，P1 R5W20）'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'

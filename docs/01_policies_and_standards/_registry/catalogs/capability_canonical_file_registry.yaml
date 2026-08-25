@@ -10229,6 +10229,134 @@ creation_tokens:
   token: auto-test-position-adjudication-center-20260825
   created_by: AI-K3-DIGEST-P1R4（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: position_adjudication_center
+- file: src/zephyr/shared/contracts/ctr002_consumer_adapter.py
+  token: auto-scaffold-ctr002_consumer_adapter-20260825
+  created_by: scaffold.py
+  capability: ctr002_consumer_adapter
+- file: src/zephyr/market_data/auction_data_manager.py
+  token: auto-scaffold-auction_data_manager-20260825
+  created_by: scaffold.py
+  capability: auction_data_manager
+- file: src/zephyr/shared/contracts/ctr002_producer_validator.py
+  token: auto-scaffold-ctr002_producer_validator-20260825
+  created_by: scaffold.py
+  capability: ctr002_producer_validator
+- file: src/zephyr/signal_ashare/sell_news_overdraft_detector.py
+  token: auto-scaffold-sell_news_overdraft_detector-20260825
+  created_by: scaffold.py
+  capability: sell_news_overdraft_detector
+- file: src/zephyr/intelligence/llm_fundamental_analysis.py
+  token: auto-scaffold-llm_fundamental_analysis-20260825
+  created_by: scaffold.py
+  capability: llm_fundamental_analysis
+- file: src/zephyr/signal_ashare/overnight_return_expectancy.py
+  token: auto-scaffold-overnight_return_expectancy-20260825
+  created_by: scaffold.py
+  capability: overnight_return_expectancy
+- file: src/zephyr/intelligence/agent_memory_architecture.py
+  token: auto-scaffold-agent_memory_architecture-20260825
+  created_by: scaffold.py
+  capability: agent_memory_architecture
+- file: src/zephyr/signal_ashare/strategy_cross_vote_funnel.py
+  token: auto-scaffold-strategy_cross_vote_funnel-20260825
+  created_by: scaffold.py
+  capability: strategy_cross_vote_funnel
+- file: src/zephyr/intelligence/llm_agent_router.py
+  token: auto-scaffold-llm_agent_router-20260825
+  created_by: scaffold.py
+  capability: llm_agent_router
+- file: src/zephyr/signal_ashare/pattern_match_strategy_library.py
+  token: auto-scaffold-pattern_match_strategy_library-20260825
+  created_by: scaffold.py
+  capability: pattern_match_strategy_library
+- file: src/zephyr/intelligence/episodic_memory_store.py
+  token: auto-scaffold-episodic_memory_store-20260825
+  created_by: scaffold.py
+  capability: episodic_memory_store
+- file: src/zephyr/signal_ashare/multi_factor_timing_overlay.py
+  token: auto-scaffold-multi_factor_timing_overlay-20260825
+  created_by: scaffold.py
+  capability: multi_factor_timing_overlay
+- file: src/zephyr/intelligence/local_llm_pool.py
+  token: auto-scaffold-local_llm_pool-20260825
+  created_by: scaffold.py
+  capability: local_llm_pool
+- file: src/zephyr/position/core/core_satellite_allocator.py
+  token: auto-scaffold-core_satellite_allocator-20260825
+  created_by: scaffold.py
+  capability: core_satellite_allocator
+- file: src/zephyr/ml_train/implementations/qnn_two_stage.py
+  token: auto-scaffold-qnn_two_stage-20260825
+  created_by: scaffold.py
+  capability: qnn_two_stage
+- file: src/zephyr/ml_train/implementations/patchtst_density_encoder.py
+  token: auto-scaffold-patchtst_density_encoder-20260825
+  created_by: scaffold.py
+  capability: patchtst_density_encoder
+- file: tests/signal_ashare/test_pattern_match_strategy_library.py
+  token: auto-test-pattern-match-strategy-library-20260825
+  created_by: AI-K3-DIGEST-P1R5（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: pattern_match_strategy_library
+- file: tests/signal_ashare/test_sell_news_overdraft_detector.py
+  token: auto-test-sell-news-overdraft-detector-20260825
+  created_by: AI-K3-DIGEST-P1R5（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: sell_news_overdraft_detector
+- file: tests/signal_ashare/test_overnight_return_expectancy.py
+  token: auto-test-overnight-return-expectancy-20260825
+  created_by: AI-K3-DIGEST-P1R5（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: overnight_return_expectancy
+- file: tests/signal_ashare/test_multi_factor_timing_overlay.py
+  token: auto-test-multi-factor-timing-overlay-20260825
+  created_by: AI-K3-DIGEST-P1R5（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: multi_factor_timing_overlay
+- file: tests/signal_ashare/test_strategy_cross_vote_funnel.py
+  token: auto-test-strategy-cross-vote-funnel-20260825
+  created_by: AI-K3-DIGEST-P1R5（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: strategy_cross_vote_funnel
+- file: tests/intelligence/test_llm_fundamental_analysis.py
+  token: auto-test-llm-fundamental-analysis-20260825
+  created_by: AI-K3-DIGEST-P1R5（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: llm_fundamental_analysis
+- file: tests/intelligence/test_agent_memory_architecture.py
+  token: auto-test-agent-memory-architecture-20260825
+  created_by: AI-K3-DIGEST-P1R5（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: agent_memory_architecture
+- file: tests/intelligence/test_llm_agent_router.py
+  token: auto-test-llm-agent-router-20260825
+  created_by: AI-K3-DIGEST-P1R5（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: llm_agent_router
+- file: tests/intelligence/test_episodic_memory_store.py
+  token: auto-test-episodic-memory-store-20260825
+  created_by: AI-K3-DIGEST-P1R5（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: episodic_memory_store
+- file: tests/intelligence/test_local_llm_pool.py
+  token: auto-test-local-llm-pool-20260825
+  created_by: AI-K3-DIGEST-P1R5（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: local_llm_pool
+- file: tests/market_data/test_auction_data_manager.py
+  token: auto-test-auction-data-manager-20260825
+  created_by: AI-K3-DIGEST-P1R5（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: auction_data_manager
+- file: tests/contracts/test_ctr002_consumer_adapter.py
+  token: auto-test-ctr002-consumer-adapter-20260825
+  created_by: AI-K3-DIGEST-P1R5（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: ctr002_consumer_adapter
+- file: tests/contracts/test_ctr002_producer_validator.py
+  token: auto-test-ctr002-producer-validator-20260825
+  created_by: AI-K3-DIGEST-P1R5（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: ctr002_producer_validator
+- file: tests/position/test_core_satellite_allocator.py
+  token: auto-test-core-satellite-allocator-20260825
+  created_by: AI-K3-DIGEST-P1R5（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: core_satellite_allocator
+- file: tests/ml_train/test_qnn_two_stage.py
+  token: auto-test-qnn-two-stage-20260825
+  created_by: AI-K3-DIGEST-P1R5（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: qnn_two_stage
+- file: tests/ml_train/test_patchtst_density_encoder.py
+  token: auto-test-patchtst-density-encoder-20260825
+  created_by: AI-K3-DIGEST-P1R5（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: patchtst_density_encoder
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
