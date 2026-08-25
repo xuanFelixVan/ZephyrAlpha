@@ -42,7 +42,10 @@ D_SIGQC — Signal Quality Domain
 from __future__ import annotations
 
 from zephyr.signal_quality.degradation_monitor_base import DegradationMonitorBase
+from zephyr.signal_quality.degradation_detector import DegradationDetector
 
 __all__ = [
     "DegradationMonitorBase",
 ]
+
+__all__.append("DegradationDetector")

@@ -106,6 +106,7 @@ from zephyr.shared.protocols.a2a import (
 from . import layer1_discovery, layer2_communication
 from .governance.auditor import A2AAuditor
 from .governance.governance_adapter import GovernanceAdapter
+from zephyr.infrastructure.a2a_protocol.a2a_check_gateway import A2aCheckGateway
 
 __all__ = [
     "A2ACommunication",
@@ -185,3 +186,5 @@ def __getattr__(name: str):
         globals()[name] = mod
         return mod
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+__all__.append("A2aCheckGateway")

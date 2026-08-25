@@ -34,6 +34,7 @@
 
 from zephyr.integration.llm_bridge import LLMBridge
 from zephyr.integration.mcp_server import get_asset_summary
+from zephyr.integration.failover_coordinator import FailoverCoordinator
 
 __all__ = [
     "LLMBridge",
@@ -51,3 +52,5 @@ __all__ = [
     "shared",
     "vector_memory",
 ]
+
+__all__.append("FailoverCoordinator")
