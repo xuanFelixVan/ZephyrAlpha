@@ -5,7 +5,7 @@
 # [CONSUMERS] MOD-POS-010(限仓执行器) ; MOD-POS-001(仓位决策引擎)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] overall_cap=min(各约束cap);block_new=any(全标的BLOCK_NEW);无约束cap=1.0;自然日计算
+# [INVARIANTS] overall_cap=min(各约束cap);block_new=any(全标的BLOCK_NEW);无约束cap=1.0;自然日计算;期货交割日(第三个周五)同期权交割日规则(前2后1+当天BLOCK_NEW);节假日窗口(前2后1)REDUCE_CAP=0.9+execution_hint=raise_cash_reserve
 # [MODIFY-GUARD] blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M
@@ -158,6 +158,7 @@ class CalendarEventType(str, Enum):
     INTERIM_FORECAST_DEADLINE = "INTERIM_FORECAST_DEADLINE"  # 半年报预告截止
     SHAREHOLDER_BLACKOUT = "SHAREHOLDER_BLACKOUT"  # 股东信息空窗期
     EARNINGS_RELEASE = "EARNINGS_RELEASE"  # 财报发布
+    HOLIDAY_EFFECT = "HOLIDAY_EFFECT"  # 节假日持币规划 (W-P1-20 扩展, B10-01316)
 
 
 class ConstraintAction(str, Enum):
@@ -206,6 +207,7 @@ class CalendarConstraint:
     cap_adjustment: float  # 1.0=不变, 0.5=收紧50%, 0.0=清零
     description: str
     affected_symbols: tuple[str, ...] | None = None  # None=全标的, 空tuple=无受影响
+    execution_hint: str | None = None  # 执行算法联动提示 (W-P1-20: switch_to_twap/raise_cash_reserve)
 
 
 @dataclass(frozen=True)
@@ -273,12 +275,15 @@ class CalendarPositionConstraint:
         self,
         current_date: date,
         positions: list[PositionInfo] | None = None,
+        *,
+        holiday_dates: set[date] | None = None,
     ) -> CalendarPositionAlert:
         """检查当前日期的日历仓位约束。
 
         Args:
             current_date: 当前日期
             positions: 持仓标的元数据列表 (可选, 用于标的级约束)
+            holiday_dates: 节假日日期集合 (W-P1-20: 用于 HOLIDAY_EFFECT 判定)
 
         Returns:
             CalendarPositionAlert
@@ -289,11 +294,13 @@ class CalendarPositionConstraint:
         constraints: list[CalendarConstraint] = []
 
         constraints.extend(self._check_option_expiry(current_date))
+        constraints.extend(self._check_future_expiry(current_date))
         constraints.extend(self._check_annual_forecast_deadline(current_date, positions))
         constraints.extend(self._check_annual_report_deadline(current_date, positions))
         constraints.extend(self._check_interim_forecast_deadline(current_date, positions))
         constraints.extend(self._check_shareholder_blackout(current_date, positions))
         constraints.extend(self._check_earnings_release(current_date, positions))
+        constraints.extend(self._check_holiday_effect(current_date, holiday_dates))
 
         return CalendarPositionAlert(
             check_date=current_date,
@@ -457,3 +464,53 @@ class CalendarPositionConstraint:
         first_day = date(year, month, 1)
         first_fri_day = 1 + (4 - first_day.weekday()) % 7
         return date(year, month, first_fri_day + 14)  # 第三个 = 第一个 + 2周
+
+    # ── W-P1-20 扩展: 股指期货交割日 + 节假日效应 (B10-01316/CAND-POS-004) ──
+
+    def _check_future_expiry(self, d: date) -> list[CalendarConstraint]:
+        """股指期货交割日 (每月第三个周五) + 前2天/后1天窗口。"""
+        constraints: list[CalendarConstraint] = []
+        expiry = self._third_friday(d.year, d.month)
+
+        if d == expiry:
+            constraints.append(
+                CalendarConstraint(
+                    rule="future_expiry_day",
+                    event_type=CalendarEventType.INDEX_FUTURE_EXPIRY,
+                    action=ConstraintAction.BLOCK_NEW,
+                    cap_adjustment=1.0,
+                    description=f"股指期货交割日 {expiry}: 否决新开仓",
+                )
+            )
+        elif expiry - timedelta(days=2) <= d <= expiry + timedelta(days=1):
+            constraints.append(
+                CalendarConstraint(
+                    rule="future_expiry_window",
+                    event_type=CalendarEventType.INDEX_FUTURE_EXPIRY,
+                    action=ConstraintAction.REDUCE_CAP,
+                    cap_adjustment=0.9,
+                    description=f"股指期货交割日 {expiry} 窗口期: 仓位上限下调10%+TWAP切换",
+                    execution_hint="switch_to_twap",
+                )
+            )
+        return constraints
+
+    def _check_holiday_effect(
+        self, d: date, holiday_dates: set[date] | None
+    ) -> list[CalendarConstraint]:
+        """节假日持币规划: 节前2天+节后1天 仓位下调+现金储备抬升。"""
+        if not holiday_dates:
+            return []
+        for h in holiday_dates:
+            if h - timedelta(days=2) <= d <= h + timedelta(days=1):
+                return [
+                    CalendarConstraint(
+                        rule="holiday_effect",
+                        event_type=CalendarEventType.HOLIDAY_EFFECT,
+                        action=ConstraintAction.REDUCE_CAP,
+                        cap_adjustment=0.9,
+                        description=f"节假日 {h} 窗口期: 仓位下调10%+现金储备抬升",
+                        execution_hint="raise_cash_reserve",
+                    )
+                ]
+        return []

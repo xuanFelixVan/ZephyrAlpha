@@ -174,3 +174,110 @@ def test_custom_config():
     assert state.opportunity_reserve == pytest.approx(50_000.0)  # 5% of 1M
     assert state.holiday_reserve == pytest.approx(150_000.0)  # 15% of 1M
     assert state.max_investable == pytest.approx(750_000.0)  # 1M - 50K - 50K - 150K
+
+
+# ── 逆回购收益增强 (B10-01307 / CAND-POS-003, W-P1-20 扩展) ─────────────────────
+
+from zephyr.position.core.cash_manager import (  # noqa: E402
+    DEFAULT_REVERSE_REPO_POOL,
+    CashFlowType as _CFT,
+    FundTransferLedger,
+    ScheduledTransfer,
+)
+
+
+def test_reverse_repo_pool_default():
+    pool = DEFAULT_REVERSE_REPO_POOL
+    assert len(pool) >= 8
+    exchanges = {i.exchange for i in pool}
+    assert exchanges == {"SH", "SZ"}
+    assert all(i.term_days in (1, 2, 3, 4, 7) for i in pool)
+
+
+def test_plan_reverse_repo_normal_day():
+    mgr = CashManager(initial_cash=INIT)  # max_investable = 800K
+    plan = mgr.plan_reverse_repo(T0, annualized_rate=0.02, max_ratio=0.5)
+    assert plan is not None
+    assert plan.amount == pytest.approx(400_000.0)  # 800K × 0.5
+    assert plan.interest_days == plan.term_days  # 非节假日: 计息=期限
+    assert plan.expected_interest == pytest.approx(plan.amount * 0.02 * plan.term_days / 365)
+
+
+def test_plan_reverse_repo_holiday_prefers_one_day_with_extra_interest():
+    mgr = CashManager(initial_cash=INIT)
+    plan = mgr.plan_reverse_repo(T0, annualized_rate=0.02, max_ratio=0.5,
+                                 in_holiday_mode=True, holiday_extra_days=6)
+    assert plan is not None
+    # 节假日: 1天期计息 1+6=7 天 > 7天期计息7天(同息取短) → 选1天期
+    assert plan.term_days == 1
+    assert plan.interest_days == 7
+
+
+def test_plan_reverse_repo_respects_max_investable():
+    mgr = CashManager(initial_cash=INIT)
+    state = mgr.compute_state(T0)
+    plan = mgr.plan_reverse_repo(T0, annualized_rate=0.02, max_ratio=1.0)
+    assert plan is not None
+    assert plan.amount <= state.max_investable + 1e-9
+
+
+def test_plan_reverse_repo_no_investable_returns_none():
+    cfg = CashReserveConfig(min_reserve=2_000_000.0, opportunity_reserve_ratio=0.0)
+    mgr = CashManager(initial_cash=INIT, config=cfg)  # max_investable = 0
+    assert mgr.plan_reverse_repo(T0, annualized_rate=0.02, max_ratio=0.5) is None
+
+
+def test_plan_reverse_repo_invalid_params():
+    mgr = CashManager(initial_cash=INIT)
+    with pytest.raises(InvalidCashFlowError):
+        mgr.plan_reverse_repo(T0, annualized_rate=0.02, max_ratio=0.0)
+    with pytest.raises(InvalidCashFlowError):
+        mgr.plan_reverse_repo(T0, annualized_rate=-0.01, max_ratio=0.5)
+    with pytest.raises(InvalidCashFlowError):
+        mgr.plan_reverse_repo(T0, annualized_rate=0.02, max_ratio=0.5, holiday_extra_days=-1)
+
+
+# ── 出入金台账 (B10-01307 / CAND-POS-003, W-P1-20 扩展) ─────────────────────────
+
+from datetime import date as _date  # noqa: E402
+
+D1 = _date(2026, 8, 3)
+D2 = _date(2026, 8, 4)
+
+
+def test_ledger_schedule_and_entries():
+    ledger = FundTransferLedger()
+    ledger.schedule(ScheduledTransfer(_CFT.DEPOSIT, 100_000.0, D1, "工资入金"))
+    ledger.schedule(ScheduledTransfer(_CFT.WITHDRAWAL, 50_000.0, D2, "还贷"))
+    entries = ledger.entries()
+    assert len(entries) == 2
+    assert entries[0].amount == pytest.approx(100_000.0)
+
+
+def test_ledger_rejects_buy_sell():
+    ledger = FundTransferLedger()
+    with pytest.raises(InvalidCashFlowError):
+        ledger.schedule(ScheduledTransfer(_CFT.BUY, 100.0, D1))
+
+
+def test_ledger_rejects_nonpositive_amount():
+    ledger = FundTransferLedger()
+    with pytest.raises(InvalidCashFlowError):
+        ledger.schedule(ScheduledTransfer(_CFT.DEPOSIT, 0.0, D1))
+
+
+def test_projected_available_with_transfers():
+    mgr = CashManager(initial_cash=INIT)  # available 1M
+    mgr.schedule_transfer(_CFT.DEPOSIT, 100_000.0, D1, "入金")
+    mgr.schedule_transfer(_CFT.WITHDRAWAL, 50_000.0, D1, "出金")
+    projected = mgr.projected_available(D1, T0)
+    assert projected == pytest.approx(1_050_000.0)
+
+
+def test_projected_available_ignores_future_transfers():
+    mgr = CashManager(initial_cash=INIT)
+    mgr.schedule_transfer(_CFT.DEPOSIT, 100_000.0, D2, "后天生效")
+    projected = mgr.projected_available(D1, T0)  # target=D1 < D2
+    assert projected == pytest.approx(1_000_000.0)
+    projected2 = mgr.projected_available(D2, T0)
+    assert projected2 == pytest.approx(1_100_000.0)

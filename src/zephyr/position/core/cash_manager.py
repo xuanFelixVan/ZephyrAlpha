@@ -5,7 +5,7 @@
 # [CONSUMERS] MOD-POS-001(仓位决策,现金约束反馈) ; D-EX-CORE(资金流水)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] available_cash=total_cash-pending_settlement;pending_settlement≥0且settle后归零;max_investable≥0;total_cash=Σ流水
+# [INVARIANTS] available_cash=total_cash-pending_settlement;pending_settlement≥0且settle后归零;max_investable≥0;total_cash=Σ流水;逆回购排程金额=max_investable×max_ratio(0<ratio≤1)且无可投资资金→None;台账仅收DEPOSIT/WITHDRAWAL且amount>0;投影可用=available+Σ生效入金−Σ生效出金(未生效不计)
 # [MODIFY-GUARD] blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M
@@ -117,15 +117,21 @@ Version: 0.1.0
 # A4 --> A5
 # I3 --> A5
 # A5 --> O1
+#
+# W-P1-20 扩展 (B10-01307/CAND-POS-003, 逆回购收益增强+出入金台账):
+# I5: 逆回购排程参数(annualized_rate/max_ratio/in_holiday_mode/holiday_extra_days/pool)
+# A6: plan_reverse_repo(节假日1天期计息=1+extra; 选息最高/同息取短)
+# A7: FundTransferLedger(出入金台账登记+ projected_available 投影)
+# O2: ReverseRepoPlan / projected_available(target_date)
 """
 
 from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from enum import Enum
-from typing import Callable
+from typing import Callable, Final
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
 
@@ -261,6 +267,7 @@ class CashManager:
         self._clock = clock or (lambda: datetime.now(timezone.utc))
         self._total_cash = initial_cash
         self._pending_settlement = 0.0
+        self._transfer_ledger: FundTransferLedger | None = None  # W-P1-20 台账(惰性)
 
     @property
     def config(self) -> CashReserveConfig:
@@ -356,3 +363,214 @@ class CashManager:
     def record_withdrawal(self, amount: float, now: datetime | None = None) -> None:
         """记录出金。"""
         self.record(CashFlow(CashFlowType.WITHDRAWAL, amount, now or self._clock()))
+
+    # ── W-P1-20 扩展: 逆回购收益增强 + 出入金台账 (B10-01307/CAND-POS-003) ──
+
+    @property
+    def transfer_ledger(self) -> FundTransferLedger:
+        """出入金台账 (惰性创建)。"""
+        if self._transfer_ledger is None:
+            self._transfer_ledger = FundTransferLedger()
+        return self._transfer_ledger
+
+    def schedule_transfer(
+        self,
+        flow_type: CashFlowType,
+        amount: float,
+        effective_date: date,
+        note: str = "",
+    ) -> None:
+        """登记一条计划出入金 (仅 DEPOSIT/WITHDRAWAL)。"""
+        self.transfer_ledger.schedule(ScheduledTransfer(flow_type, amount, effective_date, note))
+
+    def projected_available(
+        self,
+        target_date: date,
+        now: datetime | None = None,
+        in_holiday_mode: bool = False,
+    ) -> float:
+        """投影 target_date 可用资金 = 当前可用 + Σ生效入金 − Σ生效出金。
+
+        Args:
+            target_date: 投影目标日 (含当日生效)
+            now: 当前时间戳 (默认 clock)
+            in_holiday_mode: 是否节假日持币模式
+
+        Returns:
+            投影可用资金 (未生效台账条目不计)
+        """
+        state = self.compute_state(now, in_holiday_mode)
+        return self.transfer_ledger.projected_available(state, target_date)
+
+    def plan_reverse_repo(
+        self,
+        now: datetime | None = None,
+        *,
+        annualized_rate: float,
+        max_ratio: float = 0.5,
+        in_holiday_mode: bool = False,
+        holiday_extra_days: int = 0,
+        pool: tuple[ReverseRepoInstrument, ...] | None = None,
+    ) -> ReverseRepoPlan | None:
+        """逆回购排程——用可投资资金的一部分做国债逆回购现金增强。
+
+        排程规则 (确定性):
+            - 金额 = max_investable × max_ratio (0<ratio≤1)；max_investable≤0 → None
+            - 计息天数: 非节假日=term_days；节假日模式下 1 天期计息
+              1+holiday_extra_days (节前买 1 天期享假期连息)
+            - 选品: 预期利息最高者；同息取期限最短 (流动性优先)
+
+        Args:
+            now: 时间戳
+            annualized_rate: 年化利率 (如 0.02)，必须 >0
+            max_ratio: 可投资资金投入比例上限 (0,1]
+            in_holiday_mode: 是否节假日模式 (节前最后交易日)
+            holiday_extra_days: 节假日模式额外计息天数 (≥0)
+            pool: 逆回购标的池 (默认 DEFAULT_REVERSE_REPO_POOL)
+
+        Returns:
+            ReverseRepoPlan 或 None (无可投资资金)
+
+        Raises:
+            InvalidCashFlowError: 参数非法
+        """
+        if not 0 < max_ratio <= 1:
+            raise InvalidCashFlowError(f"max_ratio must be in (0,1], got {max_ratio}")
+        if annualized_rate <= 0:
+            raise InvalidCashFlowError(f"annualized_rate must be > 0, got {annualized_rate}")
+        if holiday_extra_days < 0:
+            raise InvalidCashFlowError(f"holiday_extra_days must be >= 0, got {holiday_extra_days}")
+        instruments = pool or DEFAULT_REVERSE_REPO_POOL
+        if not instruments:
+            raise InvalidCashFlowError("reverse repo pool must be non-empty")
+
+        state = self.compute_state(now, in_holiday_mode)
+        amount = state.max_investable * max_ratio
+        if amount <= 0:
+            return None
+
+        def _interest_days(inst: ReverseRepoInstrument) -> int:
+            if in_holiday_mode and inst.term_days == 1:
+                return 1 + holiday_extra_days
+            return inst.term_days
+
+        best: ReverseRepoPlan | None = None
+        for inst in instruments:
+            days = _interest_days(inst)
+            interest = amount * annualized_rate * days / 365.0
+            candidate = ReverseRepoPlan(
+                instrument_code=inst.code,
+                exchange=inst.exchange,
+                term_days=inst.term_days,
+                amount=amount,
+                annualized_rate=annualized_rate,
+                interest_days=days,
+                expected_interest=interest,
+                note="节假日连息排程" if days != inst.term_days else "",
+            )
+            if best is None or (candidate.expected_interest, -candidate.term_days) > (
+                best.expected_interest,
+                -best.term_days,
+            ):
+                best = candidate
+        return best
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# W-P1-20 扩展: 逆回购标的池 (B10-01307/CAND-POS-003)
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+@dataclass(frozen=True)
+class ReverseRepoInstrument:
+    """国债逆回购标的。"""
+
+    code: str  # 如 GC001 / R-001
+    exchange: str  # SH(沪市) / SZ(深市)
+    term_days: int  # 期限 (1/2/3/4/7 天)
+
+
+@dataclass(frozen=True)
+class ReverseRepoPlan:
+    """逆回购排程方案 (单腿)。"""
+
+    instrument_code: str
+    exchange: str
+    term_days: int
+    amount: float  # 投入金额 = max_investable × max_ratio
+    annualized_rate: float
+    interest_days: int  # 实际计息天数 (节假日可大于 term_days)
+    expected_interest: float  # 预期利息 = amount × rate × days/365
+    note: str = ""
+
+
+#: 默认逆回购标的池 (沪深 1/2/3/4/7 天期, vnpy/券商 API 常规覆盖)
+DEFAULT_REVERSE_REPO_POOL: Final[tuple[ReverseRepoInstrument, ...]] = (
+    ReverseRepoInstrument("GC001", "SH", 1),
+    ReverseRepoInstrument("GC002", "SH", 2),
+    ReverseRepoInstrument("GC003", "SH", 3),
+    ReverseRepoInstrument("GC004", "SH", 4),
+    ReverseRepoInstrument("GC007", "SH", 7),
+    ReverseRepoInstrument("R-001", "SZ", 1),
+    ReverseRepoInstrument("R-002", "SZ", 2),
+    ReverseRepoInstrument("R-003", "SZ", 3),
+    ReverseRepoInstrument("R-004", "SZ", 4),
+    ReverseRepoInstrument("R-007", "SZ", 7),
+)
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# W-P1-20 扩展: 出入金台账 (B10-01307/CAND-POS-003)
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+@dataclass(frozen=True)
+class ScheduledTransfer:
+    """计划出入金台账条目 (仅 DEPOSIT/WITHDRAWAL; 买卖走 record 流水)。"""
+
+    flow_type: CashFlowType
+    amount: float  # 正数
+    effective_date: date  # 生效日 (含当日)
+    note: str = ""
+
+
+class FundTransferLedger:
+    """出入金调度台账——计划出入金登记 + 未来可用资金投影。
+
+    只登记 DEPOSIT/WITHDRAWAL (BUY/SELL 属交易流水, 由 record 管辖)。
+    台账本身不改变 total_cash——入账仍以 record 为准; 台账供
+    projected_available 做 T+N 可用资金规划。
+    """
+
+    def __init__(self) -> None:
+        self._entries: list[ScheduledTransfer] = []
+
+    def schedule(self, transfer: ScheduledTransfer) -> None:
+        """登记一条计划出入金。
+
+        Raises:
+            InvalidCashFlowError: 非 DEPOSIT/WITHDRAWAL 或金额非正
+        """
+        if transfer.flow_type not in (CashFlowType.DEPOSIT, CashFlowType.WITHDRAWAL):
+            raise InvalidCashFlowError(
+                f"ledger only accepts DEPOSIT/WITHDRAWAL, got {transfer.flow_type}"
+            )
+        if transfer.amount <= 0:
+            raise InvalidCashFlowError(f"transfer amount must be positive, got {transfer.amount}")
+        self._entries.append(transfer)
+
+    def entries(self) -> tuple[ScheduledTransfer, ...]:
+        """全部台账条目 (按登记序)。"""
+        return tuple(self._entries)
+
+    def projected_available(self, state: CashState, target_date: date) -> float:
+        """投影 target_date 可用资金 = state.available + Σ生效入金 − Σ生效出金。"""
+        delta = 0.0
+        for e in self._entries:
+            if e.effective_date > target_date:
+                continue  # 未生效不计
+            if e.flow_type is CashFlowType.DEPOSIT:
+                delta += e.amount
+            else:
+                delta -= e.amount
+        return state.available_cash + delta

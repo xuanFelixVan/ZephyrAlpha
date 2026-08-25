@@ -3,7 +3,7 @@ module_id: MOD-POS-017
 title: "日历仓位约束蓝图 — A股风险日历→仓位上限调整"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.2.0"
 design_maturity: production
 ttl: permanent
 layer: L03_position
@@ -12,7 +12,7 @@ functional_domain: position
 owner: ZephyrAlpha-Owner
 created_by: agent
 date: "2026-08-02"
-last_updated: "2026-08-02"
+last_updated: "2026-08-25"
 priority: P1
 blueprint_level: module
 responsibility_domain: 
@@ -27,7 +27,7 @@ responsibility_domain:
 ## 1. 定位
 
 A股风险日历仓位约束——根据当前日期和A股风险日历事件, 生成临时仓位上限调整和否决指令。
-覆盖期权交割日/年报截止/股东空窗期/财报发布等7类日历事件。
+覆盖期权交割日/年报截止/股东空窗期/财报发布等7类日历事件, W-P1-20扩展至9类(新增股指期货交割日参数化+节假日效应)。
 
 属A类基础设施(日历计算+约束判定, 逻辑明确), 纯Python日期计算。
 
@@ -44,6 +44,8 @@ A股风险日历仓位约束——根据当前日期和A股风险日历事件, �
 |------|---------|---------|--------|
 | 股指期权交割日 | 每月第四个周三 | 否决新开仓(仅允许减仓) | BLOCK_NEW |
 | 期权交割日±窗口 | 前2天+后1天 | 仓位上限下调10% | REDUCE_CAP(0.9) |
+| 股指期货交割日 | 每月第三个周五 | 否决新开仓+TWAP切换提示 | BLOCK_NEW / REDUCE_CAP(0.9) (W-P1-20新增) |
+| 节假日效应窗口 | 节前2天+节后1天 | 仓位下调10%+现金储备抬升提示 | REDUCE_CAP(0.9) (W-P1-20新增) |
 | 年报预告截止前5日 | 1月26-31日 | 未出预告个股否决新买入 | BLOCK_NEW(特定标的) |
 | 年报+一季报截止 | 4月20-30日 | ST股强制清零 | FORCE_CLEAR(0.0) |
 | 半年报预告截止前5日 | 7月10-15日 | 未出预告个股否决新买入 | BLOCK_NEW(特定标的) |

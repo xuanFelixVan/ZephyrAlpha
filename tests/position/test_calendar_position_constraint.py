@@ -242,11 +242,15 @@ class TestMultipleConstraints:
         assert alert.overall_cap_adjustment == 0.0
 
     def test_normal_day_no_constraints(self, constraint: CalendarPositionConstraint):
-        """正常交易日无任何约束。"""
+        """正常交易日无任何约束。
+
+        注(W-P1-20): 原取 2026-05-15 恰为当年5月第三个周五(股指期货交割日,
+        B10-01316 新增规则触发), 改取 2026-05-20(期权/期货窗口均外)。
+        """
         positions = [
             PositionInfo("000001.SZ", is_st=False, market_cap_yi=100.0, has_forecast=True),
         ]
-        alert = constraint.check(date(2026, 5, 15), positions)
+        alert = constraint.check(date(2026, 5, 20), positions)
         assert len(alert.active_constraints) == 0
         assert alert.overall_cap_adjustment == 1.0
         assert alert.block_new_positions is False
@@ -265,8 +269,8 @@ class TestInputValidation:
             constraint.check("2026-01-01")  # type: ignore[arg-type]
 
     def test_empty_positions_normal_day(self, constraint: CalendarPositionConstraint):
-        """无持仓的正常日→空约束。"""
-        alert = constraint.check(date(2026, 5, 15), [])
+        """无持仓的正常日→空约束(2026-05-15→20, 避开期货交割日, W-P1-20)。"""
+        alert = constraint.check(date(2026, 5, 20), [])
         assert len(alert.active_constraints) == 0
 
 
@@ -287,3 +291,51 @@ class TestAlertProperties:
         """验证第三周五(期货交割日)计算。"""
         # 2026年1月: 1月1日是周四(3), 第一个周五=1月2日, 第三个=1月16日
         assert constraint._third_friday(2026, 1) == date(2026, 1, 16)
+
+
+# ── W-P1-20 扩展: 交割日参数化 + 节假日持币 (B10-01316/CAND-POS-004) ───────────────
+
+from zephyr.position.core.calendar_position_constraint import CalendarConstraint  # noqa: E402
+
+
+class TestFutureExpiryAndHolidayEffect:
+    def test_future_expiry_day_block_new(self, constraint: CalendarPositionConstraint):
+        """股指期货交割日(第三个周五)当天→否决新开仓。"""
+        future_expiry = constraint._third_friday(2026, 1)  # 2026-01-16
+        alert = constraint.check(future_expiry)
+        assert alert.block_new_positions is True
+        assert any(
+            c.event_type is CalendarEventType.INDEX_FUTURE_EXPIRY and c.action is ConstraintAction.BLOCK_NEW
+            for c in alert.active_constraints
+        )
+
+    def test_future_expiry_window_reduce_cap_and_twap(self, constraint: CalendarPositionConstraint):
+        """交割日前2天~后1天: 仓位下调10%+TWAP切换建议。"""
+        future_expiry = constraint._third_friday(2026, 1)
+        # 前2天
+        alert = constraint.check(future_expiry.replace(day=future_expiry.day - 2))
+        assert alert.overall_cap_adjustment == pytest.approx(0.9)
+        twap_constraints = [c for c in alert.active_constraints if c.execution_hint == "switch_to_twap"]
+        assert len(twap_constraints) >= 1
+        # 后1天
+        alert2 = constraint.check(future_expiry.replace(day=future_expiry.day + 1))
+        assert alert2.overall_cap_adjustment == pytest.approx(0.9)
+
+    def test_holiday_effect_reduce_cap_and_raise_cash(self, constraint: CalendarPositionConstraint):
+        """节假日窗口(节前2天+节后1天): 仓位下调10%+现金储备抬升建议。"""
+        # 模拟端午节前第2天 2026-06-16 (假设端午节 06-18)
+        holidays = {date(2026, 6, 18)}
+        alert = constraint.check(date(2026, 6, 16), holiday_dates=holidays)
+        assert alert.overall_cap_adjustment == pytest.approx(0.9)
+        assert any(
+            c.event_type is CalendarEventType.HOLIDAY_EFFECT and c.execution_hint == "raise_cash_reserve"
+            for c in alert.active_constraints
+        )
+        # 节后第1天
+        alert2 = constraint.check(date(2026, 6, 19), holiday_dates=holidays)
+        assert alert2.overall_cap_adjustment == pytest.approx(0.9)
+
+    def test_non_holiday_no_effect(self, constraint: CalendarPositionConstraint):
+        """非节假日窗口无节假日效应约束。"""
+        alert = constraint.check(date(2026, 5, 20), holiday_dates={date(2026, 6, 18)})
+        assert all(c.event_type is not CalendarEventType.HOLIDAY_EFFECT for c in alert.active_constraints)

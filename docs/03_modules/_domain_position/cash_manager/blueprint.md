@@ -3,7 +3,7 @@ module_id: MOD-POS-006
 title: "资金管理器蓝图 — T+1约束+储备计算"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.2.0"
 design_maturity: production
 ttl: permanent
 layer: L03_position
@@ -12,7 +12,7 @@ functional_domain: position
 owner: ZephyrAlpha-Owner
 created_by: agent
 date: "2026-08-02"
-last_updated: "2026-08-02"
+last_updated: "2026-08-25"
 priority: P1
 blueprint_level: module
 responsibility_domain: 
@@ -61,6 +61,20 @@ responsibility_domain:
 ### 3.4 节假日持币规划
 
 - 节前 2 天 + 节后 1 天提高现金比例 5-15% (由 holiday_mode 标志驱动, 日历判断由上层)
+
+### 3.5 逆回购收益增强 (W-P1-20 扩展, B10-01307/CAND-POS-003)
+
+- 逆回购标的池 DEFAULT_REVERSE_REPO_POOL: 沪深 1/2/3/4/7 天期 (GC001~GC007/R-001~R-007)
+- plan_reverse_repo: 金额 = max_investable × max_ratio (0<ratio≤1, C 类参数); 无可投资资金 → None
+- 计息天数: 非节假日=term_days; 节假日模式 1 天期计息 1+holiday_extra_days (节前买 1 天期享假期连息)
+- 选品: 预期利息最高; 同息取期限最短 (流动性优先)
+- 执行委托券商通道 (ex_core/adapters/miniqmt_broker.py, 运行时装配, 本模块不 import)
+
+### 3.6 出入金台账 (W-P1-20 扩展, B10-01307/CAND-POS-003)
+
+- FundTransferLedger 仅登记 DEPOSIT/WITHDRAWAL (BUY/SELL 属交易流水由 record 管辖), amount>0
+- 台账不改变 total_cash (入账仍以 record 为准); 供 projected_available 做 T+N 可用资金规划
+- projected_available(target_date) = available_cash + Σ生效入金 − Σ生效出金 (未生效条目不计)
 
 ## 4. 关键不变量 (INVARIANTS)
 
