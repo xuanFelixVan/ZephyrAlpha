@@ -13,9 +13,13 @@ from typing import Final
 
 from zephyr.data.normalizers.normalizer_base import DataNormalizer, NormalizeResult
 from zephyr.data.normalizers.ohlcv_normalizer import OhlcvNormalizer
+# NOTE(P1W08-20260825): scaffold 子包路径斜杠误写已修正（zephyr.data/normalizers → zephyr.data.normalizers），可逆单行修复
+from zephyr.data.normalizers.format_transformer import FormatTransformer
 
 __all__: Final = [
     "DataNormalizer",
     "NormalizeResult",
     "OhlcvNormalizer",
 ]
+
+__all__.append("FormatTransformer")

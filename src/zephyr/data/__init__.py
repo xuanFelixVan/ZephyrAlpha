@@ -74,6 +74,7 @@ from .scheduler import IntegratorScheduler
 from zephyr.data.storage_tiering import StorageTiering
 from zephyr.data.cleaning_rule_engine import CleaningRuleEngine
 from zephyr.data.data_service import DataService
+from zephyr.data.sector_factor_manager import SectorFactorManager
 
 _integrator: IntegratorScheduler | None = None
 
@@ -111,3 +112,5 @@ __all__.append("StorageTiering")
 __all__.append("CleaningRuleEngine")
 
 __all__.append("DataService")
+
+__all__.append("SectorFactorManager")
