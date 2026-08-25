@@ -26,6 +26,7 @@ domain_prefixes:
   BT: D_BACKTEST
   CMP: D_COMPLIANCE
   DATA: D_DATA
+  DE: D_DATA_ENG
   EX: D_EX_CORE
   FE: D_FRONTEND
   GT: D_GOVERNANCE
@@ -2569,6 +2570,91 @@ error_codes:
   module: zephyr.position.core.core_satellite_allocator
   file: src/zephyr/position/core/core_satellite_allocator.py
   introduced: '2026-08-25: DIGEST P1 R5 正式登记（AI-K3 主代理，MOD-POS-025（P1 R5W20）；前缀裁定 IT=智能/SH=共享，INT 属基设不占用）'
+- code: ZA-TR-0023
+  class: InvalidEodInputError
+  module: zephyr.trading.eod_processor
+  file: src/zephyr/trading/eod_processor.py
+  introduced: '2026-08-25: DIGEST P1 R6 正式登记（AI-K3 主代理，MOD-TRADING-012（P1 R6W22））'
+- code: ZA-TR-0024
+  class: InvalidManualInstructionError
+  module: zephyr.trading.manual_instruction_channel
+  file: src/zephyr/trading/manual_instruction_channel.py
+  introduced: '2026-08-25: DIGEST P1 R6 正式登记（AI-K3 主代理，MOD-TRADING-011（P1 R6W22））'
+- code: ZA-TR-0028
+  class: InvalidOrderTransitionError
+  module: zephyr.trading.trading_order_aggregate
+  file: src/zephyr/trading/trading_order_aggregate.py
+  introduced: '2026-08-25: DIGEST P1 R6 正式登记（AI-K3 主代理，MOD-TRADING-009（P1 R6W23））'
+- code: ZA-TR-0026
+  class: InvalidTradingOrderInputError
+  module: zephyr.trading.trading_order_aggregate
+  file: src/zephyr/trading/trading_order_aggregate.py
+  introduced: '2026-08-25: DIGEST P1 R6 正式登记（AI-K3 主代理，MOD-TRADING-009（P1 R6W23））'
+- code: ZA-TR-0027
+  class: DuplicateOrderIdError
+  module: zephyr.trading.trading_order_aggregate
+  file: src/zephyr/trading/trading_order_aggregate.py
+  introduced: '2026-08-25: DIGEST P1 R6 正式登记（AI-K3 主代理，MOD-TRADING-009（P1 R6W23））'
+- code: ZA-TR-0025
+  class: TradingOrderAggregateError
+  module: zephyr.trading.trading_order_aggregate
+  file: src/zephyr/trading/trading_order_aggregate.py
+  introduced: '2026-08-25: DIGEST P1 R6 正式登记（AI-K3 主代理，MOD-TRADING-009（P1 R6W23））'
+- code: ZA-TR-0032
+  class: InvalidSettlementTransitionError
+  module: zephyr.trading.settlement_record_aggregate
+  file: src/zephyr/trading/settlement_record_aggregate.py
+  introduced: '2026-08-25: DIGEST P1 R6 正式登记（AI-K3 主代理，MOD-TRADING-010（P1 R6W23））'
+- code: ZA-TR-0030
+  class: InvalidSettlementInputError
+  module: zephyr.trading.settlement_record_aggregate
+  file: src/zephyr/trading/settlement_record_aggregate.py
+  introduced: '2026-08-25: DIGEST P1 R6 正式登记（AI-K3 主代理，MOD-TRADING-010（P1 R6W23））'
+- code: ZA-TR-0031
+  class: DuplicateSettlementIdError
+  module: zephyr.trading.settlement_record_aggregate
+  file: src/zephyr/trading/settlement_record_aggregate.py
+  introduced: '2026-08-25: DIGEST P1 R6 正式登记（AI-K3 主代理，MOD-TRADING-010（P1 R6W23））'
+- code: ZA-TR-0029
+  class: SettlementRecordAggregateError
+  module: zephyr.trading.settlement_record_aggregate
+  file: src/zephyr/trading/settlement_record_aggregate.py
+  introduced: '2026-08-25: DIGEST P1 R6 正式登记（AI-K3 主代理，MOD-TRADING-010（P1 R6W23））'
+- code: ZA-MLT-0014
+  class: ModelVersionRegistryError
+  module: zephyr.ml_train.core.model_version_registry
+  file: src/zephyr/ml_train/core/model_version_registry.py
+  introduced: '2026-08-25: DIGEST P1 R6 正式登记（AI-K3 主代理，MOD-ML-012（P1 R6W21））'
+- code: ZA-PF-0081
+  class: StrategyFactoryError
+  module: zephyr.pf_core.core.strategy_factory
+  file: src/zephyr/pf_core/core/strategy_factory.py
+  introduced: '2026-08-25: DIGEST P1 R6 正式登记（AI-K3 主代理，MOD-PF-009（P1 R6W21））'
+- code: ZA-PF-0082
+  class: FunnelAdjudicationError
+  module: zephyr.pf_core.core.funnel_portfolio_adjudicator
+  file: src/zephyr/pf_core/core/funnel_portfolio_adjudicator.py
+  introduced: '2026-08-25: DIGEST P1 R6 正式登记（AI-K3 主代理，MOD-PF-010（P1 R6W21））'
+- code: ZA-PF-0083
+  class: ExposureManagerError
+  module: zephyr.pf_core.core.exposure_manager
+  file: src/zephyr/pf_core/core/exposure_manager.py
+  introduced: '2026-08-25: DIGEST P1 R6 正式登记（AI-K3 主代理，MOD-PF-011（P1 R6W21））'
+- code: ZA-PF-0084
+  class: CapacityEstimationError
+  module: zephyr.pf_core.core.strategy_capacity_estimator
+  file: src/zephyr/pf_core/core/strategy_capacity_estimator.py
+  introduced: '2026-08-25: DIGEST P1 R6 正式登记（AI-K3 主代理，MOD-PF-012（P1 R6W21））'
+- code: ZA-DE-0002
+  class: InvalidIncrementalInputError
+  module: zephyr.data_eng.incremental_update_engine
+  file: src/zephyr/data_eng/incremental_update_engine.py
+  introduced: '2026-08-25: DIGEST P1 R6 正式登记（AI-K3 主代理，MOD-DATA_ENG（P1 R6W23））'
+- code: ZA-DE-0001
+  class: IncrementalUpdateError
+  module: zephyr.data_eng.incremental_update_engine
+  file: src/zephyr/data_eng/incremental_update_engine.py
+  introduced: '2026-08-25: DIGEST P1 R6 正式登记（AI-K3 主代理，MOD-DATA_ENG（P1 R6W23））'
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）
