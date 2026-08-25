@@ -87,6 +87,8 @@ from zephyr.factor.factor_availability_monitor import FactorAvailabilityMonitor
 from zephyr.factor.factor_factory import FactorFactory
 from zephyr.factor.factor_production_pipeline import FactorProductionPipeline
 from zephyr.factor.wq_alpha_87 import WqAlpha87
+from zephyr.factor.ufl_deterministic_layer import UflDeterministicLayer
+from zephyr.factor.offline_store import OfflineStore
 
 __all__ = [
     "FactorBase",
@@ -113,3 +115,7 @@ __all__.append("FactorFactory")
 __all__.append("FactorProductionPipeline")
 
 __all__.append("WqAlpha87")
+
+__all__.append("UflDeterministicLayer")
+
+__all__.append("OfflineStore")
