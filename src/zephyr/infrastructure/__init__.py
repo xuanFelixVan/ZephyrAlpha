@@ -1,3 +1,4 @@
+from zephyr.infrastructure.gpu_hot_swap_model import GpuHotSwapModel
 # [TTL] permanent
 """
 
@@ -57,3 +58,5 @@ __all__ = [
     "system_snapshot",
     "warm_hot_gate",
 ]
+
+__all__.append("GpuHotSwapModel")

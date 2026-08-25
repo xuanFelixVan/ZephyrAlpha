@@ -1,4 +1,5 @@
 from zephyr.regime.regime_cycle_analyzer import RegimeCycleAnalyzer
+from zephyr.regime.volatility_regime_alerter import VolatilityRegimeAlerter
 
 # [BLUEPRINT] MOD-REGIME-001 | (auto-injected by S4 reconciler) | §
 # [TTL] permanent
@@ -47,3 +48,5 @@ __all__: list[str] = [
     "regime_feature_builder",
     "risk_signal_builder",
 ]
+
+__all__.append("VolatilityRegimeAlerter")

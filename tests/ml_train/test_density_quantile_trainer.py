@@ -104,3 +104,31 @@ class TestRegistryPromotionStub:
         trainer = DensityQuantileTrainer()
         with pytest.raises(DensityTrainError, match="未训练"):
             trainer.build_registry_entry(metrics={})
+
+
+class TestFocusedBayesianLoss:
+    """A1 聚焦贝叶斯损失（CAND-MLT-013）：左尾加权 w(r)=2.0 (r<VaR_5%)。"""
+
+    def test_focused_weights_double_left_tail(self):
+        from zephyr.ml_train.implementations.density_quantile_trainer import (
+            _focused_sample_weights,
+        )
+
+        y = np.linspace(-1.0, 1.0, 200)  # VaR_5% 线以下恰 10 个样本
+        w = _focused_sample_weights(y, var_quantile=0.05, left_tail_weight=2.0)
+        var_line = float(np.quantile(y, 0.05))
+        assert np.all(w[y < var_line] == 2.0)
+        assert np.all(w[y >= var_line] == 1.0)
+        assert float(np.mean(w > 1.0)) <= 0.05
+
+    def test_train_reports_focused_tail_ratio(self):
+        x, y = _toy_dataset()
+        trainer = DensityQuantileTrainer()  # 默认开启聚焦损失
+        metrics = trainer.train({"X": x}, y, idempotency_key="t-f1")
+        assert 0.0 < metrics["focused_tail_ratio"] <= 0.10
+
+    def test_focused_loss_disabled_by_config(self):
+        x, y = _toy_dataset()
+        trainer = DensityQuantileTrainer(DensityQuantileConfig(focused_loss_enabled=False))
+        metrics = trainer.train({"X": x}, y, idempotency_key="t-f2")
+        assert "focused_tail_ratio" not in metrics

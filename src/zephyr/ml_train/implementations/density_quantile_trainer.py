@@ -1,4 +1,4 @@
-# [BLUEPRINT] ML-DENSITY-001 | docs/03_modules/_domain_machine_learning_train/blueprint.md
+# [BLUEPRINT] MOD-ML-DENSITY | docs/03_modules/_domain_machine_learning_train/blueprint.md
 # [MODULE] zephyr.ml_train.implementations.density_quantile_trainer
 # [DOMAIN] D_ML_TRAIN
 # [DEPENDENCIES] zephyr.ml_train.trainer_base; sklearn.ensemble; numpy
@@ -63,6 +63,8 @@ class DensityQuantileConfig:
     max_iter / learning_rate / max_depth / min_samples_leaf : HGB 超参（小数据 MVP 默认值）。
     random_state : 随机种子（可复现）。
     min_train_samples : 最小训练样本数（不足拒绝训练，防空转）。
+    focused_loss_enabled / focused_var_quantile / focused_left_tail_weight :
+        A1 聚焦贝叶斯损失（CAND-MLT-013）——左尾加权 w(r)=2.0 (r<VaR_5%)，默认开启。
     """
 
     quantiles: tuple[float, ...] = DEFAULT_QUANTILES
@@ -72,12 +74,29 @@ class DensityQuantileConfig:
     min_samples_leaf: int = 20
     random_state: int = 42
     min_train_samples: int = 30
+    #: A1 聚焦贝叶斯损失开关（CAND-MLT-013，Phase 1 即可用）
+    focused_loss_enabled: bool = True
+    #: 左尾判定分位（VaR_5%）
+    focused_var_quantile: float = 0.05
+    #: 左尾样本权重 w(r)=2.0 (r<VaR_5%)
+    focused_left_tail_weight: float = 2.0
 
 
 def _pinball_loss(y: np.ndarray, pred: np.ndarray, quantile: float) -> float:
     """分位数 pinball loss（越小越好）。"""
     diff = y - pred
     return float(np.mean(np.maximum(quantile * diff, (quantile - 1.0) * diff)))
+
+
+def _focused_sample_weights(
+    y: np.ndarray, var_quantile: float, left_tail_weight: float
+) -> np.ndarray:
+    """A1 聚焦贝叶斯损失左尾权重：w(r)=left_tail_weight (r<VaR)，否则 1.0。
+
+    Duke/Monash 2024：对 VaR_5% 以左样本加倍权重，直接改善尾部校准。
+    """
+    var_line = float(np.quantile(y, var_quantile))
+    return np.where(y < var_line, left_tail_weight, 1.0)
 
 
 class DensityQuantileTrainer(ModelTrainerBase):
@@ -132,6 +151,11 @@ class DensityQuantileTrainer(ModelTrainerBase):
             )
 
         self._feature_names = [str(n) for n in features.get("feature_names", [])]
+        sample_w = (
+            _focused_sample_weights(y, self.config.focused_var_quantile, self.config.focused_left_tail_weight)
+            if self.config.focused_loss_enabled
+            else None
+        )
         models: dict[float, Any] = {}
         pinballs: list[float] = []
         for q in self.config.quantiles:
@@ -144,7 +168,7 @@ class DensityQuantileTrainer(ModelTrainerBase):
                 min_samples_leaf=self.config.min_samples_leaf,
                 random_state=self.config.random_state,
             )
-            reg.fit(x, y)
+            reg.fit(x, y, sample_weight=sample_w)
             models[q] = reg
             pinballs.append(_pinball_loss(y, reg.predict(x), q))
         self._models = models
@@ -153,6 +177,8 @@ class DensityQuantileTrainer(ModelTrainerBase):
             "train_pinball_mean": float(np.mean(pinballs)),
             "n_train": float(len(y)),
         }
+        if sample_w is not None:
+            metrics["focused_tail_ratio"] = float(np.mean(sample_w > 1.0))
         self._metadata = ModelMetadata(
             model_id=self.__model_id__,
             model_version="0.1.0",
