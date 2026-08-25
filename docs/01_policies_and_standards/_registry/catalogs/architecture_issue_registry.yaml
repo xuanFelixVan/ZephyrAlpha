@@ -20422,3 +20422,100 @@ entries:
   related_rules: ['AUD-DRAFT-001-DIGEST']
   created: '2026-08-25'
   last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-250'
+  title: DIGEST P1 R6W21：模型版本注册表/策略工厂/漏斗第六层/组合域敞口/容量估算五候选晋升（MOD-ML-012/MOD-PF-009~012）
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    model_version_registry（Model 聚合+版本生命周期+INV-011 门，训练域泛条目切出独立缺口）/
+    strategy_factory（C-006：10 阶段机+四通道+三重门禁+p-hacking+注册恒 candidate，策略族工厂
+    补位兑现 R2 归并注记）/funnel_portfolio_adjudicator（第六层：拥挤降权+corr 过滤+行业市值帽+
+    MaxDD 预算→N≤10）/exposure_manager（PC-07 组合域基准相对主动敞口+行业轮动，与 MOD-RK-38
+    风险域绝对敞口分工裁定）/strategy_capacity_estimator（PC-08 参与率∩平方根冲击）。74 新测
+    全绿，pf_core+ml_train 612/risk 1591 零回归。协调：risk/core 循环导入按 PEP 562 惰性化修复。
+  impact:
+    - 'src/zephyr/ml_train/core/model_version_registry.py + pf_core/core/{strategy_factory,funnel_portfolio_adjudicator,exposure_manager,strategy_capacity_estimator}.py（node 10631554~10631573）'
+  fix_phase: '已落地（2026-08-25，P1 R6W21）'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-251'
+  title: DIGEST P1 R6W22：EOD 处理器/外部指令通道两候选晋升（MOD-TRADING-011/012）+ 三归并（买入后验证/双盘前检查器）
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    eod_processor（D-TRADING-04 canonical：价格快照→NAV/P&L 确认→风险重估挂 15:30 链，
+    Decimal-only frozen）/manual_instruction_channel（C-013：schema+双闸不短路裁决+执行回报
+    对账+全程审计）。归并三则：B10-01475 买入后验证→MOD-RK-40（R3 预告兑现）；B1-00382 与
+    B14-04680 双盘前检查器→MOD-EX-063（四道关+boot_hooks 已接线）。撞号退让：初铸
+    MOD-TRADING-009/010 与 W23 撞车改铸 011/012（治理建议：铸号锁）。47 新测全绿，
+    sell_decision+trading 2533 零回归。
+  impact:
+    - 'src/zephyr/trading/{eod_processor,manual_instruction_channel}.py（node 10631552~10631562）'
+  fix_phase: '已落地（2026-08-25，P1 R6W22）；三归并同批'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-252'
+  title: DIGEST P1 R6W23：TradingOrder/SettlementRecord 聚合+增量更新引擎三候选晋升（MOD-TRADING-009/010）+ EOD 撞名归并与域泛条目豁免
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    trading_order_aggregate（AGG-TRD-01 运营全生命周期状态机+幂等键+领域事件，执行段一行
+    不复制委托 design 边）/settlement_record_aggregate（AGG-TRD-02 差异工单同形态）/
+    incremental_update_engine（data_eng 缺协调层实证：watermark+upsert 编排，scheduler/
+    factor_base 为被协调件）。归并：B14-04718→CAND-TRD-005（同号 D-TRADING-04 撞车，
+    git 实证 W22 在飞）；豁免：B6-08086 域泛条目（trading 包已承载）。47 新测全绿，
+    trading+zephyr/data 3585 零回归。
+  impact:
+    - 'src/zephyr/trading/{trading_order_aggregate,settlement_record_aggregate}.py + data_eng/incremental_update_engine.py（node 10631546~10631551）'
+  fix_phase: '已落地（2026-08-25，P1 R6W23）；归并豁免同批'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-253'
+  title: DIGEST P1 R6W24：异常告警中心/分布漂移监控/告警可视化/策略灰度/SOR Agent 五候选晋升（MOD-DATENG-001/MOD-FBL-001/MOD-FE-003/MOD-INF-072/MOD-XS-015）
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    data_anomaly_alerter（告警中心检测/分级/抑制/路由，与 cleaning_anomaly_engine 修复闭环
+    分工）/distribution_drift_monitor（PSI/KL/MDD 三路响应矩阵，drift 族 stub 补实）/
+    alert_center（前端告警面板对齐 gate_statistics 形态）/strategy_canary_release（策略级
+    灰度发布，gray_shadow=模型影子/canary_manager=权重桩/lifecycle=因子级均不同层）/
+    sor_agent（SOR Agent 化，族卡同 MOD-AU-011 禁 LLM 写进门控）。83 新测全绿，
+    六目录 5155 零回归。
+  impact:
+    - 'src/zephyr/data_eng/data_anomaly_alerter.py + feedback_loop/detectors/drift/distribution_drift_monitor.py + frontend/dashboard/components/alert_center.py + infrastructure/strategy_canary_release.py + ex_sor/core/sor_agent.py（node 10631559~10631581）'
+  fix_phase: '已落地（2026-08-25，P1 R6W24）'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-254'
+  title: DIGEST P1 R7W25 最终波：PEAD/trace 追踪/外部系统连接/模型漂移监控/分层指挥链五候选晋升——P1 125 条全闭环
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    pead_event_model（模块49 SUE+20 日漂移收益+财报季持仓标记，与解析/采集/日历三面分工）/
+    trace_context_store（D-SIGNAL-100 SQLite 追踪表+单笔信号反查，与 WORM/lineage/出厂验证
+    分工）/external_system_connector（D-INT-10 统一契约：能力+健康+配额+熔断挂接，与
+    vendor_registry/failover/broker_api 分工）/model_drift_monitor（D-ML-SERVE 泛条目切出
+    MS-03：四维漂移+E-OP-02 事件全仓首个生产者，生命周期面归 MOD-ML-012 不重建）/
+    layered_command_chain（三层委托/上报协议+强制 A2A 网关+越层拒绝告警，与能力路由/Agent
+    实体/L1 发现分工）。93 新测全绿，九域 1899+zephyr/data 1470 零回归。
+    至此 DIGEST P1 125 条=105 建成+20 REVIEW 全部闭环（P0 37 条=35+2 先行闭环）。
+  impact:
+    - 'src/zephyr/signal_fundamental/{pead_event_model,audit/trace_context_store}.py + integration/external_system_connector.py + ml_serve/core/model_drift_monitor.py + orchestrator/layered_command_chain.py（node 10631582~10631591）'
+  fix_phase: '已落地（2026-08-25，P1 R7W25）；DIGEST P0+P1 全量闭环'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'

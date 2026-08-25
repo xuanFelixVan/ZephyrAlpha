@@ -10357,6 +10357,166 @@ creation_tokens:
   token: auto-test-patchtst-density-encoder-20260825
   created_by: AI-K3-DIGEST-P1R5（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: patchtst_density_encoder
+- file: src/zephyr/trading/trading_order_aggregate.py
+  token: auto-scaffold-trading_order_aggregate-20260826
+  created_by: scaffold.py
+  capability: trading_order_aggregate
+- file: src/zephyr/trading/eod_processor.py
+  token: auto-scaffold-eod_processor-20260826
+  created_by: scaffold.py
+  capability: eod_processor
+- file: src/zephyr/trading/manual_instruction_channel.py
+  token: auto-scaffold-manual_instruction_channel-20260826
+  created_by: scaffold.py
+  capability: manual_instruction_channel
+- file: src/zephyr/ml_train/core/model_version_registry.py
+  token: auto-scaffold-model_version_registry-20260826
+  created_by: scaffold.py
+  capability: model_version_registry
+- file: src/zephyr/trading/settlement_record_aggregate.py
+  token: auto-scaffold-settlement_record_aggregate-20260826
+  created_by: scaffold.py
+  capability: settlement_record_aggregate
+- file: src/zephyr/data_eng/data_anomaly_alerter.py
+  token: auto-scaffold-data_anomaly_alerter-20260826
+  created_by: scaffold.py
+  capability: data_anomaly_alerter
+- file: src/zephyr/pf_core/core/strategy_factory.py
+  token: auto-scaffold-strategy_factory-20260826
+  created_by: scaffold.py
+  capability: strategy_factory
+- file: src/zephyr/pf_core/core/funnel_portfolio_adjudicator.py
+  token: auto-scaffold-funnel_portfolio_adjudicator-20260826
+  created_by: scaffold.py
+  capability: funnel_portfolio_adjudicator
+- file: src/zephyr/data_eng/incremental_update_engine.py
+  token: auto-scaffold-incremental_update_engine-20260826
+  created_by: scaffold.py
+  capability: incremental_update_engine
+- file: src/zephyr/pf_core/core/exposure_manager.py
+  token: auto-scaffold-exposure_manager-20260826
+  created_by: scaffold.py
+  capability: exposure_manager
+- file: src/zephyr/pf_core/core/strategy_capacity_estimator.py
+  token: auto-scaffold-strategy_capacity_estimator-20260826
+  created_by: scaffold.py
+  capability: strategy_capacity_estimator
+- file: src/zephyr/feedback_loop/detectors/drift/distribution_drift_monitor.py
+  token: auto-scaffold-distribution_drift_monitor-20260826
+  created_by: scaffold.py
+  capability: distribution_drift_monitor
+- file: src/zephyr/frontend/dashboard/components/alert_center.py
+  token: auto-scaffold-alert_center-20260826
+  created_by: scaffold.py
+  capability: alert_center
+- file: src/zephyr/infrastructure/strategy_canary_release.py
+  token: auto-scaffold-strategy_canary_release-20260826
+  created_by: scaffold.py
+  capability: strategy_canary_release
+- file: src/zephyr/ex_sor/core/sor_agent.py
+  token: auto-scaffold-sor_agent-20260826
+  created_by: scaffold.py
+  capability: sor_agent
+- file: src/zephyr/signal_fundamental/pead_event_model.py
+  token: auto-scaffold-pead_event_model-20260826
+  created_by: scaffold.py
+  capability: pead_event_model
+- file: src/zephyr/integration/external_system_connector.py
+  token: auto-scaffold-external_system_connector-20260826
+  created_by: scaffold.py
+  capability: external_system_connector
+- file: src/zephyr/signal_fundamental/audit/trace_context_store.py
+  token: auto-scaffold-trace_context_store-20260826
+  created_by: scaffold.py
+  capability: trace_context_store
+- file: src/zephyr/ml_serve/core/model_drift_monitor.py
+  token: auto-scaffold-model_drift_monitor-20260826
+  created_by: scaffold.py
+  capability: model_drift_monitor
+- file: src/zephyr/orchestrator/layered_command_chain.py
+  token: auto-scaffold-layered_command_chain-20260826
+  created_by: scaffold.py
+  capability: layered_command_chain
+- file: tests/ml_train/test_model_version_registry.py
+  token: auto-test-model-version-registry-20260825
+  created_by: AI-K3-DIGEST-P1R67（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: model_version_registry
+- file: tests/pf_core/test_strategy_factory.py
+  token: auto-test-strategy-factory-20260825
+  created_by: AI-K3-DIGEST-P1R67（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: strategy_factory
+- file: tests/pf_core/test_funnel_portfolio_adjudicator.py
+  token: auto-test-funnel-portfolio-adjudicator-20260825
+  created_by: AI-K3-DIGEST-P1R67（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: funnel_portfolio_adjudicator
+- file: tests/pf_core/test_exposure_manager.py
+  token: auto-test-exposure-manager-20260825
+  created_by: AI-K3-DIGEST-P1R67（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: exposure_manager
+- file: tests/pf_core/test_strategy_capacity_estimator.py
+  token: auto-test-strategy-capacity-estimator-20260825
+  created_by: AI-K3-DIGEST-P1R67（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: strategy_capacity_estimator
+- file: tests/trading/test_manual_instruction_channel.py
+  token: auto-test-manual-instruction-channel-20260825
+  created_by: AI-K3-DIGEST-P1R67（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: manual_instruction_channel
+- file: tests/trading/test_eod_processor.py
+  token: auto-test-eod-processor-20260825
+  created_by: AI-K3-DIGEST-P1R67（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: eod_processor
+- file: tests/trading/test_trading_order_aggregate.py
+  token: auto-test-trading-order-aggregate-20260825
+  created_by: AI-K3-DIGEST-P1R67（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: trading_order_aggregate
+- file: tests/trading/test_settlement_record_aggregate.py
+  token: auto-test-settlement-record-aggregate-20260825
+  created_by: AI-K3-DIGEST-P1R67（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: settlement_record_aggregate
+- file: tests/zephyr/data/test_incremental_update_engine.py
+  token: auto-test-incremental-update-engine-20260825
+  created_by: AI-K3-DIGEST-P1R67（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: incremental_update_engine
+- file: tests/zephyr/data/test_data_anomaly_alerter.py
+  token: auto-test-data-anomaly-alerter-20260825
+  created_by: AI-K3-DIGEST-P1R67（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: data_anomaly_alerter
+- file: tests/drift/test_distribution_drift_monitor.py
+  token: auto-test-distribution-drift-monitor-20260825
+  created_by: AI-K3-DIGEST-P1R67（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: distribution_drift_monitor
+- file: tests/frontend/test_alert_center.py
+  token: auto-test-alert-center-20260825
+  created_by: AI-K3-DIGEST-P1R67（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: alert_center
+- file: tests/infrastructure/test_strategy_canary_release.py
+  token: auto-test-strategy-canary-release-20260825
+  created_by: AI-K3-DIGEST-P1R67（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: strategy_canary_release
+- file: tests/ex_sor/test_sor_agent.py
+  token: auto-test-sor-agent-20260825
+  created_by: AI-K3-DIGEST-P1R67（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: sor_agent
+- file: tests/signal_fundamental/test_pead_event_model.py
+  token: auto-test-pead-event-model-20260825
+  created_by: AI-K3-DIGEST-P1R67（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: pead_event_model
+- file: tests/signal_fundamental/audit/test_trace_context_store.py
+  token: auto-test-trace-context-store-20260825
+  created_by: AI-K3-DIGEST-P1R67（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: trace_context_store
+- file: tests/integration/test_external_system_connector.py
+  token: auto-test-external-system-connector-20260825
+  created_by: AI-K3-DIGEST-P1R67（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: external_system_connector
+- file: tests/ml_serve/test_model_drift_monitor.py
+  token: auto-test-model-drift-monitor-20260825
+  created_by: AI-K3-DIGEST-P1R67（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: model_drift_monitor
+- file: tests/orchestrator/test_layered_command_chain.py
+  token: auto-test-layered-command-chain-20260825
+  created_by: AI-K3-DIGEST-P1R67（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: layered_command_chain
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
