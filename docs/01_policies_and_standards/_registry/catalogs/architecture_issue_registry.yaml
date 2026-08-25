@@ -19913,3 +19913,87 @@ entries:
   - '#ARCH-218'
   created: '2026-08-25'
   last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-224'
+  title: DIGEST P0 W2a：策略异常退出编排/盘前检查器/阈值拆分检测器三候选晋升（MOD-TRADING-008/MOD-EX-063/MOD-GOV-050）
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    CAND-TRD-002 strategy_abnormal_exit_orchestrator（冻结新信号→优先级撤单/平仓→仓位核对→EXITED
+    →告警审计；finalizer/stop_gate 端口注入薄装配不 import 不复制）；CAND-EX-007 premarket_checker
+    （盘前四道关接 boot_hooks 消费方 9→10，与 production 态 MOD-EX-024 pre_execution_checker 分工：
+    盘前 vs 逐单，限额复用 RiskLimits CTR-003）；CAND-GOVENFOR-001 threshold_split_detector
+    （交易意图先登记+30 分钟/当日两档滑窗累计比对审批阈值 80% 告警，ApprovalRequest 契约 import
+    frontend.interface_base，audit_sink 注入）。51 新测全绿，三域回归零回归。
+  impact:
+    - 'src/zephyr/trading/strategy_abnormal_exit_orchestrator.py（node 10588977）'
+    - 'src/zephyr/ex_core/premarket_checker.py（10588984）+ boot_hooks.py 接入'
+    - 'src/zephyr/gov_enforcement/rule_enforcement/threshold_split_detector.py（10588994）'
+  fix_phase: '已落地（2026-08-25，W2a）；生产接线留运行时装配批'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-225'
+  title: DIGEST P0 W2b：H1FS 运行时族四候选晋升（MOD-INF-063~066）+ 系统级执行全留 Owner 窗口
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    CAND-H1FS-004 redis_state_layer_ssot（13 命名空间三层+TTL 矩阵收口+RDB/AOF 配置渲染）/
+    CAND-H1FS-003 trading_core_process_spec（P3 独立进程规格：风控/订单/miniQMT/持仓同步，
+    核 8-11 独占+8GB 禁 swap 仅配置声明）/CAND-H1FS-005 hot_plane_budget（Tick→风控→下单
+    10ms 预算 2/3/5ms 分解）/CAND-H1FS-002 process_supervisor（P1~P5 启停升序/降序+NSSM
+    安装脚本草稿 render_nssm_install_script+服务定义 YAML 就绪件）。硬边界遵守：NSSM 注册/
+    开机自启/redis.conf 应用/核亲和禁 swap 全部零系统级执行，留 Owner 窗口。68 新测全绿。
+  impact:
+    - 'src/zephyr/infrastructure/{redis_state_layer_ssot,hot_plane_budget,process_supervisor}.py + src/zephyr/trading/trading_core_process_spec.py（node 10588976/10588982/10588990/10588997）'
+    - 'config/nssm_p1_p5_service_definitions.yaml（就绪件）'
+  fix_phase: '已落地（2026-08-25，W2b）；系统级执行 4 项留 Owner 窗口'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST', '宪章硬边界']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-226'
+  title: DIGEST P0 W2c：密钥层级/信号质量降级检测/A2A 检查网关/FailoverCoordinator 四候选晋升
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    CAND-SEC-004 key_hierarchy（既有 stub 原地实现：主密钥环境变量→KEK HKDF→DEK 按域派发
+    零明文+90 天轮换版本化+信封 seal/open+审计哈希链注入点+启动五项自检）/CAND-SIGQC-001
+    degradation_detector（IC 滑窗衰减/覆盖率骤降/方向漂移三维+三级 worst-of+SEVERE 阻断下发+
+    告警复用 Alerter 路由）/CAND-INFRAA2A-001 a2a_check_gateway（身份/能力/边界三段+PASS/DENY/
+    GATED 三态+GATED 挂起有界审批队列不批绝不放行，热路径 <1ms 实测）/CAND-BACL-002
+    failover_coordinator（三源优先级+质量分动态切换+全源降级联动 trading 熔断锁存防重复）。
+    57 新测全绿，五域回归零回归。
+  impact:
+    - 'src/zephyr/security/access_control/key_hierarchy.py（node 10584403）'
+    - 'src/zephyr/signal_quality/degradation_detector.py（10588983）'
+    - 'src/zephyr/infrastructure/a2a_protocol/a2a_check_gateway.py（10588991）'
+    - 'src/zephyr/integration/failover_coordinator.py（10588998）'
+  fix_phase: '已落地（2026-08-25，W2c）；生产接线注入点 4 处留集成批'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-227'
+  title: DIGEST P0 W2d：四级自治注册表/Per-Agent Gate/RiskManager Agent/合规规则引擎四候选晋升（MOD-AU-005~007/MOD-CMP-012）
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    CAND-AUTONOMYCORE-004 autonomy_level_registry（L0~L3 四级自治声明入 Agent Card）/
+    CAND-AUTONOMYCORE-005 per_agent_gate（允许/禁止/限额/时段规则集内嵌 Agent Card，纯内存
+    匹配 <1ms）/CAND-AUTONOMYCORE-003 risk_manager_agent（读 risk 限额/回撤/VaR 产熔断建议
+    与复盘，触发 trading_kill_switch）/CAND-CMP-002 compliance_rule_engine（DSL 解析+规则
+    版本不可变历史+活跃指针+Pre-Trade 同步 Hard Block/Soft Warn）。形态裁定=判定核心纯函数+
+    执行体回调委托零复制。108 新测全绿（域基线 1350→1458 零回归）。
+  impact:
+    - 'src/zephyr/autonomy_core/{autonomy_level_registry,per_agent_gate}.py + agents/risk_manager_agent.py（node 10588980/10588988/10589000）'
+    - 'src/zephyr/compliance/compliance_rule_engine.py（10589003）'
+  fix_phase: '已落地（2026-08-25，W2d）；运行时接线留装配批'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'

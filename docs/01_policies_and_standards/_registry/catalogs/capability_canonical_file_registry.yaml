@@ -9549,6 +9549,122 @@ creation_tokens:
   token: auto-test-performance-attribution-degradation-20260825
   created_by: AI-K3-DIGEST-W1（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: performance_attribution_degradation
+- file: src/zephyr/infrastructure/redis_state_layer_ssot.py
+  token: auto-scaffold-redis_state_layer_ssot-20260825
+  created_by: scaffold.py
+  capability: redis_state_layer_ssot
+- file: src/zephyr/trading/strategy_abnormal_exit_orchestrator.py
+  token: auto-scaffold-strategy_abnormal_exit_orchestrator-20260825
+  created_by: scaffold.py
+  capability: strategy_abnormal_exit_orchestrator
+- file: src/zephyr/autonomy_core/autonomy_level_registry.py
+  token: auto-scaffold-autonomy_level_registry-20260825
+  created_by: scaffold.py
+  capability: autonomy_level_registry
+- file: src/zephyr/signal_quality/degradation_detector.py
+  token: auto-scaffold-degradation_detector-20260825
+  created_by: scaffold.py
+  capability: degradation_detector
+- file: src/zephyr/trading/trading_core_process_spec.py
+  token: auto-scaffold-trading_core_process_spec-20260825
+  created_by: scaffold.py
+  capability: trading_core_process_spec
+- file: src/zephyr/ex_core/premarket_checker.py
+  token: auto-scaffold-premarket_checker-20260825
+  created_by: scaffold.py
+  capability: premarket_checker
+- file: src/zephyr/autonomy_core/per_agent_gate.py
+  token: auto-scaffold-per_agent_gate-20260825
+  created_by: scaffold.py
+  capability: per_agent_gate
+- file: src/zephyr/infrastructure/a2a_protocol/a2a_check_gateway.py
+  token: auto-scaffold-a2a_check_gateway-20260825
+  created_by: scaffold.py
+  capability: a2a_check_gateway
+- file: src/zephyr/infrastructure/hot_plane_budget.py
+  token: auto-scaffold-hot_plane_budget-20260825
+  created_by: scaffold.py
+  capability: hot_plane_budget
+- file: src/zephyr/gov_enforcement/rule_enforcement/threshold_split_detector.py
+  token: auto-scaffold-threshold_split_detector-20260825
+  created_by: scaffold.py
+  capability: threshold_split_detector
+- file: src/zephyr/integration/failover_coordinator.py
+  token: auto-scaffold-failover_coordinator-20260825
+  created_by: scaffold.py
+  capability: failover_coordinator
+- file: src/zephyr/infrastructure/process_supervisor.py
+  token: auto-scaffold-process_supervisor-20260825
+  created_by: scaffold.py
+  capability: process_supervisor
+- file: src/zephyr/autonomy_core/agents/risk_manager_agent.py
+  token: auto-scaffold-risk_manager_agent-20260825
+  created_by: scaffold.py
+  capability: risk_manager_agent
+- file: src/zephyr/compliance/compliance_rule_engine.py
+  token: auto-scaffold-compliance_rule_engine-20260825
+  created_by: scaffold.py
+  capability: compliance_rule_engine
+- file: tests/trading/test_strategy_abnormal_exit_orchestrator.py
+  token: auto-test-strategy-abnormal-exit-orchestrator-20260825
+  created_by: AI-K3-DIGEST-W2（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: strategy_abnormal_exit_orchestrator
+- file: tests/ex_core/test_premarket_checker.py
+  token: auto-test-premarket-checker-20260825
+  created_by: AI-K3-DIGEST-W2（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: premarket_checker
+- file: tests/governance/rule_enforcement/test_threshold_split_detector.py
+  token: auto-test-threshold-split-detector-20260825
+  created_by: AI-K3-DIGEST-W2（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: threshold_split_detector
+- file: tests/infrastructure/test_redis_state_layer_ssot.py
+  token: auto-test-redis-state-layer-ssot-20260825
+  created_by: AI-K3-DIGEST-W2（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: redis_state_layer_ssot
+- file: tests/trading/test_trading_core_process_spec.py
+  token: auto-test-trading-core-process-spec-20260825
+  created_by: AI-K3-DIGEST-W2（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: trading_core_process_spec
+- file: tests/infrastructure/test_hot_plane_budget.py
+  token: auto-test-hot-plane-budget-20260825
+  created_by: AI-K3-DIGEST-W2（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: hot_plane_budget
+- file: tests/infrastructure/test_process_supervisor.py
+  token: auto-test-process-supervisor-20260825
+  created_by: AI-K3-DIGEST-W2（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: process_supervisor
+- file: tests/security/access_control/test_key_hierarchy.py
+  token: auto-test-key-hierarchy-20260825
+  created_by: AI-K3-DIGEST-W2（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: key_hierarchy
+- file: tests/signal_quality/test_degradation_detector.py
+  token: auto-test-degradation-detector-20260825
+  created_by: AI-K3-DIGEST-W2（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: degradation_detector
+- file: tests/a2a/test_a2a_check_gateway.py
+  token: auto-test-a2a-check-gateway-20260825
+  created_by: AI-K3-DIGEST-W2（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: a2a_check_gateway
+- file: tests/integration/test_failover_coordinator.py
+  token: auto-test-failover-coordinator-20260825
+  created_by: AI-K3-DIGEST-W2（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: failover_coordinator
+- file: tests/autonomy/test_autonomy_level_registry.py
+  token: auto-test-autonomy-level-registry-20260825
+  created_by: AI-K3-DIGEST-W2（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: autonomy_level_registry
+- file: tests/autonomy/test_per_agent_gate.py
+  token: auto-test-per-agent-gate-20260825
+  created_by: AI-K3-DIGEST-W2（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: per_agent_gate
+- file: tests/autonomy/test_risk_manager_agent.py
+  token: auto-test-risk-manager-agent-20260825
+  created_by: AI-K3-DIGEST-W2（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: risk_manager_agent
+- file: tests/compliance/test_compliance_rule_engine.py
+  token: auto-test-compliance-rule-engine-20260825
+  created_by: AI-K3-DIGEST-W2（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: compliance_rule_engine
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

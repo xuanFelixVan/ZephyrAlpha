@@ -40422,11 +40422,11 @@ entries:
   plain_zh: 测试：把引擎资源优化跑一遍，确认这块逻辑没毛病。
 - module_path: src/zephyr/security/access_control/key_hierarchy.py
   domain_id: D_SECURITY
-  name_zh: zephyr.security.access_control.key_hierarchy — implementation pending."""
-  name_en: Key Hierarchy
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 安全·访问控制的密钥 hierarchy：负责密钥 hierarchy相关的具体事务，是安全·访问控制这条链路里的一个支撑节点。
+  name_zh: "三层密钥层级管理"
+  name_en: "Key Hierarchy"
+  desc_zh: "主密钥-KEK-DEK三层信封加密，按域派发数据密钥"
+  desc_en: "Three-tier master/KEK/DEK envelope encryption with per-domain DEK dispatch"
+  plain_zh: "管密钥的保险柜：主密钥放环境变量，派生出各域专用数据密钥，90天到期轮换，每次用钥匙都记进防篡改审计链，启动时自检钥匙齐全。"
 - module_path: src/zephyr/reporting/realtime_pnl_dashboard.py
   domain_id: D_REPORTING
   name_zh: RealtimePnl仪表盘
@@ -43242,6 +43242,181 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "盯策略不能只看赚不赚钱：把收益拆成配置/选择/交互三块看门道（归因计算复用既有引擎），再算因子 IC 的 60 日均线——当前均线比基准均线掉了超过一半就判策略退化、权重直接归零；如果策略挤在拥挤因子上（拥挤度超 0.6）就先减半。判定理由全留痕，输出的是降权指令，真正写回权重由编排层执行。"
+- module_path: src/zephyr/infrastructure/redis_state_layer_ssot.py
+  domain_id: D_INFRA_RUNTIME
+  name_zh: "Redis 共享状态层 SSOT"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把 A9 运维架构里 Redis 单实例的 13 个键命名空间（实时数据层/状态协调层/运维控制层三层）、每个命名空间的过期时间矩阵（行情 5 秒/信号 60 秒/因子 300 秒）、每小时 RDB 加每秒 AOF 的混合备份参数、8GB 内存硬上限和故障时先重放 AOF 的恢复步骤，全部收口成一个唯一真源模块；别的代码要查命名空间规则、生成 redis 配置草稿或做一致性校验都从这里拿，避免各处长出不一样的一套。"
+- module_path: src/zephyr/trading/strategy_abnormal_exit_orchestrator.py
+  domain_id: D_TRADING
+  name_zh: "策略异常退出编排器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "策略出事了要安全收场：先冻结它发的新信号，再按优先级撤掉挂单、平掉持仓，核对仓位清理干净后才把状态置为已退出；哪一步没走干净就告警并留审计痕迹，绝不假装退完了。覆盖崩溃、超时、限额触发三条路径。"
+- module_path: tests/trading/test_strategy_abnormal_exit_orchestrator.py
+  domain_id: D_TRADING
+  name_zh: "策略异常退出编排器单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证策略异常退出编排器：三条触发路径都能走通五步收场流程，冻结失败不许宣称退完，撤单平仓按优先级排序，仓位有残留就报失败并升级告警，同一幂等键重放不重复执行。"
+- module_path: tests/security/access_control/test_key_hierarchy.py
+  domain_id: D_SECURITY
+  name_zh: "密钥层级管理测试"
+  name_en: "Key Hierarchy Tests"
+  desc_zh: "三层密钥层级派发/信封/轮换/审计/自检的单元测试"
+  desc_en: "Unit tests for key hierarchy dispatch, envelope, rotation, audit and self-check"
+  plain_zh: "验证密钥保险柜好用：没主密钥直接拒绝开工，各域密钥互不通用，密文改一个字节就打不开，到期能换新钥，每次用钥都留审计记录。"
+- module_path: src/zephyr/autonomy_core/autonomy_level_registry.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: "四级自治注册表"
+  name_en: "Autonomy Level Registry"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给每个 Agent 角色定一个自治级别：L0 只跑死规则、L1 只出建议、L2 要人批了才能动、L3 可以自主执行；同时规定 human_gated 和 immutable_core 两类区域的级别上限谁也抬不动，越权执行会吐出熔断信号和审计记录，供边界门和熔断编排器消费。"
+- module_path: src/zephyr/trading/trading_core_process_spec.py
+  domain_id: D_INFRA_RUNTIME
+  name_zh: "P3 交易核心进程规格 SSOT"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把 A9 运维架构里 P3 交易核心进程（trading_core）的规格收成唯一真源：独占 8 到 11 号 CPU 核、内存峰值 8GB 且禁止 swap、风控神经网络常驻 2GB 显存、每 2 秒打一次心跳 10 秒没心跳算超时、以及 HC-01 铁律——任何时段崩溃都不自动重启只告警等人工。别的模块要取 P3 的心跳键、心跳过期时间或生成进程配置声明都从这一个地方拿；真正的绑核、禁 swap 这些系统级动作仍归 Owner 窗口执行，这里只出声明。"
+- module_path: tests/autonomy/test_autonomy_level_registry.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: "四级自治注册表单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "四级自治注册表的单元测试：验证 L0-L3 级别判定矩阵、区上限抬不动、未登记兜底、越级熔断信号与审计记录形状。"
+- module_path: src/zephyr/ex_core/premarket_checker.py
+  domain_id: D_EX_CORE
+  name_zh: "盘前检查器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "每天开盘前先过四道关：限额基线是不是当天的且取值合法、纪律预检有没有违规、行情数据完整性达不达标、各子系统是否就绪；任何一关不过当日就不许开张，探针出问题也按不过处理，绝不放行。"
+- module_path: tests/ex_core/test_premarket_checker.py
+  domain_id: D_EX_CORE
+  name_zh: "盘前检查器单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证盘前检查器：四道关全过才算就绪；过期限额、取值越界、纪律违规、数据质量不达标、子系统未就绪、探针异常，六种情况都必须拦住；报告不可变，事件订阅重复注册不重复生效。"
+- module_path: src/zephyr/signal_quality/degradation_detector.py
+  domain_id: D_SIGQC
+  name_zh: "信号质量降级检测器"
+  name_en: "Signal Quality Degradation Detector"
+  desc_zh: "IC衰减/覆盖率骤降/方向漂移多维检测与三级降级分级"
+  desc_en: "Multi-dimensional degradation detection (IC decay, coverage drop, direction drift) with 3-level grading"
+  plain_zh: "盯着信号质量的哨兵：发现因子IC明显衰减、信号覆盖率骤降或多空方向漂移就分级报警，重度降级时拦下信号不再下发，每次判定都写进信号审计日志。"
+- module_path: tests/signal_quality/test_degradation_detector.py
+  domain_id: D_SIGQC
+  name_zh: "信号质量降级检测器测试"
+  name_en: "Degradation Detector Tests"
+  desc_zh: "多维检测/三级分级/阻断/告警路由/审计/滑窗恢复的单元测试"
+  desc_en: "Unit tests for detection dimensions, grading, blocking, alert routing, audit and window recovery"
+  plain_zh: "验证质量哨兵靠谱：指标平稳不吵，衰减分轻中重三级报警，重度直接拦信号，同级别不重复骚扰、升级才再报，窗口滑走坏样本后能自动恢复。"
+- module_path: src/zephyr/autonomy_core/per_agent_gate.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: "单Agent门控层"
+  name_en: "Per-Agent Gate"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "每个 Agent 自带的一道门禁：它的 Agent Card 里写着能干哪些动作、不能干哪些动作、一笔单最多下多少钱、什么时段才准动；每次要动作前在内存里对一遍这些规则，不让干的就拦下并往安全事件总线写一条记录，全程不碰磁盘，微秒级返回。"
+- module_path: src/zephyr/infrastructure/hot_plane_budget.py
+  domain_id: D_INFRA_RUNTIME
+  name_zh: "Hot 平面时延预算 SSOT"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把 A9 运维架构 Hot 平面的 10 毫秒端到端时延预算落成可校验的真源：Tick 到风控触发 2 毫秒、风控规则评估 3 毫秒、订单构建加下单 5 毫秒，超任何一段或总和超 10 毫秒就判熔断告警；同时声明 P3 独占 8 到 11 号核、禁止磁盘 IO（日志除外）、miniQMT 连接独占、Redis 走本地读路径。绑核、禁 IO 这些系统级动作归 Owner 窗口，这里只做判定和声明。"
+- module_path: tests/autonomy/test_per_agent_gate.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: "单Agent门控层单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "单 Agent 门控层的单元测试：验证规则集配置校验、黑/白名单与限额时段判定序、未登记兜底拦截、DENY 写安全事件且总线异常不阻断。"
+- module_path: src/zephyr/infrastructure/a2a_protocol/a2a_check_gateway.py
+  domain_id: D_INFRA_A2A
+  name_zh: "A2A检查网关"
+  name_en: "A2A Check Gateway"
+  desc_zh: "A2A调用前身份/能力/边界三段校验与PASS/DENY/GATED三态门控"
+  desc_en: "Pre-call A2A gateway: identity/capability/boundary checks with PASS/DENY/GATED tri-state"
+  plain_zh: "Agent之间打电话前的门卫：先验身份证和签名，再看对方声明没声明这项能力，最后查通信边界；可疑的挂起来交人工审批，全程不到一毫秒。"
+- module_path: tests/a2a/test_a2a_check_gateway.py
+  domain_id: D_INFRA_A2A
+  name_zh: "A2A检查网关测试"
+  name_en: "A2A Check Gateway Tests"
+  desc_zh: "三段校验/三态/审批流/热路径/OWASP ASI01-10映射的单元测试"
+  desc_en: "Unit tests for 3-stage checks, tri-state, approval flow, hot path and OWASP ASI01-10 mapping"
+  plain_zh: "验证门卫不放水：假签名进不来、没声明的能力不让用、跨区调用一律挂人工，人工不批就永远不放行，而且全程开销控制在一毫秒内。"
+- module_path: src/zephyr/gov_enforcement/rule_enforcement/threshold_split_detector.py
+  domain_id: D_GOV_ENFORCEMENT
+  name_zh: "阈值拆分检测器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "防止把大笔交易拆成一堆小单来绕开人工审批：每笔委托先登记，按同标的同方向在30分钟和当日两档窗口里累计数量和金额，如果每笔都低于审批阈值但累计到了阈值的八成，就判定为拆分，立刻拦住后续同向委托、提请人工审批并告警留审计痕。"
+- module_path: tests/governance/rule_enforcement/test_threshold_split_detector.py
+  domain_id: D_GOV_ENFORCEMENT
+  name_zh: "阈值拆分检测器单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证阈值拆分检测器：多笔小单累计超八成即判拆分并阻断后续单；窗内有单笔超阈值不算拆分；提请审批同日同向只提一次；审批网关或告警审计端口出故障不影响阻断生效；非法意图直接报错；窗口滑出30分钟即不计入。"
+- module_path: src/zephyr/infrastructure/process_supervisor.py
+  domain_id: D_INFRA_RUNTIME
+  name_zh: "NSSM 五进程 Supervisor"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把 A9 运维架构的五个进程（行情、信号、交易核心、AI 自治、ML 管线）的守护编排收成唯一真源：开机按优先级数值从小到大启动（P1 到 P5），关机反过来从大到小，且交易核心必须先于行情关闭、行情必须先于 Redis 关闭；每个进程的心跳间隔和超时各不相同，崩溃后怎么办也按进程分档——交易核心任何时段都不自动重启只告警（HC-01 铁律），行情和信号交易时段告警加降级、非交易时段自动重启，AI 自治和 ML 管线自动重启但连错 3 次就停手告警。NSSM 注册、开机自启这些系统动作归 Owner 窗口，本模块只产出服务定义、安装脚本草稿和编排判定代码。"
+- module_path: src/zephyr/autonomy_core/agents/risk_manager_agent.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: "风控Agent(RiskManager)"
+  name_en: "RiskManager Agent"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "盯着风控引擎状态的角色：实时看限额有没有破、回撤有多深、VaR 超没超；超了就给出降仓或停开的建议并写一条建议审计，真到硬越限且总停开关还没拉时，才通过确定性校验路径发出触发信号再写一条执行审计；它只建议和发信号，真拉闸的还是确定性代码。"
+- module_path: src/zephyr/integration/failover_coordinator.py
+  domain_id: D_INTEGRATION
+  name_zh: "数据源故障切换协调器"
+  name_en: "Failover Coordinator"
+  desc_zh: "三源优先级+质量分动态切换，全源降级联动交易熔断"
+  desc_en: "Three-source priority + quality-score failover with trading kill-switch linkage"
+  plain_zh: "管三个数据源的备胎司机：主源熔断或质量分掉线就按优先级换备胎，主源养好伤再换回来；三个全趴下时通知交易系统只读禁开仓，每次换人都广播并记审计。"
+- module_path: tests/integration/test_failover_coordinator.py
+  domain_id: D_INTEGRATION
+  name_zh: "故障切换协调器测试"
+  name_en: "Failover Coordinator Tests"
+  desc_zh: "优先级切换/质量分/回切/全降级熔断联动/广播/审计的单元测试"
+  desc_en: "Unit tests for priority failover, quality score, failback, all-degraded linkage, broadcast and audit"
+  plain_zh: "验证备胎司机靠谱：主源挂了换二备、质量分掉线也换、主源恢复自动换回，三个全坏只喊一次熔断不重复骚扰，恢复后还能再上岗。"
+- module_path: tests/autonomy/test_risk_manager_agent.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: "风控Agent单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "风控 Agent 的单元测试：验证判定阶梯（正常/预警/硬越限/已熔断）、触发只在硬越限且总停开关未激活时发出、建议与执行双审计、回调异常不阻断、脏输入拒评估。"
+- module_path: src/zephyr/compliance/compliance_rule_engine.py
+  domain_id: D_COMPLIANCE
+  name_zh: "合规引擎"
+  name_en: "Compliance Rule Engine"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "下单前的合规把关引擎：规则用 DSL 写成一条条条件（比如自成交零容忍、单笔超分钟均量一半就拦），每条规则有版本，老版本永不可改、当前用哪条由活跃指针说了算；下单前同步过一遍，硬拦就拒单、软警告就转人工、普通警告放行留痕，盘后还能批量审计全天单子，命中记录写进合规日志。"
+- module_path: tests/compliance/test_compliance_rule_engine.py
+  domain_id: D_COMPLIANCE
+  name_zh: "合规引擎单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "合规引擎的单元测试：验证 DSL 规则解析校验、版本历史不可变与活跃指针切换、处置聚合取最严、评估出错一律拒单、命中写日志契约、盘后批量审计统计与收编规则包。"
 
 battle_map_steps:
 - step_id: BM-BUY-04
