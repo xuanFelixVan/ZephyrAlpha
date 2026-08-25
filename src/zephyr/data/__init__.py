@@ -75,6 +75,10 @@ from zephyr.data.storage_tiering import StorageTiering
 from zephyr.data.cleaning_rule_engine import CleaningRuleEngine
 from zephyr.data.data_service import DataService
 from zephyr.data.sector_factor_manager import SectorFactorManager
+from zephyr.data.multi_timeframe_fusion import MultiTimeframeFusion
+from zephyr.data.financial_parser import FinancialParser
+from zephyr.data.auto_backfiller import AutoBackfiller
+from zephyr.data.reference_data_manager import ReferenceDataManager
 
 _integrator: IntegratorScheduler | None = None
 
@@ -114,3 +118,11 @@ __all__.append("CleaningRuleEngine")
 __all__.append("DataService")
 
 __all__.append("SectorFactorManager")
+
+__all__.append("MultiTimeframeFusion")
+
+__all__.append("FinancialParser")
+
+__all__.append("AutoBackfiller")
+
+__all__.append("ReferenceDataManager")

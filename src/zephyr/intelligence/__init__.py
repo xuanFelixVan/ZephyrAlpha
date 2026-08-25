@@ -48,4 +48,7 @@ from __future__ import annotations
 
 # NOTE(P1W11 2026-08-25): scaffold 注册器写入悬空 import ApiLlmPool（stub 期炸全包，
 # #ARCH-228 同款 bug 复发），按该包"纯模块名导出"约定归一为模块名条目。
-__all__ = ["api_llm_pool", "model_drift_detector"]
+# NOTE(P1W09 2026-08-25): scaffold 注册器再次写入类级 import LlmMarketInterpreter +
+# __all__.append("LlmMarketInterpreter")（stub 期悬空，同款 bug 第四次复发），
+# 按同一约定归一为模块名条目 "llm_market_interpreter"。
+__all__ = ["api_llm_pool", "llm_market_interpreter", "model_drift_detector"]

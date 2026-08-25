@@ -13,7 +13,7 @@ depends_on:
 construction_progress: prototype
 language: zh
 description: 主备数据源热切换——主 QMT 推送中断时自动切换备源（通达信本地接口），CH 不可达时降级写本地 SQLite，保证数据不中断
-build_status: planned
+build_status: testing
 design_maturity: design
 responsibility_domain: 
 ---
@@ -37,7 +37,7 @@ responsibility_domain:
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L00-005` 的 11 个 file 节点 | design | `extract_depgraph.py --modules MOD-L00-005` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L00-005` 的 15 个 file 节点 | design | `extract_depgraph.py --modules MOD-L00-005` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -48,8 +48,8 @@ responsibility_domain:
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-L00-005 | MOD-L00-005 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | planned | planned | ✅ |
-| file_count | 11 文件 | N/A | — |
+| build_status | testing | testing | ✅ |
+| file_count | 15 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
