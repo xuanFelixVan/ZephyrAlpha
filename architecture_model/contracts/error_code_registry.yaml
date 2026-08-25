@@ -2484,6 +2484,91 @@ error_codes:
   module: zephyr.position.core.position_adjudication_center
   file: src/zephyr/position/core/position_adjudication_center.py
   introduced: '2026-08-25: DIGEST P1 R4W19 正式登记（AI-K3 主代理，MOD-POS-024）'
+- code: ZA-IT-0013
+  class: InvalidLocalModelSpecError
+  module: zephyr.intelligence.local_llm_pool
+  file: src/zephyr/intelligence/local_llm_pool.py
+  introduced: '2026-08-25: DIGEST P1 R5 正式登记（AI-K3 主代理，MOD-INT 本地LLM池（P1 R5W10）；前缀裁定 IT=智能/SH=共享，INT 属基设不占用）'
+- code: ZA-IT-0014
+  class: LocalModelAlreadyRegisteredError
+  module: zephyr.intelligence.local_llm_pool
+  file: src/zephyr/intelligence/local_llm_pool.py
+  introduced: '2026-08-25: DIGEST P1 R5 正式登记（AI-K3 主代理，MOD-INT 本地LLM池（P1 R5W10）；前缀裁定 IT=智能/SH=共享，INT 属基设不占用）'
+- code: ZA-IT-0015
+  class: LocalModelNotRegisteredError
+  module: zephyr.intelligence.local_llm_pool
+  file: src/zephyr/intelligence/local_llm_pool.py
+  introduced: '2026-08-25: DIGEST P1 R5 正式登记（AI-K3 主代理，MOD-INT 本地LLM池（P1 R5W10）；前缀裁定 IT=智能/SH=共享，INT 属基设不占用）'
+- code: ZA-IT-0016
+  class: InvalidTrajectoryError
+  module: zephyr.intelligence.episodic_memory_store
+  file: src/zephyr/intelligence/episodic_memory_store.py
+  introduced: '2026-08-25: DIGEST P1 R5 正式登记（AI-K3 主代理，MOD-INT 情景记忆（P1 R5W10）；前缀裁定 IT=智能/SH=共享，INT 属基设不占用）'
+- code: ZA-IT-0017
+  class: EpisodicConfigError
+  module: zephyr.intelligence.episodic_memory_store
+  file: src/zephyr/intelligence/episodic_memory_store.py
+  introduced: '2026-08-25: DIGEST P1 R5 正式登记（AI-K3 主代理，MOD-INT 情景记忆（P1 R5W10）；前缀裁定 IT=智能/SH=共享，INT 属基设不占用）'
+- code: ZA-IT-0018
+  class: FundamentalAnalysisError
+  module: zephyr.intelligence.llm_fundamental_analysis
+  file: src/zephyr/intelligence/llm_fundamental_analysis.py
+  introduced: '2026-08-25: DIGEST P1 R5 正式登记（AI-K3 主代理，MOD-INT LLM 基本面（P1 R5W10）；前缀裁定 IT=智能/SH=共享，INT 属基设不占用）'
+- code: ZA-IT-0019
+  class: InvalidRouterConfigError
+  module: zephyr.intelligence.llm_agent_router
+  file: src/zephyr/intelligence/llm_agent_router.py
+  introduced: '2026-08-25: DIGEST P1 R5 正式登记（AI-K3 主代理，MOD-INT Agent 路由（P1 R5W10）；前缀裁定 IT=智能/SH=共享，INT 属基设不占用）'
+- code: ZA-IT-0020
+  class: RouteDecisionError
+  module: zephyr.intelligence.llm_agent_router
+  file: src/zephyr/intelligence/llm_agent_router.py
+  introduced: '2026-08-25: DIGEST P1 R5 正式登记（AI-K3 主代理，MOD-INT Agent 路由（P1 R5W10）；前缀裁定 IT=智能/SH=共享，INT 属基设不占用）'
+- code: ZA-IT-0021
+  class: InvalidMemoryPolicyError
+  module: zephyr.intelligence.agent_memory_architecture
+  file: src/zephyr/intelligence/agent_memory_architecture.py
+  introduced: '2026-08-25: DIGEST P1 R5 正式登记（AI-K3 主代理，MOD-INT 记忆架构（P1 R5W10）；前缀裁定 IT=智能/SH=共享，INT 属基设不占用）'
+- code: ZA-IT-0022
+  class: MemoryBackendMissingError
+  module: zephyr.intelligence.agent_memory_architecture
+  file: src/zephyr/intelligence/agent_memory_architecture.py
+  introduced: '2026-08-25: DIGEST P1 R5 正式登记（AI-K3 主代理，MOD-INT 记忆架构（P1 R5W10）；前缀裁定 IT=智能/SH=共享，INT 属基设不占用）'
+- code: ZA-MKT-0010
+  class: AuctionDataManagerError
+  module: zephyr.market_data.auction_data_manager
+  file: src/zephyr/market_data/auction_data_manager.py
+  introduced: '2026-08-25: DIGEST P1 R5 正式登记（AI-K3 主代理，MOD-MKT-007（P1 R5W16）；前缀裁定 IT=智能/SH=共享，INT 属基设不占用）'
+- code: ZA-MKT-0011
+  class: InvalidAuctionTickError
+  module: zephyr.market_data.auction_data_manager
+  file: src/zephyr/market_data/auction_data_manager.py
+  introduced: '2026-08-25: DIGEST P1 R5 正式登记（AI-K3 主代理，MOD-MKT-007（P1 R5W16）；前缀裁定 IT=智能/SH=共享，INT 属基设不占用）'
+- code: ZA-MLT-0012
+  class: TwoStageQnnError
+  module: zephyr.ml_train.implementations.qnn_two_stage
+  file: src/zephyr/ml_train/implementations/qnn_two_stage.py
+  introduced: '2026-08-25: DIGEST P1 R5 正式登记（AI-K3 主代理，MOD-ML-010（P1 R5W20）；前缀裁定 IT=智能/SH=共享，INT 属基设不占用）'
+- code: ZA-MLT-0013
+  class: PatchtstEncoderError
+  module: zephyr.ml_train.implementations.patchtst_density_encoder
+  file: src/zephyr/ml_train/implementations/patchtst_density_encoder.py
+  introduced: '2026-08-25: DIGEST P1 R5 正式登记（AI-K3 主代理，MOD-ML-011（P1 R5W20）；前缀裁定 IT=智能/SH=共享，INT 属基设不占用）'
+- code: ZA-SH-0055
+  class: Ctr002AdapterError
+  module: zephyr.shared.contracts.ctr002_consumer_adapter
+  file: src/zephyr/shared/contracts/ctr002_consumer_adapter.py
+  introduced: '2026-08-25: DIGEST P1 R5 正式登记（AI-K3 主代理，MOD-CON-001（P1 R5W16）；前缀裁定 IT=智能/SH=共享，INT 属基设不占用）'
+- code: ZA-SH-0056
+  class: ProducerValidationError
+  module: zephyr.shared.contracts.ctr002_producer_validator
+  file: src/zephyr/shared/contracts/ctr002_producer_validator.py
+  introduced: '2026-08-25: DIGEST P1 R5 正式登记（AI-K3 主代理，MOD-CON-002（P1 R5W16）；前缀裁定 IT=智能/SH=共享，INT 属基设不占用）'
+- code: ZA-POS-0027
+  class: CoreSatelliteError
+  module: zephyr.position.core.core_satellite_allocator
+  file: src/zephyr/position/core/core_satellite_allocator.py
+  introduced: '2026-08-25: DIGEST P1 R5 正式登记（AI-K3 主代理，MOD-POS-025（P1 R5W20）；前缀裁定 IT=智能/SH=共享，INT 属基设不占用）'
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）
