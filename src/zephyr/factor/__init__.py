@@ -83,6 +83,7 @@ from zephyr.factor.bus_factor_defense import (
     generate_runbook,
 )
 from zephyr.factor.factor_base import FactorBase, FactorMeta, FactorRegistry, autodiscover_factors
+from zephyr.factor.factor_availability_monitor import FactorAvailabilityMonitor
 
 __all__ = [
     "FactorBase",
@@ -101,3 +102,5 @@ __all__ = [
 # 包级导出以 factor_base 为 SSoT（base.py 已删除，2026-07-14 shim 消除）
 # CODEGEN-GUARD: CTR-declarations-manual
 # DO NOT regenerate: CTR declarations are manually curated SSoT annotations
+
+__all__.append("FactorAvailabilityMonitor")

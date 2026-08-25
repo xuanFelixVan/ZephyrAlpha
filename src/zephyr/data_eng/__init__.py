@@ -1,3 +1,5 @@
+from zephyr.data_eng.cleaning_anomaly_engine import CleaningAnomalyEngine
+from zephyr.data_eng.expectation_governance import ExpectationGovernance
 # [BLUEPRINT] MOD-DATA_ENG | (pending)
 # [MODULE] zephyr.data_eng
 # [DOMAIN] D_DATA_ENG
@@ -48,3 +50,7 @@
 """
 
 __all__ = []
+
+__all__.append("CleaningAnomalyEngine")
+
+__all__.append("ExpectationGovernance")
