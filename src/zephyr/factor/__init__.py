@@ -84,6 +84,9 @@ from zephyr.factor.bus_factor_defense import (
 )
 from zephyr.factor.factor_base import FactorBase, FactorMeta, FactorRegistry, autodiscover_factors
 from zephyr.factor.factor_availability_monitor import FactorAvailabilityMonitor
+from zephyr.factor.factor_factory import FactorFactory
+from zephyr.factor.factor_production_pipeline import FactorProductionPipeline
+from zephyr.factor.wq_alpha_87 import WqAlpha87
 
 __all__ = [
     "FactorBase",
@@ -104,3 +107,9 @@ __all__ = [
 # DO NOT regenerate: CTR declarations are manually curated SSoT annotations
 
 __all__.append("FactorAvailabilityMonitor")
+
+__all__.append("FactorFactory")
+
+__all__.append("FactorProductionPipeline")
+
+__all__.append("WqAlpha87")

@@ -1,3 +1,12 @@
+from zephyr.signal_ashare.signal_factory import SignalFactory
+from zephyr.signal_ashare.capital_behavior_orchestrator import CapitalBehaviorOrchestrator
+from zephyr.signal_ashare.auction_microstructure_analyzer import AuctionMicrostructureAnalyzer
+from zephyr.signal_ashare.t0_trading_pipeline import T0TradingPipeline
+from zephyr.signal_ashare.unified_pattern_engine import UnifiedPatternEngine
+from zephyr.signal_ashare.risk_event_consumer import RiskEventConsumer
+from zephyr.signal_ashare.factor_result_bridge import FactorResultBridge
+# NOTE(P1W06 2026-08-25): P1W01 窗口期可逆注释的两行 export 已按 NOTE 约定恢复
+# （FactorResultBridge/RiskEventConsumer 实现就位，88 测全绿）。
 # [BLUEPRINT] MOD-SIGNAL_ASHARE | (pending)
 # [MODULE] zephyr.signal_ashare
 # [DOMAIN] D_ASHARE_SIGNAL
@@ -50,3 +59,17 @@
 """
 
 __all__ = []
+
+__all__.append("SignalFactory")
+
+__all__.append("FactorResultBridge")
+
+__all__.append("RiskEventConsumer")
+
+__all__.append("CapitalBehaviorOrchestrator")
+
+__all__.append("AuctionMicrostructureAnalyzer")
+
+__all__.append("T0TradingPipeline")
+
+__all__.append("UnifiedPatternEngine")
