@@ -54,11 +54,13 @@ try:
     PanoramaNode = _mod.PanoramaNode
     PanoramaAlignmentReport = _mod.PanoramaAlignmentReport
     PanoramaEmptyError = _mod.PanoramaEmptyError
-    _detect_orphans = _mod.detect_orphans
-    _detect_state_drifts = _mod.detect_state_drifts
-    _detect_domain_mismatches = _mod.detect_domain_mismatches
-    _detect_design_only_in_one = _mod.detect_design_only_in_one
-    _fetch_blueprint_nodes = _mod.fetch_blueprint_nodes
+    # 跟进：模块函数已私有化（下划线前缀），测试引用同步——原无下划线引用
+    # 触发模块级 skip 致本文件长期零覆盖（2026-08-25 核查实证隔离/sweep 双环境 skip）
+    _detect_orphans = _mod._detect_orphans
+    _detect_state_drifts = _mod._detect_state_drifts
+    _detect_domain_mismatches = _mod._detect_domain_mismatches
+    _detect_design_only_in_one = _mod._detect_design_only_in_one
+    _fetch_blueprint_nodes = _mod._fetch_blueprint_nodes
 except Exception as e:  # noqa: BLE001
     pytest.skip(
         f"align_panoramas 模块加载失败（可能缺少 zephyr 依赖）: {e}",
