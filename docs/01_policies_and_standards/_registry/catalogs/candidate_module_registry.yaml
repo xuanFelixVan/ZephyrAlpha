@@ -13918,11 +13918,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/shared/state_store_redis.py（四件各有散件：gpu_monitor/system_telemetry/scripts/backup）'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/infrastructure/gpu_hot_swap_model.py
   priority: P0
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-25'
   source_draft: A9运维架构
   original_id: B14-04517
   source_section: §0.3
@@ -15744,11 +15745,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/ml_train/core/sample_weights.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/ml_train/implementations/density_quantile_trainer.py
   priority: P0
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-25'
   source_draft: A1交易决策架构
   original_id: B10-01407
   source_section: §4.5.1-A1
@@ -16392,11 +16394,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/position/core/drawdown_controller.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/pf_alloc/core/maxdd_limit_allocator.py
   priority: P0
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-25'
   source_draft: A1交易决策架构
   original_id: B10-02101
   source_section: §30.1.4
@@ -16929,7 +16932,8 @@ entries:
   priority: P0
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-25'
+  review_note: "# REVIEW: 豁免不施工（2026-08-25，W3 裁定）——①29 态前身 9 态网格已被 BIC+A2 实证否决（OOS/IS 0.34<0.7），29 态属证伪方向加细；②仓位上限+策略激活已由 MOD-REGIME-001→MOD-PA-007→StrategyBook production 链覆盖，另建=双真源；③三轴无新信息源；④防抖已由 strong_confirm FSM 覆盖；⑤硬标签化恰是被证伪路线，overlay 扩展亦无信息增量"
   source_draft: 跨域(元文档)
   original_id: B1-00153
   source_section: §功能域模块·D-SIGNAL
@@ -16950,11 +16954,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/regime/core/regime_detector.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/regime/volatility_regime_alerter.py
   priority: P0
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-25'
   source_draft: A1交易决策架构
   original_id: B10-01358
   source_section: §3模块2

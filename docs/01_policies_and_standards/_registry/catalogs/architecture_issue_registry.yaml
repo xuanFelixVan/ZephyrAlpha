@@ -19997,3 +19997,46 @@ entries:
   related_rules: ['AUD-DRAFT-001-DIGEST']
   created: '2026-08-25'
   last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-228'
+  title: DIGEST P0 W3 收尾：GPU 热交换/MaxDD 分配器/Focused Bayesian Loss/波动率体制预警四候选晋升——P0 37 条全部闭环
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    CAND-INFRAOPS-001 gpu_hot_swap_model（盘中推理 8-10GB/盘后训练 16-18GB 两档画像+热交换三步，
+    gpu:allocation 草稿引用 MOD-INF-063 不重复建 Redis SSOT）/CAND-PFALLOC-006
+    maxdd_limit_allocator（预算制三档 NORMAL/DERATE×0.5/SUSPEND=0，与 PA-003 一刀切区分）/
+    CAND-MLT-013 density_quantile_trainer 增量（左尾加权 w=2.0 r<VaR_5% 经 sample_weight
+    注入，+30 行<50，外来会话在途改动完整保留）/CAND-CYCLE-003 volatility_regime_alerter
+    （复用 MOD-RK-26 自研 GARCH 不引 arch，RV_5d/20d<0.8 压缩+shift≥1.5 突变告警+
+    overlay_dims 契约）。48 新测全绿，四域回归零回归。至此 P0 37 条=35 建成+2 REVIEW 豁免。
+  impact:
+    - 'src/zephyr/infrastructure/gpu_hot_swap_model.py（node 10603020）'
+    - 'src/zephyr/pf_alloc/core/maxdd_limit_allocator.py（10603022）'
+    - 'src/zephyr/regime/volatility_regime_alerter.py（10603024）'
+    - 'src/zephyr/ml_train/implementations/density_quantile_trainer.py（增量）'
+  fix_phase: '已落地（2026-08-25，W3）；P0 全部闭环'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-229'
+  title: CAND-CYCLE-002（29 态市场状态判定引擎）REVIEW 豁免裁定——证伪方向不加细
+  severity: P2
+  category: 架构议题
+  adjudication: >-
+    候选 CAND-CYCLE-002（C-021 29 态判定引擎：三轴立方体+2 叠加态+仓位上限+策略激活矩阵）
+    裁定豁免不施工：①其前身 9 态网格已被 BIC+A2 实证否决（OOS/IS 0.34<0.7，90 号 §7 在案），
+    29 态=证伪方向加细 3 倍；②仓位上限+策略激活输出已由 MOD-REGIME-001→MOD-PA-007
+    （floor/cap/effective_budget）→StrategyBook production 链覆盖，另建=双真源；③三轴
+    （趋势/波动/流动性）无新信息源；④防抖已由 strong_confirm>confirm>trigger>fail FSM 覆盖；
+    ⑤硬标签化恰是被证伪路线，作 overlay 扩展层亦无信息增量。候选注册表 review_note 留痕，
+    状态保持 candidate 不翻转（重开条件=出现新信息源或既有链实证失效）。
+  impact:
+    - '零新件（豁免裁定）；既有 regime 链不动'
+  fix_phase: '豁免（2026-08-25，W3）'
+  status: resolved
+  related_rules: ['90号 §7', 'CAND-CYCLE-002']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'

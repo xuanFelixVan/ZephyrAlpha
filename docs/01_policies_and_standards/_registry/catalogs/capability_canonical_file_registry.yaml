@@ -9665,6 +9665,30 @@ creation_tokens:
   token: auto-test-compliance-rule-engine-20260825
   created_by: AI-K3-DIGEST-W2（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: compliance_rule_engine
+- file: src/zephyr/infrastructure/gpu_hot_swap_model.py
+  token: auto-scaffold-gpu_hot_swap_model-20260825
+  created_by: scaffold.py
+  capability: gpu_hot_swap_model
+- file: src/zephyr/pf_alloc/core/maxdd_limit_allocator.py
+  token: auto-scaffold-maxdd_limit_allocator-20260825
+  created_by: scaffold.py
+  capability: maxdd_limit_allocator
+- file: src/zephyr/regime/volatility_regime_alerter.py
+  token: auto-scaffold-volatility_regime_alerter-20260825
+  created_by: scaffold.py
+  capability: volatility_regime_alerter
+- file: tests/infrastructure/test_gpu_hot_swap_model.py
+  token: auto-test-gpu-hot-swap-model-20260825
+  created_by: AI-K3-DIGEST-W3（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: gpu_hot_swap_model
+- file: tests/pf_alloc/test_maxdd_limit_allocator.py
+  token: auto-test-maxdd-limit-allocator-20260825
+  created_by: AI-K3-DIGEST-W3（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: maxdd_limit_allocator
+- file: tests/regime/test_volatility_regime_alerter.py
+  token: auto-test-volatility-regime-alerter-20260825
+  created_by: AI-K3-DIGEST-W3（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: volatility_regime_alerter
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
