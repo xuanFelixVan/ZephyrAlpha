@@ -49,7 +49,12 @@ from typing import Any
 ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
-from zephyr.nlp.nlp_inference import InferConfig, SentimentResult, infer_batch  # noqa: E402
+from zephyr.nlp.nlp_inference import (  # noqa: E402
+    PROMPT_VERSION,
+    InferConfig,
+    SentimentResult,
+    infer_sentiment,
+)
 from zephyr.nlp.sentiment_aggregator import (  # noqa: E402
     DailySentiment,
     SourceSentiment,
@@ -112,11 +117,14 @@ def run_batch(
     pred_path: Path,
     config: InferConfig | None = None,
     resume: bool = True,
+    cache: Any = None,
 ) -> list[SentimentResult]:
-    """批量推理 + 追加写入 predictions.jsonl（断点续作）。
+    """批量推理 + 逐条追加写入 predictions.jsonl（断点续作）。
 
-    单条失败由 infer_batch 内部降级 neutral 不阻断。返回本次新推理结果
-    （不含断点续作跳过的部分）。
+    逐条推理逐条落盘——进程中途被杀仅损失当前一条，已写部分下次
+    运行经 news_id 去重跳过（2026-08-25 修复：原先全量推完才落盘，
+    12 万条批次中途被杀即全部白算）。单条失败由 infer_sentiment
+    内部降级 neutral 不阻断。返回本次新推理结果（不含断点续作跳过的部分）。
     """
     done = load_done_ids(pred_path) if resume else set()
     todo = [n for n in news_items if str(n.get("news_id", "")) not in done]
@@ -128,8 +136,15 @@ def run_batch(
     results: list[SentimentResult] = []
     t0 = time.time()
     with open(pred_path, mode, encoding="utf-8") as f:
-        batch_results = infer_batch(todo, chat=chat, config=config)
-        for news, r in zip(todo, batch_results, strict=True):
+        for news in todo:
+            r = infer_sentiment(
+                title=str(news.get("title", "")),
+                content=str(news.get("content", "")),
+                chat=chat,
+                news_id=str(news.get("news_id", "")),
+                cache=cache,
+                config=config,
+            )
             results.append(r)
             f.write(
                 json.dumps(
@@ -137,6 +152,7 @@ def run_batch(
                         "news_id": str(news.get("news_id", "")),
                         "source": news.get("source", ""),
                         "publish_date": publish_date_of(news),
+                        "prompt": PROMPT_VERSION,
                         "sentiment": r.sentiment,
                         "score": r.score,
                         "polarity": r.polarity,
@@ -224,20 +240,24 @@ def main() -> None:
         news_items = news_items[: args.limit]
     log.info("输入新闻 %d 条（source=%s）", len(news_items), args.source)
 
-    # 2. 推理后端（Ollama 单一推理源，13 号 §3.1.13 H）
+    # 2. 推理后端（Ollama 单一推理源，13 号 §3.1.13 H）+ 查询缓存（重复标题去重）
+    from zephyr.integration.local_model.cache_layer import CacheLayer
     from zephyr.integration.local_model.ollama_chat import OllamaChat
 
     if not OllamaChat.quick_alive():
         log.error("Ollama 不可达（localhost:11434），请先启动 Ollama")
         sys.exit(1)
     chat = OllamaChat(model=args.model, timeout_s=args.timeout)
+    cache = CacheLayer()
 
-    # 3. 批量推理（断点续作）
+    # 3. 批量推理（断点续作，逐条落盘）
     args.out_dir.mkdir(parents=True, exist_ok=True)
     pred_path = args.out_dir / PRED_FILENAME
     cfg = InferConfig(model_version=args.model)
     t_batch = time.time()
-    results = run_batch(news_items, chat=chat, pred_path=pred_path, config=cfg, resume=args.resume)
+    results = run_batch(
+        news_items, chat=chat, pred_path=pred_path, config=cfg, resume=args.resume, cache=cache
+    )
     batch_elapsed = time.time() - t_batch
 
     # 4. 日级聚合（跨源一致性投票，26 号 §2.7；从 predictions 全量聚合 resume 安全）

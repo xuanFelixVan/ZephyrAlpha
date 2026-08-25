@@ -32,7 +32,7 @@ MOD-NLP-INFERENCE-001 NLPImply — 新闻情感推理（零样本基线）。
 
 依据: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md Phase 2
 SSoT: #ARCH-NLP-PIPELINE-001
-Version: 0.1.0
+Version: 0.2.0（2026-08-25 prompt v2：边界规则+few-shot，金标评估集 Macro-F1 目标 ≥0.80）
 
 # [ALGO_FLOW]
 # 层: 输入
@@ -139,13 +139,27 @@ NEGATIVE = "negative"
 NEUTRAL = "neutral"
 _VALID_SENTIMENTS = frozenset({POSITIVE, NEGATIVE, NEUTRAL})
 
-# ── prompt 模板（A 股新闻情感专家）──
-SYSTEM_PROMPT = """你是 A 股金融新闻情感分析专家。对给定新闻标题和内容进行情感分类。
+# ── prompt 模板（A 股新闻情感专家，v2 边界规则+few-shot）──
+PROMPT_VERSION = "v2-fewshot"
+
+SYSTEM_PROMPT = """你是 A 股金融新闻情感分析专家。判断新闻对 A 股市场或相关上市公司的方向性影响。
 
 分类标准:
-- positive: 利好消息（降准/降息/利好/增长/盈利/回购/增持/重组/并购/改革/刺激/回暖/企稳/反弹等）
-- negative: 利空消息（跌停/暴跌/下跌/利空/亏损/减持/违规/处罚/退市/爆雷/违约/风险/警告/监管/解禁/熔断/崩盘/恐慌等）
-- neutral: 中性消息（常规公告/人事变动/数据发布/行业分析等无明显方向性）
+- positive: 利好消息（政策支持/降准降息/增长超预期/盈利改善/订单中标/扩产增产/回暖企稳/救助保供/复苏迹象等）
+- negative: 利空消息（亏损/违约/处罚立案/暴跌/减持解禁/退市/疫情扩散/停产停运/风险事件/恐慌等）
+- neutral: 无明确市场方向（常规公告/人事变动/纯数据发布/事实通报/海外无关新闻/社会新闻/科普等）
+
+判定边界（重要）:
+- 事实通报若有明确恶化/好转含义，按方向判（如"新增确诊47例"=negative，"治愈出院"=positive）
+- 仅程序性/仪式性内容（周简报/任命/展会开幕/纪念日）一律 neutral
+- 与公司直接相关的善举/保供/中标按 positive（温和），宏观政策支持按 positive（强）
+
+示例:
+新闻"央行宣布降准0.5个百分点，释放长期资金约1万亿元" → {"sentiment": "positive", "score": 0.95}
+新闻"某公司股东拟合计减持不超过26%股份" → {"sentiment": "negative", "score": 0.85}
+新闻"江西新增47例新冠肺炎确诊病例 累计333例" → {"sentiment": "negative", "score": 0.6}
+新闻"某某股份有限公司股票二级市场表现周简报" → {"sentiment": "neutral", "score": 0.5}
+新闻"某公司任命张某担任中国区总裁" → {"sentiment": "neutral", "score": 0.5}
 
 输出 JSON: {"sentiment": "positive|negative|neutral", "score": 0.0-1.0}
 score 表示情感强度（1.0=极强正向/负向，0.5=温和，0.0=完全中性）。
@@ -462,6 +476,7 @@ __all__: Final = [
     "POSITIVE",
     "NEGATIVE",
     "NEUTRAL",
+    "PROMPT_VERSION",
     "SYSTEM_PROMPT",
     "USER_TEMPLATE",
     "ChatBackend",
