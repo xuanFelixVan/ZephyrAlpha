@@ -20,6 +20,15 @@ from zephyr.signal_ashare.sentiment_price_divergence import SentimentPriceDiverg
 from zephyr.signal_ashare.limit_up_potential_scorer import LimitUpPotentialScorer
 from zephyr.signal_ashare.bottom_confirmation_entry import BottomConfirmationEntry
 from zephyr.signal_ashare.next_day_probability_gate import NextDayProbabilityGate
+# NOTE(P1W05 2026-08-25): scaffold 自动追加的 5 条类级 eager import 已按可逆模式
+# 注释（SellNewsOverdraftDetector/OvernightReturnExpectancy/StrategyCrossVoteFunnel/
+# PatternMatchStrategyLibrary/MultiFactorTimingOverlay）——实现就位前保持包可导入；
+# 实现+测试绿后由后续波次按 P1W06 先例恢复，或届时由主代理统一恢复。
+# from zephyr.signal_ashare.sell_news_overdraft_detector import SellNewsOverdraftDetector
+# from zephyr.signal_ashare.overnight_return_expectancy import OvernightReturnExpectancy
+# from zephyr.signal_ashare.strategy_cross_vote_funnel import StrategyCrossVoteFunnel
+# from zephyr.signal_ashare.pattern_match_strategy_library import PatternMatchStrategyLibrary
+# from zephyr.signal_ashare.multi_factor_timing_overlay import MultiFactorTimingOverlay
 # NOTE(P1W06 2026-08-25): P1W01 窗口期可逆注释的两行 export 已按 NOTE 约定恢复
 # （FactorResultBridge/RiskEventConsumer 实现就位，88 测全绿）。
 # [BLUEPRINT] MOD-SIGNAL_ASHARE | (pending)
@@ -114,3 +123,14 @@ __all__.append("LimitUpPotentialScorer")
 __all__.append("BottomConfirmationEntry")
 
 __all__.append("NextDayProbabilityGate")
+
+# NOTE(P1W05 2026-08-25): 与上方注释 import 配套，5 条 append 同步可逆注释。
+# __all__.append("SellNewsOverdraftDetector")
+
+# __all__.append("OvernightReturnExpectancy")
+
+# __all__.append("StrategyCrossVoteFunnel")
+
+# __all__.append("PatternMatchStrategyLibrary")
+
+# __all__.append("MultiFactorTimingOverlay")
