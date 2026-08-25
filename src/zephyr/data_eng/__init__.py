@@ -1,5 +1,13 @@
 from zephyr.data_eng.cleaning_anomaly_engine import CleaningAnomalyEngine
 from zephyr.data_eng.expectation_governance import ExpectationGovernance
+from zephyr.data_eng.data_anomaly_alerter import DataAnomalyAlerter
+# NOTE(P1W24 并行协调): 并行会话 scaffold incremental_update_engine 时 eager import
+# 先于类落地（stub 尚无 IncrementalUpdateEngine）致包门面断链；按可逆模式改守卫式
+# 导入（目标类落地即自愈，无需再改本行），frontend/components/__init__.py 同模式在案。
+try:
+    from zephyr.data_eng.incremental_update_engine import IncrementalUpdateEngine
+except ImportError:
+    IncrementalUpdateEngine = None  # type: ignore[assignment]
 # [BLUEPRINT] MOD-DATA_ENG | (pending)
 # [MODULE] zephyr.data_eng
 # [DOMAIN] D_DATA_ENG
@@ -54,3 +62,7 @@ __all__ = []
 __all__.append("CleaningAnomalyEngine")
 
 __all__.append("ExpectationGovernance")
+
+__all__.append("DataAnomalyAlerter")
+
+__all__.append("IncrementalUpdateEngine")
