@@ -161,21 +161,28 @@ __all__ += [
 ]
 
 # W1d(2026-08-25): PerformanceAttributionDegradationGuard 已落码(MOD-RK-37), 重挂合法导出(同 copula NOTE 路径)。
-from zephyr.risk.core.performance_attribution_degradation import (
-    DegradationAction,
-    DegradationGuardConfig,
-    InvalidDegradationInputError,
-    PerformanceAttributionDegradationGuard,
-    StrategyDegradationVerdict,
-)
-
-__all__ += [
+# NOTE(P1W21, 2026-08-25): 原 eager from-import 与
+# pf_core.core.performance_attribution_engine→zephyr.reporting/__init__→review_orchestrator→
+# zephyr.risk.core 形成循环导入（tests/pf_core 收集 ImportError 实证）。按仓内 PEP 562
+# 惰性重导出惯例（ml_train/__init__、pf_core/__init__ 同款）改 __getattr__ 惰性导出，
+# 公开 API 面不变（可逆：恢复 eager 仅需还原下方 from-import 块并删除 __getattr__）。
+_LAZY_PAD_EXPORTS = frozenset({
     "DegradationAction",
     "DegradationGuardConfig",
     "InvalidDegradationInputError",
     "PerformanceAttributionDegradationGuard",
     "StrategyDegradationVerdict",
-]
+})
+
+__all__ += sorted(_LAZY_PAD_EXPORTS)
+
+
+def __getattr__(name: str):
+    if name in _LAZY_PAD_EXPORTS:
+        from zephyr.risk.core import performance_attribution_degradation as _pad
+
+        return getattr(_pad, name)
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 # NOTE(2026-08-25 P1W13): scaffold 注册器把 `from zephyr.risk/core.factor_exposure_manager ...`
 # (斜杠非法路径) 插入上方 performance_attribution_degradation 多行 import 块中段(语法破坏)。

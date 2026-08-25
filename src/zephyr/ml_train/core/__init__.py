@@ -1,3 +1,6 @@
+# NOTE(2026-08-25 P1W21): scaffold 注册器斜杠非法 import 变种复发（同 #ARCH-228 族），
+# 按可逆模式归一为点号合法 import（包门面再导出约定不变）。
+from zephyr.ml_train.core.model_version_registry import ModelVersionRegistry
 # [TTL] permanent
 # ml_train/core
 
@@ -32,3 +35,5 @@
 """
 
 __all__: list[str] = []
+
+__all__.append("ModelVersionRegistry")
