@@ -39,15 +39,20 @@ autonomy_core 包结构指引（ARCH-033 治本）：
 # A1 --> O1
 """
 
+# NOTE(P1W12 2026-08-25): scaffold 注册器两次写入行首 eager import + 类名 append
+# （#ARCH-228 同款 bug 复发），按本包"纯模块名导出"约定（上文 docstring
+# ARCH-033：无导入无初始化逻辑）归一为模块名条目。
 __all__ = [
     "agent_observability",
     "agentic_drift_guard",
+    "ai_ops_autonomy_card",
     "all_skill_modules",
     "autonomy_level_registry",
     "drift_semantic_reviewer",
     "file_autoregister",
     "ide_watcher",
     "killswitch_response_levels",
+    "non_ai_boundary_guard",
     "phase_planner",
     "progressive_disclosure_injector",
     "prompt_registry",

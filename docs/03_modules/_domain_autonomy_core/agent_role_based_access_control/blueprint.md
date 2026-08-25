@@ -5,7 +5,7 @@ title: "Agent RBAC 蓝图 — 七层纵深防御·六横切面运行时权限"
 doc_type: blueprint
 status: Active
 activation_phase: requires_100ai
-version: "1.1.6"
+version: "1.1.7"
 layer: L0_infrastructure
 domain: infra_ops
 owner: ZephyrAlpha-Owner
@@ -221,7 +221,7 @@ build_status: generated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-018` 的 157 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-018` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-018` 的 158 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-018` |
 | 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -233,7 +233,7 @@ build_status: generated
 | module_id | MOD-INF-018 | MOD-INF-018 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 157 文件 | 15 文件（§0.1） | ❌ |
+| file_count | 158 文件 | 15 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -7183,7 +7183,7 @@ class PermissionHooks:
 | `src/zephyr/security/access_control/integration.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/integrity_self_check.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/intent_binder.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/key_hierarchy.py` | ⚠️ 骨架 | |
+| `src/zephyr/security/access_control/key_hierarchy.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/kill_switch.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/legal_audit_chain.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/microstructure_defense.py` | ✅ 已实现 | |
@@ -7281,6 +7281,7 @@ class PermissionHooks:
 | `tests/path/test_path_guard.py` | ✅ 已实现 | |
 | `tests/rollback/test_rollback_sandbox.py` | ✅ 已实现 | |
 | `tests/rule/test_rule_injection_guard.py` | ✅ 已实现 | |
+| `tests/security/access_control/test_key_hierarchy.py` | ✅ 已实现 | |
 | `tests/session/test_session_lifecycle.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
