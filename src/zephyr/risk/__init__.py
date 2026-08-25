@@ -97,6 +97,8 @@ import importlib as _importlib
 # 按本批 copula 同款协调模式暂注释(可逆, 非删除); 请 CAND-RSK-038 施工方实现类后取消注释恢复。
 # W1d(2026-08-25): AtrStopEngine 已落码(MOD-RK-35), 按上方 NOTE 恢复导入。
 from zephyr.risk.atr_stop_engine import AtrStopEngine
+from zephyr.risk.manipulation_avoidance_detector import ManipulationAvoidanceDetector
+from zephyr.risk.post_entry_instant_validator import PostEntryInstantValidator
 
 __all__ = [
     "cross_asset",
@@ -116,3 +118,7 @@ def __getattr__(name):
 # 与上方 NOTE 联动: AtrStopEngine 悬空期间不入 __all__(避免 import * 解析失败)。
 # W1d(2026-08-25): 类已落码, 恢复入列。
 __all__.append("AtrStopEngine")
+
+__all__.append("ManipulationAvoidanceDetector")
+
+__all__.append("PostEntryInstantValidator")

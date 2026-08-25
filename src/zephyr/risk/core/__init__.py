@@ -177,3 +177,9 @@ __all__ += [
     "StrategyDegradationVerdict",
 ]
 
+# NOTE(2026-08-25 P1W13): scaffold 注册器把 `from zephyr.risk/core.factor_exposure_manager ...`
+# (斜杠非法路径) 插入上方 performance_attribution_degradation 多行 import 块中段(语法破坏)。
+# 按可逆模式归一: 合法点路径 import 移至块外(下行), 类随 MOD-RK-38 实现落码即生效。
+from zephyr.risk.core.factor_exposure_manager import FactorExposureManager
+
+__all__.append("FactorExposureManager")
