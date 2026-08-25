@@ -16,8 +16,9 @@ tier: tier_1_governance
 status: active
 version: 1.1.1
 created: '2026-07-31'
-last_updated: '2026-08-23'
+last_updated: '2026-08-26'
 # 2026-08-16: +CAND-AUTONOMYCORE-002（FHS 引擎，双轮审查深挖④裁定，AI-RFIX-001）
+# 2026-08-26: +8 条 CAND-CRYPTO 族（数字货币量化战线启动批，Owner 2026-08-26 裁定启动，设计真源 94_crypto_quant_expansion.md §5；P0×4/P1×3/P2×1，W0 地基=001 市场日历抽象；族内查重 2026-08-26 全量检索零命中）
 # 2026-08-18: +CAND-SEC-001（Whistleblower Agent MVP，裁定 9 联动降级远期 P4，AI-ADJ-004）
 # 2026-08-20: +40 条（AI-NIGHT-001 阶段3 未来工程-大型登记批，tracker #223 承接，均不施工附触发条件）
 # 2026-08-21: +CAND-FBL-002（FLE 自卫门禁激活专项，#61 挂起转正）+CAND-GOVDRIFT-001（drift_events 容量保留，任务1 残余）（AI-RESIDUAL-001）
@@ -18462,3 +18463,513 @@ entries:
   estimated_complexity: 低
   acquisition_method: constructed
   last_review_outcome: '2026-08-24 已建成（MOD-RPT-032，testing），#ARCH-201'
+
+  # ----------------------------------------------------------
+  # CAND-CRYPTO-001~008: 数字货币量化战线启动批（2026-08-26 Owner 裁定启动）
+  # 设计真源: 94_crypto_quant_expansion.md §5（域级复用矩阵 §3 / 横切改造点 §4 / 施工波次 §6）
+  # 族内查重: 2026-08-26 全量检索"数字货币/crypto/BTC/永续/资金费/CCXT/币安"零命中
+  # ----------------------------------------------------------
+  # CAND-CRYPTO-001: 市场日历抽象（W0 第一地基——7×24 连续日历 vs A股断点日历）
+  # ----------------------------------------------------------
+- id: CAND-CRYPTO-001
+  name: "市场日历抽象(Market Calendar Abstraction)"
+  aliases: ["market_calendar", "交易日历接口", "7x24 日历", "连续市场日历"]
+  domain: D_DATA
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: "data/calendar"
+  panorama_position:
+    depgraph: {has_position: false, note: "新增横切接口层，晋升时新建节点（A股日历实现=现有交易日历逻辑收编）"}
+    dataflowgraph: {has_position: true, note: "scheduler/K线聚合/回测时间轴/PIT asof 的时间口径上游"}
+    decisiongraph: {has_position: false, note: "横切基础设施，无业务决策"}
+    blueprint: {has_position: true, note: "归属 D-DATA 蓝图横切扩展（94号 §4.1）"}
+  description: >-
+    现有 scheduler（调度）、K线聚合（120min 由 60min 两根聚合等）、回测时间轴、PIT asof 口径
+    全部隐式假设 A股断点日历（交易日历+午间休市+隔夜断点+节假日）。数字货币 7×24 连续，
+    接入前必须抽象 market_calendar 接口：定义"什么时间有交易、K线如何切分"的策略对象，
+    A股实现=现有交易日历逻辑收编，币实现=7×24 连续日历。所有时间相关计算改为注入日历。
+    硬门槛：A股现有逻辑零行为变化（纯加接口层，回归测试全绿才算完）。
+  capability: ""
+  problem_it_solves: "时间体系是双市场同内核的最深影响面——不抽象则币接入时 if/else 散落全代码库，SSOT 铁律破产"
+  trigger_signals:
+    - "Owner 启动数字货币战线施工（2026-08-26 已命中）"
+    - "94号备忘 W0 波次派单"
+  keywords: ["market_calendar", "交易日历", "7x24", "K线聚合", "PIT", "scheduler", "时间轴"]
+  upstream_deps:
+    - {path: "src/zephyr/data/scheduler.py", note: "调度器现有 A股历假设的主要改造点"}
+  downstream_consumers:
+    - {path: "src/zephyr/backtest", note: "回测时间轴注入日历"}
+    - {path: "docs/01_policies_and_standards/_registry/catalogs/technical_indicator_registry.yaml", note: "9周期 K线聚合口径（币侧新增 4h 周期候选）"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+    - {item: "A股现有时间相关代码盘点", note: "scheduler/K线聚合/回测时间轴/PIT asof 四类消费点清单，改造面摸底"}
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "src/zephyr 无 calendar 抽象层（2026-08-26 盘点），交易日历逻辑为 A股专用"}
+    blocking_question: null
+    result: candidate
+  status: candidate
+  priority: P0
+  created_at: '2026-08-26'
+  last_reviewed_at: '2026-08-26'
+  promoted_to: ""
+  source_draft: "94_crypto_quant_expansion.md"
+  source_section: "§4.1 市场日历抽象"
+  original_id: ""
+  estimated_complexity: M
+  tech_notes: >-
+    实现策略=抽象接口+按市场注入实现（策略模式），禁止业务代码 if/else 判市场。
+    A股零行为变化为回归门槛；币侧 7×24 连续日历顺带支持 4h 周期（现有 9 周期未含）。
+  risks:
+    - "改造面摸底遗漏会导致币侧时间口径错乱（K线错切/调度错点）——W0 必须先做全量消费点盘点"
+  alternatives: "币侧单独写一套时间逻辑——拒绝（SSOT 破产，双份维护）"
+  tags: ["数字货币", "横切", "时间体系", "地基", "P0"]
+  search_terms: ["market calendar", "市场日历", "7x24", "连续交易", "crypto calendar"]
+  related_candidates: ["CAND-CRYPTO-002", "CAND-CRYPTO-006", "CAND-CRYPTO-007"]
+  enables: ["CAND-CRYPTO-002", "CAND-CRYPTO-005", "CAND-CRYPTO-006", "CAND-CRYPTO-007"]
+  blocked_by: []
+  next_review_date: '2027-08-26'
+  review_frequency: yearly
+  last_review_outcome: "candidate 登记（2026-08-26 Owner 裁定启动数字货币战线）：W0 波次第一地基，派单即晋升"
+  acquisition_method: self_build
+  acquisition_source: ""
+
+  # ----------------------------------------------------------
+  # CAND-CRYPTO-002: 交易所行情 provider（W1——币可"看"）
+  # ----------------------------------------------------------
+- id: CAND-CRYPTO-002
+  name: "数字货币交易所行情接入(Crypto Exchange Market Data Provider)"
+  aliases: ["crypto provider", "交易所 WebSocket 接入", "币安行情", "OKX 行情"]
+  domain: D_MKT_DATA
+  domain_status: active
+  domain_node_count: 6
+  sub_layer: "mkt_data/connectors/crypto"
+  panorama_position:
+    depgraph: {has_position: true, note: "扩展 _domain_mkt_data 的 connectors/vendor_base 体系，新增 crypto provider 节点"}
+    dataflowgraph: {has_position: true, note: "交易所 WS/REST → WAL → CH/DuckDB 分层存储（沿用现有管道）"}
+    decisiongraph: {has_position: false, note: "数据层资产，无业务决策"}
+    blueprint: {has_position: true, note: "归属 mkt_data 蓝图 connectors 扩展"}
+  description: >-
+    新建数字货币交易所行情 provider：WebSocket 实时订阅（K线/成交/深度）+ REST 历史补数，
+    接入现有 vendor_base/故障转移体系与 WAL→CH/DuckDB 分层存储管道。
+    复用 provider_base 抽象与 quality_gate 质量门禁；断线重连/断点续传沿用现有韧性纪律。
+    交易所选型待 94号开放问题 Q1（币安/OKX/Bybit，以 Owner 账户为准）。
+  capability: ""
+  problem_it_solves: "数字货币战线无任何行情来源——数据地基不建，因子/回测/策略全是空中楼阁"
+  trigger_signals:
+    - "CAND-CRYPTO-001 市场日历抽象落地"
+    - "94号开放问题 Q1 交易所选型 Owner 拍板"
+  keywords: ["crypto", "WebSocket", "行情接入", "provider", "binance", "okx", "K线"]
+  upstream_deps:
+    - {path: "src/zephyr/data/provider_base.py", note: "provider 抽象基类复用"}
+    - {path: "docs/03_modules/_domain_mkt_data/vendor_base/blueprint.md", note: "vendor 体系接入规范"}
+  downstream_consumers:
+    - {path: "src/zephyr/data/ch_writer.py", note: "落库管道沿用"}
+    - {path: "src/zephyr/data/quality_gate.py", note: "质量门禁沿用"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+    - {item: "94号 Q1 交易所选型", note: "Owner 拍板后确定 API 体系（REST/WS 限频/鉴权）"}
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "mkt_data 域 connectors 无 crypto provider（2026-08-26 盘点），全库检索零命中"}
+    blocking_question: null
+    result: candidate
+  status: candidate
+  priority: P0
+  created_at: '2026-08-26'
+  last_reviewed_at: '2026-08-26'
+  promoted_to: ""
+  source_draft: "94_crypto_quant_expansion.md"
+  source_section: "§5 新建候选清单"
+  original_id: ""
+  estimated_complexity: L
+  tech_notes: >-
+    WS 7×24 长连接需心跳/重连/sequence 校验（防丢帧）；REST 补数按限频预算排调度。
+    历史 K线首批回填区间 Owner 定（建议 BTC/ETH 现货 3 年起，对齐 MVP universe=主流币）。
+  risks:
+    - "WS 长连接 7×24 稳定性（断线静默丢帧）——sequence 缺口检测+自动 REST 补洞为必备"
+  alternatives: "付费聚合源（Kaiko/CryptoQuant）——MVP 阶段免费直连（94号 Q4 建议），质量门禁不达标再升级"
+  tags: ["数字货币", "数据接入", "行情", "P0"]
+  search_terms: ["crypto market data", "binance websocket", "okx api", "交易所行情"]
+  related_candidates: ["CAND-CRYPTO-001", "CAND-CRYPTO-003"]
+  enables: ["CAND-CRYPTO-003", "CAND-CRYPTO-007"]
+  blocked_by: ["CAND-CRYPTO-001"]
+  next_review_date: '2027-08-26'
+  review_frequency: yearly
+  last_review_outcome: "candidate 登记（2026-08-26 Owner 裁定启动）：W1 波次，001 落地+ Q1 选型后晋升"
+  acquisition_method: self_build
+  acquisition_source: ""
+
+  # ----------------------------------------------------------
+  # CAND-CRYPTO-003: 永续合约专属数据（Phase 2——资金费率/OI/基差/爆仓）
+  # ----------------------------------------------------------
+- id: CAND-CRYPTO-003
+  name: "永续合约专属数据接入(Perpetual Swap Data Suite)"
+  aliases: ["资金费率数据", "funding rate", "持仓量 OI", "基差数据", "爆仓数据"]
+  domain: D_MKT_DATA
+  domain_status: active
+  domain_node_count: 6
+  sub_layer: "mkt_data/datasets/perp"
+  panorama_position:
+    depgraph: {has_position: true, note: "扩展 crypto provider（CAND-CRYPTO-002）的数据集族"}
+    dataflowgraph: {has_position: true, note: "funding_rate/open_interest/basis/liquidation 四类新表 → 因子域消费"}
+    decisiongraph: {has_position: false, note: "数据层资产，无业务决策"}
+    blueprint: {has_position: true, note: "归属 mkt_data 蓝图（币特有数据资产）"}
+  description: >-
+    永续合约（Perpetual Swap，无到期日期货，靠资金费率锚定现货价）的四类专属数据：
+    资金费率（funding rate，多空每 8 小时互付的持仓成本）、持仓量 OI（Open Interest）、
+    基差（合约-现汇价差）、爆仓数据（liquidation）。币圈最核心的特有 alpha 源，
+    也是 Phase 2 合约交易与杠杆风控的前置输入。
+  capability: ""
+  problem_it_solves: "永续是币圈主力品种，其专属数据（资金费率/OI/基差/爆仓）既是 alpha 源又是合约风控输入，现货体系完全无对应物"
+  trigger_signals:
+    - "94号 Q3 Phase 2 启动条件达成（建议现货实盘 track record 3 个月+）"
+    - "CAND-CRYPTO-002 行情接入落地"
+  keywords: ["perpetual", "funding rate", "open interest", "basis", "liquidation", "永续", "资金费率"]
+  upstream_deps:
+    - {path: "candidate CAND-CRYPTO-002", note: "行情 provider 落地后扩展数据集"}
+  downstream_consumers:
+    - {path: "src/zephyr/factor", note: "币特有因子（资金费率因子等）输入"}
+    - {path: "candidate CAND-CRYPTO-008", note: "杠杆风控的资金费率/爆仓价输入"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+    - {item: "CAND-CRYPTO-002 落地", note: "provider 体系就绪"}
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "无永续相关数据表（2026-08-26 盘点）"}
+    blocking_question: null
+    result: candidate
+  status: candidate
+  priority: P1
+  created_at: '2026-08-26'
+  last_reviewed_at: '2026-08-26'
+  promoted_to: ""
+  source_draft: "94_crypto_quant_expansion.md"
+  source_section: "§4.4 杠杆与资金费率"
+  original_id: ""
+  estimated_complexity: M
+  tech_notes: "四类数据均走交易所公共 API（无需鉴权）；爆仓数据部分交易所仅 WS 推送无历史回填，需落地即开始积累"
+  risks:
+    - "爆仓数据无历史回填——接入越晚历史缺口越大，可考虑 Phase 1 末期提前挂采集（只采集不消费）"
+  alternatives: "第三方聚合（Coinglass 类）——免费额度有限，交易所原生 API 优先"
+  tags: ["数字货币", "数据接入", "永续合约", "Phase2", "P1"]
+  search_terms: ["funding rate", "open interest", "perpetual swap data", "资金费率", "爆仓数据"]
+  related_candidates: ["CAND-CRYPTO-002", "CAND-CRYPTO-008"]
+  enables: ["CAND-CRYPTO-008"]
+  blocked_by: ["CAND-CRYPTO-002"]
+  next_review_date: '2027-08-26'
+  review_frequency: yearly
+  last_review_outcome: "candidate 登记（2026-08-26）：Phase 2 启动线（94号 §4.4 裁定），003 提前采集待 Q3 拍板"
+  acquisition_method: self_build
+  acquisition_source: ""
+
+  # ----------------------------------------------------------
+  # CAND-CRYPTO-004: 链上数据接入（P2 增强——alt_data 新源）
+  # ----------------------------------------------------------
+- id: CAND-CRYPTO-004
+  name: "链上数据接入(On-Chain Data Feed)"
+  aliases: ["链上数据", "on-chain", "交易所净流入", "活跃地址", "MVRV"]
+  domain: D_ALT_DATA
+  domain_status: skeleton
+  domain_node_count: 0
+  sub_layer: "alt_data/onchain"
+  panorama_position:
+    depgraph: {has_position: false, note: "alt_data 域新增数据源节点（空白域激活切入点）"}
+    dataflowgraph: {has_position: true, note: "链上指标 → alt_data 管道 → 因子/情绪消费"}
+    decisiongraph: {has_position: false, note: "数据层资产，无业务决策"}
+    blueprint: {has_position: true, note: "归属 D-ALT-DATA 蓝图（币特有另类数据）"}
+  description: >-
+    数字货币特有的另类数据源：交易所净流入（exchange netflow，币进出交易所=潜在卖压信号）、
+    活跃地址、MVRV/SOPR 等链上估值指标。只读不交互（不签名不上链，94号 §7 不做什么）。
+    接入现有 alt_data 管道（与新闻/情绪同管道），PIT 门控沿用。
+  capability: ""
+  problem_it_solves: "链上数据是币圈独有的基本面维度（A股无对应物），缺它则币版因子体系只剩价格量能一条腿"
+  trigger_signals:
+    - "币版现货策略首批上线后出现因子维度不足"
+    - "94号 W4 波次后评估"
+  keywords: ["on-chain", "exchange netflow", "MVRV", "active addresses", "链上", "另类数据"]
+  upstream_deps: []
+  downstream_consumers:
+    - {path: "src/zephyr/factor", note: "链上因子输入"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "alt_data 域无链上数据源（2026-08-26 盘点）"}
+    blocking_question: null
+    result: candidate
+  status: candidate
+  priority: P2
+  created_at: '2026-08-26'
+  last_reviewed_at: '2026-08-26'
+  promoted_to: ""
+  source_draft: "94_crypto_quant_expansion.md"
+  source_section: "§5 新建候选清单"
+  original_id: ""
+  estimated_complexity: M
+  tech_notes: "源选型：Glassnode/CryptoQuant 付费 API vs 免费自建（区块链浏览器 API 限频紧）——P2 阶段再评"
+  risks:
+    - "付费源成本高/免费源限频紧——先以 1~2 个核心指标（交易所净流入优先）验证增量价值再扩"
+  alternatives: "MVP 阶段纯价格量能+情绪因子——本项为增强非地基"
+  tags: ["数字货币", "另类数据", "链上", "P2"]
+  search_terms: ["on-chain data", "exchange netflow", "MVRV", "链上数据"]
+  related_candidates: ["CAND-CRYPTO-002"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-26'
+  review_frequency: yearly
+  last_review_outcome: "candidate 登记（2026-08-26）：P2 增强项，现货策略跑通后评估晋升"
+  acquisition_method: self_build
+  acquisition_source: ""
+
+  # ----------------------------------------------------------
+  # CAND-CRYPTO-005: 数字货币执行适配器（W3——币可"交易"）
+  # ----------------------------------------------------------
+- id: CAND-CRYPTO-005
+  name: "数字货币执行适配器(Crypto Execution Adapter)"
+  aliases: ["交易所执行器", "CCXT 适配器", "crypto broker adapter", "币安下单"]
+  domain: D_EX_CORE
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: "ex_core/adapters/crypto"
+  panorama_position:
+    depgraph: {has_position: true, note: "EX-CORE 域新增交易所适配器节点（与 QMT 执行器平级，OMS 内核不动）"}
+    dataflowgraph: {has_position: true, note: "订单 → 适配器 → 交易所私有 API → 回执/成交回报"}
+    decisiongraph: {has_position: false, note: "执行通道，无业务决策"}
+    blueprint: {has_position: true, note: "归属 D-EX-CORE 蓝图（Broker ACL 边界内，INV-005 沿用）"}
+  description: >-
+    新建数字货币交易所执行适配器：订单状态机 + 回执确认（下单后隔 1~2 秒查委托，
+    查到写回执、查不到重试并标记疑似丢单——QMT 教训直接沿用）+ 密钥管理。
+    OMS 内核不动，Broker ACL 铁律（INV-005：仅 D-EX-CORE 可调用）不变。
+    走 53号 5 态 FSM 同一路径（纸面→模拟→实盘小资金）。
+  capability: ""
+  problem_it_solves: "无执行通道则数字货币只能回测不能交易——QMT 执行器是 A股券商专属不可复用"
+  trigger_signals:
+    - "94号 Q1 交易所选型拍板 + W2 回测环境就绪"
+    - "币版策略回测通过需上模拟盘"
+  keywords: ["execution", "ccxt", "order", "adapter", "回执确认", "丢单重试"]
+  upstream_deps:
+    - {path: "src/zephyr/ex_core", note: "OMS 内核复用，适配器按 ports 接口实现"}
+    - {path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/40_execution_broker.md", note: "执行对接范式与回执教训真源"}
+  downstream_consumers:
+    - {path: "src/zephyr/trading", note: "trading conductor 经 EX-CORE 下单，通道无感"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+    - {item: "94号 Q1 交易所选型", note: "API 密钥体系/限频/私有端点确定"}
+    - {item: "CAND-CRYPTO-006 规则参数化", note: "下单校验规则包先行"}
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "ex_core 仅有 QMT/模拟通道，无 crypto 适配器（2026-08-26 盘点）"}
+    blocking_question: null
+    result: candidate
+  status: candidate
+  priority: P0
+  created_at: '2026-08-26'
+  last_reviewed_at: '2026-08-26'
+  promoted_to: ""
+  source_draft: "94_crypto_quant_expansion.md"
+  source_section: "§5 新建候选清单"
+  original_id: ""
+  estimated_complexity: L
+  tech_notes: >-
+    大概率基于 CCXT 库（统一多家交易所 API 的开源库）做薄适配，减少逐所对接成本；
+    密钥走 secret_registry 体系；回执确认机制参数化（查询间隔/重试次数按交易所调）。
+  risks:
+    - "交易所 API 限频与私有 WS 稳定性——订单回报双通道（WS 推送+REST 轮询兜底）"
+  alternatives: "逐所原生 API 直连——CCXT 统一层更省，但关键路径（下单/回执）必要时原生补强"
+  tags: ["数字货币", "执行", "P0"]
+  search_terms: ["crypto execution", "ccxt adapter", "binance order", "交易所执行"]
+  related_candidates: ["CAND-CRYPTO-001", "CAND-CRYPTO-006"]
+  enables: []
+  blocked_by: ["CAND-CRYPTO-001", "CAND-CRYPTO-006"]
+  next_review_date: '2027-08-26'
+  review_frequency: yearly
+  last_review_outcome: "candidate 登记（2026-08-26）：W3 波次，001/006 落地+Q1 选型后晋升"
+  acquisition_method: opensource
+  acquisition_source: "ccxt（备选：交易所原生 API）"
+
+  # ----------------------------------------------------------
+  # CAND-CRYPTO-006: 交易规则参数化（W2——规则集可插拔）
+  # ----------------------------------------------------------
+- id: CAND-CRYPTO-006
+  name: "交易规则可插拔参数化(Pluggable Trading Rule Packs)"
+  aliases: ["交易规则包", "step_size", "tick_size", "无涨跌停", "T+0 规则"]
+  domain: D_EX_CORE
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: "ex_core/rules"
+  panorama_position:
+    depgraph: {has_position: true, note: "board_lot/price_cage 重构为规则包加载器+A股规则包收编，新增币规则包"}
+    dataflowgraph: {has_position: false, note: "订单校验内部机制"}
+    decisiongraph: {has_position: false, note: "执行约束，无业务决策"}
+    blueprint: {has_position: true, note: "归属 D-EX-CORE 蓝图（94号 §4.3）"}
+  description: >-
+    A股规则（board_lot 整手 100 股、price_cage 涨跌停价格笼子）硬编码于 ex_core；
+    币规则完全不同：step_size（最小下单量步进）/tick_size（最小报价单位）按交易对各异、
+    无涨跌停（部分所有短时价格保护带）、T+0。裁定：规则引擎改为可插拔规则包——
+    每市场一份，订单校验按标的所属市场加载。A股行为零变化为回归门槛。
+  capability: ""
+  problem_it_solves: "交易规则硬编码=币订单无法通过现有校验（整手/涨跌停口径全错），且双市场 if/else 违反 SSoT"
+  trigger_signals:
+    - "CAND-CRYPTO-001 市场日历抽象落地"
+    - "94号 W2 波次派单"
+  keywords: ["board_lot", "price_cage", "step_size", "tick_size", "T+0", "规则包"]
+  upstream_deps:
+    - {path: "src/zephyr/ex_core/board_lot.py", note: "整手规则改造点"}
+    - {path: "src/zephyr/ex_core/price_cage.py", note: "价格笼子改造点"}
+  downstream_consumers:
+    - {path: "src/zephyr/ex_core", note: "订单校验链消费规则包"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "board_lot/price_cage 为 A股硬编码规则（2026-08-26 盘点），无规则包抽象"}
+    blocking_question: null
+    result: candidate
+  status: candidate
+  priority: P0
+  created_at: '2026-08-26'
+  last_reviewed_at: '2026-08-26'
+  promoted_to: ""
+  source_draft: "94_crypto_quant_expansion.md"
+  source_section: "§4.3 交易规则可插拔"
+  original_id: ""
+  estimated_complexity: M
+  tech_notes: "step_size/tick_size 元数据随 CAND-CRYPTO-002 行情接入落地（交易所 exchangeInfo 接口提供）；T+1→T+0 结算周期参数同源改造"
+  risks:
+    - "A股规则收编时的行为漂移——回归测试全绿+灰度对照双门槛"
+  alternatives: "币侧独立校验链——拒绝（SSoT 破产）"
+  tags: ["数字货币", "交易规则", "横切", "P0"]
+  search_terms: ["trading rules", "step size", "tick size", "price cage", "交易规则包"]
+  related_candidates: ["CAND-CRYPTO-001", "CAND-CRYPTO-005"]
+  enables: ["CAND-CRYPTO-005"]
+  blocked_by: ["CAND-CRYPTO-001"]
+  next_review_date: '2027-08-26'
+  review_frequency: yearly
+  last_review_outcome: "candidate 登记（2026-08-26）：W2 波次，001 落地后晋升"
+  acquisition_method: self_build
+  acquisition_source: ""
+
+  # ----------------------------------------------------------
+  # CAND-CRYPTO-007: 币版回测三件套实例（W2——币可"测"）
+  # ----------------------------------------------------------
+- id: CAND-CRYPTO-007
+  name: "币版回测三件套实例(Crypto Backtest Environment Trio)"
+  aliases: ["币版 universe", "币版 benchmark", "币版 cost_model", "maker/taker 费率模型"]
+  domain: D_DATA
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: "registry_instances/crypto"
+  panorama_position:
+    depgraph: {has_position: false, note: "注册表条目扩展（universe/benchmark/cost_model 三注册表新增币版实例），非独立模块"}
+    dataflowgraph: {has_position: true, note: "币版三件套 → 回测环境装配（52号范式沿用）"}
+    decisiongraph: {has_position: false, note: "配置资产，无业务决策"}
+    blueprint: {has_position: true, note: "归属三注册表蓝图（62号机制复用）"}
+  description: >-
+    回测环境三件套（universe/benchmark/cost_model）的币版实例登记：
+    universe=币交易池（MVP 建议 BTC+ETH 现货，94号 Q2 待拍板）；benchmark=BTC 指数类基准；
+    cost_model=maker/taker 双边费率（挂/吃单异价）+滑点模型，Phase 2 追加资金费率持仓成本。
+    注册表机制与回测装配全复用，只新增实例条目——回测环境先于被测对象（项目惯例）。
+  capability: ""
+  problem_it_solves: "无币版三件套则回测环境装不起来——A股三件套实例（沪深300/全A池/印花税佣金）口径全不适用"
+  trigger_signals:
+    - "CAND-CRYPTO-002 行情接入落地（universe 成分有数据源）"
+    - "94号 Q2 universe 范围拍板"
+  keywords: ["universe", "benchmark", "cost_model", "maker/taker", "回测三件套"]
+  upstream_deps:
+    - {path: "docs/01_policies_and_standards/_registry/catalogs/universe_registry.yaml", note: "universe 实例落点"}
+    - {path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/62_business_registry_construction.md", note: "注册表机制真源"}
+  downstream_consumers:
+    - {path: "src/zephyr/backtest", note: "回测装配消费三件套"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+    - {item: "94号 Q2 universe 范围", note: "MVP=BTC+ETH 或市值前 N"}
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "三注册表无币版实例（2026-08-26 盘点）"}
+    blocking_question: null
+    result: candidate
+  status: candidate
+  priority: P1
+  created_at: '2026-08-26'
+  last_reviewed_at: '2026-08-26'
+  promoted_to: ""
+  source_draft: "94_crypto_quant_expansion.md"
+  source_section: "§5 新建候选清单"
+  original_id: ""
+  estimated_complexity: S
+  tech_notes: "cost_model 需支持 maker/taker 异价（A股无此概念）；费率按交易所 VIP 档位参数化"
+  risks: []
+  alternatives: "暂用 A股 cost_model 近似——拒绝（费率结构本质不同，回测失真）"
+  tags: ["数字货币", "回测", "注册表", "P1"]
+  search_terms: ["crypto universe", "maker taker fee", "cost model", "回测三件套"]
+  related_candidates: ["CAND-CRYPTO-001", "CAND-CRYPTO-002"]
+  enables: ["CAND-CRYPTO-008"]
+  blocked_by: ["CAND-CRYPTO-001", "CAND-CRYPTO-002"]
+  next_review_date: '2027-08-26'
+  review_frequency: yearly
+  last_review_outcome: "candidate 登记（2026-08-26）：W2 波次，001/002 落地+Q2 拍板后晋升"
+  acquisition_method: self_build
+  acquisition_source: ""
+
+  # ----------------------------------------------------------
+  # CAND-CRYPTO-008: 合约仓位与杠杆风控扩展（Phase 2）
+  # ----------------------------------------------------------
+- id: CAND-CRYPTO-008
+  name: "合约仓位与杠杆风控扩展(Leverage & Liquidation Risk Extension)"
+  aliases: ["爆仓价模型", "维持保证金", "杠杆风控", "资金费率持仓成本"]
+  domain: D_POSITION
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: "position/leverage"
+  panorama_position:
+    depgraph: {has_position: false, note: "POSITION/RISK 域扩展节点，晋升时新建（VO-012 Side 已预留 SHORT/COVER）"}
+    dataflowgraph: {has_position: true, note: "杠杆持仓 → 爆仓价/维持保证金监控 → 风控否决链"}
+    decisiongraph: {has_position: true, note: "杠杆仓位裁决进 C-047 裁决链"}
+    blueprint: {has_position: true, note: "归属 D-POSITION/D-RISK 蓝图（94号 §4.4）"}
+  description: >-
+    Phase 2 永续合约交易的仓位与风控扩展：爆仓价（liquidation price，保证金不足时强制平仓价）、
+    维持保证金率监控、杠杆倍数约束、资金费率计入持仓成本。回撤 Protocol 同构升级——
+    杠杆把同等价格波动放大 N 倍，四级阈值（8/15/20/25%）触发速度快一个量级。
+  capability: ""
+  problem_it_solves: "杠杆持仓无爆仓价/维持保证金模型=实盘必爆——现货风控体系不覆盖杠杆维度"
+  trigger_signals:
+    - "94号 Q3 Phase 2 启动条件达成"
+    - "CAND-CRYPTO-003 永续数据 + CAND-CRYPTO-007 三件套就绪"
+  keywords: ["leverage", "liquidation", "margin", "爆仓价", "维持保证金", "资金费率"]
+  upstream_deps:
+    - {path: "src/zephyr/position", note: "仓位裁决中心扩展点"}
+    - {path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/35_drawdown_protocol_impl.md", note: "回撤 Protocol 升级对象"}
+  downstream_consumers:
+    - {path: "src/zephyr/risk", note: "风控否决链消费杠杆风险指标"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+    - {item: "94号 Q3 Phase 2 拍板", note: "现货 track record 后启动"}
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "position/risk 域无杠杆/爆仓建模（2026-08-26 盘点，VO-012 仅枚举预留）"}
+    blocking_question: null
+    result: candidate
+  status: candidate
+  priority: P1
+  created_at: '2026-08-26'
+  last_reviewed_at: '2026-08-26'
+  promoted_to: ""
+  source_draft: "94_crypto_quant_expansion.md"
+  source_section: "§4.4 杠杆与资金费率"
+  original_id: ""
+  estimated_complexity: L
+  tech_notes: "爆仓价公式按交易所档位（维持保证金率阶梯）；风控模块先于策略模块施工（风险优先原则，同 A股回撤 Protocol 优先级裁定）"
+  risks:
+    - "杠杆下回撤 Protocol 参数全面失真——必须重新校准，禁止沿用现货阈值"
+  alternatives: "Phase 1 不做杠杆（现货 only）——本项仅随 Phase 2 启动"
+  tags: ["数字货币", "风控", "杠杆", "Phase2", "P1"]
+  search_terms: ["liquidation price", "maintenance margin", "leverage risk", "爆仓价"]
+  related_candidates: ["CAND-CRYPTO-003", "CAND-CRYPTO-007"]
+  enables: []
+  blocked_by: ["CAND-CRYPTO-007"]
+  next_review_date: '2027-08-26'
+  review_frequency: yearly
+  last_review_outcome: "candidate 登记（2026-08-26）：Phase 2 启动线，003/007 就绪+Q3 拍板后晋升"
+  acquisition_method: self_build
+  acquisition_source: ""

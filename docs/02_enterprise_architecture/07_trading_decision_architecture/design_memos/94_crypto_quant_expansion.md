@@ -1,0 +1,186 @@
+---
+ttl: permanent
+doc_type: architecture_view
+title: 数字货币量化扩展设计
+owner: ZephyrAlpha-Owner
+language: zh
+status: draft
+version: "0.1.0"
+date: 2026-08-26
+topic: crypto_quant_expansion
+scope: 07_trading_decision_architecture
+---
+
+# 数字货币量化扩展设计
+
+> 本文是"数字货币量化战线"的启动备忘：记录为什么现在开这条战线、30 域骨架哪些与 A股共用/哪些参数化/哪些新建、四个横切改造点、新建候选清单与施工波次。
+> 性质：混合型（决策备忘 + 施工计划）。模块级登记真源 = candidate_module_registry.yaml CAND-CRYPTO-001~008；域级全景真源 = docs/_working/依赖图/00-总览与索引.md（30 域 v7.0）。
+
+## 1. 背景与定位
+
+### 1.1 为什么是现在
+
+- 项目 30 域依赖全景（v7.0）已完成设计，A股战线价值链主骨架（数据→因子→信号→组合→仓位→执行→风控）大量域处于"骨架/轻度"态，方法论与基建已就位。
+- Owner 2026-08-26 决定启动数字货币量化战线。启动前必须先把"复用边界"设计清楚——否则两条战线各自演进，同一套因子/风控/回测逻辑会出现两份实现，违反 SSoT（单一真源，Single Source of Truth——每个概念只有一个权威实现）铁律。
+- 核心判断：**量化系统约 60~70% 是资产无关的**（asset-agnostic，指不依赖具体交易品种特性的通用能力）。技术指标、因子评估、组合构建、风控框架、回测方法论、ML 平台、治理基建——这些对股票和数字货币是同一份代码。真正的差异集中在**接入层**（行情/执行）与**交易规则参数**。
+
+### 1.2 两条战线的关系
+
+| 维度 | A股战线（存量） | 数字货币战线（新增） |
+|---|---|---|
+| 定位 | 主战场，施工中 | 新战场，设计先行 |
+| 共享层 | 30 域骨架、18 业务注册表机制、治理基建 | 同左（同一套代码，禁止 fork 另建） |
+| 独立层 | QMT/券商接入、T+1、涨跌停、龙虎榜 | 交易所 API 接入、T+0、7×24、资金费率 |
+| 资金 | 独立账户 | 独立账户（30 号 Model A 独立账本体系天然支持多市场扩展） |
+
+**裁定一（复用优先）**：数字货币战线 ≈ 新建"接入层 + 规则参数集 + 市场日历"，**不重写内核**。任何"币版 XX 模块"施工前必须先问：能否用参数/规则集/instance（实例）差异解决，而非新建模块——能合并必须合并（治理预算纪律 D1）。
+
+**裁定二（设计先行，登记先行）**：所有新建构件先登记 CAND 候选库（CAND-CRYPTO 族），施工启动时按晋升流程进 depgraph 设计态，与 A股战线同一套治理纪律。
+
+## 2. 现状盘点
+
+- 域级全景真源：[依赖图 00-总览与索引](../../_working/依赖图/00-总览与索引.md)（30 域 + 30×30 依赖矩阵 + 价值链主线 DAT→FAC→SIG→PC→PA→SELL→POS→XC→RPT）。
+- A股侧已落地的可复用资产：技术指标体系（[16_technical_indicator_build_plan](16_technical_indicator_build_plan.md)，9 周期 OHLCV）、多策略并发架构（[30_multi_strategy_concurrency](30_multi_strategy_concurrency.md)，独立账本+firm 聚合）、风控三模块 production（drawdown/var/kill_switch）、执行对接范式（[40_execution_broker](40_execution_broker.md)）、18 业务注册表机制（[62_business_registry_construction](62_business_registry_construction.md)）。
+- 候选库查重：2026-08-26 对 candidate_module_registry.yaml 全量检索"数字货币/加密货币/crypto/BTC/永续/资金费/CCXT/币安"零命中——无重复登记风险，CRYPTO 族为全新前缀。
+
+## 3. 域级复用矩阵（三类划分）
+
+> 对依赖全景 30 域逐一裁定。✅=直接共用（零改动）｜🔧=框架共用+参数/规则集差异｜🆕=币版新建（A股无对应物）｜➖=该战线暂不涉及。
+
+### 3.1 横切与基础设施域（全部 ✅）
+
+| 域 | 裁定 | 说明 |
+|---|---|---|
+| D-AUTONOMY-CORE / D-AUTONOMY-PERM | ✅ | Agent 引擎与保护层，资产无关 |
+| D-INFRA-RUNTIME / D-INFRA-OPS | ✅ | 数据库/事件总线/调度/CI-CD/监控 |
+| D-SECURITY / D-INTEGRATION / D-GOVERNANCE / D-OPS | ✅ | 门禁/契约/审计/遥测，同一套 |
+| D-FRONTEND | ✅ | 复用同一前端，新增币区页面 |
+| D-KNOWLEDGE / D-RESEARCH | ✅ | 知识域/研究基础设施，资产无关 |
+
+### 3.2 核心价值链域
+
+| 域 | 裁定 | 说明 |
+|---|---|---|
+| D-DATA | 🔧 | provider_base 抽象共用；新建交易所行情 provider（CAND-CRYPTO-002）；落库 schema 沿用分层存储 |
+| D-FACTOR | ✅ | 因子框架（factor_base/IC-IR/FDR/CPCV/PIT 门禁）全共用；因子库实例部分独立（币特有因子如资金费率因子 Phase 2 补） |
+| D-SIGNAL | ✅ | 信号合成/多因子融合框架共用；币版信号实例独立登记 strategy/factor 注册表 |
+| D-PF-CORE / D-PF-ALLOC | ✅ | 组合构建与资本分配方法论共用（portfolio_model 注册表直接复用） |
+| D-SELL-DECISION | ✅ | 卖出融合仲裁框架共用 |
+| D-POSITION | 🔧 | 仓位裁决/资金曲线共用；Phase 2 合约需扩展爆仓价/维持保证金模型（CAND-CRYPTO-008） |
+| D-EX-CORE | 🔧 | OMS 框架共用；券商适配换成交易所适配器（CAND-CRYPTO-005）；回执确认机制沿用 QMT 教训（隔 1~2 秒查委托） |
+| D-EX-SOR | 🔧 | 智能路由概念共用；币侧初期单交易所直连，路由域 MVP 不施工 |
+| D-REPORTING | ✅ | 绩效归因/报告框架共用 |
+| D-RISK | 🔧 | 风控引擎（kill_switch/stop_loss/VaR）共用；risk_limit 注册表新增币版阈值实例（波动更大、无涨跌停、7×24 连续暴露） |
+| D-ML-TRAIN / D-ML-SERVE | ✅ | 训练/推理平台共用；模型实例独立 |
+
+### 3.3 数据上游与增强域
+
+| 域 | 裁定 | 说明 |
+|---|---|---|
+| D-DATA-ENG | ✅ | 数据管道/特征存储共用 |
+| D-ALT-DATA | 🆕 | 管道（NLP 情绪/新闻去重）共用；币侧新增链上数据源（CAND-CRYPTO-004）；信源独立（X/Telegram 替代东财/同花顺） |
+| D-CROSS-ASSET | ➡️受益 | 原为空白域；双市场格局形成后该域（跨市场相关性/BTC 与 A股联动）自然激活，远期 |
+| D-COMPLIANCE | 🆕/➖ | A股程序化新规不适用；币侧合规边界=Owner 个人行为自担，系统内只保留"不操纵市场"类通用纪律，门禁级建设暂不启动 |
+| D-TRADING | 🔧 | 结算对账框架共用；币版费率/充提/资金划转实例（CAND-CRYPTO-007 成本模型含 maker/taker 费率） |
+| D-SIMULATION | ✅ | 回测/仿真引擎共用（52/53 号范式沿用） |
+| seat（龙虎榜注册表） | ➖ | A股专属，币无对应物，不建 |
+
+> 技术指标专项说明：technical_indicator 注册表全量共用——指标算法输入是 OHLCV（开高低收量）K 线，币的 K 线同构。唯一注意点：币圈常用 4h 周期（现有 9 周期未含），且 K 线无午休/隔夜断点——这归入 §4 横切改造点①，不是指标算法本身的改动。
+
+## 4. 四个横切改造点（先于一切新建）
+
+> 这四点是"同一套内核服务两个市场"的前提，全部以**抽象接口 + 按市场注入实现**的方式做，禁止 if/else 散落在业务代码里。
+
+### 4.1 市场日历抽象（market_calendar，第一地基）
+
+- **问题**：A股是断点日历（交易日历 + 午间休市 + 隔夜断点 + 节假日），币是 7×24 连续。项目现有 scheduler（调度）、K 线聚合（120min 由 60min 两根聚合等）、回测时间轴、PIT asof 口径全部隐式假设 A股日历。
+- **裁定**：抽象 market_calendar 接口（Market Calendar，市场日历——定义"什么时间有交易、K 线如何切分"的策略对象），A股实现=现有交易日历逻辑，币实现=7×24 连续日历。所有时间相关计算改为注入日历，不直接读 A股历。
+- **风险**：这是影响面最深的改造，必须保证 A股现有逻辑**零行为变化**（纯加接口层，回归测试全绿才算完）。
+- 登记：CAND-CRYPTO-001，P0。
+
+### 4.2 T+0 vs T+1
+
+- A股 T+1（当日买入次日可卖）写在买入流/卖出流/boundary 测试里；币 T+0 无此约束。
+- 裁定：结算周期做成市场级参数，回测与实盘同一参数源；卖出决策域不感知差异（T+1 只是"可卖数量"的约束条件）。
+
+### 4.3 交易规则可插拔
+
+- A股规则：board_lot（整手 100 股）、price_cage（价格笼子/涨跌停 ±10%/20%）。
+- 币规则：step_size（最小下单量步进）/tick_size（最小报价单位）按交易对各异；无涨跌停（部分交易所有短时价格保护带）。
+- 裁定：ex_core 规则引擎改为规则集可插拔——每市场一份规则包，订单校验时按标的所属市场加载。登记：CAND-CRYPTO-006，P0。
+
+### 4.4 杠杆与资金费率（Phase 2，永续合约）
+
+- 永续合约（Perpetual Swap，永续掉期——无到期日的期货合约，靠资金费率锚定现货价）是币圈主力品种，但引入：资金费率（funding rate，多空双方每 8 小时互付的持仓成本）、杠杆、爆仓价、维持保证金。
+- 裁定：**Phase 1 只做现货，Phase 2 才上永续**。VO-012 Side 枚举已预留 SHORT/COVER，但仓位域的杠杆/爆仓建模（CAND-CRYPTO-008）与资金费率成本（进 cost_model）在 Phase 2 启动，不在 MVP 范围。
+
+## 5. 新建候选清单（CAND-CRYPTO 族）
+
+> 真源 = candidate_module_registry.yaml。依赖关系决定施工波次（§6）。
+
+| ID | 构件 | 域归属 | 优先级 | 依赖 |
+|---|---|---|---|---|
+| CAND-CRYPTO-001 | 市场日历抽象（7×24 连续日历 vs A股断点日历） | D-DATA/横切 | P0 | 无 |
+| CAND-CRYPTO-002 | 交易所行情 provider（WebSocket 实时 + REST 补数，接 vendor_base 体系） | D-MKT-DATA | P0 | 001 |
+| CAND-CRYPTO-003 | 永续合约专属数据（资金费率/持仓量 OI/基差/爆仓） | D-MKT-DATA | P1（Phase 2） | 002 |
+| CAND-CRYPTO-004 | 链上数据接入（交易所净流入/活跃地址/MVRV，alt_data 新源） | D-ALT-DATA | P2 | 无 |
+| CAND-CRYPTO-005 | 数字货币执行适配器（订单状态机 + 回执确认 + 疑似丢单重试） | D-EX-CORE | P0 | 001/006 |
+| CAND-CRYPTO-006 | 交易规则参数化（step_size/tick_size/无涨跌停/T+0 规则包） | D-EX-CORE | P0 | 001 |
+| CAND-CRYPTO-007 | 币版回测三件套实例（universe/benchmark/cost_model，含 maker/taker+资金费率成本） | 注册表层 | P1 | 001/002 |
+| CAND-CRYPTO-008 | 合约仓位与杠杆风控扩展（爆仓价/维持保证金/资金费率进持仓成本） | D-POSITION/D-RISK | P1（Phase 2） | 007 |
+
+> 优先级口径沿用项目惯例（回测环境三件套先于被测对象；风险相关模块先于策略模块——风险优先原则）。008 标 P1 但属 Phase 2 启动线，与 §4.4 裁定一致。
+
+## 6. 施工波次（建议）
+
+```
+W0  CAND-CRYPTO-001 市场日历抽象        ← 纯加接口层，A股零行为变化（回归全绿门槛）
+W1  CAND-CRYPTO-002 行情接入 + 落库     ← 币可"看"（数据进 CH/DuckDB 分层存储）
+W2  CAND-CRYPTO-006 规则参数化
+    + CAND-CRYPTO-007 回测三件套         ← 币可"测"（回测环境就绪）
+    + risk_limit 币版阈值实例            ← 风险先行，先于任何策略
+W3  CAND-CRYPTO-005 执行适配器           ← 币可"交易"（纸面→模拟盘→实盘小资金，走 53 号 5 态 FSM 同一路径）
+W4  币版策略首批定义 + 风控参数校准       ← 走 20 号范式（策略注册表登记）
+Phase 2  CAND-CRYPTO-003/004/008        ← 永续合约 + 链上增强
+```
+
+与 A股战线的冲突控制：W0~W2 全部正交（新增目录/注册表条目/接口实现，不改 A股业务逻辑）；W3 起涉及 ex_core 共享代码，须走 ARCH 登记 + 门禁。
+
+## 7. 不做什么
+
+| 不做 | 理由 |
+|---|---|
+| 不 fork 代码库另建币版系统 | SSoT 铁律；差异只许走参数/规则集/实例 |
+| Phase 1 不做合约/杠杆/做空 | 现货 MVP 先行（§4.4），杠杆把回撤 Protocol 复杂度抬一个量级 |
+| 不做高频/做市 | 与项目中低频+因子驱动定位一致（40 号 §2.12 通道平权裁定同逻辑） |
+| 不做 DeFi 链上交互 | 链上数据只读（CAND-CRYPTO-004），不签名不上链 |
+| 不建 seat 类 A股专属注册表 | 币无龙虎榜对应物 |
+| 不重写技术指标/因子框架 | OHLCV 资产无关，原样复用 |
+| 不启动币侧合规门禁建设 | 个人交易自担边界，系统只保留通用交易纪律（§3.3） |
+
+## 8. 开放问题（待 Owner 拍板）
+
+| # | 问题 | 影响 | 建议 |
+|---|---|---|---|
+| Q1 | 交易所选哪家（币安/OKX/Bybit 或其他）？Owner 账户在哪？ | CAND-CRYPTO-002/005 的 API 选型 | 以 Owner 已有账户为准；API 稳定性币安/OKX 均可 |
+| Q2 | universe（交易池）范围：只做 BTC/ETH 主流，还是市值前 N？ | 数据量/因子横截面深度 | 建议 MVP=BTC+ETH 现货，Phase 2 扩前 20 |
+| Q3 | Phase 2 永续合约的启动条件？ | §4.4 边界 | 建议现货实盘 track record 3 个月+ |
+| Q4 | 行情数据源：免费交易所 WS 直连，还是付费聚合源（Kaiko/CryptoQuant）？ | 002 成本与质量 | 建议 MVP 免费直连，质量门禁沿用现有 quality_gate |
+| Q5 | 资金安排：币账户与 A股账户完全隔离（独立账本），初始规模？ | 30 号账本体系登记 | 独立账本天然支持，规模 Owner 定 |
+| Q6 | 新闻/情绪信源清单（X/Telegram/中文媒体）？ | alt_data 信源接入 | 建议 MVP 先接免费聚合（如官方公告+主流快讯），X API 付费后置 |
+
+## 9. 引用
+
+- [依赖图 00-总览与索引](../../_working/依赖图/00-总览与索引.md)（30 域全景与依赖矩阵真源）
+- [16_technical_indicator_build_plan](16_technical_indicator_build_plan.md)（技术指标体系，OHLCV 资产无关依据）
+- [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md)（独立账本体系——多市场扩展的账本基础）
+- [40_execution_broker](40_execution_broker.md)（执行对接范式：回执确认/疑似丢单重试等教训沿用）
+- [52_backtest_framework_docking](52_backtest_framework_docking.md) / [53_simulation_live_path](53_simulation_live_path.md)（回测/模拟/实盘路径，币版沿用）
+- [62_business_registry_construction](62_business_registry_construction.md)（18 业务注册表机制，币版实例登记入口）
+- candidate_module_registry.yaml：CAND-CRYPTO-001~008（新建构件登记真源）
+
+## 10. 修订记录
+
+| 日期 | 版本 | 改动 | 理由 |
+|---|---|---|---|
+| 2026-08-26 | 0.1.0 | 初稿落盘（draft） | Owner 宣布启动数字货币量化战线；先定复用边界与横切改造点，CAND-CRYPTO 族 8 条同步登记，开放问题 6 项待 Owner 拍板后升 active |
