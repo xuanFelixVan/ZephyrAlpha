@@ -53,6 +53,7 @@ Signal域统一包。聚合信号生成、策略、合成、组合、资本配�
 """
 
 from __future__ import annotations
+from zephyr.signal_fundamental.pead_event_model import PeadEventModel
 
 __all__ = [
     "AllocationMethod",
@@ -91,3 +92,5 @@ def __getattr__(name):
         mod = importlib.import_module(_lazy[name], __name__)
         return getattr(mod, name)
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+__all__.append("PeadEventModel")

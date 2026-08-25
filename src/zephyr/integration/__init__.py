@@ -35,6 +35,7 @@
 from zephyr.integration.llm_bridge import LLMBridge
 from zephyr.integration.mcp_server import get_asset_summary
 from zephyr.integration.failover_coordinator import FailoverCoordinator
+from zephyr.integration.external_system_connector import ExternalSystemConnector
 
 __all__ = [
     "LLMBridge",
@@ -54,3 +55,5 @@ __all__ = [
 ]
 
 __all__.append("FailoverCoordinator")
+
+__all__.append("ExternalSystemConnector")

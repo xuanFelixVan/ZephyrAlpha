@@ -57,6 +57,10 @@ from zephyr.signal_fundamental.audit.signal_audit_logger import (
     SignalEventType,
 )
 
+# NOTE(P1W25 2026-08-25): scaffold 注册器写入斜杠非法 import（#ARCH-228 同款 bug
+# 第 11 次复发），按本包既有"点号 import + __all__ 入列"约定归一。
+from zephyr.signal_fundamental.audit.trace_context_store import TraceContextStore
+
 __all__ = [
     "AuditLogConfig",
     "AuditLogEntry",
@@ -66,3 +70,5 @@ __all__ = [
     "SignalAuditLogger",
     "SignalEventType",
 ]
+
+__all__.append("TraceContextStore")

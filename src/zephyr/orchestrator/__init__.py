@@ -198,7 +198,10 @@ __all__.append("ScriptRunner")
 
 
 from zephyr.orchestrator.execution.memory_writer import MemoryWriter, archive_to_vms
+from zephyr.orchestrator.layered_command_chain import LayeredCommandChain
 
 __all__.append("MemoryWriter")
 
 __all__.append("archive_to_vms")
+
+__all__.append("LayeredCommandChain")
