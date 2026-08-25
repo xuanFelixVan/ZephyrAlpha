@@ -9421,6 +9421,134 @@ creation_tokens:
   token: auto-scaffold-event_sentiment_adapter-20260825
   created_by: scaffold.py
   capability: event_sentiment_adapter
+- file: src/zephyr/risk/core/adaptive_risk_forecast.py
+  token: auto-scaffold-adaptive_risk_forecast-20260825
+  created_by: scaffold.py
+  capability: adaptive_risk_forecast
+- file: src/zephyr/data/storage_tiering.py
+  token: auto-scaffold-storage_tiering-20260825
+  created_by: scaffold.py
+  capability: storage_tiering
+- file: src/zephyr/data_eng/cleaning_anomaly_engine.py
+  token: auto-scaffold-cleaning_anomaly_engine-20260825
+  created_by: scaffold.py
+  capability: cleaning_anomaly_engine
+- file: src/zephyr/risk/core/adaptive_risk_monitor.py
+  token: auto-scaffold-adaptive_risk_monitor-20260825
+  created_by: scaffold.py
+  capability: adaptive_risk_monitor
+- file: src/zephyr/data_eng/expectation_governance.py
+  token: auto-scaffold-expectation_governance-20260825
+  created_by: scaffold.py
+  capability: expectation_governance
+- file: src/zephyr/risk/core/copula_garch_joint.py
+  token: auto-scaffold-copula_garch_joint-20260825
+  created_by: scaffold.py
+  capability: copula_garch_joint
+- file: src/zephyr/factor/factor_availability_monitor.py
+  token: auto-scaffold-factor_availability_monitor-20260825
+  created_by: scaffold.py
+  capability: factor_availability_monitor
+- file: src/zephyr/data/cleaning_rule_engine.py
+  token: auto-scaffold-cleaning_rule_engine-20260825
+  created_by: scaffold.py
+  capability: cleaning_rule_engine
+- file: src/zephyr/risk/core/adaptive_risk_coordinator.py
+  token: auto-scaffold-adaptive_risk_coordinator-20260825
+  created_by: scaffold.py
+  capability: adaptive_risk_coordinator
+- file: src/zephyr/risk/core/black_swan_pattern_library.py
+  token: auto-scaffold-black_swan_pattern_library-20260825
+  created_by: scaffold.py
+  capability: black_swan_pattern_library
+- file: src/zephyr/data/data_service.py
+  token: auto-scaffold-data_service-20260825
+  created_by: scaffold.py
+  capability: data_service
+- file: src/zephyr/risk/core/crowding_response_engine.py
+  token: auto-scaffold-crowding_response_engine-20260825
+  created_by: scaffold.py
+  capability: crowding_response_engine
+- file: src/zephyr/risk/core/systemic_risk_alert_state_machine.py
+  token: auto-scaffold-systemic_risk_alert_state_machine-20260825
+  created_by: scaffold.py
+  capability: systemic_risk_alert_state_machine
+- file: src/zephyr/risk/atr_stop_engine.py
+  token: auto-scaffold-atr_stop_engine-20260825
+  created_by: scaffold.py
+  capability: atr_stop_engine
+- file: src/zephyr/risk/core/emergency_stop_confirmation.py
+  token: auto-scaffold-emergency_stop_confirmation-20260825
+  created_by: scaffold.py
+  capability: emergency_stop_confirmation
+- file: src/zephyr/risk/core/performance_attribution_degradation.py
+  token: auto-scaffold-performance_attribution_degradation-20260825
+  created_by: scaffold.py
+  capability: performance_attribution_degradation
+- file: tests/zephyr/data/test_storage_tiering.py
+  token: auto-test-storage-tiering-20260825
+  created_by: AI-K3-DIGEST-W1（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: storage_tiering
+- file: tests/zephyr/data/test_cleaning_rule_engine.py
+  token: auto-test-cleaning-rule-engine-20260825
+  created_by: AI-K3-DIGEST-W1（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: cleaning_rule_engine
+- file: tests/zephyr/data/test_data_service.py
+  token: auto-test-data-service-20260825
+  created_by: AI-K3-DIGEST-W1（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: data_service
+- file: tests/zephyr/data/test_cleaning_anomaly_engine.py
+  token: auto-test-cleaning-anomaly-engine-20260825
+  created_by: AI-K3-DIGEST-W1（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: cleaning_anomaly_engine
+- file: tests/zephyr/data/test_expectation_governance.py
+  token: auto-test-expectation-governance-20260825
+  created_by: AI-K3-DIGEST-W1（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: expectation_governance
+- file: tests/factor/test_factor_availability_monitor.py
+  token: auto-test-factor-availability-monitor-20260825
+  created_by: AI-K3-DIGEST-W1（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: factor_availability_monitor
+- file: tests/risk/test_adaptive_risk_forecast.py
+  token: auto-test-adaptive-risk-forecast-20260825
+  created_by: AI-K3-DIGEST-W1（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: adaptive_risk_forecast
+- file: tests/risk/test_adaptive_risk_monitor.py
+  token: auto-test-adaptive-risk-monitor-20260825
+  created_by: AI-K3-DIGEST-W1（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: adaptive_risk_monitor
+- file: tests/risk/test_adaptive_risk_coordinator.py
+  token: auto-test-adaptive-risk-coordinator-20260825
+  created_by: AI-K3-DIGEST-W1（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: adaptive_risk_coordinator
+- file: tests/risk/test_black_swan_pattern_library.py
+  token: auto-test-black-swan-pattern-library-20260825
+  created_by: AI-K3-DIGEST-W1（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: black_swan_pattern_library
+- file: tests/risk/test_crowding_response_engine.py
+  token: auto-test-crowding-response-engine-20260825
+  created_by: AI-K3-DIGEST-W1（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: crowding_response_engine
+- file: tests/risk/core/test_copula_garch_joint.py
+  token: auto-test-copula-garch-joint-20260825
+  created_by: AI-K3-DIGEST-W1（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: copula_garch_joint
+- file: tests/risk/core/test_systemic_risk_alert_state_machine.py
+  token: auto-test-systemic-risk-alert-state-machine-20260825
+  created_by: AI-K3-DIGEST-W1（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: systemic_risk_alert_state_machine
+- file: tests/risk/test_atr_stop_engine.py
+  token: auto-test-atr-stop-engine-20260825
+  created_by: AI-K3-DIGEST-W1（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: atr_stop_engine
+- file: tests/risk/core/test_emergency_stop_confirmation.py
+  token: auto-test-emergency-stop-confirmation-20260825
+  created_by: AI-K3-DIGEST-W1（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: emergency_stop_confirmation
+- file: tests/risk/core/test_performance_attribution_degradation.py
+  token: auto-test-performance-attribution-degradation-20260825
+  created_by: AI-K3-DIGEST-W1（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: performance_attribution_degradation
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

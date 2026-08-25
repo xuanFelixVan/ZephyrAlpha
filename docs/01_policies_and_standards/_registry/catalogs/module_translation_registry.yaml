@@ -43074,6 +43074,174 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "这是事件策略情绪分适配层的测试集，用假数据源验证窗口日期映射、富负载组装、权重面板生成和标的白名单，不连数据库也能跑。"
+- module_path: src/zephyr/data/storage_tiering.py
+  domain_id: D_DATA
+  name_zh: "存储分层生命周期管理"
+  name_en: "Storage Tiering Lifecycle"
+  desc_zh: "冷热分层TTL自动迁移+分区+UFL事实层+双副本校验+恢复演练"
+  desc_en: "Tiered storage TTL migration, partitioning, UFL fact layer, replica check, DR drill"
+  plain_zh: "数据分层存储管家：按TTL把热数据从Redis迁到ClickHouse温层、超期再归档成按年月分区的Parquet冷层；维护只增不改的UFL确定性事实层，改动即拒绝；并核对D盘E盘双副本哈希一致性，按L1到L6分级演练恢复耗时与数据丢失量是否达标。"
+- module_path: src/zephyr/risk/core/adaptive_risk_forecast.py
+  domain_id: D_RISK
+  name_zh: "前瞻VaR共形预判层"
+  name_en: "Adaptive Risk Forecast"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "盘前先把明天的风险算清楚：用条件概率分布估出前瞻VaR/CVaR，再裹一层有数学覆盖率保证的共形安全垫，对照限额给出收紧倍数和是否坐出观望的建议，供三层风控盘前裁决与盘中重算当基线。"
+- module_path: tests/zephyr/data/test_storage_tiering.py
+  domain_id: D_DATA
+  name_zh: "存储分层单测"
+  name_en: "Storage Tiering Tests"
+  desc_zh: "StorageTiering 单元测试：分区/层级判定/TTL迁移/UFL/双副本/恢复演练"
+  desc_en: "Unit tests for storage tiering lifecycle manager"
+  plain_zh: "存储分层管家的体检表：验证日线按年分钟按月分区、数据按年龄判层、热键过期搬到温层、超期分区归档冷层、UFL事实层只增不改、D/E双副本哈希比对、L1到L6恢复演练达标判定。"
+- module_path: src/zephyr/data_eng/cleaning_anomaly_engine.py
+  domain_id: D_DATA_ENG
+  name_zh: "数据清洗与异常引擎"
+  name_en: "Cleaning & Anomaly Engine"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "行情数据进仓前的清洁工：先按规则库找毛病（价格跳变、复权断点、重复K线、量能异常、缺失空洞），再自动修——能跨源仲裁就仲裁、缺一两根就用前值补齐（最多补3根）、修不了就剔除并打质量标记，所有修复动作留审计日志，拿不准的进人工审核队列，防止脏数据直接污染回测和因子。"
+- module_path: src/zephyr/data_eng/expectation_governance.py
+  domain_id: D_DATA_ENG
+  name_zh: "期望治理门控"
+  name_en: "Expectation Governance"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "数据质量的可执行契约检查员：把对数据的期望写成YAML套件（字段在不在、空不空、取值范围、分布、时效），验证器跑完给出三档处置——小问题告警、中等问题降级放行、大问题直接阻断入仓，每份验证报告存档可追溯，期望字段与CTR-001行情契约联动，轻量自研不引外部重依赖。"
+- module_path: src/zephyr/factor/factor_availability_monitor.py
+  domain_id: D_FACTOR
+  name_zh: "因子可用性监控器"
+  name_en: "Factor Availability Monitor"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "因子数据的出勤考核员：每天算一遍注册因子的覆盖率和缺失比例，覆盖率低于八成告警、低于五成标记降级、低于两成直接阻断信号合成，降级状态写进FactorSignal元数据让下游自动降权，防止因子静默缺失导致信号失真还照常交易。"
+- module_path: src/zephyr/risk/core/adaptive_risk_monitor.py
+  domain_id: D_RISK
+  name_zh: "流动性相关性体制监控层"
+  name_en: "Adaptive Risk Monitor"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "盘中盯住两件事：手里股票有多少变成卖不动的（非流动占比越线就发黄牌红牌），以及持仓之间是不是涨跌停一起动（相关性体制进入高位说明分散失效发橙牌），汇总成风险仪表盘快照和告警清单给三层风控与告警器用。"
+- module_path: src/zephyr/data/cleaning_rule_engine.py
+  domain_id: D_DATA
+  name_zh: "数据清洗规则引擎"
+  name_en: "Cleaning Rule Engine"
+  desc_zh: "规则DSL解析+滚动分位阈值限幅演进+超限转人工复核+拦截统计输出"
+  desc_en: "Rule DSL engine with rolling-quantile self-evolving thresholds and interception stats"
+  plain_zh: "数据清洗裁判所：用一份DSL清单声明哪些字段超多少算脏数据，阈值不是写死的而是按滚动窗口分位数自己长，但只能在上下限幅度内小步走，一旦要超限就挂起等人工点头；判完的脏数据按规则拦下或打标，并给出每条规则拦了多少的统计清单。"
+- module_path: src/zephyr/risk/core/copula_garch_joint.py
+  domain_id: D_RISK
+  name_zh: "Copula-GARCH 联合分布建模"
+  name_en: "Copula-GARCH Joint Distribution Model"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "单看每只股票的暴跌风险不够，还要知道多只持仓会不会'一起暴跌'。本模块把每只股票的波动预测（GARCH 过滤或密度预测注入）用 Copula 拼成联合分布，DCC 盘后批算动态相关，蒙特卡洛模拟出整个组合的联合 VaR/ES 和成对尾部依赖矩阵；持仓上限 50 只，超过直接拒绝。"
+- module_path: src/zephyr/risk/core/adaptive_risk_coordinator.py
+  domain_id: D_RISK
+  name_zh: "自适应风控三层联动装配层"
+  name_en: "Adaptive Risk Coordinator"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把盘前预判和盘中监控拧成一股绳：盘前按市场状态收紧或放开限额并决定是否坐出，盘中按监控红黄橙牌分级降仓或禁开仓，黑天鹅来了只发Kill Switch建议交存量熔断执行；六条硬边界注册在案并有测试锚定防漂移。"
+- module_path: tests/zephyr/data/test_cleaning_rule_engine.py
+  domain_id: D_DATA
+  name_zh: "清洗规则引擎单测"
+  name_en: "Cleaning Rule Engine Tests"
+  desc_zh: "CleaningRuleEngine 单元测试：DSL解析/固定规则/滚动分位阈值/集成门控"
+  desc_en: "Unit tests for cleaning rule engine"
+  plain_zh: "清洗裁判所的体检表：验证DSL清单解析对错、固定阈值规则打标与拦截、滚动分位阈值在限幅内自动调整超限挂起等人工点头、以及与质量门控同形态输出的拦截统计。"
+- module_path: src/zephyr/risk/core/black_swan_pattern_library.py
+  domain_id: D_RISK
+  name_zh: "黑天鹅模式库"
+  name_en: "Black Swan Pattern Library"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "事前嗅出黑天鹅：把当下市场的波动、回撤、相关性、流动性、跳空、跌停潮、外围跌幅七项体征，跟七种历史危机模式的模板逐一比对相似度，像了就提前降仓；同时像两种以上或像系统性危机就升级给三层风控发Kill Switch建议，比对记录全部留痕。"
+- module_path: src/zephyr/data/data_service.py
+  domain_id: D_DATA
+  name_zh: "数据服务接口层"
+  name_en: "Data Service Facade"
+  desc_zh: "实时查询+PIT回测+决策输入打包+审计追溯四能力统一入口与SLA"
+  desc_en: "Unified data service facade: realtime/PIT/decision-input/audit-trail with SLA"
+  plain_zh: "数据访问总前台：查盘中最新价走Redis并卡5毫秒时效，查历史财报按查询时点只给当时已公告的版本，把因子和信号打包成策略层标准入参，谁用了哪些数据留出血缘和事件轨迹合成合规材料；四个窗口一个门进出，各带时效考核。"
+- module_path: src/zephyr/risk/core/systemic_risk_alert_state_machine.py
+  domain_id: D_RISK
+  name_zh: "系统性风险分级预警 5 级状态机"
+  name_en: "Systemic Risk Alert State Machine"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把组合的 VaR95/CVaR、今天亏了多少、昨天亏没亏放在一个天平上，分出绿黄橙红黑五档：黄档新开仓减半、橙档禁止新开仓并减仓三成、红档全线减仓一半只平不开、黑档（CVaR 超 10% 或流动性危机）全部清仓并打出熔断触发标记。只产出指令标记，真正下单/熔断由编排层执行。"
+- module_path: src/zephyr/risk/core/crowding_response_engine.py
+  domain_id: D_RISK
+  name_zh: "拥挤度响应引擎"
+  name_en: "Crowding Response Engine"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "不光量拥挤还管动手：策略盈亏形态两两比DTW，长得太像或拥挤分超线就自动降杠杆降仓并给漏斗降权；一旦拥挤叠加回撤还在恶化，判定正反馈踩踏直接熔断式退出，保住本金不等深套。"
+- module_path: tests/zephyr/data/test_data_service.py
+  domain_id: D_DATA
+  name_zh: "数据服务门面单测"
+  name_en: "Data Service Facade Tests"
+  desc_zh: "DataService 单元测试：实时/PIT双时态/决策输入打包/审计追溯/SLA"
+  desc_en: "Unit tests for unified data service facade"
+  plain_zh: "数据总前台的体检表：验证盘中查询走Redis并卡5毫秒时效、历史财报按认知时点取版本再按业务时点过滤、因子信号打包成策略层标准入参时剔除无效件、血缘加事件合成合规材料、以及各窗口时效违约记账。"
+- module_path: tests/risk/test_adaptive_risk_forecast.py
+  domain_id: D_RISK
+  name_zh: "前瞻VaR共形预判层单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证预判层：条件分布出VaR/CVaR、共形缓冲叠加、无校准降级、限额收紧与坐出建议、非法配置fail-closed。"
+- module_path: tests/risk/test_adaptive_risk_monitor.py
+  domain_id: D_RISK
+  name_zh: "流动性相关性监控层单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证监控层：非流动占比黄红分级、相关性高档橙牌、综合取最严、无相关性输入NA、非法输入fail-closed。"
+- module_path: tests/risk/test_adaptive_risk_coordinator.py
+  domain_id: D_RISK
+  name_zh: "三层联动装配层单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证装配层：六条硬边界与参数真源锚定、盘前限额缩放与regime自适应、盘中熔断分级取最严、黑天鹅升级只发建议。"
+- module_path: tests/risk/test_black_swan_pattern_library.py
+  domain_id: D_RISK
+  name_zh: "黑天鹅模式库单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证模式库：七模板齐备、平静市场零命中、流动性危机单命中降仓、多模式命中升级C-004、评分单调、留痕完整。"
+- module_path: tests/risk/test_crowding_response_engine.py
+  domain_id: D_RISK
+  name_zh: "拥挤度响应引擎单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证响应引擎：拥挤超阈降杠杆降仓降权、指纹同形态判拥挤、拥挤加回撤恶化触发熔断式退出、非法输入fail-closed。"
+- module_path: src/zephyr/risk/atr_stop_engine.py
+  domain_id: D_RISK
+  name_zh: "ATR 动态止损引擎"
+  name_en: "ATR Stop Engine"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "止损不再用死板的百分比，而是用市场波动幅度（ATR14）量尺子：趋势市给 3.5 倍尺子宽止损，震荡市给 1.75 倍紧止损，ADX 超 25 自动按趋势算。赚钱后止损线只往上挪不往下挪；止盈分三批（1R、2R 各走三分之一，剩下的跟着移动止损跑）；拿着 N 天还没赚到 1R 就认输出局。还附一个 k 值的网格和贝叶斯寻优工具，寻优过程全程留痕。"
+- module_path: src/zephyr/risk/core/emergency_stop_confirmation.py
+  domain_id: D_RISK
+  name_zh: "紧急停止安全确认"
+  name_en: "Emergency Stop Confirmation"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "按下'紧急停止'或'强制平仓'这种红色按钮前，必须两个不同的授权操作人先后确认才放行，任何一个人说不就立即作废。谁提的、谁确认的、什么理由，全部写进防篡改的哈希链台账，事后能离线校验有没有被改动；没在授权名册里的人连提案资格都没有。"
+- module_path: src/zephyr/risk/core/performance_attribution_degradation.py
+  domain_id: D_RISK
+  name_zh: "统一绩效归因与策略退化检测"
+  name_en: "Performance Attribution & Degradation Guard"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "盯策略不能只看赚不赚钱：把收益拆成配置/选择/交互三块看门道（归因计算复用既有引擎），再算因子 IC 的 60 日均线——当前均线比基准均线掉了超过一半就判策略退化、权重直接归零；如果策略挤在拥挤因子上（拥挤度超 0.6）就先减半。判定理由全留痕，输出的是降权指令，真正写回权重由编排层执行。"
 
 battle_map_steps:
 - step_id: BM-BUY-04

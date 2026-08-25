@@ -19783,3 +19783,133 @@ entries:
   - '#ARCH-BOOT-001'
   created: '2026-08-25'
   last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-218'
+  title: scaffold 功能域重叠门禁 alias 常用词误伤——W1 波 13 次硬阻断实证（工具债）
+  severity: P2
+  category: 技术债
+  adjudication: >-
+    DIGEST P0 W1 波 scaffold 共 13 次被 alias 模糊匹配误报阻断：'行情数据'→D_MKT_DATA、
+    'gate/护栏/自适应/报告'→跨域高频词连中、模块名自身含 'data' 必中本域、'自动修复'→D_SECURITY、
+    '降级'→D_SHARED、'监控'→D_OPS、'熔断/趋势/审计链/委托'→语义巧合。均经 --force-override
+    裁定通道放行（exact/module_path 冲突检查仍执行，留痕自动打印）。裁定建议：①词边界匹配
+    （子串命中豁免本域模块名）；②跨域高频词白名单降级 warn；③二级确认词共现才命中。
+    另：scaffold 注册器斜杠路径 bug（zephyr.risk/core 非法 import 行）与 _sync_blueprint_file_list
+    表格畸形写入（W1d 手工还原）同源登记。
+  impact:
+    - 'W1a 6 次/W1b 3 次/W1d 4 次阻断留痕（各波报告+fragment 证据）'
+  fix_phase: '登记（2026-08-25，DIGEST W1）；治本留治理 backlog'
+  status: open
+  related_rules:
+  - '#111 force_override 裁定通道'
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-219'
+  title: depgraph 工具链口径三则——blueprint_path 机械推导误报 / MOD-DATA_ENG 蓝图缺失 / design→production 依赖边通道
+  severity: P3
+  category: 技术债
+  adjudication: >-
+    ①add-design-node blueprint_path 按 docs/03_modules/<BLUEPRINT_ID>/ 机械推导，与蓝图实际布局
+    不符每次误报 WARNING（W1 波各波均触发）；建议从 blueprint_links/同 blueprint_id 既有节点反查。
+    ②MOD-DATA_ENG blueprint 文档缺失：blueprint_links 指向不存在目录（全库 20 个 D_DATA_ENG 节点
+    沿用），补铸或修正指向待裁定。③--add-design-edge 机械校验两端 design_maturity=design，对
+    production 依赖目标必拒；design→production 依赖正当通道=--add-edge --dep-maturity design
+    （W1 波实际使用），任务模板/文档应对齐写明分工。
+  impact:
+    - 'W1 波 16 新节点均带 WARNING 留痕；依赖边全部走 --add-edge --dep-maturity design 落账'
+  fix_phase: '登记（2026-08-25，DIGEST W1）'
+  status: open
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-220'
+  title: DIGEST P0 W1a+W1b：D_DATA/D_DATA_ENG/D_FACTOR 6 候选晋升施工落地 + CAND-FAC-006/007 合并对处置
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    AUD-DRAFT-001-DIGEST P0 波：CAND-DAT-006（storage_tiering 冷热分层 TTL+分区+UFL 事实层）/
+    CAND-DAT-007（cleaning_rule_engine 规则 DSL+滚动分位阈值自进化接 quality_gate）/
+    CAND-DAT-008（data_service 门面实时<5ms+PIT AS OF JOIN+决策输入）/
+    CAND-DATENG-001（cleaning_anomaly_engine 清洗规则库+自动修复）/
+    CAND-DATENG-002（expectation_governance 期望套件 YAML+三档门控）/
+    CAND-FAC-006（factor_availability_monitor 覆盖率/缺失率+三级阈值 is_degraded）。
+    CAND-FAC-006/007 合并定义对：canonical=006 建一份，007 REVIEW 豁免（信息更全两定义已并入，
+    注册表 review_note 留痕）。六模块 depgraph testing，新单测 93 例全绿，tests/zephyr/data+
+    tests/factor 集成零回归。
+  impact:
+    - 'src/zephyr/data/{storage_tiering,cleaning_rule_engine,data_service}.py（node 10581991/10581998/10582007）'
+    - 'src/zephyr/data_eng/{cleaning_anomaly_engine,expectation_governance}.py（10581992/10581993）'
+    - 'src/zephyr/factor/factor_availability_monitor.py（10581994）'
+  fix_phase: '已落地（2026-08-25，DIGEST W1a/W1b）'
+  status: resolved
+  related_rules:
+  - 'AUD-DRAFT-001-DIGEST'
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-221'
+  title: DIGEST P0 W1c：D_RISK 自适应风控族 5 候选晋升 + C-004 三层体系整合形态裁定（底座复用+薄装配）
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    CAND-RSK-034/035/031/032/033 晋升施工闭环。整合裁定：①预判层 MOD-RK-28 adaptive_risk_forecast
+    （条件 PDF VaR/CVaR 复用 MOD-SIG-043+共形缓冲复用 MOD-SIG-044）；②监控层 MOD-RK-29
+    adaptive_risk_monitor（流动性分级+相关性 regime 复用 MOD-POS-012）；C-004=MOD-RK-30
+    adaptive_risk_coordinator 薄装配（消费①②契约，熔断四级取最严，执行委托存量不 import 不复制）；
+    C-038=MOD-RK-31 black_swan_pattern_library（复用 BlackSwanMode 枚举唯一真源，事前匹配）；
+    C-045=MOD-RK-32 crowding_response_engine（复用 MOD-RK-13 度量+clone_guard DTW 只建响应引擎）。
+    零复制；五模块 testing，102 新测全绿，tests/risk 域回归零回归。
+  impact:
+    - 'src/zephyr/risk/core/{adaptive_risk_forecast,adaptive_risk_monitor,adaptive_risk_coordinator,black_swan_pattern_library,crowding_response_engine}.py（node 10581986~10581990）'
+    - '蓝图 MOD-RK-28~32 五件'
+  fix_phase: '已落地（2026-08-25，W1c）；运行时编排接线留运行时装配批'
+  status: resolved
+  related_rules:
+  - 'CAND-RSK-031/032/033/034/035'
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-222'
+  title: DIGEST P0 W1d：D_RISK 风险模型族 5 候选晋升（MOD-RK-33~37）+ MOD 号段并行撞号改号裁定
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    CAND-RSK-036~040 晋升施工闭环：MOD-RK-33 copula_garch_joint（边缘 GARCH+DCC Q̄ 复用
+    MOD-POS-011+经验 PIT Gaussian Copula+固定种子 MC，≤50 只硬约束）/MOD-RK-34
+    systemic_risk_alert_state_machine（组合侧 5 级阈值与 MOD-RK-10 市场侧分工，指令纯数据）/
+    MOD-RK-35 atr_stop_engine（k×ATR 体制自适应+追踪只上移+轻量 GP+EI Bayesian k 优化不引
+    sklearn）/MOD-RK-36 emergency_stop_confirmation（复用 MOD-INF-049 双锁唯一真源+白名单+
+    空名册 Fail-Closed+哈希链留痕）/MOD-RK-37 performance_attribution_degradation（退化判定
+    委托 MOD-PF-007 唯一真源，只补 MA60 口径+拥挤联动+降权指令）。撞号裁定：W1d 首件初铸
+    MOD-RK-32 与 W1c 并行批撞号，退让改号 MOD-RK-33 起（--set-blueprint-id 落痕）。五模块
+    testing，88 新测全绿。
+  impact:
+    - 'src/zephyr/risk/core/{copula_garch_joint,systemic_risk_alert_state_machine,emergency_stop_confirmation,performance_attribution_degradation}.py + src/zephyr/risk/atr_stop_engine.py（node 10581996/10582000~10582003）'
+    - '蓝图 MOD-RK-33~37 五件'
+  fix_phase: '已落地（2026-08-25，W1d）'
+  status: resolved
+  related_rules:
+  - 'CAND-RSK-036/037/038/039/040'
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-223'
+  title: 并行会话 scaffold __init__.py 交叉写坏与协调模式留痕（W1c/W1d D_RISK 同域并行）
+  severity: P2
+  category: 技术债
+  adjudication: >-
+    2026-08-25 W1c/W1d 并行施工期间，scaffold module 的 __init__ 注册器反复以非法语法
+    （zephyr.risk/core 斜杠路径）插入 import 行并切断既有 import 块；两波以可逆模式协调：
+    悬空导出先注释留 NOTE（非删除），类落码后按 NOTE 重挂合法导出，终态 __init__ 全合法
+    （import zephyr.risk(.core) 验证通过，tests/risk 1505 passed）。教训：同域并行波次
+    __init__ 是单文件热点，scaffold 注册器修复前靠 NOTE 协调模式；治本=注册器斜杠 bug 修复
+    +插入位置不切断多行 import 块（登记 #ARCH-218 同源工具债）。
+  impact:
+    - 'src/zephyr/risk/__init__.py + risk/core/__init__.py 终态合法（双方导出齐备）'
+  fix_phase: '留痕（2026-08-25，W1c/W1d）；注册器治本留治理 backlog'
+  status: resolved
+  related_rules:
+  - '#ARCH-218'
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
