@@ -36,5 +36,13 @@ from typing import Final
 
 from zephyr.position.core.drawdown_controller import DrawdownController
 from zephyr.position.core.position_sizing_engine import PositionSizingEngine
+# NOTE(2026-08-25, W-P1-19): scaffold 注册器斜杠非法 import 变种
+# (`from zephyr/position/core.position_adjudication_center import ...`，语法错误级)，
+# 已归一为点号合法 import（包门面再导出约定不变，#ARCH-242 同型复发）。
+from zephyr.position.core.position_adjudication_center import PositionAdjudicationCenter
 
-__all__: Final[list[str]] = ["DrawdownController", "PositionSizingEngine"]
+__all__: Final[list[str]] = [
+    "DrawdownController",
+    "PositionSizingEngine",
+    "PositionAdjudicationCenter",
+]

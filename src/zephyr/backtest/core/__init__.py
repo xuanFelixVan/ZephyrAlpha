@@ -11,6 +11,10 @@ from zephyr.backtest.core.overfitting_adjudicator import OverfittingAdjudicator
 
 __all__ = [
     "engine_base",
+    # NOTE(2026-08-25, W-P1-19): scaffold 注册器斜杠非法 import 变种
+    # (`from zephyr.backtest/core.strategy_cpcv_matrix import StrategyCpcvMatrix`)
+    # 已归一为模块名条目按字母序入列（#ARCH-242 同型第五次后再次复发）。
+    "strategy_cpcv_matrix",
 ]
 
 __all__.append("OverfittingAdjudicator")
