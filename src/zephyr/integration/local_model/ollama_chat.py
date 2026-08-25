@@ -59,6 +59,9 @@ INFERENCE_MODEL: Final[str] = os.getenv("OLLAMA_INFERENCE_MODEL", "qwen3:8b")
 INFERENCE_TEMPERATURE: Final[float] = 0.1
 INFERENCE_MAX_TOKENS: Final[int] = 1024
 INFERENCE_TIMEOUT_S: Final[float] = 60.0
+# qwen3 思考链默认关闭（生成后统一被 _strip_think_block 剥除，实测 -93% 无效 token、
+# 单条 9.0s→3.6s）；评估/调试需思考模式时设 ZEPHYR_OLLAMA_THINK=1
+INFERENCE_THINK: Final[bool] = os.getenv("ZEPHYR_OLLAMA_THINK", "0").lower() in ("1", "true", "yes")
 
 SYSTEM_PROMPTS: Final[dict[str, str]] = {
     "task_classification": (
@@ -452,6 +455,8 @@ class OllamaChat:
             "model": self._model,
             "messages": messages,
             "stream": False,
+            # qwen3 思考链默认关闭（INFERENCE_THINK，生成后统一被 _strip_think_block 剥除）
+            "think": INFERENCE_THINK,
         }
         options: dict[str, Any] = {}
         t = temperature if temperature is not None else self._temperature
