@@ -78,3 +78,9 @@ __all__ = [
 from zephyr.trading import (
     trigger_registry,  # noqa: F401  # ORPHAN-MODULE: 新模块引用登记（41_buy_flow §3.9 MOD-TRIG-001）
 )
+from zephyr.trading.strategy_abnormal_exit_orchestrator import StrategyAbnormalExitOrchestrator
+from zephyr.trading.trading_core_process_spec import TradingCoreProcessSpec
+
+__all__.append("StrategyAbnormalExitOrchestrator")
+
+__all__.append("TradingCoreProcessSpec")

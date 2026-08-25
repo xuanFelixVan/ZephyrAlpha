@@ -53,6 +53,7 @@ from .gate_engine import (
     gate_override,
     gate_simulator,
 )
+from zephyr.gov_enforcement.rule_enforcement.threshold_split_detector import ThresholdSplitDetector
 
 logger = logging.getLogger(__name__)
 
@@ -182,3 +183,5 @@ def __getattr__(name: str) -> Any:
             logger.debug("Lazy import failed for %s: %s", name, e)
             raise AttributeError(f"module {__name__!r} has no attribute {name!r}") from None
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+__all__.append("ThresholdSplitDetector")

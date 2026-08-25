@@ -54,6 +54,7 @@ from __future__ import annotations
 from typing import Final
 
 from zephyr.ex_core import multi_contract_adapter  # noqa: F401 — 包级导出（契约注册中心）
+from zephyr.ex_core.premarket_checker import PremarketChecker
 
 __all__: Final = [
     "AlgoType",
@@ -104,3 +105,5 @@ def __getattr__(name):
         globals()[name] = mod
         return mod
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+__all__.append("PremarketChecker")

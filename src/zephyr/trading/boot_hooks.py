@@ -181,7 +181,7 @@ _eventbus_consumers_subscribed = False
 
 
 def _subscribe_eventbus_consumers() -> None:
-    """统一调用9个消费方模块的 subscribe_eventbus() — DM-2507-J.
+    """统一调用10个消费方模块的 subscribe_eventbus() — DM-2507-J.
 
     混合注册模式：各模块提供模块级 subscribe_eventbus() 函数，
     boot_hooks 统一调用。每个 subscribe_eventbus() 内部幂等。
@@ -196,6 +196,7 @@ def _subscribe_eventbus_consumers() -> None:
       7. F1  autopilot              — task_completed
       8. F6  drift_bridge           — gate_blocked/task_completed
       9. auto_task_generator        — task_completed（自动任务生成，非架构文档生成器）
+      10. premarket_checker         — premarket.check.requested（MOD-EX-063 盘前检查器）
     注：架构文档生成器（23 个 generate_*.py）的自动触发不走 EventBus——见
     _subscribe_governance_regeneration()，启动时调 reconcile_stale() 按 mtime 扫描
     兜底；DB 真源变更由 apply_*.py 内联 reconcile_async() 实时触发。
@@ -216,6 +217,7 @@ def _subscribe_eventbus_consumers() -> None:
         ("F1 autopilot", "zephyr.trading.autopilot"),
         ("F6 drift_bridge", "zephyr.gov_drift.detector_core.bridges.drift_bridge"),
         ("auto_task_generator", "zephyr.trading.auto_task_generator"),
+        ("premarket_checker", "zephyr.ex_core.premarket_checker"),
     ]
 
     succeeded = 0
