@@ -43417,6 +43417,293 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "合规引擎的单元测试：验证 DSL 规则解析校验、版本历史不可变与活跃指针切换、处置聚合取最严、评估出错一律拒单、命中写日志契约、盘后批量审计统计与收编规则包。"
+- module_path: src/zephyr/infrastructure/gpu_hot_swap_model.py
+  domain_id: D_INFRA_OPS
+  name_zh: "GPU 上岗热交换模型"
+  name_en: "GPU Hot Swap Model"
+  desc_zh: "横切层四件套 GPU 件契约收口：盘中 8-10GB/盘后 16-18GB 两档显存画像+热交换三步协议+gpu:allocation 状态草稿（引用 MOD-INF-063 命名空间契约）"
+  desc_en: "GPU duty hot-swap contract: two VRAM profiles (intraday 8-10GB / postmarket 16-18GB) + 3-step swap protocol + gpu:allocation state draft (reusing MOD-INF-063 namespace)"
+  plain_zh: "管 GPU 什么时候干什么活、用多少显存：盘中交易时段只许用 8-10GB 做推理，盘后训练可以用 16-18GB；换班时先放空旧任务再装新任务最后检查，超预算直接拒绝，防止显存爆了拖累交易。"
+- module_path: src/zephyr/pf_alloc/core/maxdd_limit_allocator.py
+  domain_id: D_PF_ALLOC
+  name_zh: "最大回撤限制分配器"
+  name_en: "MaxDdLimit Allocation Strategist"
+  desc_zh: "PA-13 按各策略回撤预算分配资金：utilization 三档（<0.8 正常/0.8-1.0 降档×0.5/≥1.0 暂停），权重归一+只减不增，输入缺失 Fail-Closed"
+  desc_en: "Per-strategy MaxDD budget allocator: 3-tier utilization actions (normal/derate x0.5/suspend), normalized weights, fail-closed inputs"
+  plain_zh: "给每个策略发回撤额度：亏到额度的八成就把资金减半，亏穿额度直接停掉它的资金，省下来的钱分给其他还在额度内的策略，防止单个策略把组合拖垮。"
+- module_path: src/zephyr/regime/volatility_regime_alerter.py
+  domain_id: D_REGIME
+  name_zh: "波动率体制转换与关键时点预警器"
+  name_en: "Volatility Regime Alerter"
+  desc_zh: "模块2：GARCH(1,1) 日频波动预测（自研复用 fhs_engine 不引 arch 库）+RV_5d/RV_20d 压缩标记+波动突变告警，输出接 overlay_signals_builder 维度契约"
+  desc_en: "GARCH(1,1) daily vol forecast (self-built via fhs_engine, no arch lib) + RV 5d/20d compression flag + vol-shift alert, overlay_dims contract for overlay_signals_builder"
+  plain_zh: "盯市场波动什么时候要变天：用 GARCH 模型预测明天的波动率，如果预测值比过去 20 天平均高出一半就发突变告警；最近 5 天波动明显比 20 天小就标压缩；没信号时输出全零不打扰既有判定。"
+- module_path: src/zephyr/data/normalizers/format_transformer.py
+  domain_id: D_DATA
+  name_zh: "多源格式转换器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把各数据源参差不齐的记录（json/csv/parquet 行）按 Schema 定义统一翻成标准行情契约：字段类型校验、单位与时区归一，不合格的记录单独隔离留痕交给质量门控，不污染主流程。"
+- module_path: src/zephyr/data/sector_factor_manager.py
+  domain_id: D_DATA
+  name_zh: "板块因子数据管理器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把 880 板块的数据管理收口：校验板块K线覆盖完整性，挂接板块成分映射，计算板块轮动因子（相对强度/排名变化/资金流入），并给板块数据打质量评分，复用现有板块采集器不重建。"
+- module_path: src/zephyr/intelligence/api_llm_pool.py
+  domain_id: D_INTELLIGENCE
+  name_zh: "API LLM池"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "管理多家云端大模型（如DeepSeek/GLM/Claude）的调用池子：登记每家用的模型、单价、限额和超时；把每次调用花了多少token、折多少钱按Agent和任务记账；盯着每家的成功率和延迟，谁连续挂几次就先不用谁；总花费超上限或全都不可用时，给出改用本地模型的建议。密钥不在这里管。"
+- module_path: tests/intelligence/test_api_llm_pool.py
+  domain_id: D_INTELLIGENCE
+  name_zh: "API LLM池单元测试"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证API大模型调用池的行为：非法配置直接拒绝、重复注册拒绝、记账金额算得准且可按Agent和任务汇总、未注册的厂商一律拒绝、连续失败达阈值就不再被选中、花费超限或全挂时给出改用本地模型的建议、台账外发回调异常不影响记账。"
+- module_path: src/zephyr/data/redundant_source/sina_tencent_provider.py
+  domain_id: D_DATA
+  name_zh: "新浪腾讯快照备源适配器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "当 QMT 主源和通达信备源同时故障时的第三级兜底：用新浪/腾讯免登快照接口定时轮询拿报价，限速加超时退避，字段翻成标准契约，并和主源价格比对，偏差超限就告警。"
+- module_path: src/zephyr/data/implementations/announcement_provider.py
+  domain_id: D_DATA
+  name_zh: "交易所公告采集器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "从巨潮资讯和交易所的 RSS/HTTP 接口采公告新闻，整理成标准新闻行写进新闻表，入库前按标题哈希查重，避免同一公告重复落库。"
+- module_path: src/zephyr/signal_ashare/factor_result_bridge.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "因子计算结果消费桥接器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "信号域想吃因子域算好的因子结果，不自己去翻因子仓库，而是经过这座桥：桥先看结果的契约版本对不对（完全匹配就放行，同大版本就兼容透传，不认识就拒收并标降级），再把上游的降级标记原样带过来，每次过桥都记一笔审计账。"
+- module_path: src/zephyr/signal_ashare/signal_factory.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "C-028 信号工厂"
+  name_en: "Signal Factory"
+  desc_zh: "9阶段信号生命周期状态机+内存信号注册表+密度增强输出挂接+质量拥挤度双门+入漏斗批量产出"
+  desc_en: ""
+  plain_zh: "把各个分析器产出的零散信号统一收进一个工厂：先登记建档，再按九个阶段一步步推进——校验、挂上密度预测的分位数和置信度、过质量门、过拥挤度门，最后打包送进选股漏斗。哪个信号走到哪一步、被哪道门拦下，全部留痕可查。"
+- module_path: src/zephyr/signal_ashare/risk_event_consumer.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "风险事件消费处理器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "风险域一出事（比如VaR突破）会往消息流里扔事件，这个处理器就是信号域派去收件的：按消费组拉事件，凭幂等键认出重复件直接跳过，处理不了的扔进死信队列兜底，该给信号降级、撤销还是调权重就交给信号侧执行，最后给每张事件开回执，顺带盯着收件有没有拖太久。"
+- module_path: tests/signal_ashare/test_signal_factory.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "C-028 信号工厂测试"
+  name_en: "Signal Factory Tests"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证信号工厂的注册查重、九阶段顺序推进、密度置信度规则、质量拥挤度门阻断留痕、漏斗批量产出和JSON序列化契约，全部用内存合成数据不碰数据库。"
+- module_path: src/zephyr/factor/factor_factory.py
+  domain_id: D_FACTOR
+  name_zh: "因子工厂"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把一个因子从念头到退休分成九道工序（假设、生成、验证、入库、监控、迭代、退役等）串成流水线：每道工序有状态机管着能不能走，验证关必须过IC和因果双重检验，还要过回测门禁，合格才登记进因子注册表入库，后续监控、迭代、退役全程留痕。"
+- module_path: src/zephyr/factor/factor_production_pipeline.py
+  domain_id: D_FACTOR
+  name_zh: "因子与信号生产管线"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "管着七千多只股票的因子每天怎么算：盘前全员大锅饭式批量算一遍，盘中改成来一点新数据算一点的增量模式，算完写进特征仓库再广播给下游；管算力预算，超时就降级跳过不硬撑，还能先算算这么多股票乘这么多因子兜不兜得住。"
+- module_path: src/zephyr/factor/wq_alpha_87.py
+  domain_id: D_FACTOR
+  name_zh: "87个WorldQuant Alpha公式库"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把WorldQuant公开的101个Alpha公式里不依赖行业分类数据的87个逐个搬进代码：先备好一套时序小工具（排名、延迟、差分、相关、衰减加权等），再逐个写出公式，每个公式只用行情和成交额这些免费数据，天然守点-in-time不偷看未来，逐个接上IC/IR验证，登记进因子库。"
+- module_path: src/zephyr/autonomy_core/agents/researcher_agent.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: "研究Agent(Researcher)"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "扮演研究员角色：把一个因子想法（假设）和实验跑出来的指标（IC/夏普/回撤/样本数）放在一起做确定性裁决——回撤或样本不达标直接否，IC和夏普双达标才接受，边缘情况要求补数据；产出研究报告草稿但绝不直接入库，接受时只发人工门禁信号，由人审批后才生效；实验登记、报告外发都走回调委托给既有模块。"
+- module_path: tests/autonomy/test_researcher_agent.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: "研究Agent单元测试"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证研究Agent的行为：角色卡结构齐全、非法假设/指标/配置一律拒绝、回撤或样本不足硬否、IC夏普双达标才接受、边缘证据要求补数据、报告永远需要人工门禁、接受时才发门禁信号、回调异常不阻断判定、双审计记录齐全。"
+- module_path: src/zephyr/signal_ashare/capital_behavior_orchestrator.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "C-011 资金行为分析"
+  name_en: "Capital Behavior Orchestrator"
+  desc_zh: "七类主力画像+六阶段推演状态机+预测复盘自迭代校准+合力方向输出"
+  desc_en: ""
+  plain_zh: "把北向、公募、私募、游资、量化、散户、产业资本七路资金的买卖观测汇总成一张画像：谁在用真金白银做多、谁在撤，合成一个合力方向；再沿着建仓到出货六阶段推演下一步；每次预测错了会回头给对应资金类打折校准，越用越准。"
+- module_path: tests/signal_ashare/test_capital_behavior_orchestrator.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "C-011 资金行为分析测试"
+  name_en: "Capital Behavior Orchestrator Tests"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证七类画像校验、合力方向多空中性判定、六阶段推演不跳跃、复盘偏置修正限幅和JSON序列化契约，全部内存合成数据。"
+- module_path: src/zephyr/signal_ashare/auction_microstructure_analyzer.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "开盘竞价微结构分析模型"
+  name_en: "Auction Microstructure Analyzer"
+  desc_zh: "9:15-9:25竞价量价七族特征提取+抢筹诱多压价行为分类+竞价信号输出"
+  desc_en: ""
+  plain_zh: "解读集合竞价十分钟里的猫腻：虚拟撮合价是不是一路抬高、撤单多不多、买一封单是不是越堆越厚还是九点半前突然塌掉，据此判断主力是在抢筹、诱多还是压价，给出方向信号和把握度，供盘前计划和打板监控用。"
+- module_path: tests/signal_ashare/test_auction_microstructure_analyzer.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "开盘竞价微结构分析测试"
+  name_en: "Auction Microstructure Analyzer Tests"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证竞价快照校验、七族特征提取、抢筹诱多压价分类规则、单快照退化、撤单率分母为零处理和JSON序列化契约，全部内存合成数据。"
+- module_path: src/zephyr/autonomy_core/agents/signal_analyst_agent.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: "信号Agent(SignalAnalyst)"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "扮演信号分析员角色：汇总信号工厂产出的信号，看两件事——最近IC相比基线衰减了多少、这个信号拥挤不拥挤；衰减或拥挤过了预警线就建议降权入漏斗，过了硬线就建议拦下隔离；输出只到漏斗处置建议，绝不下单；非健康信号必留降级建议审计，回调异常不影响判定。"
+- module_path: tests/autonomy/test_signal_analyst_agent.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: "信号Agent单元测试"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证信号Agent的行为：角色卡含不下单的不可变边界、非法快照/配置一律拒绝、健康信号放行、衰减或拥挤入预警带降权、破硬线隔离、处置只有放行/降权/拦下三种、非健康必落降级建议审计、回调异常不阻断判定。"
+- module_path: tests/zephyr/data/test_format_transformer.py
+  domain_id: D_DATA
+  name_zh: "多源格式转换器单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证格式转换器：好记录翻成标准契约，坏记录（缺字段/类型错/负价格）进隔离区，单位倍率和时区归一都算对。"
+- module_path: tests/zephyr/data/test_sector_factor_manager.py
+  domain_id: D_DATA
+  name_zh: "板块因子数据管理器单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证板块因子管理器：覆盖完整性、成分映射挂接、轮动因子（相对强度/排名/资金流入）和质量评分的计算口径全对。"
+- module_path: tests/zephyr/data/test_sina_tencent_provider.py
+  domain_id: D_DATA
+  name_zh: "新浪腾讯备源适配器单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证第三级备源：新浪腾讯报文解析、限速退避、新浪挂了落腾讯、价格偏差超阈值会告警。"
+- module_path: tests/zephyr/data/test_announcement_provider.py
+  domain_id: D_DATA
+  name_zh: "交易所公告采集器单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证公告采集器：巨潮报文翻成标准新闻行、时间戳和链接拼对、入库前标题查重生效、单源故障不炸。"
+- module_path: src/zephyr/autonomy_core/agents/timing_analyst_agent.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: "择时Agent(TimingAnalyst)"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "扮演择时分析员角色：把大盘状态（趋势/震荡/波动）、大盘预测分和做T买卖点放在一起裁决——波动市不追单、预测破减仓线拆单减、碰到做T卖点限价减、预测和买点强共振市价开、一般共振限价开、没共振就拆单加、其余观望；建议必须经风控校验才生效，本角色绝不下单。"
+- module_path: tests/autonomy/test_timing_analyst_agent.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: "择时Agent单元测试"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证择时Agent的行为：角色卡含风控前置与不下单边界、非法上下文/配置一律拒绝、七条判定分支各就各位（波动市观望或减仓、破线减仓、卖点联动减仓、强共振市价开、共振限价开、无共振拆单加、其余观望）、建议永远要求风控校验、非观望必发风控前置信号、回调异常不阻断、双审计齐全。"
+- module_path: src/zephyr/signal_ashare/t0_trading_pipeline.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "C-012 做T日内套利管线"
+  name_en: "T0 Trading Pipeline"
+  desc_zh: "做T信号决策执行复盘全链路+底仓价差次数硬约束+延迟预算+失败回滚+尾盘强制平衡"
+  desc_en: ""
+  plain_zh: "拿着底仓做当天高抛低吸的流水线：先听做T信号，符合价差和次数规矩才动手，卖出后必须买回来、买入后必须卖出去，当天账必须做平；平衡腿没成交就自动反向撤回来，撤不回来立刻报警留痕；快收盘还没做平就按收盘价强制做平，绝不隔夜变仓。"
+- module_path: tests/signal_ashare/test_t0_trading_pipeline.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "C-012 做T管线测试"
+  name_en: "T0 Trading Pipeline Tests"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "用合成行情和执行替身验证做T管线：一轮完整高抛低吸、底仓自平衡、轮次上限、失败回滚、延迟超预算不再开新轮、尾盘强制平衡和JSON序列化，不碰真实券商。"
+- module_path: src/zephyr/autonomy_core/agents/t0_trader_agent.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: "做TAgent(T0Trader)"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "扮演做T交易员角色：收到做T买卖信号后当场裁决——没信号不做、当天做T次数到顶不做、预期价差太薄不做、卖出时没有T+1可卖底仓直接拒；能做就按可卖量和单笔上限截断出建议量，底仓保持不变；建议必须过风控校验才生效，真正下单委托给做T管线，本角色绝不下单。"
+- module_path: tests/signal_ashare/test_factor_result_bridge.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "因子计算结果消费桥接器单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给消费桥接器把门的测试：版本对了放行、同大版本兼容、不认识就拒收标降级、上游降级标记原样带出、每次消费记审计账、审计挂钩坏了也不耽误消费，全在内存里用假数据测。"
+- module_path: tests/autonomy/test_t0_trader_agent.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: "做TAgent单元测试"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证做TAgent的行为：角色卡含底仓不变与不下单边界、非法输入/配置一律拒绝、无信号/次数满/价差薄都跳过、无可卖底仓拒绝、执行时按可卖量和上限截断留痕、买入腿不受可卖约束、建议永远要风控校验、执行才发风控前置和外发、回调异常不阻断、双审计齐全。"
+- module_path: tests/signal_ashare/test_risk_event_consumer.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "风险事件消费处理器单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给风险事件处理器把门的测试：降级撤销调权三类动作派发给执行体、同幂等键的重复事件只处理一次、处理不了进死信不挡后续、每件都开回执、收件拖太久会标记，全部用内存假流测不碰真Redis。"
+- module_path: tests/factor/test_factor_factory.py
+  domain_id: D_FACTOR
+  name_zh: "因子工厂单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给因子工厂把门的测试：九道工序必须按顺序走、IC因果回测三道关不过不让入库、过了验证只验一次、迭代回炉要重新过验证、退役是终点、挖矿钩子和审计都有替身，底层生命周期状态机跟着对齐。"
+- module_path: tests/factor/test_factor_production_pipeline.py
+  domain_id: D_FACTOR
+  name_zh: "因子与信号生产管线单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给生产管线把门的测试：容量规划超标的超因子都拦住、盘前分块批算落库广播一件不落、某块算坏了只降级不罢工、算力预算花完后面的块跳过、单块超时会标记、盘中走增量模式。"
+- module_path: tests/factor/test_wq_alpha_87.py
+  domain_id: D_FACTOR
+  name_zh: "87个WorldQuant Alpha公式库单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给87个Alpha公式把门的测试：小工具挨个对答案、87个公式一个不少全部能算、14个被剔除的报得出来由、截断数据重算前缀一模一样证明不偷看未来、注册和IC验证都有钩子替身。"
+- module_path: src/zephyr/signal_ashare/unified_pattern_engine.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "统一图形识别引擎"
+  name_en: "Unified Pattern Engine"
+  desc_zh: "OHLCV多级别输入到统一PatternEvent契约+规则引擎优先缠论支撑阻力经典六类+DTW模板匹配+历史胜率注入"
+  desc_en: ""
+  plain_zh: "把双顶双底、平台突破、趋势线、支撑压力、缠论笔中枢这些各管一摊的看图手艺收进一个引擎：喂进去K线高低收，统一吐出图形事件——什么形态、朝哪个方向、把握多大、关键价位在哪、历史胜率多少，全部一个格式，后面的信号转化只管对接这一种契约。"
+- module_path: tests/signal_ashare/test_unified_pattern_engine.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "统一图形识别引擎测试"
+  name_en: "Unified Pattern Engine Tests"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "用合成K线验证统一图形引擎：双顶双底、平台突破、支撑位、缠论笔、DTW模板命中与脱靶、事件去重排序、历史胜率注入和JSON序列化，全部内存数据。"
 
 battle_map_steps:
 - step_id: BM-BUY-04

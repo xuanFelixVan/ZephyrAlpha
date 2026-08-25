@@ -9689,6 +9689,158 @@ creation_tokens:
   token: auto-test-volatility-regime-alerter-20260825
   created_by: AI-K3-DIGEST-W3（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: volatility_regime_alerter
+- file: src/zephyr/data/normalizers/format_transformer.py
+  token: auto-scaffold-format_transformer-20260825
+  created_by: scaffold.py
+  capability: format_transformer
+- file: src/zephyr/signal_ashare/signal_factory.py
+  token: auto-scaffold-signal_factory-20260825
+  created_by: scaffold.py
+  capability: signal_factory
+- file: src/zephyr/intelligence/api_llm_pool.py
+  token: auto-scaffold-api_llm_pool-20260825
+  created_by: scaffold.py
+  capability: api_llm_pool
+- file: src/zephyr/data/redundant_source/sina_tencent_provider.py
+  token: auto-scaffold-sina_tencent_provider-20260825
+  created_by: scaffold.py
+  capability: sina_tencent_provider
+- file: src/zephyr/signal_ashare/factor_result_bridge.py
+  token: auto-scaffold-factor_result_bridge-20260825
+  created_by: scaffold.py
+  capability: factor_result_bridge
+- file: src/zephyr/signal_ashare/risk_event_consumer.py
+  token: auto-scaffold-risk_event_consumer-20260825
+  created_by: scaffold.py
+  capability: risk_event_consumer
+- file: src/zephyr/data/implementations/announcement_provider.py
+  token: auto-scaffold-announcement_provider-20260825
+  created_by: scaffold.py
+  capability: announcement_provider
+- file: src/zephyr/factor/factor_factory.py
+  token: auto-scaffold-factor_factory-20260825
+  created_by: scaffold.py
+  capability: factor_factory
+- file: src/zephyr/data/sector_factor_manager.py
+  token: auto-scaffold-sector_factor_manager-20260825
+  created_by: scaffold.py
+  capability: sector_factor_manager
+- file: src/zephyr/factor/factor_production_pipeline.py
+  token: auto-scaffold-factor_production_pipeline-20260825
+  created_by: scaffold.py
+  capability: factor_production_pipeline
+- file: src/zephyr/factor/wq_alpha_87.py
+  token: auto-scaffold-wq_alpha_87-20260825
+  created_by: scaffold.py
+  capability: wq_alpha_87
+- file: src/zephyr/autonomy_core/agents/researcher_agent.py
+  token: auto-scaffold-researcher_agent-20260825
+  created_by: scaffold.py
+  capability: researcher_agent
+- file: src/zephyr/signal_ashare/capital_behavior_orchestrator.py
+  token: auto-scaffold-capital_behavior_orchestrator-20260825
+  created_by: scaffold.py
+  capability: capital_behavior_orchestrator
+- file: src/zephyr/signal_ashare/auction_microstructure_analyzer.py
+  token: auto-scaffold-auction_microstructure_analyzer-20260825
+  created_by: scaffold.py
+  capability: auction_microstructure_analyzer
+- file: src/zephyr/autonomy_core/agents/signal_analyst_agent.py
+  token: auto-scaffold-signal_analyst_agent-20260825
+  created_by: scaffold.py
+  capability: signal_analyst_agent
+- file: src/zephyr/signal_ashare/t0_trading_pipeline.py
+  token: auto-scaffold-t0_trading_pipeline-20260825
+  created_by: scaffold.py
+  capability: t0_trading_pipeline
+- file: src/zephyr/autonomy_core/agents/timing_analyst_agent.py
+  token: auto-scaffold-timing_analyst_agent-20260825
+  created_by: scaffold.py
+  capability: timing_analyst_agent
+- file: src/zephyr/autonomy_core/agents/t0_trader_agent.py
+  token: auto-scaffold-t0_trader_agent-20260825
+  created_by: scaffold.py
+  capability: t0_trader_agent
+- file: src/zephyr/signal_ashare/unified_pattern_engine.py
+  token: auto-scaffold-unified_pattern_engine-20260825
+  created_by: scaffold.py
+  capability: unified_pattern_engine
+- file: tests/signal_ashare/test_signal_factory.py
+  token: auto-test-signal-factory-20260825
+  created_by: AI-K3-DIGEST-P1R1（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: signal_factory
+- file: tests/signal_ashare/test_capital_behavior_orchestrator.py
+  token: auto-test-capital-behavior-orchestrator-20260825
+  created_by: AI-K3-DIGEST-P1R1（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: capital_behavior_orchestrator
+- file: tests/signal_ashare/test_auction_microstructure_analyzer.py
+  token: auto-test-auction-microstructure-analyzer-20260825
+  created_by: AI-K3-DIGEST-P1R1（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: auction_microstructure_analyzer
+- file: tests/signal_ashare/test_t0_trading_pipeline.py
+  token: auto-test-t0-trading-pipeline-20260825
+  created_by: AI-K3-DIGEST-P1R1（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: t0_trading_pipeline
+- file: tests/signal_ashare/test_unified_pattern_engine.py
+  token: auto-test-unified-pattern-engine-20260825
+  created_by: AI-K3-DIGEST-P1R1（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: unified_pattern_engine
+- file: tests/signal_ashare/test_factor_result_bridge.py
+  token: auto-test-factor-result-bridge-20260825
+  created_by: AI-K3-DIGEST-P1R1（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: factor_result_bridge
+- file: tests/signal_ashare/test_risk_event_consumer.py
+  token: auto-test-risk-event-consumer-20260825
+  created_by: AI-K3-DIGEST-P1R1（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: risk_event_consumer
+- file: tests/factor/test_factor_factory.py
+  token: auto-test-factor-factory-20260825
+  created_by: AI-K3-DIGEST-P1R1（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: factor_factory
+- file: tests/factor/test_factor_production_pipeline.py
+  token: auto-test-factor-production-pipeline-20260825
+  created_by: AI-K3-DIGEST-P1R1（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: factor_production_pipeline
+- file: tests/factor/test_wq_alpha_87.py
+  token: auto-test-wq-alpha-87-20260825
+  created_by: AI-K3-DIGEST-P1R1（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: wq_alpha_87
+- file: tests/zephyr/data/test_format_transformer.py
+  token: auto-test-format-transformer-20260825
+  created_by: AI-K3-DIGEST-P1R1（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: format_transformer
+- file: tests/zephyr/data/test_sector_factor_manager.py
+  token: auto-test-sector-factor-manager-20260825
+  created_by: AI-K3-DIGEST-P1R1（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: sector_factor_manager
+- file: tests/zephyr/data/test_sina_tencent_provider.py
+  token: auto-test-sina-tencent-provider-20260825
+  created_by: AI-K3-DIGEST-P1R1（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: sina_tencent_provider
+- file: tests/zephyr/data/test_announcement_provider.py
+  token: auto-test-announcement-provider-20260825
+  created_by: AI-K3-DIGEST-P1R1（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: announcement_provider
+- file: tests/intelligence/test_api_llm_pool.py
+  token: auto-test-api-llm-pool-20260825
+  created_by: AI-K3-DIGEST-P1R1（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: api_llm_pool
+- file: tests/autonomy/test_researcher_agent.py
+  token: auto-test-researcher-agent-20260825
+  created_by: AI-K3-DIGEST-P1R1（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: researcher_agent
+- file: tests/autonomy/test_signal_analyst_agent.py
+  token: auto-test-signal-analyst-agent-20260825
+  created_by: AI-K3-DIGEST-P1R1（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: signal_analyst_agent
+- file: tests/autonomy/test_timing_analyst_agent.py
+  token: auto-test-timing-analyst-agent-20260825
+  created_by: AI-K3-DIGEST-P1R1（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: timing_analyst_agent
+- file: tests/autonomy/test_t0_trader_agent.py
+  token: auto-test-t0-trader-agent-20260825
+  created_by: AI-K3-DIGEST-P1R1（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: t0_trader_agent
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

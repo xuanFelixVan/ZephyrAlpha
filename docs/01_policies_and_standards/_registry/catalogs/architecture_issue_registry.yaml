@@ -20040,3 +20040,63 @@ entries:
   related_rules: ['90号 §7', 'CAND-CYCLE-002']
   created: '2026-08-25'
   last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-230'
+  title: DIGEST P1 R1W01/W06：信号域 7 候选+因子域 3 候选晋升（MOD-SIG-087~091 族/MOD-L02-001 复用）+ 两个 canonical 声明
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    P1 首批：signal_factory（C-028）/capital_behavior_orchestrator（C-011）/
+    auction_microstructure_analyzer（竞价微结构）/t0_trading_pipeline（C-012，SAFETY=H）/
+    unified_pattern_engine（D-FACTOR-97）五件信号域（MOD-SIG-087~091）；factor_result_bridge/
+    risk_event_consumer（信号域治理层）；factor_factory/factor_production_pipeline（因子编排/
+    治理层，lifecycle FSM/FactorRegistry/DagExecutor 全复用非重复）；wq_alpha_87（WQ101 独立
+    公式族，剔除 14 个 IndNeutralize 依赖留档）。canonical 声明两则：①unified_pattern_engine=
+    统一图形识别引擎 canonical（B10-01391 另波 REVIEW 归并）；②87-Alpha 范围裁定（终裁权留
+    Owner）。169 新测全绿，tests/signal_ashare 1480+tests/factor 零回归。
+  impact:
+    - 'src/zephyr/signal_ashare/{signal_factory,capital_behavior_orchestrator,auction_microstructure_analyzer,t0_trading_pipeline,unified_pattern_engine,factor_result_bridge,risk_event_consumer}.py'
+    - 'src/zephyr/factor/{factor_factory,factor_production_pipeline,wq_alpha_87}.py'
+  fix_phase: '已落地（2026-08-25，P1 R1W01/W06）'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-231'
+  title: DIGEST P1 R1W08：数据域 4 候选晋升 + C-001 多源数据接入 REVIEW 豁免（iFind 退役后缺口失效）
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    format_transformer（D-INT-16）/sector_factor_manager（板块因子四件收口）/
+    sina_tencent_provider（A 股实时第三级免登快照，与 tickflow 美股零交集）/announcement_provider
+    （巨潮/交易所公告采集，媒体新闻链外缺口实证）四件建成。CAND-DAT-009（C-001 多源数据接入）
+    REVIEW 豁免：iFind 2026-08-14 已整体退役（#ARCH-DATA-IFIND-RETIRE-001），provider 体系/
+    调度/回填/交叉校验/quality_gate 全 production，event_bus 已建，分层存储已由
+    storage_tiering 收口——新建即重复（注册表 review_note 留痕）。54 新测全绿，
+    tests/zephyr/data 1381 零回归。
+  impact:
+    - 'src/zephyr/data/normalizers/format_transformer.py + data/sector_factor_manager.py + data/redundant_source/sina_tencent_provider.py + data/implementations/announcement_provider.py'
+  fix_phase: '已落地（2026-08-25，P1 R1W08）；C-001 豁免同批'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST', '#ARCH-DATA-IFIND-RETIRE-001']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-232'
+  title: DIGEST P1 R1W11：Agent 族 4 候选+API LLM 池晋升（MOD-AU-008~011）+ Researcher canonical 声明
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    researcher_agent/signal_analyst_agent/timing_analyst_agent/t0_trader_agent 四 Agent 晋升
+    （复用 MOD-AU-007 底座，判定纯函数+执行回调委托形态）；api_llm_pool（与 llm_gateway/
+    model_router/本地池分工=池化治理，零密钥字段）。canonical 声明：Researcher 先做即
+    canonical（B11-02483 另波 REVIEW 归并）。149 新测全绿，tests/autonomy+intelligence 零回归。
+  impact:
+    - 'src/zephyr/autonomy_core/agents/{researcher_agent,signal_analyst_agent,timing_analyst_agent,t0_trader_agent}.py'
+    - 'src/zephyr/intelligence/api_llm_pool.py'
+  fix_phase: '已落地（2026-08-25，P1 R1W11）'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
