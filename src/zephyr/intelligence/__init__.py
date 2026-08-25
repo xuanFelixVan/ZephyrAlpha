@@ -46,4 +46,6 @@ Intelligence Domain
 
 from __future__ import annotations
 
-__all__ = ["model_drift_detector"]
+# NOTE(P1W11 2026-08-25): scaffold 注册器写入悬空 import ApiLlmPool（stub 期炸全包，
+# #ARCH-228 同款 bug 复发），按该包"纯模块名导出"约定归一为模块名条目。
+__all__ = ["api_llm_pool", "model_drift_detector"]

@@ -23,10 +23,16 @@
 
 from __future__ import annotations
 
+# NOTE(P1W11 2026-08-25): scaffold 注册器四次写入斜杠非法语法行（#ARCH-228 同款 bug
+# 复发），按该包"纯模块名导出"约定归一为模块名条目。
 __all__ = [
     "algorithm_agent_entry",
     "business_agent_entry",
     "governance_agent_entry",
+    "researcher_agent",
     "risk_manager_agent",
     "self_iteration_agent_entry",
+    "signal_analyst_agent",
+    "t0_trader_agent",
+    "timing_analyst_agent",
 ]
