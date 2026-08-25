@@ -5,6 +5,11 @@ from zephyr.signal_ashare.t0_trading_pipeline import T0TradingPipeline
 from zephyr.signal_ashare.unified_pattern_engine import UnifiedPatternEngine
 from zephyr.signal_ashare.risk_event_consumer import RiskEventConsumer
 from zephyr.signal_ashare.factor_result_bridge import FactorResultBridge
+from zephyr.signal_ashare.gap_fill_model import GapFillModel
+from zephyr.signal_ashare.intraday_volume_orderflow import IntradayVolumeOrderflow
+from zephyr.signal_ashare.wyckoff_accumulation_signal import WyckoffAccumulationSignal
+from zephyr.signal_ashare.multi_indicator_divergence import MultiIndicatorDivergence
+from zephyr.signal_ashare.relative_strength_screener import RelativeStrengthScreener
 # NOTE(P1W06 2026-08-25): P1W01 窗口期可逆注释的两行 export 已按 NOTE 约定恢复
 # （FactorResultBridge/RiskEventConsumer 实现就位，88 测全绿）。
 # [BLUEPRINT] MOD-SIGNAL_ASHARE | (pending)
@@ -73,3 +78,13 @@ __all__.append("AuctionMicrostructureAnalyzer")
 __all__.append("T0TradingPipeline")
 
 __all__.append("UnifiedPatternEngine")
+
+__all__.append("GapFillModel")
+
+__all__.append("IntradayVolumeOrderflow")
+
+__all__.append("WyckoffAccumulationSignal")
+
+__all__.append("MultiIndicatorDivergence")
+
+__all__.append("RelativeStrengthScreener")
