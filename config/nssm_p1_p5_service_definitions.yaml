@@ -1,0 +1,72 @@
+# [BLUEPRINT] MOD-INF-066 | docs/03_modules/_domain_infrastructure_runtime/process_supervisor/blueprint.md |
+# [MODULE] config.nssm_p1_p5_service_definitions
+# [INVARIANTS] 服务定义真源=MOD-INF-066 render_nssm_service_definitions(); 仅就绪件草稿不执行注册
+# [MODIFY-GUARD] 内容漂移时以 MOD-INF-066 模块输出为准重新生成
+# [CONSUMERS] Owner 窗口（nssm install 审阅执行）
+# [STABILITY] evolving
+# [SAFETY] H
+# [AI_AUTONOMY] human_gated
+# [ERROR_CONTRACT]
+# [TESTS] tests/infrastructure/test_process_supervisor.py
+# [A_config] module_id=MOD-INF-066 | layer=config | stability=volatile | safety=H | ai_autonomy=human_gated
+# [TTL] permanent
+
+# ============================================================
+# DRAFT — ZephyrAlpha 五进程 NSSM 服务定义就绪件（MOD-INF-066）
+# 真源: A9 运维架构 §1.1 | 启动序列 P1→P3→P2→P4→P5（优先级数值升序）
+# 硬边界: nssm 注册/开机自启属 Owner 窗口执行，AI 不执行（applied_by_ai=false）
+# ============================================================
+
+applied_by_ai: false
+apply_boundary: "NSSM 注册/开机自启/核亲和/禁 swap 等系统级设置属 Owner 窗口执行，本定义仅供审阅应用"
+shutdown_order_note: "关闭序列=P5→P4→P2→P3→P1（优先级降序）；P3 先于 P1（挂单先撤回），P1 先于 Redis（末条行情先持久化）"
+
+services:
+- service_name: ZephyrAlpha-P1
+  display_name: "ZephyrAlpha P1 market_data (pri=10)"
+  app_parameters: "-m zephyr.data.tick_subscriber"
+  start_mode: auto
+  priority: 10
+  cpu_cores: [0, 1, 2, 3]
+  memory_budget_gb: 8
+  heartbeat: {key: "hb:market_data", interval_s: 3, timeout_s: 15, ttl_seconds: 45}
+  log_hosting: {app_stdout: "logs/market_data.out.log", app_stderr: "logs/market_data.err.log"}
+- service_name: ZephyrAlpha-P3
+  display_name: "ZephyrAlpha P3 trading_core (pri=15)"
+  app_parameters: "-m zephyr.trading"
+  start_mode: auto
+  priority: 15
+  cpu_cores: [8, 9, 10, 11]
+  memory_budget_gb: 8
+  swap_forbidden: true
+  risk_nn_vram_gb: 2
+  heartbeat: {key: "hb:trading_core", interval_s: 2, timeout_s: 10, ttl_seconds: 40}
+  log_hosting: {app_stdout: "logs/trading_core.out.log", app_stderr: "logs/trading_core.err.log"}
+  hc01_no_auto_restart: true
+- service_name: ZephyrAlpha-P2
+  display_name: "ZephyrAlpha P2 signal_engine (pri=20)"
+  app_parameters: "-m zephyr.runtime.signal_engine_main"
+  start_mode: auto
+  priority: 20
+  cpu_cores: [4, 5, 6, 7]
+  memory_budget_gb: 16
+  heartbeat: {key: "hb:signal_engine", interval_s: 5, timeout_s: 30, ttl_seconds: 60}
+  log_hosting: {app_stdout: "logs/signal_engine.out.log", app_stderr: "logs/signal_engine.err.log"}
+- service_name: ZephyrAlpha-P4
+  display_name: "ZephyrAlpha P4 ai_autonomy (pri=30)"
+  app_parameters: "-m zephyr.autonomy_core"
+  start_mode: auto
+  priority: 30
+  cpu_cores: [12, 13, 14, 15]
+  memory_budget_gb: 12
+  heartbeat: {key: "hb:ai_autonomy", interval_s: 10, timeout_s: 60, ttl_seconds: 90}
+  log_hosting: {app_stdout: "logs/ai_autonomy.out.log", app_stderr: "logs/ai_autonomy.err.log"}
+- service_name: ZephyrAlpha-P5
+  display_name: "ZephyrAlpha P5 ml_pipeline (pri=40)"
+  app_parameters: "-m zephyr.ml_train"
+  start_mode: auto
+  priority: 40
+  cpu_cores: [16, 17, 18, 19]
+  memory_budget_gb: 20
+  heartbeat: {key: "hb:ml_pipeline", interval_s: 30, timeout_s: 120, ttl_seconds: 150}
+  log_hosting: {app_stdout: "logs/ml_pipeline.out.log", app_stderr: "logs/ml_pipeline.err.log"}
