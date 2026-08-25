@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-SIG-021 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 from zephyr.signal_ashare.signal_factory import SignalFactory
 from zephyr.signal_ashare.capital_behavior_orchestrator import CapitalBehaviorOrchestrator
 from zephyr.signal_ashare.auction_microstructure_analyzer import AuctionMicrostructureAnalyzer
@@ -10,6 +12,11 @@ from zephyr.signal_ashare.intraday_volume_orderflow import IntradayVolumeOrderfl
 from zephyr.signal_ashare.wyckoff_accumulation_signal import WyckoffAccumulationSignal
 from zephyr.signal_ashare.multi_indicator_divergence import MultiIndicatorDivergence
 from zephyr.signal_ashare.relative_strength_screener import RelativeStrengthScreener
+from zephyr.signal_ashare.limit_up_ecosystem_leadership import LimitUpEcosystemLeadership
+from zephyr.signal_ashare.sector_momentum_persistence import SectorMomentumPersistence
+from zephyr.signal_ashare.extreme_sentiment_reversal_detector import ExtremeSentimentReversalDetector
+from zephyr.signal_ashare.false_breakout_trap_detector import FalseBreakoutTrapDetector
+from zephyr.signal_ashare.sentiment_price_divergence import SentimentPriceDivergence
 # NOTE(P1W06 2026-08-25): P1W01 窗口期可逆注释的两行 export 已按 NOTE 约定恢复
 # （FactorResultBridge/RiskEventConsumer 实现就位，88 测全绿）。
 # [BLUEPRINT] MOD-SIGNAL_ASHARE | (pending)
@@ -88,3 +95,13 @@ __all__.append("WyckoffAccumulationSignal")
 __all__.append("MultiIndicatorDivergence")
 
 __all__.append("RelativeStrengthScreener")
+
+__all__.append("LimitUpEcosystemLeadership")
+
+__all__.append("SectorMomentumPersistence")
+
+__all__.append("ExtremeSentimentReversalDetector")
+
+__all__.append("FalseBreakoutTrapDetector")
+
+__all__.append("SentimentPriceDivergence")
