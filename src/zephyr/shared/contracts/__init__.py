@@ -288,3 +288,10 @@ __all__ = [
 ]
 
 __all__.append("ExecutionReportContract")
+
+# NOTE(P1W16 2026-08-25): scaffold 注册器对嵌套包 shared/contracts 写入含斜杠的
+# 非法行首 eager import（from zephyr.shared/contracts.ctr002_* import ...，语法炸包）
+# + 类名 append（#ARCH-228/235/238/241/245 同款 bug 第六次复发，新变种=嵌套包斜杠）。
+# 按 DM-367"模块名条目供审计登记"同款约定归一为模块名条目，不做包级 eager import。
+__all__.append("ctr002_consumer_adapter")
+__all__.append("ctr002_producer_validator")

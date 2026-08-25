@@ -48,3 +48,8 @@
 from zephyr.shared.contracts.market_data import NormalizedMarketData
 
 __all__ = ["NormalizedMarketData"]
+
+# NOTE(P1W16 2026-08-25): scaffold 注册器写入 eager import + 类名 append
+# （#ARCH-228/235/238/241/245 同款 bug 复发），按各域包"纯模块名导出、
+# 无导入无初始化逻辑"约定归一为模块名条目；NormalizedMarketData 既有导出行未动。
+__all__.append("auction_data_manager")
