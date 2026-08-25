@@ -20272,3 +20272,78 @@ entries:
   related_rules: ['AUD-DRAFT-001-DIGEST']
   created: '2026-08-25'
   last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-242'
+  title: DIGEST P1 R4W04：涨停潜力评分/底部确认/次日概率门槛三候选晋升（MOD-SIG-102~104）+ 竞价与图形识别归并
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    limit_up_potential_scorer（IC 加权多因子评分，消费 MOD-SIG-097 梯队因子鸭子类型，与
+    calibrator/bma/limit_up_classifier 正交）/bottom_confirmation_entry（多维底部确认右侧入场，
+    与 099 事件检测/094 单维 Wyckoff 分工）/next_day_probability_gate（统一概率门槛，与
+    expectation_governance/漏斗族正交）。归并两则：B10-01382 竞价微结构→MOD-SIG-089；
+    B10-01391 图形识别→MOD-SIG-091（canonical 声明兑现）。74 新测全绿，tests/signal_ashare
+    1788 零回归。
+  impact:
+    - 'src/zephyr/signal_ashare/{limit_up_potential_scorer,bottom_confirmation_entry,next_day_probability_gate}.py（node 10624344~10624366）'
+  fix_phase: '已落地（2026-08-25，P1 R4W04）；两归并同批'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-243'
+  title: DIGEST P1 R4W14：Risk-Signal 排序器/SentimentEngine/PolicyThemeMapper/37 概念映射四候选晋升（MOD-RK-41/MOD-ALT-004~006）+ FilingNLP 归并
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    risk_signal_sequencer（全序规则+乱序检测+冲突仲裁，与执行编排/消费处理器分工）/
+    sentiment_engine（跨类别聚合+252 日分位冰点/过热统一判定，采集/打分/反转各有其面）/
+    policy_theme_mapper（政策主题→申万行业映射+半衰期）/concept_factor_mapper（37 概念因子
+    映射产出位，挂接 sector_factor_manager 预留口）。归并：B1-00113 FilingNLPEngine→
+    MOD-ALT-003（撞名互认闭环）。107 新测全绿，risk+alt_data+nlp 1883 零回归。
+  impact:
+    - 'src/zephyr/risk/risk_signal_sequencer.py + alt_data/{sentiment_engine,policy_theme_mapper,concept_factor_mapper}.py（node 10624342~10624369）'
+  fix_phase: '已落地（2026-08-25，P1 R4W14）；归并同批'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-244'
+  title: DIGEST P1 R4W18：M8 血缘族四件+分层验证管线五候选晋升（MOD-DATA_GOV-005~008/MOD-BT-027）
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    static_lineage_analyzer（S02 AST+SQL 静态抽取）/runtime_lineage_collector（S03 在线事件面）/
+    column_lineage_analyzer（列级入同一 DAG）/record_lineage_tracker（Metaxy 批次台账，
+    batch_id 对齐内容寻址只引用不重算）——四层分工复用 S01/002 底座；layered_validation_pipeline
+    （C-003：V1-V6 门控按 52 号 memo 裁定不重建，补缺=提交触发分层自动执行编排骨架）。
+    技术债：sqlglot 未登记项目依赖（S02 降级 fail-open/列级 Fail-Closed，登记后补集成测试）。
+    78 新测全绿，data_governance+backtest 949 零回归。
+  impact:
+    - 'src/zephyr/data_governance/core/{static_lineage_analyzer,runtime_lineage_collector,column_lineage_analyzer,record_lineage_tracker}.py + backtest/services/layered_validation_pipeline.py（node 10624340~10624371）'
+  fix_phase: '已落地（2026-08-25，P1 R4W18）'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST', '52号 memo']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-245'
+  title: DIGEST P1 R4W19：CPCV 矩阵/情景对策/四轨融合/盘前工作流/仓位裁决五候选晋升（MOD-BT-028/MOD-PLAN-019~021/MOD-POS-024）
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    strategy_cpcv_matrix（离线 CPCV 策略级打分，与 W-P1-05 在线 60 秒级漏斗=同名第五层双视图
+    各自 canonical）/scenario_playbook（C-005 模板库+盘中匹配+确认流）/track_fusion（四轨融合，
+    MOD-POS-001 头注明示缺口）/premarket_workflow（A 股盘前工作流编排，与 MOD-EX-063 检查器
+    编排 vs 判定分工）/position_adjudication_center（C-047 编排层裁决，非真源重叠）。
+    MOD-BT-027 跨会话撞 id 按可逆原则改铸 028（治理建议：铸号锁）。72 新测全绿，
+    backtest+plan_engine+position 1879 零回归。
+  impact:
+    - 'src/zephyr/backtest/core/strategy_cpcv_matrix.py + plan_engine/{scenario_playbook,track_fusion,premarket_workflow}.py + position/core/position_adjudication_center.py（node 10624339~10624375）'
+  fix_phase: '已落地（2026-08-25，P1 R4W19）'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'

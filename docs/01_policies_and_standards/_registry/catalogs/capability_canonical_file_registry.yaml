@@ -10089,6 +10089,146 @@ creation_tokens:
   token: auto-test-lineage-parser-20260825
   created_by: AI-K3-DIGEST-P1R3（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: lineage_parser
+- file: src/zephyr/signal_ashare/limit_up_potential_scorer.py
+  token: auto-scaffold-limit_up_potential_scorer-20260825
+  created_by: scaffold.py
+  capability: limit_up_potential_scorer
+- file: src/zephyr/risk/risk_signal_sequencer.py
+  token: auto-scaffold-risk_signal_sequencer-20260825
+  created_by: scaffold.py
+  capability: risk_signal_sequencer
+- file: src/zephyr/backtest/core/strategy_cpcv_matrix.py
+  token: auto-scaffold-strategy_cpcv_matrix-20260825
+  created_by: scaffold.py
+  capability: strategy_cpcv_matrix
+- file: src/zephyr/data_governance/core/static_lineage_analyzer.py
+  token: auto-scaffold-static_lineage_analyzer-20260825
+  created_by: scaffold.py
+  capability: static_lineage_analyzer
+- file: src/zephyr/alt_data/sentiment_engine.py
+  token: auto-scaffold-sentiment_engine-20260825
+  created_by: scaffold.py
+  capability: sentiment_engine
+- file: src/zephyr/signal_ashare/bottom_confirmation_entry.py
+  token: auto-scaffold-bottom_confirmation_entry-20260825
+  created_by: scaffold.py
+  capability: bottom_confirmation_entry
+- file: src/zephyr/data_governance/core/runtime_lineage_collector.py
+  token: auto-scaffold-runtime_lineage_collector-20260825
+  created_by: scaffold.py
+  capability: runtime_lineage_collector
+- file: src/zephyr/plan_engine/scenario_playbook.py
+  token: auto-scaffold-scenario_playbook-20260825
+  created_by: scaffold.py
+  capability: scenario_playbook
+- file: src/zephyr/alt_data/policy_theme_mapper.py
+  token: auto-scaffold-policy_theme_mapper-20260825
+  created_by: scaffold.py
+  capability: policy_theme_mapper
+- file: src/zephyr/data_governance/core/column_lineage_analyzer.py
+  token: auto-scaffold-column_lineage_analyzer-20260825
+  created_by: scaffold.py
+  capability: column_lineage_analyzer
+- file: src/zephyr/signal_ashare/next_day_probability_gate.py
+  token: auto-scaffold-next_day_probability_gate-20260825
+  created_by: scaffold.py
+  capability: next_day_probability_gate
+- file: src/zephyr/plan_engine/track_fusion.py
+  token: auto-scaffold-track_fusion-20260825
+  created_by: scaffold.py
+  capability: track_fusion
+- file: src/zephyr/alt_data/concept_factor_mapper.py
+  token: auto-scaffold-concept_factor_mapper-20260825
+  created_by: scaffold.py
+  capability: concept_factor_mapper
+- file: src/zephyr/data_governance/core/record_lineage_tracker.py
+  token: auto-scaffold-record_lineage_tracker-20260825
+  created_by: scaffold.py
+  capability: record_lineage_tracker
+- file: src/zephyr/backtest/services/layered_validation_pipeline.py
+  token: auto-scaffold-layered_validation_pipeline-20260825
+  created_by: scaffold.py
+  capability: layered_validation_pipeline
+- file: src/zephyr/plan_engine/premarket_workflow.py
+  token: auto-scaffold-premarket_workflow-20260825
+  created_by: scaffold.py
+  capability: premarket_workflow
+- file: src/zephyr/position/core/position_adjudication_center.py
+  token: auto-scaffold-position_adjudication_center-20260825
+  created_by: scaffold.py
+  capability: position_adjudication_center
+- file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/93_qmt_file_bridge_playbook.md
+  token: auto-qmt-file-bridge-playbook-20260825
+  created_by: AI-QMTBRIDGE-001
+  capability: qmt_file_bridge
+- file: tests/signal_ashare/test_limit_up_potential_scorer.py
+  token: auto-test-limit-up-potential-scorer-20260825
+  created_by: AI-K3-DIGEST-P1R4（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: limit_up_potential_scorer
+- file: tests/signal_ashare/test_bottom_confirmation_entry.py
+  token: auto-test-bottom-confirmation-entry-20260825
+  created_by: AI-K3-DIGEST-P1R4（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: bottom_confirmation_entry
+- file: tests/signal_ashare/test_next_day_probability_gate.py
+  token: auto-test-next-day-probability-gate-20260825
+  created_by: AI-K3-DIGEST-P1R4（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: next_day_probability_gate
+- file: tests/risk/test_risk_signal_sequencer.py
+  token: auto-test-risk-signal-sequencer-20260825
+  created_by: AI-K3-DIGEST-P1R4（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: risk_signal_sequencer
+- file: tests/alt_data/test_sentiment_engine.py
+  token: auto-test-sentiment-engine-20260825
+  created_by: AI-K3-DIGEST-P1R4（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: sentiment_engine
+- file: tests/alt_data/test_policy_theme_mapper.py
+  token: auto-test-policy-theme-mapper-20260825
+  created_by: AI-K3-DIGEST-P1R4（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: policy_theme_mapper
+- file: tests/alt_data/test_concept_factor_mapper.py
+  token: auto-test-concept-factor-mapper-20260825
+  created_by: AI-K3-DIGEST-P1R4（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: concept_factor_mapper
+- file: tests/data_governance/test_static_lineage_analyzer.py
+  token: auto-test-static-lineage-analyzer-20260825
+  created_by: AI-K3-DIGEST-P1R4（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: static_lineage_analyzer
+- file: tests/data_governance/test_runtime_lineage_collector.py
+  token: auto-test-runtime-lineage-collector-20260825
+  created_by: AI-K3-DIGEST-P1R4（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: runtime_lineage_collector
+- file: tests/data_governance/test_column_lineage_analyzer.py
+  token: auto-test-column-lineage-analyzer-20260825
+  created_by: AI-K3-DIGEST-P1R4（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: column_lineage_analyzer
+- file: tests/data_governance/test_record_lineage_tracker.py
+  token: auto-test-record-lineage-tracker-20260825
+  created_by: AI-K3-DIGEST-P1R4（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: record_lineage_tracker
+- file: tests/backtest/test_layered_validation_pipeline.py
+  token: auto-test-layered-validation-pipeline-20260825
+  created_by: AI-K3-DIGEST-P1R4（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: layered_validation_pipeline
+- file: tests/backtest/test_strategy_cpcv_matrix.py
+  token: auto-test-strategy-cpcv-matrix-20260825
+  created_by: AI-K3-DIGEST-P1R4（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: strategy_cpcv_matrix
+- file: tests/plan_engine/test_scenario_playbook.py
+  token: auto-test-scenario-playbook-20260825
+  created_by: AI-K3-DIGEST-P1R4（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: scenario_playbook
+- file: tests/plan_engine/test_track_fusion.py
+  token: auto-test-track-fusion-20260825
+  created_by: AI-K3-DIGEST-P1R4（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: track_fusion
+- file: tests/plan_engine/test_premarket_workflow.py
+  token: auto-test-premarket-workflow-20260825
+  created_by: AI-K3-DIGEST-P1R4（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: premarket_workflow
+- file: tests/position/test_position_adjudication_center.py
+  token: auto-test-position-adjudication-center-20260825
+  created_by: AI-K3-DIGEST-P1R4（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: position_adjudication_center
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
