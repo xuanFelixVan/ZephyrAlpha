@@ -55,8 +55,13 @@ __all__ = [
     "pydantic_v2_migrator",
     "redis_state_layer_ssot",
     "registry_governance",
+    "signal_engine_process_spec",
     "system_snapshot",
     "warm_hot_gate",
+    "warm_plane_budget",
 ]
 
 __all__.append("GpuHotSwapModel")
+# NOTE(P1W17): scaffold 注册器行首 eager import + 类名 append 已归一为模块名条目
+# （signal_engine_process_spec/warm_plane_budget 按字母序入列），恢复本包"纯模块名导出"
+# 约定；GpuHotSwapModel 行首 eager import 为前波残留，本波未动。

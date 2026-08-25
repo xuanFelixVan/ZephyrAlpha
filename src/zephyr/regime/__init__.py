@@ -1,5 +1,6 @@
 from zephyr.regime.regime_cycle_analyzer import RegimeCycleAnalyzer
 from zephyr.regime.volatility_regime_alerter import VolatilityRegimeAlerter
+from zephyr.regime.volatility_squeeze_breakout import VolatilitySqueezeBreakout
 
 # [BLUEPRINT] MOD-REGIME-001 | (auto-injected by S4 reconciler) | §
 # [TTL] permanent
@@ -43,10 +44,16 @@ regime 检测器 CRISIS 态依赖跨市场相关性（股/债/商品/加密）�
 
 __all__: list[str] = [
     "index_regime_panel",
+    "market_forecast_fusion",
     "overlay_signals_builder",
     "regime_cycle_analyzer",
     "regime_feature_builder",
     "risk_signal_builder",
+    "volatility_squeeze_breakout",
 ]
 
 __all__.append("VolatilityRegimeAlerter")
+# NOTE(P1W17): scaffold 注册器行首 eager import + 类名 append 已归一为模块名条目
+# （market_forecast_fusion/volatility_squeeze_breakout 按字母序入列），恢复本包
+# "纯模块名导出"约定；RegimeCycleAnalyzer/VolatilityRegimeAlerter 行首 eager import
+# 为前波残留，本波未动。

@@ -17,4 +17,9 @@
 
 # data_gov/core
 
+# NOTE(P1W17): scaffold 注册器对本子包写入非法行首 eager import
+# （from zephyr.data_governance/core.lineage_parser import LineageParser，斜杠非点号）
+# + __all__.append("LineageParser")——已归一移除，恢复本包"空导出、子模块显式导入"
+# 约定（与 zephyr.data_governance 包级一致）。
+
 __all__: list[str] = []
