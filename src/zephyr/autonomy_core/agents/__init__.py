@@ -27,5 +27,6 @@ __all__ = [
     "algorithm_agent_entry",
     "business_agent_entry",
     "governance_agent_entry",
+    "risk_manager_agent",
     "self_iteration_agent_entry",
 ]

@@ -43,6 +43,7 @@ __all__ = [
     "agent_observability",
     "agentic_drift_guard",
     "all_skill_modules",
+    "autonomy_level_registry",
     "drift_semantic_reviewer",
     "file_autoregister",
     "ide_watcher",
