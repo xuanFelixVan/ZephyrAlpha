@@ -71,6 +71,9 @@ from .provider_base import (
     IngestProviderMeta,
 )
 from .scheduler import IntegratorScheduler
+from zephyr.data.storage_tiering import StorageTiering
+from zephyr.data.cleaning_rule_engine import CleaningRuleEngine
+from zephyr.data.data_service import DataService
 
 _integrator: IntegratorScheduler | None = None
 
@@ -102,3 +105,9 @@ __all__ = [
     "IntegratorScheduler",
     "get_integrator",
 ]
+
+__all__.append("StorageTiering")
+
+__all__.append("CleaningRuleEngine")
+
+__all__.append("DataService")
