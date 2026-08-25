@@ -20197,3 +20197,78 @@ entries:
   related_rules: ['AUD-DRAFT-001-DIGEST']
   created: '2026-08-25'
   last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-238'
+  title: DIGEST P1 R3W03：信号情绪族 5 候选晋升（MOD-SIG-097~101）
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    limit_up_ecosystem_leadership（动量领导因子+涨停梯队，Granger F/OLS 纯 Python 零幽灵依赖）/
+    sector_momentum_persistence（动量层级与板块持续性）/extreme_sentiment_reversal_detector
+    （双冰点+Capitulation 打分卡+shakeout，与 sentiment_cycle/MOD-SIG-025/regime s2 粒度正交）/
+    false_breakout_trap_detector（假突破诱多，CVD 消费 MOD-SIG-093 契约兑现，与 SELL-003/
+    unified_pattern 双正交）/sentiment_price_divergence（情绪-价格背离指数）。155 新测全绿，
+    tests/signal_ashare 1714 零回归。
+  impact:
+    - 'src/zephyr/signal_ashare/{limit_up_ecosystem_leadership,sector_momentum_persistence,extreme_sentiment_reversal_detector,false_breakout_trap_detector,sentiment_price_divergence}.py（node 10617212~10617240）'
+  fix_phase: '已落地（2026-08-25，P1 R3W03）'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-239'
+  title: DIGEST P1 R3W13：因子敞口/操纵检测/买入后验证三候选晋升（MOD-RK-38/39/40）+ TCA 与 ATR 归并
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    factor_exposure_manager（载荷加权敞口矩阵+超限预警，RK-16/07/13 均不覆盖）/
+    manipulation_avoidance_detector（五类统计特征→评分→回避名单，与 compliance 自我操纵方向
+    相反，GNN 档按 TSV 放弃）/post_entry_instant_validator（三档时间窗即时验证，声明 canonical
+    ——W-P1-22 B10-01475 spec 全等应归并本件）。归并两则：B10-01221 TCA→MOD-L07-001（production
+    四桶全等）；B13-04440 ATR+Bayesian→MOD-RK-35（在码全等，Optuna/联动=装配面）。56 新测全绿，
+    tests/ex_core+risk 2579 零回归。
+  impact:
+    - 'src/zephyr/risk/core/factor_exposure_manager.py + risk/{manipulation_avoidance_detector,post_entry_instant_validator}.py（node 10617211~10617229）'
+  fix_phase: '已落地（2026-08-25，P1 R3W13）；两归并同批'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-240'
+  title: DIGEST P1 R3W15：另类数据三件晋升（MOD-ALT-001~003，Filing NLP 为 canonical）+ 两条另类数据源归并
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    social_sentiment_collector（帖子级文本情绪日频聚合，与 stock_hot_rank 数值人气榜分工）/
+    web_scraper_engine（无 API 页面定向爬取核心）/filing_nlp_engine（公告文本事件级 NLP，声明
+    canonical——W-P1-14 B1-00113 spec 全等应归并）。归并两则：B10-01842（社媒面全等，
+    数字足迹/产业链/卫星=残留面）；B13-04069（逐面归并，司法 tyc/Whisper ASR=残留面）。
+    109 新测全绿，intelligence+nlp 494/zephyr/data 1430 零回归。
+  impact:
+    - 'src/zephyr/alt_data/{social_sentiment_collector,web_scraper_engine,filing_nlp_engine}.py（node 10617205~10617210）'
+  fix_phase: '已落地（2026-08-25，P1 R3W15）；两归并同批'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-241'
+  title: DIGEST P1 R3W17：P2 进程规格/Warm 平面/大盘预测融合/压缩突破/血缘解析器五候选晋升（MOD-INF-070/071、MOD-REGIME-012/013、MOD-DATA_GOV-004）
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    signal_engine_process_spec（P2 规格，与 MOD-INF-066 supervisor 注册行双向对账，恒
+    core_degrade 钉死）/warm_plane_budget（Warm 200/300/500ms 累计 1s+11 态 7 行路由表，
+    与 Hot 档 MOD-INF-065 同族补件）/market_forecast_fusion（C-014 三层融合只出分布不出
+    点位，与 4态HMM/overlay 零重叠）/volatility_squeeze_breakout（模块51=双腿强压缩+突破
+    方向概率+3日确认，与 REGIME-011 早标记分工扩展施工）/lineage_parser（M8-S01 自动血缘
+    解析，幂等/环检测复用 MOD-DATA_GOV-002）。102 新测全绿，三域 2407 零回归。
+  impact:
+    - 'src/zephyr/infrastructure/{signal_engine_process_spec,warm_plane_budget}.py + regime/{market_forecast_fusion,volatility_squeeze_breakout}.py + data_governance/core/lineage_parser.py（node 10617214~10617239）'
+  fix_phase: '已落地（2026-08-25，P1 R3W17）'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'

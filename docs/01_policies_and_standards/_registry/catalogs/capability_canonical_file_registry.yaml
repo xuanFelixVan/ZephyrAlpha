@@ -9961,6 +9961,134 @@ creation_tokens:
   token: auto-test-ai-ops-autonomy-card-20260825
   created_by: AI-K3-DIGEST-P1R2（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: ai_ops_autonomy_card
+- file: src/zephyr/alt_data/social_sentiment_collector.py
+  token: auto-scaffold-social_sentiment_collector-20260825
+  created_by: scaffold.py
+  capability: social_sentiment_collector
+- file: src/zephyr/signal_ashare/limit_up_ecosystem_leadership.py
+  token: auto-scaffold-limit_up_ecosystem_leadership-20260825
+  created_by: scaffold.py
+  capability: limit_up_ecosystem_leadership
+- file: src/zephyr/alt_data/web_scraper_engine.py
+  token: auto-scaffold-web_scraper_engine-20260825
+  created_by: scaffold.py
+  capability: web_scraper_engine
+- file: src/zephyr/risk/core/factor_exposure_manager.py
+  token: auto-scaffold-factor_exposure_manager-20260825
+  created_by: scaffold.py
+  capability: factor_exposure_manager
+- file: src/zephyr/alt_data/filing_nlp_engine.py
+  token: auto-scaffold-filing_nlp_engine-20260825
+  created_by: scaffold.py
+  capability: filing_nlp_engine
+- file: src/zephyr/infrastructure/signal_engine_process_spec.py
+  token: auto-scaffold-signal_engine_process_spec-20260825
+  created_by: scaffold.py
+  capability: signal_engine_process_spec
+- file: src/zephyr/signal_ashare/sector_momentum_persistence.py
+  token: auto-scaffold-sector_momentum_persistence-20260825
+  created_by: scaffold.py
+  capability: sector_momentum_persistence
+- file: src/zephyr/risk/manipulation_avoidance_detector.py
+  token: auto-scaffold-manipulation_avoidance_detector-20260825
+  created_by: scaffold.py
+  capability: manipulation_avoidance_detector
+- file: src/zephyr/infrastructure/warm_plane_budget.py
+  token: auto-scaffold-warm_plane_budget-20260825
+  created_by: scaffold.py
+  capability: warm_plane_budget
+- file: src/zephyr/regime/market_forecast_fusion.py
+  token: auto-scaffold-market_forecast_fusion-20260825
+  created_by: scaffold.py
+  capability: market_forecast_fusion
+- file: src/zephyr/risk/post_entry_instant_validator.py
+  token: auto-scaffold-post_entry_instant_validator-20260825
+  created_by: scaffold.py
+  capability: post_entry_instant_validator
+- file: src/zephyr/signal_ashare/extreme_sentiment_reversal_detector.py
+  token: auto-scaffold-extreme_sentiment_reversal_detector-20260825
+  created_by: scaffold.py
+  capability: extreme_sentiment_reversal_detector
+- file: src/zephyr/regime/volatility_squeeze_breakout.py
+  token: auto-scaffold-volatility_squeeze_breakout-20260825
+  created_by: scaffold.py
+  capability: volatility_squeeze_breakout
+- file: src/zephyr/signal_ashare/false_breakout_trap_detector.py
+  token: auto-scaffold-false_breakout_trap_detector-20260825
+  created_by: scaffold.py
+  capability: false_breakout_trap_detector
+- file: src/zephyr/data_governance/core/lineage_parser.py
+  token: auto-scaffold-lineage_parser-20260825
+  created_by: scaffold.py
+  capability: lineage_parser
+- file: src/zephyr/signal_ashare/sentiment_price_divergence.py
+  token: auto-scaffold-sentiment_price_divergence-20260825
+  created_by: scaffold.py
+  capability: sentiment_price_divergence
+- file: tests/signal_ashare/test_limit_up_ecosystem_leadership.py
+  token: auto-test-limit-up-ecosystem-leadership-20260825
+  created_by: AI-K3-DIGEST-P1R3（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: limit_up_ecosystem_leadership
+- file: tests/signal_ashare/test_sector_momentum_persistence.py
+  token: auto-test-sector-momentum-persistence-20260825
+  created_by: AI-K3-DIGEST-P1R3（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: sector_momentum_persistence
+- file: tests/signal_ashare/test_extreme_sentiment_reversal_detector.py
+  token: auto-test-extreme-sentiment-reversal-detector-20260825
+  created_by: AI-K3-DIGEST-P1R3（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: extreme_sentiment_reversal_detector
+- file: tests/signal_ashare/test_false_breakout_trap_detector.py
+  token: auto-test-false-breakout-trap-detector-20260825
+  created_by: AI-K3-DIGEST-P1R3（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: false_breakout_trap_detector
+- file: tests/signal_ashare/test_sentiment_price_divergence.py
+  token: auto-test-sentiment-price-divergence-20260825
+  created_by: AI-K3-DIGEST-P1R3（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: sentiment_price_divergence
+- file: tests/risk/core/test_factor_exposure_manager.py
+  token: auto-test-factor-exposure-manager-20260825
+  created_by: AI-K3-DIGEST-P1R3（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: factor_exposure_manager
+- file: tests/risk/test_manipulation_avoidance_detector.py
+  token: auto-test-manipulation-avoidance-detector-20260825
+  created_by: AI-K3-DIGEST-P1R3（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: manipulation_avoidance_detector
+- file: tests/risk/test_post_entry_instant_validator.py
+  token: auto-test-post-entry-instant-validator-20260825
+  created_by: AI-K3-DIGEST-P1R3（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: post_entry_instant_validator
+- file: tests/alt_data/test_social_sentiment_collector.py
+  token: auto-test-social-sentiment-collector-20260825
+  created_by: AI-K3-DIGEST-P1R3（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: social_sentiment_collector
+- file: tests/alt_data/test_web_scraper_engine.py
+  token: auto-test-web-scraper-engine-20260825
+  created_by: AI-K3-DIGEST-P1R3（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: web_scraper_engine
+- file: tests/alt_data/test_filing_nlp_engine.py
+  token: auto-test-filing-nlp-engine-20260825
+  created_by: AI-K3-DIGEST-P1R3（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: filing_nlp_engine
+- file: tests/infrastructure/test_signal_engine_process_spec.py
+  token: auto-test-signal-engine-process-spec-20260825
+  created_by: AI-K3-DIGEST-P1R3（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: signal_engine_process_spec
+- file: tests/infrastructure/test_warm_plane_budget.py
+  token: auto-test-warm-plane-budget-20260825
+  created_by: AI-K3-DIGEST-P1R3（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: warm_plane_budget
+- file: tests/regime/test_market_forecast_fusion.py
+  token: auto-test-market-forecast-fusion-20260825
+  created_by: AI-K3-DIGEST-P1R3（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: market_forecast_fusion
+- file: tests/regime/test_volatility_squeeze_breakout.py
+  token: auto-test-volatility-squeeze-breakout-20260825
+  created_by: AI-K3-DIGEST-P1R3（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: volatility_squeeze_breakout
+- file: tests/data_governance/test_lineage_parser.py
+  token: auto-test-lineage-parser-20260825
+  created_by: AI-K3-DIGEST-P1R3（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: lineage_parser
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
