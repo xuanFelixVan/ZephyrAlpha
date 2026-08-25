@@ -9841,6 +9841,126 @@ creation_tokens:
   token: auto-test-t0-trader-agent-20260825
   created_by: AI-K3-DIGEST-P1R1（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: t0_trader_agent
+- file: src/zephyr/signal_ashare/gap_fill_model.py
+  token: auto-scaffold-gap_fill_model-20260825
+  created_by: scaffold.py
+  capability: gap_fill_model
+- file: src/zephyr/factor/analysis/bma_signal_weighter.py
+  token: auto-scaffold-bma_signal_weighter-20260825
+  created_by: scaffold.py
+  capability: bma_signal_weighter
+- file: src/zephyr/autonomy_core/non_ai_boundary_guard.py
+  token: auto-scaffold-non_ai_boundary_guard-20260825
+  created_by: scaffold.py
+  capability: non_ai_boundary_guard
+- file: src/zephyr/data/multi_timeframe_fusion.py
+  token: auto-scaffold-multi_timeframe_fusion-20260825
+  created_by: scaffold.py
+  capability: multi_timeframe_fusion
+- file: src/zephyr/data/financial_parser.py
+  token: auto-scaffold-financial_parser-20260825
+  created_by: scaffold.py
+  capability: financial_parser
+- file: src/zephyr/signal_ashare/intraday_volume_orderflow.py
+  token: auto-scaffold-intraday_volume_orderflow-20260825
+  created_by: scaffold.py
+  capability: intraday_volume_orderflow
+- file: src/zephyr/data/auto_backfiller.py
+  token: auto-scaffold-auto_backfiller-20260825
+  created_by: scaffold.py
+  capability: auto_backfiller
+- file: src/zephyr/data/reference_data_manager.py
+  token: auto-scaffold-reference_data_manager-20260825
+  created_by: scaffold.py
+  capability: reference_data_manager
+- file: src/zephyr/intelligence/llm_market_interpreter.py
+  token: auto-scaffold-llm_market_interpreter-20260825
+  created_by: scaffold.py
+  capability: llm_market_interpreter
+- file: src/zephyr/factor/ufl_deterministic_layer.py
+  token: auto-scaffold-ufl_deterministic_layer-20260825
+  created_by: scaffold.py
+  capability: ufl_deterministic_layer
+- file: src/zephyr/autonomy_core/ai_ops_autonomy_card.py
+  token: auto-scaffold-ai_ops_autonomy_card-20260825
+  created_by: scaffold.py
+  capability: ai_ops_autonomy_card
+- file: src/zephyr/signal_ashare/wyckoff_accumulation_signal.py
+  token: auto-scaffold-wyckoff_accumulation_signal-20260825
+  created_by: scaffold.py
+  capability: wyckoff_accumulation_signal
+- file: src/zephyr/factor/offline_store.py
+  token: auto-scaffold-offline_store-20260825
+  created_by: scaffold.py
+  capability: offline_store
+- file: src/zephyr/signal_ashare/multi_indicator_divergence.py
+  token: auto-scaffold-multi_indicator_divergence-20260825
+  created_by: scaffold.py
+  capability: multi_indicator_divergence
+- file: src/zephyr/signal_ashare/relative_strength_screener.py
+  token: auto-scaffold-relative_strength_screener-20260825
+  created_by: scaffold.py
+  capability: relative_strength_screener
+- file: tests/signal_ashare/test_gap_fill_model.py
+  token: auto-test-gap-fill-model-20260825
+  created_by: AI-K3-DIGEST-P1R2（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: gap_fill_model
+- file: tests/signal_ashare/test_intraday_volume_orderflow.py
+  token: auto-test-intraday-volume-orderflow-20260825
+  created_by: AI-K3-DIGEST-P1R2（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: intraday_volume_orderflow
+- file: tests/signal_ashare/test_wyckoff_accumulation_signal.py
+  token: auto-test-wyckoff-accumulation-signal-20260825
+  created_by: AI-K3-DIGEST-P1R2（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: wyckoff_accumulation_signal
+- file: tests/signal_ashare/test_multi_indicator_divergence.py
+  token: auto-test-multi-indicator-divergence-20260825
+  created_by: AI-K3-DIGEST-P1R2（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: multi_indicator_divergence
+- file: tests/signal_ashare/test_relative_strength_screener.py
+  token: auto-test-relative-strength-screener-20260825
+  created_by: AI-K3-DIGEST-P1R2（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: relative_strength_screener
+- file: tests/factor/test_ufl_deterministic_layer.py
+  token: auto-test-ufl-deterministic-layer-20260825
+  created_by: AI-K3-DIGEST-P1R2（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: ufl_deterministic_layer
+- file: tests/factor/test_bma_signal_weighter.py
+  token: auto-test-bma-signal-weighter-20260825
+  created_by: AI-K3-DIGEST-P1R2（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: bma_signal_weighter
+- file: tests/factor/test_offline_store.py
+  token: auto-test-offline-store-20260825
+  created_by: AI-K3-DIGEST-P1R2（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: offline_store
+- file: tests/zephyr/data/test_auto_backfiller.py
+  token: auto-test-auto-backfiller-20260825
+  created_by: AI-K3-DIGEST-P1R2（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: auto_backfiller
+- file: tests/zephyr/data/test_reference_data_manager.py
+  token: auto-test-reference-data-manager-20260825
+  created_by: AI-K3-DIGEST-P1R2（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: reference_data_manager
+- file: tests/zephyr/data/test_multi_timeframe_fusion.py
+  token: auto-test-multi-timeframe-fusion-20260825
+  created_by: AI-K3-DIGEST-P1R2（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: multi_timeframe_fusion
+- file: tests/zephyr/data/test_financial_parser.py
+  token: auto-test-financial-parser-20260825
+  created_by: AI-K3-DIGEST-P1R2（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: financial_parser
+- file: tests/intelligence/test_llm_market_interpreter.py
+  token: auto-test-llm-market-interpreter-20260825
+  created_by: AI-K3-DIGEST-P1R2（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: llm_market_interpreter
+- file: tests/autonomy/test_non_ai_boundary_guard.py
+  token: auto-test-non-ai-boundary-guard-20260825
+  created_by: AI-K3-DIGEST-P1R2（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: non_ai_boundary_guard
+- file: tests/autonomy/test_ai_ops_autonomy_card.py
+  token: auto-test-ai-ops-autonomy-card-20260825
+  created_by: AI-K3-DIGEST-P1R2（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+  capability: ai_ops_autonomy_card
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

@@ -43704,6 +43704,216 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "用合成K线验证统一图形引擎：双顶双底、平台突破、支撑位、缠论笔、DTW模板命中与脱靶、事件去重排序、历史胜率注入和JSON序列化，全部内存数据。"
+- module_path: src/zephyr/signal_ashare/gap_fill_model.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "缺口回补概率模型"
+  name_en: "Gap Fill Probability Model"
+  desc_zh: "缺口按ATR14标准化分四档，查表输出回补概率、部分回补分布、回补时间与MAE止损参考"
+  desc_en: "ATR-normalized gap grading with lookup-table fill probability, partial fill distribution and MAE stop reference"
+  plain_zh: "开盘跳空缺口有多大概率被补回来：把缺口按波动率分成小中大四档，查历史统计表给出回补概率、分批回补比例和止损参考价，供买入侧判断追高或抄缺口的风险"
+- module_path: tests/signal_ashare/test_gap_fill_model.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "缺口回补概率模型测试"
+  name_en: "Gap Fill Probability Model Tests"
+  desc_zh: "验证缺口分级边界、查表概率、部分回补分布归一、MAE止损方向、detect识别与fail-closed契约"
+  desc_en: "Tests for gap grading boundaries, lookup probabilities, distribution normalization, MAE stop direction and fail-closed contracts"
+  plain_zh: "缺口回补模型的验收测试：用合成K线验证分级对不对、查表概率对不对、止损方向有没有反、非法输入会不会被拦住"
+- module_path: src/zephyr/factor/analysis/bma_signal_weighter.py
+  domain_id: D_FACTOR
+  name_zh: "BMA动态信号权重器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给多个交易信号算动态权重的纯计算模块：每个信号报上自己的IC、ICIR稳定度、IC衰减和当前体制下的IC，模块先把预测力不合格的信号踢掉（IC太低、衰减过半、体制不利），再用贝叶斯模型平均的思路按效果乘稳定性分配权重，还要和上一轮权重按9比1混合防止跳变；最后看大家方向是否一致、有没有主导信号，两头都不占就建议不操作。"
+- module_path: tests/factor/test_bma_signal_weighter.py
+  domain_id: D_FACTOR
+  name_zh: "BMA动态信号权重器单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "BMA动态信号权重器的单元测试：验证不合格信号被踢掉的四条规则、权重加起来等于1且好信号权重更高、九比一平滑混合不跳变、方向打架又没主导信号时给出不操作建议，以及非法输入直接报错。"
+- module_path: src/zephyr/data/auto_backfiller.py
+  domain_id: D_DATA
+  name_zh: "自动回填器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "新因子上线、公式升级或数据源修复后，把历史数据按日期切片重新计算补齐，随机抽约一成做验证，全部通过后更新血缘并通知模型重训，部分失败只留痕不触发。"
+- module_path: src/zephyr/data/reference_data_manager.py
+  domain_id: D_DATA
+  name_zh: "参考数据管理器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "管股票的行业分类、指数成分及生效日期、各家数据商代码对照表，任何变更都记录并广播，让全系统能查同一只票在不同数据商那里的身份。"
+- module_path: src/zephyr/data/multi_timeframe_fusion.py
+  domain_id: D_DATA
+  name_zh: "多周期数据融合器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把一分钟到日线的K线互相转换：对齐交易日历、统一时间戳为每根收盘口径、缺的几根允许向前补但最多补三根，最后给融合结果打分标记好坏。"
+- module_path: src/zephyr/data/financial_parser.py
+  domain_id: D_DATA
+  name_zh: "财报结构化解析器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把年报季报的PDF和XBRL文件读成结构化财务指标，表格抽取不行就用本地大模型兜底，每个解析结果带置信度分级标记，供财务表标准化入库。"
+- module_path: src/zephyr/intelligence/llm_market_interpreter.py
+  domain_id: D_INTELLIGENCE
+  name_zh: "LLM市场解读引擎"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把新闻、研报、社媒三路文字交给大模型做统一市场解读，盘后用本地模型、盘中用API，输出主题情感影响标的和置信度，只做研判参考不直接下单，结论留审计。"
+- module_path: src/zephyr/autonomy_core/non_ai_boundary_guard.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: "Non-AI边界守卫"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "计量AI决策占全部决策权重的比例，超过30%硬顶就发出阻断新AI决策的信号，非AI决策永远放行；只发信号不直接下单阻断，审计双记录"
+- module_path: tests/autonomy/test_non_ai_boundary_guard.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: "Non-AI边界守卫单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "Non-AI边界守卫的单元测试：占比计量、30%超限阻断信号、非AI恒放行、非法输入拒绝、回调异常不阻断、双审计"
+- module_path: src/zephyr/signal_ashare/intraday_volume_orderflow.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "日内量能结构与订单流分析"
+  name_en: "Intraday Volume Orderflow Analyzer"
+  desc_zh: "分钟K聚合量能分布POC与VA70价值区，CVD累积量差峰谷对位背离追踪，50桶VPIN知情交易度量日频输出"
+  desc_en: "Minute-bar Volume Profile (POC/VA70), CVD divergence tracking and 50-bucket VPIN daily factor"
+  plain_zh: "看日内谁在真买真卖：把分钟K的量按价位堆出分布找到主成本区，追踪买卖量差和价格是否背离，再用等量桶算出知情交易占比，判断日内量能健不健康"
+- module_path: tests/signal_ashare/test_intraday_volume_orderflow.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "日内量能订单流测试"
+  name_en: "Intraday Volume Orderflow Tests"
+  desc_zh: "验证POC定位、VA覆盖率、CVD符号、顶底背离检出与确认零背离、VPIN单向流与degraded、fail-closed契约"
+  desc_en: "Tests for POC location, VA coverage, CVD signs, divergence detection, VPIN directionality, degraded flag and fail-closed contracts"
+  plain_zh: "日内量能模型的验收测试：用合成分钟K验证主成本区找得准不准、量价背离检不检得出、知情交易占比单向流是不是接近1、坏数据会不会被拦住"
+- module_path: src/zephyr/factor/ufl_deterministic_layer.py
+  domain_id: D_FACTOR
+  name_zh: "UFL确定性事实层"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给特征仓库里的因子打确定性标记并划出确定性子集的纯计算模块：哪些因子只依赖价量数据、同样输入永远算出同样结果，就标记为确定性；没标记的一律按非确定性处理，标记只增不改（改判直接报错）。模块还能给每行特征值附上这个标记、生成只含确定性因子的数据库视图SQL、以及在读取侧过滤出确定性因子的行，供训练和回测放心重放。"
+- module_path: tests/factor/test_ufl_deterministic_layer.py
+  domain_id: D_FACTOR
+  name_zh: "UFL确定性事实层单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "UFL确定性事实层的单元测试：验证没标记的因子一律按非确定性处理、标记同值幂等改判报错、纯价量输入才算确定性、行级打标不改原行、视图SQL只圈确定性因子且空集合给空视图防注入、读侧过滤只留下确定性因子的行。"
+- module_path: src/zephyr/autonomy_core/ai_ops_autonomy_card.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: "AI自治运维能力卡片"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "C-008运维自治判定核心：运维事件按禁区硬编码(交易时段重启核心进程/升级依赖/清理未归档日志必人工)、修复策略分级、TNR可撤销(无快照或不可逆必人工)裁决自动修复还是转人工，修复后恶化自动回滚信号"
+- module_path: tests/autonomy/test_ai_ops_autonomy_card.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: "AI自治运维能力卡片单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "AI自治运维能力卡片的单元测试：卡声明、禁区硬编码、策略分级门禁、TNR无快照/不可逆人工、恶化回滚、非法输入拒绝、回调异常不阻断、双审计"
+- module_path: src/zephyr/signal_ashare/wyckoff_accumulation_signal.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "Wyckoff吸筹买点信号"
+  name_en: "Wyckoff Accumulation Buy Signal"
+  desc_zh: "消费wyckoff阶段评分上穿门槛叠加CVD量差上行确认生成吸筹买点，Granger因果F检验防因果倒置"
+  desc_en: "Wyckoff stage score threshold cross + CVD confirmation buy signal with Granger causality guard"
+  plain_zh: "识别主力吸筹尾声的买点：吸筹阶段评分冲过门槛且买卖量差同步走高才发信号，并用因果检验确认是资金推动在先而不是价格自嗨，防止把因果搞反"
+- module_path: tests/signal_ashare/test_wyckoff_accumulation_signal.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "Wyckoff吸筹买点信号测试"
+  name_en: "Wyckoff Accumulation Signal Tests"
+  desc_zh: "验证上穿+CVD双确认、无量能配合拒绝、Granger领先显著/独立不显著/倒置全阻断、样本不足降级、fail-closed契约"
+  desc_en: "Tests for cross+CVD dual confirmation, Granger leading/inverted causality gating, degraded mode and fail-closed contracts"
+  plain_zh: "吸筹买点信号的验收测试：验证评分上穿加量差确认才发信号、因果倒置时信号全被拦、样本不够时显式降级、坏输入全部被拒"
+- module_path: tests/zephyr/data/test_auto_backfiller.py
+  domain_id: D_DATA
+  name_zh: "自动回填器单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证自动回填器：触发事件校验、日期分片规划、单片失败不中断、抽样验证、全通过才更新血缘和触发重训。"
+- module_path: tests/zephyr/data/test_reference_data_manager.py
+  domain_id: D_DATA
+  name_zh: "参考数据管理器单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证参考数据管理器：行业分类登记、指数成分按生效日期时点查询、多源代码互译、变更事件记录与外发。"
+- module_path: tests/zephyr/data/test_multi_timeframe_fusion.py
+  domain_id: D_DATA
+  name_zh: "多周期数据融合器单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证多周期融合：频率校验、OHLC聚合正确性、时间戳按收盘归一、交易日历对齐、前向填充最多三根、质量分级标记。"
+- module_path: tests/zephyr/data/test_financial_parser.py
+  domain_id: D_DATA
+  name_zh: "财报解析器单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证财报解析器：XBRL表格LLM三条路径阶梯、指标名标准化映射、千分位括号负数万元亿元清洗、置信度分级。"
+- module_path: tests/intelligence/test_llm_market_interpreter.py
+  domain_id: D_INTELLIGENCE
+  name_zh: "LLM市场解读引擎单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证市场解读引擎：三路输入校验、本地与API双模选择、大模型输出结构严格把关、来源留痕、审计外发、无下单语义。"
+- module_path: src/zephyr/factor/offline_store.py
+  domain_id: D_FACTOR
+  name_zh: "离线存储Offline Store"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "因子值的Parquet离线仓库：把每批因子计算结果按七列格式（日期/股票/因子名/值/版本/计算时间/质量标记）写进三个目录——日线和盘中按天建文件夹、快照按月建文件夹；同样的批次重复写不会多文件，重新算过的数据读取时自动取最新；用DuckDB按因子、日期段、质量标记批量读，默认不读被隔离的坏数据，供模型训练、回测和因子评估大批量使用。"
+- module_path: tests/factor/test_offline_store.py
+  domain_id: D_FACTOR
+  name_zh: "离线存储Offline Store单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "离线存储Offline Store的单元测试：在临时目录里真写真读——验证七列缺列和坏标记坏日期直接报错、三个目录按天按月分对文件夹、同批次重复写不出新文件、按因子日期质量过滤读取、重算同键取最新、空仓库读出空列表。"
+- module_path: src/zephyr/signal_ashare/multi_indicator_divergence.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "多指标背离检测器"
+  name_en: "Multi Indicator Divergence Detector"
+  desc_zh: "RSI与MACD与CVD峰谷对位背离检测，背离程度量化，次数反转概率与5min到日线多级别级联概率查表，支持背离化解标记"
+  desc_en: "RSI/MACD/CVD peak-trough divergence with magnitude quantification, count-based reversal and multi-timeframe cascade probabilities"
+  plain_zh: "发现价格和指标唱反调的时刻：价格创新高但RSI或MACD或量能反而走弱就是顶背离，反过来是底背离，还能算背离几次后反转概率多大、多个周期共振时概率多高"
+- module_path: tests/signal_ashare/test_multi_indicator_divergence.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "多指标背离检测测试"
+  name_en: "Multi Indicator Divergence Tests"
+  desc_zh: "验证RSI与MACD指标核、顶底背离检出、确认零背离、背离化解、次数与级联概率查表、fail-closed契约"
+  desc_en: "Tests for indicator cores, divergence detection, resolution, probability tables and fail-closed contracts"
+  plain_zh: "背离检测器的验收测试：用合成价格验证顶背离底背离检不检得出、指标重新走强后背离会不会标记化解、概率查表对不对、坏输入会不会被拦"
+- module_path: src/zephyr/signal_ashare/relative_strength_screener.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "多维度相对强弱筛选器"
+  name_en: "Multi Dimensional Relative Strength Screener"
+  desc_zh: "区间相对强度加均线多头结构加52周新高接近度加放量突破确认四维合成RS评分，批量降序输出供精筛"
+  desc_en: "Composite RS score from interval RS, MA structure, 52-week high proximity and volume breakout confirmation"
+  plain_zh: "筛出比大盘强的股票：看个股中期跑赢基准多少、均线是不是多头排列、离52周新高近不近、创新高时有没有放量，四项加权成一个0到100的强弱分并排名次"
+- module_path: tests/signal_ashare/test_relative_strength_screener.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "多维度相对强弱筛选测试"
+  name_en: "Relative Strength Screener Tests"
+  desc_zh: "验证区间RS方向、结构强弱极端、52周接近度阈值、放量突破确认、合成单调性、批量排序、短历史降级与fail-closed契约"
+  desc_en: "Tests for interval RS direction, structural extremes, 52w proximity, breakout confirmation, composite monotonicity, ranking, degraded mode and fail-closed contracts"
+  plain_zh: "相对强弱筛选器的验收测试：用合成行情验证强股分高弱股分低、接近52周新高会打标记、突破放量才算确认、历史不够时显式降级、坏输入全被拦"
 
 battle_map_steps:
 - step_id: BM-BUY-04

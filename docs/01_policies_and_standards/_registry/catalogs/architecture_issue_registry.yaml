@@ -20100,3 +20100,100 @@ entries:
   related_rules: ['AUD-DRAFT-001-DIGEST']
   created: '2026-08-25'
   last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-233'
+  title: DIGEST P1 R2W02：信号模型族 5 候选晋升（MOD-SIG-092~096）
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    gap_fill_model（缺口回补概率）/intraday_volume_orderflow（日内量能订单流，与 MOD-SIG-089
+    盘前竞价分工）/wyckoff_accumulation_signal（消费 regime wyckoff_engine 评分鸭子类型零跨域
+    import）/multi_indicator_divergence（与 sell/sentiment/t0/sector 四类背离语义正交）/
+    relative_strength_screener（与 MOD-SIG-034 口径正交）五件建成。79 新测全绿，
+    tests/signal_ashare 1559 零回归。技术债：scipy 幽灵依赖（pyproject 未声明场内 8 处 lazy
+    import，本波 Granger 以纯 Python 不完全贝塔避让）留工具健康批。
+  impact:
+    - 'src/zephyr/signal_ashare/{gap_fill_model,intraday_volume_orderflow,wyckoff_accumulation_signal,multi_indicator_divergence,relative_strength_screener}.py（node 10610102~10610135）'
+  fix_phase: '已落地（2026-08-25，P1 R2W02）'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-234'
+  title: DIGEST P1 R2W07：UFL 事实层/BMA 权重/OfflineStore 三候选晋升 + 因果验证层与工厂三兄弟 REVIEW 豁免
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    ufl_deterministic_layer（复用 storage_tiering 追加式语义做因子级标记，DDL human_only 不碰）/
+    bma_signal_weighter（跨信号 BMA 动态权重，实证 signal_weight_enhancer 不存在非重复）/
+    offline_store（Parquet 7 列离线仓，与 feature_store_writer CH 在线面分工）三件建成。
+    豁免两则：CAND-FAC-012 因果验证层（causal_factor_validator MOD-SIG-054+causal_inference_engine
+    MOD-SIG-042 双 production 覆盖，DoWhy/DML 远期 Phase 4 在案）；CAND-FAC-014 工厂三兄弟
+    （spec 即总称，factor/signal 工厂已建，strategy 工厂归后续波）。57 新测全绿，
+    tests/factor 827 零回归。
+  impact:
+    - 'src/zephyr/factor/{ufl_deterministic_layer,offline_store}.py + factor/analysis/bma_signal_weighter.py（node 10610104~10610129）'
+  fix_phase: '已落地（2026-08-25，P1 R2W07）；两豁免同批'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST', '25号 memo BM-SEL-02-M']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-235'
+  title: DIGEST P1 R2W09：数据四件+LLMMarketInterpreter 五候选晋升（回填/参考数据/MTF/财报解析/三路解读）
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    auto_backfiller（事件触发回填+分片+抽样+血缘，与 L10 backfill_checker 定时面向分工）/
+    reference_data_manager（行业分类/指数成分 PIT/多源映射/变更事件四缺口，instrument_master
+    外补不重建）/multi_timeframe_fusion（内存态统一 resample+质量评分，与 kline_resampler CH
+    库内分工）/financial_parser（PDF/XBRL→指标，与 announcement_provider 采集 vs 解析分工）/
+    llm_market_interpreter（三路统一解读双模引擎，与 analyzer/pool/gateway 分工零密钥）。
+    63 新测全绿，tests/zephyr/data 1375+tests/intelligence 329 零回归。
+  impact:
+    - 'src/zephyr/data/{auto_backfiller,reference_data_manager,multi_timeframe_fusion,financial_parser}.py + src/zephyr/intelligence/llm_market_interpreter.py（node 10610107~10610127）'
+  fix_phase: '已落地（2026-08-25，P1 R2W09）'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-236'
+  title: DIGEST P1 R2W12：Non-AI Boundary Guard/AI 自治运维卡晋升（MOD-AU-012/013）+ 三归并豁免
+  severity: P1
+  category: 功能施工
+  adjudication: >-
+    non_ai_boundary_guard（AI/非AI 决策权重计量 >30% 硬顶 BLOCK_NEW_AI，非AI 恒放行）/
+    ai_ops_autonomy_card（四阶段闭环卡+AUT-001~008 策略库+B-014/015/016 禁区硬编码+TNR
+    无快照必人工+恶化自动 ROLLBACK）两件建成。归并三则：B11-02483 研究Agent→MOD-AU-008；
+    B11-02487 择时Agent→MOD-AU-010（三要素全等）；B10-01219 执行策略选择器→MOD-EX-062
+    （production，POV/紧迫度被门禁降级不变量排除，扩面另起裁定）。83 新测全绿，
+    tests/autonomy 2489 零回归。
+  impact:
+    - 'src/zephyr/autonomy_core/{non_ai_boundary_guard,ai_ops_autonomy_card}.py（node 10610103~10610118）'
+  fix_phase: '已落地（2026-08-25，P1 R2W12）；三归并同批'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+
+- issue_id: '#ARCH-237'
+  title: 候选注册表批量翻转 off-by-one 事故（P1 R1 合并 19 条错位）——块级脚本修复并加固流程
+  severity: P1
+  category: 治理流程
+  adjudication: >-
+    2026-08-25 P1 R1 主代理注册表合并脚本按 original_id 行定位后替换"下一行 status"，
+    未考虑条目内字段序（original_id 位于 status 之后），致 19 条 promoted_to 错位至相邻条目
+    （三个后续波代理独立实证）。处置：注册表回滚至 806173d8（W3 后良态），改写块级翻转脚本
+    （按 - id: 切块、块内精确替换、块尾换行保留、翻转后全文复读校验+yaml.safe_load 双闸），
+    40 操作（34 promoted+6 review_note）零错位落盘。教训：共享注册表批量写必须块级+双校验；
+    行级正则定位在异构字段序下不可靠。脚本留存 .runtime/digest_20260825/_merge_p1r12.py
+    为后续 P1 波唯一入口范式。
+  impact:
+    - 'docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml（修复后正确态）'
+  fix_phase: '已修复（2026-08-25 当日）；流程加固随 P1 后续波执行'
+  status: resolved
+  related_rules: ['AUD-DRAFT-001-DIGEST']
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
