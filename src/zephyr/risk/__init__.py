@@ -92,6 +92,11 @@ LPC 双轨架构 C 轨（业务脊柱 · 带 l<NN>_ 前缀）
 from __future__ import annotations
 
 import importlib as _importlib
+# NOTE(2026-08-25 W1c 协调): 下行由 CAND-RSK-038 并行会话 scaffold 注册, 但其
+# atr_stop_engine.py 尚为 stub(无 AtrStopEngine 类), 悬空导入使 zephyr.risk 全包不可导入。
+# 按本批 copula 同款协调模式暂注释(可逆, 非删除); 请 CAND-RSK-038 施工方实现类后取消注释恢复。
+# W1d(2026-08-25): AtrStopEngine 已落码(MOD-RK-35), 按上方 NOTE 恢复导入。
+from zephyr.risk.atr_stop_engine import AtrStopEngine
 
 __all__ = [
     "cross_asset",
@@ -107,3 +112,7 @@ def __getattr__(name):
     if name == "cross_asset":
         return _importlib.import_module(".cross_asset", __name__)
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+# 与上方 NOTE 联动: AtrStopEngine 悬空期间不入 __all__(避免 import * 解析失败)。
+# W1d(2026-08-25): 类已落码, 恢复入列。
+__all__.append("AtrStopEngine")

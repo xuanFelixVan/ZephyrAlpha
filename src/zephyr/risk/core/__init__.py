@@ -59,6 +59,29 @@ from zephyr.risk.core.liquidity_crisis_manager import (
 )
 from zephyr.risk.core.stress_test_engine import StressTestEngine
 from zephyr.risk.core.tail_risk_monitor import TailRiskMonitor
+from zephyr.risk.core.adaptive_risk_forecast import (
+    ForwardVarForecast,
+    forecast_forward_var,
+)
+from zephyr.risk.core.adaptive_risk_monitor import (
+    RiskWatchSnapshot,
+    assess_risk_watch,
+)
+from zephyr.risk.core.adaptive_risk_coordinator import (
+    AdaptiveRiskDecision,
+    CircuitBreakerLevel,
+    decide_intraday,
+    plan_premarket,
+)
+from zephyr.risk.core.black_swan_pattern_library import (
+    BlackSwanScreenResult,
+    MarketFeatures,
+    screen_black_swan,
+)
+from zephyr.risk.core.crowding_response_engine import (
+    CrowdingResponseAction,
+    assess_crowding_response,
+)
 
 __all__: Final = [
     "StressTestEngine",
@@ -70,4 +93,87 @@ __all__: Final = [
     "LiquidityRecoveryState",
     "LiquidityLoopResult",
     "LiquidityCrisisConfig",
+    "ForwardVarForecast",
+    "forecast_forward_var",
+    "RiskWatchSnapshot",
+    "assess_risk_watch",
+    "AdaptiveRiskDecision",
+    "CircuitBreakerLevel",
+    "decide_intraday",
+    "plan_premarket",
+    "BlackSwanScreenResult",
+    "MarketFeatures",
+    "screen_black_swan",
+    "CrowdingResponseAction",
+    "assess_crowding_response",
 ]
+
+# NOTE(2026-08-25 W1c): 并行会话 scaffold 的 copula_garch_joint(CAND-RSK-036) 导出注册
+# 因该模块尚为 stub(无 CopulaGarchJoint 类)且 scaffold 写入的 import 行语法非法,
+# 修复包语法时暂未保留; 由 CAND-RSK-036 施工方实现类后自重挂导出(其 depgraph 节点
+# 与 creation token 未受影响)。
+# W1d(2026-08-25): CopulaGarchJointModel 已落码(MOD-RK-33), 按上方 NOTE 重挂合法导出。
+from zephyr.risk.core.copula_garch_joint import (
+    CopulaGarchConfig,
+    CopulaGarchJointError,
+    CopulaGarchJointModel,
+    JointRiskReport,
+    MarginalForecast,
+)
+from zephyr.risk.core.systemic_risk_alert_state_machine import (
+    InvalidSystemicAlertInputError,
+    RiskDirective,
+    RiskLevel,
+    SystemicRiskAlertConfig,
+    SystemicRiskAlertStateMachine,
+    SystemicRiskAssessment,
+)
+
+__all__ += [
+    "CopulaGarchConfig",
+    "CopulaGarchJointError",
+    "CopulaGarchJointModel",
+    "JointRiskReport",
+    "MarginalForecast",
+    "InvalidSystemicAlertInputError",
+    "RiskDirective",
+    "RiskLevel",
+    "SystemicRiskAlertConfig",
+    "SystemicRiskAlertStateMachine",
+    "SystemicRiskAssessment",
+]
+
+# W1d(2026-08-25): EmergencyStopConfirmation 已落码(MOD-RK-36), 重挂合法导出(同 copula NOTE 路径)。
+from zephyr.risk.core.emergency_stop_confirmation import (
+    ConfirmationVerdict,
+    EmergencyActionRequest,
+    EmergencyActionType,
+    EmergencyStopConfirmation,
+    EmergencyStopConfirmationError,
+)
+
+__all__ += [
+    "ConfirmationVerdict",
+    "EmergencyActionRequest",
+    "EmergencyActionType",
+    "EmergencyStopConfirmation",
+    "EmergencyStopConfirmationError",
+]
+
+# W1d(2026-08-25): PerformanceAttributionDegradationGuard 已落码(MOD-RK-37), 重挂合法导出(同 copula NOTE 路径)。
+from zephyr.risk.core.performance_attribution_degradation import (
+    DegradationAction,
+    DegradationGuardConfig,
+    InvalidDegradationInputError,
+    PerformanceAttributionDegradationGuard,
+    StrategyDegradationVerdict,
+)
+
+__all__ += [
+    "DegradationAction",
+    "DegradationGuardConfig",
+    "InvalidDegradationInputError",
+    "PerformanceAttributionDegradationGuard",
+    "StrategyDegradationVerdict",
+]
+
