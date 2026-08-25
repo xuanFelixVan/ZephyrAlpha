@@ -2459,6 +2459,31 @@ error_codes:
   module: zephyr.shared.contracts.execution_report_contract
   file: src/zephyr/shared/contracts/execution_report_contract.py
   introduced: '2026-08-24: CTR-P1-007 ExecutionReport 数据契约层施工（长城任务三-7，MOD-INF-016，depgraph node 10561088 testing）'
+- code: ZA-BT-0037
+  class: StrategyCPCVError
+  module: zephyr.backtest.core.strategy_cpcv_matrix
+  file: src/zephyr/backtest/core/strategy_cpcv_matrix.py
+  introduced: '2026-08-25: DIGEST P1 R4W19 正式登记（AI-K3 主代理，MOD-BT-028）'
+- code: ZA-PLAN-0004
+  class: PlaybookError
+  module: zephyr.plan_engine.scenario_playbook
+  file: src/zephyr/plan_engine/scenario_playbook.py
+  introduced: '2026-08-25: DIGEST P1 R4W19 正式登记（AI-K3 主代理，MOD-PLAN-019）'
+- code: ZA-PLAN-0005
+  class: TrackFusionError
+  module: zephyr.plan_engine.track_fusion
+  file: src/zephyr/plan_engine/track_fusion.py
+  introduced: '2026-08-25: DIGEST P1 R4W19 正式登记（AI-K3 主代理，MOD-PLAN-020）'
+- code: ZA-PLAN-0007
+  class: PremarketWorkflowError
+  module: zephyr.plan_engine.premarket_workflow
+  file: src/zephyr/plan_engine/premarket_workflow.py
+  introduced: '2026-08-25: DIGEST P1 R4W19 正式登记（AI-K3 主代理，MOD-PLAN-021）'
+- code: ZA-POS-0026
+  class: PositionAdjudicationError
+  module: zephyr.position.core.position_adjudication_center
+  file: src/zephyr/position/core/position_adjudication_center.py
+  introduced: '2026-08-25: DIGEST P1 R4W19 正式登记（AI-K3 主代理，MOD-POS-024）'
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）
