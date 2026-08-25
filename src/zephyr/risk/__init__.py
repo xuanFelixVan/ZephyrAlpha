@@ -99,6 +99,7 @@ import importlib as _importlib
 from zephyr.risk.atr_stop_engine import AtrStopEngine
 from zephyr.risk.manipulation_avoidance_detector import ManipulationAvoidanceDetector
 from zephyr.risk.post_entry_instant_validator import PostEntryInstantValidator
+from zephyr.risk.risk_signal_sequencer import RiskSignalSequencer
 
 __all__ = [
     "cross_asset",
@@ -122,3 +123,5 @@ __all__.append("AtrStopEngine")
 __all__.append("ManipulationAvoidanceDetector")
 
 __all__.append("PostEntryInstantValidator")
+
+__all__.append("RiskSignalSequencer")
