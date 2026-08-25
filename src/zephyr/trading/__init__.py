@@ -80,7 +80,19 @@ from zephyr.trading import (
 )
 from zephyr.trading.strategy_abnormal_exit_orchestrator import StrategyAbnormalExitOrchestrator
 from zephyr.trading.trading_core_process_spec import TradingCoreProcessSpec
+from zephyr.trading.trading_order_aggregate import TradingOrderAggregate
+from zephyr.trading.eod_processor import EodProcessor
+from zephyr.trading.manual_instruction_channel import ManualInstructionChannel
+from zephyr.trading.settlement_record_aggregate import SettlementRecordAggregate
 
 __all__.append("StrategyAbnormalExitOrchestrator")
 
 __all__.append("TradingCoreProcessSpec")
+
+__all__.append("TradingOrderAggregate")
+
+__all__.append("EodProcessor")
+
+__all__.append("ManualInstructionChannel")
+
+__all__.append("SettlementRecordAggregate")
