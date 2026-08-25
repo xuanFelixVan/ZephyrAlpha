@@ -14,9 +14,9 @@ description: >-
 owner: MOD-GOV-029
 tier: tier_1_governance
 status: active
-version: 1.1.1
+version: 1.1.2
 created: '2026-07-31'
-last_updated: '2026-08-23'
+last_updated: '2026-08-25'
 # 2026-08-16: +CAND-AUTONOMYCORE-002（FHS 引擎，双轮审查深挖④裁定，AI-RFIX-001）
 # 2026-08-18: +CAND-SEC-001（Whistleblower Agent MVP，裁定 9 联动降级远期 P4，AI-ADJ-004）
 # 2026-08-20: +40 条（AI-NIGHT-001 阶段3 未来工程-大型登记批，tracker #223 承接，均不施工附触发条件）
@@ -24,6 +24,7 @@ last_updated: '2026-08-23'
 # 2026-08-21: +CAND-REGSYNC-001（AGENTS.md 速查区数字动态化，tracker #41/#83 裁定承接，P0-6① warn-only MVP 已落地+fix-in-place 升级路径登记）
 # 2026-08-23: +383 条(场外草稿深挖批 AUD-DRAFT-001: 依赖图+架构图 42 文档 11828 条目全量对账,806 候选深挖裁定=做; P0=37/P1=125/P2=221, 真源 .runtime/audit_20260823/construction_backlog_dig.tsv)
 # 2026-08-22: +4 条 44号全组（CAND-SIG-023 M1/新建 CAND-PLAN 族-001 M2·002 M3/CAND-RPT-005 M4，44号 §11 裁定二缓办条件达成，Owner 长城任务指令晋升即施工，92号清单派单真源）
+# 2026-08-25: +6 条（新闻情感三层模型讨论批 2026-08-25-news-sentiment-upgrade-discussion.md §8，Owner 拍板 Q1~Q5，均不施工触发条件见各条 proposal）
 
 # ============================================================
 # 设计原则
@@ -18362,3 +18363,141 @@ entries:
   estimated_complexity: 低
   acquisition_method: constructed
   last_review_outcome: '2026-08-24 已建成（MOD-RPT-032，testing），#ARCH-201'
+- id: CAND-NLP-003
+  name: 新闻情感主体范围轴（v3 prompt scope 字段）
+  aliases: ['sentiment scope axis', '主体范围轴']
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/nlp/
+  problem: 个股/板块级利好利空直接进日级市场级聚合，口径污染（"某公司中标"被当大盘情绪）
+  proposal: 'Owner 拍板=做(Q1，讨论稿 §8)。最小施工形态: nlp_inference SYSTEM_PROMPT 升 v3 加 scope 字段(market/sector/stock)+金标集补标+评估不掉 F1 后切换；sentiment_aggregator 日级聚合按 scope=market 过滤。注意: 实施越晚，已跑 v2 全量数据重跑成本越高。依赖前置: MOD-NLP-INFERENCE-001。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '场内对账: nlp_inference.py v2 prompt 无 scope 字段'
+    blocking_question: null
+    result: candidate
+  status: candidate
+  priority: P2
+  source: 2026-08-25 新闻情感三层模型讨论批（Owner 拍板 Q1~Q5）
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+  source_draft: 2026-08-25-news-sentiment-upgrade-discussion.md
+  original_id: NEWSUP-Q1
+  source_section: §8
+- id: CAND-NLP-004
+  name: '新闻可预测性字段（predictability: scheduled/unscheduled）'
+  aliases: ['可预测性标签', 'predictability field']
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/nlp/
+  problem: 可预期事件（财报/解禁/政策会）与突发黑天鹅混在一个标签流里，无法支撑"提前埋伏 vs 落地应对"两种用法
+  proposal: 'Owner 拍板=做(Q2 A 先行，§8)。MVP: nlp_inference prompt 输出加 predictability 字段(scheduled/unscheduled)；正解=CAND-DAT-021 日历 join，日历上线后此字段退役。依赖前置: MOD-NLP-INFERENCE-001。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '场内对账: nlp_inference.py 无 predictability 字段'
+    blocking_question: null
+    result: candidate
+  status: candidate
+  priority: P2
+  source: 2026-08-25 新闻情感三层模型讨论批（Owner 拍板 Q1~Q5）
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+  source_draft: 2026-08-25-news-sentiment-upgrade-discussion.md
+  original_id: NEWSUP-Q2A
+  source_section: §8
+- id: CAND-DAT-021
+  name: event_calendar 前瞻填充器（未来 60 日可预见事件）
+  aliases: ['前瞻事件日历填充', 'scheduled events forward filler']
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/data/
+  problem: 可预见事件（财报季/解禁/宏观发布/行业事件）无前瞻结构化入库，"提前埋伏两个月后新闻"的诉求无数据支撑
+  proposal: 'Owner 拍板=做(Q2-B 正解，§8)。最小施工形态: event_calendar 注册表前瞻填充器——未来 60 日财报/解禁/政策会议/行业事件结构化入库，新闻流入库时与日历 join 自动打 predictability+关联事件标。PIT 纪律: 只登记当时已公告的事件。依赖前置: event_calendar 注册表。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '场内对账: event_calendar 注册表有机制无前瞻填充器'
+    blocking_question: null
+    result: candidate
+  status: candidate
+  priority: P2
+  source: 2026-08-25 新闻情感三层模型讨论批（Owner 拍板 Q1~Q5）
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+  source_draft: 2026-08-25-news-sentiment-upgrade-discussion.md
+  original_id: NEWSUP-Q2B
+  source_section: §8
+- id: CAND-RES-030
+  name: 高位利好落地事件研究（利好出尽实证）
+  aliases: ['买预期卖事实实证', 'sell-the-news event study']
+  domain: D_RESEARCH
+  domain_status: active
+  sub_layer: research/事件研究
+  problem: "新闻反着看/利好出尽缺 A股实证分布——高位+大利好落地后平均涨跌未知，L3 消化层规则无阈值依据，直接拍规则有过拟合风险"
+  proposal: 'Owner 拍板=做(Q3 实证先行，§8)。事件研究法: 以 12 万条情感打分产物为事件源，筛"板块事前 20 日涨幅高分位+强利好"，统计落地后 1/3/5/10 日异常收益分布；产出 priced-in 阈值规则供 L3 消化层使用。依赖前置: 12 万条 v2 批次完成。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '场内对账: 无高位利好事件研究产物'
+    blocking_question: null
+    result: candidate
+  status: candidate
+  priority: P1
+  source: 2026-08-25 新闻情感三层模型讨论批（Owner 拍板 Q1~Q5）
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+  source_draft: 2026-08-25-news-sentiment-upgrade-discussion.md
+  original_id: NEWSUP-Q3
+  source_section: §8
+- id: CAND-DAT-022
+  name: publish_time 口径审计（发布时间 vs 入库时间）
+  aliases: ['新闻时间戳口径审计', 'publish_time audit']
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/data/
+  problem: 新闻库 publish_time 口径未审计——若是入库时间则回测隐性未来函数，动摇全量回测可信度地基
+  proposal: 'Owner 拍板=高优先级(Q4，§8)。最小施工形态: 抽样比对 publish_time 与源站发布时间/入库时间戳，出口径结论+偏差分布；若混入入库时间，出修复方案（重采或时间戳回推）。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '场内对账: 无 publish_time 口径审计产物'
+    blocking_question: null
+    result: candidate
+  status: candidate
+  priority: P1
+  source: 2026-08-25 新闻情感三层模型讨论批（Owner 拍板 Q1~Q5）
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+  source_draft: 2026-08-25-news-sentiment-upgrade-discussion.md
+  original_id: NEWSUP-Q4
+  source_section: §8
+- id: CAND-NLP-005
+  name: SFT 银标复核流水线（微调教材生产线）
+  aliases: ['银标流水线', 'silver label pipeline']
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/nlp/
+  problem: 微调轨(SFT/LoRA)无教材——金标仅 200 条，SFT 需数千条标注
+  proposal: 'Owner 拍板=条件触发(Q5，§8)。启动条件=①银标攒够约 3000 条 ②零样本基线回测验证有效。最小施工形态: 12 万条零样本产物分层抽样→人工复核改错成银标→训练集→LoRA 微调→另注册模型名(不动共用基座)→金标复测打败 F1 0.787 才换岗。依赖前置: 12 万条 v2 批次完成。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '场内对账: 无银标数据集/微调管线'
+    blocking_question: null
+    result: candidate
+  status: candidate
+  priority: P2
+  source: 2026-08-25 新闻情感三层模型讨论批（Owner 拍板 Q1~Q5）
+  created: '2026-08-25'
+  last_updated: '2026-08-25'
+  source_draft: 2026-08-25-news-sentiment-upgrade-discussion.md
+  original_id: NEWSUP-Q5
+  source_section: §8
