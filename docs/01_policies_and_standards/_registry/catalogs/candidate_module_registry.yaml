@@ -8848,10 +8848,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 CAND-TESTA-024 同为 AltDataCatalog（B1/B5 两稿重登），canonical=CAND-TESTA-024→MOD-ALT-008 alt_data_catalog（标签+血缘+FTS5 检索含其生命周期语义）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: 跨域(元文档)
   original_id: B1-00117
   source_section: §功能域模块·D-ALT-DATA
@@ -8873,11 +8874,12 @@ entries:
       evidence: '深挖场内对账: 部分：src/zephyr/data/news_collector.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/alt_data/research_report_collector.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: D-DATA
   original_id: B1-00628
   source_section: §1 子模块清单
@@ -8899,10 +8901,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 CAND-TESTA-026 同为 A股政策预期分析（B10/B5 两稿重登），canonical=CAND-TESTA-026→MOD-ALT-010（LLM 预期打分+国家队识别含其窗口指导/事件日历语义）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: D-ALT-DATA-21
   original_id: B10-02200
   source_section: §30.2.4
@@ -8924,10 +8927,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 P1 已建 MOD-ALT-004 sentiment_engine 同为 D-ALT-02（B13 稿重登），canonical=src/zephyr/alt_data/sentiment_engine.py（三路情绪+Bayesian 聚合语义已在）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A3数据架构
   original_id: B13-04279
   source_section: §17.3
@@ -8949,10 +8953,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 P1 已建 MOD-ALT-003 filing_nlp_engine 同为 D-ALT-04（B13 稿重登），canonical=src/zephyr/alt_data/filing_nlp_engine.py"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A3数据架构
   original_id: B13-04280
   source_section: §17.3
@@ -8973,11 +8978,12 @@ entries:
       evidence: '深挖场内对账: 无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/alt_data/alt_data_compliance_reviewer.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A3数据架构
   original_id: B13-04283
   source_section: §17.3
@@ -8999,10 +9005,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 P1 已建 MOD-ALT-005 policy_theme_mapper 同为 D-ALT-19（B13 稿重登），canonical=src/zephyr/alt_data/policy_theme_mapper.py"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A3数据架构
   original_id: B13-04284
   source_section: §17.3
@@ -9024,10 +9031,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 CAND-TESTB-029（W05 波）同为 D-ALT-22 事件因果推理（B13/B1/B10 三稿重登），canonical=CAND-TESTB-029（DoWhy 反事实校验为最宽 spec，W05 施工），本波不施工"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A3数据架构
   original_id: B13-04286
   source_section: §17.3
@@ -9048,11 +9056,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/market_data/failover/manager.py（行情源故障转移有，另类数据源未覆盖）'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/alt_data/alt_source_health_manager.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A9运维架构
   original_id: B14-04617
   source_section: §8.3.2
@@ -9074,10 +9083,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 CAND-TESTA-016 同为 D-ALT-DATA-14 合规审查器（B13/B14 两稿重登），canonical=CAND-TESTA-016→MOD-ALT-015（四要素台账+审查清单+复核提醒含其授权/robots/许可语义）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A9运维架构
   original_id: B14-04664
   source_section: §8.3.5
@@ -9098,11 +9108,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/gov_audit/privacy.py（隐私组件有，另类数据管道未接入）'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/alt_data/alt_data_privacy_protector.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A9运维架构
   original_id: B14-04665
   source_section: §8.3.5
@@ -9124,11 +9135,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/data/connectors/'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/alt_data/alt_data_connector.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: D-ALT-DATA
   original_id: B5-07081
   source_section: §1
@@ -9149,11 +9161,12 @@ entries:
       evidence: '深挖场内对账: 无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/alt_data/alt_data_signal_extractor.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: D-ALT-DATA
   original_id: B5-07085
   source_section: §1
@@ -9174,11 +9187,12 @@ entries:
       evidence: '深挖场内对账: 无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/alt_data/alt_data_catalog.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: D-ALT-DATA
   original_id: B5-07089
   source_section: §1
@@ -9199,11 +9213,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/intelligence/event_geopolitical_map.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/alt_data/geopolitical_risk_analyzer.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: D-ALT-DATA
   original_id: B5-07092
   source_section: §1
@@ -9224,11 +9239,12 @@ entries:
       evidence: '深挖场内对账: 无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/alt_data/policy_expectation_analyzer.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: D-ALT-DATA
   original_id: B5-07096
   source_section: §1
@@ -15058,11 +15074,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/risk/core/risk_veto_engine.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/intelligence/human_trust_model.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: 跨域(元文档)
   original_id: B1-00221
   source_section: §功能域模块·D-REPORTING
@@ -15084,10 +15101,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 CAND-AISA-013 同为 LLM 自评估与交叉验证（B10-01235/01883 两稿重登），canonical=CAND-AISA-013→MOD-INT-LLM-SELFEVAL（Judge 三维+CoT 自校验+三模型投票含其语义）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A1交易决策架构
   original_id: B10-01235
   source_section: §1.1
@@ -15108,11 +15126,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/causal_inference_engine.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/intelligence/event_chain_causal_graph.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A1交易决策架构
   original_id: B10-01448
   source_section: ''
@@ -15138,10 +15157,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 CAND-AISA-014 同为 §29.24 VeNRA 神经符号融合（B10-01865/01952 两稿重登），canonical=CAND-AISA-014→MOD-INT-FACT-LEDGER（UFL+DoubleLock 单模块具体 spec 含其 Sentinel 语义）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A1交易决策架构
   original_id: B10-01865
   source_section: §29.24
@@ -15164,11 +15184,12 @@ entries:
       evidence: '深挖场内对账: 部分：src/zephyr/intelligence/model_profiling/exam_judge.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/intelligence/llm_self_evaluation.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A1交易决策架构
   original_id: B10-01883
   source_section: §29.37
@@ -15192,11 +15213,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/intelligence/sentinel_hallucination_detector.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/intelligence/universal_fact_ledger.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A1交易决策架构
   original_id: B10-01952
   source_section: §29.24
@@ -15218,10 +15240,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 P1 已建 llm_market_interpreter（MOD-INT-MKT-INTERPRETER）同为 D-ALT-DATA-11（B10 稿重登），canonical=src/zephyr/intelligence/llm_market_interpreter.py"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: D-ALT-DATA-11
   original_id: B10-02198
   source_section: §30.2.4
@@ -15243,10 +15266,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 P1 已建 llm_market_interpreter（MOD-INT-MKT-INTERPRETER）同为 D-ALT-DATA-11（B13 稿重登），canonical=src/zephyr/intelligence/llm_market_interpreter.py"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A3数据架构
   original_id: B13-04282
   source_section: §17.3
@@ -18790,12 +18814,12 @@ entries:
   source_section: "§4.4 杠杆与资金费率"
   original_id: ""
   estimated_complexity: M
-  tech_notes: "四类数据均走交易所公共 API（无需鉴权）；爆仓数据部分交易所仅 WS 推送无历史回填，需落地即开始积累"
+  tech_notes: "四类数据均走交易所公共 API（无需鉴权）；爆仓数据部分交易所仅 WS 推送无历史回填，需落地即开始积累。2026-08-26 行业调查扩充：加多空比（long/short ratio）与清算热图（liquidation heatmap——亮区=杠杆堆积对价格有磁吸效应，止损应放危险区外、入场可围绕强平区规划）——CoinGlass 聚合口径可直接对标；高 OI+高资金费=过度杠杆回调预警；期权维度（Deribit 基差年化/PCR/IV 偏度）同 Phase 2 评估"
   risks:
     - "爆仓数据无历史回填——接入越晚历史缺口越大，可考虑 Phase 1 末期提前挂采集（只采集不消费）"
   alternatives: "第三方聚合（Coinglass 类）——免费额度有限，交易所原生 API 优先"
   tags: ["数字货币", "数据接入", "永续合约", "Phase2", "P1"]
-  search_terms: ["funding rate", "open interest", "perpetual swap data", "资金费率", "爆仓数据"]
+  search_terms: ["funding rate", "open interest", "perpetual swap data", "资金费率", "爆仓数据", "long short ratio", "liquidation heatmap", "多空比", "清算热图"]
   related_candidates: ["CAND-CRYPTO-002", "CAND-CRYPTO-008"]
   enables: ["CAND-CRYPTO-008"]
   blocked_by: ["CAND-CRYPTO-002"]
@@ -18849,12 +18873,12 @@ entries:
   source_section: "§5 新建候选清单"
   original_id: ""
   estimated_complexity: M
-  tech_notes: "源选型：Glassnode/CryptoQuant 付费 API vs 免费自建（区块链浏览器 API 限频紧）——P2 阶段再评"
+  tech_notes: "源选型：Glassnode/CryptoQuant 付费 API vs 免费自建（区块链浏览器 API 限频紧）——P2 阶段再评。2026-08-26 行业调查扩充（资金流三网关口径）：①鲸鱼地址跟踪（Smart Money 标签地址积累行为+大额转账预警，Nansen 为行业标准，Whale Alert 铸造/大额异动告警）②稳定币流动（交易所稳定币储备=干火药购买力，新铸造=扩张前兆，USDT 场外溢价=亚洲资金入场）③交易所储备金（储备多年新低=供应挤压看涨，急升=获利了结预警）"
   risks:
     - "付费源成本高/免费源限频紧——先以 1~2 个核心指标（交易所净流入优先）验证增量价值再扩"
   alternatives: "MVP 阶段纯价格量能+情绪因子——本项为增强非地基"
   tags: ["数字货币", "另类数据", "链上", "P2"]
-  search_terms: ["on-chain data", "exchange netflow", "MVRV", "链上数据"]
+  search_terms: ["on-chain data", "exchange netflow", "MVRV", "链上数据", "whale tracking", "stablecoin flows", "鲸鱼地址", "稳定币流动", "交易所储备"]
   related_candidates: ["CAND-CRYPTO-002"]
   enables: []
   blocked_by: []
