@@ -11336,3 +11336,7 @@ di_seam_exemptions:
   token: auto-blueprint-20260826
   created_by: AI-P2-W05
   capability: fake_move_distribution_blueprint
+- file: data/backtest_artifacts/bt-8607ffc2.json
+  token: auto-bt-8607ffc2-20260826
+  created_by: worker-e97f383d-24796
+  capability: event_strategy_backtest_artifact
