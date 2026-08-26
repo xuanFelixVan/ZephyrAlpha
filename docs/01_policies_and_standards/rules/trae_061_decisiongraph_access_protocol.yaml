@@ -75,7 +75,7 @@ sections:
       enforcement: DB CHECK (edge_type IN ('triggering','informing','constraining','approving'))
     - id: DEC-INV-004
       title: build_status 单调推进
-      description: build_status 状态机为单调推进 planned→generated→testing→stable→deprecated。禁止跳态（如 generated 直接跃迁到 stable 必须经过 testing）。状态变更必须通过 apply_decisiongraph.py 走 dry-run 验证
+      description: build_status 状态机为单调推进 planned→generated→testing→stable→deprecated。禁止跳态（如 generated 直接跃迁到 stable 必须经过 testing）。状态变更必须通过 apply_decisiongraph.py 走 dry-run 验证。注：DB CHECK 词表已 6 态 +production（B-007 前置批 P0 2026-08-26，与 depgraph 对齐）；decision 图 stable→production 推进边开放属另案裁定，应用层维持 5 态链
       enforcement: DB CHECK + apply_decisiongraph.py 状态迁移校验
     - id: DEC-INV-005
       title: design_maturity 2态受控 [ARCH-MM-002]

@@ -58,7 +58,7 @@ sections:
     - type: mandatory
       step: '变更 JSON 格式: [{"op":"update","module_id":"D-FACTOR-01","field":"blueprint_status","value":"has_blueprint"}] / [{"op":"add_physical_file","module_id":"D-FACTOR-01","path":"src/zephyr/factor/new_file.py"}] / [{"op":"remove_physical_file",...}] / [{"op":"set_physical_files","module_id":"D-FACTOR-01","files":["path1.py","path2.py"]}]'
     - type: mandatory
-      step: 'build_status 合法值约束（裁定#178-183，OPS-2026062505 已添加 DB CHECK 约束）: nodes.build_status 字段只允许 5 种合法值——planned(设计态未实现)/generated(代码已生成)/testing(测试中)/stable(生产稳定)/deprecated(废弃态)。状态机为单调推进: planned→generated→testing→stable→deprecated。DB 层 CHECK 约束已生效，INSERT 非法值（如 draft/inactive/unbuilt/production/active 等）会被 psycopg2.IntegrityError 拒绝。design_maturity 字段只允许 2 种合法值: design/production（ARCH-MM-002 两档化）。module_lifecycle_state 字段已删除（v11 迁移归档到 nodes_archive_module_lifecycle 表）'
+      step: 'build_status 合法值约束（裁定#178-183，OPS-2026062505 已添加 DB CHECK 约束；B-007 前置批 P0 2026-08-26 扩展 6 态 +production，Owner 2026-08-26 全量转正裁定）: nodes.build_status 字段只允许 6 种合法值——planned(设计态未实现)/generated(代码已生成)/testing(测试中)/stable(生产稳定)/deprecated(废弃态)/production(全量转正态)。状态机为单调推进: planned→generated→testing→stable→production（stable→deprecated 为废弃分支；testing→production 禁止跳态，须走 testing→stable→production 两步法）。DB 层 CHECK 约束已生效，INSERT 非法值（如 draft/inactive/unbuilt/active 等）会被 psycopg2.IntegrityError 拒绝。design_maturity 字段只允许 2 种合法值: design/production（ARCH-MM-002 两档化）。module_lifecycle_state 字段已删除（v11 迁移归档到 nodes_archive_module_lifecycle 表）'
     - type: mandatory
       step: 'depgraph 写入禁用 lock_files.py（P2 PG 迁移治本，2026-06-29）: depgraph 已迁移到 PostgreSQL，写入通过 PG MVCC 事务保护（apply_depgraph.py 内置事务回滚），文件锁（lock_files.py cmd_acquire/cmd_release）对 PG 写无保护作用。禁止在 depgraph 写入路径调用 lock_files.py。真源指针：sync_yaml_to_depgraph.py 已删除 lock_files import（向内收治本，禁止恢复）；GitCommitGateway _check_repo_root_usage 模式5 检测 sqlite3.connect 硬编码 + 模式6 检测 DB 写入脚本中 import lock_files（DB 写入信号 + lock_files import 信号 → REPO_ROOT_VIOLATION，--no-verify 绕不过）'
     prohibitions:
@@ -111,6 +111,10 @@ sections:
       date: '2026-06-29'
       by: session-p3-pattern6-gate
       changes: 'P3 防复发门禁闭环——mandatory step 真源指针扩展模式6 AST 检测（DB 写入信号 + lock_files import 信号 → REPO_ROOT_VIOLATION），与 trae_001 §db_write_protocol 建立规则→代码双向引用'
+    - version: '1.7.0'
+      date: '2026-08-26'
+      by: session-k3-ddl-p0-0826
+      changes: 'B-007 前置批 P0——build_status 词表 5态→6态 +production（Owner 2026-08-26 全量转正裁定隐含前置）：nodes/dataflow_jobs/decision_layers/dataflow_datasets/decision_nodes/decision_edges 六表 CHECK 幂等扩展（apply_depgraph.py --fix-nodes-build-status-vocab，先例 #251 domains +dormant）；状态机新增 stable→production 推进边（禁 testing→production 跳态，走两步法）；generate_project_depgraph.py STATUS-PRESERVE 保护名单同步 +production 防重生成回滚；decision/dataflow 两图 transition 函数本体不动（另案裁定）'
 references:
   rule_ids: []
   scripts:

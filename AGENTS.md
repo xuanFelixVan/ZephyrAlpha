@@ -74,7 +74,7 @@
 
 ## RULE-DEPGRAPH / 五图对齐：第三件事（防幻觉/防漂移治本规则，2026-07-02；五图对齐提升 2026-07-22）
 
-> **施工前 MUST 登记**：任何模块施工前（写第1行业务代码前），MUST先通过 `apply_depgraph.py` 将该模块的依赖关系（模块间/契约/事件/外部域）登记到 depgraph 设计态（`status=planned`）。禁止"先施工后补登记"或"施工中临时编造依赖"。施工完成并通过验证后做状态转正——**场景分流（2026-08-14 勘正，SOP Step 8 同口径）**：worktree 隔离施工会话内只登记不流转（design 态受重建 DELETE 豁免保护；merge 回 dev 后由 #ARCH-70 同身份 UPDATE 通道随第一次重建自动转 production，merge 执行人负责实证核验+闭环遗留）；主工作区直接施工用 `--transition-design-maturity <NODE_ID> production`（注意 build_status 五态无 production 值，两字段正交，稳定度走 planned→generated→testing→stable 链）。
+> **施工前 MUST 登记**：任何模块施工前（写第1行业务代码前），MUST先通过 `apply_depgraph.py` 将该模块的依赖关系（模块间/契约/事件/外部域）登记到 depgraph 设计态（`status=planned`）。禁止"先施工后补登记"或"施工中临时编造依赖"。施工完成并通过验证后做状态转正——**场景分流（2026-08-14 勘正，SOP Step 8 同口径）**：worktree 隔离施工会话内只登记不流转（design 态受重建 DELETE 豁免保护；merge 回 dev 后由 #ARCH-70 同身份 UPDATE 通道随第一次重建自动转 production，merge 执行人负责实证核验+闭环遗留）；主工作区直接施工用 `--transition-design-maturity <NODE_ID> production`（注意 build_status 六态（B-007 P0 2026-08-26 +production）与 design_maturity 两字段正交——build_status 的 production 仅 stable 节点可转（testing→stable→production 两步法），稳定度走 planned→generated→testing→stable 链）。
 >
 > **写入设计态前 MUST 检查运营态**：`apply_depgraph.py --add-design-node` 写入 `build_status=planned` 时，内置门闸自动检查 depgraph 运营态（production节点）是否就绪。运营态为空→阻断，提示先手动运行 `generate_project_depgraph.py` 刷新；运营态就绪→允许写入设计态。设计态必须基于最新运营态，否则在过期快照上设计=幻觉温床。逃生通道：`--skip-refresh`（仅限故障时使用，正常流程禁止）。
 >
