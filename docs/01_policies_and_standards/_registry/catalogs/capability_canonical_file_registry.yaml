@@ -10604,3 +10604,7 @@ di_seam_exemptions:
   token: auto-init-20260826
   created_by: AI-P2-DIGEST-W01
   capability: infra_ops_package
+- file: src/zephyr/shared/io/audit_jsonl_writer.py
+  token: audit-jsonl-writer-20260826
+  created_by: AI-BATCH5C-GOVSEC-001
+  capability: audit_jsonl_rotation_writer

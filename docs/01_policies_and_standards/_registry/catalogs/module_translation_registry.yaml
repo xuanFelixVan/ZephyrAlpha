@@ -44887,7 +44887,6 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "用内存替身校验分层指挥链：逐层注册放行、越层和逆向注册拒绝并告警、未登记链路委托被拒、网关缺失直接失败关闭、上报必须受托人本人、待办列表排序确定。"
-
 - module_path: src/zephyr/infra_runtime/resource_scheduler.py
   domain_id: D_INFRA_RUNTIME
   name_zh: "资源调度器"
@@ -45154,6 +45153,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "运维工具域的包入口，守卫式导出四个运维工具类。"
+- module_path: src/zephyr/shared/io/audit_jsonl_writer.py
+  domain_id: D_SHARED
+  name_zh: "审计日志轮转写入助手"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给 gate_audit 下的审计流水账文件统一提供两个能力：写之前先看文件胖不胖（超过 50MB 就把旧文件改名归档成 .1/.2/.3 历史段，再开新文件写），以及写失败绝不炸主程序（只返回 False 让调用方记一笔）。专治审计文件无界疯长——之前有个文件 42 小时长到 3.7GB。"
 
 battle_map_steps:
 - step_id: BM-BUY-04
