@@ -251,7 +251,7 @@ arch_directory_tree.domain_id → domains.domain_id（必须存在，A-Blind-3 �
 | 设计态 | 功能级节点，目录 path | 目录节点，design_maturity='design' |
 | 运营态 | 文件级节点，文件 path | 文件/目录节点，design_maturity='production' |
 | design_maturity | design / production | design / production |
-| build_status | planned / generated / testing / stable / deprecated | planned / generated / testing / stable / deprecated |
+| build_status | planned / generated / testing / stable / deprecated / production | planned / generated / testing / stable / deprecated / production |
 
 **V3.3 E16 修正：删除 state 字段，统一用 design_maturity**
 
@@ -272,13 +272,13 @@ arch_directory_tree.domain_id → domains.domain_id（必须存在，A-Blind-3 �
 | ~~state~~ | ~~TEXT~~ | ~~`design`/`operational`~~ | ~~—~~ | ~~V3.4 删除（与 design_maturity 冗余）~~ |
 | ~~node_id~~ | ~~INTEGER FK~~ | ~~NULL~~ | ~~nodes.node_id~~ | ~~V3.4 #147 新增，替换 state；v15 重建表时删除（不再关联 nodes 表）~~ |
 | design_maturity | TEXT | `design` | `production` | 拓扑状态（单一判定信号，删除 state） |
-| build_status | TEXT | `planned`/`generated`/`testing`/`stable`/`deprecated` | `stable` | 生命周期状态（与 nodes 对齐，裁定#178 5态） |
+| build_status | TEXT | `planned`/`generated`/`testing`/`stable`/`deprecated`/`production` | `stable` | 生命周期状态（与 nodes 对齐，裁定#178 5态；B-007 P0 2026-08-26 扩展 6 态 +production） |
 | blueprint_id | TEXT | 用户指定 | 代码头部解析 | 关联蓝图 |
 | change_policy | TEXT | — | 人工 | 变更策略 |
 | modification_permission | TEXT | — | 人工 | 修改权限 |
 | last_scanned | TEXT | — | 时间戳 | 最后扫描时间 |
 
-**A-Blind-4 修复**：删除 state 后，build_status 和 design_maturity 正交化。design_maturity 是拓扑状态（design/production），build_status 是生命周期状态（planned/generated/testing/stable/deprecated，裁定#178 5态）。禁止 `build_status='planned'` 且 `design_maturity='production'` 的矛盾组合。
+**A-Blind-4 修复**：删除 state 后，build_status 和 design_maturity 正交化。design_maturity 是拓扑状态（design/production），build_status 是生命周期状态（planned/generated/testing/stable/deprecated/production，裁定#178 5态；B-007 P0 2026-08-26 扩展 6 态 +production）。禁止 `build_status='planned'` 且 `design_maturity='production'` 的矛盾组合。
 
 ---
 
@@ -440,7 +440,7 @@ blueprint_path = docs/03_modules/{domain_id}/{module_name}/blueprint.md
 | AI 能看到"设计态模块未来会依赖运营态模块" | AI 看不到全局 |
 | 从设计态→运营态的过渡是自然的状态流转 | 需要手动同步 |
 
-**裁定**：放在一起，用字段区分。`design_maturity` 字段标记拓扑状态（design/production），`build_status` 字段标记生命周期状态（planned/generated/testing/stable/deprecated，裁定#178 5态）。两个正交维度，分离定义（见 §12.6）。edges 表用 `dep_maturity` 字段标记 'design'（规划依赖）或 'active'（实际依赖）。
+**裁定**：放在一起，用字段区分。`design_maturity` 字段标记拓扑状态（design/production），`build_status` 字段标记生命周期状态（planned/generated/testing/stable/deprecated/production，裁定#178 5态；B-007 P0 2026-08-26 扩展 6 态 +production）。两个正交维度，分离定义（见 §12.6）。edges 表用 `dep_maturity` 字段标记 'design'（规划依赖）或 'active'（实际依赖）。
 
 ### 12.6 设计态实现检测（双正交状态机）
 
@@ -449,7 +449,7 @@ blueprint_path = docs/03_modules/{domain_id}/{module_name}/blueprint.md
 | 维度 | 字段 | 含义 | 状态机 |
 |------|------|------|--------|
 | 拓扑状态 | `design_maturity` | 节点在依赖图中的身份 | `design` → `production`（单向不可逆） |
-| 生命周期状态 | `build_status` | 节点的实现进度 | `planned` → `generated` → `testing` → `stable` → `deprecated` |
+| 生命周期状态 | `build_status` | 节点的实现进度 | `planned` → `generated` → `testing` → `stable` → `production`（`stable` → `deprecated` 为废弃分支；B-007 P0 2026-08-26 六态） |
 
 **design_maturity 状态机**（拓扑状态，3 值，裁定#179）：
 - `design`：规划中，功能级节点，目录 path（人工通过 apply_depgraph.py 写入，生成器不得创建）
@@ -457,12 +457,13 @@ blueprint_path = docs/03_modules/{domain_id}/{module_name}/blueprint.md
 - [ARCH-MM-002: prototype 已删除，原 prototype 节点现归入 production]
 - **单向不可逆**：设计态节点是规划记录，保留 `design_maturity='design'`；运营态节点由生成器产生 `design_maturity='production'`。两者通过 blueprint_id 关联，不互相转换。
 
-**build_status 状态机**（生命周期，5 态单调推进，裁定#178）：
+**build_status 状态机**（生命周期，6 态单调推进，裁定#178；B-007 P0 2026-08-26 扩展 +production）：
 - `planned`：规划中，未实现（设计态节点默认值）
 - `generated`：AI 已生成未验证（生产节点无对应 test 时推导值）
 - `testing`：开发中/测试中
 - `stable`：已验证/已上线运行
 - `deprecated`：已废弃/已退役
+- `production`：全量转正态（B-007 P0 新增；仅 stable 可转入，testing 须走 testing→stable→production 两步法，禁跳态）
 
 **设计态节点的 build_status 子集**（3 态，裁定#190）：
 - 设计态节点只使用 `planned`/`stable`/`deprecated`，不使用 `generated`/`testing`——后两个状态只适用于有代码文件的生产节点。
@@ -487,7 +488,7 @@ blueprint_path = docs/03_modules/{domain_id}/{module_name}/blueprint.md
 - [ARCH-MM-002: prototype 已删除]
 - `deprecated` 通过 apply_depgraph.py --transition-build-status 手工写入
 
-**业界依据**：Netflix Service Topology 明确分离"部署状态"（canary/stable/deprecated）和"拓扑状态"（是否存在依赖）。ZephyrAlpha 的 `design_maturity` 是拓扑状态，`build_status` 是生命周期状态，两者正交。V4.3 将原 4 态 build_status（unbuilt/testing/stable/deprecated）扩展为 5 态（planned/generated/testing/stable/deprecated），新增 `generated` 态标记 AI 生成但未验证的代码——这是 100% AI 开发场景必需（对齐 K8s Pod Phase 5 值实践）。合并原 module_lifecycle_state 字段到 build_status，消除双字段语义重叠（裁定#178/#183）。
+**业界依据**：Netflix Service Topology 明确分离"部署状态"（canary/stable/deprecated）和"拓扑状态"（是否存在依赖）。ZephyrAlpha 的 `design_maturity` 是拓扑状态，`build_status` 是生命周期状态，两者正交。V4.3 将原 4 态 build_status（unbuilt/testing/stable/deprecated）扩展为 5 态（planned/generated/testing/stable/deprecated），新增 `generated` 态标记 AI 生成但未验证的代码——这是 100% AI 开发场景必需（对齐 K8s Pod Phase 5 值实践）。合并原 module_lifecycle_state 字段到 build_status，消除双字段语义重叠（裁定#178/#183）。2026-08-26 B-007 前置批 P0 再扩展为 6 态 +production（Owner 2026-08-26 全量转正裁定隐含前置；`stable`→`production` 为新增推进边，单调不跳态）。
 
 ### 12.7 设计态写入流程（唯一入口）
 
@@ -836,15 +837,15 @@ SSoT = Single Source of Truth = 唯一真源。
 
 **两个正交维度**：
 - `design_maturity`（拓扑状态）：design → production（单向不可逆）
-- `build_status`（生命周期状态）：planned → generated → testing → stable → deprecated（5 态单调推进，裁定#178）
+- `build_status`（生命周期状态）：planned → generated → testing → stable → production（6 态单调推进，裁定#178；B-007 P0 2026-08-26 扩展 +production，stable→deprecated 为废弃分支）
 
 不是所有模块都走完——有些可能永远停在"规划中"（design + planned），这没关系。全景图允许"占位"。
 
 ### 17.2 生命周期与design_maturity映射
 
-**与 §12.6 双正交状态机一致**。build_status 为 5 态单调推进（V4.3 裁定#178：planned→generated→testing→stable→deprecated）。设计态节点使用 3 态子集（裁定#190）。
+**与 §12.6 双正交状态机一致**。build_status 为 6 态单调推进（V4.3 裁定#178：planned→generated→testing→stable→deprecated；B-007 P0 2026-08-26 扩展 +production，stable→production 为新增推进边）。设计态节点使用 3 态子集（裁定#190）。
 
-**生产节点（5 态完整推进）**：
+**生产节点（6 态完整推进）**：
 
 | 生命周期状态 | design_maturity | build_status | 说明 |
 |------------|----------------|-------------|------|
@@ -852,6 +853,7 @@ SSoT = Single Source of Truth = 唯一真源。
 | 已生成 | production | generated | AI 已生成代码未验证（无对应 test） |
 | 测试中 | production | testing | 代码测试中 |
 | 运行中 | production | stable | 代码已验证上线（运营态节点由生成器产生） |
+| 全量转正 | production | production | B-007 全量转正目标态（2026-08-26 P0 新增；仅 stable 可转入） |
 | 废弃 | 保留原值 | deprecated | 不再使用但保留 |
 
 **设计态节点（3 态子集，裁定#190）**：

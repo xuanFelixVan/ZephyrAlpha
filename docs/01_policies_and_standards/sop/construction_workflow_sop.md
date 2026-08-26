@@ -458,10 +458,12 @@ pytest tests/path/to/test_xxx.py -v
   （2026-08-14 SELL 4 节点 + POS-020/021 实证通过）。
 - **主工作区直接施工（非 worktree）**：手工流转用合法命令——
   `python scripts/governance/apply_depgraph.py --transition-design-maturity <NODE_ID> production`。
-  ⚠️ 旧写法 `--transition-build-status <NODE_ID> production` **必然失败**（exit 4）：
-  `build_status` 合法值仅 planned/generated/testing/stable/deprecated 五态
-  （单调推进链，trae_054 §build_status），`production` 是 `design_maturity` 字段的值，
+  ⚠️ 注意 `production` 同时是 `design_maturity` 与 `build_status` 两字段的合法值，
   两字段正交——design_maturity 管"纸面 vs 物理存在"，build_status 管生命周期成熟度。
+  `build_status` 合法值为 planned/generated/testing/stable/deprecated/production 六态
+  （B-007 前置批 P0 2026-08-26 扩展，单调推进链，trae_054 §build_status）：
+  `--transition-build-status <NODE_ID> production` 仅 stable 节点可转
+  （testing 节点须先转 stable 再走 stable→production 两步法，禁跳态）。
   稳定度提升用 `--transition-build-status <NODE_ID> testing|stable`。
 
 **执行命令**（主工作区场景）：

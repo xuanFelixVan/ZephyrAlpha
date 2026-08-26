@@ -19,7 +19,7 @@ description: |
 
   类别清单（category 字段）：
   - edge_type：决策/数据流边类型（triggering/informing/constraining/.../produces/consumed by）
-  - build_status：构建状态（planned/generated/testing/stable/deprecated）
+  - build_status：构建状态（planned/generated/testing/stable/deprecated/production，B-007 P0 2026-08-26 六态）
   - maturity：设计成熟度（design/production）
   - node_type：决策节点类型（signal/portfolio_target/risk_check/order/compliance_check/sell_decision）
   - pit_policy：PIT 策略（strict/loose/none）

@@ -300,6 +300,14 @@ entries:
     - 裁定#180
     - 裁定#183
   superseded_by: null
+  evolution_note: >-
+    [2026-08-26 B-007 前置批 P0 演进注记，不改历史裁定原文] 词表由 5 态扩展为 6 态
+    +production（planned/generated/testing/stable/deprecated/production），Owner
+    2026-08-26 全量转正裁定隐含此前置。状态机新增 stable→production 推进边
+    （保持单调，禁 testing→production 跳态，走两步法）；deprecated 语义不变。
+    六表 CHECK（nodes/dataflow_jobs/decision_layers/dataflow_datasets/decision_nodes/
+    decision_edges）经 apply_depgraph.py --fix-nodes-build-status-vocab 幂等扩展
+    （先例 #251 2026-08-22 domains +dormant Owner 窗口）。
 
 - ruling_id: '裁定#179'
   title: design_maturity 保留 3 值（design/production/prototype）[已被 ARCH-MM-002 supersede]
