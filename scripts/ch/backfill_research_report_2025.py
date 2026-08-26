@@ -99,8 +99,29 @@ def load_done_symbols() -> set[str]:
     return {line.strip() for line in PROGRESS_FILE.read_text(encoding="utf-8").splitlines() if line.strip()}
 
 
-def fetch_2025_rows(code: str, df) -> list[tuple]:
-    """从单只股票的研报 DataFrame 过滤 2025 年并构造写入行（11 元组含 category）。"""
+def load_existing_news_ids() -> set[str]:
+    """库内 2025 年研报已有 news_id 集合（写入侧预检——news_data 保留多版本行，
+    不预检会把已有报告再插一份（2026-08-26 实证 2025 年 2.10x 冗余）。"""
+    from zephyr.data import ch_reader  # noqa: PLC0415 — lazy：运行态才触达 CH
+
+    tsv = ch_reader.query(
+        "SELECT DISTINCT news_id FROM c3_fundamental.news_data "
+        "WHERE source = 'akshare_research_report' "
+        "AND publish_time >= toDateTime('2025-01-01 00:00:00') "
+        "AND publish_time <= toDateTime('2025-12-31 23:59:59')"
+    )
+    if not tsv or not tsv.strip():
+        return set()
+    ids = {line.strip() for line in tsv.strip().split("\n") if line.strip()}
+    log.info("库内已有 2025 研报 id %d 个（写入预检跳过）", len(ids))
+    return ids
+
+
+def fetch_2025_rows(code: str, df, existing_ids: frozenset[str] | set[str] = frozenset()) -> list[tuple]:
+    """从单只股票的研报 DataFrame 过滤 2025 年并构造写入行（11 元组含 category）。
+
+    existing_ids：库内已有 news_id 预检集——命中直接跳过（写侧防多版本冗余）。
+    """
     rows: list[tuple] = []
     for _, r in df.iterrows():
         title = str(r.get("报告名称") or "")
@@ -125,6 +146,8 @@ def fetch_2025_rows(code: str, df) -> list[tuple]:
             "akshare_research_report",
             "akshare",
         )
+        if base[0] in existing_ids:  # news_id 是元组首列
+            continue
         rows.append(tuple(base) + (_CATEGORY,))
     return rows
 
@@ -171,6 +194,12 @@ def main() -> None:
         log.info("无待采标的，退出")
         return
 
+    try:
+        existing_ids = load_existing_news_ids()
+    except Exception as exc:  # noqa: BLE001 — 预检失败 fail-closed（防冗余写入）
+        log.error("库内已有 id 预检失败: %s", exc)
+        sys.exit(1)
+
     import akshare as ak  # noqa: PLC0415 — lazy：标的后触达
 
     PROGRESS_FILE.parent.mkdir(parents=True, exist_ok=True)
@@ -185,7 +214,7 @@ def main() -> None:
                 log.debug("stock_research_report_em(%s) 失败: %s", code, exc)
                 df = None
             if df is not None and len(df) > 0:
-                batch.extend(fetch_2025_rows(code, df))
+                batch.extend(fetch_2025_rows(code, df, existing_ids))
             pf.write(code + "\n")
             pf.flush()
             if idx % args.batch_size == 0 or idx == len(todo):

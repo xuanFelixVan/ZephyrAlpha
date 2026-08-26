@@ -62,6 +62,13 @@ class TestFetch2025Rows:
         assert bf.fetch_2025_rows("600519", _df([{**_R, "日期": "2026-03-01"}])) == []
         assert bf.fetch_2025_rows("600519", _df([])) == []
 
+    def test_existing_ids_prefilter(self):
+        """库内已有 news_id 预检集命中即跳过（写侧防多版本冗余）。"""
+        rows = bf.fetch_2025_rows("600519", _df([_R]))
+        assert len(rows) == 1
+        nid = rows[0][0]
+        assert bf.fetch_2025_rows("600519", _df([_R]), {nid}) == []
+
 
 class TestResume:
     def test_progress_roundtrip(self, tmp_path, monkeypatch):

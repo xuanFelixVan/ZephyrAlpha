@@ -1,6 +1,7 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] zephyr.data
 # [DOMAIN] D_DATA
+# [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 
@@ -126,3 +127,7 @@ __all__.append("FinancialParser")
 __all__.append("AutoBackfiller")
 
 __all__.append("ReferenceDataManager")
+
+from zephyr.data import trading_calendar  # noqa: E402,F401 — test_market_calendar 需要的导出（TEST-SOURCE-CONSISTENCY 门）
+
+__all__.append("trading_calendar")
