@@ -15292,11 +15292,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/supply_chain_gnn.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/knowledge/financial_knowledge_graph.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: 跨域(元文档)
   original_id: B1-00126
   source_section: §功能域模块·D-KNOWLEDGE
@@ -15317,11 +15318,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/integration/vector_memory/'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/knowledge/kb_engine.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: 跨域(元文档)
   original_id: B1-00128
   source_section: §功能域模块·D-KNOWLEDGE
@@ -15343,10 +15345,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W03）——与 CAND-KNW-013 同为 D-KNOW-11 知识质量评估（三稿重登之一），canonical=CAND-KNW-013→MOD-KNW-002（四维评分+隔离降权+复核队列为最宽 spec，含其来源分级/时效衰减语义）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: 跨域(元文档)
   original_id: B1-00131
   source_section: §功能域模块·D-KNOWLEDGE
@@ -15367,11 +15370,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/factor/casebook/casebook.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/knowledge/factor_knowledge_base.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: D-KNOWLEDGE-02
   original_id: B10-02181
   source_section: §30.2.3
@@ -15392,11 +15396,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/experiment_tracking/adapters/strategy_runner_adapter.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/knowledge/strategy_knowledge_base.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: D-KNOWLEDGE-03
   original_id: B10-02182
   source_section: §30.2.3
@@ -15418,10 +15423,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W03）——与 CAND-KNW-013 同为 D-KNOW-11 知识质量评估（三稿重登之二），canonical=CAND-KNW-013→MOD-KNW-002（其三打分器语义被四维评分覆盖）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: D-KNOWLEDGE-11
   original_id: B10-02190
   source_section: §30.2.3
@@ -15442,11 +15448,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/feedback_loop/collectors/knowledge_capture.py;knowledge_packaging.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/knowledge/ai_knowledge_extractor.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: D-KNOWLEDGE-17
   original_id: B10-02191
   source_section: §30.2.3
@@ -15467,11 +15474,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/research/evidence/'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/knowledge/knowledge_artifact_store.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A8学习系统架构
   original_id: B12-03637
   source_section: §10.1
@@ -15491,11 +15499,12 @@ entries:
       evidence: '深挖场内对账: 部分：src/zephyr/integration/vector_memory/'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/knowledge/rag_pipeline.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A3数据架构
   original_id: B13-04034
   source_section: §0.2
@@ -15517,10 +15526,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W03）——与 CAND-KNW-001 同为金融知识图谱（五类/六类枚举姊妹稿），canonical=CAND-KNW-001→MOD-KNW-003 financial_knowledge_graph（六类实体关系表+子图+邻居/路径 API 含其语义，LLM 抽取审核入图接口并入施工）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A3数据架构
   original_id: B13-04099
   source_section: §6.1
@@ -15541,11 +15551,12 @@ entries:
       evidence: '深挖场内对账: 部分：src/zephyr/integration/vector_memory/'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/knowledge/layered_memory_orchestrator.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A3数据架构
   original_id: B13-04342
   source_section: §17.21
@@ -15567,11 +15578,12 @@ entries:
       evidence: '深挖场内对账: 部分：src/zephyr/integration/vector_memory/collection_schemas.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/knowledge/collection_schema_manager.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A3数据架构
   original_id: B13-04346
   source_section: §17.21
@@ -15592,11 +15604,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/feedback_loop/collectors/knowledge_freshness.py（新鲜度采集有，综合质量评估器缺）'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/knowledge/knowledge_quality_assessor.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A9运维架构
   original_id: B14-04624
   source_section: §8.3.2
@@ -15617,11 +15630,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/research/'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/knowledge/research_project_aggregate.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: D-RESEARCH
   original_id: B6-08533
   source_section: §0
@@ -15642,11 +15656,12 @@ entries:
       evidence: '深挖场内对账: 无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/knowledge/research_catalog.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: D-RESEARCH
   original_id: B6-08548
   source_section: §1
@@ -15667,11 +15682,12 @@ entries:
       evidence: '深挖场内对账: 无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/knowledge/paper_tracker.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: D-RESEARCH
   original_id: B6-08549
   source_section: §1
@@ -15693,11 +15709,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/infrastructure/queue/task_scheduler.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/knowledge/research_workflow_engine.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: D-RESEARCH
   original_id: B6-08551
   source_section: §1
@@ -15719,10 +15736,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W03）——与 CAND-KNW-008 同为 6 类知识产出不可变 schema+版本化存储，canonical=CAND-KNW-008→MOD-KNW-004 knowledge_artifact_store（聚合根不变量与 6 类 schema 挂载语义并入）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: D-KNOWLEDGE
   original_id: B6-08956
   source_section: §0
@@ -15744,10 +15762,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W03）——与 CAND-KNW-002 同为 D-KNOW-06 KB Engine（B6/B1 两稿重登），canonical=CAND-KNW-002→MOD-KNW-001 kb_engine（spec 含其 CRUD+版本+FTS5 全语义）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: D-KNOWLEDGE
   original_id: B6-08977
   source_section: §1
