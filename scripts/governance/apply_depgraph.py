@@ -394,6 +394,33 @@ SQL_ADD_DOMAIN_BUILD_STATUS_CHECK = (
     "CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated', 'dormant'))"
 )
 
+# --- cmd_fix_nodes_build_status_vocab（B-007 前置批 P0，Owner 2026-08-26 全量转正裁定隐含前置） ---
+# 6 张表：nodes（主目标）+ dataflow_jobs/decision_layers（ARCH-056 全景同步目标）
+# + dataflow_datasets/decision_nodes/decision_edges（词表一致性，防手工写炸 CHECK）
+_NODES_BUILD_STATUS_VOCAB_TABLES = (
+    "nodes",
+    "dataflow_jobs",
+    "decision_layers",
+    "dataflow_datasets",
+    "decision_nodes",
+    "decision_edges",
+)
+SQL_SELECT_TABLE_BUILD_STATUS_CHECK = (
+    "SELECT conname, pg_get_constraintdef(oid) AS def FROM pg_constraint "
+    "WHERE conrelid = %s::regclass AND contype = 'c'"
+)
+SQL_DROP_TABLE_BUILD_STATUS_CHECK = {
+    t: f"ALTER TABLE {t} DROP CONSTRAINT {t}_build_status_check"
+    for t in _NODES_BUILD_STATUS_VOCAB_TABLES
+}
+SQL_ADD_TABLE_BUILD_STATUS_CHECK = {
+    t: (
+        f"ALTER TABLE {t} ADD CONSTRAINT {t}_build_status_check "
+        "CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated', 'production'))"
+    )
+    for t in _NODES_BUILD_STATUS_VOCAB_TABLES
+}
+
 # --- _restore_blueprint_links_readonly_trigger ---
 SQL_CREATE_PREVENT_UPDATE_FUNCTION = (
     "CREATE OR REPLACE FUNCTION _prevent_blueprint_links_update() "
@@ -1016,7 +1043,7 @@ def add_design_node(
     - path 格式必须匹配粒度：directory 要求以 / 结尾，file/module 禁止以 / 结尾
     - blueprint_id 必须指向存在的蓝图文件
     - domain_id 必须在 domains 表中存在
-    - build_status 必须符合 §12.6 状态机规则（5态：planned/generated/testing/stable/deprecated）
+    - build_status 必须符合 §12.6 状态机规则（6态：planned/generated/testing/stable/deprecated/production）
     写入字段：design_maturity='design', granularity=参数, node_type=参数或推导, blueprint_path=机械推导
 
     治本（2026-07-13，trae_060 §2 + trae_056 §phase_2_design_state）：
@@ -1051,8 +1078,8 @@ def add_design_node(
     if node_type is None:
         node_type = "blueprint" if granularity == "directory" else "module"
 
-    # 校验build_status（5态枚举）
-    valid_status = {"planned", "generated", "testing", "stable", "deprecated"}  # noqa: gate-vocab  build_status 5态，非 module_lifecycle_status
+    # 校验build_status（6态枚举）
+    valid_status = {"planned", "generated", "testing", "stable", "deprecated", "production"}  # noqa: gate-vocab  build_status 6态（B-007 P0 +production），非 module_lifecycle_status
     if build_status not in valid_status:
         print(f"ERROR: build_status必须是{valid_status}之一: {build_status}", file=sys.stderr)
         return -1
@@ -1684,21 +1711,23 @@ def add_edge(
 
 def transition_build_status(node_id: int, to: str, db_path: str = None) -> bool:
     """
-    转换 build_status 状态（5态单调推进）。
+    转换 build_status 状态（6态单调推进）。
     返回：True=成功，False=失败
-    转换规则（机械判定，裁定#178-183）：
+    转换规则（机械判定，裁定#178-183；B-007 前置批 P0 扩展，Owner 2026-08-26 全量转正裁定）：
     - planned → generated：允许（代码已生成）
     - generated → testing：允许（进入测试）
     - testing → stable：允许（测试通过）
+    - stable → production：允许（全量转正；B-007 P0 新边，testing 节点须走 testing→stable→production 两步法，不跳态）
     - stable → deprecated：允许（废弃）
     - deprecated → stable：禁止（不可复活）
     - 任何跳转：禁止
     """
-    # 合法状态转换（5态单调推进）
+    # 合法状态转换（6态单调推进）
     valid_transitions = {
         ("planned", "generated"),
         ("generated", "testing"),
         ("testing", "stable"),
+        ("stable", "production"),
         ("stable", "deprecated"),
     }
 
@@ -3642,6 +3671,58 @@ def cmd_fix_domains_build_status_vocab(
             c.close()
 
 
+def cmd_fix_nodes_build_status_vocab(
+    dry_run: bool = False,
+    conn=None,
+) -> int:
+    """nodes 等 6 表 build_status CHECK 词表扩展 +production（B-007 前置批 P0）。
+
+    背景：Owner 2026-08-26 裁定全量转正（testing/stable → production），
+    但 nodes.build_status CHECK 仅 5 态（planned/generated/testing/stable/
+    deprecated）无 production，写入会被直接拒绝；ARCH-056 全景同步目标表
+    dataflow_jobs/decision_layers 及词表一致表 dataflow_datasets/decision_nodes/
+    decision_edges 同为 5 态，必须同批扩展（不同步扩展会在同步环节炸 CHECK）。
+    Owner 窗口 schema 变更（2026-08-26 全量转正裁定隐含此前置；
+    先例 #251 domains +dormant，2026-08-22 Owner 窗口）。
+
+    幂等：逐表检查 CHECK 定义已含 'production' 则跳过；无约束行（异常态）直接补 ADD。
+    superuser：ALTER TABLE 需属主权限（表 owner=zephyr，仅 postgres 可 DDL，
+    先例 migrations/add_acquisition_fields.py）。
+
+    返回 0=成功/已修复，-1=失败。
+    """
+    own_conn = conn is None
+
+    def _run(c) -> int:
+        """_run implementation."""
+        mode = "[DRY RUN]" if dry_run else "[OK]"
+        for table in _NODES_BUILD_STATUS_VOCAB_TABLES:
+            rows = c.execute(SQL_SELECT_TABLE_BUILD_STATUS_CHECK, (table,)).fetchall()
+            row = next((r for r in rows if "build_status" in (r["def"] or "")), None)
+            current_def = row["def"] if row else None
+            print(f"  {mode} 当前 {table}.build_status CHECK: {current_def}", file=sys.stderr)
+
+            if current_def and "'production'" in current_def:
+                print(f"  {mode} {table} CHECK 已含 'production'，跳过", file=sys.stderr)
+                continue
+            if not dry_run:
+                if current_def:
+                    c.execute(SQL_DROP_TABLE_BUILD_STATUS_CHECK[table])
+                c.execute(SQL_ADD_TABLE_BUILD_STATUS_CHECK[table])
+            print(f"  {mode} {table} CHECK 已扩展 6 态（+production）", file=sys.stderr)
+        if not dry_run and own_conn:
+            c.commit()
+        print(f"{mode} cmd_fix_nodes_build_status_vocab: 6 表 CHECK 已扩展 6 态（+production）", file=sys.stderr)
+        return EXIT_PASS
+
+    c = get_depgraph_pg_connection(autocommit=False, superuser=True) if own_conn else conn
+    try:
+        return _run(c)
+    finally:
+        if own_conn:
+            c.close()
+
+
 def _restore_blueprint_links_readonly_trigger(c) -> None:
     """恢复 blueprint_links 只读触发器（裁定#207 R1 B2 通行证恢复）。
 
@@ -5287,6 +5368,13 @@ def main() -> None:
         "dormant=零节点域休眠标注（保留不激活），与 deprecated（有替代品）语义分立；nodes.build_status 不动。",
     )
     parser.add_argument(
+        "--fix-nodes-build-status-vocab",
+        action="store_true",
+        help="nodes 等 6 表 build_status CHECK 词表扩展 +production（B-007 前置批 P0，Owner 2026-08-26 全量转正裁定隐含前置）："
+        "幂等 DROP+ADD CONSTRAINT 为 6 态（nodes/dataflow_jobs/decision_layers/dataflow_datasets/decision_nodes/decision_edges）。"
+        "production=全量转正目标态；dataflow_jobs/decision_layers 为 ARCH-056 全景同步目标，必须同批扩展。",
+    )
+    parser.add_argument(
         "--update-domain-name",
         type=str,
         nargs=2,
@@ -5775,6 +5863,14 @@ def main() -> None:
         print(f"rc={rc}")
         return
 
+    # B-007 前置批 P0：nodes 等 6 表 build_status CHECK +production——dispatch
+    if args.fix_nodes_build_status_vocab:
+        rc = cmd_fix_nodes_build_status_vocab(dry_run=args.dry_run)
+        if rc < 0:
+            sys.exit(4)
+        print(f"rc={rc}")
+        return
+
     if args.update_domain_name:
         domain_id, new_name = args.update_domain_name
         n = cmd_update_domain_name(domain_id, new_name, dry_run=args.dry_run)
@@ -5982,6 +6078,7 @@ _WRITE_COMMANDS = {
     "--apply-domain-id-check",
     "--fix-domains-defaults",
     "--fix-domains-build-status-vocab",
+    "--fix-nodes-build-status-vocab",
 }
 
 

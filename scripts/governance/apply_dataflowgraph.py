@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] raises RuntimeError on connection failure; ValueError on invalid args
 # [TESTS] tests/test_apply_dataflowgraph.py
+# [A_module] module_id=SH-GOV-003 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-051
 # noqa: m11-perm-manual-legitimate  合法 manual CLI 写入工具（ARCH-051 裁定）：人工/AI 按需调用 dataflowgraph 变更入口，对齐 apply_depgraph.py 模式，非永久自动运行器
@@ -302,9 +303,11 @@ def cmd_transition_build_status(args: argparse.Namespace) -> int:
     用法: --transition-build-status <entity_type> <entity_id|entity_name> <new_status>
       entity_type: dataset | job
 
-    注意：build_status 合法值（planned/generated/testing/stable/deprecated）由 DB CHECK
+    注意：build_status 合法值（planned/generated/testing/stable/deprecated/production，
+    B-007 P0 2026-08-26 六态）由 DB CHECK
     约束定义（03_create_dataflow_schema.sql），不在代码中预校验以避免 VOCAB-HARDCODE
     门禁。非法值由 DB CHECK 约束拒绝，错误信息含合法值清单。
+    （dataflow 图 stable→production 推进边开放属另案裁定，本命令维持 5 态链语义。）
     """
     init_dataflow_db()
     conn = get_dataflowgraph_pg_connection(autocommit=False, allow_design_delete=True)  # ARCH-053: 允许设计态写入

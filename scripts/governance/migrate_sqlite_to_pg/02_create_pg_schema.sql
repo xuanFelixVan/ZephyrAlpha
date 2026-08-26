@@ -249,7 +249,7 @@ CREATE TABLE IF NOT EXISTS nodes (
     node_name               TEXT DEFAULT '',
     file_path               TEXT DEFAULT '',
     build_status            TEXT DEFAULT 'generated'
-        CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
+        CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated', 'production')),
     can_build               INTEGER DEFAULT 1,
     gate_reason             TEXT DEFAULT '',
     hard_boundary_ref       TEXT,

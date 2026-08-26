@@ -43,6 +43,8 @@ depgraph 的 apply 脚本有 52 个参数处理大量字段，decisiongraph 更�
 
 build_status 状态机（单调推进，禁止跳态）：
   planned → generated → testing → stable → deprecated
+  （DB CHECK 词表 6 态 +production（B-007 P0 2026-08-26，与 depgraph 对齐）；
+  decision 图 stable→production 推进边开放属另案裁定，应用层维持 5 态链）
 
 用法:
   # 设计态登记新决策节点（status=planned）
@@ -176,6 +178,8 @@ def _validate_status_transition(current: str, target: str, node_id: int | None =
     - 只能向前推进（planned→generated→testing→stable→deprecated）
     - 禁止跳态（generated 不能直接到 stable，必须经过 testing）
     - deprecated 是终态，不可再迁移
+    - DB CHECK 词表 6 态 +production（B-007 P0 2026-08-26）；
+      decision 图 stable→production 推进边开放属另案裁定，本函数维持 5 态链
 
     Raises:
         ValueError: 状态迁移非法时
@@ -767,7 +771,9 @@ def main() -> None:
   --dry-run                   预演（不写 DB）
 
 build_status 状态机（单调推进，禁止跳态）：
-  planned → generated → testing → stable → deprecated""",
+  planned → generated → testing → stable → deprecated
+  （DB CHECK 词表 6 态 +production（B-007 P0 2026-08-26）；
+  decision 图 stable→production 开放属另案裁定，应用层维持 5 态链）""",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument("--list-ops", action="store_true", help="列出支持的 op")

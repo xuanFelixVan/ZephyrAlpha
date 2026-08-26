@@ -409,7 +409,7 @@ _SQL_DESIGN_ROWS_BY_PATH = "SELECT node_id, path, build_status FROM nodes WHERE 
 
 # UPDATE 只写扫描字段；不碰 owner/trust_zone/license/drive_direction/gate_reason/
 # hard_boundary_ref/consumed_interfaces（手工维护 / nodes_metadata 保护字段）。
-# build_status 参数化：手动提升值（testing/stable/deprecated）原样保留，
+# build_status 参数化：手动提升值（testing/stable/deprecated/production）原样保留，
 # planned 等默认值转为扫描推导值（与 STATUS-PRESERVE 快照口径一致）。
 _SQL_CONVERT_DESIGN_NODE = (
     "UPDATE nodes SET node_type=%s, granularity=%s, domain_id=%s, subdomain_id=%s, "
@@ -421,13 +421,13 @@ _SQL_CONVERT_DESIGN_NODE = (
     "WHERE node_id=%s AND design_maturity='design'"
 )
 
-_PRESERVED_BUILD_STATUS = frozenset({"testing", "stable", "deprecated"})
+_PRESERVED_BUILD_STATUS = frozenset({"testing", "stable", "deprecated", "production"})
 
 
 def _resolve_converted_build_status(design_build_status: str, scanned_build_status: str) -> str:
     """#ARCH-70 双态转换 build_status 取值。
 
-    手动提升值（testing/stable/deprecated，STATUS-PRESERVE 口径）原样保留；
+    手动提升值（testing/stable/deprecated/production，STATUS-PRESERVE 口径）原样保留；
     planned 等默认/占位值转为扫描推导值（与全新 INSERT 节点的口径一致）。
     """
     if design_build_status in _PRESERVED_BUILD_STATUS:
@@ -3587,7 +3587,7 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
         # 裁定#ARCH-DEPGRAPH-RESCAN-STATUS-PRESERVATION:
         # 全量重扫前快照手动提升的 build_status，防止 DELETE+INSERT 重置。
         # build_status 不在文件头中（depgraph-only 生命周期概念），rescan 总是写入 'generated' 默认值，
-        # 导致手动提升的状态（testing/stable/deprecated）被静默回滚。
+        # 导致手动提升的状态（testing/stable/deprecated/production）被静默回滚。
         # 注意：design_maturity 不在此保护范围内——ARCH-MM-002 两档化后，
         # derive_design_maturity() 总是返回 "production"（物理存在=production），
         # design 态只由 apply_depgraph.py 人工写入。无需保护 design_maturity。
@@ -3599,7 +3599,7 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
             "WHERE (design_maturity != 'design' OR design_maturity IS NULL) "
             "AND node_type NOT IN ('database', 'gate_rule_set', 'script_collection', "
             "'test_suite', 'rule_registry_collection') "
-            "AND build_status IN ('testing', 'stable', 'deprecated')"
+            "AND build_status IN ('testing', 'stable', 'deprecated', 'production')"
         )
         _preserved_node_status: dict[str, str] = {row["path"]: row["build_status"] for row in cursor.fetchall()}
         if _preserved_node_status:
@@ -3969,15 +3969,24 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
         # nodes_metadata 恢复（Stage 2）仅在 build_status 为空时生效，
         # 但 INSERT 总是写入 'generated'（非空），所以需要独立的 status 恢复步骤。
         # 仅更新 build_status='generated' 的节点（不覆盖新扫描结果中可能已提升的值）。
+        # B-007 P0 特例：production 是手工转正态（机械推导封顶 stable，
+        # upgrade_tested_modules 只会把有测试节点推导为 stable），恢复必须覆盖
+        # 推导值 generated/stable——否则全量重生成把全部转正成果静默回滚成 stable。
         # design_maturity 不在此恢复——ARCH-MM-002 两档化后，derive_design_maturity()
         # 总是返回 "production"（物理存在=production），design 态只由 apply_depgraph.py
         # 人工写入。[MATURITY] header 是 SSoT，手动 transition 时由 gate 强制同步。
         _restored_status_count = 0
         for _preserved_path, _preserved_bs in _preserved_node_status.items():
-            cursor.execute(
-                "UPDATE nodes SET build_status=%s WHERE path=%s AND build_status='generated'",  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
-                (_preserved_bs, _preserved_path),
-            )
+            if _preserved_bs == "production":
+                cursor.execute(
+                    "UPDATE nodes SET build_status=%s WHERE path=%s AND build_status IN ('generated','stable')",  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
+                    (_preserved_bs, _preserved_path),
+                )
+            else:
+                cursor.execute(
+                    "UPDATE nodes SET build_status=%s WHERE path=%s AND build_status='generated'",  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
+                    (_preserved_bs, _preserved_path),
+                )
             _restored_status_count += cursor.rowcount
         if _restored_status_count:
             print(

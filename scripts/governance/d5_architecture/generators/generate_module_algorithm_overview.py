@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] depgraph不可用→exit 1; 单模块提取失败→降级empty不阻断; battle_map不可用→全部归未锚定
 # [TESTS] tests/governance/test_generate_module_algorithm_overview.py
+# [A_module] module_id=MOD-GOV_GENERATE_ALGO_OVERVIEW | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m11-perm-manual-legitimate  M11豁免: 生成器由 reconciler/人工按需显式触发（非 cron/daemon 常驻服务），对齐 generate_code_wiki_stats.py 豁免模式
 """算法全景图生成器（按作战环节拆分，自动派生，离库）。
@@ -183,7 +184,7 @@ STATUS_LABEL_ZH = {"operational": "运营态", "design": "设计态", "missing":
 SOURCE_LABEL = {"operational": "code", "design": "blueprint", "missing": "empty"}
 
 # build_status 成熟度聚合优先级（同模块多 path 取最成熟者展示）
-_BUILD_STATUS_PRIORITY = {"stable": 5, "generated": 4, "built": 3, "planned": 2, "deprecated": 1}
+_BUILD_STATUS_PRIORITY = {"production": 6, "stable": 5, "generated": 4, "built": 3, "planned": 2, "deprecated": 1}
 
 # import 类依赖（depgraph 实际 dep_type 值，非 imports/calls——DB 实证）
 _IMPORT_DEP_TYPES = ("import_depends", "import")
