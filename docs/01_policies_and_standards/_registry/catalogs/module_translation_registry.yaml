@@ -45160,7 +45160,6 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "给 gate_audit 下的审计流水账文件统一提供两个能力：写之前先看文件胖不胖（超过 50MB 就把旧文件改名归档成 .1/.2/.3 历史段，再开新文件写），以及写失败绝不炸主程序（只返回 False 让调用方记一笔）。专治审计文件无界疯长——之前有个文件 42 小时长到 3.7GB。"
-
 - module_path: src/zephyr/shared/capacity_governance/api_cost_governor.py
   domain_id: D_SHARED
   name_zh: "外部API成本治理器"
@@ -45441,7 +45440,6 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "校验格式保留、按角色动态掩码和拉普拉斯噪声注入。"
-
 - module_path: src/zephyr/knowledge/kb_engine.py
   domain_id: D_KNOWLEDGE
   name_zh: "知识库引擎"
@@ -45645,7 +45643,6 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "知识域包入口，守卫式导出核心类，某个类暂未落地时自动置空不影响其他类使用。"
-
 - module_path: src/zephyr/alt_data/alt_data_connector.py
   domain_id: D_ALT_DATA
   name_zh: "另类数据统一接入器"
@@ -45828,7 +45825,6 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "校验事实追加、不可变约束、双重锚定拒绝和三档约束强度。"
-
 - module_path: src/zephyr/signal_ashare/event_causal_reasoner.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "A股事件因果推理器"
@@ -46011,7 +46007,6 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "校验六模式规则库、七维打分和暂停追涨输出。"
-
 - module_path: src/zephyr/signal_ashare/industry_chain_graph.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "产业链知识图谱"
@@ -46152,7 +46147,6 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "校验三命名空间、版本广播和一致性漂移检测。"
-
 - module_path: src/zephyr/research/auto_feature_discoverer.py
   domain_id: D_FACTOR
   name_zh: "AI自动特征发现器"
@@ -46433,7 +46427,6 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "校验画像注册、考试校准和findings输出校验。"
-
 - module_path: src/zephyr/simulation/overfitting_protection_gate.py
   domain_id: D_SIMULATION
   name_zh: "过拟合系统性防护门禁"
@@ -46518,6 +46511,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "用内存数据库校验登记、版本递增、查询接口和变更审计。"
+- module_path: scripts/ch/backfill_research_report_2025.py
+  domain_id: D_DATA
+  name_zh: "2025年东财研报专项补采器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "全A股逐只拉东方财富研报，只留2025年的，去重后写进新闻库并打上'研报'分类标；断点续跑，单只失败不阻断"
 
 battle_map_steps:
 - step_id: BM-BUY-04

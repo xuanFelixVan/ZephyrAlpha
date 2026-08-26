@@ -4882,6 +4882,14 @@ creation_tokens:
   token: auto-commit-queue-20260821
   created_by: AI-P0-6-004
   capability: commit_queue_serialization
+- file: scripts/ch/backfill_research_report_2025.py
+  token: auto-backfill-research-report-2025-20260826
+  created_by: AI-K3-NEWSUP-001
+  capability: news_research_report_backfill
+- file: tests/scripts/test_ch_backfill_research_report_2025.py
+  token: auto-test-ch-backfill-rr2025-20260826
+  created_by: AI-K3-NEWSUP-001
+  capability: news_research_report_backfill
 - file: .runtime/commit_queue/
   token: auto-commit-queue-dir-20260821
   created_by: AI-P0-6-004
