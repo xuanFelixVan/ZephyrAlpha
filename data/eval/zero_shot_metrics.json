@@ -1,0 +1,12 @@
+{
+  "macro_f1": 0.7869,
+  "accuracy": 0.805,
+  "route": "zero_shot",
+  "model": "qwen3:8b",
+  "prompt_version": "v2-fewshot",
+  "think": false,
+  "eval_set": "data/eval/news_sentiment_200_gold.jsonl",
+  "eval_size": 200,
+  "measured_at": "2026-08-25",
+  "note": "零样本路线（2026-08-25 Owner 裁定替代 SFT 路线验收）：qwen3:8b + v2 few-shot prompt + think 关闭，vs 金标人工标注集（市场方向约定）。对照：SFT 门槛 0.75；历史对照 v1-thinkon 0.7510 / v1-thinkoff 0.7643 / 同 prompt qwen3:14b 0.7913。"
+}
