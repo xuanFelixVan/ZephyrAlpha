@@ -20756,3 +20756,15 @@ entries:
   impact:
     - 'src/zephyr/integration×4 + infrastructure/system_telemetry×3 + orchestrator×3；tests 10 文件'
   fix_phase: '已落地（2026-08-27，DIGEST P2 W13）'
+- issue_id: '#ARCH-272'
+  title: DIGEST P2 W14 波：AUTONOMY/FBL 4 候选晋升+5 REVIEW 归并——LLM研究助手/模块匹配/技能库/元优化（含 W04 漏处理 AISA-017 补施工）
+  severity: P2
+  category: 功能施工
+  adjudication: >-
+    MOD-INT-RESEARCH-AGENT/MOD-FBL-002~004。4 模块纯内存/DI 落地，98 新测全绿。
+    REVIEW 归并 5 条：AUTONOMYCORE-014→MOD-INT-AIROUTE（W13 已建）/AUTONOMYCORE-015→AISA-017（同条目跨域）/
+    AUTPERM-001→归位迁移专项留待（重组非新建）/FBLVERIF-001→MLT-028/FBL-003→MLT-025（W07 canonical）。
+    补漏：W04 波 AISA-017 漏处理，本波补施工（复盘归因：spec 草拟漏项，收尾报告登记）。
+  impact:
+    - 'src/zephyr/intelligence×1 + feedback_loop×3；tests 4 文件'
+  fix_phase: '已落地（2026-08-27，DIGEST P2 W14）'
