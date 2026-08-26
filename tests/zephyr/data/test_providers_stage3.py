@@ -516,6 +516,70 @@ class TestTDXProvider:
             assert results[0].error is None
             assert len(results[0].rows) == 1
 
+    # ---- 8803/8804 行业板分钟K线接线（T6 §七-7，2026-08-26）----
+
+    def _fetch_with_resolved_symbols(self, resolved, extra):
+        """公共装配：mock mootdx + 打桩 _resolve_sector_symbols，返回 index_bars 调用码表。"""
+        mootdx, mock_client = self._make_mootdx_mock()
+        import pandas as pd
+
+        mock_client.index_bars.return_value = pd.DataFrame(
+            {
+                "datetime": ["2026-08-26 09:31:00"],
+                "open": [1000],
+                "high": [1010],
+                "low": [995],
+                "close": [1005],
+                "vol": [50000],
+                "amount": [5000000],
+            }
+        )
+        from src.zephyr.data.implementations.tdx_provider import TDXProvider
+
+        with patch.dict("sys.modules", {"mootdx": mootdx, "mootdx.quotes": mootdx.quotes}):
+            p = self._make_provider()
+            p.connect()
+            payload = FetchPayload(
+                table="c1_market.kline_sector_intraday",
+                symbols=None,
+                start=datetime.date(2026, 8, 26),
+                end=datetime.date(2026, 8, 26),
+                extra=extra,
+            )
+            with patch.object(TDXProvider, "_resolve_sector_symbols", return_value=resolved):
+                results = list(p.fetch(payload, SourcePolicy()))
+        assert all(r.error is None for r in results)
+        return [c.kwargs["symbol"] for c in mock_client.index_bars.call_args_list]
+
+    def test_fetch_sector_kline_include_industry_boards(self):
+        """extra.include_industry_boards=True 且 symbols=null 时，解析码集并入
+        132 条 8803/8804 行业板（SSoT=sector_code_bridge.TDX_INDUSTRY_BOARDS）。"""
+        from src.zephyr.data.implementations.sector_code_bridge import TDX_INDUSTRY_BOARDS
+
+        called = self._fetch_with_resolved_symbols(
+            ["880505", "880002"],
+            {"capability": "kline_sector", "period": "1m", "count": 240, "include_industry_boards": True},
+        )
+        expect = {"880505", "880002"} | {b.code for b in TDX_INDUSTRY_BOARDS}
+        assert set(called) == expect
+        assert len(called) == len(expect)  # 无重复抓取
+
+    def test_fetch_sector_kline_default_excludes_industry_boards(self):
+        """默认（无 include_industry_boards）不抓 8803/8804——日K等既有任务行为不变。"""
+        called = self._fetch_with_resolved_symbols(
+            ["880505", "880002"],
+            {"capability": "kline_sector", "period": "1m", "count": 240},
+        )
+        assert set(called) == {"880505", "880002"}
+
+    def test_fetch_sector_kline_include_industry_boards_dedup(self):
+        """sector_constituent 已含 8803 码时不重复抓取（去重保序）。"""
+        called = self._fetch_with_resolved_symbols(
+            ["880505", "880301"],
+            {"capability": "kline_sector", "period": "1m", "count": 240, "include_industry_boards": True},
+        )
+        assert called.count("880301") == 1
+
 
 # ============== RSSProvider 测试 ==============
 
