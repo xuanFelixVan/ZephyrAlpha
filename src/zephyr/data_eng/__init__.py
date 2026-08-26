@@ -66,3 +66,36 @@ __all__.append("ExpectationGovernance")
 __all__.append("DataAnomalyAlerter")
 
 __all__.append("IncrementalUpdateEngine")
+
+# NOTE(P2W02 DIGEST 波2): data_eng 波2 五件套（MOD-DATENG-002/003/004/005/006）
+# 同上守卫式导入（目标类落地即自愈，缺载不包门面断链）。
+try:
+    from zephyr.data_eng.cold_data_archive_manager import ColdDataArchiveManager
+except ImportError:
+    ColdDataArchiveManager = None  # type: ignore[assignment]
+try:
+    from zephyr.data_eng.quality_sla_breach_predictor import QualitySlaBreachPredictor
+except ImportError:
+    QualitySlaBreachPredictor = None  # type: ignore[assignment]
+try:
+    from zephyr.data_eng.stream_processing_engine import StreamProcessingEngine
+except ImportError:
+    StreamProcessingEngine = None  # type: ignore[assignment]
+try:
+    from zephyr.data_eng.gpu_resource_manager import GpuResourceManager
+except ImportError:
+    GpuResourceManager = None  # type: ignore[assignment]
+try:
+    from zephyr.data_eng.data_lake_manager import DataLakeManager
+except ImportError:
+    DataLakeManager = None  # type: ignore[assignment]
+
+__all__.append("ColdDataArchiveManager")
+
+__all__.append("QualitySlaBreachPredictor")
+
+__all__.append("StreamProcessingEngine")
+
+__all__.append("GpuResourceManager")
+
+__all__.append("DataLakeManager")
