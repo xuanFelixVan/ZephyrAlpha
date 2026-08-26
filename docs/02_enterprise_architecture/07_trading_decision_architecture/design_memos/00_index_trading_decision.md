@@ -5,7 +5,7 @@ title: 交易决策架构主题全集（总索引）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.14.3"
+version: "2.14.4"
 date: 2026-08-26
 topic: trading_decision_index
 scope: 07_trading_decision_architecture
@@ -87,7 +87,7 @@ scope: 07_trading_decision_architecture
 | [90_methodology_open_questions.md](90_methodology_open_questions.md) | 方法论遗留提案（P0/P1 施工优先级表+远期开放问题） | active v2.0.3 |
 | [91_density_prediction.md](91_density_prediction.md) | 密度预测与 QNN 远期愿景（待讨论） | draft v0.1.4 |
 | [92_phase2_business_construction_order.md](92_phase2_business_construction_order.md) | 阶段二业务层施工顺序清单（44 号升级+2026-08 架构审查升级项全量按依赖/冲突面排序成波次，并发施工派单真源；ClickHouse 数据实证分支裁定） | active v1.0.0（2026-08-22 Owner 指令落盘） |
-| [94_crypto_quant_expansion.md](94_crypto_quant_expansion.md) | 数字货币量化扩展设计（30 域复用矩阵三类划分+五横切改造点[含 §4.5 市场归属标注三道闸]+CAND-CRYPTO 族 10 条+施工波次 W0-W4+§7 外部实战参考；**Q1-Q6 已 Owner 拍板**；W0 市场日历抽象已派单） | active v1.3.0 |
+| [94_crypto_quant_expansion.md](94_crypto_quant_expansion.md) | 数字货币量化扩展设计（30 域复用矩阵三类划分+五横切改造点[含 §4.5 市场归属标注三道闸]+CAND-CRYPTO 族 10 条+施工波次 W0-W4+§7 外部实战参考；**Q1-Q6 已 Owner 拍板**；W0 市场日历抽象已施工 commit 69e5dc9f） | active v1.3.1 |
 
 ## 1. 文档定位
 
@@ -686,7 +686,7 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 57_daily_cycle_sop | 日循环 SOP（5x 验证层，P0-5） | ✅ 已定稿 | active v1.1.0（2026-08-24 RUN-05 演练节入册） |
 | 68_code_algorithm_review_pipeline | 代码与算法多模型审查流水线（跨切治理层） | ✅ 已定稿 | active v1.2.1 |
 | 92_phase2_business_construction_order | 阶段二业务层施工顺序清单（9x 开放问题与施工排序段） | ✅ 已定稿 | active v1.0.0（2026-08-22 Owner 指令落盘） |
-| 94_crypto_quant_expansion | 数字货币量化扩展设计（9x 新战线启动段；CAND-CRYPTO-001~010 登记真源） | 本会话落盘 | active v1.3.0（Q1-Q6 已拍板+R1-R3 循环审查+§4.5 市场归属标注；W0 派单 dispatch/2026-08-26-crypto-w0-market-calendar-order.md） |
+| 94_crypto_quant_expansion | 数字货币量化扩展设计（9x 新战线启动段；CAND-CRYPTO-001~010 登记真源） | 本会话落盘 | active v1.3.1（Q1-Q6 已拍板+R1-R3 循环审查+§4.5 市场归属标注；W0 已施工 commit 69e5dc9f [GW:AI-CAL-001]，原派单 dispatch/2026-08-26-crypto-w0-market-calendar-order.md） |
 
 ## 8. 产出物命名规范
 
@@ -884,3 +884,4 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 2026-08-26 | 2.14.1 | **94 号 v1.1.0 版本同步（循环审查 R1，AI_review_instructions 方式）**——§0 目录+§7.3 两处：94 号 active v1.0.0→v1.1.0（新增 §7.5 机构实践与开源框架对照——DolphinDB 流批一体/数据韧性五件套互证/Freqtrade 三件套/交易所官方 agent 工具包成生产基建→005 acquisition 首选变更币安官方 skills/MCP；§7.6 前沿研究——CGX 共识门控+面板构成/LLM MAS/Meta-RL-Crypto/funding-aware MM 远期/币版统计套利否定式裁定/成本模型翻转互证；§8 不做什么补 3 行——跨所延迟套利/MEV 基建/配对协整；§2 补代码侧盘点）；candidate_module_registry.yaml 联动（005 acquisition+002 tech_notes 数据韧性五件套+003 tech_notes carry 费束缚公式+头部 R1 日志行） | Owner 指令驱动（全网搜索 2026-08 最新+第一性原理+不过度工程）：三维度审查结论——集成方式补 lookahead 命令化+005 acquisition 变更，代码结构无需调整，数据源因子补否定式裁定与 Phase 2 carry 方向；过度工程筛除跨所套利多区域 AWS/MEV 验证者/HFT 做市 HJB/K8s |
 | 2026-08-26 | 2.14.2 | **94 号 v1.2.0 版本同步（循环审查 R2+R3）**——§0 目录+§7.3 两处：94 号 active v1.1.0→v1.2.0（§7.6 补 3 条——⑦中低频策略格局与成本铁律：四大耐用策略/短线 65-80% 净亏损/风控五规则互证，币版首批策略锚定趋势跟踪系；⑧链上估值因子 8 年回测实证：MVRV Z-Score/NVT 归 004 因子清单+买入持有基准门纪律；⑨稳定币 depeg 风险监控：双风险画像+传染五联动+发行方敞口≤30%，归 risk_limit 币版+010 面板）；candidate_module_registry.yaml 联动（004/010 tech_notes R2+007 delisting 幸存者偏差 R3+002 risks 交易所维护窗口 R3）【本行曾因并发覆写丢失，2026-08-26 补回】 | 策略格局/链上因子/稳定币风险三路实证（Skrumble 2026-05/KuCoin bots/12 策略组合 8 年回测/Circle OCC 2026-07）；税务记账维度裁定不适用（非美法域，过度工程） |
 | 2026-08-26 | 2.14.3 | **94 号 v1.3.0 版本同步（市场归属标注体系）**——§0 目录+§7.3 两处：94 号 active v1.2.0→v1.3.0（§4 四→五横切改造点，新增 §4.5 market scope 三道闸——物理闸市场后缀包/数据闸八表 market 字段/治理闸 depgraph 标签+CAND 族前缀+门禁按标的市场加载；"默认共用零标注只分市场构件贴标签"；依赖全景矩阵不变、§3 复用矩阵=市场分片标注文档真源防双真源）；candidate_module_registry.yaml 联动（007 tech_notes 补 market 字段口径） | Owner 三问驱动（AI 能否分清 A股/币圈/共用、会不会搞混、依赖全景是否贴标签）：同名不同市场构件错配事故（A股规则校验币订单）须在设计层防死 |
+| 2026-08-26 | 2.14.4 | **94 号 v1.3.1 版本同步（W0 市场日历抽象施工完成）**——§0 目录+§7.3 两处：94 号 active v1.3.0→v1.3.1（W0 已施工 commit 69e5dc9f [GW:AI-CAL-001]——src/zephyr/data/calendar/ 包落地：MarketCalendar 接口+A股收编+币7×24 含 4h+工厂；scheduler/fusion/pit_query 注入式改造；回测时间轴零改造声明；新测试 26 例+受影响面 130 例零回归；盘点报告+架构评审落盘；CAND-CRYPTO-001 晋升中） | W0 派单闭环（94号 §6 波次第一步）：A股零行为变化硬门槛达成（默认 None≡现状逐字节一致） |

@@ -13825,11 +13825,12 @@ entries:
       evidence: '深挖场内对账: 部分：src/zephyr/governance/depgraph_schema.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/governance/depmap_engine.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A3数据架构
   original_id: B13-04303
   source_section: §17.11
@@ -13850,11 +13851,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/governance/resilience_governance/policy_sandbox.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/governance/gov_policy_manager.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: D-GOVERNANCE
   original_id: B9-10877
   source_section: §1
@@ -13874,11 +13876,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/gov_audit/merkle_audit.py（审计链组件有，追踪依赖图构建缺）'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/gov_audit/audit_trace_graph_builder.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A9运维架构
   original_id: B14-04667
   source_section: §8.3.5
@@ -13899,11 +13902,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/shared/api/api_index.py（API索引有，文档版本同步器缺）'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/governance/docs/api_doc_version_syncer.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A9运维架构
   original_id: B14-04654
   source_section: §8.3.4
@@ -13925,10 +13929,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W12）——与 CAND-GOVDRIFT-003 同为 Agent 行为漂移检测（B1/B11 两稿），canonical=CAND-GOVDRIFT-003→MOD-GOV-055（ASI 可落子集含其调用模式/工具分布基线语义；人工确认纠正流复用 drift 调度既有通道）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: 跨域(元文档)
   original_id: B1-00284
   source_section: §功能域模块·D-GOVERNANCE
@@ -13950,11 +13955,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/gov_drift/'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/gov_drift/agent_stability_index.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A2治理架构
   original_id: B11-03056
   source_section: §7.1
@@ -14001,11 +14007,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/orchestrator/contracts/construction_guide.py;src/zephyr/gov_enforcement/commit_gates/'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/gov_enforcement/construction_governor_gate.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: D-GOVERNANCE-15
   original_id: B10-02423
   source_section: §30.6.5
@@ -14026,11 +14033,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/governance/rule_patterns.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/gov_rule/standards_manager.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: 跨域(元文档)
   original_id: B1-00289
   source_section: §功能域模块·D-GOVERNANCE
@@ -14052,10 +14060,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W12）——与 CAND-PC-002 同为 D-GOV-06 StandardsManager（B9/B1 两稿重登），canonical=CAND-PC-002→MOD-GOV-057（硬边界目录+校验锚点+人工门禁含其标准注册/元标准语义，PS-STD/PS-REG 元标准入元数据字段）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: D-GOVERNANCE
   original_id: B9-10882
   source_section: §1
@@ -18776,11 +18785,11 @@ entries:
     q1_implemented: {result: false, equivalent_nodes: [], evidence: "src/zephyr 无 calendar 抽象层（2026-08-26 盘点），交易日历逻辑为 A股专用"}
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
   priority: P0
   created_at: '2026-08-26'
   last_reviewed_at: '2026-08-26'
-  promoted_to: ""
+  promoted_to: "src/zephyr/data/calendar/（commit 69e5dc9f [GW:AI-CAL-001]）"
   source_draft: "94_crypto_quant_expansion.md"
   source_section: "§4.1 市场日历抽象"
   original_id: ""
@@ -18798,7 +18807,7 @@ entries:
   blocked_by: []
   next_review_date: '2027-08-26'
   review_frequency: yearly
-  last_review_outcome: "candidate 登记（2026-08-26 Owner 裁定启动数字货币战线）：W0 波次第一地基，派单即晋升"
+  last_review_outcome: "promoted（2026-08-26 W0 施工闭环，commit 69e5dc9f [GW:AI-CAL-001]）：calendar 包接口+双实现落地，scheduler/fusion/pit_query 注入式改造，新测试 26 例+受影响面零回归，depgraph node_id=10720640"
   acquisition_method: self_build
   acquisition_source: ""
 
@@ -19591,6 +19600,29 @@ entries:
   last_updated: '2026-08-26'
   source_draft: ''
   original_id: NEWS2025-BF2
+  source_section: ''
+- id: CAND-DAT-025
+  name: news_data 引擎级去重设计（ReplacingMergeTree 折叠审查+历史冗余清扫）
+  aliases: ['news_data 引擎去重', 'multi-version dedup engine design']
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/data/
+  problem: news_data 保留多版本行（ReplacingMergeTree 未按 news_id 折叠——实证：研报 3.5x、2025 年 2.1x、情感语料 12.8% 冗余）；读侧已三层去重治标（collect_news/批次内/聚合），但表体持续膨胀、查询变慢、写入侧仍有再插风险
+  proposal: '实证登记（2026-08-26 CAND-NLP-006 施工中发现）。最小施工形态: ①审查表 ORDER BY 键与版本列（疑含 ingest_ts/crawl_time 致同 news_id 不折叠），出键设计裁定；②一次性历史冗余清扫（OPTIMIZE FINAL 或按 news_id 留最新版本 sweep 脚本）；③写入侧统一预检规约（各 provider 写前查已有 news_id，参照 backfill_research_report_2025 的 load_existing_news_ids 修复样例）。依赖前置: ch_writer/ch_reader。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '场内对账: 读侧三层去重已建（collect_news/run_sentiment_batch/run_research_rating_batch），引擎级修复无'
+    blocking_question: null
+    result: candidate
+  status: candidate
+  priority: P1
+  source: 2026-08-26 多版本冗余实证批（CAND-NLP-006 施工发现）
+  created: '2026-08-26'
+  last_updated: '2026-08-26'
+  source_draft: ''
+  original_id: NEWS-DEDUP-ENG-001
   source_section: ''
 - id: CAND-NLP-006
   name: 研报结构化评级分析轨（评级提取/变动/目标价/盈利修正）
