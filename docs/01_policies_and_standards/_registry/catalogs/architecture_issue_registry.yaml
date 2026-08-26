@@ -20635,3 +20635,14 @@ entries:
   impact:
     - 'src/zephyr/signal_ashare×13；tests/signal_ashare 13 文件'
   fix_phase: '已落地（2026-08-26，DIGEST P2 W05）'
+- issue_id: '#ARCH-262'
+  title: DIGEST P2 W06 波：ASHARE_SIGNAL 后半 10 候选晋升+8 REVIEW 归并（含拓扑链 053→049、045+CYCLE-006→048）——产业链图谱/关系GNN/因果ML/保形预测/量能体制/风格体制/三维矩阵/权重调节/做T盈亏/共享内核
+  severity: P2
+  category: 功能施工
+  adjudication: >-
+    MOD-SIG-125~133/MOD-REGIME-014。10 模块纯内存/DI 落地，241 新测全绿（域合并 3079 零回归）。
+    REVIEW 归并 8 条：TESTB-034+046→049/TESTB-035+047→051（GNN/Causal 三稿重登）；TESTB-052→TESTB-029/TESTB-056→TESTB-044（W05 canonical）；
+    TESTB-057→P1 intraday_volume_orderflow/TESTB-058→P1 auction_microstructure_analyzer（撞 P1 已建）。
+  impact:
+    - 'src/zephyr/signal_ashare×9 + regime×1；tests 10 文件'
+  fix_phase: '已落地（2026-08-26，DIGEST P2 W06）'
