@@ -230,6 +230,95 @@ def test_panel_columns_plain_symbols():
     assert all("." not in c for c in panel.columns)
 
 
+# ── PIT 防未来函数护栏（window_date ≤ T-1 才可消费）──────────────────
+
+
+def _row_dated(symbol: str, idx: float, win: datetime.date) -> SentimentRow:
+    return SentimentRow(symbol=symbol, sentiment_index=idx, total_count=3, window_date=win)
+
+
+def test_pit_guard_t_minus_1_consumable():
+    # T-1 窗口记录：可消费（口径边界——恰好等于 cutoff 放行）
+    d1 = pd.Timestamp("2026-08-18")  # 周二 T
+    source = _FakeSource({datetime.date(2026, 8, 17): [_row_dated("600519.SH", 0.9, datetime.date(2026, 8, 17))]})
+    panel = build_event_weight_panel(
+        [d1], ["600519"], source=source, strategy=EventDrivenSleeveStrategy()
+    )
+    assert panel.loc[d1, "600519"] == pytest.approx(0.10)
+
+
+def test_pit_guard_t_day_record_not_consumable():
+    # T 日记录（window_date=T）：防未来函数硬剔除——当日面板全零（hold）
+    d1 = pd.Timestamp("2026-08-18")
+    source = _FakeSource({datetime.date(2026, 8, 17): [_row_dated("600519.SH", 0.9, datetime.date(2026, 8, 18))]})
+    panel = build_event_weight_panel(
+        [d1], ["600519"], source=source, strategy=EventDrivenSleeveStrategy()
+    )
+    assert float(panel.loc[d1].sum()) == 0.0
+
+
+def test_pit_guard_future_record_beyond_t_not_consumable():
+    # T+1 及更远未来记录：同样硬剔除
+    d1 = pd.Timestamp("2026-08-18")
+    source = _FakeSource(
+        {
+            datetime.date(2026, 8, 17): [
+                _row_dated("600519.SH", 0.9, datetime.date(2026, 8, 19)),  # T+1 → 剔除
+                _row_dated("000001.SZ", 0.8, datetime.date(2026, 8, 17)),  # T-1 → 可消费
+            ]
+        }
+    )
+    panel = build_event_weight_panel(
+        [d1], ["600519", "000001"], source=source, strategy=EventDrivenSleeveStrategy()
+    )
+    assert panel.loc[d1, "600519"] == pytest.approx(0.0)
+    assert panel.loc[d1, "000001"] == pytest.approx(0.10)
+
+
+def test_pit_guard_cross_weekend_t_minus_3_consumable():
+    # 跨周末：周一 T 的 cutoff=周日（T-1 自然日）；周五（T-3）窗口记录 ≤ cutoff 可消费
+    d1 = pd.Timestamp("2026-08-17")  # 周一
+    source = _FakeSource(
+        {
+            datetime.date(2026, 8, 16): [
+                _row_dated("600519.SH", 0.9, datetime.date(2026, 8, 14)),  # 周五（T-3）→ 可消费
+                _row_dated("000001.SZ", 0.8, datetime.date(2026, 8, 16)),  # 周日（T-1）→ 可消费
+            ]
+        }
+    )
+    panel = build_event_weight_panel(
+        [d1], ["600519", "000001"], source=source, strategy=EventDrivenSleeveStrategy()
+    )
+    assert panel.loc[d1, "600519"] == pytest.approx(0.10)
+    assert panel.loc[d1, "000001"] == pytest.approx(0.10)
+
+
+def test_pit_guard_logs_violation(caplog):
+    # 违规剔除须留痕（warning 含剔除条数与 cutoff）
+    d1 = pd.Timestamp("2026-08-18")
+    source = _FakeSource({datetime.date(2026, 8, 17): [_row_dated("600519.SH", 0.9, datetime.date(2026, 8, 18))]})
+    with caplog.at_level("WARNING", logger="zephyr.pf_core.strategy_engine.event_sentiment_adapter"):
+        build_event_weight_panel([d1], ["600519"], source=source, strategy=EventDrivenSleeveStrategy())
+    assert any("PIT" in rec.message and "1 条" in rec.message for rec in caplog.records)
+
+
+def test_pit_guard_none_window_date_passthrough():
+    # window_date=None（源未携带归属日）：放行兼容（fetch 点查询已按 T-1 取窗）
+    d1 = pd.Timestamp("2026-08-18")
+    source = _FakeSource({datetime.date(2026, 8, 17): [_row("600519.SH", 0.9)]})
+    panel = build_event_weight_panel(
+        [d1], ["600519"], source=source, strategy=EventDrivenSleeveStrategy()
+    )
+    assert panel.loc[d1, "600519"] == pytest.approx(0.10)
+
+
+def test_ch_source_parse_row_with_window_date():
+    row = ClickHouseSentimentWindowSource.parse_row(("600519.SH", 0.42, 3, 1, 0, 4, "2026-08-17"))
+    assert row.window_date == datetime.date(2026, 8, 17)
+    row_none = ClickHouseSentimentWindowSource.parse_row(("600519.SH", 0.42, 3, 1, 0, 4))
+    assert row_none.window_date is None
+
+
 # ── ClickHouseSentimentWindowSource（不触 DB：SQL 形态/行解析/白名单）──
 
 
