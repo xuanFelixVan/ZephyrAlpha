@@ -20688,3 +20688,13 @@ entries:
   impact:
     - 'src/zephyr/simulation×1 + digital_twin×1 + execution_simulation（新包 1+__init__）+ ex_core×1 + trading×2；tests 6 文件'
   fix_phase: '已落地（2026-08-26，DIGEST P2 W08）'
+- issue_id: '#ARCH-266'
+  title: DIGEST P2 W09 波：PF/PLAN/RISK 11 候选晋升+3 REVIEW 归并——策略筛选/BMA权重/RL组合/成本拆解/偏差监控/盘前工序+对冲/预取/策略持久化/查询构建/传染建模
+  severity: P2
+  category: 功能施工
+  adjudication: >-
+    MOD-PA-014/015/MOD-PF-013/014/MOD-PLAN-022/023/MOD-RK-042~046。11 模块纯内存/DI 落地，
+    259 新测全绿（四域合并 2942 零回归）。REVIEW 归并 3 条：PFALLOC-007/008+PF004-008→MOD-PF-012（容量估算三登撞 P1 已建）。
+  impact:
+    - 'src/zephyr/pf_alloc×2 + pf_core×2 + plan_engine×2 + risk×5；tests 11 文件'
+  fix_phase: '已落地（2026-08-26，DIGEST P2 W09）'
