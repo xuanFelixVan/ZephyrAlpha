@@ -2,7 +2,7 @@
 # [MODULE] zephyr.data.implementations.sector_code_bridge
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] 无三方/无网络/无库；消费方契约对齐 zephyr.signal_ashare.counter_trend_board（fund_flow 注入位，类型上仅结构化 dict 不 import）；输入行对齐 zephyr.data.implementations.sector_fund_flow_collector.SectorFundFlowEntry（鸭子类型读取 sector_type/sector_name/net_amount）
-# [CONSUMERS] （GAP-F-16 逆势榜资金卡注入位：build_counter_trend_board(fund_flow=...)，段内差分+重钥经 zephyr.signal_ashare.counter_trend_board run 层自动加载；tasks.yaml 采集排期待 8803/8804 分钟K线接线）
+# [CONSUMERS] （GAP-F-16 逆势榜资金卡注入位：build_counter_trend_board(fund_flow=...)，段内差分+重钥经 zephyr.signal_ashare.counter_trend_board run 层自动加载；TDX_INDUSTRY_BOARDS 名单供 tdx_provider include_industry_boards 并入分钟K线采集）
 # [STARTUP] imported
 # [MATURITY] testing
 # [INVARIANTS] 纯函数不触网不触库（CSV 中间层除外）；映射 SSoT=模块内常量（90 行 THS 881xxx 行业 ↔ 132 条 TDX 8803/8804 行业指数主数据）；90/90 全映射零缺失；多 881 同目标净额 SUM（行业互不相交故可加）；concept 行/空净额/未知名跳过留痕不炸；段内差分=段末累计−段前累计（段前无快照按开盘 0 起算，差分可为负不伪造）；输出 dict[880code, float] 直插消费方 fund_flow 注入位；frozen dataclass asdict JSON 可序列化
@@ -48,9 +48,11 @@ float] | None)——fund_flow 键=板块代码、值=段内净流入；None→�
 CSV 中间层（仿 D3 采集器先例）：dump_mapping_csv 落盘映射表（运行时产物不入
 git），load_mapping 读回（880 目标不在 TDX 主数据→ValueError fail-closed）。
 
-接线待办（Owner 窗口）：8803/8804 行业指数分钟K线当前未入
-kline_sector_intraday（该表现存 8800/8802/8805-8809 + 异构 881 共 593 码），
-资金卡全链路（卡1/3/4 行业腿覆盖）需 8803/8804 采集接线后排期。
+8803/8804 行业指数分钟K线接线（T6 §七-7，2026-08-26 完成）：TDX_INDUSTRY_BOARDS
+132 条经 tdx_provider._union_industry_boards 并入 5 个板块分钟K任务（tasks.yaml
+extra.include_industry_boards=true，schedule=intraday_sector），写
+c1_market.kline_sector_intraday；逆势榜卡1/3/4 行业腿全覆盖（CH 实证 132/132 码，
+1m 全日 240 根/码零缺失）。
 
 # [ALGO_FLOW]
 # 层: 输入

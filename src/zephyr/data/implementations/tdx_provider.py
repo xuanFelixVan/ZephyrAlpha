@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] zephyr.data.implementations.tdx_provider
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] mootdx SDK (Quotes.factory/index_bars/get_stock_list_in_sector); zephyr.data.ch_reader; zephyr.data.table_registry
+# [DEPENDENCIES] mootdx SDK (Quotes.factory/index_bars/get_stock_list_in_sector); zephyr.data.ch_reader; zephyr.data.table_registry; zephyr.data.implementations.sector_code_bridge（TDX_INDUSTRY_BOARDS SSoT，include_industry_boards 旗标并入，函数内延迟 import）
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] manual
 # [MATURITY] production
@@ -312,13 +312,30 @@ class TDXProvider(IngestProviderBase):
             return []
         return [line.strip() for line in tsv.strip().split("\n") if line.strip()]
 
+    @staticmethod
+    def _union_industry_boards(symbols: list[str]) -> list[str]:
+        """并入 TDX 8803/8804 行业板代码（去重保序）。
+
+        T6 §七-7 接线（2026-08-26）：132 条 8803/8804 行业指数不在
+        sector_constituent（该表仅存 8800/8802/8805-8809 + 异构 881），
+        分钟K线任务经 extra.include_industry_boards=true 显式并入，
+        名单 SSoT=sector_code_bridge.TDX_INDUSTRY_BOARDS（日K任务不挂旗标，
+        接线范围=分钟K线）。8803/8804 与 880 他族同走 mootdx index_bars
+        TCP 直连（2026-08-26 实测 132/132 可得，1m 深度约百个交易日）。
+        """
+        from .sector_code_bridge import TDX_INDUSTRY_BOARDS
+
+        return list(dict.fromkeys([*symbols, *(b.code for b in TDX_INDUSTRY_BOARDS)]))
+
     def _fetch_kline_sector(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """获取板块指数K线（client.index_bars）。
 
         mootdx index_bars(symbol, frequency, market, start, offset) 返回 DataFrame。
         frequency: 9=日线 0=5min 7=1min 1=15min 2=30min 3=1hour。
         通过 payload.extra["period"] 配置周期，默认 "1d"。
-        symbols=None 时自动从 sector_constituent 表获取全部880xxx板块代码。
+        symbols=None 时自动从 sector_constituent 表获取全部880xxx板块代码；
+        extra.include_industry_boards=true 时再并入 132 条 8803/8804 行业板
+        （SSoT=sector_code_bridge.TDX_INDUSTRY_BOARDS，分钟K线任务专用旗标）。
         880xxx 板块指数通过 TCP 直连盘中实时获取，不依赖 tdx 客户端盘后下载。
         """
         table = payload.table or _TBL_KLINE_SECTOR
@@ -334,6 +351,9 @@ class TDXProvider(IngestProviderBase):
         if not symbols:
             symbols = self._resolve_sector_symbols()
             self._log.info(f"symbols=None，从 sector_constituent 解析 {len(symbols)} 只板块")
+            if (payload.extra or {}).get("include_industry_boards"):
+                symbols = self._union_industry_boards(symbols)
+                self._log.info(f"include_industry_boards=True，并入8803/8804行业板后共 {len(symbols)} 只板块")
 
         for code in symbols:
             t0 = time.time()
