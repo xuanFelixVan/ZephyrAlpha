@@ -10799,11 +10799,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/simulation/look_ahead_bias_detector.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/simulation/quality_assurance_selfdrive.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: 跨域(元文档)
   original_id: B1-00260
   source_section: §功能域模块·D-OPS
