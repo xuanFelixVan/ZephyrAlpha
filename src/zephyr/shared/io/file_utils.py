@@ -316,6 +316,9 @@ DEFAULT_HOT_FILES: Final = frozenset(
         "docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml",
         "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/construction_progress_tracker.md",
         "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/00_index_trading_decision.md",
+        # AI-DRIFT-001（2026-08-26）：94号当日连遭 4 起并发覆写事故（frontmatter 回滚/
+        # 候选表行丢失/秒级反复覆写），扩列纳入 CAS 写前读新+commit base 新鲜度门禁覆盖。
+        "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/94_crypto_quant_expansion.md",
     }
 )
 
