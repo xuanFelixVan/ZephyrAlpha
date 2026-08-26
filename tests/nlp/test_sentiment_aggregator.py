@@ -38,8 +38,8 @@ from zephyr.nlp.sentiment_aggregator import (
 )
 
 
-def _mk(source: str, polarity: float, day: str = "2026-08-19", symbol: str = "") -> SourceSentiment:
-    return SourceSentiment(source=source, polarity=polarity, publish_date=day, symbol=symbol)
+def _mk(source: str, polarity: float, day: str = "2026-08-19", symbol: str = "", category: str = "") -> SourceSentiment:
+    return SourceSentiment(source=source, polarity=polarity, publish_date=day, symbol=symbol, category=category)
 
 
 # ============ 1. vote_cross_source ============
@@ -158,6 +158,21 @@ class TestAggregateDaily:
         items = [_mk("eastmoney", 1.0), _mk("cls", -1.0)]
         (d,) = aggregate_daily(items)
         assert d.mean_polarity == 0.0
+
+    def test_per_category_split(self):
+        """CAND-DAT-024：四类分桶统计——媒体/研报情绪分开，空 category 归 unknown。"""
+        items = [
+            _mk("eastmoney", -0.8, "2026-08-18", category="news"),
+            _mk("cls", -0.6, "2026-08-18", category="news"),
+            _mk("akshare_research_report", 0.9, "2026-08-18", category="research_report"),
+            _mk("rss", 0.5, "2026-08-18"),
+        ]
+        (d,) = aggregate_daily(items)
+        pc = d.per_category
+        assert pc["news"]["n_news"] == 2 and pc["news"]["n_negative"] == 2
+        assert pc["research_report"]["n_news"] == 1 and pc["research_report"]["n_negative"] == 0
+        assert pc["unknown"]["n_news"] == 1  # 空 category 兜底
+        assert pc["news"]["mean_polarity"] < 0 < pc["research_report"]["mean_polarity"]
 
 
 # ============ 3. aggregate_daily_by_symbol ============

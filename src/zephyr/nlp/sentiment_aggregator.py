@@ -74,12 +74,15 @@ class SourceSentiment:
     polarity : 有向极性 [-1, 1]（nlp_inference SentimentResult.polarity）。
     publish_date : 聚合日键 'YYYY-MM-DD'。
     symbol : 关联标的/板块标签（可选，板块聚合用）。
+    category : 语料四类标（announcement/research_report/macro_data/news，
+        zephyr.data.news_taxonomy；空串归 "unknown" 桶，CAND-DAT-024）。
     """
 
     source: str
     polarity: float
     publish_date: str
     symbol: str = ""
+    category: str = ""
 
 
 @dataclass(frozen=True, slots=True)
@@ -120,6 +123,9 @@ class DailySentiment:
     vote_score: float
     vote_strength: str
     symbol: str = ""
+    # 四类分桶统计（CAND-DAT-024）：{category: {n_news, n_negative, mean_polarity}}
+    # 媒体情绪（news 桶）与研报情绪（research_report 桶）分开读，防研报多头腔污染
+    per_category: dict[str, dict[str, Any]] = field(default_factory=dict)
 
 
 def _clip_polarity(x: float) -> float:
@@ -197,6 +203,23 @@ def vote_cross_source(
     return CrossSourceVote(0, 0.0, STRENGTH_NONE, n_sources, 0, source_mean)
 
 
+def _per_category_stats(group: list[SourceSentiment]) -> dict[str, dict[str, Any]]:
+    """四类分桶统计（CAND-DAT-024）：空 category 归 "unknown" 桶。"""
+    buckets: dict[str, list[float]] = {}
+    for it in group:
+        buckets.setdefault((it.category or "").strip() or "unknown", []).append(
+            _clip_polarity(it.polarity)
+        )
+    return {
+        cat: {
+            "n_news": len(pols),
+            "n_negative": sum(1 for p in pols if p < -_DIRECTION_EPS),
+            "mean_polarity": sum(pols) / len(pols),
+        }
+        for cat, pols in sorted(buckets.items())
+    }
+
+
 def _aggregate_group(day: str, symbol: str, group: list[SourceSentiment]) -> DailySentiment:
     polarities = [_clip_polarity(it.polarity) for it in group]
     n_pos = sum(1 for p in polarities if p > _DIRECTION_EPS)
@@ -215,6 +238,7 @@ def _aggregate_group(day: str, symbol: str, group: list[SourceSentiment]) -> Dai
         vote_score=vote.score,
         vote_strength=vote.strength,
         symbol=symbol,
+        per_category=_per_category_stats(group),
     )
 
 

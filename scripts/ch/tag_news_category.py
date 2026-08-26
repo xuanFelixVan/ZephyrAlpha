@@ -2,7 +2,7 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md | §4
 # [MODULE] scripts.ch.tag_news_category
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] zephyr.data.ch_config; zephyr.shared.security.secrets; clickhouse-driver(lazy)
+# [DEPENDENCIES] zephyr.data.ch_config; zephyr.shared.security.secrets; clickhouse-driver(lazy); zephyr.data.news_taxonomy
 # [CONSUMERS] (治理 CLI，无模块消费者；产物=news_data.category 四分化)
 # [STARTUP] manual
 # [MATURITY] design
@@ -50,11 +50,24 @@ log = logging.getLogger(__name__)
 _TBL = "c3_fundamental.news_data"
 _REGION_LANG = "region = 'CN' AND language = 'zh'"
 
-# 四分规则（顺序敏感：特标先行，news 兜底只扫 general）
+from zephyr.data.news_taxonomy import (  # noqa: E402
+    SOURCES_ANNOUNCEMENT,
+    SOURCES_MACRO_DATA,
+    SOURCES_RESEARCH_REPORT,
+)
+
+
+def _src_in(sources: frozenset[str]) -> str:
+    """源集合 → SQL IN 子句（单元素转等号）。"""
+    quoted = ", ".join(f"'{s}'" for s in sorted(sources))
+    return f"source IN ({quoted})"
+
+
+# 四分规则（顺序敏感：特标先行，news 兜底只扫 general；源名单真源=zephyr.data.news_taxonomy）
 RULES: list[tuple[str, str]] = [
-    ("research_report", f"source = 'akshare_research_report' AND category != 'research_report' AND {_REGION_LANG}"),
-    ("announcement", f"source IN ('巨潮网', 'cninfo') AND category != 'announcement' AND {_REGION_LANG}"),
-    ("macro_data", f"source = 'akshare_economic_baidu' AND category != 'macro_data' AND {_REGION_LANG}"),
+    ("research_report", f"{_src_in(SOURCES_RESEARCH_REPORT)} AND category != 'research_report' AND {_REGION_LANG}"),
+    ("announcement", f"{_src_in(SOURCES_ANNOUNCEMENT)} AND category != 'announcement' AND {_REGION_LANG}"),
+    ("macro_data", f"{_src_in(SOURCES_MACRO_DATA)} AND category != 'macro_data' AND {_REGION_LANG}"),
     ("news", f"category = 'general' AND {_REGION_LANG}"),
 ]
 

@@ -2,7 +2,7 @@
 # [BLUEPRINT] MOD-NLP-PIPELINE | docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md | §Phase 7
 # [MODULE] scripts.ml.run_sentiment_batch
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] zephyr.nlp.nlp_inference; zephyr.nlp.sentiment_aggregator; zephyr.data.news_collector（db 源，lazy）; zephyr.integration.local_model.ollama_chat（运行态，lazy）
+# [DEPENDENCIES] zephyr.nlp.nlp_inference; zephyr.nlp.sentiment_aggregator; zephyr.data.news_collector（db 源，lazy）; zephyr.integration.local_model.ollama_chat（运行态，lazy）; zephyr.integration.local_model.cache_layer（运行态，lazy）; zephyr.data.news_taxonomy
 # [CONSUMERS] (CLI 批量脚本，无模块消费者；产物供回测/regime S2 消费)
 # [STARTUP] manual
 # [MATURITY] design
@@ -49,6 +49,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
+from zephyr.data.news_taxonomy import category_of  # noqa: E402
 from zephyr.nlp.nlp_inference import (  # noqa: E402
     PROMPT_VERSION,
     InferConfig,
@@ -152,6 +153,7 @@ def run_batch(
                         "news_id": str(news.get("news_id", "")),
                         "source": news.get("source", ""),
                         "publish_date": publish_date_of(news),
+                        "category": str(news.get("category", "") or category_of(news.get("source", ""))),
                         "prompt": PROMPT_VERSION,
                         "sentiment": r.sentiment,
                         "score": r.score,
@@ -187,6 +189,8 @@ def aggregate_from_predictions(pred_path: Path) -> list[DailySentiment]:
                     source=str(obj.get("source", "") or "unknown"),
                     polarity=float(obj.get("polarity", 0.0)),
                     publish_date=str(obj.get("publish_date", "")),
+                    # 老行无 category 字段→按源映射兜底（同源四分真源，全语料可追溯）
+                    category=str(obj.get("category", "") or category_of(str(obj.get("source", "")))),
                 )
             )
     return aggregate_daily(items)
