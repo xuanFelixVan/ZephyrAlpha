@@ -20736,3 +20736,23 @@ entries:
   impact:
     - 'src/zephyr/frontend×10；tests/frontend 10 文件'
   fix_phase: '已落地（2026-08-26，DIGEST P2 W11）'
+- issue_id: '#ARCH-270'
+  title: DIGEST P2 W12 波：GOV 全家桶 7 候选晋升+2 REVIEW 归并——DepMap/策略管理/审计追踪/文档同步/Agent稳定度/施工门禁/硬边界
+  severity: P2
+  category: 功能施工
+  adjudication: >-
+    MOD-GOV-051~057。7 模块落地（GOV-051/055 与并发会话同路径合流，含缺陷修复），174 测全绿。
+    REVIEW 归并 2 条：PC-003→PC-002（D-GOV-06 两稿）/GOVDRIFT-002→GOVDRIFT-003（Agent 漂移两稿）。
+  impact:
+    - 'src/zephyr/governance×2(+docs×1) + gov_audit×1 + gov_drift×1 + gov_enforcement×1 + gov_rule×1；tests 7 文件'
+  fix_phase: '已落地（2026-08-26，DIGEST P2 W12）'
+- issue_id: '#ARCH-271'
+  title: DIGEST P2 W13 波：INTEGRATION/GATEWAY/OPS/ORCHESTRATOR 10 候选晋升——API文档/交互矩阵/AI路由/API网关/运维聚合/事件响应/资产盘点/全局状态/任务编排/Agent协调
+  severity: P2
+  category: 功能施工
+  adjudication: >-
+    MOD-INT-OPENAPI/MATRIX/AIROUTE/APIGW、MOD-OPS-001~003、MOD-ORCH-002~004。10 模块纯内存/DI 落地，
+    260 新测全绿。ORCH-003 因 work_dag 不在场按 agent_orchestrator 模式内建轻量 DAG。
+  impact:
+    - 'src/zephyr/integration×4 + infrastructure/system_telemetry×3 + orchestrator×3；tests 10 文件'
+  fix_phase: '已落地（2026-08-27，DIGEST P2 W13）'
