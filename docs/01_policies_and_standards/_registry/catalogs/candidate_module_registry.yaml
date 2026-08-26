@@ -19535,13 +19535,13 @@ entries:
   original_id: NEWS2025-BF1
   source_section: ''
 - id: CAND-DAT-024
-  name: news_data category 打标治理（研报/媒体逻辑分离）
-  aliases: ['category 打标', '研报新闻分离']
+  name: news_data category 打标治理（公告/研报/宏观数据/新闻四分）
+  aliases: ['category 打标', '研报新闻分离', '四类分类法']
   domain: D_DATA
   domain_status: active
   sub_layer: src/zephyr/data/
-  problem: 研报与新闻语义/偏见结构不同（研报=卖方观点多头偏见、时效慢；新闻=事件报道、时效敏感）却混存混算——category 列虚设（全库 828 万条几乎全 general），研报多头腔污染日级市场情绪聚合
-  proposal: 'Owner 裁定（2026-08-26）: 逻辑分离不搬表。最小施工形态: ①存量刷标 ALTER TABLE news_data UPDATE category=research_report WHERE source=akshare_research_report（53.2 万条）；②新采集一律带标；③sentiment_aggregator 日级聚合按 category 分开统计（媒体情绪/研报情绪两条曲线）。富字段（评级/目标价/PDF）需求出现时再评独立表（alt_data research_report_collector 模型预留）。依赖前置: sentiment_aggregator。'
+  problem: 库内实为四类异质内容混存混算——公告（巨潮 98 万条法定披露）、研报（53 万条卖方观点多头偏见）、宏观数据（akshare_economic_baidu 等纯数据条目）、媒体新闻（财联社/证券时报等）；category 列虚设（99.99% general），研报多头腔+公告程序性内容污染日级市场情绪聚合。注: 政策不是源类型而是内容维度（跨源），正交处理——regime 已有 _POLICY_KEYWORDS 关键词旗标，不走 category
+  proposal: 'Owner 裁定（2026-08-26）: 逻辑分离不搬表，category 按源确定映射（无需模型）: akshare_research_report→research_report、巨潮/cninfo/交易所公告→announcement、akshare_economic_baidu 类数据源→macro_data、其余媒体源→news。最小施工形态: ①存量刷标 ALTER TABLE UPDATE category by source 映射（全库 828 万条；空 source 27 万条先归 news 并记 CAND-DAT-022 审计）；②新采集一律带标；③sentiment_aggregator 日级聚合按 category 分开统计（媒体情绪/研报情绪两条曲线）。富字段（评级/目标价/PDF）需求出现时再评独立表（alt_data research_report_collector 模型预留）。依赖前置: sentiment_aggregator。'
   design_admission:
     q1_implemented:
       result: false
