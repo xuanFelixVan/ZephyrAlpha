@@ -51,7 +51,7 @@ import os
 import shutil
 import tempfile
 from collections.abc import Callable, Generator
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -542,8 +542,45 @@ def safe_rmtree(
     resolved = assert_safe_rmtree_target(path, allowed_prefix=allowed_prefix)
     if not resolved.exists():
         return False
-    if resolved.is_dir():
-        shutil.rmtree(resolved, ignore_errors=ignore_errors, onerror=onerror)
-    else:
-        resolved.unlink()
+    # 硬断言通过=授权完成：直通 in-process 删除补丁（若装），防授权通道被自家
+    # 补丁拦截（批5b 翻硬拦配套——.worktrees/.aidrafts 等保护区内合法清理走
+    # 本通道；裸 shutil.rmtree 无断言仍由补丁判定）。scripts.* 不可导入环境
+    # （WMI spawn 子进程）降级为不直通，补丁维持正常判定。
+    try:
+        from scripts.ops_guard import bulk_delete_approved as _approved
+    except Exception:  # noqa: BLE001 — 见上注释，降级不阻断删除主链路
+        _approved = nullcontext
+    with _approved():
+        if resolved.is_dir():
+            shutil.rmtree(resolved, ignore_errors=ignore_errors, onerror=onerror)
+        else:
+            resolved.unlink()
+    _audit_safe_rmtree(resolved, allowed_prefix)
     return True
+
+
+def _audit_safe_rmtree(resolved: Path, allowed_prefix: str | Path) -> None:
+    """授权删除留痕（批5c，2026-08-26）。
+
+    safe_rmtree 直通期间 in-process 补丁审计短路（_BULK_APPROVED 直接 return），
+    本层补落"谁经授权通道删了什么"——删除必有痕原则不缺口；落盘经统一写入
+    助手（50MB 轮转）。审计文件 .runtime/gate_audit/safe_rmtree.jsonl。
+    失败静默（留痕缺口不反转已完成的删除）。
+    """
+    try:
+        from scripts.ops_guard import _get_project_root
+        from zephyr.shared.io.audit_jsonl_writer import append_audit_jsonl
+
+        append_audit_jsonl(
+            _get_project_root() / ".runtime" / "gate_audit",
+            "safe_rmtree.jsonl",
+            {
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "event": "safe_rmtree",
+                "target": str(resolved),
+                "allowed_prefix": str(allowed_prefix),
+                "pid": os.getpid(),
+            },
+        )
+    except Exception:  # noqa: BLE001 — 留痕失败不阻断删除主链路
+        pass

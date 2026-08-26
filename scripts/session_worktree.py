@@ -568,10 +568,11 @@ def cmd_abort_inner(session_id: str, *, skip_checks: bool = False, exempt_cert1:
     # git worktree remove --force
     result = _run_git(["worktree", "remove", "--force", str(wt_path)], check=False)
     if result.returncode != 0:
-        # 如果 git worktree remove 失败，尝试手动删除目录
-        import shutil
+        # git worktree remove 失败 → safe_rmtree 硬断言+补丁直通兜底
+        # （批5b：硬断言授权通道，防 in-process 补丁拦截保护区合法清理）
+        from zephyr.shared.io.file_utils import safe_rmtree
 
-        shutil.rmtree(wt_path, ignore_errors=True)
+        safe_rmtree(wt_path, allowed_prefix=WORKTREE_ROOT, ignore_errors=True)
 
     # 删除分支（如果还存在）
     if branch:
@@ -610,15 +611,16 @@ def cmd_list(args: argparse.Namespace) -> int:
 
 
 def main() -> int:
-    # CAND-GOVSEC-001 ②（2026-08-23）：worktree CLI 入口纳入 in-process 删除护栏
-    # 观测面（audit-only——先补仪表化盲区不硬拦）。失败静默降级，不阻断主链路。
+    # CAND-GOVSEC-001 ② 翻硬拦（批5b，2026-08-26）：观测期零误伤，worktree CLI 入口
+    # in-process 删除护栏转正硬拦。abort 兜底已改 safe_rmtree 硬断言授权通道（直通），
+    # 裸删除命中保护区即拦。安装失败静默降级，不阻断主链路。
     try:
         try:
-            from scripts.ops_guard import install_inprocess_enforcement_audit_only
+            from scripts.ops_guard import install_inprocess_enforcement
         except ImportError:  # python scripts/session_worktree.py 直跑：sys.path[0]=scripts/
-            from ops_guard import install_inprocess_enforcement_audit_only
-        install_inprocess_enforcement_audit_only()
-    except Exception:  # noqa: BLE001 — 观测补强永不阻断 worktree 主链路
+            from ops_guard import install_inprocess_enforcement
+        install_inprocess_enforcement()
+    except Exception:  # noqa: BLE001 — 护栏装配失败永不阻断 worktree 主链路
         pass
 
     parser = argparse.ArgumentParser(

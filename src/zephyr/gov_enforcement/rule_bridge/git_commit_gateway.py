@@ -1304,7 +1304,6 @@ class GitCommitGateway:
         if result.status is not CommitStatus.OK:
             return
         try:
-            import json as _json
             from datetime import datetime, timezone
 
             r = self.run_git(["git", "status", "--porcelain=v1", "--branch"])
@@ -1324,8 +1323,9 @@ class GitCommitGateway:
                 "truncated": len(dirty) > 200,
                 "git_rc": r.returncode,
             }
-            with (audit_dir / "worktree_status_snapshots.jsonl").open("a", encoding="utf-8") as f:
-                f.write(_json.dumps(record, ensure_ascii=False) + "\n")
+            from zephyr.shared.io.audit_jsonl_writer import append_audit_jsonl
+
+            append_audit_jsonl(audit_dir, "worktree_status_snapshots.jsonl", record)
         except Exception:  # noqa: BLE001 — 快照 best-effort，失败不阻断 commit
             logger.debug("worktree status snapshot write failed (non-blocking)", exc_info=True)
 

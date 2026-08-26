@@ -191,9 +191,10 @@ def _audit_post_claim_modifications(gateway, session_id: str, files: list[str], 
             )
 
         if records:
-            with audit_path.open("a", encoding="utf-8") as fh:
-                for r in records:
-                    fh.write(json.dumps(r, ensure_ascii=False) + "\n")
+            from zephyr.shared.io.audit_jsonl_writer import append_audit_jsonl
+
+            for r in records:
+                append_audit_jsonl(audit_path.parent, audit_path.name, r)
     except Exception:  # noqa: BLE001 — 审计写入失败不阻断 commit
         logger.debug(
             "FOREIGN-CHANGE: post-claim audit write failed (non-blocking)",

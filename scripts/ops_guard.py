@@ -50,6 +50,7 @@
 
 from __future__ import annotations
 
+import contextlib
 import contextvars
 import hashlib
 import json
@@ -101,6 +102,11 @@ ALLOWED_PREFIXES: tuple[str, ...] = (
     ".mypy_cache",
     "node_modules",
     ".aidrafts",
+    # gitignore 的运行时缓存目录（src/zephyr/autonomy_core/skills/_skill_cache/）——
+    # 虽物理位于 src/ 保护区内，本质是运行时产物（与 __pycache__ 同型），
+    # skill_cache_provider 正常缓存清理不应被拦（批5a，观测期 350 条 would_block
+    # 误报族②：测试/运行时删缓存 json 撞保护区）。
+    "_skill_cache",
 )
 
 # 会话 ID 环境变量（与 git_guard.py 对齐）
@@ -256,12 +262,30 @@ def _resolve_to_repo_rel(target: str, cwd: str | Path | None = None) -> str:
         idx = target_lower.index("/.worktrees/")
         return target[idx + 1 :]
 
-    # 相对路径：直接返回（已归一化）
-    # 去除 ./ 前缀（os.curdir 拼接规避 RELATIVE-PATH-LITERAL 字面量检测）
+    # 相对路径：先相对 cwd（默认进程 cwd）拼绝对路径、折叠 . / ..，再重走仓内
+    # 剥离逻辑；落仓外则返回归一化绝对路径（保护区/白名单前缀均不命中 → 按非
+    # 保护区放行）。批5a 修复：旧实现把相对路径直接当 repo-rel——cwd 在仓外
+    # （如 pytest tmp 目录）时删 ./tests/conftest.py 被误判命中仓内保护区，
+    # 观测期 402 条 would_block 中 360 条即此误报族；翻硬拦前必修。
     curdir_prefix = os.curdir + "/"
     if target.startswith(curdir_prefix):
         target = target[len(curdir_prefix) :]
-    return target
+    base = Path(cwd) if cwd is not None else Path.cwd()
+    abs_path = _normalize_path(os.path.normpath(str(base / target)))
+    abs_lower = abs_path.lower()
+    if abs_lower.startswith(main_norm + "/"):
+        return abs_path[len(main_norm) + 1 :]
+    if abs_lower == main_norm:
+        return "."
+    if root_norm != main_norm:
+        if abs_lower.startswith(root_norm + "/"):
+            wt_rel = abs_path[len(root_norm) + 1 :]
+            session_part = root_norm[len(main_norm) + 1 :]
+            return f"{session_part}/{wt_rel}"
+        if abs_lower == root_norm:
+            return root_norm[len(main_norm) + 1 :]
+    # 仓外绝对路径（tmp/其他盘符等）——不命中任何仓内前缀
+    return abs_path
 
 
 def _targets_hash(targets: list[str]) -> str:
@@ -281,15 +305,23 @@ def audit_delete(
     verdict: DeleteVerdict,
     cwd: str | None = None,
 ) -> None:
-    """删除操作审计落盘（非阻断，jsonl 追加）。
+    """删除操作审计落盘（非阻断，jsonl 追加 + 分级落盘 + 大小轮转）。
 
     审计文件: .runtime/gate_audit/ops_guard_delete.jsonl
+
+    批5c 分级落盘（2026-08-26，3.7GB/42h 洪峰治本）：
+    - in-process 补丁的非敏感区 allow → 只计数（allow_skipped）不落盘
+      （信噪比第一性：异常取证不依赖 tmp/白名单区的 allow 明细，
+      333 万条/42h 洪峰 99.99% 是 gateway 临时文件清理）；
+    - 敏感区 allow + 全部 block/would_block/guard_* 显式 API 动作 → 全量落盘
+      （8-23 型 src 误删事件取证面完整保留——删保护区文件每次必留痕）；
+    - 落盘经 audit_jsonl_writer（50MB 大小轮转，旧段移位保留不物理删除）。
     """
-    audit_dir = _get_project_root() / ".runtime" / "gate_audit"
-    try:
-        audit_dir.mkdir(parents=True, exist_ok=True)
-    except Exception:
+    if action == "inprocess_allow" and verdict.allowed and not verdict.is_protected_zone:
+        _AUDIT_STATS["allow_skipped"] += 1
         return
+
+    audit_dir = _get_project_root() / ".runtime" / "gate_audit"
 
     record = {
         "timestamp": time.time(),
@@ -306,13 +338,13 @@ def audit_delete(
         "targets_hash": _targets_hash(verdict.targets),
         "pid": os.getpid(),
     }
-    audit_file = audit_dir / "ops_guard_delete.jsonl"
     try:
-        with open(audit_file, "a", encoding="utf-8") as f:
-            f.write(json.dumps(record, ensure_ascii=False) + "\n")
-    except Exception:
-        _AUDIT_STATS["audit_failed"] += 1  # T2③ 覆盖率指标：落盘失败=覆盖率缺口
-        pass  # 审计不阻断
+        from zephyr.shared.io.audit_jsonl_writer import append_audit_jsonl
+
+        if not append_audit_jsonl(audit_dir, "ops_guard_delete.jsonl", record):
+            _AUDIT_STATS["audit_failed"] += 1  # T2③ 覆盖率指标：落盘失败=覆盖率缺口
+    except Exception:  # noqa: BLE001 — 审计不阻断（含写入助手不可导入降级）
+        _AUDIT_STATS["audit_failed"] += 1
 
 
 # ============================================================================
@@ -915,6 +947,21 @@ _RECONCILER_CTX: contextvars.ContextVar[tuple[str, frozenset] | None] = contextv
 _BULK_APPROVED: contextvars.ContextVar[bool] = contextvars.ContextVar("ops_guard_bulk_approved", default=False)
 
 
+@contextlib.contextmanager
+def bulk_delete_approved():
+    """已授权删除直通（补丁判定短路）——批5b 翻硬拦配套。
+
+    供 safe_rmtree 等自带硬断言的授权通道使用：硬断言通过即授权完成，执行期
+    补丁不再重复判定——防授权通道（如 .worktrees/.aidrafts 合法清理）被自家
+    补丁拦截。与 _wrapped_shutil_rmtree 的批内直通同一 ContextVar，语义一致。
+    """
+    token = _BULK_APPROVED.set(True)
+    try:
+        yield
+    finally:
+        _BULK_APPROVED.reset(token)
+
+
 def set_reconciler_context(gate_id: str, file_ops: object) -> contextvars.Token:
     """注入 reconciler 上下文（reconcile_for 执行前调用）。返回 reset 用 token。"""
     return _RECONCILER_CTX.set((gate_id, frozenset(file_ops)))
@@ -932,12 +979,21 @@ def get_reconciler_context() -> tuple[str, frozenset] | None:
 
 def _enforce_file_ops(op: str, targets: list[str], cwd: str | Path | None = None) -> None:
     """file_ops 声明强校验：reconciler 上下文内未声明 delete/move 而执行对应操作
-    → 审计落盘 + raise DeleteBlockedError（由 reconcile_for 映射 critical_warn）。"""
+    → 审计落盘 + raise DeleteBlockedError（由 reconcile_for 映射 critical_warn）。
+
+    仓外豁免（批5b 配套）：targets 经 _resolve_to_repo_rel 解析后仍为绝对路径的
+    = 仓外目标（系统 Temp 的 subprocess housekeeping 清理等）——声明制约束的是
+    仓内业务目标的删除能力，仓外 housekeeping 天然豁免，否则每次 commit 的
+    reconciler 链产生 file_ops_block 噪音洪峰（2026-08-26 gateway 实证）。
+    """
     ctx = _RECONCILER_CTX.get()
     if ctx is None:
         return
     gate_id, declared = ctx
     if op in ("delete", "move") and op not in declared:
+        in_repo_targets = [t for t in targets if not _is_absolute_normalized(t)]
+        if not in_repo_targets:
+            return  # 仓外 housekeeping 豁免（见 docstring）
         _AUDIT_STATS["block"] += 1
         verdict = DeleteVerdict(
             allowed=False,
@@ -946,15 +1002,24 @@ def _enforce_file_ops(op: str, targets: list[str], cwd: str | Path | None = None
                 "注册时显式声明制（I-GOV-2/T1①），未声明即无此能力"
             ),
             primitive=f"file_ops_{op}",
-            targets=list(targets),
+            targets=list(in_repo_targets),
         )
-        audit_delete("file_ops_block", f"{op}({';'.join(targets)[:200]})", verdict, cwd=str(cwd) if cwd else None)
+        audit_delete("file_ops_block", f"{op}({';'.join(in_repo_targets)[:200]})", verdict, cwd=str(cwd) if cwd else None)
         raise DeleteBlockedError(
             f"[OPS-GUARD] file_ops 未声明阻断——reconciler {gate_id} 未声明 '{op}' 能力。\n"
-            f"  目标: {targets[:3]}\n"
+            f"  目标: {in_repo_targets[:3]}\n"
             f"  解决方案: 在该 reconciler 的 ReconcilerSpec.file_ops 中显式声明 '{op}'"
             "（声明即承担全量审计+回收站可逆义务）"
         )
+
+
+def _is_absolute_normalized(p: str) -> bool:
+    """归一化（正斜杠）路径是否为绝对路径——POSIX /... 或 Windows d:/...。
+
+    _resolve_to_repo_rel 批5a 语义：仓内目标一律剥离为 repo-rel，返回绝对路径
+    的 ⟺ 仓外目标（_enforce_file_ops 仓外豁免判定的唯一依据）。
+    """
+    return p.startswith("/") or (len(p) > 2 and p[1] == ":" and p[2] == "/")
 
 
 # ---- in-process 补丁 ----
@@ -974,6 +1039,7 @@ _AUDIT_STATS: dict[str, int] = {
     "block": 0,
     "audit_failed": 0,
     "would_block": 0,
+    "allow_skipped": 0,  # 批5c 分级落盘：非敏感区 allow 只计数不落盘
 }
 
 
@@ -1119,7 +1185,18 @@ def _inprocess_judge(op: str, path: object, *, recursive: bool) -> None:
         "inprocess_allow",
         f"{op}('{path_str}')",
         DeleteVerdict(
-            allowed=True, reason="非保护区", primitive=f"inprocess_{op}", targets=[rel], is_recursive=recursive
+            allowed=True,
+            # 授权通过的保护区目标须如实标注——否则批5c 分级落盘把"授权删 src"
+            # 当非敏感区跳过（8-23 型事件取证面缺口，test_graded_audit_sensitive 钉）
+            reason=(
+                "授权通过（FORCE/GATEWAY）"
+                if any(_is_under_prefix(rel, pp) for pp in PROTECTED_PREFIXES)
+                else "非保护区"
+            ),
+            primitive=f"inprocess_{op}",
+            targets=[rel],
+            is_recursive=recursive,
+            is_protected_zone=any(_is_under_prefix(rel, pp) for pp in PROTECTED_PREFIXES),
         ),
     )
 

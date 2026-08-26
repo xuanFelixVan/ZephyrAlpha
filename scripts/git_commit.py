@@ -457,15 +457,17 @@ def _cleanup_message_file(args, exit_code: int | None = None) -> None:
 
 
 def main() -> int:
-    # CAND-GOVSEC-001 ②（2026-08-23）：commit 入口纳入 in-process 删除护栏观测面
-    # （audit-only——先补仪表化盲区不硬拦）。观测补强失败静默降级，不阻断 commit。
+    # CAND-GOVSEC-001 ② 翻硬拦（批5b，2026-08-26）：观测期 42h 零误伤（333万 allow /
+    # 402 would_block 全测试噪音归因完毕），commit 入口 in-process 删除护栏转正硬拦。
+    # 裸删除命中保护区即 DeleteBlockedError；授权通道（safe_rmtree/guard_*）直通。
+    # 安装失败静默降级，不阻断 commit 主链路。
     try:
         try:
-            from scripts.ops_guard import install_inprocess_enforcement_audit_only
+            from scripts.ops_guard import install_inprocess_enforcement
         except ImportError:  # python scripts/git_commit.py 直跑：sys.path[0]=scripts/
-            from ops_guard import install_inprocess_enforcement_audit_only
-        install_inprocess_enforcement_audit_only()
-    except Exception:  # noqa: BLE001 — 观测补强永不阻断 commit 主链路
+            from ops_guard import install_inprocess_enforcement
+        install_inprocess_enforcement()
+    except Exception:  # noqa: BLE001 — 护栏装配失败永不阻断 commit 主链路
         pass
 
     parser = argparse.ArgumentParser(

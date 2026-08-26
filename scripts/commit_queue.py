@@ -935,16 +935,16 @@ def _cmd_drain(args: argparse.Namespace) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
-    # CAND-GOVSEC-001 ②（2026-08-23）：队列 CLI（含 drain 排空路径）纳入
-    # in-process 删除护栏观测面（audit-only——先补仪表化盲区不硬拦）。
-    # 失败静默降级，不阻断队列主链路。
+    # CAND-GOVSEC-001 ② 翻硬拦（批5b，2026-08-26）：观测期零误伤，队列 CLI（含
+    # drain 排空路径）in-process 删除护栏转正硬拦。landing 侧 safe_rmtree 硬断言
+    # 授权通道直通，裸删除命中保护区即拦。失败静默降级，不阻断队列主链路。
     try:
         try:
-            from scripts.ops_guard import install_inprocess_enforcement_audit_only
+            from scripts.ops_guard import install_inprocess_enforcement
         except ImportError:  # python scripts/commit_queue.py 直跑：sys.path[0]=scripts/
-            from ops_guard import install_inprocess_enforcement_audit_only
-        install_inprocess_enforcement_audit_only()
-    except Exception:  # noqa: BLE001 — 观测补强永不阻断队列主链路
+            from ops_guard import install_inprocess_enforcement
+        install_inprocess_enforcement()
+    except Exception:  # noqa: BLE001 — 护栏装配失败永不阻断队列主链路
         pass
 
     parser = argparse.ArgumentParser(

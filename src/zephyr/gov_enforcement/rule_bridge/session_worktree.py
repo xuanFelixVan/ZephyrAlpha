@@ -2324,13 +2324,14 @@ def session_worktree_sweep(
 
     root = Path(project_root) if project_root else REPO_ROOT
 
-    # CAND-GOVSEC-001 ②（2026-08-23）：sweep 是库层删除执行入口——调用方进程
-    # 纳入 in-process 删除护栏观测面（audit-only，幂等，失败静默降级不阻断清理）。
+    # CAND-GOVSEC-001 ② 翻硬拦（批5b，2026-08-26）：观测期零误伤，sweep 库层删除
+    # 执行入口 in-process 删除护栏转正硬拦（幂等）。sweep 内删除走 safe_rmtree 硬
+    # 断言授权通道（直通），裸删除命中保护区即拦。失败静默降级不阻断清理。
     try:
-        from scripts.ops_guard import install_inprocess_enforcement_audit_only
+        from scripts.ops_guard import install_inprocess_enforcement
 
-        install_inprocess_enforcement_audit_only()
-    except Exception:  # noqa: BLE001 — 观测补强永不阻断 sweep 主链路
+        install_inprocess_enforcement()
+    except Exception:  # noqa: BLE001 — 护栏装配失败永不阻断 sweep 主链路
         pass
 
     manager = _get_manager(root)
