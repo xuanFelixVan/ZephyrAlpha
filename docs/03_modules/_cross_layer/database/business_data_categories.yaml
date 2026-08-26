@@ -1326,6 +1326,56 @@
   data_source: [exchange]
   blueprint: null
 
+# --- 2026-08-26 Owner 全批 DDL 三件（GAP-F-13 / GAP-F-29 / T2_closure_review §9.1 #2）---
+
+- category_id: market_limit_up_pool
+  name: "涨停池明细（stock_zt_pool_em 全量字段：封板资金/首封/封住时长/炸板次数/连板/行业）"
+  engine: clickhouse
+  database: c1_market
+  table: limit_up_pool
+  schema_file: schemas/categories/market_limit_up_pool.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: lazy
+  frequency: 日频
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: market_account_nav_daily
+  name: "账户净值日频记录（GAP-F-29 实盘净值曲线，miniQMT 模拟净值源）"
+  engine: clickhouse
+  database: c1_market
+  table: account_nav_daily
+  schema_file: schemas/categories/market_account_nav_daily.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: lazy
+  frequency: 日频
+  data_source: [miniqmt]
+  blueprint: null
+
+- category_id: market_reconciliation_differences
+  name: "对账差异表（56号文三层 diff：trade/position/cash，CH 侧承载；SQLite 侧见 governance.db 同名表）"
+  engine: clickhouse
+  database: c1_market
+  table: reconciliation_differences
+  schema_file: schemas/categories/market_reconciliation_differences.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: lazy
+  frequency: 日频
+  data_source: [internal]
+  blueprint: null
+
 - category_id: market_st_stock_list
   name: "ST/*ST股票列表（delist_date=1970-01-01表示未摘帽）"
   engine: clickhouse

@@ -199,13 +199,16 @@ class TestCollectLimitUpPool:
         assert len(params) == 1
         assert len(params[0]) == len(INSERT_COLUMNS)
 
-    def test_collect_unregistered_table_fail_closed(self, monkeypatch):
-        """table=None 且品类未在 business_data_categories.yaml 注册 → RuntimeError 明确待办。"""
+    def test_collect_registry_resolves_table(self, monkeypatch):
+        """table=None 时品类已在 business_data_categories.yaml 注册 → 经 registry 解析全限定表名。"""
         import pandas as pd
 
         _mock_ak(monkeypatch, stock_zt_pool_em=pd.DataFrame([_row()]))
-        with pytest.raises(RuntimeError, match="market_limit_up_pool"):
-            collect_limit_up_pool(TD, ch_client=_FakeCH(), table=None)
+        client = _FakeCH()
+        n = collect_limit_up_pool(TD, ch_client=client, table=None)
+        assert n == 1
+        sql, _ = client.inserts[0]
+        assert "c1_market.limit_up_pool" in sql
 
     def test_collect_no_rows_no_insert(self, monkeypatch):
         import pandas as pd

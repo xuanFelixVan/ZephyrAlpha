@@ -349,9 +349,16 @@ SETTINGS index_granularity = 8192
 # 92号清单 §7.2（2026-08-22）：market_us_futures_intraday=美股期指 ES/NQ + A50 盘中实时快照（44号 §9.8 通道3）
 # 92号清单 §8.4（2026-08-22）：market_news_sentiment_window=夜间新闻情绪窗口落库（44号 §4 M3-②，tracker #138 闭环）
 # 92号清单 §8.2（2026-08-22）：market_breadth_snapshot=全市场分钟级宽度快照（44号 M1-④ 数据地基，M1-①/③ 消费）
+# 2026-08-26 Owner 全批 DDL 三件：limit_up_pool（GAP-F-13 涨停池明细）/ account_nav_daily
+# （GAP-F-29 实盘净值）/ reconciliation_differences（T2_closure_review §9.1 #2 / tracker #234 CH 侧）
+from schemas.categories.market_account_nav_daily import MARKET_ACCOUNT_NAV_DAILY_DDL
 from schemas.categories.market_breadth_snapshot import MARKET_BREADTH_SNAPSHOT_DDL
 from schemas.categories.market_ipo_calendar import IPO_CALENDAR_DDL
+from schemas.categories.market_limit_up_pool import MARKET_LIMIT_UP_POOL_DDL
 from schemas.categories.market_news_sentiment_window import NEWS_SENTIMENT_WINDOW_DDL
+from schemas.categories.market_reconciliation_differences import (
+    MARKET_RECONCILIATION_DIFFERENCES_DDL,
+)
 from schemas.categories.market_stk_limit import STK_LIMIT_DDL
 from schemas.categories.market_suspend import SUSPEND_DDL
 from schemas.categories.market_us_futures_intraday import US_FUTURES_INTRADAY_DDL
@@ -381,6 +388,10 @@ _ALL_DDL: list[tuple[str, str]] = [
     ("c1_market.news_sentiment_window", NEWS_SENTIMENT_WINDOW_DDL),
     # 92号清单 §8.2（2026-08-22）：全市场分钟级宽度快照（44号 M1-④ 数据地基）
     ("c1_market.market_breadth_snapshot", MARKET_BREADTH_SNAPSHOT_DDL),
+    # 2026-08-26 Owner 全批 DDL 三件
+    ("c1_market.limit_up_pool", MARKET_LIMIT_UP_POOL_DDL),
+    ("c1_market.account_nav_daily", MARKET_ACCOUNT_NAV_DAILY_DDL),
+    ("c1_market.reconciliation_differences", MARKET_RECONCILIATION_DIFFERENCES_DDL),
 ]
 
 # 增量迁移（ALTER TABLE ADD COLUMN IF NOT EXISTS）
@@ -419,6 +430,10 @@ _EXPECTED_ENGINES: dict[str, str] = {
     "news_sentiment_window": "ReplacingMergeTree",
     # 92号清单 §8.2（2026-08-22）：分钟级快照，按 (trade_date, ts) 同分钟重跑幂等替换
     "market_breadth_snapshot": "ReplacingMergeTree",
+    # 2026-08-26 Owner 全批 DDL 三件：日频全量重写/重记场景同键替换幂等
+    "limit_up_pool": "ReplacingMergeTree",
+    "account_nav_daily": "ReplacingMergeTree",
+    "reconciliation_differences": "ReplacingMergeTree",
 }
 
 _DATABASE = "c1_market"

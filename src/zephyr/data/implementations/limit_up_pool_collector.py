@@ -355,7 +355,12 @@ def collect_limit_up_pool(
     if not entries:
         return 0
     cols = ", ".join(INSERT_COLUMNS)
-    rows = [tuple(getattr(e, c) for c in INSERT_COLUMNS) for e in entries]
+    # trade_date 列 str→date 编组（clickhouse-driver Date 列要求 date 对象；
+    # 2026-08-26 DDL 建表写入路径实测实证 str 抛 AttributeError）
+    rows = [
+        tuple(date.fromisoformat(getattr(e, c)) if c == "trade_date" else getattr(e, c) for c in INSERT_COLUMNS)
+        for e in entries
+    ]
     ch_client.execute(f"INSERT INTO {full_table} ({cols}) VALUES", rows)
     return len(rows)
 
