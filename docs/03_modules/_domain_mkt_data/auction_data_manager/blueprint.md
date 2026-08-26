@@ -3,7 +3,7 @@ module_id: MOD-MKT-007
 title: "A股集合竞价数据管理器蓝图 — 竞价时段快照采集校验落账与回放供数"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L01_foundation
 layer_name: market_data
@@ -16,7 +16,7 @@ priority: P1
 blueprint_level: module
 responsibility_domain: 
 design_maturity: production
-build_status: stable
+build_status: production
 ---
 
 # MOD-MKT-007 Auction Data Manager — A股集合竞价数据管理器 蓝图
@@ -142,7 +142,7 @@ tick 规范化/采集编排（去重/拒收/异常不炸/空批与全拒不调 s
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-MKT-007 | MOD-MKT-007 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -160,13 +160,7 @@ tick 规范化/采集编排（去重/拒收/异常不炸/空批与全拒不调 s
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/market_data/auction_data_manager.py` | ✅ 已实现 | |
-
-### 9.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/market_data/test_auction_data_manager.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 9.5 路径索引使用指南
 
@@ -181,3 +175,5 @@ tick 规范化/采集编排（去重/拒收/异常不炸/空批与全拒不调 s
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

@@ -5,7 +5,7 @@ submodule_path: src/zephyr/shared
 title: "State Machine Engine 蓝图 — 通用状态机引擎·全项目状态机实例治理"
 doc_type: blueprint
 status: Draft
-version: "0.1.4"
+version: "0.1.5"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: internal
@@ -49,7 +49,7 @@ ssot_claims:
   - claim: "通用StateMachine[S]泛型基类的唯一真源"
     scope: global
 responsibility_domain: 
-build_status: stable
+build_status: production
 design_maturity: production
 ---
 
@@ -109,7 +109,7 @@ MOD-INF-038 提供通用状态机引擎，解决全项目 11+ 个独立状态机
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-038 | MOD-INF-038 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 1 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -449,7 +449,7 @@ STEP 9: 更新 REG-SM-001 entry_count
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/shared/lifecycle/state_machine.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 1.5 路径索引使用指南
 

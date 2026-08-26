@@ -13,7 +13,7 @@ depends_on:
 construction_progress: prototype
 language: zh
 description: WAL 段文件编解码层——当前 TSV 格式（已施工），Protobuf 为 P3 远期备选
-build_status: testing
+build_status: production
 design_maturity: design
 responsibility_domain: 
 ---
@@ -48,7 +48,7 @@ responsibility_domain:
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-L00-006 | MOD-L00-006 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | testing | testing | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 11 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

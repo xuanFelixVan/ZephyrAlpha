@@ -3,7 +3,7 @@ module_id: MOD-INF-066
 title: "NSSM+5 进程架构与自研 Supervisor 蓝图 — 启动升序/关闭降序编排+分级心跳+崩溃重启策略+服务定义就绪件"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L00_infrastructure
 layer_name: infrastructure_runtime
@@ -15,7 +15,7 @@ last_updated: "2026-08-25"
 priority: P0
 blueprint_level: module
 design_maturity: production
-build_status: stable
+build_status: production
 responsibility_domain: 
 ---
 
@@ -92,7 +92,7 @@ MOD-INF-039 startup_sequencer）齐备，但 **NSSM 服务化注册与 P1~P5 优
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-066 | MOD-INF-066 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -106,13 +106,7 @@ MOD-INF-039 startup_sequencer）齐备，但 **NSSM 服务化注册与 P1~P5 优
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 6.1 源码文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `src/zephyr/infrastructure/process_supervisor.py` | ✅ 已实现 | |
-
-### 6.2 测试文件
+### 6.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
@@ -131,3 +125,5 @@ MOD-INF-039 startup_sequencer）齐备，但 **NSSM 服务化注册与 P1~P5 优
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

@@ -3,8 +3,8 @@
 #
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
-generated_at: '2026-08-26'
-total_scripts: 717
+generated_at: '2026-08-27'
+total_scripts: 721
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -630,6 +630,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: ch/backfill_research_report_2025.py
+  path: ch/backfill_research_report_2025.py
+  description: 背景：2025 年新闻语料塌陷（全年仅 3.7 万条，采集缺口）。实测东财研报接口
+  domain: ch
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: ch/lint_symbol_convention.py
   path: ch/lint_symbol_convention.py
   description: 静态 lint 校验（无 DB 连接，快速 pre-commit 适用）：
@@ -641,6 +649,14 @@ scripts:
 - name: ch/optimize_merge.py
   path: ch/optimize_merge.py
   description: 背景（2026-08-16 实证）：全部业务表均为 ReplacingMergeTree，摄入幂等靠引擎键去重，
+  domain: ch
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ch/tag_news_category.py
+  path: ch/tag_news_category.py
+  description: 分类法（按源确定，无需模型）：
   domain: ch
   execution_plane: warm-path
   status: registered
@@ -809,6 +825,14 @@ scripts:
 - name: governance/__init__.py
   path: governance/__init__.py
   description: No description
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_test_lock_target.py
+  path: governance/_test_lock_target.py
+  description: print('hello')
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -4977,6 +5001,14 @@ scripts:
 - name: ml/eval_sentiment.py
   path: ml/eval_sentiment.py
   description: 对 ``data/eval/news_sentiment_200.jsonl`` 评估集跑零样本推理（Ollama qwen3:8b），
+  domain: ml
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ml/run_research_rating_batch.py
+  path: ml/run_research_rating_batch.py
+  description: news_data(category=research_report) → research_rating.analyze_report 逐行提取
   domain: ml
   execution_plane: warm-path
   status: registered

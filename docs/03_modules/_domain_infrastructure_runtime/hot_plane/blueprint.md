@@ -3,7 +3,7 @@ module_id: MOD-INF-065
 title: "Hot 平面（<10ms）蓝图 — Tick→风控→下单 10ms 端到端预算（2/3/5ms 分解）+资源独占声明+超限熔断告警"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L00_infrastructure
 layer_name: infrastructure_runtime
@@ -15,7 +15,7 @@ last_updated: "2026-08-25"
 priority: P0
 blueprint_level: module
 design_maturity: production
-build_status: stable
+build_status: production
 responsibility_domain: 
 ---
 
@@ -89,7 +89,7 @@ Hot 平面是风控执行生命线。平面标记契约（runtime_plane_tag，MO
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-065 | MOD-INF-065 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -103,13 +103,7 @@ Hot 平面是风控执行生命线。平面标记契约（runtime_plane_tag，MO
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 6.1 源码文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `src/zephyr/infrastructure/hot_plane_budget.py` | ✅ 已实现 | |
-
-### 6.2 测试文件
+### 6.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
@@ -128,3 +122,5 @@ Hot 平面是风控执行生命线。平面标记契约（runtime_plane_tag，MO
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

@@ -3,7 +3,7 @@ module_id: MOD-MKT-006
 title: "原始数据缓存蓝图 — 行情原始数据 LRU+TTL 缓存"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 ttl: permanent
 layer: L01_foundation
 layer_name: foundation
@@ -16,7 +16,7 @@ priority: P1
 blueprint_level: module
 responsibility_domain: 
 design_maturity: production
-build_status: stable
+build_status: production
 ---
 
 # MOD-MKT-006 Raw Data Cache — 原始数据缓存 蓝图
@@ -189,7 +189,7 @@ class RawDataCache:
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-MKT-006 | MOD-MKT-006 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 4 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -207,7 +207,6 @@ class RawDataCache:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/market_data/raw_data_cache/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/market_data/raw_data_cache/cache.py` | ✅ 已实现 | |
 
 ### 10.2 测试文件

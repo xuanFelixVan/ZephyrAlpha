@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/rollback
 title: "Rollback System 蓝图 — Git-native回滚+自动触发+运维治理持续性"
 doc_type: blueprint
 status: Active
-version: 9.0.6
+version: 9.0.7
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: execution
@@ -1674,58 +1674,10 @@ STEP 3: 拆分后验证
 | `src/zephyr/governance/escalation/triage.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/rollback/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/rollback/_manifest.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/agent_cooldown.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/auditor.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/auto_rollback_trigger.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/rollback/budget_tracker.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/checkpoint_gc.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/commit_quality_gate.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/rollback/complexity_budget.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/contract.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/rollback/contracts.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/credential_rotation_trigger.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/cross_platform_shell.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/drift_fix.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/env_watcher.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/external_merkle_proof.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/forensic.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/forward_fix_runner.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/git_infra_snapshot.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/hallucination_guard.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/intent_archiver.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/kill_switch.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/knowngoodstate_ledger.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/right_to_be_forgotten.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/rollback_abuse_detector.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/rollback_audit_nexus.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/rollback/rollback_boot_integration.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/rollback_bootstrap.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/rollback_budget.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/rollback_context_restorer.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/rollback_dashboard.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/rollback_drill.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/rollback_executor.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/rollback_integration.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/rollback_lock.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/rollback_loop_detector.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/rollback_scheduler.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/rollback_simulator.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/rollback_state_machine.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/rollback_target_staleness.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/rollback_verifier.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/rollback_wal.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/runbook_generator.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/s3_snapshot_lifecycle.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/secret_rotation_aware.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/semantic_rollback_tag.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/semantic_similar_detector.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/sqlite_dumper.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/submodule_sync.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/temporal_context_adapter.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/topology_change_log.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/venv_sync.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/vulnerability_rescanner.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/warm_standby.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_drift_detector.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件

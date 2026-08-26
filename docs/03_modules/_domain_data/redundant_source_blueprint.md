@@ -13,7 +13,7 @@ depends_on:
 construction_progress: prototype
 language: zh
 description: 主备数据源热切换——主 QMT 推送中断时自动切换备源（通达信本地接口），CH 不可达时降级写本地 SQLite，保证数据不中断
-build_status: testing
+build_status: production
 design_maturity: design
 responsibility_domain: 
 ---
@@ -48,7 +48,7 @@ responsibility_domain:
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-L00-005 | MOD-L00-005 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | testing | testing | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 15 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

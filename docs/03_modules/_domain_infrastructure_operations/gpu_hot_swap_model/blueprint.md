@@ -3,7 +3,7 @@ module_id: MOD-INF-069
 title: "GPU 上岗热交换模型蓝图 — 两档显存画像/热交换契约/四件套收口引用"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 ttl: permanent
 layer: L00_infrastructure
 layer_name: infrastructure_operations
@@ -15,7 +15,7 @@ last_updated: "2026-08-25"
 priority: P0
 blueprint_level: module
 design_maturity: production
-build_status: stable
+build_status: production
 responsibility_domain: 
 ---
 
@@ -101,7 +101,7 @@ A9 运维架构 §0.3 横切层四件套的 GPU 件契约收口。派单边界�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-069 | MOD-INF-069 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -115,13 +115,7 @@ A9 运维架构 §0.3 横切层四件套的 GPU 件契约收口。派单边界�
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 7.1 源码文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `src/zephyr/infrastructure/gpu_hot_swap_model.py` | ✅ 已实现 | |
-
-### 7.2 测试文件
+### 7.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|

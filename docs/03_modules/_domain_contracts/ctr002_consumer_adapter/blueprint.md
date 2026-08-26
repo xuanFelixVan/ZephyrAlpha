@@ -3,7 +3,7 @@ module_id: MOD-CON-001
 title: "CTR-002消费契约适配器蓝图 — schema版本协商+字段容忍+变更订阅"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L00_shared
 layer_name: contracts
@@ -16,7 +16,7 @@ priority: P1
 blueprint_level: module
 responsibility_domain: 
 design_maturity: production
-build_status: stable
+build_status: production
 ---
 
 # MOD-CON-001 CTR-002 Consumer Adapter — 消费契约适配器 蓝图
@@ -127,7 +127,7 @@ semver 解析/三态协商/字段容忍/批量适配/订阅发布/用法 Fail-Cl
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-CON-001 | MOD-CON-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -145,13 +145,7 @@ semver 解析/三态协商/字段容忍/批量适配/订阅发布/用法 Fail-Cl
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/shared/contracts/ctr002_consumer_adapter.py` | ✅ 已实现 | |
-
-### 9.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/contracts/test_ctr002_consumer_adapter.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 9.5 路径索引使用指南
 
@@ -166,3 +160,5 @@ semver 解析/三态协商/字段容忍/批量适配/订阅发布/用法 Fail-Cl
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

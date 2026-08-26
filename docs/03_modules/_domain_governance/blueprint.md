@@ -3,7 +3,7 @@ module_id: MOD-GOVERNANCE
 title: "Governance Domain 蓝图 — Agent治理八件套跨模块集成契约"
 doc_type: blueprint
 status: Active
-version: "0.13.10"
+version: "0.13.11"
 layer: L1_foundation
 layer_name: domain
 blueprint_level: domain
@@ -2225,15 +2225,8 @@ STEP 3: 拆分后验证
 | `src/zephyr/governance/resilience_governance/fault_tolerance.py` | ✅ 已实现 | |
 | `src/zephyr/governance/resilience_governance/offline_autonomy.py` | ⚠️ 骨架 | |
 | `src/zephyr/governance/resilience_governance/offline_resilience.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/runtime/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/infrastructure/runtime/startup_shutdown.py` | ✅ 已实现 | |
 | `src/zephyr/integration/behavioral_admission/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/integration/behavioral_admission/admission_response.py` | ✅ 已实现 | |
-| `src/zephyr/shared/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/shared/evaluation/evals.py` | ✅ 已实现 | |
-| `src/zephyr/shared/resilience/durable_execution.py` | ✅ 已实现 | |
-| `src/zephyr/shared/versioning/version_negotiation.py` | ✅ 已实现 | |
 
 ### 12.2 测试文件
 

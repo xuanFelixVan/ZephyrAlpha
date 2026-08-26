@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance/semantic_auditor
 title: "Semantic Auditor 蓝图 — 语义审计器·规则文档LLM桥接"
 doc_type: blueprint
 status: Active
-version: "6.1.4"
+version: "6.1.5"
 layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
@@ -90,7 +90,7 @@ build_status: stable
 
 # Semantic Auditor 蓝图 — 语义审计器·规则文档LLM桥接
 
-> module_id: MOD-INF-028 | version: 6.1.4 | status: active | layer: cross_layer
+> module_id: MOD-INF-028 | version: 6.1.5 | status: active | layer: cross_layer
 > actual_disk_path: `D:\ZephyrAlpha\src\zephyr\semantic-auditor\` | generation: 5 | construction_progress: partially_implemented
 
 ## 概述
@@ -1082,7 +1082,6 @@ STEP 3: 拆分后验证
 | `src/zephyr/governance/semantic_audit/spec_auditor.py` | ✅ 已实现 | |
 | `src/zephyr/governance/semantic_audit/trigger_engine.py` | ✅ 已实现 | |
 | `src/zephyr/integration/llm_bridge.py` | ✅ 已实现 | |
-| `src/zephyr/integration/vector_memory/bm25_index.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 

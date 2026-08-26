@@ -3,7 +3,7 @@ module_id: MOD-INF-063
 title: "Redis 共享状态层 SSOT 蓝图 — 13 命名空间三层结构/TTL 矩阵/混合持久化参数/恢复 runbook"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L00_infrastructure
 layer_name: infrastructure_runtime
@@ -15,7 +15,7 @@ last_updated: "2026-08-25"
 priority: P0
 blueprint_level: module
 design_maturity: production
-build_status: stable
+build_status: production
 responsibility_domain: 
 ---
 
@@ -100,7 +100,7 @@ A9 运维架构 §1.2 的 Redis 7.x 单实例共享状态层是持仓/订单状�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-063 | MOD-INF-063 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -114,13 +114,7 @@ A9 运维架构 §1.2 的 Redis 7.x 单实例共享状态层是持仓/订单状�
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 6.1 源码文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `src/zephyr/infrastructure/redis_state_layer_ssot.py` | ✅ 已实现 | |
-
-### 6.2 测试文件
+### 6.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
@@ -139,3 +133,5 @@ A9 运维架构 §1.2 的 Redis 7.x 单实例共享状态层是持仓/订单状�
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

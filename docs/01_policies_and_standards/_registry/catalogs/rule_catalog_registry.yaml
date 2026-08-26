@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-08-26T14:42:56Z'
+generated_at: '2026-08-26T16:49:37Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 219
+total_files: 220
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -1738,6 +1738,21 @@ files:
   version: 1.0.0
   rule_form: ''
   scope: precommit_incremental_discipline
+  stability: stable
+  layer: L1_foundation
+  superseded_by: ''
+  severity: high
+  tier: ''
+  aliases: []
+  section_count: 1
+- path: docs/01_policies_and_standards/rules/trae_085_stale_base_overwrite.yaml
+  module_id: TRAE-085
+  title: 陈旧基线整文件覆写禁令（Stale-Base Overwrite Prohibition）
+  doc_type: ''
+  status: ''
+  version: 1.0.0
+  rule_form: ''
+  scope: stale_base_overwrite
   stability: stable
   layer: L1_foundation
   superseded_by: ''

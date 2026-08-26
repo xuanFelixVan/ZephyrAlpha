@@ -4,7 +4,7 @@ submodule_path: src/zephyr/integration/vector_memory
 title: "Vector Memory Service 蓝图+施工图 — ChromaDB 8 Collection 统一向量持久化"
 doc_type: blueprint
 status: Active
-version: "0.12.6"
+version: "0.12.7"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -1482,32 +1482,17 @@ class FeedbackEntry(BaseModel):
 | `src/zephyr/gov_drift/_infrastructure.py` | ✅ 已实现 | |
 | `src/zephyr/gov_drift/_scanners.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/integration/vector_memory/bridge_layer.py` | ✅ 已实现 | |
-| `src/zephyr/integration/vector_memory/cache_layer.py` | ⚠️ 骨架 | |
-| `src/zephyr/integration/vector_memory/chunk_strategy_router.py` | ✅ 已实现 | |
-| `src/zephyr/integration/vector_memory/collection_manager.py` | ✅ 已实现 | |
-| `src/zephyr/integration/vector_memory/collection_schemas.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/context_ingest.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/cross_collection_retriever.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/delegated_vector_memory.py` | ✅ 已实现 | |
-| `src/zephyr/integration/vector_memory/design_principles.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/faiss_collection_manager.py` | ✅ 已实现 | |
-| `src/zephyr/integration/vector_memory/hybrid_retriever.py` | ✅ 已实现 | |
-| `src/zephyr/integration/vector_memory/in_memory_fake_vms.py` | ✅ 已实现 | |
-| `src/zephyr/integration/vector_memory/in_memory_memory_backend.py` | ✅ 已实现 | |
-| `src/zephyr/integration/vector_memory/in_process_vector_memory.py` | ✅ 已实现 | |
-| `src/zephyr/integration/vector_memory/index_health_monitor.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/interface.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/migrate_chroma_to_faiss.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/ollama_embedding.py` | ⚠️ 骨架 | |
-| `src/zephyr/integration/vector_memory/provenance_enforcer.py` | ✅ 已实现 | |
-| `src/zephyr/integration/vector_memory/retrieval_feedback.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/sqlite_metadata_store.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/vector_bridge.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/vector_writer.py` | ✅ 已实现 | |
-| `src/zephyr/integration/vector_memory/vms_errors.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/vms_memory_backend.py` | ✅ 已实现 | |
-| `src/zephyr/integration/vector_memory/vms_schemas.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 

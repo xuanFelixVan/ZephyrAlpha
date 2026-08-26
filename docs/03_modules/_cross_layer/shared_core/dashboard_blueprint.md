@@ -13,7 +13,7 @@ depends_on:
 construction_progress: prototype
 language: zh
 description: Grafana 双数据源仪表盘——Prometheus（实时 metrics）+ ClickHouse（历史行情/回测），统一可视化 + 告警
-build_status: stable
+build_status: production
 design_maturity: production
 responsibility_domain: 
 ---
@@ -48,7 +48,7 @@ responsibility_domain:
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-044 | MOD-INF-044 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 6 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

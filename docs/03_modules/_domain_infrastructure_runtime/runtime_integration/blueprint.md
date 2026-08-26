@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/runtime
 title: "Runtime Integration 蓝图 — 15核心RI模块跨层协同与运行时基础设施"
 doc_type: blueprint
 status: Active
-version: 6.1.9
+version: 6.1.10
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: infra
@@ -2013,47 +2013,25 @@ STEP 3: 拆分后验证
 | `src/zephyr/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/governance/financial_governance/atomic_transaction_manager.py` | ✅ 已实现 | |
 | `src/zephyr/governance/ops_governance/event_hook.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/auto_diagnostics.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/blueprint_code_sync.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/config/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/config/app_config.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/config_validator.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/contract_tester.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/cost_tracker.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/database_service.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/dry_run_simulator.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/event_bus_upgrade.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/event_store.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/file_watcher.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/finding_task_bridge.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/hooks/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/infrastructure/hooks/event_hook.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/infrastructure_base.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/kill_switch_sim.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/pydantic_v2_migrator.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/redis_config.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime/concurrency_guard.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/runtime/gate_coordinator.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime/sandbox_enforcer.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/system_snapshot.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/warm_hot_gate.py` | ✅ 已实现 | |
 | `src/zephyr/orchestrator/core/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/orchestrator/core/task_queue.py` | ✅ 已实现 | |
 | `src/zephyr/risk/cross_asset/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/risk/cross_asset/cross_market_data_adapter/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/risk/cross_asset/cross_market_data_adapter/ml_experiment_pipeline.py` | ✅ 已实现 | |
 | `src/zephyr/shared/_cross_layer/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/shared/_cross_layer/ml_experiment_pipeline.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/core/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/core/base_event.py` | ✅ 已实现 | |
-| `src/zephyr/shared/contracts/core/enforcer.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/core/factories.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/core/gate_types.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/core/registry.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/core/runtime_plane_tag.py` | ✅ 已实现 | |
-| `src/zephyr/shared/contracts/core/system_configuration.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/core/timestamp.py` | ✅ 已实现 | |
-| `src/zephyr/shared/contracts/core/trace_context.py` | ✅ 已实现 | |
 | `src/zephyr/shared/io/doc_compressor.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件

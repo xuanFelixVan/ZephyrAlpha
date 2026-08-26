@@ -5,7 +5,7 @@ title: "Capacity Assurance 蓝图 — SLI/SLO框架+Error Budget五级响应+Tok
 doc_type: blueprint
 status: Active
 activation_phase: requires_100ai
-version: 3.1.4
+version: 3.1.5
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: capacity
@@ -1656,20 +1656,16 @@ STEP 3: 拆分后验证
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/infrastructure/capacity_assurance/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/capacity_assurance/budget_forecaster.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/capacity_assurance/contracts/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/infrastructure/capacity_assurance/contracts/batch1_infra.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/capacity_assurance/contracts/batch2_governance.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/capacity_assurance/contracts/batch3_integration.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/capacity_assurance/contracts/contract_bus.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/capacity_assurance/cross_module_integration.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/capacity_assurance/host_resource_governor.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/capacity_assurance/kill_switch.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/capacity_assurance/risk_mitigation.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/capacity_assurance/schema.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/capacity_assurance/sli_instrumentation.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/capacity_assurance/tech_stack.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/capacity_assurance/token_budget.py` | ✅ 已实现 | |
 | `src/zephyr/integration/budget_enforcer/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/integration/budget_enforcer/degradation_spiral_detector.py` | ✅ 已实现 | |
 | `src/zephyr/shared/capacity_governance/__init__.py` | ✅ 已实现 | |

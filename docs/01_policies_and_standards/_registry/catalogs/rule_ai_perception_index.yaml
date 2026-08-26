@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: 规则AI感知索引（trae 规则→operations/gate_ids 映射）
 status: active
-generated_at: '2026-08-26T14:43:06Z'
+generated_at: '2026-08-26T16:49:40Z'
 generated_by: scripts/governance/generators/generate_rule_ai_perception_index.py
 maintenance: auto
 source: docs/01_policies_and_standards/rules/trae_*.yaml
-total_rules: 84
+total_rules: 85
 rules:
 - rule_id: TRAE-001
   title: 文件操作安全协议
@@ -2244,3 +2244,27 @@ rules:
   aliases: []
   paired_gate_id: null
   rule_file: docs/01_policies_and_standards/rules/trae_084_precommit_incremental_discipline.yaml
+- rule_id: TRAE-085
+  title: 陈旧基线整文件覆写禁令（Stale-Base Overwrite Prohibition）
+  module_id: TRAE-085
+  scope: stale_base_overwrite
+  domain: TRAE
+  severity: high
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: M
+  operations:
+  - file_write
+  - registry_batch_rewrite
+  - derived_write
+  gate_ids: []
+  tags:
+  - TRAE
+  - stale_base_overwrite
+  - L1_foundation
+  - hot_file_cas
+  - multi_ai_concurrency
+  - read_before_write
+  aliases: []
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_085_stale_base_overwrite.yaml
