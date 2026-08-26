@@ -1,51 +1,56 @@
-# [BLUEPRINT] MOD-EXEC_SIM | (pending)
+# [BLUEPRINT] MOD-EXEC_SIM | docs/03_modules/_domain_execution_sim/almgren_chriss_impact_model/blueprint.md
 # [MODULE] zephyr.execution_simulation
 # [DOMAIN] D_EXEC_SIM
-# [DEPENDENCIES]
-# [CONSUMERS]
+# [DEPENDENCIES] 无（守卫式 import 聚合子模块；子模块全注入）
+# [CONSUMERS] 运行时装配批（执行仿真/回测冲击成本真源装配）
 # [STARTUP] imported
-# [MATURITY] production
-# [INVARIANTS] none
-# [MODIFY-GUARD] none
+# [MATURITY] design
+# [INVARIANTS] 子模块导入失败守卫降级为 None 不炸包; __all__ 词表闭合
+# [MODIFY-GUARD] docs/03_modules/_domain_execution_sim/almgren_chriss_impact_model/blueprint.md
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
-# [TESTS]
+# [ERROR_CONTRACT] 子模块错误契约见各自文件（AlmgrenChrissError 占位 ZA-EXSIM-UNREGISTERED-ALMGREN-CHRISS）
+# [TESTS] tests/execution_simulation/
 # [A_module] module_id=MOD-EXEC_SIM | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# 规划态占位（planning stub）：本域已在 architecture_model/index.yaml 登记为 D_EXEC_SIM (L2_domain)，
-# 但尚未施工（无蓝图/无代码/无消费者）。AI 如需实现执行仿真功能，MUST 先创建 blueprint.md 再施工。
+"""zephyr.execution_simulation — 执行仿真域包门面（D_EXEC_SIM）。
 
+P2-W08 首件施工：MOD-EXSIM-001 almgren_chriss_impact_model（Almgren-Chriss
+冲击成本模型）。守卫式 import：子模块导入失败降级为 None 而不炸包，
+运行时装配批按 None 检测决定接线。
 """
 
+from __future__ import annotations
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 无真实输入 规划态占位包
-#   fields: 无字段（包内仅空 __init__，__all__=[]）
-#   code: execution_simulation/__init__.py L20
-# 层: 算法
-# - id: A1
-#   name_zh: ① 规划态占位 未施工
-#   name_en: __all__ = []
-#   intro: 执行仿真域已在架构模型登记但尚未施工，包内无任何函数实现
-#   desc: architecture_model/index.yaml 登记 D_EXEC_SIM 域，无蓝图无代码无消费者；施工前 MUST 先创建 blueprint.md
-#   inputs: I1
-#   outputs: 无输出（空包不导出任何符号）
-#   is_break: true
-# 层: 输出
-# - id: O1
-#   name_zh: 无输出 空包导出列表
-#   name_en: __all__
-#   intro: __all__ 为空列表，不对外导出任何符号
-#   downstream: 无下游/内部使用
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 -.->|断点| A1
-# A1 --> O1
-"""
+try:  # 守卫式 import：子模块缺失/导入异常不阻断包加载
+    from zephyr.execution_simulation.almgren_chriss_impact_model import (
+        AlmgrenChrissError,
+        AlmgrenChrissImpactModel,
+        ImpactParams,
+        ImpactQuote,
+        ImpactTrajectory,
+        MinuteBar,
+        ScheduleType,
+        TrajectoryPoint,
+    )
+except ImportError:  # pragma: no cover — 守卫降级路径
+    AlmgrenChrissError = None  # type: ignore[assignment]
+    AlmgrenChrissImpactModel = None  # type: ignore[assignment]
+    ImpactParams = None  # type: ignore[assignment]
+    ImpactQuote = None  # type: ignore[assignment]
+    ImpactTrajectory = None  # type: ignore[assignment]
+    MinuteBar = None  # type: ignore[assignment]
+    ScheduleType = None  # type: ignore[assignment]
+    TrajectoryPoint = None  # type: ignore[assignment]
 
-__all__ = []
+__all__ = [
+    "AlmgrenChrissError",
+    "AlmgrenChrissImpactModel",
+    "ImpactParams",
+    "ImpactQuote",
+    "ImpactTrajectory",
+    "MinuteBar",
+    "ScheduleType",
+    "TrajectoryPoint",
+]
