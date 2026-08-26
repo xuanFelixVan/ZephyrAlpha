@@ -20625,3 +20625,13 @@ entries:
   impact:
     - 'src/zephyr/alt_data×9 + intelligence×4；tests 13 文件'
   fix_phase: '已落地（2026-08-26，DIGEST P2 W04）'
+- issue_id: '#ARCH-261'
+  title: DIGEST P2 W05 波：ASHARE_SIGNAL 前半 13 候选晋升+1 REVIEW 归并——事件因果/庄家模式/群体博弈/形态信号/Wyckoff/隔夜传导/供应链动量/板块拥挤/分时风格/亏钱扩散/日历效应/事件分布/假动作
+  severity: P2
+  category: 功能施工
+  adjudication: >-
+    MOD-SIG-112~124。13 模块纯内存/DI 落地，289 新测全绿（tests/signal_ashare 域合并 2179 含既有零回归）。
+    REVIEW 归并 1 条：CAND-TESTB-032→MOD-SIG-091（统一图形识别引擎 P1 已建，CNN/Transformer 两稿均后续档）。
+  impact:
+    - 'src/zephyr/signal_ashare×13；tests/signal_ashare 13 文件'
+  fix_phase: '已落地（2026-08-26，DIGEST P2 W05）'
