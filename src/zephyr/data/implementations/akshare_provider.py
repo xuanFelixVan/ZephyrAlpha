@@ -206,6 +206,8 @@ _TBL_IPO_CALENDAR = get_registry().table("market_ipo_calendar")
 _TBL_ADJ_FACTOR = get_registry().table("market_adj_factor")
 _TBL_KLINE_INDEX = get_registry().table("market_index_kline")
 _TBL_KLINE_DAILY_HFQ = get_registry().table("market_kline_daily_hfq")
+# 2026-08-25 BJDAILY：北交所日K线 tushare 主源备援（kline_daily_bj）
+_TBL_KLINE_DAILY = get_registry().table("market_kline_daily")
 _TBL_KLINE_CB = get_registry().table("market_cb_kline")
 _TBL_BALANCE_SHEET = get_registry().table("fund_balance_sheet")
 _TBL_INCOME_STATEMENT = get_registry().table("fund_income_statement")
@@ -342,6 +344,7 @@ _AKSHARE_CAPABILITIES = frozenset(
         "adj_factor",  # 复权因子（新浪 stock_zh_a_daily adjust="hfq-factor"，事件日口径）
         "kline_index",  # 指数日K线（新浪 stock_zh_index_daily，volume 股→手 /100）
         "kline_daily_hfq",  # A股后复权日K线（东财 stock_zh_a_hist adjust="hfq"）
+        "kline_daily_bj",  # 北交所日K线（东财 stock_zh_a_hist adjust=""，volume 手→股 ×100；tushare 主源备援，2026-08-25 BJDAILY）
         "kline_cb",  # 可转债日K线（新浪 bond_zh_hs_cov_daily，volume 张→手 /10）
         # P2 财报类 4 个
         "balance_sheet",  # 资产负债表（东财 stock_balance_sheet_by_report_em）
@@ -475,6 +478,11 @@ SQL_STOCK_CODE_FROM_LIST = (
     "WHERE list_status = '上市' "
     "AND (delist_date IS NULL OR delist_date = toDate('1900-01-01') OR delist_date > today()) "
     "ORDER BY ts_code FORMAT TabSeparated"
+)
+# 2026-08-25 BJDAILY：kline_daily_bj universe 的 CH 兜底（akshare 清单接口失败时）
+_SQL_BJ_LIVE_SYMBOLS = (
+    "SELECT symbol FROM c1_market.stock_list "
+    "WHERE exchange='BJ' AND valid_to IS NULL ORDER BY symbol FORMAT TabSeparated"
 )
 
 
@@ -676,6 +684,7 @@ class AkshareIngestProvider(IngestProviderBase):
             CapabilityContract("adj_factor", supports_symbols_null=True),
             CapabilityContract("kline_index", supports_symbols_null=True),
             CapabilityContract("kline_daily_hfq", supports_symbols_null=True),
+            CapabilityContract("kline_daily_bj", supports_symbols_null=True),  # 2026-08-25 BJDAILY
             CapabilityContract("kline_cb", supports_symbols_null=True),
             CapabilityContract("balance_sheet", supports_symbols_null=True),
             CapabilityContract("income_statement", supports_symbols_null=True),
@@ -7358,6 +7367,171 @@ class AkshareIngestProvider(IngestProviderBase):
                         "akshare",
                     )
                 )
+
+            if len(batch_rows) >= 500:
+                yield FetchResult(
+                    table=table,
+                    columns=columns,
+                    rows=batch_rows[:],
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
+                )
+                batch_rows.clear()
+
+            threading.Event().wait(0.3)
+
+        yield FetchResult(
+            table=table,
+            columns=columns,
+            rows=batch_rows,
+            last_key=last_key,
+            elapsed_sec=time.monotonic() - t0,
+        )
+
+    # ---- 北交所日K线（2026-08-25 BJDAILY 生产上线，kline_daily_bj 能力 akshare 备源） ----
+
+    # kline_daily 16 列（对齐 schemas/categories/market_kline_daily.py INSERT_COLUMNS 列序）
+    _KLINE_DAILY_BJ_COLUMNS = [
+        "trade_date",
+        "symbol",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume",
+        "amount",
+        "amplitude",
+        "pct_change",
+        "change",
+        "turnover",
+        "adj_factor",
+        "market_type",
+        "data_source",
+        "quality_flag",
+    ]
+
+    def _map_bj_kline_hist_rows(self, df, code: str, start_str: str, end_str: str) -> list[tuple]:
+        """东财 stock_zh_a_hist(adjust="") DataFrame → kline_daily 16 列行。
+
+        单位口径：东财 成交量=手 → ×100 转股（对齐 BJ 段既有 tushare 回填与 schema
+        注释=股；与 kline_daily_hfq 表的手口径不同，勿混）；成交额=元原样；
+        振幅/涨跌幅/涨跌额/换手率源值直传；adj_factor=1 不复权（对齐主表口径）。
+        """
+        rows: list[tuple] = []
+        for _, row in df.iterrows():
+            d = self._norm_date_str(row.get("日期"))
+            if not d or d < start_str or d > end_str:
+                continue
+            vol_lots = safe_int(row.get("成交量"))  # 东财单位=手
+            rows.append(
+                (
+                    d,
+                    code,
+                    self._safe_num(row.get("开盘")),
+                    self._safe_num(row.get("最高")),
+                    self._safe_num(row.get("最低")),
+                    self._safe_num(row.get("收盘")),
+                    (vol_lots or 0) * 100,  # 手→股
+                    self._safe_num(row.get("成交额")) or 0,  # 元
+                    self._safe_num(row.get("振幅")),
+                    self._safe_num(row.get("涨跌幅")),
+                    self._safe_num(row.get("涨跌额")),
+                    self._safe_num(row.get("换手率")),
+                    1,  # adj_factor：不复权
+                    "A_share",
+                    "akshare",
+                    1,  # quality_flag：正常
+                )
+            )
+        return rows
+
+    def _load_bj_listed_symbols(self, ak, policy: SourcePolicy) -> list[str]:
+        """BJ 在市 universe（裸 6 位现行代码）：akshare 清单主路径，CH stock_list 兜底。
+
+        ak.stock_info_bj_name_code 返回 920 换码后现行代码（D5 复测 2026-08-24
+        实证 338 只，与 tushare BSE L 双源互证）；失败/空时回退 CH stock_list
+        exchange='BJ' 在市快照（D5/D6 已回填 338 行）。
+        """
+        try:
+            bj = self._call_with_policy(ak.stock_info_bj_name_code, policy)
+            if bj is not None and len(bj) > 0:
+                codes = sorted({str(c).zfill(6) for c in bj["证券代码"].tolist()})
+                self._log.info(f"kline_daily_bj universe: akshare 清单 {len(codes)} 只")
+                return codes
+        except Exception as e:  # noqa: BLE001 — 清单失败回退 CH stock_list
+            self._log.warning(f"stock_info_bj_name_code 失败，回退 CH stock_list: {e}")
+        from zephyr.data import ch_reader as _chr
+
+        out = _chr.query(_SQL_BJ_LIVE_SYMBOLS)
+        codes = [line.strip().zfill(6) for line in out.split("\n") if line.strip()]
+        self._log.info(f"kline_daily_bj universe: CH stock_list {len(codes)} 只（兜底）")
+        return codes
+
+    def _fetch_kline_daily_bj(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """北交所日K线增量（东财 stock_zh_a_hist 不复权），写入 c1_market.kline_daily。
+
+        kline_daily_bj 能力 akshare 备源实现（主源=tushare pro.daily，2026-08-25
+        BJDAILY 生产上线）。universe=payload.symbols 或 BJ 在市清单（akshare→CH 两级）；
+        920 换码后现行代码口径（清单接口与 tushare 互证）。逐只拉取、空响应跳过；
+        东财接口反爬（本机 2026-08-24 实证网络级封锁），依赖 policy 重试兜底。
+        """
+        import akshare as ak
+
+        table = payload.table or _TBL_KLINE_DAILY
+        columns = self._KLINE_DAILY_BJ_COLUMNS
+        start_str = payload.start.isoformat()
+        end_str = payload.end.isoformat()
+        ak_start = payload.start.strftime("%Y%m%d")
+        ak_end = payload.end.strftime("%Y%m%d")
+        last_key = end_str
+        t0 = time.monotonic()
+
+        codes = [self._norm_code6(s) for s in (payload.symbols or [])]
+        codes = [c for c in codes if c]
+        if not codes:
+            try:
+                codes = self._load_bj_listed_symbols(ak, policy)
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                yield FetchResult(
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
+                    error=f"kline_daily_bj 获取 BJ 标的清单失败: {e}",
+                )
+                return
+        if not codes:
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key=last_key,
+                elapsed_sec=time.monotonic() - t0,
+                error="kline_daily_bj BJ 标的清单为空（akshare + CH stock_list 均空）",
+            )
+            return
+
+        batch_rows: list[tuple] = []
+        for idx, code in enumerate(codes):
+            if (idx + 1) % 100 == 0:
+                self._log.info(f"kline_daily_bj 进度: {idx + 1}/{len(codes)}")
+            try:
+                df = self._call_with_policy(
+                    ak.stock_zh_a_hist,
+                    policy,
+                    symbol=code,
+                    period="daily",
+                    start_date=ak_start,
+                    end_date=ak_end,
+                    adjust="",
+                )
+            except Exception as e:  # noqa: BLE001 — 单票失败跳过（对齐 hfq 链）
+                self._log.debug(f"stock_zh_a_hist({code}) 失败: {e}")
+                continue
+            if df is None or len(df) == 0:
+                continue
+            batch_rows.extend(self._map_bj_kline_hist_rows(df, code, start_str, end_str))
 
             if len(batch_rows) >= 500:
                 yield FetchResult(

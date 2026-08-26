@@ -2015,6 +2015,9 @@ tasks:
   # mootdx index_bars 通过 TCP 直连通达信行情服务器，盘中可实时获取880xxx分钟K线
   # 不依赖 tdx 客户端盘后下载（tqcenter refresh_kline 盘中无法获取分钟数据，依赖tdx客户端fzline文件）
   # symbols=null 时 tdx_provider._resolve_sector_symbols 自动从 sector_constituent 表获取全部880xxx板块代码
+  # include_industry_boards=true 再并入 132 条 8803/8804 行业板（T6 §七-7 接线 2026-08-26，
+  # 该族不在 sector_constituent；名单 SSoT=sector_code_bridge.TDX_INDUSTRY_BOARDS；
+  # 接线后逆势榜卡1/3/4 行业腿全覆盖；日K任务 kline_sector_incremental 不挂此旗标）
   # 写入 c1_market.kline_sector_intraday 表（DateTime + period 列，独立于日K线 kline_sector 表）
 - task_id: kline_sector_1min_incremental
   table: c1_market.kline_sector_intraday
@@ -2029,6 +2032,7 @@ tasks:
     description: "880xxx板块1分钟K线增量（mootdx TCP直连盘中实时获取，不依赖tdx客户端盘后下载）"
     period: 1m
     count: 240
+    include_industry_boards: true    # T6 §七-7：并入132条8803/8804行业板（SSoT=sector_code_bridge.TDX_INDUSTRY_BOARDS）
 
 - task_id: kline_sector_5min_incremental
   table: c1_market.kline_sector_intraday
@@ -2043,6 +2047,7 @@ tasks:
     description: "880xxx板块5分钟K线增量（mootdx TCP直连盘中实时获取）"
     period: 5m
     count: 48
+    include_industry_boards: true    # T6 §七-7：并入132条8803/8804行业板
 
 - task_id: kline_sector_15min_incremental
   table: c1_market.kline_sector_intraday
@@ -2057,6 +2062,7 @@ tasks:
     description: "880xxx板块15分钟K线增量（mootdx TCP直连盘中实时获取）"
     period: 15m
     count: 16
+    include_industry_boards: true    # T6 §七-7：并入132条8803/8804行业板
 
 - task_id: kline_sector_30min_incremental
   table: c1_market.kline_sector_intraday
@@ -2071,6 +2077,7 @@ tasks:
     description: "880xxx板块30分钟K线增量（mootdx TCP直连盘中实时获取）"
     period: 30m
     count: 8
+    include_industry_boards: true    # T6 §七-7：并入132条8803/8804行业板
 
 - task_id: kline_sector_60min_incremental
   table: c1_market.kline_sector_intraday
@@ -2085,6 +2092,7 @@ tasks:
     description: "880xxx板块60分钟K线增量（mootdx TCP直连盘中实时获取）"
     period: 60m
     count: 4
+    include_industry_boards: true    # T6 §七-7：并入132条8803/8804行业板
 
   # ============== 周末全量刷新（5年历史回补，2026-07-29 新增）==============
   # 每周六运行，下载完整历史数据，确保5年覆盖

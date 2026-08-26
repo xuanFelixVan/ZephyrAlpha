@@ -23,7 +23,8 @@
 - 当前能力：news_data（新闻快讯/证券新闻）/ industry_class / industry_class_suppl /
   lof_list（东财反爬替代源）/ money_flow（东财反爬替代源）/
   futures_term_structure（QMT 期货板块为空替代源）/ etf_nav（东财净值接口反爬替代源）/
-  northbound_hold_snapshot（北向季度持仓快照，19 号 memo；逻辑在 northbound_hold_fetcher.py）
+  northbound_hold_snapshot（北向季度持仓快照，19 号 memo；逻辑在 northbound_hold_fetcher.py）/
+  kline_daily_bj（北交所日K线增量，2026-08-25 BJDAILY 生产上线）
 
 关键设计：
 - connect() 读取 TUSHARE_TOKEN 环境变量，初始化 pro_api 客户端
@@ -69,6 +70,8 @@ _TBL_FUTURES_TERM = get_registry().table("market_futures_term")
 # 2026-08-14 东财反爬治本：ETF 净值替代源（fund_etf_fund_info_em 持续返回空）
 _TBL_ETF_NAV = get_registry().table("market_etf_nav")
 _TBL_ETF_LIST = get_registry().table("market_etf_list")
+# 2026-08-25 BJDAILY：北交所日K线增量主源（pro.daily 按 trade_date 全市场拉取过滤 .BJ）
+_TBL_KLINE_DAILY = get_registry().table("market_kline_daily")
 # 2026-08-16 JOB-083：ST 历史状态名称变更推导回填（tushare namechange 全量历史 →
 # ST 区间 → 变化日快照合成，补齐 DS-085 首个实盘快照日前的历史段）
 _TBL_ST_STOCK_LIST = get_registry().table("market_st_stock_list")
@@ -107,6 +110,8 @@ class TushareProvider(IngestProviderBase):
             "futures_term_structure",
             "etf_nav",
             "st_namechange_backfill",
+            # 2026-08-25 BJDAILY：北交所日K线增量（symbols=None=按 trade_date 全市场过滤 .BJ 自维护）
+            CapabilityContract("kline_daily_bj", supports_symbols_null=True),
             # 19 号 memo：北向季度持仓快照（hk_hold），逻辑在独立文件 northbound_hold_fetcher.py
             CapabilityContract(
                 "northbound_hold_snapshot",
@@ -179,6 +184,8 @@ class TushareProvider(IngestProviderBase):
             yield from self._fetch_lof_list(payload, policy)
         elif capability == "money_flow":
             yield from self._fetch_money_flow(payload, policy)
+        elif capability == "kline_daily_bj":
+            yield from self._fetch_kline_daily_bj(payload, policy)
         elif capability == "futures_term_structure":
             yield from self._fetch_futures_term_structure(payload, policy)
         elif capability == "etf_nav":
@@ -682,6 +689,163 @@ class TushareProvider(IngestProviderBase):
                     )
 
             self._log.info(f"money_flow {dstr}: {len(rows)} 行（tushare 替代东财）")
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=rows,
+                last_key=current.isoformat(),
+                elapsed_sec=seconds_since(t0),
+            )
+            current += datetime.timedelta(days=1)
+
+    # ---- 北交所日K线（2026-08-25 BJDAILY 生产上线，kline_daily_bj 能力主源） ----
+
+    # kline_daily 16 列（对齐 schemas/categories/market_kline_daily.py INSERT_COLUMNS 列序）
+    _KLINE_DAILY_BJ_COLUMNS = [
+        "trade_date",
+        "symbol",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume",
+        "amount",
+        "amplitude",
+        "pct_change",
+        "change",
+        "turnover",
+        "adj_factor",
+        "market_type",
+        "data_source",
+        "quality_flag",
+    ]
+
+    @staticmethod
+    def _map_bj_kline_rows(
+        records: list[dict],
+        turnover_map: dict[str, float] | None = None,
+        symbols_filter: set[str] | None = None,
+    ) -> list[tuple]:
+        """tushare pro.daily 记录 → kline_daily 16 列行（仅 .BJ 后缀；对齐 D5 回填口径）。
+
+        单位换算：vol 手→股 ×100；amount 千元→元 ×1000（schema 注释=股/元，与
+        BJ 段既有 30 万行 tushare 回填一致）。close 缺失丢行。
+        turnover_map：ts_code → turnover_rate（daily_basic 同日快照），无命中=0。
+        symbols_filter：裸 6 位代码集合（payload.symbols 显式限定时启用）。
+        """
+        turnover_map = turnover_map or {}
+        out: list[tuple] = []
+        for r in records:
+            ts_code = str(r.get("ts_code") or "")
+            if not ts_code.endswith(".BJ"):
+                continue
+            code6 = ts_code.split(".")[0]
+            if symbols_filter is not None and code6 not in symbols_filter:
+                continue
+            close_v = r.get("close")
+            if close_v is None:
+                continue
+            close = round(float(close_v), 4)
+            preclose = float(r.get("pre_close") or 0.0)
+            high = round(float(r["high"]), 4) if r.get("high") is not None else close
+            low = round(float(r["low"]), 4) if r.get("low") is not None else close
+            open_ = round(float(r["open"]), 4) if r.get("open") is not None else close
+            amplitude = round((high - low) / preclose * 100, 4) if preclose > 0 else 0.0
+            change = (
+                round(float(r["change"]), 4)
+                if r.get("change") is not None
+                else (round(close - preclose, 4) if preclose > 0 else 0.0)
+            )
+            pct = round(float(r["pct_chg"]), 4) if r.get("pct_chg") is not None else 0.0
+            vol = r.get("vol")
+            amt = r.get("amount")
+            volume = int(round(float(vol) * 100)) if vol is not None else 0  # 手→股
+            amount = round(float(amt) * 1000, 2) if amt is not None else 0.0  # 千元→元
+            td_raw = str(r.get("trade_date") or "")
+            td = f"{td_raw[:4]}-{td_raw[4:6]}-{td_raw[6:8]}" if len(td_raw) == 8 and td_raw.isdigit() else td_raw
+            turnover = round(float(turnover_map[ts_code]), 4) if ts_code in turnover_map else 0.0
+            out.append(
+                (
+                    td,
+                    code6,
+                    open_,
+                    high,
+                    low,
+                    close,
+                    volume,
+                    amount,
+                    amplitude,
+                    pct,
+                    change,
+                    turnover,
+                    1,  # adj_factor：不复权（对齐 kline_daily 主口径）
+                    "A_share",
+                    "tushare",
+                    1,  # quality_flag：正常
+                )
+            )
+        return out
+
+    def _fetch_kline_daily_bj(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """北交所日K线增量（pro.daily 按 trade_date 全市场拉取，过滤 .BJ 后缀）。
+
+        2026-08-25 BJDAILY 生产上线（Owner 批准）：BJ 在市 338 只+退市 5 只主数据与
+        历史K线已由 D5/D6 回填完毕（kline_daily BJ 段 30 万行全 tushare），本能力承接
+        每日增量例行。设计要点：
+        - universe 自维护：pro.daily(trade_date=...) 全市场快照过滤 .BJ 后缀——
+          920 换码后 tushare 仅按现行代码返回（D5 实证旧代码 830799 查得 0 行），
+          新上市/换码标的自动纳入，无需维护清单；payload.symbols 显式传入时按其过滤。
+        - 写入口径与 D5 回填逐位对齐：volume 手→股 ×100、amount 千元→元 ×1000、
+          不复权 adj_factor=1、data_source='tushare'、quality_flag=1。
+        - turnover 由 pro.daily_basic(trade_date=...) 同日快照补；该接口失败降级 0
+          不阻塞主链路（D5 同纪律）。
+        - 非交易日 pro.daily 返回空 → 0 行批次不推进断点游标（scheduler #ARCH-CURSOR-DRIFT）。
+        """
+        table = payload.table or _TBL_KLINE_DAILY
+        columns = self._KLINE_DAILY_BJ_COLUMNS
+        start = payload.start or datetime.date.today()
+        end = payload.end or datetime.date.today()
+        symbols_filter: set[str] | None = None
+        if payload.symbols:
+            symbols_filter = {str(s).split(".")[0].zfill(6) for s in payload.symbols}
+
+        current = start
+        while current <= end:
+            t0 = now_utc()
+            dstr = current.strftime("%Y%m%d")
+            try:
+                df = self._call_with_policy(self._pro.daily, policy, trade_date=dstr)
+            except Exception as e:  # noqa: BLE001 — 单日失败记 error（触发 fallback 源）
+                yield FetchResult(
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key=current.isoformat(),
+                    elapsed_sec=seconds_since(t0),
+                    error=str(e),
+                )
+                current += datetime.timedelta(days=1)
+                continue
+
+            # turnover 同日快照（daily_basic 失败降级 0，不阻塞主链路）
+            turnover_map: dict[str, float] = {}
+            try:
+                db = self._call_with_policy(
+                    self._pro.daily_basic,
+                    policy,
+                    trade_date=dstr,
+                    fields="ts_code,trade_date,turnover_rate",
+                )
+                if db is not None and not db.empty:
+                    for _, r in db.iterrows():
+                        if r.get("turnover_rate") is not None:
+                            turnover_map[str(r.get("ts_code") or "")] = float(r.get("turnover_rate"))
+            except Exception as e:  # noqa: BLE001 — turnover 缺失降级 0
+                self._log.warning(f"kline_daily_bj {dstr} daily_basic 失败（turnover=0 降级）: {e}")
+
+            records = df.to_dict("records") if df is not None else []
+            rows = self._map_bj_kline_rows(records, turnover_map, symbols_filter)
+            self._log.info(f"kline_daily_bj {dstr}: {len(rows)} 行（tushare 全市场过滤 .BJ）")
             yield FetchResult(
                 table=table,
                 columns=columns,
