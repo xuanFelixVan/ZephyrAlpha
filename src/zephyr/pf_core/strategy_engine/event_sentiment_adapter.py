@@ -5,7 +5,7 @@
 # [CONSUMERS] 事件策略回测跑批（.runtime 施工件）；zephyr.pf_core.strategy_engine（lazy re-export）
 # [STARTUP] imported
 # [MATURITY] testing
-# [INVARIANTS] PIT：交易日 T 消费窗口 [T-1 18:00, T 08:00) 情绪分（window_date=T-1 自然日，收盘于开盘前）；面板 symbol 与 load_history 同源（纯数字代码，canonical 去后缀）；权重和<=1.0（策略侧不变量透传）；情绪分作事件方向触发维度非截面排序（26号 §2.7）
+# [INVARIANTS] PIT：交易日 T 消费窗口 [T-1 18:00, T 08:00) 情绪分（window_date=T-1 自然日，收盘于开盘前）；防未来函数护栏——window_date>T-1 的记录硬剔除不消费（window_date 缺省 None=源未携带，放行兼容）；面板 symbol 与 load_history 同源（纯数字代码，canonical 去后缀）；权重和<=1.0（策略侧不变量透传）；情绪分作事件方向触发维度非截面排序（26号 §2.7）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -65,7 +65,7 @@ _SYMBOL_RE: Final[re.Pattern[str]] = re.compile(r"^[A-Za-z0-9.]{1,20}$")
 
 # SQL 模板常量（NO-BARE-SQL gate 豁免：_SQL_* 前缀，同 event_score 约定）
 _SQL_SENTIMENT = (
-    "SELECT symbol, sentiment_index, positive_count, negative_count, neutral_count, total_count "
+    "SELECT symbol, sentiment_index, positive_count, negative_count, neutral_count, total_count, window_date "
     f"FROM {_TARGET_TABLE} WHERE scope='symbol' AND window_date = '{{window_date}}'"
 )
 
@@ -80,6 +80,7 @@ class SentimentRow:
     negative_count: int = 0
     neutral_count: int = 0
     total_count: int = 0
+    window_date: datetime.date | None = None  # 记录归属窗口日（PIT 护栏判据；None=源未携带，放行兼容）
 
 
 @runtime_checkable
@@ -158,7 +159,7 @@ class ClickHouseSentimentWindowSource:
         rows: list[SentimentRow] = []
         for line in (tsv or "").strip().splitlines():
             parts = line.split("\t")
-            if len(parts) != 6:
+            if len(parts) != 7:
                 continue
             try:
                 row = self.parse_row(tuple(parts))
@@ -173,7 +174,19 @@ class ClickHouseSentimentWindowSource:
 
     @staticmethod
     def parse_row(raw: tuple) -> SentimentRow:
-        """TSV 行（str 元组）→ SentimentRow；数值转换失败抛 ValueError（调用方剔除）。"""
+        """TSV 行（str 元组）→ SentimentRow；数值转换失败抛 ValueError（调用方剔除）。
+
+        6 列=（symbol, sentiment_index, 正/负/中/总条数）旧契约（window_date 缺省 None）；
+        7 列追加 window_date（ISO 字符串或 date，PIT 护栏判据）。
+        """
+        win: datetime.date | None = None
+        if len(raw) >= 7 and raw[6] not in (None, ""):
+            if isinstance(raw[6], datetime.datetime):
+                win = raw[6].date()
+            elif isinstance(raw[6], datetime.date):
+                win = raw[6]
+            else:
+                win = datetime.date.fromisoformat(str(raw[6]))
         return SentimentRow(
             symbol=str(raw[0]),
             sentiment_index=float(raw[1]),
@@ -181,6 +194,7 @@ class ClickHouseSentimentWindowSource:
             negative_count=int(float(raw[3])),
             neutral_count=int(float(raw[4])),
             total_count=int(float(raw[5])),
+            window_date=win,
         )
 
     @staticmethod
@@ -202,8 +216,9 @@ def build_event_weight_panel(
 ) -> pd.DataFrame:
     """逐交易日组装事件情绪权重面板（对齐 StrategyRunner._build_weight_panel 输出契约）。
 
-    每交易日 T：source.fetch(window_date=T-1) → 富负载 → 过滤（universe∩exclude）
-    → strategy.generate_target_weights → 面板行。空窗/零入选日该行保持全零——
+    每交易日 T：source.fetch(window_date=T-1) → PIT 护栏（window_date>T-1 记录硬剔除）
+    → 富负载 → 过滤（universe∩exclude）→ strategy.generate_target_weights → 面板行。
+    空窗/零入选日该行保持全零——
     DefaultBacktestEngine._normalize_day_signals 仅取 >0 分量，全零行=当日不下单、
     沿用既有持仓（hold），与 runner 非调仓日语义一致（引擎实测契约）。
 
@@ -238,7 +253,25 @@ def build_event_weight_panel(
         rows = source.fetch(win_date)
         if not rows:
             continue
-        payload = sentiment_to_event_payload(rows, event_class=event_class)
+        # PIT 防未来函数护栏：T 日决策只消费 window_date ≤ T-1 的记录；
+        # window_date 缺失（None）= 源未携带归属日，放行兼容（fetch 点查询本身已按 T-1 取窗）
+        consumable: list[SentimentRow] = []
+        violations = 0
+        for r in rows:
+            if r.window_date is not None and r.window_date > win_date:
+                violations += 1
+                continue
+            consumable.append(r)
+        if violations:
+            _logger.warning(
+                "PIT 护栏：交易日 %s 剔除 %d 条 window_date > T-1(%s) 情绪记录（防未来函数，未消费）",
+                d.date(),
+                violations,
+                win_date,
+            )
+        if not consumable:
+            continue
+        payload = sentiment_to_event_payload(consumable, event_class=event_class)
         excluded = exclude(d) if exclude is not None else set()
         tradable = [s for s in payload if s in uni_set and s not in excluded]
         if not tradable:
