@@ -380,7 +380,12 @@ def query(sql: str, timeout: int = _DEFAULT_TIMEOUT) -> str:
                     return ""
                 lines = []
                 for row in rows:
-                    lines.append("\t".join(str(v) for v in row))
+                    # 手工拼 TSV 须中和值内嵌 \t/\r/\n（2026-08-26 实证：2015 年新闻
+                    # content 含真实制表符→伪 TSV 单行爆成 97 字段、采集崩溃）；
+                    # 与 tsv_escape 写侧同策（替换为空格），不动 None 语义
+                    lines.append(
+                        "\t".join(str(v).replace("\t", " ").replace("\r", " ").replace("\n", " ") for v in row)
+                    )
                 return "\n".join(lines) + "\n"
             else:
                 # DDL 语句
