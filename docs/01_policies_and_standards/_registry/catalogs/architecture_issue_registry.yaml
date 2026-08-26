@@ -20538,3 +20538,15 @@ entries:
   impact:
     - 'src/zephyr/infra_runtime/（新包 7+__init__）+ infra_ops/（新包 4+__init__）+ infrastructure/system_telemetry×4 + rollback/cascade + a2a_protocol/strategic + config/config_center；tests 38 文件'
   fix_phase: '已落地（2026-08-26，DIGEST P2 W01）；模块清单: resource_scheduler/shared_memory_zero_copy/ha_sla_framework/database_layer/ml_pipeline_process/cold_plane_isolation/latency_budget_allocator/reproducibility_packager/observability_triad/agent_call_tracer/latency_attributor/wal_checkpoint_monitor/storage_cost_calculator/runtime_topology_visualizer/loki_log_pipeline/cascade_failure_simulator/strategic_message_bus/config_center'
+- issue_id: '#ARCH-256'
+  title: DIGEST P2 W02 波：DATA 全家桶 20 候选晋升+1 REVIEW 归并——成本治理/Redis Streams/缓存一致性/压缩归档/tushare新闻/源SLA/冷归档/质量预测/流引擎/GPU管理/数据湖/聚合根/血缘变更/OpenLineage/列级血缘/ML血缘/资产发现/AI脱敏/访问审计/脱敏引擎
+  severity: P2
+  category: 功能施工
+  adjudication: >-
+    MOD-SHARED-003~005/MOD-DATA-064~066/MOD-DATENG-002~006/MOD-DATA_GOV-009~014/MOD-DATSEC-001~003。
+    20 模块纯内存/DI 落地，429 新测全绿（域合并 548 含既有零回归）。
+    REVIEW 归并 1 条：CAND-DATGOV-012（与 CAND-DATGOV-007 同为 M8-S07 血缘变更检测器，语义全等，
+    canonical=MOD-DATA_GOV-010 lineage_change_detector）。
+  impact:
+    - 'src/zephyr/shared×3 + data×3 + data_eng×5 + data_governance×6 + data_security（新包 3+__init__ 改）；tests 20 文件'
+  fix_phase: '已落地（2026-08-26，DIGEST P2 W02）'
