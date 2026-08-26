@@ -20602,3 +20602,14 @@ entries:
   - 'ARCH-257'
   created: '2026-08-26'
   last_updated: '2026-08-26'
+- issue_id: '#ARCH-259'
+  title: DIGEST P2 W03 波：KNOWLEDGE 域 14 候选晋升+5 REVIEW 归并——KB引擎/质量评估/金融图谱/工件库/因子KB/策略KB/AI提取/RAG/五层记忆/模式管理/研究聚合/研究目录/论文追踪/研究工作流
+  severity: P2
+  category: 功能施工
+  adjudication: >-
+    MOD-KNW-001~014。14 模块纯内存/DI 落地（新包 src/zephyr/knowledge/），375 新测全绿。
+    REVIEW 归并 5 条：CAND-KNW-019→KNW-002（同 D-KNOW-06 重登）/CAND-KNW-003+006→KNW-013（同 D-KNOW-11 三登）/
+    CAND-KNW-010→KNW-001（五六类图谱姊妹稿）/CAND-KNW-018→KNW-008（同 6 类产出版本化）。
+  impact:
+    - 'src/zephyr/knowledge/（新包 14+__init__）；tests/knowledge 14 文件'
+  fix_phase: '已落地（2026-08-26，DIGEST P2 W03）'
