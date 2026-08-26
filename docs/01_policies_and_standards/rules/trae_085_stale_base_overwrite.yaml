@@ -1,0 +1,144 @@
+rule_id: TRAE-085
+title: 陈旧基线整文件覆写禁令（Stale-Base Overwrite Prohibition）
+name: 陈旧基线整文件覆写禁令
+version: '1.0.0'
+layer: L1_foundation
+module_id: TRAE-085
+priority: 52
+depends_on:
+- TRAE-001
+- TRAE-079
+tags:
+- TRAE
+- stale_base_overwrite
+- L1_foundation
+- hot_file_cas
+- multi_ai_concurrency
+- read_before_write
+stability: stable
+safety_level: M
+ai_autonomy: human_gated
+ttl: permanent
+severity: high
+scope: stale_base_overwrite
+domain: TRAE
+triggers:
+- operation: file_write
+- operation: registry_batch_rewrite
+- operation: derived_write
+sections:
+  stale_base_overwrite_prohibition:
+    section_type: procedure
+    title: 陈旧基线整文件覆写禁令（#ARCH-264 裁定，2026-08-26）
+    original_rules:
+    - RULE-STALE-BASE-OVERWRITE
+    conditions:
+    - type: pre_condition
+      check: 写入 DEFAULT_HOT_FILES 清单内热文件（file_utils.py 真源）
+      pass: 写前已读新（safe_write_text expected_base 或 lock_files 持锁）且 base 与磁盘一致
+      fail: 持旧缓存/旧基线整文件覆写（StaleWriteRefused 拒写落审计）
+    - type: trigger
+      check: 脚本对注册表/索引类共享文件做整文件 read-modify-write
+      pass: 写入路径经 safe_write_text CAS（base 不符拒写）
+      fail: read_text→字符串手术→write_text 裸写（竞态窗口吞写他人并发提交）
+    - type: trigger
+      check: AI 会话用 Write 工具整文件覆写
+      pass: 本会话本轮已 Read 该文件（基于当前磁盘内容改写）
+      fail: 凭上下文旧缓存整文件覆写（上下文=陈旧缓冲区，#68/#71/#75 族病根）
+    - type: trigger
+      check: reconciler/生成器派生写
+      pass: 派生文件集已登记（claim 快照在册或 auto-sync 清单在列）
+      fail: 未登记派生写（drift watchdog 告警"未登记写入方"字面来源）
+    actions:
+    - type: mandatory
+      step: '铁律1（热文件写前读新）: DEFAULT_HOT_FILES 清单内文件 MUST 经 safe_write_text（expected_base_sha256=本轮读取内容 hash）或 lock_files 持锁写入；base 与磁盘不符=陈旧基线，拒写并落 .runtime/audit/safe_write.jsonl。'
+    - type: mandatory
+      step: '铁律2（批量改写脚本过 CAS）: 注册表/索引类共享文件的批量翻转/合并脚本 MUST 走 safe_write_text CAS；禁止 read_text→modify→write_text 无 base 裸写（#ARCH-237 行级合并事故、08-25 055bdd5a 回滚事故前例）。'
+    - type: mandatory
+      step: '铁律3（AI 会话写前本轮 Read）: 全文件 Write 前 MUST 在本会话本轮 Read 目标文件；禁止凭会话上下文中的旧版本缓存整文件覆写。Edit 工具以当前磁盘内容匹配 old_string，天然合规；Write 工具为本条主约束对象。'
+    - type: mandatory
+      step: '铁律4（派生写必登记）: reconciler/生成器/worker 的派生写 MUST 先登记后写入——reconcile worker 写 claim 快照（.runtime/claim_snapshots/），或文件在 auto-sync 官方清单（_AUTO_SYNC_PREFIXES）在列。'
+    - type: forbidden
+      step: '禁止: 持旧缓存/旧基线整文件覆写任何 tracked 文件（#ARCH-264 定名的协作反模式）'
+    - type: forbidden
+      step: '禁止: 批量改写共享注册表时绕过 safe_write_text CAS 裸 write_text'
+    - type: forbidden
+      step: '禁止: 未登记（无 claim/不在 auto-sync 清单）的 reconciler 派生写'
+    prohibitions:
+    - 持旧缓存/旧基线整文件覆写（协作反模式 #1，#ARCH-264 登记）
+    - 热文件写入不带 expected_base/不持锁
+    - 整文件 read-modify-write 脚本绕过 CAS
+    - 凭 AI 上下文旧缓存用 Write 工具整文件覆写
+    - 未登记派生写（无 claim 快照且不在 auto-sync 清单）
+    invariants:
+    - id: RULE-STALE-BASE-INV-001
+      title: 热文件写前读新强制
+      description: DEFAULT_HOT_FILES 写入 MUST 过 safe_write_text CAS 或 lock_files；陈旧 base 拒写
+      enforcement: safe_write_text StaleWriteRefused（写时）+ HOT-FILE-BASE-FRESHNESS gate priority=47（commit 时）+ worktree_drift_watchdog（检测）
+      violation_action: reject_change
+    - id: RULE-STALE-BASE-INV-002
+      title: 批量改写过 CAS 强制
+      description: 注册表/索引批量改写脚本 MUST 走 safe_write_text
+      enforcement: code review + drift watchdog 审计归因 + #ARCH-237 前例复盘
+      violation_action: warn
+    examples:
+    - scenario: 注册表批量翻转正确姿势（digest 波次范式）
+      correct_action: |
+        from zephyr.shared.io.file_utils import content_sha256, safe_write_text
+        text = CAND_REG.read_text(encoding="utf-8")
+        base = content_sha256(text)
+        new_text = apply_flips(text, spec)          # 块级精确替换（#ARCH-237 范式）
+        safe_write_text(CAND_REG, new_text, expected_base_sha256=base)  # 他人已推进则拒写
+      reason: base 不符即拒写——宁可本波重算，不可吞写他人并发提交
+    - scenario: AI 会话整文件覆写正确姿势
+      correct_action: |
+        # Write 前：本轮 Read 目标文件（拿到当前磁盘真值）
+        # 基于刚读到的内容生成新全文，再 Write
+      reason: AI 上下文缓存滞后于磁盘（100% AI 开发结构性弱点），本轮 Read 是唯一可信基线
+    common_mistakes:
+    - '❌ 会话开工时 Read 的注册表，两小时后凭记忆整文件 Write——他人两波提交被静默吞掉（08-25 055bdd5a 事故）'
+    - '❌ 脚本 read_text→行级正则→write_text 合并注册表——off-by-one 错位 19 条（#ARCH-237）'
+    - '❌ reconciler worker 存活 78 分钟持 commit 时刻旧模型回写——工作区与他人编辑重叠漂移（#ARCH-264 W1）'
+    background:
+      source: 2026-08-26 AI-CRYPTO-001 编辑 94号/00索引/候选注册表期间连遭 4 起并发覆写事故（#ARCH-264）
+      rationale: |
+        100% AI 开发共享工作区，写层合法性三要素：可归因、基线新鲜、分类治理。
+        AI 的上下文缓存天然滞后于磁盘——不能靠"AI 自觉重读"防御，只能靠机制
+        使陈旧写物理上不可能（CAS 拒写）或立刻可检测（watchdog+写审计）。
+        本规则是 #ARCH-WORKTREE-WRITE-INTEGRITY-001 P1-1"read-modify-write 反模式清除"
+        的规则化延伸，与 TRAE-001（frozen 文件操作）/TRAE-079（提交串行化）为细化
+        补充关系，不构成冲突条款（trae_041 推导链合规）。
+      related_arch: '#ARCH-264'
+references:
+  rule_ids:
+  - TRAE-001
+  - TRAE-079
+  scripts:
+  - scripts/lock_files.py
+  modules:
+  - src/zephyr/shared/io/file_utils.py
+  - src/zephyr/gov_enforcement/commit_gates/hot_file_base_freshness_gate.py
+  - src/zephyr/gov_enforcement/rule_bridge/worktree_drift_watchdog.py
+  blueprints:
+  - MOD-GOV_DRIFT_WATCHDOG
+  agents_md_sections:
+  - AGENTS.md §热文件 CAS（L41）
+enforcement:
+  paired_gate_id: HOT-FILE-BASE-FRESHNESS
+  type: doc
+  executors:
+  - safe_write_text_cas
+  - hot_file_base_freshness_gate
+  - worktree_drift_watchdog
+  - ai_pre_action_check
+  bypass_allowed: true  # --allow-overlap 逃生通道（TRAE-079 裁定永久保留，显式声明+审计+计量升级）
+metadata:
+  change_policy: stable
+  impact_level: M
+  modification_permission: human_gated
+  superseded_by: null
+  related_arch: '#ARCH-264'
+provenance:
+  extracted_at: '2026-08-26'
+  extracted_by: AI-DRIFT-001
+  source: '2026-08-26 并发覆写事故取证（#ARCH-264）+ O7 裁定（docs/_working/reports/2026-08-26-drift-writer-adjudication.md §7）：旧缓存整文件覆写列为协作反模式，落规则文件强制'

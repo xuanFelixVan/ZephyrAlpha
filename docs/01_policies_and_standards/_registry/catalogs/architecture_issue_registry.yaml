@@ -20670,12 +20670,19 @@ entries:
     无法唯一定凶（取证能力缺口登记）。处置：DEFAULT_HOT_FILES 扩列 94号（CAS 写前读新+commit base 新鲜度门禁，
     34/34 测试绿）；AI-CRYPTO-001 已提交内容 HEAD 验证完整（94号 v1.3.0/00索引 2.14.3 三行俱在/CAND-CRYPTO×10 总 607）。
     反模式登记："持有旧缓存/旧基线整文件覆写"列为协作反模式——热文件写前必须读新（safe_write_text CAS 或 lock_files），
-    整文件 read-modify-write 脚本必须过 CAS；规则文件正式落点待 Owner 裁定（trae_001/005 frozen 不可直改）。
+    整文件 read-modify-write 脚本必须过 CAS。
+    2026-08-26 Owner 指令裁定（docs/_working/reports/2026-08-26-drift-writer-adjudication.md）：O1 派生写 claim 登记+写前读新
+    （auto-sync 豁免/离库两案否决）；O2 --allow-overlap 通道永久保留+热文件计量≥5 升级阻断；O3 热文件 10s 快扫 P0+
+    WriteAudit P1+写时 CAS 拦截 P2 挂起；O4 quarantine 带外裸删除实证（定凶豁免），watchdog 自管 30 天 retention+ops_guard
+    保护区；O5 queue 着落 base 新鲜度双闸 P2；O6 唯一告警写者（网关 scan_once 改 observe-only）+dedup 锁；
+    O7 trae_085_stale_base_overwrite 新建（stable/human_gated，四铁律）。近期三件（O6①/O4/O2 计量）待派单。
   impact:
     - 'src/zephyr/shared/io/file_utils.py（DEFAULT_HOT_FILES +1）'
     - 'docs/_working/reports/2026-08-26-drift-writer-forensics.md（取证报告）'
-  fix_phase: '部分落地（2026-08-26，AI-DRIFT-001）；reconciler 合规化/秒级取证能力/规则落点报 Owner 裁定（报告 §6 O1~O7）'
-  status: open
+    - 'docs/_working/reports/2026-08-26-drift-writer-adjudication.md（O1~O7 裁定书）'
+    - 'docs/01_policies_and_standards/rules/trae_085_stale_base_overwrite.yaml（反模式规则新建）'
+  fix_phase: '裁定完成（2026-08-26，AI-DRIFT-001）；CAS 扩列+规则文件已落盘；近期三件（O6① observe-only/O4 retention+保护区/O2 计量）与中期三件（O1 claim 登记/O3 快扫+WriteAudit/O2 阻断上线）按裁定书 §8 路线派单'
+  status: adjudicated
   created: '2026-08-26'
   last_updated: '2026-08-26'
 - issue_id: '#ARCH-265'
