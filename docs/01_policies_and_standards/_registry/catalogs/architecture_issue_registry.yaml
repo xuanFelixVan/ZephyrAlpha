@@ -20698,3 +20698,13 @@ entries:
   impact:
     - 'src/zephyr/pf_alloc×2 + pf_core×2 + plan_engine×2 + risk×5；tests 11 文件'
   fix_phase: '已落地（2026-08-26，DIGEST P2 W09）'
+- issue_id: '#ARCH-267'
+  title: DIGEST P2 W10 波：COMPLIANCE+REPORTING 8 候选晋升+1 REVIEW 归并——证据链/操纵检测/策略引擎/漂移检测/监管追踪+溯源链/审查引擎/可解释报告
+  severity: P2
+  category: 功能施工
+  adjudication: >-
+    MOD-CMP-013~017/MOD-RPT-033~035。8 模块纯内存/DI 落地，191 新测全绿（两域合并 950 零回归）。
+    REVIEW 归并 1 条：CMP-004→CMP-007（合规漂移检测两稿重登）。
+  impact:
+    - 'src/zephyr/compliance×5 + reporting×3；tests 8 文件'
+  fix_phase: '已落地（2026-08-26，DIGEST P2 W10）'
