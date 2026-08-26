@@ -350,3 +350,97 @@ class TestToModelBenchmarkResult:
         )
         result = to_model_benchmark_result(profile)
         assert result["regression_detected"] is True
+
+
+class TestLoadLatestBenchmarkResults:
+    """#ARCH-208：boot 启动路径仅读上次落盘结果（新鲜度门控），不触发跑分。"""
+
+    def test_missing_dir_returns_missing_state(self, tmp_path):
+        from zephyr.intelligence.model_profiling.results_writer import (
+            load_latest_benchmark_results,
+        )
+
+        results, meta = load_latest_benchmark_results(results_dir=str(tmp_path / "nope"))
+        assert results == []
+        assert meta["state"] == "missing"
+
+    def test_empty_dir_returns_missing_state(self, tmp_path):
+        from zephyr.intelligence.model_profiling.results_writer import (
+            load_latest_benchmark_results,
+        )
+
+        results, meta = load_latest_benchmark_results(results_dir=str(tmp_path))
+        assert results == []
+        assert meta["state"] == "missing"
+
+    def test_fresh_result_loaded_and_converted(self, tmp_path):
+        from zephyr.intelligence.model_profiling.results_writer import (
+            load_latest_benchmark_results,
+        )
+
+        profile = ModelProfile(
+            model_name="qwen3:8b",
+            source="ollama",
+            benchmark_date="2026-08-26T00:00:00",
+            average_score=0.75,
+            latency_p50_ms=500.0,
+            latency_p95_ms=900.0,
+            throughput_tokens_per_sec=80.0,
+            hallucination_rate=0.05,
+            code_validity_rate=0.8,
+            json_validity_rate=0.9,
+            category_scores={"code_generation": 0.8},
+            available=True,
+        )
+        write_benchmark_results([profile], output_dir=str(tmp_path))
+
+        results, meta = load_latest_benchmark_results(results_dir=str(tmp_path))
+        assert meta["state"] == "fresh"
+        assert len(results) == 1
+        r = results[0]
+        assert r["model_name"] == "qwen3:8b"
+        assert r["model_version"] == "8b"
+        assert r["task_scores"]["composite_score"] == 0.75
+        assert r["task_scores"]["latency_p50_ms"] == 500.0
+        assert r["task_scores"]["throughput_tok_per_sec"] == 80.0
+        assert r["task_scores"]["code_generation"] == 0.8
+        assert r["regression_detected"] is False
+
+    def test_stale_result_rejected(self, tmp_path):
+        from zephyr.intelligence.model_profiling.results_writer import (
+            load_latest_benchmark_results,
+        )
+
+        stale_file = tmp_path / "benchmark_20200101_000000.jsonl"
+        stale_file.write_text(
+            json.dumps({"model_name": "m", "available": True, "average_score": 0.9}) + "\n",
+            encoding="utf-8",
+        )
+        results, meta = load_latest_benchmark_results(results_dir=str(tmp_path))
+        assert results == []
+        assert meta["state"] == "stale"
+
+    def test_unavailable_models_filtered(self, tmp_path):
+        from zephyr.intelligence.model_profiling.results_writer import (
+            load_latest_benchmark_results,
+        )
+
+        available = ModelProfile(model_name="ok:1", source="ollama", average_score=0.7, available=True)
+        unavailable = ModelProfile(model_name="bad:1", source="ollama", available=False)
+        write_benchmark_results([available, unavailable], output_dir=str(tmp_path))
+
+        results, meta = load_latest_benchmark_results(results_dir=str(tmp_path))
+        assert meta["state"] == "fresh"
+        assert [r["model_name"] for r in results] == ["ok:1"]
+
+    def test_custom_max_age_hours(self, tmp_path):
+        from zephyr.intelligence.model_profiling.results_writer import (
+            load_latest_benchmark_results,
+        )
+
+        profile = ModelProfile(model_name="m:1", source="ollama", average_score=0.7, available=True)
+        write_benchmark_results([profile], output_dir=str(tmp_path))
+
+        results, meta = load_latest_benchmark_results(results_dir=str(tmp_path), max_age_hours=0.0)
+        assert results == []
+        assert meta["state"] == "stale"

@@ -501,3 +501,108 @@ class TestL0SupplyChainVerify:
         assert cached["scanned"] == 2
         assert cached["unsafe"] == ["evil-pkg"]
         assert any("evil-pkg" in e for e in report.errors)
+
+
+class TestBootBenchmarkOffCriticalPath:
+    """#ARCH-208：benchmark 移出 boot 关键路径——启动仅读上次落盘结果，
+    缺失/过期降级"未知"不阻断，全程禁止同步跑 ModelProfiler。"""
+
+    def _make_core(self, tmp_path):
+        config = RuntimeConfig(
+            audit_log_dir=tmp_path / "audit",
+            capability_card_dir=tmp_path / "cards",
+            night_shift_storage_path=tmp_path / "night.jsonl",
+            work_dag_dir=tmp_path / "dags",
+            dream_archive_dir=tmp_path / "dream",
+            feedback_proposal_dir=tmp_path / "feedback",
+            health_snapshot_dir=tmp_path / "health",
+            auto_start_l2=False,
+        )
+        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore.init_a2a"):
+            core = AutoRuntimeCore(config)
+        core.audit_logger = MagicMock()
+        core._ollama_chat = MagicMock()
+        core._task_learner = MagicMock()
+        core._model_router = MagicMock()
+        return core
+
+    def _boot(self, core):
+        mock_report = MagicMock()
+        mock_report.success = True
+        mock_report.errors = []
+        mock_report.components_started = []
+        mock_report.steps_completed = 0
+        with (
+            patch.object(core.lifecycle, "boot_sequence", return_value=mock_report),
+            patch.object(core, "_init_task_learner"),
+            patch.object(core, "register_task_system_cron_jobs"),
+            patch.object(core, "register_task_system_hooks"),
+            patch.object(core, "start_task_queue"),
+            patch.object(core, "start_blueprint_watcher"),
+            patch.object(core, "start_fle_scheduler"),
+            patch.object(core, "run_boot_triple_alignment"),
+            patch.object(core, "init_escalation_protocol"),
+            patch.object(core, "_bootstrap_rbac"),
+        ):
+            return core.boot()
+
+    def test_boot_reads_cached_results_and_seeds(self, tmp_path):
+        """新鲜落盘结果 → 播种 learner/router，同步跑分零调用。"""
+        core = self._make_core(tmp_path)
+        cached = [
+            {
+                "model_name": "qwen3:8b",
+                "task_scores": {"composite_score": 0.75},
+                "recommendation": "ok",
+            }
+        ]
+        with (
+            patch(
+                "zephyr.trading.auto_runtime_core.load_latest_benchmark_results",
+                return_value=(cached, {"state": "fresh", "age_hours": 1.0, "path": "x.jsonl"}),
+            ),
+            patch("zephyr.trading.auto_runtime_core.ModelProfiler") as mock_profiler_cls,
+        ):
+            report = self._boot(core)
+
+        assert report.success is True
+        assert "16_model_benchmark" in report.components_started
+        assert "14_learner_seeded" in report.components_started
+        assert "15_router_seeded" in report.components_started
+        core._task_learner.load_benchmark_baseline.assert_called_once_with(cached)
+        core._model_router.load_benchmark_profiles.assert_called_once_with(cached)
+        mock_profiler_cls.assert_not_called()
+
+    def test_boot_missing_cache_degrades_unknown(self, tmp_path):
+        """从未跑过 benchmark → 降级"未知"状态，不阻断启动、不跑分。"""
+        core = self._make_core(tmp_path)
+        with (
+            patch(
+                "zephyr.trading.auto_runtime_core.load_latest_benchmark_results",
+                return_value=([], {"state": "missing", "age_hours": None, "path": ""}),
+            ),
+            patch("zephyr.trading.auto_runtime_core.ModelProfiler") as mock_profiler_cls,
+        ):
+            report = self._boot(core)
+
+        assert report.success is True
+        assert "16_model_benchmark_degraded_unknown" in report.components_started
+        assert "16_model_benchmark" not in report.components_started
+        core._task_learner.load_benchmark_baseline.assert_not_called()
+        mock_profiler_cls.assert_not_called()
+
+    def test_boot_stale_cache_degrades_unknown(self, tmp_path):
+        """落盘结果过期 → 同样降级"未知"，同步跑分零调用。"""
+        core = self._make_core(tmp_path)
+        with (
+            patch(
+                "zephyr.trading.auto_runtime_core.load_latest_benchmark_results",
+                return_value=([], {"state": "stale", "age_hours": 999.0, "path": "old.jsonl"}),
+            ),
+            patch("zephyr.trading.auto_runtime_core.ModelProfiler") as mock_profiler_cls,
+        ):
+            report = self._boot(core)
+
+        assert report.success is True
+        assert "16_model_benchmark_degraded_unknown" in report.components_started
+        mock_profiler_cls.assert_not_called()
