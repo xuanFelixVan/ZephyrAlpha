@@ -10428,18 +10428,6 @@ creation_tokens:
   token: auto-scaffold-ashare-20260826
   created_by: scaffold.py
   capability: ashare
-- file: src/zephyr/data/calendar/__init__.py
-  token: auto-scaffold-calendar-init-20260826
-  created_by: scaffold.py
-  capability: market_calendar
-- file: docs/_working/reports/2026-08-26-calendar-consumers-inventory.md
-  token: auto-cal001-inventory-20260826
-  created_by: AI-CAL-001
-  capability: market_calendar
-- file: docs/_working/audit/architecture-reviews/2026-08-26-market-calendar-abstraction.md
-  token: auto-cal001-archreview-20260826
-  created_by: AI-CAL-001
-  capability: market_calendar
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
