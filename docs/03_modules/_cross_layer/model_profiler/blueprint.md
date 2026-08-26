@@ -4,7 +4,7 @@ submodule_path: src/zephyr/intelligence/model_profiling
 title: "Model Profiler 蓝图 — 模型画像器·LLM能力基线测量"
 doc_type: blueprint
 status: Active
-version: "2.2.6"
+version: "2.2.7"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -137,8 +137,8 @@ ModelProfiler 是 ZephyrAlpha 的 LLM 模型画像器——对所有可用模型
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-034` 的 36 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-034` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-034` 的 35 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-034` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -149,7 +149,7 @@ ModelProfiler 是 ZephyrAlpha 的 LLM 模型画像器——对所有可用模型
 | module_id | MOD-INF-034 | MOD-INF-034 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | stable | stable | ✅ |
-| file_count | 36 文件 | 8 文件（§0.1） | ❌ |
+| file_count | 35 文件 | 8 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1015,7 +1015,6 @@ MAX_OLLAMA_MODELS, SKIP_MODEL_PATTERNS
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `docs/03_modules/_cross_layer/model_profiler/blueprint.md` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/model_profiler/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_profiling/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_profiling/benchmark_suite.py` | ✅ 已实现 | |

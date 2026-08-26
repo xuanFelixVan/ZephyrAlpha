@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance/budget_engine.py
 title: Token/Cost/Time 三维预算强制执行蓝图 — 七级预算 + 全生命周期 + 信任根 + 抗对抗
 doc_type: blueprint
 status: Active
-version: 0.7.5
+version: 0.7.6
 layer: L0_infrastructure
 functional_domain: budget_enforcement
 owner: ZephyrAlpha-Owner
@@ -177,8 +177,8 @@ stability: evolving
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-024` 的 99 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-024` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-024` 的 98 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-024` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -189,7 +189,7 @@ stability: evolving
 | module_id | MOD-INF-024 | MOD-INF-024 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 99 文件 | N/A | — |
+| file_count | 98 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1431,7 +1431,6 @@ solo_maintainer_optimizations:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md` | ✅ 已实现 | |
 | `src/zephyr/gov_audit/action_history.py` | ✅ 已实现 | |
 | `src/zephyr/gov_audit/trust_ring_manager.py` | ✅ 已实现 | |
 | `src/zephyr/gov_drift/bootstrapping_calibrator.py` | ✅ 已实现 | |

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/intelligence/model_profiling
 title: "Model Capability Exam 蓝图 — 模型能力考试·多维度能力评估"
 doc_type: blueprint
 status: Active
-version: "2.3.6"
+version: "2.3.8"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -41,7 +41,7 @@ references:
   - {id: "CFG-CAP-001", at: "全篇", why: "capacity_params.yaml——MCE所有并发/超时参数从该文件读取"}
 responsibility_domain: 
 design_maturity: production
-build_status: stable
+build_status: generated
 ---
 
 # Model Capability Exam 蓝图 — 模型能力考试·多维度能力评估
@@ -128,8 +128,8 @@ ModelCapabilityExam（MCE）是 ModelProfiler（MOD-INF-034）的子系统，负
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-036` 的 16 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-036` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-036` 的 15 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-036` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -139,8 +139,8 @@ ModelCapabilityExam（MCE）是 ModelProfiler（MOD-INF-034）的子系统，负
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-036 | MOD-INF-036 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
-| file_count | 16 文件 | 14 文件（§0.1） | ❌ |
+| build_status | generated | generated | ✅ |
+| file_count | 15 文件 | 14 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1007,9 +1007,8 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `docs/03_modules/_cross_layer/model_capability_exam/blueprint.md` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/model_capability_exam/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/intelligence/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_evaluation/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_evaluation/_memory_backend.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_evaluation/activate.py` | ✅ 已实现 | |

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/security/llm_defense/llm_security
 title: "LLM Security Gateway 蓝图 — L0-L8 九层纵深防御 + fail-closed 原则"
 doc_type: blueprint
 status: Active
-version: "2.0.4"
+version: "2.0.6"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -414,8 +414,8 @@ LSG 是 ZephyrAlpha 中**所有 LLM 调用的安全闸门**。任何 AI agent �
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-LLM_SECURITY` 的 74 个 file 节点 | production | `extract_depgraph.py --modules MOD-LLM_SECURITY` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-LLM_SECURITY` 的 80 个 file 节点 | production | `extract_depgraph.py --modules MOD-LLM_SECURITY` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -426,7 +426,7 @@ LSG 是 ZephyrAlpha 中**所有 LLM 调用的安全闸门**。任何 AI agent �
 | module_id | MOD-LLM_SECURITY | MOD-LLM_SECURITY | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 74 文件 | 22 文件（§0.1） | ❌ |
+| file_count | 80 文件 | 22 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -5856,6 +5856,7 @@ Encoding Defense Layers — LSG + LLM 协作
 | `src/zephyr/security/llm_defense/llm_security/layers/l4_agent.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/layers/l5_resource_protection.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/layers/l6_data_flow.py` | ⚠️ 骨架 | |
+| `src/zephyr/security/llm_defense/llm_security/layers/l6_feishu_alert.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/layers/l6_observability.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/layers/l8_compliance.py` | ⚠️ 骨架 | |
 | `src/zephyr/security/llm_defense/llm_security/layers/l8_multi_agent.py` | ✅ 已实现 | |
@@ -5897,12 +5898,15 @@ Encoding Defense Layers — LSG + LLM 协作
 | `tests/llm_security/test_l2a_process_sandbox.py` | ✅ 已实现 | |
 | `tests/llm_security/test_l3_output_security.py` | ✅ 已实现 | |
 | `tests/llm_security/test_l4_agent_security.py` | ✅ 已实现 | |
+| `tests/llm_security/test_l5_performance_guard.py` | ✅ 已实现 | |
 | `tests/llm_security/test_l5_resource_protection.py` | ✅ 已实现 | |
+| `tests/llm_security/test_l6_feishu_alert.py` | ✅ 已实现 | |
 | `tests/llm_security/test_l6_observability.py` | ✅ 已实现 | |
 | `tests/llm_security/test_l7_red_team.py` | ✅ 已实现 | |
 | `tests/llm_security/test_l7_validation.py` | ✅ 已实现 | |
 | `tests/llm_security/test_l8_multi_agent.py` | ✅ 已实现 | |
 | `tests/llm_security/test_llm_security.py` | ✅ 已实现 | |
+| `tests/llm_security/test_lsg_self_regression.py` | ✅ 已实现 | |
 | `tests/llm_security/test_process_sandbox_llm_security.py` | ✅ 已实现 | |
 | `tests/llm_security/test_runtime_interceptor.py` | ✅ 已实现 | |
 | `tests/llm_security/test_secrets.py` | ✅ 已实现 | |

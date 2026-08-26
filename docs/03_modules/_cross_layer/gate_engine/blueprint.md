@@ -5,7 +5,7 @@ title: "Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁�
 doc_type: blueprint
 template_for: blueprint
 status: Draft
-version: "0.8.16"
+version: "0.8.17"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -51,7 +51,7 @@ ssot_claims:
   - {claim: "自指硬化协议SSoT", scope: "module"}
 responsibility_domain: 
 design_maturity: production
-build_status: stable
+build_status: generated
 ---
 
 # Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁域熔断器
@@ -61,7 +61,7 @@ build_status: stable
 
 本蓝图描述 Gate Engine——ZephyrAlpha 的门禁引擎。它解决了任务执行和知识生命周期关键决策点的合规判定问题。核心职责包括：G0-G7 八门禁覆盖任务全生命周期、G1-G5 KMS 决策门覆盖知识生命周期、熔断器阻断异常传播、法证审计完整性。当前规模 ~268 脚本/51 模块，目标容量 10000 脚本/1500 模块/100 AI 并发。上游依赖脚本系统(MOD-INF-005)提供 exit code，下游被 Orchestrator(MOD-TASK_SYSTEM)消费判定结果。
 
-> module_id: MOD-GATE_ENGINE | version: 0.8.16 | status: Draft | layer: cross_layer
+> module_id: MOD-GATE_ENGINE | version: 0.8.17 | status: Draft | layer: cross_layer
 > actual_disk_path: src/zephyr/gov_enforcement/rule_enforcement/ + src/zephyr/feedback_loop/gates/ | generation: 1 | construction_progress: partially_implemented
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
 > - 蓝图+施工图模板：blueprint-template.md
@@ -296,8 +296,8 @@ build_status: stable
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-GATE_ENGINE` 的 306 个 file 节点 | production | `extract_depgraph.py --modules MOD-GATE_ENGINE` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-GATE_ENGINE` 的 307 个 file 节点 | production | `extract_depgraph.py --modules MOD-GATE_ENGINE` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Draft | — |
 
@@ -307,8 +307,8 @@ build_status: stable
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-GATE_ENGINE | MOD-GATE_ENGINE | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
-| file_count | 306 文件 | 28 文件（§0.1） | ❌ |
+| build_status | generated | generated | ✅ |
+| file_count | 307 文件 | 28 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1465,7 +1465,6 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `docs/03_modules/_cross_layer/gate_engine/blueprint.md` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/gates/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/gates/_governance_gates.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/gates/_operational_gates.py` | ✅ 已实现 | |
@@ -1566,6 +1565,7 @@ STEP 3: 拆分后验证
 | `src/zephyr/gov_enforcement/commit_gates/hardcoded_url_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/held_overlap_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/high_complexity_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/hot_file_base_freshness_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/id_uniqueness_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/import_direction_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/import_integrity_gate.py` | ✅ 已实现 | |
@@ -1719,6 +1719,7 @@ STEP 3: 拆分后验证
 | `tests/governance/commit_gates/test_file_placement_ttl_gate.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_foreign_change_gate.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_forged_gw_marker_gate.py` | ✅ 已实现 | |
+| `tests/governance/commit_gates/test_hot_file_base_freshness_gate.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_import_integrity_gate.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_manual_only_permanent_gate_noqa.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_new_file_depgraph_gate.py` | ✅ 已实现 | |

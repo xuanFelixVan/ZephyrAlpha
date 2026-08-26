@@ -5,7 +5,7 @@ submodule_path: src/zephyr/governance/code_dedup_engine
 title: "Code Dedup Engine 蓝图 — 代码去重·爆炸半径防护·原子修复"
 doc_type: blueprint
 status: Active
-version: 0.15.4
+version: 0.15.6
 layer: L0_infrastructure
 layer_note: "跨层模块——代码在基础设施域，但与治理域交互（Gate Engine+AiAuditLogger）"
 layer_name: infrastructure
@@ -96,7 +96,7 @@ tags:
   - cross-boundary-clone
   - decision-audit-trail
 responsibility_domain: 
-build_status: stable
+build_status: generated
 design_maturity: production
 ---
 
@@ -266,7 +266,7 @@ design_maturity: production
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-017` 的 127 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-017` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -276,7 +276,7 @@ design_maturity: production
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-017 | MOD-INF-017 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | generated | generated | ✅ |
 | file_count | 127 文件 | 68 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -1745,7 +1745,6 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md` | ✅ 已实现 | |
 | `src/zephyr/gov_code_quality/code_dedup/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/gov_code_quality/code_dedup/annotations.py` | ✅ 已实现 | |
 | `src/zephyr/gov_code_quality/code_dedup/ast_comparator.py` | ✅ 已实现 | |
@@ -1873,6 +1872,7 @@ STEP 3: 拆分后验证
 | `tests/governance/shared/test_shared_evolver.py` | ✅ 已实现 | |
 | `tests/governance/shared/test_shared_lifecycle_manager.py` | ✅ 已实现 | |
 | `tests/path/test_path_index_validator.py` | ✅ 已实现 | |
+| `tests/path/test_path_tree_generator_design_protection.py` | ✅ 已实现 | |
 | `tests/risk/test_risk_mitigation_tracker.py` | ✅ 已实现 | |
 | `tests/risk/test_risk_mitigator.py` | ✅ 已实现 | |
 | `tests/self_check/test_self_scanner.py` | ✅ 已实现 | |

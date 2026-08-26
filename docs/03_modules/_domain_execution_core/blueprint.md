@@ -4,7 +4,7 @@ submodule_path: src/zephyr/ex_core
 title: "Trade Execution Core 蓝图+施工图 — 交易执行引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.13"
+version: "2.2.14"
 layer: L2_domain
 layer_name: trade_execution
 functional_domain: execution
@@ -56,7 +56,7 @@ references:
     section: "§16.7"
     why: "matching_engine Tick级5档撮合规格, MiniQMT Broker 实盘撮合逻辑需保持一致"
 responsibility_domain: 
-design_maturity: design
+design_maturity: production
 build_status: generated
 ---
 
@@ -120,7 +120,42 @@ build_status: generated
 
 ### §0.2 对齐验证矩阵
 
-| 验证项 | 验证方法 | 结果 |
+|
+| 8 | `aggregate_root_manager.py` | §3.1 | aggregate root manager | 已实现 | — |
+| 9 | `async_fill_dispatcher.py` | §3.1 | async fill dispatcher | 已实现 | — |
+| 10 | `board_lot.py` | §3.1 | board lot | 已实现 | — |
+| 11 | `broker_link_probe.py` | §3.1 | broker link probe | 已实现 | — |
+| 12 | `cancel_rate_guard.py` | §3.1 | cancel rate guard | 已实现 | — |
+| 13 | `corporate_action_adjuster.py` | §3.1 | corporate action adjuster | 已实现 | — |
+| 14 | `daban_exit_decision.py` | §3.1 | daban exit decision | 已实现 | — |
+| 15 | `daban_instant_circuit_breaker.py` | §3.1 | daban instant circuit breaker | 已实现 | — |
+| 16 | `daban_monitors.py` | §3.1 | daban monitors | 已实现 | — |
+| 17 | `daban_named_functions.py` | §3.1 | daban named functions | 已实现 | — |
+| 18 | `daban_pit_safety.py` | §3.1 | daban pit safety | 已实现 | — |
+| 19 | `daban_signal_decision.py` | §3.1 | daban signal decision | 已实现 | — |
+| 20 | `execution_report.py` | §3.1 | execution report | 已实现 | — |
+| 21 | `execution_strategy_selector.py` | §3.1 | execution strategy selector | 已实现 | — |
+| 22 | `fill_handler.py` | §3.1 | fill handler | 已实现 | — |
+| 23 | `live_simulation_switcher.py` | §3.1 | live simulation switcher | 已实现 | — |
+| 24 | `miniqmt_channel_manager.py` | §3.1 | miniqmt channel manager | 已实现 | — |
+| 25 | `multi_contract_adapter.py` | §3.1 | multi contract adapter | 已实现 | — |
+| 26 | `open_order_resolver.py` | §3.1 | open order resolver | 已实现 | — |
+| 27 | `order_execution_saga.py` | §3.1 | order execution saga | 已实现 | — |
+| 28 | `order_splitter.py` | §3.1 | order splitter | 已实现 | — |
+| 29 | `performance_monitor.py` | §3.1 | performance monitor | 已实现 | — |
+| 30 | `position_reconciler.py` | §3.1 | position reconciler | 已实现 | — |
+| 31 | `post_close_pricing.py` | §3.1 | post close pricing | 已实现 | — |
+| 32 | `pre_execution_checker.py` | §3.1 | pre execution checker | 已实现 | — |
+| 33 | `premarket_checker.py` | §3.1 | premarket checker | 已实现 | — |
+| 34 | `price_cage.py` | §3.1 | price cage | 已实现 | — |
+| 35 | `pricing_policy.py` | §3.1 | pricing policy | 已实现 | — |
+| 36 | `programmatic_trading_guard.py` | §3.1 | programmatic trading guard | 已实现 | — |
+| 37 | `rejection_action_handler.py` | §3.1 | rejection action handler | 已实现 | — |
+| 38 | `repository_interface.py` | §3.1 | repository interface | 已实现 | — |
+| 39 | `risk_layer_orchestrator.py` | §3.1 | risk layer orchestrator | 已实现 | — |
+| 40 | `signal_providers.py` | §3.1 | signal providers | 已实现 | — |
+| 41 | `trading_halt_resolver.py` | §3.1 | trading halt resolver | 已实现 | — |
+| 42 | `trading_session.py` | §3.1 | trading session | 已实现 | — | 验证项 | 验证方法 | 结果 |
 |--------|---------|:---:|
 | construction_progress = partially_implemented → 已实现章节的代码存在 | 按章节核对 | ☑ |
 | 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" *.py` | ☑ |
@@ -150,7 +185,7 @@ build_status: generated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L06-001` 的 41 个 file 节点 | design | `extract_depgraph.py --modules MOD-L06-001` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L06-001` 的 42 个 file 节点 | production | `extract_depgraph.py --modules MOD-L06-001` |
 | 数据流图 (dataflow) | 3 个 Dataset / 3 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -162,7 +197,7 @@ build_status: generated
 | module_id | MOD-L06-001 | MOD-L06-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 41 文件 | 7 文件（§0.1） | ❌ |
+| file_count | 42 文件 | 7 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1202,6 +1237,7 @@ ex_core/adapters/miniqmt_broker.py (新建, 实盘Broker)
 | `src/zephyr/ex_core/rejection_action_handler.py` | ✅ 已实现 | |
 | `src/zephyr/ex_core/risk_layer_orchestrator.py` | ✅ 已实现 | |
 | `src/zephyr/ex_core/services/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/ex_core/services/live_portfolio.py` | ✅ 已实现 | |
 | `src/zephyr/ex_core/signal_providers.py` | ✅ 已实现 | |
 | `src/zephyr/ex_core/trading_halt_resolver.py` | ✅ 已实现 | |
 | `src/zephyr/ex_core/trading_session.py` | ✅ 已实现 | |
@@ -1216,6 +1252,7 @@ ex_core/adapters/miniqmt_broker.py (新建, 实盘Broker)
 |---------|:---:|------|
 | `tests/ex_core/__init__.py` | ⚠️ 骨架 | |
 | `tests/ex_core/test_execution_report.py` | ✅ 已实现 | |
+| `tests/ex_core/test_live_portfolio.py` | ✅ 已实现 | |
 | `tests/ex_core/test_miniqmt_broker.py` | ✅ 已实现 | |
 | `tests/ex_core/test_order_manager_compliance_gate.py` | ✅ 已实现 | |
 | `tests/ex_core/test_price_cage.py` | ✅ 已实现 | |

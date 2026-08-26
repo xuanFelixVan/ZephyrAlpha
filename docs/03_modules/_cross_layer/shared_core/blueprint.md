@@ -4,7 +4,7 @@ submodule_path: src/zephyr/shared
 title: "Shared+Core 蓝图"
 doc_type: blueprint
 status: Active
-version: "0.19.12"
+version: "0.19.16"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -132,8 +132,8 @@ build_status: generated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-016` 的 343 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-016` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-016` 的 346 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-016` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -144,7 +144,7 @@ build_status: generated
 | module_id | MOD-INF-016 | MOD-INF-016 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 343 文件 | 14 文件（§0.1） | ❌ |
+| file_count | 346 文件 | 14 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -357,7 +357,6 @@ build_status: generated
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `docs/03_modules/_cross_layer/shared_core/blueprint.md` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/rule_enforcement/compliance_rule.py` | ⚠️ 骨架 | |
 | `src/zephyr/gov_enforcement/rule_enforcement/invariants/en_process_lifecycle_gateway.py` | ✅ 已实现 | |
 | `src/zephyr/governance/financial_governance/instrument.py` | ✅ 已实现 | |
@@ -462,6 +461,7 @@ build_status: generated
 | `src/zephyr/shared/contracts/execution/model_serving_request.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/execution/order.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/execution_report.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/execution_report_contract.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/experiment/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/experiment/experiment_result.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/experiment/model_serving_response.py` | ✅ 已实现 | |
@@ -546,6 +546,7 @@ build_status: generated
 | `src/zephyr/shared/infra/process_lifecycle_gateway.py` | ✅ 已实现 | |
 | `src/zephyr/shared/infra/process_pool.py` | ✅ 已实现 | |
 | `src/zephyr/shared/io/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/shared/io/audit_jsonl_writer.py` | ✅ 已实现 | |
 | `src/zephyr/shared/io/cache_invalidation.py` | ✅ 已实现 | |
 | `src/zephyr/shared/io/content_fingerprint.py` | ✅ 已实现 | |
 | `src/zephyr/shared/io/file_utils.py` | ✅ 已实现 | |
@@ -649,6 +650,7 @@ build_status: generated
 | `tests/db/conftest.py` | ✅ 已实现 | |
 | `tests/db/test_db_integration.py` | ✅ 已实现 | |
 | `tests/db/test_db_red_blue.py` | ✅ 已实现 | |
+| `tests/ex_core/test_execution_report_contract.py` | ✅ 已实现 | |
 | `tests/f_lifecycle/test_f21_auto_run.py` | ✅ 已实现 | |
 | `tests/f_lifecycle/test_f21_auto_shutdown.py` | ✅ 已实现 | |
 | `tests/f_lifecycle/test_f21_auto_startup.py` | ✅ 已实现 | |
@@ -684,6 +686,7 @@ build_status: generated
 | `tests/shared/alerts/test_alert_senders.py` | ✅ 已实现 | |
 | `tests/shared/alerts/test_dual_channel_alert.py` | ✅ 已实现 | |
 | `tests/shared/alerts/test_heartbeat_server.py` | ✅ 已实现 | |
+| `tests/shared/test_audit_jsonl_writer.py` | ✅ 已实现 | |
 | `tests/shared/test_converters.py` | ✅ 已实现 | |
 | `tests/shared/test_safe_write.py` | ✅ 已实现 | |
 | `tests/shared/test_state_store.py` | ✅ 已实现 | |

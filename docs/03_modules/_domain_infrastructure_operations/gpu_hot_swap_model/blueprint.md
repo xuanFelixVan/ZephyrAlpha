@@ -3,7 +3,7 @@ module_id: MOD-INF-069
 title: "GPU 上岗热交换模型蓝图 — 两档显存画像/热交换契约/四件套收口引用"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L00_infrastructure
 layer_name: infrastructure_operations
@@ -14,8 +14,8 @@ date: "2026-08-25"
 last_updated: "2026-08-25"
 priority: P0
 blueprint_level: module
-design_maturity: design
-build_status: testing
+design_maturity: production
+build_status: stable
 responsibility_domain: 
 ---
 
@@ -90,8 +90,8 @@ A9 运维架构 §0.3 横切层四件套的 GPU 件契约收口。派单边界�
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-069` 的 2 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-069` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-069` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-069` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -101,7 +101,7 @@ A9 运维架构 §0.3 横切层四件套的 GPU 件契约收口。派单边界�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-069 | MOD-INF-069 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | testing | testing | ✅ |
+| build_status | stable | stable | ✅ |
 | file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -120,6 +120,11 @@ A9 运维架构 §0.3 横切层四件套的 GPU 件契约收口。派单边界�
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/infrastructure/gpu_hot_swap_model.py` | ✅ 已实现 | |
+
+### 7.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
 | `tests/infrastructure/test_gpu_hot_swap_model.py` | ✅ 已实现 | |
 
 ### 7.5 路径索引使用指南
@@ -135,3 +140,5 @@ A9 运维架构 §0.3 横切层四件套的 GPU 件契约收口。派单边界�
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

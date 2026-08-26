@@ -3,7 +3,7 @@ module_id: MOD-RPT-009
 title: "复盘编排器蓝图 — 日/周/月三频复盘链路编排+四段式周报模板（55 号 G26 §3.6）"
 doc_type: blueprint
 status: Active
-version: "0.1.20"
+version: "0.1.21"
 ttl: permanent
 layer: L07_reporting
 layer_name: reporting
@@ -96,6 +96,7 @@ tests/reporting/test_review_orchestrator.py——日 PASS/FAIL 两态/周模板�
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `src/zephyr/reporting/ai_review_summary.py` | ✅ 已实现 | |
 | `src/zephyr/reporting/review_orchestrator.py` | ✅ 已实现 | |
 | `src/zephyr/reporting/review_template_engine.py` | ✅ 已实现 | |
 
@@ -103,6 +104,7 @@ tests/reporting/test_review_orchestrator.py——日 PASS/FAIL 两态/周模板�
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `tests/reporting/test_ai_review_summary.py` | ✅ 已实现 | |
 | `tests/reporting/test_review_orchestrator.py` | ✅ 已实现 | |
 | `tests/reporting/test_review_template_engine.py` | ✅ 已实现 | |
 
@@ -132,8 +134,8 @@ tests/reporting/test_review_orchestrator.py——日 PASS/FAIL 两态/周模板�
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-RPT-009` 的 4 个 file 节点 | production | `extract_depgraph.py --modules MOD-RPT-009` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-RPT-009` 的 6 个 file 节点 | production | `extract_depgraph.py --modules MOD-RPT-009` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -144,6 +146,6 @@ tests/reporting/test_review_orchestrator.py——日 PASS/FAIL 两态/周模板�
 | module_id | MOD-RPT-009 | MOD-RPT-009 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | stable | stable | ✅ |
-| file_count | 4 文件 | N/A | — |
+| file_count | 6 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

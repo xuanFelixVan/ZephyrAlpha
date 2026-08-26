@@ -39,7 +39,7 @@ template_for: ''
 title: 'D_BACKTEST 回测引擎域蓝图'
 ttl: permanent
 verifiability: automated
-version: 1.3.12
+version: 1.3.13
 responsibility_domain: 
 design_maturity: production
 build_status: generated
@@ -190,8 +190,8 @@ D_BACKTEST域代码唯一存放于 `src/zephyr/backtest/`。禁止在research/�
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-BT-001` 的 57 个 file 节点 | production | `extract_depgraph.py --modules MOD-BT-001` |
-| 数据流图 (dataflow) | 5 个 Dataset / 5 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-BT-001` 的 59 个 file 节点 | production | `extract_depgraph.py --modules MOD-BT-001` |
+| 数据流图 (dataflow) | 5 个 Dataset / 6 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -202,7 +202,7 @@ D_BACKTEST域代码唯一存放于 `src/zephyr/backtest/`。禁止在research/�
 | module_id | MOD-BT-001 | MOD-BT-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 57 文件 | N/A | — |
+| file_count | 59 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -976,7 +976,7 @@ D_BACKTEST域当前7个模块(MVP),v1.1.0扩展到15个。容量阈值≤150,无
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/backtest/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/core/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/backtest/core/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/core/cpcv.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/core/data_handler.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/core/decision_gate.py` | ✅ 已实现 | |
@@ -984,6 +984,7 @@ D_BACKTEST域当前7个模块(MVP),v1.1.0扩展到15个。容量阈值≤150,无
 | `src/zephyr/backtest/core/matching_engine.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/core/matching_logic.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/core/metrics.py` | ✅ 已实现 | |
+| `src/zephyr/backtest/core/overfitting_adjudicator.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/core/overfitting_detector.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/core/pit_manager.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/core/portfolio.py` | ✅ 已实现 | |
@@ -1026,6 +1027,7 @@ D_BACKTEST域当前7个模块(MVP),v1.1.0扩展到15个。容量阈值≤150,无
 | `tests/backtest/test_limit_price_rounding_night001.py` | ✅ 已实现 | |
 | `tests/backtest/test_matching_engine.py` | ✅ 已实现 | |
 | `tests/backtest/test_metrics_dsr.py` | ✅ 已实现 | |
+| `tests/backtest/test_overfitting_adjudicator.py` | ✅ 已实现 | |
 | `tests/backtest/test_overfitting_detector.py` | ✅ 已实现 | |
 | `tests/backtest/test_pit_leakage_future_date.py` | ✅ 已实现 | |
 | `tests/backtest/test_pit_manager.py` | ✅ 已实现 | |

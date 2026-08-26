@@ -3,8 +3,8 @@
 #
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
-generated_at: '2026-08-22'
-total_scripts: 714
+generated_at: '2026-08-26'
+total_scripts: 717
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -758,6 +758,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: construction/test_counter_state.py
+  path: construction/test_counter_state.py
+  description: import time
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: construction/test_deepseek_api.py
   path: construction/test_deepseek_api.py
   description: import json
@@ -769,6 +777,22 @@ scripts:
 - name: construction/test_event_hook.py
   path: construction/test_event_hook.py
   description: import sys
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: construction/test_qmt_file_bridge_e2e.py
+  path: construction/test_qmt_file_bridge_e2e.py
+  description: 验证链路：
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: construction/test_qmt_file_bridge_full.py
+  path: construction/test_qmt_file_bridge_full.py
+  description: 测试项：
   domain: test
   execution_plane: warm-path
   status: registered

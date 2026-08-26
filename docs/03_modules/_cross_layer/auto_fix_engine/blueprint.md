@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/auto_fix_engine
 title: "Auto Fix Engine 蓝图 — 自动修复引擎·模板化修复执行"
 doc_type: blueprint
 status: Active
-version: "5.1.3"
+version: "5.1.4"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -61,7 +61,7 @@ build_status: stable
 
 本蓝图描述 AutoFixEngine——ZephyrAlpha 的自动修复引擎。它解决了审计发现问题到自动修复执行的闭环问题。核心职责包括：三通道修复管道（结构→模板化100%确定 / 语义→LLM Bridge 95~98%置信 / 行为→Block+Alert永不自动修复）、8状态修复生命周期、WAL原子修复保证、病因修复法九阶链。当前规模 ~51模块/~268脚本/单Session，目标容量 1500模块/10000脚本/100 AI并发。上游依赖 DriftDetector(MOD-INF-023)/OrphanJudge(MOD-INF-029)/SemanticAuditor(MOD-INF-028) 提供审计发现，下游被 AuditOrchestrator(MOD-INF-027) 消费修复结果。
 
-> module_id: MOD-INF-031 | version: 5.1.3 | status: Active | layer: cross_layer
+> module_id: MOD-INF-031 | version: 5.1.4 | status: Active | layer: cross_layer
 > actual_disk_path: src/zephyr/auto-fix-engine/ | generation: 5 | construction_progress: design_only
 
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
@@ -152,8 +152,8 @@ build_status: stable
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-031` 的 61 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-031` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-031` 的 60 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-031` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -164,7 +164,7 @@ build_status: stable
 | module_id | MOD-INF-031 | MOD-INF-031 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | stable | stable | ✅ |
-| file_count | 61 文件 | 33 文件（§0.1） | ❌ |
+| file_count | 60 文件 | 33 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1273,7 +1273,6 @@ ConvergenceController：RedBlue 对抗验证→全部 GREEN→收敛检测→N �
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/auto_fix_engine/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/auto_fix_engine/__main__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/auto_fix_engine/alignment_syncer.py` | ✅ 已实现 | |

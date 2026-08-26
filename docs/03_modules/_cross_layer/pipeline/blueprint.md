@@ -4,7 +4,7 @@ submodule_path: src/zephyr/integration
 title: "Pipeline 蓝图 — 管线编排器·M1-M11门控流水线"
 doc_type: blueprint
 status: Active
-version: "0.39.7"
+version: "0.39.8"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -34,11 +34,11 @@ references:
   - {id: "MOD-INF-018", at: "全篇", why: "SoD——仅存 references"}
   - {id: "architecture_model/layers/b_pipeline.yaml", at: "全篇", why: "Pipeline YAML SSoT——本蓝图真源"}
 design_maturity: production
-build_status: stable
+build_status: generated
 responsibility_domain: 
 ---
 
-> module_id: MOD-INF-009 | version: 0.39.7 | status: active | layer: cross_layer
+> module_id: MOD-INF-009 | version: 0.39.8 | status: active | layer: cross_layer
 > actual_disk_path: src/zephyr/integration/pipeline_orchestrator.py | generation: 2 | construction_progress: partially_implemented
 
 # Pipeline 蓝图 — 管线编排器·M1-M11门控流水线
@@ -103,6 +103,12 @@ responsibility_domain:
 | 23 | `model_profiler/profiler.py` | §3 | 已迁移至 `zephyr.model_profiler.profiler` | 已迁移 | |
 | 24 | `model_profiler/results_writer.py` | §3 | 已迁移至 `zephyr.model_profiler.results_writer` | 已迁移 | |
 | 25 | `model_profiler/task_model_learner.py` | §3 | 已迁移至 `zephyr.model_profiler.task_model_learner` | 已迁移 | |
+| 26 | `failover_coordinator.py` | §3.1 | failover coordinator | 已实现 | — |
+| 27 | `llm_bridge.py` | §3.1 | llm bridge | 已实现 | — |
+| 28 | `llm_runtime_gateway.py` | §3.1 | llm runtime gateway | 已实现 | — |
+| 29 | `mcp_server.py` | §3.1 | mcp server | 已实现 | — |
+| 30 | `ports.py` | §3.1 | ports | 已实现 | — |
+| 31 | `external_system_connector.py` | §3.1 | external system connector | 已实现 | — |
 | `backpressure_types.py` | § — | — | 已实现 | | 本模块 |
 | `llm_gateway.py` | § — | — | 已实现 | | 本模块 |
 | `model_profiler/capability_passport.py` | § — | — | 已实现 | | 本模块 |
@@ -137,8 +143,8 @@ responsibility_domain:
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-009` 的 33 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-009` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-009` 的 32 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-009` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -148,8 +154,8 @@ responsibility_domain:
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-009 | MOD-INF-009 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
-| file_count | 33 文件 | 25 文件（§0.1） | ❌ |
+| build_status | generated | generated | ✅ |
+| file_count | 32 文件 | 31 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1020,7 +1026,6 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `docs/03_modules/_cross_layer/pipeline/blueprint.md` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/pipeline/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/pipeline/backpressure_manager.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/pipeline/backpressure_types.py` | ✅ 已实现 | |

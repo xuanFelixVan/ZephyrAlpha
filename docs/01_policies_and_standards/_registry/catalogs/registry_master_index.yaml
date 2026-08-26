@@ -1,8 +1,8 @@
-# 自动生成于 2026-08-22T15:10:16Z
+# 自动生成于 2026-08-26T09:50:49Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-08-22T15:10:16Z'
+generated_at: '2026-08-26T09:50:49Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
 total_registries: 46
@@ -45,7 +45,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 600
+  entry_count: 692
   status: active
 - registry_id: CFG-business-streams
   name: 业务流定义登记表
@@ -55,14 +55,14 @@ registries:
   maintenance: manual
   entry_count: 0
   status: active
-- registry_id: REG-CAND-001
-  name: 候选模块登记表
+- registry_id: CFG-candidate-module-registry
+  name: candidate_module_registry
   category: governance_rule
   physical_path: docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 166
-  status: active
+  entry_count: 0
+  status: unknown
 - registry_id: PS-REG-021
   name: 能力→真源文件反查注册表
   category: governance_rule
@@ -181,7 +181,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 152
+  entry_count: 153
   status: active
 - registry_id: CFG-governance-convergence-map
   name: governance_convergence_map
@@ -205,7 +205,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 98
+  entry_count: 99
   status: active
 - registry_id: CFG-infrastructure-registry
   name: 运行时基础设施登记表
@@ -253,7 +253,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 5942
+  entry_count: 6557
   status: active
 - registry_id: CFG-noqa-exempt-registry
   name: noqa_exempt_registry
@@ -325,7 +325,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 219
+  entry_count: 218
   status: active
 - registry_id: REG-RULING-001
   name: 裁定中央登记表

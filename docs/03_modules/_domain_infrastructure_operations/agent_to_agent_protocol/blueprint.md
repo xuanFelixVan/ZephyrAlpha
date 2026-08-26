@@ -5,7 +5,7 @@ submodule_path: src/zephyr/infrastructure/a2a_protocol
 title: "A2A Protocol 蓝图 — Agent间通信协议与冲突解决"
 doc_type: blueprint
 status: Active
-version: "0.12.3"
+version: "0.12.4"
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: infra
@@ -78,7 +78,7 @@ design_maturity: production
 > **什么时候建**: 当同时活跃 AI Agent ≥3，或跨 Agent 任务依赖 ≥5，或 Owner 要求多 Agent 协作调度时。
 > **自动化宿主**: FLE `_periodic_checks()` → `_a2a_health_check()` + CircadianScheduler `hour=5` → `_a2a_discovery_scan()`
 
-> module_id: MOD-INF-025 | version: 0.12.3 | status: active | domain: infra_ops
+> module_id: MOD-INF-025 | version: 0.12.4 | status: active | domain: infra_ops
 > actual_disk_path: src/zephyr/infra_ops/a2a_protocol/ | generation: 3 | construction_progress: scaffold
 
 # A2A Protocol 蓝图 — Agent间通信协议与冲突解决
@@ -180,7 +180,19 @@ design_maturity: production
 | 61 | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\legacy_protocol.py` | 兼容层 | 弃用 | — |
 | 62 | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\legacy_auditor.py` | 兼容层 | 弃用 | — |
 | 63 | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\legacy_governance_adapter.py` | 兼容层 | 弃用 | — |
-| 64 | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\phase_hold.py` | §1.1 | 已实现 | — |
+|
+| 64 | `__init__.py` | §3.1 |   init   | 已实现 | — |
+| 65 | `a2a_card_registry.py` | §3.1 | a2a card registry | 已实现 | — |
+| 66 | `a2a_check_gateway.py` | §3.1 | a2a check gateway | 已实现 | — |
+| 67 | `local_first_arch.py` | §3.1 | local first arch | 已实现 | — |
+| 68 | `migration_strategy.py` | §3.1 | migration strategy | 已实现 | — |
+| 69 | `multi_agent.py` | §3.1 | multi agent | 已实现 | — |
+| 70 | `multi_model_consensus.py` | §3.1 | multi model consensus | 已实现 | — |
+| 71 | `offline_autonomy.py` | §3.1 | offline autonomy | 已实现 | — |
+| 72 | `offline_resilience.py` | §3.1 | offline resilience | 已实现 | — |
+| 73 | `phase_hold.py` | §3.1 | phase hold | 已实现 | — |
+| 74 | `prompt_lifecycle.py` | §3.1 | prompt lifecycle | 已实现 | — |
+| 75 | `realtime_streaming.py` | §3.1 | realtime streaming | 已实现 | — | 64 | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\phase_hold.py` | §1.1 | 已实现 | — |
 | `governance/auditor.py` | § — | 已实现 | | 本模块 |
 | `governance/governance_adapter.py` | § — | 已实现 | | 本模块 |
 | `governance/protocol.py` | § — | 已实现 | | 本模块 |
@@ -224,8 +236,8 @@ design_maturity: production
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-025` 的 154 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-025` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-025` 的 156 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-025` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -236,7 +248,7 @@ design_maturity: production
 | module_id | MOD-INF-025 | MOD-INF-025 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 154 文件 | 64 文件（§0.1） | ❌ |
+| file_count | 156 文件 | 75 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1447,6 +1459,7 @@ STEP 3: 拆分后验证
 | `src/zephyr/governance/a2a/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/infrastructure/a2a_protocol/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/a2a_card_registry.py` | ⚠️ 骨架 | |
+| `src/zephyr/infrastructure/a2a_protocol/a2a_check_gateway.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/governance/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/governance/_base_server.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/governance/audit_logger.py` | ✅ 已实现 | |
@@ -1546,6 +1559,7 @@ STEP 3: 拆分后验证
 | `tests/a2a/test_a2a_carbon.py` | ✅ 已实现 | |
 | `tests/a2a/test_a2a_card_registry.py` | ✅ 已实现 | |
 | `tests/a2a/test_a2a_causal_trace.py` | ✅ 已实现 | |
+| `tests/a2a/test_a2a_check_gateway.py` | ✅ 已实现 | |
 | `tests/a2a/test_a2a_checkpoint.py` | ✅ 已实现 | |
 | `tests/a2a/test_a2a_collusion_detector.py` | ✅ 已实现 | |
 | `tests/a2a/test_a2a_consent.py` | ✅ 已实现 | |

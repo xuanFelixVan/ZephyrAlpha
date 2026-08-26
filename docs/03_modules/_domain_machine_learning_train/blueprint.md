@@ -4,7 +4,7 @@ submodule_path: src/zephyr/ml_train
 title: "ML Platform Core 蓝图+施工图 — 机器学习平台"
 doc_type: blueprint
 status: Active
-version: "2.1.4"
+version: "2.1.5"
 layer: L2_domain
 functional_domain: research
 owner: ZephyrAlpha-Owner
@@ -46,7 +46,7 @@ design_maturity: production
 
 > ✅ **业务层已开放，可施工** — 本蓝图处于 C 轨占位状态，当前仅有 Phase B 骨架代码，可启动新施工。待 B 轨容量升级完成后按 ARB-11 三梯队策略激活。
 
-> module_id: MOD-L11-001 | version: 2.1.4 | status: active | domain: ml_train
+> module_id: MOD-L11-001 | version: 2.1.5 | status: active | domain: ml_train
 > actual_disk_path: src/zephyr/ml_train/ | generation: 2 | construction_progress: partially_implemented
 
 # ML Platform Core 蓝图+施工图 — 机器学习平台
@@ -117,7 +117,7 @@ design_maturity: production
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-L11-001` 的 9 个 file 节点 | production | `extract_depgraph.py --modules MOD-L11-001` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -814,7 +814,7 @@ class ModelMetadata:
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/ml_train/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/ml_train/implementations/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/ml_train/implementations/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/ml_train/implementations/default_inference_engine.py` | ✅ 已实现 | |
 | `src/zephyr/ml_train/implementations/sentiment_sft_trainer.py` | ✅ 已实现 | |
 | `src/zephyr/ml_train/inference_base.py` | ✅ 已实现 | |

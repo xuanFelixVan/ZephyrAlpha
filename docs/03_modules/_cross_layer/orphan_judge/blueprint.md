@@ -4,7 +4,7 @@ submodule_path: src/zephyr/security/access_control/orphan_judge
 title: "Orphan Judge 蓝图 — 孤儿判定器·三决策树处置"
 doc_type: blueprint
 status: Active
-version: "2.1.4"
+version: "2.1.5"
 layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
@@ -49,7 +49,7 @@ references:
   - {id: "MOD-GATE_ENGINE", at: "§2", why: "Phase Manager——gate_orphan_judge门禁检查注册"}
 responsibility_domain: 
 design_maturity: production
-build_status: stable
+build_status: generated
 ---
 
 <!--
@@ -112,7 +112,7 @@ END_REQUIRED_SECTIONS
 
 # Orphan Judge 蓝图 — 孤儿判定器·三决策树处置
 
-> module_id: MOD-INF-029 | version: 2.1.4 | status: Active | layer: cross_layer
+> module_id: MOD-INF-029 | version: 2.1.5 | status: Active | layer: cross_layer
 > actual_disk_path: src/zephyr/orphan-judge/ | generation: 3 | construction_progress: scaffold
 
 ## 概述
@@ -203,8 +203,8 @@ OrphanJudge 是孤儿文件的资产生死判决引擎——解决"文件不在�
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-029` 的 28 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-029` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-029` 的 27 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-029` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -214,8 +214,8 @@ OrphanJudge 是孤儿文件的资产生死判决引擎——解决"文件不在�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-029 | MOD-INF-029 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
-| file_count | 28 文件 | 24 文件（§0.1） | ❌ |
+| build_status | generated | generated | ✅ |
+| file_count | 27 文件 | 24 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1424,7 +1424,6 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `docs/03_modules/_cross_layer/orphan_judge/blueprint.md` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/__main__.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/cascade_analyzer.py` | ✅ 已实现 | |

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/compliance
 title: "Compliance Core 蓝图+施工图 — 合规引擎"
 doc_type: blueprint
 status: Active
-version: "2.1.6"
+version: "2.1.7"
 layer: L1_foundation
 layer_name: compliance
 functional_domain: compliance
@@ -50,13 +50,13 @@ depends_on:
     at: "§10"
     why: "权限联动"
 responsibility_domain: 
-design_maturity: design
+design_maturity: production
 build_status: generated
 ---
 
 > ⚠️ **业务层已开放，可施工** — D_COMPLIANCE 属于 C 轨 T2-deferred 层，当前阶段仅做设计审查和代码验证，不开放新功能施工。
 
-> module_id: MOD-L10-001 | version: 2.1.6 | status: Active | layer: L1_foundation
+> module_id: MOD-L10-001 | version: 2.1.7 | status: Active | layer: L1_foundation
 > actual_disk_path: src/zephyr/compliance/ | generation: 2 | construction_progress: partially_implemented
 
 # Compliance Core 蓝图+施工图 — 合规引擎
@@ -132,8 +132,8 @@ build_status: generated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L10-001` 的 11 个 file 节点 | design | `extract_depgraph.py --modules MOD-L10-001` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L10-001` 的 12 个 file 节点 | production | `extract_depgraph.py --modules MOD-L10-001` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -144,7 +144,7 @@ build_status: generated
 | module_id | MOD-L10-001 | MOD-L10-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 11 文件 | 8 文件（§0.1） | ❌ |
+| file_count | 12 文件 | 8 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -914,6 +914,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/compliance/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/compliance/async_intercept_queue.py` | ✅ 已实现 | |
 | `src/zephyr/gov_drift/artifact_scanner.py` | ✅ 已实现 | |
 | `src/zephyr/governance/compliance_gate_a6/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/governance/compliance_gate_a6/compliance_manager.py` | ✅ 已实现 | |
@@ -927,6 +928,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `tests/compliance/test_async_intercept_queue.py` | ✅ 已实现 | |
 | `tests/governance/compliance/test_l10_compliance.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南

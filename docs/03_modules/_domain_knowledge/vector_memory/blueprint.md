@@ -4,7 +4,7 @@ submodule_path: src/zephyr/integration/vector_memory
 title: "Vector Memory Service 蓝图+施工图 — ChromaDB 8 Collection 统一向量持久化"
 doc_type: blueprint
 status: Active
-version: "0.12.5"
+version: "0.12.6"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -47,7 +47,7 @@ references:
   - {id: "MOD-FEEDBACK_LOOP", at: "§3.1", why: "FLE 消费检索反馈——仅存 references，断开 depends_on DAG 环"}
   - {id: "MOD-INF-020", at: "§12", why: "VMS→线3审计追踪链输出嵌入结果——仅存 references，VMS不依赖Audit Trail运行"}
 responsibility_domain: 
-build_status: stable
+build_status: generated
 design_maturity: production
 ---
 
@@ -1476,7 +1476,6 @@ class FeedbackEntry(BaseModel):
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `docs/03_modules/_domain_knowledge/vector_memory/blueprint.md` | ✅ 已实现 | |
 | `src/zephyr/gov_drift/_analysis.py` | ✅ 已实现 | |
 | `src/zephyr/gov_drift/_core.py` | ✅ 已实现 | |
 | `src/zephyr/gov_drift/_drift.py` | ✅ 已实现 | |

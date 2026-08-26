@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance/semantic_auditor
 title: "Semantic Auditor 蓝图 — 语义审计器·规则文档LLM桥接"
 doc_type: blueprint
 status: Active
-version: "6.1.3"
+version: "6.1.4"
 layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
@@ -90,7 +90,7 @@ build_status: stable
 
 # Semantic Auditor 蓝图 — 语义审计器·规则文档LLM桥接
 
-> module_id: MOD-INF-028 | version: 6.1.3 | status: active | layer: cross_layer
+> module_id: MOD-INF-028 | version: 6.1.4 | status: active | layer: cross_layer
 > actual_disk_path: `D:\ZephyrAlpha\src\zephyr\semantic-auditor\` | generation: 5 | construction_progress: partially_implemented
 
 ## 概述
@@ -181,8 +181,8 @@ SemanticAuditor 是 ZephyrAlpha 的纯语义审计引擎——它解决"规则�
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-028` 的 25 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-028` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-028` 的 24 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-028` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -193,7 +193,7 @@ SemanticAuditor 是 ZephyrAlpha 的纯语义审计引擎——它解决"规则�
 | module_id | MOD-INF-028 | MOD-INF-028 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | stable | stable | ✅ |
-| file_count | 25 文件 | 26 文件（§0.1） | ❌ |
+| file_count | 24 文件 | 26 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1063,7 +1063,6 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `docs/03_modules/_cross_layer/semantic_auditor/blueprint.md` | ✅ 已实现 | |
 | `src/zephyr/governance/resilience_governance/blast_radius.py` | ✅ 已实现 | |
 | `src/zephyr/governance/semantic_audit/alignment_engine.py` | ✅ 已实现 | |
 | `src/zephyr/governance/semantic_audit/compliance_map.py` | ✅ 已实现 | |

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/db
 title: "Database 集成蓝图 — 2库职责划分(SQLite治理+PG架构) + 三层冷热架构定位"
 doc_type: blueprint
 status: Active
-version: "4.3.6"
+version: "4.3.7"
 layer: L1_foundation
 blueprint_level: domain
 owner: ZephyrAlpha-Owner
@@ -44,13 +44,13 @@ references:
   - {id: "MOD-INF-020", at: "全篇", why: "审计事件入库"}
   - {id: "MOD-INF-015", at: "全篇", why: "query_metrics 等遥测读写"}
 responsibility_domain: 
-design_maturity: design
-build_status: planned
+design_maturity: production
+build_status: generated
 ---
 
 # Database 集成蓝图 — SQLite+DuckDB 核心运营 + v3.0 PostgreSQL容量升级
 
-> module_id: SH-DB-001 | version: 4.3.6 | status: Active | layer: cross_layer | belongs_to: MOD-MASTER_BLUEPRINT
+> module_id: SH-DB-001 | version: 4.3.7 | status: Active | layer: cross_layer | belongs_to: MOD-MASTER_BLUEPRINT
 > actual_disk_path: `src/zephyr/governance/persistence/` | generation: 3 | construction_progress: completed
 > **DW-045 拆分完成**。详细内容见子蓝图。本文档为集成入口。
 
@@ -260,8 +260,8 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph 
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=SH-DB-001` 的 12 个 file 节点 | production | `extract_depgraph.py --modules SH-DB-001` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=SH-DB-001` 的 11 个 file 节点 | production | `extract_depgraph.py --modules SH-DB-001` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -271,8 +271,8 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph 
 |------|-------------------|--------------------------|:-------:|
 | module_id | SH-DB-001 | SH-DB-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | planned | ❌ |
-| file_count | 12 文件 | 27 文件（§0.1） | ❌ |
+| build_status | generated | generated | ✅ |
+| file_count | 11 文件 | 27 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -394,7 +394,6 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph 
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `docs/03_modules/_cross_layer/database/blueprint.md` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/rule_enforcement/dlq_retry_policy.py` | ✅ 已实现 | |
 | `src/zephyr/governance/depgraph_schema.py` | ✅ 已实现 | |
 | `src/zephyr/governance/persistence/database_manager.py` | ✅ 已实现 | |

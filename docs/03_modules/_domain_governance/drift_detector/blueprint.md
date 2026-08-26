@@ -3,7 +3,7 @@ module_id: MOD-INF-023
 title: "Drift Detector 蓝图 — 39检测器漂移检测引擎与10状态漂移生命周期"
 doc_type: blueprint
 status: Active
-version: "3.1.6"
+version: "3.1.7"
 layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
@@ -73,11 +73,11 @@ tags:
 summary: >
   39检测器漂移检测引擎+10状态漂移生命周期+基线快照+自动对账+漂移预算+告警路由+混沌注入+漂移取证+防篡改审计。54文件，4Phase全部完成，红白对抗验证通过。
 responsibility_domain: 
-build_status: stable
+build_status: generated
 design_maturity: production
 ---
 
-> module_id: MOD-INF-023 | version: 3.1.6 | status: Active | layer: cross_layer
+> module_id: MOD-INF-023 | version: 3.1.7 | status: Active | layer: cross_layer
 > actual_disk_path: src/zephyr/gov_drift/ + src/zephyr/governance/drift_detector_core/ | generation: 4 | construction_progress: partially_implemented
 
 # Drift Detector 蓝图+施工图 — 39检测器漂移检测引擎与10状态漂移生命周期
@@ -223,8 +223,8 @@ design_maturity: production
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-023` 的 76 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-023` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-023` 的 75 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-023` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -234,8 +234,8 @@ design_maturity: production
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-023 | MOD-INF-023 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
-| file_count | 76 文件 | 54 文件（§0.1） | ❌ |
+| build_status | generated | generated | ✅ |
+| file_count | 75 文件 | 54 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1302,7 +1302,6 @@ detector_dimensions:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `docs/03_modules/_domain_governance/drift_detector/blueprint.md` | ✅ 已实现 | |
 | `src/zephyr/gov_drift/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/gov_drift/__main__.py` | ✅ 已实现 | |
 | `src/zephyr/gov_drift/absence_manager.py` | ✅ 已实现 | |

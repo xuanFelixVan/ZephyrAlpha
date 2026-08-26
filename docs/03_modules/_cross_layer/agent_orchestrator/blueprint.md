@@ -5,7 +5,7 @@ title: "Agent Orchestrator 蓝图 — Agent 全生命周期编排引擎"
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "1.0.4"
+version: "1.0.5"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -52,7 +52,7 @@ build_status: stable
 
 本蓝图描述 Agent Orchestrator——ZephyrAlpha Vibe Coding 2.0 五大核心服务中的"任务引擎"。它接管 Agent 任务全生命周期——任务入队、Agent 拉取、沙箱执行、幻觉检测、指标上报、收尾归档。当前规模 55 顶层模块 + 14 子包模块，覆盖 state/ resilience/ core/ 三个子域。上游依赖 AutoRuntime Core（大脑调度 WorkDAG），下游消费 Pipeline 执行结果。
 
-> module_id: MOD-INF-039 | version: 1.0.4 | status: active | layer: cross_layer
+> module_id: MOD-INF-039 | version: 1.0.5 | status: active | layer: cross_layer
 > actual_disk_path: src/zephyr/orchestrator/ | generation: 1 | construction_progress: completed
 > parent_module: MOD-INF-035（AutoRuntime Core）——从 MOD-INF-035 蓝图拆分独立
 >
@@ -172,8 +172,8 @@ build_status: stable
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-039` 的 121 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-039` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-039` 的 120 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-039` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -184,7 +184,7 @@ build_status: stable
 | module_id | MOD-INF-039 | MOD-INF-039 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | stable | stable | ✅ |
-| file_count | 121 文件 | 71 文件（§0.1） | ❌ |
+| file_count | 120 文件 | 71 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -606,7 +606,6 @@ class DetectionResult(BaseModel):
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md` | ✅ 已实现 | |
 | `src/zephyr/orchestrator/agent_health_monitor.py` | ✅ 已实现 | |
 | `src/zephyr/orchestrator/agent_orchestrator.py` | ✅ 已实现 | |
 | `src/zephyr/orchestrator/contracts/__init__.py` | ✅ 已实现 | |

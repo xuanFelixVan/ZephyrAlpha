@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance/registry_governance
 title: "注册表治理"
 doc_type: blueprint
 status: Draft
-version: "0.2.4"
+version: "0.2.5"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: internal
@@ -57,7 +57,7 @@ ssot_claims:
   - claim: "路径归属声明(path_ownership_map.yaml)是蓝图→文件路径映射的唯一真源"
     scope: global
 responsibility_domain: 
-build_status: stable
+build_status: generated
 design_maturity: production
 ---
 
@@ -139,7 +139,7 @@ END_REQUIRED_SECTIONS
 
 # Registry Governance 蓝图+施工图 — 注册表体系架构+功能域注册表+SSoT门禁
 
-> module_id: MOD-INF-037 | version: 0.2.4 | status: Draft | domain: infra_ops
+> module_id: MOD-INF-037 | version: 0.2.5 | status: Draft | domain: infra_ops
 > actual_disk_path: src/zephyr/infra_ops/ | generation: 1 | construction_progress: partially_implemented
 
 ## 概述
@@ -247,8 +247,8 @@ END_REQUIRED_SECTIONS
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-037` 的 27 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-037` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-037` 的 26 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-037` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Draft | — |
 
@@ -258,8 +258,8 @@ END_REQUIRED_SECTIONS
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-037 | MOD-INF-037 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
-| file_count | 27 文件 | 20 文件（§0.1） | ❌ |
+| build_status | generated | generated | ✅ |
+| file_count | 26 文件 | 20 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1108,7 +1108,6 @@ class OverlapResult:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `docs/03_modules/_domain_governance/registry_governance/blueprint.md` | ✅ 已实现 | |
 | `src/zephyr/governance/capability_lookup.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/registry_governance.py` | ✅ 已实现 | |
 

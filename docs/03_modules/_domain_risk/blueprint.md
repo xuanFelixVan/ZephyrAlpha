@@ -4,7 +4,7 @@ submodule_path: src/zephyr/risk
 title: "Risk Management Core 蓝图+施工图 — 风险管理引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.13"
+version: "2.2.15"
 layer: L2_domain
 layer_name: risk_management
 functional_domain: risk
@@ -59,7 +59,7 @@ build_status: generated
 > 本蓝图仅做审查、回填、压缩、对齐，不触发任何代码变更。
 
 > actual_disk_path: src/zephyr/risk/ (10 .py files)
-> module_id: MOD-L04-001 | version: 2.2.13 | status: Active | layer: L2_domain
+> module_id: MOD-L04-001 | version: 2.2.15 | status: Active | layer: L2_domain
 > generation: 2 | construction_progress: partially_implemented
 
 # Risk Management Core 蓝图+施工图 — 风险管理引擎
@@ -106,7 +106,12 @@ build_status: generated
 | 7 | `implementations/default_risk_limits_calculator.py` | §3.1 | RiskLimitsCalculator 默认实现 | 已实现 |
 | 8 | `implementations/default_risk_manager_orchestrator.py` | §3.1 | RiskManagerOrchestratorBase 默认实现 | 已实现 |
 | 9 | `implementations/default_risk_validator.py` | §3.1 | RiskValidator 默认实现 | 已实现 |
-| 10 | `implementations/default_stop_loss_engine.py` | §3.1 | StopLossEngineBase 默认实现 | 已实现 |
+|
+| 10 | `__init__.py` | §3.1 |   init   | 已实现 | — |
+| 11 | `atr_stop_engine.py` | §3.1 | atr stop engine | 已实现 | — |
+| 12 | `manipulation_avoidance_detector.py` | §3.1 | manipulation avoidance detector | 已实现 | — |
+| 13 | `post_entry_instant_validator.py` | §3.1 | post entry instant validator | 已实现 | — |
+| 14 | `risk_signal_sequencer.py` | §3.1 | risk signal sequencer | 已实现 | — | 10 | `implementations/default_stop_loss_engine.py` | §3.1 | StopLossEngineBase 默认实现 | 已实现 |
 
 > YAML SSoT 列出 10 个文件在根目录，实际磁盘将 5 个 default_* 实现放入 `implementations/` 子目录。
 
@@ -138,8 +143,8 @@ build_status: generated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L04-001` 的 136 个 file 节点 | production | `extract_depgraph.py --modules MOD-L04-001` |
-| 数据流图 (dataflow) | 1 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L04-001` 的 142 个 file 节点 | production | `extract_depgraph.py --modules MOD-L04-001` |
+| 数据流图 (dataflow) | 1 个 Dataset / 2 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 76 个决策节点 / 2 个决策层 | design | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -150,7 +155,7 @@ build_status: generated
 | module_id | MOD-L04-001 | MOD-L04-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 136 文件 | 10 文件（§0.1） | ❌ |
+| file_count | 142 文件 | 14 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -935,6 +940,7 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/fundamental_share_unlock.py` | ✅ 已实现 | |
 | `schemas/categories/macro_edb_data.py` | ✅ 已实现 | |
 | `schemas/categories/macro_macro_data.py` | ✅ 已实现 | |
+| `schemas/categories/market_account_nav_daily.py` | ✅ 已实现 | |
 | `schemas/categories/market_adj_factor.py` | ✅ 已实现 | |
 | `schemas/categories/market_auction.py` | ✅ 已实现 | |
 | `schemas/categories/market_auction_book.py` | ✅ 已实现 | |
@@ -947,6 +953,7 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/market_concept_board_constituent.py` | ✅ 已实现 | |
 | `schemas/categories/market_concept_sector.py` | ✅ 已实现 | |
 | `schemas/categories/market_convertible_bond_list.py` | ✅ 已实现 | |
+| `schemas/categories/market_daban_board_event.py` | ✅ 已实现 | |
 | `schemas/categories/market_daily_valuation.py` | ✅ 已实现 | |
 | `schemas/categories/market_dividend_tax_node.py` | ✅ 已实现 | |
 | `schemas/categories/market_dragon_tiger.py` | ✅ 已实现 | |
@@ -954,6 +961,7 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/market_etf_benchmark.py` | ✅ 已实现 | |
 | `schemas/categories/market_etf_list.py` | ✅ 已实现 | |
 | `schemas/categories/market_etf_nav.py` | ✅ 已实现 | |
+| `schemas/categories/market_execution_report.py` | ✅ 已实现 | |
 | `schemas/categories/market_futures_kline_qmt.py` | ✅ 已实现 | |
 | `schemas/categories/market_futures_position.py` | ✅ 已实现 | |
 | `schemas/categories/market_futures_term.py` | ✅ 已实现 | |
@@ -1003,6 +1011,7 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/market_kline_weekly.py` | ✅ 已实现 | |
 | `schemas/categories/market_kline_weekly_hfq.py` | ✅ 已实现 | |
 | `schemas/categories/market_limit_up_down.py` | ✅ 已实现 | |
+| `schemas/categories/market_limit_up_pool.py` | ✅ 已实现 | |
 | `schemas/categories/market_lof_list.py` | ✅ 已实现 | |
 | `schemas/categories/market_margin_target_adjustment.py` | ✅ 已实现 | |
 | `schemas/categories/market_margin_trading.py` | ✅ 已实现 | |
@@ -1014,7 +1023,9 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/market_option_iv.py` | ✅ 已实现 | |
 | `schemas/categories/market_option_kline.py` | ✅ 已实现 | |
 | `schemas/categories/market_realtime_snapshot.py` | ✅ 已实现 | |
+| `schemas/categories/market_reconciliation_differences.py` | ✅ 已实现 | |
 | `schemas/categories/market_sector_constituent.py` | ✅ 已实现 | |
+| `schemas/categories/market_sector_fund_flow.py` | ✅ 已实现 | |
 | `schemas/categories/market_sector_list.py` | ✅ 已实现 | |
 | `schemas/categories/market_sector_meta.py` | ✅ 已实现 | |
 | `schemas/categories/market_sector_snapshot.py` | ✅ 已实现 | |

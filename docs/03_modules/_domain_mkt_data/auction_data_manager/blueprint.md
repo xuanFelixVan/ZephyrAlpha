@@ -3,7 +3,7 @@ module_id: MOD-MKT-007
 title: "A股集合竞价数据管理器蓝图 — 竞价时段快照采集校验落账与回放供数"
 doc_type: blueprint
 status: Active
-version: "0.1.0"
+version: "0.1.1"
 ttl: permanent
 layer: L01_foundation
 layer_name: market_data
@@ -15,8 +15,8 @@ last_updated: "2026-08-25"
 priority: P1
 blueprint_level: module
 responsibility_domain: 
-design_maturity: design
-build_status: testing
+design_maturity: production
+build_status: stable
 ---
 
 # MOD-MKT-007 Auction Data Manager — A股集合竞价数据管理器 蓝图
@@ -131,8 +131,8 @@ tick 规范化/采集编排（去重/拒收/异常不炸/空批与全拒不调 s
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-MKT-007` 的 2 个 file 节点 | design | `extract_depgraph.py --modules MOD-MKT-007` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-MKT-007` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-MKT-007` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -142,7 +142,42 @@ tick 规范化/采集编排（去重/拒收/异常不炸/空批与全拒不调 s
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-MKT-007 | MOD-MKT-007 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | testing | testing | ✅ |
+| build_status | stable | stable | ✅ |
 | file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
+
+---
+
+## 9. 已实现代码完整路径索引
+
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 9.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/market_data/auction_data_manager.py` | ✅ 已实现 | |
+
+### 9.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/market_data/test_auction_data_manager.py` | ✅ 已实现 | |
+
+### 9.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §9（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下

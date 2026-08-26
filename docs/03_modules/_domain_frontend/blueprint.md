@@ -4,7 +4,7 @@ submodule_path: src/zephyr/frontend
 title: "Human Machine Interface Core 蓝图 — 人机交互层"
 doc_type: blueprint
 status: Active
-version: "3.4.2"
+version: "3.4.5"
 layer: L3_application
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -59,7 +59,7 @@ references:
 codification_level: L1
 codification_at: "2026-05-15"
 responsibility_domain: 
-design_maturity: design
+design_maturity: production
 build_status: generated
 ---
 
@@ -68,7 +68,7 @@ build_status: generated
 > C轨业务层已解除占位禁令[ARCH-045 P0]。AI 可自主施工。
 > 当前 construction_progress = partially_implemented，可继续业务代码实现。
 
-> module_id: MOD-L08-001 | version: 3.4.2 | status: active | domain: frontend
+> module_id: MOD-L08-001 | version: 3.4.5 | status: active | domain: frontend
 > actual_disk_path: src/zephyr/frontend/ | generation: 2 | construction_progress: partially_implemented
 > v2.2.0新增: 5个交易/回测组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel), 对接D_BACKTEST/D_EX_CORE/D_DATA, 支持joinquant/Qbot风格仪表盘+实盘交易面板
 > v3.0.0(#ARCH-047): Streamlit→Panel+HoloViz+Plotly+plotly_resampler+Lightweight Charts; 新增ChartFactory(callback仅编排); 5组件已迁移
@@ -169,8 +169,8 @@ build_status: generated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L08-001` 的 34 个 file 节点 | design | `extract_depgraph.py --modules MOD-L08-001` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L08-001` 的 41 个 file 节点 | production | `extract_depgraph.py --modules MOD-L08-001` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -181,7 +181,7 @@ build_status: generated
 | module_id | MOD-L08-001 | MOD-L08-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 34 文件 | 15 文件（§0.1） | ❌ |
+| file_count | 41 文件 | 15 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1403,10 +1403,15 @@ def render_trade_panel(data: TradePanelData) -> None:
 | `src/zephyr/frontend/dashboard/components/task_progress.py` | ✅ 已实现 | |
 | `src/zephyr/frontend/dashboard/components/tick_replay.py` | ✅ 已实现 | |
 | `src/zephyr/frontend/dashboard/components/trade_panel.py` | ✅ 已实现 | |
+| `src/zephyr/frontend/implementations/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/frontend/implementations/default_approval_gateway.py` | ✅ 已实现 | |
+| `src/zephyr/frontend/implementations/default_notification_manager.py` | ✅ 已实现 | |
+| `src/zephyr/frontend/implementations/notification_channel_senders.py` | ✅ 已实现 | |
 | `src/zephyr/frontend/infrastructure/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/frontend/interface_base.py` | ✅ 已实现 | |
 | `src/zephyr/frontend/models/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/frontend/services/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/frontend/services/dashboard_feeds.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/dashboard/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/infrastructure/dashboard/components/__init__.py` | ⚠️ 骨架 | |
 
@@ -1416,6 +1421,10 @@ def render_trade_panel(data: TradePanelData) -> None:
 |---------|:---:|------|
 | `tests/ai/test_l08_human_ai_interface.py` | ✅ 已实现 | |
 | `tests/experiment_tracking/test_experiment_history.py` | ✅ 已实现 | |
+| `tests/frontend/test_dashboard_feeds.py` | ✅ 已实现 | |
+| `tests/frontend/test_default_approval_gateway.py` | ✅ 已实现 | |
+| `tests/frontend/test_default_notification_manager.py` | ✅ 已实现 | |
+| `tests/frontend/test_notification_channel_senders.py` | ✅ 已实现 | |
 | `tests/governance/observability/test_app_panel_unit.py` | ✅ 已实现 | |
 | `tests/governance/observability/test_p1_components_unit.py` | ✅ 已实现 | |
 

@@ -3,7 +3,7 @@ module_id: MOD-PF-001
 title: "策略引擎蓝图 — 生命周期状态机 + 四维决策 + OCP-002 扩展"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.4"
 ttl: permanent
 layer: L02_portfolio_core
 layer_name: portfolio_core
@@ -118,7 +118,7 @@ registered → testing → active → deprecated
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-PF-001` 的 3 个 file 节点 | production | `extract_depgraph.py --modules MOD-PF-001` |
-| 数据流图 (dataflow) | 1 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 1 个 Dataset / 2 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -146,7 +146,7 @@ registered → testing → active → deprecated
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/pf_core/core/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/pf_core/core/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/pf_core/core/strategy_engine.py` | ✅ 已实现 | |
 
 ### 8.2 测试文件

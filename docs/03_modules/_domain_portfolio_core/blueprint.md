@@ -4,7 +4,7 @@ submodule_path: src/zephyr/pf_core
 title: "Portfolio Construction Core 蓝图+施工图 — 组合构建层"
 doc_type: blueprint
 status: Active
-version: "2.1.8"
+version: "2.1.9"
 layer: L2_domain
 layer_name: portfolio_construction
 functional_domain: portfolio
@@ -48,7 +48,7 @@ build_status: generated
 
 > ✅ **业务层已开放，可施工** — C轨（业务价值线·线7）当前状态为 partially_implemented。本蓝图仅供架构参考和预研代码维护，可以此蓝图为依据新增组合构建业务代码。
 
-> module_id: MOD-L05-001 | version: 2.1.8 | status: Active | layer: L2_domain
+> module_id: MOD-L05-001 | version: 2.1.9 | status: Active | layer: L2_domain
 > actual_disk_path: src/zephyr/pf_core/ | generation: 2 | construction_progress: partially_implemented
 
 # Portfolio Construction Core 蓝图+施工图 — 组合构建层
@@ -131,8 +131,8 @@ build_status: generated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L05-001` 的 47 个 file 节点 | production | `extract_depgraph.py --modules MOD-L05-001` |
-| 数据流图 (dataflow) | 3 个 Dataset / 3 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L05-001` 的 49 个 file 节点 | production | `extract_depgraph.py --modules MOD-L05-001` |
+| 数据流图 (dataflow) | 3 个 Dataset / 4 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 73 个决策节点 / 2 个决策层 | design | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -143,7 +143,7 @@ build_status: generated
 | module_id | MOD-L05-001 | MOD-L05-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 47 文件 | 8 文件（§0.1） | ❌ |
+| file_count | 49 文件 | 8 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -966,6 +966,7 @@ ZephyrAlpha 量化架构需要从信号层（D_SIGNAL）和风控层（D_RISK）
 | `src/zephyr/pf_core/strategies/event_driven_sleeve_strategy.py` | ✅ 已实现 | |
 | `src/zephyr/pf_core/strategies/multifactor_sleeve_strategy.py` | ✅ 已实现 | |
 | `src/zephyr/pf_core/strategy_engine/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/pf_core/strategy_engine/event_sentiment_adapter.py` | ✅ 已实现 | |
 | `src/zephyr/pf_core/strategy_engine/strategy_runner.py` | ✅ 已实现 | |
 | `src/zephyr/pf_core/strategy_engine/tick_strategy_base.py` | ✅ 已实现 | |
 | `src/zephyr/pf_core/topn_momentum_strategy.py` | ✅ 已实现 | |
@@ -977,6 +978,7 @@ ZephyrAlpha 量化架构需要从信号层（D_SIGNAL）和风控层（D_RISK）
 |---------|:---:|------|
 | `tests/cross/test_e2e_redblue_night001.py` | ✅ 已实现 | |
 | `tests/pf_core/test_daban_sleeve_strategy.py` | ✅ 已实现 | |
+| `tests/pf_core/test_event_sentiment_adapter.py` | ✅ 已实现 | |
 | `tests/pf_core/test_eventdriven_sleeve_strategy.py` | ✅ 已实现 | |
 | `tests/pf_core/test_multifactor_constraint_arbitration.py` | ✅ 已实现 | |
 | `tests/pf_core/test_multifactor_holding_drift_monitor.py` | ✅ 已实现 | |
