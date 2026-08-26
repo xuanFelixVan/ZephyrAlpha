@@ -118,6 +118,15 @@ scope: 07_trading_decision_architecture
 - 永续合约（Perpetual Swap，永续掉期——无到期日的期货合约，靠资金费率锚定现货价）是币圈主力品种，但引入：资金费率（funding rate，多空双方每 8 小时互付的持仓成本）、杠杆、爆仓价、维持保证金。
 - 裁定：**Phase 1 只做现货，Phase 2 才上永续**。VO-012 Side 枚举已预留 SHORT/COVER，但仓位域的杠杆/爆仓建模（CAND-CRYPTO-008）与资金费率成本（进 cost_model）在 Phase 2 启动，不在 MVP 范围。
 
+### 4.5 市场归属标注体系（market scope 三道闸）
+
+- **问题**：同名构件分属不同市场（如 signal_ashare 与 signal_crypto 的动量因子），若不加标注，装配层可能拿 A股规则校验币订单——错配事故须在设计层防死。
+- **裁定**：三道闸强制隔离，"默认共用零标注、只分市场构件贴标签"（防噪音）。
+  - ①**物理闸**：市场后缀包（signal_ashare ↔ signal_crypto）+ connectors/adapters/rules 子目录隔离；002/005/006 sub_layer 已预埋。
+  - ②**数据闸**：universe/benchmark/cost_model/risk_limit/strategy/factor/regime_cycle/event_calendar 八表分市场实例必带 `market: ashare|crypto` 字段，无字段=共用。
+  - ③**治理闸**：depgraph 节点/creation_token 带 market 标签 + CAND 族前缀区分 + 门禁按标的市场加载。
+- 依赖全景矩阵保持不变（资产无关骨架），§3 复用矩阵=市场分片标注文档真源（防双真源）。CAND-CRYPTO-007 tech_notes 联动 market 字段口径。
+
 ## 5. 新建候选清单（CAND-CRYPTO 族）
 
 > 真源 = candidate_module_registry.yaml。依赖关系决定施工波次（§6）。
