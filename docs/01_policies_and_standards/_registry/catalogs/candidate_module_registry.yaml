@@ -11322,11 +11322,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/compliance/compliance_log.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/compliance/evidence_chain_generator.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: 跨域(元文档)
   original_id: B1-00312
   source_section: §功能域模块·D-COMPLIANCE
@@ -11348,10 +11349,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W10）——与 CAND-CMP-007 同为合规漂移检测器（B1/B14 两稿重登），canonical=CAND-CMP-007→MOD-CMP-016（AL-P3 告警+证据快照+整改任务含其基线快照/纠正建议语义，配置中心 MOD-INF-091 已为其供基线）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: 跨域(元文档)
   original_id: B1-00314
   source_section: §功能域模块·D-COMPLIANCE
@@ -11373,11 +11375,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/compliance/trading_compliance_detector.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/compliance/info_asymmetry_manipulation_detector.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A1交易决策架构
   original_id: B10-01426
   source_section: §5模块54
@@ -11398,11 +11401,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/governance/compliance_gate_a6/compliance_manager.py（合规管理器有，策略即代码引擎缺）'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/compliance/compliance_policy_engine.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A9运维架构
   original_id: B14-04651
   source_section: §8.3.4
@@ -11422,11 +11426,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/gov_drift/config_consistency.py（配置一致性检查有，合规漂移专项缺）'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/compliance/compliance_drift_detector.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A9运维架构
   original_id: B14-04656
   source_section: §8.3.4
@@ -11446,11 +11451,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/feedback_loop/detectors/reliability/regulatory_audit.py（监管审计检测有，变更追踪缺）'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/compliance/regulatory_change_tracker.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A9运维架构
   original_id: B14-04671
   source_section: §8.3.5
@@ -17377,11 +17383,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/signal_fundamental/audit/decision_snapshot.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/reporting/decision_trace_chain.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: 跨域(元文档)
   original_id: B1-00220
   source_section: §功能域模块·D-REPORTING
@@ -17403,11 +17410,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/compliance/trading_compliance_detector.py（行为检测器有，审查报告引擎缺）'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/reporting/trading_review_engine.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A9运维架构
   original_id: B14-04662
   source_section: §8.3.5
@@ -17428,11 +17436,12 @@ entries:
       evidence: '深挖场内对账: 无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/reporting/strategy_explainability_reporter.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: D-REPORTING
   original_id: B4-06655
   source_section: §1.2
