@@ -19580,3 +19580,26 @@ entries:
   source_draft: ''
   original_id: NEWS2025-BF2
   source_section: ''
+- id: CAND-NLP-006
+  name: 研报结构化评级分析轨（评级提取/变动/目标价/盈利修正）
+  aliases: ['研报评级分析轨', 'analyst rating extraction track']
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/nlp/
+  problem: 通用情感分对研报信息量≈0（卖方多头偏见压缩分布，90%+正面挤在 0.8）；机构需要的是结构化评级信号（评级/上调下调/目标价空间/盈利预测修正）——当前无此管线
+  proposal: 'Owner 裁定方向（2026-08-26 讨论，可降级）。最小施工形态: ①规则优先——东财评级已结构化在 summary 字段（"评级:买入"），规则映射 买入+1/增持+0.6/中性0/减持-0.6/卖出-1 + 评级变动检测（同股同机构相邻报告对比）+ 首次覆盖旗标；②LLM 补位——目标价/盈利预测修正等非结构化部分从 title+content 提取；③产出 research_report 桶的评级分布/上调下调家数/目标价隐含空间日级指标，与媒体情绪分线（不喂 bad_news_flat）。依赖前置: news_taxonomy 四分（已建成）、per_category 分桶（已建成）。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '场内对账: 无研报评级结构化提取管线（现有=通用情感打分一路）'
+    blocking_question: null
+    result: candidate
+  status: candidate
+  priority: P2
+  source: 2026-08-26 研报分析方式讨论批（Owner 提出"研报不应按新闻情感打分"）
+  created: '2026-08-26'
+  last_updated: '2026-08-26'
+  source_draft: ''
+  original_id: RR-RATING-001
+  source_section: ''
