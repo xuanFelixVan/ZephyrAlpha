@@ -618,6 +618,18 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 259 | INT-01 硬编码路径收敛尾巴 2 处 | 2026-08-23 长城任务进度核对 | 阶段二批波1 已收敛 9 处（e3980936 等），核对发现 2 处真尾巴：①scripts/start_scheduler.ps1:41 仓根 `$RepoRoot="D:\ZephyrAlpha"` 硬编码；②architecture_model/data/data_sources_registry.yaml:404 通达信 `requires_path: E:\tdx\...` 裸值（其派生物 policies.yaml:139 同） | ✅ 已闭环（2026-08-23 收官批）：①start_scheduler.ps1 仓根改 `Split-Path -Parent $PSScriptRoot`（audit_data_utilization.ps1 同型范式，换盘/换机不断链；推导实证 D:\ZephyrAlpha+语法解析 OK）；②真源 data_sources_registry.yaml requires_path 改 `${TDX_PLUGIN_DIR}` 占位（真源=secret_registry.yaml TDX_PLUGIN_DIR，运行时已走 get_service_secret 回退），policies.yaml 由 generate_policies.py 重派生同步；两 YAML 解析 OK+关联测试域零新增红；src/ 残留扫描确认余下命中全为注释/docstring/__main__自测块/设计内 or 回退默认，无活跃裸硬编码执行路径——INT-01 全项清零，长城任务阶段二最后代码尾巴闭合 |
 
 
+### P1-补30 · 2026-08-26 W0 市场日历抽象（AI-CAL-001，CAND-CRYPTO-001 晋升施工）登记
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 260 | 94 号正文缺 §4.5 章节（三道闸） | AI-CAL-001 施工实证 | HEAD 与工作区一致：v1.3.0 修订记录行载"新增 §4.5 market scope 三道闸"，但正文 §4 仅 4.1-4.4——v1.3.0 提交时内容缺失（疑并发覆写后遗症）；三道闸语义完整可用（修订记录+项目记忆有全文），W0 施工不受影响；待 Owner 裁定补写正文或降级注记 | ⏳ Owner 裁定项 |
+| 261 | 日历扩展消费点注入式改造（A/B/C/D 类 20+ 文件）排后续波次 | AI-CAL-001 盘点报告 §三 | W0 克制范围=四类核心（scheduler/fusion/回测时间轴声明/pit_query）；扩展面全清单已登记 docs/_working/reports/2026-08-26-calendar-consumers-inventory.md：A 类 event_score.py/intraday_main.py（is_trading_day 直调）、B 类 backfill_checker/tick_subscriber/plan_engine 五件（硬编码时段）、C 类 calendar_event_derivations/internal_compute_provider/overnight_boundary_reviser/rebalance_scheduler/calendar_position_constraint（weekday 近似）、D 类 XHKG/xtdata/SQLite calendar_days（独立日历实现） | ⏳ 后续波次（W1+ 顺带或专项） |
+| 262 | ex_core/pre_execution_checker.py 注入式改造 | AI-CAL-001 避让登记 | ex_core 属避让施工面（W0 零触碰）；其 _ASHARE_SESSION_WINDOWS 语义已由 ASHareCalendar.session_windows 收编（复制语义不改文件）；待 ex_core 战线空窗后改注入 calendar 消除 is_trading_day 直调+weekday 降级三段 | ⏳ ex_core 空窗后 |
+| 263 | test_f18_automation.py::test_run_idempotent 环境性卡死 | AI-CAL-001 全量回归实证 | auto_runner._run_gates→check_pipeline_e2e as_completed 线程池等待超时（pytest-timeout 120s thread 法杀不断内核态阻塞）；单跑文件同点顽固复现；治理域与 W0 零关联（calendar 包/scheduler/fusion/pit_query 与该测试无 import 链）；全量回归簇2 排除本文件跑（--ignore），待系统空闲窗口复核归因（WMI/CIM 拥塞族同 #242③） | ⏳ 环境族待复核 |
+| 264 | GATE-TRACKED-DRIFT：pre-commit 运行期 tracked 区写入 | AI-CAL-001 两 commit 门禁实证 | 69e5dc9f/f246ff6d 两 commit 均触发 gate tracked-drift 告警（hook 运行期 tracked 区有写入）——与 AI-DRIFT-001 另案调查的"未登记写入方秒级覆写"同源迹象；本 session 受影响文件（94 号/00 索引/registry）已按"git show HEAD 基线→Edit→立即提交固化"纪律操作，改动全部保住；详见 .runtime/audit/hook_tracked_drift.jsonl | ⏳ AI-DRIFT-001 另案 |
+| 265 | 全量回归簇3 首轮 sklearn/joblib WMI cpu_count 超时 | AI-CAL-001 回归实证 | 簇3（17997 项收集）首轮在 sklearn.cluster.KMeans fit→joblib loky _count_physical_cores_win32 subprocess 超时中断（exit 1）——WMI/CIM 拥塞族环境性失败（同 #242③/#263），与 W0 代码无关；簇3 已重跑，结果随回归批次补登 | ⏳ 随回归批补登 |
+
+
 ### P0 · 2026-08-21 到期前全功能总账施工批（P0 批统筹会话，任务源=pre_expiry_full_backlog_roadmap.md）
 
 > 分工裁定（2026-08-21 Owner）：P0-2①②④+P0-3 归「残余四项专项批」另案，P0-2③ 另案已闭环（实测两空壳库不存在），P0-7 延后（另案 gov_drift 同域施工中防基线污染）；本会话接 P0-1②/P0-2⑤/P0-4/P0-5/P0-6。总账 §1 已标注防双头施工。
