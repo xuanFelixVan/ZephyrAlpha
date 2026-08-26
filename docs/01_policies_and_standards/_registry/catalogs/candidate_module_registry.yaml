@@ -18059,11 +18059,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/security/access_control/guards/output_guard.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/security/outbound_data_sanitizer.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: 跨域(元文档)
   original_id: B1-00372
   source_section: §功能域模块·D-SECURITY
@@ -18086,11 +18087,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/security/security_event_bus.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/security/siem_correlation_engine.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A5安全架构
   original_id: B12-03820
   source_section: §2.6
@@ -18118,11 +18120,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/feedback_loop/gates/cve_scanner.py+src/zephyr/security/llm_defense/llm_security/layers/l0_supply_chain.py+scripts/governance/d11_compliance/validate_frozen_requirements.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/security/supply_chain_security_scanner.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A5安全架构
   original_id: B12-03993
   source_section: §15.1
@@ -18146,11 +18149,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/intelligence/sentinel_hallucination_detector.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/security/llm_defense/spectral_guard.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A1交易决策架构
   original_id: B10-01868
   source_section: §29.24
@@ -18304,11 +18308,12 @@ entries:
       evidence: '深挖场内对账: 部分：src/zephyr/factor/analysis/correlation_dedup.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_quality/signal_dedup.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A7-Agent架构
   original_id: B11-02594
   source_section: §5.2
@@ -18330,11 +18335,12 @@ entries:
       evidence: '深挖场内对账: 部分：src/zephyr/signal_quality/'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_quality/signal_degradation_monitor.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A3数据架构
   original_id: B13-04309
   source_section: §17.12
@@ -18356,11 +18362,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/signal_quality/degradation_monitor_base.py（退化监控有，基准对比缺）'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_quality/signal_quality_benchmark.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A9运维架构
   original_id: B14-04630
   source_section: §8.3.2
@@ -18381,11 +18388,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/signal_fundamental/audit/decision_snapshot.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_quality/signal_explainability_guarantor.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: D-SIGNAL
   original_id: B2-05485
   source_section: §13.1
