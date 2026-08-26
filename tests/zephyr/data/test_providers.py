@@ -1944,3 +1944,248 @@ class TestAKShareKlineFuturesScope:
         assert results[0].error is not None
         mock_ak.futures_main_sina.assert_not_called()
 
+
+# ============== 北交所日K增量 kline_daily_bj（2026-08-25 BJDAILY：tushare 主源 / akshare 备源）==============
+
+
+class TestTushareKlineDailyBj:
+    """tushare kline_daily_bj 主源：行映射口径（对齐 D5 回填）+ 路由 + meta 契约 + schema 对齐。
+
+    钉住口径：vol 手→股 ×100、amount 千元→元 ×1000、不复权 adj_factor=1、
+    data_source='tushare'、symbol=裸 6 位（.BJ 后缀剥离，MATERIALIZED exchange 推导）。
+    """
+
+    @staticmethod
+    def _daily_records() -> list[dict]:
+        return [
+            {  # BJ 行（920 换码后现行代码）
+                "ts_code": "920001.BJ",
+                "trade_date": "20260825",
+                "open": 10.0,
+                "high": 10.5,
+                "low": 9.9,
+                "close": 10.2,
+                "pre_close": 10.1,
+                "change": 0.1,
+                "pct_chg": 0.9901,
+                "vol": 253.0,
+                "amount": 257.9,
+            },
+            {  # 非 BJ 行（SH）——必须被过滤
+                "ts_code": "600519.SH",
+                "trade_date": "20260825",
+                "open": 1.0,
+                "high": 1.0,
+                "low": 1.0,
+                "close": 1.0,
+                "pre_close": 1.0,
+                "change": 0.0,
+                "pct_chg": 0.0,
+                "vol": 1.0,
+                "amount": 1.0,
+            },
+            {  # close 缺失——丢行
+                "ts_code": "920002.BJ",
+                "trade_date": "20260825",
+                "open": None,
+                "high": None,
+                "low": None,
+                "close": None,
+                "pre_close": 1.0,
+                "change": None,
+                "pct_chg": None,
+                "vol": None,
+                "amount": None,
+            },
+        ]
+
+    def test_map_bj_kline_rows_filter_and_units(self):
+        rows = TushareProvider._map_bj_kline_rows(self._daily_records(), {"920001.BJ": 31.266})
+        assert len(rows) == 1  # SH 行过滤 + close 缺失丢行
+        r = rows[0]
+        # 16 列序：trade_date, symbol, open, high, low, close, volume, amount,
+        #          amplitude, pct_change, change, turnover, adj_factor, market_type, data_source, quality_flag
+        assert r[0] == "2026-08-25"
+        assert r[1] == "920001"  # .BJ 后缀剥离
+        assert r[2] == 10.0 and r[3] == 10.5 and r[4] == 9.9 and r[5] == 10.2
+        assert r[6] == 25300  # vol 手→股 ×100
+        assert r[7] == 257900.0  # amount 千元→元 ×1000
+        assert r[8] == 5.9406  # 振幅=(10.5-9.9)/10.1*100
+        assert r[9] == 0.9901
+        assert r[10] == 0.1
+        assert r[11] == 31.266  # turnover_map 命中
+        assert r[12] == 1  # adj_factor 不复权
+        assert r[13] == "A_share"
+        assert r[14] == "tushare"
+        assert r[15] == 1
+
+    def test_map_bj_kline_rows_turnover_miss_and_symbols_filter(self):
+        rows = TushareProvider._map_bj_kline_rows(self._daily_records(), None, {"920001"})
+        assert len(rows) == 1 and rows[0][11] == 0.0  # 无 turnover_map → 0
+        rows2 = TushareProvider._map_bj_kline_rows(self._daily_records(), None, {"839999"})
+        assert rows2 == []  # symbols_filter 不命中全丢
+
+    def test_columns_align_kline_daily_schema(self):
+        """产出列 ⊆ kline_daily schema INSERT_COLUMNS（写层交集过滤零丢弃，对标 #219）。"""
+        from schemas.categories.market_kline_daily import INSERT_COLUMNS
+
+        schema_cols = {c.strip() for c in INSERT_COLUMNS.strip("()").split(",")}
+        assert set(TushareProvider._KLINE_DAILY_BJ_COLUMNS) <= schema_cols
+
+    def test_meta_contract_symbols_null(self):
+        contract = TushareProvider.meta.get_capability_contract("kline_daily_bj")
+        assert contract is not None
+        assert contract.supports_symbols_null is True
+
+    def test_fetch_route_per_trade_date(self):
+        """路由 + 按 trade_date 全市场拉取 + .BJ 过滤 + turnover 合并 + last_key 推进。"""
+        p = TushareProvider()
+        p._connected = True
+        pro = MagicMock()
+        pro.daily = MagicMock(return_value=pd.DataFrame(self._daily_records()[:2]))
+        pro.daily_basic = MagicMock(
+            return_value=pd.DataFrame([{"ts_code": "920001.BJ", "trade_date": "20260825", "turnover_rate": 31.266}])
+        )
+        p._pro = pro
+        payload = FetchPayload(
+            table="c1_market.kline_daily",
+            symbols=None,
+            start=datetime.date(2026, 8, 25),
+            end=datetime.date(2026, 8, 25),
+            extra={"capability": "kline_daily_bj"},
+        )
+        results = list(p.fetch(payload, SourcePolicy()))
+        assert len(results) == 1 and not results[0].error
+        pro.daily.assert_called_once_with(trade_date="20260825")
+        rows = results[0].rows
+        assert len(rows) == 1 and rows[0][1] == "920001" and rows[0][11] == 31.266
+        assert results[0].last_key == "2026-08-25"
+
+    def test_fetch_daily_basic_failure_degrades_turnover(self):
+        """daily_basic 失败 → turnover=0 降级，不阻塞主链路（D5 同纪律）。"""
+        p = TushareProvider()
+        p._connected = True
+        pro = MagicMock()
+        pro.daily = MagicMock(return_value=pd.DataFrame(self._daily_records()[:1]))
+        pro.daily_basic = MagicMock(side_effect=RuntimeError("points limit"))
+        p._pro = pro
+        payload = FetchPayload(
+            table="c1_market.kline_daily",
+            symbols=None,
+            start=datetime.date(2026, 8, 25),
+            end=datetime.date(2026, 8, 25),
+            extra={"capability": "kline_daily_bj"},
+        )
+        results = list(p.fetch(payload, SourcePolicy()))
+        assert len(results) == 1 and not results[0].error
+        assert results[0].rows[0][11] == 0.0
+
+    def test_fetch_daily_error_yields_error(self):
+        """pro.daily 单日失败 → error 批次（触发 scheduler fallback 到 akshare 备源）。"""
+        p = TushareProvider()
+        p._connected = True
+        pro = MagicMock()
+        pro.daily = MagicMock(side_effect=RuntimeError("boom"))
+        p._pro = pro
+        payload = FetchPayload(
+            table="c1_market.kline_daily",
+            symbols=None,
+            start=datetime.date(2026, 8, 25),
+            end=datetime.date(2026, 8, 25),
+            extra={"capability": "kline_daily_bj"},
+        )
+        results = list(p.fetch(payload, SourcePolicy()))
+        assert len(results) == 1
+        assert results[0].error is not None and "boom" in results[0].error
+
+
+class TestAkshareKlineDailyBj:
+    """akshare kline_daily_bj 备源：东财行映射（volume 手→股）+ universe 两级解析 + 契约。"""
+
+    @staticmethod
+    def _hist_df() -> pd.DataFrame:
+        return pd.DataFrame(
+            [
+                {
+                    "日期": "2026-08-25",
+                    "开盘": 10.0,
+                    "收盘": 10.2,
+                    "最高": 10.5,
+                    "最低": 9.9,
+                    "成交量": 253,  # 东财单位=手
+                    "成交额": 257900.0,  # 元
+                    "振幅": 5.94,
+                    "涨跌幅": 0.99,
+                    "涨跌额": 0.1,
+                    "换手率": 31.27,
+                },
+                {  # 窗口外——丢弃
+                    "日期": "2026-08-24",
+                    "开盘": 9.9,
+                    "收盘": 10.1,
+                    "最高": 10.2,
+                    "最低": 9.8,
+                    "成交量": 100,
+                    "成交额": 100000.0,
+                    "振幅": 4.0,
+                    "涨跌幅": 2.0,
+                    "涨跌额": 0.2,
+                    "换手率": 10.0,
+                },
+            ]
+        )
+
+    def test_map_bj_kline_hist_rows_units(self):
+        p = AkshareIngestProvider()
+        rows = p._map_bj_kline_hist_rows(self._hist_df(), "920001", "2026-08-25", "2026-08-25")
+        assert len(rows) == 1  # 窗口外丢弃
+        r = rows[0]
+        assert r[0] == "2026-08-25" and r[1] == "920001"
+        assert r[6] == 25300  # 成交量 手→股 ×100（对齐 BJ 段 tushare 主源口径）
+        assert r[7] == 257900.0  # 成交额 元原样
+        assert r[8] == 5.94 and r[9] == 0.99 and r[10] == 0.1 and r[11] == 31.27
+        assert r[12] == 1 and r[13] == "A_share" and r[14] == "akshare" and r[15] == 1
+
+    def test_columns_align_kline_daily_schema(self):
+        from schemas.categories.market_kline_daily import INSERT_COLUMNS
+
+        schema_cols = {c.strip() for c in INSERT_COLUMNS.strip("()").split(",")}
+        assert set(AkshareIngestProvider._KLINE_DAILY_BJ_COLUMNS) <= schema_cols
+
+    def test_meta_contract_and_route_registered(self):
+        contract = AkshareIngestProvider.meta.get_capability_contract("kline_daily_bj")
+        assert contract is not None
+        assert contract.supports_symbols_null is True
+        assert hasattr(AkshareIngestProvider, "_fetch_kline_daily_bj")
+
+    def test_fetch_route_with_fake_akshare(self, monkeypatch):
+        """显式 symbols → 不查清单；东财 adjust='' 不复权；行映射落库口径。"""
+        mock_ak = MagicMock()
+        mock_ak.stock_zh_a_hist.__name__ = "stock_zh_a_hist"
+        mock_ak.stock_zh_a_hist.return_value = self._hist_df().head(1)
+        monkeypatch.setitem(sys.modules, "akshare", mock_ak)
+        p = AkshareIngestProvider()
+        payload = FetchPayload(
+            table="c1_market.kline_daily",
+            symbols=["920001.BJ"],
+            start=datetime.date(2026, 8, 25),
+            end=datetime.date(2026, 8, 25),
+            extra={"capability": "kline_daily_bj"},
+        )
+        results = list(p.fetch(payload, SourcePolicy()))
+        assert len(results) == 1 and not results[0].error
+        assert results[0].rows[0][1] == "920001"
+        kwargs = mock_ak.stock_zh_a_hist.call_args.kwargs
+        assert kwargs["symbol"] == "920001" and kwargs["adjust"] == "" and kwargs["period"] == "daily"
+        mock_ak.stock_info_bj_name_code.assert_not_called()  # 显式 symbols 不查清单
+
+    def test_load_bj_listed_symbols_ch_fallback(self, monkeypatch):
+        """akshare 清单接口失败（本机东财封锁场景）→ CH stock_list BJ 在市快照兜底。"""
+        mock_ak = MagicMock()
+        mock_ak.stock_info_bj_name_code.__name__ = "stock_info_bj_name_code"
+        mock_ak.stock_info_bj_name_code.side_effect = ConnectionError("blocked")
+        monkeypatch.setattr("zephyr.data.ch_reader.query", lambda sql: "920001\n920002\n")
+        p = AkshareIngestProvider()
+        codes = p._load_bj_listed_symbols(mock_ak, SourcePolicy())
+        assert codes == ["920001", "920002"]
+
