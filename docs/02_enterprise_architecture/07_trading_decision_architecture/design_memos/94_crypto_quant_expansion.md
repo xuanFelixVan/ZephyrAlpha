@@ -5,7 +5,7 @@ title: 数字货币量化扩展设计
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.0"
+version: "1.1.0"
 date: 2026-08-26
 last_updated: 2026-08-26
 topic: crypto_quant_expansion
@@ -16,7 +16,7 @@ scope: 07_trading_decision_architecture
 
 > 本文是"数字货币量化战线"的启动备忘：记录为什么现在开这条战线、30 域骨架哪些与 A股共用/哪些参数化/哪些新建、四个横切改造点、新建候选清单与施工波次。
 > 性质：混合型（决策备忘 + 施工计划）。模块级登记真源 = candidate_module_registry.yaml CAND-CRYPTO-001~010；域级全景真源 = docs/_working/依赖图/00-总览与索引.md（30 域 v7.0）。
-> 状态：active v1.0.0——§9 Q1-Q6 已 Owner 拍板（2026-08-26），W0 市场日历抽象已派单（docs/_working/dispatch/2026-08-26-crypto-w0-market-calendar-order.md）。
+> 状态：active v1.1.0——§9 Q1-Q6 已 Owner 拍板（2026-08-26），W0 市场日历抽象已派单（docs/_working/dispatch/2026-08-26-crypto-w0-market-calendar-order.md）。
 
 ## 1. 背景与定位
 
@@ -44,6 +44,7 @@ scope: 07_trading_decision_architecture
 - 域级全景真源：[依赖图 00-总览与索引](../../_working/依赖图/00-总览与索引.md)（30 域 + 30×30 依赖矩阵 + 价值链主线 DAT→FAC→SIG→PC→PA→SELL→POS→XC→RPT）。
 - A股侧已落地的可复用资产：技术指标体系（[16_technical_indicator_build_plan](16_technical_indicator_build_plan.md)，9 周期 OHLCV）、多策略并发架构（[30_multi_strategy_concurrency](30_multi_strategy_concurrency.md)，独立账本+firm 聚合）、风控三模块 production（drawdown/var/kill_switch）、执行对接范式（[40_execution_broker](40_execution_broker.md)）、18 业务注册表机制（[62_business_registry_construction](62_business_registry_construction.md)）。
 - 候选库查重：2026-08-26 对 candidate_module_registry.yaml 全量检索"数字货币/加密货币/crypto/BTC/永续/资金费/CCXT/币安"零命中——无重复登记风险，CRYPTO 族为全新前缀。
+- 代码侧盘点（2026-08-26 循环审查 R1）：src/zephyr 无 crypto/交易所行情 WS 客户端/CCXT 任何痕迹（仅前端组件与协议层 6 处 websocket 字样，非行情接入）——CAND-CRYPTO-002/005 属全新建设，条目 q1 证据成立；日历消费点预侦察 25 文件命中（scheduler/multi_timeframe_fusion/auto_backfiller/backfill_checker/calendar_position_constraint/三 provider/plan_engine 等），W0 派单消费点盘点的初始清单。
 
 ## 3. 域级复用矩阵（三类划分）
 
@@ -195,6 +196,41 @@ Phase 2  CAND-CRYPTO-003/004/008        ← 永续合约 + 链上增强
 - L2 深度数据——作者实证 L1 足够，与币侧 MVP 口径一致（中低频不依赖 L2）
 - 回测下篇（盘口重建+延迟建模）——作者未发布（fixbug 中），后续跟踪补充
 
+### 7.5 机构实践与开源框架对照（2026-08-26 循环审查 R1）
+
+> 来源：DolphinDB 币圈量化平台参考架构（2026-05）/ 机构策略研究报告（2026-02）/ OSS 框架全景调研（2026-04）/ Freqtrade 半年实测（2026-04）/ Meridian 桌诚实数字派研究（2026-06）。**采用总口径：项目已自建全链路，不引入外部框架；只吸收"已验证的运行纪律与对照检查项"。**
+
+**机构参考架构五要点 ↔ 项目现状互证**：
+
+| 机构实践 | 项目现状 | 结论 |
+|---|---|---|
+| 流批一体统一计算核（研究/生产同一代码，防双系统不一致） | 回测/模拟/实盘同路径（52/53 号）+ #ARCH-QUANT-001 proposed | ✅ 已对齐 |
+| 数据韧性五件套：双写流表按键去重 / 断连重试+本地缓存+恢复重载 / 流表与库状态周期监控告警 / OHLC 前日完整性周期校验+缺失重取 | wal_writer 双层 + quality_gate + auto_backfiller | ✅ 同构（002 施工时逐项对照，已写入条目 tech_notes） |
+| 风控模块与交易逻辑隔离（只读账户数据运行） | risk 域独立 + Broker ACL（INV-005） | ✅ 已对齐 |
+| 因子库 191 Alpha + WorldQuant 101 Alpha 流批双算 | wq_alpha_87.py 已有基底 | 🔧 远期对照补全（不立项，W4 因子批次评估） |
+| 资金费率套利为机构 2025-2026 主力盈利策略（delta-neutral：多现货+空永续 1x，8 小时收资金费，2025 均值 0.015%/8h） | Phase 2（003/008） | 📌 定为 **Phase 2 首个候选策略方向**；费束缚公式 breakeven hold ≈ fee ÷ funding-rate（短持有被费吃掉，Meridian 实证）已写入 003 tech_notes |
+
+**开源框架格局（2026-04/08）与采用口径**：
+
+| 框架 | 现状 | 吸收什么 |
+|---|---|---|
+| Freqtrade（48.4k★，币圈事实标准） | 活跃（111 版本） | ①lookahead-analysis/recursive-analysis **未来函数主动自检命令化**——项目 look_ahead_bias_detector 已有模块，裁定为回测前置必跑命令（运行方式升级，不新建）②Hyperopt 参数优化纪律：样本外留 20-30%+迭代≤200+多 loss 交叉验证——与项目 CPCV/FDR 纪律互证合并 ③FreqAI rolling retrain 范式——ml_train 已有，互证 |
+| Hummingbot（15.9k★，Apache-2.0） | 活跃（做市/DEX/跨所） | 不做市不引用；Condor AI harness 仅作 agentic 架构参照 |
+| Jesse（7.4k★，MIT） | 活跃 | 声明式策略语法参考；多周期无前视原生对齐项目 PIT 铁律 |
+| NautilusTrader（Rust 核+Python 面） | 活跃 | #ARCH-QUANT-001 已记其内核抽象，远期迁移选项，不采用 |
+| Backtrader 等僵尸项目 | 已死 | bus factor=1 教训：项目模块工厂+文档 why 锚定正是对策 |
+
+**交易所官方 agent 工具包（2025-11~2026-03，已成生产基建）**：Kraken 开源 Rust CLI（134 命令+MCP+paper trading）/ 币安 7 个 agent skills（订单执行/钱包情报/聪明钱跟踪/合约风险筛查）/ OKX Agent Trade Kit（开源 MCP，60+ 链 500+ DEX）/ Coinbase agentic wallets。→ **CAND-CRYPTO-005 acquisition 首选评估变更：币安官方 agent skills（MCP 协议，与 A10 集成架构 MCP 路线一致）优先于 CCXT 社区层**（官方维护+原生 paper 模式；CCXT 降为备选兼容层）。已写入 005 条目。
+
+### 7.6 前沿研究与远期方向（2026-06~08 最新）
+
+1. **多 agent LLM 交易面板——价值在下行风险管理，不在收益增强**（两条独立实证收敛）：CGX 共识门控执行（MDPI 2026-08-04）：Bull/Bear 对抗辩论三轮+Meta-Evaluator 按共识强度门控，Sharpe 1.90、最大回撤 -85%、2022 崩盘期 Bear 门拦截 93% 时段 vs 2024 牛市仅 12%；1/3/5/9 面板实验（2026-06）：**面板构成比数量重要**（9 面板 5 多 3 空 1 混合最优；多空均等极化面板=决策瘫痪放大亏损）。→ 项目 A7 辩论机制（agent_debate）+风控否决链已同构，币侧远期直接复用，**不新建模块**；门控定位=下行风险管理（与项目"风险优先"原则互证）
+2. **LLM MAS 加密货币组合管理**（UCL/NTU 2026）：三 agent（Crypto/News/Trading）分层架构，52 周回测 Sharpe 1.502；Crypto Agent（市场数据处理）贡献最大（移除 -42.57pp）。→ 与项目信号域多模态融合路线互证，远期参考
+3. **Meta-RL-Crypto**（arXiv 2026-02）：LLM actor/judge/meta-judge 三角闭环自改进交易 agent。→ 远期研究跟踪，不立项
+4. **Funding-aware 最优做市**（arXiv 2605）：perp DEX 做市 HJB 框架，资金费率 OU 过程建模（半衰期 2-6 小时，OU+jump 更优）。→ Phase 2 学术参考，不立项
+5. **币版统计套利否定式裁定（Meridian 实证）**：币圈配对协整是短窗口假象——90~180 天窗口协整存活数坍缩到 ≈0（资产类 regime 不稳定的结构属性，非方法问题）；唯一例外=稳定币 peg（窄、费束缚）。→ **币版禁止立项配对协整/统计套利策略**（写入 §8），省下一条死路
+6. **成本模型翻转排行榜（Meridian）**：薄边缘策略加真实成本（半价差+冲击+资金费）后排名反转；仓位是风险杠杆不是 alpha 杠杆（flat fees 下 Sharpe 与规模无关）；fill-on-touch 是上界、队列位置才是真相。→ 互证并强化 W2 cost_model 先行裁定；币版回测撮合至少做到"保守成交假设"档（中低频影响小，tick 级回测再议）
+
 ## 8. 不做什么
 
 | 不做 | 理由 |
@@ -207,6 +243,9 @@ Phase 2  CAND-CRYPTO-003/004/008        ← 永续合约 + 链上增强
 | 不重写技术指标/因子框架 | OHLCV 资产无关，原样复用 |
 | 不启动币侧合规门禁建设 | 个人交易自担边界，系统只保留通用交易纪律（§3.3） |
 | 不纳入 Polymarket 等预测市场 | 品种机制（赔率合约）与 CEX 现货本质不同+合规灰色；外部材料仅作知识储备（§7），不建接入 |
+| 不做跨所延迟套利 | 需 20-50ms 延迟目标+多区域 AWS 部署（机构基建口径），超单机/30Mbps 家用硬边界（system_charter §2） |
+| 不做 MEV/验证者/私有 mempool 基建 | DeFi 链上交互已裁定不做（上表）；超个人资金与运维边界 |
+| 不做币版配对协整/统计套利策略 | Meridian 实证（§7.6-5）：币圈协整 90~180 天窗口存活数坍缩≈0，结构性不成立；稳定币 peg 为唯一例外（Phase 2 再议） |
 
 ## 9. 开放问题（Owner 已拍板 2026-08-26）
 
@@ -228,8 +267,9 @@ Phase 2  CAND-CRYPTO-003/004/008        ← 永续合约 + 链上增强
 - [52_backtest_framework_docking](52_backtest_framework_docking.md) / [53_simulation_live_path](53_simulation_live_path.md)（回测/模拟/实盘路径，币版沿用）
 - [62_business_registry_construction](62_business_registry_construction.md)（18 业务注册表机制，币版实例登记入口）
 - candidate_module_registry.yaml：CAND-CRYPTO-001~010（新建构件登记真源）
-- `docs/_working/低学历勇闯量化/`（外部实战参考材料，§7 各节设计要点真源：第三篇网络坑 7 图 / PM 回测上篇 13 页 / 回测中篇 25 页）
+- `docs/_working/低学历勇闯量化/`（外部实战参考材料，§7.1~7.4 设计要点真源：第三篇网络坑 7 图 / PM 回测上篇 13 页 / 回测中篇 25 页）
 - 2026-08-26 行业调查（币圈必备数据维度，§5 候选 010 与 003/004 扩充的实证来源）：alternative.me 恐惧贪婪指数六因子口径 / CoinGlass 衍生品聚合（资金费率/OI/多空比/清算热图）/ 资金流三网关实践（交易所储备、稳定币、鲸鱼地址，CryptoQuant/Glassnode/Nansen 工具体系）
+- 2026-08-26 循环审查 R1 调查（§7.5/§7.6 真源）：DolphinDB 币圈量化平台参考架构（2026-05）/ 机构策略研究报告（2026-02）/ OSS 框架全景调研（2026-04）/ Freqtrade 实测（2026-04）/ Meridian RESEARCH_FINDINGS（2026-06）/ MDPI CGX 共识门控（2026-08）/ UCL-NTU LLM MAS（2026）/ arXiv 2605 funding-aware MM / arXiv 2509 Meta-RL-Crypto / 交易所官方 agent 工具包（Kraken CLI 2025-11、币安 skills 2026-03、OKX Agent Trade Kit 2026-03）
 - W0 派工单：docs/_working/dispatch/2026-08-26-crypto-w0-market-calendar-order.md（CAND-CRYPTO-001 施工派单真源）
 
 ## 11. 修订记录
@@ -239,3 +279,4 @@ Phase 2  CAND-CRYPTO-003/004/008        ← 永续合约 + 链上增强
 | 2026-08-26 | 0.1.0 | 初稿落盘（draft） | Owner 宣布启动数字货币量化战线；先定复用边界与横切改造点，CAND-CRYPTO 族 8 条同步登记，开放问题 6 项待 Owner 拍板后升 active |
 | 2026-08-26 | 0.2.0 | 外部材料审查升级：新增 §7 外部实战参考（BalletHip 系列 54 图全量审查——行情录制端 6 要点/网络双活+传输加工 8 要点/实盘运营 4 项/不采用 5 项）；补登 CAND-CRYPTO-009（跨境网络双活传输层，P0，W1 波次）；§5 候选清单 8→9 条；§6 波次 W1 加网络层；§8 不做什么加"不纳入预测市场" | Owner 裁定批准（外部材料审查报告三动作）：v0.1.0 遗漏跨境网络层（境内→境外交易所双活是实盘刚需），录制端/传输加工已验证设计直接吸收为 002/009 施工参考，Polymarket 维度裁定不纳入仅知识储备 |
 | 2026-08-26 | 1.0.0 | **翻正 active**：§9 Q1-Q6 Owner 拍板落地（交易所=币安主+OKX 备/池=BTC+ETH 现货/Phase 2≥3 个月实盘记录/免费 WS 直连/独立账本隔离/免费信源）；行业调查补登 CAND-CRYPTO-010（币圈宏观情绪面板：恐惧贪婪指数/BTC 占比/ETF 流量/USDT 溢价/减半与解锁日历，P2），003/004 条目 tech_notes 联动扩充（多空比+清算热图/鲸鱼+稳定币）；§5 候选 9→10 条；§6 Phase 2 加 010；W0 市场日历抽象派单（dispatch/2026-08-26-crypto-w0-market-calendar-order.md）。本轮同时为并发覆写修复：v0.2.0 提交后工作区与 HEAD 出现混合态（frontmatter 回滚 0.1.0/§5 表丢 009），以全量覆写重建完整 v1.0.0 并立即提交固化 | Owner 拍板 Q1-Q6 并批准行业调查结论；备忘翻正 active 后 W0 正式开工；共享工作区并发覆写事故以"全量重建+立即提交"处置 |
+| 2026-08-26 | 1.1.0 | **循环审查 R1（AI_review_instructions 方式）**：新增 §7.5 机构实践与开源框架对照（DolphinDB 流批一体/数据韧性五件套互证、Freqtrade 三件套——lookahead 自检命令化+Hyperopt 纪律+FreqAI 范式、交易所官方 agent 工具包成生产基建→005 acquisition 首选变更币安官方 skills/MCP）+ §7.6 前沿研究与远期方向（CGX 共识门控+面板构成实证——多 agent 价值在下行风险管理不新建模块/LLM MAS/Meta-RL-Crypto/funding-aware MM 远期参考/币版统计套利否定式裁定/成本模型翻转互证）；§8 不做什么补 3 行（跨所延迟套利/MEV 基建/配对协整）；§2 补代码侧盘点（零 crypto 件+日历消费点 25 文件预侦察）；CAND 注册表联动（005 acquisition 首选币安官方 skills/002 tech_notes 补数据韧性五件套对照/003 tech_notes 补 carry 费束缚公式）。过度工程筛除：跨所套利多区域 AWS/MEV 验证者/HFT 做市 HJB/K8s 部署 | Owner 指令驱动（全网搜索最新 2026-08+第一性原理+不过度工程）；三维度审查结论：集成方式补 lookahead 命令化+005 acquisition 变更，代码结构无需调整，数据源因子补否定式裁定与 Phase 2 carry 方向 |

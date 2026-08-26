@@ -21,6 +21,7 @@ last_updated: '2026-08-26'
 # 2026-08-26: +8 条 CAND-CRYPTO 族（数字货币量化战线启动批，Owner 2026-08-26 裁定启动，设计真源 94_crypto_quant_expansion.md §5；P0×4/P1×3/P2×1，W0 地基=001 市场日历抽象；族内查重 2026-08-26 全量检索零命中）
 # 2026-08-26: +CAND-CRYPTO-009（跨境网络双活传输层，外部材料审查批，Owner 裁定，94号 v0.2.0 §7.2 设计真源——低学历勇闯量化系列：第三篇网络坑 7 图+回测中篇 25 页；CAND-CRYPTO-002 联动补录制端 6 要点引用）【本行曾因并发覆写丢失，2026-08-26 补回】
 # 2026-08-26: +CAND-CRYPTO-010（币圈宏观情绪面板，行业调查批，Owner 拍板 94号 Q1-Q6 联动，94号 v1.0.0；003 tech_notes 扩充多空比+清算热图+Deribit 期权、004 tech_notes 扩充资金流三网关——鲸鱼地址/稳定币流动/交易所储备）
+# 2026-08-26: R1 循环审查联动（94号 v1.1.0 §7.5/§7.6，AI_review_instructions 方式）：005 acquisition 首选变更币安官方 agent skills/MCP（交易所官方工具包成生产基建：Kraken CLI 2025-11/币安 skills 2026-03/OKX MCP 2026-03）+002 tech_notes 补数据韧性五件套对照（DolphinDB 机构参考架构）+003 tech_notes 补资金费 carry 费束缚公式 breakeven≈fee÷funding-rate（机构 2025-2026 主力策略，Phase 2 首个候选方向）
 # 2026-08-18: +CAND-SEC-001（Whistleblower Agent MVP，裁定 9 联动降级远期 P4，AI-ADJ-004）
 # 2026-08-20: +40 条（AI-NIGHT-001 阶段3 未来工程-大型登记批，tracker #223 承接，均不施工附触发条件）
 # 2026-08-21: +CAND-FBL-002（FLE 自卫门禁激活专项，#61 挂起转正）+CAND-GOVDRIFT-001（drift_events 容量保留，任务1 残余）（AI-RESIDUAL-001）
@@ -18754,6 +18755,8 @@ entries:
     make-before-break连接轮换、多证据独立保留互校（Snapshot/Delta/BBO/成交/参考价）、
     双时间戳event_time+recorded_time；真源 docs/_working/低学历勇闯量化/ PM回测上篇13页。
     传输侧双线路与热切换由 CAND-CRYPTO-009 承接。
+    数据韧性五件套对照（2026-08-26 R1，DolphinDB 机构参考架构）：双写按键去重/断连重试+本地缓存+恢复重载/
+    流表与库状态周期监控告警/OHLC 前日完整性周期校验+缺失重取——与现有 wal_writer+quality_gate+auto_backfiller 同构，施工时逐项对照勾选。
   risks:
     - "WS 长连接 7×24 稳定性（断线静默丢帧）——sequence 缺口检测+自动 REST 补洞为必备"
   alternatives: "付费聚合源（Kaiko/CryptoQuant）——MVP 阶段免费直连（94号 Q4 建议），质量门禁不达标再升级"
@@ -18816,7 +18819,10 @@ entries:
   source_section: "§4.4 杠杆与资金费率"
   original_id: ""
   estimated_complexity: M
-  tech_notes: "四类数据均走交易所公共 API（无需鉴权）；爆仓数据部分交易所仅 WS 推送无历史回填，需落地即开始积累。2026-08-26 行业调查扩充：加多空比（long/short ratio）与清算热图（liquidation heatmap——亮区=杠杆堆积对价格有磁吸效应，止损应放危险区外、入场可围绕强平区规划）——CoinGlass 聚合口径可直接对标；高 OI+高资金费=过度杠杆回调预警；期权维度（Deribit 基差年化/PCR/IV 偏度）同 Phase 2 评估"
+  tech_notes: "四类数据均走交易所公共 API（无需鉴权）；爆仓数据部分交易所仅 WS 推送无历史回填，需落地即开始积累。2026-08-26 行业调查扩充：加多空比（long/short ratio）与清算热图（liquidation heatmap——亮区=杠杆堆积对价格有磁吸效应，止损应放危险区外、入场可围绕强平区规划）——CoinGlass 聚合口径可直接对标；高 OI+高资金费=过度杠杆回调预警；期权维度（Deribit 基差年化/PCR/IV 偏度）同 Phase 2 评估。
+    2026-08-26 R1 补充（机构主力策略方向）：资金费率 delta-neutral carry（多现货+空永续 1x，8 小时收资金费，
+    2025 均值 0.015%/8h 同比+50%）定为 Phase 2 首个候选策略方向；费束缚公式 breakeven hold ≈ fee ÷ funding-rate——
+    短持有被费吃掉（Meridian 实证），carry 仓位有最小持有期约束，进 cost_model 与仓位域设计"
   risks:
     - "爆仓数据无历史回填——接入越晚历史缺口越大，可考虑 Phase 1 末期提前挂采集（只采集不消费）"
   alternatives: "第三方聚合（Coinglass 类）——免费额度有限，交易所原生 API 优先"
@@ -18940,21 +18946,24 @@ entries:
   original_id: ""
   estimated_complexity: L
   tech_notes: >-
-    大概率基于 CCXT 库（统一多家交易所 API 的开源库）做薄适配，减少逐所对接成本；
-    密钥走 secret_registry 体系；回执确认机制参数化（查询间隔/重试次数按交易所调）。
+    2026-08-26 R1 调查更新：交易所官方 agent 工具包已成生产基建（Kraken 开源 Rust CLI 134 命令+MCP+paper 模式 2025-11；
+    币安 7 个 agent skills——订单执行/钱包情报/聪明钱跟踪/合约风险筛查 2026-03；OKX Agent Trade Kit 开源 MCP 2026-03）。
+    首选评估=币安官方 agent skills/MCP（官方维护+原生 paper 模式，与 A10 集成架构 MCP 路线一致）；
+    CCXT 降为备选兼容层（统一多家 API 的开源库，薄适配减少逐所对接成本）。
+    密钥走 secret_registry 体系（API key 权限最小化+禁提现+IP 白名单）；回执确认机制参数化（查询间隔/重试次数按交易所调）。
   risks:
     - "交易所 API 限频与私有 WS 稳定性——订单回报双通道（WS 推送+REST 轮询兜底）"
   alternatives: "逐所原生 API 直连——CCXT 统一层更省，但关键路径（下单/回执）必要时原生补强"
   tags: ["数字货币", "执行", "P0"]
-  search_terms: ["crypto execution", "ccxt adapter", "binance order", "交易所执行"]
+  search_terms: ["crypto execution", "ccxt adapter", "binance order", "交易所执行", "binance agent skills", "kraken cli", "mcp"]
   related_candidates: ["CAND-CRYPTO-001", "CAND-CRYPTO-006"]
   enables: []
   blocked_by: ["CAND-CRYPTO-001", "CAND-CRYPTO-006"]
   next_review_date: '2027-08-26'
   review_frequency: yearly
-  last_review_outcome: "candidate 登记（2026-08-26）：W3 波次，001/006 落地+Q1 选型后晋升"
+  last_review_outcome: "candidate 登记（2026-08-26）：W3 波次，001/006 落地+Q1 选型后晋升；2026-08-26 R1 acquisition 首选变更币安官方 skills/MCP"
   acquisition_method: opensource
-  acquisition_source: "ccxt（备选：交易所原生 API）"
+  acquisition_source: "币安官方 agent skills/MCP（首选评估，2026-08-26 R1）；ccxt（备选兼容层）；Kraken Rust CLI（次选参照）"
 
   # ----------------------------------------------------------
   # CAND-CRYPTO-006: 交易规则参数化（W2——规则集可插拔）
