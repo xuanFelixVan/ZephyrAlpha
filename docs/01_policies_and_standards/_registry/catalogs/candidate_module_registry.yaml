@@ -18759,6 +18759,7 @@ entries:
     流表与库状态周期监控告警/OHLC 前日完整性周期校验+缺失重取——与现有 wal_writer+quality_gate+auto_backfiller 同构，施工时逐项对照勾选。
   risks:
     - "WS 长连接 7×24 稳定性（断线静默丢帧）——sequence 缺口检测+自动 REST 补洞为必备"
+    - "交易所计划内维护窗口（定期升级停服）——维护日历跟踪+预期内断流标注，不误报质量事故（2026-08-26 R3）"
   alternatives: "付费聚合源（Kaiko/CryptoQuant）——MVP 阶段免费直连（94号 Q4 建议），质量门禁不达标再升级"
   tags: ["数字货币", "数据接入", "行情", "P0"]
   search_terms: ["crypto market data", "binance websocket", "okx api", "交易所行情"]
@@ -18881,7 +18882,10 @@ entries:
   source_section: "§5 新建候选清单"
   original_id: ""
   estimated_complexity: M
-  tech_notes: "源选型：Glassnode/CryptoQuant 付费 API vs 免费自建（区块链浏览器 API 限频紧）——P2 阶段再评。2026-08-26 行业调查扩充（资金流三网关口径）：①鲸鱼地址跟踪（Smart Money 标签地址积累行为+大额转账预警，Nansen 为行业标准，Whale Alert 铸造/大额异动告警）②稳定币流动（交易所稳定币储备=干火药购买力，新铸造=扩张前兆，USDT 场外溢价=亚洲资金入场）③交易所储备金（储备多年新低=供应挤压看涨，急升=获利了结预警）"
+  tech_notes: "源选型：Glassnode/CryptoQuant 付费 API vs 免费自建（区块链浏览器 API 限频紧）——P2 阶段再评。2026-08-26 行业调查扩充（资金流三网关口径）：①鲸鱼地址跟踪（Smart Money 标签地址积累行为+大额转账预警，Nansen 为行业标准，Whale Alert 铸造/大额异动告警）②稳定币流动（交易所稳定币储备=干火药购买力，新铸造=扩张前兆，USDT 场外溢价=亚洲资金入场）③交易所储备金（储备多年新低=供应挤压看涨，急升=获利了结预警）。
+    2026-08-26 R2 补充（8 年回测实证）：MVRV Z-Score（<1=历史深熊抄底区/>5=顶部区，2015/2018/2022 底验证）与 NVT
+    （币圈"市盈率"=价格/链上转账活跃度）为币版宏观因子中少数实证有效维度，列入首批链上因子清单；
+    纪律：任何主动因子须先过买入持有基准门（12 策略组合实证主动大多跑不赢持有）"
   risks:
     - "付费源成本高/免费源限频紧——先以 1~2 个核心指标（交易所净流入优先）验证增量价值再扩"
   alternatives: "MVP 阶段纯价格量能+情绪因子——本项为增强非地基"
@@ -19075,7 +19079,7 @@ entries:
   source_section: "§5 新建候选清单"
   original_id: ""
   estimated_complexity: S
-  tech_notes: "cost_model 需支持 maker/taker 异价（A股无此概念）；费率按交易所 VIP 档位参数化"
+  tech_notes: "cost_model 需支持 maker/taker 异价（A股无此概念）；费率按交易所 VIP 档位参数化。2026-08-26 R3 补充：universe 构建纪律=含已下架（delisting）币历史——币圈下架频繁，只收录当前在市币=幸存者偏差（INV-014 互证，与 A股退市股处理同口径）"
   risks: []
   alternatives: "暂用 A股 cost_model 近似——拒绝（费率结构本质不同，回测失真）"
   tags: ["数字货币", "回测", "注册表", "P1"]
@@ -19284,6 +19288,9 @@ entries:
     + 解锁日历（TokenUnlocks 类公开表）。2026 行业实证：恐惧贪婪六因子口径（alternative.me 官方）、
     资金流三网关（CryptoQuant/Glassnode 口径，重维度归 CAND-CRYPTO-004）、衍生品四维（归 CAND-CRYPTO-003）——
     本条目只承接宏观情绪与日历，不重复 003/004 的维度（治理纪律 D1 能合并不新建）。
+    2026-08-26 R2 补充（稳定币 depeg 监控，币版资金载体风险）：信号=USDT/USDC 多场所持续折价（vs $1 偏差>0.5% 告警）+
+    铸造销毁流突变+传染五联动（资金费率/OI/清算量/借贷利用率/稳定币池同时异动）；实践口径=发行方敞口≤30%+
+    赎回路径季度测试；风险阈值实例归 risk_limit 币版注册表，本面板提供日频信号源。
   risks:
     - "免费源稳定性（alternative.me 限频/ETF 流来源变更）——日频采集+失败降级标注即可，不进决策硬链"
   alternatives: "MVP 阶段 regime 仅用价格量价输入——本项为增强非地基（P2，可提前 W4 低成本先跑）"

@@ -41,3 +41,15 @@ fail_on: extract
 
 # Enable dependency graph for smarter comparison routing
 enable_dep_graph: true
+
+# ─── L2 acknowledged 白名单（合理重复登记，severity=acknowledged/skip，不阻断 CI）───
+# 格式：{id: "filepath:name:hash8||filepath:name:hash8", verdict, stable_key, note}
+# dismissed=标记为非重复（stable 交集抑制整个簇）；intentional=保留两副本（hash 变动重新浮现）
+acknowledged:
+  # 2026-08-26 AI-CRYPTO-001：_is_merge_commit 与 8 处 "return bool(RE.match(s))" 正则小工具函数
+  # AST 结构同构（type1_type2）但语义各殊（merge/todo/cjk/month/malformation/proxy/revision/symbol 等不同正则与职责），
+  # 硬合并=过度抽象（项目原则：三相似行优于早抽象）；源头=ruff format 波次统一模板后浮现的存量雷同，非真重复，dismissed 登记
+  - id: "scripts/governance/check_commit_message.py:_is_merge_commit:00000000||scripts/governance/d11_compliance/check_test_structure.py:_has_todo_comment:00000000"
+    verdict: dismissed
+    stable_key: "scripts/governance/check_commit_message.py:_is_merge_commit||scripts/governance/d11_compliance/check_test_structure.py:_has_todo_comment"
+    note: "2026-08-26 AI-CRYPTO-001：正则小函数结构同构语义各殊（8 对 hub 均为 _is_merge_commit），合并=过度抽象；存量雷同非真重复"

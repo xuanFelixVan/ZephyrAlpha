@@ -5,7 +5,7 @@ title: 交易决策架构主题全集（总索引）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.14.1"
+version: "2.14.2"
 date: 2026-08-26
 topic: trading_decision_index
 scope: 07_trading_decision_architecture
@@ -87,7 +87,7 @@ scope: 07_trading_decision_architecture
 | [90_methodology_open_questions.md](90_methodology_open_questions.md) | 方法论遗留提案（P0/P1 施工优先级表+远期开放问题） | active v2.0.3 |
 | [91_density_prediction.md](91_density_prediction.md) | 密度预测与 QNN 远期愿景（待讨论） | draft v0.1.4 |
 | [92_phase2_business_construction_order.md](92_phase2_business_construction_order.md) | 阶段二业务层施工顺序清单（44 号升级+2026-08 架构审查升级项全量按依赖/冲突面排序成波次，并发施工派单真源；ClickHouse 数据实证分支裁定） | active v1.0.0（2026-08-22 Owner 指令落盘） |
-| [94_crypto_quant_expansion.md](94_crypto_quant_expansion.md) | 数字货币量化扩展设计（30 域复用矩阵三类划分+四横切改造点+CAND-CRYPTO 族 10 条+施工波次 W0-W4+§7 外部实战参考[含 §7.5 机构/开源对照+§7.6 前沿研究]；**Q1-Q6 已 Owner 拍板**：币安主+OKX 备/BTC+ETH 现货 MVP/Phase 2≥3 月实盘记录/免费 WS/独立账本/免费信源；W0 市场日历抽象已派单） | active v1.1.0 |
+| [94_crypto_quant_expansion.md](94_crypto_quant_expansion.md) | 数字货币量化扩展设计（30 域复用矩阵三类划分+四横切改造点+CAND-CRYPTO 族 10 条+施工波次 W0-W4+§7 外部实战参考[§7.5 机构/开源对照+§7.6 前沿研究 9 条]；**Q1-Q6 已 Owner 拍板**；W0 市场日历抽象已派单） | active v1.2.0 |
 
 ## 1. 文档定位
 
