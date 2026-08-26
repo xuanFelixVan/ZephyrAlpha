@@ -62,7 +62,6 @@ __all__: Final = [
 import json
 import logging
 import os
-import shutil
 import signal
 import sys
 import time
@@ -274,15 +273,29 @@ def _sweep_quarantine(root: Path, retention_days: int = _QUARANTINE_RETENTION_DA
         if not d.is_dir() or not d.name.startswith("drift_"):
             continue
         try:
-            ts = datetime.strptime(d.name[len("drift_"):], "%Y%m%dT%H%M%S").replace(tzinfo=timezone.utc)
+            ts = datetime.strptime(d.name[len("drift_") :], "%Y%m%dT%H%M%S").replace(tzinfo=timezone.utc)
         except ValueError:
             result["kept"] += 1  # 命名不符不碰（人工存证目录豁免）
             continue
         if ts < cutoff:
-            shutil.rmtree(d, ignore_errors=True)
+            # 授权通道唯一化（O4②）：quarantine 已入 ops_guard 保护区，本家清扫
+            # 走 safe_rmtree 硬断言授权通道（reparse 检测+前缀白名单+留痕），
+            # 断言拒绝=不删（安全语义），下轮再试。
+            from zephyr.shared.io.file_utils import safe_rmtree  # noqa: PLC0415
+
+            try:
+                safe_rmtree(d, allowed_prefix=root / _QUARANTINE_DIR, ignore_errors=True)
+            except Exception:  # noqa: BLE001 — 授权通道异常不拖垮清扫循环
+                result["kept"] += 1
+                continue
             _audit(
                 root,
-                {"ts": _now_iso(), "verdict": "quarantine_retention_sweep", "file": d.name, "retention_days": retention_days},
+                {
+                    "ts": _now_iso(),
+                    "verdict": "quarantine_retention_sweep",
+                    "file": d.name,
+                    "retention_days": retention_days,
+                },
             )
             result["removed"] += 1
         else:
@@ -384,7 +397,13 @@ def scan_once(
             if not (root / d).is_dir():
                 _audit(
                     root,
-                    {"ts": _now_iso(), "file": d, "verdict": "quarantine_tamper", "head_sha": head_sha, "active_sessions": sessions},
+                    {
+                        "ts": _now_iso(),
+                        "file": d,
+                        "verdict": "quarantine_tamper",
+                        "head_sha": head_sha,
+                        "active_sessions": sessions,
+                    },
                 )
                 known_q.remove(d)
 
@@ -457,7 +476,13 @@ def scan_once(
                 _log_results(root, "clean", f"tracked 漂移已消解: {rel}（alert 签名 {sig[:8]}）")
                 _audit(
                     root,
-                    {"ts": _now_iso(), "file": rel, "verdict": "healed", "head_sha": head_sha, "active_sessions": sessions},
+                    {
+                        "ts": _now_iso(),
+                        "file": rel,
+                        "verdict": "healed",
+                        "head_sha": head_sha,
+                        "active_sessions": sessions,
+                    },
                 )
                 del alerted[rel]
                 files_state.pop(rel, None)

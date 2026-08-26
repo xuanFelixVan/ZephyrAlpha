@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-D5_ARCH_TOOLS | (auto-injected by S4 reconciler) | §
+# [A_module] module_id=MOD-D5_ARCH_TOOLS | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [MODULE] tests.governance.test_ops_guard_red_team
 # [DOMAIN] D_GOVERNANCE
@@ -349,3 +350,29 @@ class TestPrimitiveDetection:
         v = analyze_delete_command("Remove-Item -Recurse -Force D:\\ZephyrAlpha")
         assert not v.allowed
         assert v.is_protected_zone
+
+
+class TestQuarantineProtected:
+    """O4②（#ARCH-264，2026-08-26）：.runtime/quarantine 纳入保护区。
+
+    drift watchdog 告警快照是事故取证存证——2026-08-25/26 两起带外裸删
+    （drift_* 选择性清除、零审计）实证该目录需要与 src/docs/tests 同级保护。
+    """
+
+    def test_recursive_quarantine_delete_blocked(self) -> None:
+        """递归删除告警快照目录 → 阻断（带外清柜通道封死）。"""
+        v = analyze_delete_command("Remove-Item -Recurse -Force .runtime\\quarantine\\drift_20260825T165500")
+        assert not v.allowed, "quarantine 快照目录递归删除未被拦"
+        assert v.is_protected_zone
+
+    def test_recursive_quarantine_root_delete_blocked(self) -> None:
+        """递归删除整个 quarantine 目录 → 阻断。"""
+        v = analyze_delete_command("rd /s /q .runtime\\quarantine")
+        assert not v.allowed, "quarantine 根目录递归删除未被拦"
+        assert v.is_protected_zone
+
+    def test_force_env_allows_quarantine(self) -> None:
+        """人工确认标记 ZEPHYR_FORCE_DELETE=1 → 授权放行（授权通道唯一化，仍落审计）。"""
+        with patch.dict(os.environ, {"ZEPHYR_FORCE_DELETE": "1"}):
+            v = analyze_delete_command("Remove-Item -Recurse -Force .runtime\\quarantine\\drift_20260825T165500")
+        assert v.allowed

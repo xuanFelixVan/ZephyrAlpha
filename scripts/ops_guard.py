@@ -91,6 +91,11 @@ PROTECTED_PREFIXES: tuple[str, ...] = (
     "src",
     "docs",
     "tests",
+    # #ARCH-264 O4②（2026-08-26）：drift watchdog 告警快照=事故取证存证，
+    # 2026-08-25/26 两起带外裸删（drift_* 选择性清除、零审计）实证需保护区。
+    # 授权通道唯一化：watchdog retention 清扫经 safe_rmtree 授权通道（留痕），
+    # 人工处置走 ZEPHYR_FORCE_DELETE=1。
+    ".runtime/quarantine",
 )
 
 # 白名单前缀（这些路径下的删除放行）
@@ -1004,7 +1009,9 @@ def _enforce_file_ops(op: str, targets: list[str], cwd: str | Path | None = None
             primitive=f"file_ops_{op}",
             targets=list(in_repo_targets),
         )
-        audit_delete("file_ops_block", f"{op}({';'.join(in_repo_targets)[:200]})", verdict, cwd=str(cwd) if cwd else None)
+        audit_delete(
+            "file_ops_block", f"{op}({';'.join(in_repo_targets)[:200]})", verdict, cwd=str(cwd) if cwd else None
+        )
         raise DeleteBlockedError(
             f"[OPS-GUARD] file_ops 未声明阻断——reconciler {gate_id} 未声明 '{op}' 能力。\n"
             f"  目标: {in_repo_targets[:3]}\n"
