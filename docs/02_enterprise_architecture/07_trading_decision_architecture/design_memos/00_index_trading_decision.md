@@ -5,7 +5,7 @@ title: 交易决策架构主题全集（总索引）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.14.2"
+version: "2.14.3"
 date: 2026-08-26
 topic: trading_decision_index
 scope: 07_trading_decision_architecture
@@ -87,7 +87,7 @@ scope: 07_trading_decision_architecture
 | [90_methodology_open_questions.md](90_methodology_open_questions.md) | 方法论遗留提案（P0/P1 施工优先级表+远期开放问题） | active v2.0.3 |
 | [91_density_prediction.md](91_density_prediction.md) | 密度预测与 QNN 远期愿景（待讨论） | draft v0.1.4 |
 | [92_phase2_business_construction_order.md](92_phase2_business_construction_order.md) | 阶段二业务层施工顺序清单（44 号升级+2026-08 架构审查升级项全量按依赖/冲突面排序成波次，并发施工派单真源；ClickHouse 数据实证分支裁定） | active v1.0.0（2026-08-22 Owner 指令落盘） |
-| [94_crypto_quant_expansion.md](94_crypto_quant_expansion.md) | 数字货币量化扩展设计（30 域复用矩阵三类划分+四横切改造点+CAND-CRYPTO 族 10 条+施工波次 W0-W4+§7 外部实战参考[§7.5 机构/开源对照+§7.6 前沿研究 9 条]；**Q1-Q6 已 Owner 拍板**；W0 市场日历抽象已派单） | active v1.2.0 |
+| [94_crypto_quant_expansion.md](94_crypto_quant_expansion.md) | 数字货币量化扩展设计（30 域复用矩阵三类划分+五横切改造点[含 §4.5 市场归属标注三道闸]+CAND-CRYPTO 族 10 条+施工波次 W0-W4+§7 外部实战参考；**Q1-Q6 已 Owner 拍板**；W0 市场日历抽象已派单） | active v1.3.0 |
 
 ## 1. 文档定位
 
@@ -686,7 +686,7 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 57_daily_cycle_sop | 日循环 SOP（5x 验证层，P0-5） | ✅ 已定稿 | active v1.1.0（2026-08-24 RUN-05 演练节入册） |
 | 68_code_algorithm_review_pipeline | 代码与算法多模型审查流水线（跨切治理层） | ✅ 已定稿 | active v1.2.1 |
 | 92_phase2_business_construction_order | 阶段二业务层施工顺序清单（9x 开放问题与施工排序段） | ✅ 已定稿 | active v1.0.0（2026-08-22 Owner 指令落盘） |
-| 94_crypto_quant_expansion | 数字货币量化扩展设计（9x 新战线启动段；CAND-CRYPTO-001~010 登记真源） | 本会话落盘 | active v1.1.0（Q1-Q6 已拍板翻正+R1 循环审查；W0 派单 dispatch/2026-08-26-crypto-w0-market-calendar-order.md） |
+| 94_crypto_quant_expansion | 数字货币量化扩展设计（9x 新战线启动段；CAND-CRYPTO-001~010 登记真源） | 本会话落盘 | active v1.3.0（Q1-Q6 已拍板+R1-R3 循环审查+§4.5 市场归属标注；W0 派单 dispatch/2026-08-26-crypto-w0-market-calendar-order.md） |
 
 ## 8. 产出物命名规范
 
@@ -882,3 +882,5 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 2026-08-26 | 2.13.1 | **94 号 v0.2.0 版本同步（外部材料审查升级）**——§0 目录+§7.3 两处：94 号 draft v0.1.0→v0.2.0（新增 §7 外部实战参考——低学历勇闯量化系列 54 图全量审查：行情录制端 6 要点/跨境网络双活+传输加工 8 要点/实盘运营 4 项/不采用 5 项；§5 候选 8→9 条；§6 波次 W1 加网络层；§8 加"不纳入预测市场"）；candidate_module_registry.yaml 补登 CAND-CRYPTO-009（跨境网络双活传输层 P0）+ CAND-CRYPTO-002 联动补录制端设计引用 | Owner 裁定驱动（审查报告三动作批准）：v0.1.0 遗漏跨境网络层（境内→境外交易所双活=实盘刚需），已验证实战设计吸收为 002/009 施工参考，Polymarket 维度裁定不纳入仅知识储备 |
 | 2026-08-26 | 2.14.0 | **94 号翻正 active v1.0.0（Q1-Q6 拍板）+ W0 派单 + CAND-CRYPTO-010**——§0 目录+§7.3 两处：94 号 draft v0.2.0→active v1.0.0（§9 拍板：币安主+OKX 备/BTC+ETH 现货 MVP/Phase 2≥3 月实盘记录/免费 WS/独立账本/免费信源；行业调查补登 CAND-CRYPTO-010 币圈宏观情绪面板 P2，003/004 tech_notes 联动扩充多空比+清算热图/鲸鱼+稳定币；§5 候选 9→10 条）；W0 市场日历抽象派单落盘（dispatch/2026-08-26-crypto-w0-market-calendar-order.md，AI-CAL-001）。并发覆写事故处置：94 号 v0.2.0 提交后工作区与 HEAD 混合态（frontmatter 回滚/§5 丢 009 行/注册表头部 009 日志行丢失），以全量覆写重建 v1.0.0+日志补回并立即提交固化 | Owner 拍板 Q1-Q6+批准行业调查结论；备忘翻正后 W0 正式开工；共享工作区并发覆写以"全量重建+立即提交"处置（94 号修订记录 v1.0.0 已留痕） |
 | 2026-08-26 | 2.14.1 | **94 号 v1.1.0 版本同步（循环审查 R1，AI_review_instructions 方式）**——§0 目录+§7.3 两处：94 号 active v1.0.0→v1.1.0（新增 §7.5 机构实践与开源框架对照——DolphinDB 流批一体/数据韧性五件套互证/Freqtrade 三件套/交易所官方 agent 工具包成生产基建→005 acquisition 首选变更币安官方 skills/MCP；§7.6 前沿研究——CGX 共识门控+面板构成/LLM MAS/Meta-RL-Crypto/funding-aware MM 远期/币版统计套利否定式裁定/成本模型翻转互证；§8 不做什么补 3 行——跨所延迟套利/MEV 基建/配对协整；§2 补代码侧盘点）；candidate_module_registry.yaml 联动（005 acquisition+002 tech_notes 数据韧性五件套+003 tech_notes carry 费束缚公式+头部 R1 日志行） | Owner 指令驱动（全网搜索 2026-08 最新+第一性原理+不过度工程）：三维度审查结论——集成方式补 lookahead 命令化+005 acquisition 变更，代码结构无需调整，数据源因子补否定式裁定与 Phase 2 carry 方向；过度工程筛除跨所套利多区域 AWS/MEV 验证者/HFT 做市 HJB/K8s |
+| 2026-08-26 | 2.14.2 | **94 号 v1.2.0 版本同步（循环审查 R2+R3）**——§0 目录+§7.3 两处：94 号 active v1.1.0→v1.2.0（§7.6 补 3 条——⑦中低频策略格局与成本铁律：四大耐用策略/短线 65-80% 净亏损/风控五规则互证，币版首批策略锚定趋势跟踪系；⑧链上估值因子 8 年回测实证：MVRV Z-Score/NVT 归 004 因子清单+买入持有基准门纪律；⑨稳定币 depeg 风险监控：双风险画像+传染五联动+发行方敞口≤30%，归 risk_limit 币版+010 面板）；candidate_module_registry.yaml 联动（004/010 tech_notes R2+007 delisting 幸存者偏差 R3+002 risks 交易所维护窗口 R3）【本行曾因并发覆写丢失，2026-08-26 补回】 | 策略格局/链上因子/稳定币风险三路实证（Skrumble 2026-05/KuCoin bots/12 策略组合 8 年回测/Circle OCC 2026-07）；税务记账维度裁定不适用（非美法域，过度工程） |
+| 2026-08-26 | 2.14.3 | **94 号 v1.3.0 版本同步（市场归属标注体系）**——§0 目录+§7.3 两处：94 号 active v1.2.0→v1.3.0（§4 四→五横切改造点，新增 §4.5 market scope 三道闸——物理闸市场后缀包/数据闸八表 market 字段/治理闸 depgraph 标签+CAND 族前缀+门禁按标的市场加载；"默认共用零标注只分市场构件贴标签"；依赖全景矩阵不变、§3 复用矩阵=市场分片标注文档真源防双真源）；candidate_module_registry.yaml 联动（007 tech_notes 补 market 字段口径） | Owner 三问驱动（AI 能否分清 A股/币圈/共用、会不会搞混、依赖全景是否贴标签）：同名不同市场构件错配事故（A股规则校验币订单）须在设计层防死 |

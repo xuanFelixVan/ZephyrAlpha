@@ -19093,7 +19093,7 @@ entries:
   source_section: "§5 新建候选清单"
   original_id: ""
   estimated_complexity: S
-  tech_notes: "cost_model 需支持 maker/taker 异价（A股无此概念）；费率按交易所 VIP 档位参数化。2026-08-26 R3 补充：universe 构建纪律=含已下架（delisting）币历史——币圈下架频繁，只收录当前在市币=幸存者偏差（INV-014 互证，与 A股退市股处理同口径）"
+  tech_notes: "cost_model 需支持 maker/taker 异价（A股无此概念）；费率按交易所 VIP 档位参数化。2026-08-26 R3 补充：universe 构建纪律=含已下架（delisting）币历史——币圈下架频繁，只收录当前在市币=幸存者偏差（INV-014 互证，与 A股退市股处理同口径）。2026-08-26 市场归属标注联动（94号 §4.5）：三件套币版实例条目必带 market: crypto 字段（universe/benchmark/cost_model 属分市场八表；无 market 字段=共用条目），防 AI 拿错同名实例"
   risks: []
   alternatives: "暂用 A股 cost_model 近似——拒绝（费率结构本质不同，回测失真）"
   tags: ["数字货币", "回测", "注册表", "P1"]

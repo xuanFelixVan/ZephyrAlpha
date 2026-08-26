@@ -5,7 +5,7 @@ title: 数字货币量化扩展设计
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.2.0"
+version: "1.3.0"
 date: 2026-08-26
 last_updated: 2026-08-26
 topic: crypto_quant_expansion
@@ -90,9 +90,9 @@ scope: 07_trading_decision_architecture
 
 > 技术指标专项说明：technical_indicator 注册表全量共用——指标算法输入是 OHLCV（开高低收量）K 线，币的 K 线同构。唯一注意点：币圈常用 4h 周期（现有 9 周期未含），且 K 线无午休/隔夜断点——这归入 §4 横切改造点①，不是指标算法本身的改动。
 
-## 4. 四个横切改造点（先于一切新建）
+## 4. 五个横切改造点（先于一切新建）
 
-> 这四点是"同一套内核服务两个市场"的前提，全部以**抽象接口 + 按市场注入实现**的方式做，禁止 if/else 散落在业务代码里。
+> 这五点是"同一套内核服务两个市场"的前提，全部以**抽象接口 + 按市场注入实现**的方式做，禁止 if/else 散落在业务代码里。
 
 ### 4.1 市场日历抽象（market_calendar，第一地基）
 
@@ -284,3 +284,4 @@ Phase 2  CAND-CRYPTO-003/004/008        ← 永续合约 + 链上增强
 | 2026-08-26 | 1.0.0 | **翻正 active**：§9 Q1-Q6 Owner 拍板落地（交易所=币安主+OKX 备/池=BTC+ETH 现货/Phase 2≥3 个月实盘记录/免费 WS 直连/独立账本隔离/免费信源）；行业调查补登 CAND-CRYPTO-010（币圈宏观情绪面板：恐惧贪婪指数/BTC 占比/ETF 流量/USDT 溢价/减半与解锁日历，P2），003/004 条目 tech_notes 联动扩充（多空比+清算热图/鲸鱼+稳定币）；§5 候选 9→10 条；§6 Phase 2 加 010；W0 市场日历抽象派单（dispatch/2026-08-26-crypto-w0-market-calendar-order.md）。本轮同时为并发覆写修复：v0.2.0 提交后工作区与 HEAD 出现混合态（frontmatter 回滚 0.1.0/§5 表丢 009），以全量覆写重建完整 v1.0.0 并立即提交固化 | Owner 拍板 Q1-Q6 并批准行业调查结论；备忘翻正 active 后 W0 正式开工；共享工作区并发覆写事故以"全量重建+立即提交"处置 |
 | 2026-08-26 | 1.1.0 | **循环审查 R1（AI_review_instructions 方式）**：新增 §7.5 机构实践与开源框架对照（DolphinDB 流批一体/数据韧性五件套互证、Freqtrade 三件套——lookahead 自检命令化+Hyperopt 纪律+FreqAI 范式、交易所官方 agent 工具包成生产基建→005 acquisition 首选变更币安官方 skills/MCP）+ §7.6 前沿研究与远期方向（CGX 共识门控+面板构成实证——多 agent 价值在下行风险管理不新建模块/LLM MAS/Meta-RL-Crypto/funding-aware MM 远期参考/币版统计套利否定式裁定/成本模型翻转互证）；§8 不做什么补 3 行（跨所延迟套利/MEV 基建/配对协整）；§2 补代码侧盘点（零 crypto 件+日历消费点 25 文件预侦察）；CAND 注册表联动（005 acquisition 首选币安官方 skills/002 tech_notes 补数据韧性五件套对照/003 tech_notes 补 carry 费束缚公式）。过度工程筛除：跨所套利多区域 AWS/MEV 验证者/HFT 做市 HJB/K8s 部署 | Owner 指令驱动（全网搜索最新 2026-08+第一性原理+不过度工程）；三维度审查结论：集成方式补 lookahead 命令化+005 acquisition 变更，代码结构无需调整，数据源因子补否定式裁定与 Phase 2 carry 方向 |
 | 2026-08-26 | 1.2.0 | **循环审查 R2+R3**：§7.6 补 3 条（⑦中低频策略格局与成本铁律——四大耐用策略/短线 65-80% 净亏损/费+资金费 0.05-0.5% 往返/风控五规则互证，币版首批策略锚定趋势跟踪系；⑧链上估值因子 8 年回测实证——MVRV Z-Score<1 深熊区/>5 顶部区+NVT 市盈率归 004 因子清单，因子开发纪律=先过买入持有基准门；⑨稳定币 depeg 风险监控——USDT/USDC 双风险画像+传染五联动信号+发行方敞口≤30%，归 risk_limit 币版实例+010 面板信号）；CAND 联动（004/010 tech_notes R2 补充+007 delisting 幸存者偏差纪律 R3+002 risks 交易所维护窗口 R3+010 笔误修正） | 策略格局/链上因子/稳定币风险三路实证（Skrumble 2026-05/KuCoin bots 2026-05/12 策略组合 8 年回测/Circle OCC 2026-07/Hacken 监控体系）；税务记账维度裁定不适用（非美法域，过度工程） |
+| 2026-08-26 | 1.3.0 | **市场归属标注体系（§4 四→五横切改造点）**：新增 §4.5 market scope 三道闸——①物理闸（市场后缀包 signal_ashare↔signal_crypto+connectors/adapters/rules 子目录，002/005/006 sub_layer 已预埋）②数据闸（universe/benchmark/cost_model/risk_limit/strategy/factor/regime_cycle/event_calendar 八表分市场实例必带 `market: ashare|crypto` 字段，无字段=共用）③治理闸（depgraph 节点/creation_token 带 market 标签+CAND 族前缀+门禁按标的市场加载）；裁定"默认共用零标注、只分市场构件贴标签"（防噪音）；依赖全景矩阵保持不变，§3 复用矩阵=市场分片标注文档真源（防双真源）；CAND-CRYPTO-007 tech_notes 联动 market 字段口径 | Owner 三问驱动（AI 能否分清 A股/币圈/共用、会不会搞混、依赖全景是否贴标签）：同名不同市场构件的错配事故（A股规则校验币订单）须在设计层防死 |
