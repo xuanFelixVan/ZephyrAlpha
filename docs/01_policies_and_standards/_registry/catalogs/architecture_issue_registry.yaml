@@ -20613,3 +20613,15 @@ entries:
   impact:
     - 'src/zephyr/knowledge/（新包 14+__init__）；tests/knowledge 14 文件'
   fix_phase: '已落地（2026-08-26，DIGEST P2 W03）'
+- issue_id: '#ARCH-260'
+  title: DIGEST P2 W04 波：INTELLIGENCE+ALT_DATA 13 候选晋升+11 REVIEW 归并——另类接入/目录/研报/政策预期/源健康/隐私/信号网关/地缘/合规+人机信任/LLM自评估/事件因果/事实账本
+  severity: P2
+  category: 功能施工
+  adjudication: >-
+    MOD-ALT-007~015/MOD-INT-HUMAN-TRUST/LLM-SELFEVAL/EVENT-CHAIN/FACT-LEDGER。13 模块纯内存/DI 落地，
+    域合并 959 测全绿（含既有零回归）。REVIEW 归并 11 条：TESTA-011→024/TESTA-013→026/TESTA-020→016（同稿重登）；
+    TESTA-014→MOD-ALT-004/TESTA-015→MOD-ALT-003/TESTA-017→MOD-ALT-005/AISA-015+016→MOD-INT-MKT-INTERPRETER（撞 P1 已建）；
+    AISA-010→AISA-013/AISA-012→AISA-014（同稿重登）；TESTA-018→TESTB-029（跨域 D-ALT-22 留 W05）。
+  impact:
+    - 'src/zephyr/alt_data×9 + intelligence×4；tests 13 文件'
+  fix_phase: '已落地（2026-08-26，DIGEST P2 W04）'
