@@ -4358,6 +4358,20 @@ capabilities:
     增量）+ GATE-NAMING-AUDIT（全量 manual）； GATE-FRONTMATTER（--ci 增量）+ GATE-FRONTMATTER-AUDIT（全量
     manual）。配套代码： check_naming_convention.py main() 显示二元化（actual_blocking vs warn_only_count）。
     新 AI 设计 pre-commit hook 前MUST反查本规则，禁止 commit 阶段全量扫描阻断日常 commit。
+- capability_id: stale_base_overwrite_prohibition
+  canonical_override: docs/01_policies_and_standards/rules/trae_085_stale_base_overwrite.yaml
+  aliases:
+  - RULE-STALE-BASE-OVERWRITE
+  - stale_base_overwrite
+  - hot_file_cas
+  - read_before_write
+  - safe_write_text_cas
+  description: 陈旧基线整文件覆写禁令（trae_085，#ARCH-264，2026-08-26 Owner 裁定）。100%
+    AI 开发共享工作区写层四条铁律：①热文件写前读新（DEFAULT_HOT_FILES 经 safe_write_text
+    CAS 或 lock_files 持锁，旧 base 拒写落审计）②注册表/索引类共享文件批量改写脚本必须过
+    CAS（#ARCH-237 行级合并事故前例）③AI 会话全文件 Write 前必须本轮 Read（禁止凭上下文
+    旧缓存整文件覆写）④派生写必须登记（reconcile worker claim 快照在册或 auto-sync 清单在列）。
+    新 AI 写热文件/批量注册表脚本/派生写 reconciler 前 MUST 反查本规则。
 - capability_id: shrinkage_backtest_engine
   canonical_override: src/zephyr/backtest/implementations/shrinkage_engine.py
   aliases:
@@ -12378,3 +12392,51 @@ di_seam_exemptions:
   token: auto-blueprint-20260826
   created_by: AI-P2-W13
   capability: agent_coordination_skill_blueprint
+- file: src/zephyr/intelligence/llm_research_agent.py
+  token: auto-llm-research-agent-20260826
+  created_by: AI-P2-W14
+  capability: llm_research_agent
+- file: tests/intelligence/test_llm_research_agent.py
+  token: auto-test-llm-research-agent-20260826
+  created_by: AI-P2-W14
+  capability: llm_research_agent_test
+- file: docs/03_modules/_domain_intelligence/llm_research_agent/blueprint.md
+  token: auto-blueprint-20260826
+  created_by: AI-P2-W14
+  capability: llm_research_agent_blueprint
+- file: src/zephyr/feedback_loop/module_matcher.py
+  token: auto-module-matcher-20260826
+  created_by: AI-P2-W14
+  capability: module_matcher
+- file: tests/feedback_loop/test_module_matcher.py
+  token: auto-test-module-matcher-20260826
+  created_by: AI-P2-W14
+  capability: module_matcher_test
+- file: docs/03_modules/_domain_feedback_loop/module_matcher/blueprint.md
+  token: auto-blueprint-20260826
+  created_by: AI-P2-W14
+  capability: module_matcher_blueprint
+- file: src/zephyr/feedback_loop/skill_library.py
+  token: auto-skill-library-20260826
+  created_by: AI-P2-W14
+  capability: skill_library
+- file: tests/feedback_loop/test_skill_library.py
+  token: auto-test-skill-library-20260826
+  created_by: AI-P2-W14
+  capability: skill_library_test
+- file: docs/03_modules/_domain_feedback_loop/skill_library/blueprint.md
+  token: auto-blueprint-20260826
+  created_by: AI-P2-W14
+  capability: skill_library_blueprint
+- file: src/zephyr/feedback_loop/meta_harness_optimizer.py
+  token: auto-meta-harness-optimizer-20260826
+  created_by: AI-P2-W14
+  capability: meta_harness_optimizer
+- file: tests/feedback_loop/test_meta_harness_optimizer.py
+  token: auto-test-meta-harness-optimizer-20260826
+  created_by: AI-P2-W14
+  capability: meta_harness_optimizer_test
+- file: docs/03_modules/_domain_feedback_loop/meta_harness_optimizer/blueprint.md
+  token: auto-blueprint-20260826
+  created_by: AI-P2-W14
+  capability: meta_harness_optimizer_blueprint
