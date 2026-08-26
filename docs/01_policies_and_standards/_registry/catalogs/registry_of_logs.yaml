@@ -820,6 +820,15 @@ logs:
     schema_summary: '{pid, ...} 删除事件 JSONL'
     retention: .runtime 运行时
     status: active
+  - log_id: LOG-OPS-002B
+    name_zh: safe_rmtree 授权删除留痕
+    kind: audit_log
+    path: .runtime/gate_audit/safe_rmtree.jsonl
+    writers: [src/zephyr/shared/io/file_utils.py]
+    consumers: [治理审计]
+    schema_summary: '{timestamp, event, target, allowed_prefix, pid} 授权通道删除事件 JSONL（批5c：补丁直通期审计短路，本层补痕——删除必有痕；经 audit_jsonl_writer 50MB 轮转）'
+    retention: .runtime 运行时
+    status: active
   - log_id: LOG-OPS-003
     name_zh: 隔离区分支引用日志
     kind: audit_log

@@ -20550,3 +20550,55 @@ entries:
   impact:
     - 'src/zephyr/shared×3 + data×3 + data_eng×5 + data_governance×6 + data_security（新包 3+__init__ 改）；tests 20 文件'
   fix_phase: '已落地（2026-08-26，DIGEST P2 W02）'
+
+- issue_id: '#ARCH-257'
+  title: 2026-08-23 src/zephyr 2936 文件误删事件治本——删除硬护栏四件套 + 观测期翻硬拦闭环
+  severity: P0
+  category: 治理安全
+  adjudication: >-
+    肇事指令走未仪表化通道（主仓 session 经 python 一次性脚本渐进式 FS 删除），全部
+    reconciler/commit_queue 护栏零触发（ops_guard block=0），git HEAD 完整恢复零损失。
+    治本链（CAND-GOVSEC-001 批1-5）：①safe_rmtree 删除前三件套硬断言（resolve+is_relative_to+
+    reparse 检测+session_id 白名单，4 处删除点接入）；②ops_guard in-process 补丁推广治理入口，
+    2026-08-23~25 观测期（42h：333 万 allow/402 would_block 全测试噪音/0 真伤）后翻硬拦
+    （git_commit/session_worktree CLI/commit_queue drain/sweep 库入口四入口硬拦，pytest 裁定
+    永久 audit-only 观测哨）；③sweep 删除遥测前置（phase=begin 含调用栈）；④worker 并发闸门
+    文件锁互斥+inflight 口径；⑤批5a 观测期误报族归因修复（相对路径 cwd resolve + _skill_cache
+    gitignore 缓存目录白名单）；⑥safe_rmtree 直通 bulk_delete_approved（硬断言通过=授权完成，
+    防授权通道被自家补丁拦截）+ _enforce_file_ops 仓外 housekeeping 豁免（gateway 实证
+    file_ops_block 噪音洪峰）。
+  impact:
+    - 'scripts/ops_guard.py + 四入口 + file_utils.safe_rmtree + 五测试文件'
+  fix_phase: '已落地（2026-08-23 批1-4 → 2026-08-26 批5，commit 3e1e9bd7/aac69c43）'
+  status: resolved
+  related_rules:
+  - 'CAND-GOVSEC-001'
+  - 'ARCH-RECONCILER-AUTO-DELETE-GOV-001'
+  - 'ARCH-WORKTREE-WIPE-GOV-001'
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+
+- issue_id: '#ARCH-258'
+  title: gate_audit 审计 jsonl 无界增长——统一轮转写入助手 + 分级落盘治本（3.7GB/42h 实证）
+  severity: P1
+  category: 治理技术债
+  adjudication: >-
+    .runtime/gate_audit/ 11 个 jsonl 全部裸 open("a") 追加、零大小上限零轮转零采样，
+    GATE-RUNTIME-CLEANUP 显式豁免 *.jsonl——ops_guard_delete.jsonl 42h 膨胀 3.7GB
+    （333 万条，99.99% 是 gateway 临时文件清理噪音），worktree_status_snapshots 449 万行、
+    post_claim_modifications 175 万行同型炸弹，月增 ~50GB/文件不可持续。治本（批5c）：
+    新模块 audit_jsonl_writer（50MB 大小轮转+旧段 .1/.2/.3 移位保留不物理删除——B-016
+    禁止清理未归档审计合规，与 scheduler RotatingFileHandler 10MB×5 先例同型；写入失败
+    永不阻断主链路）；ops_guard 分级落盘（非敏感区 inprocess_allow 只计数不落盘，敏感区
+    allow 与全部 block/would_block/guard_* 全量——8-23 型取证面完整保留）；三炸弹文件
+    同批接入；safe_rmtree 授权通道补留痕。残余：其余 8 个 jsonl 维持裸追加（低频无洪峰），
+    出现增长苗头时接入同一助手（D1 查重：禁止另起第二写入实现）。
+  impact:
+    - 'src/zephyr/shared/io/audit_jsonl_writer.py（新）+ ops_guard/git_commit_gateway/foreign_change_gate 三处接入'
+  fix_phase: '已落地（2026-08-26 批5c，commit 3e1e9bd7/aac69c43）'
+  status: resolved
+  related_rules:
+  - 'B-016'
+  - 'ARCH-257'
+  created: '2026-08-26'
+  last_updated: '2026-08-26'

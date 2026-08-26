@@ -7843,7 +7843,61 @@ entries:
   blocked_by: []
   next_review_date: '2026-09-23'
   review_frequency: monthly
-  last_review_outcome: "四件套已落地（2026-08-23 批1-4 施工完成）：①safe_rmtree 删除前三件套硬断言（resolve+is_relative_to+reparse 检测+session_id 白名单，4 处删除点接入+红队单测）②ops_guard install_inprocess_enforcement 推广五治理入口（git_commit/session_worktree CLI/commit_queue drain/pytest conftest/sweep 库入口，audit-only 观测期，helper=install_inprocess_enforcement_audit_only）③sweep 删除遥测前置（phase=begin 含调用栈，与 done 成对）④worker 并发闸门文件锁互斥+inflight 计数口径（新鲜 pending status 闭合 TOCTOU 缝隙）；附修 GATE-GIT-GUARD-BYPASS same-sha 自指 reset 误报排除。后续：遥测证明零误伤后观测期翻硬拦"
+  last_review_outcome: "四件套已落地（2026-08-23 批1-4）；两步走闭环（2026-08-26 批5）：观测期 42h 零误伤（333 万 allow/402 would_block 全量归因=测试噪音两族）后四治理入口翻硬拦（git_commit/session_worktree CLI/commit_queue drain/sweep 库入口），pytest 裁定永久 audit-only 观测哨；批5a 误报族修复（相对路径 cwd resolve+_skill_cache 白名单）；safe_rmtree 直通 bulk_delete_approved+授权留痕；_enforce_file_ops 仓外 housekeeping 豁免；日志洪峰治本另见 #ARCH-258（audit_jsonl_writer 分级落盘+轮转）。事件登记 #ARCH-257 resolved。残余盲区续案=CAND-GOVSEC-002"
+  acquisition_method: self_build
+  acquisition_source: ''
+
+# ----------------------------------------------------------
+# CAND-GOVSEC-002: 删除护栏残余盲区装补丁（批5b 翻硬拦后审查发现的覆盖面续案）
+# 来源: 2026-08-26 批5 翻硬拦前全面审查（调研B 删除路径全覆盖排查报告）
+# ----------------------------------------------------------
+- id: CAND-GOVSEC-002
+  name: "删除护栏残余盲区装补丁（常驻进程/pre-commit 钩子群/ad-hoc 库调用/spawn 子进程）"
+  aliases: ["ops_guard 盲区", "删除护栏覆盖面", "常驻进程仪表化", "pre-commit 删除审计"]
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: "governance/删除操作安全层（覆盖面扩展）"
+  description: >-
+    批5b 翻硬拦前全面审查（2026-08-26）发现 ops_guard in-process 补丁（monkey-patch 不跨
+    进程传播）仍有四类盲区，全部为"有删除能力+独立进程+零补丁零审计"：
+    ①交易常驻进程（ZephyrAlpha_TradingWatchdog 当前 DISABLED 一键可启用）——
+    gov_audit/retention.py:199 物理删审计日志、log_rotation.py、tiered_storage.py、
+    auto_fix_engine/shadow_workspace.py、fix_safety.py、staging_area.py（os.remove×10+）、
+    pipeline_lock.py、rollback_* 系列全量 rmtree，启用即裸奔（下一个 8-23 温床）；
+    ②pre-commit 钩子进程群——每次 commit 由 pre-commit 框架新起 Python 进程实删
+    （d6_security/retire_tmp_artifacts.py --apply、generate_derived_files.py、
+    check_naming_convention.py 等），gateway 父进程补丁不传播；
+    ③AI 会话 ad-hoc 库调用——session_worktree_start/merge/abort 库层删除
+    （worktree_manager._force_rmtree/worktree_pool rmtree）仅 sweep 入口自装补丁，
+    start/merge/abort 入口没有；
+    ④heartbeat_daemon 等 spawn 子进程（独立解释器，补丁不继承）。
+    边界说明：git.exe/shell 子命令删除（git clean/worktree remove/Remove-Item）为 Python
+    monkey-patch 原理性不可达，归 git_guard/git_safety_wrapper 层管辖，不在本项范围。
+  capability: ""
+  problem_it_solves: "翻硬拦只覆盖已装补丁的入口进程——盲区进程的删除操作既无审计也无阻断，8-23 型事件若改道盲区路径（尤其交易常驻进程启用后）仍可无痕删仓。"
+  trigger_signals:
+  - "ZephyrAlpha_TradingWatchdog 计划任务启用前必须完成 ①（启用即上线）"
+  - "任何新登记常驻进程/计划任务时复查本清单"
+  keywords: ["ops_guard", "install_inprocess_enforcement", "常驻进程", "pre-commit", "TradingWatchdog", "删除护栏", "盲区"]
+  upstream_deps:
+  - {contract: "ops_guard.install_inprocess_enforcement / _audit_only（批5 已 production）", from_domain: D_GOVERNANCE, dep_type: S, availability: available, note: "直接复用装配模式"}
+  downstream_consumers: []
+  contracts_to_produce:
+  - {id: "盲区进程装配清单", name: "①交易进程 boot 装配点（auto_runtime_core boot_hooks）②pre-commit 钩子 conftest 式装配（框架入口 env/站点自定义）③库层 merge/abort 入口自装 ④spawn 子进程 env 继承装配"}
+  contracts_to_consume: []
+  estimated_complexity: M
+  estimated_effort: "1-2 人天（四装配点 + 各 1 红队用例 + 观测期）"
+  tech_notes: "①优先（交易进程启用即上线，retention.py 删审计日志=自毁取证链）；装配模式沿用批5b：先 audit-only 观测期零误伤后翻硬拦；②pre-commit 进程装配可用 sitecustomize/环境变量注入（框架新起进程无 CLI 钩子点），或接受 audit-only 永久（钩子删除目标=tmp/非保护区为主）；③库层入口装法与 sweep L2331 同型；④spawn 子进程经 env ZEPHYR_OPS_GUARD_AUDIT_ONLY 继承+入口装补丁。"
+  risks: ["交易进程装配补丁可能影响交易时延敏感路径（判定为纳秒级纯比对，风险低但需观测）", "pre-commit 进程装补丁可能与钩子自身临时文件清理冲突（仓外豁免已覆盖，批5b 实证）"]
+  alternatives: "维持盲区：交易进程启用后 retention/auto_fix 删除零护栏——风险不可接受（自毁审计链 = 8-23 型事件连取证能力都失去）"
+  tags: ["candidate", "P1", "security", "governance", "ops_guard", "覆盖面"]
+  search_terms: ["install_inprocess_enforcement", "TradingWatchdog", "retention.py", "pre-commit", "heartbeat_daemon", "_force_rmtree"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2026-09-26'
+  review_frequency: monthly
+  last_review_outcome: "2026-08-26 批5d 登记（批5b 翻硬拦前全面审查产物）；优先级①交易进程＞③库层 ad-hoc＞②pre-commit 群＞④spawn 子进程"
   acquisition_method: self_build
   acquisition_source: ''
 
