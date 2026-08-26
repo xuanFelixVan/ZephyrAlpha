@@ -21,7 +21,7 @@
   | # | 检查项 | 门槛 | 产物 |
   |---|--------|------|------|
   | 1 | SFT Macro-F1 | ≥ 0.75 | metrics JSON {"macro_f1": ...} |
-  | 2 | 推理速度 | 1000 条 < 300 秒 | benchmark JSON {"items": N, "elapsed_s": X} |
+  | 2 | 推理速度 | 等效 1000 条 < 900 秒（2026-08-26 修订） | benchmark JSON {"items": N, "elapsed_s": X} |
   | 3 | 端到端管道 | daily 产物含 negative_count/vote_score | daily_sentiment.jsonl |
   | 4 | 离线批量覆盖 | 最早聚合日 ≤ --start-date | daily_sentiment.jsonl |
   | 5 | SFT 权重持久化 | adapter_model.safetensors 存在 | models/qwen25-7b-sft-v1/ |
@@ -57,8 +57,12 @@ log = logging.getLogger(__name__)
 # ── 验收门槛（13 号 §3.1.12/§3.1.10）──
 SFT_F1_THRESHOLD: Final[float] = 0.75  # SFT 后 Macro-F1 ≥ 75%
 SPEED_MIN_ITEMS: Final[int] = 1000  # 推理速度样本量
-SPEED_MAX_SECONDS: Final[float] = 300.0  # 1000 条 < 5 分钟（RTX 3090）
-DEFAULT_START_DATE: Final[str] = "2010-01-01"  # 离线批量全历史起点
+# 等效每 1000 条耗时门槛（速率语义）。2026-08-26 Owner 裁定按实测修订：原 300s/1000
+# 为设计期预估值（零样本单流 qwen3:8b 独特文本 2.7s/条物理不可达）；实测生产混合
+# 速率 280~750s/1000，取 900s 留余量。速率语义防长腿批（27 万条/46h）平铺误伤。
+SPEED_MAX_SECONDS: Final[float] = 900.0
+# 2026-08-26 Owner 裁定：危机窗口回填（2015/2018/2020/2024）替代 2010-2026 全历史
+DEFAULT_START_DATE: Final[str] = "2015-01-01"
 
 STATUS_PASS: Final[str] = "PASS"
 STATUS_FAIL: Final[str] = "FAIL"
@@ -129,7 +133,11 @@ def check_inference_speed(
     min_items: int = SPEED_MIN_ITEMS,
     max_seconds: float = SPEED_MAX_SECONDS,
 ) -> CheckItem:
-    """检查项 2：推理速度 1000 条 < 5 分钟（13 号 §3.1.10，Phase 6 GGUF 回灌后测）。"""
+    """检查项 2：推理速度——等效每 1000 条耗时 < 900s（速率语义，2026-08-26 Owner 裁定修订）。
+
+    原"1000 条 < 300s"为设计期预估值；零样本单流 qwen3:8b 独特文本 2.7s/条物理不可达。
+    按等效每千条耗时判定，防长腿批（items 大、总耗时自然大）平铺误伤。
+    """
     obj = _read_json(benchmark_path)
     if obj is None or "items" not in obj or "elapsed_s" not in obj:
         return CheckItem("inference_speed", STATUS_FAIL, f"benchmark 缺失或字段不全: {benchmark_path}")
@@ -137,11 +145,12 @@ def check_inference_speed(
     elapsed = float(obj["elapsed_s"])
     if items < min_items:
         return CheckItem("inference_speed", STATUS_FAIL, f"样本量不足 {items} < {min_items}")
-    ok = elapsed < max_seconds
+    per_1000 = elapsed / items * SPEED_MIN_ITEMS
+    ok = per_1000 < max_seconds
     return CheckItem(
         "inference_speed",
         STATUS_PASS if ok else STATUS_FAIL,
-        f"{items} 条耗时 {elapsed:.1f}s（门槛 <{max_seconds:.0f}s）",
+        f"{items} 条耗时 {elapsed:.1f}s（等效 {per_1000:.0f}s/1000 条，门槛 <{max_seconds:.0f}s/1000 条）",
     )
 
 

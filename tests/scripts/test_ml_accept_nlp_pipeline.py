@@ -92,8 +92,14 @@ class TestInferenceSpeed:
 
     def test_fail_too_slow(self, tmp_path):
         p = tmp_path / "b.json"
-        _write_json(p, {"items": 1000, "elapsed_s": 360.0})
+        _write_json(p, {"items": 1000, "elapsed_s": 1000.0})  # 等效 1000s/1000 ≥ 900s 门槛
         assert acp.check_inference_speed(p).status == "FAIL"
+
+    def test_rate_normalization(self, tmp_path):
+        """速率语义：长批总耗时大但等效每千条达标 → PASS（防长腿批误伤）。"""
+        p = tmp_path / "b.json"
+        _write_json(p, {"items": 2000, "elapsed_s": 1000.0})  # 等效 500s/1000
+        assert acp.check_inference_speed(p).status == "PASS"
 
     def test_fail_insufficient_items(self, tmp_path):
         p = tmp_path / "b.json"
