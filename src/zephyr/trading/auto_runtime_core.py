@@ -62,7 +62,7 @@ from zephyr.integration.local_model.ollama_chat import OllamaChat
 from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
 from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
 from zephyr.intelligence.model_profiling import ModelProfiler
-from zephyr.intelligence.model_profiling.results_writer import to_model_benchmark_result
+from zephyr.intelligence.model_profiling.results_writer import load_latest_benchmark_results
 from zephyr.intelligence.model_profiling.task_model_learner import ModelTaskMatrix
 from zephyr.security.access_control.genesis_bootstrap import get_genesis_bootstrap
 from zephyr.shared.contracts.core.system_configuration import SystemConfiguration
@@ -1087,15 +1087,22 @@ class _TaskModelLearning:
 
     @staticmethod
     def benchmark_and_learn(core: AutoRuntimeCore, report: BootReport) -> None:
-        try:
-            profiler = core._model_profiler
-            if profiler is None:
-                profiler = ModelProfiler(max_ollama_models=5)
-            profiles = profiler.profile_ollama_only()
-            if not profiles:
-                return
+        """#ARCH-208 治本：benchmark 移出 boot 关键路径。
 
-            results = [to_model_benchmark_result(p) for p in profiles if p.available]
+        启动路径零跑分——仅读取上次落盘的 benchmark 结果（results_writer 持久化层）：
+        新鲜→播种 learner/router 供健康判断；缺失/过期→降级"未知"状态不阻断启动。
+        跑分本体由独立 CLI 异步执行并落盘：
+        ``python -m zephyr.intelligence.model_profiling.cli benchmark``
+        """
+        try:
+            results, meta = load_latest_benchmark_results()
+            if not results:
+                core._audit_logger.log_registration(
+                    "model-benchmark", f"degraded_unknown:{meta.get('state', 'missing')}"
+                )
+                report.components_started.append("16_model_benchmark_degraded_unknown")
+                report.steps_completed += 1
+                return
 
             if core._task_learner is not None:
                 core._task_learner.load_benchmark_baseline(results)
@@ -1109,7 +1116,11 @@ class _TaskModelLearning:
                 report.components_started.append("15_router_seeded")
                 report.steps_completed += 1
 
-            core._audit_logger.log_registration("model-benchmark", f"{len(profiles)}_models_profiled")
+            age_hours = meta.get("age_hours")
+            age_txt = f"{age_hours:.1f}h" if isinstance(age_hours, (int, float)) else "unknown"
+            core._audit_logger.log_registration(
+                "model-benchmark", f"{len(results)}_models_from_cache age={age_txt}"
+            )
             report.components_started.append("16_model_benchmark")
             report.steps_completed += 1
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
