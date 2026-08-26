@@ -10370,6 +10370,10 @@ creation_tokens:
   token: auto-test-patchtst-density-encoder-20260825
   created_by: AI-K3-DIGEST-P1R5（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: patchtst_density_encoder
+- file: data/backtest_artifacts/bt-8607ffc2.json
+  token: auto-bt-8607ffc2-20260826
+  created_by: worker-e97f383d-24796
+  capability: event_strategy_backtest_artifact
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
@@ -11336,7 +11340,3 @@ di_seam_exemptions:
   token: auto-blueprint-20260826
   created_by: AI-P2-W05
   capability: fake_move_distribution_blueprint
-- file: data/backtest_artifacts/bt-8607ffc2.json
-  token: auto-bt-8607ffc2-20260826
-  created_by: worker-e97f383d-24796
-  capability: event_strategy_backtest_artifact
