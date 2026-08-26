@@ -97,18 +97,31 @@ def _read_jsonl(path: Path) -> list[dict]:
     return rows
 
 
-def check_sft_f1(metrics_path: Path, threshold: float = SFT_F1_THRESHOLD) -> CheckItem:
-    """检查项 1：SFT Macro-F1 ≥ 75%（13 号 §3.1.12）。"""
-    obj = _read_json(metrics_path)
-    if obj is None or "macro_f1" not in obj:
-        return CheckItem("sft_f1", STATUS_FAIL, f"metrics 缺失或无 macro_f1 字段: {metrics_path}")
-    f1 = float(obj["macro_f1"])
-    ok = f1 >= threshold
-    return CheckItem(
-        "sft_f1",
-        STATUS_PASS if ok else STATUS_FAIL,
-        f"Macro-F1={f1:.4f}（门槛 {threshold:.2f}）",
-    )
+def check_sft_f1(
+    metrics_path: Path,
+    threshold: float = SFT_F1_THRESHOLD,
+    zero_shot_path: Path | None = None,
+) -> CheckItem:
+    """检查项 1：Macro-F1 ≥ 75%（13 号 §3.1.12；2026-08-25 Owner 裁定新增零样本替代路线）。
+
+    双路线：SFT metrics 或零样本 metrics 任一达门槛即 PASS（零样本路线实测
+    qwen3:8b+v2-fewshot F1=0.7869 ≥ 0.75，替代原 SFT 路线；SFT 推迟至
+    CAND-NLP-005 条件触发）。
+    """
+    candidates: list[tuple[str, Path]] = [("SFT", metrics_path)]
+    if zero_shot_path is not None:
+        candidates.append(("零样本", zero_shot_path))
+    details: list[str] = []
+    for label, path in candidates:
+        obj = _read_json(path)
+        if obj is None or "macro_f1" not in obj:
+            details.append(f"{label} metrics 缺失或无 macro_f1: {path}")
+            continue
+        f1 = float(obj["macro_f1"])
+        details.append(f"{label} Macro-F1={f1:.4f}")
+        if f1 >= threshold:
+            return CheckItem("sft_f1", STATUS_PASS, f"{label} 路线 Macro-F1={f1:.4f}（门槛 {threshold:.2f}）")
+    return CheckItem("sft_f1", STATUS_FAIL, "；".join(details) + f"（门槛 {threshold:.2f}）")
 
 
 def check_inference_speed(
@@ -191,10 +204,11 @@ def run_acceptance(
     adapter_dir: Path,
     rlsp_dir: Path,
     start_date: str = DEFAULT_START_DATE,
+    zero_shot_metrics_path: Path | None = None,
 ) -> list[CheckItem]:
     """执行全部检查项（纯函数，测试直调）。"""
     return [
-        check_sft_f1(metrics_path),
+        check_sft_f1(metrics_path, zero_shot_path=zero_shot_metrics_path),
         check_inference_speed(benchmark_path),
         check_e2e_pipeline(daily_path),
         check_batch_coverage(daily_path, start_date),
@@ -255,6 +269,7 @@ def write_markdown_report(items: list[CheckItem], out_path: Path) -> None:
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="NLP 管道验收检查清单（Phase 8）")
     parser.add_argument("--metrics", type=Path, default=ROOT / "data" / "eval" / "sft_metrics.json")
+    parser.add_argument("--zero-shot-metrics", type=Path, default=ROOT / "data" / "eval" / "zero_shot_metrics.json")
     parser.add_argument("--benchmark", type=Path, default=ROOT / "data" / "sentiment_batch" / "benchmark.json")
     parser.add_argument("--daily", type=Path, default=ROOT / "data" / "sentiment_batch" / "daily_sentiment.jsonl")
     parser.add_argument("--adapter-dir", type=Path, default=ROOT / "models" / "qwen25-7b-sft-v1")
@@ -273,6 +288,7 @@ def main() -> None:
         adapter_dir=args.adapter_dir,
         rlsp_dir=args.rlsp_dir,
         start_date=args.start_date,
+        zero_shot_metrics_path=args.zero_shot_metrics,
     )
     print_report(items)
     if args.report_out is not None:
