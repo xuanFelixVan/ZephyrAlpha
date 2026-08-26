@@ -11117,10 +11117,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W14）——与 W13 已建 MOD-INT-AIROUTE ai_service_route_matrix 同为 LLM 路由+成本+降级链（Router Agent 角色化封装语义=路由表+选路留痕已在），canonical=src/zephyr/integration/ai_service_route_matrix.py"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: 跨域(元文档)
   original_id: B1-00246
   source_section: §功能域模块·D-AUTONOMY
@@ -11142,10 +11143,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W14）——与 CAND-AISA-017 同为 D-RESEARCH-11 LLM 研究助手（B10/B6 两稿跨域重登），canonical=CAND-AISA-017→MOD-INT-RESEARCH-AGENT（W04 波漏处理，本波补施工）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: D-RESEARCH-11
   original_id: B10-02220
   source_section: §30.2.6
@@ -11167,10 +11169,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W14）——归位迁移属重组专项（11 目录移动+导入路径修正+域映射刷新），非新建模块且与并发会话冲突面大，登记留待专项批次（需停机窗口与 Owner 确认），本波不施工"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: D-AUTONOMY-PERM
   original_id: B7-09463
   source_section: §2.1.2
@@ -13309,10 +13312,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W14）——与 CAND-MLT-028（W07 已建）同为 D-RESEARCH-05 可复现性管理（B10/B13/B14 三稿重登），canonical=MOD-ML-020 reproducibility_manager"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: D-RESEARCH-05
   original_id: B10-02218
   source_section: §30.2.6
@@ -13334,10 +13338,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W14）——与 CAND-MLT-025（W07 已建）同为持续学习抗遗忘（B10-01228/01881 两稿），canonical=MOD-ML-018 continual_learning_antiforget（EWC+回放+回滚含其伪回放语义）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A1交易决策架构
   original_id: B10-01228
   source_section: §1.1
@@ -13358,11 +13363,12 @@ entries:
       evidence: '深挖场内对账: 无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/feedback_loop/module_matcher.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A8学习系统架构
   original_id: B12-03549
   source_section: §6.1
@@ -13383,11 +13389,12 @@ entries:
       evidence: '深挖场内对账: 无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/feedback_loop/skill_library.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A8学习系统架构
   original_id: B12-03612
   source_section: §9.1
@@ -13408,11 +13415,12 @@ entries:
       evidence: '深挖场内对账: 无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/feedback_loop/meta_harness_optimizer.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A8学习系统架构
   original_id: B12-03617
   source_section: §9.1
@@ -15372,11 +15380,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/research/factor_mining_pipeline.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/intelligence/llm_research_agent.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: D-RESEARCH
   original_id: B6-08553
   source_section: §1
