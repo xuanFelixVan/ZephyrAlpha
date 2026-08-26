@@ -12536,3 +12536,15 @@ di_seam_exemptions:
   token: auto-blueprint-20260826
   created_by: AI-P2-W15
   capability: signal_explainability_guarantor_blueprint
+- file: src/zephyr/simulation/quality_assurance_selfdrive.py
+  token: auto-quality-assurance-selfdrive-20260826
+  created_by: AI-P2-W16
+  capability: quality_assurance_selfdrive
+- file: tests/simulation/test_quality_assurance_selfdrive.py
+  token: auto-test-quality-assurance-selfdrive-20260826
+  created_by: AI-P2-W16
+  capability: quality_assurance_selfdrive_test
+- file: docs/03_modules/_domain_simulation/quality_assurance_selfdrive/blueprint.md
+  token: auto-blueprint-20260826
+  created_by: AI-P2-W16
+  capability: quality_assurance_selfdrive_blueprint

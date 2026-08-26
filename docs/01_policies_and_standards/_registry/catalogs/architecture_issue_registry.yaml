@@ -20778,3 +20778,13 @@ entries:
   impact:
     - 'src/zephyr/security×3(+llm_defense×1) + signal_quality×4；tests 8 文件'
   fix_phase: '已落地（2026-08-27，DIGEST P2 W15）'
+- issue_id: '#ARCH-274'
+  title: DIGEST P2 W16 波（漏项补施工）：CAND-AUDITTES-001 晋升——质量保障自驱动器（D_AUDITTEST 域波次映射漏配，清零核验发现并补施工）
+  severity: P2
+  category: 功能施工
+  adjudication: >-
+    MOD-AUDITTEST-001 quality_assurance_selfdrive（测试骨架自生成/偏差自诊断/性能回归比对/准确率抽检），
+    24 新测全绿。至此 AUD-DRAFT-001 批 P2 候选 221/221 全清零。
+  impact:
+    - 'src/zephyr/simulation/quality_assurance_selfdrive.py；tests/simulation 1 文件'
+  fix_phase: '已落地（2026-08-27，DIGEST P2 W16）'

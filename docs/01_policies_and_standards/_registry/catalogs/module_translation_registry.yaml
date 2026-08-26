@@ -47383,6 +47383,21 @@ entries:
   desc_en: ""
   plain_zh: "校验三要素强制、阻断告警和回放反查。"
 
+- module_path: src/zephyr/simulation/quality_assurance_selfdrive.py
+  domain_id: D_AUDITTEST
+  name_zh: "质量保障自驱动器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "质量防线自己动起来：契约一变自动生成测试骨架，前视偏差自动诊断，性能比基线退化就告警，数据准确率定期抽检。"
+- module_path: tests/simulation/test_quality_assurance_selfdrive.py
+  domain_id: D_AUDITTEST
+  name_zh: "质量自驱动单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "校验骨架生成、偏差诊断、回归比对和准确率抽检四件套。"
+
 battle_map_steps:
 - step_id: BM-BUY-04
   flow_stage: buy_flow
@@ -56966,19 +56981,19 @@ algo_submodules:
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A1
-  name_zh: 维护手册
+  name_zh: ① Agent上手上下文生成
   name_en: Handbook.generate_onboarding_context
   plain_zh: 把核心约束、关键目录、任务状态机、关键工具拼成一段固定markdown给新Agent看
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A2
-  name_zh: 维护手册
+  name_zh: ② 任务卡模板提供
   name_en: Handbook.get_task_card_template
   plain_zh: 返回一张固定的任务卡markdown表格模板，照填即可
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A3
-  name_zh: 维护手册
+  name_zh: ③ 目录地图提供
   name_en: Handbook.get_directory_map
   plain_zh: 返回核心源码/蓝图/任务系统目录到中文说明的映射字典
 - module_path: src/zephyr/shared/io/sqlite_factory.py
