@@ -37,9 +37,12 @@ from src.zephyr.data.implementations.sector_code_bridge import (
     default_mapping,
     dump_mapping_csv,
     fund_flow_for_card,
+    fund_flow_for_segment,
     load_mapping,
     rekey_sector_fund_flow,
+    rekey_segment_fund_flow,
     sector_names_880,
+    segment_net_inflow,
 )
 from src.zephyr.data.implementations.sector_fund_flow_collector import SectorFundFlowEntry
 from src.zephyr.signal_ashare.counter_trend_board import (
@@ -375,3 +378,172 @@ class TestCsvIntermediateLayer:
     def test_dump_creates_parent_dirs(self, tmp_path):
         out = dump_mapping_csv(tmp_path / "nested" / "dir" / "bridge.csv")
         assert out.endswith("bridge.csv")
+
+
+# ---------- 8803/8804 分钟K线接线契约（T6 §七-7，2026-08-26）----------
+
+
+class TestMinuteKlineWiring8803:
+    """tasks.yaml 接线契约：5 个板块分钟K任务挂 include_industry_boards=true。
+
+    8803/8804 行业板分钟K线经 tdx_provider capability=kline_sector 既有通道
+    并入 symbols=null 解析集（SSoT=TDX_INDUSTRY_BOARDS 132 条），写
+    c1_market.kline_sector_intraday——接线后逆势榜卡1/3/4 行业腿全覆盖。
+    """
+
+    _MINUTE_TASKS = (
+        "kline_sector_1min_incremental",
+        "kline_sector_5min_incremental",
+        "kline_sector_15min_incremental",
+        "kline_sector_30min_incremental",
+        "kline_sector_60min_incremental",
+    )
+
+    def _tasks(self) -> dict:
+        from pathlib import Path
+
+        import yaml
+
+        cfg = Path(__file__).parent.parent.parent.parent / "src" / "zephyr" / "data" / "config" / "tasks.yaml"
+        doc = yaml.safe_load(cfg.read_text(encoding="utf-8"))
+        return {t["task_id"]: t for t in doc["tasks"]}
+
+    def test_minute_sector_tasks_include_industry_boards(self):
+        tasks = self._tasks()
+        for tid in self._MINUTE_TASKS:
+            assert tid in tasks, f"tasks.yaml 缺任务 {tid}"
+            t = tasks[tid]
+            assert t["table"] == "c1_market.kline_sector_intraday", tid
+            assert t["source"] == "tdx", tid
+            assert (t.get("extra") or {}).get("include_industry_boards") is True, tid
+
+    def test_daily_sector_task_not_flagged(self):
+        """日K任务不挂旗标——接线范围=分钟K线（Owner 事项口径），防范围蔓延。"""
+        tasks = self._tasks()
+        daily = tasks["kline_sector_incremental"]
+        assert (daily.get("extra") or {}).get("include_industry_boards") is not True
+
+
+# ---------- 段内差分注入适配器（F16INJECT，2026-08-26）----------
+
+
+def _snap(name: str, minute: str, net: float | None, day: str = "2026-08-25") -> tuple[str, str, float | None]:
+    """合成 sector_fund_flow 快照行 (sector_name, timestamp, net_amount)。"""
+    return (name, f"{day} {minute}:00", net)
+
+
+class TestSegmentNetInflow:
+    """差分口径：段末累计 − 段前累计（快照按分钟截断，段前无快照按 0 起算）。"""
+
+    def test_basic_diff_between_bounds(self):
+        rows = [
+            _snap("钢铁", "09:32", 3.0),
+            _snap("钢铁", "09:36", 7.5),
+            _snap("钢铁", "09:40", 9.0),  # 段末后快照须忽略
+        ]
+        out = segment_net_inflow(rows, "2026-08-25 09:32", "2026-08-25 09:36")
+        assert out == {"钢铁": pytest.approx(4.5)}
+
+    def test_latest_snapshot_within_bound_wins(self):
+        rows = [
+            _snap("银行", "09:30", 1.0),
+            _snap("银行", "09:31", 2.0),  # 段前取最后一条 ≤start
+            _snap("银行", "09:35", 8.0),
+            _snap("银行", "09:36", 10.0),  # 段末取最后一条 ≤end
+        ]
+        out = segment_net_inflow(rows, "2026-08-25 09:32", "2026-08-25 09:36")
+        assert out == {"银行": pytest.approx(8.0)}
+
+    def test_no_pre_segment_snapshot_counts_from_zero(self):
+        """段前无快照 → 开盘累计起点为 0（THS 净额=当日累计）。"""
+        out = segment_net_inflow([_snap("银行", "09:36", 12.0)], "2026-08-25 09:32", "2026-08-25 09:36")
+        assert out == {"银行": pytest.approx(12.0)}
+
+    def test_sector_without_end_side_snapshot_absent(self):
+        out = segment_net_inflow([_snap("银行", "09:30", 5.0)], "2026-08-25 09:32", "2026-08-25 09:36")
+        assert out == {}
+
+    def test_none_net_amount_rows_skipped(self):
+        rows = [_snap("银行", "09:36", None), _snap("银行", "09:35", 4.0)]
+        out = segment_net_inflow(rows, "2026-08-25 09:32", "2026-08-25 09:36")
+        assert out == {"银行": pytest.approx(4.0)}
+
+    def test_datetime_ts_and_decimal_net_accepted(self):
+        """CH 行鸭子类型：timestamp=datetime / net_amount=Decimal。"""
+        from datetime import datetime
+        from decimal import Decimal
+
+        rows = [
+            ("银行", datetime(2026, 8, 25, 9, 32), Decimal("1.5")),
+            ("银行", datetime(2026, 8, 25, 9, 36), Decimal("6.5")),
+        ]
+        out = segment_net_inflow(rows, "2026-08-25 09:32", "2026-08-25 09:36")
+        assert out == {"银行": pytest.approx(5.0)}
+        assert isinstance(out["银行"], float)
+
+    def test_negative_diff_preserved(self):
+        """段内净流出如实保留负值（消费方自筛正流入，适配器不伪造）。"""
+        out = segment_net_inflow([_snap("证券", "09:36", -3.0)], "2026-08-25 09:32", "2026-08-25 09:36")
+        assert out == {"证券": pytest.approx(-3.0)}
+
+    def test_empty_rows(self):
+        assert segment_net_inflow([], "2026-08-25 09:32", "2026-08-25 09:36") == {}
+
+
+class TestFundFlowForSegment:
+    """段差分+881→880 重钥一条龙（直插消费方 fund_flow 注入位形态）。"""
+
+    def test_rekeys_to_880_with_sum_aggregation(self):
+        rows = [
+            _snap("化学原料", "09:36", 2.0),
+            _snap("电子化学品", "09:36", 1.0),  # 与化学原料同目标 880336 SUM
+            _snap("银行", "09:32", 4.0),
+            _snap("银行", "09:36", 10.0),
+        ]
+        out = fund_flow_for_segment(rows, "2026-08-25 09:32", "2026-08-25 09:36")
+        assert out["880336"] == pytest.approx(3.0)
+        assert out["880471"] == pytest.approx(6.0)
+        assert set(out) == {"880336", "880471"}
+        assert all(_CODE_880_RE.match(k) for k in out)
+
+    def test_all_90_names_full_mapping_zero_miss(self):
+        """90 行业全量单快照 → 键全 880xxx、零未映射（活体重建锚）。"""
+        rows = [_snap(name, "09:36", 1.0) for _, name in sorted(THS_INDUSTRY_90)]
+        res = rekey_segment_fund_flow(rows, "2026-08-25 09:32", "2026-08-25 09:36")
+        assert res.unmapped_sectors == ()
+        assert res.null_value_sectors == ()
+        assert len(res.mapped_codes) == 90
+        assert all(_CODE_880_RE.match(k) for k in res.fund_flow)
+
+    def test_unmapped_name_traced_not_crash(self):
+        res = rekey_segment_fund_flow(
+            [_snap("幽灵板块", "09:36", 1.0)], "2026-08-25 09:32", "2026-08-25 09:36"
+        )
+        assert res.fund_flow == {}
+        assert res.unmapped_sectors == ("幽灵板块",)
+
+    def test_empty_rows_empty_flow(self):
+        assert fund_flow_for_segment([], "2026-08-25 09:32", "2026-08-25 09:36") == {}
+
+    def test_result_json_serializable(self):
+        out = fund_flow_for_segment([_snap("银行", "09:36", 1.0)], "2026-08-25 09:32", "2026-08-25 09:36")
+        json.dumps(out, ensure_ascii=False)
+
+    def test_plugs_into_counter_trend_card2(self):
+        """端到端契约：段差分产物直插 build_counter_trend_board 卡2。"""
+        index_series, sector_series = _synthetic_board_inputs()
+        # 段=09:32→09:35；银行段前 2.0 段末 10.0 → 段内 +8.0
+        rows = [
+            _snap("银行", "09:32", 2.0, day="2026-08-24"),
+            _snap("银行", "09:35", 10.0, day="2026-08-24"),
+            _snap("贵金属", "09:35", -1.0, day="2026-08-24"),  # 净流出不入卡2
+        ]
+        fund_flow = fund_flow_for_segment(rows, "2026-08-24 09:32", "2026-08-24 09:35")
+        board = build_counter_trend_board(
+            index_series, sector_series, fund_flow, CounterTrendConfig(sector_names=sector_names_880())
+        )
+        card2 = next(c for c in board.cards if c.card == "fund_inflow")
+        assert not card2.degraded
+        assert [i.sector_code for i in card2.items] == ["880471"]
+        assert card2.items[0].metric_value == pytest.approx(8.0)
+        assert card2.items[0].sector_name == "银行"

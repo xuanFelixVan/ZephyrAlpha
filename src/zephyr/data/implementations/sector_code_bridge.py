@@ -2,10 +2,10 @@
 # [MODULE] zephyr.data.implementations.sector_code_bridge
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] 无三方/无网络/无库；消费方契约对齐 zephyr.signal_ashare.counter_trend_board（fund_flow 注入位，类型上仅结构化 dict 不 import）；输入行对齐 zephyr.data.implementations.sector_fund_flow_collector.SectorFundFlowEntry（鸭子类型读取 sector_type/sector_name/net_amount）
-# [CONSUMERS] （GAP-F-16 逆势榜资金卡注入位：build_counter_trend_board(fund_flow=...)；tasks.yaml 接线待 8803/8804 分钟K线采集排期）
+# [CONSUMERS] （GAP-F-16 逆势榜资金卡注入位：build_counter_trend_board(fund_flow=...)，段内差分+重钥经 zephyr.signal_ashare.counter_trend_board run 层自动加载；tasks.yaml 采集排期待 8803/8804 分钟K线接线）
 # [STARTUP] imported
 # [MATURITY] testing
-# [INVARIANTS] 纯函数不触网不触库（CSV 中间层除外）；映射 SSoT=模块内常量（90 行 THS 881xxx 行业 ↔ 132 条 TDX 8803/8804 行业指数主数据）；90/90 全映射零缺失；多 881 同目标净额 SUM（行业互不相交故可加）；concept 行/空净额/未知名跳过留痕不炸；输出 dict[880code, float] 直插消费方 fund_flow 注入位；frozen dataclass asdict JSON 可序列化
+# [INVARIANTS] 纯函数不触网不触库（CSV 中间层除外）；映射 SSoT=模块内常量（90 行 THS 881xxx 行业 ↔ 132 条 TDX 8803/8804 行业指数主数据）；90/90 全映射零缺失；多 881 同目标净额 SUM（行业互不相交故可加）；concept 行/空净额/未知名跳过留痕不炸；段内差分=段末累计−段前累计（段前无快照按开盘 0 起算，差分可为负不伪造）；输出 dict[880code, float] 直插消费方 fund_flow 注入位；frozen dataclass asdict JSON 可序列化
 # [MODIFY-GUARD] docs/_working/2026-08-22-frontend-backend-gap-ledger.md GAP-F-16 行
 # [STABILITY] evolving
 # [SAFETY] L
@@ -100,9 +100,12 @@ __all__: Final = [
     "default_mapping",
     "dump_mapping_csv",
     "fund_flow_for_card",
+    "fund_flow_for_segment",
     "load_mapping",
     "rekey_sector_fund_flow",
+    "rekey_segment_fund_flow",
     "sector_names_880",
+    "segment_net_inflow",
 ]
 
 #: 映射 CSV 列序（name_880/t_code 由 TDX 主数据派生落盘，读回时校验引用完整性）
@@ -499,6 +502,83 @@ def fund_flow_for_card(
     return rekey_sector_fund_flow(entries, mapping).fund_flow
 
 
+# ---------------------------------------------------------------------------
+# 段内差分（GAP-F-16 注入适配器核：当日累计快照 → 段内净流入 → 880 重钥）
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True, slots=True)
+class _SegmentFlowEntry:
+    """段差分产物行（鸭子类型对齐 SectorFundFlowEntry 三字段，供 rekey 复用）。"""
+
+    sector_name: str
+    net_amount: float  # 段内净流入（亿元，差分结果）
+    sector_type: str = "industry"
+
+
+def segment_net_inflow(
+    rows: Iterable[tuple[str, Any, Any]],
+    start_ts: str,
+    end_ts: str,
+) -> dict[str, float]:
+    """段内净流入差分（纯函数）：{THS 板块名: 段末累计 − 段前累计}（亿元）。
+
+    口径（对齐 D3FUND 报告 §1 差分裁定）：
+    - 净额=当日累计（THS 原始口径），快照时刻按分钟截断对齐（str(ts)[:16]，
+      与 kline_sector_intraday 分钟粒度一致；起界分钟快照归段前侧、止界分钟
+      快照归段末侧，轮询粒度 ±1 分钟口径留痕）；
+    - 段前累计=最后一条 ≤start_ts 的快照（无 → 0.0，开盘累计起点为零）；
+    - 段末累计=最后一条 (start_ts, end_ts] 内快照（段内无新快照 → 该板块
+      不出现在输出：段内无观测如实缺席，不伪造 0 净流入）；
+    - 净额 None 行跳过；差分可为负（消费方自筛正流入，本函数不伪造）。
+
+    Args:
+        rows: 快照行 (sector_name, timestamp, net_amount) 迭代（CH 查询行鸭子类型）。
+        start_ts/end_ts: 段界分钟 'YYYY-MM-DD HH:MM'（逆势榜 down_start/end_ts）。
+    """
+    start_m = str(start_ts)[:16]
+    end_m = str(end_ts)[:16]
+    cum_start: dict[str, tuple[str, float]] = {}
+    cum_end: dict[str, tuple[str, float]] = {}
+    for name, ts, net in rows:
+        if net is None:
+            continue
+        minute = str(ts)[:16]
+        key = str(name)
+        val = float(net)
+        if minute <= start_m:
+            prev = cum_start.get(key)
+            if prev is None or minute >= prev[0]:
+                cum_start[key] = (minute, val)
+        if start_m < minute <= end_m:
+            prev = cum_end.get(key)
+            if prev is None or minute >= prev[0]:
+                cum_end[key] = (minute, val)
+    return {k: v[1] - cum_start.get(k, ("", 0.0))[1] for k, v in cum_end.items()}
+
+
+def rekey_segment_fund_flow(
+    rows: Iterable[tuple[str, Any, Any]],
+    start_ts: str,
+    end_ts: str,
+    mapping: Iterable[SectorCodeBridgeRow] | None = None,
+) -> RekeyResult:
+    """段差分+重钥一条龙（纯函数）：快照行 → {880code: 段内净流入}（含留痕四件）。"""
+    diff = segment_net_inflow(rows, start_ts, end_ts)
+    entries = [_SegmentFlowEntry(sector_name=n, net_amount=v) for n, v in diff.items()]
+    return rekey_sector_fund_flow(entries, mapping)
+
+
+def fund_flow_for_segment(
+    rows: Iterable[tuple[str, Any, Any]],
+    start_ts: str,
+    end_ts: str,
+    mapping: Iterable[SectorCodeBridgeRow] | None = None,
+) -> dict[str, float]:
+    """逆势榜资金卡段内注入形态（=rekey_segment_fund_flow(...).fund_flow）。"""
+    return rekey_segment_fund_flow(rows, start_ts, end_ts, mapping).fund_flow
+
+
 def sector_names_880(mapping: Iterable[SectorCodeBridgeRow] | None = None) -> dict[str, str]:
     """880 中文名表（CounterTrendConfig.sector_names 回显用；全 132 条主数据）。"""
     _ = mapping  # 预留：按映射子集过滤（当前全量回显，消费方 names.get 缺省安全）
@@ -514,7 +594,7 @@ class SectorCodeBridge:
         )
 
     @classmethod
-    def from_csv(cls, path: str | Path) -> "SectorCodeBridge":
+    def from_csv(cls, path: str | Path) -> SectorCodeBridge:
         """CSV 中间层装配（load_mapping 引用完整性 fail-closed）。"""
         return cls(load_mapping(path))
 
