@@ -48,6 +48,14 @@ entry_schema:
   last_updated: str          # 最后更新日期
 
 entries:
+- issue_id: ARCH-QMTFB-001
+  title: QMT文件桥连接器施工（miniQMT替代方案）
+  severity: P0
+  adjudication: 基于93 playbook v1.4.0实证结论，新建QmtFileBridgeBroker（异步文件语义BrokerInterface实现）+ LocalOrderQueue（算法单本地排队）。双实例物理隔离（qmt_real/qmt_sim），3秒轮询柜台同步，两阶段文件状态机幂等。
+  fix_phase: blueprint_approved
+  status: decided
+  created: '2026-08-26'
+  last_updated: '2026-08-26'
 # --- #ARCH-001/003: 永久预留段（登记为 deprecated 条目占位，未立项任何议题） ---
 - issue_id: '#ARCH-001'
   title: 编号预留段（未使用）
@@ -20519,3 +20527,14 @@ entries:
   related_rules: ['AUD-DRAFT-001-DIGEST']
   created: '2026-08-25'
   last_updated: '2026-08-25'
+- issue_id: '#ARCH-255'
+  title: DIGEST P2 W01 波：INFRA 全家桶 18 候选晋升——资源调度/零拷贝/HA-SLA/数据库层/ML管线/Cold平面/延迟预算/可复现包/三支柱/Agent追踪/延迟归因/WAL监控/存储成本/运行拓扑/Loki管道/级联仿真/战略总线/配置中心
+  severity: P2
+  category: 功能施工
+  adjudication: >-
+    MOD-INF-074/MOD-INF-075/MOD-INF-076/MOD-INF-077/MOD-INF-078/MOD-INF-079/MOD-INF-080/MOD-INF-081/MOD-INF-082/MOD-INF-083/MOD-INF-084/MOD-INF-085/MOD-INF-086/MOD-INF-087/MOD-INF-088/MOD-INF-089/MOD-INF-090/MOD-INF-091。18 模块纯内存/DI 落地，
+    390 新测全绿（tests/infra_runtime 161 + tests/infra_ops 124 + tests/infrastructure 105）。
+    全部转态 testing 封顶（触及运行时装配的一律留待运行时装配批统一注入）。
+  impact:
+    - 'src/zephyr/infra_runtime/（新包 7+__init__）+ infra_ops/（新包 4+__init__）+ infrastructure/system_telemetry×4 + rollback/cascade + a2a_protocol/strategic + config/config_center；tests 38 文件'
+  fix_phase: '已落地（2026-08-26，DIGEST P2 W01）；模块清单: resource_scheduler/shared_memory_zero_copy/ha_sla_framework/database_layer/ml_pipeline_process/cold_plane_isolation/latency_budget_allocator/reproducibility_packager/observability_triad/agent_call_tracer/latency_attributor/wal_checkpoint_monitor/storage_cost_calculator/runtime_topology_visualizer/loki_log_pipeline/cascade_failure_simulator/strategic_message_bus/config_center'
