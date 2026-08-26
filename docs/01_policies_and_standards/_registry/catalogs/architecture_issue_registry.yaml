@@ -20678,3 +20678,13 @@ entries:
   status: open
   created: '2026-08-26'
   last_updated: '2026-08-26'
+- issue_id: '#ARCH-265'
+  title: DIGEST P2 W08 波：SIM/DIGITAL_TWIN/EXEC_SIM/EX_CORE/TRADING 6 候选晋升+4 REVIEW 归并——过拟合门禁/市场仿真/冲击模型/执行优化/三向对账/主数据
+  severity: P2
+  category: 功能施工
+  adjudication: >-
+    MOD-SIM-028/MOD-DT-001/MOD-EXSIM-001/MOD-EX-064/MOD-TRADING-013/014。6 模块纯内存/DI 落地，155 新测全绿。
+    REVIEW 归并 4 条：WFO-004→MLT-028/WFO-005→MLT-029（W07 canonical）；EX-011→EX-010；TRD-012→MOD-TRADING-011（P1 已建）。
+  impact:
+    - 'src/zephyr/simulation×1 + digital_twin×1 + execution_simulation（新包 1+__init__）+ ex_core×1 + trading×2；tests 6 文件'
+  fix_phase: '已落地（2026-08-26，DIGEST P2 W08）'
