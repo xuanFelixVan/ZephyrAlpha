@@ -11242,10 +11242,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W08）——与 CAND-MLT-028（W07 已建）同为 D-RESEARCH-05 可复现性管理（B14/B13/B10 三稿重登），canonical=MOD-ML-020 reproducibility_manager（种子+hash校验+复现报告含其四要素语义）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A9运维架构
   original_id: B14-04646
   source_section: §8.3.3
@@ -11267,10 +11268,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W08）——与 CAND-MLT-029（W07 已建）同为 D-RESEARCH-12 研究数据沙箱（B14/B13 两稿重登），canonical=MOD-ML-021 research_data_sandbox（PIT 只读视图语义入只读视图+评审回写）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A9运维架构
   original_id: B14-04682
   source_section: §8.3.7
@@ -12581,11 +12583,12 @@ entries:
       evidence: '深挖场内对账: 部分：src/zephyr/digital_twin/'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/digital_twin/market_twin_simulator.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A1交易决策架构
   original_id: B10-01864
   source_section: §29.23
@@ -12607,11 +12610,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/simulation/volume_aware_impact.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/execution_simulation/almgren_chriss_impact_model.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: D-EX-CORE
   original_id: B3-06286
   source_section: §10
@@ -12710,11 +12714,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/ex_core/performance_monitor.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/ex_core/execution_param_optimizer.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: 跨域(元文档)
   original_id: B1-00218
   source_section: §功能域模块·D-EXECUTION
@@ -12736,10 +12741,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W08）——与 CAND-EX-010 同为 C-026 执行运营自优化（B10/B1 两稿重登），canonical=CAND-EX-010→MOD-EX-064（optuna+TCA 目标+人工确认含其拆单/等待参数语义）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A1交易决策架构
   original_id: B10-01222
   source_section: §1.1
@@ -18335,11 +18341,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/regime/validation/overfitting_guard.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/simulation/overfitting_protection_gate.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: 跨域(元文档)
   original_id: B1-00261
   source_section: §功能域模块·D-OPS
@@ -18595,11 +18602,12 @@ entries:
       evidence: '深挖场内对账: 部分：src/zephyr/trading/settlement_reconciliation.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/trading/three_way_reconciliation.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A3数据架构
   original_id: B13-04352
   source_section: §17.23
@@ -18621,10 +18629,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W08）——与 P1 已建 MOD-TRADING-011 eod_processor 同为 D-TRADING-04（B13/B14 两稿），canonical=src/zephyr/trading/eod_processor.py（15:30 任务链+断点续跑已在）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A3数据架构
   original_id: B13-04353
   source_section: §17.23
@@ -18645,11 +18654,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/trading/trading_contracts/market/instrument.py（合约模型有，统一主数据服务缺）'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/trading/reference_data_manager.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A9运维架构
   original_id: B14-04639
   source_section: §8.3.2
@@ -18941,7 +18951,7 @@ entries:
   estimated_complexity: M
   tech_notes: "源选型：Glassnode/CryptoQuant 付费 API vs 免费自建（区块链浏览器 API 限频紧）——P2 阶段再评。2026-08-26 行业调查扩充（资金流三网关口径）：①鲸鱼地址跟踪（Smart Money 标签地址积累行为+大额转账预警，Nansen 为行业标准，Whale Alert 铸造/大额异动告警）②稳定币流动（交易所稳定币储备=干火药购买力，新铸造=扩张前兆，USDT 场外溢价=亚洲资金入场）③交易所储备金（储备多年新低=供应挤压看涨，急升=获利了结预警）。
     2026-08-26 R2 补充（8 年回测实证）：MVRV Z-Score（<1=历史深熊抄底区/>5=顶部区，2015/2018/2022 底验证）与 NVT
-    （币圈"市盈率"=价格/链上转账活跃度）为币版宏观因子中少数实证有效维度，列入首批链上因子清单；
+    （币圈「市盈率」=价格/链上转账活跃度）为币版宏观因子中少数实证有效维度，列入首批链上因子清单；
     纪律：任何主动因子须先过买入持有基准门（12 策略组合实证主动大多跑不赢持有）"
   risks:
     - "付费源成本高/免费源限频紧——先以 1~2 个核心指标（交易所净流入优先）验证增量价值再扩"
@@ -19136,7 +19146,7 @@ entries:
   source_section: "§5 新建候选清单"
   original_id: ""
   estimated_complexity: S
-  tech_notes: "cost_model 需支持 maker/taker 异价（A股无此概念）；费率按交易所 VIP 档位参数化。2026-08-26 R3 补充：universe 构建纪律=含已下架（delisting）币历史——币圈下架频繁，只收录当前在市币=幸存者偏差（INV-014 互证，与 A股退市股处理同口径）。2026-08-26 市场归属标注联动（94号 §4.5）：三件套币版实例条目必带 market: crypto 字段（universe/benchmark/cost_model 属分市场八表；无 market 字段=共用条目），防 AI 拿错同名实例"
+  tech_notes: "cost_model 需支持 maker/taker 异价（A股无此概念）；费率按交易所 VIP 档位参数化。2026-08-26 R3 补充：universe 构建纪律=含已下架（delisting）币历史——币圈下架频繁，只收录当前在市币=幸存者偏差（INV-014 互证，与 A股退市股处理同口径）。2026-08-26 市场归属标注联动（94号 §4.5）：三件套币版实例条目必带 market: crypto 字段（universe/benchmark/cost_model 属分市场八表；无 market 字段=共用条目），防 AI 拿错同名实例。**前置动作（逻辑闭环必需，Owner 2026-08-26 会话确认）**：A股存量八表条目须先回填 market: ashare——否则「无字段=共用」约定会把存量 A股条目误判为共用；回填为纯字段批量补充（零代码逻辑），须在 W2 币版条目登记前完成（可提前至 W0/W1 顺手做）"
   risks: []
   alternatives: "暂用 A股 cost_model 近似——拒绝（费率结构本质不同，回测失真）"
   tags: ["数字货币", "回测", "注册表", "P1"]
