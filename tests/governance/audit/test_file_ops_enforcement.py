@@ -177,6 +177,36 @@ class TestReconcilerContextEnforcement:
         assert results[0].action == "clean"
         assert not target.exists()
 
+    def test_outside_repo_housekeeping_exempt_from_file_ops(self, tmp_path, monkeypatch):
+        """批5b 配套：仓外目标（系统 Temp housekeeping）豁免 file_ops 声明校验。
+
+        声明制约束的是仓内业务目标的删除能力——reconciler 内 subprocess 的
+        Temp 输出文件清理（绝对路径、仓外）不应要求 delete 声明，否则每次
+        commit 的 reconciler 链产生 file_ops_block 噪音洪峰（gateway 实证）。
+        """
+        import tempfile
+
+        monkeypatch.chdir(tmp_path)
+        outside = Path(tempfile.mkdtemp(prefix="ops_guard_hk_")) / "gw_out.txt"
+        outside.write_text("x", encoding="utf-8")
+
+        def housekeeping_reconcile(files, sid):
+            os.remove(str(outside))  # 仓外绝对路径删除——未声明 delete 也应放行
+            return ReconcileResult(action="clean")
+
+        reg = ReconciliationRegistry()
+        reg.register(
+            ReconcilerSpec(
+                gate_id="HK",
+                trigger=lambda f: True,
+                reconcile=housekeeping_reconcile,
+                file_ops=frozenset({"read"}),  # 未声明 delete
+            )
+        )
+        results = reg.reconcile_for(["x"], "red-team")
+        assert results[0].action == "clean", "仓外 housekeeping 不得触发 file_ops 阻断"
+        assert not outside.exists()
+
     def test_context_reset_no_leak(self, tmp_path, monkeypatch):
         """上下文 reset：下一 reconciler 不受前一 reconciler 声明影响。"""
         monkeypatch.chdir(tmp_path)
@@ -205,6 +235,8 @@ class TestReconcilerContextEnforcement:
     def test_declared_recursive_protected_still_blocked(self, tmp_path, monkeypatch):
         """双保险：已声明 delete 的 reconciler 对保护区递归 rmtree 仍硬拦。"""
         monkeypatch.chdir(tmp_path)
+        # 批5a 相对路径 cwd resolve 后：仓根锚定 tmp 使 src/zephyr 解析为仓内保护区
+        monkeypatch.setattr(ops_guard_mod, "_PROJECT_ROOT_CACHE", tmp_path)
 
         def evil(files, sid):
             guard_rmtree("src/zephyr")  # 保护区递归
@@ -248,6 +280,8 @@ class TestInprocessEnforcement:
     def test_bare_os_remove_protected_blocked_outside_context(self, tmp_path, monkeypatch):
         """红队：worker 进程内（无 reconciler 上下文）裸 os.remove 保护区路径被拦。"""
         monkeypatch.chdir(tmp_path)
+        # 批5a 相对路径 cwd resolve 后：仓根锚定 tmp 使相对路径解析为仓内保护区
+        monkeypatch.setattr(ops_guard_mod, "_PROJECT_ROOT_CACHE", tmp_path)
         install_inprocess_enforcement()
         with pytest.raises(DeleteBlockedError):
             os.remove("src/zephyr/__init__.py")
@@ -265,6 +299,8 @@ class TestInprocessEnforcement:
     def test_path_unlink_covered(self, tmp_path, monkeypatch):
         """pathlib.Path.unlink 经 os 层 patch 覆盖（保护区阻断）。"""
         monkeypatch.chdir(tmp_path)
+        # 批5a 相对路径 cwd resolve 后：仓根锚定 tmp 使相对路径解析为仓内保护区
+        monkeypatch.setattr(ops_guard_mod, "_PROJECT_ROOT_CACHE", tmp_path)
         install_inprocess_enforcement()
         with pytest.raises(DeleteBlockedError):
             Path("tests/conftest.py").unlink()
@@ -338,6 +374,8 @@ class TestAuditOnlyMode:
     def test_audit_only_env_unset_restores_hard_block(self, tmp_path, monkeypatch):
         """env 非 1（fixture 已剥离）→ 维持硬拦语义（推广后可翻硬拦的回归锚）。"""
         monkeypatch.chdir(tmp_path)
+        # 批5a 相对路径 cwd resolve 后：仓根锚定 tmp 使相对路径解析为仓内保护区
+        monkeypatch.setattr(ops_guard_mod, "_PROJECT_ROOT_CACHE", tmp_path)
         install_inprocess_enforcement()
         with pytest.raises(DeleteBlockedError):
             os.remove("src/zephyr/__init__.py")
@@ -355,6 +393,103 @@ class TestAuditOnlyMode:
         assert install_inprocess_enforcement_audit_only() is True
         assert os.environ.get(ops_guard_mod.AUDIT_ONLY_ENV) == "0"
 
+
+# ---------------------------------------------------------------------------
+# 3c. 相对路径 cwd resolve + _skill_cache 白名单（批5a，翻硬拦前置必修）
+# ---------------------------------------------------------------------------
+@pytest.mark.usefixtures("_restore_primitives")
+class TestRelativePathCwdResolve:
+    """批5a 红队：相对路径相对 cwd 解析后再判定的回归锚。
+
+    观测期 402 条 would_block 全量归因的两族误报：
+    ① cwd 在 pytest tmp 删相对路径被旧实现直接当仓内 repo-rel（360 条）；
+    ② gitignore 运行时缓存 _skill_cache 位于 src/ 保护区内撞名单（350 条）。
+    翻硬拦前必须钉死：误报族放行 + 真保护区目标（含 .. 逃逸）仍拦。
+    """
+
+    def test_tmp_cwd_relative_path_whitelist_allowed(self, tmp_path, monkeypatch):
+        """误报族①真实形态：cwd=仓内 .runtime/tmp 白名单区，删相对路径 → 放行。"""
+        monkeypatch.chdir(tmp_path)  # pytest basetemp 位于仓内 .runtime/tmp
+        victim = tmp_path / "tests" / "conftest.py"
+        victim.parent.mkdir(parents=True)
+        victim.write_text("x", encoding="utf-8")
+        install_inprocess_enforcement()
+        os.remove("tests/conftest.py")  # resolve 后落白名单区——不拦、真删
+        assert not victim.exists()
+
+    def test_outside_repo_cwd_relative_path_not_blocked(self, monkeypatch):
+        """cwd 在仓外（系统 TEMP）：删相对路径 → 仓外绝对路径不命中保护区，放行。"""
+        import tempfile
+
+        outside = Path(tempfile.mkdtemp(prefix="ops_guard_outside_"))
+        monkeypatch.chdir(outside)
+        victim = outside / "tests" / "conftest.py"
+        victim.parent.mkdir(parents=True)
+        victim.write_text("x", encoding="utf-8")
+        install_inprocess_enforcement()
+        os.remove("tests/conftest.py")
+        assert not victim.exists()
+
+    def test_repo_root_cwd_relative_protected_still_blocked(self, tmp_path, monkeypatch):
+        """cwd=仓根（锚定 tmp）：相对路径 src/x.py 解析为仓内保护区 → 仍拦。"""
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setattr(ops_guard_mod, "_PROJECT_ROOT_CACHE", tmp_path)
+        install_inprocess_enforcement()
+        with pytest.raises(DeleteBlockedError):
+            os.remove("src/x.py")
+
+    def test_dotdot_escape_into_protected_blocked(self, tmp_path, monkeypatch):
+        """逃逸型相对路径：cwd=仓内子目录，../../src/x.py 折叠后落保护区 → 拦。"""
+        deep = tmp_path / ".runtime" / "tmp"
+        deep.mkdir(parents=True)
+        monkeypatch.chdir(deep)
+        monkeypatch.setattr(ops_guard_mod, "_PROJECT_ROOT_CACHE", tmp_path)
+        install_inprocess_enforcement()
+        with pytest.raises(DeleteBlockedError):
+            os.remove("../../src/x.py")
+
+    def test_skill_cache_whitelist_allowed(self, tmp_path, monkeypatch):
+        """误报族②：_skill_cache（gitignore 运行时缓存）在 src/ 保护区内 → 白名单放行。"""
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setattr(ops_guard_mod, "_PROJECT_ROOT_CACHE", tmp_path)
+        victim = tmp_path / "src" / "zephyr" / "autonomy_core" / "skills" / "_skill_cache" / "dkey1.json"
+        victim.parent.mkdir(parents=True)
+        victim.write_text("{}", encoding="utf-8")
+        install_inprocess_enforcement()
+        os.remove("src/zephyr/autonomy_core/skills/_skill_cache/dkey1.json")
+        assert not victim.exists()
+
+    def test_graded_audit_non_sensitive_allow_skipped(self, tmp_path, monkeypatch):
+        """批5c 分级落盘：非敏感区 inprocess_allow 只计数不落盘（3.7GB 洪峰治本）。"""
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setattr(ops_guard_mod, "_PROJECT_ROOT_CACHE", tmp_path)
+        victim = tmp_path / "scratch" / "ok.txt"  # 非保护区非白名单
+        victim.parent.mkdir(parents=True)
+        victim.write_text("x", encoding="utf-8")
+        install_inprocess_enforcement()
+        before = get_audit_stats()
+        os.remove(str(victim))
+        after = get_audit_stats()
+        assert after["allow"] - before["allow"] == 1
+        assert after["allow_skipped"] - before["allow_skipped"] == 1
+        audit_file = tmp_path / ".runtime" / "gate_audit" / "ops_guard_delete.jsonl"
+        assert not audit_file.exists(), "非敏感区 allow 不应落盘（分级跳过）"
+
+    def test_graded_audit_sensitive_allow_persisted(self, tmp_path, monkeypatch):
+        """批5c 分级落盘：敏感区 allow 全量落盘（8-23 型事件取证面完整保留）。"""
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setattr(ops_guard_mod, "_PROJECT_ROOT_CACHE", tmp_path)
+        monkeypatch.setenv("ZEPHYR_FORCE_DELETE", "1")  # 授权删除保护区
+        victim = tmp_path / "src" / "doomed.py"
+        victim.parent.mkdir(parents=True)
+        victim.write_text("x", encoding="utf-8")
+        install_inprocess_enforcement()
+        os.remove("src/doomed.py")  # 授权后 allow + is_protected_zone=True
+        assert not victim.exists()
+        entries = _read_audit(tmp_path)
+        assert any(e.get("action") == "inprocess_allow" and e.get("is_protected_zone") for e in entries), (
+            "敏感区 allow 未落盘——8-23 型事件取证面缺口"
+        )
 
 
 # ---------------------------------------------------------------------------

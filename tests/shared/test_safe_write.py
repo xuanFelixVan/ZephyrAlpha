@@ -183,3 +183,44 @@ class TestSafeRmtree:
         """assert_safe_rmtree_target 返回 resolve 后路径（调用方删返回值而非入参）。"""
         resolved = assert_safe_rmtree_target(drafts / "." / "sess-001", allowed_prefix=drafts)
         assert resolved == (drafts / "sess-001").resolve()
+
+    def test_inprocess_patch_bypassed_after_assertion(self, repo: Path, drafts: Path, monkeypatch) -> None:
+        """批5b 翻硬拦配套：硬断言通过=授权完成——safe_rmtree 直通 in-process 补丁。
+
+        .worktrees 是 ops_guard 保护区：硬拦语义的补丁下裸 rmtree 必拦，而
+        safe_rmtree（自带三件套的授权通道）必须直通成功不被自家补丁拦截；
+        测试尾恢复 conftest 的 audit-only 观测补丁（观测面不缺口）。
+        """
+        import scripts.ops_guard as ops_guard_mod
+        from scripts.ops_guard import (
+            install_inprocess_enforcement,
+            install_inprocess_enforcement_audit_only,
+            uninstall_inprocess_enforcement,
+        )
+
+        wt = repo / ".worktrees" / "sess-x"
+        (wt / "sub").mkdir(parents=True)
+        (wt / "sub" / "f.txt").write_text("x\n", encoding="utf-8")
+        monkeypatch.setattr(ops_guard_mod, "_PROJECT_ROOT_CACHE", repo)
+        monkeypatch.delenv(ops_guard_mod.AUDIT_ONLY_ENV, raising=False)  # 硬拦语义
+        try:
+            install_inprocess_enforcement()
+            assert safe_rmtree(wt, allowed_prefix=repo / ".worktrees") is True
+            assert not wt.exists(), "授权通道（硬断言通过）必须直通不被补丁拦截"
+        finally:
+            uninstall_inprocess_enforcement()
+            install_inprocess_enforcement_audit_only()  # 恢复 conftest 观测面
+
+    def test_authorized_delete_audited(self, repo: Path, drafts: Path, monkeypatch) -> None:
+        """批5c：safe_rmtree 授权通道删除落 safe_rmtree.jsonl——直通期间补丁审计
+        短路，本层补痕（删除必有痕原则不缺口）。"""
+        import json as _json
+
+        import scripts.ops_guard as ops_guard_mod
+
+        monkeypatch.setattr(ops_guard_mod, "_PROJECT_ROOT_CACHE", repo)
+        assert safe_rmtree(drafts / "sess-001", allowed_prefix=drafts) is True
+        audit = repo / ".runtime" / "gate_audit" / "safe_rmtree.jsonl"
+        assert audit.exists(), "授权通道删除未留痕（删除必有痕原则缺口）"
+        rows = [_json.loads(ln) for ln in audit.read_text(encoding="utf-8").splitlines() if ln.strip()]
+        assert any(r.get("event") == "safe_rmtree" and "sess-001" in r.get("target", "") for r in rows)

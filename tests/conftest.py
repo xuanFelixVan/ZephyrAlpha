@@ -44,10 +44,12 @@ if _src_abs not in _existing_pp.split(_os.pathsep):
 if sys.stdout.encoding != "utf-8":
     sys.stdout.reconfigure(encoding="utf-8")
 
-# CAND-GOVSEC-001 ②（2026-08-23）：pytest 进程纳入 in-process 删除护栏观测面
-# （audit-only——先补仪表化盲区不硬拦，遥测证明零误伤后可翻硬拦）。
-# ops_guard 自测文件 test_file_ops_enforcement.py 在 fixture 内 delenv 恢复硬拦语义。
-# 安装失败静默降级——观测补强永不阻断 pytest。
+# CAND-GOVSEC-001 ②（2026-08-23 装；批5b 2026-08-26 裁定永久 audit-only）：
+# pytest 进程纳入 in-process 删除护栏观测面。批5b 翻硬拦范围=四治理入口
+# （git_commit/session_worktree CLI/commit_queue drain/sweep 库入口）；
+# pytest 进程定位=永久观测哨而非防线——测试对自身 tmp/fixture 产物的删除
+# 是合法行为不应被拦（红队用例如需硬拦语义，在 fixture 内 delenv 自验，
+# 见 test_file_ops_enforcement.py）。安装失败静默降级——观测补强永不阻断 pytest。
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 try:
