@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] zephyr.data.pit_query
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] zephyr.data.ch_reader; zephyr.data.table_registry
+# [DEPENDENCIES] zephyr.data.ch_reader; zephyr.data.table_registry（zephyr.data.calendar 仅 TYPE_CHECKING 类型注解）
 # [CONSUMERS] zephyr.backtest.core.data_handler; zephyr.backtest.core.pit_manager
 # [STARTUP] imported
 # [MATURITY] production
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 非白名单表->PITQueryError; CH查询失败->返回空字符串(同ch_reader); 表无period_col->跳过LIMIT 1 BY
 # [TESTS] tests/data/test_pit_query.py
-# [A_module] module_id=MOD-GOV-pit_query | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """财报 Point-In-Time (PIT) 查询能力（#ARCH-CH-021 P0-5）。
 
@@ -38,11 +38,14 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from datetime import date, datetime
-from typing import Iterable
+from datetime import date, datetime, timedelta
+from typing import TYPE_CHECKING, Iterable
 
 from zephyr.data import ch_reader
 from zephyr.data.table_registry import get_registry
+
+if TYPE_CHECKING:  # 仅类型注解（CAND-CRYPTO-001 日历注入，零运行时依赖增量）
+    from zephyr.data.calendar.base import MarketCalendar
 
 log = logging.getLogger(__name__)
 
@@ -260,8 +263,38 @@ class FinancialPITQuery:
         symbols = pit.survivorship_universe('2026-06-01')
     """
 
-    def __init__(self, config: PITQueryConfig | None = None) -> None:
+    def __init__(
+        self,
+        config: PITQueryConfig | None = None,
+        calendar: "MarketCalendar | None" = None,
+    ) -> None:
         self.config = config if config is not None else PITQueryConfig()
+        # 市场日历注入（CAND-CRYPTO-001）：None=embargo 自然日口径（现状，逐字节不变）；
+        # 注入后 embargo_days 按真交易日历回退（换算为自然日 INTERVAL，SQL 模板不动）
+        self._calendar = calendar
+
+    # ------------------------------------------------------------------
+    # embargo 子句（公理2：泄漏防护）
+    # ------------------------------------------------------------------
+    def _embargo_sql(self, query_time: datetime | date | str) -> str:
+        """构建 embargo 子句。calendar 未注入=自然日 INTERVAL（现状）；注入=真历回退换算。
+
+        真历语义对齐 pit_manager._embargo_cutoff_by_calendar：锚定 <=query_time 最近
+        交易日，前推 embargo_days 个交易日的日期为 cutoff；换算 k=(qt-cutoff).days
+        走同一 `_ - INTERVAL k DAY` 模板，SQL 形状不变。日历窗口=embargo_days*3+15
+        自然日（覆盖最长春节假期）；窗口内交易日不足时回窗口首日-1天（同 pit_manager
+        日历不足口径）；窗口全空（不可能，防御）回退自然日口径。
+        """
+        if self._calendar is None or self.config.embargo_days <= 0:
+            return _embargo_clause(self.config.embargo_days)
+        qt_date = date.fromisoformat(_fmt_query_time(query_time))
+        window = self.config.embargo_days * 3 + 15
+        days = self._calendar.trading_days_in_range(qt_date - timedelta(days=window), qt_date)
+        if not days:
+            return _embargo_clause(self.config.embargo_days)
+        idx = len(days) - 1 - self.config.embargo_days
+        cutoff = days[idx] if idx >= 0 else days[0] - timedelta(days=1)
+        return _embargo_clause((qt_date - cutoff).days)
 
     # ------------------------------------------------------------------
     # AS OF JOIN（公理1：版本对齐）
@@ -341,7 +374,7 @@ class FinancialPITQuery:
             raise PITQueryError(f"表 '{table}' 无报告期列，as_of_latest 不适用")
         qt = _fmt_query_time(query_time)
         sym = _escape_symbol(symbol)
-        embargo = _embargo_clause(self.config.embargo_days)
+        embargo = self._embargo_sql(query_time)
         sql = _SQL_LATEST.format(
             columns=columns,
             tbl=qualified,
@@ -410,7 +443,7 @@ class FinancialPITQuery:
         """
         qualified, period_col = _resolve_table(table)
         qt = _fmt_query_time(query_time)
-        embargo = _embargo_clause(self.config.embargo_days)
+        embargo = self._embargo_sql(query_time)
         if single:
             symbol_clause = f"symbol = '{_escape_symbol(symbols[0])}'"
         else:

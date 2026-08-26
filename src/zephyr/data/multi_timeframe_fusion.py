@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-DAT-MTF-FUSION | docs/03_modules/_domain_data/multi_timeframe_fusion/blueprint.md
 # [MODULE] zephyr.data.multi_timeframe_fusion
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] pandas（纯内存计算，零 zephyr import）
+# [DEPENDENCIES] pandas（纯内存计算；zephyr.data.calendar 仅 TYPE_CHECKING 类型注解，零运行时 zephyr import）
 # [CONSUMERS] 运行时装配批（miniqmt_service/mkt_data 多周期消费接线 / 交易日历真源装配）
 # [STARTUP] manual
 # [MATURITY] testing
@@ -32,9 +32,12 @@ from __future__ import annotations
 import datetime
 import logging
 from dataclasses import dataclass
-from typing import Final, Optional, Sequence
+from typing import TYPE_CHECKING, Final, Optional, Sequence
 
 import pandas as pd
+
+if TYPE_CHECKING:  # 仅类型注解：保持本模块零运行时 zephyr import（纯 pandas 不变量）
+    from zephyr.data.calendar.base import MarketCalendar
 
 log = logging.getLogger(__name__)
 
@@ -46,13 +49,15 @@ __all__: Final = [
     "SUPPORTED_FREQS",
 ]
 
-#: 频率表：目标频率 → 分钟数（1d=1440 特例）
+#: 频率表：目标频率 → 分钟数（1d=1440 特例；4h=240 币 7×24 周期，CAND-CRYPTO-001 增量，
+#: A股 9 周期不含 4h——A股调用路径不触碰该键，零行为变化）
 SUPPORTED_FREQS: Final[dict[str, int]] = {
     "1min": 1,
     "5min": 5,
     "15min": 15,
     "30min": 30,
     "60min": 60,
+    "4h": 240,
     "1d": 1440,
 }
 
@@ -121,9 +126,27 @@ class MultiTimeframeFusion:
         ffill_limit: Optional[int] = None,
         expected_start: Optional[pd.Timestamp] = None,
         expected_end: Optional[pd.Timestamp] = None,
+        calendar: Optional["MarketCalendar"] = None,
     ) -> FusionResult:
-        """统一重采样：交易日历对齐 + bar close 归一 + ffill 上限 + 质量评分。"""
+        """统一重采样：交易日历对齐 + bar close 归一 + ffill 上限 + 质量评分。
+
+        Args:
+            calendar: 可选市场日历注入（CAND-CRYPTO-001）。仅当 trading_days 未显式
+                传入且 expected_start/expected_end 齐备时，展开为
+                calendar.trading_days_in_range(start.date(), end.date()) 作为日历
+                对齐集合；显式 trading_days 永远优先。未注入时行为与现状逐字节一致。
+        """
         self._validate(bars, source_freq, target_freq)
+        if (
+            trading_days is None
+            and calendar is not None
+            and expected_start is not None
+            and expected_end is not None
+        ):
+            trading_days = calendar.trading_days_in_range(
+                pd.Timestamp(expected_start).date(),
+                pd.Timestamp(expected_end).date(),
+            )
         cfg = self._config
         limit = cfg.ffill_limit if ffill_limit is None else ffill_limit
         if limit < 0:

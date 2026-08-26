@@ -17,13 +17,15 @@ capabilities:
   - qmt_file_bridge
   - qmt_real
   - qmt_sim
-  description: QMT 文件桥 Broker——大QMT文件桥执行器适配器，实现 BrokerInterface 异步文件语义。通过指令CSV文件与沙箱哑执行器(v14)双向通信，替代 miniQMT xttrader 直连。双实例物理隔离（env=real/sim），3秒轮询柜台同步，两阶段文件状态机幂等。canonical = src/zephyr/ex_core/adapters/qmt_file_bridge_broker.py。
+  description: QMT 文件桥 Broker——大QMT文件桥执行器适配器，实现 BrokerInterface 异步文件语义。通过指令CSV文件与沙箱哑执行器(v14)双向通信，替代
+    miniQMT xttrader 直连。双实例物理隔离（env=real/sim），3秒轮询柜台同步，两阶段文件状态机幂等。canonical = src/zephyr/ex_core/adapters/qmt_file_bridge_broker.py。
 - capability_id: local_order_queue
   aliases:
   - LocalOrderQueue
   - local_order_queue
   - 本地订单队列
-  description: 本地订单队列（算法单排队器）。接收 ExecutionEngine 的 TWAP/VWAP 切片子订单，按时间间隔排队，逐笔调用 OrderManager.submit_order 发送。QMT 通道窄（柜台挂单上限），本地排队缓冲，QMT 永远只看到 1~2 笔待执行。canonical = src/zephyr/ex_core/local_order_queue.py。
+  description: 本地订单队列（算法单排队器）。接收 ExecutionEngine 的 TWAP/VWAP 切片子订单，按时间间隔排队，逐笔调用 OrderManager.submit_order
+    发送。QMT 通道窄（柜台挂单上限），本地排队缓冲，QMT 永远只看到 1~2 笔待执行。canonical = src/zephyr/ex_core/local_order_queue.py。
 - capability_id: session_handoff_continuity
   aliases:
   - session_continuity
@@ -10414,6 +10416,30 @@ creation_tokens:
   token: auto-bt-8607ffc2-20260826
   created_by: worker-e97f383d-24796
   capability: event_strategy_backtest_artifact
+- file: src/zephyr/data/calendar/base.py
+  token: auto-scaffold-base-20260826
+  created_by: scaffold.py
+  capability: base
+- file: src/zephyr/data/calendar/crypto.py
+  token: auto-scaffold-crypto-20260826
+  created_by: scaffold.py
+  capability: crypto
+- file: src/zephyr/data/calendar/ashare.py
+  token: auto-scaffold-ashare-20260826
+  created_by: scaffold.py
+  capability: ashare
+- file: src/zephyr/data/calendar/__init__.py
+  token: auto-scaffold-calendar-init-20260826
+  created_by: scaffold.py
+  capability: market_calendar
+- file: docs/_working/reports/2026-08-26-calendar-consumers-inventory.md
+  token: auto-cal001-inventory-20260826
+  created_by: AI-CAL-001
+  capability: market_calendar
+- file: docs/_working/audit/architecture-reviews/2026-08-26-market-calendar-abstraction.md
+  token: auto-cal001-archreview-20260826
+  created_by: AI-CAL-001
+  capability: market_calendar
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
@@ -12160,3 +12186,87 @@ di_seam_exemptions:
   token: auto-blueprint-20260826
   created_by: AI-P2-W11
   capability: wechat_bot_handler_blueprint
+- file: src/zephyr/governance/depmap_engine.py
+  token: auto-depmap-engine-20260826
+  created_by: AI-P2-W12
+  capability: depmap_engine
+- file: tests/governance/test_depmap_engine.py
+  token: auto-test-depmap-engine-20260826
+  created_by: AI-P2-W12
+  capability: depmap_engine_test
+- file: docs/03_modules/_domain_governance/depmap_engine/blueprint.md
+  token: auto-blueprint-20260826
+  created_by: AI-P2-W12
+  capability: depmap_engine_blueprint
+- file: src/zephyr/governance/gov_policy_manager.py
+  token: auto-gov-policy-manager-20260826
+  created_by: AI-P2-W12
+  capability: gov_policy_manager
+- file: tests/governance/test_gov_policy_manager.py
+  token: auto-test-gov-policy-manager-20260826
+  created_by: AI-P2-W12
+  capability: gov_policy_manager_test
+- file: docs/03_modules/_domain_governance/gov_policy_manager/blueprint.md
+  token: auto-blueprint-20260826
+  created_by: AI-P2-W12
+  capability: gov_policy_manager_blueprint
+- file: src/zephyr/gov_audit/audit_trace_graph_builder.py
+  token: auto-audit-trace-graph-builder-20260826
+  created_by: AI-P2-W12
+  capability: audit_trace_graph_builder
+- file: tests/gov_audit/test_audit_trace_graph_builder.py
+  token: auto-test-audit-trace-graph-builder-20260826
+  created_by: AI-P2-W12
+  capability: audit_trace_graph_builder_test
+- file: docs/03_modules/_domain_gov_audit/audit_trace_graph_builder/blueprint.md
+  token: auto-blueprint-20260826
+  created_by: AI-P2-W12
+  capability: audit_trace_graph_builder_blueprint
+- file: src/zephyr/governance/docs/api_doc_version_syncer.py
+  token: auto-api-doc-version-syncer-20260826
+  created_by: AI-P2-W12
+  capability: api_doc_version_syncer
+- file: tests/governance/docs/test_api_doc_version_syncer.py
+  token: auto-test-api-doc-version-syncer-20260826
+  created_by: AI-P2-W12
+  capability: api_doc_version_syncer_test
+- file: docs/03_modules/_domain_governance/api_doc_version_syncer/blueprint.md
+  token: auto-blueprint-20260826
+  created_by: AI-P2-W12
+  capability: api_doc_version_syncer_blueprint
+- file: src/zephyr/gov_drift/agent_stability_index.py
+  token: auto-agent-stability-index-20260826
+  created_by: AI-P2-W12
+  capability: agent_stability_index
+- file: tests/gov_drift/test_agent_stability_index.py
+  token: auto-test-agent-stability-index-20260826
+  created_by: AI-P2-W12
+  capability: agent_stability_index_test
+- file: docs/03_modules/_domain_gov_drift/agent_stability_index/blueprint.md
+  token: auto-blueprint-20260826
+  created_by: AI-P2-W12
+  capability: agent_stability_index_blueprint
+- file: src/zephyr/gov_enforcement/construction_governor_gate.py
+  token: auto-construction-governor-gate-20260826
+  created_by: AI-P2-W12
+  capability: construction_governor_gate
+- file: tests/gov_enforcement/test_construction_governor_gate.py
+  token: auto-test-construction-governor-gate-20260826
+  created_by: AI-P2-W12
+  capability: construction_governor_gate_test
+- file: docs/03_modules/_domain_gov_enforcement/construction_governor_gate/blueprint.md
+  token: auto-blueprint-20260826
+  created_by: AI-P2-W12
+  capability: construction_governor_gate_blueprint
+- file: src/zephyr/gov_rule/standards_manager.py
+  token: auto-standards-manager-20260826
+  created_by: AI-P2-W12
+  capability: standards_manager
+- file: tests/gov_rule/test_standards_manager.py
+  token: auto-test-standards-manager-20260826
+  created_by: AI-P2-W12
+  capability: standards_manager_test
+- file: docs/03_modules/_domain_gov_rule/standards_manager/blueprint.md
+  token: auto-blueprint-20260826
+  created_by: AI-P2-W12
+  capability: standards_manager_blueprint

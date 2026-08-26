@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-L00-004 | (auto-injected by S4 reconciler) | §
+# [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """scheduler 单测（MOD-L00-004 阶段2）。
 
@@ -348,9 +349,12 @@ class TestRunSchedule:
         mock_provider.connect()
         scheduler.providers["mock"] = mock_provider
         # 时间解耦：daily_kline 属交易日历守卫时段（_schedule_should_skip），
-        # 非交易日跑测试会 return {}——patch is_trading_day 固定为交易日
+        # 非交易日跑测试会 return {}——注入恒交易日历 mock（CAND-CRYPTO-001 注入式改造后
+        # 日历经 self._calendar 消费，patch 点由模块函数迁移为实例日历）
+        mock_cal = MagicMock()
+        mock_cal.is_trading_day.return_value = True
         with (
-            patch("src.zephyr.data.scheduler.is_trading_day", return_value=True),
+            patch.object(scheduler, "_calendar", mock_cal),
             patch("src.zephyr.data.scheduler.BufferedWriter.add", return_value=True),
             patch("src.zephyr.data.scheduler.BufferedWriter.flush", return_value=True),
         ):
@@ -384,9 +388,11 @@ class TestRunSchedule:
         mock_provider = _MockProvider()
         mock_provider.connect()
         scheduler.providers["mock"] = mock_provider
-        # 时间解耦：同上（交易日历守卫时段在非交易日 return {}）
+        # 时间解耦：同上（交易日历守卫时段在非交易日 return {}；注入恒交易日历 mock）
+        mock_cal = MagicMock()
+        mock_cal.is_trading_day.return_value = True
         with (
-            patch("src.zephyr.data.scheduler.is_trading_day", return_value=True),
+            patch.object(scheduler, "_calendar", mock_cal),
             patch("src.zephyr.data.scheduler.BufferedWriter.add", return_value=True),
             patch("src.zephyr.data.scheduler.BufferedWriter.flush", return_value=True),
         ):

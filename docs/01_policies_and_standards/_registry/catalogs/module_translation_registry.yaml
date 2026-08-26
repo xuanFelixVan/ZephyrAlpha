@@ -46812,7 +46812,6 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "把库里所有研报批量过一遍评级提取，产出逐篇评级表和每天的评级指标（多少家上调/下调/首次覆盖/平均立场分）"
-
 - module_path: src/zephyr/frontend/notification_router.py
   domain_id: D_FRONTEND
   name_zh: "通知路由器"
@@ -46953,6 +46952,125 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "校验消息校验、指令鉴权、解析渲染和下单二次确认。"
+- module_path: src/zephyr/governance/depmap_engine.py
+  domain_id: D_GOVERNANCE
+  name_zh: "DepMap依赖扫描引擎"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "扫描全仓代码的import关系：自动解析每个文件依赖谁，分层存储后和影响图库对账，发现循环依赖和越层调用就出报告接CI门禁。"
+- module_path: tests/governance/test_depmap_engine.py
+  domain_id: D_GOVERNANCE
+  name_zh: "依赖扫描单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "用临时文件树校验import解析、分层存储、diff和循环依赖报告。"
+- module_path: src/zephyr/governance/gov_policy_manager.py
+  domain_id: D_GOVERNANCE
+  name_zh: "治理策略管理器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "治理策略的全生命周期管家：创建、修改、版本递增、历史全留，状态从草稿到激活到停用全程受控。"
+- module_path: tests/governance/test_gov_policy_manager.py
+  domain_id: D_GOVERNANCE
+  name_zh: "治理策略单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "用内存数据库校验CRUD、版本留存、持久化和状态机。"
+- module_path: src/zephyr/gov_audit/audit_trace_graph_builder.py
+  domain_id: D_GOV_AUDIT
+  name_zh: "审计追踪依赖构建器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把决策、代码、测试、部署串成追溯链：任何一环都能反查上下游，缺了哪段自动报缺口并给补齐建议。"
+- module_path: tests/gov_audit/test_audit_trace_graph_builder.py
+  domain_id: D_GOV_AUDIT
+  name_zh: "审计追踪单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "校验四段边登记、全链反查、缺口检测和补齐建议。"
+- module_path: src/zephyr/governance/docs/api_doc_version_syncer.py
+  domain_id: D_GOV_DOCS
+  name_zh: "API文档版本同步器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "扫描接口版本和签名变化，自动更新接口文档和变更日志，差异太大先给人确认，只在非交易时段运行。"
+- module_path: tests/governance/docs/test_api_doc_version_syncer.py
+  domain_id: D_GOV_DOCS
+  name_zh: "文档同步单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "用假扫描器假写入器校验变更diff、dry-run、人工确认和时段门禁。"
+- module_path: src/zephyr/gov_drift/agent_stability_index.py
+  domain_id: D_GOV_DRIFT
+  name_zh: "Agent稳定度指数检查器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给AI代理测稳定性：回答前后一致吗、工具使用套路变了吗、推理路径飘了吗、几个代理意见统一吗，连续几窗不达标就告警。"
+- module_path: tests/gov_drift/test_agent_stability_index.py
+  domain_id: D_GOV_DRIFT
+  name_zh: "Agent稳定度单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "用假embedder校验四维指标、滚动窗、连续告警和事件落库。"
+- module_path: src/zephyr/gov_enforcement/construction_governor_gate.py
+  domain_id: D_GOV_ENFORCEMENT
+  name_zh: "AI施工门禁器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "AI施工的两道闸：产出的公式和登记时的指纹对不上就拒绝，变更影响面太大就截断，必须升级人工审批才放行。"
+- module_path: tests/gov_enforcement/test_construction_governor_gate.py
+  domain_id: D_GOV_ENFORCEMENT
+  name_zh: "施工门禁单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "校验公式指纹比对、影响面截断、审批升级和判定留痕。"
+- module_path: src/zephyr/gov_rule/standards_manager.py
+  domain_id: D_GOV_RULE
+  name_zh: "硬边界标准管理器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "系统硬边界的总目录：每条边界有编号、约束语句、校验脚本和违反响应，改任何一条都必须人工审批。"
+- module_path: tests/gov_rule/test_standards_manager.py
+  domain_id: D_GOV_RULE
+  name_zh: "硬边界单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "校验四要素登记、脚本挂接和人工审批硬约束。"
+- module_path: src/zephyr/data/calendar/base.py
+  domain_id: D_DATA
+  name_zh: "市场日历抽象接口"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "定义'什么时候有交易、K线怎么切'的标准接口——A股和币圈各有一套实现，业务代码只管拿注入的日历用，不许自己判断是哪个市场"
+- module_path: src/zephyr/data/calendar/ashare.py
+  domain_id: D_DATA
+  name_zh: "A股市场日历实现"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "A股日历：沿用现有交易日历真源（周末/节假日休市+午休两段交易），只是把老逻辑装进标准接口里，行为一点没变"
+- module_path: src/zephyr/data/calendar/crypto.py
+  domain_id: D_DATA
+  name_zh: "数字货币市场日历实现"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "币圈日历：7×24 全年无休，每天都是交易日、全天都是交易时段，顺带支持 4 小时 K线周期"
 
 battle_map_steps:
 - step_id: BM-BUY-04

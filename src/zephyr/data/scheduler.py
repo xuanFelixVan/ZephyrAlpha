@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] zephyr.data.scheduler
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] zephyr.data.provider_base; zephyr.data.policy_registry; zephyr.data.progress_store; zephyr.data.ch_writer; zephyr.data.ch_reader; zephyr.data.task_queue; zephyr.data.alerter; zephyr.data.implementations.{miniqmt,akshare,tushare}_provider; zephyr.data.trading_calendar; zephyr.data.local_replay; apscheduler(pip); exchange_calendars(pip)
+# [DEPENDENCIES] zephyr.data.provider_base; zephyr.data.policy_registry; zephyr.data.progress_store; zephyr.data.ch_writer; zephyr.data.ch_reader; zephyr.data.task_queue; zephyr.data.alerter; zephyr.data.implementations.{miniqmt,akshare,tushare}_provider; zephyr.data.trading_calendar; zephyr.data.calendar; zephyr.data.local_replay; apscheduler(pip); exchange_calendars(pip)
 # [CONSUMERS] CLI(zephyr.data.cli 阶段3+); main()入口
 # [STARTUP] manual
 # [MATURITY] production
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] run_task失败->返回False+alerter.notify; start/stop异常->log+不抛; 所有方法返回dict/bool不抛异常
 # [TESTS] tests/zephyr/data/test_scheduler.py
-# [A_module] module_id=MOD-GOV-scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m02-manual  M02豁免: APScheduler常驻服务,由cli.py启动,启动后自动运行;非reconciler无需事件触发
 # [ALGO_FLOW]
@@ -91,7 +91,8 @@ from zephyr.data.progress_store import ProgressStore, get_store
 from zephyr.data.provider_base import FetchPayload, FetchResult, IngestProviderBase
 from zephyr.data.source_circuit_breaker import CircuitBreakerRegistry
 from zephyr.data.task_queue import FAILED, PENDING, RUNNING, SUCCESS, TaskQueue
-from zephyr.data.trading_calendar import TRADING_DAY_GUARDED_SCHEDULES, is_trading_day
+from zephyr.data.calendar import MarketCalendar, get_market_calendar
+from zephyr.data.trading_calendar import TRADING_DAY_GUARDED_SCHEDULES
 from zephyr.shared.io.paths import REPO_ROOT
 
 from . import (
@@ -189,16 +190,24 @@ def _run_schedule_callback(schedule_name: str) -> None:
         log.error("_run_schedule_callback: _global_scheduler 未设置")
 
 
-def _schedule_should_skip(schedule_name: str, sched_config: dict) -> bool:
+def _schedule_should_skip(
+    schedule_name: str,
+    sched_config: dict,
+    calendar: MarketCalendar | None = None,
+) -> bool:
     """交易日历守卫 + interval 时间窗口过滤。返回 True 表示该时段应跳过（返回空字典）。
 
     - 交易日历守卫：盘中/盘后/夜间/巡检时段在非交易日（节假日/调休）自动跳过
     - interval trigger 时间窗口过滤（集合竞价等高频场景）：
       IntervalTrigger 会 7×24 每隔 N 秒触发，需在此过滤非交易时段
+
+    Args:
+        calendar: 市场日历注入（CAND-CRYPTO-001）。None=默认 A股日历（现状行为）。
     """
+    cal = calendar if calendar is not None else get_market_calendar("ashare")
     if schedule_name in TRADING_DAY_GUARDED_SCHEDULES:
         today = datetime.date.today()
-        if not is_trading_day(today):
+        if not cal.is_trading_day(today):
             log.info("时段 %s 跳过：今日(%s)非A股交易日", schedule_name, today)
             return True
     if sched_config.get("type") == "interval":
@@ -245,7 +254,11 @@ def _run_special_schedule(
     return None
 
 
-def _filter_schedule_tasks(tasks: list[dict], schedule_name: str) -> list[dict]:
+def _filter_schedule_tasks(
+    tasks: list[dict],
+    schedule_name: str,
+    calendar: MarketCalendar | None = None,
+) -> list[dict]:
     """过滤该时段的任务。
 
     跳过规则：
@@ -256,9 +269,13 @@ def _filter_schedule_tasks(tasks: list[dict], schedule_name: str) -> list[dict]:
 
     拼写防护：miniqmt 源任务在非交易日历守卫时段（如 monthly_static）若缺少
     trading_day_only 字段（含拼写错误如 trade_day_only），会在此告警。
+
+    Args:
+        calendar: 市场日历注入（CAND-CRYPTO-001）。None=默认 A股日历（现状行为）。
     """
+    cal = calendar if calendar is not None else get_market_calendar("ashare")
     today = datetime.date.today()
-    is_trading = is_trading_day(today)
+    is_trading = cal.is_trading_day(today)
     result = []
     for t in tasks:
         if t.get("schedule") != schedule_name:
@@ -389,6 +406,7 @@ class IntegratorScheduler:
         progress_db: str | Path | None = None,
         jobs_db: str | None = None,
         startup_probes: bool = True,
+        calendar: MarketCalendar | None = None,
     ):
         """初始化调度器。
 
@@ -399,7 +417,12 @@ class IntegratorScheduler:
             startup_probes: 启动时是否执行 live 网络探针（数据源健康检查/CH 探活/破损 part 检测）。
                 生产默认 True；测试必须传 False 隔离环境噪声（#ARCH-DATA-015：
                 baostock 黑名单经 filterwarnings=error 放大为单测失败的事故治本）。
+            calendar: 市场日历注入（CAND-CRYPTO-001，交易日守卫/任务过滤用）。
+                None=默认 A股日历（现状行为）；币侧装配传 get_market_calendar("crypto")。
         """
+        self._calendar: MarketCalendar = (
+            calendar if calendar is not None else get_market_calendar("ashare")
+        )
         self._config_dir = Path(config_dir) if config_dir else _DEFAULT_CONFIG_DIR
         self._jobs_db = jobs_db or _DEFAULT_JOBS_DB
         # 组件
@@ -1741,7 +1764,7 @@ class IntegratorScheduler:
             {task_id: success_bool} 字典
         """
         sched_config = self._schedules.get(schedule_name, {})
-        if _schedule_should_skip(schedule_name, sched_config):
+        if _schedule_should_skip(schedule_name, sched_config, calendar=self._calendar):
             return {}
 
         # 特殊时段（weekend_backfill / integrity_check）独立处理
@@ -1750,7 +1773,7 @@ class IntegratorScheduler:
             return special
 
         # 过滤该时段的任务（跳过 extra.disabled=true 的退役/暂停任务）
-        schedule_tasks = _filter_schedule_tasks(self._tasks, schedule_name)
+        schedule_tasks = _filter_schedule_tasks(self._tasks, schedule_name, calendar=self._calendar)
         if not schedule_tasks:
             log.warning("时段 %s 无任务", schedule_name)
             return {}
