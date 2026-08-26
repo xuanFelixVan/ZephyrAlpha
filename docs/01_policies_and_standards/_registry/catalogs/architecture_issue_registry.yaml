@@ -20719,3 +20719,13 @@ entries:
   impact:
     - '无（作废条目）'
   fix_phase: '作废（2026-08-26）'
+- issue_id: '#ARCH-269'
+  title: DIGEST P2 W11 波：FRONTEND 10 候选晋升+2 REVIEW 归并——通知路由/图渲染/域映射/价值流/血缘渲染/追踪瀑布/合规仪表盘/API代理/飞书/微信
+  severity: P2
+  category: 功能施工
+  adjudication: >-
+    MOD-FE-004~013。10 模块纯内存/DI 落地（后端数据器，呈现层页面接线仍归页面设计批），
+    223 新测全绿（域合并 314 零回归）。REVIEW 归并 2 条：FE-003→MOD-FE-003（P1 已建）/FE-005→FE-010（同稿重登）。
+  impact:
+    - 'src/zephyr/frontend×10；tests/frontend 10 文件'
+  fix_phase: '已落地（2026-08-26，DIGEST P2 W11）'
