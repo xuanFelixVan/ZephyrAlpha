@@ -235,8 +235,8 @@ class TestCollectSectorFundFlow:
         assert len(params) == 2
         assert len(params[0]) == len(INSERT_COLUMNS)
 
-    def test_collect_unregistered_table_fail_closed(self, monkeypatch):
-        """table=None 且品类未在 business_data_categories.yaml 注册 → RuntimeError 明确待办。"""
+    def test_collect_registry_resolves_table(self, monkeypatch):
+        """table=None 时品类已在 business_data_categories.yaml 注册（2026-08-26 DDL 建表+品类登记完成）→ 经 registry 解析全限定表名。"""
         import pandas as pd
 
         _mock_ak(
@@ -244,8 +244,11 @@ class TestCollectSectorFundFlow:
             stock_fund_flow_industry=pd.DataFrame([_industry_row()]),
             stock_fund_flow_concept=pd.DataFrame([_concept_row()]),
         )
-        with pytest.raises(RuntimeError, match="market_sector_fund_flow"):
-            collect_sector_fund_flow(ts=TS, ch_client=_FakeCH(), table=None)
+        client = _FakeCH()
+        n = collect_sector_fund_flow(ts=TS, ch_client=client, table=None)
+        assert n == 2
+        sql, _ = client.inserts[0]
+        assert "c1_market.sector_fund_flow" in sql
 
     def test_collect_no_rows_no_insert(self, monkeypatch):
         import pandas as pd

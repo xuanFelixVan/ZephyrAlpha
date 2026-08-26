@@ -1376,6 +1376,56 @@
   data_source: [internal]
   blueprint: null
 
+# --- 2026-08-26 Owner 全批 DDL 数据层三件（CTR-P1-007 / D3 GAP-F-16 / STR-DABAN-022）---
+
+- category_id: market_execution_report
+  name: "执行分析报告（CTR-P1-007 codegen 契约持久化，TCA/归因数据流上游）"
+  engine: clickhouse
+  database: c1_market
+  table: execution_report
+  schema_file: schemas/categories/market_execution_report.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: lazy
+  frequency: 日频
+  data_source: [internal]
+  blueprint: "src/zephyr/shared/contracts/execution_report.py"
+
+- category_id: market_sector_fund_flow
+  name: "板块级资金流快照（THS即时源，行业+概念，亿元当日累计；分钟粒度=轮询差分）"
+  engine: clickhouse
+  database: c1_market
+  table: sector_fund_flow
+  schema_file: schemas/categories/market_sector_fund_flow.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: lazy
+  frequency: 1分钟
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: market_daban_board_event
+  name: "打板事件表（触板/封住/一字/首触/开板/封单代理/连板，kline+tick推导）"
+  engine: clickhouse
+  database: c1_market
+  table: daban_board_event
+  schema_file: schemas/categories/market_daban_board_event.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: lazy
+  frequency: 日频
+  data_source: [internal]
+  blueprint: null
+
 - category_id: market_st_stock_list
   name: "ST/*ST股票列表（delist_date=1970-01-01表示未摘帽）"
   engine: clickhouse

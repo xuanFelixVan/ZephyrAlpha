@@ -351,14 +351,19 @@ SETTINGS index_granularity = 8192
 # 92号清单 §8.2（2026-08-22）：market_breadth_snapshot=全市场分钟级宽度快照（44号 M1-④ 数据地基，M1-①/③ 消费）
 # 2026-08-26 Owner 全批 DDL 三件：limit_up_pool（GAP-F-13 涨停池明细）/ account_nav_daily
 # （GAP-F-29 实盘净值）/ reconciliation_differences（T2_closure_review §9.1 #2 / tracker #234 CH 侧）
+# 2026-08-26 Owner 全批 DDL 数据层三件：execution_report（CTR-P1-007 契约持久化，P0）/
+# sector_fund_flow（D3/GAP-F-16 THS 板块资金流快照）/ daban_board_event（STR-DABAN-022 打板事件推导）
 from schemas.categories.market_account_nav_daily import MARKET_ACCOUNT_NAV_DAILY_DDL
 from schemas.categories.market_breadth_snapshot import MARKET_BREADTH_SNAPSHOT_DDL
+from schemas.categories.market_daban_board_event import MARKET_DABAN_BOARD_EVENT_DDL
+from schemas.categories.market_execution_report import MARKET_EXECUTION_REPORT_DDL
 from schemas.categories.market_ipo_calendar import IPO_CALENDAR_DDL
 from schemas.categories.market_limit_up_pool import MARKET_LIMIT_UP_POOL_DDL
 from schemas.categories.market_news_sentiment_window import NEWS_SENTIMENT_WINDOW_DDL
 from schemas.categories.market_reconciliation_differences import (
     MARKET_RECONCILIATION_DIFFERENCES_DDL,
 )
+from schemas.categories.market_sector_fund_flow import MARKET_SECTOR_FUND_FLOW_DDL
 from schemas.categories.market_stk_limit import STK_LIMIT_DDL
 from schemas.categories.market_suspend import SUSPEND_DDL
 from schemas.categories.market_us_futures_intraday import US_FUTURES_INTRADAY_DDL
@@ -392,6 +397,10 @@ _ALL_DDL: list[tuple[str, str]] = [
     ("c1_market.limit_up_pool", MARKET_LIMIT_UP_POOL_DDL),
     ("c1_market.account_nav_daily", MARKET_ACCOUNT_NAV_DAILY_DDL),
     ("c1_market.reconciliation_differences", MARKET_RECONCILIATION_DIFFERENCES_DDL),
+    # 2026-08-26 Owner 全批 DDL 数据层三件（CTR-P1-007 / D3 GAP-F-16 / STR-DABAN-022）
+    ("c1_market.execution_report", MARKET_EXECUTION_REPORT_DDL),
+    ("c1_market.sector_fund_flow", MARKET_SECTOR_FUND_FLOW_DDL),
+    ("c1_market.daban_board_event", MARKET_DABAN_BOARD_EVENT_DDL),
 ]
 
 # 增量迁移（ALTER TABLE ADD COLUMN IF NOT EXISTS）
@@ -434,6 +443,10 @@ _EXPECTED_ENGINES: dict[str, str] = {
     "limit_up_pool": "ReplacingMergeTree",
     "account_nav_daily": "ReplacingMergeTree",
     "reconciliation_differences": "ReplacingMergeTree",
+    # 2026-08-26 数据层三件：契约持久化/轮询快照/日频推导同键替换幂等
+    "execution_report": "ReplacingMergeTree",
+    "sector_fund_flow": "ReplacingMergeTree",
+    "daban_board_event": "ReplacingMergeTree",
 }
 
 _DATABASE = "c1_market"

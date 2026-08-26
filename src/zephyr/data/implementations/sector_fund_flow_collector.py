@@ -316,7 +316,20 @@ def collect_sector_fund_flow(
     if not entries:
         return 0
     cols = ", ".join(INSERT_COLUMNS)
-    rows = [tuple(getattr(e, c) for c in INSERT_COLUMNS) for e in entries]
+    # trade_date/timestamp 列 str→date/datetime 编组（clickhouse-driver Date/DateTime64 列
+    # 要求日期时间对象；2026-08-26 DDL 建表写入路径实测实证 str 抛 AttributeError，
+    # 对齐 d74dcb8b64 limit_up_pool_collector 同修先例）
+    rows = [
+        tuple(
+            date.fromisoformat(getattr(e, c))
+            if c == "trade_date"
+            else datetime.strptime(getattr(e, c), "%Y-%m-%d %H:%M:%S")
+            if c == "timestamp"
+            else getattr(e, c)
+            for c in INSERT_COLUMNS
+        )
+        for e in entries
+    ]
     ch_client.execute(f"INSERT INTO {full_table} ({cols}) VALUES", rows)
     return len(rows)
 
