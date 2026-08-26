@@ -1,0 +1,206 @@
+#!/usr/bin/env python
+# [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md | §4
+# [MODULE] scripts.ch.backfill_research_report_2025
+# [DOMAIN] D_DATA
+# [DEPENDENCIES] akshare(lazy); zephyr.data.ch_writer; zephyr.data.news_dedup; zephyr.data.provider_base
+# [CONSUMERS] (一次性补采 CLI，无模块消费者；产物=c3_fundamental.news_data 2025 年研报行)
+# [STARTUP] manual
+# [MATURITY] design
+# [INVARIANTS] 断点续作（进度文件记已完成 symbol，重启跳过）；单股失败跳过不阻断；限速 sleep 可配默认 0.4s；category 显式写 research_report（CAND-DAT-024 四分治理）；news_id=MD5(source+title+publish_time) 天然幂等，重复跑不产生重复行
+# [MODIFY-GUARD] none
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] akshare 导入失败/标的列表为空→exit 1；单股失败 continue；ClickHouse 写入失败→exit 2
+# [TESTS] tests/scripts/test_ch_backfill_research_report_2025.py
+# [TTL] permanent
+"""backfill_research_report_2025.py — CAND-DAT-023：2025 年东财研报专项补采器。
+
+背景：2025 年新闻语料塌陷（全年仅 3.7 万条，采集缺口）。实测东财研报接口
+``ak.stock_research_report_em(symbol)`` 可回溯 2025 全年（茅台 771 条至 2017-08）。
+本脚本全 A 逐只拉取、过滤 2025 年报告、按 news_data 标准行写入
+（``category='research_report'``，配合 CAND-DAT-024 公告/研报/宏观数据/新闻四分治理）。
+
+用法:
+    python scripts/ch/backfill_research_report_2025.py                # 全量（~5000 只，约 1-2 小时）
+    python scripts/ch/backfill_research_report_2025.py --limit 20     # 试跑 20 只
+    python scripts/ch/backfill_research_report_2025.py --no-resume    # 不清进度从头跑
+
+依据: CAND-DAT-023（candidate_module_registry.yaml v1.1.3）
+"""
+
+from __future__ import annotations
+
+import argparse
+import logging
+import sys
+import time
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(ROOT / "src"))
+
+from zephyr.data import ch_writer  # noqa: E402
+from zephyr.data.news_dedup import NEWS_DATA_COLUMNS, build_news_row  # noqa: E402
+from zephyr.data.provider_base import FetchResult  # noqa: E402
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+log = logging.getLogger(__name__)
+
+_TBL_NEWS = "c3_fundamental.news_data"
+# 写入列 = 标准 10 列 + category（CAND-DAT-024：研报显式打标，不动 build_news_row 契约）
+_WRITE_COLUMNS: list[str] = NEWS_DATA_COLUMNS + ["category"]
+_CATEGORY = "research_report"
+
+_YEAR_START = "2025-01-01"
+_YEAR_END = "2025-12-31"
+
+PROGRESS_FILE = ROOT / ".runtime" / "backfill_rr2025_done.txt"
+
+
+def get_all_a_symbols() -> list[str]:
+    """全 A 股 6 位代码列表（优先 CH c1_market.stock_list 本地源，兜底 akshare 现货快照）。"""
+    codes = _symbols_from_ch()
+    if not codes:
+        codes = _symbols_from_akshare()
+    log.info("全 A 标的 %d 只", len(codes))
+    return codes
+
+
+def _symbols_from_ch() -> list[str]:
+    """c1_market.stock_list 取上市 A 股（本地源优先——东财快照接口有反爬断连风险，2026-08-26 实证）。"""
+    from zephyr.data import ch_reader  # noqa: PLC0415 — lazy
+
+    tsv = ch_reader.query(
+        "SELECT DISTINCT symbol FROM c1_market.stock_list WHERE market = 'A股' AND list_status = '上市'"
+    )
+    if not tsv or not tsv.strip():
+        log.warning("CH stock_list 为空或不可达，回退 akshare 快照")
+        return []
+    codes = sorted({line.strip() for line in tsv.strip().split("\n") if line.strip().isdigit()})
+    log.info("标的来源: CH c1_market.stock_list（%d 只）", len(codes))
+    return codes
+
+
+def _symbols_from_akshare() -> list[str]:
+    """akshare 现货快照兜底。"""
+    import akshare as ak  # noqa: PLC0415 — lazy：仅本函数触达
+
+    spot = ak.stock_zh_a_spot_em()
+    codes = sorted({str(raw)[-6:] for raw in spot["代码"] if str(raw)[-6:].isdigit()})
+    log.info("标的来源: akshare stock_zh_a_spot_em（%d 只）", len(codes))
+    return codes
+
+
+def load_done_symbols() -> set[str]:
+    """断点续作：已完成 symbol 集合。"""
+    if not PROGRESS_FILE.exists():
+        return set()
+    return {line.strip() for line in PROGRESS_FILE.read_text(encoding="utf-8").splitlines() if line.strip()}
+
+
+def fetch_2025_rows(code: str, df) -> list[tuple]:
+    """从单只股票的研报 DataFrame 过滤 2025 年并构造写入行（11 元组含 category）。"""
+    rows: list[tuple] = []
+    for _, r in df.iterrows():
+        title = str(r.get("报告名称") or "")
+        if not title:
+            continue
+        pub = str(r.get("日期") or "")[:10]
+        if not (_YEAR_START <= pub <= _YEAR_END):
+            continue
+        org = str(r.get("机构") or "").strip()
+        rating = str(r.get("东财评级") or "").strip()
+        industry = str(r.get("行业") or "").strip()
+        parts = [f"机构:{org}"] if org else []
+        if rating:
+            parts.append(f"评级:{rating}")
+        if industry:
+            parts.append(f"行业:{industry}")
+        base = build_news_row(
+            pub,
+            title,
+            str(r.get("报告PDF链接") or ""),
+            " | ".join(parts),
+            "akshare_research_report",
+            "akshare",
+        )
+        rows.append(tuple(base) + (_CATEGORY,))
+    return rows
+
+
+def flush(rows: list[tuple]) -> None:
+    """批量写入 ClickHouse（write_result；失败抛异常由调用方exit 2）。"""
+    if not rows:
+        return
+    result = FetchResult(
+        table=_TBL_NEWS,
+        columns=_WRITE_COLUMNS,
+        rows=rows,
+        last_key=_YEAR_END,
+        elapsed_sec=0.0,
+    )
+    ok = ch_writer.write_result(result)
+    if not ok:
+        raise RuntimeError(f"ClickHouse 写入失败（{len(rows)} 行）")
+
+
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="2025 年东财研报专项补采（CAND-DAT-023）")
+    parser.add_argument("--limit", type=int, default=0, help="只跑前 N 只（0=全部）")
+    parser.add_argument("--sleep", type=float, default=0.4, help="每股间隔秒数（反爬限速）")
+    parser.add_argument("--batch-size", type=int, default=200, help="多少只 flush 一次")
+    parser.add_argument("--no-resume", dest="resume", action="store_false")
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = _parse_args()
+    try:
+        symbols = get_all_a_symbols()
+    except Exception as exc:  # noqa: BLE001 — akshare 不可达 fail-closed
+        log.error("标的列表获取失败（akshare 不可达？）: %s", exc)
+        sys.exit(1)
+    if args.limit > 0:
+        symbols = symbols[: args.limit]
+
+    done = load_done_symbols() if args.resume else set()
+    todo = [s for s in symbols if s not in done]
+    log.info("待采 %d 只（跳过已完成 %d 只）", len(todo), len(symbols) - len(todo))
+    if not todo:
+        log.info("无待采标的，退出")
+        return
+
+    import akshare as ak  # noqa: PLC0415 — lazy：标的后触达
+
+    PROGRESS_FILE.parent.mkdir(parents=True, exist_ok=True)
+    total_rows = 0
+    batch: list[tuple] = []
+    t0 = time.time()
+    with open(PROGRESS_FILE, "a", encoding="utf-8") as pf:
+        for idx, code in enumerate(todo, 1):
+            try:
+                df = ak.stock_research_report_em(symbol=code)
+            except Exception as exc:  # noqa: BLE001 — 单股失败不阻断
+                log.debug("stock_research_report_em(%s) 失败: %s", code, exc)
+                df = None
+            if df is not None and len(df) > 0:
+                batch.extend(fetch_2025_rows(code, df))
+            pf.write(code + "\n")
+            pf.flush()
+            if idx % args.batch_size == 0 or idx == len(todo):
+                try:
+                    flush(batch)
+                except RuntimeError as exc:
+                    log.error("%s", exc)
+                    sys.exit(2)
+                total_rows += len(batch)
+                rate = idx / (time.time() - t0)
+                log.info("进度 %d/%d 只（%.1f 只/秒），本批写入 %d 行，累计 %d 行", idx, len(todo), rate, len(batch), total_rows)
+                batch = []
+            time.sleep(args.sleep)
+    log.info("完成：%d 只 → %d 行（耗时 %.0f 秒）", len(todo), total_rows, time.time() - t0)
+
+
+if __name__ == "__main__":
+    main()
