@@ -1,16 +1,16 @@
 # [BLUEPRINT] MOD-SIG-080 | 待统筹登记（blueprint 未建，真源=缺口总账 GAP-F-16 行）
 # [MODULE] zephyr.signal_ashare.counter_trend_board
 # [DOMAIN] D_ASHARE_SIGNAL
-# [DEPENDENCIES] zephyr.signal_ashare.index_contribution_decomposer(resample_quotes_to_minute 复用，MOD-SIG-071); c1_market.index_quote（只读，3秒快照重采样分钟）; c1_market.kline_sector_intraday（只读，板块分钟）
+# [DEPENDENCIES] zephyr.signal_ashare.index_contribution_decomposer(resample_quotes_to_minute 复用，MOD-SIG-071); zephyr.data.implementations.sector_code_bridge（段内差分+881→880 重钥，MOD-DAT-sector_code_bridge）; c1_market.index_quote（只读，3秒快照重采样分钟）; c1_market.kline_sector_intraday（只读，板块分钟）; c1_market.sector_fund_flow（只读，THS 板块资金流快照，亿元当日累计）
 # [CONSUMERS] （候选：板块页逆势榜 4 卡——逆势上涨/下跌段资金流入/率先反弹/最抗跌）
 # [STARTUP] imported
 # [MATURITY] testing
-# [INVARIANTS] 主下跌段=指数日内峰→谷（峰须在谷前，段长 ≥down_segment_min_minutes 否则全卡降级不出伪榜）；四卡口径封闭；资金腿未供给仅该卡降级（其余三卡不受影响）；板块缺分钟计覆盖分钟数留痕；PIT（全部数据 ≤ trade_date）；输入校验 fail-closed；frozen dataclass asdict JSON 可序列化
+# [INVARIANTS] 主下跌段=指数日内峰→谷（峰须在谷前，段长 ≥down_segment_min_minutes 否则全卡降级不出伪榜）；四卡口径封闭；资金腿 fund_flow=None 时 run 层随可用客户端自动供给（sector_fund_flow 段内差分+sector_code_bridge 重钥），查询异常/无客户端仅该卡降级（其余三卡不受影响）；板块缺分钟计覆盖分钟数留痕；PIT（全部数据 ≤ trade_date）；输入校验 fail-closed；frozen dataclass asdict JSON 可序列化
 # [MODIFY-GUARD] docs/_working/2026-08-22-frontend-backend-gap-ledger.md GAP-F-16 行
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] trade_date 非法→ValueError（fail-closed）；查询异常/客户端不可得→对应腿降级 notes 留痕不抛
+# [ERROR_CONTRACT] trade_date 非法→ValueError（fail-closed）；查询异常/客户端不可得→对应腿降级 notes 留痕不抛（sector_fund_flow 查询异常仅资金腿降级）
 # [TESTS] tests/signal_ashare/test_counter_trend_board.py
 # [A_module] module_id=MOD-SIG-080 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -24,8 +24,10 @@ r"""MOD-SIG-080 — 逆势榜 4 卡（GAP-F-16，板块页逆势榜后端）。
 - **主下跌段**：指数日内最高价峰 → 其后最低价谷（峰须在谷前；段长≥
   down_segment_min_minutes，否则"无有效下跌段"全卡降级）。段内分钟=(峰,谷]。
 - **卡1 逆势上涨**：段内板块分钟累计收益 >0 者，按累计收益降序。
-- **卡2 下跌段资金流入**：fund_flow 注入位（板块→段内主力净流入）；未供给
-  → 仅本卡降级（"资金流数据未供给"），正流入降序。
+- **卡2 下跌段资金流入**：fund_flow 注入位（板块→段内主力净流入，段末累计
+  −段前累计差分口径，亿元）；None → run 层随可用客户端自动加载
+  （c1_market.sector_fund_flow 快照差分 + sector_code_bridge 881→880 重钥），
+  加载失败/无客户端 → 仅本卡降级（"资金流数据未供给"），正流入降序。
 - **卡3 率先反弹**：谷后 rebound_window_minutes 内，板块自谷收盘累计涨幅
   首过 rebound_threshold_pct 的分钟数，升序（未过阈值不入选；谷=末日无
   观察窗→本卡降级）。MVP 口径：从低点收复速度即"率先"，不要求板块段内曾跌
@@ -59,6 +61,7 @@ from dataclasses import dataclass, field
 from datetime import date, datetime
 from typing import Any, Final, Mapping
 
+from zephyr.data.implementations.sector_code_bridge import fund_flow_for_segment
 from zephyr.signal_ashare.index_contribution_decomposer import resample_quotes_to_minute
 
 logger = logging.getLogger(__name__)
@@ -88,6 +91,13 @@ SELECT trade_date, code, close
 FROM c1_market.kline_sector_intraday
 WHERE toDate(trade_date) = %(trade_date)s AND period = %(period)s
 ORDER BY code, trade_date
+"""
+
+SQL_SECTOR_FUND_FLOW: Final = """
+SELECT sector_name, timestamp, net_amount
+FROM c1_market.sector_fund_flow
+WHERE trade_date = %(trade_date)s AND sector_type = 'industry'
+ORDER BY sector_name, timestamp
 """
 
 _CARD_TITLES: Final[dict[str, str]] = {
@@ -366,6 +376,12 @@ def _default_client() -> Any | None:
         return None
 
 
+def _load_fund_flow_leg(client: Any, current: date, start_ts: str, end_ts: str) -> dict[str, float]:
+    """资金腿加载：sector_fund_flow 当日快照 → 段内差分 → 880 重钥 {880code: 净流入}。"""
+    rows = client.execute(SQL_SECTOR_FUND_FLOW, {"trade_date": current})
+    return fund_flow_for_segment(rows, start_ts, end_ts)
+
+
 def run_counter_trend_board(
     trade_date: str | date | datetime,
     ch_client: Any | None = None,
@@ -383,7 +399,9 @@ def run_counter_trend_board(
         index_series/sector_series: 测试/编排注入位；None 时经 client 现查
             （指数腿=index_quote 重采样，复用 MOD-SIG-071 口径；板块腿=
             kline_sector_intraday）。
-        fund_flow: 板块下跌段净流入注入位；None → 卡2 降级。
+        fund_flow: 板块下跌段净流入注入位（段末累计−段前累计，亿元）；
+            None → 随可用客户端自动加载（sector_fund_flow 快照差分+
+            sector_code_bridge 重钥 880），加载失败/无客户端 → 卡2 降级。
 
     Returns:
         CounterTrendBoard；单腿异常独立降级（notes 留痕）。
@@ -393,9 +411,9 @@ def run_counter_trend_board(
     date_str = current.isoformat()
     notes: list[str] = []
 
-    need_client = index_series is None or sector_series is None
-    client = ch_client if ch_client is not None else (_default_client() if need_client else None)
-    if need_client and client is None:
+    core_need = index_series is None or sector_series is None
+    client = ch_client if ch_client is not None else (_default_client() if core_need else None)
+    if core_need and client is None:
         return _degraded_board(date_str, cfg.index_symbol, "CH 客户端不可得，逆势榜整体降级")
 
     if index_series is None:
@@ -417,6 +435,16 @@ def run_counter_trend_board(
             notes.append(f"kline_sector_intraday 查询异常，板块腿降级: {e!r}")
 
     board = build_counter_trend_board(index_series, sector_series, fund_flow, cfg)
+    if fund_flow is None and not board.degraded:
+        if client is None:
+            notes.append("CH 客户端不可得，资金腿保持未供给（卡2 降级）")
+        else:
+            try:
+                loaded = _load_fund_flow_leg(client, current, board.down_start_ts, board.down_end_ts)
+            except Exception as e:  # noqa: BLE001 — 资金腿降级
+                notes.append(f"sector_fund_flow 查询异常，资金腿降级: {e!r}")
+            else:
+                board = build_counter_trend_board(index_series, sector_series, loaded, cfg)
     if not notes:
         return board
     return CounterTrendBoard(

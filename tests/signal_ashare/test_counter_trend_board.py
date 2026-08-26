@@ -232,3 +232,88 @@ def test_run_no_client_degraded(monkeypatch: pytest.MonkeyPatch) -> None:
     )
     board = run_counter_trend_board(trade_date=D, ch_client=None, config=_cfg())
     assert board.degraded is True
+
+
+# ------------------------------------------------------------------
+# 资金腿自动加载接线（F16INJECT：sector_fund_flow 段内差分+880 重钥）
+# ------------------------------------------------------------------
+
+
+class _FakeFundClient:
+    """鸭子类型 client：仅应答 sector_fund_flow 查询（合成快照行）。"""
+
+    def __init__(self, rows: list | None = None, exc: Exception | None = None) -> None:
+        self._rows = rows or []
+        self._exc = exc
+
+    def execute(self, sql: str, params: dict) -> list:
+        assert "sector_fund_flow" in sql, f"非预期 SQL: {sql}"
+        if self._exc is not None:
+            raise self._exc
+        return list(self._rows)
+
+
+# 段=09:32(峰)→09:36(谷)：银行段前 2.0 段末 10.0 → 段内 +8.0；钢铁净流出
+FUND_ROWS = [
+    ("银行", f"{D} 09:32:00", 2.0),
+    ("银行", f"{D} 09:36:00", 10.0),
+    ("钢铁", f"{D} 09:36:00", -1.5),
+]
+
+
+def test_run_fund_leg_auto_loaded() -> None:
+    board = run_counter_trend_board(
+        trade_date=D, ch_client=_FakeFundClient(rows=FUND_ROWS),
+        index_series=INDEX, sector_series={"880001": SECT_A}, config=_cfg(),
+    )
+    card2 = next(c for c in board.cards if c.card == "fund_inflow")
+    assert card2.degraded is False
+    assert [i.sector_code for i in card2.items] == ["880471"]  # 银行 881→880 重钥
+    assert card2.items[0].metric_value == pytest.approx(8.0)  # 段末 10.0 − 段前 2.0
+    assert not any("资金" in n for n in board.notes)  # 降级标注已核销
+
+
+def test_run_fund_leg_query_error_degrades_only_card2() -> None:
+    board = run_counter_trend_board(
+        trade_date=D, ch_client=_FakeFundClient(exc=RuntimeError("boom")),
+        index_series=INDEX, sector_series={"880001": SECT_A}, config=_cfg(),
+    )
+    assert board.degraded is False
+    card2 = next(c for c in board.cards if c.card == "fund_inflow")
+    assert card2.degraded is True
+    assert any("资金腿降级" in n for n in board.notes)
+    card1 = next(c for c in board.cards if c.card == "counter_rally")
+    assert card1.degraded is False  # 其余三卡不受影响
+
+
+def test_run_fund_leg_empty_table_card2_no_positive() -> None:
+    board = run_counter_trend_board(
+        trade_date=D, ch_client=_FakeFundClient(rows=[]),
+        index_series=INDEX, sector_series={"880001": SECT_A}, config=_cfg(),
+    )
+    card2 = next(c for c in board.cards if c.card == "fund_inflow")
+    assert card2.degraded is True
+    assert "无正净流入" in card2.note  # 空表=如实空 dict，非"未供给"
+
+
+def test_run_fund_leg_no_client_keeps_degraded() -> None:
+    """序列注入且无客户端 → 资金腿保持未供给降级（不触默认客户端）。"""
+    board = run_counter_trend_board(
+        trade_date=D, ch_client=None,
+        index_series=INDEX, sector_series={"880001": SECT_A}, config=_cfg(),
+    )
+    card2 = next(c for c in board.cards if c.card == "fund_inflow")
+    assert card2.degraded is True
+    assert any("资金腿" in n for n in board.notes)
+
+
+def test_run_fund_leg_explicit_injection_bypasses_load() -> None:
+    """显式注入 fund_flow → 不查库（注入位优先）。"""
+    board = run_counter_trend_board(
+        trade_date=D, ch_client=_FakeFundClient(exc=RuntimeError("不应被调用")),
+        index_series=INDEX, sector_series={"880001": SECT_A},
+        fund_flow={"880001": 5.0}, config=_cfg(),
+    )
+    card2 = next(c for c in board.cards if c.card == "fund_inflow")
+    assert card2.degraded is False
+    assert card2.items[0].metric_value == pytest.approx(5.0)
