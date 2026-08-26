@@ -87,7 +87,7 @@ scope: 07_trading_decision_architecture
 | [90_methodology_open_questions.md](90_methodology_open_questions.md) | 方法论遗留提案（P0/P1 施工优先级表+远期开放问题） | active v2.0.3 |
 | [91_density_prediction.md](91_density_prediction.md) | 密度预测与 QNN 远期愿景（待讨论） | draft v0.1.4 |
 | [92_phase2_business_construction_order.md](92_phase2_business_construction_order.md) | 阶段二业务层施工顺序清单（44 号升级+2026-08 架构审查升级项全量按依赖/冲突面排序成波次，并发施工派单真源；ClickHouse 数据实证分支裁定） | active v1.0.0（2026-08-22 Owner 指令落盘） |
-| [94_crypto_quant_expansion.md](94_crypto_quant_expansion.md) | 数字货币量化扩展设计（30 域复用矩阵三类划分+四横切改造点+CAND-CRYPTO 族 8 条+施工波次 W0-W4；Phase 1 现货 MVP/Phase 2 永续；开放问题 6 项待 Owner 拍板） | draft v0.1.0 |
+| [94_crypto_quant_expansion.md](94_crypto_quant_expansion.md) | 数字货币量化扩展设计（30 域复用矩阵三类划分+四横切改造点+CAND-CRYPTO 族 10 条+施工波次 W0-W4+§7 外部实战参考；**Q1-Q6 已 Owner 拍板**：币安主+OKX 备/BTC+ETH 现货 MVP/Phase 2≥3 月实盘记录/免费 WS/独立账本/免费信源；W0 市场日历抽象已派单） | active v1.0.0 |
 
 ## 1. 文档定位
 
@@ -686,7 +686,7 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 57_daily_cycle_sop | 日循环 SOP（5x 验证层，P0-5） | ✅ 已定稿 | active v1.1.0（2026-08-24 RUN-05 演练节入册） |
 | 68_code_algorithm_review_pipeline | 代码与算法多模型审查流水线（跨切治理层） | ✅ 已定稿 | active v1.2.1 |
 | 92_phase2_business_construction_order | 阶段二业务层施工顺序清单（9x 开放问题与施工排序段） | ✅ 已定稿 | active v1.0.0（2026-08-22 Owner 指令落盘） |
-| 94_crypto_quant_expansion | 数字货币量化扩展设计（9x 新战线启动段；CAND-CRYPTO-001~009 登记真源） | 本会话落盘 | draft v0.2.0（外部材料审查升级，CAND-CRYPTO-009 补登；开放问题 Q1-Q6 待 Owner 拍板后升 active） |
+| 94_crypto_quant_expansion | 数字货币量化扩展设计（9x 新战线启动段；CAND-CRYPTO-001~010 登记真源） | 本会话落盘 | active v1.0.0（Q1-Q6 已拍板翻正；W0 派单 dispatch/2026-08-26-crypto-w0-market-calendar-order.md） |
 
 ## 8. 产出物命名规范
 
@@ -880,3 +880,4 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 2026-08-24 | 2.12.0 | **G4 批全量版本同步 + 92 号补登**——§0 目录 54→55 篇：92_phase2_business_construction_order 补登（active v1.0.0，2026-08-22 Owner 指令落盘，此前漏登）；§0 目录+§7.3 与各文档 frontmatter 全量对齐一轮（44 号 v1.2.0→v1.3.0、68 号 draft v1.2.0→active v1.2.1、50 号 draft→active v1.1.1、90 号 draft→active v2.0.3、19 号 draft→active v1.0.1、28 号 §7.3 骨架误标→active v1.2.4 等 40+ 处版本/状态漂移修正）；§7.3 补登缺失行（45/56/57/68/92）；66 号行注记 task_board 死信标签联动已补、57 号行注记 RUN-05 演练节入册 | 施工清单 P3-27 驱动：44/68 版本漂移+92 号漏登实证；本轮为快照口径对齐（frontmatter 提取脚本实证），§2/§3/§5 内嵌历史版本引用沿用既有惯例不逐处同步，下轮审查时再核 |
 | 2026-08-26 | 2.13.0 | **94 号补登（数字货币量化扩展设计，新战线启动）**——§0 目录 55→56 篇 + §7.3 占用表补登 94 号；94_crypto_quant_expansion.md 落位 9x 段（93 已占用，取下一空号 94），draft v0.1.0 待 Owner 拍板：30 域复用矩阵三类划分（共用/参数化/新建）+ 四横切改造点（市场日历抽象/T+0/规则可插拔/杠杆资金费率 Phase 2）+ 施工波次 W0-W4 + 开放问题 Q1-Q6；candidate_module_registry.yaml 同步登记 CAND-CRYPTO-001~008 族 8 条（查重零命中，P0×4/P1×3/P2×1） | Owner 裁定驱动：宣布启动数字货币量化战线，要求先设计好再施工——复用边界与横切改造点先行锚定，新建构件走 CAND→晋升流程（治理纪律 D1 查重已做） |
 | 2026-08-26 | 2.13.1 | **94 号 v0.2.0 版本同步（外部材料审查升级）**——§0 目录+§7.3 两处：94 号 draft v0.1.0→v0.2.0（新增 §7 外部实战参考——低学历勇闯量化系列 54 图全量审查：行情录制端 6 要点/跨境网络双活+传输加工 8 要点/实盘运营 4 项/不采用 5 项；§5 候选 8→9 条；§6 波次 W1 加网络层；§8 加"不纳入预测市场"）；candidate_module_registry.yaml 补登 CAND-CRYPTO-009（跨境网络双活传输层 P0）+ CAND-CRYPTO-002 联动补录制端设计引用 | Owner 裁定驱动（审查报告三动作批准）：v0.1.0 遗漏跨境网络层（境内→境外交易所双活=实盘刚需），已验证实战设计吸收为 002/009 施工参考，Polymarket 维度裁定不纳入仅知识储备 |
+| 2026-08-26 | 2.14.0 | **94 号翻正 active v1.0.0（Q1-Q6 拍板）+ W0 派单 + CAND-CRYPTO-010**——§0 目录+§7.3 两处：94 号 draft v0.2.0→active v1.0.0（§9 拍板：币安主+OKX 备/BTC+ETH 现货 MVP/Phase 2≥3 月实盘记录/免费 WS/独立账本/免费信源；行业调查补登 CAND-CRYPTO-010 币圈宏观情绪面板 P2，003/004 tech_notes 联动扩充多空比+清算热图/鲸鱼+稳定币；§5 候选 9→10 条）；W0 市场日历抽象派单落盘（dispatch/2026-08-26-crypto-w0-market-calendar-order.md，AI-CAL-001）。并发覆写事故处置：94 号 v0.2.0 提交后工作区与 HEAD 混合态（frontmatter 回滚/§5 丢 009 行/注册表头部 009 日志行丢失），以全量覆写重建 v1.0.0+日志补回并立即提交固化 | Owner 拍板 Q1-Q6+批准行业调查结论；备忘翻正后 W0 正式开工；共享工作区并发覆写以"全量重建+立即提交"处置（94 号修订记录 v1.0.0 已留痕） |

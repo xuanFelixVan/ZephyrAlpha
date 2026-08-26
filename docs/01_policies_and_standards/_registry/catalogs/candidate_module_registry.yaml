@@ -19,6 +19,8 @@ created: '2026-07-31'
 last_updated: '2026-08-26'
 # 2026-08-16: +CAND-AUTONOMYCORE-002（FHS 引擎，双轮审查深挖④裁定，AI-RFIX-001）
 # 2026-08-26: +8 条 CAND-CRYPTO 族（数字货币量化战线启动批，Owner 2026-08-26 裁定启动，设计真源 94_crypto_quant_expansion.md §5；P0×4/P1×3/P2×1，W0 地基=001 市场日历抽象；族内查重 2026-08-26 全量检索零命中）
+# 2026-08-26: +CAND-CRYPTO-009（跨境网络双活传输层，外部材料审查批，Owner 裁定，94号 v0.2.0 §7.2 设计真源——低学历勇闯量化系列：第三篇网络坑 7 图+回测中篇 25 页；CAND-CRYPTO-002 联动补录制端 6 要点引用）【本行曾因并发覆写丢失，2026-08-26 补回】
+# 2026-08-26: +CAND-CRYPTO-010（币圈宏观情绪面板，行业调查批，Owner 拍板 94号 Q1-Q6 联动，94号 v1.0.0；003 tech_notes 扩充多空比+清算热图+Deribit 期权、004 tech_notes 扩充资金流三网关——鲸鱼地址/稳定币流动/交易所储备）
 # 2026-08-18: +CAND-SEC-001（Whistleblower Agent MVP，裁定 9 联动降级远期 P4，AI-ADJ-004）
 # 2026-08-20: +40 条（AI-NIGHT-001 阶段3 未来工程-大型登记批，tracker #223 承接，均不施工附触发条件）
 # 2026-08-21: +CAND-FBL-002（FLE 自卫门禁激活专项，#61 挂起转正）+CAND-GOVDRIFT-001（drift_events 容量保留，任务1 残余）（AI-RESIDUAL-001）
@@ -19214,3 +19216,75 @@ entries:
   last_review_outcome: "candidate 登记（2026-08-26 Owner 裁定，外部材料审查批）：W1 波次与 002 同行，002 施工启动即晋升"
   acquisition_method: self_build
   acquisition_source: "Caddy（开源）+ Cloudflare Zero Trust（免费层）"
+
+  # ----------------------------------------------------------
+  # CAND-CRYPTO-010: 币圈宏观情绪面板（W4/Phase 2——恐惧贪婪/BTC占比/ETF/USDT溢价/事件日历）
+  # 来源: 2026-08-26 行业调查批（Owner 拍板 94号 Q1-Q6 联动）
+  # 设计真源: 94_crypto_quant_expansion.md §5 候选 010 + §9 Q6 裁定（v1.0.0）
+  # ----------------------------------------------------------
+- id: CAND-CRYPTO-010
+  name: "币圈宏观情绪面板(Crypto Macro Sentiment Panel)"
+  aliases: ["恐惧贪婪指数", "fear greed index", "BTC 占比", "btc dominance", "ETF 流量", "USDT 场外溢价", "币圈事件日历"]
+  domain: D_ALT_DATA
+  domain_status: skeleton
+  domain_node_count: 0
+  sub_layer: "alt_data/macro_sentiment"
+  panorama_position:
+    depgraph: {has_position: false, note: "alt_data 域新增轻量采集节点（日频级），晋升时新建；币版 regime_cycle/event_calendar 的输入上游"}
+    dataflowgraph: {has_position: true, note: "alternative.me API/ETF 流/场外溢价/解锁日历 → alt_data 管道 → 币版 regime 与情绪因子消费"}
+    decisiongraph: {has_position: true, note: "宏观情绪作为币版 regime 节流输入（对标 A股 regime 分工：市场级风险节流非 alpha 择时）"}
+    blueprint: {has_position: true, note: "归属 D-ALT-DATA 蓝图（94号 §5 候选 010）"}
+  description: >-
+    币圈宏观情绪与事件日历采集面板（轻量日频级）：
+    ①恐惧贪婪指数（Fear & Greed Index，alternative.me 免费 API——六因子加权：波动率 25%/
+    市场动量成交量 25%/社交媒体 15%/调查 15%/BTC 占比 10%/谷歌趋势 10%，0-100 极端恐惧到极端贪婪）；
+    ②BTC 占比（BTC Dominance——避险轮动/山寨季信号，兼为恐惧贪婪成分）；
+    ③ETF 流量（现货 ETF 净流入流出=机构资金风向标）；
+    ④USDT 场外溢价（亚洲资金入场指标）；
+    ⑤事件日历（减半/大额解锁/宏观发布——大额解锁=确定性抛压事件，币版 regime_cycle/
+    event_calendar 输入，与 A股特殊交易日数据资产 17 号同构）。
+    定位=市场级风险节流输入（regime 分工边界：非 alpha 择时，与项目"情绪周期 vs regime"铁律一致）。
+  capability: ""
+  problem_it_solves: "币版 regime/情绪体系无宏观输入源——A股有政策日历/北向/两融，币圈对应物是恐惧贪婪/BTC占比/ETF流/稳定币/解锁日历，缺它则币版风险节流瞎跑"
+  trigger_signals:
+    - "W4 币版策略首批定义启动（ regime 输入需求出现）"
+    - "94号 Q6 裁定落地（2026-08-26 已命中）"
+  keywords: ["fear greed index", "btc dominance", "etf flows", "usdt premium", "token unlock", "halving", "恐惧贪婪", "占比", "解锁日历"]
+  upstream_deps: []
+  downstream_consumers:
+    - {path: "src/zephyr/regime", note: "币版 regime 节流输入（远期）"}
+    - {path: "src/zephyr/factor", note: "宏观情绪因子（Phase 2）"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "alt_data 域无币圈宏观情绪源（2026-08-26 盘点）；恐惧贪婪指数等为币圈特有，A股侧无对应物"}
+    blocking_question: null
+    result: candidate
+  status: candidate
+  priority: P2
+  created_at: '2026-08-26'
+  last_reviewed_at: '2026-08-26'
+  promoted_to: ""
+  source_draft: "94_crypto_quant_expansion.md"
+  source_section: "§5 新建候选清单 + §9 Q6 裁定"
+  original_id: ""
+  estimated_complexity: S
+  tech_notes: >-
+    全部轻量日频采集：alternative.me 免费 API（无需 key）+ ETF 流公开数据（Farside/SoSoValue 类）
+    + 解锁日历（TokenUnlocks 类公开表）。2026 行业实证：恐惧贪婪六因子口径（alternative.me 官方）、
+    资金流三网关（CryptoQuant/Glassnode 口径，重维度归 CAND-CRYPTO-004）、衍生品四维（归 CAND-CRYPTO-003）——
+    本条目只承接宏观情绪与日历，不重复 003/004 的维度（治理纪律 D1 能合并不新建）。
+  risks:
+    - "免费源稳定性（alternative.me 限频/ETF 流来源变更）——日频采集+失败降级标注即可，不进决策硬链"
+  alternatives: "MVP 阶段 regime 仅用价格量价输入——本项为增强非地基（P2，可提前 W4 低成本先跑）"
+  tags: ["数字货币", "另类数据", "宏观情绪", "事件日历", "P2"]
+  search_terms: ["fear greed index", "btc dominance", "etf flows", "usdt premium", "token unlock calendar", "恐惧贪婪指数", "比特币占比", "解锁日历"]
+  related_candidates: ["CAND-CRYPTO-004"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-26'
+  review_frequency: yearly
+  last_review_outcome: "candidate 登记（2026-08-26 Owner 拍板 Q1-Q6 联动）：P2 增强项，可提前 W4 轻量先跑，币版 regime 输入需求出现时晋升"
+  acquisition_method: self_build
+  acquisition_source: "alternative.me 免费 API + 公开 ETF 流/解锁日历源"

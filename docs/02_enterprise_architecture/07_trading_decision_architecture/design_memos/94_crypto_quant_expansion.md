@@ -4,9 +4,10 @@ doc_type: architecture_view
 title: 数字货币量化扩展设计
 owner: ZephyrAlpha-Owner
 language: zh
-status: draft
-version: "0.1.0"
+status: active
+version: "1.0.0"
 date: 2026-08-26
+last_updated: 2026-08-26
 topic: crypto_quant_expansion
 scope: 07_trading_decision_architecture
 ---
@@ -14,7 +15,8 @@ scope: 07_trading_decision_architecture
 # 数字货币量化扩展设计
 
 > 本文是"数字货币量化战线"的启动备忘：记录为什么现在开这条战线、30 域骨架哪些与 A股共用/哪些参数化/哪些新建、四个横切改造点、新建候选清单与施工波次。
-> 性质：混合型（决策备忘 + 施工计划）。模块级登记真源 = candidate_module_registry.yaml CAND-CRYPTO-001~008；域级全景真源 = docs/_working/依赖图/00-总览与索引.md（30 域 v7.0）。
+> 性质：混合型（决策备忘 + 施工计划）。模块级登记真源 = candidate_module_registry.yaml CAND-CRYPTO-001~010；域级全景真源 = docs/_working/依赖图/00-总览与索引.md（30 域 v7.0）。
+> 状态：active v1.0.0——§9 Q1-Q6 已 Owner 拍板（2026-08-26），W0 市场日历抽象已派单（docs/_working/dispatch/2026-08-26-crypto-w0-market-calendar-order.md）。
 
 ## 1. 背景与定位
 
@@ -78,7 +80,7 @@ scope: 07_trading_decision_architecture
 | 域 | 裁定 | 说明 |
 |---|---|---|
 | D-DATA-ENG | ✅ | 数据管道/特征存储共用 |
-| D-ALT-DATA | 🆕 | 管道（NLP 情绪/新闻去重）共用；币侧新增链上数据源（CAND-CRYPTO-004）；信源独立（X/Telegram 替代东财/同花顺） |
+| D-ALT-DATA | 🆕 | 管道（NLP 情绪/新闻去重）共用；币侧新增链上数据源（CAND-CRYPTO-004）与宏观情绪面板（CAND-CRYPTO-010）；信源独立（X/Telegram 替代东财/同花顺） |
 | D-CROSS-ASSET | ➡️受益 | 原为空白域；双市场格局形成后该域（跨市场相关性/BTC 与 A股联动）自然激活，远期 |
 | D-COMPLIANCE | 🆕/➖ | A股程序化新规不适用；币侧合规边界=Owner 个人行为自担，系统内只保留"不操纵市场"类通用纪律，门禁级建设暂不启动 |
 | D-TRADING | 🔧 | 结算对账框架共用；币版费率/充提/资金划转实例（CAND-CRYPTO-007 成本模型含 maker/taker 费率） |
@@ -94,9 +96,9 @@ scope: 07_trading_decision_architecture
 ### 4.1 市场日历抽象（market_calendar，第一地基）
 
 - **问题**：A股是断点日历（交易日历 + 午间休市 + 隔夜断点 + 节假日），币是 7×24 连续。项目现有 scheduler（调度）、K 线聚合（120min 由 60min 两根聚合等）、回测时间轴、PIT asof 口径全部隐式假设 A股日历。
-- **裁定**：抽象 market_calendar 接口（Market Calendar，市场日历——定义"什么时间有交易、K 线如何切分"的策略对象），A股实现=现有交易日历逻辑，币实现=7×24 连续日历。所有时间相关计算改为注入日历，不直接读 A股历。
+- **裁定**：抽象 market_calendar 接口（Market Calendar，市场日历——定义"什么时间有交易、K 线如何切分"的策略对象），A股实现=现有交易日历逻辑收编，币实现=7×24 连续日历。所有时间相关计算改为注入日历，不直接读 A股历。
 - **风险**：这是影响面最深的改造，必须保证 A股现有逻辑**零行为变化**（纯加接口层，回归测试全绿才算完）。
-- 登记：CAND-CRYPTO-001，P0。
+- 登记：CAND-CRYPTO-001，P0。**已派单 W0**（docs/_working/dispatch/2026-08-26-crypto-w0-market-calendar-order.md，2026-08-26 Owner 拍板后首派）。
 
 ### 4.2 T+0 vs T+1
 
@@ -122,19 +124,21 @@ scope: 07_trading_decision_architecture
 |---|---|---|---|---|
 | CAND-CRYPTO-001 | 市场日历抽象（7×24 连续日历 vs A股断点日历） | D-DATA/横切 | P0 | 无 |
 | CAND-CRYPTO-002 | 交易所行情 provider（WebSocket 实时 + REST 补数，接 vendor_base 体系） | D-MKT-DATA | P0 | 001 |
-| CAND-CRYPTO-003 | 永续合约专属数据（资金费率/持仓量 OI/基差/爆仓） | D-MKT-DATA | P1（Phase 2） | 002 |
-| CAND-CRYPTO-004 | 链上数据接入（交易所净流入/活跃地址/MVRV，alt_data 新源） | D-ALT-DATA | P2 | 无 |
+| CAND-CRYPTO-003 | 永续合约专属数据（资金费率/持仓量 OI/基差/爆仓/多空比/清算热图） | D-MKT-DATA | P1（Phase 2） | 002 |
+| CAND-CRYPTO-004 | 链上数据接入（交易所净流入/活跃地址/MVRV/鲸鱼地址跟踪/稳定币流动） | D-ALT-DATA | P2 | 无 |
 | CAND-CRYPTO-005 | 数字货币执行适配器（订单状态机 + 回执确认 + 疑似丢单重试） | D-EX-CORE | P0 | 001/006 |
 | CAND-CRYPTO-006 | 交易规则参数化（step_size/tick_size/无涨跌停/T+0 规则包） | D-EX-CORE | P0 | 001 |
 | CAND-CRYPTO-007 | 币版回测三件套实例（universe/benchmark/cost_model，含 maker/taker+资金费率成本） | 注册表层 | P1 | 001/002 |
 | CAND-CRYPTO-008 | 合约仓位与杠杆风控扩展（爆仓价/维持保证金/资金费率进持仓成本） | D-POSITION/D-RISK | P1（Phase 2） | 007 |
+| CAND-CRYPTO-009 | 跨境网络双活传输层（主备双线路+热切换状态机+双层 WAL 传输侧） | D-MKT-DATA | P0 | 无（与 001 并行） |
+| CAND-CRYPTO-010 | 币圈宏观情绪面板（恐惧贪婪指数/BTC 占比/ETF 流量/USDT 场外溢价/减半与解锁事件日历） | D-ALT-DATA | P2 | 无 |
 
-> 优先级口径沿用项目惯例（回测环境三件套先于被测对象；风险相关模块先于策略模块——风险优先原则）。008 标 P1 但属 Phase 2 启动线，与 §4.4 裁定一致。
+> 优先级口径沿用项目惯例（回测环境三件套先于被测对象；风险相关模块先于策略模块——风险优先原则）。008 标 P1 但属 Phase 2 启动线，与 §4.4 裁定一致。009 为 2026-08-26 外部材料审查后补登——境内→境外交易所链路的网络双活是实盘刚需（行情断流=瞎、撤单传不到=资损），v0.1.0 遗漏，设计要点真源见 §7。010 为 2026-08-26 行业调查后补登（§9 拍板联动）：2026 年行业实证必备维度=恐惧贪婪指数六因子（波动率 25%/动量成交量 25%/社交 15%/调查 15%/BTC 占比 10%/谷歌趋势 10%，alternative.me 免费 API）+资金流三网关（交易所储备/稳定币流动/鲸鱼地址）+衍生品四维（资金费率/OI/多空比/清算热图）；其中衍生品四维归 003、鲸鱼与稳定币归 004（条目 tech_notes 已联动扩充），010 承接宏观情绪与事件日历（币版 regime_cycle/event_calendar 输入）。
 
 ## 6. 施工波次（建议）
 
 ```
-W0  CAND-CRYPTO-001 市场日历抽象        ← 纯加接口层，A股零行为变化（回归全绿门槛）
+W0  CAND-CRYPTO-001 市场日历抽象        ← 纯加接口层，A股零行为变化（回归全绿门槛）【已派单 2026-08-26】
 W1  CAND-CRYPTO-002 行情接入 + 落库     ← 币可"看"（数据进 CH/DuckDB 分层存储）
     + CAND-CRYPTO-009 跨境网络双活层    ← 与 002 同波次：WS 长连接与执行回传共用双线路
 W2  CAND-CRYPTO-006 规则参数化
@@ -143,6 +147,7 @@ W2  CAND-CRYPTO-006 规则参数化
 W3  CAND-CRYPTO-005 执行适配器           ← 币可"交易"（纸面→模拟盘→实盘小资金，走 53 号 5 态 FSM 同一路径）
 W4  币版策略首批定义 + 风控参数校准       ← 走 20 号范式（策略注册表登记）
 Phase 2  CAND-CRYPTO-003/004/008        ← 永续合约 + 链上增强
+         + CAND-CRYPTO-010 宏观情绪面板  ← 轻量采集可提前至 W4（恐惧贪婪/BTC 占比日频即可用，币版 regime 输入）
 ```
 
 与 A股战线的冲突控制：W0~W2 全部正交（新增目录/注册表条目/接口实现，不改 A股业务逻辑）；W3 起涉及 ex_core 共享代码，须走 ARCH 登记 + 门禁。
@@ -203,16 +208,16 @@ Phase 2  CAND-CRYPTO-003/004/008        ← 永续合约 + 链上增强
 | 不启动币侧合规门禁建设 | 个人交易自担边界，系统只保留通用交易纪律（§3.3） |
 | 不纳入 Polymarket 等预测市场 | 品种机制（赔率合约）与 CEX 现货本质不同+合规灰色；外部材料仅作知识储备（§7），不建接入 |
 
-## 9. 开放问题（待 Owner 拍板）
+## 9. 开放问题（Owner 已拍板 2026-08-26）
 
-| # | 问题 | 影响 | 建议 |
+| # | 问题 | 裁定（2026-08-26 Owner 拍板） | 落地位置 |
 |---|---|---|---|
-| Q1 | 交易所选哪家（币安/OKX/Bybit 或其他）？Owner 账户在哪？ | CAND-CRYPTO-002/005 的 API 选型 | 以 Owner 已有账户为准；API 稳定性币安/OKX 均可 |
-| Q2 | universe（交易池）范围：只做 BTC/ETH 主流，还是市值前 N？ | 数据量/因子横截面深度 | 建议 MVP=BTC+ETH 现货，Phase 2 扩前 20 |
-| Q3 | Phase 2 永续合约的启动条件？ | §4.4 边界 | 建议现货实盘 track record 3 个月+ |
-| Q4 | 行情数据源：免费交易所 WS 直连，还是付费聚合源（Kaiko/CryptoQuant）？ | 002 成本与质量 | 建议 MVP 免费直连，质量门禁沿用现有 quality_gate |
-| Q5 | 资金安排：币账户与 A股账户完全隔离（独立账本），初始规模？ | 30 号账本体系登记 | 独立账本天然支持，规模 Owner 定 |
-| Q6 | 新闻/情绪信源清单（X/Telegram/中文媒体）？ | alt_data 信源接入 | 建议 MVP 先接免费聚合（如官方公告+主流快讯），X API 付费后置 |
+| Q1 | 交易所选型 | **币安（主）+ OKX（备/数据互备源）**；provider 可插拔架构，密钥按 Owner 账户在执行层配置，不阻塞设计 | CAND-CRYPTO-002/005 |
+| Q2 | 交易池范围 | **MVP=BTC+ETH 现货**；Phase 2 扩市值前 20 | CAND-CRYPTO-007 |
+| Q3 | Phase 2 时点 | **现货实盘 track record ≥3 个月后启动永续**（003/008 启动线） | CAND-CRYPTO-003/008 |
+| Q4 | 行情数据源 | **MVP=交易所免费 WS 直连+REST 补数**；quality_gate 连续不达标再评付费聚合源 | CAND-CRYPTO-002 |
+| Q5 | 资金安排 | **独立账本与 A股完全隔离**（30 号 Model A 天然支持多市场账本）；初始规模执行层定，不阻塞设计 | 30 号账本体系 |
+| Q6 | 新闻/情绪信源 | **MVP=免费聚合（官方公告+主流快讯）**，X API 付费后置；恐惧贪婪指数/BTC 占比等宏观情绪指标由 CAND-CRYPTO-010 承接 | CAND-CRYPTO-010 |
 
 ## 10. 引用
 
@@ -222,8 +227,10 @@ Phase 2  CAND-CRYPTO-003/004/008        ← 永续合约 + 链上增强
 - [40_execution_broker](40_execution_broker.md)（执行对接范式：回执确认/疑似丢单重试等教训沿用）
 - [52_backtest_framework_docking](52_backtest_framework_docking.md) / [53_simulation_live_path](53_simulation_live_path.md)（回测/模拟/实盘路径，币版沿用）
 - [62_business_registry_construction](62_business_registry_construction.md)（18 业务注册表机制，币版实例登记入口）
-- candidate_module_registry.yaml：CAND-CRYPTO-001~009（新建构件登记真源）
+- candidate_module_registry.yaml：CAND-CRYPTO-001~010（新建构件登记真源）
 - `docs/_working/低学历勇闯量化/`（外部实战参考材料，§7 各节设计要点真源：第三篇网络坑 7 图 / PM 回测上篇 13 页 / 回测中篇 25 页）
+- 2026-08-26 行业调查（币圈必备数据维度，§5 候选 010 与 003/004 扩充的实证来源）：alternative.me 恐惧贪婪指数六因子口径 / CoinGlass 衍生品聚合（资金费率/OI/多空比/清算热图）/ 资金流三网关实践（交易所储备、稳定币、鲸鱼地址，CryptoQuant/Glassnode/Nansen 工具体系）
+- W0 派工单：docs/_working/dispatch/2026-08-26-crypto-w0-market-calendar-order.md（CAND-CRYPTO-001 施工派单真源）
 
 ## 11. 修订记录
 
@@ -231,3 +238,4 @@ Phase 2  CAND-CRYPTO-003/004/008        ← 永续合约 + 链上增强
 |---|---|---|---|
 | 2026-08-26 | 0.1.0 | 初稿落盘（draft） | Owner 宣布启动数字货币量化战线；先定复用边界与横切改造点，CAND-CRYPTO 族 8 条同步登记，开放问题 6 项待 Owner 拍板后升 active |
 | 2026-08-26 | 0.2.0 | 外部材料审查升级：新增 §7 外部实战参考（BalletHip 系列 54 图全量审查——行情录制端 6 要点/网络双活+传输加工 8 要点/实盘运营 4 项/不采用 5 项）；补登 CAND-CRYPTO-009（跨境网络双活传输层，P0，W1 波次）；§5 候选清单 8→9 条；§6 波次 W1 加网络层；§8 不做什么加"不纳入预测市场" | Owner 裁定批准（外部材料审查报告三动作）：v0.1.0 遗漏跨境网络层（境内→境外交易所双活是实盘刚需），录制端/传输加工已验证设计直接吸收为 002/009 施工参考，Polymarket 维度裁定不纳入仅知识储备 |
+| 2026-08-26 | 1.0.0 | **翻正 active**：§9 Q1-Q6 Owner 拍板落地（交易所=币安主+OKX 备/池=BTC+ETH 现货/Phase 2≥3 个月实盘记录/免费 WS 直连/独立账本隔离/免费信源）；行业调查补登 CAND-CRYPTO-010（币圈宏观情绪面板：恐惧贪婪指数/BTC 占比/ETF 流量/USDT 溢价/减半与解锁日历，P2），003/004 条目 tech_notes 联动扩充（多空比+清算热图/鲸鱼+稳定币）；§5 候选 9→10 条；§6 Phase 2 加 010；W0 市场日历抽象派单（dispatch/2026-08-26-crypto-w0-market-calendar-order.md）。本轮同时为并发覆写修复：v0.2.0 提交后工作区与 HEAD 出现混合态（frontmatter 回滚 0.1.0/§5 表丢 009），以全量覆写重建完整 v1.0.0 并立即提交固化 | Owner 拍板 Q1-Q6 并批准行业调查结论；备忘翻正 active 后 W0 正式开工；共享工作区并发覆写事故以"全量重建+立即提交"处置 |
