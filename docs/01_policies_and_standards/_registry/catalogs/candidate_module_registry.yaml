@@ -18785,11 +18785,11 @@ entries:
     q1_implemented: {result: false, equivalent_nodes: [], evidence: "src/zephyr 无 calendar 抽象层（2026-08-26 盘点），交易日历逻辑为 A股专用"}
     blocking_question: null
     result: candidate
-  status: promoted
+  status: candidate
   priority: P0
   created_at: '2026-08-26'
   last_reviewed_at: '2026-08-26'
-  promoted_to: "src/zephyr/data/calendar/（commit 69e5dc9f [GW:AI-CAL-001]）"
+  promoted_to: ""
   source_draft: "94_crypto_quant_expansion.md"
   source_section: "§4.1 市场日历抽象"
   original_id: ""
@@ -18807,7 +18807,7 @@ entries:
   blocked_by: []
   next_review_date: '2027-08-26'
   review_frequency: yearly
-  last_review_outcome: "promoted（2026-08-26 W0 施工闭环，commit 69e5dc9f [GW:AI-CAL-001]）：calendar 包接口+双实现落地，scheduler/fusion/pit_query 注入式改造，新测试 26 例+受影响面零回归，depgraph node_id=10720640"
+  last_review_outcome: "candidate 登记（2026-08-26 Owner 裁定启动数字货币战线）：W0 波次第一地基，派单即晋升"
   acquisition_method: self_build
   acquisition_source: ""
 
