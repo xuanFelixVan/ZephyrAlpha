@@ -974,6 +974,7 @@ training_args = TrainingArguments(
 
 - [~] 零样本中文 F1 ≥ 65%（否则切 Qwen2.5-7B）—— 实测 0.5148，已按预案切换 Qwen2.5-7B，进入 SFT
 - [x] LoRA SFT 后 F1 ≥ 75% —— **实测 0.7699 ✅**
+- [x] **F1 验收双路线（2026-08-25 Owner 裁定）**：qwen3:8b + v2-fewshot prompt 零样本路线 **Macro-F1=0.7869 ≥ 0.75**（金标人工标注集 news_sentiment_200_gold.jsonl 200 条，think 关闭，Acc=0.805），替代 SFT 路线作为验收路径；SFT 微调推迟至 CAND-NLP-005（银标约 3000 条+零样本基线回测验证后触发）。注：2026-08-09 关键词伪标签集实测 0.5148 系标注噪声所致（"利率下调"误判利空等），非模型能力真值；金标集为唯一验收基准。产物：data/eval/zero_shot_metrics.json。
 - [ ] RLSP 后情感-收益方向一致率 ≥ 55% —— 待 Phase 5
 - [ ] 推理速度：1000 条新闻 < 5 分钟（RTX 3090）—— 待 Phase 6 GGUF 回灌 Ollama 后测
 - [ ] 管道端到端：news_data → bad_news_flat 分数 —— 待 Phase 7
