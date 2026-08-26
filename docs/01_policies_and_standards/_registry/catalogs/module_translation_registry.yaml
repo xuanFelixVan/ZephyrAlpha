@@ -47270,6 +47270,119 @@ entries:
   desc_en: ""
   plain_zh: "用假评估器校验A/B实验、显著性判定和递归护栏。"
 
+- module_path: src/zephyr/security/outbound_data_sanitizer.py
+  domain_id: D_SECURITY
+  name_zh: "外发数据脱敏拦截器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "所有发给外部API的数据过最后一道闸：持仓、策略、因子只放行白名单字段，手机号、身份证、凭证自动打码，过不了的直接拦下。"
+- module_path: tests/security/test_outbound_data_sanitizer.py
+  domain_id: D_SECURITY
+  name_zh: "外发脱敏单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "校验白名单过滤、PII掩码和出口拦截。"
+- module_path: src/zephyr/security/siem_correlation_engine.py
+  domain_id: D_SECURITY
+  name_zh: "SIEM跨域关联引擎"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把各域的安全事件串起来看：同一个主体短时间内先注入、再越权、再导出数据就是攻击链，命中规则自动提级告警。"
+- module_path: tests/security/test_siem_correlation_engine.py
+  domain_id: D_SECURITY
+  name_zh: "SIEM关联单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "校验规则注册、滑窗聚合、严重度提升和分级路由。"
+- module_path: src/zephyr/security/supply_chain_security_scanner.py
+  domain_id: D_SECURITY
+  name_zh: "供应链安全扫描器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给依赖体检：自动生成SBOM物料清单，扫出GPL这类有传染性的许可证告警，再把CVE漏洞和具体组件对上号。"
+- module_path: tests/security/test_supply_chain_security_scanner.py
+  domain_id: D_SECURITY
+  name_zh: "供应链扫描单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "校验SBOM生成、许可证告警和CVE关联。"
+- module_path: src/zephyr/security/llm_defense/spectral_guard.py
+  domain_id: D_SECURITY_LLM
+  name_zh: "Spectral注意力谱幻觉检测器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "从注意力矩阵的数学谱特征看穿幻觉：大模型开始编的时候注意力会发散，谱能量分布就变了，按模型分别校准阈值抓现行。"
+- module_path: tests/security/llm_defense/test_spectral_guard.py
+  domain_id: D_SECURITY_LLM
+  name_zh: "谱检测单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "用构造矩阵校验谱特征计算、幻觉评分和双阈值判定。"
+- module_path: src/zephyr/signal_quality/signal_dedup.py
+  domain_id: D_SIGQC
+  name_zh: "信号去重器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "合并实质相同的信号：标的、方向、逻辑、参数都太像的只留最自信的那个，所有去重决定留审计供串谋复查。"
+- module_path: tests/signal_quality/test_signal_dedup.py
+  domain_id: D_SIGQC
+  name_zh: "信号去重单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "校验指纹相似度、合并保留和审计落痕。"
+- module_path: src/zephyr/signal_quality/signal_degradation_monitor.py
+  domain_id: D_SIGQC
+  name_zh: "信号质量退化监控器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "盯信号最近的实际表现：命中率、IC、衰减持续低于阈值就告警并给信号打降级标记，消费端自动降权但不阻断流水线。"
+- module_path: tests/signal_quality/test_signal_degradation_monitor.py
+  domain_id: D_SIGQC
+  name_zh: "退化监控单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "校验三指标滚动跟踪、阈值判定、告警和降级标记。"
+- module_path: src/zephyr/signal_quality/signal_quality_benchmark.py
+  domain_id: D_SIGQC
+  name_zh: "信号质量基准对比器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给信号找参照系：和自己的历史基线比、和买入持有基准比，偏离太大告警，每周出对比报告。"
+- module_path: tests/signal_quality/test_signal_quality_benchmark.py
+  domain_id: D_SIGQC
+  name_zh: "基准对比单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "校验基线对比、偏离告警和周度报告。"
+- module_path: src/zephyr/signal_quality/signal_explainability_guarantor.py
+  domain_id: D_SIGQC
+  name_zh: "信号可解释性强制保障器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "信号必须说清楚为什么这么干：触发因子、命中规则、置信度依据三要素缺一不可，缺了直接阻断并告警，事后可回放。"
+- module_path: tests/signal_quality/test_signal_explainability_guarantor.py
+  domain_id: D_SIGQC
+  name_zh: "可解释保障单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "校验三要素强制、阻断告警和回放反查。"
+
 battle_map_steps:
 - step_id: BM-BUY-04
   flow_stage: buy_flow
@@ -54198,12 +54311,12 @@ algo_submodules:
   name_zh: ④ 移除表注册
   name_en: remove
   plain_zh: 按表名删除注册返回是否成功
-- module_path: src/zephyr/execution_simulation/__init__.py
+- module_path: src/zephyr/execution_simulation/_extensions/__init__.py
   module_id: MOD-EXEC_SIM
   node_id: A1
-  name_zh: ① 规划态占位 未施工
-  name_en: __all__ = []
-  plain_zh: 执行仿真域已在架构模型登记但尚未施工，包内无任何函数实现
+  name_zh: ① 包命名空间占位/聚合导出
+  name_en: __init__（模块级 __all__）
+  plain_zh: 声明 zephyr.execution_simulation._extensions 包命名空间，按 __all__ 声明导出
 - module_path: src/zephyr/ex_core/aggregate_root_manager.py
   module_id: MOD-EX-049
   node_id: A1
@@ -55698,12 +55811,24 @@ algo_submodules:
   name_zh: ① 模块命名空间声明
   name_en: zephyr.nlp.__init__
   plain_zh: zephyr.nlp — NLP 情感分析管道（P1-E3）。
-- module_path: src/zephyr/ml_train/core/__init__.py
+- module_path: src/zephyr/ml_train/core/model_version_registry.py
   module_id: __unmanaged__src/zephyr/ml_train/core/__init__.py
   node_id: A1
-  name_zh: ① 训练层核心命名空间占位
-  name_en: __init__（模块级 __all__）
-  plain_zh: 预留 ml_train 核心子包命名空间，当前尚无任何实现
+  name_zh: ① 阶段机推进（Fail-Closed）
+  name_en: _transition
+  plain_zh: 合法迁移表校验；DEPRECATED 终态拒绝一切再迁移
+- module_path: src/zephyr/ml_train/core/model_version_registry.py
+  module_id: __unmanaged__src/zephyr/ml_train/core/__init__.py
+  node_id: A2
+  name_zh: ② INV-011 门禁
+  name_en: activate
+  plain_zh: 仅 SHADOW_VERIFIED→ACTIVATED；同模型已有 ACTIVATED 版本拒绝并存
+- module_path: src/zephyr/ml_train/core/model_version_registry.py
+  module_id: __unmanaged__src/zephyr/ml_train/core/__init__.py
+  node_id: A3
+  name_zh: ③ 事件外发
+  name_en: _emit
+  plain_zh: ModelTrained/ModelValidated 事件经 event_sink 回调
 - module_path: src/zephyr/pf_core/core/performance_attribution_engine.py
   module_id: MOD-PF-007
   node_id: A1
@@ -56898,12 +57023,6 @@ algo_submodules:
   name_zh: ⑤ TTL决策树判定
   name_en: evaluate_ttl / _eval_criterion
   plain_zh: 拿文件路径和frontmatter沿判定树走，走到叶子得出permanent还是task_bound
-- module_path: src/zephyr/signal_ashare/__init__.py
-  module_id: MOD-INF-038
-  node_id: A1
-  name_zh: ① 信号域包初始化
-  name_en: signal_ashare package init
-  plain_zh: A股信号域的包标记文件，只声明域归属不导出任何符号，真正的实现都在子模块里
 - module_path: src/zephyr/shared/protocols/__init__.py
   module_id: MOD-SHARED-001
   node_id: A1
@@ -57804,12 +57923,12 @@ algo_submodules:
   name_zh: ① 导入再导出
   name_en: __init__ re-export
   plain_zh: 把实现文件里的三个类提到包级命名空间，外面 import 更短
-- module_path: src/zephyr/infrastructure/__init__.py
+- module_path: src/zephyr/infrastructure/_extensions/__init__.py
   module_id: MOD-INFRA_RUNTIME
   node_id: A1
-  name_zh: ① 模块命名空间声明
-  name_en: zephyr.infrastructure.__init__
-  plain_zh: '[A_module] module_id=MOD-INFRA_RUNTIME | layer=infrastructur'
+  name_zh: ① 基础设施扩展命名空间占位
+  name_en: __init__（模块级 __all__）
+  plain_zh: 预留 infrastructure 扩展子包命名空间，当前尚无任何实现
 - module_path: src/zephyr/infrastructure/api/__init__.py
   module_id: __unmanaged__src/zephyr/infrastructure/api/__init__.py
   node_id: A1
@@ -57918,12 +58037,48 @@ algo_submodules:
   name_zh: ① 命名空间包声明
   name_en: __all__
   plain_zh: 仅声明 pf_core.api 包命名空间，导出列表为空
-- module_path: src/zephyr/pf_core/core/__init__.py
+- module_path: src/zephyr/pf_core/core/constraint_solver.py
   module_id: __unmanaged__src/zephyr/pf_core/core/__init__.py
   node_id: A1
-  name_zh: ① 空包标记初始化
-  name_en: __init__ (empty package marker)
-  plain_zh: 仅声明空 __all__，不做任何再导出、零副作用
+  name_zh: ① 7 约束链迭代投影主循环
+  name_en: ConstraintSolver.solve
+  plain_zh: 迭代投影法：逐约束裁剪 → 归一化 → 收敛判定，最多 max_iter 次
+- module_path: src/zephyr/pf_core/core/constraint_solver.py
+  module_id: __unmanaged__src/zephyr/pf_core/core/__init__.py
+  node_id: A2
+  name_zh: ② 单标的仓位投影 C7
+  name_en: _project_single_position
+  plain_zh: 每个标的权重裁剪到 [min_pos, 个票override或max_pos] 区间
+- module_path: src/zephyr/pf_core/core/constraint_solver.py
+  module_id: __unmanaged__src/zephyr/pf_core/core/__init__.py
+  node_id: A3
+  name_zh: ③ 行业集中度投影 C1/C2
+  name_en: _project_sector_absolute / _project_sector_relative
+  plain_zh: 行业聚合权重超上限等比缩放；相对基准偏移超 ±10% 裁到边界
+- module_path: src/zephyr/pf_core/core/constraint_solver.py
+  module_id: __unmanaged__src/zephyr/pf_core/core/__init__.py
+  node_id: A4
+  name_zh: ④ 暴露约束投影 C3/C6
+  name_en: _project_market_cap / _project_style
+  plain_zh: 组合加权市值/风格暴露超 0.3σ 时，同向标的按比例压缩
+- module_path: src/zephyr/pf_core/core/constraint_solver.py
+  module_id: __unmanaged__src/zephyr/pf_core/core/__init__.py
+  node_id: A5
+  name_zh: ⑤ 相关性裁剪 C5
+  name_en: _project_correlation
+  plain_zh: 标的相关性 |ρ|>0.7 时降权权重较大者
+- module_path: src/zephyr/pf_core/core/constraint_solver.py
+  module_id: __unmanaged__src/zephyr/pf_core/core/__init__.py
+  node_id: A6
+  name_zh: ⑥ 拥挤检测
+  name_en: _apply_crowding
+  plain_zh: ρ>0.9 仅保留权重较大者（另一清零）；ρ>0.8 双方权重减半
+- module_path: src/zephyr/pf_core/core/constraint_solver.py
+  module_id: __unmanaged__src/zephyr/pf_core/core/__init__.py
+  node_id: A7
+  name_zh: ⑦ 杠杆投影与归一化
+  name_en: _project_leverage / _normalize
+  plain_zh: 总权重超杠杆上限时整体缩放到 max_gross_leverage
 - module_path: src/zephyr/pf_core/infrastructure/__init__.py
   module_id: __unmanaged__src/zephyr/pf_core/infrastructure/__init__.py
   node_id: A1
@@ -58242,18 +58397,6 @@ algo_submodules:
   name_zh: ① 模块命名空间声明
   name_en: __init__
   plain_zh: 声明 MOD-ALT_DATA 另类数据域包入口并初始化空导出列表
-- module_path: src/zephyr/data_eng/__init__.py
-  module_id: MOD-DATA_ENG
-  node_id: A1
-  name_zh: ① 模块命名空间声明
-  name_en: __init__
-  plain_zh: 声明 MOD-DATA_ENG 数据工程域包入口并初始化空导出列表
-- module_path: src/zephyr/data_security/__init__.py
-  module_id: MOD-DATA_SEC
-  node_id: A1
-  name_zh: ① 模块命名空间声明
-  name_en: __init__
-  plain_zh: 声明 MOD-DATA_SEC 数据安全域包入口并初始化空导出列表
 - module_path: src/zephyr/data_governance/__init__.py
   module_id: MOD-DATA_GOV
   node_id: A1
