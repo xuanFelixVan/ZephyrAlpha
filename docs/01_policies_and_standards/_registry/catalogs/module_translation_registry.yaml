@@ -47213,6 +47213,63 @@ entries:
   desc_en: ""
   plain_zh: "校验能力匹配、冲突仲裁、共识触发和审计留痕。"
 
+- module_path: src/zephyr/intelligence/llm_research_agent.py
+  domain_id: D_INTELLIGENCE
+  name_zh: "LLM研究助手"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给研究当助手的大模型代理：先把任务拆成步骤，只许用白名单里的工具，边做边反思，关键数字必须回查事实，产出只供研究参考不碰交易。"
+- module_path: tests/intelligence/test_llm_research_agent.py
+  domain_id: D_INTELLIGENCE
+  name_zh: "研究助手单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "用假模型校验规划、工具白名单、反思循环、事实回查和研究标注。"
+- module_path: src/zephyr/feedback_loop/module_matcher.py
+  domain_id: D_FEEDBACK_LOOP
+  name_zh: "模块匹配器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "新需求来了先查仓里有没有现成模块：按能力标签初筛再算语义相似度，高相似直接用、中等改改用、不像才新建。"
+- module_path: tests/feedback_loop/test_module_matcher.py
+  domain_id: D_FEEDBACK_LOOP
+  name_zh: "模块匹配单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "用假embedder校验标签预筛、相似度计算和三档判定。"
+- module_path: src/zephyr/feedback_loop/skill_library.py
+  domain_id: D_FEEDBACK_LOOP
+  name_zh: "技能库"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把成功经验存成可复用的技能：代码片段、策略模板、因子公式三类，新任务先向量检索最相似的技能复用，少走冤枉路。"
+- module_path: tests/feedback_loop/test_skill_library.py
+  domain_id: D_FEEDBACK_LOOP
+  name_zh: "技能库单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "用假embedder校验三类条目、向量检索、复用登记和版本递增。"
+- module_path: src/zephyr/feedback_loop/meta_harness_optimizer.py
+  domain_id: D_FEEDBACK_LOOP
+  name_zh: "元优化器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "优化学习系统自己的旋钮：变异率、匹配阈值、审核策略做A/B实验，谁好用谁，但绝不允许动策略参数本身。"
+- module_path: tests/feedback_loop/test_meta_harness_optimizer.py
+  domain_id: D_FEEDBACK_LOOP
+  name_zh: "元优化单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "用假评估器校验A/B实验、显著性判定和递归护栏。"
+
 battle_map_steps:
 - step_id: BM-BUY-04
   flow_stage: buy_flow
