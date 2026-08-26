@@ -20646,3 +20646,14 @@ entries:
   impact:
     - 'src/zephyr/signal_ashare×9 + regime×1；tests 10 文件'
   fix_phase: '已落地（2026-08-26，DIGEST P2 W06）'
+- issue_id: '#ARCH-263'
+  title: DIGEST P2 W07 波：FACTOR+ML_TRAIN+ML_SERVE 20 候选晋升+5 REVIEW 归并——特征发现/签名/GP/FactorMAD/联合评估/LLM进化/迭代升级+模型工厂/标注/增强/决策树/KAN/抗遗忘/研究数据四件+压缩/两适配
+  severity: P2
+  category: 功能施工
+  adjudication: >-
+    MOD-FAC-001~007/MOD-ML-013~022/MOD-MLS-002~004。20 模块纯内存/DI 落地，451 新测全绿（四域合并 1525 零回归）。
+    REVIEW 归并 5 条：FAC-023→MOD-SIG-091；MLT-020→MOD-SIG-053（真训练属 B-007 Owner 窗）；MLT-021→MOD-ML-006+decay_monitor；
+    MLT-023+026→MLT-019（§29.19 三稿重登）。
+  impact:
+    - 'src/zephyr/research×7 + factor×1 + ml_train×9(+implementations×2) + ml_serve×3；tests 20 文件'
+  fix_phase: '已落地（2026-08-26，DIGEST P2 W07）'
