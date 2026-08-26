@@ -20708,3 +20708,14 @@ entries:
   impact:
     - 'src/zephyr/compliance×5 + reporting×3；tests 8 文件'
   fix_phase: '已落地（2026-08-26，DIGEST P2 W10）'
+- issue_id: '#ARCH-268'
+  title: （占位作废——W10 重复登记误发，真条目为 #ARCH-267；2026-08-26 治理闭环）
+  severity: P3
+  category: 治理卫生
+  adjudication: >-
+    本号因 W10 波幂等重跑误登记（bump 逻辑在 #ARCH-267 已占用时取 268），
+    W10 真裁定为 #ARCH-267（COMPLIANCE+REPORTING 8 晋升+1 归并）。本条目作废不留实施语义，
+    保留占位防编号复用。
+  impact:
+    - '无（作废条目）'
+  fix_phase: '作废（2026-08-26）'
