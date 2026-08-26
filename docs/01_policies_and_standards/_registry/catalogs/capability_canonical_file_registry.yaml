@@ -4906,6 +4906,22 @@ creation_tokens:
   token: auto-test-news-taxonomy-20260826
   created_by: AI-K3-NEWSUP-001
   capability: news_category_tagging
+- file: src/zephyr/nlp/research_rating.py
+  token: auto-research-rating-20260826
+  created_by: AI-K3-NEWSUP-001
+  capability: research_rating_extraction
+- file: tests/nlp/test_research_rating.py
+  token: auto-test-research-rating-20260826
+  created_by: AI-K3-NEWSUP-001
+  capability: research_rating_extraction
+- file: scripts/ml/run_research_rating_batch.py
+  token: auto-run-research-rating-batch-20260826
+  created_by: AI-K3-NEWSUP-001
+  capability: research_rating_extraction
+- file: tests/scripts/test_ml_run_research_rating_batch.py
+  token: auto-test-ml-run-research-rating-batch-20260826
+  created_by: AI-K3-NEWSUP-001
+  capability: research_rating_extraction
 - file: .runtime/commit_queue/
   token: auto-commit-queue-dir-20260821
   created_by: AI-P0-6-004

@@ -46686,7 +46686,6 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "新闻库四类标签的唯一判定处：公告/研报/宏观数据/媒体新闻，按来源确定不用模型；政策是内容旗标走另一条线"
-
 - module_path: src/zephyr/compliance/evidence_chain_generator.py
   domain_id: D_COMPLIANCE
   name_zh: "合规证据链生成器"
@@ -46799,6 +46798,20 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "校验双归因降级、门控判定和发布对接。"
+- module_path: src/zephyr/nlp/research_rating.py
+  domain_id: D_DATA
+  name_zh: "研报结构化评级提取模块"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "从研报里提取机构真正看的东西：评级几档、上调还是下调、首次覆盖、目标价多少——不打情感分，卖方研报全是好话打了也没用"
+- module_path: scripts/ml/run_research_rating_batch.py
+  domain_id: D_DATA
+  name_zh: "研报评级批量提取脚本"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把库里所有研报批量过一遍评级提取，产出逐篇评级表和每天的评级指标（多少家上调/下调/首次覆盖/平均立场分）"
 
 battle_map_steps:
 - step_id: BM-BUY-04
