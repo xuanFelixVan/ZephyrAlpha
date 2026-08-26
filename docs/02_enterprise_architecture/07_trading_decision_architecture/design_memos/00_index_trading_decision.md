@@ -5,8 +5,8 @@ title: 交易决策架构主题全集（总索引）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.12.0"
-date: 2026-08-24
+version: "2.13.1"
+date: 2026-08-26
 topic: trading_decision_index
 scope: 07_trading_decision_architecture
 ---
@@ -686,7 +686,7 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 57_daily_cycle_sop | 日循环 SOP（5x 验证层，P0-5） | ✅ 已定稿 | active v1.1.0（2026-08-24 RUN-05 演练节入册） |
 | 68_code_algorithm_review_pipeline | 代码与算法多模型审查流水线（跨切治理层） | ✅ 已定稿 | active v1.2.1 |
 | 92_phase2_business_construction_order | 阶段二业务层施工顺序清单（9x 开放问题与施工排序段） | ✅ 已定稿 | active v1.0.0（2026-08-22 Owner 指令落盘） |
-| 94_crypto_quant_expansion | 数字货币量化扩展设计（9x 新战线启动段；CAND-CRYPTO-001~008 登记真源） | 本会话落盘 | draft v0.1.0（开放问题 Q1-Q6 待 Owner 拍板后升 active） |
+| 94_crypto_quant_expansion | 数字货币量化扩展设计（9x 新战线启动段；CAND-CRYPTO-001~009 登记真源） | 本会话落盘 | draft v0.2.0（外部材料审查升级，CAND-CRYPTO-009 补登；开放问题 Q1-Q6 待 Owner 拍板后升 active） |
 
 ## 8. 产出物命名规范
 
@@ -879,3 +879,4 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 2026-08-21 | 2.11.13 | **56/57 号补登（P0 批两件）**——§0 目录 51→53 篇：56_backtest_vs_sim_reconciliation_plan.md（P0-1② 回测 vs 模拟盘对账方案，不变量 I1-I4+三层 diff+归因三分类+对照清单，G1/G6 转 Owner 窗口）+57_daily_cycle_sop.md（P0-5 日循环 SOP，六环节命令清单+开盘前 QMT 人工确认项+缺口 GAP1-5 登记+首跑彩排记录已过），均 active v1.0.0 | P0 批施工驱动：到期前目标态（交易日模拟盘+收盘后回测对账）的两件承载文档落位 5x 验证与可观测性层 |
 | 2026-08-24 | 2.12.0 | **G4 批全量版本同步 + 92 号补登**——§0 目录 54→55 篇：92_phase2_business_construction_order 补登（active v1.0.0，2026-08-22 Owner 指令落盘，此前漏登）；§0 目录+§7.3 与各文档 frontmatter 全量对齐一轮（44 号 v1.2.0→v1.3.0、68 号 draft v1.2.0→active v1.2.1、50 号 draft→active v1.1.1、90 号 draft→active v2.0.3、19 号 draft→active v1.0.1、28 号 §7.3 骨架误标→active v1.2.4 等 40+ 处版本/状态漂移修正）；§7.3 补登缺失行（45/56/57/68/92）；66 号行注记 task_board 死信标签联动已补、57 号行注记 RUN-05 演练节入册 | 施工清单 P3-27 驱动：44/68 版本漂移+92 号漏登实证；本轮为快照口径对齐（frontmatter 提取脚本实证），§2/§3/§5 内嵌历史版本引用沿用既有惯例不逐处同步，下轮审查时再核 |
 | 2026-08-26 | 2.13.0 | **94 号补登（数字货币量化扩展设计，新战线启动）**——§0 目录 55→56 篇 + §7.3 占用表补登 94 号；94_crypto_quant_expansion.md 落位 9x 段（93 已占用，取下一空号 94），draft v0.1.0 待 Owner 拍板：30 域复用矩阵三类划分（共用/参数化/新建）+ 四横切改造点（市场日历抽象/T+0/规则可插拔/杠杆资金费率 Phase 2）+ 施工波次 W0-W4 + 开放问题 Q1-Q6；candidate_module_registry.yaml 同步登记 CAND-CRYPTO-001~008 族 8 条（查重零命中，P0×4/P1×3/P2×1） | Owner 裁定驱动：宣布启动数字货币量化战线，要求先设计好再施工——复用边界与横切改造点先行锚定，新建构件走 CAND→晋升流程（治理纪律 D1 查重已做） |
+| 2026-08-26 | 2.13.1 | **94 号 v0.2.0 版本同步（外部材料审查升级）**——§0 目录+§7.3 两处：94 号 draft v0.1.0→v0.2.0（新增 §7 外部实战参考——低学历勇闯量化系列 54 图全量审查：行情录制端 6 要点/跨境网络双活+传输加工 8 要点/实盘运营 4 项/不采用 5 项；§5 候选 8→9 条；§6 波次 W1 加网络层；§8 加"不纳入预测市场"）；candidate_module_registry.yaml 补登 CAND-CRYPTO-009（跨境网络双活传输层 P0）+ CAND-CRYPTO-002 联动补录制端设计引用 | Owner 裁定驱动（审查报告三动作批准）：v0.1.0 遗漏跨境网络层（境内→境外交易所双活=实盘刚需），已验证实战设计吸收为 002/009 施工参考，Polymarket 维度裁定不纳入仅知识储备 |

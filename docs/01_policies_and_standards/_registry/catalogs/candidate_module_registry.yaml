@@ -18629,12 +18629,17 @@ entries:
   tech_notes: >-
     WS 7×24 长连接需心跳/重连/sequence 校验（防丢帧）；REST 补数按限频预算排调度。
     历史 K线首批回填区间 Owner 定（建议 BTC/ETH 现货 3 年起，对齐 MVP universe=主流币）。
+    录制端设计参考（94号 §7.1，已验证实战）：录制窗口>名义窗口（提前预热6步+延迟退出）、
+    "socket已连接≠ready"（订阅完成+首条真实数据+初始快照才算就绪）、快照基准+Delta绝对量语义、
+    make-before-break连接轮换、多证据独立保留互校（Snapshot/Delta/BBO/成交/参考价）、
+    双时间戳event_time+recorded_time；真源 docs/_working/低学历勇闯量化/ PM回测上篇13页。
+    传输侧双线路与热切换由 CAND-CRYPTO-009 承接。
   risks:
     - "WS 长连接 7×24 稳定性（断线静默丢帧）——sequence 缺口检测+自动 REST 补洞为必备"
   alternatives: "付费聚合源（Kaiko/CryptoQuant）——MVP 阶段免费直连（94号 Q4 建议），质量门禁不达标再升级"
   tags: ["数字货币", "数据接入", "行情", "P0"]
   search_terms: ["crypto market data", "binance websocket", "okx api", "交易所行情"]
-  related_candidates: ["CAND-CRYPTO-001", "CAND-CRYPTO-003"]
+  related_candidates: ["CAND-CRYPTO-001", "CAND-CRYPTO-003", "CAND-CRYPTO-009"]
   enables: ["CAND-CRYPTO-003", "CAND-CRYPTO-007"]
   blocked_by: ["CAND-CRYPTO-001"]
   next_review_date: '2027-08-26'
@@ -19016,3 +19021,78 @@ entries:
   last_review_outcome: "candidate 登记（2026-08-26）：Phase 2 启动线，003/007 就绪+Q3 拍板后晋升"
   acquisition_method: self_build
   acquisition_source: ""
+
+  # ----------------------------------------------------------
+  # CAND-CRYPTO-009: 跨境网络双活传输层（W1——境内→境外交易所双线路+热切换）
+  # 来源: 2026-08-26 外部材料审查批（低学历勇闯量化系列 54 图全量审查，Owner 裁定补登）
+  # 设计真源: 94_crypto_quant_expansion.md §7.2（v0.2.0）
+  # ----------------------------------------------------------
+- id: CAND-CRYPTO-009
+  name: "跨境网络双活传输层(Cross-Border Dual-Path Transport)"
+  aliases: ["跨境双线路", "主备传输", "Cloudflare Tunnel 备用线路", "Caddy 直连", "热切换状态机"]
+  domain: D_MKT_DATA
+  domain_status: active
+  domain_node_count: 6
+  sub_layer: "mkt_data/transport"
+  panorama_position:
+    depgraph: {has_position: true, note: "mkt_data 域传输层节点，位于 crypto provider（CAND-CRYPTO-002）与落库管道之间；执行回传（CAND-CRYPTO-005）共用"}
+    dataflowgraph: {has_position: true, note: "境外交易所 WS/REST ↔ 双线路（直连主/CF Tunnel 备）↔ 境内边缘 WAL ↔ 后端"}
+    decisiongraph: {has_position: false, note: "传输基础设施，无业务决策"}
+    blueprint: {has_position: true, note: "归属 mkt_data 蓝图传输层（94号 §7.2 设计真源）"}
+  description: >-
+    境内基建↔境外交易所的双线路传输层：主线路=HTTPS 直连（Caddy TLS 终结+DNS-01 证书+
+    来源 IP 白名单），备用=Cloudflare Tunnel（Access Service Token 鉴权、cloudflared
+    隧道、不暴露源站）；控制面走 CF、数据面正常直连、异常自动降级 CF。
+    热切换状态机三条纪律（外部实战血泪教训，94号 §7.2）：①失败+吞吐+积压三感知，
+    不能只看连接存活（5 秒桶积压 ~24 个≈2 分钟即主动绕开"活着但跟不上"的主线路）；
+    ②切回用纯时间驱动 60s 探测，不依赖"积压=0"等发送中永远达不到的静态条件；
+    ③积压计数器饱和递减防无符号下溢（0-1→2^64 曾误判天文数字积压反造 GB 级真实积压）。
+    内核层 BBR 拥塞控制+fq 公平队列（跨境丢包防拥塞窗口坍缩）。
+    配合双层 WAL（边缘/后端故障域分离）：双线路全断时数据留边缘 WAL 指数退避重试。
+  capability: ""
+  problem_it_solves: "境内→境外交易所链路晚高峰 TCP 积压/丢包是实盘刚需风险——行情断流=瞎、撤单传不到=资损；单线路无降级=单点，94号 v0.1.0 遗漏此层（v0.2.0 补）"
+  trigger_signals:
+    - "CAND-CRYPTO-002 行情接入施工启动（WS 长连接跨境承载需求出现）"
+    - "94号 W1 波次派单"
+  keywords: ["cross-border", "dual-path", "cloudflare tunnel", "caddy", "failover", "BBR", "双活", "热切换"]
+  upstream_deps:
+    - {path: "docs/_working/低学历勇闯量化/", note: "设计参考真源：第三篇网络坑 7 图 + 回测中篇传输 25 页（已验证实战）"}
+  downstream_consumers:
+    - {path: "candidate CAND-CRYPTO-002", note: "行情 WS 长连接跨境承载"}
+    - {path: "candidate CAND-CRYPTO-005", note: "执行下单/回执回传共用双线路"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+    - {item: "Cloudflare Zero Trust 账号与隧道配置", note: "免费层即可；域名+DNS-01 证书准备"}
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "项目现有传输为境内单线路（QMT 券商本地链路），无跨境双活层（2026-08-26 盘点）"}
+    blocking_question: null
+    result: candidate
+  status: candidate
+  priority: P0
+  created_at: '2026-08-26'
+  last_reviewed_at: '2026-08-26'
+  promoted_to: ""
+  source_draft: "94_crypto_quant_expansion.md"
+  source_section: "§7.2 跨境网络双活与传输加工"
+  original_id: ""
+  estimated_complexity: M
+  tech_notes: >-
+    关键教训写死进设计：自动切换不能只看连接存活（必须同时感知失败/吞吐/积压）；
+    自动切回不能依赖传输中永远达不到的静态条件（纯时间驱动探测）；
+    计数器一律饱和递减最低到零。数据面全量走 CF 的代理流量成本实测约 150GB/月——故控制面/数据面分离。
+    两线路保护的是"后端入口和跨境路径"不是两套后端；后端主机不可用靠边缘 WAL 而非网络切换。
+  risks:
+    - "CF ipv4 网络境内可达性不稳定——接入宜用 ipv6（外部实战经验）"
+    - "家用宽带 PPPoE 动态 IP——域名+DDNS 方案或 CF 隧道规避"
+  alternatives: "单线路直连+断线重连——拒绝（晚高峰跨境积压是常态非异常，无降级=反复断流）"
+  tags: ["数字货币", "网络", "双活", "传输", "P0"]
+  search_terms: ["cross-border transport", "cloudflare tunnel", "caddy https", "failover", "跨境网络", "双线路"]
+  related_candidates: ["CAND-CRYPTO-002", "CAND-CRYPTO-005"]
+  enables: ["CAND-CRYPTO-002", "CAND-CRYPTO-005"]
+  blocked_by: []
+  next_review_date: '2027-08-26'
+  review_frequency: yearly
+  last_review_outcome: "candidate 登记（2026-08-26 Owner 裁定，外部材料审查批）：W1 波次与 002 同行，002 施工启动即晋升"
+  acquisition_method: self_build
+  acquisition_source: "Caddy（开源）+ Cloudflare Zero Trust（免费层）"
