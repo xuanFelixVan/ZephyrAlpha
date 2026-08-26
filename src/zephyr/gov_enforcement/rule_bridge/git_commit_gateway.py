@@ -355,6 +355,42 @@ def _audit_index_hygiene(project_root: Path, session_id: str, kind: str, payload
         logger.debug("index_hygiene audit write failed (non-blocking)", exc_info=True)
 
 
+def _log_allow_overlap_usage(project_root: object, session_id: str, files: list[str]) -> None:
+    """O2 裁定（#ARCH-264）：--allow-overlap 逃生通道使用计量落盘。
+
+    通道永久保留（TRAE-079），但"常态化使用"必须可度量——每次使用落一条 JSONL 到
+    ``.runtime/gate_audit/allow_overlap_usage.jsonl``（session/文件数/热文件清单），
+    供滚动窗计数升级阻断（热文件 24h≥5 次升 hard block）与每周治理报告消费。
+    计量失败 fail-open 不阻断 commit。
+    """
+    try:
+        from datetime import datetime, timezone  # noqa: PLC0415
+
+        from zephyr.shared.io.file_utils import is_hot_file  # noqa: PLC0415
+
+        root = Path(str(project_root))
+        hot: list[str] = []
+        for f in files:
+            rel = str(f).replace("\\", "/")
+            try:
+                if is_hot_file(root / rel, root):
+                    hot.append(rel)
+            except Exception:  # noqa: BLE001 — 单文件判定失败不拖累计量
+                continue
+        audit_dir = root / ".runtime" / "gate_audit"
+        audit_dir.mkdir(parents=True, exist_ok=True)
+        record = {
+            "ts": datetime.now(timezone.utc).isoformat(),
+            "session": session_id,
+            "files": len(files),
+            "hot_files": sorted(hot),
+        }
+        with (audit_dir / "allow_overlap_usage.jsonl").open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except Exception:  # noqa: BLE001 — 计量失败不阻断 commit
+        logger.debug("allow_overlap usage audit write failed (non-blocking)", exc_info=True)
+
+
 # P2-2b 治本（#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）：
 # git 命令 timeout 分级——原硬编码 120s 对所有 git 命令共用，导致快速读命令
 # （rev-parse/show/status）与慢速写命令（commit/merge）共用上限。改为按命令类型
@@ -1635,6 +1671,8 @@ class GitCommitGateway:
                 session_id,
                 len(existing),
             )
+            # O2（#ARCH-264）：逃生通道使用计量落盘（含热文件标记，供滚动窗升级阻断）
+            _log_allow_overlap_usage(self.project_root, session_id, existing)
         if allow_multi_domain:
             full_message += f"\n[GW:{session_id}:multi-domain]"
 

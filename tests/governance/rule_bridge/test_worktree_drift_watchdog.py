@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-GOV_COMMIT_GATE_REGISTRY | (auto-injected by S4 reconciler) | §
+# [A_module] module_id=MOD-GOV_COMMIT_GATE_REGISTRY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [MODULE] tests.governance.rule_bridge.test_worktree_drift_watchdog
 # [DOMAIN] D_GOV_ENFORCEMENT
@@ -262,3 +263,83 @@ def test_grace_expired_still_alerts(git_repo: Path, monkeypatch) -> None:
     monkeypatch.setattr(wd, "_git", fake_git)
     s = wd.scan_once(git_repo, grace_seconds=600)
     assert s["alerted"] == 1, f"全锚点超窗真漂移必须 alert: {s}"
+
+
+# ── #ARCH-264 裁定落地（2026-08-26）：O6 observe-only / O3-P0 热文件快扫 / O4 quarantine 自管 ──
+
+
+def test_observe_only_audits_without_alert(git_repo: Path) -> None:
+    """O6 唯一告警写者：observe-only 只审计不告警、不推进告警状态。
+
+    网关 post-commit 即时扫降级为观察员（防 daemon/网关双扫描竞态重复告警）；
+    observe-only 不得推进 files_state——否则 daemon 侧 dedup 会把真漂移静默吞掉。
+    """
+    (git_repo / "hot.txt").write_text("v2-stale\n", encoding="utf-8")
+    summary = wd.scan_once(git_repo, grace_seconds=0, alert_enabled=False)
+    assert summary["alerted"] == 0
+    assert summary["observed"] == 1
+    # 归因审计照记（verdict=observed，含 hash）
+    audit = _read_audit(git_repo)
+    observed = [r for r in audit if r.get("verdict") == "observed"]
+    assert len(observed) == 1 and observed[0]["work_hash"]
+    # 无 critical_warn 落库
+    rows = _read_log_actions(git_repo)
+    assert not any(r[1] == "critical_warn" for r in rows)
+    # 告警状态未推进：daemon（默认 alert_enabled=True）扫同一漂移仍应告警且仅一次
+    s2 = wd.scan_once(git_repo, grace_seconds=0)
+    assert s2["alerted"] == 1
+    rows2 = _read_log_actions(git_repo)
+    assert sum(1 for r in rows2 if r[1] == "critical_warn") == 1
+
+
+def test_hot_only_scans_only_hot_files(git_repo: Path) -> None:
+    """O3-P0 热文件快扫：hot_only 只覆盖 DEFAULT_HOT_FILES ∪ design_memos/ 前缀。"""
+    # 非热文件漂移
+    (git_repo / "plain.txt").write_text("a\n", encoding="utf-8")
+    _git(git_repo, "add", "plain.txt")
+    _git(git_repo, "-c", "user.email=t@t", "-c", "user.name=t", "commit", "-q", "-m", "add plain")
+    (git_repo / "plain.txt").write_text("b\n", encoding="utf-8")
+    # design_memos 前缀热文件漂移
+    memo = git_repo / "docs" / "02_enterprise_architecture" / "07_trading_decision_architecture" / "design_memos" / "m.md"
+    memo.parent.mkdir(parents=True, exist_ok=True)
+    memo.write_text("v1\n", encoding="utf-8")
+    _git(git_repo, "add", ".")
+    _git(git_repo, "-c", "user.email=t@t", "-c", "user.name=t", "commit", "-q", "-m", "add memo")
+    memo.write_text("v2\n", encoding="utf-8")
+
+    s = wd.scan_once(git_repo, grace_seconds=0, hot_only=True)
+    assert s["alerted"] == 1, s
+    audit = _read_audit(git_repo)
+    alerted_files = [r.get("file", "") for r in audit if r.get("verdict") == "alerted"]
+    assert alerted_files and all("design_memos" in f for f in alerted_files)
+
+
+def test_quarantine_retention_sweep(git_repo: Path) -> None:
+    """O4 quarantine 自管：超 retention 的 drift_* 目录被清理并逐条留审计。"""
+    q = git_repo / ".runtime" / "quarantine"
+    old = q / "drift_20200101T000000"
+    old.mkdir(parents=True)
+    (old / "x.txt").write_text("old\n", encoding="utf-8")
+    new = q / "drift_29990101T000000"
+    new.mkdir()
+    (new / "y.txt").write_text("new\n", encoding="utf-8")
+
+    swept = wd._sweep_quarantine(git_repo, retention_days=30)
+    assert swept["removed"] == 1 and swept["kept"] == 1, swept
+    assert not old.exists() and new.exists()
+    audit = _read_audit(git_repo)
+    assert any(r.get("verdict") == "quarantine_retention_sweep" for r in audit)
+
+
+def test_quarantine_tamper_detected(git_repo: Path) -> None:
+    """O4 带外删除可观测：非 watchdog 删除已登记快照目录 → quarantine_tamper 审计。"""
+    import shutil
+
+    (git_repo / "hot.txt").write_text("v2\n", encoding="utf-8")
+    wd.scan_once(git_repo, grace_seconds=0)  # 产生快照并登记 known_quarantine
+    snaps = [p for p in (git_repo / ".runtime" / "quarantine").glob("drift_*") if p.is_dir()]
+    assert snaps
+    shutil.rmtree(snaps[0])  # 模拟带外裸删除
+    wd.scan_once(git_repo, grace_seconds=0)
+    audit = _read_audit(git_repo)
+    assert any(r.get("verdict") == "quarantine_tamper" for r in audit)

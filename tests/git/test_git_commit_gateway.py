@@ -2254,3 +2254,24 @@ class TestRunGitPipeRedirect:
         assert r.returncode == 0
         after = set(tmpdir.glob("zephyr_gw_git_*"))
         assert after == before, f"临时文件未清理: {sorted(after - before)}"
+
+
+def test_allow_overlap_usage_audit(tmp_path: Path) -> None:
+    """O2 裁定（#ARCH-264）：--allow-overlap 逃生通道使用计量落盘，含热文件标记。
+
+    通道永久保留（TRAE-079），但"常态化使用"必须可度量——用量落
+    .runtime/gate_audit/allow_overlap_usage.jsonl，供滚动窗计数升级阻断与周报消费。
+    """
+    import json
+
+    from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import _log_allow_overlap_usage
+
+    hot = "docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml"
+    _log_allow_overlap_usage(tmp_path, "sess-x", [hot, "src/foo.py"])
+    p = tmp_path / ".runtime" / "gate_audit" / "allow_overlap_usage.jsonl"
+    assert p.exists(), "用量审计文件必须落盘"
+    rec = json.loads(p.read_text(encoding="utf-8").strip().splitlines()[-1])
+    assert rec["session"] == "sess-x"
+    assert rec["files"] == 2
+    assert rec["hot_files"] == [hot]
+    assert rec["ts"]

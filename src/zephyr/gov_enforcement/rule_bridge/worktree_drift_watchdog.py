@@ -5,8 +5,8 @@
 # [CONSUMERS] git_commit_gateway (_register_default_reconcilers: make_worktree_drift_watchdog_reconciler); CLI python -m ... [--once|--daemon|--status]
 # [STARTUP] manual / post-commit reconciler ensure-daemon
 # [MATURITY] production
-# [INVARIANTS] 锚主仓工作区（anchor_main_root）；只告警不阻断（fail-open 不干扰主流程）；快照先于告警；审计写 .runtime/audit/（永不回 tracked 区）；同签名告警去重；漂移消解自动写 clean 自愈消音
-# [MODIFY-GUARD] scan_once 判定逻辑（claimed/grace/dedup/self-heal 四路分流）；快照目录格式 .runtime/quarantine/drift_<ts>/
+# [INVARIANTS] 锚主仓工作区（anchor_main_root）；只告警不阻断（fail-open 不干扰主流程）；快照先于告警；审计写 .runtime/（永不回 tracked 区）；同签名告警去重；漂移消解自动写 clean 自愈消音；#ARCH-264：critical_warn 唯一写者=daemon（网关即时扫 observe-only）；热文件 10s 快扫+interval 全量双频节拍；quarantine 30 天 retention 自管+带外删除 tamper 审计
+# [MODIFY-GUARD] scan_once 判定逻辑（claimed/grace/dedup/alert 四路分流 + observe-only 观察员模式 + hot_only 快扫过滤）；快照目录格式 .runtime/quarantine/drift_<ts>/；_sweep_quarantine 只清理 drift_<ts> 规范命名目录
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -62,10 +62,11 @@ __all__: Final = [
 import json
 import logging
 import os
+import shutil
 import signal
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Final
 
@@ -75,12 +76,16 @@ logger = logging.getLogger(__name__)
 
 GATE_ID = "GATE-WORKTREE-DRIFT-WATCHDOG"
 
-_SCAN_INTERVAL = 60  # daemon 扫描间隔（秒）
+_SCAN_INTERVAL = 60  # daemon 全量扫描间隔（秒）
+_HOT_SCAN_INTERVAL = 10  # 热文件快扫间隔（秒，#ARCH-264 O3-P0）
 _GRACE_AFTER_COMMIT = 600  # commit 后派生写宽限窗（秒）——reconciler 合法回写期
 _IDLE_EXIT_SECONDS = 1800  # 无活跃 session 持续此秒数后 daemon 退出（同 heartbeat 活性锚语义）
 _STATE_DIR = ".runtime/drift_watchdog"
 _AUDIT_DIR = ".runtime/audit"
 _QUARANTINE_DIR = ".runtime/quarantine"
+_QUARANTINE_RETENTION_DAYS = 30  # 快照保留天数（#ARCH-264 O4：watchdog 自管 retention）
+_DESIGN_MEMO_PREFIX = "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/"
+_KNOWN_QUARANTINE_CAP = 500  # known_quarantine 登记上限（防状态文件膨胀）
 
 
 # ── git 原语（全部经 run_subprocess_hidden，禁裸 subprocess 直调）────────────────
@@ -130,6 +135,13 @@ def _real_drift(root: Path, rel: str) -> bool:
     rc1, _ = _git(root, ["diff", "--quiet", "--", rel])
     rc2, _ = _git(root, ["diff", "--cached", "--quiet", "--", rel])
     return rc1 != 0 or rc2 != 0
+
+
+def _is_hot_rel(rel: str) -> bool:
+    """热文件判定（#ARCH-264 O3-P0）：DEFAULT_HOT_FILES 单真源 ∪ design_memos/ 前缀。"""
+    from zephyr.shared.io.file_utils import DEFAULT_HOT_FILES  # noqa: PLC0415
+
+    return rel in DEFAULT_HOT_FILES or rel.startswith(_DESIGN_MEMO_PREFIX)
 
 
 def _work_hash(root: Path, rel: str) -> str:
@@ -248,18 +260,72 @@ def _log_results(root: Path, action: str, detail: str) -> None:
         logger.warning("drift watchdog log_results failed: %s", e)
 
 
+def _sweep_quarantine(root: Path, retention_days: int = _QUARANTINE_RETENTION_DAYS) -> dict:
+    """quarantine retention 自管（#ARCH-264 O4）：超期 drift_* 目录清理+逐条审计。
+
+    只清理本家产物（drift_<ts> 命名规范目录）；非标准命名（人工存证等）不碰。
+    """
+    result = {"removed": 0, "kept": 0}
+    qdir = root / _QUARANTINE_DIR
+    if not qdir.is_dir():
+        return result
+    cutoff = datetime.now(timezone.utc) - timedelta(days=retention_days)
+    for d in sorted(qdir.iterdir()):
+        if not d.is_dir() or not d.name.startswith("drift_"):
+            continue
+        try:
+            ts = datetime.strptime(d.name[len("drift_"):], "%Y%m%dT%H%M%S").replace(tzinfo=timezone.utc)
+        except ValueError:
+            result["kept"] += 1  # 命名不符不碰（人工存证目录豁免）
+            continue
+        if ts < cutoff:
+            shutil.rmtree(d, ignore_errors=True)
+            _audit(
+                root,
+                {"ts": _now_iso(), "verdict": "quarantine_retention_sweep", "file": d.name, "retention_days": retention_days},
+            )
+            result["removed"] += 1
+        else:
+            result["kept"] += 1
+    return result
+
+
+def _maybe_sweep_quarantine(root: Path) -> None:
+    """retention 清扫的日级节流入口（daemon 每全量周期调用）。"""
+    state = _load_state(root)
+    today = datetime.now(timezone.utc).date().isoformat()
+    if state.get("quarantine_last_sweep") == today:
+        return
+    swept = _sweep_quarantine(root)
+    state["quarantine_last_sweep"] = today
+    _save_state(root, state)
+    if swept["removed"]:
+        _lifecycle_log(root, "quarantine_swept", swept)
+
+
 # ── 扫描主逻辑 ────────────────────────────────────────────────────────────────
 
 
-def scan_once(project_root: str | Path, *, grace_seconds: int = _GRACE_AFTER_COMMIT) -> dict:
+def scan_once(
+    project_root: str | Path,
+    *,
+    grace_seconds: int = _GRACE_AFTER_COMMIT,
+    alert_enabled: bool = True,
+    hot_only: bool = False,
+) -> dict:
     """单周期扫描：tracked 漂移四路分流（claimed/grace/dedup/alert）+ 自愈。
 
     Args:
         project_root: 项目根（worktree 调用自动锚主仓——监视对象恒为主仓工作区）。
         grace_seconds: commit 后派生写宽限窗。
+        alert_enabled: #ARCH-264 O6 唯一告警写者——False 时 observe-only
+            （只归因审计+快照存证，不写 critical_warn/clean、不推进告警状态），
+            网关 post-commit 即时扫用此模式，critical_warn 由 daemon 单写。
+        hot_only: #ARCH-264 O3-P0 热文件快扫——True 时只扫描
+            DEFAULT_HOT_FILES ∪ design_memos/（daemon 10s 快扫周期用）。
 
     Returns:
-        摘要 dict：{scanned, drifted, alerted, claimed, grace_suppressed, dedup_skipped, healed}。
+        摘要 dict：{scanned, drifted, alerted, observed, claimed, grace_suppressed, dedup_skipped, healed}。
     """
     from zephyr.shared.io.paths import anchor_main_root  # noqa: PLC0415
 
@@ -268,6 +334,7 @@ def scan_once(project_root: str | Path, *, grace_seconds: int = _GRACE_AFTER_COM
         "scanned": 0,
         "drifted": 0,
         "alerted": 0,
+        "observed": 0,
         "claimed": 0,
         "grace_suppressed": 0,
         "dedup_skipped": 0,
@@ -308,7 +375,22 @@ def scan_once(project_root: str | Path, *, grace_seconds: int = _GRACE_AFTER_COM
     in_grace = (now_utc().timestamp() - max(anchors)) < grace_seconds
 
     sessions, claimed = _active_sessions_and_claims(root)
+
+    # O4（#ARCH-264）：known_quarantine 登记快照目录被带外删除 → tamper 审计。
+    # 仅 daemon（alert_enabled）执行——观察员模式不落状态变更。
+    if alert_enabled:
+        known_q: list = state.setdefault("known_quarantine", [])
+        for d in list(known_q):
+            if not (root / d).is_dir():
+                _audit(
+                    root,
+                    {"ts": _now_iso(), "file": d, "verdict": "quarantine_tamper", "head_sha": head_sha, "active_sessions": sessions},
+                )
+                known_q.remove(d)
+
     dirty = _dirty_tracked(root)
+    if hot_only:
+        dirty = [rel for rel in dirty if _is_hot_rel(rel)]
     summary["scanned"] = len(dirty)
     seen_drift: set[str] = set()
 
@@ -345,6 +427,11 @@ def scan_once(project_root: str | Path, *, grace_seconds: int = _GRACE_AFTER_COM
             _audit(root, {**base, "verdict": "grace_suppressed"})
         else:
             snap = _snapshot(root, rel, wh)
+            if not alert_enabled:
+                # O6 observe-only：快照存证+归因审计照记，但不告警、不推进告警状态
+                _audit(root, {**base, "verdict": "observed", "snapshot": snap})
+                summary["observed"] += 1
+                continue  # 不更新 files_state/alerted——daemon 下轮仍按全状态告警，防吞
             detail = (
                 f"未登记写入方致 tracked 文件内容漂移: {rel} "
                 f"(work {prev.get('work_hash', '∅')[:8]}→{wh[:8]}, HEAD blob {hb[:8]}, "
@@ -353,22 +440,30 @@ def scan_once(project_root: str | Path, *, grace_seconds: int = _GRACE_AFTER_COM
             _log_results(root, "critical_warn", detail)
             _audit(root, {**base, "verdict": "alerted", "snapshot": snap})
             alerted[rel] = wh
+            if snap:
+                # O4：快照目录登记（带外删除可观测），容量封顶防状态膨胀
+                known_q = state.setdefault("known_quarantine", [])
+                known_q.append(snap)
+                del known_q[:-_KNOWN_QUARANTINE_CAP]
             summary["alerted"] += 1
         files_state[rel] = {"work_hash": wh, "head_blob": hb, "last_seen": _now_iso()}
 
     # 自愈：曾告警文件本轮已干净（diff 消失=恢复/HEAD 推进=已提交吸收）
-    for rel, sig in list(alerted.items()):
-        if rel not in seen_drift:
-            _log_results(root, "clean", f"tracked 漂移已消解: {rel}（alert 签名 {sig[:8]}）")
-            _audit(
-                root,
-                {"ts": _now_iso(), "file": rel, "verdict": "healed", "head_sha": head_sha, "active_sessions": sessions},
-            )
-            del alerted[rel]
-            files_state.pop(rel, None)
-            summary["healed"] += 1
+    if alert_enabled:
+        for rel, sig in list(alerted.items()):
+            if hot_only and not _is_hot_rel(rel):
+                continue  # 快扫周期不裁决非热文件自愈（留给全量周期）
+            if rel not in seen_drift:
+                _log_results(root, "clean", f"tracked 漂移已消解: {rel}（alert 签名 {sig[:8]}）")
+                _audit(
+                    root,
+                    {"ts": _now_iso(), "file": rel, "verdict": "healed", "head_sha": head_sha, "active_sessions": sessions},
+                )
+                del alerted[rel]
+                files_state.pop(rel, None)
+                summary["healed"] += 1
 
-    _save_state(root, state)
+        _save_state(root, state)
     return summary
 
 
@@ -491,9 +586,20 @@ def run_daemon(project_root: str | Path, interval: int = _SCAN_INTERVAL) -> int:
 
     _lifecycle_log(root, "started", {"interval": interval})
     idle_since = now_utc().timestamp()
+    # O3-P0（#ARCH-264）：热文件 10s 快扫 + interval 全量扫描双频节拍。
+    # 快扫只过 DEFAULT_HOT_FILES ∪ design_memos/（秒级覆写压进可观测窗）；
+    # 全量周期照旧并顺带日级 retention 清扫（O4）。
+    hot_interval = max(1, min(interval, _HOT_SCAN_INTERVAL))
+    full_every = max(1, interval // hot_interval)
+    tick = 0
     while True:
         try:
-            summary = scan_once(root)
+            tick += 1
+            if tick % full_every == 0:
+                summary = scan_once(root)
+                _maybe_sweep_quarantine(root)
+            else:
+                summary = scan_once(root, hot_only=True)
             sessions, _ = _active_sessions_and_claims(root)
             if sessions:
                 idle_since = now_utc().timestamp()
@@ -502,7 +608,7 @@ def run_daemon(project_root: str | Path, interval: int = _SCAN_INTERVAL) -> int:
                 return 0
             if summary.get("alerted"):
                 _lifecycle_log(root, "alerted", summary)
-            time.sleep(interval)
+            time.sleep(hot_interval)
         except SystemExit:
             return 0
         except Exception as e:  # noqa: BLE001 — daemon 不崩溃，写下轮继续
@@ -533,14 +639,15 @@ def make_worktree_drift_watchdog_reconciler(gateway: object):
     def _reconcile(committed_files: list[str], session_id: str) -> "ReconcileResult":
         try:
             ensure_daemon(project_root)
-            summary = scan_once(project_root)
+            # O6（#ARCH-264）唯一告警写者：网关即时扫 observe-only（快照+归因审计照记，
+            # 不写 critical_warn/clean、不推进告警状态）——critical_warn 由 daemon 单写，
+            # 消除 daemon/网关双扫描同签名重复告警（实证 3 连同签名）。
+            summary = scan_once(project_root, alert_enabled=False)
             detail = (
-                f"drift watchdog: scanned={summary['scanned']} drifted={summary['drifted']} "
-                f"alerted={summary['alerted']} claimed={summary['claimed']} "
-                f"grace={summary['grace_suppressed']} healed={summary['healed']}"
+                f"drift watchdog(observe-only): scanned={summary['scanned']} drifted={summary['drifted']} "
+                f"observed={summary['observed']} claimed={summary['claimed']} grace={summary['grace_suppressed']}"
             )
-            action = "warn" if summary["alerted"] else "clean"
-            return ReconcileResult(action=action, detail=detail, gate_id=GATE_ID)
+            return ReconcileResult(action="clean", detail=detail, gate_id=GATE_ID)
         except Exception as e:  # noqa: BLE001 — reconciler 异常降级 warn 不阻断
             return ReconcileResult(action="warn", detail=f"drift watchdog error: {e}", gate_id=GATE_ID)
 
