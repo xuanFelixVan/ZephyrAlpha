@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] InvalidEodInputError(占位未登码 ZA-TR-0023)
+# [ERROR_CONTRACT] InvalidEodInputError(ZA-TR-0023)
 # [TESTS] tests/trading/test_eod_processor.py
 # [A_module] module_id=MOD-TRADING-012 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent

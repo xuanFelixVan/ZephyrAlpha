@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] InvalidManualInstructionError(占位未登码 ZA-TR-0024)
+# [ERROR_CONTRACT] InvalidManualInstructionError(ZA-TR-0024)
 # [TESTS] tests/trading/test_manual_instruction_channel.py
 # [A_module] module_id=MOD-TRADING-011 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent

@@ -2655,6 +2655,16 @@ error_codes:
   module: zephyr.data_eng.incremental_update_engine
   file: src/zephyr/data_eng/incremental_update_engine.py
   introduced: '2026-08-25: DIGEST P1 R6 正式登记（AI-K3 主代理，MOD-DATA_ENG（P1 R6W23））'
+- code: ZA-XC-LOQ
+  class: LocalOrderQueueError
+  module: zephyr.ex_core.local_order_queue
+  file: src/zephyr/ex_core/local_order_queue.py
+  introduced: '2026-08-26: 对账批补登（代码真源先行，QMT 文件桥在途件，SSoT 诚实登记原则）'
+- code: ZA-XC-QMTFB
+  class: QmtFileBridgeError
+  module: zephyr.ex_core.adapters.qmt_file_bridge_broker
+  file: src/zephyr/ex_core/adapters/qmt_file_bridge_broker.py
+  introduced: '2026-08-26: 对账批补登（代码真源先行，QMT 文件桥在途件，SSoT 诚实登记原则）'
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）

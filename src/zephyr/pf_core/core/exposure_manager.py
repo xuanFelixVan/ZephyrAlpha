@@ -97,8 +97,7 @@ _UNCLASSIFIED: Final = "__UNCLASSIFIED__"
 class ExposureManagerError(ZephyrBaseError):
     """组合域敞口管理器输入/配置非法（Fail-Closed）。
 
-    错误码占位：ZA-PF-0083（待主代理统一登记转正，
-    建议号段 ZA-PF-0083）。
+    错误码：ZA-PF-0083（2026-08-26 对账批转正）。
     """
 
     error_code = "ZA-PF-0083"

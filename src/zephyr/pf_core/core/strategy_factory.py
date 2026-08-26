@@ -92,8 +92,7 @@ __all__: Final = [
 class StrategyFactoryError(ZephyrBaseError):
     """策略工厂操作非法（Fail-Closed）。
 
-    错误码占位：ZA-PF-0081（待主代理统一登记转正，
-    建议号段 ZA-PF-0081 起）。
+    错误码：ZA-PF-0081（2026-08-26 对账批转正）。
     """
 
     error_code = "ZA-PF-0081"

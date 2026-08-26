@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] IncrementalUpdateError(ZA-DE-0001); InvalidIncrementalInputError(同占位)
+# [ERROR_CONTRACT] IncrementalUpdateError(ZA-DE-0001); InvalidIncrementalInputError
 # [TESTS] tests/zephyr/data/test_incremental_update_engine.py
 # [A_module] module_id=MOD-DATA_ENG | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent

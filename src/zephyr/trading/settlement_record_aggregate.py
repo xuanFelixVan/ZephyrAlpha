@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] SettlementRecordAggregateError(ZA-TR-0029); InvalidSettlementInputError(同占位); DuplicateSettlementIdError(同占位); InvalidSettlementTransitionError(同占位)
+# [ERROR_CONTRACT] SettlementRecordAggregateError(ZA-TR-0029); InvalidSettlementInputError; DuplicateSettlementIdError; InvalidSettlementTransitionError
 # [TESTS] tests/trading/test_settlement_record_aggregate.py
 # [A_module] module_id=MOD-TRADING-010 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent

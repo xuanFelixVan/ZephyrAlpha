@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] TradingOrderAggregateError(ZA-TR-0025); InvalidTradingOrderInputError(同占位); DuplicateOrderIdError(同占位); InvalidOrderTransitionError(同占位)
+# [ERROR_CONTRACT] TradingOrderAggregateError(ZA-TR-0025); InvalidTradingOrderInputError; DuplicateOrderIdError; InvalidOrderTransitionError
 # [TESTS] tests/trading/test_trading_order_aggregate.py
 # [A_module] module_id=MOD-TRADING-009 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent

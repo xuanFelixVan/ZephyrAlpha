@@ -91,8 +91,7 @@ __all__: Final = [
 class FunnelAdjudicationError(ZephyrBaseError):
     """漏斗第六层裁决输入/配置非法（Fail-Closed）。
 
-    错误码占位：ZA-PF-0082（待主代理统一登记转正，
-    建议号段 ZA-PF-0082）。
+    错误码：ZA-PF-0082（2026-08-26 对账批转正）。
     """
 
     error_code = "ZA-PF-0082"
