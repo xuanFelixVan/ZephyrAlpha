@@ -107,6 +107,30 @@ class TestRunBatch:
         assert results[0].error != ""
         assert results[1].sentiment == "positive"
 
+    def test_within_run_dedup_multi_version(self, tmp_path):
+        """同批次内多版本重复 news_id 只推一次（2026-08-26 实证 12.8% 冗余）。"""
+        news = [_news("n1"), _news("n1"), _news("n2")]
+        pred = tmp_path / "predictions.jsonl"
+        results = rsb.run_batch(news, chat=_FakeChat(), pred_path=pred)
+        assert len(results) == 2
+        rows = pred.read_text(encoding="utf-8").splitlines()
+        assert len(rows) == 2
+
+    def test_aggregate_dedup_multi_version(self, tmp_path):
+        """聚合按 news_id 去重取首条（防日级计数虚高）。"""
+        pred = tmp_path / "predictions.jsonl"
+        _write_jsonl(
+            pred,
+            [
+                {"news_id": "n1", "source": "eastmoney", "publish_date": "2026-08-18", "polarity": -0.8},
+                {"news_id": "n1", "source": "eastmoney", "publish_date": "2026-08-18", "polarity": -0.8},
+                {"news_id": "n2", "source": "cls", "publish_date": "2026-08-18", "polarity": -0.6},
+            ],
+        )
+        daily = rsb.aggregate_from_predictions(pred)
+        assert daily[0].n_news == 2  # n1 重复行只计一次
+        assert daily[0].negative_count == 2
+
 
 # ============ 3. aggregate_from_predictions ============
 

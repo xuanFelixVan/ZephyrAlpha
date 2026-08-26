@@ -163,6 +163,7 @@ def main() -> None:
     if done:
         log.info("断点续作：跳过已提取 %d 条", len(done))
 
+    seen = set(done)  # 全局去重：news_data 保留多版本行（同 news_id ≈3.5x 冗余，2026-08-26 实证）
     t0 = time.time()
     total_new = 0
     stopped = False
@@ -177,12 +178,15 @@ def main() -> None:
                 sys.exit(1)
             if not reports:
                 continue
-            todo = [r for r in reports if str(r["news_id"]) not in done]
+            todo = [r for r in reports if str(r["news_id"]) not in seen]
             if not todo:
                 continue
             log.info("%d 年：%d 行待提取（跳过 %d）", year, len(todo), len(reports) - len(todo))
             rows = extract_rows(todo)
             for r in rows:
+                if r["news_id"] in seen:
+                    continue
+                seen.add(r["news_id"])
                 f.write(json.dumps(r, ensure_ascii=False) + "\n")
                 total_new += 1
                 if args.limit > 0 and total_new >= args.limit:
@@ -190,15 +194,21 @@ def main() -> None:
                     break
             f.flush()
 
-    # 日级聚合（从产物全量聚合，断点续作安全）
+    # 日级聚合（从产物全量聚合，news_id 去重取首条防版本冗余）
     all_rows: list[dict] = []
+    seen_agg: set[str] = set()
     if rating_path.exists():
         with open(rating_path, encoding="utf-8") as f:
             for line in f:
                 try:
-                    all_rows.append(json.loads(line))
+                    obj = json.loads(line)
                 except json.JSONDecodeError:
                     continue
+                nid = str(obj.get("news_id", ""))
+                if nid in seen_agg:
+                    continue
+                seen_agg.add(nid)
+                all_rows.append(obj)
     daily = aggregate_daily(all_rows)
     daily_path = args.out_dir / DAILY_FILENAME
     with open(daily_path, "w", encoding="utf-8") as f:

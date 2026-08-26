@@ -13,7 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] NewsCollectorError(ZA-DATA-0020)
 # [TESTS] tests/data/test_news_collector.py
-# [A_module] module_id=MOD-DATA-NEWS-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-L00-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-NLP-PIPELINE-001 Phase 1
 
@@ -202,6 +202,13 @@ def collect_news(
     df = pd.DataFrame(rows, columns=_NEWS_QUERY_COLUMNS)
     # publish_time 转 datetime
     df["publish_time"] = pd.to_datetime(df["publish_time"], errors="coerce")
+    # news_data 保留多版本行（同 news_id ≈12.8% 冗余，2026-08-26 实证）——
+    # 采集层统一去重（keep first，按 publish_time 有序输入即最早版本），
+    # 防同一新闻重复进入打分/聚合（GPU 浪费+日级计数虚高）
+    before = len(df)
+    df = df.drop_duplicates(subset="news_id", keep="first").reset_index(drop=True)
+    if len(df) < before:
+        _logger.info("collect_news: 多版本去重 %d → %d", before, len(df))
     _logger.info("collect_news: 采集到 %d 条新闻", len(df))
     return df
 

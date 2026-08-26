@@ -128,8 +128,16 @@ def run_batch(
     内部降级 neutral 不阻断。返回本次新推理结果（不含断点续作跳过的部分）。
     """
     done = load_done_ids(pred_path) if resume else set()
-    todo = [n for n in news_items if str(n.get("news_id", "")) not in done]
-    log.info("待推理 %d 条（跳过已预测 %d 条）", len(todo), len(news_items) - len(todo))
+    # 多版本行去重：同 news_id 只推一次（news_data 保留多版本，2026-08-26 实证 12.8% 冗余）
+    seen = set(done)
+    todo: list[dict[str, Any]] = []
+    for n in news_items:
+        nid = str(n.get("news_id", ""))
+        if nid in seen:
+            continue
+        seen.add(nid)
+        todo.append(n)
+    log.info("待推理 %d 条（跳过已预测/重复 %d 条）", len(todo), len(news_items) - len(todo))
     if not todo:
         return []
 
@@ -178,12 +186,17 @@ def aggregate_from_predictions(pred_path: Path) -> list[DailySentiment]:
     items: list[SourceSentiment] = []
     if not pred_path.exists():
         return []
+    seen: set[str] = set()  # 多版本冗余去重（取首条），防日级计数虚高
     with open(pred_path, encoding="utf-8") as f:
         for line in f:
             try:
                 obj = json.loads(line)
             except json.JSONDecodeError:
                 continue
+            nid = str(obj.get("news_id", ""))
+            if nid in seen:
+                continue
+            seen.add(nid)
             items.append(
                 SourceSentiment(
                     source=str(obj.get("source", "") or "unknown"),
