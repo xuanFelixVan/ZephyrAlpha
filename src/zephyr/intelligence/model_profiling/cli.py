@@ -83,11 +83,16 @@ def cmd_quick(model_name: str) -> None:
 
 def cmd_benchmark() -> None:
     from zephyr.intelligence.model_profiling import ModelProfiler
+    from zephyr.intelligence.model_profiling.results_writer import write_benchmark_results
 
     profiler = ModelProfiler()
     print("\n正在运行全量 model benchmark...\n")
     results = profiler.profile_ollama_only()
     profiler.print_ranking(results)
+    # ARCH-208：跑分本体为独立 CLI 异步执行——结果落盘供 boot 启动路径读取
+    output_path = write_benchmark_results(results)
+    if output_path:
+        print(f"benchmark 结果已落盘: {output_path}\n")
 
 
 def cmd_best() -> None:

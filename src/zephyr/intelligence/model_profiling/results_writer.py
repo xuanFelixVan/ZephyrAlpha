@@ -36,7 +36,7 @@ from __future__ import annotations
 import json
 import logging
 import os
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Final
 
@@ -46,6 +46,10 @@ from zephyr.shared.utils.time_utils import now_utc
 _log = logging.getLogger(__name__)
 
 DEFAULT_OUTPUT_DIR: Final[str] = "data/model_profiles"
+
+# ARCH-208：boot 启动路径读取上次落盘 benchmark 结果的新鲜度上限（7 天）。
+# 超过即视为过期——启动降级"未知"不阻断，跑分由独立 CLI 异步执行刷新。
+BENCHMARK_CACHE_MAX_AGE_HOURS: Final[float] = 168.0
 
 
 def write_benchmark_results(
@@ -111,6 +115,80 @@ def load_benchmark_history(
 
     history.sort(key=lambda r: r.get("benchmark_date", ""))
     return history
+
+
+def load_latest_benchmark_results(
+    results_dir: str = DEFAULT_OUTPUT_DIR,
+    max_age_hours: float = BENCHMARK_CACHE_MAX_AGE_HOURS,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """读取最近一次落盘的 benchmark 结果——供 boot 健康判断，不触发跑分（#ARCH-208）。
+
+    返回 (results, meta)：
+      - results: to_model_benchmark_result 兼容字典列表（仅 available 模型），
+        可直接传给 ModelTaskMatrix.load_benchmark_baseline / ModelRouter.load_benchmark_profiles。
+      - meta: {"state": "fresh"|"stale"|"missing", "path": str, "age_hours": float|None}
+    新鲜度以文件名时间戳（benchmark_%Y%m%d_%H%M%S.jsonl，UTC）判定。
+    """
+    base = Path(results_dir)
+    if not base.exists():
+        return [], {"state": "missing", "path": "", "age_hours": None}
+
+    files = sorted(base.glob("benchmark_*.jsonl"))
+    if not files:
+        return [], {"state": "missing", "path": "", "age_hours": None}
+
+    latest = files[-1]
+    age_hours: float | None = None
+    try:
+        ts = datetime.strptime(latest.stem.replace("benchmark_", ""), "%Y%m%d_%H%M%S").replace(tzinfo=UTC)
+        age_hours = (now_utc() - ts).total_seconds() / 3600.0
+    except ValueError:
+        _log.debug("ResultsWriter: unparsable timestamp in %s, treat as stale", latest.name)
+        return [], {"state": "stale", "path": str(latest), "age_hours": None}
+
+    if age_hours > max_age_hours:
+        return [], {"state": "stale", "path": str(latest), "age_hours": age_hours}
+
+    results: list[dict[str, Any]] = []
+    try:
+        for line in latest.read_text(encoding="utf-8").strip().split("\n"):
+            if not line.strip():
+                continue
+            record = json.loads(line)
+            if record.get("available"):
+                results.append(_stored_record_to_benchmark_result(record))
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
+        _log.warning("ResultsWriter: failed to parse %s: %s", latest.name, exc, exc_info=True)
+        return [], {"state": "stale", "path": str(latest), "age_hours": age_hours}
+
+    return results, {"state": "fresh", "path": str(latest), "age_hours": age_hours}
+
+
+def _stored_record_to_benchmark_result(record: dict[str, Any]) -> dict[str, Any]:
+    """将落盘 JSONL 记录（_profile_to_dict 格式）转换为 to_model_benchmark_result 兼容格式。
+
+    落盘记录不含 case 级明细（case_results 未持久化），regression_tasks 恒为空列表。
+    """
+    model_name = record.get("model_name", "")
+    return {
+        "model_name": model_name,
+        "model_version": model_name.split(":")[-1] if ":" in model_name else "",
+        "benchmark_date": record.get("benchmark_date", ""),
+        "task_scores": {
+            "composite_score": record.get("average_score", 0.0),
+            "latency_p50_ms": record.get("latency_p50_ms", 0.0),
+            "latency_p95_ms": record.get("latency_p95_ms", 0.0),
+            "throughput_tok_per_sec": record.get("throughput_tokens_per_sec", 0.0),
+            "hallucination_rate": record.get("hallucination_rate", 0.0),
+            "code_validity_rate": record.get("code_validity_rate", 0.0),
+            "json_validity_rate": record.get("json_validity_rate", 0.0),
+            **record.get("category_scores", {}),
+        },
+        "vs_previous_version": None,
+        "recommendation": record.get("recommendation", ""),
+        "regression_detected": record.get("average_score", 0.0) < 0.3,
+        "regression_tasks": [],
+    }
 
 
 def detect_drift(
