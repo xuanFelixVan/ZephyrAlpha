@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 连接失败抛 RuntimeError; 查询失败抛 psycopg2.Error
 # [TESTS] tests/test_decision_graph_reader.py
+# [A_module] module_id=SH-DB-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 decision_graph_reader.py — 决策流图数据库只读查询工具模块
@@ -132,7 +133,7 @@ class DecisionGraphReader:
         return [dict(row) for row in cursor.fetchall()]
 
     def get_layers_by_build_status(self, build_status: str) -> list[dict[str, Any]]:
-        """按 build_status（planned/generated/testing/stable/deprecated）查询层。"""
+        """按 build_status（planned/generated/testing/stable/deprecated/production）查询层。"""
         conn = self._get_conn()
         cursor = conn.execute(
             "SELECT * FROM decision_layers WHERE build_status = %s ORDER BY layer_id",

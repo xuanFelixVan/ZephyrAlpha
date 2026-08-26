@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] raises RuntimeError on connection failure; OperationalError on DDL errors
 # [TESTS] tests/test_decisiongraph_schema.py
+# [A_module] module_id=SH-DB-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """
@@ -39,7 +40,8 @@ Safety  : M（DDL 定义，init_decision_db 幂等验证）
 
 build_status / design_maturity 受控词表（与 depgraph 节点表对齐）
 -------------------------------------------------------------
-- build_status 5态：planned / generated / testing / stable / deprecated（单调推进）
+- build_status 6态：planned / generated / testing / stable / deprecated / production
+  （CHECK 词表 B-007 P0 +production，与 depgraph 对齐；decision 图状态机单调推进链维持 5 态，production 开放属另案裁定）
 - design_maturity 2态：design / production [ARCH-MM-002 两档化]
 
 五条承重墙不变量（DEC-INV-001~005）
@@ -91,7 +93,9 @@ def load_build_status_order() -> list[str]:
     """从 decision_graph_model.yaml 动态加载 build_status 状态机顺序。
 
     真源：architecture_model/domain/decision_graph_model.yaml 的 build_status_values 段。
-    5态单调推进：planned -> generated -> testing -> stable -> deprecated。
+    5态单调推进：planned -> generated -> testing -> stable -> deprecated
+    （decision 图状态机推进链；DB CHECK 词表已 6 态 +production（B-007 P0），
+    decision 图 stable->production 开放属另案裁定，未在本函数词表内）。
     """
     with open(_YAML_MODEL_PATH, encoding="utf-8") as f:
         data = yaml.safe_load(f)
@@ -176,7 +180,7 @@ CREATE TABLE IF NOT EXISTS decision_layers (
     design_maturity     TEXT    DEFAULT 'production'
         CHECK (design_maturity IN ('design', 'production')),
     build_status        TEXT    DEFAULT 'generated'
-        CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
+        CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated', 'production')),
     module_id           TEXT,
     domain_id           TEXT,
     -- Ruling:100PCT-AI-GOVERNANCE P0-3 (2026-07-19): 补齐 DB↔DDL drift
@@ -212,7 +216,7 @@ CREATE TABLE IF NOT EXISTS decision_nodes (
     design_maturity  TEXT    DEFAULT 'production'
         CHECK (design_maturity IN ('design', 'production')),
     build_status     TEXT    DEFAULT 'generated'
-        CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
+        CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated', 'production')),
     source_code_ref  TEXT,
     flow_stage       TEXT
         CHECK (flow_stage IS NULL OR flow_stage IN ('stock_selection', 'buy_flow', 'sell_flow',
@@ -243,7 +247,7 @@ CREATE TABLE IF NOT EXISTS decision_edges (
     design_maturity  TEXT    DEFAULT 'production'
         CHECK (design_maturity IN ('design', 'production')),
     build_status     TEXT    DEFAULT 'generated'
-        CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
+        CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated', 'production')),
     valid_since      TIMESTAMPTZ DEFAULT NOW()
 )
 """
@@ -298,10 +302,12 @@ _DDL_INDEXES = [
 #   说明: 决策边只允许 4 种合法值，INSERT 非法值会被 psycopg2.IntegrityError 拒绝
 #
 # DEC-INV-004: build_status 单调推进
-#   约束位置: decision_nodes.build_status CHECK IN ('planned','generated','testing','stable','deprecated')
+#   约束位置: decision_nodes.build_status CHECK IN ('planned','generated','testing','stable','deprecated','production')
 #   约束类型: DB CHECK + 应用层状态迁移校验（apply_decisiongraph.py）
 #   说明: 状态机为单调推进 planned->generated->testing->stable->deprecated，
 #         禁止跳态（如 generated 直接跃迁到 stable 必须经过 testing）。
+#         DB CHECK 词表 6 态（B-007 P0 +production，与 depgraph 对齐）；
+#         decision 图 stable->production 推进边开放属另案裁定，应用层维持 5 态链。
 #         DB CHECK 保证值合法，状态迁移顺序由 apply_decisiongraph.py 应用层校验。
 #
 # DEC-INV-005: design_maturity 2态受控（ARCH-MM-002）

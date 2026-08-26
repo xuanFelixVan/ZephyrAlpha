@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] raises RuntimeError on schema mismatch; OperationalError on DDL errors
 # [TESTS] tests/test_dataflowgraph_schema.py
+# [A_module] module_id=SH-DB-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-051
 
@@ -44,8 +45,8 @@ Safety  : M（DDL 定义，init_dataflow_db 幂等执行）
 双态模式（对齐 depgraph）
 -------------------------
   - design_maturity: design(设计态) / production(运营态)  [ARCH-MM-002 两档化]
-  - build_status: planned / generated / testing / stable / deprecated
-    （注意：本词表与 module_lifecycle_status 8值词表不同，仅 5 值，与 depgraph nodes.build_status 一致）
+  - build_status: planned / generated / testing / stable / deprecated / production
+    （注意：本词表与 module_lifecycle_status 8值词表不同，仅 6 值（B-007 P0 +production），与 depgraph nodes.build_status 一致）
 
 字段角色分离（对齐 depgraph 裁定#209 Stage 2）
 ----------------------------------------------
@@ -111,7 +112,7 @@ CREATE TABLE IF NOT EXISTS dataflow_datasets (
     design_maturity  TEXT DEFAULT 'production'
         CHECK (design_maturity IN ('design', 'production')),
     build_status     TEXT DEFAULT 'generated'
-        CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
+        CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated', 'production')),
     pit_policy       TEXT DEFAULT 'strict'
         CHECK (pit_policy IN ('strict', 'loose', 'none')),
     format_summary   TEXT,
@@ -142,7 +143,7 @@ CREATE TABLE IF NOT EXISTS dataflow_jobs (
     design_maturity  TEXT DEFAULT 'production'
         CHECK (design_maturity IN ('design', 'production')),
     build_status     TEXT DEFAULT 'generated'
-        CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
+        CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated', 'production')),
     module_id        TEXT,
     domain_id        TEXT,
     last_updated     TEXT

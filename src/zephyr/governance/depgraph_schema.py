@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] raises RuntimeError on migration failure; OperationalError on DDL errors
 # [TESTS] tests/io/test_depgraph_schema.py
+# [A_module] module_id=SH-DB-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """
@@ -276,7 +277,7 @@ CREATE TABLE IF NOT EXISTS nodes (
     last_verified            TEXT,
     node_name                TEXT    DEFAULT '',
     file_path                TEXT    DEFAULT '',
-    build_status             TEXT    DEFAULT 'generated' CHECK(build_status IN ('planned','generated','testing','stable','deprecated')),
+    build_status             TEXT    DEFAULT 'generated' CHECK(build_status IN ('planned','generated','testing','stable','deprecated','production')),
     can_build                INTEGER DEFAULT 1,
     gate_reason              TEXT    NOT NULL DEFAULT '',
     hard_boundary_ref        TEXT,
@@ -401,7 +402,7 @@ CREATE TABLE IF NOT EXISTS domains (
     created_at       TEXT    NOT NULL,
     updated_at       TEXT    NOT NULL,
     build_status     TEXT    DEFAULT 'planned'
-        CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
+        CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated', 'production')),
     modification_permission TEXT,
     layer_id         TEXT
         -- SSoT: docs/01_policies_and_standards/_registry/vocabularies/layer_vocabulary.yaml (documentation SSoT)
@@ -606,7 +607,7 @@ CREATE TABLE IF NOT EXISTS nodes (
     last_verified            TEXT,
     node_name                TEXT DEFAULT '',
     file_path                TEXT DEFAULT '',
-    build_status             TEXT DEFAULT 'generated' CHECK(build_status IN ('planned','generated','testing','stable','deprecated')),
+    build_status             TEXT DEFAULT 'generated' CHECK(build_status IN ('planned','generated','testing','stable','deprecated','production')),
     can_build                INTEGER DEFAULT 1,
     gate_reason               TEXT DEFAULT '',
     hard_boundary_ref        TEXT,
