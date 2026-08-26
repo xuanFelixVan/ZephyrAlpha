@@ -20768,3 +20768,13 @@ entries:
   impact:
     - 'src/zephyr/intelligence×1 + feedback_loop×3；tests 4 文件'
   fix_phase: '已落地（2026-08-27，DIGEST P2 W14）'
+- issue_id: '#ARCH-273'
+  title: DIGEST P2 W15 波（收官施工波）：SIGQC+SECURITY 8 候选晋升——外发脱敏/SIEM关联/供应链扫描/谱幻觉检测+信号去重/退化监控/基准对比/可解释保障
+  severity: P2
+  category: 功能施工
+  adjudication: >-
+    MOD-SEC-024~026/MOD-SECLLM-002/MOD-SIGQC-003~006。8 模块纯内存/DI 落地，171 新测全绿（两域合并 257 零回归）。
+    至此 P2 全部 15 波施工完成。
+  impact:
+    - 'src/zephyr/security×3(+llm_defense×1) + signal_quality×4；tests 8 文件'
+  fix_phase: '已落地（2026-08-27，DIGEST P2 W15）'
