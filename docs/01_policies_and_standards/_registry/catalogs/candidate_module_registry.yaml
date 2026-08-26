@@ -9981,11 +9981,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/causal_inference_engine.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/event_causal_reasoner.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: 跨域(元文档)
   original_id: B1-00125
   source_section: §功能域模块·D-ALT-DATA
@@ -10006,11 +10007,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/ml_train/implementations/seat_pattern_classifier.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/banker_pattern_simulator.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: 跨域(元文档)
   original_id: B1-00168
   source_section: §功能域模块·D-SIGNAL
@@ -10031,11 +10033,12 @@ entries:
       evidence: '深挖场内对账: 无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/crowd_game_simulator.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: 跨域(元文档)
   original_id: B1-00169
   source_section: §功能域模块·D-SIGNAL
@@ -10057,10 +10060,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W05）——与 P1 已建 MOD-SIG-091 unified_pattern_engine 同为统一技术图形识别引擎（B1-00172/B1-01010 同条目两稿），canonical=src/zephyr/signal_ashare/unified_pattern_engine.py（规则+DTW Phase1 已在，CNN/Transformer 两稿均明示后续档）；CAND-FAC-023（W07 波）同此归并"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: 跨域(元文档)
   original_id: B1-00172
   source_section: §功能域模块·D-SIGNAL
@@ -10082,11 +10086,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/chanlun_structure.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/pattern_to_signal_mapper.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: D-FACTOR
   original_id: B1-00849
   source_section: §1.2 子模块
@@ -10158,11 +10163,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/regime/features/wyckoff_engine.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/wyckoff_secondary_test.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A1交易决策架构
   original_id: B10-01372
   source_section: §3模块18
@@ -10183,11 +10189,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/cross_market_conduction_sensor.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/overnight_conduction_model.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A1交易决策架构
   original_id: B10-01375
   source_section: §3模块21
@@ -10208,11 +10215,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/supply_chain_gnn.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/supply_chain_momentum.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A1交易决策架构
   original_id: B10-01376
   source_section: §3模块22
@@ -10233,11 +10241,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/risk/core/crowding_monitor.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/sector_crowding_launch.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A1交易决策架构
   original_id: B10-01384
   source_section: §3模块40
@@ -10258,11 +10267,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/market_cap_tier.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/intraday_size_style.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A1交易决策架构
   original_id: B10-01385
   source_section: §3模块45
@@ -10283,11 +10293,12 @@ entries:
       evidence: '深挖场内对账: 无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/orderflow_network_panic.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A1交易决策架构
   original_id: B10-01388
   source_section: §3模块52
@@ -10308,11 +10319,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/data/trading_calendar.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/calendar_effects_model.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A1交易决策架构
   original_id: B10-01390
   source_section: §3模块55
@@ -10333,11 +10345,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/conditional_density_predictor.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/event_conditional_density.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A1交易决策架构
   original_id: B10-01412
   source_section: ''
@@ -10358,11 +10371,12 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/compliance/trading_compliance_detector.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/fake_move_distribution.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-23'
+  last_updated: '2026-08-26'
   source_draft: A1交易决策架构
   original_id: B10-01425
   source_section: §5模块27
