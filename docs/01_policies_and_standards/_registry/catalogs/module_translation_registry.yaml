@@ -46046,7 +46046,7 @@ entries:
   name_en: ""
   desc_zh: ""
   desc_en: ""
-  plain_zh: "用因果机器学习回答"这个因子真的导致收益吗"：双重机器学习估效应、因果森林看异质性、反事实证伪、自动发现因果图，显著才采信。"
+  plain_zh: "用因果机器学习回答「这个因子真的导致收益吗」：双重机器学习估效应、因果森林看异质性、反事实证伪、自动发现因果图，显著才采信。"
 - module_path: tests/signal_ashare/test_causal_ml_engine.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "因果ML单测"
@@ -46433,6 +46433,91 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "校验画像注册、考试校准和findings输出校验。"
+
+- module_path: src/zephyr/simulation/overfitting_protection_gate.py
+  domain_id: D_SIMULATION
+  name_zh: "过拟合系统性防护门禁"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给因子、策略、信号、模型四道防过拟合检查：IC衰减、多重检验、缩水夏普、前向验证，任何一关不过就不准上线。"
+- module_path: tests/simulation/test_overfitting_protection_gate.py
+  domain_id: D_SIMULATION
+  name_zh: "过拟合门禁单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "用假检查器校验四层注册、统一拦截裁决和防护报告。"
+- module_path: src/zephyr/digital_twin/market_twin_simulator.py
+  domain_id: D_DIGITAL_TWIN
+  name_zh: "数字孪生市场仿真"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "造一个虚拟市场陪练：一群按规则行动的交易代理互相撮合下单、情绪还会传染，用来事前压测策略，输出全部标注仿真不可实盘。"
+- module_path: tests/digital_twin/test_market_twin_simulator.py
+  domain_id: D_DIGITAL_TWIN
+  name_zh: "市场仿真单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "校验三种撮合模式、情绪传染、统计特征校验和仿真标注硬约束。"
+- module_path: src/zephyr/execution_simulation/almgren_chriss_impact_model.py
+  domain_id: D_EXEC_SIM
+  name_zh: "Almgren-Chriss冲击成本模型"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "估算大单买卖对价格的冲击成本：临时冲击按参与率非线性放大、永久冲击按平方根规律，用分钟成交额校准参数，给执行仿真提供成本真源。"
+- module_path: tests/execution_simulation/test_almgren_chriss_impact_model.py
+  domain_id: D_EXEC_SIM
+  name_zh: "冲击成本单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "校验临时永久冲击计算、衰减曲线和参数估计器。"
+- module_path: src/zephyr/ex_core/execution_param_optimizer.py
+  domain_id: D_EX_CORE
+  name_zh: "执行运营自优化器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "定期复盘成交质量自动调优下单参数：用优化算法搜更好的拆单和等待参数，但风控硬阈值绝不自动改，调参结果必须人工确认才生效。"
+- module_path: tests/ex_core/test_execution_param_optimizer.py
+  domain_id: D_EX_CORE
+  name_zh: "执行优化单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "校验TCA读取、搜索降级、人工确认硬约束和风控白名单拦截。"
+- module_path: src/zephyr/trading/three_way_reconciliation.py
+  domain_id: D_TRADING
+  name_zh: "三向对账引擎"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把交易、持仓、资金三本账逐笔对上：佣金印花税利息逐项核，对不上的按价格、数量、费用、缺失分类建台账跟进。"
+- module_path: tests/trading/test_three_way_reconciliation.py
+  domain_id: D_TRADING
+  name_zh: "三向对账单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "用样例流水校验自动匹配、异常分类和台账跟进状态机。"
+- module_path: src/zephyr/trading/reference_data_manager.py
+  domain_id: D_TRADING
+  name_zh: "证券主数据管理器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "证券基础信息唯一真源：代码、名称、行业、涨跌停规则、ST标记、交易日历统一维护，每天日终刷新版本加一，别处只准查不准抄。"
+- module_path: tests/trading/test_reference_data_manager.py
+  domain_id: D_TRADING
+  name_zh: "主数据单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "用内存数据库校验登记、版本递增、查询接口和变更审计。"
 
 battle_map_steps:
 - step_id: BM-BUY-04
