@@ -556,8 +556,12 @@ class QmtFileBridgeBroker(BrokerInterface):
         )
 
     def register_fill_callback(self, callback: FillCallback) -> None:
-        """注册成交回调"""
+        """注册成交回调（柜台同步线程检测到新成交时扇出）"""
         self._fill_callbacks.append(callback)
+        _logger.debug(
+            "成交回调已注册 env=%s callbacks=%d",
+            self._env, len(self._fill_callbacks),
+        )
 
     # ── 柜台全量镜像查询接口（委托 CounterStateMirror）──
 
@@ -704,6 +708,65 @@ def _apply_acks(acks: list[FileBridgeAck], order_cache: dict[str, Order]) -> Non
             cached.status = OrderStatus.REJECTED
             cached.updated_at = now_utc()
             _logger.warning("回执FAIL: %s detail=%s", ack.order_id, ack.detail)
+
+
+def check_broker_health(broker: QmtFileBridgeBroker) -> dict:
+    """Broker 健康检查（前端监控数据源，模块级函数防 God Class）
+
+    Returns:
+        dict: {component, type, ok, level(ok/degraded/down), env, connected,
+               sync_thread_alive, export_age_seconds, counter, detail}
+    """
+    now = now_utc().timestamp()
+    result: dict = {
+        "component": f"broker_{broker._env}",
+        "type": "broker",
+        "ok": False,
+        "level": "down",
+        "env": broker._env,
+        "connected": broker._connected,
+        "sync_thread_alive": bool(
+            broker._sync_thread and broker._sync_thread.is_alive()
+        ),
+    }
+    if not broker._connected:
+        result["detail"] = "未连接（connect() 未调用或失败）"
+        return result
+
+    # 官方导出文件新鲜度（QMT 自动导出应秒级更新）
+    exports: dict[str, float | None] = {}
+    worst_age: float | None = None
+    for name in ("Order.csv", "PositionStatics.csv", "Account.csv", "Deal.csv"):
+        p = broker._stock_dir / name
+        if p.exists():
+            age = now - p.stat().st_mtime
+            exports[name] = round(age, 1)
+            worst_age = age if worst_age is None else max(worst_age, age)
+        else:
+            exports[name] = None
+    result["export_age_seconds"] = exports
+
+    # 柜台镜像概览
+    result["counter"] = {
+        "pending_orders": len(broker._mirror.get_orders()),
+        "positions": len(broker._mirror.get_positions()),
+        "available_cash": str(broker._mirror.available_cash()),
+    }
+
+    # 等级判定
+    if not result["sync_thread_alive"]:
+        result["level"] = "degraded"
+        result["detail"] = "同步线程已停止"
+    elif worst_age is None:
+        result["level"] = "degraded"
+        result["detail"] = "官方导出文件全部缺失（QMT 自动导出未配置？）"
+    elif worst_age > 60:
+        result["level"] = "degraded"
+        result["detail"] = f"官方导出 {worst_age:.0f}s 未更新"
+    else:
+        result["ok"] = True
+        result["level"] = "ok"
+    return result
 
 
 def _normalize_symbol(code: str, market: str) -> str:

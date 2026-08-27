@@ -30,6 +30,7 @@ from zephyr.ex_core.adapters.qmt_file_bridge_broker import (
     FileBridgeInstruction,
     QmtFileBridgeBroker,
     QmtFileBridgeError,
+    check_broker_health,
 )
 from zephyr.shared.contracts.order import Order, OrderSide, OrderStatus, OrderType
 
@@ -177,6 +178,33 @@ class TestQmtFileBridgeBroker:
         """非法环境标识"""
         with pytest.raises(QmtFileBridgeError, match="非法环境标识"):
             QmtFileBridgeBroker(env="invalid")
+
+    def test_health_check_not_connected(self, broker):
+        """健康检查：未连接 → down"""
+        h = check_broker_health(broker)
+        assert h["level"] == "down"
+        assert h["connected"] is False
+
+    def test_health_check_connected_no_exports(self, broker):
+        """健康检查：已连接但官方导出缺失 → degraded"""
+        broker.connect()
+        h = check_broker_health(broker)
+        assert h["level"] == "degraded"
+        assert h["sync_thread_alive"] is True
+        assert "导出" in h["detail"]
+        broker.disconnect()
+
+    def test_health_check_connected_with_exports(self, broker, temp_bridge_dir):
+        """健康检查：已连接且导出新鲜 → ok"""
+        broker.connect()
+        stock_dir = temp_bridge_dir / "Stock"
+        for name in ("Order.csv", "PositionStatics.csv", "Account.csv", "Deal.csv"):
+            (stock_dir / name).write_text("", encoding="gbk")
+        h = check_broker_health(broker)
+        assert h["level"] == "ok"
+        assert h["ok"] is True
+        assert h["export_age_seconds"]["Order.csv"] is not None
+        broker.disconnect()
 
 
 class TestFileBridgeInstruction:

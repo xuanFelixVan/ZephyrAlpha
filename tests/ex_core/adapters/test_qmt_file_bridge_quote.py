@@ -171,3 +171,38 @@ class TestQmtFileBridgeQuoteProvider:
         snap = provider.get_quote("510300.SH")
         assert snap is not None
         assert snap.last_price == Decimal("4.999")
+
+    def test_health_check_missing_file(self, provider):
+        """健康检查：文件不存在 → down"""
+        h = provider.health_check()
+        assert h["level"] == "down"
+        assert h["ok"] is False
+        assert h["file_exists"] is False
+        assert "未启动" in h["detail"]
+
+    def test_health_check_fresh(self, provider, temp_quote_file):
+        """健康检查：新鲜文件 → ok"""
+        temp_quote_file.write_text(_HEADER + _quote_line(), encoding="ascii")
+        h = provider.health_check()
+        assert h["level"] == "ok"
+        assert h["ok"] is True
+        assert h["fresh"] is True
+        assert h["file_age_seconds"] < 10
+
+    def test_health_check_stale_degraded(self, provider, temp_quote_file):
+        """健康检查：2 分钟未更新 → degraded"""
+        temp_quote_file.write_text(_HEADER + _quote_line(), encoding="ascii")
+        old = time.time() - 120
+        os.utime(temp_quote_file, (old, old))
+        h = provider.health_check()
+        assert h["level"] == "degraded"
+        assert h["ok"] is False
+
+    def test_health_check_stale_down(self, provider, temp_quote_file):
+        """健康检查：超 5 分钟未更新 → down"""
+        temp_quote_file.write_text(_HEADER + _quote_line(), encoding="ascii")
+        old = time.time() - 3600
+        os.utime(temp_quote_file, (old, old))
+        h = provider.health_check()
+        assert h["level"] == "down"
+        assert "中断" in h["detail"]

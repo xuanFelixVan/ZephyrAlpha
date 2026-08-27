@@ -146,6 +146,41 @@ class QmtFileBridgeQuoteProvider:
         age = now_utc().timestamp() - self._quote_file.stat().st_mtime
         return age <= self._stale_seconds
 
+    def health_check(self) -> dict:
+        """健康检查（前端监控数据源）
+
+        Returns:
+            dict: {component, type, ok, level(ok/degraded/down), file, file_exists,
+                   file_age_seconds, fresh, detail}
+        """
+        result: dict = {
+            "component": f"quote_{self._env}",
+            "type": "quote_provider",
+            "ok": False,
+            "level": "down",
+            "file": str(self._quote_file),
+            "file_exists": self._quote_file.exists(),
+        }
+        if not result["file_exists"]:
+            result["detail"] = "quote.csv 不存在（QMT 端 ZEPHYR_QUOTE v15 未启动？）"
+            return result
+
+        age = now_utc().timestamp() - self._quote_file.stat().st_mtime
+        fresh = age <= self._stale_seconds
+        result["file_age_seconds"] = round(age, 1)
+        result["fresh"] = fresh
+        result["stale_threshold"] = self._stale_seconds
+
+        if fresh:
+            result["ok"] = True
+            result["level"] = "ok"
+        elif age <= 300:  # 5 分钟内：盘中间歇/午间休市视为降级
+            result["level"] = "degraded"
+            result["detail"] = f"行情文件 {age:.0f}s 未更新"
+        else:
+            result["detail"] = f"行情中断 {age:.0f}s（阈值 {self._stale_seconds}s）"
+        return result
+
     def get_quote(self, symbol: str) -> QuoteSnapshot | None:
         """获取单标的最新快照
 

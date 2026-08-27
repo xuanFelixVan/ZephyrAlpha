@@ -135,6 +135,20 @@ class TestLocalOrderQueue:
         assert stats.sent == 0
         assert mock_order_manager.submit_order.call_count == 1
 
+    def test_health_check_stopped(self, queue):
+        """健康检查：未启动 → down"""
+        h = queue.health_check()
+        assert h["level"] == "down"
+        assert h["running"] is False
+
+    def test_health_check_running(self, queue):
+        """健康检查：运行中 → ok"""
+        queue.start()
+        h = queue.health_check()
+        assert h["level"] == "ok"
+        assert h["running"] is True
+        assert h["failed"] == 0
+
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

@@ -29,7 +29,10 @@ from __future__ import annotations
 
 import logging
 
-from zephyr.ex_core.adapters.qmt_file_bridge_broker import QmtFileBridgeBroker
+from zephyr.ex_core.adapters.qmt_file_bridge_broker import (
+    QmtFileBridgeBroker,
+    check_broker_health,
+)
 from zephyr.ex_core.adapters.qmt_file_bridge_quote import QmtFileBridgeQuoteProvider
 from zephyr.ex_core.local_order_queue import LocalOrderQueue
 from zephyr.ex_core.order_manager import OrderManager
@@ -158,3 +161,32 @@ class QmtFileBridgeAssembly:
             env = broker_id.removeprefix("qmt_")
             self._quotes[broker_id] = QmtFileBridgeQuoteProvider(env=env)
         return self._quotes[broker_id]
+
+    def health_check(self) -> dict:
+        """装配体健康检查（前端监控数据源，聚合所有组件）
+
+        等级聚合规则：任一组件 down 则整体 down，任一 degraded 则整体 degraded。
+        行情 Provider 仅在显式调用过 get_quote_provider 后纳入监控。
+        """
+        components: dict[str, dict] = {}
+        for broker_id, broker in self._brokers.items():
+            components[broker_id] = check_broker_health(broker)
+        for broker_id, queue in self._queues.items():
+            components[f"queue_{broker_id}"] = queue.health_check()
+        for broker_id, quote in self._quotes.items():
+            components[f"quote_{broker_id}"] = quote.health_check()
+
+        levels = [c["level"] for c in components.values()]
+        if "down" in levels:
+            level = "down"
+        elif "degraded" in levels:
+            level = "degraded"
+        else:
+            level = "ok"
+        return {
+            "component": "qmt_file_bridge_assembly",
+            "type": "assembly",
+            "ok": level == "ok",
+            "level": level,
+            "components": components,
+        }

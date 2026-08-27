@@ -182,6 +182,29 @@ class LocalOrderQueue:
         with self._lock:
             return list(self._items)
 
+    def health_check(self) -> dict:
+        """健康检查（前端监控数据源）"""
+        running = bool(self._thread and self._thread.is_alive())
+        stats = self.get_stats()
+        ok = running and stats.failed == 0
+        if not running:
+            level = "down"
+        elif stats.failed > 0:
+            level = "degraded"
+        else:
+            level = "ok"
+        return {
+            "component": f"queue_{self._broker_id}",
+            "type": "order_queue",
+            "ok": ok,
+            "level": level,
+            "running": running,
+            "total": stats.total,
+            "pending": stats.pending,
+            "sent": stats.sent,
+            "failed": stats.failed,
+        }
+
     # ── 内部 ──
 
     def _next_schedule_time(self, interval: float) -> float:
