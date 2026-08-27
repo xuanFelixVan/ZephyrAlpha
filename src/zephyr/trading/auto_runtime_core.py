@@ -25,6 +25,7 @@ AutoRuntimeCore — 三层运行时运营中心（系统大脑）
 from __future__ import annotations
 
 import logging
+import shutil
 import time
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -750,12 +751,20 @@ class _OllamaProcessManager:
 
     @staticmethod
     def ensure_running(core: AutoRuntimeCore) -> bool:
+        # 治本（2026-08-27，Owner 裁定四）：WMI detached spawn 上下文不含交互用户 PATH
+        # （Win32_Process.Create ReturnValue=9 path not found，本机 ollama 装于
+        # %LOCALAPPDATA%\Programs\Ollama 仅入用户 PATH）——先在当前进程（有用户 PATH）
+        # 经 shutil.which 解析绝对路径再传递；解析不到退化为裸命令名（原行为）。
+        ollama_bin = shutil.which("ollama") or "ollama"
         try:
             # 5.49.1 修复：保存 Popen 引用，shutdown 时可 terminate
             # TRAE-067 铁律2：复用 process_pool 统一无窗口 spawn 入口
-            core._ollama_proc = spawn_python_hidden(["ollama", "serve"])  # type: ignore[arg-type]
+            core._ollama_proc = spawn_python_hidden([ollama_bin, "serve"])  # type: ignore[arg-type]
         except FileNotFoundError as e:
-            logger.warning("_ensure_ollama_running: ollama binary not found (%s: %s)", type(e).__name__, e)
+            logger.warning(
+                "_ensure_ollama_running: ollama binary not found (%s: %s)——请安装 Ollama 或将其加入 PATH",
+                type(e).__name__, e,
+            )
             return False
 
         for _ in range(10):
