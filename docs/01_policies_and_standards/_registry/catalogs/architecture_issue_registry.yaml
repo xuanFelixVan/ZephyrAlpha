@@ -20876,6 +20876,6 @@ entries:
     per-task token/IETF WIMSE/Windows 归因技术矩阵/量化业 WORM+SoD。
   impact:
     - 'docs/_working/reports/2026-08-27-authz-writeaudit-adjudication.md（调研裁定书）'
-    - '待施工：批1 授权面收窄（ops_guard 判定分拆+sanitized_spawn_env 三处+红队新测）'
-    - '待施工：批2 WriteAudit 守护 MVP+watchdog 联动+单测'
-  fix_phase: '裁定完成（2026-08-27）；施工两批待派单'
+    - '批1：scripts/ops_guard.py（_is_delete_authorized 语义剥离+sanitized_spawn_env）+reconcile_runner/session_worktree 三处派生点+tests/governance/test_ops_guard_red_team.py 10 新测（f2fd5056）'
+    - '批2：write_audit_daemon.py+test（17 测）+worktree_drift_watchdog B2 联动+collect_write_audit_4663.py+test（7 测）+enable_write_audit_sacls.ps1（Owner 管理员一次性）'
+  fix_phase: '批1 已落地（f2fd5056，99+109+38+241 全绿）；批2 已落地（39 全绿，A3 观测期 24h 计时起算 2026-08-27）；B3 待 Owner 跑 enable_write_audit_sacls.ps1 后采集器随跑'

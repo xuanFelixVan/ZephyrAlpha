@@ -12608,3 +12608,23 @@ di_seam_exemptions:
   token: auto-test-check-wiring-orphan-20260827
   created_by: AI-OWNER-WIRING
   capability: wiring_orphan_gate_test
+- file: src/zephyr/gov_enforcement/rule_bridge/write_audit_daemon.py
+  token: auto-write-audit-daemon-20260827
+  created_by: AI-OWNER-WIRING
+  capability: write_audit_daemon
+- file: tests/governance/rule_bridge/test_write_audit_daemon.py
+  token: auto-test-write-audit-daemon-20260827
+  created_by: AI-OWNER-WIRING
+  capability: write_audit_daemon_test
+- file: scripts/governance/collect_write_audit_4663.py
+  token: auto-collect-write-audit-4663-20260827
+  created_by: AI-OWNER-WIRING
+  capability: write_audit_sacl_collector
+- file: tests/governance/test_collect_write_audit_4663.py
+  token: auto-test-collect-write-audit-4663-20260827
+  created_by: AI-OWNER-WIRING
+  capability: write_audit_sacl_collector_test
+- file: scripts/governance/enable_write_audit_sacls.ps1
+  token: auto-enable-write-audit-sacls-20260827
+  created_by: AI-OWNER-WIRING
+  capability: write_audit_sacl_enabler

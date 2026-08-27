@@ -259,6 +259,21 @@ def _log_results(root: Path, action: str, detail: str) -> None:
         logger.warning("drift watchdog log_results failed: %s", e)
 
 
+def _write_audit_suspects(root: Path, rel: str) -> str:
+    """#ARCH-279 裁定B2：WriteAudit 告警联动——漂移文件的 write_audit 同窗口嫌疑摘要。
+
+    守护未跑/无事件/联动异常 → 空串（调用方不拼接，告警主流程零干扰）。
+    """
+    try:
+        from zephyr.gov_enforcement.rule_bridge.write_audit_daemon import (  # noqa: PLC0415
+            suspect_summary,
+        )
+
+        return suspect_summary(rel, root, seconds=120.0, limit=3)
+    except Exception:  # noqa: BLE001 — 联动失败不阻断告警主流程
+        return ""
+
+
 def _sweep_quarantine(root: Path, retention_days: int = _QUARANTINE_RETENTION_DAYS) -> dict:
     """quarantine retention 自管（#ARCH-264 O4）：超期 drift_* 目录清理+逐条审计。
 
@@ -456,8 +471,13 @@ def scan_once(
                 f"(work {prev.get('work_hash', '∅')[:8]}→{wh[:8]}, HEAD blob {hb[:8]}, "
                 f"快照 {snap or '失败'}, 活跃会话 {','.join(sessions) or '无'}，非 claim 非宽限窗）"
             )
+            # #ARCH-279 裁定B2：WriteAudit 联动——告警附 write_audit 同窗口嫌疑清单
+            # （PID→session_id 归因），守护未跑/无事件返回空串不拼接。
+            wa_suspects = _write_audit_suspects(root, rel)
+            if wa_suspects:
+                detail += f"；WriteAudit 嫌疑: {wa_suspects}"
             _log_results(root, "critical_warn", detail)
-            _audit(root, {**base, "verdict": "alerted", "snapshot": snap})
+            _audit(root, {**base, "verdict": "alerted", "snapshot": snap, "write_audit_suspects": wa_suspects})
             alerted[rel] = wh
             if snap:
                 # O4：快照目录登记（带外删除可观测），容量封顶防状态膨胀
@@ -664,6 +684,16 @@ def make_worktree_drift_watchdog_reconciler(gateway: object):
     def _reconcile(committed_files: list[str], session_id: str) -> "ReconcileResult":
         try:
             ensure_daemon(project_root)
+            # #ARCH-279 裁定B1：WriteAudit 守护随 post-commit 链幂等挂载（已跑直接返回；
+            # 挂载失败不阻断 drift watchdog 主流程）。
+            try:
+                from zephyr.gov_enforcement.rule_bridge.write_audit_daemon import (  # noqa: PLC0415
+                    ensure_daemon as _ensure_write_audit,
+                )
+
+                _ensure_write_audit(project_root)
+            except Exception:  # noqa: BLE001
+                logger.debug("write_audit ensure_daemon skipped", exc_info=True)
             # O6（#ARCH-264）唯一告警写者：网关即时扫 observe-only（快照+归因审计照记，
             # 不写 critical_warn/clean、不推进告警状态）——critical_warn 由 daemon 单写，
             # 消除 daemon/网关双扫描同签名重复告警（实证 3 连同签名）。

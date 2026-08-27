@@ -58001,3 +58001,15 @@ algo_submodules:
   name_zh: ① 包命名空间初始化 空导出
   name_en: __all__空列表
   plain_zh: 包级init不聚合再导出任何符号，消费者须显式导入具体子模块
+- module_path: src/zephyr/gov_enforcement/rule_bridge/write_audit_daemon.py
+  module_id: MOD-GOV_DRIFT_WATCHDOG
+  node_id: A1
+  name_zh: ① WriteAudit 写删审计守护
+  name_en: write_audit_daemon
+  plain_zh: 热目录集文件写删事件亚秒级观测+三层归因（进程快照/session_registry 会话映射/前后 hash），带外写删零遁形（#ARCH-279 裁定B1）
+- module_path: scripts/governance/collect_write_audit_4663.py
+  module_id: MOD-GOV_DRIFT_WATCHDOG
+  node_id: A2
+  name_zh: ② WriteAudit SACL 4663 精确归因采集器
+  name_en: collect_write_audit_4663
+  plain_zh: 读 Security 4663 事件提取用户/进程/PID 精确归因，增量水位线去重后并入 write_audit.jsonl（#ARCH-279 裁定B3）
