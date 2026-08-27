@@ -18835,7 +18835,7 @@ entries:
   blocked_by: []
   next_review_date: '2027-08-26'
   review_frequency: yearly
-  last_review_outcome: "candidate 登记（2026-08-26 Owner 裁定启动数字货币战线）：W0 波次第一地基，派单即晋升"
+  last_review_outcome: "promoted（2026-08-27）：W0 施工闭环——calendar/ 包+scheduler/fusion/pit_query 注入式改造落盘，26 新测试+130 受影响面零回归，全量回归约 46,452 passed"
   acquisition_method: self_build
   acquisition_source: ""
 
