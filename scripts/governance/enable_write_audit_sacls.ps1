@@ -29,6 +29,41 @@ if (-not $isAdmin) {
 }
 
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
+# Locale-independent subcategory GUID (Chinese Windows name is localized).
+# File System = {0CCE921D-69AE-11D9-BED3-505054503030} (well-known constant).
+$fsGuid = "{0CCE921D-69AE-11D9-BED3-505054503030}"
+
+# ---- enable SeSecurityPrivilege (required for SACL write; admin token has it disabled by default) ----
+$privCode = @"
+using System;
+using System.Runtime.InteropServices;
+public class TokenPriv {
+    [DllImport("advapi32.dll", SetLastError = true)]
+    public static extern bool OpenProcessToken(IntPtr h, int acc, out IntPtr tok);
+    [DllImport("advapi32.dll", SetLastError = true)]
+    public static extern bool LookupPrivilegeValue(string host, string name, out long luid);
+    [DllImport("advapi32.dll", SetLastError = true)]
+    public static extern bool AdjustTokenPrivileges(IntPtr tok, bool disable, ref TP newState, int len, IntPtr prev, IntPtr relen);
+    [StructLayout(LayoutKind.Sequential)]
+    public struct TP { public int Count; public long Luid; public int Attr; }
+    public static bool Enable(string name) {
+        IntPtr tok;
+        if (!OpenProcessToken(System.Diagnostics.Process.GetCurrentProcess().Handle, 0x28, out tok)) return false;
+        TP tp = new TP();
+        tp.Count = 1;
+        if (!LookupPrivilegeValue(null, name, out tp.Luid)) return false;
+        tp.Attr = 0x2; // SE_PRIVILEGE_ENABLED
+        return AdjustTokenPrivileges(tok, false, ref tp, 0, IntPtr.Zero, IntPtr.Zero);
+    }
+}
+"@
+try {
+    Add-Type -TypeDefinition $privCode -ErrorAction Stop
+    $privOk = [TokenPriv]::Enable("SeSecurityPrivilege")
+    Write-Host "  [0/3] SeSecurityPrivilege enabled: $privOk"
+} catch {
+    Write-Host "  [0/3] [WARN] privilege enable failed: $($_.Exception.Message)" -ForegroundColor Yellow
+}
 $hotDirs = @(
     (Join-Path $repoRoot "docs\01_policies_and_standards\_registry\catalogs"),
     (Join-Path $repoRoot "docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos"),
@@ -52,38 +87,49 @@ if ($Undo) {
             Write-Host ("  [UNDO] {0} (removed {1} audit rules)" -f $dir, $removed)
         }
     }
-    auditpol /set /subcategory:"File System" /success:disable | Out-Null
-    Write-Host "  [UNDO] auditpol File System success=disable"
+    auditpol /set /subcategory:"$fsGuid" /success:disable | Out-Null
+    Write-Host "  [UNDO] auditpol File System success=disable (by GUID)"
     Write-Host "== UNDO complete ==" -ForegroundColor Green
     exit 0
 }
 
 Write-Host "== WriteAudit SACL exact-attribution enabler (#ARCH-279 B3) ==" -ForegroundColor Cyan
 
-# 1. enable File System audit subcategory
-auditpol /set /subcategory:"File System" /success:enable | Out-Null
-Write-Host "  [1/3] auditpol: File System success=enable"
+# 1. enable File System audit subcategory (GUID defined above, locale-independent)
+auditpol /set /subcategory:"$fsGuid" /success:enable | Out-Null
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "  [1/3] [FAIL] auditpol /set failed (exit $LASTEXITCODE)" -ForegroundColor Red
+    exit 1
+}
+Write-Host "  [1/3] auditpol: File System success=enable (by GUID)"
 
 # 2. write SACLs on hot dir set (Everyone write/delete success, child inherit)
+# NOTE: pre-compute enum unions in variables -- multi-line -bor inside New-Object
+# argument list is misparsed as Object[] op_BitwiseOr (PS5.1 parser pitfall).
+$rights = [System.Security.AccessControl.FileSystemRights]::Write -bor [System.Security.AccessControl.FileSystemRights]::Delete -bor [System.Security.AccessControl.FileSystemRights]::DeleteSubdirectoriesAndFiles
+$inherit = [System.Security.AccessControl.InheritanceFlags]::ContainerInherit -bor [System.Security.AccessControl.InheritanceFlags]::ObjectInherit
 $auditRule = New-Object System.Security.AccessControl.FileSystemAuditRule(
     "Everyone",
-    [System.Security.AccessControl.FileSystemRights]::Write -bor
-        [System.Security.AccessControl.FileSystemRights]::Delete -bor
-        [System.Security.AccessControl.FileSystemRights]::DeleteSubdirectoriesAndFiles,
-    [System.Security.AccessControl.InheritanceFlags]::ContainerInherit -bor
-        [System.Security.AccessControl.InheritanceFlags]::ObjectInherit,
+    $rights,
+    $inherit,
     [System.Security.AccessControl.PropagationFlags]::None,
     [System.Security.AccessControl.AuditFlags]::Success
 )
+$saclFails = 0
 foreach ($dir in $hotDirs) {
     if (-not (Test-Path $dir)) {
         Write-Host "  [2/3] skip (missing): $dir" -ForegroundColor Yellow
         continue
     }
-    $acl = Get-Acl -Path $dir -Audit
-    $acl.AddAuditRule($auditRule)
-    Set-Acl -Path $dir -AclObject $acl
-    Write-Host "  [2/3] SACL written: $dir"
+    try {
+        $acl = Get-Acl -Path $dir -Audit
+        $acl.AddAuditRule($auditRule)
+        Set-Acl -Path $dir -AclObject $acl -ErrorAction Stop
+        Write-Host "  [2/3] SACL written: $dir"
+    } catch {
+        $saclFails++
+        Write-Host "  [2/3] [FAIL] SACL write failed: $dir -- $($_.Exception.Message)" -ForegroundColor Red
+    }
 }
 
 # 3. readback self-check
@@ -100,8 +146,8 @@ foreach ($dir in $hotDirs) {
         Write-Host "  [3/3] SACL readback OK: $dir ($($rules.Count) rules)"
     }
 }
-$pol = auditpol /get /subcategory:"File System" 2>$null | Out-String
-Write-Host "  [3/3] auditpol readback: $($pol -split "`n" | Select-Object -Last 2)"
+$pol = auditpol /get /subcategory:"$fsGuid" 2>$null | Out-String
+Write-Host "  [3/3] auditpol readback: $(($pol -split "`n" | Where-Object { $_.Trim() } | Select-Object -Last 1) -replace '\s+', ' ')"
 
 if ($ok) {
     Write-Host "== DONE: hot-dir writes/deletes now generate Security 4663 events ==" -ForegroundColor Green

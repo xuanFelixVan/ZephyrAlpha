@@ -37,6 +37,7 @@ _ROOT = Path("D:/ZephyrAlpha")
 
 
 def _inserts(object_name: str, access_mask: str = "0x2", object_type: str = "File") -> list[str]:
+    """4663 实测 13 槽位布局（2026-08-27 Windows 11 dump 实证）。"""
     return [
         "S-1-5-18",  # 0 SubjectSid
         "fanzi",  # 1 SubjectUser
@@ -46,10 +47,11 @@ def _inserts(object_name: str, access_mask: str = "0x2", object_type: str = "Fil
         object_type,  # 5 ObjectType
         object_name,  # 6 ObjectName
         "0x15c",  # 7 HandleId
-        "S:AI",  # 8 ResourceAttributes
-        "0xdb0",  # 9 ProcessId (hex) = 3504
-        "C:\\Windows\\System32\\notepad.exe",  # 10 ProcessName
-        access_mask,  # 11 AccessMask (hex)
+        "%%1537\n\n\t\t\t\t",  # 8 Accesses 列表占位
+        access_mask,  # 9 AccessMask (hex)
+        "0xdb0",  # 10 ProcessId (hex) = 3504
+        "C:\\Windows\\System32\\notepad.exe",  # 11 ProcessName
+        "S:AI",  # 12 ResourceAttributes
     ]
 
 

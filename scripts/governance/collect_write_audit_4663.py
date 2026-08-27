@@ -89,9 +89,10 @@ def _save_watermark(root: Path, record_number: int) -> None:
 def parse_4663_inserts(inserts: list[str], root: Path) -> dict[str, Any] | None:
     """解析 4663 StringInserts → 标准化记录（纯函数，单测友好）。
 
-    4663 布局（Windows 10/11）：0=SubjectSid 1=SubjectUser 2=SubjectDomain
-    3=LogonId 4=ObjectServer 5=ObjectType 6=ObjectName 7=HandleId
-    8=ResourceAttributes 9=ProcessId(hex) 10=ProcessName 11=AccessMask(hex)。
+    4663 布局（Windows 10/11 实测 13 槽位，2026-08-27 dump 实证）：
+    0=SubjectSid 1=SubjectUser 2=SubjectDomain 3=LogonId 4=ObjectServer
+    5=ObjectType 6=ObjectName 7=HandleId 8=Accesses 列表（%% 占位多行）
+    9=AccessMask(hex) 10=ProcessId(hex) 11=ProcessName 12=ResourceAttributes(S:AI)。
 
     Returns:
         命中热目录集 → 记录 dict；非文件/非热目录/字段不全 → None。
@@ -106,12 +107,12 @@ def parse_4663_inserts(inserts: list[str], root: Path) -> dict[str, Any] | None:
     if not any(rel.startswith(prefix + "/") or rel == prefix for prefix in _HOT_PREFIXES):
         return None
     try:
-        access_mask = int(inserts[11], 16)
+        access_mask = int(inserts[9], 16)
     except (ValueError, IndexError):
         access_mask = 0
     op = "delete" if (access_mask & 0x10000) else ("write" if (access_mask & _ACCESS_WRITE_BITS) else "access")
     try:
-        proc_pid = int(inserts[9], 16)
+        proc_pid = int(inserts[10], 16)
     except (ValueError, IndexError):
         proc_pid = 0
     return {
@@ -121,7 +122,7 @@ def parse_4663_inserts(inserts: list[str], root: Path) -> dict[str, Any] | None:
             "user": f"{inserts[2]}\\{inserts[1]}",
             "logon_id": inserts[3],
             "process_id": proc_pid,
-            "process_name": inserts[10],
+            "process_name": inserts[11],
             "access_mask": hex(access_mask),
         },
     }
