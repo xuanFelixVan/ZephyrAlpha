@@ -20838,3 +20838,19 @@ entries:
     - 'tests/governance/test_ops_guard_red_team.py（fixture+3 新测+1 语义更新）'
     - '残留报 Owner：授权面收窄（GATEWAY 子进程继承→令牌化）；WriteAudit PID 级审计推进'
   fix_phase: '已落地（2026-08-27）；残留两项报 Owner 裁定'
+- issue_id: '#ARCH-278'
+  title: 313 模块运行时装配三层架构落地（Owner 裁定三 2026-08-27 批准）——台账 Layer1+需求驱动 Layer2+超期门禁 Layer3
+  severity: P2
+  category: 治理施工
+  adjudication: >-
+    Owner 批准三层全做且拒绝猜测性全量接线：
+    Layer1 台账=wiring_registry.yaml 新建（313 晋升模块四分类：eventbus_consumer 5/startup_instance 4/
+    pure_library 304，证据=源码静态扫描，含 registered_at/event_topics/defer_reason）；
+    Layer2 需求驱动首批=premarket_checker 核实已接线（boot_hooks.py:220 第10消费方，标 wired），
+    其余 8 候选全部带证据 defer（5 事件消费者对应主题当前 src 零发射点/4 启动实例为按需驱动或外部依赖未备）——
+    不做无生产者猜测性接线；Layer3 门禁=scripts/governance/check_wiring_orphan.py（90 天超期检出+
+    结构校验+strict 模式，12 单测全绿，当前仓 0 orphan）。
+  impact:
+    - 'docs/01_policies_and_standards/_registry/catalogs/wiring_registry.yaml（新建 313 条）'
+    - 'scripts/governance/check_wiring_orphan.py + tests/governance/test_check_wiring_orphan.py（12 测）'
+  fix_phase: '已落地（2026-08-27）'

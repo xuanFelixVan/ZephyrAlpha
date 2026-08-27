@@ -12584,3 +12584,15 @@ di_seam_exemptions:
   token: auto-blueprint-20260826
   created_by: AI-P2-W16
   capability: quality_assurance_selfdrive_blueprint
+- file: docs/01_policies_and_standards/_registry/catalogs/wiring_registry.yaml
+  token: auto-wiring-registry-20260827
+  created_by: AI-OWNER-WIRING
+  capability: wiring_registry
+- file: scripts/governance/check_wiring_orphan.py
+  token: auto-check-wiring-orphan-20260827
+  created_by: AI-OWNER-WIRING
+  capability: wiring_orphan_gate
+- file: tests/governance/test_check_wiring_orphan.py
+  token: auto-test-check-wiring-orphan-20260827
+  created_by: AI-OWNER-WIRING
+  capability: wiring_orphan_gate_test

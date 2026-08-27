@@ -1,0 +1,1896 @@
+# wiring_registry.yaml — 运行时装配台账 Layer1（Owner 裁定三 2026-08-27 批准，#ARCH-278）
+# 机器可读 SSoT：313 晋升模块四分类（eventbus_consumer/startup_instance/di_service/pure_library）
+# wiring_status 词表：unwired(未接线)/wired(已接线)/exempt(豁免-纯库无需接线)
+# 生成器：.runtime/digest_p2/_gen_wiring_registry.py（证据=模块源码静态扫描）
+version: '1.0.0'
+generated_at: '2026-08-27'
+adjudication: '#ARCH-278'
+classes:
+  eventbus_consumer: '含 EventBus 订阅语义——注入点=boot_hooks._subscribe_eventbus_consumers'
+  startup_instance: '含启动/常驻语义——注入点=boot_hooks 启动实例化'
+  di_service: '含单例/被解析语义——注入点=ServiceRegistry(需扩键裁定)'
+  pure_library: '纯库——需求驱动消费，无需装配，默认 exempt'
+modules:
+- candidate_id: CAND-TESTA-002
+  name: "D-ALT-02 SentimentEngine"
+  path: src/zephyr/alt_data/sentiment_engine.py
+  domain: D_ALT_DATA
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTA-004
+  name: "D-ALT-19 PolicyThemeMapper"
+  path: src/zephyr/alt_data/policy_theme_mapper.py
+  domain: D_ALT_DATA
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTA-005
+  name: "37 概念因子映射引擎"
+  path: src/zephyr/alt_data/concept_factor_mapper.py
+  domain: D_ALT_DATA
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTA-006
+  name: "另类数据源（社交情绪/数字足迹/供应链）"
+  path: src/zephyr/alt_data/social_sentiment_collector.py
+  domain: D_ALT_DATA
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTA-008
+  name: "D-ALT-DATA-03 Web Scraper Engine网页爬取引擎"
+  path: src/zephyr/alt_data/web_scraper_engine.py
+  domain: D_ALT_DATA
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTA-009
+  name: "D-ALT-DATA-04 Filing NLP Engine监管文件NLP"
+  path: src/zephyr/alt_data/filing_nlp_engine.py
+  domain: D_ALT_DATA
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTA-012
+  name: "72 Research Report Collector"
+  path: src/zephyr/alt_data/research_report_collector.py
+  domain: D_ALT_DATA
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTA-016
+  name: "D-ALT-DATA-14 Alt-Data Compliance Reviewer"
+  path: src/zephyr/alt_data/alt_data_compliance_reviewer.py
+  domain: D_ALT_DATA
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTA-019
+  name: "D-ALT-DATA-31 另类数据源健康度与降级管理器"
+  path: src/zephyr/alt_data/alt_source_health_manager.py
+  domain: D_ALT_DATA
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTA-021
+  name: "D-ALT-DATA-17 Alt-Data Privacy Protector（另类数据隐私保护器）"
+  path: src/zephyr/alt_data/alt_data_privacy_protector.py
+  domain: D_ALT_DATA
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTA-022
+  name: "D-ALT-DATA-01 AltDataConnector"
+  path: src/zephyr/alt_data/alt_data_connector.py
+  domain: D_ALT_DATA
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTA-023
+  name: "D-ALT-DATA-05 AltDataSignalExtractor"
+  path: src/zephyr/alt_data/alt_data_signal_extractor.py
+  domain: D_ALT_DATA
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTA-024
+  name: "D-ALT-DATA-09 AltDataCatalog"
+  path: src/zephyr/alt_data/alt_data_catalog.py
+  domain: D_ALT_DATA
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTA-025
+  name: "D-ALT-DATA-12 GeopoliticalRiskAnalyzer"
+  path: src/zephyr/alt_data/geopolitical_risk_analyzer.py
+  domain: D_ALT_DATA
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTA-026
+  name: "D-ALT-DATA-16 ASharePolicyExpectationAnalyzer"
+  path: src/zephyr/alt_data/policy_expectation_analyzer.py
+  domain: D_ALT_DATA
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-002
+  name: "C-028 信号工厂"
+  path: src/zephyr/signal_ashare/signal_factory.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-003
+  name: "C-011 资金行为分析"
+  path: src/zephyr/signal_ashare/capital_behavior_orchestrator.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-004
+  name: "开盘竞价微结构分析模型"
+  path: src/zephyr/signal_ashare/auction_microstructure_analyzer.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-005
+  name: "C-012 做T日内套利"
+  path: src/zephyr/signal_ashare/t0_trading_pipeline.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-006
+  name: "统一图形识别引擎(D-FACTOR-97)"
+  path: src/zephyr/signal_ashare/unified_pattern_engine.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-007
+  name: "模块3 缺口回补概率模型（Gap Fill Probability Model）"
+  path: src/zephyr/signal_ashare/gap_fill_model.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-008
+  name: "模块5 日内量能结构与订单流分析模型"
+  path: src/zephyr/signal_ashare/intraday_volume_orderflow.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-009
+  name: "模块6 Wyckoff吸筹阶段与底部确认模型"
+  path: src/zephyr/signal_ashare/wyckoff_accumulation_signal.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-010
+  name: "模块7 多指标背离检测模型"
+  path: src/zephyr/signal_ashare/multi_indicator_divergence.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-011
+  name: "模块9 多维度相对强弱筛选模型"
+  path: src/zephyr/signal_ashare/relative_strength_screener.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-012
+  name: "模块10 动量领导因子与涨停板生态模型"
+  path: src/zephyr/signal_ashare/limit_up_ecosystem_leadership.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-013
+  name: "模块11 动量层级与板块持续性模型"
+  path: src/zephyr/signal_ashare/sector_momentum_persistence.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-014
+  name: "模块14 极端情绪反转与恐慌底部检测模型"
+  path: src/zephyr/signal_ashare/extreme_sentiment_reversal_detector.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-015
+  name: "模块15 假突破与诱多检测模型"
+  path: src/zephyr/signal_ashare/false_breakout_trap_detector.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-016
+  name: "模块16 情绪-价格背离指数模型（Sentiment-Price Divergence Index）"
+  path: src/zephyr/signal_ashare/sentiment_price_divergence.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-017
+  name: "模块33 IC加权多因子涨停板潜力评分模型"
+  path: src/zephyr/signal_ashare/limit_up_potential_scorer.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-020
+  name: "模块17 多维度底部确认与右侧入场模型"
+  path: src/zephyr/signal_ashare/bottom_confirmation_entry.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-021
+  name: "模块29 次日上涨概率统一门槛模块"
+  path: src/zephyr/signal_ashare/next_day_probability_gate.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-022
+  name: "模块44 量化模式匹配与执行策略库"
+  path: src/zephyr/signal_ashare/pattern_match_strategy_library.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-023
+  name: "模块28 利好落地变利空（预期透支）模块"
+  path: src/zephyr/signal_ashare/sell_news_overdraft_detector.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-024
+  name: "模块13 隔夜收益预测与开仓期望值模型"
+  path: src/zephyr/signal_ashare/overnight_return_expectancy.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-025
+  name: "模块57 多因子叠加择时模型"
+  path: src/zephyr/signal_ashare/multi_factor_timing_overlay.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-026
+  name: "筛选漏斗第五层：多策略交叉（60秒级，→~30）"
+  path: src/zephyr/signal_ashare/strategy_cross_vote_funnel.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-027
+  name: "D-SIGNAL-158 因子计算结果消费桥接器"
+  path: src/zephyr/signal_ashare/factor_result_bridge.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-028
+  name: "D-SIGNAL-99 Risk Event E-RK-01 Consumer Handler（风险事件消费处理器）"
+  path: src/zephyr/signal_ashare/risk_event_consumer.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-029
+  name: "D-ALT-22 AShareEventCausalReasoner"
+  path: src/zephyr/signal_ashare/event_causal_reasoner.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-030
+  name: "C-035 庄家行为模式识别与模拟"
+  path: src/zephyr/signal_ashare/banker_pattern_simulator.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-031
+  name: "C-036 群体博弈模拟"
+  path: src/zephyr/signal_ashare/crowd_game_simulator.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-033
+  name: "97 形态→信号转化"
+  path: src/zephyr/signal_ashare/pattern_to_signal_mapper.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-036
+  name: "模块18 Wyckoff二次测试与动量延续模型"
+  path: src/zephyr/signal_ashare/wyckoff_secondary_test.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-037
+  name: "模块21 隔夜全球市场传导与事件影响评估模型"
+  path: src/zephyr/signal_ashare/overnight_conduction_model.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: eventbus_consumer
+  event_topics: [BLACK_SWAN, DATA, GEOPOLITICAL, POLICY]
+  wiring_status: unwired
+- candidate_id: CAND-TESTB-038
+  name: "模块22 产业链传导与供应链动量模型"
+  path: src/zephyr/signal_ashare/supply_chain_momentum.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-039
+  name: "模块40 板块拥挤度与启动条件量化模型"
+  path: src/zephyr/signal_ashare/sector_crowding_launch.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-040
+  name: "模块45 分时微结构分析与大小盘风格检测模型"
+  path: src/zephyr/signal_ashare/intraday_size_style.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-041
+  name: "模块52 跨资产订单流网络与亏钱效应扩散模型"
+  path: src/zephyr/signal_ashare/orderflow_network_panic.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-042
+  name: "模块55 A股日历效应与关键节点量化模型"
+  path: src/zephyr/signal_ashare/calendar_effects_model.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-043
+  name: "B3 事件驱动条件分布预测 🟡未来开通"
+  path: src/zephyr/signal_ashare/event_conditional_density.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-044
+  name: "模块27 主力假动作与筹码派发识别模块"
+  path: src/zephyr/signal_ashare/fake_move_distribution.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-045
+  name: "模块23 量能体制自适应策略模型"
+  path: src/zephyr/signal_ashare/volume_regime_adaptive.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-048
+  name: "模块56 量能×体制×风格三维策略矩阵模型"
+  path: src/zephyr/signal_ashare/strategy_matrix_3d.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-049
+  name: "§29.6 图神经网络GNN股票关系建模"
+  path: src/zephyr/signal_ashare/stock_relation_gnn.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-050
+  name: "§29.16-5 TCP-RM时序保形预测增强（v8.2合并自§29.26）"
+  path: src/zephyr/signal_ashare/tcp_rm_conformal.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-051
+  name: "§29.18 Causal ML深度补充"
+  path: src/zephyr/signal_ashare/causal_ml_engine.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-053
+  name: "D-ALT-DATA-29 A-Share Industry Chain Knowledge Graph A股产业链知识图谱"
+  path: src/zephyr/signal_ashare/industry_chain_graph.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-054
+  name: "技能：signal-weight-adjust 信号权重调整"
+  path: src/zephyr/signal_ashare/signal_weight_adjuster.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-055
+  name: "技能：day-trade-pnl-estimate 做T盈亏预估"
+  path: src/zephyr/signal_ashare/day_trade_pnl_estimator.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TESTB-059
+  name: "D-SIGNAL-101 Strategy Shared Kernel Synchronizer（策略共享内核同步器）"
+  path: src/zephyr/signal_ashare/shared_kernel_sync.py
+  domain: D_ASHARE_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-AUDITTES-001
+  name: "C-025 质量保障自驱动"
+  path: src/zephyr/simulation/quality_assurance_selfdrive.py
+  domain: D_AUDITTEST
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-AUTONOMYCORE-003
+  name: "风控Agent(RiskManager)"
+  path: src/zephyr/autonomy_core/agents/risk_manager_agent.py
+  domain: D_AUTONOMY_CORE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-AUTONOMYCORE-004
+  name: "Agent自治边界（Level 0-3四级自治模型）"
+  path: src/zephyr/autonomy_core/autonomy_level_registry.py
+  domain: D_AUTONOMY_CORE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-AUTONOMYCORE-005
+  name: "单Agent门控层（Per-Agent Gate）"
+  path: src/zephyr/autonomy_core/per_agent_gate.py
+  domain: D_AUTONOMY_CORE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-AUTONOMYCORE-006
+  name: "研究Agent(Researcher)"
+  path: src/zephyr/autonomy_core/agents/researcher_agent.py
+  domain: D_AUTONOMY_CORE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-AUTONOMYCORE-007
+  name: "信号Agent(SignalAnalyst)"
+  path: src/zephyr/autonomy_core/agents/signal_analyst_agent.py
+  domain: D_AUTONOMY_CORE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-AUTONOMYCORE-008
+  name: "择时Agent(TimingAnalyst)"
+  path: src/zephyr/autonomy_core/agents/timing_analyst_agent.py
+  domain: D_AUTONOMY_CORE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-AUTONOMYCORE-009
+  name: "做TAgent(T0Trader)"
+  path: src/zephyr/autonomy_core/agents/t0_trader_agent.py
+  domain: D_AUTONOMY_CORE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-AUTONOMYCORE-010
+  name: "D-AUTONOMY-33 Non-AI Boundary Guard"
+  path: src/zephyr/autonomy_core/non_ai_boundary_guard.py
+  domain: D_AUTONOMY_CORE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-AUTONOMYCORE-013
+  name: "C-008 AI自治运维能力卡片（A1§12.2迁移）"
+  path: src/zephyr/autonomy_core/ai_ops_autonomy_card.py
+  domain: D_AUTONOMY_CORE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-WFO-002
+  name: "C-003 自动回测与仿真"
+  path: src/zephyr/backtest/services/layered_validation_pipeline.py
+  domain: D_BACKTEST
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-WFO-003
+  name: "第五层：多策略交叉验证"
+  path: src/zephyr/backtest/core/strategy_cpcv_matrix.py
+  domain: D_BACKTEST
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-CMP-002
+  name: "§10.8.1.2合规引擎架构图"
+  path: src/zephyr/compliance/compliance_rule_engine.py
+  domain: D_COMPLIANCE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-CMP-003
+  name: "合规证据链生成器"
+  path: src/zephyr/compliance/evidence_chain_generator.py
+  domain: D_COMPLIANCE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-CMP-005
+  name: "模块54 信息不对称期与操纵行为检测模型"
+  path: src/zephyr/compliance/info_asymmetry_manipulation_detector.py
+  domain: D_COMPLIANCE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-CMP-006
+  name: "D-COMPLIANCE-16 Compliance Policy-as-Code Engine（合规策略即代码引擎）"
+  path: src/zephyr/compliance/compliance_policy_engine.py
+  domain: D_COMPLIANCE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-CMP-007
+  name: "M66-NEW-03 合规漂移检测器"
+  path: src/zephyr/compliance/compliance_drift_detector.py
+  domain: D_COMPLIANCE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-CMP-008
+  name: "M36-S05 监管变更追踪器"
+  path: src/zephyr/compliance/regulatory_change_tracker.py
+  domain: D_COMPLIANCE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-CONTRACT-001
+  name: "D-SIGNAL-163 CTR-002消费契约适配器"
+  path: src/zephyr/shared/contracts/ctr002_consumer_adapter.py
+  domain: D_CONTRACTS
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-CONTRACT-003
+  name: "D-SIGNAL-158 二元结论补充"
+  path: src/zephyr/shared/contracts/ctr002_producer_validator.py
+  domain: D_CONTRACTS
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DAT-006
+  name: "03 Storage"
+  path: src/zephyr/data/storage_tiering.py
+  domain: D_DATA
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DAT-007
+  name: "数据清洗规则引擎"
+  path: src/zephyr/data/cleaning_rule_engine.py
+  domain: D_DATA
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DAT-008
+  name: "数据服务接口层"
+  path: src/zephyr/data/data_service.py
+  domain: D_DATA
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DAT-010
+  name: "D-INT-16 DataFormatTransformer"
+  path: src/zephyr/data/normalizers/format_transformer.py
+  domain: D_DATA
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DAT-011
+  name: "86 板块因子数据管理器"
+  path: src/zephyr/data/sector_factor_manager.py
+  domain: D_DATA
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DAT-012
+  name: "96 Sina+Tencent Real-Time"
+  path: src/zephyr/data/redundant_source/sina_tencent_provider.py
+  domain: D_DATA
+  wiring_class: startup_instance
+  wiring_status: unwired
+- candidate_id: CAND-DAT-013
+  name: "交易所公告/新闻源"
+  path: src/zephyr/data/implementations/announcement_provider.py
+  domain: D_DATA
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DAT-014
+  name: "§29.2-7 自动回填（Automated Backfilling）"
+  path: src/zephyr/data/auto_backfiller.py
+  domain: D_DATA
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DAT-015
+  name: "D-DATA-08 Reference Data Manager"
+  path: src/zephyr/data/reference_data_manager.py
+  domain: D_DATA
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DAT-016
+  name: "D-DATA-25 Multi-Timeframe Data Fusion"
+  path: src/zephyr/data/multi_timeframe_fusion.py
+  domain: D_DATA
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DAT-017
+  name: "D-DATA-80 Financial Parser"
+  path: src/zephyr/data/financial_parser.py
+  domain: D_DATA
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DAT-018
+  name: "D-DATA-08 数据压缩与归档"
+  path: src/zephyr/data/data_compression_archiver.py
+  domain: D_DATA
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DAT-019
+  name: "tushare 新闻数据源(待开通)"
+  path: src/zephyr/data/implementations/tushare_news_connector.py
+  domain: D_DATA
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DAT-020
+  name: "D-INFRA-321 数据源可用性SLA追踪器"
+  path: src/zephyr/data/source_sla_tracker.py
+  domain: D_DATA
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DATENG-001
+  name: "85 Cleaning & Anomaly Engine"
+  path: src/zephyr/data_eng/cleaning_anomaly_engine.py
+  domain: D_DATA_ENG
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DATENG-002
+  name: "92 Great Expectations Governance"
+  path: src/zephyr/data_eng/expectation_governance.py
+  domain: D_DATA_ENG
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DATENG-003
+  name: "91 Incremental Update Engine"
+  path: src/zephyr/data_eng/incremental_update_engine.py
+  domain: D_DATA_ENG
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DATENG-004
+  name: "D-DATA-112 Data Anomaly Alerter"
+  path: src/zephyr/data_eng/data_anomaly_alerter.py
+  domain: D_DATA_ENG
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DATENG-005
+  name: "D-INFRA-34 Cold Data Archive Manager"
+  path: src/zephyr/data_eng/cold_data_archive_manager.py
+  domain: D_DATA_ENG
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DATENG-006
+  name: "M45-NEW-04 质量SLA违约预测器"
+  path: src/zephyr/data_eng/quality_sla_breach_predictor.py
+  domain: D_DATA_ENG
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DATENG-007
+  name: "D-DATA-ENG-06 StreamProcessingEngine"
+  path: src/zephyr/data_eng/stream_processing_engine.py
+  domain: D_DATA_ENG
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DATENG-008
+  name: "D-DATA-ENG-11 GPUResourceManager"
+  path: src/zephyr/data_eng/gpu_resource_manager.py
+  domain: D_DATA_ENG
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DATENG-009
+  name: "D-DATA-ENG-12 DataLakeManager"
+  path: src/zephyr/data_eng/data_lake_manager.py
+  domain: D_DATA_ENG
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DATGOV-001
+  name: "M8-S01 血缘解析器"
+  path: src/zephyr/data_governance/core/lineage_parser.py
+  domain: D_DATA_GOV
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DATGOV-002
+  name: "M8-S02 静态分析器"
+  path: src/zephyr/data_governance/core/static_lineage_analyzer.py
+  domain: D_DATA_GOV
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DATGOV-003
+  name: "M8-S03 动态采集器"
+  path: src/zephyr/data_governance/core/runtime_lineage_collector.py
+  domain: D_DATA_GOV
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DATGOV-004
+  name: "M8-NEW-02 Column-Level Lineage Analyzer"
+  path: src/zephyr/data_governance/core/column_lineage_analyzer.py
+  domain: D_DATA_GOV
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DATGOV-005
+  name: "M8-NEW-09 Metaxy Record-Level Tracker"
+  path: src/zephyr/data_governance/core/record_lineage_tracker.py
+  domain: D_DATA_GOV
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DATGOV-006
+  name: "130~136 DDD聚合根与生命周期"
+  path: src/zephyr/data_governance/market_data_aggregates.py
+  domain: D_DATA_GOV
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DATGOV-007
+  name: "M8-S07 变更检测器"
+  path: src/zephyr/data_governance/lineage_change_detector.py
+  domain: D_DATA_GOV
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DATGOV-008
+  name: "M8-NEW-01 OpenLineage集成"
+  path: src/zephyr/data_governance/openlineage_exporter.py
+  domain: D_DATA_GOV
+  wiring_class: eventbus_consumer
+  event_topics: [COMPLETE]
+  wiring_status: unwired
+- candidate_id: CAND-DATGOV-009
+  name: "M8-NEW-02 列级血缘"
+  path: src/zephyr/data_governance/column_lineage_tracker.py
+  domain: D_DATA_GOV
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DATGOV-010
+  name: "M8-NEW-05 AI-ML血缘"
+  path: src/zephyr/data_governance/ml_lineage_tracker.py
+  domain: D_DATA_GOV
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DATGOV-011
+  name: "M8-NEW-07 自动发现"
+  path: src/zephyr/data_governance/asset_auto_discovery.py
+  domain: D_DATA_GOV
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DATSEC-001
+  name: "AI脱敏管道"
+  path: src/zephyr/data_security/ai_masking_pipeline.py
+  domain: D_DATA_SEC
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DATSEC-002
+  name: "D-SECURITY-01 Data Access Auditor"
+  path: src/zephyr/data_security/data_access_auditor.py
+  domain: D_DATA_SEC
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DATSEC-003
+  name: "D-SECURITY-02 Data Masking Engine"
+  path: src/zephyr/data_security/data_masking_engine.py
+  domain: D_DATA_SEC
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-DIGITALT-001
+  name: "§29.23 数字孪生市场仿真（v5.1新增）"
+  path: src/zephyr/digital_twin/market_twin_simulator.py
+  domain: D_DIGITAL_TWIN
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-EXSIM-001
+  name: "模拟器关联-R-118 Liquidity & Slippage Simulator"
+  path: src/zephyr/execution_simulation/almgren_chriss_impact_model.py
+  domain: D_EXEC_SIM
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-EX-007
+  name: "D-TRADING-05 Pre-Market Checker盘前检查器"
+  path: src/zephyr/ex_core/premarket_checker.py
+  domain: D_EX_CORE
+  wiring_class: eventbus_consumer
+  wiring_status: wired
+  wired_evidence: "boot_hooks.py:220 _subscribe_eventbus_consumers 第10位（premarket.check.requested，MOD-EX-063）"
+- candidate_id: CAND-EX-010
+  name: "C-026 执行运营自优化"
+  path: src/zephyr/ex_core/execution_param_optimizer.py
+  domain: D_EX_CORE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-SOR-001
+  name: "路由Agent（SOR）"
+  path: src/zephyr/ex_sor/core/sor_agent.py
+  domain: D_EX_SOR
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FAC-006
+  name: "D-SIGNAL-77 因子可用性监控器"
+  path: src/zephyr/factor/factor_availability_monitor.py
+  domain: D_FACTOR
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FAC-008
+  name: "C-027 因子工厂"
+  path: src/zephyr/factor/factor_factory.py
+  domain: D_FACTOR
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FAC-009
+  name: "C-009 因子与信号生产管线"
+  path: src/zephyr/factor/factor_production_pipeline.py
+  domain: D_FACTOR
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FAC-010
+  name: "92 87-Alpha"
+  path: src/zephyr/factor/wq_alpha_87.py
+  domain: D_FACTOR
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FAC-011
+  name: "UFL确定性事实层（v8.1）"
+  path: src/zephyr/factor/ufl_deterministic_layer.py
+  domain: D_FACTOR
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FAC-013
+  name: "模块48 动态信号权重模型（Bayesian Model Averaging）"
+  path: src/zephyr/factor/analysis/bma_signal_weighter.py
+  domain: D_FACTOR
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FAC-015
+  name: "离线存储Offline Store"
+  path: src/zephyr/factor/offline_store.py
+  domain: D_FACTOR
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FAC-016
+  name: "74 AI Auto Feature Discoverer"
+  path: src/zephyr/research/auto_feature_discoverer.py
+  domain: D_FACTOR
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FAC-017
+  name: "R&D-Agent-Quant联合优化（v8.2）"
+  path: src/zephyr/research/factor_model_co_evaluator.py
+  domain: D_FACTOR
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FAC-018
+  name: "§29.8 签名方法（Signature Methods/Rough Path Theory）"
+  path: src/zephyr/factor/signature_feature_extractor.py
+  domain: D_FACTOR
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FAC-019
+  name: "§29.14 自动策略发现（Automated Strategy Discovery）"
+  path: src/zephyr/research/gp_strategy_discovery.py
+  domain: D_FACTOR
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FAC-020
+  name: "§29.14-3.5 多智能体辩论因子挖掘（FactorMAD，ICAIF 2025）"
+  path: src/zephyr/research/factor_vote_mining.py
+  domain: D_FACTOR
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FAC-021
+  name: "§29.32 LLM进化式策略搜索（v6.0新增）"
+  path: src/zephyr/research/llm_evolutionary_search.py
+  domain: D_FACTOR
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FAC-022
+  name: "D-RESEARCH-17 Strategy Iteration Upgrader策略迭代升级"
+  path: src/zephyr/research/strategy_iteration_upgrader.py
+  domain: D_FACTOR
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FBLDETEC-001
+  name: "§29.5 特征漂移与概念漂移检测"
+  path: src/zephyr/feedback_loop/detectors/drift/distribution_drift_monitor.py
+  domain: D_FBL_DETECTORS
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FBL-004
+  name: "Module Matcher(模块匹配器)"
+  path: src/zephyr/feedback_loop/module_matcher.py
+  domain: D_FEEDBACK_LOOP
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FBL-005
+  name: "技能库(Skill Library,Voyager模式)"
+  path: src/zephyr/feedback_loop/skill_library.py
+  domain: D_FEEDBACK_LOOP
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FBL-006
+  name: "Meta-Harness元优化器(Strategy Arena 2026)"
+  path: src/zephyr/feedback_loop/meta_harness_optimizer.py
+  domain: D_FEEDBACK_LOOP
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FE-002
+  name: "D-FRONTEND-08 Alert Visualization（告警可视化）"
+  path: src/zephyr/frontend/dashboard/components/alert_center.py
+  domain: D_FRONTEND
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FE-004
+  name: "D-FE-13 NotificationRouter"
+  path: src/zephyr/frontend/notification_router.py
+  domain: D_FRONTEND
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FE-006
+  name: "M5-S07 图可视化渲染器"
+  path: src/zephyr/frontend/graph_view_renderer.py
+  domain: D_FRONTEND
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FE-007
+  name: "M6-S07 映射可视化器"
+  path: src/zephyr/frontend/domain_mapping_view.py
+  domain: D_FRONTEND
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FE-008
+  name: "M7-S06 流可视化器"
+  path: src/zephyr/frontend/value_stream_view.py
+  domain: D_FRONTEND
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FE-009
+  name: "M8-S08 血缘可视化器"
+  path: src/zephyr/frontend/lineage_view_renderer.py
+  domain: D_FRONTEND
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FE-010
+  name: "D-FRONTEND-15 End-to-End Trace Visualizer（端到端追踪可视化）"
+  path: src/zephyr/frontend/trace_waterfall_view.py
+  domain: D_FRONTEND
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FE-011
+  name: "M36-S07 合规仪表盘"
+  path: src/zephyr/frontend/compliance_dashboard.py
+  domain: D_FRONTEND
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FE-012
+  name: "API Gateway Proxy D-FRONTEND-22"
+  path: src/zephyr/frontend/frontend_api_proxy.py
+  domain: D_FRONTEND
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FE-013
+  name: "Feishu Bot D-FRONTEND-24"
+  path: src/zephyr/frontend/feishu_bot_sender.py
+  domain: D_FRONTEND
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FE-014
+  name: "WeChat Bot D-FRONTEND-25"
+  path: src/zephyr/frontend/wechat_bot_handler.py
+  domain: D_FRONTEND
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FUNDAMEN-001
+  name: "模块49 财报季事件驱动与PEAD模型"
+  path: src/zephyr/signal_fundamental/pead_event_model.py
+  domain: D_FUNDAMENTAL_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-FUNDAMEN-002
+  name: "D-SIGNAL-100 二元结论补充"
+  path: src/zephyr/signal_fundamental/audit/trace_context_store.py
+  domain: D_FUNDAMENTAL_SIGNAL
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-WORKTREE-002
+  name: "MOD-INF-040 DepMap Engine"
+  path: src/zephyr/governance/depmap_engine.py
+  domain: D_GOVERNANCE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-WORKTREE-003
+  name: "Policy Manager D-GOVERNANCE-01"
+  path: src/zephyr/governance/gov_policy_manager.py
+  domain: D_GOVERNANCE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-GOVAUDIT-004
+  name: "M48-S01 审计追踪依赖构建器"
+  path: src/zephyr/gov_audit/audit_trace_graph_builder.py
+  domain: D_GOV_AUDIT
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-REGSYNC-002
+  name: "XS-15 API Doc Auto Version Syncer（API文档自动版本同步器）"
+  path: src/zephyr/governance/docs/api_doc_version_syncer.py
+  domain: D_GOV_DOCS
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-GOVDRIFT-003
+  name: "Agent Drift量化检查器"
+  path: src/zephyr/gov_drift/agent_stability_index.py
+  domain: D_GOV_DRIFT
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-GOVENFOR-001
+  name: "阈值拆分检测器"
+  path: src/zephyr/gov_enforcement/rule_enforcement/threshold_split_detector.py
+  domain: D_GOV_ENFORCEMENT
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-GOVENFOR-002
+  name: "D-GOVERNANCE-15 AI Construction Governor"
+  path: src/zephyr/gov_enforcement/construction_governor_gate.py
+  domain: D_GOV_ENFORCEMENT
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-PC-002
+  name: "D-GOV-06 StandardsManager"
+  path: src/zephyr/gov_rule/standards_manager.py
+  domain: D_GOV_RULE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-INFRASTR-001
+  name: "配置中心"
+  path: src/zephyr/infrastructure/config/config_center.py
+  domain: D_INFRASTRUCTURE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-INFRAA2A-001
+  name: "A2A检查网关"
+  path: src/zephyr/infrastructure/a2a_protocol/a2a_check_gateway.py
+  domain: D_INFRA_A2A
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-INFRAA2A-002
+  name: "战略层消息总线（Strategic Bus）"
+  path: src/zephyr/infrastructure/a2a_protocol/strategic_message_bus.py
+  domain: D_INFRA_A2A
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-INFRAOPS-001
+  name: "横切层四件套"
+  path: src/zephyr/infrastructure/gpu_hot_swap_model.py
+  domain: D_INFRA_OPS
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-INFRAOPS-002
+  name: "D-SIGNAL-140 策略灰度发布"
+  path: src/zephyr/infrastructure/strategy_canary_release.py
+  domain: D_INFRA_OPS
+  wiring_class: startup_instance
+  wiring_status: unwired
+- candidate_id: CAND-INFRAOPS-003
+  name: "D-DATA-64 WAL Checkpoint Monitor"
+  path: src/zephyr/infra_ops/wal_checkpoint_monitor.py
+  domain: D_INFRA_OPS
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-INFRAOPS-004
+  name: "D-INFRA-345 存储成本量化核算器"
+  path: src/zephyr/infra_ops/storage_cost_calculator.py
+  domain: D_INFRA_OPS
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-INFRAOPS-005
+  name: "M10-S06 运行时依赖可视化器"
+  path: src/zephyr/infra_ops/runtime_topology_visualizer.py
+  domain: D_INFRA_OPS
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-INFRAOPS-006
+  name: "Loki日志聚合"
+  path: src/zephyr/infra_ops/loki_log_pipeline.py
+  domain: D_INFRA_OPS
+  wiring_class: startup_instance
+  wiring_status: unwired
+- candidate_id: CAND-DR-002
+  name: "M15-S02 级联失效仿真器"
+  path: src/zephyr/infrastructure/rollback/cascade_failure_simulator.py
+  domain: D_INFRA_RECOVERY
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-H1FS-002
+  name: "NSSM+5进程架构"
+  path: src/zephyr/infrastructure/process_supervisor.py
+  domain: D_INFRA_RUNTIME
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-H1FS-003
+  name: "P3 交易核心进程（trading_core）"
+  path: src/zephyr/trading/trading_core_process_spec.py
+  domain: D_INFRA_RUNTIME
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-H1FS-004
+  name: "Redis共享状态层（Redis 7.x单实例）"
+  path: src/zephyr/infrastructure/redis_state_layer_ssot.py
+  domain: D_INFRA_RUNTIME
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-H1FS-005
+  name: "Hot平面（<10ms）"
+  path: src/zephyr/infrastructure/hot_plane_budget.py
+  domain: D_INFRA_RUNTIME
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-H1FS-006
+  name: "P2 信号引擎进程（signal_engine）"
+  path: src/zephyr/infrastructure/signal_engine_process_spec.py
+  domain: D_INFRA_RUNTIME
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-H1FS-007
+  name: "Warm平面（10ms~1s）"
+  path: src/zephyr/infrastructure/warm_plane_budget.py
+  domain: D_INFRA_RUNTIME
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-H1FS-008
+  name: "§29.1 多进程隔离与运行时架构"
+  path: src/zephyr/infra_runtime/shared_memory_zero_copy.py
+  domain: D_INFRA_RUNTIME
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-H1FS-009
+  name: "D-INFRA-46 高性能高可用保障框架"
+  path: src/zephyr/infra_runtime/ha_sla_framework.py
+  domain: D_INFRA_RUNTIME
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-H1FS-010
+  name: "MOD-INF-012 Database Layer"
+  path: src/zephyr/infra_runtime/database_layer.py
+  domain: D_INFRA_RUNTIME
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-H1FS-011
+  name: "P5 ML管线进程（ml_pipeline）"
+  path: src/zephyr/infra_runtime/ml_pipeline_process.py
+  domain: D_INFRA_RUNTIME
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-H1FS-012
+  name: "Cold平面（>1s）"
+  path: src/zephyr/infra_runtime/cold_plane_isolation.py
+  domain: D_INFRA_RUNTIME
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-H1FS-013
+  name: "M56-S02 延迟预算分配器"
+  path: src/zephyr/infra_runtime/latency_budget_allocator.py
+  domain: D_INFRA_RUNTIME
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-H1FS-014
+  name: "IR-06 资源调度器"
+  path: src/zephyr/infra_runtime/resource_scheduler.py
+  domain: D_INFRA_RUNTIME
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-INFRATEL-001
+  name: "可复现性包生成器"
+  path: src/zephyr/infrastructure/system_telemetry/reproducibility_packager.py
+  domain: D_INFRA_TELEMETRY
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-INFRATEL-002
+  name: "可观测性三支柱"
+  path: src/zephyr/infrastructure/system_telemetry/observability_triad.py
+  domain: D_INFRA_TELEMETRY
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-INFRATEL-003
+  name: "M74-NEW-06 AI Agent调用链追踪器"
+  path: src/zephyr/infrastructure/system_telemetry/agent_call_tracer.py
+  domain: D_INFRA_TELEMETRY
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-INFRATEL-004
+  name: "M56-S03 延迟归因器"
+  path: src/zephyr/infrastructure/system_telemetry/latency_attributor.py
+  domain: D_INFRA_TELEMETRY
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-BACL-002
+  name: "D-INT-26 FailoverCoordinator"
+  path: src/zephyr/integration/failover_coordinator.py
+  domain: D_INTEGRATION
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-BACL-003
+  name: "D-INT-10 ExternalSystemConnector"
+  path: src/zephyr/integration/external_system_connector.py
+  domain: D_INTEGRATION
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-BACL-004
+  name: "D-INT-05 APIDocumentation"
+  path: src/zephyr/integration/api_documentation_generator.py
+  domain: D_INTEGRATION
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-BACL-005
+  name: "集成架构 v6.0(A10)"
+  path: src/zephyr/integration/integration_matrix_registry.py
+  domain: D_INTEGRATION
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-BACL-006
+  name: "AI服务交互矩阵"
+  path: src/zephyr/integration/ai_service_route_matrix.py
+  domain: D_INTEGRATION
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-INTEGRAT-001
+  name: "D-INT-01 APIGateway"
+  path: src/zephyr/integration/api_gateway.py
+  domain: D_INTEGRATION_GATEWAY
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-AISA-002
+  name: "D-ALT-11 LLMMarketInterpreter"
+  path: src/zephyr/intelligence/llm_market_interpreter.py
+  domain: D_INTELLIGENCE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-AISA-003
+  name: "§29.11 大语言模型Agent基本面分析"
+  path: src/zephyr/intelligence/llm_fundamental_analysis.py
+  domain: D_INTELLIGENCE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-AISA-004
+  name: "Agent记忆架构"
+  path: src/zephyr/intelligence/agent_memory_architecture.py
+  domain: D_INTELLIGENCE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-AISA-005
+  name: "LLM Agent路由"
+  path: src/zephyr/intelligence/llm_agent_router.py
+  domain: D_INTELLIGENCE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-AISA-006
+  name: "情景记忆（自反Agent内）"
+  path: src/zephyr/intelligence/episodic_memory_store.py
+  domain: D_INTELLIGENCE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-AISA-007
+  name: "本地LLM池"
+  path: src/zephyr/intelligence/local_llm_pool.py
+  domain: D_INTELLIGENCE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-AISA-008
+  name: "API LLM池"
+  path: src/zephyr/intelligence/api_llm_pool.py
+  domain: D_INTELLIGENCE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-AISA-009
+  name: "C-031 AI协作策略与人机信任模型"
+  path: src/zephyr/intelligence/human_trust_model.py
+  domain: D_INTELLIGENCE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-AISA-011
+  name: "模块41 事件链推理与因果图模型"
+  path: src/zephyr/intelligence/event_chain_causal_graph.py
+  domain: D_INTELLIGENCE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-AISA-013
+  name: "§29.37 LLM自评估与交叉验证（v6.0新增）"
+  path: src/zephyr/intelligence/llm_self_evaluation.py
+  domain: D_INTELLIGENCE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-AISA-014
+  name: "§29.24-1 VeNRA架构（arXiv 2603.04663)"
+  path: src/zephyr/intelligence/universal_fact_ledger.py
+  domain: D_INTELLIGENCE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-AISA-017
+  name: "LLM研究助手 D-RESEARCH-11 LLM Research Agent"
+  path: src/zephyr/intelligence/llm_research_agent.py
+  domain: D_INTELLIGENCE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-KNW-001
+  name: "D-KNOW-01 FinancialKnowledgeGraph"
+  path: src/zephyr/knowledge/financial_knowledge_graph.py
+  domain: D_KNOWLEDGE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-KNW-002
+  name: "D-KNOW-06 KBEngine"
+  path: src/zephyr/knowledge/kb_engine.py
+  domain: D_KNOWLEDGE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-KNW-004
+  name: "D-KNOWLEDGE-02 Factor Knowledge Base因子知识库"
+  path: src/zephyr/knowledge/factor_knowledge_base.py
+  domain: D_KNOWLEDGE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-KNW-005
+  name: "D-KNOWLEDGE-03 Strategy Knowledge Base策略知识库"
+  path: src/zephyr/knowledge/strategy_knowledge_base.py
+  domain: D_KNOWLEDGE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-KNW-007
+  name: "D-KNOWLEDGE-17 AI Auto Knowledge Extractor AI自动知识提取"
+  path: src/zephyr/knowledge/ai_knowledge_extractor.py
+  domain: D_KNOWLEDGE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-KNW-008
+  name: "知识库(Knowledge Base)"
+  path: src/zephyr/knowledge/knowledge_artifact_store.py
+  domain: D_KNOWLEDGE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-KNW-009
+  name: "RAG管道"
+  path: src/zephyr/knowledge/rag_pipeline.py
+  domain: D_KNOWLEDGE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-KNW-011
+  name: "D-AUTONOMY-05 Knowledge & Memory"
+  path: src/zephyr/knowledge/layered_memory_orchestrator.py
+  domain: D_KNOWLEDGE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-KNW-012
+  name: "D-AUTONOMY-187 8-Collection Unified Schema Manager"
+  path: src/zephyr/knowledge/collection_schema_manager.py
+  domain: D_KNOWLEDGE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-KNW-013
+  name: "D-KNOWLEDGE-11 Knowledge Quality Assessor（知识质量评估器）"
+  path: src/zephyr/knowledge/knowledge_quality_assessor.py
+  domain: D_KNOWLEDGE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-KNW-014
+  name: "核心聚合 ResearchProject"
+  path: src/zephyr/knowledge/research_project_aggregate.py
+  domain: D_KNOWLEDGE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-KNW-015
+  name: "研究目录 D-RESEARCH-06 Research Catalog"
+  path: src/zephyr/knowledge/research_catalog.py
+  domain: D_KNOWLEDGE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-KNW-016
+  name: "论文追踪器 D-RESEARCH-07 Paper Tracker"
+  path: src/zephyr/knowledge/paper_tracker.py
+  domain: D_KNOWLEDGE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-KNW-017
+  name: "研究工作流引擎 D-RESEARCH-09 Research Workflow Engine"
+  path: src/zephyr/knowledge/research_workflow_engine.py
+  domain: D_KNOWLEDGE
+  wiring_class: startup_instance
+  wiring_status: unwired
+- candidate_id: CAND-MKTDATA-003
+  name: "D-DATA-32 A-Share Auction Data Manager"
+  path: src/zephyr/market_data/auction_data_manager.py
+  domain: D_MKT_DATA
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-MLS-001
+  name: "D-ML-SERVE 推理域"
+  path: src/zephyr/ml_serve/core/model_drift_monitor.py
+  domain: D_ML_SERVE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-MLS-002
+  name: "§29.28 模型压缩与推理加速（v5.1新增）"
+  path: src/zephyr/ml_serve/model_compression_accelerator.py
+  domain: D_ML_SERVE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-MLS-003
+  name: "D-ML-46 M3 Code Generation Model Adapter"
+  path: src/zephyr/ml_serve/codegen_model_adapter.py
+  domain: D_ML_SERVE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-MLS-004
+  name: "D-ML-47 M7 Deep Review Model Adapter"
+  path: src/zephyr/ml_serve/deep_review_model_adapter.py
+  domain: D_ML_SERVE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-MLT-013
+  name: "A1 聚焦贝叶斯损失函数（Focused Bayesian Loss）★当前即做"
+  path: src/zephyr/ml_train/implementations/density_quantile_trainer.py
+  domain: D_ML_TRAIN
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-MLT-014
+  name: "A2 分位数神经网络两阶段架构（QNN Two-Stage）★当前即做"
+  path: src/zephyr/ml_train/implementations/qnn_two_stage.py
+  domain: D_ML_TRAIN
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-MLT-015
+  name: "§29.7 Transformer时序架构密度预测增强"
+  path: src/zephyr/ml_train/implementations/patchtst_density_encoder.py
+  domain: D_ML_TRAIN
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-MLT-016
+  name: "D-ML-TRAIN 训练域"
+  path: src/zephyr/ml_train/core/model_version_registry.py
+  domain: D_ML_TRAIN
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-MLT-017
+  name: "C-029 ML模型工厂"
+  path: src/zephyr/ml_train/ml_model_factory.py
+  domain: D_ML_TRAIN
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-MLT-018
+  name: "71 交易决策标注数据集"
+  path: src/zephyr/ml_train/decision_annotation_dataset.py
+  domain: D_ML_TRAIN
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-MLT-019
+  name: "95 金融时序数据增强"
+  path: src/zephyr/ml_train/implementations/ts_augmentation.py
+  domain: D_ML_TRAIN
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-MLT-022
+  name: "模块46 决策树与强化学习交易决策架构"
+  path: src/zephyr/ml_train/decision_tree_decision_architecture.py
+  domain: D_ML_TRAIN
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-MLT-024
+  name: "§29.33 KAN Kolmogorov-Arnold网络（v6.0新增）"
+  path: src/zephyr/ml_train/implementations/kan_density_head.py
+  domain: D_ML_TRAIN
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-MLT-025
+  name: "§29.35 持续学习抗遗忘框架（v6.0新增）"
+  path: src/zephyr/ml_train/continual_learning_antiforget.py
+  domain: D_ML_TRAIN
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-MLT-027
+  name: "D-RESEARCH-01 Research Data Manager"
+  path: src/zephyr/ml_train/research_data_manager.py
+  domain: D_ML_TRAIN
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-MLT-028
+  name: "D-RESEARCH-05 Reproducibility Manager"
+  path: src/zephyr/ml_train/reproducibility_manager.py
+  domain: D_ML_TRAIN
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-MLT-029
+  name: "D-RESEARCH-12 Research Data Sandbox"
+  path: src/zephyr/ml_train/research_data_sandbox.py
+  domain: D_ML_TRAIN
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-MLT-030
+  name: "D-RESEARCH-18 Research Asset Versioning"
+  path: src/zephyr/ml_train/research_asset_versioning.py
+  domain: D_ML_TRAIN
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-OPS-001
+  name: "运维域 D-OPS"
+  path: src/zephyr/infrastructure/system_telemetry/ops_incident_aggregate.py
+  domain: D_OPS
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-OPS-002
+  name: "OPS-03 事件响应器(骨架)"
+  path: src/zephyr/infrastructure/system_telemetry/incident_responder.py
+  domain: D_OPS
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-OPS-003
+  name: "OPS-06 资产盘点器(骨架)"
+  path: src/zephyr/infrastructure/system_telemetry/asset_inventory.py
+  domain: D_OPS
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-ORCH-001
+  name: "Agent分层指挥链（战略到战术到执行）"
+  path: src/zephyr/orchestrator/layered_command_chain.py
+  domain: D_ORCHESTRATOR
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-ORCH-002
+  name: "全局状态聚合器"
+  path: src/zephyr/orchestrator/global_state_aggregator.py
+  domain: D_ORCHESTRATOR
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-ORCH-003
+  name: "技能：task-orchestration 任务编排"
+  path: src/zephyr/orchestrator/task_orchestration_skill.py
+  domain: D_ORCHESTRATOR
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-ORCH-004
+  name: "技能：agent-coordination Agent协调"
+  path: src/zephyr/orchestrator/agent_coordination_skill.py
+  domain: D_ORCHESTRATOR
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-PFALLOC-006
+  name: "PA-13 MaxDDLimit Allocation Strategist最大回撤限制分配器"
+  path: src/zephyr/pf_alloc/core/maxdd_limit_allocator.py
+  domain: D_PF_ALLOC
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-PFALLOC-009
+  name: "PA-02 Strategy Screening 3D Evaluator策略筛选三维评估器"
+  path: src/zephyr/pf_alloc/core/strategy_screener_3d.py
+  domain: D_PF_ALLOC
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-PFALLOC-010
+  name: "动态信号权重模型（Dynamic Signal Weighting via Bayesian Model Averaging）"
+  path: src/zephyr/pf_alloc/core/regime_bma_weighting.py
+  domain: D_PF_ALLOC
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-PF004-002
+  name: "C-006 策略工厂"
+  path: src/zephyr/pf_core/core/strategy_factory.py
+  domain: D_PF_CORE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-PF004-003
+  name: "筛选漏斗第六层：组合优化（→N≤10）"
+  path: src/zephyr/pf_core/core/funnel_portfolio_adjudicator.py
+  domain: D_PF_CORE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-PF004-004
+  name: "敞口管理器 PC-07 Exposure Manager"
+  path: src/zephyr/pf_core/core/exposure_manager.py
+  domain: D_PF_CORE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-PF004-005
+  name: "策略容量估算器 PC-08 Strategy Capacity Estimator"
+  path: src/zephyr/pf_core/core/strategy_capacity_estimator.py
+  domain: D_PF_CORE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-PF004-006
+  name: "§29.9 强化学习组合优化与订单执行"
+  path: src/zephyr/pf_core/rl_portfolio_execution.py
+  domain: D_PF_CORE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-PF004-007
+  name: "PC-10 Rebalance Cost Analyzer再平衡成本分析器"
+  path: src/zephyr/pf_core/core/rebalance_cost_analyzer.py
+  domain: D_PF_CORE
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-PLAN-013
+  name: "C-005 多情景对策"
+  path: src/zephyr/plan_engine/scenario_playbook.py
+  domain: D_PLAN
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-PLAN-014
+  name: "四轨融合器（Multi-Track Fusion，v8.0）"
+  path: src/zephyr/plan_engine/track_fusion.py
+  domain: D_PLAN
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-PLAN-015
+  name: "D-TRADING-15 A-Share Pre-Market Standardized Workflow A股盘前标准化工作流"
+  path: src/zephyr/plan_engine/premarket_workflow.py
+  domain: D_PLAN
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-PLAN-016
+  name: "模块38 交易计划偏差检测与异常机会评估模型"
+  path: src/zephyr/plan_engine/plan_deviation_monitor.py
+  domain: D_PLAN
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-PLAN-017
+  name: "D-TRADING-15 A-Share Pre-Market Standardized Workflow Engine（A股盘前标准化工作流引擎）"
+  path: src/zephyr/plan_engine/premarket_workflow_engine.py
+  domain: D_PLAN
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-POS-002
+  name: "C-047 仓位管理唯一裁决中心"
+  path: src/zephyr/position/core/position_adjudication_center.py
+  domain: D_POSITION
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-POS-003
+  name: "资金与现金管理（D-TRADING）"
+  path: src/zephyr/position/core/cash_manager.py
+  domain: D_POSITION
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-POS-004
+  name: "日历约束层（v8.0）"
+  path: src/zephyr/position/core/calendar_position_constraint.py
+  domain: D_POSITION
+  wiring_class: eventbus_consumer
+  event_topics: [ANNUAL_FORECAST_DEADLINE, ANNUAL_REPORT_DEADLINE, EARNINGS_RELEASE, HOLIDAY_EFFECT, INDEX_FUTURE_EXPIRY, INDEX_OPTION_EXPIRY, INTERIM_FORECAST_DEADLINE, SHAREHOLDER_BLACKOUT]
+  wiring_status: unwired
+- candidate_id: CAND-POS-005
+  name: "模块24 核心-卫星仓位管理模型"
+  path: src/zephyr/position/core/core_satellite_allocator.py
+  domain: D_POSITION
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-CYCLE-003
+  name: "模块2 波动率体制转换与关键时点预警模型"
+  path: src/zephyr/regime/volatility_regime_alerter.py
+  domain: D_REGIME
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-CYCLE-004
+  name: "C-014 大盘预测"
+  path: src/zephyr/regime/market_forecast_fusion.py
+  domain: D_REGIME
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-CYCLE-005
+  name: "模块51 波动率压缩与突破模型"
+  path: src/zephyr/regime/volatility_squeeze_breakout.py
+  domain: D_REGIME
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-CYCLE-006
+  name: "模块32 市场风格体制识别模型"
+  path: src/zephyr/regime/style_regime_model.py
+  domain: D_REGIME
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-RPT-008
+  name: "C-030 决策可解释性与溯源"
+  path: src/zephyr/reporting/decision_trace_chain.py
+  domain: D_REPORTING
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-RPT-009
+  name: "D-REPORTING-15 A-Share Trading Review Engine（A股交易审查引擎）"
+  path: src/zephyr/reporting/trading_review_engine.py
+  domain: D_REPORTING
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-RPT-010
+  name: "D-REPORTING-14 Strategy Explainability Reporter"
+  path: src/zephyr/reporting/strategy_explainability_reporter.py
+  domain: D_REPORTING
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-RSK-031
+  name: "C-004 自适应风控"
+  path: src/zephyr/risk/core/adaptive_risk_coordinator.py
+  domain: D_RISK
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-RSK-032
+  name: "C-038 黑天鹅模式库"
+  path: src/zephyr/risk/core/black_swan_pattern_library.py
+  domain: D_RISK
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-RSK-033
+  name: "C-045 拥挤度检测"
+  path: src/zephyr/risk/core/crowding_response_engine.py
+  domain: D_RISK
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-RSK-034
+  name: "自适应风控①预判层"
+  path: src/zephyr/risk/core/adaptive_risk_forecast.py
+  domain: D_RISK
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-RSK-035
+  name: "自适应风控②监控层"
+  path: src/zephyr/risk/core/adaptive_risk_monitor.py
+  domain: D_RISK
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-RSK-036
+  name: "B1 Copula-GARCH联合分布建模 ★当前即做(≤50只)"
+  path: src/zephyr/risk/core/copula_garch_joint.py
+  domain: D_RISK
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-RSK-037
+  name: "模块37 系统性风险分级预警与尾部风险管理模型"
+  path: src/zephyr/risk/core/systemic_risk_alert_state_machine.py
+  domain: D_RISK
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-RSK-038
+  name: "模块43 ATR动态止损与Bayesian参数优化模型"
+  path: src/zephyr/risk/atr_stop_engine.py
+  domain: D_RISK
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-RSK-039
+  name: "D-RISK-115 紧急停止安全确认"
+  path: src/zephyr/risk/core/emergency_stop_confirmation.py
+  domain: D_RISK
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-RSK-040
+  name: "42 交易绩效归因与策略退化检测模型"
+  path: src/zephyr/risk/core/performance_attribution_degradation.py
+  domain: D_RISK
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-RSK-041
+  name: "PC-14 Factor Exposure Manager因子敞口管理器"
+  path: src/zephyr/risk/core/factor_exposure_manager.py
+  domain: D_RISK
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-RSK-043
+  name: "信息不对称期与操纵行为检测模型(模块54)"
+  path: src/zephyr/risk/manipulation_avoidance_detector.py
+  domain: D_RISK
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-RSK-044
+  name: "买入后即时验证与快速纠错模型（Post-Entry Instant Validation & Quick Correction Model）"
+  path: src/zephyr/risk/post_entry_instant_validator.py
+  domain: D_RISK
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-RSK-045
+  name: "D-SIGNAL-72 Risk-Signal Interaction Sequencer（风险信号交互排序器）"
+  path: src/zephyr/risk/risk_signal_sequencer.py
+  domain: D_RISK
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-RSK-046
+  name: "技能：hedge-execution 独立对冲执行"
+  path: src/zephyr/risk/hedge_execution_skill.py
+  domain: D_RISK
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-RSK-047
+  name: "D-DATA-44 VaR Compute Data Prefetcher"
+  path: src/zephyr/risk/var_data_prefetcher.py
+  domain: D_RISK
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-RSK-048
+  name: "D-RISK-49 Risk Policy Persister"
+  path: src/zephyr/risk/risk_policy_persister.py
+  domain: D_RISK
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-RSK-049
+  name: "D-RISK-82 VaR DuckDB历史模拟查询构建器"
+  path: src/zephyr/risk/var_query_builder.py
+  domain: D_RISK
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-RSK-050
+  name: "M15-S01 风险传播建模器"
+  path: src/zephyr/risk/risk_contagion_modeler.py
+  domain: D_RISK
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-SEC-004
+  name: "密钥层级管理"
+  path: src/zephyr/security/access_control/key_hierarchy.py
+  domain: D_SECURITY
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-SEC-005
+  name: "数据脱敏引擎"
+  path: src/zephyr/security/outbound_data_sanitizer.py
+  domain: D_SECURITY
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-SEC-006
+  name: "SIEM安全信息与事件管理"
+  path: src/zephyr/security/siem_correlation_engine.py
+  domain: D_SECURITY
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-SEC-007
+  name: "§15.1 供应链安全模块补全（22项全能建）"
+  path: src/zephyr/security/supply_chain_security_scanner.py
+  domain: D_SECURITY
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-SECLLM-001
+  name: "§29.24-7 Spectral Guardrails注意力拓扑谱分析幻觉检测（v7.0，arXiv 2602.08082）"
+  path: src/zephyr/security/llm_defense/spectral_guard.py
+  domain: D_SECURITY_LLM
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-SHARED-001
+  name: "C-044 成本治理"
+  path: src/zephyr/shared/capacity_governance/api_cost_governor.py
+  domain: D_SHARED
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-SHARED-002
+  name: "D-INT-12 MessageQueue"
+  path: src/zephyr/shared/redis_stream_message_queue.py
+  domain: D_SHARED
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-SHARED-003
+  name: "D-INFRA-132 缓存一致性管理器"
+  path: src/zephyr/shared/io/cache_consistency_manager.py
+  domain: D_SHARED
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-SIGQC-001
+  name: "D-SIGNAL-156 二元结论补充"
+  path: src/zephyr/signal_quality/degradation_detector.py
+  domain: D_SIGQC
+  wiring_class: eventbus_consumer
+  event_topics: [DEGRADED]
+  wiring_status: unwired
+- candidate_id: CAND-SIGQC-002
+  name: "技能：signal-dedup 信号去重"
+  path: src/zephyr/signal_quality/signal_dedup.py
+  domain: D_SIGQC
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-SIGQC-003
+  name: "D-SIGNAL-156 信号质量退化监控"
+  path: src/zephyr/signal_quality/signal_degradation_monitor.py
+  domain: D_SIGQC
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-SIGQC-004
+  name: "D-SIGNAL-157 信号质量基准对比"
+  path: src/zephyr/signal_quality/signal_quality_benchmark.py
+  domain: D_SIGQC
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-SIGQC-005
+  name: "D-SIGNAL-211 Signal Agent Explainability Guarantor"
+  path: src/zephyr/signal_quality/signal_explainability_guarantor.py
+  domain: D_SIGQC
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-SIM-009
+  name: "C-033 过拟合系统性防护"
+  path: src/zephyr/simulation/overfitting_protection_gate.py
+  domain: D_SIMULATION
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TRD-002
+  name: "D-SIGNAL-150 策略异常退出处理"
+  path: src/zephyr/trading/strategy_abnormal_exit_orchestrator.py
+  domain: D_TRADING
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TRD-003
+  name: "C-013 外部指令盯盘"
+  path: src/zephyr/trading/manual_instruction_channel.py
+  domain: D_TRADING
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TRD-005
+  name: "D-TRADING-04 EOD Processor日终处理器"
+  path: src/zephyr/trading/eod_processor.py
+  domain: D_TRADING
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TRD-009
+  name: "核心聚合 AGG-TRD-01 TradingOrder"
+  path: src/zephyr/trading/trading_order_aggregate.py
+  domain: D_TRADING
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TRD-010
+  name: "核心聚合 AGG-TRD-02 SettlementRecord"
+  path: src/zephyr/trading/settlement_record_aggregate.py
+  domain: D_TRADING
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TRD-011
+  name: "D-TRADING-02 Reconciliation Engine"
+  path: src/zephyr/trading/three_way_reconciliation.py
+  domain: D_TRADING
+  wiring_class: pure_library
+  wiring_status: exempt
+- candidate_id: CAND-TRD-013
+  name: "D-TRADING-14 Reference Data Manager（主数据管理）"
+  path: src/zephyr/trading/reference_data_manager.py
+  domain: D_TRADING
+  wiring_class: pure_library
+  wiring_status: exempt
