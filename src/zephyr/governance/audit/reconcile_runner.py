@@ -863,7 +863,14 @@ def _launch_worker_locked(
         "--payload",
         str(payload_path),
     ]
-    env = os.environ.copy()
+    # #ARCH-279 裁定A2：worker 为非 git commit 子进程——经 sanitized_spawn_env
+    # 剔除 GATEWAY/FORCE 授权变量（授权标记不再经 worker 进程树广播；worker 内
+    # 经网关 auto-commit 的 git 子进程由网关 run_git 自注入，不受影响）。
+    try:
+        from scripts.ops_guard import sanitized_spawn_env
+    except ImportError:  # 直跑兜底：sys.path[0]=scripts/
+        from ops_guard import sanitized_spawn_env
+    env = sanitized_spawn_env()
     # 确保 PYTHONPATH 含 src/（worker import zephyr.* 需要）
     src_dir = str(root / "src") if (root / "src").is_dir() else ""
     if src_dir:

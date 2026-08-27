@@ -1598,7 +1598,12 @@ def _spawn_heartbeat_daemon(
             str(worktree_path) if worktree_path else "",
         ]
 
-        env = os.environ.copy()
+        # #ARCH-279 裁定A2：heartbeat daemon 为非 git commit 子进程——剔除授权变量。
+        try:
+            from scripts.ops_guard import sanitized_spawn_env
+        except ImportError:
+            from ops_guard import sanitized_spawn_env
+        env = sanitized_spawn_env()
 
         # 确保 src/ 在 PYTHONPATH（daemon 进程需导入 zephyr.* 模块）
 
@@ -3237,7 +3242,12 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
     # 显式构造确保稳健（对标 directory_contract_gate.py 同款修复）。
 
-    dcr_env = os.environ.copy()
+    # #ARCH-279 裁定A2：DCR 检查脚本为非 git commit 子进程——剔除授权变量。
+    try:
+        from scripts.ops_guard import sanitized_spawn_env
+    except ImportError:
+        from ops_guard import sanitized_spawn_env
+    dcr_env = sanitized_spawn_env()
 
     _src_dir = str(root / "src")
 

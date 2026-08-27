@@ -55,7 +55,7 @@ from scripts.ops_guard import (  # noqa: E402
 # 全部攻击向量"授权放行"→红队拦截率假读 0%（49 failed/38 passed 实测复现）；
 # 干净环境 87/87 全绿。红队的职责是证明"未授权必拦"，故模块级固定剔除两个授权变量，
 # 使本文件结果不再依赖宿主环境泄漏。
-_AUTH_ENV_VARS = ("ZEPHYR_COMMIT_GATEWAY", "ZEPHYR_FORCE_DELETE")
+_AUTH_ENV_VARS = ("ZEPHYR_COMMIT_GATEWAY", "ZEPHYR_FORCE_DELETE", "ZEPHYR_DELETE_AUTHZ_NARROWED")
 
 
 @pytest.fixture(autouse=True)
@@ -422,3 +422,95 @@ class TestQuarantineProtected:
         with patch.dict(os.environ, {"ZEPHYR_FORCE_DELETE": "1"}):
             v = analyze_delete_command("Remove-Item -Recurse -Force .runtime\\quarantine\\drift_20260825T165500")
         assert v.allowed
+
+
+class TestAuthzNarrowing279:
+    """#ARCH-279 裁定A：GATEWAY_ENV 退出删除域（语义剥离+观测期→硬拦两阶段）。
+
+    数据实证：ops_guard_delete.jsonl 39,642 条中 GATEWAY 授权删除零合法消费方——
+    观测期（缺省）GATEWAY 仍放行但审计标 would_block_if_narrowed；
+    硬拦期（ZEPHYR_DELETE_AUTHZ_NARROWED=1）GATEWAY 不再构成删除授权，
+    FORCE_ENV（人工显式）成唯一授权通道。
+    """
+
+    def test_semantic_matrix_clean_env(self) -> None:
+        """干净环境 → 未授权。"""
+        from scripts.ops_guard import _is_delete_authorized
+
+        assert _is_delete_authorized() == (False, False)
+
+    def test_semantic_matrix_force_is_sole_channel(self) -> None:
+        """FORCE_ENV=1 → 授权且非观测标记（人工显式=唯一正道）。"""
+        from scripts.ops_guard import _is_delete_authorized
+
+        with patch.dict(os.environ, {"ZEPHYR_FORCE_DELETE": "1"}):
+            assert _is_delete_authorized() == (True, False)
+
+    def test_semantic_matrix_gateway_observation(self) -> None:
+        """观测期 GATEWAY_ENV=1 → 放行但标 narrowed_would_block。"""
+        from scripts.ops_guard import _is_delete_authorized
+
+        with patch.dict(os.environ, {"ZEPHYR_COMMIT_GATEWAY": "1"}):
+            assert _is_delete_authorized() == (True, True)
+
+    def test_semantic_matrix_narrowed_hard_block(self) -> None:
+        """硬拦期 GATEWAY_ENV=1 + NARROWED=1 → 未授权（GATEWAY 退出删除域）。"""
+        from scripts.ops_guard import _is_delete_authorized
+
+        with patch.dict(os.environ, {"ZEPHYR_COMMIT_GATEWAY": "1", "ZEPHYR_DELETE_AUTHZ_NARROWED": "1"}):
+            assert _is_delete_authorized() == (False, False)
+
+    def test_semantic_matrix_force_survives_narrowing(self) -> None:
+        """硬拦期 FORCE_ENV=1 + NARROWED=1 → 仍授权（人工通道不受收窄影响）。"""
+        from scripts.ops_guard import _is_delete_authorized
+
+        env = {"ZEPHYR_FORCE_DELETE": "1", "ZEPHYR_COMMIT_GATEWAY": "1", "ZEPHYR_DELETE_AUTHZ_NARROWED": "1"}
+        with patch.dict(os.environ, env):
+            assert _is_delete_authorized() == (True, False)
+
+    def test_analyze_observation_marks_would_block(self) -> None:
+        """观测期：GATEWAY 投毒下保护区删除放行但 reason 标 would_block_if_narrowed（审计可检索）。"""
+        with patch.dict(os.environ, {"ZEPHYR_COMMIT_GATEWAY": "1"}):
+            v = analyze_delete_command("Remove-Item -Recurse -Force src\\zephyr\\some_pkg\\sub")
+        assert v.allowed
+        assert "would_block_if_narrowed" in v.reason
+
+    def test_analyze_narrowed_blocks_gateway_poisoned(self) -> None:
+        """硬拦期：GATEWAY 投毒下保护区删除必拦——不再依赖 pytest 不变量单点兜底。"""
+        env = {"ZEPHYR_COMMIT_GATEWAY": "1", "ZEPHYR_DELETE_AUTHZ_NARROWED": "1"}
+        with patch.dict(os.environ, env):
+            v = analyze_delete_command("Remove-Item -Recurse -Force src\\zephyr\\some_pkg\\sub")
+        assert not v.allowed
+        assert v.is_protected_zone
+
+    def test_analyze_force_no_observation_mark(self) -> None:
+        """FORCE 人工授权：reason 不标观测（正道授权与观测放行可区分）。"""
+        with patch.dict(os.environ, {"ZEPHYR_FORCE_DELETE": "1"}):
+            v = analyze_delete_command("Remove-Item -Recurse -Force src\\zephyr\\some_pkg\\sub")
+        assert v.allowed
+        assert "would_block_if_narrowed" not in v.reason
+
+    def test_sanitized_spawn_env_strips_auth_vars(self) -> None:
+        """#ARCH-279 裁定A2：sanitized_spawn_env 剔除 GATEWAY/FORCE，保留其余变量。"""
+        from scripts.ops_guard import sanitized_spawn_env
+
+        base = {
+            "ZEPHYR_COMMIT_GATEWAY": "1",
+            "ZEPHYR_FORCE_DELETE": "1",
+            "PYTHONPATH": "x",
+            "PATH": "y",
+        }
+        env = sanitized_spawn_env(base)
+        assert "ZEPHYR_COMMIT_GATEWAY" not in env
+        assert "ZEPHYR_FORCE_DELETE" not in env
+        assert env["PYTHONPATH"] == "x" and env["PATH"] == "y"
+        # base 不被原地修改（返回副本）
+        assert base["ZEPHYR_COMMIT_GATEWAY"] == "1"
+
+    def test_sanitized_spawn_env_default_os_environ(self) -> None:
+        """缺省取 os.environ 副本——投毒环境下派生环境被洗净。"""
+        from scripts.ops_guard import sanitized_spawn_env
+
+        with patch.dict(os.environ, {"ZEPHYR_COMMIT_GATEWAY": "1"}):
+            env = sanitized_spawn_env()
+        assert "ZEPHYR_COMMIT_GATEWAY" not in env
