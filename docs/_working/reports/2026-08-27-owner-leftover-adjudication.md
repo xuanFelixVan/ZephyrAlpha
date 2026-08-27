@@ -137,3 +137,19 @@ date: 2026-08-27
 3. **313 装配** 拒绝猜测性全量接线、走台账+需求驱动——认可？
 4. **WMI** 请重启 Winmgmt 服务并复跑验证。
 5. **授权面收窄+WriteAudit** 两个治理项的推进优先级。
+
+---
+
+## 执行回填（2026-08-27 全部落地，Owner 四项裁定均批准）
+
+> Owner 终裁口径：①B-007 改写为「仅实盘操作需人工审批，非实盘（回测/模拟/训练/研究/建设）全部放开」；②AUTPERM-001 逻辑归位立即做；③313 装配三层全做；④WMI 全做（Owner 重启 + AI 工程兜底）；⑤误删四件治本全做。
+
+| 裁定 | 状态 | 交付物与证据 | 提交 |
+|---|---|---|---|
+| 一 B-007 | ✅ 已落地 | 规则改写「实盘审批唯一闸」+宪章 §4.2 同步+松绑清单登记（sentiment_sft_entry/xlstm/kronos/gnn 等 8 处）；RLSP Phase 5 真训练解禁 | e7b49d1002 / 13463a8a58（#ARCH-275） |
+| 二 AUTPERM-001 | ✅ 已落地 | index.yaml D_AUTONOMY_PERM 补 11 目录 scope_paths 映射（消费方零感知）+db_nodes 刷新+口径勘定 11 项实测（orphan_judge 25/escalation 20/budget_enforcer 2 等）；物理迁移降 P3 可选远期 | 0b372191f8（#ARCH-276） |
+| 三 313 装配 | ✅ 三层全落地 | Layer1 wiring_registry.yaml 313 条四分类（事件消费者 5/启动实例 4/纯库 304，含 registered_at/topics/defer_reason）；Layer2 首批=premarket_checker 核实已接线（boot_hooks.py:220 第 10 消费方）标 wired、其余 8 候选带证据 defer 拒猜测性接线，boot_hooks 冒烟 6 测全绿；Layer3 check_wiring_orphan.py 90 天超期门禁 12 单测全绿、当前仓 0 orphan；creation_token 3 枚登记 | aabcec6763（#ARCH-278） |
+| 四 WMI | ✅ 已落地 | Owner 重启 Winmgmt 后探测 wmi-ok；AI 工程兜底=ollama 启动治本（shutil.which 当前进程解析绝对路径再传 WMI detached spawn，修 Win32_Process.Create ReturnValue=9）；验证 ollama 拉起+api/tags 200 | 959be0f54a |
+| 五 误删四件 | ✅ 三件落地+两项报 Owner | 定凶=pytest 继承 ZEPHYR_COMMIT_GATEWAY/FORCE_DELETE 授权变量致红队测试 guard_rmtree('src/zephyr')「授权放行」真删（三起 ALLOWED 记录与三次误删一一对应，对照组干净环境全 BLOCKED）；治本=不变量（pytest 上下文保护区浅层递归永不真删，b4629e8172）+fixture 授权变量隔离（db417d1a21，投毒环境 87/87 全绿）+专项取证报告（c8a9b10bba）；残留报 Owner：授权面收窄（GATEWAY 子进程继承→令牌化）+WriteAudit PID 级审计 | b4629e8172 / db417d1a21 / c8a9b10bba / f91372534f（#ARCH-277） |
+
+**收口确认**：施工方案总表 1~5、8 全部完成；6（WMI 重启）Owner 已执行并验证；7（授权面收窄+WriteAudit）为仅剩 Owner 裁定项，待拍板后开施工批。
