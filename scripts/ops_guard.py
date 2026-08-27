@@ -676,6 +676,8 @@ def guard_rmtree(path: str | Path, *, cwd: str | Path | None = None) -> None:
             f"  解决方案: 设置 {FORCE_ENV}=1 授权，或移入白名单路径"
         )
 
+    # 2026-08-27 三起误删治本：pytest 上下文保护区浅层永不真删（授权放行也不得执行）
+    _enforce_pytest_never_delete_protected("rmtree", _resolve_to_repo_rel(path_str, cwd), path_str)
     shutil.rmtree(path_str, ignore_errors=True)
 
 
@@ -713,7 +715,8 @@ def guard_remove(path: str | Path, *, cwd: str | Path | None = None) -> None:
 
     if not verdict.allowed:
         raise DeleteBlockedError(f"[OPS-GUARD] remove 被阻断——{verdict.reason}\n  目标: {path_str}")
-
+    # 2026-08-27 三起误删治本：pytest 上下文保护区浅层递归永不真删（授权放行也不得执行）
+    _enforce_pytest_never_delete_protected("remove", _resolve_to_repo_rel(path_str, cwd), path_str, recursive=False)
     try:
         os.remove(path_str)
     except FileNotFoundError:
@@ -1060,6 +1063,59 @@ def _audit_only_mode() -> bool:
     return os.environ.get(AUDIT_ONLY_ENV) == "1"
 
 
+def _in_pytest_context() -> bool:
+    """pytest 测试上下文检测（PYTEST_CURRENT_TEST 由 pytest 运行期置位）。"""
+    return os.environ.get("PYTEST_CURRENT_TEST") is not None
+
+
+def _enforce_pytest_never_delete_protected(op: str, rel: str, path_str: str, *, recursive: bool = True) -> None:
+    """pytest 上下文保护区浅层递归永不真删不变量（2026-08-27 三起误删治本）。
+
+    病灶实证（ops_guard_delete.jsonl 三起 ALLOWED 记录）：pytest 进程继承
+    ZEPHYR_COMMIT_GATEWAY / ZEPHYR_FORCE_DELETE 授权变量时，红队测试以真路径
+    调用 guard_rmtree('src/zephyr') → 判定"授权放行" → 真删 src/zephyr 整包
+    （03:27/08:24/12:27 三起，3513~3537 文件/起，全部经 git restore 恢复）。
+
+    裁定（Owner 2026-08-27 裁定五）：pytest 进程定位=观测哨，但"观测"绝不含真删
+    保护区浅层——测试上下文命中「保护区前缀本身或其直接子级」（如 src/zephyr、
+    .worktrees/AI-X）的**递归**删除只能是测试缺陷或攻击，无条件硬拦：
+    - 不受授权变量影响（_is_authorized 不参与判定）；
+    - 不受观测模式软化（不走 _raise_or_observe，直接 raise）；
+    - 仅递归删除（rmtree/move 目录，事故型）触发；单文件 remove 走常规分级规则
+      （graded audit/untracked/授权门），不受影响；
+    - 深层路径（≥前缀深度+2，如 tests/governance/tmp_x 测试自建fixture）不受影响；
+    - 白名单（.runtime/tmp 等）不受影响。
+    """
+    if not recursive:
+        return
+    if not _in_pytest_context():
+        return
+    if not rel or _is_whitelisted(rel):
+        return
+    rel_parts = [p for p in rel.split("/") if p]
+    for prefix in PROTECTED_PREFIXES:
+        prefix_parts = prefix.split("/")
+        if rel_parts[: len(prefix_parts)] != prefix_parts:
+            continue
+        if len(rel_parts) <= len(prefix_parts) + 1:
+            verdict = DeleteVerdict(
+                allowed=False,
+                reason=f"pytest 上下文保护区浅层永不真删（2026-08-27 三起误删治本）: {rel}",
+                primitive=f"inprocess_{op}",
+                targets=[rel],
+                is_recursive=True,
+                is_protected_zone=True,
+            )
+            _AUDIT_STATS["block"] += 1
+            audit_delete("inprocess_block", f"{op}('{path_str}')", verdict)
+            raise DeleteBlockedError(
+                f"[OPS-GUARD] pytest 上下文禁止真删保护区浅层——{rel}\n"
+                f"  测试应使用 tmp_path/假目标；以真实护路径调用属测试缺陷（今日三起误删同型）"
+            )
+        return
+
+
+
 def _raise_or_observe(verdict: DeleteVerdict, cmd_repr: str, message: str) -> bool:
     """阻断统一出口（观测模式软化）。
 
@@ -1121,6 +1177,8 @@ def _inprocess_judge(op: str, path: object, *, recursive: bool) -> None:
         return
     _AUDIT_STATS["judge_calls"] += 1
     path_str = os.fspath(path) if not isinstance(path, str) else path
+    # 2026-08-27 三起误删治本：pytest 上下文保护区浅层递归永不真删（最先判定，先于一切授权）
+    _enforce_pytest_never_delete_protected(op, _resolve_to_repo_rel(path_str), path_str, recursive=recursive)
     ctx = _RECONCILER_CTX.get()
     if ctx is not None:
         rel = _resolve_to_repo_rel(path_str)

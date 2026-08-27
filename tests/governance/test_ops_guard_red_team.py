@@ -321,10 +321,40 @@ class TestPythonAPI:
         assert not target.exists()
 
     def test_guard_rmtree_authorized(self) -> None:
-        """授权环境下 guard_rmtree 放行保护区路径。"""
+        """授权环境下 guard_rmtree 放行保护区路径——但 pytest 上下文不得真删浅层（2026-08-27 三起误删治本不变量）。
+
+        历史行为：FORCE_DELETE=1 时分析层放行且不 raise（目录不存在故无事）。
+        新不变量：pytest 上下文中，即使授权放行，命中保护区浅层（.worktrees/X 深度2）
+        的执行必须硬拦——本测试即回归该不变量（防止授权泄漏下测试真删 src/zephyr 同型复发）。
+        """
         with patch.dict(os.environ, {"ZEPHYR_FORCE_DELETE": "1"}):
-            # 不 raise（但实际不执行删除——目录不存在，ignore_errors=True）
-            guard_rmtree(".worktrees/AI-FAKE-NONEXIST")
+            with pytest.raises(DeleteBlockedError, match="pytest 上下文禁止真删保护区浅层"):
+                guard_rmtree(".worktrees/AI-FAKE-NONEXIST")
+
+    def test_pytest_invariant_blocks_src_even_authorized(self) -> None:
+        """核心回归（三起误删同型）：授权投毒环境下 guard_rmtree('src/zephyr') 必须硬拦。
+
+        事故链：pytest 进程继承 ZEPHYR_COMMIT_GATEWAY=1 → 分析层"授权放行" →
+        guard_rmtree 真删 src/zephyr 整包（03:27/08:24/12:27 三起）。修复后：
+        pytest 上下文永不真删保护区浅层，与授权变量无关。
+        """
+        with patch.dict(os.environ, {"ZEPHYR_COMMIT_GATEWAY": "1", "ZEPHYR_FORCE_DELETE": "1"}):
+            with pytest.raises(DeleteBlockedError, match="pytest 上下文禁止真删保护区浅层"):
+                guard_rmtree("src/zephyr")
+
+    def test_pytest_invariant_ignores_deep_fixture_path(self, tmp_path: Path) -> None:
+        """不变量不误伤深层测试 fixture 路径（tests/x/y 深度≥3 不触发）。
+
+        tests/ 是保护区前缀，但测试自建 fixture 位于更深层级（前缀深度+2 及以上），
+        不在不变量范围——guard_rmtree 按常规规则判定（此处经绝对路径落白名单/非保护区执行）。
+        """
+        from scripts.ops_guard import _enforce_pytest_never_delete_protected
+
+        # 深度 3（tests/governance/tmp_x）> 前缀 tests 深度1+1 → 不触发不变量（不 raise）
+        _enforce_pytest_never_delete_protected("rmtree", "tests/governance/tmp_x", "tests/governance/tmp_x")
+        # 白名单深层同样不触发
+        _enforce_pytest_never_delete_protected("rmtree", ".runtime/tmp/pytest_x/y", ".runtime/tmp/pytest_x/y")
+
 
 
 class TestPrimitiveDetection:
