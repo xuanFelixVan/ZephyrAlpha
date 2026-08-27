@@ -20854,3 +20854,28 @@ entries:
     - 'docs/01_policies_and_standards/_registry/catalogs/wiring_registry.yaml（新建 313 条）'
     - 'scripts/governance/check_wiring_orphan.py + tests/governance/test_check_wiring_orphan.py（12 测）'
   fix_phase: '已落地（2026-08-27）'
+- issue_id: '#ARCH-279'
+  title: 裁定五残留两项调研裁定——授权面收窄=语义剥离+继承收敛（替代直接令牌化）+WriteAudit 三层归因守护立项
+  severity: P1
+  category: 治理流程
+  adjudication: >-
+    Owner 指令调研裁定（docs/_working/reports/2026-08-27-authz-writeaudit-adjudication.md）。
+    裁定A 授权面收窄：数据实证 ops_guard_delete.jsonl 39,642 条中 GATEWAY_ENV 授权删除零合法消费方
+    （合法自动化删除全走 reconciler 声明制 39,134 条，上下文绑定不经环境继承）——故不建一次性令牌
+    签发基础设施（为零需求建机制违反 YAGNI），改采 A1 删除域语义剥离（_is_authorized 删除判定只认
+    FORCE_ENV，GATEWAY_ENV 退出删除域；docs_untracked 闸门 2026-08-26 同款收窄先例零事故；提交域
+    forged_gw_marker/post_commit_guard/git_guard 语义不动）+A2 继承面收敛（sanitized_spawn_env
+    派生非 git 子进程显式剔除）+A3 观测期→硬拦两阶段（沿用 CAND-GOVSEC-001 模式）；A4 令牌化
+    挂 P3 触发式候选（OWASP per-task 模式，真实跨进程授权删除需求出现再评估）。
+    裁定B WriteAudit 立项（#ARCH-264 O3-P1 施工化）：B1 守护 MVP=ReadDirectoryChangesW 监视热目录集，
+    事件落 write_audit.jsonl（ts/path/op/前后 hash/进程快照/Restart Manager 句柄/PID→session_id
+    会话归因——仓内独有 session_registry 资产，比通用进程级归因高一级）；B2 watchdog 告警联动
+    嫌疑清单；B3 SACL 4663 精确层 P2 可选（Owner 一次性 auditpol+SACL）。否定式裁定：不上 ETW/
+    minifilter/内核驱动、不做全盘监控、带外写删只观测不拦截（无内核驱动不可拦截，观测+归因+
+    git restore 判例恢复链闭环）。业界对标：OpenAI 五槽位/Claude Code OS 沙盒/OWASP Agentic
+    per-task token/IETF WIMSE/Windows 归因技术矩阵/量化业 WORM+SoD。
+  impact:
+    - 'docs/_working/reports/2026-08-27-authz-writeaudit-adjudication.md（调研裁定书）'
+    - '待施工：批1 授权面收窄（ops_guard 判定分拆+sanitized_spawn_env 三处+红队新测）'
+    - '待施工：批2 WriteAudit 守护 MVP+watchdog 联动+单测'
+  fix_phase: '裁定完成（2026-08-27）；施工两批待派单'
