@@ -20821,3 +20821,20 @@ entries:
     - 'db_nodes domains 行（description，受锁 UPDATE）'
     - 'docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml（CAND-AUTPERM-001 口径+执行记录）'
   fix_phase: '已落地（2026-08-27）'
+- issue_id: '#ARCH-277'
+  title: 2026-08-27 三起 3500+ 文件误删定凶与治本闭环（Owner 裁定五）——pytest 授权泄漏致 guard_rmtree 真删 src/zephyr
+  severity: P1
+  category: 事故治本
+  adjudication: >-
+    定凶（ops_guard_delete.jsonl 实证）：三起误删（03:27/08:24/12:27，3513~3537 文件/起）=
+    pytest 运行红队删除测试时进程继承 ZEPHYR_COMMIT_GATEWAY/FORCE_DELETE 授权变量，
+    guard_rmtree('src/zephyr') 判"授权放行"并真删整包。非护栏失效、非未仪表化通道。
+    治本三件套：①pytest 上下文保护区浅层递归永不真删不变量（b4629e81，先于授权判定）；
+    ②红队 fixture 剔除授权变量（db417d1a）；③回归测试（投毒必拦+深层不误伤，126/89/156 全绿）。
+    取证报告：docs/_working/reports/2026-08-27-mass-deletion-forensics.md（c8a9b10b）。
+    恢复：三起均 git restore 精准恢复零损失（含外来会话 5 暂存文件经 index 恢复）。
+  impact:
+    - 'scripts/ops_guard.py（不变量三处接入）'
+    - 'tests/governance/test_ops_guard_red_team.py（fixture+3 新测+1 语义更新）'
+    - '残留报 Owner：授权面收窄（GATEWAY 子进程继承→令牌化）；WriteAudit PID 级审计推进'
+  fix_phase: '已落地（2026-08-27）；残留两项报 Owner 裁定'
