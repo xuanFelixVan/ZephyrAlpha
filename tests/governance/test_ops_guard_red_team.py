@@ -50,6 +50,22 @@ from scripts.ops_guard import (  # noqa: E402
     guard_rmtree,
 )
 
+# 测试卫生治本（2026-08-27，Owner 裁定五a）：授权环境变量隔离。
+# 病灶实证：ZEPHYR_COMMIT_GATEWAY=1 泄漏进 pytest 进程时，_is_authorized() 恒 True，
+# 全部攻击向量"授权放行"→红队拦截率假读 0%（49 failed/38 passed 实测复现）；
+# 干净环境 87/87 全绿。红队的职责是证明"未授权必拦"，故模块级固定剔除两个授权变量，
+# 使本文件结果不再依赖宿主环境泄漏。
+_AUTH_ENV_VARS = ("ZEPHYR_COMMIT_GATEWAY", "ZEPHYR_FORCE_DELETE")
+
+
+@pytest.fixture(autouse=True)
+def _scrub_auth_env(monkeypatch):
+    """每个用例执行前剔除授权环境变量（防宿主泄漏致授权放行假阴性）。"""
+    for var in _AUTH_ENV_VARS:
+        monkeypatch.delenv(var, raising=False)
+    yield
+
+
 # ============================================================================
 # 红队攻击向量（必须 100% 被拦截）
 # ============================================================================
