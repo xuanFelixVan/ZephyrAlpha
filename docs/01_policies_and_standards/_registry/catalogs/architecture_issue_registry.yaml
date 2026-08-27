@@ -20878,4 +20878,20 @@ entries:
     - 'docs/_working/reports/2026-08-27-authz-writeaudit-adjudication.md（调研裁定书）'
     - '批1：scripts/ops_guard.py（_is_delete_authorized 语义剥离+sanitized_spawn_env）+reconcile_runner/session_worktree 三处派生点+tests/governance/test_ops_guard_red_team.py 10 新测（f2fd5056）'
     - '批2：write_audit_daemon.py+test（17 测）+worktree_drift_watchdog B2 联动+collect_write_audit_4663.py+test（7 测）+enable_write_audit_sacls.ps1（Owner 管理员一次性）'
-  fix_phase: '批1 已落地（f2fd5056，99+109+38+241 全绿）；批2 已落地（39 全绿，A3 观测期 24h 计时起算 2026-08-27）；B3 待 Owner 跑 enable_write_audit_sacls.ps1 后采集器随跑'
+  fix_phase: '批1 已落地（f2fd5056）；批2 已落地（06a36b5f，守护在线 pid 实证）；B3 已实机打通（6362d6a5：auditpol GUID 化+SeSecurityPrivilege+4663 十三槽位修正，冒烟写删精确归因落盘 user/pid/进程名/操作分明）；A3 观测收尾翻硬拦（2026-08-27：观测窗 would_block_if_narrowed 零命中+历史 39,642 条零合法消费方，GATEWAY_ENV 永久退出删除域，NARROWED 开关退役，135 全绿）——裁定五残留两项全量闭环'
+- issue_id: '#ARCH-280'
+  title: GATE-REGENERATE 超时告警裁定=零工程（Owner 质疑过度工程，裁定认可）——并发期环境噪音，既有双级机制已够，不建任何升级/调优工程
+  severity: P3
+  category: 治理流程
+  adjudication: >-
+    2026-08-27 Owner 质疑「超时告警需要升级吗？感觉像过度工程」，裁定：**零工程，连升级机制都无需新建**。
+    实证（governance.db reconcile_execution_log）：①block_next（硬拦级）历史总数=0——双级严重度机制
+    （critical_warn 提醒/block_next 硬拦）已内建于 reconciler_health_gate，所谓"升级"是机制自带
+    状态转移而非待建工程；②全部 GATE-REGENERATE 超时集中在 2026-08-26 15:xx~08-27 05:xx 多会话
+    并发高峰（180s 阈值下排队等 CPU），最近 ~10h 并发消退后零新增——定性=并发期环境噪音，
+    自消解非代码缺陷；③DEPGRAPH-FRESHNESS 独立跟踪登记册实际新鲜度，无真实腐坏证据。
+    否定式裁定：不调超时阈值、不做生成器提速、不加告警聚合、不建升级机制——任何一项都需以
+    「登记册实际腐坏」证据为前置，当前为零。未来若 block_next 真实触发，届时再按新证据评估。
+  impact:
+    - '无代码变更（零工程裁定，防未来重复立案）'
+  fix_phase: '裁定完成（2026-08-27）；零工程'

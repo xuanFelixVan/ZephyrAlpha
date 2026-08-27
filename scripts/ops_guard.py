@@ -128,12 +128,10 @@ FORCE_ENV = "ZEPHYR_FORCE_DELETE"
 #: 语义不变（每次删除判定必落审计），仅阻断面软化；遥测证明零误伤后可翻硬拦。
 AUDIT_ONLY_ENV = "ZEPHYR_OPS_GUARD_AUDIT_ONLY"
 
-#: #ARCH-279 裁定A3：删除授权收窄硬开关。=1 翻硬拦——GATEWAY_ENV 永久退出删除域
+#: #ARCH-279 裁定A3 观测收尾（2026-08-27 翻硬拦）：观测窗 would_block_if_narrowed
+#: 零命中 + 历史 39,642 条审计零合法消费方 → GATEWAY_ENV 永久退出删除域
 #: （删除授权只认 FORCE_ENV 人工显式；提交域 forged_gw_marker/post_commit_guard/
-#: git_guard 语义不受影响）。缺省=观测期——GATEWAY_ENV 仍放行但审计标
-#: would_block_if_narrowed；数据实证（ops_guard_delete.jsonl 39,642 条零合法消费方）
-#: +24h 观测零命中后翻硬拦（沿用 CAND-GOVSEC-001 观测期→硬拦两阶段模式）。
-DELETE_AUTHZ_NARROWED_ENV = "ZEPHYR_DELETE_AUTHZ_NARROWED"
+#: git_guard 语义不受影响）。原 ZEPHYR_DELETE_AUTHZ_NARROWED 开关随转正退役删除。
 
 
 class DeleteBlockedError(RuntimeError):
@@ -543,23 +541,18 @@ def sanitized_spawn_env(base: dict[str, str] | None = None) -> dict[str, str]:
 
 
 def _is_delete_authorized() -> tuple[bool, bool]:
-    """删除域授权判定（#ARCH-279 裁定A1：GATEWAY_ENV 退出删除域）。
+    """删除域授权判定（#ARCH-279 裁定A1，2026-08-27 观测收尾翻硬拦）。
+
+    收尾实证：观测窗 would_block_if_narrowed 零命中 + 历史 39,642 条审计
+    零合法消费方 → GATEWAY_ENV 永久退出删除域（提交域防伪语义不受影响）。
 
     Returns:
-        (authorized, narrowed_would_block)：
-        - FORCE_ENV=1（人工显式授权）→ (True, False)；
-        - 观测期（缺省）GATEWAY_ENV=1 → (True, True)——仍放行但调用方审计须标
-          would_block_if_narrowed（39,642 条审计实证该通道零合法消费方，
-          24h 观测零命中后翻硬拦）；
-        - 硬拦期（ZEPHYR_DELETE_AUTHZ_NARROWED=1）GATEWAY_ENV=1 → (False, False)；
-        - 其余 → (False, False)。
+        (authorized, False)：FORCE_ENV=1（人工显式授权）→ (True, False)；
+        其余 → (False, False)。第二元恒 False（观测位随硬拦转正退役，
+        保留元组签名兼容既有调用点）。
     """
     if os.environ.get(FORCE_ENV) == "1":
         return True, False
-    if os.environ.get(GATEWAY_ENV) == "1":
-        if os.environ.get(DELETE_AUTHZ_NARROWED_ENV) == "1":
-            return False, False
-        return True, True
     return False, False
 
 
@@ -652,7 +645,7 @@ def analyze_delete_command(cmd: str, cwd: str | Path | None = None) -> DeleteVer
         return DeleteVerdict(allowed=True, reason="非删除命令", primitive="unknown")
 
     is_protected, resolved_targets = _judge_protected(targets, is_recursive, cwd)
-    authorized, narrowed_would_block = _is_delete_authorized()
+    authorized, _ = _is_delete_authorized()
 
     if is_protected and not authorized:
         return DeleteVerdict(
@@ -687,13 +680,7 @@ def analyze_delete_command(cmd: str, cwd: str | Path | None = None) -> DeleteVer
         else ("授权放行" if authorized else "非保护区")
     )
     if is_protected and authorized:
-        reason = (
-            # #ARCH-279 裁定A3 观测期标记：翻硬拦后此路径将 BLOCKED——审计按
-            # would_block_if_narrowed 检索，24h 零合法命中即翻 DELETE_AUTHZ_NARROWED。
-            "授权放行（命中保护区但有授权标记；观测 would_block_if_narrowed）"
-            if narrowed_would_block
-            else "授权放行（命中保护区但有授权标记）"
-        )
+        reason = "授权放行（命中保护区但有授权标记）"
 
     return DeleteVerdict(
         allowed=True,
@@ -1314,14 +1301,9 @@ def _inprocess_judge(op: str, path: object, *, recursive: bool) -> None:
             allowed=True,
             # 授权通过的保护区目标须如实标注——否则批5c 分级落盘把"授权删 src"
             # 当非敏感区跳过（8-23 型事件取证面缺口，test_graded_audit_sensitive 钉）
-            # #ARCH-279 裁定A3：GATEWAY 观测期授权（非 FORCE 人工）单独标注
-            # would_block_if_narrowed，翻硬拦后此路径将拦。
+            # #ARCH-279 翻硬拦：删除授权唯一通道=FORCE 人工显式（GATEWAY 已退出删除域）。
             reason=(
-                (
-                    "授权通过（GATEWAY 观测 would_block_if_narrowed）"
-                    if _is_delete_authorized()[1]
-                    else "授权通过（FORCE/GATEWAY）"
-                )
+                "授权通过（FORCE）"
                 if any(_is_under_prefix(rel, pp) for pp in PROTECTED_PREFIXES)
                 else "非保护区"
             ),

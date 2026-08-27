@@ -260,11 +260,17 @@ class TestAuthorizedBypass:
             assert verdict.is_protected_zone  # 仍标记保护区（审计用）
             assert "授权" in verdict.reason
 
-    def test_gateway_env_allows_protected_delete(self) -> None:
-        """ZEPHYR_COMMIT_GATEWAY=1 时保护区递归删除放行。"""
+    def test_gateway_env_never_allows_protected_delete(self) -> None:
+        """#ARCH-279 翻硬拦终态：ZEPHYR_COMMIT_GATEWAY=1 保护区递归删除必拦。
+
+        旧行为（本测试原位历史记录）：GATEWAY 标记曾构成删除授权——三起 3500+
+        文件误删的授权面病灶（pytest 继承标记→"授权放行"→真删）。观测收尾
+        （39,642 条零合法消费方+观测窗零命中）后永久退出删除域。
+        """
         with patch.dict(os.environ, {"ZEPHYR_COMMIT_GATEWAY": "1"}):
             verdict = analyze_delete_command("Remove-Item -Recurse -Force .worktrees\\AI-OLD-DONE")
-            assert verdict.allowed
+            assert not verdict.allowed
+            assert verdict.is_protected_zone
 
 
 class TestNonDeleteCommands:
@@ -425,12 +431,11 @@ class TestQuarantineProtected:
 
 
 class TestAuthzNarrowing279:
-    """#ARCH-279 裁定A：GATEWAY_ENV 退出删除域（语义剥离+观测期→硬拦两阶段）。
+    """#ARCH-279 裁定A：GATEWAY_ENV 退出删除域（2026-08-27 观测收尾翻硬拦终态）。
 
-    数据实证：ops_guard_delete.jsonl 39,642 条中 GATEWAY 授权删除零合法消费方——
-    观测期（缺省）GATEWAY 仍放行但审计标 would_block_if_narrowed；
-    硬拦期（ZEPHYR_DELETE_AUTHZ_NARROWED=1）GATEWAY 不再构成删除授权，
-    FORCE_ENV（人工显式）成唯一授权通道。
+    收尾实证：历史 39,642 条审计零合法消费方 + 观测窗 would_block_if_narrowed
+    零命中 → GATEWAY_ENV 永久退出删除域（提交域防伪语义不受影响）；
+    FORCE_ENV（人工显式）= 删除授权唯一通道；原 NARROWED 开关随转正退役。
     """
 
     def test_semantic_matrix_clean_env(self) -> None:
@@ -440,51 +445,43 @@ class TestAuthzNarrowing279:
         assert _is_delete_authorized() == (False, False)
 
     def test_semantic_matrix_force_is_sole_channel(self) -> None:
-        """FORCE_ENV=1 → 授权且非观测标记（人工显式=唯一正道）。"""
+        """FORCE_ENV=1 → 授权（人工显式=唯一通道）。"""
         from scripts.ops_guard import _is_delete_authorized
 
         with patch.dict(os.environ, {"ZEPHYR_FORCE_DELETE": "1"}):
             assert _is_delete_authorized() == (True, False)
 
-    def test_semantic_matrix_gateway_observation(self) -> None:
-        """观测期 GATEWAY_ENV=1 → 放行但标 narrowed_would_block。"""
+    def test_semantic_matrix_gateway_never_authorizes(self) -> None:
+        """硬拦终态：GATEWAY_ENV=1 → 永不构成删除授权（无需任何开关）。"""
         from scripts.ops_guard import _is_delete_authorized
 
         with patch.dict(os.environ, {"ZEPHYR_COMMIT_GATEWAY": "1"}):
-            assert _is_delete_authorized() == (True, True)
+            assert _is_delete_authorized() == (False, False)
 
-    def test_semantic_matrix_narrowed_hard_block(self) -> None:
-        """硬拦期 GATEWAY_ENV=1 + NARROWED=1 → 未授权（GATEWAY 退出删除域）。"""
+    def test_semantic_matrix_gateway_with_dead_switch_still_blocked(self) -> None:
+        """退役开关 ZEPHYR_DELETE_AUTHZ_NARROWED 不再有任何效力（防误信旧文档）。"""
         from scripts.ops_guard import _is_delete_authorized
 
         with patch.dict(os.environ, {"ZEPHYR_COMMIT_GATEWAY": "1", "ZEPHYR_DELETE_AUTHZ_NARROWED": "1"}):
             assert _is_delete_authorized() == (False, False)
 
     def test_semantic_matrix_force_survives_narrowing(self) -> None:
-        """硬拦期 FORCE_ENV=1 + NARROWED=1 → 仍授权（人工通道不受收窄影响）。"""
+        """FORCE_ENV=1（含 GATEWAY 同存）→ 仍授权（人工通道唯一且不受收窄影响）。"""
         from scripts.ops_guard import _is_delete_authorized
 
         env = {"ZEPHYR_FORCE_DELETE": "1", "ZEPHYR_COMMIT_GATEWAY": "1", "ZEPHYR_DELETE_AUTHZ_NARROWED": "1"}
         with patch.dict(os.environ, env):
             assert _is_delete_authorized() == (True, False)
 
-    def test_analyze_observation_marks_would_block(self) -> None:
-        """观测期：GATEWAY 投毒下保护区删除放行但 reason 标 would_block_if_narrowed（审计可检索）。"""
+    def test_analyze_gateway_poisoned_blocked_by_default(self) -> None:
+        """硬拦终态：GATEWAY 投毒下保护区删除默认必拦——不再依赖 pytest 不变量单点兜底。"""
         with patch.dict(os.environ, {"ZEPHYR_COMMIT_GATEWAY": "1"}):
-            v = analyze_delete_command("Remove-Item -Recurse -Force src\\zephyr\\some_pkg\\sub")
-        assert v.allowed
-        assert "would_block_if_narrowed" in v.reason
-
-    def test_analyze_narrowed_blocks_gateway_poisoned(self) -> None:
-        """硬拦期：GATEWAY 投毒下保护区删除必拦——不再依赖 pytest 不变量单点兜底。"""
-        env = {"ZEPHYR_COMMIT_GATEWAY": "1", "ZEPHYR_DELETE_AUTHZ_NARROWED": "1"}
-        with patch.dict(os.environ, env):
             v = analyze_delete_command("Remove-Item -Recurse -Force src\\zephyr\\some_pkg\\sub")
         assert not v.allowed
         assert v.is_protected_zone
 
     def test_analyze_force_no_observation_mark(self) -> None:
-        """FORCE 人工授权：reason 不标观测（正道授权与观测放行可区分）。"""
+        """FORCE 人工授权：放行且 reason 无观测标记（观测期已结束）。"""
         with patch.dict(os.environ, {"ZEPHYR_FORCE_DELETE": "1"}):
             v = analyze_delete_command("Remove-Item -Recurse -Force src\\zephyr\\some_pkg\\sub")
         assert v.allowed
