@@ -20788,3 +20788,19 @@ entries:
   impact:
     - 'src/zephyr/simulation/quality_assurance_selfdrive.py；tests/simulation 1 文件'
   fix_phase: '已落地（2026-08-27，DIGEST P2 W16）'
+- issue_id: '#ARCH-275'
+  title: B-007 规则终裁改写（Owner 2026-08-27）——「上线新策略模块需审批」收窄为「实盘操作需审批」，非实盘活动全部放开
+  severity: P1
+  category: 治理裁定
+  adjudication: >-
+    Owner 终裁：B-007 新定义=禁止 AI 在无人审批的情况下进行实盘操作，除此之外（回测/模拟盘/
+    实验性训练/研究/模块建设）全部放开。风险实质=唯实盘操作直接影响真金白银。
+    宪章 system_charter.md §4.2 B-007 行已同步改写（实盘操作定义=实盘账户下单/撤单/实盘部署启用/
+    实盘参数生效；上线流程回测→QMT模拟盘→实盘小资金→实盘部署，进入任一实盘阶段前人工审批维持不变）。
+    原三分层提案（Tier A/B/C）由本终裁覆盖：Tier A/B 全部放开，Tier C=实盘操作维持审批。
+    RLSP Phase 5/xLSTM/Kronos/GNN/RL 执行训练/ML 候选三件套的真训练自此不再属 Owner 窗口。
+  impact:
+    - 'docs/02_enterprise_architecture/04_architecture_principles_decisions/system_charter.md §4.2 B-007 行'
+    - '代码闸门松绑清单（后续施工批）：src/zephyr/ml_train/services/sentiment_sft_entry.py（ZA-MLT-0003 恒抛）、src/zephyr/ml_train/learning_effect_feedback.py（triggered_training 恒 False）、src/zephyr/signal_ashare/xlstm_long_memory.py / kronos_tsfm_predictor.py / supply_chain_gnn.py（不引 torch 不变量→改实验轨护栏）、docs/03_modules/_domain_ex_sor/rl_execution_training_env/blueprint.md（GATE-XS08 三前置改实盘前闸）、src/zephyr/ex_sor/core/rl_exec_env.py（真训练禁线）、src/zephyr/ml_train/implementations/{limit_up_classifier,seat_pattern_classifier}.py（ML-CLS-001/002 骨架）'
+    - '双义清理：docs/_working/架构图/集成架构.md:1218 另一套 B-007（参数计数）需改名（后续批）'
+  fix_phase: '宪章已改写（2026-08-27）；代码闸门松绑列后续施工批'
