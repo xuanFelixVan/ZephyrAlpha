@@ -400,11 +400,16 @@ class DashboardPanelApp:
 def create_dashboard(
     task_repo: object | None = None,
     olap_engine: object | None = None,
+    qmt_assembly: object | None = None,
+    qmt_auto_assemble: bool = True,
     **kwargs: Any,
 ) -> object:
     """创建仪表盘顶层布局（pn.Column: 标题 + Tabs）
 
     可在 panel serve 模式下 .servable()，也可在 python 模式下传给 pn.serve()。
+
+    qmt_auto_assemble=True 时自动装配 QMT 文件桥（默认仅模拟环境，安全），
+    健康监控 Tab 即获得实时数据源；传 False 或显式 qmt_assembly 可禁用/自定义。
     """
     if pn is None:
         raise RuntimeError("panel 未安装，请运行: pip install panel holoviews plotly plotly_resampler datashader bokeh")
@@ -419,7 +424,30 @@ def create_dashboard(
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             task_repo = None
 
-    app = DashboardPanelApp(task_repo=task_repo, olap_engine=olap_engine, **kwargs)
+    # 默认自动装配 QMT 文件桥（仅模拟环境；失败降级为"未装配"空态卡片）
+    if qmt_assembly is None and qmt_auto_assemble:
+        try:
+            from zephyr.ex_core.adapters.qmt_file_bridge_integration import (
+                QmtFileBridgeAssembly,
+            )
+            from zephyr.ex_core.order_manager import OrderManager
+
+            _order_manager = OrderManager()
+            _assembly = QmtFileBridgeAssembly(
+                _order_manager, enable_real=False, enable_sim=True,
+            )
+            _assembly.assemble()
+            _assembly.connect_all()
+            qmt_assembly = _assembly
+        except Exception:  # noqa: BLE001 — 装配失败不阻断仪表盘，健康 Tab 显示未装配
+            qmt_assembly = None
+
+    app = DashboardPanelApp(
+        task_repo=task_repo,
+        olap_engine=olap_engine,
+        qmt_assembly=qmt_assembly,
+        **kwargs,
+    )
     tabs = app.build_tabs()
 
     header = pn.pane.Markdown(
