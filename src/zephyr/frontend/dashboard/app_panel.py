@@ -117,6 +117,10 @@ from zephyr.frontend.dashboard.components.position_monitor import (
     fetch_position_monitor,
     render_position_monitor,
 )
+from zephyr.frontend.dashboard.components.qmt_bridge_health import (
+    fetch_qmt_bridge_health,
+    render_qmt_bridge_health,
+)
 from zephyr.frontend.dashboard.components.task_progress import (
     fetch_task_progress,
     render_task_progress,
@@ -164,6 +168,8 @@ class DashboardPanelApp:
         MiniQmtBroker 实例（持仓数据源, D_EX_CORE）
     execution_engine : Any | None
         ExecutionEngine 实例（交易面板数据源, D_EX_CORE）
+    qmt_assembly : Any | None
+        QmtFileBridgeAssembly 实例（QMT 文件桥健康监控数据源, D_EX_CORE）
     """
 
     def __init__(
@@ -176,6 +182,7 @@ class DashboardPanelApp:
         miniqmt_provider: object | None = None,
         miniqmt_broker: object | None = None,
         execution_engine: object | None = None,
+        qmt_assembly: object | None = None,
     ) -> None:
         self._task_repo = task_repo
         self._olap_engine = olap_engine
@@ -185,6 +192,7 @@ class DashboardPanelApp:
         self._miniqmt_provider = miniqmt_provider
         self._miniqmt_broker = miniqmt_broker
         self._execution_engine = execution_engine
+        self._qmt_assembly = qmt_assembly
 
     @property
     def task_repo(self):
@@ -320,6 +328,31 @@ class DashboardPanelApp:
         payload = render_trade_panel(data, execution_engine=self._execution_engine)
         return payload.get("_layout") or pn.pane.Markdown("交易面板渲染失败")
 
+    def _tab_qmt_bridge_health(self) -> object:
+        """QMT 文件桥健康监控（3 秒周期刷新，全库首例 add_periodic_callback 模式）"""
+        data = fetch_qmt_bridge_health(self._qmt_assembly)
+        payload = render_qmt_bridge_health(data)
+        container = payload.get("_layout") or pn.pane.Markdown("QMT文件桥健康渲染失败")
+
+        def _refresh() -> None:
+            try:
+                new_data = fetch_qmt_bridge_health(self._qmt_assembly)
+                new_payload = render_qmt_bridge_health(new_data)
+                new_layout = new_payload.get("_layout")
+                if new_layout is not None and hasattr(container, "objects"):
+                    container.objects = list(new_layout.objects)
+            except Exception:  # 周期回调异常不炸 server，仅日志  # noqa: BLE001
+                import logging
+
+                logging.getLogger(__name__).warning("QMT桥健康周期刷新异常", exc_info=True)
+
+        try:
+            if pn.state.curdoc is not None:
+                pn.state.add_periodic_callback(_refresh, period=3000)
+        except Exception:  # 非 server 上下文（测试/脚本）跳过周期刷新  # noqa: BLE001
+            pass
+        return container
+
     def _tab_experiment_history(self) -> object:
         data = fetch_experiment_history()
         payload = render_experiment_history(data)
@@ -348,6 +381,7 @@ class DashboardPanelApp:
             ("5档盘口", self._tab_order_book),
             ("持仓监控", self._tab_position_monitor),
             ("交易面板", self._tab_trade_panel),
+            ("QMT桥健康", self._tab_qmt_bridge_health),
         ]
         tab_objects = []
         for name, builder in tabs_spec:

@@ -4874,6 +4874,18 @@ capabilities:
   - queue_status
   - SerializerLease
 creation_tokens:
+- file: src/zephyr/frontend/dashboard/components/qmt_bridge_health.py
+  token: auto-qmt-bridge-health-20260827
+  created_by: session-qmt_bridge_recovery
+  capability: qmt_file_bridge_broker
+- file: tests/frontend/test_qmt_bridge_health.py
+  token: auto-test-qmt-bridge-health-20260827
+  created_by: session-qmt_bridge_recovery
+  capability: qmt_file_bridge_broker
+- file: docs/03_modules/_domain_frontend/blueprint_qmt_bridge_health.md
+  token: auto-blueprint-qmtbh-20260827
+  created_by: session-qmt_bridge_recovery
+  capability: qmt_file_bridge_broker
 - file: docs/03_modules/_domain_execution_core/blueprint_qmt_file_bridge.md
   token: auto-blueprint-qmtfb-20260827
   created_by: session-qmt_bridge_recovery

@@ -41,6 +41,12 @@ try:
 except ImportError:
     alert_center = None  # type: ignore[assignment]
 
+# MOD-L28-QMTBH 新增（2026-08-27）：QMT 文件桥健康监控面板
+try:
+    from zephyr.frontend.dashboard.components import qmt_bridge_health
+except ImportError:
+    qmt_bridge_health = None  # type: ignore[assignment]
+
 __all__ = [
     "fitness_functions",
     "gate_statistics",
@@ -57,4 +63,6 @@ __all__ = [
     "chart_factory",
     # MOD-FE-003 新增（P1W24）
     "alert_center",
+    # MOD-L28-QMTBH 新增（2026-08-27）
+    "qmt_bridge_health",
 ]

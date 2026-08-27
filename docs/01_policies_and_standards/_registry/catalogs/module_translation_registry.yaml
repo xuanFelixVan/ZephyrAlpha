@@ -46973,6 +46973,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "读取QMT沙箱策略每tick写入的quote.csv五档行情文件，只读文件尾部窗口，残缺行自动回退上一行，行情中断超过10秒就拒绝出价格防错价下单"
+- module_path: src/zephyr/frontend/dashboard/components/qmt_bridge_health.py
+  domain_id: D_FRONTEND
+  name_zh: "QMT文件桥健康监控面板"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把文件桥各组件健康状态画成绿黄红三色卡片：执行器、订单队列、行情桥谁中断了、什么原因一眼可见，每3秒自动刷新"
 
 battle_map_steps:
 - step_id: BM-BUY-04
