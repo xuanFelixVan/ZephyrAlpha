@@ -11159,7 +11159,7 @@ entries:
   domain: D_AUTONOMY_PERM
   domain_status: active
   sub_layer: src/zephyr/autonomy_perm/
-  problem: agent_rbac/87、audit_trail/~50、auto_fix_engine/~30、behavioral_auditor/~70、budget_enforcer/~40、escalation_engine/~100、rollback/~75、llm_security/~30、semantic_auditor/~6、orphan_judge/~2、red_blue_validator/~6——全部可归位，无孤儿模块；agent_rbac/87是PERM域最大代码资产
+  problem: agent_rbac/87、audit_trail/~50、auto_fix_engine/~30、behavioral_auditor/~70、budget_enforcer/~40、escalation_engine/~100、rollback/~75、llm_security/~30、semantic_auditor/~6、orphan_judge/~2、red_blue_validator/~6——全部可归位，无孤儿模块；agent_rbac/87是PERM域最大代码资产（2026-08-27 口径勘定：orphan_judge 实测25、escalation_engine 实测20、budget_enforcer 本包实测2[~40口径疑指ops_governance预算族~38]、agent_rbac 实测84+orphan_judge嵌套25=109、llm_security 实测39、rollback 实测58、audit_trail 壳2/实体gov_audit 64、behavioral_auditor 壳1/实体gov_drift 67、semantic_auditor 20+散布~5、red_blue_validator 壳1/实体adversarial_validation 25）
   proposal: '深挖裁定=做(P2)。业界对标: 代码归位迁移(单体仓库模块重组)。场内现状: 已有:tests/agent_rbac/+src/zephyr/security/access_control/。最小施工形态:
     agent_rbac/audit_trail/auto_fix_engine等11目录归位PERM域+db_nodes域映射刷新+导入路径修正。依赖前置: D-AUTONOMY-PERM域边界裁定。'
   design_admission:
@@ -11170,11 +11170,11 @@ entries:
     blocking_question: null
     result: candidate
   status: candidate
-  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W14）——归位迁移属重组专项（11 目录移动+导入路径修正+域映射刷新），非新建模块且与并发会话冲突面大，登记留待专项批次（需停机窗口与 Owner 确认），本波不施工"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W14）——归位迁移属重组专项（11 目录移动+导入路径修正+域映射刷新），非新建模块且与并发会话冲突面大，登记留待专项批次（需停机窗口与 Owner 确认），本波不施工 | 2026-08-27 Owner 终裁执行记录：逻辑归位已落地（#ARCH-276）——architecture_model/index.yaml D_AUTONOMY_PERM 补 scope_paths 11 目录映射+domains 行描述刷新+本条目口径勘定；物理迁移降 P3 可选远期项（停机窗口+并发清零后 Owner 通知启动）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
-  last_updated: '2026-08-26'
+  last_updated: '2026-08-27'
   source_draft: D-AUTONOMY-PERM
   original_id: B7-09463
   source_section: §2.1.2

@@ -32,16 +32,16 @@ governance:
     改 depgraph 或 layers/b_*.yaml 后由 GATE-ARCH-MODEL reconciler 自动重生。
 
 # === 分区管理约定（Partition Management Convention）===
-# 73域是唯一物理分类体系（depgraph domains表），4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。
+# 74域是唯一物理分类体系（depgraph domains表），4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。
 # AI找模块只有一条路：按域找。
 # b_track 是横切基础设施模块的施工视图（物理蓝图文件对齐），独立于域分类。
 
 partitions:
-# === 73域索引（物理分类唯一真源：depgraph domains表）===
+# === 74域索引（物理分类唯一真源：depgraph domains表）===
 - id: domains
   path: depgraph (PostgreSQL)
   description: >
-    73域物理分类唯一真源。
+    74域物理分类唯一真源。
     查询命令: python scripts/governance/extract_depgraph.py --summary
     4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。
 
@@ -139,7 +139,7 @@ partitions:
     status: implemented
     description: 蓝图 v0.7.0：18 .py 文件 + 11 子模块 + 23 单元测试 + 7 对抗测试全部通过（2026-08-17 AI-02 审计：status 由 phase_2_complete 归一到 schema 合法值 implemented）
 
-# === 73域清单（从depgraph派生，禁止手工编辑）===
+# === 74域清单（从depgraph派生，禁止手工编辑）===
 domains:
 - id: D_ALT_DATA
   name: 另类数据
@@ -165,6 +165,20 @@ domains:
 - id: D_AUTONOMY_PERM
   name: 自治保护
   layer_id: L2_domain
+  scope_paths:
+    # AUTPERM-001 逻辑归位（Owner 2026-08-27 批准，#ARCH-276）——11 目录元数据归域，消费方零感知；
+    # operational_domain 列为现行运营域（domain_mapping/蓝图头真源，不变更）；物理迁移降 P3 可选远期项。
+    - {name: agent_rbac, path: src/zephyr/security/access_control/, nature: 实体包(84+orphan_judge嵌套25), operational_domain: D_SECURITY, py_files: 109}
+    - {name: audit_trail, path: src/zephyr/compliance/audit_trail/, nature: re-export壳(2), operational_domain: D_COMPLIANCE, entity: src/zephyr/gov_audit/(64, D_GOV_AUDIT)}
+    - {name: auto_fix_engine, path: src/zephyr/infrastructure/auto_fix_engine/, nature: 实体包(30), operational_domain: D_INFRA_RUNTIME}
+    - {name: behavioral_auditor, path: src/zephyr/compliance/behavioral_auditor/, nature: re-export壳(1), operational_domain: D_COMPLIANCE, entity: src/zephyr/gov_drift/(67, D_GOV_DRIFT)}
+    - {name: budget_enforcer, path: src/zephyr/integration/budget_enforcer/, nature: 实体包(2), operational_domain: D_INTEGRATION, note: 登记~40口径不存(疑指ops_governance预算族~38)}
+    - {name: escalation_engine, path: src/zephyr/governance/escalation/, nature: 实体包(20), operational_domain: D_GOV_OPS_RESILIENCE, note: 登记~100口径不存}
+    - {name: rollback, path: src/zephyr/infrastructure/rollback/, nature: 实体包(56+gov壳2), operational_domain: D_INFRA_RUNTIME}
+    - {name: llm_security, path: src/zephyr/security/llm_defense/llm_security/, nature: 实体包(39), operational_domain: D_SECURITY_LLM}
+    - {name: semantic_auditor, path: src/zephyr/governance/semantic_audit/, nature: 实体包(20)+散布~5, operational_domain: D_GOV_AUDIT}
+    - {name: orphan_judge, path: src/zephyr/security/access_control/orphan_judge/, nature: 实体包(25), operational_domain: D_SECURITY, note: 登记~2口径失真(实测25)}
+    - {name: red_blue_validator, path: src/zephyr/red_blue_validator/, nature: re-export壳(1), operational_domain: D_SECURITY, entity: src/zephyr/security/adversarial_validation/(25)}
 - id: D_BACKTEST
   name: 回测
   layer_id: L2_domain
@@ -357,12 +371,15 @@ domains:
 - id: D_STRUCT_SCRIPTS
   name: 结构治理脚本
   layer_id: L2_domain
+- id: D_TEST
+  name: Test Domain
+  layer_id:
 - id: D_TRADING
   name: 交易运营
   layer_id: L2_domain
 
 global_stats:
-  total_domains: 73
+  total_domains: 74
   total_partitions: 12
   b_track_modules: 13
   b_track_implemented: 12
@@ -370,14 +387,14 @@ global_stats:
   b_track_phase_2_complete: 0
   b_track_skeleton: 0
   notes: >
-    73域唯一物理分类体系，4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。
+    74域唯一物理分类体系，4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。
     b_track 13横切基础设施模块（从 layers/b_*.yaml 物理文件派生）。
     结构化数据从depgraph + 物理蓝图文件派生，禁止硬编码会变化的数字。
-  last_updated: '2026-08-22'
+  last_updated: '2026-08-27'
 
 query_hints:
 - question: 系统有哪些域？
-  answer: 73域，见domains列表，真源为depgraph domains表
+  answer: 74域，见domains列表，真源为depgraph domains表
 - question: 某域有哪些模块？
   answer: "查询depgraph: python scripts/governance/extract_depgraph.py --domains <域ID>"
 - question: 模块间的依赖关系？
@@ -389,7 +406,7 @@ query_hints:
 - question: 运行平面分布？
   answer: 读cross_cutting/runtime_planes.yaml
 - question: 系统能力成熟度？
-  answer: 读cross_cutting/capability_heatmap.yaml（73域×10能力域矩阵）
+  answer: 读cross_cutting/capability_heatmap.yaml（74域×10能力域矩阵）
 - question: 前端有哪些模块？
   answer: 读frontend/frontend_model.yaml
 - question: 治理/审计脚本有哪些？
