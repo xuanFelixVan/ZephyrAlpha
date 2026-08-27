@@ -5,8 +5,8 @@ title: 大QMT文件桥双向通道操作手册（miniQMT 替代方案）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.0"
-date: 2026-08-25
+version: "1.4.0"
+date: 2026-08-26
 topic: qmt_file_bridge
 scope: 07_trading_decision_architecture
 ---
@@ -91,6 +91,12 @@ ZephyrAlpha 读取 → 持仓监控/对账/风控闭环
 | 12 | **盘中 passorder 下单（2026-08-26 10:06，模拟终端实盘模式）** | `SENT T1009` → 2 秒后 `ORDER_COUNT=1`；xttrader 交叉验证：`status=50 已报`、冻结 1805.52 元；官方导出 `Order.csv` 捕获全字段（任务来源=ZEPHYR_EXEC、下单方式=函数下单、投资备注=T1009） | **进口下单全通**；userOrderId 进入柜台"投资备注"字段，审计留痕完整 |
 | 13 | **盘中撤单（同日 10:09）** | `CANCEL_SENT T1009 sysid=2337` → xttrader 验证 `status=54 已撤`、资金解冻回 1000 万整 | **撤单链路通**；内置撤单签名 `cancel(sysid, ACCOUNT, 'stock', ContextInfo)` 命中 |
 | 14 | 引擎日志深挖 passorder 静默根因（同日 09:44-10:02） | `passorder cp, skip ... isLastBar:false`；编辑器实例（SH 前缀 requestID）反复抢先发射、纸面不进柜台；`ContextInfo._done` 跨 tick 不持久 | **三大静默根因**：① passorder 防回放保护只在 isLastBar 执行；② 编辑器运行=纸面上下文且会污染本地幂等；③ 状态必须落盘或查柜台。**幂等正解=柜台 remark 比对（权威）** |
+| 15 | **tick 级触发验证（2026-08-26 10:50-11:38，分笔线周期）** | 分笔线=逐笔/快照驱动，触发频率 **1~2 秒/次**（ack 重复 8 行反推）；T2001 最新价单 10:50:11 委托、10:50:31 成交 | **tick 级通道达成**，指令→执行延迟 ≤2 秒，做 T 执行端可用 |
+| 16 | **tick 模式幂等攻防（v7→v14 七轮迭代）** | v7 内存集合重复 8 次 → v9 文件消费重复 2 次 → v10 批量提交仍重复 → v12 柜台确认前不消费仍重复 → **v13 两阶段文件改名（#SENDING 物理锁）首次防住** → v14 补超时重试自愈 | **tick 级幂等唯一正解=文件状态机**：裸行→#SENDING（下单前原子改名）→#DONE（柜台 remark 确认后）；内存锁在分笔线重入下全部失效 |
+| 17 | **柜台挂单上限暴露（同日 11:04-11:10）** | T2009/T2010 SENT 无异常但柜台始终无记录；手动撤掉 3 笔已报挂单后，两单**立即进柜** | **程序化通道疑似存在同标的同向未成交挂单上限**（手动 GUI 无此限）；待后续自然场景验证确切阈值 |
+| 18 | **v14 自愈重试验证（同日 11:09-11:10）** | #SENDING 卡死 30 tick（约 1 分钟）自动回滚重试；T2009/T2010 在手动撤单腾出额度后 retry 成功进柜 | **文件桥最坏情况自愈能力确认**：丢单不卡死，重试 3 次失败转 #FAIL 报警 |
+| 19 | **实盘终端全链路验证（同日 11:26-11:38，账号 8887871993）** | R1001 限价 4.600 买 100 股：SENT→柜台 sysid=635209413 已报→#DONE→C1001 撤单→"已报待撤"→手动确认已撤 | **实盘与模拟行为完全一致**；tick 触发、文件锁、柜台确认、自动消费、撤单闭环全通 |
+| 20 | **程序化撤单 -54 误判根因（同日 11:35-11:38）** | PROBE_CANCEL 第一次 CANCEL_CALL_OK，但导出文件仍显示"已报"；PROBE_CANCEL2 第二次报错 **-54 不能重复撤单** | **撤单其实第一次就成功**，"已报"→"已撤"有"已报待撤"过渡态+官方导出 10 秒延迟掩盖；cancel 函数无 bug，验证方法被导出延迟误导 |
 
 ## 5. 打开方法 SOP（标准作业程序，照做即可复现）
 
@@ -136,7 +142,28 @@ ZephyrAlpha 读取 → 持仓监控/对账/风控闭环
 
 **B-4 验收**：面板下方【策略日志】出现策略名前缀的打印（如 `INIT_OK_12345`）即通；引擎底层日志在 `E:\国金证券QMT交易端\userdata\log\XtClient_Formula_YYYYMMDD.log`（GBK）
 
-### C. 双向探针验证代码（实测通过版，可直接复用）
+### C. 正式执行器 v14（tick 级，实测通过版）
+
+**文件位置**：
+- 模拟终端：`E:\qmt_bridge_sim\ZEPHYR_EXEC_v14.txt` → 编辑器粘贴保存为 `ZEPHYR_EXEC`
+- 实盘终端：`E:\qmt_bridge\ZEPHYR_EXEC_REAL.txt` → 编辑器粘贴保存为 `ZEPHYR_EXEC_REAL`
+
+**核心机制**：
+- **触发**：分笔线周期（逐笔/快照驱动，1~2 秒/次）
+- **幂等**：两阶段文件状态机——裸行→`#SENDING`（passorder 前原子改名）→`#DONE`（柜台 remark 确认后）
+- **容错**：`#SENDING` 超 30 tick（约 1 分钟）自动回滚重试，3 次失败转 `#FAIL` + ack 报警
+- **撤单**：`action=cancel`，按目标订单 remark 定位 sysid，支持同批指令延迟处理
+
+**指令文件格式**（`orders_sim.csv` / `orders_real.csv`）：
+```csv
+order_id,action,symbol,side,qty,pricetype,price
+T2001,order,510300.SH,buy,100,latest,0
+C2001,cancel,T2001,,,,,
+```
+
+**回执文件**（`ack_sim.csv` / `ack_real.csv`）：`oid,STATUS,detail`
+
+### D. 双向探针验证代码（实测通过版，可直接复用）
 
 ```python
 # -*- coding: utf-8 -*-
@@ -178,6 +205,9 @@ def handlebar(ContextInfo):
 | AI 直写模拟终端策略文件后改动不生效 | **模拟终端编辑器保存后策略即加密落盘**（实盘终端明文，两终端行为不同） | 模拟终端的策略修改只能走编辑器粘贴+保存，禁止直写磁盘 |
 | 策略 `SENT` 但柜台查无此单，引擎日志见 `passorder cp, skip ... isLastBar:false` | **passorder 防回放保护**：启动时回放数千根历史 K 线，非最新 bar 上一律 skip（init 里下单同理会打在 bar 0 被 skip） | 下单代码必须包 `if not ContextInfo.is_last_bar(): return` 守卫，只在最新 bar 执行 |
 | 策略每 ~3 秒重复发射同一指令/本地幂等文件被污染 | **编辑器【运行】的影子实例**（引擎日志 SH 前缀 requestID）纸面发射+抢先写幂等文件；`ContextInfo._done` 自定义属性跨 tick 不持久 | ① 编辑器永不点【运行】，策略只在模型交易跑；② 幂等用**柜台 remark 比对**（passorder 的 userOrderId 会进柜台"投资备注"字段，撤单/防重按它定位），本地 done 文件仅作快路径 |
+| **tick 模式（分笔线）下同一指令重复 2~8 次 SENT** | **分笔线 1~2 秒触发一次，handlebar 重入/嵌套**；内存集合（sent/in-flight）在重入瞬间未生效，柜台 remark 又未登记，双重窗口叠加 | **唯一正解=两阶段文件状态机**：裸行→`#SENDING`（passorder 前原子改名，重入者立即看见）→`#DONE`（柜台 remark 确认后）；内存锁在分笔线重入下全部失效，v13 起弃用 |
+| **#SENDING 卡死不变 #DONE，柜台始终无该单** | ① 柜台对程序化报单有**同标的同向未成交挂单上限**（手动 GUI 无此限），超限静默拒绝；② 导出延迟导致误判 | ① 手动撤掉部分挂单腾出额度即恢复（实证 T2009/T2010）；② v14 起 #SENDING 超 30 tick（约 1 分钟）自动回滚重试，3 次失败转 `#FAIL` + ack 报警 |
+| **程序化撤单返回 OK 但柜台仍显示"已报"** | **"已报"→"已撤"有"已报待撤"过渡态**，官方导出 10 秒延迟掩盖；第二次重复撤单报错 **-54 不能重复撤单** | cancel 函数无 bug，第一次调用即受理；验证撤单必须等导出刷新或看 QMT 面板实时状态，勿凭导出文件旧状态误判 |
 
 ## 7. 合规定位
 
@@ -196,10 +226,10 @@ def handlebar(ContextInfo):
 
 ## 9. 后续施工清单（本备忘对应工程项）
 
-1. 正式执行器策略（纯 ASCII：读指令 CSV → 校验幂等/金额上限 → passorder → 回执 CSV）替换探针，模拟模式验证后切实盘
+1. ~~正式执行器策略（纯 ASCII：读指令 CSV → 校验幂等/金额上限 → passorder → 回执 CSV）替换探针，模拟模式验证后切实盘~~ **已完成 v14，tick 级验证通过**
 2. 删除模型交易中 ZEPHYR_BRIDGE_TEST / ZEPHYR_EXEC 两个坏行，正式策略新建行配置
-3. 项目侧 ExecutionGateway 适配层：指令文件生成器 + 官方导出 CSV 读取器（GBK 解析、共享读容错重试）
-4. 数据源主源从 miniQMT 切至 akshare/tushare（miniQMT 行情 9·18 前并行回填历史 tick 囤货）
+3. ~~项目侧 ExecutionGateway 适配层：指令文件生成器 + 官方导出 CSV 读取器（GBK 解析、共享读容错重试）~~ **已完成 QmtFileBridgeBroker + LocalOrderQueue，见 blueprint_qmt_file_bridge.md**
+4. ~~数据源主源切换~~ **部分完成：反向行情桥 v15（QMT沙箱 5档 → quote.csv）已落地为免费主源，见 §11**；迪雅数据 WebSocket 为付费备胎（待接入）；Level-2 权限确认后升级 10 档
 5. 国金账户加开 PTrade 权限（备胎通道）
 6. 程序化交易报备落地
 7. 模拟终端导出路径改 `E:\qmt_bridge_sim`（防覆盖，见 §5-A 终端级铁律）；正式连接器落地账号二级分区（`acct_<资金账号>\`）
@@ -214,9 +244,9 @@ def handlebar(ContextInfo):
 | 2 | 模拟终端【委托】面板肉眼确认策略单存在，状态"已报" | 与手动单并列可见 | ✅ 同日通过（用户肉眼确认+xttrader 交叉验证） |
 | 3 | `E:\qmt_bridge_sim\Stock\Order.csv` 出现该委托 | 官方导出同步捕获 | ✅ 同日通过（任务来源=ZEPHYR_EXEC、下单方式=函数下单、投资备注=T1009） |
 | 4 | 用策略对该单做撤单测试（如有撤单函数）或手动撤 | 撤单成功 | ✅ 同日 10:09 通过（cancel 签名命中，status=54 已撤，资金解冻） |
-| 5 | 成交回报：把限价改到市价附近促成成交，查 `Deal.csv` + 持仓变化 | 成交可见、持仓同步 | ⏳ 未测（验证单故意低于市价不成交，安全设计；正式执行器模拟期首日补测） |
+| 5 | 成交回报：把限价改到市价附近促成成交，查 `Deal.csv` + 持仓变化 | 成交可见、持仓同步 | ✅ **2026-08-26 10:50 通过**（T2001 最新价 100 股 510300，10:50:11 委托、10:50:31 成交 @4.669，Deal.csv 捕获） |
 
-**验证结论（2026-08-26）：进口下单/查单/撤单/幂等回执四动作全部实证通过，文件桥方案正式确立为 miniQMT 替代主通道。下一步进入连接器蓝图阶段（SOP Step 1.5 起）。**
+**验证结论（2026-08-26 上午盘中）：进口下单/查单/撤单/幂等回执/成交回报五动作全部实证通过，tick 级（1~2 秒）通道达成，文件桥方案正式确立为 miniQMT 替代主通道。下一步进入连接器蓝图阶段（SOP Step 1.5 起）。**
 
 ### 10.2 备用阶梯（主力通道失效时的降级路线，逐级启用）
 
@@ -234,7 +264,93 @@ def handlebar(ContextInfo):
 - 9·18 前用 miniQMT 行情并行回填历史 tick 进 ClickHouse 囤货
 - 每日收盘比对：miniQMT 持仓 vs 官方导出 PositionStatics.csv，验证出口数据一致性
 
-## 11. 修订记录
+## 11. 反向行情桥（5档免费行情通道，2026-08-26 落地）
+
+### 11.1 架构（与交易文件桥对称的第三条文件通道）
+
+```
+QMT 沙箱策略 ZEPHYR_QUOTE v15
+  └─ 每 tick: ContextInfo.get_full_tick(SYMBOLS) → 追加写入 quote.csv
+项目侧 QmtFileBridgeQuoteProvider (src/zephyr/ex_core/adapters/qmt_file_bridge_quote.py)
+  └─ 尾部 64KB 窗口读取 → 每 symbol 取最新完整行 → PriceProvider 注入 TradingSession
+```
+
+| 项 | sim | real |
+|---|---|---|
+| 策略文件 | `E:\qmt_bridge_sim\ZEPHYR_QUOTE_v15.txt` | `E:\qmt_bridge\ZEPHYR_QUOTE_v15_real.txt` |
+| 行情输出 | `E:\qmt_bridge_sim\quote.csv` | `E:\qmt_bridge\quote.csv` |
+| 账户 | 8886156677 | 8887871993 |
+
+### 11.2 quote.csv 格式（29 列，ASCII）
+
+```
+symbol,lastPrice,open,high,low,lastClose,volume,amount,
+bid1..bid5, ask1..ask5, bidVol1..bidVol5, askVol1..askVol5, timetag
+```
+
+每 tick 追加一行；策略重启时 init 截断重写表头（全日约 10~20MB，Provider 只读尾部不受影响）。
+
+### 11.3 项目侧关键设计（13/13 单测通过）
+
+- **尾读窗口**：文件再大也只读末尾 64KB（≈300 行），O(1) 与文件大小无关
+- **残行回退**：QMT 写端无锁，末行可能写一半被读到 → 列数≠29 直接跳过，回退上一完整行
+- **新鲜度闸门**：以文件 mtime 判定（默认 10 秒），行情中断时 `price_provider` 返回空 dict —— 调用方按缺价处理，**绝不拿陈旧价下单**
+- **PriceProvider 兼容**：`make_price_provider()` 产出 `Callable[[list[str]], dict[str, Decimal]]`，与 TradingSession 注入点零改造对接
+- **5档盘口**：`get_order_book(symbol)` 返回 bid/ask 各 5 档价格+数量，供 open_order_resolver 对手价注入
+
+### 11.4 启动 SOP（QMT 端）
+
+1. QMT 策略编辑器新建策略，周期选【分笔线】，运行模式选【交易】，标的选 510300.SH
+2. 粘贴 v15 全文（sim/real 用对应版本），编译无红字
+3. 【模型交易】面板启动（**禁用编辑器"运行"按钮**，铁律同 §6）
+4. 日志见 `QUOTE_INIT_OK` 即就绪；`quote.csv` 每 tick 增长
+
+### 11.5 局限与升级路线
+
+| 项 | 现状 | 升级路径 |
+|---|---|---|
+| 档位数 | 5 档（免费，随 QMT 终端自带） | Level-2 权限确认后 v16 升级 10 档（get_full_tick 同源字段） |
+| 订阅标的 | SYMBOLS 硬编码，改后需重启策略 | v16 读订阅清单文件（symbols.csv），项目侧可热更新 |
+| 延迟 | tick 级（1~2 秒，与交易桥同量级） | 做T场景足够；高频不适用（本就不在射程） |
+| 备胎 | 迪雅数据 REST 轮询（专业版 ¥1099/年，10,000 次/天） | QMT 行情政策收紧时接入，Provider 同接口切换 |
+
+### 11.5a 历史 tick 通道实证（ZEPHYR_HIST_PROBE，2026-08-26 收盘后）
+
+沙箱内 `ContextInfo.get_market_data_ex(period='tick')` **确认支持历史 tick**，字段 19 列（amount/askPrice[5]/askVol[5]/bidPrice[5]/bidVol[5]/high/lastClose/lastPrice/low/open/pvolume/stime/time(epoch ms)/transactionNum/volume 等），每 tick 含完整 5 档数组，上交所 ETF 为 3 秒快照（200 tick/10分钟）。
+
+| 探测区间 | 结果 | 含义 |
+|---|---|---|
+| 当日（08-26） | ✅ 200 行 | 终端实时缓存可读 |
+| 昨日（08-25） | ✅ 200 行 | 缓存自动保留 ≥2 个交易日 |
+| 一周前（08-19） | ❌ 0 行 | 本地无缓存，需【数据下载】补 |
+| 一月/三月前 | ❌ 0 行 | 同上 |
+| 10分钟全窗口 count=-1 | ✅ 恰好 200 行无截断 | 批量导出可按时间窗分页全量抓 |
+
+**结论**：历史 tick 批量通道 = QMT 终端【数据下载】补分笔缓存 → 沙箱策略按时间窗（如 30 分钟/窗）`count=-1` 全量抓 → 写 CSV → 项目侧灌 ClickHouse。9·18 前主通道仍是 miniQMT 囤货（更快更稳），本通道为 miniQMT 清退后的已验证替代。
+
+**UI 实锤补充（2026-08-26 晚，数据管理面板逐项核对）**：此版 QMT【补充数据】仅支持 K线（日线/5分钟/1分钟），**无分笔/tick 下载入口**；【导出数据】仅日线+除权。→ **老历史 tick（>2 天前）无法经 QMT UI 补回**，唯一来源是 miniQMT 9·18 前囤货（§10.3）。**新历史累积机制 = 【收盘清盘】勾选"收盘时保存今日分笔成交数据"**（已勾，另勾 1分钟/5分钟/日线/除权），每个交易日收盘自动落盘，本地 tick 库逐日增厚。
+
+**存储分工与清理纪律**：QMT 本地缓存（`E:\国金QMT交易端*\userdata\`）是**中转站**（供沙箱读取），ClickHouse 才是**全量主存储**；QMT 缓存每月用【清理数据】清一次、保留近 30 天即可，清理不影响项目数据。体量参考：单标的 tick ≈ 4,800 行/天（3 秒快照），缓存压力可控。
+
+**收盘清盘勾选裁定**：分笔=必须；1分钟=建议（miniQMT 清退后分钟级备份源）；5分钟/日线/除权=项目已有主源（ClickHouse 多源），勾上仅因体积极小，非必须。市场范围裁定：SSE+SZSE 必须（已勾）；CFFEX 股指期货建议补（期现基差对 A 股 ETF 做T 有领先指示）；BSE/HK/HGT/SGT/商品期货/期权暂缓（与 510300 做T 无关，后期策略升级再议）。
+
+### 11.6 备胎调研结论：迪雅数据（2026-08-26 网调）
+
+**核心结论：迪雅数据是 REST 轮询 API（GET/POST + JSON），不是 WebSocket 推送**。官网"毫秒级推送"为营销话术，文档实证全部为请求-响应式端点（如 `GET https://api.cxdy.vip/api/scgl?apiKey=...`）。无 Key 时实时行情端点路径未公开（注册后可见），已知端点：沪深京列表 `/api/hslb`、市场概览 `/api/scgl`。
+
+| 维度 | 迪雅数据 | QMT 反向行情桥（主源） | 新浪 Level-2 |
+|---|---|---|---|
+| 接入方式 | REST 轮询（apiKey） | 文件桥（免费） | 官方无 API；社区逆向 WebSocket（灰色） |
+| 专业版价格 | ¥1099/年（10,000 次/天） | ¥0 | 标准版 ¥998/年（普及版 ¥298 接口不同） |
+| 实时性 | 取决于轮询频率，3 秒轮询≈3 秒延迟 | tick 级（1~2 秒） | 逆向 WS 毫秒级，但 3~5 分钟强制断连重认证 |
+| 5档盘口 | 有 | 有（get_full_tick） | 10 档 + 逐笔（标准版） |
+| 调用预算测算 | 单标的 3 秒轮询：4h×3600s÷3s≈4,800 次/天，10,000 次额度可覆盖 2 只标的 | 无限制 | 无调用限制，但无 SLA、账号密码登录、有封禁风险 |
+
+**新浪 Level-2 调查结论（2026-08-26 网调）**：官方定位是客户端/Web 看盘产品，**不公开开发者 API**；社区存在逆向接入方案（sinalv2 / SinaL2，机制：新浪账号登录→取 token→`ws://ff.sinajs.cn/wskt` WebSocket 推送 10 档+逐笔），但 token 与连接均 3~5 分钟过期需自动重连、属违反用户协议的灰色用法、无 SLA，**不能作为生产交易数据源**。
+
+**裁定**：迪雅数据与新浪 Level-2 均降级为**纯备胎**——QMT 反向行情桥免费且更快（tick 级 vs 3 秒轮询），迪雅仅在"QMT 行情政策收紧/沙箱禁读行情"时启用（届时注册 5 天免费试用拿 apiToken，按 §11.3 同接口实现 DiyadataQuoteProvider：REST 轮询 + 本地缓存 + 调用预算守卫，工作量小，不在当前施工）；新浪仅在需要 10 档/逐笔且接受灰色风险时考虑。**Level-2 合规正解仍是等客户经理确认券商侧权限**（随 QMT 终端走，合规且稳定）。
+
+## 12. 修订记录
 
 | 版本 | 日期 | 内容 |
 |---|---|---|
@@ -242,3 +358,5 @@ def handlebar(ContextInfo):
 | 1.1.0 | 2026-08-25 | 增补：模拟终端 passorder 下单实证（进口链路通，枚举兼容）；导出设置终端级两铁律（按终端独立、多终端分区防覆盖）；施工清单补模拟终端路径整改项 |
 | 1.2.0 | 2026-08-25 | 增补：实证#9-11（"启动本地python"勾选=秒起秒停总根源；夜间程序单静默废单与通道无关，miniQMT 对照组 status=57 铁证；SENT≠落地须回执确认）；排障表扩至六条；新增 §10 盘中验证清单与备用阶梯 L0-L4、过渡期纪律 |
 | 1.3.0 | 2026-08-26 | **盘中验证收官**：实证#12-14（下单/撤单全通，cancel 签名命中，userOrderId 进柜台"投资备注"字段）；排障表补 isLastBar 防回放保护与影子实例两条（全案最大根因）；§10.1 验证清单 4/5 项打勾通过，文件桥正式确立为替代主通道；下一步进入连接器蓝图阶段 |
+| 1.4.0 | 2026-08-26 | **tick 级通道验证与 v14 执行器定型**：实证#15-20（分笔线 1~2 秒触发、v7→v14 七轮幂等攻防、两阶段文件状态机唯一正解、柜台挂单上限暴露、自愈重试确认、实盘终端全链路一致、撤单 -54 误判根因）；排障表补 tick 重复发射/#SENDING 卡死/撤单过渡态三条；§10.1 验证清单 5/5 项全部通过；施工清单第 1 项标记完成 |
+| 1.5.0 | 2026-08-26 | **反向行情桥 v15 落地**：QMT 沙箱 5 档行情 → quote.csv 实现（含实盘/sim 双环境策略文件）；项目侧 `QmtFileBridgeQuoteProvider` 实现（尾读窗口、残行回退、新鲜度闸门、PriceProvider 兼容），13/13 单测通过；Playbook 新增 §11 完整反向行情桥章节；§11.6 迪雅数据网调结论（纯备胎，REST 非 WebSocket，额度测算完成） |

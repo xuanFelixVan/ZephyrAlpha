@@ -4874,6 +4874,42 @@ capabilities:
   - queue_status
   - SerializerLease
 creation_tokens:
+- file: docs/03_modules/_domain_execution_core/blueprint_qmt_file_bridge.md
+  token: auto-blueprint-qmtfb-20260827
+  created_by: session-qmt_bridge_recovery
+  capability: qmt_file_bridge_broker
+- file: src/zephyr/ex_core/adapters/qmt_file_bridge_broker.py
+  token: auto-qmtfb-broker-20260827
+  created_by: session-qmt_bridge_recovery
+  capability: qmt_file_bridge_broker
+- file: src/zephyr/ex_core/adapters/qmt_file_bridge_quote.py
+  token: auto-qmtfb-quote-20260827
+  created_by: session-qmt_bridge_recovery
+  capability: qmt_file_bridge_broker
+- file: src/zephyr/ex_core/adapters/qmt_file_bridge_integration.py
+  token: auto-qmtfb-integration-20260827
+  created_by: session-qmt_bridge_recovery
+  capability: qmt_file_bridge_broker
+- file: src/zephyr/ex_core/local_order_queue.py
+  token: auto-local-order-queue-20260827
+  created_by: session-qmt_bridge_recovery
+  capability: local_order_queue
+- file: src/zephyr/ex_core/qmt_trading_session.py
+  token: auto-qmt-trading-session-20260827
+  created_by: session-qmt_bridge_recovery
+  capability: qmt_file_bridge_broker
+- file: scripts/construction/test_counter_state.py
+  token: auto-test-counter-state-20260827
+  created_by: session-qmt_bridge_recovery
+  capability: qmt_file_bridge_broker
+- file: scripts/construction/test_qmt_file_bridge_e2e.py
+  token: auto-test-qmtfb-e2e-20260827
+  created_by: session-qmt_bridge_recovery
+  capability: qmt_file_bridge_broker
+- file: scripts/construction/test_qmt_file_bridge_full.py
+  token: auto-test-qmtfb-full-20260827
+  created_by: session-qmt_bridge_recovery
+  capability: qmt_file_bridge_broker
 - file: src/zephyr/trading/broker_settlement_adapter.py
   token: auto-broker-settlement-adapter-20260821
   created_by: AI-P0-G3567
