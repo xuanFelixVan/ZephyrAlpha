@@ -72,7 +72,10 @@ from typing import Any, Final, Protocol, Sequence, runtime_checkable
 import numpy as np
 import pandas as pd
 
-from zephyr.data.trading_calendar import is_trading_day as _is_trading_day
+from zephyr.data.calendar import MarketCalendar, get_market_calendar
+
+# 默认 A 股日历（保持向后兼容，零行为变化）
+_DEFAULT_CALENDAR: Final = get_market_calendar("ashare")
 
 try:
     from zephyr.shared.foundation.errors import ZephyrBaseError
@@ -441,18 +444,29 @@ def should_exit(
 # ── 辅助函数（v1.7.0 补全）────────────────────────────────────────────
 
 
-def trading_days_ago(n: int, *, from_date: date | None = None) -> date:
-    """n 个交易日前的日期（复用 zephyr.data.trading_calendar，薄封装）。
+def trading_days_ago(
+    n: int,
+    *,
+    from_date: date | None = None,
+    calendar: MarketCalendar | None = None,
+) -> date:
+    """n 个交易日前的日期（默认 A 股日历，可注入其他市场日历）。
 
     n=0 → from_date 当日；n<0 → EventScoreError。
+
+    Args:
+        n: 回溯交易日数（≥0）
+        from_date: 基准日期（None=今日）
+        calendar: 市场日历注入（None=ASHareCalendar 默认，零行为变化）
     """
     if n < 0:
         raise EventScoreError(f"trading_days_ago: n 须 ≥0，实际 {n}")
+    cal = calendar or _DEFAULT_CALENDAR
     d = from_date or date.today()
     count = 0
     while count < n:
         d -= timedelta(days=1)
-        if _is_trading_day(d):
+        if cal.is_trading_day(d):
             count += 1
     return d
 

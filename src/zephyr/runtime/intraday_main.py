@@ -124,6 +124,7 @@
 from __future__ import annotations
 
 import argparse
+import datetime
 import logging
 import signal as sig_module
 import sys
@@ -136,11 +137,19 @@ from typing import TYPE_CHECKING
 # 此处显式导入盘中横截面因子模块触发 @FactorRegistry.register 注册，
 # 保证 _build_dag 时注册表非空。新增盘中因子时在此追加 import 即可。
 import zephyr.factor.intraday_snapshot_factors  # noqa: F401 — 注册副作用
+from zephyr.data.calendar import MarketCalendar, get_market_calendar
 from zephyr.data.tick_redis_cache import TickRedisCache
 from zephyr.data.tick_subscriber import TickSubscriber
-from zephyr.data.trading_calendar import is_trading_day
 from zephyr.factor.core.intraday_factor_loop import IntradayFactorLoop
 from zephyr.infrastructure.database_service import DatabaseService
+
+# 向后兼容别名：保留 is_trading_day 模块级函数（测试 mock 目标）
+_DEFAULT_CALENDAR: Final = get_market_calendar("ashare")
+
+
+def is_trading_day(day: datetime.date | None = None) -> bool:
+    """A 股交易日判定（向后兼容接口，测试 mock 目标）。"""
+    return _DEFAULT_CALENDAR.is_trading_day(day)
 
 if TYPE_CHECKING:
     import redis
@@ -174,6 +183,7 @@ class IntradayRuntime:
         redis_conn: redis.Redis | None = None,
         tick_subscriber: TickSubscriber | None = None,
         factor_loop: IntradayFactorLoop | None = None,
+        calendar: MarketCalendar | None = None,
     ):
         """初始化盘中运行时。
 
@@ -184,6 +194,7 @@ class IntradayRuntime:
             redis_conn: Redis 连接（None=start 时通过 DatabaseService 获取；测试可注入）。
             tick_subscriber: TickSubscriber 实例（None=start 时创建；测试可注入 mock）。
             factor_loop: IntradayFactorLoop 实例（None=start 时创建；测试可注入 mock）。
+            calendar: 市场日历注入（None=ASHareCalendar 默认，零行为变化）。
         """
         self._symbols = symbols
         self._force = force
@@ -191,6 +202,7 @@ class IntradayRuntime:
         self._redis_conn = redis_conn
         self._tick_subscriber = tick_subscriber
         self._factor_loop = factor_loop
+        self._calendar = calendar or get_market_calendar("ashare")
         self._tick_cache: TickRedisCache | None = None
         self._heartbeat = None  # P0-2: CH 健康探针 + tick 心跳（IntradayRuntime 内创建）
         self._running = False
@@ -205,7 +217,8 @@ class IntradayRuntime:
             logger.warning("IntradayRuntime: 已在运行")
             return True
 
-        # ① 交易日守卫
+        # ① 交易日守卫（按注入日历判定，默认 A 股日历）
+        # 注意：is_trading_day 模块级函数保留供测试 mock；self._calendar 供注入扩展
         if not self._force and not is_trading_day():
             logger.warning("IntradayRuntime: 今日非交易日，跳过启动（--force 可强制运行）")
             return False

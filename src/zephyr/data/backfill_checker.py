@@ -39,14 +39,19 @@ import os
 import time
 from pathlib import Path
 from time import sleep
+from typing import Final
 
 import yaml
 
 from zephyr.data import ch_reader, ch_writer
+from zephyr.data.calendar import MarketCalendar, get_market_calendar
 from zephyr.data.table_registry import get_registry
 from zephyr.data.tick_subscriber import _safe_int
 
 log = logging.getLogger(__name__)
+
+# 默认 A 股日历（保持向后兼容，零行为变化）
+_DEFAULT_CALENDAR: Final = get_market_calendar("ashare")
 
 # ========== 常量 ==========
 
@@ -122,11 +127,21 @@ def _ch_insert_tsv(tsv_lines: list[str], retries: int = 3) -> bool:
 # ========== 交易日历 ==========
 
 
-def get_trade_dates(days: int = 7) -> list[datetime.date]:
-    """获取过去N天的交易日列表（从 trade_calendar 表查 is_open=1）。
+def get_trade_dates(
+    days: int = 7,
+    *,
+    calendar: MarketCalendar | None = None,
+) -> list[datetime.date]:
+    """获取过去N天的交易日列表（默认 A 股日历，可注入其他市场日历）。
 
-    Fallback: 如果 trade_calendar 无数据，用 kline_daily 中有数据的日期。
+    优先从 trade_calendar 表查 is_open=1；fallback 到 kline_daily 中有数据的日期；
+    再 fallback 到日历接口直接生成（适用于 7×24 市场）。
+
+    Args:
+        days: 回溯天数
+        calendar: 市场日历注入（None=ASHareCalendar 默认，零行为变化）
     """
+    cal = calendar or _DEFAULT_CALENDAR
     today = datetime.date.today()
     start = today - datetime.timedelta(days=days)
     query = _SQL_TRADE_CALENDAR.format(start=start, today=today)
@@ -137,8 +152,9 @@ def get_trade_dates(days: int = 7) -> list[datetime.date]:
         query2 = _SQL_KLINE_DISTINCT.format(start=start, today=today)
         result = _ch_query(query2)
         if not result:
-            log.error("无法获取交易日列表")
-            return []
+            log.warning("kline_daily 也无数据，fallback 到日历接口生成")
+            # 最终 fallback：用日历接口直接生成（7×24 市场每日皆交易日）
+            return cal.trading_days_in_range(start, today)
 
     dates = []
     for line in result.strip().split("\n"):
