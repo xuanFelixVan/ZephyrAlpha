@@ -9,15 +9,21 @@
 - CLI main 退出码
 
 设计文档：64_data_source_download_spec.md §16.2 Q8；告警规则 config/alert_rules.yaml ALERT-CH-001
+阈值真源：alert_threshold_registry.yaml THD-HEALTH-005（fail-closed 统读，2026-08-28 统读改造）
 """
 
 from __future__ import annotations
 
+import pytest
+
 from zephyr.data.ch_parts_monitor import (
+    DEFAULT_PARTS_THRESHOLD,
+    _load_parts_threshold,
     check_parts_threshold,
     main,
     parse_parts_tsv,
 )
+from zephyr.shared.alerts.threshold_loader import AlertThresholdConfigError
 
 
 class TestParsePartsTsv:
@@ -64,6 +70,34 @@ class TestCheckPartsThreshold:
         seen: list[str] = []
         check_parts_threshold(query_fn=lambda sql, timeout: (seen.append(sql), "")[1])
         assert "system.parts" in seen[0] and "active = 1" in seen[0]
+
+
+class TestThresholdRegistryWiring:
+    """阈值注册表统读接线校验 + fail-closed 红队（THD-HEALTH-005）。"""
+
+    def test_default_threshold_from_registry(self):
+        """模块级常量=注册表值（双向一致性：注册表值=代码默认值）。"""
+        assert DEFAULT_PARTS_THRESHOLD == 100
+        assert DEFAULT_PARTS_THRESHOLD == _load_parts_threshold()
+
+    def test_load_missing_registry_fail_closed(self, tmp_path):
+        with pytest.raises(AlertThresholdConfigError):
+            _load_parts_threshold(registry_path=tmp_path / "nonexistent.yaml")
+
+    def test_load_missing_entry_fail_closed(self, tmp_path):
+        registry = tmp_path / "registry.yaml"
+        registry.write_text("thresholds: []\n", encoding="utf-8")
+        with pytest.raises(AlertThresholdConfigError):
+            _load_parts_threshold(registry_path=registry)
+
+    def test_load_non_int_value_fail_closed(self, tmp_path):
+        registry = tmp_path / "registry.yaml"
+        registry.write_text(
+            "thresholds:\n  - threshold_id: THD-HEALTH-005\n    value: 100.5\n",
+            encoding="utf-8",
+        )
+        with pytest.raises(AlertThresholdConfigError):
+            _load_parts_threshold(registry_path=registry)
 
 
 class TestMain:

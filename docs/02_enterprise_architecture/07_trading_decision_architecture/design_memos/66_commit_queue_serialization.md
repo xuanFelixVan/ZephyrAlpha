@@ -37,7 +37,8 @@ related_modules:
 
 > ## 结案报告回填（2026-08-28 代码实证复核）
 > 原"commit queue 本体未做（MVP 待排期）"已过时：A 段 scripts/commit_queue.py（MOD-GOV-046，enqueue/status/drain+FIFO+死信+compaction，41 用例）+B 段 scripts/governance/commit_queue_landing.py（MOD-GOV-047 专用 worktree 真落盘+gateway 改道，32 用例）全落地；config/flags.yaml commit_queue_serializer enabled:true 已翻开（2026-08-22 Owner 裁定 2814b7f469）+全真通道首验通过（队列项落盘 e1f4058157）。
-> **仍真实未完工**：CLI drain 自举 stub landing 注记（生产排空只走 gateway 改道/bootstrap_drain_with_landing）；task_board 死信标签联动（P1）。
+> **仍真实未完工**：CLI drain 自举 stub landing 注记（生产排空只走 gateway 改道/bootstrap_drain_with_landing）。
+> **2026-08-28 闭环回填（session AI-WAVE0-001，路线图 A21）**：task_board 死信标签联动（P1）已落地——commit_queue 死信分支接 `_notify_task_board_dead_letter`（队列项 meta.task_id 存在时经 task_board.tag_dead_letter 写 metadata_json.deadletter；任务不存在/已完成/板不可达跳过不阻断排空），task_board 抽 `tag_dead_letter` 可 import 函数（CLI 薄包装复用），+5 联动用例（108 测试全绿）。
 
 # 提交队列串行化——多 AI 并发施工的集成层总案（三层防护：队列串行 + worktree 隔离 + plumbing 拦截）
 

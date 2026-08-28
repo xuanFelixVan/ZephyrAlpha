@@ -97,8 +97,10 @@ B 段接口预留点（2026-08-21 B 段已接通）
 - flag 接入：config/flags.yaml `commit_queue_serializer`（默认 enabled:false=
   ALWAYS_OFF）；ON 时 _commit_auto 改道 enqueue（git_commit_gateway 内一处改动，
   66 号 §7），启用属 Owner 窗口（宪章 B-007）。
-- task_board 联动点：死信时把 {qid, reason, session_id} 写入 task_board metadata_json
-  （66 号 §6.4，无需改表）——A/B 段仅落 dead/ JSON，联动属 P1。
+- task_board 联动（P1 已落地 2026-08-28）：死信时若队列项 meta.task_id 存在，
+  经 _notify_task_board_dead_letter → scripts.task_board.tag_dead_letter 把
+  {qid, reason, owner, tagged_at} 写入 task_board metadata_json.deadletter
+  （66 号 §6.4，无需改表）；任务不存在/已完成/板不可达仅记日志不阻断排空。
 """
 
 from __future__ import annotations
@@ -676,6 +678,41 @@ class SerializerLease:
 # ---------------------------------------------------------------------------
 
 
+def _notify_task_board_dead_letter(item: dict) -> None:
+    """死信 → task_board 打标联动（66 号 §6.4，P1 2026-08-28 落地）。
+
+    队列项 meta.task_id 存在时，经 scripts.task_board.tag_dead_letter 把
+    {qid, reason, owner, tagged_at} 写入该任务 metadata_json.deadletter；
+    任务不存在/已完成（rc=2）或 metadata 损坏（rc=1）仅记日志跳过；
+    板不可达等异常吞掉不阻断排空（死信已落 dead/，联动是可观测性增强，宁漏不误）。
+    task_id 注入通道：enqueue 时 EnqueueOptions.meta_extra={"task_id": "T-xxx"}。
+    """
+    task_id = (item.get("meta") or {}).get("task_id")
+    if not task_id:
+        return
+    try:
+        from scripts import task_board as tb
+
+        conn = tb._connect(tb._resolve_board_db())
+        try:
+            rc = tb.tag_dead_letter(
+                conn,
+                task_id,
+                qid=item.get("qid", ""),
+                reason=item.get("dead_reason", ""),
+                owner=item.get("session_id", ""),
+                actor="commit_queue",
+            )
+        finally:
+            conn.close()
+        if rc == 0:
+            logger.info("[drain] task_board 死信打标: task=%s qid=%s", task_id, item.get("qid"))
+        else:
+            logger.info("[drain] task_board 打标跳过: task=%s rc=%s（任务不存在/已完成/metadata 损坏）", task_id, rc)
+    except Exception as exc:  # noqa: BLE001 — 联动失败不阻断排空
+        logger.warning("[drain] task_board 死信联动失败（忽略，死信已落 dead/）: %s", exc)
+
+
 def _read_item(path: Path) -> dict | None:
     """读队列项 JSON，容忍 enqueue 写入窗口（O_EXCL 创建后单 write 的极短半写窗口）。
 
@@ -792,8 +829,8 @@ def drain_queue(
                 os.replace(processing_path, root / "dead" / head.name)
                 stats["dead"] += 1
                 logger.warning("[drain] qid=%s 进死信: %s", qid, result.reason)
-                # B 段联动点：task_board metadata_json 打标签（{qid, reason, session_id}，
-                # 66 号 §6.4，无需改表）；依赖级联标记（meta.depends_on）B 段实现。
+                _notify_task_board_dead_letter(item)  # 66 号 §6.4 task_board 死信标签联动（P1 已落地）
+                # 依赖级联标记（meta.depends_on）B 段实现。
             stats["processed_qids"].append(qid)
             processed += 1
     return stats

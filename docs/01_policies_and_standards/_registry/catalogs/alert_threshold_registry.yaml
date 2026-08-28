@@ -11,6 +11,8 @@
 #   裁定逻辑=判据为评审触发器非自动关停，误触发成本≪漏触发成本，风险优先取早触发侧；校准点=首批上线数据回归（PLV 周期）。
 # 2026-08-17 v1.2.0：存量 9 模块统读落地（drawdown/health/deviation/plv/alert/audit/report/oprisk 26 条 active 条目锚点随统读刷新）；
 #   双向一致性对账测试演化为「注册表值=代码默认值」接线校验 + 红队 fail-closed 36 用例。
+# 2026-08-28 v1.3.0：新增 THD-HEALTH-005（CH 单表 data parts 爆炸阈值 100）——64 号 §16.2 Q8 裁定施工尾巴，
+#   ch_parts_monitor 阈值由码内硬编码改为注册表 fail-closed 统读（session AI-WAVE0-001，路线图 A17）。
 # ============================================================================
 # module_id: MOD-GOVERNANCE
 ttl: permanent
@@ -23,9 +25,9 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.2.0
+version: 1.3.0
 created: '2026-08-15'
-last_updated: '2026-08-17'
+last_updated: '2026-08-28'
 related_arch: '#ARCH-MON-001'
 unique_key:
 - threshold_id
@@ -104,7 +106,7 @@ thresholds:
     last_verified: '2026-08-17'
 
   # ============================================================
-  # HEALTH（系统健康压力分级，55 号 §3.1A）— 4 条
+  # HEALTH（系统健康压力分级，55 号 §3.1A + 64 号 §16.2 Q8）— 5 条
   # ============================================================
   - threshold_id: "THD-HEALTH-001"
     name: "Memory Pressure Elevated"
@@ -173,6 +175,23 @@ thresholds:
     tags: [健康, 磁盘, 压力分级]
     evidence: "L69 _DISK_PRESSURE_CRITICAL=_HEALTH_DEFAULTS（统读；5.43.5 修复：磁盘纳入分级）"
     last_verified: '2026-08-17'
+
+  - threshold_id: "THD-HEALTH-005"
+    name: "ClickHouse Parts Explosion"
+    name_zh: "CH 单表 data parts 爆炸阈值"
+    category: health
+    metric_zh: "单表 active data parts 计数（system.parts 按表聚合）"
+    value: 100
+    unit: count
+    comparator: gt
+    severity_action: "ALERT-CH-001 critical 告警（fle/dashboard/escalation 通知，CLI 巡检退出码 1）"
+    source_code: "src/zephyr/data/ch_parts_monitor.py::DEFAULT_PARTS_THRESHOLD"
+    consumer: "src/zephyr/data/ch_parts_monitor.py (MOD-L00-004-PM)；config/alert_rules.yaml ALERT-CH-001"
+    status: active
+    doc_ref: "64_data_source_download_spec.md §16.2 Q8"
+    tags: [ClickHouse, parts, 数据健康, 告警]
+    evidence: "防 2026-07-09 parts 爆炸致 CH merge 满载崩溃事故重演（kline_1min 1039 parts）；check_parts_threshold 严格 > 阈值判定；2026-08-28 由码内硬编码改统读"
+    last_verified: '2026-08-28'
 
   # ============================================================
   # GPU（显存硬边界，system_charter §2 / 55 号 §3.1A）— 1 条

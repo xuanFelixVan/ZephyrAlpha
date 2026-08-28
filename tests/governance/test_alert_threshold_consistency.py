@@ -20,9 +20,10 @@
   新模块（MOD-RK-23/退役评估器）运行时已 fail-closed 直读注册表（改表即生效），
   不在本对账范围（其一致性由自身加载测试覆盖）。
 
-覆盖 32 条 active 条目全量对账 + 3 条 design 条目存在性校验 + 红队 fail-closed 四类。
+覆盖 33 条 active 条目全量对账 + 3 条 design 条目存在性校验 + 红队 fail-closed 四类。
 （2026-08-15 v1.1.0：4 条 pending_adjudication 经 Owner 裁定转正 active——
-THD-RETIRE-001/002/003 + THD-DEVIATION-003，值不变，并入 active 对账。）
+THD-RETIRE-001/002/003 + THD-DEVIATION-003，值不变，并入 active 对账。
+2026-08-28 v1.3.0：THD-HEALTH-005（CH parts 爆炸阈值 100）统读落地，并入 active 对账。）
 """
 
 from __future__ import annotations
@@ -33,6 +34,7 @@ import pytest
 import yaml
 
 import zephyr.backtest.core.decision_gate as decision_gate
+import zephyr.data.ch_parts_monitor as ch_parts_monitor
 import zephyr.governance.lifecycle_governance.post_live_verification as post_live_verification
 import zephyr.reporting.risk_report_engine as risk_report_engine
 import zephyr.risk.core.alert_generator as alert_generator
@@ -69,7 +71,7 @@ def _registry_entries() -> dict[str, dict]:
 
 
 class TestActiveThresholdsMatchCode:
-    """32 条 active 条目：注册表值 MUST 等于代码常量当前值（漂移=测试红）。"""
+    """33 条 active 条目：注册表值 MUST 等于代码常量当前值（漂移=测试红）。"""
 
     def test_drawdown_triple(self):
         e = _registry_entries()
@@ -84,6 +86,12 @@ class TestActiveThresholdsMatchCode:
         assert float(e["THD-HEALTH-002"]["value"]) == health_monitor._MEM_PRESSURE_HIGH
         assert float(e["THD-HEALTH-003"]["value"]) == health_monitor._MEM_PRESSURE_CRITICAL
         assert float(e["THD-HEALTH-004"]["value"]) == health_monitor._DISK_PRESSURE_CRITICAL
+
+    def test_ch_parts_explosion(self):
+        """THD-HEALTH-005：CH 单表 data parts 爆炸阈值（64 号 §16.2 Q8）注册表值=代码默认值。"""
+        e = _registry_entries()
+        assert e["THD-HEALTH-005"]["status"] == "active"
+        assert int(e["THD-HEALTH-005"]["value"]) == ch_parts_monitor.DEFAULT_PARTS_THRESHOLD
 
     def test_deviation_thresholds(self):
         e = _registry_entries()
@@ -169,9 +177,9 @@ class TestDesignEntriesExist:
         assert e["THD-DRIFT-003"]["value"] == "h=4σ"
 
     def test_entry_total_and_categories(self):
-        """总量与分类守卫：35 条 11 类（防误删条目无感流失）。"""
+        """总量与分类守卫：36 条 11 类（防误删条目无感流失）。"""
         e = _registry_entries()
-        assert len(e) == 35
+        assert len(e) == 36
         cats = {entry["category"] for entry in e.values()}
         assert cats == {
             "drawdown",

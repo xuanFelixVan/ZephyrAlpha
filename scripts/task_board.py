@@ -2,7 +2,7 @@
 # [MODULE] scripts.task_board
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] stdlib (sqlite3/argparse/json/os/sys/subprocess/uuid/pathlib)
-# [CONSUMERS] 全部 AI session（任务认领协调）；66 号提交队列死信标签承载（deadletter 子命令打标 + list --label 查询，metadata_json 承载）
+# [CONSUMERS] 全部 AI session（任务认领协调）；66 号提交队列死信标签承载（deadletter 子命令打标 + list --label 查询，metadata_json 承载）；scripts/commit_queue.py 死信联动（tag_dead_letter 函数级复用，2026-08-28 P1 落地）
 # [STARTUP] manual
 # [MATURITY] production
 # [INVARIANTS] 状态机仅 pending→claimed→completed 三态；认领走单条 UPDATE CAS（changes()>0 即成功）；completed 任务禁止再认领/删除/打标；DB 锚主仓 .runtime（跨 worktree 共享）；死信标签=metadata_json.deadletter{qid,reason,owner,tagged_at}（66 号 §6.4，不改表，重复打标以最新为准）
@@ -329,37 +329,59 @@ def cmd_delete(conn: sqlite3.Connection, args: argparse.Namespace) -> int:
         return 0
 
 
-def cmd_deadletter(conn: sqlite3.Connection, args: argparse.Namespace) -> int:
-    """66 号 §6.4 死信打标：qid+原因+属主写入 metadata_json.deadletter（不改表）。
+def tag_dead_letter(
+    conn: sqlite3.Connection,
+    task_id: str,
+    *,
+    qid: str,
+    reason: str,
+    owner: str,
+    actor: str,
+) -> int:
+    """66 号 §6.4 死信打标核心（CLI 与 commit_queue 联动共用）：qid+原因+属主写入 metadata_json.deadletter。
 
     重复打标以最新为准（死信取回重入队后再失败须更新原因）；completed 任务
     禁止打标（与禁删/禁认领同守卫）。标签经 list --label deadletter 可查。
+    返回 0 成功 / 2 任务不存在或已完成 / 1 metadata 损坏。
     """
     with conn:
-        task = _get_task(conn, args.task_id)
+        task = _get_task(conn, task_id)
         if task is None:
-            print(f"DENIED: task {args.task_id} 不存在", file=sys.stderr)
             return 2
         if task["status"] == "completed":
-            print(f"DENIED: task {args.task_id} 已完成，禁止死信打标", file=sys.stderr)
             return 2
         try:
             metadata = json.loads(task["metadata_json"] or "{}")
-        except json.JSONDecodeError as e:
-            print(f"ERROR: task {args.task_id} metadata_json 损坏: {e}", file=sys.stderr)
+        except json.JSONDecodeError:
             return 1
-        owner = args.owner or args.session
         tag = {
-            "qid": args.qid,
-            "reason": args.reason,
+            "qid": qid,
+            "reason": reason,
             "owner": owner,
             "tagged_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         }
         metadata["deadletter"] = tag
-        conn.execute(_SQL_UPDATE_METADATA, (json.dumps(metadata, ensure_ascii=False), args.task_id))
-        _add_event(conn, args.task_id, "deadlettered", args.session, dict(tag))
-        print(f"DEADLETTER {args.task_id} qid={args.qid}")
+        conn.execute(_SQL_UPDATE_METADATA, (json.dumps(metadata, ensure_ascii=False), task_id))
+        _add_event(conn, task_id, "deadlettered", actor, dict(tag))
         return 0
+
+
+def cmd_deadletter(conn: sqlite3.Connection, args: argparse.Namespace) -> int:
+    """66 号 §6.4 死信打标 CLI（核心逻辑见 tag_dead_letter）。"""
+    task = _get_task(conn, args.task_id)
+    if task is None:
+        print(f"DENIED: task {args.task_id} 不存在", file=sys.stderr)
+        return 2
+    if task["status"] == "completed":
+        print(f"DENIED: task {args.task_id} 已完成，禁止死信打标", file=sys.stderr)
+        return 2
+    owner = args.owner or args.session
+    rc = tag_dead_letter(conn, args.task_id, qid=args.qid, reason=args.reason, owner=owner, actor=args.session)
+    if rc == 1:
+        print(f"ERROR: task {args.task_id} metadata_json 损坏", file=sys.stderr)
+        return 1
+    print(f"DEADLETTER {args.task_id} qid={args.qid}")
+    return 0
 
 
 def cmd_list(conn: sqlite3.Connection, args: argparse.Namespace) -> int:

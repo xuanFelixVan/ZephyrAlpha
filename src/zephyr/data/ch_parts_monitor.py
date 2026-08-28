@@ -1,16 +1,16 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] zephyr.data.ch_parts_monitor
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] zephyr.data.ch_reader
+# [DEPENDENCIES] zephyr.data.ch_reader; zephyr.shared.alerts.threshold_loader; docs/01_policies_and_standards/_registry/catalogs/alert_threshold_registry.yaml (SSoT，fail-closed 加载)
 # [CONSUMERS] CLI/巡检脚本；config/alert_rules.yaml ALERT-CH-001
 # [STARTUP] manual
 # [MATURITY] testing
-# [INVARIANTS] 只读探测（system.parts）；查询失败返回空违规列表+warning（宁漏报不误报阻断）
+# [INVARIANTS] 只读探测（system.parts）；查询失败返回空违规列表+warning（宁漏报不误报阻断）；阈值唯一真源=alert_threshold_registry.yaml THD-HEALTH-005（fail-closed，禁码内第二真源）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] CH 查询异常→log.warning+返回 []；TSV 解析容错（坏行跳过）
+# [ERROR_CONTRACT] CH 查询异常→log.warning+返回 []；TSV 解析容错（坏行跳过）；注册表缺失/畸形→AlertThresholdConfigError(ZA-SH-0052)
 # [TESTS] tests/zephyr/data/test_ch_parts_monitor.py
 # [A_module] module_id=MOD-L00-004-PM | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -34,16 +34,35 @@
 裁定真源：64号 §16.2 Q8——system.parts 单表 active parts > 100 告警，
 防 2026-07-09 parts 爆炸致 CH merge 满载崩溃事故重演。
 配套告警规则：config/alert_rules.yaml ALERT-CH-001（Grafana 面板/alerter 通知由遥测链路消费）。
+阈值真源：alert_threshold_registry.yaml THD-HEALTH-005（fail-closed 统读，2026-08-28 由硬编码改统读）。
 """
 
 from __future__ import annotations
 
 import logging
 from collections.abc import Callable
+from pathlib import Path
+from typing import Final
+
+from zephyr.shared.alerts.threshold_loader import load_alert_thresholds
 
 log = logging.getLogger(__name__)
 
-DEFAULT_PARTS_THRESHOLD = 100
+
+def _load_parts_threshold(registry_path: Path | None = None) -> int:
+    """从告警阈值注册表加载 parts 告警阈值（fail-closed；registry_path 为测试逃生门）。
+
+    64号 §16.2 Q8 统读：THD-HEALTH-005（裁定值 100）。
+    """
+    return load_alert_thresholds(
+        {"THD-HEALTH-005": "parts_threshold"},
+        registry_path=registry_path,
+        cast="int",
+    )["parts_threshold"]
+
+
+#: import 期 fail-closed 加载（注册表缺失/畸形 → import 即 raise，禁止码内第二真源兜底）
+DEFAULT_PARTS_THRESHOLD: Final[int] = _load_parts_threshold()
 
 # NO-BARE-SQL gate 豁免：_SQL_* 前缀常量（同 scheduler._SQL_FIND_PART 既有约定）
 _SQL_ACTIVE_PARTS = (

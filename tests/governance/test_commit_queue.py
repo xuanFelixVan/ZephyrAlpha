@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import json
 import os
+import sqlite3
 import threading
 import time
 from pathlib import Path
@@ -39,6 +40,7 @@ from pathlib import Path
 import pytest
 
 import scripts.commit_queue as cq
+import scripts.task_board as tb
 
 
 @pytest.fixture()
@@ -403,6 +405,106 @@ class TestDeadLetter:
         assert stats["dead"] == 1 and stats["done"] == 1
         dead = json.loads(next((queue_root / "dead").glob("q-*.json")).read_text(encoding="utf-8"))
         assert "RuntimeError" in dead["dead_reason"]
+
+
+# ---------------------------------------------------------------------------
+# 死信 → task_board 标签联动（66 号 §6.4，P1 2026-08-28 落地）
+# ---------------------------------------------------------------------------
+
+
+class TestDeadLetterTaskBoardLinkage:
+    """联动口径：队列项 meta.task_id 存在 → 死信时 task_board metadata_json.deadletter 打标；
+    任务不存在/已完成/板不可达/无 task_id → 跳过不阻断排空（宁漏不误）。"""
+
+    @pytest.fixture()
+    def board_db(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
+        db = tmp_path / "task_board.db"
+        monkeypatch.setenv("ZEPHYR_TASK_BOARD_DB", str(db))
+        return db
+
+    @staticmethod
+    def _create_task(title: str = "demo") -> str:
+        assert tb.main(["create", "--title", title, "--session", "AI-TEST"]) == 0
+        conn = sqlite3.connect(os.environ["ZEPHYR_TASK_BOARD_DB"])
+        try:
+            row = conn.execute(
+                "SELECT task_id FROM tasks ORDER BY created_at DESC, rowid DESC LIMIT 1"
+            ).fetchone()
+        finally:
+            conn.close()
+        return row[0]
+
+    @staticmethod
+    def _read_metadata(db: Path, task_id: str) -> dict:
+        conn = sqlite3.connect(str(db))
+        try:
+            row = conn.execute("SELECT metadata_json FROM tasks WHERE task_id=?", (task_id,)).fetchone()
+        finally:
+            conn.close()
+        return json.loads(row[0])
+
+    @staticmethod
+    def _fail_all(item: dict, root: Path) -> cq.LandingResult:
+        return cq.LandingResult(ok=False, reason="boom-模拟门禁失败")
+
+    def _enqueue_with_task(self, root: Path, task_id: str | None) -> dict:
+        options = cq.EnqueueOptions(meta_extra={"task_id": task_id} if task_id else None)
+        return cq.enqueue_item("AI-DL", "m", [("a.txt", b"1")], queue_root=root, options=options)
+
+    def test_dead_letter_tags_task_board(self, queue_root: Path, board_db: Path) -> None:
+        tid = self._create_task()
+        item = self._enqueue_with_task(queue_root, tid)
+        stats = cq.drain_queue(queue_root, landing=self._fail_all)
+        assert stats["dead"] == 1
+        tag = self._read_metadata(board_db, tid)["deadletter"]
+        assert tag["qid"] == item["qid"]
+        assert "boom-模拟门禁失败" in tag["reason"]
+        assert tag["owner"] == "AI-DL"
+        assert tag["tagged_at"]
+        # 事件留痕
+        conn = sqlite3.connect(str(board_db))
+        try:
+            ev = conn.execute(
+                "SELECT event_type, actor, payload_json FROM task_events WHERE task_id=? AND event_type='deadlettered'",
+                (tid,),
+            ).fetchone()
+        finally:
+            conn.close()
+        assert ev is not None and ev[1] == "commit_queue"
+        assert json.loads(ev[2])["qid"] == item["qid"]
+
+    def test_task_not_found_skips_without_blocking(self, queue_root: Path, board_db: Path) -> None:
+        """meta.task_id 指向不存在任务 → 打标跳过，drain 正常死信落盘。"""
+        self._enqueue_with_task(queue_root, "T-nonexistent")
+        stats = cq.drain_queue(queue_root, landing=self._fail_all)
+        assert stats["dead"] == 1
+        assert len(list((queue_root / "dead").glob("q-*.json"))) == 1
+
+    def test_completed_task_rejects_tag_without_blocking(self, queue_root: Path, board_db: Path) -> None:
+        tid = self._create_task()
+        assert tb.main(["claim", tid, "--session", "AI-TEST"]) == 0
+        assert tb.main(["complete", tid, "--session", "AI-TEST"]) == 0
+        self._enqueue_with_task(queue_root, tid)
+        stats = cq.drain_queue(queue_root, landing=self._fail_all)
+        assert stats["dead"] == 1
+        assert "deadletter" not in self._read_metadata(board_db, tid)
+
+    def test_no_task_id_no_linkage(self, queue_root: Path, board_db: Path) -> None:
+        """无 meta.task_id → 不联动（board DB 文件不被创建）。"""
+        self._enqueue_with_task(queue_root, None)
+        stats = cq.drain_queue(queue_root, landing=self._fail_all)
+        assert stats["dead"] == 1
+        assert not board_db.exists()
+
+    def test_board_unreachable_does_not_block_drain(self, queue_root: Path, monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+        """板路径不可写（父路径是文件）→ 联动异常吞掉，drain 不阻断。"""
+        blocker = tmp_path / "blocker"
+        blocker.write_text("x", encoding="utf-8")
+        monkeypatch.setenv("ZEPHYR_TASK_BOARD_DB", str(blocker / "task_board.db"))
+        self._enqueue_with_task(queue_root, "T-any")
+        stats = cq.drain_queue(queue_root, landing=self._fail_all)
+        assert stats["dead"] == 1
+        assert len(list((queue_root / "dead").glob("q-*.json"))) == 1
 
 
 # ---------------------------------------------------------------------------
