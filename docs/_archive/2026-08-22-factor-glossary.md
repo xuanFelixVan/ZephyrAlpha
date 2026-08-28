@@ -1,6 +1,8 @@
 ---
-ttl: task_bound
+ttl: permanent
 ---
+
+> **退役注记（2026-08-28，Owner 裁定）**：本文档全部科普内容（十大因子族四段式+总览表+组合正交性纪律）已全量迁入因子库真源 `docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml` 的 `factor_family_glossary` 段（v1.3.1）。自此科普口径真源=注册表，本文档退役归档，不再更新。
 
 > **结案报告（2026-08-24 AI-K3-T2-REVIEW 补审）**：文档性质=纯术语/科普口径参考（十大因子族四段式，非施工任务清单）｜总条目 10 因子族（+附录 1 组合/正交性纪律）｜待施工条目 0｜已落盘=文档类使命已完成（文档即交付物，全文 10 族 + 总览表 + 附录齐整）｜未施工 0｜结论：建议【保留】。依据：本文档的科普四段式口径（大白话赚钱逻辑/A股适用性）未迁入正式真源 factor_registry.yaml（注册表 schema 无帮助说明/科普字段，两者为"族级科普口径"与"条目级真源"互补关系非取代），且仍被 2026-08-20-frontend-dashboard-redesign.md 指定为因子库页"帮助说明"字段数据源与施工会话口径基准，删除将造成口径失锚。
 > 真源关系核验（实证）：factor_registry.yaml status=active，在册 157 条（liquidity 39 / technical 31 / momentum 29 / sentiment 23 / event 17 / intraday 16 / value 1 / quality 1；volatility、size 两类暂空），含 2026-08-24 ICBATCH 批新增 code-anchored 条目 FCT-INTRADAY-029/030（code_symbol=src/zephyr/factor/intraday_snapshot_factors.py::IntradayVwap/IntradayClose，IC 实测回填）；BTRUN_report §4 因子 IC 实测回填完成、T5_rereview_closure §2 确认"FCT 12 条核销+IC 回填 4 条实测入 factor_registry"。注册表侧真源运转正常，但仅覆盖条目级公式/IC/代码锚，不承接本文档的科普口径。

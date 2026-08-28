@@ -28,9 +28,9 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.3.0
+version: 1.3.1
 created: '2026-08-10'
-last_updated: '2026-08-15'
+last_updated: '2026-08-28'
 related_arch: '#ARCH-BREG-001'
 unique_key:
 - factor_id
@@ -143,6 +143,119 @@ entry_schema:
   evidence: str                # 回测证据 Evidence — IC/胜率等回测证据摘要，空串=未回测（后续条目内容填入时回填）
   code_symbol: str|null         # 代码符号锚点 Code Symbol — 算法实现的函数/类级锚点（格式 <relative_path>::<symbol>，如 src/zephyr/factor/momentum.py::calc_mom_20）；null=代码未落地（设计态，实现域真源暂为库）；代码落地后实现域真源移交代码，与 code_path 共同支撑库↔代码双向查找（#ARCH-BREG-002 分域真源裁定 2026-08-15）
   code_fingerprint: str|null    # 实现指纹 Code Fingerprint — 代码侧实现（参数/签名/AST）canonical hash 快照，由扫描器写入；库侧快照与代码重算不一致=漂移告警（门禁B reconciler 对账，告警不自动双写）；null=未计算
+
+# factor_family_glossary 段新增（2026-08-28，Owner 裁定）：十大因子族科普四段式自 docs/_working/2026-08-22-factor-glossary.md 全量迁入（原文退役归档 docs/_archive/）。
+# 用途：①前端因子库页"帮助说明"字段数据源（每个因子一句话让 Owner 看懂）；②施工会话写因子的口径基准（定义/赚钱逻辑/A股适用性以本段为准，防口径漂移）。
+factor_family_glossary:
+  source: 幻方量化《量化投资 18 问》因子科普手绘卡片，经项目语境重写（每条对齐 A股实证惯例与项目现有因子库口径）
+  format: 一句话定义 → 大白话赚钱逻辑 → 常见类型 → A股适用性要点
+  factor_definition: 用一组可量化数据，对股票未来涨跌的"预判信号"（幻方定义）；多因子组合=同时参考多个打分维度，提高预测稳定性
+  families:
+  - family_id: reversal
+    name_zh: 反转因子
+    name_en: Reversal
+    one_liner: 短期涨多的跌回去、跌多的弹回来
+    direction: 做空超跌反弹/高抛
+    ashare_effectiveness: ⭐⭐⭐⭐ 强（A股散户追涨杀跌重）
+    definition: 短期内涨幅过大的股票倾向于回落，跌幅过大的倾向于反弹——"涨多了要跌，跌多了要涨"
+    money_logic: A股散户爱追涨杀跌，把短期价格推过头。反转因子逆着这股情绪做——前期跌惨的票，恐慌盘出清后有人接，博均值回归那一段反弹
+    common_types: 短期反转（5日/20日涨跌幅取负）、超跌反弹（距 N 日新低幅度）、隔日反转（昨日涨跌今日反向）
+    ashare_notes: A股反转效应强于美股（散户占比高、追涨杀跌重），20 日反转是经典有效因子。要点：剔除 ST/退市风险票（跌是真跌不是错杀）；与流动性因子联用防接飞刀
+  - family_id: value
+    name_zh: 价值因子
+    name_en: Value
+    one_liner: 买便宜货（低估值）
+    direction: 做多低估
+    ashare_effectiveness: ⭐⭐⭐ 中（需防价值陷阱）
+    definition: 买入估值低于内在价值的股票（低 PE/PB/PS），等价值回归
+    money_logic: 市场短期是投票机、长期是称重机。便宜货被冷落时买入，等市场重新发现它的价值。赚"估值修复"的钱
+    common_types: PE（市盈率）/PB（市净率）/PS（市销率）/PCF（市现率）倒数，即 EP/BP/SP；股息率
+    ashare_notes: 长期有效但易陷价值陷阱——低估值可能是基本面恶化。要点：必须叠加质量过滤（盈利稳定/非周期顶部）；银行地产常年低估是结构非错杀，别当信号
+  - family_id: growth
+    name_zh: 成长因子
+    name_en: Growth
+    one_liner: 买业绩增速快的
+    direction: 做多高增
+    ashare_effectiveness: ⭐⭐⭐ 中（赛道股行情时强）
+    definition: 买入营收/利润高速增长的股票，赚成长兑现的钱
+    money_logic: 业绩持续高增的公司，股价随业绩水涨船高。赛道股行情里成长因子是主角（新能源/半导体高增阶段）
+    common_types: 营收增长率、净利润增长率、ROE 变化、预期增速上修（分析师一致预期变化）
+    ashare_notes: 强周期——成长风格占优时（流动性宽松+赛道景气）极强，价值风格占优时失效。要点：防"增速见顶"（增速拐点即杀估值）；需判断当前市场风格是否偏成长
+  - family_id: momentum
+    name_zh: 动量因子
+    name_en: Momentum
+    one_liner: 强者恒强、弱者恒弱
+    direction: 做多强势
+    ashare_effectiveness: ⭐⭐⭐ 中（A股动量周期偏短）
+    definition: 过去表现强的股票未来短期继续强——"强者恒强"
+    money_logic: 趋势有惯性。资金抱团、信息扩散需要时间，已启动的强势股短期内延续概率大。追涨的"理性版"
+    common_types: N 日收益率动量（剔除最近 1 周防反转）、52 周新高距离、相对强度（个股 vs 大盘/板块）
+    ashare_notes: A股动量周期比美股短——美股 12 月动量有效，A股更适合 1~3 月中短动量；且与反转因子在不同周期打架（短期反转、中期动量）。要点：高位动量易接盘，需配止损；板块动量强于个股动量（联动板块因子）
+  - family_id: volatility
+    name_zh: 波动率因子
+    name_en: Volatility / Low-Volatility Anomaly
+    one_liner: 低波动长期跑赢高波动
+    direction: 做多低波
+    ashare_effectiveness: ⭐⭐⭐ 中（防御配置用）
+    definition: 低波动股票长期风险调整收益反而跑赢高波动股票——"低波异象"
+    money_logic: 反直觉但实证扎实——高波动票多是投机炒作，暴涨暴跌后长期跑输；低波动票闷声走慢牛，复利效应下跑赢。赚"别人赌刺激、你求稳"的钱
+    common_types: 历史波动率（收益率标准差）倒数、最大回撤、beta 倒数、特质波动率（剔除市场后的个股波动）
+    ashare_notes: 防御配置价值高——震荡市/熊市显著占优，牛市跑输。要点：适合做压舱石（对应作战室 W5 宽基压舱石逻辑）；不追求进攻性，追求回撤小、睡得着
+  - family_id: liquidity
+    name_zh: 流动性因子
+    name_en: Liquidity
+    one_liner: 换手/成交活跃度溢价
+    direction: 看口径
+    ashare_effectiveness: ⭐⭐⭐⭐ 强（A股流动性溢价显著）
+    definition: 换手率/成交活跃度低的股票存在流动性溢价（长期收益补偿），但短期活跃票弹性大
+    money_logic: 两层——长期看，冷门低流动票因"不好卖"要求更高收益补偿（流动性溢价）；短期看，放量活跃票是资金关注焦点、弹性足。看你要赚哪层的钱
+    common_types: 换手率、成交额、Amihud 非流动性（涨跌幅/成交额）、量比
+    ashare_notes: A股流动性溢价显著（散户爱追活跃票，冷门票被低估）。要点：小资金可博流动性溢价（你买得了冷门票，机构买不进）；打板/短线则反向用——追放量活跃票（量比异动）
+  - family_id: sentiment
+    name_zh: 情绪因子
+    name_en: Sentiment
+    one_liner: 市场情绪过热反向、过冷正向
+    direction: 反向
+    ashare_effectiveness: ⭐⭐⭐⭐ 强（A股情绪驱动明显）
+    definition: 市场情绪过热时反向（减仓）、过冷时正向（抄底）——"别人贪婪我恐惧"
+    money_logic: 情绪是短期价格的最大推手，且总走极端。涨停潮/全网看多时往往见顶，跌停潮/无人问津时往往见底。逆情绪操作
+    common_types: 涨停家数/炸板率、连板高度、换手率异常、新开户数、融资余额变化、舆情情感分（新闻/股吧多空）
+    ashare_notes: A股情绪驱动极强（散户市+题材市）。直接对应项目情绪页——情绪温度计/发酵扩散仪表（A10）就是情绪因子的可视化。要点：情绪是择时因子非选股因子；高潮期"高开不追"（作战室预案逻辑）就是情绪因子的执行化
+  - family_id: money_flow
+    name_zh: 资金流因子
+    name_en: Money Flow
+    one_liner: 主力资金流入的票更强
+    direction: 做多流入
+    ashare_effectiveness: ⭐⭐⭐⭐ 强（主力行为可追踪）
+    definition: 主力资金净流入的股票，短期走势更强——跟着"聪明钱"走
+    money_logic: 主力（机构/游资/北向）资金量大、信息灵，它们的流向透露真实意图。主力持续流入的票，后市往往有戏。跟踪资金流向=搭主力的便车
+    common_types: 主力净流入（大单/超大单）、北向资金持股变化、龙虎榜席位资金、融资融券余额变化
+    ashare_notes: 主力行为在 A股可追踪性强（龙虎榜/北向披露）。直接对应项目 MOD-SIG-061 主线候选、复盘页龙虎榜卡（BFE-10/11）。要点：区分"真流入"（持续多日）vs"对倒假流入"（单日脉冲）；与板块因子联用（资金流入+板块共振=主线）
+  - family_id: sector
+    name_zh: 板块因子
+    name_en: Sector / Industry
+    one_liner: 所属板块强弱的带动效应
+    direction: 做多强板块
+    ashare_effectiveness: ⭐⭐⭐⭐⭐ 强（A股板块效应极强，六维之首）
+    definition: 个股所属板块的强弱，对个股有显著带动效应——"选对赛道比选对票更重要"
+    money_logic: A股板块效应极强——板块启动时鸡犬升天，板块退潮时龙头也扛不住。先看板块在哪条主线，再在主线里挑票。板块是个股的"大盘"
+    common_types: 板块动量（板块指数涨幅）、板块资金流、板块景气度（基本面/政策）、板块拥挤度（成交占比）
+    ashare_notes: 直接对应项目板块页梯队/主线候选（MOD-SIG-061）、作战室作战池（主线板块交集票）。要点：板块因子是"自上而下"入口——先定板块再定个股；退潮板块坚决回避（作战室"失败/退潮"分层 A9）
+  - family_id: order_book
+    name_zh: 盘口因子
+    name_en: Order Book / Microstructure
+    one_liner: 买卖盘口挂单透露的短期方向
+    direction: 做多买盘强
+    ashare_effectiveness: ⭐⭐ 弱-中（高频向，日频弱）
+    definition: 买卖盘口的挂单结构（买一卖一力量对比、大单挂单）透露短期价格方向
+    money_logic: 盘口是多空实时博弈的现场——买盘厚实（大买单托底）短期易涨，卖盘压顶（大卖单压制）短期易跌。高频/短线交易员的主战场
+    common_types: 买卖盘口不平衡度（bid/ask 量比）、大单净流入、撤单率、封单强度（涨停板封单额/流通盘）
+    ashare_notes: 这是高频因子——宪章 §4.5 B-017 明确不做 HFT，3 秒 Tick 用于信号触发/风控而非盘口博弈。要点：项目层面仅取封单强度用于打板监控（BFE-36）和 T+0 风控；不做微秒级盘口预测。频率边界与宪章一致
+  combination_discipline:
+    multi_factor: 单因子易失效，多因子分散风险——如同招聘看"成绩+竞赛+特长"多维。对应宪章 §3 约束四（策略三维解耦）：因子是"选股信号"维的输入，与组合权重、执行方式解耦
+    orthogonality: 同族因子信息冗余（如 5 日反转与 20 日反转高度相关），组合时需去重——对应因子库页"相似组聚类"（GAP-F-38）：同组只留代表因子
+    decay: 因子会随市场学习而失效（IC 半衰期）——需持续监控滚动 IC（因子库页 A8），跌破有效线（0.03）即降级/退役（对应 BFE-20 信号质量告警推送）
+    charter_alignment: 因子库建设走统一框架派（约束二）——多因子作为统一大模型的特征输入，非各自为战的独立策略；新因子上线受 B-007（人工审批）/B-009（禁过拟合）硬边界约束
 
 factors:
 - factor_id: "FCT-INTRADAY-015"
