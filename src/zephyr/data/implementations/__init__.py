@@ -12,6 +12,14 @@ from typing import Final
 
 from .akshare_provider import AkshareIngestProvider
 from .miniqmt_provider import MiniQmtIngestProvider
+from zephyr.data.implementations.crypto_profile_provider import CryptoProfileProvider
 from zephyr.data.implementations.onchain_provider import OnchainProvider
+from zephyr.data.implementations.crypto_event_calendar import CryptoEventCalendarProvider
 
-__all__: Final = ["MiniQmtIngestProvider", "AkshareIngestProvider", "OnchainProvider"]
+__all__: Final = [
+    "MiniQmtIngestProvider",
+    "AkshareIngestProvider",
+    "OnchainProvider",
+    "CryptoEventCalendarProvider",
+    "CryptoProfileProvider",
+]
