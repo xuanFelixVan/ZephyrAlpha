@@ -1,5 +1,5 @@
 ---
-ttl: task_bound
+ttl: permanent
 ---
 
 # LLM 模型注册三处对账 + mcp.json↔tool_contracts.yaml 漂移裁定报告（18号清单 §5 / 10号文 §4 Phase 0.2+0.3）

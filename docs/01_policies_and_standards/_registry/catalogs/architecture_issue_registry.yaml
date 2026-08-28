@@ -17942,7 +17942,7 @@ entries:
     - 'src/zephyr/gov_enforcement/commit_gates/errcode_consistency_gate.py（新建——GATE-ERRCODE-CONSISTENCY，priority=131 硬阻断，调用 tests/governance/test_error_code_consistency.py 六断言为判定 SSoT 不重实现）'
     - 'tests/governance/commit_gates/test_errcode_consistency_gate.py（新建——构造/跳过/阻断/真仓放行 6 用例）'
     - 'docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml（注册 + total_gates 97→98）'
-    - '裁定书 docs/_working/reviews/2026-08-21-errorcode-stability-adjudication.md'
+    - '裁定书 docs/_archive/2026-08-21-errorcode-stability-adjudication.md'
   fix_phase: '已落地（2026-08-21 AI-RESIDUAL-001）：gate+测试+注册全齐；真仓放行实证+合成违规阻断实证（含下一可用号提示）6/6 绿；gate_registry.yaml 由 GATE-REGISTRY-SYNC reconciler（priority=830）post-commit 自动重生成不手改'
   status: decided
   confirmed_by_user: '2026-08-21 Owner 批准三项 human_gated 遗留执行+改号影响面调研裁定'
@@ -17970,7 +17970,7 @@ entries:
     - 'src/zephyr/regime/cross_sectional_features.py（新建，MOD-REGIME-007，testing 封顶）'
     - 'src/zephyr/regime/regime_feature_builder.py（可选开关增量，默认关零行为变化）'
     - 'tests/regime/test_cross_sectional_features.py（18 用例）'
-  fix_phase: '已落地（2026-08-22）：18 新用例全绿+tests/regime 577 passed 零新增红；A/B 报告 docs/_working/reviews/2026-08-22-alg01-cross-sectional-ab.md'
+  fix_phase: '已落地（2026-08-22）：18 新用例全绿+tests/regime 577 passed 零新增红；A/B 报告 docs/_archive/2026-08-22-alg01-cross-sectional-ab.md'
   status: decided
   confirmed_by_user: '2026-08-22 Owner 长城任务指令（阶段二施工）'
   related_rules: '2026-08 架构审查报告 §4.3 ALG-01; 92号清单 §5.1; 10号 regime_detector_spec; 宪章约束三（regime 生死线）'
@@ -18517,7 +18517,7 @@ entries:
     - 'src/zephyr/integration/llm_runtime_gateway.py（新建，testing 封顶）'
     - 'governance.db::llm_call_log（已建表+ts 索引）'
     - 'tests/model/test_llm_runtime_gateway.py（34 用例）'
-    - 'docs/_working/reports/2026-08-22-llm-registry-reconciliation.md（对账+Q8 裁定）'
+    - 'docs/_archive/2026-08-22-llm-registry-reconciliation.md（对账+Q8 裁定）'
   fix_phase: '已落地（2026-08-22）：34 新用例全绿+tests/model 766 passed 零新增红；GATE-20 零绕过实证'
   status: decided
   confirmed_by_user: '2026-08-22 Owner 长城任务指令'
@@ -20671,7 +20671,7 @@ entries:
     34/34 测试绿）；AI-CRYPTO-001 已提交内容 HEAD 验证完整（94号 v1.3.0/00索引 2.14.3 三行俱在/CAND-CRYPTO×10 总 607）。
     反模式登记："持有旧缓存/旧基线整文件覆写"列为协作反模式——热文件写前必须读新（safe_write_text CAS 或 lock_files），
     整文件 read-modify-write 脚本必须过 CAS。
-    2026-08-26 Owner 指令裁定（docs/_working/reports/2026-08-26-drift-writer-adjudication.md）：O1 派生写 claim 登记+写前读新
+    2026-08-26 Owner 指令裁定（docs/_archive/2026-08-26-drift-writer-adjudication.md）：O1 派生写 claim 登记+写前读新
     （auto-sync 豁免/离库两案否决）；O2 --allow-overlap 通道永久保留+热文件计量≥5 升级阻断；O3 热文件 10s 快扫 P0+
     WriteAudit P1+写时 CAS 拦截 P2 挂起；O4 quarantine 带外裸删除实证（定凶豁免），watchdog 自管 30 天 retention+ops_guard
     保护区；O5 queue 着落 base 新鲜度双闸 P2；O6 唯一告警写者（网关 scan_once 改 observe-only）+dedup 锁；
@@ -20679,7 +20679,7 @@ entries:
   impact:
     - 'src/zephyr/shared/io/file_utils.py（DEFAULT_HOT_FILES +1）'
     - 'docs/_working/reports/2026-08-26-drift-writer-forensics.md（取证报告）'
-    - 'docs/_working/reports/2026-08-26-drift-writer-adjudication.md（O1~O7 裁定书）'
+    - 'docs/_archive/2026-08-26-drift-writer-adjudication.md（O1~O7 裁定书）'
     - 'docs/01_policies_and_standards/rules/trae_085_stale_base_overwrite.yaml（反模式规则新建）'
   fix_phase: '裁定完成（2026-08-26，AI-DRIFT-001）；CAS 扩列+规则文件已落盘；近期三件（O6① observe-only/O4 retention+保护区/O2 计量）与中期三件（O1 claim 登记/O3 快扫+WriteAudit/O2 阻断上线）按裁定书 §8 路线派单'
   status: adjudicated
@@ -20859,7 +20859,7 @@ entries:
   severity: P1
   category: 治理流程
   adjudication: >-
-    Owner 指令调研裁定（docs/_working/reports/2026-08-27-authz-writeaudit-adjudication.md）。
+    Owner 指令调研裁定（docs/_archive/2026-08-27-authz-writeaudit-adjudication.md）。
     裁定A 授权面收窄：数据实证 ops_guard_delete.jsonl 39,642 条中 GATEWAY_ENV 授权删除零合法消费方
     （合法自动化删除全走 reconciler 声明制 39,134 条，上下文绑定不经环境继承）——故不建一次性令牌
     签发基础设施（为零需求建机制违反 YAGNI），改采 A1 删除域语义剥离（_is_authorized 删除判定只认
@@ -20875,7 +20875,7 @@ entries:
     git restore 判例恢复链闭环）。业界对标：OpenAI 五槽位/Claude Code OS 沙盒/OWASP Agentic
     per-task token/IETF WIMSE/Windows 归因技术矩阵/量化业 WORM+SoD。
   impact:
-    - 'docs/_working/reports/2026-08-27-authz-writeaudit-adjudication.md（调研裁定书）'
+    - 'docs/_archive/2026-08-27-authz-writeaudit-adjudication.md（调研裁定书）'
     - '批1：scripts/ops_guard.py（_is_delete_authorized 语义剥离+sanitized_spawn_env）+reconcile_runner/session_worktree 三处派生点+tests/governance/test_ops_guard_red_team.py 10 新测（f2fd5056）'
     - '批2：write_audit_daemon.py+test（17 测）+worktree_drift_watchdog B2 联动+collect_write_audit_4663.py+test（7 测）+enable_write_audit_sacls.ps1（Owner 管理员一次性）'
   fix_phase: '批1 已落地（f2fd5056）；批2 已落地（06a36b5f，守护在线 pid 实证）；B3 已实机打通（6362d6a5：auditpol GUID 化+SeSecurityPrivilege+4663 十三槽位修正，冒烟写删精确归因落盘 user/pid/进程名/操作分明）；A3 观测收尾翻硬拦（2026-08-27：观测窗 would_block_if_narrowed 零命中+历史 39,642 条零合法消费方，GATEWAY_ENV 永久退出删除域，NARROWED 开关退役，135 全绿）——裁定五残留两项全量闭环'
@@ -20903,7 +20903,7 @@ entries:
   severity: P1
   category: 治理基建
   adjudication: >-
-    2026-08-28 裁定书（docs/_working/2026-08-28-b007-leftover-adjudication.md §3+§3.4）：P0 确立的
+    2026-08-28 裁定书（docs/_archive/2026-08-28-b007-leftover-adjudication.md §3+§3.4）：P0 确立的
     "机械推导封顶 stable，production 唯人工 transition"不变量只布防了重生成器一条通道，post-commit
     reconciler 链两条漏守 + 生成器两条缺口——①sync_yaml_to_depgraph 双 sync 函数 UPDATE 无条件回写
     stable（GATE-YAML-SYNC 触发，4 聚合节点 production→stable 两度翻转真凶）；②apply_depgraph

@@ -1,5 +1,5 @@
 ---
-ttl: task_bound
+ttl: permanent
 ---
 
 # AI-NIGHT-001 阶段2 — 端到端红蓝对抗测试报告（数据→信号→组合→执行→风控）

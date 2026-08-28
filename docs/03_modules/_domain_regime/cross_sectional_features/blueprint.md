@@ -50,7 +50,7 @@ regime 特征集的横截面结构补强：既有 6 特征全部由市场代理�
 
 ## 5. A/B 实证结论（2026-08-22）
 
-真实 kline_daily（2024-01~2026-06，601 交易日）两臂 walk-forward regime 判定高度一致（schedule Pearson 0.9999，|Δ|均值 0.0007）——边际影响小，开关维持默认关，仅作诊断维度观察。报告：docs/_working/reviews/2026-08-22-alg01-cross-sectional-ab.md。
+真实 kline_daily（2024-01~2026-06，601 交易日）两臂 walk-forward regime 判定高度一致（schedule Pearson 0.9999，|Δ|均值 0.0007）——边际影响小，开关维持默认关，仅作诊断维度观察。报告：docs/_archive/2026-08-22-alg01-cross-sectional-ab.md。
 
 ## 6. 边界
 

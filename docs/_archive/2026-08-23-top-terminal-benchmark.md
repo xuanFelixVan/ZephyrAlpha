@@ -1,5 +1,5 @@
 ---
-ttl: task_bound
+ttl: permanent
 ---
 
 > **文档元信息**（_working 临时区豁免规范）：doc_type=research_notes · owner=ZephyrAlpha-Owner · status=active · version=0.5.0 · date=2026-08-25 · topic=top_terminal_benchmark。

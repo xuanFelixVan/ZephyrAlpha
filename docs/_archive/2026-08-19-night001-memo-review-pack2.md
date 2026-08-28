@@ -1,5 +1,5 @@
 ---
-ttl: task_bound
+ttl: permanent
 ---
 
 # design_memos 审查·分包2（29-37/40-43/50/51 共 15 篇）

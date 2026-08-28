@@ -1,5 +1,5 @@
 ---
-ttl: task_bound
+ttl: permanent
 ---
 
 # AI-NIGHT-001 阶段1 收尾核查：#199/#200/#201 消费侧实证与裁定建议

@@ -1,5 +1,5 @@
 ---
-ttl: task_bound
+ttl: permanent
 ---
 
 # ALG-01 横截面结构特征 A/B 对比报告

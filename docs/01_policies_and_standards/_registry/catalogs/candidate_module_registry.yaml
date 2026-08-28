@@ -6374,7 +6374,7 @@ entries:
   created_at: '2026-08-16'
   last_reviewed_at: '2026-08-16'
   promoted_to: ""
-  source_draft: "AI-TDEBT-001 测试债清偿 #ARCH-096 裁定书（docs/_working/audit/architecture-reviews/2026-08-16-test-debt-leftover-adjudication.md）"
+  source_draft: "AI-TDEBT-001 测试债清偿 #ARCH-096 裁定书（docs/_archive/2026-08-16-test-debt-leftover-adjudication.md）"
   source_section: "§ARCH-096 skill 内容库恢复或退役"
   original_id: "ARCH-096"
   estimated_complexity: M
@@ -6395,7 +6395,7 @@ entries:
 
   # ----------------------------------------------------------
   # CAND-AUTONOMYCORE-002: FHS 引擎实现（candidate，2026-08-16 双轮审查深挖④裁定）
-  # 来源: docs/_working/reviews/2026-08-16-dual-review-adjudication.md §三 D1 / §六 CAND 登记
+  # 来源: docs/_archive/2026-08-16-dual-review-adjudication.md §三 D1 / §六 CAND 登记
   # ----------------------------------------------------------
 - id: CAND-AUTONOMYCORE-002
   name: "FHS 引擎 / Filtered Historical Simulation（GARCH 残差重采样 VaR）"
@@ -6450,7 +6450,7 @@ entries:
   created_at: '2026-08-16'
   last_reviewed_at: '2026-08-18'
   promoted_to: "MOD-RK-26 fhs_engine（src/zephyr/risk/core/fhs_engine.py，2026-08-18 AI-FHS-001 MVP 施工，#ARCH-121）"
-  source_draft: "双轮审查差异比对与裁定书（docs/_working/reviews/2026-08-16-dual-review-adjudication.md）"
+  source_draft: "双轮审查差异比对与裁定书（docs/_archive/2026-08-16-dual-review-adjudication.md）"
   source_section: "§三 深挖④ / §六 CAND 登记"
   original_id: ""
   estimated_complexity: M
@@ -6471,7 +6471,7 @@ entries:
 
   # ----------------------------------------------------------
   # CAND-WORKTREE-001: 退役脏工作区强制 patch 存证 + 派生活水三分类器（candidate，裁定书 Z1+Z2 2026-08-16）
-  # 来源: 140 外来 WIP 调查裁定书 §4.4（docs/_working/audit/architecture-reviews/2026-08-16-test-debt-leftover-adjudication.md）
+  # 来源: 140 外来 WIP 调查裁定书 §4.4（docs/_archive/2026-08-16-test-debt-leftover-adjudication.md）
   # ----------------------------------------------------------
 - id: CAND-WORKTREE-001
   name: "Worktree 退役存证与派生分类 / retire-evidence+derived-classifier"

@@ -1,5 +1,5 @@
 ---
-ttl: task_bound
+ttl: permanent
 title: Owner 遗留五项架构裁定书（DIGEST 批收尾）
 owner: ZephyrAlpha-Owner
 language: zh

@@ -1,5 +1,5 @@
 ---
-ttl: task_bound
+ttl: permanent
 title: drift 写入方事故 O1~O7 架构裁定书（100% AI 开发共享工作区写层治理）
 owner: ZephyrAlpha-Owner
 language: zh

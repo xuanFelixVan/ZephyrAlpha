@@ -1,5 +1,5 @@
 ---
-ttl: task_bound
+ttl: permanent
 ---
 
 > **文档元信息**（_working 临时区豁免规范：EXEMPT-ZONE-FM）：doc_type=construction_ledger · owner=ZephyrAlpha-Owner · status=active · version=1.0.0 · date=2026-08-23 · topic=construction_order_master（长城任务） · scope=全项目。

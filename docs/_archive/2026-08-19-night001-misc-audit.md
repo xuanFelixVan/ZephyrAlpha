@@ -1,5 +1,5 @@
 ---
-ttl: task_bound
+ttl: permanent
 ---
 
 # AI-NIGHT-001 顺手实证小包核查报告

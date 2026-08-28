@@ -1,5 +1,5 @@
 ---
-ttl: task_bound
+ttl: permanent
 ---
 
 # AI-NIGHT-001 夜班批·Owner 裁定事项 AI 调研裁定书（第十统筹，2026-08-20）

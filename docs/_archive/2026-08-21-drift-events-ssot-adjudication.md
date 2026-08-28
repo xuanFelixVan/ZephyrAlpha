@@ -1,5 +1,5 @@
 ---
-ttl: task_bound
+ttl: permanent
 ---
 
 # drift_events 唯一真源裁定书（#62 治本，2026-08-21 第十统筹）

@@ -1,5 +1,5 @@
 ---
-ttl: task_bound
+ttl: permanent
 ---
 
 # AI-NIGHT-001 阶段3 · design_memos 全量审查分包1（19 篇 / 20 文件）

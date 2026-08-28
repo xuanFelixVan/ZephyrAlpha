@@ -1,9 +1,9 @@
 ---
-ttl: task_bound
+ttl: permanent
 title: 测试债清偿遗留项调研与裁定书（#ARCH-093~097 + 关联项）
 owner: ZephyrAlpha-Owner
 language: zh
-status: active
+status: deprecated
 version: "1.0.0"
 date: 2026-08-16
 topic: arch_review_test_debt_leftover

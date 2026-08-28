@@ -1,5 +1,5 @@
 ---
-ttl: task_bound
+ttl: permanent
 task_id: B-007
 created: '2026-08-26'
 owner_approval: 'Owner 2026-08-26 裁定全量转正（AI 施工资源 09-03 到期，须在此前完成转正，后续只跑验证）'

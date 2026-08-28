@@ -1,5 +1,5 @@
 ---
-ttl: task_bound
+ttl: permanent
 title: 授权面收窄 + WriteAudit PID 级写删审计 调研裁定书（裁定五残留两项）
 owner: ZephyrAlpha-Owner
 language: zh
@@ -10,7 +10,7 @@ date: 2026-08-27
 
 # 授权面收窄 + WriteAudit 调研裁定书
 
-> 上游文档：docs/_working/reports/2026-08-27-mass-deletion-forensics.md（三起误删取证）、docs/_working/reports/2026-08-26-drift-writer-adjudication.md（#ARCH-264 O1~O7）、docs/_working/reports/2026-08-27-owner-leftover-adjudication.md（裁定五残留）
+> 上游文档：docs/_working/reports/2026-08-27-mass-deletion-forensics.md（三起误删取证）、docs/_archive/2026-08-26-drift-writer-adjudication.md（#ARCH-264 O1~O7）、docs/_archive/2026-08-27-owner-leftover-adjudication.md（裁定五残留）
 > 关联登记：#ARCH-277（三起误删闭环）、#ARCH-264（O3 WriteAudit 原计划）、#ARCH-257（wipe 事故判例）
 > 裁定人：应 Owner 指令，以客观架构师身份调研裁定；施工按本文路线派单
 

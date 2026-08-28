@@ -1,5 +1,5 @@
 ---
-ttl: task_bound
+ttl: permanent
 ---
 
 # B-007 遗留五项裁定书（2026-08-28）

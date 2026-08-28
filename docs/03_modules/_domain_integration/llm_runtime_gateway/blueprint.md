@@ -65,4 +65,4 @@ class QwenChat   # 备用通道轻量客户端（OpenAI 兼容端点，读 QWEN_
 
 ## 6. 测试
 
-tests/model/test_llm_runtime_gateway.py（34 用例）；对账报告 docs/_working/reports/2026-08-22-llm-registry-reconciliation.md（四源对账 + Q8 裁定 + 谷峰价 F3 待校准项）。
+tests/model/test_llm_runtime_gateway.py（34 用例）；对账报告 docs/_archive/2026-08-22-llm-registry-reconciliation.md（四源对账 + Q8 裁定 + 谷峰价 F3 待校准项）。

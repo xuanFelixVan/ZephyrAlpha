@@ -1,5 +1,5 @@
 ---
-ttl: task_bound
+ttl: permanent
 ---
 
 # trend_analyzer 回迁子裁定书（推翻 #18 F5，#62 §六 C 机制行落地，2026-08-21 专项批）

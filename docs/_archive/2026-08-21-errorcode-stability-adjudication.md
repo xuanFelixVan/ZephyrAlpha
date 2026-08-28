@@ -1,5 +1,5 @@
 ---
-ttl: task_bound
+ttl: permanent
 ---
 
 # 错误码改号影响面与稳定性战略裁定书（Owner 交办，2026-08-21）

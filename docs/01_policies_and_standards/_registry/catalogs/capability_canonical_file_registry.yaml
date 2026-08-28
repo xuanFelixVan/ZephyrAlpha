@@ -5012,7 +5012,7 @@ creation_tokens:
   token: auto-pre-expiry-backlog-roadmap-20260821
   created_by: AI-NIGHT-001
   capability: pre_expiry_backlog_roadmap
-- file: docs/_working/reviews/2026-08-21-trend-analyzer-ssot-adjudication.md
+- file: docs/_archive/2026-08-21-trend-analyzer-ssot-adjudication.md
   token: auto-trend-analyzer-ssot-adjudication-20260821
   created_by: AI-RESIDUAL-001
   capability: trend_analyzer_ssot_adjudication
@@ -5020,7 +5020,7 @@ creation_tokens:
   token: auto-fle-gates-activation-adjudication-20260821
   created_by: AI-RESIDUAL-001
   capability: fle_gates_activation_adjudication
-- file: docs/_working/reviews/2026-08-21-errorcode-stability-adjudication.md
+- file: docs/_archive/2026-08-21-errorcode-stability-adjudication.md
   token: auto-errorcode-stability-adjudication-20260821
   created_by: AI-RESIDUAL-001
   capability: errorcode_stability_adjudication
@@ -5032,7 +5032,7 @@ creation_tokens:
   token: auto-test-errcode-consistency-gate-20260821
   created_by: AI-RESIDUAL-001
   capability: errcode_consistency_gate
-- file: docs/_working/reviews/2026-08-21-drift-events-ssot-adjudication.md
+- file: docs/_archive/2026-08-21-drift-events-ssot-adjudication.md
   token: auto-drift-events-ssot-adjudication-20260821
   created_by: AI-NIGHT-001
   capability: drift_events_ssot_adjudication
@@ -7461,7 +7461,7 @@ creation_tokens:
   token: auto-risk-liquidity-crisis-manager-review-20260813
   created_by: AI-LIQ-001
   capability: liquidity_crisis_manager
-- file: docs/_working/audit/architecture-reviews/2026-08-16-test-debt-leftover-adjudication.md
+- file: docs/_archive/2026-08-16-test-debt-leftover-adjudication.md
   token: auto-gov-test-debt-leftover-adjudication-20260816
   created_by: AI-TDEBT-001
   capability: test_debt_adjudication
@@ -7756,7 +7756,7 @@ creation_tokens:
   token: auto-test-cross-sectional-features-20260822
   created_by: AI-P2-ALG01
   capability: regime_cross_sectional_features
-- file: docs/_working/reviews/2026-08-22-alg01-cross-sectional-ab.md
+- file: docs/_archive/2026-08-22-alg01-cross-sectional-ab.md
   token: auto-alg01-cross-sectional-ab-20260822
   created_by: AI-P2-ALG01
   capability: regime_cross_sectional_features
@@ -8124,7 +8124,7 @@ creation_tokens:
   token: auto-test-llm-runtime-gateway-20260822
   created_by: AI-P3-W2GW
   capability: llm_runtime_gateway
-- file: docs/_working/reports/2026-08-22-llm-registry-reconciliation.md
+- file: docs/_archive/2026-08-22-llm-registry-reconciliation.md
   token: auto-llm-registry-reconciliation-20260822
   created_by: AI-P3-W2GW
   capability: llm_runtime_gateway
@@ -8272,7 +8272,7 @@ creation_tokens:
   token: auto-model-digests-20260822
   created_by: AI-RESIDUAL-255C
   capability: l0_supply_chain_boot_verify
-- file: docs/_working/2026-08-23-construction-order-master.md
+- file: docs/_archive/2026-08-23-construction-order-master.md
   token: auto-construction-order-master-20260823
   created_by: AI-K3-GW-0823
   capability: construction_order_master

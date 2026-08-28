@@ -1,8 +1,7 @@
 ---
 title: 量化核心算法正确性审查报告（第一轮·Kimi K3）
 date: 2026-08-16
-doc_type: review_report
-ttl: task_bound
+ttl: permanent
 reviewer: "Kimi K3（coord-0815-gov3 统筹会话）"
 review_round: "第一轮（非盲审——审查者持有项目上下文）"
 completes_when: "Qwen3.8 Max 盲审二审完成后做差异比对裁定"

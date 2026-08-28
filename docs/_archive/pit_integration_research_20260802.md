@@ -1,5 +1,5 @@
 ---
-ttl: task_bound
+ttl: permanent
 ---
 
 # PIT 接线调研报告：财报数据修订处理与回测正确性

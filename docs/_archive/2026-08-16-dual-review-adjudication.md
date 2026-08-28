@@ -1,7 +1,6 @@
 ---
 title: 双轮审查差异比对与裁定书（Kimi K3 一审 × Qwen3.8-Max 盲审二审）
 date: 2026-08-16
-doc_type: adjudication
 ttl: permanent
 adjudicator: "第五统筹 coord-0815-gov3"
 ---

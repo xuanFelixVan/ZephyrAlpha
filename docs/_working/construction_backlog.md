@@ -9,7 +9,7 @@ ttl: task_bound
 > 本文件为施工顺序总账，完成一项勾一项；Owner 窗口项已显式标注。
 
 > **结案审查（2026-08-28 复核）**：未结案（A 阶段部分已落地，复选框未勾销）
-> - 已实证：BTRUN/DVERIFY 首批实测报告在 `.runtime/construction_20260823/reports/`（momentum_20d IC=-0.0399 首份实测范式；factor IC 回填）；B 阶段 Owner 窗口项已转 `2026-08-23-construction-order-master.md` 挂起登记。
+> - 已实证：BTRUN/DVERIFY 首批实测报告在 `.runtime/construction_20260823/reports/`（momentum_20d IC=-0.0399 首份实测范式；factor IC 回填）；B 阶段 Owner 窗口项已转 `docs/_archive/2026-08-23-construction-order-master.md` 挂起登记（2026-08-28 归档）。
 > - 注意：下列复选框均未勾，与实际进度脱节；勾销前须逐项 grep/查库实证。
 
 ---

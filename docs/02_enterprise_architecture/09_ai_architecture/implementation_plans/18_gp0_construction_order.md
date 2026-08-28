@@ -82,7 +82,7 @@ completes_when: "GP0 全部可施工项完工、测试两轮零问题、提交�
 
 ## 5. 波 2 工单（10 号 llm_runtime_gateway）
 
-- **Phase 0 纯治理三件**：①depgraph 设计态登记（统筹执行 apply_depgraph）；②三处模型注册对账基线：dump MOD-INF-039 运行时 dict+REG-ML-001 entries+llm_gateway._build_providers() 输出+model_pricing.yaml→对账清单落 docs/_working/reports/2026-08-22-llm-registry-reconciliation.md，不一致项逐条归属裁定；③mcp.json↔tool_contracts.yaml 漂移项裁定（4 个不一致 server 归属，10 号文 Q8）。
+- **Phase 0 纯治理三件**：①depgraph 设计态登记（统筹执行 apply_depgraph）；②三处模型注册对账基线：dump MOD-INF-039 运行时 dict+REG-ML-001 entries+llm_gateway._build_providers() 输出+model_pricing.yaml→对账清单落 docs/_archive/2026-08-22-llm-registry-reconciliation.md，不一致项逐条归属裁定；③mcp.json↔tool_contracts.yaml 漂移项裁定（4 个不一致 server 归属，10 号文 Q8）。
 - **最小网关 MVP**（E1 裁定）：新建 src/zephyr/integration/llm_runtime_gateway.py——单一 `infer(task_type, prompt, model=None, **kw) -> InferResult` 签名（InferResult 含 text/model_version/tokens_in/tokens_out/cost_yuan/latency_ms）；通道=DeepSeekChat（L3 主力）+QwenChat（备用，OpenAI 兼容端点，读 .env QWEN_*）+OllamaChat（L2 兜底）三通道优先级链；每次调用**登记落库**（governance.db 新表 llm_call_log：ts/task_type/model/provider/tokens/cost/latency/status——92号 D2 同族授权）供日终对账（调用次数×单价 vs 账单防超额，44号 §9.14 联动口径）；LSG 注入点=波 1 ④.1 产物（客户端统一注入后 gateway 天然过闸）；预算硬门不做（GP1），只做登记对账。
 - **验收**：10号文 §4 Phase 0 三项产物+gateway MVP 单测（mock 通道）+真 smoke（波 5）。
 
