@@ -338,6 +338,8 @@ Session 关门时 MUST 根目录审计：ls 根目录 → 逐项对照白名单 
 **核心**：AI 完成文件修改后 MUST 在 session 结束前 git commit。未提交的代码 = 不存在 = 会被 git reset/checkout 冲掉。
 
 > **GATE-COMMIT-GW 门禁**：全项目禁止裸 `git commit`。pre-commit hook 会阻断所有非 `--no-verify` 的 commit。所有 commit MUST 经 GitCommitGateway（CLI 入口 `python scripts/git_commit.py`）。`git_guard.py commit` 是裸透传会被阻断——勿用。
+>
+> **发起权（2026-08-28 Owner 授权）**：AI 可自主发起 commit，无需逐次请示——本条即 RULE-TWENTY「写完即提交」的直接执行，方式约束不变（GitCommitGateway 唯一入口、禁 `--no-verify`）。**四条边界**：① commit ≠ push——push 到远程仍需 Owner 明确指令；② 涉密文件（.env/credentials/密钥类）永不提交；③ 受保护路径（AGENTS.md/architecture_model//rules/）commit message 仍需 `[ARCH-APPROVAL:ISSUE_ID]`；④ 任务收尾/逻辑闭环时才 commit，禁止半截提交。
 
 ### 强制流程
 
