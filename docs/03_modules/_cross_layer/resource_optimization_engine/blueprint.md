@@ -85,8 +85,9 @@ build_status: deprecated
 | 7 | lazy_loader.py | §4 | 懒加载器 | 已实现 | — |
 | 8 | resource_optimization.yaml | §18 | 配置文件 | 已实现 | — |
 | 9 | gpu_monitor.py | §1.2-G9 | GPU 状态采集（nvidia-smi） | 已实现 | — |
-| 10 | ide_health_daemon.py | §1.2-G10 | IDE 幽灵窗口守护 + 任务残留进程清理 | 已实现 | — |
-| 11 | ide_health_service.py | §new-IDE | 常驻守护进程入口（IdeHealthDaemon + ResourceOptimizationEngine + nanny自恢复） | 已实现 | — |
+| 10 | ~~ide_health_daemon.py~~（2026-08-28 删除） | §1.2-G10 | 已并入 process_reaper.py（旧常驻守护模式违反 boot C1/C3，实证失效） | 已删除 | — |
+| 11 | ~~ide_health_service.py~~（2026-08-28 删除） | §new-IDE | 同上，one-shot 模式取代常驻守护 | 已删除 | — |
+| 11+ | process_reaper.py | §new-IDE | 残留进程清理器（one-shot，Task Scheduler 每 10min 直跑脚本；python 进程判定矩阵 + Trae 幽灵进程拓扑判据 + 3 轮确认状态机 + kill 前复查 + 轻导入隔离 + drift 指标） | 已实现 | — |
 | 12 | zombie_scanner.py | §new-IDE | 僵尸 Python 进程四级分类检测器（SUSPICIOUS/ABNORMAL/DANGEROUS auto-kill + 模式计数） | 已实现 | — |
 | 13 | speed_baseline_checker.py | §new-IDE | 脚本运行速度基线检测器（读取 script_manifest timeout 基线，对比活跃进程运行时，四级分类 SLOW/VERY_SLOW/CRITICAL_SLOW） | 已实现 | — |
 
@@ -161,7 +162,7 @@ build_status: deprecated
 | G7 | **自愈闭环**——资源异常自动检测→诊断→优化→验证 | 资源异常从检测到恢复 ≤60 秒，无需人工干预 |
 | G8 | **AI 可发现**——任何新 AI session 都能自动定位并使用资源优化能力 | 通过蓝图路由+技能注册+MCP工具三重发现，0 次人工指引 |
 | G9 | **GPU 监控**——nvidia-smi 采集 GPU 使用率/显存，纳入 MAPE-K 压力分级 | GPU >98% → EMERGENCY，>95% → CRITICAL，>85% → WARNING |
-| G10 | **IDE 幽灵窗口检测**——自动检测 MainWindowHandle=0 的 TRAE 窗口并 force kill | 幽灵窗口出现后 ≤30s 自动清理，零人工干预 |
+| G10 | **IDE 幽灵进程清理**——进程拓扑判据（Trae 子进程父死/PID 复用=嫌疑，main 永不判）+ 连续 3 轮确认 + kill 前复查 + 轻导入隔离（commit a82ac30a0a） | 真幽灵 ≤30min 自动清理；活进程结构性不可能误判（2026-08-28 误杀事故后废弃 MainWindowHandle/title WMI 观测模型：结构性错位+「活但卡」同构+WMI 超时+CH 故障导入锁卡死） |
 
 ### 1.3 不包含的目标
 

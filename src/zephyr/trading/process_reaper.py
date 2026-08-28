@@ -38,7 +38,7 @@
 1. 白名单 cmdline 正则命中         -> skip（永久服务）
 2. 父链含 Trae CN 进程             -> skip（IDE 子进程：jedi/MCP 等，IDE 负责回收）
 3. DANGEROUS：mem>10GB 或 子进程>50 -> kill（资源失控，不论年龄）
-4. cmdline 含 .runtime/ 路径 + 孤儿 -> kill（临时目录脚本无长命权利，sweep_runner 族精准命中）
+4. cmdline 含 .runtime/ 路径 + 孤儿 -> age>30min kill / 未超龄 report（sweep 族命中；detached 合法短任务留活路）
 5. 孤儿 + age>2h                   -> kill（创建者已死且超龄）
 6. 孤儿 + 30min<age<=2h            -> report（观察，下轮再判）
 7. 非孤儿 + age>6h + CPU<0.5%      -> kill（长命但空转，zombie_scanner 阈值修正版）
@@ -146,6 +146,12 @@ _IDLE_KILL_CPU_MAX = 0.5
 _IDLE_REPORT_AGE_S = 3600  # 非孤儿 age>1h 且 CPU<0.1% 报告
 _IDLE_REPORT_CPU_MAX = 0.1
 _KILL_CHILD_RECURSIVE = True  # kill 时级联杀子进程树（sweep 族连根拔，防残留再繁殖）
+# .runtime 孤儿杀年龄窗（2026-08-28 reconcile_worker 误杀实证）：detached spawn 的合法短任务
+# （git commit 后 GitCommitGateway 拉起的审计 worker，payload 固定 .runtime/reconcile_reports/）
+# 天生孤儿且分钟级生命周期——立即杀会误杀干活中的任务（实证 age=1min 即被杀，审计链路
+# 从未完整跑完，23 具 payload 遗体清理）。30min 窗给合法短任务留活路；超龄残留照杀；
+# 急性失控（循环派生/内存爆炸）仍由 DANGEROUS 判据（mem>10GB/children>50）即时兜底。
+_RUNTIME_ORPHAN_KILL_AGE_S = 1800
 
 # ============== 幽灵进程状态机（2026-08-28 终审三件套）==============
 _GHOST_SUSPECTS_FILE = REPO_ROOT / "data" / "runtime" / "ghost_suspects.json"
@@ -274,10 +280,15 @@ def classify_process(
         v.action = "kill"
         v.reason = f"dangerous:mem={mem_mb:.0f}MB,children={children}"
         return v
-    # .runtime/ 临时目录脚本 + 孤儿：立即杀（sweep_runner 族精准命中）
+    # .runtime/ 临时目录脚本 + 孤儿：超龄 30min 杀（sweep 族命中）；未超龄 report 观察
+    # （detached 合法短任务如 reconcile_worker 天生孤儿且分钟级，给活路——2026-08-28 误杀实证）
     if orphan and _RUNTIME_PATH_MARKER.search(cmdline):
-        v.action = "kill"
-        v.reason = f"runtime_dir_orphan:age={age_s / 60:.0f}min"
+        if age_s > _RUNTIME_ORPHAN_KILL_AGE_S:
+            v.action = "kill"
+            v.reason = f"runtime_dir_orphan:age={age_s / 60:.0f}min"
+        else:
+            v.action = "report"
+            v.reason = f"runtime_dir_orphan_watch:age={age_s / 60:.0f}min"
         return v
     # 孤儿分级
     if orphan:

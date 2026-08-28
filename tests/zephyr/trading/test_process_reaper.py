@@ -86,20 +86,48 @@ class TestDangerous:
 
 
 class TestRuntimeDirOrphan:
-    """sweep_runner 族精准命中：.runtime/ 路径 + 孤儿 = 立即杀（无年龄门槛）。"""
+    """sweep_runner 族命中：.runtime/ 路径 + 孤儿 + 超龄 30min 才杀（2026-08-28
+    reconcile_worker 误杀实证后从「立即杀」改为分级——detached 合法短任务天生孤儿且分钟级）。"""
 
-    def test_runtime_dir_orphan_killed_immediately(self):
+    def test_runtime_dir_orphan_aged_killed(self):
         v = _classify(
             cmdline=r"python .runtime\test_sweep\sweep_runner.py .runtime\test_sweep\manifest.txt",
             orphan=True,
-            age_s=60.0,  # 仅 1 分钟也杀
+            age_s=31 * 60.0,  # 超龄 30min 杀
         )
         assert v.action == "kill" and "runtime_dir_orphan" in v.reason
+
+    def test_runtime_dir_orphan_young_only_reported(self):
+        # 未超龄不杀（report 观察）——给 detached 合法短任务留活路
+        v = _classify(
+            cmdline=r"python .runtime\test_sweep\sweep_runner.py .runtime\test_sweep\manifest.txt",
+            orphan=True,
+            age_s=60.0,
+        )
+        assert v.action == "report" and "runtime_dir_orphan_watch" in v.reason
 
     def test_runtime_dir_non_orphan_not_killed(self):
         # 父活着的 .runtime 脚本（正在执行的合法短任务）不走此条，按正常规则判
         v = _classify(cmdline=r"python .runtime\test_sweep\sweep_runner.py", orphan=False, age_s=60.0)
         assert v.action == "skip"
+
+    def test_reconcile_worker_never_killed_young(self):
+        """2026-08-28 误杀回归：git commit 后 GitCommitGateway 拉起的审计 worker
+        （detached spawn 天生孤儿 + payload 在 .runtime/reconcile_reports/），
+        分钟级生命周期内绝不杀（实证 age=1min 即被杀、23 具 payload 遗体）。"""
+        v = _classify(
+            cmdline=r'"C:\...\python.exe" -m zephyr.governance.audit.reconcile_worker --payload D:\ZephyrAlpha\.runtime\reconcile_reports\reconcile_payload_abc123.json',
+            orphan=True,  # detached spawn 架构特征，非异常
+            age_s=60.0,
+        )
+        assert v.action == "report", "reconcile_worker 运行窗口内必须只观察不杀"
+        # 真卡死超龄的 worker 仍会被清（fail-safe 双向不失效）
+        v2 = _classify(
+            cmdline=r'"C:\...\python.exe" -m zephyr.governance.audit.reconcile_worker --payload D:\ZephyrAlpha\.runtime\reconcile_reports\reconcile_payload_abc123.json',
+            orphan=True,
+            age_s=45 * 60.0,
+        )
+        assert v2.action == "kill"
 
 
 class TestOrphanGrading:
@@ -145,12 +173,21 @@ class TestRealWorldFixtures:
     """2026-08-28 事故实录回归：确保历史肇事者必被杀、被保留者必不杀。"""
 
     def test_sweep_runner_killed(self):
+        # 事故急性特征=循环派生 60+ 进程 7.7GB：DANGEROUS 判据即时杀（无年龄窗）
         v = _classify(
             cmdline=r'"C:\...\python.exe" .runtime\test_sweep\sweep_runner.py .runtime\test_sweep\manifest_b2_A.txt',
             orphan=True,
             age_s=18 * 60.0,  # 事故时仅 18 分钟龄
+            children=51,
         )
-        assert v.action == "kill"
+        assert v.action == "kill" and "dangerous" in v.reason
+        # 单残留超龄路径：31min 走 runtime_dir_orphan 杀
+        v2 = _classify(
+            cmdline=r'"C:\...\python.exe" .runtime\test_sweep\sweep_runner.py .runtime\test_sweep\manifest_b2_A.txt',
+            orphan=True,
+            age_s=31 * 60.0,
+        )
+        assert v2.action == "kill" and "runtime_dir_orphan" in v2.reason
 
     def test_orphan_pytest_aged_killed(self):
         v = _classify(
