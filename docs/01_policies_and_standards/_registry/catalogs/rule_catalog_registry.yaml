@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-08-28T14:33:35Z'
+generated_at: '2026-08-28T16:39:21Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 221
+total_files: 222
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -1760,6 +1760,21 @@ files:
   tier: ''
   aliases: []
   section_count: 1
+- path: docs/01_policies_and_standards/sop/2026-08-22-emergency-runbook.md
+  module_id: ''
+  title: 保命轨 D-L1~D-L3 人工 Runbook
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/sop/construction_workflow_sop.md
   module_id: ''
   title: 07 域施工流程标准作业规程（SOP）——端到端 15 步施工闭环
@@ -2035,7 +2050,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.2.0
+  version: 1.3.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2350,7 +2365,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.3.0
+  version: 1.3.1
   rule_form: ''
   scope: ''
   stability: ''
