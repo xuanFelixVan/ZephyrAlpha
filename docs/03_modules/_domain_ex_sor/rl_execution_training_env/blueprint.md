@@ -24,7 +24,7 @@ responsibility_domain:
 
 > **module_id**: MOD-XS-008 | **域**: D_EX_SOR | **层**: L2 执行路由
 > **优先级**: P2 | **成熟度**: design（骨架） | **建设标记**: ②受限（GATE-XS08） | **设计标签**: XS-08
-> **SSoT**: depgraph MOD-XS-008 | **设计真源**: docs/_working/依赖图/09-D-EX-SOR-执行路由域.md §2.1 XS-08
+> **SSoT**: depgraph MOD-XS-008 | **设计真源**: docs/_archive/依赖图/09-D-EX-SOR-执行路由域.md §2.1 XS-08（2026-08-28 自 docs/_working/ 退役归档）
 > **代码**: src/zephyr/ex_sor/core/rl_exec_{contract,boundary,env}.py | **测试**: tests/ex_sor/test_rl_exec_env.py
 
 ## 1. 定位
