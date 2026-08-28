@@ -5,9 +5,9 @@ title: 数字货币量化扩展设计
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.3.1"
-date: 2026-08-26
-last_updated: 2026-08-26
+version: "1.3.3"
+date: 2026-08-28
+last_updated: 2026-08-28
 topic: crypto_quant_expansion
 scope: 07_trading_decision_architecture
 ---
@@ -16,7 +16,7 @@ scope: 07_trading_decision_architecture
 
 > 本文是"数字货币量化战线"的启动备忘：记录为什么现在开这条战线、30 域骨架哪些与 A股共用/哪些参数化/哪些新建、四个横切改造点、新建候选清单与施工波次。
 > 性质：混合型（决策备忘 + 施工计划）。模块级登记真源 = candidate_module_registry.yaml CAND-CRYPTO-001~010；域级全景真源 = docs/_working/依赖图/00-总览与索引.md（30 域 v7.0）。
-> 状态：active v1.1.0——§9 Q1-Q6 已 Owner 拍板（2026-08-26），W0 市场日历抽象已派单（docs/_working/dispatch/2026-08-26-crypto-w0-market-calendar-order.md）。
+> 状态：active v1.3.3——§9 Q1-Q6 已 Owner 拍板（2026-08-26），W0 市场日历抽象已派单并完工（CAND-CRYPTO-001 promoted），W1 OKX 行情 provider 已完工（CAND-CRYPTO-002 promoted），W2 交易规则参数化已完工（CAND-CRYPTO-006 promoted）。
 
 ## 1. 背景与定位
 
@@ -112,6 +112,7 @@ scope: 07_trading_decision_architecture
 - A股规则：board_lot（整手 100 股）、price_cage（价格笼子/涨跌停 ±10%/20%）。
 - 币规则：step_size（最小下单量步进）/tick_size（最小报价单位）按交易对各异；无涨跌停（部分交易所有短时价格保护带）。
 - 裁定：ex_core 规则引擎改为规则集可插拔——每市场一份规则包，订单校验时按标的所属市场加载。登记：CAND-CRYPTO-006，P0。
+- 施工：**W2 已完成（2026-08-28，[GW:AI-CAL-001]）**——src/zephyr/ex_core/rules/ 包落地（TradingRulePack 接口 + AshareRulePack 委托 board_lot/price_cage 真源 + CryptoRulePack 骨架 + get_trading_rule_pack 工厂）；PreExecutionChecker market_calendar 注入式改造（#262，默认 ASHareCalendar 零行为变化）；37 测试两轮全绿+1576 受影响面零回归。depgraph 设计态 node_id=10865682。
 
 ### 4.4 杠杆与资金费率（Phase 2，永续合约）
 
@@ -297,3 +298,4 @@ Phase 2  CAND-CRYPTO-003/004/008        ← 永续合约 + 链上增强
 | 2026-08-26 | 1.3.0 | **市场归属标注体系（§4 四→五横切改造点）**：新增 §4.5 market scope 三道闸——①物理闸（市场后缀包 signal_ashare↔signal_crypto+connectors/adapters/rules 子目录，002/005/006 sub_layer 已预埋）②数据闸（universe/benchmark/cost_model/risk_limit/strategy/factor/regime_cycle/event_calendar 八表分市场实例必带 `market: ashare|crypto` 字段，无字段=共用）③治理闸（depgraph 节点/creation_token 带 market 标签+CAND 族前缀+门禁按标的市场加载）；裁定"默认共用零标注、只分市场构件贴标签"（防噪音）；依赖全景矩阵保持不变，§3 复用矩阵=市场分片标注文档真源（防双真源）；CAND-CRYPTO-007 tech_notes 联动 market 字段口径 | Owner 三问驱动（AI 能否分清 A股/币圈/共用、会不会搞混、依赖全景是否贴标签）：同名不同市场构件的错配事故（A股规则校验币订单）须在设计层防死 |
 | 2026-08-26 | 1.3.1 | **W0 市场日历抽象施工完成**（CAND-CRYPTO-001 晋升，commit 69e5dc9f [GW:AI-CAL-001]）：§4.1 补施工行——src/zephyr/data/calendar/ 包（接口+A股收编+币7×24+4h+工厂）+scheduler/fusion/pit_query 注入式改造+回测时间轴零改造声明；新测试 26 例+受影响面 130 例零回归；盘点报告+架构评审落盘；depgraph 设计态 node_id=10720640 | W0 派单闭环（94号 §6 波次第一步）；A股零行为变化硬门槛达成（默认 None≡现状逐字节一致） |
 | 2026-08-28 | 1.3.2 | **W1 OKX 行情 Provider 施工完成**（CAND-CRYPTO-002，commit 47f3814c [GW:AI-CAL-001]）：src/zephyr/data/implementations/okx_provider.py（公开 REST 端点 /candles+/history-candles，分页 300 条/页，限频 10/s，bar 映射 1d/4h/1h）+19 测试两轮全绿+147 受影响面零回归；depgraph 设计态 node_id=10865681；架构评审 6/6 PASS；OKX API 密钥已配置（secret_registry 登记，公开端点无需签名）；克制范围=仅 REST K 线补数，WS 长连接归 009 传输层 | W1 波次第一步：币可"看"（数据进 WAL→CH 管道）；Q1/Q4 拍板后首个数据接入模块 |
+| 2026-08-28 | 1.3.3 | **W2 交易规则参数化施工完成**（CAND-CRYPTO-006 + #262 PreExecutionChecker 注入式改造，[GW:AI-CAL-001]）：src/zephyr/ex_core/rules/ 包落地（TradingRulePack 接口 + AshareRulePack 委托 board_lot/price_cage 真源 + CryptoRulePack 骨架 + get_trading_rule_pack 工厂）+PreExecutionChecker market_calendar 注入（默认 ASHareCalendar 零行为变化）；37 测试两轮全绿+1576 受影响面零回归；depgraph 设计态 node_id=10865682；A股零行为变化硬门槛达成（A股规则包=真源委托收编） | W2 波次：币可"交易"前置（规则包可插拔）；ex_core 空窗合并施工 #262 |

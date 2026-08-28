@@ -19145,14 +19145,14 @@ entries:
   contracts_to_consume: []
   prerequisites: []
   design_admission:
-    q1_implemented: {result: false, equivalent_nodes: [], evidence: "board_lot/price_cage 为 A股硬编码规则（2026-08-26 盘点），无规则包抽象"}
+    q1_implemented: {result: true, equivalent_nodes: [], evidence: "src/zephyr/ex_core/rules/ 已落（base/ashare/crypto 三包+工厂），A股规则委托 board_lot/price_cage 真源零行为变化；PreExecutionChecker market_calendar 注入式改造完成（#262），37 测试两轮全绿+1576 受影响面零回归（2026-08-28 W2 施工）"}
     blocking_question: null
-    result: candidate
-  status: candidate
+    result: promoted
+  status: promoted
   priority: P0
   created_at: '2026-08-26'
-  last_reviewed_at: '2026-08-26'
-  promoted_to: ""
+  last_reviewed_at: '2026-08-28'
+  promoted_to: "src/zephyr/ex_core/rules/"
   source_draft: "94_crypto_quant_expansion.md"
   source_section: "§4.3 交易规则可插拔"
   original_id: ""
@@ -19168,7 +19168,7 @@ entries:
   blocked_by: ["CAND-CRYPTO-001"]
   next_review_date: '2027-08-26'
   review_frequency: yearly
-  last_review_outcome: "candidate 登记（2026-08-26）：W2 波次，001 落地后晋升"
+  last_review_outcome: "promoted（2026-08-28）：W2 施工闭环——ex_core/rules/ 规则包抽象+ASHare/Crypto 双包+PreExecutionChecker 日历注入（#262），37 测试两轮全绿+1576 受影响面零回归"
   acquisition_method: self_build
   acquisition_source: ""
 
