@@ -5,7 +5,7 @@ title: 数字货币量化扩展设计
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.3.4"
+version: "1.4.0"
 date: 2026-08-28
 last_updated: 2026-08-28
 topic: crypto_quant_expansion
@@ -20,8 +20,8 @@ scope: 07_trading_decision_architecture
 > **未做+原因**：①CAND-CRYPTO-007 条目仍 candidate（三件套实例已登记，翻 promoted 尾巴待做）；②#261 日历扩展消费点注入改造 20+ 文件排后续波次；③CAND-CRYPTO-003/004/008/009/010 未施工（设计内 W4+ 波次，依赖 Cloudflare 账户/API key 等外部条件）。
 
 > 本文是"数字货币量化战线"的启动备忘：记录为什么现在开这条战线、30 域骨架哪些与 A股共用/哪些参数化/哪些新建、四个横切改造点、新建候选清单与施工波次。
-> 性质：混合型（决策备忘 + 施工计划）。模块级登记真源 = candidate_module_registry.yaml CAND-CRYPTO-001~010；域级全景真源 = docs/_working/依赖图/00-总览与索引.md（30 域 v7.0）。
-> 状态：active v1.3.4——§9 Q1-Q6 已 Owner 拍板（2026-08-26），W0 市场日历抽象已完工（CAND-CRYPTO-001 promoted），W1 OKX 行情 provider 已完工（CAND-CRYPTO-002 promoted），W2 交易规则参数化已完工（CAND-CRYPTO-006 promoted），W3 执行适配器已完工（CAND-CRYPTO-005 promoted）。
+> 性质：混合型（决策备忘 + 施工计划）。模块级登记真源 = candidate_module_registry.yaml CAND-CRYPTO-001~010；域级全景真源 = PostgreSQL depgraph + docs/02_enterprise_architecture/02_domain_architecture_docs/domain_index.md（原 docs/_working/依赖图/00-总览与索引.md 30 域 v7.0 已于 2026-08-28 退役归档至 docs/_archive/依赖图/00-总览与索引.md）。
+> 状态：active v1.4.0——§9 Q1-Q6 已 Owner 拍板（2026-08-26），W0~W3 全部完工（CAND-CRYPTO-001/002/005/006 promoted），Phase 2 候选 003/004/008/009/010 代码已落盘（candidate 门禁态，trigger 条件满足后晋升）。
 
 ## 1. 背景与定位
 
@@ -46,7 +46,7 @@ scope: 07_trading_decision_architecture
 
 ## 2. 现状盘点
 
-- 域级全景真源：[依赖图 00-总览与索引](../../_working/依赖图/00-总览与索引.md)（30 域 + 30×30 依赖矩阵 + 价值链主线 DAT→FAC→SIG→PC→PA→SELL→POS→XC→RPT）。
+- 域级全景真源：PostgreSQL depgraph + `docs/02_enterprise_architecture/02_domain_architecture_docs/domain_index.md`（30 域 + 30×30 依赖矩阵 + 价值链主线 DAT→FAC→SIG→PC→PA→SELL→POS→XC→RPT）；原 `docs/_working/依赖图/00-总览与索引.md` 已于 2026-08-28 退役归档至 `docs/_archive/依赖图/00-总览与索引.md`。
 - A股侧已落地的可复用资产：技术指标体系（[16_technical_indicator_build_plan](16_technical_indicator_build_plan.md)，9 周期 OHLCV）、多策略并发架构（[30_multi_strategy_concurrency](30_multi_strategy_concurrency.md)，独立账本+firm 聚合）、风控三模块 production（drawdown/var/kill_switch）、执行对接范式（[40_execution_broker](40_execution_broker.md)）、18 业务注册表机制（[62_business_registry_construction](62_business_registry_construction.md)）。
 - 候选库查重：2026-08-26 对 candidate_module_registry.yaml 全量检索"数字货币/加密货币/crypto/BTC/永续/资金费/CCXT/币安"零命中——无重复登记风险，CRYPTO 族为全新前缀。
 - 代码侧盘点（2026-08-26 循环审查 R1）：src/zephyr 无 crypto/交易所行情 WS 客户端/CCXT 任何痕迹（仅前端组件与协议层 6 处 websocket 字样，非行情接入）——CAND-CRYPTO-002/005 属全新建设，条目 q1 证据成立；日历消费点预侦察 25 文件命中（scheduler/multi_timeframe_fusion/auto_backfiller/backfill_checker/calendar_position_constraint/三 provider/plan_engine 等），W0 派单消费点盘点的初始清单。
@@ -279,7 +279,7 @@ Phase 2  CAND-CRYPTO-003/004/008        ← 永续合约 + 链上增强
 
 ## 10. 引用
 
-- [依赖图 00-总览与索引](../../_working/依赖图/00-总览与索引.md)（30 域全景与依赖矩阵真源）
+- 依赖图 00-总览与索引（30 域全景与依赖矩阵）——已退役归档：`docs/_archive/依赖图/00-总览与索引.md`；现行真源 = PostgreSQL depgraph + `docs/02_enterprise_architecture/02_domain_architecture_docs/domain_index.md`
 - [16_technical_indicator_build_plan](16_technical_indicator_build_plan.md)（技术指标体系，OHLCV 资产无关依据）
 - [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md)（独立账本体系——多市场扩展的账本基础）
 - [40_execution_broker](40_execution_broker.md)（执行对接范式：回执确认/疑似丢单重试等教训沿用）
@@ -305,3 +305,4 @@ Phase 2  CAND-CRYPTO-003/004/008        ← 永续合约 + 链上增强
 | 2026-08-28 | 1.3.2 | **W1 OKX 行情 Provider 施工完成**（CAND-CRYPTO-002，commit 47f3814c [GW:AI-CAL-001]）：src/zephyr/data/implementations/okx_provider.py（公开 REST 端点 /candles+/history-candles，分页 300 条/页，限频 10/s，bar 映射 1d/4h/1h）+19 测试两轮全绿+147 受影响面零回归；depgraph 设计态 node_id=10865681；架构评审 6/6 PASS；OKX API 密钥已配置（secret_registry 登记，公开端点无需签名）；克制范围=仅 REST K 线补数，WS 长连接归 009 传输层 | W1 波次第一步：币可"看"（数据进 WAL→CH 管道）；Q1/Q4 拍板后首个数据接入模块 |
 | 2026-08-28 | 1.3.3 | **W2 交易规则参数化施工完成**（CAND-CRYPTO-006 + #262 PreExecutionChecker 注入式改造，[GW:AI-CAL-001]）：src/zephyr/ex_core/rules/ 包落地（TradingRulePack 接口 + AshareRulePack 委托 board_lot/price_cage 真源 + CryptoRulePack 骨架 + get_trading_rule_pack 工厂）+PreExecutionChecker market_calendar 注入（默认 ASHareCalendar 零行为变化）；37 测试两轮全绿+1576 受影响面零回归；depgraph 设计态 node_id=10865682；A股零行为变化硬门槛达成（A股规则包=真源委托收编） | W2 波次：币可"交易"前置（规则包可插拔）；ex_core 空窗合并施工 #262 |
 | 2026-08-28 | 1.3.4 | **W3 执行适配器施工完成**（CAND-CRYPTO-005，[GW:AI-CAL-001]）：src/zephyr/ex_core/adapters/okx_broker.py OKX V5 私有 REST API 对接（HMAC-SHA256 签名+幂等 INV-007+回执确认隔 1.5 秒查委托 3 次重试疑似丢单+CryptoRulePack 注入 step_size/tick_size 校验）；15 测试两轮全绿+1591 受影响面零回归；密钥走 secret_registry 体系（OKX_API_KEY/OKX_SECRET_KEY/OKX_PASSPHRASE 已登记） | W3 波次：币可"交易"（纸面→模拟→实盘小资金走 53 号 5 态 FSM）；OKX API 密钥已配置（secret_registry 登记） |
+| 2026-08-28 | 1.4.0 | **Phase 2 五候选代码落盘（candidate 门禁态，trigger 条件满足后晋升）**：CAND-CRYPTO-003 OKX 永续合约数据（okx_swap_provider.py 资金费率/OI/基差/标记价格，33 测试，trigger=spot_track_record>=3_months）；CAND-CRYPTO-004 链上数据骨架（onchain_provider.py Glassnode/CryptoQuant 免费端点+付费 key 注入预留，27 测试，trigger=paid_api_key_configured）；CAND-CRYPTO-008 杠杆风控模型（leverage_risk_model.py 爆仓价/维持保证金阶梯/资金费率成本，44 测试，trigger=CAND-CRYPTO-003 promoted）；CAND-CRYPTO-009 跨境双活骨架（cross_border_dual.py Cloudflare Tunnel 配置生成+热切换状态机三感知切备/60s 时间驱动切回，23 测试，trigger=cloudflare_account_configured）；CAND-CRYPTO-010 宏观情绪面板（sentiment_panel_provider.py 恐惧贪婪指数实采+BTC 占比实采+ETF/USDT 溢价骨架，24 测试，trigger=CAND-CRYPTO-007 promoted） | PR 会员到期前抢工：全部代码落盘+测试+登记，depgraph 保持 planned 设计态，trigger 条件满足后晋升 production；五模块 commit f90b609410/594dfe9fbd/12345a31f9/f55e41931d/e021682ae1 |
