@@ -6,7 +6,7 @@ ttl: task_bound
 >
 > **⚠ 保留依据（防删声明，任何清理会话必读）**：**建议【保留，且优先入 git 追踪】**。①本账是"前端有→后端没有"唯一总账（83 项逐项含页面锚点+后端证据+优先级），删除即丢失后端施工/供数派单真源——v1 被删后 Owner 已指令重建一次，不可再失；②反向账（backend-rich-frontend-blind-ledger.md）08-24 结案报告已明确两账互为唯一派单源；③磁盘备份=`.runtime/frontend-backend-gap-ledger-v2.2.0.md`（MD5 已核验），但备份不防主文件被删后的信息分叉，**根本保护=git 追踪**（_working 已有 62 份 md 在 git，本账不在 ignore 名单，可正常提交）。
 >
-> **文档元信息**（_working 临时区豁免规范，EXEMPT-ZONE-FM）：doc_type=coverage_ledger · owner=ZephyrAlpha-Owner · status=active · version=2.3.1 · date=2026-08-28 · topic=frontend_backend_gap_ledger · scope=07_trading_decision_architecture。
+> **文档元信息**（_working 临时区豁免规范，EXEMPT-ZONE-FM）：doc_type=coverage_ledger · owner=ZephyrAlpha-Owner · status=active · version=2.3.2 · date=2026-08-28 · topic=frontend_backend_gap_ledger · scope=07_trading_decision_architecture。
 >
 > **姊妹篇**：[2026-08-22-backend-rich-frontend-blind-ledger.md](2026-08-22-backend-rich-frontend-blind-ledger.md)（反向账：后端有→前端无，40 项 BFE 接线清单）。**分工**：本账管"前端有呈现/占位→后端缺真源"；反向账管"后端已在码→前端未呈现"。两端相接的条目互相标注（BFE-××/GAP-××），勿重复派单。
 >
@@ -84,7 +84,7 @@ ttl: task_bound
 | B23 | 架构全景三视图（数据流全景/决策流程全景/作战地图） | 架构全景页三视图切换位（注明"待 _zoomable_html 收编后点亮 I-2"） | 架构图生成器（zoomable_html）产物在码；视图收编+供数约定缺 | P2 |
 | B24 | W5 风险预算表+预算分配供数（演示值） | 作战室 W5 风险预算表+预算分配两卡 | MOD-RK 预算族 prod；#w5-budget-table 一行接口已埋（CWIRE 批）——整体通数待 I-2 | P1 |
 | B25 | 风控实时区通数（9 限额余量/VaR/回撤油门/流动性/尾部风险，mock 渲染注明） | 盘中实时页风控实时区（页内注明 risk_limits/var_calculator/drawdown_tracker/crowding_monitor/stop_loss 均 prod+BFE-26/30/31 三行接口位） | **dashboard_feeds 9 条 prod 包装接口已建（CWIRE 批实证）**——前端 mock 待通数（I-2 接通即摘 mock 注记） | **P0**（接口已埋，最接近闭合） |
-| B26 | 板块页数据族（大盘分时贡献度拆解+分钟级逆势上涨/下跌段资金流入/率先反弹/最抗跌四卡+盘后板块总结四分层） | 板块全景页贡献度拆解卡+四异动卡+盘后板块总结卡（演示） | 指数分时+板块分钟资金/强度计算管线缺；limit_up_down/money_flow 在库可作源 | P1 |
+| B26 | 板块页数据族（大盘分时贡献度拆解+分钟级逆势上涨/下跌段资金流入/率先反弹/最抗跌四卡+盘后板块总结四分层） | 板块全景页贡献度拆解卡+四异动卡+盘后板块总结卡（演示） | 指数分时+板块分钟资金/强度计算管线缺；limit_up_down/money_flow 在库可作源；**扩注 R15（2026-08-28）**：Owner 升级=**相对强度光谱地图**（分界=大盘实时涨速，分时双模式=跌切抗跌/涨切领涨，右红强左绿弱）+**抗跌榜/领涨榜**（次数排序优先=RS 持续性+冲高回落形态标注=过程>结果）+证据链卡（资金流入/RS/抗跌次数/形态四因子）——管线同族扩展：板块分钟 RS 序列/下跌段捕获率/抗跌次数统计；Wyckoff 吸筹 FSM prod 可借引擎（资产总账 R15） | P1 |
 | B27 | 涨跌停全景+全市场快照（演示值） | 情绪页涨跌停全景卡（limit_up_down 盘中实时注明）+市场宽度卡（realtime_snapshot 全市场快照 5 分钟注明） | limit_up_down/realtime_snapshot 表在库；盘中读取接口缺 | P1 |
 | B28 | 账户灯桥心跳供数（v3.7 全景总览 L3 账户折叠表灯列：绿/黄/红/灰灯全演示） | 全景总览 L2 两市场卡折叠 L3 账户表（实盘1🔴/实盘2🟡/模拟🟢；币安🟢/OKX⚪） | QMT 桥双分区文件在盘（E:\qmt_bridge_sim / E:\qmt_bridge，委托回执 1s+持仓导出 10s）；灯语义=QMT 桥心跳+回执+持仓时间戳聚合接口缺（I-2 已登记） | P1 |
 | B29 | 研评级页面供数（R7 设计令：评级上调下调/目标价/金股池） | 研评级独立页（资产总账 R7，页面待建）+个股档案研报卡「待接入」（D7 交叉） | research_rating.jsonl **146,519 行在盘**（data/research_rating/，含日聚合 daily_research_rating.jsonl）；供数接口缺 | P1 |
@@ -170,3 +170,4 @@ ttl: task_bound
 | 2026-08-25 | 2.2.0 | **循环核查收敛（68→83，R5+R6 连续两轮零新增）**：R1（待接入/接口位/占位/mock 探针）补 C19 写通道族（回测发起/任务重跑/审批/盘中下单+撤单）+C20 产业地图；R2（转真/待建设/样例/demo 对象探针）零新增；R3（待接入 77 处全映射）补 A14 个股阶段标注（BFE-05 候选）+B23 架构三视图+C21 实验门控族（DSR/PBO+meta-labeling）+D15 扩注 margin_monitor；R4（全卡标题结构性穷举 187 卡）补 10 项——A15 W3 竞价观察哨（auction_snapshot/auction_book 在库）/A16 盘中 Regime 结论（regime_detector prod）/A17 极端预警明细（BFE-23）/A18 新闻情绪聚合（sentiment_aggregator）/A19 因子健康（D_SIGQC prod）/B24 W5 风险预算/B25 风控实时通数（CWIRE 9 接口已埋，列 P0）/B26 板块页数据族/B27 涨跌停+全市场快照+C22 W4 多空辩论（agent_debate 缺口⑧）；R5（尾部区段精读）零新增；R6（折叠子卡+板块详情 8 维度+onclick 演示按钮）零新增（B15 扩注板块详情 8 维度）——**R5+R6 连续零新增，按 Owner 指令收敛**；终态：A 19/B 27/C 22/D 15 = 83 项 | Owner 指令：循环检查直到连续两次检查不出任何缺陷为止 |
 | 2026-08-28 | 2.3.0 | **R7 批（v2.9~v3.7 原型复扫补登 13 项，83→96）**：v2.2.0 扫描基线=v2.8 原型（28 页），此后 v2.9 个股行情/v3.0 币圈 5 页/v3.6 数据总览+IA 重构/v3.7 全景重构的新增演示与占位内容未登记，本批补齐——B 类+3（B28 账户灯桥心跳/B29 研评级供数/B30 数据组页面供数族）、C 类+6（C23 币圈账户持仓管道/**C24 时序分段状态机 P0/C25 明日推演联动 P0**（R13 设计令）/C26 算法实时校验/C27 健康告警聚合（R12 设计令）/C28 币圈策略回测档案转真）、D 类+4（D16 币圈衍生品数据族/D17 全球板块行情/D18 币版事件源/D19 亚洲指数与商品源）；**C20 扩注升 P0**（产业链图谱后端 ig_* 七表已竣工，实质转 A 类接线件，资产总账 DAL-C01 实证）；C24~C27 为 R12/R13 设计令预定件（前端待建，依据=2026-08-28-dashboard-asset-ledger.md 需求族）；终态：A 19/B 30/C 28/D 19 = **96 项** | Owner 指令：检查现有页面哪些需要新建模块，登记正向账 |
 | 2026-08-28 | 2.3.1 | **R14 联动补登（96→97）**：B31 大盘分析页供数族（涨跌分档分布直方图+封板率/炸板率/开板数+涨跌停板块归属+四指数状态）——盘中实时改名「大盘分析」重构令的供数需求；realtime_snapshot/limit_up_down 同表扩展+打板族 testing 两件；R14 本体裁定（感知层/决策层分工+一主三辅+因子构成面板+基本零新模块）见资产总账 v1.5.0 | Owner 指令：盘中实时说细（改名大盘分析+情绪分析图+因子构成） |
+| 2026-08-28 | 2.3.2 | **R15 联动扩注**：B26 板块页数据族扩注——Owner 升级为相对强度光谱地图（分时双模式/分界=大盘实时涨速/右红左绿）+抗跌榜/领涨榜（次数优先=RS 持续性+冲高回落形态标注）+证据链卡；管线同族扩展=板块分钟 RS 序列/下跌段捕获率/抗跌次数统计，Wyckoff 吸筹 FSM prod 可借引擎；R15 本体裁定见资产总账 v1.6.0（含随批裁定：地图颜色右红左绿+每页结果+证据链铁律） | Owner 指令：板块全景说细（逆势抗跌地图+资金悄悄吸筹洞察） |
