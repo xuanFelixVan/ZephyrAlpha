@@ -295,3 +295,43 @@ universes:
     evidence: logs/c1_repro/basket_data_spec.json 实证：10 股 27616 行日线后复权（2015-01-05~2026-06-30，c1_market.kline_daily_hfq）；EXP-REGIME-001 C1 四项全通过
     code_symbol: null
     code_fingerprint: null
+
+  - universe_id: UNI-CRYPTO-001
+    name: Crypto MVP Spot Pool
+    name_zh: 数字货币 MVP 现货池
+    aliases: [币版池, BTC+ETH 现货池, crypto pool]
+    universe_type: static
+    construction_rule: >-
+      MVP 阶段固定成分：BTC/USDT + ETH/USDT 现货交易对（94号 Q2 拍板）。
+      Phase 2 扩展至市值前 20 币种。含已下架币历史数据防幸存者偏差。
+    base_universe: null
+    filter_rules:
+      - 仅 BTC/USDT + ETH/USDT 现货（MVP）
+      - Phase 2 扩市值前 20
+      - 含已下架币历史数据（幸存者偏差治理）
+    rebalance_frequency: none
+    component_count: 2
+    components_ref: null
+    used_by_strategies: []
+    data_source: null
+    module_id: MOD-GOVERNANCE
+    doc_ref: 94_crypto_quant_expansion.md §5 CAND-CRYPTO-007
+    code_path: null
+    market: crypto
+    status: candidate
+    version: 1.0.0
+    created_at: '2026-08-28'
+    updated_at: '2026-08-28'
+    owner: MOD-GOVERNANCE
+    pit_constituent_construction: true    # 固定成分无调仓，天然 PIT
+    delisted_handling: include            # 裁定：含已下架币历史数据防幸存者偏差
+    survivorship_free: true               # include 退市+PIT=无生存偏差
+    eligibility: eligible
+    data_tier: realtime
+    entry_role: reference
+    applies_to: [market]
+    tags: [数字货币, 股票池, 规则]
+    algorithm_status: not_applicable
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
