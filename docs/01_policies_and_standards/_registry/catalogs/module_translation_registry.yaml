@@ -46973,6 +46973,48 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "从Glassnode和CryptoQuant拉取链上指标（交易所净流入、活跃地址、稳定币流动），没配付费API密钥时产出假数据保证管道能跑通，配了密钥自动切真实数据"
+- module_path: src/zephyr/signal_ashare/sector_breadth.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "板块宽度与资金性质聚合"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把板块涨停数换成涨停比（涨停数÷成分股数），让200只成分股的大板块和30只的小板块能公平比较情绪宽度；再把个股资金性质（拉升/吸筹/弱托底/对倒嫌疑/出货）按成交额加权汇总成板块级得分，给出主力流入/中性/对倒主导/主力流出四档标签，作为板块强度分的输出层乘法修正因子"
+- module_path: tests/signal_ashare/test_sector_breadth.py
+  domain_id: D_AUDITTEST
+  name_zh: "板块宽度与资金性质聚合单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证涨停比跨板块可比与边界截断、四档宽度分档阈值、成交额加权聚合（大票主导、权重和为零退化等权、缺失个股按弱托底计0）、四档资金标签阈值边界与强度修正乘数"
+- module_path: src/zephyr/signal_ashare/sector_momentum.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "板块多时间框架动量"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "对付板块一日游：给每个板块算3日/5日/20日累计涨跌幅，在全板块截面做百分位排名后按0.3/0.3/0.4加权合成0到1的动量分——3日超短窗口最快感知方向变化、20日锚定中期趋势，作为板块强度综合层第三维输入；历史不足21日的板块跳过"
+- module_path: tests/signal_ashare/test_sector_momentum.py
+  domain_id: D_AUDITTEST
+  name_zh: "板块多时间框架动量单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证N日累计涨跌幅计算与非法输入拦截、截面百分位排名（并列取平均秩、单板块中性0.5）、0.4/0.3/0.3加权合成、短历史板块跳过、窗口权重不等长拦截与输出0到1有界"
+- module_path: src/zephyr/ex_core/daban_execution.py
+  domain_id: D_EX_CORE
+  name_zh: "打板执行族（分笔建仓/时点决策/动态容量）"
+  name_en: "Daban Execution Suite"
+  desc_zh: "24号 §3.13缺失#4 DabanExecutionAlgorithm 分笔建仓（指数填充概率+SaR前置→三段计划）+ §3.14缺失#11 DabanTimingDecision 打板时点（追板vs埋伏）+ 缺失#12 DynamicCapacityCalculator 动态容量（sar/seal/float/nav四约束取min）"
+  desc_en: "Memo-24 batch-execution algorithm, timing decision and dynamic capacity calculator"
+  plain_zh: "打板策略三只执行层零件：分笔建仓器回答'怎么分批买'（封板瞬间先下六成、回封补三成、留余量伺机，盘口太薄先砍三成总量）；时点决策器回答'什么时候下什么单'（封板把握大且封单够厚就市价追板，把握中等就挂限价单埋伏最多等两分钟）；容量计算器回答'最多能买多少'（滑点风险、封单量、流通盘、账户净值四条线取最紧的一条，防大资金进场把价格打飞）。"
+- module_path: tests/ex_core/test_daban_execution.py
+  domain_id: D_AUDITTEST
+  name_zh: "打板执行族单测"
+  name_en: "Daban Execution Tests"
+  desc_zh: "daban_execution 三符号单元测试（23 用例，纯内存不触网不触库）"
+  desc_en: ""
+  plain_zh: "给打板执行三零件配的单元测试：填充概率随排队位置和距离衰减对不对、浅盘口滑点评估会不会放大报警、三段建仓总量守不守恒、追板和埋伏的切换阈值卡得准不准、容量四条约束线各自生效时取没取到最小值、空盘口和零价格会不会安全地拒绝下仓。"
 
 battle_map_steps:
 - step_id: BM-BUY-04

@@ -51,10 +51,20 @@ D_EXECUTION_CORE 执行核心域 — 包入口（懒加载聚合导出）
 
 from __future__ import annotations
 
-from typing import Final
+from typing import TYPE_CHECKING, Final
 
 from zephyr.ex_core import multi_contract_adapter  # noqa: F401 — 包级导出（契约注册中心）
 from zephyr.ex_core.premarket_checker import PremarketChecker
+
+if TYPE_CHECKING:
+    # 打板执行族（daban_execution，MOD-EX-001）预接线模块的可发现性声明——
+    # 消费方=G22 执行层落线后的 sleeve 组装（见 daban_execution.py [CONSUMERS]），
+    # 运行时不加载（lazy 映射包 TYPE_CHECKING 先例，ORPHAN-MODULE 门禁透视用）。
+    from zephyr.ex_core.daban_execution import (
+        DabanExecutionAlgorithm,
+        DabanTimingDecision,
+        DynamicCapacityCalculator,
+    )
 
 __all__: Final = [
     "AlgoType",

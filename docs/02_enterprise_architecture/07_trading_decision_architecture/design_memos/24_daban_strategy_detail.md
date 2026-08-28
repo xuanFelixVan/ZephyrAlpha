@@ -5,8 +5,8 @@ title: 打板策略细节
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.10.6"
-date: 2026-08-15
+version: "1.10.7"
+date: 2026-08-28
 topic: daban_strategy_detail
 scope: 07_trading_decision_architecture
 ---
@@ -21,7 +21,7 @@ scope: 07_trading_decision_architecture
 
 > ## 结案报告回填（2026-08-28 代码实证复核）
 > 原"12 算法+8 具名函数全部未落码"已过时：ex_core/ 下五文件已落码——daban_named_functions.py（8 具名函数全：classify_echelon_health/score_consecutive_height_with_death_pool/score_auction_3d/detect_auction_paper_tiger/score_seal_structure/forecast_next_day_premium/classify_reflush_board/detect_quant_seat_warning）、daban_signal_decision.py（第 7 类 REFLUSH_DIVE）、daban_instant_circuit_breaker.py、daban_exit_decision.py、daban_monitors.py（HoldingPeriodMicrostructureMonitor+SignalDecayMonitor CUSUM/PSI）、daban_pit_safety.py；组装类 pf_core/strategies/daban_sleeve_strategy.py（MOD-L05-001）在位。
-> **仍真实未完工**：DabanExecutionAlgorithm/DabanTimingDecision/DynamicCapacityCalculator 三符号零命中；DabanPITBacktestFramework 骨架态（自述未注入）；Phase 5 ML 栈远期。
+> **波 2a 回填（2026-08-28，AI-WAVE2A-001）**：三符号已落码 `ex_core/daban_execution.py`——DabanExecutionAlgorithm（§3.13#4 分笔建仓）/ DabanTimingDecision（§3.14#11 时点决策）/ DynamicCapacityCalculator（§3.14#12 动态容量）；DabanPITBacktestFramework 骨架已注入（`from_db_session` 接 get_dragon_tiger_pit + trading_calendar 真日历，最小回测路径跑通）。12 项形式化算法+8 具名函数**全部落码完毕**；Phase 5 ML 栈远期。
 
 # 打板策略细节
 
@@ -68,21 +68,22 @@ scope: 07_trading_decision_architecture
 | 执行层（G22） | `src/zephyr/ex_core/execution_engine.py` / `order_execution_saga.py` / `fill_handler.py` 等 | ✅ production | §3.13#4 分笔建仓依赖 / §3.14#11 打板时点决策落地层 |
 | 板块/资金/机构行为分析 | `sector_analyzer.py` / `capital_flow_pattern_analyzer.py` / `institutional_behavior_analyzer.py` / `market_sentiment_analyzer.py` / `intraday_buy_sell_point_analyzer.py`（均 signal_ashare/） | ✅ production | §3.1 梯队板块共振 / §3.3 资金引擎 / §3.14#8 前置质量评估的数据源 |
 
-**③ 文档态形式化算法（🟧 全部未落码——2026-08-12 grep 全 `src/` 零命中，属"文档已定型、代码待施工"）**
+**③ 形式化算法落码盘点（2026-08-28 波 2a 后：12 项+8 具名函数全部落码，真源 `src/zephyr/ex_core/`）**
 
-| 算法 | 文档位置 | 施工时点 |
-|---|---|---|
-| §3.13 七项：NextDayExitDecision（含 classify_position_status）/ DabanInstantCircuitBreaker / classify_decision_v192（第7类 REFLUSH_DIVE）/ DabanExecutionAlgorithm / get_dragon_tiger_pit / SignalDecayMonitor / reflush_next_day_exit_decision | §3.13 | 首批实盘前必做（#1/#2/#5）/ Phase 3-5（其余） |
-| §3.14 五项：pre_validate_daban_signal / HoldingPeriodMicrostructureMonitor / DabanPITBacktestFramework / DabanTimingDecision / DynamicCapacityCalculator | §3.14 | 首批实盘/回测前必做（#8/#9/#10）/ Phase 3（#11/#12） |
-| v1.5.0~v1.9.0 增补具名函数：classify_echelon_health / score_consecutive_height_with_death_pool / score_auction_3d / detect_auction_paper_tiger / score_seal_structure / forecast_next_day_premium / classify_reflush_board / detect_quant_seat_warning | §3.1/§3.9/§3.11 | 同上——§6 待裁定表"已补"指**文档算法补全**，非代码已 production，阅读时勿误读 |
+| 算法 | 文档位置 | 代码真源 | 状态 |
+|---|---|---|---|
+| §3.13 七项：NextDayExitDecision（含 classify_position_status）/ DabanInstantCircuitBreaker / classify_decision_v192（第7类 REFLUSH_DIVE）/ get_dragon_tiger_pit / SignalDecayMonitor / reflush_next_day_exit_decision | §3.13 | `daban_exit_decision.py` / `daban_instant_circuit_breaker.py` / `daban_signal_decision.py` / `daban_pit_safety.py` / `daban_monitors.py` / `daban_exit_decision.py` | ✅ 已落码有测试 |
+| §3.13#4 DabanExecutionAlgorithm（分笔建仓） | §3.13 | `daban_execution.py` | ✅ 已落码有测试（波 2a） |
+| §3.14 五项：pre_validate_daban_signal / HoldingPeriodMicrostructureMonitor / DabanPITBacktestFramework / DabanTimingDecision / DynamicCapacityCalculator | §3.14 | `daban_signal_decision.py` / `daban_monitors.py` / `daban_pit_safety.py`（波 2a `from_db_session` 真实依赖注入）/ `daban_execution.py`（波 2a，后两支） | ✅ 已落码有测试 |
+| v1.5.0~v1.9.0 增补具名函数：classify_echelon_health / score_consecutive_height_with_death_pool / score_auction_3d / detect_auction_paper_tiger / score_seal_structure / forecast_next_day_premium / classify_reflush_board / detect_quant_seat_warning | §3.1/§3.9/§3.11 | `daban_named_functions.py` | ✅ 已落码有测试 |
 
 **④ ⚠️ 术语与分类法消歧**
 
 1. **引擎命名**：本文 §3.5 原表述"情绪引擎/技术引擎"= battle_map 与源码的"**游资情绪引擎**（BM-SEL-23）/**量化强度引擎**（BM-SEL-24）"。v1.10.0 起正文统一用 battle_map canonical 名。
-2. **决策分类法两层架构**：battle_map BM-SEL-25 与 production `classify_decision` 输出 **6 类标的分类**（主升龙头/二进三/跟风/复苏/伪强/地天反包）；本文 §3.5 表的 7 类（BOARD/CONTINUE/INVERSE_BOARD/REFLUSH_DIVE/WATCH/REJECT/WAIT）是**交易动作层**分类法（标的分类→买卖动作的映射），其中第 7 类 REFLUSH_DIVE 为 v1.9.2 设计态新增、代码未落。v1.8.2 修订记录中"伪代码修正为多维条件版匹配 production `classify_decision`"的表述**不准确**——两者分类语义不同层，不存在逐行匹配关系；v1.10.0 已修正 §3.5 表述。两层映射的最终统一裁定见 §6 待裁定新增条目。
+2. **决策分类法两层架构**：battle_map BM-SEL-25 与 production `classify_decision` 输出 **6 类标的分类**（主升龙头/二进三/跟风/复苏/伪强/地天反包）；本文 §3.5 表的 7 类（BOARD/CONTINUE/INVERSE_BOARD/REFLUSH_DIVE/WATCH/REJECT/WAIT）是**交易动作层**分类法（标的分类→买卖动作的映射），其中第 7 类 REFLUSH_DIVE 为 v1.9.2 设计态新增，已随 `daban_signal_decision.py`（classify_decision_v192）落码。v1.8.2 修订记录中"伪代码修正为多维条件版匹配 production `classify_decision`"的表述**不准确**——两者分类语义不同层，不存在逐行匹配关系；v1.10.0 已修正 §3.5 表述。两层映射的最终统一裁定见 §6 待裁定新增条目。
 3. **正交引用**：[28_sentiment_cycle_trading](28_sentiment_cycle_trading.md) 已于 2026-08-12 填充定型（active 1.0.0，commit `0db887c9e7`，按引用方锚点重建），本文 `[28 §x.x]` 前向引用已全部落地——§3.2 5 阶段买卖纪律 / §3.4 与 regime 的正交性 / §3.5 退潮加权机制（§6 待裁定对应行已核销）。
 
-**盘点结论**：打板 sleeve 的信号识别链（BM-SEL-22→23→24→25）四引擎与支撑设施（T+1 结算/仓位上限/回撤 Protocol/程序化合规/执行层）**全部 production 且有测试**，这是 §3.1-3.7 各裁定"复用已建打板链"的事实基座。未落码的是 v1.9.2/v1.9.3 两轮施工算法审查补全的 12 项形式化算法 + 8 个具名函数——它们是从"信号→定位→入场→封板→出场→风控→容量"全流程的断裂点补全，施工时点已在 §6 逐条登记（首批实盘前/Phase 3/Phase 5）。**先清楚有什么 → 才能知道怎么改 → 才知道该退役什么**：当前无需退役项。
+**盘点结论**：打板 sleeve 的信号识别链（BM-SEL-22→23→24→25）四引擎与支撑设施（T+1 结算/仓位上限/回撤 Protocol/程序化合规/执行层）**全部 production 且有测试**；v1.9.2/v1.9.3 两轮施工算法审查补全的 12 项形式化算法 + 8 个具名函数亦已全部落码于 `src/zephyr/ex_core/` 打板七文件（2026-08-28 波 2a 闭合三符号+PIT 框架注入），覆盖"信号→定位→入场→封板→出场→风控→容量"全流程。**先清楚有什么 → 才能知道怎么改 → 才知道该退役什么**：当前无需退役项。
 
 **作战地图环节映射**
 
@@ -853,6 +854,7 @@ class DynamicCapacityCalculator:
 | 2026-08-12 | 1.10.4 | 作战地图环节映射补强③——补锚 BM-SEL-23-C（情绪周期策略映射→§3.5 门控切换 + §3.6 仓位上限 5 档，体系深锚 28号 §3.2）与 BM-SEL-25-B（情绪周期自适应权重→§3.5 `determine_adaptive_weights` 5 档）：PG `battle_map_steps` 全量核对（340 环节/19 deprecated/321 活跃）发现 3 个活跃环节未显式锚定，其中 2 个属本篇（另 1 个 BM-SIM-08 归 53号）；语义早已覆盖（§3.5/§3.6 既有正文），仅补编号级锚定，不改既有正文 |
 | 2026-08-14 | 1.10.5 | 压缩精简：噪音去除+施工细节梳理，零信息丢失审查通过（AI-DOCS-001） |
 | 2026-08-15 | 1.10.6 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-06）——§1 状态行内容清单墙去重（真源=文首块引用+§9 修订记录）；§7 八项已闭合讨论要点压缩为一行映射；§6 删「已闭合·交叉引用」行（40 号 v2.6.0 闭合见 §3.7 施工状态+v1.9.1 修订记录，28 号前向引用落地见 §1.1④+v1.10.0 修订记录）。炸板率 8/32/58、晋级率 50/30/15/0、13 约束链、7 类决策、12 项算法参数/裁定/链接零丢失 |
+| 2026-08-28 | 1.10.7 | **波 2a 施工完毕回填（AI-WAVE2A-001）**：三符号落码 `ex_core/daban_execution.py`——§3.13#4 DabanExecutionAlgorithm（passive impact 指数填充概率+SaR 前置→FIRST60%/REFLUSH30%/RESERVE 三段，SaR>2% 削 30%）/ §3.14#11 DabanTimingDecision（封板概率≥85%+封流比≥5%→CHASE 市价/50-85%→AMBUSH 限价；spec 转写登记：概率公式下限 0.5 致 WAIT 分支不可达，逐字保留待 Phase 3 校准；AMBUSH limit_price 为 spec 占位标记由 G22 解析）/ §3.14#12 DynamicCapacityCalculator（sar/seal/float/nav 四约束取 min，price<=0→nav=0 Fail-Closed）。DabanPITBacktestFramework 骨架注入：`from_db_session` 装配真依赖（XSHG 真日历 trading_days_in_range/is_trading_day + get_dragon_tiger_pit），最小回测路径跑通（23+5 新用例两轮全绿，ex_core 全量+pf_core 打板零回归）。§1.1③ 盘点表翻转为"全部落码"；消歧④2 REFLUSH_DIVE"代码未落"过时表述核销。治理：creation_token 2 条+能力条目 daban_execution+翻译注册 2 条+depgraph 设计态节点 node_id=10911653（只登记不流转，merge 后自动转 production） |
 
 ---
 

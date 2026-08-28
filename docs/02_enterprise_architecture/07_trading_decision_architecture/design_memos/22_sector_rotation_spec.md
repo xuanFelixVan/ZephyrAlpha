@@ -21,7 +21,8 @@ scope: 07_trading_decision_architecture
 
 > ## 结案报告回填（2026-08-28 代码实证复核）
 > 原"8 项计算层全部未落码"已大面积过时：①RRG 轮动序列（signal_ashare/sector_rrg.py，JdK DualEma 10/26+四象限+zscore）已落码；②电风扇速度计+5 状态（signal_ashare/sector_divergence.py，MOD-SIG-060，rotation_velocity/CONSENSUS_CLIMAX/siphon_chaos）已独立成因子；③虹吸 HHI（sector_siphon.py detect_siphon_state）在位；④涨停比（sector_report_builder.py sector_limit_up_ratio）在位；⑤回踩 A/B/C 消费侧（pf_alloc/batched_position_builder.py+signal_fundamental/sector_rotation_score_mapping.py）已接线；⑥plan_engine/boundary_revision_engine.py 电风扇>75 分位降档+llm_premarket_analysis 注入消费链已通。
-> **仍真实未完工**：aggregate_capital_nature_to_sector 零命中；q3 多 TF 动量加权未见独立实证；lead-lag network/ML 转折点远期登记。
+> **回填续记（2026-08-28 AI-WAVE2B-001 复核补登）**：⑦ aggregate_capital_nature_to_sector（signal_ashare/sector_breadth.py，成交额加权+4 级标签+capital_nature_multiplier，commit fff6ea6bfc）已落码；⑧ q3 多 TF 动量加权（signal_ashare/sector_momentum.py multi_tf_momentum 0.4×q20+0.3×q5+0.3×q3，同 commit）已落码并被 data/sector_report_builder.py 消费——两项单元测试 2 轮全绿 + tests/signal_ashare 2395 项零回归。
+> **仍真实未完工**：lead-lag network/ML 转折点远期登记。
 
 # 板块轮动 spec
 
@@ -695,7 +696,8 @@ sector_snapshot_collector (production) ──880xxx快照──┐
 | SectorSnapshotCollector | MOD-L00-004 | `src/zephyr/data/sector_snapshot_collector.py` | 880xxx 快照采集（复用，§3.1⑧ q3 数据源） | production |
 | 调整周期进度追踪 | MOD-SIG-040 | `src/zephyr/signal_ashare/`（待施工） | BM-SEL-09 进度算法 | planned |
 | 轮动序列/回踩A/B/C/虹吸态/传导映射 | — | 待登记 | BM-SEL-08 序列逻辑 + §3.1②⑤⑦ | proposed |
-| 短周期动量 q3/q5/q20 加权 | — | 待登记（"板块强度综合"层内） | §3.1⑧ 多时间框架动量第三维 | proposed |
+| 资金性质板块级聚合 | MOD-SIG-026 supplement | `src/zephyr/signal_ashare/sector_breadth.py` | §3.1① v1.8.0 聚合 + evaluate_strength 乘法修正 | production |
+| 短周期动量 q3/q5/q20 加权 | MOD-SIG-026 supplement | `src/zephyr/signal_ashare/sector_momentum.py` | §3.1⑧ 多时间框架动量第三维 | production |
 | 板块轮动状态 5 分类 | — | 待登记 | §3.1⑨ 市场级快照 + watch_score | proposed |
 | 三级放行门槛（准入 gate） | — | 待登记（G05 选股引擎消费） | §3.1⑩ 板块→个股准入 | proposed |
 | 水温→板块信号响应映射 | — | 待登记（与 regime 协同） | §3.1⑪ 声明响应，不判水温 | proposed |

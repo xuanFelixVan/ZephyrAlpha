@@ -230,3 +230,87 @@ class TestRunBacktest:
         fw.data_loader = lambda s, d: {"date": d} if s == "dragon_tiger" else orig(s, d)
         with pytest.raises(AssertionError, match="PIT VIOLATION"):
             fw.run_backtest({}, date(2026, 8, 18), date(2026, 8, 19))
+
+
+# ---------------------------------------------------------------------
+# DabanPITBacktestFramework.from_db_session（波 2a 真实依赖注入）
+# ---------------------------------------------------------------------
+
+
+def _source_loaders(auction_open=11.0):
+    """emotion/echelon/auction 三数据源 fake loaders（无既有查询函数，调用方注入）。"""
+
+    def emotion_loader(source, d):
+        return {"date": d, "phase": "主升", "score": 50.0, "divergence": 0.0}
+
+    def echelon_loader(source, d):
+        return {
+            "date": d,
+            "health": "PERFECT",
+            "height": 2,
+            "sector_resonance": 0.8,
+            "follow_count": 5,
+            "tech_score": 70.0,
+            "price": 10.0,
+        }
+
+    def auction_loader(source, d):
+        return {"date": d, "open_price": auction_open}
+
+    return {
+        "emotion_cycle_score": emotion_loader,
+        "echelon_data": echelon_loader,
+        "next_day_auction": auction_loader,
+    }
+
+
+class TestFromDbSession:
+    """from_db_session：真日历（XSHG/weekday 回退）+ get_dragon_tiger_pit 接线，最小回测路径跑通。
+
+    2026-08-18（周二）~2026-08-20（周四）为常规交易日（8 月无法定节假日，
+    exchange_calendars 真日历与 weekday 回退口径一致）。
+    """
+
+    def test_minimal_backtest_path_runs(self):
+        """真日历+真龙虎榜查询接线→全链路跑通：2 个交易日均 BOARD→次日高开全卖。"""
+        rows = [_FakeRow("000001", date(2026, 8, 17)), _FakeRow("000001", date(2026, 8, 18))]
+        fw = DabanPITBacktestFramework.from_db_session(_FakeSession(rows), "000001", _source_loaders())
+        out = fw.run_backtest({}, date(2026, 8, 18), date(2026, 8, 19))
+        assert out["total"] == 2
+        assert out["by_decision"] == {"BOARD": 2}
+        assert all(t["exit"]["action"] == "SELL_ALL" for t in out["trades"])
+
+    def test_dragon_tiger_wired_via_pit_query(self):
+        """dragon_tiger 数据源走 get_dragon_tiger_pit：查询边界 latest=决策日-1（PIT 合规）。"""
+        session = _FakeSession([_FakeRow("000001", date(2026, 8, 17))])
+        fw = DabanPITBacktestFramework.from_db_session(session, "000001", _source_loaders())
+        fw.run_backtest({}, date(2026, 8, 18), date(2026, 8, 18))
+        assert session.last_params["symbol"] == "000001"
+        assert session.last_params["latest"] == date(2026, 8, 17)  # T 日决策只用 T-1 及之前
+
+    def test_empty_dragon_tiger_still_pit_safe(self):
+        """退化：无龙虎榜记录→data_date 兜底 T-1，PIT 断言通过，回测不崩。"""
+        fw = DabanPITBacktestFramework.from_db_session(_FakeSession([]), "000001", _source_loaders())
+        out = fw.run_backtest({}, date(2026, 8, 18), date(2026, 8, 18))
+        assert out["total"] == 1
+
+    def test_unwired_source_raises(self):
+        """异常：source_loaders 缺数据源→加载时 RuntimeError 显式报错（不静默造数）。"""
+        rows = [_FakeRow("000001", date(2026, 8, 17))]
+        fw = DabanPITBacktestFramework.from_db_session(_FakeSession(rows), "000001", {})
+        with pytest.raises(RuntimeError, match="未注入 source_loaders"):
+            fw.run_backtest({}, date(2026, 8, 18), date(2026, 8, 18))
+
+    def test_real_calendar_skips_weekend(self):
+        """真日历：周五→次一交易日跳过周末到周一（2026-08-21 周五→08-24 周一）。"""
+        rows = [_FakeRow("000001", date(2026, 8, 20))]
+        captured = []
+
+        def auction_loader(source, d):
+            captured.append(d)
+            return {"date": d, "open_price": 11.0}
+
+        loaders = {**_source_loaders(), "next_day_auction": auction_loader}
+        fw = DabanPITBacktestFramework.from_db_session(_FakeSession(rows), "000001", loaders)
+        fw.run_backtest({}, date(2026, 8, 21), date(2026, 8, 21))  # 单日：周五
+        assert captured == [date(2026, 8, 24)]  # 次日出场落在周一（周末被真日历跳过）
