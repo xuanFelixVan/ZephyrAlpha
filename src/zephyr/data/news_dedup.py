@@ -48,6 +48,9 @@ _DEDUP_WINDOW_DAYS = 7
 # SQL 集中化：查询最近 N 天已有新闻标题
 _SQL_DEDUP_QUERY_TEMPLATE = f"SELECT title FROM {_TBL_NEWS_DATA} WHERE publish_time >= now() - INTERVAL {{days}} DAY"
 
+# SQL 集中化：写前预检（CAND-DAT-025）
+_SQL_EXISTING_IDS_TEMPLATE = f"SELECT DISTINCT news_id FROM {_TBL_NEWS_DATA} WHERE {{where}}"
+
 # news_data 表标准列顺序（与 c3_fundamental.news_data schema 对齐）
 # 必填列（无 DEFAULT）：news_id, publish_time, title, content, source, data_source
 # 可选列（有 DEFAULT）：summary, source_url, category, region(默认'CN'), language(默认'zh'), ...
@@ -69,11 +72,22 @@ NEWS_DATA_COLUMNS = [
 _TITLE_INDEX = NEWS_DATA_COLUMNS.index("title")
 
 
+def _tz_shanghai():
+    """Asia/Shanghai 时区对象（dateutil 自带时区库，Windows 无 tzdata 依赖）。"""
+    from dateutil import tz
+
+    return tz.gettz("Asia/Shanghai")
+
+
 def _parse_datetime(dt_str: str) -> str:
     """解析各种格式的日期时间字符串为 ClickHouse DateTime 格式。
 
     支持 RFC 2822（RSS）、ISO 8601（JSON Feed）、常见中文格式等。
     解析失败时返回原始字符串前 19 字符或当前时间。
+
+    时区语义（CAND-DAT-025 固化，防 8h 漂移复发）：
+    - naive 串/纯日期：一律按 Asia/Shanghai 墙钟落地（列时区解析）
+    - tz-aware 串：先 astimezone(Asia/Shanghai) 再落地（同一绝对时刻）
     """
     if not dt_str or not str(dt_str).strip():
         return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -81,10 +95,35 @@ def _parse_datetime(dt_str: str) -> str:
         from dateutil import parser as date_parser
 
         dt = date_parser.parse(str(dt_str))
+        if dt.tzinfo is not None:
+            dt = dt.astimezone(_tz_shanghai())
         return dt.strftime("%Y-%m-%d %H:%M:%S")
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         s = str(dt_str).strip()
         return s[:19] if len(s) >= 19 else s
+
+
+def existing_news_ids(where: str) -> set[str]:
+    """写前预检：库内满足 where 条件的已存在 news_id 集合（CAND-DAT-025）。
+
+    供批量回填脚本在写入侧过滤多版本冗余行（ReplacingMergeTree 按
+    (news_id, publish_time) 折叠，同 id 不同 publish_time 永不折叠——
+    实证见 design_memos/67_news_data_dedup_design.md §1.2）。
+
+    Args:
+        where: SQL WHERE 谓词（不含 WHERE 关键字），调用方负责条件正确性
+
+    Returns:
+        news_id 集合；查询失败返回空集合（fail-open，与模块既有契约一致）
+    """
+    try:
+        result = ch_reader.query(_SQL_EXISTING_IDS_TEMPLATE.format(where=where))
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        log.warning("写前预检查询失败，返回空集合（fail-open）: %s", e)
+        return set()
+    if not result:
+        return set()
+    return {line.strip() for line in result.strip().split("\n") if line.strip()}
 
 
 def build_news_row(

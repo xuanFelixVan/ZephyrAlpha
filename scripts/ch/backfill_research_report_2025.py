@@ -101,18 +101,16 @@ def load_done_symbols() -> set[str]:
 
 def load_existing_news_ids() -> set[str]:
     """库内 2025 年研报已有 news_id 集合（写入侧预检——news_data 保留多版本行，
-    不预检会把已有报告再插一份（2026-08-26 实证 2025 年 2.10x 冗余）。"""
-    from zephyr.data import ch_reader  # noqa: PLC0415 — lazy：运行态才触达 CH
+    不预检会把已有报告再插一份（2026-08-26 实证 2025 年 2.10x 冗余）。
 
-    tsv = ch_reader.query(
-        "SELECT DISTINCT news_id FROM c3_fundamental.news_data "
-        "WHERE source = 'akshare_research_report' "
+    CAND-DAT-025：实现沉淀为 news_dedup.existing_news_ids 公共助手。"""
+    from zephyr.data.news_dedup import existing_news_ids  # noqa: PLC0415 — lazy：运行态才触达 CH
+
+    ids = existing_news_ids(
+        "source = 'akshare_research_report' "
         "AND publish_time >= toDateTime('2025-01-01 00:00:00') "
         "AND publish_time <= toDateTime('2025-12-31 23:59:59')"
     )
-    if not tsv or not tsv.strip():
-        return set()
-    ids = {line.strip() for line in tsv.strip().split("\n") if line.strip()}
     log.info("库内已有 2025 研报 id %d 个（写入预检跳过）", len(ids))
     return ids
 
