@@ -20895,3 +20895,46 @@ entries:
   impact:
     - '无代码变更（零工程裁定，防未来重复立案）'
   fix_phase: '裁定完成（2026-08-27）；零工程'
+- issue_id: '#ARCH-281'
+  title: >-
+    B-007 遗留治本——"机械通道不降级人工 lifecycle 态"全通道布防五修复（sync 双 UPDATE 剔除
+    build_status 回写 / ghost 清理 `#` 锚点剥离 / diagnose 豁免对齐 / regen DELETE 目录粒度
+    blueprint 节点豁免 / density 测试头 blueprint 号合规）
+  severity: P1
+  category: 治理基建
+  adjudication: >-
+    2026-08-28 裁定书（docs/_working/2026-08-28-b007-leftover-adjudication.md §3+§3.4）：P0 确立的
+    "机械推导封顶 stable，production 唯人工 transition"不变量只布防了重生成器一条通道，post-commit
+    reconciler 链两条漏守 + 生成器两条缺口——①sync_yaml_to_depgraph 双 sync 函数 UPDATE 无条件回写
+    stable（GATE-YAML-SYNC 触发，4 聚合节点 production→stable 两度翻转真凶）；②apply_depgraph
+    ghost 清理对 `#` 锚点 path 裸 exists() 永假判删（GATE-GHOST 触发，INFRA-DB 4 节点反复移除真凶）
+    + diagnose 豁免口径未对齐；③design_maturity 修正后目录粒度 blueprint 节点跌出 DELETE 豁免
+    （补充批实战 regen 删 7 节点确诊）；④density 测试文件头 blueprint 号不合 DB 正则被
+    Phase 2.2 永久过滤。批 5/6 归因错位纠正：真凶非重生成器（DELETE 排除链 2026-07-01 至今完整）。
+    常驻原则：未来新增机械写入通道必须遵循同一不变量；字段语义修正后必须立即全量 regen 实战。
+  impact:
+    - 'scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py（sync_aggregate_nodes+sync_database_nodes UPDATE 剔除 build_status 回写，INSERT 保持 stable）'
+    - 'scripts/governance/apply_depgraph.py（cmd_cleanup_orphan_nodes ghost 判定 `path.split("#")[0]` 真源豁免，真源不在仍判幽灵）'
+    - 'scripts/governance/d5_architecture/diagnose_depgraph.py（ORPHAN_EXEMPT_TYPES 补 database+4 聚合类型+同款 `#` 剥离）'
+    - 'scripts/governance/generate_project_depgraph.py（主 DELETE 谓词豁免目录粒度 blueprint 节点，裁定#189"不得创建"对称"不得删除"）'
+    - 'tests/ml_train/test_density_quantile_trainer.py（文件头 [BLUEPRINT] ML-DENSITY-001→MOD-ML-DENSITY）'
+  fix_phase: >-
+    2026-08-28 全落地：54+41 相关测试全绿、ruff 零新增；两轮全量 regen 实战幂等零振荡
+    （7 目录节点 id 稳定/4 聚合+4 INFRA-DB 全保持/density 合规回库，全库 7,796 一致）；
+    B-007 全战役终态 production=2,933、testing=0。本提交落账。
+- issue_id: '#ARCH-282'
+  title: >-
+    悬案——data/connectors/ 与 data/normalizers/ 两目录节点 planned→production 库外通道写入
+    （无 B-007 清单/快照/日志留痕），终态正确已追认，写入通道待排查
+  severity: P2
+  category: 治理流程
+  adjudication: >-
+    2026-08-28 裁定书 §2.3-3：2026-08-21 备份（depgraph_backup_20260821_p06.sql）实证两节点=planned，
+    2026-08-27 活库=production，跨 4 态且不在 B-007 任何批次清单/pre-snapshot/transition.log——
+    库外通道证据链断。终态正确（220/544 行实质实现+测试+同 bp 文件节点群在册）裁定追认不回滚；
+    生成器常规通道已排除（全景 §12.6 reconciliation 对 design 节点只写 planned/stable 两值）。
+    嫌疑面：在飞会话直接 SQL 或未走工具的旧版脚本。排查建议：governance.db
+    reconcile_execution_log 逐窗归账 + PG 写路径审计。
+  impact:
+    - '无代码变更（悬案登记，防未来重复立案）'
+  fix_phase: '悬案 open（2026-08-28 登记）；终态追认已闭环（design_maturity 修正+production 保留）'

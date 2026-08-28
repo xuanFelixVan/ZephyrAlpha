@@ -73,7 +73,23 @@ LAYER_MAP = {
 
 LAYER_KEYS_SORTED = sorted(LAYER_MAP.keys(), key=lambda x: -len(x))
 
-ORPHAN_EXEMPT_TYPES = {"doc", "diagram", "infra", "policy", "template", "schema", "data", "config"}  # noqa: gate-vocab  孤儿节点豁免类型业务子集
+# 2026-08-28 B-007 治本：补 database/gate_rule_set/script_collection/test_suite/rule_registry_collection
+# 五类型，对齐 generate_project_depgraph.py 重建 DELETE 排除口径（这些节点由 YAML sync 维护，豁免孤儿判定）
+ORPHAN_EXEMPT_TYPES = {
+    "doc",
+    "diagram",
+    "infra",
+    "policy",
+    "template",
+    "schema",
+    "data",
+    "config",
+    "database",
+    "gate_rule_set",
+    "script_collection",
+    "test_suite",
+    "rule_registry_collection",
+}  # noqa: gate-vocab  孤儿节点豁免类型业务子集
 
 
 def load_depgraph():
@@ -368,7 +384,10 @@ def find_orphan_nodes(nodes, adjacency_forward, adjacency_reverse, project_root=
             entry = {"path": path, "type": ntype, "blueprint_id": node.get("blueprint_id", "")}
             # P1-DEP: 对称漂移检测——磁盘不存在的 node 标记为 ghost
             if project_root is not None:
-                full_path = Path(project_root) / path
+                # 2026-08-28 B-007 治本：'#' 锚点 path 剥离后判定（同 apply_depgraph cleanup 口径，
+                # 锚点非磁盘路径，带锚点 exists() 永假会误判 ghost）
+                disk_path = path.split("#")[0] if "#" in path else path
+                full_path = Path(project_root) / disk_path
                 entry["ghost"] = not full_path.exists()
             orphans.append(entry)
     return orphans

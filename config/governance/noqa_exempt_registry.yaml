@@ -353,7 +353,7 @@ exemptions:
     # reason 与代码行内注释逐字一致（reason fallback 漂移免疫关键——旧值夹带漂移日志致 fallback 失效）
     reason: '业务子集：跨切域清单（#ARCH-CROSS-CUTTING-EXEMPT-001），非 target_layer 词表全集校验'
   - file: src/zephyr/governance/persistence/battlemap_schema.py
-    line: 188
+    line: 187
     category: business_subset
     reason: 'design_maturity 3态受控词表（design/production/deprecated，含 deprecated 治理裁定态，#ARCH-OE-007~009），与 depgraph/decisiongraph 对齐，业务子集非词表（行号 187→188 漂移跟进，2026-08-26 B-007 批）'
   - file: scripts/governance/harvest_candidates_from_drafts.py

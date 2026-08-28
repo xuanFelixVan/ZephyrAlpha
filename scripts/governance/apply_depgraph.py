@@ -410,8 +410,7 @@ SQL_SELECT_TABLE_BUILD_STATUS_CHECK = (
     "WHERE conrelid = %s::regclass AND contype = 'c'"
 )
 SQL_DROP_TABLE_BUILD_STATUS_CHECK = {
-    t: f"ALTER TABLE {t} DROP CONSTRAINT {t}_build_status_check"
-    for t in _NODES_BUILD_STATUS_VOCAB_TABLES
+    t: f"ALTER TABLE {t} DROP CONSTRAINT {t}_build_status_check" for t in _NODES_BUILD_STATUS_VOCAB_TABLES
 }
 SQL_ADD_TABLE_BUILD_STATUS_CHECK = {
     t: (
@@ -2461,7 +2460,11 @@ def cmd_cleanup_orphan_nodes(dry_run: bool = False, db_path: str = None) -> int:
             for r in all_nodes:
                 nid = r["node_id"]
                 path = r["path"]
-                full_path = Path(project_root) / path
+                # 2026-08-28 B-007 治本：path 含 '#' 锚点（如 infrastructure_registry.yaml#INFRA-DB-001）
+                # 时剥离锚点取真实文件判定——锚点非磁盘路径，带锚点 exists() 永假会误判幽灵；
+                # 真源文件不存在时仍按幽灵处理，注册表真删时仍能清出。
+                disk_path = path.split("#")[0] if "#" in path else path
+                full_path = Path(project_root) / disk_path
                 if not full_path.exists():
                     ghost_node_ids.append((nid, path))
 
@@ -4382,7 +4385,9 @@ def cmd_migrate_nodes(
             if not domain:
                 print(f"ERROR: new_domain_id '{new_domain_id}' 不在 domains 表中", file=sys.stderr)
                 return -1
-            placeholders = ",".join(["%s"] * len(node_ids))  # 修复: ",".join("%s"*n) 在 n>1 时产生 %, 坏占位符（存量 bug，#ARCH-169 实证）
+            placeholders = ",".join(
+                ["%s"] * len(node_ids)
+            )  # 修复: ",".join("%s"*n) 在 n>1 时产生 %, 坏占位符（存量 bug，#ARCH-169 实证）
             rows = conn.execute(
                 f"SELECT node_id, path, domain_id FROM nodes WHERE node_id IN ({placeholders})",  # 5.160.2 OK: dynamic SQL, kept inline
                 node_ids,

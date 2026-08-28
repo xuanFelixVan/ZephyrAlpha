@@ -1774,6 +1774,8 @@ def sync_aggregate_nodes(cur):
 
         if existing:
             # UPDATE 已有聚合节点
+            # 2026-08-28 B-007 治本：机械通道不降级人工 lifecycle 态（承 P0 STATUS-PRESERVE 不变量）
+            # ——UPDATE 剔除 build_status 回写（保留现值），INSERT 仍落 'stable'
             cur.execute(
                 """
                 UPDATE nodes SET
@@ -1781,7 +1783,6 @@ def sync_aggregate_nodes(cur):
                     node_name = %s,
                     domain_id = %s,
                     design_maturity = 'production',
-                    build_status = 'stable',
                     architecture_layer = 'L1_foundation',
                     granularity = 'aggregated',
                     tags = 'ARCH-052,aggregate_node',
@@ -1959,6 +1960,8 @@ def sync_database_nodes(cur):
         existing = cur.fetchone()
 
         if existing:
+            # 2026-08-28 B-007 治本：机械通道不降级人工 lifecycle 态（承 P0 STATUS-PRESERVE 不变量）
+            # ——UPDATE 剔除 build_status 回写（保留现值），INSERT 仍落 'stable'
             cur.execute(
                 """
                 UPDATE nodes SET
@@ -1967,7 +1970,6 @@ def sync_database_nodes(cur):
                     node_name = %s,
                     domain_id = %s,
                     design_maturity = 'production',
-                    build_status = 'stable',
                     architecture_layer = 'L1_foundation',
                     granularity = 'aggregated',
                     tags = 'ARCH-053,database_node',

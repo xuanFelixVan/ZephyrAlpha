@@ -3629,6 +3629,8 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
         # 裁定#218: 排除 node_type='database' 的持久基础设施节点（已运营非设计态，手工维护不被扫描器清空）
         # ARCH-052: 排除聚合节点类型（gate_rule_set/script_collection/test_suite/rule_registry_collection），
         #           这些节点由 YAML sync 维护（sync_aggregate_nodes），非代码扫描产物，重建时必须保留
+        # 2026-08-28 B-007 治本：dm 修正后目录节点保护网补全（裁定#189 对称豁免）——目录粒度
+        # blueprint 节点存在性真源=人工 add-design-node/YAML 登记，生成器不扫描目录节点，"不得创建"对称"不得删除"
         # #ARCH-WORKTREE-DB-SPLIT-001 裁定③：豁免活跃 worktree 独有节点（主仓不存在但
         # worktree 存在的路径）——主仓重建不再删 worktree 施工期登记节点，PG 双视角单调。
         _wt_exempt_paths = _collect_active_worktree_exempt_paths(cursor)
@@ -3641,6 +3643,7 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
             "DELETE FROM nodes WHERE (design_maturity != 'design' OR design_maturity IS NULL) "
             "AND node_type NOT IN ('database', 'gate_rule_set', 'script_collection', "
             "'test_suite', 'rule_registry_collection') "
+            "AND NOT (node_type = 'blueprint' AND granularity = 'directory') "
             "AND (path IS NULL OR NOT (path = ANY(%s)))",
             (_wt_exempt_paths,),
         )
