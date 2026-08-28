@@ -46959,6 +46959,20 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "把文件桥各组件健康状态画成绿黄红三色卡片：执行器、订单队列、行情桥谁中断了、什么原因一眼可见，每3秒自动刷新"
+- module_path: src/zephyr/data/implementations/okx_provider.py
+  domain_id: D_MKT_DATA
+  name_zh: "OKX 行情 Provider"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "从 OKX 交易所 REST API 拉取数字货币 K 线数据（BTC/ETH 现货），接入现有 WAL 落库管道，支持增量补数和限频重试"
+- module_path: src/zephyr/data/implementations/onchain_provider.py
+  domain_id: D_ALT_DATA
+  name_zh: "链上数据Provider"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "从Glassnode和CryptoQuant拉取链上指标（交易所净流入、活跃地址、稳定币流动），没配付费API密钥时产出假数据保证管道能跑通，配了密钥自动切真实数据"
 
 battle_map_steps:
 - step_id: BM-BUY-04

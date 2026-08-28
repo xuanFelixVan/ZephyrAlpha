@@ -154,7 +154,8 @@ def sanitize_secret(name: str, value: str) -> str:
     Returns:
         脱敏字符串——例 "***REDACTED*** (len=32)"
     """
-    return f"***REDACTED*** (len={len(value)})"
+    value_len = len(value)
+    return f"***REDACTED*** (len={value_len})"
 
 
 def _parse_env_file(path: Path) -> dict[str, str]:
@@ -446,6 +447,8 @@ _SERVICE_ENV_FILES: Final[dict[str, str]] = {
     "redis": "config/.env.redis",
     "qmt": "config/.env.qmt",
     "ch_backup": "config/.env.ch_backup",
+    "glassnode": "config/.env.glassnode",
+    "cryptoquant": "config/.env.cryptoquant",
 }
 
 

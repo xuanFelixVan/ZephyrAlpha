@@ -8,7 +8,10 @@
 SDK import 在方法内部（懒加载），模块加载时不依赖具体 SDK 已安装。
 """
 
+from typing import Final
+
 from .akshare_provider import AkshareIngestProvider
 from .miniqmt_provider import MiniQmtIngestProvider
+from zephyr.data.implementations.onchain_provider import OnchainProvider
 
-__all__ = ["MiniQmtIngestProvider", "AkshareIngestProvider"]
+__all__: Final = ["MiniQmtIngestProvider", "AkshareIngestProvider", "OnchainProvider"]
