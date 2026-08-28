@@ -4283,3 +4283,118 @@ risk_limits:
     stage: "candidate"
     owner: "MOD-CMP-011"
     updated_at: "2026-08-24"
+
+# --- 2026-08-28 CAND-CRYPTO-007 币版风控阈值实例（94号 W2 波次，风险先行先于任何策略） ---
+  - risk_limit_id: "RLM-CRYPTO-001"
+    name: "Crypto Max Drawdown Protocol"
+    name_zh: "数字货币最大回撤 Protocol"
+    limit_type: "drawdown"
+    scope: "firm"
+    scope_strategy: null
+    threshold_value: 0.25
+    threshold_unit: "组合净值最大回撤比例（币版四级阈值 8/15/20/25%，对标 35号回撤 Protocol 同构升级）"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "7×24 连续监控，回撤触及四级阈值逐级触发（8%=减仓 20%/15%=减仓 50%/20%=清仓/25%=Kill Switch）；杠杆放大后触发速度快一个量级"
+    kri_frequency: "daily"
+    review_cycle: "monthly"
+    breach_action: "halt"
+    module_id: "MOD-RISK"
+    doc_ref: "94_crypto_quant_expansion.md §6 W2 波次"
+    code_path: "src/zephyr/risk/"
+    market: crypto
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-28"
+    updated_at: "2026-08-28"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    pain_metric: {metric_type: none, threshold: null, monitoring_window_days: 365}
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["market"]
+    tags: ["风控", "回撤", "数字货币"]
+    algorithm_status: "pending_backtest"
+    evidence: "币版风控五规则对标（94号 §7.6-7）：0.5-2% 单笔风险/预定义自动止损/接受 40% 胜率配 2:1 盈亏比/日周月回撤上限/交易资金与持有资金分离"
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-CRYPTO-002"
+    name: "Crypto Stablecoin Depeg Monitor"
+    name_zh: "稳定币 depeg 监控"
+    limit_type: "firm_risk"
+    scope: "firm"
+    scope_strategy: null
+    threshold_value: 0.03
+    threshold_unit: "USDT/USDC 折价偏差（vs $1）持续超 3% 触发告警（94号 §7.6-9 裁定）"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "多场所持续折价+铸造销毁流突变+传染五联动（资金费率/OI/清算量/借贷利用率/稳定币池同时异动）；发行方敞口≤30%"
+    kri_frequency: "daily"
+    review_cycle: "weekly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "94_crypto_quant_expansion.md §7.6-9"
+    code_path: ""
+    market: crypto
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-28"
+    updated_at: "2026-08-28"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    pain_metric: {metric_type: none, threshold: null, monitoring_window_days: 30}
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["market"]
+    tags: ["风控", "数字货币", "稳定币"]
+    algorithm_status: "pending_definition"
+    evidence: "USDT=储备不透明+法域压力（59% 份额），USDC=银行集中度+监管扣押（24%）；3% depeg=3% 浮亏"
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-CRYPTO-003"
+    name: "Crypto Single Trade Risk Cap"
+    name_zh: "数字货币单笔风险上限"
+    limit_type: "position"
+    scope: "strategy"
+    scope_strategy: null
+    threshold_value: 0.02
+    threshold_unit: "单笔交易最大风险敞口占总资金比例（94号 §7.6-7 风控五规则第一条：0.5-2%）"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "每笔开仓前校验仓位价值×止损幅度≤总资金 2%；超限拒单"
+    kri_frequency: "daily"
+    review_cycle: "monthly"
+    breach_action: "halt"
+    module_id: "MOD-RISK"
+    doc_ref: "94_crypto_quant_expansion.md §7.6-7"
+    code_path: "src/zephyr/risk/"
+    market: crypto
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-28"
+    updated_at: "2026-08-28"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    pain_metric: {metric_type: none, threshold: null, monitoring_window_days: 30}
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["market"]
+    tags: ["风控", "仓位", "数字货币"]
+    algorithm_status: "pending_backtest"
+    evidence: "0.5-2% 单笔风险对标 KuCoin/FCA 零售交易者风控披露口径"
+    code_symbol: null
+    code_fingerprint: null
