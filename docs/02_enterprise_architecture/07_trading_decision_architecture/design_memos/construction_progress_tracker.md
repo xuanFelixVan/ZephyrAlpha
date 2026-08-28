@@ -639,6 +639,15 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 268 | 打板族无独立 blueprint.md（族级存量） | AI-WAVE2A-001 | daban_execution.py 与既有打板六件同挂 MOD-EX-001（apply_depgraph 登记时"蓝图文件不存在"WARNING 如实留痕）；既有五件施工时同例未建蓝图，属族级存量非本批新增缺口——如统筹裁定需为打板族补建 blueprint，另行安排 | ⏳ 待统筹裁定 |
 | 269 | DabanTimingDecision WAIT 分支 spec 死代码观察 | AI-WAVE2A-001 | §3.14#11 spec 概率公式下限 0.5（base 0.5+非负增量），decide_timing 两条 WAIT 分支（seal_prob<50%）不可达——已按"spec 语义锁定"逐字保留并登记于模块 docstring+24 号 v1.10.7 修订记录；Phase 3 回测校准概率模型时复核（不擅自改 spec） | ⏳ Phase 3 校准期复核 |
 
+### 波 2c/波 3 · 2026-08-28 测试债+事件漏斗+常驻服务+盘中操纵（AI-WAVE2C/3A/3B/3C，路线图 A4/A5/A6/A8）登记
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 270 | capability_canonical_file_registry 的 di_seam_exemptions 段被 creation_token 污染（结构性） | 统筹实证（CREATE-GUARD 门禁排查） | 该注册表 creation_tokens 段于 L4895 起、di_seam_exemptions 段于 L10532 起；约自 2026-08-26 起多条 creation_token（auto-resource-scheduler/write_audit 等）被会话追加到文件末尾=落入 di_seam_exemptions 段（该段 schema 应为 module_path/reason/created 豁免条目）——①CREATE-GUARD 只读 creation_tokens 段，错位 token 致新文件门禁误判"无 token"（本批实证 45_warroom/sector×4/backfill 三条命中，已归位 0e2b3539）；②di_seam_exemptions 段 schema 被 token 条目污染，其消费方（DI seam 豁免判定）行为待核查。治本=把混入 token 条目全量移回 creation_tokens 段+补"追加位置"文档钉（SOP 或注册表头部注释） | ⏳ 待治理专项（本批已归位 6 条，存量污染未清） |
+| 271 | MOD-SIG-049 双实现归并裁定（21 号 screener vs 26 号 funnel） | AI-WAVE3A-001 施工发现 | signal_ashare/event_driven_screener.py（MOD-SIG-049，21 号 A 股域骨架，EventImpactRecord 契约）与 intelligence/event_funnel.py（MOD-INT_EVENT_FUNNEL，26 号 §2.5 视角，EventRecord+compute_event_score 契约）平行承载 BM-SEL-19——两实现各有契约消费场景，长期归一/边界归属属 SIGNAL-ARCH 架构议题。**关联注记**：事件漏斗模块 ID 因 BLUEPRINT-FORMAT #214 轨式门禁由 MOD-INT-EVENT-FUNNEL 改名 MOD-INT_EVENT_FUNNEL（派生轨正则连字符后仅允数字），depgraph 设计态节点 10919338 元数据旧 ID 待下轮 regen 从文件头自动收敛 | ⏳ 待 Owner 架构裁定 |
+| 272 | 盘中操纵监测生产装配注入（MOD-CMP-018） | AI-WAVE3C-001 | 监测器与 OrderManager 事件缝已落地（可选注入+Fail-Closed），但 qmt_trading_session/start_paper_session 尚未实例化 monitor+attach（与 ReportGate/declaration_guard 同哲学"测试注入先行"）——生产编排接线属后续装配批；残余：分钟均量 MVP 估计口径（43 号 §8 待 C1 实盘校准） | ⏳ 后续装配批 |
+| 273 | LiveStrategyAdapter CLI/调度接线+deadman 第四路 | AI-WAVE3B-001 | 库级件已落码（多 slot/异常隔离/biz 心跳/退避熔断）；残余=start_paper_session.assemble_session 包 slot 常驻运行（adapter.run(close_at=15:05)）后续批；tmp/live_strategy_biz.heartbeat 纳入 deadman_switch 监控清单=随 trading watchdog 翻开同属 Owner 窗口 | ⏳ 后续批/Owner 窗口 |
+
 
 ### P0 · 2026-08-21 到期前全功能总账施工批（P0 批统筹会话，任务源=pre_expiry_full_backlog_roadmap.md）
 
