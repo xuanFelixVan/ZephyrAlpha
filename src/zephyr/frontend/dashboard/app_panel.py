@@ -101,6 +101,10 @@ from zephyr.frontend.dashboard.components.gate_statistics import (
     fetch_gate_statistics,
     render_gate_statistics,
 )
+from zephyr.frontend.dashboard.components.industry_graph import (
+    fetch_industry_graph,
+    render_industry_graph,
+)
 from zephyr.frontend.dashboard.components.knowledge_overview import (
     fetch_knowledge_overview,
     render_knowledge_overview,
@@ -358,6 +362,12 @@ class DashboardPanelApp:
         payload = render_experiment_history(data)
         return payload.get("_layout") or pn.pane.Markdown("实验历史渲染失败")
 
+    def _tab_industry_graph(self) -> object:
+        """图谱语料（产业链/供应链文档浏览器 + RAG 问答 + 主题联动日报）"""
+        data = fetch_industry_graph()
+        payload = render_industry_graph(data)
+        return payload.get("_layout") or pn.pane.Markdown("图谱语料渲染失败")
+
     # ===== Demo 数据（无 BacktestResult 注入时展示，证明仪表盘可运行）=====
 
     @staticmethod
@@ -382,6 +392,7 @@ class DashboardPanelApp:
             ("持仓监控", self._tab_position_monitor),
             ("交易面板", self._tab_trade_panel),
             ("QMT桥健康", self._tab_qmt_bridge_health),
+            ("图谱语料", self._tab_industry_graph),
         ]
         tab_objects = []
         for name, builder in tabs_spec:

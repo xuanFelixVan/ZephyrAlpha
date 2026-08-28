@@ -2,9 +2,11 @@
 ttl: task_bound
 ---
 
-> **文档元信息**（_working 临时区豁免规范：正式 frontmatter 仅入正式目录，EXEMPT-ZONE-FM）：doc_type=feature_design · owner=ZephyrAlpha-Owner · status=draft · version=1.0.0 · date=2026-08-28 · topic=industry_graph_frontend · scope=产业链/供应链图谱前端可视化（迁入 design_memos 时此节翻回正式 frontmatter，ttl 翻回 permanent）。
+> **文档元信息**（_working 临时区豁免规范：正式 frontmatter 仅入正式目录，EXEMPT-ZONE-FM）：doc_type=feature_design · owner=ZephyrAlpha-Owner · status=draft · version=1.1.0 · date=2026-08-28 · topic=industry_graph_frontend · scope=产业链/供应链图谱前端可视化（迁入 design_memos 时此节翻回正式 frontmatter，ttl 翻回 permanent）。
 >
 > **暂存说明**：本稿暂存 `docs/_working/`。数据底座已由长城任务 INDUSTRY-GRAPH-001 建成（PostgreSQL depgraph 图谱域 ig_* 七表 + 58,029 条供应链边 + 686 条产业链 + 81M 字符语料），本文档为前端追加功能的施工依据。
+>
+> **v1.1.0 定位更新（2026-08-28 Owner 裁定）**：本文档全部内容**并入新仪表盘设计**，后续统一在新仪表盘施工；§6 记录的已落地功能（旧仪表盘 app_panel 图谱语料 Tab + 主题联动监控脚本）视为先行验证，新仪表盘施工时按其结论取舍迁移。
 
 # 产业链/供应链图谱 前端功能设计
 
@@ -103,6 +105,37 @@ ttl: task_bound
 
 ## 5. 与量化主线的衔接
 
-- 视图二/三 是**供应链 lead-lag 传导因子**（回测施工中文 task A）的可视化载体：因子持仓可叠加显示在 ego 网络节点上。
+- 视图二/三 是**供应链 lead-lag 传导因子**的可视化载体（2026-08-28 回测已**证伪**：月度 IC=-0.029/周度 IC=-0.012，不进因子框架，仅留脚本 `scripts/industry_graph/backtest_supply_leadlag.py` 可复现；前视自检 1 条 MEDIUM 经复核为面板数据误报）。
 - 环节映射（0.85 互证子集）是**主题联动监控**的原料：同环节股票异动联动提示。
 - 大客户依赖预警（top1>30%）后续接入风控引擎 risk_limit 候选规则。
+
+## 6. 已落地功能（2026-08-28，旧仪表盘 app_panel，先行验证）
+
+> 以下功能已施工完成并验证，**并入新仪表盘设计时按本节结论取舍**。
+
+### 6.1 图谱语料 Tab（旧仪表盘第 13 个 Tab，已上线）
+
+- 组件 `src/zephyr/frontend/dashboard/components/industry_graph.py`，app_panel 注册"图谱语料"Tab。
+- 四区块：KPI 卡（文档 2110 / 全景图 PDF / 研报 / 图谱 / 已提取文本）、文档浏览器（静态表前 200 条 + 文档 ID 输入预览提取文本）、RAG 语料问答、主题联动日报表。
+- RAG 检索层（task B 已建成）：76,112 语料块 × bge-small-zh 512 维本地向量（`E:\数据下载\产业链数据_P2语料\chunks.sqlite` + `embeddings.npy`），问答实证命中"光伏硅料四大天王"原文；脚本 `scripts/industry_graph/rag_build_index.py` / `rag_query.py`。
+
+### 6.2 主题联动监控（日报级 MVP，已产出）
+
+- 脚本 `scripts/industry_graph/theme_linkage_monitor.py`：0.85 互证子集（24 链 / 523 家）× 最新完整交易日行情 → 每链涨家占比、均涨幅、**联动强度**（20 日平均成对相关性）、领涨股；CSV 落 `.runtime/industry_graph/theme_linkage_daily.csv` 供前端读取。
+- 实证（2026-08-25）：可控核聚变 100% 上涨/联动 0.61；光模块链联动 0.85 齐跌——高联动主题齐涨齐跌，监控有效。
+- 后续可接 QMT 盘中升级为实时版、接定时任务每日产出。
+
+### 6.3 施工教训（新仪表盘必须规避）
+
+| 坑 | 现象 | 规避方案 |
+|---|---|---|
+| 大 Tabulator 全量渲染 | 2,000+ 行带 header_filters 的 Tabulator 在 dynamic Tab 激活时主线程永久卡死 | 大表一律静态表/服务端分页；交互表格限制单页行数 |
+| 后台线程加载 torch 模型 | 与 Bokeh 事件循环并发有致死锁风险 | 模型加载放首次用户触发时同步执行（约 30 秒，之后秒回） |
+| 行情"最新日"入库中途 | max(trade_date) 当日仅个位数股票有数据，全表统计归零 | 覆盖率 <80% 峰值时自动回退上一完整交易日 |
+| kline_daily 重复行 | 同 (symbol, trade_date) 多数据源重复导致 reindex 报错 | 拉数后 drop_duplicates(symbol, trade_date) |
+| 浏览器子代理验证 | 其截图存档跨会话污染，出现别应用残留帧，内容描述不可信 | 前端验收以探针数据 + Python 层验证为准，关键页 Owner 肉眼复核 |
+
+### 6.4 新仪表盘待施工（本文档 §2 四视图）
+
+- 视图一 产业链浏览器、视图二 供应链 ego 网络、视图三 公司指标卡：未施工，待新仪表盘统一实施。
+- 视图四 语料问答：已在旧仪表盘验证（§6.1），新仪表盘按 §6.3 教训迁移（静态表分页 + 触发式模型加载）。
