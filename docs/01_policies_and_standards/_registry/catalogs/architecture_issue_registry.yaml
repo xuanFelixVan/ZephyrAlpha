@@ -20938,3 +20938,21 @@ entries:
   impact:
     - '无代码变更（悬案登记，防未来重复立案）'
   fix_phase: '悬案 open（2026-08-28 登记）；终态追认已闭环（design_maturity 修正+production 保留）'
+- issue_id: '#ARCH-IDE-RESILIENCE-001'
+  title: >-
+    IDE 工具链韧性裁定（100% AI 开发场景）——Trae 崩溃真凶=8-25 静默更新原生 bug 经 30 万文件
+    工作区放大+ProcessReaper 旧判据误杀渲染进程；R1~R8 分 P0 应急/P1 制度化/P2 条件触发三档
+  severity: P1
+  category: 治理流程
+  discovered: 2026-08-28 IDE 崩溃事故链取证（Windows 事件日志/WER 报告/崩溃转储/Trae 自有日志）
+  adjudication: >-
+    2026-08-28 裁定书（docs/_archive/2026-08-28-ide-toolchain-resilience-ruling.md）：
+    P0 应急=ProcessReaper 根治三件套（classify_trae_process 内核态拓扑判据替代旧 WMI 判据、
+    _advance_ghost_state 3 轮确认状态机、kill_ghost_windows 杀前复查赦免）+轻导入隔离
+    （reaper 零 zephyr 包 import+计划任务改脚本直跑）；P1 制度化=R4 应急 runbook 沉淀 sop/、
+    R5 工作区卫生制度化；P2 条件触发。否定式裁定：不换 IDE、不自建替代组件、不引入第二套日常
+    环境（防过度工程）；治本主线=把 IDE 从"不可替换的单点"降级为"可替换的执行器"。
+  impact:
+    - 'scripts/process_reaper.py 根治三件套+轻导入隔离（a82ac30a，33 测全绿/干跑零误杀）'
+    - 'docs/_archive/2026-08-28-ide-toolchain-resilience-ruling.md（裁定书，ttl=permanent）'
+  fix_phase: 'P0 已闭环（2026-08-28，a82ac30a）；P1 R4/R5 open 待施工（裁定书头部结案审查块标注）'
