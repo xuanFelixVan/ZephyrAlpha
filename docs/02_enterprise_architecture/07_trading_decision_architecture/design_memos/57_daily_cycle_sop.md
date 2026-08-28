@@ -3,7 +3,7 @@ ttl: permanent
 completes_when: "日循环连续运行 5 个交易日且对账 G3-G7 施工完毕后转 maintenance（文档保留，流程图并入 55 号监控体系）"
 doc_type: architecture_view
 status: active
-version: 1.1.0
+version: 1.1.1
 created: 2026-08-21
 owner: P0 批统筹代办，Owner 审批
 ---
@@ -105,7 +105,7 @@ python -c "import sys;sys.path.insert(0,'src');from zephyr.ex_core.adapters.mini
 | # | 缺口 | 状态（2026-08-21 Owner 全批后） |
 |---|---|---|
 | GAP-1 | 56 号文 G3-G7 | ✅ 已施工（#ARCH-135：query_trades_today 兜底+Fill JSONL 落盘+双适配器+recon_runner，testing 封顶） |
-| GAP-2 | 盘中模拟盘常驻服务入口 | ◐ 部分闭环：start_paper_session.py 拉起脚本已落（交易日 09:25 前手动执行）；LiveStrategyAdapter 与常驻服务化仍登记后续批 |
+| GAP-2 | 盘中模拟盘常驻服务入口 | ◐ 部分闭环：start_paper_session.py 拉起脚本已落（交易日 09:25 前手动执行）；LiveStrategyAdapter 库级常驻服务件已落码（2026-08-28 波 3b AI-WAVE3B-001：src/zephyr/ex_core/live_strategy_adapter.py + tests/ex_core/test_live_strategy_adapter.py 19 用例，depgraph 设计态登记 node 10919336/10919337）——CLI/调度接线+deadman_switch 第四路扩展=后续批/Owner 窗口 |
 | GAP-3 | post_settlement 挂调度+CLI | ◐ 部分闭环：run_post_settlement.py CLI 已落实证 exit 0；挂调度（cron 30 15 规格已备）=Owner 窗口待批 |
 | GAP-4 | _data_inventory 关键表 | ✅ 已闭环（+trade_calendar/stk_limit/limit_up_down+None 行数存量 bug 修复） |
 | GAP-5 | 向量化逐笔 trade_log+跑批脚本 | ✅ 登记 CAND-BT-003（触发=对账需向量化基准；当前 EDE 路径分工不缺口）；跑批显式串 sink 见 §4 命令 |

@@ -66,6 +66,14 @@ if TYPE_CHECKING:
         DynamicCapacityCalculator,
     )
 
+    # LiveStrategyAdapter（57 号文 GAP-2 常驻服务化）预接线可发现性声明——
+    # 消费方=后续批 CLI/调度接线（见 live_strategy_adapter.py [CONSUMERS]），
+    # 运行时不加载（同上 TYPE_CHECKING 先例）。
+    from zephyr.ex_core.live_strategy_adapter import (
+        LiveStrategyAdapter,
+        StrategySlot,
+    )
+
 __all__: Final = [
     "AlgoType",
     "BrokerInterface",
