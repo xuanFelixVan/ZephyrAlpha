@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.order_manager
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.trading.trading_contracts.broker_interface; zephyr.trading.trading_contracts.execution.fill; zephyr.trading.trading_contracts.execution.order; zephyr.ex_core.cancel_rate_guard; zephyr.compliance.compliance_report_registry
-# [CONSUMERS]
+# [DEPENDENCIES] zephyr.trading.trading_contracts.broker_interface; zephyr.trading.trading_contracts.execution.fill; zephyr.trading.trading_contracts.execution.order; zephyr.ex_core.cancel_rate_guard; zephyr.compliance.compliance_report_registry; zephyr.compliance.manipulation_realtime_monitor(TYPE_CHECKING 预接线)
+# [CONSUMERS] zephyr.compliance.manipulation_realtime_monitor(订单事件/fill 回调消费+is_frozen 闸抛转)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 先报告后交易（ReportGate BLOCK→拒发）;日申报>=1万笔拒发（Fail-Closed）;门禁未注入不影响既有行为
+# [INVARIANTS] 先报告后交易（ReportGate BLOCK→拒发）;日申报>=1万笔拒发（Fail-Closed）;操纵冻结标的拒发新申报（MOD-CMP-018 闸抛转, 失效 Fail-Closed）;门禁未注入不影响既有行为;订单事件回调异常隔离不阻断主链
 # [MODIFY-GUARD] 43_compliance_discipline.md §7.4/§8（#ARCH-COMPLIANCE-001 方案A）
 # [STABILITY] evolving
 # [SAFETY] L
@@ -42,6 +42,13 @@ C-002 执行域合规门禁（2026-08-15 AI-ASM-001 装配批接线，43_complia
   发往券商即 record_cancel() 计入日申报硬计数器（成功/失败均计，"申报、撤单
   笔数"同口径）；未注入 declaration_guard 时跳过，不影响既有行为。
   门禁自身失效（登记表不可读等）由各门禁模块 Fail-Closed 兜底（43 号 §7.4）。
+  3. 盘中操纵冻结闸（2026-08-28 AI-WAVE3C-001 A8 批，43 号 §7.3/§10）：
+     manipulation_monitor（MOD-CMP-018）is_frozen(symbol) 命中冻结 →
+     ComplianceGateBlockError 拒发新申报（既有闸抛转，不新建执行通道）；
+     监测失效 → Fail-Closed 拒发（43 号 §7.6）。
+  订单事件流（A8 批接线）：submit_order 券商确认后与 cancel_order 撤单终态后
+  经 _order_callbacks 发射订单事件（被动观察，回调异常隔离不阻断主链），
+  供盘中操纵实时监测消费委托流；fill 事件经既有 register_fill_callback 链。
 
 SSoT: cross_layer_contracts.yaml -> CTR-004 + CTR-005
 
@@ -116,7 +123,7 @@ from collections.abc import Callable
 from datetime import UTC, datetime
 from decimal import Decimal
 from enum import Enum
-from typing import Final
+from typing import TYPE_CHECKING, Final
 
 from zephyr.compliance.compliance_report_registry import ReportGate, ReportGateDecision
 from zephyr.ex_core.cancel_rate_guard import CancelRateGuard, DailyDeclarationStatus
@@ -125,6 +132,9 @@ from zephyr.shared.contracts.fill import Fill
 from zephyr.shared.contracts.order import Order
 from zephyr.shared.foundation.errors import ZephyrBaseError
 from zephyr.trading.trading_contracts.broker_interface import BrokerInterface
+
+if TYPE_CHECKING:
+    from zephyr.compliance.manipulation_realtime_monitor import ManipulationRealtimeMonitor
 
 _logger = logging.getLogger(__name__)
 
@@ -200,6 +210,7 @@ class OrderManager:
         brokers: dict[str, BrokerInterface] | None = None,
         report_gate: ReportGate | None = None,
         declaration_guard: CancelRateGuard | None = None,
+        manipulation_monitor: ManipulationRealtimeMonitor | None = None,
     ):
         self._brokers = brokers or {}
         self._orders: dict[str, Order] = {}
@@ -212,6 +223,8 @@ class OrderManager:
         # C-002 合规门禁（43 号 §7.4/§8，AI-ASM-001 装配批接线；None=未接线不校验）
         self._report_gate = report_gate
         self._declaration_guard = declaration_guard
+        # C-002 第三道闸：盘中操纵冻结闸（43 号 §7.3/§10，AI-WAVE3C-001 A8 批；None=未注入跳过）
+        self._manipulation_monitor = manipulation_monitor
         self._fill_lock = threading.Lock()
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
@@ -241,6 +254,11 @@ class OrderManager:
         防 TradingSession 与 OrderManager 各持独立计数器分裂计数）。"""
         return self._declaration_guard
 
+    @property
+    def manipulation_monitor(self) -> ManipulationRealtimeMonitor | None:
+        """只读：盘中操纵监测器（供装配层校验同实例注入/挂接事件回调）。"""
+        return self._manipulation_monitor
+
     def register_broker(self, broker_id: str, broker: BrokerInterface) -> None:
         self._brokers[broker_id] = broker
         broker.register_fill_callback(self._on_fill)
@@ -248,6 +266,23 @@ class OrderManager:
 
     def register_fill_callback(self, callback: Callable[[Fill], None]) -> None:
         self._fill_callbacks.append(callback)
+
+    def register_order_event_callback(self, callback: Callable[[Order], None]) -> None:
+        """注册订单事件回调（A8 批接线，43 号 §10 盘中实时流委托流消费口）。
+
+        触发点：submit_order 券商确认后（status=SUBMITTED=报单）与
+        cancel_order 撤单终态后（status=CANCELLED=撤单）；事件类别由
+        order.status 判别。回调异常逐回调隔离，不阻断订单主链。
+        """
+        self._order_callbacks.append(callback)
+
+    def _emit_order_event(self, order: Order) -> None:
+        """发射订单事件（被动观察口；异常隔离同 fill 回调链口径）。"""
+        for callback in self._order_callbacks:
+            try:
+                callback(order)
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                _logger.error("Order event callback error: %s", e, exc_info=True)
 
     def create_order(
         self,
@@ -333,16 +368,21 @@ class OrderManager:
         order.broker_order_id = broker_order_id
         order.updated_at = datetime.now(UTC)
 
+        # 订单事件流（A8 批）：券商确认=报单成功，发射 SUBMITTED 事件供盘中操纵监测消费
+        self._emit_order_event(order)
+
         return broker_order_id
 
     def _check_compliance_gates(self, order: Order) -> None:
         """C-002 执行域合规门禁（AI-ASM-001 装配批接线）。
 
-        两道硬闸（注入即生效，None=未接线跳过）：
+        三道硬闸（注入即生效，None=未接线跳过）：
         1. ReportGate 先报告后交易（43 号 §7.4 铁律）：任一必报项 broker_ack
            缺失 → BLOCK → ComplianceGateBlockError 拒发；
         2. 日申报笔数读数检查（43 号 §8 方案 A）：>=1 万笔拒发；>=5000 笔
            WARNING 不阻断。
+        3. 盘中操纵冻结闸（43 号 §7.3/§10，A8 批）：monitor is_frozen 命中
+           → 拒发新申报；监测失效 → Fail-Closed 拒发（§7.6）。
         """
         if self._report_gate is not None:
             gate_result = self._report_gate.check()
@@ -373,6 +413,27 @@ class OrderManager:
                     "C-002 日申报笔数预警: count=%d >= %d（5000 笔预警线，不阻断）",
                     count,
                     self._declaration_guard.daily_warn_threshold,
+                )
+        if self._manipulation_monitor is not None:
+            # 第三道闸（A8 批，43 号 §7.3/§10）：操纵命中冻结标的拒发新申报——
+            # 阻断判定消费监测器，执行抛转走本闸既有 ComplianceGateBlockError 路径
+            try:
+                frozen = self._manipulation_monitor.is_frozen(order.symbol)
+            except Exception as exc:  # noqa: BLE001 — 43 号 §7.6 检测失效=Fail-Closed
+                _logger.exception("盘中操纵监测失效，Fail-Closed 拒单: symbol=%s", order.symbol)
+                raise ComplianceGateBlockError(
+                    "盘中操纵监测失效，Fail-Closed 拒绝新申报",
+                    details={"order_id": order.order_id, "symbol": order.symbol},
+                ) from exc
+            if frozen:
+                _logger.error(
+                    "C-002 拒单[盘中操纵冻结]: order_id=%s symbol=%s（冻结标的拒发新申报，待人工复解释放）",
+                    order.order_id,
+                    order.symbol,
+                )
+                raise ComplianceGateBlockError(
+                    "盘中操纵命中冻结标的，拒绝新申报",
+                    details={"order_id": order.order_id, "symbol": order.symbol},
                 )
 
     def cancel_order(self, order_id: str) -> bool:
@@ -409,6 +470,8 @@ class OrderManager:
 
         self._transition_status(order, OrderStatus.CANCELLED)
         _logger.info("Order cancelled: order_id=%s", order_id)
+        # 订单事件流（A8 批）：撤单终态，发射 CANCELLED 事件供盘中操纵监测消费
+        self._emit_order_event(order)
         return True
 
     def _cancel_at_broker(self, order_id: str, order: Order) -> bool:

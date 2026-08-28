@@ -5,8 +5,8 @@ title: 合规与交易纪律体系
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.1.0"
-date: 2026-08-15
+version: "1.2.0"
+date: 2026-08-28
 topic: compliance_discipline
 scope: 07_trading_decision_architecture
 ---
@@ -19,7 +19,7 @@ scope: 07_trading_decision_architecture
 >
 > **未做事项及原因**：
 > - 47 项功能裁定清单全量迁移未做——源文档不在仓内，待用户补供（遗留 #77）。
-> - 对敲/拉抬/洗售（Spoofing/Layering/WashTrade）盘中实时检测未做——需盘中实时流驱动，属后续批次。
+> - 对敲/拉抬/洗售（Spoofing/Layering/WashTrade）盘中实时检测~~未做~~——需盘中实时流驱动，属后续批次。**已闭环**（2026-08-28 AI-WAVE3C-001 A8 批，MOD-CMP-018 盘中实时流驱动监测器+C-002 第三道冻结闸，含拉抬打压实时口径，见 §10 盘中实时流驱动记录）。
 
 # 合规与交易纪律体系
 
@@ -324,6 +324,7 @@ compliance:
 | 2026-08-15 | 1.0.0 | **已施工**（AI-COMP-001，第 4 批）：五环节全落地，draft→active | §3-§7 全模块落码（7 模块+2 登记表+78 测试全绿），详见 §10 施工落地记录；depgraph 4 预登记设计态节点落码+3 新登记+10 设计态边 |
 | 2026-08-15 | 1.0.1 | #ARCH-COMPLIANCE-001 裁定吸收（用户拍板方案 A） | §8 开放问题闭环：不独立建 program_trading_regulation.py；日申报笔数硬计数器（5000 预警/1 万阻断）并入 tracker #74 装配批 |
 | 2026-08-15 | 1.1.0 | **运行时装配完工**（AI-ASM-001，tracker #78） | §10 新增装配记录：C-004 四道合规闸（清单/熔断/纪律/操纵检测）+C-002 双硬闸（ReportGate/日申报笔数）+MOD-PA-006 gate_batch_order+CancelRateGuard v1.1.0 硬计数器；§8 #ARCH-COMPLIANCE-001 转已闭环；红队三向量实证 |
+| 2026-08-28 | 1.2.0 | **盘中实时流驱动完工**（AI-WAVE3C-001，A8 批） | §10 新增盘中实时流驱动记录：MOD-CMP-018 manipulation_realtime_monitor（委托/成交事件流挂接+tick 流分钟均量/短窗供给+4 类检测+告警冻结分发）+C-002 第三道闸（操纵冻结抛转）；结案报告"盘中实时检测未做"残余闭环；31 新用例+1503 两轮全绿 |
 
 ## 10. 施工落地记录
 
@@ -356,6 +357,19 @@ compliance:
 - 红队实证（tests/compliance/test_runtime_wiring.py）：①9999 笔放行→1 万整 C-002 拒发+broker_ack 缺失拒发；②清单缺项整批 Hard Block、补全恢复；③报复命中 HARD_BLOCK+熔断落盘，C-004 与 MOD-PA-006 跨链同策略均拦，合规日志留痕
 - 测试：213 项（ex_core 3 文件+pf_alloc+compliance 含红队 4 项）连续 2 轮全绿
 - 边界：Spoofing/Layering/WashTrade 需订单/成交历史，由盘中实时流以同一 detector 实例驱动，不在 Pre-Trade 链范围；MOD-CMP-005/008 为治理/审计面不参与运行时拦截
+
+**盘中实时流驱动**（2026-08-28，AI-WAVE3C-001，A8 批——结案报告"盘中实时检测未做"残余闭环）：
+
+| 嵌入点 | 接线内容 | 落点 | 语义 |
+|---|---|---|---|
+| 委托/成交事件流（C-002 执行域） | MOD-CMP-018 ManipulationRealtimeMonitor attach 挂接：订单事件回调（报单 SUBMITTED/撤单 CANCELLED 发射）+ 既有 fill 回调链 | [order_manager.py](../../../../src/zephyr/ex_core/order_manager.py) `register_order_event_callback`/`_emit_order_event`（submit 券商确认后/cancel 终态后发射，回调异常隔离） | 被动观察，不接任何下单/撤单执行路径 |
+| tick 行情流（tick_subscriber CP-01 通道） | RedisTickMarketProvider 懒读 Redis tick 缓存：分钟均量=累计量/已交易分钟（Spoofing 前提）+ 5min 滚动观测窗价变/量差（拉抬打压前提） | [manipulation_realtime_monitor.py](../../../../src/zephyr/compliance/manipulation_realtime_monitor.py)（事件时刻拉取，零定时器；缺数据降级跳过防误伤） | tick key/符号归一走 SSoT（tick_latest_key/normalize_symbol） |
+| 检出→告警/阻断 | 命中一律 logging 告警 + compliance_log（MANIPULATION_REALTIME_ALERT；逐命中 MANIPULATION_VERDICT 归 detector 唯一真源）+ 冻结标的判定 | C-002 `_check_compliance_gates` 第三道闸：is_frozen 命中 → ComplianceGateBlockError 拒发新申报（既有闸抛转，不新建执行通道）；监测失效 Fail-Closed（§7.6） | 冻结须人工复核 release_freeze 释放（MANIPULATION_FREEZE_RELEASE 留痕） |
+
+- 4 类检测口径：Spoofing/Layering/WashTrade（§7.3 经 ManipulationStreamDriver 同一 detector 实例）+ 拉抬打压（§7.2 短窗价变+我方成交占比，事件驱动懒评估）；尾盘操纵/大额成交维持 C-004 Pre-Trade 链覆盖不重复
+- 测试：31 新用例（4 类检测正常/边界/异常 + 实时流接入隔离 + 集成冒烟模拟流）；compliance+ex_core 1503 项连续 2 轮全绿零回归
+- 治理：MOD-CMP-018 depgraph 节点登记（只登记不流转）+ capability creation_tokens + module_translation 中文名
+- 边界重述：本批=检测/告警/阻断判定逻辑；执行动作走既有合规闸抛转（ComplianceGateBlockError），未新建执行通道
 
 ---
 
