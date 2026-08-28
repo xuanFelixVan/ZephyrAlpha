@@ -14,6 +14,11 @@ completes_when: "阶段二全部波次施工、测试、提交闭环后归档（
 
 # 阶段二业务层施工顺序清单（92 号）
 
+> ## 结案报告（2026-08-28 全量审查批，代码实证）
+> **实际开发**：七波全闭环——波0 清单+CAND×4 登记；波1 INT-01 九处路径收敛+STR-03/ALG-06/ALG-04；波2 ALG-01 横截面特征/ALG-02 稳定区优选/ALG-03 因子案例库+STR-01/02 分类勘正+INT-03 看门狗；波3 M1 六件+MOD-PLAN-004+MOD-SIG-057；波4 十模块+期指采集配置+us_futures_intraday 建表；波5 六模块+market_breadth_snapshot/news_sentiment_window 建表；波6 E2E 两轮零问题；波7 蓝图 19 份+44 号 v1.3.0。INT-01 最后 2 处尾巴已于 2026-08-23 清零（#259）。
+> **最终成果**：阶段二业务层施工全批闭环（2026-08-22/23），全部新模块 testing 封顶（B-007）。
+> **未做+原因**：①IDX-02 前端接入移交前端会话（D6 裁定有主）；②DeepSeek 充值 #253（Owner 行动项）；其余移交项 §11 登记有主。**本案可标已结案**。
+
 > **性质**：施工排序清单——Owner 2026-08-22 指令（长城任务任务一）驱动，将 [44_premarket_intraday_decision_upgrade.md](44_premarket_intraday_decision_upgrade.md)（M1/M2/M3/M4 全组）与 [architecture_review_2026_08_module_upgrade_audit.md](architecture_review_2026_08_module_upgrade_audit.md)（INT/STR/ALG/SEC/IDX 族）的全部施工内容按依赖与冲突面排序成波次，作为并发施工派单真源。
 > **前置状态实证（2026-08-22）**：P0 批全闭环（tracker #232-#244）；残余四项专项批闭环（#61/#62/#63）；提交队列 MVP 已落且 flag 已翻开（#240，dev 写入强制串行化）；P0-4② calendar_event 回填已实证在库（#237，396 行 9 类）；44 号 CAND 登记的缓办条件（残余批任务4闭环）已达成。44 号"全组排 P0 目标态之后"的前置已满足，Owner 指令即开工令。
 > **真源分工**：算法公式/阈值以 44 号 §9 与审查报告 §10.2/§11.5 为真源，本文只做排序、施工面划分、实证分支裁定与验收口径，不复制算法伪代码。

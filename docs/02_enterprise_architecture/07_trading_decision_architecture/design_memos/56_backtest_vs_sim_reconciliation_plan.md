@@ -9,6 +9,11 @@ owner: P0 批统筹代办，Owner 审批（含 DB 写操作窗口项）
 
 # 56 · 回测 vs 模拟盘对账方案与对照清单（P0-1②）
 
+> ## 结案报告（2026-08-28 全量审查批，代码实证）
+> **实际开发**：G3 query_trades_today（miniqmt_broker 盘后兜底+Fill JSONL 落盘回放）；G4 broker_settlement_adapter.py（配对键 {symbol}|{seq:03d}）；G5 backtest_fills_adapter.py（回测 trade_log→Fill+持仓重放）；G7 recon_runner.py（L1/L2/L3 编排+归因三分类+落 reconciliation_differences）；G1 三套费率已统一（Owner 裁定回测以实盘万0.854 为准，8 处费率点统一）；G6 四表 DDL 已落 governance.db。
+> **最终成果**：对账链路 AI 可施工项全闭环（2026-08-21，测试 39+45 件全绿），G1/G6 Owner 窗口项均已落地。
+> **未做+原因**：①recon_runner 维持 testing 封顶（B-007 分期，production 启用挂起等 Owner）；②L3 期初持仓快照数据源=57 号文窗口项。
+
 > **用途**：定义"同信号同窗口"下回测与 QMT 模拟盘的成交/持仓逐日 diff 机制与偏差归因口径，供 P0-5 日循环 SOP 的"当日回测跑批→对账 diff→异常登记"环节直接嵌入。
 > **口径铁律**：对账比对以**数量与成交价为主键**，佣金/税费仅作参考列——仓内现存三套费率口径不一致（见 §4 风险 R1），费率统一未裁定前，费用差不得判为 drift。
 > **不产生第二真源**：对账设计真源=54 号文，监控节奏真源=55 号文，本文只是两者在"回测 vs 模拟盘"场景的接线方案+任务清单。

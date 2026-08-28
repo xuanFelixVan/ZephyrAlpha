@@ -13,6 +13,11 @@ scope: 07_trading_decision_architecture
 
 # 盘前与盘中决策支持升级（28/41/90 号升级备忘）
 
+> ## 结案报告（2026-08-28 全量审查批，代码实证）
+> **实际开发**：M1 情绪增量全组落码——MOD-SIG-057~063（lhb_premium_analyzer/futures_basis_monitor/option_sentiment/sector_divergence/mainline_candidates/sector_leader/similar_day_inference）；M2 MOD-PLAN-004~007（overnight_boundary_reviser/scenario_planner/boundary_revision_engine）；M3-⑨ MOD-PLAN-007 llm_premarket_analysis（DeepSeek 402 真跑故障→Qwen 降级链接管，生产实证）；M3 其余 MOD-RPT-028/029（prediction_log_writer/prediction_calibration_monitor）；MOD-DATA-061~063（sector_intraday_aggregator/market_breadth_collector/intraday_sentiment_loop）；外盘 ES/NQ 通道（akshare hq_str_hf_ES 解析）。
+> **最终成果**：阶段二施工批（92 号清单）七波全闭环，E2E 两轮零问题（4665×2 passed）。
+> **未做+原因**：①production 启用一律挂起等 Owner 审批（宪章 B-007 分期）；②期货分钟/tick 采集配置、A50/日韩数据源为登记候选；③M4 日志体系随运维期迭代。
+
 > **性质**：升级备忘——登记 2026-08-21 Owner 三问核查发现的三个功能缺口，作为 [28_sentiment_cycle_trading](28_sentiment_cycle_trading.md)（情绪周期）、[41_buy_flow](41_buy_flow.md)（买入流/明日预案双层架构）、[90_methodology_open_questions](90_methodology_open_questions.md) §7（T+1 次日预测暂缓裁定）的**增量升级载体**，与老文件互相引用，不改动老文件既有裁定。
 > **状态**：active v1.3.0——§11 五项裁定已获 Owner 批准（2026-08-21）；v1.1.0 起随批增量均属裁定一范式内细化（§11 附注）；施工按 §7 分期执行（全组排 P0 目标态之后），新模块仅到 testing，production 启用一律 Owner 审批（宪章 B-007）。
 > **本文不做什么**：不推翻 90 号 §7"BM-SEL-04 暂缓建设"裁定；不新建方向点预测模型；不产生第二真源（候选登记以 candidate_module_registry.yaml 为 SSoT，因子登记以 factor_registry.yaml 为 SSoT，本文只做 why 层载体）。

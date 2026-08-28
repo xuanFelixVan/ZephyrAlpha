@@ -14,6 +14,11 @@ scope: 07_trading_decision_architecture
 
 # 数字货币量化扩展设计
 
+> ## 结案报告（2026-08-28 全量审查批，代码实证）——战线进行中，阶段性回填
+> **实际开发**：W0 市场日历抽象（src/zephyr/data/calendar/，CAND-CRYPTO-001 promoted，commit 69e5dc9f）；W1 OKX 行情 provider（okx_provider.py，CAND-CRYPTO-002 promoted）；W2 交易规则参数化（ex_core/rules/{base,ashare,crypto}.py+PreExecutionChecker 日历注入，CAND-CRYPTO-006 promoted）；W3 OKX broker（okx_broker.py HMAC-SHA256+回执确认，CAND-CRYPTO-005 promoted）；007 回测三件套登记（UNI-CRYPTO-001/BMK-CRYPTO-001/CST-CRYPTO-001 带 market:crypto 字段）；§4.5 三道闸正文已补（2026-08-27 Owner 裁定）。
+> **最终成果**：W0-W3 全闭环，A 股零行为变化硬门槛达成。
+> **未做+原因**：①CAND-CRYPTO-007 条目仍 candidate（三件套实例已登记，翻 promoted 尾巴待做）；②#261 日历扩展消费点注入改造 20+ 文件排后续波次；③CAND-CRYPTO-003/004/008/009/010 未施工（设计内 W4+ 波次，依赖 Cloudflare 账户/API key 等外部条件）。
+
 > 本文是"数字货币量化战线"的启动备忘：记录为什么现在开这条战线、30 域骨架哪些与 A股共用/哪些参数化/哪些新建、四个横切改造点、新建候选清单与施工波次。
 > 性质：混合型（决策备忘 + 施工计划）。模块级登记真源 = candidate_module_registry.yaml CAND-CRYPTO-001~010；域级全景真源 = docs/_working/依赖图/00-总览与索引.md（30 域 v7.0）。
 > 状态：active v1.3.4——§9 Q1-Q6 已 Owner 拍板（2026-08-26），W0 市场日历抽象已完工（CAND-CRYPTO-001 promoted），W1 OKX 行情 provider 已完工（CAND-CRYPTO-002 promoted），W2 交易规则参数化已完工（CAND-CRYPTO-006 promoted），W3 执行适配器已完工（CAND-CRYPTO-005 promoted）。

@@ -4366,12 +4366,10 @@ capabilities:
   - hot_file_cas
   - read_before_write
   - safe_write_text_cas
-  description: 陈旧基线整文件覆写禁令（trae_085，#ARCH-264，2026-08-26 Owner 裁定）。100%
-    AI 开发共享工作区写层四条铁律：①热文件写前读新（DEFAULT_HOT_FILES 经 safe_write_text
-    CAS 或 lock_files 持锁，旧 base 拒写落审计）②注册表/索引类共享文件批量改写脚本必须过
-    CAS（#ARCH-237 行级合并事故前例）③AI 会话全文件 Write 前必须本轮 Read（禁止凭上下文
-    旧缓存整文件覆写）④派生写必须登记（reconcile worker claim 快照在册或 auto-sync 清单在列）。
-    新 AI 写热文件/批量注册表脚本/派生写 reconciler 前 MUST 反查本规则。
+  description: 陈旧基线整文件覆写禁令（trae_085，#ARCH-264，2026-08-26 Owner 裁定）。100% AI 开发共享工作区写层四条铁律：①热文件写前读新（DEFAULT_HOT_FILES
+    经 safe_write_text CAS 或 lock_files 持锁，旧 base 拒写落审计）②注册表/索引类共享文件批量改写脚本必须过 CAS（#ARCH-237
+    行级合并事故前例）③AI 会话全文件 Write 前必须本轮 Read（禁止凭上下文 旧缓存整文件覆写）④派生写必须登记（reconcile worker
+    claim 快照在册或 auto-sync 清单在列）。 新 AI 写热文件/批量注册表脚本/派生写 reconciler 前 MUST 反查本规则。
 - capability_id: shrinkage_backtest_engine
   canonical_override: src/zephyr/backtest/implementations/shrinkage_engine.py
   aliases:
@@ -10494,6 +10492,10 @@ creation_tokens:
   token: auto-scaffold-ashare-20260826
   created_by: scaffold.py
   capability: ashare
+- file: src/zephyr/data/implementations/onchain_provider.py
+  token: auto-scaffold-onchain_provider-20260828
+  created_by: scaffold.py
+  capability: onchain_provider
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
@@ -12632,3 +12634,7 @@ di_seam_exemptions:
   token: auto-enable-write-audit-sacls-20260827
   created_by: AI-OWNER-WIRING
   capability: write_audit_sacl_enabler
+- file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/45_warroom_playbook.md
+  token: auto-warroom-playbook-20260828
+  created_by: AI-CLOSURE-AUDIT-001（补登：文档 2026-08-22 已存在于工作区但未入 git，随全量审查批首次提交）
+  capability: warroom_playbook

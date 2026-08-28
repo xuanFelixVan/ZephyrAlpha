@@ -13,6 +13,11 @@ scope: 07_trading_decision_architecture
 
 # 大QMT文件桥双向通道操作手册（miniQMT 替代方案）
 
+> ## 结案报告（2026-08-28 全量审查批，代码实证）
+> **实际开发**：qmt_file_bridge_broker.py（E:\qmt_bridge 实盘/E:\qmt_bridge_sim 模拟双分区+orders/ack 回执文件对+隔 1~2 秒回执确认机制）；qmt_file_bridge_quote.py（行情出口读取，draft 成熟度）；蓝图 MOD-L06-001-QMTFB（哑执行器 v14+异步回填语义）；前端 qmt_bridge_health.py 健康面板（3 秒自刷）。
+> **最终成果**：项目侧文件桥读写链已落地，操作手册 active，miniQMT 清退后的唯一合规通道可用。
+> **未做+原因**：①quote 侧 draft 成熟度（消费方驱动按需成熟）；②无独立计划任务脚本属设计内（导出=QMT 侧系统设置零代码，项目侧由持仓监控/对账消费方驱动）。
+
 > 本备忘记录 miniQMT 清退后，项目与券商终端之间**唯一合规双向通道**的架构、实证证据与逐步打开方法。
 > 上游衔接：[40_execution_broker](40_execution_broker.md) 决策⑲（MiniQMT 政策关注）——2026-08-25 政策风险正式兑现，本备忘是兑现后的落地答案。
 > 性质：永久态操作手册，全部步骤经 2026-08-25 实盘终端逐项实证，不是推测。

@@ -9,6 +9,11 @@ owner: 第十统筹（AI-NIGHT-001）代办，Owner 审批
 
 # 18 · 到期前全功能总账与优先级路线图（临时文档）
 
+> ## 结案报告（2026-08-28 全量审查批，代码实证）
+> **实际开发**：P0-1~P0-7 全闭环——P0-1 对账循环（recon_runner G7+G3/G4/G5 适配层+四表 DDL）；P0-2⑤ correlation_engine DB_PATH+列对齐；P0-4 三 sleeve 策略类+SelectionResult 契约（CAND-SIG-012/013 promoted）+calendar_event 回填实证；P0-5 日循环 SOP+首跑彩排；P0-6 GATE-REGISTRY-SYNC+commit queue MVP（flag 已翻开+全真通道首验）+xdist 族治理；P0-7 drift 写入链复产三证+QMT C1 探活。费率三套口径统一（Owner 裁定万0.854，8 处费率点）。
+> **最终成果**：到期前 P0 层全量闭环（2026-08-21~22），目标态（交易日模拟盘+收盘后回测对账）链路可跑通。
+> **未做+原因**：P1 层残留——#221 stk_limit 历史重算（待 Owner 裁定口径）/#225 tushare index_weight（积分门槛）/#253 DeepSeek 充值（Owner 行动）；P2 候选池为常态排期库。**P0 层可标已结案，P1/P2 继续以本文为排期真源**。
+
 > **用途**：把"后面要做的所有功能"——值得做的、不值得做的、确定的、候选的、第三阶段的——全部登记在一处，只排优先级，不在本文施工。
 > **目标态（Owner 2026-08-21 原话）**：到期（Trae 无限会员 2026-08-27 / 赠送积分 2026-09-03）前完成**整个项目所有模块的高度集成——能启动所有模块，能跑回测和模拟盘：交易日模拟盘、收盘后回测**。
 > **数据底座（2026-08-21 实测）**：depgraph production 6548/design 205/planned 115；CAND 候选库 candidate 91 + deferred 29 + rejected 30 + promoted 6；tracker 挂账见 §3。

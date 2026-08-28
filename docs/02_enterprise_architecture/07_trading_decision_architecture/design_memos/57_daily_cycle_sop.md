@@ -10,6 +10,11 @@ owner: P0 批统筹代办，Owner 审批
 
 # 57 · 交易日模拟盘+收盘后回测 日循环 SOP（P0-5）
 
+> ## 结案报告（2026-08-28 全量审查批，代码实证）
+> **实际开发**：六环节 SOP 定稿；首跑彩排已过（2026-08-21 晚收盘后）；GAP-2 start_paper_session.py（模拟盘启动 MVP）；GAP-3 run_post_settlement.py（结算 CLI 真跑 exit 0，已挂计划任务 ZephyrAlpha_PostSettlement 每日 15:30）；GAP-4 _data_inventory 扩表+None 行数修复；GAP-5 转 CAND-BT-003。
+> **最终成果**：SOP active v1.1.0 + 日循环链路可跑通（回测跑批/sink 落盘/结算 dry-run/空对账全实证）。
+> **未做+原因**：①GAP-2 常驻服务化（LiveStrategyAdapter）未做，待排期；②QMT 开盘前在线人工确认=常态 Owner 动作（QMT 无法自动登录，保持常开口径）；③RUN-05 真实断网断电演练留 Owner 窗口。
+
 > **用途**：把"到期前目标态"落成每个交易日可照做的运行手册——开盘前数据就绪检查 → 交易日模拟盘运行 → 15:30 收盘结算 → 当日回测跑批 → 对账 diff → 异常登记。与 55 号监控"日自动/周人工/月轻量"节奏对接。
 > **铁律**：QMT 常开（Owner 裁定 2026-08-21，无法自动登录，不手动关闭就不关闭）；一切 DB 写操作留 Owner 窗口；本 SOP 所有命令默认只读或幂等。
 > **对账口径真源** = 56 号文（56_backtest_vs_sim_reconciliation_plan.md）；本文是运行形态，不复述对账设计。

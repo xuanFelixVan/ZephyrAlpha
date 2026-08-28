@@ -10,6 +10,11 @@ baseline: "depgraph production 6548 / design 205 / planned 115；CAND 91+29+30+6
 
 # 2026-08 全模块架构审查与升级清单（外部实践对标）
 
+> ## 结案报告（2026-08-28 全量审查批，代码实证）
+> **实际开发**：审计升级项全族施工完毕——INT-01 硬编码路径收敛（#259 清零）+INT-03 看门狗 Disabled 注册；STR-01 七包 43 文件 DORMANT 标注+STR-02 42 空壳包+6 stub MATURITY 勘正+STR-03 命名消歧；ALG-01 cross_sectional_features（MOD-REGIME-007）+ALG-02 param_analyzer 稳定区+ALG-03 因子案例库 casebook+ALG-04/06 注记；SEC-01~05 板块族（sector_report_builder/sector_leader/mainline_candidates 等）；IDX-01 index_regime_panel+index_market_brief。
+> **最终成果**：升级项经 92 号清单派单随阶段二批全量闭环，审计发现的问题全部有着落。
+> **未做+原因**：IDX-02 前端接入移交前端会话（D6 裁定有主）。**本案可标已结案**。
+
 > **定位**：带日期的审计快照——对照 2026 年 8 月最新机构实践、量化社区与氛围编程（vibe coding）社区做法，回答四个问题：①集成/运行方式是否需升级；②代码结构/功能是否需调整；③数据源/因子/算法是否有缺口或更优解；④模块能否运行、集成后能否运行。
 >
 > **口径声明（防第二真源）**：本文是审查视图不是登记簿。已在 P0 批/残余四项专项批在途施工的事项只标注「在途」，不重复登记；新增升级项集中在 §6 总表，晋升一律走既有 CAND→ROOR / ARCH 流程，经 Owner 裁定后施工。
