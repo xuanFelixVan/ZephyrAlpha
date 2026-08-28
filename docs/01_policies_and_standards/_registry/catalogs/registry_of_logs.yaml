@@ -537,12 +537,12 @@ logs:
 
   # ═══════════════ TRD — 交易/执行 ═══════════════
   - log_id: LOG-TRD-001
-    name_zh: 僵尸进程猎杀日志
+    name_zh: 残留进程猎杀日志
     kind: event_log
-    path: data/runtime/zombie_kill.log
-    writers: [src/zephyr/trading/zombie_scanner.py]
+    path: data/runtime/reaper_kill.log
+    writers: [src/zephyr/trading/process_reaper.py]
     consumers: [人工查询排障]
-    schema_summary: '{pid, reason, ts} JSONL'
+    schema_summary: '[ts] KILLED|DRY-RUN PID={pid} reason={reason} 行格式'
     retention: permanent
     status: active
   - log_id: LOG-TRD-002

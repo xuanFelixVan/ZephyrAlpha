@@ -49,6 +49,16 @@ The architecture must meet seven constraints derived from first principles:
 | Tick Subscriber | `ZephyrAlpha_TickSubscriber` | AtLogOn + PT5M heartbeat | scripts/start_tick_subscriber.ps1 |
 | RSSHub | `ZephyrAlpha_RSSHub` | AtLogOn | `pm2 resurrect` (hidden) |
 | Trae Cache Cleanup | `ZephyrAlpha_TraeCacheCleanup` | AtLogOn + PT30S delay | clean_trae_cache.ps1 |
+| Process Reaper | `ZephyrAlpha_ProcessReaper` | AtLogOn + PT10M (one-shot) | `pythonw -m zephyr.trading.process_reaper` |
+
+**Process Reaper（2026-08-28 裁定纳入，替代旧 ide_health_daemon 常驻守护模式）**：无状态
+one-shot 清理器（模式先例 deadman_switch.ps1 #ARCH-BOOT-002 E），scan→判定→kill→exit，
+无常驻进程/无心跳/无 pid 锁。治理范围：项目 python 残留进程（白名单优先 + 孤儿/超龄/
+危险指标多重信号判定矩阵）+ Trae 幽灵窗口 + drift 指标（stash>5 自动清理）。白名单 =
+本表永久服务 + Trae 进程树后代 + `data/runtime/process_reaper_keep.txt` 个案保留。
+旧 ide_health_daemon「常驻守护 + AI 冷启动自觉拉起」模式违反 C1/C3 且实证失效
+（track_task_process 零调用者死代码、守护死亡无人知），判定矩阵详见模块 docstring。
+ExecutionTimeLimit=10min 由 OS 回收挂死实例（dogfood：清理器自身不得成为僵尸）。
 
 **Task Scheduler is the sole entry point for ZephyrAlpha services.** No Startup folder .bat/.lnk,
 no registry Run entries for ZA services.
@@ -369,7 +379,7 @@ finally {
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L00-004` 的 134 个 file 节点 | design | `extract_depgraph.py --modules MOD-L00-004` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L00-004` 的 137 个 file 节点 | design | `extract_depgraph.py --modules MOD-L00-004` |
 | 数据流图 (dataflow) | 5 个 Dataset / 6 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -380,7 +390,7 @@ finally {
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-L00-004 | MOD-L00-004 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | testing | N/A | — |
-| file_count | 134 文件 | N/A | — |
+| build_status | production | N/A | — |
+| file_count | 137 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

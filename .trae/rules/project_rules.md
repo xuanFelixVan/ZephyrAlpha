@@ -288,7 +288,7 @@ Session 关门时 MUST 根目录审计：ls 根目录 → 逐项对照白名单 
 
 **核心**：任何新建/改造自动化系统，MUST 通过两轨分类 + 实现验证。单轨实现 = 未完成。
 
-**施工三步**：①判定归属（🕐 定时=全项目扫描/重操作/外部同步/缓存维护；⚡ 事件=状态变更响应/即时校验；🕐+⚡ 双轨=关键校验）②实现（⚡ 事件→`boot_hooks.py` 中 `hook_registry.register` 或 `event_bus.subscribe`；🕐 已禁用）③验证（`python scripts/ide_health_service.py --status` → 触发事件后 check hooks 执行）。
+**施工三步**：①判定归属（🕐 定时=全项目扫描/重操作/外部同步/缓存维护→OS Task Scheduler one-shot（如 ProcessReaper 模式），禁止进程内常驻轮询；⚡ 事件=状态变更响应/即时校验；🕐+⚡ 双轨=关键校验）②实现（⚡ 事件→`boot_hooks.py` 中 `hook_registry.register` 或 `event_bus.subscribe`；🕐 进程内定时已禁用，改 OS 计划任务）③验证（触发事件后 check hooks 执行日志；OS 任务用 `--status` 状态文件核实）。
 
 | ❌ 绝对禁止 | 后果 |
 |---------|------|

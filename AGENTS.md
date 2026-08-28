@@ -22,13 +22,13 @@
 
 > **进入本项目的第一个命令（任何平台：Cursor/RooCode/Claude Code/Trae/VS Code）**：
 > ```
-> python scripts/lock_files.py cleanup && python scripts/ide_health_service.py --status
+> python scripts/lock_files.py cleanup && python -m zephyr.trading.process_reaper --status
 > ```
-> running=false → `python scripts/ide_health_service.py --start`
-> running=true → 继续
+> never_run=true（或 last_run 超 24h 未更新）→ `powershell -ExecutionPolicy Bypass -File scripts\register_process_reaper_task.ps1`
+> 有 last_run → 继续
 >
-> 守护进程启动 ResourceOptimizationEngine（CPU/内存/进程自动监控+分级防御）+ IdeHealthDaemon（僵尸窗口自动清理）。
-> **守护进程未运行 = 禁止任何写操作。**
+> 进程清理由 OS 托管（2026-08-28 裁定，替代旧 ide_health_daemon 常驻守护模式）：Task Scheduler `ZephyrAlpha_ProcessReaper` 每 10 分钟触发 [`process_reaper.py`](file:///d:/ZephyrAlpha/src/zephyr/trading/process_reaper.py) one-shot 清理（孤儿/超龄/危险项目 python 进程 + Trae 幽灵窗口 + drift 指标 stash>5 自动清理），白名单保护永久服务，个案保留走 `data/runtime/process_reaper_keep.txt`（每行一个 cmdline 子串）。后台任务会话结束后由 reaper 兜底回收，AI 无需手动清理，但长批任务 MUST 先登记 keep 文件防误杀。
+> **ProcessReaper 计划任务不存在 = 禁止任何写操作。**
 
 ## RULE-WORKTREE：第二件事（正式规则，2026-07-02 转正）
 

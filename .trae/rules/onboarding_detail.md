@@ -317,12 +317,15 @@ except PermissionError:
 > 以下为 L0 "进门"步骤的完整展开。日常使用 L0 版本即可。新 AI 首次进入或深度任务时完整执行。
 
 ```
-STEP 0  — 🛡️ RULE-GUARDIAN 守护进程启动 + 过期锁清理（非协商，任何平台进入必做第一步）:
+STEP 0  — 🛡️ RULE-GUARDIAN 进程清理确认 + 过期锁清理（非协商，任何平台进入必做第一步）:
            python scripts/lock_files.py cleanup
-           python scripts/ide_health_service.py --status
-           running=false → python scripts/ide_health_service.py --start-background
-           running=true  → 继续
-           ⚠️ 守护进程未运行 = 禁止执行任何后续步骤（含 STEP 1 及写操作）
+           python -m zephyr.trading.process_reaper --status
+           never_run=true（或 last_run 超 24h 未更新）→ powershell -ExecutionPolicy Bypass -File scripts\register_process_reaper_task.ps1
+           有 last_run → 继续
+           ⚠️ ProcessReaper 计划任务不存在 = 禁止执行任何后续步骤（含 STEP 1 及写操作）
+           说明：2026-08-28 裁定为 OS 托管模式（Task Scheduler 每 10min one-shot 清理），
+           替代旧 ide_health_daemon 常驻守护；后台任务残留由 reaper 兜底回收，
+           长批任务 MUST 先登记 data/runtime/process_reaper_keep.txt 防误杀。
 STEP 0.5 — 🧠 大脑系统启动（单次 boot 模式，Trae AI 进入项目时必做）:
            检查: 查看当前 terminal 列表 → 是否有 start_brain.py 在运行？
            未运行 → RunCommand(blocking=false): python scripts/construction/start_brain.py --once

@@ -15257,13 +15257,6 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 漂移检测的自测试校验：按既定规则核对自测试，不合规就拦住或报出来，防止漂移检测出问题。
-- module_path: src/zephyr/trading/ide_health_daemon.py
-  domain_id: D_TRADING
-  name_zh: 无窗口 subprocess.run wrapper
-  name_en: Ide Health Daemon
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 交易运营的IDE 健康守护进程：把IDE 健康守护进程的逻辑集中在一处，交易运营别处直接拿来用，避免重复造轮子。
 - module_path: src/zephyr/security/access_control/decision_explainer.py
   domain_id: D_SECURITY
   name_zh: 拒绝决策的结构化解释器.
@@ -20914,13 +20907,6 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：自动驾驶能不能正常工作，有问题尽早暴露。
-- module_path: src/zephyr/trading/zombie_scanner.py
-  domain_id: D_INFRA_RUNTIME
-  name_zh: Zombie扫描器
-  name_en: Zombie Scanner
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 交易运营的僵尸检查：一条一条过僵尸的规矩，错的漏的都挑出来，给交易运营把关。
 - module_path: tests/test_matching_engine.py
   domain_id: D_BACKTEST
   name_zh: matching_engine + matching_logic + portfolio 正式测试
@@ -21061,13 +21047,6 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 共享基础·补偿的Saga compensator：把Saga compensator的逻辑集中在一处，共享基础·补偿别处直接拿来用，避免重复造轮子。
-- module_path: scripts/ide_health_service.py
-  domain_id: ''
-  name_zh: IDE健康守护进程CLI包装器
-  name_en: Ide Health Service
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 脚本的IDE 健康服务：负责IDE 健康服务相关的具体事务，是脚本这条链路里的一个支撑节点。
 - module_path: tests/feedback/test_collaborative_learning.py
   domain_id: ''
   name_zh: Collaborative学习测试
@@ -56564,19 +56543,19 @@ algo_submodules:
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A1
-  name_zh: 维护手册
+  name_zh: ① Agent上手上下文生成
   name_en: Handbook.generate_onboarding_context
   plain_zh: 把核心约束、关键目录、任务状态机、关键工具拼成一段固定markdown给新Agent看
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A2
-  name_zh: 维护手册
+  name_zh: ② 任务卡模板提供
   name_en: Handbook.get_task_card_template
   plain_zh: 返回一张固定的任务卡markdown表格模板，照填即可
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A3
-  name_zh: 维护手册
+  name_zh: ③ 目录地图提供
   name_en: Handbook.get_directory_map
   plain_zh: 返回核心源码/蓝图/任务系统目录到中文说明的映射字典
 - module_path: src/zephyr/shared/io/sqlite_factory.py
@@ -58001,15 +57980,3 @@ algo_submodules:
   name_zh: ① 包命名空间初始化 空导出
   name_en: __all__空列表
   plain_zh: 包级init不聚合再导出任何符号，消费者须显式导入具体子模块
-- module_path: src/zephyr/gov_enforcement/rule_bridge/write_audit_daemon.py
-  module_id: MOD-GOV_DRIFT_WATCHDOG
-  node_id: A1
-  name_zh: ① WriteAudit 写删审计守护
-  name_en: write_audit_daemon
-  plain_zh: 热目录集文件写删事件亚秒级观测+三层归因（进程快照/session_registry 会话映射/前后 hash），带外写删零遁形（#ARCH-279 裁定B1）
-- module_path: scripts/governance/collect_write_audit_4663.py
-  module_id: MOD-GOV_DRIFT_WATCHDOG
-  node_id: A2
-  name_zh: ② WriteAudit SACL 4663 精确归因采集器
-  name_en: collect_write_audit_4663
-  plain_zh: 读 Security 4663 事件提取用户/进程/PID 精确归因，增量水位线去重后并入 write_audit.jsonl（#ARCH-279 裁定B3）
