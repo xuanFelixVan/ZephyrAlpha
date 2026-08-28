@@ -19,6 +19,10 @@ scope: 07_trading_decision_architecture
 >
 > **未做事项及原因**：① 要点④特征仓库存储层未施工——轻量三层选型已定，但 schemas/categories/ 实证无特征值宽表，data_asset_registry 登记待 62 号 P1；② DQ_SPECS 八维 check_func 未绑定（data_governance/data_quality.py 注册表仅字符串、无 check_completeness 等实现实证，§6 待裁定项）；③ Embargo BDay→真交易日历未切换——依赖 calendar_event 表回填，而 calendar_event_refresh 任务未登记（tasks.yaml 实证，17 号 §6.6-2）；④ backtest 前置检查器绑定（BM-BT-02-D）未施工（暂缓：重评条件=首批回测因数据质量返工 ≥2 次）；⑤ 轨 A/轨 B 合流未施工（轨 B 无 miniQMT connector——维持双轨至多厂商需求真实出现的既定裁定）。
 
+> ## 结案报告回填（2026-08-28 代码实证复核）
+> 原缺口②③已闭环：①DQ 八维 check_func 已绑定落地（governance/data_governance/data_quality.py，check_completeness/check_accuracy 等，注释明示"15 号 §6 待裁定项落地"）；②calendar_event_refresh 任务已登记（tasks.yaml L1862）+特征值宽表 schema（schemas/categories/factor_feature_value.py）已存在；schemas/categories 现 115 个文件（原口径 103）。
+> **仍真实未完工**：轨 A/轨 B 合流未做（既定裁定）；回测前置检查器（BM-BT-02-D）暂缓条件未触发；Embargo 真交易日历切换未见实证。
+
 # 数据与特征层规范
 
 > **性质**：spec / 工程规范（G01，地基层 1x 段位）。与 [64_data_source_download_spec](64_data_source_download_spec.md) 边界：**64 号管"数据怎么进来"（Provider/调度/落库/韧性），本文管"数据进来后怎么用"（schema 规范/PIT/特征/因子/质量门控）**。

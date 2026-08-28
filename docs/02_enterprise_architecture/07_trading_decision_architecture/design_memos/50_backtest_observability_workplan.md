@@ -23,6 +23,10 @@ parent: 10_regime_detector_spec.md
 > - §3 ⑤ 历史结果回灌评估未做——M1 的 2 个 smoke run 已按 51 号裁定丢弃重跑（§二.3），`logs/c1_repro/` 历史结果是否回灌 JSON 属"待评估"非承诺项，裁定=未来工程-小型（随 51 号施工时一并评估，当前无阻塞）。
 > - §3 ⑦ 治理登记收尾未竟——`07_d_infra_telemetry.md` 中 experiment_tracking 措辞仍写"MLflow 薄包装"（v1.1.0 已登记不越界改）、51 号 C2 列的 creation_token/blueprint 同步项随 51 号收口，裁定=未来工程-小型（文档级，随下一治理批顺手）。
 
+> ## 结案报告回填（2026-08-28 代码实证复核）
+> 原"adapters/ 仅 c1_adapter.py 一个适配器（核心剩余工作 1.5 天）"已过时：experiment_tracking/ 包 13 文件、6 个适配器全部落码（c1/c2c3/feature/regime/strategy_runner/vectorized_adapter，抽检均 production 实实现非 stub）；c1_runner.py track_c1_result 接线在位；tests/experiment_tracking/ 4 测试文件。
+> **仍真实未完工**：历史回灌评估+治理登记措辞=小型遗留（非阻塞）。
+
 # 回测可观测性体系工作计划
 
 > 状态: 工作计划（M1 已落地；MLflow 路线已被 51 号逆转为单一 JSON 后端；剩余=其余五零件接入）

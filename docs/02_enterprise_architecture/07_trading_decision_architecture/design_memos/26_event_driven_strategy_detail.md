@@ -18,6 +18,10 @@ scope: 07_trading_decision_architecture
 >
 > **未做事项及原因**：① sentiment_aggregator.py 未落盘（src/zephyr/nlp/ 实证仅 nlp_inference.py，§2.7 已裁定单条推理降级不阻塞 MVP）；② sleeve 内部组件全部未落码（grep 实证零命中）——event_score_single_factor / compute_event_score / event_score_dual_factor / event_score_triple_factor / should_enter_with_confirmation / should_exit / 5 辅助函数（has_contradictory_event/has_volume_confirmation 等）/ event_store/volume_series/volume_ma/trading_days_ago 四薄封装 / detect_anomaly 异动识别器 / compute_ipo_siphon_coefficient / map_geopolitical_event_to_sectors / dragon_tiger_corroboration_modifier / expectation_gap_with_revision_momentum / check_selling_pressure_absorbed；③ 六因子矩阵待施工项（dReport/Jump on PEAD/隔夜趋势/AStockEvent Feed）未落码；④ BM-SEL-19 事件驱动分布筛选漏斗（MOD-SIG-049）未施工——依赖知识图谱 BM-SEL-11（design 态）+ NLP 管道 Phase 7；⑤ Hawkes/Janus-Q 细分类/CNN 可视化/LLM 动态图谱/Data Funnel 双阶段为 §5 暂缓项与远期登记；CAND-AISA-001 待 G28 四问评估。
 
+> ## 结案报告回填（2026-08-28 代码实证复核）
+> 原"sentiment_aggregator 未落盘/sleeve 组件未落码"已过时：intelligence/event_score.py 全族（single/dual/triple_factor+compute_event_score+should_enter_with_confirmation+expectation_gap+selling_pressure_absorbed）+event_dragon_tiger.py+event_ipo_siphon.py+event_geopolitical_map.py+event_anomaly_detector.py 全在位；nlp/sentiment_aggregator.py 已落盘；pf_core/strategies/event_driven_sleeve_strategy.py 组装类在位。
+> **仍真实未完工**：六因子矩阵待施工项（dReport/Jump on PEAD 等外部 Feed）未落；BM-SEL-19/MOD-SIG-049 漏斗零命中；Hawkes/Janus-Q 远期。
+
 # 事件驱动策略细节
 > 本备忘定义首批 3 策略之一——事件驱动 sleeve（[20_first_batch_strategies §2.4](20_first_batch_strategies.md) 策略C）的 alpha 信号来源、事件源、事件分类、冲击衰减曲线、事件→选股映射、换手率与多源情绪接入。性质：永久态讨论记录。管理规范见 [01_design_memo_management_spec.md](01_design_memo_management_spec.md)；路线图定位见 [00_index_trading_decision](00_index_trading_decision.md) G10（L1·Alpha 选股层，P2）。
 ## 1. 背景

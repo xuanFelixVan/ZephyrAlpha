@@ -24,6 +24,10 @@ related_issues:
 >
 > **复核补记（AI-NIGHT-001 复核 2026-08-19）**：代码实证以下定稿后施工项仍未落地，补登备查——① §6.6-1 akshare hk_trade_calendar 声明残留**仍存在**（akshare_provider.py 实证：capability frozenset L275 与 CapabilityContract("hk_trade_calendar") L511 未删，方法体已无，仍为"声明无实现"态）；② §6.6-2 calendar_event_refresh 任务未登记（tasks.yaml 实证仅 hk_trade_calendar_refresh 一条 internal 任务，calendar_event 表仍无数据填充通道）；③ §6.6-4 六条品类注册未补登（business_data_categories.yaml 实证仅 market_hk_trade_calendar + market_northbound_hold_snapshot 相关段）；④ §5.8 MVP 最小集（施工项 4 符号一致性双向 gate + 施工项 1 expected_market/expected_variety 字段）未施工（grep 实证 expected_market 零命中，现有 check_route_meta_consistency 仅覆盖路由↔meta 声明、不校验 _fetch_xxx 方法真实定义）；⑤ §6.3 FOMC 等 3 个 manual event_type CSV 未填充（与 ② 同批条件未达成）；⑥ §6.6-3 三条 akshare 采集链按 v1.0.0 定稿暂缓未施工（属既定裁定，待下个数据资产窗口）。scheduler.py create_provider 亦无 source=="internal" 分支（实证），internal 任务目前无调度路由——与 16 号调度闭环同根缺口。
 
+> ## 结案报告回填（2026-08-28 代码实证复核）
+> 原复核补记缺口①②④已闭环：①akshare_provider.py 的 hk_trade_calendar 声明残留已删（2026-08-20，注释实证）；②calendar_event_refresh 已登记（tasks.yaml L1862，dependencies 含 trade_calendar/hk_trade_calendar）；④expected_market 已落码（provider_base.py 字段+akshare/okx/internal_compute 三 provider+capability_semantic_gate.py 语义门禁）；⑤data/manual/calendar_event_manual.csv（FOMC 等）已填充。
+> **仍真实未完工**：运行时抽样校验（裁定推迟）；§6.6-3 三条 akshare 采集链（既定暂缓）。
+
 # A股"特殊交易日"数据资产全景与治理
 
 > 本文档承接原 `.trae/documents/special_trading_days_data_ingestion.md`（工作规划，不入 git）的规划职责，

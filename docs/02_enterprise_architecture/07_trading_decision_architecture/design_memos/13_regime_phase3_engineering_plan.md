@@ -34,6 +34,10 @@ related_modules:
 >
 > **未做事项及原因**：① P1-E9 S2 评分算法重设计未施工——14 号 v0.4.5 详设就绪但 grep 实证 s2_breadth_thrust_score / keys_or_gte / s2_valuation_score_fundamental / _capitulation_daily 均无落码，Step 0 勘探门禁未启动，未排期；② NLP Phase 5-8 未施工——RLSP（带护栏实验）、GGUF 回灌 Ollama、sentiment_aggregator 端到端管道 + 离线批量、验收，scripts/ml 仅 4 个 SFT 阶段脚本实证；③ P2-E8 forward_days 参数扫描未施工（P2 级收尾，当前默认 20）。
 
+> ## 结案报告回填（2026-08-28 代码实证复核）
+> 原"E9 未施工/NLP 仅 4 脚本"已过时：①E9 五子项全部落码——overlay_features.py 的 _capitulation_daily/s2_valuation_score_fundamental/s2_spring_flag(0/1/2/3 分级)/s2_three_yang_flag(6 维)/s2_breadth_thrust_score + regime_detector.py keys_or_gte 析取逻辑（E9d）；②scripts/ml/ 现 8 脚本（含 convert_gguf_ollama.py Phase 6、accept_nlp_pipeline.py Phase 8 验收）；③nlp/sentiment_aggregator.py+run_sentiment_batch.py Phase 7 端到端；④T3 七维评分全接真实数据。
+> **仍真实未完工**：①B4 S2 三事件 design_match 未翻 true（E9 落码后未重跑验证——本文档保持 draft 的依据仍成立）；②RLSP（Phase 5）未施工（既定 WARN 不阻塞）；③P2-E8 forward_days 扫描未见。
+
 # Phase 3 工程规划——降态数 + 两阶段校准 + NLP 管道 + S2/T3 数据激活
 
 > **前置**：Phase 2 验证完成（commit 14c8b9f1），A1 PASS / B4 S1 3/3 / A2 FAIL / B1 FAIL。

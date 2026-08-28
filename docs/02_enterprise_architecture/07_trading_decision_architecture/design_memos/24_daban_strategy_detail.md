@@ -19,6 +19,10 @@ scope: 07_trading_decision_architecture
 >
 > **未做事项及原因**：12 项形式化算法 + 8 具名函数全部未落码（grep 实证零命中）——§3.13 七项（NextDayExitDecision 含 classify_position_status / DabanInstantCircuitBreaker / classify_decision_v192 第 7 类 REFLUSH_DIVE / DabanExecutionAlgorithm / get_dragon_tiger_pit PIT 断言 / SignalDecayMonitor / reflush_next_day_exit_decision）+ §3.14 五项（pre_validate_daban_signal / HoldingPeriodMicrostructureMonitor / DabanPITBacktestFramework / DabanTimingDecision / DynamicCapacityCalculator）+ 8 具名函数（classify_echelon_health / score_consecutive_height_with_death_pool / score_auction_3d / detect_auction_paper_tiger / score_seal_structure / forecast_next_day_premium / classify_reflush_board / detect_quant_seat_warning）；按 §6 登记排期——#1/#2/#5/#8/#9 首批实盘前必做、#10 首批回测前必做、#6 实盘后即需、#3/#7 Phase 5、#4/#11/#12 Phase 3；两层分类法统一裁定（§6）与 C9 换手率分层校准待首批回测。Phase 5 ML 栈（CatBoost 破板预测/Siamese LOB/QFCQT/Hawkes/速度签名/Du 混合模型）为远期登记。
 
+> ## 结案报告回填（2026-08-28 代码实证复核）
+> 原"12 算法+8 具名函数全部未落码"已过时：ex_core/ 下五文件已落码——daban_named_functions.py（8 具名函数全：classify_echelon_health/score_consecutive_height_with_death_pool/score_auction_3d/detect_auction_paper_tiger/score_seal_structure/forecast_next_day_premium/classify_reflush_board/detect_quant_seat_warning）、daban_signal_decision.py（第 7 类 REFLUSH_DIVE）、daban_instant_circuit_breaker.py、daban_exit_decision.py、daban_monitors.py（HoldingPeriodMicrostructureMonitor+SignalDecayMonitor CUSUM/PSI）、daban_pit_safety.py；组装类 pf_core/strategies/daban_sleeve_strategy.py（MOD-L05-001）在位。
+> **仍真实未完工**：DabanExecutionAlgorithm/DabanTimingDecision/DynamicCapacityCalculator 三符号零命中；DabanPITBacktestFramework 骨架态（自述未注入）；Phase 5 ML 栈远期。
+
 # 打板策略细节
 
 > **性质**：已定型（active）。由 [00_index_trading_decision](00_index_trading_decision.md) G08 主题组派生，8 项讨论要点已逐项对齐落入 §3 决策。

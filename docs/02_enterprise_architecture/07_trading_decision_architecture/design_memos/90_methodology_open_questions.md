@@ -24,6 +24,10 @@ scope: 07_trading_decision_architecture
 > - P-1~P-5（Wasserstein 收敛 / Conformal 五变体栈 / Robust HMM 选型 / RL 执行 / 过拟合检测协议）——仍全部待用户裁定（方向已给；A2 PASS 后 P-1/P-3 紧迫性已下调）；裁定=待 Owner。
 > - §22 五环节：BM-SEL-05-D/05-E/06/10 远期候选 MVP 不建（重评条件在档）——裁定=过度工程（当前阶段）；BM-SEL-26 C-030 决策溯源链 Phase 2 候选——裁定=未来工程-小型（结构化决策快照最小实现先行）。
 
+> ## 结案报告回填（2026-08-28 代码实证复核）
+> 原 P0/P1 多项已落地：Phase1/2 小型登记项 14 件组批清偿（commit f71f3e5e）；P1 三项全落地（CST-T0-001 成本模型+中证1000/中证2000/万得全A 基准+ex_sor/core/algo_execution_selector.py）；P2 抽查落地（factor/analysis/bhy_fdr.py BHY FDR+clone_guard/strategy_fingerprint.py 指纹库+liquidity_monitor.py LVaR 族）。
+> **仍真实未完工**：P-1~P-5 五项待人拍板（设计内）；#7 T+1 8 态预测"暂缓建设"裁定文字与代码现状有出入（signal_ashare/next_day_8state_forecast.py MOD-SIG-037 已 production，口径需回切）；§22 远期候选未建（设计内）。
+
 # 方法论约束遗留提案
 
 > **状态**：21 项遗留提案。#1-#11 源自原《能力定位书》§3 约束一~十三；#12-#21 源自系统宪章多轮精简移出项（成功指标/基准/PIT/资产分级/行为边界/资产覆盖/大额下单/工程细节/做T方法论）。

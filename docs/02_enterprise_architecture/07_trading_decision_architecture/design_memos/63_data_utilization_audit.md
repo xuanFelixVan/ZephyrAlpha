@@ -32,6 +32,10 @@ depends_on:
 > - Q1 index_meta 生命周期 / Q8 六张 dormant 表处置 / Q3 hfq 统一 / Q4 ARCH 登记 / Q6 pre-commit warn——§10.2 待人决策项，未拍板；裁定=待 Owner（默认建议已在档）。
 > - §9"不做什么"全表（DataHub/ODCS 工具链/AST 全量解析/LLM 全量语义验证等）——已逐项裁定拒绝，不施工；裁定=过度工程（不再逐条列出）。
 
+> ## 结案报告回填（2026-08-28 代码实证复核）
+> 原"audit_data_utilization.ps1 未创建"已过时：scripts/audit_data_utilization.ps1 已建（2026-08-24 落地，CSV sink 恢复）+docs/_audit/data_utilization_audit_2026-08-24.csv 快照在位；批次 A 补文档部分实证（35/37/24 号已含目标表引用）。
+> **仍真实未完工**：批次 B/C 补文档（26/22/15 号部分）未实证落地；community_detection/temporal_coupling/quality_spc/freshness_fingerprint 四件（运维期机制，触发条件未到，设计内延期）；Q1/Q3/Q4/Q6/Q8 待人决策未拍板。
+
 # 业务数据资产利用率审查与施工计划
 
 > 本备忘是业务数据库 103 张数据表在 design_memos 文档与 src/zephyr/ 代码层的**引用审查底稿 + 文档覆盖缺口清单 + 归档决策**。

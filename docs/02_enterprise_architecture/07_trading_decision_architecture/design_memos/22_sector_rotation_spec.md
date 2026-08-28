@@ -19,6 +19,10 @@ scope: 07_trading_decision_architecture
 >
 > **未做事项及原因**：8 项计算层 + 2 项 v1.8.0 补全算法全部未落码（grep 实证零命中）——① RRG 轮动序列（无 rs_momentum/relative_rotation）、② 回踩 A/B/C、③ 调整周期进度（MOD-SIG-040 无）、④ 虹吸态 HHI（detect_siphon_state 无）、⑤ q3 多 TF 动量加权、⑥ 5 状态分类（CONSENSUS_CLIMAX/watch_score 无）、⑦ 三级放行门槛、⑧ 水温响应映射、⑨ 板块涨停比归一化（sector_limit_up_ratio 无）、⑩ aggregate_capital_nature_to_sector；全部为纯函数规则层、无新增数据源需求，按 §5.2 演进路径待 G05/G06 施工批次。lead-lag network / ML 转折点检测 / 板块相关性聚类为第四阶段远期登记。
 
+> ## 结案报告回填（2026-08-28 代码实证复核）
+> 原"8 项计算层全部未落码"已大面积过时：①RRG 轮动序列（signal_ashare/sector_rrg.py，JdK DualEma 10/26+四象限+zscore）已落码；②电风扇速度计+5 状态（signal_ashare/sector_divergence.py，MOD-SIG-060，rotation_velocity/CONSENSUS_CLIMAX/siphon_chaos）已独立成因子；③虹吸 HHI（sector_siphon.py detect_siphon_state）在位；④涨停比（sector_report_builder.py sector_limit_up_ratio）在位；⑤回踩 A/B/C 消费侧（pf_alloc/batched_position_builder.py+signal_fundamental/sector_rotation_score_mapping.py）已接线；⑥plan_engine/boundary_revision_engine.py 电风扇>75 分位降档+llm_premarket_analysis 注入消费链已通。
+> **仍真实未完工**：aggregate_capital_nature_to_sector 零命中；q3 多 TF 动量加权未见独立实证；lead-lag network/ML 转折点远期登记。
+
 # 板块轮动 spec
 
 > 本备忘定义板块轮动作为选股输入特征（非独立层）的算法规格、复用边界与上限。

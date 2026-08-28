@@ -27,6 +27,10 @@ scope: 07_trading_decision_architecture
 > - 冷启动 T0/T1/T2 渐进建仓（§3.1）——设计态；随首批策略上线由 53 号迁移路径承载。裁定=未来工程-小型。
 > - LLM 驱动 alpha 挖掘远期候选（§3.2 登记表）/独立 Lifecycle Manager 服务（§4.3）/KFP-KServe-K8s（§4.2）/多 Agent 编排（§4.1）——本篇已逐项裁定 Phase 5+/暂缓/拒绝，不施工；裁定=过度工程（当前阶段）。
 
+> ## 结案报告回填（2026-08-28 代码实证复核）
+> 原"退役工作流/归档/行为基线未施工"已大面积过时：governance/lifecycle_governance/ 下 strategy_retirement_evaluator.py+retirement_workflow.py（退役 5 步工作流）+strategy_archive.py（归档四件套）+ai_behavior_baseline.py（BM-RC-04-F）全部 production；pf_core/core/msprt_champion_challenger.py（MOD-PF-008 统计内核，design 态）在库。
+> **仍真实未完工**：Drift Observatory 四层编排零命中（设计内延期）；mSPRT 晋升编排层/消费方未建（内核在库）；BM-MT-02-A/B 灰度+影子部署未施工。
+
 # 策略生命周期与多 AI 协作
 > 本备忘记录策略从孵化到退役的完整生命周期规范，以及多 AI 协作的分工与交接纪律。
 > 性质：永久态设计记录，可随项目演进而修订，不是不可推翻的裁定。

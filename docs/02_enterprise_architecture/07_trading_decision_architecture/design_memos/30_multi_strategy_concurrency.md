@@ -25,6 +25,10 @@ scope: 07_trading_decision_architecture
 > - Bayesian Kelly/Conformal Kelly/Water-Filling/no-trade 半带/MPC/Relaxed Risk Parity——文档已裁 Phase 2/3 远期候选并给重评条件，非施工缺口。
 > - ~~§2.4 施工状态注记"481 行"漂移~~ ✅ 本次复核补正（遗留 #36 实证项）：实测 548 行，已就地更正。
 
+> ## 结案报告回填（2026-08-28 代码实证复核）
+> 原"cold_start_ratio 全 src 零命中未落码"已过时：pf_alloc/core/regime_meta_allocator.py 已有 cold_start_ratios 参数+position/core/strategy_book.py get_cold_start_ratio+cold_start_progression.py 冷启动递进模块在位。四模块（MOD-POS-020/021/022+MOD-PA-007）production 态与四测试套件实证不变。
+> **仍真实未完工**：score→weight 形式化、§6.2 相关性验证、旧体系退役裁定=文档明示延期/等 Owner 窗口（非缺口）。
+
 # 多策略并发架构
 
 > 本备忘记录多策略并发执行架构的选型推理与上限定义。

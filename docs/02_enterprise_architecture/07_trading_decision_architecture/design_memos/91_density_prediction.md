@@ -24,6 +24,10 @@ scope: 07_trading_decision_architecture
 > - BM-BUY-02-A-1-c 8 态预测 PDF 积分派生接口——随 90 号 §7 暂缓建设一并冻结（重启三条件未达）；裁定=过度工程（当前阶段）。
 > - QNN 量子神经网络——远期愿景待讨论问题（单机 RTX 3090 工程可行性未证）；裁定=过度工程（当前阶段）。
 
+> ## 结案报告回填（2026-08-28 代码实证复核）
+> 原"RWC/MDN/Survival AFT/TCP-RM/QNN 全仓零命中"已严重过时，愿景项已被后续批次大量落码：signal_ashare/conditional_density_predictor.py（MOD-SIG-043 production，BLUEPRINT 锚定本文 §1）+survival_time_predictor.py（MOD-SIG-045，AFT+KM）+tcp_rm_conformal.py（MOD-SIG-128，Robbins-Monro+DDCI）+adaptive_conformal_tcp_rm_ddci.py+conformal_predictor.py+event_conditional_density.py；ml_train/implementations/qnn_two_stage.py（MOD-ML-010，注意=分位数 QNN 非量子 QNN）+patchtst_density_encoder.py+kan_density_head.py。
+> **仍真实未完工**：量子神经网络（quantum QNN）零命中——与"过度工程不施工"裁定一致；RWC 变体未单独实证；90 号 P-2 conformal 五变体栈收敛待 Owner。本文 draft v0.1.4 与代码现状漂移最大，后续升版时应将状态从"愿景登记"改为"愿景项已部分落码"。
+
 # 密度预测与 QNN 远期愿景
 
 > **状态**：远期愿景，待讨论。源自原《能力定位书》约束十二，当前项目中无代码实现，亦无对应 G01-G28 讨论主题。移入此处待条件成熟后启动讨论。

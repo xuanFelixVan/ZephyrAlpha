@@ -19,6 +19,10 @@ scope: 07_trading_decision_architecture
 >
 > **未做事项及原因**：00_index 对本目录篇的"8 大类"描述未同步——重建后分类口径以代码真源为准（5 大类），仅剩索引描述同步项（目录篇 §7 已登记）。
 
+> ## 结案报告回填（2026-08-28 代码实证复核）
+> 原 P0 缺口"调度闭环未做"已闭环：tasks.yaml 已登记 technical_indicator_incremental+technical_indicator_full_refresh 双任务；scheduler.py 已补 internal 源分支接线（commit fff1cd05）；internal_compute_provider.py（InternalComputeProvider+XHKG 港股日历）在位；technical_indicator_registry 40+ 条目、tests 250 测试函数实证。
+> **仍真实未完工**：分钟级全量回算的执行进度属运行时事项，代码侧无缺口。
+
 # 技术指标施工计划
 
 > **性质**：architecture_view / 施工计划（施工流程组织：目标→现状→改动→验证→不做）。

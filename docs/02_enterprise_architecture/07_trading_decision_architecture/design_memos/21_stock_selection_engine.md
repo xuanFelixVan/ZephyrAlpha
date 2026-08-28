@@ -19,6 +19,10 @@ scope: 07_trading_decision_architecture
 >
 > **未做事项及原因**：① SelectionResult 统一接口与 3 sleeve 实现未施工——无 SelectionResult 类实证（signal_ashare 仅有局部 StockSelectionResult），pf_core/strategies/ 空壳，与 20 号 sleeve 策略类同属"首批上线主链路"缺口，待 G08/G09/G10 定型；② 漏斗三层级（BM-SEL-16 分级指标过滤/17 初筛/18 精筛评分）模块未落码（grep 实证零命中，§3.6 已裁定为批处理语义的设计态）；③ confidence 算法（待裁定-5）、事件置信度阈值（待裁定-6）、6 维权重 IC 校准（待裁定-8）未施工——登记为 G08/G09/G10 细节讨论时校准；④ 信号工厂九子阶段 + 信号聚合器按 §3.3.1 裁定远期登记不施工（激活条件=信号冲突/口径漂移实例 ≥3 例，未触发）；⑤ LLM alpha 挖掘闭环（八框架）、Cross-Sectional LSTM、BM-SEL-12 Signature 分布特征为远期登记。
 
+> ## 结案报告回填（2026-08-28 代码实证复核）
+> 原缺口①②③主体已补：①SelectionResult 统一接口（shared/contracts/selection_result.py）已建；②漏斗三层级（signal_fundamental/selection_funnel.py：GradedFilterResult/PreliminaryScreenResult/FineSelectionResult 对应 BM-SEL-16/17/18）已落码；③confidence 算法（signal_fundamental/selection_confidence.py，§3.5/§3.6 差异化算法）已落码；三 sleeve 组装类（pf_core/strategies/）已接 SelectionResult。
+> **仍真实未完工**：信号工厂九子阶段+聚合器（裁定远期不施工）；LLM alpha 八框架/Cross-Sectional LSTM 远期登记；6 维权重 IC 校准待实盘数据。
+
 # 选股引擎架构
 
 > 本备忘定义多策略并发架构（[30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) Model A）下选股引擎的分层架构、双引擎融合定位、pipeline 标准接口与 StrategyBook 对接契约。

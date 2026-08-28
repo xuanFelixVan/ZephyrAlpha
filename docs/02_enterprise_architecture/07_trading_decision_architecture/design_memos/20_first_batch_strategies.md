@@ -19,6 +19,10 @@ scope: 07_trading_decision_architecture
 >
 > **未做事项及原因**：① 3 个 sleeve 策略类（daban/multifactor/event_driven 组装策略类）未施工——pf_core/strategies/ 实证仅 __init__.py 空壳（仅 DefaultEquityStrategy wrapper），"组件就绪→首批上线"最后一公里未闭环，按 §6 登记待 G08/G09/G10 细节定型后经 G05 标准接口施工；② charter §3 约束二措辞物理修订未做（"按市场状态切换权重"→"按市场状态做风险节流"，§5 待裁定-1，04 域 owner 待认领）；③ convergence_window 校准/容量精确测算/相关性实测为待实盘或归 G07/G08-G10 的依赖项。
 
+> ## 结案报告回填（2026-08-28 代码实证复核）
+> 原缺口①"pf_core/strategies 空壳最后一公里"已闭环：2026-08-21 CAND-SIG-012/013 晋升施工——pf_core/strategies/ 下 daban_sleeve_strategy.py（MOD-L05-001）+multifactor_sleeve_strategy.py+event_driven_sleeve_strategy.py 三策略类落码（lazy 映射防双注册，urgency 三档对齐 21 号映射表），配套三测试文件 35 用例全绿；shared/contracts/selection_result.py 统一接口（CTR-P1-018）在位。
+> **仍真实未完工**：confidence 占位算法待 21 号 §6 裁定细化；G07 相关性实测归回测校准期；convergence_window 校准/容量测算待首批策略实盘 track record（既定挂载）。
+
 # 首批 3 策略定义
 
 > 本备忘定义多策略并发架构（[30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) Model A）下首批上线的 3 个策略及其特征。

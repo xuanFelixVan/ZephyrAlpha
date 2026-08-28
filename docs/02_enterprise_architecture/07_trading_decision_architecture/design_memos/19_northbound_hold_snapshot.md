@@ -27,6 +27,10 @@ related_modules:
 >
 > **复核补记（AI-NIGHT-001 复核 2026-08-19）**：fetcher 链路与登记实证一致（northbound_hold_fetcher.py 落码 + tasks.yaml northbound_hold_snapshot_refresh 登记 + schemas/categories/market_northbound_hold_snapshot.py + business_data_categories.yaml 品类 + data_asset_registry.yaml 条目 + known_data_gaps.yaml 三失效接口与撞码条目均在）。§6 方法论 MVP 边界（§6.3 个股增减持排名 + §6.5 季度净流入估算，"Δ持股数量 × 当季 VWAP"单公式 pandas 数十行）**未落码**（grep 实证无对应函数/脚本）——属 fetcher 落库后的分析层，外资行为因子未立项故未排期；南向季度快照按 §8/§9 裁定暂不采集。
 
+> ## 结案报告回填（2026-08-28 代码实证复核）
+> 原复核补记"§6.5 分析层未落码"已过时：src/zephyr/data/northbound_hold_analysis.py 已落码 estimate_quarterly_net_inflow（Δ持股×VWAP 季度净流入估算）；fetcher（northbound_hold_fetcher.py tushare hk_hold）+schema（market_northbound_hold_snapshot.py）+tasks.yaml northbound_hold_snapshot_refresh 全在位。
+> **仍真实未完工**：南向季度快照（§8/§9 裁定不采集，非缺口）；外资行为因子未立项（下游非本档职责）。
+
 # 北向资金季度持仓快照 fetcher 施工计划
 
 > 本备忘是北向资金数据断档（2024-08-19 港交所停止公布日频）后的**替代数据源选型 + 季度持仓快照 fetcher 施工计划 + 外资行为分析方法论**。

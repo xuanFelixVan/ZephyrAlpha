@@ -22,6 +22,10 @@ parent: 30_multi_strategy_concurrency.md
 >
 > **复核补记（AI-NIGHT-001 复核 2026-08-19）**：除 S2 外，代码实证以下设计项亦未落码，补登备查——① §4.7.6/§4.8.5/§4.11.10/§4.12.10 机构级数据维度（IV/COT 拥挤度/信用利差/期权异动/CAPE/巴菲特指标/Margin Debt/Put-Call）无对应数据管道与评分实现（grep 实证 lppl/credit_spread/CAPE 等零命中）；② §4.8.1 LPPL 赶顶检测未实现；③ §6.2 主线识别四阶段评分与 RRG 轮动（§6.6 采纳点）未实现（与 22 号 RRG 项同源）；④ §6.2.3 NetworkX 资金图谱 PageRank 未实现；⑤ §2.5.4 情绪周期灰度概率输出升级未实施（BM-SEL-23-B 仍为 5 阶段硬标签）；⑥ §9 备查升级路径（HSMM/Student-t/Wasserstein/层次 HMM/TVTP/Shannon/Staggered/BOCPD/Feature Saliency/Conformal/CPCV/动态调制矩阵/RARP/Causal-TS/NLP-regime 连接）均按既定裁定维持备查未施工。上述①-④为设计期"参数标定真源"的未施工部分，当前生产实现为 4 态 HMM + 简化 TRANSITION_CONFIG 维度 + RiskSignal 13 参数（含 #8 虹吸实证），Phase 2/C1 验证均基于此形态通过。
 
+> ## 结案报告回填（2026-08-28 代码实证复核）
+> 原复核补记②"LPPL 未实现"已过时：src/zephyr/regime/features/lppl_detector.py 已实现 lppl_blowoff_score；overlay_features.py 的 put_call_ratio 参数已接入 capitulation 过滤器。
+> **仍真实未完工**（机构级维度，既定延期）：credit_spread/COT 拥挤度/IV/Margin Debt 零命中；CAPE 待 daily_valuation 管道（路 A）；§6.2.3 NetworkX PageRank 无；§9 备查升级路径（HSMM/Student-t）维持不施工裁定。
+
 # regime 检测器完整 spec
 
 > 本文档合并原 10_regime_detector_spec（regime 业务规则）+ 11_regime_backtest_validation_plan（L0 范围决策），为 12 态 regime 检测器的完整讨论文档。
@@ -320,7 +324,7 @@ D-SIGNAL-68（特殊态覆盖层）→ 检查 CRISIS/RECOVERY/BREAKOUT 触发条
 
 ## 3. 12 态清单（已确认，真源 D-SIGNAL-04）
 
-> 真源文档：`docs/_working/依赖图/04-D-SIGNAL-信号域.md` 第 463 行。
+> 真源文档：`docs/_archive/依赖图/04-D-SIGNAL-信号域.md` 第 463 行（2026-08-28 自 `docs/_working/` 退役归档；现行域真源 = PG depgraph + `02_domain_architecture_docs`）。
 > 置信度输出：HMM 后验概率 0.0-1.0，输出契约 RegimeSnapshot（frozen=True）。
 
 > **⚠️ v1.4.0 实现现状标注**：以下 §3.1 的 9 态清单为设计期规划。实际施工后经 Phase 2 验证（A2 FAIL），9 态降为 4 态（BIC 驱动）。**实际输出为 7 维概率分布**（4 HMM 基态 r1-r4 + 3 overlay 特殊态 CRISIS/RECOVERY/BREAKOUT），Σ=1.0。§3.1 的 9 态表保留为设计意图历史真源，实际 4 态定义见 §9.2。特殊态 §3.2（CRISIS/RECOVERY/BREAKOUT）不变，仍是规则触发的覆盖层。

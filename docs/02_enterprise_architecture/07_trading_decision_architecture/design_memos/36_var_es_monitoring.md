@@ -22,6 +22,10 @@ scope: 07_trading_decision_architecture
 > - ~~2026-08-16 双轮审查发现 F1 ES 插值口径、F2+F4 NaN/Inf 过滤等算法缺陷——已派单算法修复批 AI-RFIX-001，在途未合并。~~ **✅ 已闭环（2026-08-17 merge f8a14cf7；2026-08-19 复核补正）**：ES/VaR 分位数 `method='lower'` 统一（v1.11.0 ES 侧 + v1.11.2 VaR 侧）、NaN/Inf Fail-Closed 过滤（`nan_dropped` 计数+超阈值 raise）、POT 小样本降级（`pot_fallback_historical`）、5 级仓位上限单调性修正（ORANGE 0.7→0.5）全部落码实证。
 > - §3.11 daily_auditor 集成包装层（`run_var_backtest` + `log_entry_var`/`log_baseline`/`log_recalibration`）未落码——2026-08-19 复核新发现文档漂移（原标"✅ 已施工"不实，已就地勘正）；回测 4 法本体已在 `var_backtester.py`，裁定=未来工程-小型（包装层+3 日志方法，单批可闭环）。
 
+> ## 结案报告回填（2026-08-28 代码实证复核）
+> 原"FHS 编排层接线仍属远期（tracker #147）"已过时：ex_core/risk_layer_orchestrator.py 已实现 FHS 编排（I5/A5：should_switch_to_fhs 三触发+try_activate_fhs+10 日冷却/3 次永久禁用）；fhs_engine.py（MOD-RK-26）+var_backtester.py+var_breach_state_machine.py+var_intraday_recalc.py 全在位。
+> **仍真实未完工**：daily_auditor 集成包装层未落码（原报告已自勘正属实，维持登记）。
+
 # VaR/ES 与波动率监控
 
 > 本备忘记录 VaR/ES 与波动率监控从 §2.5.4 框架到代码落地的选型推理、触发机制裁决与上限定义。

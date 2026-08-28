@@ -34,6 +34,10 @@ related_issues:
 >
 > **未做事项及原因**：P1-E9 五子项全部未施工（grep 实证零命中）——E9a capitulation 衰减加权和 + 多过滤器（_capitulation_daily 不存在）、E9b valuation 路 A CAPE/PB 分位（s2_valuation_score_fundamental 不存在）+ 路 B 阈值放宽、E9c spring 复用 wyckoff_engine + 深度分级 + velocity、E9d breadth_thrust V 反转通路（s2_breadth_thrust_score / keys_or_gte 析取字段均不存在）、E9e three_yang 6 维分级（现仅 pct_change 单参数旧版）；属 P1 工程未排期，Step 0 勘探（daily_valuation 字段/wyckoff Spring 接口/涨跌家数/期权 put-call）未启动。演进方向 6 项（AH-HMM/LVI/滞回触发器/ProRealCode FSM/EVR/flush）为远期登记。
 
+> ## 结案报告回填（2026-08-28 代码实证复核）
+> 原"E9 五子项全部未施工（grep 零命中）"已严重过时：E9a-e 治本全部落码（overlay_features.py 五函数+regime_detector.py keys_or_gte，详见 13 号回填）；诊断脚本 scripts/tests/dump_s2_scores.py 已沉淀；P0 治标（b4 design_match 字段+historical_events.yaml 三事件标 false）在位。
+> **仍真实未完工**：E9 落码后未重跑 B4 将 S2 三事件 design_match 翻回 true（收尾验证动作）；演进方向 6 项（AH-HMM/LVI 等）远期登记（既定）。
+
 # S2 评分算法时点错配诊断与治本方案——capitulation 过程化 + valuation 基本面化 + V 反转通路
 
 > **前置**：Phase 2 验证 B4 曾因 `data_ready=False`（S2 不计分母）以 PASS(3/3) 闭环

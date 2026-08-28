@@ -20,6 +20,10 @@ scope: 07_trading_decision_architecture
 >
 > **未做事项及原因**：① §3.7 八项编排算法全部未落码（grep 实证零命中）——SynthesisDegradationChain / ConstraintArbitration / DecayActionLifecycle（6 态）/ SimpleFactorAttribution / CrowdingRealTimeMonitor / RebalanceTrigger（含 Inaction Cost）/ MultifactorPITBacktestFramework / HoldingDriftMonitor，文档标"MVP 即做/首批回测前必做"未排期；② Mask-First tradability mask 未施工（~40 行，MVP 即做项）；③ CUSUM 预警层 + "连续 40 日 |IC|<0.02→休眠"自动淘汰层未施工（decay_monitor 现仅半衰期，§3.3 代码现状注记确认）；④ C1-C7 策略级约束链 ↔ MOD-PF-006 代码约束链对齐未施工（CTR-003 RiskLimits 注入，上线前项）；⑤ 6 态↔registry 5 态映射规则未定义（随 ③ 落码时回写 62 号）；⑥ Phase 4.1-4.20 ML 合成/组合/风控栈、BM-SEL-02-E LLM 语义去重、BM-SEL-02-M 因果验证、BM-RC-06-D 三深度增强均为远期登记。
 
+> ## 结案报告回填（2026-08-28 代码实证复核）
+> 原"§3.7 八项编排算法未落码/缺口①②④"已过时，八项全部落码：factor/analysis/ 下 multifactor_degradation_chain.py（#1）、multifactor_decay_lifecycle.py（#3 DecayActionLifecycle 6 态）、simple_factor_attribution.py（#4）、multifactor_crowding_monitor.py（#5）、multifactor_pit_backtest.py（#7）、multifactor_tradability_mask.py（Mask-First）；pf_core/core/ 下 multifactor_constraint_arbitration.py（#2，C1-C7↔CTR-003 对齐）、multifactor_rebalance_trigger.py（#6）、multifactor_holding_drift_monitor.py（#8）。
+> **仍真实未完工**：CUSUM 独立预警层未见（部分并入 decay_lifecycle）；Phase 4.1-4.20 ML 栈远期登记。
+
 # 多因子策略细节
 
 > **性质**：已定型（active）。由 [00_index_trading_decision](00_index_trading_decision.md) G09 主题组派生，6 项讨论要点已逐项对齐落入 §3 决策。

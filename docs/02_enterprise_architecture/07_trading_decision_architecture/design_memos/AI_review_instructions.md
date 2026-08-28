@@ -4,7 +4,7 @@ doc_type: architecture_view
 title: 23路并发AI审查回填指令集
 owner: ZephyrAlpha-Owner
 language: zh
-status: active
+status: deprecated
 version: "2.1.2"
 date: 2026-08-15
 topic: ai_review_instructions
@@ -12,6 +12,9 @@ scope: 07_trading_decision_architecture
 ---
 
 # 23 路并发 AI 审查回填指令集
+
+> ## 归档标记（2026-08-28 Owner 裁定：归档不删）
+> 本文档使命已完成：其驱动的 22~23 路并发 AI 审查已全部收尾，48 篇设计备忘结案报告全覆盖（2026-08-16/19 两批+2026-08-28 全量审查批补全）。**2026-08-28 Owner 裁定归档不删（保留审计链）**，后续不再更新。现行治理规则真源=construction_workflow_sop.md（docs/01_policies_and_standards/sop/）+68 号代码算法审查流水线 active 机制。
 
 > **用途**：本文档包含 23 个 AI 的完整指令，每个指令可一键复制到新 AI 对话中独立执行。
 > **任务**：对 `07_trading_decision_architecture/design_memos/` 下 48 篇文档进行回填、审查、扩展、更新、过度工程清理。

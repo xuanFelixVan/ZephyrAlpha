@@ -22,6 +22,10 @@ scope: 07_trading_decision_architecture
 > - TradeLevelCircuitBreaker（交易级熔断）Phase 2 未做——同登记候选库，等触发条件。
 > - G04 参数校准（ATR 倍数/移动止损回撤/时间止损差异化）未做——依赖首批策略回测/实盘轨道记录，属"等数据"非施工缺口（遗留 #48 统筹跟踪）。
 
+> ## 结案报告回填（2026-08-28 代码实证复核）
+> 原"MOD-SELL-014/017 未施工（MVP 决策）"已过时：sell_decision/core/strategy_specific_stop_framework.py（MOD-SELL-014）与 trade_level_circuit_breaker.py（MOD-SELL-017，evolving 成熟度+测试在位）均已落码；MVP 4 模块（SELL-000/004/005/019）+21 测试文件实证不变。
+> **仍真实未完工**：G04 参数校准（ATR 倍数/移动止损/时间止损差异化+熔断 N=2/3）待首批策略回测/实盘 track record（既定挂载，跨文档校准项）。
+
 # 卖出流 spec
 
 > 本备忘把 [battle_map_07_sell_flow](../battle_map/battle_map_07_sell_flow.md) 14 环节的"what is"落地为卖出侧"how + when"的可施工 spec：止损/止盈/破位/分批四族的 MVP 取舍、时序、T+1 约束、与回撤 Protocol 联动。
