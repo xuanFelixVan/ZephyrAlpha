@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-EX-024 | docs/03_modules/MOD-EX-024/
 # [MODULE] zephyr.ex_core.pre_execution_checker
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.risk.core.risk_data_pipeline; zephyr.risk.core.risk_veto_engine; zephyr.shared.contracts.enums.order_enums; zephyr.shared.foundation.errors
+# [DEPENDENCIES] zephyr.risk.core.risk_data_pipeline; zephyr.risk.core.risk_veto_engine; zephyr.shared.contracts.enums.order_enums; zephyr.shared.foundation.errors; zephyr.data.calendar
 # [CONSUMERS] MOD-L06-001(TradingSession._validate_and_submit 前置硬拦) ; MOD-EX-007(Execution Risk Gate)
 # [STARTUP] imported
 # [MATURITY] production
@@ -20,7 +20,8 @@
   1. Kill Switch 闸门  — 熔断激活拒绝全部新订单（短路，不建快照；
      探针异常按已熔断处理，Fail-Closed；生产接线: DefaultRiskValidator.kill_switch_active）
   2. 交易时段闸门      — L-003 非交易时段禁下单（默认 A 股窗口 09:30-11:30 / 13:00-15:00
-     Asia/Shanghai + 交易日判定；探针异常按非交易时段处理，Fail-Closed）
+     Asia/Shanghai + 交易日判定；探针异常按非交易时段处理，Fail-Closed；
+     CAND-CRYPTO-006/#262 改造：支持 market_calendar 注入，默认 ASHareCalendar）
   3. 风控快照装配      — MOD-RK-25 RiskDataPipeline；失败 → SNAPSHOT_UNAVAILABLE 拒单
   4. 风险否决评估      — MOD-RK-24 RiskVetoEngine（判定核心为纯函数，本模块只编排）
 
@@ -36,6 +37,7 @@ from datetime import UTC, datetime, time
 from typing import Final
 from zoneinfo import ZoneInfo
 
+from zephyr.data.calendar import MarketCalendar, get_market_calendar
 from zephyr.risk.core.risk_data_pipeline import RiskDataPipelineError, RiskSnapshot
 from zephyr.risk.core.risk_veto_engine import (
     OrderRiskRequest,
@@ -94,6 +96,30 @@ def is_ashare_trading_window(now: datetime) -> bool:
     return any(start <= now_time <= end for start, end in _ASHARE_SESSION_WINDOWS)
 
 
+def _is_trading_window(now: datetime, calendar: MarketCalendar) -> bool:
+    """基于市场日历的交易时段判定（CAND-CRYPTO-006/#262 注入式改造）。
+
+    naive datetime 按日历 timezone 口径解释；aware datetime 先换算对应时区。
+    """
+    if now.tzinfo is None:
+        local_now = now.replace(tzinfo=ZoneInfo(calendar.timezone))
+    else:
+        local_now = now.astimezone(ZoneInfo(calendar.timezone))
+
+    try:
+        if not calendar.is_trading_day(local_now.date()):
+            return False
+    except Exception:  # noqa: BLE001 — 日历异常降级为周日历判定
+        if local_now.weekday() >= 5:
+            return False
+
+    now_time = local_now.time()
+    return any(
+        start <= now_time <= end
+        for start, end in calendar.session_windows(local_now.date())
+    )
+
+
 @dataclass(frozen=True)
 class PreExecutionBlock:
     """单条执行前阻断（结构化理由）。"""
@@ -124,17 +150,23 @@ class PreExecutionChecker:
         kill_switch_probe: KillSwitchProbe | None = None,
         session_window_probe: SessionWindowProbe | None = None,
         veto_engine: RiskVetoEngine | None = None,
+        market_calendar: MarketCalendar | None = None,
     ) -> None:
         """
         Args:
             snapshot_builder: 风控快照构建器（生产接线 RiskDataPipeline.build_snapshot）。
             kill_switch_probe: 熔断状态探针；None=未接线（不臆造熔断态，记 DEBUG 留痕）。
-            session_window_probe: 交易时段探针；None=用默认 A 股窗口实现。
+            session_window_probe: 交易时段探针；None=用 market_calendar 或默认 A 股窗口实现。
             veto_engine: 否决引擎；None=内置默认硬规则集。
+            market_calendar: 市场日历注入（CAND-CRYPTO-006/#262）；None=ASHareCalendar 默认。
         """
         self._snapshot_builder = snapshot_builder
         self._kill_switch_probe = kill_switch_probe
-        self._session_window_probe = session_window_probe or is_ashare_trading_window
+        if session_window_probe is not None:
+            self._session_window_probe = session_window_probe
+        else:
+            calendar = market_calendar or get_market_calendar("ashare")
+            self._session_window_probe = lambda now: _is_trading_window(now, calendar)
         self._veto_engine = veto_engine or RiskVetoEngine()
 
     def check(

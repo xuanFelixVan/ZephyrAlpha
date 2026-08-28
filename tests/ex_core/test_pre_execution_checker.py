@@ -19,6 +19,7 @@
 覆盖: 熔断闸门/交易时段闸门(L-003)/快照装配/否决引擎四级检查,
 各环节 fail-closed 降级(探针异常按熔断处理/时段异常按非交易时段/
 快照失败拒单), 短路语义(熔断激活不建快照), 报告契约。
+CAND-CRYPTO-006/#262 注入式改造: market_calendar 注入覆盖。
 """
 
 from __future__ import annotations
@@ -33,6 +34,7 @@ pytest.importorskip(
     reason="pre_execution_checker not importable",
 )
 
+from zephyr.data.calendar import CryptoCalendar  # noqa: E402
 from zephyr.ex_core.pre_execution_checker import (  # noqa: E402
     PreExecutionChecker,
     is_ashare_trading_window,
@@ -252,3 +254,82 @@ class TestAshareTradingWindow:
     def test_weekend_closed(self):
         # 2026-08-22 周六
         assert is_ashare_trading_window(datetime(2026, 8, 22, 10, 0)) is False
+
+
+# ── CAND-CRYPTO-006/#262: market_calendar 注入 ─────────────────────
+
+
+class TestMarketCalendarInjection:
+    def test_default_calendar_is_ashare(self):
+        """无注入时默认使用 A 股日历。"""
+        checker, _ = _checker(session_window_probe=None)
+        # 2026-08-21 周五 10:00 UTC → 北京 18:00 已收盘
+        report = checker.check(_request(), now=datetime(2026, 8, 21, 10, 0, tzinfo=UTC))
+        assert not report.allowed
+        codes = [b.reason_code for b in report.blocks]
+        assert "OUTSIDE_TRADING_WINDOW" in codes
+
+    def test_crypto_calendar_7x24_always_open(self):
+        """币版日历注入：7×24 恒开放。"""
+        checker, _ = _checker(
+            session_window_probe=None,
+            market_calendar=CryptoCalendar(),
+        )
+        # 周六凌晨 3 点也应放行
+        report = checker.check(_request(), now=datetime(2026, 8, 22, 3, 0, tzinfo=UTC))
+        assert report.allowed
+        assert report.blocks == ()
+
+    def test_crypto_calendar_naive_datetime_utc(self):
+        """币版日历 naive datetime 按 UTC 口径解释。"""
+        checker, _ = _checker(
+            session_window_probe=None,
+            market_calendar=CryptoCalendar(),
+        )
+        # naive datetime 2026-08-22 03:00 → UTC 03:00
+        report = checker.check(_request(), now=datetime(2026, 8, 22, 3, 0))
+        assert report.allowed
+
+    def test_ashare_calendar_naive_datetime_shanghai(self):
+        """A股日历 naive datetime 按 Asia/Shanghai 口径解释。"""
+        checker, _ = _checker(session_window_probe=None)
+        # naive datetime 2026-08-21 10:00 → 北京 10:00 在窗口内
+        report = checker.check(_request(), now=datetime(2026, 8, 21, 10, 0))
+        assert report.allowed
+
+    def test_ashare_calendar_lunch_break_blocked(self):
+        """A股日历午休时段阻断。"""
+        checker, _ = _checker(session_window_probe=None)
+        # naive datetime 2026-08-21 12:00 → 北京 12:00 午休
+        report = checker.check(_request(), now=datetime(2026, 8, 21, 12, 0))
+        assert not report.allowed
+        codes = [b.reason_code for b in report.blocks]
+        assert "OUTSIDE_TRADING_WINDOW" in codes
+
+    def test_ashare_calendar_weekend_blocked(self):
+        """A股日历周末阻断。"""
+        checker, _ = _checker(session_window_probe=None)
+        # naive datetime 2026-08-22 10:00 → 北京 10:00 周六
+        report = checker.check(_request(), now=datetime(2026, 8, 22, 10, 0))
+        assert not report.allowed
+        codes = [b.reason_code for b in report.blocks]
+        assert "OUTSIDE_TRADING_WINDOW" in codes
+
+    def test_session_window_probe_overrides_calendar(self):
+        """显式 session_window_probe 优先于 market_calendar。"""
+        custom_probe_called = False
+
+        def custom_probe(now):
+            nonlocal custom_probe_called
+            custom_probe_called = True
+            return False
+
+        checker, _ = _checker(
+            session_window_probe=custom_probe,
+            market_calendar=CryptoCalendar(),
+        )
+        report = checker.check(_request())
+        assert custom_probe_called
+        assert not report.allowed
+        codes = [b.reason_code for b in report.blocks]
+        assert "OUTSIDE_TRADING_WINDOW" in codes
