@@ -2675,6 +2675,11 @@ error_codes:
   module: zephyr.ex_core.adapters.qmt_file_bridge_quote
   file: src/zephyr/ex_core/adapters/qmt_file_bridge_quote.py
   introduced: '2026-08-28: 对账批补登（b907bfbeb8 引入时漏登，GATE-ERRCODE 对账翻出，代码真源先行，SSoT 诚实登记原则）'
+- code: ZA-RK-0072
+  class: InvalidLeverageRiskInputError
+  module: zephyr.risk.core.leverage_risk_model
+  file: src/zephyr/risk/core/leverage_risk_model.py
+  introduced: '2026-08-28: 对账批补登（CAND-CRYPTO-008 杠杆风控在途件，GATE-ERRCODE-CONSISTENCY 对账翻出，代码真源先行，SSoT 诚实登记原则，AI-CAL-001 代登）'
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）
