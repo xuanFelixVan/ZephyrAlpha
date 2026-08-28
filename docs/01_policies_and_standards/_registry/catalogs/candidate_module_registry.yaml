@@ -18876,14 +18876,14 @@ entries:
   prerequisites:
     - {item: "94号 Q1 交易所选型", note: "Owner 拍板后确定 API 体系（REST/WS 限频/鉴权）"}
   design_admission:
-    q1_implemented: {result: false, equivalent_nodes: [], evidence: "mkt_data 域 connectors 无 crypto provider（2026-08-26 盘点），全库检索零命中"}
+    q1_implemented: {result: true, equivalent_nodes: [], evidence: "src/zephyr/data/implementations/okx_provider.py 已落（公开 REST /candles+/history-candles，分页 300 条/页，限频 10/s），19 测试两轮全绿+147 受影响面零回归（2026-08-28 W1 施工）"}
     blocking_question: null
-    result: candidate
-  status: candidate
+    result: promoted
+  status: promoted
   priority: P0
   created_at: '2026-08-26'
-  last_reviewed_at: '2026-08-26'
-  promoted_to: ""
+  last_reviewed_at: '2026-08-28'
+  promoted_to: "src/zephyr/data/implementations/okx_provider.py"
   source_draft: "94_crypto_quant_expansion.md"
   source_section: "§5 新建候选清单"
   original_id: ""
@@ -18909,7 +18909,7 @@ entries:
   blocked_by: ["CAND-CRYPTO-001"]
   next_review_date: '2027-08-26'
   review_frequency: yearly
-  last_review_outcome: "candidate 登记（2026-08-26 Owner 裁定启动）：W1 波次，001 落地+ Q1 选型后晋升"
+  last_review_outcome: "promoted（2026-08-28）：W1 施工闭环——okx_provider.py 公开 REST K 线补数落盘，19 测试两轮全绿+147 受影响面零回归，depgraph node_id=10865681"
   acquisition_method: self_build
   acquisition_source: ""
 
