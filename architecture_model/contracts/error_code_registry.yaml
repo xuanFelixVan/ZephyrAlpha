@@ -1695,6 +1695,11 @@ error_codes:
   module: zephyr.ex_core.corporate_action_adjuster
   file: src/zephyr/ex_core/corporate_action_adjuster.py
   introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-XC-0002
+  class: OkxBrokerError
+  module: zephyr.ex_core.adapters.okx_broker
+  file: src/zephyr/ex_core/adapters/okx_broker.py
+  introduced: '2026-08-28: CAND-CRYPTO-005 OKX 执行适配器（W3 施工）'
 - code: ZA-XS-0001
   class: RoutingError
   module: zephyr.ex_sor.core.optimal_order_router
