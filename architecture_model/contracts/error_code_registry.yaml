@@ -2540,6 +2540,11 @@ error_codes:
   module: zephyr.intelligence.agent_memory_architecture
   file: src/zephyr/intelligence/agent_memory_architecture.py
   introduced: '2026-08-25: DIGEST P1 R5 正式登记（AI-K3 主代理，MOD-INT 记忆架构（P1 R5W10）；前缀裁定 IT=智能/SH=共享，INT 属基设不占用）'
+- code: ZA-IT-0023
+  class: EventFunnelError
+  module: zephyr.intelligence.event_funnel
+  file: src/zephyr/intelligence/event_funnel.py
+  introduced: '2026-08-28: AI-WAVE3A-001 正式登记（26 号 §2.5 事件驱动选股漏斗 BM-SEL-19 事件侧编排，MOD-INT_EVENT_FUNNEL；取号=ZA-IT 序列 max(0022)+1）'
 - code: ZA-MKT-0010
   class: AuctionDataManagerError
   module: zephyr.market_data.auction_data_manager

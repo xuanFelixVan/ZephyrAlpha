@@ -21,6 +21,9 @@ scope: 07_trading_decision_architecture
 > ## 结案报告回填（2026-08-28 代码实证复核）
 > 原"sentiment_aggregator 未落盘/sleeve 组件未落码"已过时：intelligence/event_score.py 全族（single/dual/triple_factor+compute_event_score+should_enter_with_confirmation+expectation_gap+selling_pressure_absorbed）+event_dragon_tiger.py+event_ipo_siphon.py+event_geopolitical_map.py+event_anomaly_detector.py 全在位；nlp/sentiment_aggregator.py 已落盘；pf_core/strategies/event_driven_sleeve_strategy.py 组装类在位。
 > **仍真实未完工**：六因子矩阵待施工项（dReport/Jump on PEAD 等外部 Feed）未落；BM-SEL-19/MOD-SIG-049 漏斗零命中；Hawkes/Janus-Q 远期。
+>
+> ## 施工回填（2026-08-28 AI-WAVE3A-001）
+> "BM-SEL-19 漏斗零命中"已施工闭环：`intelligence/event_funnel.py`（MOD-INT_EVENT_FUNNEL，§2.5 事件→选股映射落码）——候选池生成（精筛∪事件触发，`build_candidate_pool`）→ 过滤（复用 `compute_event_score` 全族评分：利空剔除/极端反应>3%/条件PDF下降>15%/传导链>0.7；|score|<0.2 噪声不动作）→ 评分降序 → ~50→~30 容量截断（`run_event_funnel`）；无事件数据源 `skipped` 直通不阻塞。评分真源唯一在 event_score（不重复造公式）；与 21 号侧 `signal_ashare/event_driven_screener.py`（MOD-SIG-049，EventImpactRecord 契约）平行承载 BM-SEL-19 两视角。测试 `tests/intelligence/test_event_funnel.py` 33 用例全绿；depgraph 设计态 node_id=10919338（planned，只登记不流转）。遗留：sleeve 策略接线（当前 event_driven_sleeve_strategy 自承载逐标的评分过滤，漏斗层经 TYPE_CHECKING 声明待接线）。
 
 # 事件驱动策略细节
 > 本备忘定义首批 3 策略之一——事件驱动 sleeve（[20_first_batch_strategies §2.4](20_first_batch_strategies.md) 策略C）的 alpha 信号来源、事件源、事件分类、冲击衰减曲线、事件→选股映射、换手率与多源情绪接入。性质：永久态讨论记录。管理规范见 [01_design_memo_management_spec.md](01_design_memo_management_spec.md)；路线图定位见 [00_index_trading_decision](00_index_trading_decision.md) G10（L1·Alpha 选股层，P2）。

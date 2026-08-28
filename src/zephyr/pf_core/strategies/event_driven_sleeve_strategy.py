@@ -44,7 +44,7 @@ SSoT: docs/02_enterprise_architecture/07_trading_decision_architecture/design_me
 from __future__ import annotations
 
 import logging
-from typing import Any, Final
+from typing import TYPE_CHECKING, Any, Final
 
 from zephyr.governance.strategies.strategy_base import (
     StrategyBase,
@@ -69,6 +69,13 @@ from zephyr.shared.contracts.selection_result import (
     SignalInput,
     TargetPosition,
 )
+
+# ORPHAN-MODULE 可发现性（2026-08-28，AI-WAVE3A-001）：TYPE_CHECKING 静态引用——
+# 仅类型检查期生效，运行时不执行；事件漏斗（MOD-INT_EVENT_FUNNEL，BM-SEL-19 事件侧
+# 编排：候选池→过滤→排序→~30）是本策略选股收敛上游，待接线（当前本策略自承载逐标的
+# 评分过滤），接线后由 run_event_funnel 输出喂 generate_target_weights。
+if TYPE_CHECKING:
+    from zephyr.intelligence.event_funnel import EventFunnelResult, run_event_funnel
 
 _logger = logging.getLogger(__name__)
 
