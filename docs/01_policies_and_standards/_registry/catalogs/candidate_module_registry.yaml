@@ -19420,12 +19420,12 @@ entries:
   design_admission:
     q1_implemented: {result: true, equivalent_nodes: [], evidence: "2026-08-28 骨架落地：src/zephyr/data/implementations/sentiment_panel_provider.py（恐惧贪婪 alternative.me 实采 + BTC 占比 CMC 实采 + ETF 流量/USDT 场外溢价数据源骨架）+ tests/zephyr/data/test_sentiment_panel_provider.py 24 测试 green（原 2026-08-26 盘点：alt_data 域无币圈宏观情绪源，恐惧贪婪指数等为币圈特有，A股侧无对应物）"}
     blocking_question: null
-    result: candidate
-  status: candidate
+    result: promoted
+  status: promoted
   priority: P2
   created_at: '2026-08-26'
-  last_reviewed_at: '2026-08-26'
-  promoted_to: ""
+  last_reviewed_at: '2026-08-28'
+  promoted_to: "src/zephyr/data/implementations/sentiment_panel_provider.py"
   source_draft: "94_crypto_quant_expansion.md"
   source_section: "§5 新建候选清单 + §9 Q6 裁定"
   original_id: ""
@@ -19441,6 +19441,7 @@ entries:
     2026-08-28 施工补充：provider 骨架落地（sentiment_panel_provider.py，四能力路由+统一行格式
     metric/trade_date/value/value_classification/source/extra），trigger 条件追加 "CAND-CRYPTO-007 promoted"
     （回测三件套就绪后，宏观情绪输入接入币版 regime/回测校准，本条目由 candidate 晋升）。
+    2026-08-28 晋升：CAND-CRYPTO-007 已 promoted，trigger 条件达成，本条目翻 promoted。
   risks:
     - "免费源稳定性（alternative.me 限频/ETF 流来源变更）——日频采集+失败降级标注即可，不进决策硬链"
   alternatives: "MVP 阶段 regime 仅用价格量价输入——本项为增强非地基（P2，可提前 W4 低成本先跑）"
@@ -19451,7 +19452,7 @@ entries:
   blocked_by: []
   next_review_date: '2027-08-26'
   review_frequency: yearly
-  last_review_outcome: "candidate 登记（2026-08-26 Owner 拍板 Q1-Q6 联动）：P2 增强项，可提前 W4 轻量先跑，币版 regime 输入需求出现时晋升"
+  last_review_outcome: "promoted（2026-08-28）：CAND-CRYPTO-007 已 promoted，trigger 条件达成，W4/Phase 2 提前启用"
   acquisition_method: self_build
   acquisition_source: "alternative.me 免费 API + 公开 ETF 流/解锁日历源"
 - id: CAND-NLP-003
@@ -19474,7 +19475,7 @@ entries:
   source: 2026-08-25 新闻情感三层模型讨论批（Owner 拍板 Q1~Q5）【2026-08-26 自 bcfaa597 补回】
   created: '2026-08-25'
   last_updated: '2026-08-26'
-  source_draft: 2026-08-25-news-sentiment-upgrade-discussion.md
+  source_draft: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/2026-08-25-news-sentiment-upgrade-discussion.md
   original_id: NEWSUP-Q1
   source_section: §8
 - id: CAND-NLP-004
@@ -19497,7 +19498,7 @@ entries:
   source: 2026-08-25 新闻情感三层模型讨论批（Owner 拍板 Q1~Q5）【2026-08-26 自 bcfaa597 补回】
   created: '2026-08-25'
   last_updated: '2026-08-26'
-  source_draft: 2026-08-25-news-sentiment-upgrade-discussion.md
+  source_draft: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/2026-08-25-news-sentiment-upgrade-discussion.md
   original_id: NEWSUP-Q2A
   source_section: §8
 - id: CAND-DAT-021
@@ -19520,7 +19521,7 @@ entries:
   source: 2026-08-25 新闻情感三层模型讨论批（Owner 拍板 Q1~Q5）【2026-08-26 自 bcfaa597 补回】
   created: '2026-08-25'
   last_updated: '2026-08-26'
-  source_draft: 2026-08-25-news-sentiment-upgrade-discussion.md
+  source_draft: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/2026-08-25-news-sentiment-upgrade-discussion.md
   original_id: NEWSUP-Q2B
   source_section: §8
 - id: CAND-RES-030
@@ -19543,7 +19544,7 @@ entries:
   source: 2026-08-25 新闻情感三层模型讨论批（Owner 拍板 Q1~Q5）【2026-08-26 自 bcfaa597 补回】
   created: '2026-08-25'
   last_updated: '2026-08-26'
-  source_draft: 2026-08-25-news-sentiment-upgrade-discussion.md
+  source_draft: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/2026-08-25-news-sentiment-upgrade-discussion.md
   original_id: NEWSUP-Q3
   source_section: §8
 - id: CAND-DAT-022
@@ -19566,7 +19567,7 @@ entries:
   source: 2026-08-25 新闻情感三层模型讨论批（Owner 拍板 Q1~Q5）【2026-08-26 自 bcfaa597 补回】
   created: '2026-08-25'
   last_updated: '2026-08-26'
-  source_draft: 2026-08-25-news-sentiment-upgrade-discussion.md
+  source_draft: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/2026-08-25-news-sentiment-upgrade-discussion.md
   original_id: NEWSUP-Q4
   source_section: §8
 - id: CAND-NLP-005
@@ -19589,7 +19590,7 @@ entries:
   source: 2026-08-25 新闻情感三层模型讨论批（Owner 拍板 Q1~Q5）【2026-08-26 自 bcfaa597 补回】
   created: '2026-08-25'
   last_updated: '2026-08-26'
-  source_draft: 2026-08-25-news-sentiment-upgrade-discussion.md
+  source_draft: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/2026-08-25-news-sentiment-upgrade-discussion.md
   original_id: NEWSUP-Q5
   source_section: §8
 - id: CAND-DAT-023

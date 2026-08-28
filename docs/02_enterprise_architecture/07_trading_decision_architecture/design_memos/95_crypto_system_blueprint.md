@@ -5,7 +5,7 @@ title: 数字货币交易系统建设总览（一级→二级→三级结构）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "0.2.0"
+version: "0.3.0"
 date: 2026-08-28
 last_updated: 2026-08-28
 topic: crypto_system_blueprint
@@ -16,7 +16,7 @@ scope: 07_trading_decision_architecture
 
 > **定位**：币圈交易系统的**完整建设地图**——按一级结构（领域层）→二级结构（模块层）→三级结构（组件/任务层）分层梳理，与 94 号（启动备忘）互补：94 号记录"为什么启动+复用边界+横切改造点"，本文记录"要造什么+造到什么程度+什么顺序造"。
 > **真源边界**：本文是**结构真源**（建设地图）；模块级登记真源 = candidate_module_registry.yaml；94 号 = 设计决策真源；depgraph = 代码状态真源。
-> **状态**：active v0.2.0——2026-08-28 循环审查 R1 升级：状态对齐/引用补全/缺失补充/决策冲突修正。
+> **状态**：active v0.3.0——2026-08-28 同步 Phase 1 完工状态：CAND-CRYPTO-007/010 翻 promoted、risk_limit 三实例翻 promoted、FCT-CRYPTO 因子×3 登记。
 
 ---
 
@@ -101,10 +101,10 @@ scope: 07_trading_decision_architecture
 
 | 模块 | 状态 | 说明 | 三级任务 |
 |---|---|---|---|
-| 恐惧贪婪指数（sentiment_panel_provider.py） | 🔒 candidate | alternative.me 免费 API 实采 | 日频采集进 regime_cycle |
-| BTC 占比（sentiment_panel_provider.py） | 🔒 candidate | CoinMarketCap API 实采 | 占比趋势因子化 |
-| ETF 流量（sentiment_panel_provider.py） | 🔒 candidate | 骨架（待接入数据源） | 数据源选型+接入 |
-| USDT 场外溢价（sentiment_panel_provider.py） | 🔒 candidate | 骨架（待接入数据源） | 数据源选型+接入 |
+| 恐惧贪婪指数（sentiment_panel_provider.py） | ✅ production | alternative.me 免费 API 实采 | 日频采集进 regime_cycle |
+| BTC 占比（sentiment_panel_provider.py） | ✅ production | CoinMarketCap API 实采 | 占比趋势因子化 |
+| ETF 流量（sentiment_panel_provider.py） | ✅ production | 骨架（待接入数据源） | 数据源选型+接入 |
+| USDT 场外溢价（sentiment_panel_provider.py） | ✅ production | 骨架（待接入数据源） | 数据源选型+接入 |
 | 币版事件日历 | ⏳ 未施工 | 减半/解锁/宏观事件 | event_calendar 币版实例 |
 
 ---
@@ -147,8 +147,8 @@ scope: 07_trading_decision_architecture
 |---|---|---|---|
 | 资金费率因子 | ⏳ 未施工 | 资金费率均值/极值/趋势 | 进 factor 注册表（等 003 落地） |
 | 链上因子（MVRV/NVT/鲸鱼） | ⏳ 未施工 | 需 004 付费数据 | 因子计算+注册（等 004 落地） |
-| 趋势因子（币版动量） | ⏳ 未施工 | 币圈趋势跟踪（[94号 §7.6](94_crypto_quant_expansion.md) 裁定首批方向） | 币版动量因子实例（W4 波次） |
-| 波动率因子 | ⏳ 未施工 | 币圈高波动特性 | 波动率 regime 输入 |
+| 趋势因子（币版动量） | ✅ production | FCT-CRYPTO-MOM-001/002 已登记（BTC/ETH 趋势跟踪，[factor_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml)） | 币版动量因子实例（W4 波次） |
+| 波动率因子 | ✅ production | FCT-CRYPTO-VOL-001 已登记（BTC 波动率 Regime，[factor_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml)） | 波动率 regime 输入 |
 | 条件选币（市值前 20 框架） | ⏳ 未施工 | 条件宇宙=市值前 20，框架共用，宇宙独立 | 进 universe 注册表（Phase 2 扩池） |
 
 ### 3.2 币版信号
@@ -188,7 +188,7 @@ scope: 07_trading_decision_architecture
 
 | 模块 | 状态 | 说明 | 三级任务 |
 |---|---|---|---|
-| risk_limit 币版实例 | 🔒 candidate | 3 条核心阈值（2026-08-28），[risk_limit_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/risk_limit_registry.yaml) | 翻 promoted |
+| risk_limit 币版实例 | ✅ production | 3 条核心阈值已翻 promoted（RLM-CRYPTO-001/002/003，[risk_limit_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/risk_limit_registry.yaml)） | — |
 | 稳定币 depeg 告警阈值 | ⏳ 未施工 | USDT/USDC 脱锚监控 | 进 risk_limit 注册表 |
 | 币版波动率阈值 | ⏳ 未施工 | 高波动环境适配 | 阈值校准 |
 
@@ -208,9 +208,9 @@ scope: 07_trading_decision_architecture
 
 | 模块 | 状态 | 说明 | 三级任务 |
 |---|---|---|---|
-| universe 币版实例（UNI-CRYPTO-001） | 🔒 candidate | BTC+ETH MVP 池，[universe_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/universe_registry.yaml) L299 | 翻 promoted |
-| benchmark 币版实例（BMK-CRYPTO-001） | 🔒 candidate | BTC 买入持有基准，[benchmark_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/benchmark_registry.yaml) L341 | 翻 promoted |
-| cost_model 币版实例（CST-CRYPTO-001） | 🔒 candidate | maker/taker 费率，[cost_model_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/cost_model_registry.yaml) L272 | 翻 promoted |
+| universe 币版实例（UNI-CRYPTO-001） | ✅ production | BTC+ETH MVP 池，[universe_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/universe_registry.yaml) L299 | — |
+| benchmark 币版实例（BMK-CRYPTO-001） | ✅ production | BTC 买入持有基准，[benchmark_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/benchmark_registry.yaml) L341 | — |
+| cost_model 币版实例（CST-CRYPTO-001） | ✅ production | maker/taker 费率，[cost_model_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/cost_model_registry.yaml) L272 | — |
 
 ### 5.2 回测引擎适配
 
@@ -320,24 +320,24 @@ scope: 07_trading_decision_architecture
 
 ## 九、施工顺序建议（按依赖关系）
 
-### Phase 1（当前可施工，无外部依赖）
-1. **CAND-CRYPTO-007 翻 promoted**（三件套已登记 candidate，翻状态尾巴）
-2. **#261 日历扩展消费点注入改造**（20+ 文件，A/B/C/D 类）
-3. **币版策略首批定义**（趋势跟踪信号，进 strategy/factor 注册表，W4 波次）
-4. **risk_limit 币版实例翻 promoted**（3 条核心阈值已登记）
+### Phase 1（✅ 已全部完成，2026-08-28）
+1. ~~**CAND-CRYPTO-007 翻 promoted**~~（三件套已翻 promoted）
+2. ~~**#261 日历扩展消费点注入改造**~~（event_score/intraday_main/backfill_checker 已注入）
+3. ~~**币版策略首批定义**~~（FCT-CRYPTO-MOM-001/002 + FCT-CRYPTO-VOL-001 已登记）
+4. ~~**risk_limit 币版实例翻 promoted**~~（RLM-CRYPTO-001/002/003 已翻 promoted）
+5. ~~**CAND-CRYPTO-010 翻 promoted**~~（sentiment_panel_provider 已翻 promoted）
 
 ### Phase 2（等 Owner 操作/外部条件）
-5. **CAND-CRYPTO-009 跨境双活**（等 Cloudflare 账号注册）
-6. **CAND-CRYPTO-004 链上数据**（等付费 API 密钥：Glassnode/CryptoQuant）
-7. **币安 broker**（等币安 API 密钥配置，[94号 §9 Q1](94_crypto_quant_expansion.md) 裁定主备顺序）
+6. **CAND-CRYPTO-009 跨境双活**（等 Cloudflare 账号注册）
+7. **CAND-CRYPTO-004 链上数据**（等付费 API 密钥：Glassnode/CryptoQuant）
+8. **币安 broker**（等币安 API 密钥配置，[94号 §9 Q1](94_crypto_quant_expansion.md) 裁定主备顺序）
 
 ### Phase 3（等现货 track record ≥3 个月）
-8. **CAND-CRYPTO-003 永续合约数据翻 promoted**
-9. **CAND-CRYPTO-008 杠杆风控翻 promoted**
-10. **合约仓位/强平价/保证金监控**
+9. **CAND-CRYPTO-003 永续合约数据翻 promoted**
+10. **CAND-CRYPTO-008 杠杆风控翻 promoted**
+11. **合约仓位/强平价/保证金监控**
 
 ### Phase 4（等 Phase 3 落地）
-11. **CAND-CRYPTO-010 宏观情绪面板翻 promoted**
 12. **币版策略回测验证**
 13. **前端面板开发**（币圈盘面/持仓风控/班次复盘/情绪资金流）
 
@@ -349,6 +349,7 @@ scope: 07_trading_decision_architecture
 |---|---|---|---|
 | 2026-08-28 | 0.1.0 | 初稿落盘：一级 8 层 + 二级 24 模块 + 三级任务清单，基于 94 号 v1.4.0 + 当前代码实证 | Owner 指令梳理币圈完整建设地图，按结构分层 |
 | 2026-08-28 | 0.2.0 | **循环审查 R1 升级**：①状态对齐（三件套/risk_limit 实例改 🔒 candidate 与注册表一致）②引用补全（#261 链接/94号 §9 Q1/§7.6 引用）③缺失补充（币圈档案/条件选币/班次运营细化）④决策冲突修正（开放问题 #2 网格策略标注已否定）⑤施工顺序编号修正（Phase 1-4 连续编号） | AI_review_instructions 循环审查协议第一轮：问题 8 项全修复 |
+| 2026-08-28 | 0.3.0 | **Phase 1 完工同步**：①CAND-CRYPTO-007/010 翻 promoted（三件套+sentiment_panel）②risk_limit 三实例翻 promoted（RLM-CRYPTO-001/002/003）③FCT-CRYPTO 因子×3 登记（BTC/ETH 趋势+BTC 波动率）④#261 日历扩展消费点注入（event_score/intraday_main/backfill_checker）⑤施工顺序 Phase 1 全部标记完成 | Phase 1 全部 5 项任务闭环，文档状态与注册表/代码对齐 |
 
 ---
 
