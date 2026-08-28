@@ -10553,6 +10553,46 @@ creation_tokens:
   token: auto-backfill-evaluation-20260828
   created_by: AI-WAVE0-001
   capability: backfill_evaluation
+- file: src/zephyr/intelligence/event_funnel.py
+  token: manual-event-funnel-20260828
+  created_by: AI-WAVE3A-001
+  capability: event_funnel
+- file: tests/intelligence/test_event_funnel.py
+  token: manual-test-event-funnel-20260828
+  created_by: AI-WAVE3A-001（tests/ 豁免自愿补登随 SELL-001 先例）
+  capability: event_funnel
+- file: tests/backtest/test_engine_base.py
+  token: auto-test-engine-base-20260828
+  created_by: AI-WAVE2C-001（52号四核心模块零单测清偿：engine_base 契约+最小端到端确定性 14 用例）
+  capability: backtest_engine_core
+- file: tests/backtest/test_matching_logic.py
+  token: auto-test-matching-logic-20260828
+  created_by: AI-WAVE2C-001（52号四核心模块零单测清偿：三模式撮合黄金数/费用边界/纯函数语义 41 用例）
+  capability: backtest_engine_core
+- file: tests/backtest/test_portfolio.py
+  token: auto-test-portfolio-20260828
+  created_by: AI-WAVE2C-001（52号四核心模块零单测清偿：买卖记账/T+1/停牌结转黄金数 31 用例）
+  capability: backtest_engine_core
+- file: tests/backtest/test_metrics.py
+  token: auto-test-metrics-20260828
+  created_by: AI-WAVE2C-001（52号四核心模块零单测清偿：收益/回撤/Sharpe/IC-IR 黄金数 32 用例）
+  capability: backtest_engine_core
+- file: src/zephyr/ex_core/live_strategy_adapter.py
+  token: manual-live-strategy-adapter-20260828
+  created_by: AI-WAVE3B-001
+  capability: daily_cycle_sop
+- file: tests/ex_core/test_live_strategy_adapter.py
+  token: manual-test-live-strategy-adapter-20260828
+  created_by: AI-WAVE3B-001（tests/ 豁免自愿补登随 SELL-001 先例）
+  capability: daily_cycle_sop
+- file: src/zephyr/compliance/manipulation_realtime_monitor.py
+  token: auto-manipulation-realtime-monitor-20260828
+  created_by: AI-WAVE3C-001
+  capability: intraday_manipulation_realtime_detection
+- file: tests/compliance/test_manipulation_realtime_monitor.py
+  token: auto-test-manipulation-realtime-monitor-20260828
+  created_by: AI-WAVE3C-001
+  capability: intraday_manipulation_realtime_detection
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

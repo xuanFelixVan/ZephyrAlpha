@@ -42791,6 +42791,13 @@ entries:
   desc_zh: 'Spoofing/Layering/WashTrade 三规则离线批处理 MVP（43 号 §7.3）：全日订单/成交按 placed_at 时间序重放经 30min 滚动窗口，规则唯一真源=TradingComplianceDetector 零重实现；首命中去重报告 + compliance_log 双类事件。'
   desc_en: 'Offline batch MVP for Spoofing/Layering/WashTrade (memo-43 §7.3): time-ordered replay over 30min rolling windows; rules delegated to TradingComplianceDetector; first-hit-dedup report plus compliance_log events.'
   plain_zh: '盘中操纵检测批处理器。每天收盘后把全天挂单撤单成交回放一遍，查有没有虚假挂单、分层压单、自成交，查到的留证据，没查到也留''今天扫过了''的记录。'
+- module_path: src/zephyr/compliance/manipulation_realtime_monitor.py
+  domain_id: D_COMPLIANCE
+  name_zh: 盘中操纵实时监测器
+  name_en: 'Intraday Manipulation Realtime Monitor'
+  desc_zh: '盘中操纵 4 类检测实时流驱动接线层（43 号 §7.2/§7.3，A8 批）：挂接 OrderManager 委托/成交事件流 + RedisTickMarketProvider 懒读 tick 缓存供给分钟均量与 5min 短窗，同一 TradingComplianceDetector 实例驱动；命中→告警+compliance_log 证据+冻结判定，阻断走 C-002 既有合规闸抛转，不接任何下单/撤单执行路径。'
+  desc_en: 'Realtime stream wiring for 4 manipulation checks (memo-43 §7.2/§7.3, wave A8): consumes OrderManager order/fill event callbacks plus lazy Redis tick reads; same TradingComplianceDetector instance; hits alert, log evidence and freeze symbols; blocking handed to the existing C-002 gate, no execution path touched.'
+  plain_zh: '盘中操纵实时监测器。交易进行中盯着每一笔挂单撤单成交，发现虚假挂单、分层压单、自成交、拉抬打压就立刻告警留证据并把这只票冻结——冻结后新申报被既有合规闸直接拒掉，要人工复核确认后才解冻。'
 # --- 2026-08-24 GW-T4-G plain_zh ---
 - module_path: src/zephyr/frontend/implementations/notification_channel_senders.py
   domain_id: D_FRONTEND
@@ -45790,6 +45797,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "用假检验器校验事件节点、因果边注册、条件概率计算和查询接口。"
+- module_path: src/zephyr/intelligence/event_funnel.py
+  domain_id: D_INTELLIGENCE
+  name_zh: "事件驱动选股漏斗"
+  name_en: "Event-Driven Selection Funnel"
+  desc_zh: "事件驱动选股漏斗（MOD-INT_EVENT_FUNNEL，BM-SEL-19 第四层事件侧编排，26 号 §2.5）：候选池生成（精筛∪事件触发）→ compute_event_score 族评分过滤（利空/极端反应>3%/条件PDF下降>15%/传导链>0.7）→ 评分降序 → ~50→~30 容量截断；复用 event_score 不重复造评分；无事件数据源 skipped 直通"
+  desc_en: "Event-driven selection funnel (MOD-INT_EVENT_FUNNEL, BM-SEL-19 L4 event-side): candidate pool (prescreened + event-triggered) -> compute_event_score family filtering (negative/extreme reaction>3%/conditional PDF drop>15%/conduction risk>0.7) -> score-ranked -> ~50 to ~30 capacity truncation; reuses event_score; skipped passthrough when event source not ready"
+  plain_zh: "事件驱动选股漏斗。精筛选出的约50只票叠加上被公告新闻等事件触发的票组成候选池，用事件冲击分给每只票打分：利空的踢掉（A股不能做空只能回避）、当天涨跌超过3%的不追不杀、事件后上涨概率掉超15%的淘汰、传导链风险太高的剔除，剩下的按分数从高到低排，最多留30只交给下游多策略投票；事件数据源没就绪时本层直接跳过不筛，不阻塞主漏斗。"
 - module_path: src/zephyr/intelligence/universal_fact_ledger.py
   domain_id: D_INTELLIGENCE
   name_zh: "通用事实账本与双重锚定"
@@ -47015,6 +47029,20 @@ entries:
   desc_zh: "daban_execution 三符号单元测试（23 用例，纯内存不触网不触库）"
   desc_en: ""
   plain_zh: "给打板执行三零件配的单元测试：填充概率随排队位置和距离衰减对不对、浅盘口滑点评估会不会放大报警、三段建仓总量守不守恒、追板和埋伏的切换阈值卡得准不准、容量四条约束线各自生效时取没取到最小值、空盘口和零价格会不会安全地拒绝下仓。"
+- module_path: src/zephyr/ex_core/live_strategy_adapter.py
+  domain_id: D_EX_CORE
+  name_zh: "模拟盘策略常驻服务适配器"
+  name_en: "Live Strategy Adapter"
+  desc_zh: "57号文GAP-2常驻服务化：包装TradingSession为常驻可管理服务——多slot承载/启动优雅停止/业务心跳落盘(tmp转os.replace原子写,与guard进程心跳正交)/单策略崩溃异常隔离/退避重启上限熔断。仅模拟盘会话，实盘启用=Owner窗口。"
+  desc_en: "Resident paper-trading strategy service adapter (57 GAP-2): wraps TradingSession as a managed resident service - multi-slot hosting, graceful start/stop, biz heartbeat (atomic tmp+os.replace write, orthogonal to guard process heartbeat), per-slot crash isolation, backoff restart with exhaustion cap. Paper sessions only; live enablement is Owner-window."
+  plain_zh: "模拟盘的策略保姆：把盘中交易会话装进一个常驻服务里统一看管——某个策略崩了只关它自己小房间、其他策略照常跑，崩了还会等一会儿自动重拉（最多3次），每15秒在tmp下写一张活着证明小纸条供看门狗巡检。收盘到点自动优雅收摊（撤掉没成交的单）。"
+- module_path: tests/ex_core/test_live_strategy_adapter.py
+  domain_id: D_EX_CORE
+  name_zh: "模拟盘策略常驻服务适配器单元测试"
+  name_en: "Live Strategy Adapter Tests"
+  desc_zh: "LiveStrategyAdapter 单元测试（57号文GAP-2）：配置校验/启动停止/心跳原子写与失败隔离/slot异常隔离（装配启动停止崩溃不扩散）/退避重启与EXHAUSTED熔断/run有界循环三通道收场，19用例。"
+  desc_en: "Unit tests for LiveStrategyAdapter (57 GAP-2): config validation, lifecycle, heartbeat atomic write and failure isolation, per-slot crash isolation, backoff restart with exhaustion cap, bounded run loop shutdown channels. 19 cases."
+  plain_zh: "给策略保姆配的体检表：装错配置会不会报错、策略崩了隔壁房间是不是真不受影响、崩了重拉超过3次会不会熔断停摆、到收盘点会不会自动收摊——共19项检查全过才算合格。"
 
 battle_map_steps:
 - step_id: BM-BUY-04

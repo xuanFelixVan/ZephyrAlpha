@@ -2,7 +2,12 @@
 # See: https://github.com/echo-guard/echo-guard
 
 # Minimum function size to consider (in lines)
-min_function_lines: 3
+# 2026-08-28 AI-WAVE0-001：3→6 校准——extract 级硬阻断被"琐碎单行访问器族"误报淹没
+# （@property/decorator+def+return 3 行模板在 Type-2 重命名口径下全仓 100% 撞车，
+# 实证 agent_id/initial_capital/traces/links/core_writer 五 hub 82+ 对全为假阳性），
+# 3 行阈值恰等于该模板行数=放行假阳性族；6 行阈值灭族且保留真克隆检测面。
+# 既有 dismissed 登记（本文件下方案例）为该族的实例级备案，两轨并行防复发。
+min_function_lines: 6
 
 # Maximum function size to consider
 max_function_lines: 500
@@ -53,3 +58,59 @@ acknowledged:
     verdict: dismissed
     stable_key: "scripts/governance/check_commit_message.py:_is_merge_commit||scripts/governance/d11_compliance/check_test_structure.py:_has_todo_comment"
     note: "2026-08-26 AI-CRYPTO-001：正则小函数结构同构语义各殊（8 对 hub 均为 _is_merge_commit），合并=过度抽象；存量雷同非真重复"
+  # 2026-08-28 AI-WAVE0-001（随 AI-CRYPTO-001 先例）：_concurrency.py agent_id 简单 @property
+  # （return self._agent_id 一行）与 N 处琐碎单行属性（__bool__/event_subscribed/callbacks/base_dir/skills_dir 等）
+  # extract 级 100% 碰撞——琐碎单行属性模式撞车，语义无关，合并=荒谬；dismissed 登记
+  # ⚠ 教训：stable_key 必须与 finding 实际路径分隔符一致（Windows=反斜杠）且两侧按字符串排序（_ 在字母前）
+  - id: "scripts\\governance\\meta\\_concurrency.py:agent_id:00000000||scripts\\governance\\meta\\_concurrency.py:__bool__:00000000"
+    verdict: dismissed
+    stable_key: "scripts\\governance\\meta\\_concurrency.py:__bool__||scripts\\governance\\meta\\_concurrency.py:agent_id"
+    note: "2026-08-28：琐碎单行 @property 模式撞车（agent_id vs __bool__），非真重复"
+  - id: "scripts\\governance\\meta\\_concurrency.py:agent_id:00000000||src\\zephyr\\autonomy_core\\context\\context_pipeline_auto.py:event_subscribed:00000000"
+    verdict: dismissed
+    stable_key: "scripts\\governance\\meta\\_concurrency.py:agent_id||src\\zephyr\\autonomy_core\\context\\context_pipeline_auto.py:event_subscribed"
+    note: "2026-08-28：琐碎单行 @property 模式撞车（agent_id vs event_subscribed），非真重复"
+  - id: "scripts\\governance\\meta\\_concurrency.py:agent_id:00000000||src\\zephyr\\autonomy_core\\ide_watcher.py:callbacks:00000000"
+    verdict: dismissed
+    stable_key: "scripts\\governance\\meta\\_concurrency.py:agent_id||src\\zephyr\\autonomy_core\\ide_watcher.py:callbacks"
+    note: "2026-08-28：琐碎单行 @property 模式撞车（agent_id vs callbacks），非真重复"
+  - id: "scripts\\governance\\meta\\_concurrency.py:agent_id:00000000||src\\zephyr\\autonomy_core\\skills\\skill_constructor.py:base_dir:00000000"
+    verdict: dismissed
+    stable_key: "scripts\\governance\\meta\\_concurrency.py:agent_id||src\\zephyr\\autonomy_core\\skills\\skill_constructor.py:base_dir"
+    note: "2026-08-28：琐碎单行 @property 模式撞车（agent_id vs base_dir），非真重复"
+  - id: "scripts\\governance\\meta\\_concurrency.py:agent_id:00000000||src\\zephyr\\autonomy_core\\skills\\skill_constructor.py:skills_dir:00000000"
+    verdict: dismissed
+    stable_key: "scripts\\governance\\meta\\_concurrency.py:agent_id||src\\zephyr\\autonomy_core\\skills\\skill_constructor.py:skills_dir"
+    note: "2026-08-28：琐碎单行 @property 模式撞车（agent_id vs skills_dir），非真重复"
+  - id: "scripts\\governance\\meta\\_concurrency.py:agent_id:00000000||src\\zephyr\\autonomy_core\\skills\\skill_constructor.py:registry_path:00000000"
+    verdict: dismissed
+    stable_key: "scripts\\governance\\meta\\_concurrency.py:agent_id||src\\zephyr\\autonomy_core\\skills\\skill_constructor.py:registry_path"
+    note: "2026-08-28：琐碎单行 @property 模式撞车（agent_id vs registry_path），非真重复"
+  - id: "scripts\\governance\\meta\\_concurrency.py:agent_id:00000000||src\\zephyr\\autonomy_core\\skills\\skill_durable.py:storage_dir:00000000"
+    verdict: dismissed
+    stable_key: "scripts\\governance\\meta\\_concurrency.py:agent_id||src\\zephyr\\autonomy_core\\skills\\skill_durable.py:storage_dir"
+    note: "2026-08-28：琐碎单行 @property 模式撞车（agent_id vs storage_dir），非真重复"
+  - id: "scripts\\governance\\meta\\_concurrency.py:agent_id:00000000||src\\zephyr\\backtest\\core\\data_handler.py:pit_manager:00000000"
+    verdict: dismissed
+    stable_key: "scripts\\governance\\meta\\_concurrency.py:agent_id||src\\zephyr\\backtest\\core\\data_handler.py:pit_manager"
+    note: "2026-08-28：琐碎单行 @property 模式撞车（agent_id vs pit_manager），非真重复"
+  - id: "scripts\\governance\\meta\\_concurrency.py:agent_id:00000000||src\\zephyr\\backtest\\core\\data_handler.py:active_source:00000000"
+    verdict: dismissed
+    stable_key: "scripts\\governance\\meta\\_concurrency.py:agent_id||src\\zephyr\\backtest\\core\\data_handler.py:active_source"
+    note: "2026-08-28：琐碎单行 @property 模式撞车（agent_id vs active_source），非真重复"
+  - id: "scripts\\governance\\meta\\_concurrency.py:agent_id:00000000||src\\zephyr\\backtest\\core\\matching_engine.py:config:00000000"
+    verdict: dismissed
+    stable_key: "scripts\\governance\\meta\\_concurrency.py:agent_id||src\\zephyr\\backtest\\core\\matching_engine.py:config"
+    note: "2026-08-28：琐碎单行 @property 模式撞车（agent_id vs matching_engine.config），非真重复"
+  - id: "scripts\\governance\\meta\\_concurrency.py:agent_id:00000000||src\\zephyr\\backtest\\core\\matching_engine.py:logic:00000000"
+    verdict: dismissed
+    stable_key: "scripts\\governance\\meta\\_concurrency.py:agent_id||src\\zephyr\\backtest\\core\\matching_engine.py:logic"
+    note: "2026-08-28：琐碎单行 @property 模式撞车（agent_id vs logic），非真重复"
+  - id: "scripts\\governance\\meta\\_concurrency.py:agent_id:00000000||src\\zephyr\\backtest\\core\\matching_logic.py:config:00000000"
+    verdict: dismissed
+    stable_key: "scripts\\governance\\meta\\_concurrency.py:agent_id||src\\zephyr\\backtest\\core\\matching_logic.py:config"
+    note: "2026-08-28：琐碎单行 @property 模式撞车（agent_id vs matching_logic.config），非真重复"
+  - id: "scripts\\governance\\meta\\_concurrency.py:agent_id:00000000||src\\zephyr\\backtest\\core\\portfolio.py:cash:00000000"
+    verdict: dismissed
+    stable_key: "scripts\\governance\\meta\\_concurrency.py:agent_id||src\\zephyr\\backtest\\core\\portfolio.py:cash"
+    note: "2026-08-28：琐碎单行 @property 模式撞车（agent_id vs cash），非真重复"
