@@ -19078,14 +19078,14 @@ entries:
     - {item: "94号 Q1 交易所选型", note: "API 密钥体系/限频/私有端点确定"}
     - {item: "CAND-CRYPTO-006 规则参数化", note: "下单校验规则包先行"}
   design_admission:
-    q1_implemented: {result: false, equivalent_nodes: [], evidence: "ex_core 仅有 QMT/模拟通道，无 crypto 适配器（2026-08-26 盘点）"}
+    q1_implemented: {result: true, equivalent_nodes: [], evidence: "src/zephyr/ex_core/adapters/okx_broker.py 已落（OKX V5 私有 REST API 对接，HMAC-SHA256 签名+幂等+回执确认+规则包注入），15 测试两轮全绿+1591 受影响面零回归（2026-08-28 W3 施工）"}
     blocking_question: null
-    result: candidate
-  status: candidate
+    result: promoted
+  status: promoted
   priority: P0
   created_at: '2026-08-26'
-  last_reviewed_at: '2026-08-26'
-  promoted_to: ""
+  last_reviewed_at: '2026-08-28'
+  promoted_to: "src/zephyr/ex_core/adapters/okx_broker.py"
   source_draft: "94_crypto_quant_expansion.md"
   source_section: "§5 新建候选清单"
   original_id: ""
@@ -19096,6 +19096,7 @@ entries:
     首选评估=币安官方 agent skills/MCP（官方维护+原生 paper 模式，与 A10 集成架构 MCP 路线一致）；
     CCXT 降为备选兼容层（统一多家 API 的开源库，薄适配减少逐所对接成本）。
     密钥走 secret_registry 体系（API key 权限最小化+禁提现+IP 白名单）；回执确认机制参数化（查询间隔/重试次数按交易所调）。
+    2026-08-28 施工落地：OKX V5 私有 REST API 原生对接（非 CCXT），回执确认沿用 QMT 教训（隔 1.5 秒查委托，3 次重试疑似丢单）。
   risks:
     - "交易所 API 限频与私有 WS 稳定性——订单回报双通道（WS 推送+REST 轮询兜底）"
   alternatives: "逐所原生 API 直连——CCXT 统一层更省，但关键路径（下单/回执）必要时原生补强"
@@ -19106,9 +19107,9 @@ entries:
   blocked_by: ["CAND-CRYPTO-001", "CAND-CRYPTO-006"]
   next_review_date: '2027-08-26'
   review_frequency: yearly
-  last_review_outcome: "candidate 登记（2026-08-26）：W3 波次，001/006 落地+Q1 选型后晋升；2026-08-26 R1 acquisition 首选变更币安官方 skills/MCP"
+  last_review_outcome: "promoted（2026-08-28）：W3 施工闭环——okx_broker.py OKX V5 私有 REST API 对接（HMAC-SHA256 签名+幂等+回执确认+CryptoRulePack 注入），15 测试两轮全绿+1591 受影响面零回归"
   acquisition_method: opensource
-  acquisition_source: "币安官方 agent skills/MCP（首选评估，2026-08-26 R1）；ccxt（备选兼容层）；Kraken Rust CLI（次选参照）"
+  acquisition_source: "币安官方 agent skills/MCP（首选评估，2026-08-26 R1）；ccxt（备选兼容层）；Kraken Rust CLI（次选参照）；OKX V5 原生 REST API（2026-08-28 施工落地）"
 
   # ----------------------------------------------------------
   # CAND-CRYPTO-006: 交易规则参数化（W2——规则集可插拔）
