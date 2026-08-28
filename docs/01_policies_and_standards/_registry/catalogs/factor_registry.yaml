@@ -5177,6 +5177,232 @@ factors:
   code_symbol: null
   code_fingerprint: null
 
+# --- 2026-08-28 CAND-CRYPTO-011 币版趋势跟踪因子（94号 §7.6 裁定首批方向：趋势跟踪系） ---
+- factor_id: "FCT-CRYPTO-MOM-001"
+  name: "BTC Trend Following"
+  name_zh: "BTC 趋势跟踪因子"
+  aliases: ["BTC 动量", "BTC trend", "crypto momentum"]
+  factor_class: "momentum"
+  formula: "BTC 价格动量：close_t / close_{t-N} - 1，N=20（约 1 个月）。币圈趋势跟踪核心因子，捕捉中期趋势方向。"
+  params: {lookback_days: 20}
+  inputs: ["close"]
+  outputs: ["btc_momentum_20d"]
+  alpha_source: "币圈趋势跟踪实证（94号 §7.6-7：四大耐用策略之一）；动量因子在 BTC/ETH 上历史正期望"
+  frequency: "daily"
+  lookback_period: 20
+  universe: "UNI-CRYPTO-001"
+  benchmark_id: "BMK-CRYPTO-001"
+  neutralization: "none"
+  pit_policy: "price_only"
+  module_id: "MOD-FACTOR"
+  doc_ref: "94_crypto_quant_expansion.md §7.6-7"
+  code_path: ""
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-08-28"
+  updated_at: "2026-08-28"
+  owner: "MOD-GOVERNANCE"
+  ic: null
+  ir: null
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: null
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
+  null_rate: null
+  drift_psi: null
+  drift_ks_pvalue: null
+  last_quality_scan_at: null
+  correlation_group: null
+  redundancy_status: null
+  causal_graph: null
+  causal_structure: null
+  attribution_stability: null
+  lib_audit: null
+  ex_post_filter_audit: null
+  schema_plan: null
+  liquidity_metric: null
+  llm_safety_stack: null
+  version_pin: null
+  code_commit: null
+  range_bounds: {}
+  rmt_denoised: {"applicable": false, "reason": "low_factor_count"}
+  discovery_agent: "human"
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily", "4h"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "long"
+  entry_role: "ranking"
+  applies_to: ["market"]
+  market: crypto
+  tags: ["动量", "趋势", "数字货币", "BTC"]
+  algorithm_status: "pending_backtest"
+  evidence: "币圈趋势跟踪为四大耐用策略之一（94号 §7.6-7）；动量因子在 BTC/ETH 上历史正期望"
+  code_symbol: null
+  code_fingerprint: null
+
+- factor_id: "FCT-CRYPTO-MOM-002"
+  name: "ETH Trend Following"
+  name_zh: "ETH 趋势跟踪因子"
+  aliases: ["ETH 动量", "ETH trend", "crypto momentum eth"]
+  factor_class: "momentum"
+  formula: "ETH 价格动量：close_t / close_{t-N} - 1，N=20（约 1 个月）。与 BTC 动量因子正交，捕捉 ETH 独立趋势。"
+  params: {lookback_days: 20}
+  inputs: ["close"]
+  outputs: ["eth_momentum_20d"]
+  alpha_source: "ETH 与 BTC 相关性约 0.8-0.9，存在独立 alpha 空间；趋势跟踪在 ETH 上同样有效"
+  frequency: "daily"
+  lookback_period: 20
+  universe: "UNI-CRYPTO-001"
+  benchmark_id: "BMK-CRYPTO-001"
+  neutralization: "none"
+  pit_policy: "price_only"
+  module_id: "MOD-FACTOR"
+  doc_ref: "94_crypto_quant_expansion.md §7.6-7"
+  code_path: ""
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-08-28"
+  updated_at: "2026-08-28"
+  owner: "MOD-GOVERNANCE"
+  ic: null
+  ir: null
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: null
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
+  null_rate: null
+  drift_psi: null
+  drift_ks_pvalue: null
+  last_quality_scan_at: null
+  correlation_group: null
+  redundancy_status: null
+  causal_graph: null
+  causal_structure: null
+  attribution_stability: null
+  lib_audit: null
+  ex_post_filter_audit: null
+  schema_plan: null
+  liquidity_metric: null
+  llm_safety_stack: null
+  version_pin: null
+  code_commit: null
+  range_bounds: {}
+  rmt_denoised: {"applicable": false, "reason": "low_factor_count"}
+  discovery_agent: "human"
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily", "4h"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "long"
+  entry_role: "ranking"
+  applies_to: ["market"]
+  market: crypto
+  tags: ["动量", "趋势", "数字货币", "ETH"]
+  algorithm_status: "pending_backtest"
+  evidence: "ETH 趋势跟踪与 BTC 正交，存在独立 alpha 空间"
+  code_symbol: null
+  code_fingerprint: null
+
+- factor_id: "FCT-CRYPTO-VOL-001"
+  name: "BTC Volatility Regime"
+  name_zh: "BTC 波动率 Regime 因子"
+  aliases: ["BTC 波动率", "crypto volatility", "vol regime"]
+  factor_class: "volatility"
+  formula: "BTC 20 日年化波动率：std(daily_returns, 20) * sqrt(365)。高波动环境（>80%）减仓，低波动环境（<40%）加仓。"
+  params: {lookback_days: 20, annualization_factor: 365}
+  inputs: ["close"]
+  outputs: ["btc_volatility_20d"]
+  alpha_source: "币圈高波动特性（94号 §4.2：波动更大、无涨跌停、7×24 连续暴露）；波动率 regime 是风控核心输入"
+  frequency: "daily"
+  lookback_period: 20
+  universe: "UNI-CRYPTO-001"
+  benchmark_id: "BMK-CRYPTO-001"
+  neutralization: "none"
+  pit_policy: "price_only"
+  module_id: "MOD-FACTOR"
+  doc_ref: "94_crypto_quant_expansion.md §4.2/§7.6-7"
+  code_path: ""
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-08-28"
+  updated_at: "2026-08-28"
+  owner: "MOD-GOVERNANCE"
+  ic: null
+  ir: null
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: null
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
+  null_rate: null
+  drift_psi: null
+  drift_ks_pvalue: null
+  last_quality_scan_at: null
+  correlation_group: null
+  redundancy_status: null
+  causal_graph: null
+  causal_structure: null
+  attribution_stability: null
+  lib_audit: null
+  ex_post_filter_audit: null
+  schema_plan: null
+  liquidity_metric: null
+  llm_safety_stack: null
+  version_pin: null
+  code_commit: null
+  range_bounds: {}
+  rmt_denoised: {"applicable": false, "reason": "low_factor_count"}
+  discovery_agent: "human"
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "filter"
+  applies_to: ["market"]
+  market: crypto
+  tags: ["波动", "风控", "数字货币", "BTC"]
+  algorithm_status: "pending_backtest"
+  evidence: "币圈高波动特性要求波动率 regime 作为风控核心输入"
+  code_symbol: null
+  code_fingerprint: null
+
 - factor_id: "FCT-MOM-014"
   name: "混沌期三特征与触发"
   name_zh: "混沌期三特征与触发"

@@ -4303,7 +4303,7 @@ risk_limits:
     doc_ref: "94_crypto_quant_expansion.md §6 W2 波次"
     code_path: "src/zephyr/risk/"
     market: crypto
-    status: "candidate"
+    status: "promoted"
     version: "1.0.0"
     created_at: "2026-08-28"
     updated_at: "2026-08-28"
@@ -4341,7 +4341,7 @@ risk_limits:
     doc_ref: "94_crypto_quant_expansion.md §7.6-9"
     code_path: ""
     market: crypto
-    status: "candidate"
+    status: "promoted"
     version: "1.0.0"
     created_at: "2026-08-28"
     updated_at: "2026-08-28"
@@ -4379,7 +4379,7 @@ risk_limits:
     doc_ref: "94_crypto_quant_expansion.md §7.6-7"
     code_path: "src/zephyr/risk/"
     market: crypto
-    status: "candidate"
+    status: "promoted"
     version: "1.0.0"
     created_at: "2026-08-28"
     updated_at: "2026-08-28"

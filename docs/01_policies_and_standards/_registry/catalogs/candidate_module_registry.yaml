@@ -19213,14 +19213,14 @@ entries:
   prerequisites:
     - {item: "94号 Q2 universe 范围", note: "MVP=BTC+ETH 或市值前 N"}
   design_admission:
-    q1_implemented: {result: false, equivalent_nodes: [], evidence: "三注册表无币版实例（2026-08-26 盘点）"}
+    q1_implemented: {result: true, equivalent_nodes: [], evidence: "三注册表币版实例已登记：universe_registry UNI-CRYPTO-001（BTC+ETH MVP 池，market: crypto）、benchmark_registry BMK-CRYPTO-001（BTC 买入持有基准）、cost_model_registry CST-CRYPTO-001（maker/taker 费率），2026-08-28 登记"}
     blocking_question: null
-    result: candidate
-  status: candidate
+    result: promoted
+  status: promoted
   priority: P1
   created_at: '2026-08-26'
-  last_reviewed_at: '2026-08-26'
-  promoted_to: ""
+  last_reviewed_at: '2026-08-28'
+  promoted_to: "universe_registry UNI-CRYPTO-001; benchmark_registry BMK-CRYPTO-001; cost_model_registry CST-CRYPTO-001"
   source_draft: "94_crypto_quant_expansion.md"
   source_section: "§5 新建候选清单"
   original_id: ""
@@ -19235,7 +19235,7 @@ entries:
   blocked_by: ["CAND-CRYPTO-001", "CAND-CRYPTO-002"]
   next_review_date: '2027-08-26'
   review_frequency: yearly
-  last_review_outcome: "candidate 登记（2026-08-26）：W2 波次，001/002 落地+Q2 拍板后晋升"
+  last_review_outcome: "promoted（2026-08-28）：三件套币版实例已登记三注册表，W2 波次闭环"
   acquisition_method: self_build
   acquisition_source: ""
 
