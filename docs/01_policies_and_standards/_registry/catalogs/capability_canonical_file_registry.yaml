@@ -4871,6 +4871,27 @@ capabilities:
   - try_bootstrap_drain
   - queue_status
   - SerializerLease
+- capability_id: daban_execution
+  aliases:
+  - DabanExecutionAlgorithm
+  - DabanTimingDecision
+  - DynamicCapacityCalculator
+  - 打板执行族
+  - 打板分笔建仓
+  - 打板时点决策
+  - 打板动态容量
+  description: 打板执行族（24号 §3.13 缺失#4 + §3.14 缺失#11/#12，2026-08-28 波 2a 施工 AI-WAVE2A-001）。
+    canonical = src/zephyr/ex_core/daban_execution.py（auto 派生：basename 匹配 capability_id）。
+    DabanExecutionAlgorithm 分笔建仓（passive impact 指数填充概率衰减+SaR 前置检查→FIRST60%/REFLUSH30%/RESERVE
+    三段，SaR>2% 削 30%）；DabanTimingDecision 打板时点（封板概率≥85%+封流比≥5%→追板市价单/50-85%→板前埋伏限价单）；
+    DynamicCapacityCalculator 动态容量（sar/seal/float/nav 四约束取 min→max_qty+binding_constraint，C12 单票≤5%
+    NAV）。与既有打板五件（daban_named_functions/daban_signal_decision/daban_instant_circuit_breaker/
+    daban_exit_decision/daban_monitors/daban_pit_safety）同包同契约（MOD-EX-001）。[MATURITY] production。
+    解决发现性：新 AI 搜 "打板分笔建仓/打板时点/动态容量/DabanExecution" 可定位真源。解决防重建：check_file_canonical() 反查。
+  integrity_anchors:
+  - DabanExecutionAlgorithm
+  - DabanTimingDecision
+  - DynamicCapacityCalculator
 creation_tokens:
 - file: docs/_working/2026-08-28-industry-graph-frontend.md
   token: auto-industry-graph-frontend-20260828
@@ -10496,6 +10517,18 @@ creation_tokens:
   token: auto-scaffold-onchain_provider-20260828
   created_by: scaffold.py
   capability: onchain_provider
+- file: src/zephyr/data/implementations/crypto_event_calendar.py
+  token: auto-scaffold-crypto_event_calendar-20260828
+  created_by: scaffold.py
+  capability: crypto_event_calendar
+- file: src/zephyr/ex_core/daban_execution.py
+  token: manual-daban-execution-20260828
+  created_by: AI-WAVE2A-001
+  capability: daban_execution
+- file: tests/ex_core/test_daban_execution.py
+  token: manual-test-daban-execution-20260828
+  created_by: AI-WAVE2A-001（tests/ 豁免自愿补登随 SELL-001 先例）
+  capability: daban_execution
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
@@ -12638,3 +12671,23 @@ di_seam_exemptions:
   token: auto-warroom-playbook-20260828
   created_by: AI-CLOSURE-AUDIT-001（补登：文档 2026-08-22 已存在于工作区但未入 git，随全量审查批首次提交）
   capability: warroom_playbook
+- file: src/zephyr/signal_ashare/sector_breadth.py
+  token: auto-sector-breadth-20260828
+  created_by: AI-WAVE2B-001（补登：代码随 AI-NIGHT-001 commit fff6ea6bfc 已入库，token 缺失本批补登）
+  capability: sector_breadth
+- file: tests/signal_ashare/test_sector_breadth.py
+  token: auto-test-sector-breadth-20260828
+  created_by: AI-WAVE2B-001（补登：代码随 AI-NIGHT-001 commit fff6ea6bfc 已入库，token 缺失本批补登）
+  capability: sector_breadth
+- file: src/zephyr/signal_ashare/sector_momentum.py
+  token: auto-sector-momentum-20260828
+  created_by: AI-WAVE2B-001（补登：代码随 AI-NIGHT-001 commit fff6ea6bfc 已入库，token 缺失本批补登）
+  capability: sector_momentum
+- file: tests/signal_ashare/test_sector_momentum.py
+  token: auto-test-sector-momentum-20260828
+  created_by: AI-WAVE2B-001（补登：代码随 AI-NIGHT-001 commit fff6ea6bfc 已入库，token 缺失本批补登）
+  capability: sector_momentum
+- file: docs/_working/reports/2026-08-28-backfill-evaluation.md
+  token: auto-backfill-evaluation-20260828
+  created_by: AI-WAVE0-001
+  capability: backfill_evaluation
