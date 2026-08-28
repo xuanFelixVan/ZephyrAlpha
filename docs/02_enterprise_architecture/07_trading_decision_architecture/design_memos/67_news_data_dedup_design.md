@@ -5,7 +5,7 @@ title: news_data 引擎级去重设计
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.0.0"
+version: "2.1.0"
 date: 2026-08-28
 topic: news_data_dedup_design
 scope: 07_trading_decision_architecture
@@ -156,4 +156,5 @@ ORDER BY `(news_id, publish_time)` 设计本身合理（同 id 同时间折叠�
 | --- | --- | --- | --- |
 | 2026-08-27 | 1.0.0 | 初稿（draft） | CAND-DAT-025 立项设计：冗余根因锁定为 publish\_time 时区语义漂移（非键设计缺陷）；三件套方案 + news/announcement 8h 偏移关联发现登记 |
 | 2026-08-28 | 2.0.0 | 转 active：§8 事故链/处置/教训/结局对账；§7 开放问题三件结案 | purge 执行引爆时区迁移原地改键列后遗症（part 排序损坏、merge 吞数据）；换表重建+category 重刷痊愈；四条硬约束级教训归档 |
+| 2026-08-28 | 2.1.0 | CAND-DAT-026 施工闭环登记：rebuild\_news\_data\_tz2 换表修正 760 万行 16:00 指纹 +8h（跨月 22.1 万行引擎按值归分区；对账三修：源 DISTINCT 键/目标键级 uniqExact/跨 INSERT 邻月撞键容忍）；终验 FINAL==键数+历史指纹清零；残留 2 行 16:00 为 economic\_baidu 经济日历合法预定时刻（非偏移，指纹≠偏移语义随时间演化需知悉）；消费侧日级重算随情感回填完成一并执行 | 时区二期完成，回测前视偏差消除；full\_publish\_time 非纯日期语义不修（实证全天分布） |
 

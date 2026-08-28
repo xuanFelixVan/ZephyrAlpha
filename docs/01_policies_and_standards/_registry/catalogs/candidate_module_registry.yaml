@@ -19667,7 +19667,7 @@ entries:
       evidence: '场内对账: apply_timezone_migration 为一期（类型标注+业务列偏移），本专项为二期（news/announcement 存量数据修正），无重复节点'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
   priority: P0
   source: 2026-08-27 news_data 去重侦察批（67 号设计备忘 §4 关联发现）
   created: '2026-08-28'
