@@ -21,7 +21,7 @@
   - 主题联动日报（.runtime/industry_graph/theme_linkage_daily.csv,
     scripts/industry_graph/theme_linkage_monitor.py 产出）
 
-设计文档: docs/_working/2026-08-28-industry-graph-frontend.md §2.4
+设计文档: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/2026-08-28-industry-graph-frontend.md §2.4
 """
 
 from __future__ import annotations

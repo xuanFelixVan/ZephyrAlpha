@@ -8112,7 +8112,7 @@ creation_tokens:
   token: auto-tnr-drill-20260822
   created_by: AI-P3-W1C
   capability: security_event_bus
-- file: docs/_working/reports/2026-08-22-emergency-runbook.md
+- file: docs/01_policies_and_standards/sop/2026-08-22-emergency-runbook.md
   token: auto-emergency-runbook-20260822
   created_by: AI-P3-W1C
   capability: security_event_bus

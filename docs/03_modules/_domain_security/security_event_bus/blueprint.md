@@ -63,4 +63,4 @@ class FeishuAlertChannel(pending_path=..., dry_run=False, timeout_sec=5.0, webho
 
 ## 6. 测试
 
-tests/security/test_security_event_bus.py（21 用例）；配套演练报告 docs/_working/reports/2026-08-22-tnr-drill.md（TNR 双达标）+ 2026-08-22-emergency-runbook.md（D-L1~D-L3 保命轨）。
+tests/security/test_security_event_bus.py（21 用例）；配套演练报告 docs/_working/reports/2026-08-22-tnr-drill.md（TNR 双达标，报告已随 2026-08-28 _working 大清理退役）+ docs/01_policies_and_standards/sop/2026-08-22-emergency-runbook.md（D-L1~D-L3 保命轨）。

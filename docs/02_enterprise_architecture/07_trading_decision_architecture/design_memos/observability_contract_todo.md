@@ -2,7 +2,7 @@
 blueprint_id: MOD-GOVERNANCE
 title: Observability Contract Todo
 module_id: GOV-071
-ttl: task_bound
+ttl: permanent
 doc_type: blueprint
 completes_when: doc_type 迁移完成且文档归档
 ---

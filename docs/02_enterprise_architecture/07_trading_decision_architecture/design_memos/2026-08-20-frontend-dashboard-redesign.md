@@ -1,10 +1,18 @@
 ---
-ttl: task_bound
+ttl: permanent
+doc_type: architecture_view
+title: 前端仪表盘改版设计
+owner: ZephyrAlpha-Owner
+language: zh
+status: closed
+version: "2.8.1"
+date: 2026-08-20
+topic: frontend_dashboard_redesign
+scope: 07_trading_decision_architecture
 ---
 
-> **文档元信息**（_working 临时区豁免规范：正式 frontmatter 仅入正式目录，EXEMPT-ZONE-FM）：doc_type=architecture_view · owner=ZephyrAlpha-Owner · status=draft · version=0.4.2 · date=2026-08-20 · topic=frontend_dashboard_redesign · scope=07_trading_decision_architecture（迁入 design_memos 时此节翻回正式 frontmatter，ttl 翻回 permanent）。
+> **归位注记（2026-08-28）**：自 `docs/_working/` 迁入 design_memos 正式化（ttl 翻 permanent；status=closed——v2.8.1 已全部施工收口，见 page-by-page-review 竣工确认）；编号/00_index 登记留待按《设计备忘管理规范》后续补登。
 >
-> **暂存说明**：本稿暂存 `docs/_working/`。2026-08-19 夜班（AI-NIGHT-001）收口期间避让共享索引写入；夜班收口后按《设计备忘管理规范》迁入 `07_trading_decision_architecture/design_memos/`，取 5x 段（验证与可观测性）下一个空号并登记 00_index §7.3。
 > **HTML 原型不入 git**：DIRECTORY-CONTRACT 门禁（DCR-005/008）规定 `docs/_working/` 仅允许 .md/.csv/.yaml，且全项目无目录允许 .html——视觉原型 [2026-08-20-dashboard-mockup.html](file:///d:/ZephyrAlpha/docs/_working/2026-08-20-dashboard-mockup.html) 仅存磁盘（备份 `.runtime/dashboard-mockup-v0.4.html`）；打板属一次性产物，定稿落码后即弃，持久记录以本文档为准。
 
 # 前端仪表盘改版设计

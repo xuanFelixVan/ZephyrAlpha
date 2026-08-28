@@ -18490,7 +18490,7 @@ entries:
   impact:
     - 'src/zephyr/security/security_event_bus.py（新建，testing 封顶）'
     - 'tests/security/test_security_event_bus.py（21 用例）'
-    - 'docs/_working/reports/2026-08-22-tnr-drill.md + 2026-08-22-emergency-runbook.md'
+    - 'docs/_working/reports/2026-08-22-tnr-drill.md（已随 2026-08-28 清理退役）+ docs/01_policies_and_standards/sop/2026-08-22-emergency-runbook.md'
   fix_phase: '已落地（2026-08-22）：21 新用例全绿+llm_security+fix 1470/safety+agent_rbac 1140/escalation+security 370 零新增红'
   status: decided
   confirmed_by_user: '2026-08-22 Owner 长城任务指令'

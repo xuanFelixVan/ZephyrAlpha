@@ -1,8 +1,17 @@
 ---
-ttl: task_bound
+ttl: permanent
+doc_type: architecture_view
+title: 新闻情感分析升级讨论
+owner: ZephyrAlpha-Owner
+language: zh
+status: closed
+version: "1.0.0"
+date: 2026-08-25
+topic: news_sentiment_upgrade
+scope: 07_trading_decision_architecture
 ---
 
-> **文档元信息**（_working 临时区豁免规范 EXEMPT-ZONE-FM）：doc_type=discussion · owner=ZephyrAlpha-Owner · status=open · version=1.0.0 · date=2026-08-25 · topic=news_sentiment_upgrade · scope=07_trading_decision_architecture。
+> **归位注记（2026-08-28）**：自 `docs/_working/` 迁入 design_memos 正式化；讨论已收敛（Q1~Q5 Owner 拍板），行动项已入 candidate_module_registry（CAND-NLP-003/004/005、CAND-DAT-021/022、CAND-RES-030），status=closed。
 
 # 新闻情感分析升级讨论（临时）
 

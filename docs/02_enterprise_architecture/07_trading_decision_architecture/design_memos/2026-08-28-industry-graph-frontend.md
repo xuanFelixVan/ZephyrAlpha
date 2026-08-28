@@ -1,10 +1,17 @@
 ---
-ttl: task_bound
+ttl: permanent
+doc_type: architecture_view
+title: 产业链/供应链图谱前端功能设计
+owner: ZephyrAlpha-Owner
+language: zh
+status: active
+version: "1.1.0"
+date: 2026-08-28
+topic: industry_graph_frontend
+scope: 产业链/供应链图谱前端可视化
 ---
 
-> **文档元信息**（_working 临时区豁免规范：正式 frontmatter 仅入正式目录，EXEMPT-ZONE-FM）：doc_type=feature_design · owner=ZephyrAlpha-Owner · status=draft · version=1.1.0 · date=2026-08-28 · topic=industry_graph_frontend · scope=产业链/供应链图谱前端可视化（迁入 design_memos 时此节翻回正式 frontmatter，ttl 翻回 permanent）。
->
-> **暂存说明**：本稿暂存 `docs/_working/`。数据底座已由长城任务 INDUSTRY-GRAPH-001 建成（PostgreSQL depgraph 图谱域 ig_* 七表 + 58,029 条供应链边 + 686 条产业链 + 81M 字符语料），本文档为前端追加功能的施工依据。
+> **归位注记（2026-08-28）**：自 `docs/_working/` 迁入 design_memos 正式化（ttl 翻 permanent）；status=active——前端视图一/二/三待新仪表盘施工。
 >
 > **v1.1.0 定位更新（2026-08-28 Owner 裁定）**：本文档全部内容**并入新仪表盘设计**，后续统一在新仪表盘施工；§6 记录的已落地功能（旧仪表盘 app_panel 图谱语料 Tab + 主题联动监控脚本）视为先行验证，新仪表盘施工时按其结论取舍迁移。
 >

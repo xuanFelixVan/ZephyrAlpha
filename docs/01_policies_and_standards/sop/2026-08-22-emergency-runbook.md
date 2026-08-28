@@ -1,5 +1,15 @@
 ---
-ttl: task_bound
+ttl: permanent
+doc_type: policy
+rule_form: procedural
+verifiability: manual
+title: 保命轨 D-L1~D-L3 人工 Runbook
+owner: ZephyrAlpha-Owner
+language: zh
+status: active
+version: "1.0.0"
+date: 2026-08-22
+topic: emergency_runbook
 ---
 
 # 保命轨 D-L1~D-L3 人工 Runbook（16号文 §4.2 P0-4）

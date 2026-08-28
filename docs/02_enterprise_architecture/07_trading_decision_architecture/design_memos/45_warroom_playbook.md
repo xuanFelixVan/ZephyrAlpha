@@ -10,7 +10,7 @@ date: 2026-08-22
 topic: warroom_playbook
 scope: 07_trading_decision_architecture
 related_issues:
-  - "前端改版设计文档 L15 决策（docs/_working/2026-08-20-frontend-dashboard-redesign.md，迁入前暂存区）"
+  - "前端改版设计文档 L15 决策（design_memos/2026-08-20-frontend-dashboard-redesign.md，2026-08-28 已正式迁入）"
   - "44 号文 §9.11 竞价三细节 / §9.5-9.6 档位映射（MOD-PLAN-005/004 已落码）"
 ---
 
@@ -152,5 +152,5 @@ related_issues:
 
 - [44_premarket_intraday_decision_upgrade](44_premarket_intraday_decision_upgrade.md)（MOD-PLAN 系列 why 层；§9.11 竞价三细节；§9.5/§9.6 档位映射）
 - [41_buy_flow](41_buy_flow.md)（明日预案双层架构）｜[90_methodology_open_questions](90_methodology_open_questions.md) §7（BM-SEL-04 暂缓裁定）｜[30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §2.2（firm 硬约束）
-- 前端改版设计文档 L15（`_working/2026-08-20-frontend-dashboard-redesign.md`，暂存区，迁入时取 5x 段空号）
+- 前端改版设计文档 L15（[2026-08-20-frontend-dashboard-redesign](2026-08-20-frontend-dashboard-redesign.md)，2026-08-28 已正式迁入本目录）
 - 机构调研来源见 §3.4（2026-08-22 实证检索）
