@@ -268,3 +268,46 @@ cost_models:
     evidence: "A股成本参数全集（佣金万三/印花税千一/滑点万二）"
     code_symbol: null
     code_fingerprint: null
+
+  - cost_model_id: CST-CRYPTO-001
+    name: Crypto Spot Standard Cost Model
+    name_zh: 数字货币现货标准成本模型
+    aliases: [币版成本, crypto cost, maker/taker]
+    cost_model_type: crypto_spot
+    components:
+      maker_fee:
+        rate: 0.001
+        note: "挂单费率（maker），币安 VIP0 基准 0.1%"
+      taker_fee:
+        rate: 0.001
+        note: "吃单费率（taker），币安 VIP0 基准 0.1%"
+      slippage:
+        model: fixed
+        params:
+          bps: 1
+      funding_rate:
+        note: "Phase 2 永续合约持仓成本，MVP 现货=0"
+        rate: 0.0
+      market_impact:
+        model: none
+        params: null
+    slippage_model: fixed
+    impact_model: none
+    propagator_config: null
+    used_by_strategies: []
+    module_id: MOD-GOVERNANCE
+    doc_ref: 94_crypto_quant_expansion.md §5 CAND-CRYPTO-007
+    code_path: null
+    market: crypto
+    status: candidate
+    version: 1.0.0
+    created_at: '2026-08-28'
+    updated_at: '2026-08-28'
+    owner: MOD-GOVERNANCE
+    entry_role: "rule"
+    applies_to: ["market"]
+    tags: ["成本", "规则", "数字货币"]
+    algorithm_status: "not_applicable"
+    evidence: "maker/taker 双边费率模型（挂/吃单异价）；币安 VIP0 现货基准费率 0.1%/0.1%，实际以 Owner 账户 VIP 等级为准"
+    code_symbol: null
+    code_fingerprint: null

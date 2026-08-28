@@ -337,3 +337,36 @@ benchmarks:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
+
+  - benchmark_id: BMK-CRYPTO-001
+    name: BTC Buy-and-Hold Benchmark
+    name_zh: BTC 买入持有基准
+    aliases: [BTC 基准, 币版买入持有, buy and hold BTC]
+    benchmark_type: custom_equal
+    underlying_universe: UNI-CRYPTO-001
+    weight_method: equal_weighted
+    data_source: null
+    used_by_strategies: []
+    module_id: MOD-GOVERNANCE
+    doc_ref: 94_crypto_quant_expansion.md §5 CAND-CRYPTO-007
+    code_path: null
+    market: crypto
+    status: candidate
+    version: 1.0.0
+    created_at: '2026-08-28'
+    updated_at: '2026-08-28'
+    owner: MOD-GOVERNANCE
+    annual_return: null
+    sharpe: null
+    max_drawdown: null
+    last_evaluated_at: null
+    construction_method: custom
+    active_share: null
+    style_drift_detection: {method: none, monitoring_frequency: monthly}
+    entry_role: "reference"
+    applies_to: ["market"]
+    tags: ["基准", "指数", "数字货币"]
+    algorithm_status: "not_applicable"
+    evidence: "因子开发纪律：任何币版主动因子/策略须先过买入持有基准门（94号 §7.6-8 裁定）"
+    code_symbol: null
+    code_fingerprint: null
