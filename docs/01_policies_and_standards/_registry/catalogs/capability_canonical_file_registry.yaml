@@ -10529,6 +10529,30 @@ creation_tokens:
   token: manual-test-daban-execution-20260828
   created_by: AI-WAVE2A-001（tests/ 豁免自愿补登随 SELL-001 先例）
   capability: daban_execution
+- file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/45_warroom_playbook.md
+  token: auto-warroom-playbook-20260828
+  created_by: AI-CLOSURE-AUDIT-001（补登：文档 2026-08-22 已存在于工作区但未入 git，随全量审查批首次提交）
+  capability: warroom_playbook
+- file: src/zephyr/signal_ashare/sector_breadth.py
+  token: auto-sector-breadth-20260828
+  created_by: AI-WAVE2B-001（补登：代码随 AI-NIGHT-001 commit fff6ea6bfc 已入库，token 缺失本批补登）
+  capability: sector_breadth
+- file: tests/signal_ashare/test_sector_breadth.py
+  token: auto-test-sector-breadth-20260828
+  created_by: AI-WAVE2B-001（补登：代码随 AI-NIGHT-001 commit fff6ea6bfc 已入库，token 缺失本批补登）
+  capability: sector_breadth
+- file: src/zephyr/signal_ashare/sector_momentum.py
+  token: auto-sector-momentum-20260828
+  created_by: AI-WAVE2B-001（补登：代码随 AI-NIGHT-001 commit fff6ea6bfc 已入库，token 缺失本批补登）
+  capability: sector_momentum
+- file: tests/signal_ashare/test_sector_momentum.py
+  token: auto-test-sector-momentum-20260828
+  created_by: AI-WAVE2B-001（补登：代码随 AI-NIGHT-001 commit fff6ea6bfc 已入库，token 缺失本批补登）
+  capability: sector_momentum
+- file: docs/_working/reports/2026-08-28-backfill-evaluation.md
+  token: auto-backfill-evaluation-20260828
+  created_by: AI-WAVE0-001
+  capability: backfill_evaluation
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
@@ -12667,27 +12691,3 @@ di_seam_exemptions:
   token: auto-enable-write-audit-sacls-20260827
   created_by: AI-OWNER-WIRING
   capability: write_audit_sacl_enabler
-- file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/45_warroom_playbook.md
-  token: auto-warroom-playbook-20260828
-  created_by: AI-CLOSURE-AUDIT-001（补登：文档 2026-08-22 已存在于工作区但未入 git，随全量审查批首次提交）
-  capability: warroom_playbook
-- file: src/zephyr/signal_ashare/sector_breadth.py
-  token: auto-sector-breadth-20260828
-  created_by: AI-WAVE2B-001（补登：代码随 AI-NIGHT-001 commit fff6ea6bfc 已入库，token 缺失本批补登）
-  capability: sector_breadth
-- file: tests/signal_ashare/test_sector_breadth.py
-  token: auto-test-sector-breadth-20260828
-  created_by: AI-WAVE2B-001（补登：代码随 AI-NIGHT-001 commit fff6ea6bfc 已入库，token 缺失本批补登）
-  capability: sector_breadth
-- file: src/zephyr/signal_ashare/sector_momentum.py
-  token: auto-sector-momentum-20260828
-  created_by: AI-WAVE2B-001（补登：代码随 AI-NIGHT-001 commit fff6ea6bfc 已入库，token 缺失本批补登）
-  capability: sector_momentum
-- file: tests/signal_ashare/test_sector_momentum.py
-  token: auto-test-sector-momentum-20260828
-  created_by: AI-WAVE2B-001（补登：代码随 AI-NIGHT-001 commit fff6ea6bfc 已入库，token 缺失本批补登）
-  capability: sector_momentum
-- file: docs/_working/reports/2026-08-28-backfill-evaluation.md
-  token: auto-backfill-evaluation-20260828
-  created_by: AI-WAVE0-001
-  capability: backfill_evaluation
