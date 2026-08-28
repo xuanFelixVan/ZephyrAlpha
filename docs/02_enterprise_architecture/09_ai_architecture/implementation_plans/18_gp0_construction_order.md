@@ -14,6 +14,11 @@ completes_when: "GP0 全部可施工项完工、测试两轮零问题、提交�
 
 # 阶段三 AI 层施工顺序清单（GP0 手动地基全量）
 
+> ## 结案报告（2026-08-28 全量审查批，代码实证）
+> **实际开发**：七波派单全闭环——波1 保障四件套（lsg_gate/autonomy_boundary_gate/kill_switch_orchestrator/security_event_bus）；波2 gateway MVP（llm_runtime_gateway 三通道+llm_call_log）；波3 04 T0 七件/07 CE 收口/06 手动链路 5/5 PASS；波4 进化能力手动形态（11 证据关联/12 L1 反思/13 模块工厂 SOP+首实例/14 四类薄入口）；波5 M3-⑨ 真跑（DeepSeek 402→Qwen 降级链接管）；波6 两轮零问题；波7 蓝图批+三文档回写+总收尾报告。
+> **最终成果**：GP0 全部可施工项完工，E0-1~E0-8 全绿，M0 Owner 终审通过。frontmatter completes_when 已达成，按约定**归档（归档不删除，保留审计链）**。
+> **未做+原因**：无（遗留项全部转 tracker #253~#257 登记在册）。**本案已结案**。
+
 > **性质**：施工排序清单——Owner 2026-08-22 长城任务任务二（阶段三 AI 层施工）驱动，将 09_ai_architecture/implementation_plans/ 全部施工图中**全局 Phase 0（GP0 手动地基）**的施工内容按依赖与冲突面排序成波次。
 > **范围裁定**：按项目既定教训（project_memory：GP0 确定性件优先，GP1/GP2/GP3 因结构性阻塞与依赖真实运行流量验证不抢建），本清单只覆盖 GP0；GP1+ 一律不施工。真源=[17_phase_roadmap.md](17_phase_roadmap.md) §4.2（GP0 组成+E0-1~E0-8 退出检查表）与各文 §4 Phase 0 验收标准。
 > **前置状态实证（2026-08-22 勘察）**：E0-1 提交队列 ✅ 已绿（08 号文 Phase 0，flag 已翻开）；E0-2~E0-7 现状=09 部分已建/04·06·07 设施在收口未做/15·16·11·12·13·14 零代码（逐项实证见 §1）；E0-8=03 号文 Owner 裁定=人工项（登记跳过）。

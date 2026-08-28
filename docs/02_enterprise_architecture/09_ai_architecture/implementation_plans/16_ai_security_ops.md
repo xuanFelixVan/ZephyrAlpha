@@ -13,6 +13,11 @@ scope: 09_ai_architecture
 
 # AI 安全与自治运维施工图
 
+> ## 结案报告（2026-08-28 全量审查批，代码实证）
+> **实际开发**：事件总线+TNR+保命轨落地——security_event_bus.py（MOD-SEC-EVENTBUS：统一 schema pydantic 严校+四域 adapter+高危告警 webhook 不可达本地持久化不丢）+TNR 演练（.runtime/security_events/tnr_drill/ 产物+tnr-drill 报告，可撤销+不恶化双达标）+保命轨 runbook（emergency-runbook 报告，RTO<5min）+incident_pipeline.py+killswitch_response_levels.py（KILLSWITCH 三级响应）。
+> **最终成果**：GP0 验收口径落地（安全事件统一总线+应急保命轨可用）。
+> **未做+原因**：Detect→Diagnose→Remediate→Learn 统一自愈管线、修复策略库落盘（data/fix_patterns/ 未建）、A-L0~A-L4 成熟度代码——均属 GP1+。
+
 > 本文定位：AI 安全（LLM 4层 guardrails + Agent 安全 + MCP Triple Gate + KILLSWITCH）和自治运维闭环（Detect→Diagnose→Remediate→Learn + TNR + 成熟度分级 + 知识库 + 保命轨）的施工。
 > 与其他文件的分工：结构设计见 [00_index.md](00_index.md) §3.3/§3.4（机制设计真源，本文不复制），LLM 安全栈层内设计与集成接线见 [09_llm_security_integration.md](09_llm_security_integration.md)，自治边界/Kill Switch 五套实现/Drift 防护见 [15_autonomy_boundary_risk.md](15_autonomy_boundary_risk.md)。
 > **真源边界**：G1~G4 与 L0~L8 的映射口径真源 = 09 号文 §3.2；MCP Triple Gate 映射真源 = 09 号文 §3.3；三分类/Kill Switch 设施盘点真源 = 15 号文 §2.4。本文只负责：①Agent 安全四威胁（串谋/涌现/幻觉/记忆投毒）的设施收口；②KILLSWITCH 三级响应的策略层定义；③自治运维闭环（Detect→Diagnose→Remediate→Learn + TNR + 成熟度 + 知识库 + 保命轨）的施工排序与验收。

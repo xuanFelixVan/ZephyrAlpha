@@ -13,6 +13,11 @@ scope: 09_ai_architecture
 
 # AutoRuntime Core 施工图
 
+> ## 结案报告（2026-08-28 全量审查批，代码实证）
+> **实际开发**：GP0 T0 七件落地——auto_runtime_core.py（MOD-INF-035 系统大脑本体）+capability_registry.py（内存缓存+读写锁+TTL+命中计数）+runtime_config.py（max_brain_memory_mb RAM 预算）+start_brain.py（--boot-sla-ms 冷启动 SLA 埋点）+stop_gate.py（会话预算）+resource_optimization.py（PressureLevel 降级链）；§3.6 自治层不变量 INV-AU-001~008 设计态登记。
+> **最终成果**：GP0 范围全落地（蓝图 5 漂移项裁定留痕）。
+> **未做+原因**：①容量升级 12 项 GAP 属 GP1+ 触发式施工（既定分期，非缺口）；②boot watchdog NoneType 存量缺陷+SLA 20 次连跑复测（tracker #255 登记）；③本文版本未回写施工后状态（小滞后）。
+
 > 本文定位：AutoRuntime Core（系统大脑）五层同心圆架构的施工落地计划。
 > 与其他文件的分工：结构设计见 [00_index.md](00_index.md) §1（基础设施层），蓝图见 `docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md`（MOD-INF-035，v6.0.2）。
 >

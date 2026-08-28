@@ -13,6 +13,11 @@ scope: 09_ai_architecture
 
 # LLM 安全栈集成施工图
 
+> ## 结案报告（2026-08-28 全量审查批，代码实证）
+> **实际开发**：GP0 集成接线闭环——lsg_gate.py（MOD-INF-052 统一注入点）+四客户端注入（ollama_chat/deepseek_chat/embedding_router/local_model_scheduler 行级实证）+detect_direct_llm_calls.py 静态扫描器+绕过扫描=0（2919 文件两模式零命中报告）+fail-closed 演练报告；tests/llm_security/ 62 测试文件。
+> **最终成果**：LLM 调用全链路 LSG 强制经过，绕过路径数=0 实证。
+> **未做+原因**：层内剩余约 20%（L3B Docker/WASI 沙箱、Threat Intel 拉取、LSGPerformanceGuard 预算管理、CI workflow 文件）+v2.0.0 signal_bus 未实现——均属 GP1+/蓝图侧缺口；DeepSeek 账户 402 欠费为 Owner 行动项（tracker #253）。
+
 > 本文定位：LLM 安全栈（L0~L8 纵深防御）的集成施工——所有 LLM 调用必经安全栈。
 > 与其他文件的分工：结构设计见 [00_index.md](00_index.md)，蓝图见 `docs/03_modules/_cross_layer/large_language_model_security/blueprint.md`。
 > **真源边界**：L0~L8 各层的层内设计（接口契约/检测算法/代码落位）真源 = 上述蓝图（MOD-LLM_SECURITY），本文不复制；本文只负责「集成」的 why/how——即 LSG 如何嵌入 AI 层 LLM 调用链路、剩余缺口的施工顺序、与 10/16 号文的接口。

@@ -13,6 +13,9 @@ scope: 09_ai_architecture
 
 # AI 架构设计（AI Architecture Design）
 
+> ## 结案报告（2026-08-28 全量审查批，代码实证）——元文档不适用结案
+> 本文档为总索引+施工顺序/解锁点（U1~U8）唯一真源，permanent 元文档，不适用结案。当前状态：AI-FILL-01~17 填充全部完成；GP0 代码施工全量完成（E0-1~E0-8 全绿、M0 Owner 终审通过，2026-08-22）；§5 状态标注回写待随批（小滞后）；derived_graphs/ 目录待建（远期项）。
+
 > **本文定位**：AI 层整体结构设计与施工约束——回答"AI 系统长什么样、怎么建、边界在哪"。
 >
 > **与其他文件的分工**：盘点信息见 [02_design_asset_inventory.md](02_design_asset_inventory.md)，外部对标详情见 [01_external_benchmark_analysis.md](01_external_benchmark_analysis.md)。

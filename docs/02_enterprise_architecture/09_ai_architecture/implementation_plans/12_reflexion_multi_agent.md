@@ -13,6 +13,11 @@ scope: 09_ai_architecture
 
 # 自反Agent与多Agent协作施工图
 
+> ## 结案报告（2026-08-28 全量审查批，代码实证）
+> **实际开发**：L1 反思落地——src/zephyr/intelligence/reflexion/ 7 文件（roles.py Actor→Evaluator→SelfReflection 三角色/l1_reflector.py/reflection_schema.py/reflctrl_gate.py/preflect_store.py/batch_runner.py）+盘中零调用守卫（IntradayReflectionForbidden）+3 测试文件（test_reflexion_phase0/test_preflect_store/test_reflctrl_gate）。
+> **最终成果**：GP0 验收口径落地（单轨迹 L1 反思批量手动形态可用）。
+> **未做+原因**：data/brain/reflections/ 尚未真跑产生落盘（批量入口系手动/计划任务触发，代码与守卫齐备）；L2/L3 反思、PreFlect 消费接线、涌现告警介入链路、投票评审壳消费——均属 GP1+。
+
 > 本文定位：自反Agent（Actor→Evaluator→SelfReflection + L1/L2/L3 反思 + PreFlect + Agent-R + ReflCtrl）和多Agent协作（投票优先 + FactorMAD + R&D-Agent + 涌现行为检测）的施工。
 > 与其他文件的分工：结构设计见 [00_index.md](00_index.md)，对标见 [01_external_benchmark_analysis.md](01_external_benchmark_analysis.md)，全局资产盘点真源见 [02_design_asset_inventory.md](02_design_asset_inventory.md)（本文 §2.4 只列本主题设施）。
 

@@ -13,6 +13,9 @@ scope: 09_ai_architecture
 
 # AI 架构外部对标分析（External Benchmark Analysis）
 
+> ## 结案报告（2026-08-28 全量审查批）——信息库不适用结案
+> 本文档为外部对标信息库唯一真源（AQuA/Hermes/Qualixar/TiMi 等 12 框架），被 11/12/13 号文对标引用，permanent 信息库，不适用结案。内容已按 2026-08 最新调研填充完毕（v0.6.0），后续随外部演进按需增补。
+
 > **本文定位**：信息库——汇总外部顶级框架的详细分析、与场内设计资产的对照、模块工厂落地性评估。本文是**外部对标的唯一真源**（00_index.md §2 只保留一句话速览表）。
 >
 > **与其他文件的分工**：结构设计见 [00_index.md](00_index.md)，盘点见 [02_design_asset_inventory.md](02_design_asset_inventory.md)。

@@ -13,6 +13,11 @@ scope: 09_ai_architecture
 
 # intelligence_governance 包整合施工图
 
+> ## 结案报告（2026-08-28 全量审查批，代码实证）
+> **实际开发**：intelligence_governance 包整合定稿（Phase 0=文档定稿，零代码改动性质，active v0.2.2）；src/zephyr/governance/intelligence_governance/ 24 个功能模块实证在位（delegation_engine/model_router/agent_debate/self_benchmark 等与文内清单逐名一致）。
+> **最终成果**：包文件级细节真源+GP1 入口修复施工图确立。
+> **未做+原因**：__init__.py 入口腐烂未修（仅 1 行 future import，16 个不存在名字+漏列 5 个实存模块问题依旧）——既定 GP1 项，待 Q1 裁定；文件头 [TESTS]/[CONSUMERS] 漂移同留 GP1。
+
 > 本文定位：`src/zephyr/governance/intelligence_governance/` 24 个功能模块的整合方案——统一入口、职责边界、与 AI 层的关系。
 > 与其他文件的分工：结构设计见 [00_index.md](00_index.md)，资产登记（链接级）见 [02_design_asset_inventory.md](02_design_asset_inventory.md) §1「智能治理包」行——本文档是该包的文件级细节真源，不复制 02 号文的登记表。
 

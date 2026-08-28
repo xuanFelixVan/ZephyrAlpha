@@ -13,6 +13,11 @@ scope: 09_ai_architecture
 
 # AI 自治边界与风险施工图
 
+> ## 结案报告（2026-08-28 全量审查批，代码实证）
+> **实际开发**：GP0 三件全落地——autonomy_boundary_gate.py（MOD-AU-001 运行时三分类 gate）+kill_switch_orchestrator.py（MOD-AU-002 KS 两级编排）+validate_autonomy_gate.py 验证器；延迟实测写回本文 §2.3（gate 热路径 P95=313.5µs、KS 内联 P95≤0.8µs，全 P95<1ms 达标，2026-08-22 补测报告）；Q5（内联拦截语义）/Q6（Agent Challenge=交叉会话复审+challenge 工单+人兜底）已 Owner 裁定闭环。
+> **最终成果**：自治边界运行时闸+Kill Switch 编排生产可用，延迟硬指标达标。
+> **未做+原因**：Agentic Drift 行为基线检测、ARS 双轨结算、三套自治等级标尺统一裁定（Q3 待人裁）——均属 GP1+/开放问题。
+
 > 本文定位：AI 自治边界（ai_modifiable/human_gated/immutable + Agentic Drift 防护 + 自治熔断）和 Agent 风险治理（有界自治5级 + OWASP + Kill Switch + ARS 双轨）的施工。
 > 与其他文件的分工：结构设计见 [00_index.md](00_index.md)，对标见 [01_external_benchmark_analysis.md](01_external_benchmark_analysis.md)。
 

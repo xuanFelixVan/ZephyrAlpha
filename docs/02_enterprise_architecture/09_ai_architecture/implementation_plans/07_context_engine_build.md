@@ -13,6 +13,11 @@ scope: 09_ai_architecture
 
 # Context Engine 施工图
 
+> ## 结案报告（2026-08-28 全量审查批，代码实证）
+> **实际开发**：对齐收口完成——context_engine 蓝图 v1.2.6（2026-08-22 起持续演进）；tests/context/ 46 测试文件+tests/ce/ 7 测试文件实证；CE depgraph 边缺口 7 项已闭环 5 项（syncer 过滤器治本 generated/testing/stable 三态+蓝图依赖表对齐 depgraph 26 实测出边）。
+> **最终成果**：GP0 收口目标达成（956 测试绿运行口径留痕）。
+> **未做+原因**：inject 段生产空段（context_injector.py 返回空 InjectedContext）/llm_summary 压缩档/InProcessContextEngine 未落地——均属 GP1+；boot_hooks 接线归 Q2 Owner 项。
+
 > 本文定位：Context Engine（上下文引擎）剩余未实现部分的施工计划。
 > 与其他文件的分工：结构设计见 [00_index.md](00_index.md)，盘点见 [02_design_asset_inventory.md](02_design_asset_inventory.md)。
 

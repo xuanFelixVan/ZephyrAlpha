@@ -13,6 +13,11 @@ scope: 09_ai_architecture
 
 # AI 层域边界定义
 
+> ## 结案报告（2026-08-28 全量审查批，代码实证）
+> **实际开发**：E0-8 域边界裁定闭环（#ARCH-169 混合方案，Owner 授权架构师裁定）——8 核心域∪ai_layer 横切标签 147 节点打标+42 节点域迁移（25→D_SECURITY_LLM/17→D_INTEGRATION_GATEWAY）+D_BEHAVIORAL_AUDIT 空域退役；depgraph_tags_vocabulary.yaml 登记 ai_layer 标签值（PS-VOC-036）；apply_depgraph.py tag_nodes 写路径+derive_tags _AI_LAYER_TAG_PREFIXES 派生（抗全量重扫）；domains CHECK 扩 6 态+dormant+11 零节点域侧写。本文档已升 active v0.3.0。
+> **最终成果**：AI 层域边界唯一裁定真源落地，全量重生成抗性实证零回退。
+> **未做+原因**：无。**本案已结案**。
+
 > 本文定位：定义 AI 层在 depgraph 中的域边界——哪些域归入 AI 层，AI 层是横切视图还是独立域。**本文是裁定类文档**（按"问题→选项→依据→裁定"组织）：产出是裁定方案与选项分析，最终拍板权在 Owner，AI 不作未授权裁定。
 > 与其他文件的分工：结构设计见 [00_index.md](00_index.md)，资产盘点见 [02_design_asset_inventory.md](02_design_asset_inventory.md)，外部对标见 [01_external_benchmark_analysis.md](01_external_benchmark_analysis.md)。
 

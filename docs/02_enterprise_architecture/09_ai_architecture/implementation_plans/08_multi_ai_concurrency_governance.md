@@ -13,6 +13,11 @@ scope: 09_ai_architecture
 
 # 多 AI 并发治理施工图
 
+> ## 结案报告（2026-08-28 全量审查批，代码实证）
+> **实际开发**：多 AI 并发治理三件套+提交队列落地——lock_files.py（TTL+Mutex 原子写）/task_board.py（三态机+CAS+死信）/session_worktree.py（四证 SOP+活性登记+心跳 daemon）；commit_queue.py（MOD-GOV-046 A 段：enqueue/status/drain+FIFO+死信+compaction）+commit_queue_landing.py（MOD-GOV-047 B 段：专用 worktree 真落盘+gateway 改道）；flags.yaml commit_queue_serializer enabled:true 已翻开（2026-08-22 Owner 裁定）；.runtime/commit_queue/ 运行中实证（done 74+ 项）。
+> **最终成果**：61/65/66 号备忘核心机制全部落地，跨会话并发提交串行化生产启用。
+> **未做+原因**：dead/ 积压 40+ 死信项未清理（运维观察项）；CLI drain 自举 stub landing 注记（生产排空只走 gateway 改道）。
+
 > 本文定位：61/65/66 号备忘的多 AI 并发治理方案施工落地——会话隔离、git 安全、提交队列串行化。
 > 与其他文件的分工：结构设计见 [00_index.md](00_index.md)，设计备忘见 `design_memos/61/65/66`。
 > **真源边界**：三起事故的事故链细节、方案调研论证、三层防护协议算法（入队 schema/compaction/Serializer 主循环/冲突判定）的**设计真源**在 [66_commit_queue_serialization.md](../../07_trading_decision_architecture/design_memos/66_commit_queue_serialization.md)；git 安全各防御层的施工细节真源在 [65_git_safety_governance.md](../../07_trading_decision_architecture/design_memos/65_git_safety_governance.md)；多 AI 协作纪律真源在 [61_lifecycle_multi_ai.md](../../07_trading_decision_architecture/design_memos/61_lifecycle_multi_ai.md) §3.6。本文不复制上述内容，只负责：①三件套的施工状态实测收口；②剩余缺口（提交队列 MVP 等）的施工排序与验收；③本主题在 AI 层架构中的定位与接口。
@@ -48,7 +53,7 @@ scope: 09_ai_architecture
 **当前施工状态（2026-08-17 实测）**：三层防护中**两层半已落地**——
 - ✅ **git 安全防护层**（65 号，v2.4.0）：wrapper 已激活、git_guard plumbing 扩展已落地、ops_guard 删除原语拦截已 production、审计/规则层齐备（详见 §2.4）。
 - ✅ **会话隔离层**（65 号 §11 三件套 + 66 号第二层）：worktree 五命令、文件锁 TTL 八命令、task_board 全部 production；worktree 隔离强化（会话活性登记+心跳守护+四证清理 SOP）已落地。
-- ❌ **提交队列层**（66 号第一层）：**MVP 本体未施工**——`scripts/commit_queue.py` 与 `.runtime/commit_queue/` 磁盘实测均不存在，遗留 #67 登记在案（66 号 2026-08-16 结案报告）。当前提交期靠 `_GlobalCommitLock` 全局串行锁（git_commit_gateway.py 内，TTL=1800s）+ AGENTS.md §10.0 过渡期纪律（改完立即 `git_guard.py add`）维持。
+- ❌ **提交队列层**（66 号第一层）：MVP 已施工并生产启用——scripts/commit_queue.py（MOD-GOV-046）+commit_queue_landing.py（MOD-GOV-047）在位，flag 已翻开（2026-08-22），.runtime/commit_queue/ 运行中（2026-08-28 实证回填）。当前提交期靠 `_GlobalCommitLock` 全局串行锁（git_commit_gateway.py 内，TTL=1800s）+ AGENTS.md §10.0 过渡期纪律（改完立即 `git_guard.py add`）维持。
 
 本文档读者应能从 §2.4 一张表看清：这个主题在项目里有哪些设施、各自状态、缺口在哪。
 ### 2.2 核心问题

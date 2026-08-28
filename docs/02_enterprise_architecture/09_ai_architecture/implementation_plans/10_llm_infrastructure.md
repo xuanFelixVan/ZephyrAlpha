@@ -13,6 +13,11 @@ scope: 09_ai_architecture
 
 # LLM 基础设施施工图
 
+> ## 结案报告（2026-08-28 全量审查批，代码实证）
+> **实际开发**：Phase 0 三件+gateway MVP 落地——llm_runtime_gateway.py（MOD-INF-051：单一 infer 签名+DeepSeek/Qwen/Ollama 三通道优先级链+llm_call_log append-only 落库+LSG 入口闸门+LLMDeg-0~4 降级注入）；真实消费方 plan_engine/llm_premarket_analysis.py（M3-⑨/MOD-PLAN-007）接线；降级链生产实证（DeepSeek 402→Qwen 接管成功，llm_daily_analysis 落库）；model_pricing 谷时价按 DeepSeek 官网 2026-08-17 调价真源校准（42 用例绿）。
+> **最终成果**：三通道降级链+成本对账+真跑验证全闭环（GP0 验收口径）。
+> **未做+原因**：预算硬门/路由级联（Phase 1）属 GP1（文中已声明）；MCP 运行时动态发现、模型注册 SSoT 收敛方向裁定未完成（GP1+/开放问题）。
+
 > 本文定位：LLM 基础设施的施工——三层运行时（L1/L2/L3）、MCP 工具调用、推理优化、模型注册、数据增强。
 > 与其他文件的分工：结构设计见 [00_index.md](00_index.md)，盘点见 [02_design_asset_inventory.md](02_design_asset_inventory.md)。
 
@@ -26,7 +31,7 @@ scope: 09_ai_architecture
 | 所属 | [00_index.md](00_index.md) §1 目标架构·基础设施层 |
 | 依赖 | AutoRuntime Core 蓝图（04 号文） |
 | 优先级 | P1——LLM 推理是所有 AI 能力的底层支撑 |
-| 状态 | draft（骨架填充完成，待施工） |
+| 状态 | draft（GP0 已施工：gateway MVP+三通道降级链落地；Phase 1 预算门/级联属 GP1） |
 
 ---
 

@@ -15,6 +15,11 @@ scope: 09_ai_architecture
 
 # 模块工厂施工图
 
+> ## 结案报告（2026-08-28 全量审查批，代码实证）
+> **实际开发**：模块工厂手动 SOP（19 号文 v1.0.0）+首实例走通——factor_registry.yaml FCT-SENT-028 涨跌家数二阶加速度（status:candidate+algorithm_status:pending_backtest+evidence 非空+variant_of:FCT-SENT-020 变体裁决，完全符合 SOP 铁律）；实例报告 17 项检查全 PASS（2026-08-22）；#ARCH-167 登记。
+> **最终成果**：知识→模块映射手动链路验证通过（Phase 0→1 的手动形态）。
+> **未做+原因**：自动分类器、映射引擎、受控生成通道、自动化采集——Phase 1+ 属 GP1+（正常分期）。
+
 > 本文定位：模块工厂（Module Factory）的施工——知识采集→分类→映射→代码生成→验证→入库的完整流水线。
 > 与其他文件的分工：结构设计见 [00_index.md](00_index.md)，落地性分析见 [01_external_benchmark_analysis.md](01_external_benchmark_analysis.md) §5。
 > 本文只写 why（决策推理）与 how（施工步骤）；实现细节（代码级）由 blueprint/代码维护。入库 schema 的真源在交易决策侧 [62_business_registry_construction.md](../../07_trading_decision_architecture/design_memos/62_business_registry_construction.md)，本文只引用不复制。

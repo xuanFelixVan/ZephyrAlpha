@@ -13,6 +13,11 @@ scope: 09_ai_architecture
 
 # 自我进化核心组件施工图
 
+> ## 结案报告（2026-08-28 全量审查批，代码实证）
+> **实际开发**：证据关联手动形态落地——src/zephyr/research/evidence/ 四件套（hypothesis_registry.py 状态机/evidence_chain.py 三态+hash 固化/iteration_guide.py/batch_entry.py）+盘中零调用守卫（工作日 09:30-15:00 CST 拒绝执行）+tests/research/test_evidence_phase0.py。
+> **最终成果**：GP0 验收口径落地（假设→证据→迭代引导链路可用）。
+> **未做+原因**：技能库自动生成（AutoSkill 自进化+Voyager 闭环，量化技能仍零）、模型路由级联编排器（三处 production 基座未串联）——均属 GP1+（18 号文明确不抢建）。
+
 > 本文定位：AI 自我进化层的三个核心组件——证据关联（假设→证据→迭代引导）、技能库（AutoSkill+Voyager）、模型路由。
 > 与其他文件的分工：结构设计见 [00_index.md](00_index.md)，对标见 [01_external_benchmark_analysis.md](01_external_benchmark_analysis.md)，全局资产盘点真源见 [02_design_asset_inventory.md](02_design_asset_inventory.md)（本文 §2.4 只列本主题设施）。
 

@@ -15,6 +15,11 @@ scope: 09_ai_architecture
 
 # AI 执行层施工图
 
+> ## 结案报告（2026-08-28 全量审查批，代码实证）
+> **实际开发**：四类薄入口落地——src/zephyr/autonomy_core/agents/ 下 governance_agent_entry.py（MOD-EXE-GOV-001，纯组装薄入口+复用 MOD-AU-001+产出落盘 .runtime/agent_runs/governance/+human_gated 标注）+business_agent_entry.py+algorithm_agent_entry.py+self_iteration_agent_entry.py 四入口齐+tests/autonomy/test_execution_layer_agent_entries.py。
+> **最终成果**：执行层 Agent 手动形态四入口可用（testing 成熟度，既定口径）。
+> **未做+原因**：Phase 1+（接 11/12/13 号文正式接口、U7 业务 Agent 细化——前置已就绪转 GP 排期待 Owner 裁定 Q1）属 GP1+。
+
 > 本文定位：AI 执行层的施工——治理 Agent、业务 Agent、算法 Agent、自我迭代 Agent。
 > 与其他文件的分工：结构设计见 [00_index.md](00_index.md)，盘点见 [02_design_asset_inventory.md](02_design_asset_inventory.md)。
 

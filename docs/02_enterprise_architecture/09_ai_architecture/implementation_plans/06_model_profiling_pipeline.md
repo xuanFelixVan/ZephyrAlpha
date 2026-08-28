@@ -13,6 +13,11 @@ scope: 09_ai_architecture
 
 # 模型画像→考试→护照流水线施工图
 
+> ## 结案报告（2026-08-28 全量审查批，代码实证）
+> **实际开发**：GP0 手动链路 5/5 PASS（P0-1~P0-5 逐项，P0-3 因 Ollama 离线降级实证）——task_gate.py 门控本体+data/brain/passports/ 7 份护照 JSON（deepseek-v4-flash/pro×thinking/non-thinking+qwen2.5-coder:14b/qwen3-coder:30b/qwen3:8b）；护照 ID 口径治本（list_all() 真源改护照内 model_id 字段）。
+> **最终成果**：画像→考试→护照→门控手动链路全通（GP0 验收口径）。**本案已结案（GP0 口径）**。
+> **未做+原因**：端到端自动闭环（自动画像→考试→护照→门控调度器）未建属 GP1+；护照落盘 schema 缺 cost/tool 字段待下次 Standard 考试自然补齐（文中已声明不单独施工）。
+
 > 本文定位：模型画像（7 维评测）→ 能力考试（五轴评测）→ 能力护照（CapabilityPassport）→ 任务门控（TaskGate）的完整流水线施工。
 > 与其他文件的分工：结构设计见 [00_index.md](00_index.md)，盘点见 [02_design_asset_inventory.md](02_design_asset_inventory.md)；模型路由消费侧见 [11_evidence_skill_router.md](11_evidence_skill_router.md)，LLM 运行时环境见 [10_llm_infrastructure.md](10_llm_infrastructure.md)。
 

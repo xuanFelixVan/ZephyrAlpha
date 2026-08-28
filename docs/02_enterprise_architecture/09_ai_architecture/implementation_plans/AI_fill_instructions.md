@@ -4,7 +4,7 @@ doc_type: architecture_view
 title: AI 架构施工图填充指令集
 owner: ZephyrAlpha-Owner
 language: zh
-status: draft
+status: deprecated
 version: "0.3.0"
 date: 2026-08-17
 topic: ai_architecture_fill_sop
@@ -12,6 +12,9 @@ scope: 09_ai_architecture
 ---
 
 # AI 架构施工图填充指令集
+
+> ## 归档标记（2026-08-28 Owner 裁定：归档不删）
+> 本文档使命已完成：其驱动的 AI-FILL-01~17 填充批全部完成（20 篇施工图全达 v0.2.0+），且后续 GP0 代码施工批（2026-08-22）亦已闭环。**2026-08-28 Owner 裁定归档不删（保留审计链+20 条填充纪律载体）**，后续不再更新；若再开新骨架文档批次，参照本文重建同类 SOP。
 
 > **本文定位**：18 篇 AI 架构骨架文档的填充 SOP——为每个骨架文档提供独立、可循环、可并发的填充指令。
 >
