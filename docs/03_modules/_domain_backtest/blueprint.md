@@ -39,7 +39,7 @@ template_for: ''
 title: 'D_BACKTEST 回测引擎域蓝图'
 ttl: permanent
 verifiability: automated
-version: 1.3.16
+version: 1.3.17
 responsibility_domain: 
 design_maturity: production
 build_status: generated
@@ -190,7 +190,7 @@ D_BACKTEST域代码唯一存放于 `src/zephyr/backtest/`。禁止在research/�
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-BT-001` 的 59 个 file 节点 | production | `extract_depgraph.py --modules MOD-BT-001` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-BT-001` 的 63 个 file 节点 | production | `extract_depgraph.py --modules MOD-BT-001` |
 | 数据流图 (dataflow) | 5 个 Dataset / 5 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -202,7 +202,7 @@ D_BACKTEST域代码唯一存放于 `src/zephyr/backtest/`。禁止在research/�
 | module_id | MOD-BT-001 | MOD-BT-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 59 文件 | N/A | — |
+| file_count | 63 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -999,13 +999,17 @@ D_BACKTEST域当前7个模块(MVP),v1.1.0扩展到15个。容量阈值≤150,无
 | `tests/backtest/test_e2_stationary_bootstrap.py` | ✅ 已实现 | |
 | `tests/backtest/test_e3_param_sensitivity.py` | ✅ 已实现 | |
 | `tests/backtest/test_e4_cost_sensitivity.py` | ✅ 已实现 | |
+| `tests/backtest/test_engine_base.py` | ✅ 已实现 | |
 | `tests/backtest/test_event_driven_engine.py` | ✅ 已实现 | |
 | `tests/backtest/test_limit_price_rounding_night001.py` | ✅ 已实现 | |
 | `tests/backtest/test_matching_engine.py` | ✅ 已实现 | |
+| `tests/backtest/test_matching_logic.py` | ✅ 已实现 | |
+| `tests/backtest/test_metrics.py` | ✅ 已实现 | |
 | `tests/backtest/test_metrics_dsr.py` | ✅ 已实现 | |
 | `tests/backtest/test_overfitting_detector.py` | ✅ 已实现 | |
 | `tests/backtest/test_pit_leakage_future_date.py` | ✅ 已实现 | |
 | `tests/backtest/test_pit_manager.py` | ✅ 已实现 | |
+| `tests/backtest/test_portfolio.py` | ✅ 已实现 | |
 | `tests/backtest/test_preflight_checker.py` | ✅ 已实现 | |
 | `tests/backtest/test_purged_kfold.py` | ✅ 已实现 | |
 | `tests/backtest/test_shrinkage_engine.py` | ✅ 已实现 | |

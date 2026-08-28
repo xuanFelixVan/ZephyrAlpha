@@ -4,7 +4,7 @@ submodule_path: src/zephyr/ex_core
 title: "Trade Execution Core 蓝图+施工图 — 交易执行引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.16"
+version: "2.2.17"
 layer: L2_domain
 layer_name: trade_execution
 functional_domain: execution
@@ -155,7 +155,9 @@ build_status: generated
 | 39 | `risk_layer_orchestrator.py` | §3.1 | risk layer orchestrator | 已实现 | — |
 | 40 | `signal_providers.py` | §3.1 | signal providers | 已实现 | — |
 | 41 | `trading_halt_resolver.py` | §3.1 | trading halt resolver | 已实现 | — |
-| 42 | `trading_session.py` | §3.1 | trading session | 已实现 | — | 验证项 | 验证方法 | 结果 |
+| 42 | `trading_session.py` | §3.1 | trading session | 已实现 | — |
+| 43 | `live_strategy_adapter.py` | §3.1 | live strategy adapter（57号文GAP-2常驻服务化） | 已实现 | — |
+| 验证项 | 验证方法 | 结果 |
 |--------|---------|:---:|
 | construction_progress = partially_implemented → 已实现章节的代码存在 | 按章节核对 | ☑ |
 | 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" *.py` | ☑ |
@@ -185,7 +187,7 @@ build_status: generated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L06-001` 的 56 个 file 节点 | production | `extract_depgraph.py --modules MOD-L06-001` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L06-001` 的 58 个 file 节点 | production | `extract_depgraph.py --modules MOD-L06-001` |
 | 数据流图 (dataflow) | 3 个 Dataset / 2 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -197,7 +199,7 @@ build_status: generated
 | module_id | MOD-L06-001 | MOD-L06-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 56 文件 | 7 文件（§0.1） | ❌ |
+| file_count | 58 文件 | 7 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1222,6 +1224,7 @@ ex_core/adapters/miniqmt_broker.py (新建, 实盘Broker)
 |---------|:---:|------|
 | `src/zephyr/ex_core/adapters/okx_broker.py` | ✅ 已实现 | |
 | `src/zephyr/ex_core/adapters/qmt_file_bridge_integration.py` | ✅ 已实现 | |
+| `src/zephyr/ex_core/live_strategy_adapter.py` | ✅ 已实现 | |
 | `src/zephyr/ex_core/services/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/governance/adapters/__init__.py` | ✅ 已实现 | |
 
@@ -1235,6 +1238,7 @@ ex_core/adapters/miniqmt_broker.py (新建, 实盘Broker)
 | `tests/ex_core/adapters/test_qmt_file_bridge_quote.py` | ✅ 已实现 | |
 | `tests/ex_core/test_execution_report.py` | ✅ 已实现 | |
 | `tests/ex_core/test_live_portfolio.py` | ✅ 已实现 | |
+| `tests/ex_core/test_live_strategy_adapter.py` | ✅ 已实现 | |
 | `tests/ex_core/test_local_order_queue.py` | ✅ 已实现 | |
 | `tests/ex_core/test_miniqmt_broker.py` | ✅ 已实现 | |
 | `tests/ex_core/test_order_manager_compliance_gate.py` | ✅ 已实现 | |
