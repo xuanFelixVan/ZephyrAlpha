@@ -4874,6 +4874,10 @@ capabilities:
   - queue_status
   - SerializerLease
 creation_tokens:
+- file: docs/_working/2026-08-28-industry-graph-frontend.md
+  token: auto-industry-graph-frontend-20260828
+  created_by: session-qmt_bridge_recovery
+  capability: industry_graph_frontend
 - file: src/zephyr/frontend/dashboard/components/qmt_bridge_health.py
   token: auto-qmt-bridge-health-20260827
   created_by: session-qmt_bridge_recovery
