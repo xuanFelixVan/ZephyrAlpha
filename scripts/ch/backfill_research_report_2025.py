@@ -58,6 +58,13 @@ _YEAR_END = "2025-12-31"
 PROGRESS_FILE = ROOT / ".runtime" / "backfill_rr2025_done.txt"
 
 
+def progress_file_for(year_start: str, year_end: str) -> Path:
+    """断点文件按区间分名（2025 单年保持原名复用已完成进度）。"""
+    if (year_start, year_end) == (_YEAR_START, _YEAR_END):
+        return PROGRESS_FILE
+    return ROOT / ".runtime" / f"backfill_rr_{year_start[:4]}_{year_end[:4]}_done.txt"
+
+
 def get_all_a_symbols() -> list[str]:
     """全 A 股 6 位代码列表（优先 CH c1_market.stock_list 本地源，兜底 akshare 现货快照）。"""
     codes = _symbols_from_ch()
@@ -92,15 +99,16 @@ def _symbols_from_akshare() -> list[str]:
     return codes
 
 
-def load_done_symbols() -> set[str]:
+def load_done_symbols(progress_file: Path | None = None) -> set[str]:
     """断点续作：已完成 symbol 集合。"""
-    if not PROGRESS_FILE.exists():
+    pf = progress_file or PROGRESS_FILE
+    if not pf.exists():
         return set()
-    return {line.strip() for line in PROGRESS_FILE.read_text(encoding="utf-8").splitlines() if line.strip()}
+    return {line.strip() for line in pf.read_text(encoding="utf-8").splitlines() if line.strip()}
 
 
-def load_existing_news_ids() -> set[str]:
-    """库内 2025 年研报已有 news_id 集合（写入侧预检——news_data 保留多版本行，
+def load_existing_news_ids(year_start: str = _YEAR_START, year_end: str = _YEAR_END) -> set[str]:
+    """库内指定区间研报已有 news_id 集合（写入侧预检——news_data 保留多版本行，
     不预检会把已有报告再插一份（2026-08-26 实证 2025 年 2.10x 冗余）。
 
     CAND-DAT-025：实现沉淀为 news_dedup.existing_news_ids 公共助手。"""
@@ -108,15 +116,21 @@ def load_existing_news_ids() -> set[str]:
 
     ids = existing_news_ids(
         "source = 'akshare_research_report' "
-        "AND publish_time >= toDateTime('2025-01-01 00:00:00') "
-        "AND publish_time <= toDateTime('2025-12-31 23:59:59')"
+        f"AND publish_time >= toDateTime('{year_start} 00:00:00') "
+        f"AND publish_time <= toDateTime('{year_end} 23:59:59')"
     )
-    log.info("库内已有 2025 研报 id %d 个（写入预检跳过）", len(ids))
+    log.info("库内已有 %s~%s 研报 id %d 个（写入预检跳过）", year_start[:4], year_end[:4], len(ids))
     return ids
 
 
-def fetch_2025_rows(code: str, df, existing_ids: frozenset[str] | set[str] = frozenset()) -> list[tuple]:
-    """从单只股票的研报 DataFrame 过滤 2025 年并构造写入行（11 元组含 category）。
+def fetch_2025_rows(
+    code: str,
+    df,
+    existing_ids: frozenset[str] | set[str] = frozenset(),
+    year_start: str = _YEAR_START,
+    year_end: str = _YEAR_END,
+) -> list[tuple]:
+    """从单只股票的研报 DataFrame 过滤年份区间并构造写入行（11 元组含 category）。
 
     existing_ids：库内已有 news_id 预检集——命中直接跳过（写侧防多版本冗余）。
     """
@@ -126,7 +140,7 @@ def fetch_2025_rows(code: str, df, existing_ids: frozenset[str] | set[str] = fro
         if not title:
             continue
         pub = str(r.get("日期") or "")[:10]
-        if not (_YEAR_START <= pub <= _YEAR_END):
+        if not (year_start <= pub <= year_end):
             continue
         org = str(r.get("机构") or "").strip()
         rating = str(r.get("东财评级") or "").strip()
@@ -167,16 +181,20 @@ def flush(rows: list[tuple]) -> None:
 
 
 def _parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="2025 年东财研报专项补采（CAND-DAT-023）")
+    parser = argparse.ArgumentParser(description="东财研报专项补采（CAND-DAT-023；年份区间可配，默认 2025）")
     parser.add_argument("--limit", type=int, default=0, help="只跑前 N 只（0=全部）")
     parser.add_argument("--sleep", type=float, default=0.4, help="每股间隔秒数（反爬限速）")
     parser.add_argument("--batch-size", type=int, default=200, help="多少只 flush 一次")
+    parser.add_argument("--year-from", default=_YEAR_START, help="区间起（YYYY-MM-DD，默认 2025-01-01）")
+    parser.add_argument("--year-to", default=_YEAR_END, help="区间止（YYYY-MM-DD，默认 2025-12-31）")
     parser.add_argument("--no-resume", dest="resume", action="store_false")
     return parser.parse_args()
 
 
 def main() -> None:
     args = _parse_args()
+    year_start, year_end = args.year_from, args.year_to
+    progress_file = progress_file_for(year_start, year_end)
     try:
         symbols = get_all_a_symbols()
     except Exception as exc:  # noqa: BLE001 — akshare 不可达 fail-closed
@@ -185,26 +203,26 @@ def main() -> None:
     if args.limit > 0:
         symbols = symbols[: args.limit]
 
-    done = load_done_symbols() if args.resume else set()
+    done = load_done_symbols(progress_file) if args.resume else set()
     todo = [s for s in symbols if s not in done]
-    log.info("待采 %d 只（跳过已完成 %d 只）", len(todo), len(symbols) - len(todo))
+    log.info("待采 %d 只（跳过已完成 %d 只；区间 %s~%s）", len(todo), len(symbols) - len(todo), year_start, year_end)
     if not todo:
         log.info("无待采标的，退出")
         return
 
     try:
-        existing_ids = load_existing_news_ids()
+        existing_ids = load_existing_news_ids(year_start, year_end)
     except Exception as exc:  # noqa: BLE001 — 预检失败 fail-closed（防冗余写入）
         log.error("库内已有 id 预检失败: %s", exc)
         sys.exit(1)
 
     import akshare as ak  # noqa: PLC0415 — lazy：标的后触达
 
-    PROGRESS_FILE.parent.mkdir(parents=True, exist_ok=True)
+    progress_file.parent.mkdir(parents=True, exist_ok=True)
     total_rows = 0
     batch: list[tuple] = []
     t0 = time.time()
-    with open(PROGRESS_FILE, "a", encoding="utf-8") as pf:
+    with open(progress_file, "a", encoding="utf-8") as pf:
         for idx, code in enumerate(todo, 1):
             try:
                 df = ak.stock_research_report_em(symbol=code)
@@ -212,7 +230,7 @@ def main() -> None:
                 log.debug("stock_research_report_em(%s) 失败: %s", code, exc)
                 df = None
             if df is not None and len(df) > 0:
-                batch.extend(fetch_2025_rows(code, df, existing_ids))
+                batch.extend(fetch_2025_rows(code, df, existing_ids, year_start, year_end))
             pf.write(code + "\n")
             pf.flush()
             if idx % args.batch_size == 0 or idx == len(todo):
