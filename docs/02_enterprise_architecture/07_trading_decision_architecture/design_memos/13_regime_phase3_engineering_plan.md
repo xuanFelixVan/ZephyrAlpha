@@ -38,6 +38,9 @@ related_modules:
 > 原"E9 未施工/NLP 仅 4 脚本"已过时：①E9 五子项全部落码——overlay_features.py 的 _capitulation_daily/s2_valuation_score_fundamental/s2_spring_flag(0/1/2/3 分级)/s2_three_yang_flag(6 维)/s2_breadth_thrust_score + regime_detector.py keys_or_gte 析取逻辑（E9d）；②scripts/ml/ 现 8 脚本（含 convert_gguf_ollama.py Phase 6、accept_nlp_pipeline.py Phase 8 验收）；③nlp/sentiment_aggregator.py+run_sentiment_batch.py Phase 7 端到端；④T3 七维评分全接真实数据。
 > **仍真实未完工**：①B4 S2 三事件 design_match 未翻 true（E9 落码后未重跑验证——本文档保持 draft 的依据仍成立）；②RLSP（Phase 5）未施工（既定 WARN 不阻塞）；③P2-E8 forward_days 扫描未见。
 
+> ## B4 S2 重验注记（AI-WAVE1-001，2026-08-28）
+> E9 落码后按生产路径（OverlaySignalsConstructor.build_for_date → RegimeDetector.record_transition，B4 ±5 交易日窗口语义）重跑 S2 三事件：**0/3 未命中，design_match 维持 false，本文档保持 draft**（status→active 条件未达成）。环境一致性对照：同日 run_phase2_validation --first-batch 权威重跑 A1 PASS + B4 PASS(3/3，S1 三事件 Δ=+1d/+0d/+2d)。差距详见 14 号同日重验注记——核心：E9a capitulation 三事件 ±25 交易日全程 0.0（三过滤器联玩过严+衰减权重 w₀≈0.09 致 trigger≥60 不可达）；E9b 2020/2024 valuation 路 B=0（路 A CAPE 分位管道未建、未接线）；2015 confirm 另卡 fund=0。
+
 # Phase 3 工程规划——降态数 + 两阶段校准 + NLP 管道 + S2/T3 数据激活
 
 > **前置**：Phase 2 验证完成（commit 14c8b9f1），A1 PASS / B4 S1 3/3 / A2 FAIL / B1 FAIL。

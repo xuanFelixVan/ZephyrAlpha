@@ -38,6 +38,13 @@ related_issues:
 > 原"E9 五子项全部未施工（grep 零命中）"已严重过时：E9a-e 治本全部落码（overlay_features.py 五函数+regime_detector.py keys_or_gte，详见 13 号回填）；诊断脚本 scripts/tests/dump_s2_scores.py 已沉淀；P0 治标（b4 design_match 字段+historical_events.yaml 三事件标 false）在位。
 > **仍真实未完工**：E9 落码后未重跑 B4 将 S2 三事件 design_match 翻回 true（收尾验证动作）；演进方向 6 项（AH-HMM/LVI 等）远期登记（既定）。
 
+> ## B4 S2 重验注记（AI-WAVE1-001，2026-08-28）
+> E9 落码后重验**未通过（0/3）**，historical_events.yaml 三事件 design_match 维持 false。方法：生产路径逐日实证（OverlaySignalsConstructor.build_for_date → RegimeDetector.record_transition，B4 ±5 交易日窗口），另做 ±25 交易日宽窗口峰值扫描；同日 run_phase2_validation --first-batch 权威对照 A1 PASS + B4 PASS(3/3 S1)，环境一致。逐事件差距（±25 窗口内各维度峰值）：
+> - **EVT-2015-RECOVERY**：trigger 仅卡 capitulation——vix max=60(@09-18)/bad_news_flat max=80 在位，capitulation 全程 0.0；confirm 卡 fund=0（breadth_thrust max=60@08-11 / policy 80 / valuation 60@08-26 峰值在位，wyckoff max=10）。
+> - **EVT-2020-RECOVERY**：trigger 卡 capitulation=0（vix 60@03-30 / bad_news_flat 80 在位）；confirm 卡 valuation=0（路 B pos≈0.86-0.90 不给分）+ fund 峰 50@03-05 与 breadth_thrust 60@03-06 不同日；spring max=3@03-23。
+> - **EVT-2024-RECOVERY**：confirm 仅卡 valuation=0——E9d breadth_thrust 析取通路实证有效（09-27/09-30/10-08 breadth=80、policy 40-60、fund 50-70 同日在位）；trigger 三维（capitulation/vix/bad_news_flat）全 0。
+> **差距结论**：①E9a capitulation 三过滤器（量能>2.0×均量 + 实体>40%ATR + 下影线>50%）联玩过严（A 股暴跌日 close≈low 致下影线比≈0），叠加衰减权重 w₀≈0.09（单日 90 分仅贡献 ~8 分），trigger≥60 实际不可达——三事件 ±25 交易日全程 0.0，含 2015-08-26/2020-03-23 真实底部；②E9b 路 A（s2_valuation_score_fundamental）未接线——builder 仍走路 B s2_valuation_score(close)（overlay_signals_builder.py:349-350 注明"路 A CAPE 待 daily_valuation 管道，Step 0 ①"），V 反转 pos 高→0；③E9e three_yang 三事件窗口全 0（strong_confirm 门槛 three_yang≥2 不可达）；④2015 fund=0（资金数据源覆盖不足）。后续方向：capitulation 过滤器/衰减参数需按 §4.5 walk-forward 校准（非简单降阈值凑分）；路 A CAPE 分位管道（daily_valuation）建设后接线。
+
 # S2 评分算法时点错配诊断与治本方案——capitulation 过程化 + valuation 基本面化 + V 反转通路
 
 > **前置**：Phase 2 验证 B4 曾因 `data_ready=False`（S2 不计分母）以 PASS(3/3) 闭环
