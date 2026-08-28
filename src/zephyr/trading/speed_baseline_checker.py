@@ -2,11 +2,11 @@
 # [MODULE] zephyr.trading.speed_baseline_checker
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.__init__
-# [CONSUMERS] scripts/ide_health_service.py
+# [CONSUMERS] none
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] script-manifest.yaml 是脚本基线唯一数据源; process_iter 必须同时检查 cmdline + cwd;
-# [MODIFY-GUARD] 修改分类阈值前必须确认与 zombie_scanner 的分类不重叠冲突
+# [MODIFY-GUARD] 修改分类阈值前必须确认与 process_reaper 的判定矩阵不重叠冲突
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -32,8 +32,6 @@ _MANIFEST_PATH = REPO_ROOT / "scripts" / "script-manifest.yaml"
 _BASELINE_CACHE_TTL = 300.0
 
 _LONG_RUNNING_KEYWORDS = [
-    "ide_health_service",
-    "ide_health_nanny",
     "_nanny",
     "daemon",
     "windows_service",

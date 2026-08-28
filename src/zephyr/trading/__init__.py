@@ -51,7 +51,6 @@ __all__ = [
     "gpu_consensus_scheduler",
     "gpu_monitor",
     "health_monitor",
-    "ide_health_daemon",
     "integration_registry",
     "lifecycle_manager",
     "module_onboarding_scanner",
@@ -70,7 +69,6 @@ __all__ = [
     "windows_service",
     "work_dag",
     "work_orchestrator",
-    "zombie_scanner",
     "trigger_registry",
     "__main__",
 ]

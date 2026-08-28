@@ -459,22 +459,6 @@ def _hook_triple_alignment_on_verified(event: object, task_repo: TaskRepositoryP
         logger.error("hook triple_alignment_on_verified FAILED: %s", exc, exc_info=True)
 
 
-def _hook_cleanup_task_processes(event: object) -> None:
-    try:
-        task_id = getattr(event, "task_id", "")
-        to_status = getattr(event, "to_status", "")
-        if not task_id:
-            return
-        if to_status.upper() in (TaskStatus.COMPLETED, TaskStatus.FAILED, TaskStatus.CANCELLED):
-            from zephyr.trading.ide_health_daemon import kill_task_processes
-
-            killed = kill_task_processes(task_id)
-            if killed:
-                logger.info("hook cleanup_task_processes: killed %d PIDs for %s", len(killed), task_id)
-    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
-        logger.warning("hook cleanup_task_processes FAILED: %s", exc, exc_info=True)
-
-
 def _hook_orc_vms_archive(event: object, task_repo: TaskRepositoryProtocol | None = None) -> None:
     try:
         task_id = getattr(event, "task_id", "")
@@ -608,11 +592,10 @@ def register_boot_hooks(
         hook_registry.register(
             lambda e: _hook_triple_alignment_on_verified(e, task_repo), priority=70, name="triple_alignment_on_verified"
         )
-        hook_registry.register(_hook_cleanup_task_processes, priority=45, name="cleanup_task_processes")
         hook_registry.register(lambda e: _hook_orc_vms_archive(e, task_repo), priority=48, name="orc_vms_archive")
         hook_registry.register(_hook_rbk_gate_freeze, priority=55, name="rbk_gate_freeze")
         logger.info(
-            "Task system hooks registered: auto_unblock_dependents / auto_retry_on_failure / triple_alignment_on_verified / cleanup_task_processes / orc_vms_archive / rbk_gate_freeze"
+            "Task system hooks registered: auto_unblock_dependents / auto_retry_on_failure / triple_alignment_on_verified / orc_vms_archive / rbk_gate_freeze"
         )
 
         # Event-driven hooks
@@ -639,13 +622,8 @@ def register_boot_hooks(
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("Failed to register task system hooks: %s", e, exc_info=True)
 
-    try:
-        from zephyr.trading.ide_health_daemon import register_daemon
-
-        register_daemon()
-        logger.info("IdeHealthDaemon registered and auto-started via boot hooks")
-    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-        logger.warning("Failed to register IdeHealthDaemon: %s", e, exc_info=True)
+    # IdeHealthDaemon 常驻守护模式已于 2026-08-28 裁定废弃（OS 托管 ProcessReaper 替代，
+    # 见 docs/03_modules/_domain_data/boot_autostart_architecture.md §2），此处不再注册。
 
     _subscribe_task_lifecycle_events(budget_engine=budget_engine)
     _register_rbac_hooks()

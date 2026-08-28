@@ -761,7 +761,7 @@ class ResourceOptimizationEngine:
             logger.warning("suppressed error in resource_optimization", exc_info=True)
 
         try:
-            from zephyr.trading.ide_health_daemon import scan_ghost_windows
+            from zephyr.trading.process_reaper import scan_ghost_windows
 
             ghosts = scan_ghost_windows()
             snap.ide_ghost_windows = len(ghosts)

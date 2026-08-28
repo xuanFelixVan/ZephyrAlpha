@@ -2,7 +2,7 @@
 # [MODULE] zephyr.trading.auto_dispatcher
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo
-# [CONSUMERS] zephyr.trading.ide_health_service
+# [CONSUMERS] none
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none
