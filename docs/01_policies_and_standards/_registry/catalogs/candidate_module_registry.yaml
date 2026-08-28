@@ -18810,14 +18810,14 @@ entries:
   prerequisites:
     - {item: "A股现有时间相关代码盘点", note: "scheduler/K线聚合/回测时间轴/PIT asof 四类消费点清单，改造面摸底"}
   design_admission:
-    q1_implemented: {result: false, equivalent_nodes: [], evidence: "src/zephyr 无 calendar 抽象层（2026-08-26 盘点），交易日历逻辑为 A股专用"}
+    q1_implemented: {result: true, equivalent_nodes: [], evidence: "src/zephyr/data/calendar/ 包已落（base/ashare/crypto/__init__），scheduler/fusion/pit_query 注入式改造完成，26 测试全绿（2026-08-26 W0 施工）"}
     blocking_question: null
-    result: candidate
-  status: candidate
+    result: promoted
+  status: promoted
   priority: P0
   created_at: '2026-08-26'
-  last_reviewed_at: '2026-08-26'
-  promoted_to: ""
+  last_reviewed_at: '2026-08-27'
+  promoted_to: "src/zephyr/data/calendar/"
   source_draft: "94_crypto_quant_expansion.md"
   source_section: "§4.1 市场日历抽象"
   original_id: ""
@@ -19644,13 +19644,36 @@ entries:
       evidence: '场内对账: 读侧三层去重已建（collect_news/run_sentiment_batch/run_research_rating_batch），引擎级修复无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
   priority: P1
   source: 2026-08-26 多版本冗余实证批（CAND-NLP-006 施工发现）
   created: '2026-08-26'
-  last_updated: '2026-08-26'
+  last_updated: '2026-08-28'
   source_draft: ''
   original_id: NEWS-DEDUP-ENG-001
+  source_section: ''
+- id: CAND-DAT-026
+  name: news/announcement publish_time 8h 偏移专项（时区防线二期）
+  aliases: ['新闻公告时间戳 8h 偏移', 'publish_time tz phase-2']
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/data/
+  problem: news 类别 98.4%（6,619,975/6,727,116 行）、announcement 类别 100%（982,538 行）的 publish_time 系统性偏早 8 小时（16:00:00 指纹——北京日期 D 记为 D-1 16:00）；业务后果：回测前视偏差（D 日信息 D-1 收盘后可见，信号前移一日 IC 虚高）+日级归日错一天；look_ahead_bias_detector 无法检出（查代码未来函数，不查库内时间戳语义）。另含 research_report 35 个全老批 stuck id 同款指纹
+  proposal: '实证登记（2026-08-27 CAND-DAT-025 施工侦察发现，67 号设计备忘 §4）。最小施工形态: ①白盒验证引擎/键健康后（CAND-DAT-025 已建判据），按 rebuild_news_data 同款换表法对 news/announcement 行 +8h 修正（16:00 指纹行 publish_time+8h，纯日期语义归位）；②同步修正消费侧日级聚合（情感/公告事件日历重算）；③research_report 35 个 stuck id 一并 +8h。依赖前置: rebuild_news_data（已建成）、tag_news_category（已建成）。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '场内对账: apply_timezone_migration 为一期（类型标注+业务列偏移），本专项为二期（news/announcement 存量数据修正），无重复节点'
+    blocking_question: null
+    result: candidate
+  status: candidate
+  priority: P0
+  source: 2026-08-27 news_data 去重侦察批（67 号设计备忘 §4 关联发现）
+  created: '2026-08-28'
+  last_updated: '2026-08-28'
+  source_draft: ''
+  original_id: NEWS-TZ-PHASE2-001
   source_section: ''
 - id: CAND-NLP-006
   name: 研报结构化评级分析轨（评级提取/变动/目标价/盈利修正）
@@ -19667,11 +19690,11 @@ entries:
       evidence: '场内对账: 无研报评级结构化提取管线（现有=通用情感打分一路）'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
   priority: P2
   source: 2026-08-26 研报分析方式讨论批（Owner 提出"研报不应按新闻情感打分"）
   created: '2026-08-26'
-  last_updated: '2026-08-26'
+  last_updated: '2026-08-28'
   source_draft: ''
   original_id: RR-RATING-001
   source_section: ''
