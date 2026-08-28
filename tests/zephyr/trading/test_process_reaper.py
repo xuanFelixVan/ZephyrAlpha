@@ -20,7 +20,13 @@ _SRC = _REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from zephyr.trading.process_reaper import classify_process  # noqa: E402
+from zephyr.trading.process_reaper import (  # noqa: E402
+    _GHOST_STRIKES_TO_KILL,
+    _advance_ghost_state,
+    _is_trae_child_cmdline,
+    classify_process,
+    classify_trae_process,
+)
 
 _BASE = dict(
     pid=1234,
@@ -163,6 +169,122 @@ class TestRealWorldFixtures:
             cpu_pct=100.0,
         )
         assert v.action == "skip"
+
+
+# ============== 幽灵判据三件套（2026-08-28 终审重构）==============
+
+_NOW = "2026-08-28 14:00:00"
+_MAIN_CMD = r'"D:\AI\Trae CN\Trae CN.exe"'
+_RENDERER_CMD = r'"D:\AI\Trae CN\Trae CN.exe" --type=renderer --user-data-dir="C:\...\Trae CN" --vscode-window-config=vscode:abc'
+_EXTWORKER_CMD = r'"D:\AI\Trae CN\Trae CN.exe" "d:\AI\...\serverWorkerMain" --node-ipc --clientProcessId=27916'
+
+# 典型活 IDE 拓扑：main(100) <- renderer(200)、utility(300)、ext worker(400 <- 300)
+_LIVE_PROCS = {
+    100: {"name": "Trae CN.exe", "ppid": 999, "create_time": 1000.0, "cmdline": _MAIN_CMD},
+    200: {"name": "Trae CN.exe", "ppid": 100, "create_time": 1010.0, "cmdline": _RENDERER_CMD},
+    300: {"name": "Trae CN.exe", "ppid": 100, "create_time": 1020.0, "cmdline": '"Trae CN.exe" --type=utility'},
+    400: {"name": "Trae CN.exe", "ppid": 300, "create_time": 1030.0, "cmdline": _EXTWORKER_CMD},
+    999: {"name": "explorer.exe", "ppid": 1, "create_time": 100.0, "cmdline": "explorer.exe"},
+}
+
+
+def _classify_trae(pid, procs):
+    info = procs[pid]
+    return classify_trae_process(
+        pid=pid,
+        name=info["name"],
+        cmdline=info["cmdline"],
+        ppid=info["ppid"],
+        create_time=info["create_time"],
+        procs=procs,
+    )
+
+
+class TestClassifyTraeProcess:
+    """内核态拓扑判据：main 永不判、父活不判、父死/PID复用判嫌疑。"""
+
+    def test_non_trae_never_suspect(self):
+        assert _classify_trae(999, _LIVE_PROCS) is None
+
+    def test_main_never_suspect_even_ppid_dangling(self):
+        # main 的父 explorer 死了（ppid 悬空）也永不判——事故核心防护
+        procs = {100: _LIVE_PROCS[100]}
+        assert _classify_trae(100, procs) is None
+
+    def test_child_parent_alive_not_suspect(self):
+        assert _classify_trae(200, _LIVE_PROCS) is None
+        assert _classify_trae(400, _LIVE_PROCS) is None
+
+    def test_child_parent_gone_suspect(self):
+        # renderer 的父 main 死了（崩溃残留）——真幽灵，必须判
+        procs = {k: v for k, v in _LIVE_PROCS.items() if k != 100}
+        reason = _classify_trae(200, procs)
+        assert reason is not None and "gone" in reason
+
+    def test_ext_worker_parent_gone_suspect(self):
+        # extension host worker（无 --type=）父 utility 死了也判——靠 --node-ipc 标记
+        procs = {k: v for k, v in _LIVE_PROCS.items() if k != 300}
+        reason = _classify_trae(400, procs)
+        assert reason is not None and "gone" in reason
+
+    def test_pid_reuse_suspect(self):
+        # 父 PID 被复用：复用者 create_time 必晚于子出生 -> 父实死
+        procs = dict(_LIVE_PROCS)
+        procs[100] = {"name": "svchost.exe", "ppid": 1, "create_time": 9999.0, "cmdline": "svchost.exe"}
+        reason = _classify_trae(200, procs)
+        assert reason is not None and "pid_reused" in reason
+
+
+class TestTraeChildCmdline:
+    def test_type_marker_is_child(self):
+        assert _is_trae_child_cmdline(_RENDERER_CMD)
+
+    def test_node_ipc_marker_is_child(self):
+        assert _is_trae_child_cmdline(_EXTWORKER_CMD)
+
+    def test_bare_main_not_child(self):
+        assert not _is_trae_child_cmdline(_MAIN_CMD)
+
+
+class TestGhostStateMachine:
+    """3 轮确认状态机：连续在列才达斩杀线，恢复即出列，进程消失即出列。"""
+
+    @staticmethod
+    def _current(*pids):
+        return {p: {"reason": "trae_orphan:ppid=100_gone", "cmdline": _RENDERER_CMD} for p in pids}
+
+    def test_first_round_no_kill(self):
+        state, kill_ready = _advance_ghost_state({"version": 1, "suspects": {}}, self._current(200), _NOW)
+        assert kill_ready == []
+        assert state["suspects"]["200"]["strikes"] == 1
+
+    def test_three_consecutive_rounds_reach_kill_line(self):
+        state = {"version": 1, "suspects": {}}
+        for _ in range(_GHOST_STRIKES_TO_KILL - 1):
+            state, kill_ready = _advance_ghost_state(state, self._current(200), _NOW)
+            assert kill_ready == []
+        state, kill_ready = _advance_ghost_state(state, self._current(200), _NOW)
+        assert kill_ready == [200]
+        assert state["suspects"]["200"]["strikes"] == _GHOST_STRIKES_TO_KILL
+
+    def test_recovery_between_rounds_evicts(self):
+        # 第 2 轮恢复（父活=不在嫌疑集）-> 出列；第 3 轮再嫌疑 -> 从 strikes=1 重新计
+        state, _ = _advance_ghost_state({"version": 1, "suspects": {}}, self._current(200), _NOW)
+        state, kill_ready = _advance_ghost_state(state, self._current(), _NOW)  # 恢复轮
+        assert state["suspects"] == {} and kill_ready == []
+        state, kill_ready = _advance_ghost_state(state, self._current(200), _NOW)
+        assert state["suspects"]["200"]["strikes"] == 1 and kill_ready == []
+
+    def test_process_exit_evicts(self):
+        state, _ = _advance_ghost_state({"version": 1, "suspects": {}}, self._current(200), _NOW)
+        state, kill_ready = _advance_ghost_state(state, {}, _NOW)  # 进程消失
+        assert state["suspects"] == {} and kill_ready == []
+
+    def test_independent_pids_counted_separately(self):
+        state, _ = _advance_ghost_state({"version": 1, "suspects": {}}, self._current(200, 300), _NOW)
+        state, kill_ready = _advance_ghost_state(state, self._current(300), _NOW)  # 200 恢复出列
+        assert "200" not in state["suspects"]
+        assert state["suspects"]["300"]["strikes"] == 2 and kill_ready == []
 
 
 if __name__ == "__main__":

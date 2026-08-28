@@ -51,7 +51,12 @@ if (-not (Test-Path $PythonW)) {
     if (-not (Test-Path $PythonW)) { throw "pythonw.exe not found in known locations" }
 }
 
-$argString = '-m zephyr.trading.process_reaper'
+# 2026-08-28 light-import-isolation ruling: direct script execution (NOT -m package path)
+# bypasses zephyr/__init__ Timer bootstrap chain. Root cause: the 0.05s daemon Timer in
+# zephyr/__init__ imports auto_bootstrap (connects ClickHouse); on CH failure the background
+# thread held the import lock and starved the reaper main thread (13:55 hang incident).
+# The janitor must be hardier than what it cleans: zero zephyr imports + no package __init__.
+$argString = 'src\zephyr\trading\process_reaper.py'
 $action = New-ScheduledTaskAction -Execute $PythonW -Argument $argString -WorkingDirectory $RepoRoot
 
 # Settings: Parallel (one-shot idempotent, no single-instance decision by Task Scheduler) +
@@ -93,6 +98,6 @@ $task | Set-ScheduledTask | Out-Null
 Write-Host ""
 Write-Host "Done. ProcessReaper: AtLogOn + every 10min, one-shot (scan->judge->kill->exit), ExecutionTimeLimit=10min."
 Write-Host "Run now:      schtasks /run /tn $TaskName"
-Write-Host "Query status: python -m zephyr.trading.process_reaper --status"
-Write-Host "Dry-run:      python -m zephyr.trading.process_reaper --dry-run"
+Write-Host "Query status: python src\zephyr\trading\process_reaper.py --status"
+Write-Host "Dry-run:      python src\zephyr\trading\process_reaper.py --dry-run"
 Write-Host "Keep list:    data\runtime\process_reaper_keep.txt (per-case preserve, one cmdline substring per line)"

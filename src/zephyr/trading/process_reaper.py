@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-RESOURCE_OPTIMIZATION_ENGINE | docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md | §new-IDE
 # [MODULE] zephyr.trading.process_reaper
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.shared.io.paths; zephyr.shared.infra.process_pool(run_subprocess_hidden); psutil(可选)
+# [DEPENDENCIES] 纯 stdlib + psutil(可选)；零 zephyr 包 import（轻导入隔离，见 docstring）
 # [CONSUMERS] scripts/register_process_reaper_task.ps1; Windows Task Scheduler(ZephyrAlpha_ProcessReaper)
 # [STARTUP] scheduled_task
 # [MATURITY] production
@@ -46,13 +46,35 @@
 9. 其余                            -> skip
 
 同时兼任（从 ide_health_daemon 迁移的治理能力）：
-- Trae 幽灵窗口扫描清理（复用 scan_ghost_windows/kill_ghost_windows，零修改）
+- Trae 幽灵进程清理（2026-08-28 三次误杀事故后终审重构，见下方「幽灵判据治本」）
 - drift 指标：git stash>5 自动清理（cleanup_stash.py）、worktree 变更>50 告警记录
 
-CLI：
-    python -m zephyr.trading.process_reaper            # 执行清理（Task Scheduler 调用方式）
-    python -m zephyr.trading.process_reaper --dry-run  # 只报告不杀（验证用）
-    python -m zephyr.trading.process_reaper --status   # 读上次运行状态
+幽灵判据治本（2026-08-28 终审，替代旧 WMI 窗口观测方案）：
+旧方案死穴：window-config 挂在 renderer 上、MainWindowTitle/Handle 挂在 main 上（永不同属
+一个进程），renderer 的 handle 恒为 0，唯一保护是 PowerShell+WMI 查出的可见窗口集——
+高负载 WMI 超时 → 可见集空 → 全部活 renderer 判幽灵即杀（当日 20+3 次误杀，exit 15）。
+新方案三件套：
+1. 内核态进程拓扑判据（纯 psutil，零 WMI 零 PowerShell）：Trae 子进程（cmdline 含
+   --type=/--node-ipc/--clientProcessId）父死=嫌疑；main（无子进程标记）永不判；
+   父 create_time 晚于子=PID 复用（父实死）。
+2. 连续 3 轮确认状态机（data/runtime/ghost_suspects.json）：嫌疑须连续 3 轮在列才杀，
+   任一轮恢复（父活/进程消失）即出列——10min 轮隔 × 3 = 30min 确认窗，活 IDE 子进程
+   绝无可能连续 30min 父死。
+3. kill 前复查赦免：动手前重新枚举进程表重跑判据，父复活立即赦免出列。
+fail-safe 铁律：观测异常/状态文件损坏一律偏向不动作。
+
+轻导入隔离（2026-08-28 CH 故障卡死事故后追加）：
+本模块零 zephyr 包 import（REPO_ROOT 本地算、subprocess 无窗口调用本地实现），
+且 Task Scheduler 以脚本直跑方式启动（非 -m 包路径）——彻底脱离 zephyr/__init__
+Timer 引导链。根因：import zephyr 的 0.05s daemon Timer 会 import auto_bootstrap
+（连 ClickHouse），CH 故障时后台线程持导入锁卡死、主线程 import 随锁饿死
+（13:55 reaper 实例卡死 5 分钟实证）。清道夫必须比被清理对象更皮实：
+CH 挂了、zephyr 包引导炸了，reaper 都照常干活。
+
+CLI（脚本直跑，绕过包 __init__）：
+    python src/zephyr/trading/process_reaper.py            # 执行清理（Task Scheduler 调用方式）
+    python src/zephyr/trading/process_reaper.py --dry-run  # 只报告不杀（验证用）
+    python src/zephyr/trading/process_reaper.py --status   # 读上次运行状态
 """
 
 from __future__ import annotations
@@ -62,13 +84,12 @@ import json
 import logging
 import os
 import re
+import subprocess
 import sys
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
-
-from zephyr.shared.io.paths import REPO_ROOT
 
 try:
     import psutil
@@ -76,6 +97,36 @@ except ImportError:  # psutil 不可用时 python 进程扫描降级关闭，幽
     psutil = None
 
 logger = logging.getLogger(__name__)
+
+
+def _find_repo_root() -> Path:
+    """本地计算仓库根（零 zephyr 依赖，轻导入隔离——见模块 docstring）。
+
+    本文件位于 <repo>/src/zephyr/trading/process_reaper.py，parents[3] 即仓库根；
+    以 src/zephyr/__init__.py 存在性做标记校验，防文件被移动后静默错根。
+    """
+    root = Path(__file__).resolve().parents[3]
+    if not (root / "src" / "zephyr" / "__init__.py").exists():
+        raise FileNotFoundError(f"repo root marker missing under {root}（文件被移动？）")
+    return root
+
+
+REPO_ROOT = _find_repo_root()
+
+
+def _run_hidden(cmd: list[str], **kwargs) -> "subprocess.CompletedProcess":
+    """本地无窗口 subprocess.run（CREATE_NO_WINDOW），零 zephyr 依赖。
+
+    语义对齐 zephyr.shared.infra.process_pool.run_subprocess_hidden（TRAE-067 铁律2），
+    此处本地复刻以维持轻导入隔离。
+    """
+    kwargs.setdefault("capture_output", True)
+    kwargs.setdefault("text", True)
+    if kwargs.get("text", True):
+        kwargs.setdefault("errors", "replace")
+    if os.name == "nt":
+        kwargs.setdefault("creationflags", subprocess.CREATE_NO_WINDOW)
+    return subprocess.run(cmd, **kwargs)
 
 # ============== 路径与文件 ==============
 _STATUS_DIR = REPO_ROOT / ".runtime" / "process_reaper"
@@ -95,6 +146,13 @@ _IDLE_KILL_CPU_MAX = 0.5
 _IDLE_REPORT_AGE_S = 3600  # 非孤儿 age>1h 且 CPU<0.1% 报告
 _IDLE_REPORT_CPU_MAX = 0.1
 _KILL_CHILD_RECURSIVE = True  # kill 时级联杀子进程树（sweep 族连根拔，防残留再繁殖）
+
+# ============== 幽灵进程状态机（2026-08-28 终审三件套）==============
+_GHOST_SUSPECTS_FILE = REPO_ROOT / "data" / "runtime" / "ghost_suspects.json"
+_GHOST_STRIKES_TO_KILL = 3  # 连续 3 轮嫌疑才杀（10min 轮隔 × 3 = 30min 确认窗）
+# Trae 子进程 cmdline 标记（Electron 架构）：renderer/gpu/utility/crashpad 带 --type=，
+# extension host worker 带 --node-ipc/--clientProcessId；main 裸 cmdline 永不判。
+_TRAE_CHILD_MARKERS: tuple[str, ...] = ("--type=", "--node-ipc", "--clientProcessId")
 
 # ============== 默认白名单（永久服务 cmdline 正则，命中永不杀）==============
 # 来源：boot_autostart_architecture.md 永久服务清单 + 当前生产实证常驻服务。
@@ -384,189 +442,222 @@ def _kill_pid_tree(pid: int) -> bool:
         return True
 
 
-# ============== Trae 幽灵窗口扫描（2026-08-28 从 ide_health_daemon 迁入并修复）==============
-# 迁移说明：旧 ide_health_daemon._get_trae_processes 用精确匹配 psutil name=="Trae CN"，
-# 但 psutil 实际返回 "Trae CN.exe"——原实现静默失效（永远扫描为空）。迁入后统一为
-# startswith 前缀匹配（与 reaper Trae 后代判定同一真源）。
-# 幽灵窗口语义：MainWindowHandle=0 且其 window-config UUID 无对应可见窗口的 TRAE 进程树，
-# 多为 IDE 崩溃/异常关闭后的残留渲染进程，发现即 force kill。
+# ============== Trae 幽灵进程扫描（2026-08-28 终审重构：内核态拓扑 + 3 轮确认状态机）==============
+# 旧 WMI 窗口观测方案已废除（死穴见模块 docstring「幽灵判据治本」），三个
+# PowerShell/WMI 函数（_get_window_configs_from_cmdlines/_get_visible_window_configs/
+# _get_mainwindow_handle_map）连同 handle 观测一并删除——观测纯 psutil，零 WMI 零 PowerShell。
 
 
-def _get_trae_processes() -> list[dict[str, Any]]:
-    """枚举全部 Trae CN 进程（psutil name 前缀匹配，修复原精确匹配静默失效 bug）。"""
-    procs: list[dict[str, Any]] = []
-    if psutil is None:
-        return procs
-    for p in psutil.process_iter(["pid", "name"]):
+def _is_trae_child_cmdline(cmdline: str) -> bool:
+    """Trae 子进程判定：cmdline 含 Electron 子进程标记。main（裸 cmdline）返回 False。"""
+    return any(m in cmdline for m in _TRAE_CHILD_MARKERS)
+
+
+def classify_trae_process(
+    *,
+    pid: int,
+    name: str,
+    cmdline: str,
+    ppid: int | None,
+    create_time: float,
+    procs: dict[int, dict],
+) -> str | None:
+    """内核态拓扑幽灵判据（纯函数，可单测）。返回嫌疑 reason，非嫌疑返回 None。
+
+    判定链：
+    1. 非 Trae 进程           -> None
+    2. main（无子进程标记）    -> None（永不判：explorer 重启致 ppid 悬空也赦免）
+    3. ppid 不在活进程表       -> 嫌疑（父死）
+    4. 父 create_time 晚于子   -> 嫌疑（PID 复用，父实死：复用者必晚于子出生）
+    5. 其余（父活）            -> None
+    """
+    if not name.lower().startswith(_TRAE_PROCESS_NAME_PREFIX):
+        return None
+    if not _is_trae_child_cmdline(cmdline):
+        return None  # main 永不判
+    parent = procs.get(ppid)
+    if parent is None:
+        return f"trae_orphan:ppid={ppid}_gone"
+    if parent.get("create_time", 0.0) > create_time:
+        return f"trae_orphan:ppid={ppid}_pid_reused"
+    return None
+
+
+def _snapshot_all_processes() -> dict[int, dict]:
+    """一次 psutil 枚举全进程表 {pid: {name, ppid, create_time, cmdline}}。零 WMI 零 PowerShell。"""
+    procs: dict[int, dict] = {}
+    for proc in psutil.process_iter(["pid", "name", "cmdline", "ppid", "create_time"]):
         try:
-            info = p.info
-            if (info.get("name") or "").lower().startswith(_TRAE_PROCESS_NAME_PREFIX):
-                procs.append({"pid": info["pid"], "name": info["name"]})
+            info = proc.info
+            pid = info.get("pid")
+            if pid is None:
+                continue
+            cmdline_list = info.get("cmdline") or []
+            procs[pid] = {
+                "name": info.get("name") or "",
+                "ppid": info.get("ppid"),
+                "create_time": info.get("create_time") or 0.0,
+                "cmdline": " ".join(cmdline_list) if isinstance(cmdline_list, list) else str(cmdline_list),
+            }
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             continue
     return procs
 
 
-def _get_window_configs_from_cmdlines(pids: list[int]) -> dict[str, set[int]]:
-    """WMI 查询每个 TRAE 进程命令行，提取 vscode-window-config UUID。
-
-    返回 {window_config_uuid: {pid, ...}}。
-    """
-    from zephyr.shared.infra.process_pool import run_subprocess_hidden
-
-    windows: dict[str, set[int]] = {}
-    for pid in pids:
-        try:
-            result = run_subprocess_hidden(
-                [
-                    "powershell",
-                    "-NoProfile",
-                    "-Command",
-                    f'(Get-WmiObject Win32_Process -Filter "ProcessId={pid}").CommandLine',
-                ],
-                capture_output=True,
-                text=True,
-                timeout=5,
-            )
-            match = re.search(r"vscode-window-config=vscode:([a-f0-9-]+)", result.stdout)
-            if match:
-                windows.setdefault(match.group(1), set()).add(pid)
-        except Exception:  # noqa: BLE001 — 单进程查询失败不影响整体扫描
-            continue
-    return windows
-
-
-def _get_visible_window_configs() -> set[str]:
-    """获取 MainWindowTitle 非空（可见）的 TRAE 窗口对应的 window-config UUID 集合。"""
-    from zephyr.shared.infra.process_pool import run_subprocess_hidden
-
-    visible: set[str] = set()
-    try:
-        result = run_subprocess_hidden(
-            [
-                "powershell",
-                "-NoProfile",
-                "-Command",
-                "Get-Process -Name 'Trae CN' -ErrorAction SilentlyContinue | "
-                "Where-Object { $_.MainWindowTitle -ne '' } | "
-                "ForEach-Object { "
-                '  try { (Get-WmiObject Win32_Process -Filter \\"ProcessId=$($_.Id)\\").CommandLine } catch {} '
-                "}",
-            ],
-            capture_output=True,
-            text=True,
-            timeout=15,
-        )
-        for match in re.finditer(r"vscode-window-config=vscode:([a-f0-9-]+)", result.stdout):
-            visible.add(match.group(1))
-    except Exception as e:  # noqa: BLE001 — 可见窗口查询失败时退化为全部按幽灵处理（保守不杀：由 handle==0 二次过滤）
-        logger.warning("可见 TRAE 窗口查询失败: %s", e)
-    return visible
-
-
-def _get_mainwindow_handle_map() -> dict[int, int]:
-    """返回 {pid: MainWindowHandle}，仅含 TRAE 进程。"""
-    from zephyr.shared.infra.process_pool import run_subprocess_hidden
-
-    handle_map: dict[int, int] = {}
-    try:
-        result = run_subprocess_hidden(
-            [
-                "powershell",
-                "-NoProfile",
-                "-Command",
-                "Get-Process -Name 'Trae CN' -ErrorAction SilentlyContinue | "
-                "Select-Object Id, MainWindowHandle | "
-                "ForEach-Object { '{0}:{1}' -f $_.Id, $_.MainWindowHandle }",
-            ],
-            capture_output=True,
-            text=True,
-            timeout=10,
-        )
-        for line in result.stdout.strip().split("\n"):
-            line = line.strip()
-            if not line:
-                continue
-            parts = line.split(":", 1)
-            if len(parts) == 2:
-                try:
-                    handle_map[int(parts[0])] = int(parts[1])
-                except ValueError:
-                    continue
-    except Exception as e:  # noqa: BLE001
-        logger.warning("MainWindowHandle 查询失败: %s", e)
-    return handle_map
-
-
 def scan_ghost_windows() -> list[dict[str, Any]]:
-    """扫描所有 TRAE 幽灵窗口（MainWindowHandle=0 且无对应可见窗口的 window-config）。
+    """扫描 Trae 幽灵嫌疑进程（子进程父死）。零副作用（只读），纯 psutil。
 
-    零副作用（只读）。返回 [{config_id, pids, pid_count}]。
-    消费方：process_reaper 周期清理；resource_optimization snapshot 指标采集。
+    返回 [{pid, reason, cmdline}]。函数名保留（resource_optimization 消费 len() 做指标），
+    语义从「WMI 窗口观测」升级为「内核态拓扑嫌疑」——指标含义更准（真嫌疑数）。
     """
-    procs = _get_trae_processes()
-    if not procs:
+    if psutil is None:
         return []
+    procs = _snapshot_all_processes()
+    suspects: list[dict[str, Any]] = []
+    for pid, info in procs.items():
+        reason = classify_trae_process(
+            pid=pid,
+            name=info["name"],
+            cmdline=info["cmdline"],
+            ppid=info["ppid"],
+            create_time=info["create_time"],
+            procs=procs,
+        )
+        if reason:
+            suspects.append({"pid": pid, "reason": reason, "cmdline": info["cmdline"][:120]})
+    return suspects
 
-    all_pids = [p["pid"] for p in procs]
-    windows = _get_window_configs_from_cmdlines(all_pids)
-    visible = _get_visible_window_configs()
-    handle_map = _get_mainwindow_handle_map()
 
-    ghosts: list[dict[str, Any]] = []
-    for config_id, pids in windows.items():
-        if config_id in visible:
-            continue
-        ghost_pids = [pid for pid in pids if pid in handle_map and handle_map[pid] == 0]
-        if ghost_pids:
-            ghosts.append(
-                {
-                    "config_id": config_id,
-                    "pids": sorted(ghost_pids),
-                    "pid_count": len(ghost_pids),
-                }
-            )
-    return ghosts
+def _load_ghost_suspects() -> dict[str, Any]:
+    """加载嫌疑状态。文件损坏/缺失按空状态处理（fail-safe：空状态=从零累计，不杀）。"""
+    try:
+        if _GHOST_SUSPECTS_FILE.exists():
+            data = json.loads(_GHOST_SUSPECTS_FILE.read_text(encoding="utf-8"))
+            if isinstance(data, dict) and isinstance(data.get("suspects"), dict):
+                return data
+    except (OSError, ValueError) as e:
+        logger.warning("ghost_suspects 状态读取失败（按空状态处理）: %s", e)
+    return {"version": 1, "suspects": {}}
+
+
+def _save_ghost_suspects(state: dict[str, Any]) -> None:
+    """原子写状态（tmp + os.replace，与 _write_status 同模式）。"""
+    try:
+        _GHOST_SUSPECTS_FILE.parent.mkdir(parents=True, exist_ok=True)
+        tmp = _GHOST_SUSPECTS_FILE.parent / f"ghost_suspects.{os.getpid()}.tmp"
+        tmp.write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding="utf-8")
+        os.replace(tmp, _GHOST_SUSPECTS_FILE)
+    except OSError as e:
+        logger.warning("ghost_suspects 状态落盘失败: %s", e)
+
+
+def _advance_ghost_state(
+    state: dict[str, Any],
+    current: dict[int, dict[str, Any]],
+    now: str,
+) -> tuple[dict[str, Any], list[int]]:
+    """状态机演进（纯函数，可单测）。返回 (新状态, 达到斩杀线的 PID 列表)。
+
+    规则：仍在嫌疑 -> strikes+1；不再嫌疑（父活/进程消失）-> 出列；新嫌疑 -> 入列。
+    strikes >= _GHOST_STRIKES_TO_KILL 进入斩杀线（是否真杀由 kill 前复查决定）。
+    """
+    suspects: dict[str, Any] = state.get("suspects", {})
+    new_suspects: dict[str, Any] = {}
+    kill_ready: list[int] = []
+    current_keys = {str(pid) for pid in current}
+    for key in list(suspects.keys()):
+        if key not in current_keys:
+            logger.info("ghost suspect %s 出列（本轮恢复/消失）", key)
+    for pid, info in current.items():
+        key = str(pid)
+        entry = suspects.get(key)
+        if entry is None:
+            entry = {"strikes": 0, "first_seen": now, "reason": info["reason"], "cmdline": info["cmdline"]}
+        entry["strikes"] = int(entry.get("strikes", 0)) + 1
+        entry["last_seen"] = now
+        entry["reason"] = info["reason"]
+        new_suspects[key] = entry
+        if entry["strikes"] >= _GHOST_STRIKES_TO_KILL:
+            kill_ready.append(pid)
+    return {"version": 1, "suspects": new_suspects}, kill_ready
 
 
 def kill_ghost_windows(ghosts: list[dict[str, Any]] | None = None) -> list[int]:
-    """Force kill 幽灵窗口进程树。不传 ghosts 时自动扫描。返回被 kill 的 PID 列表。"""
+    """Force kill 幽灵嫌疑进程，kill 前复查赦免：重新枚举进程表重跑判据，
+    父复活/进程已死/标记不符一律赦免不杀。返回实际被 kill 的 PID 列表。"""
     import signal as _signal
 
     if ghosts is None:
         ghosts = scan_ghost_windows()
-
+    if not ghosts:
+        return []
+    # kill 前复查：现场快照重跑判据（动杀前最后一次赦免机会）
+    recheck = _snapshot_all_processes() if psutil is not None else {}
     killed: list[int] = []
     for ghost in ghosts:
-        for pid in ghost["pids"]:
+        pid = ghost["pid"]
+        info = recheck.get(pid)
+        if info is None:
+            logger.info("ghost PID %d 复查时已自行退出，赦免", pid)
+            continue
+        reason = classify_trae_process(
+            pid=pid,
+            name=info["name"],
+            cmdline=info["cmdline"],
+            ppid=info["ppid"],
+            create_time=info["create_time"],
+            procs=recheck,
+        )
+        if reason is None:
+            logger.warning("ghost PID %d kill 前复查赦免（父复活/标记不符）", pid)
+            continue
+        try:
+            os.kill(pid, _signal.SIGTERM)
+            killed.append(pid)
+            logger.info("killed ghost PID %d (%s)", pid, reason)
+        except OSError:
             try:
-                os.kill(pid, _signal.SIGTERM)
+                psutil.Process(pid).terminate()
                 killed.append(pid)
-                logger.info("killed ghost PID %d (config=%s)", pid, ghost["config_id"])
-            except OSError:
-                try:
-                    psutil.Process(pid).terminate()
-                    killed.append(pid)
-                    logger.info("psutil-terminated ghost PID %d", pid)
-                except Exception:  # noqa: BLE001
-                    logger.warning("failed to kill ghost PID %d", pid, exc_info=True)
+                logger.info("psutil-terminated ghost PID %d", pid)
+            except Exception:  # noqa: BLE001
+                logger.warning("failed to kill ghost PID %d", pid, exc_info=True)
     return killed
 
 
 def _reap_ghost_windows(dry_run: bool) -> dict[str, int]:
-    result = {"scanned": 0, "killed": 0}
+    """幽灵清理主流程：扫描 -> 状态机演进 -> 斩杀线复查 kill -> 状态落盘。
+
+    dry-run：状态机照常演进落盘（验证可观测 strikes 递增），但只 log 不杀。
+    """
+    result = {"scanned": 0, "killed": 0, "tracking": 0}
     try:
-        ghosts = scan_ghost_windows()
-        result["scanned"] = len(ghosts)
-        if ghosts and not dry_run:
-            killed = kill_ghost_windows(ghosts)
-            result["killed"] = len(killed)
-            for pid in killed:
-                _log_kill(pid, "trae_ghost_window", dry_run=False)
-        elif ghosts:
-            logger.info("[dry-run] 检测到 %d 个幽灵窗口，不执行 kill", len(ghosts))
-    except Exception as e:  # noqa: BLE001 — 幽灵窗口扫描失败不阻断 python 进程清理主流程
-        logger.warning("幽灵窗口扫描异常（跳过）: %s", e)
+        suspects = scan_ghost_windows()
+        result["scanned"] = len(suspects)
+        state = _load_ghost_suspects()
+        current = {s["pid"]: s for s in suspects}
+        now = time.strftime("%Y-%m-%d %H:%M:%S")
+        state, kill_ready = _advance_ghost_state(state, current, now)
+        result["tracking"] = len(state["suspects"])
+        if kill_ready:
+            if dry_run:
+                logger.info(
+                    "[dry-run] %d 个嫌疑达斩杀线（strikes>=%d），不执行 kill",
+                    len(kill_ready),
+                    _GHOST_STRIKES_TO_KILL,
+                )
+                for pid in kill_ready:
+                    _log_kill(pid, state["suspects"][str(pid)]["reason"], dry_run=True)
+            else:
+                kill_list = [{**state["suspects"][str(pid)], "pid": pid} for pid in kill_ready]
+                killed = kill_ghost_windows(kill_list)
+                result["killed"] = len(killed)
+                for pid in killed:
+                    _log_kill(pid, state["suspects"][str(pid)]["reason"], dry_run=False)
+                    state["suspects"].pop(str(pid), None)  # 被杀的出列；未杀成的留列下轮复查
+        _save_ghost_suspects(state)
+    except Exception as e:  # noqa: BLE001 — 幽灵扫描异常不阻断主流程，fail-safe 方向=不动作
+        logger.warning("幽灵进程扫描异常（跳过，fail-safe 不动作）: %s", e)
     return result
 
 
@@ -575,21 +666,15 @@ def _reap_ghost_windows(dry_run: bool) -> dict[str, int]:
 
 def _collect_drift_metrics(dry_run: bool) -> dict[str, Any]:
     """git stash>5 自动清理 + worktree 变更>50 告警记录。"""
-    from zephyr.shared.infra.process_pool import run_subprocess_hidden
-
     metrics: dict[str, Any] = {"stash_count": None, "worktree_changes": None}
     try:
-        r = run_subprocess_hidden(
-            ["git", "stash", "list"], capture_output=True, text=True, cwd=str(REPO_ROOT), timeout=30
-        )
+        r = _run_hidden(["git", "stash", "list"], cwd=str(REPO_ROOT), timeout=30)
         if r.returncode == 0:
             metrics["stash_count"] = len([l for l in r.stdout.splitlines() if l.strip()])
     except Exception as e:  # noqa: BLE001 — drift 采集失败不阻断主流程
         logger.warning("git stash list 失败: %s", e)
     try:
-        r = run_subprocess_hidden(
-            ["git", "status", "--porcelain"], capture_output=True, text=True, cwd=str(REPO_ROOT), timeout=60
-        )
+        r = _run_hidden(["git", "status", "--porcelain"], cwd=str(REPO_ROOT), timeout=60)
         if r.returncode == 0:
             metrics["worktree_changes"] = len([l for l in r.stdout.splitlines() if l.strip()])
     except Exception as e:  # noqa: BLE001
@@ -601,11 +686,9 @@ def _collect_drift_metrics(dry_run: bool) -> dict[str, Any]:
         else:
             logger.warning("stash=%d > 5，自动清理（保留最新3）", metrics["stash_count"])
             try:
-                run_subprocess_hidden(
+                _run_hidden(
                     [sys.executable, "scripts/governance/cleanup_stash.py", "--cleanup"],
                     cwd=str(REPO_ROOT),
-                    capture_output=True,
-                    text=True,
                     timeout=60,
                 )
             except Exception as e:  # noqa: BLE001
