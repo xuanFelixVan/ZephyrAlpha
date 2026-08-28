@@ -631,6 +631,15 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 266 | CAND-CRYPTO-001 翻 promoted + CAND-CRYPTO-007 币版回测三件套实例登记 | AI-CAL-001 长城任务（2026-08-28） | ①CAND-CRYPTO-001 status→promoted（586cea89，evidence/outcome/promoted_to 同步）；②三注册表币版实例（UNI-CRYPTO-001 BTC+ETH MVP 池/BMK-CRYPTO-001 BTC 买入持有基准/CST-CRYPTO-001 maker/taker 成本模型），market:crypto 字段按 94号 §4.5 数据闸裁定（3675a605）；W2 波次 007 前置就绪（001+002 blocked_by 001 已 promoted） | ✅ 已闭环（2026-08-28，两 commit） |
 
 
+### 波 2a · 2026-08-28 打板三符号+PIT 注入（AI-WAVE2A-001，路线图 A2）登记
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 267 | depgraph 设计态节点只登记不流转 | AI-WAVE2A-001 | daban_execution.py 设计态节点 node_id=10911653（MOD-EX-001/D_EX_CORE/planned/file 粒度）已登记；按 SOP Step 8 分流口径会话内不流转 production——统筹 merge 后由 #ARCH-70 同身份 UPDATE 通道自动转正，merge 执行人需实证核验节点双态。另：daban_pit_safety 新增依赖 zephyr.data.trading_calendar（延迟导入），边由 depgraph 生成器下轮重建自动派生，merge 后一并核验 | ⏳ 待统筹 merge 后核验 |
+| 268 | 打板族无独立 blueprint.md（族级存量） | AI-WAVE2A-001 | daban_execution.py 与既有打板六件同挂 MOD-EX-001（apply_depgraph 登记时"蓝图文件不存在"WARNING 如实留痕）；既有五件施工时同例未建蓝图，属族级存量非本批新增缺口——如统筹裁定需为打板族补建 blueprint，另行安排 | ⏳ 待统筹裁定 |
+| 269 | DabanTimingDecision WAIT 分支 spec 死代码观察 | AI-WAVE2A-001 | §3.14#11 spec 概率公式下限 0.5（base 0.5+非负增量），decide_timing 两条 WAIT 分支（seal_prob<50%）不可达——已按"spec 语义锁定"逐字保留并登记于模块 docstring+24 号 v1.10.7 修订记录；Phase 3 回测校准概率模型时复核（不擅自改 spec） | ⏳ Phase 3 校准期复核 |
+
+
 ### P0 · 2026-08-21 到期前全功能总账施工批（P0 批统筹会话，任务源=pre_expiry_full_backlog_roadmap.md）
 
 > 分工裁定（2026-08-21 Owner）：P0-2①②④+P0-3 归「残余四项专项批」另案，P0-2③ 另案已闭环（实测两空壳库不存在），P0-7 延后（另案 gov_drift 同域施工中防基线污染）；本会话接 P0-1②/P0-2⑤/P0-4/P0-5/P0-6。总账 §1 已标注防双头施工。

@@ -22,9 +22,9 @@ ttl: task_bound
 
 | # | 缺口 | 出处文档 | 缺口内容 | 代码实证 | 建议波次 |
 |---|---|---|---|---|---|
-| A1 | B4 S2 翻 true 收尾重验 | [13号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md) / [14号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/14_regime_s2_diagnosis.md) | E9 五子项已落码但未重跑 B4 验证器将 historical_events.yaml 三事件 design_match 翻回 true；翻正后 13 号 draft→active；RLSP（Phase 5）、P2-E8 扫描未做 | overlay_features.py 五函数+regime_detector keys_or_gte 已在位 | 波 1 |
-| A2 | 打板三符号+PIT 注入 | [24号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/24_daban_strategy_detail.md) | DabanExecutionAlgorithm / DabanTimingDecision / DynamicCapacityCalculator 三符号零命中；DabanPITBacktestFramework 骨架态未注入 | ex_core/daban_*.py 五文件已在位 | 波 2 |
-| A3 | 板块资金性质聚合+多周期动量 | [22号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md) | aggregate_capital_nature_to_sector 零命中；q3 多 TF 动量加权未见 | sector_rrg/sector_divergence/sector_siphon 已在位 | 波 2 |
+| A1 | B4 S2 翻 true 收尾重验 | [13号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md) / [14号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/14_regime_s2_diagnosis.md) | ⚠️ **2026-08-28 重验未通过（0/3，design_match 维持 false，13 号保持 draft，AI-WAVE1-001 生产路径逐日实证）**：①E9a capitulation 三事件 ±25 交易日全程 0（三过滤器联玩过严——A 股暴跌日 close≈low 致下影线比≈0，叠加衰减 w₀≈0.09，trigger≥60 不可达）；②E9b 路 A CAPE 未接线（待 daily_valuation 管道）；③E9e three_yang 窗口全 0。后续=capitulation 过滤器/衰减参数按 14 号 §4.5 walk-forward 校准（非降阈值凑分）+路 A 管道建设 | overlay_features.py 五函数+keys_or_gte 已在位 | ~~波 1~~ 转校准专项（新立项，见 §四 注记） |
+| ~~A2~~ | ~~打板三符号+PIT 注入~~ ✅ 已完工（2026-08-28 波 2a，AI-WAVE2A-001，commit 待统筹统一提交） | [24号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/24_daban_strategy_detail.md) | ~~DabanExecutionAlgorithm / DabanTimingDecision / DynamicCapacityCalculator 三符号零命中；DabanPITBacktestFramework 骨架态未注入~~ → 三符号落码 `ex_core/daban_execution.py`（23 用例）；`from_db_session` 真依赖注入（+5 用例）；两轮全绿零回归 | ex_core/daban_*.py 七文件在位 | ~~波 2~~ 已闭环 |
+| ~~A3~~ | ~~板块资金性质聚合+多周期动量~~ ✅ 已完工（2026-08-28 波 2b，AI-WAVE2B-001，D1 查重命中——前序 fff6ea6bfc 已落码，零新增源码） | [22号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md) | ~~零命中~~ → 既有实证：sector_breadth.py（aggregate_capital_nature_to_sector+capital_nature_multiplier，37 用例）+sector_momentum.py（multi_tf_momentum 0.4×q20+0.3×q5+0.3×q3，15 用例，已被 sector_report_builder 消费）；本波=实证核验 2 轮 52+2395 全绿+治理补登（4 token+4 中文名）+22 号 v1.9.9 纠偏 | 同上 | ~~波 2~~ 已闭环 |
 | A4 | 回测四核心模块零单测 | [52号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/52_backtest_framework_docking.md) | engine_base/matching_logic/portfolio/metrics 四核心模块零直接单测（测试债） | tests/backtest/ 仅 3 件实证 | 波 2 |
 | A5 | 事件漏斗 BM-SEL-19 | [26号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/26_event_driven_strategy_detail.md) | BM-SEL-19 / MOD-SIG-049 漏斗零命中 | event_score.py 全族已在位 | 波 3 |
 | A6 | GAP-2 常驻服务化 | [57号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/57_daily_cycle_sop.md) | LiveStrategyAdapter 模拟盘常驻服务未做（当前为拉起脚本 MVP） | start_paper_session.py 已在位 | 波 3 |
@@ -38,11 +38,11 @@ ttl: task_bound
 | A14 | 执行层 Phase 2 项 | [40号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/40_execution_broker.md) | 拒单分类实际动作 Saga 接管 / 盘后全量对账 Phase 2 / 盘后固定价格交易 | order_manager/saga/cancel_rate_guard 已在位 | 波 5 |
 | A15 | 监控暂缓项复评 | [55号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/55_monitoring_review.md) | Email/WeChat sender 实发 / miniQMT 链路探针 / 偏离归因分解 H-A~D / 模板引擎固化（暂缓带重评条件，先复评再定施工面） | MOD-RK-23/MOD-RPT-009/threshold_loader 已在位 | 波 5 |
 | A16 | CPCV+PBO 过拟合增强 | [52号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/52_backtest_framework_docking.md) | CPCV+PBO 设计内延期（过拟合检测增强） | deflated_sharpe/overfitting_adjudicator 已在位 | 波 5 |
-| A17 | Q8 parts>100 告警 | [64号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/64_data_source_download_spec.md) | ClickHouse data parts>100 告警零命中（§16.2 裁定施工 14 项中唯一未落） | source_circuit_breaker 等同族已在位 | 波 0 |
-| A18 | 8 态预测口径回切 | [90号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/90_methodology_open_questions.md) | #7 T+1 8 态预测"暂缓建设"裁定文字 vs 代码现状（next_day_8state_forecast.py MOD-SIG-037 已 production）矛盾，需回切口径 | 代码已 production | 波 0 |
-| A19 | CAND-CRYPTO-007 翻 promoted | [94号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/94_crypto_quant_expansion.md) | 回测三件套实例已登记但 CAND 条目仍 candidate，evidence/promoted_to 补全翻牌 | UNI/BMK/CST-CRYPTO-001 已在位 | 波 0 |
-| A20 | 回测历史回灌评估 | [50号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/50_backtest_observability_workplan.md) | 历史回测结果向 experiment_tracking 回灌的评估（小遗留） | 6 适配器已全落 | 波 0 |
-| A21 | task_board 死信标签联动 | [66号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/66_commit_queue_serialization.md) | commit queue 死信与 task_board 标签联动（P1） | commit_queue.py/landing.py 已在位 | 波 0 |
+| ~~A17~~ | ~~Q8 parts>100 告警~~ ✅ 已完工（2026-08-28 波 0，AI-WAVE0-001） | [64号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/64_data_source_download_spec.md) | ~~零命中~~ → 实证监控主体 ch_parts_monitor.py 已于 08-20 在位，真尾巴=阈值 100 硬编码；本波=THD-HEALTH-005 入注册表（v1.3.0）+fail-closed 统读接线+4 新用例+一致性守卫 35→36，两轮 102 passed | 同上 | ~~波 0~~ 已闭环 |
+| ~~A18~~ | ~~8 态预测口径回切~~ ✅ 已完工（2026-08-28 波 0，AI-WAVE0-001） | [90号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/90_methodology_open_questions.md) | ~~口径矛盾~~ → 90 号 v2.1.0 六处回切：预测模块（MOD-SIG-037 只出概率分布）登记为既有模块，暂缓对象收敛为 8 态→决策消费链，历史裁定原文全保留 | 同上 | ~~波 0~~ 已闭环 |
+| ~~A19~~ | ~~CAND-CRYPTO-007 翻 promoted~~ ✅ 已完工（2026-08-28 波 0 实证已闭环，零改动） | [94号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/94_crypto_quant_expansion.md) | ~~仍 candidate~~ → 实证条目已 promoted（promoted_to 指向三件套，2026-08-28 已落），任务背景为旧快照 | 同上 | ~~波 0~~ 已闭环 |
+| ~~A20~~ | ~~回测历史回灌评估~~ ✅ 已完工（2026-08-28 波 0，AI-WAVE0-001） | [50号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/50_backtest_observability_workplan.md) | ~~小遗留~~ → 评估落盘 docs/_working/reports/2026-08-28-backfill-evaluation.md，结论=**按需回灌（当前不回灌）**：唯一候选源知识已由 md 承载、无批量积压、与 51 号口径一致；附触发条件与实现要点 | 同上 | ~~波 0~~ 已闭环 |
+| ~~A21~~ | ~~task_board 死信标签联动~~ ✅ 已完工（2026-08-28 波 0，AI-WAVE0-001） | [66号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/66_commit_queue_serialization.md) | ~~P1~~ → tag_dead_letter 函数抽出+commit_queue 死信分支接入（meta.task_id 存在时打标，不存在/不可达宁漏不阻断）+5 新用例，两轮 108 passed；66 号回填闭环标注 | 同上 | ~~波 0~~ 已闭环 |
 | A22 | 期指 tick 采集+A50 数据源评估 | [44号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/44_premarket_intraday_decision_upgrade.md) | 期货分钟/tick 采集 symbols 未配置（配置即施工）；A50 通道数据源评估落地（日韩已裁定砍） | 期指日频/ES/NQ 通道已在位 | 波 3 |
 
 ### B 类：外部条件阻塞（触发即转 A 类，21 项）
@@ -157,6 +157,8 @@ B 类触发链（条件达成自动转 A 类插入对应波次）：
 - A11（前端页）与全部后端波次零文件冲突，是唯一可立即开工的大件。
 - B5（44 号启用）是 A 类多项的"价值放大器"——M1/M2/M3 模块已落码但未启用，启用后盘前/盘中决策链才真正生产化，建议 Owner 尽早排审批窗口。
 
+**校准专项（2026-08-28 波 1 实证新立项，A1 转入）**：S2 翻 true 双前置——①capitulation 过滤器/衰减参数按 14 号 §4.5 walk-forward 校准（三过滤器联玩过严，A 股暴跌日下影线比≈0 致全程 0 分；非降阈值凑分）；②路 A CAPE 分位管道（daily_valuation）建设+builder 接线。两项达成前 13 号保持 draft。排期建议：随波 3 数据域一并议。
+
 ## 五、登记纪律
 
 1. **每推进一项**：复扫本文档更新状态（勾销 + commit hash + 日期），走 GitCommitGateway 提交。
@@ -170,3 +172,4 @@ B 类触发链（条件达成自动转 A 类插入对应波次）：
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
 | 2026-08-28 | 1.0.0 | 初版：85 篇全量审查批产出——A 类 22 项/B 类 21 项/C 类 10 项/GP1+ 13 项全量登记+波次 0-5 派单 | Owner 指令建剩余施工项统一派单真源；两项范围裁定（tracker 引用不复制/GP1+ 单列分期区） |
+| 2026-08-28 | 1.1.0 | 波 0 五项全闭环（A17-A21，A19 实证已闭环零改动/A20 结论按需回灌）；波 2a/2b 闭环（A2 三符号落码 44 新用例/A3 查重命中零新增源码）；波 1 重验未通过（0/3）→A1 转校准专项（§四 注记新立项） | 波 0-2 施工回收；波 1 真实验证结论驱动计划修正（capitulation 过严+路 A 未接线，非简单降阈值可解） |
