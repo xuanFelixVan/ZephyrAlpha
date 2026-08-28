@@ -4,7 +4,7 @@ submodule_path: src/zephyr/security/access_control/orphan_judge
 title: "Orphan Judge 蓝图 — 孤儿判定器·三决策树处置"
 doc_type: blueprint
 status: Active
-version: "2.1.5"
+version: "2.1.6"
 layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
@@ -112,7 +112,7 @@ END_REQUIRED_SECTIONS
 
 # Orphan Judge 蓝图 — 孤儿判定器·三决策树处置
 
-> module_id: MOD-INF-029 | version: 2.1.5 | status: Active | layer: cross_layer
+> module_id: MOD-INF-029 | version: 2.1.6 | status: Active | layer: cross_layer
 > actual_disk_path: src/zephyr/orphan-judge/ | generation: 3 | construction_progress: scaffold
 
 ## 概述
@@ -1426,26 +1426,20 @@ STEP 3: 拆分后验证
 |---------|:---:|------|
 | `src/zephyr/security/access_control/orphan_judge/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/__main__.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/orphan_judge/cascade_analyzer.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/config_loader.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/db.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/orphan_judge/decision_table.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/orphan_judge/deprecation_tracker.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/drift_bridge.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/duplicate_detector.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/escalation_bridge.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/feedback_bridge.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/orphan_judge/judge.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/kb_bridge.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/mcp_integration.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/models.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/orphan_collector.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/orphan_judge/orphan_detector.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/rbac_bridge.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/reference_graph_engine.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/registration_checker.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/report_generator.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/orphan_judge/safety_fence.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/standalone_evaluator.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/swid_tag.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/unique_analyzer.py` | ✅ 已实现 | |

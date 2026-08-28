@@ -3,7 +3,7 @@ module_id: MOD-POS-004
 title: "再平衡引擎蓝图 — 成本收益判定+三级触发"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 design_maturity: production
 ttl: permanent
 layer: L03_position
@@ -109,7 +109,7 @@ responsibility_domain:
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-POS-004 | MOD-POS-004 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | N/A | — |
+| build_status | production | N/A | — |
 | file_count | 1 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -127,7 +127,7 @@ responsibility_domain:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/position/core/rebalance_engine.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 8.5 路径索引使用指南
 

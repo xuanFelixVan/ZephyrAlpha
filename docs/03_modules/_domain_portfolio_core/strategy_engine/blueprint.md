@@ -3,7 +3,7 @@ module_id: MOD-PF-001
 title: "策略引擎蓝图 — 生命周期状态机 + 四维决策 + OCP-002 扩展"
 doc_type: blueprint
 status: Active
-version: "0.1.4"
+version: "0.1.5"
 ttl: permanent
 layer: L02_portfolio_core
 layer_name: portfolio_core
@@ -147,7 +147,6 @@ registered → testing → active → deprecated
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/pf_core/core/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/pf_core/core/strategy_engine.py` | ✅ 已实现 | |
 
 ### 8.2 测试文件
 

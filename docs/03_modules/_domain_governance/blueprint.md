@@ -3,7 +3,7 @@ module_id: MOD-GOVERNANCE
 title: "Governance Domain 蓝图 — Agent治理八件套跨模块集成契约"
 doc_type: blueprint
 status: Active
-version: "0.13.11"
+version: "0.13.12"
 layer: L1_foundation
 layer_name: domain
 blueprint_level: domain
@@ -2170,59 +2170,21 @@ STEP 3: 拆分后验证
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/gov_enforcement/behavioral_admission/admission_response.py` | ✅ 已实现 | |
-| `src/zephyr/gov_enforcement/behavioral_admission/ai_code_standards.py` | ✅ 已实现 | |
-| `src/zephyr/gov_enforcement/behavioral_admission/code_review_ai.py` | ✅ 已实现 | |
-| `src/zephyr/gov_enforcement/behavioral_admission/mcp_result_push.py` | ✅ 已实现 | |
-| `src/zephyr/gov_enforcement/behavioral_admission/post_process.py` | ✅ 已实现 | |
-| `src/zephyr/gov_enforcement/behavioral_admission/vibe_coding_enforcer.py` | ✅ 已实现 | |
-| `src/zephyr/gov_rule/constitutional_update/constitutional_update.py` | ✅ 已实现 | |
-| `src/zephyr/governance/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/governance/architecture_governance/architecture_contracts.py` | ✅ 已实现 | |
-| `src/zephyr/governance/architecture_governance/architecture_principles.py` | ✅ 已实现 | |
-| `src/zephyr/governance/architecture_governance/cross_env_consistency.py` | ✅ 已实现 | |
-| `src/zephyr/governance/architecture_governance/dependency_manager.py` | ✅ 已实现 | |
 | `src/zephyr/governance/architecture_governance/llm_impact_analyzer.py` | ✅ 已实现 | |
 | `src/zephyr/governance/architecture_governance/local_first_arch.py` | ✅ 已实现 | |
-| `src/zephyr/governance/architecture_governance/path_resolver.py` | ✅ 已实现 | |
 | `src/zephyr/governance/context_governance/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/governance/context_governance/prompt_lifecycle.py` | ✅ 已实现 | |
 | `src/zephyr/governance/data_governance/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/governance/data_governance/data_classification.py` | ✅ 已实现 | |
-| `src/zephyr/governance/data_governance/data_lifecycle.py` | ✅ 已实现 | |
-| `src/zephyr/governance/data_governance/data_quality.py` | ✅ 已实现 | |
-| `src/zephyr/governance/data_governance/data_source_reliability.py` | ✅ 已实现 | |
-| `src/zephyr/governance/data_governance/realtime_streaming.py` | ⚠️ 骨架 | |
-| `src/zephyr/governance/financial_governance/financial_compliance.py` | ✅ 已实现 | |
-| `src/zephyr/governance/financial_governance/fsm_verifier.py` | ✅ 已实现 | |
 | `src/zephyr/governance/financial_governance/microstructure_defense.py` | ✅ 已实现 | |
-| `src/zephyr/governance/financial_governance/oms_risk_engine.py` | ✅ 已实现 | |
-| `src/zephyr/governance/financial_governance/strategy_portfolio.py` | ✅ 已实现 | |
-| `src/zephyr/governance/intelligence_governance/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/governance/intelligence_governance/agent_debate.py` | ✅ 已实现 | |
-| `src/zephyr/governance/intelligence_governance/ai_self_diagnosis.py` | ✅ 已实现 | |
 | `src/zephyr/governance/intelligence_governance/multi_model_consensus.py` | ✅ 已实现 | |
 | `src/zephyr/governance/lifecycle_governance/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/governance/lifecycle_governance/ai_behavior_baseline.py` | ✅ 已实现 | |
-| `src/zephyr/governance/lifecycle_governance/api_lifecycle.py` | ✅ 已实现 | |
 | `src/zephyr/governance/lifecycle_governance/migration_strategy.py` | ✅ 已实现 | |
-| `src/zephyr/governance/lifecycle_governance/paper_live_transition.py` | ✅ 已实现 | |
-| `src/zephyr/governance/lifecycle_governance/post_live_verification.py` | ✅ 已实现 | |
-| `src/zephyr/governance/lifecycle_governance/retirement_workflow.py` | ✅ 已实现 | |
-| `src/zephyr/governance/lifecycle_governance/strategy_archive.py` | ✅ 已实现 | |
-| `src/zephyr/governance/lifecycle_governance/strategy_retirement_evaluator.py` | ✅ 已实现 | |
 | `src/zephyr/governance/observability_governance/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/governance/observability_governance/observability_dashboard.py` | ✅ 已实现 | |
 | `src/zephyr/governance/ops_governance/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/governance/ops_governance/agent_dispatch.py` | ✅ 已实现 | |
 | `src/zephyr/governance/ops_governance/decision_fatigue.py` | ✅ 已实现 | |
 | `src/zephyr/governance/ops_governance/environment_manager.py` | ✅ 已实现 | |
-| `src/zephyr/governance/ops_governance/phase_check_registry.py` | ✅ 已实现 | |
-| `src/zephyr/governance/ops_governance/phase_manager.py` | ✅ 已实现 | |
 | `src/zephyr/governance/ops_governance/startup_shutdown.py` | ✅ 已实现 | |
-| `src/zephyr/governance/ops_governance/startup_shutdown_cli.py` | ✅ 已实现 | |
-| `src/zephyr/governance/persistence/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/governance/resilience_governance/bus_factor_defense.py` | ✅ 已实现 | |
-| `src/zephyr/governance/resilience_governance/fault_tolerance.py` | ✅ 已实现 | |
 | `src/zephyr/governance/resilience_governance/offline_autonomy.py` | ⚠️ 骨架 | |
 | `src/zephyr/governance/resilience_governance/offline_resilience.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/runtime/__init__.py` | ⚠️ 骨架 | |

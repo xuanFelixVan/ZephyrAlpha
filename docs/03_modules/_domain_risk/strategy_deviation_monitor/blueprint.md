@@ -3,7 +3,7 @@ module_id: MOD-RK-23
 title: "策略偏离监控器蓝图 — 实盘 vs 回测净值偏离双口径持续度量（55 号 G26 §3.4）"
 doc_type: blueprint
 status: Active
-version: "0.1.21"
+version: "0.1.22"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
@@ -16,7 +16,7 @@ priority: P1
 blueprint_level: module
 responsibility_domain: 
 design_maturity: production
-build_status: stable
+build_status: production
 ---
 
 # MOD-RK-23 Strategy Deviation Monitor — 策略偏离监控器 蓝图
@@ -93,14 +93,7 @@ tests/risk/core/test_strategy_deviation_monitor.py——阈值加载/三档判�
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
 
-### 10.1 源码文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `src/zephyr/risk/core/deviation_attribution.py` | ✅ 已实现 | |
-| `src/zephyr/risk/core/strategy_deviation_monitor.py` | ✅ 已实现 | |
-
-### 10.2 测试文件
+### 10.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
@@ -144,7 +137,7 @@ tests/risk/core/test_strategy_deviation_monitor.py——阈值加载/三档判�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-RK-23 | MOD-RK-23 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 4 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

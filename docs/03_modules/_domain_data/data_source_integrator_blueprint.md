@@ -16,7 +16,7 @@ construction_progress: stage4_done
 language: zh
 description: 统一管理多个数据源的自动下载——Provider 抽象 + per-source 策略注册表 + APScheduler 调度编排 + 进度/告警统一管理
 responsibility_domain: 
-build_status: testing
+build_status: production
 design_maturity: design
 ---
 

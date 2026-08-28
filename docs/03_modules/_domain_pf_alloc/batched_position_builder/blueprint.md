@@ -3,7 +3,7 @@ module_id: MOD-PA-006
 title: "分批建仓引擎 — C-031置信度驱动分批建仓+尾盘集中执行+限价锚定+资金pro-rata兜底"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 ttl: permanent
 layer: L2_domain
 functional_domain: pf_alloc
@@ -23,14 +23,14 @@ ssot_claims:
   - {claim: "Batch/BatchedEntryPlan 数据契约唯一真源", scope: "module"}
 responsibility_domain: 
 design_maturity: production
-build_status: stable
+build_status: production
 language: zh
 generation: 1
 summary: "BM-BUY-04 分批建仓引擎：消费 31 号 FirmTargetPortfolio，C-031 置信度驱动 2 批/激进 1 批，尾盘 14:50-14:57 集中执行，限价锚定，资金 pro-rata 兜底，突破失败降级联动 42 号"
 ---
 # Batched Position Builder 蓝图+施工图 — 分批建仓引擎 — C-031置信度驱动分批建仓+尾盘集中执行+限价锚定+资金pro-rata兜底
 
-> module_id: MOD-PA-006 | version: 0.1.2 | status: Active | layer: L2_domain (pf_alloc)
+> module_id: MOD-PA-006 | version: 0.1.3 | status: Active | layer: L2_domain (pf_alloc)
 > actual_disk_path: src/zephyr/pf_alloc/batched_position_builder.py | generation: 1
 > 设计真源: 41_buy_flow v1.7.0 §3.2-§3.6 | 施工性质: 回填蓝图（代码已完工，83用例通过，2026-08-13 补建，遗留项 #29）
 
@@ -94,7 +94,7 @@ summary: "BM-BUY-04 分批建仓引擎：消费 31 号 FirmTargetPortfolio，C-0
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-PA-006 | MOD-PA-006 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 2 文件 | 1 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -513,13 +513,7 @@ class BatchedEntryPlan:
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 1.1 源码文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `src/zephyr/pf_alloc/batched_position_builder.py` | ✅ 已实现 | |
-
-### 1.2 测试文件
+### 1.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|

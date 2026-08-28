@@ -5,7 +5,7 @@ submodule_path: src/zephyr/infrastructure/a2a_protocol
 title: "A2A Protocol 蓝图 — Agent间通信协议与冲突解决"
 doc_type: blueprint
 status: Active
-version: "0.12.5"
+version: "0.12.6"
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: infra
@@ -78,7 +78,7 @@ design_maturity: production
 > **什么时候建**: 当同时活跃 AI Agent ≥3，或跨 Agent 任务依赖 ≥5，或 Owner 要求多 Agent 协作调度时。
 > **自动化宿主**: FLE `_periodic_checks()` → `_a2a_health_check()` + CircadianScheduler `hour=5` → `_a2a_discovery_scan()`
 
-> module_id: MOD-INF-025 | version: 0.12.5 | status: active | domain: infra_ops
+> module_id: MOD-INF-025 | version: 0.12.6 | status: active | domain: infra_ops
 > actual_disk_path: src/zephyr/infra_ops/a2a_protocol/ | generation: 3 | construction_progress: scaffold
 
 # A2A Protocol 蓝图 — Agent间通信协议与冲突解决
@@ -1462,11 +1462,7 @@ STEP 3: 拆分后验证
 | `src/zephyr/infrastructure/a2a_protocol/governance/audit_logger.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/governance/auditor.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/governance/error_codes.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/governance/governance_adapter.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/governance/phase_hold.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/governance/policy_engine.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/governance/protocol.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/governance/rate_limiter.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/governance/session_manager.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/layer1_discovery/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/a2a_protocol/layer2_communication/__init__.py` | ✅ 已实现 | |

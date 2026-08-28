@@ -3,7 +3,7 @@ module_id: MOD-RK-18
 title: "模型风险审计器蓝图 — 交易预测模型漂移/衰退/偏差审计"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
@@ -17,7 +17,7 @@ blueprint_id: MOD-RK-18
 domain_id: D_RISK
 path: src/zephyr/risk/core/model_risk_audit.py
 design_maturity: production
-build_status: stable
+build_status: production
 granularity: file
 ai_autonomy: ai_modifiable
 safety: L
@@ -84,7 +84,7 @@ D_RISK 域 A 类基础设施——交易预测模型漂移/衰退/偏差审计�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-RK-18 | MOD-RK-18 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -98,13 +98,7 @@ D_RISK 域 A 类基础设施——交易预测模型漂移/衰退/偏差审计�
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 6.1 源码文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `src/zephyr/risk/core/model_risk_audit.py` | ✅ 已实现 | |
-
-### 6.2 测试文件
+### 6.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|

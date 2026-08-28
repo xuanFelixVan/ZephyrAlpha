@@ -3,7 +3,7 @@ module_id: MOD-PLAN-003
 title: "尾盘决策引擎 — 14:45基于明日高/低开概率的加减仓决策（ADD/REDUCE/HOLD/EXIT）"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 ttl: permanent
 layer: L2_domain
 functional_domain: plan_engine
@@ -21,14 +21,14 @@ ssot_claims:
   - {claim: "尾盘决策阈值与规则（加仓>70%高开/减仓>60%低开/否则HOLD）唯一真源", scope: "module"}
 responsibility_domain: 
 design_maturity: production
-build_status: stable
+build_status: production
 language: zh
 generation: 1
 summary: "BM-PLAN-03 尾盘决策：14:45-15:00 基于今日盘中推演与持仓状态，明日高开概率>70%→ADD/低开概率>60%→REDUCE/否则HOLD；与 §3.4 尾盘窗口分工：本模块是预测驱动调仓决策层，§3.4 是建仓执行层"
 ---
 # Closing Session Decision 蓝图+施工图 — 尾盘决策引擎 — 14:45基于明日高/低开概率的加减仓决策（ADD/REDUCE/HOLD/EXIT）
 
-> module_id: MOD-PLAN-003 | version: 0.1.2 | status: Active | layer: L2_domain (plan_engine)
+> module_id: MOD-PLAN-003 | version: 0.1.3 | status: Active | layer: L2_domain (plan_engine)
 > actual_disk_path: src/zephyr/plan_engine/closing_session_decision.py | generation: 1
 > 设计真源: 41_buy_flow v1.7.0 §3.10.4 | 施工性质: 回填蓝图（代码已完工，83用例通过，2026-08-13 补建，遗留项 #29）
 
@@ -92,7 +92,7 @@ summary: "BM-PLAN-03 尾盘决策：14:45-15:00 基于今日盘中推演与持�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-PLAN-003 | MOD-PLAN-003 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 1 文件 | 1 文件（§0.1） | ✅ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -468,7 +468,7 @@ class BoundedActionAdvice:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/plan_engine/closing_session_decision.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 1.5 路径索引使用指南
 

@@ -3,7 +3,7 @@ module_id: MOD-CMP-002
 title: "四项严禁纪律闸蓝图 — 追高/补仓/骄傲/报复检测 + KillSwitchLite"
 doc_type: blueprint
 status: Active
-version: "0.1.20"
+version: "0.1.21"
 ttl: permanent
 design_maturity: production
 layer: L1_foundation
@@ -100,7 +100,7 @@ tests/compliance/test_discipline_prohibition_checker.py — 18 用例：四行�
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/compliance/discipline_prohibition_checker.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 9.5 路径索引使用指南
 
@@ -139,7 +139,7 @@ tests/compliance/test_discipline_prohibition_checker.py — 18 用例：四行�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-CMP-002 | MOD-CMP-002 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | N/A | — |
+| build_status | production | N/A | — |
 | file_count | 1 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

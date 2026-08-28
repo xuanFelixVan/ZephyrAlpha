@@ -3,7 +3,7 @@ module_id: MOD-EX-063
 title: "D-TRADING-05 Pre-Market Checker 盘前检查器蓝图 — 限额/纪律预检/数据完整性/系统就绪 MVP"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L06_execution
 layer_name: execution_core
@@ -18,7 +18,7 @@ blueprint_id: MOD-EX-063
 domain_id: D_EX_CORE
 path: src/zephyr/ex_core/premarket_checker.py
 design_maturity: production
-build_status: stable
+build_status: production
 granularity: file
 ai_autonomy: ai_modifiable
 safety: H
@@ -109,7 +109,7 @@ boot_hooks（MOD-INF-035）消费方列表登记为运行时装配（本模块�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-EX-063 | MOD-EX-063 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -127,13 +127,7 @@ boot_hooks（MOD-INF-035）消费方列表登记为运行时装配（本模块�
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/ex_core/premarket_checker.py` | ✅ 已实现 | |
-
-### 6.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/ex_core/test_premarket_checker.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 6.5 路径索引使用指南
 
@@ -148,3 +142,5 @@ boot_hooks（MOD-INF-035）消费方列表登记为运行时装配（本模块�
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

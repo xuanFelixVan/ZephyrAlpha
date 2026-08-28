@@ -39,7 +39,7 @@ template_for: ''
 title: 'D_BACKTEST 回测引擎域蓝图'
 ttl: permanent
 verifiability: automated
-version: 1.3.14
+version: 1.3.15
 responsibility_domain: 
 design_maturity: production
 build_status: generated
@@ -976,35 +976,11 @@ D_BACKTEST域当前7个模块(MVP),v1.1.0扩展到15个。容量阈值≤150,无
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/backtest/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/core/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/backtest/core/cpcv.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/core/data_handler.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/core/decision_gate.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/core/engine_base.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/core/matching_engine.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/core/matching_logic.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/core/metrics.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/core/overfitting_adjudicator.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/core/overfitting_detector.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/core/pit_manager.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/core/portfolio.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/core/preflight_checker.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/core/purged_kfold.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/core/strategy_validation_pipeline.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/core/tick_replay.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/core/walk_forward.py` | ✅ 已实现 | |
+| `src/zephyr/backtest/core/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/implementations/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/implementations/event_driven_engine.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/implementations/shrinkage_engine.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/implementations/vectorized_engine.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/io/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/io/backtest_result_sink.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/io/decisiongraph_adapter.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/io/result_repository.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/regime_validation/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/regime_validation/c1_comparator.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/regime_validation/c1_runner.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/regime_validation/shrinkage_provider.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 
@@ -1027,7 +1003,6 @@ D_BACKTEST域当前7个模块(MVP),v1.1.0扩展到15个。容量阈值≤150,无
 | `tests/backtest/test_limit_price_rounding_night001.py` | ✅ 已实现 | |
 | `tests/backtest/test_matching_engine.py` | ✅ 已实现 | |
 | `tests/backtest/test_metrics_dsr.py` | ✅ 已实现 | |
-| `tests/backtest/test_overfitting_adjudicator.py` | ✅ 已实现 | |
 | `tests/backtest/test_overfitting_detector.py` | ✅ 已实现 | |
 | `tests/backtest/test_pit_leakage_future_date.py` | ✅ 已实现 | |
 | `tests/backtest/test_pit_manager.py` | ✅ 已实现 | |

@@ -3,7 +3,7 @@ module_id: MOD-SIM-003
 title: "Risk Simulator 蓝图 — 风控仿真器"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.4"
 ttl: permanent
 layer: L03_simulation
 layer_name: simulation
@@ -16,7 +16,7 @@ priority: P1
 blueprint_level: module
 responsibility_domain: 
 design_maturity: production
-build_status: stable
+build_status: production
 ---
 
 # MOD-SIM-003 Risk Simulator — 风控仿真器 蓝图
@@ -193,7 +193,7 @@ class RiskSimulator:
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-SIM-003 | MOD-SIM-003 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 3 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -207,13 +207,7 @@ class RiskSimulator:
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 10.1 源码文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `src/zephyr/simulation/risk_simulator.py` | ✅ 已实现 | |
-
-### 10.2 测试文件
+### 10.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|

@@ -3,7 +3,7 @@ module_id: MOD-PLAN-001
 title: "明日预案引擎 — 盘后生成TomorrowBoundary操作边界（箱体上下沿+加仓上限+禁加仓/必出价位）"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 ttl: permanent
 layer: L2_domain
 functional_domain: plan_engine
@@ -21,14 +21,14 @@ ssot_claims:
   - {claim: "盘后边界计算规则（箱体上沿/下沿/加仓上限/禁加仓/必出/突破验证）唯一真源", scope: "module"}
 responsibility_domain: 
 design_maturity: production
-build_status: stable
+build_status: production
 language: zh
 generation: 1
 summary: "BM-PLAN-01 明日预案引擎：盘后收盘基于当日数据冷静计算明日操作边界 TomorrowBoundary，边界层（B/C）核心产出者，边界层坏=致命暂停操作"
 ---
 # Tomorrow Boundary Planner 蓝图+施工图 — 明日预案引擎 — 盘后生成TomorrowBoundary操作边界（箱体上下沿+加仓上限+禁加仓/必出价位）
 
-> module_id: MOD-PLAN-001 | version: 0.1.2 | status: Active | layer: L2_domain (plan_engine)
+> module_id: MOD-PLAN-001 | version: 0.1.3 | status: Active | layer: L2_domain (plan_engine)
 > actual_disk_path: src/zephyr/plan_engine/tomorrow_boundary_planner.py | generation: 1
 > 设计真源: 41_buy_flow v1.7.0 §3.10.2 | 施工性质: 回填蓝图（代码已完工，83用例通过，2026-08-13 补建，遗留项 #29）
 
@@ -92,7 +92,7 @@ summary: "BM-PLAN-01 明日预案引擎：盘后收盘基于当日数据冷静�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-PLAN-001 | MOD-PLAN-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 2 文件 | 1 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -462,13 +462,7 @@ class TomorrowBoundary:
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 1.1 源码文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `src/zephyr/plan_engine/tomorrow_boundary_planner.py` | ✅ 已实现 | |
-
-### 1.2 测试文件
+### 1.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|

@@ -5,7 +5,7 @@ submodule_path: src/zephyr/governance/code_dedup_engine
 title: "Code Dedup Engine 蓝图 — 代码去重·爆炸半径防护·原子修复"
 doc_type: blueprint
 status: Active
-version: 0.15.6
+version: 0.15.7
 layer: L0_infrastructure
 layer_note: "跨层模块——代码在基础设施域，但与治理域交互（Gate Engine+AiAuditLogger）"
 layer_name: infrastructure
@@ -1746,70 +1746,11 @@ STEP 3: 拆分后验证
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/gov_code_quality/code_dedup/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/annotations.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/ast_comparator.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/atomic_fixer.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/auto_fixer.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/behavioral_sampler.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/behavioral_trust_checker.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/cache_manager.py` | ✅ 已实现 | |
 | `src/zephyr/gov_code_quality/code_dedup/canary_manager.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/canary_register.py` | ✅ 已实现 | |
 | `src/zephyr/gov_code_quality/code_dedup/cli.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/code_analyzer_runner.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/code_simulator.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/config.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/contract_consistency_checker.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/cross_boundary_detector.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/dead_module_detector.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/debt_projector.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/decision_auditor.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/degradation.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/diff_detector.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/doom_loop_guard.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/exit_codes.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/extraction_safety.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/false_negative_auditor.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/fifteen_dimension_auditor.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/file_creator.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/function_discovery.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/grandfather_manager.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/health_monitor.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/integration_hub.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/integrations.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/micro_clone_detector.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/mock_duplicate_generator.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/monoculture_guard.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/observation_window_guard.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/path_index_validator.py` | ✅ 已实现 | |
 | `src/zephyr/gov_code_quality/code_dedup/phase_executor.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/policy_tree_validator.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/pre_apply_integrity_gate.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/prioritizer.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/recovery_manifest_writer.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/report.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/risk_mitigator.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/self_scanner.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/sensitivity_sweeper.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/shadow_trust_validator.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/shadow_verifier.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/shared_evolver.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/shared_lifecycle_manager.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/signature_matcher.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/simplicity_auditor.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/ssot_registrar.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/stale_shared_detector.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/success_validator.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/symbol_index.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/thematic_clusterer.py` | ✅ 已实现 | |
 | `src/zephyr/gov_code_quality/code_dedup/trackers/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/gov_code_quality/code_dedup/trackers/blind_spot_tracker.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/trackers/consequence_tracker.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/trackers/hotspot_tracker.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/trackers/import_surface_tracker.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/trackers/question_tracker.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/trackers/risk_mitigation_tracker.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/verifier.py` | ✅ 已实现 | |
 | `src/zephyr/governance/intelligence_governance/self_benchmark.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件

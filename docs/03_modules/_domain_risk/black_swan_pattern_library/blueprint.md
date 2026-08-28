@@ -3,7 +3,7 @@ module_id: MOD-RK-31
 title: "C-038 黑天鹅模式库蓝图 — 7 模式特征模板+事前相似度匹配→提前降仓并触发 C-004 MVP"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
@@ -18,7 +18,7 @@ blueprint_id: MOD-RK-31
 domain_id: D_RISK
 path: src/zephyr/risk/core/black_swan_pattern_library.py
 design_maturity: production
-build_status: stable
+build_status: production
 granularity: file
 ai_autonomy: ai_modifiable
 safety: H
@@ -89,7 +89,7 @@ responsibility_domain:
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-RK-31 | MOD-RK-31 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -107,13 +107,7 @@ responsibility_domain:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/risk/core/black_swan_pattern_library.py` | ✅ 已实现 | |
-
-### 5.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/risk/test_black_swan_pattern_library.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 5.5 路径索引使用指南
 
@@ -128,3 +122,5 @@ responsibility_domain:
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

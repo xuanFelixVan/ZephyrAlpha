@@ -3,7 +3,7 @@ module_id: MOD-INT-AISA
 title: "AI 舆情分析器蓝图 — 规则法情绪打分桩+窗口聚合+事件信号（MVP）"
 doc_type: blueprint
 status: Active
-version: "0.1.14"
+version: "0.1.15"
 ttl: permanent
 design_maturity: production
 layer: L02_intelligence
@@ -137,7 +137,7 @@ analyzer.analyze_date_range(start, end) -> (DataFrame, list[SentimentWindow], li
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/intelligence/news_sentiment_analyzer.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 9.5 路径索引使用指南
 
@@ -176,7 +176,7 @@ analyzer.analyze_date_range(start, end) -> (DataFrame, list[SentimentWindow], li
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INT-AISA | MOD-INT-AISA | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | N/A | — |
+| build_status | production | N/A | — |
 | file_count | 1 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

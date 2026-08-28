@@ -3,7 +3,7 @@ module_id: MOD-RK-33
 title: "Copula-GARCH 联合分布建模蓝图 — ≤50 标的联合尾部依赖与联合 VaR/ES"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
@@ -15,7 +15,7 @@ last_updated: "2026-08-25"
 priority: P0
 blueprint_level: module
 design_maturity: production
-build_status: stable
+build_status: production
 responsibility_domain: 
 ---
 
@@ -87,7 +87,7 @@ Gaussian Copula（DCC 动态相关）捕捉**联合尾部依赖**——"多只�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-RK-33 | MOD-RK-33 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -101,13 +101,7 @@ Gaussian Copula（DCC 动态相关）捕捉**联合尾部依赖**——"多只�
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 6.1 源码文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `src/zephyr/risk/core/copula_garch_joint.py` | ✅ 已实现 | |
-
-### 6.2 测试文件
+### 6.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
@@ -126,3 +120,5 @@ Gaussian Copula（DCC 动态相关）捕捉**联合尾部依赖**——"多只�
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

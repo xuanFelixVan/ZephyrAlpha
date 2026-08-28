@@ -3,7 +3,7 @@ module_id: MOD-GOV-050
 title: "阈值拆分检测器蓝图 — 反化整为零（滑动窗累计+提请审批+阻断）MVP"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L2_domain
 layer_name: gov_enforcement
@@ -18,7 +18,7 @@ blueprint_id: MOD-GOV-050
 domain_id: D_GOV_ENFORCEMENT
 path: src/zephyr/gov_enforcement/rule_enforcement/threshold_split_detector.py
 design_maturity: production
-build_status: stable
+build_status: production
 granularity: file
 ai_autonomy: ai_modifiable
 safety: H
@@ -108,7 +108,7 @@ AI 拆分交易绕过审批属 AI 自治熔断硬缺口：审批网关（MOD-L08
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-GOV-050 | MOD-GOV-050 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -126,13 +126,7 @@ AI 拆分交易绕过审批属 AI 自治熔断硬缺口：审批网关（MOD-L08
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/gov_enforcement/rule_enforcement/threshold_split_detector.py` | ✅ 已实现 | |
-
-### 6.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/governance/rule_enforcement/test_threshold_split_detector.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 6.5 路径索引使用指南
 
@@ -147,3 +141,5 @@ AI 拆分交易绕过审批属 AI 自治熔断硬缺口：审批网关（MOD-L08
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

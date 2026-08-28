@@ -10,7 +10,7 @@ layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
 design_maturity: production
-build_status: stable
+build_status: production
 arch_ref: "#ARCH-ALIGN-UNIFIED-001"
 last_updated: "2026-08-08"
 ---
@@ -84,7 +84,7 @@ python scripts/governance/d5_architecture/generators/align_all.py --output custo
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-GOV-ALIGN-ALL | MOD-GOV-ALIGN-ALL | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 1 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

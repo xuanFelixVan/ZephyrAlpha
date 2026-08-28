@@ -3,7 +3,7 @@ module_id: MOD-POS-006
 title: "资金管理器蓝图 — T+1约束+储备计算"
 doc_type: blueprint
 status: Active
-version: "0.2.0"
+version: "0.2.1"
 design_maturity: production
 ttl: permanent
 layer: L03_position
@@ -138,7 +138,6 @@ responsibility_domain:
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/position/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/position/core/cash_manager.py` | ✅ 已实现 | |
 
 ### 8.5 路径索引使用指南
 

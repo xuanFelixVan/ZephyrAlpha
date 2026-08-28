@@ -3,7 +3,7 @@ module_id: MOD-SELL-019
 title: "卖出执行编排器蓝图 — 执行时序映射+跌停排队+KillSwitch清仓排序"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 ttl: permanent
 design_maturity: production
 layer: L03_sell_decision
@@ -149,7 +149,7 @@ SellExecutionPlanner.rank_kill_switch_liquidation(
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-SELL-019 | MOD-SELL-019 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | N/A | — |
+| build_status | production | N/A | — |
 | file_count | 1 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -167,7 +167,7 @@ SellExecutionPlanner.rank_kill_switch_liquidation(
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/sell_decision/core/sell_execution_planner.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 9.5 路径索引使用指南
 

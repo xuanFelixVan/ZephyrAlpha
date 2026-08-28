@@ -3,7 +3,7 @@ module_id: MOD-PLAN-002
 title: "盘前预案加载器 — 9:00加载TomorrowBoundary+9:25集合竞价9情景匹配初始化ConstraintState"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 ttl: permanent
 layer: L2_domain
 functional_domain: plan_engine
@@ -21,14 +21,14 @@ ssot_claims:
   - {claim: "9:25 集合竞价 9 情景匹配规则唯一真源", scope: "module"}
 responsibility_domain: 
 design_maturity: production
-build_status: stable
+build_status: production
 language: zh
 generation: 1
 summary: "BM-PLAN-02 盘前预案加载：次日 9:00 加载昨晚 TomorrowBoundary，9:25 集合竞价匹配 9 情景初始化 ConstraintState；加载失败=致命，无约束状态禁止开始交易"
 ---
 # Premarket Constraint Loader 蓝图+施工图 — 盘前预案加载器 — 9:00加载TomorrowBoundary+9:25集合竞价9情景匹配初始化ConstraintState
 
-> module_id: MOD-PLAN-002 | version: 0.1.2 | status: Active | layer: L2_domain (plan_engine)
+> module_id: MOD-PLAN-002 | version: 0.1.3 | status: Active | layer: L2_domain (plan_engine)
 > actual_disk_path: src/zephyr/plan_engine/premarket_constraint_loader.py | generation: 1
 > 设计真源: 41_buy_flow v1.7.0 §3.10.3 | 施工性质: 回填蓝图（代码已完工，83用例通过，2026-08-13 补建，遗留项 #29）
 
@@ -91,7 +91,7 @@ summary: "BM-PLAN-02 盘前预案加载：次日 9:00 加载昨晚 TomorrowBound
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-PLAN-002 | MOD-PLAN-002 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 1 文件 | 1 文件（§0.1） | ✅ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -465,7 +465,7 @@ class ConstraintState:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/plan_engine/premarket_constraint_loader.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 1.5 路径索引使用指南
 

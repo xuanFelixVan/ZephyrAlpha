@@ -4,7 +4,7 @@ submodule_path: src/zephyr/factor
 title: "Alpha Factor Core 蓝图+施工图 — 因子工厂·C-027管理+C-009执行双角色"
 doc_type: blueprint
 status: Active
-version: "4.0.11"
+version: "4.0.12"
 layer: L2_domain
 layer_name: alpha_factor
 functional_domain: intelligence
@@ -208,7 +208,7 @@ dual_storage:
     content: "元数据 + 血缘 + 质量 + 版本"
   consistency: "同一 Engine.compute() 驱动两种存储写入 → 消除15-25%偏差"
 responsibility_domain: 
-build_status: stable
+build_status: production
 ---
 
 > ✅ **业务层可施工声明**：本蓝图所属C轨业务层已开放[ARCH-045 P0]，可施工。
@@ -218,7 +218,7 @@ build_status: stable
 
 # Alpha Factor Core 蓝图+施工图 — 因子工厂·C-027管理+C-009执行双角色
 
-> module_id: MOD-L02-001 | version: 4.0.11 | status: active | domain: factor
+> module_id: MOD-L02-001 | version: 4.0.12 | status: active | domain: factor
 > actual_disk_path: src/zephyr/factor/ | generation: 3 | construction_progress: partially_implemented
 > 子模块体系: D-FACTOR-01~11+24（蓝图内部编号，不进blueprint_registry）
 
@@ -319,7 +319,7 @@ build_status: stable
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-L02-001 | MOD-L02-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 122 文件 | 14 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -1105,10 +1105,7 @@ class FactorMeta(BaseModel):
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/factor/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/factor/alpha_signal_pipeline.py` | ✅ 已实现 | |
-| `src/zephyr/factor/analysis/bma_signal_weighter.py` | ✅ 已实现 | |
-| `src/zephyr/factor/bus_factor_defense.py` | ✅ 已实现 | |
 | `src/zephyr/factor/core/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/factor/core/backpressure/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/factor/core/backpressure/limiter.py` | ✅ 已实现 | |
@@ -1121,27 +1118,10 @@ class FactorMeta(BaseModel):
 | `src/zephyr/factor/core/ctr002_producer/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/factor/core/ctr002_producer/converter.py` | ✅ 已实现 | |
 | `src/zephyr/factor/core/dag_manager/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/factor/core/dag_manager/executor.py` | ✅ 已实现 | |
 | `src/zephyr/factor/core/dist_feature_eng/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/factor/core/dist_feature_eng/engine.py` | ✅ 已实现 | |
-| `src/zephyr/factor/core/evaluation/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/factor/core/evaluation/backtest.py` | ✅ 已实现 | |
-| `src/zephyr/factor/core/evaluation/metrics.py` | ✅ 已实现 | |
 | `src/zephyr/factor/core/factor_dag/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/factor/core/factor_dag/dag.py` | ✅ 已实现 | |
-| `src/zephyr/factor/core/intraday_factor_loop.py` | ✅ 已实现 | |
-| `src/zephyr/factor/factor_availability_monitor.py` | ✅ 已实现 | |
-| `src/zephyr/factor/factor_base.py` | ✅ 已实现 | |
-| `src/zephyr/factor/factor_factory.py` | ✅ 已实现 | |
-| `src/zephyr/factor/factor_production_pipeline.py` | ✅ 已实现 | |
-| `src/zephyr/factor/intraday_snapshot_factors.py` | ✅ 已实现 | |
-| `src/zephyr/factor/momentum_factor.py` | ✅ 已实现 | |
-| `src/zephyr/factor/offline_store.py` | ✅ 已实现 | |
-| `src/zephyr/factor/technical_indicators/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/factor/technical_indicators/indicator_base.py` | ✅ 已实现 | |
-| `src/zephyr/factor/ufl_deterministic_layer.py` | ✅ 已实现 | |
-| `src/zephyr/factor/value_factor.py` | ✅ 已实现 | |
-| `src/zephyr/factor/wq_alpha_87.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 
@@ -1152,7 +1132,6 @@ class FactorMeta(BaseModel):
 | `tests/factor/test_abs001_gate.py` | ✅ 已实现 | |
 | `tests/factor/test_backpressure.py` | ✅ 已实现 | |
 | `tests/factor/test_batch_output.py` | ✅ 已实现 | |
-| `tests/factor/test_bma_signal_weighter.py` | ✅ 已实现 | |
 | `tests/factor/test_config_manager.py` | ✅ 已实现 | |
 | `tests/factor/test_correlation_analyzer.py` | ✅ 已实现 | |
 | `tests/factor/test_correlation_dedup.py` | ✅ 已实现 | |
@@ -1163,12 +1142,9 @@ class FactorMeta(BaseModel):
 | `tests/factor/test_evaluation_backtest.py` | ✅ 已实现 | |
 | `tests/factor/test_evaluation_metrics.py` | ✅ 已实现 | |
 | `tests/factor/test_factor_attribution.py` | ✅ 已实现 | |
-| `tests/factor/test_factor_availability_monitor.py` | ✅ 已实现 | |
 | `tests/factor/test_factor_dag.py` | ✅ 已实现 | |
 | `tests/factor/test_factor_decay_monitor.py` | ✅ 已实现 | |
-| `tests/factor/test_factor_factory.py` | ✅ 已实现 | |
 | `tests/factor/test_factor_optimization.py` | ✅ 已实现 | |
-| `tests/factor/test_factor_production_pipeline.py` | ✅ 已实现 | |
 | `tests/factor/test_governance_engine.py` | ✅ 已实现 | |
 | `tests/factor/test_grayscale_rollout.py` | ✅ 已实现 | |
 | `tests/factor/test_ic_decay.py` | ✅ 已实现 | |
@@ -1178,11 +1154,8 @@ class FactorMeta(BaseModel):
 | `tests/factor/test_layered_backtest.py` | ✅ 已实现 | |
 | `tests/factor/test_lifecycle_state_machine.py` | ✅ 已实现 | |
 | `tests/factor/test_multifactor_synthesis.py` | ✅ 已实现 | |
-| `tests/factor/test_offline_store.py` | ✅ 已实现 | |
 | `tests/factor/test_six_step_flow.py` | ✅ 已实现 | |
 | `tests/factor/test_three_level_judgment.py` | ✅ 已实现 | |
-| `tests/factor/test_ufl_deterministic_layer.py` | ✅ 已实现 | |
-| `tests/factor/test_wq_alpha_87.py` | ✅ 已实现 | |
 | `tests/zephyr/factor/technical_indicators/test_indicator_base.py` | ✅ 已实现 | |
 | `tests/zephyr/factor/technical_indicators/test_momentum.py` | ✅ 已实现 | |
 | `tests/zephyr/factor/technical_indicators/test_reversal.py` | ✅ 已实现 | |

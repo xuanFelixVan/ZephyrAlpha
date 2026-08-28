@@ -3,7 +3,7 @@ module_id: MOD-SELL-008
 title: "买卖冲突仲裁器蓝图 — 卖出优先保守原则+冲突分级"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 design_maturity: design
 build_status: deprecated
 ttl: permanent
@@ -166,7 +166,7 @@ class ArbitrationResult:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/sell_decision/core/sell_conflict_arbitrator.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 10.5 路径索引使用指南
 

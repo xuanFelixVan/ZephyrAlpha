@@ -3,7 +3,7 @@ module_id: MOD-CMP-010
 title: "合规日志落库蓝图 — compliance_log JSONL append-only 证据链"
 doc_type: blueprint
 status: Active
-version: "0.1.20"
+version: "0.1.21"
 ttl: permanent
 design_maturity: production
 layer: L1_foundation
@@ -88,7 +88,7 @@ tests/compliance/test_compliance_log.py — 6 用例：读写闭环/父目录自
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/compliance/compliance_log.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 9.5 路径索引使用指南
 
@@ -127,7 +127,7 @@ tests/compliance/test_compliance_log.py — 6 用例：读写闭环/父目录自
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-CMP-010 | MOD-CMP-010 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | N/A | — |
+| build_status | production | N/A | — |
 | file_count | 1 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

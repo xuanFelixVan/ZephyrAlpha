@@ -3,7 +3,7 @@ module_id: MOD-L02-027
 title: "因子研究案例库蓝图 — 成功/失败→修复案例沉淀，防 AI 重复试错"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 design_maturity: production
 ttl: permanent
 responsibility_domain: 
@@ -145,7 +145,7 @@ depgraph `blueprint_id=MOD-L02-027`（建议）。首个计划消费者：数据
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-L02-027 | MOD-L02-027 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | N/A | — |
+| build_status | production | N/A | — |
 | file_count | 3 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -163,7 +163,6 @@ depgraph `blueprint_id=MOD-L02-027`（建议）。首个计划消费者：数据
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/factor/casebook/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/factor/casebook/casebook.py` | ✅ 已实现 | |
 
 ### 8.2 测试文件

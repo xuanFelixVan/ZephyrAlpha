@@ -4,7 +4,7 @@ submodule_path: src/zephyr/intelligence/model_profiling
 title: "Model Profiler 蓝图 — 模型画像器·LLM能力基线测量"
 doc_type: blueprint
 status: Active
-version: "2.2.7"
+version: "2.2.8"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -38,7 +38,7 @@ references:
 codification_level: L1
 responsibility_domain: 
 design_maturity: production
-build_status: stable
+build_status: production
 ---
 
 # Model Profiler 蓝图 — 模型画像器·LLM能力基线测量
@@ -148,7 +148,7 @@ ModelProfiler 是 ZephyrAlpha 的 LLM 模型画像器——对所有可用模型
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-034 | MOD-INF-034 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 35 文件 | 8 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -1016,24 +1016,9 @@ MAX_OLLAMA_MODELS, SKIP_MODEL_PATTERNS
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/infrastructure/model_profiler/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/benchmark_suite.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/capability_passport.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_profiling/case_assembler.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/cli.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/deepseek_v4_chat.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/exam_checks.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_profiling/exam_executor.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/exam_judge.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/exam_orchestrator.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_profiling/exam_rubric.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/exam_test_cases.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/job_matcher.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/model_discovery.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/profiler.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/provider_data.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/results_writer.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/task_model_learner.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 

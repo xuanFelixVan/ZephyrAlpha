@@ -3,9 +3,9 @@ module_id: MOD-SIM-002
 title: "策略仿真器蓝图 — 策略沙箱+信号模拟+组合模拟"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 design_maturity: production
-build_status: stable
+build_status: production
 ttl: permanent
 layer: L_SIMULATION
 layer_name: simulation
@@ -123,7 +123,7 @@ responsibility_domain:
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-SIM-002 | MOD-SIM-002 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 1 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -141,7 +141,7 @@ responsibility_domain:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/simulation/strategy_simulator.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 8.5 路径索引使用指南
 

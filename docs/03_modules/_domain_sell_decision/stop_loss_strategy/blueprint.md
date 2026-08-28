@@ -3,7 +3,7 @@ module_id: MOD-SELL-005
 title: "止损策略族蓝图 — Chandelier Exit 统一止损 + ATR自适应时间止损"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 ttl: permanent
 design_maturity: production
 layer: L03_sell_decision
@@ -140,7 +140,7 @@ StopLossStrategy.check_time_stop(
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-SELL-005 | MOD-SELL-005 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | N/A | — |
+| build_status | production | N/A | — |
 | file_count | 1 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -158,7 +158,7 @@ StopLossStrategy.check_time_stop(
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/sell_decision/core/stop_loss_strategy.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 9.5 路径索引使用指南
 

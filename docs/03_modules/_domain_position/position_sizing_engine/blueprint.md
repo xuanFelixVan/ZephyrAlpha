@@ -3,7 +3,7 @@ module_id: MOD-POS-001
 title: "仓位决策引擎蓝图 — 四轨融合+半Kelly+13约束+分阶段施工"
 doc_type: blueprint
 status: Active
-version: "0.2.3"
+version: "0.2.4"
 design_maturity: production
 ttl: permanent
 layer: L03_position
@@ -380,7 +380,6 @@ overlay 标志位(正交修饰, 不占 enum):
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/position/core/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/position/core/position_sizing_engine.py` | ✅ 已实现 | |
 
 ### 13.5 路径索引使用指南
 

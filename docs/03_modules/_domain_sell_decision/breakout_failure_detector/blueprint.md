@@ -3,7 +3,7 @@ module_id: MOD-SELL-003
 title: "突破成败检测器蓝图 — 压力位突破判定+强制清仓"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 ttl: permanent
 design_maturity: production
 layer: L03_sell_decision
@@ -158,7 +158,7 @@ class BreakoutResult:
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-SELL-003 | MOD-SELL-003 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | N/A | — |
+| build_status | production | N/A | — |
 | file_count | 1 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -176,7 +176,7 @@ class BreakoutResult:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/sell_decision/core/breakout_failure_detector.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 9.5 路径索引使用指南
 

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/integration/mcp
 title: "MCP Servers 蓝图 — MCP 服务器管理与调度"
 doc_type: blueprint
 status: Draft
-version: "0.3.44"
+version: "0.3.45"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -787,7 +787,6 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/门禁决策等能�
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/integration/mcp/governance_server.py` | ✅ 已实现 | |
 | `src/zephyr/integration/mcp/handoff_auto_loader.py` | ✅ 已实现 | |
 | `src/zephyr/integration/mcp/prompt_provider.py` | ✅ 已实现 | |
 | `src/zephyr/integration/mcp/resource_provider.py` | ✅ 已实现 | |

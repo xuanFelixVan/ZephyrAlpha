@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/rollback
 title: "Rollback System 蓝图 — Git-native回滚+自动触发+运维治理持续性"
 doc_type: blueprint
 status: Active
-version: 9.0.7
+version: 9.0.8
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: execution
@@ -71,7 +71,7 @@ summary: >
   Git-native+SQLite dump双轨回滚+auto_guard后验自动触发+四级回滚操作+130盲点覆盖+8层防御架构+容量升级至1500模块。62代码文件，completed。v7.0.0模板v3.5/v3.6升级。
 responsibility_domain: 
 design_maturity: production
-build_status: stable
+build_status: production
 ---
 
 > module_id: MOD-INF-021 | version: 9.0.0 | status: Active | layer: L01_infrastructure
@@ -247,7 +247,7 @@ build_status: stable
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-021 | MOD-INF-021 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 193 文件 | 61 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -1669,16 +1669,12 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/governance/escalation/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/governance/escalation/result_types.py` | ✅ 已实现 | |
-| `src/zephyr/governance/escalation/triage.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/rollback/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/rollback/_manifest.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/rollback/budget_tracker.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/rollback/complexity_budget.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/rollback/contracts.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/rollback/rollback_boot_integration.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_drift_detector.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 

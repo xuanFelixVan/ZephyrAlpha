@@ -3,7 +3,7 @@ module_id: MOD-RPT-003
 title: "报告发布器蓝图 — 中心枢纽+归档+分发+哈希链审计(基础版)"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.4"
 ttl: permanent
 layer: L07_reporting
 layer_name: reporting
@@ -16,7 +16,7 @@ priority: P0
 blueprint_level: module
 responsibility_domain: 
 design_maturity: production
-build_status: stable
+build_status: production
 ---
 
 # MOD-RPT-003 Report Publisher — 报告发布器 蓝图
@@ -226,7 +226,7 @@ class ReportPublisher:
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-RPT-003 | MOD-RPT-003 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 3 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -240,13 +240,7 @@ class ReportPublisher:
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 10.1 源码文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `src/zephyr/reporting/report_publisher.py` | ✅ 已实现 | |
-
-### 10.2 测试文件
+### 10.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|

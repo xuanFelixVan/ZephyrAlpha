@@ -3,7 +3,7 @@ module_id: MOD-CMP-009
 title: "程序化交易报告登记+报送门禁蓝图 — 6 项义务 + ReportGate"
 doc_type: blueprint
 status: Active
-version: "0.1.20"
+version: "0.1.21"
 ttl: permanent
 design_maturity: production
 layer: L1_foundation
@@ -92,7 +92,7 @@ tests/compliance/test_compliance_report_registry.py — 7 用例：全确认/缺
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/compliance/compliance_report_registry.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 9.5 路径索引使用指南
 
@@ -131,7 +131,7 @@ tests/compliance/test_compliance_report_registry.py — 7 用例：全确认/缺
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-CMP-009 | MOD-CMP-009 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | N/A | — |
+| build_status | production | N/A | — |
 | file_count | 1 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

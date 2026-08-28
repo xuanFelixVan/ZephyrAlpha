@@ -3,7 +3,7 @@ module_id: MOD-EX-056
 title: "盘中持仓对账器蓝图 — 系统账vs券商账定期比对+差异冻结"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 design_maturity: production
 ttl: permanent
 responsibility_domain: 
@@ -176,7 +176,7 @@ depgraph `blueprint_id=MOD-EX-056` 与设计文档 `D-EX-CORE-56` 编号一致�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-EX-056 | MOD-EX-056 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | N/A | — |
+| build_status | production | N/A | — |
 | file_count | 5 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -190,13 +190,7 @@ depgraph `blueprint_id=MOD-EX-056` 与设计文档 `D-EX-CORE-56` 编号一致�
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 10.1 源码文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `src/zephyr/ex_core/position_reconciler.py` | ✅ 已实现 | |
-
-### 10.2 测试文件
+### 10.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|

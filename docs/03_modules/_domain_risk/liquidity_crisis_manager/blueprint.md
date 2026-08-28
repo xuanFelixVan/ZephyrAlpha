@@ -3,7 +3,7 @@ module_id: MOD-RK-21
 title: "流动性危机管理器蓝图 — 37号流动性危机协议 6 项算法施工落地"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
@@ -17,7 +17,7 @@ blueprint_id: MOD-RK-21
 domain_id: D_RISK
 path: src/zephyr/risk/core/liquidity_crisis_manager.py
 design_maturity: production
-build_status: stable
+build_status: production
 granularity: file
 ai_autonomy: ai_modifiable
 safety: H
@@ -161,7 +161,7 @@ drain_ratio = 未来 5 日 IPO 募资总额 / 全市场 20 日均成交额（亿
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-RK-21 | MOD-RK-21 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -175,13 +175,7 @@ drain_ratio = 未来 5 日 IPO 募资总额 / 全市场 20 日均成交额（亿
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 7.1 源码文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `src/zephyr/risk/core/liquidity_crisis_manager.py` | ✅ 已实现 | |
-
-### 7.2 测试文件
+### 7.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|

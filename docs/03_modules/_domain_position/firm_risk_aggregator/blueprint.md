@@ -3,9 +3,9 @@ module_id: MOD-POS-021
 title: "Firm层风险聚合器蓝图 — 求和+硬上限裁剪+冲突净额（A模型·组合汇总层）"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 design_maturity: production
-build_status: stable
+build_status: production
 ttl: permanent
 layer: L03_position
 layer_name: position
@@ -317,7 +317,7 @@ if net_weight ≤ 0: 标记为清仓/减仓（target_weight=0 或负值转卖出
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-POS-021 | MOD-POS-021 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 1 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -335,7 +335,7 @@ if net_weight ≤ 0: 标记为清仓/减仓（target_weight=0 或负值转卖出
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/position/core/firm_risk_aggregator.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 10.5 路径索引使用指南
 

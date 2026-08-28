@@ -3,7 +3,7 @@ module_id: MOD-RK-40
 title: "Post-Entry Instant Validator 买入后即时验证与快速纠错蓝图 — T+5/15/30min 三档验证"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
@@ -15,7 +15,7 @@ last_updated: "2026-08-25"
 priority: P1
 blueprint_level: module
 design_maturity: production
-build_status: stable
+build_status: production
 responsibility_domain: 
 ---
 
@@ -111,7 +111,7 @@ L4 风控层增量判定核心：买入成交后按 T+5/15/30min 三档时点校
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-RK-40 | MOD-RK-40 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -129,13 +129,7 @@ L4 风控层增量判定核心：买入成交后按 T+5/15/30min 三档时点校
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/risk/post_entry_instant_validator.py` | ✅ 已实现 | |
-
-### 6.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/risk/test_post_entry_instant_validator.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 6.5 路径索引使用指南
 
@@ -150,3 +144,5 @@ L4 风控层增量判定核心：买入成交后按 T+5/15/30min 三档时点校
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

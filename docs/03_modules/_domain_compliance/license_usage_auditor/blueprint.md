@@ -3,7 +3,7 @@ module_id: MOD-CMP-008
 title: "数据源授权合规审计器蓝图 — 授权条款登记/使用审计/违规处置"
 doc_type: blueprint
 status: Active
-version: "0.1.20"
+version: "0.1.21"
 ttl: permanent
 design_maturity: production
 layer: L1_foundation
@@ -93,7 +93,7 @@ tests/compliance/test_license_usage_auditor.py — 11 用例：缺段保守/超�
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/compliance/license_usage_auditor.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 9.5 路径索引使用指南
 
@@ -132,7 +132,7 @@ tests/compliance/test_license_usage_auditor.py — 11 用例：缺段保守/超�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-CMP-008 | MOD-CMP-008 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | N/A | — |
+| build_status | production | N/A | — |
 | file_count | 1 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

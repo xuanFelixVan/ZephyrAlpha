@@ -3,7 +3,7 @@ module_id: MOD-TRADING-002
 title: "盈亏计算器蓝图 — 已实现/未实现盈亏+A股费率"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 ttl: permanent
 layer: L03_trading
 layer_name: trading
@@ -16,7 +16,7 @@ priority: P1
 blueprint_level: module
 responsibility_domain: 
 design_maturity: production
-build_status: stable
+build_status: production
 ---
 
 # MOD-TRADING-002 PnL Calculator — 盈亏计算器 蓝图
@@ -213,7 +213,7 @@ class PnlCalculator:
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-TRADING-002 | MOD-TRADING-002 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -227,13 +227,7 @@ class PnlCalculator:
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 10.1 源码文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `src/zephyr/trading/pnl_calculator.py` | ✅ 已实现 | |
-
-### 10.2 测试文件
+### 10.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|

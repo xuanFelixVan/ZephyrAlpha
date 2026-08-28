@@ -4,7 +4,7 @@ submodule_path: src/zephyr/security/adversarial_validation
 title: "Red-Blue Validator 蓝图 — 红蓝对抗验证器·修复有效性确认"
 doc_type: blueprint
 status: Active
-version: "2.2.3"
+version: "2.2.4"
 generation: 17
 layer: L1_foundation
 layer_name: 跨层基础设施
@@ -1269,24 +1269,19 @@ STEP 3: 拆分后验证
 | `src/zephyr/security/adversarial_validation/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/__main__.py` | ⚠️ 骨架 | |
 | `src/zephyr/security/adversarial_validation/ai_attack_generator.py` | ✅ 已实现 | |
-| `src/zephyr/security/adversarial_validation/async_monitor.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/attack_registry.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/blast_radius.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/bypass_recorder.py` | ✅ 已实现 | |
-| `src/zephyr/security/adversarial_validation/circuit_breaker.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/cleanup.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/cli.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/cold_start.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/commit_trigger.py` | ✅ 已实现 | |
-| `src/zephyr/security/adversarial_validation/constitution_engine.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/constitution_guard.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/convergence_checker.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/defense_runner.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/game_day_runner.py` | ✅ 已实现 | |
-| `src/zephyr/security/adversarial_validation/game_day_scheduler.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/injection_engine.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/mcp_endpoints.py` | ✅ 已实现 | |
-| `src/zephyr/security/adversarial_validation/models.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/scenario_loader.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/steady_state.py` | ✅ 已实现 | |
 | `src/zephyr/security/adversarial_validation/validator.py` | ✅ 已实现 | |

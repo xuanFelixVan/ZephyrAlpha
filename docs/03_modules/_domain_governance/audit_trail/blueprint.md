@@ -4,7 +4,7 @@ submodule_path: src/zephyr/gov_audit
 title: "Audit Trail 蓝图 — 不可变动作审计与密码学完整性保证"
 doc_type: blueprint
 status: Active
-version: "2.1.6"
+version: "2.1.7"
 generation: 9
 layer: L0_infrastructure
 layer_name: infrastructure
@@ -63,7 +63,7 @@ design_maturity: production
 build_status: generated
 ---
 
-> module_id: MOD-INF-020 | version: 2.1.6 | status: active | domain: infra_ops
+> module_id: MOD-INF-020 | version: 2.1.7 | status: active | domain: infra_ops
 > actual_disk_path: src/zephyr/audit-trail/ (352 .py files) | generation: 9 | construction_progress: partially_implemented
 
 # Audit Trail 蓝图 — 不可变动作审计与密码学完整性保证
@@ -1707,76 +1707,24 @@ class LamportClockV2:
 |---------|:---:|------|
 | `src/zephyr/compliance/audit_trail/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/compliance/audit_trail/bridges/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/_orchestrator_compat.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/agent_signer.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/anomaly.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/api_lifecycle.py` | ✅ 已实现 | |
 | `src/zephyr/gov_audit/audit_admission_controller.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/audit_schema.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/bridge.py` | ✅ 已实现 | |
 | `src/zephyr/gov_audit/bridges/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/gov_audit/bridges/audit_anomaly.py` | ✅ 已实现 | |
 | `src/zephyr/gov_audit/bridges/audit_contracts.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/bridges/audit_delegation_bridge.py` | ✅ 已实现 | |
 | `src/zephyr/gov_audit/bridges/audit_drift_bridge.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/bridges/audit_feedback_bridge.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/bridges/audit_tiered_storage_bridge.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/bridges/audit_trust_bridge.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/changelog_manager.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/cli.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/code_archaeology.py` | ✅ 已实现 | |
 | `src/zephyr/gov_audit/cold_start.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/compliance_map.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/contracts.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/corporate_actions.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/delegation_auditor.py` | ✅ 已实现 | |
 | `src/zephyr/gov_audit/delegation_bridge.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/dora_metrics.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/drift_bridge.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/event_store.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/evidence_pack.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/external_tool_audit.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/feedback_bridge.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/feedback_policy.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/feedback_self_audit.py` | ✅ 已实现 | |
 | `src/zephyr/gov_audit/finding_ingest.py` | ✅ 已实现 | |
 | `src/zephyr/gov_audit/finding_model.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/genesis.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/glossary_matrix.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/incremental_review.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/indexer.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/integrity.py` | ✅ 已实现 | |
 | `src/zephyr/gov_audit/kb_gate.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/log_rotation.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/merkle_hourly.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/models.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/observability_dashboard.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/pipeline_runner.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/privacy.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/provenance_tracker.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/query.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/replay_engine.py` | ✅ 已实现 | |
 | `src/zephyr/gov_audit/resource_aware_pool.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/retention.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/sbom_generator.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/self_monitor.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/spec_auditor.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/supply_chain.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/supply_chain_security.py` | ✅ 已实现 | |
 | `src/zephyr/gov_audit/text_to_finding_adapter.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/tiered_storage.py` | ✅ 已实现 | |
 | `src/zephyr/gov_audit/tiered_storage_bridge.py` | ✅ 已实现 | |
 | `src/zephyr/gov_audit/trust_bridge.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/trust_engine.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/wqa_scorer.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/writer.py` | ✅ 已实现 | |
-| `src/zephyr/governance/audit/snapshot_manager.py` | ✅ 已实现 | |
 | `src/zephyr/governance/bridges/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/governance/bridges/spec_auditor.py` | ✅ 已实现 | |
 | `src/zephyr/governance/evidence_pack.py` | ✅ 已实现 | |
 | `src/zephyr/governance/integrity.py` | ✅ 已实现 | |
-| `src/zephyr/governance/observability_governance/projection_engine.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 

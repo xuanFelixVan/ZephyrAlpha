@@ -52,7 +52,7 @@ tags:
   - vibe-coding-infrastructure
 responsibility_domain: 
 design_maturity: production
-build_status: stable
+build_status: production
 ---
 
 # Agent Orchestrator Interface / Agent 编排器接口规范

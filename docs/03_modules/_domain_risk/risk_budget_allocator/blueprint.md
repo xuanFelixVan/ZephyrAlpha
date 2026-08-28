@@ -3,7 +3,7 @@ module_id: MOD-RK-08
 title: "风险预算分配器蓝图 — ERC + 自定义预算 SLSQP 优化"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.4"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
@@ -16,7 +16,7 @@ priority: P0
 blueprint_level: module
 responsibility_domain: 
 design_maturity: production
-build_status: stable
+build_status: production
 ---
 
 # MOD-RK-08 Risk Budget Allocator — 风险预算分配器 蓝图
@@ -138,14 +138,7 @@ build_status: stable
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 8.1 源码文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `src/zephyr/risk/core/liquidity_monitor.py` | ✅ 已实现 | |
-| `src/zephyr/risk/core/risk_budget_allocator.py` | ✅ 已实现 | |
-
-### 8.2 测试文件
+### 8.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|

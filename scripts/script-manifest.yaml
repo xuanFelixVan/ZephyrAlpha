@@ -3,8 +3,8 @@
 #
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
-generated_at: '2026-08-27'
-total_scripts: 721
+generated_at: '2026-08-28'
+total_scripts: 741
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -114,14 +114,6 @@ scripts:
   path: git_guard.py
   description: Git Guard — 拦截危险 git 命令，防止破坏其他 session 的文件锁。
   domain: git_guard.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: ide_health_service.py
-  path: ide_health_service.py
-  description: 包装 src/zephyr/trading/ide_health_daemon.py，提供 --status/--start CLI 接口。
-  domain: health
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -654,6 +646,30 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: ch/purge_news_data_rr_dup.py
+  path: ch/purge_news_data_rr_dup.py
+  description: 根因（67 号设计备忘 §1.2）：同一新闻新老两批 publish_time 时区语义漂移
+  domain: ch
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ch/rebuild_news_data.py
+  path: ch/rebuild_news_data.py
+  description: 背景（design_memos/67_news_data_dedup_design.md + 2026-08-28 事故链）：
+  domain: ch
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ch/rebuild_news_data_tz2.py
+  path: ch/rebuild_news_data_tz2.py
+  description: 背景（67 号设计备忘 §4 + §8）：
+  domain: ch
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: ch/tag_news_category.py
   path: ch/tag_news_category.py
   description: 分类法（按源确定，无需模型）：
@@ -947,6 +963,22 @@ scripts:
   description: 检测 staged 新增 .py 文件是否违反 SSoT（四层硬阻断）：
   domain: governance
   execution_plane: hot-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/check_wiring_orphan.py
+  path: governance/check_wiring_orphan.py
+  description: 职责：扫描 wiring_registry.yaml，检出「登记超期未接线」模块，防架上当品烂尾。
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/collect_write_audit_4663.py
+  path: governance/collect_write_audit_4663.py
+  description: 前置（一次性，Owner 管理员）：scripts/governance/enable_write_audit_sacls.ps1
+  domain: governance
+  execution_plane: warm-path
   status: registered
   timeout_seconds: 60
   dimensions: []
@@ -4898,6 +4930,134 @@ scripts:
   path: hooks/auto_handoff_log.py
   description: from __future__ import annotations
   domain: hooks
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: industry_graph/apply_industry_graph_ddl.py
+  path: industry_graph/apply_industry_graph_ddl.py
+  description: 表结构（2026-08-27 与用户定稿）：
+  domain: industry_graph
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: industry_graph/backtest_supply_leadlag.py
+  path: industry_graph/backtest_supply_leadlag.py
+  description: 假设：客户（下游）股价信息领先传导到供应商（上游）——客户过去 20 日收益
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: industry_graph/calc_customer_concentration.py
+  path: industry_graph/calc_customer_concentration.py
+  description: 衍生指标（公司-年度）：
+  domain: industry_graph
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: industry_graph/load_supply_collab_j88.py
+  path: industry_graph/load_supply_collab_j88.py
+  description: '- 重构后的供应商数据：from=供应商 → to=中游公司，weight=合作次数'
+  domain: industry_graph
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: industry_graph/load_supply_match_list.py
+  path: industry_graph/load_supply_match_list.py
+  description: 数据源：上市公司企业供应链上下游匹配名单2012-2023年/最终结果-供应链上下游匹配名单.xlsx
+  domain: industry_graph
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: industry_graph/load_supply_resilience_l106.py
+  path: industry_graph/load_supply_resilience_l106.py
+  description: metric='supply_chain_resilience', value=供应链韧性, value_aux=供应链韧性_缩尾。
+  domain: industry_graph
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: industry_graph/load_supply_top5_483.py
+  path: industry_graph/load_supply_top5_483.py
+  description: '- 边：from_symbol=披露公司(供应商) → to=客户(上市则取代码，否则 ''''+to_name)，'
+  domain: industry_graph
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: industry_graph/p0_scan_documents.py
+  path: industry_graph/p0_scan_documents.py
+  description: 扫描 E:\\数据下载\\产业链数据（或 --root 指定目录），将每个文件登记到
+  domain: scanner
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: industry_graph/p1_extract_normalize.py
+  path: industry_graph/p1_extract_normalize.py
+  description: 对 ig_document 中 canonical 的压缩包（.zip 必处理，.rar 需系统有 UnRAR）：
+  domain: industry_graph
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: industry_graph/p2a_extract_reports.py
+  path: industry_graph/p2a_extract_reports.py
+  description: 对 ig_document 中 doc_type='research_report' 的 canonical 文档，用 PyMuPDF
+  domain: industry_graph
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: industry_graph/p2b_ocr_extract.py
+  path: industry_graph/p2b_ocr_extract.py
+  description: 处理队列（幂等，可中断重跑）：
+  domain: industry_graph
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: industry_graph/p3a_struct_extract.py
+  path: industry_graph/p3a_struct_extract.py
+  description: 从已提取文本（panorama_pdf 的 OCR/文字层）中抽取三级结构：
+  domain: industry_graph
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: industry_graph/p3b_corpus_manifest.py
+  path: industry_graph/p3b_corpus_manifest.py
+  description: 核对 ig_document 中已提取文档与语料目录文件一致性，生成下游 NLP 可用的
+  domain: industry_graph
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: industry_graph/rag_build_index.py
+  path: industry_graph/rag_build_index.py
+  description: 语料 manifest.jsonl → 分块（页标记切分 + 800 字滑窗 step 500）
+  domain: industry_graph
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: industry_graph/rag_query.py
+  path: industry_graph/rag_query.py
+  description: '用法::'
+  domain: industry_graph
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: industry_graph/theme_linkage_monitor.py
+  path: industry_graph/theme_linkage_monitor.py
+  description: 每条链输出：覆盖公司数、当日涨家占比、平均/中位涨跌幅、领涨股、
+  domain: industry_graph
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60

@@ -3,7 +3,7 @@ module_id: MOD-SELL-000
 title: "持仓分级判定器蓝图 — ATR距离驱动WATCH/MONITOR/HOLD三级"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 ttl: permanent
 design_maturity: production
 layer: L03_sell_decision
@@ -126,7 +126,7 @@ PositionTriage.triage(
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-SELL-000 | MOD-SELL-000 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | N/A | — |
+| build_status | production | N/A | — |
 | file_count | 1 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -144,7 +144,7 @@ PositionTriage.triage(
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/sell_decision/core/position_triage.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 9.5 路径索引使用指南
 

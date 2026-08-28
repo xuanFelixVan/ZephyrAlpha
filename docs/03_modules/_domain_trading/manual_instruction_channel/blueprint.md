@@ -3,7 +3,7 @@ module_id: MOD-TRADING-011
 title: "Manual Instruction Channel 人工指令通道蓝图 — C-013 外部指令盯盘（schema+校验+对账+审计）"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L02_trading
 layer_name: trading
@@ -15,7 +15,7 @@ last_updated: "2026-08-25"
 priority: P1
 blueprint_level: module
 design_maturity: production
-build_status: stable
+build_status: production
 responsibility_domain: 
 ---
 
@@ -127,7 +127,7 @@ MATCHED/DRIFT/UNFILLED/PROBE_ERROR、alert/audit 委托吞没。
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-TRADING-011 | MOD-TRADING-011 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -145,13 +145,7 @@ MATCHED/DRIFT/UNFILLED/PROBE_ERROR、alert/audit 委托吞没。
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/trading/manual_instruction_channel.py` | ✅ 已实现 | |
-
-### 6.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/trading/test_manual_instruction_channel.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 6.5 路径索引使用指南
 
@@ -166,3 +160,5 @@ MATCHED/DRIFT/UNFILLED/PROBE_ERROR、alert/audit 委托吞没。
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

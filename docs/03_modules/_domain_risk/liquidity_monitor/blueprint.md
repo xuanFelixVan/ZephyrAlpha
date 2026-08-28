@@ -6,7 +6,7 @@ blueprint_id: MOD-RK-08
 domain_id: D_RISK
 path: src/zephyr/risk/core/liquidity_monitor.py
 design_maturity: production
-build_status: stable
+build_status: production
 granularity: file
 ai_autonomy: ai_modifiable
 safety: L
@@ -113,7 +113,7 @@ is_illiquid = (amihud_illiq > amihud_threshold) OR (volume_shrinkage_ratio < vol
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-RK-08 | MOD-RK-08 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 5 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -127,14 +127,7 @@ is_illiquid = (amihud_illiq > amihud_threshold) OR (volume_shrinkage_ratio < vol
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 8.1 源码文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `src/zephyr/risk/core/liquidity_monitor.py` | ✅ 已实现 | |
-| `src/zephyr/risk/core/risk_budget_allocator.py` | ✅ 已实现 | |
-
-### 8.2 测试文件
+### 8.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|

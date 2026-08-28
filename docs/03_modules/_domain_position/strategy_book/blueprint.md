@@ -3,9 +3,9 @@ module_id: MOD-POS-020
 title: "独立策略账本蓝图 — 选股+粗仓位+独立风控+budget适配（A模型分层·方案A）"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.4"
 design_maturity: production
-build_status: stable
+build_status: production
 ttl: permanent
 layer: L03_position
 layer_name: position
@@ -300,7 +300,7 @@ def rebalance_to_budget(self, new_budget: float) -> TargetPortfolio:
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-POS-020 | MOD-POS-020 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 3 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -314,14 +314,7 @@ def rebalance_to_budget(self, new_budget: float) -> TargetPortfolio:
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 10.1 源码文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `src/zephyr/position/core/cold_start_progression.py` | ✅ 已实现 | |
-| `src/zephyr/position/core/strategy_book.py` | ✅ 已实现 | |
-
-### 10.2 测试文件
+### 10.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|

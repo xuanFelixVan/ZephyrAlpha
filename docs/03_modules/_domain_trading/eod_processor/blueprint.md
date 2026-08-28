@@ -3,7 +3,7 @@ module_id: MOD-TRADING-012
 title: "EOD Processor 日终处理器蓝图 — 收盘价格快照 + NAV/PnL 确认 + 日终风险重估"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L02_trading
 layer_name: trading
@@ -15,7 +15,7 @@ last_updated: "2026-08-25"
 priority: P1
 blueprint_level: module
 design_maturity: production
-build_status: stable
+build_status: production
 responsibility_domain: 
 ---
 
@@ -126,7 +126,7 @@ CONFIRMED/DRIFT/SKIPPED、风险重估 OK/ERROR/SKIPPED、alert/audit 委托、�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-TRADING-012 | MOD-TRADING-012 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -144,13 +144,7 @@ CONFIRMED/DRIFT/SKIPPED、风险重估 OK/ERROR/SKIPPED、alert/audit 委托、�
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/trading/eod_processor.py` | ✅ 已实现 | |
-
-### 6.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/trading/test_eod_processor.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 6.5 路径索引使用指南
 
@@ -165,3 +159,5 @@ CONFIRMED/DRIFT/SKIPPED、风险重估 OK/ERROR/SKIPPED、alert/audit 委托、�
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

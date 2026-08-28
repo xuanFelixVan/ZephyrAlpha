@@ -3,7 +3,7 @@ module_id: MOD-RK-13
 title: "拥挤度监控器蓝图 — 跨参与者因子拥挤度检测"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
@@ -17,7 +17,7 @@ blueprint_id: MOD-RK-13
 domain_id: D_RISK
 path: src/zephyr/risk/core/crowding_monitor.py
 design_maturity: production
-build_status: stable
+build_status: production
 granularity: file
 ai_autonomy: ai_modifiable
 safety: L
@@ -122,7 +122,7 @@ is_crowded = crowding_score > threshold (默认 0.6)
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-RK-13 | MOD-RK-13 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 5 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -136,13 +136,7 @@ is_crowded = crowding_score > threshold (默认 0.6)
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 8.1 源码文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `src/zephyr/risk/core/crowding_monitor.py` | ✅ 已实现 | |
-
-### 8.2 测试文件
+### 8.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|

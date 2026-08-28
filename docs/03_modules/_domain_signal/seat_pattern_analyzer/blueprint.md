@@ -4,7 +4,7 @@ belongs_to: MOD-L03-001
 title: "Seat Pattern Analyzer 蓝图+施工图 — 龙虎榜席位形态分析（谁在买）"
 doc_type: blueprint
 status: Draft
-version: "0.1.2"
+version: "0.1.3"
 layer: L2_domain
 functional_domain: ashare_signal
 responsibility_domain: 
@@ -42,7 +42,7 @@ priority: P1
 
 # Seat Pattern Analyzer 蓝图+施工图 — 龙虎榜席位形态分析（谁在买）
 
-> module_id: MOD-SIG-056 | version: 0.1.2 | status: Draft | layer: L2_domain
+> module_id: MOD-SIG-056 | version: 0.1.3 | status: Draft | layer: L2_domain
 > actual_disk_path: src/zephyr/signal_ashare/seat_pattern_analyzer.py | generation: 1
 
 ## 概述
@@ -127,7 +127,7 @@ priority: P1
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-SIG-056 | MOD-SIG-056 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | N/A | — |
+| build_status | production | N/A | — |
 | file_count | 1 文件 | 2 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -569,7 +569,7 @@ design（v0.1 代码已实现+测试，depgraph design 态；merge 后统筹重�
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/signal_ashare/seat_pattern_analyzer.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 1.5 路径索引使用指南
 

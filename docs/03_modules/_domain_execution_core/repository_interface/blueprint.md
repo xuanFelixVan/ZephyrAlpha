@@ -3,7 +3,7 @@ module_id: MOD-EX-050
 title: "执行域仓储接口蓝图 — Order/PositionSnapshot持久化抽象+内存实现"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 design_maturity: production
 ttl: permanent
 responsibility_domain: 
@@ -167,7 +167,7 @@ class InMemoryPositionSnapshotRepository(PositionSnapshotRepository):
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-EX-050 | MOD-EX-050 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | N/A | — |
+| build_status | production | N/A | — |
 | file_count | 1 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -185,7 +185,7 @@ class InMemoryPositionSnapshotRepository(PositionSnapshotRepository):
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/ex_core/repository_interface.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 11.5 路径索引使用指南
 

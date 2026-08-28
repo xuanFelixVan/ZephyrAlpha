@@ -3,7 +3,7 @@ module_id: MOD-RK-39
 title: "Manipulation Avoidance Detector 庄股操纵回避检测器蓝图 — 五类统计特征→操纵风险评分→回避名单"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
@@ -15,7 +15,7 @@ last_updated: "2026-08-25"
 priority: P1
 blueprint_level: module
 design_maturity: production
-build_status: stable
+build_status: production
 responsibility_domain: 
 ---
 
@@ -107,7 +107,7 @@ MOD-RK-02 Pre-Trade / 信号域装配批）；检测日志经 audit_sink 委托 
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-RK-39 | MOD-RK-39 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -125,13 +125,7 @@ MOD-RK-02 Pre-Trade / 信号域装配批）；检测日志经 audit_sink 委托 
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/risk/manipulation_avoidance_detector.py` | ✅ 已实现 | |
-
-### 6.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/risk/test_manipulation_avoidance_detector.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 6.5 路径索引使用指南
 
@@ -146,3 +140,5 @@ MOD-RK-02 Pre-Trade / 信号域装配批）；检测日志经 audit_sink 委托 
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

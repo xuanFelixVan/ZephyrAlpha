@@ -3,9 +3,9 @@ module_id: MOD-SELL-007
 title: "卖出信号融合引擎蓝图 — 多信号加权融合+多时间框架共振"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 design_maturity: production
-build_status: stable
+build_status: production
 ttl: permanent
 layer: L03_sell_decision
 layer_name: sell_decision
@@ -168,7 +168,7 @@ class FusedSellDecision:
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-SELL-007 | MOD-SELL-007 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 1 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -186,7 +186,7 @@ class FusedSellDecision:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/sell_decision/core/sell_signal_fusion_engine.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 10.5 路径索引使用指南
 

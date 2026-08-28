@@ -4,7 +4,7 @@ submodule_path: src/zephyr/data
 title: "Data Source Core 蓝图+施工图 — 数据接入层"
 doc_type: blueprint
 status: Active
-version: "4.0.7"
+version: "4.0.8"
 layer: L2_domain
 layer_name: data_source
 functional_domain: data
@@ -64,7 +64,7 @@ design_maturity: production
 
 # Data Source Core 蓝图+施工图 — 数据接入层
 
-> module_id: MOD-L00-001 | version: 4.0.7 | status: active | domain: data
+> module_id: MOD-L00-001 | version: 4.0.8 | status: active | domain: data
 > actual_disk_path: src/zephyr/data/ | generation: 4 | construction_progress: partially_implemented
 
 > ⚠️ **职责拆分通知（2026-07-06）**
@@ -1115,13 +1115,7 @@ class MiniQmtQuoteProvider(QuoteProviderBase):
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/data/satellite_geospatial_engine/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/gov_enforcement/rule_enforcement/default_quality_gate.py` | ✅ 已实现 | |
-| `src/zephyr/gov_enforcement/rule_enforcement/quality_gate.py` | ✅ 已实现 | |
-| `src/zephyr/governance/data_governance/akshare_provider.py` | ✅ 已实现 | |
-| `src/zephyr/governance/data_governance/akshare_quote_provider.py` | ✅ 已实现 | |
 | `src/zephyr/governance/data_governance/miniqmt_provider.py` | ✅ 已实现 | |
-| `src/zephyr/governance/intelligence_governance/memory_provider.py` | ✅ 已实现 | |
-| `src/zephyr/governance/intelligence_governance/provider_base.py` | ✅ 已实现 | |
 | `src/zephyr/trading/trading_contracts/portfolio/contracts/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/trading/trading_contracts/portfolio/contracts/money.py` | ✅ 已实现 | |
 | `src/zephyr/trading/trading_contracts/portfolio/contracts/strategy_lifecycle_event.py` | ⚠️ 骨架 | |

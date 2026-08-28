@@ -3,7 +3,7 @@ module_id: MOD-RK-30
 title: "C-004 自适应风控三层联动装配层蓝图 — 盘前预判+盘中监控+熔断分级（薄装配）MVP"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
@@ -18,7 +18,7 @@ blueprint_id: MOD-RK-30
 domain_id: D_RISK
 path: src/zephyr/risk/core/adaptive_risk_coordinator.py
 design_maturity: production
-build_status: stable
+build_status: production
 granularity: file
 ai_autonomy: ai_modifiable
 safety: H
@@ -94,7 +94,7 @@ C-004 三层联动的**薄装配编排面**（W1c 同族整合裁定：底座复
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-RK-30 | MOD-RK-30 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -112,13 +112,7 @@ C-004 三层联动的**薄装配编排面**（W1c 同族整合裁定：底座复
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/risk/core/adaptive_risk_coordinator.py` | ✅ 已实现 | |
-
-### 5.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/risk/test_adaptive_risk_coordinator.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 5.5 路径索引使用指南
 
@@ -133,3 +127,5 @@ C-004 三层联动的**薄装配编排面**（W1c 同族整合裁定：底座复
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/pf_core
 title: "Portfolio Construction Core 蓝图+施工图 — 组合构建层"
 doc_type: blueprint
 status: Active
-version: "2.1.9"
+version: "2.1.10"
 layer: L2_domain
 layer_name: portfolio_construction
 functional_domain: portfolio
@@ -48,7 +48,7 @@ build_status: generated
 
 > ✅ **业务层已开放，可施工** — C轨（业务价值线·线7）当前状态为 partially_implemented。本蓝图仅供架构参考和预研代码维护，可以此蓝图为依据新增组合构建业务代码。
 
-> module_id: MOD-L05-001 | version: 2.1.9 | status: Active | layer: L2_domain
+> module_id: MOD-L05-001 | version: 2.1.10 | status: Active | layer: L2_domain
 > actual_disk_path: src/zephyr/pf_core/ | generation: 2 | construction_progress: partially_implemented
 
 # Portfolio Construction Core 蓝图+施工图 — 组合构建层
@@ -955,22 +955,8 @@ ZephyrAlpha 量化架构需要从信号层（D_SIGNAL）和风控层（D_RISK）
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/governance/strategies/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/governance/strategies/strategy_base.py` | ✅ 已实现 | |
 | `src/zephyr/governance/strategies/strategy_registry.py` | ⚠️ 骨架 | |
-| `src/zephyr/pf_core/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/pf_core/default_equity_strategy.py` | ✅ 已实现 | |
-| `src/zephyr/pf_core/intraday_surge_fall_strategy.py` | ✅ 已实现 | |
-| `src/zephyr/pf_core/orderbook_imbalance_strategy.py` | ✅ 已实现 | |
-| `src/zephyr/pf_core/strategies/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/pf_core/strategies/daban_sleeve_strategy.py` | ✅ 已实现 | |
-| `src/zephyr/pf_core/strategies/event_driven_sleeve_strategy.py` | ✅ 已实现 | |
-| `src/zephyr/pf_core/strategies/multifactor_sleeve_strategy.py` | ✅ 已实现 | |
 | `src/zephyr/pf_core/strategy_engine/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/pf_core/strategy_engine/event_sentiment_adapter.py` | ✅ 已实现 | |
-| `src/zephyr/pf_core/strategy_engine/strategy_runner.py` | ✅ 已实现 | |
-| `src/zephyr/pf_core/strategy_engine/tick_strategy_base.py` | ✅ 已实现 | |
-| `src/zephyr/pf_core/topn_momentum_strategy.py` | ✅ 已实现 | |
-| `src/zephyr/pf_core/vwap_reversion_strategy.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 
@@ -978,7 +964,6 @@ ZephyrAlpha 量化架构需要从信号层（D_SIGNAL）和风控层（D_RISK）
 |---------|:---:|------|
 | `tests/cross/test_e2e_redblue_night001.py` | ✅ 已实现 | |
 | `tests/pf_core/test_daban_sleeve_strategy.py` | ✅ 已实现 | |
-| `tests/pf_core/test_event_sentiment_adapter.py` | ✅ 已实现 | |
 | `tests/pf_core/test_eventdriven_sleeve_strategy.py` | ✅ 已实现 | |
 | `tests/pf_core/test_multifactor_constraint_arbitration.py` | ✅ 已实现 | |
 | `tests/pf_core/test_multifactor_holding_drift_monitor.py` | ✅ 已实现 | |

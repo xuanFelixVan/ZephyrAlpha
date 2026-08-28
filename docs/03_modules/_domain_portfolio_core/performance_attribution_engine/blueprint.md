@@ -3,7 +3,7 @@ module_id: MOD-PF-007
 title: "绩效归因引擎蓝图 — Brinson 三因子 + 因子/风险归因 + 降级检测"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 ttl: permanent
 layer: L02_portfolio_core
 layer_name: portfolio_core
@@ -16,7 +16,7 @@ priority: P0
 blueprint_level: module
 responsibility_domain: 
 design_maturity: production
-build_status: stable
+build_status: production
 ---
 
 # MOD-PF-007 Performance Attribution Engine — 绩效归因引擎 蓝图
@@ -132,7 +132,7 @@ interaction_effect = Σ (w_p,i - w_b,i) × (r_p,i - r_b,i)  (交互效应)
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-PF-007 | MOD-PF-007 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 1 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -150,7 +150,7 @@ interaction_effect = Σ (w_p,i - w_b,i) × (r_p,i - r_b,i)  (交互效应)
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/pf_core/core/performance_attribution_engine.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 8.5 路径索引使用指南
 

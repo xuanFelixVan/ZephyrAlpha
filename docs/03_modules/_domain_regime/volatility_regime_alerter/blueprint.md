@@ -3,7 +3,7 @@ module_id: MOD-REGIME-011
 title: "波动率体制转换与关键时点预警蓝图 — GARCH(1,1) 波动预测+RV 压缩标记+突变告警"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L2_domain
 layer_name: regime
@@ -15,7 +15,7 @@ last_updated: "2026-08-25"
 priority: P0
 blueprint_level: module
 design_maturity: production
-build_status: stable
+build_status: production
 responsibility_domain: 
 ---
 
@@ -100,7 +100,7 @@ QMLE，不引 arch 库**（AI-FHS-001 #1，MOD-RK-26 fhs_engine 先例）。本�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-REGIME-011 | MOD-REGIME-011 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -114,13 +114,7 @@ QMLE，不引 arch 库**（AI-FHS-001 #1，MOD-RK-26 fhs_engine 先例）。本�
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 7.1 源码文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `src/zephyr/regime/volatility_regime_alerter.py` | ✅ 已实现 | |
-
-### 7.2 测试文件
+### 7.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
@@ -139,3 +133,5 @@ QMLE，不引 arch 库**（AI-FHS-001 #1，MOD-RK-26 fhs_engine 先例）。本�
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

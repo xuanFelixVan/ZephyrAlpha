@@ -4,7 +4,7 @@ title: "Task System 蓝图 — 全链路任务卡生命周期管理"
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "0.9.8"
+version: "0.9.9"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -60,7 +60,7 @@ build_status: generated
 
 # Task System 蓝图 — 全链路任务卡生命周期管理
 
-> module_id: MOD-TASK_SYSTEM | version: 0.9.8 | status: active | layer: L0_infrastructure
+> module_id: MOD-TASK_SYSTEM | version: 0.9.9 | status: active | layer: L0_infrastructure
 > actual_disk_path: src/zephyr/governance/task_repo.py | generation: 1 | construction_progress: partially_implemented
 
 ## 概述
@@ -1452,11 +1452,7 @@ STEP 3: 拆分后验证
 |---------|:---:|------|
 | `src/zephyr/governance/architecture_governance/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/governance/architecture_governance/post_sync_validator.py` | ✅ 已实现 | |
-| `src/zephyr/governance/lifecycle_governance/transition.py` | ✅ 已实现 | |
 | `src/zephyr/governance/persistence/base_repo.py` | ✅ 已实现 | |
-| `src/zephyr/governance/persistence/intent_keyword_mapper.py` | ✅ 已实现 | |
-| `src/zephyr/governance/persistence/intent_parser.py` | ✅ 已实现 | |
-| `src/zephyr/governance/persistence/task_repo.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 

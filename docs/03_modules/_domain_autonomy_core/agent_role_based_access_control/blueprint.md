@@ -5,7 +5,7 @@ title: "Agent RBAC 蓝图 — 七层纵深防御·六横切面运行时权限"
 doc_type: blueprint
 status: Active
 activation_phase: requires_100ai
-version: "1.1.7"
+version: "1.1.8"
 layer: L0_infrastructure
 domain: infra_ops
 owner: ZephyrAlpha-Owner
@@ -7122,86 +7122,20 @@ class PermissionHooks:
 |---------|:---:|------|
 | `src/zephyr/security/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/security/access_control/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/a2a_check.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/adversarial_resilience.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/agent_creation_policy.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/approver_check.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/asymmetric_audit.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/auto_maintenance.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/blueprint_fidelity.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/bootstrap_superadmin.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/build_sanitizer.py` | ⚠️ 骨架 | |
-| `src/zephyr/security/access_control/cache_invalidation.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/canary_rollout_manager.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/capability_check.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/cascading_failure_isolator.py` | ⚠️ 骨架 | |
-| `src/zephyr/security/access_control/cold_start_lock.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/compliance_matrix.py` | ⚠️ 骨架 | |
-| `src/zephyr/security/access_control/contracts.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/cross_cutting.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/decision_explainer.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/decision_registry.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/defense_depth.py` | ⚠️ 骨架 | |
-| `src/zephyr/security/access_control/dependency_auditor.py` | ⚠️ 骨架 | |
-| `src/zephyr/security/access_control/derive_rbac_roles.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/detectors/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/security/access_control/detectors/anomaly_detector.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/detectors/context_drift_detector.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/detectors/cross_session_detector.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/detectors/false_completion_detector.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/detectors/multi_agent_collusion_detector.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/detectors/shell_dialect_detector.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/dry_run.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/emergency_override.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/engine_degradation.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/environment_manager.py` | ⚠️ 骨架 | |
-| `src/zephyr/security/access_control/escalation_handler.py` | ⚠️ 骨架 | |
-| `src/zephyr/security/access_control/exceptions.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/genesis_bootstrap.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/guard_layers.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/guards/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/guards/abac_guard.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/guards/anti_pattern_guard.py` | ⚠️ 骨架 | |
-| `src/zephyr/security/access_control/guards/audit_log_guard.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/guards/cybersec_2026_guard.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/guards/input_guard.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/guards/memory_guard.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/guards/memory_provenance_guard.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/guards/native_api_guard.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/guards/novel_attack_guard.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/guards/output_guard.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/guards/path_guard.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/guards/permission_guard.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/guards/rbac_guard.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/guards/replay_attack_guard.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/guards/rule_injection_guard.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/guards/sequence_guard.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/guards/toctou_guard.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/guards/vibe_coding_guard.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/identity.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/immutable_core.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/integration.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/integrity_self_check.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/intent_binder.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/key_hierarchy.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/kill_switch.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/legal_audit_chain.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/microstructure_defense.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/monotonic_clock.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/non_repudiation.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/observability.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/permission_hooks.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/permission_mode_manager.py` | ⚠️ 骨架 | |
 | `src/zephyr/security/access_control/phase_executor.py` | ⚠️ 骨架 | |
-| `src/zephyr/security/access_control/risk_mitigation.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/rollback_sandbox.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/secrets_lifecycle.py` | ⚠️ 骨架 | |
-| `src/zephyr/security/access_control/session_concurrency.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/session_lifecycle.py` | ⚠️ 骨架 | |
 | `src/zephyr/security/access_control/verifiers/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/security/access_control/verifiers/bootstrap_verifier.py` | ⚠️ 骨架 | |
 | `src/zephyr/security/access_control/verifiers/continuous_verifier.py` | ⚠️ 骨架 | |
-| `src/zephyr/security/access_control/verifiers/contract_verifier.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/verifiers/micro_verifier.py` | ⚠️ 骨架 | |
 | `src/zephyr/security/access_control/verifiers/post_action_verifier.py` | ⚠️ 骨架 | |
 
@@ -7281,7 +7215,6 @@ class PermissionHooks:
 | `tests/path/test_path_guard.py` | ✅ 已实现 | |
 | `tests/rollback/test_rollback_sandbox.py` | ✅ 已实现 | |
 | `tests/rule/test_rule_injection_guard.py` | ✅ 已实现 | |
-| `tests/security/access_control/test_key_hierarchy.py` | ✅ 已实现 | |
 | `tests/session/test_session_lifecycle.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南

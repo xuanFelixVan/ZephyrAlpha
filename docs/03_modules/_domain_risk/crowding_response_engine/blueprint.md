@@ -3,7 +3,7 @@ module_id: MOD-RK-32
 title: "C-045 拥挤度响应引擎蓝图 — 策略逻辑指纹相似度+超阈降杠杆/降仓+拥挤-回撤悖论防护 MVP"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
@@ -18,7 +18,7 @@ blueprint_id: MOD-RK-32
 domain_id: D_RISK
 path: src/zephyr/risk/core/crowding_response_engine.py
 design_maturity: production
-build_status: stable
+build_status: production
 granularity: file
 ai_autonomy: ai_modifiable
 safety: H
@@ -93,7 +93,7 @@ crowding_score 并补逻辑指纹维 + 响应动作；DTW 唯一真源 = clone_g
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-RK-32 | MOD-RK-32 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -111,13 +111,7 @@ crowding_score 并补逻辑指纹维 + 响应动作；DTW 唯一真源 = clone_g
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/risk/core/crowding_response_engine.py` | ✅ 已实现 | |
-
-### 5.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/risk/test_crowding_response_engine.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 5.5 路径索引使用指南
 
@@ -132,3 +126,5 @@ crowding_score 并补逻辑指纹维 + 响应动作；DTW 唯一真源 = clone_g
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

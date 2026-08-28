@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance/registry_governance
 title: "注册表治理"
 doc_type: blueprint
 status: Draft
-version: "0.2.5"
+version: "0.2.6"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: internal
@@ -139,7 +139,7 @@ END_REQUIRED_SECTIONS
 
 # Registry Governance 蓝图+施工图 — 注册表体系架构+功能域注册表+SSoT门禁
 
-> module_id: MOD-INF-037 | version: 0.2.5 | status: Draft | domain: infra_ops
+> module_id: MOD-INF-037 | version: 0.2.6 | status: Draft | domain: infra_ops
 > actual_disk_path: src/zephyr/infra_ops/ | generation: 1 | construction_progress: partially_implemented
 
 ## 概述
@@ -1104,14 +1104,7 @@ class OverlapResult:
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 1.1 源码文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `src/zephyr/governance/capability_lookup.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/registry_governance.py` | ✅ 已实现 | |
-
-### 1.2 测试文件
+### 1.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|

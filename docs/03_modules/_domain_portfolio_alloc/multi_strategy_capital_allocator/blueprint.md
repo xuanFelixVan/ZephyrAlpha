@@ -3,9 +3,9 @@ module_id: MOD-PA-003
 title: "多策略资金分配器蓝图 — 容量+MaxDD+冷启动+再平衡频率"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 design_maturity: design
-build_status: stable
+build_status: production
 ttl: permanent
 layer: L02_pf_alloc
 layer_name: pf_alloc
@@ -104,7 +104,7 @@ responsibility_domain:
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-PA-003 | MOD-PA-003 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -122,7 +122,7 @@ responsibility_domain:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/pf_alloc/core/multi_strategy_capital_allocator.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 8.5 路径索引使用指南
 

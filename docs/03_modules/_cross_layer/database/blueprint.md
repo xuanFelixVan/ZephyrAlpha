@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/db
 title: "Database 集成蓝图 — 2库职责划分(SQLite治理+PG架构) + 三层冷热架构定位"
 doc_type: blueprint
 status: Active
-version: "4.3.7"
+version: "4.3.8"
 layer: L1_foundation
 blueprint_level: domain
 owner: ZephyrAlpha-Owner
@@ -50,7 +50,7 @@ build_status: generated
 
 # Database 集成蓝图 — SQLite+DuckDB 核心运营 + v3.0 PostgreSQL容量升级
 
-> module_id: SH-DB-001 | version: 4.3.7 | status: Active | layer: cross_layer | belongs_to: MOD-MASTER_BLUEPRINT
+> module_id: SH-DB-001 | version: 4.3.8 | status: Active | layer: cross_layer | belongs_to: MOD-MASTER_BLUEPRINT
 > actual_disk_path: `src/zephyr/governance/persistence/` | generation: 3 | construction_progress: completed
 > **DW-045 拆分完成**。详细内容见子蓝图。本文档为集成入口。
 
@@ -395,16 +395,9 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/gov_enforcement/rule_enforcement/dlq_retry_policy.py` | ✅ 已实现 | |
-| `src/zephyr/governance/depgraph_schema.py` | ✅ 已实现 | |
-| `src/zephyr/governance/persistence/database_manager.py` | ✅ 已实现 | |
-| `src/zephyr/governance/persistence/database_service.py` | ✅ 已实现 | |
 | `src/zephyr/governance/persistence/dataflowgraph_schema.py` | ✅ 已实现 | |
-| `src/zephyr/governance/persistence/depgraph_reader.py` | ✅ 已实现 | |
-| `src/zephyr/governance/persistence/sqlite_schema.py` | ✅ 已实现 | |
 | `src/zephyr/shared/database/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/database/database_crud_mixin.py` | ✅ 已实现 | |
-| `src/zephyr/trading/autopilot.py` | ✅ 已实现 | |
-| `src/zephyr/trading/conductor.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

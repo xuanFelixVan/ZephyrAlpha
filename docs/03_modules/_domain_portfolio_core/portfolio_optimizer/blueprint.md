@@ -3,7 +3,7 @@ module_id: MOD-PF-002
 title: "组合优化器蓝图 — 风险预算为主 + 均值方差备选 + Kelly 截断"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.4"
 ttl: permanent
 layer: L02_portfolio_core
 layer_name: portfolio_core
@@ -148,7 +148,6 @@ build_status: generated
 | `src/zephyr/pf_core/core/multifactor_constraint_arbitration.py` | ✅ 已实现 | |
 | `src/zephyr/pf_core/core/multifactor_holding_drift_monitor.py` | ✅ 已实现 | |
 | `src/zephyr/pf_core/core/multifactor_rebalance_trigger.py` | ✅ 已实现 | |
-| `src/zephyr/pf_core/core/portfolio_optimizer.py` | ✅ 已实现 | |
 
 ### 8.2 测试文件
 

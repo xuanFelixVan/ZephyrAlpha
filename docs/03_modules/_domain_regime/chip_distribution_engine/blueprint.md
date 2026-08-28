@@ -3,9 +3,9 @@ module_id: MOD-REGIME-005
 title: "筹码分布引擎蓝图 — 华泰2026前沿VWAP三角分布+筹码龄分层+32相对网格（regime特征管道#12/#5/S2底部筹码数据源）"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 design_maturity: production
-build_status: stable
+build_status: production
 ttl: permanent
 layer: L2_domain
 layer_name: regime
@@ -349,7 +349,7 @@ MOD-REGIME-005 → D_DATA (ClickHouse OHLCV + money_flow)
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-REGIME-005 | MOD-REGIME-005 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 1 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -367,7 +367,7 @@ MOD-REGIME-005 → D_DATA (ClickHouse OHLCV + money_flow)
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/regime/features/chip_distribution_engine.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 12.5 路径索引使用指南
 

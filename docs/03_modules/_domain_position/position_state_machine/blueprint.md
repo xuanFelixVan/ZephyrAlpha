@@ -3,7 +3,7 @@ module_id: MOD-POS-002
 title: "仓位状态机蓝图 — 仓位生命周期状态转换"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 design_maturity: production
 ttl: permanent
 layer: L03_position
@@ -133,7 +133,7 @@ fsm.close(cooldown_until=t2+5d, now=t2)             # → CLOSED (冷却期)
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-POS-002 | MOD-POS-002 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | N/A | — |
+| build_status | production | N/A | — |
 | file_count | 1 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -151,7 +151,7 @@ fsm.close(cooldown_until=t2+5d, now=t2)             # → CLOSED (冷却期)
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/position/core/position_state_machine.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 9.5 路径索引使用指南
 

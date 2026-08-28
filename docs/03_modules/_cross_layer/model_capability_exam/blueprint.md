@@ -4,7 +4,7 @@ submodule_path: src/zephyr/intelligence/model_profiling
 title: "Model Capability Exam 蓝图 — 模型能力考试·多维度能力评估"
 doc_type: blueprint
 status: Active
-version: "2.3.8"
+version: "2.3.9"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -1010,15 +1010,11 @@ STEP 3: 拆分后验证
 | `src/zephyr/infrastructure/model_capability_exam/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_evaluation/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_evaluation/_memory_backend.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_evaluation/activate.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_evaluation/experiment_tracker/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_evaluation/implementations/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_evaluation/implementations/default_inference_engine.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_evaluation/inference_base.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_evaluation/notebook_integration/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_evaluation/reranker.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_evaluation/unified_memory_api.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 

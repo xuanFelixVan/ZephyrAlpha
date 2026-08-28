@@ -3,7 +3,7 @@ module_id: MOD-RK-37
 title: "统一绩效归因与策略退化检测蓝图 — IC 衰减 60 日均线退化判定 + 拥挤度联动自动降权"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
@@ -15,7 +15,7 @@ last_updated: "2026-08-25"
 priority: P0
 blueprint_level: module
 design_maturity: production
-build_status: stable
+build_status: production
 responsibility_domain: 
 ---
 
@@ -91,7 +91,7 @@ IC 60 日均线衰减 >50% → 退化判定；拥挤度联动（MOD-RK-13 口径
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-RK-37 | MOD-RK-37 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -105,13 +105,7 @@ IC 60 日均线衰减 >50% → 退化判定；拥挤度联动（MOD-RK-13 口径
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 6.1 源码文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `src/zephyr/risk/core/performance_attribution_degradation.py` | ✅ 已实现 | |
-
-### 6.2 测试文件
+### 6.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
@@ -130,3 +124,5 @@ IC 60 日均线衰减 >50% → 退化判定；拥挤度联动（MOD-RK-13 口径
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

@@ -3,7 +3,7 @@ module_id: MOD-TRIG-001
 title: "扳机清单注册与仲裁引擎 — 触发器统一注册+优先级仲裁+同源去重+冷却期防重"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 ttl: permanent
 layer: L2_domain
 functional_domain: trading
@@ -22,14 +22,14 @@ ssot_claims:
   - {claim: "MVP 15 条扳机清单唯一真源", scope: "module"}
 responsibility_domain: 
 design_maturity: production
-build_status: stable
+build_status: production
 language: zh
 generation: 1
 summary: "41 §3.9 条件触发执行队列：买入/卖出/执行/风控触发器统一注册 TriggerEntry，priority 1-5 仲裁+scope 排序+同源去重+冷却期，MVP 15 条清单预注册"
 ---
 # Trigger Registry 蓝图+施工图 — 扳机清单注册与仲裁引擎 — 触发器统一注册+优先级仲裁+同源去重+冷却期防重
 
-> module_id: MOD-TRIG-001 | version: 0.1.2 | status: Active | layer: L2_domain (trading)
+> module_id: MOD-TRIG-001 | version: 0.1.3 | status: Active | layer: L2_domain (trading)
 > actual_disk_path: src/zephyr/trading/trigger_registry.py | generation: 1
 > 设计真源: 41_buy_flow v1.7.0 §3.9 | 施工性质: 回填蓝图（代码已完工，83用例通过，2026-08-13 补建，遗留项 #29）
 
@@ -92,7 +92,7 @@ summary: "41 §3.9 条件触发执行队列：买入/卖出/执行/风控触发�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-TRIG-001 | MOD-TRIG-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 2 文件 | 1 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -509,13 +509,7 @@ class TriggeredEvent:
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 1.1 源码文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `src/zephyr/trading/trigger_registry.py` | ✅ 已实现 | |
-
-### 1.2 测试文件
+### 1.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|

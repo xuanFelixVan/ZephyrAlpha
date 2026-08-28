@@ -3,7 +3,7 @@ module_id: MOD-CMP-007
 title: "交易合规检测器蓝图 — 异常交易 2 条 + 市场操纵 4 类"
 doc_type: blueprint
 status: Active
-version: "0.1.20"
+version: "0.1.21"
 ttl: permanent
 design_maturity: production
 layer: L1_foundation
@@ -97,14 +97,7 @@ tests/compliance/test_trading_compliance_detector.py — 17 用例：六类检�
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 9.1 源码文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `src/zephyr/compliance/manipulation_stream_driver.py` | ✅ 已实现 | |
-| `src/zephyr/compliance/trading_compliance_detector.py` | ✅ 已实现 | |
-
-### 9.2 测试文件
+### 9.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
@@ -152,7 +145,7 @@ tests/compliance/test_trading_compliance_detector.py — 17 用例：六类检�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-CMP-007 | MOD-CMP-007 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | N/A | — |
+| build_status | production | N/A | — |
 | file_count | 8 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/ex_core
 title: "Trade Execution Core 蓝图+施工图 — 交易执行引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.14"
+version: "2.2.15"
 layer: L2_domain
 layer_name: trade_execution
 functional_domain: execution
@@ -185,7 +185,7 @@ build_status: generated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L06-001` 的 42 个 file 节点 | production | `extract_depgraph.py --modules MOD-L06-001` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L06-001` 的 54 个 file 节点 | production | `extract_depgraph.py --modules MOD-L06-001` |
 | 数据流图 (dataflow) | 3 个 Dataset / 2 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -197,7 +197,7 @@ build_status: generated
 | module_id | MOD-L06-001 | MOD-L06-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 42 文件 | 7 文件（§0.1） | ❌ |
+| file_count | 54 文件 | 7 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1220,42 +1220,24 @@ ex_core/adapters/miniqmt_broker.py (新建, 实盘Broker)
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/ex_core/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/ex_core/adapters/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/ex_core/adapters/miniqmt_broker.py` | ✅ 已实现 | |
-| `src/zephyr/ex_core/async_fill_dispatcher.py` | ✅ 已实现 | |
-| `src/zephyr/ex_core/board_lot.py` | ✅ 已实现 | |
-| `src/zephyr/ex_core/cancel_rate_guard.py` | ✅ 已实现 | |
-| `src/zephyr/ex_core/corporate_action_adjuster.py` | ✅ 已实现 | |
-| `src/zephyr/ex_core/execution_engine.py` | ✅ 已实现 | |
-| `src/zephyr/ex_core/execution_report.py` | ✅ 已实现 | |
-| `src/zephyr/ex_core/open_order_resolver.py` | ✅ 已实现 | |
-| `src/zephyr/ex_core/order_manager.py` | ✅ 已实现 | |
-| `src/zephyr/ex_core/price_cage.py` | ✅ 已实现 | |
-| `src/zephyr/ex_core/pricing_policy.py` | ✅ 已实现 | |
-| `src/zephyr/ex_core/programmatic_trading_guard.py` | ✅ 已实现 | |
-| `src/zephyr/ex_core/rejection_action_handler.py` | ✅ 已实现 | |
-| `src/zephyr/ex_core/risk_layer_orchestrator.py` | ✅ 已实现 | |
+| `src/zephyr/ex_core/adapters/qmt_file_bridge_integration.py` | ✅ 已实现 | |
 | `src/zephyr/ex_core/services/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/ex_core/services/live_portfolio.py` | ✅ 已实现 | |
-| `src/zephyr/ex_core/signal_providers.py` | ✅ 已实现 | |
-| `src/zephyr/ex_core/trading_halt_resolver.py` | ✅ 已实现 | |
-| `src/zephyr/ex_core/trading_session.py` | ✅ 已实现 | |
 | `src/zephyr/governance/adapters/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/governance/adapters/risk_validation_bridge.py` | ✅ 已实现 | |
-| `src/zephyr/governance/adapters/simulation_broker.py` | ✅ 已实现 | |
-| `src/zephyr/trading/trading_contracts/broker_interface.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `tests/ex_core/__init__.py` | ⚠️ 骨架 | |
+| `tests/ex_core/adapters/test_qmt_file_bridge_broker.py` | ✅ 已实现 | |
+| `tests/ex_core/adapters/test_qmt_file_bridge_quote.py` | ✅ 已实现 | |
 | `tests/ex_core/test_execution_report.py` | ✅ 已实现 | |
 | `tests/ex_core/test_live_portfolio.py` | ✅ 已实现 | |
+| `tests/ex_core/test_local_order_queue.py` | ✅ 已实现 | |
 | `tests/ex_core/test_miniqmt_broker.py` | ✅ 已实现 | |
 | `tests/ex_core/test_order_manager_compliance_gate.py` | ✅ 已实现 | |
 | `tests/ex_core/test_price_cage.py` | ✅ 已实现 | |
+| `tests/ex_core/test_qmt_trading_session.py` | ✅ 已实现 | |
 | `tests/ex_core/test_rejection_action_handler.py` | ✅ 已实现 | |
 | `tests/ex_core/test_risk_layer_orchestrator.py` | ✅ 已实现 | |
 | `tests/ex_core/test_trading_session.py` | ✅ 已实现 | |

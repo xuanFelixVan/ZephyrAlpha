@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance/semantic_auditor
 title: "Semantic Auditor 蓝图 — 语义审计器·规则文档LLM桥接"
 doc_type: blueprint
 status: Active
-version: "6.1.5"
+version: "6.1.6"
 layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
@@ -85,12 +85,12 @@ references:
 architecture_layer: "L1_分析引擎"
 responsibility_domain: 
 design_maturity: production
-build_status: stable
+build_status: production
 ---
 
 # Semantic Auditor 蓝图 — 语义审计器·规则文档LLM桥接
 
-> module_id: MOD-INF-028 | version: 6.1.5 | status: active | layer: cross_layer
+> module_id: MOD-INF-028 | version: 6.1.6 | status: active | layer: cross_layer
 > actual_disk_path: `D:\ZephyrAlpha\src\zephyr\semantic-auditor\` | generation: 5 | construction_progress: partially_implemented
 
 ## 概述
@@ -192,7 +192,7 @@ SemanticAuditor 是 ZephyrAlpha 的纯语义审计引擎——它解决"规则�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-028 | MOD-INF-028 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 24 文件 | 26 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -1063,7 +1063,6 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/governance/resilience_governance/blast_radius.py` | ✅ 已实现 | |
 | `src/zephyr/governance/semantic_audit/alignment_engine.py` | ✅ 已实现 | |
 | `src/zephyr/governance/semantic_audit/compliance_map.py` | ✅ 已实现 | |
 | `src/zephyr/governance/semantic_audit/feedback_self_audit.py` | ✅ 已实现 | |
@@ -1072,7 +1071,6 @@ STEP 3: 拆分后验证
 | `src/zephyr/governance/semantic_audit/issue_aggregator.py` | ✅ 已实现 | |
 | `src/zephyr/governance/semantic_audit/kb_gate.py` | ✅ 已实现 | |
 | `src/zephyr/governance/semantic_audit/llm_bridge.py` | ✅ 已实现 | |
-| `src/zephyr/governance/semantic_audit/models.py` | ✅ 已实现 | |
 | `src/zephyr/governance/semantic_audit/orchestrator.py` | ✅ 已实现 | |
 | `src/zephyr/governance/semantic_audit/privacy.py` | ✅ 已实现 | |
 | `src/zephyr/governance/semantic_audit/reference_extractor.py` | ✅ 已实现 | |

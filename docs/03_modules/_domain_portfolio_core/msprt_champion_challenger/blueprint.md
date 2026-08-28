@@ -3,7 +3,7 @@ module_id: MOD-PF-008
 title: "mSPRT Champion-Challenger 序贯晋升组件蓝图 — 高斯 mixture 闭式解 + Ville 边界"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L02_portfolio_core
 layer_name: portfolio_core
@@ -16,7 +16,7 @@ priority: P1
 blueprint_level: module
 responsibility_domain: 
 design_maturity: production
-build_status: stable
+build_status: production
 ---
 
 # MOD-PF-008 mSPRT Champion-Challenger — 序贯晋升组件 蓝图
@@ -131,7 +131,7 @@ anytime-valid：可任意频次查看无"偷看惩罚"（Type I ≤ α 在所有
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-PF-008 | MOD-PF-008 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -149,13 +149,7 @@ anytime-valid：可任意频次查看无"偷看惩罚"（Type I ≤ α 在所有
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/pf_core/core/msprt_champion_challenger.py` | ✅ 已实现 | |
-
-### 7.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/pf_core/test_msprt_champion_challenger.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 7.5 路径索引使用指南
 
@@ -170,3 +164,5 @@ anytime-valid：可任意频次查看无"偷看惩罚"（Type I ≤ α 在所有
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

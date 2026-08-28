@@ -3,7 +3,7 @@ module_id: MOD-RPT-009
 title: "复盘编排器蓝图 — 日/周/月三频复盘链路编排+四段式周报模板（55 号 G26 §3.6）"
 doc_type: blueprint
 status: Active
-version: "0.1.21"
+version: "0.1.22"
 ttl: permanent
 layer: L07_reporting
 layer_name: reporting
@@ -16,7 +16,7 @@ priority: P1
 blueprint_level: module
 responsibility_domain: 
 design_maturity: production
-build_status: stable
+build_status: production
 ---
 
 # MOD-RPT-009 Review Orchestrator — 复盘编排器 蓝图
@@ -92,19 +92,10 @@ tests/reporting/test_review_orchestrator.py——日 PASS/FAIL 两态/周模板�
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
 
-### 10.1 源码文件
+### 10.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/reporting/ai_review_summary.py` | ✅ 已实现 | |
-| `src/zephyr/reporting/review_orchestrator.py` | ✅ 已实现 | |
-| `src/zephyr/reporting/review_template_engine.py` | ✅ 已实现 | |
-
-### 10.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/reporting/test_ai_review_summary.py` | ✅ 已实现 | |
 | `tests/reporting/test_review_orchestrator.py` | ✅ 已实现 | |
 | `tests/reporting/test_review_template_engine.py` | ✅ 已实现 | |
 
@@ -145,7 +136,7 @@ tests/reporting/test_review_orchestrator.py——日 PASS/FAIL 两态/周模板�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-RPT-009 | MOD-RPT-009 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 6 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

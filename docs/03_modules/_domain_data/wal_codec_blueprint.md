@@ -14,7 +14,7 @@ construction_progress: prototype
 language: zh
 description: WAL 段文件编解码层——当前 TSV 格式（已施工），Protobuf 为 P3 远期备选
 build_status: production
-design_maturity: design
+design_maturity: production
 responsibility_domain: 
 ---
 
@@ -37,8 +37,8 @@ responsibility_domain:
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L00-006` 的 11 个 file 节点 | design | `extract_depgraph.py --modules MOD-L00-006` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L00-006` 的 11 个 file 节点 | production | `extract_depgraph.py --modules MOD-L00-006` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 

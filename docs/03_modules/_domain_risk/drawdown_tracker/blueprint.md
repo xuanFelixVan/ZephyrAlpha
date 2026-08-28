@@ -3,7 +3,7 @@ module_id: MOD-RK-011
 title: "回撤实时追踪器蓝图 — 峰值谷值+三级阈值告警"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.4"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
@@ -16,7 +16,7 @@ priority: P0
 blueprint_level: module
 responsibility_domain: 
 design_maturity: production
-build_status: stable
+build_status: production
 ---
 
 # MOD-RK-011 Drawdown Real-Time Tracker — 回撤实时追踪器 蓝图
@@ -117,7 +117,7 @@ RK-11 是*实时告警*(回撤→分级告警, 监控导向)。RK-11 产出告�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-RK-011 | MOD-RK-011 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 3 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -135,9 +135,7 @@ RK-11 是*实时告警*(回撤→分级告警, 监控导向)。RK-11 产出告�
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/risk/core/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/risk/core/drawdown_tracker.py` | ✅ 已实现 | |
-| `src/zephyr/risk/core/var_backtester.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 8.5 路径索引使用指南
 

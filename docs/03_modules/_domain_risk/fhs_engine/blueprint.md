@@ -3,7 +3,7 @@ module_id: MOD-RK-26
 title: "FHS 引擎蓝图 — Filtered Historical Simulation（GARCH 残差重采样 VaR/ES）MVP"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
@@ -16,7 +16,7 @@ priority: P2
 blueprint_level: module
 responsibility_domain: 
 design_maturity: production
-build_status: stable
+build_status: production
 ---
 
 # MOD-RK-26 FHS Engine — Filtered Historical Simulation 引擎 蓝图
@@ -153,7 +153,7 @@ memo ES method='lower'，多日 √T 缩放）——供 FHS vs HS 偏离度审�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-RK-26 | MOD-RK-26 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -165,13 +165,7 @@ memo ES method='lower'，多日 √T 缩放）——供 FHS vs HS 偏离度审�
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 8.1 源码文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `src/zephyr/risk/core/fhs_engine.py` | ✅ 已实现 | |
-
-### 8.2 测试文件
+### 8.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|

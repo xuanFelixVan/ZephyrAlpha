@@ -3,7 +3,7 @@ module_id: MOD-CMP-001
 title: "四项必做清单检查器蓝图 — 盘前/盘中/盘后/晚间完成度检测"
 doc_type: blueprint
 status: Active
-version: "0.1.20"
+version: "0.1.21"
 ttl: permanent
 design_maturity: production
 layer: L1_foundation
@@ -100,7 +100,7 @@ tests/compliance/test_discipline_must_do_checker.py — 11 用例：全完成/�
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/compliance/discipline_must_do_checker.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 9.5 路径索引使用指南
 
@@ -139,7 +139,7 @@ tests/compliance/test_discipline_must_do_checker.py — 11 用例：全完成/�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-CMP-001 | MOD-CMP-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | N/A | — |
+| build_status | production | N/A | — |
 | file_count | 1 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

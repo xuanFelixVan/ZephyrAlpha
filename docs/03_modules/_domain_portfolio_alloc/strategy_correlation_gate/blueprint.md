@@ -3,9 +3,9 @@ module_id: MOD-PA-004
 title: "策略相关性门禁蓝图 — 多维度相关性检查+5级裁决"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 design_maturity: design
-build_status: stable
+build_status: production
 ttl: permanent
 layer: L02_pf_alloc
 layer_name: pf_alloc
@@ -98,7 +98,7 @@ G12 策略相关性门禁——在策略上线/资金分配前, 检查策略两�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-PA-004 | MOD-PA-004 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -116,7 +116,7 @@ G12 策略相关性门禁——在策略上线/资金分配前, 检查策略两�
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/pf_alloc/core/strategy_correlation_gate.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 8.5 路径索引使用指南
 

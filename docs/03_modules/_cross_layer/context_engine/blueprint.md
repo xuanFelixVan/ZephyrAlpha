@@ -5,7 +5,7 @@ title: Context Engine 集成蓝图 — 上下文引擎集成索引
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: 1.2.5
+version: 1.2.6
 layer: L1_foundation
 blueprint_level: domain
 owner: ZephyrAlpha-Owner
@@ -154,44 +154,6 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/autonomy_core/context/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/atomic_injector.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/ce_bootstrap.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/ce_explain_cli.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/ce_file_lister.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/ce_playground_v2.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/ce_vibe_shortcuts.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/checkpoint_manager.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/cold_start_booster.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/complexity_budget.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/context_assembler.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/context_budget.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/context_budget_tracker.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/context_debt_score.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/context_evaluator.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/context_evictor.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/context_health_score.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/context_injector.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/context_model_strategy.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/context_outcome_tracker.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/context_pipeline.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/context_pipeline_auto.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/context_playground.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/context_rot_model.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/context_rule_registry.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/context_value_attribution.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/contextual_fetch_api.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/curation_loop.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/diff_injector.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/diversity_constraint.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/domain_decay_config.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/fallback_staleness_gate.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/integrity_check.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/memory_bank.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/mode_manager.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/position_optimizer.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/shadow_canary.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/staleness_manager.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/vector_bridge.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 
@@ -217,7 +179,6 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 | `tests/context/test_context_debt_score.py` | ✅ 已实现 | |
 | `tests/context/test_context_engine_pipeline.py` | ✅ 已实现 | |
 | `tests/context/test_context_health_score.py` | ✅ 已实现 | |
-| `tests/context/test_context_injector_memory_wiring.py` | ✅ 已实现 | |
 | `tests/context/test_context_model_strategy.py` | ✅ 已实现 | |
 | `tests/context/test_context_pipeline_auto.py` | ✅ 已实现 | |
 
