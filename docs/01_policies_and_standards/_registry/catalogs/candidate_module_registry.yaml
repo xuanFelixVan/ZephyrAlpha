@@ -18949,13 +18949,13 @@ entries:
   prerequisites:
     - {item: "CAND-CRYPTO-002 落地", note: "provider 体系就绪"}
   design_admission:
-    q1_implemented: {result: false, equivalent_nodes: [], evidence: "无永续相关数据表（2026-08-26 盘点）"}
+    q1_implemented: {result: true, equivalent_nodes: [], evidence: "src/zephyr/data/implementations/okx_swap_provider.py 已落（公开 REST 四端点：funding-rate-history 分页 100 条/页 + open-interest + mark-price + index-tickers 基差衍生，无需签名，限频 10/s），33 测试全绿（2026-08-28 施工）；status 保持 candidate 待 Phase 2 门禁"}
     blocking_question: null
     result: candidate
   status: candidate
   priority: P1
   created_at: '2026-08-26'
-  last_reviewed_at: '2026-08-26'
+  last_reviewed_at: '2026-08-28'
   promoted_to: ""
   source_draft: "94_crypto_quant_expansion.md"
   source_section: "§4.4 杠杆与资金费率"
@@ -18964,7 +18964,9 @@ entries:
   tech_notes: "四类数据均走交易所公共 API（无需鉴权）；爆仓数据部分交易所仅 WS 推送无历史回填，需落地即开始积累。2026-08-26 行业调查扩充：加多空比（long/short ratio）与清算热图（liquidation heatmap——亮区=杠杆堆积对价格有磁吸效应，止损应放危险区外、入场可围绕强平区规划）——CoinGlass 聚合口径可直接对标；高 OI+高资金费=过度杠杆回调预警；期权维度（Deribit 基差年化/PCR/IV 偏度）同 Phase 2 评估。
     2026-08-26 R1 补充（机构主力策略方向）：资金费率 delta-neutral carry（多现货+空永续 1x，8 小时收资金费，
     2025 均值 0.015%/8h 同比+50%）定为 Phase 2 首个候选策略方向；费束缚公式 breakeven hold ≈ fee ÷ funding-rate——
-    短持有被费吃掉（Meridian 实证），carry 仓位有最小持有期约束，进 cost_model 与仓位域设计"
+    短持有被费吃掉（Meridian 实证），carry 仓位有最小持有期约束，进 cost_model 与仓位域设计。
+    2026-08-28 施工补充：okx_swap_provider.py 落地（资金费率历史/OI/标记价格/基差四类采集，公开端点无需签名）；
+    Phase 2 晋升 trigger 条件量化——spot_track_record >= 3_months（现货实盘 track record 满 3 个月）方可启动晋升评估，在此之前 status 保持 candidate"
   risks:
     - "爆仓数据无历史回填——接入越晚历史缺口越大，可考虑 Phase 1 末期提前挂采集（只采集不消费）"
   alternatives: "第三方聚合（Coinglass 类）——免费额度有限，交易所原生 API 优先"
@@ -18975,7 +18977,7 @@ entries:
   blocked_by: ["CAND-CRYPTO-002"]
   next_review_date: '2027-08-26'
   review_frequency: yearly
-  last_review_outcome: "candidate 登记（2026-08-26）：Phase 2 启动线（94号 §4.4 裁定），003 提前采集待 Q3 拍板"
+  last_review_outcome: "candidate 保持（2026-08-28）：okx_swap_provider.py 施工完成（资金费率/OI/基差/标记价格，33 测试全绿），q1_implemented=true；Phase 2 门禁未达（trigger: spot_track_record >= 3_months），不 promoted"
   acquisition_method: self_build
   acquisition_source: ""
 
@@ -19011,13 +19013,13 @@ entries:
   contracts_to_consume: []
   prerequisites: []
   design_admission:
-    q1_implemented: {result: false, equivalent_nodes: [], evidence: "alt_data 域无链上数据源（2026-08-26 盘点）"}
+    q1_implemented: {result: true, equivalent_nodes: [], evidence: "骨架完成（2026-08-28）：src/zephyr/data/implementations/onchain_provider.py（Glassnode 交易所净流入/活跃地址 + CryptoQuant 稳定币流动，3 capabilities，无 key 走确定性 mock 序列 is_mock=1）+ tests/zephyr/data/test_onchain_provider.py（28 用例通过）；付费 key 注入接口 get_service_secret 已预留（glassnode/cryptoquant 服务已登记 secret_registry）"}
     blocking_question: null
     result: candidate
   status: candidate
   priority: P2
   created_at: '2026-08-26'
-  last_reviewed_at: '2026-08-26'
+  last_reviewed_at: '2026-08-28'
   promoted_to: ""
   source_draft: "94_crypto_quant_expansion.md"
   source_section: "§5 新建候选清单"
@@ -19026,7 +19028,9 @@ entries:
   tech_notes: "源选型：Glassnode/CryptoQuant 付费 API vs 免费自建（区块链浏览器 API 限频紧）——P2 阶段再评。2026-08-26 行业调查扩充（资金流三网关口径）：①鲸鱼地址跟踪（Smart Money 标签地址积累行为+大额转账预警，Nansen 为行业标准，Whale Alert 铸造/大额异动告警）②稳定币流动（交易所稳定币储备=干火药购买力，新铸造=扩张前兆，USDT 场外溢价=亚洲资金入场）③交易所储备金（储备多年新低=供应挤压看涨，急升=获利了结预警）。
     2026-08-26 R2 补充（8 年回测实证）：MVRV Z-Score（<1=历史深熊抄底区/>5=顶部区，2015/2018/2022 底验证）与 NVT
     （币圈「市盈率」=价格/链上转账活跃度）为币版宏观因子中少数实证有效维度，列入首批链上因子清单；
-    纪律：任何主动因子须先过买入持有基准门（12 策略组合实证主动大多跑不赢持有）"
+    纪律：任何主动因子须先过买入持有基准门（12 策略组合实证主动大多跑不赢持有）。
+    2026-08-28 骨架落地补充：trigger 条件新增 paid_api_key_configured——GLASSNODE_API_KEY / CRYPTOQUANT_API_KEY
+    配置后 onchain_provider 自动从 mock 序列切换真实端点（is_mock 1→0），付费指标（MVRV/SOPR）扩展挂此后置条件"
   risks:
     - "付费源成本高/免费源限频紧——先以 1~2 个核心指标（交易所净流入优先）验证增量价值再扩"
   alternatives: "MVP 阶段纯价格量能+情绪因子——本项为增强非地基"
@@ -19270,7 +19274,7 @@ entries:
   prerequisites:
     - {item: "94号 Q3 Phase 2 拍板", note: "现货 track record 后启动"}
   design_admission:
-    q1_implemented: {result: false, equivalent_nodes: [], evidence: "position/risk 域无杠杆/爆仓建模（2026-08-26 盘点，VO-012 仅枚举预留）"}
+    q1_implemented: {result: true, equivalent_nodes: [], evidence: "2026-08-28 施工落地 src/zephyr/risk/core/leverage_risk_model.py（爆仓价多/空公式、维持保证金率交易所阶梯、资金费率持仓成本、margin ratio/distance to liquidation 风险指标，44 tests green）"}
     blocking_question: null
     result: candidate
   status: candidate
@@ -19282,7 +19286,7 @@ entries:
   source_section: "§4.4 杠杆与资金费率"
   original_id: ""
   estimated_complexity: L
-  tech_notes: "爆仓价公式按交易所档位（维持保证金率阶梯）；风控模块先于策略模块施工（风险优先原则，同 A股回撤 Protocol 优先级裁定）"
+  tech_notes: "爆仓价公式按交易所档位（维持保证金率阶梯）；风控模块先于策略模块施工（风险优先原则，同 A股回撤 Protocol 优先级裁定）；晋升 trigger 补充 \"CAND-CRYPTO-003 promoted\"（永续资金费率/爆仓数据输入就绪后晋升）"
   risks:
     - "杠杆下回撤 Protocol 参数全面失真——必须重新校准，禁止沿用现货阈值"
   alternatives: "Phase 1 不做杠杆（现货 only）——本项仅随 Phase 2 启动"
@@ -19340,7 +19344,7 @@ entries:
   prerequisites:
     - {item: "Cloudflare Zero Trust 账号与隧道配置", note: "免费层即可；域名+DNS-01 证书准备"}
   design_admission:
-    q1_implemented: {result: false, equivalent_nodes: [], evidence: "项目现有传输为境内单线路（QMT 券商本地链路），无跨境双活层（2026-08-26 盘点）"}
+    q1_implemented: {result: true, equivalent_nodes: [], evidence: "骨架完成（2026-08-28，AI-CAL-001）：src/zephyr/data/transport/cross_border_dual.py 落盘——cloudflared 配置 YAML 生成+双线路热切换状态机（三感知切备/60s 时间驱动切回/饱和递减），tests/zephyr/data/transport/test_cross_border_dual.py 覆盖；登记前盘点（2026-08-26）：项目原无跨境双活层"}
     blocking_question: null
     result: candidate
   status: candidate
@@ -19357,6 +19361,7 @@ entries:
     自动切回不能依赖传输中永远达不到的静态条件（纯时间驱动探测）；
     计数器一律饱和递减最低到零。数据面全量走 CF 的代理流量成本实测约 150GB/月——故控制面/数据面分离。
     两线路保护的是"后端入口和跨境路径"不是两套后端；后端主机不可用靠边缘 WAL 而非网络切换。
+    晋升/施工 trigger 条件：cloudflare_account_configured（Cloudflare Zero Trust 账号与隧道配置就绪，免费层即可）。
   risks:
     - "CF ipv4 网络境内可达性不稳定——接入宜用 ipv6（外部实战经验）"
     - "家用宽带 PPPoE 动态 IP——域名+DDNS 方案或 CF 隧道规避"
@@ -19413,7 +19418,7 @@ entries:
   contracts_to_consume: []
   prerequisites: []
   design_admission:
-    q1_implemented: {result: false, equivalent_nodes: [], evidence: "alt_data 域无币圈宏观情绪源（2026-08-26 盘点）；恐惧贪婪指数等为币圈特有，A股侧无对应物"}
+    q1_implemented: {result: true, equivalent_nodes: [], evidence: "2026-08-28 骨架落地：src/zephyr/data/implementations/sentiment_panel_provider.py（恐惧贪婪 alternative.me 实采 + BTC 占比 CMC 实采 + ETF 流量/USDT 场外溢价数据源骨架）+ tests/zephyr/data/test_sentiment_panel_provider.py 24 测试 green（原 2026-08-26 盘点：alt_data 域无币圈宏观情绪源，恐惧贪婪指数等为币圈特有，A股侧无对应物）"}
     blocking_question: null
     result: candidate
   status: candidate
@@ -19433,6 +19438,9 @@ entries:
     2026-08-26 R2 补充（稳定币 depeg 监控，币版资金载体风险）：信号=USDT/USDC 多场所持续折价（vs $1 偏差>0.5% 告警）+
     铸造销毁流突变+传染五联动（资金费率/OI/清算量/借贷利用率/稳定币池同时异动）；实践口径=发行方敞口≤30%+
     赎回路径季度测试；风险阈值实例归 risk_limit 币版注册表，本面板提供日频信号源。
+    2026-08-28 施工补充：provider 骨架落地（sentiment_panel_provider.py，四能力路由+统一行格式
+    metric/trade_date/value/value_classification/source/extra），trigger 条件追加 "CAND-CRYPTO-007 promoted"
+    （回测三件套就绪后，宏观情绪输入接入币版 regime/回测校准，本条目由 candidate 晋升）。
   risks:
     - "免费源稳定性（alternative.me 限频/ETF 流来源变更）——日频采集+失败降级标注即可，不进决策硬链"
   alternatives: "MVP 阶段 regime 仅用价格量价输入——本项为增强非地基（P2，可提前 W4 低成本先跑）"
