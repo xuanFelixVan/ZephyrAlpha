@@ -380,8 +380,12 @@ class DashboardPanelApp:
                 logging.getLogger(__name__).warning("QMT桥健康周期刷新异常", exc_info=True)
 
         try:
-            if pn.state.curdoc is not None:
+            _doc = pn.state.curdoc
+            # 同文档只注册一次——Tab 双建/重建时重复注册会触发 bokeh
+            # "A callback of the same type has already been added with this ID" 崩会话
+            if _doc is not None and not getattr(_doc, "_qmt_health_cb_on", False):
                 pn.state.add_periodic_callback(_refresh, period=3000)
+                _doc._qmt_health_cb_on = True
         except Exception:  # 非 server 上下文（测试/脚本）跳过周期刷新  # noqa: BLE001
             pass
         return container
