@@ -362,10 +362,10 @@ def test_drawdown_throttle_strategy_stop_listed() -> None:
 
 def test_calendar_constraint_no_constraint_day() -> None:
     out = query_calendar_position_constraints(
-        current_date=date(2026, 8, 21),
+        current_date=date(2026, 8, 12),
         positions=[{"symbol": "600519.SH", "market_cap_yi": 21000.0}],
     )
-    assert out["check_date"] == "2026-08-21"
+    assert out["check_date"] == "2026-08-12"
     assert out["overall_cap_adjustment"] == pytest.approx(1.0)
     assert out["block_new_positions"] is False
     assert out["constraints"] == []
