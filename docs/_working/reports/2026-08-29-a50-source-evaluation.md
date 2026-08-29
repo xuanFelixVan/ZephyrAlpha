@@ -2,6 +2,8 @@
 ttl: task_bound
 ---
 
+> **文档元信息**（_working 临时区豁免规范，EXEMPT-ZONE-FM）：doc_type=evaluation_report · owner=ZephyrAlpha-Owner · language=zh · status=active · version=1.0.0 · date=2026-08-29 · topic=a50_source_evaluation · scope=07_trading_decision_architecture · completes_when=Owner 审阅源裁定结论并批准盘前 gap_adj w3（A50 夜盘）通道启用后归档（归档不删除，保留审计链）。
+
 # A50（富时中国A50期货，新交所SGX）数据源评估与落地结论
 
 > **用途**：A22 施工项（44号备忘 §9.6 通道1 / M3-①d 盘前 gap_adj w3=A50夜盘）的数据源评估落盘。
