@@ -101,6 +101,8 @@ from datetime import date, datetime
 from pathlib import Path
 from typing import Any, Final, Iterable, Mapping
 
+from zephyr.data.calendar import get_market_calendar
+
 logger = logging.getLogger(__name__)
 
 __all__: Final = [
@@ -139,7 +141,12 @@ INSERT_COLUMNS: Final = (
     "data_source",
 )
 
-_MARKET_CLOSE_SECONDS: Final = 15 * 3600  # 15:00:00 A 股收盘
+# 94号 §4.1/#261：收盘基准统一经 data.calendar 包取 session_windows 末段收盘
+# （ASHareCalendar 恒定 (13:00,15:00) 末段 → 15*3600，与既有硬编码数值一致，零行为变化）
+_ASHARE_CLOSE_TIME: Final = get_market_calendar("ashare").session_windows(date(2000, 1, 3))[-1][1]
+_MARKET_CLOSE_SECONDS: Final = (
+    _ASHARE_CLOSE_TIME.hour * 3600 + _ASHARE_CLOSE_TIME.minute * 60 + _ASHARE_CLOSE_TIME.second
+)  # 15:00:00 A 股收盘
 _HHMMSS_RE: Final = re.compile(r"^(\d{2}):(\d{2}):(\d{2})$")
 
 

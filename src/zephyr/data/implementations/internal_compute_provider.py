@@ -45,6 +45,7 @@ from typing import Final, Iterator
 
 import pandas as pd
 
+from zephyr.data.calendar import MarketCalendar, get_market_calendar
 from zephyr.data.provider_base import (
     CapabilityContract,
     FetchPayload,
@@ -54,6 +55,11 @@ from zephyr.data.provider_base import (
 )
 
 log = logging.getLogger("integrator.internal")
+
+# 默认 A 股日历（94号 §4.1/#261 注入式改造：日历判定统一经 data.calendar 包，
+# ASHareCalendar 委托 trading_calendar 真源；缺日历数据时包内降级 weekday——
+# 降级路径语义与原 weekday 近似一致）
+_DEFAULT_CALENDAR: Final = get_market_calendar("ashare")
 
 
 # 周期 → (K线源表, 时间戳列, 是否日内) 映射
@@ -629,7 +635,7 @@ class InternalComputeProvider(IngestProviderBase):
             futures_delivery      股指期货交割日（每月第3个周五，非交易日顺延下一交易日）
             index_option_expiry   股指期权到期日（每月第3个周五）
             etf_option_expiry     ETF期权到期日（每月第4个周三，非交易日顺延）
-            lpr_announcement      LPR公布日（每月20日，遇周末顺延下一工作日）
+            lpr_announcement      LPR公布日（每月20日，遇非交易日顺延下一交易日）
             hk_connect_closed     港股通休市日（A股开盘但港股休市）
             fomc_meeting          美联储FOMC议息日（manual CSV 台账合并）
             major_meeting         重要会议（两会/中央经济工作会议，manual CSV）

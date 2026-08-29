@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] zephyr.data.implementations.calendar_event_derivations
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] zephyr.data.implementations.internal_compute_provider（_nth_weekday_of_month/_next_trading_day_on_or_after 纯函数真源复用，同包）
+# [DEPENDENCIES] zephyr.data.implementations.internal_compute_provider（_nth_weekday_of_month/_next_trading_day_on_or_after 纯函数真源复用，同包）; zephyr.data.calendar
 # [CONSUMERS] 待评估登记后由 internal_compute_provider._fetch_calendar_event 接线（17 号 §2.4 待评估项）；当前为函数级 MVP
 # [STARTUP] imported
 # [MATURITY] production
@@ -17,7 +17,7 @@
 # [ALGO_FLOW]
 # I1: by_month{(year,month): 月末交易日} + trading_days_set（A股交易日集合）+ range_start/range_end
 # F1: derive_earnings_deadline（优先；每年 4/30、8/31、10/31，遇非交易日取前一交易日）
-# F2: derive_mlf_operation（每月 15 日，遇周末顺延下一工作日——与 LPR 派生同口径）
+# F2: derive_mlf_operation（每月 15 日，遇非交易日顺延下一交易日——与 LPR 派生同口径，94号 §4.1/#261 日历注入）
 # F3: derive_bond_futures_delivery（国债期货交割日：季月 3/6/9/12 第 2 个周五，非交易日顺延）
 # F4: derive_a50_futures_delivery（富时 A50 交割日：每月倒数第 2 个工作日，SGX 口径 Mon-Fri）
 # O1: list[tuple(event_date, event_type, description, "internal")]（未去重未排序，由调用方 _dedupe_and_sort_events 收口）
@@ -48,6 +48,7 @@ from __future__ import annotations
 import datetime
 from typing import Final
 
+from zephyr.data.calendar import MarketCalendar, get_market_calendar
 from zephyr.data.implementations.internal_compute_provider import (
     _next_trading_day_on_or_after,
     _nth_weekday_of_month,
@@ -68,6 +69,11 @@ EARNINGS_DEADLINE_DATES: Final[tuple[tuple[int, int], ...]] = ((4, 30), (8, 31),
 TREASURY_DELIVERY_MONTHS: Final[frozenset[int]] = frozenset({3, 6, 9, 12})
 _LOOKBACK_DAYS: Final[int] = 10  # 前向/后向查找上限（覆盖春节/国庆长假）
 
+#: 默认 A 股日历（94号 §4.1/#261 注入式改造：顺延判定统一经 data.calendar 包，
+#: ASHareCalendar 委托 trading_calendar 真源；缺日历数据时包内降级 weekday——
+#: 降级路径语义与原 weekday 近似一致）
+_DEFAULT_CALENDAR: Final = get_market_calendar("ashare")
+
 
 def _prev_trading_day_on_or_before(
     d: datetime.date,
@@ -81,10 +87,22 @@ def _prev_trading_day_on_or_before(
     return None
 
 
-def _weekday_on_or_after(year: int, month: int, day: int) -> datetime.date:
-    """某年某月某日，遇周末顺延下一工作日（与 LPR 派生同口径，工作日=周一~周五）。"""
+def _trading_day_on_or_after(
+    year: int,
+    month: int,
+    day: int,
+    *,
+    calendar: MarketCalendar | None = None,
+) -> datetime.date:
+    """某年某月某日，遇非交易日顺延下一交易日（与 LPR 派生同口径）。
+
+    94号 §4.1/#261：顺延判定统一经注入的市场日历（默认 ASHareCalendar 委托
+    XSHG 真源），原 weekday 周末手工近似已消除；缺日历数据时日历包内部降级
+    weekday——降级路径语义与原实现一致。
+    """
+    cal = calendar or _DEFAULT_CALENDAR
     d = datetime.date(year, month, day)
-    while d.weekday() >= 5:
+    while not cal.is_trading_day(d):
         d += datetime.timedelta(days=1)
     return d
 
@@ -136,11 +154,17 @@ def derive_mlf_operation(
     by_month: dict[tuple[int, int], datetime.date],
     range_start: datetime.date,
     range_end: datetime.date,
+    *,
+    calendar: MarketCalendar | None = None,
 ) -> list[tuple]:
-    """MLF 操作日（每月 15 日，遇周末顺延下一工作日——与 LPR 派生同口径）。"""
+    """MLF 操作日（每月 15 日，遇非交易日顺延下一交易日——与 LPR 派生同口径）。
+
+    calendar: 市场日历注入（94号 §4.1/#261；None=ASHareCalendar 默认，
+        缺日历数据时包内降级 weekday，降级路径语义不变）。
+    """
     rows: list[tuple] = []
     for year, month in by_month.keys():
-        mlf_day = _weekday_on_or_after(year, month, 15)
+        mlf_day = _trading_day_on_or_after(year, month, 15, calendar=calendar)
         if range_start <= mlf_day <= range_end:
             rows.append((mlf_day, "mlf_operation", f"{year}-{month:02d} MLF操作日（每月15日顺延）", "internal"))
     return rows
