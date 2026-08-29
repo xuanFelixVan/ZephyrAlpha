@@ -118,3 +118,108 @@ class TestDryRun:
         dryrun_file = tmp_path / "alerts_dryrun.jsonl"
         assert dryrun_file.exists()
         assert "direct_injection" in dryrun_file.read_text(encoding="utf-8")
+
+
+class TestObservabilityChainWiring:
+    """P1-1 链路接线：L6 ObservabilityLayer 高危事件 → 飞书告警通道。"""
+
+    def test_high_event_pushes_feishu_alert_via_chain(self, tmp_path: Any, monkeypatch: Any) -> None:
+        from zephyr.security.llm_defense.llm_security.layers.l6_observability import (
+            AlertSeverity,
+            ObservabilityLayer,
+            SecurityEventType,
+        )
+
+        _mock_webhook_ok(monkeypatch)
+        alerter = _make_alerter(tmp_path)
+        layer = ObservabilityLayer(feishu_alerter=alerter)
+        layer.log_security_event(
+            event_type=SecurityEventType.INJECTION,
+            message="probe blocked",
+            severity=AlertSeverity.HIGH,
+        )
+        assert alerter.pending_count() == 0  # webhook 可达 → 已送达
+
+    def test_chain_degrades_to_local_persistence_when_webhook_down(
+        self, tmp_path: Any, monkeypatch: Any
+    ) -> None:
+        """webhook 不可达 → 链路降级本地持久化，事件不丢。"""
+        from zephyr.security.llm_defense.llm_security.layers.l6_observability import (
+            AlertSeverity,
+            ObservabilityLayer,
+            SecurityEventType,
+        )
+
+        _mock_webhook_down(monkeypatch)
+        alerter = _make_alerter(tmp_path)
+        layer = ObservabilityLayer(feishu_alerter=alerter)
+        ev = layer.log_security_event(
+            event_type=SecurityEventType.DATA_LEAK,
+            message="pii leak probe",
+            severity=AlertSeverity.CRITICAL,
+        )
+        assert ev in layer.events  # L6 事件记录不受影响
+        assert alerter.pending_count() == 1  # 告警事件落盘不丢
+
+    def test_low_severity_event_does_not_push(self, tmp_path: Any, monkeypatch: Any) -> None:
+        from zephyr.security.llm_defense.llm_security.layers.l6_observability import (
+            AlertSeverity,
+            ObservabilityLayer,
+            SecurityEventType,
+        )
+
+        def _forbidden(self: Any, webhook: str, text: str) -> bool:
+            raise AssertionError("低危事件不得触发 webhook")
+
+        monkeypatch.setattr(FeishuAlertChannel, "_post_webhook", _forbidden)
+        alerter = _make_alerter(tmp_path)
+        layer = ObservabilityLayer(feishu_alerter=alerter)
+        layer.log_security_event(
+            event_type=SecurityEventType.SYSTEM, message="routine", severity=AlertSeverity.LOW
+        )
+        assert alerter.pending_count() == 0
+
+    def test_alerter_exception_does_not_break_main_chain(self, tmp_path: Any) -> None:
+        """告警器自身异常 → L6 主链路不阻断，事件照常记录。"""
+        from zephyr.security.llm_defense.llm_security.layers.l6_observability import (
+            AlertSeverity,
+            ObservabilityLayer,
+            SecurityEventType,
+        )
+
+        class _BoomAlerter:
+            def send_high_risk_alert(self, **kwargs: Any) -> bool:
+                raise RuntimeError("boom")
+
+        layer = ObservabilityLayer(feishu_alerter=_BoomAlerter())
+        ev = layer.log_security_event(
+            event_type=SecurityEventType.INJECTION,
+            message="probe",
+            severity=AlertSeverity.HIGH,
+        )
+        assert ev in layer.events
+
+    def test_default_no_alerter_noop(self) -> None:
+        """默认不接线：高危事件仅走本地 AlertSender，不触网不落盘。"""
+        from zephyr.security.llm_defense.llm_security.layers.l6_observability import (
+            AlertSeverity,
+            ObservabilityLayer,
+            SecurityEventType,
+        )
+
+        layer = ObservabilityLayer()
+        ev = layer.log_security_event(
+            event_type=SecurityEventType.INJECTION,
+            message="probe",
+            severity=AlertSeverity.CRITICAL,
+        )
+        assert ev in layer.events
+        assert layer._feishu_alerter is None
+
+    def test_config_flag_auto_constructs_alerter(self) -> None:
+        from zephyr.security.llm_defense.llm_security.layers.l6_observability import (
+            ObservabilityLayer,
+        )
+
+        layer = ObservabilityLayer(config={"feishu_alert_enabled": True})
+        assert isinstance(layer._feishu_alerter, LsgFeishuAlerter)

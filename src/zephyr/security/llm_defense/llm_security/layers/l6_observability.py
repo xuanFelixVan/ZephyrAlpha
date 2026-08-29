@@ -19,13 +19,17 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 from collections import defaultdict, deque
 from datetime import UTC, datetime, timedelta
 from enum import Enum
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
+    from zephyr.security.llm_defense.llm_security.layers.l6_feishu_alert import LsgFeishuAlerter
     from zephyr.security.llm_defense.llm_security.protocol import SecurityResult
+
+logger = logging.getLogger(__name__)
 
 
 class AlertSeverity(Enum):
@@ -272,12 +276,37 @@ class SideChannelDefender:
 class ObservabilityLayer:
     """L6 Observability Layer — aggregates logging, alerting, metrics, reporting."""
 
-    def __init__(self, config=None):
+    def __init__(self, config=None, feishu_alerter: "LsgFeishuAlerter | None" = None):
         self.config = config or {}
         self.events: list[SecurityEvent] = []
         self._alert_sender = AlertSender(self.config)
         self._frequency_detector = FrequencyAnomalyDetector()
         self._report_generator = ReportGenerator(self.config)
+        # 蓝图 §9 / 09 号文 §4.3 P1-1：高危事件实时推送 Owner（飞书 Webhook）。
+        # 默认 None（不接线）；显式注入或 config["feishu_alert_enabled"]=True 时启用。
+        # 降级语义由 LsgFeishuAlerter 保证：webhook 不可达/未配置 → 本地持久化不丢事件。
+        if feishu_alerter is None and isinstance(self.config, dict) and self.config.get("feishu_alert_enabled"):
+            from zephyr.security.llm_defense.llm_security.layers.l6_feishu_alert import LsgFeishuAlerter
+
+            feishu_alerter = LsgFeishuAlerter()
+        self._feishu_alerter = feishu_alerter
+
+    def _push_feishu_alert(self, event: SecurityEvent, severity: AlertSeverity | str) -> None:
+        """高危事件推飞书告警链路；任何异常不得阻断 L6 主链路。"""
+        alerter = self._feishu_alerter
+        if alerter is None:
+            return
+        try:
+            et_str = event.event_type.value if isinstance(event.event_type, SecurityEventType) else str(event.event_type)
+            sev_str = severity.value if isinstance(severity, AlertSeverity) else str(severity)
+            alerter.send_high_risk_alert(
+                layer=event.source or "l6_observability",
+                rule=et_str,
+                result=event.message,
+                severity=sev_str,
+            )
+        except Exception:  # noqa: BLE001 — 告警链路异常不得阻断主链路
+            logger.warning("飞书告警推送异常，事件已由告警通道本地兜底", exc_info=True)
 
     def log_security_event(
         self,
@@ -290,6 +319,7 @@ class ObservabilityLayer:
         self._report_generator.record_event(ev)
         if severity in (AlertSeverity.CRITICAL, AlertSeverity.HIGH):
             self._alert_sender.send_alert(severity=severity, event_type=event_type, message=message)
+            self._push_feishu_alert(ev, severity)
         return ev
 
     def detect_frequency_anomaly(self, value: float) -> dict[str, Any]:
