@@ -5,13 +5,13 @@
 # [CONSUMERS] 波5 统筹接线（44号 M3-⑨ MOD-PLAN-007 客户端注入）
 # [STARTUP] imported
 # [MATURITY] testing
-# [INVARIANTS] 调用必登记（每次 infer 含失败/被拦均落 llm_call_log，append-only 仅 INSERT）; LSG 不过不调用（enforce_input 判决 BLOCK/DENY 或 LSG 异常 -> 不发起任何通道调用）; 预算硬门（pre_flight_check DENY -> 不发起任何通道调用；预算引擎解析/调用异常 -> fail-closed 同径 blocked）; LLMDeg-0~4 降级注入路由决策（10号文 §3.6 降级表：1=非关键本地优先，2=仅关键任务用 API，3/4=仅本地，显式 API 钉死在 2+非关键/3+ 被拒）; L2 无旁路（无 L2 专属 LSG/预算旁路配置项，Ollama 与 API 通道同一 LSG+预算闸门）; 降级链留痕（每一通道尝试各落一行）; infer 不承载业务语义（task_type 仅登记/对账维度，critical 仅成本治理降级维度）; SQL 参数化+常量（NO-BARE-SQL）; db_path 默认 None 走 DB_PATH SSoT（测试注入临时库，prediction_log_writer 同款隔离先例）
+# [INVARIANTS] 调用必登记（每次 infer 含失败/被拦均落 llm_call_log，append-only 仅 INSERT）; LSG 不过不调用（enforce_input 判决 BLOCK/DENY 或 LSG 异常 -> 不发起任何通道调用）; 预算硬门（pre_flight_check DENY -> 不发起任何通道调用；预算引擎解析/调用异常 -> fail-closed 同径 blocked）; LLMDeg-0~4 降级注入路由决策（10号文 §3.6 降级表：1=非关键本地优先，2=仅关键任务用 API，3/4=仅本地，显式 API 钉死在 2+非关键/3+ 被拒）; L2 无旁路（无 L2 专属 LSG/预算旁路配置项，Ollama 与 API 通道同一 LSG+预算闸门）; 降级链留痕（每一通道尝试各落一行）; infer 不承载业务语义（task_type 仅登记/对账维度，critical 仅成本治理降级维度，complexity/max_cost 仅路由分发维度）; complexity 路由分发（Phase 1.1：ECONOMY/MINIMAL tier 且本地通道在链 -> 本地优先，其余 -> API 优先；channel 显式钉死优先于 complexity；分发后仍经 §3.6 降级收窄）; SQL 参数化+常量（NO-BARE-SQL）; db_path 默认 None 走 DB_PATH SSoT（测试注入临时库，prediction_log_writer 同款隔离先例）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] 未知 channel -> ValueError（fail-closed 输入校验）; 通道异常（超时/非200/SecretsError 等）不抛 -> 降级下一通道，全失败返回 InferResult(status=error); LSG 判决/异常 -> 捕获 LSGBlockedError 返回 InferResult(status=blocked) 且不发起调用; 预算 DENY/预算引擎异常/LLMDeg 熔断期显式 API 钉死 -> InferResult(status=blocked) 落库不抛; 登记落库 sqlite3.Error 透传（审计 fail-closed，同 prediction_log_writer 先例）
-# [TESTS] tests/model/test_llm_runtime_gateway.py
+# [ERROR_CONTRACT] 未知 channel -> ValueError（fail-closed 输入校验）; 未知 complexity -> ValueError（同径 fail-closed 输入校验）; 通道异常（超时/非200/SecretsError 等）不抛 -> 降级下一通道，全失败返回 InferResult(status=error); LSG 判决/异常 -> 捕获 LSGBlockedError 返回 InferResult(status=blocked) 且不发起调用; 预算 DENY/预算引擎异常/LLMDeg 熔断期显式 API 钉死 -> InferResult(status=blocked) 落库不抛; 登记落库 sqlite3.Error 透传（审计 fail-closed，同 prediction_log_writer 先例）
+# [TESTS] tests/model/test_llm_runtime_gateway.py; tests/model/test_llm_runtime_gateway_phase1.py
 # [A_module] module_id=MOD-INF-051 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
@@ -27,6 +27,10 @@ llm_runtime_gateway — L2/L3 统一 LLM 推理门面 MVP（10号文 §4 + 18号
 职责边界（纯网关）
 ------------------
 - infer 不承载业务语义：task_type 只是落库登记/日终对账维度，不参与任何路由决策。
+- complexity/max_cost 路由分发（10号文 §4 Phase 1.1）：complexity 显式传入时经
+  ModelRouter perf-aware 决策分发——ECONOMY/MINIMAL tier 且本地通道在链 -> Ollama 本地优先
+  （默认 L2）；其余 -> API 通道优先（显式升 L3）；缺省不传保持 E1 裁定降级链语义零变化，
+  channel 显式钉死优先于 complexity 分发。
 - 预算硬门（10号文 §4 Phase 1.2，GP1 落地）：infer 入口统一调 BudgetEngine.pre_flight_check，
   DENY 阻断不发起调用；LLMDeg-0~4 降级级别（§3.6）注入路由决策——
   级别由 GateResult.budget_level 映射（L0→0 … L4/L5/L6→4），驱动通道链重排/收窄。
@@ -508,14 +512,62 @@ class LLMRuntimeGateway:
             return result
         return None
 
-    def _effective_chain(self, critical: bool) -> tuple[str, ...]:
+    @staticmethod
+    def _normalize_complexity(complexity: TaskComplexity | str) -> TaskComplexity:
+        """complexity 入参归一（fail-closed 输入校验：非法值 ValueError，同未知通道纪律）。"""
+        if isinstance(complexity, TaskComplexity):
+            return complexity
+        try:
+            return TaskComplexity(str(complexity).strip().lower())
+        except ValueError:
+            raise ValueError(f"未知复杂度: {complexity!r}") from None
+
+    def _routed_chain(
+        self,
+        critical: bool,
+        *,
+        complexity: TaskComplexity,
+        max_cost: float | None,
+    ) -> tuple[str, ...]:
+        """ModelRouter 驱动的 L2/L3 分发（10号文 §4 Phase 1.1：默认 L2、显式升 L3）。
+
+        决策源 = self.route()（MOD-INF-024 perf-aware + LLMDeg tier 封顶，单一决策点不另造）：
+        ECONOMY/MINIMAL tier 且链内含本地通道 -> 本地优先；其余 -> API 优先。
+        分发结果再经 _effective_chain 施加 §3.6 通道级收窄（路由与降级双闸同源）。
+        max_cost 透传 route() 的 max_cost_per_1k（元/千 token 口径，None=不设上限）。
+        """
+        decision = self.route(
+            complexity=complexity,
+            max_cost_per_1k=max_cost if max_cost is not None else float("inf"),
+            critical=critical,
+        )
+        base = self._chain
+        local = tuple(c for c in base if c in _LOCAL_CHANNELS)
+        api = tuple(c for c in base if c in _API_CHANNELS)
+        other = tuple(c for c in base if c not in _API_CHANNELS and c not in _LOCAL_CHANNELS)
+        if decision.tier in (ModelTier.MINIMAL, ModelTier.ECONOMY) and local:
+            routed = local + api + other
+        else:
+            routed = api + local + other
+        _log.debug(
+            "llm_runtime_gateway 路由分发: complexity=%s tier=%s -> %s (reason=%s)",
+            complexity.value,
+            decision.tier.value,
+            routed,
+            decision.reason,
+        )
+        return self._effective_chain(critical, base=routed)
+
+    def _effective_chain(self, critical: bool, base: tuple[str, ...] | None = None) -> tuple[str, ...]:
         """LLMDeg-0~4 注入通道链（10号文 §3.6 降级表）。
 
         0=原链；1=非关键本地优先（关键任务原链）；2=仅关键任务用 API（非关键仅本地）；
         3/4=仅本地（全部任务）。链内无本地通道时保留原链并告警（降级不能造出不存在的通道）。
+        base 缺省为构造链；Phase 1.1 路由分发传入 ModelRouter 决策后的基础链，降级收窄同源复用。
         """
         level = self._last_llmdeg
-        base = self._chain
+        if base is None:
+            base = self._chain
         if level <= 0:
             return base
         local = tuple(c for c in base if c in _LOCAL_CHANNELS)
@@ -583,6 +635,8 @@ class LLMRuntimeGateway:
         temperature: float = 0.2,
         channel: str | None = None,
         critical: bool = False,
+        complexity: TaskComplexity | str | None = None,
+        max_cost: float | None = None,
         **kw: Any,
     ) -> InferResult:
         """统一推理入口（纯网关，不承载业务语义；task_type 仅登记维度，critical 仅成本治理维度）。
@@ -590,9 +644,16 @@ class LLMRuntimeGateway:
         流程：LSG 入口闸门（fail-closed）-> 预算硬门（pre_flight_check，DENY/异常 blocked）
         -> LLMDeg 级别注入通道链（§3.6）-> 按链/显式通道尝试 -> 成功即返回并回填 token 消费；
         单通道失败降级留痕；全失败 status=error；LSG/预算判决 status=blocked 不降级。
+
+        Phase 1.1 路由分发（complexity 显式传入时生效，缺省保持 E1 裁定降级链语义零变化）：
+        complexity（TaskComplexity 或 "simple"/"moderate"/"complex"，非法值 ValueError）经
+        ModelRouter perf-aware 决策（含 LLMDeg tier 封顶）驱动 L2/L3 分发——ECONOMY/MINIMAL
+        tier 且本地通道在链 -> 本地优先（默认 L2）；其余 -> API 优先（显式升 L3）。
+        max_cost（元/千 token）透传决策的成本上限。channel 显式钉死优先于 complexity 分发。
         """
         if channel is not None and channel not in DEFAULT_CHANNEL_CHAIN:
             raise ValueError(f"未知通道: {channel}")
+        cx = self._normalize_complexity(complexity) if complexity is not None else None
         system = str(kw.get("system", ""))
 
         # LSG 入口注入点（波1 lsg_gate）：判决 BLOCK/DENY 或 LSG 异常 -> 不发起任何通道调用
@@ -639,7 +700,12 @@ class LLMRuntimeGateway:
             self._record(task_type, result, ts=entry_ts)
             return result
 
-        chain = (channel,) if channel else self._effective_chain(critical)
+        if channel is not None:
+            chain = (channel,)
+        elif cx is not None:
+            chain = self._routed_chain(critical, complexity=cx, max_cost=max_cost)
+        else:
+            chain = self._effective_chain(critical)
         attempt_errors: list[str] = []
         for ch in chain:
             attempt_ts = _now_beijing()

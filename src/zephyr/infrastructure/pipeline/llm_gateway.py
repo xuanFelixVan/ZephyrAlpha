@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] zephyr.infrastructure.pipeline.llm_gateway
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES]
+# [DEPENDENCIES] zephyr.shared.foundation.constants; zephyr.shared.security.secrets; zephyr.shared.utils.async_utils; zephyr.governance.intelligence_governance.model_router(lazy，route() perf-aware 增强，10号文 §4 Phase 1.4)
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS]
+# [TESTS] tests/llm_security/test_llm_gateway.py; tests/llm_security/test_llm_gateway_route_perf_aware.py
 # [A_module] module_id=MOD-INF-009 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
@@ -354,6 +354,37 @@ def _call_anthropic(
         )
 
 
+def _perf_aware_route_fields(provider: str) -> dict[str, Any]:
+    """MOD-INF-024 perf-aware 路由字段（10号文 §4 Phase 1.4）：tier/reason/performance_score。
+
+    懒加载治理层 ModelRouter，以 prefer_provider 延续 hint 语义输出 perf-aware 决策字段。
+    故障兜底：路由元数据查询不得因治理层故障中断既有 hint 映射（既有消费方零破坏）——
+    异常时字段以 None/0.0 占位并在 reason 标注 ``router-unavailable``。
+    """
+    try:
+        from zephyr.governance.intelligence_governance.model_router import (
+            ModelRouter,
+            TaskComplexity,
+        )
+
+        decision = ModelRouter().route(
+            complexity=TaskComplexity.MODERATE,
+            prefer_provider=provider,
+        )
+        return {
+            "tier": decision.tier.value,
+            "reason": decision.reason,
+            "performance_score": decision.performance_score,
+        }
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
+        logger.warning("LLMGateway route perf-aware enrichment failed: %s", exc)
+        return {
+            "tier": None,
+            "reason": f"router-unavailable: {type(exc).__name__}",
+            "performance_score": 0.0,
+        }
+
+
 class LLMGateway:
     """LLM 网关——多模型智能路由 + 降级链 + 真实 API 调用
 
@@ -436,6 +467,12 @@ class LLMGateway:
 
     @classmethod
     def route(cls, skill_id: str, model_hint: str | None = None) -> dict[str, Any]:
+        """路由信息查询：hint 映射保留既有键，叠加 MOD-INF-024 perf-aware 决策三字段。
+
+        provider/model/base_url/max_context_tokens 维持 hint 直接映射语义（既有消费方零破坏）；
+        tier/reason/performance_score 来自 ModelRouter perf-aware 决策（10号文 §4 Phase 1.4），
+        治理层故障时降级为占位值（reason 标注 router-unavailable），不阻断 hint 映射。
+        """
         provider = model_hint or "deepseek"
         config = _PROVIDERS.get(provider, _PROVIDERS["deepseek"])
         return {
@@ -444,6 +481,7 @@ class LLMGateway:
             "model": config.default_model,
             "base_url": config.base_url,
             "max_context_tokens": config.max_context_tokens,
+            **_perf_aware_route_fields(provider),
         }
 
     @classmethod
