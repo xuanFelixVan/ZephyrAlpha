@@ -27,11 +27,16 @@ prompt construction. Supports three retrieval modes:
   2. By module_id — find KEs belonging to a module
   3. By keyword  — semantic/keyword search
 
-Phase 1 (07 号文 §4 P1-1): inject_by_keyword() 数据源接至 UnifiedMemoryAPI
-（D_INTELLIGENCE 域）——经 VMSSearchProtocol 协议注入，不跨域硬编码具体
-实现；未注入检索客户端时经懒加载默认适配器（构造失败降级为空结果）。
-inject_by_task_id / inject_by_module_id 仍返回空 InjectedContext（无对应
-检索通道，归 Phase 2 裁定）。
+Phase 1 (07 号文 §4 P1-1): 三种检索模式（keyword / task_id / module_id）数据源
+均接至 UnifiedMemoryAPI（D_INTELLIGENCE 域）——经 VMSSearchProtocol 协议注入，
+不跨域硬编码具体实现；未注入检索客户端时经懒加载默认适配器（构造失败降级为
+空结果）。inject_by_task_id / inject_by_module_id 不再返回空占位——
+07 号文 §6 Q6（inject 空占位修复优先级）由本施工关闭：统一经 VMSSearchProtocol
+检索通道修复，query 构造规则见各方法 docstring。
+
+裁定回填（07 号文 §4 P1-3）：sync/async 偏差裁定=维持 sync 主用，
+async wrapper 待真实需求再建；接口规范 §4.1 的 InProcessContextEngine
+（async 三源汇聚全量版）降级为远期候选（P4）。
 
 Respects token budget limits from ContextBudgetTracker.
 """
@@ -125,10 +130,9 @@ def _build_default_search_client() -> VMSSearchProtocol | None:
 class ContextInjector:
     """Retrieve and inject knowledge context.
 
-    inject_by_keyword() 经 VMSSearchProtocol 检索客户端接 UnifiedMemoryAPI
-    返回非空 InjectedContext（含 sources + provenances）；无可用数据源时
-    降级为空结果。inject_by_task_id / inject_by_module_id 仍返回空
-    InjectedContext（生产检索由 context pipeline 带外处理）。
+    三种检索模式（keyword / task_id / module_id）均经 VMSSearchProtocol
+    检索客户端接 UnifiedMemoryAPI 返回非空 InjectedContext（含 sources +
+    provenances）；无可用数据源/检索异常时降级为空结果（不炸）。
 
     Parameters
     ----------
@@ -137,7 +141,7 @@ class ContextInjector:
     max_sources : int
         Maximum number of sources to include (default 10).
     search_client : VMSSearchProtocol | None
-        检索客户端（协议注入）；None 时首次 keyword 检索懒加载默认
+        检索客户端（协议注入）；None 时首次检索懒加载默认
         UnifiedMemoryAPI 适配器，构造失败降级为空结果。
     search_collection : str
         默认检索 collection（默认 "ke_entries"）。
@@ -159,7 +163,7 @@ class ContextInjector:
         self._default_client_resolved = search_client is not None
 
     # ------------------------------------------------------------------
-    # Public API — inject_by_keyword 经协议检索；task_id/module_id 仍为空
+    # Public API — keyword / task_id / module_id 均经协议检索
     # ------------------------------------------------------------------
     def _empty_context(self, mode: RetrievalMode, query: str) -> InjectedContext:
         return InjectedContext(
@@ -194,7 +198,7 @@ class ContextInjector:
         provenance = f"unified_memory:{topic}:{chunk_id}" if chunk_id else f"unified_memory:{topic}"
         return content, source, provenance
 
-    def _assemble_keyword_context(self, keyword: str, raw_hits: list[Any]) -> InjectedContext:
+    def _assemble_context(self, mode: RetrievalMode, query: str, raw_hits: list[Any]) -> InjectedContext:
         """将检索命中组装为受 token 预算约束的 InjectedContext。"""
         parts: list[str] = []
         sources: list[str] = []
@@ -213,32 +217,53 @@ class ContextInjector:
                 sources.append(source)
             provenances.append(provenance)
         if not parts:
-            return self._empty_context(RetrievalMode.KEYWORD, keyword)
+            return self._empty_context(mode, query)
         return InjectedContext(
             context="\n\n".join(parts),
             sources=sources,
             provenances=provenances,
             token_count=total_tokens,
-            retrieval_mode=RetrievalMode.KEYWORD.value,
-            query=keyword,
+            retrieval_mode=mode.value,
+            query=query,
             budget_remaining=max(0, self._token_budget - total_tokens),
         )
 
+    def _inject_via_search(self, mode: RetrievalMode, query: str) -> InjectedContext:
+        """三种检索模式共享的检索-装配路径（降级不炸）。"""
+        client = self._resolve_search_client()
+        if client is None or not query.strip():
+            return self._empty_context(mode, query)
+        try:
+            raw_hits = client.search(self._search_collection, query, top_k=self._max_sources)
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            return self._empty_context(mode, query)
+        return self._assemble_context(mode, query, raw_hits)
+
     def inject_by_task_id(self, task_id: str) -> InjectedContext:
-        return self._empty_context(RetrievalMode.TASK_ID, task_id)
+        """按 task_id 检索关联知识条目并注入。
+
+        query 构造规则（07 号文 §4 P1-1 扩展）：query = task_id 原文
+        （任务标识符本身承载检索语义，如 "T-2-12"/"MOD-X-TASK-010"），
+        检索 collection = self._search_collection（默认 ke_entries），
+        top_k = max_sources。检索客户端缺省/异常时返回空 InjectedContext
+        （降级不炸）。
+        """
+        return self._inject_via_search(RetrievalMode.TASK_ID, task_id)
 
     def inject_by_module_id(self, module_id: str) -> InjectedContext:
-        return self._empty_context(RetrievalMode.MODULE_ID, module_id)
+        """按 module_id 检索归属该模块的知识条目并注入。
+
+        query 构造规则（07 号文 §4 P1-1 扩展）：query = module_id 原文
+        （模块标识符本身承载检索语义，如 "MOD-CONTEXT_ENGINE"），
+        检索 collection = self._search_collection（默认 ke_entries），
+        top_k = max_sources。检索客户端缺省/异常时返回空 InjectedContext
+        （降级不炸）。
+        """
+        return self._inject_via_search(RetrievalMode.MODULE_ID, module_id)
 
     def inject_by_keyword(self, keyword: str) -> InjectedContext:
-        client = self._resolve_search_client()
-        if client is None or not keyword.strip():
-            return self._empty_context(RetrievalMode.KEYWORD, keyword)
-        try:
-            raw_hits = client.search(self._search_collection, keyword, top_k=self._max_sources)
-        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-            return self._empty_context(RetrievalMode.KEYWORD, keyword)
-        return self._assemble_keyword_context(keyword, raw_hits)
+        """按关键词语义检索并注入（query = keyword 原文，规则同上）。"""
+        return self._inject_via_search(RetrievalMode.KEYWORD, keyword)
 
     def inject(self, query: str, mode: RetrievalMode = RetrievalMode.KEYWORD) -> InjectedContext:
         if mode is RetrievalMode.TASK_ID:

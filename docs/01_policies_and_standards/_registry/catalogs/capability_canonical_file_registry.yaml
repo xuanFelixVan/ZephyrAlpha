@@ -4893,6 +4893,18 @@ capabilities:
   - DabanTimingDecision
   - DynamicCapacityCalculator
 creation_tokens:
+- file: src/zephyr/autonomy_core/context/local_llm_summarizer.py
+  token: auto-local-llm-summarizer-20260829
+  created_by: traesid-20260829-1308
+  capability: context_engine
+- file: tests/autonomy/test_context_injector_task_module.py
+  token: auto-test-context-injector-task-module-20260829
+  created_by: traesid-20260829-1308
+  capability: context_engine
+- file: tests/autonomy/test_local_llm_summarizer.py
+  token: auto-test-local-llm-summarizer-20260829
+  created_by: traesid-20260829-1308
+  capability: context_engine
 - file: src/zephyr/intelligence/model_routing/runtime_assembly.py
   token: auto-runtime-assembly-20260829
   created_by: traesid-20260829-1308

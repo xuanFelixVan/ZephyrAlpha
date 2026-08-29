@@ -30,6 +30,13 @@ entry_schema:
   desc_en: str
   plain_zh: str
 entries:
+- module_path: src/zephyr/autonomy_core/context/local_llm_summarizer.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: 本地LLM摘要器
+  name_en: Local LLM Summarizer
+  desc_zh: 07号文 Phase 1 压缩三档降级链的 llm_summary 生产档（MOD-CONTEXT_ENGINE）：超长文本行边界分 slot→逐段经 llm_runtime_gateway 本地优先路由摘要→合并递归；摘要过 integrity 四规则校验不过则不替换原文（降级 rule_based）；opt-in 注入 ContextAssembler，默认行为零变化。
+  desc_en: Phase 1 production llm_summary tier of the 3-tier compression chain (MOD-CONTEXT_ENGINE): line-aligned slotting, per-slot summary via llm_runtime_gateway local-first routing, recursive merge; integrity 4-rule check gates replacement (fallback rule_based); opt-in injection, zero default behavior change.
+  plain_zh: "长文压缩工"。超长资料塞不进上下文时，它把文章切成几段让本地小模型逐段写摘要再合并；摘要质量过不了校验就自动放弃改用老办法压缩，宁可降级也不用坏摘要。
 - module_path: src/zephyr/intelligence/model_routing/runtime_assembly.py
   domain_id: D_INTELLIGENCE
   name_zh: 模型路由运行时装配

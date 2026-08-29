@@ -25,6 +25,16 @@ ContextAssembler — 上下文装配、校验、影子留档
   2. assemble  — 拼接为单一上下文字符串
   3. compress  — 超 token 预算时调用 DocCompressor
   4. shadow    — 生成影子副本供脚本系统 B 线复查
+
+裁定回填（07 号文 §4 P1-3）：sync/async 偏差裁定=维持 sync 主用，
+async wrapper 待真实需求再建；InProcessContextEngine（async 三源汇聚）
+降级为远期候选（P4）。§6 Q6（inject 空占位修复优先级）关闭——
+已由 context_injector 三模式检索接线施工回答。
+
+压缩 opt-in（07 号文 §4 P1-2）：构造参数 llm_summarizer 注入时，
+_compress_context 将其透传 DocCompressor 启用 llm_summary 档
+（生产实现见 local_llm_summarizer.LocalLLMSummarizer）；缺省 None 时
+行为与现状零变化（自动降 rule_based）。
 """
 
 from __future__ import annotations
@@ -141,10 +151,13 @@ class ContextAssembler:
         max_file_size_mb: int = 5,
         require_absolute_paths: bool = True,
         rule_registry: ContextRuleRegistry | None = None,
+        *,
+        llm_summarizer: Callable[[str], str] | None = None,
     ) -> None:
         self._max_bytes = max_file_size_mb * 1024 * 1024
         self._require_absolute = require_absolute_paths
         self._rule_registry = rule_registry
+        self._llm_summarizer = llm_summarizer
 
     # ------------------------------------------------------------------
     # 公共 API
@@ -391,7 +404,7 @@ class ContextAssembler:
             from zephyr.shared.io.doc_compressor import DocCompressor
 
             compressor = DocCompressor()
-            outcome = compressor.compress_with_provenance(raw)
+            outcome = compressor.compress_with_provenance(raw, llm_summarizer=self._llm_summarizer)
             ctx.raw_context_text = outcome.raw_text
             ctx.context_text = outcome.compressed_text
         except (ImportError, Exception) as e:  # noqa: BLE001 — 5.135治标: broad exception catch

@@ -116,12 +116,17 @@ class TestInjectByKeywordWired:
         assert result.context != ""
         assert result.retrieval_mode == "keyword"
 
-    def test_task_and_module_modes_stay_empty(self) -> None:
-        client = _FakeSearchClient([_hit("不应被检索", chunk_id="c-1")])
+    def test_task_and_module_modes_use_search_path(self) -> None:
+        """07号文 GP1 施工后：task_id/module_id 不再返回空占位，统一走检索路径。"""
+        client = _FakeSearchClient([_hit("关联知识", chunk_id="c-1")])
         injector = ContextInjector(search_client=client)
-        assert injector.inject_by_task_id("T-1-1").context == ""
-        assert injector.inject_by_module_id("MOD-X").context == ""
-        assert client.calls == []
+        task_result = injector.inject_by_task_id("T-1-1")
+        module_result = injector.inject_by_module_id("MOD-X")
+        assert task_result.context != ""
+        assert task_result.retrieval_mode == "task_id"
+        assert module_result.context != ""
+        assert module_result.retrieval_mode == "module_id"
+        assert len(client.calls) == 2
 
 
 class TestUnifiedMemoryAdapterIntegration:
