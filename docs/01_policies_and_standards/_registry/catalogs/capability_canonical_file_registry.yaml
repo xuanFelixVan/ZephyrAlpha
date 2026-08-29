@@ -10685,6 +10685,10 @@ creation_tokens:
   token: auto-test-factor-promotion-wiring-20260829
   created_by: AI-WAVE4-001
   capability: lifecycle_governance_orchestration
+- file: docs/_working/reports/2026-08-29-s2-walkforward-validation.md
+  token: auto-s2-walkforward-validation-20260829
+  created_by: AI-WAVE4-001（S2 校准专项 walk-forward 验证报告，DSR N=17）
+  capability: regime_s2_calibration
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
