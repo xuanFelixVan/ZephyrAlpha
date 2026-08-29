@@ -14,26 +14,31 @@
 # [TESTS]
 # [A_module] module_id=MOD-L08-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""app_panel · Panel 仪表盘主应用入口（v3.1.0, #ARCH-047）
+"""app_panel · Panel 仪表盘主应用入口（v3.5.0, #ARCH-047）
 
 ARCH-047 v3.1.0: 仪表盘可运行化。Panel 主入口组装 11 个 Tab（5 治理类 + 6 交易/回测类）。
 v3.0.0 已完成 5 个交易/回测组件迁移；v3.1.0 完成剩余 5 个治理类组件迁移 + 本主入口。
 v3.4.0（51 号工作流 B）: 新增「实验历史」Tab（C1 回测历史 + 双净值对比，MLflow 退役后单一 JSON 源）。
+v3.5.0（45号作战手册 P1）: 新增「作战室」Tab（实盘组首位，消费 warroom 组件）。
 
-11 个 Tab:
+14 个 Tab:
+  作战室（v3.5.0 新增）:
+    1. 作战室           — warroom
   治理类（v3.1.0 迁移）:
-    1. 任务进度看板     — task_progress
-    2. 知识库概览       — knowledge_overview
-    3. 门禁统计         — gate_statistics
-    4. Fitness Functions — fitness_functions
-    5. OLAP 趋势        — olap_trend
+    2. 任务进度看板     — task_progress
+    3. 知识库概览       — knowledge_overview
+    4. 门禁统计         — gate_statistics
+    5. Fitness Functions — fitness_functions
+    6. OLAP 趋势        — olap_trend
   交易/回测类（v3.0.0 迁移 + v3.4.0 新增）:
-    6. 回测结果         — backtest_results
-    7. 实验历史         — experiment_history（v3.4.0）
-    8. Tick 回放        — tick_replay
-    9. 5档盘口          — order_book
-    10. 持仓监控        — position_monitor
-    11. 交易面板        — trade_panel
+    7. 回测结果         — backtest_results
+    8. 实验历史         — experiment_history（v3.4.0）
+    9. Tick 回放        — tick_replay
+    10. 5档盘口          — order_book
+    11. 持仓监控        — position_monitor
+    12. 交易面板        — trade_panel
+    13. QMT桥健康      — qmt_bridge_health
+    14. 图谱语料        — industry_graph
 
 启动方式:
     方式1 (panel serve, 推荐):
@@ -137,6 +142,12 @@ from zephyr.frontend.dashboard.components.tick_replay import (
 from zephyr.frontend.dashboard.components.trade_panel import (
     TradePanelData,
     render_trade_panel,
+)
+
+# 作战室（v3.5.0, 45号作战手册 P1：预案→走势匹配→明日惯性，全通道 fail-open）
+from zephyr.frontend.dashboard.components.warroom import (
+    fetch_warroom,
+    render_warroom,
 )
 from zephyr.governance.persistence.sqlite_schema import init_db
 from zephyr.governance.persistence.task_repo import TaskRepository
@@ -268,6 +279,24 @@ class DashboardPanelApp:
             overfitting_flag=False,
         )
 
+    # ===== 实盘组 Tab =====
+
+    def _tab_warroom(self) -> object:
+        """作战指挥室（v3.5.0, 45号作战手册 P1：昨日预案→走势匹配→明日惯性）
+
+        warroom 组件全通道 fail-open（单通道异常降级"待数据/待接入"负反馈），
+        本层再兜底：取数/渲染异常不炸 Tab。
+        """
+        try:
+            data = fetch_warroom()
+            payload = render_warroom(data)
+        except Exception as e:  # noqa: BLE001 — fail-open：作战室取数/渲染异常降级 Alert，不炸仪表盘
+            import logging
+
+            logging.getLogger(__name__).warning("作战室渲染异常 fail-open: %s", e, exc_info=True)
+            return pn.pane.Alert(f"作战室渲染异常（fail-open 降级）: {type(e).__name__}", alert_type="warning")
+        return payload.get("_layout") or pn.pane.Markdown("作战室渲染失败")
+
     # ===== 治理类 Tab =====
 
     def _tab_task_progress(self) -> object:
@@ -378,8 +407,9 @@ class DashboardPanelApp:
     # ===== 组装 =====
 
     def build_tabs(self) -> object:
-        """构建 11 个 Tab 的 pn.Tabs 布局"""
+        """构建 14 个 Tab 的 pn.Tabs 布局（v3.5.0 作战室居实盘组首位）"""
         tabs_spec = [
+            ("作战室", self._tab_warroom),
             ("任务进度", self._tab_task_progress),
             ("知识库概览", self._tab_knowledge_overview),
             ("门禁统计", self._tab_gate_statistics),

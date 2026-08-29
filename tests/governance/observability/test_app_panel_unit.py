@@ -67,11 +67,17 @@ class TestDashboardPanelApp:
         assert isinstance(data.gate_status, BacktestGateStatus)
 
     def test_build_tabs_returns_tabs(self) -> None:
-        """build_tabs 返回 pn.Tabs，含 11 个 Tab。"""
+        """build_tabs 返回 pn.Tabs，含 14 个 Tab（v3.5.0 作战室首位）。"""
         app = DashboardPanelApp()
         tabs = app.build_tabs()
         # pn.Tabs 对象可通过 len() 获取 Tab 数量
-        assert len(tabs) == 11
+        assert len(tabs) == 14
+
+    def test_warroom_tab_first(self) -> None:
+        """作战室 Tab 居首位（v3.5.0, 45号作战手册 P1 实盘组首位）。"""
+        app = DashboardPanelApp()
+        tabs = app.build_tabs()
+        assert tabs._names[0] == "作战室"
 
 
 class TestCreateDashboard:
