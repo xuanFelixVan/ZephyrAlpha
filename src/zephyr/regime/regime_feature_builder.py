@@ -337,6 +337,13 @@ class RegimeFeatureBuilder:
         """P1-E3: 新闻情感聚合（供 S2 policy/bad_news_flat 维度）。None=降级。"""
         return self._data_loader.load_news_sentiment() if self._data_loader is not None else None
 
+    def get_index_valuation(self) -> pd.DataFrame | None:
+        """S2 估值路A: 指数估值日频（CAPE/PB/ERP 分位，供 S2 valuation 维度）。
+
+        None=降级（调用方 overlay_signals_builder 回退路B s2_valuation_score(close)）。
+        """
+        return self._data_loader.load_index_valuation() if self._data_loader is not None else None
+
     def build_train_matrix(self, start: str, end: str) -> dict[str, Any]:
         """构造 HMM 训练矩阵（walk-forward 季度重拟合用）。
 

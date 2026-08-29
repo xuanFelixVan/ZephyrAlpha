@@ -2382,3 +2382,64 @@ tasks:
     disabled: true
     disabled_reason: "分析型任务配置级登记（15_data_feature_layer_spec §6：重评条件'因子数>50'已满足——factor_registry 111 条目）。runner 未绑定：monitor_decay 需 ic_decay_series 或 symbols/start/end 注入，周复盘批量 runner（遍历 factor_registry→monitor_decay→decay_state 回写）施工后移除 disabled 启用。登记使缺口机查可见。无 capability 字段（capability_validator 对无 capability 任务不校验）；无 fallback_sources（内部计算无数据源可切，DATA-TASK-COMPLETENESS warn 已知晓并接受）。"
   fallback_sources: []
+
+# ============== S2 估值路A：指数估值管道（2026-08-29 S2 治本方案 §5.1）==============
+# 主源 akshare 中证官网历史K线采 PE_TTM/股息率原始列；fallback=internal
+# （IndexValuationComputeProvider 读库计算真 CAPE/分位/ERP 回写同表，计算列仍可产出）。
+- task_id: index_valuation_daily_incremental
+  table: c1_market.index_valuation_daily
+  source: akshare
+  schedule: daily_kline
+  incremental: true
+  date_col: trade_date
+  dependencies: ["kline_index_incremental"]    # DAG: 指数日K落库后采集估值（CAPE 分子复用 close）
+  capability: index_valuation_daily
+  symbols:         # null=默认核心指数 000300/000905/399006（provider 内置）
+  extra:
+    description: "指数估值增量（akshare 中证官网 stock_zh_index_hist_csindex，PE_TTM/股息率；S2 估值路A）"
+
+  fallback_sources:
+  - source: internal
+    capability: index_valuation_daily
+
+- task_id: index_valuation_daily_backfill
+  table: c1_market.index_valuation_daily
+  source: akshare
+  schedule: weekend_calibration
+  incremental: false    # 全量回填 2010-01-01 起（provider 内固定起点，覆盖 1250 交易日 CAPE 窗口）
+  dependencies: []
+  capability: index_valuation_daily
+  symbols:
+  extra:
+    description: "指数估值全量回填（2010-01-01 起，中证官网全历史 PE_TTM/股息率；回填后由 internal 计算 CAPE/分位/ERP）"
+
+  fallback_sources:
+  - source: internal
+    capability: index_valuation_daily
+
+# ============== A22：期指 tick + A50 日频历史（44号备忘 §9.6 通道1 / §9.8 通道2，2026-08-29）==============
+- task_id: futures_tick_intraday
+  table: c1_market.tick_data
+  source: miniqmt
+  schedule: intraday_realtime    # 盘中实时层每5分钟（与族内任务同频）
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: tick_data
+  symbols: ["IF00.IF", "IC00.IF", "IM00.IF", "IH00.IF"]    # 股指期货主力连续（detect_market_type → futures）
+  fallback_sources: []    # tick 仅 miniqmt 有源（天然无副源）
+  extra:
+    description: "股指期货 IF/IC/IM/IH 主力连续 3秒Tick 盘中增量（miniQMT，写 c1_market.tick_data，market_type=futures）"
+
+- task_id: a50_futures_daily_incremental
+  table: c1_market.a50_futures_daily
+  source: akshare
+  schedule: pre_market    # 盘前 08:30（A50 夜盘 ~05:15 已收，盘前 gap_adj w3 通道校准用数）
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: a50_futures_daily
+  symbols:         # null=默认品种 CHA50CFD（富时中国A50当月连续，provider 内置）
+  fallback_sources: []    # 源评估裁定：无免费稳定等价源（东财历史不可用/tushare 无 SGX 品种/SGX 官方付费）
+  extra:
+    description: "富时中国A50期货日K增量（akshare futures_foreign_hist 新浪源，单次全量本地窗口过滤；44号 §9.6 通道1）"

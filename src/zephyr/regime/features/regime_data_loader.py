@@ -57,6 +57,8 @@ _logger = logging.getLogger(__name__)
 _MULTI_TF_ETF = "510300"
 # 合成 VIX 用的期权标的
 _VIX_UNDERLYINGS: Final = ["510050", "510300"]
+# S2 估值路A 用的指数代码（沪深300，与市场代理 MARKET_PROXY 口径一致）
+_INDEX_VALUATION_SYMBOL: Final = "000300"
 
 # ── NLP 关键词字典（P1-E3 MVP：关键词情感分析，无 GPU 降级方案）──
 # 利好关键词（正面情绪）
@@ -290,6 +292,16 @@ class RegimeDataLoader:
             negative_count, policy_count]) 或 None。供 S2 policy/bad_news_flat 用。
         """
         return self._load_or_cache("news_sentiment", self._load_news_sentiment)
+
+    def load_index_valuation(self) -> pd.DataFrame | None:
+        """指数估值日频（S2 估值路A：CAPE/PB/ERP 分位，2026-08-29 S2 治本方案 §5.4）。
+
+        Returns:
+            DataFrame(index=trade_date, cols=[pe_ttm, cape_5y, cape_5y_pct, pe_pct,
+            pb_pct, erp, erp_pct]) 或 None（查询失败/无数据降级，
+            调用方 overlay S2 valuation 回退路B s2_valuation_score(close)）。
+        """
+        return self._load_or_cache("index_valuation", self._load_index_valuation)
 
     # ── 实际加载逻辑 ──────────────────────────────────────────────────────
 
@@ -532,6 +544,38 @@ class RegimeDataLoader:
             df["trade_date"].max().date(),
             int(df["total_count"].mean()),
         )
+        return df.set_index("trade_date").sort_index()
+
+    def _load_index_valuation(self) -> pd.DataFrame | None:
+        """加载指数估值日频（c1_market.index_valuation_daily，市场代理 000300）。
+
+        列：pe_ttm / cape_5y / cape_5y_pct / pe_pct / pb_pct / erp / erp_pct。
+        消费端语义：cape_5y_pct/pb_pct/erp_pct 为全历史扩展窗分位（0~1），
+        erp 为百分数小数口径（0.052=5.2%），供 s2_valuation_score_fundamental。
+        """
+        table = self._registry.table("market_index_valuation_daily")
+        sql = (
+            f"SELECT trade_date, pe_ttm, cape_5y, cape_5y_pct, pe_pct, pb_pct, erp, erp_pct "
+            f"FROM {table} FINAL "
+            f"WHERE symbol = '{_INDEX_VALUATION_SYMBOL}' "
+            f"AND trade_date >= toDate('{self.data_load_start}') "
+            f"AND trade_date <= toDate('{self.backtest_end}') "
+            f"ORDER BY trade_date"
+        )
+        tsv = self._query(sql, "index_valuation")
+        rows = parse_tsv(tsv, ncols=8)
+        if not rows:
+            _logger.warning("index_valuation_daily 无数据，S2 valuation 将降级路B（close 回撤代理）")
+            return None
+        df = pd.DataFrame(
+            rows,
+            columns=["trade_date", "pe_ttm", "cape_5y", "cape_5y_pct", "pe_pct", "pb_pct", "erp", "erp_pct"],
+        )
+        df["trade_date"] = pd.to_datetime(df["trade_date"])
+        for c in ["pe_ttm", "cape_5y", "cape_5y_pct", "pe_pct", "pb_pct", "erp", "erp_pct"]:
+            df[c] = pd.to_numeric(df[c], errors="coerce")
+        # 去重：FINAL 仍可能残留同键重复（同 P1-E5 sector_kline 修复口径）
+        df = df.drop_duplicates(subset=["trade_date"], keep="last")
         return df.set_index("trade_date").sort_index()
 
 

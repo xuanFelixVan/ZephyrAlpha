@@ -92,6 +92,7 @@ _INTERNAL_COMPUTE_CAPABILITIES = frozenset(
         "technical_indicator",
         "calendar_event",
         "hk_trade_calendar",
+        "index_valuation_daily",  # S2 估值路A（2026-08-29）：委托 IndexValuationComputeProvider
     }
 )
 
@@ -354,6 +355,8 @@ class InternalComputeProvider(IngestProviderBase):
             # #ARCH-DATA-002 施工项1 语义锚试点（17号 §5.2）：日历类能力标市场/品种
             CapabilityContract("calendar_event", expected_market="a_share", expected_variety="calendar"),
             CapabilityContract("hk_trade_calendar", expected_market="hk", expected_variety="calendar"),
+            # S2 估值路A（2026-08-29）：指数估值 CAPE/分位/ERP 内部计算，symbols=null=默认核心指数
+            CapabilityContract("index_valuation_daily", supports_symbols_null=True),
         ],
         known_issues=[],
     )
@@ -404,14 +407,38 @@ class InternalComputeProvider(IngestProviderBase):
         Yields:
             FetchResult：每批一个（按标的分批，避免单批过大）
         """
-        # 按 table 路由：calendar_event 走日历事件派生，hk_trade_calendar 走 XHKG 日历，其余走技术指标
+        # 按 table 路由：calendar_event 走日历事件派生，hk_trade_calendar 走 XHKG 日历，
+        # index_valuation_daily 走指数估值内部计算（S2 路A），其余走技术指标
         if payload.table == "c1_market.calendar_event":
             yield from self._fetch_calendar_event(payload)
             return
         if payload.table == "c1_market.hk_trade_calendar":
             yield from self._fetch_hk_trade_calendar(payload)
             return
+        if payload.table == "c1_market.index_valuation_daily":
+            yield from self._fetch_index_valuation_daily(payload, policy)
+            return
         yield from self._fetch_technical_indicator(payload)
+
+    def _fetch_index_valuation_daily(self, payload: FetchPayload, policy) -> Iterator[FetchResult]:
+        """指数估值路由分支（index_valuation_daily capability 的命名约定实现）。
+
+        capability_symbol_gate 门禁强制 _fetch_<cap> 命名约定（参照
+        _fetch_technical_indicator 先例：frozenset 声明的能力必须有同名方法，
+        否则双向 gate 报"声明残留"）。本方法仅包装委托
+        IndexValuationComputeProvider（S2 路A 管道：读 CH 原始 PE_TTM/close/CPI/10Y
+        → 本地计算真 CAPE/全历史分位/ERP → 返回 FetchResult 回写同表）。
+        """
+        from zephyr.data.implementations.index_valuation_compute import (
+            IndexValuationComputeProvider,
+        )
+
+        provider = IndexValuationComputeProvider()
+        provider.connect()
+        try:
+            yield from provider.fetch(payload, policy)
+        finally:
+            provider.disconnect()
 
     def _fetch_technical_indicator(self, payload: FetchPayload) -> Iterator[FetchResult]:
         """技术指标默认分支（technical_indicator capability 的命名约定实现）。

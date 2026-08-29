@@ -353,10 +353,14 @@ SETTINGS index_granularity = 8192
 # （GAP-F-29 实盘净值）/ reconciliation_differences（T2_closure_review §9.1 #2 / tracker #234 CH 侧）
 # 2026-08-26 Owner 全批 DDL 数据层三件：execution_report（CTR-P1-007 契约持久化，P0）/
 # sector_fund_flow（D3/GAP-F-16 THS 板块资金流快照）/ daban_board_event（STR-DABAN-022 打板事件推导）
+# 2026-08-29 S2 估值路A + A22：index_valuation_daily（指数估值 PE_TTM/CAPE/分位/ERP）/
+# a50_futures_daily（富时A50期货日K，44号 §9.6 通道1）
+from schemas.categories.market_a50_futures_daily import A50_FUTURES_DAILY_DDL
 from schemas.categories.market_account_nav_daily import MARKET_ACCOUNT_NAV_DAILY_DDL
 from schemas.categories.market_breadth_snapshot import MARKET_BREADTH_SNAPSHOT_DDL
 from schemas.categories.market_daban_board_event import MARKET_DABAN_BOARD_EVENT_DDL
 from schemas.categories.market_execution_report import MARKET_EXECUTION_REPORT_DDL
+from schemas.categories.market_index_valuation_daily import MARKET_INDEX_VALUATION_DAILY_DDL
 from schemas.categories.market_ipo_calendar import IPO_CALENDAR_DDL
 from schemas.categories.market_limit_up_pool import MARKET_LIMIT_UP_POOL_DDL
 from schemas.categories.market_news_sentiment_window import NEWS_SENTIMENT_WINDOW_DDL
@@ -401,6 +405,9 @@ _ALL_DDL: list[tuple[str, str]] = [
     ("c1_market.execution_report", MARKET_EXECUTION_REPORT_DDL),
     ("c1_market.sector_fund_flow", MARKET_SECTOR_FUND_FLOW_DDL),
     ("c1_market.daban_board_event", MARKET_DABAN_BOARD_EVENT_DDL),
+    # 2026-08-29 S2 估值路A + A22（44号 §9.6 通道1）
+    ("c1_market.index_valuation_daily", MARKET_INDEX_VALUATION_DAILY_DDL),
+    ("c1_market.a50_futures_daily", A50_FUTURES_DAILY_DDL),
 ]
 
 # 增量迁移（ALTER TABLE ADD COLUMN IF NOT EXISTS）
@@ -447,6 +454,9 @@ _EXPECTED_ENGINES: dict[str, str] = {
     "execution_report": "ReplacingMergeTree",
     "sector_fund_flow": "ReplacingMergeTree",
     "daban_board_event": "ReplacingMergeTree",
+    # 2026-08-29 S2 估值路A + A22：日频快照按 (symbol, trade_date) 同键替换幂等
+    "index_valuation_daily": "ReplacingMergeTree",
+    "a50_futures_daily": "ReplacingMergeTree",
 }
 
 _DATABASE = "c1_market"

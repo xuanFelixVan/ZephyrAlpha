@@ -346,8 +346,9 @@ class OverlaySignalsConstructor:
         if close is not None:
             # Phase 2c：s2_wyckoff 委托 wyckoff_engine（需 high/low/volume/pct/vol_z）
             cache["wyckoff"] = overlay_features.s2_wyckoff_score(close, high, low, volume, pct_change, vol_z)
-            # P1-E9b 路 B：阈值校准版（路 A CAPE 分位待 daily_valuation 管道，Step 0 ①）
-            cache["valuation"] = overlay_features.s2_valuation_score(close)
+            # S2 估值（2026-08-29 S2 治本方案 §5.4）：路A fundamental（CAPE/PB/ERP 分位）优先，
+            # index_valuation_daily 数据缺失时降级路B s2_valuation_score(close) 并告警
+            cache["valuation"] = self._s2_valuation_score(close, feat.index)
             # P1-E9c：spring 深度分级版（需 high/low；缺失时函数内回退 close 简化版）
             cache["spring"] = overlay_features.s2_spring_flag(close, high, low, volume)
             cache["break_sc_low"] = overlay_features.s2_break_sc_low_flag(close)
@@ -500,6 +501,44 @@ class OverlaySignalsConstructor:
         except Exception as exc:  # noqa: BLE001 — 降级友好
             _logger.warning("%s 调用失败，降级 None: %s", method_name, exc)
             return None
+
+    def _s2_valuation_score(self, close: pd.Series, index: pd.Index) -> pd.Series:
+        """S2 valuation 维度：路A（CAPE/PB/ERP 分位）优先，路B（close 回撤代理）降级。
+
+        路A（2026-08-29 S2 治本方案 §5.4）：经 feature_builder.get_index_valuation()
+        取 c1_market.index_valuation_daily 的 CAPE/PB/ERP 分位，调
+        overlay_features.s2_valuation_score_fundamental（危机期 PE_TTM 因盈利崩塌
+        "越跌越贵"失真，故以 5 年真 CAPE 分位为主评分轴）。
+        降级路B：index_valuation_daily 缺失或 CAPE 分位全 NaN（回填未跑/计算列未产出）
+        时回退 P1-E9b 阈值校准版 s2_valuation_score(close)，并 logger.warning 留痕。
+        """
+        index_val = self._fb_call("get_index_valuation")
+        if index_val is not None and not getattr(index_val, "empty", True) and "cape_5y_pct" in index_val.columns:
+            cape_pct = pd.to_numeric(index_val["cape_5y_pct"], errors="coerce").reindex(index)
+            if cape_pct.notna().any():
+                pb_pct = (
+                    pd.to_numeric(index_val["pb_pct"], errors="coerce").reindex(index)
+                    if "pb_pct" in index_val.columns
+                    else None
+                )
+                erp_abs = (
+                    pd.to_numeric(index_val["erp"], errors="coerce").reindex(index)
+                    if "erp" in index_val.columns
+                    else None
+                )
+                erp_pct = (
+                    pd.to_numeric(index_val["erp_pct"], errors="coerce").reindex(index)
+                    if "erp_pct" in index_val.columns
+                    else None
+                )
+                return overlay_features.s2_valuation_score_fundamental(
+                    cape_percentile=cape_pct,
+                    pb_percentile=pb_pct,
+                    erp_percentile=erp_pct,
+                    erp_absolute=erp_abs,
+                )
+        _logger.warning("S2 valuation 路A 数据缺失（index_valuation_daily 无 CAPE 分位），降级路B s2_valuation_score(close)")
+        return overlay_features.s2_valuation_score(close)
 
     def _compute_vix_pct(self, index: pd.DatetimeIndex) -> pd.Series | None:
         """Phase 2c: VIX 历史分位（vix_pct）—— 期权 IV 优先，合成 VIX 后备。

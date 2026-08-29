@@ -2182,3 +2182,37 @@
   frequency: 日频
   data_source: [akshare]
   blueprint: null
+
+# --- S2 估值路A 指数估值 + A22 A50 日频历史（2026-08-29） ---
+
+- category_id: market_index_valuation_daily
+  name: "指数估值日频（PE_TTM/股息率/真CAPE_5Y/全历史分位/ERP，S2 估值路A）"
+  engine: clickhouse
+  database: c1_market
+  table: index_valuation_daily
+  schema_file: schemas/categories/market_index_valuation_daily.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare, internal]
+  blueprint: null
+
+- category_id: market_a50_futures_daily
+  name: "富时中国A50期货日K（新交所 CHA50CFD 当月连续，盘前 gap_adj w3 通道校准）"
+  engine: clickhouse
+  database: c1_market
+  table: a50_futures_daily
+  schema_file: schemas/categories/market_a50_futures_daily.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "新浪免费通道无 SLA；源早期年份 volume/position 可为 0"
+  calc_mode: lazy
+  frequency: 日频
+  data_source: [akshare]
+  blueprint: null

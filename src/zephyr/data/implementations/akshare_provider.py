@@ -213,6 +213,8 @@ _TBL_BALANCE_SHEET = get_registry().table("fund_balance_sheet")
 _TBL_INCOME_STATEMENT = get_registry().table("fund_income_statement")
 _TBL_CASHFLOW_STATEMENT = get_registry().table("fund_cashflow_statement")
 _TBL_FINANCIAL_INDICATOR = get_registry().table("fund_financial_indicator")
+# S2 估值路A（2026-08-29）：指数估值 PE_TTM/股息率采集目标表（注册表真源，fail-closed）
+_TBL_INDEX_VALUATION_DAILY = get_registry().table("market_index_valuation_daily")
 
 # JOB-077 SQL 集中化（NO-BARE-SQL gate 合规，常量名匹配 ^_?SQL_\w+$ 豁免正则）
 # kline_daily 交易日序列/每股日期数组（stk_limit 计算与 suspend 推导共用）
@@ -353,6 +355,10 @@ _AKSHARE_CAPABILITIES = frozenset(
         "financial_indicator",  # 财务指标（新浪 stock_financial_analysis_indicator；东财 em 版 1.18.75 已损坏）
         # 92号清单 §7.2 / 44号备忘 §9.8 通道3（2026-08-21 Owner 裁定五）：美股期指 ES/NQ + A50 盘中实时
         "us_futures_intraday",
+        # S2 估值路A（2026-08-29）：指数估值 PE_TTM/股息率（中证官网 stock_zh_index_hist_csindex）
+        "index_valuation_daily",
+        # A22 / 44号备忘 §9.6 通道1（2026-08-29）：富时A50期货日K（新浪 futures_foreign_hist，CHA50CFD）
+        "a50_futures_daily",
     }
 )
 
@@ -532,6 +538,52 @@ _US_FUTURES_COLUMNS: Final[tuple[str, ...]] = (
     "degraded",
 )
 
+# ============== S2 估值路A 指数估值 + A22 A50 日频历史（2026-08-29）==============
+# index_valuation_daily：中证官网历史K线（stock_zh_index_hist_csindex）采 PE_TTM/股息率，
+#   评估真源见 docs/_working/reports/2026-08-29-s2-valuation-pipeline-report.md §一④
+#   （stock_zh_index_value_csindex 仅最近 20 条不可回填，已排除；乐咕月度仅作交叉验证）。
+#   CAPE/分位/ERP 计算列由 internal_compute（IndexValuationComputeProvider）读库计算回写，
+#   本能力只采原始列（计算列一律置 None，由回写覆盖）。
+# a50_futures_daily：富时中国A50期货（新交所 CHA50CFD 当月连续）日频历史K线，
+#   源=akshare futures_foreign_hist（新浪外盘期货历史，单次全量返回，约10年），
+#   评估真源见 docs/_working/reports/2026-08-29-a50-source-evaluation.md。
+_INDEX_VALUATION_DEFAULT_SYMBOLS: Final[tuple[str, ...]] = ("000300", "000905", "399006")
+# 全量回填起点（S2 裁定：2010-01-01 起，覆盖 1250 交易日≈5年 CAPE 窗口所需历史深度）
+_INDEX_VALUATION_BACKFILL_START: Final[str] = "20100101"
+# index_valuation_daily 表列序（与 schemas/categories/market_index_valuation_daily.py
+# INSERT_COLUMNS 一致；pb_mrq/pb_pct/broken_net_ratio/buffett_ratio 一期暂缺恒 None）
+_INDEX_VALUATION_COLUMNS: Final[tuple[str, ...]] = (
+    "trade_date",
+    "symbol",
+    "pe_ttm",
+    "pb_mrq",
+    "dividend_yield",
+    "cape_5y",
+    "cape_5y_pct",
+    "pe_pct",
+    "pb_pct",
+    "erp",
+    "erp_pct",
+    "broken_net_ratio",
+    "buffett_ratio",
+    "data_source",
+)
+_A50_FUTURES_DEFAULT_SYMBOLS: Final[tuple[str, ...]] = ("CHA50CFD",)
+# a50_futures_daily 表列序（与 schemas/categories/market_a50_futures_daily.py
+# INSERT_COLUMNS 一致；MATERIALIZED 列 exchange/symbol_canonical 由 CH 派生不写入；
+# 源无成交额字段，本表无 amount 列属有意为之）
+_A50_FUTURES_COLUMNS: Final[tuple[str, ...]] = (
+    "trade_date",
+    "symbol",
+    "open",
+    "high",
+    "low",
+    "close",
+    "volume",
+    "open_interest",
+    "data_source",
+)
+
 
 def parse_sina_hf_futures_quotes(text: str) -> dict[str, dict]:
     """解析新浪 hf 外盘期货行情载荷（纯函数，可离线单测）。
@@ -692,6 +744,10 @@ class AkshareIngestProvider(IngestProviderBase):
             CapabilityContract("financial_indicator", supports_symbols_null=True),
             # 92号清单 §7.2 / 44号备忘 §9.8 通道3：symbols=null 时取默认品种表（ES/NQ/CHA50CFD）
             CapabilityContract("us_futures_intraday", supports_symbols_null=True),
+            # S2 估值路A（2026-08-29）：symbols=null 时取默认核心指数（000300/000905/399006）
+            CapabilityContract("index_valuation_daily", supports_symbols_null=True),
+            # A22 / 44号备忘 §9.6 通道1：symbols=null 时取默认品种（CHA50CFD 当月连续）
+            CapabilityContract("a50_futures_daily", supports_symbols_null=True),
         ],
         known_issues=["须断开VPN", "东财接口反爬严重"],
     )
@@ -8372,3 +8428,193 @@ class AkshareIngestProvider(IngestProviderBase):
             last_key=last_key,
             elapsed_sec=time.monotonic() - t0,
         )
+
+    # ---- S2 估值路A：指数估值日频（index_valuation_daily，2026-08-29）----
+
+    def _fetch_index_valuation_daily(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """采集指数估值原始列（PE_TTM/股息率），写入 c1_market.index_valuation_daily。
+
+        主源：ak.stock_zh_index_hist_csindex（中证官网历史K线，返回 16 列含
+        滚动市盈率/股息率1，支持 start_date/end_date 拉取全历史——S2 施工报告 §一④
+        实证 2010-01-01 起 4046 条日频）。注意同族 stock_zh_index_value_csindex
+        仅返回最近 20 条，不可用于历史回填，故不采用。
+        CAPE/分位/ERP 计算列由 internal_compute（IndexValuationComputeProvider）
+        读库计算后回写同表，本能力计算列一律置 None。
+        表名校验 fail-closed：payload.table 缺失时回落注册表真源
+        （market_index_valuation_daily，table_registry 查不到即 KeyError），
+        禁止凭记忆编表名。
+        回填口径：incremental=False（全量回填任务）时 start_date 固定 2010-01-01，
+        覆盖 1250 交易日（约5年）CAPE 窗口所需历史深度。
+        """
+        import akshare as ak
+
+        table = payload.table or _TBL_INDEX_VALUATION_DAILY
+        columns = list(_INDEX_VALUATION_COLUMNS)
+        last_key = payload.end.isoformat()
+        t0 = time.monotonic()
+
+        # 增量=按 payload 窗口；全量回填（incremental=False）= 2010-01-01 起全历史
+        if payload.incremental:
+            ak_start = payload.start.strftime("%Y%m%d")
+            start_str = payload.start.isoformat()
+        else:
+            ak_start = _INDEX_VALUATION_BACKFILL_START
+            start_str = "2010-01-01"
+        ak_end = payload.end.strftime("%Y%m%d")
+        end_str = payload.end.isoformat()
+
+        symbols = [self._norm_code6(s) for s in (payload.symbols or [])]
+        symbols = [s for s in symbols if s]
+        if not symbols:
+            # symbols=null → 默认核心指数（S2 消费方：沪深300/中证500/创业板指）
+            symbols = list(_INDEX_VALUATION_DEFAULT_SYMBOLS)
+
+        for sym in symbols:
+            try:
+                df = self._call_with_policy(
+                    ak.stock_zh_index_hist_csindex,
+                    policy,
+                    symbol=sym,
+                    start_date=ak_start,
+                    end_date=ak_end,
+                )
+            except Exception as e:  # noqa: BLE001 — 单标的失败留痕，不阻塞其余标的
+                self._log.warning(f"stock_zh_index_hist_csindex({sym}) 失败: {e}")
+                yield FetchResult(
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
+                    error=f"index_valuation_daily 采集失败 symbol={sym}: {e}",
+                )
+                continue
+            if df is None or len(df) == 0:
+                yield FetchResult(
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
+                    error=f"index_valuation_daily 空数据 symbol={sym} [{start_str}~{end_str}]",
+                )
+                continue
+            rows: list[tuple] = []
+            for _, row in df.iterrows():
+                d = self._norm_date_str(row.get("日期"))
+                if not d or d < start_str or d > end_str:
+                    continue
+                rows.append(
+                    (
+                        d,
+                        sym,
+                        safe_float(row.get("滚动市盈率")),  # pe_ttm（TTM 口径）
+                        None,  # pb_mrq（一期暂缺，二期升级）
+                        safe_float(row.get("股息率1")),  # dividend_yield（%）
+                        None,  # cape_5y（internal_compute 计算列）
+                        None,  # cape_5y_pct（internal_compute 计算列）
+                        None,  # pe_pct（internal_compute 计算列）
+                        None,  # pb_pct（一期暂缺）
+                        None,  # erp（internal_compute 计算列）
+                        None,  # erp_pct（internal_compute 计算列）
+                        None,  # broken_net_ratio（二期预留）
+                        None,  # buffett_ratio（二期预留）
+                        "akshare_csindex",
+                    )
+                )
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=rows,
+                last_key=last_key,
+                elapsed_sec=time.monotonic() - t0,
+                rows_fetched=len(rows),
+            )
+
+    # ---- A22：富时A50期货日频历史（a50_futures_daily，44号备忘 §9.6 通道1）----
+
+    def _fetch_a50_futures_daily(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """采集富时中国A50期货（新交所 SGX，当月连续 CHA50CFD）日频历史K线。
+
+        源：ak.futures_foreign_hist（新浪外盘期货历史接口，单次全量返回，
+        2016-08 起约 10 年日K，列=date/open/high/low/close/volume/position，
+        无成交额字段）——源评估见 docs/_working/reports/2026-08-29-a50-source-evaluation.md。
+        用途：盘前 gap_adj w3 通道（A50 夜盘涨跌幅）历史校准 + A50 交割周回溯。
+        表名 fail-closed：必须经 tasks.yaml table 字段显式传入（payload.table 为空
+        即报错，禁止凭记忆编表名——同 _fetch_us_futures_intraday 纪律）。
+        源为单次全量返回，本地按 payload.start/end 窗口过滤（增量任务只落窗口内行，
+        ReplacingMergeTree 同键重跑幂等替换）。
+        """
+        t0 = time.monotonic()
+        last_key = payload.end.isoformat()
+        table = payload.table
+        if not table:
+            yield FetchResult(
+                table="",
+                columns=list(_A50_FUTURES_COLUMNS),
+                rows=[],
+                last_key=last_key,
+                elapsed_sec=time.monotonic() - t0,
+                error="a50_futures_daily 需 tasks.yaml 显式指定 table（payload.table 为空，fail-closed）",
+            )
+            return
+
+        import akshare as ak
+
+        symbols = [str(s).strip().upper() for s in (payload.symbols or []) if str(s).strip()]
+        if not symbols:
+            symbols = list(_A50_FUTURES_DEFAULT_SYMBOLS)
+
+        for sym in symbols:
+            try:
+                df = self._call_with_policy(ak.futures_foreign_hist, policy, symbol=sym)
+            except Exception as e:  # noqa: BLE001 — 失败留痕不抛出（触发上层告警/重跑）
+                self._log.warning(f"futures_foreign_hist({sym}) 失败: {e}")
+                yield FetchResult(
+                    table=table,
+                    columns=list(_A50_FUTURES_COLUMNS),
+                    rows=[],
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
+                    error=f"a50_futures_daily 采集失败 futures_foreign_hist({sym}): {e}",
+                )
+                continue
+            if df is None or len(df) == 0:
+                yield FetchResult(
+                    table=table,
+                    columns=list(_A50_FUTURES_COLUMNS),
+                    rows=[],
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
+                    error=f"a50_futures_daily 空数据 symbol={sym} [{payload.start}~{payload.end}]",
+                )
+                continue
+            # 本地窗口过滤（源单次返回全历史，增量只取 [start, end] 闭区间）
+            start_str = payload.start.isoformat()
+            end_str = payload.end.isoformat()
+            rows: list[tuple] = []
+            for _, row in df.iterrows():
+                d = self._norm_date_str(row.get("date"))
+                if not d or d < start_str or d > end_str:
+                    continue
+                rows.append(
+                    (
+                        d,
+                        sym,
+                        safe_float(row.get("open")),
+                        safe_float(row.get("high")),
+                        safe_float(row.get("low")),
+                        safe_float(row.get("close")),
+                        safe_int(row.get("volume")) or 0,  # 源早期年份可为 0/缺失
+                        safe_int(row.get("position")) or 0,  # open_interest=新浪 position 字段
+                        "akshare_sina",
+                    )
+                )
+            yield FetchResult(
+                table=table,
+                columns=list(_A50_FUTURES_COLUMNS),
+                rows=rows,
+                last_key=last_key,
+                elapsed_sec=time.monotonic() - t0,
+                rows_fetched=len(rows),
+            )
