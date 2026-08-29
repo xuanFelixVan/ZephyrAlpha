@@ -2326,12 +2326,17 @@ function applyHover(i){
       c.cross.style.display='';
       c.rd.style.display='block';
       c.rd.innerHTML=c.readout(ii);   /* R23b：多行卡片读数（对齐旧版 Plotly hover），readout 返回 HTML */
+      /* v3.2：个股行情主图 hover 联动筹码峰——按光标日重算（截止光标日+光标价分获利/套牢） */
+      if(id==='sq-main'&&c.g0.__sqChipRender){ var dg=sqData(),gi=w2gi(c,ii); if(dg[gi]) c.g0.__sqChipRender(gi,dg[gi].c); }
     }else{
       if(c.cross) c.cross.style.display='none';
       c.rd.style.display='none';
+      if(id==='sq-main'&&c.g0.__sqChipBase) c.g0.__sqChipBase();   /* 移出回窗口末现价 */
     }
   }
 }
+/* v3.2：sq-main hover 索引→数据索引（窗口偏移） */
+function w2gi(c,ii){ var w=sqWinGet(); return w.lo+ii; }
 
 /* ---- 汇总主图：K线+成交量+叠加层+买卖信号 ---- */
 function renderMain(d){
@@ -5130,8 +5135,8 @@ function sentRenderTrend(){
     tmp[N-1]=62;
     var yf=function(v){return T+(1-v/100)*(H-T-B);},xf=function(ii){return L+ii*(W-L-R)/(N-1);};
     var g=el('g',{},svg); grid(svg,W,L,R,H,T,B);
-    el('rect',{x:L,y:yf(80),width:W-L-R,height:yf(100)-yf(80)+0,fill:'#CA3F64',opacity:0.07},g);
-    el('rect',{x:L,y:yf(20),width:W-L-R,height:yf(0)-yf(20),fill:'#25A750',opacity:0.07},g);
+    el('rect',{x:L,y:yf(80),width:W-L-R,height:Math.abs(yf(100)-yf(80)),fill:'#CA3F64',opacity:0.07},g);
+    el('rect',{x:L,y:yf(20),width:W-L-R,height:Math.abs(yf(0)-yf(20)),fill:'#25A750',opacity:0.07},g);
     el('line',{x1:L,x2:W-R,y1:yf(80),y2:yf(80),stroke:'#CA3F64','stroke-width':0.6,'stroke-dasharray':'4 3',opacity:0.6},g);
     el('line',{x1:L,x2:W-R,y1:yf(20),y2:yf(20),stroke:'#25A750','stroke-width':0.6,'stroke-dasharray':'4 3',opacity:0.6},g);
     hlabel(svg,W-R-46,yf(80)+10,'狂热 80','#AA0066',8); hlabel(svg,W-R-46,yf(20)+10,'冰点 20','#44AA88',8);
@@ -6072,10 +6077,12 @@ function sqTickData(){   /* 分时 240 分钟合成序列（种子确定性；�
 }
 function sqRenderMain(){
   var svg=document.getElementById('sq-main'); if(!svg)return; svg.innerHTML='';
-  var W=1100,H=460,L=46,R=sqTogs.chip?150:64,T=14,B=30,FS=12;   /* FS=右侧未来空槽（OKX 式：末日之后留白给未来事件） */
+  var W=1100,H=460,L=46,R=sqTogs.chip?150:64,T=14,B=30;
   var CW_RATIO=0.78, CW_MIN=2.5, CW_MAX=26, FS_MAX=120;   /* v3.1：蜡烛体宽绝对像素夹紧（缩放不变形）+ 未来空槽上限 */
   var d=sqData(),w=sqWinGet(),n=w.hi-w.lo,win=d.slice(w.lo,w.hi);
-  var slotW=(W-L-R)/(n+FS);
+  /* v3.2：FS 动态化——窗口右缘贴数据末时未来空槽=12，右拖进未来区时空槽随 hi 扩展；滚轮缩放时收窄到 2 格（放大不留白） */
+  var FSeff=Math.max(2, Math.min(FS_MAX, w.hi-d.length+12));
+  var slotW=(W-L-R)/(n+FSeff);
   var x=function(j){ return L+j*slotW; };
   var cwEff=Math.max(CW_MIN,Math.min(CW_MAX,slotW*CW_RATIO));   /* v3.1：体宽绝对夹紧——放大不再变细 */
   var g=el('g',{},svg);
@@ -6129,7 +6136,7 @@ function sqRenderMain(){
   for(i=w.lo;i<hiEff;i++){ lo=Math.min(lo,d[i].l,m20[i]); hi=Math.max(hi,d[i].h,m20[i]); }
   var pad=(hi-lo)*0.08; lo-=pad; hi+=pad;
   var yf=function(v){ return T+(1-(v-lo)/(hi-lo))*(H-T-B); };
-  if(sqTogs.grid) grid(g,W,L,R,H,T,B,n+FS);
+  if(sqTogs.grid) grid(g,W,L,R,H,T,B,n+FSeff);
   drawCandles(g,win,x,yf,cwEff);   /* v3.1：绝对体宽夹紧（缩放不变形） */
   var mset=[[5,'#FFA726'],[10,'#EC407A'],[20,'#27C6DA']];   /* v3 MA 色序照抄 OKX 实测：5 橙/10 品红/20 青（v2 标反根治）；MA60 蓝=可选叠加不默认 */
   mset.forEach(function(m){
@@ -6170,37 +6177,39 @@ function sqRenderMain(){
   el('rect',{x:W-R+2,y:yf(lastC2)-9,width:58,height:17,rx:2,fill:lup2?'#CA3F64':'#25A750'},g);
   var pt2=el('text',{x:W-R+7,y:yf(lastC2)+3,fill:'#000000','font-size':11,'font-weight':600},g); pt2.textContent=lastC2.toFixed(2);
   var cdt=el('text',{x:W-R+7,y:yf(lastC2)+20,fill:'#59626D','font-size':9},g); cdt.textContent='--:--';
-  /* 筹码峰细腻版 v3.1 同花顺单色：60 桶、每价位一根柱单色（现价下获利红/上套牢绿）、成本线=琥珀 */
+  /* 筹码峰细腻版 v3.2 同花顺单色+随光标重算：60 桶、每价位一根柱单色（光标价下获利红/上套牢绿）、成本线=琥珀 */
   if(sqTogs.chip){
-    var NB=60,bw2=(hi-lo)/NB,binsD=[],bi;
-    for(i=0;i<NB;i++) binsD.push(0);
-    for(i=w.lo;i<hiEff;i++){   /* v3.1：筹码峰只算有效数据段 */
-      var tp3=(d[i].h+d[i].l+d[i].c)/3;
-      bi=Math.floor((tp3-lo)/bw2); if(bi<0)bi=0; if(bi>=NB)bi=NB-1;
-      binsD[bi]+=d[i].v;
-    }
-    var bins=binsD;
-    var bmax2=Math.max.apply(null,bins),poc2=0;
-    for(i=0;i<NB;i++) if(bins[i]>bins[poc2]) poc2=i;
-    /* v3.1 同花顺单色方案：每价位一根柱单色——现价以下=获利盘红 #CA3F64 / 现价以上=套牢盘绿 #25A750（红=赚钱 A股语义）；成本线=琥珀 #F0B90B（v3 白 POC 废止=一根柱内红绿并排丑根因） */
-    var pocPx=lo+(poc2+0.5)*bw2,prof=0;
-    for(i=poc2;i<NB;i++) prof+=bins[i];
+    var chipG=el('g',{id:'sq-chip-g'},g);   /* 挂光标联动：hover 重算 */
+    var NB=60,bw2=(hi-lo)/NB;
     var chipX=W-R+66,chipW=Math.min(64,(W-R)*0.5);
-    var totV=bins.reduce(function(a2,b2){return a2+b2;},0);
-    for(i=0;i<NB;i++){
-      if(bins[i]<=0) continue;
-      var binPx=lo+(i+0.5)*bw2, isProfit=binPx<=lastC2;   /* 相对现价分获利/套牢 */
-      var bwW3=(bins[i]/bmax2)*chipW, yy2=yf(lo+(i+1)*bw2), hh2=Math.max(1.2,(H-T-B)/NB-0.5);
-      el('rect',{x:chipX,y:yy2,width:Math.max(1,bwW3),height:hh2,fill:isProfit?'#CA3F64':'#25A750',opacity:0.5},g);
+    function renderChip(uptoGi,refPx){   /* uptoGi=数据末索引（含）；refPx=参考价（现/光标） */
+      chipG.innerHTML='';
+      var binsD=[],bi;
+      for(i=0;i<NB;i++) binsD.push(0);
+      var st=Math.max(0,Math.min(uptoGi,d.length-1));
+      for(i=w.lo;i<=st;i++){ if(i>=d.length)break; var tp3=(d[i].h+d[i].l+d[i].c)/3; bi=Math.floor((tp3-lo)/bw2); if(bi<0)bi=0; if(bi>=NB)bi=NB-1; binsD[bi]+=d[i].v; }
+      var bins=binsD, bmax2=Math.max.apply(null,bins),poc2=0;
+      for(i=0;i<NB;i++) if(bins[i]>bins[poc2]) poc2=i;
+      var pocPx=lo+(poc2+0.5)*bw2,prof=0;
+      for(i=poc2;i<NB;i++) prof+=bins[i];
+      var totV=bins.reduce(function(a2,b2){return a2+b2;},0);
+      for(i=0;i<NB;i++){
+        if(bins[i]<=0) continue;
+        var binPx=lo+(i+0.5)*bw2, isProfit=binPx<=refPx;   /* 相对光标价分获利/套牢 */
+        var bwW3=(bins[i]/bmax2)*chipW, yy2=yf(lo+(i+1)*bw2), hh2=Math.max(1.2,(H-T-B)/NB-0.5);
+        el('rect',{x:chipX,y:yy2,width:Math.max(1,bwW3),height:hh2,fill:isProfit?'#CA3F64':'#25A750',opacity:0.5},chipG);
+      }
+      el('line',{x1:chipX-2,x2:chipX+chipW,y1:yf(pocPx),y2:yf(pocPx),stroke:'#F0B90B','stroke-width':1.2},chipG);
+      hlabel(chipG,chipX,T+2,totV>0?('获利 '+(prof/totV*100).toFixed(0)+'%'):'获利 —','#8B949E',9);
+      hlabel(chipG,chipX,T+14,'成本 '+pocPx.toFixed(2),'#F0B90B',9);
     }
-    /* 平均成本线=琥珀 #F0B90B（同花顺实测：黄线=平均成本；POC 白细线废止） */
-    el('line',{x1:chipX-2,x2:chipX+chipW,y1:yf(pocPx),y2:yf(pocPx),stroke:'#F0B90B','stroke-width':1.2},g);
-    hlabel(g,chipX,T+2,totV>0?('获利 '+(prof/totV*100).toFixed(0)+'%'):'获利 —','#8B949E',9);   /* v3.1：零数据窗守卫 NaN% */
-    hlabel(g,chipX,T+14,'成本 '+pocPx.toFixed(2),'#F0B90B',9);
+    renderChip(Math.min(w.hi,d.length)-1, lastC2);   /* 默认=窗口末现价 */
+    svg.__sqChipRender=renderChip;   /* 供 hover 联动 */
+    svg.__sqChipBase=function(){ renderChip(Math.min(w.hi,d.length)-1, lastC2); };   /* 移出回默认 */
   }
   /* 日期轴（OKX 式：末日后续未来空槽，等距标签） */
-  var dStep=Math.ceil((n+FS)/7);
-  for(i=0;i<n+FS;i+=dStep){
+  var dStep=Math.ceil((n+FSeff)/7);
+  for(i=0;i<n+FSeff;i+=dStep){
     var di=w.lo+i,dstr=di<d.length?dates[di]:null;
     if(!dstr){ var fdt=new Date(2026,7,27); fdt.setDate(fdt.getDate()+(di-d.length+1)); dstr=String(fdt.getMonth()+1).padStart(2,'0')+'-'+String(fdt.getDate()).padStart(2,'0'); }
     hlabel(g,x(i)-12,H-8,dstr,'#59626D',10);
@@ -6222,7 +6231,7 @@ function sqRenderMain(){
     else {   /* 未来日期→右侧未来空槽定位 */
       var fdt2=new Date(2026,7,27),tgt=new Date(2026,parseInt(dt.slice(0,2))-1,parseInt(dt.slice(3)));
       var fdiff=Math.round((tgt-fdt2)/86400000);
-      if(fdiff>0&&fdiff<=FS) ex=x(n+fdiff-1)+slotW*0.31; else return;
+      if(fdiff>0&&fdiff<=FSeff) ex=x(n+fdiff-1)+slotW*0.31; else return;
     }
     var grp=el('g',{cursor:'pointer','data-ev':dt},g);
     el('rect',{x:ex-9,y:H-26,width:18,height:16,rx:4,fill:'#1A1C1E',stroke:'#2E2E2E','stroke-width':1,'data-ev':dt},grp);
