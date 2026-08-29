@@ -922,7 +922,7 @@ modules:
   wiring_status: exempt
 - candidate_id: CAND-FE-013
   name: "Feishu Bot D-FRONTEND-24"
-  path: src/zephyr/frontend/feishu_bot_sender.py
+  path: src/zephyr/frontend/implementations/feishu_bot_sender.py
   domain: D_FRONTEND
   wiring_class: pure_library
   wiring_status: exempt
