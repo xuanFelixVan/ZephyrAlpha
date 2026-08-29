@@ -38,7 +38,11 @@
   ⑦ 风险包络 W5     —— 缺口⑨ 相关性净额（GAP-F-04 query_correlation_netting，
                        持仓/相关性对上游装配注入）+ 缺口⑩ 禁做清单
                        （MOD-PLAN-014 三源合成，源未装配=待接入）
-  ⑧ P3 折叠占位     —— 缺口⑧ 辩论实例化 + W0/W6，本期不实现
+  ⑧ W4 多空辩论台  —— 缺口⑧ P3 展示层：消费 llm_daily_analysis v2 辩论落库行
+                       （MOD-PLAN-007 debate_mode=True 跑批产出：多头/空头陈词+
+                       综合席三情景裁决）；交易员综合/风控 veto 位
+                       （MOD-PLAN-013 四角色链 testing）未接日循环 → 恒"待接入"；
+                       W0/W6 历史预案库折叠占位随样本积累后接入
 
 渲染依赖: Panel（可选导入，测试环境零依赖仅返回 dict payload）。
 """
@@ -47,8 +51,10 @@ from __future__ import annotations
 
 import json
 import logging
+import sqlite3
 from dataclasses import dataclass, field
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Callable, Final
 
 try:
@@ -57,6 +63,7 @@ except ImportError:  # 测试环境无 panel
     pn = None
 
 from zephyr.reporting.prediction_log_writer import query_predictions
+from zephyr.shared.io.paths import DB_PATH
 
 log = logging.getLogger(__name__)
 
@@ -70,6 +77,18 @@ _PT_OUTCOME: Final = "outcome"
 _MODULE_BOUNDARY: Final = "plan_engine.tomorrow_boundary_planner"
 _PT_TOMORROW_BOUNDARY: Final = "tomorrow_boundary"
 _BOUNDARY_QUERY_LIMIT: Final = 64  # 作战池+持仓规模上限内（RULE-SEVEN 批量并发 ≤8，回查行数放宽）
+
+# W4 辩论台查询口径（镜像 MOD-PLAN-007 llm_premarket_analysis 常量——llm_daily_analysis
+# schema 唯一真源在产出方，前端不反向 import plan_engine 全链；值变更以产出方为准）
+_LLM_STATUS_SUCCESS: Final = "success"
+_LLM_DEBATE_SUFFIX: Final = "+debate"  # v2 辩论模式 prompt_version 后缀（44号 §9.14 铁律③）
+_LLM_MODE_V2: Final = "v2_debate"
+_SQL_LLM_DEBATE_LATEST: Final = (  # NO-BARE-SQL：常量+参数化
+    "SELECT output_json, model_version, prompt_version, created_at "
+    "FROM llm_daily_analysis "
+    "WHERE trade_date = ? AND prompt_version LIKE ? AND status = ? "
+    "ORDER BY id DESC LIMIT 1"
+)
 
 #: 9 情景 → （中文剧本名， 一句话逻辑）
 _SCENARIO_ZH: Final[dict[str, tuple[str, str]]] = {
@@ -191,6 +210,9 @@ class WarroomData:
         sit_out: 禁做清单 dict（MOD-PLAN-014 to_dict；None=三源未装配待接入/异常）。
         netting: 相关性净额 dict（GAP-F-04 query_correlation_netting；
             None=持仓/相关性对未装配待接入/异常）。
+        debate: W4 多空辩论 dict（llm_daily_analysis v2 辩论行解析：
+            bull/bear 陈词 + analysis 综合席裁决 + model/prompt 版本留痕；
+            None=当日无 v2 辩论落库行——debate_mode 未启用/未跑批，正常态非异常）。
         errors: 各取数通道异常留痕（fail-open 负反馈）。
     """
 
@@ -204,6 +226,7 @@ class WarroomData:
     boundaries: list[dict] | None = None
     sit_out: dict | None = None
     netting: dict | None = None
+    debate: dict | None = None
     errors: list[str] = field(default_factory=list)
 
 
@@ -475,6 +498,73 @@ def fetch_correlation_netting(
         return None, f"相关性净额：{type(exc).__name__}"
 
 
+def _parse_debate_output(output: object, row: tuple) -> dict | None:
+    """解析 llm_daily_analysis output_json 为 W4 展示 dict（不合格 → None）。"""
+    if not isinstance(output, dict) or output.get("mode") != _LLM_MODE_V2:
+        return None
+    debate = output.get("debate") or {}
+    bull = str(debate.get("bull") or "").strip() or None
+    bear = str(debate.get("bear") or "").strip() or None
+    if bull is None and bear is None:
+        return None
+    analysis = output.get("analysis")
+    return {
+        "bull": bull,
+        "bear": bear,
+        "analysis": analysis if isinstance(analysis, dict) else None,
+        "model_version": row[1],
+        "prompt_version": row[2],
+        "created_at": row[3],
+    }
+
+
+def _query_debate_row(resolved: Path, trade_date: str) -> tuple | None:
+    """查当日最新 v2 辩论 success 行（无行 → None）。"""
+    from zephyr.shared.io.sqlite_factory import get_db_connection
+
+    conn = get_db_connection(resolved)
+    try:
+        return conn.execute(
+            _SQL_LLM_DEBATE_LATEST,
+            (trade_date, f"%{_LLM_DEBATE_SUFFIX}", _LLM_STATUS_SUCCESS),
+        ).fetchone()
+    finally:
+        conn.close()
+
+
+def fetch_warroom_debate(
+    trade_date: str,
+    db_path: object = None,
+) -> tuple[dict | None, str | None]:
+    """W4 多空辩论台：LLM 盘前 v2 辩论落库产物（缺口⑧ P3 展示层）。
+
+    数据源=governance.db llm_daily_analysis（MOD-PLAN-007 debate_mode=True 跑批
+    落库，prompt_version 带 "+debate" 后缀的最新 success 行）：多头/空头陈词 +
+    综合席三情景裁决。交易员综合/风控 veto（MOD-PLAN-013 四角色链 testing）
+    未接日循环跑批，不在本通道产出（渲染层恒标"待接入"）。
+
+    Returns:
+        (debate dict, error)。当日无 v2 辩论落库行/库不存在/表未建（未启用/未跑批）
+        → (None, None)——正常态非异常；解析异常 → (None, error) fail-open。
+    """
+    try:
+        resolved = Path(db_path) if db_path is not None else DB_PATH
+        if not resolved.exists():  # 只读通道不建库（connect 副作用创建空文件）
+            return None, None
+        row = _query_debate_row(resolved, trade_date)
+        if row is None:
+            return None, None
+        return _parse_debate_output(json.loads(row[0]), row), None
+    except sqlite3.OperationalError as exc:  # 表未建=从未跑批=待接入（正常态非异常）
+        if "no such table" in str(exc).lower():
+            return None, None
+        log.warning("W4 辩论产物查询异常 fail-open: %s: %s", type(exc).__name__, exc)
+        return None, f"辩论台：{type(exc).__name__}"
+    except Exception as exc:  # noqa: BLE001 — fail-open：解析异常不炸页面
+        log.warning("W4 辩论产物查询异常 fail-open: %s: %s", type(exc).__name__, exc)
+        return None, f"辩论台：{type(exc).__name__}"
+
+
 def fetch_warroom(
     trade_date: str | None = None,
     db_path: object = None,
@@ -540,6 +630,9 @@ def fetch_warroom(
     )
     if err:
         errors.append(err)
+    debate, err = fetch_warroom_debate(v_date, db_path)
+    if err:
+        errors.append(err)
 
     return WarroomData(
         trade_date=v_date,
@@ -552,6 +645,7 @@ def fetch_warroom(
         boundaries=boundaries,
         sit_out=sit_out,
         netting=netting,
+        debate=debate,
         errors=errors,
     )
 
@@ -980,16 +1074,71 @@ def _render_risk_envelope_section(data: WarroomData) -> Any:
     return pn.Card(*items, title="⑦ W5 风险包络（相关性净额 + 禁做清单）", sizing_mode="stretch_width")
 
 
+def _render_debate_section(data: WarroomData) -> Any:
+    """区⑧ W4 多空辩论台（缺口⑧ P3 展示层）。
+
+    只读 llm_daily_analysis v2 辩论落库行（MOD-PLAN-007）；交易员综合/风控 veto
+    （MOD-PLAN-013 四角色链）未接日循环 → 恒"待接入"（G4 反误导）。
+    """
+    if data.debate is None:
+        return pn.Card(
+            _md(
+                "**待接入**：今日无 v2 多空辩论落库产物——44号 §9.14 `debate_mode` 默认 "
+                "False（v1 单调用验证期）；启用后由盘前跑批落库自动呈现。"
+                "交易员综合/风控 veto 位（MOD-PLAN-013 四角色链 testing）待日循环接线。"
+            ),
+            title="⑧ W4 多空辩论台（预案质量门）",
+            collapsed=True,
+            sizing_mode="stretch_width",
+        )
+    d = data.debate
+    items: list[Any] = []
+    bull_body = d.get("bull") or "_多头陈词缺失（落库行未含 bull 段）_"
+    bear_body = d.get("bear") or "_空头陈词缺失（落库行未含 bear 段）_"
+    items.append(pn.Row(
+        pn.Card(_md(bull_body), title="多头研究员", sizing_mode="stretch_width"),
+        pn.Card(_md(bear_body), title="空头研究员", sizing_mode="stretch_width"),
+        sizing_mode="stretch_width",
+    ))
+    analysis = d.get("analysis")
+    if analysis:
+        scenarios = analysis.get("scenarios") or {}
+
+        def _sc_line(key: str, zh: str) -> str:
+            s = scenarios.get(key) or {}
+            prob = s.get("prob")
+            prob_text = _pct_plain(float(prob) * 100.0) if isinstance(prob, (int, float)) else "—"
+            return f"- **{zh}**：概率 {prob_text}；{s.get('action_boundary') or '—'}"
+
+        lines = [_sc_line("gap_up", "高开"), _sc_line("flat", "平开"), _sc_line("gap_down", "低开")]
+        risk_points = [str(p) for p in (analysis.get("risk_points") or [])]
+        if risk_points:
+            lines.append("- **风险点**：" + "；".join(risk_points))
+        watch = [str(w) for w in (analysis.get("watch_sectors") or [])]
+        if watch:
+            lines.append("- **关注板块**：" + "、".join(watch))
+        note = analysis.get("confidence_note")
+        if note:
+            lines.append(f"> 置信声明：{note}")
+        items.append(pn.Card(_md("\n".join(lines)), title="综合席裁决（三情景）", sizing_mode="stretch_width"))
+    items.append(_md(
+        "> 交易员综合 / 风控 veto 位：**待接入**——MOD-PLAN-013 四角色链已落码（testing），"
+        "接日循环跑批后呈现（D3>0.6 进攻方案自动否决红色标注）。　"
+        f"`model={d.get('model_version')}` `prompt={d.get('prompt_version')}`"
+    ))
+    return pn.Card(*items, title="⑧ W4 多空辩论台（预案质量门）", sizing_mode="stretch_width")
+
+
 def _render_backlog_section() -> Any:
-    """区⑧ P3 折叠占位（缺口⑧ + W0/W6，本期不实现）。"""
+    """区⑨ 折叠占位（W0/W6 历史预案库，随样本积累后接入）。"""
     body = "\n".join([
-        "- **缺口⑧ 交易域多空辩论实例化 W4**（多头/空头研究员→交易员→风控四角色链）——待 P3（CAND 评审；agent_debate 治理域已 production）",
         "- **W0/W6 历史预案库 + Brier 校准度**——随 prediction_log 样本积累（MOD-PLAN-018 日循环跑批）后接入",
+        "- 缺口⑧ 辩论台 P3 已落展示层（本页区⑧）：消费 llm_daily_analysis v2 辩论行；MOD-PLAN-013 四角色链接线待日循环",
         "- P2 已落：缺口⑥ 9 格矩阵展示层（格概率待 BM-SEL-04 解除暂缓）/缺口⑦ 批量边界回查/缺口⑨ 相关性净额/缺口⑩ 禁做清单",
     ])
     return pn.Card(
         _md(body),
-        title="⑧ P3 待施工区（缺口⑧ 辩论实例化 + W0/W6，本期不实现）",
+        title="⑨ 折叠占位区（W0/W6 历史预案库，随样本积累后接入）",
         collapsed=True,
         sizing_mode="stretch_width",
     )
@@ -1016,6 +1165,8 @@ def render_warroom(data: WarroomData) -> dict[str, Any]:
         "has_sit_out": data.sit_out is not None,
         "netting": data.netting,
         "has_netting": data.netting is not None,
+        "debate": data.debate,
+        "has_debate": data.debate is not None,
         "errors": list(data.errors),
         "renderer": "panel" if pn is not None else "dict",
     }
@@ -1041,6 +1192,7 @@ def render_warroom(data: WarroomData) -> dict[str, Any]:
     items.append(_render_scenario_matrix_section(grid))
     items.append(_render_boundaries_section(data))
     items.append(_render_risk_envelope_section(data))
+    items.append(_render_debate_section(data))
     items.append(_render_backlog_section())
     payload["_layout"] = pn.Column(*items, sizing_mode="stretch_width")
     return payload
@@ -1055,6 +1207,7 @@ __all__: Final = [
     "fetch_playbook_action",
     "fetch_sit_out_list",
     "fetch_warroom",
+    "fetch_warroom_debate",
     "fetch_warroom_outcome",
     "fetch_warroom_plan",
     "render_warroom",

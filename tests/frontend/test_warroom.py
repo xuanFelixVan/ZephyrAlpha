@@ -35,6 +35,7 @@ from zephyr.frontend.dashboard.components.warroom import (
     fetch_playbook_action,
     fetch_sit_out_list,
     fetch_warroom,
+    fetch_warroom_debate,
     fetch_warroom_outcome,
     fetch_warroom_plan,
     render_warroom,
@@ -552,3 +553,95 @@ class TestFetchWarroomAggregateP2:
         payload = render_warroom(data)
         assert payload["has_boundaries"] is False
         assert payload["has_sit_out"] is False and payload["has_netting"] is False
+
+
+def _seed_debate_row(db, *, prompt_version: str = "pm-v1.0.0+debate", status: str = "success",
+                     mode: str = "v2_debate", with_debate: bool = True) -> None:
+    """种一行 llm_daily_analysis（MOD-PLAN-007 落库契约形状）。"""
+    from zephyr.plan_engine.llm_premarket_analysis import ensure_llm_daily_analysis_table
+    from zephyr.shared.io.sqlite_factory import get_db_connection
+
+    ensure_llm_daily_analysis_table(db)
+    output = {
+        "mode": mode,
+        "analysis": {
+            "date": _DATE,
+            "scenarios": {
+                "gap_up": {"prob": 0.3, "key_levels": ["3900"], "action_boundary": "高开不追"},
+                "flat": {"prob": 0.5, "key_levels": [], "action_boundary": "平开按预案"},
+                "gap_down": {"prob": 0.2, "key_levels": [], "action_boundary": "低开等确认"},
+            },
+            "risk_points": ["外围波动"],
+            "watch_sectors": ["半导体"],
+            "confidence_note": "量能数据缺口",
+        },
+        "debate": {"bull": "资金面改善，主线延续", "bear": "炸板率抬升，分歧加大"} if with_debate else None,
+    }
+    conn = get_db_connection(db)
+    try:
+        conn.execute(
+            "INSERT INTO llm_daily_analysis "
+            "(trade_date, model_version, prompt_version, input_hash, output_json, status, "
+            "error, tokens_in, tokens_out, cost_yuan, latency_ms, created_at) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (_DATE, "qwen3:14b", prompt_version, "h1", json.dumps(output, ensure_ascii=False),
+             status, None, None, None, None, None, "2026-08-28T01:00:00+00:00"),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+
+class TestWarroomDebate:
+    """缺口⑧ P3：W4 多空辩论台（llm_daily_analysis v2 辩论行只读消费，fail-open）。"""
+
+    def test_no_db_returns_none_no_error(self, tmp_path) -> None:
+        debate, err = fetch_warroom_debate(_DATE, db_path=tmp_path / "missing.db")
+        assert debate is None and err is None  # 未启用/未跑批=正常态非异常
+
+    def test_seeded_v2_debate_parsed(self, tmp_path) -> None:
+        db = tmp_path / "governance.db"
+        _seed_debate_row(db)
+        debate, err = fetch_warroom_debate(_DATE, db_path=db)
+        assert err is None and debate is not None
+        assert debate["bull"] == "资金面改善，主线延续"
+        assert debate["bear"] == "炸板率抬升，分歧加大"
+        assert debate["analysis"]["scenarios"]["flat"]["prob"] == pytest.approx(0.5)
+        assert debate["prompt_version"] == "pm-v1.0.0+debate"
+        assert debate["model_version"] == "qwen3:14b"
+
+    def test_v1_row_ignored(self, tmp_path) -> None:
+        db = tmp_path / "governance.db"
+        _seed_debate_row(db, prompt_version="pm-v1.0.0", mode="v1", with_debate=False)
+        debate, err = fetch_warroom_debate(_DATE, db_path=db)
+        assert debate is None and err is None  # v1 单调用行不进 W4
+
+    def test_debate_transcripts_missing_returns_none(self, tmp_path) -> None:
+        db = tmp_path / "governance.db"
+        _seed_debate_row(db, with_debate=False)
+        debate, err = fetch_warroom_debate(_DATE, db_path=db)
+        assert debate is None and err is None  # 无陈词段=无可展示产物
+
+    def test_missing_table_fail_open(self, tmp_path) -> None:
+        db = tmp_path / "governance.db"
+        ensure_prediction_log_table(db)  # 建库但不建 llm_daily_analysis
+        debate, err = fetch_warroom_debate(_DATE, db_path=db)
+        assert debate is None and err is None  # 表未建=从未跑批=待接入（正常态）
+
+    def test_aggregate_and_render_payload(self, tmp_path) -> None:
+        db = tmp_path / "governance.db"
+        ensure_prediction_log_table(db)
+        _seed_debate_row(db)
+        data = fetch_warroom(
+            trade_date=_DATE, db_path=db,
+            forecaster=_FakeForecaster(), panel_fn=lambda _d: _FakePanel(),
+        )
+        assert data.debate is not None and data.errors == []
+        payload = render_warroom(data)
+        assert payload["has_debate"] is True
+        assert payload["debate"]["bull"].startswith("资金面")
+        json.dumps({k: v for k, v in payload.items() if k != "_layout"}, ensure_ascii=False)
+
+    def test_render_no_debate_pending(self) -> None:
+        payload = render_warroom(WarroomData(trade_date=_DATE))
+        assert payload["has_debate"] is False and payload["debate"] is None
