@@ -1952,6 +1952,16 @@ error_codes:
   module: zephyr.governance.lifecycle_governance.ai_behavior_baseline
   file: src/zephyr/governance/lifecycle_governance/ai_behavior_baseline.py
   introduced: '2026-08-21: AI-RESIDUAL-001 改号收口新增（Owner 批准走 08-18 先例路径 A——后引入者改号，git 首引入裁定 canonical=先引入者）'
+- code: ZA-GV-0052
+  class: DriftObservatoryError
+  module: zephyr.governance.lifecycle_governance.drift_observatory_orchestrator
+  file: src/zephyr/governance/lifecycle_governance/drift_observatory_orchestrator.py
+  introduced: '2026-08-29: AI-WAVE4-001 A10 施工新增（61号 Drift Observatory 四层编排；登记=门禁强制动作，[ARCH-APPROVAL:ARCH-MODEL-LIFECYCLE-001] 随 AI-CRYPTO-001/AI-WAVE3A-001 先例）'
+- code: ZA-GV-0053
+  class: PromotionChannelError
+  module: zephyr.governance.lifecycle_governance.msprt_promotion_channel
+  file: src/zephyr/governance/lifecycle_governance/msprt_promotion_channel.py
+  introduced: '2026-08-29: AI-WAVE4-001 A10 施工新增（61号 mSPRT 晋升编排层；登记=门禁强制动作，[ARCH-APPROVAL:ARCH-MODEL-LIFECYCLE-001] 随 AI-CRYPTO-001/AI-WAVE3A-001 先例）'
 - code: ZA-IT-0004
   class: EventFactorError
   module: zephyr.intelligence.event_factor_matrix
