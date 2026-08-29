@@ -648,6 +648,12 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 272 | 盘中操纵监测生产装配注入（MOD-CMP-018） | AI-WAVE3C-001 | 监测器与 OrderManager 事件缝已落地（可选注入+Fail-Closed），但 qmt_trading_session/start_paper_session 尚未实例化 monitor+attach（与 ReportGate/declaration_guard 同哲学"测试注入先行"）——生产编排接线属后续装配批；残余：分钟均量 MVP 估计口径（43 号 §8 待 C1 实盘校准） | ⏳ 后续装配批 |
 | 273 | LiveStrategyAdapter CLI/调度接线+deadman 第四路 | AI-WAVE3B-001 | 库级件已落码（多 slot/异常隔离/biz 心跳/退避熔断）；残余=start_paper_session.assemble_session 包 slot 常驻运行（adapter.run(close_at=15:05)）后续批；tmp/live_strategy_biz.heartbeat 纳入 deadman_switch 监控清单=随 trading watchdog 翻开同属 Owner 窗口 | ⏳ 后续批/Owner 窗口 |
 
+### 波 4 · 2026-08-29 S2 估值管道勘探（AI-WAVE4-001 续，2020 valuation=0 专项）登记
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 274 | index_valuation_daily 的 pb_pct/erp/erp_pct 三列全历史 100% NULL | 2020 valuation=0 勘探实证（CH 直查） | 000300 全 4046 行 pb_pct/erp/erp_pct 全 NULL——S2 路A 加分层（PB<10%→+10、ERP 分位/绝对值→封顶+10、Buffett→+5）从未触发，valuation 维度实际上限被压至 CAPE-only 80 分；cape_5y_pct 早期 1175/4046 NULL=5 年窗 warmup 预期内，000905 CAPE 全 NULL（非 S2 代理不缺口）。**勘探结论**：2020 窗口数据无深度缺口——2020-02-03 cape_5y_pct=0.4064、03-16=0.4231 均恰高于 0.40 门槛→0 分（高位暴跌，估值从未进入低估区，真阴性语义）；03-18~04-01 底部窗口 0.30~0.40 正常得 40 分；事件日 04-10 市场已反弹、分位回升破门槛回 0。步进映射（0/40/60/80）cliff 效应属 §4.12.5 设计口径非 bug，如需平滑（线性插值）须 Owner 裁定。修复面=PB 源+10Y 国债收益率 ERP 管道回填（数据工程项，44 号 B5 价值放大器关联） | ⏳ 待数据工程批 |
+
 
 ### P0 · 2026-08-21 到期前全功能总账施工批（P0 批统筹会话，任务源=pre_expiry_full_backlog_roadmap.md）
 

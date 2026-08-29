@@ -12721,10 +12721,15 @@ entries:
     valuation 0→60✓（恒 0 锁死解除），2015/2020 事件日滞后超 halflife=10 物理极限仍 0→转 14号
     开放问题 3（事件标注/阶段期望审视，随 B4 结果一并裁定）。详档：reports/2026-08-28-s2-calibration-investigation.md
     + reports/2026-08-29-s2-walkforward-validation.md。残余：Phase 2 全量重跑（A1+B4+A2+B1）与
-    design_match 翻 true 由统筹执行；fund 维度 P1-E4 升级为 2015 confirm 必要条件最后缺口
+    design_match 翻 true 由统筹执行；fund 维度 P1-E4 升级为 2015 confirm 必要条件最后缺口。
+    【2026-08-29 2020 valuation=0 勘探（CH 直查实证）】结论=真阴性非数据缺口：000300 cape_5y_pct
+    2020 窗口完整（2010 起 4046 行），02-03=0.4064/03-16=0.4231 恰高于 0.40 门槛→0 分（高位暴跌
+    未入低估区），03-18~04-01 底部窗口 0.30~0.40 正常得 40 分，事件日 04-10 已反弹回 0——步进映射
+    cliff 属 §4.12.5 设计口径。附带实证真缺口=pb_pct/erp/erp_pct 全历史 100% NULL（路A 加分层
+    从未触发，上限被压 CAPE-only 80），已登 tracker #274 待数据工程批
   status: confirmed
   created: '2026-08-08'
-  last_updated: '2026-08-08'
+  last_updated: '2026-08-29'
 # --- #ARCH-OPTION-AKSHARE-FALLBACK: 期权日K线 QMT无权限→akshare新浪源 fallback（2026-08-09）---
 - issue_id: '#ARCH-OPTION-AKSHARE-FALLBACK'
   title: 期权日K线 QMT 模拟账户无权限 → akshare 新浪源 fallback
