@@ -248,7 +248,24 @@ class WorktreeLanding:
         return _run_git(self.repo_root, list(args), check=check)
 
     def _git_wt(self, *args: str, check: bool = True) -> subprocess.CompletedProcess:
-        """_git_wt implementation."""
+        """_git_wt implementation.
+
+        fail-closed（2026-08-29 主仓打穿事故治本）：专用 worktree 目录在但 .git 链接
+        丢失时，git 以 cwd 向上查找会命中主仓 .git——reset --hard/clean 直接打穿主工作区
+        （当日 reflog 实证 6 次成对 reset）。执行前硬校验：.git 链接存在 且
+        rev-parse --show-toplevel 解析回自身，否则 RuntimeError（宁停勿伤）。
+        """
+        git_link = self.worktree_path / ".git"
+        if not git_link.exists():
+            raise RuntimeError(
+                f"[landing] 专用 worktree .git 链接丢失，拒绝执行（防 walk-up 打穿主仓）: {self.worktree_path}"
+            )
+        r = _run_git(self.worktree_path, ["rev-parse", "--show-toplevel"], check=True)
+        top = os.path.normcase(str(Path(r.stdout.strip()).resolve()))
+        if top != os.path.normcase(str(self.worktree_path)):
+            raise RuntimeError(
+                f"[landing] 专用 worktree toplevel 漂移（{top} != {self.worktree_path}），拒绝执行（防打穿主仓）"
+            )
         return _run_git(self.worktree_path, list(args), check=check)
 
     def _dev_head(self) -> str:
@@ -273,11 +290,18 @@ class WorktreeLanding:
             if line.startswith("worktree ") and os.path.normcase(line.split(" ", 1)[1].strip()) == target_norm:
                 registered = True
                 break
-        if registered and wt.is_dir():
+        # .git 链接存在性=复用前提（2026-08-29 事故：目录在而链接丢失 → git walk-up 打穿主仓）
+        git_link_ok = wt.is_dir() and (wt / ".git").exists()
+        if registered and git_link_ok:
             return wt  # 就位，复用
-        if registered and not wt.is_dir():
-            logger.warning("[landing] 专用 worktree 注册残留但目录丢失，prune 后重建: %s", wt)
+        if registered and not git_link_ok:
+            logger.warning("[landing] 专用 worktree 注册残留但目录/.git 链接丢失，prune+清残骸后重建: %s", wt)
             self._git_repo("worktree", "prune")
+            if wt.exists():
+                # 残留检出树（无 .git 链接的 stale checkout）——物理清除后重建
+                from zephyr.shared.io.file_utils import safe_rmtree  # noqa: PLC0415
+
+                safe_rmtree(wt, allowed_prefix=self.queue_root, ignore_errors=True)
         elif wt.exists() and not registered:
             # 半成品残骸（上次 worktree add 中断）——仅限本专用路径，物理清掉重建
             # （CAND-GOVSEC-001①：safe_rmtree 硬断言——resolve 后须严格落在

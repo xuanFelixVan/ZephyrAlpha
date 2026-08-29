@@ -640,3 +640,52 @@ class TestMainWorkspaceConvergence:
         stats3 = cq.drain_queue(queue_root, landing=landing)
         assert stats3["done"] == 1
         assert _audit_records(queue_root) == [], "already_synced 幂等，零审计零副作用"
+# ---------------------------------------------------------------------------
+# 2026-08-29 主仓打穿事故回归：专用 worktree .git 链接丢失 → fail-closed
+# ---------------------------------------------------------------------------
+
+
+class TestWorktreeGitlinkGuard:
+    """2026-08-29 事故回归：专用 worktree 目录在而 .git 链接丢失 → git walk-up 打穿主仓。
+
+    事故实证：.runtime/commit_queue/worktree 注册残留（git worktree list 标 prunable）且目录内
+    .git 链接文件丢失（残留检出树仍在）——landing 的 _sync_worktree 以该目录为 cwd 执行
+    reset --hard refs/heads/dev + clean -fd 时，git 向上查找命中主仓 .git，主工作区未提交
+    修改被清（当日 reflog 6 次成对 reset）。治本：_git_wt fail-closed + ensure_worktree 检测重建。
+    """
+
+    def test_git_wt_refuses_when_gitlink_missing(self, tmp_path: Path):
+        """目录在、.git 链接缺失（事故形态）→ RuntimeError，绝不执行 git。"""
+        landing = cql.WorktreeLanding.__new__(cql.WorktreeLanding)
+        landing.worktree_path = tmp_path / "worktree"
+        landing.worktree_path.mkdir()
+        with pytest.raises(RuntimeError, match=r"\.git"):
+            landing._git_wt("status")
+
+    def test_git_wt_refuses_when_toplevel_drifts(self, tmp_path: Path, monkeypatch):
+        """.git 链接在但 toplevel 解析漂移（walk-up 命中外层仓）→ RuntimeError。"""
+        landing = cql.WorktreeLanding.__new__(cql.WorktreeLanding)
+        wt = tmp_path / "worktree"
+        wt.mkdir()
+        (wt / ".git").write_text("gitdir: ../fake", encoding="utf-8")
+        landing.worktree_path = wt
+
+        class _FakeR:
+            stdout = str(tmp_path)  # toplevel 漂移到上级目录（walk-up 命中外层仓形态）
+
+        monkeypatch.setattr(cql, "_run_git", lambda *a, **k: _FakeR())
+        with pytest.raises(RuntimeError, match="toplevel"):
+            landing._git_wt("status")
+
+    def test_ensure_worktree_rebuilds_when_gitlink_missing(self, tmp_repo: Path, queue_root: Path):
+        """registered + 目录在但 .git 链接丢失 → 不复用：prune + 清残骸 + 重建（.git 链接恢复）。"""
+        landing = cql.WorktreeLanding(tmp_repo, queue_root=queue_root)
+        wt = landing.ensure_worktree()
+        assert (wt / ".git").exists(), "首次建立后 .git 链接应在位"
+        # 制造事故形态：删掉 .git 链接文件（目录残留树保留）
+        (wt / ".git").unlink()
+        wt2 = landing.ensure_worktree()
+        assert (wt2 / ".git").exists(), "链接丢失后须重建恢复 .git"
+        # 重建后 _git_wt 恢复可用
+        r = landing._git_wt("rev-parse", "--show-toplevel")
+        assert Path(r.stdout.strip()).resolve() == wt2.resolve()
