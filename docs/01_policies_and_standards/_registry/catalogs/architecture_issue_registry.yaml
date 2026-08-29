@@ -12711,7 +12711,17 @@ entries:
     - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/14_regime_s2_diagnosis.md（诊断与治本详档）'
   fix_phase: design_match=false 排除 + P0 bug 修复已落地（commit 93a25890，B4 PASS(3/3) Phase 2 闭环）；
     治本待 P1-E9 算法重设计（13_regime_phase3_engineering_plan §3.5）——capitulation 过程化(rolling max)+多维度、
-    valuation 基本面化(PE/破净率历史分位)、spring 复用 wyckoff_engine；完成后 S2 design_match 回 true 重跑验证
+    valuation 基本面化(PE/破净率历史分位)、spring 复用 wyckoff_engine；完成后 S2 design_match 回 true 重跑验证。
+    【2026-08-29 治本施工+接线闭环，AI-WAVE4-001】Owner 四裁定（C1衰减峰值/d5=-15%/新建指数估值表/真CAPE）
+    后全链落地：①capitulation 三层参数化重设计（walk-forward 12 组合 DSR N=17 终选
+    precrisis_z+close_pos+pct250+decayed_max：WFE 3.44/fp@60 0.8%/参数平移零变化；MC p=0.87 未过
+    预注册门槛——Owner 裁定低置信接线并注记）；②three_yang v2_index（d5 30%→15% 指数口径+删 d4
+    误抄维，IS 命中 0→12.9%）；③路A c1_market.index_valuation_daily 真 CAPE 管道回填 8093 行；
+    ④生产接线已切换（commit c5c23036）——dump_s2_scores 复跑：2024 窗口 capitulation 0→73.1✓/
+    valuation 0→60✓（恒 0 锁死解除），2015/2020 事件日滞后超 halflife=10 物理极限仍 0→转 14号
+    开放问题 3（事件标注/阶段期望审视，随 B4 结果一并裁定）。详档：reports/2026-08-28-s2-calibration-investigation.md
+    + reports/2026-08-29-s2-walkforward-validation.md。残余：Phase 2 全量重跑（A1+B4+A2+B1）与
+    design_match 翻 true 由统筹执行；fund 维度 P1-E4 升级为 2015 confirm 必要条件最后缺口
   status: confirmed
   created: '2026-08-08'
   last_updated: '2026-08-08'
