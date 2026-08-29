@@ -330,6 +330,9 @@ _PROMPT_TEMPLATE: Final[str] = """对以下知识片段做分类与多维适用�
 - "factor"：alpha 因子 -> factor_class 必填，词表：{factor_classes}
 - "strategy"：完整交易策略（含入场/出场/仓位）-> strategy_class 必填，词表：{strategy_classes}
 - "other"：其他 -> other_subtype 必填，词表：{other_subtypes}
+  策展口径：若口诀/纪律/使用方法类条目明确服务于某类因子或策略的生产使用
+  （如打板纪律→daban、动量跟踪纪律→momentum_trend），按服务对象归类，
+  不默认 knowledge_only；knowledge_only 仅用于无生产服务对象的纯方法论
   （risk_rule=风控规则 / execution_algo=执行算法 / data_asset=数据资产 /
    technical_indicator=技术指标 / tool=工具 / knowledge_only=纯方法论知识）
 
@@ -390,6 +393,42 @@ def _extract_json(text: str) -> dict[str, Any]:
         if isinstance(obj, dict):
             return obj
     raise ValueError("LLM 输出中未找到可解析的 JSON 对象")
+
+
+# 键名别名归一化表（Q-B 修复，2026-08-30 预审实证）：本地小模型高频近似键名
+# → 规范键。归一化发生在严格 schema 校验之前——严格性终态不变，只回收笔误。
+_KEY_ALIASES: Final[dict[str, str]] = {
+    "applicable_timeframe": "applicable_timeframes",
+    "timeframes": "applicable_timeframes",
+    "applicable_timeframe_list": "applicable_timeframes",
+    "regime": "regime_valid",
+    "regimes": "regime_valid",
+    "regime_invalids": "regime_invalid",
+    "kind": "target_kind",
+    "type": "target_kind",
+    "target": "target_kind",
+    "factor_type": "factor_class",
+    "strategy_type": "strategy_class",
+    "other_type": "other_subtype",
+    "reason": "rationale",
+    "reasoning": "rationale",
+    "tag": "tags",
+    "apply_to": "applies_to",
+}
+
+
+def _normalize_payload_keys(obj: dict[str, Any]) -> dict[str, Any]:
+    """LLM 输出键名归一化：别名映射+空白剥离；冲突时规范键优先（已在位不覆盖）。
+
+    词表值不改写（枚举值错仍 fail-closed）——只回收键名笔误，不放宽语义。
+    """
+    out: dict[str, Any] = {}
+    for key, value in obj.items():
+        canonical = _KEY_ALIASES.get(str(key).strip(), str(key).strip())
+        if canonical in out and key != canonical:  # 规范键已在位，别名不覆盖
+            continue
+        out[canonical] = value
+    return out
 
 
 class KnowledgeClassifier:
@@ -496,7 +535,9 @@ class KnowledgeClassifier:
                 raw_text=raw_text,
             )
         try:
-            payload = ClassificationPayload.model_validate(_extract_json(raw_text))
+            payload = ClassificationPayload.model_validate(
+                _normalize_payload_keys(_extract_json(raw_text))
+            )
         except Exception as exc:  # noqa: BLE001 — 解析/schema 失败 fail-closed（含词表外枚举）
             _log.warning("knowledge_classifier 输出校验失败: %s", exc)
             return ClassificationResult(

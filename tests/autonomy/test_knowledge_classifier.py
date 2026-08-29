@@ -301,3 +301,41 @@ class TestTagDiscipline:
         result = clf.classify(_item())
         assert result.classification.tags == ["私有词"]
         assert result.tags_pending_registration == ("动量",)
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Q-B 键名别名归一化（2026-08-30 预审实证：本地小模型近似键名触发 fail-closed）
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+class TestKeyAliasNormalization:
+    """归一化发生在严格校验之前：别名键回收，规范键优先，枚举值错仍 fail-closed。"""
+
+    def test_alias_keys_recovered(self) -> None:
+        payload = _factor_payload()
+        payload["applicable_timeframe"] = payload.pop("applicable_timeframes")
+        payload["kind"] = payload.pop("target_kind")
+        payload["reason"] = payload.pop("rationale")
+        clf = KnowledgeClassifier(llm=_FakeGateway(payload))
+        result = clf.classify(_item())
+        assert result.verdict == "classified"
+        assert result.classification.applicable_timeframes == ["daily", "weekly"]
+        assert result.classification.target_kind == "factor"
+        assert result.classification.rationale == "典型动量因子"
+
+    def test_canonical_key_wins_over_alias(self) -> None:
+        payload = _factor_payload()
+        payload["applicable_timeframe"] = ["weekly"]  # 别名（应被忽略）
+        # 规范键 applicable_timeframes=["daily","weekly"] 已在位
+        clf = KnowledgeClassifier(llm=_FakeGateway(payload))
+        result = clf.classify(_item())
+        assert result.verdict == "classified"
+        assert result.classification.applicable_timeframes == ["daily", "weekly"]
+
+    def test_alias_does_not_relax_enum_strictness(self) -> None:
+        payload = _factor_payload()
+        payload["applicable_timeframe"] = ["intraday"]  # 键名归一但词表外值仍拒
+        payload.pop("applicable_timeframes")
+        clf = KnowledgeClassifier(llm=_FakeGateway(payload))
+        result = clf.classify(_item())
+        assert result.verdict == "error"
