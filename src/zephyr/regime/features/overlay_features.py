@@ -230,6 +230,10 @@ def s2_capitulation_score(
     atr_window: int = 14,
     vol_mult: float = 2.0,
     enable_options_filter: bool = False,
+    base_mode: str = "zscore",
+    wick_mode: str = "wick",
+    vol_filter_mode: str = "mult",
+    agg_mode: str = "wavg",
 ) -> pd.Series:
     """S2 capitulation: 近 N 日 capitulation 的衰减加权和（过程信号，防粘滞）。
 
@@ -250,8 +254,19 @@ def s2_capitulation_score(
     lookback=20（默认）；confirm（政策底→市场底滞后 1.5-3 月）halflife=30/lookback=40
     （占位，待 §4.5 walk-forward 校准）。
 
+    参数化候选族（2026-08-28 S2 校准调查报告 §四预注册草案，Owner 裁定聚合=C1 主 +
+    C3 对照；全部默认值 = legacy，现行为不变）：
+      - base_mode: "zscore"(legacy) | "pct250"(A1 长期分位基准) | "precrisis_z"(A2 危机前基准 z)
+      - wick_mode: "wick"(legacy) | "none"(B1 删 wick，语义归位 spring/flush 域)
+        | "close_pos"(B2 光脚大阴线：收盘位置贴底 <0.15)
+      - vol_filter_mode: "mult"(legacy 20 日均量×vol_mult) | "pct250"(>0.8)
+        | "calm_window"(>平静窗均量×1.5)
+      - agg_mode: "wavg"(legacy 归一化衰减加权) | "decayed_max"(C1 衰减峰值)
+        | "cluster_count"(C3 近 20 日 daily≥70 簇计数映射 0/40/60/80)
+    三层候选自由组合（A×B×C≤12 组，§4.4 walk-forward 选型，严禁降阈值凑分）。
+
     降级：volume/high/low/open/close 任一缺失 → 回退原瞬时两维版（治标 z>1，
-    与 commit 93a25890 一致），保证无 OHLCV 的调用方不抛错。
+    与 commit 93a25890 一致），保证无 OHLCV 的调用方不抛错（降级路径忽略模式参数）。
     """
     if any(s is None for s in (volume, high, low, open, close)):
         # 降级：原瞬时两维版（无 rolling/无过滤器）
@@ -275,13 +290,32 @@ def s2_capitulation_score(
         put_call_ratio,
         new_low_ratio,
         enable_options_filter,
+        base_mode=base_mode,
+        wick_mode=wick_mode,
+        vol_filter_mode=vol_filter_mode,
     )
-    # 衰减权重：rolling 窗口按时间正序传入（旧→新），权重须反序对齐——近期权重高、
+    # 衰减因子：rolling 窗口按时间正序传入（旧→新），权重须反序对齐——近期权重高、
     # 远期 e^(-i/τ) 衰减（τ=halflife/0.693）。14 memo 伪码 weights 未反序系笔误，
     # 此处按 §4.1 文字设计意图（防粘滞、信号自然消退）实现。
-    weights = np.exp(-np.arange(lookback)[::-1] / (halflife / 0.693))
-    weights = weights / weights.sum()
-    return daily.rolling(lookback).apply(lambda w: (w * weights).sum(), raw=True)
+    decay = np.exp(-np.arange(lookback)[::-1] / (halflife / 0.693))
+    if agg_mode == "wavg":
+        # legacy：归一化衰减加权平均（w₀≈0.089，单日 90 仅贡献 ~8 分）
+        weights = decay / decay.sum()
+        return daily.rolling(lookback).apply(lambda w: (w * weights).sum(), raw=True)
+    if agg_mode == "decayed_max":
+        # C1 衰减峰值：score_t = max_{i∈窗口} daily_i×e^(-(t-i)/τ)（非归一化）。
+        # 单日 90 → 当日 90 直接过 trigger 60；3 周后 90×e^(-15/14.4)≈31.9。
+        return daily.rolling(lookback).apply(lambda w: (w * decay).max(), raw=True)
+    if agg_mode == "cluster_count":
+        # C3 簇计数映射：近 lookback 日 daily≥70 天数 n → 0/1/2/≥3 映射 0/40/60/80。
+        # 对"簇早于事件日 3 周"天然稳健（计数只随窗口滑动衰减，无权重逐日衰减）；
+        # min_periods=1：计数语义无需满窗（warmup 期按已观测日计数，无信号=0）。
+        counts = (daily >= 70).astype(float).rolling(lookback, min_periods=1).sum()
+        return pd.Series(
+            np.select([counts >= 3, counts == 2, counts == 1], [80.0, 60.0, 40.0], default=0.0),
+            index=daily.index,
+        )
+    raise ValueError(f"未知 agg_mode: {agg_mode!r}（可选 wavg/decayed_max/cluster_count）")
 
 
 def _capitulation_daily(
@@ -297,35 +331,93 @@ def _capitulation_daily(
     put_call_ratio: pd.Series | None = None,
     new_low_ratio: pd.Series | None = None,
     enable_options_filter: bool = False,
+    base_mode: str = "zscore",
+    wick_mode: str = "wick",
+    vol_filter_mode: str = "mult",
 ) -> pd.Series:
     """单日 capitulation 评分（多维度共振，P1-E9a 原两维升级版）。
 
-    量价基础分（与原逻辑一致的分档）：
-      z>3 & 跌>4% → 90 / z>1 & 跌>3% → 70 / z>1 & 跌>1.5% → 50 / else → 0
-    三道过滤器（仅共振时保留基础分，否则归零）：
-      - 量能放大：当日量 > vol_mult×20 日均量（v0.4.0 校准 1.3→2.0，研究下限）
-      - 实体力度：|close-open| > 40% ATR(14)（真实体，非 close-to-close 近似）
-      - 下影线：(min(open,close)-low)/(high-low) > 0.5（卖盘被吸收信号）
+    量价基础分（base_mode 三候选，2026-08-28 调查报告 §4.1 预注册；刻度 50/70/90 不变）：
+      - "zscore"（legacy）：z>3 & 跌>4% → 90 / z>1 & 跌>3% → 70 / z>1 & 跌>1.5% → 50
+        （z 为调用方传入的 20 日滚窗 vol_z，危机簇内滚窗均量被抬高 → 结构性失真）
+      - "pct250"（A1 长期分位基准）：量能证据改用 250 日滚动分位
+        vol_pct250 = volume.rolling(250).rank(pct=True)（与 synthetic_vix_pct 同族口径，
+        抗簇内失真），分档锚定跌幅主导（极端跌幅本身即投降证据，量能降级为佐证）：
+        跌≥3% ∧ vol_pct250>0.6 → 50 / 跌≥5% ∧ vol_pct250>0.5 → 70 / 跌≥7% → 90
+        （90 档无量能条件；warmup 期分位 NaN → 视为不满足）
+      - "precrisis_z"（A2 危机前基准 z）：z 的均值/方差改用危机前平静窗
+        volume.shift(20).rolling(40)（衡量"相对危机前的放量"，簇内高量不再抬基准），
+        分档阈值同 legacy；内部从 volume 重算，忽略传入 vol_z
+    三道过滤器（仅共振时保留基础分，否则归零；wick/vol 两维可切换候选口径）：
+      - 量能放大（vol_filter_mode）："mult"（legacy）当日量 > vol_mult×20 日均量
+        （v0.4.0 校准 1.3→2.0，研究下限）| "pct250"（B3，vol_pct250>0.8，与 A1 联动）
+        | "calm_window"（B3，> 平静窗 shift(20).rolling(40) 均量×1.5，与 A2 联动）
+      - 实体力度（不变，实证唯一健康维度）：|close-open| > 40% ATR(14)（真实体）
+      - 下影线/收盘位置（wick_mode）："wick"（legacy）下影线占比>0.5（卖盘被吸收信号，
+        实证与 A 股暴跌"光脚大阴线"形态根本冲突）| "none"（B1 删 wick，见底确认语义
+        移交 spring/flush 域）| "close_pos"（B2 本土形态：(close-low)/(high-low)<0.15
+        收盘贴底 = 恐慌尾盘无人承接的实体宣泄）
     可选第 5/6 维（enable_options_filter=True 且数据就绪时，默认关——三过滤器已
     selective 足够，六维交集过严致永不触发）：
       - put/call ratio > 1.4（期权市场恐慌对冲需求）
       - 创新低占比 > 0.90（indiscriminate selling）
     """
-    z = vol_z.fillna(0.0)
     pct = pct_change.fillna(0.0)
     base = pd.Series(0.0, index=vol_z.index)
-    base[(z > 1) & (pct < -0.015)] = 50
-    base[(z > 1) & (pct < -0.03)] = 70
-    base[(z > 3) & (pct < -0.04)] = 90
-    # 三道过滤器
-    vol_surge = volume > volume.rolling(20).mean() * vol_mult
+    # 250 日滚动分位在 base/vol_filter 两处可能用到，惰性按需计算
+    vol_pct250: pd.Series | None = None
+
+    def _vol_pct250() -> pd.Series:
+        nonlocal vol_pct250
+        if vol_pct250 is None:
+            vol_pct250 = volume.rolling(250).rank(pct=True)
+        return vol_pct250
+
+    # ── L1 基础分档 ──
+    if base_mode == "zscore":
+        z = vol_z.fillna(0.0)
+        base[(z > 1) & (pct < -0.015)] = 50
+        base[(z > 1) & (pct < -0.03)] = 70
+        base[(z > 3) & (pct < -0.04)] = 90
+    elif base_mode == "pct250":
+        vp = _vol_pct250()
+        base[(pct <= -0.03) & (vp > 0.6)] = 50
+        base[(pct <= -0.05) & (vp > 0.5)] = 70
+        base[pct <= -0.07] = 90
+    elif base_mode == "precrisis_z":
+        calm_mean = volume.shift(20).rolling(40).mean()
+        calm_std = volume.shift(20).rolling(40).std()
+        z = ((volume - calm_mean) / (calm_std + 1e-8)).fillna(0.0)
+        base[(z > 1) & (pct < -0.015)] = 50
+        base[(z > 1) & (pct < -0.03)] = 70
+        base[(z > 3) & (pct < -0.04)] = 90
+    else:
+        raise ValueError(f"未知 base_mode: {base_mode!r}（可选 zscore/pct250/precrisis_z）")
+
+    # ── L2 过滤器：量能（口径候选）+ 实体（不变）+ 下影/收盘位置（形态候选）──
+    if vol_filter_mode == "mult":
+        vol_surge = volume > volume.rolling(20).mean() * vol_mult
+    elif vol_filter_mode == "pct250":
+        vol_surge = _vol_pct250() > 0.8
+    elif vol_filter_mode == "calm_window":
+        vol_surge = volume > volume.shift(20).rolling(40).mean() * 1.5
+    else:
+        raise ValueError(f"未知 vol_filter_mode: {vol_filter_mode!r}（可选 mult/pct250/calm_window）")
     atr = _atr(high, low, close, atr_window)
     body = (close - open).abs()  # 真实体
     big_body = body > atr * 0.4
-    lower_wick = np.minimum(open, close) - low  # 下影线
-    wick_ratio = lower_wick / (high - low + 1e-8)
-    strong_wick = wick_ratio > 0.5
-    mask = vol_surge & big_body & strong_wick
+    if wick_mode == "wick":
+        lower_wick = np.minimum(open, close) - low  # 下影线
+        wick_ratio = lower_wick / (high - low + 1e-8)
+        shape_ok = wick_ratio > 0.5
+    elif wick_mode == "none":
+        shape_ok = pd.Series(True, index=vol_z.index)
+    elif wick_mode == "close_pos":
+        close_pos = (close - low) / (high - low + 1e-8)  # 收盘在当日区间中的位置
+        shape_ok = close_pos < 0.15
+    else:
+        raise ValueError(f"未知 wick_mode: {wick_mode!r}（可选 wick/none/close_pos）")
+    mask = vol_surge & big_body & shape_ok
     # 可选第 5/6 维（JournalPlus 2026 四信号 confluence）
     if enable_options_filter:
         if put_call_ratio is not None:
@@ -632,6 +724,8 @@ def s2_three_yang_flag(
     close: pd.Series,
     volume: pd.Series,
     window: int = 60,
+    grading: str = "legacy",
+    drawdown_threshold: float = -0.15,
 ) -> pd.Series:
     """S2 three_yang: 红三兵 6 维量化判定 → 0/1/2/3（P1-E9e 升级）。
 
@@ -649,7 +743,26 @@ def s2_three_yang_flag(
     返回分级：3=三个白武士（第三根实体≥第二根 2× + 近乎光头，加强版），
     2=标准红三兵，1=弱红三兵（缺量能确认），0=不满足。
     strong_confirm 门槛 three_yang≥2（标准红三兵及以上）。
+
+    grading="v2_index"（2026-08-28 S2 校准调查报告 §六修复建议 3，指数适配版，
+    legacy 默认保持现行为不变）：
+      - weak(=1)     = 三连阳 ∧ 实体递增 ∧ 收盘逐日新高 ∧ drawdown<drawdown_threshold
+                       ∧ not_overbought
+      - standard(=2) = weak ∧ 量温和递增 1.1× ∧ ¬巨量
+      - warrior(=3)  = standard ∧ 上影≤实体 5% ∧ 第三根实体≥第二根 2×
+      差异点：
+      ① d5 位置维度：drawdown<-30% → drawdown_threshold=-0.15（Owner 裁定单一口径；
+         000300 危机级回撤实证仅 ~15%：2020 新冠底 -15%、2024 924 前 -15%；
+         legacy 路径仍硬编码 -30%，drawdown_threshold 仅 v2_index 生效）；
+      ② d4 删除"第三根量≥前两根均量 2×"维度——回源核对 14 号 §4.4b 原文：同文并存
+         "温和递增 1.1×"与"第三根≥前两根均量 2×"+"禁止巨量>2×"，三者数学互斥
+         （全历史满足率 0.4%），判定该条系"巨量排除"语义的误抄（逻辑上"禁巨量>2×"
+         才是排除条件），v2 仅保留 温和递增 1.1× ∧ ¬巨量；
+      ③ open_in_body 移出定级（2024-09-24 跳空高开 +4.3% 属合法底部反转，不应卡死）；
+      ④ 上影≤5% 从 weak 前置条件降级为 warrior 分级条件（实证通过率 12.2% 偏严）。
     """
+    if grading not in ("legacy", "v2_index"):
+        raise ValueError(f"未知 grading: {grading!r}（可选 legacy/v2_index）")
     body = (close - open).abs()
     upper_wick = high - close
     wick_ratio = upper_wick / (body + 1e-8)
@@ -667,21 +780,27 @@ def s2_three_yang_flag(
     vol_inc = (volume > volume.shift(1) * 1.1) & (volume.shift(1) > volume.shift(2) * 1.1)
     vol_surge = volume > (volume.shift(1) + volume.shift(2)) / 2 * 2.0
     not_giant = volume < volume.rolling(5).mean() * 2.0
-    # 维度 5: 位置（底部反转：60 日跌幅 >30%）
+    # 维度 5: 位置（底部反转：60 日跌幅 >30%；v2_index 指数适配 -15%）
     rolling_max = close.rolling(window).max()
     drawdown = close / rolling_max - 1.0
-    at_bottom = drawdown < -0.30
+    at_bottom = drawdown < (-0.30 if grading == "legacy" else drawdown_threshold)
     # 维度 6: 失效（三根总涨幅 >15% = 动能透支）
     total_gain = close / close.shift(2) - 1.0
     not_overbought = total_gain < 0.15
 
     # 分级
     score = pd.Series(0.0, index=close.index)
-    base_mask = three_yang & body_inc & open_in_body & close_new_high & at_bottom
-    weak = base_mask & small_wick & not_overbought  # 缺量能确认
-    standard = weak & vol_inc & vol_surge & not_giant
-    # 三个白武士：第三根实体显著放大（≥第二根 2×）+ 近乎光头（上影≈0）
-    warrior = standard & (body > body.shift(1) * 2.0) & (wick_ratio < 0.01)
+    if grading == "legacy":
+        base_mask = three_yang & body_inc & open_in_body & close_new_high & at_bottom
+        weak = base_mask & small_wick & not_overbought  # 缺量能确认
+        standard = weak & vol_inc & vol_surge & not_giant
+        # 三个白武士：第三根实体显著放大（≥第二根 2×）+ 近乎光头（上影≈0）
+        warrior = standard & (body > body.shift(1) * 2.0) & (wick_ratio < 0.01)
+    else:
+        # v2_index：核心维合取定级 + 辅助维分级（开盘位置/上影不再卡 weak）
+        weak = three_yang & body_inc & close_new_high & at_bottom & not_overbought
+        standard = weak & vol_inc & not_giant  # vol_surge 维度已删（误抄，见 docstring ②）
+        warrior = standard & (wick_ratio < 0.05) & (body > body.shift(1) * 2.0)
 
     score[weak.fillna(False)] = 1.0
     score[standard.fillna(False)] = 2.0

@@ -10593,6 +10593,58 @@ creation_tokens:
   token: auto-test-manipulation-realtime-monitor-20260828
   created_by: AI-WAVE3C-001
   capability: intraday_manipulation_realtime_detection
+- file: schemas/categories/market_index_valuation_daily.py
+  token: auto-market-index-valuation-daily-20260829
+  created_by: AI-WAVE4-001（S2 治本方案 §5.1 路A 指数级估值表 DDL-as-Code）
+  capability: index_valuation_daily
+- file: schemas/categories/market_a50_futures_daily.py
+  token: auto-market-a50-futures-daily-20260829
+  created_by: AI-WAVE4-001（A22：A50 日频历史表，44号 §9.6 通道1）
+  capability: a50_futures_daily
+- file: src/zephyr/data/implementations/index_valuation_compute.py
+  token: auto-index-valuation-compute-20260829
+  created_by: AI-WAVE4-001（S2 治本方案 §5.2 真 CAPE/历史分位/ERP 内部计算）
+  capability: index_valuation_daily
+- file: tests/zephyr/data/test_index_valuation_compute.py
+  token: auto-test-index-valuation-compute-20260829
+  created_by: AI-WAVE4-001
+  capability: index_valuation_daily
+- file: tests/zephyr/data/test_akshare_index_valuation.py
+  token: auto-test-akshare-index-valuation-20260829
+  created_by: AI-WAVE4-001
+  capability: index_valuation_daily
+- file: tests/zephyr/data/test_a50_futures_daily.py
+  token: auto-test-a50-futures-daily-20260829
+  created_by: AI-WAVE4-001
+  capability: a50_futures_daily
+- file: tests/regime/test_overlay_signals_builder_valuation.py
+  token: auto-test-overlay-signals-builder-valuation-20260829
+  created_by: AI-WAVE4-001（S2 治本方案 §5.4 路A 接线降级测试）
+  capability: index_valuation_daily
+- file: src/zephyr/frontend/dashboard/components/warroom.py
+  token: auto-warroom-component-20260829
+  created_by: AI-WAVE4-001（A11：45号作战室前端组件 P1）
+  capability: warroom_playbook
+- file: tests/frontend/test_warroom.py
+  token: auto-test-warroom-20260829
+  created_by: AI-WAVE4-001（tests/ 豁免自愿补登随 SELL-001 先例）
+  capability: warroom_playbook
+- file: tests/governance/docs/__init__.py
+  token: auto-test-governance-docs-init-20260829
+  created_by: AI-WAVE4-001（tests 包初始化补登）
+  capability: governance_docs_tests
+- file: docs/_working/reports/2026-08-28-s2-calibration-investigation.md
+  token: auto-s2-calibration-investigation-20260829
+  created_by: AI-S2-INVESTIGATE-001（S2 三事件 design_match 失败调查与治本方案）
+  capability: regime_s2_calibration
+- file: docs/_working/reports/2026-08-29-s2-valuation-pipeline-report.md
+  token: auto-s2-valuation-pipeline-report-20260829
+  created_by: AI-WAVE4-001（路A 管道施工报告）
+  capability: regime_s2_calibration
+- file: docs/_working/reports/2026-08-29-a50-source-evaluation.md
+  token: auto-a50-source-evaluation-20260829
+  created_by: AI-WAVE4-001（A22：A50 数据源评估落地）
+  capability: a50_futures_daily
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

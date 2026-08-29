@@ -30,14 +30,18 @@
   4. 失效：三根总涨幅 >15% → 0（动能透支）
   5. 维度单项破坏：非 3 阳 / 实体不递增 / 开盘跳空 / 上影过长 → 0
   6. warmup / 常态全 0
+  7. grading="v2_index"（2026-08-28 S2 校准调查报告 §六修复建议 3，指数适配版）：
+     d5 回撤 -15% 单一口径 / d4 删除"第三根量≥前两根均量 2×"误抄维度 /
+     open_in_body 移出定级 / 上影≤5% 降级为 warrior 条件；legacy 默认行为（1-6 节）不变
 
-依据: 14_regime_s2_diagnosis v0.4.5 §4.4b / §4.5
+依据: 14_regime_s2_diagnosis v0.4.5 §4.4b / §4.5；2026-08-28-s2-calibration-investigation §六
 """
 
 from __future__ import annotations
 
 import numpy as np
 import pandas as pd
+import pytest
 
 from zephyr.regime.features.overlay_features import s2_three_yang_flag
 
@@ -227,3 +231,105 @@ class TestNormalMarket:
         _standard_three_yang(d)
         out = _run(d)
         assert set(out.unique()).issubset({0.0, 1.0, 2.0, 3.0})
+
+
+# ---------------------------------------------------------------------------
+# 5. grading="v2_index"（指数适配版，2026-08-28 调查报告 §六修复建议 3）
+# ---------------------------------------------------------------------------
+
+
+def _run_v2(d: dict[str, np.ndarray], **kw) -> pd.Series:
+    s = {k: pd.Series(v, dtype=float) for k, v in d.items()}
+    return s2_three_yang_flag(
+        s["open"], s["high"], s["low"], s["close"], s["volume"], grading="v2_index", **kw
+    )
+
+
+def _mild_decline_base(n: int = _N) -> dict[str, np.ndarray]:
+    """-17% 回撤场景（000300 危机级实证口径）：0-30 日 3000 平盘 → 31-66 日线性跌至 2400。
+
+    rolling(60).max 在第 69 日=3000 → drawdown≈-17%（<-15% v2 满足 / >-30% legacy 卡死）。
+    """
+    close = np.concatenate(
+        [np.full(31, 3000.0), np.linspace(3000.0, 2400.0, 37)[1:], np.full(3, 2400.0)]
+    )
+    assert len(close) == n
+    return {
+        "open": close * 1.001,
+        "high": close * 1.002,
+        "low": close * 0.999,
+        "close": close,
+        "volume": np.full(n, 1e8),
+    }
+
+
+class TestV2IndexGrading:
+    """v2_index：核心维合取定级 + 辅助维分级（d5=-15% / d4 删误抄维 / 开盘移出 / 上影降级）。"""
+
+    def test_v2_vol_surge_dim_removed(self):
+        """d4"第三根量≥前两根均量2×"系 §4.4b 原文误抄（与温和递增1.1×数学互斥）：
+        v2 删除该维 → 温和递增但无 2× 巨量 → legacy=1 / v2=2。"""
+        d = _decline_base()
+        _standard_three_yang(d)
+        d["volume"][69] = 1.30e8  # vol_inc ✓（1.30>1.265）但 vol_surge（>2.15e8）✗
+        assert _run(d).iloc[69] == 1.0
+        assert _run_v2(d).iloc[69] == 2.0
+
+    def test_v2_gap_up_open_allowed(self):
+        """2024-09-24 型跳空高开合法：v2 将 open_in_body 移出定级（legacy=0 / v2=3）。
+
+        第三根开盘 1580 跳空高开（>前根收盘 1560）；实体 130≥2×60 + 上影 1%<5% → 白武士。
+        """
+        d = _decline_base()
+        _standard_three_yang(d)
+        _set_yang(d, 69, 1580.0, 1710.0, 1.30e8)
+        assert _run(d).iloc[69] == 0.0
+        assert _run_v2(d).iloc[69] == 3.0
+
+    def test_v2_wick_demoted_to_warrior_tier(self):
+        """上影 10%：v2 下不影响 weak/standard（仅卡 warrior）→ legacy=0 / v2=2。"""
+        d = _decline_base()
+        _standard_three_yang(d)
+        d["high"][69] = 1650.0 + 110.0 * 0.10  # 上影=实体 10%（>5%）
+        assert _run(d).iloc[69] == 0.0
+        assert _run_v2(d).iloc[69] == 2.0
+
+    def test_v2_drawdown_15pct_threshold(self):
+        """d5 单一口径 -15%（Owner 裁定）：-17% 回撤 → legacy(-30%)=0 / v2=2。"""
+        d = _mild_decline_base()
+        _set_yang(d, 67, 2395.0, 2410.0, 1.00e8)  # 实体 15
+        _set_yang(d, 68, 2405.0, 2440.0, 1.15e8)  # 实体 35 > 15
+        _set_yang(d, 69, 2430.0, 2490.0, 1.30e8)  # 实体 60 ≥ 1.5×35=52.5
+        # drawdown = 2490/3000-1 ≈ -17%
+        assert _run(d).iloc[69] == 0.0, "legacy d5=-30% 应卡死 -17% 回撤"
+        assert _run_v2(d).iloc[69] == 2.0, "v2 d5=-15% 应识别（实体60<2×35 → 非白武士）"
+        # drawdown_threshold 参数化：收紧到 -20% → -17% 不满足 → 0
+        assert _run_v2(d, drawdown_threshold=-0.20).iloc[69] == 0.0
+
+    def test_v2_overbought_still_excluded(self):
+        """失效维度保留：三根总涨幅 >15%（动能透支）→ v2 仍 0。"""
+        d = _decline_base()
+        _set_yang(d, 67, 1480.0, 1500.0, 1.00e8)  # 实体 20
+        _set_yang(d, 68, 1490.0, 1600.0, 1.15e8)  # 实体 110 > 20
+        _set_yang(d, 69, 1590.0, 1760.0, 2.60e8)  # 实体 170 ≥ 1.5×110=165；总涨幅 17.3%>15%
+        assert _run_v2(d).iloc[69] == 0.0
+
+    def test_v2_weak_without_volume(self):
+        """量平（无温和递增）→ v2=1（弱红三兵，缺量能确认）。"""
+        d = _decline_base()
+        _standard_three_yang(d)
+        d["volume"][67] = d["volume"][68] = d["volume"][69] = 1e8
+        assert _run_v2(d).iloc[69] == 1.0
+
+    def test_v2_return_domain(self):
+        """v2 值域 ⊆ {0,1,2,3}。"""
+        d = _decline_base()
+        _standard_three_yang(d)
+        out = _run_v2(d)
+        assert set(out.unique()).issubset({0.0, 1.0, 2.0, 3.0})
+
+    def test_invalid_grading_raises(self):
+        d = _decline_base()
+        s = {k: pd.Series(v, dtype=float) for k, v in d.items()}
+        with pytest.raises(ValueError, match="grading"):
+            s2_three_yang_flag(s["open"], s["high"], s["low"], s["close"], s["volume"], grading="bogus")
