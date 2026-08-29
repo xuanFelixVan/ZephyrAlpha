@@ -23,7 +23,7 @@ granularity: file
 
 > **module_id**: MOD-FE-012 | **域**: D_FRONTEND | **优先级**: P2
 > **来源**: B9-10705（AUD-DRAFT-001-DIGEST P2 波 P2-W11，CAND-FE-013，B9 D-FRONTEND-24）
-> 代码：`src/zephyr/frontend/feishu_bot_sender.py`
+> 代码：`src/zephyr/frontend/implementations/feishu_bot_sender.py`（2026-08-29 自 frontend/ 根迁入，trae_024 单一类型归位）
 
 ## 0. 定位
 
