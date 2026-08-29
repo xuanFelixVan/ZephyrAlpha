@@ -43,12 +43,12 @@
 schema_version: "1.0.0"
 doc_type: gate
 module_id: PS-CTR-002
-version: "1.2.0"
+version: "1.3.0"
 title: "Directory Contract"
 status: active
 ttl: permanent
-contract_version: "1.2.0"
-last_updated: "2026-08-14"
+contract_version: "1.3.0"
+last_updated: "2026-08-29"
 
 # ============================================================
 # 0. 真源溯源（三维来源声明）
@@ -255,6 +255,11 @@ directory_extensions:
         extensions: [".txt"]
       - subdir: "shared/contracts/_frozen_signatures/"
         extensions: [".json"]
+      # 前端 Web 资源合法家（Owner 2026-08-29 裁定）：src/zephyr/frontend/ 树允许 Web 静态资源——
+      # 仪表盘从 _working 单文件原型模块化迁入时的 .html 页面/.css/.js/字体/图标归宿；
+      # Python 渲染层（dashboard/components 等）原有 .py 不受影响。DCR-008 对本规则跳过（无 purpose 字段）
+      - subdir: "frontend/"
+        extensions: [".html", ".css", ".js", ".mjs", ".map", ".woff", ".woff2", ".ttf", ".svg", ".png", ".ico", ".webmanifest"]
 
   - path: "scripts/"
     allowed: [".py", ".sh", ".ps1", ".vbs", ".yaml", ".json", ".md"]
@@ -368,12 +373,13 @@ directory_extensions:
   # （必须是 allowed 的子集）。AI 创建临时文件前 MUST 对照 trae_070 directory_purpose_classification
   # 确定目标目录，DCR-008 在 commit 时强制阻断跨类乱放。
   - path: "docs/_working/"
-    allowed: [".md", ".csv", ".yaml"]
+    allowed: [".md", ".csv", ".yaml", ".html"]
     forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline"]
     zone: temporary
     allowed_doc_types: []
     purpose: task_document
-    purpose_allowed_extensions: [".md", ".csv", ".yaml"]
+    purpose_allowed_extensions: [".md", ".csv", ".yaml", ".html"]
+    note: ".html 白名单=Owner 2026-08-29 裁定：仪表盘原型等 UI 设计稿（人工设计 artifact，如 2026-08-20-dashboard-mockup.html）可入 git 追踪——此前原型长期 untracked 裸奔（Mode D 式丢失风险），且 _SCAN_EXTENSIONS 不含 .html（repo 扫描不受影响），仅显式提交时经 DCR 校验；生成物 .html 仍归各区生成器目录（如 battle_map/_zoomable_html/），不适用本条"
 
   - path: "docs/_working/audit/"
     allowed: [".md"]
