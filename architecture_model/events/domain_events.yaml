@@ -20,11 +20,12 @@ partition:
   name: "Domain Events / 领域事件清单"
   type: cross-cutting
   description: >
-    领域事件 SSoT（设计清单）。25 条核心事件，分 7 域（Research 3 / Backtest 3 / Signal 3 / Portfolio 2 /
-    Execution 7 / Risk 4 / Ops 3，其中含 2 条量化红线补充事件 E-RK-03/E-RK-04）。
+    领域事件 SSoT（设计清单）。27 条核心事件，分 8 域（Research 3 / Backtest 3 / Signal 3 / Portfolio 2 /
+    Position 2 / Execution 7 / Risk 4 / Ops 3，其中含 2 条量化红线补充事件 E-RK-03/E-RK-04）。
     当前运行时：单进程架构，事件通过进程内回调分发（非消息总线）。
     来源：domain-event-catalog.md v1.0.0 迁移。
-    2026-08-17 AI-02 审计修正计数口径：实数 25 条（含红线 2 条），原"25+2"暗示 27 条的表述失真。
+    2026-08-17 AI-02 审计修正计数口径：25 条（含红线 2 条）。
+    2026-08-30 A13 补登 Position 域 2 条（E-POS-40/41）→ 27 条 8 域。
   source_views:
     - domain-event-catalog.md
   related_kb_refs:
@@ -71,7 +72,7 @@ frequency_levels:
     observability: "每条必 alert + 留痕"
 
 # =============================================================================
-# 25 条领域事件
+# 27 条领域事件
 # =============================================================================
 events:
   # ─── Research 域（3 条）───
@@ -370,6 +371,60 @@ events:
     causal_precondition: "Position 变动 + Risk Policy 已配置"
     causal_successor: "可能触发 E-RK-01 或手工减仓"
     audit_level: high
+
+  # ─── Position 域（2 条，2026-08-30 A13 补登）───
+  - id: E-POS-40
+    name: "BudgetChangeHandled / Budget 变动处理完成"
+    domain: position
+    frequency: L1
+    publisher: l03
+    publisher_module: "position.core.budget_change_handler"
+    subscribers: [l05, l07]
+    subscriber_details:
+      - {layer: l05, action: "RegimeMetaAllocator 收处理反馈（下轮分配参考）"}
+      - {layer: l07, action: "Trader 归因（budget 变动→仓位收敛链）"}
+    aggregate_root: null
+    payload_contract: null
+    description: "BudgetChangeHandler 完成一次 budget 变动裁决（NO_ACTION/DEBOUNCE/三级升级/re-target 均发）。进程内回调分发（subscribe），订阅者异常不阻断状态机。"
+    payload_fields:
+      - {name: strategy_id, type: str}
+      - {name: action, type: "str（NO_ACTION/DEBOUNCE/TIER1+TIER2/RETARGET 前缀）"}
+      - {name: old_budget, type: float}
+      - {name: target_budget, type: float}
+      - {name: current_tier, type: "enum: idle/tier_1_lock/tier_2_rebalance/tier_3_force_trim/converged"}
+      - {name: instruction_tiers, type: "List[int]"}
+      - {name: timestamp, type: datetime}
+      - {name: schema_version, type: str}
+    causal_precondition: "RegimeMetaAllocator 产出新 BudgetAllocation（E-PA-07 BudgetChanged）"
+    causal_successor: "下调超阈值时级联 E-POS-41 TierEscalation"
+    audit_level: medium
+    retention: "≥7 年"
+
+  - id: E-POS-41
+    name: "TierEscalation / 三级升级流转"
+    domain: position
+    frequency: L4
+    publisher: l03
+    publisher_module: "position.core.budget_change_handler"
+    subscribers: [l07, l12]
+    subscriber_details:
+      - {layer: l07, action: "Trader 归因（Tier 1→2→3 流转链复盘）"}
+      - {layer: l12, action: "审计日志（每级独立留痕）"}
+    aggregate_root: null
+    payload_contract: null
+    description: "BudgetChangeHandler 每次 Tier 流转即发（idle→tier_1_lock→tier_2_rebalance→tier_3_force_trim），含超时升级与 firm 违例直触两路径。"
+    payload_fields:
+      - {name: strategy_id, type: str}
+      - {name: from_tier, type: "enum: idle/tier_1_lock/tier_2_rebalance"}
+      - {name: to_tier, type: "enum: tier_1_lock/tier_2_rebalance/tier_3_force_trim"}
+      - {name: reason, type: str}
+      - {name: target_budget, type: float}
+      - {name: timestamp, type: datetime}
+      - {name: schema_version, type: str}
+    causal_precondition: "E-POS-40 裁决触发三级升级，或 firm 风险违例直触"
+    causal_successor: "Tier3 ForcedTrim 指令（CTR-POS-022-T → FirmRiskAggregator）"
+    audit_level: high
+    retention: "≥7 年"
 
   # ─── Execution 域（7 条）───
   - id: E-EX-01

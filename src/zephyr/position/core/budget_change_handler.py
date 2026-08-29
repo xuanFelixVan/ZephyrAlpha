@@ -5,12 +5,12 @@
 # [CONSUMERS] MOD-POS-020(StrategyBook收rebalance指令); MOD-POS-021(FirmRiskAggregator收ForcedTrim); RegimeMetaAllocator(收BudgetChangeHandled反馈)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 只处理budget下调(上调简单直接抬高上限); 三级升级Tier1封锁→Tier2策略自主→Tier3强裁; 策略不能说"我不卖"(rebalance_to_budget必返回适配portfolio); convergence_window按换手率差异化; 每级独立事件可log可复盘; state缺失=无活跃升级返回NO_ACTION(进程内缓存语义; Phase2 DB持久化后读取失败场景适用fail-closed假设Tier1封锁)
+# [INVARIANTS] 只处理budget下调(上调简单直接抬高上限); 三级升级Tier1封锁→Tier2策略自主→Tier3强裁; 策略不能说"我不卖"(rebalance_to_budget必返回适配portfolio); convergence_window按换手率差异化; 每级独立事件可log可复盘(E-POS-40/41进程内回调分发,订阅者异常不阻断状态机); state缺失=无活跃升级返回NO_ACTION(进程内缓存语义); persist_path配置后TierState跨日持久化(JSON快照),快照损坏/版本不符→StateRecoveryError(ZA-POS-0044) fail-closed不静默继续
 # [MODIFY-GUARD] blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] BudgetChangeError(ZA-POS-0040); RebalanceTimeoutError(ZA-POS-0042)
+# [ERROR_CONTRACT] BudgetChangeError(ZA-POS-0040); StateRecoveryError(ZA-POS-0044); RebalanceTimeoutError(ZA-POS-0042,设计内非致命仅作Tier3触发条件不落异常)
 # [TESTS] tests/position/test_budget_change_handler.py
 # [A_module] module_id=MOD-POS-022 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -123,10 +123,19 @@ Version: 1.0.1
 
 from __future__ import annotations
 
+import json
+import logging
+import os
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
+from pathlib import Path
 from typing import Any
+
+from zephyr.shared.foundation.errors import ZephyrBaseError
+
+_logger = logging.getLogger(__name__)
 
 # ── 常量（参数来源：30_multi_strategy_concurrency §2.4/§6 + 33号 §3.4）──
 
@@ -144,6 +153,43 @@ DEFAULT_CONVERGENCE_WINDOWS = {
     "多因子": timedelta(days=4),  # 低换手需更多时间
     "事件驱动": timedelta(days=3),  # 中等换手
 }
+
+# ── E-POS-40/41 事件 ID（architecture_model/events/domain_events.yaml 已登记）──
+EVENT_BUDGET_CHANGE_HANDLED = "E-POS-40"  # BudgetChangeHandled：变动处理完成（归因用）
+EVENT_TIER_ESCALATION = "E-POS-41"  # TierEscalation：Tier 1→2→3 流转留痕
+
+# 持久化快照 schema 版本（不符 → StateRecoveryError fail-closed）
+SNAPSHOT_SCHEMA_VERSION = "1.0"
+
+
+class BudgetChangeError(ZephyrBaseError):
+    """ZA-POS-0040: BudgetChanged 输入非法（allocation 缺失 / effective_budgets 非数值映射等）。"""
+
+    error_code = "ZA-POS-0040"
+
+
+class StateRecoveryError(ZephyrBaseError):
+    """ZA-POS-0044: 跨日恢复状态机异常（持久化快照损坏 / schema 版本不符 / 状态不一致）。"""
+
+    error_code = "ZA-POS-0044"
+
+
+@dataclass(frozen=True)
+class BudgetHandlerEvent:
+    """E-POS-40/41 领域事件（进程内回调分发，对齐 domain_events.yaml 运行时口径）。
+
+    BudgetChangeHandled（E-POS-40）：每次 handle_budget_change 裁决完成即发，
+    消费方 RegimeMetaAllocator + Trader（归因用）。
+    TierEscalation（E-POS-41）：Tier 1→2→3 每次升级流转即发，
+    消费方 Trader + 归因系统。
+    """
+
+    event_id: str  # E-POS-40 / E-POS-41
+    name: str  # BudgetChangeHandled / TierEscalation
+    strategy_id: str
+    payload: dict[str, Any]
+    timestamp: datetime = field(default_factory=datetime.now)
+    schema_version: str = "1.0"
 
 
 class TierLevel(Enum):
@@ -231,6 +277,86 @@ class TierState:
             TierLevel.TIER_3_FORCE_TRIM,
         )
 
+    # ── 跨日持久化序列化（A13；JSON 快照，schema_version=1.0）──
+
+    def to_dict(self) -> dict[str, Any]:
+        """序列化为 JSON 可写 dict（datetime → ISO str，Enum → value）。"""
+
+        def _iso(dt: datetime | None) -> str | None:
+            return dt.isoformat() if dt is not None else None
+
+        return {
+            "strategy_id": self.strategy_id,
+            "current_tier": self.current_tier.value,
+            "old_budget": self.old_budget,
+            "target_budget": self.target_budget,
+            "tier1_at": _iso(self.tier1_at),
+            "tier2_at": _iso(self.tier2_at),
+            "tier3_at": _iso(self.tier3_at),
+            "converged_at": _iso(self.converged_at),
+            "convergence_window_end": _iso(self.convergence_window_end),
+            "cumulative_budget_change": self.cumulative_budget_change,
+            "last_budget_change_date": self.last_budget_change_date,
+            "convergence_days_satisfied": self.convergence_days_satisfied,
+            "strategy_type": self.strategy_type,
+            "instructions_issued": [
+                {"tier": rec["tier"], "reason": rec["reason"], "at": _iso(rec.get("at"))}
+                for rec in self.instructions_issued
+            ],
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> TierState:
+        """从快照 dict 恢复；字段缺失/格式非法 → StateRecoveryError（fail-closed）。"""
+
+        def _dt(key: str) -> datetime | None:
+            raw = data.get(key)
+            if raw is None:
+                return None
+            try:
+                return datetime.fromisoformat(raw)
+            except (TypeError, ValueError) as exc:
+                raise StateRecoveryError(
+                    f"TierState 快照字段 {key} 非 ISO datetime：{raw!r}",
+                    details={"field": key, "raw": repr(raw)},
+                ) from exc
+
+        try:
+            tier = TierLevel(data["current_tier"])
+            strategy_id = data["strategy_id"]
+        except (KeyError, ValueError) as exc:
+            raise StateRecoveryError(
+                f"TierState 快照字段缺失/非法：{exc}",
+                details={"error": str(exc)},
+            ) from exc
+
+        instructions: list[dict[str, Any]] = []
+        for rec in data.get("instructions_issued", []):
+            instructions.append(
+                {
+                    "tier": rec["tier"],
+                    "reason": rec["reason"],
+                    "at": datetime.fromisoformat(rec["at"]) if rec.get("at") else None,
+                }
+            )
+
+        return cls(
+            strategy_id=strategy_id,
+            current_tier=tier,
+            old_budget=float(data.get("old_budget", 0.0)),
+            target_budget=float(data.get("target_budget", 0.0)),
+            tier1_at=_dt("tier1_at"),
+            tier2_at=_dt("tier2_at"),
+            tier3_at=_dt("tier3_at"),
+            converged_at=_dt("converged_at"),
+            convergence_window_end=_dt("convergence_window_end"),
+            cumulative_budget_change=float(data.get("cumulative_budget_change", 0.0)),
+            last_budget_change_date=str(data.get("last_budget_change_date", "")),
+            convergence_days_satisfied=int(data.get("convergence_days_satisfied", 0)),
+            strategy_type=str(data.get("strategy_type", "多因子")),
+            instructions_issued=instructions,
+        )
+
 
 @dataclass
 class BudgetChangeResult:
@@ -262,6 +388,7 @@ class BudgetChangeHandler:
         cumulative_trend_threshold: float = CUMULATIVE_TREND_THRESHOLD,
         eps_pos: float = CONVERGENCE_EPS_POS,
         eps_days: int = CONVERGENCE_EPS_DAYS,
+        persist_path: str | os.PathLike[str] | None = None,
     ) -> None:
         """初始化。
 
@@ -272,6 +399,12 @@ class BudgetChangeHandler:
             cumulative_trend_threshold: 日间累计趋势阈值（默认 10%）。
             eps_pos: 收敛仓位差容忍度（默认 5%）。
             eps_days: 收敛持续性天数（默认 1 日）。
+            persist_path: TierState 跨日持久化 JSON 快照路径（A13）。None=纯进程内缓存
+                （默认，向后兼容）；配置后每次状态变更自动原子写快照，初始化时自动恢复。
+                快照损坏/schema 版本不符 → StateRecoveryError（fail-closed 不静默继续）。
+
+        Raises:
+            StateRecoveryError: persist_path 已存在但快照损坏或版本不符（ZA-POS-0044）。
         """
         self.convergence_windows = convergence_windows or dict(DEFAULT_CONVERGENCE_WINDOWS)
         self.debounce_threshold = debounce_threshold
@@ -279,6 +412,11 @@ class BudgetChangeHandler:
         self.eps_pos = eps_pos
         self.eps_days = eps_days
         self._active_states: dict[str, TierState] = {}  # strategy_id → TierState
+        self._persist_path: Path | None = Path(persist_path) if persist_path is not None else None
+        self._subscribers: list[Callable[[BudgetHandlerEvent], None]] = []  # E-POS-40/41 进程内回调
+        self._last_effective_budgets: dict[str, float] = {}  # 上次 sync_from_allocator 快照（previous 缺省源）
+        if self._persist_path is not None:
+            self._load_snapshot()
 
     # ══ 公共接口 ══════════════════════════════════════════════════════
 
@@ -319,13 +457,15 @@ class BudgetChangeHandler:
         if new_budget >= old_budget:
             if state.is_in_convergence():
                 # 收敛中上调 → re-target（trim_ratio 变小/为负 → 停止强裁）
-                return self._retarget_in_convergence(state, new_budget)
+                return self._finalize(self._retarget_in_convergence(state, new_budget))
             # 非收敛中上调：无动作
             state.target_budget = new_budget
-            return BudgetChangeResult(
-                action="NO_ACTION: budget 上调或不变，StrategyBook 自然部署",
-                state=state,
-                instructions=[],
+            return self._finalize(
+                BudgetChangeResult(
+                    action="NO_ACTION: budget 上调或不变，StrategyBook 自然部署",
+                    state=state,
+                    instructions=[],
+                )
             )
 
         # ── 下调场景（new < old）──
@@ -333,7 +473,7 @@ class BudgetChangeHandler:
 
         # ── 规则 2：已在收敛中 → re-target 不防抖（§3.3 防抖豁免）──
         if state.is_in_convergence():
-            return self._retarget_in_convergence(state, new_budget)
+            return self._finalize(self._retarget_in_convergence(state, new_budget))
 
         # ── 日内/日间防抖累计 ──
         if current_date != state.last_budget_change_date:
@@ -344,10 +484,12 @@ class BudgetChangeHandler:
 
         # ── 规则 3：首次下调 <5% 且累计 <10% → 防抖忽略 ──
         if change_pct < self.debounce_threshold and state.cumulative_budget_change < self.cumulative_trend_threshold:
-            return BudgetChangeResult(
-                action=f"DEBOUNCE: budget 下调 {change_pct:.1%} < {self.debounce_threshold:.0%} 阈值，忽略（日内抖动）",
-                state=state,
-                instructions=[],
+            return self._finalize(
+                BudgetChangeResult(
+                    action=f"DEBOUNCE: budget 下调 {change_pct:.1%} < {self.debounce_threshold:.0%} 阈值，忽略（日内抖动）",
+                    state=state,
+                    instructions=[],
+                )
             )
 
         # ── 规则 4/5：触发三级升级（≥5% 或累计趋势 >10%）──
@@ -357,7 +499,7 @@ class BudgetChangeHandler:
             else f"累计趋势 {state.cumulative_budget_change:.1%} ≥ {self.cumulative_trend_threshold:.0%} 阈值（日间趋势强制触发）"
         )
 
-        return self._trigger_three_tier_escalation(state, old_budget, new_budget, strategy_type, trigger_reason)
+        return self._finalize(self._trigger_three_tier_escalation(state, old_budget, new_budget, strategy_type, trigger_reason))
 
     def check_convergence(
         self,
@@ -413,6 +555,7 @@ class BudgetChangeHandler:
                 # 完全收敛
                 state.current_tier = TierLevel.CONVERGED
                 state.converged_at = now
+                self._save_snapshot()
                 return BudgetChangeResult(
                     action=f"CONVERGED: Tier 2 收敛完成（exposure={current_exposure:.4f} ≤ target={target:.4f}+ε）",
                     state=state,
@@ -420,6 +563,7 @@ class BudgetChangeHandler:
                 )
             else:
                 # 持续性未达标，继续等待
+                self._save_snapshot()
                 return BudgetChangeResult(
                     action=f"WAITING: 仓位已收敛但持续性未达标（{state.convergence_days_satisfied}/{self.eps_days} 日）",
                     state=state,
@@ -434,6 +578,7 @@ class BudgetChangeHandler:
             return self._escalate_to_tier3(state, current_exposure, now)
         else:
             # 窗口内但未收敛，继续等待
+            self._save_snapshot()
             return BudgetChangeResult(
                 action=f"WAITING: 仓位未收敛（exposure={current_exposure:.4f} vs target={target:.4f}），窗口内继续等待",
                 state=state,
@@ -489,6 +634,81 @@ class BudgetChangeHandler:
                 current_date=current_date,
             )
         return results
+
+    def sync_from_allocator(
+        self,
+        allocation: Any,
+        previous_budgets: dict[str, float] | None = None,
+        strategy_types: dict[str, str] | None = None,
+        current_date: str | None = None,
+    ) -> dict[str, BudgetChangeResult]:
+        """生产调用方接线入口（33号 §7 新发现3：BudgetChanged 事件链接线）。
+
+        生产编排层每个分配周期拿到 RegimeMetaAllocator 的 BudgetAllocation 后调用
+        本方法一次即可：自动解包 effective_budgets → 与上一期快照 diff → 逐策略走
+        防抖+三级升级裁决 → 记忆本期快照供下期作 previous（persist_path 配置时跨日
+        持久，重启不断档）。
+
+        跨域依赖倒置保持：不 import pf_alloc，allocation 走 duck-typing
+        （有 effective_budgets 属性的对象，或纯 {strategy_id: budget} dict）。
+
+        Args:
+            allocation: BudgetAllocation 对象（duck-typed）或纯 dict 映射
+            previous_budgets: 上一期 {strategy_id: budget}；None=用本 handler 记忆的
+                上期快照（首次调用时为空 → 全部视为新策略首配跳过）
+            strategy_types: {strategy_id: 策略类型}（窗口查询用）
+            current_date: 当前日期 YYYY-MM-DD（防抖日内/日间判定）
+
+        Returns:
+            {strategy_id: BudgetChangeResult}（含各策略指令列表，调用方负责执行）
+
+        Raises:
+            BudgetChangeError: allocation 缺失或 effective_budgets 非数值映射（ZA-POS-0040）
+        """
+        if allocation is None:
+            raise BudgetChangeError(
+                "sync_from_allocator: allocation 缺失（None）",
+                details={"allocation": None},
+            )
+        effective = getattr(allocation, "effective_budgets", None)
+        if effective is None:
+            if isinstance(allocation, dict):
+                effective = allocation
+            else:
+                raise BudgetChangeError(
+                    f"sync_from_allocator: allocation 无 effective_budgets 属性且非 dict（type={type(allocation).__name__}）",
+                    details={"type": type(allocation).__name__},
+                )
+        if not isinstance(effective, dict) or not all(
+            isinstance(k, str) and isinstance(v, (int, float)) and not isinstance(v, bool)
+            for k, v in effective.items()
+        ):
+            raise BudgetChangeError(
+                "sync_from_allocator: effective_budgets 必须是 {str: 数值} 映射",
+                details={"effective_budgets_type": type(effective).__name__},
+            )
+
+        prev = dict(self._last_effective_budgets) if previous_budgets is None else dict(previous_budgets)
+        results = self.on_budget_allocation(
+            effective_budgets={sid: float(b) for sid, b in effective.items()},
+            previous_budgets=prev,
+            strategy_types=strategy_types,
+            current_date=current_date,
+        )
+        self._last_effective_budgets = {sid: float(b) for sid, b in effective.items()}
+        self._save_snapshot()
+        return results
+
+    # ── E-POS-40/41 事件订阅（进程内回调分发，domain_events.yaml 运行时口径）──
+
+    def subscribe(self, callback: Callable[[BudgetHandlerEvent], None]) -> None:
+        """订阅 E-POS-40/41 事件（RegimeMetaAllocator 反馈 / Trader 归因消费入口）。"""
+        self._subscribers.append(callback)
+
+    def unsubscribe(self, callback: Callable[[BudgetHandlerEvent], None]) -> None:
+        """退订事件回调。"""
+        if callback in self._subscribers:
+            self._subscribers.remove(callback)
 
     def on_firm_violation(
         self,
@@ -550,6 +770,115 @@ class BudgetChangeHandler:
             self._active_states[strategy_id] = state
         return self._active_states[strategy_id]
 
+    # ── 事件发射（E-POS-40/41，订阅者异常不阻断状态机）──
+
+    def _emit(self, event: BudgetHandlerEvent) -> None:
+        """分发事件给全部订阅者；单个订阅者异常仅 log，不影响状态机。"""
+        for callback in self._subscribers:
+            try:
+                callback(event)
+            except Exception as exc:  # noqa: BLE001 — 事件通道不得反噬状态机
+                _logger.warning("BudgetHandlerEvent 订阅者异常（已隔离）: %s", exc)
+
+    def _emit_tier_escalation(self, state: TierState, from_tier: TierLevel, to_tier: TierLevel, reason: str) -> None:
+        """发 TierEscalation（E-POS-41）：Tier 流转留痕。"""
+        self._emit(
+            BudgetHandlerEvent(
+                event_id=EVENT_TIER_ESCALATION,
+                name="TierEscalation",
+                strategy_id=state.strategy_id,
+                payload={
+                    "from_tier": from_tier.value,
+                    "to_tier": to_tier.value,
+                    "reason": reason,
+                    "target_budget": state.target_budget,
+                },
+            )
+        )
+
+    def _emit_handled(self, result: BudgetChangeResult) -> None:
+        """发 BudgetChangeHandled（E-POS-40）：一次 budget 变动裁决完成。"""
+        state = result.state
+        self._emit(
+            BudgetHandlerEvent(
+                event_id=EVENT_BUDGET_CHANGE_HANDLED,
+                name="BudgetChangeHandled",
+                strategy_id=state.strategy_id,
+                payload={
+                    "action": result.action,
+                    "old_budget": state.old_budget,
+                    "target_budget": state.target_budget,
+                    "current_tier": state.current_tier.value,
+                    "instruction_tiers": [i["tier"] for i in result.instructions],
+                },
+            )
+        )
+
+    def _finalize(self, result: BudgetChangeResult) -> BudgetChangeResult:
+        """handle_budget_change 统一出口：发 E-POS-40 + 持久化快照。"""
+        self._emit_handled(result)
+        self._save_snapshot()
+        return result
+
+    # ── TierState 跨日持久化（A13；JSON 快照 + 原子写，RULE-ONE）──
+
+    def _save_snapshot(self) -> None:
+        """把全部 TierState + 上期 budget 快照原子写入 persist_path（未配置则 no-op）。"""
+        if self._persist_path is None:
+            return
+        payload = {
+            "schema_version": SNAPSHOT_SCHEMA_VERSION,
+            "saved_at": datetime.now().isoformat(),
+            "states": {sid: state.to_dict() for sid, state in self._active_states.items()},
+            "last_effective_budgets": dict(self._last_effective_budgets),
+        }
+        tmp_path = f"{self._persist_path}.{os.getpid()}.tmp"
+        try:
+            with open(tmp_path, "w", encoding="utf-8") as f:
+                json.dump(payload, f, ensure_ascii=False, indent=2)
+            os.replace(tmp_path, self._persist_path)
+        except PermissionError:
+            try:
+                os.remove(tmp_path)
+            except OSError:
+                pass
+            raise
+
+    def _load_snapshot(self) -> None:
+        """从 persist_path 恢复 TierState（跨日恢复）。
+
+        快照不存在 → 空起步（首日运行）；存在但损坏/版本不符 → StateRecoveryError
+        fail-closed（33号 §6：持久化读取失败场景适用 fail-closed，不静默丢弃降级中状态）。
+        """
+        assert self._persist_path is not None
+        if not self._persist_path.exists():
+            return
+        try:
+            with open(self._persist_path, encoding="utf-8") as f:
+                payload = json.load(f)
+        except (OSError, json.JSONDecodeError) as exc:
+            raise StateRecoveryError(
+                f"TierState 快照读取失败：{self._persist_path}（{exc}）",
+                details={"path": str(self._persist_path), "error": str(exc)},
+            ) from exc
+        if not isinstance(payload, dict) or payload.get("schema_version") != SNAPSHOT_SCHEMA_VERSION:
+            raise StateRecoveryError(
+                f"TierState 快照 schema 版本不符（期望 {SNAPSHOT_SCHEMA_VERSION}）：{self._persist_path}",
+                details={
+                    "path": str(self._persist_path),
+                    "found": payload.get("schema_version") if isinstance(payload, dict) else type(payload).__name__,
+                },
+            )
+        states = payload.get("states", {})
+        if not isinstance(states, dict):
+            raise StateRecoveryError(
+                "TierState 快照 states 非 dict",
+                details={"path": str(self._persist_path)},
+            )
+        self._active_states = {sid: TierState.from_dict(data) for sid, data in states.items()}
+        last = payload.get("last_effective_budgets", {})
+        self._last_effective_budgets = {str(k): float(v) for k, v in last.items()}
+
     def _trigger_three_tier_escalation(
         self,
         state: TierState,
@@ -574,6 +903,7 @@ class BudgetChangeHandler:
         tier1_instr = self._issue_tier1_freeze(state.strategy_id)
         instructions.append({"tier": 1, "instruction": tier1_instr, "reason": trigger_reason})
         state.instructions_issued.append({"tier": 1, "reason": trigger_reason, "at": state.tier1_at})
+        self._emit_tier_escalation(state, TierLevel.IDLE, TierLevel.TIER_1_LOCK, trigger_reason)
 
         # ── Tier 2：发 rebalance 请求（策略自选砍仓）──
         state.current_tier = TierLevel.TIER_2_REBALANCE
@@ -596,6 +926,9 @@ class BudgetChangeHandler:
                 "reason": f"窗口 {convergence_window.days} 天",
                 "at": state.tier2_at,
             }
+        )
+        self._emit_tier_escalation(
+            state, TierLevel.TIER_1_LOCK, TierLevel.TIER_2_REBALANCE, f"窗口 {convergence_window.days} 天"
         )
 
         return BudgetChangeResult(
@@ -662,6 +995,7 @@ class BudgetChangeHandler:
             # 无暴露，无需裁剪
             state.current_tier = TierLevel.CONVERGED
             state.converged_at = now
+            self._save_snapshot()
             return BudgetChangeResult(
                 action="CONVERGED: 当前暴露=0，无需 Tier 3 强裁",
                 state=state,
@@ -673,6 +1007,7 @@ class BudgetChangeHandler:
             # 已收敛（窗口结束时实际已收敛）
             state.current_tier = TierLevel.CONVERGED
             state.converged_at = now
+            self._save_snapshot()
             return BudgetChangeResult(
                 action=f"CONVERGED: 窗口结束时已收敛（exposure={current_exposure:.4f} ≤ target={target:.4f}）",
                 state=state,
@@ -692,6 +1027,8 @@ class BudgetChangeHandler:
                 "at": now,
             }
         )
+        self._emit_tier_escalation(state, TierLevel.TIER_2_REBALANCE, TierLevel.TIER_3_FORCE_TRIM, reason)
+        self._save_snapshot()
 
         return BudgetChangeResult(
             action=f"TIER3 强裁：{reason}，trim_ratio={trim_ratio:.4f}",

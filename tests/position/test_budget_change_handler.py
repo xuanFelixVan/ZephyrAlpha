@@ -17,14 +17,18 @@ Tier3 强裁边界 / re-target 豁免 / 状态机留痕 / 多策略隔离 / #4 �
 from __future__ import annotations
 
 from datetime import datetime, timedelta
+from pathlib import Path
 
 import pytest
 
 from zephyr.position.core.budget_change_handler import (
+    BudgetChangeError,
     BudgetChangeHandler,
+    BudgetHandlerEvent,
     ForcedTrim,
     FreezeNewPositions,
     RebalanceRequest,
+    StateRecoveryError,
     TierLevel,
     TierState,
 )
@@ -455,3 +459,236 @@ class TestOnFirmViolation:
         assert state is not None
         tiers = [rec["tier"] for rec in state.instructions_issued]
         assert tiers == [3]  # 直触：无 Tier1/2 记录
+
+
+# ── A13：E-POS-40/41 事件发射（进程内回调分发）─────────────────────────────
+
+
+class TestEventEmission:
+    """E-POS-40 BudgetChangeHandled / E-POS-41 TierEscalation 事件发射。"""
+
+    def test_handled_event_on_trigger(self, handler: BudgetChangeHandler) -> None:
+        """触发三级升级 → BudgetChangeHandled（E-POS-40）携带动作与指令级别。"""
+        events: list[BudgetHandlerEvent] = []
+        handler.subscribe(events.append)
+        handler.handle_budget_change("s1", 0.30, 0.20, strategy_type="打板", current_date=D1)
+        handled = [e for e in events if e.event_id == "E-POS-40"]
+        assert len(handled) == 1
+        assert handled[0].name == "BudgetChangeHandled"
+        assert handled[0].strategy_id == "s1"
+        assert handled[0].payload["instruction_tiers"] == [1, 2]
+        assert handled[0].payload["current_tier"] == "tier_2_rebalance"
+
+    def test_handled_event_on_no_action(self, handler: BudgetChangeHandler) -> None:
+        """上调 NO_ACTION 也发 BudgetChangeHandled（变动处理完成，归因用）。"""
+        events: list[BudgetHandlerEvent] = []
+        handler.subscribe(events.append)
+        handler.handle_budget_change("s1", 0.30, 0.35, current_date=D1)
+        handled = [e for e in events if e.event_id == "E-POS-40"]
+        assert len(handled) == 1
+        assert handled[0].payload["action"].startswith("NO_ACTION")
+        assert handled[0].payload["instruction_tiers"] == []
+
+    def test_tier_escalation_events_on_trigger(self, handler: BudgetChangeHandler) -> None:
+        """触发 → TierEscalation（E-POS-41）两连发：IDLE→T1、T1→T2。"""
+        events: list[BudgetHandlerEvent] = []
+        handler.subscribe(events.append)
+        handler.handle_budget_change("s1", 0.30, 0.20, strategy_type="打板", current_date=D1)
+        esc = [e for e in events if e.event_id == "E-POS-41"]
+        assert [(e.payload["from_tier"], e.payload["to_tier"]) for e in esc] == [
+            ("idle", "tier_1_lock"),
+            ("tier_1_lock", "tier_2_rebalance"),
+        ]
+
+    def test_tier_escalation_event_on_tier3_timeout(self, triggered_handler: BudgetChangeHandler) -> None:
+        """窗口超时升 Tier3 → TierEscalation 记录 T2→T3 流转。"""
+        events: list[BudgetHandlerEvent] = []
+        triggered_handler.subscribe(events.append)
+        now = datetime.now() + timedelta(days=3)
+        triggered_handler.check_convergence("s1", current_exposure=0.28, now=now)
+        esc = [e for e in events if e.event_id == "E-POS-41"]
+        assert len(esc) == 1
+        assert esc[0].payload["from_tier"] == "tier_2_rebalance"
+        assert esc[0].payload["to_tier"] == "tier_3_force_trim"
+
+    def test_tier_escalation_event_on_firm_violation(self, handler: BudgetChangeHandler) -> None:
+        """firm 违例直触 Tier3 → TierEscalation 留痕。"""
+        events: list[BudgetHandlerEvent] = []
+        handler.subscribe(events.append)
+        handler.on_firm_violation("s1", current_exposure=0.40, target_budget=0.20)
+        esc = [e for e in events if e.event_id == "E-POS-41"]
+        assert len(esc) == 1
+        assert esc[0].payload["to_tier"] == "tier_3_force_trim"
+        assert "firm 风险违例" in esc[0].payload["reason"]
+
+    def test_subscriber_exception_isolated(self, triggered_handler: BudgetChangeHandler) -> None:
+        """订阅者抛异常不阻断状态机（仅 log），后续订阅者仍收到事件。"""
+
+        def bad_callback(_event: BudgetHandlerEvent) -> None:
+            raise RuntimeError("boom")
+
+        events: list[BudgetHandlerEvent] = []
+        triggered_handler.subscribe(bad_callback)
+        triggered_handler.subscribe(events.append)
+        now = datetime.now() + timedelta(days=3)
+        result = triggered_handler.check_convergence("s1", current_exposure=0.28, now=now)
+        assert result.state.current_tier == TierLevel.TIER_3_FORCE_TRIM  # 状态机照常推进
+        assert any(e.event_id == "E-POS-41" for e in events)  # 后续订阅者仍收到
+
+    def test_unsubscribe_stops_events(self, handler: BudgetChangeHandler) -> None:
+        """退订后不再收到事件。"""
+        events: list[BudgetHandlerEvent] = []
+        handler.subscribe(events.append)
+        handler.unsubscribe(events.append)
+        handler.handle_budget_change("s1", 0.30, 0.20, strategy_type="打板", current_date=D1)
+        assert events == []
+
+
+# ── A13：TierState 跨日持久化（JSON 快照 + fail-closed 恢复）─────────────────
+
+
+class TestTierStatePersistence:
+    """persist_path 配置后：状态变更自动快照，重启恢复；损坏 fail-closed。"""
+
+    def test_snapshot_roundtrip_across_restart(self, tmp_path: Path) -> None:
+        """触发升级 → 新实例从快照恢复 tier/窗口/指令留痕（跨日收敛窗口不断档）。"""
+        path = tmp_path / "tier_state.json"
+        h1 = BudgetChangeHandler(persist_path=path)
+        h1.handle_budget_change("s1", 0.30, 0.20, strategy_type="打板", current_date=D1)
+
+        h2 = BudgetChangeHandler(persist_path=path)
+        state = h2.get_state("s1")
+        assert state is not None
+        assert state.current_tier == TierLevel.TIER_2_REBALANCE
+        assert state.target_budget == pytest.approx(0.20)
+        assert state.strategy_type == "打板"
+        assert state.convergence_window_end is not None
+        assert [rec["tier"] for rec in state.instructions_issued] == [1, 2]
+
+    def test_missing_snapshot_starts_empty(self, tmp_path: Path) -> None:
+        """快照不存在 → 空起步（首日运行），不抛错。"""
+        path = tmp_path / "nonexistent.json"
+        h = BudgetChangeHandler(persist_path=path)
+        assert h.get_state("s1") is None
+
+    def test_corrupt_snapshot_fail_closed(self, tmp_path: Path) -> None:
+        """快照 JSON 损坏 → StateRecoveryError（ZA-POS-0044），不静默丢弃降级中状态。"""
+        path = tmp_path / "tier_state.json"
+        path.write_text("{ not json", encoding="utf-8")
+        with pytest.raises(StateRecoveryError) as exc_info:
+            BudgetChangeHandler(persist_path=path)
+        assert exc_info.value.error_code == "ZA-POS-0044"
+
+    def test_schema_version_mismatch_fail_closed(self, tmp_path: Path) -> None:
+        """schema_version 不符 → StateRecoveryError fail-closed。"""
+        import json
+
+        path = tmp_path / "tier_state.json"
+        path.write_text(json.dumps({"schema_version": "9.9", "states": {}}), encoding="utf-8")
+        with pytest.raises(StateRecoveryError, match="schema"):
+            BudgetChangeHandler(persist_path=path)
+
+    def test_tier_state_dict_roundtrip(self, triggered_handler: BudgetChangeHandler) -> None:
+        """TierState.to_dict/from_dict 全字段往返一致。"""
+        state = triggered_handler.get_state("s1")
+        assert state is not None
+        restored = TierState.from_dict(state.to_dict())
+        assert restored.strategy_id == state.strategy_id
+        assert restored.current_tier == state.current_tier
+        assert restored.old_budget == pytest.approx(state.old_budget)
+        assert restored.target_budget == pytest.approx(state.target_budget)
+        assert restored.tier1_at == state.tier1_at
+        assert restored.convergence_window_end == state.convergence_window_end
+        assert restored.strategy_type == state.strategy_type
+        assert [r["tier"] for r in restored.instructions_issued] == [1, 2]
+
+    def test_convergence_check_persists_days_count(self, tmp_path: Path) -> None:
+        """check_convergence 的持续性计数也入快照（跨日累计不丢）。"""
+        path = tmp_path / "tier_state.json"
+        h1 = BudgetChangeHandler(persist_path=path, eps_days=3)
+        h1.handle_budget_change("s1", 0.30, 0.20, strategy_type="打板", current_date=D1)
+        h1.check_convergence("s1", current_exposure=0.205)  # 收敛但持续性 1/3
+
+        h2 = BudgetChangeHandler(persist_path=path, eps_days=3)
+        state = h2.get_state("s1")
+        assert state is not None
+        assert state.convergence_days_satisfied == 1
+
+    def test_no_persist_path_no_file(self, handler: BudgetChangeHandler, tmp_path: Path) -> None:
+        """默认无 persist_path → 纯进程内缓存，不产生文件（向后兼容）。"""
+        handler.handle_budget_change("s1", 0.30, 0.20, strategy_type="打板", current_date=D1)
+        assert list(tmp_path.iterdir()) == []
+
+
+# ── A13：sync_from_allocator 生产调用方接线 ──────────────────────────────
+
+
+class _FakeAllocation:
+    """duck-typed BudgetAllocation（不 import pf_alloc，依赖倒置）。"""
+
+    def __init__(self, effective_budgets: dict[str, float]) -> None:
+        self.effective_budgets = effective_budgets
+
+
+class TestSyncFromAllocator:
+    """sync_from_allocator：BudgetAllocation → 自动 diff 上期快照 → 三级升级裁决。"""
+
+    def test_first_sync_all_new_strategies_skipped(self, handler: BudgetChangeHandler) -> None:
+        """首次同步无上期快照 → 全部视为新策略首配跳过，且记忆本期快照。"""
+        results = handler.sync_from_allocator(_FakeAllocation({"s1": 0.30}), current_date=D1)
+        assert results == {}
+        assert handler._last_effective_budgets == {"s1": 0.30}
+
+    def test_second_sync_diffs_remembered_previous(self, handler: BudgetChangeHandler) -> None:
+        """第二次同步自动以上期快照为 previous：下调 ≥5% → 触发 Tier1+Tier2。"""
+        handler.sync_from_allocator(_FakeAllocation({"s1": 0.30}), current_date=D1)
+        results = handler.sync_from_allocator(_FakeAllocation({"s1": 0.20}), current_date=D2)
+        assert [i["tier"] for i in results["s1"].instructions] == [1, 2]
+
+    def test_explicit_previous_overrides_memory(self, handler: BudgetChangeHandler) -> None:
+        """显式 previous_budgets 优先于记忆快照。"""
+        results = handler.sync_from_allocator(
+            _FakeAllocation({"s1": 0.20}), previous_budgets={"s1": 0.30}, current_date=D1
+        )
+        assert [i["tier"] for i in results["s1"].instructions] == [1, 2]
+
+    def test_plain_dict_accepted(self, handler: BudgetChangeHandler) -> None:
+        """纯 dict 映射同样接受（无 effective_budgets 属性时按 dict 处理）。"""
+        handler.sync_from_allocator({"s1": 0.30}, current_date=D1)
+        results = handler.sync_from_allocator({"s1": 0.35}, current_date=D2)
+        assert results["s1"].action.startswith("NO_ACTION")
+
+    def test_none_allocation_raises(self, handler: BudgetChangeHandler) -> None:
+        """allocation=None → BudgetChangeError（ZA-POS-0040）。"""
+        with pytest.raises(BudgetChangeError) as exc_info:
+            handler.sync_from_allocator(None, current_date=D1)
+        assert exc_info.value.error_code == "ZA-POS-0040"
+
+    def test_invalid_effective_budgets_raises(self, handler: BudgetChangeHandler) -> None:
+        """effective_budgets 含非数值 → BudgetChangeError（Fail-Closed 不猜输入）。"""
+        with pytest.raises(BudgetChangeError):
+            handler.sync_from_allocator(_FakeAllocation({"s1": "0.30"}), current_date=D1)  # type: ignore[dict-item]
+
+    def test_non_dict_non_allocation_raises(self, handler: BudgetChangeHandler) -> None:
+        """既非 dict 又无 effective_budgets → BudgetChangeError。"""
+        with pytest.raises(BudgetChangeError):
+            handler.sync_from_allocator(42, current_date=D1)
+
+    def test_previous_snapshot_survives_restart(self, tmp_path: Path) -> None:
+        """persist_path 配置时上期快照跨日持久：重启后第二次同步仍能 diff 触发。"""
+        path = tmp_path / "tier_state.json"
+        h1 = BudgetChangeHandler(persist_path=path)
+        h1.sync_from_allocator(_FakeAllocation({"s1": 0.30}), current_date=D1)
+
+        h2 = BudgetChangeHandler(persist_path=path)  # 模拟次日重启
+        results = h2.sync_from_allocator(_FakeAllocation({"s1": 0.20}), current_date=D2)
+        assert [i["tier"] for i in results["s1"].instructions] == [1, 2]
+
+    def test_sync_emits_handled_events(self, handler: BudgetChangeHandler) -> None:
+        """sync 走 handle_budget_change → 每策略发 BudgetChangeHandled。"""
+        events: list[BudgetHandlerEvent] = []
+        handler.subscribe(events.append)
+        handler.sync_from_allocator({"s1": 0.30}, current_date=D1)
+        handler.sync_from_allocator({"s1": 0.20}, current_date=D2)
+        handled = [e for e in events if e.event_id == "E-POS-40" and e.strategy_id == "s1"]
+        assert len(handled) == 1  # 首配跳过无事件，第二次下调裁决发一条
