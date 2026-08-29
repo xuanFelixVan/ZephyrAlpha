@@ -4893,6 +4893,30 @@ capabilities:
   - DabanTimingDecision
   - DynamicCapacityCalculator
 creation_tokens:
+- file: src/zephyr/autonomy_core/agents/ticket_queue.py
+  token: auto-agent-ticket-queue-20260829
+  created_by: traesid-20260829-1308
+  capability: execution_layer_agents
+- file: src/zephyr/autonomy_core/agents/_s11_wiring.py
+  token: auto-agent-s11-wiring-20260829
+  created_by: traesid-20260829-1308
+  capability: execution_layer_agents
+- file: src/zephyr/autonomy_core/agents/_g04_ops_check.py
+  token: auto-agent-g04-ops-check-20260829
+  created_by: traesid-20260829-1308
+  capability: execution_layer_agents
+- file: tests/autonomy/test_agent_ticket_queue.py
+  token: auto-test-agent-ticket-queue-20260829
+  created_by: traesid-20260829-1308
+  capability: execution_layer_agents
+- file: tests/autonomy/test_execution_layer_s11_wiring.py
+  token: auto-test-execution-layer-s11-wiring-20260829
+  created_by: traesid-20260829-1308
+  capability: execution_layer_agents
+- file: tests/autonomy/test_business_g04_ops_check.py
+  token: auto-test-business-g04-ops-check-20260829
+  created_by: traesid-20260829-1308
+  capability: execution_layer_agents
 - file: src/zephyr/autonomy_core/context/local_llm_summarizer.py
   token: auto-local-llm-summarizer-20260829
   created_by: traesid-20260829-1308

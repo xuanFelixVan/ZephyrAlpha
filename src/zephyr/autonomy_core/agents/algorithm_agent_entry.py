@@ -1,17 +1,17 @@
-# [BLUEPRINT] MOD-EXE-ALGO-001 | docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/14_execution_layer.md | §3.3/§4-S0.4
+# [BLUEPRINT] MOD-EXE-ALGO-001 | docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/14_execution_layer.md | §3.3/§4-S0.4/§4-S1.1
 # [MODULE] zephyr.autonomy_core.agents.algorithm_agent_entry
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES] zephyr.autonomy_core.agents._run_store ; zephyr.experiment_tracking.query ; zephyr.trading.gpu_monitor
-# [CONSUMERS] tests/autonomy/test_execution_layer_agent_entries.py ; 人手动触发（CLI）
+# [DEPENDENCIES] zephyr.autonomy_core.agents._run_store ; zephyr.experiment_tracking.query ; zephyr.trading.gpu_monitor ; zephyr.autonomy_core.agents._s11_wiring（§4-S1.1 可选接线，懒加载）
+# [CONSUMERS] tests/autonomy/test_execution_layer_agent_entries.py ; tests/autonomy/test_execution_layer_s11_wiring.py ; 人手动触发（CLI）
 # [STARTUP] manual
 # [MATURITY] testing
-# [INVARIANTS] 实验登记先于执行（无 pending 登记片段不进入执行步，steps 顺序留痕）；单卡显存占用 >=90% 拒启动算法任务（约束二硬上限）；Phase 0 不新起训练/评估进程，执行步只读既有实验记录；不写注册表本体（REG-EXP-001 登记交统筹）
-# [MODIFY-GUARD] Owner approval required; 变更须同步 14号文 §4 S0.4 验收口径
+# [INVARIANTS] 实验登记先于执行（无 pending 登记片段不进入执行步，steps 顺序留痕）；单卡显存占用 >=90% 拒启动算法任务（约束二硬上限）；Phase 0 不新起训练/评估进程，执行步只读既有实验记录；不写注册表本体（REG-EXP-001 登记交统筹）；S1.1 注入缝（cascade_router/module_mapper）默认 None 零行为变化
+# [MODIFY-GUARD] Owner approval required; 变更须同步 14号文 §4 S0.4/S1.1 验收口径
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] 显存采集不可用→守卫降级为 not_available 放行并如实留痕；实验记录缺失→status=evidence_missing 不抛
-# [TESTS] tests/autonomy/test_execution_layer_agent_entries.py
+# [ERROR_CONTRACT] 显存采集不可用→守卫降级为 not_available 放行并如实留痕；实验记录缺失→status=evidence_missing 不抛；S1.1 模块映射载荷非法→status=error 裁决留痕不抛
+# [TESTS] tests/autonomy/test_execution_layer_agent_entries.py ; tests/autonomy/test_execution_layer_s11_wiring.py
 # [A_module] module_id=MOD-EXE-ALGO-001 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """算法 Agent 薄入口（14号文 §3.3 信号/模型/训练实验，§4 S0.4 手动形态）.
@@ -24,6 +24,9 @@
     memory_used/memory_total >= 0.90 → 拒启动（status=refused_vram）；
   ③执行步只读——经 experiment_tracking.query.get_run 读既有实验记录出评估报告，
     Phase 0 不新起训练/评估进程（手动形态，14号文 §3.3 依赖降级说明）。
+S1.1 可选接线（默认 None 零行为变化）：cascade_router→11号文模型选择裁决
+（model_routing.decision.json）；experiment_type=module_generation 且注入
+module_mapper→13号文四选一裁决留痕（module_mapping.spec.json）。
 
 手动触发：python -m zephyr.autonomy_core.agents.algorithm_agent_entry --ticket <path>
 """
@@ -92,6 +95,8 @@ def run_algorithm_experiment_ticket(
     repo_root: str | Path | None = None,
     gpu_stats_provider: Callable[[], dict[str, Any]] | None = None,
     tracking_config: ExperimentTrackingConfig | None = None,
+    cascade_router: Any | None = None,
+    module_mapper: Any | None = None,
 ) -> dict[str, Any]:
     """执行一张算法实验工单（登记先于执行 + 显存守卫 + 只读评估，端到端落盘）.
 
@@ -99,6 +104,7 @@ def run_algorithm_experiment_ticket(
         ticket: {"ticket_id", "experiment_type", "target_id", "run_id", "component"?}.
         gpu_stats_provider: 可注入显存采集（默认 nvidia-smi 口径 collect_gpu_stats）.
         tracking_config: 可注入实验跟踪配置（默认 load_config；测试注入 fallback_dir）.
+        cascade_router/module_mapper: S1.1 可选注入 11号文 cascade/13号文 ModuleMapper（默认 None 不接）.
 
     Returns:
         运行报告 dict（status：completed/refused_vram/evidence_missing）.
@@ -123,13 +129,26 @@ def run_algorithm_experiment_ticket(
     store.write_output("experiment_registration.pending.json", registration, ticket_id)
     steps.append("registered")
 
+    # S1.1 可选接线（默认 None 零行为变化）：cascade 模型选择 / ModuleMapper 模块裁决
+    extras: dict[str, Any] = {}
+    if cascade_router is not None:
+        from zephyr.autonomy_core.agents import _s11_wiring
+        extras["model_routing"] = _s11_wiring.route_experiment_model(ticket, cascade_router)
+        store.write_output("model_routing.decision.json", extras["model_routing"], ticket_id)
+        steps.append("model_routed" if extras["model_routing"]["status"] == "routed" else "model_route_skipped")
+    if module_mapper is not None and str(ticket.get("experiment_type") or "") == "module_generation":
+        from zephyr.autonomy_core.agents import _s11_wiring
+        extras["module_mapping"] = _s11_wiring.map_module_generation(ticket, module_mapper)
+        store.write_output("module_mapping.spec.json", extras["module_mapping"], ticket_id)
+        steps.append("module_mapped" if extras["module_mapping"]["status"] == "mapped" else "module_map_error")
+
     # ② 显存守卫：<90% 硬上限，超阈值拒启动
     guard = _check_vram((gpu_stats_provider or _default_gpu_stats)())
     store.write_output("vram_guard.json", guard, ticket_id)
     steps.append(guard["guard"])
     if guard["refused"]:
         store.finish(ticket_id, "refused_vram", {"steps": steps})
-        return {"status": "refused_vram", "steps": steps, "guard": guard}
+        return {"status": "refused_vram", "steps": steps, "guard": guard, **extras}
 
     # ③ 执行步（Phase 0 只读形态）：读既有实验记录出评估报告
     run_id = str(ticket.get("run_id") or "")
@@ -137,7 +156,7 @@ def run_algorithm_experiment_ticket(
     detail = get_run(run_id, component=component, config=tracking_config) if run_id else None
     if detail is None:
         store.finish(ticket_id, "evidence_missing", {"steps": steps, "run_id": run_id})
-        return {"status": "evidence_missing", "steps": steps, "run_id": run_id}
+        return {"status": "evidence_missing", "steps": steps, "run_id": run_id, **extras}
     evaluation = {
         "kind": "model_evaluation_report",
         "run_id": detail.run_id,
@@ -152,7 +171,7 @@ def run_algorithm_experiment_ticket(
     store.write_output("evaluation_report.json", evaluation, ticket_id)
     steps.append("evaluated")
     store.finish(ticket_id, "completed", {"steps": steps, "run_id": run_id})
-    return {"status": "completed", "steps": steps, "evaluation": evaluation}
+    return {"status": "completed", "steps": steps, "evaluation": evaluation, **extras}
 
 
 def main(argv: list[str] | None = None) -> int:

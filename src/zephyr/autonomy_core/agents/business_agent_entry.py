@@ -1,29 +1,27 @@
-# [BLUEPRINT] MOD-EXE-BIZ-001 | docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/14_execution_layer.md | §3.2/§4-S0.3
+# [BLUEPRINT] MOD-EXE-BIZ-001 | docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/14_execution_layer.md | §3.2/§4-S0.3/§4-S1.3
 # [MODULE] zephyr.autonomy_core.agents.business_agent_entry
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES] pyyaml ; zephyr.autonomy_core.agents._run_store
-# [CONSUMERS] tests/autonomy/test_execution_layer_agent_entries.py ; 人手动触发（CLI）
+# [DEPENDENCIES] pyyaml ; zephyr.autonomy_core.agents._run_store ; zephyr.autonomy_core.agents._g04_ops_check（§4-S1.3 薄委派，懒加载）
+# [CONSUMERS] tests/autonomy/test_execution_layer_agent_entries.py ; tests/autonomy/test_business_g04_ops_check.py ; 人手动触发（CLI）
 # [STARTUP] manual
 # [MATURITY] testing
-# [INVARIANTS] 纯组装薄入口（注册表只读，真源=62号文 18 业务注册表）；产出 100% 落盘且标"仅建议"+human_gated；零交易执行路径——本模块不 import 任何下单/执行域包（zephyr.ex_core/ex_sor/trading），测试断言此不变量
-# [MODIFY-GUARD] Owner approval required; 变更须同步 14号文 §4 S0.3 验收口径
+# [INVARIANTS] 纯组装薄入口（注册表只读，真源=62号文 18 业务注册表）；产出 100% 落盘且标"仅建议"+human_gated；零交易执行路径——本模块不 import 任何下单/执行域包（zephyr.ex_core/ex_sor/trading），测试断言此不变量；S1.3 g04_strategy_ops_check=20号文三策略注册表+组件在位核对（仅建议语义）
+# [MODIFY-GUARD] Owner approval required; 变更须同步 14号文 §4 S0.3/S1.3 验收口径
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 注册表不可读/条目不存在→产出件如实标 status=evidence_missing，不抛
-# [TESTS] tests/autonomy/test_execution_layer_agent_entries.py
+# [TESTS] tests/autonomy/test_execution_layer_agent_entries.py ; tests/autonomy/test_business_g04_ops_check.py
 # [A_module] module_id=MOD-EXE-BIZ-001 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""业务 Agent 薄入口（14号文 §3.2 因子/策略/组合运营，§4 S0.3 手动形态）.
+"""业务 Agent 薄入口（14号文 §3.2 因子/策略/组合运营，§4 S0.3 手动形态 + S1.3 G04 核对）.
 
-两样例（手动触发端到端）：①注册状态查询——读 factor/strategy registry
-（REG-FCT-001/REG-STR-001 真源）出状态汇总+单条目登记状态；②因子候选评估
-工单——读 status=candidate 候选条目出评估建议文本。产出物一律"仅建议"
-（advice_only=true），不做自动交易决策/下单（交易决策属交易决策侧，§5-3）。
-
+kind=registration_status（默认）：factor/strategy registry 状态汇总+单条目登记状态；
+kind=factor_candidate_eval：status=candidate 候选条目评估建议文本；
+kind=g04_strategy_ops_check（S1.3）：20号文首批三策略（打板/多因子/事件驱动）
+注册表+组件在位核对（薄委派 _g04_ops_check）。产出物一律"仅建议"（advice_only=
+true），不做自动交易决策/下单（交易决策属交易决策侧，§5-3）。
 手动触发：python -m zephyr.autonomy_core.agents.business_agent_entry --ticket <path>
-  工单 kind=registration_status（factor_id/strategy_id 可选）或
-       kind=factor_candidate_eval（factor_ids 可选，limit 默认 3）。
 """
 
 from __future__ import annotations
@@ -52,17 +50,15 @@ AGENT_CARD: Final[dict[str, Any]] = {
     "role": ROLE,
     "capabilities": [
         {"id": "registration_status_query", "name": "因子/策略注册状态查询",
-         "inputs": "注册表真源（只读）", "outputs": "注册状态报告（落盘）",
-         "autonomyLevel": "L0_manual"},
+         "inputs": "注册表真源（只读）", "outputs": "注册状态报告（落盘）", "autonomyLevel": "L0_manual"},
         {"id": "factor_candidate_eval", "name": "因子候选评估工单起草",
-         "inputs": "候选条目（status=candidate，只读）", "outputs": "评估建议工单（仅建议，落盘）",
-         "autonomyLevel": "L0_manual"},
+         "inputs": "候选条目（status=candidate）", "outputs": "评估建议工单（仅建议）", "autonomyLevel": "L0_manual"},
+        {"id": "g04_strategy_ops_check", "name": "S1.3 G04 三策略运营核对",
+         "inputs": "注册表+组件在位（只读）", "outputs": "核对报告（仅建议）", "autonomyLevel": "L0_manual"},
     ],
-    "autonomyBoundaries": {
-        "ai_modifiable": [],
-        "human_gated": ["全部产出（仅建议，人审后方可施工）"],
-        "immutable": ["交易决策/下单（属交易决策侧，本入口不碰）", "注册表本体"],
-    },
+    "autonomyBoundaries": {"ai_modifiable": [],
+                           "human_gated": ["全部产出（仅建议，人审后方可施工）"],
+                           "immutable": ["交易决策/下单（属交易决策侧）", "注册表本体"]},
     "healthCheck": {"heartbeat": "manual_trigger_only"},
 }
 
@@ -154,13 +150,16 @@ def _candidate_advice(entry: dict[str, Any]) -> dict[str, Any]:
         gaps.append("code_path 未落地（设计态），建议登记代码锚点后再进候选评审")
     if not gaps:
         gaps.append("登记字段齐备，建议进人工候选评审（回测口径复核）")
-    return {
-        "factor_id": entry.get("factor_id"),
-        "name": entry.get("name"),
-        "factor_class": entry.get("factor_class"),
-        "suggestion_zh": "；".join(gaps) + "。（仅建议，人审定夺）",
-        "human_gated": True,
-    }
+    return {"factor_id": entry.get("factor_id"), "name": entry.get("name"),
+            "factor_class": entry.get("factor_class"),
+            "suggestion_zh": "；".join(gaps) + "。（仅建议，人审定夺）", "human_gated": True}
+
+
+def run_g04_strategy_ops_check(ticket: dict[str, Any], **kwargs: Any) -> dict[str, Any]:
+    """S1.3 G04 三策略运营核对工单（20号文打板/多因子/事件驱动；薄委派 _g04_ops_check）."""
+    from zephyr.autonomy_core.agents import _g04_ops_check
+
+    return _g04_ops_check.run_g04_strategy_ops_check(ticket, role=ROLE, **kwargs)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -173,6 +172,7 @@ def main(argv: list[str] | None = None) -> int:
     handlers = {
         "registration_status": query_registration_status,
         "factor_candidate_eval": draft_factor_candidate_evaluation,
+        "g04_strategy_ops_check": run_g04_strategy_ops_check,
     }
     handler = handlers.get(str(ticket.get("kind") or "registration_status"))
     if handler is None:
@@ -190,6 +190,7 @@ __all__ = [
     "draft_factor_candidate_evaluation",
     "main",
     "query_registration_status",
+    "run_g04_strategy_ops_check",
 ]
 
 

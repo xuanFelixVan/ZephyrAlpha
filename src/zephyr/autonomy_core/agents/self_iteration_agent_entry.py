@@ -1,28 +1,25 @@
-# [BLUEPRINT] MOD-EXE-ITER-001 | docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/14_execution_layer.md | §3.4/§4-S0.5
+# [BLUEPRINT] MOD-EXE-ITER-001 | docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/14_execution_layer.md | §3.4/§4-S0.5/§4-S1.1
 # [MODULE] zephyr.autonomy_core.agents.self_iteration_agent_entry
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES] stdlib ; zephyr.autonomy_core.agents._run_store
-# [CONSUMERS] tests/autonomy/test_execution_layer_agent_entries.py ; 人手动触发（CLI）
+# [DEPENDENCIES] stdlib ; zephyr.autonomy_core.agents._run_store ; zephyr.autonomy_core.agents._s11_wiring（§4-S1.1 反思接线薄委派，懒加载）
+# [CONSUMERS] tests/autonomy/test_execution_layer_agent_entries.py ; tests/autonomy/test_execution_layer_s11_wiring.py ; 人手动触发（CLI）
 # [STARTUP] manual
 # [MATURITY] testing
-# [INVARIANTS] 只读形态：仅消费落盘证据（读白名单=.runtime/logs/docs 内文件），不写 src/ 不写注册表；零代码自改路径（不 import 执行/编辑链模块，测试断言此不变量）；建议工单 100% human_gated 标记（Phase 2 前一律人审）
-# [MODIFY-GUARD] Owner approval required; 变更须同步 14号文 §4 S0.5 验收口径
+# [INVARIANTS] 只读形态：仅消费落盘证据（读白名单=.runtime/logs/docs 内文件），不写 src/ 不写注册表；零代码自改路径（不 import 执行/编辑链模块，测试断言此不变量）；建议工单 100% human_gated 标记（Phase 2 前一律人审）；S1.1 reflection_review=12号文频率闸门先行（拒则 denied 留痕不反思），放行才走三角色/L1 反思
+# [MODIFY-GUARD] Owner approval required; 变更须同步 14号文 §4 S0.5/S1.1 验收口径
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] 证据路径越白名单/不可读→跳过并如实记 skipped_evidence，不抛
-# [TESTS] tests/autonomy/test_execution_layer_agent_entries.py
+# [ERROR_CONTRACT] 证据路径越白名单/不可读→跳过并如实记 skipped_evidence，不抛；reflection_review 非法 layer/level→ValueError fail-closed（先于落盘）
+# [TESTS] tests/autonomy/test_execution_layer_agent_entries.py ; tests/autonomy/test_execution_layer_s11_wiring.py
 # [A_module] module_id=MOD-EXE-ITER-001 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""自我迭代 Agent 薄入口（14号文 §3.4 评估/优化/反馈，§4 S0.5 只读形态）.
+"""自我迭代 Agent 薄入口（14号文 §3.4 评估/优化/反馈，§4 S0.5 只读形态 + S1.1 反思接线）.
 
-输入：迭代评估工单（落盘 JSON：ticket_id + evidence_paths 证据指针列表，指向
-gate verdict/实验指标/审计记录落盘文件）。处理：只读解析证据（json/jsonl），
-汇总 gate 判定分布与实验通过情况，模板化出优化建议（只复述证据缺口）。
-输出：iteration_suggestion.json 建议工单（逐条 human_gated）+ run.json + audit.jsonl。
-不做：权重自更新/自进化策略搜索/自动改架构改码（§3.4 不做项）；Phase 0 不启用
-STOP 模式与 Meta-Harness（启用时点=Phase 1+）。
-
+kind=iteration_review（默认）：只读解析白名单证据（json/jsonl）→汇总 gate 判定与实验
+通过情况→human_gated 优化建议工单（只复述缺口）。kind=reflection_review（S1.1）：
+12号文频率闸门→三角色/L1 反思→ReflectionStore（薄委派 _s11_wiring）。
+不做权重自更新/自进化搜索/自动改码；STOP 模式与 Meta-Harness 归 Phase 1+。
 手动触发：python -m zephyr.autonomy_core.agents.self_iteration_agent_entry --ticket <path>
 """
 
@@ -119,11 +116,10 @@ def _build_suggestions(summary: dict[str, Any]) -> list[dict[str, Any]]:
                                              "条实验未通过，建议复查 PIT/成本口径与登记字段完整性"
                                              "（只读观察，非结论）。"})
     if not suggestions:
-        suggestions.append({"topic": "常规巡检",
-                            "suggestion_zh": "证据未见拦截/失败信号，建议维持现行门禁与实验纪律。"})
+        suggestions.append({"topic": "常规巡检", "suggestion_zh":
+                            "证据未见拦截/失败信号，建议维持现行门禁与实验纪律。"})
     for item in suggestions:
-        item["human_gated"] = True
-        item["advice_only"] = True
+        item["human_gated"] = item["advice_only"] = True
     return suggestions
 
 
@@ -135,12 +131,8 @@ def run_iteration_review(
 ) -> dict[str, Any]:
     """执行一张迭代评估工单（只读证据→human_gated 建议工单，端到端落盘）.
 
-    Args:
-        ticket: {"ticket_id", "evidence_paths": [仓内相对/绝对路径...], "note"?}.
-        runtime_dir: 落盘根（默认仓根 .runtime/），同时是证据白名单根之一.
-
-    Returns:
-        建议工单 dict（suggestions 逐条 human_gated/advice_only）.
+    ticket={"ticket_id", "evidence_paths": [仓内相对/绝对路径...], "note"?}；
+    runtime_dir 落盘根同时是证据白名单根之一。返回建议工单 dict（逐条 human_gated）。
     """
     ticket_id = str(ticket.get("ticket_id") or "").strip()
     if not ticket_id:
@@ -164,19 +156,21 @@ def run_iteration_review(
             skipped.append(str(raw))
 
     summary = _summarize(evidence)
-    report = {
-        "kind": "iteration_suggestion",
-        "advice_only": True,
-        "evidence_consumed": len(evidence),
-        "skipped_evidence": skipped,
-        "summary": summary,
-        "suggestions": _build_suggestions(summary),
-        "note": str(ticket.get("note") or ""),
-    }
+    report = {"kind": "iteration_suggestion", "advice_only": True,
+              "evidence_consumed": len(evidence), "skipped_evidence": skipped,
+              "summary": summary, "suggestions": _build_suggestions(summary),
+              "note": str(ticket.get("note") or "")}
     store.write_output("iteration_suggestion.json", report, ticket_id)
     store.finish(ticket_id, "completed",
                  {"evidence_consumed": len(evidence), "skipped": len(skipped)})
     return report
+
+
+def run_reflection_review(ticket: dict[str, Any], **kwargs: Any) -> dict[str, Any]:
+    """S1.1 reflection_review 工单（12号文闸门+三角色反思；实现薄委派 _s11_wiring）."""
+    from zephyr.autonomy_core.agents import _s11_wiring
+
+    return _s11_wiring.run_reflection_review(ticket, role=ROLE, **kwargs)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -186,13 +180,19 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--runtime-dir", default=None, help="落盘根（默认仓根 .runtime/）")
     args = parser.parse_args(argv)
     ticket = json.loads(Path(args.ticket).read_text(encoding="utf-8"))
-    report = run_iteration_review(ticket, runtime_dir=args.runtime_dir)
-    print(json.dumps({"kind": report["kind"], "suggestions": len(report["suggestions"])},
+    kind = str(ticket.get("kind") or "iteration_review")
+    if kind == "reflection_review":
+        report = run_reflection_review(ticket, runtime_dir=args.runtime_dir)
+    elif kind == "iteration_review":
+        report = run_iteration_review(ticket, runtime_dir=args.runtime_dir)
+    else:
+        raise ValueError(f"未知迭代工单 kind: {ticket.get('kind')!r}")
+    print(json.dumps({"kind": report["kind"], "status": report.get("status", "completed")},
                      ensure_ascii=False))
     return 0
 
 
-__all__ = ["AGENT_CARD", "ROLE", "main", "run_iteration_review"]
+__all__ = ["AGENT_CARD", "ROLE", "main", "run_iteration_review", "run_reflection_review"]
 
 
 if __name__ == "__main__":

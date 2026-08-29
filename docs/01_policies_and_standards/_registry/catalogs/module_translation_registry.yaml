@@ -30,6 +30,13 @@ entry_schema:
   desc_en: str
   plain_zh: str
 entries:
+- module_path: src/zephyr/autonomy_core/agents/ticket_queue.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: Agent工单队列
+  name_en: Agent Ticket Queue
+  desc_zh: 14号文 Phase 1 S1.2（MOD-EXE-AGENTS）：工单队列落盘化——pending/claimed/done/dead 四态+O_EXCL 原子认领（多会话防抢单）+断点恢复（孤儿/超龄双判据 fail-closed）+61号文 §3.6 三件套字段（design_memo/depgraph_path/owner）；产出 100% human_gated 落盘。
+  desc_en: Phase 1 S1.2 ticket queue (MOD-EXE-AGENTS): pending/claimed/done/dead on-disk states, O_EXCL atomic claim, orphan/stale dual-criteria fail-closed recovery, 61-doc handoff triplet fields; all outputs human_gated on disk.
+  plain_zh: "多会话施工的派单窗口"。人把任务工单放进队列文件夹，哪个 AI 会话接单就在文件上原子盖章，谁抢重谁越权都会被拦；会话中途崩了，工单能被别人按规则捡回来继续干，全程有据可查。
 - module_path: src/zephyr/autonomy_core/context/local_llm_summarizer.py
   domain_id: D_AUTONOMY_CORE
   name_zh: 本地LLM摘要器
