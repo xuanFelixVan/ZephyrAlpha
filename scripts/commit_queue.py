@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] exit 0=成功（含 drain 拿不到 lease 跳过）; exit 1=参数/IO 错误; exit 2=入队轻检拒绝(DENIED)
+# [ERROR_CONTRACT] exit 0=成功（含 drain 拿不到 lease 跳过）; exit 1=参数/IO 错误（含 requeue 取回失败）; exit 2=入队轻检拒绝(DENIED)
 # [TESTS] tests/governance/test_commit_queue.py
 # [A_module] module_id=MOD-GOV-046 | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -101,13 +101,23 @@ B 段接口预留点（2026-08-21 B 段已接通）
   经 _notify_task_board_dead_letter → scripts.task_board.tag_dead_letter 把
   {qid, reason, owner, tagged_at} 写入 task_board metadata_json.deadletter
   （66 号 §6.4，无需改表）；任务不存在/已完成/板不可达仅记日志不阻断排空。
+- P1 队列联动三件套（2026-08-29 已落地，08 号文 §4.3 ↔ 66 号 §10 P1 行）：
+  ①级联标记——项 X 成功落盘后扫描 pending，meta.depends_on 含 X.qid 或 base_head
+  与 X 相同（base_head 经由 X）的后续项标 stale；stale 项排到队首时重校验基底
+  （base_blob vs 当前 HEAD，head_reader 注入比对），仍适用→清标放行，不适用→
+  降死信候选（dead_reason=cascade_stale，不消耗 landing）；
+  ②死信重新入队 CLI——requeue 从 dead/ 取回，基于当前工作区文件内容重建快照
+  重新入队（新 qid 排 FIFO 队尾，原死信项留 dead/ 追加 requeued 标注留痕，
+  task_board 死信标签同步标注 requeued 不解除）；
+  ③done/ TTL 清理——默认 7 天可配置，drain 收尾在 lease 内自动执行；
+  dead/ 永不自动清理不变量不变（66 号 §8）。
 """
 
 from __future__ import annotations
 
 __manifest__ = """
 args: []
-description: 提交队列串行化 MVP（enqueue/status/drain + 入队自举排空 + 死信 + compaction）
+description: 提交队列串行化 MVP（enqueue/status/drain/requeue/cleanup + 入队自举排空 + 死信 + compaction + 级联标记 + done/ TTL 清理）
 dimensions:
 - D1
 priority: P0
@@ -158,8 +168,14 @@ _SEQ_PAD = 4  # 66 号 §6.1：seq:04d 零填充——qid 字典序 == 数值序
 _READ_RETRY_TIMES = 20  # drain 读 pending 项容忍写入窗口：重试次数（见 _read_item 注释）
 _READ_RETRY_INTERVAL = 0.05  # 重试间隔 50ms × 20 = 1s 上限
 
+_DONE_TTL_DAYS_DEFAULT = 7.0  # 66 号 §12 Q3 已闭环：done 保留 7 天 TTL；dead 永不自动清理
+
 # session_id 字符白名单：session_id 进入 qid 与 seq 文件名，必须防路径注入
 _SESSION_ID_RE = re.compile(r"^[A-Za-z0-9._-]{1,64}$")
+
+# qid 格式白名单：requeue 的 qid 入参直接拼 dead/ 文件路径，必须防路径穿越
+# （对齐 _make_qid：q-{date:%Y%m%d}-{session_id}-{seq:04d}，碰撞重试 seq 可超 4 位）
+_QID_RE = re.compile(r"^q-\d{8}-[A-Za-z0-9._-]{1,64}-\d{4,}$")
 
 # 密钥文件名黑名单（66 号 §6.5 pathspec 白名单：禁止 .git/密钥路径入队）
 _SECRET_NAME_RE = re.compile(
@@ -174,6 +190,10 @@ class QueueReject(ValueError):
 
 class LeaseUnavailable(RuntimeError):
     """Serializer lease 被活体持有（自举模式：放弃等下次，非错误）。"""
+
+
+class RequeueError(RuntimeError):
+    """死信取回重入队失败（qid 不在 dead/、qid 非法、工作区文件缺失等——CLI 映射 exit 1）。"""
 
 
 @dataclass
@@ -559,7 +579,7 @@ def enqueue_item(
                 "message": msg,
                 "files": blob_entries,
                 "meta": {
-                    "depends_on": list(depends_on or []),  # schema 预留，A 段不实现级联
+                    "depends_on": list(depends_on or []),  # P1 级联标记依据（66 号 §6.4）
                     "supersedes": removed,  # compaction 覆盖全链（传递累积，审计可追溯）
                     **(meta_extra or {}),
                 },
@@ -758,12 +778,86 @@ def _recover_orphans(queue_root: Path) -> list[str]:
     return recovered
 
 
+# ---------------------------------------------------------------------------
+# 依赖级联标记（66 号 §6.4 + 08 号文 §4.3 P1，2026-08-29 落地）
+# ---------------------------------------------------------------------------
+
+
+def _mark_cascade_stale(root: Path, landed_item: dict) -> list[str]:
+    """项 X 成功落盘后的级联标记：扫描 pending 剩余项，命中的标 stale，返回命中 qid 列表。
+
+    命中条件（66 号 §6.4「级联标记」）：
+    - meta.depends_on 含 X.qid（显式依赖前置项）；或
+    - base_head 与 X.base_head 相同且均非空（base_head 经由 X——同基底入队，
+      X 落盘后目标分支 HEAD 已越过该基底，Y 的基底过龄）。
+
+    stale 项不立即处置——排到队首时经 _revalidate_stale_base 重校验基底：
+    仍适用→清标放行，不适用→降死信候选（dead_reason=cascade_stale）。
+    仅 lease 持有者（单写者）调用；仅作用 pending（done/dead 是终态不触碰）；
+    并发 compaction 移除（FileNotFoundError）/写入窗口瞬态占用（PermissionError）
+    容错跳过。已标 stale 的项不重复标——保留首个触发源（stale_by 审计首因）。
+    """
+    landed_qid = landed_item.get("qid", "")
+    landed_base = landed_item.get("base_head")
+    marked: list[str] = []
+    for candidate in sorted((root / "pending").glob("q-*.json")):
+        try:
+            item = json.loads(candidate.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue  # 写入窗口或损坏——跳过不碰（读者容错，同 _compact_pending 口径）
+        meta = item.setdefault("meta", {})
+        if meta.get("stale"):
+            continue
+        depends_hit = landed_qid in (meta.get("depends_on") or [])
+        base_hit = bool(landed_base) and bool(item.get("base_head")) and item["base_head"] == landed_base
+        if not (depends_hit or base_hit):
+            continue
+        meta["stale"] = True
+        meta["stale_by"] = landed_qid
+        meta["stale_at"] = _now_iso()
+        try:
+            _retry_transient(
+                lambda: _atomic_write(candidate, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
+            )
+            marked.append(item.get("qid", candidate.stem))
+        except (FileNotFoundError, PermissionError):
+            pass  # 并发 compaction 移除/写入窗口——跳过（同 _compact_pending 竞态口径）
+    return marked
+
+
+def _revalidate_stale_base(item: dict, head_reader) -> tuple[bool, list[str]]:
+    """stale 项基底重校验（66 号 §6.4）：base_blob vs 当前 HEAD 逐文件比对。
+
+    返回 (仍适用, 不适用路径清单)。判定口径：
+    - base_blob 为空的条目跳过（A 段无基底信息，无法判定→放行口径）；
+    - base_blob 非空而 head_reader 缺失 → fail-closed 判不适用（无法确认仍适用即
+      降死信候选，人工经 requeue 基于当前工作区重建快照取回，66 号 §6.4 死信闭环）；
+    - head_reader: callable(仓内相对路径) -> 当前 HEAD 该路径 blob 标识（与 base_blob
+      同 id 空间），路径不在 HEAD 返回 None；比对不一致即不适用。
+    队列层保持零 git 依赖（66 号 §6.1 刻意出入 #3）——HEAD 读取能力由调用方注入。
+    """
+    mismatched: list[str] = []
+    for f in item.get("files") or []:
+        base_blob = f.get("base_blob")
+        if not base_blob:
+            continue
+        path = f.get("path", "?")
+        if head_reader is None:
+            mismatched.append(f"{path}(head_reader 缺失无法重校验)")
+            continue
+        if head_reader(path) != base_blob:
+            mismatched.append(path)
+    return (not mismatched, mismatched)
+
+
 def drain_queue(
     queue_root: str | os.PathLike | None = None,
     *,
     landing=None,
     max_items: int | None = None,
     lease_timeout: float = _LEASE_TIMEOUT_SECONDS,
+    head_reader=None,
+    done_ttl_days: float | None = _DONE_TTL_DAYS_DEFAULT,
 ) -> dict:
     """Serializer 排空（单写者主循环）。
 
@@ -773,13 +867,27 @@ def drain_queue(
 
     landing : callable(item: dict, queue_root: Path) -> LandingResult；None=默认桩
         （仅标记 done 不真提交，B 段接专用 worktree 真落盘）。
+    head_reader : callable(仓内相对路径) -> 当前 HEAD 该路径 blob 标识 | None；
+        P1 级联 stale 项基底重校验用（_revalidate_stale_base）；None=仅 base_blob
+        全空的项可重校验通过（A 段口径），base_blob 非空项 fail-closed 降死信候选。
+    done_ttl_days : done/ TTL 天数（默认 7 天，66 号 §12 Q3）；排空收尾在 lease 内
+        自动清理超龄 done 项；None=本轮不清理。dead/ 永不清理不变量不受影响。
     异常语义：landing 抛 Exception → 单项失败死信；BaseException 不捕获向上传播
         （模拟进程崩溃，当前项留 processing 等孤儿回收）。
     """
     root = resolve_queue_root(queue_root)
     _ensure_dirs(root)
     landing_fn = landing if landing is not None else default_landing_stub
-    stats = {"skipped": False, "recovered": 0, "done": 0, "dead": 0, "processed_qids": []}
+    stats = {
+        "skipped": False,
+        "recovered": 0,
+        "done": 0,
+        "dead": 0,
+        "processed_qids": [],
+        "stale_cleared": 0,  # P1 级联：stale 重校验仍适用清标放行数
+        "cascade_marked": 0,  # P1 级联：成功落盘后续项被标 stale 数
+        "done_cleaned": 0,  # done/ TTL 清理移除数
+    }
 
     with SerializerLease(root, timeout=lease_timeout):
         stats["recovered"] = len(_recover_orphans(root))
@@ -811,16 +919,42 @@ def drain_queue(
                     pass
                 break
             qid = item.get("qid", head.stem)
-            try:
-                result = landing_fn(item, root)
-            except Exception as exc:  # 单项失败 → 死信不卡队（66 号 §4 裁定 4）
-                result = LandingResult(ok=False, reason=f"landing 异常: {type(exc).__name__}: {exc}")
+            result: LandingResult | None = None
+            if (item.get("meta") or {}).get("stale"):
+                # P1 级联（66 号 §6.4）：stale 项重校验基底——仍适用清标放行走正常
+                # landing；不适用直接降死信候选（dead_reason=cascade_stale），不消耗 landing
+                still_ok, mismatched = _revalidate_stale_base(item, head_reader)
+                if still_ok:
+                    meta = item["meta"]
+                    meta.pop("stale", None)
+                    meta["stale_cleared_at"] = _now_iso()  # stale_by 保留作审计溯源
+                    stats["stale_cleared"] += 1
+                    logger.info("[drain] qid=%s stale 重校验仍适用，清标放行（stale_by=%s）", qid, meta.get("stale_by"))
+                else:
+                    result = LandingResult(
+                        ok=False,
+                        reason=(
+                            f"cascade_stale: 基底重校验不适用 {mismatched}"
+                            f"（stale_by={item['meta'].get('stale_by')}）"
+                        ),
+                    )
+            if result is None:
+                try:
+                    result = landing_fn(item, root)
+                except Exception as exc:  # 单项失败 → 死信不卡队（66 号 §4 裁定 4）
+                    result = LandingResult(ok=False, reason=f"landing 异常: {type(exc).__name__}: {exc}")
             if result.ok:
                 item["landed_at"] = _now_iso()
                 item["landed_id"] = result.landed_id
                 _atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
                 os.replace(processing_path, root / "done" / head.name)
                 stats["done"] += 1
+                # 依赖级联标记（66 号 §6.4，P1 2026-08-29 落地）：X 成功落盘后扫描
+                # pending，meta.depends_on 含 X.qid 或 base_head 经由 X 的后续项标 stale
+                marked = _mark_cascade_stale(root, item)
+                if marked:
+                    stats["cascade_marked"] += len(marked)
+                    logger.info("[drain] qid=%s 落盘，级联标记 stale: %s", qid, marked)
             else:
                 # 死信：附原因移 dead/，队列继续前进（DLQ 语义不堵队，66 号 §6.4）
                 item["dead_at"] = _now_iso()
@@ -830,9 +964,11 @@ def drain_queue(
                 stats["dead"] += 1
                 logger.warning("[drain] qid=%s 进死信: %s", qid, result.reason)
                 _notify_task_board_dead_letter(item)  # 66 号 §6.4 task_board 死信标签联动（P1 已落地）
-                # 依赖级联标记（meta.depends_on）B 段实现。
             stats["processed_qids"].append(qid)
             processed += 1
+        if done_ttl_days is not None:
+            # done/ TTL 清理（66 号 §12 Q3：done 7 天 / dead 永不清理）；lease 内单写者安全
+            stats["done_cleaned"] = len(cleanup_done(root, ttl_days=done_ttl_days)["removed"])
     return stats
 
 
@@ -842,7 +978,187 @@ def try_bootstrap_drain(queue_root: str | os.PathLike | None = None, *, landing=
         return drain_queue(queue_root, landing=landing)
     except LeaseUnavailable as exc:
         logger.info("[bootstrap] %s —— 另一 Serializer 在跑，放弃等下次自举", exc)
-        return {"skipped": True, "reason": "lease_unavailable", "done": 0, "dead": 0, "recovered": 0, "processed_qids": []}
+        return {
+            "skipped": True,
+            "reason": "lease_unavailable",
+            "done": 0,
+            "dead": 0,
+            "recovered": 0,
+            "processed_qids": [],
+            "stale_cleared": 0,
+            "cascade_marked": 0,
+            "done_cleaned": 0,
+        }
+
+
+# ---------------------------------------------------------------------------
+# requeue（死信取回重入队，66 号 §6.4 死信闭环 + 08 号文 §4.3 P1，2026-08-29 落地）
+# ---------------------------------------------------------------------------
+
+
+def _notify_task_board_requeued(old_item: dict, new_qid: str) -> None:
+    """requeue → task_board 死信标签标注联动（66 号 §6.4）。
+
+    原死信项 meta.task_id 存在时，经 scripts.task_board.tag_requeued 把
+    {old_qid, new_qid, requeued_at} 写入 metadata_json.deadletter.requeued——
+    死信标签不解除（死信事实留痕），重复取回以最新为准。
+    与 _notify_task_board_dead_letter 同口径：联动失败仅记日志不阻断（宁漏不误，
+    重入队已完成是主流程）。
+    """
+    task_id = (old_item.get("meta") or {}).get("task_id")
+    if not task_id:
+        return
+    try:
+        from scripts import task_board as tb
+
+        conn = tb._connect(tb._resolve_board_db())
+        try:
+            rc = tb.tag_requeued(
+                conn,
+                task_id,
+                old_qid=old_item.get("qid", ""),
+                new_qid=new_qid,
+                actor="commit_queue",
+            )
+        finally:
+            conn.close()
+        if rc == 0:
+            logger.info("[requeue] task_board 死信标签标注 requeued: task=%s qid=%s", task_id, old_item.get("qid"))
+        else:
+            logger.info("[requeue] task_board 标注跳过: task=%s rc=%s（任务不存在/已完成/metadata 损坏/无死信标签）", task_id, rc)
+    except Exception as exc:  # noqa: BLE001 — 联动失败不阻断重入队主流程
+        logger.warning("[requeue] task_board 联动失败（忽略，重入队已完成）: %s", exc)
+
+
+def requeue_dead_item(
+    qid: str,
+    *,
+    queue_root: str | os.PathLike | None = None,
+    worktree_root: str | os.PathLike | None = None,
+    session_id: str | None = None,
+    message: str | None = None,
+    base_head: str | None = None,
+) -> dict:
+    """死信取回重入队（66 号 §6.4 死信闭环 + 08 号文 §4.3 P1）。
+
+    qid 口径（裁定留痕）：**新 qid，不复用原 qid**——原死信项留 dead/ 永不清理
+    （66 号 §8 不变量），同 qid 再入 pending 会与留痕项撞名破坏四态唯一；
+    新 qid 排 FIFO 队尾，meta.requeued_from=原 qid + 原死信项追加
+    requeued={new_qid, at} 标注，双向可追溯。
+
+    快照重建（66 号 §6.4 死信闭环原文口径）：基于**当前工作区**文件内容重新入队——
+    每会话有独立 worktree，重入队快照基于本会话 worktree 状态，一次重试即可通过
+    快进判定。action=delete 条目走 deletes 通道（无 blob）；modify 条目工作区文件
+    缺失/不可读 → RequeueError（人工判定该文件是否还应提交，不静默造空快照）。
+
+    task_board 联动：原项 meta.task_id 存在 → metadata_json.deadletter 标注
+    requeued（标签不解除，死信事实留痕）。
+
+    返回 {"old_qid", "new_qid", "item"}；异常 RequeueError（CLI 映射 exit 1）/
+    QueueReject（新项入队轻检拒绝，CLI 映射 exit 2）。
+    """
+    if not qid or not _QID_RE.match(qid):
+        raise RequeueError(f"非法 qid（白名单 q-YYYYMMDD-<session>-<seq>，防路径穿越）: {qid!r}")
+    root = resolve_queue_root(queue_root)
+    _ensure_dirs(root)
+    dead_path = root / "dead" / f"{qid}.json"
+    if not dead_path.exists():
+        raise RequeueError(f"qid 不在 dead/（仅死信项可取回重入队）: {qid}")
+    try:
+        old_item = json.loads(dead_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        raise RequeueError(f"死信项读取失败: {qid}（{exc}）") from exc
+
+    wt = Path(worktree_root) if worktree_root else Path.cwd()
+    payload: list[tuple[str, bytes]] = []
+    deletes: list[str] = []
+    for f in old_item.get("files") or []:
+        path = f.get("path")
+        if not path:
+            continue
+        if f.get("action") == "delete":
+            deletes.append(path)
+            continue
+        try:
+            payload.append((path, (wt / path).read_bytes()))
+        except OSError as exc:
+            raise RequeueError(
+                f"工作区文件缺失/不可读，无法重建快照: {path}（{exc}）——若该文件应删除请人工处理"
+            ) from exc
+    if not payload and not deletes:
+        raise RequeueError(f"死信项无文件条目可取回: {qid}")
+
+    task_id = (old_item.get("meta") or {}).get("task_id")
+    new_item = enqueue_item(
+        session_id or old_item.get("session_id", ""),
+        message or old_item.get("message", ""),
+        payload,
+        queue_root=root,
+        options=EnqueueOptions(
+            base_head=base_head,
+            deletes=deletes or None,
+            meta_extra={"requeued_from": qid, **({"task_id": task_id} if task_id else {})},
+        ),
+    )
+    # 取回留痕：原死信项追加 requeued 标注（dead/ 永不清理——只标注不删除）
+    old_item["requeued"] = {"new_qid": new_item["qid"], "at": _now_iso()}
+    _atomic_write(dead_path, json.dumps(old_item, ensure_ascii=False, indent=2).encode("utf-8"))
+    _notify_task_board_requeued(old_item, new_item["qid"])
+    logger.info("[requeue] %s -> %s（基于当前工作区重建快照，新 qid 排 FIFO 队尾）", qid, new_item["qid"])
+    return {"old_qid": qid, "new_qid": new_item["qid"], "item": new_item}
+
+
+# ---------------------------------------------------------------------------
+# done/ TTL 清理（66 号 §12 Q3 已闭环：done 7 天 TTL / dead 永不自动清理）
+# ---------------------------------------------------------------------------
+
+
+def cleanup_done(
+    queue_root: str | os.PathLike | None = None,
+    *,
+    ttl_days: float = _DONE_TTL_DAYS_DEFAULT,
+    now: datetime | None = None,
+) -> dict:
+    """done/ TTL 清理：超龄 done 项删除，返回 {"removed": [qid...], "kept": n}。
+
+    年龄基准 landed_at（落盘时刻），缺失/解析失败回退文件 mtime。
+    **dead/ 永不触碰**（66 号 §8 队列腐败口径：死信回退给人，永不自动清理——
+    不变量由 TestDoneTtlCleanup 专测钉死）；pending/processing 不触碰；
+    blobs/ 内容寻址共享存储不在本清理范围（多队列项可共享同一 blob）。
+    drain 排空收尾自动调用（lease 内单写者安全）；CLI cleanup 子命令可手动触发。
+    """
+    root = resolve_queue_root(queue_root)
+    _ensure_dirs(root)
+    ref = now or datetime.now().astimezone()
+    cutoff = ref.timestamp() - ttl_days * 86400
+    removed: list[str] = []
+    kept = 0
+    for entry in sorted((root / "done").glob("q-*.json")):
+        ts: float | None = None
+        try:
+            item = json.loads(entry.read_text(encoding="utf-8"))
+            landed_at = item.get("landed_at")
+            if landed_at:
+                ts = datetime.fromisoformat(landed_at).timestamp()
+        except (OSError, ValueError):
+            ts = None
+        if ts is None:
+            try:
+                ts = entry.stat().st_mtime
+            except OSError:
+                kept += 1
+                continue
+        if ts < cutoff:
+            try:
+                _retry_transient(lambda: os.remove(entry))
+                removed.append(entry.stem)
+            except (FileNotFoundError, PermissionError):
+                pass  # 并发读取窗口瞬态占用——留待下轮清理
+        else:
+            kept += 1
+    if removed:
+        logger.info("[cleanup] done/ TTL(%s 天) 清理 %d 项: %s", ttl_days, len(removed), removed)
+    return {"removed": removed, "kept": kept}
 
 
 # ---------------------------------------------------------------------------
@@ -959,15 +1275,58 @@ def _cmd_status(args: argparse.Namespace) -> int:
 
 def _cmd_drain(args: argparse.Namespace) -> int:
     try:
-        result = drain_queue(args.queue_root, max_items=args.max_items)
+        result = drain_queue(args.queue_root, max_items=args.max_items, done_ttl_days=args.done_ttl_days)
     except LeaseUnavailable as exc:
         # 显式 drain 拿不到 lease = 另一 Serializer 在排空——正常路径非错误（66 号 §8）
         print(f"SKIPPED: {exc}")
         return 0
     print(
         f"DRAIN: done={result['done']} dead={result['dead']} "
-        f"recovered={result['recovered']} qids={result['processed_qids']}"
+        f"recovered={result['recovered']} qids={result['processed_qids']} "
+        f"stale_cleared={result['stale_cleared']} cascade_marked={result['cascade_marked']} "
+        f"done_cleaned={result['done_cleaned']}"
     )
+    return 0
+
+
+def _cmd_requeue(args: argparse.Namespace) -> int:
+    message = args.message
+    if args.message_file:
+        try:
+            # --message-file：UTF-8 读入（与 enqueue 同款，66 号 §6.3 修正 3）
+            message = Path(args.message_file).read_text(encoding="utf-8")
+        except OSError as exc:
+            print(f"ERROR: message-file 读取失败: {exc}", file=sys.stderr)
+            return 1
+    try:
+        result = requeue_dead_item(
+            args.qid,
+            queue_root=args.queue_root,
+            worktree_root=args.worktree_root,
+            session_id=args.session,
+            message=message,
+            base_head=args.base_head,
+        )
+    except RequeueError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+    except QueueReject as exc:
+        # 新项入队轻检拒绝——fail-closed 报错非静默（与 enqueue 同口径）
+        print(f"DENIED: {exc}", file=sys.stderr)
+        return 2
+    print(f"REQUEUED: {result['old_qid']} -> {result['new_qid']}（基于当前工作区重建快照，新 qid 排 FIFO 队尾）")
+    if not args.no_bootstrap:
+        drain_result = try_bootstrap_drain(args.queue_root)  # 重入队自举排空（66 号 §8）
+        if not drain_result.get("skipped"):
+            print(f"DRAIN: done={drain_result['done']} dead={drain_result['dead']} recovered={drain_result['recovered']}")
+        else:
+            print("DRAIN: skipped（另一 Serializer 持 lease，等下次自举）")
+    return 0
+
+
+def _cmd_cleanup(args: argparse.Namespace) -> int:
+    result = cleanup_done(args.queue_root, ttl_days=args.done_ttl_days)
+    print(f"CLEANUP: removed={len(result['removed'])} kept={result['kept']}（done/ 超 TTL 项已清理；dead/ 永不清理）")
     return 0
 
 
@@ -998,7 +1357,7 @@ def main(argv: list[str] | None = None) -> int:
     p_enq.add_argument("--message-file", default=None, help="commit message 文件（UTF-8，中文推荐）")
     p_enq.add_argument("--worktree-root", default=None, help="工作区根（默认 cwd）")
     p_enq.add_argument("--base-head", default=None, help="入队时目标分支 HEAD（A 段显式传入，B 段自动取）")
-    p_enq.add_argument("--depends-on", default=None, help="依赖的前置 qid 逗号分隔（schema 预留，A 段不实现级联）")
+    p_enq.add_argument("--depends-on", default=None, help="依赖的前置 qid 逗号分隔（P1 起 drain 级联标记生效：前置项落盘后本项标 stale 重校验基底，66 号 §6.4）")
     p_enq.add_argument("--no-bootstrap", action="store_true", help="入队后不尝试自举排空")
     p_enq.set_defaults(func=_cmd_enqueue)
 
@@ -1009,7 +1368,22 @@ def main(argv: list[str] | None = None) -> int:
 
     p_dr = sub.add_parser("drain", help="显式排空（拿不到 lease 则跳过 exit 0）")
     p_dr.add_argument("--max-items", type=int, default=None, help="本轮最多处理项数")
+    p_dr.add_argument("--done-ttl-days", type=float, default=_DONE_TTL_DAYS_DEFAULT, help=f"done/ TTL 天数（默认 {_DONE_TTL_DAYS_DEFAULT:.0f}；dead/ 永不清理）")
     p_dr.set_defaults(func=_cmd_drain)
+
+    p_rq = sub.add_parser("requeue", help="死信取回重入队（66 号 §6.4：基于当前工作区重建快照，新 qid 排 FIFO 队尾）")
+    p_rq.add_argument("qid", help="dead/ 中的死信项 qid")
+    p_rq.add_argument("--worktree-root", default=None, help="工作区根（默认 cwd）——快照重建内容来源")
+    p_rq.add_argument("--session", default=None, help="新项会话 ID（默认沿用原死信项 session_id）")
+    p_rq.add_argument("--message", default=None, help="commit message（默认沿用原死信项 message）")
+    p_rq.add_argument("--message-file", default=None, help="commit message 文件（UTF-8，中文推荐）")
+    p_rq.add_argument("--base-head", default=None, help="新项 base_head（默认 None，由调用方/B 段填充）")
+    p_rq.add_argument("--no-bootstrap", action="store_true", help="重入队后不尝试自举排空")
+    p_rq.set_defaults(func=_cmd_requeue)
+
+    p_cl = sub.add_parser("cleanup", help=f"done/ TTL 清理（默认 {_DONE_TTL_DAYS_DEFAULT:.0f} 天；dead/ 永不清理）")
+    p_cl.add_argument("--done-ttl-days", type=float, default=_DONE_TTL_DAYS_DEFAULT, help="done/ 保留天数")
+    p_cl.set_defaults(func=_cmd_cleanup)
 
     args = parser.parse_args(argv)
     return args.func(args)

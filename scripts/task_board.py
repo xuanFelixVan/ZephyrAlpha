@@ -2,7 +2,7 @@
 # [MODULE] scripts.task_board
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] stdlib (sqlite3/argparse/json/os/sys/subprocess/uuid/pathlib)
-# [CONSUMERS] 全部 AI session（任务认领协调）；66 号提交队列死信标签承载（deadletter 子命令打标 + list --label 查询，metadata_json 承载）；scripts/commit_queue.py 死信联动（tag_dead_letter 函数级复用，2026-08-28 P1 落地）
+# [CONSUMERS] 全部 AI session（任务认领协调）；66 号提交队列死信标签承载（deadletter 子命令打标 + list --label 查询，metadata_json 承载）；scripts/commit_queue.py 死信联动（tag_dead_letter 函数级复用，2026-08-28 P1 落地）与 requeue 取回标注联动（tag_requeued，2026-08-29 P1 落地）
 # [STARTUP] manual
 # [MATURITY] production
 # [INVARIANTS] 状态机仅 pending→claimed→completed 三态；认领走单条 UPDATE CAS（changes()>0 即成功）；completed 任务禁止再认领/删除/打标；DB 锚主仓 .runtime（跨 worktree 共享）；死信标签=metadata_json.deadletter{qid,reason,owner,tagged_at}（66 号 §6.4，不改表，重复打标以最新为准）
@@ -363,6 +363,44 @@ def tag_dead_letter(
         metadata["deadletter"] = tag
         conn.execute(_SQL_UPDATE_METADATA, (json.dumps(metadata, ensure_ascii=False), task_id))
         _add_event(conn, task_id, "deadlettered", actor, dict(tag))
+        return 0
+
+
+def tag_requeued(
+    conn: sqlite3.Connection,
+    task_id: str,
+    *,
+    old_qid: str,
+    new_qid: str,
+    actor: str,
+) -> int:
+    """66 号 §6.4 死信取回标注（commit_queue requeue 联动扩展，2026-08-29 P1 落地）。
+
+    metadata_json.deadletter.requeued 写入 {old_qid, new_qid, requeued_at}——
+    死信标签不解除（死信事实留痕），重复取回以最新为准；completed 任务禁止标注
+    （与 tag_dead_letter 同守卫）。返回 0 成功 / 2 任务不存在或已完成 /
+    1 metadata 损坏 / 3 无 deadletter 标签可标注。
+    """
+    with conn:
+        task = _get_task(conn, task_id)
+        if task is None:
+            return 2
+        if task["status"] == "completed":
+            return 2
+        try:
+            metadata = json.loads(task["metadata_json"] or "{}")
+        except json.JSONDecodeError:
+            return 1
+        if "deadletter" not in metadata:
+            return 3
+        requeued = {
+            "old_qid": old_qid,
+            "new_qid": new_qid,
+            "requeued_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        }
+        metadata["deadletter"]["requeued"] = requeued
+        conn.execute(_SQL_UPDATE_METADATA, (json.dumps(metadata, ensure_ascii=False), task_id))
+        _add_event(conn, task_id, "requeued", actor, dict(requeued))
         return 0
 
 

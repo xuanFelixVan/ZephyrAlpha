@@ -397,7 +397,7 @@ Remove-Item Env:ZEPHYR_SERIALIZER_MODE
 | 期 | 内容 | 验收（全部可自动化断言） |
 |---|---|---|
 | MVP（P0） | 队列目录协议 + enqueue/status/drain CLI + 入队自举排空 + 专用 worktree 落盘（复用 gateway 全门禁）+ 死信 + compaction + `_commit_auto` 改道入队 + **git_guard.py DANGEROUS_SUBCOMMANDS 扩展 4 个 plumbing 命令** + **install_git_safety_wrapper.ps1 落地（含 plumbing 拦截）** | 3 会话并发 50 提交：零丢失（done 数=有效入队数）、零搭便车（逐 commit `git show` 内容 == 入队快照 hash 比对）、FIFO 序（拓扑序 == qid 序）、死信正确归因；REFERENCE-TRANSACTION-GUARD 不拦队列 commit；**read-tree 在会话层被拦（exit 1 + 审计日志），在 Serializer worktree 内放行**；压测脚本见 §11 |
-| P1 | 级联标记 + task_board 死信标签联动 + 死信重新入队 CLI + done/ TTL 清理 + **worktree 强制升硬（WORKTREE-REQUIRED gate THRESHOLD 概念废除——队列落地后会话不 commit，gate 只管 Serializer 专用 worktree 之外的会话直接 git 操作）** | 同键 3 连提交仅留最终态；死信取回重入队闭环演示；依赖级联标记正确；**会话层 git read-tree 被拦后会话改在自己 worktree 内执行不报错** |
+| P1 | 级联标记 + task_board 死信标签联动 + 死信重新入队 CLI + done/ TTL 清理 + **worktree 强制升硬（WORKTREE-REQUIRED gate THRESHOLD 概念废除——队列落地后会话不 commit，gate 只管 Serializer 专用 worktree 之外的会话直接 git 操作）** **【已落地 2026-08-29】**：级联标记/requeue/done TTL 三件套落 scripts/commit_queue.py（drain 路径 + requeue/cleanup 子命令），task_board 死信标签联动 2026-08-28 已落地、requeue 取回标注（tag_requeued）随本批落地；61 号 §3.6 第 5 条/65 号 §7.6/ARCH-WORKTREE-GATE-001 注记升硬口径联动修订同批完成（§12 #2 闭环） | 同键 3 连提交仅留最终态；死信取回重入队闭环演示；依赖级联标记正确；**会话层 git read-tree 被拦后会话改在自己 worktree 内执行不报错** |
 | P2 | 落盘确认接入 55 号监控 + 防饥饿告警（阈值入注册表）+ temp-index plumbing 形态评估（含 62 门禁 blob 化工程量）+ 多目标分支支持评估 + schtasks 兜底排空 | 监控面板可见；告警触发演示；temp-index 形态做/不做裁定 |
 
 **前置条件（2026-08-12 审查核验修正）**：
@@ -420,7 +420,7 @@ Remove-Item Env:ZEPHYR_SERIALIZER_MODE
 > **已闭环（v1.0.0 用户裁定）**：Q1 门禁出队端适配 → MVP 专用 worktree 形态、100 门禁零适配（temp-index 封存 P2）；Q2 `_commit_auto` 改道入队保住单写者不变量；Q3 单 blob 10MB 上限 / done 保留 7 天 TTL / dead 永不自动清理；Q4 无需"队列空窗才 merge"硬门禁（merge 消失，反向约束在 §6.6）；Q7 AGENTS.md §10"改完立即入队"铁律随本文 active 生效（已落地 §10.0）。
 
 1. **GOV-BUDGET-002 注册表条目重登记** → **已闭环（2026-08-14）**：治理预算三纪律（I-GOV-3 v2）条目已重登记为 `#ARCH-GOV-BUDGET-002`，本文 frontmatter related_issues 引用已恢复 `#` 前缀。
-2. **61 号 §3.6 / 65 号 §7.6 / ARCH-WORKTREE-GATE-001 口径联动**（待施工，裁定已确认）：用户已确认 worktree 强化方向。队列 MVP 验收通过后，由归属会话联动修订（61 号 §3.6 第 5 条改为"队列+worktree 双层"、65 号 §7.6 改为"worktree 强制（队列落地后可达）"、gate 代码注记同步），本文不越界改。
+2. **61 号 §3.6 / 65 号 §7.6 / ARCH-WORKTREE-GATE-001 口径联动** → **已闭环（2026-08-29）**：队列 MVP 已验收生产在跑，归属会话完成三处口径修订——61 号 §3.6 第 5 条改为"队列+worktree 双层"、65 号 §7.6 改为"worktree 强制（队列落地后可达）"、worktree_required_gate.py 代码注记同步（只改注释不改逻辑）。
 
 ## 13. 修订记录
 

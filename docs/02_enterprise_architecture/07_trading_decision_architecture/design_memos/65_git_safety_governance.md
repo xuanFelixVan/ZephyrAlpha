@@ -798,7 +798,7 @@ if (-not $env:ZEPHYR_SESSION_ID) {
 | `backup.ps1` 清理旧备份（`-Recurse -Force` 非 TEMP）被阻断 | ✅ 已闭环（2026-08-14 晚核实：当前代码仅单文件 -Force 无 -Recurse 组合，wrapper 不拦，无需修复） |
 | pre-commit 框架 stash unstaged 适配 | 待处理：逃生通道或环境变量绕过 |
 | `iex`/`Invoke-Expression` 别名级绕过 | 待施工：`iex` 是别名需单独函数覆盖 |
-| GATE-WORKTREE-REQUIRED 阈值 5→3 | 待评估 |
+| GATE-WORKTREE-REQUIRED 阈值 5→3 | ✅ 已闭环（2026-08-29 升硬口径，66 号 §10 P1/§12 #2）：阈值概念废除——队列落地后会话不 commit，gate 只管 Serializer 专用 worktree 之外的会话直接 git 操作，无需阈值调优 |
 | 定期 push 远程作最终备份 | 待评估（origin/dev 大量 commits 未 push） |
 | setup_git_guard_aliases.py 补 clean | ✅ 已闭环（2026-08-14 晚，21f447c1：DANGEROUS_SUBCOMMANDS 补 clean 对齐 git_guard 7 命令） |
 | `robocopy /mir` 函数覆盖 | 远期评估 |

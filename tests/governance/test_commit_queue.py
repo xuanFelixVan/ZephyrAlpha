@@ -35,6 +35,7 @@ import os
 import sqlite3
 import threading
 import time
+from datetime import datetime, timedelta
 from pathlib import Path
 
 import pytest
@@ -565,7 +566,7 @@ class TestStatus:
         assert own["total"] == 1 and own["items"][0]["session_id"] == "AI-S1"
 
     def test_depends_on_schema_reserved(self, queue_root: Path) -> None:
-        """meta.depends_on 预留字段落盘（A 段只 schema 预留，不实现级联逻辑）。"""
+        """meta.depends_on 预留字段落盘（P1 起 drain 级联标记消费该字段，66 号 §6.4）。"""
         item = cq.enqueue_item(
             "AI-S3",
             "m",
@@ -576,3 +577,340 @@ class TestStatus:
         assert item["meta"]["depends_on"] == ["q-20260821-x-0001"]
         on_disk = json.loads((queue_root / "pending" / f"{item['qid']}.json").read_text(encoding="utf-8"))
         assert on_disk["meta"]["depends_on"] == ["q-20260821-x-0001"]
+
+
+# ---------------------------------------------------------------------------
+# P1 级联标记（66 号 §6.4 + 08 号文 §4.3，2026-08-29 落地）：
+# X 成功落盘后 depends_on 含 X.qid / base_head 经由 X 的 pending 项标 stale；
+# stale 项重校验基底——仍适用清标放行，不适用降死信候选（cascade_stale）
+# ---------------------------------------------------------------------------
+
+
+def _inject_base_blob(root: Path, qid: str, path: str, base_blob: str) -> None:
+    """模拟 B 段填充 base_blob（A 段 enqueue 恒为 None）——手写 pending 项 JSON。"""
+    p = root / "pending" / f"{qid}.json"
+    item = json.loads(p.read_text(encoding="utf-8"))
+    for f in item["files"]:
+        if f["path"] == path:
+            f["base_blob"] = base_blob
+    p.write_text(json.dumps(item, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+class TestCascadeStale:
+    def test_depends_on_hit_marked_stale_then_cleared_and_landed(self, queue_root: Path) -> None:
+        ix = _enqueue(queue_root, "AI-X", "mx", [("x.txt", b"x")])
+        iy = cq.enqueue_item(
+            "AI-Y", "my", [("y.txt", b"y")],
+            queue_root=queue_root, options=cq.EnqueueOptions(depends_on=[ix["qid"]]),
+        )
+        stats = cq.drain_queue(queue_root)
+        assert stats["done"] == 2 and stats["dead"] == 0
+        assert stats["cascade_marked"] == 1, "depends_on 含 X.qid 的后续项 MUST 标 stale"
+        # base_blob 全空（A 段口径）→ 重校验放行，清标
+        assert stats["stale_cleared"] == 1
+        done_y = json.loads((queue_root / "done" / f"{iy['qid']}.json").read_text(encoding="utf-8"))
+        assert "stale" not in done_y["meta"], "重校验通过 MUST 清 stale 标"
+        assert done_y["meta"]["stale_by"] == ix["qid"], "stale_by 保留作审计溯源"
+        assert done_y["meta"]["stale_cleared_at"]
+
+    def test_base_head_equality_marked_stale(self, queue_root: Path) -> None:
+        """base_head 经由 X（同基底入队）的后续项标 stale；不同基底不标。"""
+        ix = cq.enqueue_item("AI-X", "mx", [("x.txt", b"x")], queue_root=queue_root,
+                             options=cq.EnqueueOptions(base_head="sha-base"))
+        iy = cq.enqueue_item("AI-Y", "my", [("y.txt", b"y")], queue_root=queue_root,
+                             options=cq.EnqueueOptions(base_head="sha-base"))
+        iz = cq.enqueue_item("AI-Z", "mz", [("z.txt", b"z")], queue_root=queue_root,
+                             options=cq.EnqueueOptions(base_head="sha-other"))
+        stats = cq.drain_queue(queue_root)
+        assert stats["cascade_marked"] == 1
+        done_y = json.loads((queue_root / "done" / f"{iy['qid']}.json").read_text(encoding="utf-8"))
+        assert done_y["meta"]["stale_by"] == ix["qid"]
+        done_z = json.loads((queue_root / "done" / f"{iz['qid']}.json").read_text(encoding="utf-8"))
+        assert "stale_by" not in done_z["meta"], "base_head 不同（非经由 X）不标 stale"
+
+    def test_unrelated_items_not_marked(self, queue_root: Path) -> None:
+        """无 depends_on 且 base_head 均空 → 零级联标记。"""
+        _enqueue(queue_root, "AI-X", "m1", [("a.txt", b"1")])
+        _enqueue(queue_root, "AI-Y", "m2", [("b.txt", b"2")])
+        stats = cq.drain_queue(queue_root)
+        assert stats["cascade_marked"] == 0 and stats["stale_cleared"] == 0
+        assert stats["done"] == 2
+
+    def test_stale_revalidate_mismatch_goes_dead_cascade_stale(self, queue_root: Path) -> None:
+        """stale 项基底重校验不一致 → 降死信候选（dead_reason=cascade_stale），不消耗 landing。"""
+        ix = _enqueue(queue_root, "AI-X", "mx", [("x.txt", b"x")])
+        iy = cq.enqueue_item(
+            "AI-Y", "my", [("y.txt", b"y")],
+            queue_root=queue_root, options=cq.EnqueueOptions(depends_on=[ix["qid"]]),
+        )
+        _inject_base_blob(queue_root, iy["qid"], "y.txt", "blob-old")
+        landed: list[str] = []
+
+        def rec(item: dict, root: Path) -> cq.LandingResult:
+            landed.append(item["qid"])
+            return cq.LandingResult(ok=True)
+
+        stats = cq.drain_queue(queue_root, landing=rec, head_reader=lambda path: "blob-new")
+        assert stats["done"] == 1 and stats["dead"] == 1
+        assert landed == [ix["qid"]], "stale 重校验不适用 MUST 直接降死信候选，不消耗 landing"
+        dead = json.loads(next((queue_root / "dead").glob("q-*.json")).read_text(encoding="utf-8"))
+        assert dead["qid"] == iy["qid"]
+        assert "cascade_stale" in dead["dead_reason"]
+        assert "y.txt" in dead["dead_reason"]
+
+    def test_stale_revalidate_match_passes(self, queue_root: Path) -> None:
+        """stale 项基底重校验逐文件一致 → 清标放行走正常 landing。"""
+        ix = _enqueue(queue_root, "AI-X", "mx", [("x.txt", b"x")])
+        iy = cq.enqueue_item(
+            "AI-Y", "my", [("y.txt", b"y")],
+            queue_root=queue_root, options=cq.EnqueueOptions(depends_on=[ix["qid"]]),
+        )
+        _inject_base_blob(queue_root, iy["qid"], "y.txt", "blob-y")
+        stats = cq.drain_queue(queue_root, head_reader=lambda path: "blob-y")
+        assert stats["done"] == 2 and stats["dead"] == 0
+        assert stats["stale_cleared"] == 1
+
+    def test_stale_base_blob_without_head_reader_fail_closed(self, queue_root: Path) -> None:
+        """base_blob 非空而 head_reader 缺失 → fail-closed 降死信候选（无法确认仍适用）。"""
+        ix = _enqueue(queue_root, "AI-X", "mx", [("x.txt", b"x")])
+        iy = cq.enqueue_item(
+            "AI-Y", "my", [("y.txt", b"y")],
+            queue_root=queue_root, options=cq.EnqueueOptions(depends_on=[ix["qid"]]),
+        )
+        _inject_base_blob(queue_root, iy["qid"], "y.txt", "blob-y")
+        stats = cq.drain_queue(queue_root)  # head_reader=None
+        assert stats["done"] == 1 and stats["dead"] == 1
+        dead = json.loads(next((queue_root / "dead").glob("q-*.json")).read_text(encoding="utf-8"))
+        assert dead["qid"] == iy["qid"]
+        assert "cascade_stale" in dead["dead_reason"]
+        assert "head_reader" in dead["dead_reason"]
+
+    def test_stale_mark_persisted_on_disk_before_processing(self, queue_root: Path) -> None:
+        """级联标记落盘留痕：max_items=1 仅处理 X，Y 留 pending 且盘上带 stale 标。"""
+        ix = _enqueue(queue_root, "AI-X", "mx", [("x.txt", b"x")])
+        iy = cq.enqueue_item(
+            "AI-Y", "my", [("y.txt", b"y")],
+            queue_root=queue_root, options=cq.EnqueueOptions(depends_on=[ix["qid"]]),
+        )
+        stats = cq.drain_queue(queue_root, max_items=1)
+        assert stats["done"] == 1 and stats["cascade_marked"] == 1
+        pending_y = json.loads((queue_root / "pending" / f"{iy['qid']}.json").read_text(encoding="utf-8"))
+        assert pending_y["meta"]["stale"] is True
+        assert pending_y["meta"]["stale_by"] == ix["qid"]
+        assert pending_y["meta"]["stale_at"]
+
+
+# ---------------------------------------------------------------------------
+# P1 死信重新入队（66 号 §6.4 死信闭环 + 08 号文 §4.3，2026-08-29 落地）：
+# 从 dead/ 取回，基于当前工作区重建快照重新入队（新 qid 排尾），取回留痕
+# ---------------------------------------------------------------------------
+
+
+class TestRequeue:
+    @staticmethod
+    def _make_dead(root: Path, files: list[tuple[str, bytes]] | None = None, task_id: str | None = None) -> dict:
+        options = cq.EnqueueOptions(meta_extra={"task_id": task_id} if task_id else None)
+        item = cq.enqueue_item("AI-R", "m-orig", files or [("a.txt", b"v1")], queue_root=root, options=options)
+        stats = cq.drain_queue(root, landing=lambda i, r: cq.LandingResult(ok=False, reason="boom-模拟门禁失败"))
+        assert stats["dead"] == 1
+        return item
+
+    def test_requeue_rebuilds_snapshot_from_current_worktree(self, queue_root: Path, tmp_path: Path) -> None:
+        old = self._make_dead(queue_root)
+        wt = tmp_path / "wt"
+        wt.mkdir()
+        (wt / "a.txt").write_bytes(b"v2-current")
+        result = cq.requeue_dead_item(old["qid"], queue_root=queue_root, worktree_root=wt)
+        # 新 qid 口径：不复用原 qid，排 FIFO 队尾
+        assert result["new_qid"] != result["old_qid"]
+        new_item = result["item"]
+        assert new_item["meta"]["requeued_from"] == old["qid"]
+        assert _blob_content(queue_root, new_item, "a.txt") == b"v2-current", "基于当前工作区重建快照"
+        assert (queue_root / "pending" / f"{result['new_qid']}.json").exists()
+        # 取回留痕：原死信项留 dead/（永不清理）追加 requeued 标注
+        dead = json.loads((queue_root / "dead" / f"{old['qid']}.json").read_text(encoding="utf-8"))
+        assert dead["requeued"]["new_qid"] == result["new_qid"]
+        assert dead["requeued"]["at"]
+        assert dead["dead_reason"]  # 死信事实留痕不抹除
+
+    def test_requeue_closed_loop_lands(self, queue_root: Path, tmp_path: Path) -> None:
+        """死信取回重入队闭环演示（66 号 §10 P1 验收行）：dead → requeue → drain → done。"""
+        old = self._make_dead(queue_root)
+        wt = tmp_path / "wt"
+        wt.mkdir()
+        (wt / "a.txt").write_bytes(b"v2")
+        result = cq.requeue_dead_item(old["qid"], queue_root=queue_root, worktree_root=wt)
+        stats = cq.drain_queue(queue_root)
+        assert stats["done"] == 1 and stats["dead"] == 0
+        states = _all_state_qids(queue_root)
+        assert states[old["qid"]] == "dead", "原死信项留 dead/ 留痕"
+        assert states[result["new_qid"]] == "done"
+
+    def test_requeue_non_dead_qid_error(self, queue_root: Path, tmp_path: Path) -> None:
+        item = _enqueue(queue_root, "AI-R", "m", [("a.txt", b"v")])  # 仍在 pending
+        with pytest.raises(cq.RequeueError, match="不在 dead/"):
+            cq.requeue_dead_item(item["qid"], queue_root=queue_root, worktree_root=tmp_path)
+        with pytest.raises(cq.RequeueError, match="不在 dead/"):
+            cq.requeue_dead_item("q-20260829-AI-X-0001", queue_root=queue_root, worktree_root=tmp_path)
+
+    def test_requeue_qid_path_traversal_rejected(self, queue_root: Path) -> None:
+        """qid 拼 dead/ 文件路径——路径穿越必须 fail-closed 拒绝。"""
+        with pytest.raises(cq.RequeueError, match="非法 qid"):
+            cq.requeue_dead_item("../../etc/passwd", queue_root=queue_root)
+        with pytest.raises(cq.RequeueError, match="非法 qid"):
+            cq.requeue_dead_item("q-20260829-a b-0001", queue_root=queue_root)
+
+    def test_requeue_missing_worktree_file_error(self, queue_root: Path, tmp_path: Path) -> None:
+        old = self._make_dead(queue_root)  # 引用 a.txt
+        wt = tmp_path / "wt"
+        wt.mkdir()  # 空工作区
+        with pytest.raises(cq.RequeueError, match="无法重建快照"):
+            cq.requeue_dead_item(old["qid"], queue_root=queue_root, worktree_root=wt)
+        assert not list((queue_root / "pending").glob("q-*.json")), "取回失败 MUST 不产生新项"
+        dead = json.loads((queue_root / "dead" / f"{old['qid']}.json").read_text(encoding="utf-8"))
+        assert "requeued" not in dead, "取回失败 MUST 不留 requeued 标注"
+
+    def test_requeue_delete_entry_passthrough(self, queue_root: Path, tmp_path: Path) -> None:
+        """action=delete 条目走 deletes 通道（无 blob，不读工作区）。"""
+        item = cq.enqueue_item(
+            "AI-R", "m-del", [], queue_root=queue_root,
+            options=cq.EnqueueOptions(deletes=["gone.txt"]),
+        )
+        cq.drain_queue(queue_root, landing=lambda i, r: cq.LandingResult(ok=False, reason="boom"))
+        result = cq.requeue_dead_item(item["qid"], queue_root=queue_root, worktree_root=tmp_path)
+        new_item = result["item"]
+        assert [f["path"] for f in new_item["files"]] == ["gone.txt"]
+        assert new_item["files"][0]["action"] == "delete"
+        assert new_item["files"][0]["blob_sha256"] is None
+
+    def test_requeue_taskboard_annotation(self, queue_root: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """task_board 死信标签同步标注 requeued（标签不解除，死信事实留痕）。"""
+        db = tmp_path / "task_board.db"
+        monkeypatch.setenv("ZEPHYR_TASK_BOARD_DB", str(db))
+        assert tb.main(["create", "--title", "demo", "--session", "AI-TEST"]) == 0
+        conn = sqlite3.connect(str(db))
+        try:
+            tid = conn.execute("SELECT task_id FROM tasks LIMIT 1").fetchone()[0]
+        finally:
+            conn.close()
+        old = self._make_dead(queue_root, task_id=tid)
+        wt = tmp_path / "wt"
+        wt.mkdir()
+        (wt / "a.txt").write_bytes(b"v2")
+        result = cq.requeue_dead_item(old["qid"], queue_root=queue_root, worktree_root=wt)
+        conn = sqlite3.connect(str(db))
+        try:
+            metadata = json.loads(
+                conn.execute("SELECT metadata_json FROM tasks WHERE task_id=?", (tid,)).fetchone()[0]
+            )
+            ev = conn.execute(
+                "SELECT actor, payload_json FROM task_events WHERE task_id=? AND event_type='requeued'", (tid,)
+            ).fetchone()
+        finally:
+            conn.close()
+        tag = metadata["deadletter"]
+        assert tag["qid"] == old["qid"], "死信标签不解除"
+        assert tag["requeued"]["old_qid"] == old["qid"]
+        assert tag["requeued"]["new_qid"] == result["new_qid"]
+        assert tag["requeued"]["requeued_at"]
+        assert ev is not None and ev[0] == "commit_queue"
+        assert json.loads(ev[1])["new_qid"] == result["new_qid"]
+        # 新项继承 task_id——再失败可继续打标同一任务（闭环可持续）
+        assert result["item"]["meta"]["task_id"] == tid
+
+    def test_requeue_cli(self, queue_root: Path, tmp_path: Path, capsys: pytest.CaptureFixture) -> None:
+        old = self._make_dead(queue_root)
+        wt = tmp_path / "wt"
+        wt.mkdir()
+        (wt / "a.txt").write_bytes(b"v2")
+        rc = cq.main([
+            "--queue-root", str(queue_root),
+            "requeue", old["qid"], "--worktree-root", str(wt), "--no-bootstrap",
+        ])
+        assert rc == 0
+        assert "REQUEUED" in capsys.readouterr().out
+        # CLI 错误路径：非死信 qid → exit 1（ERROR 非静默）
+        rc = cq.main([
+            "--queue-root", str(queue_root),
+            "requeue", "q-20260829-AI-X-0001", "--no-bootstrap",
+        ])
+        assert rc == 1
+        assert "ERROR" in capsys.readouterr().err
+
+
+# ---------------------------------------------------------------------------
+# P1 done/ TTL 清理（66 号 §12 Q3：done 7 天 TTL / dead 永不自动清理，
+# 2026-08-29 落地）——dead 永不清理不变量专测钉死
+# ---------------------------------------------------------------------------
+
+
+def _age_done_item(root: Path, qid: str, days: float) -> None:
+    """手工陈化 done 项 landed_at（TTL 判定基准）。"""
+    p = root / "done" / f"{qid}.json"
+    item = json.loads(p.read_text(encoding="utf-8"))
+    item["landed_at"] = (datetime.now().astimezone() - timedelta(days=days)).isoformat(timespec="seconds")
+    p.write_text(json.dumps(item, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+class TestDoneTtlCleanup:
+    def test_expired_done_removed_fresh_kept(self, queue_root: Path) -> None:
+        i1 = _enqueue(queue_root, "AI-T1", "m1", [("a.txt", b"1")])
+        i2 = _enqueue(queue_root, "AI-T1", "m2", [("b.txt", b"2")])
+        cq.drain_queue(queue_root)
+        _age_done_item(queue_root, i1["qid"], days=8)
+        result = cq.cleanup_done(queue_root, ttl_days=7)
+        assert result["removed"] == [i1["qid"]]
+        assert result["kept"] == 1
+        assert not (queue_root / "done" / f"{i1['qid']}.json").exists()
+        assert (queue_root / "done" / f"{i2['qid']}.json").exists()
+
+    def test_dead_never_cleaned_invariant(self, queue_root: Path) -> None:
+        """不变量钉死（66 号 §8）：dead/ 永不自动清理——超龄死信 + TTL=0 极端值也不动。"""
+        i1 = _enqueue(queue_root, "AI-T2", "m1", [("a.txt", b"1")])
+        _enqueue(queue_root, "AI-T2", "m2", [("b.txt", b"2")])
+        cq.drain_queue(
+            queue_root,
+            landing=lambda i, r: cq.LandingResult(ok=False, reason="boom")
+            if any(f["path"] == "b.txt" for f in i["files"])
+            else cq.LandingResult(ok=True),
+        )
+        _age_done_item(queue_root, i1["qid"], days=30)
+        dead_path = next((queue_root / "dead").glob("q-*.json"))
+        dead = json.loads(dead_path.read_text(encoding="utf-8"))
+        dead["dead_at"] = (datetime.now().astimezone() - timedelta(days=30)).isoformat(timespec="seconds")
+        dead_path.write_text(json.dumps(dead, ensure_ascii=False, indent=2), encoding="utf-8")
+        result = cq.cleanup_done(queue_root, ttl_days=0)  # TTL=0 极端值
+        assert result["removed"] == [i1["qid"]], "超龄 done 全清理"
+        assert dead_path.exists(), "dead/ 永不自动清理不变量破裂"
+        on_disk = json.loads(dead_path.read_text(encoding="utf-8"))
+        assert on_disk["dead_reason"] == "boom", "dead/ 内容不被清理流程改动"
+
+    def test_ttl_configurable(self, queue_root: Path) -> None:
+        i1 = _enqueue(queue_root, "AI-T3", "m1", [("a.txt", b"1")])
+        cq.drain_queue(queue_root)
+        _age_done_item(queue_root, i1["qid"], days=3)
+        result = cq.cleanup_done(queue_root, ttl_days=7)
+        assert result["removed"] == [] and result["kept"] == 1, "3 天 < 7 天 TTL 保留"
+        result = cq.cleanup_done(queue_root, ttl_days=2)
+        assert result["removed"] == [i1["qid"]], "3 天 > 2 天 TTL 清理（可配置生效）"
+
+    def test_drain_auto_cleanup(self, queue_root: Path) -> None:
+        """drain 收尾自动清理（lease 内单写者）：超龄 done 项随排空移除。"""
+        i1 = _enqueue(queue_root, "AI-T4", "m1", [("a.txt", b"1")])
+        cq.drain_queue(queue_root)
+        _age_done_item(queue_root, i1["qid"], days=8)
+        i2 = _enqueue(queue_root, "AI-T4", "m2", [("b.txt", b"2")])
+        stats = cq.drain_queue(queue_root)
+        assert stats["done"] == 1
+        assert stats["done_cleaned"] == 1
+        assert not (queue_root / "done" / f"{i1['qid']}.json").exists()
+        assert (queue_root / "done" / f"{i2['qid']}.json").exists()
+
+    def test_cleanup_cli(self, queue_root: Path, capsys: pytest.CaptureFixture) -> None:
+        i1 = _enqueue(queue_root, "AI-T5", "m1", [("a.txt", b"1")])
+        cq.drain_queue(queue_root)
+        _age_done_item(queue_root, i1["qid"], days=8)
+        rc = cq.main(["--queue-root", str(queue_root), "cleanup"])
+        assert rc == 0
+        out = capsys.readouterr().out
+        assert "CLEANUP" in out and "removed=1" in out
