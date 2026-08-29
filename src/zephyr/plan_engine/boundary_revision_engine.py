@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.reporting.prediction_log_writer(log_prediction/ensure_prediction_log_table); zephyr.shared.state_store(JsonStateStore 接口鸭子类型注入); 触发源类型仅 TYPE_CHECKING 引用（signal_ashare 波3/波4 输出，运行时鸭子类型读字段）
 # [CONSUMERS] MOD-PLAN-001(TomorrowBoundary.apply_revision 应用经修正边界); MOD-PLAN-003(closing_session_decision 尾盘决策在修正后边界内执行); prediction_log(plan_revision 事件，44号 §12.1 M4-②)
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 修正仅当日有效（次日盘前 MOD-PLAN-001 基线覆盖，不跨日累积；非当日消费拒发/标 expired）; 升档×1.2 封顶 firm 单票 8%/组合硬约束（30号 §2.2，firm 层执行）; 防抖≥15min + 升/降档当日各最多 1 次冷却; 触发源缺数据=该源跳过不炸整体; 升降档同窗同时确认→降档优先（安全方向）; 输出纯 dataclass JSON 可序列化
 # [MODIFY-GUARD] blueprint.md（待统筹登记）
 # [STABILITY] testing

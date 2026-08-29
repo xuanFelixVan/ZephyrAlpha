@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.data.table_registry; c1_market.sector_snapshot（只读）; zephyr.data.ch_writer（默认客户端延迟加载，可注入旁路）
 # [CONSUMERS] （MVP 阶段无——调度挂接点预留 44号 M1-④ 盘中调度回路载体（波5 注册任务）；候选消费方：SEC-01 板块盘后报告器、Dashboard D-02 板块全景页、SEC-05 主线候选榜盘中修正）
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 纯函数聚合（aggregate_sector_intraday 无 I/O 无副作用，同输入同输出）；本模块不注册调度任务（M1-④ 载体职责）；资金腿口径=成交额增量代理（sector_snapshot 无主力净流入字段，22号 §3.1⑥ 实证裁定；880xxx 板块指数 inside/outside 为指数自身合成报价 tick 计数，2026-08-22 实证近恒 0-4，不作资金流主口径）；市场统计指数（880001-880009）默认剔除出板块榜；PIT（只读 ≤ 查询时点快照）；frozen dataclass asdict JSON 可序列化
 # [MODIFY-GUARD] docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/92_phase2_business_construction_order.md §7.6
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.plan_engine.scenario_plan_recorder(ScenarioPlanRecorder/compute_and_record_scenario_plan/ScenarioRecorderConfig/ScenarioOutcomeVerdict); zephyr.data.ch_reader（默认 CH 读取通道）; zephyr.data.table_registry（market_trade_calendar 表名解析）
 # [CONSUMERS] 57号日循环 SOP 环节④（盘后批：回写当日+备次日）/ 盘前管线（备当日预案）; 作战室 W0/W6 样本积累（scenario_plan+outcome 族日行落库）
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 盘前段 target_date=次交易日（market_trade_calendar 真源 is_open=1 严格大于数据日 LIMIT 1）; 幂等（同日重跑不重复落库——复用 prediction_log UNIQUE(trade_date,module,prediction_type,input_hash) 保首条，编排层零自建键）; 单段失败不炸另一段（fail-open）; 落库仅经 prediction_log_writer 公共 API（零裸 SQL 写库）; 输入校验 fail-closed; 错误消息不含 session_id
 # [MODIFY-GUARD] blueprint.md
 # [STABILITY] testing

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.backtest.io.result_repository; zephyr.ex_core.position_reconciler; zephyr.risk.core.daily_auditor; zephyr.shared.contracts.fill; zephyr.shared.contracts.position; zephyr.shared.io.paths; zephyr.trading.backtest_fills_adapter; zephyr.trading.broker_settlement_adapter; zephyr.trading.settlement_reconciliation
 # [CONSUMERS] 57号文日循环SOP（人工/后续调度触发）
 # [STARTUP] manual
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 只消费不改既有引擎逻辑(SettlementReconciler/PositionReconciler/DailyAuditor); 差异写库append-only仅INSERT; SQL参数化+常量(NO-BARE-SQL); db_path默认None走DB_PATH SSoT(测试注入临时库); C类当日告警清单必出; 费用差仅参考不归类(56号文C9)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

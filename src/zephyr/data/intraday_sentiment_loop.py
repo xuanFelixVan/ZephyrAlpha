@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.data.sector_intraday_aggregator（SEC-02 挂接）; zephyr.signal_ashare.market_sentiment_analyzer（MOD-SIG-025）; zephyr.reporting.prediction_log_writer（M4-②）; zephyr.data.ch_writer（默认客户端延迟加载，可注入旁路）; c1_market.market_breadth_snapshot / index_quote / kline_index / sector_snapshot（只读）
 # [CONSUMERS] （常驻节拍交 APScheduler/P0-5 日循环 SOP 调度族挂接，本模块不注册任务——波5 交付单拍函数）
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 单拍形态：只提供 run_once() 单拍函数，禁止 while True/常驻循环（PERM-TRIGGER 门禁纪律——永久驻留循环必须有界或由调度器节拍）；fail-open：任一 I/O 边界（快照读/指数读/prediction_log 写/SEC-02 聚合）单次失败 → errors 留痕不抛不炸调度；PIT（只读 ≤ 当前时点最新交易日快照）；快照缺失>2min 不外推（MOD-SIG-025 侧纪律）；输出容器 frozen dataclass（含 datetime 字段不直接 JSON 序列化；prediction_log payload 经写入器 canonical 序列化，datetime/Decimal 放行）
 # [MODIFY-GUARD] docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/92_phase2_business_construction_order.md §8.2
 # [STABILITY] evolving

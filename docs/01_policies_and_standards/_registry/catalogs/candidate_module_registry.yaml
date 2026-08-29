@@ -7575,7 +7575,7 @@ entries:
   source: '2026-08-21 44号 v1.2.1 §7/§11 裁定二（M1 挂 CAND-SIG 族）；2026-08-22 Owner 指令晋升'
   created: '2026-08-22'
   last_updated: '2026-08-22'
-  promoted_to: "92号清单 波3-6.1/波4-7.1/7.3/7.4/波5-8.1/8.2（testing 封顶，B-007）"
+  promoted_to: "92号清单 波3-6.1/波4-7.1/7.3/7.4/波5-8.1/8.2（production 启用 2026-08-29 Owner 批准 B5，B-007 转态）"
   last_reviewed_at: '2026-08-22'
   last_review_outcome: "Owner 指令晋升，阶段二施工"
 
@@ -7620,7 +7620,7 @@ entries:
   source: '2026-08-21 44号 §7/§11 裁定二（M3 挂新建 CAND-PLAN 族）；2026-08-22 Owner 指令晋升'
   created: '2026-08-22'
   last_updated: '2026-08-22'
-  promoted_to: "92号清单 波3-6.2/6.3/6.4、波4-7.11、波5-8.4/8.5/8.6（testing 封顶，B-007）"
+  promoted_to: "92号清单 波3-6.2/6.3/6.4、波4-7.11、波5-8.4/8.5/8.6（production 启用 2026-08-29 Owner 批准 B5，B-007 转态）"
   last_reviewed_at: '2026-08-22'
   last_review_outcome: "Owner 指令晋升，阶段二施工"
 

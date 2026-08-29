@@ -17915,12 +17915,12 @@ entries:
     - 'src/zephyr/trading/backtest_fills_adapter.py（新建，MOD-TRADING-006）'
     - 'src/zephyr/trading/recon_runner.py（新建，MOD-TRADING-007，testing 封顶）'
     - 'tests/trading/test_g3_fill_persistence.py、test_broker_settlement_adapter.py、test_backtest_fills_adapter.py、test_recon_runner.py（全 mock/tmp 隔离）'
-  fix_phase: '已落地（2026-08-21）：4 件施工完成；新测试 39 passed；关联域两轮全绿（tests/ex_core fill_handler 3 文件 + tests/trading 全域，各 2062 passed/15 skipped/3 xfailed 零失败）；depgraph 三节点 planned→generated→testing 两跳推进；不改 SettlementReconciler/PositionReconciler/DailyAuditor 既有逻辑（只消费）；不挂调度（57号文 SOP 人工/后续触发）；57号文 §5 文本升级由统筹会话负责。'
+  fix_phase: '已落地（2026-08-21）：4 件施工完成；新测试 39 passed；关联域两轮全绿（tests/ex_core fill_handler 3 文件 + tests/trading 全域，各 2062 passed/15 skipped/3 xfailed 零失败）；depgraph 三节点 planned→generated→testing 两跳推进；不改 SettlementReconciler/PositionReconciler/DailyAuditor 既有逻辑（只消费）；不挂调度（57号文 SOP 人工/后续触发）；57号文 §5 文本升级由统筹会话负责。【2026-08-29 B6 启用】Owner 批准 production 转态（B-007）：recon_runner/broker_settlement_adapter/backtest_fills_adapter 三件 [MATURITY] testing→production，depgraph 双态实证已在位 production（无需再转），24h 监控随次日日循环 SOP 观察。'
   status: decided
-  confirmed_by_user: '2026-08-21 Owner 批准 56号文 §4 缺口清单 G3/G4/G5/G7 施工'
-  related_rules: '56号文（backtest_vs_sim_reconciliation_plan）; 57号文 §5; 40号文 §决策①工程约束1; #ARCH-134; tracker #234; 宪章 B-007（testing 封顶）'
+  confirmed_by_user: '2026-08-21 Owner 批准 56号文 §4 缺口清单 G3/G4/G5/G7 施工；2026-08-29 Owner 批准 B6 production 启用'
+  related_rules: '56号文（backtest_vs_sim_reconciliation_plan）; 57号文 §5; 40号文 §决策①工程约束1; #ARCH-134; tracker #234; 宪章 B-007（testing 封顶，2026-08-29 B5/B6 批解除）'
   created: '2026-08-21'
-  last_updated: '2026-08-21'
+  last_updated: '2026-08-29'
 # --- #ARCH-136: ERRCODE 门禁 in-process 化（gateway 主通道结构洞补齐） ---
 - issue_id: '#ARCH-136'
   title: GATE-ERRCODE 只挂外部 pre-commit 链致 gateway 主通道无 error_code 对账——43 未登记+5 重号入仓（08-20 夜班批目测取号事故）

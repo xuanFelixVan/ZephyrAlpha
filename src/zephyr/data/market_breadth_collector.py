@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.data.table_registry; zephyr.data.ch_reader（ST 集加载，默认延迟加载可注入旁路）; zephyr.data.implementations.akshare_provider（_limit_pct_of 幅度口径复用）
 # [CONSUMERS] zephyr.data.implementations.miniqmt_provider（market_breadth_snapshot capability）; tests/zephyr/data/test_market_breadth_snapshot.py
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 聚合纯函数无 I/O 无副作用（同输入同输出）；涨跌停幅度口径与 akshare_provider._limit_pct_of（stk_limit 日频表）同源复用不另造；价格比较一律 Decimal 量化到分（ROUND_HALF_UP，交易所口径）；无效 tick（缺昨收/最新价≤0）跳过不计入 total_count；ST 集加载失败→degraded=1 降级不炸（主板 ST 按 10% 近似，涨停计数偏紧留痕）
 # [MODIFY-GUARD] docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/92_phase2_business_construction_order.md §8.2
 # [STABILITY] evolving

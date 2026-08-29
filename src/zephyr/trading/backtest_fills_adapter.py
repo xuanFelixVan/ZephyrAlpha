@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.backtest.io.result_repository; zephyr.shared.contracts.fill; zephyr.trading.broker_settlement_adapter
 # [CONSUMERS] zephyr.trading.recon_runner
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 配对键口径=broker_settlement_adapter.make_business_pair_key; 适配纯转换不修改source状态; Decimal全程; 持仓重放buy+sell-零持仓过滤
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

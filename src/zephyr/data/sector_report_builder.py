@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.data.sector_ranking_engine; zephyr.signal_ashare.sector_breadth; zephyr.signal_ashare.sector_siphon; zephyr.signal_ashare.sector_momentum; zephyr.signal_ashare.sector_analyzer; zephyr.signal_ashare.mainline_candidates; c1_market.kline_sector_880（只读）; c1_market.sector_constituent（只读）; c1_market.kline_daily（只读）; c1_market.money_flow（只读）; c1_market.limit_up_down（只读）; c1_market.stk_limit（只读）; c1_market.sector_snapshot（只读）; c1_market.sector_meta（只读）
 # [CONSUMERS] （MVP 阶段无——候选消费方：IDX-02 Dashboard 板块页 D-02/D-03/D-06、Owner 盘后复盘、.runtime/reports 落盘文件直读）
 # [STARTUP] manual
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 观测层只读：不接交易链路（B-007）；单维度缺数据该维度标 availability=unavailable 不炸整体；PIT（全部数据 ≤ trade_date，成分股 SCD-2 时点过滤）；净流入单位=亿元（money_flow 万元实证口径÷1e4）；涨停梯队双源并集（limit_up_down ∪ stk_limit 触价收封）；frozen dataclass asdict JSON 可序列化；报告落盘 .runtime/reports/（运行时产物不入 git）
 # [MODIFY-GUARD] docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/92_phase2_business_construction_order.md §7.5
 # [STABILITY] evolving

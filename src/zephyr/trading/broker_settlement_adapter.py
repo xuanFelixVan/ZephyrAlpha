@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.contracts.fill; zephyr.trading.settlement_reconciliation
 # [CONSUMERS] zephyr.trading.recon_runner
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 配对键口径唯一真源(symbol+组内时间序); 适配纯转换不修改source状态; Decimal全程
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

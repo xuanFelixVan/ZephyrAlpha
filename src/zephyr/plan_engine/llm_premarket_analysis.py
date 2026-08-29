@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.io.paths(DB_PATH SSoT); zephyr.shared.io.sqlite_factory(get_db_connection); zephyr.shared.io.serialization(dumps canonical); zephyr.data.ch_reader（默认 CH 读取通道，惰性解析）; zephyr.data.table_registry（表名解析）; 注入契约类型仅 TYPE_CHECKING 引用（MOD-SIG-025/057/058/059/060 输出，运行时鸭子类型读字段）
 # [CONSUMERS] 阶段三 llm_runtime_gateway（09架构10号件——本模块=其首个真实消费场景，llm_client 由 gateway 注入）; MOD-PLAN-005 scenario_planner（三情景注解栏，对接口径见 docstring——本单不改 scenario_planner）; 回测 PIT 消费（llm_daily_analysis 表，历史回填留阶段三）
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] PIT 铁律①全部输入须"T+1 日 08:00 前可见"（asof_cutoff 护栏：数据点时间戳>cutoff 拒绝入包+rejected 留痕，fail-closed）; 铁律②③ model_version/prompt_version 冻结入库（版本漂移=新型 PIT 风险）; 铁律④ input_hash=输入数据包 canonical JSON 的 SHA-256（回测复现校验同源）; LLM 是"分析参考注解层"不是信号真源——输出只进 M3 情景注解，不直接改边界档位（防幻觉直通交易，与"不预测"纪律一致）; 本模块不直连任何 LLM API（llm_client 可调用对象注入；None→status=skipped_not_wired 落库留痕不炸）; 落库幂等 UNIQUE(trade_date, model_version, prompt_version, input_hash) 同键跳过保首条; SQL 参数化+常量（NO-BARE-SQL）; db_path 默认 None 走 DB_PATH SSoT（测试注入临时库）; 容器常量 Final; 输出纯 dataclass JSON 可序列化
 # [MODIFY-GUARD] blueprint.md（待统筹登记）
 # [STABILITY] testing
