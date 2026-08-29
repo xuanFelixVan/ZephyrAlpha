@@ -1,0 +1,38 @@
+<section class="page" id="p-projmap">
+    <h2 class="page-title">项目地图 <span class="badge b-na">交互树建设中</span></h2>
+    <div class="page-sub">系统组 · <b>整个项目的"活地图"</b>：7,675 模块 × 73 域依赖全景——哪些模块正在跑、数据正流向哪、谁依赖谁。终态：可缩放依赖树 / 数据流灯 / 折叠展开 / 点节点跳代码位置（首页「全景总览」保留入口卡=快捷方式，本页=本体）</div>
+
+    <div class="card" style="margin-bottom:14px">
+      <h3>真源与现状</h3>
+      <div class="param-strip">
+        <span>依赖关系真源 <b>depgraph</b>（7,675 模块×73 域，2026-08-29 全量重建）</span>
+        <span>中文名+人话简介 <b>module_translation 注册表</b></span>
+        <span style="border-right:none">运行态数据流 <b>调度器任务态+数据库写入流（I-2 接入）</b></span>
+      </div>
+      <div class="note">Owner 用法（讨论裁定）：平时不天天看，要看时展开——①确认"几千个 AI 写的模块在干啥、健不健康" ②点模块看中文名+简介+算法说明 ③跳代码位置方便施工修改 ④折叠/展开父子子孙层级</div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <h3>73 域骨架预览 <span class="badge b-na">演示数据</span> <span class="dim">交互式缩放树施工中；当前=传导链骨架静态呈现</span></h3>
+      <div style="font-size:12.5px;line-height:2.2;padding:6px 2px">
+        <span class="badge b-buy" style="font-size:12px;padding:4px 10px">数据底座 D_ 族</span> →
+        <span class="badge b-buy" style="font-size:12px;padding:4px 10px">因子库</span> →
+        <span class="badge b-buy" style="font-size:12px;padding:4px 10px">信号 / 策略</span> →
+        <span class="badge b-warn" style="font-size:12px;padding:4px 10px">风控</span> →
+        <span class="badge b-warn" style="font-size:12px;padding:4px 10px">执行（QMT 桥 / 币安）</span> →
+        <span class="badge b-na" style="font-size:12px;padding:4px 10px">回测 / 实验</span> →
+        <span class="badge b-na" style="font-size:12px;padding:4px 10px">治理（gate / audit）</span> →
+        <span class="badge b-pass" style="font-size:12px;padding:4px 10px">前端仪表盘（你在这里）</span>
+      </div>
+      <div class="note">「做菜的流水线」视角（Owner 比喻）：数据从哪进 → 在哪加工 → 入哪个库 → 因子怎么算 → 信号怎么来 → 单怎么下。交互树上线后每一环可点开看模块明细+跳代码。</div>
+    </div>
+
+    <div class="card">
+      <h3>当前可用替代</h3>
+      <div class="note" style="font-size:12.5px;line-height:2">
+        ① <b>模块总账</b>（系统组）：6,912 模块四段灯台账，文本网格版 → <span class="todo-link" onclick="go('modledger')">去模块总账</span><br>
+        ② <b>架构全景</b>（系统组）：72 功能域架构图浏览器 → <span class="todo-link" onclick="go('pano')">去架构全景</span><br>
+        ③ 架构可缩放 HTML 图谱：文档服务 8765 启动后可嵌入本页 iframe（_zoomable_html 族）
+      </div>
+    </div>
+  </section>

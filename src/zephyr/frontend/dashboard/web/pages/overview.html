@@ -1,8 +1,27 @@
-<section class="page active" id="p-overview">
+<section class="page" id="p-overview">
     <h2 class="page-title">全景总览 <span class="badge b-na">R18 重构</span> <span style="float:right;font-size:11px;font-weight:400;cursor:pointer;border:1px solid var(--border);border-radius:5px;padding:2px 10px;color:var(--dim)" onclick="modToggleEdit()">🔧 布局</span></h2>
-    <div class="page-sub">2026-08-30 周日 · <b>老板汇报墙</b>：资金总览 + 各页结论卡墙（点卡去源页看全部因子证据；✓/✗ 直接反馈）+ 系统健康 + AI 助手——行情细节去各专业页（R18 二次定位：本页不再堆行情，只做"全员汇报+项目健康"）· 模块可自由增删改大小（布局按钮）</div>
+    <div class="page-sub">2026-08-30 周日 · <b>决策简报</b>：今日决策（买/卖/观望）压顶 + 资金总览 + 持仓明细 + 各页结论卡墙——行情细节去各专业页（R18 二次定位）· 模块可自由增删改大小（布局按钮）· 默认落地页=「首页」（建设中）</div>
 
     <div class="ovx-grid" id="ovx-grid">
+
+      <!-- 今日决策双卡（Owner 2026-08-30 裁定：全站唯一核心产出=现在买/卖/观望；一切分析的最终目的） -->
+      <div data-mod="decide" data-mod-name="今日决策" style="--span:12">
+        <div class="dc2">
+          <div class="dc-card dc-hold">
+            <div class="dc-mkt">A股 · 今日决策 <span class="badge b-na">演示数据</span></div>
+            <div class="dc-act">观望 · 不新开仓</div>
+            <div class="dc-why">明日惯性下行概率偏大（8 态推演：下行 32.6%）→ 今日买入明天才能卖，等明天恐慌盘（T+1 隔夜风险）；预案格「平开+高走」午后未站稳 VWAP，执行降级</div>
+            <div class="dc-sub-deal dim">持仓动作：持仓 4 只不动 · 宁德时代距止损 1.8% 盯紧 → <span class="todo-link" onclick="go('warroom')">作战指挥</span> · <span class="todo-link" onclick="go('position')">持仓监控</span></div>
+          </div>
+          <div class="dc-card dc-buy">
+            <div class="dc-mkt">币圈 · 今日决策 <span class="badge b-na">演示数据</span></div>
+            <div class="dc-act">做多 BTC · 小仓试</div>
+            <div class="dc-why">资金费率 +0.009% 偏多温和+恐惧贪婪 64 贪婪区间+BTC/纳指共振走强；仓位 3% 试探，止损 -2%（风险预算内）；ETH 不动（费率分化）</div>
+            <div class="dc-sub-deal dim">已挂审批：BTC 永续多 3% · 待你批（human_gated）→ <span class="todo-link" onclick="go('cryptopos')">币圈持仓风控</span></div>
+          </div>
+        </div>
+        <div class="note" style="margin-top:8px">决策卡=全部分析的终点：W2 预案匹配+明日推演+情绪+资金+风险预算五路汇入 → 一句话行动指令（只出方向不出点位，90 号铁律）；✓/✗ 可反馈到下方结论墙对应卡</div>
+      </div>
 
       <div data-mod="funds" data-mod-name="资金总览" style="--span:12">
         <div>
@@ -54,10 +73,40 @@
         </div>
       </div>
 
-      <!-- R21 结论卡墙：全站各页结论按实盘交易顺序聚合（JS 抓取各页 .vd 卡镜像，真源唯一；点卡去源页看全部因子证据） -->
-      <div data-mod="wall" data-mod-name="结论卡墙" style="--span:12">
+      <!-- 持仓明细（同花顺口径移植，Owner 2026-08-30 截图裁定字段；双市场分表） -->
+      <div data-mod="pos" data-mod-name="持仓明细" style="--span:12">
         <div class="card">
-          <h3>全员结论汇报 <span class="badge b-na">演示数据</span> <span class="dim">各页"一句话结论"按实盘交易顺序排列 · 共 <b id="vd-wall-n">—</b> 张 · 点卡去源页看全部因子证据 · ✓/✗=你判它对错（R1 反馈反推优化）</span></h3>
+          <h3>持仓明细 <span class="badge b-na">演示数据</span> <span class="dim">同花顺口径（Owner 截图裁定字段）· A股/币圈分表 · 明细操作去「持仓监控」「币圈持仓风控」</span></h3>
+          <div class="pos-head">
+            <div class="ph"><span class="l">总资产</span><span class="v">375,432.66</span></div>
+            <div class="ph"><span class="l">资金余额</span><span class="v">280,750.36</span></div>
+            <div class="ph"><span class="l">股票市值</span><span class="v">94,682.30</span></div>
+            <div class="ph"><span class="l">持仓盈亏</span><span class="v down">-26,330.63</span></div>
+            <div class="ph"><span class="l">当日盈亏</span><span class="v down">-115.20</span></div>
+            <div class="ph"><span class="l">当日盈亏比</span><span class="v down">-0.03%</span></div>
+            <span class="todo-link" style="margin-left:auto;align-self:center" onclick="go('position')">持仓监控 →</span>
+          </div>
+          <table class="pos-table">
+            <tr><th>证券代码</th><th>名称</th><th style="text-align:right">市值</th><th style="text-align:right">持仓量</th><th style="text-align:right">当日盈亏</th><th style="text-align:right">当日盈亏比</th><th style="text-align:right">参考盈亏</th><th style="text-align:right">盈亏比例</th><th style="text-align:right">市价</th><th style="text-align:right">成本价</th><th style="text-align:right">仓位占比</th><th style="text-align:right">持股天数</th></tr>
+            <tr><td>159915</td><td>创业板ETF易方达</td><td style="text-align:right">69,892.90</td><td style="text-align:right">20,300</td><td style="text-align:right" class="down">-523.90</td><td style="text-align:right" class="down">-0.38%</td><td style="text-align:right" class="up">+356.93</td><td style="text-align:right" class="up">+0.52%</td><td style="text-align:right">3.443</td><td style="text-align:right">3.425</td><td style="text-align:right">18.62%</td><td style="text-align:right">16</td></tr>
+            <tr><td>159865</td><td>养殖ETF国泰</td><td style="text-align:right">20,348.40</td><td style="text-align:right">37,200</td><td style="text-align:right" class="up">+148.80</td><td style="text-align:right" class="up">+0.74%</td><td style="text-align:right" class="up">+43.70</td><td style="text-align:right" class="up">+0.24%</td><td style="text-align:right">0.547</td><td style="text-align:right">0.546</td><td style="text-align:right">5.42%</td><td style="text-align:right">22</td></tr>
+            <tr><td>603216</td><td>梦天家居</td><td style="text-align:right">2,059.00</td><td style="text-align:right">100</td><td style="text-align:right">0.00</td><td style="text-align:right">0.00%</td><td style="text-align:right" class="down">-34,092.35</td><td style="text-align:right" class="down">-94.30%</td><td style="text-align:right">20.590</td><td style="text-align:right">361.448</td><td style="text-align:right">0.55%</td><td style="text-align:right">97</td></tr>
+            <tr><td>512400</td><td>有色金属ETF南方</td><td style="text-align:right">198.20</td><td style="text-align:right">100</td><td style="text-align:right" class="up">+132.50</td><td style="text-align:right" class="up">+0.44%</td><td style="text-align:right" class="up">+66.90</td><td style="text-align:right" class="up">+56.93%</td><td style="text-align:right">1.982</td><td style="text-align:right">1.263</td><td style="text-align:right">0.05%</td><td style="text-align:right">2</td></tr>
+          </table>
+          <div style="display:flex;align-items:center;gap:10px;margin:12px 0 6px"><b style="font-size:12.5px">币圈持仓</b><span class="dim" style="font-size:11px">合约 · USDT 本位 · 与 A股资金完全隔离</span><span class="todo-link" style="margin-left:auto" onclick="go('cryptopos')">币圈持仓风控 →</span></div>
+          <table class="pos-table">
+            <tr><th>合约</th><th>方向</th><th style="text-align:right">数量</th><th style="text-align:right">开仓价</th><th style="text-align:right">标记价</th><th style="text-align:right">未实现盈亏</th><th style="text-align:right">回报率</th><th style="text-align:right">强平价</th><th style="text-align:right">保证金率</th></tr>
+            <tr><td>BTC-USDT 永续</td><td><span class="badge b-buy">多</span></td><td style="text-align:right">0.15</td><td style="text-align:right">83,940.0</td><td style="text-align:right">85,062.0</td><td style="text-align:right" class="up">+168.3</td><td style="text-align:right" class="up">+1.34%</td><td style="text-align:right">76,120</td><td style="text-align:right">4.8%</td></tr>
+            <tr><td>ETH-USDT 永续</td><td><span class="badge b-buy">多</span></td><td style="text-align:right">2.0</td><td style="text-align:right">3,152.0</td><td style="text-align:right">3,128.4</td><td style="text-align:right" class="down">-47.2</td><td style="text-align:right" class="down">-0.75%</td><td style="text-align:right">2,810</td><td style="text-align:right">8.2%</td></tr>
+          </table>
+          <div class="note">冻结数量/当日买入卖出/交易市场等全字段在「持仓监控」页（本页=摘要口径）；币圈维持保证金率 &lt;10% 触发强减审批（human_gated）</div>
+        </div>
+      </div>
+
+      <!-- R21 结论卡墙：全站各页结论按实盘交易顺序聚合（JS 抓取各页 .vd 卡镜像，真源唯一；点卡去源页看全部因子证据） -->
+      <div data-mod="wall" data-mod-name="决策简报" style="--span:12">
+        <div class="card">
+          <h3>决策简报 <span class="badge b-na">演示数据</span> <span class="dim">各页"一句话结论"按实盘交易动线排列 · 共 <b id="vd-wall-n">—</b> 张 · 点卡去源页看全部因子证据 · ✓/✗=你判它对错（R1 反馈反推优化）</span></h3>
           <div class="vd-wall" id="vd-wall"></div>
           <div class="note">排序=实盘交易动线：隔夜外盘 → 昨日预案 → 今天匹配 → 大盘状态 → 走势预期 → 板块资金 → 情绪 → 新闻 → 政策 → 做T → 持仓 → 币圈 → 明天推演 → 系统健康</div>
         </div>
@@ -128,7 +177,7 @@
             <div style="flex:1;font-size:12px;line-height:1.8">
               整个项目的"活地图"：哪些模块正在跑、数据正流向哪、谁依赖谁。支持缩放/折叠/中文名+简介，点节点跳代码位置。
             </div>
-            <button style="background:var(--blue,#3D8BFF);border:none;color:#fff;border-radius:6px;padding:8px 16px;cursor:pointer;font-size:12.5px" onclick="ovxMap(1)">展开全屏</button>
+            <button style="background:var(--blue,#3D8BFF);border:none;color:#fff;border-radius:6px;padding:8px 16px;cursor:pointer;font-size:12.5px" onclick="go('projmap')">打开地图 →</button>
           </div>
         </div>
       </div>
@@ -156,16 +205,5 @@
       <div id="mod-drawer-list"></div>
       <button style="width:100%;margin-top:10px;background:transparent;border:1px solid var(--border);color:var(--dim);border-radius:6px;padding:6px;cursor:pointer;font-size:12px" onclick="modReset()">一键还原默认布局</button>
       <button style="width:100%;margin-top:6px;background:transparent;border:1px solid var(--border);color:var(--dim);border-radius:6px;padding:6px;cursor:pointer;font-size:12px" onclick="modToggleEdit()">完成 · 锁定布局</button>
-    </div>
-
-    <!-- R18 项目全景地图全屏覆盖层 -->
-    <div class="map-overlay" id="map-overlay">
-      <button class="mo-close" onclick="ovxMap(0)">✕ 关闭</button>
-      <h3 style="margin-top:0">项目全景地图 <span class="badge b-na">交互树施工中（I-2）</span></h3>
-      <div class="note" style="margin-bottom:14px">真源=depgraph（7,675 模块 × 73 域依赖关系，08-29 已全量重建）+ 翻译注册表（每模块中文名+人话简介）——终态：可缩放依赖树/数据流灯/点节点跳代码。当前可用替代：架构可缩放 HTML 图谱（文档服务 8765 启动后可嵌入本页 iframe）。</div>
-      <div class="card">
-        <h3>73 域地图（骨架预览）</h3>
-        <div class="dim" style="font-size:12px;line-height:2">数据底座（D_ 族）→ 因子库 → 信号/策略 → 风控 → 执行（QMT 桥/币安）→ 回测/实验 → 治理（gate/audit）→ 前端仪表盘（本地图）…　交互式缩放树施工排期中，骨架数据已就绪。</div>
-      </div>
     </div>
   </section>
