@@ -1,11 +1,11 @@
-# [BLUEPRINT] MOD-AU-001 | docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/15_autonomy_boundary_risk.md | §4.1-S0.2
+# [BLUEPRINT] MOD-AU-001 | docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/15_autonomy_boundary_risk.md | §4.1-S0.2 + §4.2-S1.2
 # [MODULE] zephyr.autonomy_core.autonomy_boundary_gate
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES] pyyaml
-# [CONSUMERS] tests/autonomy/test_autonomy_boundary_gate.py
+# [DEPENDENCIES] pyyaml; zephyr.autonomy_core.agentic_drift_guard（S1.2 内联漂移检查，默认启用可关）
+# [CONSUMERS] tests/autonomy/test_autonomy_boundary_gate.py; tests/autonomy/test_autonomy_gate_drift_hook.py
 # [STARTUP] imported
 # [MATURITY] testing
-# [INVARIANTS] fail-closed(注册表不可读/目标未登记/内部异常 => 永不放行); 每次判定必留痕(.runtime/audit jsonl); 判定以 GOV-AI-001 注册表为唯一真源(文件头 [AI_AUTONOMY] 锚定仅为投影提示)
+# [INVARIANTS] fail-closed(注册表不可读/目标未登记/内部异常 => 永不放行); 每次判定必留痕(.runtime/audit jsonl); 判定以 GOV-AI-001 注册表为唯一真源(文件头 [AI_AUTONOMY] 锚定仅为投影提示); S1.2 漂移内联挂接 drift_check_enabled=False 时零行为变化; 漂移检查仅作用于带 session_id 的留痕判定（内存滑窗增量，禁全量读 jsonl）; 漂移挂点自身异常不阻断原判定
 # [MODIFY-GUARD] Owner approval required; 变更须同步 15号文 §4.1 S0.2 验收口径
 # [STABILITY] evolving
 # [SAFETY] H
@@ -29,6 +29,14 @@
 - 全部判定 → .runtime/audit/autonomy_boundary_gate.jsonl（追加，逐行 flush）
 - human_gated 升级工单 → .runtime/autonomy_gate/queue/ticket-<verdict_id>.json（status=pending_review）
 - immutable_core 告警 → .runtime/autonomy_gate/alerts.jsonl（severity=critical）
+
+S1.2 内联漂移挂接（15号文 §4.2，默认启用，drift_check_enabled=False 整体关断）：
+- 每次带 session_id 的留痕判定，把本步操作追加进该会话的内存滑窗（deque，
+  与审计事件流 append 同步增量更新，不做全量 jsonl 读取），再交 AgenticDriftGuard
+  做操作链漂移检查（纯函数核，性能预算对齐蓝图 L2 ABAC ≈0.25ms 量级）。
+- DRIFT_WARNING → 不阻断，verdict 打 auto_guard 降级标记（autonomy_regressor 的
+  auto_guard 档语义）；DRIFT_DETECTED → 原放行判定升级为 BLOCK（Hard-Gate），
+  P0 告警由 AgenticDriftGuard 按 16号文统一事件 schema 落盘。
 """
 
 from __future__ import annotations
@@ -37,6 +45,7 @@ import json
 import logging
 import os
 import uuid
+from collections import deque
 from dataclasses import dataclass, field, replace
 from datetime import UTC, datetime
 from enum import Enum
@@ -44,6 +53,13 @@ from pathlib import Path
 from typing import Any, Final, final
 
 import yaml
+
+from zephyr.autonomy_core.agentic_drift_guard import (
+    AgenticDriftGuard,
+    ChainOperation,
+    DriftCheckConfig,
+    DriftLevel,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -93,7 +109,13 @@ _LAYER_REASON: Final[dict[AutonomyLayer, str]] = {
 
 @dataclass(frozen=True)
 class GateVerdict:
-    """单次写操作判定结果（不可变）."""
+    """单次写操作判定结果（不可变）.
+
+    auto_guard / drift_level / drift_verdict_id 为 S1.2 漂移内联检查投影字段：
+    未启用或无 session_id 时保持默认值（零行为变化）；drift_level ∈
+    {""/ok/warning/detected}，warning 时 auto_guard=True（不阻断），
+    detected 且原判定放行时 decision 升级为 BLOCK（Hard-Gate）。
+    """
 
     verdict_id: str
     action_id: str
@@ -107,6 +129,9 @@ class GateVerdict:
     session_id: str = ""
     ticket_path: str = ""
     timestamp: str = ""
+    auto_guard: bool = False
+    drift_level: str = ""
+    drift_verdict_id: str = ""
 
     @property
     def allowed(self) -> bool:
@@ -128,6 +153,9 @@ class GateVerdict:
             "session_id": self.session_id,
             "ticket_path": self.ticket_path,
             "timestamp": self.timestamp,
+            "auto_guard": self.auto_guard,
+            "drift_level": self.drift_level,
+            "drift_verdict_id": self.drift_verdict_id,
         }
 
 
@@ -235,6 +263,10 @@ class AutonomyBoundaryGate:
         registry_path: str | Path | None = None,
         runtime_dir: str | Path | None = None,
         repo_root: str | Path | None = None,
+        *,
+        drift_check_enabled: bool = True,
+        drift_config: DriftCheckConfig | None = None,
+        drift_guard: AgenticDriftGuard | None = None,
     ) -> None:
         self._repo_root = Path(repo_root) if repo_root else _REPO_ROOT
         self._registry_path = (
@@ -247,6 +279,16 @@ class AutonomyBoundaryGate:
         self._index = _RegistryIndex(self._registry_path)
         self._audit_handle: Any = None
         self._alerts_handle: Any = None
+        # S1.2 内联漂移挂接（15号文 §4.2）：默认启用；drift_check_enabled=False 时
+        # 不建 guard/滑窗，判定链路与挂接前完全一致（零行为变化）。
+        self._drift_guard: AgenticDriftGuard | None = None
+        self._drift_window_size: int = 10
+        self._session_ops: dict[str, deque[ChainOperation]] = {}
+        if drift_check_enabled:
+            self._drift_guard = drift_guard or AgenticDriftGuard(
+                runtime_dir=self._runtime_dir, config=drift_config
+            )
+            self._drift_window_size = self._drift_guard.config.window_size
 
     def check_write_permission(
         self,
@@ -291,6 +333,7 @@ class AutonomyBoundaryGate:
         elif verdict.decision is GateDecision.BLOCK:
             self._write_alert(verdict, session_context)
         if trace:
+            verdict = self._drift_inline_check(verdict, session_context)
             self._trace(verdict)
         return verdict
 
@@ -363,6 +406,67 @@ class AutonomyBoundaryGate:
                 return layer, raw_path, module
         return None, "", ""
 
+    def _drift_inline_check(
+        self, verdict: GateVerdict, session_context: dict[str, Any] | None
+    ) -> GateVerdict:
+        """S1.2 操作链内联漂移检查（15号文 §4.2，挂在留痕判定链路上）.
+
+        操作链真源 = 本 gate 审计事件流（session_id 键控有序事件），此处以每会话
+        内存滑窗（deque，maxlen=window_size）增量承载——判定事件流 append 时同步
+        更新，禁止每次全量读 jsonl；无 session_id 即无链可判，直接跳过。
+        处置：WARNING → auto_guard 降级标记（autonomy_regressor 语义，不阻断）；
+        DETECTED → 原 ALLOW 升级 BLOCK（Hard-Gate），P0 告警由 guard 侧落盘。
+        挂点自身异常不阻断原判定（仅 logger.warning）。
+        """
+        if self._drift_guard is None or not verdict.session_id:
+            return verdict
+        try:
+            window = self._session_ops.get(verdict.session_id)
+            if window is None:
+                window = deque(maxlen=self._drift_window_size)
+                self._session_ops[verdict.session_id] = window
+            op_type = "write"
+            if isinstance(session_context, dict):
+                op_type = str(session_context.get("op_type") or "write")
+            window.append(
+                ChainOperation(
+                    op_type=op_type,
+                    path=self._normalize_target(verdict.target),
+                    timestamp=verdict.timestamp,
+                )
+            )
+            drift = self._drift_guard.inspect(tuple(window))
+        except Exception as exc:  # noqa: BLE001 — 漂移挂点异常不阻断 gate 原判定
+            logger.warning("S1.2 内联漂移检查异常（原判定仍生效）: %r", exc)
+            return verdict
+        if drift.level is DriftLevel.DETECTED:
+            decision = verdict.decision
+            note = f"agentic drift DETECTED（{drift.reason}）"
+            if decision is GateDecision.ALLOW:
+                decision = GateDecision.BLOCK
+                note = f"{note}，原放行判定被 Hard-Gate 拦截"
+            return replace(
+                verdict,
+                decision=decision,
+                reason=f"{verdict.reason}；{note}",
+                drift_level=drift.level.value,
+                drift_verdict_id=drift.verdict_id,
+            )
+        if drift.level is DriftLevel.WARNING:
+            return replace(
+                verdict,
+                reason=(
+                    f"{verdict.reason}；agentic drift WARNING（{drift.reason}），"
+                    "降级 auto_guard"
+                ),
+                auto_guard=True,
+                drift_level=drift.level.value,
+                drift_verdict_id=drift.verdict_id,
+            )
+        return replace(
+            verdict, drift_level=drift.level.value, drift_verdict_id=drift.verdict_id
+        )
+
     def _trace(self, verdict: GateVerdict) -> None:
         severity = {
             GateDecision.ALLOW: "info",
@@ -376,6 +480,10 @@ class AutonomyBoundaryGate:
             ),
             GateDecision.BLOCK: "immutable_core_violation",
         }[verdict.decision]
+        if verdict.drift_level in (DriftLevel.WARNING.value, DriftLevel.DETECTED.value):
+            threat_category = "agentic_drift"
+            if verdict.decision is GateDecision.ALLOW:
+                severity = "elevated"  # WARNING 不阻断，但严重度提升留痕
         record = {
             "schema_version": SCHEMA_VERSION,
             "event_id": verdict.verdict_id,
@@ -389,6 +497,8 @@ class AutonomyBoundaryGate:
                 "registry": str(self._registry_path),
                 "matched_path": verdict.matched_path,
                 "ticket_path": verdict.ticket_path,
+                "drift_level": verdict.drift_level,
+                "drift_verdict_id": verdict.drift_verdict_id,
             },
             **verdict.to_dict(),
         }

@@ -411,6 +411,11 @@ class AgenticDriftGuard:
         self._alerts_path = self._runtime_dir / "audit" / "agentic_drift_guard_alerts.jsonl"
         self._config = config or DEFAULT_DRIFT_CONFIG
 
+    @property
+    def config(self) -> DriftCheckConfig:
+        """生效配置（只读；S0.2 gate 内联挂接据此对齐会话滑窗宽度）。"""
+        return self._config
+
     def inspect(
         self,
         ops: Sequence[ChainOperation],
