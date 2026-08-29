@@ -18,13 +18,16 @@
   6. 参数非法 exit 2 / 连接失败 exit 1
   7. 启动前检查项打印（C1 PASS/FAIL/SKIP 三态 + mock 信号告警）
   8. load_qmt_sim_config（tmp 配置文件解析）
+  9. --service 常驻服务模式（GAP-2 残余①：assemble_session 包 slot 交 LiveStrategyAdapter）
 """
 
 from __future__ import annotations
 
 import importlib.util
+import json
 import sys
 from datetime import datetime, timedelta
+from datetime import time as dtime
 from decimal import Decimal
 from pathlib import Path
 from types import SimpleNamespace
@@ -96,6 +99,10 @@ class _MockSession:
 
     def stop(self) -> None:
         self.stopped = True
+
+    def get_session_report(self) -> dict:
+        """adapter 监督/心跳契约件（running 供意外停止检测）。"""
+        return {"running": self.started and not self.stopped}
 
 
 # ── 1. CLI 参数解析 ──
@@ -309,3 +316,164 @@ class TestLoadQmtSimConfig:
     def test_missing_file(self, tmp_path):
         with pytest.raises(FileNotFoundError):
             sps.load_qmt_sim_config(tmp_path / "nope.env")
+
+
+# ── 9. --service 常驻服务模式（57 号文 GAP-2 残余①：assemble_session 包 slot 交 adapter）──
+
+
+class _MockAdapter:
+    """记录型 mock LiveStrategyAdapter。"""
+
+    def __init__(self, run_code: int = 0) -> None:
+        self.started = False
+        self.run_called = False
+        self.run_close_at = None
+        self.run_code = run_code
+
+    def start(self) -> None:
+        self.started = True
+
+    def run(self, close_at=None, *, stop_event=None) -> int:
+        self.run_called = True
+        self.run_close_at = close_at
+        return self.run_code
+
+
+class TestServiceMode:
+    def test_parse_service_flag_default_off(self):
+        assert sps.parse_args([]).service is False
+        assert sps.parse_args(["--service"]).service is True
+
+    def test_service_mode_routes_to_adapter(self, capsys):
+        """--service：adapter.start→run(close_at) 收场 exit 0；main 不直接装配/启动 session。"""
+        broker = _MockBroker()
+        adapter = _MockAdapter()
+
+        def _forbidden_session_factory(a, b):
+            raise AssertionError("--service 模式 main 不直接装配 session（归 adapter slot 工厂）")
+
+        code = sps.main(
+            ["--service"],
+            broker_factory=lambda: broker,
+            session_factory=_forbidden_session_factory,
+            adapter_factory=lambda a, b: adapter,
+            qmt_probe=lambda: True,
+        )
+        assert code == 0
+        assert adapter.started and adapter.run_called
+        assert adapter.run_close_at == dtime(15, 5)
+        assert "常驻服务" in capsys.readouterr().out
+
+    def test_service_mode_close_time_passthrough(self):
+        """--close-time 透传 adapter.run(close_at)。"""
+        adapter = _MockAdapter()
+        code = sps.main(
+            ["--service", "--close-time", "14:55"],
+            broker_factory=lambda: _MockBroker(),
+            adapter_factory=lambda a, b: adapter,
+            qmt_probe=lambda: True,
+        )
+        assert code == 0
+        assert adapter.run_close_at == dtime(14, 55)
+
+    def test_service_mode_assembly_failure_exit_1(self, capsys):
+        """常驻服务装配失败 → broker 断连 + exit 1（与过渡形态装配失败同口径）。"""
+        broker = _MockBroker()
+
+        def _boom(a, b):
+            raise RuntimeError("slots 不能为空")
+
+        code = sps.main(
+            ["--service"],
+            broker_factory=lambda: broker,
+            adapter_factory=_boom,
+            qmt_probe=lambda: True,
+        )
+        assert code == 1
+        assert broker.disconnected is True
+        assert "常驻服务装配失败" in capsys.readouterr().out
+
+    def test_service_mode_dry_run_precedence(self):
+        """--service --dry-run：dry-run 优先（只连不打单），adapter 永不装配。"""
+        broker = _MockBroker()
+
+        def _forbidden_adapter_factory(a, b):
+            raise AssertionError("dry-run 不得装配常驻服务（只连不打任何单）")
+
+        code = sps.main(
+            ["--service", "--dry-run"],
+            broker_factory=lambda: broker,
+            adapter_factory=_forbidden_adapter_factory,
+            qmt_probe=lambda: True,
+        )
+        assert code == 0
+        assert broker.connected and broker.positions_queried and broker.disconnected
+
+    def test_service_mode_real_adapter_bounded_run(self, tmp_path):
+        """真 adapter 链路：假钟越过收盘 → run 有界收场（session start/stop 各一次）→ exit 0。"""
+        clock = _FakeClock(_sh(15, 4))
+        session = _MockSession()
+        hb = tmp_path / "live_strategy_biz.heartbeat"
+
+        def _sleeper(seconds: float) -> None:
+            clock.advance(120.0)  # 一觉睡过 15:05
+
+        code = sps.main(
+            ["--service"],
+            broker_factory=lambda: _MockBroker(),
+            session_factory=lambda a, b: session,
+            sleeper=_sleeper,
+            now_fn=clock,
+            qmt_probe=lambda: True,
+            adapter_kwargs={"heartbeat_path": hb},
+        )
+        assert code == 0
+        assert session.started and session.stopped
+        payload = json.loads(hb.read_text(encoding="utf-8"))
+        assert payload["service"] == "live_strategy_adapter"
+        assert payload["running"] is False  # 收场后最终心跳
+        assert payload["slots"][0]["state"] == "STOPPED"
+
+
+class TestAssembleAdapter:
+    def test_wraps_session_factory_as_slot(self, tmp_path):
+        """assemble_session 包 slot：真 adapter start→session started；biz 心跳 JSON 落盘含 slot。"""
+        args = sps.parse_args([])
+        sessions: list = []
+
+        def _factory(a, b):
+            s = _MockSession()
+            sessions.append(s)
+            return s
+
+        hb = tmp_path / "live_strategy_biz.heartbeat"
+        adapter = sps.assemble_adapter(
+            args,
+            _MockBroker(),
+            session_factory=_factory,
+            heartbeat_path=hb,
+            now_fn=lambda: _sh(9, 25),
+            sleeper=lambda s: None,
+        )
+        adapter.start()
+        assert len(sessions) == 1 and sessions[0].started
+        payload = json.loads(hb.read_text(encoding="utf-8"))
+        assert payload["service"] == "live_strategy_adapter"
+        assert payload["running"] is True
+        assert payload["slots"][0]["slot_id"] == "paper-keepalive"
+        adapter.stop()
+        assert sessions[0].stopped
+
+    def test_slot_factory_recreates_session_on_call(self, tmp_path):
+        """slot 工厂=assemble_session 口径：每次调用重造新会话实例（崩溃重启不携残留态）。"""
+        args = sps.parse_args(["--strategy", "topn-momentum", "--universe", "600000.SH"])
+        adapter = sps.assemble_adapter(
+            args,
+            _MockBroker(),
+            heartbeat_path=tmp_path / "biz.heartbeat",
+            now_fn=lambda: _sh(9, 25),
+            sleeper=lambda s: None,
+        )
+        factory = adapter._runtimes[0].slot.session_factory
+        assert factory() is not factory()
+        assert adapter._runtimes[0].slot.slot_id == "paper-topn-momentum"

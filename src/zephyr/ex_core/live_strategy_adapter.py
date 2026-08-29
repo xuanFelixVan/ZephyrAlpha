@@ -2,7 +2,7 @@
 # [MODULE] zephyr.ex_core.live_strategy_adapter
 # [DOMAIN] D_EX_CORE
 # [DEPENDENCIES] stdlib；zephyr.ex_core.trading_session（TradingSession 生命周期契约：start/stop/get_session_report）
-# [CONSUMERS] 57 号文 GAP-2 常驻服务化——CLI/调度接线属后续批（start_paper_session.py 过渡形态仍有效）
+# [CONSUMERS] 57 号文 GAP-2 常驻服务化——CLI 接线已落（scripts/start_paper_session.py --service：assemble_session 包 slot 常驻运行）；挂计划任务/调度=Owner 窗口
 # [STARTUP] imported
 # [MATURITY] testing
 # [INVARIANTS] 只编排不重造（包装 TradingSession 不复制下单/撤单逻辑）；slot 异常隔离（单 slot 装配/启动/停止/崩溃不扩散其余 slot 与服务本体）；业务心跳 tmp+os.replace 原子写（tick_subscriber biz 心跳先例），与 guard 进程心跳（tmp/trading.heartbeat，ISO|guard_pid|child_pid）正交；重启上限熔断（默认 3 次，process_supervisor MAX_RESTART_ATTEMPTS 先例）超限转 EXHAUSTED 等人工；仅承载模拟盘会话（实盘启用一律 Owner 窗口，本模块无任何下单路径——下单语义在 TradingSession 内）
