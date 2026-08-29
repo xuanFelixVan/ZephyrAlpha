@@ -1,6 +1,6 @@
 ---
 ttl: permanent
-doc_type: blueprint
+doc_type: architecture_view
 title: LLM 基础设施施工图
 owner: ZephyrAlpha-Owner
 language: zh

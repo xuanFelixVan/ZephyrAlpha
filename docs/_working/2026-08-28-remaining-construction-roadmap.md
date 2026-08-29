@@ -65,8 +65,8 @@ ttl: task_bound
 | B14 | 选股 6 维权重 IC 校准 | [21号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/21_stock_selection_engine.md) | 实盘数据 |
 | B15 | 情绪周期定位器准确率评估 | [28号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/28_sentiment_cycle_trading.md) | 实盘数据 |
 | B16 | 外部 Feed 事件因子（dReport/Jump on PEAD） | [26号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/26_event_driven_strategy_detail.md) | 外部 Feed 接入（iFind 已裁定不续费，源待选） |
-| B17 | 三套自治等级标尺统一（09 域 Q3） | [15号(09)](../02_enterprise_architecture/09_ai_architecture/implementation_plans/15_autonomy_boundary_risk.md) | **Owner 裁定**（GP 排期联动） |
-| B18 | 模块工厂 Phase 0→1 / U7 业务 Agent 细化（09 域 Q1/Q2） | [13号(09)](../02_enterprise_architecture/09_ai_architecture/implementation_plans/13_module_factory.md) / [14号(09)](../02_enterprise_architecture/09_ai_architecture/implementation_plans/14_execution_layer.md) | **Owner 裁定**（前置已就绪，转 GP 排期） |
+| ~~B17~~ | ~~三套自治等级标尺统一（09 域 Q3）~~ ✅ 已闭环（2026-08-29，#ARCH-284） | [15号(09)](../02_enterprise_architecture/09_ai_architecture/implementation_plans/15_autonomy_boundary_risk.md) | ~~Owner 裁定~~ → 实证 Owner 已于 2026-08-18 裁定关闭（裁定8/裁定#224，commit 56319b2f42：00_index 主标尺 L0~L3+L4 保留+§3.3 映射定稿+PS-VOC-021 l3 改"中风险封顶"）；本项系 08-28 审查批误标"待人裁"，本次追认+15号文两处漂移文本修复+14号文 Q5 联动关闭 |
+| ~~B18~~ | ~~模块工厂 Phase 0→1 / U7 业务 Agent 细化（09 域 Q1/Q2）~~ ✅ 已闭环（2026-08-29，#ARCH-285/#ARCH-286） | [13号(09)](../02_enterprise_architecture/09_ai_architecture/implementation_plans/13_module_factory.md) / [14号(09)](../02_enterprise_architecture/09_ai_architecture/implementation_plans/14_execution_layer.md) | ~~Owner 裁定~~ → **GP1 排期批裁定开门**（I1-1~I1-3 全达成，17号文刷新）：第一波=10号 L2/L3 统一入口 ∥ 13号 Phase 1（knowledge_classifier+module_mapper）∥ 09号缺口收尾；13号文 Q1~Q9 全裁定（Q1 批准/Q2 真源归11号文/Q3 双关关闭/Q4-Q9 逐项）；14号文 Q1/Q2/Q4/Q5 事实关闭+Q7 doc_type 裁定（目录统一 architecture_view） |
 | B19 | 灰度+影子部署 BM-MT-02-A/B | [61号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/61_lifecycle_multi_ai.md) | 策略上线后 |
 | B20 | recon_runner L3 期初持仓快照数据源 | [56号](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/56_backtest_vs_sim_reconciliation_plan.md) | 57 号文窗口项（日循环跑通后定） |
 | B21 | IDX-02 前端接入（架构审查尾巴） | [架构审查](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/architecture_review_2026_08_module_upgrade_audit.md) | 已移交前端会话（D6 裁定有主），随 A11 前端批一并排 |
@@ -142,7 +142,7 @@ ttl: task_bound
 波 5（延期登记项清偿，低优先）
   A12 回撤延期项 → A13 BudgetChange 接线 → A14 执行层 Phase 2 → A15 监控暂缓项复评 → A16 CPCV+PBO
         │
-GP1 批（09 域 G1-G13，GP0 终审 M0 后单独开排期批；Q1/Q3 先走 Owner 窗口=B17/B18）
+GP1 批（09 域 G1-G13，~~GP0 终审 M0 后单独开排期批；Q1/Q3 先走 Owner 窗口=B17/B18~~ **2026-08-29 已裁定开门**：B17/B18 已闭环（#ARCH-284/285/286），I1-1~I1-3 全达成；第一波=10号 L2/L3 统一入口 ∥ 13号 Phase 1 模块工厂两件 ∥ 09号 LSG 缺口收尾，14号 S1.1 接口接线排后待 11/12/13 接口冻结）
         │
 B 类触发链（条件达成自动转 A 类插入对应波次）：
   回测跑批完成 → B1（相关性矩阵）+ B3（因子 IC 回填）

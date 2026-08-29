@@ -20999,3 +20999,103 @@ entries:
   - '#ARCH-GIT-SELF-HARM-GUARD'
   created: '2026-08-29'
   last_updated: '2026-08-29'
+
+# --- #ARCH-284: B17 追认——自治标尺统一 Owner 已裁定（裁定8）+ 15号文漂移文本修复（2026-08-29）---
+- issue_id: '#ARCH-284'
+  title: B17 追认闭环——三套自治等级标尺统一已于 2026-08-18 由 Owner 裁定（裁定8/裁定#224），路线图/15号文误标"待人裁"漂移修复
+  severity: P2
+  category: 治理流程
+  adjudication: >-
+    2026-08-29 全链路实证：①git log 实证 commit 56319b2f42（2026-08-18 02:40，AI-ADJ-003）
+    =Owner 裁定回填批（裁定6~11），其中裁定8=自治标尺统一——00_index §3.2 主标尺补
+    「L4 保留不启用」、15号文 §3.3 候选映射转定稿（L0 OBSERVE=L0 / L1=NOTIFY+SUGGEST
+    两亚档 / L3 AUTO_MINOR=L2 / L4 AUTO_FULL 保留不启用 / AutonomyGuard 正交不入映射 /
+    16号文 A-L 系交叉引用），15 Q3/16 Q4 关闭；②PS-VOC-021 词表 l3 实证已改"中风险封顶，
+    全权自主不启用"（v1.0.1 在册）。裁定结论：**B17 不存在待裁定项**——2026-08-28 审查批
+    在 15号文结案报告误写"Q3 待人裁"（未读 §3.3 定稿段），路线图 B17 行照抄致错挂
+    Owner 窗口。本次追认关闭+三处漂移修复（15号文结案报告/§2.2 问题三正文/路线图 B17 行）
+    +14号文 Q5 联动关闭（其"待对齐 15号文映射"由裁定8 映射表直接答复：四入口=L0/L1 起步，
+    升级走 15号文 §4.3 逐级解锁）。
+  impact:
+    - 'docs/.../15_autonomy_boundary_risk.md（结案报告勘正+§2.2 问题三回写已关闭）'
+    - 'docs/.../14_execution_layer.md（Q5 联动关闭）'
+    - 'docs/_working/2026-08-28-remaining-construction-roadmap.md（B17 行勾销）'
+  fix_phase: '已落地（2026-08-29）；教训留痕——审查批引用文档结论前须读正文定稿段，结案报告与正文矛盾时以正文+git 历史为准'
+  status: resolved
+  related_rules:
+  - '裁定#224（2026-08-18 Owner 裁定批，AI-ADJ-003）'
+  created: '2026-08-29'
+  last_updated: '2026-08-29'
+
+# --- #ARCH-285: B18 主裁定——GP1 排期批开门 + 13号文 Q1 批准 + 14号文 Q1/Q2/Q4 事实关闭（2026-08-29）---
+- issue_id: '#ARCH-285'
+  title: B18 主裁定——GP1 排期批正式开门（I1-1~I1-3 全达成）+ 模块工厂 Phase 0→1 批准入第一波 + 14号文三问事实关闭
+  severity: P1
+  category: 治理流程
+  adjudication: >-
+    2026-08-29 Owner 授权架构师裁定（"全部裁定"授权，第一性原理分析）。一、GP1 开门判据
+    （17号文 §4.3 进入条件）：I1-1（E0 全绿）=M0 Owner 终审 2026-08-28 通过+E0-8 随
+    #ARCH-169 于 2026-08-22 闭环，实质达成（复测格"未达成"系刷新滞后，已刷新）；I1-2
+    （U7 G04）/I1-3（U8 62号注册表）2026-08-18 R2 复测均已就绪。三条件齐→GP1 排期批
+    开门，17号文全局 Phase 表 GP0 翻"已退出"/GP1 翻"当前所处阶段"。二、GP1 第一波定序
+    （按 17号文主依赖链"推理入口→进化三组件→执行层半自动"）：10号文 L2/L3 统一入口
+    （GP1 核心解锁件）∥ 13号文 Phase 1（knowledge_classifier+module_mapper，U8 已就绪）
+    ∥ 09号文 LSG 缺口收尾（80%→95%）；14号文 S1.1（四入口接 11/12/13 正式接口）排后，
+    待接口冻结。三、13号文 Q1 批准三判据：①前置就绪（U8 active/19号 SOP 首实例
+    FCT-SENT-028 全链路走通/M0 已过）；②Phase 1 只自动化纯机械环节（LLM 分类+embedding
+    查重），生成留 Phase 2+人审；③人审闸门在位（L4/62号 G8 不可降级）。四、14号文
+    事实关闭三问：Q1（四 Agent 施工顺序）/Q2（四类简化两类）——GP0 波4 四入口已全部
+    落码 testing（autonomy_core/agents/ 四件），排序与简化问题失去对象；Q4（域归属编号）
+    ——已落地 D_AUTONOMY_CORE+MOD-EXE-GOV/BIZ/ALGO/ITER-001（#ARCH-169 八域清单后登记）。
+  impact:
+    - '17_phase_roadmap.md（GP1 开门+I1-1 刷新+全局 Phase 表翻态）'
+    - '13_module_factory.md（Q1 批准回填）'
+    - '14_execution_layer.md（Q1/Q2/Q4 关闭回填）'
+    - '00_index.md（§6.2 U7/U8 两待办勾销）'
+    - 'docs/_working/2026-08-28-remaining-construction-roadmap.md（B18 勾销+GP1 批开门注记）'
+  fix_phase: '已落地（2026-08-29）；GP1 第一波三件待派单开工（走 GitCommitGateway 常规施工批）'
+  status: resolved
+  related_rules:
+  - '17号文 §4.3（I1-1~I1-3）'
+  - '#ARCH-169（03号文域边界裁定）'
+  - '#ARCH-284'
+  created: '2026-08-29'
+  last_updated: '2026-08-29'
+
+# --- #ARCH-286: 13/14号文开放问题批量裁定——Q2 接口真源归 11号文 / Q3 双关关闭 / Q4-Q9 逐项 / doc_type 统一（2026-08-29）---
+- issue_id: '#ARCH-286'
+  title: 13/14号文开放问题批量裁定（B18 配套）——接口真源裁定+六项逐项处置+09域目录 doc_type 统一 architecture_view
+  severity: P2
+  category: 治理流程
+  adjudication: >-
+    2026-08-29 同批裁定（Owner"全部裁定"授权）。①13号文 Q2（11号技能库接口）：
+    **真源裁定=接口提供方持有真源（11号文）**，打破两文互让环路（13号"待11号定稿" vs
+    11号 Q2"以13号为真源"）；11号文 v0.3.0 §4.6 口径=技能库不为工厂单独建索引、复用
+    skill_discovery/skill_router 既有设施；实证差异（既有设施无"按描述检索技能候选列表"
+    精确函数，skill_router.route 返回 role/domain 非候选集）登记为 P1-S3 开工时接口冻结项。
+    ②13号文 Q3（12号接口）：12号文 Q3 已逐条核对一致并声明"待人确认后双关"——本裁定即
+    人确认，双关关闭；EvaluationReport 增 source 区分字段登记 Phase 1 顺手项。③Q4（62号文
+    §6 标题漂移）：以落盘实测为准，文档修订转交易决策侧顺手项。④Q5（discovery_agent 枚举
+    加 module_factory）：批准，随 Phase 1 入库施工执行。⑤Q6（模块工厂归域）：归
+    D_AUTONOMY_CORE（"知识→模块创建"=自治核心能力，与 reflexion/execution entries 同域），
+    编号 P1-S1 登记时分配。⑥Q7（潘潘课程剩余 260 条首批实例）：批准——Phase 1"≥5 条
+    半自动入库"验收的真实负载。⑦Q8（采集增强三候选）：PIT 门控吸收为数据纪律项（防前视
+    正确性刚需，与文本优先裁定不冲突）；ADWIN/VLM 维持不进施工计划（Phase 2+ 远期候选）。
+    ⑧Q9（MAML/EWC/LoRA 反证）：维持 01号文 ICL 既定裁定——推翻既定裁定需"必要性证据"
+    （ICL 实测不足）而非仅"可行性反证"，该证据不存在；折中口径登记 Phase 3 远期观察项。
+    ⑨14号文 Q7（doc_type）：09域 implementation_plans/ 目录统一 doc_type=architecture_view
+    （blueprint 语义=模块级蓝图，目录级施工图非模块蓝图），10/13/14 三篇 blueprint 改回，
+    00_index=index 合法不动。⑩11号文 Q1-Q7/12号文 Q1-Q9 等施工内开放问题**不批量预裁**
+    ——系 GP1 各件开工时"当时证据"裁定项，批量预裁违反触发式排期原则（17号文 §3.6），
+    统一随 GP1 排期批逐件裁定。
+  impact:
+    - '13_module_factory.md（Q1-Q9 全裁定回填+doc_type 改 architecture_view）'
+    - '14_execution_layer.md（Q7 裁定回填+doc_type 改 architecture_view）'
+    - '10_llm_infrastructure.md（doc_type 改 architecture_view）'
+  fix_phase: '已落地（2026-08-29）；11/12号文施工内开放问题随 GP1 排期批逐件裁定'
+  status: resolved
+  related_rules:
+  - '#ARCH-285'
+  - '17号文 §3.6（触发式排期）'
+  created: '2026-08-29'
+  last_updated: '2026-08-29'

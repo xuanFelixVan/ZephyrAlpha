@@ -16,7 +16,7 @@ scope: 09_ai_architecture
 > ## 结案报告（2026-08-28 全量审查批，代码实证）
 > **实际开发**：GP0 三件全落地——autonomy_boundary_gate.py（MOD-AU-001 运行时三分类 gate）+kill_switch_orchestrator.py（MOD-AU-002 KS 两级编排）+validate_autonomy_gate.py 验证器；延迟实测写回本文 §2.3（gate 热路径 P95=313.5µs、KS 内联 P95≤0.8µs，全 P95<1ms 达标，2026-08-22 补测报告）；Q5（内联拦截语义）/Q6（Agent Challenge=交叉会话复审+challenge 工单+人兜底）已 Owner 裁定闭环。
 > **最终成果**：自治边界运行时闸+Kill Switch 编排生产可用，延迟硬指标达标。
-> **未做+原因**：Agentic Drift 行为基线检测、ARS 双轨结算、三套自治等级标尺统一裁定（Q3 待人裁）——均属 GP1+/开放问题。
+> **未做+原因**：Agentic Drift 行为基线检测、ARS 双轨结算——均属 GP1+/开放问题。（勘正 2026-08-29：三套自治等级标尺统一**已裁定关闭**——Owner 2026-08-18 裁定8/裁定#224（commit 56319b2f42），§3.3 映射表定稿+PS-VOC-021 l3 词表已改"中风险封顶"；本行此前误标"Q3 待人裁"系 2026-08-28 审查批未读 §3.3 所致，#ARCH-284 留痕）
 
 > 本文定位：AI 自治边界（ai_modifiable/human_gated/immutable + Agentic Drift 防护 + 自治熔断）和 Agent 风险治理（有界自治5级 + OWASP + Kill Switch + ARS 双轨）的施工。
 > 与其他文件的分工：结构设计见 [00_index.md](00_index.md)，对标见 [01_external_benchmark_analysis.md](01_external_benchmark_analysis.md)。
@@ -66,7 +66,7 @@ ZephyrAlpha 是个人 + 100% AI 生成代码的 A 股量化交易系统（miniQM
 | AutonomyMaturity | `feedback_loop/gates/autonomy_maturity.py` | L0~L4（5 级） | 运行时信任阶梯（OBSERVE/NOTIFY/SUGGEST/AUTO_MINOR/AUTO_FULL） |
 | AutonomyGuard | `orchestrator/governance/autonomy_guard.py` | level1~3（3 级） | Owner 缺位时的运维动作白名单（健康检查→自动缓解→回滚） |
 
-另有 `autonomy_regressor.py` 的 `autonomous/auto_guard/blocked` 三态（行为态，非等级）。00_index §3.2 的「有界自治 5 级：L0 人工→L1 建议→L2 低风险→L3 中风险」是第 4 种口径。不统一会导致：模块工厂（13 号文）给新模块定级时无所适从，Drift 检测的"降级"动作不知道降到哪一档。统一方案需人裁定（开放问题 Q3），本文只给候选映射。
+另有 `autonomy_regressor.py` 的 `autonomous/auto_guard/blocked` 三态（行为态，非等级）。00_index §3.2 的「有界自治 5 级：L0 人工→L1 建议→L2 低风险→L3 中风险」是第 4 种口径。不统一会导致：模块工厂（13 号文）给新模块定级时无所适从，Drift 检测的"降级"动作不知道降到哪一档。~~统一方案需人裁定（开放问题 Q3）~~ **Q3 已关闭（Owner 2026-08-18 裁定8/裁定#224，commit 56319b2f42）：00_index 有界自治 L0~L3（L4 保留不启用）为唯一主标尺，定稿映射表见 §3.3。**
 
 **问题四：Kill Switch 如何触发、如何收敛、延迟是否够用？**
 00_index §3.2 定了多路径：AI 自动(<1ms) / 人工一键(<100ms) / 定时熔断(<1ms) / 外部信号。两个现实问题：①"<1ms"在 Windows+Python 用户态做不到内核级响应（开放问题 Q1），需要软件级等效方案并实测延迟；②5 套 Kill Switch 并存，全局事故时该拉哪一个、拉错会不会只停了次要回路而主回路还在跑——需要两级编排（系统级总开关 + 域级分开关）。

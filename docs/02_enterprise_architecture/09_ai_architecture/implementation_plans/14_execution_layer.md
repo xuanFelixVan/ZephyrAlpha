@@ -1,6 +1,6 @@
 ---
 ttl: permanent
-doc_type: blueprint
+doc_type: architecture_view
 title: AI 执行层施工图
 owner: ZephyrAlpha-Owner
 language: zh
@@ -292,13 +292,13 @@ A7《Agent架构》及其依赖图派生物描述的是一套"多 Agent 自治�
 
 | # | 问题 | 状态 | 说明 |
 |---|------|------|------|
-| Q1 | 四个 Agent 的施工顺序？ | 待裁定 | 本文 §4 建议：治理（S0.2)+业务（S0.3）先行并行→算法（S0.4)→迭代（S0.5 只读形态）。依据：治理是其他三类前置（gate 先行），业务输入真源唯一全就绪（U7 已满足）。待人确认 |
-| Q2 | 四类是否可简化为两类（治理+业务）先行？ | 待裁定 | 00_index §1 为四类图景，本文按四类薄入口设计；若人力紧张，允许 Phase 0 只建治理+业务两入口，算法/迭代入口延后——物理上是薄入口，简化为两类不破坏四类终态 |
+| Q1 | 四个 Agent 的施工顺序？ | ✅ 已关闭（2026-08-29，#ARCH-285） | **已被事实关闭**：GP0 波4 四入口全部落码（autonomy_core/agents/ 四件 MOD-EXE-GOV/BIZ/ALGO/ITER-001，testing/human_gated），"先后顺序"问题在 Phase 0 已被并行建成绕过。残余排序问题=Phase 1 S1.1 接口接线顺序，随 GP1 排期批按 17号文主依赖链定序（11/12/13 接口冻结在先） |
+| Q2 | 四类是否可简化为两类（治理+业务）先行？ | ✅ 已关闭（2026-08-29，#ARCH-285） | **被事实关闭**：四类入口均已建成（简化对象不存在了）；四类终态保持，不简化 |
 | Q3 | 对自我进化层的接口假设核对 | 部分核对（2026-08-17 复审） | 11/12/13 号文已填充 v0.2.0。复审结论=锚点近似非等同：①模型路由锚点 intelligence_governance/model_router.py（production）与 11 号文正式接口的逐字段映射待核对；②"自反闭环"锚点实测不存在（feedback_loop/evolution/self_reflection.py 为 30 行运维诊断桩，12 号文 §2.1 实测），真正组件=12 号文新建 MOD-REFLEXION_AGENT（intelligence/reflexion/，planned）；③spec_engine 是蓝图→Skill 引擎（MOD-INF-019），13 号文为新建四模块流水线，Phase 1 改接 13 号文正式接口。待办：①的字段映射核对 + ②③正式接口冻结后替换锚点 |
-| Q4 | 四个入口模块的域归属与模块编号 | 待裁定 | 候选：归入既有 D_ORCHESTRATOR 域 vs 新建执行层域。涉及 functional_domain_registry 变更，需人裁定后按规则登记 |
-| Q5 | 执行层 Agent 自治等级（L0~L3）划分 | 待核对 | 15 号文（自治边界）已填充 v0.2.1（2026-08-17）。本文暂定四类入口全部按最低自治（手动触发+human_gated 产出）施工；待对齐 15 号文有界自治 5 级映射 |
+| Q4 | 四个入口模块的域归属与模块编号 | ✅ 已关闭（2026-08-29，#ARCH-285） | **已被事实关闭**：03 号文域边界裁定（#ARCH-169，2026-08-22）落地 8 域清单后，四入口已登记 **D_AUTONOMY_CORE** 域 + MOD-EXE-GOV-001/BIZ-001/ALGO-001/ITER-001（depgraph 在册，文件头实证） |
+| Q5 | 执行层 Agent 自治等级（L0~L3）划分 | ✅ 已关闭（2026-08-29，#ARCH-284 联动） | 15 号文 Q3 已经 Owner 裁定8（2026-08-18）关闭——主标尺 L0~L3（L4 保留不启用），本文"四入口全部最低自治（手动触发+human_gated）起步"=主标尺 **L0/L1 档**（15号文 §3.3 映射表口径），升级走 15号文 §4.3 逐级解锁验证。暂定姿态即定稿姿态 |
 | Q6 | 治理 Agent 入口与 05 号文整合出口的衔接 | **已核对 2026-08-18：包级 `__all__` 已修复，降级路径可用** | 05 号文包级 `__all__` 已修复（AI-ADJ-001：PEP 562 惰性外观，42 个真实符号+契约测试 4 项，commit 8efacc2c70，28 消费方测试文件 570 测试绿）——S0.2 降级路径「直接组装包级 `__all__`」现已成为可用面；此前"治理入口若先施工须用子模块路径导入"的临时口径同时作废（子模块路径导入仍是合法惯例，但不再是唯一选择）。05 号文 Q6 与本问同源，已同步更新 |
-| Q7 | 本目录 18 篇骨架的 doc_type 合规性 | 待裁定 | 骨架统一用 doc_type=implementation_plan，但 doc_type_vocabulary.yaml 受控词表无此值（construction_plan 已于 2026-06-29 合并入 blueprint），TTL-METADATA 门禁硬阻断。本文已改 doc_type=blueprint（并补 valid_from/last_verified）以过门禁；00_index.md 用 architecture_design 同样不在词表。建议协调者统一裁定本目录 doc_type 取值后回填各文 |
+| Q7 | 本目录 18 篇骨架的 doc_type 合规性 | ✅ 已裁定（2026-08-29，#ARCH-286） | **裁定：本目录（implementation_plans/）统一 doc_type=architecture_view**——blueprint 语义=模块级蓝图，目录级施工图非模块蓝图；现状 16 篇已 architecture_view，仅 10/13/14 三篇为 blueprint（当年过门禁权宜），本次统一改回（00_index=index 合法不动，Q7 所述"00 用 architecture_design"系旧快照已自癒） |
 
 ---
 
