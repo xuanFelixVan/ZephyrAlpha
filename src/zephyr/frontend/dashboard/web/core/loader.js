@@ -10,7 +10,7 @@
     });
   }
   Promise.all(PAGES.map(function(id){
-    return fetch('pages/'+id+'.html').then(function(r){
+    return fetch('pages/'+id+'.html', {cache:'no-cache'}).then(function(r){   /* 迭代期防浏览器缓存旧片段（Owner 实测"改了看不到"事故根治） */
       if(!r.ok) throw new Error('page '+id+' http '+r.status);
       return r.text();
     });
