@@ -4893,6 +4893,14 @@ capabilities:
   - DabanTimingDecision
   - DynamicCapacityCalculator
 creation_tokens:
+- file: src/zephyr/ex_core/eod_reconciliation.py
+  token: auto-eod-reconciliation-20260830
+  created_by: traesid-20260829-1308
+  capability: eod_reconciliation
+- file: tests/ex_core/test_eod_reconciliation.py
+  token: auto-test-eod-reconciliation-20260830
+  created_by: traesid-20260829-1308
+  capability: eod_reconciliation
 - file: src/zephyr/reporting/attribution_meta_iteration.py
   token: auto-attribution-meta-iteration-20260830
   created_by: traesid-20260829-1308

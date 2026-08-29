@@ -239,6 +239,7 @@ def make_saga(
     audit_logger: ExecutionAuditLogger | None = None,
     config: SagaConfig | None = None,
     signal_confirmer: Any = None,
+    rejection_executor: Any = None,
 ) -> OrderExecutionSaga:
     """构建测试用 Saga（默认全部通过）。"""
     om = OrderManager()
@@ -255,6 +256,7 @@ def make_saga(
         broker_id=broker.broker_id,
         config=config or SagaConfig(timeout_seconds=5.0, broker_id=broker.broker_id),
         signal_confirmer=signal_confirmer,
+        rejection_executor=rejection_executor,
     )
 
 
@@ -955,3 +957,161 @@ class TestExecuteTerminalStateGuard:
 
         assert result.state == SagaState.SIGNAL_INVALID
         assert "终态" in (result.error or "")
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 拒单分类实际动作 Saga 接管（40 号 §6.1 gap 4，A14 Phase 2）
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+class _CodedRejectBroker(BrokerInterface):
+    """submit_order 抛带 int error_code 异常的券商（模拟 xttrader 拒单）。"""
+
+    def __init__(self, error_code: int | None):
+        self._error_code = error_code
+
+    @property
+    def broker_id(self) -> str:
+        return "coded-reject"
+
+    def connect(self) -> bool:
+        return True
+
+    def disconnect(self) -> None:
+        pass
+
+    def submit_order(self, order: Order) -> str:
+        exc = RuntimeError(f"broker rejected (code={self._error_code})")
+        exc.error_code = self._error_code  # type: ignore[attr-defined]
+        raise exc
+
+    def cancel_order(self, broker_order_id: str) -> bool:
+        return False
+
+    def query_order(self, broker_order_id: str) -> Order | None:
+        return None
+
+    def get_positions(self) -> PositionSnapshot:
+        return PositionSnapshot(
+            as_of_timestamp=datetime.now(UTC),
+            portfolio_id="coded-reject",
+            idempotency_key="coded-reject",
+            cash=Decimal("1000000"),
+            gross_leverage=0.0,
+            holdings={},
+            market_values={},
+            total_market_value=Decimal("0"),
+        )
+
+    def register_fill_callback(self, callback) -> None:
+        pass
+
+
+class TestRejectionExecutorTakeover:
+    """gap 4：注入 RejectionActionExecutor 后 Saga 接管拒单分类实际动作。"""
+
+    def test_alert_freeze_freezes_strategy(self):
+        """error 54（资金不足）→ ALERT_FREEZE 实际动作：策略新开仓冻结。"""
+        from zephyr.ex_core.rejection_action_handler import RejectionActionExecutor
+
+        alerts: list[tuple[str, dict]] = []
+        executor = RejectionActionExecutor(alert_sink=lambda m, c: alerts.append((m, c)))
+        saga = make_saga(_CodedRejectBroker(54), rejection_executor=executor)
+        order = make_order()
+
+        result = saga.execute(order, OrderSide.BUY)
+
+        assert result.state == SagaState.ORDER_REJECTED
+        assert executor.is_strategy_frozen(order.strategy_id)
+        assert alerts, "ALERT_FREEZE 应触发告警"
+
+    def test_alert_reconcile_triggers(self):
+        """error 55（持仓不足）→ ALERT_RECONCILE 实际动作：触发持仓对账。"""
+        from zephyr.ex_core.rejection_action_handler import RejectionActionExecutor
+
+        triggered: list[tuple[str, str]] = []
+        executor = RejectionActionExecutor(reconcile_trigger=lambda s, y: triggered.append((s, y)))
+        saga = make_saga(_CodedRejectBroker(55), rejection_executor=executor)
+
+        result = saga.execute(make_order(), OrderSide.SELL)
+
+        assert result.state == SagaState.ORDER_REJECTED
+        assert triggered == [("test", "600000.SH")]
+
+    def test_retry_once_invokes_injected_retry_fn(self):
+        """error 53（价格不合法）→ RETRY_ONCE：调用装配层注入的 retry_fn。"""
+        from zephyr.ex_core.rejection_action_handler import RejectionActionExecutor
+
+        retried: list[str] = []
+        executor = RejectionActionExecutor(retry_fn=lambda o, e: retried.append(o.order_id) or "bo-retry")
+        saga = make_saga(_CodedRejectBroker(53), rejection_executor=executor)
+
+        result = saga.execute(make_order(), OrderSide.BUY)
+
+        assert result.state == SagaState.ORDER_REJECTED
+        assert len(retried) == 1
+
+    def test_abandon_for_limit_up(self):
+        """error 50（涨停）→ ABANDON：不重试不冻结，仅留痕。"""
+        from zephyr.ex_core.rejection_action_handler import RejectionActionExecutor
+
+        executor = RejectionActionExecutor()
+        saga = make_saga(_CodedRejectBroker(50), rejection_executor=executor)
+        order = make_order()
+
+        result = saga.execute(order, OrderSide.BUY)
+
+        assert result.state == SagaState.ORDER_REJECTED
+        assert not executor.is_strategy_frozen(order.strategy_id)
+
+    def test_no_executor_keeps_mvp_behavior(self):
+        """未注入 executor：既有 MVP 行为（仅审计留痕，不崩溃）。"""
+        audit = ExecutionAuditLogger()
+        saga = make_saga(_CodedRejectBroker(54), audit_logger=audit)
+
+        result = saga.execute(make_order(), OrderSide.BUY)
+
+        assert result.state == SagaState.ORDER_REJECTED
+        rejected = [r for r in audit.query() if r.event_type.value == "ORDER_REJECTED"]
+        assert rejected
+        assert rejected[0].detail.get("rejection_action") is None
+
+    def test_non_int_error_code_conservative_abandon(self):
+        """无 int error_code（本地异常）→ 保守 ABANDON 留痕。"""
+        from zephyr.ex_core.rejection_action_handler import RejectionActionExecutor
+
+        executor = RejectionActionExecutor()
+        saga = make_saga(_CodedRejectBroker(None), rejection_executor=executor)
+
+        result = saga.execute(make_order(), OrderSide.BUY)
+
+        assert result.state == SagaState.ORDER_REJECTED
+
+    def test_executor_exception_swallowed(self):
+        """执行器自身异常吞没，不阻断 Saga 主流程（拒单处置不得引发二次事故）。"""
+        from zephyr.ex_core.rejection_action_handler import RejectionActionExecutor
+
+        def _boom(order, error):
+            raise RuntimeError("retry_fn exploded")
+
+        executor = RejectionActionExecutor(retry_fn=_boom)
+        saga = make_saga(_CodedRejectBroker(53), rejection_executor=executor)
+
+        result = saga.execute(make_order(), OrderSide.BUY)
+
+        assert result.state == SagaState.ORDER_REJECTED
+        assert "order submit failed" in (result.error or "")
+
+    def test_audit_records_rejection_outcome(self):
+        """审计 detail 留痕分类动作与结果。"""
+        from zephyr.ex_core.rejection_action_handler import RejectionActionExecutor
+
+        audit = ExecutionAuditLogger()
+        executor = RejectionActionExecutor()
+        saga = make_saga(_CodedRejectBroker(54), audit_logger=audit, rejection_executor=executor)
+
+        saga.execute(make_order(), OrderSide.BUY)
+
+        rejected = [r for r in audit.query() if r.event_type.value == "ORDER_REJECTED"]
+        assert rejected[0].detail.get("rejection_action") == "ALERT_FREEZE"
+        assert rejected[0].detail.get("rejection_outcome") == "frozen"

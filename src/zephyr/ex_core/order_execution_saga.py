@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-EX-057 | docs/03_modules/_domain_execution_core/order_execution_saga/blueprint.md
 # [MODULE] zephyr.ex_core.order_execution_saga
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.ex_core.order_manager; zephyr.ex_core.position_tracker.tracker; zephyr.ex_core.audit_journal.auditor; zephyr.governance.adapters.risk_validation_bridge; zephyr.shared.contracts.order; zephyr.shared.contracts.fill; zephyr.shared.contracts.enums.order_enums; zephyr.shared.contracts.risk_limits
+# [DEPENDENCIES] zephyr.ex_core.order_manager; zephyr.ex_core.position_tracker.tracker; zephyr.ex_core.audit_journal.auditor; zephyr.ex_core.rejection_action_handler; zephyr.governance.adapters.risk_validation_bridge; zephyr.shared.contracts.order; zephyr.shared.contracts.fill; zephyr.shared.contracts.enums.order_enums; zephyr.shared.contracts.risk_limits
 # [CONSUMERS] D-PORTFOLIO(TradingSession可调用); D-EX-CORE(ExecutionEngine可调用)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 六步严格顺序;补偿幂等;≤5s超时;每步审计不可跳过;SagaResult frozen不可变;execute同步阻塞;超时撤单失败强制查询订单终态(已成交补走step5/6不吞掉)
+# [INVARIANTS] 六步严格顺序;补偿幂等;≤5s超时;每步审计不可跳过;SagaResult frozen不可变;execute同步阻塞;超时撤单失败强制查询订单终态(已成交补走step5/6不吞掉);拒单分类动作经注入RejectionActionExecutor执行(未注入=仅日志,Saga不自动重试下单)
 # [MODIFY-GUARD] blueprint.md
 # [STABILITY] evolving
 # [SAFETY] L
@@ -142,8 +142,12 @@ from zephyr.ex_core.audit_journal.auditor import (
     ExecutionAuditEventType,
     ExecutionAuditLogger,
 )
-from zephyr.ex_core.order_manager import OrderManager
+from zephyr.ex_core.order_manager import OrderManager, RejectionAction
 from zephyr.ex_core.position_tracker.tracker import PositionTracker
+from zephyr.ex_core.rejection_action_handler import (
+    RejectionActionExecutor,
+    RejectionActionResult,
+)
 from zephyr.governance.adapters.risk_validation_bridge import (
     RiskValidationPort,
     RiskViolation,
@@ -423,6 +427,7 @@ class OrderExecutionSaga:
         risk_limits: RiskLimits | None = None,
         config: SagaConfig | None = None,
         signal_confirmer: Callable[[Order], bool] | None = None,
+        rejection_executor: RejectionActionExecutor | None = None,
     ) -> None:
         """初始化 Saga 编排器。
 
@@ -436,6 +441,12 @@ class OrderExecutionSaga:
             risk_limits: 风控限额（None=用默认）
             config: Saga 配置（None=默认 5s 超时）
             signal_confirmer: 信号确认回调（None=跳过步骤2）
+            rejection_executor: 拒单分类动作执行器（40 号 §6.1 gap 4 Saga 接管）。
+                None=未接管，拒单仅审计留痕（既有 MVP 行为）。注入后步骤3
+                下单被拒时按 40 号 §2.7 分类执行实际动作（RETRY_ONCE/
+                ALERT_FREEZE/ALERT_RECONCILE）；Saga 不自带 retry_fn——
+                修正价格重试需装配层注入定价策略，未接线时执行器降级放弃
+                （Fail-Closed 不盲目重试）。
         """
         self._order_manager = order_manager
         self._risk_validator = risk_validator
@@ -446,6 +457,7 @@ class OrderExecutionSaga:
         self._config.broker_id = broker_id
         self._risk_limits = risk_limits or self._default_risk_limits()
         self._signal_confirmer = signal_confirmer
+        self._rejection_executor = rejection_executor
 
     @staticmethod
     def _default_risk_limits() -> RiskLimits:
@@ -702,14 +714,55 @@ class OrderExecutionSaga:
         except Exception as exc:  # noqa: BLE001
             ctx.state = SagaState.ORDER_REJECTED
             ctx.error = f"order submit failed: {exc}"
+            rejection_result = self._handle_rejection(ctx, exc)
             self._audit.log(
                 ExecutionAuditEventType.ORDER_REJECTED,
                 ctx.order.order_id,
                 ctx.order.symbol,
                 AuditSource.AUTO,
-                {"reason": "submit_error", "error": str(exc)},
+                {
+                    "reason": "submit_error",
+                    "error": str(exc),
+                    "rejection_action": rejection_result.action.name if rejection_result else None,
+                    "rejection_outcome": rejection_result.outcome.value if rejection_result else None,
+                },
             )
             return False
+
+    def _handle_rejection(self, ctx: _SagaContext, exc: Exception) -> RejectionActionResult | None:
+        """拒单分类实际动作（40 号 §6.1 gap 4 Saga 接管，§2.7 层3）。
+
+        注入 rejection_executor 时按 error_code 分类执行实际动作
+        （RETRY_ONCE 重试/ALERT_FREEZE 冻结策略/ALERT_RECONCILE 触发对账）；
+        未注入返回 None（仅审计留痕，既有 MVP 行为）。执行器自身异常吞没
+        不阻断 Saga 主流程（拒单处置不得引发二次事故）。
+        """
+        if self._rejection_executor is None:
+            return None
+        raw_code = getattr(exc, "error_code", None)
+        try:
+            if isinstance(raw_code, int):
+                result = self._rejection_executor.classify_and_execute(raw_code, ctx.order, exc)
+            else:
+                # 无 int error_code（如本地合规闸阻断）——保守按 ABANDON 留痕
+                result = self._rejection_executor.execute(RejectionAction.ABANDON, ctx.order, exc)
+        except Exception as handler_exc:  # noqa: BLE001 — 处置器异常不阻断 Saga
+            _logger.error(
+                "[Saga %s] 拒单动作执行异常（已吞没）: order=%s error=%s",
+                ctx.saga_id[:8],
+                ctx.order.order_id,
+                handler_exc,
+                exc_info=True,
+            )
+            return None
+        _logger.info(
+            "[Saga %s] 拒单分类动作: order=%s action=%s outcome=%s",
+            ctx.saga_id[:8],
+            ctx.order.order_id,
+            result.action.name,
+            result.outcome.value,
+        )
+        return result
 
     def _step4_fill_confirm(self, ctx: _SagaContext, collector: _FillCollector | None, timeout: float) -> Fill | None:
         """步骤4: 成交确认（等待 fill 回调）。"""

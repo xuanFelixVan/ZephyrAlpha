@@ -522,6 +522,26 @@ class OrderManager:
             if o.status in {OrderStatus.PENDING, OrderStatus.SUBMITTED, OrderStatus.PARTIAL}
         ]
 
+    def expire_open_orders(self) -> list[Order]:
+        """日终将全部未成交订单批量转 EXPIRED（40 号 §6.1 gap 10 盘后全量对账）。
+
+        A 股日终语义：收盘后交易所自动作废未成交委托，本地台账同步归档。
+        仅作用于非终态（PENDING/SUBMITTED/PARTIAL）订单，终态跳过（幂等，
+        重复调用返回空列表）。纯本地台账归档，不向券商发任何指令（盘后
+        无撤单通道，券商侧作废由交易所规则保证）。
+
+        Returns:
+            本次转为 EXPIRED 的订单列表（按 _orders 注册顺序，确定性）。
+        """
+        expired: list[Order] = []
+        for order in list(self._orders.values()):
+            if order.status in {OrderStatus.PENDING, OrderStatus.SUBMITTED, OrderStatus.PARTIAL}:
+                self._transition_status(order, OrderStatus.EXPIRED)
+                expired.append(order)
+                _logger.info("日终归档 EXPIRED: order_id=%s symbol=%s", order.order_id, order.symbol)
+                self._emit_order_event(order)
+        return expired
+
     def get_fills_for_order(self, order_id: str) -> list[Fill]:
         return self._fills.get(order_id, [])
 

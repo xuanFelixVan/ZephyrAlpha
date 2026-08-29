@@ -30,6 +30,13 @@ entry_schema:
   desc_en: str
   plain_zh: str
 entries:
+- module_path: src/zephyr/ex_core/eod_reconciliation.py
+  domain_id: D_EX_CORE
+  name_zh: 盘后全量对账器
+  name_en: EOD Reconciler
+  desc_zh: 40号文 Phase 2（MOD-L06-003）：盘后四步——持仓全量对账（委托 PositionReconciler）+资金核对+未成交订单日终转 EXPIRED+T+1 可用更新（align_to_broker 显式开启才动账，默认仅报告 dry-run 语义，输入不齐 fail-closed）。
+  desc_en: "40-doc Phase 2 (MOD-L06-003): four-step EOD reconciliation - full position reconciliation delegated to PositionReconciler, cash check, expiring unfilled orders, T+1 availability update (align_to_broker opt-in only, report-only by default, fail-closed on incomplete inputs)."
+  plain_zh: 每天收盘后的对账员。把券商账上的持仓和现金跟系统账核对一遍，没成交的挂单日终归档；发现对不上就只报告不动账，要真动账必须人显式点头。
 - module_path: src/zephyr/risk/core/drawdown_broker_side_stop.py
   domain_id: D_RISK
   name_zh: 回撤L2券商端止损对账
