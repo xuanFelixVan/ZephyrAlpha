@@ -70,6 +70,8 @@ warn_only: false
 
 import argparse
 import ast
+import hashlib
+import json
 import os
 import re
 from datetime import datetime
@@ -136,18 +138,31 @@ def _is_ghost(path: str, design_maturity: str = "") -> bool:
     return bool(path) and not (REPO_ROOT / path).exists()
 
 
+# 进程级缓存（治本：同一 .py 在全景/运营态/设计态 3 个 Mermaid 视图 + 跨域表格被重复
+# read_text + ast.parse）。键 = (path, mtime_ns, size)，文件变更后旧键自然失效；
+# 仅进程内存活，进程退出即销毁，无持久化一致性负担。
+_DOCSTRING_FIRST_LINE_CACHE: dict[tuple[str, int, int], str] = {}
+_YAML_DESCRIPTION_CACHE: dict[tuple[str, int, int], str] = {}
+
+
 def _extract_docstring_first_line(path: str) -> str:
     """从 Python 文件提取 docstring 首行作为功能简介。
 
     用 ast 模块安全解析，非 .py 文件或无 docstring 返回空字符串。
     跳过治理标记首行（[A_module]、[BLUEPRINT]、[MODULE] 等），取第一个有意义行。
-    截断到 80 字符。
+    截断到 80 字符。按 (path, mtime_ns, size) 进程级缓存（见 _DOCSTRING_FIRST_LINE_CACHE）。
     """
     if not path or not path.endswith(".py"):
         return ""
     abs_path = REPO_ROOT / path
-    if not abs_path.exists():
+    try:
+        st = abs_path.stat()
+    except OSError:
         return ""
+    cache_key = (path, st.st_mtime_ns, st.st_size)
+    if cache_key in _DOCSTRING_FIRST_LINE_CACHE:
+        return _DOCSTRING_FIRST_LINE_CACHE[cache_key]
+    result = ""
     try:
         content = abs_path.read_text(encoding="utf-8", errors="replace")
         tree = ast.parse(content)
@@ -161,23 +176,31 @@ def _extract_docstring_first_line(path: str) -> str:
                 # 跳过治理标记行（[A_module]、[BLUEPRINT]、[MODULE] 等）
                 if line.startswith("[A_") or line.startswith("[BLUEPRINT") or line.startswith("[MODULE"):
                     continue
-                return _truncate(line, 80)
-            return ""
+                result = _truncate(line, 80)
+                break
     except Exception:  # noqa: BLE001 — 单个 Python 文件读取/AST 解析失败（语法错误/编码异常/IO）时返回空简介继续生成文档，尽力而为语义
         pass
-    return ""
+    _DOCSTRING_FIRST_LINE_CACHE[cache_key] = result
+    return result
 
 
 def _extract_yaml_description(path: str) -> str:
     """从 YAML 文件提取 description 字段作为功能简介（ARCH-052）。
 
     用于聚合节点展开的 items——门禁 yaml/脚本配置等。
+    按 (path, mtime_ns, size) 进程级缓存（见 _YAML_DESCRIPTION_CACHE）。
     """
     if not path or not path.endswith((".yaml", ".yml")):
         return ""
     abs_path = REPO_ROOT / path
-    if not abs_path.exists():
+    try:
+        st = abs_path.stat()
+    except OSError:
         return ""
+    cache_key = (path, st.st_mtime_ns, st.st_size)
+    if cache_key in _YAML_DESCRIPTION_CACHE:
+        return _YAML_DESCRIPTION_CACHE[cache_key]
+    result = ""
     try:
         data = yaml.safe_load(abs_path.read_text(encoding="utf-8", errors="replace"))
         if isinstance(data, dict):
@@ -185,10 +208,11 @@ def _extract_yaml_description(path: str) -> str:
             if desc:
                 # 取第一行，截断到 80 字符
                 first_line = desc.split("\n")[0].strip()
-                return _truncate(first_line, 80)
+                result = _truncate(first_line, 80)
     except Exception:  # noqa: BLE001 — 单个 YAML 读取/解析失败（YAMLError/IO）时返回空简介继续生成文档，尽力而为语义
         pass
-    return ""
+    _YAML_DESCRIPTION_CACHE[cache_key] = result
+    return result
 
 
 # ---------------------------------------------------------------------------
@@ -720,14 +744,24 @@ def get_domain_info(conn: PgConnExecuteWrapper, domain_id: str) -> dict | None:
 
 
 def get_domain_nodes(conn: PgConnExecuteWrapper, domain_id: str) -> list[dict]:
-    """查询指定域的所有节点（排除 deprecated 已废弃节点）。"""
+    """查询指定域的所有节点（排除 deprecated 已废弃节点）。
+
+    治本（N+1 消除）：原逐行相关子查询 (SELECT COUNT(*) FROM edges WHERE ...) ×2
+    改为两条 GROUP BY 聚合派生表 LEFT JOIN——语义完全一致（原子查询同样统计全部
+    edges 行、不过滤 deprecated），节点数 N 时 1+2N 次执行计划降为 1 次。
+    """
     cur = conn.execute(
         "SELECT n.node_id, n.path, n.blueprint_id, n.design_maturity, n.build_status, n.node_name, "
         "n.node_type, n.gate_reason, "
-        "(SELECT COUNT(*) FROM edges WHERE to_node_id=n.node_id) AS in_degree, "
-        "(SELECT COUNT(*) FROM edges WHERE from_node_id=n.node_id) AS out_degree, "
+        "COALESCE(deg_in.cnt, 0) AS in_degree, "
+        "COALESCE(deg_out.cnt, 0) AS out_degree, "
         "n.architecture_layer, n.file_path "
-        "FROM nodes n WHERE n.domain_id=%s AND n.build_status != 'deprecated' ORDER BY n.path",
+        "FROM nodes n "
+        "LEFT JOIN (SELECT to_node_id AS nid, COUNT(*) AS cnt FROM edges GROUP BY to_node_id) deg_in "
+        "ON deg_in.nid = n.node_id "
+        "LEFT JOIN (SELECT from_node_id AS nid, COUNT(*) AS cnt FROM edges GROUP BY from_node_id) deg_out "
+        "ON deg_out.nid = n.node_id "
+        "WHERE n.domain_id=%s AND n.build_status != 'deprecated' ORDER BY n.path",
         (domain_id,),
     )
     rows = []
@@ -1051,6 +1085,33 @@ def get_cross_domain_edges_detail(
         )
 
     return outgoing_edges, incoming_edges
+
+
+def _gather_domain_inputs(conn: PgConnExecuteWrapper, domain_id: str) -> dict | None:
+    """一次性收集域文档的全部 DB 输入（供指纹计算与渲染共用，避免同一查询跑两遍）。
+
+    返回 dict 含 generate_domain_doc 所需的全部 7 组查询结果；
+    域不存在时返回 None（与 generate_domain_doc 原语义一致）。
+    """
+    info = get_domain_info(conn, domain_id)
+    if not info:
+        return None
+    nodes = get_domain_nodes(conn, domain_id)
+    edges = get_domain_edges(conn, domain_id)
+    outgoing_agg, incoming_agg = get_cross_domain_deps(conn, domain_id)
+    outgoing_detail, incoming_detail = get_cross_domain_deps_detail(conn, domain_id)
+    all_outgoing, all_incoming = get_cross_domain_edges_detail(conn, domain_id, [n["node_id"] for n in nodes])
+    return {
+        "info": info,
+        "nodes": nodes,
+        "edges": edges,
+        "outgoing_agg": outgoing_agg,
+        "incoming_agg": incoming_agg,
+        "outgoing_detail": outgoing_detail,
+        "incoming_detail": incoming_detail,
+        "all_outgoing": all_outgoing,
+        "all_incoming": all_incoming,
+    }
 
 
 def build_numbering_map(conn: PgConnExecuteWrapper) -> dict[str, int]:
@@ -1553,17 +1614,29 @@ def render_module_algorithm_section(nodes: list[dict], domain_id: str) -> str:
 # ---------------------------------------------------------------------------
 
 
-def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int = 0) -> str:
-    """生成域文档内容（中英文对照表格 + 内嵌 Mermaid 依赖图 + ASCII art 架构图）。"""
-    info = get_domain_info(conn, domain_id)
-    if not info:
+def generate_domain_doc(
+    domain_id: str,
+    conn: PgConnExecuteWrapper,
+    number: int = 0,
+    _inputs: dict | None = None,
+) -> str:
+    """生成域文档内容（中英文对照表格 + 内嵌 Mermaid 依赖图 + ASCII art 架构图）。
+
+    _inputs: 可选的预取 DB 输入（_gather_domain_inputs 返回值）。--all 增量模式
+    下调用方已用同一批数据算过指纹，直接复用避免重复查询；为 None 时内部现查。
+    """
+    inputs = _inputs if _inputs is not None else _gather_domain_inputs(conn, domain_id)
+    if not inputs:
         print(f"ERROR: 域 '{domain_id}' 不存在", file=sys.stderr)
         return ""
 
-    nodes = get_domain_nodes(conn, domain_id)
-    edges = get_domain_edges(conn, domain_id)
-    outgoing_agg, incoming_agg = get_cross_domain_deps(conn, domain_id)
-    outgoing_detail, incoming_detail = get_cross_domain_deps_detail(conn, domain_id)
+    info = inputs["info"]
+    nodes = inputs["nodes"]
+    edges = inputs["edges"]
+    outgoing_agg = inputs["outgoing_agg"]
+    incoming_agg = inputs["incoming_agg"]
+    outgoing_detail = inputs["outgoing_detail"]
+    incoming_detail = inputs["incoming_detail"]
 
     # 治本（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）：
     # 时间真源改为脚本最近 git commit 时间（idempotent_date / idempotent_timestamp），
@@ -1671,7 +1744,9 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     lines.append("")
 
     # 跨域边明细（仅全景图用；运营态/设计态图不显示跨域外部节点，聚焦域内结构）
-    all_outgoing, all_incoming = get_cross_domain_edges_detail(conn, domain_id, [n["node_id"] for n in nodes])
+    # 数据来自 _gather_domain_inputs 预取（指纹计算与渲染共用同一批查询结果）
+    all_outgoing = inputs["all_outgoing"]
+    all_incoming = inputs["all_incoming"]
 
     def _emit_internal_view(
         title: str, hint: str, view_nodes: list[dict], view_outgoing: list[dict], view_incoming: list[dict]
@@ -1809,6 +1884,157 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
 
 
 # ---------------------------------------------------------------------------
+# 域级指纹持久缓存（治本：GATE-REGENERATE --all 全量重生成超 180s 被杀）
+#
+# 原理：为每个域计算"输入指纹" = 规范化哈希(
+#   该域 7 组 DB 查询结果行 + 域编号
+#   + 涉及节点/跨域端点文件的 (path, mtime_ns, size) 元组
+#   + 模块节点解析到的 blueprint.md 的 (path, mtime_ns, size) 元组
+#   + 共享输入：生成器/映射/加载器代码文件、翻译与域注册表 yaml、
+#     tmp/mermaid.min.js、全量 domains 表、幂等时间源取值)
+# --all 时指纹与 .runtime/cache/domain_doc_fingerprints.json 中记录一致
+# → 跳过 generate + 写 md + emit HTML（产物已在磁盘且输入未变，重写必然
+# 逐字节相同）。指纹不含任何实时时间源（mtime 是文件属性非时钟读数），
+# 不违反 check_generator_no_realtime_time 门禁。
+# ---------------------------------------------------------------------------
+
+# 缓存文件位置（.runtime/ 已 gitignore，不入库）
+_FINGERPRINT_CACHE_PATH = REPO_ROOT / ".runtime" / "cache" / "domain_doc_fingerprints.json"
+_FINGERPRINT_VERSION = 1
+
+# 共享代码输入（任一变化 → 全域重生成）：生成器自身 + 本目录共享模块 + _shared 依赖
+_FINGERPRINT_CODE_FILES = [
+    _THIS_FILE,  # generate_domain_doc.py 自身
+    _THIS_FILE.parent / "zoomable_html.py",  # HTML 模板/联动生成逻辑
+    _THIS_FILE.parent / "domain_name_mapping.py",  # 域名/简介/层级真源
+    _THIS_FILE.parent / "_common.py",  # 幂等时间源/清理工具
+    _THIS_FILE.parents[2] / "_shared" / "module_translation_loader.py",  # 模块翻译加载器
+    _THIS_FILE.parents[2] / "_shared" / "code_algorithm_extractor.py",  # 算法摘要提取器
+    _THIS_FILE.parents[2] / "_shared" / "constants.py",  # DOC_HTTP_BASE 等常量
+]
+
+# 共享数据输入（注册表 yaml + dev-local mermaid.min.js）
+_FINGERPRINT_DATA_FILES = [
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "module_translation_registry.yaml",
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "functional_domain_registry.yaml",
+    REPO_ROOT / "tmp" / "mermaid.min.js",  # 存在与否决定 HTML 内嵌/CDN 模式
+]
+
+
+def _hash_canonical(obj: object) -> str:
+    """对 JSON 可序列化对象做规范化哈希（键排序 + 紧凑分隔符，同输入→同哈希）。"""
+    payload = json.dumps(obj, sort_keys=True, ensure_ascii=False, separators=(",", ":"), default=str)
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def _stat_entry(abs_path: Path) -> list:
+    """文件元组 [posix路径, mtime_ns, size]；文件不存在 → [posix路径, -1, -1]。"""
+    try:
+        st = abs_path.stat()
+    except OSError:
+        return [abs_path.as_posix(), -1, -1]
+    return [abs_path.as_posix(), st.st_mtime_ns, st.st_size]
+
+
+def _paths_stat_entries(paths: list[str]) -> list[list]:
+    """对 repo 相对路径集合取 (path, mtime_ns, size) 元组列表（去重 + 排序保证确定性）。
+
+    YAML 聚合节点 path 含 "#FRAGMENT" 后缀（非物理文件），剥离后 stat 底层文件。
+    """
+    entries: dict[str, list] = {}
+    for p in paths:
+        if not p:
+            continue
+        base = p.split("#", 1)[0]
+        if not base or base in entries:
+            continue
+        e = _stat_entry(REPO_ROOT / base)
+        entries[base] = [base, e[1], e[2]]
+    return [entries[k] for k in sorted(entries)]
+
+
+def _compute_shared_fingerprint(conn: PgConnExecuteWrapper) -> dict:
+    """计算所有域共享的输入指纹（每次运行算一次）。
+
+    覆盖：代码文件 stat、注册表 yaml stat、mermaid.min.js stat、全量 domains 表
+    （跨域标签取他域中文名、编号映射取他域 layer_id，均为全表驱动）、幂等时间源
+    取值（生成器自身 commit 日期变化 → md frontmatter date 变化 → 全域重生成）。
+    """
+    cur = conn.execute("SELECT domain_id, domain_name, layer_id FROM domains ORDER BY domain_id")
+    domains_rows = [[r["domain_id"], r["domain_name"] or "", r["layer_id"] or ""] for r in cur.fetchall()]
+    return {
+        "code": [_stat_entry(p) for p in _FINGERPRINT_CODE_FILES],
+        "data": [_stat_entry(p) for p in _FINGERPRINT_DATA_FILES],
+        "domains_table": _hash_canonical(domains_rows),
+        "date_src": idempotent_date(_THIS_FILE),  # md frontmatter date 真源
+        "ts_src": idempotent_timestamp(_THIS_FILE.parent / "zoomable_html.py"),  # HTML 生成时间真源
+    }
+
+
+def _compute_domain_fingerprint(inputs: dict, number: int, shared_fp: dict) -> str:
+    """计算单域输入指纹（DB 查询行 + 涉及文件 stat + blueprint stat + 共享输入）。"""
+    nodes = inputs["nodes"]
+    # 1) 涉及文件：域内节点 path + 域内边/跨域明细/跨域边两端 path
+    #    （docstring/yaml/算法摘要均按这些 path 读盘，mtime+size 变化即内容可能变化）
+    paths: list[str] = [n["path"] for n in nodes]
+    for coll_key in ("edges", "outgoing_detail", "incoming_detail", "all_outgoing", "all_incoming"):
+        for row in inputs[coll_key]:
+            paths.append(row.get("from_path") or "")
+            paths.append(row.get("to_path") or "")
+    # 2) blueprint 解析结果：设计态模块以 blueprint.md 内容为真源参与渲染；
+    #    新增/删除 blueprint 文件会改变解析结果（None ↔ 路径），必须纳入指纹
+    bp_index = build_blueprint_index()
+    bp_entries: dict[str, list] = {}
+    for n in nodes:
+        bp_id = (n.get("blueprint_id") or "").strip()
+        node_path = n.get("path") or ""
+        if not bp_id or not node_path.endswith(".py") or bp_id in bp_entries:
+            continue
+        bp_path = bp_index.get(bp_id)
+        if bp_path is None:
+            bp_entries[bp_id] = [bp_id, "", -1, -1]
+        else:
+            e = _stat_entry(bp_path)
+            bp_entries[bp_id] = [bp_id, e[0], e[1], e[2]]
+    fp_obj = {
+        "v": _FINGERPRINT_VERSION,
+        "number": number,  # 编号进标题（f"{number:02d}_..."），编号变 → 重生成
+        "db": inputs,
+        "files": _paths_stat_entries(paths),
+        "blueprints": [bp_entries[k] for k in sorted(bp_entries)],
+        "shared": shared_fp,
+    }
+    return _hash_canonical(fp_obj)
+
+
+def _load_fingerprint_cache() -> dict:
+    """读取域指纹缓存。文件缺失 → 空缓存；损坏 → 告警并按空缓存全量重生成（缓存 fail-open）。"""
+    try:
+        data = json.loads(_FINGERPRINT_CACHE_PATH.read_text(encoding="utf-8"))
+        if (
+            isinstance(data, dict)
+            and data.get("version") == _FINGERPRINT_VERSION
+            and isinstance(data.get("domains"), dict)
+        ):
+            return data
+        print(f"[CACHE] 指纹缓存版本不匹配，按全量重生成处理: {_FINGERPRINT_CACHE_PATH}", file=sys.stderr)
+    except FileNotFoundError:
+        pass
+    except Exception as exc:  # noqa: BLE001 — 缓存损坏按全失效处理（缓存语义 fail-open，不影响生成正确性）
+        print(f"[CACHE] 指纹缓存读取失败（{exc}），按全量重生成处理: {_FINGERPRINT_CACHE_PATH}", file=sys.stderr)
+    return {"version": _FINGERPRINT_VERSION, "domains": {}}
+
+
+def _save_fingerprint_cache(cache: dict) -> None:
+    """原子写指纹缓存（复用 _atomic_write；目录自动创建）。"""
+    _FINGERPRINT_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    _atomic_write(
+        _FINGERPRINT_CACHE_PATH,
+        json.dumps(cache, ensure_ascii=False, indent=1, sort_keys=True) + "\n",
+    )
+
+
+# ---------------------------------------------------------------------------
 # CLI 入口
 # ---------------------------------------------------------------------------
 
@@ -1827,6 +2053,16 @@ def main() -> None:
     )
     parser.add_argument("--output-dir", type=str, default=str(OUTPUT_DIR), help="输出目录")
     parser.add_argument("--all", action="store_true", help="生成所有域的文档")
+    parser.add_argument(
+        "--no-cache",
+        action="store_true",
+        help="禁用域指纹增量缓存（不读不写，全量重生成，等同旧行为）",
+    )
+    parser.add_argument(
+        "--refresh-cache",
+        action="store_true",
+        help="强制全量重生成并刷新指纹缓存（不读旧指纹判定，但写入新指纹）",
+    )
     args = parser.parse_args()
 
     if not args.all and not args.domain_id:
@@ -1864,14 +2100,34 @@ def main() -> None:
         # 构建编号映射（按 layer_id 分组排序）
         numbering_map = build_numbering_map(conn)
 
+        # 增量缓存开关：--no-cache 全禁；--refresh-cache 只禁读（强制重生成）但仍写新指纹
+        cache_read = not args.no_cache and not args.refresh_cache
+        cache_write = not args.no_cache
+        fp_cache = _load_fingerprint_cache() if (cache_read or cache_write) else None
+        # 共享输入指纹（代码/注册表/mermaid.min.js/全量 domains 表/幂等时间源），每运行算一次
+        shared_fp = _compute_shared_fingerprint(conn) if fp_cache is not None else None
+
         if args.all:
             # 生成所有域的文档
             cur = conn.execute("SELECT domain_id FROM domains ORDER BY domain_id")
             domain_ids = [r["domain_id"] for r in cur.fetchall()]
             success = 0
+            skipped = 0
+            new_fps: dict[str, str] = {}
             for did in domain_ids:
                 number = numbering_map.get(did, 0)
-                content = generate_domain_doc(did, conn, number)
+                # 指纹判定与渲染共用同一批 DB 输入（避免重复查询）
+                inputs = _gather_domain_inputs(conn, did)
+                if not inputs:
+                    continue
+                fp = _compute_domain_fingerprint(inputs, number, shared_fp) if shared_fp is not None else ""
+                if cache_read and fp_cache is not None and fp_cache["domains"].get(did) == fp:
+                    # 输入指纹未变 → 产物必然逐字节相同，跳过 generate + 写 md + emit HTML
+                    new_fps[did] = fp
+                    skipped += 1
+                    print(f"[SKIP] {did} 输入指纹未变，跳过重生成")
+                    continue
+                content = generate_domain_doc(did, conn, number, _inputs=inputs)
                 if content:
                     safe_name = did.replace("-", "_").lower()
                     out_path = output_dir / f"{number:02d}_{safe_name}.md"
@@ -1881,7 +2137,14 @@ def main() -> None:
                     html_info = f" +HTML({HTML_SUBDIR}/{html_path.name})" if html_path else ""
                     print(f"[OK] 生成 {out_path} ({len(content)} 字符){html_info}")
                     success += 1
-            print(f"\n共生成 {success}/{len(domain_ids)} 个域文档")
+                    if fp:
+                        new_fps[did] = fp
+                # 生成失败不记录指纹（下次运行重试，不掩盖失败）
+            print(f"\n共生成 {success}/{len(domain_ids)} 个域文档（指纹跳过 {skipped} 个）")
+            # 持久化指纹缓存（整体替换：自动清除已删除域的残留条目）
+            if fp_cache is not None and cache_write:
+                fp_cache["domains"] = new_fps
+                _save_fingerprint_cache(fp_cache)
             # 治本：清理残留文件（解决只增不删）
             expected_docs = {
                 f"{numbering_map.get(did, 0):02d}_{did.replace('-', '_').lower()}.md"
@@ -1904,9 +2167,13 @@ def main() -> None:
             if deleted_html:
                 print(f"[CLEANUP] 删除 {len(deleted_html)} 个过时 HTML: {deleted_html}")
         else:
-            # 生成单个域的文档
+            # 生成单个域的文档（显式指定 → 始终生成，不做指纹跳过；成功后回写指纹保持缓存一致）
             number = numbering_map.get(args.domain_id, 0)
-            content = generate_domain_doc(args.domain_id, conn, number)
+            inputs = _gather_domain_inputs(conn, args.domain_id)
+            if not inputs:
+                print(f"ERROR: 域 '{args.domain_id}' 不存在", file=sys.stderr)
+                sys.exit(EXIT_ERROR)
+            content = generate_domain_doc(args.domain_id, conn, number, _inputs=inputs)
             if not content:
                 sys.exit(EXIT_ERROR)
             safe_name = args.domain_id.replace("-", "_").lower()
@@ -1916,6 +2183,10 @@ def main() -> None:
             html_path = emit_zoomable_html(out_path, content)
             html_info = f" +HTML({HTML_SUBDIR}/{html_path.name})" if html_path else ""
             print(f"[OK] 生成 {out_path} ({len(content)} 字符){html_info}")
+            # 回写单域指纹（不清除其他域条目）
+            if fp_cache is not None and cache_write and shared_fp is not None:
+                fp_cache["domains"][args.domain_id] = _compute_domain_fingerprint(inputs, number, shared_fp)
+                _save_fingerprint_cache(fp_cache)
     finally:
         conn.close()
 

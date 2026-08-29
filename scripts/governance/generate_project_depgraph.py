@@ -852,6 +852,19 @@ def _extract_tree_domains(
         _extract_tree_domains(val, child_path, derivation_list, domains_data, unreg_prefixes, domain_id_to_layer)
 
 
+def _extract_domain_override_lines(lines: list[str]) -> str | None:
+    """_extract_domain_override 核心逻辑（预切分行版本，供合并 IO 复用）。"""
+    try:
+        for i in range(min(20, len(lines))):
+            line = lines[i]
+            m = re.match(r"^#\s*\[DOMAIN\]\s*(D[_-][A-Z0-9_]+)", line)
+            if m:
+                return m.group(1)
+    except (OSError, UnicodeDecodeError):
+        pass
+    return None
+
+
 def _extract_domain_override(filepath: Path) -> str | None:
     """从文件头提取 [DOMAIN] 字段，返回 domain_id 或 None。
 
@@ -860,23 +873,25 @@ def _extract_domain_override(filepath: Path) -> str | None:
     """
     try:
         with open(filepath, encoding="utf-8", errors="ignore") as f:
-            for _ in range(20):
-                line = f.readline()
-                if not line:
-                    break
-                m = re.match(r"^#\s*\[DOMAIN\]\s*(D[_-][A-Z0-9_]+)", line)
-                if m:
-                    return m.group(1)
+            lines = _split_text_lines(f.read())
+            return _extract_domain_override_lines(lines)
     except (OSError, UnicodeDecodeError):
         pass
     return None
 
 
-def derive_domain_id(rel_path: str, domain_derivation: list = None, filepath: Path = None) -> str:
+def derive_domain_id(
+    rel_path: str, domain_derivation: list = None, filepath: Path = None, header_lines: list | None = None
+) -> str:
     """derive_domain_id implementation."""
     # 优先检查文件头 [DOMAIN] 覆盖
+    # header_lines：合并 IO 路径传入的预切分行（跳过重复读文件）；None 时自行读取
     if filepath and filepath.exists():
-        override = _extract_domain_override(filepath)
+        override = (
+            _extract_domain_override_lines(header_lines)
+            if header_lines is not None
+            else _extract_domain_override(filepath)
+        )
         if override:
             return override
     # 路径派生
@@ -1074,21 +1089,45 @@ def derive_tags(rel_path: str, node_type: str) -> list:
     return capped
 
 
-def count_header_completeness(filepath) -> int:
-    """count_header_completeness implementation."""
+def _split_text_lines(text: str) -> list[str]:
+    """与文本模式（universal newlines）逐行迭代等价的切分（合并 IO 路径用）。
+
+    \\r\\n/\\r 归一化为 \\n 后切分；返回行不含行尾换行符；文件末尾换行不产出
+    额外空行；空文本返回空列表（对齐空文件迭代零行语义）。
+    """
+    if not text:
+        return []
+    norm = text.replace("\r\n", "\n").replace("\r", "\n")
+    lines = norm.split("\n")
+    if norm.endswith("\n"):
+        lines.pop()
+    return lines
+
+
+def _count_header_completeness_lines(lines: list[str]) -> int:
+    """count_header_completeness 核心逻辑（预切分行版本，供合并 IO 复用）。"""
     found = 0
     try:
-        with open(filepath, encoding="utf-8", errors="ignore") as f:
-            for i, line in enumerate(f):
-                if i >= 20:
-                    break
-                stripped = line.strip()
-                for field in HEADER_FIELDS:
-                    if f"[{field}]" in stripped:
-                        found += 1
-    except Exception:  # noqa: BLE001 — 单文件读取/解码失败时返回已统计字段数，不中断批量头部完整性扫描
+        for i, line in enumerate(lines):
+            if i >= 20:
+                break
+            stripped = line.strip()
+            for field in HEADER_FIELDS:
+                if f"[{field}]" in stripped:
+                    found += 1
+    except Exception:  # noqa: BLE001 — 行解析异常返回已统计字段数，不中断批量头部完整性扫描
         pass
     return found
+
+
+def count_header_completeness(filepath) -> int:
+    """count_header_completeness implementation."""
+    try:
+        with open(filepath, encoding="utf-8", errors="ignore") as f:
+            return _count_header_completeness_lines(_split_text_lines(f.read()))
+    except Exception:  # noqa: BLE001 — 单文件读取/解码失败时返回已统计字段数，不中断批量头部完整性扫描
+        pass
+    return 0
 
 
 # Type classification prefixes — loaded from depgraph_scan_exclusions.yaml
@@ -1108,8 +1147,8 @@ ID_PATTERN = re.compile(
 )
 
 
-def parse_blueprint_header(filepath: Path) -> dict:
-    """parse_blueprint_header implementation."""
+def _parse_blueprint_header_lines(lines: list[str]) -> dict:
+    """parse_blueprint_header 核心逻辑（预切分行版本，供合并 IO 复用）。"""
     info = {
         "blueprint_id": "",
         "blueprint_path": "",
@@ -1119,49 +1158,58 @@ def parse_blueprint_header(filepath: Path) -> dict:
         "modification_permission": "",
     }
     try:
-        # Bug 4 修复（2026-07-18）：用 utf-8-sig 自动去除 BOM。
-        with open(filepath, encoding="utf-8-sig", errors="ignore") as f:
-            for i, line in enumerate(f):
-                if i >= 15:
-                    break
-                stripped = line.strip()
-                if stripped.startswith("# [BLUEPRINT]"):
-                    parts = stripped[len("# [BLUEPRINT]") :].strip().split("|")
-                    if len(parts) >= 1:
-                        info["blueprint_id"] = parts[0].strip()
-                    if len(parts) >= 2:
-                        info["blueprint_path"] = parts[1].strip()
-                elif stripped.startswith('"""[BLUEPRINT]') or stripped.startswith("'''[BLUEPRINT]"):
-                    content = stripped.lstrip("\"'").lstrip()
-                    if content.startswith("[BLUEPRINT]"):
-                        content = content[len("[BLUEPRINT]") :].strip()
-                    else:
-                        content = content[len("BLUEPRINT]") :].strip()
-                    parts = content.split("|")
-                    if len(parts) >= 1:
-                        info["blueprint_id"] = parts[0].strip()
-                    if len(parts) >= 2:
-                        info["blueprint_path"] = parts[1].strip()
-                elif stripped.startswith("# [MODULE]"):
-                    info["module_path"] = stripped[len("# [MODULE]") :].strip()
-                elif stripped.startswith("# [STABILITY]"):
-                    val = stripped[len("# [STABILITY]") :].strip()
-                    info["change_policy"] = val
-                elif stripped.startswith("# [SAFETY]"):
-                    val = stripped[len("# [SAFETY]") :].strip()
-                    info["impact_level"] = val
-                elif stripped.startswith("# [AI_AUTONOMY]"):
-                    val = stripped[len("# [AI_AUTONOMY]") :].strip()
-                    info["modification_permission"] = val
-                if not info["blueprint_id"] and i < 10:
-                    bp_match = __import__("re").search(
-                        r"(?:蓝图|blueprint)[:\s]+([A-Z]{2,4}-[A-Z]*-?\d+)", stripped, __import__("re").IGNORECASE
-                    )
-                    if bp_match:
-                        info["blueprint_id"] = bp_match.group(1).upper()
+        for i, line in enumerate(lines):
+            if i >= 15:
+                break
+            stripped = line.strip()
+            if stripped.startswith("# [BLUEPRINT]"):
+                parts = stripped[len("# [BLUEPRINT]") :].strip().split("|")
+                if len(parts) >= 1:
+                    info["blueprint_id"] = parts[0].strip()
+                if len(parts) >= 2:
+                    info["blueprint_path"] = parts[1].strip()
+            elif stripped.startswith('"""[BLUEPRINT]') or stripped.startswith("'''[BLUEPRINT]"):
+                content = stripped.lstrip("\"'").lstrip()
+                if content.startswith("[BLUEPRINT]"):
+                    content = content[len("[BLUEPRINT]") :].strip()
+                else:
+                    content = content[len("BLUEPRINT]") :].strip()
+                parts = content.split("|")
+                if len(parts) >= 1:
+                    info["blueprint_id"] = parts[0].strip()
+                if len(parts) >= 2:
+                    info["blueprint_path"] = parts[1].strip()
+            elif stripped.startswith("# [MODULE]"):
+                info["module_path"] = stripped[len("# [MODULE]") :].strip()
+            elif stripped.startswith("# [STABILITY]"):
+                val = stripped[len("# [STABILITY]") :].strip()
+                info["change_policy"] = val
+            elif stripped.startswith("# [SAFETY]"):
+                val = stripped[len("# [SAFETY]") :].strip()
+                info["impact_level"] = val
+            elif stripped.startswith("# [AI_AUTONOMY]"):
+                val = stripped[len("# [AI_AUTONOMY]") :].strip()
+                info["modification_permission"] = val
+            if not info["blueprint_id"] and i < 10:
+                bp_match = __import__("re").search(
+                    r"(?:蓝图|blueprint)[:\s]+([A-Z]{2,4}-[A-Z]*-?\d+)", stripped, __import__("re").IGNORECASE
+                )
+                if bp_match:
+                    info["blueprint_id"] = bp_match.group(1).upper()
     except Exception:  # noqa: BLE001 — 单文件蓝图头解析失败返回默认空信息，不中断全量文件扫描
         pass
     return info
+
+
+def parse_blueprint_header(filepath: Path) -> dict:
+    """parse_blueprint_header implementation."""
+    try:
+        # Bug 4 修复（2026-07-18）：用 utf-8-sig 自动去除 BOM。
+        with open(filepath, encoding="utf-8-sig", errors="ignore") as f:
+            lines = _split_text_lines(f.read())
+    except Exception:  # noqa: BLE001 — 单文件蓝图头解析失败返回默认空信息，不中断全量文件扫描
+        lines = []
+    return _parse_blueprint_header_lines(lines)
 
 
 def parse_yaml_header(filepath: Path) -> dict:
@@ -1281,13 +1329,10 @@ def _resolve_gov_bare_import(module: str, importing_file: Path) -> str | None:
     return None
 
 
-def extract_py_imports(filepath: Path) -> list:
-    """extract_py_imports implementation."""
+def _extract_imports_from_tree(tree: ast.AST, filepath: Path) -> list:
+    """extract_py_imports 核心逻辑（预解析 AST 版本，供合并 IO 单次 parse 复用）。"""
     imports = []
     try:
-        with open(filepath, encoding="utf-8", errors="ignore") as f:
-            source = f.read()
-        tree = ast.parse(source, filename=str(filepath))
         for node in ast.walk(tree):
             if isinstance(node, ast.Import):
                 for alias in node.names:
@@ -1341,9 +1386,39 @@ def extract_py_imports(filepath: Path) -> list:
                             alias_path = f"{resolved}.{alias.name}"
                             if alias_path not in imports:
                                 imports.append(alias_path)
-    except Exception:  # noqa: BLE001 — 单文件 AST 解析或导入分析失败返回已收集导入，不中断全量扫描
+    except Exception:  # noqa: BLE001 — 单文件导入分析失败返回已收集导入，不中断全量扫描
         pass
     return imports
+
+
+def extract_py_imports(filepath: Path) -> list:
+    """extract_py_imports implementation."""
+    try:
+        with open(filepath, encoding="utf-8", errors="ignore") as f:
+            source = f.read()
+        tree = ast.parse(source, filename=str(filepath))
+    except Exception:  # noqa: BLE001 — 单文件 AST 解析失败返回空导入列表，不中断全量扫描
+        return []
+    return _extract_imports_from_tree(tree, filepath)
+
+
+def _extract_public_api_from_tree(tree: ast.AST) -> str:
+    """extract_public_api 核心逻辑（预解析 AST 版本，供合并 IO 单次 parse 复用）。"""
+    try:
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Assign):
+                for target in node.targets:
+                    if isinstance(target, ast.Name) and target.id == "__all__":
+                        if isinstance(node.value, ast.List):
+                            names = []
+                            for elt in node.value.elts:
+                                if isinstance(elt, ast.Constant) and isinstance(elt.value, str):
+                                    names.append(elt.value)
+                            return ", ".join(names)
+                        return ""
+    except Exception:  # noqa: BLE001 — 单文件 __all__ 提取失败返回空串，public_api 为可选字段不中断扫描
+        pass
+    return ""
 
 
 def extract_public_api(filepath: Path) -> str:
@@ -1359,20 +1434,9 @@ def extract_public_api(filepath: Path) -> str:
         with open(filepath, encoding="utf-8", errors="ignore") as f:
             source = f.read()
         tree = ast.parse(source, filename=str(filepath))
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Assign):
-                for target in node.targets:
-                    if isinstance(target, ast.Name) and target.id == "__all__":
-                        if isinstance(node.value, ast.List):
-                            names = []
-                            for elt in node.value.elts:
-                                if isinstance(elt, ast.Constant) and isinstance(elt.value, str):
-                                    names.append(elt.value)
-                            return ", ".join(names)
-                        return ""
     except Exception:  # noqa: BLE001 — 单文件 __all__ 提取失败返回空串，public_api 为可选字段不中断扫描
-        pass
-    return ""
+        return ""
+    return _extract_public_api_from_tree(tree)
 
 
 def extract_md_references(filepath: Path) -> list:
@@ -1469,13 +1533,38 @@ def compute_file_hash(filepath: Path) -> str:
 
 
 def scan_py_file(rel_path: str, domain_derivation: list = None) -> dict | None:
-    """scan_py_file implementation."""
+    """scan_py_file implementation.
+
+    治本（2026-08-29，depgraph 性能）：单文件 6 次 open + 2 次 ast.parse 合并为
+    1 次字节读取 + 1 次 ast.parse——字节流派生 sha256 content_hash；utf-8-sig 文本供
+    blueprint 头解析（对齐原 parse_blueprint_header 的去 BOM 行为）；utf-8 文本供
+    [DOMAIN] 覆盖/头部完整度统计/AST（imports 与 public_api 两次遍历共用同一棵树）。
+    各提取阶段独立容错（单阶段失败仅该字段取默认值），产出字段值与原逐函数版一致。
+    """
     filepath = PROJECT_ROOT / rel_path
     if not filepath.exists():
         return None
-    header = parse_blueprint_header(filepath)
-    imports = extract_py_imports(filepath)
-    public_api = extract_public_api(filepath)
+    try:
+        raw_bytes = filepath.read_bytes()
+        content_hash = hashlib.sha256(raw_bytes).hexdigest()
+    except Exception:  # noqa: BLE001 — 单文件读取失败：全部派生字段取默认值（对齐原各函数独立失败语义）
+        raw_bytes = b""
+        content_hash = ""
+    # 编码逐一对齐原读取方：blueprint 头=utf-8-sig（去 BOM），domain/完整度/AST=utf-8
+    text_sig = raw_bytes.decode("utf-8-sig", errors="ignore")
+    text_utf8 = raw_bytes.decode("utf-8", errors="ignore")
+    lines_utf8 = _split_text_lines(text_utf8)
+    header = _parse_blueprint_header_lines(_split_text_lines(text_sig))
+    try:
+        tree = ast.parse(text_utf8, filename=str(filepath))
+    except Exception:  # noqa: BLE001 — 语法错误等：imports=[] / public_api=""（对齐原两函数各自降级）
+        tree = None
+    if tree is not None:
+        imports = _extract_imports_from_tree(tree, filepath)
+        public_api = _extract_public_api_from_tree(tree)
+    else:
+        imports = []
+        public_api = ""
     cat = classify_file(rel_path)
     if not cat:
         cat = "module"
@@ -1484,13 +1573,13 @@ def scan_py_file(rel_path: str, domain_derivation: list = None) -> dict | None:
         "type": cat,
         "granularity": "file",
         "blueprint_id": header["blueprint_id"],
-        "domain_id": derive_domain_id(rel_path, domain_derivation, filepath),
+        "domain_id": derive_domain_id(rel_path, domain_derivation, filepath, header_lines=lines_utf8),
         "change_policy": header["change_policy"],
         "impact_level": header["impact_level"],
         "modification_permission": header["modification_permission"],
-        "file_header_score": count_header_completeness(filepath),
+        "file_header_score": _count_header_completeness_lines(lines_utf8),
         "imports": imports,
-        "content_hash": compute_file_hash(filepath),
+        "content_hash": content_hash,
         "public_api": public_api,
     }
 
@@ -2717,6 +2806,14 @@ def enrich_edges_semantic(edges: list, nodes: dict, registry_deps: list) -> list
     # Track which edges got registry enrichment
     enriched_by_registry = set()
 
+    # 治本（2026-08-29，depgraph 性能）：预建 (from,to)→edges 索引，registry 富化内层
+    # 从"每个 registry 对全扫 edges 列表"O(R×E) 降为 O(1) 查询。
+    # 同一 (from,to) 可存在多条边（edge 去重键含 dep_type），索引值为列表；
+    # 修改仍作用于 edges 内同一 dict 对象（引用语义不变），幂等守卫 enriched_by_registry 保留。
+    edge_by_pair: dict[tuple, list] = {}
+    for edge in edges:
+        edge_by_pair.setdefault((edge.get("from"), edge.get("to")), []).append(edge)
+
     # Enrich edges from registry (module-level mapping)
     for (src_mod, tgt_mod), reg_deps in reg_lookup.items():
         src_nodes = mod_to_nodes.get(src_mod, set())
@@ -2725,14 +2822,15 @@ def enrich_edges_semantic(edges: list, nodes: dict, registry_deps: list) -> list
             continue
         # Use first registry dep for primary fields (most deps are 1:1)
         primary_dep = reg_deps[0]
-        for edge in edges:
-            if edge["from"] in src_nodes and edge["to"] in tgt_nodes:
-                edge_key = (id(edge),)
-                if edge_key not in enriched_by_registry:
-                    edge["semantic_type"] = primary_dep.get("type", "")
-                    edge["semantic_direction"] = primary_dep.get("direction", "")
-                    edge["contract_anchor"] = primary_dep.get("contract_anchor", "")
-                    enriched_by_registry.add(edge_key)
+        for src_nid in src_nodes:
+            for tgt_nid in tgt_nodes:
+                for edge in edge_by_pair.get((src_nid, tgt_nid), ()):
+                    edge_key = (id(edge),)
+                    if edge_key not in enriched_by_registry:
+                        edge["semantic_type"] = primary_dep.get("type", "")
+                        edge["semantic_direction"] = primary_dep.get("direction", "")
+                        edge["contract_anchor"] = primary_dep.get("contract_anchor", "")
+                        enriched_by_registry.add(edge_key)
 
     # Enrich remaining edges with derived defaults
     for edge in edges:
@@ -3062,6 +3160,98 @@ def _class_has_di_seam(class_node: ast.ClassDef) -> bool:
     return _init_has_injectable_param(init_func)
 
 
+# ============================================================================
+# 治本（2026-08-29，depgraph 性能）：DI seam 检查内容哈希级缓存。
+# 病根：_validate_di_seam 每次运行对 src/zephyr/**/*.py 串行 ast.parse（隐藏二次全扫，
+# 与 --incremental/ScanCache 无关，全量重建路径白付一次全量 AST）。
+# 缓存 key=(path, content_hash)，value=该文件"缺 DI seam 的类"原始清单（豁免过滤前），
+# 无变化文件直接命中跳过 ast.parse；失效：检测逻辑变更 → bump _DI_SEAM_LOGIC_VERSION 全失效。
+# 豁免清单在缓存命中后运行时过滤（豁免变更无需失效缓存）。
+# ============================================================================
+_DI_SEAM_LOGIC_VERSION = 1  # _class_has_di_seam 等检测逻辑变更时 bump → 全缓存失效
+_DI_SEAM_CACHE_FILE = PROJECT_ROOT / ".runtime" / "depgraph_di_seam_cache.json"
+
+
+class _DiSeamCache:
+    """DI seam 单文件检查结果缓存（对齐 ScanCache 模式：原子落盘、版本失效、失败回退全扫）。
+
+    结构: {path: {content_hash: [缺DI seam的类全限定名, ...]}}（豁免过滤前的原始结果）。
+    """
+
+    def __init__(self, cache_path: Path):
+        """__init__ implementation."""
+        self.cache_path = cache_path
+        self.entries: dict[str, dict[str, list]] = {}
+        self._dirty = False
+        self._load()
+
+    def _load(self) -> None:
+        """_load implementation."""
+        try:
+            with open(self.cache_path, encoding="utf-8") as f:
+                data = json.load(f)
+            if data.get("_meta", {}).get("di_seam_logic_version") == _DI_SEAM_LOGIC_VERSION:
+                self.entries = data.get("entries", {})
+            else:
+                self.entries = {}
+        except Exception:  # noqa: BLE001 — 缓存缺失/损坏回退全扫，不阻断校验
+            self.entries = {}
+
+    def get(self, rel_path: str, content_hash: str) -> list | None:
+        """get implementation."""
+        if not content_hash:
+            return None  # hash 计算失败 → 永不命中 → 安全回退实时解析
+        return self.entries.get(rel_path, {}).get(content_hash)
+
+    def put(self, rel_path: str, content_hash: str, result: list) -> None:
+        """put implementation."""
+        if not content_hash:
+            return
+        self.entries.setdefault(rel_path, {})[content_hash] = result
+        self._dirty = True
+
+    def save(self) -> None:
+        """save implementation."""
+        if not self._dirty:
+            return
+        try:
+            self.cache_path.parent.mkdir(parents=True, exist_ok=True)
+            data = {
+                "_meta": {
+                    "di_seam_logic_version": _DI_SEAM_LOGIC_VERSION,
+                    "saved_at": datetime.now().isoformat(),
+                },
+                "entries": self.entries,
+            }
+            tmp = self.cache_path.with_suffix(".tmp")
+            with open(tmp, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False)
+            tmp.replace(self.cache_path)  # atomic rename
+        except Exception as e:  # noqa: BLE001 — 缓存保存失败不阻断校验
+            print(f"[DEPGRAPH] WARNING: DI seam 缓存保存失败: {e}")
+
+
+def _check_file_di_seam_raw(py_file: Path) -> list[str]:
+    """单文件 DI seam 原始检查（#ARCH-DI-SEAM-001）：返回缺 DI seam 的类全限定名清单。
+
+    不含豁免过滤——豁免在缓存命中后运行时应用（豁免清单变更无需失效缓存）。
+    SyntaxError 文件返回空清单（对齐原逐个跳过语义，且结果可随内容哈希缓存）。
+    """
+    try:
+        tree = ast.parse(py_file.read_text(encoding="utf-8-sig", errors="ignore"), filename=str(py_file))
+    except SyntaxError:
+        return []
+    rel_path = str(py_file.relative_to(PROJECT_ROOT)).replace("\\", "/").replace("src/", "")
+    module_prefix = rel_path.replace("/", ".").removesuffix(".py")
+    violations: list[str] = []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.ClassDef):
+            continue
+        if not _class_has_di_seam(node):
+            violations.append(f"{module_prefix}.{node.name}")
+    return violations
+
+
 def _validate_di_seam():
     """Phase 4 防御性门禁 (#ARCH-DI-SEAM-001): DI seam 静态检测 — 跨切面依赖注入接缝扫描。
 
@@ -3071,27 +3261,27 @@ def _validate_di_seam():
 
     豁免清单真源：capability_canonical_file_registry.yaml 的 di_seam_exemptions 字段。
     编号铁律#6: 本函数引用 #ARCH-DI-SEAM-001，已在 architecture_issue_registry.yaml 登记。
+
+    性能治本（2026-08-29）：单文件结果按 (path, content_hash) 缓存到
+    .runtime/depgraph_di_seam_cache.json，无变化文件跳过 ast.parse；
+    缓存存豁免过滤前的原始清单，豁免过滤在命中后运行时应用（输出与原实现一致）。
     """
     exemptions = _load_di_seam_exemptions()
     src_root = PROJECT_ROOT / "src" / "zephyr"
     warnings: list[str] = []
+    cache = _DiSeamCache(_DI_SEAM_CACHE_FILE)
     for py_file in src_root.rglob("*.py"):
-        try:
-            tree = ast.parse(py_file.read_text(encoding="utf-8-sig", errors="ignore"), filename=str(py_file))
-        except SyntaxError:
-            continue
-        rel_path = str(py_file.relative_to(PROJECT_ROOT)).replace("\\", "/").replace("src/", "")
-        module_prefix = rel_path.replace("/", ".").removesuffix(".py")
-        for node in ast.walk(tree):
-            if not isinstance(node, ast.ClassDef):
-                continue
-            full_path = f"{module_prefix}.{node.name}"
+        content_hash = compute_file_hash(py_file)
+        rel = str(py_file.relative_to(PROJECT_ROOT)).replace("\\", "/")
+        raw = cache.get(rel, content_hash)
+        if raw is None:
+            raw = _check_file_di_seam_raw(py_file)
+            cache.put(rel, content_hash, raw)
+        for full_path in raw:
             if full_path in exemptions:
                 continue
-            if not _class_has_di_seam(node):
-                warnings.append(
-                    f"{full_path} — __init__ 无可注入参数（Protocol/ABC/Interface 注解 或 |None=None 默认）"
-                )
+            warnings.append(f"{full_path} — __init__ 无可注入参数（Protocol/ABC/Interface 注解 或 |None=None 默认）")
+    cache.save()
     if warnings:
         print(f"[DEPGRAPH] WARNING: DI seam 检测发现 {len(warnings)} 个候选违规 (#ARCH-DI-SEAM-001):")
         for w in warnings[:20]:
@@ -3683,14 +3873,44 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
         # 不合规的blueprint_id会触发RAISE EXCEPTION导致整个事务回滚（连累合规节点）
         # 在INSERT前预过滤，不合规的跳过并记录WARN
         _BLUEPRINT_ID_VALID_RE = re.compile(r"^(MOD-|D-|SH-|SYS-|PLACEHOLDER)")
-        # 治本 2026-07-02 (ARCH-033 Phase 2.1): 逐节点SAVEPOINT，失败时ROLLBACK TO SAVEPOINT
+        # 治本 2026-07-02 (ARCH-033 Phase 2.1): SAVEPOINT 隔离失败节点
         # 防御性设计：即使预过滤通过，仍可能有其他DB约束冲突（如CHECK constraint）
         # 用SAVEPOINT确保单节点失败不影响其他合规节点
+        # 治本（2026-08-29，性能）：INSERT 从逐节点 execute（~6500 节点 × SAVEPOINT+INSERT+RELEASE
+        # ≈ 2 万次 round-trip）改为 execute_values 批量写（页大小 500，SAVEPOINT 降为按批）；
+        # 批失败时 ROLLBACK TO 批 SAVEPOINT 并降级到原逐节点 SAVEPOINT+INSERT 路径——
+        # "单节点失败不连累合规节点"语义逐字保留。INSERT 列清单与参数元组与原实现逐字一致，
+        # 仅 VALUES 由 execute_values 展开为多行。design→production 同身份 UPDATE（#ARCH-70）
+        # 保持即时逐行执行（量小且与 INSERT 路径互斥：path 命中 design 行的节点不进 INSERT）。
         # ── #ARCH-70：快照 DELETE 后保留的 design 行（同身份 UPDATE 通道的命中表）──
         cursor.execute(_SQL_DESIGN_ROWS_BY_PATH)
         _design_rows_by_path = {r["path"]: dict(r) for r in cursor.fetchall()}
         converted_design_count = 0
         _sp_counter = 0
+        _INSERT_NODES_BATCH_SQL = """INSERT INTO nodes (
+                    node_type, path, granularity, domain_id, subdomain_id, blueprint_id,
+                    belongs_to, owner, change_policy, impact_level, modification_permission,
+                    file_header_score, tags, architecture_layer, design_maturity, deployment_lifecycle,
+                    trust_zone, license, drive_direction, type_specific_data, last_verified,
+                    node_name, file_path, build_status,
+                    can_build, gate_reason, hard_boundary_ref, consumed_interfaces, content_hash,
+                    public_api
+                ) VALUES %s"""
+        _INSERT_NODE_ONE_SQL = """INSERT INTO nodes (
+                    node_type, path, granularity, domain_id, subdomain_id, blueprint_id,
+                    belongs_to, owner, change_policy, impact_level, modification_permission,
+                    file_header_score, tags, architecture_layer, design_maturity, deployment_lifecycle,
+                    trust_zone, license, drive_direction, type_specific_data, last_verified,
+                    node_name, file_path, build_status,
+                    can_build, gate_reason, hard_boundary_ref, consumed_interfaces, content_hash,
+                    public_api
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+                          %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+        _NODE_BATCH_SIZE = 500
+        _insert_rows: list[tuple] = []
+        _insert_meta: list[tuple] = []  # (gen_node_id, bp_id, path, domain_id)，与 _insert_rows 对齐
+
+        # Pass 1: design 同身份转换（即时逐行，原逻辑）+ 收集待 INSERT 行
         for node_id, node in nodes.items():
             # Skip design-state nodes (already in DB)
             if node.get("design_maturity") == "design":
@@ -3736,14 +3956,14 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
             # H6 fix: Compute can_build from design_maturity
             can_build = 1 if node.get("design_maturity") == "production" else 0
 
+            # ── #ARCH-70 同身份 UPDATE：path 命中保留的 design 行 → 转换，不 INSERT ──
             # Phase 2.1: 逐节点SAVEPOINT，失败时ROLLBACK TO SAVEPOINT不连累合规节点
-            _sp_counter += 1
-            _sp_name = f"sp_node_{_sp_counter}"
-            try:
-                cursor.execute(f"SAVEPOINT {_sp_name}")
-                # ── #ARCH-70 同身份 UPDATE：path 命中保留的 design 行 → 转换，不 INSERT ──
-                _drow = _design_rows_by_path.get(node.get("path", ""))
-                if _drow is not None:
+            _drow = _design_rows_by_path.get(node.get("path", ""))
+            if _drow is not None:
+                _sp_counter += 1
+                _sp_name = f"sp_node_{_sp_counter}"
+                try:
+                    cursor.execute(f"SAVEPOINT {_sp_name}")
                     _conv_bs = _resolve_converted_build_status(
                         _drow["build_status"], node.get("build_status", "generated")
                     )
@@ -3777,79 +3997,126 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
                     cursor.execute(f"RELEASE SAVEPOINT {_sp_name}")
                     converted_design_count += 1
                     gen_node_id_to_path[node_id] = node.get("path", "")
-                    continue
-                cursor.execute(
-                    """INSERT INTO nodes (
-                    node_type, path, granularity, domain_id, subdomain_id, blueprint_id,
-                    belongs_to, owner, change_policy, impact_level, modification_permission,
-                    file_header_score, tags, architecture_layer, design_maturity, deployment_lifecycle,
-                    trust_zone, license, drive_direction, type_specific_data, last_verified,
-                    node_name, file_path, build_status,
-                    can_build, gate_reason, hard_boundary_ref, consumed_interfaces, content_hash,
-                    public_api
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-                          %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
-                    (
-                        node.get("type", "module"),
-                        node.get("path", ""),
-                        node.get("granularity", "file"),
-                        # Bug 3 修复（2026-07-18）：domain_id 空字符串触发 FK 违反
-                        # nodes_domain_id_fkey（空字符串不在 domains 表中）。NULL 不触发 FK 检查。
-                        node.get("domain_id") or None,
-                        node.get("subdomain_id") or None,
-                        node.get("blueprint_id", ""),
-                        node.get("belongs_to", ""),
-                        node.get("owner", ""),
-                        node.get("change_policy", "evolving"),
-                        node.get("impact_level", "M"),
-                        node.get("modification_permission", "ai_modifiable"),
-                        node.get("file_header_score", 0),
-                        tags_json,
-                        node.get("architecture_layer", ""),
-                        node.get("design_maturity", "production"),
-                        node.get("deployment_lifecycle", "stable"),
-                        node.get("trust_zone", "trusted_core"),
-                        node.get("license", "Internal"),
-                        node.get("drive_direction", "bottom_up"),
-                        type_specific_json,
-                        now_utc().isoformat(),
-                        node.get("node_name", ""),
-                        node.get("file_path", node.get("path", "")),
-                        node.get("build_status", "generated"),  # 裁定#178：删除draft默认值，改用推导值
-                        can_build,  # H6 fix
-                        node.get("gate_reason", ""),  # H6 fix
-                        node.get("hard_boundary_ref", ""),  # H6 fix
-                        node.get("consumed_interfaces", ""),  # H6 fix
-                        node.get("content_hash", ""),  # 裁定#209 Stage 3
-                        node.get("public_api", ""),  # 五图模块对齐 Step 3
-                    ),
+                except Exception as node_err:
+                    # ROLLBACK TO SAVEPOINT 恢复事务到SAVEPOINT之前状态，可继续后续INSERT
+                    try:
+                        cursor.execute(f"ROLLBACK TO SAVEPOINT {_sp_name}")
+                    except Exception:
+                        # SAVEPOINT本身失败（极端情况），需要rollback整个事务并重建
+                        conn.rollback()
+                        cursor = conn.cursor()
+                    failed_insert_count += 1
+                    failed_inserts.append(
+                        {
+                            "blueprint_id": bp_id,
+                            "path": node.get("path", ""),
+                            "domain_id": node.get("domain_id", ""),
+                            "error": str(node_err),
+                        }
+                    )
+                    if failed_insert_count <= 10:  # 即时WARN前10个，完整ERROR摘要在循环后
+                        print(
+                            f"[DEPGRAPH-DB] WARN: 节点INSERT失败被跳过: "
+                            f"blueprint_id={bp_id} path={node.get('path', '')} error={node_err}"
+                        )
+                continue
+
+            _insert_rows.append(
+                (
+                    node.get("type", "module"),
+                    node.get("path", ""),
+                    node.get("granularity", "file"),
+                    # Bug 3 修复（2026-07-18）：domain_id 空字符串触发 FK 违反
+                    # nodes_domain_id_fkey（空字符串不在 domains 表中）。NULL 不触发 FK 检查。
+                    node.get("domain_id") or None,
+                    node.get("subdomain_id") or None,
+                    node.get("blueprint_id", ""),
+                    node.get("belongs_to", ""),
+                    node.get("owner", ""),
+                    node.get("change_policy", "evolving"),
+                    node.get("impact_level", "M"),
+                    node.get("modification_permission", "ai_modifiable"),
+                    node.get("file_header_score", 0),
+                    tags_json,
+                    node.get("architecture_layer", ""),
+                    node.get("design_maturity", "production"),
+                    node.get("deployment_lifecycle", "stable"),
+                    node.get("trust_zone", "trusted_core"),
+                    node.get("license", "Internal"),
+                    node.get("drive_direction", "bottom_up"),
+                    type_specific_json,
+                    now_utc().isoformat(),
+                    node.get("node_name", ""),
+                    node.get("file_path", node.get("path", "")),
+                    node.get("build_status", "generated"),  # 裁定#178：删除draft默认值，改用推导值
+                    can_build,  # H6 fix
+                    node.get("gate_reason", ""),  # H6 fix
+                    node.get("hard_boundary_ref", ""),  # H6 fix
+                    node.get("consumed_interfaces", ""),  # H6 fix
+                    node.get("content_hash", ""),  # 裁定#209 Stage 3
+                    node.get("public_api", ""),  # 五图模块对齐 Step 3
                 )
-                cursor.execute(f"RELEASE SAVEPOINT {_sp_name}")
-                node_count += 1
+            )
+            _insert_meta.append((node_id, bp_id, node.get("path", ""), node.get("domain_id", "")))
+
+        # Pass 2: 分批 execute_values INSERT（按批 SAVEPOINT）；批失败降级逐节点（原逻辑）
+        for _chunk_lo in range(0, len(_insert_rows), _NODE_BATCH_SIZE):
+            _rows_chunk = _insert_rows[_chunk_lo : _chunk_lo + _NODE_BATCH_SIZE]
+            _meta_chunk = _insert_meta[_chunk_lo : _chunk_lo + _NODE_BATCH_SIZE]
+            _sp_counter += 1
+            _batch_sp = f"sp_node_batch_{_sp_counter}"
+            try:
+                cursor.execute(f"SAVEPOINT {_batch_sp}")
+                psycopg2.extras.execute_values(
+                    cursor, _INSERT_NODES_BATCH_SQL, _rows_chunk, page_size=_NODE_BATCH_SIZE
+                )
+                cursor.execute(f"RELEASE SAVEPOINT {_batch_sp}")
+                node_count += len(_rows_chunk)
                 # P0-1 schema fix: 记录生成器node_id→path映射
-                gen_node_id_to_path[node_id] = node.get("path", "")
-            except Exception as node_err:
-                # ROLLBACK TO SAVEPOINT 恢复事务到SAVEPOINT之前状态，可继续后续INSERT
+                for _gen_id, _bp, _path, _dom in _meta_chunk:
+                    gen_node_id_to_path[_gen_id] = _path
+            except Exception as batch_err:  # noqa: BLE001 — 批失败降级逐节点重试，不连累其他批
+                # 批失败降级：回滚批 SAVEPOINT，逐节点 SAVEPOINT+INSERT 定位并跳过坏节点
                 try:
-                    cursor.execute(f"ROLLBACK TO SAVEPOINT {_sp_name}")
-                except Exception:
-                    # SAVEPOINT本身失败（极端情况），需要rollback整个事务并重建
+                    cursor.execute(f"ROLLBACK TO SAVEPOINT {_batch_sp}")
+                except Exception:  # noqa: BLE001 — SAVEPOINT 本身失败（极端情况），rollback 整个事务并重建
                     conn.rollback()
                     cursor = conn.cursor()
-                failed_insert_count += 1
-                failed_inserts.append(
-                    {
-                        "blueprint_id": bp_id,
-                        "path": node.get("path", ""),
-                        "domain_id": node.get("domain_id", ""),
-                        "error": str(node_err),
-                    }
+                print(
+                    f"[DEPGRAPH-DB] WARN: 批量INSERT失败，降级逐节点重试 "
+                    f"({len(_rows_chunk)} 节点): {batch_err}"
                 )
-                if failed_insert_count <= 10:  # 即时WARN前10个，完整ERROR摘要在循环后
-                    print(
-                        f"[DEPGRAPH-DB] WARN: 节点INSERT失败被跳过: "
-                        f"blueprint_id={bp_id} path={node.get('path', '')} error={node_err}"
-                    )
+                for (_gen_id, bp_id, _path, _dom), _row in zip(_meta_chunk, _rows_chunk):  # noqa: B905 — 两列表构造时等长
+                    _sp_counter += 1
+                    _sp_name = f"sp_node_{_sp_counter}"
+                    try:
+                        cursor.execute(f"SAVEPOINT {_sp_name}")
+                        cursor.execute(_INSERT_NODE_ONE_SQL, _row)
+                        cursor.execute(f"RELEASE SAVEPOINT {_sp_name}")
+                        node_count += 1
+                        # P0-1 schema fix: 记录生成器node_id→path映射
+                        gen_node_id_to_path[_gen_id] = _path
+                    except Exception as node_err:  # noqa: BLE001 — 单节点失败跳过，不连累合规节点
+                        # ROLLBACK TO SAVEPOINT 恢复事务到SAVEPOINT之前状态，可继续后续INSERT
+                        try:
+                            cursor.execute(f"ROLLBACK TO SAVEPOINT {_sp_name}")
+                        except Exception:  # noqa: BLE001 — SAVEPOINT 本身失败（极端情况），rollback 整个事务并重建
+                            conn.rollback()
+                            cursor = conn.cursor()
+                        failed_insert_count += 1
+                        failed_inserts.append(
+                            {
+                                "blueprint_id": bp_id,
+                                "path": _path,
+                                "domain_id": _dom,
+                                "error": str(node_err),
+                            }
+                        )
+                        if failed_insert_count <= 10:  # 即时WARN前10个，完整ERROR摘要在循环后
+                            print(
+                                f"[DEPGRAPH-DB] WARN: 节点INSERT失败被跳过: "
+                                f"blueprint_id={bp_id} path={_path} error={node_err}"
+                            )
 
         if skipped_invalid_blueprint > 0:
             print(f"[DEPGRAPH-DB] Phase 2.2 预过滤: 跳过 {skipped_invalid_blueprint} 个不合规blueprint_id节点")
@@ -4043,6 +4310,20 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
         if _restored_attrs > 0:
             print(f"[PRESERVE-ATTRS] 恢复 {_restored_attrs} 个节点的 subdomain_id/gate_reason")
 
+        # 治本（2026-08-29，性能）：边 INSERT 从逐条 execute（~1.2 万条 ≈ 1.2 万次 round-trip）
+        # 改为 execute_values 批量写（页大小 1000）。列清单与参数元组与原实现逐字一致，
+        # 仅 VALUES 由 execute_values 展开为多行。失败语义与原实现对齐：任一边 INSERT 失败
+        # 即抛出 → 外层回滚整个写入事务（原逐条版同样无单边容错）。
+        _INSERT_EDGES_SQL = """INSERT INTO edges (
+                from_node_id, to_node_id, dep_type, architecture_direction, coupling_strength,
+                used_symbol, invocation_method, api_contract_refs, event_ref,
+                ddd_integration_pattern, failure_mode, fallback, activation_condition,
+                data_transfer_description, resource_impact, relationship_type,
+                cross_domain, verified
+            ) VALUES %s"""
+        _EDGE_BATCH_SIZE = 1000
+        _edge_rows: list[tuple] = []
+
         for edge in edges:
             from_node = edge.get("from", "")
             to_node = edge.get("to", "")
@@ -4075,14 +4356,7 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
                 else str(api_contract_refs)
             )
 
-            cursor.execute(
-                """INSERT INTO edges (
-                from_node_id, to_node_id, dep_type, architecture_direction, coupling_strength,
-                used_symbol, invocation_method, api_contract_refs, event_ref,
-                ddd_integration_pattern, failure_mode, fallback, activation_condition,
-                data_transfer_description, resource_impact, relationship_type,
-                cross_domain, verified
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+            _edge_rows.append(
                 (
                     gen_to_db_node_id.get(from_node),
                     gen_to_db_node_id.get(to_node),
@@ -4102,9 +4376,17 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
                     edge.get("relationship_type", "one_to_many"),
                     1 if edge.get("cross_domain") else 0,
                     1 if edge.get("verified") else 0,
-                ),
+                )
             )
-            edge_count += 1
+            if len(_edge_rows) >= _EDGE_BATCH_SIZE:
+                psycopg2.extras.execute_values(cursor, _INSERT_EDGES_SQL, _edge_rows, page_size=_EDGE_BATCH_SIZE)
+                edge_count += len(_edge_rows)
+                _edge_rows.clear()
+
+        if _edge_rows:
+            psycopg2.extras.execute_values(cursor, _INSERT_EDGES_SQL, _edge_rows, page_size=_EDGE_BATCH_SIZE)
+            edge_count += len(_edge_rows)
+            _edge_rows.clear()
 
         # 裁定#209 Stage 2: 从 edges_metadata 恢复保护字段（DELETE 前已 UPSERT 保存）
         # 替代 Python 端 apply_edge_production_protection

@@ -47,15 +47,20 @@ __all__ = ["cleanup_stale_files", "DB_DISPLAY_NAME", "idempotent_timestamp", "id
 # parents[3]=scripts/ parents[4]=repo root。
 _REPO_ROOT = Path(__file__).resolve().parents[4]
 
+# 进程级缓存（治本：generate_domain_doc --all 时每域 md frontmatter + 每个 HTML 各调一次
+# git log 子进程，73 域 ≈ 146 次 subprocess spawn）。同一进程内 git HEAD/工作树不变，
+# 结果可安全复用；键 = 目标脚本路径字符串。
+_TS_CACHE: dict[str, str] = {}
+
 
 def idempotent_timestamp(script_path: "Path | None" = None) -> str:
     """幂等时间源：返回脚本最近一次 git commit 时间（ISO 8601 秒精度 YYYY-MM-DDTHH:MM:SS）。
 
-    相同 commit → 相同时间戳，避免 ``datetime.now()`` 导致生成器输出非确定性。
+    相同 commit → 相同时间戳，避免 ``datetime.now`` 等实时时钟导致生成器输出非确定性。
 
     治本：#ARCH-REGEN-NONIDEMPOTENT-001
     正典先例：generate_decision_diagram._git_commit_timestamp()
-    真源铁律：AGENTS.md §11.1.1 "禁止在生成器中使用 datetime.now() 或任何实时时间源"
+    真源铁律：AGENTS.md §11.1.1 "禁止在生成器中使用 datetime.now 或任何实时时间源"
 
     Args:
         script_path: 待查脚本路径；默认为调用方源文件。建议显式传 ``Path(__file__)``。
@@ -65,6 +70,10 @@ def idempotent_timestamp(script_path: "Path | None" = None) -> str:
         git 不可用或文件未入库时返回 ``"unknown"``。
     """
     target = Path(script_path) if script_path is not None else Path(__file__)
+    cache_key = str(target)
+    if cache_key in _TS_CACHE:
+        return _TS_CACHE[cache_key]
+    ts = "unknown"
     try:
         r = subprocess.run(
             ["git", "log", "-1", "--format=%cI", "--", str(target)],
@@ -75,10 +84,11 @@ def idempotent_timestamp(script_path: "Path | None" = None) -> str:
         )
         if r.returncode == 0 and r.stdout.strip():
             # %cI 输出形如 2026-08-05T21:38:00+08:00，截到秒（19 字符）
-            return r.stdout.strip()[:19]
+            ts = r.stdout.strip()[:19]
     except Exception:  # noqa: BLE001 — git 不可用时降级
         pass
-    return "unknown"
+    _TS_CACHE[cache_key] = ts
+    return ts
 
 
 def idempotent_date(script_path: "Path | None" = None) -> str:

@@ -443,14 +443,30 @@ def build_html(blocks: list[tuple[str, str]], doc_title: str, mermaid_source: st
 </html>"""
 
 
+# 模块级缓存（治本：generate_domain_doc --all 时 73 个域各调一次 emit_zoomable_html，
+# 每次 read_text 整个 3.4MB mermaid.min.js ≈ 250MB 重复 IO）。进程内只读一次；
+# tmp/mermaid.min.js 是 dev-local 静态资源，进程生命周期内视为不变。
+_MERMAID_SOURCE_CACHE: tuple[str, bool, str] | None = None
+
+
 def resolve_mermaid_source(force_cdn: bool = False) -> tuple[str, bool, str]:
     """返回 (mermaid_source, is_cdn, mode_desc)。
 
     优先内嵌 tmp/mermaid.min.js（dev 环境离线自包含）；不存在或 force_cdn 时回退 CDN。
     """
-    if not force_cdn and _MERMAID_LOCAL.is_file():
-        return _MERMAID_LOCAL.read_text(encoding="utf-8"), False, f"内嵌({_MERMAID_LOCAL.stat().st_size // 1024}KB)"
-    return _CDN_URL, True, "CDN"
+    global _MERMAID_SOURCE_CACHE
+    if force_cdn:
+        return _CDN_URL, True, "CDN"
+    if _MERMAID_SOURCE_CACHE is None:
+        if _MERMAID_LOCAL.is_file():
+            _MERMAID_SOURCE_CACHE = (
+                _MERMAID_LOCAL.read_text(encoding="utf-8"),
+                False,
+                f"内嵌({_MERMAID_LOCAL.stat().st_size // 1024}KB)",
+            )
+        else:
+            _MERMAID_SOURCE_CACHE = (_CDN_URL, True, "CDN")
+    return _MERMAID_SOURCE_CACHE
 
 
 def emit_zoomable_html(

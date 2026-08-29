@@ -81,6 +81,7 @@ warn_only: true
 
 import argparse
 import ast
+import concurrent.futures
 import hashlib
 import json
 import os
@@ -319,9 +320,8 @@ def metric_02_manual_only_permanent() -> dict:
             continue
         py_files = iter_files(scan_dir, extensions=frozenset({".py"}), exclude_dirs=exclude)
         for fp in py_files:
-            try:
-                source = fp.read_text(encoding="utf-8")
-            except (OSError, UnicodeDecodeError):
+            source = _get_source_text(fp)
+            if source is None:
                 continue
             sm = _STARTUP_RE.search(source)
             tm = _TTL_RE.search(source)
@@ -453,10 +453,8 @@ def metric_03_duplicate_function_clusters() -> dict:
     py_files = iter_files(SRC_ZEPHYR, extensions=frozenset({".py"}), exclude_dirs=exclude)
     hash_to_funcs: dict[str, list[str]] = defaultdict(list)
     for fp in py_files:
-        try:
-            source = fp.read_text(encoding="utf-8")
-            tree = ast.parse(source, filename=str(fp))
-        except (OSError, UnicodeDecodeError, SyntaxError):
+        source, tree = _get_source_and_ast(fp)
+        if tree is None:
             continue
         # 治本（M03）：per-file 豁免（接口实现/协议方法等合法重复）
         if _has_noqa_exempt(source, "m03-duplicate"):
@@ -805,9 +803,8 @@ def metric_10_time_trigger_residuals() -> dict:
             continue
         py_files = iter_files(scan_dir, extensions=frozenset({".py"}), exclude_dirs=exclude)
         for fp in py_files:
-            try:
-                source = fp.read_text(encoding="utf-8")
-            except (OSError, UnicodeDecodeError):
+            source = _get_source_text(fp)
+            if source is None:
                 continue
             # 必须是永久系统（[TTL]=permanent 或 [STARTUP]=daemon/imported 的运行时系统）
             tm = _TTL_RE.search(source)
@@ -950,6 +947,87 @@ def _scan_py_file_ast(fp: Path) -> tuple[ast.Module | None, list[str]]:
         return None, []
 
 
+# ── 改造：单次扫描共享索引 ──────────────────────────────────────────────
+# 治理脚本每次 commit 运行，prod .py 文件集不变（除非文件增删），但 10+ 个指标
+# 各自独立调用 iter_prod_py_files + _scan_py_file_ast，导致 ~10 次全树遍历与 AST parse。
+# 此处引入 {path: (source_text, ast_tree_or_None, lines)} 共享索引，AST parse 从
+# ~10 次降为 1 次，正则 read 型指标直接从索引拿 source 文本。
+
+_SHARED_INDEX: dict[Path, tuple[str | None, ast.AST | None, list[str]]] = {}
+
+
+def _build_shared_index() -> dict[Path, tuple[str | None, ast.AST | None, list[str]]]:
+    """一次性遍历生产 .py 文件集，建立 {path: (source_text, ast_tree, lines)} 索引。
+
+    若文件解析失败：ast_tree=None, lines=[]，与 _scan_py_file_ast 语义一致。
+    """
+    idx: dict[Path, tuple[str | None, ast.AST | None, list[str]]] = {}
+    for fp in iter_prod_py_files():
+        try:
+            source = fp.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            idx[fp] = (None, None, [])
+            continue
+        try:
+            tree = ast.parse(source, filename=str(fp))
+        except SyntaxError:
+            tree = None
+        idx[fp] = (source, tree, source.splitlines() if source else [])
+    return idx
+
+
+def _get_source_text(fp: Path) -> str | None:
+    """从共享索引读取 source 文本；若索引未建立（mock 场景）则退化为文件 read。"""
+    entry = _SHARED_INDEX.get(fp)
+    if entry is not None:
+        return entry[0]
+    # mock 测试中 patch iter_prod_py_files 返回临时文件，此时 _SHARED_INDEX 为空，降级行为
+    try:
+        return fp.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return None
+
+
+def _get_ast_tree(fp: Path) -> tuple[ast.AST | None, list[str]]:
+    """从共享索引读取 AST tree + lines；若索引未建立则退化到 _scan_py_file_ast。
+
+    返回值语义与 _scan_py_file_ast 完全一致（tree, lines）。
+    """
+    entry = _SHARED_INDEX.get(fp)
+    if entry is not None:
+        return entry[1], entry[2]
+    return _scan_py_file_ast(fp)
+
+
+def _get_source_and_ast(fp: Path) -> tuple[str | None, ast.AST | None]:
+    """从共享索引读取 (source, tree)；索引未命中时退化为直接 read+parse。
+
+    语义：read 失败 → (None, None)；parse 失败 → (source, None)；成功 → (source, tree)。
+    """
+    entry = _SHARED_INDEX.get(fp)
+    if entry is not None:
+        return entry[0], entry[1]
+    try:
+        source = fp.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return None, None
+    try:
+        return source, ast.parse(source, filename=str(fp))
+    except SyntaxError:
+        return source, None
+
+
+# 子进程指标（I/O 型，可与 PG 并行）
+_METRIC_KIND_SUBPROC = frozenset({"M01", "M05", "M08", "M09"})
+# PG 指标（独立 I/O 型，可与子进程并行）
+_METRIC_KIND_PG = frozenset({"M11"})
+# 消费共享扫描索引的指标（决定 run_all_metrics 是否需要建索引；
+# --metric 单跑无索引消费方时跳过建索引，避免无谓全树 parse）
+_INDEXED_METRIC_IDS = frozenset(
+    {"M02", "M03", "M10", "M12", "M14", "M22", "M23", "M24", "M25", "M26", "M27", "M28", "M29", "M30"}
+)
+
+
 def _walk_no_nested_scope(node: ast.AST):
     """walk（含节点自身）但不下钻嵌套作用域（FunctionDef/AsyncFunctionDef/Lambda/ClassDef）。"""
     stack = [node]
@@ -1022,7 +1100,7 @@ def metric_12_broad_except_swallow() -> dict:
     """
     violations: list[str] = []
     for fp in iter_prod_py_files():
-        tree, lines = _scan_py_file_ast(fp)
+        tree, lines = _get_ast_tree(fp)
         if tree is None:
             continue
         try:
@@ -1231,7 +1309,7 @@ def metric_14_abc_completeness() -> dict:
     """
     violations: list[str] = []
     for fp in iter_prod_py_files():
-        tree, _lines = _scan_py_file_ast(fp)
+        tree, _lines = _get_ast_tree(fp)
         if tree is None:
             continue
         try:
@@ -1861,7 +1939,7 @@ def metric_22_docstring_coverage() -> dict:
     """
     violations: list[str] = []
     for fp in iter_prod_py_files():
-        tree, _ = _scan_py_file_ast(fp)
+        tree, _ = _get_ast_tree(fp)
         if tree is None:
             continue
         try:
@@ -1895,9 +1973,8 @@ def metric_23_asyncio_calls() -> dict:
     """
     violations: list[str] = []
     for fp in iter_prod_py_files():
-        try:
-            source = fp.read_text(encoding="utf-8")
-        except (OSError, UnicodeDecodeError):
+        source = _get_source_text(fp)
+        if source is None:
             continue
         try:
             rel = fp.relative_to(REPO_ROOT)
@@ -1924,9 +2001,8 @@ def metric_26_todo_fixme() -> dict:
     """
     violations: list[str] = []
     for fp in iter_prod_py_files():
-        try:
-            source = fp.read_text(encoding="utf-8")
-        except (OSError, UnicodeDecodeError):
+        source = _get_source_text(fp)
+        if source is None:
             continue
         try:
             rel = fp.relative_to(REPO_ROOT)
@@ -1958,7 +2034,7 @@ def metric_27_open_not_in_with() -> dict:
     """
     violations: list[str] = []
     for fp in iter_prod_py_files():
-        tree, _ = _scan_py_file_ast(fp)
+        tree, _ = _get_ast_tree(fp)
         if tree is None:
             continue
         try:
@@ -2009,7 +2085,7 @@ def metric_29_resource_not_in_try_finally() -> dict:
     """
     violations: list[str] = []
     for fp in iter_prod_py_files():
-        tree, _ = _scan_py_file_ast(fp)
+        tree, _ = _get_ast_tree(fp)
         if tree is None:
             continue
         try:
@@ -2103,7 +2179,7 @@ def metric_24_field_shadowing() -> dict:
     """
     violations: list[str] = []
     for fp in iter_prod_py_files():
-        tree, _ = _scan_py_file_ast(fp)
+        tree, _ = _get_ast_tree(fp)
         if tree is None:
             continue
         try:
@@ -2199,7 +2275,7 @@ def metric_25_module_const_missing_final() -> dict:
     """
     violations: list[str] = []
     for fp in iter_prod_py_files():
-        tree, _ = _scan_py_file_ast(fp)
+        tree, _ = _get_ast_tree(fp)
         if tree is None:
             continue
         try:
@@ -2265,7 +2341,7 @@ def metric_28_singleton_no_lock() -> dict:
     """
     violations: list[str] = []
     for fp in iter_prod_py_files():
-        tree, _ = _scan_py_file_ast(fp)
+        tree, _ = _get_ast_tree(fp)
         if tree is None:
             continue
         try:
@@ -2302,9 +2378,8 @@ def metric_30_zephyr_env_enum_consistency() -> dict:
     """
     violations: list[str] = []
     for fp in iter_prod_py_files():
-        try:
-            source = fp.read_text(encoding="utf-8")
-        except (OSError, UnicodeDecodeError):
+        source = _get_source_text(fp)
+        if source is None:
             continue
         try:
             rel = fp.relative_to(REPO_ROOT)
@@ -2431,16 +2506,46 @@ def run_all_metrics(selected: list[str] | None = None) -> dict:
 
     Returns:
         仪表盘结果 dict（含 timestamp/metrics/total/manual_baseline）。
+
+    治本（GATE-ARCH-HEALTH 120s 超时）：
+      1. 入口一次性构建生产 .py 共享扫描索引（read + AST parse 各 1 遍），
+         供 _INDEXED_METRIC_IDS 中的 AST/read 型指标复用（原各指标独立
+         read+parse 同一文件集，~10 遍全量 AST parse）；
+      2. 子进程型指标（M01/M05/M08/M09）与 PG 型指标（M11）相互独立，
+         用 ThreadPoolExecutor 并行（范式参考 reconcile_generators._invoke_parallel），
+         主线程同时串行跑纯 Python 指标（与子进程 I/O 等待窗口重叠）；
+      3. 失败降级语义不变：子进程超时/失败仍记 error 字段，单检测器异常
+         降级为 error 不中断其余。
     """
-    metrics_results: list[dict] = []
-    for mid, name, fn in METRICS:
-        if selected and mid not in selected:
-            continue
+    global _SHARED_INDEX
+    to_run = [(mid, name, fn) for mid, name, fn in METRICS if not selected or mid in selected]
+    parallel = [t for t in to_run if t[0] in _METRIC_KIND_SUBPROC or t[0] in _METRIC_KIND_PG]
+    serial = [t for t in to_run if t[0] not in _METRIC_KIND_SUBPROC and t[0] not in _METRIC_KIND_PG]
+
+    results: dict[str, dict] = {}
+
+    def _run_one(mid: str, name: str, fn) -> None:
+        """运行单个指标并降级（与原 run_all_metrics 内联 except 语义一致）。"""
         try:
-            result = fn()
+            results[mid] = fn()
         except Exception as e:  # noqa: BLE001 — 单检测器异常降级不中断
-            result = _make_metric(mid, name, 0, error=f"detector raised: {e}", source="inline")
-        metrics_results.append(result)
+            results[mid] = _make_metric(mid, name, 0, error=f"detector raised: {e}", source="inline")
+
+    if any(mid in _INDEXED_METRIC_IDS for mid, _, _ in to_run):
+        _SHARED_INDEX = _build_shared_index()
+    try:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max(1, len(parallel))) as pool:
+            futures = [pool.submit(_run_one, mid, name, fn) for mid, name, fn in parallel]
+            # 主线程串行跑纯 Python 指标（共享索引后已足够快；与子进程 I/O 等待重叠）
+            for mid, name, fn in serial:
+                _run_one(mid, name, fn)
+            for fut in concurrent.futures.as_completed(futures):
+                fut.result()  # _run_one 已捕获异常，此处仅确认完成
+    finally:
+        _SHARED_INDEX = {}  # 运行结束即释放（AST 索引驻留内存大），直调场景走降级路径
+
+    # 输出顺序保持 METRICS 注册顺序（与并行完成顺序无关）
+    metrics_results = [results[mid] for mid, _, _ in to_run]
     total = sum(m["count"] for m in metrics_results)
     return {
         "timestamp": datetime.now(UTC).isoformat(),
