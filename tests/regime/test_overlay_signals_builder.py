@@ -54,6 +54,7 @@ class _MockFeatureBuilder:
 
     Phase 2c：新增 6 个数据透传方法（money_flow/sector/limit_up_down/hk_connect/
     option_iv/multi_tf_kline），默认 None（降级 0.0），测试可通过 kwargs 注入。
+    S2 估值路A（2026-08-29）：新增 index_valuation 透传（默认 None → 降级路B）。
     """
 
     def __init__(
@@ -67,6 +68,7 @@ class _MockFeatureBuilder:
         hk_connect_flow: pd.DataFrame | None = None,
         option_iv_surface: pd.DataFrame | None = None,
         multi_tf_kline: dict[str, pd.DataFrame] | None = None,
+        index_valuation: pd.DataFrame | None = None,
     ) -> None:
         self._features = features
         self._index_df = index_df
@@ -76,6 +78,7 @@ class _MockFeatureBuilder:
         self._hk_connect_flow = hk_connect_flow
         self._option_iv_surface = option_iv_surface
         self._multi_tf_kline = multi_tf_kline
+        self._index_valuation = index_valuation
 
     def build_features(self) -> pd.DataFrame:
         return self._features
@@ -101,6 +104,10 @@ class _MockFeatureBuilder:
 
     def get_multi_tf_kline(self) -> dict[str, pd.DataFrame] | None:
         return self._multi_tf_kline
+
+    def get_index_valuation(self) -> pd.DataFrame | None:
+        """S2 估值路A 透传（None → overlay 降级路B close 回撤代理）。"""
+        return self._index_valuation
 
 
 def _make_features(

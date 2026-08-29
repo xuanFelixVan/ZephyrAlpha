@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] zephyr.data.backfill_checker
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] zephyr.data.ch_reader; zephyr.data.tick_subscriber; zephyr.data.provider_base; zephyr.data.policy_registry; zephyr.data.implementations.akshare_provider
+# [DEPENDENCIES] zephyr.data.ch_reader; zephyr.data.tick_subscriber; zephyr.data.provider_base; zephyr.data.policy_registry; zephyr.data.implementations.akshare_provider; zephyr.data.calendar
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] imported
 # [MATURITY] production
@@ -949,11 +949,12 @@ def _load_known_gaps() -> list[dict]:
         return []
 
 
-def _check_date_range_gap(gap: dict) -> dict:
+def _check_date_range_gap(gap: dict, *, calendar: MarketCalendar | None = None) -> dict:
     """检测 date_range 类型缺口（指定日期范围内行数低于阈值）。
 
     Args:
         gap: 缺口字典，含 table/start_date/end_date/detection_threshold/date_column
+        calendar: 市场日历注入（94号 §4.1/#261；None=ASHareCalendar 默认）
 
     Returns:
         检测结果 dict: {id, table, missing_dates, total_expected, total_actual, still_missing}
@@ -980,18 +981,14 @@ def _check_date_range_gap(gap: dict) -> dict:
         if len(parts) == 2:
             date_counts[parts[0]] = int(parts[1])
 
-    # 生成缺口范围内的交易日列表
+    # 生成缺口范围内的交易日列表（统一经日历包判定，消除 weekday 手工近似；
+    # 缺日历数据时日历包内部降级 weekday——降级路径语义不变）
     from datetime import date as _date
-    from datetime import timedelta as _td
 
     start_d = _date.fromisoformat(start)
     end_d = _date.fromisoformat(end) if end else _date.today()
-    all_dates: list[str] = []
-    cur = start_d
-    while cur <= end_d:
-        if cur.weekday() < 5:  # 周一到周五
-            all_dates.append(cur.isoformat())
-        cur += _td(days=1)
+    cal = calendar or _DEFAULT_CALENDAR
+    all_dates: list[str] = [d.isoformat() for d in cal.trading_days_in_range(start_d, end_d)]
 
     missing_dates = [d for d in all_dates if date_counts.get(d, 0) < threshold]
 
@@ -1030,12 +1027,16 @@ def _check_empty_table_gap(gap: dict) -> dict:
     }
 
 
-def run_known_gap_backfill(scheduler=None) -> dict:
+def run_known_gap_backfill(scheduler=None, *, calendar: MarketCalendar | None = None) -> dict:
     """检测并补下载已知数据缺口（audit 2.7/3.8 治本，#ARCH-CH-029）。
 
     与 run_weekend_backfill（7天窗口）互补：
     - run_weekend_backfill: 检测最近 7 天的增量缺口
     - run_known_gap_backfill: 检测已登记的历史缺口（不受 7 天窗口限制）
+
+    Args:
+        scheduler: IntegratorScheduler 实例（可选）
+        calendar: 市场日历注入（94号 §4.1/#261；None=ASHareCalendar 默认）
 
     流程：
     1. 加载 known_data_gaps.yaml
@@ -1066,7 +1067,7 @@ def run_known_gap_backfill(scheduler=None) -> dict:
         gap_id = gap.get("id", "unknown")
 
         if gap_type == "date_range":
-            result = _check_date_range_gap(gap)
+            result = _check_date_range_gap(gap, calendar=calendar)
             details.append(result)
             if result["still_missing"] > 0:
                 still_missing_count += result["still_missing"]
@@ -1120,6 +1121,8 @@ def run_weekend_backfill(
     scheduler=None,
     days: int = _DEFAULT_BACKFILL_DAYS,
     skip_known_gaps: bool = False,
+    *,
+    calendar: MarketCalendar | None = None,
 ) -> dict:
     """L10 周末补下载主入口（全表覆盖）。
 
@@ -1135,6 +1138,7 @@ def run_weekend_backfill(
         scheduler: IntegratorScheduler 实例（可选，用于记录进度和告警）
         days: 回溯天数（默认7天）
         skip_known_gaps: 跳过已知历史缺口检测（每日调用时设True，避免重复检查）
+        calendar: 市场日历注入（94号 §4.1/#261；None=ASHareCalendar 默认，零行为变化）
 
     Returns:
         {"missing_tables": [...], "total_rows": int, "success": bool}
@@ -1144,7 +1148,7 @@ def run_weekend_backfill(
     log.info("=" * 60)
 
     # 1. 获取交易日
-    trade_dates = get_trade_dates(days)
+    trade_dates = get_trade_dates(days, calendar=calendar)
     if not trade_dates:
         log.error("无法获取交易日列表，退出")
         return {"missing_tables": [], "total_rows": 0, "success": False}
@@ -1185,7 +1189,7 @@ def run_weekend_backfill(
     if skip_known_gaps:
         known_result = {"checked": 0, "still_missing": 0, "backfilled_rows": 0, "details": []}
     else:
-        known_result = run_known_gap_backfill(scheduler)
+        known_result = run_known_gap_backfill(scheduler, calendar=calendar)
     total_rows += known_result.get("backfilled_rows", 0)
 
     return {

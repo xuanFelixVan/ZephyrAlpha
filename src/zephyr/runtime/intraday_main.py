@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-RUNTIME_INTRADAY | self-contained (runtime entry) | §
 # [MODULE] zephyr.runtime.intraday_main
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.data.tick_subscriber; zephyr.data.tick_redis_cache; zephyr.factor.core.intraday_factor_loop; zephyr.infrastructure.database_service; zephyr.data.trading_calendar; zephyr.data.redundant_source.heartbeat_monitor; zephyr.data.alerter
+# [DEPENDENCIES] zephyr.data.tick_subscriber; zephyr.data.tick_redis_cache; zephyr.factor.core.intraday_factor_loop; zephyr.infrastructure.database_service; zephyr.data.calendar; zephyr.data.redundant_source.heartbeat_monitor; zephyr.data.alerter
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
@@ -54,7 +54,7 @@
 # - id: I2
 #   name: 交易日历状态
 #   fields: is_trading_day() 今日是否交易日 bool
-#   code: start L132（zephyr.data.trading_calendar.is_trading_day）
+#   code: start 守卫段（模块级 is_trading_day → data.calendar 包 ASHareCalendar 委托真源）
 # - id: I3
 #   name: Redis 连接（H1 实例）
 #   fields: redis.Redis 连接句柄（None 时经 DatabaseService 获取，测试可注入）

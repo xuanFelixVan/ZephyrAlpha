@@ -245,3 +245,66 @@ class TestWeekendBackfillKlineIndexRouting:
         scheduler.run_task.assert_not_called()
         assert result["total_rows"] == 100
         assert result["success"] is True
+
+
+class TestCheckDateRangeGapCalendar:
+    """94号 §4.1/#261：_check_date_range_gap 日历注入——消除 weekday 手工近似。"""
+
+    @staticmethod
+    def _gap():
+        return {
+            "id": "g1",
+            "table": "c1_market.tick_data",
+            "start_date": "2026-08-14",  # 周五
+            "end_date": "2026-08-17",  # 周一
+            "detection_threshold": 100,
+            "date_column": "trade_date",
+        }
+
+    def test_default_ashare_skips_weekend(self):
+        """默认 A 股日历：期望日仅含交易日（周五/周一），周末不计入缺口基数。"""
+        with patch.object(bc.ch_reader, "query", return_value="2026-08-14\t5000000\n2026-08-17\t5000000"):
+            result = bc._check_date_range_gap(self._gap())
+        assert result["total_dates"] == 2  # 08-14 周五 + 08-17 周一（周末被日历剔除）
+        assert result["still_missing"] == 0
+
+    def test_crypto_calendar_counts_weekend(self):
+        """注入 7×24 币历：周末计入期望日（日历包驱动差异的实证）。"""
+        from zephyr.data.calendar import get_market_calendar
+
+        with patch.object(bc.ch_reader, "query", return_value=""):
+            result = bc._check_date_range_gap(self._gap(), calendar=get_market_calendar("crypto"))
+        assert result["total_dates"] == 4  # 周五~周一全自然日
+        assert result["still_missing"] == 4  # 全部无数据→全缺失
+
+    def test_missing_dates_below_threshold(self):
+        """低于阈值的交易日进入 missing_dates（注入语义不变量）。"""
+        with patch.object(bc.ch_reader, "query", return_value="2026-08-14\t50"):
+            result = bc._check_date_range_gap(self._gap())
+        assert result["missing_dates"] == ["2026-08-14", "2026-08-17"]
+        assert result["still_missing"] == 2
+
+    def test_run_known_gap_backfill_threads_calendar(self):
+        """run_known_gap_backfill：calendar 参数透传至 date_range 检测（币历周末计入实证）。"""
+        from zephyr.data.calendar import get_market_calendar
+
+        gaps = [
+            {
+                "id": "g1",
+                "table": "c1_market.some_table",  # 非 tick_data，不触发补下载
+                "gap_type": "date_range",
+                "start_date": "2026-08-14",  # 周五
+                "end_date": "2026-08-17",  # 周一
+                "detection_threshold": 100,
+                "date_column": "trade_date",
+                "status": "open",
+            }
+        ]
+        with (
+            patch.object(bc, "_load_known_gaps", return_value=gaps),
+            patch.object(bc.ch_reader, "query", return_value=""),
+        ):
+            ashare = bc.run_known_gap_backfill()
+            crypto = bc.run_known_gap_backfill(calendar=get_market_calendar("crypto"))
+        assert ashare["details"][0]["total_dates"] == 2  # A股：周五+周一
+        assert crypto["details"][0]["total_dates"] == 4  # 币：全自然日

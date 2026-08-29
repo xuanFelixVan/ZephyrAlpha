@@ -235,9 +235,10 @@ _KLINE_1D_CAPABILITIES = frozenset({"kline_hk_daily"})
 _INDEX_FUTURES_SYMBOL_RE = re.compile(r"^(IF|IC|IM|IH)\d+(\.[A-Za-z0-9]+)?$", re.IGNORECASE)
 
 # A22 期指 tick 通道（2026-08-29，44号备忘 §9.8 通道2）：detect_market_type 期货识别。
-# 交易所后缀白名单（QMT 代码约定：IF00.IF / IF2407.CFFEX / RB2407.SHF 等）
-# + 品种前缀白名单（IF/IC/IM/IH 股指期货）双条件命中 → market_type="futures"，
-# 防个股 6 位代码误判（如 600000.SH 后缀 SH 不在期货后缀集）。
+# 交易所后缀白名单（QMT 代码约定：IF00.IF / IF2407.CFFEX / RB2407.SHF / sc2509.INE 等）
+# 单条件充分——SHF/SHFE/DCE/CZC/CZCE/GFEX/INE/CFFEX/IF 均为期货交易所专署后缀，
+# 与个股后缀（.SH/.SZ/.BJ）零碰撞。品种前缀白名单（IF/IC/IM/IH）仅限 kline_futures
+# 路由护栏（tracker #246 口径=股指期货），不作通用 market_type 分类条件（商品期货同归 futures）。
 _FUTURES_EXCHANGE_SUFFIXES = frozenset({"IF", "CFFEX", "SHF", "SHFE", "DCE", "CZC", "CZCE", "GFEX", "INE"})
 _FUTURES_INDEX_PREFIXES = ("IF", "IC", "IM", "IH")
 
@@ -3310,14 +3311,14 @@ class MiniQmtIngestProvider(IngestProviderBase):
     def detect_market_type(stock_code: str) -> str:
         """根据代码后缀和前缀推断 market_type（Stage 4 公共化，primary）。
 
-        期货（交易所后缀白名单 + IF/IC/IM/IH 品种前缀双条件，如 IF00.IF/
-        IF2407.CFFEX）→ futures；.BJ → stock_bj；指数(000/399.SH/SZ) → index；
+        期货（交易所后缀白名单单条件充分，如 IF00.IF/IF2407.CFFEX/RB2407.SHF）
+        → futures；.BJ → stock_bj；指数(000/399.SH/SZ) → index；
         ETF(15/51/52) → etf；可转债(11/12) → cb；其余 → stock。
         """
         raw_code = stock_code.split(".")[0]
         suffix = stock_code.split(".")[-1] if "." in stock_code else ""
-        # 期货识别（A22 期指 tick 通道，2026-08-29）：后缀+品种前缀双条件，防个股误判
-        if suffix.upper() in _FUTURES_EXCHANGE_SUFFIXES and raw_code.upper().startswith(_FUTURES_INDEX_PREFIXES):
+        # 期货识别（A22 期指 tick 通道，2026-08-29）：期货交易所专署后缀，零碰撞
+        if suffix.upper() in _FUTURES_EXCHANGE_SUFFIXES:
             return "futures"
         code = raw_code.zfill(6)
         if suffix == "BJ":

@@ -1192,6 +1192,72 @@ def _feed_ticks(fake_xt, n=5, interval=0.1):
         time.sleep(interval)
 
 
+class TestCalendarInjection:
+    """94号 §4.1/#261：市场日历注入缝——默认 A 股零行为变化，注入币历/桩历生效。"""
+
+    def test_default_calendar_is_ashare(self):
+        """默认构造注入 ASHareCalendar（A 股现状行为锚点）。"""
+        sub = _make_sub()
+        assert sub._calendar.market == "ashare"
+
+    def test_crypto_calendar_weekend_is_trading_day(self, monkeypatch):
+        """注入 7×24 币历：周六也判交易日（xtdata 未挂载时降级走日历包）。"""
+        from zephyr.data.calendar import get_market_calendar
+
+        _patch_now(monkeypatch, datetime(2026, 8, 15, 10, 0))  # 周六
+        sub = TickSubscriber(calendar=get_market_calendar("crypto"))
+        sub._xtdata = None
+        sub._refresh_trading_day_flag()
+        assert sub._is_trading_day is True
+
+    def test_crypto_calendar_all_day_open(self, monkeypatch):
+        """注入 7×24 币历：周六凌晨 03:00（A股闭市时段）仍判盘中。"""
+        from zephyr.data.calendar import get_market_calendar
+
+        _patch_now(monkeypatch, datetime(2026, 8, 15, 3, 0))  # 周六凌晨
+        sub = TickSubscriber(calendar=get_market_calendar("crypto"))
+        sub._is_trading_day = True
+        assert sub._is_market_open_now() is True
+
+    def test_ashare_lunch_break_counts_as_open(self, monkeypatch):
+        """A股日历：午休 12:00 仍属日间监控窗（09:30~15:00 包络，与既有硬编码逐分一致）。"""
+        _patch_now(monkeypatch, datetime(2026, 8, 17, 12, 0))  # 周一午休
+        sub = _make_sub()
+        sub._is_trading_day = True
+        assert sub._is_market_open_now() is True
+
+    def test_stub_calendar_narrow_window_respected(self, monkeypatch):
+        """注入自定义窄时段日历桩：窗口内外判定跟随注入（注入缝生效证据）。"""
+        from datetime import time as dt_time
+
+        from zephyr.data.calendar import MarketCalendar
+
+        class _StubCalendar(MarketCalendar):
+            market = "stub"
+            timezone = "Asia/Shanghai"
+
+            def is_trading_day(self, day=None):
+                return True
+
+            def trading_days_in_range(self, start, end):
+                return [start]
+
+            def session_windows(self, day):
+                return ((dt_time(10, 0), dt_time(11, 0)),)
+
+            def kline_agg_rule(self, target_freq):
+                from zephyr.data.calendar import KlineAggRule
+
+                return KlineAggRule(mode="native")
+
+        _patch_now(monkeypatch, datetime(2026, 8, 17, 10, 30))  # 窗口内
+        sub = TickSubscriber(calendar=_StubCalendar())
+        sub._is_trading_day = True
+        assert sub._is_market_open_now() is True
+        _patch_now(monkeypatch, datetime(2026, 8, 17, 9, 45))  # 窗口外
+        assert sub._is_market_open_now() is False
+
+
 class TestIntradayLinkIntegration:
     """联调实证（模拟盘中订阅链路）：start→订阅→tick 流入→WAL 落行→心跳业务字段增长→stop。
     全程 fake xtdata/WalWriter，不触真 QMT/CH，不污染主仓 tmp。"""

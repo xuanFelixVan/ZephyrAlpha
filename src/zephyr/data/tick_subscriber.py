@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L00-001 | docs/03_modules/_domain_data/blueprint.md | §
 # [MODULE] zephyr.data.tick_subscriber
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] zephyr.data.wal_writer; zephyr.data.provider_base; zephyr.data.table_registry; zephyr.shared.observability.metrics; zephyr.shared.observability.metrics_server
+# [DEPENDENCIES] zephyr.data.wal_writer; zephyr.data.provider_base; zephyr.data.table_registry; zephyr.data.calendar; zephyr.shared.observability.metrics; zephyr.shared.observability.metrics_server
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
@@ -36,7 +36,9 @@ import time
 from datetime import datetime
 from decimal import Decimal
 from pathlib import Path
+from typing import Final
 
+from zephyr.data.calendar import MarketCalendar, get_market_calendar
 from zephyr.data.table_registry import get_registry
 from zephyr.shared.observability.metrics import get_registry as _get_metrics_registry
 from zephyr.shared.observability.metrics_server import start_metrics_server
@@ -69,6 +71,10 @@ _DATA_SOURCE = "miniqmt"
 
 # P0-2: 批量出队上限（减少 WalWriter.add 调用次数）
 _DRAIN_BATCH_SIZE = 500
+
+# 默认 A 股日历（94号 §4.1/#261 注入式改造：统一经 data.calendar 包读取日历约束，
+# 缺省保持 A 股现状行为；币侧装配注入 get_market_calendar("crypto") 即可）
+_DEFAULT_CALENDAR: Final = get_market_calendar("ashare")
 
 # #ARCH-DATA-017 裁定B/C/E（2026-08-15）：业务心跳/日志落盘路径与看门狗参数
 _REPO_ROOT = Path(__file__).resolve().parents[3]  # src/zephyr/data/tick_subscriber.py → 仓根
@@ -226,6 +232,7 @@ class TickSubscriber:
         heartbeat=None,
         backup_provider=None,
         tick_cache=None,
+        calendar: MarketCalendar | None = None,
     ):
         """初始化订阅器。
 
@@ -239,6 +246,8 @@ class TickSubscriber:
                 传入后与 heartbeat 配合，主源中断时自动切换 TDX 备源轮询。
             tick_cache: TickRedisCache 实例（H1 Redis 热缓存双写，可选）。
                 传入后 _drain_batch 批量写入 tick:{symbol}:latest 到 Redis（CP-01）。
+            calendar: 市场日历注入（94号 §4.1/#261，可选）。
+                None=ASHareCalendar 默认（零行为变化）；币侧装配传 CryptoCalendar。
         """
         self._symbols = symbols
         self._batch_rows = batch_rows
@@ -246,6 +255,7 @@ class TickSubscriber:
         self._heartbeat = heartbeat  # P2-8: 主源心跳检测集成
         self._backup_provider = backup_provider  # P1-3: TDX 备源
         self._tick_cache = tick_cache  # H1 Redis tick 缓存双写
+        self._calendar = calendar or _DEFAULT_CALENDAR  # 市场日历（#261 注入缝）
         self._switcher = None  # P1-3: SourceSwitcher（start 中创建）
         self._backup_poller = None  # P1-3: BackupTickPoller
 
@@ -621,10 +631,15 @@ class TickSubscriber:
     # ── #ARCH-DATA-017 裁定C/E：业务心跳 + 盘中周期重订阅（2026-08-15）──
 
     def _refresh_trading_day_flag(self) -> None:
-        """刷新当日是否交易日（xtdata 日历真源，fallback 周一~周五近似）。
+        """刷新当日是否交易日（xtdata 日历优先，降级走注入的市场日历）。
 
         心跳 JSON 携带 is_trading_day：监控侧（deadman/guard）不做日历推算——
         业务侧最知道今天该不该有数据，这是"收盘/周末/节假日不误报"的第一性来源。
+
+        降级链（94号 §4.1/#261 注入式改造）：xtdata 历（QMT 在线时主路径）
+        → 注入的市场日历（默认 ASHareCalendar 委托 XSHG 真源）；
+        日历包内部在 exchange_calendars 不可用时再降级 weekday——与原
+        "xtdata 缺失→weekday 近似"的降级终点一致，降级路径语义不变。
         """
         today = datetime.now().date()
         try:
@@ -636,18 +651,28 @@ class TickSubscriber:
                     self._is_trading_day = today in dayset
                     return
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            log.warning("交易日历刷新失败（fallback weekday 近似）: %s", e)
-        self._is_trading_day = today.weekday() < 5
+            log.warning("交易日历刷新失败（降级市场日历包）: %s", e)
+        # 手工 weekday 近似已消除：统一经日历包判定（其内部保留 weekday 降级链）
+        self._is_trading_day = self._calendar.is_trading_day(today)
 
     def _is_market_open_now(self) -> bool:
-        """当前是否盘中时段（09:30-15:00 且交易日）。"""
+        """当前是否盘中时段（当日交易时段最外包络内且交易日）。
+
+        时段统一从注入的市场日历读取（94号 §4.1/#261）：取 session_windows
+        首段开盘~末段收盘的包络——A股=09:30~15:00，与既有硬编码逐分一致
+        （含午休，看门狗语义为"日间监控窗"而非"连续竞价"）。
+        """
         now = datetime.now()
         if self._is_trading_day is None:
             self._refresh_trading_day_flag()
         if not self._is_trading_day:
             return False
+        windows = self._calendar.session_windows(now.date())
+        if not windows:
+            return False
+        open_t, close_t = windows[0][0], windows[-1][1]
         hm = now.hour * 60 + now.minute
-        return 9 * 60 + 30 <= hm <= 15 * 60
+        return (open_t.hour * 60 + open_t.minute) <= hm <= (close_t.hour * 60 + close_t.minute)
 
     def _write_biz_heartbeat(self) -> None:
         """写业务心跳 JSON（tmp→os.replace 原子写，对齐 guard Write-Heartbeat 防半读）。

@@ -904,6 +904,23 @@ class TestMiniQMTBatch2Capabilities:
         assert MiniQmtIngestProvider.detect_market_type("113001.SH") == "cb"
         assert MiniQmtIngestProvider.detect_market_type("128001.SZ") == "cb"
 
+    def test_detect_market_type_futures(self):
+        """A22：期货代码识别为 futures（期指 tick 落 tick_data 的共表隔离键）。"""
+        # 主力连续（xtquant 期货 market 码：中金所=IF）
+        assert MiniQmtIngestProvider.detect_market_type("IF00.IF") == "futures"
+        assert MiniQmtIngestProvider.detect_market_type("IC00.IF") == "futures"
+        assert MiniQmtIngestProvider.detect_market_type("IM00.IF") == "futures"
+        assert MiniQmtIngestProvider.detect_market_type("IH00.IF") == "futures"
+        # 具体合约（CFFEX/SHFE 等数据文件侧写法）
+        assert MiniQmtIngestProvider.detect_market_type("IF2407.CFFEX") == "futures"
+        assert MiniQmtIngestProvider.detect_market_type("RB2407.SHF") == "futures"
+        assert MiniQmtIngestProvider.detect_market_type("sc2509.INE") == "futures"
+        # 回归护栏：股票/指数/ETF 判定不受影响
+        assert MiniQmtIngestProvider.detect_market_type("600000.SH") == "stock"
+        assert MiniQmtIngestProvider.detect_market_type("000300.SH") == "index"
+        assert MiniQmtIngestProvider.detect_market_type("510300.SH") == "etf"
+        assert MiniQmtIngestProvider.detect_market_type("920001.BJ") == "stock_bj"
+
     def test_format_tick_timestamp(self):
         """tick 时间戳格式化。"""
         td, ts = MiniQmtIngestProvider.format_tick_timestamp("20240103093015", datetime.date(2024, 1, 3))

@@ -2,7 +2,7 @@
 # [TTL] permanent
 # [MODULE] zephyr.ex_core.daban_pit_safety
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] stdlib; zephyr.ex_core.daban_signal_decision; zephyr.ex_core.daban_exit_decision; zephyr.data.trading_calendar（from_db_session 延迟导入）
+# [DEPENDENCIES] stdlib; zephyr.ex_core.daban_signal_decision; zephyr.ex_core.daban_exit_decision; zephyr.data.calendar（from_db_session 延迟导入）
 # [CONSUMERS] （首批回测接线前暂无）
 # [STARTUP] imported
 # [MATURITY] production
@@ -97,20 +97,25 @@ class DabanPITBacktestFramework:
     def from_db_session(cls, db_session, symbol: str, source_loaders: dict | None = None) -> DabanPITBacktestFramework:
         """真实依赖装配（波 2a 注入）：最小回测路径可直接跑通。
 
-        - trading_days/next_trading_day：接 zephyr.data.trading_calendar（XSHG 真日历，
-          与 c1_market.trade_calendar 同源语义，延迟导入防循环依赖）；
+        - trading_days/next_trading_day：统一经 zephyr.data.calendar 包取 A 股日历
+          （94号 §4.1/#261 注入式改造；ASHareCalendar 委托 XSHG 真日历，与
+          c1_market.trade_calendar 同源语义，延迟导入防循环依赖）；
         - dragon_tiger 数据源：接 get_dragon_tiger_pit（§3.13#5，latest=T-1 边界+逐行断言）；
         - 其余数据源（emotion_cycle_score/echelon_data/next_day_auction）：ex_core 无既有
           查询函数，由 source_loaders {source: callable(source, date)->dict} 显式注入，
           未注入的数据源加载时 RuntimeError（Fail-Closed 显式报错，不静默造数）。
         """
-        from zephyr.data.trading_calendar import is_trading_day, trading_days_in_range
+        # 94号 §4.1/#261：日历消费统一经 data.calendar 包（ASHareCalendar 委托
+        # trading_calendar 真源，行为零变化；后续币侧装配改注入 crypto 日历即可）
+        from zephyr.data.calendar import get_market_calendar
+
+        calendar = get_market_calendar("ashare")
 
         loaders = dict(source_loaders or {})
 
         def _next_trading_day(d: date) -> date:
             cur = d + timedelta(days=1)
-            while not is_trading_day(cur):
+            while not calendar.is_trading_day(cur):
                 cur += timedelta(days=1)
             return cur
 
@@ -127,7 +132,7 @@ class DabanPITBacktestFramework:
                 )
             return loader(source, d)
 
-        return cls(data_loader=data_loader, trading_days=trading_days_in_range, next_trading_day=_next_trading_day)
+        return cls(data_loader=data_loader, trading_days=calendar.trading_days_in_range, next_trading_day=_next_trading_day)
 
     PIT_RULES = {
         "dragon_tiger": {"publish_time": "T日17:00", "available_for": "T+1日盘中"},  # §3.13#5

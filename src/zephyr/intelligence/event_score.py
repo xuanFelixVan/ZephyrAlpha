@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INT-EVENT-SCORE | docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/26_event_driven_strategy_detail.md | §2.5
 # [MODULE] zephyr.intelligence.event_score
 # [DOMAIN] D_INTELLIGENCE
-# [DEPENDENCIES] pandas; zephyr.data.trading_calendar; zephyr.data.ch_reader（默认量能 provider，lazy）; zephyr.data.table_registry（lazy）
+# [DEPENDENCIES] pandas; zephyr.data.calendar; zephyr.data.ch_reader（默认量能 provider，lazy）; zephyr.data.table_registry（lazy）
 # [CONSUMERS] 事件驱动 sleeve（首批策略C，选股漏斗 BM-SEL-19 第四层输入，待开通降级不阻塞）
 # [STARTUP] imported
 # [MATURITY] design
@@ -52,7 +52,8 @@
   （fund_news_data + 事件分类落库）依赖事件分类管道，未闭合，登记降级。
 - ``volume_series`` / ``volume_ma``：c1_market.kline_daily 薄封装（默认 CH provider，
   可注入 fake 测试）。
-- ``trading_days_ago``：复用 zephyr.data.trading_calendar。
+- ``trading_days_ago``：经 zephyr.data.calendar 包读取交易日历（94号 §4.1/#261 注入式改造，
+  默认 ASHareCalendar 委托 trading_calendar 真源，行为零变化）。
 
 外部数据（一致预期/EAR/ORJ 价格）由调用方从数据层获取后经
 ``EarningsFactorData`` 注入——本模块不直接依赖万得/同花顺接口（保持纯函数可测）。
