@@ -28,9 +28,12 @@ pytest.importorskip(
 
 from zephyr.frontend.dashboard.components.warroom import (
     WarroomData,
+    fetch_batch_boundaries,
+    fetch_correlation_netting,
     fetch_index_regime_panel,
     fetch_next_day_inertia,
     fetch_playbook_action,
+    fetch_sit_out_list,
     fetch_warroom,
     fetch_warroom_outcome,
     fetch_warroom_plan,
@@ -351,3 +354,201 @@ class TestRenderWarroom:
         assert payload["has_plan"] is False
         assert payload["errors"] == []
         json.dumps({k: v for k, v in payload.items() if k != "_layout"}, ensure_ascii=False)
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# P2：缺口⑥~⑩（9 格矩阵展示层/批量边界/相关性净额/禁做清单）
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+def _seed_boundary_payload(symbol: str) -> dict:
+    """最小 tomorrow_boundary payload（MOD-PLAN-012 落库契约形状）。"""
+    return {
+        "symbol": symbol,
+        "box_upper": 1750.0,
+        "box_lower": 1690.0,
+        "max_add_position": 0.3,
+        "no_add_price": 1742.0,
+        "must_exit_price": 1745.0,
+        "breakout_confirm": True,
+        "source_trade_date": "2026-08-27",
+        "target_date": _DATE,
+        "producer": "MOD-PLAN-012.batch_boundary_runner",
+    }
+
+
+class TestBatchBoundaries:
+    """缺口⑦：批量边界回查（tomorrow_boundary 族，只读）。"""
+
+    def test_empty_db_returns_empty_list(self, tmp_path) -> None:
+        db = tmp_path / "governance.db"
+        ensure_prediction_log_table(db)
+        items, err = fetch_batch_boundaries(_DATE, db_path=db)
+        assert items == [] and err is None
+
+    def test_seeded_rows_parsed(self, tmp_path) -> None:
+        db = tmp_path / "governance.db"
+        ensure_prediction_log_table(db)
+        for sym in ("600519", "000001"):
+            log_prediction(
+                trade_date=_DATE,
+                module="plan_engine.tomorrow_boundary_planner",
+                prediction_type="tomorrow_boundary",
+                payload=_seed_boundary_payload(sym),
+                db_path=db,
+            )
+        items, err = fetch_batch_boundaries(_DATE, db_path=db)
+        assert err is None and items is not None
+        assert len(items) == 2
+        assert {i["symbol"] for i in items} == {"600519", "000001"}
+        assert items[0]["box_lower"] == 1690.0
+        assert items[0]["breakout_confirm"] is True
+
+    def test_missing_table_fail_open(self, tmp_path) -> None:
+        db = tmp_path / "no_table.db"
+        items, err = fetch_batch_boundaries(_DATE, db_path=db)
+        assert items is None and err is not None
+
+
+class TestSitOutList:
+    """缺口⑩：禁做清单（MOD-PLAN-014 三源注入，未装配=待接入不假阴性）。"""
+
+    def test_no_sources_means_pending(self) -> None:
+        sit, err = fetch_sit_out_list(_DATE, sources=None)
+        assert sit is None and err is None
+
+    def test_three_sources_synthesized(self) -> None:
+        sit, err = fetch_sit_out_list(_DATE, sources={
+            "events": [
+                {  # blackout 市场级 → NO_TRADE 进清单
+                    "event_date": _DATE, "event_type": "EVT-FOMC", "scope": "market",
+                    "target": None, "severity": "blackout", "name": "美联储议息",
+                },
+                {  # caution 级不进清单仅计数
+                    "event_date": _DATE, "event_type": "EVT-DATA", "scope": "market",
+                    "target": None, "severity": "caution", "name": "CPI 发布",
+                },
+            ],
+            "stopped_symbols": [{"symbol": "600519", "stopped_at": _DATE, "reason": "破减仓触发价"}],
+            "limit_down_symbols": ["000001"],
+            "war_pool_symbols": ["600519"],
+        })
+        assert err is None and sit is not None
+        rules = {e["rule"] for e in sit["entries"]}
+        assert rules == {"EVENT_BLACKOUT", "STOP_LOSS_NO_REVERSE", "LIMIT_DOWN_NO_DIP", "OUT_OF_POOL"}
+        actions = {e["rule"]: e["action"] for e in sit["entries"]}
+        assert actions["EVENT_BLACKOUT"] == "NO_TRADE"
+        assert actions["STOP_LOSS_NO_REVERSE"] == "NO_REVERSE"
+        assert actions["LIMIT_DOWN_NO_DIP"] == "NO_BUY"
+        assert sit["pool_rule_active"] is True
+        assert any("caution" in n for n in sit["notes"])  # caution 计数留痕
+
+    def test_bad_source_fail_open(self) -> None:
+        sit, err = fetch_sit_out_list(_DATE, sources={"events": [{"event_date": "bad"}]})
+        assert sit is None and err is not None
+
+
+class TestCorrelationNetting:
+    """缺口⑨：相关性净额（GAP-F-04 展示层消费，未装配=待接入不假阴性）。"""
+
+    def test_no_positions_means_pending(self) -> None:
+        netting, err = fetch_correlation_netting(positions=None)
+        assert netting is None and err is None
+
+    def test_cluster_merged(self) -> None:
+        netting, err = fetch_correlation_netting(
+            positions={"A": 0.1, "B": 0.08, "C": 0.05},
+            correlation_pairs=[("A", "B", 0.85)],
+            as_of=_DATE,
+        )
+        assert err is None and netting is not None
+        assert netting["gross_position_count"] == 3
+        assert netting["net_risk_units"] == 2  # A+B 合并，C 独立
+        assert netting["netting_reduction"] == 1
+        assert netting["clusters"][0]["members"] == ["A", "B"]
+        assert netting["as_of"] == _DATE
+
+    def test_invalid_input_fail_open(self) -> None:
+        netting, err = fetch_correlation_netting(positions={"A": -0.1})
+        assert netting is None and err is not None
+
+
+class TestScenarioGrid:
+    """缺口⑥展示层：3×3 矩阵 9 格封闭穷举 + 概率待接入标注 + 最可能格高亮。"""
+
+    def test_nine_cells_exhaustive_no_prob(self) -> None:
+        data = WarroomData(trade_date=_DATE, plan=_seed_plan_payload())
+        payload = render_warroom(data)
+        grid = payload["scenario_grid"]
+        assert len(grid) == 9
+        keys = {c["scenario"] for c in grid}
+        assert len(keys) == 9  # 封闭穷举无重复
+        assert "LOW_OPEN_FAKE_DOWN" in keys and "HIGH_OPEN_FAKE_UP" in keys
+        assert payload["grid_prob_available"] is False
+        assert all(c["prob"] is None for c in grid)  # BM-SEL-04 暂缓→待接入
+        focus = [c for c in grid if c["is_focus"]]
+        assert len(focus) == 1 and focus[0]["scenario"] == "FLAT_OPEN_REAL_UP"
+
+    def test_grid_probabilities_rendered_when_logged(self) -> None:
+        plan = _seed_plan_payload()
+        plan["grid_probabilities"] = {"FLAT_OPEN_REAL_UP": 0.35, "FLAT_OPEN_WASH": 0.20}
+        payload = render_warroom(WarroomData(trade_date=_DATE, plan=plan))
+        assert payload["grid_prob_available"] is True
+        cell = next(c for c in payload["scenario_grid"] if c["scenario"] == "FLAT_OPEN_REAL_UP")
+        assert cell["prob"] == pytest.approx(0.35)
+
+    def test_focus_prefers_outcome_actual(self) -> None:
+        data = WarroomData(
+            trade_date=_DATE,
+            plan=_seed_plan_payload(),
+            outcome=_seed_outcome_payload() | {"actual_scenario": "LOW_OPEN_FAKE_DOWN"},
+        )
+        payload = render_warroom(data)
+        focus = [c for c in payload["scenario_grid"] if c["is_focus"]]
+        assert len(focus) == 1 and focus[0]["scenario"] == "LOW_OPEN_FAKE_DOWN"
+
+
+class TestFetchWarroomAggregateP2:
+    """P2 三通道聚合（fail-open，单通道异常不炸）。"""
+
+    def test_aggregate_p2_channels(self, tmp_path) -> None:
+        db = tmp_path / "governance.db"
+        ensure_prediction_log_table(db)
+        log_prediction(
+            trade_date=_DATE,
+            module="plan_engine.tomorrow_boundary_planner",
+            prediction_type="tomorrow_boundary",
+            payload=_seed_boundary_payload("600519"),
+            db_path=db,
+        )
+        data = fetch_warroom(
+            trade_date=_DATE,
+            db_path=db,
+            forecaster=_FakeForecaster(),
+            panel_fn=lambda _d: _FakePanel(),
+            positions={"600519": 0.1, "000001": 0.08},
+            correlation_pairs=[("600519", "000001", 0.9)],
+            sit_out_sources={"war_pool_symbols": ["600519"]},
+        )
+        assert data.boundaries is not None and len(data.boundaries) == 1
+        assert data.netting is not None and data.netting["net_risk_units"] == 1
+        assert data.sit_out is not None and data.sit_out["pool_rule_active"] is True
+        assert data.errors == []
+        payload = render_warroom(data)
+        assert payload["has_boundaries"] is True
+        assert payload["has_netting"] is True and payload["has_sit_out"] is True
+        json.dumps({k: v for k, v in payload.items() if k != "_layout"}, ensure_ascii=False)
+
+    def test_aggregate_p2_unassembled_pending(self, tmp_path) -> None:
+        db = tmp_path / "governance.db"
+        ensure_prediction_log_table(db)
+        data = fetch_warroom(
+            trade_date=_DATE, db_path=db,
+            forecaster=_FakeForecaster(), panel_fn=lambda _d: _FakePanel(),
+        )
+        assert data.boundaries == []  # 当日未跑批=待数据（非异常）
+        assert data.sit_out is None and data.netting is None  # 未装配=待接入
+        assert data.errors == []
+        payload = render_warroom(data)
+        assert payload["has_boundaries"] is False
+        assert payload["has_sit_out"] is False and payload["has_netting"] is False

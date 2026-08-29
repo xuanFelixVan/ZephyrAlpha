@@ -30,8 +30,15 @@
                        （与 dashboard_feeds 相关性净额展示聚合同先例）
   ④ 四指数状态卡    —— IDX-02 前端接入：MOD-REGIME-008 四指数 regime 面板
                        （testing，compute_index_regime_panel → to_dict）
-  ⑤ P2/P3 折叠占位  —— 缺口⑥~⑩（9格概率模型完整版/批量边界/辩论实例化/
-                       相关性净额/禁做清单），本期不实现
+  ⑤ 3×3 情景矩阵    —— 缺口⑥ P2 展示层：9 格封闭穷举（3 开盘 × 3 走势），
+                       格概率=plan.grid_probabilities 落库字段（BM-SEL-04 暂缓
+                       不抢建，未落库一律"概率待接入"）；格内动作=playbook 模板
+  ⑥ 批量边界        —— 缺口⑦ P2 前端消费：MOD-PLAN-012 落库 tomorrow_boundary
+                       族回查（prediction_log 只读；未跑批=待数据）
+  ⑦ 风险包络 W5     —— 缺口⑨ 相关性净额（GAP-F-04 query_correlation_netting，
+                       持仓/相关性对上游装配注入）+ 缺口⑩ 禁做清单
+                       （MOD-PLAN-014 三源合成，源未装配=待接入）
+  ⑧ P3 折叠占位     —— 缺口⑧ 辩论实例化 + W0/W6，本期不实现
 
 渲染依赖: Panel（可选导入，测试环境零依赖仅返回 dict payload）。
 """
@@ -58,6 +65,11 @@ log = logging.getLogger(__name__)
 _MODULE_SCENARIO_PLAN: Final = "plan_engine.scenario_planner"
 _PT_SCENARIO_PLAN: Final = "scenario_plan"
 _PT_OUTCOME: Final = "outcome"
+
+# 批量边界落库族口径（镜像 MOD-PLAN-012 batch_boundary_runner 常量；语义产出方=MOD-PLAN-001）
+_MODULE_BOUNDARY: Final = "plan_engine.tomorrow_boundary_planner"
+_PT_TOMORROW_BOUNDARY: Final = "tomorrow_boundary"
+_BOUNDARY_QUERY_LIMIT: Final = 64  # 作战池+持仓规模上限内（RULE-SEVEN 批量并发 ≤8，回查行数放宽）
 
 #: 9 情景 → （中文剧本名， 一句话逻辑）
 _SCENARIO_ZH: Final[dict[str, tuple[str, str]]] = {
@@ -132,6 +144,35 @@ _DIRECTION_HINT: Final[dict[str, tuple[str, str]]] = {
     "flat": ("warning", "方向不明——不开新仓等待确认，做T/回封除外"),
 }
 
+#: 3×3 情景矩阵（45号 §4 W2）：行=开盘（项目真实阈值 ±2%），列=开盘后 30 分钟走势（VWAP 判定）
+_GRID_ROW_ZH: Final[dict[str, str]] = {
+    "HIGH_OPEN": "高开（>+2%）",
+    "FLAT_OPEN": "平开（±2%）",
+    "LOW_OPEN": "低开（<-2%）",
+}
+_GRID_COL_ZH: Final[dict[str, str]] = {"up": "高走", "flat": "平走", "down": "低走"}
+#: (开盘行, 走势列) → 9 情景 key（低走列在三行分别=假涨/真跌/假跌，勿想当然拼接）
+_GRID_SCENARIO: Final[dict[tuple[str, str], str]] = {
+    ("HIGH_OPEN", "up"): "HIGH_OPEN_REAL_UP",
+    ("HIGH_OPEN", "flat"): "HIGH_OPEN_WASH",
+    ("HIGH_OPEN", "down"): "HIGH_OPEN_FAKE_UP",
+    ("FLAT_OPEN", "up"): "FLAT_OPEN_REAL_UP",
+    ("FLAT_OPEN", "flat"): "FLAT_OPEN_WASH",
+    ("FLAT_OPEN", "down"): "FLAT_OPEN_REAL_DOWN",
+    ("LOW_OPEN", "up"): "LOW_OPEN_FAKE_DOWN",
+    ("LOW_OPEN", "flat"): "LOW_OPEN_WASH",
+    ("LOW_OPEN", "down"): "LOW_OPEN_REAL_DOWN",
+}
+_GRID_ROWS: Final = ("HIGH_OPEN", "FLAT_OPEN", "LOW_OPEN")
+_GRID_COLS: Final = ("up", "flat", "down")
+
+#: 禁做清单动作 → 中文（MOD-PLAN-014）
+_SITOUT_ACTION_ZH: Final[dict[str, str]] = {
+    "NO_TRADE": "禁交易",
+    "NO_BUY": "禁买入",
+    "NO_REVERSE": "禁反手",
+}
+
 
 @dataclass
 class WarroomData:
@@ -145,6 +186,11 @@ class WarroomData:
         playbook: 当前剧本对策（scenario_playbook 模板摘要；None=无剧本/未命中模板）。
         inertia: 今日→明日惯性（MOD-SIG-037 8 态分布+三桶聚合；None=不可用）。
         index_panel: 四指数 regime 面板 dict（IDX-02；None=不可用）。
+        boundaries: 候选股批量边界 list（MOD-PLAN-012 落库 tomorrow_boundary 族；
+            []=当日未跑批/无落库行；None=查询通道异常）。
+        sit_out: 禁做清单 dict（MOD-PLAN-014 to_dict；None=三源未装配待接入/异常）。
+        netting: 相关性净额 dict（GAP-F-04 query_correlation_netting；
+            None=持仓/相关性对未装配待接入/异常）。
         errors: 各取数通道异常留痕（fail-open 负反馈）。
     """
 
@@ -155,6 +201,9 @@ class WarroomData:
     playbook: dict | None = None
     inertia: dict | None = None
     index_panel: dict | None = None
+    boundaries: list[dict] | None = None
+    sit_out: dict | None = None
+    netting: dict | None = None
     errors: list[str] = field(default_factory=list)
 
 
@@ -313,12 +362,129 @@ def fetch_index_regime_panel(
         return None, f"四指数面板：{type(exc).__name__}"
 
 
+def fetch_batch_boundaries(
+    trade_date: str,
+    db_path: object = None,
+) -> tuple[list[dict] | None, str | None]:
+    """缺口⑦：候选股批量边界回查（MOD-PLAN-012 落库 tomorrow_boundary 族，只读）。
+
+    Returns:
+        (boundaries, error)。boundaries=payload dict 列表（symbol/box_upper/
+        box_lower/max_add_position/no_add_price/must_exit_price/breakout_confirm/
+        target_date）；[]=当日批量未跑（待数据）；None=查询通道异常。
+        单行 payload 解析失败跳过留痕（不炸整批）。
+    """
+    try:
+        rows = query_predictions(
+            trade_date=trade_date,
+            module=_MODULE_BOUNDARY,
+            prediction_type=_PT_TOMORROW_BOUNDARY,
+            limit=_BOUNDARY_QUERY_LIMIT,
+            db_path=db_path,
+        )
+    except Exception as exc:  # noqa: BLE001 — fail-open：查询异常降级"待数据"
+        log.warning("批量边界查询异常 fail-open: %s: %s", type(exc).__name__, exc)
+        return None, f"批量边界：{type(exc).__name__}"
+    items: list[dict] = []
+    for row in rows:
+        try:
+            payload = json.loads(row["payload_json"])
+        except Exception as exc:  # noqa: BLE001 — 单行解析失败跳过留痕
+            log.warning("批量边界 payload 解析失败跳过: %s: %s", type(exc).__name__, exc)
+            continue
+        if isinstance(payload, dict) and payload.get("symbol"):
+            items.append(payload)
+    return items, None
+
+
+def fetch_sit_out_list(
+    trade_date: str,
+    sources: dict | None = None,
+) -> tuple[dict | None, str | None]:
+    """缺口⑩：禁做清单（MOD-PLAN-014 三源合成，纯函数零 DB/CH）。
+
+    Args:
+        trade_date: 页面交易日。
+        sources: 三源装配注入位 {events, stopped_symbols, limit_down_symbols,
+            war_pool_symbols}（event 实例为 MOD-PLAN-014 CalendarEvent 契约形状，
+            dict 亦可，本层负责还原）；None=三源未装配 → (None, None) 待接入
+            （G4 反误导：源未接不输出"今日无禁做"假阴性）。
+
+    Returns:
+        (sit_out dict, error)。
+    """
+    if sources is None:
+        return None, None
+    try:
+        from zephyr.plan_engine.sit_out_list import (
+            CalendarEvent,
+            StoppedSymbol,
+            build_sit_out_list,
+        )
+
+        events = [
+            ev if isinstance(ev, CalendarEvent) else CalendarEvent(**ev)
+            for ev in (sources.get("events") or ())
+        ]
+        stopped = [
+            s if isinstance(s, StoppedSymbol) else StoppedSymbol(**s)
+            for s in (sources.get("stopped_symbols") or ())
+        ]
+        sit = build_sit_out_list(
+            trade_date,
+            events=events,
+            stopped_symbols=stopped,
+            limit_down_symbols=sources.get("limit_down_symbols") or (),
+            war_pool_symbols=sources.get("war_pool_symbols"),
+        )
+        return sit.to_dict(), None
+    except Exception as exc:  # noqa: BLE001 — fail-open：源数据非法/合成异常不炸页面
+        log.warning("禁做清单合成异常 fail-open: %s: %s", type(exc).__name__, exc)
+        return None, f"禁做清单：{type(exc).__name__}"
+
+
+def fetch_correlation_netting(
+    positions: dict | None = None,
+    correlation_pairs: object = (),
+    threshold: float | None = None,
+    as_of: str | None = None,
+) -> tuple[dict | None, str | None]:
+    """缺口⑨：相关性净额（GAP-F-04 query_correlation_netting 展示层消费）。
+
+    Args:
+        positions: {symbol: 权重}（上游装配注入；None=持仓/相关性源未装配 →
+            (None, None) 待接入，G4 反误导不输出假"无净额"）。
+        correlation_pairs: [(a, b, rho)]（上游注入）。
+        threshold: 聚合阈值（None=口径默认 0.7，对齐 MOD-PF-006 C5）。
+        as_of: 数据日期（展示用）。
+
+    Returns:
+        (netting dict, error)。
+    """
+    if positions is None:
+        return None, None
+    try:
+        from zephyr.frontend.services.dashboard_feeds import query_correlation_netting
+
+        kwargs: dict[str, Any] = {"as_of": as_of}
+        if threshold is not None:
+            kwargs["threshold"] = threshold
+        return query_correlation_netting(positions, correlation_pairs or (), **kwargs), None
+    except Exception as exc:  # noqa: BLE001 — fail-open：输入非法/计算异常不炸页面
+        log.warning("相关性净额计算异常 fail-open: %s: %s", type(exc).__name__, exc)
+        return None, f"相关性净额：{type(exc).__name__}"
+
+
 def fetch_warroom(
     trade_date: str | None = None,
     db_path: object = None,
     forecaster: object = None,
     panel_fn: Callable[..., Any] | None = None,
     index_symbol: str = "000300",
+    positions: dict | None = None,
+    correlation_pairs: object = (),
+    netting_threshold: float | None = None,
+    sit_out_sources: dict | None = None,
 ) -> WarroomData:
     """作战室页聚合取数（全通道 fail-open，单通道异常不炸页面）。
 
@@ -328,6 +494,10 @@ def fetch_warroom(
         forecaster: MOD-SIG-037 注入位（测试 mock）。
         panel_fn: MOD-REGIME-008 注入位（测试 mock）。
         index_symbol: 惯性推演市场代理指数。
+        positions: 相关性净额持仓注入位（None=未装配待接入）。
+        correlation_pairs: 相关性净额相关性对注入位。
+        netting_threshold: 净额聚合阈值（None=口径默认 0.7）。
+        sit_out_sources: 禁做清单三源注入位（None=未装配待接入）。
     """
     v_date = trade_date or _today_str()
     errors: list[str] = []
@@ -359,6 +529,18 @@ def fetch_warroom(
     if err:
         errors.append(err)
 
+    boundaries, err = fetch_batch_boundaries(v_date, db_path)
+    if err:
+        errors.append(err)
+    sit_out, err = fetch_sit_out_list(v_date, sit_out_sources)
+    if err:
+        errors.append(err)
+    netting, err = fetch_correlation_netting(
+        positions, correlation_pairs, threshold=netting_threshold, as_of=v_date
+    )
+    if err:
+        errors.append(err)
+
     return WarroomData(
         trade_date=v_date,
         plan=plan,
@@ -367,6 +549,9 @@ def fetch_warroom(
         playbook=playbook,
         inertia=inertia,
         index_panel=index_panel,
+        boundaries=boundaries,
+        sit_out=sit_out,
+        netting=netting,
         errors=errors,
     )
 
@@ -642,19 +827,169 @@ def _render_index_panel_section(data: WarroomData) -> Any:
     return pn.Card(*items, title="④ 四指数状态卡（IDX-02 · 1 引擎×4 代理 regime 面板）", sizing_mode="stretch_width")
 
 
+def _build_scenario_grid(data: WarroomData) -> list[dict[str, Any]]:
+    """缺口⑥展示层：3×3 情景矩阵 9 格（纯函数，无 panel 依赖，可 JSON 序列化）。
+
+    格概率=plan.grid_probabilities 落库字段（缺口⑥后端 BM-SEL-04 暂缓不抢建，
+    未落库一律 prob=None 标"概率待接入"）；格内动作=playbook production 模板；
+    最可能格=盘后 outcome.actual_scenario 优先，否则 plan.final_scenario。
+    """
+    plan = data.plan or {}
+    grid_probs = plan.get("grid_probabilities")
+    grid_probs = grid_probs if isinstance(grid_probs, dict) else {}
+    focus = (data.outcome or {}).get("actual_scenario") or plan.get("final_scenario")
+
+    cells: list[dict[str, Any]] = []
+    for row in _GRID_ROWS:
+        for col in _GRID_COLS:
+            key = _GRID_SCENARIO[(row, col)]
+            name_zh, logic = _SCENARIO_ZH[key]
+            prob = grid_probs.get(key)
+            action_zh = None
+            try:
+                pb = fetch_playbook_action(key)
+                action_zh = pb["action_zh"] if pb else None
+            except Exception as exc:  # noqa: BLE001 — fail-open：模板检索异常不影响格结构
+                log.warning("矩阵格 playbook 检索异常 fail-open（%s）: %s", key, exc)
+            cells.append({
+                "scenario": key,
+                "row": row,
+                "row_zh": _GRID_ROW_ZH[row],
+                "col": col,
+                "col_zh": _GRID_COL_ZH[col],
+                "name_zh": name_zh,
+                "logic": logic,
+                "prob": float(prob) if isinstance(prob, (int, float)) else None,
+                "action_zh": action_zh,
+                "is_focus": key == focus,
+            })
+    return cells
+
+
+def _render_scenario_matrix_section(cells: list[dict[str, Any]]) -> Any:
+    """区⑤ W2 3×3 情景矩阵（缺口⑥ P2 展示层）。"""
+    has_prob = any(c["prob"] is not None for c in cells)
+    cards: list[Any] = []
+    for c in cells:
+        prob_text = f"**概率**：{_pct_plain(c['prob'])}" if c["prob"] is not None else "**概率**：待接入（缺口⑥ BM-SEL-04 暂缓）"
+        body = "\n\n".join([
+            prob_text,
+            f"**动作**：{c['action_zh'] or '—'}",
+            c["logic"],
+        ])
+        title = ("⭐ " if c["is_focus"] else "") + f"{c['row_zh']}×{c['col_zh']} {c['name_zh']}"
+        cards.append(pn.Card(_md(body), title=title, sizing_mode="stretch_width"))
+    intro = (
+        "行=开盘形态（项目真实阈值 ±2%），列=开盘后 30 分钟走势（分时均价线 VWAP 判定）；"
+        "9 格封闭穷举，任何行情落下都有格子接住；⭐=当前判定格"
+    )
+    if not has_prob:
+        intro += "；**格概率模型待接入**（缺口⑥，90号 §7 BM-SEL-04 暂缓裁定不抢建，当前以最可能格+信度缩放表达）"
+    items: list[Any] = [
+        _md(intro),
+        pn.GridBox(*cards, ncols=3, sizing_mode="stretch_width"),
+        _md("> 只展示概率分布/动作对策，不出点位方向预测（90号 §7 铁律）；格内个股方案点位由 ⑥ 批量边界区供给"),
+    ]
+    return pn.Card(*items, title="⑤ W2 3×3 情景矩阵（完备预案·9 格封闭穷举）", sizing_mode="stretch_width")
+
+
+def _render_boundaries_section(data: WarroomData) -> Any:
+    """区⑥ W2b 批量边界（缺口⑦：MOD-PLAN-012 落库 tomorrow_boundary 族回查）。"""
+    items: list[Any] = []
+    boundaries = data.boundaries
+    if boundaries is None:
+        items.append(pn.pane.Alert(
+            "批量边界查询通道异常（fail-open 降级）——本区待数据",
+            alert_type="warning",
+        ))
+    elif not boundaries:
+        items.append(pn.pane.Alert(
+            f"今日（{data.trade_date}）无 tomorrow_boundary 落库行——盘后批量管线"
+            "（MOD-PLAN-012）未跑或候选清单为空，本区待数据；未算股一律视为「待计算」禁凭感觉操作",
+            alert_type="warning",
+        ))
+    else:
+        rows = [
+            "| 标的 | 箱体（下沿~上沿） | 加仓上限 | 禁加仓价 | 必出价 | 突破验证 |",
+            "|---|---|---|---|---|---|",
+        ]
+        for b in boundaries:
+            box = f"{_fmt_price(b.get('box_lower'))} ~ {_fmt_price(b.get('box_upper'))}"
+            rows.append(
+                f"| {b.get('symbol')} | {box} | {_pct_plain(b.get('max_add_position'), 0)} | "
+                f"{_fmt_price(b.get('no_add_price'))} | {_fmt_price(b.get('must_exit_price'))} | "
+                f"{'放量站稳10分钟' if b.get('breakout_confirm') else '—'} |"
+            )
+        items.append(_md("\n".join(rows)))
+        items.append(_md(
+            f"> 共 {len(boundaries)} 票（MOD-PLAN-012 盘后批量，生效日="
+            f"{boundaries[0].get('target_date', '—')}）；失效条件（逻辑破坏点）优先于价格触发"
+        ))
+    return pn.Card(*items, title="⑥ W2b 候选股/持仓股明日边界（批量栏杆）", sizing_mode="stretch_width")
+
+
+def _render_risk_envelope_section(data: WarroomData) -> Any:
+    """区⑦ W5 风险包络（缺口⑨ 相关性净额 + 缺口⑩ 禁做清单）。"""
+    items: list[Any] = []
+
+    netting = data.netting
+    if netting is None:
+        items.append(pn.pane.Alert(
+            "相关性净额：持仓/相关性对上游未装配——待接入（GAP-F-04 查询函数已就绪，"
+            "防「五个仓位实则一个赌注」）",
+            alert_type="warning",
+        ))
+    else:
+        items.append(_md(
+            f"**相关性净额**：持仓 {netting.get('gross_position_count')} 笔 → "
+            f"净风险单位 **{netting.get('net_risk_units')}** 个"
+            f"（合并 {netting.get('netting_reduction')} 笔，|ρ|≥{netting.get('threshold')}）"
+        ))
+        for cl in netting.get("clusters") or []:
+            items.append(pn.pane.Alert(
+                f"高相关簇合并计 1 笔风险：{' + '.join(cl.get('members') or [])}"
+                f"（max ρ={cl.get('max_pair_rho')}，合计权重 {_pct_plain(cl.get('combined_weight'))}）",
+                alert_type="warning",
+            ))
+
+    sit_out = data.sit_out
+    if sit_out is None:
+        items.append(pn.pane.Alert(
+            "禁做清单：三源（事件日历/止损状态/作战池）未装配——待接入"
+            "（MOD-PLAN-014 生成器已就绪；违反清单=预案外操作，W0 归因记执行不一致）",
+            alert_type="warning",
+        ))
+    else:
+        entries = sit_out.get("entries") or []
+        if not entries:
+            note = (sit_out.get("annotations") or ["今日禁做清单空"])[0]
+            items.append(pn.pane.Alert(f"禁做清单：{note}", alert_type="success"))
+        else:
+            lines = [
+                f"- **{_SITOUT_ACTION_ZH.get(e.get('action'), e.get('action'))}**"
+                f"（{e.get('scope')}{('/' + e['target']) if e.get('target') else ''}）：{e.get('reason')}"
+                for e in entries
+            ]
+            items.append(pn.pane.Alert(
+                f"⛔ 今日禁做清单 {len(entries)} 条（违反=预案外操作，W0 归因记执行不一致）",
+                alert_type="danger",
+            ))
+            items.append(_md("\n".join(lines)))
+        for note in sit_out.get("notes") or []:
+            items.append(_md(f"> {note}"))
+    return pn.Card(*items, title="⑦ W5 风险包络（相关性净额 + 禁做清单）", sizing_mode="stretch_width")
+
+
 def _render_backlog_section() -> Any:
-    """区⑤ P2/P3 折叠占位（缺口⑥~⑩，本期不实现）。"""
+    """区⑧ P3 折叠占位（缺口⑧ + W0/W6，本期不实现）。"""
     body = "\n".join([
-        "- **缺口⑥ 9 格概率模型完整版**（3×3 情景矩阵逐格概率）——待 P2（CAND 评审；90号 §7 BM-SEL-04 暂缓裁定不抢建，当前以最可能剧本+信度缩放表达）",
-        "- **缺口⑦ 候选股批量边界**（TomorrowBoundary 对主线候选股批量出栏杆）——待 P2（Owner 2026-08-28 裁定本期仅占位；MOD-PLAN-001 单票 production 已就绪）",
         "- **缺口⑧ 交易域多空辩论实例化 W4**（多头/空头研究员→交易员→风控四角色链）——待 P3（CAND 评审；agent_debate 治理域已 production）",
-        "- **缺口⑨ 相关性净额前端消费 W5**（高相关持仓合并计 1 笔风险）——待 P2（dashboard_feeds.query_correlation_netting 可接，组合域 prod 已就绪）",
-        "- **缺口⑩ 禁做清单生成器 W5**（事件日历+止损状态+池外规则 → sit-out list）——待 P2（event_calendar 注册表已有）",
         "- **W0/W6 历史预案库 + Brier 校准度**——随 prediction_log 样本积累（MOD-PLAN-018 日循环跑批）后接入",
+        "- P2 已落：缺口⑥ 9 格矩阵展示层（格概率待 BM-SEL-04 解除暂缓）/缺口⑦ 批量边界回查/缺口⑨ 相关性净额/缺口⑩ 禁做清单",
     ])
     return pn.Card(
         _md(body),
-        title="⑤ P2/P3 待施工区（缺口⑥~⑩ + W0/W6，本期不实现）",
+        title="⑧ P3 待施工区（缺口⑧ 辩论实例化 + W0/W6，本期不实现）",
         collapsed=True,
         sizing_mode="stretch_width",
     )
@@ -665,6 +1000,7 @@ def render_warroom(data: WarroomData) -> dict[str, Any]:
 
     测试环境（无 panel）仅返回 dict payload。
     """
+    grid = _build_scenario_grid(data)
     payload: dict[str, Any] = {
         "trade_date": data.trade_date,
         "has_plan": data.plan is not None,
@@ -672,6 +1008,14 @@ def render_warroom(data: WarroomData) -> dict[str, Any]:
         "has_inertia": data.inertia is not None,
         "has_index_panel": data.index_panel is not None,
         "playbook": data.playbook,
+        "scenario_grid": grid,
+        "grid_prob_available": any(c["prob"] is not None for c in grid),
+        "boundaries": data.boundaries,
+        "has_boundaries": bool(data.boundaries),
+        "sit_out": data.sit_out,
+        "has_sit_out": data.sit_out is not None,
+        "netting": data.netting,
+        "has_netting": data.netting is not None,
         "errors": list(data.errors),
         "renderer": "panel" if pn is not None else "dict",
     }
@@ -682,7 +1026,7 @@ def render_warroom(data: WarroomData) -> dict[str, Any]:
         _md("## 作战指挥室（War Room）"),
         _md(
             "实盘组 · **核心三件事：昨天定的预案是什么 → 现在走势匹配哪一格 → 明天大概怎么走、今天该怎么动**　"
-            "盘中不思考，只匹配执行（45号作战手册 P1；页面结构=Owner 2026-08-28 裁定）"
+            "盘中不思考，只匹配执行（45号作战手册 P1+P2；页面结构=Owner 2026-08-28 裁定）"
         ),
     ]
     if data.errors:
@@ -694,6 +1038,9 @@ def render_warroom(data: WarroomData) -> dict[str, Any]:
     items.append(_render_intraday_section(data))
     items.append(_render_inertia_section(data))
     items.append(_render_index_panel_section(data))
+    items.append(_render_scenario_matrix_section(grid))
+    items.append(_render_boundaries_section(data))
+    items.append(_render_risk_envelope_section(data))
     items.append(_render_backlog_section())
     payload["_layout"] = pn.Column(*items, sizing_mode="stretch_width")
     return payload
@@ -701,9 +1048,12 @@ def render_warroom(data: WarroomData) -> dict[str, Any]:
 
 __all__: Final = [
     "WarroomData",
+    "fetch_batch_boundaries",
+    "fetch_correlation_netting",
     "fetch_index_regime_panel",
     "fetch_next_day_inertia",
     "fetch_playbook_action",
+    "fetch_sit_out_list",
     "fetch_warroom",
     "fetch_warroom_outcome",
     "fetch_warroom_plan",
