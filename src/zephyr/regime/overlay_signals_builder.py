@@ -331,8 +331,13 @@ class OverlaySignalsConstructor:
             and open_ is not None
         ):
             # 期权 put/call + 新低占比（第 5/6 维）：Step 0 ④ 勘探无数据管道，默认关闭
+            # 2026-08-29 治本接线（AI-WAVE4-001，Owner 裁定选项1低置信接线）：
+            # walk-forward 终选组合 precrisis_z+close_pos+pct250+decayed_max（WFE 3.44/fp60 0.8%；
+            # MC p=0.87 未过已注记 reports/2026-08-29-s2-walkforward-validation.md §七）
             cache["capitulation"] = overlay_features.s2_capitulation_score(
-                vol_z, pct_change, volume, high, low, open_, close
+                vol_z, pct_change, volume, high, low, open_, close,
+                base_mode="precrisis_z", wick_mode="close_pos",
+                vol_filter_mode="pct250", agg_mode="decayed_max",
             )
         elif vol_z is not None and pct_change is not None:
             _logger.warning("S2 capitulation 缺 OHLCV/open，降级瞬时两维版（治标 z>1）")
@@ -359,8 +364,10 @@ class OverlaySignalsConstructor:
         else:
             _logger.warning("S2 fund 数据缺失，降级 0.0")
         # P1-E9e：three_yang 6 维分级版（需 OHLCV 五序列；缺失降级 0.0，不回退旧宽松版）
+        # 2026-08-29 治本接线：grading="v2_index"（d5 回撤 30%→15% 指数口径 + 删 d4 误抄维，
+        # AI-WAVE4-001，Owner 裁定；14号 §4.4b 回源核对结论见 overlay_features docstring）
         if open_ is not None and high is not None and low is not None and close is not None and volume is not None:
-            cache["three_yang"] = overlay_features.s2_three_yang_flag(open_, high, low, close, volume)
+            cache["three_yang"] = overlay_features.s2_three_yang_flag(open_, high, low, close, volume, grading="v2_index")
         else:
             _logger.warning("S2 three_yang 数据缺失（需 OHLCV），降级 0.0")
         # P1-E9d：breadth_thrust V 反转通路（需广度指数涨跌家数，confirm 析取维度）

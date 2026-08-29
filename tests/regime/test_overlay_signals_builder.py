@@ -538,18 +538,19 @@ class TestP1E9S2Integration:
         """双符号 index_df：000300 完整 OHLCV + 399106 涨跌家数（breadth thrust）。"""
         n = len(dates)
         # 000300：常态平盘 3000；250-252 日 3 日 capitulation 级联暴跌（-6%/日，
-        # 3×量 + 长下影 + 大实体，三过滤器全共振）
+        # 3×量 + 光脚大阴线 + 大实体——2026-08-29 接线后语义：close_pos<0.15 +
+        # precrisis_z 危机前平静窗 z（平静窗量需方差>0，故常态量交替 0.95/1.05e8））
         open_a = np.full(n, 3000.0)
         high = np.full(n, 3005.0)
         low = np.full(n, 2995.0)
         close = np.full(n, 3000.0)
-        volume = np.full(n, 1e8)
+        volume = np.where(np.arange(n) % 2 == 0, 0.95e8, 1.05e8)
         prev = 3000.0
         for i in (250, 251, 252):
             o, c = prev * 0.99, prev * 0.94
             open_a[i], close[i] = o, c
             high[i] = prev * 1.001
-            low[i] = c * 0.92  # 下影占比 ~57%>50%
+            low[i] = c * 0.995  # 光脚：close 贴底（close_pos≈0.07<0.15，A 股投降形态）
             volume[i] = 3e8
             prev = c
         proxy_idx = pd.MultiIndex.from_product([["000300"], dates], names=["symbol", "trade_date"])
