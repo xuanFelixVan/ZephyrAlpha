@@ -10645,6 +10645,46 @@ creation_tokens:
   token: auto-a50-source-evaluation-20260829
   created_by: AI-WAVE4-001（A22：A50 数据源评估落地）
   capability: a50_futures_daily
+- file: src/zephyr/reporting/attribution_calculator.py
+  token: auto-attribution-calculator-20260829
+  created_by: AI-WAVE4-001（A9：54号 BM-REC-02-B §3.2 Brinson/Carino/T+1 公式落码，MOD-RPT-036）
+  capability: performance_attribution
+- file: src/zephyr/reporting/attribution_result_store.py
+  token: auto-attribution-result-store-20260829
+  created_by: AI-WAVE4-001（A9：54号 BM-REC-02-B 归因落库+查询接口，MOD-RPT-037）
+  capability: performance_attribution
+- file: tests/reporting/test_attribution_calculator.py
+  token: auto-test-attribution-calculator-20260829
+  created_by: AI-WAVE4-001
+  capability: performance_attribution
+- file: tests/reporting/test_attribution_result_store.py
+  token: auto-test-attribution-result-store-20260829
+  created_by: AI-WAVE4-001
+  capability: performance_attribution
+- file: src/zephyr/governance/lifecycle_governance/drift_observatory_orchestrator.py
+  token: auto-drift-observatory-orchestrator-20260829
+  created_by: AI-WAVE4-001（A10：61号 Drift Observatory 四层编排）
+  capability: lifecycle_governance_orchestration
+- file: src/zephyr/governance/lifecycle_governance/msprt_promotion_channel.py
+  token: auto-msprt-promotion-channel-20260829
+  created_by: AI-WAVE4-001（A10：61号 mSPRT 晋升编排层）
+  capability: lifecycle_governance_orchestration
+- file: src/zephyr/governance/lifecycle_governance/factor_promotion_wiring.py
+  token: auto-factor-promotion-wiring-20260829
+  created_by: AI-WAVE4-001（A10：mSPRT 消费方接线）
+  capability: lifecycle_governance_orchestration
+- file: tests/governance/lifecycle/test_drift_observatory_orchestrator.py
+  token: auto-test-drift-observatory-orchestrator-20260829
+  created_by: AI-WAVE4-001
+  capability: lifecycle_governance_orchestration
+- file: tests/governance/lifecycle/test_msprt_promotion_channel.py
+  token: auto-test-msprt-promotion-channel-20260829
+  created_by: AI-WAVE4-001
+  capability: lifecycle_governance_orchestration
+- file: tests/governance/lifecycle/test_factor_promotion_wiring.py
+  token: auto-test-factor-promotion-wiring-20260829
+  created_by: AI-WAVE4-001
+  capability: lifecycle_governance_orchestration
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
