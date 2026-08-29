@@ -2,6 +2,20 @@
     <h2 class="page-title">大盘分析 <span class="badge b-na">演示数据</span></h2>
     <div class="page-sub">实盘组 · <b>核心：大盘今天什么状态 + 接下来走势预期</b>（感知层——看状态、看证据；怎么做→「作战指挥」）· 四指数一主三辅 + 情绪快照 + 成交额对比 + 因子构成面板（铁律：结果+全部因子证据）· 真源=B31/B32/B33（I-2 接线后转真）</div>
 
+    <!-- R21 结论卡（本页标准输出口；首页墙聚合抓取本卡） -->
+    <div class="vd" data-vd-order="4" data-vd-page="live">
+      <div class="vd-top"><span class="vd-tag">今天大盘状态</span><span class="vd-src">{{page_name}</span>
+        <span class="vd-fb"><button onclick="vdFb(this,1,event)" title="量化这个判断对了">✓</button><button onclick="vdFb(this,0,event)" title="判断错了，进纠错样本库">✗</button></span></div>
+      <div class="vd-main">晴偏多云：上涨 3,842 / 下跌 1,276 · 涨停 58 家 · 成交 9,860 亿 <span class="badge b-na" style="font-size:10px">演示</span></div>
+      <div class="vd-sub">依据：市场宽度+涨停+成交额四指数综合——情绪细节去「市场情绪」页</div>
+    </div>
+    <div class="vd" data-vd-order="5" data-vd-page="live">
+      <div class="vd-top"><span class="vd-tag">接下来走势预期</span><span class="vd-src">{{page_name}</span>
+        <span class="vd-fb"><button onclick="vdFb(this,1,event)" title="量化这个判断对了">✓</button><button onclick="vdFb(this,0,event)" title="判断错了，进纠错样本库">✗</button></span></div>
+      <div class="vd-main">午后延续偏强 · 14:00 看量能确认 <span class="badge b-na" style="font-size:10px">演示</span></div>
+      <div class="vd-sub">依据：上午段形态判定+量能结构+板块贡献度——只出状态与预期，不出点位（90 号铁律）</div>
+    </div>
+
     <!-- ① 四指数一主三辅 -->
     <div class="row" style="grid-template-columns:2fr 1fr 1fr 1fr;display:grid;gap:12px;margin-bottom:14px">
       <div class="card">

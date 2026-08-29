@@ -2,6 +2,14 @@
     <h2 class="page-title">板块全景 <span class="badge b-na">演示数据</span></h2>
     <div class="page-sub">实盘组 · <b>核心：今天资金去了哪些板块 / 谁在持续流入 / 谁产生分歧</b>——相对强度光谱地图 + 抗跌榜/领涨榜（次数优先=RS 持续性，冲高回落标注=防假强势）+ 证据链卡（铁律：结果+全部因子证据）· 真源=B26 管线（counter_trend_board 后端在码，I-2 接线后转真）</div>
 
+    <!-- R21 结论卡（本页标准输出口；首页墙聚合抓取本卡） -->
+    <div class="vd" data-vd-order="6" data-vd-page="sector">
+      <div class="vd-top"><span class="vd-tag">板块资金去向</span><span class="vd-src">{{page_name}</span>
+        <span class="vd-fb"><button onclick="vdFb(this,1,event)" title="量化这个判断对了">✓</button><button onclick="vdFb(this,0,event)" title="判断错了，进纠错样本库">✗</button></span></div>
+      <div class="vd-main">主力净流入：软件算力 +48.2 亿居首 · 半导体跟随 · 白酒流出 <span class="badge b-na" style="font-size:10px">演示</span></div>
+      <div class="vd-sub">依据：下跌抗跌地图+上涨领涨地图双视角交叉验证——悄悄流入的板块靠"跌时少跌"识别</div>
+    </div>
+
     <!-- ① 相对强度光谱地图 -->
     <div class="card" style="margin-bottom:14px">
       <h3>相对强度光谱地图 <span class="dim">分界=大盘实时涨速；右红=强于大盘（跌得慢/逆势涨）、左绿=弱于大盘 · 分时双模式（大盘跌自动切抗跌视角/涨切领涨视角）· 分钟级</span>

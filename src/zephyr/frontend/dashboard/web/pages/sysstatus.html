@@ -2,6 +2,14 @@
     <h2 class="page-title">系统状态</h2>
     <div class="page-sub">系统组 · 全部使用项目真实数据（tasks.yaml 167 任务 / data_inventory 121 表 · 2026-08-06 扫描）</div>
 
+    <!-- R21 结论卡（本页标准输出口；首页墙聚合抓取本卡） -->
+    <div class="vd" data-vd-order="15" data-vd-page="sysstatus">
+      <div class="vd-top"><span class="vd-tag">系统健康</span><span class="vd-src">{{page_name}</span>
+        <span class="vd-fb"><button onclick="vdFb(this,1,event)" title="量化这个判断对了">✓</button><button onclick="vdFb(this,0,event)" title="判断错了，进纠错样本库">✗</button></span></div>
+      <div class="vd-main">数据管线 1 失败（adj_factor 修复中）· 其余全绿 · 熔断待命 <span class="badge b-na" style="font-size:10px">演示</span></div>
+      <div class="vd-sub">依据：156 任务心跳+QMT 桥+治理审计+GPU——异常自动升级为首页告警</div>
+    </div>
+
     <div class="row c4">
       <div class="card metric"><div class="l">业务表</div><div class="v">121</div><div class="s">非空 104 · 空表 17</div></div>
       <div class="card metric"><div class="l">数据总行数</div><div class="v">111.6 亿</div><div class="s">ClickHouse c1_market + c3_fundamental</div></div>

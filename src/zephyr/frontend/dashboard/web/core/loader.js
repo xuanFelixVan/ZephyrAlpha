@@ -26,6 +26,8 @@
     return loadJs('core/app4.js');
   }).then(function(){
     return loadJs('core/backtest.js');
+  }).then(function(){
+    return loadJs('core/home.js');   /* 首页三件套（结论墙/布局引擎/AI 对话框）——最后加载，依赖全部页面片段已在 DOM */
   }).catch(function(e){
     main.innerHTML = '<div style="padding:40px;color:#CA3F64">页面片段加载失败：'+e.message+'（需通过 http 服务访问，file:// 不支持 fetch）</div>';
     console.error(e);

@@ -2,6 +2,14 @@
     <h2 class="page-title">政策资金</h2>
     <div class="page-sub">实盘组 · 核心目的：<b>政策与国家资金动向</b>——政策流（分源：国务院/央行/证监会/地方政府+海外央行）+ 国家队资金（社保/汇金持仓变动、宽基 ETF 份额异动）；<b>政策≠新闻</b>：本页=官方独立源语境，新闻舆情页=媒体流语境（L4 边界）</div>
 
+    <!-- R21 结论卡（本页标准输出口；首页墙聚合抓取本卡） -->
+    <div class="vd" data-vd-order="9" data-vd-page="policy">
+      <div class="vd-top"><span class="vd-tag">政策资金</span><span class="vd-src">{{page_name}</span>
+        <span class="vd-fb"><button onclick="vdFb(this,1,event)" title="量化这个判断对了">✓</button><button onclick="vdFb(this,0,event)" title="判断错了，进纠错样本库">✗</button></span></div>
+      <div class="vd-main">北向净流入 +32.6 亿 · 两融余额微升——资金面温和偏多 <span class="badge b-na" style="font-size:10px">演示</span></div>
+      <div class="vd-sub">依据：北向+两融+ETF 申赎+产业资本四路资金合成；政策事件无重大新增</div>
+    </div>
+
     <!-- 上半：政策流（分源 tabs） -->
     <div class="card">
       <h3>政策流 <span class="badge b-na">演示数据</span> <span class="dim">政策≠新闻——独立官方源（政府公报/央行官网/证监会发布/地方政府+海外央行）；news_data 827 万行可筛政策类作近似源，独立政策源接口待接入（I-2）</span></h3>

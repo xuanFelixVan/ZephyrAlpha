@@ -2,6 +2,14 @@
     <h2 class="page-title">做T分析</h2>
     <div class="page-sub">实盘组 · 核心目的：分时图做T点位（何时买/何时卖）+ <b>信号正确性回验</b>——反馈系统的做T分析对不对</div>
 
+    <!-- R21 结论卡（本页标准输出口；首页墙聚合抓取本卡） -->
+    <div class="vd" data-vd-order="11" data-vd-page="t0">
+      <div class="vd-top"><span class="vd-tag">做T 机会</span><span class="vd-src">{{page_name}</span>
+        <span class="vd-fb"><button onclick="vdFb(this,1,event)" title="量化这个判断对了">✓</button><button onclick="vdFb(this,0,event)" title="判断错了，进纠错样本库">✗</button></span></div>
+      <div class="vd-main">持仓 3 只可 T：宁德波动率达标 · 茅台窄幅震荡不建议 <span class="badge b-na" style="font-size:10px">演示</span></div>
+      <div class="vd-sub">依据：日内波动率+买卖价差+持仓成本线三维筛选——做T 只降成本不开新风险</div>
+    </div>
+
     <div class="param-strip" style="align-items:center">
       <span>标的 <span class="sel" id="t0-sym-sel" style="min-width:170px;position:relative;cursor:pointer" onclick="t0SymTgl(event)"><span id="t0-sym-t">600519 贵州茅台</span> ▾
         <span class="acct-menu" id="t0-sym-menu">

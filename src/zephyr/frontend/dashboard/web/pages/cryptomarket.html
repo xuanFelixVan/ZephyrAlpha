@@ -1,6 +1,14 @@
 <section class="page" id="p-cryptomarket">
     <h2 class="page-title">币圈盘面</h2>
     <div class="page-sub">币圈组 · 24/7 连续市场（无开收盘/无涨跌停/永续合约多空双向）——行情+资金费率+持仓量 OI+多空比+爆仓（§C-2；OKX 公开 API 待接入 I-2，演示数据如实标注）</div>
+
+    <!-- R21 结论卡（本页标准输出口；首页墙聚合抓取本卡） -->
+    <div class="vd" data-vd-order="13" data-vd-page="cryptomarket">
+      <div class="vd-top"><span class="vd-tag">币圈盘面</span><span class="vd-src">{{page_name}</span>
+        <span class="vd-fb"><button onclick="vdFb(this,1,event)" title="量化这个判断对了">✓</button><button onclick="vdFb(this,0,event)" title="判断错了，进纠错样本库">✗</button></span></div>
+      <div class="vd-main">BTC +1.24% · 资金费率 +0.009% 偏多温和 · 恐贪 64 贪婪 <span class="badge b-na" style="font-size:10px">演示</span></div>
+      <div class="vd-sub">依据：价格+资金费率+爆仓+Dominance 四维——币圈仓位与 A股完全隔离</div>
+    </div>
     <div class="row c4" id="cm-kpis"></div>
     <div class="card" style="margin-bottom:14px">
       <h3>永续合约行情 <span class="badge b-na">演示数据</span> <span class="dim">24/7 · 资金费率 8h 结算（下次结算倒计时）· 标记价格口径 · OKX 公开 API 待接入（I-2）</span></h3>

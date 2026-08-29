@@ -2,6 +2,14 @@
     <h2 class="page-title">持仓监控</h2>
     <div class="page-sub">实盘组 · 核心目的：<b>我的持仓在当前市场结构里的处境</b>——每只持仓的板块语境（主线/退潮）+ 风险告警（T1+L6）· 多账号视图（charter §1.3 能力③）</div>
 
+    <!-- R21 结论卡（本页标准输出口；首页墙聚合抓取本卡） -->
+    <div class="vd" data-vd-order="12" data-vd-page="position">
+      <div class="vd-top"><span class="vd-tag">持仓风险</span><span class="vd-src">{{page_name}</span>
+        <span class="vd-fb"><button onclick="vdFb(this,1,event)" title="量化这个判断对了">✓</button><button onclick="vdFb(this,0,event)" title="判断错了，进纠错样本库">✗</button></span></div>
+      <div class="vd-main">总仓位 76.8% · 宁德距止损线 1.8%（🔴 关注）· 其余安全 <span class="badge b-na" style="font-size:10px">演示</span></div>
+      <div class="vd-sub">依据：逐仓止损距离+组合 VaR+回撤预算消耗——减仓建议走审批流（human_gated）</div>
+    </div>
+
     <!-- I-7 多账号视图切换（charter §1.3 能力③多账户；参考同花顺投资账本 APP） -->
     <div class="tabs" id="pos-acct-tabs">
       <span class="tab on" onclick="acctSwitch('sum',this)">汇总持仓</span>

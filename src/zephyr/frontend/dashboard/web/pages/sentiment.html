@@ -2,6 +2,14 @@
     <h2 class="page-title">市场情绪 <span class="badge b-na">演示数据</span></h2>
     <div class="page-sub">实盘组 · <b>核心：今天情绪什么状态、由什么构成</b>（本页管"今天快照"；周期位置与温度时序见下）· 涨停强度今昨对比 + 连板天梯 + 涨停质量三维（数量/质量/速度）+ 构成因子卡（铁律：结果+全部因子证据）· 真源=B32（I-2）</div>
 
+    <!-- R21 结论卡（本页标准输出口；首页墙聚合抓取本卡） -->
+    <div class="vd" data-vd-order="7" data-vd-page="sentiment">
+      <div class="vd-top"><span class="vd-tag">市场情绪</span><span class="vd-src">{{page_name}</span>
+        <span class="vd-fb"><button onclick="vdFb(this,1,event)" title="量化这个判断对了">✓</button><button onclick="vdFb(this,0,event)" title="判断错了，进纠错样本库">✗</button></span></div>
+      <div class="vd-main">温度 62° 偏热 · 涨停 58 家 vs 昨日 47 家——情绪回暖 <span class="badge b-na" style="font-size:10px">演示</span></div>
+      <div class="vd-sub">依据：涨停强度今昨对比+连板梯队高度+炸板率三维合成（市场情绪页有全套因子明细）</div>
+    </div>
+
     <!-- ① 情绪温度+周期位置（保留口径，紧凑化） -->
     <div class="row c4" style="margin-bottom:14px">
       <div class="card metric"><div class="l">情绪温度</div><div class="v">62°</div><div class="s">偏热（0~100）· 昨日 55° 回暖中</div></div>

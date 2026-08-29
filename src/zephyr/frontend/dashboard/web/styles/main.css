@@ -559,3 +559,59 @@
   .pnl-day .dn{color:rgba(255,255,255,.85)}
   .pnl-day .pv{font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
   .fund-flow{font-size:12.5px;background:var(--input);border:1px solid #23282F;border-radius:6px;padding:10px 14px;line-height:2;font-variant-numeric:tabular-nums}
+
+/* ═══════ R21 verdict 卡标准件（每页结论卡=该页标准输出口；首页墙聚合抓取，真源唯一） ═══════ */
+.vd{background:var(--input);border:1px solid var(--border);border-radius:8px;padding:8px 12px;margin:10px 0 0}
+.vd-top{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--dim);margin-bottom:3px}
+.vd-tag{font-weight:700;color:var(--text);font-size:11.5px}
+.vd-src{color:var(--dim)}
+.vd-fb{margin-left:auto;display:inline-flex;gap:4px}
+.vd-fb button{border:1px solid var(--border);background:transparent;color:var(--dim);border-radius:4px;cursor:pointer;font-size:10.5px;padding:0 5px;line-height:16px}
+.vd-fb button:hover{color:var(--text);border-color:var(--dim)}
+.vd-fb button.vd-ok-on{color:#25A750;border-color:#25A750}
+.vd-fb button.vd-no-on{color:#CA3F64;border-color:#CA3F64}
+.vd-main{font-size:13px;font-weight:700;color:var(--text);line-height:1.5}
+.vd-sub{font-size:11.5px;color:var(--dim);line-height:1.6;margin-top:2px}
+/* ═══════ R21 首页结论墙 ═══════ */
+.vd-wall{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.vd-wall .vd{margin:0;cursor:pointer;transition:border-color .15s}
+.vd-wall .vd:hover{border-color:var(--dim)}
+.vd-wall .vd .vd-fb{display:none}            /* 墙内卡=镜像只读，反馈回源页按（R1：结论与反馈同页） */
+.vd-wall .vd .vd-fb{display:inline-flex}     /* Owner 裁定：墙上也可直接反馈 */
+.vd-order-tag{font-size:10px;color:var(--dim);border:1px solid var(--border);border-radius:3px;padding:0 4px}
+/* ═══════ R19 布局引擎（一期：首页试点） ═══════ */
+.ovx-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+.ovx-grid>[data-mod]{grid-column:span var(--span,12);min-width:0}
+.ovx-grid>[data-mod]>.card{margin-bottom:0;height:100%;box-sizing:border-box}
+body.mod-edit .ovx-grid>[data-mod]{outline:1.5px dashed rgba(240,185,11,.55);outline-offset:2px;position:relative}
+.mod-chrome{display:none;position:absolute;top:4px;right:6px;z-index:6;gap:4px}
+body.mod-edit .mod-chrome{display:inline-flex}
+.mod-chrome button{border:1px solid var(--border);background:var(--input);color:var(--dim);border-radius:4px;font-size:10.5px;padding:1px 6px;cursor:pointer}
+.mod-chrome button:hover{color:var(--text)}
+.mod-chrome .mod-drag{cursor:grab}
+.ovx-grid>[data-mod].mod-hide{display:none}
+.mod-size{position:absolute;left:6px;top:4px;z-index:6;display:none;gap:3px}
+body.mod-edit .mod-size{display:inline-flex}
+.mod-size button{border:1px solid var(--border);background:var(--input);color:var(--dim);border-radius:4px;font-size:10px;padding:1px 5px;cursor:pointer}
+/* 右侧模块抽屉 */
+.mod-drawer{position:fixed;top:0;right:-320px;width:300px;height:100vh;background:var(--panel,#1A1B1D);border-left:1px solid var(--border);z-index:900;transition:right .2s;padding:14px;overflow-y:auto;box-shadow:-4px 0 16px rgba(0,0,0,.4)}
+.mod-drawer.open{right:0}
+.mod-drawer h4{margin:0 0 10px;font-size:13px}
+.mod-drawer .md-item{display:flex;align-items:center;gap:8px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;margin-bottom:6px;font-size:12px;cursor:pointer}
+.mod-drawer .md-item:hover{border-color:var(--dim)}
+.mod-drawer .md-item .st{margin-left:auto;font-size:11px;color:var(--dim)}
+.mod-drawer .md-item.off{opacity:.45}
+/* ═══════ R18 AI 对话框（首页常驻迷你版） ═══════ */
+.ovx-ai{display:flex;flex-direction:column;height:100%}
+.ovx-ai-log{flex:1;overflow-y:auto;min-height:120px;max-height:220px;font-size:12.5px;line-height:1.7;padding:6px;background:var(--bg,#141518);border-radius:6px;border:1px solid var(--border)}
+.ovx-ai-log .m-u{color:var(--text);margin:4px 0}
+.ovx-ai-log .m-a{color:var(--dim);margin:4px 0 8px;padding-left:10px;border-left:2px solid var(--border)}
+.ovx-ai-in{display:flex;gap:6px;margin-top:8px}
+.ovx-ai-in input{flex:1;background:var(--input);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:6px 10px;font-size:12.5px;outline:none}
+.ovx-ai-in button{background:var(--blue,#3D8BFF);border:none;color:#fff;border-radius:6px;padding:6px 14px;cursor:pointer;font-size:12.5px}
+/* ═══════ R18 项目全景地图入口卡 ═══════ */
+.ovx-map-ent{display:flex;align-items:center;gap:14px}
+.ovx-map-ent .glyph{font-size:30px}
+.map-overlay{position:fixed;inset:0;background:rgba(10,11,12,.97);z-index:950;display:none;padding:26px;overflow:auto}
+.map-overlay.open{display:block}
+.map-overlay .mo-close{position:fixed;top:14px;right:20px;z-index:951;border:1px solid var(--border);background:var(--input);color:var(--text);border-radius:6px;padding:4px 12px;cursor:pointer}

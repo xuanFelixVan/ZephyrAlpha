@@ -2,6 +2,26 @@
     <h2 class="page-title">作战指挥</h2>
     <div class="page-sub">实盘组 · <b>核心三件事：昨天定的预案是什么 → 现在走势匹配哪一格 → 明天大概怎么走、今天该怎么动</b>（决策层——感知状态去「大盘分析」）· <b>四区骨架（R23c 对齐旧版清晰结构）</b>：①盘前预案（8:00-8:30 生成，W1 总预判+W2 矩阵+W3 观察哨）②实时情景跟踪（主角，1~5 分钟滚动）③今日→明日惯性推演+四指数状态（T+1 隔夜风险反哺今日仓位）④执行区（决策链/委托/打板，常态折叠）</div>
 
+    <!-- R21 结论卡（本页标准输出口；首页墙聚合抓取本卡） -->
+    <div class="vd" data-vd-order="2" data-vd-page="warroom">
+      <div class="vd-top"><span class="vd-tag">昨日预案</span><span class="vd-src">{{page_name}</span>
+        <span class="vd-fb"><button onclick="vdFb(this,1,event)" title="量化这个判断对了">✓</button><button onclick="vdFb(this,0,event)" title="判断错了，进纠错样本库">✗</button></span></div>
+      <div class="vd-main">平开高走格（8 态概率 28.4% 众数）· 正常执行 <span class="badge b-na" style="font-size:10px">演示</span></div>
+      <div class="vd-sub">依据：昨日 8 态转移矩阵（样本 4042）+隔夜外盘——预案 08:00 盘前生成，盘中不思考只匹配</div>
+    </div>
+    <div class="vd" data-vd-order="3" data-vd-page="warroom">
+      <div class="vd-top"><span class="vd-tag">今天匹配</span><span class="vd-src">{{page_name}</span>
+        <span class="vd-fb"><button onclick="vdFb(this,1,event)" title="量化这个判断对了">✓</button><button onclick="vdFb(this,0,event)" title="判断错了，进纠错样本库">✗</button></span></div>
+      <div class="vd-main">上午段命中「平开+高走」格 · 开盘试探驱动型 <span class="badge b-na" style="font-size:10px">演示</span></div>
+      <div class="vd-sub">依据：竞价三细节+开盘 30 分钟站稳 VWAP+量能同比——实时情景跟踪每 1~5 分钟滚动</div>
+    </div>
+    <div class="vd" data-vd-order="14" data-vd-page="warroom">
+      <div class="vd-top"><span class="vd-tag">明天推演</span><span class="vd-src">{{page_name}</span>
+        <span class="vd-fb"><button onclick="vdFb(this,1,event)" title="量化这个判断对了">✓</button><button onclick="vdFb(this,0,event)" title="判断错了，进纠错样本库">✗</button></span></div>
+      <div class="vd-main">上行 35.0% · 下行 32.6% · 震荡 32.5%（偏多惯性） <span class="badge b-na" style="font-size:10px">演示</span></div>
+      <div class="vd-sub">依据：今日盘面态→次日众数态转移+置信度 0.28——T+1 隔夜风险反哺今日仓位</div>
+    </div>
+
     <!-- W1 明日总预判 -->
     <div class="param-strip">
       <span>隔夜修正档位 <b class="up">偏多 ×1.2</b>（final_shift=+0.5，MOD-PLAN-004）</span>

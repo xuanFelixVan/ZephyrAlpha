@@ -2,6 +2,14 @@
     <h2 class="page-title">外盘速览</h2>
     <div class="page-sub">实盘组 · 核心目的：<b>一切影响大A的外部力量</b>——全球股市/期货/汇率/商品，各自对 A 股利好/利空判定 + 整体分析结论</div>
 
+    <!-- R21 结论卡（本页标准输出口；首页墙聚合抓取本卡） -->
+    <div class="vd" data-vd-order="1" data-vd-page="overseas">
+      <div class="vd-top"><span class="vd-tag">隔夜外盘</span><span class="vd-src">{{page_name}</span>
+        <span class="vd-fb"><button onclick="vdFb(this,1,event)" title="量化这个判断对了">✓</button><button onclick="vdFb(this,0,event)" title="判断错了，进纠错样本库">✗</button></span></div>
+      <div class="vd-main">纳指 +0.61% · 恒生 -0.42% · BTC +1.24%——整体偏多、结构分化 <span class="badge b-na" style="font-size:10px">演示</span></div>
+      <div class="vd-sub">依据：隔夜三市场收盘+24/7 币圈先行反应；对 A股 开盘的传导口径=方向参考非指令</div>
+    </div>
+
     <div class="row c4" id="ovs-grid"><!-- JS 生成 12 张迷你卡 --></div>
 
     <div class="card">
