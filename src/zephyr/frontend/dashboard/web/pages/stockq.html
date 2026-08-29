@@ -16,7 +16,12 @@
       <div class="sq-col">
         <div class="sq-head" id="sq-head"></div>
         <div class="sq-mainbox">
-          <svg class="spark" id="sq-main" viewBox="0 0 1100 460" preserveAspectRatio="none" style="display:block;width:100%;height:430px"></svg>
+          <!-- v4 canvas 分层：主层=数据图形（K线/指标/网格/VOL）+顶层=十字光标（60fps 独立重绘）+DOM 覆盖层=tooltip/事件轴/画线面板 -->
+          <div class="sq-canvas-stack" id="sq-canvas-stack" style="position:relative;width:100%;height:430px">
+            <canvas id="sq-main-canvas" style="position:absolute;left:0;top:0;width:100%;height:100%;display:block"></canvas>
+            <canvas id="sq-cross-canvas" style="position:absolute;left:0;top:0;width:100%;height:100%;display:block;pointer-events:none"></canvas>
+            <div id="sq-dom-overlay" style="position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none"></div>
+          </div>
         </div>
         <div id="sq-panes"></div>
         <div class="sq-addpane"><span class="sel" id="sq-add-sel" style="font-size:11px;cursor:pointer" onclick="sqAddPaneTgl(event)">＋ 添加指标 ▾</span>
