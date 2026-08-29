@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.pf_core.core.msprt_champion_challenger（MOD-PF-008 统计内核，仅消费不改）; zephyr.shared.foundation.errors（仅错误基类）
 # [CONSUMERS] zephyr.governance.lifecycle_governance.factor_promotion_wiring（因子晋升场景）; 调用方（BM-MT-02 晋升调度，64 号 §6.4 调度基座装配）
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 通道须预注册（SR 26-02 并行期开始前文档化纪律），未注册拒喂;状态机 PENDING→OBSERVING→PROMOTED/ELIMINATED 单向推进无回退;终局判定后内核冻结（重复投喂零副作用，裁决快照不变）;序贯早停语义=feed_batch 达终局即截断;统计判定逻辑不在本层重实现（内核唯一真源）
 # [MODIFY-GUARD] 61_lifecycle_multi_ai.md §3.3 纪律 1; docs/03_modules/_domain_portfolio_core/msprt_champion_challenger/blueprint.md
 # [STABILITY] evolving

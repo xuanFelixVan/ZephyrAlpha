@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.lifecycle_governance.msprt_promotion_channel; zephyr.factor.governance.lifecycle_state_machine（MOD-L02-013 因子 FSM，仅消费不改）
 # [CONSUMERS] 调用方（因子灰度晋升评审：champion-challenger 并行期结束后应用裁决）
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 仅终局裁决（PROMOTED/ELIMINATED）产生 FSM 副作用，留观（OBSERVING/PENDING）零副作用;前置态=grayscale（champion-challenger 并行灰度期），非灰度态由 MOD-INF-038 InvalidTransitionError fail-loud 上抛不静默跳过;FSM 转换拓扑唯一真源=MOD-L02-013（本模块不新增转换边）
 # [MODIFY-GUARD] 61_lifecycle_multi_ai.md §3.3 纪律 1
 # [STABILITY] evolving

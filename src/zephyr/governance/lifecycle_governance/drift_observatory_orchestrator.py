@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.foundation.errors（仅错误基类；四层检测器与执行端口全部依赖注入，本模块不 import 生产执行体）
 # [CONSUMERS] 调用方（盘后批量漂移巡检编排；首批策略上线后由 64 号 §6.4 调度基座装配，执行端口接 order_manager/position_sizer 适配器）
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] composite=Σw·s 绝对权重（缺层计 0 不归一）保"多层确认"语义——L1 单层满格仅 ALERT，L4 单层满格至多 STOP_NEW_ENTRIES;coverage_breach 直达 RETRAIN 不被其他层稀释;执行水位只升不降（无自动降级，恢复须人工 reset_strategy，对齐 rollback_state_machine 单向保守纪律）;幂等重入=同水位重复裁决零执行副作用
 # [MODIFY-GUARD] 61_lifecycle_multi_ai.md §3.3 纪律 4
 # [STABILITY] evolving
