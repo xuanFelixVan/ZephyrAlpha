@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-MODEL_ROUTER_ORCH | docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/11_evidence_skill_router.md | §4.3
 # [MODULE] zephyr.intelligence.model_routing.runtime_assembly
 # [DOMAIN] D_INTELLIGENCE
-# [DEPENDENCIES] zephyr.intelligence.model_routing.cascade_orchestrator(CascadeOrchestrator/CascadeDecision/DEFAULT_POLICY_PATH 只消费不改); zephyr.intelligence.llm_agent_router(LlmAgentRouter/RouteRequest/AgentRouterConfig/RouteAuditRecord 只消费不改); zephyr.governance.intelligence_governance.model_router(TaskComplexity 只消费不改); zephyr.governance.ops_governance.budget_engine(BudgetEngine 台账只读); zephyr.governance.ops_governance.budget_models(BudgetDimension); zephyr.data.calendar(get_market_calendar 交易时段真源); zephyr.shared.io.paths(AUDIT_DATA_DIR)
+# [DEPENDENCIES] zephyr.intelligence.model_routing.cascade_orchestrator(CascadeOrchestrator/CascadeDecision/DEFAULT_POLICY_PATH 只消费不改); zephyr.intelligence.llm_agent_router(LlmAgentRouter/RouteRequest/AgentRouterConfig/RouteAuditRecord 只消费不改); zephyr.governance.intelligence_governance.model_router(TaskComplexity 只消费不改); zephyr.governance.ops_governance.budget_engine(BudgetEngine 台账只读); zephyr.governance.ops_governance.budget_models(BudgetDimension); zephyr.data.calendar(get_market_calendar 交易时段真源); zephyr.shared.io.paths(AUDIT_DATA_DIR); zephyr.trading.task_gate(TaskGate 懒加载 opt-in); zephyr.intelligence.model_profiling.exam_trigger_scheduler(ExamTriggerScheduler 懒加载 opt-in 登记拦截计数)
 # [CONSUMERS] 06号文 Phase 2 dispatch 链 + AutoRuntime（经 assemble_agent_router 取装配完成的 LlmAgentRouter）；手动 CLI 冒烟入口（python -m zephyr.intelligence.model_routing.runtime_assembly）
 # [STARTUP] manual
 # [MATURITY] testing
-# [INVARIANTS] 只装配不改被接方逻辑（cascade_orchestrator/model_router/llm_agent_router 源文件零改动）; 级联异常降级返回 model=None 由门面走既有静态兜底（级联异常绝不阻断运行时路由）; 运行时装配默认懒加载（orchestrator/台账/日历/审计落盘均在首次调用时解析，assemble 本身不构造重基座）; 全部构造期依赖可注入 fake（测试零网络零真 LLM）; 时段词表=策略 period_rules 键（pre_open/call_auction/trading/post_close），门面旧词 intraday 由适配器映射为 trading; 审计落盘 append-only JSONL（16号文统一事件 schema：schema_version/event_id/ts/source/event_type/payload）
+# [INVARIANTS] 只装配不改被接方逻辑（cascade_orchestrator/model_router/llm_agent_router 源文件零改动）; 级联异常降级返回 model=None 由门面走既有静态兜底（级联异常绝不阻断运行时路由）; 运行时装配默认懒加载（orchestrator/台账/日历/审计落盘均在首次调用时解析，assemble 本身不构造重基座）; 全部构造期依赖可注入 fake（测试零网络零真 LLM）; 时段词表=策略 period_rules 键（pre_open/call_auction/trading/post_close），门面旧词 intraday 由适配器映射为 trading; 审计落盘 append-only JSONL（16号文统一事件 schema：schema_version/event_id/ts/source/event_type/payload）; task_gate dispatch 硬门 opt-in（缺省 None 零行为变化；门控钩子异常 fail-closed 按拦截处理不阻断路由；复核建议 human_gated 不变量不动）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -37,6 +37,10 @@ runtime_assembly — 模型路由级联的运行时装配层（11号文 §4.3 Ph
   is_trading_day + Asia/Shanghai 墙钟 -> 策略 period_rules 词表
   （pre_open/call_auction/trading/post_close）；非交易日按 post_close（API
   allowed）；日历/解析异常 fail-closed 按 trading（最严时段）。
+- **task_gate 接 dispatch 硬门（opt-in，默认不启用）**：TaskGate.can_dispatch
+  经 ExamTriggerScheduler.check_and_record 适配为门面 task_gate 缝（判定同时
+  登记拦截计数，连续 low_accuracy 超阈发复核建议，human_gated 不变量不动）；
+  门控/调度器异常 fail-closed 按拦截处理，不阻断路由返回。
 
 时段词表说明：门面 LlmAgentRouter 既有逻辑只特判 "intraday"（盘中强制本地），
 级联策略 period_rules 词表为 pre_open/call_auction/trading/post_close。装配层
@@ -95,6 +99,7 @@ __all__: Final = [
     "default_router_config",
     "jsonl_audit_sink",
     "main",
+    "task_gate_dispatch_hook",
 ]
 
 _log = logging.getLogger(__name__)
@@ -264,6 +269,44 @@ def jsonl_audit_sink(path: Path | str | None = None) -> Any:
     return sink
 
 
+# ── task_gate 缝：TaskGate + ExamTriggerScheduler dispatch 硬门（06号文 §2.1，opt-in）──
+
+
+def task_gate_dispatch_hook(gate: Any | None = None, scheduler: Any | None = None) -> Any:
+    """task_gate 缝：TaskGate + ExamTriggerScheduler 适配为门面 task_gate 契约
+    ``(model_id, capability) -> (bool, reason)``。
+
+    判定经 ExamTriggerScheduler.check_and_record 透传 TaskGate.can_dispatch 并登记
+    拦截计数（连续 low_accuracy 超阈自动发复核建议，human_gated 不变量不动）。
+    gate/scheduler 缺省首次调用时懒构造（TaskGate.load_passports 全量护照 +
+    ExamTriggerScheduler 默认参数）；任何异常不抛 -> (False, reason) fail-closed
+    由门面按拦截语义处理。
+    """
+    holder: list[Any] = [gate, scheduler]
+
+    def hook(model_id: str, capability: str) -> tuple[bool, str]:
+        try:
+            if holder[0] is None:
+                from zephyr.trading.task_gate import TaskGate
+
+                real_gate = TaskGate()
+                real_gate.load_passports()
+                holder[0] = real_gate
+            if holder[1] is None:
+                from zephyr.intelligence.model_profiling.exam_trigger_scheduler import (
+                    ExamTriggerScheduler,
+                )
+
+                holder[1] = ExamTriggerScheduler()
+            allowed, reason = holder[1].check_and_record(holder[0], model_id, capability)
+            return (bool(allowed), str(reason))
+        except Exception as exc:  # noqa: BLE001 — 门控异常 fail-closed 按拦截处理，不阻断路由调用
+            _log.warning("task_gate 钩子异常，fail-closed 按拦截处理: %s", exc)
+            return (False, f"task_gate 异常: {type(exc).__name__}: {exc}")
+
+    return hook
+
+
 # ── 装配入口 ──
 
 
@@ -304,6 +347,7 @@ def assemble_agent_router(
     policy_path: Path | str | None = None,
     audit_log_path: Path | str | None = None,
     daily_budget_usd: float | None = None,
+    task_gate: Any | None = None,
 ) -> LlmAgentRouter:
     """装配运行时 LlmAgentRouter：四缝接真源，全部构造期依赖可注入 fake。
 
@@ -311,6 +355,9 @@ def assemble_agent_router(
     缺省懒构造 CascadeOrchestrator（首次 route 才解析，其内部三基座仍各自懒加载）；
     cost_ledger 缺省接 BudgetEngine COST 台账；audit_sink 缺省 16号文统一事件
     JSONL 落盘。
+    task_gate（06号文 §2.1 dispatch 硬门）opt-in：缺省 None 不启用（零行为变化）；
+    True 接 TaskGate+ExamTriggerScheduler 生产硬门（首次调用懒构造）；可直接注入
+    fake callable 测试。
     """
     if config is None:
         config = default_router_config(daily_budget_usd=daily_budget_usd, policy_path=policy_path)
@@ -321,12 +368,16 @@ def assemble_agent_router(
             holder[0] = CascadeOrchestrator(policy_path=policy_path)
         return holder[0]
 
+    if task_gate is True:
+        task_gate = task_gate_dispatch_hook()
+
     return LlmAgentRouter(
         config,
         decision_engine=cascade_decision_engine(_resolve_orchestrator),
         cost_ledger=cost_ledger or budget_cost_ledger(),
         audit_sink=audit_sink or jsonl_audit_sink(audit_log_path),
         clock=clock,
+        task_gate=task_gate,
     )
 
 

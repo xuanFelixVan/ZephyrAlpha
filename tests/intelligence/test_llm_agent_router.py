@@ -107,3 +107,81 @@ class TestRoute:
         router.route(RouteRequest(task_type="t", candidates=["m"], estimated_cost_usd=5.0))
         router.reset_daily()
         assert router.daily_cost() == 0.0
+
+
+class TestTaskGateDispatch:
+    """task_gate dispatch 硬门（06号文 §2.1 可选钩子，默认 None 零行为变化）。
+
+    钩子契约 (model_id, capability) -> (bool, reason)；deny 按既有降级语义：
+    回退过门候选，全部不过门则 selected=None 阻断标记（对齐 decision_engine
+    缺省/异常的 model=None 兜底语义），拦截原因一律入 reasons 留痕。
+    """
+
+    def _router(self, gate, model: str | None = "m1") -> LlmAgentRouter:
+        return LlmAgentRouter(
+            _config(),
+            decision_engine=lambda req: {"model": model, "provider": "ollama"},
+            task_gate=gate,
+        )
+
+    def test_default_no_gate_zero_change(self) -> None:
+        router = LlmAgentRouter(
+            _config(), decision_engine=lambda req: {"model": "m1", "provider": "ollama"}
+        )
+        dec = router.route(RouteRequest(task_type="code_fix", candidates=["m1"], period="post_close"))
+        assert dec.selected_model == "m1"
+        assert not any("task_gate" in r for r in dec.reasons)
+
+    def test_gate_allow_passes_selected_and_task_type(self) -> None:
+        calls: list = []
+
+        def gate(model_id: str, capability: str) -> tuple:
+            calls.append((model_id, capability))
+            return (True, "ok")
+
+        dec = self._router(gate).route(
+            RouteRequest(task_type="code_fix", candidates=["m1"], period="post_close")
+        )
+        assert dec.selected_model == "m1"
+        assert calls == [("m1", "code_fix")]
+
+    def test_gate_deny_falls_back_to_allowed_candidate(self) -> None:
+        def gate(model_id: str, capability: str) -> tuple:
+            return (False, "low_accuracy: x") if model_id == "m1" else (True, "ok")
+
+        dec = self._router(gate).route(
+            RouteRequest(task_type="code_fix", candidates=["m1", "m2"], period="post_close")
+        )
+        assert dec.selected_model == "m2"  # 回退过门候选
+        assert any("task_gate 拦截(m1)" in r for r in dec.reasons)
+
+    def test_gate_deny_all_returns_blocked_marker(self) -> None:
+        router = self._router(lambda m, c: (False, "no_passport"))
+        dec = router.route(
+            RouteRequest(task_type="code_fix", candidates=["m1", "m2"], period="post_close")
+        )
+        assert dec.selected_model is None  # 阻断标记：无过门候选
+        assert any("task_gate 阻断" in r for r in dec.reasons)
+
+    def test_gate_exception_fail_closed(self) -> None:
+        def bad(model_id: str, capability: str) -> tuple:
+            raise RuntimeError("gate down")
+
+        dec = self._router(bad).route(
+            RouteRequest(task_type="code_fix", candidates=["m1"], period="post_close")
+        )
+        assert dec.selected_model is None  # 钩子异常 fail-closed 按拦截处理，不抛出
+        assert any("task_gate 异常" in r for r in dec.reasons)
+
+    def test_gate_not_called_when_no_model_selected(self) -> None:
+        calls: list = []
+
+        def gate(model_id: str, capability: str) -> tuple:
+            calls.append((model_id, capability))
+            return (True, "ok")
+
+        dec = self._router(gate, model=None).route(
+            RouteRequest(task_type="code_fix", candidates=["m1"], period="post_close")
+        )
+        assert dec.selected_model is None  # 静态兜底无模型 -> 门控不适用
+        assert calls == []

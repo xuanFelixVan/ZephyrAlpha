@@ -342,3 +342,76 @@ class TestCliSmoke:
     def test_empty_candidates_fail_closed(self):
         with pytest.raises(ValueError):
             ra.main(["--task-type", TASK, "--candidates", ""], router_factory=lambda **kw: None)
+
+
+# ── task_gate 缝：06号文 §2.1 dispatch 硬门（opt-in，默认关闭零行为变化）──
+
+
+class TestTaskGateWiring:
+    def test_assemble_default_task_gate_off(self):
+        router = ra.assemble_agent_router(
+            _config(),
+            orchestrator=_FakeOrchestrator(decision=_decision()),
+            cost_ledger=lambda: 0.0,
+            audit_sink=lambda rec: None,
+        )
+        assert router._task_gate is None  # 默认不启用
+
+    def test_assemble_task_gate_callable_injected(self):
+        orch = _FakeOrchestrator(decision=_decision())
+        calls = []
+
+        def fake_gate(model_id, capability):
+            calls.append((model_id, capability))
+            return (False, "low_accuracy: x")
+
+        router = ra.assemble_agent_router(
+            _config(),
+            orchestrator=orch,
+            cost_ledger=lambda: 0.0,
+            audit_sink=lambda rec: None,
+            task_gate=fake_gate,
+        )
+        dec = router.route(_period_req())
+        assert dec.selected_model is None  # 唯一候选被拦截 -> 阻断标记
+        assert calls == [(MODEL, TASK)]
+        assert any("task_gate" in r for r in dec.reasons)
+
+    def test_assemble_task_gate_true_wires_lazy_hook(self):
+        router = ra.assemble_agent_router(
+            _config(),
+            orchestrator=_FakeOrchestrator(decision=_decision()),
+            cost_ledger=lambda: 0.0,
+            audit_sink=lambda rec: None,
+            task_gate=True,
+        )
+        assert callable(router._task_gate)  # 懒构造：首次调用才建 TaskGate/调度器
+
+    def test_dispatch_hook_delegates_to_scheduler_check_and_record(self):
+        class _FakeGate:
+            def can_dispatch(self, model_id, capability):
+                return (False, "low_accuracy: x")
+
+        class _FakeScheduler:
+            def __init__(self):
+                self.calls = []
+
+            def check_and_record(self, gate, model_id, capability):
+                self.calls.append((gate, model_id, capability))
+                return gate.can_dispatch(model_id, capability)
+
+        gate = _FakeGate()
+        sched = _FakeScheduler()
+        hook = ra.task_gate_dispatch_hook(gate=gate, scheduler=sched)
+        assert hook(MODEL, "code_fix") == (False, "low_accuracy: x")
+        assert sched.calls == [(gate, MODEL, "code_fix")]  # 登记拦截计数经调度器
+
+    def test_dispatch_hook_exception_fail_closed(self):
+        class _BadScheduler:
+            def check_and_record(self, gate, model_id, capability):
+                raise RuntimeError("scheduler down")
+
+        hook = ra.task_gate_dispatch_hook(gate=object(), scheduler=_BadScheduler())
+        allowed, reason = hook("m", "c")
+        assert allowed is False  # 钩子异常 fail-closed 按拦截处理，不抛出
+        assert "task_gate 异常" in reason

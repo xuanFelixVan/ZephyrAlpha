@@ -124,7 +124,15 @@ class AgentRouterConfig:
 
 
 class LlmAgentRouter:
-    """LLM Agent 路由判定核心（纯内存，无 IO）。"""
+    """LLM Agent 路由判定核心（纯内存，无 IO）。
+
+    task_gate（06号文 §2.1 dispatch 前最终硬门）为可选注入缝，契约
+    ``(model_id, capability) -> (bool, reason)``；默认 None 零行为变化。
+    路由决策产出后、返回前判定：deny 按既有降级语义回退过门候选，全部不过门
+    则 selected_model=None 阻断标记（对齐 decision_engine 缺省/异常的
+    model=None 兜底语义），拦截原因一律入 reasons 留痕；钩子异常 fail-closed
+    按拦截处理，不阻断 route 返回。
+    """
 
     def __init__(
         self,
@@ -133,14 +141,25 @@ class LlmAgentRouter:
         cost_ledger: Callable[[], float] | None = None,
         audit_sink: Callable[[RouteAuditRecord], None] | None = None,
         clock: Callable[[], float] | None = None,
+        task_gate: Callable[[str, str], tuple[bool, str]] | None = None,
     ) -> None:
         self._config = config
         self._decision_engine = decision_engine
         self._cost_ledger = cost_ledger
         self._audit_sink = audit_sink
         self._clock = clock or (lambda: 0.0)
+        self._task_gate = task_gate
         self._daily_cost: float = 0.0
         self._today: int = 0
+
+    def _gate_allows(self, model_id: str, capability: str) -> tuple[bool, str]:
+        """task_gate 钩子调用；异常 fail-closed 按拦截处理（降级=信号语义，不抛出）。"""
+        try:
+            allowed, reason = self._task_gate(model_id, capability)  # type: ignore[misc]
+            return (bool(allowed), str(reason))
+        except Exception as exc:  # noqa: BLE001 — 门控钩子异常 fail-closed 按拦截处理
+            _log.warning("task_gate 钩子异常，fail-closed 按拦截处理: %s", exc)
+            return (False, f"task_gate 异常: {type(exc).__name__}: {exc}")
 
     def _ensure_day(self) -> None:
         today = int(self._clock() // 86400)
@@ -198,6 +217,20 @@ class LlmAgentRouter:
         if request.period == "intraday":
             selected = self._pick_local(request.candidates, selected)
             provider = "local"
+        # Stage4: task_gate dispatch 硬门（06号文 §2.1 可选钩子，默认 None 零行为变化）
+        if self._task_gate is not None and selected is not None:
+            denied: list[str] = []
+            allowed, gate_reason = self._gate_allows(selected, request.task_type)
+            while not allowed:
+                denied.append(selected)
+                reasons.append(f"task_gate 拦截({selected}): {gate_reason}")
+                fallback = next((c for c in request.candidates if c not in denied), None)
+                if fallback is None:
+                    selected = None
+                    reasons.append("task_gate 阻断: 无过门候选")
+                    break
+                selected = fallback
+                allowed, gate_reason = self._gate_allows(selected, request.task_type)
         self._daily_cost = daily_before + cost
         # 延迟预算校验
         latency_violations: list[str] = []

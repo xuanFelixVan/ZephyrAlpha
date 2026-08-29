@@ -235,3 +235,81 @@ class TestFailClosed:
         seen_path.write_text("{not-json", encoding="utf-8")
         with pytest.raises(ExamTriggerError, match="seen 快照损坏"):
             ExamTriggerScheduler(seen_store_path=seen_path)
+
+
+class TestCliScanNewModels:
+    """CLI 入口（python -m ... scan-new-models [--dry-run]）。
+
+    dry-run 只列新模型不跑考试（只读预览，盘中可用）；真实模式跑 Quick 考试落盘
+    QuickProfile；盘中守卫拒跑真实模式（复用 reflexion is_intraday 口径，测试注入假守卫，
+    Quick 考试吃 GPU 盘后是设计口径）。发现器/runner 全 fake，零真考试零网络。
+    """
+
+    def _factory(self, tmp_path, models, runner):
+        def factory():
+            return ExamTriggerScheduler(
+                discovery=_FakeDiscovery(models),
+                quick_exam_runner=runner,
+                seen_store_path=tmp_path / "seen.json",
+            )
+
+        return factory
+
+    def _runner(self, called):
+        def run(model_id):
+            called.append(model_id)
+            return QuickProfile(model_id=model_id, overall_score=0.5)
+
+        return run
+
+    def test_dry_run_lists_new_models_without_exams(self, isolated_dirs, tmp_path, capsys):
+        called = []
+        factory = self._factory(tmp_path, [_ollama("qwen3:8b")], self._runner(called))
+        rc = sched_mod.main(
+            ["scan-new-models", "--dry-run"],
+            scheduler_factory=factory,
+            intraday_check=lambda: False,
+        )
+        assert rc == 0
+        out = json.loads(capsys.readouterr().out)
+        assert out["dry_run"] is True
+        assert out["new_models"] == ["qwen3:8b"]
+        assert called == []  # dry-run 不跑考试
+        assert not (isolated_dirs["quick"] / "qwen3_8b.json").exists()
+
+    def test_real_run_executes_quick_exams_off_hours(self, isolated_dirs, tmp_path, capsys):
+        called = []
+        factory = self._factory(tmp_path, [_ollama("qwen3:8b")], self._runner(called))
+        rc = sched_mod.main(
+            ["scan-new-models"],
+            scheduler_factory=factory,
+            intraday_check=lambda: False,
+        )
+        assert rc == 0
+        assert called == ["qwen3:8b"]  # 真实模式跑 Quick 考试
+        out = json.loads(capsys.readouterr().out)
+        assert out["dry_run"] is False and out["examined"] == ["qwen3:8b"]
+        assert (isolated_dirs["quick"] / "qwen3_8b.json").exists()  # QuickProfile 落盘
+
+    def test_intraday_guard_refuses_real_run(self, isolated_dirs, tmp_path, capsys):
+        called = []
+        factory = self._factory(tmp_path, [_ollama("qwen3:8b")], self._runner(called))
+        rc = sched_mod.main(
+            ["scan-new-models"],
+            scheduler_factory=factory,
+            intraday_check=lambda: True,  # 盘中
+        )
+        assert rc == 2
+        assert called == []  # 盘中拒跑：Quick 考试吃 GPU，盘后是设计口径
+        assert "盘中" in capsys.readouterr().err
+
+    def test_dry_run_allowed_during_intraday(self, isolated_dirs, tmp_path, capsys):
+        called = []
+        factory = self._factory(tmp_path, [_ollama("qwen3:8b")], self._runner(called))
+        rc = sched_mod.main(
+            ["scan-new-models", "--dry-run"],
+            scheduler_factory=factory,
+            intraday_check=lambda: True,  # 盘中
+        )
+        assert rc == 0  # dry-run 只读预览不碰 GPU，盘中可用
+        assert called == []

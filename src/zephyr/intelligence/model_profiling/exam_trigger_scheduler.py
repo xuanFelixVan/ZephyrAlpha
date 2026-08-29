@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-INF-054 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | §4 Phase 1（06号文 P1-1~P1-4 触发式考试调度器）
 # [MODULE] zephyr.intelligence.model_profiling.exam_trigger_scheduler
 # [DOMAIN] D_INTELLIGENCE
-# [DEPENDENCIES] zephyr.intelligence.model_profiling.capability_passport(CapabilityPassport/QuickProfile); zephyr.intelligence.model_profiling.model_discovery(ModelDiscovery)
-# [CONSUMERS] 待统筹接线（06号文 Phase 2：dispatch 链门控钩子 + ModelDiscovery 定时扫描挂点）
+# [DEPENDENCIES] zephyr.intelligence.model_profiling.capability_passport(CapabilityPassport/QuickProfile/QUICK_PROFILES_DIR); zephyr.intelligence.model_profiling.model_discovery(ModelDiscovery); zephyr.intelligence.reflexion.batch_runner(is_intraday 仅 CLI 懒加载盘中守卫)
+# [CONSUMERS] zephyr.intelligence.model_routing.runtime_assembly（task_gate_dispatch_hook 经 check_and_record 接 dispatch 硬门，opt-in 默认不启用）；CLI 入口 python -m zephyr.intelligence.model_profiling.exam_trigger_scheduler scan-new-models [--dry-run]（盘中守卫拒跑真实模式）；ModelDiscovery 定时扫描注册待统筹（config/tasks.yaml 未动）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 触发器只产「建议/QuickProfile」（Quick 自动；Standard/Deep 始终人工确认 human_gated，本模块无任何 Standard/Deep 调用路径）; 新模型判定=无护照且无 QuickProfile 且未入 seen 快照; 复核建议只发不执行（连续 low_accuracy 超阈 -> 建议落盘+告警）; 单模型考试失败不中断批量（降级留痕）; 可变容器 typing.Final 禁重新赋值
@@ -40,13 +40,16 @@ exam_trigger_scheduler — 触发式考试调度器（06号文 §4 Phase 1，P1-
 
 from __future__ import annotations
 
+import argparse
 import json
 import logging
+import sys
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Final
 
 from zephyr.intelligence.model_profiling.capability_passport import (
+    QUICK_PROFILES_DIR,
     CapabilityPassport,
     QuickProfile,
 )
@@ -56,6 +59,7 @@ __all__: Final = [
     "DEFAULT_LOW_ACCURACY_THRESHOLD",
     "ExamTriggerError",
     "ExamTriggerScheduler",
+    "main",
 ]
 
 _log = logging.getLogger(__name__)
@@ -275,3 +279,74 @@ class ExamTriggerScheduler:
     def block_streaks(self) -> dict[tuple[str, str], int]:
         """连续拦截计数的只读快照（观测/对账用）。"""
         return dict(self._block_streaks)
+
+
+# ── CLI：ModelDiscovery 新模型扫描（06号文 Phase 2 挂点入口；定时注册归统筹 config/tasks.yaml）──
+
+# 生产默认落盘：seen 快照/复核建议与 QuickProfile 同区（data/brain/）
+_DEFAULT_SEEN_STORE: Final[Path] = QUICK_PROFILES_DIR.parent / "exam_trigger_seen.json"
+_DEFAULT_SUGGESTION_SINK: Final[Path] = QUICK_PROFILES_DIR.parent / "exam_trigger_suggestions.jsonl"
+
+
+def main(
+    argv: list[str] | None = None,
+    *,
+    scheduler_factory: Any | None = None,
+    intraday_check: Any | None = None,
+) -> int:
+    """CLI 入口：``scan-new-models [--dry-run]``。
+
+    --dry-run 只列新模型不跑考试（只读预览，不碰 GPU，盘中可用）；真实模式跑
+    Quick 考试落盘 QuickProfile（LLM 仅本地 Ollama 通道，见 _default_quick_exam_runner）。
+    盘中守卫：真实模式复用 reflexion.batch_runner.is_intraday，盘中拒跑返回 2
+    （Quick 考试吃 GPU，盘后是设计口径）。scheduler_factory/intraday_check 为测试注入缝。
+    """
+    parser = argparse.ArgumentParser(
+        prog="exam_trigger_scheduler",
+        description="触发式考试调度器：ModelDiscovery 新模型扫描 + 自动 Quick 考试（06号文 §4 Phase 1）",
+    )
+    sub = parser.add_subparsers(dest="command", required=True)
+    scan = sub.add_parser("scan-new-models", help="扫描新模型并自动 Quick 考试（盘中拒跑）")
+    scan.add_argument("--dry-run", action="store_true", help="只列新模型不跑考试（只读预览）")
+    args = parser.parse_args(argv)
+
+    if scheduler_factory is not None:
+        sched = scheduler_factory()
+    else:
+        sched = ExamTriggerScheduler(
+            seen_store_path=_DEFAULT_SEEN_STORE,
+            suggestion_sink_path=_DEFAULT_SUGGESTION_SINK,
+        )
+
+    if args.command == "scan-new-models":
+        if args.dry_run:
+            new_models = sched.scan_new_models()
+            print(
+                json.dumps(
+                    {"dry_run": True, "count": len(new_models), "new_models": new_models},
+                    ensure_ascii=False,
+                    indent=2,
+                )
+            )
+            return 0
+        if intraday_check is not None:
+            guard = intraday_check
+        else:
+            from zephyr.intelligence.reflexion.batch_runner import is_intraday
+
+            guard = is_intraday
+        if guard():
+            print(
+                "盘中拒跑: Quick 考试吃 GPU，盘后是设计口径"
+                "（is_intraday: 工作日 09:30-15:00 禁止；--dry-run 只读预览盘中可用）",
+                file=sys.stderr,
+            )
+            return 2
+        report = sched.trigger_quick_exams()
+        print(json.dumps({"dry_run": False, **report}, ensure_ascii=False, indent=2))
+        return 0
+    return 0  # pragma: no cover — subparsers required=True 保证不可达
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
