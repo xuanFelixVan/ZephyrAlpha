@@ -4893,6 +4893,30 @@ capabilities:
   - DabanTimingDecision
   - DynamicCapacityCalculator
 creation_tokens:
+- file: src/zephyr/reporting/attribution_meta_iteration.py
+  token: auto-attribution-meta-iteration-20260830
+  created_by: traesid-20260829-1308
+  capability: attribution_meta_iteration
+- file: tests/reporting/test_attribution_meta_iteration.py
+  token: auto-test-attribution-meta-iteration-20260830
+  created_by: traesid-20260829-1308
+  capability: attribution_meta_iteration
+- file: src/zephyr/risk/core/drawdown_broker_side_stop.py
+  token: auto-drawdown-broker-side-stop-20260830
+  created_by: traesid-20260829-1308
+  capability: drawdown_l23_fallback
+- file: src/zephyr/risk/core/drawdown_watchdog.py
+  token: auto-drawdown-watchdog-20260830
+  created_by: traesid-20260829-1308
+  capability: drawdown_l23_fallback
+- file: tests/risk/test_drawdown_broker_side_stop.py
+  token: auto-test-drawdown-broker-side-stop-20260830
+  created_by: traesid-20260829-1308
+  capability: drawdown_l23_fallback
+- file: tests/risk/test_drawdown_watchdog.py
+  token: auto-test-drawdown-watchdog-20260830
+  created_by: traesid-20260829-1308
+  capability: drawdown_l23_fallback
 - file: docs/_working/reports/2026-08-29-gp1-eval50-review.md
   token: auto-gp1-eval50-review-20260829
   created_by: traesid-20260829-1308
