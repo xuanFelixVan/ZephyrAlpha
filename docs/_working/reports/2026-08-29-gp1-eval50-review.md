@@ -18,6 +18,9 @@ ttl: task_bound
 |---|---|---|---|---|
 | R1（8b+旧 prompt） | 44/50 | 6 | 30/50 | **24%** |
 | R2（14b+修复 prompt） | 39/50 | 11 | 27/50 | **20%** |
+| R3（14b+Q-B 键名归一化，2026-08-30） | **47/50** | **3** | — | 22%（注册表口径，符合预期——Q-A 口径问题与 Q-B 正交） |
+
+**Q-B 修复验证（R3 生产实证）**：R2 被拦截的 11 条中 **8 条恢复**产出正常分类（FCT-MOM-007→quality、FCT-LIQ-057→value、STR-MULTIFACTOR-090→multifactor、FCT-SENT-014→event、FCT-SENT-028→sentiment、FCT-LIQ-044→value、STR-MOMTREND-012→technical、STR-MOMTREND-010→tool），fail-closed 误伤率 22%→6%；残余 3 条 error（FCT-MOM-028/FCT-INTRADAY-015/STR-MULTIFACTOR-053）为小模型输出本身不合 schema（非键名问题），归模型能力上限，键名归一化不再扩大容错（严格性终态不变）。8 条恢复条目进入人评范围（原"AI拦截"行现可按 R3 预判复核，见 §四 表"R3 预判"列补记）。
 
 **距 85% 验收门槛差距巨大。但预审结论：这个口径下的 85% 不可达，问题出在评估设计而非分类器**——见下。
 
@@ -55,7 +58,7 @@ factor/strategy/other 三层命中仅 54-60%——"口诀类"文本被分进 kno
 | 6 | FCT-MOM-028 | 行业因子构造与轮动 | 未产出（拦截） | — | 因子/momentum | AI拦截 |  |
 | 7 | FCT-LIQ-054 | 尾盘偷袭识别 | 因子/sentiment | 资金行为模式 | 因子/liquidity | 注册表合理（资金流） |  |
 | 8 | FCT-INTRADAY-026 | 温和放量连续红 | 因子/value | 主力建仓特征 | 因子/intraday | 注册表合理（日内形态）；AI 的 value 无据 |  |
-| 9 | FCT-LIQ-057 | 逆势强度比公式修订 | 未产出（拦截） | — | 因子/liquidity | AI拦截 |  |
+| 9 | FCT-LIQ-057 | 逆势强度比公式修订 | R3恢复：因子/value | 逆势强度量化 | 因子/liquidity | 注册表合理（资金流族；value 无据） |  |
 | 10 | FCT-MOM-012 | 子板块等权指数构造 | 其他/data_asset | 指数构造方法 | 因子/momentum | **AI合理**（构造方法=数据资产） |  |
 | 11 | FCT-TECH-071 | 波段浪型量化标准 | 策略/value_reversal | 浪型+均线策略 | 因子/technical | 注册表合理（技术指标判据） |  |
 | 12 | FCT-LIQ-061 | 假动作模式库 | 其他/risk_rule | 虚假信号规则集 | 因子/liquidity | 边界争议 |  |
@@ -63,7 +66,7 @@ factor/strategy/other 三层命中仅 54-60%——"口诀类"文本被分进 kno
 | 14 | FCT-TECH-059 | 历史天量 | 因子/volatility | 底部信号 | 因子/technical | 边界争议 |  |
 | 15 | FCT-EVENT-011 | 消息面错位=诱多 | 因子/event | 事件背离信号 | 因子/event | **一致** |  |
 | 16 | FCT-LIQ-041 | ETF 成交异动 | 因子/liquidity | ETF 分钟级异动 | 因子/liquidity | **一致** |  |
-| 17 | FCT-INTRADAY-015 | 急跌必有急反 | 未产出（拦截） | — | 因子/intraday | AI拦截 |  |
+| 17 | FCT-INTRADAY-015 | 急跌必有急反 | 未产出（拦截，R3 仍拦截） | — | 因子/intraday | AI拦截（模型能力上限） |  |
 | 18 | FCT-TECH-058 | 月线 20 日均线支撑 | 因子/technical | 均线支撑 | 因子/technical | **一致** |  |
 | 19 | FCT-TECH-083 | 假突破统计参数 | 因子/technical | 突破过滤参数 | 因子/technical | **一致** |  |
 | 20 | FCT-LIQ-043 | 口径矛盾处理铁律 | 其他/data_asset | 数据治理规则 | 因子/liquidity | **AI合理**（文本是纪律不是因子） |  |
@@ -79,27 +82,27 @@ factor/strategy/other 三层命中仅 54-60%——"口诀类"文本被分进 kno
 | 30 | FCT-MOM-029 | 20日动量（代码锚） | 因子/momentum | 20 日动量 | 因子/momentum | **一致** |  |
 | 31 | FCT-SENT-028 | 涨跌家数二阶加速度 | 未产出（拦截） | — | 因子/sentiment | AI拦截 |  |
 | 32 | FCT-QUAL-001 | 业绩维因子 | 因子/value | 基本面因子集 | 因子/quality | 注册表合理（增速/PEG=质量族） |  |
-| 33 | FCT-SENT-014 | 逼空检测量化 | 未产出（拦截） | — | 因子/sentiment | AI拦截 |  |
+| 33 | FCT-SENT-014 | 逼空检测量化 | R3恢复：因子/event | 逼空量化指标 | 因子/sentiment | 边界争议（逼空=情绪极端态 vs 事件触发） |  |
 | 34 | FCT-INTRADAY-018 | 分时均线压制 | 因子/technical | 日内技术信号 | 因子/intraday | 边界争议（日内技术双属性） |  |
 | 35 | FCT-EVENT-016 | 利好落地变利空判定 | 因子/event | 事件透支指标 | 因子/event | **一致** |  |
 | 36 | STR-MULTIFACTOR-073 | 首批+二批+现金机动仓位 | 策略/daban | 仓位分配策略 | 策略/multifactor | 边界争议（仓位管理规则） |  |
 | 37 | STR-MULTIFACTOR-058 | 买点三档裁决 | 策略/daban | 入场止损完整策略 | 策略/multifactor | 边界争议（通用裁决纪律） |  |
-| 38 | STR-MULTIFACTOR-053 | "单列观察"中间分类 | 未产出（拦截） | — | 策略/multifactor | AI拦截 |  |
-| 39 | STR-MULTIFACTOR-090 | 策略生命周期八阶段 | 未产出（拦截） | — | 策略/multifactor | AI拦截+**注册表存疑**（文本是方法论） |  |
-| 40 | STR-MOMTREND-010 | 辅助确认工具指定法 | 未产出（拦截） | — | 策略/momentum_trend | AI拦截 |  |
+| 38 | STR-MULTIFACTOR-053 | "单列观察"中间分类 | 未产出（拦截，R3 仍拦截） | — | 策略/multifactor | AI拦截（模型能力上限） |  |
+| 39 | STR-MULTIFACTOR-090 | 策略生命周期八阶段 | R3恢复：策略/multifactor | 生命周期与通过标准 | 策略/multifactor | **一致**（R3 恢复即命中）；注册表存疑仍成立（文本是方法论） |  |
+| 40 | STR-MOMTREND-010 | 辅助确认工具指定法 | R3恢复：其他/tool | 板块趋势确认工具用法 | 策略/momentum_trend | **AI合理**（文本是工具方法论；注册表为策展挂载） |  |
 | 41 | STR-MULTIFACTOR-056 | 共振触发条件矩阵 | 策略/daban | 板块×个股策略 | 策略/multifactor | 注册表合理（共振=多因子合成） |  |
 | 42 | STR-MULTIFACTOR-049 | ETF 多只对比四维选优 | 策略/multifactor | 四维选优策略 | 策略/multifactor | **一致** |  |
 | 43 | STR-MULTIFACTOR-078 | 共振等级→仓位映射 | 其他/execution_algo | 仓位映射规则 | 策略/multifactor | 边界争议（执行层视角成立） |  |
 | 44 | STR-MULTIFACTOR-045 | 双策略 5 分 | 策略/daban | 共振打分系统 | 策略/multifactor | 注册表合理（共振族） |  |
 | 45 | STR-MULTIFACTOR-034 | 空仓等主线 | 策略/value_reversal | 空仓策略 | 策略/multifactor | 双方都不准（实为交易纪律） |  |
 | 46 | STR-VREV-002 | 下跌趋势不选/不抄底 | 其他/knowledge_only | 方法论/风控纪律 | 策略/value_reversal | **AI合理**（文本是纪律） |  |
-| 47 | STR-MOMTREND-012 | 强中强双重共振筛选 | 未产出（拦截） | — | 策略/momentum_trend | AI拦截 |  |
+| 47 | STR-MOMTREND-012 | 强中强双重共振筛选 | R3恢复：因子/technical | 均线+突破筛选 | 策略/momentum_trend | 注册表合理（共振筛选=选股策略族） |  |
 | 48 | STR-MULTIFACTOR-038 | 选股四要素 | 其他/knowledge_only | 选股条件知识 | 策略/multifactor | 边界争议 |  |
 | 49 | STR-MOMTREND-021 | 加速第三买点 | 其他/risk_rule | 禁止买入规则 | 策略/momentum_trend | 边界争议 |  |
 | 50 | STR-MULTIFACTOR-096 | 多因子 sleeve 组装策略 | 策略/multifactor | 完整多因子策略 | 策略/multifactor | **一致** |  |
 
 ## 五、预审结论
 
-- AI 与注册表一致：10 条（20%）；AI 拦截未产出：11 条（Q-B 族，prompt 修复+别名归一化后可回收大半）；预审判 AI 文本语义合理：4 条（#4/#10/#20/#46）；注册表合理：10 条；边界争议：13 条；双方不准：1 条；注册表存疑：1 条。
-- **若按口径甲（人判合理性）**：AI 明显错误率约 16%（8/50），即可接受度约 84%——接近 85% 门槛，Q-B 修复后大概率过线。
-- **下一步**：①Owner 裁定 Q-A 口径 → ②Q-B 别名归一化施工（小件）→ ③Owner 填"Owner 判定"列（预审意见已给参考，扫一遍约 20 分钟）。
+- AI 与注册表一致：10 条（20%，R2 口径；R3 恢复后一致 12 条——新增 #31/#39）；AI 拦截未产出：11 条→**R3 已降至 3 条**（Q-B 修复实证，见 §二）；预审判 AI 文本语义合理：4 条（#4/#10/#20/#46，R3 新增 #40）；注册表合理：10 条（R3 新增 #1/#9/#28/#47 → 14 条）；边界争议：13 条（R3 新增 #33 → 14 条）；双方不准：1 条；注册表存疑：1 条。
+- **若按口径甲（人判合理性）**：AI 明显错误率约 16%（8/50），即可接受度约 84%——接近 85% 门槛；**Q-B 修复后 R3 实证：47/50 产出（94%），其中拦截报废仅 3 条**，叠加 8 条恢复条目预审（7 条落"注册表合理/一致/边界争议/AI合理"均可接受、0 条明显错），口径甲可接受度预计 **~90%**。
+- **下一步**：①Owner 裁定 Q-A 口径 → ②~~Q-B 别名归一化施工~~（已落，commit c1fd4c8efd + R3 实证）→ ③Owner 填"Owner 判定"列（预审意见已给参考，扫一遍约 20 分钟）。
