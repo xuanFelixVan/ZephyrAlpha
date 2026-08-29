@@ -20971,3 +20971,31 @@ entries:
     - 'scripts/process_reaper.py 根治三件套+轻导入隔离（a82ac30a，33 测全绿/干跑零误杀）'
     - 'docs/_archive/2026-08-28-ide-toolchain-resilience-ruling.md（裁定书，ttl=permanent）'
   fix_phase: 'P0 已闭环（2026-08-28，a82ac30a）；P1 R4/R5 open 待施工（裁定书头部结案审查块标注）'
+
+# --- #ARCH-283: 66号 landing 专用 worktree .git 链接丢失→git walk-up 打穿主仓（2026-08-29 主仓打穿事故）---
+- issue_id: '#ARCH-283'
+  title: commit_queue 专用 worktree .git 链接丢失致 reset --hard/clean 打穿主工作区（30 分钟一对 6 次实证）
+  severity: P1
+  category: 技术债
+  adjudication: >-
+    2026-08-29 立项（当日事故，reflog 实证 6 次成对 reset --hard refs/heads/dev + clean -fd，
+    30 分钟一对，wave-4 四个施工代理产出曾被整体清空后重放；Owner 10 笔提交全部幸存）。
+    根因：.runtime/commit_queue/worktree 注册残留（git worktree list 标 prunable）且目录内
+    .git 链接文件丢失（残留检出树仍在）——landing 的 _sync_worktree 以该目录为 cwd 执行
+    reset --hard/clean 时，git 自 cwd 向上查找 .git 命中主仓，操作直接落在主工作区
+    （#ARCH-WORKTREE-GATE-001/#ARCH-WORKTREE-WIPE-GOV-001 同族：worktree 边界失效→主仓受害）。
+    治本（TDD 红绿闭环，3 回归用例）：①_git_wt fail-closed——.git 链接缺失或
+    rev-parse --show-toplevel 解析不回自身即 RuntimeError 宁停勿伤；②ensure_worktree——
+    registered 但 .git 链接丢失不再误判"就位复用"，prune+清残留树+重建。
+  impact:
+    - 'scripts/governance/commit_queue_landing.py（_git_wt 硬校验 + ensure_worktree 检测重建）'
+    - 'tests/governance/test_commit_queue_landing.py（TestWorktreeGitlinkGuard 3 回归用例）'
+    - '主工作区未提交修改被清 6 次（事故损失面=当日 wave-4 代理产出重放成本）'
+  fix_phase: '已落地（2026-08-29，68b5a1b5be）；落地后 1h43m reflog 零新增 reset（原 30min 周期断绝）——持续观察至次日复扫'
+  status: resolved
+  related_rules:
+  - '#ARCH-WORKTREE-GATE-001'
+  - '#ARCH-WORKTREE-WIPE-GOV-001'
+  - '#ARCH-GIT-SELF-HARM-GUARD'
+  created: '2026-08-29'
+  last_updated: '2026-08-29'
