@@ -2391,6 +2391,11 @@ error_codes:
   module: zephyr.ex_core.performance_monitor
   file: src/zephyr/ex_core/performance_monitor.py
   introduced: '2026-08-23: AI-K3-GW-INFRA 阶段14 MOD-EX-036 新增'
+- code: ZA-EX-0023
+  class: EodReconciliationError
+  module: zephyr.ex_core.eod_reconciliation
+  file: src/zephyr/ex_core/eod_reconciliation.py
+  introduced: '2026-08-28: 补登（代码已在仓未登记，GATE-ERRCODE-CONSISTENCY 对账红灯，doc_review_20260828 顺手补登）'
 - code: ZA-MLT-0009
   class: AdversarialValidationError
   module: zephyr.ml_train.adversarial_robustness_validator

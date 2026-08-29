@@ -18,5 +18,6 @@ __all__: Final = [
     "metrics",
     "metrics_server",
     "reasoning_spans",
+    "stage_timer",
     "tracing",
 ]

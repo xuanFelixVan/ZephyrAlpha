@@ -75,13 +75,17 @@ class TestMetricsServer:
             server.server_close()
 
     def test_health_endpoint_returns_ok(self):
-        """/health 返回 200 + b"ok" """
+        """/health 返回 200 + 契约 JSON {"status","uptime_seconds"}（CAND-OBS-001 §3.4 升级）"""
+        import json as _json
+
         server = start_metrics_server(port=0)
         assert server is not None
         try:
             status, body = _fetch(server, "/health")
             assert status == 200
-            assert body == b"ok"
+            payload = _json.loads(body.decode("utf-8"))
+            assert payload["status"] == "ok"
+            assert payload["uptime_seconds"] >= 0.0
         finally:
             server.shutdown()
             server.server_close()

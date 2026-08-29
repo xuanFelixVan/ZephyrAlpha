@@ -104,9 +104,58 @@ entry_schema:
 # [PURGE 2026-08-05] 移除 5283 个 CAND-HARVEST-* 条目到归档文件 candidate_module_registry_harvest_archive.yaml（主 registry 瘦身）。手工候选 38 条保留。
 entries:
   # ----------------------------------------------------------
-  # CAND-GOVAUDIT-001: 死进程 reconciler 告警自动消音（candidate，一问过——现有路径未覆盖硬杀场景）
-  # 来源: 2026-08-14 用户会话排查（3 条 RECONCILE-WORKER-STALE 残留告警取证）
+  # CAND-OBS-001: 模块级可观测性打点契约 MVP（candidate——经一问：复用 MOD-INF-082 门面非新建采集引擎）
+  # 来源: design_memos/observability_contract_todo.md（对手系统三段式打点对标，Owner 2026-08-28 裁定开工）
   # ----------------------------------------------------------
+- id: CAND-OBS-001
+  name: "模块级可观测性打点契约 MVP（Observability Instrumentation Contract）"
+  aliases: ["打点契约", "三段式延迟打点", "observability contract", "metrics contract MVP"]
+  domain: D_INFRA_TELEMETRY
+  domain_status: active
+  domain_node_count: 1
+  sub_layer: "infrastructure/system_telemetry"
+  panorama_position:
+    depgraph: {has_position: true, note: "扩展 MOD-INF-015/082（system_telemetry/observability_triad）——新增 StageTimer 分段计时器+health 端点助手，采集面复用既有门面"}
+    dataflowgraph: {has_position: false, note: "遥测基础设施，非业务数据流"}
+    decisiongraph: {has_position: false, note: "遥测基础设施，非业务决策"}
+    blueprint: {has_position: true, note: "契约文档落 design_memos/observability_contract_todo.md（MVP 版转正）；试点 tick_subscriber"}
+  description: >-
+    定义模块级打点契约（MUST 指标 requests_total/latency_seconds/errors_total、分层延迟阶段拆分
+    <action>_duration_seconds、结构化日志格式 trace_id 贯通、GET /health 端点约定），并在
+    system_telemetry 落地轻量助手（StageTimer 分段计时 + health_payload 构造），试点 tick_subscriber。
+    采集底座零新建——复用 MOD-INF-082 ObservabilityTriad（counter/gauge/render_prometheus/哈希链日志）。
+  capability: "observability_instrumentation"
+  problem_it_solves: "50 个模块各自用不同打点格式后再统一的返工成本；对手系统（BalletHip）三段式延迟打点缺口"
+  trigger_signals:
+    - "已触发：tick_subscriber 数据管道+QMT 桥交易链路在跑生产级流程（文档 §五 时机条件达成）"
+    - "首个模块进生产"
+  keywords: ["observability", "metrics", "latency", "打点", "契约", "prometheus", "health", "三段式"]
+  upstream_deps:
+    - {path: "src/zephyr/infrastructure/system_telemetry/observability_triad.py", note: "MOD-INF-082 采集门面（复用不重建）"}
+  downstream_consumers:
+    - {path: "src/zephyr/data/tick_subscriber.py", note: "MVP 试点消费方"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "observability_triad 只有 counter/gauge 原子接口，无分段计时器/health 助手/契约命名规约——本件是契约层+轻量助手，非重复"}
+    blocking_question: null
+    result: candidate
+  status: candidate
+  priority: P2
+  created_at: '2026-08-28'
+  last_reviewed_at: '2026-08-28'
+  promoted_to: ""
+  source_draft: "design_memos/observability_contract_todo.md"
+  source_section: "§三 待定义内容 + §五 实施时机"
+  original_id: "GOV-071"
+  estimated_complexity: S
+  tech_notes: >-
+    边界：不碰 Prometheus/Grafana 重基建部署；StageTimer 语义=单事务多阶段计时
+    （begin/end 阶段 + 汇总），每阶段输出 {stage}_duration_seconds；health 端点返回
+    {status, uptime_seconds}；结构化日志补 trace_id。试点=tick_subscriber（L00 数据接入，
+    阶段拆分 WS recv→parse→quality_gate→emit）。
+
 - id: CAND-GOVAUDIT-001
   name: "死进程 reconciler 告警自动消音(Dead-Worker Alert Auto-Ack)"
   aliases: ["死进程告警自动降级", "dead worker alert auto-ack", "RECONCILE-WORKER-STALE 自愈闭环补全"]

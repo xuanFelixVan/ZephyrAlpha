@@ -5,7 +5,7 @@
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] QMT callback 线程只做 queue.put_nowait（最小开销）; flush 线程批量出队(500条)构造单个 FetchResult 交给 WalWriter; WalWriter 先落盘段文件再异步 drain 到 CH（P0-1 主动WAL）; 无锁计数(CPython GIL 保证 int += 1 统计精度足够); queue.Queue 解耦线程安全; P1-5 metrics 埋点覆盖 received/written/dropped/queue_size; P2-5 分阶段延迟度量 Histogram: Stage1 on_tick/Stage2 queue_wait/Stage3 convert/Stage4 wal_add/Stage5 wal_flush; #ARCH-DATA-017 裁定B/C/E: 业务心跳JSON(tick_subscriber_biz.heartbeat)+tick-biz-watchdog线程盘中无tick周期重订阅+日志落盘RotatingFileHandler(tick_subscriber_run.log)
+# [INVARIANTS] QMT callback 线程只做 queue.put_nowait（最小开销）; flush 线程批量出队(500条)构造单个 FetchResult 交给 WalWriter; WalWriter 先落盘段文件再异步 drain 到 CH（P0-1 主动WAL）; 无锁计数(CPython GIL 保证 int += 1 统计精度足够); queue.Queue 解耦线程安全; P1-5 metrics 埋点覆盖 received/written/dropped/queue_size; 分阶段延迟度量走 CAND-OBS-001 契约 StageTimer（tick_subscriber_{on_tick,queue_wait,convert,wal_add}_duration_seconds，对齐契约 §3.2 L00 四段）; #ARCH-DATA-017 裁定B/C/E: 业务心跳JSON(tick_subscriber_biz.heartbeat)+tick-biz-watchdog线程盘中无tick周期重订阅+日志落盘RotatingFileHandler(tick_subscriber_run.log)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -272,6 +272,10 @@ class TickSubscriber:
         # Event 在 _on_tick 首次成功入队后 set()，start() 中 wait(timeout) 阻塞等待
         self._first_tick_received = threading.Event()
         self._start_time: float = 0.0  # 订阅启动时间（用于预热耗时统计）
+        # CAND-OBS-001: 契约分段计时器（消灭手写 perf_counter 样板）
+        # 阶段拆分对齐契约 §3.2 L00 数据接入：on_tick（WS recv）/queue_wait/convert（parse+quality_gate）/wal_add（emit）
+        from zephyr.shared.observability.stage_timer import StageTimer
+        self._stage_timer = StageTimer(module="tick_subscriber")
 
         # xtdata 模块（延迟导入）
         self._xtdata = None
@@ -300,8 +304,8 @@ class TickSubscriber:
         """
         if not self._running:
             return
-        # P2-5: Stage 1 延迟度量——on_tick 回调处理耗时
-        t0 = time.perf_counter()
+        # CAND-OBS-001: Stage on_tick（契约 L00 WS recv 段）——回调端到端处理耗时
+        self._stage_timer.begin("on_tick")
         # P2-8: 主源心跳检测——收到 tick 即标记主源活跃
         if self._heartbeat is not None:
             self._heartbeat.record_tick()
@@ -333,8 +337,8 @@ class TickSubscriber:
                     log.error("入队失败 symbol=%s: %s", symbol, e, exc_info=True)
                     self._errors += 1
                     _get_metrics_registry().inc("zephyr_tick_dropped_total")
-        # P2-5: Stage 1——on_tick 回调端到端处理耗时（含心跳记录 + 入队循环）
-        _get_metrics_registry().observe("zephyr_tick_stage_on_tick_seconds", time.perf_counter() - t0)
+        # CAND-OBS-001: Stage on_tick 收尾——observe tick_subscriber_on_tick_duration_seconds
+        self._stage_timer.end("on_tick")
 
     def _on_backup_tick(self, symbol: str, tick: dict) -> None:
         """备源 tick 回调——TDX BackupTickPoller 调用（P1-3）。
@@ -369,18 +373,19 @@ class TickSubscriber:
             本次写入 WalWriter 的行数（0=队列空或写入失败）。
         """
         reg = _get_metrics_registry()
-        # P2-5: Stage 2——queue.get 阻塞等待耗时（含空队 sleep）
-        t_wait = time.perf_counter()
+        # CAND-OBS-001: Stage queue_wait——queue.get 阻塞等待耗时（含空队 sleep）
+        self._stage_timer.begin("queue_wait")
         try:
             symbol, tick = self._tick_queue.get(timeout=timeout)
         except queue.Empty:
+            self._stage_timer.end("queue_wait")
             return 0
-        reg.observe("zephyr_tick_stage_queue_wait_seconds", time.perf_counter() - t_wait)
+        self._stage_timer.end("queue_wait")
 
         rows: list[tuple] = []
         cache_ticks: list[tuple[str, dict]] = []  # H1 Redis tick 缓存双写收集
-        # P2-5: Stage 3——tick_to_row 批量转换耗时（首行 + 非阻塞批量取）
-        t_conv = time.perf_counter()
+        # CAND-OBS-001: Stage convert——tick_to_row 批量转换耗时（契约 parse+quality_gate 段）
+        self._stage_timer.begin("convert")
         row = tick_to_row(symbol, tick, data_source=tick.pop("_data_source", _DATA_SOURCE))
         if row:
             rows.append(row)
@@ -394,7 +399,7 @@ class TickSubscriber:
             if r:
                 rows.append(r)
             cache_ticks.append((symbol, tick))
-        reg.observe("zephyr_tick_stage_convert_seconds", time.perf_counter() - t_conv)
+        self._stage_timer.end("convert")
 
         if not rows:
             return 0
@@ -407,10 +412,10 @@ class TickSubscriber:
             last_key="",
             elapsed_sec=0.0,
         )
-        # P2-5: Stage 4——WalWriter.add 段落盘耗时（含列过滤 + save_fallback）
-        t_wal = time.perf_counter()
+        # CAND-OBS-001: Stage wal_add——WalWriter.add 段落盘耗时（契约 emit 段）
+        self._stage_timer.begin("wal_add")
         add_ok = self._writer.add(result)
-        reg.observe("zephyr_tick_stage_wal_add_seconds", time.perf_counter() - t_wal)
+        self._stage_timer.end("wal_add")
 
         # H1 Redis tick 缓存双写（best-effort，不阻断 WAL 主路径，CP-01 Tick→Redis ≤3秒）
         if self._tick_cache and cache_ticks:
