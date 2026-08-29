@@ -47,9 +47,20 @@
 # A1 --> O1
 """
 
-from typing import Final
+from typing import TYPE_CHECKING, Final
 
 from zephyr.risk.core.daily_auditor import AuditRequest, DailyAuditor
+
+if TYPE_CHECKING:
+    # 回撤 L2/L3 兜底族（35号文 §6.11，A12 批）预接线模块的可发现性声明——
+    # 消费方=RiskOrchestrator 编排批（§6.5 接线位），运行时不加载
+    # （lazy 映射包 TYPE_CHECKING 先例，ORPHAN-MODULE 门禁透视用）。
+    from zephyr.risk.core.drawdown_broker_side_stop import (  # noqa: F401
+        build_protective_stop_plan,
+        reconcile_broker_side_stops,
+    )
+    from zephyr.risk.core.drawdown_watchdog import WatchdogVerdict, poll_once  # noqa: F401
+
 from zephyr.risk.core.liquidity_crisis_manager import (
     LiquidityCrisisConfig,
     LiquidityLoopResult,

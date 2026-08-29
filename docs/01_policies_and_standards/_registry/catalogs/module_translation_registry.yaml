@@ -30,6 +30,20 @@ entry_schema:
   desc_en: str
   plain_zh: str
 entries:
+- module_path: src/zephyr/risk/core/drawdown_broker_side_stop.py
+  domain_id: D_RISK
+  name_zh: 回撤L2券商端止损对账
+  name_en: Drawdown Broker-Side Stop
+  desc_zh: 35号文 §6.11 L2 平台层（A12）：开仓同步挂券商端止损意图（缺 stop_price fail-closed）+计划 vs 券商实际对账，未保护/错配→coverage_ok=False+CRITICAL 告警；纯逻辑裁决层不直连 broker。
+  desc_en: "35-doc section 6.11 L2 platform tier (A12): attach broker-side protective stop intent at open (fail-closed without stop_price) plus plan-vs-broker reconciliation; unprotected/mismatched positions flag coverage_ok=False with CRITICAL alert; pure decision layer, no broker connection."
+  plain_zh: 止损双保险的第一道。每笔开仓都同步在券商那边挂一个止损单，并每天对账确认没漏挂；发现裸奔的仓位立刻报警。万一本地程序全挂了，券商那张止损单还在保命。
+- module_path: src/zephyr/risk/core/drawdown_watchdog.py
+  domain_id: D_RISK
+  name_zh: 回撤L3看门狗
+  name_en: Drawdown Watchdog
+  desc_zh: 35号文 §6.11 L3 看门狗裁决（A12）：轮询比对券商实盘持仓与策略状态，发现幽灵仓位（券商有、策略无）即强平+锁新开仓；轮询失败 fail-closed 锁而不盲平；Kill Switch 闭合且有残余持仓→全量强平。只裁决不执行。
+  desc_en: "35-doc section 6.11 L3 watchdog decision (A12): polls broker holdings vs strategy state, force-liquidates ghost positions (broker holds, strategy unaware) and halts new orders; poll failure fail-closed halts without blind liquidation; kill-switch CLOSED with residual holdings triggers full liquidation. Decides only, never executes."
+  plain_zh: 盯鬼的保安。它不停比对券商账上的持仓和策略以为的持仓，发现策略不知道的幽灵仓位就立刻清掉并停止开新仓；它自己看不清的时候宁可锁门也不乱卖。"
 - module_path: src/zephyr/autonomy_core/agents/ticket_queue.py
   domain_id: D_AUTONOMY_CORE
   name_zh: Agent工单队列

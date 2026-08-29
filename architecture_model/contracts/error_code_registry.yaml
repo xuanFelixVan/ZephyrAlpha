@@ -2695,6 +2695,26 @@ error_codes:
   module: zephyr.risk.core.leverage_risk_model
   file: src/zephyr/risk/core/leverage_risk_model.py
   introduced: '2026-08-28: 对账批补登（CAND-CRYPTO-008 杠杆风控在途件，GATE-ERRCODE-CONSISTENCY 对账翻出，代码真源先行，SSoT 诚实登记原则，AI-CAL-001 代登）'
+- code: ZA-RK-0073
+  class: InvalidBrokerSideStopInputError
+  module: zephyr.risk.core.drawdown_broker_side_stop
+  file: src/zephyr/risk/core/drawdown_broker_side_stop.py
+  introduced: '2026-08-30: A12 回撤延期项 L2 平台层落码补登（35号文 §6.11 broker 端硬止损对账，AI-WAVE5 批）'
+- code: ZA-RK-0074
+  class: InvalidWatchdogInputError
+  module: zephyr.risk.core.drawdown_watchdog
+  file: src/zephyr/risk/core/drawdown_watchdog.py
+  introduced: '2026-08-30: A12 回撤延期项 L3 看门狗落码补登（35号文 §6.11 轮询裁决 fail-closed，AI-WAVE5 批）'
+- code: ZA-POS-0040
+  class: BudgetChangeError
+  module: zephyr.position.core.budget_change_handler
+  file: src/zephyr/position/core/budget_change_handler.py
+  introduced: '2026-08-30: A13 BudgetChange 接线尾巴落码补登（33号文 blueprint §6 段位 0040~0044 早已声明，本次 sync_from_allocator 输入校验落码，session-20260830-A13）'
+- code: ZA-POS-0044
+  class: StateRecoveryError
+  module: zephyr.position.core.budget_change_handler
+  file: src/zephyr/position/core/budget_change_handler.py
+  introduced: '2026-08-30: A13 TierState 跨日持久化落码补登（33号文 blueprint §6 段位 0040~0044 早已声明，本次快照损坏/schema 不符 fail-closed 落码，session-20260830-A13）'
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）
