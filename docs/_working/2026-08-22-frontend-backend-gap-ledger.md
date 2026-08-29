@@ -94,7 +94,7 @@ ttl: task_bound
 | B33 | 市场成交额对比供数（今日分时累计 vs 昨日同时段 vs 历史序列+预测线） | 大盘分析页成交额卡（R16 设计令：今日/昨日/历史/预测四模式） | 行情成交额在库（kline/tick 聚合）；预测线=同时段历史均值外推（新计算，轻量） | P1 |
 | B34 | 新闻两天滚动窗清单+详情供数（从现在到 48h 前自动保持，点击展开全文+分析） | 新闻舆情页新闻清单区（R17 设计令） | news_data 表在库（时间戳精确）；时间窗接口+全文读取接口缺；分析=双标签/影响分级（C2/MOD-NLP-IMPACT-001 在码） | P1 |
 
-### 2.C 类：后端能力缺口，需新建（CAND 评审）（29 项）
+### 2.C 类：后端能力缺口，需新建（CAND 评审）（34 项）
 
 | 编号 | 缺口 | 前端工件（锚点） | 说明 | 优先级 |
 |---|---|---|---|---|
@@ -127,6 +127,11 @@ ttl: task_bound
 | C27 | 健康告警三合一聚合（数据源/治理/系统告警合一，无告警=一行绿不占版面） | 实盘全景总览「健康告警」条（R12 设计令，页面待重构） | alerter/ch_health_probe/source_circuit_breaker/gate_audit 均在码在跑；聚合适配缺（B13 待办中心同族） | P1 |
 | C28 | 币圈策略/回测/档案占位页转真（策略 3 卡占位+网格回测演示净值曲线+档案 3 币卡占位） | 币圈策略页+币圈回测页+币圈档案页（v3.0 建站占位） | strategy_registry market_domain 字段在码；crypto 回测规则包 CAND-CRYPTO-007 在册；链上数据源 planned（okx_swap/onchain） | P2 |
 | C29 | 订单季报前瞻分析页（三季报/四季报+订单预测：季报与订单深度绑定→反推下季度订单+行业景气度；机构提前定价逻辑=先买预期→财报兑现出货） | 订单季报前瞻独立页（R17 设计令·远期，机构提前定价研究位） | 新页能力：分析师盈利预测修订趋势（analyst_forecast 在库）+MOD-SIG-110 PEAD 财报漂移统计（prod）+event_factor_matrix（招商 dReport/华泰 PEAD 实证族）；**订单数据无源**——近似=盈利预测修订+供应链指标（ig_company_metric 23.6 万条） | P2（远期） |
+| C30 | AI 对话通道（前端对话框→ReAct 助手：会话管理+工具白名单调用+UFL 锚定回查+advisory_only 硬约束执行） | AI 对话页对话框+能干/不能干双卡（R5·Owner 08-29 拍板第六组，v4.1 新页） | MOD-INT-RESEARCH-AGENT ReAct 助手 prod+MOD-INT-FACT-LEDGER UFL prod+Ollama qwen3:8b 本机在跑；**前端↔助手 HTTP 会话接口缺**（助手现为库内调用，无对外服务层） | P1 |
+| C31 | AI 任务队列供数（对话派单+自治任务统一队列：任务 CRUD/状态流[排队/运行/完成/失败]/产出物指针/审计留痕接口+重跑触发） | AI 任务队列页任务流水表+三状态卡（v4.1 新页） | gpu_consensus_scheduler 在码（Ollama 探活+并发闸）；**任务持久化表+队列接口缺**——现无统一任务存储，演示行靠前端 | P1 |
+| C32 | 审批操作写通道（human_gated 批/否写回+留痕：实盘下单审批/距强平<10% 强减审批/autonomy_gate queue ticket 消费） | 全景总览「审批+健康告警横切条」审批行批/否按钮（Owner 08-29 拍板横切形态，v4.1） | I03 人工闸门规则在册+I02 autonomy_gate alerts.jsonl/queue ticket 在跑；**审批读聚合+写回接口缺**（C19 写通道族同族扩展） | P1 |
+| C33 | 打板 sleeve 仿真启用开关+实时监控供数（启用态 runtime config+仿真成交/瞬时熔断触发/坑位检查/破板出货事件流→dashboard feed） | 作战指挥执行区「打板实时监控」卡（Owner 08-29 拍板仿真启用，v4.1；转实盘需二次拍板） | BFE-36 打板族五件 prod（signal_decision/exit_decision/instant_circuit_breaker/pit_safety/open_order_resolver）+DabanSleeveStrategy 已注册（testing）；**仿真启用开关位+事件流聚合作供数接口缺** | P1 |
+| C34 | C03 产业链联动日报前端接线（产物已核实=纯接线件；脚本 manual→定时调度+CSV→dashboard feed 化） | 板块全景「产业链联动日报」卡（badge 真源已核实，v4.1；24链/523家·08-25 快照已呈现） | theme_linkage_monitor.py prod+`.runtime/industry_graph/theme_linkage_daily.csv` 在盘（资产总账 DAL-C03 销账）；**定时调度+dashboard feed 接口缺**（接线后自动刷新，QMT 盘中接入后可切实时版） | P1 |
 
 ### 2.D 类：外部数据源缺口（20 项）
 
