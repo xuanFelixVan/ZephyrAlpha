@@ -35,50 +35,50 @@ entries:
   name_zh: Agent工单队列
   name_en: Agent Ticket Queue
   desc_zh: 14号文 Phase 1 S1.2（MOD-EXE-AGENTS）：工单队列落盘化——pending/claimed/done/dead 四态+O_EXCL 原子认领（多会话防抢单）+断点恢复（孤儿/超龄双判据 fail-closed）+61号文 §3.6 三件套字段（design_memo/depgraph_path/owner）；产出 100% human_gated 落盘。
-  desc_en: Phase 1 S1.2 ticket queue (MOD-EXE-AGENTS): pending/claimed/done/dead on-disk states, O_EXCL atomic claim, orphan/stale dual-criteria fail-closed recovery, 61-doc handoff triplet fields; all outputs human_gated on disk.
-  plain_zh: "多会话施工的派单窗口"。人把任务工单放进队列文件夹，哪个 AI 会话接单就在文件上原子盖章，谁抢重谁越权都会被拦；会话中途崩了，工单能被别人按规则捡回来继续干，全程有据可查。
+  desc_en: "Phase 1 S1.2 ticket queue (MOD-EXE-AGENTS) - pending/claimed/done/dead on-disk states, O_EXCL atomic claim, orphan/stale dual-criteria fail-closed recovery, 61-doc handoff triplet fields; all outputs human_gated on disk."
+  plain_zh: "多会话施工的派单窗口。人把任务工单放进队列文件夹，哪个 AI 会话接单就在文件上原子盖章，谁抢重谁越权都会被拦；会话中途崩了，工单能被别人按规则捡回来继续干，全程有据可查。"
 - module_path: src/zephyr/autonomy_core/context/local_llm_summarizer.py
   domain_id: D_AUTONOMY_CORE
   name_zh: 本地LLM摘要器
   name_en: Local LLM Summarizer
   desc_zh: 07号文 Phase 1 压缩三档降级链的 llm_summary 生产档（MOD-CONTEXT_ENGINE）：超长文本行边界分 slot→逐段经 llm_runtime_gateway 本地优先路由摘要→合并递归；摘要过 integrity 四规则校验不过则不替换原文（降级 rule_based）；opt-in 注入 ContextAssembler，默认行为零变化。
-  desc_en: Phase 1 production llm_summary tier of the 3-tier compression chain (MOD-CONTEXT_ENGINE): line-aligned slotting, per-slot summary via llm_runtime_gateway local-first routing, recursive merge; integrity 4-rule check gates replacement (fallback rule_based); opt-in injection, zero default behavior change.
-  plain_zh: "长文压缩工"。超长资料塞不进上下文时，它把文章切成几段让本地小模型逐段写摘要再合并；摘要质量过不了校验就自动放弃改用老办法压缩，宁可降级也不用坏摘要。
+  desc_en: "Phase 1 production llm_summary tier of the 3-tier compression chain (MOD-CONTEXT_ENGINE): line-aligned slotting, per-slot summary via llm_runtime_gateway local-first routing, recursive merge; integrity 4-rule check gates replacement (fallback rule_based); opt-in injection, zero default behavior change."
+  plain_zh: "长文压缩工。超长资料塞不进上下文时，它把文章切成几段让本地小模型逐段写摘要再合并；摘要质量过不了校验就自动放弃改用老办法压缩，宁可降级也不用坏摘要。"
 - module_path: src/zephyr/intelligence/model_routing/runtime_assembly.py
   domain_id: D_INTELLIGENCE
   name_zh: 模型路由运行时装配
   name_en: Model Routing Runtime Assembly
   desc_zh: 11号文 Phase 1 运行时装配（GP1 第二波）：把 CascadeOrchestrator（MOD-MODEL_ROUTER_ORCH）适配为 llm_agent_router 的 decision_engine，并接通 cost_ledger（BudgetEngine）/audit_sink（统一事件 JSONL）/period（data/calendar 交易时段）三缝；级联异常降级不阻断路由返回。
   desc_en: Phase 1 runtime assembly wiring CascadeOrchestrator as llm_agent_router decision_engine plus cost_ledger/audit_sink/period seams; cascade faults degrade without blocking routing.
-  plain_zh: "装电线的工作"。级联路由（能不能做→谁适合→预算内选谁）此前已建成但插座没插上；本模块把插头插进运行时门面，让路由决策真正走三段级联，任何一段坏了自动回退老办法，绝不断电。
+  plain_zh: "装电线的工作。级联路由（能不能做→谁适合→预算内选谁）此前已建成但插座没插上；本模块把插头插进运行时门面，让路由决策真正走三段级联，任何一段坏了自动回退老办法，绝不断电。"
 - module_path: src/zephyr/intelligence/reflexion/vote_review_shell.py
   domain_id: D_AUTONOMY_CORE
   name_zh: 投票评审壳
   name_en: Vote Review Shell
   desc_zh: 12号文 Phase 1 投票评审壳（MOD-VOTE_REVIEW_SHELL，<100 行纯编排）：人多开 3-5 会话产候选→壳收集候选文件→调 A2AVoting（MOD-INF-025）计票（approve/reject/abstain+quorum+权重）→最优落盘+裁决报告；人手动触发的可选模式设施，无自动触发路径。
-  desc_en: Phase 1 vote review shell (MOD-VOTE_REVIEW_SHELL, <100-line orchestration): collect candidate files, run A2AVoting (MOD-INF-025) tally with quorum/weights, persist winner plus verdict report; human-triggered optional mode, zero auto-trigger paths.
-  plain_zh: "多开工位方案的唱票员"。遇到拿不准的大事，人可以开几个 AI 会话各写一版方案放进文件夹，它负责收齐、按规则唱票、把胜出方案和计票报告落盘；它从不自己启动，只有人拉它才干活。
+  desc_en: "Phase 1 vote review shell (MOD-VOTE_REVIEW_SHELL, <100-line orchestration): collect candidate files, run A2AVoting (MOD-INF-025) tally with quorum/weights, persist winner plus verdict report; human-triggered optional mode, zero auto-trigger paths."
+  plain_zh: "多开工位方案的唱票员。遇到拿不准的大事，人可以开几个 AI 会话各写一版方案放进文件夹，它负责收齐、按规则唱票、把胜出方案和计票报告落盘；它从不自己启动，只有人拉它才干活。"
 - module_path: src/zephyr/autonomy_core/embedding_provider_adapter.py
   domain_id: D_AUTONOMY_CORE
   name_zh: 嵌入向量适配器
   name_en: Embedding Provider Adapter
   desc_zh: 15号文 S1.3 批量档配套（MOD-AU-003）：把既有 EmbeddingRouter（MOD-INF-042）适配为 drift_semantic_reviewer 的 EmbeddingProvider Protocol，复用其路由/LSG 闸门/降级链；批量手动 CLI 带盘中守卫（交易日 09:30-15:00 拒跑）。
-  desc_en: S1.3 batch companion (MOD-AU-003): adapts EmbeddingRouter (MOD-INF-042) to the EmbeddingProvider protocol reusing its routing/LSG/degradation chain; manual batch CLI guarded off trading hours.
-  plain_zh: "语义体检的翻译官"。批量复核 AI 会话有没有跑偏时需要算文字相似度，本适配器把项目现成的嵌入模型包装成体检器能用的接口，且只在收盘后干活，绝不挤占盘中资源。
+  desc_en: "S1.3 batch companion (MOD-AU-003): adapts EmbeddingRouter (MOD-INF-042) to the EmbeddingProvider protocol reusing its routing/LSG/degradation chain; manual batch CLI guarded off trading hours."
+  plain_zh: "语义体检的翻译官。批量复核 AI 会话有没有跑偏时需要算文字相似度，本适配器把项目现成的嵌入模型包装成体检器能用的接口，且只在收盘后干活，绝不挤占盘中资源。"
 - module_path: src/zephyr/autonomy_core/module_factory/knowledge_classifier.py
   domain_id: D_AUTONOMY_CORE
   name_zh: 知识分类器
   name_en: Knowledge Classifier
   desc_zh: 模块工厂 Phase 1 知识分类器（MOD-FACTORY-001）：LLM 受控词表约束分类（factor 10 类/strategy 6 类/其他分流）+ v2.0 多维标注 + 信息价值四维门禁 + tags 归并纪律；输出建议草稿，human_gated 不直写注册表。
-  desc_en: Module factory Phase 1 knowledge classifier (MOD-FACTORY-001): LLM controlled-vocabulary classification (factor 10-class / strategy 6-class / other) + v2.0 multidimensional annotation + 4-dim quality gate + tag merging discipline; advisory drafts only, human_gated.
-  plain_zh: 给新知识"贴标签的分拣员"。一篇文章进来，它判断这是因子还是策略、属于哪一类、适用于什么行情，贴上规范标签；质量太差直接拒收。它只贴标签不入库，入不入由人说了算。
+  desc_en: "Module factory Phase 1 knowledge classifier (MOD-FACTORY-001): LLM controlled-vocabulary classification (factor 10-class / strategy 6-class / other) + v2.0 multidimensional annotation + 4-dim quality gate + tag merging discipline; advisory drafts only, human_gated."
+  plain_zh: "给新知识贴标签的分拣员。一篇文章进来，它判断这是因子还是策略、属于哪一类、适用于什么行情，贴上规范标签；质量太差直接拒收。它只贴标签不入库，入不入由人说了算。"
 - module_path: src/zephyr/autonomy_core/module_factory/module_mapper.py
   domain_id: D_AUTONOMY_CORE
   name_zh: 模块映射引擎
   name_en: Module Mapper
   desc_zh: 模块工厂 Phase 1 知识→模块映射引擎（MOD-FACTORY-002）：语义抽象 schema_plan + embedding/FTS5 双通道检索既有 286 条目 + 四选一裁决（新建/变体/重复/组合）输出 ModuleSpec；重复在写代码前拦截，裁决理由全留痕，human_gated。
-  desc_en: Module factory Phase 1 knowledge-to-module mapper (MOD-FACTORY-002): semantic abstraction schema_plan + embedding/FTS5 dual-channel retrieval over 286 registry entries + four-way verdict (new/variant/duplicate/combination) emitting ModuleSpec; duplicates intercepted before coding, reasons fully audited, human_gated.
-  plain_zh: "查重裁判员"。新点子先跟库里已有的 286 个因子/策略比对：是重复就拦下、是老相识的改款就记为变体、是几个老件的组合就标组合、都不是才准新建。写代码之前先过它，省得白写。
+  desc_en: "Module factory Phase 1 knowledge-to-module mapper (MOD-FACTORY-002): semantic abstraction schema_plan + embedding/FTS5 dual-channel retrieval over 286 registry entries + four-way verdict (new/variant/duplicate/combination) emitting ModuleSpec; duplicates intercepted before coding, reasons fully audited, human_gated."
+  plain_zh: "查重裁判员。新点子先跟库里已有的 286 个因子/策略比对：是重复就拦下、是老相识的改款就记为变体、是几个老件的组合就标组合、都不是才准新建。写代码之前先过它，省得白写。"
 - module_path: src/zephyr/ex_core/adapters/qmt_file_bridge_broker.py
   domain_id: D_EX_CORE
   name_zh: QMT文件桥Broker
@@ -56676,19 +56676,19 @@ algo_submodules:
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A1
-  name_zh: ① Agent上手上下文生成
+  name_zh: 维护手册
   name_en: Handbook.generate_onboarding_context
   plain_zh: 把核心约束、关键目录、任务状态机、关键工具拼成一段固定markdown给新Agent看
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A2
-  name_zh: ② 任务卡模板提供
+  name_zh: 维护手册
   name_en: Handbook.get_task_card_template
   plain_zh: 返回一张固定的任务卡markdown表格模板，照填即可
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A3
-  name_zh: ③ 目录地图提供
+  name_zh: 维护手册
   name_en: Handbook.get_directory_map
   plain_zh: 返回核心源码/蓝图/任务系统目录到中文说明的映射字典
 - module_path: src/zephyr/shared/io/sqlite_factory.py
