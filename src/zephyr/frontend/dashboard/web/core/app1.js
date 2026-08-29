@@ -3350,7 +3350,10 @@ function btCharts(){
     polyline(g,B.bEq.map(function(v,i){return[x(i)+cw/2,yf(v)];}),'#AB47BC',1.5);
     polyline(g,B.ex.map(function(v,i){return[x(i)+cw/2,yf(v)];}),'#F0B90B',1.5,'2 4');
     bindHover(svg,{W:W,L:L,R:R,H:H,T:T,B:Bx,n:n,x:x,cw:cw,g:g,rd:mkReadout(svg.parentNode),readout:function(i){
-      return B.dates[i]+'  策略 '+B.sEq[i].toFixed(1)+'%  基准 '+B.bEq[i].toFixed(1)+'%  超额 '+B.ex[i].toFixed(1)+'%';
+      return '<div class="rd-date">'+B.dates[i]+'</div>'
+        +'<div class="rd-row"><span class="rd-dot" style="background:#3D8BFF"></span>策略收益 <b>'+B.sEq[i].toFixed(2)+'%</b></div>'
+        +'<div class="rd-row"><span class="rd-dot" style="background:#AB47BC"></span>沪深300 <b>'+B.bEq[i].toFixed(2)+'%</b></div>'
+        +'<div class="rd-row"><span class="rd-dot" style="background:#F0B90B"></span>超额收益 <b>'+B.ex[i].toFixed(2)+'%</b></div>';
     }});
   })();
   /* 回撤图：策略红面积 / 基准紫面积 */
