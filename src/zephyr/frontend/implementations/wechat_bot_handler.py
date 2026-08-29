@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-FE-013 | docs/03_modules/_domain_frontend/wechat_bot_handler/blueprint.md
-# [MODULE] zephyr.frontend.wechat_bot_handler
+# [MODULE] zephyr.frontend.implementations.wechat_bot_handler
 # [DOMAIN] D_FRONTEND
 # [DEPENDENCIES] 无（协议核心纯内存；鉴权器/盯盘·查询数据源/下单执行器/时钟全注入）
 # [CONSUMERS] 运行时装配批（企业微信回调入口 / 盯盘·查询·下单适配器装配）

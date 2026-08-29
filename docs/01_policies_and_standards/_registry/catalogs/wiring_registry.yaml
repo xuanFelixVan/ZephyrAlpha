@@ -928,7 +928,7 @@ modules:
   wiring_status: exempt
 - candidate_id: CAND-FE-014
   name: "WeChat Bot D-FRONTEND-25"
-  path: src/zephyr/frontend/wechat_bot_handler.py
+  path: src/zephyr/frontend/implementations/wechat_bot_handler.py
   domain: D_FRONTEND
   wiring_class: pure_library
   wiring_status: exempt

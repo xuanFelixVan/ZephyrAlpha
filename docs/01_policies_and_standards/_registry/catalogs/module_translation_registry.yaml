@@ -46931,7 +46931,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "用假客户端校验卡片模板、通道标记和回执记录。"
-- module_path: src/zephyr/frontend/wechat_bot_handler.py
+- module_path: src/zephyr/frontend/implementations/wechat_bot_handler.py
   domain_id: D_FRONTEND
   name_zh: "企业微信机器人处理器"
   name_en: ""

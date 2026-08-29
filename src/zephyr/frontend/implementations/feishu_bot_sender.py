@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-FE-012 | docs/03_modules/_domain_frontend/feishu_bot_sender/blueprint.md
-# [MODULE] zephyr.frontend.feishu_bot_sender
+# [MODULE] zephyr.frontend.implementations.feishu_bot_sender
 # [DOMAIN] D_FRONTEND
 # [DEPENDENCIES] 无（协议核心纯内存；webhook client/时钟全注入，密钥仅 secrets 引用不落地）
 # [CONSUMERS] 运行时装配批（审批通知发送 / 告警推送微信备选通道装配）

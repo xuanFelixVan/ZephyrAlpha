@@ -12411,7 +12411,7 @@ di_seam_exemptions:
   token: auto-blueprint-20260826
   created_by: AI-P2-W11
   capability: frontend_api_proxy_blueprint
-- file: src/zephyr/frontend/feishu_bot_sender.py
+- file: src/zephyr/frontend/implementations/feishu_bot_sender.py
   token: auto-feishu-bot-sender-20260826
   created_by: AI-P2-W11
   capability: feishu_bot_sender
@@ -12423,7 +12423,7 @@ di_seam_exemptions:
   token: auto-blueprint-20260826
   created_by: AI-P2-W11
   capability: feishu_bot_sender_blueprint
-- file: src/zephyr/frontend/wechat_bot_handler.py
+- file: src/zephyr/frontend/implementations/wechat_bot_handler.py
   token: auto-wechat-bot-handler-20260826
   created_by: AI-P2-W11
   capability: wechat_bot_handler

@@ -15,7 +15,7 @@ owner: ZephyrAlpha-Owner
 priority: P2
 blueprint_level: module
 domain_id: D_FRONTEND
-path: src/zephyr/frontend/wechat_bot_handler.py
+path: src/zephyr/frontend/implementations/wechat_bot_handler.py
 granularity: file
 ---
 
@@ -23,7 +23,7 @@ granularity: file
 
 > **module_id**: MOD-FE-013 | **域**: D_FRONTEND | **优先级**: P2
 > **来源**: B9-10706（AUD-DRAFT-001-DIGEST P2 波 P2-W11，CAND-FE-014，B9 D-FRONTEND-25）
-> 代码：`src/zephyr/frontend/wechat_bot_handler.py`
+> 代码：`src/zephyr/frontend/implementations/wechat_bot_handler.py`（2026-08-29 自 frontend/ 根迁入，trae_024 单一类型归位）
 
 ## 0. 定位
 

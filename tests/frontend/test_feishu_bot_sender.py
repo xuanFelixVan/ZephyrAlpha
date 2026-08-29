@@ -18,11 +18,11 @@ import datetime
 import pytest
 
 pytest.importorskip(
-    "zephyr.frontend.feishu_bot_sender",
+    "zephyr.frontend.implementations.feishu_bot_sender",
     reason="feishu_bot_sender not importable",
 )
 
-from zephyr.frontend.feishu_bot_sender import (  # noqa: E402
+from zephyr.frontend.implementations.feishu_bot_sender import (  # noqa: E402
     AlertLevel,
     AlertPush,
     ApprovalAction,

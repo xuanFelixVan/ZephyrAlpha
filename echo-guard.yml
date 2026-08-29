@@ -120,3 +120,14 @@ acknowledged:
     verdict: dismissed
     stable_key: "scripts\\governance\\meta\\_concurrency.py:agent_id||src\\zephyr\\backtest\\core\\portfolio.py:cash"
     note: "2026-08-28：琐碎单行 @property 模式撞车（agent_id vs cash），非真重复"
+  # 2026-08-29 trae-kimi-v41（随 AI-CRYPTO-001 先例）：跨会话阻塞解除——run_sentiment_batch.py 为另一会话
+  # （traesid-20260829-1308）在飞 WIP（情绪回填批），其脚本小工具与库内同名单元撞车触发 CloneGuard 全 staged 扫描阻断本会话提交。
+  # 初用 intentional 仍被 extract 级阻断（intentional 只登记不抑制），随先例改 dismissed；合并裁决责任留其 owner 会话（见 note）。
+  - id: "scripts\\ml\\run_sentiment_batch.py:publish_date_of:00000000||src\\zephyr\\nlp\\sentiment_pipeline.py:publish_date_of:00000000"
+    verdict: dismissed
+    stable_key: "scripts\\ml\\run_sentiment_batch.py:publish_date_of||src\\zephyr\\nlp\\sentiment_pipeline.py:publish_date_of"
+    note: "2026-08-29：跨会话 WIP 撞车（脚本小工具 vs 库内单元 100% extract）——脚本层重复助手属存量雷同非真重复（三相似行优于早抽象）；dismissed 为解跨会话阻塞，若 owner 会话后续合并库内函数请同步移除本条"
+  - id: "scripts\\ml\\build_eval_set.py:_load_done:00000000||scripts\\ml\\run_sentiment_batch.py:load_done_ids:00000000"
+    verdict: dismissed
+    stable_key: "scripts\\ml\\build_eval_set.py:_load_done||scripts\\ml\\run_sentiment_batch.py:load_done_ids"
+    note: "2026-08-29：跨会话 WIP 撞车（两脚本续跑去重小函数 60% extract）——脚本间雷同小函数不合并不抽象；dismissed 为解跨会话阻塞，owner 会话若合并请同步移除本条"

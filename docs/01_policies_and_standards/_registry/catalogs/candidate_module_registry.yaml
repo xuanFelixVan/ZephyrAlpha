@@ -13754,7 +13754,7 @@ entries:
     blocking_question: null
     result: candidate
   status: promoted
-  promoted_to: src/zephyr/frontend/wechat_bot_handler.py
+  promoted_to: src/zephyr/frontend/implementations/wechat_bot_handler.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'

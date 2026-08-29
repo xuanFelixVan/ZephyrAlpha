@@ -44981,7 +44981,7 @@ ownership:
     existence: '已实现'
     ownership_judgment: '本模块'
 
-  - path: 'src/zephyr/frontend/feishu_bot_sender.py'
+  - path: 'src/zephyr/frontend/implementations/feishu_bot_sender.py'
     owner_blueprint: 'MOD-FE-012'
     claim_type: 'depgraph_node'
     declared_in: ''

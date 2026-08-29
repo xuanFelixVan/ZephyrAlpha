@@ -18,11 +18,11 @@ import datetime
 import pytest
 
 pytest.importorskip(
-    "zephyr.frontend.wechat_bot_handler",
+    "zephyr.frontend.implementations.wechat_bot_handler",
     reason="wechat_bot_handler not importable",
 )
 
-from zephyr.frontend.wechat_bot_handler import (  # noqa: E402
+from zephyr.frontend.implementations.wechat_bot_handler import (  # noqa: E402
     CallbackMessage,
     Command,
     OrderSide,
