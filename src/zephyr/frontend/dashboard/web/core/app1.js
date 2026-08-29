@@ -2298,6 +2298,33 @@ function barLabel(i){
   return fmtD(dt)+' '+String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');
 }
 function mkReadout(chartBox){ var rd=chartBox.querySelector('.readout'); if(!rd){ rd=document.createElement('div'); rd.className='readout'; chartBox.appendChild(rd); } return rd; }
+/* v4 canvas 十字光标联动：主层 canvas 绑定 mousemove，顶层 canvas 画十字线，DOM 覆盖层读数卡 */
+function bindHoverCanvas(mc,cc,ov,cfg){
+  var cctx=cc.getContext('2d'),dpr=window.devicePixelRatio||1;
+  cctx.scale(dpr,dpr);
+  mc.addEventListener('mousemove',function(e){
+    var rect=mc.getBoundingClientRect();
+    var sx=(e.clientX-rect.left)/rect.width*cfg.W;
+    var i=Math.floor((sx-cfg.L)/((cfg.W-cfg.L-cfg.R)/cfg.n));
+    if(i<0)i=0; if(i>=cfg.n)i=cfg.n-1;
+    /* 顶层 canvas 清屏重绘十字线（60fps 不碰主层） */
+    cctx.clearRect(0,0,cfg.W,cfg.H);
+    var cx=cfg.x(i)+cfg.cw/2;
+    cctx.strokeStyle='#EDEFF2'; cctx.lineWidth=0.8; cctx.setLineDash([4,3]); cctx.globalAlpha=0.75;
+    cctx.beginPath(); cctx.moveTo(cx,cfg.T); cctx.lineTo(cx,cfg.H-cfg.B); cctx.stroke(); cctx.setLineDash([]); cctx.globalAlpha=1;
+    /* DOM 覆盖层读数卡 */
+    var rd=ov.querySelector('.readout'); if(!rd){ rd=document.createElement('div'); rd.className='readout'; ov.appendChild(rd); }
+    rd.style.display='block';
+    rd.innerHTML=cfg.readout(i);
+    /* 筹码峰随光标重算 */
+    if(mc.__sqChipRender){ var gi=cfg.w.lo+i; if(cfg.d[gi]) mc.__sqChipRender(gi,cfg.d[gi].c); }
+  });
+  mc.addEventListener('mouseleave',function(){
+    cctx.clearRect(0,0,cfg.W,cfg.H);
+    var rd=ov.querySelector('.readout'); if(rd) rd.style.display='none';
+    if(mc.__sqChipBase) mc.__sqChipBase();
+  });
+}
 function bindHover(svg,cfg){
   cfg.g0=svg; CHARTS[svg.id]=cfg;
   if(!svg._hb){
@@ -5135,7 +5162,7 @@ function sentRenderTrend(){
     tmp[N-1]=62;
     var yf=function(v){return T+(1-v/100)*(H-T-B);},xf=function(ii){return L+ii*(W-L-R)/(N-1);};
     var g=el('g',{},svg); grid(svg,W,L,R,H,T,B);
-    el('rect',{x:L,y:yf(80),width:W-L-R,height:Math.abs(yf(100)-yf(80)),fill:'#CA3F64',opacity:0.07},g);
+    el('rect',{x:L,y:yf(100),width:W-L-R,height:Math.abs(yf(100)-yf(80)),fill:'#CA3F64',opacity:0.07},g);  /* 修复：狂热区色带原 y=yf(80) 错位到 60~80 区间，正确应从 yf(100) 顶起 */
     el('rect',{x:L,y:yf(20),width:W-L-R,height:Math.abs(yf(0)-yf(20)),fill:'#25A750',opacity:0.07},g);
     el('line',{x1:L,x2:W-R,y1:yf(80),y2:yf(80),stroke:'#CA3F64','stroke-width':0.6,'stroke-dasharray':'4 3',opacity:0.6},g);
     el('line',{x1:L,x2:W-R,y1:yf(20),y2:yf(20),stroke:'#25A750','stroke-width':0.6,'stroke-dasharray':'4 3',opacity:0.6},g);
@@ -5873,14 +5900,15 @@ function sqPoolFind(sym){ for(var i=0;i<SQ_POOL.length;i++) if(SQ_POOL[i].sym===
 function sqData(){ return genCandles(+sqCur,240); }
 function sqInit(){
   sqRenderList(); sqRenderAll();
-  var svg=document.getElementById('sq-main');
-  if(svg&&!svg.__sqWheelBound){
-    svg.__sqWheelBound=1;
-    svg.addEventListener('wheel',sqWheel,{passive:false});
-    svg.addEventListener('mousedown',sqDragStart);   /* v3 拖拽平移 */
+  var mc=document.getElementById('sq-main-canvas');
+  if(mc&&!mc.__sqBound){
+    mc.__sqBound=1;
+    mc.addEventListener('wheel',sqWheel,{passive:false});
+    mc.addEventListener('mousedown',sqDragStart);   /* v3 拖拽平移 */
     window.addEventListener('mousemove',sqDragMove);
     window.addEventListener('mouseup',sqDragEnd);
-    svg.addEventListener('dblclick',sqDblReset);   /* v3 双击复位 */
+    mc.addEventListener('dblclick',sqDblReset);   /* v3 双击复位 */
+    mc.addEventListener('click',sqDrawClickCanvas,true);   /* v4 画线点击（capture=画线优先于事件弹层） */
   }
   sqDrawLoad();   /* v3.1：按股票+周期加载画线（localStorage 持久化，刷新不丢） */
   sqRenderMain();   /* v3.1：加载后补渲染（修复刷新后线条不上屏） */
@@ -5949,7 +5977,8 @@ function sqWinGet(){
 function sqWheel(e){
   e.preventDefault();
   var d=sqData(),w=sqWinGet(),cnt=w.hi-w.lo;
-  var svg=document.getElementById('sq-main'),r=svg.getBoundingClientRect();
+  var mc=document.getElementById('sq-main-canvas'),r=mc.getBoundingClientRect();
+  if(!r.width)return;   /* v4：canvas 防御（隐藏页 rect.width=0） */
   var fx=Math.max(0.02,Math.min(0.98,(e.clientX-r.left)/r.width));
   var dir=e.deltaY>0?1:-1;
   var ncnt=Math.round(cnt*(dir>0?0.8:1.25));   /* 滚轮下=放大（窗口变窄）、上=缩小（窗口变宽），OKX 方向 */
@@ -5968,7 +5997,8 @@ function sqDragStart(e){
 }
 function sqDragMove(e){
   if(!sqDrag)return;
-  var svg=document.getElementById('sq-main'),r=svg.getBoundingClientRect();
+  var mc=document.getElementById('sq-main-canvas'),r=mc.getBoundingClientRect();
+  if(!r.width)return;   /* v4：canvas 防御 */
   var d=sqData(),cnt=sqDrag.w.hi-sqDrag.w.lo;
   var perPx=cnt/Math.max(1,r.width);   /* 每像素对应 K 线根数 */
   var dj=-Math.round((e.clientX-sqDrag.x)*perPx);   /* 右拖=看历史（窗口左移），OKX 方向 */
@@ -5994,6 +6024,49 @@ function sqDrawSet(m){
   sqRenderHead();   /* 刷新按钮高亮 */
 }
 function sqDrawClear(){ sqDraw.items=[]; sqDraw.pend=null; sqDrawSave(); sqRenderHead(); sqRenderMain(); }
+/* v4 画线渲染（canvas 主层）：数据坐标→像素，随窗口/缩放联动 */
+function sqDrawRenderCanvas(ctx,x,yf,slotW,n,w,d,L2,R2){
+  sqDraw.items.forEach(function(it){
+    var pts=it.pts;
+    if(it.type==='hline'){
+      var y=yf(pts[0][1]);
+      ctx.strokeStyle='#F0B90B'; ctx.lineWidth=1; ctx.setLineDash([6,4]);
+      ctx.beginPath(); ctx.moveTo(L2,y); ctx.lineTo(R2,y); ctx.stroke(); ctx.setLineDash([]);
+    }else if(it.type==='trend'){
+      var x1=x(pts[0][0]-w.lo)+slotW*0.31, y1=yf(pts[0][1]), x2=x(pts[1][0]-w.lo)+slotW*0.31, y2=yf(pts[1][1]);
+      ctx.strokeStyle='#3D8BFF'; ctx.lineWidth=1.2;
+      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    }else if(it.type==='rect'){
+      var rx1=x(pts[0][0]-w.lo)+slotW*0.31, ry1=yf(pts[0][1]), rx2=x(pts[1][0]-w.lo)+slotW*0.31, ry2=yf(pts[1][1]);
+      ctx.fillStyle='rgba(61,139,255,0.08)'; ctx.fillRect(Math.min(rx1,rx2),Math.min(ry1,ry2),Math.abs(rx2-rx1),Math.abs(ry2-ry1));
+      ctx.strokeStyle='#3D8BFF'; ctx.lineWidth=1; ctx.setLineDash([4,3]);
+      ctx.strokeRect(Math.min(rx1,rx2),Math.min(ry1,ry2),Math.abs(rx2-rx1),Math.abs(ry2-ry1)); ctx.setLineDash([]);
+    }
+  });
+}
+/* v4 画线点击（canvas 坐标拾取）：canvas 无节点，用 getBoundingClientRect 换算 */
+function sqDrawClickCanvas(e){
+  if(!sqDraw.mode) return;
+  e.stopPropagation(); e.preventDefault();
+  var mc=document.getElementById('sq-main-canvas'),r=mc.getBoundingClientRect();
+  var W=1100,L=46,R=sqTogs.chip?150:64;
+  var d=sqData(),w=sqWinGet(),n=w.hi-w.lo,slotW=(W-L-R)/(n+12);
+  var m20=sqMAArr(d,20),lo=1e18,hi=-1e18,i;
+  var hiEff2=Math.min(w.hi,d.length);
+  for(i=w.lo;i<hiEff2;i++){ lo=Math.min(lo,d[i].l,m20[i]); hi=Math.max(hi,d[i].h,m20[i]); }
+  var pad=(hi-lo)*0.08; lo-=pad; hi+=pad;
+  var T=14,H=460,B=30;
+  var fx=(e.clientX-r.left)/r.width*W, fy=(e.clientY-r.top)/r.height*H;
+  var gi=Math.max(0,Math.min(d.length-1+12,Math.round((fx-L)/slotW+w.lo)));
+  var px=lo+(1-(fy-T)/(H-T-B))*(hi-lo);
+  var pt=[gi,Math.round(px*100)/100];
+  if(sqDraw.mode==='hline'){ sqDraw.items.push({type:'hline',pts:[pt]}); sqDrawSave(); sqDraw.pend=null; }
+  else if(sqDraw.mode==='trend'||sqDraw.mode==='rect'){
+    if(!sqDraw.pend){ sqDraw.pend=pt; }
+    else{ sqDraw.items.push({type:sqDraw.mode,pts:[sqDraw.pend,pt]}); sqDrawSave(); sqDraw.pend=null; }
+  }
+  sqRenderMain();
+}
 /* 渲染已存画线（数据坐标→像素，随窗口/缩放联动）；L2/R2=蜡烛区左右界（显式传入，不依赖外部作用域） */
 function sqDrawRender(g,x,yf,slotW,n,w,d,L2,R2){
   sqDraw.items.forEach(function(it){
@@ -6076,8 +6149,15 @@ function sqTickData(){   /* 分时 240 分钟合成序列（种子确定性；�
   var out={px:px,vol:vol,k:sqCur}; sqTickData.__c=out; return out;
 }
 function sqRenderMain(){
-  var svg=document.getElementById('sq-main'); if(!svg)return; svg.innerHTML='';
+  /* v4 canvas 分层：主层 canvas=数据图形，DOM 覆盖层=tooltip/事件轴/画线 */
+  var stack=document.getElementById('sq-canvas-stack'); if(!stack)return;
+  var mc=document.getElementById('sq-main-canvas'), cc=document.getElementById('sq-cross-canvas'), ov=document.getElementById('sq-dom-overlay');
+  if(!mc||!cc||!ov) return;
   var W=1100,H=460,L=46,R=sqTogs.chip?150:64,T=14,B=30;
+  var dpr=window.devicePixelRatio||1;
+  mc.width=W*dpr; mc.height=H*dpr; mc.style.width='100%'; mc.style.height='100%';
+  cc.width=W*dpr; cc.height=H*dpr; cc.style.width='100%'; cc.style.height='100%';
+  var ctx=mc.getContext('2d'); ctx.scale(dpr,dpr); ctx.clearRect(0,0,W,H);
   var CW_RATIO=0.78, CW_MIN=2.5, CW_MAX=26, FS_MAX=120;   /* v3.1：蜡烛体宽绝对像素夹紧（缩放不变形）+ 未来空槽上限 */
   var d=sqData(),w=sqWinGet(),n=w.hi-w.lo,win=d.slice(w.lo,w.hi);
   /* v3.2：FS 动态化——窗口右缘贴数据末时未来空槽=12，右拖进未来区时空槽随 hi 扩展；滚轮缩放时收窄到 2 格（放大不留白） */
@@ -6085,105 +6165,144 @@ function sqRenderMain(){
   var slotW=(W-L-R)/(n+FSeff);
   var x=function(j){ return L+j*slotW; };
   var cwEff=Math.max(CW_MIN,Math.min(CW_MAX,slotW*CW_RATIO));   /* v3.1：体宽绝对夹紧——放大不再变细 */
-  var g=el('g',{},svg);
   var dates=sqDates(d);
-  /* ---------- 分时模式（同花顺功能增量：白线价+黄均价+双轴） ---------- */
+  /* ---------- 分时模式（v4 canvas：同花顺功能增量） ---------- */
   if(sqTf==='分时'){
     var tk=sqTickData(),tp=tk.px,tn=240;
     var p0=sqPoolFind(sqCur),prev=tp[0],tlo=Math.min.apply(null,tp),thi=Math.max.apply(null,tp),tpd=(thi-tlo)*0.12; tlo-=tpd; thi+=tpd;
     var ty=function(v){ return T+(1-(v-tlo)/(thi-tlo))*(H-T-B); };
     var tx=function(j){ return L+j*(W-L-R)/(tn-1); };
-    if(sqTogs.grid) grid(g,W,L,R,H,T,B);
+    /* 网格（v4 canvas） */
+    if(sqTogs.grid){
+      ctx.strokeStyle='#171717'; ctx.lineWidth=1;
+      var vSteps=5;
+      for(var vi=0;vi<=vSteps;vi++){ var vy=T+vi*(H-T-B)/vSteps; ctx.beginPath(); ctx.moveTo(L,vy); ctx.lineTo(W-R,vy); ctx.stroke(); }
+      var hSteps=Math.ceil(tn/7);
+      for(var hi2=0;hi2<=hSteps;hi2++){ var hx=L+hi2*(W-L-R)/hSteps; ctx.beginPath(); ctx.moveTo(hx,T); ctx.lineTo(hx,H-B); ctx.stroke(); }
+    }
     /* 昨收参考线 */
-    el('line',{x1:L,x2:W-R,y1:ty(prev),y2:ty(prev),stroke:'#59626D','stroke-width':0.8,'stroke-dasharray':'4 3'},g);
+    ctx.strokeStyle='#59626D'; ctx.lineWidth=0.8; ctx.setLineDash([4,3]);
+    ctx.beginPath(); ctx.moveTo(L,ty(prev)); ctx.lineTo(W-R,ty(prev)); ctx.stroke(); ctx.setLineDash([]);
     var avg=[],asum=0; for(var ai=0;ai<tn;ai++){ asum+=tp[ai]; avg.push(asum/(ai+1)); }
-    var apPts=tp.map(function(v,j){return[tx(j),ty(v)];});
     /* 面积微渐变（刻意超越包） */
-    var gidt='sg-tick';
-    el('defs',{},g).innerHTML='<linearGradient id="'+gidt+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EDEFF2" stop-opacity="0.12"/><stop offset="1" stop-color="#EDEFF2" stop-opacity="0"/></linearGradient>';
-    var apath='M'+apPts.map(function(q){return q[0].toFixed(1)+' '+q[1].toFixed(1);}).join(' L');
-    el('path',{d:apath+' L'+tx(tn-1)+' '+ty(tlo)+' L'+tx(0)+' '+ty(tlo)+' Z',fill:'url(#'+gidt+')',stroke:'none'},g);
-    polyline(g,apPts,'#EDEFF2',1.5);
-    polyline(g,avg.map(function(v,j){return[tx(j),ty(v)];}),'#F0B90B',1.2);
-    /* 双轴：右价左% */
+    var grad=ctx.createLinearGradient(0,T,0,H-B);
+    grad.addColorStop(0,'rgba(237,239,242,0.12)'); grad.addColorStop(1,'rgba(237,239,242,0)');
+    ctx.fillStyle=grad; ctx.beginPath();
+    ctx.moveTo(tx(0),ty(tlo));
+    for(var ai2=0;ai2<tn;ai2++) ctx.lineTo(tx(ai2),ty(tp[ai2]));
+    ctx.lineTo(tx(tn-1),ty(tlo)); ctx.closePath(); ctx.fill();
+    /* 白线价+黄均价 */
+    ctx.strokeStyle='#EDEFF2'; ctx.lineWidth=1.5; ctx.beginPath();
+    for(var ai3=0;ai3<tn;ai3++){ var px3=tx(ai3),py3=ty(tp[ai3]); if(ai3===0)ctx.moveTo(px3,py3);else ctx.lineTo(px3,py3); }
+    ctx.stroke();
+    ctx.strokeStyle='#F0B90B'; ctx.lineWidth=1.2; ctx.beginPath();
+    for(var ai4=0;ai4<tn;ai4++){ var px4=tx(ai4),py4=ty(avg[ai4]); if(ai4===0)ctx.moveTo(px4,py4);else ctx.lineTo(px4,py4); }
+    ctx.stroke();
+    /* 双轴：右价左%（v4 canvas fillText） */
+    ctx.font='12px OKXSans'; ctx.textAlign='left';
     for(var ti2=0;ti2<=4;ti2++){
       var tv=tlo+(thi-tlo)*ti2/4,tyy=ty(tv);
-      el('line',{x1:L,x2:W-R,y1:tyy,y2:tyy,stroke:'#2A2F36','stroke-width':0.3,opacity:0.5},g);
-      hlabel(g,W-R+6,tyy+3,tv.toFixed(2),'#A0A6AD',10);
-      var pc2=(tv-prev)/prev*100,pl=el('text',{x:L-5,y:tyy+3,fill:pc2>=0?'#CA3F64':'#25A750','font-size':10,'text-anchor':'end'},g); pl.textContent=(pc2>=0?'+':'')+pc2.toFixed(2)+'%';
+      ctx.fillStyle='#C6C6C6'; ctx.fillText(tv.toFixed(2),W-R+6,tyy+3);
+      var pc2=(tv-prev)/prev*100;
+      ctx.fillStyle=pc2>=0?'#CA3F64':'#25A750'; ctx.textAlign='right'; ctx.fillText((pc2>=0?'+':'')+pc2.toFixed(2)+'%',L-5,tyy+3); ctx.textAlign='left';
     }
-    /* 当前价色签（OKX 式：色底白字+时间） */
+    /* 当前价色签（v4 canvas） */
     var lc=tp[tn-1],lup=lc>=prev;
-    el('rect',{x:W-R+2,y:ty(lc)-9,width:58,height:17,rx:3,fill:lup?'#CA3F64':'#25A750'},g);
-    var lct=el('text',{x:W-R+7,y:ty(lc)+3,fill:'#FFFFFF','font-size':10},g); lct.textContent=lc.toFixed(2);
+    ctx.fillStyle=lup?'#CA3F64':'#25A750'; ctx.fillRect(W-R+2,ty(lc)-9,58,17);
+    ctx.fillStyle='#000000'; ctx.font='11px OKXSans'; ctx.fillText(lc.toFixed(2),W-R+7,ty(lc)+3);
     /* 时间轴（09:30/10:30/11:30/13:00/14:00/15:00） */
+    ctx.fillStyle='#59626D'; ctx.font='10px OKXSans';
     ['09:30','10:30','11:30/13:00','14:00','15:00'].forEach(function(tk2,k2){
       var xi=[0,60,120,180,239][k2];
-      hlabel(g,Math.max(L,tx(xi)-14),H-8,tk2,'#59626D',10);
+      ctx.fillText(tk2,Math.max(L,tx(xi)-14),H-8);
     });
     /* 高低点标注 */
     var hiI=tp.indexOf(thi-tpd),loI=tp.indexOf(tlo+tpd);
-    hlabel(g,Math.min(tx(hiI)+6,W-R-64),ty(thi-tpd)-4,(thi-tpd).toFixed(2)+' →','#A0A6AD',10);
-    hlabel(g,Math.min(tx(loI)+6,W-R-64),ty(tlo+tpd)+12,(tlo+tpd).toFixed(2)+' →','#A0A6AD',10);
-    bindHover(svg,{W:W,L:L,R:R,H:H-B,T:T,B:0,n:tn,x:tx,cw:(W-L-R)/tn,g:g,rd:mkReadout(svg.parentNode),readout:function(j){
+    ctx.fillStyle='#A0A6AD'; ctx.font='10px OKXSans';
+    ctx.fillText((thi-tpd).toFixed(2)+' →',Math.min(tx(hiI)+6,W-R-64),ty(thi-tpd)-4);
+    ctx.fillText((tlo+tpd).toFixed(2)+' →',Math.min(tx(loI)+6,W-R-64),ty(tlo+tpd)+12);
+    /* hover 十字读数（v4 canvas） */
+    bindHoverCanvas(mc,cc,ov,{W:W,L:L,R:R,H:H-B,T:T,B:0,n:tn,x:tx,cw:(W-L-R)/tn,d:null,w:null,dates:null,m20:null,readout:function(j){
       return '分时  价 '+tp[j].toFixed(2)+'  均 '+avg[j].toFixed(2)+'  量 '+tk.vol[j];
     }});
     return;
   }
-  /* ---------- 蜡烛模式 ---------- */
+  /* ---------- 蜡烛模式（v4 canvas 主层） ---------- */
   var m20=sqMAArr(d,20),lo=1e18,hi=-1e18,i;
   var hiEff=Math.min(w.hi,d.length);   /* v3.1：窗口越未来区时，lo/hi 只算有效数据段 */
   for(i=w.lo;i<hiEff;i++){ lo=Math.min(lo,d[i].l,m20[i]); hi=Math.max(hi,d[i].h,m20[i]); }
   var pad=(hi-lo)*0.08; lo-=pad; hi+=pad;
   var yf=function(v){ return T+(1-(v-lo)/(hi-lo))*(H-T-B); };
-  if(sqTogs.grid) grid(g,W,L,R,H,T,B,n+FSeff);
-  drawCandles(g,win,x,yf,cwEff);   /* v3.1：绝对体宽夹紧（缩放不变形） */
-  var mset=[[5,'#FFA726'],[10,'#EC407A'],[20,'#27C6DA']];   /* v3 MA 色序照抄 OKX 实测：5 橙/10 品红/20 青（v2 标反根治）；MA60 蓝=可选叠加不默认 */
-  mset.forEach(function(m){
-    var arr=sqMAArr(d,m[0]),pts=[];
-    for(var j=0;j<n;j++){ var gi3=w.lo+j; if(gi3>=d.length) continue; pts.push([x(j)+slotW*0.31,yf(arr[gi3])]); }   /* v3.1：越未来区跳过 */
-    polyline(g,pts,m[1],1.3);
-  });
-  if(sqTogs.cost){
-    var avg2=0; for(i=w.lo;i<hiEff;i++) avg2+=d[i].c; avg2/=Math.max(1,hiEff-w.lo);   /* v3.1：成本线只算有效数据段 */
-    el('line',{x1:L,x2:W-R,y1:yf(avg2),y2:yf(avg2),stroke:'#F0B90B','stroke-width':1.2,'stroke-dasharray':'6 4'},g);
-    hlabel(g,W-R-58,yf(avg2)-6,'成本 '+avg2.toFixed(2),'#F0B90B',11);
+  /* 网格（v4 canvas） */
+  if(sqTogs.grid){
+    ctx.strokeStyle='#171717'; ctx.lineWidth=1;
+    var vSteps=(n+FSeff)>120?7:((n+FSeff)>60?6:5);
+    for(var vi=0;vi<=vSteps;vi++){ var vy=T+vi*(H-T-B)/vSteps; ctx.beginPath(); ctx.moveTo(L,vy); ctx.lineTo(W-R,vy); ctx.stroke(); }
+    var hSteps=Math.ceil((n+FSeff)/7);
+    for(var hi2=0;hi2<=hSteps;hi2++){ var hx=L+hi2*(W-L-R)/hSteps; ctx.beginPath(); ctx.moveTo(hx,T); ctx.lineTo(hx,H-B); ctx.stroke(); }
   }
+  /* 蜡烛（v4 canvas） */
+  win.forEach(function(k,j){
+    var up=k.c>=k.o, col=up?'#CA3F64':'#25A750';
+    var cx=x(j)+cwEff/2;
+    ctx.strokeStyle=col; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(cx,yf(k.h)); ctx.lineTo(cx,yf(k.l)); ctx.stroke();
+    ctx.fillStyle=col; ctx.fillRect(x(j),yf(Math.max(k.o,k.c)),cwEff,Math.max(1.5,Math.abs(yf(k.o)-yf(k.c))));
+  });
+  /* MA 三线（v4 canvas） */
+  var mset=[[5,'#FFA726'],[10,'#EC407A'],[20,'#27C6DA']];
+  mset.forEach(function(m){
+    var arr=sqMAArr(d,m[0]);
+    ctx.strokeStyle=m[1]; ctx.lineWidth=1.3; ctx.beginPath();
+    var first=true;
+    for(var j=0;j<n;j++){ var gi3=w.lo+j; if(gi3>=d.length) continue; var px=x(j)+slotW*0.31,py=yf(arr[gi3]); if(first){ctx.moveTo(px,py);first=false;}else ctx.lineTo(px,py); }
+    ctx.stroke();
+  });
+  /* 成本线（v4 canvas） */
+  if(sqTogs.cost){
+    var avg2=0; for(i=w.lo;i<hiEff;i++) avg2+=d[i].c; avg2/=Math.max(1,hiEff-w.lo);
+    ctx.strokeStyle='#F0B90B'; ctx.lineWidth=1.2; ctx.setLineDash([6,4]);
+    ctx.beginPath(); ctx.moveTo(L,yf(avg2)); ctx.lineTo(W-R,yf(avg2)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle='#F0B90B'; ctx.font='11px OKXSans'; ctx.fillText('成本 '+avg2.toFixed(2),W-R-58,yf(avg2)-6);
+  }
+  /* 买卖点（v4 canvas） */
   if(sqTogs.bs){
     sqBS(d).forEach(function(s){
       if(s.i<w.lo||s.i>=hiEff) return;
       var j=s.i-w.lo;
-      if(s.dir===1) hlabel(g,x(j)-16,yf(d[s.i].l)+26,'▲买','#CA3F64',12);
-      else hlabel(g,x(j)-16,yf(d[s.i].h)-20,'▼卖','#25A750',12);
+      ctx.font='12px OKXSans'; ctx.fillStyle=s.dir===1?'#CA3F64':'#25A750';
+      ctx.fillText(s.dir===1?'▲买':'▼卖',x(j)-16,s.dir===1?yf(d[s.i].l)+26:yf(d[s.i].h)-20);
     });
   }
-  /* 高低点标注（OKX 式：极值点右引 "值 →"）——v3.1：只扫有效数据段，初始值夹紧 */
+  /* 高低点标注（v4 canvas） */
   var i0=Math.min(w.lo,d.length-1),hiK=d[i0],loK=d[i0],hiJ=0,loJ=0;
   for(i=0;i<hiEff-w.lo;i++){ var kk=d[w.lo+i]; if(kk.h>hiK.h){hiK=kk;hiJ=i;} if(kk.l<loK.l){loK=kk;loJ=i;} }
-  el('circle',{cx:x(hiJ)+slotW*0.31,cy:yf(hiK.h),r:2,fill:'#A0A6AD'},g);
-  hlabel(g,Math.min(x(hiJ)+slotW*0.62+4,W-R-64),yf(hiK.h)+3,hiK.h.toFixed(2)+' →','#A0A6AD',10);
-  el('circle',{cx:x(loJ)+slotW*0.31,cy:yf(loK.l),r:2,fill:'#A0A6AD'},g);
-  hlabel(g,Math.min(x(loJ)+slotW*0.62+4,W-R-64),yf(loK.l)+3,loK.l.toFixed(2)+' →','#A0A6AD',10);
-  /* 双轴：右=价格刻度（5 档），左=涨跌幅%（窗口首收为 0，红正绿负） */
-  var base=d[Math.min(w.lo,d.length-1)].c;   /* v3.1：越未来区取最后有效收盘价为基准 */
+  ctx.fillStyle='#A0A6AD'; ctx.beginPath(); ctx.arc(x(hiJ)+slotW*0.31,yf(hiK.h),2,0,7); ctx.fill();
+  ctx.font='10px OKXSans'; ctx.fillText(hiK.h.toFixed(2)+' →',Math.min(x(hiJ)+slotW*0.62+4,W-R-64),yf(hiK.h)+3);
+  ctx.beginPath(); ctx.arc(x(loJ)+slotW*0.31,yf(loK.l),2,0,7); ctx.fill();
+  ctx.fillText(loK.l.toFixed(2)+' →',Math.min(x(loJ)+slotW*0.62+4,W-R-64),yf(loK.l)+3);
+  /* 双轴（v4 canvas fillText） */
+  var base=d[Math.min(w.lo,d.length-1)].c;
+  ctx.font='12px OKXSans'; ctx.textAlign='left';
   for(var tk3=0;tk3<=4;tk3++){
     var tv3=lo+(hi-lo)*tk3/4,ty3=yf(tv3);
-    hlabel(g,W-R+6,ty3+3,tv3.toFixed(2),'#A0A6AD',10);
-    var pc3=(tv3-base)/base*100,pl3=el('text',{x:L-6,y:ty3+3,fill:pc3>=0?'#CA3F64':'#25A750','font-size':10,'text-anchor':'end'},g); pl3.textContent=(pc3>=0?'+':'')+pc3.toFixed(1)+'%';
+    ctx.fillStyle='#C6C6C6'; ctx.fillText(tv3.toFixed(2),W-R+6,ty3+3);
+    var pc3=(tv3-base)/base*100;
+    ctx.fillStyle=pc3>=0?'#CA3F64':'#25A750'; ctx.textAlign='right'; ctx.fillText((pc3>=0?'+':'')+pc3.toFixed(1)+'%',L-6,ty3+3); ctx.textAlign='left';
   }
-  /* 当前价色签（v3 OKX 实测：点线 2px点+3px隔 alpha.5 + 色底黑字 + 倒计时小字） */
-  var lastC2=d[Math.min(w.hi,d.length)-1].c,p2=sqPoolFind(sqCur),lup2=p2.dir>=0;   /* v3.1：越未来区取最后有效收盘价 */
-  el('line',{x1:L,x2:W-R,y1:yf(lastC2),y2:yf(lastC2),stroke:lup2?'#CA3F64':'#25A750','stroke-width':1.2,'stroke-dasharray':'2 3',opacity:0.5},g);
-  el('rect',{x:W-R+2,y:yf(lastC2)-9,width:58,height:17,rx:2,fill:lup2?'#CA3F64':'#25A750'},g);
-  var pt2=el('text',{x:W-R+7,y:yf(lastC2)+3,fill:'#000000','font-size':11,'font-weight':600},g); pt2.textContent=lastC2.toFixed(2);
-  var cdt=el('text',{x:W-R+7,y:yf(lastC2)+20,fill:'#59626D','font-size':9},g); cdt.textContent='--:--';
-  /* 筹码峰细腻版 v3.2 同花顺单色+随光标重算：60 桶、每价位一根柱单色（光标价下获利红/上套牢绿）、成本线=琥珀 */
+  /* 当前价色签（v4 canvas） */
+  var lastC2=d[Math.min(w.hi,d.length)-1].c,p2=sqPoolFind(sqCur),lup2=p2.dir>=0;
+  ctx.strokeStyle=lup2?'#CA3F64':'#25A750'; ctx.lineWidth=1.2; ctx.setLineDash([2,3]); ctx.globalAlpha=0.5;
+  ctx.beginPath(); ctx.moveTo(L,yf(lastC2)); ctx.lineTo(W-R,yf(lastC2)); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha=1;
+  ctx.fillStyle=lup2?'#CA3F64':'#25A750'; ctx.fillRect(W-R+2,yf(lastC2)-9,58,17);
+  ctx.fillStyle='#000000'; ctx.font='11px OKXSans'; ctx.fillText(lastC2.toFixed(2),W-R+7,yf(lastC2)+3);
+  ctx.fillStyle='#59626D'; ctx.font='9px OKXSans'; ctx.fillText('--:--',W-R+7,yf(lastC2)+20);
+  /* 筹码峰 v4 canvas 主层绘制：60 桶、每价位一根柱单色（现价下获利红/上套牢绿）、成本线=琥珀、随光标重算 */
   if(sqTogs.chip){
-    var chipG=el('g',{id:'sq-chip-g'},g);   /* 挂光标联动：hover 重算 */
     var NB=60,bw2=(hi-lo)/NB;
     var chipX=W-R+66,chipW=Math.min(64,(W-R)*0.5);
-    function renderChip(uptoGi,refPx){   /* uptoGi=数据末索引（含）；refPx=参考价（现/光标） */
-      chipG.innerHTML='';
+    function renderChip(uptoGi,refPx){
+      ctx.save();
       var binsD=[],bi;
       for(i=0;i<NB;i++) binsD.push(0);
       var st=Math.max(0,Math.min(uptoGi,d.length-1));
@@ -6195,26 +6314,34 @@ function sqRenderMain(){
       var totV=bins.reduce(function(a2,b2){return a2+b2;},0);
       for(i=0;i<NB;i++){
         if(bins[i]<=0) continue;
-        var binPx=lo+(i+0.5)*bw2, isProfit=binPx<=refPx;   /* 相对光标价分获利/套牢 */
+        var binPx=lo+(i+0.5)*bw2, isProfit=binPx<=refPx;
         var bwW3=(bins[i]/bmax2)*chipW, yy2=yf(lo+(i+1)*bw2), hh2=Math.max(1.2,(H-T-B)/NB-0.5);
-        el('rect',{x:chipX,y:yy2,width:Math.max(1,bwW3),height:hh2,fill:isProfit?'#CA3F64':'#25A750',opacity:0.5},chipG);
+        ctx.fillStyle=isProfit?'#CA3F64':'#25A750'; ctx.globalAlpha=0.5;
+        ctx.fillRect(chipX,yy2,Math.max(1,bwW3),hh2);
       }
-      el('line',{x1:chipX-2,x2:chipX+chipW,y1:yf(pocPx),y2:yf(pocPx),stroke:'#F0B90B','stroke-width':1.2},chipG);
-      hlabel(chipG,chipX,T+2,totV>0?('获利 '+(prof/totV*100).toFixed(0)+'%'):'获利 —','#8B949E',9);
-      hlabel(chipG,chipX,T+14,'成本 '+pocPx.toFixed(2),'#F0B90B',9);
+      ctx.globalAlpha=1;
+      ctx.strokeStyle='#F0B90B'; ctx.lineWidth=1.2;
+      ctx.beginPath(); ctx.moveTo(chipX-2,yf(pocPx)); ctx.lineTo(chipX+chipW,yf(pocPx)); ctx.stroke();
+      ctx.fillStyle='#8B949E'; ctx.font='9px OKXSans';
+      ctx.fillText(totV>0?('获利 '+(prof/totV*100).toFixed(0)+'%'):'获利 —',chipX,T+2);
+      ctx.fillStyle='#F0B90B'; ctx.fillText('成本 '+pocPx.toFixed(2),chipX,T+14);
+      ctx.restore();
     }
-    renderChip(Math.min(w.hi,d.length)-1, lastC2);   /* 默认=窗口末现价 */
-    svg.__sqChipRender=renderChip;   /* 供 hover 联动 */
-    svg.__sqChipBase=function(){ renderChip(Math.min(w.hi,d.length)-1, lastC2); };   /* 移出回默认 */
+    renderChip(Math.min(w.hi,d.length)-1, lastC2);
+    /* v4：canvas 无节点，光标联动改由 sq-main-canvas 的 mousemove 触发 renderChip 重绘 */
+    mc.__sqChipRender=renderChip;
+    mc.__sqChipBase=function(){ renderChip(Math.min(w.hi,d.length)-1, lastC2); };
   }
-  /* 日期轴（OKX 式：末日后续未来空槽，等距标签） */
+  /* 日期轴（v4 canvas fillText） */
   var dStep=Math.ceil((n+FSeff)/7);
+  ctx.fillStyle='#59626D'; ctx.font='10px OKXSans'; ctx.textAlign='left';
   for(i=0;i<n+FSeff;i+=dStep){
     var di=w.lo+i,dstr=di<d.length?dates[di]:null;
     if(!dstr){ var fdt=new Date(2026,7,27); fdt.setDate(fdt.getDate()+(di-d.length+1)); dstr=String(fdt.getMonth()+1).padStart(2,'0')+'-'+String(fdt.getDate()).padStart(2,'0'); }
-    hlabel(g,x(i)-12,H-8,dstr,'#59626D',10);
+    ctx.fillText(dstr,x(i)-12,H-8);
   }
-  /* 事件轴图标（新闻双日期规则：pub=📰披露 + evt=📅兑现，同一弹层；同日多事件带数量 badge） */
+  /* 事件轴图标（v4 DOM 覆盖层：保留免费交互） */
+  ov.innerHTML='';
   var evByDate={};
   SQ_EVX.forEach(function(ev){
     [{dt:ev.pub,ic:SQ_EVIC[ev.type]||'📑'},{dt:ev.evt,ic:ev.pub===ev.evt?null:'📅'}].forEach(function(oc){
@@ -6228,28 +6355,32 @@ function sqRenderMain(){
     for(i=0;i<d.length;i++) if(dates[i]===dt){ gi=i-w.lo; break; }
     var ex;
     if(gi>=0&&gi<n) ex=x(gi)+slotW*0.31;
-    else {   /* 未来日期→右侧未来空槽定位 */
+    else {
       var fdt2=new Date(2026,7,27),tgt=new Date(2026,parseInt(dt.slice(0,2))-1,parseInt(dt.slice(3)));
       var fdiff=Math.round((tgt-fdt2)/86400000);
       if(fdiff>0&&fdiff<=FSeff) ex=x(n+fdiff-1)+slotW*0.31; else return;
     }
-    var grp=el('g',{cursor:'pointer','data-ev':dt},g);
-    el('rect',{x:ex-9,y:H-26,width:18,height:16,rx:4,fill:'#1A1C1E',stroke:'#2E2E2E','stroke-width':1,'data-ev':dt},grp);
-    var icT=el('text',{x:ex,y:H-14,'font-size':10,'text-anchor':'middle','data-ev':dt},grp); icT.textContent=evByDate[dt].ics[0];
+    var bx=(ex/W)*100, by=((H-26)/H)*100;
+    var evEl=document.createElement('div');
+    evEl.style.cssText='position:absolute;left:'+bx+'%;top:'+by+'%;width:18px;height:16px;background:#1A1C1E;border:1px solid #2E2E2E;border-radius:4px;font-size:10px;text-align:center;line-height:14px;cursor:pointer;pointer-events:auto;z-index:5';
+    evEl.textContent=evByDate[dt].ics[0];
+    evEl.setAttribute('data-ev',dt);
     if(evByDate[dt].ics.length>1){
-      el('circle',{cx:ex+8,cy:H-26,r:5.5,fill:'#3D8BFF','data-ev':dt},grp);
-      var cb=el('text',{x:ex+8,y:H-23,'font-size':8,fill:'#fff','text-anchor':'middle','data-ev':dt},grp); cb.textContent=evByDate[dt].ics.length;
+      var badge=document.createElement('span');
+      badge.style.cssText='position:absolute;right:-4px;top:-4px;width:11px;height:11px;background:#3D8BFF;border-radius:50%;font-size:8px;color:#fff;line-height:11px;text-align:center';
+      badge.textContent=evByDate[dt].ics.length;
+      evEl.appendChild(badge);
     }
+    evEl.onclick=function(e){ sqEvPopV2(dt,e); };
+    ov.appendChild(evEl);
   });
-  if(!svg.__evBind){ svg.__evBind=1; svg.addEventListener('click',function(e){ var t=e.target; if(t&&t.getAttribute&&t.getAttribute('data-ev')) sqEvPopV2(t.getAttribute('data-ev'),e); }); }
-  /* v3.1 画线层渲染（画线优先于十字读数，点击不触发 hover） */
+  /* v4 画线层（canvas 主层绘制，数据坐标→像素映射） */
   if(sqTf!=='分时'){
-    sqDrawRender(g,x,yf,slotW,n,w,d,L,W-R);
-    if(!svg.__drawBind){ svg.__drawBind=1; svg.addEventListener('click',sqDrawClick,true); }   /* capture=画线优先于事件弹层 */
+    sqDrawRenderCanvas(ctx,x,yf,slotW,n,w,d,L,W-R);
   }
-  /* hover 十字读数 */
-  bindHover(svg,{W:W,L:L,R:R,H:H-B,T:T,B:0,n:n,x:function(j){return x(j)+slotW*0.31;},cw:cwEff,g:g,rd:mkReadout(svg.parentNode),readout:function(j){
-    var gi=w.lo+j,k=d[gi]; if(!k)return '';   /* v3.1：未来空槽 hover 不出读数 */
+  /* hover 十字读数（v4：canvas 主层绑定 mousemove，顶层 canvas 画十字线，DOM 覆盖层读数卡） */
+  bindHoverCanvas(mc,cc,ov,{W:W,L:L,R:R,H:H-B,T:T,B:0,n:n,x:function(j){return x(j)+slotW*0.31;},cw:cwEff,d:d,w:w,dates:dates,m20:m20,readout:function(j){
+    var gi=w.lo+j,k=d[gi]; if(!k)return '';
     return dates[gi]+'  开 '+k.o.toFixed(2)+'  高 '+k.h.toFixed(2)+'  低 '+k.l.toFixed(2)+'  收 '+k.c.toFixed(2)+'  MA20 '+m20[gi].toFixed(2);
   }});
 }
@@ -6258,7 +6389,7 @@ function sqEvPopV2(dt,e){
   var old=document.getElementById('sq-evpop2'); if(old)old.remove();
   var evs=SQ_EVX.filter(function(ev){return ev.pub===dt||ev.evt===dt;});
   if(!evs.length)return;
-  var box=svgBoxOf('sq-main'); if(!box)return;
+  var box=document.getElementById('sq-canvas-stack'); if(!box)return;   /* v4：canvas 化后 svg#sq-main 已删，改取 stack 容器 */
   var pop=document.createElement('div'); pop.id='sq-evpop2'; pop.className='sq-evpop2';
   var h='<div class="tt">2026/'+dt.replace('-','/')+'</div>';
   evs.forEach(function(ev){
