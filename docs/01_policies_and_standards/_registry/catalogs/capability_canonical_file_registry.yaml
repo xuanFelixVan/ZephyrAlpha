@@ -4893,6 +4893,38 @@ capabilities:
   - DabanTimingDecision
   - DynamicCapacityCalculator
 creation_tokens:
+- file: src/zephyr/intelligence/model_routing/runtime_assembly.py
+  token: auto-runtime-assembly-20260829
+  created_by: traesid-20260829-1308
+  capability: model_router_orch
+- file: tests/intelligence/model_routing/test_runtime_assembly.py
+  token: auto-test-runtime-assembly-20260829
+  created_by: traesid-20260829-1308
+  capability: model_router_orch
+- file: src/zephyr/intelligence/reflexion/vote_review_shell.py
+  token: auto-vote-review-shell-20260829
+  created_by: traesid-20260829-1308
+  capability: vote_review_shell
+- file: docs/03_modules/_domain_autonomy_core/vote_review_shell/blueprint.md
+  token: auto-blueprint-vote-review-shell-20260829
+  created_by: traesid-20260829-1308
+  capability: vote_review_shell
+- file: tests/intelligence/test_vote_review_shell.py
+  token: auto-test-vote-review-shell-20260829
+  created_by: traesid-20260829-1308
+  capability: vote_review_shell
+- file: src/zephyr/autonomy_core/embedding_provider_adapter.py
+  token: auto-embedding-provider-adapter-20260829
+  created_by: traesid-20260829-1308
+  capability: agentic_drift_guard
+- file: tests/autonomy/test_autonomy_gate_drift_hook.py
+  token: auto-test-gate-drift-hook-20260829
+  created_by: traesid-20260829-1308
+  capability: agentic_drift_guard
+- file: tests/autonomy/test_embedding_provider_adapter.py
+  token: auto-test-embedding-provider-adapter-20260829
+  created_by: traesid-20260829-1308
+  capability: agentic_drift_guard
 - file: src/zephyr/autonomy_core/module_factory/__init__.py
   token: auto-module-factory-init-20260829
   created_by: traesid-20260829-1308

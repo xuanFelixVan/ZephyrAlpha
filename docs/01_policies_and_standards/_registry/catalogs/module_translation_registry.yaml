@@ -30,6 +30,27 @@ entry_schema:
   desc_en: str
   plain_zh: str
 entries:
+- module_path: src/zephyr/intelligence/model_routing/runtime_assembly.py
+  domain_id: D_INTELLIGENCE
+  name_zh: 模型路由运行时装配
+  name_en: Model Routing Runtime Assembly
+  desc_zh: 11号文 Phase 1 运行时装配（GP1 第二波）：把 CascadeOrchestrator（MOD-MODEL_ROUTER_ORCH）适配为 llm_agent_router 的 decision_engine，并接通 cost_ledger（BudgetEngine）/audit_sink（统一事件 JSONL）/period（data/calendar 交易时段）三缝；级联异常降级不阻断路由返回。
+  desc_en: Phase 1 runtime assembly wiring CascadeOrchestrator as llm_agent_router decision_engine plus cost_ledger/audit_sink/period seams; cascade faults degrade without blocking routing.
+  plain_zh: "装电线的工作"。级联路由（能不能做→谁适合→预算内选谁）此前已建成但插座没插上；本模块把插头插进运行时门面，让路由决策真正走三段级联，任何一段坏了自动回退老办法，绝不断电。
+- module_path: src/zephyr/intelligence/reflexion/vote_review_shell.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: 投票评审壳
+  name_en: Vote Review Shell
+  desc_zh: 12号文 Phase 1 投票评审壳（MOD-VOTE_REVIEW_SHELL，<100 行纯编排）：人多开 3-5 会话产候选→壳收集候选文件→调 A2AVoting（MOD-INF-025）计票（approve/reject/abstain+quorum+权重）→最优落盘+裁决报告；人手动触发的可选模式设施，无自动触发路径。
+  desc_en: Phase 1 vote review shell (MOD-VOTE_REVIEW_SHELL, <100-line orchestration): collect candidate files, run A2AVoting (MOD-INF-025) tally with quorum/weights, persist winner plus verdict report; human-triggered optional mode, zero auto-trigger paths.
+  plain_zh: "多开工位方案的唱票员"。遇到拿不准的大事，人可以开几个 AI 会话各写一版方案放进文件夹，它负责收齐、按规则唱票、把胜出方案和计票报告落盘；它从不自己启动，只有人拉它才干活。
+- module_path: src/zephyr/autonomy_core/embedding_provider_adapter.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: 嵌入向量适配器
+  name_en: Embedding Provider Adapter
+  desc_zh: 15号文 S1.3 批量档配套（MOD-AU-003）：把既有 EmbeddingRouter（MOD-INF-042）适配为 drift_semantic_reviewer 的 EmbeddingProvider Protocol，复用其路由/LSG 闸门/降级链；批量手动 CLI 带盘中守卫（交易日 09:30-15:00 拒跑）。
+  desc_en: S1.3 batch companion (MOD-AU-003): adapts EmbeddingRouter (MOD-INF-042) to the EmbeddingProvider protocol reusing its routing/LSG/degradation chain; manual batch CLI guarded off trading hours.
+  plain_zh: "语义体检的翻译官"。批量复核 AI 会话有没有跑偏时需要算文字相似度，本适配器把项目现成的嵌入模型包装成体检器能用的接口，且只在收盘后干活，绝不挤占盘中资源。
 - module_path: src/zephyr/autonomy_core/module_factory/knowledge_classifier.py
   domain_id: D_AUTONOMY_CORE
   name_zh: 知识分类器
