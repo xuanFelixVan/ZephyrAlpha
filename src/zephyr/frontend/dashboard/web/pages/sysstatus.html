@@ -79,6 +79,34 @@
       </div>
     </div>
 
+    <!-- R23a：QMT 文件桥健康详细卡（旧版 Panel 移植，颗粒度对齐——独立行） -->
+    <div class="row c1">
+      <div class="card">
+        <h3>QMT 文件桥健康 <span class="badge b-na">演示数据</span> <span class="dim">真源=fetch_qmt_bridge_health（production 在跑，I-2 接线转真）</span></h3>
+        <div class="param-strip" style="margin-bottom:10px">
+          <span>文件桥整体 <span class="badge b-warn">降级 degraded</span></span>
+          <span>检查于 <b>22:30:38</b></span>
+          <span style="border-right:none">终端数 <b>1</b>（qmt_sim）</span>
+        </div>
+        <table>
+          <tr><th>终端</th><th>状态</th><th>降级原因</th><th>在途挂单</th><th>持仓数</th><th>可用资金</th></tr>
+          <tr>
+            <td><b>qmt_sim</b></td>
+            <td><span class="badge b-warn">▲ 降级</span></td>
+            <td class="dim">官方导出 92375s 未更新</td>
+            <td>0</td>
+            <td>1</td>
+            <td class="up">9,998,116.60</td>
+          </tr>
+        </table>
+        <table style="margin-top:8px">
+          <tr><th>导出文件延迟（秒）</th><th>Order.csv</th><th>PositionStatics.csv</th><th>Account.csv</th><th>Deal.csv</th></tr>
+          <tr><td class="dim">官方导出时间戳距今</td><td class="down">92375.2</td><td class="down">92375.2</td><td class="down">92375.2</td><td class="down">92375.2</td></tr>
+        </table>
+        <div class="note">降级判读：四导出文件同步停滞=官方导出源停更（非桥死）——终端在线但数据不动；阈值线：&gt;60s 黄 /&gt;300s 红（连续停滞升级为告警入总览横切条）；券商连接卡管"通不通"，本卡管"数据动不动"</div>
+      </div>
+    </div>
+
     <!-- I-5b 备份健康（scripts/backup 三件套；恢复演练=备份有效性的唯一实证，负反馈明说「没有」） -->
     <div class="row c1">
       <div class="card" id="bak-health">

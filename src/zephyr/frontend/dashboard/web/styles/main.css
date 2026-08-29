@@ -258,7 +258,10 @@
   .alert-row.info{color:var(--dim)}   /* v6：info=灰字无框，中性提示不抢焦点 */
   .alert-row .t{color:var(--faint);font-size:11px;margin-left:auto}
   .chart-box{background:var(--panel2);border:0.67px solid var(--border);border-radius:6px;padding:10px;margin-bottom:14px;position:relative}
-  .readout{position:absolute;top:36px;left:10px;font-size:11px;color:var(--text);background:rgba(26,27,29,.88);padding:3px 8px;border-radius:4px;border:1px solid var(--border);display:none;pointer-events:none;z-index:5;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .readout{position:absolute;top:36px;left:10px;font-size:11px;color:var(--text);background:rgba(26,27,29,.94);padding:6px 10px;border-radius:6px;border:1px solid var(--border);display:none;pointer-events:none;z-index:5;font-variant-numeric:tabular-nums;white-space:normal;line-height:1.8;min-width:150px;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+  .readout .rd-date{font-weight:700;border-bottom:1px solid var(--border);padding-bottom:2px;margin-bottom:3px}
+  .readout .rd-row{display:flex;align-items:center;gap:5px}
+  .readout .rd-dot{width:8px;height:8px;border-radius:2px;display:inline-block;flex:none}
   .chart-title{font-size:12px;color:var(--dim);margin-bottom:4px;font-weight:600}
   .tabs{display:flex;gap:4px;margin-bottom:14px;flex-wrap:wrap}
   .tab{padding:5px 14px;border-radius:4px;font-size:12px;color:var(--dim);cursor:pointer}

@@ -2331,7 +2331,7 @@ function applyHover(i){
       c.cross.setAttribute('y1',c.T); c.cross.setAttribute('y2',c.H-c.B);
       c.cross.style.display='';
       c.rd.style.display='block';
-      c.rd.textContent=c.readout(ii);
+      c.rd.innerHTML=c.readout(ii);   /* R23b：多行卡片读数（对齐旧版 Plotly hover），readout 返回 HTML */
     }else{
       if(c.cross) c.cross.style.display='none';
       c.rd.style.display='none';
@@ -3367,7 +3367,9 @@ function btCharts(){
     btArea(g,B.sDD,x,cw,yf(0),yf,'#CA3F64',0.4);
     polyline(g,B.sDD.map(function(v,i){return[x(i)+cw/2,yf(v)];}),'#CA3F64',1);
     bindHover(svg,{W:W,L:L,R:R,H:H,T:T,B:Bx,n:n,x:x,cw:cw,g:g,rd:mkReadout(svg.parentNode),readout:function(i){
-      return B.dates[i]+'  策略回撤 '+B.sDD[i].toFixed(1)+'%  基准回撤 '+B.bDD[i].toFixed(1)+'%';
+      return '<div class="rd-date">'+B.dates[i]+'</div>'
+        +'<div class="rd-row"><span class="rd-dot" style="background:#CA3F64"></span>策略回撤 <b>'+B.sDD[i].toFixed(2)+'%</b></div>'
+        +'<div class="rd-row"><span class="rd-dot" style="background:#AB47BC"></span>沪深300回撤 <b>'+B.bDD[i].toFixed(2)+'%</b></div>';
     }});
   })();
   /* 日收益率：红/绿柱 + 基准紫线 */
@@ -3386,7 +3388,9 @@ function btCharts(){
     });
     polyline(g,B.bRet.map(function(v,i){return[x(i)+cw/2,yf(v)];}),'#AB47BC',1);
     bindHover(svg,{W:W,L:L,R:R,H:H,T:T,B:Bx,n:n,x:x,cw:cw,g:g,rd:mkReadout(svg.parentNode),readout:function(i){
-      return B.dates[i]+'  当日 '+(B.sRet[i]>=0?'+':'')+B.sRet[i].toFixed(2)+'%  基准 '+(B.bRet[i]>=0?'+':'')+B.bRet[i].toFixed(2)+'%';
+      return '<div class="rd-date">'+B.dates[i]+'</div>'
+        +'<div class="rd-row"><span class="rd-dot" style="background:'+(B.sRet[i]>=0?'#CA3F64':'#25A750')+'"></span>策略日收益 <b>'+(B.sRet[i]>=0?'+':'')+B.sRet[i].toFixed(2)+'%</b></div>'
+        +'<div class="rd-row"><span class="rd-dot" style="background:#AB47BC"></span>沪深300日收益 <b>'+(B.bRet[i]>=0?'+':'')+B.bRet[i].toFixed(2)+'%</b></div>';
     }});
   })();
 }

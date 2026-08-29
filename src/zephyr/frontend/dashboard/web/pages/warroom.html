@@ -1,6 +1,6 @@
 <section class="page" id="p-warroom">
     <h2 class="page-title">作战指挥</h2>
-    <div class="page-sub">实盘组 · <b>核心三件事：昨天定的预案是什么 → 现在走势匹配哪一格 → 明天大概怎么走、今天该怎么动</b>（决策层——感知状态去「大盘分析」）· 三区：①盘前预案（8:00-8:30 生成）②实时情景跟踪（主角，1~5 分钟滚动）③明日推演（T+1 隔夜风险反哺今日仓位）</div>
+    <div class="page-sub">实盘组 · <b>核心三件事：昨天定的预案是什么 → 现在走势匹配哪一格 → 明天大概怎么走、今天该怎么动</b>（决策层——感知状态去「大盘分析」）· <b>四区骨架（R23c 对齐旧版清晰结构）</b>：①盘前预案（8:00-8:30 生成，W1 总预判+W2 矩阵+W3 观察哨）②实时情景跟踪（主角，1~5 分钟滚动）③今日→明日惯性推演+四指数状态（T+1 隔夜风险反哺今日仓位）④执行区（决策链/委托/打板，常态折叠）</div>
 
     <!-- W1 明日总预判 -->
     <div class="param-strip">
@@ -74,6 +74,38 @@
         <tr><td>20:30 美联储讲话未兑现</td><td>预期锚=符合预期则影响中性；放鹰则隔夜传导降半档</td><td><span class="badge b-na">尾盘仓位留余量</span></td></tr>
       </table>
       <div class="note">T+1 隔夜风险逻辑：今天买入明天才能卖——"明天会怎样"决定"今天能不能买"；底部震荡收不上去的日子，次日惯性下杀概率显著升高（隔夜惯性实证），今日宁等明天恐慌盘</div>
+    </div>
+
+    <!-- ④ 四指数 regime 状态卡（R23c：旧版 Panel 移植——作战室缺此件；IDX-02 一引擎×四代理 regime 面板；真源=MOD-REGIME-008，I-2 接线） -->
+    <div class="card" style="margin-bottom:14px">
+      <h3>四指数状态 <span class="badge b-na">演示数据</span> <span class="dim">IDX-02 · 1 引擎×4 代理 regime 面板——只输出 regime 概率分布与强弱排序，不出点位/方向预测（90 号 §7 铁律）· 强弱排序=近 20 日已实现收益/波动调整 · 真源=MOD-REGIME-008（I-2）</span></h3>
+      <div class="row c4">
+        <div class="card" style="background:var(--input)">
+          <div style="font-weight:700;margin-bottom:4px">沪深300 <span class="dim" style="font-weight:400">000300</span></div>
+          <div style="font-size:12px">Regime：<b class="up">牛市趋势</b> <span class="dim">置信 100.0%</span></div>
+          <div style="font-size:12px;margin-top:3px">强弱位次：<b>第 4</b> · 近20日 <span class="up">+0.46%</span></div>
+          <div class="dim" style="font-size:11px;margin-top:3px">Top2：牛市趋势 100.0% · 中波震荡 0.0%</div>
+        </div>
+        <div class="card" style="background:var(--input)">
+          <div style="font-weight:700;margin-bottom:4px">上证指数 <span class="dim" style="font-weight:400">000001</span></div>
+          <div style="font-size:12px">Regime：<b class="up">牛市趋势</b> <span class="dim">置信 99.6%</span></div>
+          <div style="font-size:12px;margin-top:3px">强弱位次：<b>第 1</b> · 近20日 <span class="up">+3.08%</span></div>
+          <div class="dim" style="font-size:11px;margin-top:3px">Top2：牛市趋势 99.6% · 低波震荡 0.4%</div>
+        </div>
+        <div class="card" style="background:var(--input)">
+          <div style="font-weight:700;margin-bottom:4px">创业板指 <span class="dim" style="font-weight:400">399006</span></div>
+          <div style="font-size:12px">Regime：<b>低波震荡</b> <span class="dim">置信 80.4%</span></div>
+          <div style="font-size:12px;margin-top:3px">强弱位次：<b>第 2</b> · 近20日 <span class="up">+2.38%</span></div>
+          <div class="dim" style="font-size:11px;margin-top:3px">Top2：低波震荡 80.4% · 牛市趋势 19.6%</div>
+        </div>
+        <div class="card" style="background:var(--input)">
+          <div style="font-weight:700;margin-bottom:4px">科创50 <span class="dim" style="font-weight:400">000688</span></div>
+          <div style="font-size:12px">Regime：<b>低波震荡</b> <span class="dim">置信 98.8%</span></div>
+          <div style="font-size:12px;margin-top:3px">强弱位次：<b>第 3</b> · 近20日 <span class="up">+1.59%</span></div>
+          <div class="dim" style="font-size:11px;margin-top:3px">Top2：低波震荡 98.8% · 中波震荡 1.2%</div>
+        </div>
+      </div>
+      <div class="note">用法：四指数 regime 背离=风格分化信号（如上证牛市趋势+科创低波震荡=权重强/科技弱，资金在权重不在成长）；与「大盘分析」页 regime 面板同源（MOD-REGIME-008），作战室放一份=决策时不用跳页</div>
     </div>
 
     <!-- W2b 持仓股明日边界（自复盘页迁入） -->
