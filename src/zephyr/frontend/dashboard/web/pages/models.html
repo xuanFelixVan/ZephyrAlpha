@@ -1,0 +1,91 @@
+<section class="page" id="p-models">
+    <h2 class="page-title">模型页 <span class="badge b-na">演示数据</span></h2>
+    <div class="page-sub">系统组 · <b>核心：有哪些模型、还健康吗</b>——注册表视图（模型/架构/任务/晋升态/衰减态/回测证据）+训练态质量+服务态四维漂移 · 真源=model_registry（8 条，BFE-40）+ML 监控族（prod）</div>
+    <div class="card">
+      <h3>模型注册表 <span class="dim">BFE-40 裁定：先出注册表视图，随训练推进填产物（5 候选全 candidate 零训练）</span></h3>
+      <table>
+        <tr><th>模型</th><th>架构</th><th>任务</th><th>晋升态</th><th>衰减态</th><th>回测证据</th></tr>
+        <tr><td>density_quantile</td><td>分位数密度头</td><td>W2 概率分布</td><td><span class="badge b-pass">champion</span></td><td><span class="dot g"></span>稳定</td><td>pinball 0.042 · 覆盖率 91%</td></tr>
+        <tr><td>qnn_two_stage</td><td>两阶段分位数</td><td>截面排序</td><td><span class="badge b-na">challenger</span></td><td><span class="dot g"></span>稳定</td><td>degraded 标记已解</td></tr>
+        <tr><td>regime_hmm</td><td>HMM 三态</td><td>市场状态</td><td><span class="badge b-pass">champion</span></td><td><span class="dot y"></span>观察</td><td>切换相位回测一致</td></tr>
+        <tr><td>signal_cls_lgbm</td><td>LightGBM</td><td>信号分类</td><td><span class="badge b-na">candidate</span></td><td class="dim">零训练</td><td>—（GAP-F-34 待训练）</td></tr>
+        <tr><td>llm_sft_qwen</td><td>Qwen3-8B SFT</td><td>新闻情绪</td><td><span class="badge b-na">candidate</span></td><td class="dim">零样本基线 F1 0.787</td><td>金标 200 条（待 SFT 银标 3000）</td></tr>
+      </table>
+    </div>
+    <div class="row c2" style="margin-top:14px">
+      <div class="card">
+        <h3>训练态质量 <span class="dim">密度/QNN 指标+抗遗忘门禁+鲁棒性</span></h3>
+        <table>
+          <tr><th>指标</th><th>值</th><th>门禁</th></tr>
+          <tr><td>pinball loss（密度头）</td><td>0.042</td><td><span class="badge b-pass">✓</span></td></tr>
+          <tr><td>分位数覆盖率 q10~q90</td><td>91%</td><td><span class="badge b-pass">✓</span></td></tr>
+          <tr><td>抗遗忘（旧 regime 性能降）</td><td>+2.1%</td><td><span class="badge b-pass">&lt;5% 放行</span></td></tr>
+          <tr><td>对抗鲁棒性（噪声扰动漂移 L2）</td><td>0.018</td><td><span class="badge b-pass">✓</span></td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3>服务态四维漂移+影子部署 <span class="dim">MOD-MLS-001（prod）· warn/critical 双阈值</span></h3>
+        <table>
+          <tr><th>维度</th><th>当前</th><th>状态</th></tr>
+          <tr><td>特征漂移 PSI</td><td>0.06</td><td><span class="dot g"></span>正常</td></tr>
+          <tr><td>输出漂移 JS</td><td>0.04</td><td><span class="dot g"></span>正常</td></tr>
+          <tr><td>性能漂移</td><td>-1.2%</td><td><span class="dot g"></span>正常</td></tr>
+          <tr><td>IC 漂移</td><td>-3.8%</td><td><span class="dot y"></span>观察（&lt;5% 阈值）</td></tr>
+        </table>
+        <div class="note">影子部署：qnn_two_stage 影子观测第 12 天（effective 恒 False 红线——影子单永不真下单）；晋升需冠军挑战者 mSPRT 序贯检验通过</div>
+      </div>
+    </div>
+    <!-- J-14 补齐：学习回喂（MOD-ML-009）+解释留痕（MOD-ML-016） -->
+    <div class="row c2" style="margin-top:14px">
+      <div class="card">
+        <h3>学习效果回喂 <span class="dim">MOD-ML-009（prod）· 上线后 IC 衰减监控+超阈值自动触发 retrain</span></h3>
+        <table>
+          <tr><th>模型</th><th>上线 IC</th><th>近 20 日</th><th>衰减</th><th>处置</th></tr>
+          <tr><td>density_quantile</td><td>0.081</td><td>0.074</td><td><span class="dot g"></span>-8.6%</td><td>正常·继续观测</td></tr>
+          <tr><td>qnn_two_stage（影子）</td><td>0.079</td><td>0.077</td><td><span class="dot g"></span>-2.5%</td><td>影子期·不处置</td></tr>
+          <tr><td>regime_hmm</td><td>—</td><td>切换准确率 71%</td><td><span class="dot y"></span>-4.9%</td><td>逼近 5% 阈值·列观察</td></tr>
+        </table>
+        <div class="note">回喂闭环：IC 衰减超阈值 → 自动 retrain 工单 → 新模型进影子部署（MOD-ML-004）→ mSPRT 挑战冠军——全自动可跑，人工随时可否决</div>
+      </div>
+      <div class="card">
+        <h3>决策解释+人工干预留痕 <span class="dim">MOD-ML-016（prod）· GBM+SHAP·你的每次改判都留痕反推训练</span></h3>
+        <table>
+          <tr><th>最近决策</th><th>SHAP 前三因子</th><th>人工干预</th></tr>
+          <tr><td>08-28 买入 688169.SH</td><td>RS 强度 +0.31 · 板块共振 +0.22 · 量能 +0.14</td><td>无</td></tr>
+          <tr><td>08-27 否决 002821.SZ</td><td>情绪分 +0.28 · 位置过高 -0.31</td><td class="down">人工否决（高位分歧）</td></tr>
+        </table>
+        <div class="note">干预留痕回训练集：人工否决样本权重 ×1.5——你改判的每一笔都在教模型</div>
+      </div>
+    </div>
+    <!-- J-14 补齐：压缩三阶段（MOD-MLS-002）+因子×模型利用度（MOD-FAC-005） -->
+    <div class="row c2" style="margin-top:14px">
+      <div class="card">
+        <h3>压缩验证三阶段 <span class="dim">MOD-MLS-002（prod）· 性能不显著降才放行</span></h3>
+        <table>
+          <tr><th>阶段</th><th>对象</th><th>性能变化</th><th>判定</th></tr>
+          <tr><td>① 剪枝</td><td>qnn_two_stage</td><td>-0.3%</td><td><span class="badge b-pass">放行</span></td></tr>
+          <tr><td>② 量化 INT8</td><td>qnn_two_stage</td><td>-0.9%</td><td><span class="badge b-pass">放行</span></td></tr>
+          <tr><td>③ 蒸馏</td><td>density_quantile</td><td>-4.1%</td><td><span class="badge b-na">待验证</span></td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3>因子×模型双向利用度 <span class="dim">MOD-FAC-005（prod）· 哪些因子被模型真正用上</span></h3>
+        <table>
+          <tr><th>因子族</th><th>模型利用率</th><th>贡献 IC</th><th>判定</th></tr>
+          <tr><td>动量/RS 族</td><td>87%</td><td>0.034</td><td class="up">主力因子</td></tr>
+          <tr><td>情绪族</td><td>62%</td><td>0.021</td><td class="up">有效</td></tr>
+          <tr><td>资金族</td><td>55%</td><td>0.018</td><td class="up">有效</td></tr>
+          <tr><td>量价微观族</td><td>12%</td><td>0.002</td><td class="dim">低利用·待修剪</td></tr>
+        </table>
+      </div>
+    </div>
+    <!-- 铁律证据链+可复现锚定（MOD-ML-020） -->
+    <div class="card" style="margin-top:14px">
+      <h3>本页结论怎么来的 · 证据链 <span class="dim">铁律：结果+全部因子证据 <i class="info-ic" data-tip="算法查看：注册表=model_registry 表（BFE-40）；四维漂移=MOD-MLS-001（PSI/JS/性能/IC 四检验）；学习回喂=MOD-ML-009（IC 衰减阈值）；抗遗忘=MOD-ML-018（旧 regime 降>5% 拦截）；解释=MOD-ML-016（SHAP）；压缩=MOD-MLS-002（三阶段门禁）；可复现=MOD-ML-020（训练种子+数据快照+代码 commit 三锚定）——算法出处见「算法注册表」（R2，I-2）">!</i></span></h3>
+      <div class="kv-mini">
+        注册表 <b>5 模型（champion 2 / challenger 1 / candidate 2）</b> ｜ 训练态门禁 <b class="up">4/4 通过</b> ｜ 服务态漂移 <b>3 正常·1 观察</b> ｜ 影子部署 <b>第 12 天·零真实下单</b> ｜ 可复现 <b>MOD-ML-020 三锚定齐套</b>
+      </div>
+    </div>
+  </section>
+
+  

@@ -1,0 +1,45 @@
+<section class="page" id="p-datasrc">
+    <h2 class="page-title">数据源监管 <span class="badge b-na">演示数据</span></h2>
+    <div class="page-sub">数据组 · <b>核心：数据从哪来、健康吗</b>——15 注册数据源清单+SLA+熔断+测速+切换+告警流水 · 真源=data_asset_registry（206 条）+监控族（source_health/sla/circuit_breaker/speed_tester，prod）</div>
+    <div class="row c5">
+      <div class="card metric"><div class="l">注册数据源</div><div class="v">15</div><div class="s">17 prod / 5 testing / 3 planned</div></div>
+      <div class="card metric"><div class="l">当前异常</div><div class="v down">1</div><div class="s">adj_factor 任务失败（修复中）</div></div>
+      <div class="card metric"><div class="l">SLA 达成（30 日）</div><div class="v">99.2%</div><div class="s">burn-rate healthy</div></div>
+      <div class="card metric"><div class="l">熔断中</div><div class="v">0</div><div class="s">source_circuit_breaker 待命</div></div>
+      <div class="card metric"><div class="l">退役</div><div class="v na">1</div><div class="s">iFind（配额耗尽 08-14）</div></div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <h3>源清单 <span class="dim">测速=rows/sec 实测（speed_tester prod）· 状态灯=最近 1h 抓取</span></h3>
+      <table>
+        <tr><th>源</th><th>能力</th><th>状态</th><th>SLA 30日</th><th>测速</th><th>最近成功</th><th>熔断</th></tr>
+        <tr><td>miniQMT</td><td>行情/五档/委托</td><td><span class="dot g"></span>prod</td><td>99.8%</td><td>12,400 r/s</td><td>38ms 前</td><td><span class="badge b-na">待命</span></td></tr>
+        <tr><td>akshare</td><td>日频/财务/股东</td><td><span class="dot g"></span>prod</td><td>99.1%</td><td>860 r/s</td><td>3 分钟前</td><td><span class="badge b-na">待命</span></td></tr>
+        <tr><td>tushare</td><td>日频/基本面</td><td><span class="dot g"></span>prod</td><td>98.7%</td><td>1,200 r/s</td><td>8 分钟前</td><td><span class="badge b-na">待命</span></td></tr>
+        <tr><td>财联社 cls</td><td>新闻电报</td><td><span class="dot g"></span>prod</td><td>99.6%</td><td>实时流</td><td>12 秒前</td><td><span class="badge b-na">待命</span></td></tr>
+        <tr><td>FRED</td><td>美联储宏观</td><td><span class="dot g"></span>prod</td><td>99.9%</td><td>日频</td><td>06:00</td><td><span class="badge b-na">待命</span></td></tr>
+        <tr><td>OKX</td><td>币圈行情</td><td><span class="dot y"></span>planned</td><td>—</td><td>20 req/2s</td><td>—</td><td><span class="badge b-na">未接调度</span></td></tr>
+        <tr><td>iFind</td><td>宏观 EDB</td><td><span class="dot w"></span>退役</td><td>—</td><td>—</td><td>08-14</td><td><span class="badge b-fail">已退役</span></td></tr>
+      </table>
+    </div>
+    <div class="row c2" style="margin-top:14px">
+      <div class="card">
+        <h3>SLA burn-rate <span class="dim">错误预算燃烧曲线（quality_sla_breach_predictor prod）——数据会断提前可见</span></h3>
+        <div class="bar-row"><span>miniQMT</span><div class="bar"><i class="g" style="width:12%"></i></div><span>healthy 12%</span></div>
+        <div class="bar-row"><span>akshare</span><div class="bar"><i class="g" style="width:28%"></i></div><span>healthy 28%</span></div>
+        <div class="bar-row"><span>新闻聚合</span><div class="bar"><i class="y" style="width:61%"></i></div><span>watch 61%（08-28 重建后观察期）</span></div>
+        <div class="note">burn-rate 四级：healthy→watch→degrading→exhausted；超过 watch 提前 24h 告警并建议处置窗口</div>
+      </div>
+      <div class="card">
+        <h3>主备切换+告警流水 <span class="dim">failover/manager（prod）+ data_anomaly_alerter（prod）</span></h3>
+        <table>
+          <tr><th>时间</th><th>事件</th><th>级别</th><th>处置</th></tr>
+          <tr><td>08-27 14:22</td><td>tushare 接口超时 ×3 → 自动切 baostock 备源</td><td><span class="badge b-warn">AL-P2</span></td><td class="dim">已恢复主源</td></tr>
+          <tr><td>08-28 10:12</td><td>adj_factor 任务失败（复权断点检测）</td><td><span class="badge b-warn">AL-P2</span></td><td class="dim">自动重跑中</td></tr>
+          <tr><td>08-28 03:00</td><td>news_data 重建完成（200 个月分区）</td><td><span class="badge b-na">INFO</span></td><td class="dim">观察期 7 天</td></tr>
+        </table>
+        <div class="note">告警分级+抑制降噪（同源合并/维护窗静默）——不吵的告警流；CH 健康探针 60s 巡检（7×24）</div>
+      </div>
+    </div>
+  </section>
+
+  

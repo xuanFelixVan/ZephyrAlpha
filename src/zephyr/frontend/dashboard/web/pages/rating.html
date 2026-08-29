@@ -1,0 +1,45 @@
+<section class="page" id="p-rating">
+    <h2 class="page-title">研评级 <span class="badge b-na">演示数据</span></h2>
+    <div class="page-sub">研究组 · <b>核心：机构评级变动与 AI 独立观点</b>——卖方 91% 多头偏见，<b>变动才是边际信息</b>（上调/下调/首次覆盖）· 真源=research_rating 14.6 万条（B29，I-2）+MOD-ALT-009 评级变动事件（prod）</div>
+    <div class="row c4">
+      <div class="card metric"><div class="l">近 30 日上调</div><div class="v up">23</div><div class="s">含首次覆盖 6</div></div>
+      <div class="card metric"><div class="l">近 30 日下调</div><div class="v down">7</div><div class="s">下调比上调稀缺=更硬信号</div></div>
+      <div class="card metric"><div class="l">维持</div><div class="v">186</div><div class="s">维持=噪音，不看</div></div>
+      <div class="card metric"><div class="l">目标价平均上行空间</div><div class="v">+18%</div><div class="s">一致预期锚（analyst_forecast）</div></div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <h3>评级变动流 <span class="dim">快照 diff 检测（MOD-ALT-009 prod）· 只看变动，维持不列</span></h3>
+      <table>
+        <tr><th>日期</th><th>标的</th><th>机构</th><th>变动</th><th>评级</th><th>目标价</th><th>上行空间</th></tr>
+        <tr><td>08-28</td><td>中芯国际</td><td>中金</td><td><span class="badge b-buy">上调</span></td><td>增持→买入</td><td>102.0</td><td class="up">+21%</td></tr>
+        <tr><td>08-28</td><td>恒瑞医药</td><td>摩根士丹利</td><td><span class="badge b-buy">首次覆盖</span></td><td>—→超配</td><td>68.0</td><td class="up">+15%</td></tr>
+        <tr><td>08-27</td><td>某消费电子</td><td>华泰</td><td><span class="badge b-sell">下调</span></td><td>买入→增持</td><td>38.5</td><td class="down">-4%</td></tr>
+        <tr><td>08-27</td><td>宁德时代</td><td>高盛</td><td><span class="badge b-buy">上调</span></td><td>中性→买入</td><td>245.0</td><td class="up">+24%</td></tr>
+        <tr><td>08-26</td><td>贵州茅台</td><td>招商</td><td><span class="badge b-na">维持</span></td><td>买入</td><td>1880.0</td><td class="dim">+11%</td></tr>
+      </table>
+    </div>
+    <div class="row c2" style="margin-top:14px">
+      <div class="card">
+        <h3>金股池 <span class="dim">≥3 家机构近 30 日共振上调/买入</span></h3>
+        <table>
+          <tr><th>标的</th><th>共振家数</th><th>最新动作</th><th>一致目标价</th></tr>
+          <tr><td>中芯国际</td><td><b>5</b></td><td>中金上调 08-28</td><td>98.6（+18%）</td></tr>
+          <tr><td>宁德时代</td><td>4</td><td>高盛上调 08-27</td><td>238.0（+21%）</td></tr>
+          <tr><td>恒瑞医药</td><td>3</td><td>大摩首覆 08-28</td><td>65.2（+13%）</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3>AI 深研 <span class="badge b-warn">advisory only</span> <span class="dim">llm_research_agent（prod）+UFL 事实锚定（数字必须检索自账本，防幻觉）</span></h3>
+        <div style="font-size:12px;color:var(--dim);line-height:1.9">
+          <b>中芯国际 深研摘要</b> <span class="badge b-pass">已锚定 14/14 数字</span><br>
+          ① 三期基金注资提速=订单可见度提升至 2027（锚：政策原文+公司公告）<br>
+          ② 成熟制程产能利用率 92%，28nm 满产（锚：季报+调研纪要）<br>
+          ③ 风险：设备国产化率与良率爬坡节奏（锚：招股说明书风险提示章）<br>
+          <span class="dim">— 以上为 AI 研究助手产出（工具白名单+事实回查），仅参考非信号；与卖方观点差异：AI 更关注产能约束而非情绪</span>
+        </div>
+      </div>
+    </div>
+    <div class="note">证据链：评级数据=research_rating.jsonl（14.6 万条）+ analyst_forecast 一致预期；变动检测=快照 diff（MOD-ALT-009）；AI 深研=llm_research_agent+UFL 双锁锚定——全部可溯源（铁律）</div>
+  </section>
+
+  

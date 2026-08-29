@@ -1,0 +1,202 @@
+<section class="page" id="p-review">
+    <h2 class="page-title">盘后复盘</h2>
+    <div class="page-sub">实盘组 · 核心目的：<b>验证系统今日决策对不对</b>（向后看）；明日预案完整呈现 → 「作战室」（向前看，L15 边界裁定）· 数据日期 2026-08-19</div>
+
+    <!-- A1 周期切换（I-5）：单日|本周|本月 三口径联动 执行回看 / PnL归因 / 交易统计 -->
+    <div class="tabs" id="rev-tabs" style="align-items:center">
+      <span class="tab on" data-rev="day" onclick="revSet('day',this)">单日</span>
+      <span class="tab" data-rev="week" onclick="revSet('week',this)">本周</span>
+      <span class="tab" data-rev="month" onclick="revSet('month',this)">本月</span>
+      <span class="badge b-na" style="margin-left:8px">演示数据</span>
+      <span class="dim" style="font-size:11px">多口径聚合管线落地后转真（I-2）</span>
+    </div>
+
+    <div class="row c2">
+      <div class="card">
+        <h3><span id="rev-exec-title">今日执行回看</span> <span class="dim">计划 vs 实际</span></h3>
+        <table>
+          <tbody id="rev-exec-body">
+          <tr><th>计划</th><th>实际</th><th>偏差原因</th></tr>
+          <tr><td>买 贵州茅台 ×100</td><td class="up">✅ 成交 @1712.5</td><td>—</td></tr>
+          <tr><td>买 中国平安 ×200</td><td><span class="badge b-warn">未执行</span></td><td>风控拦截：行业集中度超限</td></tr>
+          <tr><td>卖 宁德时代 ×400</td><td><span class="badge b-warn">部分 200</span></td><td>跌停附近流动性不足，剩余挂单价外</td></tr>
+          </tbody>
+        </table>
+        <div class="note">拦截/部分成交原因必须可见（滑点/流动性/风控/拒单可归因）</div>
+      </div>
+      <div class="card">
+        <h3><span id="rev-pnl-title">PnL 对账 + 归因</span> <span class="dim">pnl_calculator / attribution / TCA</span></h3>
+        <table>
+          <tbody id="rev-pnl-body">
+          <tr><td>当日已实现盈亏</td><td class="up">+8,412</td><td>对账差异</td><td class="up">0（平）</td></tr>
+          <tr><td>未实现盈亏</td><td class="up">+21,308</td><td>公司行为调成本</td><td>今日无</td></tr>
+          <tr><td>Alpha 拆解</td><td colspan="3">选股 +1.8% / 行业轮动 +0.9% / 配比 -0.3%</td></tr>
+          <tr><td>TCA 执行质量</td><td colspan="3">滑点 0.08% · 冲击 0.03% · 佣金 0.05%（优于 VWAP 基准 0.02%）</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- A2 交易统计（实盘版，对标回测页交易统计；I-5）——口径随周期切换联动 -->
+    <div class="sec-title">交易统计（实盘） <span class="badge b-na">演示数据</span> <span class="dim" style="font-weight:400">口径随上方周期切换 · trades/journal 聚合，多口径聚合管线落地后转真（I-2）</span></div>
+    <div class="row c6" id="rev-kpi"></div>
+    <div class="row c2">
+      <div class="card">
+        <h3>按情景胜率 <span class="dim">开盘形态 × 走势 分桶</span></h3>
+        <div id="rev-scene"></div>
+      </div>
+      <div class="card">
+        <h3>按板块胜率 <span class="dim">industry 归属分桶</span></h3>
+        <div id="rev-sector"></div>
+      </div>
+    </div>
+
+    <!-- A3 打板复盘（I-8）：连板梯队晋级率+炸板率+封板成功率+打板收益统计——复盘统计语境，与板块全景「梯队结构」盘中语境区分 -->
+    <div class="sec-title">打板复盘 <span class="badge b-na">演示数据</span> <span class="dim" style="font-weight:400">复盘统计语境（晋级率/收益统计，回答"今天打板生态能不能赚钱"）；盘中实时梯队结构 → 「板块全景」；数据：limit_up_down，打板专项管线（BFE-36 五件 prod）接线后转真 I-2</span></div>
+    <div class="row c5">
+      <div class="card metric"><div class="l">1 进 2 晋级率</div><div class="v up">29%</div><div class="s">昨首板 38 → 今 2 板 11</div></div>
+      <div class="card metric"><div class="l">2 进 3 晋级率</div><div class="v up">36%</div><div class="s">昨 2 板 14 → 今 3 板 5</div></div>
+      <div class="card metric"><div class="l">3 进 4 晋级率</div><div class="v" style="color:var(--text)">33%</div><div class="s">昨 3 板 6 → 今 4 板 2</div></div>
+      <div class="card metric"><div class="l">炸板率</div><div class="v" style="color:var(--text)">31%</div><div class="s">触板未封 21 / 68</div></div>
+      <div class="card metric"><div class="l">封板成功率</div><div class="v up">69%</div><div class="s">封住 47 / 触板 68</div></div>
+    </div>
+    <div class="row c2">
+      <div class="card">
+        <h3>连板梯队晋级明细 <span class="dim">今日梯队 vs 昨日基数</span></h3>
+        <table>
+          <tr><th>梯队</th><th>今日家数</th><th>昨日基数</th><th>晋级率</th><th>晋级标的</th></tr>
+          <tr><td>5 连板</td><td>1</td><td>昨 4 板 3</td><td style="color:var(--text)">33%</td><td>某某科技（半导体，空间板）</td></tr>
+          <tr><td>4 连板</td><td>2</td><td>昨 3 板 6</td><td style="color:var(--text)">33%</td><td>某某股份 / 某某智能</td></tr>
+          <tr><td>3 连板</td><td>5</td><td>昨 2 板 14</td><td class="up">36%</td><td>梯队完整度良好</td></tr>
+          <tr><td>2 连板</td><td>11</td><td>昨首板 38</td><td class="up">29%</td><td>半导体 4 / 机器人 3 / 其他 4</td></tr>
+          <tr><td>首板</td><td>49</td><td>—</td><td>—</td><td>新发酵：白酒 12 / 半导体 9</td></tr>
+        </table>
+        <div class="note">梯队与「市场情绪」页同源自洽（5板×1 · 4板×2 · 3板×5 · 2板×11 · 首板×49）；晋级率&lt;20% 为生态恶化预警线（历史回测口径）</div>
+      </div>
+      <div class="card">
+        <h3>打板收益统计 <span class="dim">昨日涨停今表现 / 打板单收益分布</span></h3>
+        <table>
+          <tr><td>昨日涨停今日平均收益</td><td class="up">+2.1%</td><td>接力赚钱效应为正</td></tr>
+          <tr><td>封板成功单均收益</td><td class="up">+4.6%</td><td>强封（封单比&gt;1 且 0 次开板）+6.2%</td></tr>
+          <tr><td>炸板单均亏损</td><td class="down">-1.8%</td><td>炸板后回封率仅 24%</td></tr>
+          <tr><td>本月打板累计收益（演示）</td><td class="up">+8.3%</td><td>胜率 58% · 盈亏比 1.9:1</td></tr>
+        </table>
+        <div class="bar-row" style="margin-top:8px"><span>盈利单</span><div class="bar"><i class="g" style="width:58%"></i></div><span>58%</span></div>
+        <div class="bar-row"><span>保本单</span><div class="bar"><i style="width:14%"></i></div><span>14%</span></div>
+        <div class="bar-row"><span>亏损单</span><div class="bar"><i class="r" style="width:28%"></i></div><span>28%</span></div>
+        <div class="note">结论级判读：晋级率健康+炸板率中性+接力正收益 → 打板生态可参与（与情绪页「高潮区」判读互证）；收益统计=trades 打板标记单聚合，真实管线随 BFE-36 接线转真</div>
+      </div>
+    </div>
+
+    <!-- A4 因子级归因加深（I-8 P2：FactSet 日频因子归因简化——超额收益拆到行业/选股/因子暴露，与 PnL 卡 +2.4% 闭合） -->
+    <div class="row c1">
+      <div class="card">
+        <h3>因子级归因 <span class="badge b-na">演示数据</span> <span class="dim">FactSet 日频因子归因简化版：Brinson（配置/选股/交互）+ 风险模型（因子暴露）双口径，与 PnL 卡 Alpha 拆解 +2.4% 对账闭合；attribution.py 设计态（CTR-P1-007 阻塞），真实管线落地后转真（I-2）</span></h3>
+        <div class="row c2" style="margin-bottom:0">
+          <div>
+            <div class="sec-title" style="margin-top:0">Brinson 拆解 <span class="dim">超额 +2.4% vs 沪深300</span></div>
+            <div class="bar-row"><span>行业配置</span><div class="bar"><i class="g" style="width:45%"></i></div><span class="up">+0.9%</span></div>
+            <div class="bar-row"><span>选股</span><div class="bar"><i class="g" style="width:90%"></i></div><span class="up">+1.8%</span></div>
+            <div class="bar-row"><span>交互</span><div class="bar"><i class="r" style="width:15%"></i></div><span class="down">-0.3%</span></div>
+          </div>
+          <div>
+            <div class="sec-title" style="margin-top:0">因子暴露拆解 <span class="dim">风险模型口径</span></div>
+            <div class="bar-row"><span>动量</span><div class="bar"><i class="g" style="width:60%"></i></div><span class="up">+0.6%</span></div>
+            <div class="bar-row"><span>质量</span><div class="bar"><i class="g" style="width:40%"></i></div><span class="up">+0.4%</span></div>
+            <div class="bar-row"><span>价值</span><div class="bar"><i class="r" style="width:20%"></i></div><span class="down">-0.2%</span></div>
+            <div class="bar-row"><span>规模</span><div class="bar"><i class="g" style="width:10%"></i></div><span class="up">+0.1%</span></div>
+            <div class="bar-row"><span>特质收益</span><div class="bar"><i class="g" style="width:75%"></i></div><span class="up">+1.5%</span></div>
+          </div>
+        </div>
+        <div class="note">两口径各自闭合 +2.4%：Brinson 看"配对了什么"（行业+选股），因子暴露看"承担了什么风险溢价"（负值=拖累项：价值暴露 -0.2%=成长市拖累）；复盘口径=对计划不对结果；日频因子归因序列（时序曲线）随归因管线转真后补齐</div>
+      </div>
+    </div>
+
+    <div class="row c1">
+      <div class="card">
+        <h3>压力测试盘后验证 <span class="badge b-na">演示数据</span> <span class="dim">历史三情景 · 结论级（BFE-32；数据源接口位：query_stress_test_summary → StressTestEngine MOD-RK-12 prod，明细走报告存档）</span></h3>
+        <table>
+          <tr><th>情景</th><th>组合损失%</th><th>损失金额</th><th>判定</th></tr>
+          <tbody id="stress-test-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="row c2">
+      <div class="card">
+        <h3>预案回看 <span class="dim">PLAN-02 竞价 9 情景 / PLAN-03 尾盘</span></h3>
+        <table>
+          <tr><td>竞价实际命中</td><td><span class="badge b-pass">情景 3：高开低走向下箱体</span></td></tr>
+          <tr><td>预案动作</td><td>不追高，等回踩箱体下沿 1700 买入</td></tr>
+          <tr><td>实际执行</td><td class="up">✅ 一致（10:23 回踩 1702 成交）</td></tr>
+          <tr><td>尾盘决策 14:45</td><td>持仓不动（明日预案已生成）</td></tr>
+        </table>
+        <div class="note">命中率/三维归因/校准度统计 → 见「作战室」W0（本卡只看今日单点回放）</div>
+      </div>
+      <div class="card">
+        <h3>因子健康 <span class="dim">IC/IR 衰减 · 信号降级</span></h3>
+        <table>
+          <tr><th>因子</th><th>IC（20日）</th><th>趋势</th><th>状态</th></tr>
+          <tr><td>行业动量</td><td>0.062</td><td class="up">↑</td><td><span class="badge b-pass">正常</span></td></tr>
+          <tr><td>北向增持</td><td>0.048</td><td class="down">↓</td><td><span class="badge b-warn">衰减告警</span></td></tr>
+          <tr><td>估值下限</td><td>0.031</td><td>→</td><td><span class="badge b-pass">正常</span></td></tr>
+        </table>
+        <div class="note">ic_decay 衰减监控 + bhy_fdr 去留判决；信号降级警告（SIGQC）今日 0 条</div>
+      </div>
+    </div>
+
+    <div class="row c2">
+      <div class="card">
+        <h3>龙虎榜 · 席位"谁在买" <span class="dim">dragon_tiger_seat</span></h3>
+        <table>
+          <tr><th>标的</th><th>知名席位</th><th>净买额</th></tr>
+          <tr><td>中芯国际</td><td>机构专用 ×2</td><td class="up">+3.8 亿</td></tr>
+          <tr><td>东方财富</td><td>深股通 + 章盟主席位</td><td class="up">+2.1 亿</td></tr>
+          <tr><td>宁德时代</td><td>沪股通净卖出</td><td class="down">-1.6 亿</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3>隔夜外盘 <span class="dim">kline_us_daily / FRED</span></h3>
+        <table>
+          <tr><td>标普500</td><td class="down">-0.42%</td><td>纳斯达克</td><td class="down">-0.87%</td></tr>
+          <tr><td>美元指数</td><td class="up">+0.31%</td><td>离岸人民币</td><td class="down">7.24</td></tr>
+          <tr><td>WTI 原油</td><td class="up">+1.2%</td><td>黄金</td><td class="up">+0.4%</td></tr>
+          <tr><td colspan="4" class="dim">美联储放鹰 → 对明日 A 股开盘情绪偏空（传导系数低，关注北向）</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>明日预案 <span class="dim">PLAN-01 产出 · 完整呈现已迁移至「实盘 → 作战室」（L15 边界裁定：本页只留生成入口+摘要）</span></h3>
+      <div class="param-strip">
+        <span>隔夜修正档位 <b class="up">偏多 ×1.2</b></span>
+        <span>最可能格 <b>平开+高走 22%</b></span>
+        <span>作战池 <b>3 票</b></span>
+        <span style="border-right:none">风控 <span class="badge b-pass">辩论台已通过</span></span>
+      </div>
+      <div class="note">完整内容（3×3 情景矩阵/逐票点位仓位/失效条件/多空辩论/风险预算/禁做清单）→ 点击左侧导航「实盘 → 作战室」；次日 8 态概率预测（BM-SEL-04）设计态·未施工（90 号 §7 裁定）</div>
+    </div>
+
+    <!-- A5 上帝视角战报（小红书组2 QINLONG 参考；产出物走 BFE-38 微信/邮件通道） -->
+    <div class="card" style="margin-top:14px;border-left:3px solid var(--faint)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <h3 style="margin:0">📜 今日战报 <span class="dim">上帝视角一键生成 · 小红书 QINLONG 参考 A5 · 推送微信/邮件（BFE-38）</span></h3>
+        <span class="badge b-na">演示数据</span>
+      </div>
+      <div class="row c2">
+        <div class="kv-mini">
+          今日最强主线题材 <b>半导体</b>（资金/梯队/逆势三证据共振）<br>
+          情绪极值 <b class="up">高潮区</b>（涨停 47 家 / 连板高度 5 板）<br>
+          最强攻击波 <b>09:45 ~ 10:15</b>，涨停家数峰值 12 家/15min<br>
+          次主线候选 <b>机器人</b>（51%，龙头独行待后排跟进确认）
+        </div>
+        <div class="kv-mini">
+          今日操作 <b>6 笔</b>，预案外 <b class="up">0 笔</b> → 执行一致性 PASS<br>
+          已实现盈亏 <b class="up">+8,412</b> ｜ 命中率 <b class="up">4/5 日</b><br>
+          <b>AI 操盘室结语（GAP-F-40）：</b>"主线清晰但情绪偏高潮，明日若高开不追、回踩主线龙头是主战场；宁德时代失效单已清，仓位纪律良好。"
+        </div>
+      </div>
+    </div>
+  </section>
+
+  

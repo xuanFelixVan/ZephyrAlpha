@@ -1,0 +1,18 @@
+<section class="page" id="p-reglib">
+    <h2 class="page-title">注册表库 <span class="badge b-na">演示数据</span></h2>
+    <div class="page-sub">研究组 · 核心目的：18 个业务注册表集中浏览——库网格→库详情（条目/字段/状态分布），registry_of_registries 实测口径</div>
+
+    <div class="card" style="margin-bottom:14px;padding:10px 16px">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12px">
+        <input id="reg-srch" class="reg-srch" placeholder="搜索库名（中文 / 英文）…" oninput="regFilter()">
+        <span class="dim" id="reg-cnt"></span>
+        <span class="badge b-fail" style="margin-left:auto">完整条目 JSON 导出供数后转真（I-2 流程）</span>
+      </div>
+    </div>
+
+    <div class="reg-grid" id="reg-grid"></div>
+
+    <div id="reg-detail"></div>
+  </section>
+
+  

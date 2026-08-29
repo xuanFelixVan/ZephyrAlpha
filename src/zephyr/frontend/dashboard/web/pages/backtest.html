@@ -1,0 +1,256 @@
+<section class="page" id="p-backtest">
+    <h2 class="page-title">回测结果</h2>
+    <div class="page-sub">研究组 · 现有 v3.2.0 掘金风格组件 1:1 视觉复刻（功能不变；demo-perf-001 演示数据）</div>
+
+    <!-- I-6c 新建回测配置条（对标聚宽算法页回测配置；发起通道待接入 I-2） -->
+    <div class="card" id="btr-card" style="margin-bottom:14px">
+      <h3>新建回测 <span class="dim">New Backtest</span> <span class="badge b-na">演示结构</span> <span class="dim">发起通道待接入（后端执行，前端配置面板+状态轮询，I-2 转真）</span></h3>
+      <div class="btr-form">
+        <div class="btr-fld">
+          <label>策略 Strategy</label>
+          <span class="sel">主线龙头回踩 ▾</span>
+          <div class="btr-opts">行业轮动 / 打板策略 / 低估值防御 / 做T增强</div>
+        </div>
+        <div class="btr-fld">
+          <label>时间段 Period</label>
+          <span class="sel" style="min-width:210px">2024-01-01 ~ 2026-08-20 ▾</span>
+          <div class="btr-opts">近1年 / 近3年 / 近5年 / 自定义</div>
+        </div>
+        <div class="btr-fld">
+          <label>初始金额 Initial Capital</label>
+          <span class="sel" style="min-width:100px">100 万 ▾</span>
+          <div class="btr-opts">50 / 100 / 500 / 1000 万</div>
+        </div>
+        <div class="btr-fld">
+          <label>频率 Frequency</label>
+          <span class="sel" style="min-width:90px">日频 ▾</span>
+          <div class="btr-opts">日频 / 分钟频 可选 · <span class="btr-tick-off">tick</span> <span class="badge b-na">企业版权限</span></div>
+        </div>
+        <div class="btr-fld">
+          <span class="btn primary" id="btr-btn" onclick="btrRun()">▶ 发起回测</span>
+        </div>
+      </div>
+      <div class="btr-prog-wrap" id="btr-prog-wrap" style="display:none">
+        <div class="bar"><i id="btr-prog-fill" style="width:0%"></i></div>
+        <div class="note" id="btr-status"></div>
+      </div>
+      <div class="note">成本口径 Cost Basis：成本 = 佣金 + 印花税 + 滑点 + 市场冲击 + 做T额外成本（charter §3 约束一：费率按实际账户配置，不硬编码）</div>
+    </div>
+
+    <div class="strategy-head">
+      <span class="name">📊 行业轮动替换fundamental</span>
+      <span class="sub">回测绩效分析 Backtest Performance Analysis | demo-perf-001</span>
+    </div>
+
+    <div class="tabs" style="background:var(--panel);border:0.67px solid var(--border);border-radius:6px;padding:6px 8px">
+      <span class="tab on" onclick="bt('overview',this)">绩效概览 Performance Overview</span>
+      <span class="tab" onclick="bt('holding',this)">持仓分析 Position Analysis</span>
+      <span class="tab" onclick="bt('trades',this)">交易统计 Trade Statistics</span>
+      <span class="tab" onclick="bt('daily',this)">每日明细 Daily Detail</span>
+      <span class="tab" onclick="bt('signal',this)">信号分析 Signal Analysis</span>
+    </div>
+
+    <div class="param-strip">
+      <span>回测时间 Backtest Period<br><b>2019-01-02 ~ 2020-12-31</b></span>
+      <span>期初资金 Initial Capital<br><b>¥10,000,000.00</b></span>
+      <span>基准 Benchmark<br><b>沪深300</b></span>
+      <span>状态 Status<br><b style="color:var(--up)">已完成 Completed</b></span>
+      <span>交易天数 Trading Days<br><b>522</b></span>
+    </div>
+
+    <!-- ===== 子页共享 6 KPI ===== -->
+    <div class="row c6" id="bt-kpi">
+      <div class="card metric"><div class="l">↗ 累计收益率</div><div class="s">Cumulative Return</div><div class="v up">124.82%</div></div>
+      <div class="card metric"><div class="l">↗ 年化收益率</div><div class="s">Annual Return</div><div class="v up">47.40%</div></div>
+      <div class="card metric"><div class="l">↘ 最大回撤</div><div class="s">Max Drawdown</div><div class="v down">-15.84%</div></div>
+      <div class="card metric"><div class="l">◆ 夏普比率</div><div class="s">Sharpe Ratio</div><div class="v" style="color:var(--text)">2.16</div></div>
+      <div class="card metric"><div class="l">◆ 胜率</div><div class="s">Win Rate</div><div class="v" style="color:var(--text)">66.29%</div></div>
+      <div class="card metric"><div class="l">◆ 盈亏比</div><div class="s">Profit/Loss Ratio</div><div class="v" style="color:var(--text)">1.76</div></div>
+    </div>
+
+    <!-- ---------- Tab1 绩效概览：单列通栏长页 ---------- -->
+    <div class="subpage active" id="bt-overview">
+      <div class="chart-box">
+        <div class="chart-title">收益图 Performance Chart</div>
+        <svg class="spark" id="bt-eq" viewBox="0 0 1100 400" preserveAspectRatio="none" style="background:#000000;border-radius:4px"></svg>
+        <div class="lv" style="justify-content:center">
+          <span style="color:var(--blue)">— 策略收益 Strategy +124.82%</span>
+          <span style="color:var(--purple)">— 沪深300 Benchmark -23.65%</span>
+          <span style="color:var(--orange)">┄ 超额收益 Excess +148.46%</span>
+        </div>
+      </div>
+
+      <div class="chart-box">
+        <div class="chart-title">回撤图 Drawdown Chart</div>
+        <svg class="spark" id="bt-dd" viewBox="0 0 1100 300" preserveAspectRatio="none" style="background:#000000;border-radius:4px"></svg>
+        <div class="lv" style="justify-content:center">
+          <span style="color:var(--down)">▼ 策略回撤 Strategy DD -15.84%</span>
+          <span style="color:var(--purple)">▼ 沪深300回撤 Benchmark DD -38.20%</span>
+        </div>
+      </div>
+
+      <div class="chart-box">
+        <div class="chart-title">日收益率 Daily Returns</div>
+        <svg class="spark" id="bt-dr" viewBox="0 0 1100 300" preserveAspectRatio="none" style="background:#000000;border-radius:4px"></svg>
+        <div class="lv" style="justify-content:center">
+          <span style="color:var(--up)">■ 策略日收益（正）</span>
+          <span style="color:var(--down)">■ 策略日收益（负）</span>
+          <span style="color:var(--purple)">— 沪深300日收益率 Benchmark ~1D</span>
+        </div>
+      </div>
+
+      <div class="sec-title">绩效指标明细 Performance Metrics Detail</div>
+      <table>
+        <tr><th style="width:22%">指标 Metric</th><th style="width:28%">值 Value</th><th style="width:22%">指标 Metric</th><th style="width:28%">值 Value</th></tr>
+        <tr><td>期初资产</td><td>¥10,000,000.00</td><td>胜率</td><td class="up">66.29%</td></tr>
+        <tr><td>期末资产</td><td>¥22,481,641.27</td><td>Alpha</td><td>0.39</td></tr>
+        <tr><td>累计盈亏</td><td class="up">¥12,481,641.27</td><td>Beta</td><td>0.13</td></tr>
+        <tr><td>累计手续费</td><td>¥53,436.96</td><td>夏普比率</td><td style="color:var(--text)">2.16</td></tr>
+        <tr><td>累计收益率</td><td class="up">124.82%</td><td>索提诺比率</td><td>3.33</td></tr>
+        <tr><td>基准收益率</td><td class="down">-23.65%</td><td>卡玛比率</td><td>2.99</td></tr>
+        <tr><td>超额收益率</td><td class="up">148.46%</td><td>信息比率</td><td>2.54</td></tr>
+        <tr><td>年化收益率</td><td class="up">47.40%</td><td>特雷诺比率</td><td>340.40</td></tr>
+        <tr><td>最大回撤</td><td class="down">-15.84%</td><td>无风险利率</td><td>2.00%</td></tr>
+        <tr><td>年化波动率</td><td>21.04%</td><td>交易天数</td><td>522</td></tr>
+      </table>
+    </div>
+
+    <!-- ---------- Tab2 持仓分析 ---------- -->
+    <div class="subpage" id="bt-holding">
+      <div class="chart-box">
+        <div class="chart-title">仓位资金分布图 Position Value Distribution</div>
+        <svg class="spark" viewBox="0 0 1100 400" preserveAspectRatio="none" style="background:#000000;border-radius:4px">
+          <g stroke="#555" stroke-width="0.3" opacity="0.5">
+            <line x1="0" y1="100" x2="1100" y2="100"/><line x1="0" y1="200" x2="1100" y2="200"/><line x1="0" y1="300" x2="1100" y2="300"/>
+          </g>
+          <!-- 堆叠面积：000001 蓝 / 000300 紫 / 600000 橙 -->
+          <path d="M0,400 L0,260 L180,240 L360,270 L540,220 L720,250 L900,210 L1100,230 L1100,400 Z" fill="#3D8BFF" opacity="0.55"/>
+          <path d="M0,400 L0,260 L180,240 L360,270 L540,220 L720,250 L900,210 L1100,230 L1100,150 L900,130 L720,160 L540,120 L360,150 L180,130 L0,150 Z" fill="#AB47BC" opacity="0.5"/>
+          <path d="M0,150 L180,130 L360,150 L540,120 L720,160 L900,130 L1100,150 L1100,80 L900,60 L720,90 L540,55 L360,80 L180,70 L0,90 Z" fill="#F0B90B" opacity="0.5"/>
+        </svg>
+        <div class="lv" style="justify-content:center">
+          <span style="color:var(--blue)">■ 000001.SZ</span><span style="color:var(--purple)">■ 000300.SH</span><span style="color:var(--orange)">■ 600000.SH</span>
+        </div>
+      </div>
+      <div class="sec-title">持仓明细 Position Details</div>
+      <table>
+        <tr><th>日期 Date</th><th>代码 Symbol</th><th>方向 Side</th><th>数量 Qty</th><th>均价 VWAP</th><th>当前价 Price</th><th>市值 Market Value</th><th>浮动盈亏 Float PnL</th></tr>
+        <tr><td>2020-12-31</td><td>000001.SZ</td><td>long</td><td>2,051</td><td>48.901</td><td>52.61</td><td>¥107,903</td><td class="up">+7,613</td></tr>
+        <tr><td>2020-12-31</td><td>000300.SH</td><td>long</td><td>4,141</td><td>95.210</td><td>97.80</td><td>¥404,990</td><td class="up">+10,726</td></tr>
+        <tr><td>2020-12-31</td><td>600000.SH</td><td>long</td><td>695</td><td>320.50</td><td>319.37</td><td>¥221,962</td><td class="down">-782</td></tr>
+        <tr><td>2020-12-30</td><td>000001.SZ</td><td>long</td><td>2,051</td><td>48.901</td><td>51.94</td><td>¥106,529</td><td class="up">+6,239</td></tr>
+        <tr><td>2020-12-30</td><td>000300.SH</td><td>long</td><td>4,141</td><td>95.210</td><td>96.12</td><td>¥398,033</td><td class="up">+3,769</td></tr>
+        <tr><td colspan="8" class="dim" style="text-align:center">… 每日快照全量（现有组件同款，支持滚动）</td></tr>
+      </table>
+    </div>
+
+    <!-- ---------- Tab3 交易统计：26 卡 + 月度热力图 ---------- -->
+    <div class="subpage" id="bt-trades">
+      <div class="row c6">
+        <div class="card metric"><div class="l">交易天数</div><div class="v" style="font-size:18px">522</div></div>
+        <div class="card metric"><div class="l">上涨天数</div><div class="v up" style="font-size:18px">297</div></div>
+        <div class="card metric"><div class="l">下跌天数</div><div class="v down" style="font-size:18px">225</div></div>
+        <div class="card metric"><div class="l">最大连续上涨</div><div class="v" style="font-size:18px">10天</div></div>
+        <div class="card metric"><div class="l">最大连续下跌</div><div class="v" style="font-size:18px">5天</div></div>
+        <div class="card metric"><div class="l">平仓次数</div><div class="v" style="font-size:18px">120</div></div>
+        <div class="card metric"><div class="l">盈利次数</div><div class="v up" style="font-size:18px">80</div></div>
+        <div class="card metric"><div class="l">亏损次数</div><div class="v down" style="font-size:18px">40</div></div>
+        <div class="card metric"><div class="l">日胜率</div><div class="v" style="font-size:18px">56.90%</div></div>
+        <div class="card metric"><div class="l">胜率</div><div class="v" style="font-size:18px;color:var(--text)">66.29%</div></div>
+        <div class="card metric"><div class="l">最大单次盈利</div><div class="v up" style="font-size:18px">¥1.58M</div></div>
+        <div class="card metric"><div class="l">平均单次盈利</div><div class="v up" style="font-size:18px">¥85,200</div></div>
+        <div class="card metric"><div class="l">最大单次亏损</div><div class="v down" style="font-size:18px">¥-420,000</div></div>
+        <div class="card metric"><div class="l">平均单次亏损</div><div class="v down" style="font-size:18px">¥-48,500</div></div>
+        <div class="card metric"><div class="l">盈亏比</div><div class="v" style="font-size:18px;color:var(--text)">1.76</div></div>
+        <div class="card metric"><div class="l">最大回撤持续</div><div class="v" style="font-size:18px">42天</div></div>
+        <div class="card metric"><div class="l">最大连续回撤</div><div class="v down" style="font-size:18px">-15.84%</div></div>
+        <div class="card metric"><div class="l">最大日回撤</div><div class="v down" style="font-size:18px">-4.71%</div></div>
+        <div class="card metric"><div class="l">最大周回撤</div><div class="v down" style="font-size:18px">-8.50%</div></div>
+        <div class="card metric"><div class="l">最大月回撤</div><div class="v down" style="font-size:18px">-12.30%</div></div>
+        <div class="card metric"><div class="l">最大回撤起始</div><div class="v" style="font-size:18px">2019-07-15</div></div>
+        <div class="card metric"><div class="l">最大回撤结束</div><div class="v" style="font-size:18px">2019-08-26</div></div>
+        <div class="card metric"><div class="l">最长不创新高</div><div class="v" style="font-size:18px">58天</div></div>
+        <div class="card metric"><div class="l">单日最大上涨</div><div class="v up" style="font-size:18px">4.58%</div></div>
+        <div class="card metric"><div class="l">单日最大下跌</div><div class="v down" style="font-size:18px">-4.71%</div></div>
+        <div class="card metric"><div class="l">年换手率</div><div class="v" style="font-size:18px">12.50</div></div>
+      </div>
+      <div class="sec-title">月度收益率热力图 Monthly Returns</div>
+      <div class="card">
+        <div class="hm">
+          <span class="hh"></span><span class="hh">1月</span><span class="hh">2月</span><span class="hh">3月</span><span class="hh">4月</span><span class="hh">5月</span><span class="hh">6月</span><span class="hh">7月</span><span class="hh">8月</span><span class="hh">9月</span><span class="hh">10月</span><span class="hh">11月</span><span class="hh">12月</span>
+          <span class="hy">2019</span>
+            <span class="hc" style="background:rgba(202,63,100,.45)">4.2%</span><span class="hc" style="background:rgba(202,63,100,.3)">2.1%</span><span class="hc" style="background:rgba(37,167,80,.45)">-3.4%</span><span class="hc" style="background:rgba(202,63,100,.45)">5.0%</span><span class="hc" style="background:rgba(202,63,100,.85)">17.9%</span><span class="hc" style="background:rgba(202,63,100,.6)">8.3%</span><span class="hc" style="background:rgba(37,167,80,.6)">-6.1%</span><span class="hc" style="background:rgba(37,167,80,.3)">-2.8%</span><span class="hc" style="background:rgba(202,63,100,.3)">1.6%</span><span class="hc" style="background:rgba(202,63,100,.45)">4.7%</span><span class="hc" style="background:rgba(202,63,100,.6)">7.2%</span><span class="hc" style="background:rgba(202,63,100,.45)">3.9%</span>
+          <span class="hy">2020</span>
+            <span class="hc" style="background:rgba(202,63,100,.18)">1.2%</span><span class="hc" style="background:rgba(37,167,80,.6)">-7.5%</span><span class="hc" style="background:rgba(37,167,80,.85)">-11.2%</span><span class="hc" style="background:rgba(202,63,100,.6)">6.4%</span><span class="hc" style="background:rgba(202,63,100,.6)">9.1%</span><span class="hc" style="background:rgba(202,63,100,.45)">3.6%</span><span class="hc" style="background:rgba(202,63,100,.85)">14.2%</span><span class="hc" style="background:rgba(202,63,100,.6)">8.8%</span><span class="hc" style="background:rgba(37,167,80,.6)">-8.9%</span><span class="hc" style="background:rgba(202,63,100,.3)">2.4%</span><span class="hc" style="background:rgba(202,63,100,.45)">5.5%</span><span class="hc" style="background:rgba(202,63,100,.6)">7.7%</span>
+        </div>
+        <div class="lv" style="justify-content:center;margin-top:8px"><span class="down">■ -10%</span><span class="dim">■ 0</span><span class="up">■ +10%</span><span class="dim">透明度族发散（DS-1：红=正/绿=负，5 档 alpha）</span></div>
+      </div>
+    </div>
+
+    <!-- ---------- Tab4 每日明细：日期下钻三表 ---------- -->
+    <div class="subpage" id="bt-daily">
+      <div style="margin-bottom:14px"><span class="dim" style="font-size:12px;margin-right:8px">选择日期 Select Date:</span>
+        <span class="sel" id="bt-date-sel" style="position:relative;cursor:pointer" onclick="btDateTgl(event)"><span id="bt-date-t">2019-01-02</span> ▾
+          <span class="acct-menu" id="bt-date-menu">
+            <span class="acct-mi on" onclick="btDailySet('2019-01-02',event)">2019-01-02</span>
+            <span class="acct-mi" onclick="btDailySet('2019-02-11',event)">2019-02-11</span>
+            <span class="acct-mi" onclick="btDailySet('2019-03-04',event)">2019-03-04</span>
+          </span>
+        </span>
+        <span class="dim" style="font-size:11px">（演示 3 个有交易日；全量日期 I-2 转真）</span>
+      </div>
+
+      <div class="sec-title" id="bt-cap-title">当日资金 Daily Capital (2019-01-02)</div>
+      <table id="bt-cap-table"></table>
+
+      <div class="sec-title" id="bt-pos-title">当日持仓 Daily Positions (2019-01-02)</div>
+      <table id="bt-pos-table"></table>
+
+      <div class="sec-title" id="bt-ord-title">当日委托 Daily Orders (2019-01-02)</div>
+      <table id="bt-ord-table"></table>
+    </div>
+
+    <!-- ---------- Tab5 信号分析：K线+买卖点 ---------- -->
+    <div class="subpage" id="bt-signal">
+      <div style="display:flex;gap:14px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
+        <div class="tabs" style="margin:0">
+          <span class="tab on">日线 Daily</span><span class="tab">60分钟</span><span class="tab">30分钟</span><span class="tab">15分钟</span><span class="tab">5分钟</span><span class="tab">1分钟</span>
+        </div>
+        <span class="dim" style="font-size:12px">标的 Symbol:</span><span class="sel">000001.SZ ▾</span>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title">K线 + 买卖信号 K-Line + Trade Signals</div>
+        <svg class="spark" viewBox="0 0 1100 620" preserveAspectRatio="none" style="background:#000000;border-radius:4px">
+          <g stroke="#555" stroke-width="0.3" opacity="0.5">
+            <line x1="0" y1="120" x2="1100" y2="120"/><line x1="0" y1="240" x2="1100" y2="240"/><line x1="0" y1="360" x2="1100" y2="360"/>
+            <line x1="0" y1="500" x2="1100" y2="500"/>
+          </g>
+          <!-- K线蜡烛（24根， teal涨/red跌） -->
+          <g id="candles"></g>
+          <!-- 买卖三角：▲买贴近蜡烛低点下方 / ▼卖贴近高点上方（红买绿卖） -->
+          <path d="M120,272 l10,-16 l10,16 Z" fill="#CA3F64" stroke="#EDEFF2" stroke-width="1"/>
+          <path d="M310,96 l10,16 l10,-16 Z" fill="#25A750" stroke="#EDEFF2" stroke-width="1"/>
+          <path d="M560,282 l10,-16 l10,16 Z" fill="#CA3F64" stroke="#EDEFF2" stroke-width="1"/>
+          <path d="M760,106 l10,16 l10,-16 Z" fill="#25A750" stroke="#EDEFF2" stroke-width="1"/>
+          <!-- 成交量柱 -->
+          <g id="vols"></g>
+        </svg>
+        <div class="lv" style="justify-content:center">
+          <span style="color:var(--up)">— K线 K-Line</span><span style="color:var(--down)">■ 成交量 Volume</span>
+          <span style="color:var(--up)">▲ 买入 Buy</span><span style="color:var(--down)">▼ 卖出 Sell</span>
+        </div>
+      </div>
+      <div class="sec-title">交易明细 Trade Details</div>
+      <table>
+        <tr><th>时间 Time</th><th>代码 Symbol</th><th>方向 Side</th><th>价格 Price</th><th>数量 Qty</th><th>金额 Amount</th><th>手续费 Fee</th></tr>
+        <tr><td>2019-01-02</td><td>000001.SZ</td><td class="up">buy</td><td>48.901</td><td>5,204</td><td>¥254,480</td><td>76.34</td></tr>
+        <tr><td>2019-02-11</td><td>000001.SZ</td><td class="down">sell</td><td>52.330</td><td>5,204</td><td>¥272,325</td><td>81.70</td></tr>
+        <tr><td>2019-03-04</td><td>000001.SZ</td><td class="up">buy</td><td>50.120</td><td>5,300</td><td>¥265,636</td><td>79.69</td></tr>
+        <tr><td>2019-04-19</td><td>000001.SZ</td><td class="down">sell</td><td>55.870</td><td>5,300</td><td>¥296,111</td><td>88.83</td></tr>
+      </table>
+    </div>
+
+    <div class="note">本页为现有 backtest_performance 组件的视觉复刻（图表真实实现为 Plotly 交互图：hover 悬浮/点击下钻/双击重置）；中英双语标签为现有规范</div>
+  </section>
+
+  

@@ -1,0 +1,49 @@
+<section class="page" id="p-modledger">
+    <h2 class="page-title">模块总账</h2>
+    <div class="page-sub">治理组 · 核心目的：全模块台账——哪些建造了/哪些没建/前端哪页显示/最近在没在跑，一表对照（depgraph+候选清单自动供数，近似口径如实标注）</div>
+
+    <div class="row c5">
+      <div class="card metric"><div class="l">模块总数</div><div class="v">7,809</div><div class="s">depgraph 节点 7,809（19,216 边/73 域）+ 候选 618</div></div>
+      <div class="card metric"><div class="l">已建（production）</div><div class="v">2,933</div><div class="s">占 37.6%（B-007 转正终态）</div></div>
+      <div class="card metric"><div class="l">设计态 planned</div><div class="v">205</div><div class="s">含 generated 已生成</div></div>
+      <div class="card metric"><div class="l">候选未施工</div><div class="v">618</div><div class="s">candidate_module_registry（promoted 332 / candidate 177）</div></div>
+      <div class="card metric"><div class="l">前端已显示模块</div><div class="v">212</div><div class="s">覆盖率 5.3%（按 stable+testing 计）</div></div>
+    </div>
+
+    <div class="card">
+      <h3>全模块清单 <span class="badge b-na">演示数据</span> <span class="dim">12 代表域 × 抽样 80 模块 · 按功能域分组（全量 6,912 行由生成器 JSON 供数，约定后转真 I-2）</span></h3>
+      <div class="mod-legend">
+        <span class="dim" style="font-weight:600">状态灯</span>
+        <span><span class="dot ok"></span>stable 且近 7 日有运行</span>
+        <span><span class="dot y"></span>planned 或 30 日未运行</span>
+        <span><span class="dot w"></span>候选未施工（cand）</span>
+        <span><span class="dot b"></span>testing</span>
+      </div>
+      <div class="tabs" id="mod-domtabs"></div>
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px;flex-wrap:wrap">
+        <select class="sel" style="min-width:120px" onchange="modSetSt(this.value)">
+          <option value="all">全部状态</option>
+          <option value="stable">stable</option>
+          <option value="testing">testing</option>
+          <option value="planned">planned</option>
+          <option value="cand">cand</option>
+        </select>
+        <input class="mod-srch" placeholder="搜索模块中文 / 英文名…" oninput="modSetQ(this.value)">
+        <span class="dim" style="font-size:11px" id="mod-count"></span>
+      </div>
+      <table id="mod-table"></table>
+      <div class="note">演示为抽样 80 行（真实模块照此风格自造），列规格/徽标/状态灯即正式版口径；域头计数随筛选联动</div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <h3>口径与数据源说明</h3>
+      <ol style="font-size:12px;color:var(--dim);line-height:2;padding-left:18px">
+        <li><b>状态</b>＝depgraph build_status 四段：planned 设计 / generated 已生成 / testing 测试 / stable 运营（generated 并入 planned 计）。</li>
+        <li><b>最近使用</b>＝近似口径（测试套件最近运行 + 调度任务心跳合成）——真实模块级调用埋点已登记 CAND，当前为近似值，如实标注。</li>
+        <li><b>前端显示</b>＝页面-模块映射（人工种子 + 生成器补全）；「待接入」＝模块已建但前端未挂页。</li>
+        <li><b>数据源</b>：depgraph 全景图 + candidate_module_registry + module_translation_registry（中文名）；生成器每次运行自动刷新——本页为演示结构，JSON 导出约定后转真（I-2）。</li>
+      </ol>
+    </div>
+  </section>
+
+  

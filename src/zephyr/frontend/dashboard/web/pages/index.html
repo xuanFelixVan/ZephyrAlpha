@@ -1,0 +1,125 @@
+<section class="page" id="p-index">
+    <h2 class="page-title" id="idx-title">上证指数（000001.SH）</h2>
+    <div class="page-sub">研究组 · 核心目的：<b>任意标的的技术面分析台</b>——标的搜索/下拉切换（指数 4 只+个股），汇总主图（多指标叠加+买卖信号置信度）+ 39 指标窗格自由增减 · 9 时段切换 · 固定 120 根K线（指数分析组合并入本页，Owner 2026-08-23 裁定）</div>
+
+    <div class="param-strip" style="align-items:center">
+      <span>标的
+        <span class="sel tech-sel on" data-sym="sh" onclick="techSwitch('sh',this)">上证指数</span>
+        <span class="sel tech-sel" data-sym="sz" onclick="techSwitch('sz',this)">深证成指</span>
+        <span class="sel tech-sel" data-sym="cy" onclick="techSwitch('cy',this)">创业板指</span>
+        <span class="sel tech-sel" data-sym="kc" onclick="techSwitch('kc',this)">科创综指</span>
+        <span class="sel tech-sel" data-sym="600519" onclick="techSwitch('600519',this)">贵州茅台</span>
+        <span class="sel tech-sel" data-sym="300750" onclick="techSwitch('300750',this)">宁德时代</span>
+        <span class="sel tech-sel" data-sym="688981" onclick="techSwitch('688981',this)">中芯国际</span>
+        <span class="tech-srch-wrap"><input class="tech-srch" id="tech-srch" placeholder="搜索标的…" oninput="techSearch(this.value)" onkeydown="if(event.key==='Enter')techSearchGo()"><span class="tech-srch-list" id="tech-srch-list"></span></span>
+      </span>
+      <span>现价 <b id="idx-price">3,087.53</b></span>
+      <span>涨跌 <b class="up" id="idx-chg">+0.72%</b></span>
+      <span id="idx-regime">Regime <b style="color:var(--text)">震荡偏强</b></span>
+      <span id="idx-regime-na" style="display:none">Regime <b class="dim">— 个股不适用（市场级指标）</b></span>
+      <span style="border-right:none">时段
+        <span class="tabs" style="display:inline-flex;margin:0 0 0 8px" id="per-tabs">
+          <span class="tab" onclick="setPer(0,this)">1分钟</span>
+          <span class="tab" onclick="setPer(1,this)">5分钟</span>
+          <span class="tab" onclick="setPer(2,this)">15分钟</span>
+          <span class="tab" onclick="setPer(3,this)">30分钟</span>
+          <span class="tab" onclick="setPer(4,this)">60分钟</span>
+          <span class="tab" onclick="setPer(5,this)">120分钟</span>
+          <span class="tab on" onclick="setPer(6,this)">日线</span>
+          <span class="tab" onclick="setPer(7,this)">周线</span>
+          <span class="tab" onclick="setPer(8,this)">月线</span>
+        </span>
+      </span>
+    </div>
+
+    <!-- 综合观点卡：系统对大盘的多指标共振结论 -->
+    <div class="card" id="signal-card" style="margin-bottom:14px"></div>
+
+    <!-- A11 多周期K线同屏对比（小红书组3 FreshQuant 参考：1m~1d 六格同屏，周期共振/背离一眼看出） -->
+    <details class="sec-det" style="margin-bottom:14px">
+      <summary>📐 多周期同屏对比（1m/5m/15m/30m/60m/日线 六格——周期共振与背离，小红书 FreshQuant 参考 A11）<span class="badge b-na" style="margin-left:8px">演示缩略图</span></summary>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px" id="mc-grid"></div>
+      <div class="note" style="margin-top:6px">读法：日线定方向、60m 定结构、15m 定买点——三周期同向=共振（胜率高）；日线涨但 60m 顶背离=追高风险。缠论笔/段/中枢叠加（GAP-F-37）施工后此处各格可叠加显示</div>
+    </details>
+
+    <!-- 汇总主图：K线+成交量+多指标叠加+买卖信号 -->
+    <div class="chart-box">
+      <div class="chart-title" style="display:flex;justify-content:space-between;align-items:center">
+        <span>汇总主图 · <span id="per-lbl-1">日线</span> · 固定 <b>120</b> 根（红涨绿跌，下挂成交量）</span>
+        <details class="ovl"><summary>叠加指标 ▾</summary>
+          <div class="ovl-body">
+            <label><input type="checkbox" checked onchange="ovlTgl('ma',this.checked)"> MA20 均线</label>
+            <label><input type="checkbox" checked onchange="ovlTgl('boll',this.checked)"> 布林带 BOLL</label>
+            <label><input type="checkbox" checked onchange="ovlTgl('frac',this.checked)"> 顶/底分型</label>
+            <label><input type="checkbox" checked onchange="ovlTgl('trend',this.checked)"> 趋势线</label>
+            <label><input type="checkbox" checked onchange="ovlTgl('sr',this.checked)"> 压力/支撑</label>
+            <label><input type="checkbox" checked onchange="ovlTgl('cost',this.checked)"> 主力成本线</label>
+            <label><input type="checkbox" checked onchange="ovlTgl('volmark',this.checked)"> 量能标注（天量/地量）</label>
+          </div>
+        </details>
+      </div>
+      <svg class="spark" id="svg-main" viewBox="0 0 1100 520" preserveAspectRatio="none" style="background:#000000;border-radius:4px"></svg>
+      <div class="lv" style="justify-content:center">
+        <span style="color:var(--up)">▲ 买点（底分型+共振）</span>
+        <span style="color:var(--down)">▼ 卖点（顶分型+共振）</span>
+        <span style="color:var(--blue)">— MA20</span>
+        <span style="color:var(--orange)">— 主力成本线</span>
+        <span class="dim">下拉框可开关各叠加层；所有出现位置同时标注，不只标一处</span>
+      </div>
+    </div>
+
+    <!-- 循环升级 R9：技术信号预警设置卡（TradingView Alerts 同位，盘后批检查口径）+ 买卖点信号回验表（主图 ▲▼ 后续命中验证） -->
+    <div class="row c2" style="margin-bottom:14px">
+      <details class="card sec-det" style="margin-bottom:0">
+        <summary><b>技术信号预警设置</b>（TradingView Alerts 同位：价格触线/指标触发 → 盘后批检查 → 总览告警；循环升级 R9）</summary>
+        <div style="margin-top:10px">
+          <table>
+            <tr><th>预警条件</th><th>类型</th><th>状态</th><th>最近触发</th></tr>
+            <tr><td>上证指数 收盘跌破 MA20</td><td>价格/均线</td><td><span class="badge b-pass">监控中</span></td><td class="dim">08-12（已推送总览告警）</td></tr>
+            <tr><td>MACD DIF 上穿 DEA（金叉）</td><td>指标触发</td><td><span class="badge b-pass">监控中</span></td><td class="dim">08-19</td></tr>
+            <tr><td>底分型成立且共振 ≥5/7</td><td>形态+共振</td><td><span class="badge b-na">已暂停</span></td><td class="dim">—</td></tr>
+            <tr><td>成交量 &gt; 20 日均量 ×2（天量）</td><td>量能</td><td><span class="badge b-pass">监控中</span></td><td class="dim">08-21</td></tr>
+          </table>
+          <div style="margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <span class="sel" style="min-width:130px">价格突破 ▾</span>
+            <span class="sel" style="min-width:110px">MA20 ▾</span>
+            <span class="btn" onclick="alert('预警已创建（演示）——盘后批检查触发，非盘中实时；真实触发引擎 I-2')">＋ 创建预警</span>
+            <span class="dim" style="font-size:11px">日频系统=盘后批检查触发（TradingView Alerts 同构，非盘中实时推送；触发引擎 I-2）</span>
+          </div>
+          <div class="note">预警列表演示；触发→总览告警区+通知占位（BFE-38 通道）</div>
+        </div>
+      </details>
+      <details class="card sec-det" style="margin-bottom:0">
+        <summary><b>买卖点信号回验表</b>（主图 ▲▼ 信号后续 N 日命中验证——做T页回验同构；循环升级 R9）</summary>
+        <table style="margin-top:10px">
+          <tr><th>日期</th><th>信号</th><th>价位</th><th>置信度</th><th>+5 日</th><th>+10 日</th><th>判定</th></tr>
+          <tr><td>08-04</td><td><span class="badge b-buy">▲ 买点</span></td><td>2,986.2</td><td>72%</td><td class="up">+1.8%</td><td class="up">+3.1%</td><td><span class="badge b-pass">命中</span></td></tr>
+          <tr><td>07-22</td><td><span class="badge b-sell">▼ 卖点</span></td><td>3,121.8</td><td>68%</td><td class="down">-1.2%</td><td class="down">-2.4%</td><td><span class="badge b-pass">命中</span></td></tr>
+          <tr><td>07-09</td><td><span class="badge b-buy">▲ 买点</span></td><td>3,042.5</td><td>64%</td><td class="down">-0.6%</td><td class="up">+1.1%</td><td><span class="badge b-warn">半命中</span></td></tr>
+          <tr><td>06-25</td><td><span class="badge b-sell">▼ 卖点</span></td><td>3,188.0</td><td>75%</td><td class="up">+0.8%</td><td class="down">-0.4%</td><td><span class="badge b-fail">失手</span></td></tr>
+        </table>
+        <div class="note">近 20 信号：命中 12 / 半命中 5 / 失手 3（65%）——置信度评分算法为演示（缺口③），正式回验随评分算法落地转真；回验口径与做T页/作战室 W0 同构</div>
+      </details>
+    </div>
+
+    <!-- 指标窗格区（+/- 自由增减，每格下拉选指标） -->
+    <div id="panes"></div>
+    <div style="margin:6px 0 14px"><span class="btn" onclick="addPane()">＋ 添加指标图</span><span class="note" style="display:inline;margin-left:10px">每个窗格左上角下拉换指标（BOLL/KDJ/MACD/量价分析/形态分型）、右上角 − 移除；识别不出形态时窗格会明说（负反馈也是结果）</span></div>
+
+    <!-- 阶段状态带（指数态显示；个股态隐藏换负反馈） -->
+    <div class="chart-box" id="phase-box">
+      <div class="chart-title">阶段状态标注 <span style="font-weight:400">（regime_detector + regime_cycle_analyzer：哪一阶段属于什么状态，直接画在时间轴上）</span>· <span id="per-lbl-4">日线</span></div>
+      <svg class="spark" id="svg-phase" viewBox="0 0 1100 240" preserveAspectRatio="none" style="background:#000000;border-radius:4px"></svg>
+      <div class="lv" style="justify-content:center">
+        <span style="color:var(--up)">■ 上升段</span><span style="color:var(--down)">■ 下跌段</span><span style="color:var(--dim)">■ 震荡段</span><span style="color:var(--yellow)">■ 修复段（当前）</span>
+      </div>
+    </div>
+    <div class="card" id="phase-na" style="display:none">
+      <h3>阶段状态标注 <span class="badge b-na">待接入</span></h3>
+      <div class="note" style="margin-top:0">阶段带=大盘 regime 专用（regime_detector 市场级指标），个股适用性待研究——当前标的为个股，本卡不输出（负反馈也是结果——系统明说「没有」）</div>
+    </div>
+
+    <div class="note">数据：kline_index（日/周/月）+ kline 分钟族（1m~120min，120min 由 60min 两根聚合——项目技术指标规范）；指数/个股同页搜索切换共用本版式（I-5c 合并）；本原型用确定性模拟数据演示版式与交互，置信度评分算法为演示（多指标共振综合评分属新增能力，§5 缺口③）；搜索范围外的标的显示「待接入」负反馈</div>
+  </section>
+
+  

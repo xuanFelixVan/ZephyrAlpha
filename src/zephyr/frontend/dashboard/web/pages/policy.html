@@ -1,0 +1,62 @@
+<section class="page" id="p-policy">
+    <h2 class="page-title">政策资金</h2>
+    <div class="page-sub">实盘组 · 核心目的：<b>政策与国家资金动向</b>——政策流（分源：国务院/央行/证监会/地方政府+海外央行）+ 国家队资金（社保/汇金持仓变动、宽基 ETF 份额异动）；<b>政策≠新闻</b>：本页=官方独立源语境，新闻舆情页=媒体流语境（L4 边界）</div>
+
+    <!-- 上半：政策流（分源 tabs） -->
+    <div class="card">
+      <h3>政策流 <span class="badge b-na">演示数据</span> <span class="dim">政策≠新闻——独立官方源（政府公报/央行官网/证监会发布/地方政府+海外央行）；news_data 827 万行可筛政策类作近似源，独立政策源接口待接入（I-2）</span></h3>
+      <div class="tabs" id="pol-tabs">
+        <span class="tab on" data-pol="all" onclick="polSet('all',this)">全部</span>
+        <span class="tab" data-pol="国务院" onclick="polSet('国务院',this)">国务院</span>
+        <span class="tab" data-pol="央行" onclick="polSet('央行',this)">央行</span>
+        <span class="tab" data-pol="证监会" onclick="polSet('证监会',this)">证监会</span>
+        <span class="tab" data-pol="地方政府" onclick="polSet('地方政府',this)">地方政府</span>
+        <span class="tab" data-pol="海外" onclick="polSet('海外',this)">海外（美联储）</span>
+        <span class="dim" id="pol-count" style="margin-left:8px;font-size:11px"></span>
+      </div>
+      <table>
+        <tbody id="pol-body"></tbody>
+      </table>
+      <div class="note">级别口径：国家级 &gt; 部委级 &gt; 省市级；影响解读=对 A 股方向性判读（演示）；海外源：美联储政策与利率路径——FRED 序列在库（macro_data 含 DFF 联邦基金利率/DGS10/DGS02 国债收益率 22 序列，macro_fred_incremental 任务 event_driven），本卡利率行=库内真实序列口径演示；原文链=官方发布页（演示置灰）</div>
+    </div>
+
+    <!-- 下半：国家资金 -->
+    <div class="row c2">
+      <div class="card">
+        <h3>国家队持仓变动（社保/汇金） <span class="badge b-na">演示数据</span> <span class="dim">季度口径：top10_shareholders（十大股东 144 万行）推导——社保/汇金/大基金出现在十大股东=持仓痕迹；专门「国家队持仓」表无 → 推导演示，滞后 1-2 月如实标注</span></h3>
+        <div class="sec-title" style="margin-top:0">板块维度（季度净变动，推导）</div>
+        <div class="bar-row"><span>银行</span><div class="bar"><i class="g" style="width:82%"></i></div><span class="up">+82 亿</span></div>
+        <div class="bar-row"><span>非银金融</span><div class="bar"><i class="g" style="width:45%"></i></div><span class="up">+45 亿</span></div>
+        <div class="bar-row"><span>医药生物</span><div class="bar"><i class="g" style="width:21%"></i></div><span class="up">+21 亿</span></div>
+        <div class="bar-row"><span>电子</span><div class="bar"><i class="r" style="width:12%"></i></div><span class="down">-12 亿</span></div>
+        <div class="bar-row"><span>新能源</span><div class="bar"><i class="r" style="width:8%"></i></div><span class="down">-8 亿</span></div>
+        <div class="sec-title">个股维度（2026Q2 十大股东推导）</div>
+        <table>
+          <tr><th>标的</th><th>主体</th><th>持仓变动</th><th>参考市值</th></tr>
+          <tr><td>工商银行</td><td>中央汇金</td><td class="up">增持 +2.1 亿股</td><td>+15.6 亿</td></tr>
+          <tr><td>中国平安</td><td>社保基金组合</td><td class="up">增持 +0.8 亿股</td><td>+3.9 亿</td></tr>
+          <tr><td>恒瑞医药</td><td>社保基金组合</td><td class="up">增持 +0.3 亿股</td><td>+1.4 亿</td></tr>
+          <tr><td>中芯国际</td><td>大基金一期</td><td class="down">减持 -0.5 亿股</td><td>-4.6 亿</td></tr>
+        </table>
+        <div class="note">判读：国家队加仓银行/保险=防御托底信号，与「宽基 ETF 份额异动」互证；季报披露后 T+45 日内更新</div>
+      </div>
+      <div class="card">
+        <h3>宽基 ETF 份额异动 <span class="dim">国家队护盘代理指标</span> <span class="badge b-na">待接入</span></h3>
+        <div class="note" style="margin-top:0"><b>（负反馈也是结果——系统明说「没有」）</b>：库内 <b>无 ETF 份额数据表</b>——etf_nav（净值 5.4 万行）/etf_list（名录 1,628）/kline_etf_daily（行情 5.6 万行）在库但<b>无份额字段</b>，无法计算份额净申购。护盘代理指标（汇金增持宽基 ETF=份额暴增）需要份额日频数据。</div>
+        <table>
+          <tr><th>数据源候选</th><th>口径</th><th>可获取性</th></tr>
+          <tr><td>交易所基金公告</td><td>份额日频（免费）</td><td><span class="badge b-pass">API 可达</span></td></tr>
+          <tr><td>Wind/Choice 份额日报</td><td>日频（付费终端）</td><td><span class="badge b-na">越硬边界·付费</span></td></tr>
+        </table>
+        <div class="note">处置：走 CAND 评审接交易所免费源后点亮本卡（G4 反误导——不造份额假数据）；当前可用代理=ETF 成交额异动（kline_etf_daily 在库），列入「盘中实时」页资金异动语境，不在本卡重复</div>
+      </div>
+    </div>
+
+    <!-- 地缘政治/战争风险（I-8 数据盘点：库内无表 → 占位负反馈卡） -->
+    <div class="card">
+      <h3>地缘政治 / 战争风险 <span class="badge b-na">待接入</span></h3>
+      <div class="note" style="margin-top:0"><b>（负反馈也是结果——系统明说「没有」）</b>：库内无地缘政治/战争风险结构化数据表。数据源候选：<b>GDELT</b>（免费全球事件数据库，可筛冲突/制裁类事件，API 免 key）/ <b>ACLED</b>（武装冲突事件库，学术免费）——评估后走 CAND 流程接入。当前近似覆盖=新闻舆情页「不可预测 · 真突发」标签（天灾/突发事件类）。</div>
+    </div>
+  </section>
+
+  

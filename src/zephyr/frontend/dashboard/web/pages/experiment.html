@@ -1,0 +1,86 @@
+<section class="page" id="p-experiment">
+    <h2 class="page-title">实验历史</h2>
+    <div class="page-sub">研究组 · 现有 v3.4.0 实现（memo 51：C1 回测历史 + 双净值对比，单一 JSON 源）—— 功能不变，主题统一预览</div>
+
+    <div class="row c13">
+      <div class="card">
+        <h3>Runs</h3>
+        <div class="run-list">
+          <div class="run-item on" onclick="expSel(0,this)">
+            <div class="exp-run-top"><span><input type="checkbox" class="exp-ck" data-i="0" title="勾选对比（≤2 个）" style="vertical-align:-2px;margin-right:4px" onclick="event.stopPropagation();expCkTgl()">c1_mock_20260819_sector</span><span class="exp-gate" title="阶段门控：研究→回测→纸面→实盘｜晋级规则：纸面交易必须落在回测统计包络内才允许晋级实盘（QC 哲学，与 depgraph 状态机同构）"><i class="dot exp-ok"></i><i class="dot exp-ok"></i><i class="dot exp-cur"></i><i class="dot exp-no"></i></span></div>
+            <span class="m">夏普 2.16 · 08-19 23:51 · 纸面验证中</span>
+          </div>
+          <div class="run-item" onclick="expSel(1,this)">
+            <div class="exp-run-top"><span><input type="checkbox" class="exp-ck" data-i="1" title="勾选对比（≤2 个）" style="vertical-align:-2px;margin-right:4px" onclick="event.stopPropagation();expCkTgl()">c1_mock_20260818_multi</span><span class="exp-gate" title="阶段门控：研究→回测→纸面→实盘｜晋级规则：纸面交易必须落在回测统计包络内才允许晋级实盘（QC 哲学，与 depgraph 状态机同构）"><i class="dot exp-ok"></i><i class="dot exp-ok"></i><i class="dot exp-ok"></i><i class="dot exp-cur"></i></span></div>
+            <span class="m">夏普 1.42 · 08-18 22:03 · 实盘灰度中</span>
+          </div>
+          <div class="run-item" onclick="expSel(2,this)">
+            <div class="exp-run-top"><span><input type="checkbox" class="exp-ck" data-i="2" title="勾选对比（≤2 个）" style="vertical-align:-2px;margin-right:4px" onclick="event.stopPropagation();expCkTgl()">c1_mock_20260817_daban</span><span class="exp-gate" title="阶段门控：研究→回测→纸面→实盘｜晋级规则：纸面交易必须落在回测统计包络内才允许晋级实盘（QC 哲学，与 depgraph 状态机同构）"><i class="dot exp-ok"></i><i class="dot exp-cur"></i><i class="dot exp-no"></i><i class="dot exp-no"></i></span></div>
+            <span class="m">夏普 0.88 · 08-17 21:40 · 回测门禁复核</span>
+          </div>
+          <div class="run-item" onclick="expSel(3,this)">
+            <div class="exp-run-top"><span><input type="checkbox" class="exp-ck" data-i="3" title="勾选对比（≤2 个）" style="vertical-align:-2px;margin-right:4px" onclick="event.stopPropagation();expCkTgl()">c1_mock_20260815_sector_v2</span><span class="exp-gate" title="阶段门控：研究→回测→纸面→实盘｜晋级规则：纸面交易必须落在回测统计包络内才允许晋级实盘（QC 哲学，与 depgraph 状态机同构）"><i class="dot exp-cur"></i><i class="dot exp-no"></i><i class="dot exp-no"></i><i class="dot exp-no"></i></span></div>
+            <span class="m">夏普 — · 08-15 20:12 · 研究阶段</span>
+          </div>
+          <div class="run-item" onclick="expSel(4,this)">
+            <div class="exp-run-top"><span><input type="checkbox" class="exp-ck" data-i="4" title="勾选对比（≤2 个）" style="vertical-align:-2px;margin-right:4px" onclick="event.stopPropagation();expCkTgl()">c1_mock_20260814_defensive</span><span class="exp-gate" title="阶段门控：研究→回测→纸面→实盘｜晋级规则：纸面交易必须落在回测统计包络内才允许晋级实盘（QC 哲学，与 depgraph 状态机同构）"><i class="dot exp-ok"></i><i class="dot exp-ok"></i><i class="dot exp-ok"></i><i class="dot exp-ok"></i></span></div>
+            <span class="m">夏普 1.05 · 08-14 19:47 · 已上实盘</span>
+          </div>
+        </div>
+        <div class="note" style="margin-top:6px">阶段门控：<i class="dot exp-ok" style="margin-right:2px"></i>已达 <i class="dot exp-cur" style="margin:0 2px 0 8px"></i>当前 <i class="dot exp-no" style="margin:0 2px 0 8px"></i>未达（研究→回测→纸面→实盘，悬停灯位看晋级规则）</div>
+        <div style="margin-top:10px"><span class="btn" style="font-size:11px">勾选 2 个 run 对比</span></div>
+        <div class="note">当前为 mock 记录；C1 真实回测历史接入后显示真实 run</div>
+      </div>
+      <div class="card">
+        <h3 id="exp-title">c1_mock_20260819_sector · 详情</h3>
+        <div class="exp-meta">
+          <div class="exp-meta-grid">
+            <div><span class="exp-meta-l">代码版本</span><br>git <b>d3074bfc</b></div>
+            <div><span class="exp-meta-l">数据版本</span><br>bundle <b>2026-08-22</b></div>
+            <div><span class="exp-meta-l">配置快照</span><br><code class="exp-meta-cfg">{"universe":"sector_top10","cost":"t+1_万2.5","signal":"v3.2"}</code></div>
+          </div>
+          <div class="exp-meta-env">运行环境：python 3.12 / rqalpha 6.3 <span class="badge b-na" style="margin-left:8px">演示数据</span> <span class="dim">experiment 注册表落地后转真（I-2）</span></div>
+        </div>
+        <div class="row c4" style="margin-bottom:10px">
+          <div class="card metric"><div class="l">夏普</div><div class="v" style="color:var(--text)">2.16</div></div>
+          <div class="card metric"><div class="l">最大回撤</div><div class="v down">-15.8%</div></div>
+          <div class="card metric"><div class="l">年化</div><div class="v up">+47.4%</div></div>
+          <div class="card metric"><div class="l">胜率</div><div class="v" style="color:var(--text)">66.3%</div></div>
+        </div>
+        <div class="chart-box">
+          <div class="chart-title">净值曲线（选中 1 个 run；勾选 2 个时出双线对比——run 名前复选框勾选，≤2 个）</div>
+          <svg class="spark" id="exp-nav-svg" viewBox="0 0 600 160" preserveAspectRatio="none"></svg>
+          <div class="lv" style="margin-top:6px" id="exp-nav-lv"></div>
+        </div>
+        <table style="margin-top:10px">
+          <tr><th>参数</th><th>值</th><th>参数</th><th>值</th></tr>
+          <tr><td>universe</td><td>沪深300</td><td>benchmark</td><td>沪深300</td></tr>
+          <tr><td>cost_model</td><td>万2.5+千1+滑点</td><td>调仓频率</td><td>周频</td></tr>
+          <tr><td>门禁结果</td><td colspan="3"><span class="badge b-pass">通过</span> <span class="dim">WFA ✅ / OOS ❌ / 过拟合检查 ✅</span></td></tr>
+        </table>
+        <!-- 循环升级 R6：门禁证据展开（OOS ❌ 数值化）+ 晋级审批留痕（human_gated 时间线）——QC 证据门控：证据必须可见 -->
+        <details class="sec-det" style="margin-top:8px">
+          <summary><b>门禁证据展开</b>（OOS ❌ 数值化——QC 证据门控：证据必须可见）</summary>
+          <table style="margin-top:8px">
+            <tr><th>门禁项</th><th>判定</th><th>证据数值</th><th>阈值</th></tr>
+            <tr><td>WFA 前向滚动</td><td><span class="badge b-pass">✅ 通过</span></td><td>8/8 窗口 OOS 夏普中位 1.21（IS 1.42，衰减 -15%）</td><td>衰减 ≤30%</td></tr>
+            <tr><td>OOS 样本外</td><td><span class="badge b-fail">❌ 未过</span></td><td>OOS 夏普 0.98 vs 回测 1.42，偏离 <b class="down">-31%</b>；OOS 最大回撤 -14.2% vs 回测 -9.6%</td><td>偏离 ≤25%</td></tr>
+            <tr><td>过拟合检查</td><td><span class="badge b-pass">✅ 通过</span></td><td>参数邻域夏普方差 0.18（稳定）；DSR 1.12 &gt; 0</td><td>方差 ≤0.5</td></tr>
+          </table>
+          <div class="note">OOS 未过但整体门禁通过=人工复核放行（Owner 2026-08-19 裁定：偏离主因 7 月极端行情，非结构失效）——放行理由必须留痕；门禁三件套=WFA/OOS/过拟合（#196-#210 口径）</div>
+        </details>
+        <details class="sec-det" style="margin-top:8px">
+          <summary><b>晋级审批留痕</b>（human_gated 时间线——研究→回测→纸面→实盘每步谁批准）</summary>
+          <table style="margin-top:8px">
+            <tr><th>时间</th><th>动作</th><th>审批人</th><th>留痕</th></tr>
+            <tr><td>08-19 14:22</td><td>研究 → 回测</td><td>系统自动（门禁 ✅）</td><td>WFA/OOS/过拟合三件套通过</td></tr>
+            <tr><td>08-19 16:40</td><td>回测 → 纸面</td><td>Owner</td><td>OOS 偏离 -31% 人工复核放行（理由：极端行情）</td></tr>
+            <tr><td>—</td><td>纸面 → 实盘</td><td class="dim">未申请</td><td class="dim">纸面须满 20 交易日且落回测包络（QC 哲学）</td></tr>
+          </table>
+          <div class="note">晋级执行=human_gated 审批闸门（后端工作流）；「申请晋级」按钮与留痕落库 experiment 注册表（I-2）</div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  

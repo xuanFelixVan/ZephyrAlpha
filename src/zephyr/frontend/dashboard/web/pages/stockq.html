@@ -1,0 +1,38 @@
+<section class="page" id="p-stockq">
+    <h2 class="page-title">个股行情</h2>
+    <div class="page-sub">研究组 · OKX 式 K 线工作台（滚轮缩放/指标增删/筹码峰/事件时间线+报错）+ 同花顺式左列表右资料（四.A；真源 I-2，演示数据如实标注）</div>
+    <div class="sq-wrap">
+      <!-- 左：个股列表（自选/持仓） -->
+      <div class="sq-col">
+        <div class="sq-list-tabs">
+          <span class="tab on" id="sq-tab-fav" onclick="sqListTab('fav')">自选</span>
+          <span class="tab" id="sq-tab-hold" onclick="sqListTab('hold')">持仓</span>
+        </div>
+        <input class="sq-srch" id="sq-srch" placeholder="搜索名称/代码" oninput="sqRenderList()">
+        <div class="sq-stock-list" id="sq-list"></div>
+        <div class="note" style="margin-top:8px">自选清单 localStorage 记忆；持仓=汇总持仓 3 账户同源；演示池 3 只全量资料（其余 K线可画、资料区负反馈）</div>
+      </div>
+      <!-- 中：K 线工作台 -->
+      <div class="sq-col">
+        <div class="sq-head" id="sq-head"></div>
+        <div class="sq-mainbox">
+          <svg class="spark" id="sq-main" viewBox="0 0 1100 460" preserveAspectRatio="none" style="display:block;width:100%;height:430px"></svg>
+        </div>
+        <div id="sq-panes"></div>
+        <div class="sq-addpane"><span class="sel" id="sq-add-sel" style="font-size:11px;cursor:pointer" onclick="sqAddPaneTgl(event)">＋ 添加指标 ▾</span>
+          <span class="acct-menu" id="sq-add-menu" style="position:absolute">
+            <span class="acct-mi" onclick="sqAddPane('vol',event)">成交量 VOL</span>
+            <span class="acct-mi" onclick="sqAddPane('macd',event)">MACD(12,26,9)</span>
+            <span class="acct-mi" onclick="sqAddPane('kdj',event)">KDJ(9,3,3)</span>
+          </span>
+        </div>
+        <div class="sq-evt-strip" id="sq-evt-strip"></div>
+      </div>
+      <!-- 右：个股资料面板 -->
+      <div class="sq-col" id="sq-info" style="overflow-y:auto"></div>
+    </div>
+    <div class="sq-evtpop" id="sq-evtpop"></div>
+    <div class="sq-toast" id="sq-toast"></div>
+  </section>
+
+  

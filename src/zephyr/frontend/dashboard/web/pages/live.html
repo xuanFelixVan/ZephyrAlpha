@@ -1,0 +1,336 @@
+<section class="page" id="p-live">
+    <h2 class="page-title">大盘分析 <span class="badge b-na">演示数据</span></h2>
+    <div class="page-sub">实盘组 · <b>核心：大盘今天什么状态 + 接下来走势预期</b>（感知层——看状态、看证据；怎么做→「作战指挥」）· 四指数一主三辅 + 情绪快照 + 成交额对比 + 因子构成面板（铁律：结果+全部因子证据）· 真源=B31/B32/B33（I-2 接线后转真）</div>
+
+    <!-- ① 四指数一主三辅 -->
+    <div class="row" style="grid-template-columns:2fr 1fr 1fr 1fr;display:grid;gap:12px;margin-bottom:14px">
+      <div class="card">
+        <h3>上证指数 <span class="dim">主版面 · 分钟级</span></h3>
+        <div style="display:flex;align-items:baseline;gap:12px">
+          <div class="v" style="font-size:26px;font-weight:600">3,847.23</div>
+          <div class="up" style="font-size:17px;font-weight:600">+0.61%</div>
+          <div class="dim" style="font-size:12px">成交 9,704 亿 · regime <b>震荡偏强</b></div>
+        </div>
+        <svg id="mk-sh" style="width:100%;height:90px;margin-top:8px"></svg>
+        <div class="kv-mini" style="margin-top:6px">状态带：趋势 <span class="badge b-pass">多</span> 波动 <span class="badge b-na">中</span> 四季 <span class="badge b-buy">秋·拉升段</span> 牛熊相位 <span class="badge b-na">WATCH</span>（MOD-SIG-036/039/041）</div>
+      </div>
+      <div class="card metric"><div class="l">深证成指</div><div class="v up">12,693.4</div><div class="s up">+0.84% · 成交 11,313 亿</div><svg id="mk-sz" style="width:100%;height:44px;margin-top:6px"></svg><div class="kv-mini" style="margin-top:4px">regime 偏多</div></div>
+      <div class="card metric"><div class="l">创业板指</div><div class="v up">2,681.15</div><div class="s up">+1.22% · 成长强于价值</div><svg id="mk-cy" style="width:100%;height:44px;margin-top:6px"></svg><div class="kv-mini" style="margin-top:4px">regime 多</div></div>
+      <div class="card metric"><div class="l">科创综指</div><div class="v down">1,342.88</div><div class="s down">-0.18% · 高位分歧</div><svg id="mk-kc" style="width:100%;height:44px;margin-top:6px"></svg><div class="kv-mini" style="margin-top:4px">regime 震荡</div></div>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <h3>风格分化 <span class="dim">大小盘 × 价值成长四象限（MOD-REGIME-014 production）——四指数的价值不在四个数，在分化本身</span></h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;max-width:520px;font-size:12px">
+        <div style="background:var(--input);border:1px solid var(--border);border-radius:6px;padding:8px" class="dim">大盘价值 <span class="dim">银行/白酒</span><br><span class="down">-0.2%</span></div>
+        <div style="background:var(--input);border:1px solid var(--up);border-radius:6px;padding:8px"><b>大盘成长</b> <span class="dim">宁德/中芯</span><br><span class="up">+1.1%</span> <span class="badge b-buy">当前</span></div>
+        <div style="background:var(--input);border:1px solid var(--border);border-radius:6px;padding:8px" class="dim">小盘价值 <span class="dim">ST/壳</span><br><span class="down">-0.4%</span></div>
+        <div style="background:var(--input);border:1px solid var(--border);border-radius:6px;padding:8px" class="dim">小盘成长 <span class="dim">题材/微盘</span><br><span class="up">+0.6%</span></div>
+      </div>
+      <div class="note">判读：大盘成长领涨+科创微跌=资金主攻主线龙头而非全面进攻——与作战池结构一致（联动「作战指挥」）</div>
+    </div>
+
+    <!-- ② 情绪快照：分档分布+涨停强度+板块归属 -->
+    <div class="row c2" style="margin-bottom:14px">
+      <div class="card">
+        <h3>涨跌分档分布 <span class="dim">同花顺口径：分档家数直方图——分布尾部厚度决定情绪性质（跌 4000 家但多在 0~3% vs 3000 家跌 7%+ 完全不同）· 真源 B31</span></h3>
+        <svg id="mk-dist" style="width:100%;height:180px"></svg>
+        <div class="kv-mini" style="margin-top:6px">涨 <b class="up">3,013</b> · 平 144 · 跌 <b class="down">2,390</b>；判读：上涨家数过半且 &gt;5% 厚尾在涨侧=偏多结构</div>
+      </div>
+      <div class="card">
+        <h3>涨停强度 · 今 vs 昨 <span class="dim">同花顺标准件 · 真源 B32</span></h3>
+        <table>
+          <tr><th></th><th>今日</th><th>昨日</th><th>判定</th></tr>
+          <tr><td>涨停板</td><td class="up">81</td><td>77</td><td class="up">↑ 回暖</td></tr>
+          <tr><td>涨停封板率</td><td>81%</td><td>81%</td><td class="dim">持平</td></tr>
+          <tr><td>涨停打开</td><td>19</td><td>18</td><td class="dim">持平</td></tr>
+          <tr><td>跌停板</td><td class="down">2</td><td>4</td><td class="up">↓ 修复</td></tr>
+          <tr><td>跌停封板率</td><td>22%</td><td>100%</td><td class="up">恐慌消退</td></tr>
+          <tr><td>跌停打开</td><td>7</td><td>0</td><td class="dim">—</td></tr>
+        </table>
+        <div class="note">涨停增多+跌停减半+跌停封板率 100%→22%=<b>恐慌盘出逃后修复</b>；涨停的板块：半导体 12 / 软件 7 / 医药 5；跌停的板块：ST 2</div>
+      </div>
+    </div>
+
+    <!-- ③ 成交额对比 -->
+    <div class="card" style="margin-bottom:14px">
+      <h3>市场成交额对比 <span class="dim">今日分时累计 vs 昨日同时段 vs 预测线（同时段历史均值外推）——量能是情绪的燃料 · 真源 B33</span></h3>
+      <div style="display:flex;gap:18px;font-size:12px;margin-bottom:6px">
+        <span>今日累计 <b>21,180 亿</b></span>
+        <span>昨日全日 <b>21,413 亿</b></span>
+        <span>同时段差 <b class="up">+2.1%</b></span>
+        <span class="dim">预测线=近 20 日同时段均值</span>
+      </div>
+      <svg id="mk-vol" style="width:100%;height:120px"></svg>
+      <div class="kv-mini" style="margin-top:4px">判读：今日量能曲线持续在昨日上方=放量上攻结构；午后斜率未衰减=资金未离场</div>
+    </div>
+
+    <!-- ④ 因子构成面板（铁律：结果+全部因子证据） -->
+    <div class="card">
+      <h3>大盘状态 · 因子构成面板 <span class="dim">铁律：结论由哪些因子/数据构成全部呈现——你判断它分析得对不对、数据全不全（BFE-21 13 参数风险信号 production）</span></h3>
+      <div class="param-strip" style="margin-bottom:10px">
+        <span>综合结论 <b>震荡偏强</b>（13 参数加权）</span>
+        <span>趋势×波动 <b>多×中</b>（九网格 MOD-SIG-036）</span>
+        <span>牛熊切换 <b>WATCH</b>（MOD-SIG-039）</span>
+        <span>四季 <b>秋·拉升段</b>（MOD-SIG-041）</span>
+        <span style="border-right:none">极端预警 <b class="dim">无赶顶信号</b>（BFE-23）</span>
+      </div>
+      <table>
+        <tr><th>因子</th><th>当前值</th><th>方向</th><th>中文解释（ⓘ 一句人话）</th></tr>
+        <tr><td>市场宽度（涨跌家数比）</td><td>1.26</td><td class="up">偏多</td><td>涨的股票比跌的多，盘面有赚钱效应</td></tr>
+        <tr><td>涨停/跌停比</td><td>40.5</td><td class="up">强</td><td>敢涨停的多、恐慌跌停的少，短线情绪热</td></tr>
+        <tr><td>成交额（ vs 20 日均）</td><td>+2.1%</td><td class="up">放量</td><td>钱在进场不是离场</td></tr>
+        <tr><td>新高-新低家数差</td><td>+87</td><td class="up">偏多</td><td>创新高的远多于创新低的，强势结构</td></tr>
+        <tr><td>两融余额变化</td><td>+0.3%</td><td class="dim">中性</td><td>杠杆资金没大幅进出</td></tr>
+        <tr><td>北向准净流入（季度）</td><td>+42 亿</td><td class="up">偏多</td><td>外资在慢慢买（季度估算，港交所停发日频后唯一窗口）</td></tr>
+        <tr><td>Hurst 指数</td><td>0.58</td><td class="dim">趋势延续</td><td>当前走势有惯性，不太会马上反转</td></tr>
+        <tr><td>波动率（GARCH 族）</td><td>中位</td><td class="dim">中性</td><td>波动没爆炸也没极度压缩</td></tr>
+        <tr><td>筹码获利盘比例</td><td>61%</td><td class="dim">中性偏多</td><td>多数人赚钱，抛压温和（MOD-REGIME-005）</td></tr>
+        <tr><td>隔夜外盘传导</td><td>弱偏空</td><td class="dim">弱影响</td><td>美股小跌，对 A 股拖累有限（MOD-SIG-117）</td></tr>
+        <tr><td>合成 VIX 代理</td><td>低位</td><td class="up">无恐慌</td><td>市场不慌</td></tr>
+        <tr><td>政策事件窗</td><td>20:30 美联储讲话</td><td class="dim">待兑现</td><td>晚上有变量，尾盘别满仓赌</td></tr>
+        <tr><td>主力六阶段（BFE-05）</td><td>拉升段</td><td class="up">多</td><td>主力资金在拉升期不是出货期</td></tr>
+      </table>
+      <div class="note">算法查看：本结论=13 参数风险信号加权（<code>regime/risk_signal_builder.py</code>）+九网格/四季/牛熊相位交叉验证——因子明细与算法出处见「技术分析·算法注册表」（R2 流水线，I-2）</div>
+    </div>
+
+    <h2 class="page-title">盘中实时</h2>
+    <div class="page-sub">实盘组 · 四指数市场状态 + 决策链 + 风控实时 + 交易执行（L7）</div>
+
+    <!-- 实时权益横幅（循环升级 R1：QC Live Results Runtime Statistics 同位；权益分时 vs 样本外回测包络=实盘偏离回测最早警报，风险优先第一眼） -->
+    <div class="card" style="margin-bottom:14px;padding:10px 16px">
+      <div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap;font-size:12px">
+        <span style="font-weight:600">实时权益 <span class="badge b-na">演示数据</span></span>
+        <span>总权益 <b>173.85 万</b></span>
+        <span>当日盈亏 <b class="up">+5,100（+0.29%）</b></span>
+        <span>持仓市值 <b>92.94 万</b></span>
+        <span>浮动盈亏 <b class="up">+2.69 万</b></span>
+        <span>费用 <span class="dim">86.4</span></span>
+        <span class="dim" style="margin-left:auto">QC Live Results 同位横幅 · 3 账户汇总口径 · 真源 I-2</span>
+      </div>
+      <div class="chart-box" style="margin:8px 0 0;padding:8px">
+        <div class="chart-title">权益分时 vs 样本外回测包络 <span style="font-weight:400">（蓝=今日权益分时；灰带=同期回测 ±1σ 包络——蓝出灰带=实盘偏离预警，QC Out-of-Sample 包络哲学）</span></div>
+        <svg class="spark" id="live-eq-svg" viewBox="0 0 1100 180" preserveAspectRatio="none" style="background:#000000;border-radius:4px"></svg>
+      </div>
+      <div class="note" id="live-eq-note"></div>
+    </div>
+
+    <!-- 四指数同屏（L2） -->
+    <div class="row c4">
+      <div class="card metric"><div class="l">上证指数 <span class="dim">000001.SH</span></div><div class="v up">3,087.53</div><div class="s"><span class="up">+0.72%</span> · 震荡偏强</div></div>
+      <div class="card metric"><div class="l">深证成指 <span class="dim">399001.SZ</span></div><div class="v up">9,741.20</div><div class="s"><span class="up">+1.05%</span> · 震荡偏强</div></div>
+      <div class="card metric"><div class="l">创业板指 <span class="dim">399006.SZ</span></div><div class="v down">1,892.44</div><div class="s"><span class="down">-0.31%</span> · 弱于主板</div></div>
+      <div class="card metric"><div class="l">科创综指 <span class="dim">000680.SH</span></div><div class="v up">986.12</div><div class="s"><span class="up">+1.48%</span> · 领涨</div></div>
+    </div>
+    <div class="note">数据 kline_index（609 只指数在库）；当前 regime 为大盘整体判定——四指数分市场分析未施工（§5 缺口②，接入后每卡显示各自 regime/预判）</div>
+
+    <!-- 市场状态（黑箱①） -->
+    <div class="row c4">
+      <div class="card">
+        <h3>市场 Regime <span class="dim">regime_detector</span></h3>
+        <div class="v" style="font-size:18px;color:var(--text)">震荡市 · 偏强</div>
+        <div class="s" style="font-size:11px;color:var(--dim)">概率 0.71 · 非 CRISIS · 跨市场相关性正常</div>
+      </div>
+      <div class="card">
+        <h3>情绪温度 <span class="dim">BM-SEL-03-A</span></h3>
+        <div class="v" style="font-size:18px;color:var(--text)">62 · 贪婪区</div>
+        <div class="s" style="font-size:11px;color:var(--dim)">0=恐慌 100=狂热</div>
+      </div>
+      <div class="card">
+        <h3>接力情绪周期 <span class="dim">BM-SEL-23</span></h3>
+        <div class="v" style="font-size:18px;color:var(--up)">主升期</div>
+        <div class="s" style="font-size:11px;color:var(--dim)">评分 74/100 · 冰点→反核→主升→疯狂→退潮</div>
+      </div>
+      <div class="card">
+        <h3>极端预警 <span class="dim">LPPL/合成VIX/Wyckoff</span></h3>
+        <div class="v" style="font-size:18px;color:var(--up)">无赶顶信号</div>
+        <div class="s" style="font-size:11px;color:var(--dim)">VIX 代理 18.3 正常 · Wyckoff 吸筹标注 2 只</div>
+      </div>
+    </div>
+
+    <!-- I-7 框架状态条（统一框架派盘中语境：当前判定什么环境 → 正在用什么策略权重；与策略档案页框架状态卡同源） -->
+    <div class="card" style="margin-bottom:14px;padding:10px 16px">
+      <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:12px">
+        <span style="font-weight:600">框架状态 <span class="badge b-na">演示数据</span></span>
+        <span>Regime <b style="color:var(--text)">震荡市 · 偏强</b> <span class="dim">（概率 0.71）</span></span>
+        <span class="dim">→</span>
+        <span>子策略权重：主线龙头回踩 <b>35%</b> · 行业轮动 <b>25%</b> · 低估值防御 <b>25%</b> · 打板策略 <b>10%</b> · 做T增强 <b>5%</b></span>
+        <span class="dim">最近切换 08-21：主线龙头 30→35%</span>
+        <span class="todo-link" style="margin-left:auto" onclick="ovxGo('strategy',this)">策略档案 · 框架状态卡 →</span>
+      </div>
+      <div class="note" style="margin:6px 0 0">统一框架派（charter §3 约束二/三）：当前判定什么环境 → 正在用什么拳——regime 错=权重错，判定依据特征值见策略档案页框架状态卡</div>
+    </div>
+
+    <!-- 决策链（黑箱④） -->
+    <div class="card" style="margin-bottom:14px">
+      <h3>决策链 <span class="dim">信号 → 漏斗 → 组合 → 仓位裁决 → 风控仲裁（每步命中明细）</span></h3>
+      <div style="display:flex;gap:6px;align-items:center;font-size:12px;flex-wrap:wrap">
+        <span class="card" style="padding:6px 10px">信号 3,412 只</span>→
+        <span class="card" style="padding:6px 10px">L1-L3 初筛 <b>1,200</b></span>→
+        <span class="card" style="padding:6px 10px">L4 精筛 <b>300</b></span>→
+        <span class="card" style="padding:6px 10px">L5 事件+交叉 <b>50</b></span>→
+        <span class="card" style="padding:6px 10px">L6 组合优化 <b>10</b></span>→
+        <span class="card" style="padding:6px 10px">风控仲裁后下单 <b>3</b></span>
+      </div>
+      <table style="margin-top:10px">
+        <tr><th>标的</th><th>来源信号</th><th>漏斗得分</th><th>Kelly 仓位</th><th>风控仲裁</th><th>命中约束</th></tr>
+        <tr><td>600519 贵州茅台</td><td>行业轮动+北向</td><td>86.5</td><td>8.2%</td><td><span class="badge b-pass">通过</span></td><td>—</td></tr>
+        <tr><td>601318 中国平安</td><td>低估值+北向</td><td>81.3</td><td>6.5%</td><td><span class="badge b-warn">降仓通过</span></td><td>单票上限 8% → 6.5%</td></tr>
+        <tr><td>300750 宁德时代</td><td>移动止损</td><td>—</td><td>清仓</td><td><span class="badge b-pass">通过</span></td><td>止损优先级最高</td></tr>
+        <tr><td>002594 比亚迪</td><td>动量突破</td><td>78.9</td><td>5.1%</td><td><span class="badge b-fail">拦截</span></td><td>行业集中度 38% 超限</td></tr>
+      </table>
+      <div class="note">数据源：BM-SEL-16~21 筛选漏斗 + BM-POS-01 仓位裁决 + BM-RC-02/EXE-01 风控仲裁；拦截原因必须可见（消灭黑箱）</div>
+    </div>
+
+    <!-- 风控实时（黑箱⑤） -->
+    <div class="card" style="margin-bottom:14px">
+      <h3>风控实时 <span class="dim">9 限额余量 / VaR / 止损 / 熔断 / 系统性风险</span></h3>
+      <div class="row c3" style="margin-bottom:0">
+        <div>
+          <div class="bar-row"><span>单票集中度</span><div class="bar"><i class="g" style="width:66%"></i></div><span>13.3%</span></div>
+          <div class="bar-row"><span>行业集中度</span><div class="bar"><i class="y" style="width:76%"></i></div><span>38%</span></div>
+          <div class="bar-row"><span>总仓位</span><div class="bar"><i class="g" style="width:70%"></i></div><span>69.8%</span></div>
+          <div class="bar-row"><span>日亏损停盘</span><div class="bar"><i class="g" style="width:16%"></i></div><span>0.3%/2%</span></div>
+        </div>
+        <div>
+          <div class="bar-row"><span>VaR(95%)</span><div class="bar"><i class="g" style="width:51%"></i></div><span>1.8/3.5%</span></div>
+          <div class="bar-row"><span>回撤预算</span><div class="bar"><i class="g" style="width:21%"></i></div><span>21%</span></div>
+          <div class="bar-row"><span>拥挤度</span><div class="bar"><i class="g" style="width:34%"></i></div><span>0.34</span></div>
+          <div class="bar-row"><span>撤单率</span><div class="bar"><i class="g" style="width:8%"></i></div><span>4%</span></div>
+        </div>
+        <div>
+          <table id="risk-hard-table">
+            <tr><th>硬性项</th><th>状态</th></tr>
+            <tr><td>熔断开关 Kill Switch</td><td><span class="badge b-pass">待命</span></td></tr>
+            <tr><td>系统性风险 5 信号</td><td><span class="badge b-pass">0/5（≥3 清仓）</span></td></tr>
+            <tr><td>A股 6 种止损</td><td><span class="badge b-warn">1 接近（宁德时代）</span></td></tr>
+            <tr><td>T+1 可卖约束</td><td><span class="badge b-pass">正常</span></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="note">数据源：risk_limits/var_calculator/drawdown_tracker/crowding_monitor/stop_loss（均 production）；新增三行（BFE-26/30/31，各加一行不独立成卡）：回撤油门刹车=query_drawdown_throttle→DrawdownController（MOD-POS-008）· 流动性=query_liquidity_status→LiquidityMonitor（MOD-RK-08）· 尾部风险=query_tail_risk_status→TailRiskMonitor（MOD-RK-15）——均 prod，当前 mock 渲染</div>
+    </div>
+
+    <!-- 交易计划 + 委托成交 + 下单（v0.2 实盘页内容） -->
+    <div class="row c1">
+      <div class="card">
+        <h3>今日交易计划 <span class="badge b-warn">2 待审批</span></h3>
+        <table>
+          <tr><th>方向</th><th>标的</th><th>数量</th><th>参考价</th><th>逻辑原因（一句话）</th><th>状态</th></tr>
+          <tr><td><span class="badge b-buy">买入</span></td><td>600519 贵州茅台</td><td>100</td><td>1712.5</td><td>行业轮动信号：白酒景气上行</td><td><span class="badge b-warn">待审批</span></td></tr>
+          <tr><td><span class="badge b-buy">买入</span></td><td>601318 中国平安</td><td>200</td><td>48.3</td><td>低估值 + 北向连续增持</td><td><span class="badge b-na">计划中</span></td></tr>
+          <tr><td><span class="badge b-sell">卖出</span></td><td>300750 宁德时代</td><td>400</td><td>175.3</td><td>触发移动止损线</td><td><span class="badge b-warn">待审批</span></td></tr>
+        </table>
+        <div class="note">数据源：决策层每日输出的交易计划（信号→组合→风控过滤后的最终候选）</div>
+      </div>
+    </div>
+
+    <div class="row c2">
+      <div class="card">
+        <h3>当日委托 / 成交</h3>
+        <div class="tabs" id="ord-tabs"><span class="tab on" onclick="ordTab('ord',this)">当日委托 (2)</span><span class="tab" onclick="ordTab('fill',this)">当日成交 (1)</span></div>
+        <div id="ord-tab-ord">
+        <table>
+          <tr><th>时间</th><th>标的</th><th>方向</th><th>量/价</th><th>状态</th><th>操作</th></tr>
+          <tr><td>10:23</td><td>600519.SH</td><td class="up">买</td><td>100 @ 1712.5</td><td><span class="badge b-pass">已成交</span></td><td>—</td></tr>
+          <tr><td>11:05</td><td>300750.SZ</td><td class="down">卖</td><td>200 @ 175.3</td><td><span class="badge b-warn">待审批</span></td><td><span class="btn" onclick="ordCancel(this,'300750.SZ 卖 200 @175.3')">撤单</span></td></tr>
+        </table>
+        </div>
+        <div id="ord-tab-fill" style="display:none">
+        <table>
+          <tr><th>时间</th><th>标的</th><th>方向</th><th>量/价</th><th>状态</th><th>成交均价</th></tr>
+          <tr><td>10:23:11</td><td>600519.SH</td><td class="up">买</td><td>100 @ 1712.5</td><td><span class="badge b-pass">全部成交</span></td><td>1712.50（滑点 0.00）</td></tr>
+          <tr><td colspan="6" class="dim">其余成交明细接入 ExecutionEngine 回报总线后转真（I-2）</td></tr>
+        </table>
+        </div>
+        <!-- I-5b 逐笔回报时序（委托→回报完整链路，对标 QuantConnect Live Orders 同位） -->
+        <div class="sec-title" id="ord-timeline-title">逐笔回报时序 <span class="dim">fills timeline · 委托→回报的完整链路（QC Live Orders 同位）</span> <span class="badge b-na">演示数据</span></div>
+        <div class="tl" id="ord-timeline">
+          <div class="tl-item">
+            <span class="tl-dot tl-ev-ord"></span>
+            <div class="tl-body"><span class="tl-time">09:35:12</span><span class="tl-ev tl-ev-ord">报</span><span class="tl-txt">601318.SH 中国平安 买 200 @ 48.30 <span class="dim">已申报 · 待审批排队（Order 108215）</span></span></div>
+          </div>
+          <div class="tl-item">
+            <span class="tl-dot tl-ev-ord"></span>
+            <div class="tl-body"><span class="tl-time">10:23:05</span><span class="tl-ev tl-ev-ord">报</span><span class="tl-txt">600519.SH 贵州茅台 买 100 @ 1712.50 <span class="dim">审批通过 · 已申报（Order 108198）</span></span></div>
+          </div>
+          <div class="tl-item">
+            <span class="tl-dot tl-ev-fill-buy"></span>
+            <div class="tl-body"><span class="tl-time">10:23:11</span><span class="tl-ev tl-ev-fill-buy">成</span><span class="tl-txt">600519.SH 贵州茅台 <b class="up">买</b> 100 @ 1712.50 <span class="dim">全部成交 Filled（Order 108198，耗时 6s）</span></span></div>
+          </div>
+          <div class="tl-item">
+            <span class="tl-dot tl-ev-ord"></span>
+            <div class="tl-body"><span class="tl-time">11:05:02</span><span class="tl-ev tl-ev-ord">报</span><span class="tl-txt">300750.SZ 宁德时代 卖 200 @ 175.30 <span class="dim">待审批（触发移动止损线，Order 108220）</span></span></div>
+          </div>
+          <div class="tl-item">
+            <span class="tl-dot tl-ev-cancel"></span>
+            <div class="tl-body"><span class="tl-time">11:05:40</span><span class="tl-ev tl-ev-cancel">撤</span><span class="tl-txt">300750.SZ 宁德时代 卖 200 <span class="dim">Owner 撤回 Cancelled · 转人工观察</span></span></div>
+          </div>
+          <div class="tl-item">
+            <span class="tl-dot tl-ev-reject"></span>
+            <div class="tl-body"><span class="tl-time">13:05:11</span><span class="tl-ev tl-ev-reject">拒</span><span class="tl-txt">002594.SZ 比亚迪 买 300 @ 252.00 <span class="warn">拒单 Rejected：超出单票 8% 预算（Order 108231）</span></span></div>
+          </div>
+          <div class="tl-item">
+            <span class="tl-dot tl-ev-ord"></span>
+            <div class="tl-body"><span class="tl-time">13:30:26</span><span class="tl-ev tl-ev-ord">报</span><span class="tl-txt">601318.SH 中国平安 买 200 @ 48.30 <span class="dim">风控放行 · 二次申报（Order 108236）</span></span></div>
+          </div>
+          <div class="tl-item">
+            <span class="tl-dot tl-ev-fill-buy"></span>
+            <div class="tl-body"><span class="tl-time">14:36:50</span><span class="tl-ev tl-ev-fill-buy">成</span><span class="tl-txt">601318.SH 中国平安 <b class="up">买</b> 100 @ 48.35 <span class="dim">部分成交 Partial 100/200（Order 108236）</span></span></div>
+          </div>
+          <div class="tl-item">
+            <span class="tl-dot tl-ev-cancel"></span>
+            <div class="tl-body"><span class="tl-time">14:57:12</span><span class="tl-ev tl-ev-cancel">撤</span><span class="tl-txt">601318.SH 中国平安 买 100 <span class="dim">尾盘未成交残余自动撤单（收盘前清理）</span></span></div>
+          </div>
+        </div>
+        <div class="note">色义裁定：买成交=红 · 卖成交=绿 · 申报=蓝 · 撤单=灰 · 拒单=黄（A股红涨绿跌语义，与全局 .up/.down 一致）；接入 ExecutionEngine 委托/成交回报总线后转真，JS 前缀 ordXxx</div>
+      </div>
+      <!-- B1 系统日志流（I-5 新增，对标 QuantConnect Live Results Logs/Errors）；grid-column+order 落到第二行通栏 -->
+      <div class="card" style="grid-column:1/-1;order:3">
+        <h3>系统运行日志 <span class="dim">Logs / Errors · 系统说话通道</span> <span class="badge b-na">演示数据</span></h3>
+        <div class="tabs" id="log-chips" style="margin-bottom:8px">
+          <span class="tab on" onclick="logFilter('all',this)">全部</span>
+          <span class="tab" onclick="logFilter('信息',this)">信息</span>
+          <span class="tab" onclick="logFilter('警告',this)">警告</span>
+          <span class="tab" onclick="logFilter('错误',this)">错误</span>
+        </div>
+        <div class="audit-scroll" id="log-stream" style="max-height:140px">
+          <div class="log-line" data-lv="信息">09:25:00 <span class="lv-info">[信息]</span> 网关 miniQMT 模拟通道连接成功，延迟 12ms</div>
+          <div class="log-line" data-lv="信息">09:30:05 <span class="lv-info">[信息]</span> 采集 竞价快照入库：4,968 只</div>
+          <div class="log-line" data-lv="信息">09:31:02 <span class="lv-info">[信息]</span> 采集 kline_1min 增量 4,812 行入库</div>
+          <div class="log-line" data-lv="信息">09:35:18 <span class="lv-info">[信息]</span> 信号 行业轮动信号刷新：白酒景气上行，候选 12 只</div>
+          <div class="log-line" data-lv="信息">09:41:27 <span class="lv-info">[信息]</span> 风控 9 限额巡检通过，余量正常</div>
+          <div class="log-line" data-lv="警告">10:02:44 <span class="lv-warn">[警告]</span> 风控 创业板指 30min 波动率超 85 分位</div>
+          <div class="log-line" data-lv="信息">10:15:03 <span class="lv-info">[信息]</span> 信号 低估值+北向交叉命中：601318 中国平安</div>
+          <div class="log-line" data-lv="信息">10:23:11 <span class="lv-info">[信息]</span> 执行 委托 108198 已成交：买 600519 ×100 @1712.5</div>
+          <div class="log-line" data-lv="信息">10:41:36 <span class="lv-info">[信息]</span> 风控 宁德时代 距止损线 1.8%，已推送审批</div>
+          <div class="log-line" data-lv="警告">11:05:09 <span class="lv-warn">[警告]</span> 执行 委托 108220 待审批超 5 分钟未处理</div>
+          <div class="log-line" data-lv="信息">11:28:52 <span class="lv-info">[信息]</span> 采集 kline_1min 增量 4,655 行入库</div>
+          <div class="log-line err" data-lv="错误">13:05:11 <span class="lv-err">[错误]</span> 执行 委托 108231 拒单：超出单票 8% 预算</div>
+          <div class="log-line" data-lv="警告">13:12:40 <span class="lv-warn">[警告]</span> 采集 分钟K线 5 张表时间戳异常（1970-01-01）</div>
+          <div class="log-line" data-lv="信息">13:30:07 <span class="lv-info">[信息]</span> 信号 动量突破候选 002594 比亚迪 被风控拦截（行业集中度 38%）</div>
+          <div class="log-line" data-lv="信息">14:02:19 <span class="lv-info">[信息]</span> 网关 行情心跳正常，丢包率 0.0%</div>
+          <div class="log-line err" data-lv="错误">14:18:33 <span class="lv-err">[错误]</span> 采集 adj_factor 夜班复权任务重试 2/3 失败，已转人工</div>
+          <div class="log-line" data-lv="警告">14:45:26 <span class="lv-warn">[警告]</span> 风控 拥挤度 0.34 → 0.41，接近关注阈值 0.5</div>
+          <div class="log-line" data-lv="信息">14:57:58 <span class="lv-info">[信息]</span> 信号 尾盘信号快照落盘，候选 10 只入组合优化</div>
+        </div>
+        <div class="note">接入真实日志总线后转真（I-2）；级别过滤已可点，错误行整行淡红底</div>
+      </div>
+      <div class="card">
+        <h3>下单 <span class="badge b-warn">human_gated</span></h3>
+        <div class="form-grid">
+          <div><label>标的</label><input class="inp" id="ord-code" value="600000.SH" style="width:100%;box-sizing:border-box"></div>
+          <div><label>方向</label><span class="sel" id="ord-dir" style="cursor:pointer;min-width:0;display:block;text-align:center" onclick="ordDirTgl()">买入 ▾</span></div>
+          <div><label>数量</label><input class="inp" id="ord-qty" value="100" style="width:100%;box-sizing:border-box"></div>
+          <div><label>价格</label><input class="inp" id="ord-px" value="10.00" style="width:100%;box-sizing:border-box"></div>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <span class="btn danger" onclick="ordEstop()">紧急停止</span>
+          <span class="btn primary" onclick="ordSubmit()">提交（需二次确认+Owner审批）</span>
+          <span class="dim" id="ord-fb" style="font-size:11px"></span>
+        </div>
+        <div class="note">现有交易面板风控链路（审批闸门/二次确认/T+1提示/资金影响预估）原样保留并入本页；方向点击切换买/卖，提交=human_gated 二次确认演示（真实下单通道未接——券商接入后转真）</div>
+      </div>
+    </div>
+  </section>
+
+  

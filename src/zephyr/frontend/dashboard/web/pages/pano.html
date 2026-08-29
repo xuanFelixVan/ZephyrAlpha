@@ -1,0 +1,39 @@
+<section class="page" id="p-pano">
+    <h2 class="page-title">架构全景 <span class="badge b-na">自动生成产物</span></h2>
+    <div class="page-sub">系统组 · 核心目的：自动生成的架构可视化（依赖全景/数据流/决策流程/作战地图）集中浏览——选功能域→页内嵌入查看（生成器产物只读集成，DCR 派生禁改）</div>
+
+    <div class="card pano-toolbar" style="margin-bottom:14px">
+      <div class="pano-tb-row">
+        <span class="dim" style="font-size:12px;flex:none">视图类型</span>
+        <span class="sel pano-view on" title="当前可用">依赖全景图 <span class="dim">_zoomable_html · 72 域</span> <span class="badge b-pass">当前可用</span></span>
+        <span class="sel pano-view pano-dis" title="待 _zoomable_html 收编后点亮（I-2 流程）">数据流全景 <span class="badge b-na">待接入</span></span>
+        <span class="sel pano-view pano-dis" title="待 _zoomable_html 收编后点亮（I-2 流程）">决策流程全景 <span class="badge b-na">待接入</span></span>
+        <span class="sel pano-view pano-dis" title="待 _zoomable_html 收编后点亮（I-2 流程）">作战地图 <span class="badge b-na">待接入</span></span>
+        <input id="pano-srch" class="pano-srch" placeholder="搜索功能域（编号 / 英文 / 中文）…" oninput="panoFilter()">
+        <span class="btn primary" style="flex:none" onclick="panoOpenNew()">新窗口打开 ↗</span>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <h3>功能域 <span class="dim">点击卡片 → 下方嵌入查看</span><span class="dim" id="pano-count" style="margin-left:8px"></span></h3>
+      <div class="pano-grid" id="pano-grid"></div>
+      <div class="note" id="pano-none" style="display:none">无匹配域——换个关键词试试</div>
+    </div>
+
+    <div class="card">
+      <h3>嵌入查看 <span class="dim" id="pano-cur-cn"></span></h3>
+      <div class="pano-url-row">
+        <input id="pano-url" class="pano-url" readonly onclick="this.select()" title="点击全选，Ctrl+C 复制">
+        <span class="btn" style="flex:none" onclick="panoOpenNew()">新窗口打开 ↗</span>
+      </div>
+      <iframe id="pano-frame" class="pano-frame"
+              src="http://localhost:8765/docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/01_d_contracts.html"></iframe>
+      <div class="pano-offcard" id="pano-off" style="display:none">
+        <div style="font-weight:700;margin-bottom:6px">⚠ 8765 静态服务未启动</div>
+        <div style="font-size:12px;color:var(--dim)">启动命令：在 <b style="color:var(--text)">d:\ZephyrAlpha</b> 跑 <code>python -m http.server 8765</code>，或点「新窗口打开」重试（负反馈也是结果）</div>
+      </div>
+      <div class="note">72 域 HTML 由 generate_project_depgraph 自动生成（派生产物禁手改）；数据流/决策流程/作战地图三视图待对应目录 _zoomable_html 收编后点亮（I-2 流程）</div>
+    </div>
+  </section>
+
+  

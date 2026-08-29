@@ -1,0 +1,94 @@
+<section class="page" id="p-stock">
+    <h2 class="page-title">个股档案 <span class="badge b-na">演示数据</span></h2>
+    <div class="page-sub">研究组 · 核心目的：<b>单标的的一站式档案</b>——基本/股东/财报/资金/公告/行情边界全在此页（对标机构 F9 / iFinD 深度资料 / 东财个股页）</div>
+
+    <div class="param-strip" style="align-items:center">
+      <span>标的
+        <span class="sel stock-sel on" onclick="stockSwitch('600519',this)">600519 贵州茅台</span>
+        <span class="sel stock-sel" onclick="stockSwitch('300750',this)">300750 宁德时代</span>
+        <span class="sel stock-sel" onclick="stockSwitch('688981',this)">688981 中芯国际</span>
+        <input id="stock-q" type="text" placeholder="搜索个股…" style="background:var(--input);border:1px solid var(--border);border-radius:5px;padding:4px 10px;color:var(--text);font-size:12px;width:130px;margin-left:6px" onkeydown="if(event.key==='Enter')stockSrchGo()" title="循环升级 R10：个股搜索（演示口径 3 标的，池外「待接入」负反馈；S3 证券上下文补钉）">
+      </span>
+      <span style="border-right:none">档案口径 <b>演示数据</b> · 全卡切换联动 · 对标机构 F9</span>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <h3>档案头 <span class="dim">basic_info</span> <span class="badge b-na">演示数据</span></h3>
+      <div id="stock-head"></div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <h3>行情边界 <span class="dim">kline_daily · TomorrowBoundary（作战室 L15 个股级投影）</span> <span class="badge b-na">演示数据</span></h3>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
+        <div class="chart-box" style="margin-bottom:0;flex:none">
+          <div class="chart-title">日 K 迷你图 <span style="font-weight:400">（120 根 · 黄=MA20）</span></div>
+          <svg id="stock-k" width="520" height="220" viewBox="0 0 520 220" style="background:#000000;border-radius:4px;display:block"></svg>
+        </div>
+        <div style="flex:1;min-width:280px" id="stock-boundary"></div>
+      </div>
+    </div>
+
+    <div class="row c2">
+      <div class="card">
+        <h3>前十大股东 <span class="dim">top10_holders · 定期报告披露口径</span> <span class="badge b-na">演示数据</span></h3>
+        <table id="stock-holders"></table>
+        <div class="note">性质口径：国资/外资（陆股通）/基金/社保/QFII/个人；较上期变动单位=百分点（pct）</div>
+      </div>
+      <div class="card">
+        <h3>董监高 <span class="dim">executives · 年报披露口径</span> <span class="badge b-na">演示数据</span></h3>
+        <table id="stock-execs"></table>
+        <div class="note">仅列 4 个关键岗位（董事长/总经理/财务总监/董秘）；完整董监高名册待年报结构化管线接入后展开</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <h3>财务概况 <span class="dim">income_statement · 近 8 季 + 近 3 年</span> <span class="badge b-na">演示数据</span></h3>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
+        <div class="chart-box" style="margin-bottom:0;flex:none">
+          <div class="chart-title">近 8 季 营收 / 归母净利（亿元） <span style="font-weight:400;color:var(--blue)">■ 营收</span> <span style="font-weight:400;color:var(--orange)">■ 归母净利</span></div>
+          <svg id="stock-fin-svg" width="520" height="200" viewBox="0 0 520 200" style="background:#000000;border-radius:4px;display:block"></svg>
+        </div>
+        <div style="flex:1;min-width:320px"><table id="stock-fin-table"></table></div>
+      </div>
+    </div>
+
+    <!-- I-5b F9 补强 B1：筹码与股东户数 -->
+    <div class="card" style="margin-bottom:14px">
+      <h3>筹码与股东户数 <span class="dim">holder_num · 定期报告披露口径</span> <span class="badge b-na">演示数据</span></h3>
+      <table id="stock-chip"></table>
+      <div class="note">户数降=筹码集中=偏多头解读；户数急升=筹码分散需警惕；主力机构家数变化同向印证（环比着色跟随数值方向：红增绿降，多头/空头解读见本注）</div>
+    </div>
+
+    <!-- I-5b F9 补强 B2：主营构成 + 同行比较 -->
+    <div class="card" style="margin-bottom:14px">
+      <h3>主营构成 + 同行比较 <span class="dim">business_composition / peer_comparison</span> <span class="badge b-na">演示数据</span></h3>
+      <div id="stock-peer"></div>
+      <div class="note">估值口径：PE TTM / PB(MRQ) / ROE(TTM)；同行取同申万行业市值相近标的，演示数值仅示意版式，真实接入走 I-2</div>
+    </div>
+
+    <div class="row c2">
+      <div class="card">
+        <h3>资金流向 <span class="dim">money_flow · 红正绿负（万元）</span> <span class="badge b-na">演示数据</span></h3>
+        <table id="stock-flow"></table>
+        <div class="note">档位口径：主力=超大单+大单；当日 vs 近 5 日累计同表对照，看持续性不看单日噪音</div>
+      </div>
+      <div class="card">
+        <h3>近期公告 <span class="dim">announcements</span> <span class="badge b-na">演示数据</span> <span class="badge b-na">待接入</span></h3>
+        <table id="stock-anns"></table>
+        <div class="note">公告流数据源待接入，演示结构——后端落地后点亮（I-2 流程）（负反馈也是结果——系统明说「没有」）</div>
+      </div>
+    </div>
+
+    <div class="row c2">
+      <div class="card">
+        <h3>研报评级 <span class="dim">analyst_rating · 近 90 日</span> <span class="badge b-na">演示数据</span></h3>
+        <div id="stock-ratings"></div>
+      </div>
+      <div class="card">
+        <h3>关联跳转 <span class="dim">cross_page_links</span></h3>
+        <div id="stock-links" style="font-size:12px;line-height:2.1"></div>
+      </div>
+    </div>
+  </section>
+
+  

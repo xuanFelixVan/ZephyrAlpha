@@ -1,0 +1,131 @@
+<section class="page" id="p-news">
+    <h2 class="page-title">新闻舆情 <span class="badge b-na">演示数据</span></h2>
+    <div class="page-sub">实盘组 · <b>核心：新闻的分析结果，不是新闻本身</b>（看原始数据→「数据总览」）· 两天滚动窗清单（自动保持 48h）+ 点击展开详情与分析 + 今日整体分析（多空/可预测分布）+ 预期差 · 真源=B34（I-2）；新闻只是资本想让人看见的——突发看风险、非突发看未来判断（Owner 新闻观）</div>
+
+    <!-- ① 今日整体分析条 -->
+    <div class="param-strip" style="margin-bottom:14px">
+      <span>今日新闻 <b>214 条</b>（两天窗 468 条）</span>
+      <span>倾向 <b class="up">偏多</b>（利好 46% / 中性 38% / 利空 16%）</span>
+      <span>可预测 <b>58%</b>（日历/资金痕迹/双命中）· 突发 42%</span>
+      <span>影响分级 <b>A 级 6 条</b> / B 级 38 / C 级 170</span>
+      <span style="border-right:none">热点主题 <b>半导体国产化 ×48</b> · AI 应用 ×31 · 创新药 ×19</span>
+    </div>
+
+    <!-- ② 两天滚动新闻清单（点击展开详情+分析） -->
+    <div class="card" style="margin-bottom:14px">
+      <h3>新闻清单 <span class="dim">两天滚动窗（现在 ↔ 48h 前，自动保持）· 点击展开详情+分析 · 真源 B34</span></h3>
+      <div id="news-feed"></div>
+      <div class="note">窗口底部：2026-08-26 12:47（48h 前）——更早新闻去「数据总览」；来源显示采集方（财联社/东财/研报），原文 URL 库内无则负反馈不造假</div>
+    </div>
+
+    <!-- ③ 预期差分析（R6） -->
+    <div class="row c2" style="margin-bottom:14px">
+      <div class="card">
+        <h3>预期差分析 <span class="dim">事件研究+预期差（R6）：利好却跌=弱、利空不跌=强——看反着看 · MOD-NLP-DUALTAG-001（testing）</span></h3>
+        <table>
+          <tr><th>类型</th><th>今日</th><th>代表案例</th><th>解读</th></tr>
+          <tr><td>超预期（利好+股价应涨）</td><td>12</td><td>宁德三季报预增 18%（一致预期 12%）</td><td class="up">真利好</td></tr>
+          <tr><td>符合预期（已提前定价）</td><td>31</td><td>半导体政策（两月前机构已预测）</td><td class="dim">利好兑现嫌疑</td></tr>
+          <tr><td>低于预期（利好却跌=弱）</td><td>4</td><td>某消费电子利好高开低走</td><td class="down">该涨不涨=弱</td></tr>
+          <tr><td>利空不跌（强）</td><td>2</td><td>某医药集采传闻不跌反涨</td><td class="up">该跌不跌=强</td></tr>
+        </table>
+        <div class="note">机构提前定价逻辑：先买预期→财报/订单兑现时出货——"符合预期"占比高时警惕利好出尽（CAND-RES-030 事件研究候选在册）</div>
+      </div>
+      <div class="card">
+        <h3>可预测性分布 <span class="dim">双标签：可预测（日历/资金痕迹/双命中）vs 突发——可预测新闻多半已被定价</span></h3>
+        <div class="bar-row"><span>可预测·已定价</span><div class="bar"><i style="width:42%"></i></div><span>58%</span></div>
+        <div class="bar-row"><span>突发·未定价</span><div class="bar"><i class="g" style="width:30%"></i></div><span>42%</span></div>
+        <div class="note">用法：<b>突发事件看风险</b>（先躲）——地缘/天灾/政策突袭；<b>非突发看未来判断</b>——新鲜首次出现的产业信号才有埋伏价值（如首次粮食涨价预期，股价还没拉+技术形态满足=可埋伏）</div>
+      </div>
+    </div>
+
+    <!-- ④ 情绪分析+公告流（紧凑保留） -->
+    <div class="row c2">
+      <div class="card">
+        <h3>情绪聚合分析 <span class="dim">sentiment_aggregator 在码（A18）</span></h3>
+        <div class="bar-row"><span>新闻情绪指数（1h 窗）</span><div class="bar"><i class="g" style="width:64%"></i></div><span class="up">+0.34</span></div>
+        <div class="bar-row"><span>研评级情绪（评级上调/下调）</span><div class="bar"><i class="g" style="width:58%"></i></div><span>上调 23 / 下调 7</span></div>
+        <div class="note">隔夜情绪窗（18:00→08:00）：+0.21 偏暖——盘前消息面温度（MOD-INT-NEWS-NIGHT testing）</div>
+      </div>
+      <div class="card">
+        <h3>公告流 <span class="badge b-na">待接入</span></h3>
+        <div class="alert-row info">🔵 公告独立源未接（D6：巨潮/交易所公告源，CAND 评审中）——公告≠新闻：官方披露语境。当前近似覆盖=新闻清单内「公告」分类标签（news_data 可筛）</div>
+      </div>
+    </div>
+
+    <h2 class="page-title">新闻舆情</h2>
+    <div class="page-sub">实盘组 · 当日新闻清单 + 情绪分析结果（L4）</div>
+
+    <div class="row c4">
+      <div class="card metric"><div class="l">今日新闻</div><div class="v">1,203</div><div class="s">12 源 · 去重后 847 条</div></div>
+      <div class="card metric"><div class="l">情绪聚合</div><div class="v up">偏多 0.62</div><div class="s">多源一致性投票（强一致）</div></div>
+      <div class="card metric"><div class="l">重大利好</div><div class="v up">14</div><div class="s">影响评估 A 级 3 条</div></div>
+      <div class="card metric"><div class="l">重大利空</div><div class="v down">5</div><div class="s">影响评估 A 级 1 条</div></div>
+    </div>
+
+    <div class="alert-row warn" style="margin-bottom:14px">🟡 <b>读新闻纪律（Owner 裁定）</b>：可预测新闻（早有预期/资金已埋伏）≈ 利好兑现风险，参考价值要"反着看"；只有天灾类是真正不可预测；议息/数据类事件必须结合<b>预期差</b>（超预期/符合/不及预期）判断方向，不是超预期都视作利空<span class="t">标签体系</span></div>
+
+    <div class="row c32">
+      <div class="card">
+        <h3>当日新闻清单 <span class="dim">news_data · 12 源 · 双标签体系（可预测性 + 预期差）</span></h3>
+        <!-- 循环升级 R11：新闻检索（彭博 NSE 同位：关键词搜索+双标签筛选） -->
+        <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center;flex-wrap:wrap">
+          <input id="news-q" type="text" placeholder="搜索新闻关键词…（NSE 同位）" style="background:var(--input);border:1px solid var(--border);border-radius:5px;padding:5px 10px;color:var(--text);font-size:12px;width:210px" oninput="newsFilter()">
+          <span class="tabs" id="news-ftabs" style="margin-bottom:0">
+            <span class="tab on" data-nf="all" onclick="newsFSet('all',this)">全部</span>
+            <span class="tab" data-nf="可预测" onclick="newsFSet('可预测',this)">可预测</span>
+            <span class="tab" data-nf="不可预测" onclick="newsFSet('不可预测',this)">不可预测</span>
+            <span class="tab" data-nf="超预期" onclick="newsFSet('超预期',this)">超预期</span>
+            <span class="tab" data-nf="不及预期" onclick="newsFSet('不及预期',this)">不及预期</span>
+          </span>
+          <span class="dim" id="news-fcount" style="font-size:11px"></span>
+        </div>
+        <table id="news-table">
+          <tr><th>时间</th><th>来源</th><th>标题</th><th>情绪</th><th>可预测性</th><th>预期差</th><th>关联</th></tr>
+          <tr><td>14:02</td><td>财联社</td><td>半导体设备国产化率突破 40%</td><td><span class="badge b-buy">利好</span></td><td><span class="badge b-warn">可预测</span></td><td>—</td><td>半导体</td></tr>
+          <tr><td>13:15</td><td>东财快讯</td><td>央行开展 3800 亿 MLF 操作</td><td><span class="badge b-buy">利好</span></td><td><span class="badge b-warn">可预测</span></td><td><span class="badge b-buy">超预期</span></td><td>大盘</td></tr>
+          <tr><td>11:30</td><td>华尔街见闻</td><td>美联储官员放鹰：年内或仅降息一次</td><td><span class="badge b-sell">利空</span></td><td><span class="badge b-warn">可预测</span></td><td><span class="badge b-sell">不及预期</span></td><td>外盘</td></tr>
+          <tr><td>10:48</td><td>金十数据</td><td>白酒中秋备货启动，批价稳中有升</td><td><span class="badge b-buy">利好</span></td><td><span class="badge b-warn">可预测</span> <span class="dim" style="font-size:10px">兑现风险</span></td><td>—</td><td>白酒</td></tr>
+          <tr><td>09:20</td><td>财新</td><td>某新能源龙头被曝减产传闻</td><td><span class="badge b-sell">利空</span></td><td><span class="badge b-warn">可预测</span> <span class="dim" style="font-size:10px">疑似烟雾弹</span></td><td>—</td><td>新能源</td></tr>
+          <tr><td>08:55</td><td>研报</td><td>券商集体上调白酒行业评级</td><td><span class="badge b-buy">利好</span></td><td><span class="badge b-warn">可预测</span></td><td>—</td><td>白酒/证券</td></tr>
+          <tr><td>07:40</td><td>应急管理部</td><td>某地发生 5.2 级地震</td><td><span class="badge b-sell">利空</span></td><td><span class="badge b-buy">不可预测</span> <span class="dim" style="font-size:10px">真突发</span></td><td>—</td><td>区域基建/保险</td></tr>
+        </table>
+        <div class="note">标签判定口径：可预测性=事件日历（event_calendar 注册表：议息/财报/披露计划早知道）+ 事前资金痕迹（主力已埋伏=兑现风险/疑似烟雾弹）；预期差=实际值 vs 一致预期（analyst_forecast/macro 预期库），仅对有预期锚的事件打此标签</div>
+      </div>
+      <div class="card">
+        <h3>情绪分析 <span class="dim">sentiment_aggregator</span></h3>
+        <div class="bar-row"><span>一致看多</span><div class="bar"><i class="g" style="width:62%"></i></div><span>62%</span></div>
+        <div class="bar-row"><span>中性</span><div class="bar"><i style="width:26%"></i></div><span>26%</span></div>
+        <div class="bar-row"><span>一致看空</span><div class="bar"><i class="r" style="width:12%"></i></div><span>12%</span></div>
+        <h3 style="margin-top:12px">今日热点</h3>
+        <div style="font-size:12px;line-height:2">
+          <span class="badge b-pass">半导体国产化 ×48</span>
+          <span class="badge b-pass">白酒备货 ×36</span>
+          <span class="badge b-warn">MLF 续作 ×29</span>
+          <span class="badge b-fail">美联储放鹰 ×22</span>
+          <span class="badge b-na">机器人 ×17</span>
+        </div>
+        <div class="note">多源一致性投票 + <b>标签修正</b>：可预测利好的情绪权重降权（防烟雾弹带节奏）；不可预测突发按实际影响评级</div>
+      </div>
+    </div>
+
+    <!-- B1 公司公告（I-5）：与新闻不同源，公告=事实不打情绪标签 -->
+    <div class="card" style="margin-top:14px">
+      <h3>公司公告 <span class="badge b-na">演示数据</span> <span class="dim">公告与新闻不同源（交易所披露易/巨潮），公告=事实不打情绪标签（专业口径）；公告数据源待接入（I-2）</span></h3>
+      <div class="tabs" id="ann-tabs">
+        <span class="tab on" data-ann="all" onclick="annSet('all',this)">全部</span>
+        <span class="tab" data-ann="定期报告" onclick="annSet('定期报告',this)">定期报告</span>
+        <span class="tab" data-ann="重大事项" onclick="annSet('重大事项',this)">重大事项</span>
+        <span class="tab" data-ann="减持" onclick="annSet('减持',this)">减持</span>
+        <span class="tab" data-ann="回购" onclick="annSet('回购',this)">回购</span>
+        <span class="tab" data-ann="分红" onclick="annSet('分红',this)">分红</span>
+        <span class="dim" id="ann-count" style="margin-left:8px;font-size:11px"></span>
+      </div>
+      <table>
+        <tbody id="ann-body"></tbody>
+      </table>
+      <div class="note">公告查询与批量下载待数据源落地后点亮</div>
+    </div>
+  </section>
+
+  

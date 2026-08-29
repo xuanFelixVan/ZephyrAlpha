@@ -1,0 +1,49 @@
+<section class="page" id="p-overseas">
+    <h2 class="page-title">外盘速览</h2>
+    <div class="page-sub">实盘组 · 核心目的：<b>一切影响大A的外部力量</b>——全球股市/期货/汇率/商品，各自对 A 股利好/利空判定 + 整体分析结论</div>
+
+    <div class="row c4" id="ovs-grid"><!-- JS 生成 12 张迷你卡 --></div>
+
+    <div class="card">
+      <h3>整体分析 <span class="dim">对 A 股的综合影响判定</span></h3>
+      <div style="display:flex;gap:14px;align-items:baseline;margin-bottom:8px">
+        <span style="font-size:16px;font-weight:700">外盘环境：</span>
+        <span style="font-size:18px;font-weight:700;color:var(--text)">偏空 · 弱影响</span>
+        <span class="dim" style="font-size:12px">传导强度低-中</span>
+      </div>
+      <table>
+        <tr><th>通道</th><th>状态</th><th>对 A 股影响</th></tr>
+        <tr><td>美股（昨夜）</td><td class="down">纳指 -0.87% 道指 -0.42%</td><td><span class="badge b-sell">利空</span> 科技映射承压（半导体开盘情绪受影响）</td></tr>
+        <tr><td>美联储预期</td><td class="down">放鹰：年内或仅降息一次</td><td><span class="badge b-sell">利空</span> 外资风险偏好下降，关注北向</td></tr>
+        <tr><td>港股（实时）</td><td class="up">恒生 +0.62%</td><td><span class="badge b-buy">利好</span> 南向联动偏暖</td></tr>
+        <tr><td>A50 期货（实时）</td><td class="up">+0.18%</td><td><span class="badge b-buy">弱利好</span> 与 A 股现货同步</td></tr>
+        <tr><td>汇率</td><td class="dim">离岸 7.24 走弱</td><td><span class="badge b-sell">弱利空</span> 压制北向流入意愿</td></tr>
+        <tr><td>商品</td><td class="up">原油 +1.2% 黄金 +0.4%</td><td><span class="badge b-na">中性</span> 利好油气/黄金板块个股，对指数无方向</td></tr>
+      </table>
+      <div class="note">综合：外盘偏空但传导弱（美跌+美联储鹰 vs 港股/A50 偏暖）→ 判定「偏空·弱影响」：低开概率大，低开后看内生主线（半导体）承接力。时效如实标注：美股/日/韩=A 股盘中显示昨夜收盘；港股/A50/汇率/商品=实时；数据：kline_us_daily / us_index（tickflow）/ FRED / EIA</div>
+    </div>
+
+    <!-- 美债利率深区（I-8 P2：收益率曲线+利差结构——对 A 股传导的核心利率因子） -->
+    <div class="card" style="margin-top:14px">
+      <h3>美债利率深区 <span class="badge b-na">演示数据</span> <span class="dim">收益率曲线 + 利差结构（对 A 股传导的核心利率因子）；FRED 在库 22 序列（DGS02/DGS10/DFF 等，macro_fred_incremental 事件驱动），曲线历史与利差时序随 FRED 消费管线转真（I-2）</span></h3>
+      <div class="row c32">
+        <div class="chart-box" style="margin-bottom:0">
+          <div class="chart-title">美债收益率曲线 <span style="font-weight:400">（2Y/5Y/10Y/30Y，蓝=当前 / 灰=一周前）</span></div>
+          <svg class="spark" id="usyc-svg" viewBox="0 0 520 220" preserveAspectRatio="none" style="background:#000000;border-radius:4px"></svg>
+        </div>
+        <div>
+          <table>
+            <tr><th>指标</th><th>当前</th><th>周变动</th><th>对 A 股传导</th></tr>
+            <tr><td>美债 10Y</td><td>4.28%</td><td class="up">+6bp</td><td><span class="badge b-sell">弱利空</span> 成长股估值承压</td></tr>
+            <tr><td>10Y-2Y 利差</td><td>+43bp</td><td class="up">+8bp</td><td><span class="badge b-na">中性</span> 倒挂结束后正常化</td></tr>
+            <tr><td>10Y TIPS 实际利率</td><td>1.98%</td><td class="up">+3bp</td><td><span class="badge b-sell">弱利空</span> 黄金/成长贴现率↑</td></tr>
+            <tr><td>美元指数 DXY</td><td>104.2</td><td class="up">+0.4</td><td><span class="badge b-sell">弱利空</span> 北向流入意愿↓</td></tr>
+            <tr><td>联邦基金利率（DFF）</td><td>4.33%</td><td class="dim">—</td><td><span class="badge b-na">中性</span> 降息路径 → 「政策资金」页海外源</td></tr>
+          </table>
+          <div class="note">曲线形态：短端低于长端（正常化上行）——衰退定价消退；传导链：美债收益率↑ → 中美利差收窄 → 北向/汇率压力 → A 股成长估值折价（与 6 通道判定互证）</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  

@@ -1,0 +1,76 @@
+<section class="page" id="p-screener">
+    <h2 class="page-title">条件选股 <span class="badge b-na">演示数据</span></h2>
+    <div class="page-sub">研究组 · 核心目的：从全市场到候选清单——条件宇宙→过滤→结果输出（筛选引擎真实执行=待接入 CAND，本页演示交互与版式）</div>
+
+    <div class="card" style="margin-bottom:10px;padding:10px 16px">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px">
+        <span class="dim">预置方案 <span class="dim">Preset</span>：</span>
+        <span class="scr-chip" onclick="scrPreset(0)">低估值高ROE <span class="dim">PE&lt;20 且 ROE&gt;15%</span></span>
+        <span class="scr-chip" onclick="scrPreset(1)">强势突破 <span class="dim">收盘&gt;MA20 且 20日涨幅&gt;10%</span></span>
+        <span class="scr-chip" onclick="scrPreset(2)">资金抢筹 <span class="dim">主力净流入&gt;5000万 且 换手&gt;3%</span></span>
+        <span class="badge b-na" style="margin-left:auto">筛选引擎真实执行 · 待接入 CAND</span>
+      </div>
+    </div>
+
+    <div class="scr-grid">
+      <div class="card" style="margin-bottom:0">
+        <h3>条件面板 <span class="dim">Criteria Panel</span></h3>
+        <div class="sec-title" style="margin-top:0">① 选股宇宙 <span class="dim">Universe</span> <span class="badge b-na">注册表联动 待接入</span></div>
+        <select class="sel" id="scr-uni" style="width:100%;margin-bottom:4px" onchange="scrRun()">
+          <option value="all">全A（约 5420 只）</option>
+          <option value="hs300">沪深300</option>
+          <option value="zz500">中证500</option>
+          <option value="zz1000">中证1000</option>
+          <option value="watch">自选股板块</option>
+        </select>
+        <div class="sec-title">② 添加条件 <span class="dim">Add Condition</span></div>
+        <div style="display:flex;gap:6px;margin-bottom:6px">
+          <select class="sel" id="scr-cat" style="min-width:0;width:84px" onchange="scrCatFields()">
+            <option value="val">估值</option>
+            <option value="gro">成长</option>
+            <option value="tec">技术</option>
+            <option value="cap">资金</option>
+            <option value="emo">情绪</option>
+          </select>
+          <select class="sel" id="scr-field" style="min-width:0;flex:1"></select>
+        </div>
+        <span class="btn" style="display:block;text-align:center" onclick="scrAddCond()">＋ 添加条件</span>
+        <div class="sec-title">③ 条件列表 <span class="dim">AND 组合</span>　<span class="sel" style="min-width:0;padding:1px 8px;opacity:.45;pointer-events:none">OR ▾</span> <span class="badge b-na">待接入</span></div>
+        <div id="scr-conds"></div>
+        <div style="display:flex;gap:6px;margin-top:8px">
+          <span class="btn primary" style="flex:1;text-align:center" onclick="scrRun()">执行选股</span>
+          <span class="btn" onclick="scrClear()">清空</span>
+          <span class="btn" onclick="scrSavePlan()">保存方案</span>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:6px">
+          <select class="sel" id="scr-plans" style="min-width:0;flex:1" onchange="scrLoadPlan()"></select>
+          <span class="btn danger" style="padding:5px 10px" onclick="scrDelPlan()">删除</span>
+        </div>
+        <div class="note">方案存 localStorage（key=zk-screener-plans），仅本机浏览器</div>
+      </div>
+
+      <div>
+        <div class="card" style="margin-bottom:10px;padding:10px 16px">
+          <div class="scr-sum">
+            <span id="scr-sum-l">尚未执行</span>
+            <details class="ovl" style="margin-left:auto">
+              <summary>结果列配置 ▾</summary>
+              <div class="ovl-body" id="scr-colcfg"></div>
+            </details>
+          </div>
+        </div>
+        <div class="card">
+          <h3>选股结果 <span class="dim">Results · 「入作战池」=作战室 W1 作战池联动示意</span></h3>
+          <table id="scr-table"></table>
+          <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+            <span class="btn" style="opacity:.45;pointer-events:none">导出 CSV</span>
+            <span class="badge b-na">待接入</span>
+            <span class="note" style="margin:0 0 0 auto">「档案」=个股档案页跳转（3 只演示标的可切，其余提示待接入）</span>
+          </div>
+          <div class="note">估值/成长/技术/资金组=前端对演示样本真过滤；情绪组（涨停基因/连板数）=随机命中演示并标注 badge——真实筛选引擎与 universe 注册表均待接入 CAND</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  

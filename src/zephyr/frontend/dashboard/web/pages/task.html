@@ -1,0 +1,69 @@
+<section class="page" id="p-task">
+    <h2 class="page-title">任务进度</h2>
+    <div class="page-sub">治理组 · 现有上半屏保留，下半屏填充（V1）</div>
+    <div class="row c3">
+      <div class="card metric"><div class="l">Overall Completion</div><div class="v">74.2%</div></div>
+      <div class="card metric"><div class="l">Total Tasks</div><div class="v">1,279</div></div>
+      <div class="card metric"><div class="l">Completed</div><div class="v">949</div></div>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <h3>各阶段进度（现有内容保留）</h3>
+      <div class="bar-row"><span>Phase 0</span><div class="bar"><i class="g" style="width:100%"></i></div><span>100%</span></div>
+      <div class="bar-row"><span>Phase 1</span><div class="bar"><i style="width:82%"></i></div><span>82%</span></div>
+      <div class="bar-row"><span>Phase 2</span><div class="bar"><i style="width:61%"></i></div><span>61%</span></div>
+    </div>
+    <div class="row c2">
+      <div class="card">
+        <h3>最近完成 <span class="dim">新增（V1）</span></h3>
+        <table><tr><th>任务</th><th>完成时间</th></tr>
+          <tr><td>#205 软拥挤约束坍缩修复</td><td>08-19 23:02</td></tr>
+          <tr><td>#207 同号暴露约束修复</td><td>08-19 22:47</td></tr>
+          <tr><td>涨跌停分板块推断</td><td>08-19 22:15</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3>失败任务 <span class="dim">新增（V1）· 点行展开下钻</span></h3>
+        <table><tr><th>任务</th><th>失败原因</th><th>时间</th><th>操作</th></tr>
+          <tr style="cursor:pointer" onclick="taskDrill(this,'td1')"><td>tick 回补 08-14 ▸</td><td>源数据缺口 2 只</td><td>08-19 06:40</td><td><span class="btn" style="padding:2px 10px;font-size:11px" onclick="event.stopPropagation();taskRerun('tick 回补 08-14',this)">重跑</span></td></tr>
+          <tbody id="td1" style="display:none"><tr><td colspan="4" style="background:var(--panel2)">
+            <div style="font-size:12px;line-height:1.9">
+              最近 5 次耗时：<b>38m / 41m / 36m / 40m / <span class="down">失败 12m</span></b>（迷你趋势 ▂▃▂▃▁）<br>
+              日志尾部：<span class="dim">06:38:12 [WARN] 源数据缺口检测：2 只标的（600XXX/002XXX）QMT 历史范围外 → 06:40:03 [ERROR] backfill_checker abort：缺口超阈值 2&gt;0，任务标记失败</span><br>
+              下次计划运行：08-26 06:30（schedule: daily 06:30）；关联缺口登记：known_data_gaps tick_data_2026_06_gap（completed）
+            </div>
+          </tr></tbody>
+        </table>
+        <div class="note">下钻=耗时趋势/日志尾部/下次计划（tasks.yaml 心跳+日志落盘接口位）；重跑=human_gated 确认弹窗+操作留痕（演示，执行通道 I-2）</div>
+      </div>
+    </div>
+    <!-- 循环升级 R7：全量任务清单（167 任务前端出口：搜索+阶段筛选+上次运行/耗时/状态） -->
+    <div class="card">
+      <h3>全量任务清单 <span class="badge b-na">演示数据</span> <span class="dim">167 任务（tasks.yaml）前端出口：搜索框+阶段筛选+上次运行/耗时/状态灯；连续失败≥2 次预警</span></h3>
+      <div class="alert-row warn" style="margin-bottom:10px">🟡 失败预警：tick 回补 08-14（源数据缺口 2 只，近 7 日失败 1 次）；连续失败≥2 次任务 0 个<span class="t">规则：≥2 连Fail 顶部红条</span></div>
+      <div style="display:flex;gap:8px;margin-bottom:10px;align-items:center;flex-wrap:wrap">
+        <input id="task-q" type="text" placeholder="搜索任务名/ID…" style="background:var(--input);border:1px solid var(--border);border-radius:5px;padding:5px 10px;color:var(--text);font-size:12px;width:200px" oninput="taskListRender()">
+        <span class="tabs" id="task-stage-tabs" style="margin-bottom:0">
+          <span class="tab on" data-st="all" onclick="taskStageSet('all',this)">全部</span>
+          <span class="tab" data-st="数据采集" onclick="taskStageSet('数据采集',this)">数据采集</span>
+          <span class="tab" data-st="因子计算" onclick="taskStageSet('因子计算',this)">因子计算</span>
+          <span class="tab" data-st="治理" onclick="taskStageSet('治理',this)">治理</span>
+          <span class="tab" data-st="运维" onclick="taskStageSet('运维',this)">运维</span>
+        </span>
+        <span class="dim" id="task-list-count" style="font-size:11px"></span>
+      </div>
+      <table><tbody id="task-list-body"></tbody></table>
+      <div class="note">演示抽样 12 行（全量 167 行 I-2 供数）；状态灯：绿=最近成功/黄=久未运行/红=最近失败</div>
+    </div>
+      <!-- R4 长任务进度条（统一规格：浅蓝 #3D8BFF 单色+百分比+ETA+当前步名；<3 秒短任务不出条防闪烁） -->
+    <div class="card" style="margin-top:14px">
+      <h3>长任务进度 <span class="dim">六类长任务统一进度条规格（R4 裁定）；演示数据</span></h3>
+      <div class="pbar-row" style="margin-bottom:8px"><span style="width:180px">新闻情绪打分回填</span><div class="pbar" style="flex:1"><i style="width:63%;background:#3D8BFF"></i></div><span class="dim">63% · 2015-06-27 · ETA 明晨</span></div>
+      <div class="pbar-row" style="margin-bottom:8px"><span style="width:180px">回测：多因子合成 v3</span><div class="pbar" style="flex:1"><i style="width:41%;background:#3D8BFF"></i></div><span class="dim">41% · WFA 窗 7/17 · ETA 22 分钟</span></div>
+      <div class="pbar-row" style="margin-bottom:8px"><span style="width:180px">数据回补：tick 2026-06</span><div class="pbar" style="flex:1"><i style="width:100%;background:#3D8BFF"></i></div><span class="dim">完成 · 3.19 亿行/21 天</span></div>
+      <div class="pbar-row"><span style="width:180px">RAG 索引重建</span><div class="pbar" style="flex:1"><i style="width:8%;background:#3D8BFF"></i></div><span class="dim">8% · 块 6,112/76,112 · ETA 1.5 小时</span></div>
+      <div class="note">规则：回测发起/数据回补/情绪打分/图谱重建/RAG 索引/模型训练六类必出进度条；短任务（&lt;3 秒）一律不出（防闪烁）；进度语义只留 label 文字色（进度条单色 #3D8BFF，Owner 裁定）</div>
+    </div>
+</section>
+
+
+  

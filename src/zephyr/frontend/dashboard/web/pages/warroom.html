@@ -1,0 +1,280 @@
+<section class="page" id="p-warroom">
+    <h2 class="page-title">作战指挥</h2>
+    <div class="page-sub">实盘组 · <b>核心三件事：昨天定的预案是什么 → 现在走势匹配哪一格 → 明天大概怎么走、今天该怎么动</b>（决策层——感知状态去「大盘分析」）· 三区：①盘前预案（8:00-8:30 生成）②实时情景跟踪（主角，1~5 分钟滚动）③明日推演（T+1 隔夜风险反哺今日仓位）</div>
+
+    <!-- W1 明日总预判 -->
+    <div class="param-strip">
+      <span>隔夜修正档位 <b class="up">偏多 ×1.2</b>（final_shift=+0.5，MOD-PLAN-004）</span>
+      <span>Regime <b>震荡偏强</b></span>
+      <span>总仓位基调 <b>6~7 成</b>（档位×regime 节流）</span>
+      <span>隔夜外盘 <b>偏空·弱影响</b>（联动外盘页）</span>
+      <span style="border-right:none">明日事件 <b>美联储官员讲话 20:30</b>（预期锚=符合预期，联动新闻页双标签）</span>
+    </div>
+    <div class="param-strip" style="margin-top:-8px">
+      <span>今日作战池 <b>3 票</b>：中芯国际 / 中微公司 / 汇川技术</span>
+      <span style="border-right:none" class="dim">机构模板铁律=刻意小池（2~3 只"催化剂×结构"交集票）；池外股票今日一律不碰——注意力也是风险预算</span>
+    </div>
+
+    <!-- W2 3×3 情景矩阵 -->
+    <div class="card" style="margin-bottom:14px">
+      <h3>W2 明日情景矩阵 3×3 <span class="dim">开盘三态（项目真实阈值 ±2%）× 开盘后 30 分钟走势三态 = 9 格封闭穷举；点击格子展开完整方案 · 数据源：MOD-PLAN-005 ScenarioPlan</span></h3>
+      <div id="wr-grid" style="display:grid;grid-template-columns:96px repeat(3,1fr);gap:6px;font-size:12px">
+        <div></div>
+        <div style="text-align:center;color:var(--dim);padding:4px">高走（站稳 VWAP）</div>
+        <div style="text-align:center;color:var(--dim);padding:4px">平走（围绕 VWAP）</div>
+        <div style="text-align:center;color:var(--dim);padding:4px">低走（VWAP 下方）</div>
+        <div style="color:var(--dim);padding:8px 4px">高开<br>&gt;+2%</div>
+        <div class="wr-cell" onclick="warSel('00',this)" style="background:var(--input);border:1px solid var(--border);border-radius:6px;padding:8px;cursor:pointer"><span class="badge b-buy">进攻</span> <b style="float:right">18%</b><br><span class="dim">强势确认，主线延续加仓</span></div>
+        <div class="wr-cell" onclick="warSel('01',this)" style="background:var(--input);border:1px solid var(--border);border-radius:6px;padding:8px;cursor:pointer"><span class="badge b-na">观察</span> <b style="float:right">12%</b><br><span class="dim">利好兑现嫌疑，不追高</span></div>
+        <div class="wr-cell" onclick="warSel('02',this)" style="background:var(--input);border:1px solid var(--border);border-radius:6px;padding:8px;cursor:pointer"><span class="badge b-sell">防守</span> <b style="float:right">8%</b><br><span class="dim">冲高回落=兑现，减仓至5成</span></div>
+        <div style="color:var(--dim);padding:8px 4px">平开<br>±2%</div>
+        <div class="wr-cell" onclick="warSel('10',this)" style="background:var(--input);border:2px solid var(--text);border-radius:6px;padding:8px;cursor:pointer"><span class="badge b-buy">进攻·轻仓试</span> <b style="float:right;color:var(--text)">22% 最可能</b><br><span class="dim">平开走强=内生强势，买主线龙头回踩</span></div>
+        <div class="wr-cell" onclick="warSel('11',this)" style="background:var(--input);border:1px solid var(--border);border-radius:6px;padding:8px;cursor:pointer"><span class="badge b-na">观察</span> <b style="float:right">15%</b><br><span class="dim">震荡延续，做T为主不开新仓</span></div>
+        <div class="wr-cell" onclick="warSel('12',this)" style="background:var(--input);border:1px solid var(--border);border-radius:6px;padding:8px;cursor:pointer"><span class="badge b-sell">防守</span> <b style="float:right">10%</b><br><span class="dim">弱势确认，减仓观察</span></div>
+        <div style="color:var(--dim);padding:8px 4px">低开<br>&lt;-2%</div>
+        <div class="wr-cell" onclick="warSel('20',this)" style="background:var(--input);border:1px solid var(--border);border-radius:6px;padding:8px;cursor:pointer"><span class="badge b-buy">黄金坑</span> <b style="float:right">8%</b><br><span class="dim">低开翻红=恐慌盘被接，重仓低吸</span></div>
+        <div class="wr-cell" onclick="warSel('21',this)" style="background:var(--input);border:1px solid var(--border);border-radius:6px;padding:8px;cursor:pointer"><span class="badge b-na">观察</span> <b style="float:right">4%</b><br><span class="dim">方向不明，观望等确认</span></div>
+        <div class="wr-cell" onclick="warSel('22',this)" style="background:var(--input);border:1px solid var(--border);border-radius:6px;padding:8px;cursor:pointer"><span class="badge b-sell">退潮</span> <b style="float:right">3%</b><br><span class="dim">清仓观望，宽基压舱石顶上</span></div>
+      </div>
+      <div class="note">概率分布为演示数据（缺口⑥：BM-SEL-04 设计态未施工，先以最可能格高亮表达）；9 格封闭穷举=任何开盘形态都有方案接住，杜绝"没想到"</div>
+
+      <!-- 展开方案区（随点击更新） -->
+      <div id="wr-detail" style="margin-top:12px"></div>
+    </div>
+
+    <!-- ② 实时情景跟踪区（R13 主角区：时序分段判定 C24——开盘段/上午/下午各 3~4 互斥形态滚动判定；真源 I-2） -->
+    <div class="card" style="margin-bottom:14px;border-left:3px solid var(--up)">
+      <h3>实时情景跟踪 <span class="badge b-na">演示数据</span> <span class="dim">主角区 · 当前走势匹配预案哪格+关键位验证（支撑/阻力站稳/量能/买盘）+本时段形态判定——不做 3×3×3 矩阵，改时序分段判定（Owner 裁定）· 真源 C24 时序分段状态机（I-2）</span></h3>
+      <div class="param-strip" style="margin-bottom:10px">
+        <span>当前时段 <b>上午段</b>（10:42）</span>
+        <span>开盘段判定 <b class="up">平开+30分钟站稳 VWAP</b>（开盘试探驱动型）</span>
+        <span>匹配预案格 <b>平开+高走</b>（W2 已描边）</span>
+        <span style="border-right:none">接下来预判 <b>午后延续偏强，14:00 看量能</b></span>
+      </div>
+      <table>
+        <tr><th>关键位验证</th><th>实况</th><th>判定</th></tr>
+        <tr><td>VWAP 站稳时长</td><td>52 分钟</td><td><span class="badge b-pass">✓ 有效（&gt;30min）</span></td></tr>
+        <tr><td>支撑位 3,820 回踩</td><td>10:15 触及未破+缩量</td><td><span class="badge b-pass">✓ 支撑有效</span></td></tr>
+        <tr><td>量能（vs 昨日同时段）</td><td>+2.1%</td><td><span class="badge b-pass">✓ 放量上攻</span></td></tr>
+        <tr><td>买盘力量（主力净流入）</td><td>+38.2 亿（半导体主攻）</td><td><span class="badge b-pass">✓ 有主攻方向</span></td></tr>
+        <tr><td>时序形态（开盘段→现在）</td><td>试探→驱动→高位震荡</td><td class="dim">趋势日候选，未破坏</td></tr>
+      </table>
+      <div class="note">时序分段判定规则（市场轮廓开盘类型学）：开盘段（前 15 分钟）4 型——直驱/试探驱动/<b>拒绝反转</b>/震荡；上午段/下午段各 3~4 互斥形态滚动判定，组合成全天——27 格矩阵认知超载已否决（Owner 裁定）</div>
+    </div>
+
+    <!-- ③ 明日推演区（R13：今日盘面→明日情景概率→今日操作联动；T+1 隔夜风险——今天买了明天才能卖） -->
+    <div class="card" style="margin-bottom:14px;border-left:3px solid var(--faint)">
+      <h3>明日推演 <span class="badge b-na">演示数据</span> <span class="dim">根据今天盘面推明天 → 反哺今天操作（不开仓/打底仓/延后/正常执行）· 次日 8 态概率=MOD-SIG-037（production）· 联动=C25（I-2）</span></h3>
+      <div style="display:flex;gap:4px;align-items:flex-end;height:64px;margin:8px 0 4px" id="wr-8state"></div>
+      <div class="kv-mini" style="margin-bottom:8px">次日 8 态概率分布（MOD-SIG-037）：高开高走 24% · 高开震荡 14% · 平开高走 22% · 平开震荡 18% · 低开高走 9% · 低开震荡 7% · 低开低走 4% · 极端 2%</div>
+      <table>
+        <tr><th>今日盘面输入</th><th>对明天的推演</th><th>今日操作联动</th></tr>
+        <tr><td>上午偏强+量能未衰减+主攻明确</td><td>明日高开/平开高走概率 46%——惯性偏多</td><td><span class="badge b-buy">正常执行预案</span></td></tr>
+        <tr><td>若午后冲高回落收最低</td><td>明日低开惯性下杀概率升——底部震荡收不上去=次日有惯性</td><td><span class="badge b-sell">不开新仓/只打底仓</span></td></tr>
+        <tr><td>20:30 美联储讲话未兑现</td><td>预期锚=符合预期则影响中性；放鹰则隔夜传导降半档</td><td><span class="badge b-na">尾盘仓位留余量</span></td></tr>
+      </table>
+      <div class="note">T+1 隔夜风险逻辑：今天买入明天才能卖——"明天会怎样"决定"今天能不能买"；底部震荡收不上去的日子，次日惯性下杀概率显著升高（隔夜惯性实证），今日宁等明天恐慌盘</div>
+    </div>
+
+    <!-- W2b 持仓股明日边界（自复盘页迁入） -->
+    <div class="card" style="margin-bottom:14px">
+      <h3>W2b 持仓股明日边界 <span class="dim">逐票栏杆（MOD-PLAN-001 TomorrowBoundary 产出；自复盘页迁入，L15 边界裁定）——候选买票看 W2 格内方案，持仓票看这里</span></h3>
+      <table>
+        <tr><th>标的</th><th>箱体（box_lower ~ box_upper）</th><th>加仓规则</th><th>禁加仓价 no_add</th><th>必出价 must_exit</th><th>突破验证 breakout_confirm</th></tr>
+        <tr><td>贵州茅台</td><td>1690 ~ 1745</td><td>站稳 1730 加 100 股</td><td>1742</td><td>跌破 1688 止损</td><td>放量突破 1745 站稳 10 分钟确认主升</td></tr>
+        <tr><td>中国平安</td><td>47.2 ~ 49.8</td><td>回踩 47.5 买入</td><td>49.5</td><td>跌破 46.8 放弃</td><td>—</td></tr>
+        <tr><td>宁德时代</td><td colspan="5"><span class="badge b-fail">止损清剩余 200 股，不新开仓</span>（失效条件已触发，方案作废——逻辑破坏点优先于价格）</td></tr>
+      </table>
+      <div class="note">次日 8 态走势概率预测（BM-SEL-04）：<b>设计态·未施工</b>（90 号 §7 裁定暂缓）——接入后 W2 矩阵 9 格概率升级为模型分布，当前为演示数据（缺口⑥）</div>
+    </div>
+
+    <!-- W3 开盘观察哨 -->
+    <div class="card" style="margin-bottom:14px">
+      <h3>W3 开盘观察哨 <span class="dim">9:15-10:00 盘中实时 · 竞价三细节（44号文 §9.11，MOD-PLAN-005 已落码）→ 命中格点亮</span></h3>
+      <div class="row c4">
+        <div class="card metric"><div class="l">D1 虚拟开盘价偏离（9:25）</div><div class="v up">+0.35%</div><div class="s">与 gap_adj 同向 → <span class="badge b-pass">确认</span>（背离则降信半档）</div></div>
+        <div class="card metric"><div class="l">D2 匹配量放大</div><div class="v">1.31×</div><div class="s">≥1.2× → <span class="badge b-pass">确认</span>（&lt;1.0× 降信半档）</div></div>
+        <div class="card metric"><div class="l">D3 撤单识别（9:20 分界）</div><div class="v">0.22</div><div class="s">&lt;0.6 → <span class="badge b-pass">无虚假申报</span>（&gt;0.6 信号作废=诱多/诱空）</div></div>
+        <div class="card metric"><div class="l">昨日涨停竞价溢价</div><div class="v up">+2.1%</div><div class="s">打板情绪偏暖</div></div>
+      </div>
+      <table>
+        <tr><th>时点</th><th>观察项</th><th>实况</th><th>判定</th></tr>
+        <tr><td>9:25</td><td>竞价二次匹配 9 情景</td><td>平开偏多</td><td><span class="badge b-pass">维持预判</span></td></tr>
+        <tr><td>9:30-9:35</td><td>空间板竞价未被核（低开&gt;5% 或跌停开=退潮预警）</td><td>空间板 +1.8% 开</td><td><span class="badge b-pass">✓</span></td></tr>
+        <tr><td>9:35-10:00</td><td>主线涨停家数 ≥10（昨天 15→低于 5=分歧信号）</td><td>半导体 12 家</td><td><span class="badge b-pass">✓</span></td></tr>
+        <tr><td>9:35-10:00</td><td>持仓票竞价无跳水</td><td>正常</td><td><span class="badge b-pass">✓</span></td></tr>
+        <tr><td>10:00</td><td colspan="2"><b>命中格点亮：平开+高走（W2 已描边）→ 按该格方案执行</b></td><td><span class="badge b-buy">当前命中</span></td></tr>
+      </table>
+      <div class="alert-row warn" style="margin-top:10px"><span>⏱ 10:00 纪律线：其后不开新仓（做T/回封除外）——盘中只匹配执行，不临时决策</span><span class="t">A股社区实践+项目纪律</span></div>
+    </div>
+
+    <!-- ④ 执行区（R14⑥ 自原盘中实时迁入：决策链/风控实时/委托——决策层执行侧，常态折叠） -->
+    <details style="margin-bottom:14px">
+      <summary style="cursor:pointer;font-size:14px;font-weight:600;padding:10px 14px;background:var(--panel2);border-radius:8px">执行区（自盘中实时迁入）<span class="dim" style="font-weight:400">——权益横幅/决策链/风控实时/委托面板；常态折叠，点击展开</span></summary>
+      <div class="card" style="margin-top:10px">
+        <div class="param-strip" style="margin-bottom:10px">
+          <span>权益（汇总）</span><span><b>173.85 万</b> <span class="up">+5,100 (+0.29%)</span></span>
+          <span>决策链：信号 <b>47</b> → 风控放行 <b>12</b> → 委托 <b>8</b> → 成交 <b>6</b></span>
+          <span style="border-right:none">风控实时：9 限额余量正常 · VaR -1.8% · 撤单率 3.1%</span>
+        </div>
+        <table>
+          <tr><th>委托（近 6 笔）</th><th>方向</th><th>价格/数量</th><th>状态</th><th>回执</th></tr>
+          <tr><td>中芯国际</td><td><span class="badge b-buy">买</span></td><td>82.40 × 500</td><td><span class="badge b-pass">已成交</span></td><td class="dim">ack 0.8s</td></tr>
+          <tr><td>汇川技术</td><td><span class="badge b-buy">买</span></td><td>61.15 × 800</td><td><span class="badge b-pass">已成交</span></td><td class="dim">ack 0.7s</td></tr>
+          <tr><td>宁德时代</td><td><span class="badge b-sell">卖</span></td><td>196.00 × 200</td><td><span class="badge b-warn">部分成交</span></td><td class="dim">200/500，余撤</td></tr>
+        </table>
+        <div class="note">委托面板=human_gated 二次确认（C19 写通道未接，演示）；风控实时 9 限额/VaR/流动性/尾部=B25（dashboard_feeds 9 条 prod 接口已埋，I-2 通数即摘 mock）；逐笔回报时序与系统运行日志归「系统状态」页（B2/B14）</div>
+        <!-- 打板实时监控（BFE-36·Owner 2026-08-29 拍板：sleeve 仿真启用——信号全真跑、成交走模拟户、不碰实盘资金） -->
+        <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:10px">
+          <h3>打板实时监控 <span class="badge b-na">演示数据</span> <span class="dim">sleeve 状态：<b class="up">仿真启用</b>（Owner 08-29 拍板——信号全真跑·成交走模拟户·不碰实盘资金）· 真源=BFE-36 打板族五件 prod：信号决策/破板/出货/瞬时熔断/坑位安全（I-2 接线）</span></h3>
+          <div class="param-strip" style="margin-bottom:10px">
+            <span>今日仿真打板 <b>3 笔</b>（模拟户）</span>
+            <span>瞬时熔断 <b>0 触发</b>（daban_instant_circuit_breaker 值守中）</span>
+            <span>坑位安全检查 <b class="up">3/3 通过</b>（daban_pit_safety）</span>
+            <span style="border-right:none">打板 sleeve 容量 <b>2/10</b>（N≤10 硬约束）</span>
+          </div>
+          <table>
+            <tr><th>标的</th><th>信号决策</th><th>熔断/坑位</th><th>仿真成交</th><th>破板监控</th><th>处置建议</th></tr>
+            <tr><td>华虹公司</td><td><span class="badge b-buy">打板 B 级</span> 融合 0.72</td><td><span class="dot g"></span>正常 / 通过</td><td>09:42 涨停价 × 1000（模拟）</td><td>封单 2.1 亿·稳</td><td><span class="badge b-pass">持有看明早竞价</span></td></tr>
+            <tr><td>中晶科技</td><td><span class="badge b-na">观察</span> 融合 0.58</td><td><span class="dot g"></span>正常 / 通过</td><td>—（未达买入阈值）</td><td>—</td><td class="dim">回封再看，不追</td></tr>
+            <tr><td>芯源微</td><td><span class="badge b-sell">出货触发</span> 破板出货</td><td><span class="dot y"></span>破板预警 / 通过</td><td>13:51 仿真卖出 +3.2%（模拟）</td><td>13:47 开板·量能放大</td><td><span class="badge b-sell">破板即走·纪律执行</span></td></tr>
+          </table>
+          <div class="note">铁律证据链：信号=daban_signal_decision（四引擎融合：资格门 MOD-SIG-023/游资情绪 MOD-SIG-033/量化强度 MOD-SIG-034/融合决策 MOD-SIG-035）；破板=daban_exit_decision；熔断=daban_instant_circuit_breaker；坑位=daban_pit_safety；收益统计归「盘后复盘·打板复盘」（A11）——仿真期每笔进复盘归因，转实盘需 Owner 二次拍板</div>
+        </div>
+      </div>
+    </details>
+
+    <!-- ── 验证与次要区（R13 主次分离：以下折叠降级——预案质量复盘/持仓边界/辩论/风控，需要时展开） ── -->
+    <!-- W0 昨日预案验证 -->
+    <div class="card" style="margin-bottom:14px">
+      <h3>W0 昨日预案验证 <span class="dim">昨日对今天的预测 vs 今日实际 · 三维归因（预测对 ≠ 执行对 ≠ 赚钱，分开统计才知道哪环错）</span></h3>
+      <div class="param-strip" style="margin-bottom:10px">
+        <span>昨日预测格 <b>平开 + 高走</b>（概率最高 22%）</span>
+        <span>今日实际 <b>平开 +0.3% → 30分钟站稳 VWAP 高走</b></span>
+        <span>命中判定 <span class="badge b-pass">命中</span></span>
+      </div>
+      <table>
+        <tr><th>归因维度</th><th>结果</th><th>明细</th></tr>
+        <tr><td>① 预测命中</td><td><span class="badge b-pass">✓ 命中</span></td><td>实际走势落入预测格（平开+高走）</td></tr>
+        <tr><td>② 执行一致</td><td><span class="badge b-pass">✓ 一致</span></td><td>预案动作=回踩主线龙头买入；实际 10:23 回踩 1702 成交（与盘后复盘页对账一致）</td></tr>
+        <tr><td>③ 盈亏结果</td><td class="up">+1.2%</td><td>预案方案当日实际盈亏</td></tr>
+      </table>
+      <div class="bar-row" style="margin-top:10px"><span>近20日 预测命中</span><div class="bar"><i class="g" style="width:65%"></i></div><span>13/20 65%</span></div>
+      <div class="bar-row"><span>近20日 执行一致</span><div class="bar"><i style="width:80%"></i></div><span>16/20 80%</span></div>
+      <div class="bar-row"><span>近20日 预案盈利</span><div class="bar"><i class="y" style="width:55%"></i></div><span>11/20 55%</span></div>
+      <!-- 循环升级 R12：校准度可视（概率分桶 vs 实际命中率——系统性高估/低估一眼可见，Brier 口径数值化） -->
+      <div class="sec-title" style="margin-top:10px">校准度 · 概率分桶 vs 实际命中率 <span class="dim">近 60 日样本 · Brier 0.18（良，0=完美 / 0.25=掷硬币基准）</span></div>
+      <table style="margin-top:4px">
+        <tr><th>预测概率桶</th><th>样本</th><th>实际命中率</th><th>偏离</th><th>判定</th></tr>
+        <tr><td>10~20%</td><td>18</td><td>28%</td><td class="down">+8pp</td><td><span class="badge b-warn">系统性低估</span></td></tr>
+        <tr><td>20~35%</td><td>22</td><td>32%</td><td class="dim">+4pp</td><td><span class="badge b-pass">校准良好</span></td></tr>
+        <tr><td>35~50%</td><td>14</td><td>36%</td><td class="dim">-6pp</td><td><span class="badge b-pass">校准良好</span></td></tr>
+        <tr><td>&gt;50%</td><td>6</td><td>50%</td><td class="up">-8pp</td><td><span class="badge b-warn">样本少·观察</span></td></tr>
+      </table>
+      <div class="note" style="margin-top:6px">判读：低概率格实际命中率偏高（10~20% 格实际 28%）=系统性低估强势情景——W2 概率分布偏低档修正方向；正式口径=布赖尔评分（Brier Score，概率预测均方误差）</div>
+      <div class="note">数据源：prediction_log 落库（MOD-PLAN-005 预留通道）；校准度=预测概率 vs 实际频率（正式口径升级=布赖尔评分 Brier Score：概率预测的均方误差，用于发现系统性高估/低估）· 复盘口径对齐机构模板：<b>对计划不对结果</b>——盈亏差但执行一致的预案≠坏预案，反之亦然</div>
+    </div>
+
+    <!-- W4 多空辩论台 -->
+    <div class="card" style="margin-bottom:14px">
+      <h3>W4 多空辩论台 <span class="dim">预案质量门 · TradingAgents 式四角色链（分析师→多空辩论→交易员→风控）；数据源：agent_debate（交易域实例化=缺口⑧，演示）</span></h3>
+      <div class="row c4">
+        <div class="card" style="border-left:3px solid var(--up)">
+          <h3 style="color:var(--up)">多头研究员</h3>
+          <div style="font-size:12px;color:var(--dim)">① 半导体国产替代政策催化，中军放量突破平台<br>② A50 隔夜偏暖+港股联动，南向情绪不差<br>③ 情绪周期发酵第 2 天，空间板未断</div>
+        </div>
+        <div class="card" style="border-left:3px solid var(--down)">
+          <h3 style="color:var(--down)">空头研究员</h3>
+          <div style="font-size:12px;color:var(--dim)">① 美股昨夜下跌，科技映射开盘承压<br>② 美联储放鹰，北向流入意愿受抑<br>③ 主线拥挤度 78 分位，追高风险累积</div>
+        </div>
+        <div class="card" style="border-left:3px solid var(--faint)">
+          <h3>交易员综合</h3>
+          <div style="font-size:12px;color:var(--dim)">偏多但<b>降半档</b>：主攻平开/低开高走两格方案；高开不追（兑现嫌疑）——与 W1 档位 ×1.2 一致</div>
+        </div>
+        <div class="card" style="border-left:3px solid var(--faint)">
+          <h3>风控官</h3>
+          <div style="font-size:12px;color:var(--dim)"><span class="badge b-pass">通过·有条件</span>：单票≤8%、总仓≤7 成；<b>若 D3 撤单&gt;0.6 自动 veto 全部进攻方案</b></div>
+        </div>
+      </div>
+      <details class="sec-det" style="margin-top:10px">
+        <summary><b>历史辩论记录</b>（近 5 日：多空结论+风控 veto+事后验证——辩论质量门可追溯，I-8 P2）</summary>
+        <table style="margin-top:8px">
+          <tr><th>日期</th><th>多头核心</th><th>空头核心</th><th>交易员结论</th><th>风控</th><th>事后验证</th></tr>
+          <tr><td>08-25</td><td>半导体政策催化+梯队完整</td><td>美跌映射+拥挤度 78 分位</td><td>偏多降半档</td><td><span class="badge b-pass">通过·有条件</span></td><td class="dim">盘中验证中</td></tr>
+          <tr><td>08-24</td><td>白酒备货旺季+防御切换</td><td>指数缩量+主线不明</td><td>中性偏守</td><td><span class="badge b-pass">通过</span></td><td><span class="badge b-pass">命中</span> 白酒 +1.8%</td></tr>
+          <tr><td>08-23</td><td>黄金坑低吸窗口</td><td>退潮蔓延风险</td><td>低吸主线龙头</td><td><span class="badge b-warn">veto 追高方案</span></td><td><span class="badge b-pass">命中</span> 半导体反包</td></tr>
+          <tr><td>08-22</td><td>证券降准预期</td><td>梯队残缺无后排</td><td>轻仓试不追</td><td><span class="badge b-pass">通过</span></td><td><span class="badge b-warn">半命中</span> 冲高回落</td></tr>
+          <tr><td>08-21</td><td>新能源反抽</td><td>板块退潮+外资减持</td><td>否决反抽</td><td><span class="badge b-fail">veto</span></td><td><span class="badge b-pass">命中</span> 避开 -2.1%</td></tr>
+        </table>
+        <div class="note">辩论记录=agent_debate DebateVerdict 落库（治理域双模型辩论已 prod；交易域角色实例化=缺口⑧，演示）；事后验证=次日实际走势回判，校准度统计入 W0（Brier 口径）；命中率：近 5 日 3 命中/1 半命中/1 验证中</div>
+      </details>
+    </div>
+
+    <!-- W5 风险预算表 -->
+    <div class="row c2">
+      <div class="card">
+        <h3>W5 风险预算表 <span class="dim">单日总预算 → 各情景/标的分配</span></h3>
+        <table id="w5-budget-table">
+          <tr><td>单日总风险预算</td><td><b>总资产 -2.0%</b>（≈ -84,000）</td></tr>
+          <tr><td>单笔硬约束</td><td>单票 ≤8% 总资产（firm 层 FirmRiskAggregator 硬顶，30号 §2.2）</td></tr>
+          <tr><td>相关性净额</td><td>半导体+AI算力 ρ=0.82 → 合并计 1 笔风险（防"五个仓位实则一个赌注"）</td></tr>
+          <tr><td>今日已用额度</td><td><span class="up">-0.6%</span> / 预算 -2.0%</td></tr>
+        </table>
+        <div class="bar-row" style="margin-top:8px"><span>已用风险额度</span><div class="bar"><i class="y" style="width:30%"></i></div><span>30%</span></div>
+      </div>
+      <div class="card">
+        <h3>预算分配 <span class="dim">按情景动作类型 · 已做相关性净额扣减</span></h3>
+        <div class="bar-row"><span>进攻方案（2格）</span><div class="bar"><i class="g" style="width:40%"></i></div><span>40%</span></div>
+        <div class="bar-row"><span>黄金坑低吸</span><div class="bar"><i class="g" style="width:25%"></i></div><span>25%</span></div>
+        <div class="bar-row"><span>机动做T</span><div class="bar"><i style="width:20%"></i></div><span>20%</span></div>
+        <div class="bar-row"><span>压舱石宽基</span><div class="bar"><i class="y" style="width:15%"></i></div><span>15%</span></div>
+        <div class="bar-row"><span>防守情景</span><div class="bar"><i class="r" style="width:2%"></i></div><span>0%</span></div>
+        <div class="note">防守情景只出不进，不占买入预算；压舱石=防御性底仓（宽基 ETF，退潮格自动顶上）</div>
+      </div>
+    </div>
+    <div class="alert-row bad">⛔ 今日禁做清单（sit-out list，机构风险包络四件套之一）：美联储官员讲话 20:30 后不开新仓 · 宁德时代止损后禁反手 · 跌停挂单票不撬板 · 作战池外股票不碰<span class="t">违反=预案外操作，W0 归因记"执行不一致"</span></div>
+    <div class="note" style="margin-top:6px">熔断阶梯联动（SEC 15c3-5 制式四级：节流→撤单→停机→平仓）：当前状态见「系统 → 系统状态」熔断开关灯；W4 风控 veto 触发时自动降仓执行</div>
+
+    <!-- A6 纪律防守阵地（小红书组2 QINLONG 参考） -->
+    <div class="row c2" style="margin-top:14px">
+      <div class="card">
+        <h3>⚔ 纪律铁律 <span class="dim">五条必须遵守（高于禁做清单的硬约束）· 小红书 QINLONG 参考 A6</span></h3>
+        <ul class="law-list">
+          <li>止损必执行——失效条件触发即出，不抱幻想不摊平</li>
+          <li>10:00 后不开新仓——盘中只匹配执行，不临时决策</li>
+          <li>单票 ≤8% / 总仓 ≤7 成——硬顶不可破，系统强制</li>
+          <li>预案外不操作——未进作战池/未写明触发条件=不碰</li>
+          <li>风控 veto 即停手——D3 撤单&gt;0.6 自动否决全部进攻方案</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>系统审计日志 <span class="dim">风控/纪律事件滚动留痕（BFE-38 报告通道联动）</span></h3>
+        <div class="audit-scroll">
+          10:41:12 [风控] 宁德时代 距止损线 1.8% → 触发预警<br>
+          10:15:03 [纪律] 10:00 纪律线生效，新仓通道已锁定<br>
+          09:47:55 [veto] 风控官对"高开进攻格"附加条件：D3&gt;0.6 自动否决<br>
+          09:30:02 [预案] 今日预案已加载：作战池 3 票 · 9 格矩阵 · 总预算 -2.0%<br>
+          昨 15:00:33 [复盘] 战报已生成并推送微信（BFE-38）<br>
+          昨 14:52:10 [审计] 全日操作 6 笔，0 笔预案外 → 执行一致性 PASS
+        </div>
+      </div>
+    </div>
+
+    <!-- W6 历史预案库 -->
+    <details class="sec-det">
+      <summary>W6 历史预案库（按日回看：那天系统怎么想的 + 命中结果）</summary>
+      <div class="card" style="margin-top:8px">
+        <table>
+          <tr><th>交易日</th><th>预测格（最高概率）</th><th>实际走势</th><th>命中</th><th>预案盈亏</th></tr>
+          <tr><td>2026-08-21</td><td>平开+高走（22%）</td><td>平开+高走</td><td><span class="badge b-pass">✓</span></td><td class="up">+1.2%</td></tr>
+          <tr><td>2026-08-20</td><td>低开+高走·黄金坑（19%）</td><td>低开翻红</td><td><span class="badge b-pass">✓</span></td><td class="up">+2.1%</td></tr>
+          <tr><td>2026-08-19</td><td>平开+平走（24%）</td><td>平开震荡</td><td><span class="badge b-pass">✓</span></td><td class="up">+0.3%</td></tr>
+          <tr><td>2026-08-18</td><td>高开+高走（17%）</td><td>平开低走</td><td><span class="badge b-fail">✗</span></td><td class="down">-0.6%</td></tr>
+          <tr><td>2026-08-17</td><td>平开+高走（21%）</td><td>平开+高走</td><td><span class="badge b-pass">✓</span></td><td class="up">+0.8%</td></tr>
+        </table>
+        <div class="note">近 5 日命中 4/5；预测格概率与校准度联动——长期"22% 概率格实际命中率 40%"= 系统性低估，反之高估</div>
+      </div>
+    </details>
+  </section>
+
+  

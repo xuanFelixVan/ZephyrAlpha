@@ -1,0 +1,35 @@
+<section class="page" id="p-factor">
+    <h2 class="page-title">因子档案 <span class="badge b-na">演示数据</span></h2>
+    <div class="page-sub">研究组 · 因子研究台：因子看板（IC/IR/风格暴露/相似组）+ 因子详情（分组净值/IC 滚动稳定/衰减/聚类）——反向账 BFE-19 落地页（factor 注册表 124 模块接入后填真；小红书 momo 因子平台 参考 A7/A8）</div>
+
+    <!-- A7 因子看板表 -->
+    <div class="card" style="margin-bottom:14px">
+      <h3>因子看板 <span class="dim">得分/IC/IR/风格暴露/覆盖率/状态/相似组（GAP-F-38 聚类缺口，演示）</span></h3>
+      <table>
+        <tr><th>因子</th><th>方向</th><th>IC 均值</th><th>IR</th><th>多头年化</th><th>风格暴露</th><th>覆盖率</th><th>相似组</th><th>状态</th></tr>
+        <tr style="cursor:pointer" onclick="factorSel('反转因子',this)"><td><b>反转因子</b>（20日反转）</td><td class="dim">做空高涨幅</td><td class="up">0.062</td><td>0.81</td><td class="up">+14.2%</td><td>高波动/小市值</td><td>96%</td><td>G1</td><td><span class="badge b-pass">有效</span></td></tr>
+        <tr style="cursor:pointer" onclick="factorSel('动量因子',this)"><td><b>动量因子</b>（60日动量）</td><td class="dim">做多强势</td><td class="up">0.048</td><td>0.64</td><td class="up">+11.8%</td><td>趋势/大盘成长</td><td>98%</td><td>G2</td><td><span class="badge b-pass">有效</span></td></tr>
+        <tr style="cursor:pointer" onclick="factorSel('资金流因子',this)"><td><b>资金流因子</b>（主力净流入）</td><td class="dim">做多流入</td><td class="up">0.055</td><td>0.72</td><td class="up">+13.5%</td><td>—</td><td>88%</td><td>G1</td><td><span class="badge b-pass">有效</span></td></tr>
+        <tr style="cursor:pointer" onclick="factorSel('低波动因子',this)"><td><b>低波动因子</b>（波动率倒数）</td><td class="dim">做多低波</td><td class="down">-0.021</td><td>-0.34</td><td class="down">+4.1%</td><td>防御/大盘价值</td><td>99%</td><td>G3</td><td><span class="badge b-warn">衰减中</span></td></tr>
+        <tr style="cursor:pointer" onclick="factorSel('情绪因子',this)"><td><b>情绪因子</b>（涨停溢价）</td><td class="dim">做多情绪</td><td class="up">0.039</td><td>0.52</td><td class="up">+9.6%</td><td>高波动/题材</td><td>76%</td><td>G2</td><td><span class="badge b-na">观察</span></td></tr>
+      </table>
+      <div class="note">IC=因子值与未来收益相关性（>0.03 有效）；IR=IC 均值/IC 标准差（>0.5 稳定）；相似组=因子暴露聚类（同组因子信息冗余，组合时去重）</div>
+    </div>
+
+    <!-- A8 因子详情 -->
+    <div class="row c2">
+      <div class="card">
+        <h3 id="fc-name">反转因子 · 分组净值 <span class="dim">Decile NAV（十分位组合）</span></h3>
+        <svg viewBox="0 0 400 170" preserveAspectRatio="none" style="width:100%;height:170px;background:#000000;border-radius:6px" id="fc-nav"></svg>
+        <div class="kv-mini" style="margin-top:4px">多头组(D10) <b class="up">+14.2%</b> · 空头组(D1) <b class="down">-3.8%</b> · 多空价差 <b class="up">18.0%</b>——分层单调=因子有效</div>
+      </div>
+      <div class="card">
+        <h3>IC 滚动稳定 + 衰减 <span class="dim">12 期滚动 IC / IC 半衰期</span></h3>
+        <svg viewBox="0 0 400 110" preserveAspectRatio="none" style="width:100%;height:110px;background:#000000;border-radius:6px" id="fc-ic"></svg>
+        <div class="kv-mini" style="margin-top:4px">滚动 IC 稳定在 0.04~0.08 区间（未跌破 0.03 有效线）；IC 半衰期 <b>8 日</b>——衰减偏快，持仓周期不宜超 2 周</div>
+      </div>
+    </div>
+    <div class="note">因子挖掘入口（GAP-F-43，待施工）：论文搜索→LLM 提因子假说→沙箱验证→入本库；因子科普口径见《因子科普词典》（幻方十大因子）</div>
+  </section>
+
+  

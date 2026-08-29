@@ -1,0 +1,33 @@
+<section class="page" id="p-fitness">
+    <h2 class="page-title">适应评估 <span style="font-size:12px;color:var(--faint);font-weight:400">Fitness Functions</span></h2>
+    <div class="page-sub">治理组 · 修卡片折断 + FAIL 指引 + 趋势条（V2）；5 项度量为真实计算</div>
+    <div class="row c1"><div class="card metric" style="text-align:left"><div class="l">Overall Status</div><div class="v"><span class="badge b-fail" style="font-size:16px">FAIL · 3/5 通过</span></div></div></div>
+    <div class="row c5">
+      <div class="card metric"><div class="l">模块耦合度</div><div class="v">0.31</div><div class="s"><span class="badge b-pass">PASS</span></div></div>
+      <div class="card metric"><div class="l">测试覆盖率</div><div class="v">0%</div><div class="s"><span class="badge b-fail">FAIL</span></div></div>
+      <div class="card metric"><div class="l">合规率</div><div class="v">98.2%</div><div class="s"><span class="badge b-pass">PASS</span></div></div>
+      <div class="card metric"><div class="l">知识激活率</div><div class="v">0%</div><div class="s"><span class="badge b-fail">FAIL</span></div></div>
+      <div class="card metric"><div class="l">幻觉拦截</div><div class="v">100%</div><div class="s"><span class="badge b-pass">PASS</span></div></div>
+    </div>
+    <div class="card">
+      <h3>近 30 次趋势 <span class="dim">新增（V2）· 30 根=近 30 次评估</span></h3>
+      <div id="fit-trend" style="display:flex;gap:3px;align-items:flex-end;height:60px"></div>
+      <div class="lv" style="margin-top:6px"><span>■ 通过率</span><span class="up">■ 全过</span><span class="down">■ 有 FAIL</span></div>
+      <!-- 交互实测修复：FAIL 修复指引实体化（每 FAIL 项可展开指引，原仅说明文字） -->
+      <details class="sec-det" style="margin-top:10px">
+        <summary><b>测试覆盖率 FAIL · 修复指引</b>（当前 0% · 阈值 ≥80% · 差距 -80pct）</summary>
+        <div style="font-size:12px;margin-top:6px;line-height:1.9">
+          修复路径：① test_inventory 注册表盘点未覆盖模块（全量拓扑实证 102 目录/926 文件已收敛）→ ② 高危域优先（风控/执行/仓位——charter 风险优先）→ ③ 单测桩先行（corrected 算法先写桩再码）→ ④ 全量姿势=簇内串行 -n 0 × 簇间 3 路并发 + 假死簇 300s 强杀（AI-RESIDUAL-001 实证）。未覆盖模块 Top 清单供数=I-2（test_suite_registry 近似口径）。
+        </div>
+      </details>
+      <details class="sec-det" style="margin-top:6px">
+        <summary><b>知识激活率 FAIL · 修复指引</b>（当前 0% · 阈值 ≥60% · 差距 -60pct）</summary>
+        <div style="font-size:12px;margin-top:6px;line-height:1.9">
+          修复路径：① 知识条目审计（KB 系统 2026-07 已退役——残留条目需清理或迁移）→ ② 决策上下文自动挂载（决策点触发知识引用计数）→ ③ 条目保鲜巡检（90 日未引用条目进退役候选，对齐治理预算 D3 年检纪律）→ ④ 激活率周报入治理看板（趋势跟踪，回升至阈值后自动转 PASS）。历史归因：08-19 起 FAIL（触发=KB 退役后激活通道拆除），供数=I-2（知识引用埋点）。
+        </div>
+      </details>
+      <div class="note">5 项度量为真实计算（V2 口径）；FAIL 历史归因与下钻明细供数=I-2（度量历史+触发事件关联）</div>
+    </div>
+  </section>
+
+  

@@ -1,0 +1,132 @@
+<section class="page" id="p-sysstatus">
+    <h2 class="page-title">系统状态</h2>
+    <div class="page-sub">系统组 · 全部使用项目真实数据（tasks.yaml 167 任务 / data_inventory 121 表 · 2026-08-06 扫描）</div>
+
+    <div class="row c4">
+      <div class="card metric"><div class="l">业务表</div><div class="v">121</div><div class="s">非空 104 · 空表 17</div></div>
+      <div class="card metric"><div class="l">数据总行数</div><div class="v">111.6 亿</div><div class="s">ClickHouse c1_market + c3_fundamental</div></div>
+      <div class="card metric"><div class="l">调度任务</div><div class="v">167</div><div class="s">启用 156 · 停用留痕 11</div></div>
+      <div class="card metric"><div class="l">数据源</div><div class="v">14</div><div class="s">miniqmt/akshare/baostock/tushare 等</div></div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <h3>10 层数据分布 <span class="dim">真实扫描（generate_data_inventory.py）</span></h3>
+      <table>
+        <tr><th>层</th><th>名称</th><th>频率</th><th>表数</th><th>总行数</th><th>状态</th></tr>
+        <tr><td>L1</td><td>Tick 执行层</td><td>3秒</td><td>6</td><td>82.59 亿</td><td><span class="badge b-warn">1 异常</span></td></tr>
+        <tr><td>L2</td><td>分钟时机层</td><td>1-60min</td><td>15</td><td>25.24 亿</td><td><span class="badge b-warn">5 异常</span></td></tr>
+        <tr><td>L3</td><td>日K 趋势层</td><td>日/周/月</td><td>15</td><td>5,338.9 万</td><td><span class="badge b-pass">正常</span></td></tr>
+        <tr><td>L4</td><td>资金面层</td><td>日</td><td>9</td><td>76.5 万</td><td><span class="badge b-pass">正常</span></td></tr>
+        <tr><td>L5</td><td>基本面层</td><td>季度</td><td>18</td><td>1,000.0 万</td><td><span class="badge b-pass">正常</span></td></tr>
+        <tr><td>L6</td><td>新闻事件层</td><td>实时</td><td>5</td><td>1,881.9 万</td><td><span class="badge b-pass">正常</span></td></tr>
+        <tr><td>L7</td><td>产业链关联层</td><td>季度/年</td><td>4</td><td>21.8 万</td><td><span class="badge b-pass">正常</span></td></tr>
+        <tr><td>L8</td><td>衍生品跨市场层</td><td>日</td><td>14</td><td>36.4 万</td><td><span class="badge b-pass">正常</span></td></tr>
+        <tr><td>L9</td><td>宏观层</td><td>月/季</td><td>2</td><td>5.4 万</td><td><span class="badge b-pass">正常</span></td></tr>
+        <tr><td>L10</td><td>静态元数据层</td><td>月/年</td><td>33</td><td>2.93 亿</td><td><span class="badge b-pass">正常</span></td></tr>
+      </table>
+    </div>
+
+    <div class="row c2">
+      <div class="card">
+        <h3>已知问题 <span class="badge b-warn">4 项</span> <span class="dim">真实登记</span></h3>
+        <div class="alert-row err">🔴 adj_factor 复权因子链路缺陷 — 夜班 #196/#197/#198 在修（降级源错写主表 / 因子评估未用 / 无持续生产者）<span class="t">夜班</span></div>
+        <div class="alert-row warn">🟡 分钟K线 5 表（1/5/15/30/60min）时间戳异常 1970-01-01 — 真实扫描发现，待查<span class="t">L2</span></div>
+        <div class="alert-row warn">🟡 realtime_snapshot 时间戳异常 1970-01-01<span class="t">L1</span></div>
+        <div class="alert-row info">🔵 L2 tick 0 行：需付费 Level2 权限，任务停用留痕（#ARCH-DATA-014，fallback 已降级五档快照）<span class="t">已裁定</span></div>
+        <div class="note">东财反爬治本留痕：money_flow / lof_list / etf_nav 主源已切 tushare（2026-08-14）——降级链路按设计工作，不算故障</div>
+      </div>
+      <div class="card">
+        <h3>调度时段 <span class="dim">tasks.yaml 真实分布</span></h3>
+        <div class="bar-row"><span>盘前 08:30</span><div class="bar"><i style="width:6%"></i></div><span>7</span></div>
+        <div class="bar-row"><span>盘中实时</span><div class="bar"><i style="width:14%"></i></div><span>17</span></div>
+        <div class="bar-row"><span>盘中分钟</span><div class="bar"><i style="width:10%"></i></div><span>12</span></div>
+        <div class="bar-row"><span>盘后日K 16:30</span><div class="bar"><i style="width:13%"></i></div><span>15</span></div>
+        <div class="bar-row"><span>盘后资金/事件</span><div class="bar"><i style="width:28%"></i></div><span>34</span></div>
+        <div class="bar-row"><span>夜间财务</span><div class="bar"><i style="width:8%"></i></div><span>9</span></div>
+        <div class="bar-row"><span>事件驱动/新闻</span><div class="bar"><i style="width:15%"></i></div><span>18</span></div>
+        <div class="bar-row"><span>周末校准/补下载</span><div class="bar"><i style="width:21%"></i></div><span>25</span></div>
+        <div class="bar-row"><span>月初静态</span><div class="bar"><i style="width:19%"></i></div><span>22</span></div>
+        <div class="note">条数为近似归组（同表多任务合并计）；正式实现从 tasks.yaml 实时解析</div>
+      </div>
+    </div>
+
+    <div class="row c2">
+      <div class="card">
+        <h3>券商连接</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div style="border:0.67px solid var(--border);border-radius:8px;padding:14px;background:var(--input)">
+            <div style="font-weight:700;margin-bottom:6px">QMT 实盘 <span class="badge b-fail">未连接</span></div>
+            <div style="font-size:12px;color:var(--dim)">最后连接：08-18 15:30<br>用途：真实资金下单通道<br>断连影响：实盘交易全部暂停</div>
+          </div>
+          <div style="border:0.67px solid var(--border);border-radius:8px;padding:14px;background:var(--input)">
+            <div style="font-weight:700;margin-bottom:6px">miniQMT 模拟盘 <span class="badge b-pass">已连接</span></div>
+            <div style="font-size:12px;color:var(--dim)">延迟：38ms · 心跳正常<br>用途：模拟盘验证 / 回测-实盘对账<br>今日成交：1 笔</div>
+          </div>
+        </div>
+        <div class="note">任一断连 → 总览告警区置顶</div>
+      </div>
+      <div class="card">
+        <h3>熔断开关（Kill Switch） <span class="badge b-pass">待命</span></h3>
+        <p style="font-size:12px;color:var(--dim)">系统的最后防线：检测到极端风险时<b>切断一切交易活动</b>（撤全部挂单、禁止新委托）。</p>
+        <table style="margin-top:8px">
+          <tr><th>触发条件</th><th>当前值</th><th>阈值</th><th>状态</th></tr>
+          <tr><td>回撤超限</td><td>-3.2%</td><td>-15%</td><td><span class="badge b-pass">安全</span></td></tr>
+          <tr><td>异常委托频率</td><td>2 笔/分</td><td>30 笔/分</td><td><span class="badge b-pass">安全</span></td></tr>
+          <tr><td>手动触发</td><td>—</td><td>—</td><td><span class="btn danger" style="padding:2px 12px">立即熔断</span></td></tr>
+          <tr><td>最近一次熔断演练</td><td colspan="2"><b style="color:var(--yellow)">从未演练</b> <span class="badge b-warn">待安排</span></td><td class="dim">与灾备演练同批排期</td></tr>
+        </table>
+        <div class="note">「待命」= 已武装、监控中、可随时触发；触发后需 Owner 人工复位；<b>最后防线从未演练=风险盲区</b>（负反馈也是结果——与灾备恢复演练同规：演练是有效性的唯一实证，建议季度级演练：模拟回撤超限→验证撤单/禁新委托/人工复位链路）</div>
+      </div>
+    </div>
+
+    <!-- I-5b 备份健康（scripts/backup 三件套；恢复演练=备份有效性的唯一实证，负反馈明说「没有」） -->
+    <div class="row c1">
+      <div class="card" id="bak-health">
+        <h3>备份健康 Backup Health <span class="badge b-na">演示数据</span> <span class="dim">scripts/backup（backup.ps1 + backup_config.yaml + backup_daily_trigger）· 日志接口位待接</span></h3>
+        <table>
+          <tr><th style="width:180px">项目 Item</th><th>状态 Status</th></tr>
+          <tr>
+            <td>最近一次备份 Last Backup</td>
+            <td><b>2026-08-23 03:00</b>（每日 03:00 触发）· 结果 <span class="badge b-pass">成功</span> · 内容 = 代码镜像 + 数据库 dump + 增量（D→F 盘，≥8h 间隔，charter §2 约束五）</td>
+          </tr>
+          <tr>
+            <td>体积与校验 Size &amp; Checksum</td>
+            <td>备份耗时 <b>14 分钟</b> · 体积 <b>38.2 GB</b> · 校验和比对 <span class="badge b-pass">一致</span></td>
+          </tr>
+          <tr>
+            <td>最近一次灾备恢复测试 Last DR Drill</td>
+            <td><b style="color:var(--yellow)">从未演练</b> <span class="badge b-warn">待安排</span> —— 恢复演练是备份有效性的唯一实证（负反馈也是结果，系统明说「没有」）</td>
+          </tr>
+        </table>
+        <div class="note">backup.ps1 执行日志落盘接口位预留（JS 前缀 bakXxx）；灾备恢复演练排期后本行转 <span class="badge b-pass">已通过</span></div>
+      </div>
+    </div>
+
+    <!-- 循环升级 R5：性能监控+资源水位（单机 PC 性能衰退=实盘链路直接威胁，当前盲区补位） -->
+    <div class="row c2">
+      <div class="card">
+        <h3>性能监控 <span class="badge b-na">演示数据</span> <span class="dim">近 7 日任务耗时 P50/P95 + 最慢 5 任务 + DB 慢查询占位（psutil+耗时落盘接口位，真源 I-2）</span></h3>
+        <div class="bar-row"><span>P50 任务耗时</span><div class="bar"><i class="g" style="width:32%"></i></div><span>3.2 分</span></div>
+        <div class="bar-row"><span>P95 任务耗时</span><div class="bar"><i class="y" style="width:78%"></i></div><span>21.5 分</span></div>
+        <table style="margin-top:8px">
+          <tr><th>最慢 5 任务（近 7 日均值）</th><th>耗时</th><th>趋势</th></tr>
+          <tr><td>tick_data_record 日终整理</td><td>38.2 分</td><td class="up">→</td></tr>
+          <tr><td>factor_alpha_pipeline</td><td>18.4 分</td><td class="up">→</td></tr>
+          <tr><td>backup_daily_trigger</td><td>14.1 分</td><td class="up">→</td></tr>
+          <tr><td>backfill_checker_daily</td><td>9.2 分</td><td class="down">↑ +12%</td></tr>
+          <tr><td>ic_ir_daily</td><td>6.6 分</td><td class="up">→</td></tr>
+        </table>
+        <div class="note">DB 慢查询（&gt;5s）：0 条/近 7 日（ClickHouse query_log 接口位）；backfill_checker 耗时抬头与 8 月数据量增长一致，未达告警线（&gt;2× 基准）</div>
+      </div>
+      <div class="card">
+        <h3>资源水位 <span class="badge b-na">演示数据</span> <span class="dim">CPU/内存/磁盘三水位（单机 PC 资源见顶前兆；psutil 接口位，真源 I-2）</span></h3>
+        <div class="bar-row"><span>CPU（峰值/均值）</span><div class="bar"><i class="g" style="width:46%"></i></div><span>46% / 28%</span></div>
+        <div class="bar-row"><span>内存</span><div class="bar"><i class="y" style="width:71%"></i></div><span>71%（45.4/64 GB）</span></div>
+        <div class="bar-row"><span>磁盘 D:</span><div class="bar"><i class="y" style="width:68%"></i></div><span>68%（1.36/2.0 TB）</span></div>
+        <div class="bar-row"><span>磁盘 F:（备份盘）</span><div class="bar"><i class="g" style="width:41%"></i></div><span>41%（812 GB/2 TB）</span></div>
+        <div class="note">告警线：水位≥85% 黄条、≥95% 红条+总览告警；内存 71% 主因 ClickHouse 缓冲（正常态）；D 盘按当前增速约 5 个月到 85%——数据保留策略见 data_retention_contract</div>
+      </div>
+    </div>
+  </section>
+
+  

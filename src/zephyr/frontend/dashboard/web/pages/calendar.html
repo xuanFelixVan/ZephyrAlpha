@@ -1,0 +1,34 @@
+<section class="page" id="p-calendar">
+    <h2 class="page-title">事件日历 <span class="badge b-na">演示数据</span> <span class="badge b-fail">日历数据源待接入（I-2 流程）</span></h2>
+    <div class="page-sub">研究组 · 核心目的：未来要发生的事一屏尽览——宏观发布/解禁/新股/财报/分红+币圈事件，市场过滤（宏观两市场共享/A股/币圈），PIT 纪律（只显示当时已知信息，event_calendar 注册表对接后转真；币版事件=演示）</div>
+
+    <div class="row c4" id="cal-hl"></div>
+
+    <div class="card" style="margin-bottom:14px;padding:10px 16px">
+      <div class="cal-legend" id="cal-legend"></div>
+    </div>
+
+    <div class="row c23">
+      <div class="card">
+        <h3>2026 年 8 月 <span class="dim">点击日期查看右侧当日清单；蓝框=今日（8-20 周四）</span></h3>
+        <div class="cal-grid" id="cal-grid"></div>
+        <div class="note">每日最多 3 个事件圆点，超出以 +N 折叠；圆点颜色对应上方分类图例</div>
+      </div>
+      <div class="card">
+        <h3>当日清单 · <span id="cal-selday"></span> <span class="badge b-na" id="cal-count"></span></h3>
+        <table id="cal-table"></table>
+        <div class="note">默认选中今日；重要性「高」= 需盘前预案覆盖（联动作战室 W3 观察哨）</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>数据源与纪律 <span class="badge b-fail">日历数据源待接入（I-2 流程），本页为演示结构</span></h3>
+      <div style="font-size:12px;color:var(--dim);line-height:2">
+        ① <b>PIT 纪律</b>：日历只显示「当时已知」的排期信息——宏观发布走 <b>macro_indicator 发布纪律</b>（注册表已入 ROOR），公司行动（解禁/新股/财报/分红）走 <b>event_calendar 注册表</b>（ROOR 在册）；禁止未来函数，回测引用日历必须按 knowledge_date 截断。<br>
+        ② <b>五类事件</b>：宏观发布 / 限售解禁 / 新股上市 / 财报披露 / 分红除权——转真后由 event_calendar 注册表统一供数，本页结构（本周重点 + 月历 + 当日清单 + 分类过滤）即为接入后的目标形态。<br>
+        ③ <b>联动</b>：宏观发布 → 「宏观分析」页；财报/解禁 → 个股研究；股指交割日 → 作战室盘前预案。
+      </div>
+    </div>
+  </section>
+
+  

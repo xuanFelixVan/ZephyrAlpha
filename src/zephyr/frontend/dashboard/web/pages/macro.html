@@ -1,0 +1,39 @@
+<section class="page" id="p-macro">
+    <h2 class="page-title">宏观分析 <span class="badge b-na">待建设</span></h2>
+    <div class="page-sub">研究组 · 宏观环境对 A 股的系统性影响——利率/流动性/政策/经济周期 → 仓位基调与风格切换</div>
+    <div class="alert-row info">🔵 本页待建设：宏观指标发布纪律（macro_indicator 注册表已入 ROOR）+ FRED/EIA/国内宏观数据源接入后排期施工。<span class="t">Owner 裁定新增页 2026-08-22</span></div>
+    <div class="grid c2" style="margin-top:14px">
+      <div class="card">
+        <h3>规划内容（待与 Owner 对齐后细化）</h3>
+        <ul style="font-size:13px;color:var(--dim);line-height:2;padding-left:18px">
+          <li><b>流动性面</b>：SHIBOR/DR007/MLF-LPR/北向资金/两融余额 → 市场资金成本与增量</li>
+          <li><b>经济周期</b>：PMI/CPI/PPI/社融/出口 → 复苏/过热/滞胀/衰退定位 → 风格切换（成长/价值/防御）</li>
+          <li><b>政策日历</b>：宏观指标发布纪律 + 重要会议窗口（event_calendar/macro_indicator 注册表）</li>
+          <li><b>海外联动</b>：美联储利率路径/美债收益率/美元指数 → 与外盘页 6 通道传导联动</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>与现有页面的边界</h3>
+        <ul style="font-size:13px;color:var(--dim);line-height:2;padding-left:18px">
+          <li><b>外盘页</b>：实时行情快照（今天涨没涨）→ 本页：宏观趋势研判（周期处于哪段）</li>
+          <li><b>作战室 W1</b>：明日仓位基调的消费方——本页产出"月度宏观定性"供其参考</li>
+          <li><b>regime 检测</b>：市场微观状态（波动/趋势）→ 本页：宏观经济状态（正交互补）</li>
+        </ul>
+      </div>
+    </div>
+    <!-- I-8 数据盘点落地：天气数据在库（weather_data）→ 宏观语境卡先行点亮 -->
+    <div class="card" style="margin-top:14px">
+      <h3>天气数据（40 城市） <span class="badge b-na">演示数据</span> <span class="dim">weather_data 表在库：4,200 行（2026-08-04 起每日积累，和风实时+7 天预报两任务 qweather_now/forecast_incremental）——宏观语境=极端天气→农产品/能源/区域基建</span></h3>
+      <table>
+        <tr><th>城市</th><th>天气</th><th>气温</th><th>宏观关联（演示判读）</th></tr>
+        <tr><td>郑州</td><td>晴 高温</td><td class="up">36°C</td><td>高温用电负荷↑ → 动力煤/电力</td></tr>
+        <tr><td>哈尔滨</td><td>雷阵雨</td><td>24°C</td><td>东北雨季正常 → 大豆/玉米生长无碍</td></tr>
+        <tr><td>海口</td><td>台风预警</td><td class="down">27°C</td><td>台风登陆预期 → 橡胶/海南区域基建短期扰动</td></tr>
+        <tr><td>乌鲁木齐</td><td>晴</td><td>30°C</td><td>棉花关键期光照充足 → 棉价偏空</td></tr>
+      </table>
+      <div class="note">免费版和风无历史 API（每日快照积累中），40 城市全清单与 7 天预报随库积累增厚；天气→品种传导规则属研究件（CAND 后排），本卡先行呈现"库里有天气数据"这一事实（I-8 数据盘点落地）</div>
+    </div>
+    <div class="note">建设依赖：macro_indicator 注册表消费 + 国内宏观数据源接入 + 周期定位算法（缺口总账待登记）</div>
+  </section>
+
+  

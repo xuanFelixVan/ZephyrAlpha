@@ -1,0 +1,33 @@
+<section class="page" id="p-datainfo">
+    <h2 class="page-title">数据总览 <span class="badge b-na">规划中</span> <span class="badge b-na">演示数据</span></h2>
+    <div class="page-sub">数据组 · 全部数据资产的家底与健康——有什么数据、从哪来、质量如何——本页=结构占位：八表资产地图+数据域健康度为演示框架，真源=数据闸八表实例（market 字段强制）+采集质量门禁（I-2）</div>
+
+    <div class="card" style="margin-bottom:14px">
+      <h3>八表资产地图 <span class="dim">universe/benchmark/cost_model/risk_limit/strategy/factor/regime_cycle/event_calendar——数据闸：实例必带 market 字段</span></h3>
+      <table>
+        <tr><th>注册表</th><th>A股实例（market: ashare）</th><th>币圈实例（market: crypto）</th><th>状态</th></tr>
+        <tr><td>universe 交易池</td><td>全 A 4,500 只（UNI-RULE-001 注册口径，含退市防幸存者偏差）</td><td>BTC+ETH 现货（MVP；Phase 2 市值前 20）</td><td><span class="badge b-pass">stable</span></td></tr>
+        <tr><td>benchmark 基准</td><td>沪深 300 / 中证 500 / 创业板指</td><td>BTC 持有</td><td><span class="badge b-pass">stable</span></td></tr>
+        <tr><td>cost_model 成本模型</td><td>佣金万 2.5+印花税千 0.5+滑点</td><td>Maker/Taker 费率+资金费率</td><td><span class="badge b-pass">stable</span></td></tr>
+        <tr><td>risk_limit 风控规则</td><td>单票 8% 硬顶 / 行业 25% / 涨跌停</td><td>单币 ≤5x / 总杠杆 ≤3x / 距强平 <10% 减仓审批</td><td><span class="badge b-pass">stable</span></td></tr>
+        <tr><td>strategy 策略</td><td>打板/低吸/趋势 12 注册策略</td><td>网格/费率套利（占位）</td><td><span class="badge b-na">币版占位</span></td></tr>
+        <tr><td>factor 因子</td><td>量价/情绪/研报评级 231 因子</td><td>MVRV Z-Score / NVT（链上首批，先过买入持有基准）</td><td><span class="badge b-na">币版验证中</span></td></tr>
+        <tr><td>regime_cycle 周期判定</td><td>接力情绪周期 5 阶段</td><td>待定义（无涨跌停，A股节律产物不适用）</td><td><span class="badge b-na">待接入</span></td></tr>
+        <tr><td>event_calendar 事件日历</td><td>宏观/解禁/财报/交割</td><td>减半/解锁/宏观联动</td><td><span class="badge b-pass">stable</span></td></tr>
+      </table>
+    </div>
+
+    <div class="row c3">
+      <div class="card metric"><div class="l">新闻舆情 news_data</div><div class="v">14.7 万</div><div class="s">research_report 类唯一 ID 146,519（2026-08-27 实测；08-28 重建 200 个月分区完成，复测中）；研评级 research_rating 14.6 万条</div></div>
+      <div class="card metric"><div class="l">行情数据（miniQMT 桥）</div><div class="v" style="font-size:18px">日/分/tick</div><div class="s">五档快照+委托成交回执；币圈行情=OKX WS 直连（待接入）</div></div>
+      <div class="card metric"><div class="l">链上与衍生品数据</div><div class="v" style="font-size:18px;color:var(--faint)">待接入</div><div class="s">MVRV/NVT/资金费率/OI——录制端双层 WAL 设计已定（I-2）</div></div>
+    </div>
+
+    <div class="card">
+      <h3>规划深页 <span class="dim">数据组扩展位（逐域成熟一个开一个）</span></h3>
+      <div class="kv-mini">行情数据 / 新闻数据 / 研评级数据 / 链上数据 / 采集质量监控——按 I-2 真源就绪节奏接入，未开一律 <span class="badge b-na">待接入</span> 负反馈不假做；注册表库（18 业务注册表）已归口本组</div>
+    </div>
+  </section>
+
+
+  

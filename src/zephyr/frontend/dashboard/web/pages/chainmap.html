@@ -1,0 +1,70 @@
+<section class="page" id="p-chainmap">
+    <h2 class="page-title">产业地图 <span class="badge b-na">演示数据</span></h2>
+    <div class="page-sub">研究组 · <b>核心：产业链上下游传导——从"哪个环节受益"到"买哪只票"</b>· 板块页答"哪个板块强"（横向），本页答"强势会传导给谁"（纵向）· 真源=INDUSTRY-GRAPH-001 ig_* 七表（PostgreSQL，I-2 接线后转真 C20→P0）</div>
+    <div class="row c5">
+      <div class="card metric"><div class="l">产业链</div><div class="v">686</div><div class="s">ig_chain</div></div>
+      <div class="card metric"><div class="l">环节节点</div><div class="v">2,911</div><div class="s">ig_node</div></div>
+      <div class="card metric"><div class="l">环节结构边</div><div class="v">1,133</div><div class="s">ig_edge</div></div>
+      <div class="card metric"><div class="l">环节↔公司映射</div><div class="v">11,075</div><div class="s">ig_node_company（0.85 互证 801 条）</div></div>
+      <div class="card metric"><div class="l">公司供应链边</div><div class="v">58,029</div><div class="s">ig_company_edge（三证据源，1,980 多源互证）</div></div>
+    </div>
+    <div class="row c2" style="margin-top:14px">
+      <div class="card">
+        <h3>产业链浏览 <span class="dim">示例 6 链（全量 686 链 I-2 供数）· 点击展开环节与个股落位</span></h3>
+        <table>
+          <tr><th>产业链</th><th>环节数</th><th>映射公司</th><th>核心环节</th><th>热度</th></tr>
+          <tr><td>半导体设备</td><td>7</td><td>86</td><td>刻蚀/薄膜沉积/清洗</td><td><span class="badge b-buy">热</span></td></tr>
+          <tr><td>AI 算力（服务器/光模块）</td><td>9</td><td>112</td><td>GPU/光模块/液冷</td><td><span class="badge b-buy">热</span></td></tr>
+          <tr><td>创新药（ADC/双抗）</td><td>6</td><td>64</td><td>靶点发现/临床/CXO</td><td><span class="badge b-na">温</span></td></tr>
+          <tr><td>电力（绿电/特高压）</td><td>8</td><td>97</td><td>发电/输变电/储能</td><td><span class="badge b-na">温</span></td></tr>
+          <tr><td>新能源车（智能化）</td><td>10</td><td>143</td><td>域控/激光雷达/线控</td><td><span class="badge b-na">温</span></td></tr>
+          <tr><td>白酒消费</td><td>4</td><td>32</td><td>高端/次高端/渠道</td><td><span class="badge b-sell">冷</span></td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3>个股落位查询 <span class="dim">ig_node_company 按 symbol 查（演示 3 票）</span></h3>
+        <table>
+          <tr><th>标的</th><th>产业链</th><th>环节</th><th>角色</th><th>置信度</th></tr>
+          <tr><td>中芯国际</td><td>半导体制造</td><td>晶圆代工</td><td>核心</td><td><span class="badge b-pass">0.92 互证</span></td></tr>
+          <tr><td>中微公司</td><td>半导体设备</td><td>刻蚀设备</td><td>核心</td><td><span class="badge b-pass">0.88 互证</span></td></tr>
+          <tr><td>汇川技术</td><td>工业自动化</td><td>伺服/PLC</td><td>核心</td><td><span class="badge b-pass">0.86 互证</span></td></tr>
+        </table>
+        <h3 style="margin-top:12px">供应链指标 <span class="dim">ig_company_metric 23.6 万条（客户 HHI/Top1/Top5/稳定性/韧性）</span></h3>
+        <table>
+          <tr><th>标的</th><th>客户 HHI</th><th>Top1 占比</th><th>供应链韧性</th></tr>
+          <tr><td>中芯国际</td><td>0.18</td><td>22%</td><td><span class="badge b-pass">高</span></td></tr>
+          <tr><td>汇川技术</td><td>0.09</td><td>8%</td><td><span class="badge b-pass">高</span></td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <h3>说明与边界</h3>
+      <div class="note">①源文档 1,970 份有效（ig_document；81M 语料+RAG 索引 76,112 块，研究组检索入口远期）②映射置信度两档：0.85 互证 801 条（人工级）/0.6 自动 10,274 条（程序级）③<b>lead-lag 传导因子已回测证伪</b>（月 IC=-0.029，2026-08-28 裁定不进因子框架，留档）——图谱价值在"传导路径与个股落位"，不在预测 ④股权边并图（第三种关系边）=远期，待数据源（R11）</div>
+    </div>
+
+    <h2 class="page-title">产业地图 <span class="badge b-na">待建设</span></h2>
+    <div class="page-sub">研究组 · 产业链上下游传导图谱——从"哪个环节受益"到"买哪只票"的链条可视化</div>
+    <div class="alert-row info">🔵 本页待建设：产业链图谱数据结构 + 个股-环节映射 + 传导强度算法均需从零设计。<span class="t">Owner 裁定新增页 2026-08-22</span></div>
+    <div class="grid c2" style="margin-top:14px">
+      <div class="card">
+        <h3>规划内容（待与 Owner 对齐后细化）</h3>
+        <ul style="font-size:13px;color:var(--dim);line-height:2;padding-left:18px">
+          <li><b>图谱结构</b>：上中下游环节节点（如 半导体=设备/材料/设计/制造/封测）+ 环节间传导边</li>
+          <li><b>个股落位</b>：每只票映射到环节节点（sector_constituent 粒度之上加产业链维度）</li>
+          <li><b>热度传导</b>：某环节异动 → 上下游受益/受损链条推演（与板块页主线联动）</li>
+          <li><b>催化剂锚定</b>：新闻/政策命中某环节 → 链条上个股清单（与作战室作战池联动）</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>与现有页面的边界</h3>
+        <ul style="font-size:13px;color:var(--dim);line-height:2;padding-left:18px">
+          <li><b>板块页</b>：板块=行业分类（横向同环节并列）→ 本页：产业链=纵向环节传导</li>
+          <li><b>板块详情 8 维度</b>：单板块内部 → 本页：跨板块上下游关系</li>
+          <li><b>差异本质</b>：板块页答"哪个板块强"，本页答"这个板块的强势会传导给谁"</li>
+        </ul>
+      </div>
+    </div>
+    <div class="note">建设依赖：产业链图谱数据源（外部引入或人工维护种子库）+ 环节-个股映射表 + 传导算法（缺口总账待登记）</div>
+  </section>
+
+  

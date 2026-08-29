@@ -1,0 +1,27 @@
+<section class="page" id="p-cryptostrat">
+    <h2 class="page-title">币圈策略</h2>
+    <div class="page-sub">币圈组 · 与 A 股策略框架同构、参数域不同（24/7/杠杆/资金费）——三策略族占位（§C-2；策略引擎落地属 I-2/CAND 评审）</div>
+    <div class="row c3">
+      <div class="card">
+        <h3>网格交易 <span class="badge b-na">待接入</span></h3>
+        <div class="kv-mini">BTC/USDT 区间网格：82,000 ~ 88,000，50 格，每格 200 USDT；24/7 自动低买高卖吃波动，适合震荡市；年化演示 18~35%（区间不破前提）。</div>
+        <div class="note">参数域：区间上下沿/格数/单格金额/触发价；风险=区间突破单边（需止损线）；落地 I-2</div>
+      </div>
+      <div class="card">
+        <h3>资金费套利 <span class="badge b-na">待接入</span></h3>
+        <div class="kv-mini">现货多 + 永续空（Delta 中性）吃资金费：费率为正时空头收 8h 费，年化演示 8~25%（费率均值回归前提）；当前 BTC 费率 +0.012%（温和，非极佳开仓窗）。</div>
+        <div class="note">参数域：费率阈值/展期成本/爆仓保护杠杆 ≤2x；风险=费率反转+基差扩大；落地 I-2/CAND</div>
+      </div>
+      <div class="card">
+        <h3>趋势跟踪 <span class="badge b-na">待接入</span></h3>
+        <div class="kv-mini">多周期均线族 + ATR 止损的趋势策略（与 A 股 CTA 框架同构）：4h/1h 共振入场，2×ATR 移动止损，单笔风险 ≤1% 权益。</div>
+        <div class="note">复用 A 股策略框架（MOD-SIG 族），换标的与交易时段参数；落地 I-2/CAND</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>与 A 股策略的关系</h3>
+      <div class="kv-mini">策略注册表（strategy_registry）统一登记：市场域字段 market_domain∈{A股， 币圈永续}；回测/实验/因子/门禁（Sharpe≥1.2 等）引擎共享；差异参数域（杠杆/资金费/24h 数据频率）在策略说明书中明文化——不另起注册表。</div>
+    </div>
+  </section>
+
+  

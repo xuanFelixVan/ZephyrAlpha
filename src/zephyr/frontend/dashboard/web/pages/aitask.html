@@ -1,0 +1,31 @@
+<section class="page" id="p-aitask">
+    <h2 class="page-title">AI 任务队列 <span class="badge b-na">演示数据</span></h2>
+    <div class="page-sub">AI 组 · <b>核心：AI 干了什么、干成没有、留痕了吗</b>——对话派单+自治任务统一队列，每件任务有状态/产出/审计三件套（GPU 共识调度器 gpu_consensus_scheduler 已在码，I-2 接线）</div>
+    <div class="card">
+      <h3>任务流水 <span class="dim">三态：排队/运行/完成+失败重跑·全部留痕可审计</span></h3>
+      <table>
+        <tr><th>编号</th><th>任务</th><th>来源</th><th>状态</th><th>耗时</th><th>产出物</th><th>审计</th></tr>
+        <tr><td>#A-1024</td><td>最近三天涨停数统计表</td><td>对话派单</td><td><span class="dot g"></span>完成</td><td>8s</td><td>表格×1（已存对话）</td><td class="dim">SQL+结果已留痕</td></tr>
+        <tr><td>#A-1023</td><td>半导体链今日联动强度</td><td>对话派单</td><td><span class="dot g"></span>完成</td><td>12s</td><td>联动日报引用卡</td><td class="dim">读 theme_linkage_daily.csv</td></tr>
+        <tr><td>#A-1022</td><td>金标 200 条新闻情绪复核</td><td>自治（每日）</td><td><span class="dot g"></span>完成</td><td>4m</td><td>复核报告（一致率 91%）</td><td class="dim">qwen3:8b 打分留痕</td></tr>
+        <tr><td>#A-1021</td><td>「上次类似盘面怎么判」案例检索</td><td>对话派单</td><td><span class="dot y"></span>运行中</td><td>—</td><td>—</td><td class="dim">情景记忆库检索中</td></tr>
+        <tr><td>#A-1020</td><td>LLM 基本面三 Agent 裁决·688169</td><td>研评级页派单</td><td><span class="dot g"></span>完成</td><td>2m10s</td><td>裁决卡（定量分 72/置信 0.8）</td><td class="dim">三 Agent 各自理由留痕</td></tr>
+        <tr><td>#A-1019</td><td>arXiv 新论文摘要→因子假说</td><td>自治（每日）</td><td><span class="dot r"></span>失败</td><td>—</td><td>—</td><td class="dim">网络超时·<a href="javascript:void(0)" onclick="gToast('演示——重跑通道待 I-2 接线')">重跑</a></td></tr>
+      </table>
+    </div>
+    <div class="row c3" style="margin-top:14px">
+      <div class="card">
+        <h3>ReAct 研究助手 <span class="dim">MOD-INT-RESEARCH-AGENT（prod）</span></h3>
+        <div class="kv-mini">工具白名单 <b>12 件</b> ｜ 今日调用 <b>47 次</b> ｜ 事实回查拦截 <b class="down">3 次</b>（AI 想说没出处的数字被拦下）</div>
+      </div>
+      <div class="card">
+        <h3>情景记忆 <span class="dim">MOD-INT-EPISODIC-MEM（testing·标试验中）</span></h3>
+        <div class="kv-mini">历史案例 <b>1,240 件</b> ｜ 今日检索 <b>6 次</b> ｜ 「上次类似盘面」命中率 <b>83%</b></div>
+      </div>
+      <div class="card">
+        <h3>GPU 共识调度 <span class="dim">gpu_consensus_scheduler（在码）</span></h3>
+        <div class="kv-mini">Ollama 探活 <b class="up">正常</b> ｜ 多 AI 并发闸 <b>2/4</b> ｜ 排队 <b>1 件</b></div>
+      </div>
+    </div>
+    <div class="note" style="margin-top:14px">证据链：本页任务=对话页派单+自治任务两源；三 Agent 裁决=MOD-INT-LLM-FUND（testing）；论文传送带=MOD-KNW-013 paper_tracker（prod）——每件任务点开能看 AI 实际跑了什么、依据是什么</div>
+  </section>

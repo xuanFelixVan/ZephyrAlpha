@@ -1,0 +1,51 @@
+<section class="page" id="p-aichat">
+    <h2 class="page-title">AI 对话 <span class="badge b-na">演示数据</span></h2>
+    <div class="page-sub">AI 组 · <b>核心：像聊天一样指挥本地 AI 干简单活</b>——本机 Ollama qwen3:8b 在跑（新闻情绪后端同模型）· 红线=advisory_only（AI 只能建议，永不自己下单）· 真源：MOD-INT-RESEARCH-AGENT ReAct 助手（prod）+工具白名单+事实回查</div>
+
+    <!-- 本地模型状态条 -->
+    <div class="row c4">
+      <div class="card metric"><div class="l">本地推理模型</div><div class="v" style="font-size:20px">qwen3:8b</div><div class="s"><span class="dot g"></span>Ollama 运行中·本机 GPU</div></div>
+      <div class="card metric"><div class="l">嵌入模型</div><div class="v" style="font-size:20px">bge-m3</div><div class="s"><span class="dot g"></span>知识库检索用</div></div>
+      <div class="card metric"><div class="l">今日对话/任务</div><div class="v">23 / 6</div><div class="s">对话 23 轮·派单 6 件</div></div>
+      <div class="card metric"><div class="l">事实回查命中率</div><div class="v up">96%</div><div class="s">数字必检索自 UFL 账本（双锁锚定）</div></div>
+    </div>
+
+    <!-- 对话框 -->
+    <div class="card" style="margin-bottom:14px">
+      <h3>对话 <span class="dim">演示——前端桩，真实通道=ReAct 助手（工具白名单+advisory_only 红线，I-2 接线）</span></h3>
+      <div style="background:var(--input);border-radius:8px;padding:12px;margin-bottom:10px">
+        <div style="margin-bottom:10px"><span class="badge b-na">你</span> <span style="margin-left:6px">今天半导体板块为什么突然拉升？</span></div>
+        <div style="margin-bottom:10px"><span class="badge b-pass">AI</span> <span style="margin-left:6px">14:02 国产替代政策新闻触发（影响 A 级·多源共振 3 源）。产业链图谱显示「小核酸药物」链领涨 688169.SH +20%。板块 RS 强度 87 分位。<b>建议：属政策驱动脉冲，追高需谨慎——这是建议不是指令，买卖你定。</b><span class="dim">（证据：news_dual_tagger 双标签·theme_linkage_daily·RS 光谱——均可点击溯源）</span></span></div>
+        <div><span class="badge b-na">你</span> <span style="margin-left:6px">把最近三天涨停数量做成表格给我</span> <span class="dim" style="margin-left:8px">→ 已派单任务队列 #A-1024（查数类简单活）</span></div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <input type="text" placeholder="输入指令——查数/总结/对比这类简单活直接派单；涉及买卖只会给建议" style="flex:1;background:var(--input);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--fg)">
+        <button class="vfy-ok" style="padding:8px 18px;border-radius:6px" onclick="gToast('演示——真实对话通道待 I-2 接线 ReAct 助手')">发送</button>
+      </div>
+    </div>
+
+    <!-- 能干什么/不能干什么（自治边界） -->
+    <div class="row c2">
+      <div class="card">
+        <h3 class="up">能干什么 <span class="dim">工具白名单内·简单活直接干</span></h3>
+        <table>
+          <tr><td>查数取数</td><td class="dim">「最近三天涨停数」「某股现价」→ 直接查库给结果+出处</td></tr>
+          <tr><td>总结归纳</td><td class="dim">「总结今天新闻」→ UFL 账本锚定，数字必可溯源</td></tr>
+          <tr><td>对比分析</td><td class="dim">「今天情绪 vs 昨天」→ 调因子库给对比表</td></tr>
+          <tr><td>派单重活</td><td class="dim">「回测某因子」→ 转成任务进队列，不阻塞对话</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3 class="down">不能干什么 <span class="dim">自治边界红线（15_autonomy_boundary_risk 设计）</span></h3>
+        <table>
+          <tr><td class="down">永不自己下单</td><td class="dim">advisory_only 硬约束——AI 只出建议，交易指令只能你发</td></tr>
+          <tr><td class="down">不碰资金划转</td><td class="dim">资金操作不在工具白名单，物理隔离</td></tr>
+          <tr><td class="down">不改模型参数</td><td class="dim">模型治理走模型页门禁，对话无权直改</td></tr>
+          <tr><td class="down">不编造数字</td><td class="dim">UFL 双锁锚定——查不到的数字必须说「不知道」</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="note" style="margin-top:14px">证据链：对话后端=MOD-INT-RESEARCH-AGENT（ReAct 循环+事实回查，prod）；账本锚定=MOD-INT-FACT-LEDGER UFL（prod）；知识检索=MOD-KNW-001 kb_engine 八库门面+MOD-KNW-008 RAG（prod）——AI 说的每个数字都能点开看出处</div>
+  </section>
+
+  

@@ -1,0 +1,230 @@
+<section class="page active" id="p-overview">
+    <h2 class="page-title">实盘全景总览</h2>
+    <div class="page-sub">2026-08-25 周二 · <b style="color:var(--text)">今日：美联储议息纪要 02:00（外盘）</b> · <b>实盘驾驶舱</b>：资金（最重要）+ 量化实时分析对不对 + 项目健不健康——只放实盘实时状态（研究/回测去专门页；R12 重构令）· 一屏看完 · G-五 当日事件行</div>
+
+    <div class="row c5">
+      <div class="card metric"><div class="l">总资产（3 账户汇总）</div><div class="v">173.85 万</div><div class="s">实盘1 96.50 + 实盘2 45.20 + 模拟 32.15</div></div>
+      <div class="card metric"><div class="l">当日盈亏（汇总）</div><div class="v up">+5,100</div><div class="s">+0.29% · 与持仓页/盘中横幅对账闭合</div></div>
+      <div class="card metric"><div class="l">持仓市值 / 总仓位（汇总）</div><div class="v">92.94 万</div><div class="s">76.8%（账号加权口径）</div></div>
+      <div class="card metric"><div class="l">当前回撤</div><div class="v down">-3.2%</div><div class="s">预算 -15% · 消耗 21%</div></div>
+      <div class="card metric"><div class="l">风险价值 VaR(95%,1d) <i class="info-ic" data-tip="人话：正常行情下，明天有 95% 概率亏损不超过这个数（当前 -1.8%，限额 -3.5%）——Value at Risk，机构标准风险度量">!</i></div><div class="v">-1.8%</div><div class="s">限额 -3.5%</div></div>
+    </div>
+    <div class="note">口径：3 账号汇总（与「持仓监控·汇总条」「盘中实时·权益横幅」同一汇总口径，G4 对账闭合；账号明细见持仓页）；数据源：券商账户（CTR-P1-008 ← D_RISK）；未连接时本行整体降级为「未连接」引导态</div>
+    <!-- L2 市场分层资产卡（Owner 2026-08-27 拍板：两市场卡+卡内折叠 L3 账户明细+红绿灯；charter：A股/币圈资金完全隔离独立账本） -->
+    <div class="row c2">
+      <div class="card">
+        <h3 style="display:flex;align-items:center;gap:8px">A股资产汇总 <span class="dim" style="font-weight:400">3 账户 · 独立账本</span> <span class="badge b-na">演示数据</span><span class="ovx-fold" onclick="ovxFold('ovx-acct-a',this)">账户明细 ▾</span><span class="todo-link" onclick="ovxGo('position',this)">持仓监控 →</span></h3>
+        <div class="ovx-mkt">
+          <div class="ovx-mk"><div class="l">总资产</div><div class="v">173.85 万</div></div>
+          <div class="ovx-mk"><div class="l">当日盈亏</div><div class="v up">+5,100</div></div>
+          <div class="ovx-mk"><div class="l">持仓市值</div><div class="v">92.94 万</div></div>
+          <div class="ovx-mk"><div class="l">当前回撤</div><div class="v down">-3.2%</div></div>
+        </div>
+        <div class="ovx-acct" id="ovx-acct-a" style="display:none">
+          <table>
+            <tr><th style="width:22px"></th><th>账户</th><th>总资产</th><th>当日盈亏</th><th>持仓市值</th><th>当前回撤</th><th>连接状态</th></tr>
+            <tr><td><span class="dot r"></span></td><td>实盘账户 1</td><td>96.50 万</td><td class="up">+3,820</td><td>58.30 万</td><td class="down">-4.1%</td><td class="dim">断连 · 最后 08-18 15:30</td></tr>
+            <tr><td><span class="dot y"></span></td><td>实盘账户 2</td><td>45.20 万</td><td class="up">+960</td><td>21.84 万</td><td class="down">-2.6%</td><td class="dim">部分异常：持仓 6 分钟未更新</td></tr>
+            <tr><td><span class="dot g"></span></td><td>模拟账户</td><td>32.15 万</td><td class="up">+320</td><td>12.80 万</td><td class="down">-1.8%</td><td class="dim">正常 · miniQMT 38ms</td></tr>
+          </table>
+          <div class="note">灯语义（DS-5 状态灯）：🟢 全部正常 / 🟡 部分异常（下单失败 · 持仓 >5 分钟未更新等）/ 🔴 断连——真源=QMT 桥心跳+委托回执+持仓导出时间戳（I-2）</div>
+        </div>
+      </div>
+      <div class="card">
+        <h3 style="display:flex;align-items:center;gap:8px">币圈资产汇总 <span class="dim" style="font-weight:400">独立账本（与 A股资金完全隔离）</span> <span class="badge b-na">演示数据</span><span class="ovx-fold" onclick="ovxFold('ovx-acct-c',this)">账户明细 ▾</span><span class="todo-link" onclick="ovxGo('cryptopos',this)">币圈持仓风控 →</span></h3>
+        <div class="ovx-mkt">
+          <div class="ovx-mk"><div class="l">账户权益（USDT）</div><div class="v">128,640</div></div>
+          <div class="ovx-mk"><div class="l">未实现盈亏</div><div class="v up">+3,214</div></div>
+          <div class="ovx-mk"><div class="l">持仓市值（USDT）</div><div class="v">96,400</div></div>
+          <div class="ovx-mk"><div class="l">当前回撤</div><div class="v down">-5.1%</div></div>
+        </div>
+        <div class="ovx-acct" id="ovx-acct-c" style="display:none">
+          <table>
+            <tr><th style="width:22px"></th><th>账户</th><th>权益(USDT)</th><th>未实现盈亏</th><th>持仓市值</th><th>维持保证金率</th><th>连接状态</th></tr>
+            <tr><td><span class="dot g"></span></td><td>币安主账户</td><td>128,640</td><td class="up">+3,214</td><td>96,400</td><td>4.8%</td><td class="dim">正常 · API 心跳 12s</td></tr>
+            <tr><td><span class="dot w"></span></td><td>OKX 备用账户</td><td>—</td><td>—</td><td>—</td><td>—</td><td class="dim">未启用（可插拔架构备选所）</td></tr>
+          </table>
+          <div class="note">真源=交易所 API 连接状态+持仓快照（I-2；交易 key=human_gated 同级，Owner 自持不进代码）</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 系统健康灯行（QC/BigQuant 首页连接状态同位；与侧栏 4 灯同源） -->
+    <div class="card" style="margin-bottom:14px;padding:8px 16px">
+      <div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap;font-size:12px">
+        <span style="font-weight:600">系统健康</span>
+        <span><span class="dot r"></span> QMT 实盘 未连接 <span class="dim">（最后 08-18 15:30）</span></span>
+        <span><span class="dot g"></span> miniQMT 模拟 已连接 <span class="dim">38ms · 心跳正常</span></span>
+        <span><span class="dot g"></span> 数据管线 156 任务 <span class="dim">失败 1（adj_factor 修复中）</span></span>
+        <span><span class="dot g"></span> 熔断开关 待命</span>
+        <span class="todo-link" style="margin-left:auto" onclick="ovxGo('sysstatus',this)">系统状态 →</span>
+      </div>
+    </div>
+
+    <!-- 算法实时校验卡（R12：量化实时分析产出 vs Owner 判断——R1 人机回环纠错首站；✓/✗ 反馈落 __fbQueue，I-2 转真 C26） -->
+    <div class="card" style="margin-bottom:14px">
+      <h3>算法实时校验 <span class="badge b-na">演示数据</span> <span class="dim">量化最新产出 vs 你的判断——对就 ✓ 错就 ✗，反馈落日志反推优化（R1 首站；真源 C26）</span></h3>
+      <table id="ovx-vfy">
+        <tr><th>时间</th><th>产出</th><th>量化判断</th><th>你的判断</th><th>证据链</th></tr>
+        <tr><td>11:42</td><td>新闻定性：半导体国产替代政策</td><td><span class="badge b-buy">利好·可预测</span></td><td><button class="vfy-ok" onclick="ovxVfy(this,1)">✓</button> <button class="vfy-no" onclick="ovxVfy(this,0)">✗</button></td><td class="dim">双标签+影响 A 级+多源共振 3</td></tr>
+        <tr><td>11:05</td><td>事件影响：宁德三季报预增</td><td><span class="badge b-buy">超预期</span></td><td><button class="vfy-ok" onclick="ovxVfy(this,1)">✓</button> <button class="vfy-no" onclick="ovxVfy(this,0)">✗</button></td><td class="dim">一致预期+12% vs 实际+18%</td></tr>
+        <tr><td>10:38</td><td>买卖点：中芯国际 10:23 回踩</td><td><span class="badge b-buy">买入信号</span></td><td><button class="vfy-ok" onclick="ovxVfy(this,1)">✓</button> <button class="vfy-no" onclick="ovxVfy(this,0)">✗</button></td><td class="dim">MOD-SIG-024 · 3 重确认放行</td></tr>
+        <tr><td>09:55</td><td>天气研判：今日高开 0.2~0.4%</td><td><span class="badge b-na">方向对·幅度偏小</span></td><td><button class="vfy-ok" onclick="ovxVfy(this,1)">✓</button> <button class="vfy-no" onclick="ovxVfy(this,0)">✗</button></td><td class="dim">隔夜传导 β+集合竞价三细节</td></tr>
+        <tr><td>09:31</td><td>强度评级：软件算力 A 级</td><td><span class="badge b-buy">A（强）</span></td><td><button class="vfy-ok" onclick="ovxVfy(this,1)">✓</button> <button class="vfy-no" onclick="ovxVfy(this,0)">✗</button></td><td class="dim">BM-SEL-24 · RRG+资金+梯队</td></tr>
+      </table>
+      <div class="note">校验统计（近 20 日）：✓ 76% · ✗ 24%——✗ 样本进纠错样本库（DAL-D07，I-2）；反馈≠改结论，是喂给形态库进化的粮食</div>
+    </div>
+
+    <!-- 审批+健康告警横切条（Owner 2026-08-29 拍板形态：横切层不独立成区——待审批收件箱 I02/I03 + 数据源/治理/系统告警四合一，无告警=一行绿不占版面；真源 C27+I01~I05） -->
+    <div class="card" style="margin-bottom:14px;padding:8px 16px" id="ovx-health">
+      <div style="display:flex;gap:12px;align-items:center;font-size:12px">
+        <span class="dot y"></span><b>待审批 <span class="down">2</span></b>
+        <span class="dim">实盘下单审批 1 · 强减审批 1（human_gated 人工闸门，I03）</span>
+        <span style="border-left:1px solid var(--border);padding-left:12px"><span class="dot g"></span><b>健康告警</b> <span class="dim">数据源 ✓ · 治理 ✓ · 系统 ✓</span></span>
+        <span class="todo-link" style="margin-left:auto" onclick="ovxHealthTgl(this)">展开明细 ▾</span>
+      </div>
+      <div id="ovx-health-d" style="display:none;margin-top:8px">
+        <table>
+          <tr><th>级别</th><th>来源</th><th>内容</th><th>时间</th><th>状态</th></tr>
+          <tr><td><span class="badge b-warn">审批</span></td><td>人工闸门</td><td>实盘下单审批：汇川技术 买 800 股（已超 30 分钟未批——signal 时效内）</td><td>10:05</td><td><span class="badge b-buy" style="cursor:pointer" onclick="gToast('演示——审批通道 human_gated 待 I-2 接线，操作留痕')">批</span> <span class="badge b-sell" style="cursor:pointer" onclick="gToast('演示——已否决并留痕')">否</span></td></tr>
+          <tr><td><span class="badge b-warn">审批</span></td><td>人工闸门</td><td>距强平 &lt;10% 强减审批：币圈 ETH 永续保证金率 8.2%</td><td>09:58</td><td><span class="badge b-buy" style="cursor:pointer" onclick="gToast('演示——审批通道 human_gated 待 I-2 接线，操作留痕')">批</span> <span class="badge b-sell" style="cursor:pointer" onclick="gToast('演示——已否决并留痕')">否</span></td></tr>
+          <tr><td><span class="badge b-warn">黄</span></td><td>数据管线</td><td>adj_factor 任务失败 1 次（修复中，自动重跑）</td><td>10:12</td><td class="dim">跟踪中</td></tr>
+          <tr><td><span class="badge b-na">灰</span></td><td>QMT 实盘桥</td><td>未连接（最后 08-18 15:30）——非今日异常</td><td>—</td><td class="dim">已知</td></tr>
+        </table>
+        <div class="note">横切条口径（Owner 08-29 拍板·四合一）：①待审批=人工闸门收件箱（I03 实盘下单/强减审批+I02 autonomy_gate queue ticket）②数据源（ch_health_probe/source_circuit_breaker，I01）③治理（gate_audit 异常+CAND 评审流 618 条，I04/I05）④系统（alerter/GPU/链路）——有审批/告警才升级红/黄灯并自动展开；审批永远 human_gated，AI 无权代批（C27+I01~I05）</div>
+      </div>
+    </div>
+
+    <!-- A1 市场天气（三栏可插拔：全球排名榜/A股天气/币圈天气——Owner 2026-08-27 四拍板；预测层=今日研判独立条，实时层=本卡） -->
+    <div class="card" style="margin-bottom:14px">
+      <h3>市场天气 <span class="badge b-na">演示数据</span> <span class="dim">实时层三栏可插拔（预测层=今日研判独立条）· 对标 Wind 全球市场概览 · 实时行情接入后转真（I-2）</span></h3>
+      <div class="ovx-w3">
+        <div class="ovx-wcol">
+          <div class="sec-title" style="margin-top:0">全球市场排名 <span class="dim">按涨跌幅自动排序 · 实时驱动（I-2）；红涨绿跌</span></div>
+          <table id="ovx-rank"></table>
+          <div class="note" style="margin-top:6px">联动解读（演示文案，真源=跨市场联动分析 I-2）：创业板/恒生/ETH 同步走弱 vs 纳指昨夜收涨——今日 A股 指数无忧但结构分化（算力强/消费电子弱）；BTC 与纳指科技高度正相关，24/7 已先行反应；日韩/股指期货/金油接入后排名自动补全（待接入，不造假数据）</div>
+        </div>
+        <div class="ovx-wcol">
+          <div class="sec-title" style="margin-top:0">A股天气 <span class="dim">市场宽度</span></div>
+          <div style="font-size:13px;line-height:2"><span class="up">上涨 3,842</span> / <span class="down">下跌 1,276</span>　涨停 <b class="up">58</b> 家 · 成交额 <b>9,860</b> 亿</div>
+          <div style="margin:4px 0 8px;font-size:12px;color:var(--text)">⛅ 晴偏多云：指数普涨、量能放大</div>
+          <div class="kv-mini">天气口径：上涨/下跌家数+涨停+成交额→天气总结；分时结构→板块全景贡献度拆解</div>
+          <div class="lv" style="margin-top:8px"><span class="todo-link" onclick="ovxGo('live',this)">盘中实时 →</span><span class="todo-link" onclick="ovxGo('sector',this)">板块全景 →</span></div>
+        </div>
+        <div class="ovx-wcol">
+          <div class="sec-title" style="margin-top:0">币圈天气 <span class="dim">24/7</span></div>
+          <table>
+            <tr><td>比特币 BTC</td><td style="text-align:right">85,062</td><td style="text-align:right" class="up">+1.24%</td></tr>
+            <tr><td>以太坊 ETH</td><td style="text-align:right">3,128.40</td><td style="text-align:right" class="down">-0.83%</td></tr>
+          </table>
+          <div style="font-size:12px;line-height:2;margin-top:4px">资金费率均值 <b>+0.009%</b> <span class="dim">8h · 偏多温和</span><br>恐惧贪婪 <b style="color:var(--text)">64 · 贪婪</b>　24h 爆仓 <b>$2.94 亿</b> <span class="dim">多 1.62 / 空 1.32</span><br>BTC 市值占比（Dominance）<b>58.2%</b></div>
+          <div class="lv" style="margin-top:8px"><span class="todo-link" onclick="ovxGo('cryptomarket',this)">币圈盘面 →</span><span class="todo-link" onclick="ovxGo('cryptopos',this)">币圈持仓风控 →</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A2 今日日历条（I-5 新增） -->
+    <div class="card" style="margin-bottom:14px">
+      <h3>今日日历 <span class="badge b-na">演示数据</span></h3>
+      <div class="ovx-cal">
+        <span class="ev"><span class="dim">08:30</span> 7 月经济数据发布 <span class="badge b-na">宏观</span></span>
+        <span class="ev"><span class="dim">08:30</span> CPI 2.8% · 高于预期 <span class="badge b-warn">数据</span></span>
+        <span class="dim" style="padding:0 4px">｜ 明日预告 ｜</span>
+        <span class="ev"><span class="dim">明日 02:00</span> 美联储议息纪要 <span class="badge b-na">外盘</span></span>
+        <span class="ev"><span class="dim">明日</span> 宁德时代解禁 1.2 亿股 <span class="badge b-warn">事件</span></span>
+        <span class="todo-link" style="margin-left:auto" onclick="ovxGo('calendar',this)">全部日历 →</span>
+      </div>
+    </div>
+
+    <div class="row c32">
+      <div class="card">
+        <h3>净值曲线（近 30 日） <span style="font-weight:400">vs 沪深300</span></h3>
+        <div class="chart-box" style="margin-bottom:0">
+          <svg class="spark" viewBox="0 0 600 180" preserveAspectRatio="none">
+            <path d="M0,150 L40,142 L80,148 L120,130 L160,136 L200,118 L240,124 L280,105 L320,112 L360,95 L400,102 L440,88 L480,94 L520,80 L560,86 L600,72"
+                  fill="none" stroke="#3D8BFF" stroke-width="1.5"/>
+            <path d="M0,140 L40,138 L80,142 L120,136 L160,140 L200,132 L240,136 L280,128 L320,132 L360,126 L400,130 L440,124 L480,128 L520,122 L560,126 L600,120"
+                  fill="none" stroke="#AB47BC" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="lv"><span style="color:var(--blue)">— 组合净值 Strategy</span><span style="color:var(--purple)">— 基准 Benchmark</span><span class="dim">超额 +8.2%</span></div>
+      </div>
+      <div class="card">
+        <h3>今日告警 <span class="badge b-warn">2 待处理</span></h3>
+        <div class="alert-row err">🔴 宁德时代 距止损线 1.8%<span class="t">10:41</span></div>
+        <div class="alert-row warn">🟡 分钟K线 5 张表时间戳异常（1970-01-01）<span class="t">系统状态</span></div>
+        <div class="alert-row info">🔵 回测完成：行业轮动替换fundamental（夏普 2.16）<span class="t">昨 23:51</span></div>
+        <div class="note">聚合源：风控事件 / 数据质量门 / 回测完成事件</div>
+      </div>
+    </div>
+
+    <!-- 今日研判（预测层：盘前 08:00 作战预测产物；与下方 W0 昨日验证条形成时间对——Owner 2026-08-27 拍板独立成条） -->
+    <div class="card" style="margin-bottom:14px;padding:10px 16px">
+      <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;font-size:12px">
+        <span style="font-weight:600">今日研判 <span class="dim">盘前 08:00 作战预测</span> <span class="badge b-na">演示数据</span></span>
+        <span>隔夜全球：纳指 <b class="up">+0.61%</b> · 恒生 <b class="down">-0.42%</b> · BTC <b class="up">+1.24%</b></span>
+        <span>A股 预判：<b style="color:var(--text)">高开 0.2~0.4% 但科技分化</b> <span class="dim">（算力强/消费电子弱）</span></span>
+        <span>关键变量：<b>10:00 7 月经济数据</b></span>
+        <span>作战口径：仓位 6~7 成不变 · 科技只低吸不追</span>
+        <span class="todo-link" style="margin-left:auto" onclick="ovxGo('warroom',this)">作战室 W2 情景矩阵 →</span>
+      </div>
+    </div>
+
+    <!-- 昨日预案验证摘要（作战室 W0 首页化：QC 证据门控第一眼——系统执行表现反馈件） -->
+    <div class="card" style="margin-bottom:14px;padding:10px 16px">
+      <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;font-size:12px">
+        <span style="font-weight:600">昨日预案验证 <span class="dim">W0 摘要</span></span>
+        <span>预测格 平开+高走 <span class="badge b-pass">命中</span></span>
+        <span>执行一致 <span class="badge b-pass">✓</span></span>
+        <span>预案当日盈亏 <b class="up">+1.2%</b></span>
+        <span class="dim">近 20 日：命中 13/20（65%）· 执行一致 16/20 · 预案盈利 11/20 · Brier 0.18（校准良好）</span>
+        <span class="todo-link" style="margin-left:auto" onclick="ovxGo('warroom',this)">作战室 W0 →</span>
+      </div>
+    </div>
+
+    <!-- A3 待办中心（I-5 新增，三合一） -->
+    <div class="card" style="margin-bottom:14px">
+      <h3>待办中心 <span class="badge b-warn">5</span> <span class="badge b-na">演示数据</span> <span class="dim">审批 / 告警 / 失败任务三合一聚合</span></h3>
+      <div class="row c3" style="margin-bottom:0">
+        <div>
+          <div class="sec-title" style="margin-top:0">待审批计划 <span class="badge b-warn">2</span></div>
+          <div class="todo-row"><span>行业轮动 · <span class="up">拟买</span> 600519 贵州茅台<br><span class="dim" style="font-size:11px">白酒景气上行 · Kelly 8.2%</span></span><span class="todo-link" onclick="ovxGo('live',this)">去审批 →</span></div>
+          <div class="todo-row"><span>移动止损 · <span class="down">拟卖</span> 300750 宁德时代<br><span class="dim" style="font-size:11px">触发移动止损线 · 优先级最高</span></span><span class="todo-link" onclick="ovxGo('live',this)">去审批 →</span></div>
+        </div>
+        <div>
+          <div class="sec-title" style="margin-top:0">待处理告警 <span class="badge b-warn">2</span></div>
+          <div class="todo-row"><span>🔴 宁德时代 距止损线 1.8%<br><span class="dim" style="font-size:11px">10:41 · 风控事件</span></span><span class="todo-link" onclick="ovxGo('live',this)">去处理 →</span></div>
+          <div class="todo-row"><span>🟡 分钟K线 5 张表时间戳异常<br><span class="dim" style="font-size:11px">1970-01-01 · 数据质量门</span></span><span class="todo-link" onclick="ovxGo('task',this)">去处理 →</span></div>
+        </div>
+        <div>
+          <div class="sec-title" style="margin-top:0">失败任务 <span class="badge b-fail">1</span></div>
+          <div class="todo-row"><span>⚙ adj_factor 夜班复权因子任务<br><span class="dim" style="font-size:11px">修复中 · 重试 2/3</span></span><span class="todo-link" onclick="ovxGo('task',this)">任务进度 →</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row c2">
+      <div class="card">
+        <h3>最近回测</h3>
+        <table>
+          <tr><th>策略</th><th>夏普</th><th>最大回撤</th><th>年化</th><th>日期</th><th></th></tr>
+          <tr><td>行业轮动替换fundamental</td><td style="color:var(--text)">2.16</td><td class="down">-15.8%</td><td class="up">+47.4%</td><td>08-19</td><td><span class="badge b-pass">过门禁</span></td></tr>
+          <tr><td>多因子 v2.3</td><td style="color:var(--text)">1.42</td><td class="down">-9.6%</td><td class="up">+21.3%</td><td>08-18</td><td><span class="badge b-warn">OOS未过</span></td></tr>
+          <tr><td>打板策略 v1.1</td><td style="color:var(--text)">0.88</td><td class="down">-22.4%</td><td class="down">-4.1%</td><td>08-17</td><td><span class="badge b-fail">未过</span></td></tr>
+        </table>
+        <div class="note">点击行进「回测结果」页（R3 闭环，待裁定）</div>
+      </div>
+      <div class="card">
+        <h3>今日交易动态 <span class="dim">实盘监控摘要</span></h3>
+        <table>
+          <tr><th></th><th>标的</th><th>逻辑原因（简要）</th><th>状态</th></tr>
+          <tr><td><span class="badge b-buy">拟买</span></td><td>600519 贵州茅台</td><td>行业轮动信号：白酒景气上行</td><td><span class="badge b-warn">待审批</span></td></tr>
+          <tr><td><span class="badge b-buy">拟买</span></td><td>601318 中国平安</td><td>低估值 + 北向连续增持</td><td><span class="badge b-na">计划中</span></td></tr>
+          <tr><td><span class="badge b-sell">拟卖</span></td><td>300750 宁德时代</td><td>触发移动止损线</td><td><span class="badge b-warn">待审批</span></td></tr>
+          <tr><td colspan="2">✅ 已成交：买 600519 ×100 @1712.5</td><td colspan="2" class="dim">10:23 · miniQMT 模拟</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  

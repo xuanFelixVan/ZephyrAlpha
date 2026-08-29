@@ -1,0 +1,260 @@
+<section class="page" id="p-sector">
+    <h2 class="page-title">板块全景 <span class="badge b-na">演示数据</span></h2>
+    <div class="page-sub">实盘组 · <b>核心：今天资金去了哪些板块 / 谁在持续流入 / 谁产生分歧</b>——相对强度光谱地图 + 抗跌榜/领涨榜（次数优先=RS 持续性，冲高回落标注=防假强势）+ 证据链卡（铁律：结果+全部因子证据）· 真源=B26 管线（counter_trend_board 后端在码，I-2 接线后转真）</div>
+
+    <!-- ① 相对强度光谱地图 -->
+    <div class="card" style="margin-bottom:14px">
+      <h3>相对强度光谱地图 <span class="dim">分界=大盘实时涨速；右红=强于大盘（跌得慢/逆势涨）、左绿=弱于大盘 · 分时双模式（大盘跌自动切抗跌视角/涨切领涨视角）· 分钟级</span>
+        <span style="float:right"><span class="badge b-buy" id="sc-mode-badge">当前：领涨视角</span> <span class="dim">大盘 +0.61%</span></span></h3>
+      <svg id="sc-rsmap" style="width:100%;height:340px"></svg>
+      <div class="kv-mini" style="margin-top:6px">读法：条形越长=相对强度越大；最右=最强（资金主攻），最左=最弱（资金逃离）；半导体/软件在最右=进攻方向，白酒/银行居中=防御没动，地产/煤炭最左=被抛弃</div>
+    </div>
+
+    <!-- ② 抗跌榜 / 领涨榜（次数优先+冲高回落标注） -->
+    <div class="row c2" style="margin-bottom:14px">
+      <div class="card">
+        <h3>抗跌榜 <span class="dim">大盘下跌段跌得少的——悄悄吸筹嫌疑（次数=RS 持续性，一次抗跌是运气每次都抗跌是习惯）</span></h3>
+        <table>
+          <tr><th>板块</th><th>抗跌次数</th><th>今日</th><th>资金净流入</th><th>形态</th></tr>
+          <tr><td>创新药</td><td><b>4/4</b></td><td class="up">+0.8%</td><td class="up">+12.4 亿</td><td><span class="badge b-pass">持续吸筹</span></td></tr>
+          <tr><td>电力</td><td><b>4/4</b></td><td class="up">+0.3%</td><td class="up">+5.1 亿</td><td><span class="badge b-pass">持续吸筹</span></td></tr>
+          <tr><td>小金属</td><td>3/4</td><td class="up">+1.2%</td><td class="up">+8.7 亿</td><td class="dim">正常</td></tr>
+          <tr><td>白酒</td><td>3/4</td><td class="down">-0.2%</td><td class="down">-2.3 亿</td><td class="dim">防御钝化</td></tr>
+        </table>
+        <div class="note">创新药/电力：大盘 4 次下探全部跌得比大盘少+资金净流入为正=<b>每次下跌有人接筹</b>（威科夫吸筹特征，弱中显强）——重点观察</div>
+      </div>
+      <div class="card">
+        <h3>领涨榜 <span class="dim">大盘上涨段涨得好的——<b>冲高回落型单独标注</b>（涨幅>大盘但一路向下=持续流出，过程>结果）</span></h3>
+        <table>
+          <tr><th>板块</th><th>领涨次数</th><th>今日</th><th>资金净流入</th><th>形态</th></tr>
+          <tr><td>半导体</td><td><b>3/3</b></td><td class="up">+2.8%</td><td class="up">+38.2 亿</td><td><span class="badge b-buy">主攻</span></td></tr>
+          <tr><td>软件算力</td><td>3/3</td><td class="up">+2.1%</td><td class="up">+21.5 亿</td><td><span class="badge b-buy">主攻</span></td></tr>
+          <tr><td>证券</td><td>2/3</td><td class="up">+1.4%</td><td class="down">-4.2 亿</td><td><span class="badge b-fail">冲高回落 ⚠</span></td></tr>
+          <tr><td>新能源车</td><td>1/3</td><td class="up">+0.9%</td><td class="down">-1.8 亿</td><td><span class="badge b-warn">跟风不足</span></td></tr>
+        </table>
+        <div class="note">证券：早盘冲高 +2.3% 后一路回落、资金净流出=<b>假强势</b>（拉高出货嫌疑）——与半导体（放量上攻+流入）性质完全不同</div>
+      </div>
+    </div>
+
+    <!-- ③ 证据链卡（铁律） -->
+    <div class="card" style="margin-bottom:14px">
+      <h3>证据链 · 怎么算出"资金去了哪" <span class="dim">四因子全呈现（铁律）· 算法查看</span></h3>
+      <table>
+        <tr><th>因子</th><th>来源模块</th><th>说明（ⓘ 人话）</th></tr>
+        <tr><td>板块资金净流入</td><td><code>money_flow</code> 表 + sector_fund_flow_collector</td><td>真金白银流进流出哪个板块</td></tr>
+        <tr><td>相对强度 RS（次数）</td><td><code>counter_trend_board.py</code>（testing）</td><td>每次大盘跌它跌得少不少——次数多=持续有人接</td></tr>
+        <tr><td>过程形态</td><td><code>sector_detail_enricher.py</code>（testing）</td><td>冲高回落=假强势；稳步推升=真主攻</td></tr>
+        <tr><td>主线概率</td><td><code>mainline_probability.py</code>（testing，四因子合成）</td><td>RRG 象限+接力阶段+资金持续+梯队完整，合成"是不是主线"</td></tr>
+      </table>
+    </div>
+
+    <!-- ④ 主线候选 Top10（保留+接线标注） -->
+    <div class="card" style="margin-bottom:14px">
+      <h3>主线候选 Top10 <span class="badge b-na">演示数据</span> <span class="dim">真源=MOD-SIG-061 主线候选榜+MOD-SIG-064 主线概率（I-2 接线后转真）</span></h3>
+      <table>
+        <tr><th>#</th><th>板块</th><th>主线概率</th><th>RRG 象限</th><th>接力阶段</th><th>梯队完整度</th><th>资金持续</th></tr>
+        <tr><td>1</td><td>半导体</td><td><b>82%</b></td><td>领先</td><td>发酵期</td><td>5板+2板+首板×12</td><td>5 日连续净流入</td></tr>
+        <tr><td>2</td><td>软件算力</td><td>74%</td><td>领先</td><td>发酵期</td><td>3板+首板×7</td><td>3 日连续</td></tr>
+        <tr><td>3</td><td>创新药</td><td>61%</td><td>改善</td><td>萌芽期</td><td>首板×5</td><td>2 日连续</td></tr>
+        <tr><td>4</td><td>电力</td><td>55%</td><td>改善</td><td>萌芽期</td><td>首板×2</td><td>4 日连续</td></tr>
+      </table>
+      <div class="note">梯队解读：龙头 5 板未开板（最强）、中军 2 板确认、后排首板跟进——<b>梯队结构完整=主线相</b>；封单比&gt;1 且开板 0 次为强封</div>
+    </div>
+
+    <!-- ⑤ 产业链联动日报（C03·真源已核实 2026-08-29：.runtime/industry_graph/theme_linkage_daily.csv 在盘，24链/523家=0.85 互证子集） -->
+    <div class="card" style="margin-bottom:14px">
+      <h3>产业链联动日报 <span class="badge b-pass">真源已核实</span> <span class="dim">C03 主题联动监控（theme_linkage_monitor.py prod）·快照=08-25 交易日·按当日强度排序·联动强度=近 20 日平均成对相关性·I-2 接线后自动刷新</span></h3>
+      <table>
+        <tr><th>产业链</th><th>覆盖公司</th><th>涨家占比</th><th>平均涨幅</th><th>领涨股</th><th>联动强度 corr20</th><th>判读</th></tr>
+        <tr><td>中国企业出海数据合规服务商</td><td>7 家</td><td class="up">100%</td><td class="up">+4.60%</td><td>688169.SH <span class="up">+20.0%</span></td><td>0.41</td><td class="dim">全链红·领涨 20cm——链级行情</td></tr>
+        <tr><td>小核酸药物</td><td>5 家</td><td class="up">80%</td><td class="up">+3.06%</td><td>002821.SZ <span class="up">+10.0%</span></td><td>0.52</td><td class="dim">联动中强·涨停领衔</td></tr>
+        <tr><td>太空光伏</td><td>3 家</td><td class="up">100%</td><td class="up">+2.05%</td><td>000547.SZ <span class="up">+2.7%</span></td><td>0.53</td><td class="dim">齐涨但无领涨板——联动型跟涨</td></tr>
+        <tr><td>中国外贸产业带</td><td>23 家</td><td class="up">91%</td><td class="up">+1.86%</td><td>603408.SH <span class="up">+5.8%</span></td><td>0.22</td><td class="dim">大链普涨但相关性弱——个股逻辑&gt;链逻辑</td></tr>
+        <tr><td>可控核聚变</td><td>4 家</td><td class="up">100%</td><td class="up">+1.81%</td><td>600363.SH <span class="up">+4.1%</span></td><td>0.61</td><td class="dim">相关性最强——真联动链，一荣俱荣</td></tr>
+      </table>
+      <div class="note">用法：涨家占比高+corr20 高=<b>链级共振</b>（买链不买票）；涨家占比高+corr20 低=个股各走各的（链只是壳）。QMT 盘中接入后可切盘中实时版（脚本预留）；历史 24 链全表接线后翻页可查</div>
+    </div>
+
+    <h2 class="page-title">板块全景</h2>
+    <div class="page-sub">实盘组 · 核心目的：产出<b>主线候选清单</b>——本页所有数据都为这个结论提供证据链（L1 扩展）</div>
+
+    <!-- 主线候选 Top10 -->
+    <div class="row c1">
+      <div class="card">
+        <h3>主线候选 Top 10 <span class="badge b-pass">实时更新</span> <span class="dim">BM-SEL-08 轮动 + RRG + 接力周期 + 资金持续性 + 梯队完整度</span></h3>
+        <table>
+          <tr><th>#</th><th>板块</th><th>属性</th><th>强度分</th><th>主力净流入</th><th>连板高度</th><th>主线概率</th><th>持续性</th><th>拥挤度</th><th>分歧标注</th></tr>
+          <tr><td>1</td><td>白酒</td><td><span class="badge b-na">平衡</span></td><td>88.2</td><td class="up">+42.6 亿</td><td>2 板</td><td><b class="up">72%</b></td><td>连续 3 日净流入</td><td class="dim">适中</td><td><span class="badge b-pass">一致</span></td></tr>
+          <tr><td>2</td><td>半导体</td><td><span class="badge b-buy">进攻</span></td><td>84.7</td><td class="up">+38.1 亿</td><td>5 板</td><td><b class="up">68%</b></td><td>连续 2 日净流入</td><td class="dim">偏热</td><td><span class="badge b-warn">弱分歧·回踩A级</span></td></tr>
+          <tr><td>3</td><td>证券</td><td><span class="badge b-buy">进攻</span></td><td>79.3</td><td class="up">+21.4 亿</td><td>2 板</td><td><b>55%</b></td><td>今日转净流入</td><td class="dim">适中</td><td><span class="badge b-warn">弱分歧·回踩B级</span></td></tr>
+          <tr><td>4</td><td>消费电子</td><td><span class="badge b-buy">进攻</span></td><td>74.1</td><td class="up">+9.6 亿</td><td>3 板</td><td>48%</td><td>连续 2 日净流入</td><td class="dim">适中</td><td><span class="badge b-pass">一致</span></td></tr>
+          <tr><td>5</td><td>银行</td><td><span class="badge b-sell">防御</span></td><td>71.5</td><td class="up">+12.8 亿</td><td>—</td><td>41%</td><td>连续 5 日净流入</td><td class="dim">低</td><td><span class="badge b-pass">一致</span></td></tr>
+          <tr><td>6</td><td>军工</td><td><span class="badge b-buy">进攻</span></td><td>69.8</td><td class="up">+6.3 亿</td><td>2 板</td><td>38%</td><td>今日转净流入</td><td class="dim">低</td><td><span class="badge b-warn">弱分歧</span></td></tr>
+          <tr><td>7</td><td>光伏</td><td><span class="badge b-buy">进攻</span></td><td>63.2</td><td class="down">-2.1 亿</td><td>—</td><td>25%</td><td>连续 2 日净流出</td><td class="dim">低</td><td><span class="badge b-warn">弱分歧·回踩C级</span></td></tr>
+          <tr><td>8</td><td>医药</td><td><span class="badge b-sell">防御</span></td><td>58.4</td><td class="down">-3.2 亿</td><td>—</td><td>22%</td><td>连续 3 日净流出</td><td class="dim">低</td><td><span class="badge b-warn">转弱</span></td></tr>
+          <tr><td>9</td><td>新能源</td><td><span class="badge b-buy">进攻</span></td><td>61.0</td><td class="down">-8.7 亿</td><td>—</td><td>18%</td><td>连续 4 日净流出</td><td class="dim">低</td><td><span class="badge b-fail">强分歧·顶部特征</span></td></tr>
+          <tr><td>10</td><td>房地产</td><td><span class="badge b-na">平衡</span></td><td>52.3</td><td class="down">-11.2 亿</td><td>—</td><td>12%</td><td>连续 5 日净流出</td><td class="dim">低</td><td><span class="badge b-fail">强分歧</span></td></tr>
+        </table>
+        <div class="note">主线概率=RRG 象限 + 接力阶段 + 资金持续性 + 梯队完整度综合评分（演示算法；正式概率模型=§5 缺口①）。属性标注规则：银行/医药/公用=防御，半导体/证券/消费电子=进攻，白酒/地产=平衡——大盘下跌段若<b>防御板块带队反弹=避险反抽，多半还要跌；进攻板块带队=有上攻意愿</b>。拥挤度=板块成交额占全市场比（过热警示）</div>
+      </div>
+    </div>
+
+    <!-- 梯队折叠明细 -->
+    <div class="card" style="margin-bottom:14px">
+      <h3>板块梯队明细 <span class="dim">点击板块名展开/收起（龙头+中军+后排完整结构）</span></h3>
+
+      <details class="sec-det" open>
+        <summary><b>半导体</b> · 梯队完整 ✅（龙头+中军+后排） · 完整度 90 / 强度 84.7 · 净流入 <span class="up">+38.1 亿</span></summary>
+        <div style="font-size:12px;color:var(--dim);margin:8px 0">
+          <span style="color:var(--text)">龙头</span>：中芯国际（5天4板）· <span style="color:var(--text)">中军</span>：韦尔股份、北方华创 · <span class="dim">后排</span>：首板 12 只 / 2 板 3 只
+        </div>
+        <table>
+          <tr><th>个股</th><th>几天几板</th><th>涨幅</th><th>封单比</th><th>换手率</th><th>流通市值</th><th>总市值</th><th>首封</th><th>封住</th><th>开板</th><th>涨停原因分析</th></tr>
+          <tr><td>中芯国际 688981</td><td><b class="up">5天4板</b></td><td class="up">+10.0%</td><td>1.8</td><td>8.2%</td><td>7,412 亿</td><td>7,426 亿</td><td>09:42</td><td>09:42</td><td>0 次</td><td>半导体设备国产化率突破 40%（新闻驱动）</td></tr>
+          <tr><td>韦尔股份 603501</td><td>2连板</td><td class="up">+10.0%</td><td>1.2</td><td>5.6%</td><td>1,380 亿</td><td>1,402 亿</td><td>10:05</td><td>10:18</td><td>1 次</td><td>龙头带动+业绩预增</td></tr>
+          <tr><td>北方华创 002371</td><td>2连板</td><td class="up">+9.9%</td><td>0.9</td><td>4.1%</td><td>2,106 亿</td><td>2,118 亿</td><td>10:11</td><td>10:30</td><td>2 次</td><td>设备龙头跟涨（中军确认）</td></tr>
+          <tr><td>中微公司 688012</td><td>首板</td><td class="up">+9.8%</td><td>0.6</td><td>3.8%</td><td>986 亿</td><td>992 亿</td><td>13:22</td><td>13:35</td><td>3 次</td><td>后排补涨（封单偏弱）</td></tr>
+          <tr><td>沪硅产业 688126</td><td>首板</td><td class="up">+9.7%</td><td>0.4</td><td>6.2%</td><td>512 亿</td><td>518 亿</td><td>13:47</td><td>14:02</td><td>2 次</td><td>后排补涨</td></tr>
+        </table>
+        <div class="note">梯队解读：龙头 5 板未开板（最强）、中军 2 板确认、后排首板 12 只跟进——<b>梯队结构完整=主线相</b>；封单比&gt;1 且开板 0 次为强封；数据：limit_up_down（盘中实时）+ 涨停原因=新闻/公告关联（news_data join）</div>
+      </details>
+
+      <details class="sec-det">
+        <summary><b>白酒</b> · 梯队较完整 · 完整度 75 / 强度 88.2 · 净流入 <span class="up">+42.6 亿</span></summary>
+        <div style="font-size:12px;color:var(--dim);margin:8px 0"><span style="color:var(--text)">龙头</span>：贵州茅台（趋势新高，非连板）· <span style="color:var(--text)">中军</span>：五粮液、泸州老窖 · <span class="dim">后排</span>：2 板 1 只 / 首板 6 只</div>
+        <table>
+          <tr><th>个股</th><th>几天几板</th><th>涨幅</th><th>封单比</th><th>换手率</th><th>流通市值</th><th>总市值</th><th>首封</th><th>封住</th><th>开板</th><th>涨停原因分析</th></tr>
+          <tr><td>酒鬼酒 000799</td><td>2连板</td><td class="up">+10.0%</td><td>1.4</td><td>9.1%</td><td>286 亿</td><td>292 亿</td><td>10:18</td><td>10:18</td><td>0 次</td><td>中秋备货启动+券商上调评级</td></tr>
+          <tr><td>舍得酒业 600702</td><td>首板</td><td class="up">+9.9%</td><td>0.8</td><td>7.4%</td><td>402 亿</td><td>409 亿</td><td>11:02</td><td>11:20</td><td>1 次</td><td>板块跟风</td></tr>
+        </table>
+        <div class="note">梯队解读：大市值龙头走趋势（茅台 +3.1% 不连板）、小盘先锋连板——机构型主线特征，持续性好于连板型但爆发力弱</div>
+      </details>
+
+      <details class="sec-det">
+        <summary><b>证券</b> · 梯队残缺 ⚠（有龙头无后排） · 完整度 55 / 强度 79.3 · 净流入 <span class="up">+21.4 亿</span></summary>
+        <div style="font-size:12px;color:var(--dim);margin:8px 0"><span style="color:var(--text)">龙头</span>：东方财富（2连板）· <span class="dim">中军/后排缺位</span>——首板仅 2 只</div>
+        <table>
+          <tr><th>个股</th><th>几天几板</th><th>涨幅</th><th>封单比</th><th>换手率</th><th>流通市值</th><th>总市值</th><th>首封</th><th>封住</th><th>开板</th><th>涨停原因分析</th></tr>
+          <tr><td>东方财富 300059</td><td>2连板</td><td class="up">+20.0%</td><td>2.1</td><td>6.8%</td><td>2,890 亿</td><td>2,912 亿</td><td>09:55</td><td>09:55</td><td>0 次</td><td>成交额破万亿受益+降准预期</td></tr>
+        </table>
+        <div class="note">梯队解读：龙头独行无梯队=持续性存疑，除非明日后排补涨跟进（梯队完整度是主线确认的硬指标）</div>
+      </details>
+    </div>
+
+    <!-- 板块详情（全字段示例） -->
+    <details class="card sec-det" style="margin-bottom:14px">
+      <summary><b>板块详情 · 半导体</b>（拉升原因/持续性/主线概率分解/周期表位置/景气度/业绩/容量/个股贡献——点开查看）</summary>
+      <div class="row c2" style="margin-top:10px">
+        <div>
+          <table>
+            <tr><th style="width:34%">维度</th><th>内容</th></tr>
+            <tr><td>拉升原因分析</td><td>新闻驱动（国产化率突破 40%）+ 业绩（龙头中报预增）+ 政策预期；非单纯情绪</td></tr>
+            <tr><td>板块持续性</td><td>连续 2 日净流入 · 换手率 5.8%（温和放大）· 回调缩量——持续性 <b class="up">较好</b></td></tr>
+            <tr><td>成为主线概率分解</td><td>RRG 转强 +15% · 接力反核阶段 +12% · 资金持续性 +18% · 梯队完整 +23% = <b class="up">68%</b></td></tr>
+            <tr><td>TDX 板块周期表</td><td>当前位置：<b>启动期 → 主升期过渡段</b>（880xxx 板块周期定位）</td></tr>
+          </table>
+        </div>
+        <div>
+          <table>
+            <tr><th style="width:34%">维度</th><th>内容（专业机构口径）</th></tr>
+            <tr><td>行业景气度</td><td>一致预期上修（分析师盈利预测上调 12 家/下调 3 家）+ 研报覆盖 48 篇/周（密度上升）——关联 analyst_forecast / research_report</td></tr>
+            <tr><td>行业业绩</td><td>板块个股最新财报：营收增速中位数 +18.2%、净利增速中位数 +24.6%（income_statement 聚合）</td></tr>
+            <tr><td>板块容量</td><td>日均成交 612 亿、自由流通市值 2.1 万亿——可容纳机构级资金建仓（vs 小板块 50 亿成交无法建仓）</td></tr>
+            <tr><td>拥挤度风险</td><td>成交占全市场 6.0%（警戒线 8%）——偏热未过热</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="note">板块（880xxx 交易主题）≠ 行业（申万官方分类）：景气度/业绩通过板块-行业映射关联；成分股分时贡献（哪些先涨/后涨）在下方分时贡献度拆解中下钻</div>
+    </details>
+
+    <!-- 板块档案下钻（I-8 P2：梯队明细=当日结构，本卡=历史维度——成分股全表+资金流历史+板块舆情） -->
+    <div class="card" style="margin-bottom:14px">
+      <h3>板块档案下钻 <span class="badge b-na">演示数据</span> <span class="dim">成分股全表（sector_constituent 16.3 万行）+ 板块资金流历史（money_flow 近 5 日）+ 板块舆情（news_data join + analyst_forecast）；全板块覆盖待成分映射管线（I-2）</span></h3>
+      <div class="tabs" id="secarc-tabs" style="margin-bottom:10px">
+        <span class="tab on" data-sec="半导体" onclick="secArcSet('半导体',this)">半导体</span>
+        <span class="tab" data-sec="白酒" onclick="secArcSet('白酒',this)">白酒</span>
+        <span class="tab" data-sec="证券" onclick="secArcSet('证券',this)">证券</span>
+        <span class="dim" style="font-size:11px;align-self:center">演示内置 3 板块；其余板块档案待接入（I-2）</span>
+      </div>
+      <div class="row c32">
+        <div>
+          <div class="sec-title" style="margin-top:0">成分股全表 <span class="dim">按权重排序</span></div>
+          <table><tbody id="secarc-cons"></tbody></table>
+        </div>
+        <div>
+          <div class="sec-title" style="margin-top:0">板块资金流历史 <span class="dim">近 5 日主力净流入</span></div>
+          <div id="secarc-flow"></div>
+          <div class="sec-title">板块舆情 <span class="dim">48 小时热点词 + 研报密度</span></div>
+          <div id="secarc-news" style="font-size:12px;line-height:2"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 分时贡献度拆解 -->
+    <div class="card" style="margin-bottom:14px">
+      <h3>大盘分时贡献度拆解 <span class="dim">每段上涨/下跌由哪些板块构成（专业名：指数分时贡献度拆解）</span></h3>
+      <svg class="spark" id="sector-contrib" viewBox="0 0 1100 260" preserveAspectRatio="none" style="background:#000000;border-radius:4px"></svg>
+      <table style="margin-top:8px">
+        <tr><th>时段</th><th>大盘方向</th><th>领涨/领跌板块</th><th>贡献</th><th>性质判定</th></tr>
+        <tr><td>09:30-10:00</td><td class="up">+0.4%</td><td>半导体、白酒</td><td>+8.2 点</td><td><span class="badge b-buy">进攻带队</span> 开局健康</td></tr>
+        <tr><td>10:00-10:40</td><td class="down">-0.3%</td><td>新能源、地产</td><td>-6.1 点</td><td><span class="badge b-na">退潮板块拖累</span></td></tr>
+        <tr><td>10:40-11:30</td><td class="up">+0.5%</td><td>证券、白酒</td><td>+9.4 点</td><td><span class="badge b-buy">进攻带队</span> 放量上攻</td></tr>
+        <tr><td>13:10-13:40</td><td class="down">-0.4%</td><td>全市场回落</td><td>-7.8 点</td><td><span class="badge b-warn">普跌</span> 看逆势榜</td></tr>
+        <tr><td>13:40-15:00</td><td class="up">+0.5%</td><td>半导体、消费电子</td><td>+10.3 点</td><td><span class="badge b-buy">进攻带队</span> 主线强化</td></tr>
+      </table>
+      <div class="note">点开时段行可下钻：该时段板块内个股贡献（哪些先涨/哪些后涨——龙头先行、中军确认、后排补涨的时间序）；数据：kline_sector_intraday（分钟级）× kline_index 分钟级对齐计算</div>
+    </div>
+
+    <!-- 逆势榜（大盘分时下跌段） -->
+    <div class="row c4">
+      <div class="card">
+        <h3>分钟级逆势上涨</h3>
+        <table><tr><th>板块</th><th>区间涨幅</th></tr>
+          <tr><td>半导体</td><td class="up">+0.8%</td></tr>
+          <tr><td>白酒</td><td class="up">+0.3%</td></tr>
+          <tr><td>军工</td><td class="up">+0.1%</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3>下跌段资金流入</h3>
+        <table><tr><th>板块</th><th>净流入</th></tr>
+          <tr><td>半导体</td><td class="up">+4.2 亿</td></tr>
+          <tr><td>证券</td><td class="up">+1.8 亿</td></tr>
+          <tr><td>白酒</td><td class="up">+1.1 亿</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3>率先反弹</h3>
+        <table><tr><th>板块</th><th>领先大盘</th></tr>
+          <tr><td>半导体</td><td>13:42（早 6 分钟）</td></tr>
+          <tr><td>消费电子</td><td>13:44（早 4 分钟）</td></tr>
+          <tr><td>证券</td><td>13:45（早 3 分钟）</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3>最抗跌</h3>
+        <table><tr><th>板块</th><th>区间跌幅</th></tr>
+          <tr><td>银行</td><td class="dim">-0.05%</td></tr>
+          <tr><td>白酒</td><td class="dim">-0.12%</td></tr>
+          <tr><td>公用事业</td><td class="dim">-0.18%</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="note" style="margin-bottom:14px">逆势榜口径：大盘分时下跌段（13:10-13:40）内逐分钟计算；<b>率先反弹+下跌段资金流入同时指向半导体=主力真实进攻方向</b>（最抗跌是防御属性，不等于进攻方向）</div>
+
+    <!-- 盘后板块总结（A9 复盘四分层：小红书组4 复盘大师参考） -->
+    <div class="card">
+      <h3>盘后板块总结 <span class="dim">15:00 后生成 · 四分层资金撤退方向（小红书 复盘大师 参考 A9）</span></h3>
+      <div class="alert-row info">🔵 今日主线：半导体（资金/梯队/逆势三证据共振）；明日关注：证券梯队能否补位（龙头独行需后排跟进确认）<span class="t">盘后</span></div>
+      <table style="margin-top:10px">
+        <tr><th style="width:110px">分层</th><th>板块</th><th>资金动向</th><th>明日定性</th></tr>
+        <tr><td><span class="badge b-buy">主线</span></td><td>半导体</td><td class="up">净流入 +38.2 亿 · 梯队完整（龙头/中军/后排齐）</td><td>延续持仓，回踩不破主线地位</td></tr>
+        <tr><td><span class="badge b-na">次主线</span></td><td>机器人 / AI 算力</td><td class="up">净流入 +12.5 亿 · 龙头独行后排未跟</td><td>观察补位，确认再加</td></tr>
+        <tr><td><span class="badge b-warn">活口</span></td><td>证券</td><td class="dim">净流入 +3.1 亿 · 护盘属性异动</td><td>仅护盘预期，不做主攻</td></tr>
+        <tr><td><span class="badge b-fail">失败/退潮</span></td><td>新能源 / 高位消费</td><td class="down">净流出 -21.7 亿 · 资金撤退方向</td><td>回避，反弹即减仓机会</td></tr>
+      </table>
+      <div class="note">四分层=主线（可攻）/次主线（观察）/活口（仅护盘）/失败退潮（回避）——回答"资金今天从哪撤、往哪去"，指导明日作战池取舍（联动板块梯队 Top10）</div>
+    </div>
+  </section>
+
+  

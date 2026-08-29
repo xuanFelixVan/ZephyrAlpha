@@ -1,0 +1,67 @@
+<section class="page" id="p-t0">
+    <h2 class="page-title">做T分析</h2>
+    <div class="page-sub">实盘组 · 核心目的：分时图做T点位（何时买/何时卖）+ <b>信号正确性回验</b>——反馈系统的做T分析对不对</div>
+
+    <div class="param-strip" style="align-items:center">
+      <span>标的 <span class="sel" id="t0-sym-sel" style="min-width:170px;position:relative;cursor:pointer" onclick="t0SymTgl(event)"><span id="t0-sym-t">600519 贵州茅台</span> ▾
+        <span class="acct-menu" id="t0-sym-menu">
+          <span class="acct-mi on" onclick="t0SymSet(600519,1712.5,'600519 贵州茅台',event)">600519 贵州茅台</span>
+          <span class="acct-mi" onclick="t0SymSet(300750,289.4,'300750 宁德时代',event)">300750 宁德时代</span>
+          <span class="acct-mi" onclick="t0SymSet(688981,99.2,'688981 中芯国际',event)">688981 中芯国际</span>
+          <span class="acct-mi" onclick="t0SymSet(1,3087.53,'000001.SH 上证指数',event)">000001.SH 上证指数</span>
+        </span>
+      </span></span>
+      <span>类型 <b>股票</b>（指数同样可查，如 000001.SH）</span>
+      <span style="border-right:none">数据 <b>tick → 1分钟分时</b>（tick_data / kline_1min）</span>
+    </div>
+
+    <div class="chart-box">
+      <div class="chart-title">分时图 · 做T点位 <span style="font-weight:400">（白=分时价 黄=均价VWAP；▲T买/▼T卖 带逻辑与置信度）</span></div>
+      <svg class="spark" id="t0-svg" viewBox="0 0 1100 440" preserveAspectRatio="none" style="background:#000000;border-radius:4px"></svg>
+      <div class="lv" style="justify-content:center">
+        <span style="color:var(--text)">— 分时价</span><span style="color:var(--yellow)">— 均价 VWAP</span>
+        <span style="color:var(--up)">▲ T买</span><span style="color:var(--down)">▼ T卖</span>
+      </div>
+    </div>
+
+    <div class="row c4">
+      <div class="card metric"><div class="l">均价线偏离度</div><div class="v up">+0.62%</div><div class="s">价格强于均价，偏多</div></div>
+      <div class="card metric"><div class="l">量比</div><div class="v">1.8</div><div class="s">量能温和放大</div></div>
+      <div class="card metric"><div class="l">分时 MACD</div><div class="v up">多头</div><div class="s">DIF 在 DEA 上方</div></div>
+      <div class="card metric" id="t1-sellable-card"><div class="l">T+0 可用底仓</div><div class="v">—</div><div class="s">数据源接口位：query_t1_sellable（BFE-28）</div></div>
+    </div>
+
+    <div class="card">
+      <h3>今日做T信号回验 <span class="dim">信号后 10/30 分钟实际走势判定命中（反馈正确性）</span></h3>
+      <table>
+        <tr><th>时间</th><th>信号</th><th>价位</th><th>逻辑</th><th>置信度</th><th>10分钟后</th><th>30分钟后</th><th>判定</th></tr>
+        <tr><td>10:12</td><td><span class="badge b-buy">T买</span></td><td>1701.2</td><td>回踩均价不破+缩量止跌</td><td>76%</td><td class="up">+0.4%</td><td class="up">+0.9%</td><td><span class="badge b-pass">命中</span></td></tr>
+        <tr><td>11:05</td><td><span class="badge b-sell">T卖</span></td><td>1718.6</td><td>冲高远离均价 1.3%+量价背离</td><td>71%</td><td class="down">-0.3%</td><td class="down">-0.2%</td><td><span class="badge b-pass">命中</span></td></tr>
+        <tr><td>13:24</td><td><span class="badge b-buy">T买</span></td><td>1710.3</td><td>二次回踩均价确认</td><td>68%</td><td class="down">-0.2%</td><td class="up">+0.5%</td><td><span class="badge b-warn">半命中</span></td></tr>
+        <tr><td>14:18</td><td><span class="badge b-sell">T卖</span></td><td>1722.4</td><td>尾盘冲高乏力</td><td>73%</td><td class="down">-0.4%</td><td class="dim">—</td><td><span class="badge b-pass">命中</span></td></tr>
+      </table>
+      <div class="note">今日信号命中率：3 命中 / 1 半命中 / 0 失手（75%）；判定规则=T买后 N 分钟上涨、T卖后 N 分钟下跌为命中——<b>这就是你要的"做T分析对不对"的直接反馈</b>；信号源已接线 MOD-SIG-024 盘中买卖点引擎（production，BFE-01；数据源接口位：query_intraday_buy_sell_points，当前 mock 数据渲染——图上 ▲▼ 与置信度由 FEED 层驱动）；做T专项化+10/30 分钟命中统计正式管线见缺口⑤</div>
+      <!-- 循环升级 R4：回验统计升维（近 20 日命中趋势+类型/置信度分桶——单日 4 条→统计样本，反馈优先） -->
+      <div class="row c2" style="margin-top:10px;margin-bottom:0">
+        <div>
+          <div class="sec-title" style="margin-top:0">近 20 日命中率趋势 <span class="dim">7 日滚动窗口 · 样本 93 条</span></div>
+          <svg id="t0-hit-svg" viewBox="0 0 480 150" style="background:#000000;border-radius:4px;display:block;width:100%;height:auto"></svg>
+        </div>
+        <div>
+          <div class="sec-title" style="margin-top:0">分桶校准 <span class="dim">信号类型 × 置信度（名义 vs 实际）</span></div>
+          <table>
+            <tr><th>信号类型</th><th>样本</th><th>命中率</th><th>判定</th></tr>
+            <tr><td>回踩均价</td><td>46</td><td class="up">78%</td><td><span class="badge b-pass">主信号·可信</span></td></tr>
+            <tr><td>量价背离</td><td>28</td><td class="up">71%</td><td><span class="badge b-pass">可信</span></td></tr>
+            <tr><td>二次确认</td><td>19</td><td style="color:var(--text)">63%</td><td><span class="badge b-warn">降权参考</span></td></tr>
+            <tr><td>置信度 ≥75%</td><td>34</td><td class="up">82%</td><td><span class="badge b-pass">校准良好</span></td></tr>
+            <tr><td>置信度 60~75%</td><td>41</td><td class="up">70%</td><td><span class="badge b-pass">符合名义</span></td></tr>
+            <tr><td>置信度 &lt;60%</td><td>18</td><td style="color:var(--text)">56%</td><td><span class="badge b-warn">低于名义·建议过滤</span></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="note">反馈结论：回踩均价+高置信度为主战场；&lt;60% 置信度实际命中 56% 低于名义——建议系统侧过滤低置信信号（与作战室 W0 校准度口径同构；演示统计，正式命中统计管线=缺口⑤）</div>
+    </div>
+  </section>
+
+  
