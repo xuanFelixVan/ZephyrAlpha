@@ -1059,3 +1059,281 @@ class TestStableKeyAndHashParsing:
 
         fid = "x.py:f:h1||y.py:g:h2"
         assert EchoGuardAdapter._make_stable_key(fid) == EGConfig.make_stable_key(fid)
+
+
+# ---------------------------------------------------------------------------
+# 平凡访问器族过滤测试（治本 AI-GOVFIX-ECHO-001）
+# ---------------------------------------------------------------------------
+
+
+class TestTrivialAccessorFilter:
+    """平凡访问器族过滤测试——extract 级假阳性族引擎级治本（AI-GOVFIX-ECHO-001）。
+
+    根因（实证）：
+    - echo-guard 行数口径 = tree-sitter function_definition 跨度（def→末行，
+      含 docstring、不含 decorator）——``@property+def+docstring+return`` = 3 行
+      恰过 min_function_lines=3 入库；
+    - Tier-1 归一化 AST 哈希对 ``return self._X`` 模板 100% 撞车（Type-2 口径）；
+    - echo-guard ``_is_trivial_function`` 按物理行计 body，docstring 被计入，
+      带注释单行访问器逃逸"单语句体=平凡"抑制 → 3+ 副本聚组 = extract 硬阻断
+      （实证 agent_id/traces/links/core_writer/initial_capital 五 hub 82+ 对全假阳性）。
+
+    治本：适配器 AST 层重判——函数体剥 docstring 后 ≤1 条语句 = 平凡访问器
+    （getter/setter/单行表达式同族），source/existing 两侧皆平凡则剔除 finding；
+    判定失败（文件缺失/解析失败/定位失败/歧义）一律保守保留；
+    多语句函数（真克隆检测面）不受影响。
+    """
+
+    # ── fixture 文件内容（def 行号必须与 finding JSON 的 lineno 一致）──
+    _GETTER_A = (
+        "class Lock:\n"
+        "    @property\n"
+        "    def agent_id(self) -> str:\n"  # def = line 3
+        '        """agent_id implementation."""\n'
+        "        return self._agent_id\n"
+    )
+    _GETTER_B = (
+        "class Tracker:\n"
+        "    @property\n"
+        "    def traces(self):\n"  # def = line 3
+        '        """只读：traces。"""\n'
+        "        return self._traces\n"
+    )
+    _GETTER_C = (
+        "class Ctx:\n"
+        "    @property\n"
+        "    def links(self):\n"  # def = line 3
+        '        """只读：links。"""\n'
+        "        return self._links\n"
+    )
+    _GETTER_D = (
+        "class Exec:\n"
+        "    @property\n"
+        "    def core_writer(self):\n"  # def = line 3
+        '        """只读：core_writer。"""\n'
+        "        return self._core_writer\n"
+    )
+    _GETTER_E = (
+        "class Portfolio:\n"
+        "    @property\n"
+        "    def initial_capital(self):\n"  # def = line 3
+        '        """初始资金"""\n'
+        "        return self._initial_capital\n"
+    )
+    _SETTER_A = (
+        "class Writer:\n"
+        "    @core_writer.setter\n"
+        "    def core_writer(self, value):\n"  # def = line 3
+        '        """写入：core_writer。"""\n'
+        "        self._core_writer = value\n"
+    )
+    _SETTER_B = (
+        "class Store:\n"
+        "    @storage_dir.setter\n"
+        "    def storage_dir(self, value):\n"  # def = line 3
+        '        """写入：storage_dir。"""\n'
+        "        self._storage_dir = value\n"
+    )
+    _MULTILINE_DOC_GETTER = (
+        "class Cfg:\n"
+        "    @property\n"
+        "    def base_dir(self):\n"  # def = line 3
+        '        """只读：base_dir。\n'
+        "\n"
+        "        多行注释压测——docstring 跨行不影響语句计数。\n"
+        '        """\n'
+        "        return self._base_dir\n"
+    )
+    _REAL_A = (
+        "def compute_total(items):\n"  # def = line 1
+        '    """合计正值。"""\n'
+        "    total = 0\n"
+        "    for it in items:\n"
+        "        if it > 0:\n"
+        "            total += it\n"
+        "    return total\n"
+    )
+    _REAL_B = (
+        "def sum_positive(values):\n"  # def = line 1
+        '    """合计正值。"""\n'
+        "    result = 0\n"
+        "    for v in values:\n"
+        "        if v > 0:\n"
+        "            result += v\n"
+        "    return result\n"
+    )
+    _AMBIGUOUS = (
+        "class Dual:\n"
+        "    @property\n"
+        "    def traces(self):\n"  # def = line 3
+        "        return self._traces\n"
+        "    @traces.setter\n"
+        "    def traces(self, value):\n"  # def = line 6（同名第二定义）
+        "        self._traces = value\n"
+    )
+
+    def _write(self, repo: Path, name: str, content: str) -> None:
+        (repo / name).write_text(content, encoding="utf-8")
+
+    def _seed_repo(self, repo: Path) -> None:
+        """写入全部 fixture 文件。"""
+        for name, content in {
+            "alpha.py": self._GETTER_A,
+            "beta.py": self._GETTER_B,
+            "zeta.py": self._GETTER_C,
+            "eta.py": self._GETTER_D,
+            "theta.py": self._GETTER_E,
+            "gamma.py": self._SETTER_A,
+            "sigma.py": self._SETTER_B,
+            "omega.py": self._MULTILINE_DOC_GETTER,
+            "delta.py": self._REAL_A,
+            "epsilon.py": self._REAL_B,
+            "ambiguous.py": self._AMBIGUOUS,
+        }.items():
+            self._write(repo, name, content)
+
+    @staticmethod
+    def _match_raw(src: tuple[str, str, int], ext: tuple[str, str, int], severity: str = "extract") -> dict:
+        """构造 type=match 的 echo-guard JSON。tuple=(filepath, name, lineno)。"""
+        return {
+            "findings": [
+                {
+                    "type": "match",
+                    "finding_id": "F-T1",
+                    "severity": severity,
+                    "clone_type": "T2",
+                    "similarity_score": 1.0,
+                    "source": {"filepath": src[0], "name": src[1], "lineno": src[2]},
+                    "existing": {"filepath": ext[0], "name": ext[1], "lineno": ext[2]},
+                }
+            ]
+        }
+
+    def _detect(self, adapter: EchoGuardAdapter, raw: dict, files: list[str]):
+        mock_result = MagicMock(returncode=1, stdout=json.dumps(raw), stderr="")
+        with patch("subprocess.run", return_value=mock_result):
+            return adapter.detect(files)
+
+    # ── 假阳性族清零（五 hub 锁定）──
+
+    def test_trivial_getter_pair_dropped(self, tmp_path: Path):
+        """带 docstring 的单 return @property 对（agent_id↔traces 形态）被剔除。"""
+        self._seed_repo(tmp_path)
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        raw = self._match_raw(("alpha.py", "agent_id", 3), ("beta.py", "traces", 3))
+        findings, degraded = self._detect(adapter, raw, ["alpha.py"])
+        assert degraded is False
+        assert findings == []
+
+    def test_five_hub_group_dropped(self, tmp_path: Path):
+        """五 hub 形态（agent_id/traces/links/core_writer/initial_capital）extract 组全灭。"""
+        self._seed_repo(tmp_path)
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        raw = {
+            "findings": [
+                {
+                    "type": "group",
+                    "finding_id": "G-HUB",
+                    "severity": "extract",
+                    "clone_type": "T2",
+                    "similarity_score": 1.0,
+                    "functions": [
+                        {"filepath": "alpha.py", "name": "agent_id", "lineno": 3},
+                        {"filepath": "beta.py", "name": "traces", "lineno": 3},
+                        {"filepath": "zeta.py", "name": "links", "lineno": 3},
+                        {"filepath": "eta.py", "name": "core_writer", "lineno": 3},
+                        {"filepath": "theta.py", "name": "initial_capital", "lineno": 3},
+                    ],
+                }
+            ]
+        }
+        findings, degraded = self._detect(adapter, raw, ["alpha.py"])
+        assert degraded is False
+        assert findings == []
+
+    def test_trivial_setter_pair_dropped(self, tmp_path: Path):
+        """setter 族（docstring + 单赋值语句）同族剔除——min=3 回退后不复发。"""
+        self._seed_repo(tmp_path)
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        raw = self._match_raw(("gamma.py", "core_writer", 3), ("sigma.py", "storage_dir", 3))
+        findings, degraded = self._detect(adapter, raw, ["gamma.py"])
+        assert degraded is False
+        assert findings == []
+
+    def test_multiline_docstring_accessor_dropped(self, tmp_path: Path):
+        """多行 docstring 的单 return 访问器仍判平凡（语句计数≠物理行计数）。"""
+        self._seed_repo(tmp_path)
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        raw = self._match_raw(("omega.py", "base_dir", 3), ("beta.py", "traces", 3))
+        findings, degraded = self._detect(adapter, raw, ["omega.py"])
+        assert degraded is False
+        assert findings == []
+
+    def test_review_severity_pair_also_dropped(self, tmp_path: Path):
+        """review 级平凡对同样剔除（过滤与 severity 无关——噪声在任何级别都是噪声）。"""
+        self._seed_repo(tmp_path)
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        raw = self._match_raw(("alpha.py", "agent_id", 3), ("beta.py", "traces", 3), severity="review")
+        findings, degraded = self._detect(adapter, raw, ["alpha.py"])
+        assert degraded is False
+        assert findings == []
+
+    def test_scan_path_also_filters(self, tmp_path: Path):
+        """scan()（L2 审计）与 detect() 共用过滤漏斗。"""
+        self._seed_repo(tmp_path)
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        raw = self._match_raw(("alpha.py", "agent_id", 3), ("beta.py", "traces", 3))
+        mock_result = MagicMock(returncode=1, stdout=json.dumps(raw), stderr="")
+        with patch("subprocess.run", return_value=mock_result):
+            findings, degraded = adapter.scan()
+        assert degraded is False
+        assert findings == []
+
+    # ── 真克隆检测面不动 ──
+
+    def test_real_clone_pair_kept(self, tmp_path: Path):
+        """≥6 行多语句实质重复对（重命名 Type-2）仍保留——extract 阻断面不受影响。"""
+        self._seed_repo(tmp_path)
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        raw = self._match_raw(("delta.py", "compute_total", 1), ("epsilon.py", "sum_positive", 1))
+        findings, degraded = self._detect(adapter, raw, ["delta.py"])
+        assert degraded is False
+        assert len(findings) == 1
+        assert findings[0].severity == "extract"
+        assert findings[0].source_function == "compute_total"
+
+    def test_trivial_vs_real_kept(self, tmp_path: Path):
+        """一侧平凡、一侧多语句 → 保守保留（两侧皆平凡才剔除）。"""
+        self._seed_repo(tmp_path)
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        raw = self._match_raw(("alpha.py", "agent_id", 3), ("delta.py", "compute_total", 1))
+        findings, degraded = self._detect(adapter, raw, ["alpha.py"])
+        assert degraded is False
+        assert len(findings) == 1
+
+    def test_missing_file_side_kept(self, tmp_path: Path):
+        """一侧文件缺失（无法 AST 判定）→ 保守保留。"""
+        self._seed_repo(tmp_path)
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        raw = self._match_raw(("alpha.py", "agent_id", 3), ("ghost.py", "traces", 3))
+        findings, degraded = self._detect(adapter, raw, ["alpha.py"])
+        assert degraded is False
+        assert len(findings) == 1
+
+    def test_lineno_shift_unique_name_still_dropped(self, tmp_path: Path):
+        """索引后文件被编辑致 lineno 偏移：唯一函数名回退定位仍正确剔除。"""
+        self._seed_repo(tmp_path)
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        raw = self._match_raw(("alpha.py", "agent_id", 99), ("beta.py", "traces", 3))
+        findings, degraded = self._detect(adapter, raw, ["alpha.py"])
+        assert degraded is False
+        assert findings == []
+
+    def test_ambiguous_name_lineno_miss_kept(self, tmp_path: Path):
+        """同名多定义（property+setter）且 lineno 未命中 → 歧义保守保留。"""
+        self._seed_repo(tmp_path)
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        raw = self._match_raw(("ambiguous.py", "traces", 999), ("beta.py", "traces", 3))
+        findings, degraded = self._detect(adapter, raw, ["ambiguous.py"])
+        assert degraded is False
+        assert len(findings) == 1

@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-CLONE_GUARD | docs/03_modules/_cross_layer/clone_guard/blueprint.md | §4.3
 # [MODULE] zephyr.clone_guard.engines.echo_guard_adapter
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.clone_guard.config (CloneGuardConfig); subprocess; json; logging; ruamel.yaml (acknowledge/prune 写入路径，lazy import); filelock (_embedding_lock 跨进程锁，lazy import)
+# [DEPENDENCIES] zephyr.clone_guard.config (CloneGuardConfig); subprocess; json; logging; ast (平凡访问器族 AST 判定，AI-GOVFIX-ECHO-001); ruamel.yaml (acknowledge/prune 写入路径，lazy import); filelock (_embedding_lock 跨进程锁，lazy import)
 # [CONSUMERS] zephyr.clone_guard.orchestrator
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] Adapter 模式——封装 echo-guard CLI 调用，对编排层暴露统一 detect() 接口；echo-guard 不可用时返回空列表 + degraded 标记；永不抛异常；OOB 治本（P2 #ARCH-ECHO-GUARD-EMBEDDING-OOB）：_embedding_lock 跨进程文件锁序列化 echo-guard CLI 调用（detect/scan），防 EmbeddingStore 无锁并发写导致 153 函数 embedding_row OOB（0.74%）；锁超时→degraded 不执行 CLI（避免无锁竞态）；filelock 未安装/锁目录不可写→fail-open 无锁执行（守 _GlobalCommitLock 先例）
+# [INVARIANTS] Adapter 模式——封装 echo-guard CLI 调用，对编排层暴露统一 detect() 接口；echo-guard 不可用时返回空列表 + degraded 标记；永不抛异常；OOB 治本（P2 #ARCH-ECHO-GUARD-EMBEDDING-OOB）：_embedding_lock 跨进程文件锁序列化 echo-guard CLI 调用（detect/scan），防 EmbeddingStore 无锁并发写导致 153 函数 embedding_row OOB（0.74%）；锁超时→degraded 不执行 CLI（避免无锁竞态）；filelock 未安装/锁目录不可写→fail-open 无锁执行（守 _GlobalCommitLock 先例）；平凡访问器族治本（AI-GOVFIX-ECHO-001）：_parse_findings 漏斗 AST 层剔除"两侧皆平凡访问器"finding（函数体剥 docstring 后 ≤1 语句=平凡），根治 echo-guard _is_trivial_function 物理行口径 docstring 逃逸致的 Type-2 单行访问器 extract 假阳性族（实证五 hub 82+ 对）；判定失败保守保留；多语句真克隆检测面不动
 # [MODIFY-GUARD] blueprint=docs/03_modules/_cross_layer/clone_guard/blueprint.md
 # [STABILITY] evolving
 # [SAFETY] L
@@ -25,10 +25,25 @@
   - 超时 → degraded=True, 返回空列表
   - CLI 崩溃 → degraded=True, 返回空列表
   - 正常执行 → 返回 Finding 列表
+
+平凡访问器族过滤（治本 AI-GOVFIX-ECHO-001）：
+  echo-guard 行数口径为 tree-sitter function_definition 跨度（def→末行，
+  含 docstring、不含 decorator），``@property+def+docstring+return self._X``
+  3 行模板恰过 min_function_lines=3 入库；Tier-1 归一化 AST 哈希对该模板
+  100% 撞车（Type-2 口径）；而其 _is_trivial_function 按物理行计函数体，
+  docstring 被计入致带注释单行访问器逃逸"单语句体=平凡"抑制——3+ 副本聚组
+  即 extract 级硬阻断（实证 agent_id/traces/links/core_writer/initial_capital
+  五 hub 82+ 对全假阳性，2026-08-28）。本适配器在 _parse_findings 漏斗以
+  Python AST 重判：函数体剥 docstring 后 ≤1 条语句即平凡访问器（getter/
+  setter/单行表达式同族），source/existing 两侧皆平凡则剔除；判定失败
+  （文件缺失/解析失败/定位失败/歧义）一律保守保留；多语句函数（真克隆
+  检测面）不受影响。回归锁定：tests/clone_guard/test_echo_guard_adapter.py
+  TestTrivialAccessorFilter。
 """
 
 from __future__ import annotations
 
+import ast
 import json
 import logging
 import os
@@ -573,7 +588,10 @@ class EchoGuardAdapter:
         return src_hash, ext_hash
 
     def _parse_findings(self, data: dict) -> list[Finding]:
-        """将 echo-guard JSON 输出解析为 Finding 列表。"""
+        """将 echo-guard JSON 输出解析为 Finding 列表（含平凡访问器族过滤）。
+
+        detect()/scan() 共用漏斗——平凡访问器对过滤在此统一生效（AI-GOVFIX-ECHO-001）。
+        """
         findings: list[Finding] = []
         for item in data.get("findings", []):
             try:
@@ -583,7 +601,92 @@ class EchoGuardAdapter:
                     findings.extend(self._parse_group(item))
             except (KeyError, TypeError) as e:
                 logger.debug("跳过无法解析的 finding: %s (%s)", item.get("finding_id", "?"), e)
-        return findings
+        return self._drop_trivial_accessor_pairs(findings)
+
+    # ------------------------------------------------------------------
+    # 平凡访问器族过滤（治本 AI-GOVFIX-ECHO-001）
+    # ------------------------------------------------------------------
+
+    def _drop_trivial_accessor_pairs(self, findings: list[Finding]) -> list[Finding]:
+        """剔除 source/existing 两侧均为平凡访问器的 finding（Type-2 单行模板撞车假阳性族）。
+
+        根因：echo-guard ``_is_trivial_function`` 按物理行计函数体，docstring 被计为
+        body line——``@property def f(): "doc"; return self._x``（def+docstring+return
+        3 行模板，恰过 min_function_lines=3）逃逸"单语句体=平凡"抑制；而 Tier-1 归一化
+        AST 哈希对该模板 100% 撞车（``return self._X`` 标识符位置归一后全同构），
+        3+ 副本聚组即 extract 级硬阻断（实证五 hub 82+ 对全假阳性）。
+
+        治本：AST 层重判——函数体剥 docstring 后 ≤1 条语句即平凡访问器（getter/
+        setter/单行表达式同族），两侧皆平凡则剔除。判定失败（文件缺失/解析失败/
+        函数定位失败/同名歧义）一律保守保留。多语句函数（真克隆检测面）不受影响。
+        """
+        if not findings:
+            return findings
+        ast_cache: dict[str, ast.Module | None] = {}
+        kept: list[Finding] = []
+        for f in findings:
+            if self._is_trivial_accessor(f.source_file, f.source_function, f.source_lineno, ast_cache) and (
+                self._is_trivial_accessor(f.existing_file, f.existing_function, f.existing_lineno, ast_cache)
+            ):
+                logger.debug(
+                    "剔除平凡访问器族 finding: %s:%s ↔ %s:%s（两侧皆单语句体，Type-2 模板撞车非真重复）",
+                    f.source_file,
+                    f.source_function,
+                    f.existing_file,
+                    f.existing_function,
+                )
+                continue
+            kept.append(f)
+        return kept
+
+    def _is_trivial_accessor(
+        self,
+        filepath: str,
+        name: str,
+        lineno: int,
+        ast_cache: dict[str, ast.Module | None],
+    ) -> bool:
+        """AST 判定指定函数是否平凡访问器（函数体剥 docstring 后 ≤1 条语句）。
+
+        定位策略：按函数名收集候选，优先 lineno 精确命中（echo-guard tree-sitter
+        lineno 与 Python ast FunctionDef.lineno 同指 def 行，口径一致）；未命中且
+        名字唯一时回退唯一候选（容忍索引后文件编辑致行号偏移）；同名多定义
+        （property+setter）且行号未命中属歧义，保守判非平凡。
+
+        保守语义：文件缺失/不可读/语法错误/函数定位失败 → False（保留 finding）。
+        """
+        key = str(self._repo_root / filepath)
+        if key not in ast_cache:
+            try:
+                ast_cache[key] = ast.parse(Path(key).read_text(encoding="utf-8"))
+            except (OSError, SyntaxError, ValueError):
+                ast_cache[key] = None
+        tree = ast_cache[key]
+        if tree is None:
+            return False
+
+        candidates = [
+            n
+            for n in ast.walk(tree)
+            if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and n.name == name
+        ]
+        if not candidates:
+            return False
+        node = next((n for n in candidates if n.lineno == lineno), None)
+        if node is None:
+            node = candidates[0] if len(candidates) == 1 else None
+        if node is None:
+            return False
+
+        body = node.body
+        if (
+            body
+            and isinstance(body[0], ast.Expr)
+            and isinstance(body[0].value, ast.Constant)
+            and isinstance(body[0].value.value, str)
+        ):
+            body = body[1:]  # 剥 docstring——语句计数口径，非物理行口径
+        return len(body) <= 1
 
     def _parse_match(self, item: dict) -> Finding:
         """解析 type=match 的 finding。"""

@@ -2,12 +2,18 @@
 # See: https://github.com/echo-guard/echo-guard
 
 # Minimum function size to consider (in lines)
-# 2026-08-28 AI-WAVE0-001：3→6 校准——extract 级硬阻断被"琐碎单行访问器族"误报淹没
-# （@property/decorator+def+return 3 行模板在 Type-2 重命名口径下全仓 100% 撞车，
-# 实证 agent_id/initial_capital/traces/links/core_writer 五 hub 82+ 对全为假阳性），
-# 3 行阈值恰等于该模板行数=放行假阳性族；6 行阈值灭族且保留真克隆检测面。
-# 既有 dismissed 登记（本文件下方案例）为该族的实例级备案，两轨并行防复发。
-min_function_lines: 6
+# 2026-08-28 AI-WAVE0-001：3→6 治标——extract 级硬阻断被"琐碎单行访问器族"误报淹没
+# （@property+def+docstring+return 3 行模板在 Type-2 重命名口径下全仓 100% 撞车，
+# 实证 agent_id/initial_capital/traces/links/core_writer 五 hub 82+ 对全为假阳性）。
+# 2026-08-29 AI-GOVFIX-ECHO-001：6→3 回退——引擎级治本已落地：
+# src/zephyr/clone_guard/engines/echo_guard_adapter.py 在 _parse_findings 漏斗以
+# Python AST 重判"函数体剥 docstring 后 ≤1 条语句=平凡访问器"，两侧皆平凡即剔除
+# （根因=echo-guard _is_trivial_function 物理行口径把 docstring 计入函数体，
+# 带注释单行访问器逃逸平凡抑制）。getter/setter/多行 docstring 访问器族与阈值
+# 脱钩灭族，min=6 牺牲的 3-5 行真克隆（多语句）检测面恢复。
+# 回归锁定：tests/clone_guard/test_echo_guard_adapter.py TestTrivialAccessorFilter。
+# 既有 dismissed 登记（本文件下方案例）保留为该族的实例级备案，双轨并行防复发。
+min_function_lines: 3
 
 # Maximum function size to consider
 max_function_lines: 500
