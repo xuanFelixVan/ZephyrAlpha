@@ -2,7 +2,7 @@
 # [MODULE] zephyr.intelligence.llm_agent_router
 # [DOMAIN] D_INTELLIGENCE
 # [DEPENDENCIES] zephyr.shared.foundation.errors(ZephyrBaseError)
-# [CONSUMERS] 运行时装配批（decision_engine 接级联 / cost_ledger 接台账 / audit_sink 接审计链 / period 接交易时段真源）
+# [CONSUMERS] zephyr.intelligence.model_routing.runtime_assembly（运行时装配批已接线：decision_engine 接级联 cascade_orchestrator / cost_ledger 接 BudgetEngine COST 台账 / audit_sink 接 16号文统一事件 JSONL 落盘 / period 接 data/calendar 交易时段真源）
 # [STARTUP] imported
 # [MATURITY] testing
 # [INVARIANTS] 判定核心纯内存无IO; 配置非法Fail-Closed; 空候选→RouteDecisionError; 成本判定确定性; 降级=信号语义; 零密钥字段; 仅信号输入无下单语义

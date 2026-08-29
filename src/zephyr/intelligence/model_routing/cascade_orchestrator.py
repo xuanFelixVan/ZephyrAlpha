@@ -2,7 +2,7 @@
 # [MODULE] zephyr.intelligence.model_routing.cascade_orchestrator
 # [DOMAIN] D_INTELLIGENCE
 # [DEPENDENCIES] zephyr.intelligence.model_profiling.capability_passport(CapabilityPassport/TamperError/QuickProfile); zephyr.intelligence.model_profiling.job_matcher(JobMatcher); zephyr.intelligence.model_profiling.task_model_learner(ModelTaskMatrix); zephyr.governance.intelligence_governance.model_router(ModelRouter/RoutingDecision/TaskComplexity 只消费不改); zephyr.governance.ops_governance.budget_models(ModelTier); zephyr.shared.io.paths(REPO_ROOT)
-# [CONSUMERS] 待统筹接线（06号文 Phase 2 dispatch 链 + AutoRuntime）
+# [CONSUMERS] zephyr.intelligence.model_routing.runtime_assembly（已接线：route 适配为 llm_agent_router decision_engine 契约）；06号文 Phase 2 dispatch 链 + AutoRuntime 经装配层消费
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 只做消费与串联（三基座 CapabilityPassport/JobMatcher/task_model_learner + MOD-INF-024 ModelRouter 内部结构零改动）; L1 验签失败=拒绝（伪造/篡改护照不进入候选）; required 硬门不满足不进入 L2; 级联降级链逐段留痕（每段故障=降级产物+告警，不中断路由返回）; 风控类任务必须外部 API 不可降级（HB-09，故障注入也不落本地/规则引擎）; 路由规则落配置（config/model_routing_policy.yaml，配置变更不改代码）; 可变容器 typing.Final 禁重新赋值
