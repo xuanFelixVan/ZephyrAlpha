@@ -4781,22 +4781,24 @@ def derive_autonomy_fallback(node_type: str, path: str) -> str:
     return _AUTONOMY_FALLBACK.get(node_type, "ai_modifiable")
 
 
-def _check_incremental_skip(files_data: list, output_db: str) -> bool:
-    """裁定#209 Stage 3: 增量模式——比较文件 content_hash，无变更时返回 True（跳过 DB 重建）。
+def _compute_incremental_diff(files_data: list, output_db: str) -> dict | None:
+    """裁定#209 Stage 3 扩展（2026-08-29）：计算增量差异集，供 skip 判定与 panorama 增量分发共用。
 
-    首次运行（content_hash 列不存在）或 DB 连接失败时返回 False（回退全量重建）。
+    返回 None 表示 DB 查询失败（调用方回退全量语义）。
+    返回 dict：added/removed/changed/stale 四个 path 集合 + db_module_by_path（重建前 DB 行的
+    path→blueprint_id 映射，removed 文件的模块归属只能从这里取）。
     """
     if not output_db:
-        return False
+        return None
     conn = None
     try:
         conn = _get_pg_conn_with_dict_cursor(autocommit=False)  # Bug 2 修复：DictCursor
         with conn.cursor() as cur:
-            cur.execute("SELECT path, content_hash FROM nodes WHERE design_maturity = 'production'")
+            cur.execute("SELECT path, content_hash, blueprint_id FROM nodes WHERE design_maturity = 'production'")
             db_rows = cur.fetchall()
     except Exception as e:
         print(f"[DEPGRAPH][INCREMENTAL] 查询失败（可能 content_hash 列不存在），回退全量重建: {e}")
-        return False
+        return None
     finally:
         if conn:
             try:
@@ -4805,6 +4807,7 @@ def _check_incremental_skip(files_data: list, output_db: str) -> bool:
                 pass
 
     db_hashes = {row["path"]: (row["content_hash"] or "") for row in db_rows}
+    db_module_by_path = {row["path"]: (row["blueprint_id"] or "") for row in db_rows}
     scan_hashes = {fd.get("path", ""): fd.get("content_hash", "") for fd in files_data}
 
     added = set(scan_hashes) - set(db_hashes)
@@ -4812,6 +4815,54 @@ def _check_incremental_skip(files_data: list, output_db: str) -> bool:
     common = set(scan_hashes) & set(db_hashes)
     changed = {p for p in common if scan_hashes[p] and db_hashes[p] != scan_hashes[p]}
     stale = {p for p in common if not db_hashes[p] and scan_hashes[p]}
+    return {
+        "added": added,
+        "removed": removed,
+        "changed": changed,
+        "stale": stale,
+        "db_module_by_path": db_module_by_path,
+    }
+
+
+def _diff_to_module_ids(diff: dict, files_data: list) -> set:
+    """把增量文件差异集映射为受影响 module_id 集合（2026-08-29 ARCH-056 增量分发治本）。
+
+    - added/changed/stale：blueprint_id 取自本次扫描结果（文件在磁盘上）
+    - removed：blueprint_id 取自重建前 DB 行；若该模块在本次扫描中已无其他存活文件
+      （模块整体删除），跳过——孤儿清理由 GATE-DELETE-AUDIT / prune_orphans 负责，
+      交给 sync 只会 rc=3 误报失败
+    """
+    scan_module_by_path = {fd.get("path", ""): (fd.get("blueprint_id") or "") for fd in files_data}
+    live_modules = {bp for bp in scan_module_by_path.values() if bp}
+    ids: set = set()
+    for p in diff["added"] | diff["changed"] | diff["stale"]:
+        bp = scan_module_by_path.get(p, "")
+        if bp:
+            ids.add(bp)
+    for p in diff["removed"]:
+        bp = diff["db_module_by_path"].get(p, "")
+        if bp and bp in live_modules:
+            ids.add(bp)
+    return ids
+
+
+def _check_incremental_skip(files_data: list, output_db: str, diff: dict | None = None) -> bool:
+    """裁定#209 Stage 3: 增量模式——比较文件 content_hash，无变更时返回 True（跳过 DB 重建）。
+
+    首次运行（content_hash 列不存在）或 DB 连接失败时返回 False（回退全量重建）。
+    diff：2026-08-29 起支持调用方传入预计算差异集（_compute_incremental_diff），
+    避免 main 中 skip 判定与 panorama 增量分发重复查询 DB。
+    """
+    if not output_db:
+        return False
+    if diff is None:
+        diff = _compute_incremental_diff(files_data, output_db)
+        if diff is None:
+            return False
+    added = diff["added"]
+    removed = diff["removed"]
+    changed = diff["changed"]
+    stale = diff["stale"]
 
     # added/removed 不阻断 skip（稳定态）：
     # - added: INSERT 失败的节点（如 domain_id FK 违反）每次都在 scan 中但不在 DB 中
@@ -5050,7 +5101,11 @@ def main():
     print(f"[DEPGRAPH][CACHE] {scan_cache.stats()}")
 
     # 裁定#209 Stage 3: 增量模式——无变更时跳过 DB 重建
-    if args.incremental and _check_incremental_skip(files_data, args.output_db):
+    # 2026-08-29：diff 预计算一次，skip 判定与后置 panorama 增量分发共用（避免重复查库）
+    _incr_diff = None
+    if args.incremental:
+        _incr_diff = _compute_incremental_diff(files_data, args.output_db)
+    if args.incremental and _check_incremental_skip(files_data, args.output_db, diff=_incr_diff):
         print("[DEPGRAPH][INCREMENTAL] 跳过 DB 重建，直接退出")
         sys.exit(EXIT_PASS)
 
@@ -5234,9 +5289,19 @@ def main():
 
         # ARCH-056: depgraph 写入后自动同步到 dataflow/decision/blueprint
         try:
-            from sync_panorama_module import sync_all_panorama
+            from sync_panorama_module import sync_all_panorama, sync_modules_panorama
 
-            sync_all_panorama()
+            if args.incremental and _incr_diff is not None:
+                # 2026-08-29 增量分发治本（原 sync_all 全量 616 模块 × 3 连接 ≈ 370s，
+                # 占 depgraph 变更路径耗时大头）：只同步受影响模块。未变更模块的聚合
+                # 字段必然不变（weighted_domain_vote 仅依赖模块自身行，其行未变），
+                # 跳过安全；漂移由全量路径（手动 --force 不带 --incremental）与
+                # prune_orphans 兜底。
+                _sync_ids = _diff_to_module_ids(_incr_diff, files_data)
+                print(f"[DEPGRAPH][INCREMENTAL] panorama 增量同步 {len(_sync_ids)} 个受影响模块")
+                sync_modules_panorama(sorted(_sync_ids))
+            else:
+                sync_all_panorama()
         except Exception as e:
             print(f"[WARN] sync_panorama_module 失败（不阻断）: {e}", file=sys.stderr)
 

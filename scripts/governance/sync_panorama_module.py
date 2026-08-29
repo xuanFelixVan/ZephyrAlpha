@@ -96,7 +96,6 @@ _SQL_QUERY_MODULE = (
     "ORDER BY (path IS NULL), path"
 )
 _SQL_QUERY_ALL_MODULES = "SELECT DISTINCT blueprint_id FROM nodes WHERE blueprint_id IS NOT NULL AND blueprint_id <> ''"
-_SQL_CHECK_DATAFLOW_JOB = "SELECT entity_type FROM dataflow_jobs WHERE job_name = %s"
 _SQL_UPDATE_DATAFLOW_JOB = (
     "UPDATE dataflow_jobs SET domain_id=%s, design_maturity=%s, build_status=%s, module_id=%s WHERE job_name=%s"
 )
@@ -110,7 +109,6 @@ _SQL_UPSERT_DATAFLOW_PLACEHOLDER = (
     "domain_id=EXCLUDED.domain_id, design_maturity=EXCLUDED.design_maturity, "
     "build_status=EXCLUDED.build_status"
 )
-_SQL_CHECK_DECISION_LAYER = "SELECT track FROM decision_layers WHERE layer_id = %s"
 _SQL_UPDATE_DECISION_LAYER = (
     "UPDATE decision_layers SET domain_id=%s, design_maturity=%s, build_status=%s, module_id=%s WHERE layer_id=%s"
 )
@@ -127,6 +125,53 @@ _SQL_QUERY_DECISION_PLACEHOLDERS = "SELECT layer_id FROM decision_layers WHERE t
 _SQL_DELETE_DECISION_LAYER = "DELETE FROM decision_layers WHERE layer_id = %s"
 _SQL_QUERY_DATAFLOW_PLACEHOLDERS = "SELECT job_name FROM dataflow_jobs WHERE entity_type = 'module_placeholder'"
 _SQL_DELETE_DATAFLOW_JOB = "DELETE FROM dataflow_jobs WHERE job_name = %s"
+# 2026-08-29 增量治本：skip-identical 判定需要既有行的完整字段（原只查 entity_type/track）
+_SQL_CHECK_DATAFLOW_JOB_FULL = (
+    "SELECT entity_type, domain_id, design_maturity, build_status, module_id FROM dataflow_jobs WHERE job_name = %s"
+)
+_SQL_CHECK_DECISION_LAYER_FULL = (
+    "SELECT track, domain_id, design_maturity, build_status, module_id FROM decision_layers WHERE layer_id = %s"
+)
+
+
+def _open_sync_conns() -> dict:
+    """一次打开三条同步连接（2026-08-29 批量路径连接复用治本）。
+
+    原 sync_all_panorama 每模块开/关 3 条全新 PG 连接（616 模块 ≈ 1850 次连接建立，
+    占 ~370s 耗时大头）。批量入口（sync_all/sync_modules）改为循环外开一次复用。
+    单模块入口（conns=None）维持原每次开关语义。
+    """
+    return {
+        "depgraph": get_depgraph_pg_connection(),
+        # FP-ISO.4C：写路径必须 read_only=False（详见 sync_module_panorama 注释）
+        "dataflow": get_dataflowgraph_pg_connection(read_only=False, allow_design_delete=True),
+        "decision": get_decisiongraph_pg_connection(read_only=False, allow_design_delete=True),
+    }
+
+
+def _close_sync_conns(conns: dict) -> None:
+    for c in conns.values():
+        try:
+            c.close()
+        except Exception:  # noqa: BLE001 — 关闭异常不掩盖主流程
+            pass
+
+
+def _values_unchanged(existing: dict, module: dict) -> bool:
+    """skip-identical 判定（2026-08-29）：既有行核心字段与新值全部相等（NULL/'' 归一）。
+
+    normalize_to_none 语义对齐：'' 与 NULL 视为同一值（写入侧也是 normalize_to_none）。
+    """
+
+    def _n(v):
+        return None if v in ("", None) else v
+
+    return (
+        _n(existing.get("domain_id")) == _n(module["domain_id"])
+        and _n(existing.get("design_maturity")) == _n(module["design_maturity"])
+        and _n(existing.get("build_status")) == _n(module["build_status"])
+        and _n(existing.get("module_id")) == _n(module["module_id"])
+    )
 
 
 def _query_depgraph_module(conn, module_id: str) -> dict | None:
@@ -179,69 +224,101 @@ def _query_depgraph_module(conn, module_id: str) -> dict | None:
     }
 
 
-def _sync_to_dataflow(conn, module: dict) -> int:
+def _sync_to_dataflow(conn, module: dict) -> str:
     """同步到 dataflow_jobs 占位记录。
 
     占位策略：entity_type='module_placeholder', job_name=module_id。
     如已存在非占位记录（entity_type!='module_placeholder'），更新核心字段但不改 entity_type。
+    2026-08-29 skip-identical：既有行核心字段与新值全等时跳过写入，返回 "unchanged"；
+    发生写入返回 "changed"（供批量路径统计与下游跳过决策）。
     """
     mid = module["module_id"]
     with conn.cursor() as cur:
-        cur.execute(_SQL_CHECK_DATAFLOW_JOB, (mid,))
+        cur.execute(_SQL_CHECK_DATAFLOW_JOB_FULL, (mid,))
         existing = cur.fetchone()
         if existing is not None:
-            existing_type = existing.get("entity_type") if isinstance(existing, dict) else existing[0]
-            if existing_type != "module_placeholder":
+            if not isinstance(existing, dict):
+                existing = {
+                    "entity_type": existing[0],
+                    "domain_id": existing[1],
+                    "design_maturity": existing[2],
+                    "build_status": existing[3],
+                    "module_id": existing[4],
+                }
+            if _values_unchanged(existing, module):
+                return "unchanged"
+            if existing.get("entity_type") != "module_placeholder":
                 cur.execute(
                     _SQL_UPDATE_DATAFLOW_JOB,
                     (module["domain_id"], module["design_maturity"], module["build_status"], mid, mid),
                 )
-                return EXIT_PASS
+                return "changed"
         cur.execute(
             _SQL_UPSERT_DATAFLOW_PLACEHOLDER,
             (mid, mid, module["domain_id"], module["design_maturity"], module["build_status"]),
         )
-        return EXIT_PASS
+        return "changed"
 
 
-def _sync_to_decision(conn, module: dict) -> int:
+def _sync_to_decision(conn, module: dict) -> str:
     """同步到 decision_layers 占位记录。
 
     占位策略：layer_id=module_id, track='placeholder'。
     如已存在非占位 layer（track!='placeholder'），更新核心字段但不改 track。
+    2026-08-29 skip-identical：同 _sync_to_dataflow，返回 "unchanged"/"changed"。
     """
     mid = module["module_id"]
     with conn.cursor() as cur:
-        cur.execute(_SQL_CHECK_DECISION_LAYER, (mid,))
+        cur.execute(_SQL_CHECK_DECISION_LAYER_FULL, (mid,))
         existing = cur.fetchone()
         if existing is not None:
-            existing_track = existing.get("track") if isinstance(existing, dict) else existing[0]
-            if existing_track != "placeholder":
+            if not isinstance(existing, dict):
+                existing = {
+                    "track": existing[0],
+                    "domain_id": existing[1],
+                    "design_maturity": existing[2],
+                    "build_status": existing[3],
+                    "module_id": existing[4],
+                }
+            if _values_unchanged(existing, module):
+                return "unchanged"
+            if existing.get("track") != "placeholder":
                 cur.execute(
                     _SQL_UPDATE_DECISION_LAYER,
                     (module["domain_id"], module["design_maturity"], module["build_status"], mid, mid),
                 )
-                return EXIT_PASS
+                return "changed"
         cur.execute(
             _SQL_UPSERT_DECISION_PLACEHOLDER,
             (mid, mid, mid, mid, module["domain_id"], module["design_maturity"], module["build_status"]),
         )
-        return EXIT_PASS
+        return "changed"
 
 
-def sync_module_panorama(module_id: str) -> int:
+def sync_module_panorama(module_id: str, conns: dict | None = None) -> int:
     """同步单个模块的全景核心字段。
+
+    Args:
+        module_id: 模块 ID（blueprint_id）。
+        conns: 2026-08-29 连接复用——批量入口（sync_all/sync_modules）传入
+            _open_sync_conns() 的共享连接字典，循环内不再每模块开/关 3 条连接；
+            None（默认）时维持原"每次自开自关"语义（单模块 CLI/调用方不变）。
 
     Returns: 0=成功, 3=模块不存在, 4=DB异常, 5=部分下游同步失败（dataflow/decision/blueprint）
     """
-    depgraph_conn = get_depgraph_pg_connection()
+    _own_conns = conns is None
+    if _own_conns:
+        depgraph_conn = get_depgraph_pg_connection()
+    else:
+        depgraph_conn = conns["depgraph"]
     try:
         module = _query_depgraph_module(depgraph_conn, module_id)
         if not module:
             print(f"[ERROR] 模块 {module_id} 在 depgraph 中不存在", file=sys.stderr)
             return 3
     finally:
-        depgraph_conn.close()
+        if _own_conns:
+            depgraph_conn.close()
 
     # ARCH-FRONTMATTER-STATE-001 Phase 2：dataflow/decision 同步失败不阻断 frontmatter 对齐。
     # 三个下游 sync 目标（dataflow/decision/blueprint）相互独立，
@@ -257,10 +334,13 @@ def sync_module_panorama(module_id: str) -> int:
     # 但用 failed_count 计数 + 返回 exit 5 + stderr 最后一行打印 FAILED_COUNT=N，
     # 让父 reconciler 检测到部分失败并升级为 critical_warn（P0-1 已对接）。
     failed_count = 0
-    dataflow_conn = get_dataflowgraph_pg_connection(
-        read_only=False,
-        allow_design_delete=True,
-    )
+    if _own_conns:
+        dataflow_conn = get_dataflowgraph_pg_connection(
+            read_only=False,
+            allow_design_delete=True,
+        )
+    else:
+        dataflow_conn = conns["dataflow"]
     try:
         _sync_to_dataflow(dataflow_conn, module)
         # FP-FIX-DECISION-COMMIT (2026-08-05, 治本 decision_layers 静默回滚):
@@ -274,12 +354,16 @@ def sync_module_panorama(module_id: str) -> int:
         failed_count += 1
         print(f"[ERROR] dataflow 同步失败（module={module_id}）: {e}", file=sys.stderr)
     finally:
-        dataflow_conn.close()
+        if _own_conns:
+            dataflow_conn.close()
 
-    decision_conn = get_decisiongraph_pg_connection(
-        read_only=False,
-        allow_design_delete=True,
-    )
+    if _own_conns:
+        decision_conn = get_decisiongraph_pg_connection(
+            read_only=False,
+            allow_design_delete=True,
+        )
+    else:
+        decision_conn = conns["decision"]
     try:
         _sync_to_decision(decision_conn, module)
         # FP-FIX-DECISION-COMMIT (2026-08-05)：见上方 dataflow_conn.commit() 注释。
@@ -290,7 +374,8 @@ def sync_module_panorama(module_id: str) -> int:
         failed_count += 1
         print(f"[ERROR] decision 同步失败（module={module_id}）: {e}", file=sys.stderr)
     finally:
-        decision_conn.close()
+        if _own_conns:
+            decision_conn.close()
 
     # 蓝图 frontmatter 对齐（如蓝图存在）
     try:
@@ -329,10 +414,16 @@ def sync_all_panorama() -> int:
     # 批量期间逐条 WARN 静音并累积，循环后打印一行汇总。
     from d5_architecture.syncers import blueprint_frontmatter_reconciler as _bfr
 
+    # 2026-08-29 连接复用治本：循环外开一次 3 条连接（原每模块开/关 3 条 ≈ 616×3 次建立）。
+    # 空模块列表提前返回（不白开连接，也避免测试环境真实连库）。
+    if not modules:
+        print("[OK] 同步完成：0 个模块，0 个失败，0 个部分下游失败")
+        return EXIT_PASS
+    _conns = _open_sync_conns()
     _bfr.set_quiet_missing(True)
     try:
         for mid in modules:
-            rc = sync_module_panorama(mid)
+            rc = sync_module_panorama(mid, conns=_conns)
             if rc == 5:
                 # P0-2: 部分下游失败——不重复打印（sync_module_panorama 已打印详情）
                 partial += 1
@@ -342,6 +433,7 @@ def sync_all_panorama() -> int:
     finally:
         _missing_bp = _bfr.pop_missing_modules()
         _bfr.set_quiet_missing(False)
+        _close_sync_conns(_conns)
     # P0-2: 汇总行打印结构化计数，供父 reconciler 解析
     print(f"[OK] 同步完成：{len(modules)} 个模块，{failed} 个失败，{partial} 个部分下游失败")
     print(
@@ -375,10 +467,12 @@ def sync_modules_panorama(module_ids: list[str]) -> int:
     # 缺蓝图 WARN 聚合（同 sync_all_panorama，2026-08-15 治本）
     from d5_architecture.syncers import blueprint_frontmatter_reconciler as _bfr
 
+    # 2026-08-29 连接复用治本（同 sync_all_panorama）
+    _conns = _open_sync_conns()
     _bfr.set_quiet_missing(True)
     try:
         for mid in module_ids:
-            rc = sync_module_panorama(mid)
+            rc = sync_module_panorama(mid, conns=_conns)
             if rc == 5:
                 partial += 1
             elif rc != 0:
@@ -387,6 +481,7 @@ def sync_modules_panorama(module_ids: list[str]) -> int:
     finally:
         _missing_bp = _bfr.pop_missing_modules()
         _bfr.set_quiet_missing(False)
+        _close_sync_conns(_conns)
     print(f"[OK] 增量同步完成：{len(module_ids)} 个模块，{failed} 个失败，{partial} 个部分下游失败")
     if _missing_bp:
         print(f"[OK] 蓝图缺失跳过 {len(_missing_bp)} 个模块（容忍常态）", file=sys.stderr)

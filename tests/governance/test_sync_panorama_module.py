@@ -145,7 +145,7 @@ class TestSyncModuleNotFound:
 
 class TestSyncAllPanorama:
     def test_sync_all_iterates_modules(self, spm, monkeypatch):
-        """--all 遍历所有模块"""
+        """--all 遍历所有模块（2026-08-29：批量入口循环外共享连接，三个工厂各只调一次）"""
         depgraph_conn = MagicMock()
         dep_cursor = MagicMock()
         dep_cursor.fetchall.return_value = [
@@ -154,16 +154,92 @@ class TestSyncAllPanorama:
         ]
         depgraph_conn.cursor.return_value.__enter__.return_value = dep_cursor
         monkeypatch.setattr(spm, "get_depgraph_pg_connection", lambda **kw: depgraph_conn)
+        # _open_sync_conns 会真实调用 dataflow/decision 工厂——mock 之（单测不连真实 DB）
+        monkeypatch.setattr(spm, "get_dataflowgraph_pg_connection", lambda **kw: MagicMock())
+        monkeypatch.setattr(spm, "get_decisiongraph_pg_connection", lambda **kw: MagicMock())
 
         call_count = {"n": 0}
 
-        def fake_sync(mid):
+        def fake_sync(mid, conns=None):  # 2026-08-29：批量入口改传共享连接，fake 签名对齐
             call_count["n"] += 1
             return 0
 
         monkeypatch.setattr(spm, "sync_module_panorama", fake_sync)
         assert spm.sync_all_panorama() == 0
         assert call_count["n"] == 2
+
+
+class TestConnectionReuse:
+    """2026-08-29 连接复用治本：批量同步 N 个模块，三条连接工厂各只调用一次。"""
+
+    def test_sync_modules_reuses_connections(self, spm, monkeypatch):
+        counts = {"depgraph": 0, "dataflow": 0, "decision": 0}
+
+        def _factory(name):
+            def _make(**kw):
+                counts[name] += 1
+                conn = MagicMock()
+                cur = MagicMock()
+                if name == "depgraph":
+                    cur.fetchall.return_value = [_make_module_row()]
+                else:
+                    cur.fetchone.return_value = None  # 占位记录不存在 → UPSERT
+                conn.cursor.return_value.__enter__.return_value = cur
+                return conn
+
+            return _make
+
+        monkeypatch.setattr(spm, "get_depgraph_pg_connection", _factory("depgraph"))
+        monkeypatch.setattr(spm, "get_dataflowgraph_pg_connection", _factory("dataflow"))
+        monkeypatch.setattr(spm, "get_decisiongraph_pg_connection", _factory("decision"))
+
+        assert spm.sync_modules_panorama(["MOD-TEST", "MOD-TEST"]) == 0
+        assert counts == {"depgraph": 1, "dataflow": 1, "decision": 1}
+
+
+class TestSkipIdentical:
+    """2026-08-29 skip-identical：既有行核心字段全等 → 跳过写入（只 SELECT 不写）。"""
+
+    def test_unchanged_row_skips_writes(self, spm, monkeypatch):
+        existing = {
+            "entity_type": "module_placeholder",
+            "domain_id": "D_TEST",
+            "design_maturity": "design",
+            "build_status": "planned",
+            "module_id": "MOD-TEST",
+        }
+        depgraph_conn, dataflow_conn, decision_conn = _mock_three_conns(
+            spm,
+            monkeypatch,
+            depgraph_fetchone=_make_module_row(),
+            dataflow_fetchone=dict(existing),
+            decision_fetchone={"track": "placeholder", **{k: v for k, v in existing.items() if k != "entity_type"}},
+        )
+        assert spm.sync_module_panorama("MOD-TEST") == 0
+        # 每个下游连接只应执行 1 条 SELECT（无 UPDATE/UPSERT）
+        df_cur = dataflow_conn.cursor.return_value.__enter__.return_value
+        dec_cur = decision_conn.cursor.return_value.__enter__.return_value
+        assert df_cur.execute.call_count == 1
+        assert dec_cur.execute.call_count == 1
+
+    def test_changed_row_still_writes(self, spm, monkeypatch):
+        existing = {
+            "entity_type": "module_placeholder",
+            "domain_id": "D_TEST",
+            "design_maturity": "design",
+            "build_status": "OLD_STATUS",  # 与新值不一致 → 触发写入
+            "module_id": "MOD-TEST",
+        }
+        depgraph_conn, dataflow_conn, decision_conn = _mock_three_conns(
+            spm,
+            monkeypatch,
+            depgraph_fetchone=_make_module_row(),
+            dataflow_fetchone=dict(existing),
+            decision_fetchone=None,
+        )
+        assert spm.sync_module_panorama("MOD-TEST") == 0
+        df_cur = dataflow_conn.cursor.return_value.__enter__.return_value
+        assert df_cur.execute.call_count == 2  # SELECT + UPSERT
 
 
 class TestMainNoArgs:

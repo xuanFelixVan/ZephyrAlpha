@@ -259,3 +259,62 @@ class TestDesignEdgeSurvivesRebuild:
         finally:
             conn.rollback()
             conn.close()
+
+
+# ============================================================================
+# Test 3: 增量分发（2026-08-29 panorama sync_all→sync_modules 治本）
+# ============================================================================
+
+
+class TestIncrementalDispatch:
+    """_compute_incremental_diff / _diff_to_module_ids / _check_incremental_skip(diff=) 单测。
+
+    全景同步治本：depgraph 变更路径后置钩子从 sync_all_panorama（616 模块 × 3 连接 ≈ 370s）
+    改为只同步受影响模块。本类锁定差异集→module_id 映射语义与 skip 判定契约。
+    """
+
+    @staticmethod
+    def _fd(path, content_hash="h1", blueprint_id="MOD-A"):
+        return {"path": path, "content_hash": content_hash, "blueprint_id": blueprint_id}
+
+    def test_functions_exist(self, gpd):
+        assert hasattr(gpd, "_compute_incremental_diff")
+        assert hasattr(gpd, "_diff_to_module_ids")
+
+    def test_diff_to_module_ids_basic(self, gpd):
+        """changed/added/stale 取扫描侧 blueprint_id；removed 取 DB 侧（且模块仍存活才纳入）。"""
+        diff = {
+            "added": {"src/new.py"},
+            "changed": {"src/chg.py"},
+            "stale": {"src/stale.py"},
+            "removed": {"src/gone.py", "src/gone2.py"},
+            "db_module_by_path": {
+                "src/chg.py": "MOD-OLD",  # DB 侧旧归属（应被扫描侧新归属覆盖语义：changed 走扫描侧）
+                "src/gone.py": "MOD-B",  # MOD-B 仍有其他存活文件 → 纳入
+                "src/gone2.py": "MOD-DEAD",  # MOD-DEAD 已无存活文件 → 跳过（孤儿归 prune_orphans）
+            },
+        }
+        files_data = [
+            self._fd("src/new.py", "h", "MOD-C"),
+            self._fd("src/chg.py", "h2", "MOD-A"),
+            self._fd("src/stale.py", "h3", ""),
+            self._fd("src/alive_b.py", "h4", "MOD-B"),  # MOD-B 存活证据
+        ]
+        ids = gpd._diff_to_module_ids(diff, files_data)
+        assert ids == {"MOD-C", "MOD-A", "MOD-B"}
+
+    def test_diff_to_module_ids_empty(self, gpd):
+        diff = {"added": set(), "removed": set(), "changed": set(), "stale": set(), "db_module_by_path": {}}
+        assert gpd._diff_to_module_ids(diff, [self._fd("src/a.py")]) == set()
+
+    def test_check_incremental_skip_with_precomputed_diff(self, gpd, monkeypatch):
+        """传入预计算 diff 时不再触库；无 changed/stale → skip=True。"""
+        monkeypatch.setattr(
+            gpd,
+            "_get_pg_conn_with_dict_cursor",
+            lambda **kw: (_ for _ in ()).throw(AssertionError("不应触库")),
+        )
+        diff = {"added": set(), "removed": set(), "changed": set(), "stale": set(), "db_module_by_path": {}}
+        assert gpd._check_incremental_skip([self._fd("src/a.py")], "depgraph", diff=diff) is True
+        diff_changed = {**diff, "changed": {"src/a.py"}}
+        assert gpd._check_incremental_skip([self._fd("src/a.py")], "depgraph", diff=diff_changed) is False
