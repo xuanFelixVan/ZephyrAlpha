@@ -4893,6 +4893,46 @@ capabilities:
   - DabanTimingDecision
   - DynamicCapacityCalculator
 creation_tokens:
+- file: src/zephyr/autonomy_core/module_factory/__init__.py
+  token: auto-module-factory-init-20260829
+  created_by: traesid-20260829-1308
+  capability: module_factory
+- file: src/zephyr/autonomy_core/module_factory/knowledge_classifier.py
+  token: auto-knowledge-classifier-20260829
+  created_by: traesid-20260829-1308
+  capability: knowledge_classifier
+- file: src/zephyr/autonomy_core/module_factory/module_mapper.py
+  token: auto-module-mapper-20260829
+  created_by: traesid-20260829-1308
+  capability: module_mapper
+- file: docs/03_modules/_domain_autonomy_core/knowledge_classifier/blueprint.md
+  token: auto-blueprint-knowledge-classifier-20260829
+  created_by: traesid-20260829-1308
+  capability: knowledge_classifier
+- file: docs/03_modules/_domain_autonomy_core/module_mapper/blueprint.md
+  token: auto-blueprint-module-mapper-20260829
+  created_by: traesid-20260829-1308
+  capability: module_mapper
+- file: tests/autonomy/test_knowledge_classifier.py
+  token: auto-test-knowledge-classifier-20260829
+  created_by: traesid-20260829-1308
+  capability: knowledge_classifier
+- file: tests/autonomy/test_module_mapper.py
+  token: auto-test-module-mapper-20260829
+  created_by: traesid-20260829-1308
+  capability: module_mapper
+- file: tests/model/test_llm_runtime_gateway_phase1.py
+  token: auto-test-llm-runtime-gateway-phase1-20260829
+  created_by: traesid-20260829-1308
+  capability: llm_runtime_gateway
+- file: tests/llm_security/test_llm_gateway_route_perf_aware.py
+  token: auto-test-llm-gateway-route-perf-20260829
+  created_by: traesid-20260829-1308
+  capability: llm_gateway
+- file: tests/llm_security/test_phase_gate_lsg_hookup.py
+  token: auto-test-phase-gate-lsg-hookup-20260829
+  created_by: traesid-20260829-1308
+  capability: phase_check_registry
 - file: docs/_working/2026-08-28-industry-graph-frontend.md
   token: auto-industry-graph-frontend-20260828
   created_by: session-qmt_bridge_recovery

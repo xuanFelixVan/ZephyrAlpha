@@ -30,6 +30,20 @@ entry_schema:
   desc_en: str
   plain_zh: str
 entries:
+- module_path: src/zephyr/autonomy_core/module_factory/knowledge_classifier.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: 知识分类器
+  name_en: Knowledge Classifier
+  desc_zh: 模块工厂 Phase 1 知识分类器（MOD-FACTORY-001）：LLM 受控词表约束分类（factor 10 类/strategy 6 类/其他分流）+ v2.0 多维标注 + 信息价值四维门禁 + tags 归并纪律；输出建议草稿，human_gated 不直写注册表。
+  desc_en: Module factory Phase 1 knowledge classifier (MOD-FACTORY-001): LLM controlled-vocabulary classification (factor 10-class / strategy 6-class / other) + v2.0 multidimensional annotation + 4-dim quality gate + tag merging discipline; advisory drafts only, human_gated.
+  plain_zh: 给新知识"贴标签的分拣员"。一篇文章进来，它判断这是因子还是策略、属于哪一类、适用于什么行情，贴上规范标签；质量太差直接拒收。它只贴标签不入库，入不入由人说了算。
+- module_path: src/zephyr/autonomy_core/module_factory/module_mapper.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: 模块映射引擎
+  name_en: Module Mapper
+  desc_zh: 模块工厂 Phase 1 知识→模块映射引擎（MOD-FACTORY-002）：语义抽象 schema_plan + embedding/FTS5 双通道检索既有 286 条目 + 四选一裁决（新建/变体/重复/组合）输出 ModuleSpec；重复在写代码前拦截，裁决理由全留痕，human_gated。
+  desc_en: Module factory Phase 1 knowledge-to-module mapper (MOD-FACTORY-002): semantic abstraction schema_plan + embedding/FTS5 dual-channel retrieval over 286 registry entries + four-way verdict (new/variant/duplicate/combination) emitting ModuleSpec; duplicates intercepted before coding, reasons fully audited, human_gated.
+  plain_zh: "查重裁判员"。新点子先跟库里已有的 286 个因子/策略比对：是重复就拦下、是老相识的改款就记为变体、是几个老件的组合就标组合、都不是才准新建。写代码之前先过它，省得白写。
 - module_path: src/zephyr/ex_core/adapters/qmt_file_bridge_broker.py
   domain_id: D_EX_CORE
   name_zh: QMT文件桥Broker
