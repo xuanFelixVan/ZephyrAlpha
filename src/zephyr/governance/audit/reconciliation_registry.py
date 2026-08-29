@@ -2429,6 +2429,9 @@ def make_depgraph_ops_reconciler(gateway: object) -> ReconcilerSpec:
                 "--output-db",
                 "depgraph",
                 "--force",
+                # 裁定#209 Stage 3 开关接电（2026-08-29）：无 content_hash 变更时
+                # 生成器秒级 skip DB 重建，避免每次 commit 都全量 DELETE+INSERT（>600s）。
+                "--incremental",
             ],
             cwd=str(project_root),
             capture_output=True,
