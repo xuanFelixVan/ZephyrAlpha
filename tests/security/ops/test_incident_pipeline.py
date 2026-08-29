@@ -30,6 +30,7 @@ from types import SimpleNamespace
 import pytest
 
 from zephyr.security.ops.incident_pipeline import (
+    COLD_START_LEDGER_FILENAME,
     FIXER_REGISTRY_FILENAME,
     PATTERN_INDEX_FILENAME,
     ChannelDecision,
@@ -40,6 +41,7 @@ from zephyr.security.ops.incident_pipeline import (
     IncidentPipelineError,
     InterventionStatus,
     PipelineConfig,
+    WhitelistApprovalGate,
 )
 from zephyr.security.security_event_bus import SCHEMA_VERSION, SecurityEvent
 
@@ -289,7 +291,7 @@ class TestWhitelistApproval:
             reason="人工审批留痕",
         )
         granted = pipe.whitelist.request_exemption(
-            path="config/flags.yaml",
+            path="config/drift_thresholds.yaml",
             reason="approved probe",
             approval_id="APR-001",
         )
@@ -370,3 +372,143 @@ class TestEmergenceIntervention:
             pipe.consume_emergence_alert(_event(threat_category="injection", severity="high"))
         with pytest.raises(IncidentPipelineError):
             pipe.consume_emergence_alert(_event(threat_category="emergence", severity="low"))
+
+
+class TestColdStartPatternImport:
+    """P1-3①：failure_matcher 内置故障模式导出为 pattern_index 冷启动内容（幂等+留痕）。"""
+
+    def test_cold_start_imports_builtin_patterns_when_empty(self, tmp_path):
+        store = FixPatternStore(tmp_path / "fix_patterns")
+        imported = store.ensure_cold_start_patterns()
+        assert imported > 0, "空库 MUST 导入 failure_matcher 内置模式"
+        index = store.read_pattern_index()
+        patterns = index["patterns"]
+        assert len(patterns) == imported
+        names = {p["pattern_name"] for p in patterns}
+        assert "iterative_retry_loop" in names, "FailurePatternMatcher 命名模式 MUST 导出"
+        assert "category:syntax" in names, "FailureMatcher 九类分类模式 MUST 导出"
+        matchers = {p["matcher"] for p in patterns}
+        assert matchers == {"FailurePatternMatcher", "FailureMatcher"}
+        for pat in patterns:
+            assert pat["record_id"] and pat["ts"], "冷启动条目 MUST 含 record_id/ts"
+            assert pat["kind"] == "cold_start_pattern"
+            assert pat["source"] == "failure_matcher"
+            assert pat["regex"] and pat["suggestion"]
+        store.validate_pattern_index(index)
+
+    def test_cold_start_import_event_audited(self, tmp_path):
+        store = FixPatternStore(tmp_path / "fix_patterns")
+        imported = store.ensure_cold_start_patterns()
+        ledger = _read_jsonl(tmp_path / "fix_patterns" / COLD_START_LEDGER_FILENAME)
+        assert len(ledger) == 1, "导入事件 MUST 落盘留痕"
+        entry = ledger[0]
+        assert entry["kind"] == "cold_start_import"
+        assert entry["source"] == "zephyr.orchestrator.resilience.failure_matcher"
+        assert entry["imported"] == imported
+        assert entry["ts"]
+
+    def test_cold_start_idempotent_non_empty_no_reimport(self, tmp_path):
+        store = FixPatternStore(tmp_path / "fix_patterns")
+        first = store.ensure_cold_start_patterns()
+        second = store.ensure_cold_start_patterns()
+        assert first > 0
+        assert second == 0, "库非空 MUST NOT 重复导入（幂等）"
+        index = store.read_pattern_index()
+        assert len(index["patterns"]) == first
+        ledger = _read_jsonl(tmp_path / "fix_patterns" / COLD_START_LEDGER_FILENAME)
+        assert len(ledger) == 1, "幂等：重复调用 MUST NOT 重复留痕"
+
+    def test_pipeline_init_triggers_cold_start_and_records_stay_clean(self, tmp_path):
+        pipe = _pipeline(tmp_path)
+        index = pipe.store.read_pattern_index()
+        assert index.get("patterns"), "管线初始化 MUST 触发故障模式库冷启动"
+        assert index["records"] == [], "冷启动内容 MUST NOT 混入修复记录（records 只装修复动作）"
+
+
+class TestAuthorityRegistryGate:
+    """P1-4：GOV-AI-001 实质对接——在册校验 + immutable 拒批 + 注册表不可读 fail-closed。"""
+
+    @staticmethod
+    def _gate(tmp_path, registry_path=None) -> WhitelistApprovalGate:
+        kwargs = {} if registry_path is None else {"registry_path": registry_path}
+        return WhitelistApprovalGate(tmp_path / "whitelist_ledger.jsonl", **kwargs)
+
+    def test_registered_human_gated_target_granted_with_approval(self, tmp_path):
+        gate = self._gate(tmp_path)
+        gate.approve("APR-100", approver="owner", scope="protected_path_exemption", reason="r")
+        granted = gate.request_exemption(
+            path="config/drift_thresholds.yaml",
+            reason="registered human-gated target",
+            approval_id="APR-100",
+        )
+        assert granted is True, "在册 Human-Gated 目标 + 有效审批 MUST 授予"
+        kinds = [e["kind"] for e in gate.entries()]
+        assert "exemption_granted" in kinds
+
+    def test_registered_human_gated_directory_prefix_match(self, tmp_path):
+        gate = self._gate(tmp_path)
+        gate.approve("APR-101", approver="owner", scope="s", reason="r")
+        granted = gate.request_exemption(
+            path="src/zephyr/shared/alerts/alert_precision_tracker.py",
+            reason="dir prefix match",
+            approval_id="APR-101",
+        )
+        assert granted is True, "目录前缀命中在册 Human-Gated 条目（src/zephyr/shared/）MUST 可批"
+
+    def test_immutable_core_target_denied_even_with_approval(self, tmp_path):
+        gate = self._gate(tmp_path)
+        gate.approve("APR-102", approver="owner", scope="s", reason="r")
+        granted = gate.request_exemption(
+            path="src/zephyr/risk/engine.py", reason="immutable probe", approval_id="APR-102"
+        )
+        assert granted is False, "Immutable Core 目标豁免请求 MUST 一律拒"
+        denied = [e for e in gate.entries() if e["kind"] == "exemption_denied"]
+        assert len(denied) == 1
+        assert denied[0]["denial_reason"] == "immutable_core_target"
+        granted_entries = [e for e in gate.entries() if e["kind"] == "exemption_granted"]
+        assert granted_entries == [], "immutable 目标 MUST 0 条授予"
+
+    def test_unregistered_target_denied(self, tmp_path):
+        gate = self._gate(tmp_path)
+        gate.approve("APR-103", approver="owner", scope="s", reason="r")
+        granted = gate.request_exemption(
+            path="src/zephyr/not_registered/x.py", reason="r", approval_id="APR-103"
+        )
+        assert granted is False, "豁免目标 MUST 在 GOV-AI-001 注册表在册"
+        denied = [e for e in gate.entries() if e["kind"] == "exemption_denied"]
+        assert len(denied) == 1
+        assert denied[0]["denial_reason"] == "target_not_in_authority_registry"
+
+    def test_registry_unavailable_fail_closed(self, tmp_path):
+        gate = self._gate(tmp_path, registry_path=tmp_path / "missing_registry.yaml")
+        gate.approve("APR-104", approver="owner", scope="s", reason="r")
+        granted = gate.request_exemption(
+            path="config/drift_thresholds.yaml", reason="r", approval_id="APR-104"
+        )
+        assert granted is False, "注册表不可读 MUST fail-closed 拒批"
+        denied = [e for e in gate.entries() if e["kind"] == "exemption_denied"]
+        assert len(denied) == 1
+        assert denied[0]["denial_reason"] == "authority_registry_unavailable"
+
+    def test_registry_malformed_fail_closed(self, tmp_path):
+        bad = tmp_path / "bad_registry.yaml"
+        bad.write_text("- this\n- is a list not a registry\n", encoding="utf-8")
+        gate = self._gate(tmp_path, registry_path=bad)
+        gate.approve("APR-105", approver="owner", scope="s", reason="r")
+        granted = gate.request_exemption(
+            path="config/drift_thresholds.yaml", reason="r", approval_id="APR-105"
+        )
+        assert granted is False, "注册表解析结果非 mapping MUST fail-closed 拒批"
+
+    def test_pipeline_config_overrides_registry_path(self, tmp_path):
+        config = PipelineConfig(
+            store_dir=tmp_path / "fix_patterns",
+            runtime_dir=tmp_path / "ops_runtime",
+            authority_registry_path=tmp_path / "missing.yaml",
+        )
+        pipe = IncidentPipeline(config, engine=_StubEngine())
+        pipe.whitelist.approve("APR-106", approver="owner", scope="s", reason="r")
+        granted = pipe.whitelist.request_exemption(
+            path="config/drift_thresholds.yaml", reason="r", approval_id="APR-106"
+        )
+        assert granted is False, "管线注入的注册表路径不可读时 MUST fail-closed"

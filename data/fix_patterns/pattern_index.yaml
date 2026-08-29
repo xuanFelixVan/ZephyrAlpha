@@ -9,3 +9,154 @@
 schema_version: '1.0'
 kind: fix_pattern_index
 records: []
+patterns:
+- record_id: coldstart-FailurePatternMatcher:iterative_retry_loop
+  ts: '2026-08-29T15:18:59.380263Z'
+  kind: cold_start_pattern
+  source: failure_matcher
+  matcher: FailurePatternMatcher
+  pattern_name: iterative_retry_loop
+  severity: high
+  regex: (retry|再次尝试|第\s*\d+\s*次)
+  suggestion: 检测到迭代重试循环——建议暂停、检查是否模型幻觉、降低 temperature 或切换模型重试。
+  automatic_recovery: false
+- record_id: coldstart-FailurePatternMatcher:context_insufficient
+  ts: '2026-08-29T15:18:59.380263Z'
+  kind: cold_start_pattern
+  source: failure_matcher
+  matcher: FailurePatternMatcher
+  pattern_name: context_insufficient
+  severity: medium
+  regex: (context|token.*limit|超出.*上下文|truncat)
+  suggestion: 上下文不足——建议拆分为更小的原子任务、或使用 Context Window 裁剪策略。
+  automatic_recovery: false
+- record_id: coldstart-FailurePatternMatcher:multi_module_failure
+  ts: '2026-08-29T15:18:59.380263Z'
+  kind: cold_start_pattern
+  source: failure_matcher
+  matcher: FailurePatternMatcher
+  pattern_name: multi_module_failure
+  severity: critical
+  regex: (多个.*模块|跨模块.*失败|multi.*module)
+  suggestion: 多模块级联失败——暂停全线，检查上游依赖的 CT-* 契约对齐性。
+  automatic_recovery: false
+- record_id: coldstart-FailurePatternMatcher:schema_mismatch
+  ts: '2026-08-29T15:18:59.380263Z'
+  kind: cold_start_pattern
+  source: failure_matcher
+  matcher: FailurePatternMatcher
+  pattern_name: schema_mismatch
+  severity: medium
+  regex: (schema|字段.*缺失|field.*missing|类型.*不匹配|validation error)
+  suggestion: Schema 或字段不匹配——检查字段对齐并执行 Schema 版本迁移。
+  automatic_recovery: false
+- record_id: coldstart-FailurePatternMatcher:gate_violation
+  ts: '2026-08-29T15:18:59.380263Z'
+  kind: cold_start_pattern
+  source: failure_matcher
+  matcher: FailurePatternMatcher
+  pattern_name: gate_violation
+  severity: high
+  regex: (gate|门禁|violation|G\d)
+  suggestion: 门禁检查失败——检查 G1-G7 不变式违规详情，补齐缺失字段/上下文后手动重试。
+  automatic_recovery: false
+- record_id: coldstart-FailurePatternMatcher:dependency_freshness
+  ts: '2026-08-29T15:18:59.380263Z'
+  kind: cold_start_pattern
+  source: failure_matcher
+  matcher: FailurePatternMatcher
+  pattern_name: dependency_freshness
+  severity: medium
+  regex: (stale|过期|依赖.*变更|dependency.*outdated)
+  suggestion: 依赖新鲜度过期——上游蓝图已更新，需重新获取最新依赖并重建上下文。
+  automatic_recovery: false
+- record_id: coldstart-FailurePatternMatcher:timeout_exceeded
+  ts: '2026-08-29T15:18:59.380263Z'
+  kind: cold_start_pattern
+  source: failure_matcher
+  matcher: FailurePatternMatcher
+  pattern_name: timeout_exceeded
+  severity: low
+  regex: (timeout|超时|timed out|耗时.*分钟)
+  suggestion: 任务超时——考虑拆分任务、增加 timeout 上限、或使用 faster model。
+  automatic_recovery: true
+- record_id: coldstart-FailureMatcher:category:network
+  ts: '2026-08-29T15:18:59.380263Z'
+  kind: cold_start_pattern
+  source: failure_matcher
+  matcher: FailureMatcher
+  pattern_name: category:network
+  category: network
+  regex: connection\s+(?:refused|reset|closed|aborted|timed?\s*out)|network\s+(?:unreachable|error|is\s+down)|host\s+unreachable
+  probability: 0.9
+  suggestion: Check network connectivity, DNS resolution, and retry with backoff.
+- record_id: coldstart-FailureMatcher:category:timeout
+  ts: '2026-08-29T15:18:59.380263Z'
+  kind: cold_start_pattern
+  source: failure_matcher
+  matcher: FailureMatcher
+  pattern_name: category:timeout
+  category: timeout
+  regex: timed?\s*out|deadline\s+exceeded|timeout\s+exceeded|operation\s+timed\s+out
+  probability: 0.85
+  suggestion: Increase timeout budget or check downstream service responsiveness.
+- record_id: coldstart-FailureMatcher:category:syntax
+  ts: '2026-08-29T15:18:59.380263Z'
+  kind: cold_start_pattern
+  source: failure_matcher
+  matcher: FailureMatcher
+  pattern_name: category:syntax
+  category: syntax
+  regex: syntaxerror|indentationerror|taberror|unexpected\s+(?:indent|token|eof)|invalid\s+syntax
+  probability: 0.9
+  suggestion: Fix the syntax error in the source code.
+- record_id: coldstart-FailureMatcher:category:validation
+  ts: '2026-08-29T15:18:59.380263Z'
+  kind: cold_start_pattern
+  source: failure_matcher
+  matcher: FailureMatcher
+  pattern_name: category:validation
+  category: validation
+  regex: validation\s+failed|invalid\s+\w+|validation\s+error|valueerror|typeerror
+  probability: 0.85
+  suggestion: Verify input schema, field constraints, and data types.
+- record_id: coldstart-FailureMatcher:category:permission
+  ts: '2026-08-29T15:18:59.380263Z'
+  kind: cold_start_pattern
+  source: failure_matcher
+  matcher: FailureMatcher
+  pattern_name: category:permission
+  category: permission
+  regex: permission\s+denied|access\s+denied|unauthorized|forbidden|not\s+allowed
+  probability: 0.9
+  suggestion: Check credentials, ACLs, and authentication tokens.
+- record_id: coldstart-FailureMatcher:category:disk_space
+  ts: '2026-08-29T15:18:59.380263Z'
+  kind: cold_start_pattern
+  source: failure_matcher
+  matcher: FailureMatcher
+  pattern_name: category:disk_space
+  category: disk_space
+  regex: no\s+space\s+left|disk\s+full|out\s+of\s+space|insufficient\s+disk
+  probability: 0.95
+  suggestion: Free up disk space or expand storage capacity.
+- record_id: coldstart-FailureMatcher:category:dependency
+  ts: '2026-08-29T15:18:59.380263Z'
+  kind: cold_start_pattern
+  source: failure_matcher
+  matcher: FailureMatcher
+  pattern_name: category:dependency
+  category: dependency
+  regex: module\s+not\s+found|import\s+(?:error|not\s+found)|no\s+module\s+named|importerror|modulenotfounderror|dependency\s+(?:missing|not\s+found)
+  probability: 0.85
+  suggestion: Install the missing dependency or fix the import path.
+- record_id: coldstart-FailureMatcher:category:logic
+  ts: '2026-08-29T15:18:59.380263Z'
+  kind: cold_start_pattern
+  source: failure_matcher
+  matcher: FailureMatcher
+  pattern_name: category:logic
+  category: logic
+  regex: assertionerror|assert\s+\w+\s+failed|logic\s+error
+  probability: 0.8
+  suggestion: Review the failing assertion or business logic branch.

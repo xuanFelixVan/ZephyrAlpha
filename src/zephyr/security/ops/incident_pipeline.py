@@ -5,7 +5,7 @@
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 行为类故障永不触发自动修复（Block+Alert only）;语义类修复必经LLM Bridge（LSG闸）不直通模板化;每次修复动作自动写知识库记录（append-only，记录优先不做匹配）;未经审批的白名单豁免0条
+# [INVARIANTS] 行为类故障永不触发自动修复（Block+Alert only）;语义类修复必经LLM Bridge（LSG闸）不直通模板化;每次修复动作自动写知识库记录（append-only，记录优先不做匹配）;未经审批的白名单豁免0条;豁免目标必须在GOV-AI-001注册表在册且非Immutable Core（注册表不可读fail-closed拒批）;故障模式库冷启动导入幂等（库非空不重复导）
 # [MODIFY-GUARD] 16_ai_security_ops.md §4.3; 12_reflexion_multi_agent.md §4.4
 # [STABILITY] evolving
 # [SAFETY] H
@@ -36,9 +36,16 @@
 3. **知识库落盘（P1-3）**：``data/fix_patterns/pattern_index.yaml``
    （REG-AFX-PATTERN-001）+ ``_fixer-registry.yaml``（MOD-INF-031 蓝图登记项）。
    **记录优先，不做匹配**——每次修复动作自动向库写一条记录，append-only。
+   故障模式库冷启动：库（``patterns`` 节）为空时从 failure_matcher
+   （MOD-INF-039）内置故障模式导入冷启动内容，幂等（非空不重复导），
+   导入事件落盘留痕（``cold_start_imports.jsonl``）。
+   **16号文 Q2（先建库还是先建闭环）关闭**——按候选方案「并行冷启动、
+   记录优先」落地：闭环照跑、记录优先写库，冷启动导入并行兜底。
 4. **白名单审批（P1-4）**：保护路径/豁免白名单变更走 human_gated 审批
-   （GOV-AI-001 对接口径），审批与豁免授予/拒绝全部留痕；
-   不变量——未经审批的豁免 0 条。
+   （GOV-AI-001 实质对接——豁免目标 MUST 在
+   ``ai_autonomy_authority_registry.yaml`` 权限注册表在册且非 Immutable
+   Core，注册表不可读/缺失/解析失败 fail-closed 一律拒批），审批与豁免
+   授予/拒绝全部留痕；不变量——未经审批的豁免 0 条。
 5. **涌现介入接线（12号文 §4.1/§4.4，不新建检测节点，消费侧接线）**：
    消费 MOD-RK-14 涌现 is_breached 告警（threat=emergence 且 severity≥high），
    产人工介入处置工单，SOP 状态机：告警→工单（ticket_open）→人审
@@ -63,6 +70,7 @@ from typing import Any, Final, Protocol
 
 import yaml
 
+from zephyr.orchestrator.resilience import failure_matcher as _failure_matcher_module
 from zephyr.orchestrator.resilience.failure_matcher import (
     FailureCategory,
     FailureMatcher,
@@ -79,6 +87,8 @@ from zephyr.shared.utils.time_utils import now_iso
 logger = logging.getLogger(__name__)
 
 __all__: Final = [
+    "COLD_START_LEDGER_FILENAME",
+    "DEFAULT_AUTHORITY_REGISTRY_PATH",
     "FIXER_REGISTRY_FILENAME",
     "PATTERN_INDEX_FILENAME",
     "ChannelDecision",
@@ -101,6 +111,7 @@ __all__: Final = [
 SCHEMA_VERSION: Final[str] = "1.0"
 PATTERN_INDEX_FILENAME: Final[str] = "pattern_index.yaml"
 FIXER_REGISTRY_FILENAME: Final[str] = "_fixer-registry.yaml"
+COLD_START_LEDGER_FILENAME: Final[str] = "cold_start_imports.jsonl"
 # 知识库 yaml 治理锚定头（B_yaml 6 字段——重写文件时保持锚定不丢失）
 _KB_HEADER: Final[str] = (
     "# --- 治理锚定 ---\n"
@@ -114,6 +125,15 @@ _KB_HEADER: Final[str] = (
 )
 DEFAULT_STORE_DIR: Final[Path] = REPO_ROOT / "data" / "fix_patterns"
 DEFAULT_RUNTIME_DIR: Final[Path] = REPO_ROOT / ".runtime" / "security_ops"
+# GOV-AI-001 AI 自治权限注册表（白名单豁免在册校验的唯一真源）
+DEFAULT_AUTHORITY_REGISTRY_PATH: Final[Path] = (
+    REPO_ROOT
+    / "docs"
+    / "01_policies_and_standards"
+    / "_registry"
+    / "catalogs"
+    / "ai_autonomy_authority_registry.yaml"
+)
 SEMANTIC_ACTION_TYPE: Final[str] = "llm_fix"
 
 _BEHAVIORAL_THREATS: Final[frozenset[ThreatCategory]] = frozenset(
@@ -238,6 +258,7 @@ class PipelineConfig:
     escalations_filename: str = "escalations.jsonl"
     tickets_filename: str = "intervention_tickets.jsonl"
     whitelist_ledger_filename: str = "whitelist_approvals.jsonl"
+    authority_registry_path: Path = DEFAULT_AUTHORITY_REGISTRY_PATH
     emergence_min_severity: Severity = Severity.HIGH
 
 
@@ -282,15 +303,53 @@ def _serialize_incident(record: IncidentRecord) -> dict[str, Any]:
     return blob
 
 
+def _builtin_failure_patterns() -> list[dict[str, Any]]:
+    """读取 failure_matcher（MOD-INF-039）内置故障模式（只读消费模块级模式表，不改本体逻辑）。
+
+    双件全量导出：FailurePatternMatcher 命名模式（``_FAILURE_PATTERNS``）+
+    FailureMatcher 九类分类模式（``_CATEGORY_PATTERNS``），以 ``matcher`` 字段区分来源。
+    """
+    patterns: list[dict[str, Any]] = []
+    for pat in getattr(_failure_matcher_module, "_FAILURE_PATTERNS", None) or []:
+        patterns.append(
+            {
+                "matcher": "FailurePatternMatcher",
+                "pattern_name": str(pat.get("name", "")),
+                "severity": str(pat.get("severity", "")),
+                "regex": str(pat.get("regex", "")),
+                "suggestion": str(pat.get("suggestion", "")),
+                "automatic_recovery": bool(pat.get("automatic_recovery", False)),
+            }
+        )
+    for cat, regex, probability, suggestion in (
+        getattr(_failure_matcher_module, "_CATEGORY_PATTERNS", None) or []
+    ):
+        patterns.append(
+            {
+                "matcher": "FailureMatcher",
+                "pattern_name": f"category:{getattr(cat, 'value', cat)}",
+                "category": str(getattr(cat, "value", cat)),
+                "regex": str(regex),
+                "probability": float(probability),
+                "suggestion": str(suggestion),
+            }
+        )
+    return patterns
+
+
 class FixPatternStore:
     """修复策略知识库（``data/fix_patterns/``，记录优先，不做匹配；append-only）。
 
     - ``pattern_index.yaml``（REG-AFX-PATTERN-001）：每次修复动作自动写一条
-      修复记录（``records`` 列表只增不改）。
+      修复记录（``records`` 列表只增不改）；``patterns`` 节为故障模式库冷启动
+      内容（failure_matcher 内置模式导出，``ensure_cold_start_patterns``）。
     - ``_fixer-registry.yaml``（MOD-INF-031 蓝图登记项）：三通道修复器注册表，
       冷启动落盘三通道条目（结构→模板化 / 语义→LLM Bridge 必经 LSG / 行为→
       Block+Alert 永不自动修复）。
     两文件写入前 MUST 过 schema 校验（``FixPatternStoreError``），读回同样校验。
+
+    16号文 Q2（先建库还是先建闭环）关闭——按候选方案「并行冷启动、记录优先」
+    落地：库为空时导入冷启动内容，幂等（非空不重复导），导入事件落盘留痕。
     """
 
     def __init__(self, store_dir: Path) -> None:
@@ -358,6 +417,48 @@ class FixPatternStore:
         self._write_yaml(self._index_path, index)
         return record_id
 
+    def ensure_cold_start_patterns(self) -> int:
+        """故障模式库冷启动：``patterns`` 节为空时导入 failure_matcher 内置模式。
+
+        幂等——``patterns`` 非空时不重复导（返回 0）；导入事件 append-only 落盘
+        留痕（``cold_start_imports.jsonl``）。返回本次导入条数。
+        """
+        self.ensure_files()
+        index = self.read_pattern_index()
+        if index.get("patterns"):
+            return 0
+        builtin = _builtin_failure_patterns()
+        if not builtin:
+            return 0
+        ts = now_iso()
+        index["patterns"] = [
+            {
+                "record_id": f"coldstart-{pat['matcher']}:{pat['pattern_name']}",
+                "ts": ts,
+                "kind": "cold_start_pattern",
+                "source": "failure_matcher",
+                **pat,
+            }
+            for pat in builtin
+        ]
+        self.validate_pattern_index(index)
+        self._write_yaml(self._index_path, index)
+        _append_jsonl(
+            self._store_dir / COLD_START_LEDGER_FILENAME,
+            {
+                "kind": "cold_start_import",
+                "source": "zephyr.orchestrator.resilience.failure_matcher",
+                "imported": len(builtin),
+                "ts": ts,
+            },
+        )
+        logger.info(
+            "故障模式库冷启动导入 %d 条 failure_matcher 内置模式 → %s",
+            len(builtin),
+            self._index_path,
+        )
+        return len(builtin)
+
     def read_pattern_index(self) -> dict[str, Any]:
         self.ensure_files()
         with open(self._index_path, encoding="utf-8") as fh:
@@ -384,6 +485,13 @@ class FixPatternStore:
         for rec in records:
             if not isinstance(rec, Mapping) or not rec.get("record_id") or not rec.get("ts"):
                 raise FixPatternStoreError("pattern_index.records 条目缺 record_id/ts")
+        patterns = data.get("patterns")
+        if patterns is not None:
+            if not isinstance(patterns, list):
+                raise FixPatternStoreError("pattern_index.patterns 必须是 list")
+            for pat in patterns:
+                if not isinstance(pat, Mapping) or not pat.get("record_id") or not pat.get("ts"):
+                    raise FixPatternStoreError("pattern_index.patterns 条目缺 record_id/ts")
 
     @staticmethod
     def validate_fixer_registry(data: Mapping[str, Any]) -> None:
@@ -430,15 +538,75 @@ class EscalationSink:
         return _read_jsonl(self._path)
 
 
+def _load_authority_registry(path: Path) -> Mapping[str, Any] | None:
+    """读取 GOV-AI-001 权限注册表；不可读/解析失败/非 mapping 返回 None（调用方 fail-closed）。"""
+    try:
+        with open(path, encoding="utf-8") as fh:
+            data = yaml.safe_load(fh)
+    except (OSError, yaml.YAMLError):
+        return None
+    return data if isinstance(data, Mapping) else None
+
+
+def _registry_permission_for(registry: Mapping[str, Any], path: str) -> str | None:
+    """按 path 精确/目录前缀匹配注册表 ``permission_table`` 权限。
+
+    返回命中的权限串；不在册返回 ``None``。多命中时只要含 Immutable 即返回之
+    （取最严，immutable 目标豁免一律拒）。仅消费 ``path`` 字段——component-only
+    条目（无 path）不做名字猜测匹配（组件名跨节重复，误匹配风险高）。
+    """
+    target = path.replace("\\", "/")
+    while target.startswith("./"):
+        target = target[2:]
+    table = registry.get("permission_table")
+    if not isinstance(table, Mapping):
+        return None
+    matched: list[str] = []
+    for section in table.values():
+        if not isinstance(section, list):
+            continue
+        for entry in section:
+            if not isinstance(entry, Mapping):
+                continue
+            raw = entry.get("path")
+            if not isinstance(raw, str):
+                continue
+            candidate = raw.replace("\\", "/").strip()
+            if "/" not in candidate:
+                continue  # 跳过「同上 子模块」「见 §2.9」「项目外 OS 级」等非路径登记
+            if target == candidate.rstrip("/") or (
+                candidate.endswith("/") and target.startswith(candidate)
+            ):
+                matched.append(str(entry.get("permission", "")))
+    if not matched:
+        return None
+    for permission in matched:
+        if "immutable" in permission.lower():
+            return permission
+    return matched[0]
+
+
 class WhitelistApprovalGate:
-    """保护路径/豁免白名单的 human_gated 审批闸（P1-4，GOV-AI-001 对接口径）。
+    """保护路径/豁免白名单的 human_gated 审批闸（P1-4，GOV-AI-001 实质对接）。
 
     不变量：未经审批的豁免 0 条——``request_exemption`` 无有效 ``approval_id``
     MUST 拒绝并留痕（``exemption_denied``）；审批与授予全部 append-only 留痕。
+
+    GOV-AI-001 实质对接：豁免目标 MUST 在 ``ai_autonomy_authority_registry.yaml``
+    权限注册表在册（``path`` 精确或目录前缀匹配）且非 Immutable Core——
+    immutable 目标豁免请求一律拒；注册表不可读/缺失/解析失败 fail-closed
+    （一律拒批，``denial_reason=authority_registry_unavailable``）。
     """
 
-    def __init__(self, ledger_path: Path) -> None:
+    def __init__(self, ledger_path: Path, registry_path: Path | None = None) -> None:
         self._ledger_path = ledger_path
+        self._registry_path = (
+            registry_path if registry_path is not None else DEFAULT_AUTHORITY_REGISTRY_PATH
+        )
+
+    @property
+    def authority_registry_path(self) -> Path:
+        return self._registry_path
 
     def approve(self, approval_id: str, *, approver: str, scope: str, reason: str) -> None:
         """人工审批登记（human_gated——approver 为空即拒，fail-closed）。"""
@@ -457,22 +625,40 @@ class WhitelistApprovalGate:
         )
 
     def request_exemption(self, *, path: str, reason: str, approval_id: str = "") -> bool:
-        """申请豁免：仅当存在匹配审批时授予；否则拒绝留痕（未经审批豁免 0 条）。"""
-        approved = bool(approval_id) and any(
-            e.get("kind") == "approval" and e.get("approval_id") == approval_id for e in self.entries()
+        """申请豁免：目标在册且非 Immutable Core 且存在匹配审批时授予；否则拒绝留痕。"""
+        denial_reason = self._registry_denial_reason(path)
+        approved = (
+            not denial_reason
+            and bool(approval_id)
+            and any(
+                e.get("kind") == "approval" and e.get("approval_id") == approval_id
+                for e in self.entries()
+            )
         )
         kind = "exemption_granted" if approved else "exemption_denied"
-        _append_jsonl(
-            self._ledger_path,
-            {
-                "kind": kind,
-                "path": path,
-                "reason": reason,
-                "approval_id": approval_id,
-                "ts": now_iso(),
-            },
-        )
+        entry: dict[str, Any] = {
+            "kind": kind,
+            "path": path,
+            "reason": reason,
+            "approval_id": approval_id,
+            "ts": now_iso(),
+        }
+        if denial_reason:
+            entry["denial_reason"] = denial_reason
+        _append_jsonl(self._ledger_path, entry)
         return approved
+
+    def _registry_denial_reason(self, path: str) -> str:
+        """GOV-AI-001 在册校验：返回拒绝原因（空串=通过）；注册表不可读 fail-closed。"""
+        registry = _load_authority_registry(self._registry_path)
+        if registry is None:
+            return "authority_registry_unavailable"
+        permission = _registry_permission_for(registry, path)
+        if permission is None:
+            return "target_not_in_authority_registry"
+        if "immutable" in permission.lower():
+            return "immutable_core_target"
+        return ""
 
     def entries(self) -> list[dict[str, Any]]:
         return _read_jsonl(self._ledger_path)
@@ -551,10 +737,15 @@ class IncidentPipeline:
         self._pattern_matcher = FailurePatternMatcher()
         self._store = FixPatternStore(config.store_dir)
         self._store.ensure_files()
+        # P1-3① 故障模式库冷启动：库为空时导入 failure_matcher 内置模式（幂等，非空不重复导）
+        self._store.ensure_cold_start_patterns()
         config.runtime_dir.mkdir(parents=True, exist_ok=True)
         self._incidents_path = config.runtime_dir / config.incidents_filename
         self._escalation = EscalationSink(config.runtime_dir / config.escalations_filename)
-        self._whitelist = WhitelistApprovalGate(config.runtime_dir / config.whitelist_ledger_filename)
+        self._whitelist = WhitelistApprovalGate(
+            config.runtime_dir / config.whitelist_ledger_filename,
+            registry_path=config.authority_registry_path,
+        )
         self._tickets = InterventionTicketStore(config.runtime_dir / config.tickets_filename)
 
     @property
