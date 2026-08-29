@@ -336,6 +336,7 @@ _PROMPT_TEMPLATE: Final[str] = """对以下知识片段做分类与多维适用�
 【v2.0 多维标注】
 - primary_timeframe 主时间级别（词表：{timeframes}；无时间语义为 null）
 - applicable_timeframes 可泛化时间级别列表（同词表；含 primary；无则空表）
+  ⚠️ 时间级别只允许上述词表内的值；"intraday"是 factor_class 不是时间级别（intraday 因子应标 primary_timeframe="1min"~“60min”档），词表外词汇一律禁止
 - regime_valid 有效市场环境列表（词表：{regimes}；空=未标注）
 - regime_invalid 失效市场环境列表（同词表；与 regime_valid 不得有交集）
 - direction 信号方向（词表：{directions}；无方向语义用 "neutral"）
