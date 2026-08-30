@@ -6899,11 +6899,14 @@ entries:
     排版。已采"检测即跳过"策略（generate_directory_init 遇 ALGO_FLOW 直接 SKIP），
     S4 接管文件的幂等性由 S4 reconciler 负责。本项批量补登 ALGO_FLOW 时注意：
     已接管文件不应再被生成器骨架重建覆盖。
-  status: candidate
+  status: promoted
   priority: P3
   source: '循环审计 R1 杠杆#8（2026-08-19 AI-00 登记）'
   created: '2026-08-19'
-  last_updated: '2026-08-19'
+  last_updated: '2026-08-31'
+  promoted_to: '算法全景真源存量清零（2026-08-31 长城任务 13 commits，有效清单 2663 模块补登 2623）'
+  last_reviewed_at: '2026-08-31'
+  last_review_outcome: "2026-08-31 长城任务（algoflow-gw 会话）12 批次 + 1 矫正批全量落地：严格 AST 代码事实提取生成器（非 drafter 虚构草稿），行号不动点收敛，每批 10% 抽查复核（累计 0 语义错误）。存量 2764→40：31 文件 ruff 语义债（BLE001/F821/RUF007/RUF008）不可自动修复留 Owner 裁定，9 文件为并发会话在飞 WIP（GATE-ALGO-FLOW 硬门禁将强制其归属会话补登）。结案报告 docs/_working/reports/2026-08-31-algoflow-completion-report.md"
 # --- CAND-GATEMECH-001: 门禁"内容绿但 files-modified 标 Failed"聚合语义修订 ---
 - id: CAND-GATEMECH-001
   name: pre-commit 门禁聚合语义修订（files-modified 与内容判定解耦）
