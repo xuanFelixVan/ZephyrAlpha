@@ -22,7 +22,8 @@
 # 层: 输出
 # - id: O1  板块轮动综合评分 [0,1]（SynthesizedSignal.score 语义统一）
 # [/ALGO_FLOW]
-"""板块轮动 → SynthesizedSignal.score 映射（21 号 memo §3.1 v1.1.16，随 G06 批次落地）。
+"""
+板块轮动 → SynthesizedSignal.score 映射（21 号 memo §3.1 v1.1.16，随 G06 批次落地）。
 
 公式（memo 原文）：
     score = clamp(SECTOR_QUADRANT_BASE[quadrant] + strength_score/100 × 0.2
@@ -39,6 +40,42 @@ Lagging 象限+低强度+差回踩 → score 接近 0.1（弱信号/回避）。
 
 放置说明：RRG 象限枚举只读 import 自 signal_ashare.sector_rrg（22 号 G06 批次资产），
 本模块只做映射公式，不改动 sector_* 任何模块。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: quadrant 参数
+#   fields: 参数 quadrant，类型注解 RRGQuadrant | str
+#   code: sector_rotation_score_mapping.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: strength_score 参数
+#   fields: 参数 strength_score，类型注解 float
+#   code: sector_rotation_score_mapping.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: pullback_quality 参数
+#   fields: 参数 pullback_quality，类型注解 str | None
+#   code: sector_rotation_score_mapping.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① map_sector_rotation_score
+#   name_en: map_sector_rotation_score
+#   intro: RRG 象限 + 板块强度 + 回踩质量 → SynthesizedSignal.score ∈ [0,1]。
+#   desc: RRG 象限 + 板块强度 + 回踩质量 → SynthesizedSignal.score ∈ [0,1]。 Args: quadrant: RRGQuadrant 枚举或其…；源码 L100-L124
+#   inputs: quadrant strength_score pullback_quality
+#   outputs: float
+# 层: 输出
+# - id: O1
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 G06 板块轮动定型后 L2-C→sleeve SynthesizedSignal.score 接线)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

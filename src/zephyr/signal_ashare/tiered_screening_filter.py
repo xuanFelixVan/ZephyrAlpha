@@ -21,7 +21,8 @@
 # A3: 四排除机制——委托骨架 run_graded_exclusion（板块幅度自推导经 is_limit_locked 钩子闭包注入）：物理(封死/停牌/ST)/门禁(次新<30天)/分级(日均成交额<500万)/概率(弃庄>0.95)
 # O1: TieredFilterResult(kept/excluded{symbol:reason}/degraded)
 # [/ALGO_FLOW]
-"""选股漏斗第一层——分级指标过滤（BM-SEL-16，~7000→~1200）——A 股信号域薄适配层。
+"""
+选股漏斗第一层——分级指标过滤（BM-SEL-16，~7000→~1200）——A 股信号域薄适配层。
 
 SIGNAL-ARCH-001 归并裁定落地：层序/接口/数据流唯一真源为
 zephyr.signal_ashare.selection_funnel_skeleton（MOD-SIG-086 共享骨架），
@@ -34,6 +35,69 @@ zephyr.signal_ashare.selection_funnel_skeleton（MOD-SIG-086 共享骨架），
 is_limit_locked 钩子闭包注入，服务 A 股信号域候选池入口过滤。
 
 降级：过滤模块未就绪 → 仅排除涨跌停封死/停牌，其余放行（degraded=True）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: board 参数
+#   fields: 参数 board，类型注解 Board | str
+#   code: tiered_screening_filter.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: is_st 参数
+#   fields: 参数 is_st（无注解）
+#   code: tiered_screening_filter.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: close 参数
+#   fields: 参数 close，类型注解 float
+#   code: tiered_screening_filter.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: prev_close 参数
+#   fields: 参数 prev_close，类型注解 float
+#   code: tiered_screening_filter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① limit_pct_for
+#   name_en: limit_pct_for
+#   intro: 板块 → 涨跌停幅度（小数）。
+#   desc: 板块 → 涨跌停幅度（小数）。 规则（宪章 §2 约束四 + 2026-07-06 新规）：主板 ±10%（ST ±10%，原 5% 已上调）/ 科创创业板 ±20%（ST 同板…；源码 L140-L164
+#   inputs: board is_st
+#   outputs: float
+# - id: A2
+#   name_zh: ② is_limit_locked_price
+#   name_en: is_limit_locked_price
+#   intro: 从收盘价推导涨跌停封死（|close/prev_close − 1| ≥ limit_pct − ε）。
+#   desc: 从收盘价推导涨跌停封死（|close/prev_close − 1| ≥ limit_pct − ε）。 涨停封死与跌停封死均视为"当日无法按正常价格成交"——第一层过滤对两个方…；源码 L167-L184
+#   inputs: close prev_close limit_pct eps
+#   outputs: bool | None
+# - id: A3
+#   name_zh: ③ filter_tiered
+#   name_en: filter_tiered
+#   intro: 四排除机制批处理过滤（~7000→~1200）——委托 MOD-SIG-086 共享骨架。
+#   desc: 四排除机制批处理过滤（~7000→~1200）——委托 MOD-SIG-086 共享骨架。 排除优先级（先命中先生效）：物理排除（涨跌停封死/停牌/ST）→ 门禁排除（次新） →…；源码 L228-L267
+#   inputs: records config degraded
+#   outputs: TieredFilterResult
+#   （注：A3 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.signal_ashare.coarse_screening_funnel; zephyr.signal_ashare.screening_fu…
+# - id: O2
+#   name_zh: bool | None
+#   name_en: bool | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.signal_ashare.coarse_screening_funnel; zephyr.signal_ashare.screening_fu…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations
@@ -177,10 +241,12 @@ def filter_tiered(
     cfg = config or TieredFilterConfig()
     hooks = GradedExclusionHooks(
         # 板块幅度自推导注入：board→limit_pct→close/prev_close 推导封死；状态不明 None→不排除
-        is_limit_locked=lambda rec: is_limit_locked_price(
-            rec.close, rec.prev_close, limit_pct_for(rec.board, is_st=rec.is_st), eps=cfg.limit_eps
-        )
-        is True,
+        is_limit_locked=lambda rec: (
+            is_limit_locked_price(
+                rec.close, rec.prev_close, limit_pct_for(rec.board, is_st=rec.is_st), eps=cfg.limit_eps
+            )
+            is True
+        ),
         is_suspended=attrgetter("is_suspended"),
         is_st=attrgetter("is_st"),
         list_days=attrgetter("list_days"),

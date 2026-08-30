@@ -23,6 +23,50 @@ Version: 0.3.0
 
 Skill 校准 —— 置信度 vs 真实准确率对齐 + drift 监控.
 当模型输出 confidence 与实际 accuracy 持续偏离时触发 recalibration 事件.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: confidence 参数
+#   fields: 参数 confidence（无注解）
+#   code: skill_calibration.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: actual_accuracy 参数
+#   fields: 参数 actual_accuracy（无注解）
+#   code: skill_calibration.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: timestamp 参数
+#   fields: 参数 timestamp（无注解）
+#   code: skill_calibration.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CalibrationEntry
+#   name_en: CalibrationEntry
+#   intro: class CalibrationEntry 源码 L78-L91
+#   desc: 公共方法（定义序）: to_dict；源码 L78-L91
+#   inputs: confidence actual_accuracy timestamp
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② SkillCalibration
+#   name_en: SkillCalibration
+#   intro: Skill 校准 —— 置信度 vs 准确率对齐.
+#   desc: Skill 校准 —— 置信度 vs 准确率对齐.；公共方法（定义序）: trend_direction, calibrate, drift_trend, should_recalibrate, clear_histo…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: CalibrationEntry, SkillCalibration
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -55,9 +99,9 @@ class SkillCalibration:
         if len(drifts) < 3:
             return "insufficient_data"
         recent = drifts[-3:]
-        if all((d > 0 for d in recent)):
+        if all(d > 0 for d in recent):
             return "increasing_overconfidence"
-        if all((d < 0 for d in recent)):
+        if all(d < 0 for d in recent):
             return "increasing_underconfidence"
         if recent[-1] > recent[-2] > recent[-3]:
             return "increasing_overconfidence"

@@ -14,7 +14,8 @@
 # [TESTS] tests/risk/test_var_query_builder.py
 # [A_module] module_id=MOD-RK-045 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""VarQueryBuilder — VaR 历史模拟查询构建器（MOD-RK-045）。
+"""
+VarQueryBuilder — VaR 历史模拟查询构建器（MOD-RK-045）。
 
 B13-04313（AUD-DRAFT-001-DIGEST P2 波 P2-W09，CAND-RSK-049，A3 D-RISK-82）：
 历史模拟查询构建——窗口/标的/频段参数化 SQL 生成（参数白名单防注入）+ 谓词
@@ -25,6 +26,48 @@ singleflight 防击穿语义）。
 做分位数）；var_data_prefetcher=DuckDB 批量预取+环形缓冲（本件=SQL 文本与
 参数生成+结果缓存，键语义对齐但互不持有）；本件不持有任何连接，loader 全
 注入。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: table 参数
+#   fields: 参数 table（无注解）
+#   code: var_query_builder.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: allowed_symbols 参数
+#   fields: 参数 allowed_symbols（无注解）
+#   code: var_query_builder.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: max_window 参数
+#   fields: 参数 max_window（无注解）
+#   code: var_query_builder.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: cache_capacity 参数
+#   fields: 参数 cache_capacity（无注解）
+#   code: var_query_builder.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① VarQueryBuilder
+#   name_en: VarQueryBuilder
+#   intro: 历史模拟查询构建器（白名单参数化 + 谓词下推 + 结果缓存）。
+#   desc: 历史模拟查询构建器（白名单参数化 + 谓词下推 + 结果缓存）。；公共方法（定义序）: build, cache_key, fetch, cache_stats, cache_clear；源码 L133-L287
+#   inputs: table allowed_symbols max_window cache_capacity
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: VarQueryBuilder
+#   downstream: 运行时装配批（VaR历史模拟查询装配 / 与预取器共用缓存键语义）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -182,8 +225,10 @@ class VarQueryBuilder:
             sql=sql,
             params=tuple(params),
             cache_key=self.cache_key(
-                holdings=holdings, symbols=cleaned,
-                window_days=window_days, frequency=frequency,
+                holdings=holdings,
+                symbols=cleaned,
+                window_days=window_days,
+                frequency=frequency,
             ),
         )
 
@@ -202,9 +247,7 @@ class VarQueryBuilder:
             body = ";".join(f"{k}={holdings[k]}" for k in sorted(holdings))
         else:
             body = ";".join(sorted(symbols))
-        digest = hashlib.sha256(
-            f"{body}|w={window_days}|f={frequency.value}".encode("utf-8")
-        ).hexdigest()
+        digest = hashlib.sha256(f"{body}|w={window_days}|f={frequency.value}".encode()).hexdigest()
         return digest
 
     # ── 结果缓存（命中统计 + singleflight 防击穿） ────────────────────────

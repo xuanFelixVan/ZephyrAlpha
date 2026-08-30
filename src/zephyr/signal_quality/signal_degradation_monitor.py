@@ -14,7 +14,8 @@
 # [TESTS] tests/signal_quality/test_signal_degradation_monitor.py
 # [A_module] module_id=MOD-SIGQC-004 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""SignalDegradationMonitor — 信号质量退化监控器（MOD-SIGQC-004）。
+"""
+SignalDegradationMonitor — 信号质量退化监控器（MOD-SIGQC-004）。
 
 B13-04309（AUD-DRAFT-001-DIGEST P2 波 P2-W15，CAND-SIGQC-003，A3
 D-SIGNAL-156）：质量指标（命中率/IC/衰减）滚动窗跟踪 + 阈值判定 + 自动告
@@ -25,6 +26,56 @@ D-SIGNAL-156）：质量指标（命中率/IC/衰减）滚动窗跟踪 + 阈值�
 对比检测器（IC衰减/覆盖率骤降/方向漂移，绑定 D-DATA-112 alerter 与
 signal_audit 设施）；本件=轻量三指标滚动窗阈值监控器，alert_router 与
 mark_sink 全回调注入，不绑具体设施，消费端凭 weight_hint 降权。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: window_size 参数
+#   fields: 参数 window_size（无注解）
+#   code: signal_degradation_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: min_samples 参数
+#   fields: 参数 min_samples（无注解）
+#   code: signal_degradation_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: hit_rate_floor 参数
+#   fields: 参数 hit_rate_floor（无注解）
+#   code: signal_degradation_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: ic_floor 参数
+#   fields: 参数 ic_floor（无注解）
+#   code: signal_degradation_monitor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DegradationReport
+#   name_en: DegradationReport
+#   intro: 滚动窗评估报告（frozen；degraded ⇔ level != NONE）。
+#   desc: 滚动窗评估报告（frozen；degraded ⇔ level != NONE）。；公共方法（定义序）: degraded；源码 L151-L166
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② SignalDegradationMonitor
+#   name_en: SignalDegradationMonitor
+#   intro: 三指标滚动窗退化监控器（纯内存/DI，不阻断流水线）。
+#   desc: 三指标滚动窗退化监控器（纯内存/DI，不阻断流水线）。 - 指标：命中率（hit 均值）/ IC 均值 / 衰减（窗内前半 IC 均值相对后半的 回落占比，|前半均值|≈0 时退…；公共方法（定义序）: observe…
+#   inputs: window_size min_samples hit_rate_floor ic_floor decay_warn decay_seve…
+#   outputs: 返回值
+#   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: DegradationReport, SignalDegradationMonitor
+#   downstream: 运行时装配批（信号消费端降权联动 / 告警接 alert 路由）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -144,9 +195,7 @@ class SignalDegradationMonitor:
         if window_size < 2:
             raise SignalDegradationError(f"window_size 须 ≥2，实际 {window_size!r}")
         if not 1 <= min_samples <= window_size:
-            raise SignalDegradationError(
-                f"min_samples 须在 [1, window_size]，实际 {min_samples!r}"
-            )
+            raise SignalDegradationError(f"min_samples 须在 [1, window_size]，实际 {min_samples!r}")
         if not 0.0 < hit_rate_floor <= 1.0:
             raise SignalDegradationError(f"hit_rate_floor 须在 (0,1]，实际 {hit_rate_floor!r}")
         if not 0.0 < ic_floor <= 1.0:
@@ -189,9 +238,7 @@ class SignalDegradationMonitor:
             decay = 0.0
         return hit_rate, ic_mean, decay
 
-    def _judge(
-        self, hit_rate: float, ic_mean: float, decay: float
-    ) -> tuple[DegradationLevel, tuple[str, ...]]:
+    def _judge(self, hit_rate: float, ic_mean: float, decay: float) -> tuple[DegradationLevel, tuple[str, ...]]:
         level = DegradationLevel.NONE
         reasons: list[str] = []
 
@@ -228,9 +275,7 @@ class SignalDegradationMonitor:
         return level, tuple(reasons)
 
     def _alert(self, report: DegradationReport) -> None:
-        _log.warning(
-            "信号降级: %s %s (%s)", report.signal_id, report.level.value, ";".join(report.reasons)
-        )
+        _log.warning("信号降级: %s %s (%s)", report.signal_id, report.level.value, ";".join(report.reasons))
         if self._alert_router is not None:
             try:
                 self._alert_router(

@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-SIG-107 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""隔夜收益预测与开仓期望值（MOD-SIG-107，B10-01464，模块13）。
+"""
+隔夜收益预测与开仓期望值（MOD-SIG-107，B10-01464，模块13）。
 
 决策链第二道经济门槛：E[次日收益]=P涨×E涨−P跌×E跌；E>0.5% 且盈亏比>1.5 且
 成本优势>2ATR 才参与。上游概率/密度生产方（MOD-SIG-037/043）鸭子类型注入。
@@ -23,7 +24,35 @@
 依据: AUD-DRAFT-001 深挖批 B10-01464（裁定=做 P1）；蓝图 §0 边界
 SSoT: depgraph blueprint_id=MOD-SIG-107
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: overnight_return_expectancy.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① OvernightReturnExpectancy
+#   name_en: OvernightReturnExpectancy
+#   intro: 隔夜收益期望值与开仓经济门槛。
+#   desc: 隔夜收益期望值与开仓经济门槛。；公共方法（定义序）: evaluate；源码 L127-L177
+#   inputs: config
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: OvernightReturnExpectancy
+#   downstream: （候选：开仓评估装配层，L3+模块29联动）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
+
 from __future__ import annotations
 
 import logging

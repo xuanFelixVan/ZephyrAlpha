@@ -24,6 +24,32 @@ Version: 0.2.0
 Skill 特性开关 —— 运行时切换 Skill 行为。
 支持预设 Flag (use_l3_refs, strict_mode, sandbox_preview, audit_enabled)
 + 环境变量覆盖 (ZEPHYR_SKILL_FLAGS)。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: skill_feature_flags.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SkillFeatureFlags
+#   name_en: SkillFeatureFlags
+#   intro: Skill 特性开关 —— 运行时切换 Skill 行为.
+#   desc: Skill 特性开关 —— 运行时切换 Skill 行为.；公共方法（定义序）: set_flag, get_flag, get_all_flags, enable_for_all, disable_for_all,…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SkillFeatureFlags
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

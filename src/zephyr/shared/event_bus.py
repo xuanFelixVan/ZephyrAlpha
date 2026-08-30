@@ -34,6 +34,51 @@ v0.2.0: EventBus + ContractBus 桥接
   - Queue 深度采样，每 emit() 检查
   - 超过警戒水位 (CAP-006 = 500) -> 生产者减速（sleep / 拒绝）
   - 严重水位 (> 2× threshold) -> 丢弃低优先级事件
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: max_queue_size 参数
+#   fields: 参数 max_queue_size（无注解）
+#   code: event_bus.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: warn_threshold 参数
+#   fields: 参数 warn_threshold（无注解）
+#   code: event_bus.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: critical_threshold 参数
+#   fields: 参数 critical_threshold（无注解）
+#   code: event_bus.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① EventBus
+#   name_en: EventBus
+#   intro: 任务事件发布/订阅总线（单例模式）
+#   desc: 任务事件发布/订阅总线（单例模式） 与 EventBusBackpressure 互补：EventBus 面向领域事件，EventBusBackpressure 面向系统事件 v…；公共方法（定义序）: subscri…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② EventBusBackpressure
+#   name_en: EventBusBackpressure
+#   intro: 事件总线背压控制器 (M-07)
+#   desc: 事件总线背压控制器 (M-07) 跨线程安全：使用 threading.Lock 保护共享状态 v0.2.0: 集成 ContractBus Schema 校验；公共方法（定义序）: set_contract_bus,…
+#   inputs: max_queue_size warn_threshold critical_threshold
+#   outputs: 返回值
+#   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: EventBus, EventBusBackpressure
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 import logging
@@ -352,7 +397,9 @@ class EventBusBackpressure:
 
 def _init_bridge() -> None:
     try:
-        from zephyr.shared.contract_bus import get_bus  # noqa: import-integrity  contract_bus 可选桥接（模块未上线），try/except 守卫降级 debug
+        from zephyr.shared.contract_bus import (
+            get_bus,  # noqa: import-integrity  contract_bus 可选桥接（模块未上线），try/except 守卫降级 debug
+        )
 
         bus.set_contract_bus(get_bus())
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch

@@ -14,7 +14,8 @@
 # [TESTS] tests/signal_ashare/test_intraday_size_style.py
 # [A_module] module_id=MOD-SIG-120 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""IntradaySizeStyle — 分时微结构与大小盘风格（MOD-SIG-120）。
+"""
+IntradaySizeStyle — 分时微结构与大小盘风格（MOD-SIG-120）。
 
 B10-01385（AUD-DRAFT-001-DIGEST P2 波 P2-W05，CAND-TESTB-040，A1 模块45）：
 Size 因子（大盘-小盘收益差序列）+ 风格持续性统计（同向 >5 天判定）+
@@ -25,6 +26,33 @@ Size 因子（大盘-小盘收益差序列）+ 风格持续性统计（同向 >5
 时序与日内动量，不做分层）；intraday_volume_orderflow=分时量价订单流
 （本件取首/次半小时收益对做 Gao 式动量，零交集）；t0_point_analyzer=
 T0 买卖点（本件仅风格/动量统计信号，不产买卖点）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: intraday_size_style.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① IntradaySizeStyle
+#   name_en: IntradaySizeStyle
+#   intro: 分时微结构与大小盘风格统计件（纯内存，时钟注入）。
+#   desc: 分时微结构与大小盘风格统计件（纯内存，时钟注入）。 Args: clock: 时钟注入（测试可控）；缺省系统时钟。；公共方法（定义序）: size_factor_series, style_persistence, i…
+#   inputs: clock
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: IntradaySizeStyle
+#   downstream: 运行时装配批（统一注入点装配：大小盘收益序列 / 分时价量接入）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -120,7 +148,7 @@ def _pearson(xs: Sequence[float], ys: Sequence[float]) -> float:
     n = len(xs)
     mx = sum(xs) / n
     my = sum(ys) / n
-    cov = sum((x - mx) * (y - my) for x, y in zip(xs, ys))
+    cov = sum((x - mx) * (y - my) for x, y in zip(xs, ys, strict=False))
     vx = sum((x - mx) ** 2 for x in xs)
     vy = sum((y - my) ** 2 for y in ys)
     if vx == 0.0 or vy == 0.0:
@@ -149,10 +177,8 @@ class IntradaySizeStyle:
         large = _as_finite_series("large_returns", large_returns)
         small = _as_finite_series("small_returns", small_returns)
         if len(large) != len(small):
-            raise IntradaySizeStyleError(
-                f"大小盘收益序列长度不齐: {len(large)} vs {len(small)}"
-            )
-        return tuple(l - s for l, s in zip(large, small))
+            raise IntradaySizeStyleError(f"大小盘收益序列长度不齐: {len(large)} vs {len(small)}")
+        return tuple(l - s for l, s in zip(large, small, strict=False))
 
     # ── 风格持续性 ────────────────────────────────────────────────────────
 
@@ -198,15 +224,11 @@ class IntradaySizeStyle:
         if window < 2:
             raise IntradaySizeStyleError(f"window 非法: {window!r}（须 >= 2）")
         if not 0.0 < corr_threshold <= 1.0:
-            raise IntradaySizeStyleError(
-                f"corr_threshold 非法: {corr_threshold!r}（须 ∈ (0,1]）"
-            )
+            raise IntradaySizeStyleError(f"corr_threshold 非法: {corr_threshold!r}（须 ∈ (0,1]）")
         first = _as_finite_series("first_half_returns", first_half_returns)
         second = _as_finite_series("second_half_returns", second_half_returns)
         if len(first) != len(second):
-            raise IntradaySizeStyleError(
-                f"首/次半小时收益序列长度不齐: {len(first)} vs {len(second)}"
-            )
+            raise IntradaySizeStyleError(f"首/次半小时收益序列长度不齐: {len(first)} vs {len(second)}")
         if len(first) < window:
             _log.debug("日内动量窗口未就绪: %d < %d（降级）", len(first), window)
             return IntradayMomentumSignal(correlation=0.0, window_ready=False, signal=0)
@@ -225,9 +247,7 @@ class IntradaySizeStyle:
         px = _as_finite_series("prices", prices)
         vol = _as_finite_series("volumes", volumes)
         if len(px) != len(vol):
-            raise IntradaySizeStyleError(
-                f"价量序列长度不齐: {len(px)} vs {len(vol)}"
-            )
+            raise IntradaySizeStyleError(f"价量序列长度不齐: {len(px)} vs {len(vol)}")
         for p in px:
             if p <= 0.0:
                 raise IntradaySizeStyleError(f"价格非正: {p!r}")
@@ -237,7 +257,7 @@ class IntradaySizeStyle:
         total_vol = sum(vol)
         if total_vol <= 0.0:
             raise IntradaySizeStyleError("总成交量为 0（VWAP 无定义，Fail-Closed）")
-        vwap = sum(p * v for p, v in zip(px, vol)) / total_vol
+        vwap = sum(p * v for p, v in zip(px, vol, strict=False)) / total_vol
         return (px[-1] - vwap) / vwap
 
     # ── 分时 ADX ─────────────────────────────────────────────────────────
@@ -257,15 +277,11 @@ class IntradaySizeStyle:
         lo = _as_finite_series("lows", lows)
         cl = _as_finite_series("closes", closes)
         if not (len(hi) == len(lo) == len(cl)):
-            raise IntradaySizeStyleError(
-                f"高低收序列长度不齐: {len(hi)}/{len(lo)}/{len(cl)}"
-            )
+            raise IntradaySizeStyleError(f"高低收序列长度不齐: {len(hi)}/{len(lo)}/{len(cl)}")
         n = len(cl)
         if n < period + 1:
-            raise IntradaySizeStyleError(
-                f"样本 {n} 不足（ADX 需 period+1={period + 1}，Fail-Closed）"
-            )
-        for h, l in zip(hi, lo):
+            raise IntradaySizeStyleError(f"样本 {n} 不足（ADX 需 period+1={period + 1}，Fail-Closed）")
+        for h, l in zip(hi, lo, strict=False):
             if h < l:
                 raise IntradaySizeStyleError(f"最高价 < 最低价: high={h!r} low={l!r}")
 
@@ -277,19 +293,21 @@ class IntradaySizeStyle:
             down = lo[i - 1] - lo[i]
             plus_dm.append(up if (up > down and up > 0.0) else 0.0)
             minus_dm.append(down if (down > up and down > 0.0) else 0.0)
-            trs.append(max(
-                hi[i] - lo[i],
-                abs(hi[i] - cl[i - 1]),
-                abs(lo[i] - cl[i - 1]),
-            ))
+            trs.append(
+                max(
+                    hi[i] - lo[i],
+                    abs(hi[i] - cl[i - 1]),
+                    abs(lo[i] - cl[i - 1]),
+                )
+            )
         dx_values: list[float] = []
         for end in range(period, len(trs) + 1):
-            atr = sum(trs[end - period:end])
+            atr = sum(trs[end - period : end])
             if atr == 0.0:
                 dx_values.append(0.0)
                 continue
-            pdi = 100.0 * sum(plus_dm[end - period:end]) / atr
-            mdi = 100.0 * sum(minus_dm[end - period:end]) / atr
+            pdi = 100.0 * sum(plus_dm[end - period : end]) / atr
+            mdi = 100.0 * sum(minus_dm[end - period : end]) / atr
             denom = pdi + mdi
             dx = 0.0 if denom == 0.0 else 100.0 * abs(pdi - mdi) / denom
             dx_values.append(dx)

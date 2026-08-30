@@ -39,6 +39,77 @@ async wrapper 待真实需求再建；接口规范 §4.1 的 InProcessContextEng
 （async 三源汇聚全量版）降级为远期候选（P4）。
 
 Respects token budget limits from ContextBudgetTracker.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: context 参数
+#   fields: 参数 context，类型注解 ValidatedContext
+#   code: context_injector.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: session_limit 参数
+#   fields: 参数 session_limit（无注解）
+#   code: context_injector.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: examples_similarity_threshold 参数
+#   fields: 参数 examples_similarity_threshold（无注解）
+#   code: context_injector.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: timeout_s 参数
+#   fields: 参数 timeout_s（无注解）
+#   code: context_injector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ContextInjector
+#   name_en: ContextInjector
+#   intro: Retrieve and inject knowledge context.
+#   desc: Retrieve and inject knowledge context. 三种检索模式（keyword / task_id / module_id）均经 VMSSearchP…；公共方法（定义序）: inject_…
+#   inputs: token_budget max_sources search_client search_collection
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② format_context
+#   name_en: format_context
+#   intro: 将 ValidatedContext 按四层结构格式化。
+#   desc: 将 ValidatedContext 按四层结构格式化。 Parameters ---------- context : ValidatedContext Validate 阶段…；源码 L412-L452
+#   inputs: context
+#   outputs: dict[str, str]
+# - id: A3
+#   name_zh: ③ inject
+#   name_en: inject
+#   intro: INJECT 阶段入口——将校验上下文以四层结构注入。
+#   desc: INJECT 阶段入口——将校验上下文以四层结构注入。 注入顺序：Layer1(system) -> Layer2(rules) -> Layer3(knowledge) ->…；源码 L517-L626
+#   inputs: context session_limit examples_similarity_threshold timeout_s lsg_pas…
+#   outputs: InjectionResult
+# - id: A4
+#   name_zh: ④ with_authority_review
+#   name_en: with_authority_review
+#   intro: TASK-018: 为注入结果标记 authority chain review 层级。
+#   desc: TASK-018: 为注入结果标记 authority chain review 层级。 CE build(0.7) -> Orc check(0.85) -> User rev…；源码 L667-L675
+#   inputs: result level
+#   outputs: InjectionResult
+#   （注：A4 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, str]
+#   name_en: dict[str, str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: InjectionResult
+#   name_en: InjectionResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

@@ -20,6 +20,48 @@ HealthMonitor — 健康监控 + 自愈
 ================================
 蓝图: docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md §3.1
 借鉴: K8s Liveness/Readiness Probe + Level-Triggered Reconciliation
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: snapshot_dir 参数
+#   fields: 参数 snapshot_dir（无注解）
+#   code: health_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: max_restart_attempts 参数
+#   fields: 参数 max_restart_attempts（无注解）
+#   code: health_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: health_check_interval 参数
+#   fields: 参数 health_check_interval（无注解）
+#   code: health_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: metrics_interval 参数
+#   fields: 参数 metrics_interval（无注解）
+#   code: health_monitor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① HealthMonitor
+#   name_en: HealthMonitor
+#   intro: 健康监控 + 自愈——水平触发调和循环。
+#   desc: 健康监控 + 自愈——水平触发调和循环。 借鉴: - K8s Liveness Probe: 组件是否存活 - K8s Readiness Probe: 组件是否可服务 - K8…；公共方法（定义序）: running…
+#   inputs: snapshot_dir max_restart_attempts health_check_interval metrics_inter…
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: HealthMonitor
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 import json

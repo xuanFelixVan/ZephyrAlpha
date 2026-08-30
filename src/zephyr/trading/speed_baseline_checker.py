@@ -14,6 +14,45 @@
 # [TESTS] test_speed_baseline_checker.py
 # [A_module] module_id=MOD-RESOURCE_OPTIMIZATION_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: speed_baseline_checker.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SpeedBaselineChecker
+#   name_en: SpeedBaselineChecker
+#   intro: class SpeedBaselineChecker 源码 L156-L231
+#   desc: 公共方法（定义序）: check_active_processes；源码 L156-L231
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② check_speed_anomalies
+#   name_en: check_speed_anomalies
+#   intro: check_speed_anomalies() 源码 L234-L236
+#   desc: 源码 L234-L236
+#   inputs: 无参数
+#   outputs: SpeedCheckResult
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: SpeedCheckResult
+#   name_en: SpeedCheckResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: none
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
+
 import logging
 import time
 from dataclasses import dataclass, field

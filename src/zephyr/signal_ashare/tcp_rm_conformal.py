@@ -14,7 +14,8 @@
 # [TESTS] tests/signal_ashare/test_tcp_rm_conformal.py
 # [A_module] module_id=MOD-SIG-128 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""TcpRmConformal — TCP-RM 时序保形预测增强器（MOD-SIG-128）。
+"""
+TcpRmConformal — TCP-RM 时序保形预测增强器（MOD-SIG-128）。
 
 B10-01854（AUD-DRAFT-001-DIGEST P2 波 P2-W06，CAND-TESTB-050，A1 §29.16-5）：
 **Robbins-Monro 在线校准**（分位数误差反馈 q ← q + (step0/n)·(τ − 1{score≤q})，
@@ -29,6 +30,38 @@ conformal 离线基线（窗口经验分位数，无在线反馈）；adaptive_c
 tcp_rm_ddci（MOD-SIG-052）= 加权校准批式变体（整批残差加权分位数；本件=
 Robbins-Monro 随机逼近逐样本流式在线更新 + DDCI 覆盖率双反馈 + CP-VaR
 回测语义，路线不同零交集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: tcp_rm_conformal.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: tcp_rm_conformal.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① TcpRmConformal
+#   name_en: TcpRmConformal
+#   intro: TCP-RM 时序保形预测增强器（Robbins-Monro + DDCI 双反馈）。
+#   desc: TCP-RM 时序保形预测增强器（Robbins-Monro + DDCI 双反馈）。 在线语义：update(point, actual) 先用当前阈值出区间（无未来函数），再…；公共方法（定义序）: reset,…
+#   inputs: config clock
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: TcpRmConformal
+#   downstream: 运行时装配批（CP-VaR 回测 / 在线区间预测接密度预测下游）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

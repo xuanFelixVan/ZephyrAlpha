@@ -14,13 +14,53 @@
 # [TESTS] tests/test_autopilot.py
 # [A_module] module_id=MOD-ORC-autopilot | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""AutoPilot — AI session 自动找活干、认领任务。
+"""
+AutoPilot — AI session 自动找活干、认领任务。
 
 职责边界：
 - scan / status_report -> 只读，告诉 AI 当前有什么活
 - claim_next -> 认领一个任务（Event Sourcing 原子争抢）
 - run_cycle -> 扫描 + 逐 batch 认领，返回认领到的任务列表
 - 不执行任务 —— 执行是 AI session 的事
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: session_id 参数
+#   fields: 参数 session_id（无注解）
+#   code: autopilot.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: db_path 参数
+#   fields: 参数 db_path（无注解）
+#   code: autopilot.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AutoPilot
+#   name_en: AutoPilot
+#   intro: 自动驾驶 —— AI session 启动后自动扫描并认领待办任务。
+#   desc: 自动驾驶 —— AI session 启动后自动扫描并认领待办任务。；公共方法（定义序）: repo, scan, status_report, claim_next, run_cycle；源码 L85-L236
+#   inputs: session_id db_path
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② subscribe_eventbus
+#   name_en: subscribe_eventbus
+#   intro: 订阅 EventBusBackpressure 的 task_completed 事件。
+#   desc: 订阅 EventBusBackpressure 的 task_completed 事件。 幂等：重复调用安全。Backpressure 总线不可用时静默跳过。 供 boot_ho…；源码 L245-L269
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: AutoPilot, subscribe_eventbus
+#   downstream: zephyr.trading.__init__; zephyr.trading.conductor
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-L03-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道
+"""
+AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道
 ============================================
 Domain   : _domain_signal (SIGNAL-DOMAIN-001)
 Contracts: AS-CT-001~005
@@ -37,6 +38,33 @@ AS-CT-002: 因子计算幂等性保证
 AS-CT-003: 信号合成加权策略契约
 AS-CT-004: 信号降级->告警路由
 AS-CT-005: 跨层审计追踪
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: pipeline.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① AlphaSignalPipeline
+#   name_en: AlphaSignalPipeline
+#   intro: D_FACTOR->D_SIGNAL Alpha-Signal 跨层集成管道。
+#   desc: D_FACTOR->D_SIGNAL Alpha-Signal 跨层集成管道。 将 D_FACTOR 因子层的原始因子信号通过 D_SIGNAL 信号合成引擎 转化为统一的合成交…；公共方法（定义序）: factors…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: AlphaSignalPipeline
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

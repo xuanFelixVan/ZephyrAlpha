@@ -14,7 +14,8 @@
 # [TESTS] tests/signal_ashare/test_event_conditional_density.py
 # [A_module] module_id=MOD-SIG-123 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""EventConditionalDensity — 事件驱动条件分布预测（MOD-SIG-123）。
+"""
+EventConditionalDensity — 事件驱动条件分布预测（MOD-SIG-123）。
 
 B10-01412（AUD-DRAFT-001-DIGEST P2 波 P2-W05，CAND-TESTB-043，A1 B3）：
 以**事件类型作条件变量**扩展条件密度预测——按事件类型分桶历史事件前瞻
@@ -27,6 +28,43 @@ NLP 分类回调**接入（文本→闭合事件词表，未注入 Fail-Closed �
 分桶/regime 标签的收益率条件密度（本件=事件类型条件变量扩展，分桶降级
 语义同构：桶样本不足回退全样本 degraded）；event_driven_screener=事件选
 股（本件不做选股，只产分布）；causal_inference_engine=因果推断（零交集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: event_conditional_density.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: event_classifier 参数
+#   fields: 参数 event_classifier（无注解）
+#   code: event_conditional_density.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: event_conditional_density.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① EventConditionalDensity
+#   name_en: EventConditionalDensity
+#   intro: 事件驱动条件分布预测器（事件分桶 + 直方图/分位数 + 盘后批护栏）。
+#   desc: 事件驱动条件分布预测器（事件分桶 + 直方图/分位数 + 盘后批护栏）。；公共方法（定义序）: validate_conservation, classify_event, add_sample, add_sample…
+#   inputs: clock event_classifier config
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: EventConditionalDensity
+#   downstream: 运行时装配批（盘后事件条件分布批处理 / 信号-风控下游密度输入）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -95,15 +133,13 @@ class EventCondDensityConfig:
         if self.min_samples < 1:
             raise EventCondDensityError(f"min_samples 须≥1，实得 {self.min_samples}")
         if self.max_batch_symbols < 1:
-            raise EventCondDensityError(
-                f"max_batch_symbols 须≥1，实得 {self.max_batch_symbols}"
-            )
+            raise EventCondDensityError(f"max_batch_symbols 须≥1，实得 {self.max_batch_symbols}")
         if not self.quantiles:
             raise EventCondDensityError("quantiles 为空")
         for p in self.quantiles:
             if not 0.0 < p < 1.0:
                 raise EventCondDensityError(f"分位水平越界: {p!r}（须∈(0,1) 开区间）")
-        for prev, nxt in zip(self.quantiles, self.quantiles[1:]):
+        for prev, nxt in zip(self.quantiles, self.quantiles[1:], strict=False):
             if prev >= nxt:
                 raise EventCondDensityError(f"quantiles 须严格递增: {self.quantiles!r}")
 
@@ -168,8 +204,7 @@ def _histogram(values: Sequence[float], bin_count: int) -> tuple[HistogramBin, .
             idx = bin_count - 1
         counts[idx] += 1
     return tuple(
-        HistogramBin(lower=lo + i * width, upper=lo + (i + 1) * width, count=counts[i])
-        for i in range(bin_count)
+        HistogramBin(lower=lo + i * width, upper=lo + (i + 1) * width, count=counts[i]) for i in range(bin_count)
     )
 
 
@@ -198,24 +233,16 @@ class EventConditionalDensity:
         try:
             return EventType(str(raw))
         except ValueError:
-            raise EventCondDensityError(
-                f"未注册事件类型: {raw!r}（词表闭合）"
-            ) from None
+            raise EventCondDensityError(f"未注册事件类型: {raw!r}（词表闭合）") from None
 
     @staticmethod
     def _check_return(value: float) -> float:
         """前瞻收益取值校验（须有限实数）。"""
-        if (
-            isinstance(value, bool)
-            or not isinstance(value, (int, float))
-            or not math.isfinite(value)
-        ):
+        if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
             raise EventCondDensityError(f"非法前瞻收益: {value!r}（须有限实数）")
         return float(value)
 
-    def _build(
-        self, event_type: EventType, values: Sequence[float], *, degraded: bool
-    ) -> EventDensity:
+    def _build(self, event_type: EventType, values: Sequence[float], *, degraded: bool) -> EventDensity:
         """构造事件条件分布（直方图 + 分位数 + 计数守恒校验）。"""
         density = EventDensity(
             event_type=event_type,
@@ -232,9 +259,7 @@ class EventConditionalDensity:
         """分布校验：Σ直方图计数 == n_samples（破守恒 Fail-Closed）。"""
         total = sum(b.count for b in density.histogram)
         if total != density.n_samples:
-            raise EventCondDensityError(
-                f"直方图计数不守恒: Σcount={total} != n_samples={density.n_samples}"
-            )
+            raise EventCondDensityError(f"直方图计数不守恒: Σcount={total} != n_samples={density.n_samples}")
 
     # ── 事件源注入（NLP 事件分类回调）────────────────────────────────────
 
@@ -243,9 +268,7 @@ class EventConditionalDensity:
         if not text or not text.strip():
             raise EventCondDensityError("事件文本为空")
         if self._classifier is None:
-            raise EventCondDensityError(
-                "event_classifier 未注入（事件源强制 NLP 分类回调，禁止旁路）"
-            )
+            raise EventCondDensityError("event_classifier 未注入（事件源强制 NLP 分类回调，禁止旁路）")
         try:
             raw = self._classifier(text)
         except EventCondDensityError:
@@ -262,9 +285,7 @@ class EventConditionalDensity:
         t = self._coerce_type(event_type)
         self._samples[t].append(self._check_return(forward_return))
 
-    def add_samples(
-        self, event_type: EventType | str, forward_returns: Iterable[float]
-    ) -> None:
+    def add_samples(self, event_type: EventType | str, forward_returns: Iterable[float]) -> None:
         """批量登记事件前瞻收益样本（空序列 Fail-Closed）。"""
         values = list(forward_returns)
         if not values:
@@ -314,9 +335,7 @@ class EventConditionalDensity:
             raise EventCondDensityError("盘后批次为空")
         n = len(symbol_samples)
         if n > self._cfg.max_batch_symbols:
-            raise EventCondDensityError(
-                f"盘后批次越护栏: {n} > {self._cfg.max_batch_symbols} 只"
-            )
+            raise EventCondDensityError(f"盘后批次越护栏: {n} > {self._cfg.max_batch_symbols} 只")
         prepared: dict[str, tuple[EventType, list[float]]] = {}
         for symbol, (raw_type, raw_returns) in symbol_samples.items():
             if not symbol or not symbol.strip():
@@ -337,6 +356,4 @@ class EventConditionalDensity:
             )
             for symbol, (t, vals) in prepared.items()
         }
-        return AfterCloseBatchReport(
-            generated_at=self._clock(), n_symbols=n, densities=densities
-        )
+        return AfterCloseBatchReport(generated_at=self._clock(), n_symbols=n, densities=densities)

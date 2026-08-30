@@ -14,7 +14,8 @@
 # [TESTS] tests/signal_ashare/test_pattern_to_signal_mapper.py
 # [A_module] module_id=MOD-SIG-115 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""PatternToSignalMapper — 97形态→信号转化层（MOD-SIG-115，B1-00849，C2 97）。
+"""
+PatternToSignalMapper — 97形态→信号转化层（MOD-SIG-115，B1-00849，C2 97）。
 
 消费 unified_pattern_engine 的 PatternEvent（类型+置信度+关键点位+方向+
 历史胜率）→ 方向/强度/止损位映射（形态→方向映射表 + 强度=置信度×胜率
@@ -22,6 +23,48 @@
 （注入产出校验器，未注入/拒绝即 Fail-Closed 不出伪信号）。
 
 纯内存/DI设计；外部副作用全部经注入回调。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: stop_buffer_pct 参数
+#   fields: 参数 stop_buffer_pct（无注解）
+#   code: pattern_to_signal_mapper.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: default_win_rate 参数
+#   fields: 参数 default_win_rate（无注解）
+#   code: pattern_to_signal_mapper.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: validator 参数
+#   fields: 参数 validator（无注解）
+#   code: pattern_to_signal_mapper.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: pattern_to_signal_mapper.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① PatternToSignalMapper
+#   name_en: PatternToSignalMapper
+#   intro: 形态信号转化层（PatternEvent→方向/强度/止损→CTR-002 输出）。
+#   desc: 形态信号转化层（PatternEvent→方向/强度/止损→CTR-002 输出）。；公共方法（定义序）: map_event, map_batch, emit_signal；源码 L132-L254
+#   inputs: stop_buffer_pct default_win_rate validator clock
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: PatternToSignalMapper
+#   downstream: 运行时装配批（统一注入点装配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -134,9 +177,7 @@ class PatternToSignalMapper:
             notes = ("中性形态，无止损位",)
         else:
             if not event.key_points:
-                raise PatternSignalMapError(
-                    f"形态 {event.pattern_id!r} 无关键点位，无法计算止损"
-                )
+                raise PatternSignalMapError(f"形态 {event.pattern_id!r} 无关键点位，无法计算止损")
             prices = [kp.price for kp in event.key_points]
             if direction is SignalDirection.LONG:
                 anchor = min(prices)
@@ -183,8 +224,10 @@ class PatternToSignalMapper:
 
         values: dict[str, float] = {}
         for sig in signals:
-            signed = sig.strength if sig.direction is SignalDirection.LONG else (
-                -sig.strength if sig.direction is SignalDirection.SHORT else 0.0
+            signed = (
+                sig.strength
+                if sig.direction is SignalDirection.LONG
+                else (-sig.strength if sig.direction is SignalDirection.SHORT else 0.0)
             )
             values[sig.pattern_id] = round(signed, 6)
 
@@ -206,8 +249,6 @@ class PatternToSignalMapper:
         except Exception as exc:  # noqa: BLE001 — 校验器违约 Fail-Closed
             raise PatternSignalMapError(f"validator 执行异常: {exc}") from exc
         if not ok:
-            raise PatternSignalMapError(
-                f"CTR-002 校验拒绝: symbol {symbol!r}（Fail-Closed 不出伪信号）"
-            )
+            raise PatternSignalMapError(f"CTR-002 校验拒绝: symbol {symbol!r}（Fail-Closed 不出伪信号）")
         _log.info("形态信号出网: %s（%d 形态）", symbol, len(signals))
         return payload

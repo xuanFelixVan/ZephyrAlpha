@@ -14,7 +14,8 @@
 # [TESTS] tests/signal_ashare/test_factor_result_bridge.py
 # [A_module] module_id=MOD-SIG-087 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D-SIGNAL-158 因子计算结果消费桥接器（CAND-TESTB-027 / B13-04307）。
+"""
+D-SIGNAL-158 因子计算结果消费桥接器（CAND-TESTB-027 / B13-04307）。
 
 D-FACTOR→D-SIGNAL 统一消费桥接（anti-corruption layer）：信号侧不再直连因子
 存储，一律经本桥接器消费因子计算结果。
@@ -33,6 +34,48 @@ D-FACTOR→D-SIGNAL 统一消费桥接（anti-corruption layer）：信号侧不
     注入，适配器落地后接线；真实 Redis/CH provider 装配留运行时装配批。
 
 依据: A3数据架构 §17.12；construction_backlog_dig.tsv B13-04307。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: provider 参数
+#   fields: 参数 provider（无注解）
+#   code: factor_result_bridge.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: supported_versions 参数
+#   fields: 参数 supported_versions（无注解）
+#   code: factor_result_bridge.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: audit_sink 参数
+#   fields: 参数 audit_sink（无注解）
+#   code: factor_result_bridge.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: factor_result_bridge.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FactorResultBridge
+#   name_en: FactorResultBridge
+#   intro: 因子计算结果消费桥接器。
+#   desc: 因子计算结果消费桥接器。 Args: provider: 取数回调 ``provider(as_of=None) -> FactorResultBatch`` （CTR-002…；公共方法（定义序）: audit_lo…
+#   inputs: provider supported_versions audit_sink clock
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: FactorResultBridge
+#   downstream: D_ASHARE_SIGNAL 信号合成侧（运行时装配批接线）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -165,9 +208,7 @@ class FactorResultBridge:
         except Exception as exc:  # noqa: BLE001 — provider 边界统一翻译
             raise FactorResultBridgeError(f"因子结果取数失败: {exc}") from exc
         if not isinstance(batch, FactorResultBatch):
-            raise FactorResultBridgeError(
-                f"provider 返回类型非法: {type(batch).__name__}（期望 FactorResultBatch）"
-            )
+            raise FactorResultBridgeError(f"provider 返回类型非法: {type(batch).__name__}（期望 FactorResultBatch）")
 
         action, reason = self._adjudicate_version(batch.schema_version)
         if action == "unsupported":

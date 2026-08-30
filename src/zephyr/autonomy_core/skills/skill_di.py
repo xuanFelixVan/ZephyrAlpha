@@ -22,6 +22,32 @@ Author: factory-agent
 Version: 0.3.0
 
 Skill DI——模块化 Skill 组装与依赖拓扑排序.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: skill_di.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SkillDI
+#   name_en: SkillDI
+#   intro: Skill DI——模块化 Skill 组装与依赖解析.
+#   desc: Skill DI——模块化 Skill 组装与依赖解析.；公共方法（定义序）: register, resolve, inject, topological_order, clear；源码 L59-L115
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SkillDI
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

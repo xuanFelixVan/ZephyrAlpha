@@ -21,7 +21,8 @@
 # A3: 横截面 Z-score 标准化 → 降序 Top-N（std≈0 时 Z 置 0 按 raw 兜底排名）
 # O1: FineScoreResult(top: ScoredEntry(symbol/raw_score/z_score/rank), degraded)
 # [/ALGO_FLOW]
-"""选股漏斗第三层——精筛评分（BM-SEL-18，~300→~50）。
+"""
+选股漏斗第三层——精筛评分（BM-SEL-18，~300→~50）。
 
 六要素综合评分（21 号 memo §3.6 ③ 契约）：基础评分（价值 40%/动量 30%/质量 20%/
 情绪 10%）×(1+状态偏移 ±10%) + 主力评分 ×0.20 − 拥挤度 ×0.10 − 密度要素 ×0.15
@@ -33,6 +34,69 @@
 一），本模块不 import 密度预测实现，保持漏斗层与模型层解耦。
 
 降级：精筛未就绪 → 等权综合评分（degraded=True）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: density 参数
+#   fields: 参数 density，类型注解 Any
+#   code: fine_scoring_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: rec 参数
+#   fields: 参数 rec，类型注解 FineScoreRecord
+#   code: fine_scoring_engine.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: cfg 参数
+#   fields: 参数 cfg（无注解）
+#   code: fine_scoring_engine.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: degraded 参数
+#   fields: 参数 degraded（无注解）
+#   code: fine_scoring_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① compute_density_penalty
+#   name_en: compute_density_penalty
+#   intro: 密度要素扣分项 = 负偏度幅度×10 + 超额峰度×5 + 前瞻 VaR 幅度%（memo §3.6 ③）。
+#   desc: 密度要素扣分项 = 负偏度幅度×10 + 超额峰度×5 + 前瞻 VaR 幅度%（memo §3.6 ③）。 density 为 None 时返回 0.0（密度预测未就绪 → 密…；源码 L177-L185
+#   inputs: density
+#   outputs: float
+# - id: A2
+#   name_zh: ② composite_raw_score
+#   name_en: composite_raw_score
+#   intro: 六要素合成原始分。
+#   desc: 六要素合成原始分。degraded=True → 等权综合（四维基础分+主力五维等权）。；源码 L188-L211
+#   inputs: rec cfg degraded
+#   outputs: float
+# - id: A3
+#   name_zh: ③ score_fine
+#   name_en: score_fine
+#   intro: 六要素综合评分 → 横截面 Z-score 标准化 → 降序取 Top-N（~300→~50）。
+#   desc: 六要素综合评分 → 横截面 Z-score 标准化 → 降序取 Top-N（~300→~50）。 Z-score：std≈0（全体同分）时 Z 全部置 0（无区分度，按 raw…；源码 L214-L237
+#   inputs: records top_n config degraded
+#   outputs: FineScoreResult
+#   （注：A3 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.signal_ashare.event_driven_screener
+# - id: O2
+#   name_zh: FineScoreResult
+#   name_en: FineScoreResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.signal_ashare.event_driven_screener
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

@@ -35,7 +35,8 @@
 #   name: GradedFilterResult / PreliminaryScreenResult / FineSelectionResult
 #   intro: 三级结果含保留/排除清单、排除归因、降级标记；Z-score 排名 Top-N 喂 sleeve 排序
 # [/ALGO_FLOW]
-"""选股漏斗三层级——基本面信号域薄适配层（21 号 memo §3.6，BM-SEL-16/17/18）。
+"""
+选股漏斗三层级——基本面信号域薄适配层（21 号 memo §3.6，BM-SEL-16/17/18）。
 
 SIGNAL-ARCH-001 归并裁定落地：层序/接口/数据流唯一真源为
 zephyr.signal_ashare.selection_funnel_skeleton（MOD-SIG-086 共享骨架），
@@ -59,6 +60,77 @@ zephyr.signal_ashare.selection_funnel_skeleton（MOD-SIG-086 共享骨架），
 权重说明：BM-SEL-18 六要素合成权重（主力 0.20 / 拥挤 0.10 / 密度 0.15）为经验初值，
 与 memo §3.4 6 维权重同属"经验设定 → 待 G09 回测校准"口径；8 态修正项按 90 号 §7
 暂缓裁定置 0 不参与（等效五要素），重评条件满足后恢复接入。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: records 参数
+#   fields: 参数 records，类型注解 list[FunnelSymbolRecord]
+#   code: selection_funnel.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: degraded 参数
+#   fields: 参数 degraded（无注解）
+#   code: selection_funnel.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: volume_ratio_min 参数
+#   fields: 参数 volume_ratio_min（无注解）
+#   code: selection_funnel.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: turnover_rate_min_pct 参数
+#   fields: 参数 turnover_rate_min_pct（无注解）
+#   code: selection_funnel.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① filter_graded_indicators
+#   name_en: filter_graded_indicators
+#   intro: 四排除机制批处理过滤。
+#   desc: 四排除机制批处理过滤。只排除不评分，廉价规则先砍量。 degraded=True（过滤模块未就绪）：仅排除涨跌停/停牌，其余放行。；源码 L332-L348
+#   inputs: records degraded
+#   outputs: GradedFilterResult
+# - id: A2
+#   name_zh: ② screen_preliminary
+#   name_en: screen_preliminary
+#   intro: 五维布尔/门槛式初筛：技术 + 量价 + 板块 + 主力 + 状态。
+#   desc: 五维布尔/门槛式初筛：技术 + 量价 + 板块 + 主力 + 状态。 degraded=True（初筛未就绪）：全量放行进精筛。；源码 L354-L377
+#   inputs: records degraded volume_ratio_min turnover_rate_min_pct sector_rank_m…
+#   outputs: PreliminaryScreenResult
+# - id: A3
+#   name_zh: ③ score_fine_selection
+#   name_en: score_fine_selection
+#   intro: 六要素综合评分 → 横截面 Z-score 标准化 → 降序取 Top-N。
+#   desc: 六要素综合评分 → 横截面 Z-score 标准化 → 降序取 Top-N。 Z-score：std=0（全体同分）时全部置 0（无区分度，按 raw 降序兜底排名）。 top_…；源码 L383-L403
+#   inputs: records top_n degraded
+#   outputs: FineSelectionResult
+# - id: A4
+#   name_zh: ④ run_selection_funnel
+#   name_en: run_selection_funnel
+#   intro: BM-SEL-16 → 17 → 18 盘前批处理串联。
+#   desc: BM-SEL-16 → 17 → 18 盘前批处理串联。；源码 L409-L451
+#   inputs: records top_n graded_degraded screen_degraded score_degraded
+#   outputs: SelectionFunnelResult
+#   （注：A4 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: GradedFilterResult
+#   name_en: GradedFilterResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 G08/G09/G10 sleeve 接线)
+# - id: O2
+#   name_zh: PreliminaryScreenResult
+#   name_en: PreliminaryScreenResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 G08/G09/G10 sleeve 接线)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations
@@ -372,6 +444,8 @@ def run_selection_funnel(
     )
     return SelectionFunnelResult(
         graded=GradedFilterResult(kept=chain.graded.kept, excluded=chain.graded.excluded, degraded=graded_degraded),
-        screened=PreliminaryScreenResult(kept=chain.screened.kept, excluded=chain.screened.excluded, degraded=screen_degraded),
+        screened=PreliminaryScreenResult(
+            kept=chain.screened.kept, excluded=chain.screened.excluded, degraded=screen_degraded
+        ),
         scored=FineSelectionResult(top=_wrap_scored(chain.scored), degraded=score_degraded),
     )

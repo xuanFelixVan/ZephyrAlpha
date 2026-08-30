@@ -20,6 +20,47 @@ StatusDashboard — 实时状态面板
 ================================
 蓝图: docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md §3.1
 TUI + JSON API 双模式。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: registry 参数
+#   fields: 参数 registry（无注解）
+#   code: status_dashboard.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: health_monitor 参数
+#   fields: 参数 health_monitor（无注解）
+#   code: status_dashboard.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: night_shift_queue 参数
+#   fields: 参数 night_shift_queue（无注解）
+#   code: status_dashboard.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: work_orchestrator 参数
+#   fields: 参数 work_orchestrator（无注解）
+#   code: status_dashboard.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① StatusDashboard
+#   name_en: StatusDashboard
+#   intro: 实时状态面板——TUI + JSON API 双模式。
+#   desc: 实时状态面板——TUI + JSON API 双模式。；公共方法（定义序）: orphan, registry, uptime_start, render_tui, render_json, sampling_inte…
+#   inputs: registry health_monitor night_shift_queue work_orchestrator orphan_de…
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: StatusDashboard
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from datetime import datetime

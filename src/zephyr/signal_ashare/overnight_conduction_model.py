@@ -14,7 +14,8 @@
 # [TESTS] tests/signal_ashare/test_overnight_conduction_model.py
 # [A_module] module_id=MOD-SIG-117 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""OvernightConductionModel — 隔夜全球传导评估模型（MOD-SIG-117）。
+"""
+OvernightConductionModel — 隔夜全球传导评估模型（MOD-SIG-117）。
 
 B10-01375（AUD-DRAFT-001-DIGEST P2 波 P2-W05，CAND-TESTB-037，A1 模块21）：
 隔夜 β 传导系数（外盘收益 → A股开盘缺口，注入回归器）+ 30 分钟衰减检验
@@ -23,6 +24,43 @@ B10-01375（AUD-DRAFT-001-DIGEST P2 波 P2-W05，CAND-TESTB-037，A1 模块21）
 
 纯内存/DI 设计：回归器/事件库/时钟全注入；不触网、不触盘、无 subprocess。
 同输入必同输出。非法输入 Fail-Closed 抛 OvernightConductionError。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: overnight_conduction_model.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: regressor 参数
+#   fields: 参数 regressor（无注解）
+#   code: overnight_conduction_model.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: overnight_conduction_model.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① OvernightConductionModel
+#   name_en: OvernightConductionModel
+#   intro: 隔夜全球传导评估模型（β 回归 + 30分钟衰减 + 事件统计表 + 影响评分）。
+#   desc: 隔夜全球传导评估模型（β 回归 + 30分钟衰减 + 事件统计表 + 影响评分）。；公共方法（定义序）: event_impact_table, evaluate；源码 L273-L405
+#   inputs: config regressor clock
+#   outputs: 返回值
+#   （注：A1 之后另有 11 个公共定义未列入（含 11 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（12 定义）
+#   name_en: public defs
+#   intro: OvernightConductionModel
+#   downstream: 运行时装配批（统一注入点装配：隔夜传导评分层 / 开盘缺口预判消费方）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -84,7 +122,7 @@ class ImpactLevel(str, Enum):
 
 
 #: 事件基础严重度（评分用，词表闭合映射）
-_EVENT_BASE_SEVERITY: Final[dict["OvernightEventType", float]] = {
+_EVENT_BASE_SEVERITY: Final[dict[OvernightEventType, float]] = {
     OvernightEventType.POLICY: 0.6,
     OvernightEventType.GEOPOLITICAL: 0.7,
     OvernightEventType.DATA: 0.4,
@@ -92,7 +130,7 @@ _EVENT_BASE_SEVERITY: Final[dict["OvernightEventType", float]] = {
 }
 
 #: 预期内外乘子（预期外全额，预期内打折）
-_EXPECTATION_MULTIPLIER: Final[dict["EventExpectation", float]] = {
+_EXPECTATION_MULTIPLIER: Final[dict[EventExpectation, float]] = {
     EventExpectation.EXPECTED: 0.6,
     EventExpectation.UNEXPECTED: 1.0,
 }
@@ -190,13 +228,16 @@ class OvernightConductionConfig:
         if isinstance(self.min_samples, bool) or self.min_samples < 2:
             raise OvernightConductionError(f"min_samples 必须 ≥2: {self.min_samples!r}")
         if isinstance(self.decay_segment_index, bool) or self.decay_segment_index < 0:
-            raise OvernightConductionError(
-                f"decay_segment_index 必须 ≥0: {self.decay_segment_index!r}"
-            )
+            raise OvernightConductionError(f"decay_segment_index 必须 ≥0: {self.decay_segment_index!r}")
         for name in (
-            "decay_concentration_threshold", "beta_scale",
-            "beta_weight", "r2_weight", "decay_weight", "event_weight",
-            "high_threshold", "medium_threshold",
+            "decay_concentration_threshold",
+            "beta_scale",
+            "beta_weight",
+            "r2_weight",
+            "decay_weight",
+            "event_weight",
+            "high_threshold",
+            "medium_threshold",
         ):
             _check_finite(name, getattr(self, name))
         if not (0.0 < self.decay_concentration_threshold <= 1.0):
@@ -245,9 +286,7 @@ class OvernightConductionModel:
 
     # ── 事件影响时长统计表 ────────────────────────────────────────────────
 
-    def event_impact_table(
-        self, events: Sequence[OvernightEvent]
-    ) -> tuple[EventImpactStat, ...]:
+    def event_impact_table(self, events: Sequence[OvernightEvent]) -> tuple[EventImpactStat, ...]:
         """四分类×预期内外全 8 格统计（枚举定义序，确定性）。"""
         events = tuple(events)
         for e in events:
@@ -256,18 +295,17 @@ class OvernightConductionModel:
         out: list[EventImpactStat] = []
         for et in OvernightEventType:
             for ex in EventExpectation:
-                cell = [
-                    e.impact_hours for e in events
-                    if e.event_type is et and e.expectation is ex
-                ]
+                cell = [e.impact_hours for e in events if e.event_type is et and e.expectation is ex]
                 n = len(cell)
-                out.append(EventImpactStat(
-                    event_type=et,
-                    expectation=ex,
-                    sample_count=n,
-                    mean_impact_hours=(sum(cell) / n) if n else 0.0,
-                    max_impact_hours=max(cell) if cell else 0.0,
-                ))
+                out.append(
+                    EventImpactStat(
+                        event_type=et,
+                        expectation=ex,
+                        sample_count=n,
+                        mean_impact_hours=(sum(cell) / n) if n else 0.0,
+                        max_impact_hours=max(cell) if cell else 0.0,
+                    )
+                )
         return tuple(out)
 
     # ── 主入口 ────────────────────────────────────────────────────────────
@@ -283,9 +321,7 @@ class OvernightConductionModel:
             raise OvernightConductionError("回归器未注入（Fail-Closed，禁止旁路拟合）")
         samples = tuple(samples)
         if len(samples) < self._config.min_samples:
-            raise OvernightConductionError(
-                f"隔夜样本不足: {len(samples)} < min_samples={self._config.min_samples}"
-            )
+            raise OvernightConductionError(f"隔夜样本不足: {len(samples)} < min_samples={self._config.min_samples}")
         for s in samples:
             if not isinstance(s, GapSample):
                 raise OvernightConductionError(f"非 GapSample 元素: {type(s)!r}")
@@ -330,12 +366,16 @@ class OvernightConductionModel:
             if sev > event_component:
                 event_component = sev
         wsum = cfg.beta_weight + cfg.r2_weight + cfg.decay_weight + cfg.event_weight
-        score = 100.0 * (
-            cfg.beta_weight * beta_component
-            + cfg.r2_weight * r2_component
-            + cfg.decay_weight * decay_component
-            + cfg.event_weight * event_component
-        ) / wsum
+        score = (
+            100.0
+            * (
+                cfg.beta_weight * beta_component
+                + cfg.r2_weight * r2_component
+                + cfg.decay_weight * decay_component
+                + cfg.event_weight * event_component
+            )
+            / wsum
+        )
         if score >= cfg.high_threshold:
             level = ImpactLevel.HIGH
         elif score >= cfg.medium_threshold:
@@ -356,6 +396,10 @@ class OvernightConductionModel:
         )
         _log.debug(
             "隔夜传导: beta=%.4f r2=%.4f decay=%.4f score=%.2f level=%s",
-            beta, r2, decay_ratio, score, level.value,
+            beta,
+            r2,
+            decay_ratio,
+            score,
+            level.value,
         )
         return report

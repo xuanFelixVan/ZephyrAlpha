@@ -24,6 +24,32 @@ Version: 0.3.0
 Skill 缓存供应商——多后端缓存切换
 ================================
 Memory + Disk 双后端，自动 fallback
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: backend 参数
+#   fields: 参数 backend（无注解）
+#   code: skill_cache_provider.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SkillCacheProvider
+#   name_en: SkillCacheProvider
+#   intro: class SkillCacheProvider 源码 L144-L192
+#   desc: 公共方法（定义序）: backend_name, configure, get, set, invalidate, clear；源码 L144-L192
+#   inputs: backend
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SkillCacheProvider
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

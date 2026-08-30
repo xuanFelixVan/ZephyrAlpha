@@ -14,7 +14,8 @@
 # [TESTS] tests/signal_fundamental/test_pead_event_model.py
 # [A_module] module_id=MOD-SIG-110 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""PeadEventModel — 财报季事件驱动与 PEAD 模型（MOD-SIG-110）。
+"""
+PeadEventModel — 财报季事件驱动与 PEAD 模型（MOD-SIG-110）。
 
 B10-01417（AUD-DRAFT-001-DIGEST P1 波 W-P1-25，CAND-FUNDAMEN-001，A1交易决策
 架构 §4模块49）：PEAD（Post-Earnings-Announcement Drift，Bernard & Thomas
@@ -28,6 +29,85 @@ B10-01417（AUD-DRAFT-001-DIGEST P1 波 W-P1-25，CAND-FUNDAMEN-001，A1交易�
 
 一致预期须用免费源（避免付费数据边界）：本件纯内存判定核心，EPS/一致预
 期/价格序列全部 DI 注入，免费源绑定归运行时装配批。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: actual_eps 参数
+#   fields: 参数 actual_eps，类型注解 float
+#   code: pead_event_model.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: consensus_eps 参数
+#   fields: 参数 consensus_eps，类型注解 float
+#   code: pead_event_model.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: eps_floor 参数
+#   fields: 参数 eps_floor（无注解）
+#   code: pead_event_model.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: sue 参数
+#   fields: 参数 sue，类型注解 float
+#   code: pead_event_model.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① compute_sue
+#   name_en: compute_sue
+#   intro: SUE = (实际EPS − 一致预期) / |一致预期|；近零预期 → None（不可计算）。
+#   desc: SUE = (实际EPS − 一致预期) / |一致预期|；近零预期 → None（不可计算）。；源码 L233-L247
+#   inputs: actual_eps consensus_eps eps_floor
+#   outputs: float | None
+# - id: A2
+#   name_zh: ② classify_sue
+#   name_en: classify_sue
+#   intro: SUE 五档分档（sue < 阈值 严格小于归低档）。
+#   desc: SUE 五档分档（sue < 阈值 严格小于归低档）。；源码 L250-L262
+#   inputs: sue thresholds
+#   outputs: SueBand
+# - id: A3
+#   name_zh: ③ compute_drift_return
+#   name_en: compute_drift_return
+#   intro: 事件日后 N 日漂移收益 close[t+N]/close[t] − 1；窗口不足 → None。
+#   desc: 事件日后 N 日漂移收益 close[t+N]/close[t] − 1；窗口不足 → None。；源码 L265-L288
+#   inputs: closes event_index days
+#   outputs: float | None
+# - id: A4
+#   name_zh: ④ earnings_season_windows
+#   name_en: earnings_season_windows
+#   intro: 年度财报季窗口（4/30、8/31、10/31 前伸 pre_window 个日历日）。
+#   desc: 年度财报季窗口（4/30、8/31、10/31 前伸 pre_window 个日历日）。；源码 L291-L304
+#   inputs: year pre_window
+#   outputs: tuple[EarningsSeasonWindow, ...]
+# - id: A5
+#   name_zh: ⑤ PeadEventModel
+#   name_en: PeadEventModel
+#   intro: PEAD 事件驱动判定核心（配置持有 + 事件评估 + 财报季标记）。
+#   desc: PEAD 事件驱动判定核心（配置持有 + 事件评估 + 财报季标记）。；公共方法（定义序）: evaluate, earnings_season_mark；源码 L307-L386
+#   inputs: thresholds drift_days eps_floor pre_window
+#   outputs: 返回值
+#   （注：A5 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: float | None
+#   name_en: float | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 运行时装配批（akshare 盈利预测免费源→一致预期注入 / c3 财务表实际 EPS 装配 / CTR-002 桥接）
+# - id: O2
+#   name_zh: SueBand
+#   name_en: SueBand
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 运行时装配批（akshare 盈利预测免费源→一致预期注入 / c3 财务表实际 EPS 装配 / CTR-002 桥接）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations
@@ -258,10 +338,7 @@ class PeadEventModel:
         sue = compute_sue(event.actual_eps, event.consensus_eps, eps_floor=self._eps_floor)
         drift = compute_drift_return(closes, event_index, days=self._drift_days)
         if sue is None:
-            detail = (
-                f"consensus_eps 近零(|{event.consensus_eps}| < {self._eps_floor})，"
-                "SUE 不可计算（留痕不静默丢弃）"
-            )
+            detail = f"consensus_eps 近零(|{event.consensus_eps}| < {self._eps_floor})，SUE 不可计算（留痕不静默丢弃）"
             _log.warning("PEAD 不可计算: %s %s", event.symbol, detail)
             return PeadResult(
                 symbol=event.symbol,

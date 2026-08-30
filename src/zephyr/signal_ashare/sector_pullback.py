@@ -22,7 +22,8 @@
 # A3: grade_pullback(Fib 档 × 量能档 × 强度档 三维取最弱档定级; 时间窗 <2/>15 不评级)
 # O1: grade A(优先建仓)/B(分批建仓)/C(观望或突破失败降级)/None + pullback_action 映射
 # [/ALGO_FLOW]
-"""回踩质量 A/B/C 判定（22 号 spec §3.1②，BM-SEL-08 缺失态补施工）。
+"""
+回踩质量 A/B/C 判定（22 号 spec §3.1②，BM-SEL-08 缺失态补施工）。
 
 量化三维 + 时间窗：
   - Fib 回撤位：A=≤50%（浅/中）/ B=50%-61.8%（深）/ C=>61.8%（>78.6% 结构破坏）
@@ -32,6 +33,76 @@
 
 三维错位时取最弱档定级（保守降级，服务突破失败降级用途）。
 阈值待 G05/G08 校准（spec §6 待裁定）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: swing_high 参数
+#   fields: 参数 swing_high，类型注解 float
+#   code: sector_pullback.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: swing_low 参数
+#   fields: 参数 swing_low，类型注解 float
+#   code: sector_pullback.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: current_price 参数
+#   fields: 参数 current_price，类型注解 float
+#   code: sector_pullback.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: volume_ratios 参数
+#   fields: 参数 volume_ratios，类型注解 list[float]
+#   code: sector_pullback.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① fib_retrace_ratio
+#   name_en: fib_retrace_ratio
+#   intro: Fibonacci 回撤比例 = (swing_high - current) / (swing_high - swi…
+#   desc: Fibonacci 回撤比例 = (swing_high - current) / (swing_high - swing_low)。 0 = 未回踩（创新高）；0.382-0.…；源码 L144-L155
+#   inputs: swing_high swing_low current_price
+#   outputs: float
+# - id: A2
+#   name_zh: ② classify_volume_pattern
+#   name_en: classify_volume_pattern
+#   intro: 量能衰减模式分类（输入：最近 N 日成交量/50日均量 比率序列，时间升序）。
+#   desc: 量能衰减模式分类（输入：最近 N 日成交量/50日均量 比率序列，时间升序）。 - SHRINKING：逐日递减且最新 ≤0.50（健康缩量，35-50% 区间达标） - EXP…；源码 L158-L180
+#   inputs: volume_ratios
+#   outputs: str
+# - id: A3
+#   name_zh: ③ grade_pullback
+#   name_en: grade_pullback
+#   intro: 回踩质量 A/B/C 定级（三维取最弱档，时间窗外不评级）。
+#   desc: 回踩质量 A/B/C 定级（三维取最弱档，时间窗外不评级）。 Args: fib_ratio: Fib 回撤比例（fib_retrace_ratio 输出）。 volume_pa…；源码 L183-L226
+#   inputs: fib_ratio volume_pattern sector_strength pullback_days rotation_warni…
+#   outputs: str | None
+# - id: A4
+#   name_zh: ④ pullback_action
+#   name_en: pullback_action
+#   intro: 等级 → BM-BUY-04 买入优先级动作；None（不评级）按观望处理。
+#   desc: 等级 → BM-BUY-04 买入优先级动作；None（不评级）按观望处理。；源码 L229-L233
+#   inputs: grade
+#   outputs: str
+# 层: 输出
+# - id: O1
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 G05 选股引擎 / BM-BUY-04 买入优先级)
+# - id: O2
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 G05 选股引擎 / BM-BUY-04 买入优先级)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

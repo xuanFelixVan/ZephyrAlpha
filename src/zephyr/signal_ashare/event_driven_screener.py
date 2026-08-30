@@ -21,7 +21,8 @@
 # A3: 事件衰减权重 weight = 1 + direction×strength×2^(−age/半衰期)，按事件类半衰期表；容量截断 ~50→~30
 # O1: EventScreenResult(kept/excluded{symbol:reason}/weights/skipped/degraded)
 # [/ALGO_FLOW]
-"""选股漏斗第四层——事件驱动分布筛选（BM-SEL-19，~50→~30）。
+"""
+选股漏斗第四层——事件驱动分布筛选（BM-SEL-19，~50→~30）。
 
 事件影响三重门控（26 号 memo §2.3/§2.4 + 21 号 memo §3.6）：
   ① 置信度门控——LLM 事件标签 confidence<0.7 视为无事件（防误读，初拟阈值）；
@@ -35,6 +36,61 @@
 
 降级/跳过：无事件数据源（event_source_ready=False）→ skipped=True 直通不筛
 （memo 契约："没事件数据源就跳过"）；degraded=True → 仅剔除利空，其余放行。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: category 参数
+#   fields: 参数 category，类型注解 EventCategory | str
+#   code: event_driven_screener.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: records 参数
+#   fields: 参数 records，类型注解 list[EventImpactRecord]
+#   code: event_driven_screener.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: event_driven_screener.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: event_source_ready 参数
+#   fields: 参数 event_source_ready（无注解）
+#   code: event_driven_screener.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① event_halflife_days
+#   name_en: event_halflife_days
+#   intro: 事件类 → rising 半衰期（交易日）。
+#   desc: 事件类 → rising 半衰期（交易日）。未知类别 → ValueError 由 Enum 转换抛出。；源码 L135-L137
+#   inputs: category
+#   outputs: float
+# - id: A2
+#   name_zh: ② screen_events
+#   name_en: screen_events
+#   intro: 事件驱动分布筛选（~50→~30）。
+#   desc: 事件驱动分布筛选（~50→~30）。 无事件数据源（event_source_ready=False）→ skipped=True 直通不筛（memo 既定跳过路径）。 degr…；源码 L191-L245
+#   inputs: records config event_source_ready degraded
+#   outputs: EventScreenResult
+#   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 sleeve 排序/StrategyBook 接线)
+# - id: O2
+#   name_zh: EventScreenResult
+#   name_en: EventScreenResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 sleeve 排序/StrategyBook 接线)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -171,7 +227,10 @@ def screen_events(
             excluded[rec.symbol] = "event:conduction_risk"
             continue
         kept_records.append(rec)
-    weights = {r.symbol: (_event_weight(r) if r.has_event and r.confidence >= cfg.min_confidence else 1.0) for r in kept_records}
+    weights = {
+        r.symbol: (_event_weight(r) if r.has_event and r.confidence >= cfg.min_confidence else 1.0)
+        for r in kept_records
+    }
     truncated = False
     if len(kept_records) > cfg.capacity_target:
         kept_records = sorted(kept_records, key=lambda r: (-weights[r.symbol], r.symbol))[: cfg.capacity_target]

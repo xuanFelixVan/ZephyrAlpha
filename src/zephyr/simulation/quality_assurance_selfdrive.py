@@ -14,7 +14,8 @@
 # [TESTS] tests/simulation/test_quality_assurance_selfdrive.py
 # [A_module] module_id=MOD-AUDITTEST-001 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""QualityAssuranceSelfdrive — 质量保障自驱动器（MOD-AUDITTEST-001）。
+"""
+QualityAssuranceSelfdrive — 质量保障自驱动器（MOD-AUDITTEST-001）。
 
 B1-00346（AUD-DRAFT-001-DIGEST P2 波 P2-W16，CAND-AUDITTES-001，C2 C-025）：
 质量保障**自驱动**四件套——①契约变更触发**测试骨架自生成**（解析契约
@@ -26,6 +27,48 @@ schema 字段 → pytest 骨架文本，产物仅经注入 writer，不直写 tr
 
 查重分工（蓝图 §0）：look_ahead_bias_detector=偏差检测实现（本件仅做接线与
 异常包装，不重复实现检测算法）；result_analyzer=回测结果分析（零交集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: quality_assurance_selfdrive.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: random_source 参数
+#   fields: 参数 random_source（无注解）
+#   code: quality_assurance_selfdrive.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: bias_detector 参数
+#   fields: 参数 bias_detector（无注解）
+#   code: quality_assurance_selfdrive.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: skeleton_writer 参数
+#   fields: 参数 skeleton_writer（无注解）
+#   code: quality_assurance_selfdrive.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① QualityAssuranceSelfdrive
+#   name_en: QualityAssuranceSelfdrive
+#   intro: 质量保障自驱动四件套（骨架生成 + 偏差接线 + 回归比对 + 准确率抽检）。
+#   desc: 质量保障自驱动四件套（骨架生成 + 偏差接线 + 回归比对 + 准确率抽检）。；公共方法（定义序）: generate_test_skeleton, diagnose_bias, compare_performance…
+#   inputs: clock random_source bias_detector skeleton_writer alert_sink
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: QualityAssuranceSelfdrive
+#   downstream: 运行时装配批（契约变更钩子 / look_ahead 自诊断接线 / 回归基线比对 / 数据准确率抽检）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -211,9 +254,7 @@ class QualityAssuranceSelfdrive:
                 target,
                 f"检出 {len(issues)} 项 look_ahead 偏差: {'; '.join(issues)}",
             )
-        return BiasDiagnosis(
-            target=target, issues=issues, is_clean=is_clean, diagnosed_at=self._clock()
-        )
+        return BiasDiagnosis(target=target, issues=issues, is_clean=is_clean, diagnosed_at=self._clock())
 
     # ── ③ 性能回归基线比对 ───────────────────────────────────────────────
 
@@ -270,9 +311,7 @@ class QualityAssuranceSelfdrive:
         if not isinstance(sample_size, int) or isinstance(sample_size, bool):
             raise QualitySelfdriveError(f"非法抽检样本量: {sample_size!r}")
         if not 1 <= sample_size <= len(records):
-            raise QualitySelfdriveError(
-                f"抽检样本量越界: {sample_size}（须在 [1, {len(records)}]）"
-            )
+            raise QualitySelfdriveError(f"抽检样本量越界: {sample_size}（须在 [1, {len(records)}]）")
         if validator is None:
             raise QualitySelfdriveError("validator 未注入（准确率比对禁止旁路）")
         if not 0.0 <= min_accuracy <= 1.0:

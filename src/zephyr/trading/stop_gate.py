@@ -21,6 +21,38 @@ StopGate — 质量闸门
 蓝图: docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md §3.1
 借鉴: Claude Code 45天自主实验——被动质量闸门
 阻止 AI 什么都不做就退出。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: session_max_actions 参数
+#   fields: 参数 session_max_actions（无注解）
+#   code: stop_gate.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: session_max_minutes 参数
+#   fields: 参数 session_max_minutes（无注解）
+#   code: stop_gate.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① StopGate
+#   name_en: StopGate
+#   intro: 质量闸门——AI 不能空手退出。
+#   desc: 质量闸门——AI 不能空手退出。 借鉴: Claude Code 45天自主实验——Stop Gate 阻止了 19/30 的空转 session。 设计原理: - 不告诉 AI…；公共方法（定义序）: session…
+#   inputs: session_max_actions session_max_minutes
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: StopGate
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from dataclasses import dataclass, field

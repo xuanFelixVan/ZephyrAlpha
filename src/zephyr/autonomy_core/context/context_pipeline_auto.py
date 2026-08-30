@@ -17,12 +17,49 @@
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 # noqa: m10-time-trigger  M10豁免: threading.Timer是auto_run的一次性超时保护(超时触发auto_shutdown),非周期触发(与timeout_guard同类)
 
-"""context_pipeline_auto.py — ContextPipeline 三层自动化机制
+"""
+context_pipeline_auto.py — ContextPipeline 三层自动化机制
 
 三层自动化：
 1. 自动启动 (auto_start): 系统启动时初始化，注册 EventBus 订阅
 2. 事件启动 (event-driven): TASK_STARTED/TASK_COMPLETED/TASK_FAILED 事件自动触发
 3. 自动关闭 (auto_shutdown): KillSwitch 熔断 + 超时保护 + 资源清理
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: kill_switch 参数
+#   fields: 参数 kill_switch（无注解）
+#   code: context_pipeline_auto.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: timeout_seconds 参数
+#   fields: 参数 timeout_seconds（无注解）
+#   code: context_pipeline_auto.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: auto_kill_threshold 参数
+#   fields: 参数 auto_kill_threshold（无注解）
+#   code: context_pipeline_auto.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ContextPipelineAuto
+#   name_en: ContextPipelineAuto
+#   intro: ContextPipeline 自动化包装器——三层自动化机制。
+#   desc: ContextPipeline 自动化包装器——三层自动化机制。 自动启动 -> 事件启动 -> 自动运行 -> 自动关闭；公共方法（定义序）: kill_switch, is_started, fuse_on, cl…
+#   inputs: kill_switch timeout_seconds auto_kill_threshold
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: ContextPipelineAuto
+#   downstream: zephyr.trading.boot_hooks; tests/test_context_pipeline_auto
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

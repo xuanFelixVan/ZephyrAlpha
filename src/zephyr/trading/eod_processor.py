@@ -32,7 +32,8 @@
 # A2 --> O1
 # A3 --> O1
 # [/ALGO_FLOW]
-"""D-TRADING-04 EOD Processor — 日终处理器 (MOD-TRADING-012, CAND-TRD-005, B10-02208)。
+"""
+D-TRADING-04 EOD Processor — 日终处理器 (MOD-TRADING-012, CAND-TRD-005, B10-02208)。
 
 每个交易日收盘后（15:30 链）执行日终三步：
   ① 收盘价格快照：逐持仓 symbol 经注入 price_probe 取日终价，缺失/异常如实披露
@@ -49,6 +50,61 @@ W-P1-23 同名候选 CAND-TRD-007（B14-04718）后到时应归并本件（本�
 
 SSoT: docs/03_modules/_domain_trading/eod_processor/blueprint.md
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: trade_date 参数
+#   fields: 参数 trade_date，类型注解 str
+#   code: eod_processor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: positions 参数
+#   fields: 参数 positions（无注解）
+#   code: eod_processor.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: cash 参数
+#   fields: 参数 cash（无注解）
+#   code: eod_processor.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: price_probe 参数
+#   fields: 参数 price_probe（无注解）
+#   code: eod_processor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① build_eod_job_spec
+#   name_en: build_eod_job_spec
+#   intro: 日终 15:30 任务规格（与 post_settlement_pipeline 同窗口串联，调度层注册）。
+#   desc: 日终 15:30 任务规格（与 post_settlement_pipeline 同窗口串联，调度层注册）。；源码 L197-L205
+#   inputs: 无参数
+#   outputs: EodJobSpec
+# - id: A2
+#   name_zh: ② run_eod_processor
+#   name_en: run_eod_processor
+#   intro: 日终处理执行入口（价格快照 → NAV/P&L 确认 → 风险重估）。
+#   desc: 日终处理执行入口（价格快照 → NAV/P&L 确认 → 风险重估）。 Args: trade_date: 结算日（YYYY-MM-DD）。 positions: 日终持仓（Eo…；源码 L208-L335
+#   inputs: trade_date positions cash price_probe risk_reassess_fn expected_nav n…
+#   outputs: EodReport
+#   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: EodJobSpec
+#   name_en: EodJobSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 调度层(data scheduler APScheduler / trading work_dag，build_eod_job_spec 注册入口，与 pos…
+# - id: O2
+#   name_zh: EodReport
+#   name_en: EodReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 调度层(data scheduler APScheduler / trading work_dag，build_eod_job_spec 注册入口，与 pos…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -222,9 +278,7 @@ def run_eod_processor(
         else:
             priced.append(pos.symbol)
             prices[pos.symbol] = price
-    if not pos_list:
-        snapshot_status = "OK"
-    elif not unpriced:
+    if not pos_list or not unpriced:
         snapshot_status = "OK"
     elif priced:
         snapshot_status = "INCOMPLETE"

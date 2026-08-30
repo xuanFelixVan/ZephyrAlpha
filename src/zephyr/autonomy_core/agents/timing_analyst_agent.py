@@ -14,7 +14,8 @@
 # [TESTS] tests/autonomy/test_timing_analyst_agent.py
 # [A_module] module_id=MOD-AU-010 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
-"""TimingAnalystAgent — 择时 Agent (MOD-AU-010)
+"""
+TimingAnalystAgent — 择时 Agent (MOD-AU-010)
 
 B1-00242（AUD-DRAFT-001-DIGEST P1 波 W-P1-11）：TimingAnalyst 角色卡
 （14号文 §3.0 role façade 族卡模式，与 MOD-AU-007/008/009 同族）。综合
@@ -25,6 +26,43 @@ C-021 大盘状态 + C-014 大盘预测 + 做T 点位（MOD-SIG-068 口径）→
 
 查重分工：regime 判定归 MOD-REGIME-001；做T 点位归 MOD-SIG-068；执行策略
 选择本体归 MOD-EX-062；本角色只做融合裁决与风控前置信号。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: thresholds 参数
+#   fields: 参数 thresholds（无注解）
+#   code: timing_analyst_agent.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: risk_check_trigger 参数
+#   fields: 参数 risk_check_trigger（无注解）
+#   code: timing_analyst_agent.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: audit_sink 参数
+#   fields: 参数 audit_sink（无注解）
+#   code: timing_analyst_agent.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① TimingAnalystAgent
+#   name_en: TimingAnalystAgent
+#   intro: 择时 Agent：状态×预测×做T 点 → 时机与执行策略建议（判定核心纯函数）。
+#   desc: 择时 Agent：状态×预测×做T 点 → 时机与执行策略建议（判定核心纯函数）。 Args: thresholds: 判定阈值配置。 risk_check_trigger: 风…；公共方法（定义序）: advise,…
+#   inputs: thresholds risk_check_trigger audit_sink
+#   outputs: 返回值
+#   （注：A1 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（9 定义）
+#   name_en: public defs
+#   intro: TimingAnalystAgent
+#   downstream: 运行时装配批（C-021/C-014 实时输入装配 / 风控校验链 / MOD-EX-062 执行策略选择）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -79,7 +117,11 @@ AGENT_CARD: Final[dict[str, Any]] = {
     "autonomyBoundaries": {
         "ai_modifiable": ["建议理由文本", "执行策略建议"],
         "human_gated": ["建议经风控校验后生效（风控前置信号）"],
-        "immutable": ["下单/交易执行（执行域职责，本角色无下单语义）", "regime/预测/点位真源（C-021/C-014/MOD-SIG-068）", "判定阈值真源（配置）"],
+        "immutable": [
+            "下单/交易执行（执行域职责，本角色无下单语义）",
+            "regime/预测/点位真源（C-021/C-014/MOD-SIG-068）",
+            "判定阈值真源（配置）",
+        ],
     },
     "healthCheck": {"heartbeat": "on_demand_advise"},
 }
@@ -120,9 +162,7 @@ class TimingContext:
 
     def __post_init__(self) -> None:
         if self.regime_state not in _VALID_REGIMES:
-            raise InvalidTimingContextError(
-                f"regime_state 必须 ∈ {sorted(_VALID_REGIMES)}: {self.regime_state!r}"
-            )
+            raise InvalidTimingContextError(f"regime_state 必须 ∈ {sorted(_VALID_REGIMES)}: {self.regime_state!r}")
         if not (-1.0 <= self.forecast_score <= 1.0):
             raise InvalidTimingContextError(f"forecast_score 必须 ∈ [-1,1]: {self.forecast_score}")
         if self.t0_signal is not None and self.t0_signal not in _VALID_T0:

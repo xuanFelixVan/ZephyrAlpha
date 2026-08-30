@@ -22,6 +22,76 @@ previously inlined into skill_freshness.py and skill_lifecycle.py
 but kept getting lost on file overwrites.
 
 This module is the canonical location. Import from here.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: model 参数
+#   fields: 参数 model，类型注解 FreshnessDecayModel | None
+#   code: skill_freshness_ext.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: lifecycle 参数
+#   fields: 参数 lifecycle，类型注解 SkillLifecycle
+#   code: skill_freshness_ext.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: skill_id 参数
+#   fields: 参数 skill_id，类型注解 str
+#   code: skill_freshness_ext.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: freshness_score 参数
+#   fields: 参数 freshness_score，类型注解 float
+#   code: skill_freshness_ext.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① scan_all_freshness
+#   name_en: scan_all_freshness
+#   intro: scan_all_freshness(model) 源码 L110-L135
+#   desc: 源码 L110-L135
+#   inputs: model
+#   outputs: dict[str, Any]
+# - id: A2
+#   name_zh: ② auto_deprecate_skill
+#   name_en: auto_deprecate_skill
+#   intro: auto_deprecate_skill(lifecycle, skill_id, freshness_score,…
+#   desc: 源码 L138-L173
+#   inputs: lifecycle skill_id freshness_score reason
+#   outputs: dict[str, Any]
+# - id: A3
+#   name_zh: ③ should_load_onboarding
+#   name_en: should_load_onboarding
+#   intro: should_load_onboarding(loader, session_id, max_rounds) 源码 L…
+#   desc: 源码 L176-L178
+#   inputs: loader session_id max_rounds
+#   outputs: bool
+# - id: A4
+#   name_zh: ④ increment_round
+#   name_en: increment_round
+#   intro: increment_round(loader, session_id) 源码 L181-L185
+#   desc: 源码 L181-L185
+#   inputs: loader session_id
+#   outputs: int
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, Any]
+#   name_en: dict[str, Any]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: auto_runtime_core.py, event_bus subscribers
+# - id: O2
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: auto_runtime_core.py, event_bus subscribers
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

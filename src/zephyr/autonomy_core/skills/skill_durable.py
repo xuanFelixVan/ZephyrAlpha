@@ -28,6 +28,32 @@ Skill 持久化执行引擎
   2. ResumeFrom: 中断后从最近的检查点恢复
   3. StateSerialization: 执行状态序列化为 JSON
   4. ProgressTracking: 追踪执行进度
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: storage_dir 参数
+#   fields: 参数 storage_dir（无注解）
+#   code: skill_durable.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DurableExecution
+#   name_en: DurableExecution
+#   intro: Skill 持久化执行器
+#   desc: Skill 持久化执行器；公共方法（定义序）: storage_dir, checkpoints, active_executions, start, advance, complete, fail, resume,…
+#   inputs: storage_dir
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: DurableExecution
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

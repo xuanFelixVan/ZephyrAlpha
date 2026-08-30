@@ -15,7 +15,6 @@
 # [A_module] module_id=MOD-TRADING-006 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
 D_TRADING — 回测侧对账适配层（适配层 A，56号文 §2 G5）
 
 读 data/backtest_artifacts/{run_id}.json 的 trade_log（TradeRecord 口径），
@@ -38,6 +37,76 @@ D_TRADING — 回测侧对账适配层（适配层 A，56号文 §2 G5）
               （broker_fill_id=None，SettlementReconciler 回退 order_id 配对；
               口径真源=broker_settlement_adapter，两侧同款方能逐笔对上）
   fill_id    → f"bt-{run_id}-{symbol}-{seq:03d}"（回测侧全局唯一）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: trade_log 参数
+#   fields: 参数 trade_log，类型注解 list[dict[str, Any]]
+#   code: backtest_fills_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: strategy_id 参数
+#   fields: 参数 strategy_id，类型注解 str
+#   code: backtest_fills_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: run_id 参数
+#   fields: 参数 run_id，类型注解 str
+#   code: backtest_fills_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: storage_path 参数
+#   fields: 参数 storage_path，类型注解 Path | None
+#   code: backtest_fills_adapter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① trades_to_fills
+#   name_en: trades_to_fills
+#   intro: 回测 trade_log（list[dict]，TradeRecord 口径）→ 系统侧 Fill 列表。
+#   desc: 回测 trade_log（list[dict]，TradeRecord 口径）→ 系统侧 Fill 列表。 Args: trade_log: BacktestRunArtifac…；源码 L144-L188
+#   inputs: trade_log strategy_id run_id
+#   outputs: list[Fill]
+# - id: A2
+#   name_zh: ② load_backtest_trade_log
+#   name_en: load_backtest_trade_log
+#   intro: 读 backtest_artifacts/{run_id}.json，返回 (trade_log, strategy_…
+#   desc: 读 backtest_artifacts/{run_id}.json，返回 (trade_log, strategy_id)。 Raises: ArtifactNotFoundE…；源码 L191-L201
+#   inputs: run_id storage_path
+#   outputs: tuple[list[dict[str, Any]], str]
+# - id: A3
+#   name_zh: ③ load_backtest_fills
+#   name_en: load_backtest_fills
+#   intro: 读回测产物并适配为系统侧 Fill 列表（适配层 A 主入口）。
+#   desc: 读回测产物并适配为系统侧 Fill 列表（适配层 A 主入口）。 Args: run_id: 回测运行 ID（save_artifact 返回值） storage_path: 产…；源码 L204-L215
+#   inputs: run_id storage_path
+#   outputs: list[Fill]
+# - id: A4
+#   name_zh: ④ replay_positions_from_trade_log
+#   name_en: replay_positions_from_trade_log
+#   intro: 由 trade_log 重放推导日终持仓（56号文 §2 L2 基准侧持仓来源）。
+#   desc: 由 trade_log 重放推导日终持仓（56号文 §2 L2 基准侧持仓来源）。 buy 加 / sell 减，净零持仓标的剔除（语义对齐 portfolio 重放口径）。；源码 L218-L234
+#   inputs: trade_log
+#   outputs: dict[str, Decimal]
+# 层: 输出
+# - id: O1
+#   name_zh: list[Fill]
+#   name_en: list[Fill]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.trading.recon_runner
+# - id: O2
+#   name_zh: tuple[list[dict[str, Any]], str]
+#   name_en: tuple[list[dict[str, Any]], str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.trading.recon_runner
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

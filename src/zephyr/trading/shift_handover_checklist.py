@@ -35,6 +35,99 @@ ShiftHandoverChecklist — 班次交接检查清单（24/7 连续市场班次运
     python -m zephyr.trading.shift_handover_checklist --shift 0/8/16 [--input snapshot.json]
 
 exit codes: 0=总体非 FAIL（可交接）, 1=存在 FAIL 项或快照读取失败, 2=参数错误。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: shift 参数
+#   fields: 参数 shift，类型注解 int
+#   code: shift_handover_checklist.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: argv 参数
+#   fields: 参数 argv，类型注解 list[str] | None
+#   code: shift_handover_checklist.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① MarginState
+#   name_en: MarginState
+#   intro: 保证金快照。
+#   desc: 保证金快照。；公共方法（定义序）: margin_ratio；源码 L183-L194
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② ShiftSnapshot
+#   name_en: ShiftSnapshot
+#   intro: 班次交接检查输入快照——由调用方从实时数据源装配。
+#   desc: 班次交接检查输入快照——由调用方从实时数据源装配。；公共方法（定义序）: from_dict；源码 L225-L275
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ CheckFinding
+#   name_en: CheckFinding
+#   intro: 单项检查内的具体发现（带级别）。
+#   desc: 单项检查内的具体发现（带级别）。；公共方法（定义序）: to_dict；源码 L279-L286
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ CheckItem
+#   name_en: CheckItem
+#   intro: 一个检查项的结构化结果。
+#   desc: 一个检查项的结构化结果。；公共方法（定义序）: to_dict；源码 L290-L304
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ ShiftHandoverReport
+#   name_en: ShiftHandoverReport
+#   intro: 班次交接检查报告——JSON 输出供前端消费。
+#   desc: 班次交接检查报告——JSON 输出供前端消费。；公共方法（定义序）: to_dict, to_json；源码 L308-L332
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ shift_window_utc
+#   name_en: shift_window_utc
+#   intro: 返回班次 UTC 窗口字符串，如 shift=0 → '00:00-08:00'。
+#   desc: 返回班次 UTC 窗口字符串，如 shift=0 → '00:00-08:00'。；源码 L335-L340
+#   inputs: shift
+#   outputs: str
+# - id: A7
+#   name_zh: ⑦ ShiftHandoverChecklist
+#   name_en: ShiftHandoverChecklist
+#   intro: 班次交接检查清单——五项接班前检查，输出 PASS/WARN/FAIL 结构化结果。
+#   desc: 班次交接检查清单——五项接班前检查，输出 PASS/WARN/FAIL 结构化结果。；公共方法（定义序）: run；源码 L349-L480
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A8
+#   name_zh: ⑧ main
+#   name_en: main
+#   intro: main(argv) 源码 L496-L509
+#   desc: 源码 L496-L509
+#   inputs: argv
+#   outputs: int
+#   （注：A8 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: CLI: python -m zephyr.trading.shift_handover_checklist
+# - id: O2
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: CLI: python -m zephyr.trading.shift_handover_checklist
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> O1
 """
 
 from __future__ import annotations
@@ -353,7 +446,10 @@ class ShiftHandoverChecklist:
             age_s = (now - generated).total_seconds()
             if age_s > sig.ttl_seconds:
                 findings.append(
-                    CheckFinding(CheckStatus.FAIL, f"{sig.signal_id}: 信号已过期（age={age_s:.0f}s > ttl={sig.ttl_seconds:.0f}s）")
+                    CheckFinding(
+                        CheckStatus.FAIL,
+                        f"{sig.signal_id}: 信号已过期（age={age_s:.0f}s > ttl={sig.ttl_seconds:.0f}s）",
+                    )
                 )
             elif age_s > sig.ttl_seconds * _SIGNAL_NEAR_EXPIRY_RATIO:
                 findings.append(CheckFinding(CheckStatus.WARN, f"{sig.signal_id}: 信号临近过期（age={age_s:.0f}s）"))
@@ -389,7 +485,9 @@ def _build_parser() -> argparse.ArgumentParser:
         prog="python -m zephyr.trading.shift_handover_checklist",
         description="班次交接检查清单（24/7 连续市场班次运营）——JSON 输出供前端消费",
     )
-    parser.add_argument("--shift", type=int, required=True, choices=list(VALID_SHIFTS), help="班次起始 UTC 小时: 0/8/16")
+    parser.add_argument(
+        "--shift", type=int, required=True, choices=list(VALID_SHIFTS), help="班次起始 UTC 小时: 0/8/16"
+    )
     parser.add_argument("--input", default=None, help="快照 JSON 文件路径；缺省使用空快照（视为健康基线）")
     parser.add_argument("--compact", action="store_true", default=False, help="紧凑 JSON 输出（无缩进）")
     return parser

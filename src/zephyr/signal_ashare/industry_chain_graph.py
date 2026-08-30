@@ -14,7 +14,8 @@
 # [TESTS] tests/signal_ashare/test_industry_chain_graph.py
 # [A_module] module_id=MOD-SIG-125 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""IndustryChainGraph — 产业链知识图谱（MOD-SIG-125）。
+"""
+IndustryChainGraph — 产业链知识图谱（MOD-SIG-125）。
 
 B10-02202（AUD-DRAFT-001-DIGEST P2 波 P2-W06，CAND-TESTB-053，A1 D-ALT-DATA-29）：
 产业链**节点/边 SQLite 表**（连接全注入：节点=公司/环节，边=投入产出关系+权重
@@ -23,6 +24,46 @@ B10-02202（AUD-DRAFT-001-DIGEST P2 波 P2-W06，CAND-TESTB-053，A1 D-ALT-DATA-
 查重分工（蓝图 §0）：KNW-003=通用金融 KG（本件=产业链传导专用，边类型词表闭
 合，不重建通用 KG）；supply_chain_gnn=GNN 风险传播占位（本件=关系存储与路径
 查询，不做图神经网络推理）；禁 Neo4j，存储仅经注入的 sqlite3 连接。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: conn 参数
+#   fields: 参数 conn（无注解）
+#   code: industry_chain_graph.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: decay 参数
+#   fields: 参数 decay（无注解）
+#   code: industry_chain_graph.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ChainPath
+#   name_en: ChainPath
+#   intro: 传导路径（steps 含起点终点；strength=decay^跳数×边权连乘，frozen）。
+#   desc: 传导路径（steps 含起点终点；strength=decay^跳数×边权连乘，frozen）。；公共方法（定义序）: hops；源码 L158-L167
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② IndustryChainGraph
+#   name_en: IndustryChainGraph
+#   intro: 产业链图谱件（注入 SQLite 连接 + 增删查 + 上/下游传导路径 BFS）。
+#   desc: 产业链图谱件（注入 SQLite 连接 + 增删查 + 上/下游传导路径 BFS）。；公共方法（定义序）: add_node, remove_node, get_node, list_nodes, add_edge,…
+#   inputs: conn decay
+#   outputs: 返回值
+#   （注：A2 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: ChainPath, IndustryChainGraph
+#   downstream: 运行时装配批（产业链传导路径信号装配 / 上下游冲击分析消费方）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -143,9 +184,7 @@ class IndustryChainGraph:
     # ── 内部 ─────────────────────────────────────────────────────────────
 
     def _has_node(self, node_id: str) -> bool:
-        row = self._conn.execute(
-            "SELECT 1 FROM ic_nodes WHERE node_id = ?", (node_id,)
-        ).fetchone()
+        row = self._conn.execute("SELECT 1 FROM ic_nodes WHERE node_id = ?", (node_id,)).fetchone()
         return row is not None
 
     def _require_node(self, node_id: str) -> None:
@@ -173,9 +212,7 @@ class IndustryChainGraph:
     def remove_node(self, node_id: str) -> None:
         """删除节点：未知 → Fail-Closed；级联删除关联边。"""
         self._require_node(node_id)
-        self._conn.execute(
-            "DELETE FROM ic_edges WHERE src = ? OR dst = ?", (node_id, node_id)
-        )
+        self._conn.execute("DELETE FROM ic_edges WHERE src = ? OR dst = ?", (node_id, node_id))
         self._conn.execute("DELETE FROM ic_nodes WHERE node_id = ?", (node_id,))
         self._conn.commit()
 
@@ -191,13 +228,8 @@ class IndustryChainGraph:
 
     def list_nodes(self) -> tuple[ChainNode, ...]:
         """全量节点（按 node_id 确定性排序）。"""
-        rows = self._conn.execute(
-            "SELECT node_id, name, kind, meta FROM ic_nodes ORDER BY node_id"
-        ).fetchall()
-        return tuple(
-            ChainNode(node_id=r[0], name=r[1], kind=NodeKind(r[2]), meta=r[3])
-            for r in rows
-        )
+        rows = self._conn.execute("SELECT node_id, name, kind, meta FROM ic_nodes ORDER BY node_id").fetchall()
+        return tuple(ChainNode(node_id=r[0], name=r[1], kind=NodeKind(r[2]), meta=r[3]) for r in rows)
 
     # ── 边增删查 ──────────────────────────────────────────────────────────
 
@@ -211,17 +243,13 @@ class IndustryChainGraph:
         self._require_node(edge.dst)
         weight = float(edge.weight)
         if not 0.0 < weight <= 1.0:
-            raise IndustryChainError(
-                f"边权必须 ∈ (0,1]: {edge.src!r} -> {edge.dst!r} = {edge.weight}"
-            )
+            raise IndustryChainError(f"边权必须 ∈ (0,1]: {edge.src!r} -> {edge.dst!r} = {edge.weight}")
         dup = self._conn.execute(
             "SELECT 1 FROM ic_edges WHERE src = ? AND dst = ? AND edge_kind = ?",
             (edge.src, edge.dst, edge.edge_kind.value),
         ).fetchone()
         if dup is not None:
-            raise IndustryChainError(
-                f"边重复: {edge.src!r} -> {edge.dst!r} ({edge.edge_kind.value})"
-            )
+            raise IndustryChainError(f"边重复: {edge.src!r} -> {edge.dst!r} ({edge.edge_kind.value})")
         self._conn.execute(
             "INSERT INTO ic_edges (src, dst, edge_kind, weight, source) VALUES (?, ?, ?, ?, ?)",
             (edge.src, edge.dst, edge.edge_kind.value, weight, edge.source),
@@ -238,16 +266,13 @@ class IndustryChainGraph:
         )
         self._conn.commit()
         if cur.rowcount == 0:
-            raise IndustryChainError(
-                f"未知边: {src!r} -> {dst!r} ({edge_kind.value})（未登记）"
-            )
+            raise IndustryChainError(f"未知边: {src!r} -> {dst!r} ({edge_kind.value})（未登记）")
 
     def list_edges(self, node_id: str | None = None) -> tuple[ChainEdge, ...]:
         """边查询（可选按节点过滤；按 (src,dst,edge_kind) 确定性排序）。"""
         if node_id is None:
             rows = self._conn.execute(
-                "SELECT src, dst, edge_kind, weight, source FROM ic_edges "
-                "ORDER BY src, dst, edge_kind"
+                "SELECT src, dst, edge_kind, weight, source FROM ic_edges ORDER BY src, dst, edge_kind"
             ).fetchall()
         else:
             self._require_node(node_id)
@@ -256,10 +281,7 @@ class IndustryChainGraph:
                 "WHERE src = ? OR dst = ? ORDER BY src, dst, edge_kind",
                 (node_id, node_id),
             ).fetchall()
-        return tuple(
-            ChainEdge(src=r[0], dst=r[1], edge_kind=EdgeKind(r[2]), weight=r[3], source=r[4])
-            for r in rows
-        )
+        return tuple(ChainEdge(src=r[0], dst=r[1], edge_kind=EdgeKind(r[2]), weight=r[3], source=r[4]) for r in rows)
 
     # ── 传导路径查询（上/下游 N 跳 BFS + 乘积衰减） ────────────────────────
 

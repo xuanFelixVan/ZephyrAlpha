@@ -21,7 +21,8 @@
 # A3: assess_causality——lead-lag 双 IC + 控制市场后的偏 IC（残差法）→ 因果/相关/伪相关裁定
 # O1: ConductionPath / ImpactMap / CausalAssessment(forward_ic/backward_ic/partial_ic/verdict)
 # [/ALGO_FLOW]
-"""知识图谱与因果推演引擎（BM-SEL-11，MOD-SIG-042）。
+"""
+知识图谱与因果推演引擎（BM-SEL-11，MOD-SIG-042）。
 
 两件套：
   ① 事件传导路径推演——事件、公司、行业的关联织成有向带权图（边权=传导强度、
@@ -34,6 +35,56 @@
 轻量实现纪律：numpy 单一依赖，不引入 DoWhy/DML 重模型栈（25 号 memo BM-SEL-02-M
 裁定——DoWhy/DML 登记远期 Phase 4，本模块为统计社区标准 lead-lag/偏相关做法的
 轻量落地；因果图未就绪时下游降级为仅统计评估）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: factor_values 参数
+#   fields: 参数 factor_values，类型注解 Iterable[float]
+#   code: causal_inference_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: forward_returns 参数
+#   fields: 参数 forward_returns，类型注解 Iterable[float]
+#   code: causal_inference_engine.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: control_values 参数
+#   fields: 参数 control_values（无注解）
+#   code: causal_inference_engine.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: min_samples 参数
+#   fields: 参数 min_samples（无注解）
+#   code: causal_inference_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ConductionGraph
+#   name_en: ConductionGraph
+#   intro: 事件传导有向带权图（知识图谱轻量版：邻接表 + BFS 推演）。
+#   desc: 事件传导有向带权图（知识图谱轻量版：邻接表 + BFS 推演）。；公共方法（定义序）: add_edge, node_count, neighbors, conduction_paths, propagate_impa…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② assess_causality
+#   name_en: assess_causality
+#   intro: 因子因果性评估（统计社区标准做法轻量版，无重模型依赖）。
+#   desc: 因子因果性评估（统计社区标准做法轻量版，无重模型依赖）。 三路证据： forward_ic = corr(factor_t, ret_{t+1})——因子领先收益（因果必要条件）…；源码 L261-L330
+#   inputs: factor_values forward_returns control_values min_samples ic_floor lea…
+#   outputs: CausalAssessment
+#   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: CausalAssessment
+#   name_en: CausalAssessment
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.signal_ashare.causal_factor_validator; zephyr.signal_ashare.event_driven…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

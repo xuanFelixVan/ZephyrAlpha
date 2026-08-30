@@ -15,6 +15,49 @@
 # [A_module] module_id=MOD-INF-035 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: capability_registry 参数
+#   fields: 参数 capability_registry（无注解）
+#   code: work_orchestrator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: dag_dir 参数
+#   fields: 参数 dag_dir（无注解）
+#   code: work_orchestrator.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: max_parallel_l1 参数
+#   fields: 参数 max_parallel_l1（无注解）
+#   code: work_orchestrator.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: max_parallel_l2 参数
+#   fields: 参数 max_parallel_l2（无注解）
+#   code: work_orchestrator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① WorkOrchestrator
+#   name_en: WorkOrchestrator
+#   intro: 工作编排子系统——决定什么工作、什么时候、用什么模型、什么顺序。
+#   desc: 工作编排子系统——决定什么工作、什么时候、用什么模型、什么顺序。；公共方法（定义序）: items, slots, slots_used, register_dag, get_dag, list_dags, load_…
+#   inputs: capability_registry dag_dir max_parallel_l1 max_parallel_l2 max_paral…
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: WorkOrchestrator
+#   downstream: zephyr.trading.auto_runtime_core; zephyr.trading.lifecycle_manager; zephyr.trad…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
+"""
+
 __all__ = [
     "WorkOrchestrator",
 ]

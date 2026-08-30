@@ -14,7 +14,8 @@
 # [TESTS] tests/signal_ashare/test_risk_event_consumer.py
 # [A_module] module_id=MOD-SIG-088 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D-SIGNAL-99 Risk Event E-RK-01 Consumer Handler（CAND-TESTB-028 / B14-04728）。
+"""
+D-SIGNAL-99 Risk Event E-RK-01 Consumer Handler（CAND-TESTB-028 / B14-04728）。
 
 风险事件到信号域降级处置的消费处理器：Redis Streams 消费组订阅 E-RK-01 风险
 事件，幂等键去重 + DLQ 兜底，触发信号降级/撤销/权重调整并回执，消费滞后监控
@@ -37,6 +38,48 @@
     本件不复制其逻辑。
 
 依据: A9运维架构 §8.3.13；construction_backlog_dig.tsv B14-04728。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: stream_client 参数
+#   fields: 参数 stream_client（无注解）
+#   code: risk_event_consumer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: group 参数
+#   fields: 参数 group（无注解）
+#   code: risk_event_consumer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: consumer_name 参数
+#   fields: 参数 consumer_name（无注解）
+#   code: risk_event_consumer.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: action_handler 参数
+#   fields: 参数 action_handler（无注解）
+#   code: risk_event_consumer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RiskEventConsumer
+#   name_en: RiskEventConsumer
+#   intro: E-RK-01 风险事件消费处理器。
+#   desc: E-RK-01 风险事件消费处理器。 Args: stream_client: 流读取 client（注入式，实现 read_group 协议）。 group: 消费组名。 co…；公共方法（定义序）: seen_co…
+#   inputs: stream_client group consumer_name action_handler dlq_sink ack_hook la…
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: RiskEventConsumer
+#   downstream: 信号域降级/撤销/权重调整执行体（action_handler 注入点）；告警路由（lag_exceeded 读取方）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -263,13 +306,9 @@ class RiskEventConsumer:
     def poll_once(self, max_events: int = 10) -> list[ConsumeReceipt]:
         """拉取一批事件并逐条处置，返回回执列表。"""
         try:
-            events = self._client.read_group(
-                group=self._group, consumer=self._consumer_name, max_events=max_events
-            )
+            events = self._client.read_group(group=self._group, consumer=self._consumer_name, max_events=max_events)
         except AttributeError as exc:
-            raise RiskEventConsumerError(
-                f"stream_client 不具 read_group 协议: {exc}"
-            ) from exc
+            raise RiskEventConsumerError(f"stream_client 不具 read_group 协议: {exc}") from exc
         except Exception as exc:  # noqa: BLE001 — 拉取边界统一翻译
             raise RiskEventConsumerError(f"风险事件拉取失败: {exc}") from exc
 

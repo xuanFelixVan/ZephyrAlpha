@@ -14,7 +14,8 @@
 # [TESTS] tests/autonomy/test_signal_analyst_agent.py
 # [A_module] module_id=MOD-AU-009 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""SignalAnalystAgent — 信号 Agent (MOD-AU-009)
+"""
+SignalAnalystAgent — 信号 Agent (MOD-AU-009)
 
 B1-00241（AUD-DRAFT-001-DIGEST P1 波 W-P1-11）：SignalAnalyst 角色卡
 （14号文 §3.0 role façade 族卡模式，与 MOD-AU-007/008 同族）。汇总 C-028
@@ -24,6 +25,43 @@ B1-00241（AUD-DRAFT-001-DIGEST P1 波 W-P1-11）：SignalAnalyst 角色卡
 
 查重分工：信号生产归 MOD-SIG-087 signal_factory；质量基础设施归 D_SIGQC
 族；本角色只做职责化编排判定（评估输入注入、不复制 QC 计算件、不辩论）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: thresholds 参数
+#   fields: 参数 thresholds（无注解）
+#   code: signal_analyst_agent.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: degrade_sink 参数
+#   fields: 参数 degrade_sink（无注解）
+#   code: signal_analyst_agent.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: audit_sink 参数
+#   fields: 参数 audit_sink（无注解）
+#   code: signal_analyst_agent.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SignalAnalystAgent
+#   name_en: SignalAnalystAgent
+#   intro: 信号 Agent：IC 衰减×拥挤度 → 漏斗处置建议（判定核心纯函数）。
+#   desc: 信号 Agent：IC 衰减×拥挤度 → 漏斗处置建议（判定核心纯函数）。 Args: thresholds: 判定阈值配置。 degrade_sink: 降级建议回调；异常不阻…；公共方法（定义序）: assess,…
+#   inputs: thresholds degrade_sink audit_sink
+#   outputs: 返回值
+#   （注：A1 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（9 定义）
+#   name_en: public defs
+#   intro: SignalAnalystAgent
+#   downstream: 运行时装配批（C-028 输出批量装配 / 漏斗权重真实调整 / SIGQC 指标对接）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -75,7 +113,11 @@ AGENT_CARD: Final[dict[str, Any]] = {
     "autonomyBoundaries": {
         "ai_modifiable": ["降级建议文本", "评估理由"],
         "human_gated": ["QUARANTINE 隔离的恢复放行"],
-        "immutable": ["下单/交易执行（执行域职责，本角色无下单语义）", "信号生产本体（MOD-SIG-087）", "判定阈值真源（配置）"],
+        "immutable": [
+            "下单/交易执行（执行域职责，本角色无下单语义）",
+            "信号生产本体（MOD-SIG-087）",
+            "判定阈值真源（配置）",
+        ],
     },
     "healthCheck": {"heartbeat": "on_demand_assess"},
 }
@@ -145,15 +187,11 @@ class SignalAnalystThresholds:
         if not (0.0 < self.decay_warn_ratio <= 1.0):
             raise InvalidSignalAnalystConfigError(f"decay_warn_ratio 必须 ∈ (0,1]: {self.decay_warn_ratio}")
         if not (0.0 < self.decay_crit_ratio < self.decay_warn_ratio):
-            raise InvalidSignalAnalystConfigError(
-                f"decay_crit_ratio 必须 ∈ (0, warn): {self.decay_crit_ratio}"
-            )
+            raise InvalidSignalAnalystConfigError(f"decay_crit_ratio 必须 ∈ (0, warn): {self.decay_crit_ratio}")
         if not (0.0 < self.crowding_warn < 1.0):
             raise InvalidSignalAnalystConfigError(f"crowding_warn 必须 ∈ (0,1): {self.crowding_warn}")
         if not (self.crowding_warn < self.crowding_crit <= 1.0):
-            raise InvalidSignalAnalystConfigError(
-                f"crowding_crit 必须 ∈ (warn, 1]: {self.crowding_crit}"
-            )
+            raise InvalidSignalAnalystConfigError(f"crowding_crit 必须 ∈ (warn, 1]: {self.crowding_crit}")
 
 
 @dataclass(frozen=True)

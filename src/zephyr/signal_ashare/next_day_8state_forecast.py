@@ -23,7 +23,8 @@
 # A4: confidence = top_probability × 支持度因子 min(1, 当前态出发转移数/30)
 # O1: NextDayForecast（8 态概率分布 + 众数态 + 置信度，供下游风控节流/权重修正）
 # [/ALGO_FLOW]
-"""次日 8 状态预测（交易决策架构 9.2 八态叠加模型，BM-SEL-04，MOD-SIG-037）。
+"""
+次日 8 状态预测（交易决策架构 9.2 八态叠加模型，BM-SEL-04，MOD-SIG-037）。
 
 8 态 = 高开高走/高开低走/低开高走/低开低走/平开高走/平开低走/震荡收平/剧烈
 震荡，输出次日走势的 8 态概率分布（ΣP=1.0）。引擎为一阶马尔可夫链：历史状
@@ -35,6 +36,93 @@
 下游风控节流与信号权重修正消费（与 44 号"只出档位概率不出点位"一致）。
 
 阈值（平开 ±0.5%、收平 ±0.3%、剧烈震荡振幅 3%、blend 0.2）为初拟，待实盘标定。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: bar 参数
+#   fields: 参数 bar，类型注解 DailyBar
+#   code: next_day_8state_forecast.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: prev_close 参数
+#   fields: 参数 prev_close，类型注解 float
+#   code: next_day_8state_forecast.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: gap_threshold 参数
+#   fields: 参数 gap_threshold（无注解）
+#   code: next_day_8state_forecast.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: flat_threshold 参数
+#   fields: 参数 flat_threshold（无注解）
+#   code: next_day_8state_forecast.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① classify_daily_state
+#   name_en: classify_daily_state
+#   intro: 单日 K 线 → 8 态分类（优先级：剧烈震荡 > 震荡收平 > 缺口×方向网格）。
+#   desc: 单日 K 线 → 8 态分类（优先级：剧烈震荡 > 震荡收平 > 缺口×方向网格）。 Args: bar: 当日 K 线（OHLC）。 prev_close: 前收盘价（必须为正…；源码 L220-L254
+#   inputs: bar prev_close gap_threshold flat_threshold violent_amplitude
+#   outputs: NextDayState
+# - id: A2
+#   name_zh: ② build_state_series
+#   name_en: build_state_series
+#   intro: K 线序列 → 8 态序列（首根无前收跳过，输出长度 = len(bars) − 1）。
+#   desc: K 线序列 → 8 态序列（首根无前收跳过，输出长度 = len(bars) − 1）。；源码 L257-L274
+#   inputs: bars config
+#   outputs: list[NextDayState]
+# - id: A3
+#   name_zh: ③ estimate_transition_matrix
+#   name_en: estimate_transition_matrix
+#   intro: 历史状态转移频次 + Laplace 平滑 → 8×8 行归一转移矩阵。
+#   desc: 历史状态转移频次 + Laplace 平滑 → 8×8 行归一转移矩阵。 laplace_alpha=0 时无平滑，无出发转移的行保持全零（由 forecast 兜底均匀分布）。；源码 L277-L292
+#   inputs: states laplace_alpha
+#   outputs: list[list[float]]
+# - id: A4
+#   name_zh: ④ stationary_distribution
+#   name_en: stationary_distribution
+#   intro: 幂迭代求马尔可夫链平稳分布 π（π = π×M，每步归一化兜底零行）。
+#   desc: 幂迭代求马尔可夫链平稳分布 π（π = π×M，每步归一化兜底零行）。；源码 L295-L320
+#   inputs: matrix max_iter tol
+#   outputs: list[float]
+# - id: A5
+#   name_zh: ⑤ forecast_next_day
+#   name_en: forecast_next_day
+#   intro: 核心纯函数：8 态历史序列 → 次日 8 态概率分布预测。
+#   desc: 核心纯函数：8 态历史序列 → 次日 8 态概率分布预测。 预测分布 = (1−blend)×经验转移行 + blend×平稳分布，再归一化； 经验行全零（当前态无出发转移且无平…；源码 L323-L368
+#   inputs: states config
+#   outputs: NextDayForecast
+# - id: A6
+#   name_zh: ⑥ NextDay8StateForecaster
+#   name_en: NextDay8StateForecaster
+#   intro: 次日 8 态预测器（DB 加载层薄封装，计算全部委托纯函数）。
+#   desc: 次日 8 态预测器（DB 加载层薄封装，计算全部委托纯函数）。 DB 依赖注入：query_fn 默认走项目既有 data 层 ch_reader.query（TSV）， reg…；公共方法（定义序）: load_in…
+#   inputs: registry query_fn config
+#   outputs: 返回值
+#   （注：A6 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: NextDayState
+#   name_en: NextDayState
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 BM-BUY-01 多情景对策 / 下游风控节流层信号权重修正)
+# - id: O2
+#   name_zh: list[NextDayState]
+#   name_en: list[NextDayState]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 BM-BUY-01 多情景对策 / 下游风控节流层信号权重修正)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
 """
 
 from __future__ import annotations
@@ -266,9 +354,7 @@ def forecast_next_day(
     top_probability = probabilities[top_state]
 
     # 支持度：当前态出发的历史转移数 → 支持度因子（满 support_full 记 1）
-    support = sum(
-        1 for i in range(len(states) - 1) if states[i] == current
-    )
+    support = sum(1 for i in range(len(states) - 1) if states[i] == current)
     support_factor = min(1.0, support / cfg.support_full) if cfg.support_full > 0 else 1.0
     confidence = top_probability * support_factor
 
@@ -325,9 +411,7 @@ class NextDay8StateForecaster:
         Raises:
             NextDayForecastDataError: 查询为空或无可解析行。
         """
-        sql = _SQL_INDEX_KLINE.format(
-            table=self._resolve_table(), symbol=symbol, start=start, end=end
-        )
+        sql = _SQL_INDEX_KLINE.format(table=self._resolve_table(), symbol=symbol, start=start, end=end)
         tsv = self._resolve_query_fn()(sql)
         bars: list[DailyBar] = []
         for line in (tsv or "").strip().split("\n"):
@@ -345,9 +429,7 @@ class NextDay8StateForecaster:
                 except ValueError:
                     _logger.warning("next_day_8state_forecast 跳过不可解析行: %s", line[:80])
         if not bars:
-            raise NextDayForecastDataError(
-                f"market_index_kline 查询为空: symbol={symbol}, [{start}, {end}]"
-            )
+            raise NextDayForecastDataError(f"market_index_kline 查询为空: symbol={symbol}, [{start}, {end}]")
         return bars
 
     def forecast(

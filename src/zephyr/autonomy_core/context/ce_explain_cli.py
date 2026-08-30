@@ -15,7 +15,41 @@
 # [A_module] module_id=MOD-CONTEXT_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""ce_explain_cli.py — KE inclusion rationale 解释 CLI (TASK-016)"""
+"""
+ce_explain_cli.py — KE inclusion rationale 解释 CLI (TASK-016)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: ke_id 参数
+#   fields: 参数 ke_id，类型注解 str
+#   code: ce_explain_cli.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: query 参数
+#   fields: 参数 query（无注解）
+#   code: ce_explain_cli.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① explain_ke
+#   name_en: explain_ke
+#   intro: CLI /ce:explain KE-0127 -> JSON rationale.
+#   desc: CLI /ce:explain KE-0127 -> JSON rationale.；源码 L68-L78
+#   inputs: ke_id query
+#   outputs: str
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
+"""
 
 import json
 from dataclasses import dataclass

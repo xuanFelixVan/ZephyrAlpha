@@ -23,6 +23,50 @@ Version: 0.3.0
 
 Skill 认知保留 —— 跨 Session/跨 Agent 的 Skill 学习状态持久化.
 保存 Skill 执行后的认知决策链，供后续 Agent 做暖启动(warm-resume).
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: skill_id 参数
+#   fields: 参数 skill_id（无注解）
+#   code: skill_cognitive_preservation.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: state 参数
+#   fields: 参数 state（无注解）
+#   code: skill_cognitive_preservation.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: timestamp 参数
+#   fields: 参数 timestamp（无注解）
+#   code: skill_cognitive_preservation.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CognitiveSnapshot
+#   name_en: CognitiveSnapshot
+#   intro: class CognitiveSnapshot 源码 L80-L93
+#   desc: 公共方法（定义序）: to_dict；源码 L80-L93
+#   inputs: skill_id state timestamp
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② SkillCognitivePreservation
+#   name_en: SkillCognitivePreservation
+#   intro: Skill 认知保留 —— 跨 Session 记忆持久化与暖启动.
+#   desc: Skill 认知保留 —— 跨 Session 记忆持久化与暖启动.；公共方法（定义序）: memory, save, restore, merge, list_skills, warm_resume_context,…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: CognitiveSnapshot, SkillCognitivePreservation
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

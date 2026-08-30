@@ -20,6 +20,37 @@ CapabilityRegistry — 能力注册中心
 ==================================
 蓝图: docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md §3.1
 对标: Google A2A AgentCard + Anthropic MCP Tools + Cursor Rules
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: card_dir 参数
+#   fields: 参数 card_dir（无注解）
+#   code: capability_registry.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: cache_ttl_seconds 参数
+#   fields: 参数 cache_ttl_seconds（无注解）
+#   code: capability_registry.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CapabilityRegistry
+#   name_en: CapabilityRegistry
+#   intro: 能力注册中心——解决'AI 不知道有这个功能'的问题。
+#   desc: 能力注册中心——解决'AI 不知道有这个功能'的问题。 对标: - Google A2A Agent Card: JSON 格式的能力自描述 - Anthropic MCP: t…；公共方法（定义序）: card_di…
+#   inputs: card_dir cache_ttl_seconds
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: CapabilityRegistry
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 import threading
@@ -164,9 +195,7 @@ class CapabilityRegistry:
             return self._cached(
                 ("discover", q),
                 lambda: [
-                    card
-                    for card in self._cards.values()
-                    if q in card.name.lower() or q in card.description.lower()
+                    card for card in self._cards.values() if q in card.name.lower() or q in card.description.lower()
                 ],
             )
 
@@ -179,11 +208,7 @@ class CapabilityRegistry:
         with self._lock.read():
             return self._cached(
                 ("find_by_tags", tag_set),
-                lambda: [
-                    card
-                    for card in self._cards.values()
-                    if tag_set & {t.lower() for t in card.tags}
-                ],
+                lambda: [card for card in self._cards.values() if tag_set & {t.lower() for t in card.tags}],
             )
 
     def get(self, capability_id: str) -> CapabilityCard | None:

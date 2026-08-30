@@ -23,7 +23,8 @@
 # A4: estimate_fill_probability(min(1, counter_volume/(queue_ahead+order_size)), 53号§3.2公式②)
 # O1: OrderRoutingResult(FILLED/QUEUED/CONVERTED_QUEUED) + 队列快照 + 成交概率
 # [/ALGO_FLOW]
-"""Paper Matching 涨跌停排队引擎(BM-SIM-08)
+"""
+Paper Matching 涨跌停排队引擎(BM-SIM-08)
 
 职责(53号 memo §3.2 撮合 Step② + 公式②, SHADOW 阶段前置):
   - 显式复现 A 股涨跌停硬约束: 涨停板仅撮合 bid 队列(买单按时间优先排队),
@@ -38,6 +39,93 @@
   - 输入注入式: 封单量/对手盘流量由调用方供给, 不连接外部行情
 
 SSoT: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/53_simulation_live_path.md §3.2
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: prev_close 参数
+#   fields: 参数 prev_close，类型注解 float
+#   code: limit_board_queue.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: limit_pct 参数
+#   fields: 参数 limit_pct，类型注解 float
+#   code: limit_board_queue.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: last_price 参数
+#   fields: 参数 last_price，类型注解 float
+#   code: limit_board_queue.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: queue_ahead 参数
+#   fields: 参数 queue_ahead，类型注解 int
+#   code: limit_board_queue.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① limit_up_price
+#   name_en: limit_up_price
+#   intro: 涨停价 = 昨收 × (1 + limit_pct), 四舍五入到分(ROUND_HALF_UP)
+#   desc: 涨停价 = 昨收 × (1 + limit_pct), 四舍五入到分(ROUND_HALF_UP) 用 Decimal 精确乘法（str 转换），避免 float 二进制误差翻转…；源码 L257-L265
+#   inputs: prev_close limit_pct
+#   outputs: float
+# - id: A2
+#   name_zh: ② limit_down_price
+#   name_en: limit_down_price
+#   intro: 跌停价 = 昨收 × (1 - limit_pct), 四舍五入到分(ROUND_HALF_UP)
+#   desc: 跌停价 = 昨收 × (1 - limit_pct), 四舍五入到分(ROUND_HALF_UP) 如 8.45×0.9 真值 7.605 → 交易所 7.61（float 银行…；源码 L268-L275
+#   inputs: prev_close limit_pct
+#   outputs: float
+# - id: A3
+#   name_zh: ③ detect_board_state
+#   name_en: detect_board_state
+#   intro: 判定板态: 最新价触及涨停/跌停价(按 0.
+#   desc: 判定板态: 最新价触及涨停/跌停价(按 0.01 取整后比较) Args: last_price: 最新价 prev_close: 昨收价(>0) limit_pct: 涨跌停幅…；源码 L285-L312
+#   inputs: last_price prev_close limit_pct
+#   outputs: BoardState
+# - id: A4
+#   name_zh: ④ estimate_fill_probability
+#   name_en: estimate_fill_probability
+#   intro: 封板成交概率估算(53号 §3.
+#   desc: 封板成交概率估算(53号 §3.2 公式②) P(fill) ≈ min(1, counter_volume / (queue_ahead + order_size)) - qu…；源码 L315-L345
+#   inputs: queue_ahead order_size counter_volume
+#   outputs: float
+# - id: A5
+#   name_zh: ⑤ route_order
+#   name_en: route_order
+#   intro: 封板订单路由(53号 §3.
+#   desc: 封板订单路由(53号 §3.2 Step②) 规则: - NORMAL: 不干预(委托既有撮合链路, 本函数返回 FILLED 占位语义, 实际成交 价格由既有撮合决定——函数级…；源码 L348-L427
+#   inputs: side qty board_state limit_price order_type queue_ahead
+#   outputs: OrderRoutingResult
+# - id: A6
+#   name_zh: ⑥ LimitBoardQueue
+#   name_en: LimitBoardQueue
+#   intro: 封板排队队列(时间优先 FIFO)
+#   desc: 封板排队队列(时间优先 FIFO) 承载单个标的单向(涨停=bid 队列 / 跌停=ask 队列)的排队状态: - enqueue: 订单入队尾(时间优先) - on_count…；公共方法（定义序）: total_q…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A6 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 预留(paper matching引擎, 53号§3.2撮合Step②, SHADOW前置)
+# - id: O2
+#   name_zh: BoardState
+#   name_en: BoardState
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 预留(paper matching引擎, 53号§3.2撮合Step②, SHADOW前置)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
 """
 
 from __future__ import annotations

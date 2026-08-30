@@ -14,7 +14,8 @@
 # [TESTS] tests/zephyr/trading/test_process_reaper.py
 # [A_module] module_id=MOD-RESOURCE_OPTIMIZATION_ENGINE | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""process_reaper.py — 项目残留进程清理器（无状态 one-shot，Task Scheduler 托管）
+"""
+process_reaper.py — 项目残留进程清理器（无状态 one-shot，Task Scheduler 托管）
 =====================================================================
 
 治本背景（2026-08-28 裁定）：
@@ -75,6 +76,93 @@ CLI（脚本直跑，绕过包 __init__）：
     python src/zephyr/trading/process_reaper.py            # 执行清理（Task Scheduler 调用方式）
     python src/zephyr/trading/process_reaper.py --dry-run  # 只报告不杀（验证用）
     python src/zephyr/trading/process_reaper.py --status   # 读上次运行状态
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: pid 参数
+#   fields: 参数 pid（无注解）
+#   code: process_reaper.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: cmdline 参数
+#   fields: 参数 cmdline（无注解）
+#   code: process_reaper.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: age_s 参数
+#   fields: 参数 age_s（无注解）
+#   code: process_reaper.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: mem_mb 参数
+#   fields: 参数 mem_mb（无注解）
+#   code: process_reaper.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① classify_process
+#   name_en: classify_process
+#   intro: 判定矩阵纯函数实现。
+#   desc: 判定矩阵纯函数实现。输入均为外部可观测量，不依赖 psutil，便于单测。；源码 L333-L403
+#   inputs: pid cmdline age_s mem_mb cpu_pct children orphan is_self_ancestor
+#   outputs: ProcVerdict
+# - id: A2
+#   name_zh: ② classify_trae_process
+#   name_en: classify_trae_process
+#   intro: 内核态拓扑幽灵判据（纯函数，可单测）。
+#   desc: 内核态拓扑幽灵判据（纯函数，可单测）。返回嫌疑 reason，非嫌疑返回 None。 判定链： 1. 非 Trae 进程 -> None 2. main（无子进程标记） -> N…；源码 L556-L583
+#   inputs: pid name cmdline ppid create_time procs
+#   outputs: str | None
+# - id: A3
+#   name_zh: ③ scan_ghost_windows
+#   name_en: scan_ghost_windows
+#   intro: 扫描 Trae 幽灵嫌疑进程（子进程父死）。
+#   desc: 扫描 Trae 幽灵嫌疑进程（子进程父死）。零副作用（只读），纯 psutil。 返回 [{pid, reason, cmdline}]。函数名保留（resource_optim…；源码 L607-L628
+#   inputs: 无参数
+#   outputs: list[dict[str, Any]]
+# - id: A4
+#   name_zh: ④ kill_ghost_windows
+#   name_en: kill_ghost_windows
+#   intro: Force kill 幽灵嫌疑进程，kill 前复查赦免：重新枚举进程表重跑判据，
+#   desc: Force kill 幽灵嫌疑进程，kill 前复查赦免：重新枚举进程表重跑判据， 父复活/进程已死/标记不符一律赦免不杀。返回实际被 kill 的 PID 列表。；源码 L685-L725
+#   inputs: ghosts
+#   outputs: list[int]
+# - id: A5
+#   name_zh: ⑤ reap
+#   name_en: reap
+#   intro: 执行一轮清理。
+#   desc: 执行一轮清理。one-shot：scan→判定→kill→落盘→返回，调用方随即退出。；源码 L817-L899
+#   inputs: dry_run
+#   outputs: ReapReport
+# - id: A6
+#   name_zh: ⑥ main
+#   name_en: main
+#   intro: main() 源码 L924-L956
+#   desc: 源码 L924-L956
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A6 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ProcVerdict
+#   name_en: ProcVerdict
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: scripts/register_process_reaper_task.ps1; Windows Task Scheduler(ZephyrAlpha_Pr…
+# - id: O2
+#   name_zh: str | None
+#   name_en: str | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: scripts/register_process_reaper_task.ps1; Windows Task Scheduler(ZephyrAlpha_Pr…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
 """
 
 from __future__ import annotations
@@ -114,7 +202,7 @@ def _find_repo_root() -> Path:
 REPO_ROOT = _find_repo_root()
 
 
-def _run_hidden(cmd: list[str], **kwargs) -> "subprocess.CompletedProcess":
+def _run_hidden(cmd: list[str], **kwargs) -> subprocess.CompletedProcess:
     """本地无窗口 subprocess.run（CREATE_NO_WINDOW），零 zephyr 依赖。
 
     语义对齐 zephyr.shared.infra.process_pool.run_subprocess_hidden（TRAE-067 铁律2），
@@ -127,6 +215,7 @@ def _run_hidden(cmd: list[str], **kwargs) -> "subprocess.CompletedProcess":
     if os.name == "nt":
         kwargs.setdefault("creationflags", subprocess.CREATE_NO_WINDOW)
     return subprocess.run(cmd, **kwargs)
+
 
 # ============== 路径与文件 ==============
 _STATUS_DIR = REPO_ROOT / ".runtime" / "process_reaper"
@@ -716,9 +805,7 @@ def _write_status(report: ReapReport) -> None:
     try:
         _STATUS_DIR.mkdir(parents=True, exist_ok=True)
         tmp = _STATUS_DIR / f"last_run.{os.getpid()}.tmp"
-        tmp.write_text(
-            json.dumps(report.__dict__, ensure_ascii=False, indent=2, default=str), encoding="utf-8"
-        )
+        tmp.write_text(json.dumps(report.__dict__, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
         os.replace(tmp, _STATUS_FILE)
     except OSError as e:
         logger.warning("状态落盘失败: %s", e)
@@ -823,7 +910,9 @@ def _print_status() -> int:
         return 1
     print(f"last_run={data.get('timestamp')}")
     print(f"dry_run={data.get('dry_run')}")
-    print(f"scanned={data.get('scanned')} whitelist_hits={data.get('whitelist_hits')} trae_hits={data.get('trae_descendant_hits')}")
+    print(
+        f"scanned={data.get('scanned')} whitelist_hits={data.get('whitelist_hits')} trae_hits={data.get('trae_descendant_hits')}"
+    )
     print(f"killed={len(data.get('killed', []))} reported={len(data.get('reported', []))}")
     print(f"ghosts={data.get('ghosts')}")
     print(f"drift={data.get('drift')}")

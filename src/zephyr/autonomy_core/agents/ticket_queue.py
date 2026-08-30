@@ -14,7 +14,8 @@
 # [TESTS] tests/autonomy/test_agent_ticket_queue.py
 # [A_module] module_id=MOD-EXE-AGENTS | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""S1.2 工单队列落盘化（14号文 §4-S1.2，61号文 §3.6 人调度多会话交接载体）.
+"""
+S1.2 工单队列落盘化（14号文 §4-S1.2，61号文 §3.6 人调度多会话交接载体）.
 
 队列目录：<runtime>/agent_runs/_queue/{pending,claimed,done,dead}/<ticket_id>.json。
 单工单手动触发形态（Phase 0）之上加多会话交接：人/会话 enqueue 工单入队，
@@ -29,6 +30,40 @@ CLI：
   python -m zephyr.autonomy_core.agents.ticket_queue done --ticket-id T --session-id S [--status S]
   python -m zephyr.autonomy_core.agents.ticket_queue dead --ticket-id T --reason R [--session-id S]
   python -m zephyr.autonomy_core.agents.ticket_queue recover [--alive-sessions a,b] [--stale-minutes N]
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: argv 参数
+#   fields: 参数 argv，类型注解 list[str] | None
+#   code: ticket_queue.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① TicketQueue
+#   name_en: TicketQueue
+#   intro: 四态落盘工单队列（O_EXCL 原子认领 + 断点恢复重派）.
+#   desc: 四态落盘工单队列（O_EXCL 原子认领 + 断点恢复重派）.；公共方法（定义序）: enqueue, claim, done, mark_dead, recover, list_tickets；源码 L109-L337
+#   inputs: runtime_dir repo_root
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② main
+#   name_en: main
+#   intro: CLI：enqueue/list/claim/done/dead/recover（打印 JSON 结果行）.
+#   desc: CLI：enqueue/list/claim/done/dead/recover（打印 JSON 结果行）.；源码 L340-L386
+#   inputs: argv
+#   outputs: int
+# 层: 输出
+# - id: O1
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests/autonomy/test_agent_ticket_queue.py ; 四类 Agent 薄入口 CLI ; 人调度多会话（61号文 §3.6）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -180,8 +215,9 @@ class TicketQueue:
         if record is None:
             raise ValueError(f"工单 {ticket_id} 不在 claimed 态（未认领不可完结）")
         self._check_owner(record, session_id)
-        record.update({"state": "done", "result_status": str(status),
-                       "summary": summary or {}, "finished_at": _utc_now()})
+        record.update(
+            {"state": "done", "result_status": str(status), "summary": summary or {}, "finished_at": _utc_now()}
+        )
         return self._transition(record, "claimed", "done")
 
     def mark_dead(self, ticket_id: str, *, reason: str, session_id: str | None = None) -> Path:
@@ -269,9 +305,7 @@ class TicketQueue:
         records.sort(key=lambda r: (str(r.get("created_at") or ""), str(r.get("ticket_id") or "")))
         return records
 
-    def _pending_candidates(
-        self, *, role: str | None, ticket_id: str | None
-    ) -> list[dict[str, Any]]:
+    def _pending_candidates(self, *, role: str | None, ticket_id: str | None) -> list[dict[str, Any]]:
         candidates = []
         for record in self._scan("pending"):
             if role is not None and record.get("role") != role:
@@ -287,9 +321,7 @@ class TicketQueue:
     def _check_owner(record: dict[str, Any], session_id: str) -> None:
         owner = str(record.get("owner") or "")
         if owner != str(session_id or ""):
-            raise PermissionError(
-                f"工单 {record.get('ticket_id')} owner（占用者）={owner!r}，非 {session_id!r} 拒操作"
-            )
+            raise PermissionError(f"工单 {record.get('ticket_id')} owner（占用者）={owner!r}，非 {session_id!r} 拒操作")
 
     def _transition(self, record: dict[str, Any], source: str, target: str) -> Path:
         dest = self._path(target, record["ticket_id"])

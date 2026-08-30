@@ -32,6 +32,46 @@ Collection name -> 返回 top-K results。
 - 桥接模式：低耦合——CE 不直接依赖 VMS 具体实现
 - 超时机制：每次 VMS 调用带 5s 超时
 - 降级策略：VMS 不可用时返回空结果集（由调用方 build_context 降级处理）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: vms_client 参数
+#   fields: 参数 vms_client（无注解）
+#   code: vector_bridge.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: default_timeout_s 参数
+#   fields: 参数 default_timeout_s（无注解）
+#   code: vector_bridge.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① VMSSearchProtocol
+#   name_en: VMSSearchProtocol
+#   intro: VMS 检索协议——vector_bridge 依赖此协议而非具体实现。
+#   desc: VMS 检索协议——vector_bridge 依赖此协议而非具体实现。；公共方法（定义序）: search；源码 L85-L88
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② VectorBridge
+#   name_en: VectorBridge
+#   intro: CE↔VMS 检索桥接。
+#   desc: CE↔VMS 检索桥接。 接受 collection name + query embedding -> 返回 top-K 结构化结果。 Using:: bridge = Vec…；公共方法（定义序）: search,…
+#   inputs: vms_client default_timeout_s
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: VMSSearchProtocol, VectorBridge
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

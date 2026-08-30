@@ -24,6 +24,37 @@
 #   circadian_scheduler.start()/.stop() no-op 调用、finalizer.register("circadian_scheduler", ...)。
 #   未改动 boot/shutdown 语义与其他组件逻辑。
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: lifecycle_manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① LifecycleManager
+#   name_en: LifecycleManager
+#   intro: 生命周期管理器——Boot + Shutdown 序列。
+#   desc: 生命周期管理器——Boot + Shutdown 序列。；公共方法（定义序）: config, boot_sequence, shutdown_sequence；源码 L106-L258
+#   inputs: config
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: LifecycleManager
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 __all__ = [
     "BootReport",
     "LifecycleManager",

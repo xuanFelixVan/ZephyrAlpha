@@ -22,7 +22,8 @@
 # A4: confidence = 阈值边际（距最近分类边界的归一化距离）× 样本充足因子 ∈ [0,1]
 # O1: MarketStateSnapshot（9 网格状态 + 趋势/波动分解 + 置信度，供下游风控节流消费）
 # [/ALGO_FLOW]
-"""市场状态传感器（10 号 regime spec §2.1 结构探测器规则版，MOD-SIG-036）。
+"""
+市场状态传感器（10 号 regime spec §2.1 结构探测器规则版，MOD-SIG-036）。
 
 规则驱动的 3×3 市场状态分类：趋势方向（Bull/Neutral/Bear）× 波动率水平
 （Low/Medium/High）→ 9 网格状态单值输出 + 分解得分 + 置信度。
@@ -34,6 +35,101 @@
 无拟合、无过拟合风险），两者输入同源（指数价量）可交叉验证。
 
 阈值（trend ±0.2、vol 1/3-2/3 分位、tanh 缩放 0.10/0.05）为初拟，待实盘标定。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: closes 参数
+#   fields: 参数 closes，类型注解 Sequence[float]
+#   code: market_state_sensor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: short_window 参数
+#   fields: 参数 short_window，类型注解 int
+#   code: market_state_sensor.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: long_window 参数
+#   fields: 参数 long_window，类型注解 int
+#   code: market_state_sensor.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: returns 参数
+#   fields: 参数 returns，类型注解 Sequence[float]
+#   code: market_state_sensor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① compute_trend_score
+#   name_en: compute_trend_score
+#   intro: 趋势得分 ∈ [-1, 1]：20 日收益与 MA20/MA60 偏离的等权 tanh 合成。
+#   desc: 趋势得分 ∈ [-1, 1]：20 日收益与 MA20/MA60 偏离的等权 tanh 合成。 Args: closes: 收盘序列（升序），长度 ≥ long_window +…；源码 L253-L278
+#   inputs: closes short_window long_window
+#   outputs: float
+# - id: A2
+#   name_zh: ② compute_vol_percentile
+#   name_en: compute_vol_percentile
+#   intro: 已实现波动率分位 ∈ (0, 1]：近 vol_window 日波动率在 trailing 窗口中的排名。
+#   desc: 已实现波动率分位 ∈ (0, 1]：近 vol_window 日波动率在 trailing 窗口中的排名。 波动率 = 日收益总体标准差 × √252（年化）。分位 = trai…；源码 L281-L305
+#   inputs: returns vol_window lookback
+#   outputs: float
+# - id: A3
+#   name_zh: ③ classify_trend
+#   name_en: classify_trend
+#   intro: 趋势得分 → 3 分类（≥bull_min BULL / ≤bear_max BEAR / 其间 NEUTRAL）。
+#   desc: 趋势得分 → 3 分类（≥bull_min BULL / ≤bear_max BEAR / 其间 NEUTRAL）。；源码 L308-L318
+#   inputs: trend_score bull_min bear_max
+#   outputs: TrendDirection
+# - id: A4
+#   name_zh: ④ classify_volatility
+#   name_en: classify_volatility
+#   intro: 波动率分位 → 3 分类（<low_max LOW / >high_min HIGH / 边界等值落 MEDIUM）。
+#   desc: 波动率分位 → 3 分类（<low_max LOW / >high_min HIGH / 边界等值落 MEDIUM）。；源码 L321-L331
+#   inputs: vol_percentile low_max high_min
+#   outputs: VolatilityLevel
+# - id: A5
+#   name_zh: ⑤ classify_market_state
+#   name_en: classify_market_state
+#   intro: 趋势 × 波动率 → 9 网格状态单值输出。
+#   desc: 趋势 × 波动率 → 9 网格状态单值输出。；源码 L334-L339
+#   inputs: trend vol
+#   outputs: MarketGridState
+# - id: A6
+#   name_zh: ⑥ sense_market_state
+#   name_en: sense_market_state
+#   intro: 核心纯函数：收盘序列 → 市场状态快照。
+#   desc: 核心纯函数：收盘序列 → 市场状态快照。 confidence 合成（初拟）：趋势/波动各自距最近分类边界的归一化边际均值 × 样本充足因子（min(1, n/(2×min_hi…；源码 L342-L384
+#   inputs: closes config
+#   outputs: MarketStateSnapshot
+# - id: A7
+#   name_zh: ⑦ MarketStateSensor
+#   name_en: MarketStateSensor
+#   intro: 市场状态传感器（DB 加载层薄封装，计算全部委托纯函数）。
+#   desc: 市场状态传感器（DB 加载层薄封装，计算全部委托纯函数）。 DB 依赖注入：query_fn 默认走项目既有 data 层 ch_reader.query（TSV）， regis…；公共方法（定义序）: load_in…
+#   inputs: registry query_fn config
+#   outputs: 返回值
+#   （注：A7 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 regime_change_detector / next_day_8state_forecast / 下游风控节流层)
+# - id: O2
+#   name_zh: TrendDirection
+#   name_en: TrendDirection
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 regime_change_detector / next_day_8state_forecast / 下游风控节流层)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> O1
 """
 
 from __future__ import annotations
@@ -173,9 +269,7 @@ def compute_trend_score(
         ValueError: 输入长度不足 long_window + 1。
     """
     if len(closes) < long_window + 1:
-        raise ValueError(
-            f"closes 长度 {len(closes)} 不足 long_window+1={long_window + 1}"
-        )
+        raise ValueError(f"closes 长度 {len(closes)} 不足 long_window+1={long_window + 1}")
     ret_short = closes[-1] / closes[-1 - short_window] - 1.0
     ma_short = statistics.fmean(closes[-short_window:])
     ma_long = statistics.fmean(closes[-long_window:])
@@ -203,14 +297,9 @@ def compute_vol_percentile(
         ValueError: 输入长度不足 vol_window + 1。
     """
     if len(returns) < vol_window + 1:
-        raise ValueError(
-            f"returns 长度 {len(returns)} 不足 vol_window+1={vol_window + 1}"
-        )
+        raise ValueError(f"returns 长度 {len(returns)} 不足 vol_window+1={vol_window + 1}")
     annualize = math.sqrt(252.0)
-    vols = [
-        statistics.pstdev(returns[i - vol_window : i]) * annualize
-        for i in range(vol_window, len(returns) + 1)
-    ]
+    vols = [statistics.pstdev(returns[i - vol_window : i]) * annualize for i in range(vol_window, len(returns) + 1)]
     current = vols[-1]
     trailing = vols[-lookback:]
     return sum(1 for v in trailing if v <= current) / len(trailing)
@@ -275,13 +364,11 @@ def sense_market_state(
     vol = classify_volatility(vol_pct, cfg.vol_low_max, cfg.vol_high_min)
     state = classify_market_state(trend, vol)
 
-    trend_margin = min(
-        abs(trend_score - cfg.trend_bull_min), abs(trend_score - cfg.trend_bear_max)
-    ) / max(cfg.trend_bull_min, 1e-9)
+    trend_margin = min(abs(trend_score - cfg.trend_bull_min), abs(trend_score - cfg.trend_bear_max)) / max(
+        cfg.trend_bull_min, 1e-9
+    )
     vol_span = cfg.vol_high_min - cfg.vol_low_max
-    vol_margin = min(
-        abs(vol_pct - cfg.vol_low_max), abs(vol_pct - cfg.vol_high_min)
-    ) / max(vol_span, 1e-9)
+    vol_margin = min(abs(vol_pct - cfg.vol_low_max), abs(vol_pct - cfg.vol_high_min)) / max(vol_span, 1e-9)
     margin_factor = max(0.0, min(1.0, 0.5 * (min(trend_margin, 1.0) + min(vol_margin, 1.0))))
     sample_factor = min(1.0, n / (2.0 * cfg.min_history))
     confidence = margin_factor * sample_factor
@@ -341,9 +428,7 @@ class MarketStateSensor:
         Raises:
             MarketStateDataError: 查询为空或无可解析行。
         """
-        sql = _SQL_INDEX_KLINE.format(
-            table=self._resolve_table(), symbol=symbol, start=start, end=end
-        )
+        sql = _SQL_INDEX_KLINE.format(table=self._resolve_table(), symbol=symbol, start=start, end=end)
         tsv = self._resolve_query_fn()(sql)
         closes: list[float] = []
         for line in (tsv or "").strip().split("\n"):
@@ -354,9 +439,7 @@ class MarketStateSensor:
                 except ValueError:
                     _logger.warning("market_state_sensor 跳过不可解析行: %s", line[:80])
         if not closes:
-            raise MarketStateDataError(
-                f"market_index_kline 查询为空: symbol={symbol}, [{start}, {end}]"
-            )
+            raise MarketStateDataError(f"market_index_kline 查询为空: symbol={symbol}, [{start}, {end}]")
         return closes
 
     def sense(

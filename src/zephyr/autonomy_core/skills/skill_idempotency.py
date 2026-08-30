@@ -23,6 +23,32 @@ Version: 0.2.0
 
 Skill 幂等性保证 —— 防止同一 Skill 在相同输入下重复执行。
 使用 sha256(input_hash) + skill_id 作为去重键，带 TTL 过期。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: skill_idempotency.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SkillIdempotency
+#   name_en: SkillIdempotency
+#   intro: Skill 幂等性保证 —— 重复执行安全.
+#   desc: Skill 幂等性保证 —— 重复执行安全.；公共方法（定义序）: hash_input, is_duplicate, mark_executed, clear_expired, clear_all, stats；源码…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SkillIdempotency
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

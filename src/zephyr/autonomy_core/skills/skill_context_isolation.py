@@ -29,6 +29,32 @@ Skill 上下文隔离引擎
   2. DataLeakagePrevention: 阻止前一个 Skill 的输出泄露到下一个 Skill
   3. ContaminationCheck: 检测上下文是否已被污染
   4. SnapshotRestore: 多 Skill 切换时的上下文快照
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: mode 参数
+#   fields: 参数 mode（无注解）
+#   code: skill_context_isolation.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ContextIsolation
+#   name_en: ContextIsolation
+#   intro: Skill 上下文隔离器
+#   desc: Skill 上下文隔离器；公共方法（定义序）: isolation_level, namespaces, snapshots, contamination_log, create_namespace, isolate_…
+#   inputs: mode
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: ContextIsolation
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-SEC-security_event_bus | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""统一安全事件总线（16号文 Phase 0：P0-1 事件 schema + P0-3 高危告警通道）。
+"""
+统一安全事件总线（16号文 Phase 0：P0-1 事件 schema + P0-3 高危告警通道）。
 
 目的：四域安全检测（LSG 安全栈 / 自治边界 gate / 治理门禁 / 运行时检测器与
 ai_agent_monitor）各自产出格式各异的安全事件，无统一出口 = 无可观测性。
@@ -38,6 +39,96 @@ ai_agent_monitor）各自产出格式各异的安全事件，无统一出口 = �
 
 边界：本模块只收口事件，不改动 LSG / access_control / FBL 检测器 /
 auto_fix_engine 任何本体逻辑（16号文 §5 第 6 条）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: pending_path 参数
+#   fields: 参数 pending_path（无注解）
+#   code: security_event_bus.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: dry_run_path 参数
+#   fields: 参数 dry_run_path（无注解）
+#   code: security_event_bus.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: dry_run 参数
+#   fields: 参数 dry_run（无注解）
+#   code: security_event_bus.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: timeout_sec 参数
+#   fields: 参数 timeout_sec（无注解）
+#   code: security_event_bus.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DomainEventAdapter
+#   name_en: DomainEventAdapter
+#   intro: 域事件 adapter 基类：把本域既有事件 dict 转成统一 schema。
+#   desc: 域事件 adapter 基类：把本域既有事件 dict 转成统一 schema。 子类只需实现 ``raw_mapping`` 返回 schema 字段 dict；``adapt…；公共方法（定义序）: raw_map…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② LsgSecurityStackAdapter
+#   name_en: LsgSecurityStackAdapter
+#   intro: LSG 安全栈（L0~L8 / L6 审计事件）adapter。
+#   desc: LSG 安全栈（L0~L8 / L6 审计事件）adapter。 消费 behavior_audit_logger / gateway 判决风格事件： {layer, rule,…；公共方法（定义序）: raw_map…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ AutonomyGateAdapter
+#   name_en: AutonomyGateAdapter
+#   intro: 自治边界 gate（access_control 守卫/门禁拦截）adapter。
+#   desc: 自治边界 gate（access_control 守卫/门禁拦截）adapter。 消费 {gate, decision, blocked, reason, agent_id,…；公共方法（定义序）: raw_mapp…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ GovernanceGateAdapter
+#   name_en: GovernanceGateAdapter
+#   intro: 治理门禁（governance / security_governance 判决）adapter。
+#   desc: 治理门禁（governance / security_governance 判决）adapter。 消费 {policy_id, verdict, finding, severi…；公共方法（定义序）: raw_map…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ RuntimeDetectorAdapter
+#   name_en: RuntimeDetectorAdapter
+#   intro: 运行时域（FBL 检测器 / ai_agent_monitor 风险评分）adapter。
+#   desc: 运行时域（FBL 检测器 / ai_agent_monitor 风险评分）adapter。 消费 {detector, state?, risk_score?, is_breac…；公共方法（定义序）: raw_map…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ FeishuAlertChannel
+#   name_en: FeishuAlertChannel
+#   intro: 高危事件飞书 webhook 告警通道（16号文 §4.2 P0-3）。
+#   desc: 高危事件飞书 webhook 告警通道（16号文 §4.2 P0-3）。 不变量「告警不丢」：webhook 未配置 / 不可达 / 非 200 一律写入本地持久化 队列 ``a…；公共方法（定义序）: format_…
+#   inputs: pending_path dry_run_path dry_run timeout_sec webhook_url
+#   outputs: 返回值
+# - id: A7
+#   name_zh: ⑦ SecurityEventBus
+#   name_en: SecurityEventBus
+#   intro: 统一安全事件总线：校验 → 落盘 JSONL → 高危告警。
+#   desc: 统一安全事件总线：校验 → 落盘 JSONL → 高危告警。 不变量： - schema 校验失败 MUST 拒收（SecurityEventValidationError），不…；公共方法（定义序）: events_…
+#   inputs: event_dir alert_threshold dry_run_alert alerter
+#   outputs: 返回值
+#   （注：A7 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（12 定义）
+#   name_en: public defs
+#   intro: DomainEventAdapter, LsgSecurityStackAdapter, AutonomyGateAdapter, GovernanceGat…
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> O1
 """
 
 from __future__ import annotations

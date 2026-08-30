@@ -14,7 +14,8 @@
 # [TESTS] tests/signal_ashare/test_stock_relation_gnn.py
 # [A_module] module_id=MOD-SIG-126 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""StockRelationGNN — 股票关系 GNN 基类（MOD-SIG-126）。
+"""
+StockRelationGNN — 股票关系 GNN 基类（MOD-SIG-126）。
 
 B10-01830（AUD-DRAFT-001-DIGEST P2 波 P2-W06，CAND-TESTB-049，A1 §29.6；
 canonical 承接 TESTB-034/046 归并）：**3 种邻接图**（供应链/同行业/概念共现，
@@ -26,6 +27,43 @@ canonical 承接 TESTB-034/046 归并）：**3 种邻接图**（供应链/同行
 stock_id 字典序；三路关系聚合结果按 RelationKind 枚举序与自身特征拼接；
 浮点累加经 math.fsum，同输入必同输出。真 GNN 训练属人工闸门，本件仅为
 确定性前向聚合基类，禁止冒充训练后推理结果消费。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: max_nodes 参数
+#   fields: 参数 max_nodes（无注解）
+#   code: stock_relation_gnn.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: max_edges 参数
+#   fields: 参数 max_edges（无注解）
+#   code: stock_relation_gnn.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: predictor 参数
+#   fields: 参数 predictor（无注解）
+#   code: stock_relation_gnn.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① StockRelationGNN
+#   name_en: StockRelationGNN
+#   intro: 股票关系 GNN 基类（3 邻接图 + GAT/GCN 聚合 + 密度预测注入 + 规模护栏）。
+#   desc: 股票关系 GNN 基类（3 邻接图 + GAT/GCN 聚合 + 密度预测注入 + 规模护栏）。；公共方法（定义序）: node_count, edge_count, feature_dim, add_node, ad…
+#   inputs: max_nodes max_edges predictor
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: StockRelationGNN
+#   downstream: 运行时装配批（邻居聚合特征接密度预测装配 / 关系图信号消费方）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -110,9 +148,7 @@ class StockRelationGNN:
         self._features: dict[str, tuple[float, ...]] = {}
         self._dim: int | None = None
         #: 邻接：kind -> stock -> {neighbor: weight}（无向闭合，遍历时排序）
-        self._adj: dict[RelationKind, dict[str, dict[str, float]]] = {
-            kind: {} for kind in RelationKind
-        }
+        self._adj: dict[RelationKind, dict[str, dict[str, float]]] = {kind: {} for kind in RelationKind}
         self._edge_count = 0
 
     # ── 属性 ─────────────────────────────────────────────────────────────
@@ -148,13 +184,9 @@ class StockRelationGNN:
         if self._dim is None:
             self._dim = len(vec)
         elif len(vec) != self._dim:
-            raise StockRelationGnnError(
-                f"特征维数不一致: {stock_id!r} 维数 {len(vec)} ≠ 全图 {self._dim}"
-            )
+            raise StockRelationGnnError(f"特征维数不一致: {stock_id!r} 维数 {len(vec)} ≠ 全图 {self._dim}")
         if len(self._features) >= self._max_nodes:
-            raise StockRelationGnnError(
-                f"节点数超护栏上限: {self._max_nodes}（图规模护栏拒绝）"
-            )
+            raise StockRelationGnnError(f"节点数超护栏上限: {self._max_nodes}（图规模护栏拒绝）")
         self._features[stock_id] = vec
 
     def add_edge(self, edge: RelationEdge) -> None:
@@ -168,18 +200,12 @@ class StockRelationGNN:
                 raise StockRelationGnnError(f"未知节点: {endpoint!r}（未登记）")
         weight = float(edge.weight)
         if not 0.0 < weight <= 1.0:
-            raise StockRelationGnnError(
-                f"边权必须 ∈ (0,1]: {edge.src!r} -- {edge.dst!r} = {edge.weight}"
-            )
+            raise StockRelationGnnError(f"边权必须 ∈ (0,1]: {edge.src!r} -- {edge.dst!r} = {edge.weight}")
         adj = self._adj[edge.kind]
         if edge.dst in adj.get(edge.src, {}):
-            raise StockRelationGnnError(
-                f"边重复: {edge.src!r} -- {edge.dst!r} ({edge.kind.value})"
-            )
+            raise StockRelationGnnError(f"边重复: {edge.src!r} -- {edge.dst!r} ({edge.kind.value})")
         if self._edge_count >= self._max_edges:
-            raise StockRelationGnnError(
-                f"边数超护栏上限: {self._max_edges}（图规模护栏拒绝）"
-            )
+            raise StockRelationGnnError(f"边数超护栏上限: {self._max_edges}（图规模护栏拒绝）")
         adj.setdefault(edge.src, {})[edge.dst] = weight
         adj.setdefault(edge.dst, {})[edge.src] = weight  # 无向闭合
         self._edge_count += 1
@@ -191,10 +217,7 @@ class StockRelationGNN:
         if not isinstance(kind, RelationKind):
             raise StockRelationGnnError(f"非法关系类型: {kind!r}")
         adj = self._adj[kind]
-        return {
-            stock: tuple(sorted(adj.get(stock, {}).items()))
-            for stock in sorted(self._features)
-        }
+        return {stock: tuple(sorted(adj.get(stock, {}).items())) for stock in sorted(self._features)}
 
     def node_features(self, stock_id: str) -> tuple[float, ...]:
         """单节点原始特征（未知 → Fail-Closed）。"""
@@ -209,9 +232,7 @@ class StockRelationGNN:
         if not isinstance(mode, AggregateMode):
             raise StockRelationGnnError(f"非法聚合模式: {mode!r}")
 
-    def _aggregate_kind(
-        self, kind: RelationKind, mode: AggregateMode
-    ) -> dict[str, tuple[float, ...]]:
+    def _aggregate_kind(self, kind: RelationKind, mode: AggregateMode) -> dict[str, tuple[float, ...]]:
         """单关系图聚合：GCN=度归一化加权均值；GAT=缩放点击注意力softmax。"""
         assert self._dim is not None
         adj = self._adj[kind]
@@ -228,18 +249,15 @@ class StockRelationGNN:
             else:  # GAT：缩放点击打分 softmax（温度=sqrt(dim)）
                 scale = math.sqrt(self._dim)
                 scores = [
-                    math.fsum(a * b for a, b in zip(x_i, self._features[nbr])) / scale
+                    math.fsum(a * b for a, b in zip(x_i, self._features[nbr], strict=False)) / scale
                     for nbr, _ in neighbors
                 ]
                 peak = max(scores)
                 exps = [math.exp(s - peak) for s in scores]
                 denom = math.fsum(exps)
-                coeffs = [
-                    (nbr, e / denom) for (nbr, _), e in zip(neighbors, exps)
-                ]
+                coeffs = [(nbr, e / denom) for (nbr, _), e in zip(neighbors, exps, strict=False)]
             out[stock] = tuple(
-                math.fsum(coef * self._features[nbr][d] for nbr, coef in coeffs)
-                for d in range(self._dim)
+                math.fsum(coef * self._features[nbr][d] for nbr, coef in coeffs) for d in range(self._dim)
             )
         return out
 
@@ -248,9 +266,7 @@ class StockRelationGNN:
         self._require_mode(mode)
         if not self._features:
             raise StockRelationGnnError("图为空（无节点，禁止聚合）")
-        per_kind = {
-            kind: self._aggregate_kind(kind, mode) for kind in RelationKind
-        }
+        per_kind = {kind: self._aggregate_kind(kind, mode) for kind in RelationKind}
         out: dict[str, tuple[float, ...]] = {}
         for stock in sorted(self._features):
             parts = [self._features[stock]]
@@ -266,21 +282,13 @@ class StockRelationGNN:
         if stock_id not in self._features:
             raise StockRelationGnnError(f"未知节点: {stock_id!r}（未登记）")
         if self._predictor is None:
-            raise StockRelationGnnError(
-                "predictor 未注入（密度预测强制注入回调，禁止旁路）"
-            )
+            raise StockRelationGnnError("predictor 未注入（密度预测强制注入回调，禁止旁路）")
         features = self.aggregate_features(mode)[stock_id]
         try:
             score = float(self._predictor(stock_id, features))
         except Exception as exc:  # noqa: BLE001 — 外部回调异常 Fail-Closed 包装
             _log.exception("predictor 预测异常: %s", stock_id)
-            raise StockRelationGnnError(
-                f"predictor 预测异常: {stock_id!r}（Fail-Closed）"
-            ) from exc
+            raise StockRelationGnnError(f"predictor 预测异常: {stock_id!r}（Fail-Closed）") from exc
         if not math.isfinite(score):
-            raise StockRelationGnnError(
-                f"predictor 返回非有限分: {stock_id!r} = {score}（Fail-Closed）"
-            )
-        return DensityForecast(
-            stock_id=stock_id, mode=mode, features=features, score=score
-        )
+            raise StockRelationGnnError(f"predictor 返回非有限分: {stock_id!r} = {score}（Fail-Closed）")
+        return DensityForecast(stock_id=stock_id, mode=mode, features=features, score=score)

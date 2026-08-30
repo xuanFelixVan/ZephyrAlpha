@@ -21,6 +21,38 @@ DreamCycle — 知识固化引擎
 蓝图: docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md §3.1
 借鉴: Claude Code Dream Cycle + Tulving 记忆分类
 归档->提取->遗忘->索引->commit
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: archive_dir 参数
+#   fields: 参数 archive_dir（无注解）
+#   code: dream_cycle.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: audit_log_dir 参数
+#   fields: 参数 audit_log_dir（无注解）
+#   code: dream_cycle.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DreamCycle
+#   name_en: DreamCycle
+#   intro: 知识固化引擎——从情节记忆到语义记忆的转化。
+#   desc: 知识固化引擎——从情节记忆到语义记忆的转化。 借鉴: - Claude Code Dream Cycle: 归档->提取->遗忘->索引->commit - Tulving 记忆…；公共方法（定义序）: archive…
+#   inputs: archive_dir audit_log_dir
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: DreamCycle
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 import json

@@ -22,7 +22,8 @@
 # A3: apply_rrg_filter(ALL / IMPROVING_ONLY / LEADING_ONLY / NONE 象限过滤)
 # O1: WaterTempResponse + (gate_pass, gate_level) + rrg 放行布尔
 # [/ALGO_FLOW]
-"""三级放行门槛 + 水温→板块信号响应映射（22 号 spec §3.1⑩⑪）。
+"""
+三级放行门槛 + 水温→板块信号响应映射（22 号 spec §3.1⑩⑪）。
 
 ⑩ 准入 gate v2.1（先 gate 后 weight）：板块一日游（Top3 次日重合率 14.8%）
 下降低阈值（v2.0 0.70/0.90 → v2.1 0.60/0.80），对非热门启动板块好股票留
@@ -35,6 +36,69 @@ CONSENSUS_CLIMAX 时 signal_weight 再 ×0.5（双重抑制过热追高）。
 
 边界：仓位比例（100/50/50/30/0%）归 regime/firm 层（30 号 §2.2 MOD-POS-021），
 本模块只输出板块信号响应。阈值 v2.1 初拟待 G05 回测验证（spec §6 待裁定）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: water_temp 参数
+#   fields: 参数 water_temp，类型注解 WaterTemp | str
+#   code: sector_gate.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: consensus_climax 参数
+#   fields: 参数 consensus_climax（无注解）
+#   code: sector_gate.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: sector_code 参数
+#   fields: 参数 sector_code，类型注解 str
+#   code: sector_gate.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: score 参数
+#   fields: 参数 score，类型注解 float
+#   code: sector_gate.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① water_temp_response
+#   name_en: water_temp_response
+#   intro: 水温 → 板块信号响应映射（5 档 → 3 类可执行调整）。
+#   desc: 水温 → 板块信号响应映射（5 档 → 3 类可执行调整）。 Args: water_temp: 水温档位（regime/情绪周期上游输入）。 consensus_climax:…；源码 L161-L184
+#   inputs: water_temp consensus_climax
+#   outputs: WaterTempResponse
+# - id: A2
+#   name_zh: ② admission_gate
+#   name_en: admission_gate
+#   intro: 三级放行门槛（准入 gate v2.1，先 gate 后 weight）。
+#   desc: 三级放行门槛（准入 gate v2.1，先 gate 后 weight）。 Args: sector_code: 个股所属板块代码。 score: 个股强度分 ∈ [0,1]（G…；源码 L187-L220
+#   inputs: sector_code score top_sectors thresholds retained_sectors
+#   outputs: tuple[bool, str]
+# - id: A3
+#   name_zh: ③ apply_rrg_filter
+#   name_en: apply_rrg_filter
+#   intro: RRG 象限过滤层（水温联动：PANIC_REPAIR 仅改善 / RISK_OFF 仅领先 / CRASH 全拦截）。
+#   desc: RRG 象限过滤层（水温联动：PANIC_REPAIR 仅改善 / RISK_OFF 仅领先 / CRASH 全拦截）。 Args: quadrant: RRG 象限（LEADI…；源码 L223-L239
+#   inputs: quadrant rrg_filter
+#   outputs: bool
+#   （注：A3 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: WaterTempResponse
+#   name_en: WaterTempResponse
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 G05 选股引擎漏斗准入层 / RRG 象限过滤层)
+# - id: O2
+#   name_zh: tuple[bool, str]
+#   name_en: tuple[bool, str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 G05 选股引擎漏斗准入层 / RRG 象限过滤层)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

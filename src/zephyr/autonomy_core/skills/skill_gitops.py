@@ -28,6 +28,32 @@ Skill 版本管理与自动化发布:
   2. BranchManagement: feature/fix/chore 分支命名
   3. PRTemplate: 自动填充 PR 描述
   4. ReleasesNotes: 生成变更日志
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: skill_gitops.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SkillGitOps
+#   name_en: SkillGitOps
+#   intro: Skill GitOps 操作引擎
+#   desc: Skill GitOps 操作引擎；公共方法（定义序）: generate_branch_name, generate_pr_description, generate_release_notes, version_b…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SkillGitOps
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

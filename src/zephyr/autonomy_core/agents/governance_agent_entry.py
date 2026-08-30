@@ -14,7 +14,8 @@
 # [TESTS] tests/autonomy/test_execution_layer_agent_entries.py
 # [A_module] module_id=MOD-EXE-GOV-001 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
-"""治理 Agent 薄入口（14号文 §3.1 gate 检查/规则执行，§4 S0.2 手动形态）.
+"""
+治理 Agent 薄入口（14号文 §3.1 gate 检查/规则执行，§4 S0.2 手动形态）.
 
 输入：gate 检查工单（落盘 JSON：ticket_id + targets 路径列表）。
 处理：逐 target 组装调用既有 AutonomyBoundaryGate（MOD-AU-001，GOV-AI-001 注册表
@@ -23,6 +24,60 @@
 不做：不修改规则本身；不做自治运行时（人手动触发，61号文 §4.1 边界内）。
 
 手动触发：python -m zephyr.autonomy_core.agents.governance_agent_entry --ticket <path>
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: ticket 参数
+#   fields: 参数 ticket，类型注解 dict[str, Any]
+#   code: governance_agent_entry.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: runtime_dir 参数
+#   fields: 参数 runtime_dir（无注解）
+#   code: governance_agent_entry.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: repo_root 参数
+#   fields: 参数 repo_root（无注解）
+#   code: governance_agent_entry.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: gate 参数
+#   fields: 参数 gate（无注解）
+#   code: governance_agent_entry.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① run_gate_check_ticket
+#   name_en: run_gate_check_ticket
+#   intro: 执行一张 gate 检查工单（端到端：输入工单→gate verdict→审计落盘）.
+#   desc: 执行一张 gate 检查工单（端到端：输入工单→gate verdict→审计落盘）. Args: ticket: {"ticket_id": str, "targets": […；源码 L119-L172
+#   inputs: ticket runtime_dir repo_root gate
+#   outputs: dict[str, Any]
+# - id: A2
+#   name_zh: ② main
+#   name_en: main
+#   intro: CLI 手动触发入口：--ticket <工单 JSON 路径> [--runtime-dir DIR].
+#   desc: CLI 手动触发入口：--ticket <工单 JSON 路径> [--runtime-dir DIR].；源码 L175-L184
+#   inputs: argv
+#   outputs: int
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, Any]
+#   name_en: dict[str, Any]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests/autonomy/test_execution_layer_agent_entries.py ; 人手动触发（CLI）
+# - id: O2
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests/autonomy/test_execution_layer_agent_entries.py ; 人手动触发（CLI）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -91,9 +146,7 @@ def run_gate_check_ticket(
     gate = gate or AutonomyBoundaryGate(runtime_dir=runtime_dir, repo_root=repo_root)
     try:
         verdicts: list[dict[str, Any]] = [
-            gate.check_write_permission(
-                f"{ticket_id}-{index:02d}", str(target), {"session_id": session_id}
-            ).to_dict()
+            gate.check_write_permission(f"{ticket_id}-{index:02d}", str(target), {"session_id": session_id}).to_dict()
             for index, target in enumerate(targets)
         ]
     finally:

@@ -15,6 +15,36 @@
 # [A_module] module_id=MOD-INF-019 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: skill_factory.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SkillFactory
+#   name_en: SkillFactory
+#   intro: class SkillFactory 源码 L65-L273
+#   desc: 公共方法（定义序）: read_blueprint, extract_module_info, find_section, render_template, sanitize_dir_name, generate_sk…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SkillFactory
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 import os
 import re
 from collections.abc import Generator

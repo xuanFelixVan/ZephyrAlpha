@@ -14,7 +14,8 @@
 # [TESTS] tests/signal_ashare/test_day_trade_pnl_estimator.py
 # [A_module] module_id=MOD-SIG-132 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""DayTradePnlEstimator — 做T盈亏预估器（MOD-SIG-132）。
+"""
+DayTradePnlEstimator — 做T盈亏预估器（MOD-SIG-132）。
 
 B11-02600（AUD-DRAFT-001-DIGEST P2 波 P2-W06，CAND-TESTB-055，A7 技能
 day-trade-pnl-estimate）：做T成本模型净盈亏预估（价差-双边佣金-印花税
@@ -25,6 +26,43 @@ day-trade-pnl-estimate）：做T成本模型净盈亏预估（价差-双边佣�
 不识别买卖点）；t0_trading_pipeline=做T流水线编排（零交集）。
 
 纯内存/DI设计；外部副作用（OS调用/网络/进程控制）全部经注入回调。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: fee_model 参数
+#   fields: 参数 fee_model（无注解）
+#   code: day_trade_pnl_estimator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: day_trade_pnl_estimator.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: day_trade_pnl_estimator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DayTradePnlEstimator
+#   name_en: DayTradePnlEstimator
+#   intro: 做T盈亏预估器（四要素成本模型+置信度+成交回写校准）。
+#   desc: 做T盈亏预估器（四要素成本模型+置信度+成交回写校准）。；公共方法（定义序）: estimate, record_fill, impact_multiplier, fill_count, fills；源码 L189-L…
+#   inputs: fee_model config clock
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: DayTradePnlEstimator
+#   downstream: 运行时装配批（统一注入点装配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -107,9 +145,7 @@ class DayTradePnlConfig:
             or not isinstance(self.calibration_window, int)
             or self.calibration_window < 1
         ):
-            raise DayTradePnlError(
-                f"calibration_window 非法: {self.calibration_window!r}（须为正整数）"
-            )
+            raise DayTradePnlError(f"calibration_window 非法: {self.calibration_window!r}（须为正整数）")
         _validate_finite("mult_min", self.mult_min, 1.0e-12)
         _validate_finite("mult_max", self.mult_max, 1.0e-12)
         if not self.mult_min <= self.mult_max:
@@ -180,15 +216,8 @@ class DayTradePnlEstimator:
         n = _validate_shares(shares)
         gross, commission, stamp, impact, net = self._cost_breakdown(buy, sell, n)
         spread_ratio = (sell - buy) / buy
-        similar = [
-            f for f in self._fills
-            if abs(f.spread_ratio - spread_ratio) <= self._cfg.similarity_tol
-        ]
-        confidence = (
-            sum(1.0 if f.realized_flag else 0.0 for f in similar) / len(similar)
-            if similar
-            else 0.0
-        )
+        similar = [f for f in self._fills if abs(f.spread_ratio - spread_ratio) <= self._cfg.similarity_tol]
+        confidence = sum(1.0 if f.realized_flag else 0.0 for f in similar) / len(similar) if similar else 0.0
         return DayTradePnlEstimate(
             buy_price=buy,
             sell_price=sell,
@@ -240,7 +269,10 @@ class DayTradePnlEstimator:
         self._recalibrate()
         _log.info(
             "成交回写: 价差=%.4f%% 预估=%.2f 实现=%.2f 冲击倍率→%.4f",
-            est.spread_ratio * 100.0, est.net_pnl, realized, self._multiplier,
+            est.spread_ratio * 100.0,
+            est.net_pnl,
+            realized,
+            self._multiplier,
         )
         return record
 
@@ -264,9 +296,7 @@ class DayTradePnlEstimator:
     # ------------------------------------------------------------------
     # 内部
     # ------------------------------------------------------------------
-    def _cost_breakdown(
-        self, buy: float, sell: float, shares: int
-    ) -> tuple[float, float, float, float, float]:
+    def _cost_breakdown(self, buy: float, sell: float, shares: int) -> tuple[float, float, float, float, float]:
         """四要素成本拆分（价差/双边佣金/印花税/冲击成本）。"""
         buy_amount = buy * shares
         sell_amount = sell * shares

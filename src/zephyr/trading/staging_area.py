@@ -37,6 +37,33 @@ Usage::
         print("committed")
     elif result.status == CommitStatus.CONFLICT:
         print("conflict detected")
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: staging_area.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① StagingArea
+#   name_en: StagingArea
+#   intro: 多AI并发草稿写入+提交+冲突检测模块。
+#   desc: 多AI并发草稿写入+提交+冲突检测模块。；公共方法（定义序）: write_draft, commit, try_auto_merge, list_drafts, discard, get_conflict；源码 L4…
+#   inputs: project_root
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: StagingArea
+#   downstream: zephyr.integration.mcp.task_manager_server; scripts/lock_files.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

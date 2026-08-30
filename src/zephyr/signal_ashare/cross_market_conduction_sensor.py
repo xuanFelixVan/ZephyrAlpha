@@ -22,7 +22,8 @@
 # A4: 异动分档: |shock|<1% NONE / [1%,2%) MILD / ≥2% SEVERE; 影响预测 = Σ beta×shock（clip ±5%）
 # O1: ConductionSnapshot（分市场传导系数+影响预测 + 总影响 + 最重异动档 + 置信度）
 # [/ALGO_FLOW]
-"""跨市场传导传感器（90 号 §22.3 BM-SEL-06，MOD-SIG-038）。
+"""
+跨市场传导传感器（90 号 §22.3 BM-SEL-06，MOD-SIG-038）。
 
 美股/港股等外盘指数异动到达时，用领先滞后相关 + 回归斜率（简版 Granger
 思路）估计"外盘 → A 股"的传导系数，量化预测对 A 股的影响幅度：美股一异动，
@@ -37,6 +38,101 @@
 
 参数（相关显著性 0.3、min_samples 60、异动分档 1%/2%、clip ±5%）为初拟，待实
 盘标定。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: x 参数
+#   fields: 参数 x，类型注解 Sequence[float]
+#   code: cross_market_conduction_sensor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: y 参数
+#   fields: 参数 y，类型注解 Sequence[float]
+#   code: cross_market_conduction_sensor.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: ashare 参数
+#   fields: 参数 ashare，类型注解 Mapping[str, float]
+#   code: cross_market_conduction_sensor.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: foreign 参数
+#   fields: 参数 foreign，类型注解 Mapping[str, float]
+#   code: cross_market_conduction_sensor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① pearson_corr
+#   name_en: pearson_corr
+#   intro: 皮尔逊相关（零方差/样本不足 → 0.0）。
+#   desc: 皮尔逊相关（零方差/样本不足 → 0.0）。；源码 L250-L263
+#   inputs: x y
+#   outputs: float
+# - id: A2
+#   name_zh: ② align_foreign_to_ashare
+#   name_en: align_foreign_to_ashare
+#   intro: 外盘收益对齐到 A 股日历：A 股当日 ← 最新早于当日的外盘日期收益。
+#   desc: 外盘收益对齐到 A 股日历：A 股当日 ← 最新早于当日的外盘日期收益。 隔夜传导口径：美股 t 日收盘（北京时间次日凌晨）影响 A 股 t+1 交易日。 无先于此日期的外盘数据…；源码 L266-L289
+#   inputs: ashare foreign
+#   outputs: tuple[list[float], list[float]]
+# - id: A3
+#   name_zh: ③ lead_lag_correlation
+#   name_en: lead_lag_correlation
+#   intro: 领先滞后相关：corr(foreign[i], ashare[i+lag])，lag ≥ 0。
+#   desc: 领先滞后相关：corr(foreign[i], ashare[i+lag])，lag ≥ 0。；源码 L292-L304
+#   inputs: foreign ashare lag
+#   outputs: float
+# - id: A4
+#   name_zh: ④ estimate_conduction
+#   name_en: estimate_conduction
+#   intro: 单市场传导估计：lag 扫描取 |corr| 最大，回归斜率为传导系数 beta。
+#   desc: 单市场传导估计：lag 扫描取 |corr| 最大，回归斜率为传导系数 beta。 Args: foreign_returns: 已对齐的外盘收益序列。 ashare_retur…；源码 L307-L360
+#   inputs: foreign_returns ashare_returns config symbol
+#   outputs: MarketConduction | None
+# - id: A5
+#   name_zh: ⑤ classify_shock
+#   name_en: classify_shock
+#   intro: 外盘异动分档：|shock| <1% NONE / [1%, 2%) MILD / ≥2% SEVERE（边界取重档）。
+#   desc: 外盘异动分档：|shock| <1% NONE / [1%, 2%) MILD / ≥2% SEVERE（边界取重档）。；源码 L363-L374
+#   inputs: shock mild_threshold severe_threshold
+#   outputs: ShockLevel
+# - id: A6
+#   name_zh: ⑥ sense_cross_market_conduction
+#   name_en: sense_cross_market_conduction
+#   intro: 核心纯函数：多市场传导感知 → 总影响预测快照。
+#   desc: 核心纯函数：多市场传导感知 → 总影响预测快照。 单市场样本不足时剔除该市场（降级友好）；全部不足 → 空 markets + 零影响。 影响预测 = Σ beta × late…；源码 L377-L416
+#   inputs: foreign_series config
+#   outputs: ConductionSnapshot
+# - id: A7
+#   name_zh: ⑦ CrossMarketConductionSensor
+#   name_en: CrossMarketConductionSensor
+#   intro: 跨市场传导传感器（DB 加载层薄封装，计算全部委托纯函数）。
+#   desc: 跨市场传导传感器（DB 加载层薄封装，计算全部委托纯函数）。 DB 依赖注入：query_fn 默认走项目既有 data 层 ch_reader.query（TSV）， regi…；公共方法（定义序）: sense；源…
+#   inputs: registry query_fn config foreign_codes
+#   outputs: 返回值
+#   （注：A7 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 下游风控节流层 / 全量或板块重算触发器)
+# - id: O2
+#   name_zh: tuple[list[float], list[float]]
+#   name_en: tuple[list[float], list[float]]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 下游风控节流层 / 全量或板块重算触发器)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> O1
 """
 
 from __future__ import annotations
@@ -300,9 +396,7 @@ def sense_cross_market_conduction(
                 est,
                 latest_shock=fs.latest_shock,
                 predicted_impact=impact,
-                shock_level=classify_shock(
-                    fs.latest_shock, cfg.mild_threshold, cfg.severe_threshold
-                ),
+                shock_level=classify_shock(fs.latest_shock, cfg.mild_threshold, cfg.severe_threshold),
             )
         )
 
@@ -312,9 +406,7 @@ def sense_cross_market_conduction(
     for m in markets:
         if _SHOCK_RANK[m.shock_level.value] > _SHOCK_RANK[worst.value]:
             worst = m.shock_level
-    confidence = (
-        sum(m.confidence for m in markets) / len(markets) if markets else 0.0
-    )
+    confidence = sum(m.confidence for m in markets) / len(markets) if markets else 0.0
 
     return ConductionSnapshot(
         markets=tuple(markets),
@@ -383,9 +475,7 @@ class CrossMarketConductionSensor:
                 except ValueError:
                     _logger.warning("cross_market_conduction 跳过不可解析行: %s", line[:80])
         if not rows:
-            raise CrossMarketConductionDataError(
-                f"market_index_kline 查询为空: symbol={symbol}, [{start}, {end}]"
-            )
+            raise CrossMarketConductionDataError(f"market_index_kline 查询为空: symbol={symbol}, [{start}, {end}]")
         return self._closes_to_returns(rows)
 
     def _load_foreign_returns(self, start: str, end: str) -> dict[str, dict[str, float]]:

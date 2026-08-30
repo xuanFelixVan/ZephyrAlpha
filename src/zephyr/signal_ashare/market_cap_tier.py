@@ -14,7 +14,8 @@
 # [TESTS] tests/signal_ashare/test_market_cap_tier.py
 # [A_module] module_id=MOD-SIGNAL-ASHARE-MCT | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_SIGNAL_ASHARE — 流通市值 6 级分层（90 号 Phase2 项，#15 资产分级两维精简）
+"""
+D_SIGNAL_ASHARE — 流通市值 6 级分层（90 号 Phase2 项，#15 资产分级两维精简）
 
 裁定真源：90_methodology_open_questions.md §15（v2.0.0）：
   ④ 流通市值 6 级分层采纳为交易准入内的子维度（"市值定调子"原则：同一信号在
@@ -26,6 +27,33 @@
 
 注意：本模块为 90 号 Phase2 交付物，MATURITY=testing；universe_registry 回填与
 信号链路接线挂起待 Owner（宪章 B-007 纪律）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: float_mcap_yi 参数
+#   fields: 参数 float_mcap_yi，类型注解 float
+#   code: market_cap_tier.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① float_mcap_tier
+#   name_en: float_mcap_tier
+#   intro: 流通市值（亿元）→ 6 级分层。
+#   desc: 流通市值（亿元）→ 6 级分层。 Args: float_mcap_yi: 流通市值，单位亿元（≥0） Returns: MarketCapTier 分层标签 Raises: V…；源码 L87-L104
+#   inputs: float_mcap_yi
+#   outputs: MarketCapTier
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: MarketCapTier
+#   name_en: MarketCapTier
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: universe_registry 流通市值分层计算字段（登记待回填）；信号解释"市值定调子"第一道筛子
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

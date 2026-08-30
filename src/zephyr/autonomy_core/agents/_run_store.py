@@ -14,11 +14,48 @@
 # [TESTS] tests/autonomy/test_execution_layer_agent_entries.py
 # [A_module] module_id=MOD-EXE-AGENTS | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""四类 Agent 薄入口共享落盘纪律件（组装用内部件，非角色入口）.
+"""
+四类 Agent 薄入口共享落盘纪律件（组装用内部件，非角色入口）.
 
 统一运行落盘 schema：.runtime/agent_runs/<role>/<run_id>/ 下
 ticket.json（输入快照）+ 角色产出件 + run.json（运行记录），
 并追加一行审计到 .runtime/agent_runs/<role>/audit.jsonl。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: role 参数
+#   fields: 参数 role（无注解）
+#   code: _run_store.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: runtime_dir 参数
+#   fields: 参数 runtime_dir（无注解）
+#   code: _run_store.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: repo_root 参数
+#   fields: 参数 repo_root（无注解）
+#   code: _run_store.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AgentRunStore
+#   name_en: AgentRunStore
+#   intro: 单次手动触发运行的落盘器（.
+#   desc: 单次手动触发运行的落盘器（.runtime/agent_runs/<role>/<run_id>/）.；公共方法（定义序）: begin, write_output, finish；源码 L83-L148
+#   inputs: role runtime_dir repo_root
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: AgentRunStore
+#   downstream: zephyr.autonomy_core.agents.governance_agent_entry ; business_agent_entry ; alg…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -106,9 +143,7 @@ class AgentRunStore:
     def _write(self, path: Path, record: dict[str, Any]) -> None:
         try:
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(
-                json.dumps(record, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-            )
+            path.write_text(json.dumps(record, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         except OSError as exc:  # ERROR_CONTRACT：写盘失败不抛
             logger.warning("agent_runs 落盘失败 %s: %r", path, exc)
 

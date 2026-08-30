@@ -25,6 +25,32 @@ AutoDispatcher — 守护进程内的轻量 PipelineDispatcher
         ├── ContextBridge.request_context()     -> CE->LSG + CE->VMS 自动触发
         ├── ScriptRunner.run_audit()            -> Script->Gate + Script->KB 自动触发
         └── transition(IN_PROGRESS->COMPLETED)   -> Orc->VMS + KB->VMS hook 自动触发
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: task_repo 参数
+#   fields: 参数 task_repo（无注解）
+#   code: auto_dispatcher.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AutoDispatcher
+#   name_en: AutoDispatcher
+#   intro: 轻量 PipelineDispatcher — 执行 TaskCard 并触发整条基础设施管道。
+#   desc: 轻量 PipelineDispatcher — 执行 TaskCard 并触发整条基础设施管道。；公共方法（定义序）: dispatch；源码 L71-L143
+#   inputs: task_repo
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: AutoDispatcher
+#   downstream: none
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

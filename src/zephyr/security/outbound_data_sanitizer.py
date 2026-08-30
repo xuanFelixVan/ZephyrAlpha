@@ -14,7 +14,8 @@
 # [TESTS] tests/security/test_outbound_data_sanitizer.py
 # [A_module] module_id=MOD-SEC-024 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""OutboundDataSanitizer — 外发数据脱敏拦截器（MOD-SEC-024）。
+"""
+OutboundDataSanitizer — 外发数据脱敏拦截器（MOD-SEC-024）。
 
 B1-00372（AUD-DRAFT-001-DIGEST P2 波 P2-W15，CAND-SEC-005，C2）：外发 API
 payload **字段级过滤**（持仓/策略/因子三类白名单，白名单外字段一律剥离）
@@ -24,6 +25,43 @@ payload **字段级过滤**（持仓/策略/因子三类白名单，白名单外
 查重分工（蓝图 §0）：MOD-DATSEC-002=存储/访问侧脱敏引擎（本件不复用其引
 擎）；output_guard=输出内容守卫语义（本件=外发出口拦截闸，仅作出口统一
 装配点，不重建内容审查）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: field_whitelists 参数
+#   fields: 参数 field_whitelists（无注解）
+#   code: outbound_data_sanitizer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: mask_patterns 参数
+#   fields: 参数 mask_patterns（无注解）
+#   code: outbound_data_sanitizer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: outbound_data_sanitizer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① OutboundDataSanitizer
+#   name_en: OutboundDataSanitizer
+#   intro: 外发出口拦截闸（白名单过滤 + PII/凭证掩码 + 未过检不放行）。
+#   desc: 外发出口拦截闸（白名单过滤 + PII/凭证掩码 + 未过检不放行）。；公共方法（定义序）: sanitize；源码 L127-L232
+#   inputs: field_whitelists mask_patterns clock
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: OutboundDataSanitizer
+#   downstream: 运行时装配批（外发 API 出口统一装配本拦截闸：持仓/策略/因子 payload）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -154,9 +192,7 @@ class OutboundDataSanitizer:
 
     # ── 出口拦截 ─────────────────────────────────────────────────────────
 
-    def sanitize(
-        self, category: PayloadCategory, payload: Mapping[str, object]
-    ) -> SanitizeReport:
+    def sanitize(self, category: PayloadCategory, payload: Mapping[str, object]) -> SanitizeReport:
         """出口拦截：白名单剥离 → 递归掩码 → 未过检（空载）Fail-Closed 不放行。"""
         if not isinstance(category, PayloadCategory):
             raise OutboundSanitizeError(f"非法 payload 类别: {category!r}")
@@ -180,9 +216,7 @@ class OutboundDataSanitizer:
 
         if not sanitized:
             _log.warning("外发拦截: 类别 %s 剥离后空载，不放行", category.value)
-            raise OutboundSanitizeError(
-                f"未过检不放行: 类别 {category.value} 白名单内无字段（全量剥离）"
-            )
+            raise OutboundSanitizeError(f"未过检不放行: 类别 {category.value} 白名单内无字段（全量剥离）")
         if stripped:
             _log.info("外发脱敏: 类别 %s 剥离字段 %s", category.value, sorted(stripped))
         if masked:

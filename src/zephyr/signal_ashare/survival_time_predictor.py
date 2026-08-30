@@ -21,7 +21,8 @@
 # A3: 预测件——中位时间/S(t)/horizon 内事件概率/期望时间（Γ 闭式）
 # O1: SurvivalCurve / WeibullAFTModel（coef/intercept/sigma/loglik）
 # [/ALGO_FLOW]
-"""Survival 止盈止损时间预测（BM-SEL-15，MOD-SIG-045）。
+"""
+Survival 止盈止损时间预测（BM-SEL-15，MOD-SIG-045）。
 
 预测止盈止损还有多久发生——不是固定 N 天，而是时间概率分布。
 
@@ -37,6 +38,53 @@
 
 激活条件注记（91 号 §3）：本模块为密度预测体系配套件，当前以合成/历史序列
 自验证；消费 BM-SEL-03 市场状态作协变量的接线待密度预测验证通过后激活。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: durations 参数
+#   fields: 参数 durations，类型注解 Iterable[float]
+#   code: survival_time_predictor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: events 参数
+#   fields: 参数 events，类型注解 Iterable[int]
+#   code: survival_time_predictor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SurvivalCurve
+#   name_en: SurvivalCurve
+#   intro: KM 生存曲线（阶跃）：times[i] 处生存率降为 survival[i]。
+#   desc: KM 生存曲线（阶跃）：times[i] 处生存率降为 survival[i]。；公共方法（定义序）: survival_at, median_time；源码 L106-L128
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② kaplan_meier
+#   name_en: kaplan_meier
+#   intro: Kaplan-Meier 非参数生存曲线（右删失，AFT 校准基线）。
+#   desc: Kaplan-Meier 非参数生存曲线（右删失，AFT 校准基线）。 S(t) = Π_{t_i≤t} (1 − d_i/n_i)，d_i=t_i 时刻事件数，n_i=风险集大…；源码 L145-L161
+#   inputs: durations events
+#   outputs: SurvivalCurve
+# - id: A3
+#   name_zh: ③ WeibullAFTModel
+#   name_en: WeibullAFTModel
+#   intro: Weibull AFT 参数生存模型（右删失 MLE，Newton 法）。
+#   desc: Weibull AFT 参数生存模型（右删失 MLE，Newton 法）。 参数化（y=log t 极值分布形式）：log T = x·β + σ·W，W ~ 标准最小极值分布。…；公共方法（定义序）: sigma,…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: SurvivalCurve
+#   name_en: SurvivalCurve
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 BM-POS-01 仓位时间预算 / 止盈止损时点消费层)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations
@@ -65,7 +113,7 @@ class SurvivalCurve:
     def survival_at(self, t: float) -> float:
         """t 时刻生存率（阶跃右连续口径：最后 ≤t 事件点的生存率，之前为 1）。"""
         s = 1.0
-        for ti, si in zip(self.times, self.survival):
+        for ti, si in zip(self.times, self.survival, strict=False):
             if ti <= t:
                 s = si
             else:
@@ -74,7 +122,7 @@ class SurvivalCurve:
 
     def median_time(self) -> float | None:
         """中位生存时间（首个 S≤0.5 的事件时刻）；未达 0.5 返回 None。"""
-        for ti, si in zip(self.times, self.survival):
+        for ti, si in zip(self.times, self.survival, strict=False):
             if si <= 0.5:
                 return ti
         return None
@@ -174,7 +222,7 @@ class WeibullAFTModel:
         tol: float = 1e-8,
         ridge: float = 1e-6,
         max_step: float = 2.0,
-    ) -> "WeibullAFTModel":
+    ) -> WeibullAFTModel:
         """MLE 拟合（阻尼 Newton：信赖域步长上限 + 步长回退 + 对角岭正则）。
 
         Args:
@@ -206,7 +254,7 @@ class WeibullAFTModel:
         for it in range(max_iter):
             _, grad, hess = self._ll_grad_hess(theta, y, e, x)
             # Levenberg 阻尼 Newton：λ 自适应放大直到 (H−λI) 负定且 ll 单调上升
-            #（H 在远离最优解处可非负定，裸 Newton 方向不保证上升——λ 兜底方向性）
+            # （H 在远离最优解处可非负定，裸 Newton 方向不保证上升——λ 兜底方向性）
             lam = ridge
             accepted = False
             for _ in range(12):

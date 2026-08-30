@@ -14,7 +14,8 @@
 # [TESTS] tests/signal_quality/test_signal_explainability_guarantor.py
 # [A_module] module_id=MOD-SIGQC-006 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""SignalExplainabilityGuarantor — 信号可解释性强制保障器（MOD-SIGQC-006）。
+"""
+SignalExplainabilityGuarantor — 信号可解释性强制保障器（MOD-SIGQC-006）。
 
 B2-05485（AUD-DRAFT-001-DIGEST P2 波 P2-W15，CAND-SIGQC-005，B2
 D-SIGNAL-211）：可解释性强制契约——信号输出必须携带理由链（触发因子 + 规
@@ -25,6 +26,43 @@ signal_id 反查）。
 查重分工（蓝图 §0）：decision_snapshot（D_FUNDAMENTAL_SIGNAL）=决策快照
 存取设施（degraded 降级不阻塞）；本件=信号出站侧的强制门禁（缺失即阻断），
 经注入 audit_sink 写入审计链，不自建存储设施。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: audit_sink 参数
+#   fields: 参数 audit_sink（无注解）
+#   code: signal_explainability_guarantor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: alert_sink 参数
+#   fields: 参数 alert_sink（无注解）
+#   code: signal_explainability_guarantor.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: signal_explainability_guarantor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SignalExplainabilityGuarantor
+#   name_en: SignalExplainabilityGuarantor
+#   intro: 可解释性强制保障器（纯内存/DI；缺失即阻断）。
+#   desc: 可解释性强制保障器（纯内存/DI；缺失即阻断）。 强制契约：信号输出必须携带理由链三要素（触发因子/规则命中/置信度依据）。 缺失 → 告警（alert_sink）+ 阻断（抛…；公共方法（定义序）: enforce,…
+#   inputs: audit_sink alert_sink clock
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: SignalExplainabilityGuarantor
+#   downstream: 运行时装配批（信号出站前强制校验 / 审计链 sink 装配 / 事后回放反查）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -102,9 +140,7 @@ class SignalExplainabilityGuarantor:
         clock: Callable[[], datetime.datetime] | None = None,
     ) -> None:
         if audit_sink is None:
-            raise ExplainabilityGuarantorError(
-                "audit_sink 未注入（强制契约：解释必须入审计链）"
-            )
+            raise ExplainabilityGuarantorError("audit_sink 未注入（强制契约：解释必须入审计链）")
         self._audit_sink = audit_sink
         self._alert_sink = alert_sink
         self._clock = clock or datetime.datetime.now
@@ -151,9 +187,7 @@ class SignalExplainabilityGuarantor:
         if not direction:
             raise ExplainabilityGuarantorError("direction 为空")
         if not 0.0 <= confidence <= 1.0:
-            raise ExplainabilityGuarantorError(
-                f"confidence 须在 [0,1]，实际 {confidence!r}"
-            )
+            raise ExplainabilityGuarantorError(f"confidence 须在 [0,1]，实际 {confidence!r}")
         if not isinstance(reason_chain, ReasonChain):
             raise ExplainabilityGuarantorError(f"非法理由链类型: {type(reason_chain)!r}")
         if not isinstance(emitted_at, datetime.datetime):
@@ -185,9 +219,7 @@ class SignalExplainabilityGuarantor:
             self._audit_sink(record)
         except Exception as exc:  # 解释未入审计链 = 保障失败，Fail-Closed
             _log.exception("audit_sink 写入失败: %s", signal_id)
-            raise ExplainabilityGuarantorError(
-                f"解释入审计链失败: {signal_id!r}（{exc!r}）"
-            ) from exc
+            raise ExplainabilityGuarantorError(f"解释入审计链失败: {signal_id!r}（{exc!r}）") from exc
         self._records[signal_id] = record
         return record
 
@@ -197,9 +229,7 @@ class SignalExplainabilityGuarantor:
         """按 signal_id 反查回放（未知 → Fail-Closed）。"""
         record = self._records.get(signal_id)
         if record is None:
-            raise ExplainabilityGuarantorError(
-                f"未知 signal_id: {signal_id!r}（无解释档案）"
-            )
+            raise ExplainabilityGuarantorError(f"未知 signal_id: {signal_id!r}（无解释档案）")
         return record
 
     def has(self, signal_id: str) -> bool:

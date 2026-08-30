@@ -14,7 +14,8 @@
 # [TESTS] tests/signal_ashare/test_strategy_matrix_3d.py
 # [A_module] module_id=MOD-SIG-130 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""StrategyMatrix3D — 量能×体制×风格三维策略矩阵（MOD-SIG-130）。
+"""
+StrategyMatrix3D — 量能×体制×风格三维策略矩阵（MOD-SIG-130）。
 
 B10-01467（AUD-DRAFT-001-DIGEST P2 波 P2-W06，CAND-TESTB-048，A1 模块56）：
 **3×3×2=18 格策略查找表**（量能 3 × 体制 3 × 风格 2，格值=仓位/选股方向/
@@ -26,6 +27,38 @@ backtest_runner，逐格调用产出格值）+ **格子查询接口**（三轴�
 二维查找（本件=扩展第三维风格轴并引入版本管理，轴枚举复用不重建）；
 style_regime_model（MOD-REGIME-014）=风格态识别（本件仅复用其 SizeAxis
 2 轴枚举）；signal_weight_adjuster=信号权重滚动调节（零交集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: backtest_runner 参数
+#   fields: 参数 backtest_runner（无注解）
+#   code: strategy_matrix_3d.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: strategy_matrix_3d.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① StrategyMatrix3D
+#   name_en: StrategyMatrix3D
+#   intro: 量能×体制×风格 18 格策略查找表（版本化，纯内存确定性）。
+#   desc: 量能×体制×风格 18 格策略查找表（版本化，纯内存确定性）。；公共方法（定义序）: all_keys, commit, fill_from_backtest, query, version_snapshot, lat…
+#   inputs: backtest_runner clock
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: StrategyMatrix3D
+#   downstream: 运行时装配批（量能×体制×风格三轴策略参数查询 / 参数版本审计）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -111,9 +144,7 @@ class StrategyMatrix3D:
     @staticmethod
     def all_keys() -> tuple[GridKey, ...]:
         """全 18 格键（枚举定义序，确定性）。"""
-        return tuple(
-            (v, r, s) for v in VolumeState for r in MarketRegime for s in SizeAxis
-        )
+        return tuple((v, r, s) for v in VolumeState for r in MarketRegime for s in SizeAxis)
 
     @staticmethod
     def _check_key(key: object) -> GridKey:
@@ -148,9 +179,7 @@ class StrategyMatrix3D:
                 raise StrategyMatrixError(f"格值类型非法: {key!r} -> {type(cell).__name__}")
             snapshot[key] = cell
         version = len(self._versions) + 1
-        self._versions[version] = MatrixVersion(
-            version=version, created_at=self._clock(), cells=snapshot
-        )
+        self._versions[version] = MatrixVersion(version=version, created_at=self._clock(), cells=snapshot)
         _log.info("三维策略矩阵版本提交: v%d（18 格）", version)
         return version
 
@@ -169,12 +198,8 @@ class StrategyMatrix3D:
             except StrategyMatrixError:
                 raise
             except Exception as exc:  # noqa: BLE001 — 回测异常 Fail-Closed 包装
-                raise StrategyMatrixError(
-                    f"backtest_runner 异常: {(volume_state, regime, style)!r}: {exc}"
-                ) from exc
-            cells[(volume_state, regime, style)] = self._coerce_cell(
-                raw, (volume_state, regime, style)
-            )
+                raise StrategyMatrixError(f"backtest_runner 异常: {(volume_state, regime, style)!r}: {exc}") from exc
+            cells[(volume_state, regime, style)] = self._coerce_cell(raw, (volume_state, regime, style))
         return self.commit(cells)
 
     @staticmethod

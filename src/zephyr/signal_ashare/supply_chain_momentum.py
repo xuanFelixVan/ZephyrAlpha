@@ -14,7 +14,8 @@
 # [TESTS] tests/signal_ashare/test_supply_chain_momentum.py
 # [A_module] module_id=MOD-SIG-118 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""SupplyChainMomentumModel — 产业链传导与供应链动量（MOD-SIG-118）。
+"""
+SupplyChainMomentumModel — 产业链传导与供应链动量（MOD-SIG-118）。
 
 B10-01376（AUD-DRAFT-001-DIGEST P2 波 P2-W05，CAND-TESTB-038，A1 模块22）：
 产业链邻接表（投入产出关系注入）+ 上游动量因子（客户/供应商收益领先
@@ -24,6 +25,48 @@ Cohen & Frazzini 供应链动量单机版。
 纯内存/DI 设计：邻接表/收益映射/回归器/时钟全注入；不触网、不触盘、
 无 subprocess。同输入必同输出。非法输入 Fail-Closed 抛
 SupplyChainMomentumError。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: links 参数
+#   fields: 参数 links（无注解）
+#   code: supply_chain_momentum.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: supply_chain_momentum.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: regressor 参数
+#   fields: 参数 regressor（无注解）
+#   code: supply_chain_momentum.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: supply_chain_momentum.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SupplyChainMomentumModel
+#   name_en: SupplyChainMomentumModel
+#   intro: 产业链传导与供应链动量模型（邻接表 + 上游动量因子 + R²筛选 + 异常标记）。
+#   desc: 产业链传导与供应链动量模型（邻接表 + 上游动量因子 + R²筛选 + 异常标记）。；公共方法（定义序）: adjacency, upstream_momentum, screen_links, evaluate；源码…
+#   inputs: links config regressor clock
+#   outputs: 返回值
+#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（8 定义）
+#   name_en: public defs
+#   intro: SupplyChainMomentumModel
+#   downstream: 运行时装配批（统一注入点装配：供应链动量因子层 / 传导异常预警消费方）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -131,9 +174,7 @@ class SupplyChainMomentumConfig:
 
     def __post_init__(self) -> None:
         if len(self.lead_weights) != len(_LEAD_DAYS):
-            raise SupplyChainMomentumError(
-                f"lead_weights 长度须为 {len(_LEAD_DAYS)}: {len(self.lead_weights)}"
-            )
+            raise SupplyChainMomentumError(f"lead_weights 长度须为 {len(_LEAD_DAYS)}: {len(self.lead_weights)}")
         for w in self.lead_weights:
             _check_finite("lead_weight", w)
             if w < 0:
@@ -147,9 +188,7 @@ class SupplyChainMomentumConfig:
         if self.z_threshold <= 0:
             raise SupplyChainMomentumError(f"z_threshold 必须为正: {self.z_threshold}")
         if isinstance(self.min_returns, bool) or self.min_returns < max(_LEAD_DAYS) + 1:
-            raise SupplyChainMomentumError(
-                f"min_returns 必须 ≥ {max(_LEAD_DAYS) + 1}: {self.min_returns!r}"
-            )
+            raise SupplyChainMomentumError(f"min_returns 必须 ≥ {max(_LEAD_DAYS) + 1}: {self.min_returns!r}")
 
 
 @dataclass(frozen=True)
@@ -237,7 +276,7 @@ class SupplyChainMomentumModel:
         for upstream, edge_w in ups:
             series = self._returns_of(returns_map, upstream)
             lead_sum = 0.0
-            for lead, lw in zip(_LEAD_DAYS, weights):
+            for lead, lw in zip(_LEAD_DAYS, weights, strict=False):
                 lead_sum += lw * series[-lead]
             contrib = edge_w * lead_sum
             contributions.append((upstream, contrib))
@@ -262,9 +301,7 @@ class SupplyChainMomentumModel:
                 xs = tuple(leader[:-lead])
                 ys = tuple(follower[lead:])
                 if len(xs) != len(ys) or len(xs) < 2:
-                    raise SupplyChainMomentumError(
-                        f"领先对齐样本不足: lead={lead} n={len(xs)}"
-                    )
+                    raise SupplyChainMomentumError(f"领先对齐样本不足: lead={lead} n={len(xs)}")
                 try:
                     result = self._regressor(xs, ys)
                 except SupplyChainMomentumError:
@@ -272,9 +309,7 @@ class SupplyChainMomentumModel:
                 except Exception as exc:  # noqa: BLE001 — 回归器异常统一包装 Fail-Closed
                     raise SupplyChainMomentumError(f"注入回归器异常: {exc!r}") from exc
                 if not isinstance(result, RegressionResult):
-                    raise SupplyChainMomentumError(
-                        f"回归器返回非法类型: {type(result)!r}"
-                    )
+                    raise SupplyChainMomentumError(f"回归器返回非法类型: {type(result)!r}")
                 cand = LeadLagResult(
                     upstream=upstream,
                     downstream=symbol,
@@ -288,15 +323,17 @@ class SupplyChainMomentumModel:
                 if best is None or cand.r_squared > best.r_squared:
                     best = cand
             assert best is not None  # _LEAD_DAYS 非空
-            out.append(LeadLagResult(
-                upstream=best.upstream,
-                downstream=best.downstream,
-                best_lead_days=best.best_lead_days,
-                slope=best.slope,
-                intercept=best.intercept,
-                r_squared=best.r_squared,
-                passed=best.r_squared > self._config.r2_threshold,
-            ))
+            out.append(
+                LeadLagResult(
+                    upstream=best.upstream,
+                    downstream=best.downstream,
+                    best_lead_days=best.best_lead_days,
+                    slope=best.slope,
+                    intercept=best.intercept,
+                    r_squared=best.r_squared,
+                    passed=best.r_squared > self._config.r2_threshold,
+                )
+            )
         return tuple(out)
 
     # ── 传导异常 >2σ 标记 ────────────────────────────────────────────────
@@ -318,9 +355,7 @@ class SupplyChainMomentumModel:
             ys = tuple(follower[lead:])
             if len(xs) < 2:
                 continue
-            residuals = [
-                y - (link.intercept + link.slope * x) for x, y in zip(xs, ys)
-            ]
+            residuals = [y - (link.intercept + link.slope * x) for x, y in zip(xs, ys, strict=False)]
             mean = sum(residuals) / len(residuals)
             var = sum((r - mean) ** 2 for r in residuals) / len(residuals)
             sigma = math.sqrt(var)
@@ -331,18 +366,18 @@ class SupplyChainMomentumModel:
             actual = follower[-1]
             z = (actual - predicted) / sigma
             if abs(z) > self._config.z_threshold:
-                out.append(ConductionAnomaly(
-                    upstream=link.upstream,
-                    downstream=symbol,
-                    lead_days=lead,
-                    predicted=predicted,
-                    actual=actual,
-                    z_score=z,
-                    flagged_at=self._clock(),
-                ))
-                _log.warning(
-                    "传导异常: %s→%s lead=%d z=%.3f", link.upstream, symbol, lead, z
+                out.append(
+                    ConductionAnomaly(
+                        upstream=link.upstream,
+                        downstream=symbol,
+                        lead_days=lead,
+                        predicted=predicted,
+                        actual=actual,
+                        z_score=z,
+                        flagged_at=self._clock(),
+                    )
                 )
+                _log.warning("传导异常: %s→%s lead=%d z=%.3f", link.upstream, symbol, lead, z)
         return tuple(out)
 
     # ── 主入口 ────────────────────────────────────────────────────────────

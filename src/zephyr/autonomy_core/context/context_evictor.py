@@ -16,13 +16,72 @@
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 
-"""context_evictor.py — 三维逐出器 (DD9, TASK-014 beta a)
+"""
+context_evictor.py — 三维逐出器 (DD9, TASK-014 beta a)
 ===========================================================
 优先级(priority) × 新鲜度(freshness) × 相关性(relevance) 三维加权排序，
 当 token budget 超限时决定驱逐哪些上下文条目。
 
 公式: score = w_p × (1 - priority_norm) + w_f × (1 - freshness) + w_r × (1 - relevance)
 分数越高意味着越倾向于被逐出。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: w_p 参数
+#   fields: 参数 w_p（无注解）
+#   code: context_evictor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: w_f 参数
+#   fields: 参数 w_f（无注解）
+#   code: context_evictor.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: w_r 参数
+#   fields: 参数 w_r（无注解）
+#   code: context_evictor.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: weights 参数
+#   fields: 参数 weights（无注解）
+#   code: context_evictor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ContextBlock
+#   name_en: ContextBlock
+#   intro: class ContextBlock 源码 L104-L124
+#   desc: 公共方法（定义序）: is_pinned, is_mandatory, compute_eviction_score；源码 L104-L124
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② EvictionResult
+#   name_en: EvictionResult
+#   intro: class EvictionResult 源码 L128-L140
+#   desc: 公共方法（定义序）: compression_ratio；源码 L128-L140
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ ContextEvictor
+#   name_en: ContextEvictor
+#   intro: 三维逐出器 (DD9)。
+#   desc: 三维逐出器 (DD9)。 公式: score = w_p × (1 - priority_norm) + w_f × (1 - freshness) + w_r × (1 - r…；公共方法（定义序）: reset_i…
+#   inputs: w_p w_f w_r weights
+#   outputs: 返回值
+#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: ContextBlock, EvictionResult, ContextEvictor
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

@@ -28,6 +28,48 @@ WindowsService — Windows Service 包装器
 
 卸载:
   sc delete ZephyrAlpha
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: windows_service.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① install_service
+#   name_en: install_service
+#   intro: install_service() 源码 L85-L92
+#   desc: 源码 L85-L92
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② uninstall_service
+#   name_en: uninstall_service
+#   intro: uninstall_service() 源码 L95-L99
+#   desc: 源码 L95-L99
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ run_as_service
+#   name_en: run_as_service
+#   intro: run_as_service() 源码 L102-L146
+#   desc: 源码 L102-L146
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: install_service, uninstall_service, run_as_service
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

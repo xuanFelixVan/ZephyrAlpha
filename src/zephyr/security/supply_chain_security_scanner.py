@@ -14,7 +14,8 @@
 # [TESTS] tests/security/test_supply_chain_security_scanner.py
 # [A_module] module_id=MOD-SEC-026 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""SupplyChainSecurityScanner — 供应链安全扫描器（MOD-SEC-026）。
+"""
+SupplyChainSecurityScanner — 供应链安全扫描器（MOD-SEC-026）。
 
 B12-03993（AUD-DRAFT-001-DIGEST P2 波 P2-W15，CAND-SEC-007，B12 §15.1）：
 供应链安全三件套——CycloneDX JSON **SBOM 生成器**（requirements 锁文件经
@@ -23,6 +24,48 @@ B12-03993（AUD-DRAFT-001-DIGEST P2 波 P2-W15，CAND-SEC-007，B12 §15.1）：
 
 查重分工（蓝图 §0）：feedback_loop/gates/cve_scanner=CVE 门禁扫描实现
 （本件仅注入其回调做关联，不重建扫描）；锁文件读取副作用全 DI，纯内存。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: requirements_reader 参数
+#   fields: 参数 requirements_reader（无注解）
+#   code: supply_chain_security_scanner.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: license_table 参数
+#   fields: 参数 license_table（无注解）
+#   code: supply_chain_security_scanner.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: license_rules 参数
+#   fields: 参数 license_rules（无注解）
+#   code: supply_chain_security_scanner.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: cve_scanner 参数
+#   fields: 参数 cve_scanner（无注解）
+#   code: supply_chain_security_scanner.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SupplyChainSecurityScanner
+#   name_en: SupplyChainSecurityScanner
+#   intro: 供应链安全扫描器（SBOM 生成 + 许可证扫描 + CVE 关联）。
+#   desc: 供应链安全扫描器（SBOM 生成 + 许可证扫描 + CVE 关联）。；公共方法（定义序）: generate_sbom, to_cyclonedx_dict, scan_licenses, correlate_cve…
+#   inputs: requirements_reader license_table license_rules cve_scanner clock
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: SupplyChainSecurityScanner
+#   downstream: 运行时装配批（CI/发布闸装配 SBOM 生成+许可证扫描+CVE 关联三件套）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -57,8 +100,8 @@ class LicenseVerdict:
     """许可证判定词表（闭合字符串常量）。"""
 
     CONTAMINATED: Final = "contaminated"  # 强传染性（GPL/AGPL/SSPL）告警
-    REVIEW: Final = "review"              # 弱传染性（LGPL/MPL）复核
-    CLEAN: Final = "clean"                # 未命中规则
+    REVIEW: Final = "review"  # 弱传染性（LGPL/MPL）复核
+    CLEAN: Final = "clean"  # 未命中规则
 
 
 #: 默认许可证传染性规则表（有序子串匹配，大小写不敏感；先特异后泛化）
@@ -130,9 +173,7 @@ class SupplyChainSecurityScanner:
                 raise SupplyChainSecError("许可证表含空 name/license")
         self._license_table = {k.lower(): v for k, v in table.items()}
         rules = tuple(license_rules) if license_rules is not None else DEFAULT_LICENSE_RULES
-        valid_verdicts = {
-            LicenseVerdict.CONTAMINATED, LicenseVerdict.REVIEW, LicenseVerdict.CLEAN
-        }
+        valid_verdicts = {LicenseVerdict.CONTAMINATED, LicenseVerdict.REVIEW, LicenseVerdict.CLEAN}
         for pattern, verdict in rules:
             if not pattern:
                 raise SupplyChainSecError("许可证规则 pattern 为空")
@@ -157,9 +198,7 @@ class SupplyChainSecurityScanner:
             if not line or line.startswith("#"):
                 continue
             if line.count("==") != 1:
-                raise SupplyChainSecError(
-                    f"锁文件第 {lineno} 行畸形（须严格 name==version）: {line!r}"
-                )
+                raise SupplyChainSecError(f"锁文件第 {lineno} 行畸形（须严格 name==version）: {line!r}")
             name, version = (part.strip() for part in line.split("=="))
             if not name or not version:
                 raise SupplyChainSecError(f"锁文件第 {lineno} 行 name/version 为空")
@@ -216,12 +255,14 @@ class SupplyChainSecurityScanner:
                     break
             if verdict == LicenseVerdict.CONTAMINATED:
                 _log.warning("许可证传染性告警: %s (%s)", comp.name, comp.license)
-            findings.append(LicenseFinding(
-                component=comp.name,
-                license=comp.license,
-                verdict=verdict,
-                matched_rule=matched,
-            ))
+            findings.append(
+                LicenseFinding(
+                    component=comp.name,
+                    license=comp.license,
+                    verdict=verdict,
+                    matched_rule=matched,
+                )
+            )
         return tuple(findings)
 
     # ── CVE 关联 ─────────────────────────────────────────────────────────
@@ -240,7 +281,11 @@ class SupplyChainSecurityScanner:
             cve_ids = tuple(sorted({str(c) for c in cves}))
             if cve_ids:
                 _log.warning("CVE 关联: %s@%s -> %s", comp.name, comp.version, cve_ids)
-            out.append(CveAssociation(
-                component=comp.name, version=comp.version, cve_ids=cve_ids,
-            ))
+            out.append(
+                CveAssociation(
+                    component=comp.name,
+                    version=comp.version,
+                    cve_ids=cve_ids,
+                )
+            )
         return tuple(out)

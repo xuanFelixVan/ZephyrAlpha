@@ -23,7 +23,8 @@
 # A1: 非法转换/空差异清单→Fail-Closed; sink 异常仅日志不阻断
 # O1: SettlementRecord 聚合根(只读快照) + DiscrepancyTicket 工单事件流(OPEN/CLOSED)
 # [/ALGO_FLOW]
-"""D_TRADING — SettlementRecord 结算记录核心聚合（AGG-TRD-02，D-TRADING §0）。
+"""
+D_TRADING — SettlementRecord 结算记录核心聚合（AGG-TRD-02，D-TRADING §0）。
 
 交易运营域结算记录聚合根（DDD）。与既有件边界：
   - settlement_reconciliation（MOD-TRADING-003）：纯对账引擎（逐笔比对+
@@ -39,6 +40,33 @@ C9 仅参考不升级工单）；非费用类差异按类别聚合成 Discrepanc
 
 设计真源：docs/03_modules/_domain_trading/settlement_record_aggregate/blueprint.md
 （B6-08088 / CAND-TRD-010，AUD-DRAFT-001-DIGEST P1 波 W-P1-23）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: event_sink 参数
+#   fields: 参数 event_sink（无注解）
+#   code: settlement_record_aggregate.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SettlementRecordBook
+#   name_en: SettlementRecordBook
+#   intro: SettlementRecord 聚合注册表（簿）——幂等注册 + 状态机 + 差异工单事件。
+#   desc: SettlementRecord 聚合注册表（簿）——幂等注册 + 状态机 + 差异工单事件。 event_sink：注入式工单事件出口（装配批接事件总线）；缺失仅落聚合内 工单…；公共方法（定义序）: classif…
+#   inputs: event_sink
+#   outputs: 返回值
+#   （注：A1 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（9 定义）
+#   name_en: public defs
+#   intro: SettlementRecordBook
+#   downstream: 交易运营编排层（运行时装配批）; MOD-TRADING-009 TradingOrder 聚合（SETTLED 联动）; 差异工单消费方（装配批接事件总线）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -246,9 +274,7 @@ class SettlementRecordBook:
         """按 settlement_id 取聚合快照（不存在返回 None）。"""
         return self._records.get(settlement_id)
 
-    def _transition(
-        self, settlement_id: str, to_status: SettlementStatus, occurred_at: str
-    ) -> SettlementRecord:
+    def _transition(self, settlement_id: str, to_status: SettlementStatus, occurred_at: str) -> SettlementRecord:
         record = self._records.get(settlement_id)
         if record is None:
             raise InvalidSettlementInputError(f"未知结算记录: {settlement_id}")
@@ -268,9 +294,7 @@ class SettlementRecordBook:
         try:
             self._event_sink(ticket)
         except Exception:  # noqa: BLE001 — sink 异常不阻断聚合（记日志不静默）
-            _logger.warning(
-                "settlement event_sink 异常（不阻断聚合）: ticket_id=%s", ticket.ticket_id, exc_info=True
-            )
+            _logger.warning("settlement event_sink 异常（不阻断聚合）: ticket_id=%s", ticket.ticket_id, exc_info=True)
 
 
 __all__ = [

@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-SIG-108 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""多因子叠加择时（MOD-SIG-108，B10-01482，模块57）。
+"""
+多因子叠加择时（MOD-SIG-108，B10-01482，模块57）。
 
 6 源择时信号库 + IC 加权或 BMA 叠加 + ≥3 同向共振高置信标记。
 与 timing_analyst_agent（MOD-AU-010）分工：本件=信号合成层，010=Agent 裁决层。
@@ -23,7 +24,35 @@
 依据: AUD-DRAFT-001 深挖批 B10-01482（裁定=做 P1）；蓝图 §0 边界
 SSoT: depgraph blueprint_id=MOD-SIG-108
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: multi_factor_timing_overlay.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① MultiFactorTimingOverlay
+#   name_en: MultiFactorTimingOverlay
+#   intro: 多源择时信号叠加共振检测器。
+#   desc: 多源择时信号叠加共振检测器。；公共方法（定义序）: overlay；源码 L130-L206
+#   inputs: config
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: MultiFactorTimingOverlay
+#   downstream: （候选：决策编排器+MOD-AU-010 裁决层）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
+
 from __future__ import annotations
 
 import logging
@@ -164,7 +193,7 @@ class MultiFactorTimingOverlay:
             resonance_direction = "none"
 
         if len(signals) < len(TIMING_SOURCES):
-            notes = (notes + ";missing_sources" if notes else "missing_sources")
+            notes = notes + ";missing_sources" if notes else "missing_sources"
 
         return TimingOverlayResult(
             composite_score=composite,

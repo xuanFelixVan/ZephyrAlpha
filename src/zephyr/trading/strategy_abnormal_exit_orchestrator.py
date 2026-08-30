@@ -52,6 +52,48 @@ Fail-Closed 铁律：冻结失败 / 任一腿失败 / 核对残留 → 不宣称
 
 SSoT: docs/03_modules/_domain_trading/strategy_abnormal_exit/blueprint.md
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: signal_freezer 参数
+#   fields: 参数 signal_freezer（无注解）
+#   code: strategy_abnormal_exit_orchestrator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: order_canceller 参数
+#   fields: 参数 order_canceller（无注解）
+#   code: strategy_abnormal_exit_orchestrator.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: position_closer 参数
+#   fields: 参数 position_closer（无注解）
+#   code: strategy_abnormal_exit_orchestrator.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: position_verifier 参数
+#   fields: 参数 position_verifier（无注解）
+#   code: strategy_abnormal_exit_orchestrator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① StrategyAbnormalExitOrchestrator
+#   name_en: StrategyAbnormalExitOrchestrator
+#   intro: 策略异常退出编排器（五步编排，全部 Fail-Closed）。
+#   desc: 策略异常退出编排器（五步编排，全部 Fail-Closed）。 Args: signal_freezer: 冻结新信号端口；返回 True=冻结确认。 order_cancell…；公共方法（定义序）: execute…
+#   inputs: signal_freezer order_canceller position_closer position_verifier life…
+#   outputs: 返回值
+#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（8 定义）
+#   name_en: public defs
+#   intro: StrategyAbnormalExitOrchestrator
+#   downstream: finalizer(MOD-INF-035, 运行时装配批 register 清理函数); stop_gate(MOD-INF-035, has_unreso…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -14,7 +14,8 @@
 # [TESTS] tests/signal_ashare/test_crowd_game_simulator.py
 # [A_module] module_id=MOD-SIG-114 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""CrowdGameSimulator — 群体博弈模拟器（MOD-SIG-114，B1-00169，C2 C-036）。
+"""
+CrowdGameSimulator — 群体博弈模拟器（MOD-SIG-114，B1-00169，C2 C-036）。
 
 轻量博弈推演：四类玩家（北向/公募/游资/散户词表闭合）行为规则库
 （历史统计先验参数注入）+ 合力方向（加权净方向）/分歧度（方向熵）输出
@@ -22,6 +23,38 @@
 ABM思想规则库版。
 
 纯内存/DI设计；外部副作用全部经注入回调。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: priors 参数
+#   fields: 参数 priors（无注解）
+#   code: crowd_game_simulator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: crowd_game_simulator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CrowdGameSimulator
+#   name_en: CrowdGameSimulator
+#   intro: 群体博弈模拟器（规则库+加权净方向+方向熵）。
+#   desc: 群体博弈模拟器（规则库+加权净方向+方向熵）。；公共方法（定义序）: simulate；源码 L167-L268
+#   inputs: priors clock
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: CrowdGameSimulator
+#   downstream: 运行时装配批（统一注入点装配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

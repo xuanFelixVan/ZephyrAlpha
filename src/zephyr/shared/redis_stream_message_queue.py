@@ -14,7 +14,8 @@
 # [TESTS] tests/shared/test_redis_stream_message_queue.py
 # [A_module] module_id=MOD-SHARED-004 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""RedisStreamMessageQueue — Redis Streams 可靠消息队列（MOD-SHARED-004）。
+"""
+RedisStreamMessageQueue — Redis Streams 可靠消息队列（MOD-SHARED-004）。
 
 B1-00341（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-SHARED-002，C2 D-INT-12）：
 Redis Streams 承载事件总线语义——stream + consumer group + ACK 重试
@@ -25,6 +26,56 @@ Redis Streams 承载事件总线语义——stream + consumer group + ACK 重试
 查重分工（蓝图 §0）：event_bus=进程内发布订阅语义（本件复用其主题语义，
 inproc 快路径即其承载；stream 通道与可靠投递为本件新增）；alert 路由族=
 告警出口（DLQ 经注入 dlq_sink 对接，不重建告警总线）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: client 参数
+#   fields: 参数 client（无注解）
+#   code: redis_stream_message_queue.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: redis_stream_message_queue.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: dlq_sink 参数
+#   fields: 参数 dlq_sink（无注解）
+#   code: redis_stream_message_queue.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: group 参数
+#   fields: 参数 group（无注解）
+#   code: redis_stream_message_queue.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① StreamClient
+#   name_en: StreamClient
+#   intro: Redis Streams 客户端协议（全注入；生产=redis-py，测试=内存 fake）。
+#   desc: Redis Streams 客户端协议（全注入；生产=redis-py，测试=内存 fake）。；公共方法（定义序）: xadd, xreadgroup, xack, xpending；源码 L146-L169
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② RedisStreamMessageQueue
+#   name_en: RedisStreamMessageQueue
+#   intro: Redis Streams 可靠消息队列（双通道路由 + ACK重试 + DLQ）。
+#   desc: Redis Streams 可靠消息队列（双通道路由 + ACK重试 + DLQ）。；公共方法（定义序）: bind, channel_of, topics, publish, consume_inproc, poll…
+#   inputs: client clock dlq_sink group consumer max_deliveries pending_timeout_ms
+#   outputs: 返回值
+#   （注：A2 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: StreamClient, RedisStreamMessageQueue
+#   downstream: 运行时装配批（事件总线 stream 通道绑定 / 进程内快路径装配 / DLQ 接告警路由）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -148,9 +199,7 @@ class RedisStreamMessageQueue:
         if max_deliveries <= 0:
             raise RedisStreamQueueError(f"max_deliveries 非法: {max_deliveries!r}（须 > 0）")
         if pending_timeout_ms <= 0:
-            raise RedisStreamQueueError(
-                f"pending_timeout_ms 非法: {pending_timeout_ms!r}（须 > 0）"
-            )
+            raise RedisStreamQueueError(f"pending_timeout_ms 非法: {pending_timeout_ms!r}（须 > 0）")
         self._client = client
         self._clock = clock or datetime.datetime.now
         self._dlq_sink = dlq_sink
@@ -178,9 +227,7 @@ class RedisStreamMessageQueue:
 
     def _require_client(self) -> StreamClient:
         if self._client is None:
-            raise RedisStreamQueueError(
-                "Redis 客户端未注入（stream 通道强制注入，禁止旁路）"
-            )
+            raise RedisStreamQueueError("Redis 客户端未注入（stream 通道强制注入，禁止旁路）")
         return self._client
 
     @staticmethod
@@ -204,9 +251,7 @@ class RedisStreamMessageQueue:
         existing = self._routes.get(topic)
         if existing is not None:
             if existing is not channel:
-                raise RedisStreamQueueError(
-                    f"主题 {topic!r} 已绑定 {existing.value}，拒绝改绑 {channel.value}"
-                )
+                raise RedisStreamQueueError(f"主题 {topic!r} 已绑定 {existing.value}，拒绝改绑 {channel.value}")
             return  # 幂等
         if channel is Channel.STREAM:
             self._require_client()  # 绑定时即 Fail-Closed，不留半装配态
@@ -233,9 +278,14 @@ class RedisStreamMessageQueue:
         if channel is Channel.INPROC:
             self._inproc_seq[topic] += 1
             message_id = f"{topic}-inproc-{self._inproc_seq[topic]}"
-            self._inproc[topic].append(QueueMessage(
-                message_id=message_id, topic=topic, payload=data, enqueued_at=enqueued_at,
-            ))
+            self._inproc[topic].append(
+                QueueMessage(
+                    message_id=message_id,
+                    topic=topic,
+                    payload=data,
+                    enqueued_at=enqueued_at,
+                )
+            )
             return message_id
         fields = {
             "topic": topic,
@@ -268,9 +318,7 @@ class RedisStreamMessageQueue:
             raise RedisStreamQueueError(f"count 非法: {count!r}（须 > 0）")
         client = self._require_client()
         now = self._clock()
-        resp = client.xreadgroup(
-            self._group, self._consumer, {self._stream_of(topic): ">"}, count
-        )
+        resp = client.xreadgroup(self._group, self._consumer, {self._stream_of(topic): ">"}, count)
         out: list[QueueMessage] = []
         for stream, entries in resp:
             if stream != self._stream_of(topic):
@@ -295,13 +343,9 @@ class RedisStreamMessageQueue:
         entry = self._pending.pop(message_id, None)
         if entry is None:
             raise RedisStreamQueueError(f"未知 message_id: {message_id!r}（不在 pending 表）")
-        acked = self._require_client().xack(
-            self._stream_of(entry.message.topic), self._group, message_id
-        )
+        acked = self._require_client().xack(self._stream_of(entry.message.topic), self._group, message_id)
         if acked != 1:
-            raise RedisStreamQueueError(
-                f"服务端 PEL 与本地镜像不一致: {message_id!r}（xack 返回 {acked}）"
-            )
+            raise RedisStreamQueueError(f"服务端 PEL 与本地镜像不一致: {message_id!r}（xack 返回 {acked}）")
 
     def collect_redeliveries(self) -> RedeliveryReport:
         """pending 超期重投：超 timeout 未 ACK 重投；deliveries 超上限进 DLQ。
@@ -321,22 +365,16 @@ class RedisStreamMessageQueue:
             entry.deliveries += 1
             if entry.deliveries > self._max_deliveries:
                 if self._dlq_sink is None:
-                    raise RedisStreamQueueError(
-                        f"消息 {mid!r} 超最大投递次数且 dlq_sink 未注入（拒绝静默丢弃）"
-                    )
+                    raise RedisStreamQueueError(f"消息 {mid!r} 超最大投递次数且 dlq_sink 未注入（拒绝静默丢弃）")
                 self._dlq_sink(entry.message)
-                self._require_client().xack(
-                    self._stream_of(entry.message.topic), self._group, mid
-                )
+                self._require_client().xack(self._stream_of(entry.message.topic), self._group, mid)
                 del self._pending[mid]
                 dead_lettered.append(entry.message)
                 _log.warning("消息进 DLQ: %s（topic=%s）", mid, entry.message.topic)
             else:
                 entry.last_delivery = now
                 redelivered.append(entry.message)
-        return RedeliveryReport(
-            redelivered=tuple(redelivered), dead_lettered=tuple(dead_lettered)
-        )
+        return RedeliveryReport(redelivered=tuple(redelivered), dead_lettered=tuple(dead_lettered))
 
     # ── 观测 ─────────────────────────────────────────────────────────────
 
@@ -345,9 +383,7 @@ class RedisStreamMessageQueue:
         channel = self._route_of(topic)
         if channel is not Channel.STREAM:
             raise RedisStreamQueueError(f"主题 {topic!r} 非 stream 通道（当前 {channel.value}）")
-        entries = self._require_client().xpending(
-            self._stream_of(topic), self._group, min_idle_ms=0
-        )
+        entries = self._require_client().xpending(self._stream_of(topic), self._group, min_idle_ms=0)
         return tuple(sorted(entries, key=lambda e: e.message_id))
 
     def pending_count(self) -> int:

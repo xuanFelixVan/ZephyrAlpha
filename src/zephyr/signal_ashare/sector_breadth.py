@@ -22,7 +22,8 @@
 # A4: capital_nature_multiplier(主力流入×1.1 / 中性×1.0 / 对倒主导×0.8 / 主力流出×0.6, 输出层乘法修正)
 # O1: (ratio, breadth_label, breadth_score) + (capital_score, capital_label, multiplier)
 # [/ALGO_FLOW]
-"""板块宽度归一化与资金性质板块级聚合（22 号 spec §3.1① v1.8.0 补全算法）。
+"""
+板块宽度归一化与资金性质板块级聚合（22 号 spec §3.1① v1.8.0 补全算法）。
 
 两项 evaluate_strength 修正层纯函数：
   1. 板块涨停比归一化——涨停绝对数不可跨板块比较（电力设备 19/200≈9.5%
@@ -30,6 +31,84 @@
   2. aggregate_capital_nature_to_sector——25 号个股级资金性质 5 类分类
      （拉升+1/吸筹+0.5/弱托底0/对倒嫌疑-0.5/出货-1）按成交额加权上溯板块级，
      作为 evaluate_strength 输出层乘法修正因子（非新增第 4 维度）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: limit_up_count 参数
+#   fields: 参数 limit_up_count，类型注解 int
+#   code: sector_breadth.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: constituent_count 参数
+#   fields: 参数 constituent_count，类型注解 int
+#   code: sector_breadth.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: ratio 参数
+#   fields: 参数 ratio，类型注解 float
+#   code: sector_breadth.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: sector_constituents 参数
+#   fields: 参数 sector_constituents，类型注解 list[str]
+#   code: sector_breadth.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① sector_limit_up_ratio
+#   name_en: sector_limit_up_ratio
+#   intro: 板块涨停比 = 板块涨停数 / 板块成分股数（归一化宽度指标）。
+#   desc: 板块涨停比 = 板块涨停数 / 板块成分股数（归一化宽度指标）。 Args: limit_up_count: 板块内涨停数量。 constituent_count: 板块成分股数…；源码 L153-L165
+#   inputs: limit_up_count constituent_count
+#   outputs: float
+# - id: A2
+#   name_zh: ② classify_limit_up_breadth
+#   name_en: classify_limit_up_breadth
+#   intro: 涨停比 → 情绪宽度分档（>10% 极强 / >5% 强 / <2% 弱 / 其余中）。
+#   desc: 涨停比 → 情绪宽度分档（>10% 极强 / >5% 强 / <2% 弱 / 其余中）。；源码 L168-L176
+#   inputs: ratio
+#   outputs: str
+# - id: A3
+#   name_zh: ③ limit_up_breadth_score
+#   name_en: limit_up_breadth_score
+#   intro: 涨停比 → 0-40 分（替换 evaluate_strength 涨停数维度，40% 权重不变）。
+#   desc: 涨停比 → 0-40 分（替换 evaluate_strength 涨停数维度，40% 权重不变）。 映射对齐原绝对数档位（涨停≥5→40 / ≥1→20 / else 5）的相…；源码 L179-L192
+#   inputs: ratio
+#   outputs: float
+# - id: A4
+#   name_zh: ④ aggregate_capital_nature_to_sector
+#   name_en: aggregate_capital_nature_to_sector
+#   intro: 将个股级资金性质聚合到板块级（成交额加权，大票权重高）。
+#   desc: 将个股级资金性质聚合到板块级（成交额加权，大票权重高）。 Args: sector_constituents: 板块成分股代码列表。 capital_nature_scores:…；源码 L200-L237
+#   inputs: sector_constituents capital_nature_scores turnovers
+#   outputs: tuple[float, str]
+# - id: A5
+#   name_zh: ⑤ capital_nature_multiplier
+#   name_en: capital_nature_multiplier
+#   intro: 板块级资金性质标签 → evaluate_strength 输出层乘法修正因子。
+#   desc: 板块级资金性质标签 → evaluate_strength 输出层乘法修正因子。 主力流入×1.1（资金面确认结构强度）/ 对倒主导×0.8（虚假流入风险）/ 主力流出×0.6（…；源码 L240-L246
+#   inputs: sector_capital_label
+#   outputs: float
+# 层: 输出
+# - id: O1
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 G05 选股引擎 / evaluate_strength 修正层)
+# - id: O2
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 G05 选股引擎 / evaluate_strength 修正层)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations

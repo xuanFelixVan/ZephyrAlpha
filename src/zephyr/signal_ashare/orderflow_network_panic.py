@@ -14,7 +14,8 @@
 # [TESTS] tests/signal_ashare/test_orderflow_network_panic.py
 # [A_module] module_id=MOD-SIG-121 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""OrderflowNetworkPanic — 跨资产订单流网络与亏钱扩散（MOD-SIG-121）。
+"""
+OrderflowNetworkPanic — 跨资产订单流网络与亏钱扩散（MOD-SIG-121）。
 
 B10-01388（AUD-DRAFT-001-DIGEST P2 波 P2-W05，CAND-TESTB-041，A1 模块52）：
 大幅回撤事件检测（窗口回撤 >30%）+ 板块内 Moran's I 空间聚集统计
@@ -26,6 +27,38 @@ B10-01388（AUD-DRAFT-001-DIGEST P2 波 P2-W05，CAND-TESTB-041，A1 模块52）
 传导传感（本件=A 股板块/个股网络空间聚集与恐慌扩散，零交集）；
 supply_chain_gnn=产业链 GNN 建模（本件注入邻接矩阵做统计判定，不建图
 神经网络）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: granger_tester 参数
+#   fields: 参数 granger_tester（无注解）
+#   code: orderflow_network_panic.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: orderflow_network_panic.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① OrderflowNetworkPanic
+#   name_en: OrderflowNetworkPanic
+#   intro: 亏钱扩散统计件（纯内存；邻接矩阵 / Granger 检验器 / 时钟注入）。
+#   desc: 亏钱扩散统计件（纯内存；邻接矩阵 / Granger 检验器 / 时钟注入）。 Args: granger_tester: Granger 检验回调 ``tester(sourc…；公共方法（定义序）: detect_…
+#   inputs: granger_tester clock
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: OrderflowNetworkPanic
+#   downstream: 运行时装配批（统一注入点装配：邻接矩阵 / Granger 检验器 / 节点收益接入）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -187,15 +220,17 @@ class OrderflowNetworkPanic:
         i = 0
         n = len(series)
         while i + window <= n:
-            seg = series[i:i + window]
+            seg = series[i : i + window]
             peak_off, trough_off, depth = _max_drawdown(seg)
             if depth > threshold:
-                events.append(DrawdownEvent(
-                    node=node,
-                    peak_idx=i + peak_off,
-                    trough_idx=i + trough_off,
-                    depth=depth,
-                ))
+                events.append(
+                    DrawdownEvent(
+                        node=node,
+                        peak_idx=i + peak_off,
+                        trough_idx=i + trough_off,
+                        depth=depth,
+                    )
+                )
                 i += trough_off + 1  # 跳过事件覆盖区间，防重叠重复
             else:
                 i += 1
@@ -222,12 +257,7 @@ class OrderflowNetworkPanic:
         s0 = sum(sum(row) for row in w)
         if s0 == 0.0:
             raise OrderflowPanicError("邻接矩阵无边（S0=0，Moran's I 无定义）")
-        num = sum(
-            w[i][j] * dev[i] * dev[j]
-            for i in range(n)
-            for j in range(n)
-            if w[i][j] != 0.0
-        )
+        num = sum(w[i][j] * dev[i] * dev[j] for i in range(n) for j in range(n) if w[i][j] != 0.0)
         return (n / s0) * (num / denom)
 
     def _check_adjacency(
@@ -241,14 +271,10 @@ class OrderflowNetworkPanic:
         except (TypeError, ValueError) as exc:
             raise OrderflowPanicError(f"邻接矩阵含非数值元素: {exc}") from exc
         if len(rows) != n:
-            raise OrderflowPanicError(
-                f"邻接矩阵维度不齐: {len(rows)} 行 vs 节点数 {n}"
-            )
+            raise OrderflowPanicError(f"邻接矩阵维度不齐: {len(rows)} 行 vs 节点数 {n}")
         for row in rows:
             if len(row) != n:
-                raise OrderflowPanicError(
-                    f"邻接矩阵非方阵: 行长 {len(row)} != {n}"
-                )
+                raise OrderflowPanicError(f"邻接矩阵非方阵: 行长 {len(row)} != {n}")
             for v in row:
                 if not math.isfinite(v):
                     raise OrderflowPanicError(f"邻接矩阵含非有限值: {v!r}")
@@ -268,23 +294,15 @@ class OrderflowNetworkPanic:
     ) -> int | None:
         """最小显著传导时滞（1..max_lag 首个 p<alpha）；不显著返回 None。"""
         if self._granger_tester is None:
-            raise OrderflowPanicError(
-                "granger_tester 未注入（恐慌传导时滞判定强制注入检验器）"
-            )
+            raise OrderflowPanicError("granger_tester 未注入（恐慌传导时滞判定强制注入检验器）")
         if max_lag not in (1, 2):
             raise OrderflowPanicError(f"max_lag 非法: {max_lag!r}（须 ∈ {{1,2}}）")
         if not 0.0 < alpha < 1.0:
             raise OrderflowPanicError(f"alpha 非法: {alpha!r}（须 ∈ (0,1)）")
-        src = _as_finite_series(
-            "source_returns", source_returns, min_len=_MIN_CONDUCTION_SAMPLES
-        )
-        tgt = _as_finite_series(
-            "target_returns", target_returns, min_len=_MIN_CONDUCTION_SAMPLES
-        )
+        src = _as_finite_series("source_returns", source_returns, min_len=_MIN_CONDUCTION_SAMPLES)
+        tgt = _as_finite_series("target_returns", target_returns, min_len=_MIN_CONDUCTION_SAMPLES)
         if len(src) != len(tgt):
-            raise OrderflowPanicError(
-                f"传导序列长度不齐: {len(src)} vs {len(tgt)}"
-            )
+            raise OrderflowPanicError(f"传导序列长度不齐: {len(src)} vs {len(tgt)}")
         for lag in range(1, max_lag + 1):
             try:
                 p_value = float(self._granger_tester(src, tgt, lag))
@@ -351,12 +369,14 @@ class OrderflowNetworkPanic:
             for target, hops in hops_of.items():
                 if hops == 0:
                     continue
-                paths.append(DiffusionPath(
-                    source=src,
-                    target=target,
-                    hops=hops,
-                    strength=depth * (decay ** hops),
-                ))
+                paths.append(
+                    DiffusionPath(
+                        source=src,
+                        target=target,
+                        hops=hops,
+                        strength=depth * (decay**hops),
+                    )
+                )
         paths.sort(key=lambda p: (p.hops, p.source, p.target))
         return tuple(paths)
 
@@ -388,10 +408,8 @@ class OrderflowNetworkPanic:
         """
         if not node_returns:
             raise OrderflowPanicError("node_returns 为空")
-        if not 0.0 < morans_threshold:
-            raise OrderflowPanicError(
-                f"morans_threshold 非法: {morans_threshold!r}（须 > 0）"
-            )
+        if not morans_threshold > 0.0:
+            raise OrderflowPanicError(f"morans_threshold 非法: {morans_threshold!r}（须 > 0）")
         nodes = tuple(sorted(node_returns))
         series: dict[str, tuple[float, ...]] = {}
         length: int | None = None
@@ -413,9 +431,14 @@ class OrderflowNetworkPanic:
                 equity.append(equity[-1] * (1.0 + r))
             _, _, full_depth = _max_drawdown(equity)
             depths[name] = full_depth
-            events.extend(self.detect_drawdown_events(
-                name, equity, window=window + 1, threshold=drawdown_threshold,
-            ))
+            events.extend(
+                self.detect_drawdown_events(
+                    name,
+                    equity,
+                    window=window + 1,
+                    threshold=drawdown_threshold,
+                )
+            )
         events.sort(key=lambda e: (e.node, e.trough_idx))
 
         # ② Moran's I 空间聚集（截面值=各节点全序列最大回撤深度）
@@ -430,7 +453,10 @@ class OrderflowNetworkPanic:
                 if src == tgt:
                     continue
                 lag = self.panic_conduction_lag(
-                    series[src], series[tgt], max_lag=max_lag, alpha=alpha,
+                    series[src],
+                    series[tgt],
+                    max_lag=max_lag,
+                    alpha=alpha,
                 )
                 if lag is not None:
                     links.append(ConductionLink(source=src, target=tgt, lag=lag))
@@ -438,16 +464,18 @@ class OrderflowNetworkPanic:
         # ④ 扩散路径与强度（无事件源 → 空路径）
         paths: tuple[DiffusionPath, ...] = ()
         if event_nodes:
-            src_depths = {
-                name: max(e.depth for e in events if e.node == name)
-                for name in event_nodes
-            }
+            src_depths = {name: max(e.depth for e in events if e.node == name) for name in event_nodes}
             paths = self.diffusion_paths(nodes, src_depths, adjacency, decay=decay)
 
         is_panic = bool(events) and is_clustered
         _log.info(
             "亏钱扩散评估: events=%d morans=%.4f clustered=%s links=%d paths=%d panic=%s",
-            len(events), morans, is_clustered, len(links), len(paths), is_panic,
+            len(events),
+            morans,
+            is_clustered,
+            len(links),
+            len(paths),
+            is_panic,
         )
         return PanicAssessment(
             events=tuple(events),

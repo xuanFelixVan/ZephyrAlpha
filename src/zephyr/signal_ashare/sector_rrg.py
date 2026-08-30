@@ -23,7 +23,8 @@
 # A6: rrg_zscore(Z=(RS-Ratio−63日均值)/63日标准差) + zscore_signal_adjust(领先 Z>+2 降级持有 / 改善 Z<−2 升级提前布局)
 # O1: RRGPoint(rs_ratio, rs_momentum, quadrant) 序列 + 已确认象限序列 + 信号/强度调整分
 # [/ALGO_FLOW]
-"""RRG 相对旋转图（22 号 spec §3.1④，轮动序列主算法，BM-SEL-08 缺失态补施工）。
+"""
+RRG 相对旋转图（22 号 spec §3.1④，轮动序列主算法，BM-SEL-08 缺失态补施工）。
 
 JdK（Julius de Kempenaer）DualEma 标准公式（xkqg/quantifiedtrader 2026 依据）：
   RS          = 100 × P_sector / P_bench
@@ -40,6 +41,101 @@ ranking 是当日截面快照选推送池，RRG 是时序变化率追轮动序�
 
 收缩登记：transition matrix 概率门限、21d/63d/252d 三时间框架交叉、
 θ/r 旋转角度追踪本轮未施工（§3.1④ RRG 增强第 2 项与步骤 5 角度法，远期增强）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: values 参数
+#   fields: 参数 values，类型注解 list[float]
+#   code: sector_rrg.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: span 参数
+#   fields: 参数 span，类型注解 int
+#   code: sector_rrg.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: p_sector 参数
+#   fields: 参数 p_sector，类型注解 list[float]
+#   code: sector_rrg.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: p_bench 参数
+#   fields: 参数 p_bench，类型注解 list[float]
+#   code: sector_rrg.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ema_series
+#   name_en: ema_series
+#   intro: 指数移动平均序列（alpha=2/(span+1)，种子=首值，无预热 NaN）。
+#   desc: 指数移动平均序列（alpha=2/(span+1)，种子=首值，无预热 NaN）。；源码 L196-L204
+#   inputs: values span
+#   outputs: list[float]
+# - id: A2
+#   name_zh: ② compute_rrg_series
+#   name_en: compute_rrg_series
+#   intro: 计算 RRG 序列（RS-Ratio / RS-Momentum / 四象限落点）。
+#   desc: 计算 RRG 序列（RS-Ratio / RS-Momentum / 四象限落点）。 Args: p_sector: 板块指数收盘价日频序列（时间升序，market_kline_…；源码 L212-L253
+#   inputs: p_sector p_bench short long
+#   outputs: list[RRGPoint]
+# - id: A3
+#   name_zh: ③ classify_quadrant
+#   name_en: classify_quadrant
+#   intro: (RS-Ratio, RS-Momentum) 二维坐标 → 四象限（100 为中性分界线）。
+#   desc: (RS-Ratio, RS-Momentum) 二维坐标 → 四象限（100 为中性分界线）。；源码 L256-L260
+#   inputs: rs_ratio rs_momentum
+#   outputs: RRGQuadrant
+# - id: A4
+#   name_zh: ④ confirm_quadrant_series
+#   name_en: confirm_quadrant_series
+#   intro: 象限序列 whipsaw 确认平滑（已确认状态须连续 confirm_days 日才切换）。
+#   desc: 象限序列 whipsaw 确认平滑（已确认状态须连续 confirm_days 日才切换）。 强趋势半圆（领先→疲软→领先）天然容许：疲软连续 2 日即确认， 再回领先连续 2…；源码 L268-L300
+#   inputs: quadrants confirm_days
+#   outputs: list[RRGQuadrant]
+# - id: A5
+#   name_zh: ⑤ rrg_zscore
+#   name_en: rrg_zscore
+#   intro: 最新 RS-Ratio 的滚动 z-score：Z = (当前 − 63日均值) / 63日标准差。
+#   desc: 最新 RS-Ratio 的滚动 z-score：Z = (当前 − 63日均值) / 63日标准差。 序列不足 window 时用全序列；样本 <2 或标准差为 0 返回 0.0…；源码 L308-L321
+#   inputs: rs_ratio_series window
+#   outputs: float
+# - id: A6
+#   name_zh: ⑥ zscore_signal_adjust
+#   name_en: zscore_signal_adjust
+#   intro: Z-score 跨象限修正后的交易信号。
+#   desc: Z-score 跨象限修正后的交易信号。 领先象限 Z>+2 = 透支，买入信号降级为持有； 改善象限 Z<−2 = 异常压缩，升级为提前布局；其余返回基础信号。；源码 L324-L334
+#   inputs: quadrant z
+#   outputs: str
+# - id: A7
+#   name_zh: ⑦ quadrant_strength_adjust
+#   name_en: quadrant_strength_adjust
+#   intro: 象限 → 板块强度综合层调整分（+0.05/+0.02/−0.03/−0.08）。
+#   desc: 象限 → 板块强度综合层调整分（+0.05/+0.02/−0.03/−0.08）。；源码 L337-L339
+#   inputs: quadrant
+#   outputs: float
+#   （注：A7 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[float]
+#   name_en: list[float]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 G05 选股引擎 / sector_gate rrg_filter / 10 号 §6.2 主线识别)
+# - id: O2
+#   name_zh: list[RRGPoint]
+#   name_en: list[RRGPoint]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 G05 选股引擎 / sector_gate rrg_filter / 10 号 §6.2 主线识别)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> O1
 """
 
 from __future__ import annotations

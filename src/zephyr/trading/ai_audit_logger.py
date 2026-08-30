@@ -22,6 +22,37 @@ AiAuditLogger — AI 行为审计日志
 所有 AI 行为写入结构化 JSONL，不可变、追加式。
 
 5.17.3 修复：添加 SHA-256 哈希链 + 篡改检测，实现真正的不可变性。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: log_dir 参数
+#   fields: 参数 log_dir（无注解）
+#   code: ai_audit_logger.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: session_id 参数
+#   fields: 参数 session_id（无注解）
+#   code: ai_audit_logger.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AiAuditLogger
+#   name_en: AiAuditLogger
+#   intro: AI 行为审计日志——所有 AI 决策/执行的不可变记录。
+#   desc: AI 行为审计日志——所有 AI 决策/执行的不可变记录。 5.17.3 修复：每条日志通过 SHA-256 哈希链关联前一条日志，重启后链恢复连续。 提供 verify_int…；公共方法（定义序）: session…
+#   inputs: log_dir session_id
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: AiAuditLogger
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 import logging

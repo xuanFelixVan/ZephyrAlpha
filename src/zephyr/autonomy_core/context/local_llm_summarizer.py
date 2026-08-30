@@ -36,6 +36,55 @@ llm_summary 压缩档的生产实现：经 llm_runtime_gateway（MOD-INF-051）�
 integrity 校验不过 —— 一律返回空串（降级不炸），由调用方走 rule_based 兜底。
 
 裁定回填（07 号文 §4 P1-3）：维持 sync 主用，async wrapper 待真实需求再建。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: original 参数
+#   fields: 参数 original，类型注解 str
+#   code: local_llm_summarizer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: summary 参数
+#   fields: 参数 summary，类型注解 str
+#   code: local_llm_summarizer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: checker 参数
+#   fields: 参数 checker（无注解）
+#   code: local_llm_summarizer.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: min_ratio 参数
+#   fields: 参数 min_ratio（无注解）
+#   code: local_llm_summarizer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① verify_summary_integrity
+#   name_en: verify_summary_integrity
+#   intro: 摘要完整性交叉校验（07 号文 §4 P1-2：校验通过方可替换原文）。
+#   desc: 摘要完整性交叉校验（07 号文 §4 P1-2：校验通过方可替换原文）。 校验规则（任一条不过即 False）： 1. 摘要非空且确为压缩（len(summary) < len(…；源码 L144-L184
+#   inputs: original summary checker min_ratio
+#   outputs: bool
+# - id: A2
+#   name_zh: ② LocalLLMSummarizer
+#   name_en: LocalLLMSummarizer
+#   intro: 本地 Qwen 分 slot 摘要器（DocCompressor llm_summary 档的生产注入实现）。
+#   desc: 本地 Qwen 分 slot 摘要器（DocCompressor llm_summary 档的生产注入实现）。 Parameters ---------- gateway : _…；公共方法（定义序）: summari…
+#   inputs: gateway slot_chars max_passes complexity channel integrity_checker
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.autonomy_core.context.context_assembler（opt-in 注入）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

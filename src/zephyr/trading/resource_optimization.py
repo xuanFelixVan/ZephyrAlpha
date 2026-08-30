@@ -31,6 +31,48 @@ MAPE-K loop:
   Plan     -> decide optimization or defensive strategy
   Execute  -> run strategy, record result
   Knowledge -> accumulate history for smarter decisions
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: level 参数
+#   fields: 参数 level，类型注解 PressureLevel
+#   code: resource_optimization.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① degradation_lv
+#   name_en: degradation_lv
+#   intro: PressureLevel → 蓝图 §3.3 降级链级别（Lv0~Lv3）。
+#   desc: PressureLevel → 蓝图 §3.3 降级链级别（Lv0~Lv3）。；源码 L166-L168
+#   inputs: level
+#   outputs: str
+# - id: A2
+#   name_zh: ② CircuitBreaker
+#   name_en: CircuitBreaker
+#   intro: class CircuitBreaker 源码 L200-L264
+#   desc: 公共方法（定义序）: state, allow, record_success, record_failure, reset；源码 L200-L264
+#   inputs: failure_threshold recovery_timeout_s half_open_max_calls
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ ResourceOptimizationEngine
+#   name_en: ResourceOptimizationEngine
+#   intro: MAPE-K 自治资源优化引擎（单例 facade）。
+#   desc: MAPE-K 自治资源优化引擎（单例 facade）。 5.150.1 God Class 治本：3 个高内聚零耦合职责簇已提取为同文件协作者类—— _ConfigReloade…；公共方法（定义序）: classif…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: N/A (all consumers verified as phantom — stale references removed)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

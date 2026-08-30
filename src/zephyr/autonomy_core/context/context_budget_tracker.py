@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-CONTEXT_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""ContextBudgetTracker: token budget management with 3-level thresholds.
+"""
+ContextBudgetTracker: token budget management with 3-level thresholds.
 
 Tracks token usage per session and emits Observer events when
 thresholds are crossed. Uses tiktoken for accurate counting.
@@ -29,6 +30,67 @@ T-V2-006 扩展（experimental）
 - register_doc_compressor(compressor)  — M1 build() 时注入单例
 - L2_THROTTLE 事件触发时，事件 payload 追加 compression_suggested=True
 - get_doc_compressor()                 — M3 触发器调用入口
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: payload 参数
+#   fields: 参数 payload，类型注解 dict[str, Any]
+#   code: context_budget_tracker.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: tracker 参数
+#   fields: 参数 tracker，类型注解 ContextBudgetTracker
+#   code: context_budget_tracker.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① get_thresholds_from_yaml
+#   name_en: get_thresholds_from_yaml
+#   intro: 从 context_rules.yaml CTX-001 规则提取阈值。
+#   desc: 从 context_rules.yaml CTX-001 规则提取阈值。 Returns ------- dict[ContextBudgetLevel, float] | No…；源码 L161-L178
+#   inputs: 无参数
+#   outputs: dict[ContextBudgetLevel, float] | None
+# - id: A2
+#   name_zh: ② ContextBudgetTracker
+#   name_en: ContextBudgetTracker
+#   intro: Per-session token budget tracker with threshold events.
+#   desc: Per-session token budget tracker with threshold events. Usage:: bus = Observer() tracker…；公共方法（定义序）: sessions…
+#   inputs: observer session_limit thresholds
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ handle_compression_needed
+#   name_en: handle_compression_needed
+#   intro: Module-level entry point for TriggerRouter dispatch.
+#   desc: Module-level entry point for TriggerRouter dispatch. Resolves the singleton ContextBudget…；源码 L380-L392
+#   inputs: payload
+#   outputs: str | None
+# - id: A4
+#   name_zh: ④ set_default_tracker
+#   name_en: set_default_tracker
+#   intro: Register the default tracker for trigger dispatch.
+#   desc: Register the default tracker for trigger dispatch.；源码 L395-L398
+#   inputs: tracker
+#   outputs: 返回值
+#   （注：A4 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: dict[ContextBudgetLevel, float] | None
+#   name_en: dict[ContextBudgetLevel, float] | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: str | None
+#   name_en: str | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

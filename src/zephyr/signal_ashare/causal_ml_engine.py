@@ -14,7 +14,8 @@
 # [TESTS] tests/signal_ashare/test_causal_ml_engine.py
 # [A_module] module_id=MOD-SIG-127 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""CausalMlEngine — 因果ML引擎（MOD-SIG-127）。
+"""
+CausalMlEngine — 因果ML引擎（MOD-SIG-127）。
 
 B10-01858（AUD-DRAFT-001-DIGEST P2 波 P2-W06，CAND-TESTB-051，A1 §29.18；
 canonical 承接 TESTB-035/047 归并）：**DML 因子因果效应估计**（注入
@@ -30,6 +31,48 @@ IC/偏 IC 轻量统计因果本体（本件=四通道外部 runner 纯编排层�
 （MOD-SIG-112）= 事件传导边模板 BFS（本件=因子级效应估计与因果图发现，
 零交集）；四通道库是否安装由注入方判定，本件对 runner 缺失/异常/产出非
 法一律打降级标记，永不阻断其余通道。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: effect_threshold 参数
+#   fields: 参数 effect_threshold（无注解）
+#   code: causal_ml_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: p_value_threshold 参数
+#   fields: 参数 p_value_threshold（无注解）
+#   code: causal_ml_engine.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: dml_runner 参数
+#   fields: 参数 dml_runner（无注解）
+#   code: causal_ml_engine.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: causal_forest_runner 参数
+#   fields: 参数 causal_forest_runner（无注解）
+#   code: causal_ml_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CausalMlEngine
+#   name_en: CausalMlEngine
+#   intro: 因果ML引擎（四通道注入编排 + 盘前图缓存 + 显著性筛选）。
+#   desc: 因果ML引擎（四通道注入编排 + 盘前图缓存 + 显著性筛选）。 runner 契约（全部为注入回调；本件不 import 任何因果库，库未装由注入方 自行降级或缺席）： - d…；公共方法（定义序）: estimat…
+#   inputs: effect_threshold p_value_threshold dml_runner causal_forest_runner do…
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: CausalMlEngine
+#   downstream: 运行时装配批（盘前因果图预计算 / 因子因果效应显著性筛选接信号装配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -125,8 +168,7 @@ class CausalGraphSnapshot:
 
 #: runner 产出映射的数值键契约
 _EFFECT_RUNNERS_DOC: Final = (
-    "键 effect(float)/p_value(float) 必填，n_samples(int)/note(str) 可选，"
-    "dowhy 通道另可带 refuted(bool)"
+    "键 effect(float)/p_value(float) 必填，n_samples(int)/note(str) 可选，dowhy 通道另可带 refuted(bool)"
 )
 
 
@@ -323,9 +365,7 @@ class CausalMlEngine:
                 p_value=e.p_value,
             )
             for e in effects
-            if not e.downgraded
-            and abs(e.effect) > self._effect_threshold
-            and e.p_value < self._p_value_threshold
+            if not e.downgraded and abs(e.effect) > self._effect_threshold and e.p_value < self._p_value_threshold
         ]
         out.sort(key=lambda s: (-abs(s.effect), s.channel.value, s.treatment, s.outcome))
         return tuple(out)

@@ -20,6 +20,33 @@ MOD-INF-019: Agent Spec — Skill Cross-Model
 Blueprint: docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 Author: factory-agent
 Version: 0.2.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: default_provider 参数
+#   fields: 参数 default_provider（无注解）
+#   code: skill_cross_model.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SkillCrossModel
+#   name_en: SkillCrossModel
+#   intro: class SkillCrossModel 源码 L138-L316
+#   desc: 公共方法（定义序）: adapter_registry, default_provider, fallback_chain, get_capability, supports_feature, set_fallback…
+#   inputs: default_provider
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: SkillCrossModel
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from dataclasses import dataclass, field

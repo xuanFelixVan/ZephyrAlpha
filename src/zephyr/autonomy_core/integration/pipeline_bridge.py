@@ -27,6 +27,48 @@ PipelineSkillBridge — Agent Spec -> Pipeline 双向桥接
     bridge = PipelineSkillBridge()
     result = bridge.inject_for_task(task_description="修改数据库模型", stage="construction")
     # -> 加载 database-specialist + implementer
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: loader 参数
+#   fields: 参数 loader（无注解）
+#   code: pipeline_bridge.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SkillInjectionResult
+#   name_en: SkillInjectionResult
+#   intro: class SkillInjectionResult 源码 L83-L104
+#   desc: 公共方法（定义序）: to_context_string；源码 L83-L104
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② SkillContextInjector
+#   name_en: SkillContextInjector
+#   intro: class SkillContextInjector 源码 L107-L190
+#   desc: 公共方法（定义序）: loader, inject, inject_single；源码 L107-L190
+#   inputs: loader
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ PipelineSkillBridge
+#   name_en: PipelineSkillBridge
+#   intro: class PipelineSkillBridge 源码 L213-L289
+#   desc: 公共方法（定义序）: injector, router, stage_map, inject_for_task；源码 L213-L289
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: SkillInjectionResult, SkillContextInjector, PipelineSkillBridge
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

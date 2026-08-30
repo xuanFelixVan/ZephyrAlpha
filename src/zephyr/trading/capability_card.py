@@ -20,6 +20,32 @@ CapabilityCard — 能力卡片数据模型
 ==================================
 蓝图: docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md §3.1
 对标: Google A2A AgentCard + Anthropic MCP Tool + Cursor Rules
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: capability_card.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① 数据契约声明
+#   name_en: data class declarations
+#   intro: 纯声明类（无公共方法，AST 事实）: CapabilityCategory, CapabilityCard
+#   desc: 数据契约/异常/枚举声明共 2 类；无算法流程（AST 事实）
+#   inputs: I1
+#   outputs: 数据契约类集合
+# 层: 输出
+# - id: O1
+#   name_zh: 数据契约声明（2 类）
+#   name_en: data classes
+#   intro: CapabilityCategory, CapabilityCard
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from datetime import datetime

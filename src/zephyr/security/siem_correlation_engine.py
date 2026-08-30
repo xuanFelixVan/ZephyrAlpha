@@ -14,7 +14,8 @@
 # [TESTS] tests/security/test_siem_correlation_engine.py
 # [A_module] module_id=MOD-SEC-025 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""SiemCorrelationEngine — SIEM 跨域关联引擎（MOD-SEC-025）。
+"""
+SiemCorrelationEngine — SIEM 跨域关联引擎（MOD-SEC-025）。
 
 B12-03820（AUD-DRAFT-001-DIGEST P2 波 P2-W15，CAND-SEC-006，B12）：Sigma 风
 格规则注册（同主体/同会话**滑动时间窗**内多域**事件序列**聚合，如 注入→
@@ -23,6 +24,48 @@ B12-03820（AUD-DRAFT-001-DIGEST P2 波 P2-W15，CAND-SEC-006，B12）：Sigma �
 
 查重分工（蓝图 §0）：security_event_bus=事件分发总线（本件=其上关联规则
 引擎，复用路由语义不重建总线）；ML 异常检测不建（纯确定性序列匹配）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: rules 参数
+#   fields: 参数 rules（无注解）
+#   code: siem_correlation_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: siem_correlation_engine.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: immediate_router 参数
+#   fields: 参数 immediate_router（无注解）
+#   code: siem_correlation_engine.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: summary_sink 参数
+#   fields: 参数 summary_sink（无注解）
+#   code: siem_correlation_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SiemCorrelationEngine
+#   name_en: SiemCorrelationEngine
+#   intro: SIEM 关联规则引擎（滑窗序列聚合 + 提级 + 分级路由）。
+#   desc: SIEM 关联规则引擎（滑窗序列聚合 + 提级 + 分级路由）。；公共方法（定义序）: ingest, flush_summary；源码 L156-L293
+#   inputs: rules clock immediate_router summary_sink
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: SiemCorrelationEngine
+#   downstream: 运行时装配批（安全事件总线订阅端装配关联引擎与分级路由回调）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -44,6 +87,7 @@ __all__: Final = [
     "SiemError",
     "SigmaRule",
 ]
+
 
 class SiemError(Exception):
     """SIEM 关联引擎输入/状态非法（Fail-Closed）。

@@ -21,6 +21,32 @@ Author: factory-agent
 Version: 0.3.0
 
 Know Your Agent certification
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: skill_kya.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SkillKYA
+#   name_en: SkillKYA
+#   intro: class SkillKYA 源码 L58-L126
+#   desc: 公共方法（定义序）: certs, assess, certify, revalidate；源码 L58-L126
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SkillKYA
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from datetime import UTC, datetime, timedelta

@@ -34,6 +34,48 @@ budget_tracker 的数学基础。
 
 Singleton 支持：通过 ``ContextRotModel.instance()`` 获取共享实例，
 ``ContextRotModel.reset_instance()`` 重置（主要用于测试隔离）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: ref_tokens 参数
+#   fields: 参数 ref_tokens（无注解）
+#   code: context_rot_model.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: k 参数
+#   fields: 参数 k（无注解）
+#   code: context_rot_model.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: warn_attention 参数
+#   fields: 参数 warn_attention（无注解）
+#   code: context_rot_model.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: low_attention 参数
+#   fields: 参数 low_attention（无注解）
+#   code: context_rot_model.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ContextRotModel
+#   name_en: ContextRotModel
+#   intro: Context Rot 注意力衰减数学模型。
+#   desc: Context Rot 注意力衰减数学模型。 使用调和衰减曲线模拟 LLM 上下文腐烂现象。token 数在 ``ref_tokens`` 以内时注意力为 1.0；超过 ``re…；公共方法（定义序）: ref_tok…
+#   inputs: ref_tokens k warn_attention low_attention critical_attention
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: ContextRotModel
+#   downstream: tests/context/test_context_rot_model_unit.py; tests/autonomy/test_mgmt_context_…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -37,7 +37,8 @@
 #   name: ExclusionOutcome / GateOutcome / ScoredItem / FunnelChainResult
 #   intro: 域适配层把骨架输出包装为本域结果类型（kept/excluded/degraded/truncated/raw/z/rank）
 # [/ALGO_FLOW]
-"""选股漏斗共享骨架（MOD-SIG-086，SIGNAL-ARCH-001 归并裁定落地）。
+"""
+选股漏斗共享骨架（MOD-SIG-086，SIGNAL-ARCH-001 归并裁定落地）。
 
 21 号 memo §3.6（BM-SEL-16/17/18，容量链 ~7000→~1200→~300→~50）四层容量链的
 层序、接口与数据流唯一真源。双域原实现（signal_fundamental/selection_funnel.py
@@ -57,6 +58,93 @@
 
 降级链路（memo 既定）：一层未就绪→仅物理排除；二层未就绪→全量放行；
 三层未就绪→等权综合评分。执行频率按 memo v1.1.19：盘前批处理，盘中不滚动。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: records 参数
+#   fields: 参数 records，类型注解 Sequence[RecT]
+#   code: selection_funnel_skeleton.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: symbol_of 参数
+#   fields: 参数 symbol_of（无注解）
+#   code: selection_funnel_skeleton.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: hooks 参数
+#   fields: 参数 hooks（无注解）
+#   code: selection_funnel_skeleton.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: thresholds 参数
+#   fields: 参数 thresholds（无注解）
+#   code: selection_funnel_skeleton.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① run_graded_exclusion
+#   name_en: run_graded_exclusion
+#   intro: 四排除机制批处理过滤（~7000→~1200）。
+#   desc: 四排除机制批处理过滤（~7000→~1200）。只排除不评分，廉价规则先砍量。 排除优先级（先命中先生效）：物理排除（涨跌停封死/停牌/ST）→ 门禁排除（次新） → 分级排除（…；源码 L256-L309
+#   inputs: records symbol_of hooks thresholds degraded
+#   outputs: ExclusionOutcome
+# - id: A2
+#   name_zh: ② run_preliminary_gates
+#   name_en: run_preliminary_gates
+#   intro: 五维门槛初筛 + 可选容量收敛（~1200→~300）。
+#   desc: 五维门槛初筛 + 可选容量收敛（~1200→~300）。 五维顺序执行（先命中先排除）：技术 → 量比 → 换手率 → 板块排名 → 主力 → 状态。 degraded=True…；源码 L348-L397
+#   inputs: records symbol_of hooks thresholds capacity degraded
+#   outputs: GateOutcome
+# - id: A3
+#   name_zh: ③ density_penalty_from_summary
+#   name_en: density_penalty_from_summary
+#   intro: 密度要素扣分项规范取法 = 负偏度幅度×10 + 超额峰度×5 + 前瞻 VaR 幅度%（memo §3.6 ③）。
+#   desc: 密度要素扣分项规范取法 = 负偏度幅度×10 + 超额峰度×5 + 前瞻 VaR 幅度%（memo §3.6 ③）。 鸭子类型消费：任何带 neg_skewness / exce…；源码 L442-L453
+#   inputs: density
+#   outputs: float
+# - id: A4
+#   name_zh: ④ run_fine_scoring
+#   name_en: run_fine_scoring
+#   intro: 六要素综合评分 → 横截面 Z-score 标准化 → 降序取 Top-N（~300→~50）。
+#   desc: 六要素综合评分 → 横截面 Z-score 标准化 → 降序取 Top-N（~300→~50）。 Z-score：std≈0（全体同分）时 Z 全部置 0（无区分度，按 raw…；源码 L482-L516
+#   inputs: records symbol_of hooks weights top_n degraded tie_break
+#   outputs: tuple[ScoredItem, ...]
+# - id: A5
+#   name_zh: ⑤ subset_by_kept
+#   name_en: subset_by_kept
+#   intro: 按上一层 kept 清单取记录子集（保持 kept 顺序；同名标的后出现记录覆盖）。
+#   desc: 按上一层 kept 清单取记录子集（保持 kept 顺序；同名标的后出现记录覆盖）。；源码 L522-L530
+#   inputs: records symbol_of kept
+#   outputs: list[RecT]
+# - id: A6
+#   name_zh: ⑥ run_funnel_chain
+#   name_en: run_funnel_chain
+#   intro: BM-SEL-16 → 17 → 18 盘前批处理串联（层序/数据流骨架）。
+#   desc: BM-SEL-16 → 17 → 18 盘前批处理串联（层序/数据流骨架）。 各层执行体由域适配层以 partial/闭包注入（绑定本域钩子、阈值与降级标记）； 骨架只保证层序与…；源码 L533-L550
+#   inputs: records symbol_of run_graded run_screen run_score
+#   outputs: FunnelChainResult
+#   （注：A6 之后另有 11 个公共定义未列入（含 11 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ExclusionOutcome
+#   name_en: ExclusionOutcome
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.signal_fundamental.selection_funnel; zephyr.signal_ashare.tiered_screeni…
+# - id: O2
+#   name_zh: GateOutcome
+#   name_en: GateOutcome
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.signal_fundamental.selection_funnel; zephyr.signal_ashare.tiered_screeni…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
 """
 
 from __future__ import annotations
@@ -302,7 +390,9 @@ def run_preliminary_gates(
         kept_records.append(rec)
     truncated = False
     if capacity is not None and len(kept_records) > capacity.target:
-        kept_records = sorted(kept_records, key=lambda r: (-capacity.liquidity_score_of(r), symbol_of(r)))[: capacity.target]
+        kept_records = sorted(kept_records, key=lambda r: (-capacity.liquidity_score_of(r), symbol_of(r)))[
+            : capacity.target
+        ]
         truncated = True
     return GateOutcome(kept=tuple(symbol_of(r) for r in kept_records), excluded=excluded, truncated=truncated)
 

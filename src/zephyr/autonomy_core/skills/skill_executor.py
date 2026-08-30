@@ -15,6 +15,113 @@
 # [A_module] module_id=MOD-INF-019 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: skill_id 参数
+#   fields: 参数 skill_id（无注解）
+#   code: skill_executor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: label 参数
+#   fields: 参数 label（无注解）
+#   code: skill_executor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① VersionCheckpoint
+#   name_en: VersionCheckpoint
+#   intro: Skill 加载前创建回滚检查点
+#   desc: Skill 加载前创建回滚检查点；公共方法（定义序）: to_dict；源码 L145-L159
+#   inputs: skill_id label
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② RollbackManager
+#   name_en: RollbackManager
+#   intro: 对接 MOD-INF-021 回滚模块
+#   desc: 对接 MOD-INF-021 回滚模块；公共方法（定义序）: create_checkpoint, rollback；源码 L162-L175
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ AuditEvent
+#   name_en: AuditEvent
+#   intro: 对接 MOD-INF-020 审计追溯模块
+#   desc: 对接 MOD-INF-020 审计追溯模块；公共方法（定义序）: to_entry；源码 L178-L204
+#   inputs: event_type skill_id
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ GateResult
+#   name_en: GateResult
+#   intro: G0-G9 门控引擎结果
+#   desc: G0-G9 门控引擎结果；公共方法（定义序）: to_dict；源码 L207-L216
+#   inputs: gate_id passed message
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ PermissionLevel
+#   name_en: PermissionLevel
+#   intro: class PermissionLevel 源码 L219-L232
+#   desc: 公共方法（定义序）: get_tools；源码 L219-L232
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ BudgetEnforcer
+#   name_en: BudgetEnforcer
+#   intro: 对接 MOD-INF-024 预算强制执行
+#   desc: 对接 MOD-INF-024 预算强制执行；公共方法（定义序）: check, downgrade；源码 L235-L259
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A7
+#   name_zh: ⑦ SkillFeedbackLoop
+#   name_en: SkillFeedbackLoop
+#   intro: 对接 MOD-FEEDBACK_LOOP 反馈闭环——五阶段闭环
+#   desc: 对接 MOD-FEEDBACK_LOOP 反馈闭环——五阶段闭环；公共方法（定义序）: predict, detect, diagnose, act, verify；源码 L262-L283
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A8
+#   name_zh: ⑧ EscalationHandler
+#   name_en: EscalationHandler
+#   intro: 对接 MOD-INF-022 升级协议
+#   desc: 对接 MOD-INF-022 升级协议；公共方法（定义序）: escalate, determine_level；源码 L286-L309
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A9
+#   name_zh: ⑨ ScriptCollector
+#   name_en: ScriptCollector
+#   intro: 对接 MOD-INF-005 脚本系统——Skill 脚本输出采集为 Finding
+#   desc: 对接 MOD-INF-005 脚本系统——Skill 脚本输出采集为 Finding；公共方法（定义序）: collect；源码 L312-L325
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A10
+#   name_zh: ⑩ SkillExecutor
+#   name_en: SkillExecutor
+#   intro: Skill 执行引擎——八项跨模块集成编排
+#   desc: Skill 执行引擎——八项跨模块集成编排；公共方法（定义序）: write_audit, core_writer, infer_permission, execute, get_audit_trail；源码 L328…
+#   inputs: loader
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（10 定义）
+#   name_en: public defs
+#   intro: VersionCheckpoint, RollbackManager, AuditEvent, GateResult, PermissionLevel, Bu…
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> A10
+# A10 --> O1
+"""
+
 import logging
 
 logger = logging.getLogger(__name__)

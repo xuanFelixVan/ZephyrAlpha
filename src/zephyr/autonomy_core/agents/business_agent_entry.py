@@ -14,7 +14,8 @@
 # [TESTS] tests/autonomy/test_execution_layer_agent_entries.py ; tests/autonomy/test_business_g04_ops_check.py
 # [A_module] module_id=MOD-EXE-BIZ-001 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""业务 Agent 薄入口（14号文 §3.2 因子/策略/组合运营，§4 S0.3 手动形态 + S1.3 G04 核对）.
+"""
+业务 Agent 薄入口（14号文 §3.2 因子/策略/组合运营，§4 S0.3 手动形态 + S1.3 G04 核对）.
 
 kind=registration_status（默认）：factor/strategy registry 状态汇总+单条目登记状态；
 kind=factor_candidate_eval：status=candidate 候选条目评估建议文本；
@@ -22,6 +23,76 @@ kind=g04_strategy_ops_check（S1.3）：20号文首批三策略（打板/多因�
 注册表+组件在位核对（薄委派 _g04_ops_check）。产出物一律"仅建议"（advice_only=
 true），不做自动交易决策/下单（交易决策属交易决策侧，§5-3）。
 手动触发：python -m zephyr.autonomy_core.agents.business_agent_entry --ticket <path>
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: ticket 参数
+#   fields: 参数 ticket，类型注解 dict[str, Any]
+#   code: business_agent_entry.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: runtime_dir 参数
+#   fields: 参数 runtime_dir（无注解）
+#   code: business_agent_entry.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: repo_root 参数
+#   fields: 参数 repo_root（无注解）
+#   code: business_agent_entry.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: argv 参数
+#   fields: 参数 argv，类型注解 list[str] | None
+#   code: business_agent_entry.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① query_registration_status
+#   name_en: query_registration_status
+#   intro: 样例①：注册状态查询（读 factor/strategy registry 状态汇总，端到端落盘）.
+#   desc: 样例①：注册状态查询（读 factor/strategy registry 状态汇总，端到端落盘）.；源码 L166-L207
+#   inputs: ticket runtime_dir repo_root
+#   outputs: dict[str, Any]
+# - id: A2
+#   name_zh: ② draft_factor_candidate_evaluation
+#   name_en: draft_factor_candidate_evaluation
+#   intro: 样例②：因子候选评估工单（读候选条目出评估建议文本，仅建议）.
+#   desc: 样例②：因子候选评估工单（读候选条目出评估建议文本，仅建议）.；源码 L210-L242
+#   inputs: ticket runtime_dir repo_root
+#   outputs: dict[str, Any]
+# - id: A3
+#   name_zh: ③ run_g04_strategy_ops_check
+#   name_en: run_g04_strategy_ops_check
+#   intro: S1.3 G04 三策略运营核对工单（20号文打板/多因子/事件驱动；
+#   desc: S1.3 G04 三策略运营核对工单（20号文打板/多因子/事件驱动；薄委派 _g04_ops_check）.；源码 L265-L269
+#   inputs: ticket
+#   outputs: dict[str, Any]
+# - id: A4
+#   name_zh: ④ main
+#   name_en: main
+#   intro: CLI 手动触发入口：--ticket <工单 JSON 路径> [--runtime-dir DIR].
+#   desc: CLI 手动触发入口：--ticket <工单 JSON 路径> [--runtime-dir DIR].；源码 L272-L289
+#   inputs: argv
+#   outputs: int
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, Any]
+#   name_en: dict[str, Any]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests/autonomy/test_execution_layer_agent_entries.py ; tests/autonomy/test_busi…
+# - id: O2
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests/autonomy/test_execution_layer_agent_entries.py ; tests/autonomy/test_busi…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations
@@ -39,26 +110,45 @@ from zephyr.autonomy_core.agents._run_store import AgentRunStore
 ROLE: Final[str] = "business"
 _REPO_ROOT: Final[Path] = Path(__file__).resolve().parents[4]
 _REGISTRIES: Final[dict[str, tuple[str, str, str]]] = {
-    "factor": ("docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml",
-               "factors", "factor_id"),
-    "strategy": ("docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml",
-                 "strategies", "strategy_id"),
+    "factor": ("docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml", "factors", "factor_id"),
+    "strategy": (
+        "docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml",
+        "strategies",
+        "strategy_id",
+    ),
 }
 ADVICE_ONLY_DISCLAIMER: Final[str] = "仅建议：本产出为运营辅助建议，不构成任何交易指令，落地需人审。"
 
 AGENT_CARD: Final[dict[str, Any]] = {
     "role": ROLE,
     "capabilities": [
-        {"id": "registration_status_query", "name": "因子/策略注册状态查询",
-         "inputs": "注册表真源（只读）", "outputs": "注册状态报告（落盘）", "autonomyLevel": "L0_manual"},
-        {"id": "factor_candidate_eval", "name": "因子候选评估工单起草",
-         "inputs": "候选条目（status=candidate）", "outputs": "评估建议工单（仅建议）", "autonomyLevel": "L0_manual"},
-        {"id": "g04_strategy_ops_check", "name": "S1.3 G04 三策略运营核对",
-         "inputs": "注册表+组件在位（只读）", "outputs": "核对报告（仅建议）", "autonomyLevel": "L0_manual"},
+        {
+            "id": "registration_status_query",
+            "name": "因子/策略注册状态查询",
+            "inputs": "注册表真源（只读）",
+            "outputs": "注册状态报告（落盘）",
+            "autonomyLevel": "L0_manual",
+        },
+        {
+            "id": "factor_candidate_eval",
+            "name": "因子候选评估工单起草",
+            "inputs": "候选条目（status=candidate）",
+            "outputs": "评估建议工单（仅建议）",
+            "autonomyLevel": "L0_manual",
+        },
+        {
+            "id": "g04_strategy_ops_check",
+            "name": "S1.3 G04 三策略运营核对",
+            "inputs": "注册表+组件在位（只读）",
+            "outputs": "核对报告（仅建议）",
+            "autonomyLevel": "L0_manual",
+        },
     ],
-    "autonomyBoundaries": {"ai_modifiable": [],
-                           "human_gated": ["全部产出（仅建议，人审后方可施工）"],
-                           "immutable": ["交易决策/下单（属交易决策侧）", "注册表本体"]},
+    "autonomyBoundaries": {
+        "ai_modifiable": [],
+        "human_gated": ["全部产出（仅建议，人审后方可施工）"],
+        "immutable": ["交易决策/下单（属交易决策侧）", "注册表本体"],
+    },
     "healthCheck": {"heartbeat": "manual_trigger_only"},
 }
 
@@ -101,12 +191,19 @@ def query_registration_status(
             "entry": hit,
             "entry_found": (hit is not None) if wanted else None,
         }
-    report = {"kind": "registration_status", "advice_only": True,
-              "disclaimer": ADVICE_ONLY_DISCLAIMER, "registries": registries}
+    report = {
+        "kind": "registration_status",
+        "advice_only": True,
+        "disclaimer": ADVICE_ONLY_DISCLAIMER,
+        "registries": registries,
+    }
     store.write_output("registration_status.json", report, ticket_id)
     missing = any(r.get("status") == "evidence_missing" for r in registries.values())
-    store.finish(ticket_id, "evidence_missing" if missing else "completed",
-                 {k: v.get("total_entries") for k, v in registries.items()})
+    store.finish(
+        ticket_id,
+        "evidence_missing" if missing else "completed",
+        {k: v.get("total_entries") for k, v in registries.items()},
+    )
     return report
 
 
@@ -131,9 +228,15 @@ def draft_factor_candidate_evaluation(
     limit = int(ticket.get("limit") or 3)
     suggestions = [_candidate_advice(e) for e in pool[:limit]]
     status = "completed" if entries else "evidence_missing"
-    report = {"kind": "factor_candidate_eval", "advice_only": True,
-              "disclaimer": ADVICE_ONLY_DISCLAIMER, "status": status, "registry": rel,
-              "candidate_pool_size": len(pool), "candidates": suggestions}
+    report = {
+        "kind": "factor_candidate_eval",
+        "advice_only": True,
+        "disclaimer": ADVICE_ONLY_DISCLAIMER,
+        "status": status,
+        "registry": rel,
+        "candidate_pool_size": len(pool),
+        "candidates": suggestions,
+    }
     store.write_output("factor_candidate_eval.json", report, ticket_id)
     store.finish(ticket_id, status, {"evaluated": len(suggestions), "pool": len(pool)})
     return report
@@ -150,9 +253,13 @@ def _candidate_advice(entry: dict[str, Any]) -> dict[str, Any]:
         gaps.append("code_path 未落地（设计态），建议登记代码锚点后再进候选评审")
     if not gaps:
         gaps.append("登记字段齐备，建议进人工候选评审（回测口径复核）")
-    return {"factor_id": entry.get("factor_id"), "name": entry.get("name"),
-            "factor_class": entry.get("factor_class"),
-            "suggestion_zh": "；".join(gaps) + "。（仅建议，人审定夺）", "human_gated": True}
+    return {
+        "factor_id": entry.get("factor_id"),
+        "name": entry.get("name"),
+        "factor_class": entry.get("factor_class"),
+        "suggestion_zh": "；".join(gaps) + "。（仅建议，人审定夺）",
+        "human_gated": True,
+    }
 
 
 def run_g04_strategy_ops_check(ticket: dict[str, Any], **kwargs: Any) -> dict[str, Any]:
@@ -178,8 +285,7 @@ def main(argv: list[str] | None = None) -> int:
     if handler is None:
         raise ValueError(f"未知业务工单 kind: {ticket.get('kind')!r}")
     report = handler(ticket, runtime_dir=args.runtime_dir)
-    print(json.dumps({"kind": report["kind"], "advice_only": report["advice_only"]},
-                     ensure_ascii=False))
+    print(json.dumps({"kind": report["kind"], "advice_only": report["advice_only"]}, ensure_ascii=False))
     return 0
 
 

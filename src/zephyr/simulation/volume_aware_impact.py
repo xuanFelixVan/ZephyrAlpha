@@ -20,7 +20,8 @@
 # A2: volume_aware_sqrt_impact_batch(逐标的批量形式, NAV loop rebalance_cost 用)
 # O1: impact 成本率(标量或list[float], 占notional比例)
 # [/ALGO_FLOW]
-"""citrusquant volume-aware sqrt impact 形式模块(53号 §3.2 v2.0 候选)
+"""
+citrusquant volume-aware sqrt impact 形式模块(53号 §3.2 v2.0 候选)
 
 职责:
   - citrusquant #19(2026-07-10 合并)的 square-root impact 工程实现形式——
@@ -42,6 +43,61 @@
   - 纯函数无副作用, 输入注入式
 
 SSoT: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/53_simulation_live_path.md §3.2
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: delta_weight 参数
+#   fields: 参数 delta_weight，类型注解 float
+#   code: volume_aware_impact.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: notional 参数
+#   fields: 参数 notional，类型注解 float
+#   code: volume_aware_impact.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: dollar_volume 参数
+#   fields: 参数 dollar_volume，类型注解 float
+#   code: volume_aware_impact.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: impact_coef 参数
+#   fields: 参数 impact_coef，类型注解 float
+#   code: volume_aware_impact.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① volume_aware_sqrt_impact
+#   name_en: volume_aware_sqrt_impact
+#   intro: citrusquant 形式单标的 sqrt impact 成本率
+#   desc: citrusquant 形式单标的 sqrt impact 成本率 impact = impact_coef × sqrt(|Δw| × notional / dollar_vo…；源码 L138-L180
+#   inputs: delta_weight notional dollar_volume impact_coef
+#   outputs: float
+# - id: A2
+#   name_zh: ② volume_aware_sqrt_impact_batch
+#   name_en: volume_aware_sqrt_impact_batch
+#   intro: citrusquant 形式批量 impact(NAV loop rebalance_cost 用)
+#   desc: citrusquant 形式批量 impact(NAV loop rebalance_cost 用) Args: delta_weights: 各标的权重变化列表 notiona…；源码 L183-L210
+#   inputs: delta_weights notional dollar_volumes impact_coef
+#   outputs: list[float]
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 预留(portfolio-rebalance级撮合升级时评估采纳, 53号§3.2 v2.0候选)
+# - id: O2
+#   name_zh: list[float]
+#   name_en: list[float]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 预留(portfolio-rebalance级撮合升级时评估采纳, 53号§3.2 v2.0候选)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -148,4 +204,7 @@ def volume_aware_sqrt_impact_batch(
         raise VolumeAwareImpactError(
             f"delta_weights与dollar_volumes长度必须一致, got {len(delta_weights)} vs {len(dollar_volumes)}"
         )
-    return [volume_aware_sqrt_impact(dw, notional, dv, impact_coef) for dw, dv in zip(delta_weights, dollar_volumes)]
+    return [
+        volume_aware_sqrt_impact(dw, notional, dv, impact_coef)
+        for dw, dv in zip(delta_weights, dollar_volumes, strict=False)
+    ]

@@ -32,7 +32,8 @@
 # A3 --> O1
 # A4 --> O1
 # [/ALGO_FLOW]
-"""C-013 外部指令盯盘 — 人工指令通道 (MOD-TRADING-011, CAND-TRD-003, B1-00192)。
+"""
+C-013 外部指令盯盘 — 人工指令通道 (MOD-TRADING-011, CAND-TRD-003, B1-00192)。
 
 OMS 手工单通道判定核心：
   ① 指令 schema 校验（标的/方向/数量/时限/操作人，frozen，Fail-Closed）；
@@ -52,6 +53,48 @@ OMS 手工单通道判定核心：
 
 SSoT: docs/03_modules/_domain_trading/manual_instruction_channel/blueprint.md
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: premarket_check_fn 参数
+#   fields: 参数 premarket_check_fn（无注解）
+#   code: manual_instruction_channel.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: risk_check_fn 参数
+#   fields: 参数 risk_check_fn（无注解）
+#   code: manual_instruction_channel.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: audit_sink 参数
+#   fields: 参数 audit_sink（无注解）
+#   code: manual_instruction_channel.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: alert_sink 参数
+#   fields: 参数 alert_sink（无注解）
+#   code: manual_instruction_channel.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ManualInstructionChannel
+#   name_en: ManualInstructionChannel
+#   intro: 人工指令通道（录入裁决 + 执行回报对账 + 全程审计）。
+#   desc: 人工指令通道（录入裁决 + 执行回报对账 + 全程审计）。 Args: premarket_check_fn: 盘前边界闸探针（() → ready: bool；委托 MOD-E…；公共方法（定义序）: intake,…
+#   inputs: premarket_check_fn risk_check_fn audit_sink alert_sink clock qty_tole…
+#   outputs: 返回值
+#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（8 定义）
+#   name_en: public defs
+#   intro: ManualInstructionChannel
+#   downstream: 录入面(CLI/前端装配批); track_fusion 轨道3人工指令(MOD-PLAN-020 下游消费); 执行委托 ex_core trading_s…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -199,7 +242,9 @@ class ManualInstructionChannel:
 
     # ── 内部：审计/告警出口（异常吞没不阻断主链） ─────────────────
     def _emit(self, events: list[InstructionAuditEvent], stage: str, outcome: str, detail: str) -> None:
-        event = InstructionAuditEvent(seq=len(events) + 1, stage=stage, outcome=outcome, detail=detail, at=self._clock())
+        event = InstructionAuditEvent(
+            seq=len(events) + 1, stage=stage, outcome=outcome, detail=detail, at=self._clock()
+        )
         events.append(event)
         if self._audit_sink is not None:
             try:
@@ -220,7 +265,9 @@ class ManualInstructionChannel:
         """录入裁决：边界闸 → 风控闸（全量评估），ACCEPTED/REJECTED + 审计链。"""
         events: list[InstructionAuditEvent] = []
         iid = instruction.instruction_id
-        self._emit(events, "RECEIVED", "OK", f"指令接收 id={iid} symbol={instruction.symbol} side={instruction.side.value}")
+        self._emit(
+            events, "RECEIVED", "OK", f"指令接收 id={iid} symbol={instruction.symbol} side={instruction.side.value}"
+        )
 
         # 边界闸（盘前就绪，委托 MOD-EX-063；Fail-Closed）
         pre_fail: tuple[str, str] | None = None
@@ -284,7 +331,9 @@ class ManualInstructionChannel:
                 filled = Decimal(str(filled))
             except Exception:  # noqa: BLE001
                 self._alert(f"执行回报数量非法 id={iid}: {filled!r}")
-                return ExecutionReconReport(iid, ReconStatus.PROBE_ERROR, expected, Decimal("0"), f"bad filled_quantity: {filled!r}")
+                return ExecutionReconReport(
+                    iid, ReconStatus.PROBE_ERROR, expected, Decimal("0"), f"bad filled_quantity: {filled!r}"
+                )
         if abs(filled - expected) > self._qty_tolerance:
             events: list[InstructionAuditEvent] = []
             detail = f"对账不一致 id={iid} expected={expected} filled={filled} tol={self._qty_tolerance}"

@@ -28,6 +28,32 @@ Skill 自学习引擎
   2. DeltaComputation: 计算与期望输出的偏离量
   3. ConstraintReinforcement: 发现新模式后追加约束
   4. LearningCurve: 追踪学习进步曲线
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: skill_learning.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SkillLearning
+#   name_en: SkillLearning
+#   intro: Skill 自学习引擎
+#   desc: Skill 自学习引擎；公共方法（定义序）: learned_patterns, learning_history, session_deltas, add_execution, get_learning, sugge…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SkillLearning
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

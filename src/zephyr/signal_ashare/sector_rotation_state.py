@@ -23,7 +23,8 @@
 # A2: watch_score 映射(-0.10/-0.08/+0.03/+0.01/0.00 注入板块强度综合层统一加减)
 # O1: RotationState 5 选 1 + watch_score
 # [/ALGO_FLOW]
-"""板块轮动状态 5 分类（22 号 spec §3.1⑨，每日盘后市场级快照）。
+"""
+板块轮动状态 5 分类（22 号 spec §3.1⑨，每日盘后市场级快照）。
 
 4 维输入规则映射 → 5 选 1 状态 + watch_score 加减分注入板块强度综合层
 （全板块强度分统一加减，不进仓位分配层，与 regime 边界一致）。
@@ -34,6 +35,69 @@ z-score 相对阈值精判极端分化，可串联。与 regime 12 态正交：r
 
 阈值（hhi 0.20/0.25/0.30、up_ratio 0.40/0.70、streak 3）为初拟
 （legulegu/rebuildingsociety 2026 依据），待 2026 实盘标定（spec §6 待裁定）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: turnovers 参数
+#   fields: 参数 turnovers，类型注解 list[float]
+#   code: sector_rotation_state.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: n 参数
+#   fields: 参数 n，类型注解 int
+#   code: sector_rotation_state.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: up_ratio 参数
+#   fields: 参数 up_ratio，类型注解 float
+#   code: sector_rotation_state.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: hhi_top5 参数
+#   fields: 参数 hhi_top5，类型注解 float
+#   code: sector_rotation_state.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① top_n_hhi
+#   name_en: top_n_hhi
+#   intro: 头部 N 成交额份额平方和 HHI（5 状态用 N=5；空列表/总额 ≤0 → 0.0）。
+#   desc: 头部 N 成交额份额平方和 HHI（5 状态用 N=5；空列表/总额 ≤0 → 0.0）。；源码 L143-L149
+#   inputs: turnovers n
+#   outputs: float
+# - id: A2
+#   name_zh: ② classify_rotation_state
+#   name_en: classify_rotation_state
+#   intro: 4 维输入 → 规则映射 5 状态（优先级从高到低，命中即定）。
+#   desc: 4 维输入 → 规则映射 5 状态（优先级从高到低，命中即定）。 Args: up_ratio: 上涨板块数 / 全板块数。 hhi_top5: 头部 5 板块成交额份额平方和（…；源码 L152-L179
+#   inputs: up_ratio hhi_top5 lead_streak disp_signal fast_rotation
+#   outputs: RotationState
+# - id: A3
+#   name_zh: ③ watch_score
+#   name_en: watch_score
+#   intro: 状态 → watch_score 加减分（CONSENSUS_CLIMAX −0.08 / DISTRIBUTION_…
+#   desc: 状态 → watch_score 加减分（CONSENSUS_CLIMAX −0.08 / DISTRIBUTION_RISK −0.10 等）。；源码 L182-L184
+#   inputs: state
+#   outputs: float
+#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 G05 选股引擎 / 板块强度综合层市场级调节项 / sector_gate 水温联动)
+# - id: O2
+#   name_zh: RotationState
+#   name_en: RotationState
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 G05 选股引擎 / 板块强度综合层市场级调节项 / sector_gate 水温联动)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

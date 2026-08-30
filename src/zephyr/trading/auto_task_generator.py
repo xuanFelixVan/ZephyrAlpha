@@ -31,6 +31,48 @@ AutoTaskGenerator — 自动任务生成器
     - 每次 MAPE-K 调和周期生成一批任务
     - 维护已处理文件去重表，避免重复提交
     - 限制每批任务数量，防止队列膨胀
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: scheduler 参数
+#   fields: 参数 scheduler，类型注解 LocalModelScheduler | None
+#   code: auto_task_generator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AutoTaskGenerator
+#   name_en: AutoTaskGenerator
+#   intro: 自动任务生成器——扫描项目 -> 生成推理任务 -> 送入调度器。
+#   desc: 自动任务生成器——扫描项目 -> 生成推理任务 -> 送入调度器。；公共方法（定义序）: root, max_batch, max_queue_depth, cooldown, file_queue, last_sca…
+#   inputs: project_root max_batch max_queue_depth cooldown_s
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② set_scheduler
+#   name_en: set_scheduler
+#   intro: 注入 LocalModelScheduler 实例（由 AutoRuntimeCore/PipelineOrchest…
+#   desc: 注入 LocalModelScheduler 实例（由 AutoRuntimeCore/PipelineOrchestrator 启动时调用）。 AutoTaskGenerato…；源码 L365-L376
+#   inputs: scheduler
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ subscribe_eventbus
+#   name_en: subscribe_eventbus
+#   intro: 订阅 task_completed 事件——任务完成后自动生成新任务填满队列。
+#   desc: 订阅 task_completed 事件——任务完成后自动生成新任务填满队列。 boot_hooks 的 _subscribe_eventbus_consumers() 统一调用…；源码 L379-L402
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: AutoTaskGenerator, set_scheduler, subscribe_eventbus
+#   downstream: zephyr.trading.boot_hooks._subscribe_eventbus_consumers
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

@@ -15,11 +15,54 @@
 # [A_module] module_id=MOD-INF-035 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Protocol-based interface layer for runtime->pipeline dependency abstraction.
+"""
+Protocol-based interface layer for runtime->pipeline dependency abstraction.
 
 Breaks the deep dependency chain: runtime->pipeline->mcp->rollback->llm_security->shared.schema
 by defining structural interfaces that runtime depends on instead of importing
 pipeline concrete implementations directly.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: ports.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① PipelineDispatcherProtocol
+#   name_en: PipelineDispatcherProtocol
+#   intro: Structural interface for pipeline task dispatching.
+#   desc: Structural interface for pipeline task dispatching. Runtime depends on this protocol inst…；公共方法（定义序）: dispatc…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② PipelineStatusReporterProtocol
+#   name_en: PipelineStatusReporterProtocol
+#   intro: Structural interface for pipeline status reporting.
+#   desc: Structural interface for pipeline status reporting. Runtime depends on this protocol inst…；公共方法（定义序）: get_sta…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ TaskDispatchProtocol
+#   name_en: TaskDispatchProtocol
+#   intro: Structural interface for task dispatch handler used by runt…
+#   desc: Structural interface for task dispatch handler used by runtime task queue.；公共方法（定义序）: handle；源码 L105-L108
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: PipelineDispatcherProtocol, PipelineStatusReporterProtocol, TaskDispatchProtocol
+#   downstream: zephyr.trading.auto_runtime_core;zephyr.trading.work_orchestrator
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

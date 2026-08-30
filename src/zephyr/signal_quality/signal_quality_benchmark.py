@@ -14,7 +14,8 @@
 # [TESTS] tests/signal_quality/test_signal_quality_benchmark.py
 # [A_module] module_id=MOD-SIGQC-005 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""SignalQualityBenchmark — 信号质量基准对比器（MOD-SIGQC-005）。
+"""
+SignalQualityBenchmark — 信号质量基准对比器（MOD-SIGQC-005）。
 
 B14-04630（AUD-DRAFT-001-DIGEST P2 波 P2-W15，CAND-SIGQC-004，A9
 D-SIGNAL-157）：当前 IC/覆盖率/稳定性 vs 滚动历史基线与基准策略（buy-hold
@@ -24,6 +25,48 @@ D-SIGNAL-157）：当前 IC/覆盖率/稳定性 vs 滚动历史基线与基准�
 降级检测（基线=自身历史窗）；signal_degradation_monitor（MOD-SIGQC-004）
 =三指标滚动窗阈值监控；本件=跨参照系对比（历史基线 + 外部基准策略序列）
 与周度报告，零交集。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: benchmark_series 参数
+#   fields: 参数 benchmark_series（无注解）
+#   code: signal_quality_benchmark.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: baseline_window 参数
+#   fields: 参数 baseline_window（无注解）
+#   code: signal_quality_benchmark.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: deviation_threshold 参数
+#   fields: 参数 deviation_threshold（无注解）
+#   code: signal_quality_benchmark.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: signal_quality_benchmark.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SignalQualityBenchmark
+#   name_en: SignalQualityBenchmark
+#   intro: 信号质量基准对比器（纯内存/DI）。
+#   desc: 信号质量基准对比器（纯内存/DI）。 - 基准策略：buy-hold 语义，经 benchmark_series（基准 IC 序列）注入， 代表值 = 序列均值。 - 历史基线：…；公共方法（定义序）: benchma…
+#   inputs: benchmark_series baseline_window deviation_threshold clock alert_sink
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: SignalQualityBenchmark
+#   downstream: 运行时装配批（周度对比报告 / 偏离告警接 alert 路由）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -149,11 +192,7 @@ class SignalQualityBenchmark:
         if not benchmark_series:
             raise SignalBenchmarkError("benchmark_series 为空（基准策略须注入基准序列）")
         for value in benchmark_series:
-            if (
-                isinstance(value, bool)
-                or not isinstance(value, (int, float))
-                or not -1.0 <= float(value) <= 1.0
-            ):
+            if isinstance(value, bool) or not isinstance(value, (int, float)) or not -1.0 <= float(value) <= 1.0:
                 raise SignalBenchmarkError(f"基准序列值须在 [-1,1]，实际 {value!r}")
         if baseline_window < 1:
             raise SignalBenchmarkError(f"baseline_window 须 ≥1，实际 {baseline_window!r}")
@@ -225,9 +264,7 @@ class SignalQualityBenchmark:
             raise SignalBenchmarkError("strategy_id 为空")
         hist = self._history_of(strategy_id)
         if len(hist) < 2:
-            raise SignalBenchmarkError(
-                f"历史基线不足: {strategy_id!r} 需 ≥2 期快照，实际 {len(hist)}"
-            )
+            raise SignalBenchmarkError(f"历史基线不足: {strategy_id!r} 需 ≥2 期快照，实际 {len(hist)}")
         current = hist[-1]
         baseline = list(hist)[:-1]
         n = len(baseline)

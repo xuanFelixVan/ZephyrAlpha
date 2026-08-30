@@ -14,7 +14,8 @@
 # [TESTS] tests/simulation/test_overfitting_protection_gate.py
 # [A_module] module_id=MOD-SIM-028 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""OverfittingProtectionGate — 过拟合系统性防护门禁（MOD-SIM-028）。
+"""
+OverfittingProtectionGate — 过拟合系统性防护门禁（MOD-SIM-028）。
 
 B1-00261（AUD-DRAFT-001-DIGEST P2 波 P2-W08，CAND-SIM-009，C2 C-033）：
 **四层防护统一门禁**——因子层（IC 衰减 + 多重检验校正）/ 策略层
@@ -26,6 +27,33 @@ B1-00261（AUD-DRAFT-001-DIGEST P2 波 P2-W08，CAND-SIM-009，C2 C-033）：
 overfitting_guard=预注册/WFE 方法论栈（本件不重算指标，各层算法经注入
 检查器消费其语义）；本件=检查项注册/编排/统一裁决/报告协议面，检查器
 全注入，缺层 Fail-Closed 不放行。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: overfitting_protection_gate.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① OverfittingProtectionGate
+#   name_en: OverfittingProtectionGate
+#   intro: 四层过拟合防护统一门禁（注册表 + 编排 + 裁决 + 报告）。
+#   desc: 四层过拟合防护统一门禁（注册表 + 编排 + 裁决 + 报告）。；公共方法（定义序）: register_check, checks_of, evaluate；源码 L161-L270
+#   inputs: clock
+#   outputs: 返回值
+#   （注：A1 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（9 定义）
+#   name_en: public defs
+#   intro: OverfittingProtectionGate
+#   downstream: 运行时装配批（因子/策略/信号/ML 四层检查器绑定 / 上线前统一裁决装配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -61,10 +89,10 @@ class OverfittingGateError(Exception):
 class ProtectionLayer(str, Enum):
     """防护层（词表闭合）。"""
 
-    FACTOR = "factor"      # 因子层：IC 衰减 + 多重检验校正
+    FACTOR = "factor"  # 因子层：IC 衰减 + 多重检验校正
     STRATEGY = "strategy"  # 策略层：deflated SR + PBO
-    SIGNAL = "signal"      # 信号层：walkforward 折叠一致性
-    ML = "ml"              # ML 层：OOS 退化 + 对抗
+    SIGNAL = "signal"  # 信号层：walkforward 折叠一致性
+    ML = "ml"  # ML 层：OOS 退化 + 对抗
 
 
 class CheckStatus(str, Enum):
@@ -189,9 +217,7 @@ class OverfittingProtectionGate:
         ctx: Mapping = payload if payload is not None else {}
         for layer in _LAYER_ORDER:
             if not self._checks[layer]:
-                raise OverfittingGateError(
-                    f"防护层 {layer.value!r} 无注册检查项（防护不完整，Fail-Closed 拒绝裁决）"
-                )
+                raise OverfittingGateError(f"防护层 {layer.value!r} 无注册检查项（防护不完整，Fail-Closed 拒绝裁决）")
 
         verdicts: list[LayerVerdict] = []
         blocked: list[str] = []
@@ -210,15 +236,22 @@ class OverfittingProtectionGate:
                 status = CheckStatus.PASSED if passed else CheckStatus.FAILED
                 if not passed:
                     blocked.append(check_id)
-                results.append(CheckResult(
-                    check_id=check_id, layer=layer, status=status,
-                    metrics=metrics, detail=detail,
-                ))
-            verdicts.append(LayerVerdict(
-                layer=layer,
-                passed=all(r.status is CheckStatus.PASSED for r in results),
-                results=tuple(results),
-            ))
+                results.append(
+                    CheckResult(
+                        check_id=check_id,
+                        layer=layer,
+                        status=status,
+                        metrics=metrics,
+                        detail=detail,
+                    )
+                )
+            verdicts.append(
+                LayerVerdict(
+                    layer=layer,
+                    passed=all(r.status is CheckStatus.PASSED for r in results),
+                    results=tuple(results),
+                )
+            )
 
         decision = GateDecision.APPROVED if not blocked else GateDecision.BLOCKED
         report = ProtectionReport(
@@ -230,6 +263,8 @@ class OverfittingProtectionGate:
         )
         _log.info(
             "过拟合防护裁决: subject=%s decision=%s blocked_by=%s",
-            subject_id, decision.value, report.blocked_by,
+            subject_id,
+            decision.value,
+            report.blocked_by,
         )
         return report

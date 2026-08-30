@@ -14,7 +14,8 @@
 # [TESTS] tests/risk/test_var_data_prefetcher.py
 # [A_module] module_id=MOD-RK-043 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""VarDataPrefetcher — VaR 数据预取器（MOD-RK-043）。
+"""
+VarDataPrefetcher — VaR 数据预取器（MOD-RK-043）。
 
 B13-04254（AUD-DRAFT-001-DIGEST P2 波 P2-W09，CAND-RSK-047，A3 D-DATA-44）：
 VaR 计算数据预取——DuckDB 读 Parquet 批量预取（持仓相关收益率序列，duckdb
@@ -25,6 +26,56 @@ VaR 计算数据预取——DuckDB 读 Parquet 批量预取（持仓相关收益
 做分位数计算）；var_query_builder=参数化 SQL 生成+结果缓存（本件=批量预取
 +环形缓冲，缓存键语义对齐但不共用实现）；risk_data_pipeline=风控数据管道
 编排（本件=单职责预取件，不做管道编排）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: duckdb_conn 参数
+#   fields: 参数 duckdb_conn（无注解）
+#   code: var_data_prefetcher.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: parquet_path 参数
+#   fields: 参数 parquet_path（无注解）
+#   code: var_data_prefetcher.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: capacity 参数
+#   fields: 参数 capacity（无注解）
+#   code: var_data_prefetcher.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: time_source 参数
+#   fields: 参数 time_source（无注解）
+#   code: var_data_prefetcher.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① PrefetchMetrics
+#   name_en: PrefetchMetrics
+#   intro: 预取指标快照（命中率/IO 耗时，frozen）。
+#   desc: 预取指标快照（命中率/IO 耗时，frozen）。；公共方法（定义序）: hit_rate；源码 L108-L122
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② VarDataPrefetcher
+#   name_en: VarDataPrefetcher
+#   intro: VaR 数据预取器（DuckDB 批量预取 + 环形缓冲容量护栏 + 指标）。
+#   desc: VaR 数据预取器（DuckDB 批量预取 + 环形缓冲容量护栏 + 指标）。；公共方法（定义序）: prefetch, get_returns, contains, clear, metrics；源码 L143-L2…
+#   inputs: duckdb_conn parquet_path capacity time_source
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: PrefetchMetrics, VarDataPrefetcher
+#   downstream: 运行时装配批（VaR计算前批量预取装配 / 与查询构建器共用缓存语义）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -134,9 +185,7 @@ class VarDataPrefetcher:
         )
         t0 = self._time()
         try:
-            rows: Sequence = self._conn.execute(
-                sql, [self._parquet_path, *symbol_list]
-            ).fetchall()
+            rows: Sequence = self._conn.execute(sql, [self._parquet_path, *symbol_list]).fetchall()
         except VarPrefetchError:
             raise
         except Exception as exc:  # noqa: BLE001 — IO 失败统一 Fail-Closed 包装

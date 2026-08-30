@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-SIG-052 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""自适应保形 TCP-RM/DDCI（MOD-SIG-052，91 号 memo BM-SEL-14-A）。
+"""
+自适应保形 TCP-RM/DDCI（MOD-SIG-052，91 号 memo BM-SEL-14-A）。
 
 MOD-SIG-044 rolling conformal（slow unweighted，Phase 0 基线）的**加权变体**
 （TCP-RM/DDCI 路线登记 Phase 2 远期）：校准残差带权重（如近期加权/regime 加权），
@@ -24,6 +25,33 @@ margin 跟随近期残差尺度收缩。
 
 轻量实现口径：加权 split-conformal 核心算法即可测交付；DDCI（分布漂移检测
 触发权重重置）留接口位（calibrate 可反复调用，权重由调用方供给）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: alpha 参数
+#   fields: 参数 alpha（无注解）
+#   code: adaptive_conformal_tcp_rm_ddci.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AdaptiveConformalTcpRmDdci
+#   name_en: AdaptiveConformalTcpRmDdci
+#   intro: 自适应保形（TCP-RM/DDCI 加权变体）。
+#   desc: 自适应保形（TCP-RM/DDCI 加权变体）。；公共方法（定义序）: margin, calibrate, predict_interval；源码 L96-L144
+#   inputs: alpha
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: AdaptiveConformalTcpRmDdci
+#   downstream: （远期：MOD-SIG-044 rolling 基线的加权升级消费方）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -79,7 +107,7 @@ class AdaptiveConformalTcpRmDdci:
     def margin(self) -> float | None:
         return self._margin
 
-    def calibrate(self, residuals: np.ndarray, weights: np.ndarray | None = None) -> "AdaptiveConformalTcpRmDdci":
+    def calibrate(self, residuals: np.ndarray, weights: np.ndarray | None = None) -> AdaptiveConformalTcpRmDdci:
         """校准加权安全缓冲。weights 缺省=均匀（退化为 split-conformal 口径）。"""
         r = np.asarray(residuals, dtype=float).ravel()
         if r.size == 0:

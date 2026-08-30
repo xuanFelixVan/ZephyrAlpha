@@ -15,7 +15,36 @@
 # [A_module] module_id=MOD-CONTEXT_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""checkpoint_manager.py — Inject 前快照 (DD100, TASK-019)"""
+"""
+checkpoint_manager.py — Inject 前快照 (DD100, TASK-019)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: store_dir 参数
+#   fields: 参数 store_dir（无注解）
+#   code: checkpoint_manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CheckpointManager
+#   name_en: CheckpointManager
+#   intro: Inject 前 snapshot; 回滚到注入前 (DD100).
+#   desc: Inject 前 snapshot; 回滚到注入前 (DD100).；公共方法（定义序）: save, restore；源码 L64-L81
+#   inputs: store_dir
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: CheckpointManager
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 import json
 from dataclasses import dataclass

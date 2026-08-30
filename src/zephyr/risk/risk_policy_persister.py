@@ -14,7 +14,8 @@
 # [TESTS] tests/risk/test_risk_policy_persister.py
 # [A_module] module_id=MOD-RK-044 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""RiskPolicyPersister — 风控策略持久化器（MOD-RK-044）。
+"""
+RiskPolicyPersister — 风控策略持久化器（MOD-RK-044）。
 
 B13-04311（AUD-DRAFT-001-DIGEST P2 波 P2-W09，CAND-RSK-048，A3 D-RISK-49）：
 风控策略 SQLite 持久化——risk_policy / risk_limit / risk_policy_version 三表
@@ -24,6 +25,38 @@ B13-04311（AUD-DRAFT-001-DIGEST P2 波 P2-W09，CAND-RSK-048，A3 D-RISK-49）�
 查重分工（蓝图 §0）：risk_limits=限额计算引擎接口（本件=限额的持久化与版本
 治理，不做限额计算）；var_calculator=VaR 计算（本件仅持久化限额键值）；运行
 时限额消费由运行时装配批注入同步校验，本件不直连组合优化器。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: conn 参数
+#   fields: 参数 conn（无注解）
+#   code: risk_policy_persister.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: risk_policy_persister.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RiskPolicyPersister
+#   name_en: RiskPolicyPersister
+#   intro: 风控策略持久化器（三表 DDL + 版本不可变 + 原子热加载 + 同步校验）。
+#   desc: 风控策略持久化器（三表 DDL + 版本不可变 + 原子热加载 + 同步校验）。；公共方法（定义序）: save_policy, activate, active_policy, get_version, list_v…
+#   inputs: conn clock
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: RiskPolicyPersister
+#   downstream: 运行时装配批（风控策略持久化装配 / 与 risk_limits 运行时限额双向同步校验）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -134,23 +167,20 @@ class RiskPolicyPersister:
     def _reload_active(self) -> None:
         """启动时从库内恢复激活指针（热加载语义）。"""
         rows = self._conn.execute(
-            "SELECT policy_id, version FROM risk_policy_version WHERE is_active = 1 "
-            "ORDER BY policy_id"
+            "SELECT policy_id, version FROM risk_policy_version WHERE is_active = 1 ORDER BY policy_id"
         ).fetchall()
         for policy_id, version in rows:
             self._active[policy_id] = self._load_version(policy_id, version)
 
     def _load_version(self, policy_id: str, version: int) -> PolicyVersion:
         row = self._conn.execute(
-            "SELECT created_at, is_active FROM risk_policy_version "
-            "WHERE policy_id = ? AND version = ?",
+            "SELECT created_at, is_active FROM risk_policy_version WHERE policy_id = ? AND version = ?",
             (policy_id, version),
         ).fetchone()
         if row is None:
             raise RiskPolicyError(f"未知策略版本: {policy_id!r} v{version}")
         limits_rows = self._conn.execute(
-            "SELECT limit_key, limit_value FROM risk_limit "
-            "WHERE policy_id = ? AND version = ? ORDER BY limit_key",
+            "SELECT limit_key, limit_value FROM risk_limit WHERE policy_id = ? AND version = ? ORDER BY limit_key",
             (policy_id, version),
         ).fetchall()
         return PolicyVersion(
@@ -186,19 +216,16 @@ class RiskPolicyPersister:
         try:
             with self._conn:  # 单事务原子落库
                 self._conn.execute(
-                    "INSERT OR IGNORE INTO risk_policy(policy_id, name, created_at) "
-                    "VALUES (?, ?, ?)",
+                    "INSERT OR IGNORE INTO risk_policy(policy_id, name, created_at) VALUES (?, ?, ?)",
                     (policy.policy_id, policy.name, now),
                 )
                 self._conn.execute(
-                    "INSERT INTO risk_policy_version(policy_id, version, created_at, "
-                    "is_active) VALUES (?, ?, ?, 0)",
+                    "INSERT INTO risk_policy_version(policy_id, version, created_at, is_active) VALUES (?, ?, ?, 0)",
                     (policy.policy_id, next_version, now),
                 )
                 for key in sorted(policy.limits):
                     self._conn.execute(
-                        "INSERT INTO risk_limit(policy_id, version, limit_key, "
-                        "limit_value) VALUES (?, ?, ?, ?)",
+                        "INSERT INTO risk_limit(policy_id, version, limit_key, limit_value) VALUES (?, ?, ?, ?)",
                         (policy.policy_id, next_version, key, str(policy.limits[key])),
                     )
         except sqlite3.Error as exc:
@@ -217,8 +244,7 @@ class RiskPolicyPersister:
                     (policy_id,),
                 )
                 self._conn.execute(
-                    "UPDATE risk_policy_version SET is_active = 1 "
-                    "WHERE policy_id = ? AND version = ?",
+                    "UPDATE risk_policy_version SET is_active = 1 WHERE policy_id = ? AND version = ?",
                     (policy_id, version),
                 )
         except sqlite3.Error as exc:
@@ -247,17 +273,14 @@ class RiskPolicyPersister:
     def list_versions(self, policy_id: str) -> tuple[int, ...]:
         """版本清单（升序确定性）。"""
         rows = self._conn.execute(
-            "SELECT version FROM risk_policy_version WHERE policy_id = ? "
-            "ORDER BY version",
+            "SELECT version FROM risk_policy_version WHERE policy_id = ? ORDER BY version",
             (policy_id,),
         ).fetchall()
         return tuple(r[0] for r in rows)
 
     # ── 与 risk_limits 双向同步校验 ───────────────────────────────────────
 
-    def sync_check(
-        self, policy_id: str, live_limits: Mapping[str, Decimal]
-    ) -> tuple[PolicyDrift, ...]:
+    def sync_check(self, policy_id: str, live_limits: Mapping[str, Decimal]) -> tuple[PolicyDrift, ...]:
         """激活版本 vs risk_limits 运行侧双向比对 → 漂移清单（按 key 排序）。
 
         双向：持久化侧有而运行侧缺失、运行侧有而持久化侧缺失、同键值不等，
@@ -271,7 +294,5 @@ class RiskPolicyPersister:
             persisted = active.limits.get(key)
             live = live_limits.get(key)
             if persisted != live:
-                drifts.append(
-                    PolicyDrift(limit_key=key, persisted=persisted, live=live)
-                )
+                drifts.append(PolicyDrift(limit_key=key, persisted=persisted, live=live))
         return tuple(drifts)

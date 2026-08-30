@@ -22,7 +22,8 @@
 # created: "2026-05-05"
 # ---
 
-"""D_RISK — Risk Validator
+"""
+D_RISK — Risk Validator
 
 风险校验引擎。在交易执行前校验订单和持仓是否符合风险限额。
 
@@ -44,6 +45,33 @@ CTR 契约：
   生产者 — CTR-ERR-004 (RiskLimitViolationError) -> D_PORTFOLIO_CORE, D_EXECUTION_CORE
 
 依赖方向：D_FACTOR + D_EXECUTION_CORE -> D_RISK -> D_PORTFOLIO_CORE/D_EXECUTION_CORE
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: risk_validator.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① RiskValidator
+#   name_en: RiskValidator
+#   intro: 风险校验器抽象基类（OCP 扩展点）
+#   desc: 风险校验器抽象基类（OCP 扩展点） 实现者要求： - validate_order(): 单笔订单的 pre-trade 校验 - validate_portfolio():…；公共方法（定义序）: validate…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: RiskValidator
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

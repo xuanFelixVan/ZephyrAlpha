@@ -23,7 +23,8 @@
 # A4: confidence = 样本因子 × (0.4+0.6×边际) ± 指数一致性调整（±0.1，clip [0,1]）
 # O1: LifecyclePhaseSnapshot（季节 + 约束 + 持续天数 + 置信度，供下游风控节流消费）
 # [/ALGO_FLOW]
-"""市场生命周期相位（90 号 §22.4 BM-SEL-10，MOD-SIG-041）。
+"""
+市场生命周期相位（90 号 §22.4 BM-SEL-10，MOD-SIG-041）。
 
 盘后判定行情生命周期春夏秋冬 4 阶段：输入=板块新高占比趋势（周月频低频
 overlay），输出=季节标签 + 季节约束（冬季禁抄底 / 秋季强制离场），供下游风
@@ -41,6 +42,93 @@ overlay），输出=季节标签 + 季节约束（冬季禁抄底 / 秋季强制
 不是同一物的三种说法。输出是状态/约束/置信度，**非择时买卖信号**。
 
 阈值（高低水位 0.10、快慢线 5/20、指数 MA60）为初拟，待实盘标定。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: values 参数
+#   fields: 参数 values，类型注解 Sequence[float]
+#   code: market_lifecycle_phase.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: window 参数
+#   fields: 参数 window，类型注解 int
+#   code: market_lifecycle_phase.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: is_high 参数
+#   fields: 参数 is_high，类型注解 bool
+#   code: market_lifecycle_phase.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: is_rising 参数
+#   fields: 参数 is_rising，类型注解 bool
+#   code: market_lifecycle_phase.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① moving_average
+#   name_en: moving_average
+#   intro: 末尾 window 项简单移动平均（window 超出长度时取全部）。
+#   desc: 末尾 window 项简单移动平均（window 超出长度时取全部）。；源码 L222-L225
+#   inputs: values window
+#   outputs: float
+# - id: A2
+#   name_zh: ② classify_season
+#   name_en: classify_season
+#   intro: 2×2 季节映射：水位（高/低）× 趋势（升/降）→ 春夏秋冬。
+#   desc: 2×2 季节映射：水位（高/低）× 趋势（升/降）→ 春夏秋冬。；源码 L228-L232
+#   inputs: is_high is_rising
+#   outputs: LifecycleSeason
+# - id: A3
+#   name_zh: ③ season_constraint
+#   name_en: season_constraint
+#   intro: 季节 → 禁为约束（冬季禁抄底 / 秋季强制离场，90 号 §22.4）。
+#   desc: 季节 → 禁为约束（冬季禁抄底 / 秋季强制离场，90 号 §22.4）。；源码 L235-L240
+#   inputs: season
+#   outputs: SeasonConstraint
+# - id: A4
+#   name_zh: ④ compute_nh_ratio_series
+#   name_en: compute_nh_ratio_series
+#   intro: 板块日 K 行 → 每日新高占比序列（(code, trade_date, close) 升序输入）。
+#   desc: 板块日 K 行 → 每日新高占比序列（(code, trade_date, close) 升序输入）。 新高定义：当日收盘 ≥ 该板块 trailing high_window…；源码 L243-L271
+#   inputs: rows high_window
+#   outputs: list[tuple[str, float]]
+# - id: A5
+#   name_zh: ⑤ detect_lifecycle_phase
+#   name_en: detect_lifecycle_phase
+#   intro: 核心纯函数：新高占比序列（+可选指数收盘）→ 生命周期相位快照。
+#   desc: 核心纯函数：新高占比序列（+可选指数收盘）→ 生命周期相位快照。 趋势判定：快线 > 慢线（严格大于——高位不升即滞涨判秋，低位躺平判冬）。 指数一致性（closes 提供时）：…；源码 L274-L332
+#   inputs: nh_ratios closes config
+#   outputs: LifecyclePhaseSnapshot
+# - id: A6
+#   name_zh: ⑥ MarketLifecyclePhaseSensor
+#   name_en: MarketLifecyclePhaseSensor
+#   intro: 市场生命周期相位传感器（DB 加载层薄封装，计算全部委托纯函数）。
+#   desc: 市场生命周期相位传感器（DB 加载层薄封装，计算全部委托纯函数）。 DB 依赖注入：query_fn 默认走项目既有 data 层 ch_reader.query（TSV）， r…；公共方法（定义序）: load_nh…
+#   inputs: registry query_fn config
+#   outputs: 返回值
+#   （注：A6 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 下游风控节流层：冬季禁抄底 / 秋季强制离场约束消费)
+# - id: O2
+#   name_zh: LifecycleSeason
+#   name_en: LifecycleSeason
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 下游风控节流层：冬季禁抄底 / 秋季强制离场约束消费)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
 """
 
 from __future__ import annotations
@@ -284,9 +372,7 @@ class MarketLifecyclePhaseSensor:
         Raises:
             MarketLifecycleDataError: 查询为空或无可解析行。
         """
-        sql = _SQL_SECTOR_KLINE.format(
-            table=self._resolve_table("market_sector_kline"), start=start, end=end
-        )
+        sql = _SQL_SECTOR_KLINE.format(table=self._resolve_table("market_sector_kline"), start=start, end=end)
         tsv = self._resolve_query_fn()(sql)
         rows: list[tuple[str, str, float]] = []
         for line in (tsv or "").strip().split("\n"):
@@ -297,14 +383,10 @@ class MarketLifecyclePhaseSensor:
                 except ValueError:
                     _logger.warning("market_lifecycle_phase 跳过不可解析行: %s", line[:80])
         if not rows:
-            raise MarketLifecycleDataError(
-                f"market_sector_kline 查询为空: [{start}, {end}]"
-            )
+            raise MarketLifecycleDataError(f"market_sector_kline 查询为空: [{start}, {end}]")
         series = compute_nh_ratio_series(rows)
         if not series:
-            raise MarketLifecycleDataError(
-                f"market_sector_kline 新高占比序列为空: [{start}, {end}]"
-            )
+            raise MarketLifecycleDataError(f"market_sector_kline 新高占比序列为空: [{start}, {end}]")
         return [ratio for _, ratio in series]
 
     def load_index_closes(
@@ -327,9 +409,7 @@ class MarketLifecyclePhaseSensor:
                 except ValueError:
                     _logger.warning("market_lifecycle_phase 跳过不可解析行: %s", line[:80])
         if not closes:
-            raise MarketLifecycleDataError(
-                f"market_index_kline 查询为空: symbol={symbol}, [{start}, {end}]"
-            )
+            raise MarketLifecycleDataError(f"market_index_kline 查询为空: symbol={symbol}, [{start}, {end}]")
         return closes
 
     def sense(

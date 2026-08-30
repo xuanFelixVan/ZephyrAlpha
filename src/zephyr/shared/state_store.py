@@ -22,7 +22,8 @@
 # created: "2026-08-16"
 # ---
 
-"""D_SHARED — Crash-only 状态外部化原语（#ARCH-QUANT-002 承载层）。
+"""
+D_SHARED — Crash-only 状态外部化原语（#ARCH-QUANT-002 承载层）。
 
 痛点（Qwen P0-2/P0-3 + 53 号 memo §7 裁定）：
   1. Kill Switch 熔断状态纯内存——进程 crash/重启即解除熔断，极端行情下恰是高发场景。
@@ -50,6 +51,77 @@
     （make_state_store / make_dedup_set 工厂或构造参数直传）。
 
 SSoT: #ARCH-QUANT-002 (architecture_issue_registry.yaml) + 53 号 memo §7
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: backend 参数
+#   fields: 参数 backend，类型注解 str
+#   code: state_store.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: root_dir 参数
+#   fields: 参数 root_dir（无注解）
+#   code: state_store.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: redis_conn 参数
+#   fields: 参数 redis_conn（无注解）
+#   code: state_store.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: key_prefix 参数
+#   fields: 参数 key_prefix（无注解）
+#   code: state_store.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① JsonStateStore
+#   name_en: JsonStateStore
+#   intro: 命名空间 JSON 快照状态存取（单条状态记录的外部化）。
+#   desc: 命名空间 JSON 快照状态存取（单条状态记录的外部化）。 每个 namespace 对应 root_dir 下一个 `<namespace>.json` 文件。 适用于 kil…；公共方法（定义序）: root_di…
+#   inputs: root_dir
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② AppendOnlyDedupSet
+#   name_en: AppendOnlyDedupSet
+#   intro: append-only 持久化去重集（幂等键"见过即永久"）。
+#   desc: append-only 持久化去重集（幂等键"见过即永久"）。 一行一个 ID 追加落盘，启动时全量加载进内存 set。 适用于 fill_id 去重、event_id 去重等"…；公共方法（定义序）: path, a…
+#   inputs: path
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ make_state_store
+#   name_en: make_state_store
+#   intro: 状态存取工厂——消费方切换后端的唯一决策点（配置注入，默认文件后端）。
+#   desc: 状态存取工厂——消费方切换后端的唯一决策点（配置注入，默认文件后端）。 Args: backend: "json"（默认，文件后端）或 "redis"。 root_dir: 文件…；源码 L389-L422
+#   inputs: backend root_dir redis_conn key_prefix
+#   outputs: JsonStateStore | RedisStateStore
+# - id: A4
+#   name_zh: ④ make_dedup_set
+#   name_en: make_dedup_set
+#   intro: 去重集工厂——消费方切换后端的唯一决策点（配置注入，默认文件后端）。
+#   desc: 去重集工厂——消费方切换后端的唯一决策点（配置注入，默认文件后端）。 Args: backend: "json"（默认，append-only 文件）或 "redis"。 pat…；源码 L425-L462
+#   inputs: backend path redis_conn set_name key_prefix
+#   outputs: AppendOnlyDedupSet | RedisDedupSet
+#   （注：A4 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: JsonStateStore | RedisStateStore
+#   name_en: JsonStateStore | RedisStateStore
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.risk.implementations.default_risk_validator; zephyr.risk.stop_loss; zeph…
+# - id: O2
+#   name_zh: AppendOnlyDedupSet | RedisDedupSet
+#   name_en: AppendOnlyDedupSet | RedisDedupSet
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.risk.implementations.default_risk_validator; zephyr.risk.stop_loss; zeph…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

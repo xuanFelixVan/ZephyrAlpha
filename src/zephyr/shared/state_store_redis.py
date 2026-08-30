@@ -22,7 +22,8 @@
 # created: "2026-08-17"
 # ---
 
-"""D_SHARED — Crash-only 状态外部化原语 · Redis 后端（#ARCH-QUANT-002 承载层）。
+"""
+D_SHARED — Crash-only 状态外部化原语 · Redis 后端（#ARCH-QUANT-002 承载层）。
 
 与 zephyr.shared.state_store（文件后端）同接口契约的 Redis 实现，
 2026-08-17 AI-REDIS-001 落地；自 state_store.py 拆出（#ARCH-118：
@@ -48,6 +49,45 @@ fail-closed）建连后注入 redis.Redis 连接（与 H1RedisReader 同款 DI �
 shared→infrastructure 反向依赖属层级违规，故 config 建连不下沉到本层）。
 
 SSoT: #ARCH-QUANT-002 (architecture_issue_registry.yaml) + 53 号 memo §7
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: redis_conn 参数
+#   fields: 参数 redis_conn（无注解）
+#   code: state_store_redis.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: key_prefix 参数
+#   fields: 参数 key_prefix（无注解）
+#   code: state_store_redis.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RedisStateStore
+#   name_en: RedisStateStore
+#   intro: 命名空间 JSON 快照状态存取——Redis 后端（与 JsonStateStore 同接口契约）。
+#   desc: 命名空间 JSON 快照状态存取——Redis 后端（与 JsonStateStore 同接口契约）。 每个 namespace 对应一个 Redis STRING 键 `{ke…；公共方法（定义序）: key_pre…
+#   inputs: redis_conn key_prefix
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② RedisDedupSet
+#   name_en: RedisDedupSet
+#   intro: 持久化去重集——Redis 后端（与 AppendOnlyDedupSet 同接口契约）。
+#   desc: 持久化去重集——Redis 后端（与 AppendOnlyDedupSet 同接口契约）。 一个去重集对应一个 Redis SET 键 `{key_prefix}:{set_na…；公共方法（定义序）: key, ad…
+#   inputs: redis_conn set_name key_prefix
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: RedisStateStore, RedisDedupSet
+#   downstream: zephyr.shared.state_store（工厂 lazy import）; tests/shared/test_state_store_redis.…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

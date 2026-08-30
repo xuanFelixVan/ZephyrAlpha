@@ -14,7 +14,8 @@
 # [TESTS] tests/signal_ashare/test_event_causal_reasoner.py
 # [A_module] module_id=MOD-SIG-112 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""EventCausalReasoner — A股事件因果推理器（MOD-SIG-112，B1-00125，C2 D-ALT-22）。
+"""
+EventCausalReasoner — A股事件因果推理器（MOD-SIG-112，B1-00125，C2 D-ALT-22）。
 
 事件类型→传导边模板（产业链上下游/同业/供应链三类词表闭合）
 + DoWhy反事实校验（注入dowhy_runner回调，库未装则降级标记不阻断）
@@ -23,6 +24,48 @@
 EconML/DoWhy思想单机版。
 
 纯内存/DI设计；外部副作用（OS调用/网络/进程控制）全部经注入回调。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: decay_factor 参数
+#   fields: 参数 decay_factor（无注解）
+#   code: event_causal_reasoner.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: max_hops 参数
+#   fields: 参数 max_hops（无注解）
+#   code: event_causal_reasoner.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: min_cumulative_decay 参数
+#   fields: 参数 min_cumulative_decay（无注解）
+#   code: event_causal_reasoner.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: dowhy_runner 参数
+#   fields: 参数 dowhy_runner（无注解）
+#   code: event_causal_reasoner.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① EventCausalReasoner
+#   name_en: EventCausalReasoner
+#   intro: 事件因果推理器（传导边模板+BFS+可选DoWhy/存储）。
+#   desc: 事件因果推理器（传导边模板+BFS+可选DoWhy/存储）。；公共方法（定义序）: register_template, templates, reason；源码 L161-L295
+#   inputs: decay_factor max_hops min_cumulative_decay dowhy_runner sqlite_conn c…
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: EventCausalReasoner
+#   downstream: 运行时装配批（统一注入点装配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

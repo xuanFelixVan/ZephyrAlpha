@@ -31,6 +31,32 @@ Version: 0.2.0
   5. 写入 skills/domain/{module_name}/SKILL.md
   6. 更新 skill-registry.yaml
   7. 可选：触发 AGENTS.md 触发表更新
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: base_dir 参数
+#   fields: 参数 base_dir（无注解）
+#   code: skill_constructor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SkillConstructor
+#   name_en: SkillConstructor
+#   intro: 蓝图->Skill 全自动生成器
+#   desc: 蓝图->Skill 全自动生成器；公共方法（定义序）: base_dir, skills_dir, registry_path, parse_blueprint, extract_sections, extract_c…
+#   inputs: base_dir
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SkillConstructor
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-SIG-063-store | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-r"""MOD-SIG-063-store — 相似日 KNN 历史宽度快照生产读取器（44号 §9.3 history_store 落地）。
+"""
+MOD-SIG-063-store — 相似日 KNN 历史宽度快照生产读取器（44号 §9.3 history_store 落地）。
 
 职责：从 ClickHouse c1_market.market_breadth_snapshot 读取历史交易日分钟快照，
 装配为 similar_day_inference 期望的 history_store 契约（逐日 DataFrame 可迭代）。
@@ -30,6 +31,51 @@ np.interp 线性插值到 30 个等距时点。列契约映射：
     index_price      ← 从 kline_index 按 trade_date 收盘补全（历史日标签必需）
 
 零运行时调用（表空/CH 异常）→ 返回空列表，由 similar_day_inference 走兜底分支。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: end_date 参数
+#   fields: 参数 end_date，类型注解 str | date | None
+#   code: market_breadth_history_store.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: lookback_days 参数
+#   fields: 参数 lookback_days（无注解）
+#   code: market_breadth_history_store.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: query_fn 参数
+#   fields: 参数 query_fn（无注解）
+#   code: market_breadth_history_store.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① HistoryRecord
+#   name_en: HistoryRecord
+#   intro: 单个历史交易日的重采样记录（similar_day_inference history_store 元素契约）。
+#   desc: 单个历史交易日的重采样记录（similar_day_inference history_store 元素契约）。；公共方法（定义序）: to_dataframe；源码 L191-L216
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② load_history_store
+#   name_en: load_history_store
+#   intro: 从 ClickHouse 加载历史宽度快照并装配为 history_store（fail-open）。
+#   desc: 从 ClickHouse 加载历史宽度快照并装配为 history_store（fail-open）。 Args: end_date: 窗口截止日（None=今日）；窗口 = […；源码 L401-L443
+#   inputs: end_date lookback_days query_fn
+#   outputs: MarketBreadthHistoryStore
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: MarketBreadthHistoryStore
+#   name_en: MarketBreadthHistoryStore
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.signal_ashare.similar_day_inference（history_store 生产注入）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -73,7 +119,7 @@ ORDER BY trade_date
 
 # 重采样网格常量
 _GRID_POINTS: Final = 30
-_SESSION_OPEN_MIN: Final = 570.0   # 09:30
+_SESSION_OPEN_MIN: Final = 570.0  # 09:30
 _SESSION_CLOSE_MIN: Final = 900.0  # 15:00
 _INDEX_SYMBOL: Final = "000001"  # 上证指数裸码（kline_index 口径实证）
 
@@ -148,24 +194,26 @@ class HistoryRecord:
     trade_date: str
     # 30 时点重采样网格上的特征向量（NaN 表示缺维/无效）
     breadth_vel: np.ndarray  # 涨跌家数净增的分钟差分（近似加速度）
-    lu_net: np.ndarray       # 涨停净数
+    lu_net: np.ndarray  # 涨停净数
     vol_extrap_ratio: np.ndarray  # 量能外推比（占位 NaN，待 20 日均量口径预计算）
-    yw_spread: np.ndarray    # 黄白线剪刀差（缺列 NaN）
-    if_basis: np.ndarray     # IF 基差（缺列 NaN）
+    yw_spread: np.ndarray  # 黄白线剪刀差（缺列 NaN）
+    if_basis: np.ndarray  # IF 基差（缺列 NaN）
     index_price: np.ndarray  # 指数收盘点位序列（标签计算用）
 
     def to_dataframe(self) -> pd.DataFrame:
         """转为 similar_day_inference 期望的 DataFrame 契约。"""
         grid = np.linspace(_SESSION_OPEN_MIN, _SESSION_CLOSE_MIN, _GRID_POINTS)
-        return pd.DataFrame({
-            "ts": grid,
-            "breadth_vel": self.breadth_vel,
-            "lu_net": self.lu_net,
-            "vol_extrap_ratio": self.vol_extrap_ratio,
-            "yw_spread": self.yw_spread,
-            "if_basis": self.if_basis,
-            "index_price": self.index_price,
-        })
+        return pd.DataFrame(
+            {
+                "ts": grid,
+                "breadth_vel": self.breadth_vel,
+                "lu_net": self.lu_net,
+                "vol_extrap_ratio": self.vol_extrap_ratio,
+                "yw_spread": self.yw_spread,
+                "if_basis": self.if_basis,
+                "index_price": self.index_price,
+            }
+        )
 
 
 @dataclass(frozen=True)
@@ -301,18 +349,20 @@ def _group_rows_by_date(rows: list[list[str]]) -> dict[str, list[dict[str, Any]]
     by_date: dict[str, list[dict[str, Any]]] = {}
     for row in rows:
         d = row[0].strip()
-        by_date.setdefault(d, []).append({
-            "ts": row[1],
-            "advancing": row[2],
-            "declining": row[3],
-            "flat": row[4],
-            "limit_up": row[5],
-            "limit_down": row[6],
-            "sealed": row[7],
-            "attempted": row[8],
-            "total_count": row[9],
-            "total_amount": row[10],
-        })
+        by_date.setdefault(d, []).append(
+            {
+                "ts": row[1],
+                "advancing": row[2],
+                "declining": row[3],
+                "flat": row[4],
+                "limit_up": row[5],
+                "limit_down": row[6],
+                "sealed": row[7],
+                "attempted": row[8],
+                "total_count": row[9],
+                "total_amount": row[10],
+            }
+        )
     return by_date
 
 

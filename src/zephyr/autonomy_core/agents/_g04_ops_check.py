@@ -14,7 +14,8 @@
 # [TESTS] tests/autonomy/test_business_g04_ops_check.py
 # [A_module] module_id=MOD-EXE-BIZ-001 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""S1.3 业务 Agent U7 深化：G04 三策略运营核对件（14号文 §4-S1.3）.
+"""
+S1.3 业务 Agent U7 深化：G04 三策略运营核对件（14号文 §4-S1.3）.
 
 对 20号文首批三策略（打板 daban / 多因子 multifactor / 事件驱动 event_driven）做
 因子-策略-组合状态核对，产出缺口清单（仅建议语义）：
@@ -23,6 +24,47 @@
     evidence/algorithm_status 状态；
   ②组件在位性：G04_COMPONENTS 清单（20号文 §2.7 设施盘点锚定）只读存在性检查；
   ③产出 g04_strategy_ops_check.json 核对报告（差异/缺口清单，仅建议，人审定夺）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: ticket 参数
+#   fields: 参数 ticket，类型注解 dict[str, Any]
+#   code: _g04_ops_check.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: role 参数
+#   fields: 参数 role（无注解）
+#   code: _g04_ops_check.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: runtime_dir 参数
+#   fields: 参数 runtime_dir（无注解）
+#   code: _g04_ops_check.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: repo_root 参数
+#   fields: 参数 repo_root（无注解）
+#   code: _g04_ops_check.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① run_g04_strategy_ops_check
+#   name_en: run_g04_strategy_ops_check
+#   intro: 执行一张 G04 三策略运营核对工单（端到端落盘，仅建议语义）.
+#   desc: 执行一张 G04 三策略运营核对工单（端到端落盘，仅建议语义）. Args: ticket: {"ticket_id", "kind"="g04_strategy_ops_che…；源码 L219-L265
+#   inputs: ticket role runtime_dir repo_root catalogs
+#   outputs: dict[str, Any]
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, Any]
+#   name_en: dict[str, Any]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.autonomy_core.agents.business_agent_entry（懒加载薄委派）; tests/autonomy/test_b…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -40,7 +82,9 @@ _REPO_ROOT: Final[Path] = Path(__file__).resolve().parents[4]
 BLUEPRINT_REF: Final[str] = "20_first_batch_strategies.md §2.2-2.4/§2.7"
 G04_STRATEGY_CLASSES: Final[tuple[str, ...]] = ("daban", "multifactor", "event_driven")
 G04_STRATEGY_NAMES: Final[dict[str, str]] = {
-    "daban": "打板", "multifactor": "多因子", "event_driven": "事件驱动",
+    "daban": "打板",
+    "multifactor": "多因子",
+    "event_driven": "事件驱动",
 }
 _CATALOGS: Final[dict[str, tuple[str, str]]] = {
     "strategy": ("docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml", "strategies"),
@@ -114,8 +158,10 @@ def _check_strategy(
     else:
         entries = [e for e in strategies if str(e.get("strategy_class") or "") == strategy_class]
         entry_ids = [str(e.get("strategy_id")) for e in entries]
-        no_code = [sid for sid, e in zip(entry_ids, entries) if not str(e.get("code_path") or "").strip()]
-        no_evidence = [sid for sid, e in zip(entry_ids, entries) if not str(e.get("evidence") or "").strip()]
+        no_code = [sid for sid, e in zip(entry_ids, entries, strict=False) if not str(e.get("code_path") or "").strip()]
+        no_evidence = [
+            sid for sid, e in zip(entry_ids, entries, strict=False) if not str(e.get("evidence") or "").strip()
+        ]
         registry = {
             "status": "ok",
             "entry_count": len(entries),
@@ -135,26 +181,39 @@ def _check_strategy(
         gaps.append(f"{strategy_class}: 因子注册表不可读（evidence_missing）")
         linked = {"count": 0, "factor_ids": [], "evidence_missing": [], "pending_backtest": []}
     else:
-        linked_entries = [f for f in factors
-                          if {str(s) for s in (f.get("belongs_to_strategies") or [])} & set(entry_ids)]
+        linked_entries = [
+            f for f in factors if {str(s) for s in (f.get("belongs_to_strategies") or [])} & set(entry_ids)
+        ]
         linked_ids = [str(f.get("factor_id")) for f in linked_entries]
-        f_no_evidence = [fid for fid, f in zip(linked_ids, linked_entries)
-                         if not str(f.get("evidence") or "").strip()]
-        f_pending = [fid for fid, f in zip(linked_ids, linked_entries)
-                     if str(f.get("algorithm_status") or "") == "pending_backtest"]
-        linked = {"count": len(linked_ids), "factor_ids": linked_ids,
-                  "evidence_missing": f_no_evidence, "pending_backtest": f_pending}
+        f_no_evidence = [
+            fid for fid, f in zip(linked_ids, linked_entries, strict=False) if not str(f.get("evidence") or "").strip()
+        ]
+        f_pending = [
+            fid
+            for fid, f in zip(linked_ids, linked_entries, strict=False)
+            if str(f.get("algorithm_status") or "") == "pending_backtest"
+        ]
+        linked = {
+            "count": len(linked_ids),
+            "factor_ids": linked_ids,
+            "evidence_missing": f_no_evidence,
+            "pending_backtest": f_pending,
+        }
         if not linked_ids:
-            gaps.append(f"{strategy_class}: factor_registry 无关联因子挂接"
-                        "（belongs_to_strategies 未指向本策略条目）")
+            gaps.append(f"{strategy_class}: factor_registry 无关联因子挂接（belongs_to_strategies 未指向本策略条目）")
         if f_no_evidence:
             gaps.append(f"{strategy_class}: 关联因子未回测（evidence 为空）: {f_no_evidence}")
         if f_pending:
             gaps.append(f"{strategy_class}: 关联因子待回测（algorithm_status=pending_backtest）: {f_pending}")
 
-    return {"strategy_class": strategy_class, "name_zh": G04_STRATEGY_NAMES[strategy_class],
-            "registry": registry, "linked_factors": linked, "components": components,
-            "gaps": gaps}
+    return {
+        "strategy_class": strategy_class,
+        "name_zh": G04_STRATEGY_NAMES[strategy_class],
+        "registry": registry,
+        "linked_factors": linked,
+        "components": components,
+        "gaps": gaps,
+    }
 
 
 def run_g04_strategy_ops_check(
@@ -187,8 +246,7 @@ def run_g04_strategy_ops_check(
         strategies = catalogs.get("strategies")
         factors = catalogs.get("factors")
 
-    per_strategy = {cls: _check_strategy(cls, strategies, factors, root)
-                    for cls in G04_STRATEGY_CLASSES}
+    per_strategy = {cls: _check_strategy(cls, strategies, factors, root) for cls in G04_STRATEGY_CLASSES}
     gaps = [gap for cls in G04_STRATEGY_CLASSES for gap in per_strategy[cls]["gaps"]]
     status = "evidence_missing" if (strategies is None or factors is None) else "completed"
     report = {

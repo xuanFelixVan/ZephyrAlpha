@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-SIG-063 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-r"""MOD-SIG-063 — 相似日 KNN 剩余走势推演（44号备忘录 §9.3，M1-③；92号清单 §8.1）。
+"""
+MOD-SIG-063 — 相似日 KNN 剩余走势推演（44号备忘录 §9.3，M1-③；92号清单 §8.1）。
 
 纪律（90号 §7 哲学）：只输出尾盘三档情景概率 P(走强/持平/转弱) + 五阶段转移概率，
 不输出点位/收益幅度预测。是状态推演器不是因子（44号 §2.1 裁定：不登记 factor_registry）。
@@ -51,6 +52,69 @@ r"""MOD-SIG-063 — 相似日 KNN 剩余走势推演（44号备忘录 §9.3，M1
 history_store 契约：可迭代对象，逐元素=一个历史交易日的全时段分钟快照 DataFrame
 （须覆盖 session_close 以计算标签；ts ≤ 当前时刻的部分参与同时刻切片匹配）。
 生产实现=market_breadth_snapshot 读取器（后续波次接）；当前零数据积累 → 恒走兜底分支。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: predictions 参数
+#   fields: 参数 predictions，类型注解 list[SimilarDayInference]
+#   code: similar_day_inference.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: actual_tail_returns 参数
+#   fields: 参数 actual_tail_returns，类型注解 list[float]
+#   code: similar_day_inference.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: today_series 参数
+#   fields: 参数 today_series，类型注解 pd.DataFrame | None
+#   code: similar_day_inference.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: history_store 参数
+#   fields: 参数 history_store，类型注解 Iterable[pd.DataFrame] | None
+#   code: similar_day_inference.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SimilarDayInference
+#   name_en: SimilarDayInference
+#   intro: 尾盘三档情景概率 + 五阶段转移概率输出（to_dict JSON 可序列化）。
+#   desc: 尾盘三档情景概率 + 五阶段转移概率输出（to_dict JSON 可序列化）。；公共方法（定义序）: to_dict；源码 L179-L200
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② update_hit_rate_stats
+#   name_en: update_hit_rate_stats
+#   intro: walk-forward 命中率统计 stub（数据期接 prediction_log 回放校准后回填实现）。
+#   desc: walk-forward 命中率统计 stub（数据期接 prediction_log 回放校准后回填实现）。 口径预留：命中率 = 预测 dominant_scenario 与…；源码 L206-L216
+#   inputs: predictions actual_tail_returns
+#   outputs: float
+# - id: A3
+#   name_zh: ③ infer_remaining_session
+#   name_en: infer_remaining_session
+#   intro: 相似日 KNN 尾盘三档情景概率推演（44号 §9.3 主入口）。
+#   desc: 相似日 KNN 尾盘三档情景概率推演（44号 §9.3 主入口）。 Args: today_series: 当日 09:30→当前时刻快照序列 DataFrame（列契约见模块…；源码 L347-L511
+#   inputs: today_series history_store config
+#   outputs: SimilarDayInference
+#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: （数据期前无——候选消费方：尾盘决策 closing_session_decision、M2 边界修正引擎（44号 §9.5）、prediction_log…
+# - id: O2
+#   name_zh: SimilarDayInference
+#   name_en: SimilarDayInference
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: （数据期前无——候选消费方：尾盘决策 closing_session_decision、M2 边界修正引擎（44号 §9.5）、prediction_log…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations
@@ -303,27 +367,29 @@ def infer_remaining_session(
     # ===== 纪律开关：walk-forward 命中率 <55% → 自动停用（仍出先验概率 + disabled 标注）=====
     disabled_reason: str | None = None
     if cfg.walkforward_hit_rate is not None and cfg.walkforward_hit_rate < cfg.hit_rate_floor:
-        disabled_reason = (
-            f"walkforward_hit_rate={cfg.walkforward_hit_rate:.3f} < {cfg.hit_rate_floor:.2f}，自动停用（44号 §9.3 纪律）"
-        )
+        disabled_reason = f"walkforward_hit_rate={cfg.walkforward_hit_rate:.3f} < {cfg.hit_rate_floor:.2f}，自动停用（44号 §9.3 纪律）"
         notes.append(disabled_reason)
 
     # ===== 当日序列守卫 =====
     if today_series is None or len(today_series) == 0:
-        return _fallback_inference(
-            "today_series_empty", cfg, current, 0, [], notes + ["今日快照为空"], disabled_reason
-        )
+        return _fallback_inference("today_series_empty", cfg, current, 0, [], notes + ["今日快照为空"], disabled_reason)
     if TS_COLUMN not in today_series.columns:
         raise ValueError(f"today_series 缺 {TS_COLUMN!r} 列（调用方契约违例）")
 
     open_min = _hhmm_to_minutes(cfg.session_open)
     close_min = _hhmm_to_minutes(cfg.session_close)
-    now_min = _hhmm_to_minutes(cfg.now) if cfg.now is not None else float(
-        today_series[TS_COLUMN].map(_ts_to_minutes).max()
+    now_min = (
+        _hhmm_to_minutes(cfg.now) if cfg.now is not None else float(today_series[TS_COLUMN].map(_ts_to_minutes).max())
     )
     if now_min <= open_min:
         return _fallback_inference(
-            "now_before_open", cfg, current, 0, [], notes + [f"当前时刻 {now_min:.0f} ≤ 开盘 {open_min:.0f}"], disabled_reason
+            "now_before_open",
+            cfg,
+            current,
+            0,
+            [],
+            notes + [f"当前时刻 {now_min:.0f} ≤ 开盘 {open_min:.0f}"],
+            disabled_reason,
         )
     grid = np.linspace(open_min, now_min, cfg.grid_points)
 
@@ -347,9 +413,7 @@ def infer_remaining_session(
         else:
             today_vecs[name] = vec
     if not today_vecs:
-        return _fallback_inference(
-            "today_features_unusable", cfg, current, 0, features_used, notes, disabled_reason
-        )
+        return _fallback_inference("today_features_unusable", cfg, current, 0, features_used, notes, disabled_reason)
     features_used = [name for name in features_used if name in today_vecs]
     weight_total = sum(weights[name] for name in features_used)
     weights = {name: weights[name] / weight_total for name in features_used}

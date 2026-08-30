@@ -15,7 +15,36 @@
 # [A_module] module_id=MOD-CONTEXT_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""complexity_budget.py — Token 预算复杂度因子 (DD103, TASK-019)"""
+"""
+complexity_budget.py — Token 预算复杂度因子 (DD103, TASK-019)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: complexity_budget.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ComplexityBudgetAdjuster
+#   name_en: ComplexityBudgetAdjuster
+#   intro: tree-sitter 复杂度×TaskCard.
+#   desc: tree-sitter 复杂度×TaskCard.priority -> budget coefficient (DD103).；公共方法（定义序）: adjust；源码 L59-L68
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: ComplexityBudgetAdjuster
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 from dataclasses import dataclass
 

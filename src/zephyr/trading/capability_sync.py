@@ -14,6 +14,36 @@
 # [TESTS]
 # [A_module] module_id=MOD-INF-035 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: registry 参数
+#   fields: 参数 registry（无注解）
+#   code: capability_sync.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CapabilitySync
+#   name_en: CapabilitySync
+#   intro: class CapabilitySync 源码 L86-L162
+#   desc: 公共方法（定义序）: registry, sync_a2a, sync_skills；源码 L86-L162
+#   inputs: registry
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: CapabilitySync
+#   downstream: zephyr.trading.auto_runtime_core
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 from __future__ import annotations
 
 import logging

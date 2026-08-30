@@ -14,7 +14,8 @@
 # [TESTS] tests/research/test_gp_strategy_discovery.py
 # [A_module] module_id=MOD-FAC-003 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""GpStrategyDiscovery — 遗传规划策略发现器（MOD-FAC-003）。
+"""
+GpStrategyDiscovery — 遗传规划策略发现器（MOD-FAC-003）。
 
 B10-01844（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-FAC-019，A1 §29.14）：GP/SR
 进化信号公式——算子集（算术/条件/滚动词表闭合）+ 表达式树（生成/交叉/变异，
@@ -25,6 +26,41 @@ B10-01844（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-FAC-019，A1 §29.14）：
 查重分工（蓝图 §0）：factor_mining_pipeline=论文→LLM 假说链（外部知识驱动）；
 auto_feature_discoverer=算子模板笛卡尔枚举（无进化）；本件=表达式树**进化搜
 索**（生成/交叉/变异+三重门禁），三者驱动源正交。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: node 参数
+#   fields: 参数 node，类型注解 ExprNode
+#   code: gp_strategy_discovery.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① serialize
+#   name_en: serialize
+#   intro: 表达式树 → 确定性前缀字符串（如 ``add(close, ts_mean(volume, 5))``）。
+#   desc: 表达式树 → 确定性前缀字符串（如 ``add(close, ts_mean(volume, 5))``）。；源码 L124-L130
+#   inputs: node
+#   outputs: str
+# - id: A2
+#   name_zh: ② GpStrategyDiscovery
+#   name_en: GpStrategyDiscovery
+#   intro: GP/SR 进化信号公式发现器（进化循环 + 三重门禁 + 人工审批队列）。
+#   desc: GP/SR 进化信号公式发现器（进化循环 + 三重门禁 + 人工审批队列）。 Args: rng: 注入随机源，``() -> [0,1)`` 均匀随机数。 fitness_ev…；公共方法（定义序）: random_…
+#   inputs: rng fitness_evaluator purged_kfold_gate walkforward_gate permutation_…
+#   outputs: 返回值
+#   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 运行时装配批（GP 策略发现批 / 审批后入因子库草稿治理串行合并）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -81,7 +117,7 @@ class ExprNode:
     """表达式树节点（frozen；op ∈ {var,const} ∪ 算子词表）。"""
 
     op: str
-    children: tuple["ExprNode", ...] = ()
+    children: tuple[ExprNode, ...] = ()
     value: str | int | None = None
 
 
@@ -203,18 +239,12 @@ class GpStrategyDiscovery:
         if node.op == "const":
             return not node.children and node.value in WINDOW_CONSTS
         if node.op in _BINARY_OPS:
-            return len(node.children) == 2 and all(
-                self._is_valid(c, depth + 1) for c in node.children
-            )
+            return len(node.children) == 2 and all(self._is_valid(c, depth + 1) for c in node.children)
         if node.op in ROLLING_OPS:
             if len(node.children) != 2:
                 return False
             series, window = node.children
-            return (
-                self._is_valid(series, depth + 1)
-                and window.op == "const"
-                and window.value in WINDOW_CONSTS
-            )
+            return self._is_valid(series, depth + 1) and window.op == "const" and window.value in WINDOW_CONSTS
         return False
 
     # ── 生成 / 交叉 / 变异（随机源注入） ────────────────────────────────────

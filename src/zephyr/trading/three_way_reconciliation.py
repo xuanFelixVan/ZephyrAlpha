@@ -14,7 +14,8 @@
 # [TESTS] tests/trading/test_three_way_reconciliation.py
 # [A_module] module_id=MOD-TRADING-013 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""ThreeWayReconEngine — 三向对账引擎（MOD-TRADING-013）。
+"""
+ThreeWayReconEngine — 三向对账引擎（MOD-TRADING-013）。
 
 B13-04352（AUD-DRAFT-001-DIGEST P2 波 P2-W08，CAND-TRD-011，A3 D-TRADING-02）：
 三向对账收口——交易/持仓/资金三方流水（券商资金流水：佣金/印花税/利息逐笔）
@@ -25,6 +26,48 @@ B13-04352（AUD-DRAFT-001-DIGEST P2 波 P2-W08，CAND-TRD-011，A3 D-TRADING-02�
 查重分工（蓝图 §0）：settlement_reconciliation=系统 Fill vs 券商结算单逐笔
 交易级对账（本件=交易/持仓/资金三方收口含费用逐笔与台账跟进，口径互补不重
 复）；eod_processor=日终任务链（本件被调度消费，零交集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: qty_tolerance 参数
+#   fields: 参数 qty_tolerance（无注解）
+#   code: three_way_reconciliation.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: amount_tolerance 参数
+#   fields: 参数 amount_tolerance（无注解）
+#   code: three_way_reconciliation.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: fee_tolerance 参数
+#   fields: 参数 fee_tolerance（无注解）
+#   code: three_way_reconciliation.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: three_way_reconciliation.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ThreeWayReconEngine
+#   name_en: ThreeWayReconEngine
+#   intro: 三向对账引擎（交易/持仓/资金三方流水 + 未匹配台账跟进状态机）。
+#   desc: 三向对账引擎（交易/持仓/资金三方流水 + 未匹配台账跟进状态机）。；公共方法（定义序）: reconcile, update_follow_up, ledger, anomaly；源码 L213-L479
+#   inputs: qty_tolerance amount_tolerance fee_tolerance clock alert_sink
+#   outputs: 返回值
+#   （注：A1 之后另有 9 个公共定义未列入（含 9 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（10 定义）
+#   name_en: public defs
+#   intro: ThreeWayReconEngine
+#   downstream: 运行时装配批（盘后三向对账调度 / 告警路由接线 / 未匹配台账跟进工作台）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -85,17 +128,21 @@ class FollowUpStatus(str, Enum):
 
 
 #: 参与交易费用匹配的费用类型（利息为账户级，仅计数不参与逐笔匹配）
-_FEE_MATCH_TYPES: Final[frozenset[FeeType]] = frozenset({
-    FeeType.COMMISSION,
-    FeeType.STAMP_TAX,
-})
+_FEE_MATCH_TYPES: Final[frozenset[FeeType]] = frozenset(
+    {
+        FeeType.COMMISSION,
+        FeeType.STAMP_TAX,
+    }
+)
 
 #: 台账跟进合法迁移（终态 RESOLVED 不可逆）
-_ALLOWED_TRANSITIONS: Final[frozenset[tuple[FollowUpStatus, FollowUpStatus]]] = frozenset({
-    (FollowUpStatus.OPEN, FollowUpStatus.INVESTIGATING),
-    (FollowUpStatus.OPEN, FollowUpStatus.RESOLVED),
-    (FollowUpStatus.INVESTIGATING, FollowUpStatus.RESOLVED),
-})
+_ALLOWED_TRANSITIONS: Final[frozenset[tuple[FollowUpStatus, FollowUpStatus]]] = frozenset(
+    {
+        (FollowUpStatus.OPEN, FollowUpStatus.INVESTIGATING),
+        (FollowUpStatus.OPEN, FollowUpStatus.RESOLVED),
+        (FollowUpStatus.INVESTIGATING, FollowUpStatus.RESOLVED),
+    }
+)
 
 
 @dataclass(frozen=True)
@@ -272,18 +319,20 @@ class ThreeWayReconEngine:
         ) -> None:
             nonlocal seq
             seq += 1
-            anomalies.append(Anomaly(
-                anomaly_id=f"{recon_id}-A{seq:03d}",
-                recon_id=recon_id,
-                anomaly_class=cls,
-                symbol=symbol,
-                detail=detail,
-                expected=expected,
-                actual=actual,
-                status=FollowUpStatus.OPEN,
-                raised_at=now,
-                updated_at=now,
-            ))
+            anomalies.append(
+                Anomaly(
+                    anomaly_id=f"{recon_id}-A{seq:03d}",
+                    recon_id=recon_id,
+                    anomaly_class=cls,
+                    symbol=symbol,
+                    detail=detail,
+                    expected=expected,
+                    actual=actual,
+                    status=FollowUpStatus.OPEN,
+                    raised_at=now,
+                    updated_at=now,
+                )
+            )
 
         pos_by_ref = {p.trade_ref: p for p in sorted(positions, key=lambda x: x.flow_id)}
         # 费用按 trade_ref 归集（佣金+印花税；利息为账户级仅计数不参与匹配）
@@ -299,39 +348,50 @@ class ThreeWayReconEngine:
             p = pos_by_ref.get(t.flow_id)
             if p is None:
                 new_anomaly(
-                    AnomalyClass.MISSING, t.symbol,
-                    f"券商持仓确认缺失: 交易 {t.flow_id}", t.quantity, None,
+                    AnomalyClass.MISSING,
+                    t.symbol,
+                    f"券商持仓确认缺失: 交易 {t.flow_id}",
+                    t.quantity,
+                    None,
                 )
                 continue
             if p.symbol != t.symbol:
                 new_anomaly(
-                    AnomalyClass.MISSING, t.symbol,
+                    AnomalyClass.MISSING,
+                    t.symbol,
                     f"标的错位: 交易 {t.flow_id} 标的 {t.symbol} vs 券商 {p.symbol}",
-                    t.quantity, p.quantity,
+                    t.quantity,
+                    p.quantity,
                 )
                 continue
             matched = True
             if abs(t.quantity - p.quantity) > self._qty_tol:
                 new_anomaly(
-                    AnomalyClass.QUANTITY, t.symbol,
+                    AnomalyClass.QUANTITY,
+                    t.symbol,
                     f"数量不一致: 系统 {t.quantity} vs 券商 {p.quantity}",
-                    t.quantity, p.quantity,
+                    t.quantity,
+                    p.quantity,
                 )
                 matched = False
             expected_amount = t.price * t.quantity
             if abs(expected_amount - p.amount) > self._amount_tol:
                 new_anomaly(
-                    AnomalyClass.PRICE, t.symbol,
+                    AnomalyClass.PRICE,
+                    t.symbol,
                     f"金额不一致: 系统 {expected_amount} vs 券商 {p.amount}",
-                    expected_amount, p.amount,
+                    expected_amount,
+                    p.amount,
                 )
                 matched = False
             actual_fee = fee_by_ref.get(t.flow_id, Decimal("0"))
             if abs(t.expected_fee - actual_fee) > self._fee_tol:
                 new_anomaly(
-                    AnomalyClass.FEE, t.symbol,
+                    AnomalyClass.FEE,
+                    t.symbol,
                     f"费用不一致: 系统预估 {t.expected_fee} vs 券商实际 {actual_fee}",
-                    t.expected_fee, actual_fee,
+                    t.expected_fee,
+                    actual_fee,
                 )
                 matched = False
             if matched:
@@ -340,16 +400,20 @@ class ThreeWayReconEngine:
         for p in sorted(positions, key=lambda x: x.flow_id):
             if p.trade_ref not in trade_refs:
                 new_anomaly(
-                    AnomalyClass.MISSING, p.symbol,
+                    AnomalyClass.MISSING,
+                    p.symbol,
                     f"系统交易缺失: 券商持仓 {p.flow_id} 引用 {p.trade_ref}",
-                    None, p.quantity,
+                    None,
+                    p.quantity,
                 )
         for c in sorted(cash_flows, key=lambda x: x.flow_id):
             if c.trade_ref is not None and c.trade_ref not in trade_refs:
                 new_anomaly(
-                    AnomalyClass.MISSING, "",
+                    AnomalyClass.MISSING,
+                    "",
                     f"资金流水引用未知交易: {c.flow_id} -> {c.trade_ref}",
-                    None, c.amount,
+                    None,
+                    c.amount,
                 )
 
         for a in anomalies:
@@ -377,15 +441,15 @@ class ThreeWayReconEngine:
                 _log.exception("alert_sink 告警失败")
         _log.info(
             "三向对账完成: %s matched=%d anomalies=%d",
-            recon_id, matched_count, len(anomalies),
+            recon_id,
+            matched_count,
+            len(anomalies),
         )
         return report
 
     # ── 未匹配台账（跟进状态机） ───────────────────────────────────────────
 
-    def update_follow_up(
-        self, anomaly_id: str, new_status: FollowUpStatus, operator: str
-    ) -> Anomaly:
+    def update_follow_up(self, anomaly_id: str, new_status: FollowUpStatus, operator: str) -> Anomaly:
         """台账跟进：OPEN→INVESTIGATING→RESOLVED（OPEN→RESOLVED 直达；终态不可逆）。"""
         if not operator:
             raise ThreeWayReconError("操作人为空")
@@ -395,9 +459,7 @@ class ThreeWayReconEngine:
         if anomaly is None:
             raise ThreeWayReconError(f"未知台账异常: {anomaly_id!r}")
         if (anomaly.status, new_status) not in _ALLOWED_TRANSITIONS:
-            raise ThreeWayReconError(
-                f"非法跟进迁移: {anomaly_id!r} {anomaly.status.value} -> {new_status.value}"
-            )
+            raise ThreeWayReconError(f"非法跟进迁移: {anomaly_id!r} {anomaly.status.value} -> {new_status.value}")
         updated = replace(anomaly, status=new_status, updated_at=self._clock())
         self._ledger[anomaly_id] = updated
         _log.info("台账跟进: %s -> %s (operator=%s)", anomaly_id, new_status.value, operator)

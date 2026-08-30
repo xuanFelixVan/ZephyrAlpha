@@ -14,7 +14,8 @@
 # [TESTS] tests/signal_ashare/test_calendar_effects_model.py
 # [A_module] module_id=MOD-SIG-122 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""CalendarEffectsModel — A股日历效应模型（MOD-SIG-122）。
+"""
+CalendarEffectsModel — A股日历效应模型（MOD-SIG-122）。
 
 B10-01390（AUD-DRAFT-001-DIGEST P2 波 P2-W05，CAND-TESTB-042，A1 模块55）：
 日历效应滚动统计检验：月度/周内/节假日/交割日四类（分组均值 t 检验注入
@@ -25,6 +26,38 @@ B10-01390（AUD-DRAFT-001-DIGEST P2 波 P2-W05，CAND-TESTB-042，A1 模块55）
 引擎，不复制定义）；market_lifecycle_phase=市场阶段判定（本件=日历时间
 固定分组统计，零交集）；overnight_return_expectancy=隔夜收益预期（本件
 =日间收益日历效应，零交集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: ttest_runner 参数
+#   fields: 参数 ttest_runner（无注解）
+#   code: calendar_effects_model.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: calendar_effects_model.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CalendarEffectsModel
+#   name_en: CalendarEffectsModel
+#   intro: 日历效应滚动统计件（纯内存；ttest_runner / clock 注入）。
+#   desc: 日历效应滚动统计件（纯内存；ttest_runner / clock 注入）。 Args: ttest_runner: 分组均值 t 检验回调 ``runner(group_a,…；公共方法（定义序）: monthly…
+#   inputs: ttest_runner clock
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: CalendarEffectsModel
+#   downstream: 运行时装配批（统一注入点装配：收益序列 / 日历映射 / 统计器注入）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -132,9 +165,7 @@ class CalendarEffectsModel:
     def _check_ttest(self) -> Callable[[Sequence[float], Sequence[float]], tuple[float, float]]:
         """统计器注入校验。"""
         if self._ttest is None:
-            raise CalendarEffectsError(
-                "ttest_runner 未注入（t 检验强制注入，Fail-Closed）"
-            )
+            raise CalendarEffectsError("ttest_runner 未注入（t 检验强制注入，Fail-Closed）")
         return self._ttest
 
     def _group_ttest(
@@ -149,9 +180,7 @@ class CalendarEffectsModel:
         except Exception as exc:  # noqa: BLE001
             raise CalendarEffectsError(f"ttest_runner 异常: {exc}") from exc
         if not math.isfinite(t_stat) or not math.isfinite(p_value):
-            raise CalendarEffectsError(
-                f"ttest_runner 返回非有限值: t={t_stat!r} p={p_value!r}"
-            )
+            raise CalendarEffectsError(f"ttest_runner 返回非有限值: t={t_stat!r} p={p_value!r}")
         return float(t_stat), float(p_value)
 
     def _robustness(
@@ -167,7 +196,7 @@ class CalendarEffectsModel:
         """分年稳健性：每年分别对目标标签做 t 检验，|t|>t_critical 计 1。"""
         # 按年拆分为 {year: [(label, return), ...]}
         by_year: dict[int, list[tuple[str, float]]] = {}
-        for y, r, l in zip(years, returns, labels):
+        for y, r, l in zip(years, returns, labels, strict=False):
             by_year.setdefault(int(y), []).append((l, r))
         total = len(by_year)  # 唯一年数（非记录数）
         sig = 0
@@ -195,8 +224,8 @@ class CalendarEffectsModel:
         label_name: str,
     ) -> EffectNode | None:
         """单标签效应节点（无数据返回 None，数据驱动不人为）。"""
-        in_group = [r for l, r in zip(labels, returns) if l == target_label]
-        out_group = [r for l, r in zip(labels, returns) if l != target_label]
+        in_group = [r for l, r in zip(labels, returns, strict=False) if l == target_label]
+        out_group = [r for l, r in zip(labels, returns, strict=False) if l != target_label]
         if not in_group:
             return None  # 数据决定无此标签
         mean_eff = sum(in_group) / len(in_group)
@@ -211,9 +240,7 @@ class CalendarEffectsModel:
             t_critical=t_critical,
             alpha=alpha,
         )
-        is_sig = (abs(t_stat) > t_critical) and (
-            total_years == 0 or (robust_years / total_years) > robustness_ratio
-        )
+        is_sig = (abs(t_stat) > t_critical) and (total_years == 0 or (robust_years / total_years) > robustness_ratio)
         return EffectNode(
             effect_type=effect_type,
             label=label_name,
@@ -370,9 +397,7 @@ class CalendarEffectsModel:
         nodes: list[EffectNode] = []
         unique_years = sorted({int(y) for y in years})
         if len(unique_years) < min_years:
-            raise CalendarEffectsError(
-                f"总年数 {len(unique_years)} < 最小滚动窗口 {min_years}"
-            )
+            raise CalendarEffectsError(f"总年数 {len(unique_years)} < 最小滚动窗口 {min_years}")
         if months is not None:
             for m in range(1, 13):
                 node = self.monthly_effect(
@@ -424,7 +449,9 @@ class CalendarEffectsModel:
         sig = tuple(n for n in nodes if n.is_significant)
         _log.info(
             "日历效应节点: 总=%d 显著=%d 类型覆盖=%s",
-            len(nodes), len(sig), sorted({n.effect_type.value for n in nodes}),
+            len(nodes),
+            len(sig),
+            sorted({n.effect_type.value for n in nodes}),
         )
         return CalendarResult(
             nodes=tuple(nodes),

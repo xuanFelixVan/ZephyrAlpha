@@ -24,6 +24,40 @@ Version: 0.2.0
 Skill 反馈环 —— ModuleResult -> SkillLifecycle -> 自动优化闭.
 每次 Skill 执行后自动记录质量指标，触发 freshness 衰减/boost，
 并在异常情况下自动触发 Kill Switch.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: skill_feedback.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① FeedbackSignal
+#   name_en: FeedbackSignal
+#   intro: class FeedbackSignal 源码 L75-L97
+#   desc: 公共方法（定义序）: to_dict；源码 L75-L97
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② SkillFeedback
+#   name_en: SkillFeedback
+#   intro: Skill 反馈环 —— ModuleResult->SkillLifecycle->自动优化.
+#   desc: Skill 反馈环 —— ModuleResult->SkillLifecycle->自动优化.；公共方法（定义序）: history, consecutive_failures, record_module_resu…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: FeedbackSignal, SkillFeedback
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

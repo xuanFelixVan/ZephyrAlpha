@@ -20,6 +20,45 @@ list_ce_files.py — CE 文件清单生成器
 =====================================
 Task ID : MOD-CONTEXT_ENGINE-TASK-011
 Priority: P2 (beta)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: ce_file_lister.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① collect_files
+#   name_en: collect_files
+#   intro: collect_files() 源码 L78-L88
+#   desc: 源码 L78-L88
+#   inputs: 无参数
+#   outputs: dict[str, list[dict[str, str]]]
+# - id: A2
+#   name_zh: ② generate_manifest
+#   name_en: generate_manifest
+#   intro: generate_manifest() 源码 L91-L98
+#   desc: 源码 L91-L98
+#   inputs: 无参数
+#   outputs: str
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, list[dict[str, str]]]
+#   name_en: dict[str, list[dict[str, str]]]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 import json

@@ -14,7 +14,8 @@
 # [TESTS] tests/autonomy/test_researcher_agent.py
 # [A_module] module_id=MOD-AU-008 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""ResearcherAgent — 研究 Agent (MOD-AU-008)
+"""
+ResearcherAgent — 研究 Agent (MOD-AU-008)
 
 B1-00238（AUD-DRAFT-001-DIGEST P1 波 W-P1-11）：Researcher 角色卡（对齐
 14号文 §3.0 role façade 族卡模式，与 MOD-AU-007 RiskManager 同族）。
@@ -25,6 +26,48 @@ B1-00238（AUD-DRAFT-001-DIGEST P1 波 W-P1-11）：Researcher 角色卡（对�
 
 **canonical 声明**：B11-02483（W-P1-12，同名"研究Agent（Researcher）"）以
 本模块为 canonical 实现，重复候选按 REVIEW 归并。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: thresholds 参数
+#   fields: 参数 thresholds（无注解）
+#   code: researcher_agent.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: experiment_sink 参数
+#   fields: 参数 experiment_sink（无注解）
+#   code: researcher_agent.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: report_sink 参数
+#   fields: 参数 report_sink（无注解）
+#   code: researcher_agent.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: human_gate_trigger 参数
+#   fields: 参数 human_gate_trigger（无注解）
+#   code: researcher_agent.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ResearcherAgent
+#   name_en: ResearcherAgent
+#   intro: 研究 Agent：假设×指标 → 裁决与报告草稿（判定核心纯函数）。
+#   desc: 研究 Agent：假设×指标 → 裁决与报告草稿（判定核心纯函数）。 Args: thresholds: 判定阈值配置。 experiment_sink: 实验登记回调（委托 e…；公共方法（定义序）: evaluat…
+#   inputs: thresholds experiment_sink report_sink human_gate_trigger
+#   outputs: 返回值
+#   （注：A1 之后另有 9 个公共定义未列入（含 9 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（10 定义）
+#   name_en: public defs
+#   intro: ResearcherAgent
+#   downstream: 运行时装配批（C-027 工厂实验产出接入 / C-003 回测门禁指标装配 / 人工门禁链 / 报告入库持久化）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

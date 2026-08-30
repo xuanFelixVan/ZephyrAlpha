@@ -20,7 +20,8 @@
 # A3: strength_momentum = 0.4×q20 + 0.3×q5 + 0.3×q3（多时间框架动量加权）
 # O1: dict[板块代码, strength_momentum ∈ [0,1]]（板块强度综合层第三维输入）
 # [/ALGO_FLOW]
-"""短周期动量 q3/q5/q20 多时间框架加权（22 号 spec §3.1⑧，BM-SEL-08 增强）。
+"""
+短周期动量 q3/q5/q20 多时间框架加权（22 号 spec §3.1⑧，BM-SEL-08 增强）。
 
 应对板块一日游（Top3 次日重合率 14.8%，spec §2.3）：旧版 0.7×q20+0.3×q5
 在"板块持续领涨"假设下成立，A 股一日游特征下 20 日权重过高会持续追
@@ -31,6 +32,68 @@
 
 数据源：market_kline_sector_880 日K 收盘价（盘后批量，T+1 开盘可执行）。
 权重 0.4/0.3/0.3 为初拟（WyckoffTradingAgent v2.1.x 移植），待 G05 回测校准。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: closes 参数
+#   fields: 参数 closes，类型注解 list[float]
+#   code: sector_momentum.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: n 参数
+#   fields: 参数 n，类型注解 int
+#   code: sector_momentum.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: values 参数
+#   fields: 参数 values，类型注解 dict[str, float]
+#   code: sector_momentum.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: closes_by_sector 参数
+#   fields: 参数 closes_by_sector，类型注解 dict[str, list[float]]
+#   code: sector_momentum.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① n_day_return
+#   name_en: n_day_return
+#   intro: N 日累计涨跌幅 = close(t)/close(t-N) − 1。
+#   desc: N 日累计涨跌幅 = close(t)/close(t-N) − 1。 Raises: ValueError: 序列长度 < n+1 或基准收盘价 ≤0。；源码 L109-L120
+#   inputs: closes n
+#   outputs: float
+# - id: A2
+#   name_zh: ② percentile_ranks
+#   name_en: percentile_ranks
+#   intro: 截面百分位排名（0=最弱，1=最强； ties 取平均秩）。
+#   desc: 截面百分位排名（0=最弱，1=最强； ties 取平均秩）。 单板块时返回 0.5（无截面可比性，中性）。；源码 L123-L144
+#   inputs: values
+#   outputs: dict[str, float]
+# - id: A3
+#   name_zh: ③ multi_tf_momentum
+#   name_en: multi_tf_momentum
+#   intro: 多时间框架动量加权：strength_momentum = Σ w_k × q_{window_k}。
+#   desc: 多时间框架动量加权：strength_momentum = Σ w_k × q_{window_k}。 Args: closes_by_sector: 板块代码 → 日K 收盘价…；源码 L147-L180
+#   inputs: closes_by_sector windows weights
+#   outputs: dict[str, float]
+# 层: 输出
+# - id: O1
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 G05 选股引擎 / 板块强度综合层第三维)
+# - id: O2
+#   name_zh: dict[str, float]
+#   name_en: dict[str, float]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 G05 选股引擎 / 板块强度综合层第三维)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

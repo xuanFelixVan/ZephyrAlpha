@@ -14,7 +14,8 @@
 # [TESTS] tests/signal_quality/test_signal_dedup.py
 # [A_module] module_id=MOD-SIGQC-003 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""SignalDedup — 信号去重器（MOD-SIGQC-003）。
+"""
+SignalDedup — 信号去重器（MOD-SIGQC-003）。
 
 B11-02594（AUD-DRAFT-001-DIGEST P2 波 P2-W15，CAND-SIGQC-002，A7 技能
 signal-dedup）：信号指纹（标的/方向/逻辑标签/参数桶四元组）+ 相似度>0.9
@@ -25,6 +26,48 @@ signal-dedup）：信号指纹（标的/方向/逻辑标签/参数桶四元组�
 （D_FACTOR，pandas 相关矩阵贪心，对象为因子非信号）；degradation_detector
 （MOD-SIGQC-001）=信号质量降级检测（零交集）；本件=信号级指纹去重，纯内
 存不依赖 pandas。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: signal_dedup.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: audit_sink 参数
+#   fields: 参数 audit_sink（无注解）
+#   code: signal_dedup.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: similarity_threshold 参数
+#   fields: 参数 similarity_threshold（无注解）
+#   code: signal_dedup.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: window 参数
+#   fields: 参数 window（无注解）
+#   code: signal_dedup.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SignalDedup
+#   name_en: SignalDedup
+#   intro: 信号指纹去重器（纯内存/DI）。
+#   desc: 信号指纹去重器（纯内存/DI）。 - 相似度：指纹四元组等权匹配占比（4 分量全同=1.0，3 同=0.75 …）。 - 合并：相似度**严格大于**阈值（默认 0.9）且 |e…；公共方法（定义序）: fingerp…
+#   inputs: clock audit_sink similarity_threshold window
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: SignalDedup
+#   downstream: 运行时装配批（信号汇流入库前去重 / 串谋检测复查审计回放）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

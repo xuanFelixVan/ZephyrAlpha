@@ -29,6 +29,40 @@ Skill 效能实证校准 —— Anti-Regression SkillsBench
   3. AccuracyValidator: 对比 Skill 产出与预期输出
   4. RegressionDetector: 多版本对比，发现性能退化
   5. CalibrationAdvisor: 给出调优建议
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: history_path 参数
+#   fields: 参数 history_path（无注解）
+#   code: skill_efficacy_calibrator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SkillsBenchRunner
+#   name_en: SkillsBenchRunner
+#   intro: 基准测试执行器
+#   desc: 基准测试执行器；公共方法（定义序）: history, history_path, record_run, get_history, detect_regression；源码 L77-L184
+#   inputs: history_path
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② SkillEfficacyCalibrator
+#   name_en: SkillEfficacyCalibrator
+#   intro: Skill 效能实证校准器
+#   desc: Skill 效能实证校准器；公共方法（定义序）: bench_results, runner, run_benchmark, calibrate；源码 L233-L359
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: SkillsBenchRunner, SkillEfficacyCalibrator
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

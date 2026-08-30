@@ -25,6 +25,42 @@ Conductor — AI session 全自动指挥官。
 
 不执行任务 —— 执行是 AI session / sub-agent 的事。
 Conductor 只负责"找活 + 认领 + 分组"，AI 拿到分组后并行派发。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: session_id 参数
+#   fields: 参数 session_id（无注解）
+#   code: conductor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: db_path 参数
+#   fields: 参数 db_path（无注解）
+#   code: conductor.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: max_parallel 参数
+#   fields: 参数 max_parallel（无注解）
+#   code: conductor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① Conductor
+#   name_en: Conductor
+#   intro: 全自动指挥官 —— 认领 + 冲突检测 + 并行分组 + 状态管理。
+#   desc: 全自动指挥官 —— 认领 + 冲突检测 + 并行分组 + 状态管理。；公共方法（定义序）: max_parallel, db_path, autopilot, repo, plan_cycle, mark_comple…
+#   inputs: session_id db_path max_parallel
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: Conductor
+#   downstream: AI session conductor loop (replaces manual AutoPilot.run_cycle + serial executi…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

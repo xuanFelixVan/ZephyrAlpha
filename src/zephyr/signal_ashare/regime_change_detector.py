@@ -24,7 +24,8 @@
 #     TRIGGERED 0.35+0.45×k/confirm_days / CONFIRMED 0.90（对应 spec §4 触发→确认概率爬升）
 # O1: RegimeChangeSnapshot（当前体制 + 切换相位 + 切换概率 + 置信度，供下游风控节流消费）
 # [/ALGO_FLOW]
-"""regime 变更检测器（10 号 regime spec §2.1 BM-BUY-02-A-1-d，MOD-SIG-039）。
+"""
+regime 变更检测器（10 号 regime spec §2.1 BM-BUY-02-A-1-d，MOD-SIG-039）。
 
 牛/熊 2 态体制 + 变点预警的规则实现：盯着市场脾气会不会变——趋势转震荡、
 牛转熊的切换点提前预警。spec 原文为"牛/熊 2 态（HMM+变点）"，本模块按施工
@@ -38,6 +39,85 @@ alpha 择时）正交。
 
 参数（MA60、回撤 20%、confirm 3 天、CUSUM 阈值 2.0、watch_band 0.75）为初拟，
 待实盘标定。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: closes 参数
+#   fields: 参数 closes，类型注解 Sequence[float]
+#   code: regime_change_detector.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: ma_window 参数
+#   fields: 参数 ma_window，类型注解 int
+#   code: regime_change_detector.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: drawdown_threshold 参数
+#   fields: 参数 drawdown_threshold，类型注解 float
+#   code: regime_change_detector.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: peak_window 参数
+#   fields: 参数 peak_window，类型注解 int
+#   code: regime_change_detector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① classify_regime
+#   name_en: classify_regime
+#   intro: 牛熊规则判定：收盘价 < MA 或自峰值回撤 ≥ 阈值 → BEAR，否则 BULL。
+#   desc: 牛熊规则判定：收盘价 < MA 或自峰值回撤 ≥ 阈值 → BEAR，否则 BULL。 Args: closes: 收盘序列（升序），长度 ≥ ma_window。 ma_win…；源码 L215-L239
+#   inputs: closes ma_window drawdown_threshold peak_window
+#   outputs: MarketRegime
+# - id: A2
+#   name_zh: ② build_regime_series
+#   name_en: build_regime_series
+#   intro: 逐日重建最近 days 天的牛熊体制序列（升序，供切换状态机消费）。
+#   desc: 逐日重建最近 days 天的牛熊体制序列（升序，供切换状态机消费）。；源码 L242-L255
+#   inputs: closes days ma_window drawdown_threshold peak_window
+#   outputs: list[MarketRegime]
+# - id: A3
+#   name_zh: ③ cusum_level
+#   name_en: cusum_level
+#   intro: 双侧 CUSUM 变点统计量（σ√n 归一，allowance=0.5σ 过滤噪声漂移）。
+#   desc: 双侧 CUSUM 变点统计量（σ√n 归一，allowance=0.5σ 过滤噪声漂移）。 检测窗口内收益均值的漂移：去均值累积偏差的最大值按 σ√n 归一。 恒定收益（无漂移）…；源码 L258-L283
+#   inputs: returns
+#   outputs: float
+# - id: A4
+#   name_zh: ④ detect_regime_change
+#   name_en: detect_regime_change
+#   intro: 核心纯函数：收盘序列 → regime 变更快照（切换状态机 + CUSUM 预警）。
+#   desc: 核心纯函数：收盘序列 → regime 变更快照（切换状态机 + CUSUM 预警）。 状态机：尾部连续同态天数 k；前一不同态为已确认体制。 - 无翻转（整窗同态）→ STAB…；源码 L286-L355
+#   inputs: closes config
+#   outputs: RegimeChangeSnapshot
+# - id: A5
+#   name_zh: ⑤ RegimeChangeDetector
+#   name_en: RegimeChangeDetector
+#   intro: regime 变更检测器（DB 加载层薄封装，计算全部委托纯函数）。
+#   desc: regime 变更检测器（DB 加载层薄封装，计算全部委托纯函数）。 DB 依赖注入：query_fn 默认走项目既有 data 层 ch_reader.query（TSV），…；公共方法（定义序）: load_ind…
+#   inputs: registry query_fn config
+#   outputs: 返回值
+#   （注：A5 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: MarketRegime
+#   name_en: MarketRegime
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 BM-BUY-02 买卖流体制切换预警 / 下游风控节流层)
+# - id: O2
+#   name_zh: list[MarketRegime]
+#   name_en: list[MarketRegime]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 BM-BUY-02 买卖流体制切换预警 / 下游风控节流层)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations
@@ -169,12 +249,9 @@ def build_regime_series(
     """逐日重建最近 days 天的牛熊体制序列（升序，供切换状态机消费）。"""
     n = len(closes)
     if n < ma_window + days:
-        raise ValueError(
-            f"closes 长度 {n} 不足 ma_window+days={ma_window + days}"
-        )
+        raise ValueError(f"closes 长度 {n} 不足 ma_window+days={ma_window + days}")
     return [
-        classify_regime(closes[: n - days + j + 1], ma_window, drawdown_threshold, peak_window)
-        for j in range(days)
+        classify_regime(closes[: n - days + j + 1], ma_window, drawdown_threshold, peak_window) for j in range(days)
     ]
 
 
@@ -223,13 +300,9 @@ def detect_regime_change(
     cfg = config or RegimeChangeConfig()
     n = len(closes)
     if n < cfg.ma_window + cfg.min_history:
-        raise ValueError(
-            f"closes 长度 {n} 不足 ma_window+min_history={cfg.ma_window + cfg.min_history}"
-        )
+        raise ValueError(f"closes 长度 {n} 不足 ma_window+min_history={cfg.ma_window + cfg.min_history}")
 
-    series = build_regime_series(
-        closes, cfg.min_history, cfg.ma_window, cfg.drawdown_threshold, cfg.peak_window
-    )
+    series = build_regime_series(closes, cfg.min_history, cfg.ma_window, cfg.drawdown_threshold, cfg.peak_window)
     raw_today = series[-1]
     k = 1
     while k < len(series) and series[-1 - k] == raw_today:
@@ -325,9 +398,7 @@ class RegimeChangeDetector:
         Raises:
             RegimeChangeDataError: 查询为空或无可解析行。
         """
-        sql = _SQL_INDEX_KLINE.format(
-            table=self._resolve_table(), symbol=symbol, start=start, end=end
-        )
+        sql = _SQL_INDEX_KLINE.format(table=self._resolve_table(), symbol=symbol, start=start, end=end)
         tsv = self._resolve_query_fn()(sql)
         closes: list[float] = []
         for line in (tsv or "").strip().split("\n"):
@@ -338,9 +409,7 @@ class RegimeChangeDetector:
                 except ValueError:
                     _logger.warning("regime_change_detector 跳过不可解析行: %s", line[:80])
         if not closes:
-            raise RegimeChangeDataError(
-                f"market_index_kline 查询为空: symbol={symbol}, [{start}, {end}]"
-            )
+            raise RegimeChangeDataError(f"market_index_kline 查询为空: symbol={symbol}, [{start}, {end}]")
         return closes
 
     def detect(

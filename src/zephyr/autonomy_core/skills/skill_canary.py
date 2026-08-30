@@ -21,6 +21,32 @@ Author: factory-agent
 Version: 0.3.0
 
 Canary deployment & gradual rollout
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: skill_canary.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SkillCanary
+#   name_en: SkillCanary
+#   intro: class SkillCanary 源码 L56-L98
+#   desc: 公共方法（定义序）: canary, deploy_canary, promote, rollback_canary；源码 L56-L98
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SkillCanary
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from datetime import UTC, datetime

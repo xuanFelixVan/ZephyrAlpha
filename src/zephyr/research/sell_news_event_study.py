@@ -14,7 +14,8 @@
 # [TESTS] tests/research/test_sell_news_event_study.py
 # [A_module] module_id=MOD-RES-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""SellNewsEventStudy — 高位利好落地事件研究（利好出尽实证，MOD-RES-001）。
+"""
+SellNewsEventStudy — 高位利好落地事件研究（利好出尽实证，MOD-RES-001）。
 
 CAND-RES-030 转正（2026-08-30 候选核销批桶B，P1）：26号文 §2.4 事件驱动六因子矩阵
 dReport 因子的实证底座——"事前 20 日涨幅分位高 + 强利好披露落地"后的利好出尽
@@ -45,6 +46,48 @@ dReport 因子的实证底座——"事前 20 日涨幅分位高 + 强利好披�
 - MOD-INT-EVENT-FACTOR（intelligence/event_factor_matrix）：dReport/Jump on PEAD
   **因子值**计算件（单事件数值项），不做跨事件 CAR 分布统计；
 - 本件：**跨事件统计研究**（分组 CAR 分布 -> priced-in 规则建议），纯研究态不落因子表。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: events 参数
+#   fields: 参数 events，类型注解 pd.DataFrame
+#   code: sell_news_event_study.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: prices 参数
+#   fields: 参数 prices，类型注解 pd.DataFrame
+#   code: sell_news_event_study.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: benchmark 参数
+#   fields: 参数 benchmark，类型注解 pd.DataFrame
+#   code: sell_news_event_study.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: config 参数
+#   fields: 参数 config，类型注解 SellNewsStudyConfig | None
+#   code: sell_news_event_study.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① run_sell_news_study
+#   name_en: run_sell_news_study
+#   intro: 高位利好落地事件研究主入口（纯函数，数据全注入）。
+#   desc: 高位利好落地事件研究主入口（纯函数，数据全注入）。 Parameters ---------- events : 事件清单，列 symbol / event_date / eve…；源码 L525-L590
+#   inputs: events prices benchmark config
+#   outputs: SellNewsStudyReport
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: SellNewsStudyReport
+#   name_en: SellNewsStudyReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 运行时装配批（事件清单+日K+基准指数 DataFrame 注入）；L3 消化层 priced-in 规则标定（产出为规则建议文本，不直接落库）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -339,9 +382,7 @@ def _collect_samples(
         symbol = str(row.symbol)
         panel = panels.get(symbol)
         sample = (
-            None
-            if panel is None
-            else _event_sample(symbol, row.event_date, str(row.event_type), panel, cfg, bmk_ret)
+            None if panel is None else _event_sample(symbol, row.event_date, str(row.event_type), panel, cfg, bmk_ret)
         )
         if sample is None:
             dropped += 1
@@ -417,7 +458,9 @@ def _stats_lookup(stats: tuple[EventCarStats, ...]) -> dict[tuple[str, int], Eve
     return {(s.group, s.horizon): s for s in stats}
 
 
-def _build_verdict(horizon: int, high: EventCarStats, control: EventCarStats, cfg: SellNewsStudyConfig) -> PricedInVerdict:
+def _build_verdict(
+    horizon: int, high: EventCarStats, control: EventCarStats, cfg: SellNewsStudyConfig
+) -> PricedInVerdict:
     """单窗口 priced-in 判定：显著为负 + 弱于对照 + 负收益过半 -> 利好出尽成立。"""
     spread = high.mean - control.mean
     significant = abs(high.t_stat) >= cfg.significance_t
@@ -528,9 +571,7 @@ def run_sell_news_study(
         )
     stats = _group_stats(high, control, cfg)
     lookup = _stats_lookup(stats)
-    verdicts = tuple(
-        _build_verdict(h, lookup[("high", h)], lookup[("control", h)], cfg) for h in cfg.horizons
-    )
+    verdicts = tuple(_build_verdict(h, lookup[("high", h)], lookup[("control", h)], cfg) for h in cfg.horizons)
     primary = _primary_verdict(verdicts, cfg.primary_horizon)
     return SellNewsStudyReport(
         n_events_input=len(events),

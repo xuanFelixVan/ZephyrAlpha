@@ -34,6 +34,32 @@ Phase B 骨架——定义风控层的公共接口。
   CTR-P1-011  RiskMetricsReport         -> D_PORTFOLIO_CORE, D_REPORTING, D_FRONTEND, D_COMPLIANCE（生产者——风险指标）
 
 SSoT: cross_layer_contracts.yaml v3.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: risk_manager.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① RiskManagerBase
+#   name_en: RiskManagerBase
+#   intro: 风控管理器抽象基类（OCP 扩展点）
+#   desc: 风控管理器抽象基类（OCP 扩展点） 职责： - 从上游信号/持仓计算当前风险敞口 - 产出 RiskLimits 供给 D_PORTFOLIO_CORE 组合优化器 - 产出…；公共方法（定义序）: validate…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: RiskManagerBase
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -14,7 +14,8 @@
 # [TESTS] tests/autonomy/test_execution_layer_agent_entries.py ; tests/autonomy/test_execution_layer_s11_wiring.py
 # [A_module] module_id=MOD-EXE-ALGO-001 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""算法 Agent 薄入口（14号文 §3.3 信号/模型/训练实验，§4 S0.4 手动形态）.
+"""
+算法 Agent 薄入口（14号文 §3.3 信号/模型/训练实验，§4 S0.4 手动形态）.
 
 输入：算法实验工单（落盘 JSON：ticket_id/experiment_type/target_id/run_id/component）。
 处理纪律（步骤顺序即验收口径，run.json steps 留痕）：
@@ -29,6 +30,60 @@ S1.1 可选接线（默认 None 零行为变化）：cascade_router→11号文�
 module_mapper→13号文四选一裁决留痕（module_mapping.spec.json）。
 
 手动触发：python -m zephyr.autonomy_core.agents.algorithm_agent_entry --ticket <path>
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: ticket 参数
+#   fields: 参数 ticket，类型注解 dict[str, Any]
+#   code: algorithm_agent_entry.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: runtime_dir 参数
+#   fields: 参数 runtime_dir（无注解）
+#   code: algorithm_agent_entry.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: repo_root 参数
+#   fields: 参数 repo_root（无注解）
+#   code: algorithm_agent_entry.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: gpu_stats_provider 参数
+#   fields: 参数 gpu_stats_provider（无注解）
+#   code: algorithm_agent_entry.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① run_algorithm_experiment_ticket
+#   name_en: run_algorithm_experiment_ticket
+#   intro: 执行一张算法实验工单（登记先于执行 + 显存守卫 + 只读评估，端到端落盘）.
+#   desc: 执行一张算法实验工单（登记先于执行 + 显存守卫 + 只读评估，端到端落盘）. Args: ticket: {"ticket_id", "experiment_type", "t…；源码 L146-L231
+#   inputs: ticket runtime_dir repo_root gpu_stats_provider tracking_config casca…
+#   outputs: dict[str, Any]
+# - id: A2
+#   name_zh: ② main
+#   name_en: main
+#   intro: CLI 手动触发入口：--ticket <工单 JSON 路径> [--runtime-dir DIR].
+#   desc: CLI 手动触发入口：--ticket <工单 JSON 路径> [--runtime-dir DIR].；源码 L234-L243
+#   inputs: argv
+#   outputs: int
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, Any]
+#   name_en: dict[str, Any]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests/autonomy/test_execution_layer_agent_entries.py ; tests/autonomy/test_exec…
+# - id: O2
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests/autonomy/test_execution_layer_agent_entries.py ; tests/autonomy/test_exec…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -133,11 +188,13 @@ def run_algorithm_experiment_ticket(
     extras: dict[str, Any] = {}
     if cascade_router is not None:
         from zephyr.autonomy_core.agents import _s11_wiring
+
         extras["model_routing"] = _s11_wiring.route_experiment_model(ticket, cascade_router)
         store.write_output("model_routing.decision.json", extras["model_routing"], ticket_id)
         steps.append("model_routed" if extras["model_routing"]["status"] == "routed" else "model_route_skipped")
     if module_mapper is not None and str(ticket.get("experiment_type") or "") == "module_generation":
         from zephyr.autonomy_core.agents import _s11_wiring
+
         extras["module_mapping"] = _s11_wiring.map_module_generation(ticket, module_mapper)
         store.write_output("module_mapping.spec.json", extras["module_mapping"], ticket_id)
         steps.append("module_mapped" if extras["module_mapping"]["status"] == "mapped" else "module_map_error")

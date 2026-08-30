@@ -23,6 +23,55 @@ Version: 0.3.0
 
 Skill 生命周期状态机 + 跨模块协调.
 v0.3.0: complete lifecycle with guard functions, transition log, rollback, batch ops.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: from_status 参数
+#   fields: 参数 from_status（无注解）
+#   code: skill_lifecycle.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: to_status 参数
+#   fields: 参数 to_status（无注解）
+#   code: skill_lifecycle.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: reason 参数
+#   fields: 参数 reason（无注解）
+#   code: skill_lifecycle.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: timestamp 参数
+#   fields: 参数 timestamp（无注解）
+#   code: skill_lifecycle.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① Transition
+#   name_en: Transition
+#   intro: class Transition 源码 L88-L101
+#   desc: 公共方法（定义序）: to_dict；源码 L88-L101
+#   inputs: from_status to_status reason timestamp
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② SkillLifecycle
+#   name_en: SkillLifecycle
+#   intro: Skill 生命周期状态机 + 跨模块协调.
+#   desc: Skill 生命周期状态机 + 跨模块协调.；公共方法（定义序）: guards, states, register, current_status, add_guard, transition, history, r…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: Transition, SkillLifecycle
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

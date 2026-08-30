@@ -15,6 +15,68 @@
 # [A_module] module_id=MOD-INF-035 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: budget 参数
+#   fields: 参数 budget，类型注解 BrainResourceBudget | None
+#   code: runtime_config.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: rss_reader 参数
+#   fields: 参数 rss_reader，类型注解 Callable[[], float] | None
+#   code: runtime_config.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: boot_phase 参数
+#   fields: 参数 boot_phase（无注解）
+#   code: runtime_config.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: config 参数
+#   fields: 参数 config，类型注解 RuntimeConfig
+#   code: runtime_config.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① check_brain_memory_budget
+#   name_en: check_brain_memory_budget
+#   intro: RAM 预算检查（GAP-006）：超限 → boot 阶段拒启动 / 运行中触发降级。
+#   desc: RAM 预算检查（GAP-006）：超限 → boot 阶段拒启动 / 运行中触发降级。 rss_reader 可注入（测试 mock 超限场景）；默认读当前进程 RSS。；源码 L123-L143
+#   inputs: budget rss_reader boot_phase
+#   outputs: BrainBudgetResult
+# - id: A2
+#   name_zh: ② validate_config
+#   name_en: validate_config
+#   intro: 启动前配置完整性校验（5.71.1 治本）——必填字段/类型/范围，失败 fail-fast。
+#   desc: 启动前配置完整性校验（5.71.1 治本）——必填字段/类型/范围，失败 fail-fast。 boot() 首步调用；校验失败抛 ValueError（聚合全部问题一次抛出），…；源码 L146-L192
+#   inputs: config
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ ensure_runtime_dirs
+#   name_en: ensure_runtime_dirs
+#   intro: ensure_runtime_dirs(config) 源码 L195-L206
+#   desc: 源码 L195-L206
+#   inputs: config
+#   outputs: 返回值
+#   （注：A3 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: BrainBudgetResult
+#   name_en: BrainBudgetResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.trading.auto_runtime_core;zephyr.trading.lifecycle_manager;zephyr.tradin…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
+"""
+
 from collections.abc import Callable
 from dataclasses import dataclass
 

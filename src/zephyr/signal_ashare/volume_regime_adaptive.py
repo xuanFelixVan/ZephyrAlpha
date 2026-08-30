@@ -14,7 +14,8 @@
 # [TESTS] tests/signal_ashare/test_volume_regime_adaptive.py
 # [A_module] module_id=MOD-SIG-129 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""VolumeRegimeAdaptive — 量能体制自适应策略（MOD-SIG-129）。
+"""
+VolumeRegimeAdaptive — 量能体制自适应策略（MOD-SIG-129）。
 
 B10-01445（AUD-DRAFT-001-DIGEST P2 波 P2-W06，CAND-TESTB-045，A1 模块23）：
 **量能三态**（vol/MA20：缩量 <0.7 / 平量 0.7-1.3 / 放量 >1.3，极端分位
@@ -26,6 +27,48 @@ B10-01445（AUD-DRAFT-001-DIGEST P2 波 P2-W06，CAND-TESTB-045，A1 模块23）
 层，本件=单标的三态+策略参数查找）；intraday_volume_orderflow=日内量能
 结构/订单流（本件=日频 vol/MA20 体制适配）；strategy_matrix_3d（MOD-SIG-
 130）=本件三态与体制轴的三维扩展消费方，轴枚举在此定义供其复用。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: strategy_matrix 参数
+#   fields: 参数 strategy_matrix（无注解）
+#   code: volume_regime_adaptive.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: shrink_threshold 参数
+#   fields: 参数 shrink_threshold（无注解）
+#   code: volume_regime_adaptive.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: spike_threshold 参数
+#   fields: 参数 spike_threshold（无注解）
+#   code: volume_regime_adaptive.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: extreme_low_pct 参数
+#   fields: 参数 extreme_low_pct（无注解）
+#   code: volume_regime_adaptive.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① VolumeRegimeAdaptive
+#   name_en: VolumeRegimeAdaptive
+#   intro: 量能三态分类 + 量能×体制 3×3 策略矩阵查找（纯内存确定性）。
+#   desc: 量能三态分类 + 量能×体制 3×3 策略矩阵查找（纯内存确定性）。；公共方法（定义序）: classify, query, adapt；源码 L161-L294
+#   inputs: strategy_matrix shrink_threshold spike_threshold extreme_low_pct extr…
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: VolumeRegimeAdaptive
+#   downstream: 运行时装配批（量能×体制策略参数查找 / MOD-SIG-130 三维矩阵轴复用）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -64,16 +107,16 @@ class VolumeState(str, Enum):
     """量能三态（词表闭合）。"""
 
     SHRINK = "shrink"  # 缩量：量比 < 缩量阈值
-    FLAT = "flat"      # 平量：量比 ∈ [缩量阈值, 放量阈值]
-    SPIKE = "spike"    # 放量：量比 > 放量阈值
+    FLAT = "flat"  # 平量：量比 ∈ [缩量阈值, 放量阈值]
+    SPIKE = "spike"  # 放量：量比 > 放量阈值
 
 
 class MarketRegime(str, Enum):
     """市场体制三态（词表闭合，三维矩阵体制轴复用）。"""
 
-    TREND = "trend"                          # 趋势
-    MEAN_REVERSION = "mean_reversion"        # 均值回归
-    CHOPPY = "choppy"                        # 混沌
+    TREND = "trend"  # 趋势
+    MEAN_REVERSION = "mean_reversion"  # 均值回归
+    CHOPPY = "choppy"  # 混沌
 
 
 @dataclass(frozen=True)
@@ -152,7 +195,9 @@ class VolumeRegimeAdaptive:
         if missing:
             raise VolumeRegimeError(f"策略矩阵缺格: {sorted(str(k) for k in missing)}")
         if extra:
-            raise VolumeRegimeError(f"策略矩阵多格（键须为 (MarketRegime, VolumeState)）: {sorted(str(k) for k in extra)}")
+            raise VolumeRegimeError(
+                f"策略矩阵多格（键须为 (MarketRegime, VolumeState)）: {sorted(str(k) for k in extra)}"
+            )
         for key, cell in strategy_matrix.items():
             if not isinstance(cell, StrategyParams):
                 raise VolumeRegimeError(f"格值类型非法: {key!r} -> {type(cell).__name__}")
@@ -233,11 +278,17 @@ class VolumeRegimeAdaptive:
             )
             _log.warning(
                 "极端量能分位护栏触发: regime=%s state=%s percentile=%.1f 仓位 %.2f→%.2f",
-                regime.value, signal.state.value, signal.percentile or 0.0,
-                params.position_pct, effective.position_pct,
+                regime.value,
+                signal.state.value,
+                signal.percentile or 0.0,
+                params.position_pct,
+                effective.position_pct,
             )
         _log.debug(
             "量能自适应: regime=%s ratio=%.3f state=%s extreme=%s",
-            regime.value, signal.ratio, signal.state.value, guarded,
+            regime.value,
+            signal.ratio,
+            signal.state.value,
+            guarded,
         )
         return AdaptiveDecision(signal=signal, params=params, effective_params=effective, guarded=guarded)

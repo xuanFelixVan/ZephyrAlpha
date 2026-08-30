@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-SIG-055 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""供应链 GNN（MOD-SIG-055）——接口契约 + 轻量占位实现。
+"""
+供应链 GNN（MOD-SIG-055）——接口契约 + 轻量占位实现。
 
 产业链/供应链图神经网络属远期增强候选。本模块只立接口契约：fit_baseline 图校验
 （节点唯一/边不悬空/边权 ∈ (0,1]）+ propagate_risk 传播接口 + 未训练 fail-closed。
@@ -24,6 +25,32 @@
 占位传播路径：种子风险分沿有向边按 边权×decay 逐跳衰减扩散（BFS，访问集防环），
 输出每节点 [0,1] 裁剪后的传导风险分——与 causal_inference_engine 传导语义一致
 的轻量基线，禁止冒充 GNN 真推理结果消费。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: decay 参数
+#   fields: 参数 decay（无注解）
+#   code: supply_chain_gnn.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SupplyChainGnn
+#   name_en: SupplyChainGnn
+#   intro: 供应链 GNN 骨架（BFS 衰减传播占位）。
+#   desc: 供应链 GNN 骨架（BFS 衰减传播占位）。；公共方法（定义序）: is_fitted, fit_baseline, propagate_risk；源码 L64-L125
+#   inputs: decay
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SupplyChainGnn
+#   downstream: （远期：供应链传导风险信号消费方）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

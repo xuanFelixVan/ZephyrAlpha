@@ -22,7 +22,8 @@
 # A4: rolling_zscore 三信号标准化 → siphon_score = 0.4×z_hhi + 0.35×z_conc + 0.25×z_outflow
 # O1: SiphonResult(is_siphon = score>1.5σ, siphon_score, siphon_sectors=头部N名单)
 # [/ALGO_FLOW]
-"""虹吸态识别（22 号 spec §3.1⑤，BM-SEL-08 增强补施工）。
+"""
+虹吸态识别（22 号 spec §3.1⑤，BM-SEL-08 增强补施工）。
 
 虹吸态 = 少数头部强势板块吸金致其余板块缺血的极端分化状态（情绪周期
 主升/疯狂态的板块级表现；2026 实证：国海固收 2026-07 "AI 产业链持续虹吸"，
@@ -34,6 +35,61 @@ z > 1.5σ（正态 ~93% 分位）触发。虹吸态用相对 z-score（相对近
 
 参数（N=5 / 权重 / 阈值 1.5）均待 G05/G08 实盘校准（spec §6 待裁定，
 需 ≥3 个月虹吸态样本后标定）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: value 参数
+#   fields: 参数 value，类型注解 float
+#   code: sector_siphon.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: history 参数
+#   fields: 参数 history，类型注解 list[float]
+#   code: sector_siphon.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: sectors 参数
+#   fields: 参数 sectors，类型注解 list[SectorFlowSnapshot]
+#   code: sector_siphon.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: hhi_history 参数
+#   fields: 参数 hhi_history，类型注解 list[float]
+#   code: sector_siphon.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① rolling_zscore
+#   name_en: rolling_zscore
+#   intro: 当前值相对滚动窗口历史序列的 z-score。
+#   desc: 当前值相对滚动窗口历史序列的 z-score。 历史样本 <2 或标准差为 0 时返回 0.0（降级不触发，不误报）。；源码 L132-L144
+#   inputs: value history
+#   outputs: float
+# - id: A2
+#   name_zh: ② detect_siphon_state
+#   name_en: detect_siphon_state
+#   intro: 虹吸态识别——三信号滚动 z-score 加权。
+#   desc: 虹吸态识别——三信号滚动 z-score 加权。 Args: sectors: 当日全市场板块列表（含 turnover, net_inflow）。 hhi_history: 信…；源码 L147-L205
+#   inputs: sectors hhi_history conc_history outflow_history n_top threshold
+#   outputs: SiphonResult
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 G05 选股引擎市场状态适配输入 / sector_rotation_state 串联精判)
+# - id: O2
+#   name_zh: SiphonResult
+#   name_en: SiphonResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 G05 选股引擎市场状态适配输入 / sector_rotation_state 串联精判)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

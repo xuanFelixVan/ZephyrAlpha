@@ -20,6 +20,56 @@ Finalizer — 优雅清理器
 ========================
 蓝图: docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md §3.1
 借鉴: K8s Finalizer + OwnerReference
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: finalizer 参数
+#   fields: 参数 finalizer，类型注解 Finalizer
+#   code: finalizer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① Finalizer
+#   name_en: Finalizer
+#   intro: 优雅清理器——关闭前完成所有必要持久化。
+#   desc: 优雅清理器——关闭前完成所有必要持久化。；公共方法（定义序）: cleanup_fns, register, run；源码 L82-L110
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② register_monitoring_finalizers
+#   name_en: register_monitoring_finalizers
+#   intro: 注册监控模块的 Finalizer 清理函数 — DM-201249.
+#   desc: 注册监控模块的 Finalizer 清理函数 — DM-201249. 在系统关闭时自动： 1. monitor-flush — flush MetricsRegistry 指标…；源码 L118-L155
+#   inputs: finalizer
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ get_finalizer
+#   name_en: get_finalizer
+#   intro: 获取全局 Finalizer 单例 — DM-201249.
+#   desc: 获取全局 Finalizer 单例 — DM-201249.；源码 L162-L169
+#   inputs: 无参数
+#   outputs: Finalizer
+# - id: A4
+#   name_zh: ④ register_monitoring_finalizers_auto
+#   name_en: register_monitoring_finalizers_auto
+#   intro: 自动注册监控清理函数到全局 Finalizer — DM-201249.
+#   desc: 自动注册监控清理函数到全局 Finalizer — DM-201249. 无需传入 Finalizer 实例，使用全局单例。；源码 L172-L177
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: Finalizer
+#   name_en: Finalizer
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 import logging

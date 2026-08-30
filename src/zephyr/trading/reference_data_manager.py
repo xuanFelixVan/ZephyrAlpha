@@ -14,7 +14,8 @@
 # [TESTS] tests/trading/test_reference_data_manager.py
 # [A_module] module_id=MOD-TRADING-014 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""ReferenceDataManager — 证券主数据管理器（MOD-TRADING-014）。
+"""
+ReferenceDataManager — 证券主数据管理器（MOD-TRADING-014）。
 
 B14-04639（AUD-DRAFT-001-DIGEST P2 波 P2-W08，CAND-TRD-013，A9 D-TRADING-14）：
 主数据 SSOT——代码/名称/行业分类/涨跌停规则/ST 与退市标记/交易日历统一登记
@@ -26,6 +27,43 @@ B14-04639（AUD-DRAFT-001-DIGEST P2 波 P2-W08，CAND-TRD-013，A9 D-TRADING-14�
 查重分工（蓝图 §0）：trading_contracts.market.instrument=Instrument 契约类
 型（本件=主数据存储/版本/查询运行时，复用其代码语义不重建契约）；
 eod_processor=日终任务链（本件被其调度执行日终刷新，零交集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: conn 参数
+#   fields: 参数 conn（无注解）
+#   code: reference_data_manager.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: reference_data_manager.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: audit_sink 参数
+#   fields: 参数 audit_sink（无注解）
+#   code: reference_data_manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ReferenceDataManager
+#   name_en: ReferenceDataManager
+#   intro: 证券主数据管理器（SSOT：sqlite 注入 + 日终刷新 + 版本递增 + 查询 API + 审计回调）。
+#   desc: 证券主数据管理器（SSOT：sqlite 注入 + 日终刷新 + 版本递增 + 查询 API + 审计回调）。；公共方法（定义序）: eod_refresh, version, get, exists, all_cod…
+#   inputs: conn clock audit_sink
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: ReferenceDataManager
+#   downstream: 运行时装配批（监控与风控经查询 API 统一引用 / 日终刷新任务链 / 审计路由接线）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -135,9 +173,7 @@ class ReferenceDataManager:
         with self._conn:
             for stmt in _SCHEMA:
                 self._conn.execute(stmt)
-            if self._conn.execute(
-                "SELECT value FROM meta WHERE key = 'version'"
-            ).fetchone() is None:
+            if self._conn.execute("SELECT value FROM meta WHERE key = 'version'").fetchone() is None:
                 self._conn.execute("INSERT INTO meta (key, value) VALUES ('version', '0')")
 
     # ── 内部 ─────────────────────────────────────────────────────────────
@@ -176,9 +212,7 @@ class ReferenceDataManager:
         return tuple(sorted(days))
 
     def _all_records(self) -> tuple[SecurityRecord, ...]:
-        rows = self._conn.execute(
-            f"SELECT {_COLUMNS} FROM securities ORDER BY code"
-        ).fetchall()
+        rows = self._conn.execute(f"SELECT {_COLUMNS} FROM securities ORDER BY code").fetchall()
         return tuple(self._row_to_record(r) for r in rows)
 
     def _audit(self, change: ChangeSet) -> None:
@@ -227,24 +261,24 @@ class ReferenceDataManager:
                 f"INSERT INTO securities ({_COLUMNS}) VALUES (?, ?, ?, ?, ?, ?, ?)",
                 [
                     (
-                        r.code, r.name, r.industry,
-                        str(r.limit_up_pct), str(r.limit_down_pct),
-                        int(r.is_st), int(r.is_delisted),
+                        r.code,
+                        r.name,
+                        r.industry,
+                        str(r.limit_up_pct),
+                        str(r.limit_down_pct),
+                        int(r.is_st),
+                        int(r.is_delisted),
                     )
                     for r in sorted(new.values(), key=lambda x: x.code)
                 ],
             )
             if days is not None:
-                self._conn.execute(
-                    "DELETE FROM calendar_days WHERE cal_name = ?", (calendar_name,)
-                )
+                self._conn.execute("DELETE FROM calendar_days WHERE cal_name = ?", (calendar_name,))
                 self._conn.executemany(
                     "INSERT INTO calendar_days (cal_name, day) VALUES (?, ?)",
                     [(calendar_name, d.isoformat()) for d in days],
                 )
-            self._conn.execute(
-                "UPDATE meta SET value = ? WHERE key = 'version'", (str(to_version),)
-            )
+            self._conn.execute("UPDATE meta SET value = ? WHERE key = 'version'", (str(to_version),))
 
         change = ChangeSet(
             from_version=from_version,
@@ -256,7 +290,11 @@ class ReferenceDataManager:
         )
         _log.info(
             "主数据日终刷新: v%d -> v%d (added=%d removed=%d changed=%d)",
-            from_version, to_version, len(added), len(removed), len(changed),
+            from_version,
+            to_version,
+            len(added),
+            len(removed),
+            len(changed),
         )
         self._audit(change)
         return change
@@ -265,18 +303,14 @@ class ReferenceDataManager:
 
     def version(self) -> int:
         """当前主数据版本号。"""
-        row = self._conn.execute(
-            "SELECT value FROM meta WHERE key = 'version'"
-        ).fetchone()
+        row = self._conn.execute("SELECT value FROM meta WHERE key = 'version'").fetchone()
         return int(row[0])
 
     def get(self, code: str) -> SecurityRecord:
         """按代码查询（未知 → Fail-Closed）。"""
         if not code:
             raise ReferenceDataError("查询代码为空")
-        row = self._conn.execute(
-            f"SELECT {_COLUMNS} FROM securities WHERE code = ?", (code,)
-        ).fetchone()
+        row = self._conn.execute(f"SELECT {_COLUMNS} FROM securities WHERE code = ?", (code,)).fetchone()
         if row is None:
             raise ReferenceDataError(f"未知证券代码: {code!r}")
         return self._row_to_record(row)
@@ -285,9 +319,7 @@ class ReferenceDataManager:
         """代码是否已登记（空代码 → Fail-Closed）。"""
         if not code:
             raise ReferenceDataError("查询代码为空")
-        row = self._conn.execute(
-            "SELECT 1 FROM securities WHERE code = ?", (code,)
-        ).fetchone()
+        row = self._conn.execute("SELECT 1 FROM securities WHERE code = ?", (code,)).fetchone()
         return row is not None
 
     def all_codes(self) -> tuple[str, ...]:

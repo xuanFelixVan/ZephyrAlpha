@@ -14,7 +14,8 @@
 # [TESTS] tests/signal_ashare/test_fake_move_distribution.py
 # [A_module] module_id=MOD-SIG-124 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""FakeMoveDetector — 主力假动作与筹码派发识别（MOD-SIG-124）。
+"""
+FakeMoveDetector — 主力假动作与筹码派发识别（MOD-SIG-124）。
 
 B10-01425（AUD-DRAFT-001-DIGEST P2 波 P2-W05，CAND-TESTB-044，A1 模块27；
 canonical 承接 TESTB-056 归并）：**假动作 6 模式规则库**（假拉升真出货/
@@ -27,6 +28,43 @@ canonical 承接 TESTB-056 归并）：**假动作 6 模式规则库**（假拉�
 破 N 日回落判假+诱多三特征（本件=多模式假动作规则库+7维资金/筹码面打
 分，零交集）；trading_compliance_detector=合规检测（本件为信号域行为
 识别，不做合规判定）；识别结论仅作信号输入，不直接下单（advisory）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: fake_move_distribution.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: warning_sink 参数
+#   fields: 参数 warning_sink（无注解）
+#   code: fake_move_distribution.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: fake_move_distribution.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FakeMoveDetector
+#   name_en: FakeMoveDetector
+#   intro: 主力假动作识别器（6 模式规则库 + 7 维打分 + >85% 暂停追涨）。
+#   desc: 主力假动作识别器（6 模式规则库 + 7 维打分 + >85% 暂停追涨）。；公共方法（定义序）: assess；源码 L320-L399
+#   inputs: clock warning_sink config
+#   outputs: 返回值
+#   （注：A1 之后另有 9 个公共定义未列入（含 9 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（10 定义）
+#   name_en: public defs
+#   intro: FakeMoveDetector
+#   downstream: 运行时装配批（追涨门禁 / 买入侧防伪告警接 alert 路由）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -218,16 +256,9 @@ class FakeMoveConfig:
     def __post_init__(self) -> None:
         if self.weights is not None:
             if len(self.weights) != len(_DIM_ORDER):
-                raise FakeMoveError(
-                    f"weights 须 {len(_DIM_ORDER)} 项（7维），实得 {len(self.weights)}"
-                )
+                raise FakeMoveError(f"weights 须 {len(_DIM_ORDER)} 项（7维），实得 {len(self.weights)}")
             for w in self.weights:
-                if (
-                    isinstance(w, bool)
-                    or not isinstance(w, (int, float))
-                    or not math.isfinite(w)
-                    or w < 0.0
-                ):
+                if isinstance(w, bool) or not isinstance(w, (int, float)) or not math.isfinite(w) or w < 0.0:
                     raise FakeMoveError(f"weights 含非法权重: {w!r}（须非负有限）")
             if abs(sum(self.weights) - 1.0) > 1e-6:
                 raise FakeMoveError(f"weights Σ≠1: {sum(self.weights)!r}")
@@ -238,9 +269,7 @@ class FakeMoveConfig:
         if self.lhb_scale <= 0.0:
             raise FakeMoveError(f"lhb_scale 须>0: {self.lhb_scale!r}")
         if not 0.0 < self.pattern_match_threshold <= 1.0:
-            raise FakeMoveError(
-                f"pattern_match_threshold 越界: {self.pattern_match_threshold!r}"
-            )
+            raise FakeMoveError(f"pattern_match_threshold 越界: {self.pattern_match_threshold!r}")
         if not 0.0 < self.warn_threshold < 1.0:
             raise FakeMoveError(f"warn_threshold 越界: {self.warn_threshold!r}")
 
@@ -278,12 +307,7 @@ def _validate_metrics(m: SignalMetrics) -> None:
     """7 维注入数据校验（比率∈[0,1]、金额有限、时段词表闭合）。"""
     for name in ("active_buy_ratio", "volume_persistence", "sector_follow_rate", "bottom_chip_ratio"):
         v = getattr(m, name)
-        if (
-            isinstance(v, bool)
-            or not isinstance(v, (int, float))
-            or not math.isfinite(v)
-            or not 0.0 <= v <= 1.0
-        ):
+        if isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v) or not 0.0 <= v <= 1.0:
             raise FakeMoveError(f"{name} 越界: {v!r}（须∈[0,1] 有限实数）")
     for name in ("big_order_net_inflow", "lhb_net_buy"):
         v = getattr(m, name)
@@ -313,23 +337,15 @@ class FakeMoveDetector:
         """7 维嫌疑分（各∈[0,1]，越高越可疑；静态表驱动确定性）。"""
         cfg = self._cfg
         return {
-            SignalDim.ACTIVE_BUY: _clamp01(
-                (cfg.active_buy_mid - m.active_buy_ratio) / cfg.active_buy_mid
-            ),
+            SignalDim.ACTIVE_BUY: _clamp01((cfg.active_buy_mid - m.active_buy_ratio) / cfg.active_buy_mid),
             SignalDim.BIG_ORDER_INFLOW: (
-                0.0
-                if m.big_order_net_inflow >= 0.0
-                else _clamp01(-m.big_order_net_inflow / cfg.big_order_scale)
+                0.0 if m.big_order_net_inflow >= 0.0 else _clamp01(-m.big_order_net_inflow / cfg.big_order_scale)
             ),
             SignalDim.VOLUME_PERSISTENCE: _clamp01(1.0 - m.volume_persistence),
             SignalDim.SECTOR_FOLLOW: _clamp01(1.0 - m.sector_follow_rate),
             SignalDim.PUMP_WINDOW: _WINDOW_SUSPICION[m.pump_window],
             SignalDim.BOTTOM_CHIP: _clamp01(1.0 - m.bottom_chip_ratio),
-            SignalDim.LHB: (
-                0.0
-                if m.lhb_net_buy >= 0.0
-                else _clamp01(-m.lhb_net_buy / cfg.lhb_scale)
-            ),
+            SignalDim.LHB: (0.0 if m.lhb_net_buy >= 0.0 else _clamp01(-m.lhb_net_buy / cfg.lhb_scale)),
         }
 
     # ── 评估 ─────────────────────────────────────────────────────────────
@@ -345,16 +361,11 @@ class FakeMoveDetector:
         _validate_metrics(metrics)
         scores = self._dim_scores(metrics)
         weights = self._cfg.weights if self._cfg.weights is not None else _EQUAL_WEIGHTS
-        probability = _clamp01(
-            sum(w * scores[dim] for w, dim in zip(weights, _DIM_ORDER))
-        )
+        probability = _clamp01(sum(w * scores[dim] for w, dim in zip(weights, _DIM_ORDER, strict=False)))
         matched = tuple(
             rule.pattern
             for rule in FAKE_MOVE_RULES.values()
-            if all(
-                scores[d] >= self._cfg.pattern_match_threshold
-                for d in rule.contradiction_dims
-            )
+            if all(scores[d] >= self._cfg.pattern_match_threshold for d in rule.contradiction_dims)
         )
         now = self._clock()
         warning: FakeMoveWarning | None = None

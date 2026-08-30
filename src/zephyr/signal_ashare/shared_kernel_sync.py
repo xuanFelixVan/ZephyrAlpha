@@ -14,7 +14,8 @@
 # [TESTS] tests/signal_ashare/test_shared_kernel_sync.py
 # [A_module] module_id=MOD-SIG-133 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""SharedKernelSync — 策略共享内核同步器（MOD-SIG-133）。
+"""
+SharedKernelSync — 策略共享内核同步器（MOD-SIG-133）。
 
 B14-04730（AUD-DRAFT-001-DIGEST P2 波 P2-W06，CAND-TESTB-059，A9
 D-SIGNAL-101）：公共参数/市场状态/特征缓存三命名空间（词表闭合）
@@ -26,6 +27,43 @@ D-SIGNAL-101）：公共参数/市场状态/特征缓存三命名空间（词表
 同步，不做特征计算）。
 
 纯内存/DI设计；外部副作用（OS调用/网络/进程控制）全部经注入回调。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: bus 参数
+#   fields: 参数 bus（无注解）
+#   code: shared_kernel_sync.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: shared_kernel_sync.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: alert_sink 参数
+#   fields: 参数 alert_sink（无注解）
+#   code: shared_kernel_sync.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SharedKernelSync
+#   name_en: SharedKernelSync
+#   intro: 策略共享内核同步器（单一真源注册表+版本广播+一致性校验）。
+#   desc: 策略共享内核同步器（单一真源注册表+版本广播+一致性校验）。；公共方法（定义序）: write, read, version_of, keys, snapshot_versions, check_drift；源码 L1…
+#   inputs: bus clock alert_sink
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: SharedKernelSync
+#   downstream: 运行时装配批（统一注入点装配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -190,18 +228,12 @@ class SharedKernelSync:
 
     def snapshot_versions(self) -> Mapping[tuple[KernelNamespace, str], int]:
         """全注册表版本快照（(命名空间,键)→版本）。"""
-        return {
-            (ns, k): version
-            for ns in KernelNamespace
-            for k, (_, version, _) in self._store[ns].items()
-        }
+        return {(ns, k): version for ns in KernelNamespace for k, (_, version, _) in self._store[ns].items()}
 
     # ------------------------------------------------------------------
     # 一致性校验
     # ------------------------------------------------------------------
-    def check_drift(
-        self, reader_id: str, stamps: Iterable[ReaderStamp]
-    ) -> tuple[KernelDrift, ...]:
+    def check_drift(self, reader_id: str, stamps: Iterable[ReaderStamp]) -> tuple[KernelDrift, ...]:
         """读侧版本戳比对：与真源不一致即产出漂移清单+告警（确定性排序）。"""
         if not reader_id or not str(reader_id).strip():
             raise SharedKernelError(f"reader_id 为空: {reader_id!r}")
@@ -230,7 +262,10 @@ class SharedKernelSync:
                 self._alert_sink(drift)
             _log.warning(
                 "内核漂移告警: reader=%s %s/%s 读侧=v%d 真源=v%d",
-                drift.reader_id, drift.namespace.value, drift.key,
-                drift.reader_version, drift.current_version,
+                drift.reader_id,
+                drift.namespace.value,
+                drift.key,
+                drift.reader_version,
+                drift.current_version,
             )
         return tuple(drifts)

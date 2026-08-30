@@ -22,6 +22,32 @@ Author: factory-agent
 Version: 0.3.0
 
 Skill 契约验证 —— I/O Schema + 副作用 + 依赖
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: skill_contract.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SkillContract
+#   name_en: SkillContract
+#   intro: class SkillContract 源码 L59-L120
+#   desc: 公共方法（定义序）: parse_contracts, validate_contracts；源码 L59-L120
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SkillContract
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

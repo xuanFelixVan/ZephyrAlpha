@@ -14,7 +14,8 @@
 # [TESTS] tests/autonomy/test_risk_manager_agent.py
 # [A_module] module_id=MOD-AU-007 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
-"""RiskManagerAgent — 风控 Agent (MOD-AU-007)
+"""
+RiskManagerAgent — 风控 Agent (MOD-AU-007)
 
 CAND-AUTONOMYCORE-003（B1-00240）：RiskManager 角色（14号文 §3.0 role façade
 族卡模式）。实时读 risk 引擎限额 / 回撤 / VaR 状态（``RiskEngineState`` 由
@@ -26,6 +27,43 @@ CAND-AUTONOMYCORE-003（B1-00240）：RiskManager 角色（14号文 §3.0 role f
 
 与 MOD-RK-22 agent_risk_monitor 分工：RK-22 管 agent 交易行为活动窗指标，
 本角色管 risk 引擎状态（限额/回撤/VaR）的解释与熔断编排建议，互补不重复实现。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: thresholds 参数
+#   fields: 参数 thresholds（无注解）
+#   code: risk_manager_agent.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: kill_switch_trigger 参数
+#   fields: 参数 kill_switch_trigger（无注解）
+#   code: risk_manager_agent.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: audit_sink 参数
+#   fields: 参数 audit_sink（无注解）
+#   code: risk_manager_agent.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RiskManagerAgent
+#   name_en: RiskManagerAgent
+#   intro: 风控 Agent：限额/回撤/VaR 状态 → 熔断建议与复盘说明（判定核心纯函数）。
+#   desc: 风控 Agent：限额/回撤/VaR 状态 → 熔断建议与复盘说明（判定核心纯函数）。 Args: thresholds: 判定阈值配置。 kill_switch_trigger…；公共方法（定义序）: assess,…
+#   inputs: thresholds kill_switch_trigger audit_sink
+#   outputs: 返回值
+#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（8 定义）
+#   name_en: public defs
+#   intro: RiskManagerAgent
+#   downstream: MOD-INF-016(trading_kill_switch 确定性执行体) ; 运行时装配批（状态轮询/审计持久化）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -207,11 +245,7 @@ class RiskManagerAgent:
         warn_reasons: list[str] = []
         if state.current_drawdown >= warn * state.max_drawdown_limit:
             warn_reasons.append(f"回撤 {state.current_drawdown:.4f} 入预警带（≥{warn:.0%}×上限）")
-        if (
-            state.var_95 is not None
-            and state.var_limit is not None
-            and state.var_95 >= warn * state.var_limit
-        ):
+        if state.var_95 is not None and state.var_limit is not None and state.var_95 >= warn * state.var_limit:
             warn_reasons.append(f"VaR95 {state.var_95:.4f} 入预警带（≥{warn:.0%}×上限）")
         if warn_reasons:
             return CircuitBreakerAdvice(level=CircuitBreakerLevel.REDUCE, reasons=tuple(warn_reasons))

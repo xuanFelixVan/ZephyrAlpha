@@ -23,6 +23,58 @@ Version: 0.3.0
 
 Skill 发现——从模块蓝图与源码自动发现可生成 Skill 的模块。
 v0.3.0: 新增 auto_generate_missing() — B156 自动化 Skill 生成闭环.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: module_name 参数
+#   fields: 参数 module_name（无注解）
+#   code: skill_discovery.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: blueprint_path 参数
+#   fields: 参数 blueprint_path（无注解）
+#   code: skill_discovery.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: reason 参数
+#   fields: 参数 reason（无注解）
+#   code: skill_discovery.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DiscoveryGap
+#   name_en: DiscoveryGap
+#   intro: class DiscoveryGap 源码 L91-L102
+#   desc: 公共方法（定义序）: to_dict；源码 L91-L102
+#   inputs: module_name blueprint_path reason
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② DiscoveryResult
+#   name_en: DiscoveryResult
+#   intro: class DiscoveryResult 源码 L105-L120
+#   desc: 公共方法（定义序）: to_dict；源码 L105-L120
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ SkillDiscovery
+#   name_en: SkillDiscovery
+#   intro: Skill 发现——从模块蓝图自动发现可生成 Skill 的模块.
+#   desc: Skill 发现——从模块蓝图自动发现可生成 Skill 的模块.；公共方法（定义序）: parse_frontmatter, extract_module_name, derive_skill_id, scan_mo…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: DiscoveryGap, DiscoveryResult, SkillDiscovery
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

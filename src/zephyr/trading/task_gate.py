@@ -29,6 +29,32 @@ TaskGate --- 任务门控
 
     ok, reason = gate.can_dispatch("qwen3:8b", "task_classification")
     # -> (True, "ok")
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: task_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① TaskGate
+#   name_en: TaskGate
+#   intro: 任务门控 — 根据护照决定是否允许模型执行某个能力类型。
+#   desc: 任务门控 — 根据护照决定是否允许模型执行某个能力类型。；公共方法（定义序）: passports, load_passports, load_passport, can_dispatch, can_do_any, g…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: TaskGate
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

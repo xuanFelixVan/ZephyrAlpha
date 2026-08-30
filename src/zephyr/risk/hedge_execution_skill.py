@@ -14,7 +14,8 @@
 # [TESTS] tests/risk/test_hedge_execution_skill.py
 # [A_module] module_id=MOD-RK-042 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""HedgeExecutionSkill — 对冲执行技能（MOD-RK-042）。
+"""
+HedgeExecutionSkill — 对冲执行技能（MOD-RK-042）。
 
 B11-02591（AUD-DRAFT-001-DIGEST P2 波 P2-W09，CAND-RSK-046，A7 技能
 hedge-execution）：对冲需求（敞口/比例）→ 标的映射（股指期货/ETF 词表闭合
@@ -26,6 +27,48 @@ hedge-execution）：对冲需求（敞口/比例）→ 标的映射（股指期
 降敞口执行技能，零交集）；exposure_manager=组合敞口调仓（本件不改正股持仓，
 仅生成对冲腿单）；portfolio_optimizer=权重优化（本件=确定性词表映射+数量取
 整，不做优化）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: instrument_vocab 参数
+#   fields: 参数 instrument_vocab（无注解）
+#   code: hedge_execution_skill.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: price_provider 参数
+#   fields: 参数 price_provider（无注解）
+#   code: hedge_execution_skill.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: basis_provider 参数
+#   fields: 参数 basis_provider（无注解）
+#   code: hedge_execution_skill.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: executor 参数
+#   fields: 参数 executor（无注解）
+#   code: hedge_execution_skill.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① HedgeExecutionSkill
+#   name_en: HedgeExecutionSkill
+#   intro: 对冲执行技能（标的映射 + 腿单生成 + 双确认执行 + 有效性回写）。
+#   desc: 对冲执行技能（标的映射 + 腿单生成 + 双确认执行 + 有效性回写）。；公共方法（定义序）: plan, execute, record_of, records；源码 L196-L373
+#   inputs: instrument_vocab price_provider basis_provider executor risk_confirme…
+#   outputs: 返回值
+#   （注：A1 之后另有 9 个公共定义未列入（含 9 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（10 定义）
+#   name_en: public defs
+#   intro: HedgeExecutionSkill
+#   downstream: 运行时装配批（对冲执行技能装配：执行层回调 / 风控Agent+人工双确认注入）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -172,9 +215,7 @@ class HedgeExecutionSkill:
             if not isinstance(spec, HedgeInstrumentSpec):
                 raise HedgeExecutionError(f"非法标的条目: {spec!r}")
             if spec.index_code != index_code:
-                raise HedgeExecutionError(
-                    f"词表键/条目不一致: {index_code!r} vs {spec.index_code!r}"
-                )
+                raise HedgeExecutionError(f"词表键/条目不一致: {index_code!r} vs {spec.index_code!r}")
             if spec.contract_multiplier <= _ZERO:
                 raise HedgeExecutionError(f"合约乘数非正: {index_code!r}")
         self._vocab: dict[str, HedgeInstrumentSpec] = dict(instrument_vocab)
@@ -238,9 +279,7 @@ class HedgeExecutionSkill:
         per_contract = price * multiplier
         quantity = int(target_notional / per_contract)
         if quantity < 1:
-            raise HedgeExecutionError(
-                f"对冲名义不足一手: 目标名义 {target_notional} < 单手名义 {per_contract}"
-            )
+            raise HedgeExecutionError(f"对冲名义不足一手: 目标名义 {target_notional} < 单手名义 {per_contract}")
         notional = per_contract * quantity
         leg = HedgeLeg(
             leg_id=f"{request.request_id}-L1",
@@ -281,9 +320,7 @@ class HedgeExecutionSkill:
         if blockers:
             reason = "双确认硬约束拦截: " + "; ".join(blockers)
             _log.warning("对冲执行拦截: %s (%s)", plan.request_id, reason)
-            record = HedgeRecord(
-                plan=plan, status=HedgeStatus.BLOCKED, reason=reason, effectiveness=None
-            )
+            record = HedgeRecord(plan=plan, status=HedgeStatus.BLOCKED, reason=reason, effectiveness=None)
             self._records[plan.request_id] = record
             return record
 
@@ -297,9 +334,7 @@ class HedgeExecutionSkill:
                 ok = False
             if not ok:
                 reason = f"执行回调失败: {leg.leg_id}"
-                record = HedgeRecord(
-                    plan=plan, status=HedgeStatus.BLOCKED, reason=reason, effectiveness=None
-                )
+                record = HedgeRecord(plan=plan, status=HedgeStatus.BLOCKED, reason=reason, effectiveness=None)
                 self._records[plan.request_id] = record
                 return record
 

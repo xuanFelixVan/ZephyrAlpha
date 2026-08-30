@@ -29,7 +29,8 @@
 # 层: 输出
 # - id: O1  5 维灰度概率/温度/转换信号/纪律/联合指令/部署策略/验证报告
 # [/ALGO_FLOW]
-"""情绪周期×交易决策标准函数集（28 号 memo §3.2-§3.10，设计态准入落码）。
+"""
+情绪周期×交易决策标准函数集（28 号 memo §3.2-§3.10，设计态准入落码）。
 
 8 个标准函数签名（§3.10，薄包装无递归）：
 ① classify_sentiment_phase → locate_sentiment_phase（§3.3）
@@ -49,6 +50,125 @@
 §3.5.2 映射表权重标定：SENTIMENT_TO_REGIME_MAP 为 Phase 1 弱静态映射经验值，
 **待 Phase 2 各策略 3-6 月实盘后人工调参**（28 号 §6 待裁定-2）；
 validate_sentiment_regime_map 为加载校验函数。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: limit_up_count 参数
+#   fields: 参数 limit_up_count，类型注解 int
+#   code: sentiment_cycle.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: limit_down_count 参数
+#   fields: 参数 limit_down_count，类型注解 int
+#   code: sentiment_cycle.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: explosion_count 参数
+#   fields: 参数 explosion_count，类型注解 int
+#   code: sentiment_cycle.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: sealed_limit_up_count 参数
+#   fields: 参数 sealed_limit_up_count，类型注解 int
+#   code: sentiment_cycle.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① compute_sentiment_temperature
+#   name_en: compute_sentiment_temperature
+#   intro: 七维 A 股情绪温度计 → [0,100] 综合评分（标准签名②，memo §3.2 增补）。
+#   desc: 七维 A 股情绪温度计 → [0,100] 综合评分（标准签名②，memo §3.2 增补）。 反向指标（跌停恐惧/炸板背离）取 1-x。 温度→阶段粗映射：<20 冰点 / <…；源码 L319-L378
+#   inputs: limit_up_count limit_down_count explosion_count sealed_limit_up_count…
+#   outputs: SentimentTemperatureOutput
+# - id: A2
+#   name_zh: ② detect_phase_transition
+#   name_en: detect_phase_transition
+#   intro: 底反转与顶背离双重判定（标准签名④，memo §3.2.1）。
+#   desc: 底反转与顶背离双重判定（标准签名④，memo §3.2.1）。 底反转（FREEZING→STARTING）：先行=炸板率骤降（5 日均值-当日 ≥0.15） +涨停回暖（当日…；源码 L399-L488
+#   inputs: current_phase explosion_rate_series limit_up_count_series consecutive…
+#   outputs: PhaseTransitionSignal
+# - id: A3
+#   name_zh: ③ locate_sentiment_phase
+#   name_en: locate_sentiment_phase
+#   intro: 情绪周期定位器（标准签名③，memo §3.3）。
+#   desc: 情绪周期定位器（标准签名③，memo §3.3）。 四步：①多维指标评分 → ②先验+贝叶斯更新（转移平滑）→ ③兜底（置信度 <threshold → 回退 FREEZING/…；源码 L524-L588
+#   inputs: inp confidence_threshold
+#   outputs: SentimentLocatorOutput
+# - id: A4
+#   name_zh: ④ get_phase_trading_discipline
+#   name_en: get_phase_trading_discipline
+#   intro: 标准签名⑤：获取指定阶段买卖纪律（查 PHASE_DISCIPLINE 表）。
+#   desc: 标准签名⑤：获取指定阶段买卖纪律（查 PHASE_DISCIPLINE 表）。；源码 L756-L758
+#   inputs: phase
+#   outputs: PhaseTradingDiscipline
+# - id: A5
+#   name_zh: ⑤ apply_phase_discipline
+#   name_en: apply_phase_discipline
+#   intro: 将情绪周期买卖纪律应用到 sleeve 目标仓位（memo §3.4）。
+#   desc: 将情绪周期买卖纪律应用到 sleeve 目标仓位（memo §3.4）。 Returns: (adjusted_position, allowed, reason)，reason…；源码 L761-L793
+#   inputs: sleeve_name target_position locator_output is_new_open
+#   outputs: tuple[float, bool, str]
+# - id: A6
+#   name_zh: ⑥ validate_sentiment_regime_map
+#   name_en: validate_sentiment_regime_map
+#   intro: §3.5.2 映射表加载校验（配置级，标"待 Phase 2 人工调参"）。
+#   desc: §3.5.2 映射表加载校验（配置级，标"待 Phase 2 人工调参"）。 规则：① 覆盖全 5 阶段；② 目标态名 ∈ REGIME_STATES_12；③ 权重 ∈ [-1…；源码 L826-L851
+#   inputs: mapping
+#   outputs: list[str]
+# - id: A7
+#   name_zh: ⑦ apply_sentiment_soft_influence
+#   name_en: apply_sentiment_soft_influence
+#   intro: 情绪周期对 12 态概率的软影响（§3.5.2 regime 概率版，弱静态 Phase 1）。
+#   desc: 情绪周期对 12 态概率的软影响（§3.5.2 regime 概率版，弱静态 Phase 1）。 P_new = P_old * (1 + weight * P_sentimen…；源码 L854-L873
+#   inputs: regime_prob sentiment_output
+#   outputs: dict[str, float]
+# - id: A8
+#   name_zh: ⑧ get_effective_combinations
+#   name_en: get_effective_combinations
+#   intro: 获取有效（情绪阶段, regime 态）组合列表（全量 60 个，可过滤）。
+#   desc: 获取有效（情绪阶段, regime 态）组合列表（全量 60 个，可过滤）。；源码 L974-L984
+#   inputs: phase_filter regime_filter
+#   outputs: list[tuple[SentimentPhase, str]]
+# - id: A9
+#   name_zh: ⑨ apply_sentiment_position_soft_influence
+#   name_en: apply_sentiment_position_soft_influence
+#   intro: 情绪阶段对策略仓位的软影响（§3.5.4 仓位版；memo 注：重命名避免与 §3.5.2 同名覆盖）。
+#   desc: 情绪阶段对策略仓位的软影响（§3.5.4 仓位版；memo 注：重命名避免与 §3.5.2 同名覆盖）。 概率加权缩放：Σ P(phase) × position_scale(p…；源码 L987-L1019
+#   inputs: sleeve_name target_position sentiment_output
+#   outputs: tuple[float, str]
+# - id: A10
+#   name_zh: ⑩ combine_sentiment_regime
+#   name_en: combine_sentiment_regime
+#   intro: alpha 仓位缩放 × regime Shrinkage 乘法叠加（§3.5.4 联合交易指令）。
+#   desc: alpha 仓位缩放 × regime Shrinkage 乘法叠加（§3.5.4 联合交易指令）。 乘法叠加理由（正交性）：情绪管"方向/标的"，regime 管"力度/谨慎度…；源码 L1022-L1068
+#   inputs: sleeve_name target_position sentiment_output regime_prob regime_shrin…
+#   outputs: CombinedTradingDirective
+#   （注：A10 之后另有 22 个公共定义未列入（含 12 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: SentimentTemperatureOutput
+#   name_en: SentimentTemperatureOutput
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 G07 相关性验证 / G08 打板 sleeve / 10_regime BM-SEL-03-B 软影响接线)
+# - id: O2
+#   name_zh: PhaseTransitionSignal
+#   name_en: PhaseTransitionSignal
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 G07 相关性验证 / G08 打板 sleeve / 10_regime BM-SEL-03-B 软影响接线)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> A10
+# A10 --> O1
 """
 
 from __future__ import annotations
@@ -385,7 +505,7 @@ class SentimentLocatorInput:
     market_amount_ratio_vs_ma20: float  # 成交额/20 日均量
     dragon_tiger_net_buy_ratio: float  # 龙虎榜净买率
     northbound_net_inflow: float  # 北向净流入（亿）
-    yesterday_phase_prob: Optional[dict[SentimentPhase, float]] = None  # 昨日 5 维概率（先验）
+    yesterday_phase_prob: dict[SentimentPhase, float] | None = None  # 昨日 5 维概率（先验）
 
 
 @dataclass
@@ -852,8 +972,8 @@ EFFECTIVE_COMBINATIONS_60: list[tuple[SentimentPhase, str]] = [
 
 
 def get_effective_combinations(
-    phase_filter: Optional[SentimentPhase] = None,
-    regime_filter: Optional[str] = None,
+    phase_filter: SentimentPhase | None = None,
+    regime_filter: str | None = None,
 ) -> list[tuple[SentimentPhase, str]]:
     """获取有效（情绪阶段, regime 态）组合列表（全量 60 个，可过滤）。"""
     return [
@@ -1108,8 +1228,8 @@ STRATEGY_DEPLOYMENT_MATRIX: dict[tuple[str, SentimentPhase], StrategyDeploymentP
 
 def compute_strategy_deployment(
     phase: SentimentPhase,
-    strategy_name: Optional[str] = None,
-) -> "StrategyDeploymentPolicy | dict[str, StrategyDeploymentPolicy]":
+    strategy_name: str | None = None,
+) -> StrategyDeploymentPolicy | dict[str, StrategyDeploymentPolicy]:
     """按情绪阶段查 3 策略×5 阶段部署矩阵（§3.6.1）。"""
     if strategy_name is not None:
         return STRATEGY_DEPLOYMENT_MATRIX[(strategy_name, phase)]
@@ -1118,8 +1238,8 @@ def compute_strategy_deployment(
 
 def get_strategy_deployment_by_phase(
     phase: SentimentPhase,
-    strategy_name: Optional[str] = None,
-) -> "StrategyDeploymentPolicy | dict[str, StrategyDeploymentPolicy]":
+    strategy_name: str | None = None,
+) -> StrategyDeploymentPolicy | dict[str, StrategyDeploymentPolicy]:
     """标准签名⑧：按阶段获取策略部署（薄包装委托 §3.6.1，无递归）。"""
     return compute_strategy_deployment(phase, strategy_name)
 
@@ -1315,11 +1435,11 @@ def evaluate_locator_accuracy(
     """
     if len(predicted_phases) != len(actual_phases) or not predicted_phases:
         return {"accuracy": 0.0, "adjacent_tolerance_rate": 0.0, "n_samples": 0.0}
-    correct = sum(1 for p, a in zip(predicted_phases, actual_phases) if p == a)
+    correct = sum(1 for p, a in zip(predicted_phases, actual_phases, strict=False) if p == a)
     accuracy = correct / len(predicted_phases)
     adjacent_correct = sum(
         1
-        for p, a in zip(predicted_phases, actual_phases)
+        for p, a in zip(predicted_phases, actual_phases, strict=False)
         if p != a and abs(PHASE_ORDER.index(p) - PHASE_ORDER.index(a)) == 1
     )
     return {

@@ -22,7 +22,8 @@
 # A4: progress = 0.4×time + 0.3×dd + 0.3×breadth（权重初拟待 G05/G08 校准）
 # O1: progress ∈ [0,1] + action(≥80% ACTIVATE_PARTIAL 分批 / <40% BLOCK_DIP 拦截低吸 / 其余 OBSERVE)
 # [/ALGO_FLOW]
-"""调整周期进度追踪（22 号 spec §3.1③，MOD-SIG-040 planned→落码，BM-SEL-09）。
+"""
+调整周期进度追踪（22 号 spec §3.1③，MOD-SIG-040 planned→落码，BM-SEL-09）。
 
 输入板块扩散指标（新高占比变体）+ 回撤深度 + 持续时间，输出进度百分比：
   - 进度 ≥80% → 激活 BM-BUY-04 分批建仓条件①
@@ -32,6 +33,60 @@
 扩散指标管"调整进度"，RRG（sector_rrg）管"轮动序列"，分工不重叠
 （西部金工 2026-05：扩散指标在震荡市/快轮动期滞后，两者互补）。
 滚动窗口/归一化权重为初拟，待 G05/G08 定参校准（spec §6 待裁定）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: elapsed_days 参数
+#   fields: 参数 elapsed_days，类型注解 int
+#   code: sector_adjustment.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: drawdown_pct 参数
+#   fields: 参数 drawdown_pct，类型注解 float
+#   code: sector_adjustment.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: nh_ratio_current 参数
+#   fields: 参数 nh_ratio_current，类型注解 float
+#   code: sector_adjustment.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: nh_ratio_trough 参数
+#   fields: 参数 nh_ratio_trough，类型注解 float
+#   code: sector_adjustment.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① compute_adjustment_progress
+#   name_en: compute_adjustment_progress
+#   intro: 计算调整周期进度（三维加权，扩散指标恢复为主指标）。
+#   desc: 计算调整周期进度（三维加权，扩散指标恢复为主指标）。 Args: elapsed_days: 调整已持续交易日数（自板块指数阶段高点起算）。 drawdown_pct: 板块指数…；源码 L113-L148
+#   inputs: elapsed_days drawdown_pct nh_ratio_current nh_ratio_trough nh_ratio_p…
+#   outputs: float
+# - id: A2
+#   name_zh: ② adjustment_action
+#   name_en: adjustment_action
+#   intro: 进度 → BM-BUY-04 动作（≥80% 激活分批 / <40% 拦截低吸 / 其余观察）。
+#   desc: 进度 → BM-BUY-04 动作（≥80% 激活分批 / <40% 拦截低吸 / 其余观察）。；源码 L151-L157
+#   inputs: progress
+#   outputs: str
+# 层: 输出
+# - id: O1
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 G05 选股引擎 / BM-BUY-04 分批建仓条件①)
+# - id: O2
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 G05 选股引擎 / BM-BUY-04 分批建仓条件①)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

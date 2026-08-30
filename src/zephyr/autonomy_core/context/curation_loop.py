@@ -20,6 +20,33 @@
 curation_loop.py — Per-Turn Curation 策展 (DD10, TASK-014 beta b)
 ==================================================================
 多轮对话中不重复注入已注入的 KE，渐进式策展上下文。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: curation_loop.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① CurationLoop
+#   name_en: CurationLoop
+#   intro: Per-Turn 渐进策展器 (DD10)。
+#   desc: Per-Turn 渐进策展器 (DD10)。 追踪已注入的 KE ID，确保后续 turn 不重复注入。 Using:: loop = CurationLoop() ke_ids…；公共方法（定义序）: select_…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: CurationLoop
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from dataclasses import dataclass, field
