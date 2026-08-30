@@ -60,6 +60,85 @@ Safety : H（基础设施核心，状态机错误会影响整个任务流水线�
 --------
 单实例使用 threading.RLock 串行化写操作；读操作直接执行（WAL 允许并发读）。
 与 ADR-0030 §4.5 "单 Writer 假设"一致。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: status 参数
+#   fields: 参数 status，类型注解 TaskStatus | str
+#   code: task_repo.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: db_path 参数
+#   fields: 参数 db_path，类型注解 Path | str
+#   code: task_repo.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: query 参数
+#   fields: 参数 query，类型注解 str
+#   code: task_repo.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: limit 参数
+#   fields: 参数 limit（无注解）
+#   code: task_repo.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① now_iso
+#   name_en: now_iso
+#   intro: 返回当前 UTC 时间的 ISO 8601 字符串（Z 后缀真源：shared/utils/time_utils.no…
+#   desc: 返回当前 UTC 时间的 ISO 8601 字符串（Z 后缀真源：shared/utils/time_utils.now_iso）。；源码 L807-L814
+#   inputs: 无参数
+#   outputs: str
+# - id: A2
+#   name_zh: ② TaskRepository
+#   name_en: TaskRepository
+#   intro: 任务登记表的 CRUD + 状态机入口。
+#   desc: 任务登记表的 CRUD + 状态机入口。 参数 ---- db_path SQLite 数据库路径；默认使用 DB_PATH。 auto_init 为 True 时在首次连接时调…；公共方法（定义序）: is_time…
+#   inputs: db_path auto_init gate_dir project_root enable_gate
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ allowed_transitions
+#   name_en: allowed_transitions
+#   intro: 返回给定状态的合法目标状态集合。
+#   desc: 返回给定状态的合法目标状态集合。；源码 L3975-L3979
+#   inputs: status
+#   outputs: frozenset[TaskStatus]
+# - id: A4
+#   name_zh: ④ is_terminal
+#   name_en: is_terminal
+#   intro: 判断是否为终态（VERIFIED / CANCELLED）。
+#   desc: 判断是否为终态（VERIFIED / CANCELLED）。；源码 L3982-L3986
+#   inputs: status
+#   outputs: bool
+# - id: A5
+#   name_zh: ⑤ search
+#   name_en: search
+#   intro: T-DB-010: 使用 FTS5 全文搜索任务。
+#   desc: T-DB-010: 使用 FTS5 全文搜索任务。 query 搜索词（支持 FTS5 查询语法）。 namespace 可选命名空间过滤。 limit 返回结果上限（默认 50…；源码 L3994-L4043
+#   inputs: db_path query limit namespace
+#   outputs: list[dict[str, object]]
+#   （注：A5 之后另有 14 个公共定义未列入（含 14 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.infrastructure.shared_services.blueprint_decomposer; zephyr.integration.…
+# - id: O2
+#   name_zh: frozenset[TaskStatus]
+#   name_en: frozenset[TaskStatus]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.infrastructure.shared_services.blueprint_decomposer; zephyr.integration.…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations

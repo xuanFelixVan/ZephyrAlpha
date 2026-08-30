@@ -15,9 +15,36 @@
 # [A_module] module_id=MOD-INF-028 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""[BLUEPRINT] MOD-INF-028 — LLM 桥接 Stage 6
+"""
+[BLUEPRINT] MOD-INF-028 — LLM 桥接 Stage 6
 
 接收 RED 问题,生成修复文本。LLM 只润色不做判断。不可用时降级为模板生成。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: api_available 参数
+#   fields: 参数 api_available（无注解）
+#   code: llm_bridge.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① LLMBridge
+#   name_en: LLMBridge
+#   intro: class LLMBridge 源码 L80-L153
+#   desc: 公共方法（定义序）: generate_fix, generate_fix_batch, is_available, set_available；源码 L80-L153
+#   inputs: api_available
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: LLMBridge
+#   downstream: self_healer; fix_prioritizer
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

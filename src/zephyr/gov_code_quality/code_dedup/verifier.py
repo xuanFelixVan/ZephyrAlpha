@@ -15,9 +15,37 @@
 # [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""修复验证器 — import + 类型 + 行为采样验证.
+"""
+修复验证器 — import + 类型 + 行为采样验证.
 
 依赖 pyproject.toml 定义依赖（pydantic / yaml / ast）.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: verifier.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① Verifier
+#   name_en: Verifier
+#   intro: 修复后验证器.
+#   desc: 修复后验证器.；公共方法（定义序）: root, verify_file, verify_module_import；源码 L65-L113
+#   inputs: project_root
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: Verifier
+#   downstream: tests/governance/ops/test_verifier.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from dataclasses import dataclass, field

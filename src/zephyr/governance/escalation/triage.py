@@ -31,6 +31,38 @@ G2 Triage 门禁 — 知识分类评分（T-2-13-B）
 6. 写入 02_triaged/ 目录
 
 Safety : M
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: kb_root 参数
+#   fields: 参数 kb_root（无注解）
+#   code: triage.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: gate_engine 参数
+#   fields: 参数 gate_engine（无注解）
+#   code: triage.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① TriageGate
+#   name_en: TriageGate
+#   intro: class TriageGate 源码 L256-L423
+#   desc: 公共方法（定义序）: triage；源码 L256-L423
+#   inputs: kb_root gate_engine
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: TriageGate
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

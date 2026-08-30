@@ -22,7 +22,8 @@
 # created: "2026-05-05"
 # ---
 
-"""D_PORTFOLIO_CORE — StrategyBase + StrategyMeta + StrategyRegistry
+"""
+D_PORTFOLIO_CORE — StrategyBase + StrategyMeta + StrategyRegistry
 
 Hand-maintained OCP extension point. DO NOT overwrite via codegen.
 
@@ -30,6 +31,49 @@ CTR 契约：
   OCP-002  StrategyBase + StrategyRegistry   策略扩展点
 
 SSoT: cross_layer_contracts.yaml v3.0 -> OCP-002
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: package_path 参数
+#   fields: 参数 package_path，类型注解 str
+#   code: strategy_base.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① StrategyBase
+#   name_en: StrategyBase
+#   intro: 策略抽象基类（OCP-002 OCP 扩展点）
+#   desc: 策略抽象基类（OCP-002 OCP 扩展点） 所有策略实现 MUST: - 实现 generate_target_weights() - 定义 meta 属性返回 Strate…；公共方法（定义序）: generat…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② StrategyRegistry
+#   name_en: StrategyRegistry
+#   intro: 策略注册表
+#   desc: 策略注册表 用法: @StrategyRegistry.register class MyStrategy(StrategyBase): meta = StrategyMeta(…；公共方法（定义序）: registe…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ autodiscover_strategies
+#   name_en: autodiscover_strategies
+#   intro: autodiscover_strategies(package_path) 源码 L181-L199
+#   desc: 源码 L181-L199
+#   inputs: package_path
+#   outputs: int
+#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

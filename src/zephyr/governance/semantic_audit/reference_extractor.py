@@ -15,9 +15,36 @@
 # [A_module] module_id=MOD-INF-028 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""[BLUEPRINT] MOD-INF-028 — 引用提取器 Stage 1
+"""
+[BLUEPRINT] MOD-INF-028 — 引用提取器 Stage 1
 
 AST 解析文件，提取 9 个维度的引用信息。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: reference_extractor.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ReferenceExtractor
+#   name_en: ReferenceExtractor
+#   intro: class ReferenceExtractor 源码 L81-L170
+#   desc: 公共方法（定义序）: extract, extract_batch；源码 L81-L170
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: ReferenceExtractor
+#   downstream: trigger_engine; alignment_engine; safety_boundary
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -22,6 +22,33 @@ CrossAgentConflictDetector — 多 Agent 并发冲突检测。
 
 两个 AI agent 同时修改同一文件 -> 检测冲突 -> 仲裁 -> 串行化。
 双写入检测：同一文件被不同 session_id 同时修改 -> ConflictResolution。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: cross_agent_conflict_detector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CrossAgentConflictDetector
+#   name_en: CrossAgentConflictDetector
+#   intro: class CrossAgentConflictDetector 源码 L77-L174
+#   desc: 公共方法（定义序）: run_git, project_root, get_most_recent_author, detect_conflicts, resolve_conflicts；源码 L77-L174
+#   inputs: project_root
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: CrossAgentConflictDetector
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

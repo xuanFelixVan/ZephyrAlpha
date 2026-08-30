@@ -6,6 +6,32 @@ Audit Trail — MOD-INF-020
 
 不可变审计追踪：所有Agent操作记录 + 异常检测。
 G-CT-001 (RBAC->Audit), G-CT-002 (Audit->Rollback).
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 包内子模块公共符号
+#   fields: import 再导出符号: AnomalyDetector, AnomalyEvent, AuditWriter, AuditDelegationBridge, Br…
+#   code: __init__.py import L37
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包公共面再导出
+#   name_en: __init__ re-export
+#   intro: 再导出 AnomalyDetector, AnomalyEvent, AuditDelegationBridge, AuditFeedbackBridge,…
+#   desc: __init__ import L37；__all__ 16 项（AST 事实）
+#   inputs: I1
+#   outputs: __all__ 公共符号表
+# 层: 输出
+# - id: O1
+#   name_zh: 公共 API 面（16 符号）
+#   name_en: __all__
+#   intro: AnomalyDetector, AnomalyEvent, AuditDelegationBridge, AuditFeedbackBridge, Audi…
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from zephyr.gov_audit.bridges.audit_anomaly import AnomalyDetector, AnomalyEvent

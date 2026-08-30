@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 Memory Provenance — v0.9.0 记忆溯源追踪: 每条memory record的来源agent+timestamp+hash链。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: memory_provenance.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① MemoryProvenanceLog
+#   name_en: MemoryProvenanceLog
+#   intro: class MemoryProvenanceLog 源码 L54-L79
+#   desc: 公共方法（定义序）: records, record, trace；源码 L54-L79
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: MemoryProvenanceLog
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

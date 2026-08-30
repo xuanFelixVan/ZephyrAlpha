@@ -35,6 +35,32 @@ depgraph_reader.py — 依赖图数据库查询工具模块
     reader = DepgraphReader()
     nodes = reader.get_nodes_by_domain('D_FACTOR')
     edges = reader.get_edges_from_node('some_node_id')
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: db_path 参数
+#   fields: 参数 db_path（无注解）
+#   code: depgraph_reader.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DepgraphReader
+#   name_en: DepgraphReader
+#   intro: 依赖图数据库读取器
+#   desc: 依赖图数据库读取器；公共方法（定义序）: close, get_nodes_by_domain, get_nodes_by_type, get_node_by_path, get_node_by_id, get_bui…
+#   inputs: db_path
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: DepgraphReader
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

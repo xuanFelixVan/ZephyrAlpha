@@ -15,7 +15,36 @@
 # [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""修复优先级排序器 — 置信度×Impact×适配性 三因子排序."""
+"""
+修复优先级排序器 — 置信度×Impact×适配性 三因子排序.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: prioritizer.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① Prioritizer
+#   name_en: Prioritizer
+#   intro: 三因子修复优先级排序.
+#   desc: 三因子修复优先级排序.；公共方法（定义序）: rank；源码 L63-L85
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: Prioritizer
+#   downstream: tests/governance/orchestrator/test_prioritizer.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 from dataclasses import dataclass
 

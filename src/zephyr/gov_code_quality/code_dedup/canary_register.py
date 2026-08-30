@@ -15,7 +15,35 @@
 # [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""金丝雀注册表维护器 — 注册/过期/腐败检测."""
+"""
+金丝雀注册表维护器 — 注册/过期/腐败检测.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: registry_path 参数
+#   fields: 参数 registry_path（无注解）
+#   code: canary_register.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CanaryRegister
+#   name_en: CanaryRegister
+#   intro: 金丝雀函数注册表.
+#   desc: 金丝雀函数注册表.；公共方法（定义序）: canaries, register, check_staleness；源码 L54-L116
+#   inputs: registry_path
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: CanaryRegister
+#   downstream: tests/canary/test_canary_register.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 from datetime import UTC, datetime
 from pathlib import Path

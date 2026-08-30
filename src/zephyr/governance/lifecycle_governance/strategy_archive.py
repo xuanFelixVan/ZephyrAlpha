@@ -21,7 +21,8 @@
 # F3: list_archived_strategies(扫描 archive_root 下含 manifest.json 的子目录)
 # O1: archive_strategy→归档目录 Path；retrieve→{manifest, files}
 # [/ALGO_FLOW]
-"""D_GOVERNANCE — 退役策略归档区读写（61 号 §3.9 归档四件套第 ④ 条，函数级）。
+"""
+D_GOVERNANCE — 退役策略归档区读写（61 号 §3.9 归档四件套第 ④ 条，函数级）。
 
 物理终点 ``strategy_archive/<strategy_id>/``：PnL 曲线 + 参数快照 + training_run_id +
 退役原因五骑士归因，落 manifest.json 清单。归档四件套其余三件（design_memo deprecated /
@@ -29,6 +30,69 @@ depgraph retired / 模型注册 alias）由调用方另行承载，本模块仅�
 
 依据: 61_lifecycle_multi_ai §3.9（策略归档机制）
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: strategy_id 参数
+#   fields: 参数 strategy_id，类型注解 str
+#   code: strategy_archive.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: artifacts 参数
+#   fields: 参数 artifacts，类型注解 StrategyArchiveArtifacts
+#   code: strategy_archive.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: archive_root 参数
+#   fields: 参数 archive_root（无注解）
+#   code: strategy_archive.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: archived_at 参数
+#   fields: 参数 archived_at（无注解）
+#   code: strategy_archive.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① archive_strategy
+#   name_en: archive_strategy
+#   intro: 把退役策略产物归档到 ``<archive_root>/<strategy_id>/``。
+#   desc: 把退役策略产物归档到 ``<archive_root>/<strategy_id>/``。 幂等纪律：归档只增不改——目录已存在（含 manifest.json）→ Strate…；源码 L156-L211
+#   inputs: strategy_id artifacts archive_root archived_at
+#   outputs: Path
+# - id: A2
+#   name_zh: ② retrieve_strategy_archive
+#   name_en: retrieve_strategy_archive
+#   intro: 取回退役策略归档（只读）：``{"manifest": dict, "files": {name: Path}}``。
+#   desc: 取回退役策略归档（只读）：``{"manifest": dict, "files": {name: Path}}``。；源码 L214-L231
+#   inputs: strategy_id archive_root
+#   outputs: dict
+# - id: A3
+#   name_zh: ③ list_archived_strategies
+#   name_en: list_archived_strategies
+#   intro: 列出全部已归档策略 ID（含 manifest.json 的子目录；根目录不存在 → 空列表）。
+#   desc: 列出全部已归档策略 ID（含 manifest.json 的子目录；根目录不存在 → 空列表）。；源码 L234-L239
+#   inputs: archive_root
+#   outputs: list[str]
+#   （注：A3 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: Path
+#   name_en: Path
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.governance.lifecycle_governance.retirement_workflow (archive 端口); 调用方（退役…
+# - id: O2
+#   name_zh: dict
+#   name_en: dict
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.governance.lifecycle_governance.retirement_workflow (archive 端口); 调用方（退役…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

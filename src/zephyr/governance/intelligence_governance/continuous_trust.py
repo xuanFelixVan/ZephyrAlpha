@@ -29,6 +29,49 @@ Continuous Trust Ledger — 持续信任评估引擎。
     - trust < 0.5 -> tier 1 propose-only
     - trust < -0.3 -> tier 0 read-only + human
     - 涵盖 R15-R20 AI agent 信任安全风险
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: ledger_dir 参数
+#   fields: 参数 ledger_dir（无注解）
+#   code: continuous_trust.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① TrustScore
+#   name_en: TrustScore
+#   intro: class TrustScore 源码 L99-L146
+#   desc: 公共方法（定义序）: from_ledger；源码 L99-L146
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② TrustTierPerms
+#   name_en: TrustTierPerms
+#   intro: class TrustTierPerms 源码 L150-L185
+#   desc: 公共方法（定义序）: from_tier；源码 L150-L185
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ ContinuousTrust
+#   name_en: ContinuousTrust
+#   intro: class ContinuousTrust 源码 L188-L381
+#   desc: 公共方法（定义序）: ledger_dir, record_trust_event, successful_rollback, failed_rollback, critical_failure, false_posi…
+#   inputs: ledger_dir
+#   outputs: 返回值
+#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: TrustScore, TrustTierPerms, ContinuousTrust
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

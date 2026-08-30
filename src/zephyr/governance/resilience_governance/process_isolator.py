@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 Process Isolator — v0.6.0 进程隔离器: engine运行在独立进程+资源限制+crash恢复。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: process_isolator.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ProcessIsolator
+#   name_en: ProcessIsolator
+#   intro: class ProcessIsolator 源码 L51-L78
+#   desc: 公共方法（定义序）: processes, spawn_engine, isolate, kill_engine；源码 L51-L78
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: ProcessIsolator
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

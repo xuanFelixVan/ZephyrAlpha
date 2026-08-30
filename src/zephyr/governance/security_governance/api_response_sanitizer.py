@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 API Response Sanitizer — v0.9.0 API响应清洗器: 外部API返回内容清洗+injection检测。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: api_response_sanitizer.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① APIResponseSanitizer
+#   name_en: APIResponseSanitizer
+#   intro: class APIResponseSanitizer 源码 L53-L75
+#   desc: 公共方法（定义序）: sanitize, is_suspicious；源码 L53-L75
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: APIResponseSanitizer
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -32,6 +32,41 @@
   - ScoutAgentBase         : OCP 实验-SCT — 自动化实验编排（CTR-P1-014 生产者）
 
 依赖方向：D_RESEARCH -> 实验 -> D_PORTFOLIO_CORE / D_SIGNAL（实验结果提升至生产管线）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: pipeline_base.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ExperimentPipelineBase
+#   name_en: ExperimentPipelineBase
+#   intro: 实验管线基类（OCP 扩展点 实验-EXP）
+#   desc: 实验管线基类（OCP 扩展点 实验-EXP） 实现者要求： - run(): 接收实验配置，返回统计指标结果列表 - 支持 A/B 分组与 p-value / effect_si…；公共方法（定义序）: run, co…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② ScoutAgentBase
+#   name_en: ScoutAgentBase
+#   intro: Scout Agent 自动化实验编排器（OCP 扩展点 实验-SCT）
+#   desc: Scout Agent 自动化实验编排器（OCP 扩展点 实验-SCT） 契约对齐：CTR-P1-014（ExperimentResult 出站）-> D_RESEARCH, D…；公共方法（定义序）: scout,…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: ExperimentPipelineBase, ScoutAgentBase
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

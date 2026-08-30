@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 Coldstart Manager — v0.7.0 冷启动管理器: escalation rules加载+引擎初始化+健康检查。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: coldstart_manager.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ColdstartManager
+#   name_en: ColdstartManager
+#   intro: class ColdstartManager 源码 L51-L68
+#   desc: 公共方法（定义序）: initialize, ready, health_report；源码 L51-L68
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: ColdstartManager
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

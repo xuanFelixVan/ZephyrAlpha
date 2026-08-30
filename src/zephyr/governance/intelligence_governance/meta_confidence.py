@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 Meta-Confidence — D-022-10 Agent对自身判定置信度的自评+历史校准。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: meta_confidence.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① MetaConfidence
+#   name_en: MetaConfidence
+#   intro: class MetaConfidence 源码 L51-L76
+#   desc: 公共方法（定义序）: history, self_assess, calibrate, calibration_error；源码 L51-L76
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: MetaConfidence
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

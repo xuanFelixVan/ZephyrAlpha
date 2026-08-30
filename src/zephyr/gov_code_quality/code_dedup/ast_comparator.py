@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Stage 2: AST 级精确比对器.
+"""
+Stage 2: AST 级精确比对器.
 
 职责：
   - AST 子树归一化哈希
@@ -23,6 +24,33 @@
   - 参数化模板聚类
   - Python 惯用法豁免（IDIOM_WHITELIST：__init__/__repr__/__enter__/@property/ABC/@overload）
   - 设计模式白名单（Strategy/Adapter/Factory/Template Method/Observer/Decorator）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: ast_comparator.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ASTComparator
+#   name_en: ASTComparator
+#   intro: Stage 2: AST 子树哈希 + LCS + 模板聚类 + 豁免白名单.
+#   desc: Stage 2: AST 子树哈希 + LCS + 模板聚类 + 豁免白名单.；公共方法（定义序）: compare, compare_bulk, compute_subtree_hash, cluster_templ…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: ASTComparator
+#   downstream: zephyr.governance.intelligence_governance.self_benchmark; tests/governance/code…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -31,6 +31,33 @@ AI 施工约定：
   - 每次 API 调用 MUST 调用 record_usage() 更新累计消费
 
 SSoT: MOD-INF-024 §12 盲点 B26
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: cost_budget.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① CostBudget
+#   name_en: CostBudget
+#   intro: AI 成本预算管理器——跟踪累计消费、强制熔断。
+#   desc: AI 成本预算管理器——跟踪累计消费、强制熔断。 Usage:: budget = CostBudget(hard_limit=5.00) budget.set_pricing(…；公共方法（定义序）: set_pri…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: CostBudget
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

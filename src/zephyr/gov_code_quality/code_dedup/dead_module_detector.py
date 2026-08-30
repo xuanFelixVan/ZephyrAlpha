@@ -15,7 +15,35 @@
 # [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""死共享模块检测器 — shared/子模块无人使用 -> DEAD."""
+"""
+死共享模块检测器 — shared/子模块无人使用 -> DEAD.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: dead_module_detector.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① DeadModuleDetector
+#   name_en: DeadModuleDetector
+#   intro: 死模块检测.
+#   desc: 死模块检测.；公共方法（定义序）: detect；源码 L52-L76
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: DeadModuleDetector
+#   downstream: tests/governance/drift/test_dead_module_detector.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 from datetime import UTC, datetime
 from pathlib import Path

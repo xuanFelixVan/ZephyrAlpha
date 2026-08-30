@@ -15,7 +15,44 @@
 # [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""跨边界克隆感知——四大边界差异化检测+独立策略+跨边界保守auto_fix规则."""
+"""
+跨边界克隆感知——四大边界差异化检测+独立策略+跨边界保守auto_fix规则.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: cross_boundary_detector.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① CrossBoundaryClone
+#   name_en: CrossBoundaryClone
+#   intro: class CrossBoundaryClone 源码 L94-L108
+#   desc: 公共方法（定义序）: can_auto_fix；源码 L94-L108
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② CrossBoundaryDetector
+#   name_en: CrossBoundaryDetector
+#   intro: class CrossBoundaryDetector 源码 L112-L139
+#   desc: 公共方法（定义序）: detect；源码 L112-L139
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: CrossBoundaryClone, CrossBoundaryDetector
+#   downstream: tests/cross/test_cross_boundary_detector.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
 
 from dataclasses import dataclass, field
 from enum import Enum

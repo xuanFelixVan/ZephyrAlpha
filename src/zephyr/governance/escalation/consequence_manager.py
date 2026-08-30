@@ -15,6 +15,71 @@
 # [A_module] module_id=MOD-INF-022 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: con_id 参数
+#   fields: 参数 con_id，类型注解 str
+#   code: consequence_manager.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: severity 参数
+#   fields: 参数 severity，类型注解 ConsequenceSeverity
+#   code: consequence_manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① get_consequence
+#   name_en: get_consequence
+#   intro: get_consequence(con_id) 源码 L160-L161
+#   desc: 源码 L160-L161
+#   inputs: con_id
+#   outputs: ConsequenceDeclaration | None
+# - id: A2
+#   name_zh: ② activate_consequence
+#   name_en: activate_consequence
+#   intro: activate_consequence(con_id) 源码 L164-L171
+#   desc: 源码 L164-L171
+#   inputs: con_id
+#   outputs: ConsequenceDeclaration | None
+# - id: A3
+#   name_zh: ③ list_active
+#   name_en: list_active
+#   intro: list_active() 源码 L174-L175
+#   desc: 源码 L174-L175
+#   inputs: 无参数
+#   outputs: list[ConsequenceDeclaration]
+# - id: A4
+#   name_zh: ④ list_by_severity
+#   name_en: list_by_severity
+#   intro: list_by_severity(severity) 源码 L178-L179
+#   desc: 源码 L178-L179
+#   inputs: severity
+#   outputs: list[ConsequenceDeclaration]
+#   （注：A4 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ConsequenceDeclaration | None
+#   name_en: ConsequenceDeclaration | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-INF-027;MOD-INF-020;MOD-INF-018
+# - id: O2
+#   name_zh: list[ConsequenceDeclaration]
+#   name_en: list[ConsequenceDeclaration]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-INF-027;MOD-INF-020;MOD-INF-018
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
+"""
+
 from __future__ import annotations
 
 from datetime import UTC, datetime

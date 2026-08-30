@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-028 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""[BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md
+"""
+[BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md
 
 audit-trail.feedback_self_audit — MOD-INF-020 · 反馈自审计
 
@@ -33,6 +34,32 @@ audit-trail.feedback_self_audit — MOD-INF-020 · 反馈自审计
 
   - 异常放大检测: 检测反馈导致的行为偏差放大
 
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: amplification_threshold 参数
+#   fields: 参数 amplification_threshold（无注解）
+#   code: feedback_self_audit.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FeedbackSelfAuditor
+#   name_en: FeedbackSelfAuditor
+#   intro: class FeedbackSelfAuditor 源码 L158-L314
+#   desc: 公共方法（定义序）: amplification_threshold, detect_self_reinforcement, check_circular；源码 L158-L314
+#   inputs: amplification_threshold
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: FeedbackSelfAuditor
+#   downstream: 见蓝图 §4 接口契约
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 SBOM Guard — v0.8.0 SBOM供应链防护: 依赖版本锁定+脆弱性扫描+cve告警。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: sbom_guard.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SBOMGuard
+#   name_en: SBOMGuard
+#   intro: class SBOMGuard 源码 L51-L80
+#   desc: 公共方法（定义序）: sbom, register_dependency, verify_sbom, scan_cve；源码 L51-L80
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SBOMGuard
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

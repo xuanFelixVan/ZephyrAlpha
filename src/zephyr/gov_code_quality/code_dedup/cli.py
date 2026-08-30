@@ -16,7 +16,35 @@
 # [TTL] permanent
 # noqa: m11-perm-manual-legitimate  M11豁免: pre-commit GATE-DEDUP 事件触发（verify_dedup.py→cli verify 链路在案），非人工 manual
 
-"""code-dedup-engine CLI——子命令映射+退出码+扫描入口."""
+"""
+code-dedup-engine CLI——子命令映射+退出码+扫描入口.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: cli.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① main
+#   name_en: main
+#   intro: main() 源码 L125-L142
+#   desc: 源码 L125-L142
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: main
+#   downstream: CI pipeline
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 from __future__ import annotations
 

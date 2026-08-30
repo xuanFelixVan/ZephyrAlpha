@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Stage 0: 函数缓存管理器 — 增量扫描的加速核心.
+"""
+Stage 0: 函数缓存管理器 — 增量扫描的加速核心.
 
 职责：
   - 加载/保存 function-cache.json
@@ -23,6 +24,33 @@
   - _integrity SHA256 自检——加载时校验->损坏->自动全量重建
   - 增量更新：仅更新变更文件的函数条目
   - 全量重建：重新扫描所有源文件生成缓存
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: cache_path 参数
+#   fields: 参数 cache_path（无注解）
+#   code: cache_manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CacheManager
+#   name_en: CacheManager
+#   intro: 函数缓存管理器.
+#   desc: 函数缓存管理器.；公共方法（定义序）: load, save, incremental_update, full_rebuild, get_by_id, get_by_signature, cache；源码 L104-…
+#   inputs: cache_path
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: CacheManager
+#   downstream: tests/governance/data_layer/test_dedup_cache_manager.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

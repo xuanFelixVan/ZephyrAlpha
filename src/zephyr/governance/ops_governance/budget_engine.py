@@ -23,6 +23,48 @@ Pre-flight gate, model router, degradation manager, and budget consumption track
 ARCH-303（2026-08-31 裁定）：预算硬门主维度=COST（单位=元人民币，对齐 Owner sanction 口径），
 TOKEN 策略保留为防跑飞二级兜底保险丝。
 Blueprint: docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md §2-4
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: budget_engine.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① BudgetEngineProtocol
+#   name_en: BudgetEngineProtocol
+#   intro: BudgetEngine 协议——5.133.2 DI 注入契约。
+#   desc: BudgetEngine 协议——5.133.2 DI 注入契约。 覆盖跨层调用方实际使用的方法/属性： pre_flight_check / get_snapshot / ge…；公共方法（定义序）: current…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② BudgetEngine
+#   name_en: BudgetEngine
+#   intro: class BudgetEngine 源码 L137-L896
+#   desc: 公共方法（定义序）: policies, alerts, degradation_steps, current_degradation_level, active_step_idx, ensure_initialize…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ subscribe_eventbus
+#   name_en: subscribe_eventbus
+#   intro: 订阅 EventBusBackpressure 的 slo_violation 事件。
+#   desc: 订阅 EventBusBackpressure 的 slo_violation 事件。 幂等：重复调用安全。Backpressure 总线不可用时静默跳过。 供 boot_hoo…；源码 L904-L920
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: BudgetEngineProtocol, BudgetEngine, subscribe_eventbus
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations
@@ -93,7 +135,7 @@ class BudgetEngineProtocol(Protocol):
 
 
 class BudgetEngine:
-    _instance: "BudgetEngine | None" = None
+    _instance: BudgetEngine | None = None
     _instance_lock = threading.Lock()
 
     DEFAULT_POLICIES = {
@@ -186,7 +228,7 @@ class BudgetEngine:
         self._active_step_idx = value
 
     @classmethod
-    def ensure_initialized(cls) -> "BudgetEngine":
+    def ensure_initialized(cls) -> BudgetEngine:
         """确保 BudgetEngine 已初始化并返回实例（幂等）。"""
         if cls._instance is not None:
             return cls._instance
@@ -206,7 +248,7 @@ class BudgetEngine:
         cls._instance = None
 
     @classmethod
-    def set_instance(cls, engine: "BudgetEngine") -> None:
+    def set_instance(cls, engine: BudgetEngine) -> None:
         """设置单例实例（for testing, Stage 4）."""
         cls._instance = engine
 
@@ -288,7 +330,7 @@ class BudgetEngine:
         return {"persisted_to": persist_path, "snapshot": snapshot, "cleaned_up": True}
 
     @classmethod
-    def recover_from_snapshot(cls, snapshot_path: str = "") -> "BudgetEngine":
+    def recover_from_snapshot(cls, snapshot_path: str = "") -> BudgetEngine:
         """从快照文件恢复 BudgetEngine 状态。
 
         读取 shutdown() 持久化的 JSON 快照，恢复消费数据和降级级别。

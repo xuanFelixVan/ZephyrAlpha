@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 Account Isolator — v0.10.0 多账户升级隔离器。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: account_isolator.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① AccountIsolator
+#   name_en: AccountIsolator
+#   intro: class AccountIsolator 源码 L51-L62
+#   desc: 公共方法（定义序）: bind, get_policy, isolate_account；源码 L51-L62
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: AccountIsolator
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

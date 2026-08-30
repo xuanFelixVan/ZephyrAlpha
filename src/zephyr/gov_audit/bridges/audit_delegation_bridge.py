@@ -15,10 +15,37 @@
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Audit ↔ DelegationManager 委托链审计桥接.
+"""
+Audit ↔ DelegationManager 委托链审计桥接.
 
 蓝图 D-020-16 — 委托链审计（深度控制 + 权限缩小）。
 集成 infrastructure/escalation_protocol/delegation_manager.py。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: audit_delegation_bridge.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① AuditDelegationBridge
+#   name_en: AuditDelegationBridge
+#   intro: 审计↔委托链桥接器.
+#   desc: 审计↔委托链桥接器. 将委托操作写入审计日志， 并在委托深度超限或权限扩大时触发异常。；公共方法（定义序）: record_delegation, check_depth_anomaly, audit_delegati…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: AuditDelegationBridge
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

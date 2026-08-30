@@ -20,7 +20,8 @@
 # F2: detect_anomalies(z>|threshold| → commit_frequency/type_distribution；新模块 → first_touch_module)
 # O1: BehaviorBaseline；list[BehaviorAnomaly]（空=正常）
 # [/ALGO_FLOW]
-"""D_GOVERNANCE — AI 会话行为基线 + 异常告警（61 号 §3.6 BM-RC-04-F，函数级 MVP）。
+"""
+D_GOVERNANCE — AI 会话行为基线 + 异常告警（61 号 §3.6 BM-RC-04-F，函数级 MVP）。
 
 从 Git 提交历史/会话日志统计 AI 会话行为基线——操作频率（commits/小时）、操作类型
 分布（文档 vs 代码 vs 注册表占比）、涉及模块分布；偏离基线（z-score 超阈）或首次触碰
@@ -29,6 +30,69 @@
 
 依据: 61_lifecycle_multi_ai §3.6（BM-RC-04-F Agent 行为基线 + 异常告警）
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: sessions 参数
+#   fields: 参数 sessions，类型注解 Sequence[SessionBehavior]
+#   code: ai_behavior_baseline.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: min_sessions 参数
+#   fields: 参数 min_sessions（无注解）
+#   code: ai_behavior_baseline.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: session 参数
+#   fields: 参数 session，类型注解 SessionBehavior
+#   code: ai_behavior_baseline.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: baseline 参数
+#   fields: 参数 baseline，类型注解 BehaviorBaseline
+#   code: ai_behavior_baseline.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SessionBehavior
+#   name_en: SessionBehavior
+#   intro: 单 AI 会话行为快照（调用方从 git_commit 会话登记日志提取）。
+#   desc: 单 AI 会话行为快照（调用方从 git_commit 会话登记日志提取）。；公共方法（定义序）: commits_per_hour, type_ratios；源码 L125-L143
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② compute_baseline
+#   name_en: compute_baseline
+#   intro: 从 ≥min_sessions 个历史会话统计行为基线（小样本不判，fail-closed）。
+#   desc: 从 ≥min_sessions 个历史会话统计行为基线（小样本不判，fail-closed）。；源码 L181-L205
+#   inputs: sessions min_sessions
+#   outputs: BehaviorBaseline
+# - id: A3
+#   name_zh: ③ detect_anomalies
+#   name_en: detect_anomalies
+#   intro: 对单会话做异常检测：z-score 偏离 + 首次触碰未见模块（空列表=正常）。
+#   desc: 对单会话做异常检测：z-score 偏离 + 首次触碰未见模块（空列表=正常）。；源码 L215-L272
+#   inputs: session baseline z_threshold
+#   outputs: list[BehaviorAnomaly]
+#   （注：A3 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: BehaviorBaseline
+#   name_en: BehaviorBaseline
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 调用方（AI 会话行为审查；告警通道待 55 号定型承接，当前 interim=人工审查输出）
+# - id: O2
+#   name_zh: list[BehaviorAnomaly]
+#   name_en: list[BehaviorAnomaly]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 调用方（AI 会话行为审查；告警通道待 55 号定型承接，当前 interim=人工审查输出）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations
@@ -126,7 +190,7 @@ def compute_baseline(
     cph = [s.commits_per_hour() for s in sessions]
     ratios = [s.type_ratios() for s in sessions]
     known = frozenset(m for s in sessions for m in s.modules_touched)
-    cols = list(zip(*ratios))
+    cols = list(zip(*ratios, strict=False))
     return BehaviorBaseline(
         n_sessions=len(sessions),
         cph_mean=fmean(cph),
@@ -176,7 +240,7 @@ def detect_anomalies(
     names = ("docs_ratio", "code_ratio", "registry_ratio")
     means = (baseline.docs_ratio_mean, baseline.code_ratio_mean, baseline.registry_ratio_mean)
     stds = (baseline.docs_ratio_std, baseline.code_ratio_std, baseline.registry_ratio_std)
-    for name, value, mean, std in zip(names, session.type_ratios(), means, stds):
+    for name, value, mean, std in zip(names, session.type_ratios(), means, stds, strict=False):
         z = _z(value, mean, std)
         if abs(z) > z_threshold:
             anomalies.append(

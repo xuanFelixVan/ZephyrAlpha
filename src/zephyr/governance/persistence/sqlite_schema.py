@@ -59,6 +59,87 @@ PRAGMA 基线（KBG-0030 §4.3）
 
     init_db()              # 幂等，可重复调用
     conn = get_db_connection()   # 返回配置好 PRAGMA 的连接
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: db_path 参数
+#   fields: 参数 db_path，类型注解 Path | str | None
+#   code: sqlite_schema.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: echo 参数
+#   fields: 参数 echo（无注解）
+#   code: sqlite_schema.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: pending_only 参数
+#   fields: 参数 pending_only（无注解）
+#   code: sqlite_schema.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① init_db
+#   name_en: init_db
+#   intro: 幂等初始化数据库（执行 DDL + 按需运行版本化迁移）。
+#   desc: 幂等初始化数据库（执行 DDL + 按需运行版本化迁移）。 可安全重复调用：已存在的表和列不会被覆盖，已执行的迁移会被跳过。 参数 ---- db_path 数据库文件路径，默认…；源码 L1203-L1303
+#   inputs: db_path echo
+#   outputs: Path
+# - id: A2
+#   name_zh: ② table_names
+#   name_en: table_names
+#   intro: 返回数据库中所有表名（不含视图）。
+#   desc: 返回数据库中所有表名（不含视图）。；源码 L1311-L1319
+#   inputs: db_path
+#   outputs: list[str]
+# - id: A3
+#   name_zh: ③ view_names
+#   name_en: view_names
+#   intro: 返回数据库中所有视图名。
+#   desc: 返回数据库中所有视图名。；源码 L1322-L1330
+#   inputs: db_path
+#   outputs: list[str]
+# - id: A4
+#   name_zh: ④ schema_version
+#   name_en: schema_version
+#   intro: 返回当前数据库的 schema 版本（供外部诊断）。
+#   desc: 返回当前数据库的 schema 版本（供外部诊断）。；源码 L1333-L1341
+#   inputs: db_path
+#   outputs: int
+# - id: A5
+#   name_zh: ⑤ migration_dry_run
+#   name_en: migration_dry_run
+#   intro: T-DB-008: 检查待执行迁移，返回迁移预览信息。
+#   desc: T-DB-008: 检查待执行迁移，返回迁移预览信息。 参数 ---- pending_only True 时仅返回待执行的迁移；False 时返回全部注册迁移。 db_path…；源码 L1344-L1390
+#   inputs: db_path pending_only
+#   outputs: dict
+# - id: A6
+#   name_zh: ⑥ SchemaManager
+#   name_en: SchemaManager
+#   intro: Schema 级别管理器——提供表级幂等创建方法，供 EventStore/SnapshotManager 初始化时调…
+#   desc: Schema 级别管理器——提供表级幂等创建方法，供 EventStore/SnapshotManager 初始化时调用。；公共方法（定义序）: ensure_task_events_table；源码 L1398-L1…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: Path
+#   name_en: Path
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: list[str]
+#   name_en: list[str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
 """
 
 from __future__ import annotations

@@ -15,9 +15,36 @@
 # [A_module] module_id=MOD-INF-028 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""[BLUEPRINT] MOD-INF-028 — 触发器引擎 Stage 2
+"""
+[BLUEPRINT] MOD-INF-028 — 触发器引擎 Stage 2
 
 监听文件变更，判定是否触发语义审计。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: trigger_engine.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① TriggerEngine
+#   name_en: TriggerEngine
+#   intro: class TriggerEngine 源码 L66-L191
+#   desc: 公共方法（定义序）: build_baseline, evaluate；源码 L66-L191
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: TriggerEngine
+#   downstream: alignment_engine; audit-orchestrator
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

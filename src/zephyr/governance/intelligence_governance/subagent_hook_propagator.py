@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 Subagent Hook Propagator — v0.13.0 子Agent Hook旁路防护器。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: subagent_hook_propagator.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SubagentHookPropagator
+#   name_en: SubagentHookPropagator
+#   intro: class SubagentHookPropagator 源码 L51-L71
+#   desc: 公共方法（定义序）: hooks, register_hook, must_propagate；源码 L51-L71
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SubagentHookPropagator
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

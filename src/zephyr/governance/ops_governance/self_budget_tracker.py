@@ -14,6 +14,42 @@
 # [TESTS]
 # [A_module] module_id=MOD-INF-024 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: daily_cap 参数
+#   fields: 参数 daily_cap（无注解）
+#   code: self_budget_tracker.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: efficiency_threshold 参数
+#   fields: 参数 efficiency_threshold（无注解）
+#   code: self_budget_tracker.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SelfBudgetTracker
+#   name_en: SelfBudgetTracker
+#   intro: class SelfBudgetTracker 源码 L67-L114
+#   desc: 公共方法（定义序）: record_usage, status, remaining, reset_daily；源码 L67-L114
+#   inputs: daily_cap efficiency_threshold
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: SelfBudgetTracker
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
+"""
+
 import time
 from dataclasses import dataclass
 

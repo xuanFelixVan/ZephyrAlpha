@@ -15,7 +15,44 @@
 # [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""集成协调器 — 24集成+19更新+16GitHub整合."""
+"""
+集成协调器 — 24集成+19更新+16GitHub整合.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: integration_hub.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① IntegrationHub
+#   name_en: IntegrationHub
+#   intro: 跨边界集成协调.
+#   desc: 跨边界集成协调.；公共方法（定义序）: verify_all, get_status_report；源码 L69-L111
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② register_ce_rules
+#   name_en: register_ce_rules
+#   intro: register_ce_rules() 源码 L114-L154
+#   desc: 源码 L114-L154
+#   inputs: 无参数
+#   outputs: int
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests/governance/code_quality/test_code_dedup_engine_red_team.py; tests/governa…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
 
 from dataclasses import dataclass
 from datetime import UTC, datetime

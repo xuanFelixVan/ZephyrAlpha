@@ -16,7 +16,8 @@
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 
-"""PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控检查映射.
+"""
+PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控检查映射.
 
 本模块是 PhaseManager 与 GateEngine 之间的唯一桥梁：
 - PhaseManager.PHASE_SEQUENCE 定义了 43 个 check_name（字符串）
@@ -32,6 +33,110 @@
     - 所有检查函数无副作用——只读验证，不修改任何文件
     - 检查失败返回 YELLOW/RED + 描述性消息，不抛异常
     - 本模块不直接操作 SQLite——GateEngine 负责持久化
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: engine 参数
+#   fields: 参数 engine，类型注解 object | None
+#   code: phase_check_registry.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: check_name 参数
+#   fields: 参数 check_name，类型注解 str
+#   code: phase_check_registry.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① check_session_manager
+#   name_en: check_session_manager
+#   intro: 验证 session_logs/ 目录和 index.
+#   desc: 验证 session_logs/ 目录和 index.yaml 存在.；源码 L214-L220
+#   inputs: 无参数
+#   outputs: GateResult
+# - id: A2
+#   name_zh: ② check_session_continuity
+#   name_en: check_session_continuity
+#   intro: 验证 SessionContinuity 模块可用.
+#   desc: 验证 SessionContinuity 模块可用.；源码 L223-L232
+#   inputs: 无参数
+#   outputs: GateResult
+# - id: A3
+#   name_zh: ③ check_lock_protocol
+#   name_en: check_lock_protocol
+#   intro: 验证 lock_files.
+#   desc: 验证 lock_files.py 工具可用.；源码 L235-L243
+#   inputs: 无参数
+#   outputs: GateResult
+# - id: A4
+#   name_zh: ④ check_blueprint_mandatory
+#   name_en: check_blueprint_mandatory
+#   intro: 验证 key blueprint 文件存在.
+#   desc: 验证 key blueprint 文件存在. 注: module-registry.yaml 于 commit 8e66175a9d 被删除（备份 depgraph 前的清理）。…；源码 L246-L260
+#   inputs: 无参数
+#   outputs: GateResult
+# - id: A5
+#   name_zh: ⑤ check_path_resolver
+#   name_en: check_path_resolver
+#   intro: 验证关键路径解析工具可用.
+#   desc: 验证关键路径解析工具可用.；源码 L263-L275
+#   inputs: 无参数
+#   outputs: GateResult
+# - id: A6
+#   name_zh: ⑥ check_script_manifest
+#   name_en: check_script_manifest
+#   intro: 验证 scripts/script-manifest.
+#   desc: 验证 scripts/script-manifest.yaml 存在且有内容.；源码 L278-L285
+#   inputs: 无参数
+#   outputs: GateResult
+# - id: A7
+#   name_zh: ⑦ check_path_tree_freshness
+#   name_en: check_path_tree_freshness
+#   intro: 验证 project-path-tree.
+#   desc: 验证 project-path-tree.yaml 与磁盘一致——调用 generate_project_path_tree.py --check.；源码 L288-L295
+#   inputs: 无参数
+#   outputs: GateResult
+# - id: A8
+#   name_zh: ⑧ check_env_vars
+#   name_en: check_env_vars
+#   intro: 验证关键环境变量可达.
+#   desc: 验证关键环境变量可达.；源码 L298-L303
+#   inputs: 无参数
+#   outputs: GateResult
+# - id: A9
+#   name_zh: ⑨ check_encoding_safety
+#   name_en: check_encoding_safety
+#   intro: 验证编码安全——调用 detect_missing_encoding.
+#   desc: 验证编码安全——调用 detect_missing_encoding.py.；源码 L306-L311
+#   inputs: 无参数
+#   outputs: GateResult
+# - id: A10
+#   name_zh: ⑩ check_secret_leak_scan
+#   name_en: check_secret_leak_scan
+#   intro: 验证密钥泄漏扫描——调用 scan_secret_leak.
+#   desc: 验证密钥泄漏扫描——调用 scan_secret_leak.py.；源码 L314-L319
+#   inputs: 无参数
+#   outputs: GateResult
+#   （注：A10 之后另有 51 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: GateResult
+#   name_en: GateResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> A10
+# A10 --> O1
 """
 
 from __future__ import annotations

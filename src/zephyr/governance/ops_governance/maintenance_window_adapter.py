@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 Maintenance Window Adapter — v0.10.0 计划维护窗口适配器。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: maintenance_window_adapter.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① MaintenanceWindowAdapter
+#   name_en: MaintenanceWindowAdapter
+#   intro: class MaintenanceWindowAdapter 源码 L51-L68
+#   desc: 公共方法（定义序）: start_maintenance, end_maintenance, in_maintenance, adjust_escalation；源码 L51-L68
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: MaintenanceWindowAdapter
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

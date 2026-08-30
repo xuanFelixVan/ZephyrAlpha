@@ -16,7 +16,36 @@
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: "cron"在注释/文档字符串中，非实际cron调用
 
-"""集成管理——预提交钩子+CI-only 扫描+超时边界."""
+"""
+集成管理——预提交钩子+CI-only 扫描+超时边界.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: integrations.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① IntegrationManager
+#   name_en: IntegrationManager
+#   intro: class IntegrationManager 源码 L67-L90
+#   desc: 公共方法（定义序）: register_precommit, register_ci, status；源码 L67-L90
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: IntegrationManager
+#   downstream: tests/governance/integration/test_integrations.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 from dataclasses import dataclass, field
 from typing import Any

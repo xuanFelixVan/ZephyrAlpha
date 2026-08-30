@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 GitHub API Guard — v0.9.0 Comment and Control防御: PR评论命令注入检测+限制。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: github_api_guard.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① GitHubAPIGuard
+#   name_en: GitHubAPIGuard
+#   intro: class GitHubAPIGuard 源码 L51-L75
+#   desc: 公共方法（定义序）: allowed_commands, validate_command, get_audit_log；源码 L51-L75
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: GitHubAPIGuard
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

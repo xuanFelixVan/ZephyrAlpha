@@ -22,7 +22,8 @@
 # created: "2026-05-05"
 # ---
 
-"""D_DATA — Memory Provider
+"""
+D_DATA — Memory Provider
 
 内存模拟数据源。实现 IngestProviderBase (OCP 扩展点)，用于测试和离线环境。
 生成符合真实统计特征的合成 OHLCV 数据，无需外部网络依赖。
@@ -37,6 +38,47 @@ CTR 契约：
   生产者 — CTR-TRACE-001 (TraceContext) -> D_FACTOR~D_REPORTING, D_ML_TRAIN
 
 SSoT: cross_layer_contracts.yaml -> CTR-001
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: symbols 参数
+#   fields: 参数 symbols（无注解）
+#   code: memory_provider.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: start_date 参数
+#   fields: 参数 start_date（无注解）
+#   code: memory_provider.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: base_prices 参数
+#   fields: 参数 base_prices（无注解）
+#   code: memory_provider.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: seed 参数
+#   fields: 参数 seed（无注解）
+#   code: memory_provider.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① MemoryProvider
+#   name_en: MemoryProvider
+#   intro: 内存数据源——合成行情数据生成器
+#   desc: 内存数据源——合成行情数据生成器；公共方法（定义序）: connect, disconnect, health_check, fetch, fetch_historical, subscribe_realtime, g…
+#   inputs: symbols start_date base_prices seed
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: MemoryProvider
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -172,7 +214,7 @@ class MemoryProvider(IngestProviderBase):
         """探活。内存数据源始终可用。"""
         return True
 
-    def fetch(self, payload: FetchPayload, policy: "SourcePolicy") -> Iterator[FetchResult]:
+    def fetch(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """按 payload 拉取数据，返回 FetchResult 迭代器。
 
         内存数据源将 fetch_historical 的 DataFrame 转换为 FetchResult。

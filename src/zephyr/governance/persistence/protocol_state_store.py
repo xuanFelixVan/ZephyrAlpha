@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 Protocol State Store — v0.10.0 协议运行时状态持久化: JSON snapshot+recovery state+crash恢复。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: state_dir 参数
+#   fields: 参数 state_dir（无注解）
+#   code: protocol_state_store.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ProtocolStateStore
+#   name_en: ProtocolStateStore
+#   intro: class ProtocolStateStore 源码 L55-L80
+#   desc: 公共方法（定义序）: state, save, update；源码 L55-L80
+#   inputs: state_dir
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: ProtocolStateStore
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

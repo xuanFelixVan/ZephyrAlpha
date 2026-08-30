@@ -15,7 +15,46 @@
 # [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""文件创建清单执行器 — 验证所有源/测试/数据文件存在性."""
+"""
+文件创建清单执行器 — 验证所有源/测试/数据文件存在性.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: package_dir 参数
+#   fields: 参数 package_dir（无注解）
+#   code: file_creator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: test_dir 参数
+#   fields: 参数 test_dir（无注解）
+#   code: file_creator.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: data_dir 参数
+#   fields: 参数 data_dir（无注解）
+#   code: file_creator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FileCreator
+#   name_en: FileCreator
+#   intro: 文件创建清单验证器.
+#   desc: 文件创建清单验证器.；公共方法（定义序）: verify_all；源码 L71-L159
+#   inputs: package_dir test_dir data_dir
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: FileCreator
+#   downstream: tests/file/test_file_creator.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
+"""
 
 from dataclasses import dataclass
 from datetime import UTC, datetime

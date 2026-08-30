@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 Human Factors — v0.7.0 人因工程: 通知疲劳管理+上下文简洁性+多通道notifications。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: human_factors.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① HumanFactors
+#   name_en: HumanFactors
+#   intro: class HumanFactors 源码 L53-L104
+#   desc: 公共方法（定义序）: notification_count, last_notified, min_interval_s, max_per_hour, should_notify；源码 L53-L104
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: HumanFactors
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

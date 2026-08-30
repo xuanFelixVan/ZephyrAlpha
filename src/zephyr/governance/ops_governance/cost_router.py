@@ -15,6 +15,89 @@
 # [A_module] module_id=MOD-INF-024 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: provider 参数
+#   fields: 参数 provider，类型注解 LLMProvider
+#   code: cost_router.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: estimated_tokens 参数
+#   fields: 参数 estimated_tokens，类型注解 int
+#   code: cost_router.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: input_output_ratio 参数
+#   fields: 参数 input_output_ratio，类型注解 float
+#   code: cost_router.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: policy 参数
+#   fields: 参数 policy，类型注解 RoutingPolicy
+#   code: cost_router.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① estimate_cost
+#   name_en: estimate_cost
+#   intro: 根据预估token总量计算成本。
+#   desc: 根据预估token总量计算成本。；源码 L220-L232
+#   inputs: provider estimated_tokens input_output_ratio
+#   outputs: float
+# - id: A2
+#   name_zh: ② route_min_cost
+#   name_en: route_min_cost
+#   intro: 给定 token 预估量，返回成本最低模型。
+#   desc: 给定 token 预估量，返回成本最低模型。；源码 L235-L244
+#   inputs: estimated_tokens
+#   outputs: LLMProvider
+# - id: A3
+#   name_zh: ③ route
+#   name_en: route
+#   intro: A/B 双路由策略。
+#   desc: A/B 双路由策略。；源码 L247-L257
+#   inputs: estimated_tokens policy
+#   outputs: LLMProvider
+# - id: A4
+#   name_zh: ④ get_pricing
+#   name_en: get_pricing
+#   intro: get_pricing(provider) 源码 L260-L261
+#   desc: 源码 L260-L261
+#   inputs: provider
+#   outputs: ModelPricing | None
+# - id: A5
+#   name_zh: ⑤ list_models_sorted_by_cost
+#   name_en: list_models_sorted_by_cost
+#   intro: list_models_sorted_by_cost() 源码 L264-L266
+#   desc: 源码 L264-L266
+#   inputs: 无参数
+#   outputs: list[tuple[LLMProvider, float, float]]
+#   （注：A5 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-INF-020;MOD-INF-018;MOD-INF-027
+# - id: O2
+#   name_zh: LLMProvider
+#   name_en: LLMProvider
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-INF-020;MOD-INF-018;MOD-INF-027
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
+"""
+
 from __future__ import annotations
 
 import logging

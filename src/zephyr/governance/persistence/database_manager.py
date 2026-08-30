@@ -42,6 +42,56 @@ Depends    : sqlite_schema.py
     dm.health_check()
     dm.backup()
     dm.close()  # 自动 WAL checkpoint + 备份
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: healthy 参数
+#   fields: 参数 healthy（无注解）
+#   code: database_manager.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: schema_version 参数
+#   fields: 参数 schema_version（无注解）
+#   code: database_manager.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: db_size_bytes 参数
+#   fields: 参数 db_size_bytes（无注解）
+#   code: database_manager.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: wal_size_bytes 参数
+#   fields: 参数 wal_size_bytes（无注解）
+#   code: database_manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DatabaseHealthStatus
+#   name_en: DatabaseHealthStatus
+#   intro: 数据库健康状态快照。
+#   desc: 数据库健康状态快照。；公共方法（定义序）: to_dict；源码 L197-L248
+#   inputs: healthy schema_version db_size_bytes wal_size_bytes table_count integ…
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② DatabaseManager
+#   name_en: DatabaseManager
+#   intro: 统一的数据库生命周期管理器。
+#   desc: 统一的数据库生命周期管理器。 参数 ---- db_path SQLite 数据库路径，默认 DB_PATH。 backup_dir 备份文件存放目录，默认 data/backu…；公共方法（定义序）: backup_…
+#   inputs: db_path backup_dir auto_init pool_size max_overflow pool_timeout pool…
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: DatabaseHealthStatus, DatabaseManager
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

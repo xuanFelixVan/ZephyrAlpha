@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/docs/test_api_doc_version_syncer.py
 # [A_module] module_id=MOD-GOV-054 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""ApiDocVersionSyncer — API 文档版本同步器（MOD-GOV-054）。
+"""
+ApiDocVersionSyncer — API 文档版本同步器（MOD-GOV-054）。
 
 B14-04654（AUD-DRAFT-001-DIGEST P2 波 P2-W12，CAND-REGSYNC-002，A9
 XS-15）：扫描 API 版本号与接口签名变更（注入 api_scanner）→ 自动更
@@ -25,6 +26,48 @@ XS-15）：扫描 API 版本号与接口签名变更（注入 api_scanner）→ 
 取其快照，不重建索引）；changelog_manager=审计 changelog 落证（本件
 只经注入 writer 产出更新载荷，不写盘）；doc_drift 检测族=文档漂移
 告警（本件=版本/签名驱动的主动同步，零交集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: api_scanner 参数
+#   fields: 参数 api_scanner（无注解）
+#   code: api_doc_version_syncer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: doc_writer 参数
+#   fields: 参数 doc_writer（无注解）
+#   code: api_doc_version_syncer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: trading_hours 参数
+#   fields: 参数 trading_hours（无注解）
+#   code: api_doc_version_syncer.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: human_confirmer 参数
+#   fields: 参数 human_confirmer（无注解）
+#   code: api_doc_version_syncer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ApiDocVersionSyncer
+#   name_en: ApiDocVersionSyncer
+#   intro: API 文档版本同步器（扫描 → diff → dry-run 计划 → 写文档/changelog）。
+#   desc: API 文档版本同步器（扫描 → diff → dry-run 计划 → 写文档/changelog）。；公共方法（定义序）: scan_changes, sync；源码 L159-L335
+#   inputs: api_scanner doc_writer trading_hours human_confirmer diff_threshold c…
+#   outputs: 返回值
+#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（8 定义）
+#   name_en: public defs
+#   intro: ApiDocVersionSyncer
+#   downstream: 运行时装配批（非交易时段同步批：API 扫描器 + 文档写入器 + 时段判定 + 人工确认回调统一注入）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -173,39 +216,27 @@ class ApiDocVersionSyncer:
         updates: list[DocUpdate] = []
         for change in changes:
             if change.kind is ChangeKind.REMOVED:
-                content = (
-                    f"# {change.api_id}\n\n"
-                    f"status: removed\n\n"
-                    f"last_version: {change.old_version}\n"
-                )
+                content = f"# {change.api_id}\n\nstatus: removed\n\nlast_version: {change.old_version}\n"
             else:
                 version = change.new_version
                 signature = snapshot[change.api_id].signature
-                content = (
-                    f"# {change.api_id}\n\n"
-                    f"version: {version}\n\n"
-                    f"signature: `{signature}`\n"
+                content = f"# {change.api_id}\n\nversion: {version}\n\nsignature: `{signature}`\n"
+            updates.append(
+                DocUpdate(
+                    target=DocTarget.DOC,
+                    path=f"docs/api/{change.api_id}.md",
+                    content=content,
                 )
-            updates.append(DocUpdate(
-                target=DocTarget.DOC,
-                path=f"docs/api/{change.api_id}.md",
-                content=content,
-            ))
+            )
         if changes:
-            lines = [
-                f"- {c.api_id}: {c.kind.value} {c.old_version or '-'} -> "
-                f"{c.new_version or '-'}"
-                for c in changes
-            ]
-            updates.append(DocUpdate(
-                target=DocTarget.CHANGELOG,
-                path=self._changelog_path,
-                content=(
-                    f"## API 同步 {self._clock().isoformat()}\n\n"
-                    + "\n".join(lines)
-                    + "\n"
-                ),
-            ))
+            lines = [f"- {c.api_id}: {c.kind.value} {c.old_version or '-'} -> {c.new_version or '-'}" for c in changes]
+            updates.append(
+                DocUpdate(
+                    target=DocTarget.CHANGELOG,
+                    path=self._changelog_path,
+                    content=(f"## API 同步 {self._clock().isoformat()}\n\n" + "\n".join(lines) + "\n"),
+                )
+            )
         return tuple(updates)
 
     # ── 扫描 diff ─────────────────────────────────────────────────────────
@@ -217,30 +248,32 @@ class ApiDocVersionSyncer:
             new = snapshot.get(api_id)
             old = self._baseline.get(api_id)
             if old is None and new is not None:
-                changes.append(ApiChange(
-                    kind=ChangeKind.ADDED,
-                    api_id=api_id,
-                    old_version="",
-                    new_version=new.version,
-                ))
+                changes.append(
+                    ApiChange(
+                        kind=ChangeKind.ADDED,
+                        api_id=api_id,
+                        old_version="",
+                        new_version=new.version,
+                    )
+                )
             elif new is None and old is not None:
-                changes.append(ApiChange(
-                    kind=ChangeKind.REMOVED,
-                    api_id=api_id,
-                    old_version=old.version,
-                    new_version="",
-                ))
-            elif (
-                old is not None
-                and new is not None
-                and (old.version, old.signature) != (new.version, new.signature)
-            ):
-                changes.append(ApiChange(
-                    kind=ChangeKind.MODIFIED,
-                    api_id=api_id,
-                    old_version=old.version,
-                    new_version=new.version,
-                ))
+                changes.append(
+                    ApiChange(
+                        kind=ChangeKind.REMOVED,
+                        api_id=api_id,
+                        old_version=old.version,
+                        new_version="",
+                    )
+                )
+            elif old is not None and new is not None and (old.version, old.signature) != (new.version, new.signature):
+                changes.append(
+                    ApiChange(
+                        kind=ChangeKind.MODIFIED,
+                        api_id=api_id,
+                        old_version=old.version,
+                        new_version=new.version,
+                    )
+                )
         return tuple(changes)
 
     def scan_changes(self) -> tuple[ApiChange, ...]:
@@ -267,22 +300,22 @@ class ApiDocVersionSyncer:
         if len(changes) > self._threshold:
             if self._confirmer is None:
                 raise ApiDocSyncError(
-                    f"差异数 {len(changes)} 超阈值 {self._threshold}，"
-                    "human_confirmer 未注入（须人工确认）"
+                    f"差异数 {len(changes)} 超阈值 {self._threshold}，human_confirmer 未注入（须人工确认）"
                 )
             try:
                 confirmed = bool(self._confirmer(changes))
             except Exception as exc:  # noqa: BLE001 — 确认回调异常按拒绝处理
                 raise ApiDocSyncError(f"human_confirmer 确认失败: {exc}") from exc
             if not confirmed:
-                raise ApiDocSyncError(
-                    f"差异数 {len(changes)} 超阈值 {self._threshold}，人工确认拒绝"
-                )
+                raise ApiDocSyncError(f"差异数 {len(changes)} 超阈值 {self._threshold}，人工确认拒绝")
 
         if dry_run:
             _log.info("API 文档同步 dry-run: %d 变更 / %d 更新", len(changes), len(updates))
             return SyncResult(
-                dry_run=True, changes=changes, updates=updates, applied=False,
+                dry_run=True,
+                changes=changes,
+                updates=updates,
+                applied=False,
             )
 
         if self._writer is None:
@@ -291,11 +324,12 @@ class ApiDocVersionSyncer:
             try:
                 self._writer(update)
             except Exception as exc:  # noqa: BLE001 — writer 异常统一 Fail-Closed
-                raise ApiDocSyncError(
-                    f"doc_writer 写入失败: {update.path!r}: {exc}"
-                ) from exc
+                raise ApiDocSyncError(f"doc_writer 写入失败: {update.path!r}: {exc}") from exc
         self._baseline = snapshot  # 写入成功后才推进 baseline
         _log.info("API 文档同步完成: %d 变更已落写", len(changes))
         return SyncResult(
-            dry_run=False, changes=changes, updates=updates, applied=True,
+            dry_run=False,
+            changes=changes,
+            updates=updates,
+            applied=True,
         )

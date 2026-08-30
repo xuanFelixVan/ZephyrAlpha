@@ -15,7 +15,36 @@
 # [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""影子清单验证器 — size sanity check + semantic验证 + 覆盖度报告."""
+"""
+影子清单验证器 — size sanity check + semantic验证 + 覆盖度报告.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: shadow_verifier.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ShadowVerifier
+#   name_en: ShadowVerifier
+#   intro: 影子清单验证器.
+#   desc: 影子清单验证器.；公共方法（定义序）: verify_size, verify_semantic, generate_dashboard_card；源码 L64-L129
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: ShadowVerifier
+#   downstream: tests/governance/adversarial/test_shadow_verifier.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 import os
 from dataclasses import dataclass, field

@@ -15,13 +15,41 @@
 # [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Stage 0.5: 签名指纹 SHA256[:12] O(1) 精确匹配.
+"""
+Stage 0.5: 签名指纹 SHA256[:12] O(1) 精确匹配.
 
 职责：
   - 对函数签名（param_types + return_type）计算 SHA256[:12] 指纹
   - O(1) 字典查询——匹配已有函数签名 -> 输出 COLLISION / NEAR_COLLISION
   - 路径感知阈值：shared/ 内签名碰撞 -> CRITICAL，tests/ -> LOW
   - Vibe Coding 场景性价比最高的检测维度
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: signature_matcher.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SignatureMatcher
+#   name_en: SignatureMatcher
+#   intro: Stage 0.
+#   desc: Stage 0.5 签名指纹匹配器.；公共方法（定义序）: index, classify_path, build_index, compute_fingerprint, match, match_bulk, extr…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: SignatureMatcher
+#   downstream: tests/governance/security/test_signature_matcher.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -15,6 +15,81 @@
 # [A_module] module_id=MOD-INF-022 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: category 参数
+#   fields: 参数 category，类型注解 RiskCategory
+#   code: risk_matrix.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: risk_a 参数
+#   fields: 参数 risk_a，类型注解 RiskItem
+#   code: risk_matrix.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: risk_b 参数
+#   fields: 参数 risk_b，类型注解 RiskItem
+#   code: risk_matrix.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: flag 参数
+#   fields: 参数 flag，类型注解 str
+#   code: risk_matrix.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① get_risk
+#   name_en: get_risk
+#   intro: get_risk(category) 源码 L202-L203
+#   desc: 源码 L202-L203
+#   inputs: category
+#   outputs: RiskItem | None
+# - id: A2
+#   name_zh: ② risks_sorted_by_level
+#   name_en: risks_sorted_by_level
+#   intro: risks_sorted_by_level() 源码 L206-L207
+#   desc: 源码 L206-L207
+#   inputs: 无参数
+#   outputs: list[RiskItem]
+# - id: A3
+#   name_zh: ③ get_interactions
+#   name_en: get_interactions
+#   intro: get_interactions(risk_a, risk_b) 源码 L210-L211
+#   desc: 源码 L210-L211
+#   inputs: risk_a risk_b
+#   outputs: bool
+# - id: A4
+#   name_zh: ④ flagged_risks
+#   name_en: flagged_risks
+#   intro: flagged_risks(flag) 源码 L214-L215
+#   desc: 源码 L214-L215
+#   inputs: flag
+#   outputs: list[RiskItem]
+#   （注：A4 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: RiskItem | None
+#   name_en: RiskItem | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-INF-027;MOD-INF-020;MOD-INF-018
+# - id: O2
+#   name_zh: list[RiskItem]
+#   name_en: list[RiskItem]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-INF-027;MOD-INF-020;MOD-INF-018
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
+"""
+
 from __future__ import annotations
 
 from enum import Enum

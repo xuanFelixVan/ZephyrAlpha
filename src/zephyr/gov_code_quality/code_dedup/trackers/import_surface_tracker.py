@@ -15,7 +15,35 @@
 # [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Import表面积负债追踪 — SBS 0-100 + shared burden score."""
+"""
+Import表面积负债追踪 — SBS 0-100 + shared burden score.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: import_surface_tracker.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ImportSurfaceTracker
+#   name_en: ImportSurfaceTracker
+#   intro: Import表面积 (SBS) 负债追踪.
+#   desc: Import表面积 (SBS) 负债追踪.；公共方法（定义序）: compute_sbs, analyze_file；源码 L51-L71
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: ImportSurfaceTracker
+#   downstream: tests/governance/security/test_import_surface_tracker.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 from pathlib import Path
 

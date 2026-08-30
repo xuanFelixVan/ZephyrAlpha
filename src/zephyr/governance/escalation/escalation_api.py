@@ -17,9 +17,39 @@
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 
 """
-
 Escalation API — v0.7.0 Service Account API: 外部系统安全触发升级，不绕过引擎。
 v0.7.0: 集成EscalationEngine + 速率限制 + 审计日志
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: engine 参数
+#   fields: 参数 engine（无注解）
+#   code: escalation_api.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: rate_limit_per_hour 参数
+#   fields: 参数 rate_limit_per_hour（无注解）
+#   code: escalation_api.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① EscalationAPI
+#   name_en: EscalationAPI
+#   intro: class EscalationAPI 源码 L65-L158
+#   desc: 公共方法（定义序）: api_keys, register_service, validate_request, get_audit_log, clear_audit_log, trigger_escalation；源…
+#   inputs: engine rate_limit_per_hour
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: EscalationAPI
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

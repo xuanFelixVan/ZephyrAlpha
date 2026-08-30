@@ -15,7 +15,43 @@
 # [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""敏感性扫荡——threshold扫描->固化成new baseline（零假阳性+触达率保险）."""
+"""
+敏感性扫荡——threshold扫描->固化成new baseline（零假阳性+触达率保险）.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: sensitivity_sweeper.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SweepResult
+#   name_en: SweepResult
+#   intro: class SweepResult 源码 L60-L73
+#   desc: 公共方法（定义序）: f1；源码 L60-L73
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② SensitivitySweeper
+#   name_en: SensitivitySweeper
+#   intro: class SensitivitySweeper 源码 L77-L108
+#   desc: 公共方法（定义序）: sweep, get_baseline；源码 L77-L108
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: SweepResult, SensitivitySweeper
+#   downstream: tests/governance/security/test_sensitivity_sweeper.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
 
 from dataclasses import dataclass, field
 

@@ -37,6 +37,64 @@ F5EventSubscriber — F5 事件启动机制 (MOD-INF-022 §3).
     subscriber.subscribe_all()  # 订阅 F5 事件到 EventBus
     # 事件发布后自动触发处理器
     subscriber.unsubscribe_all()  # 清理订阅
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: escalation_engine 参数
+#   fields: 参数 escalation_engine，类型注解 object
+#   code: f5_event_subscriber.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: delegation_engine 参数
+#   fields: 参数 delegation_engine，类型注解 object
+#   code: f5_event_subscriber.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: deadlock_detector 参数
+#   fields: 参数 deadlock_detector，类型注解 object
+#   code: f5_event_subscriber.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: arbitrator 参数
+#   fields: 参数 arbitrator，类型注解 object
+#   code: f5_event_subscriber.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① F5EventSubscriber
+#   name_en: F5EventSubscriber
+#   intro: F5 事件订阅器 — 将 F5 组件绑定到 EventBus 事件驱动。
+#   desc: F5 事件订阅器 — 将 F5 组件绑定到 EventBus 事件驱动。 职责: 1. 订阅 EventBus 上的 F5 事件主题 2. 事件到达时调用对应 F5 组件处理器…；公共方法（定义序）: bind_com…
+#   inputs: event_bus rule_bindings
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② create_f5_event_subscriber
+#   name_en: create_f5_event_subscriber
+#   intro: 模块级便捷函数: 创建 F5EventSubscriber 并绑定组件。
+#   desc: 模块级便捷函数: 创建 F5EventSubscriber 并绑定组件。；源码 L663-L681
+#   inputs: escalation_engine delegation_engine deadlock_detector arbitrator feed…
+#   outputs: F5EventSubscriber
+# - id: A3
+#   name_zh: ③ subscribe_eventbus
+#   name_en: subscribe_eventbus
+#   intro: 订阅 EventBusBackpressure 的4个外部事件。
+#   desc: 订阅 EventBusBackpressure 的4个外部事件。 幂等：重复调用安全。供 boot_hooks 统一调用。 事件: budget_exceeded / drift…；源码 L689-L710
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A3 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: F5EventSubscriber
+#   name_en: F5EventSubscriber
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.trading.boot_hooks
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

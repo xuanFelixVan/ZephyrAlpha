@@ -25,6 +25,33 @@ fix_prioritizer — MOD-INF-028 §3.1 Stage 8
 - impact:    FixResult.affected_count (受影响项数)
 - urgency:   FixResult.certainty (触发确定性 0-1)
 - dependency_depth: 外部传入 (finding_id->深度映射)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: weights 参数
+#   fields: 参数 weights（无注解）
+#   code: fix_result_prioritizer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FixPrioritizer
+#   name_en: FixPrioritizer
+#   intro: 修复优先级排序器 — 蓝图 §3.
+#   desc: 修复优先级排序器 — 蓝图 §3.1 Stage 8. 四维排序规则（降序）: 1. severity: RED > YELLOW > INFO 2. impact: affec…；公共方法（定义序）: priorit…
+#   inputs: weights
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: FixPrioritizer
+#   downstream: blast_radius.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

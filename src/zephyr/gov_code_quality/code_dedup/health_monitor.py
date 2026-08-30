@@ -15,13 +15,41 @@
 # [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""健康仪表盘 — Dedup Health Score 0-100 + 趋势 + Session Log 写入.
+"""
+健康仪表盘 — Dedup Health Score 0-100 + 趋势 + Session Log 写入.
 
 职责：
   - 计算多维 Health Score（≥18 维度）
   - 趋势判定（↑ up / -> flat / ↓ down）
   - Session Log 摘要写入（≤3行 MD：Health Score + Top3 热点 + 本次发现）
   - 引擎自观指标聚合
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: health_monitor.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① HealthMonitor
+#   name_en: HealthMonitor
+#   intro: 多维代码健康仪表盘.
+#   desc: 多维代码健康仪表盘.；公共方法（定义序）: classify_dimension, compute_grade, compute；源码 L81-L224
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: HealthMonitor
+#   downstream: tests/governance/ops/test_health_monitor.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

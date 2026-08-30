@@ -16,9 +16,34 @@
 # [TTL] permanent
 
 """
-
 Deadlock Detector — D-022-04 多Agent死锁+循环依赖检测+超时破解。
 SSoT: 本模块是全项目死锁检测的唯一真源。A2A Protocol 消费本模块，不再独立实现。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: deadlock_detector.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① DeadlockDetector
+#   name_en: DeadlockDetector
+#   intro: class DeadlockDetector 源码 L55-L186
+#   desc: 公共方法（定义序）: wait_graph, locks, lock_timestamps, preemption_order, add_edge, detect_cycle, break_deadlock, try_…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: DeadlockDetector
+#   downstream: zephyr.governance.intelligence_governance.delegation_engine;zephyr.infrastructu…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

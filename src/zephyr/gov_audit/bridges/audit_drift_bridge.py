@@ -34,6 +34,33 @@ SRC-0038: 副本文件 — 保持独立实现，待后续审核。
     4. 审计异常中未匹配漂移的 = 潜在漂移盲区
 
 契约锚定: DOM-GOV-001 G-CT-007
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: audit_events_path 参数
+#   fields: 参数 audit_events_path（无注解）
+#   code: audit_drift_bridge.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DriftBridge
+#   name_en: DriftBridge
+#   intro: 审计追踪链 ↔ 漂移检测器双向桥接。
+#   desc: 审计追踪链 ↔ 漂移检测器双向桥接。 使用方式: bridge = DriftBridge() result = bridge.sync() if result.critical…；公共方法（定义序）: sync；源码…
+#   inputs: audit_events_path
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: DriftBridge
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -40,6 +40,40 @@ Safety     : M（监控组件，不影响主流程）
 
     # 或直接包装
     cursor = qm.execute(conn, "SELECT * FROM tasks WHERE status=?", ("READY",))
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: max_size 参数
+#   fields: 参数 max_size（无注解）
+#   code: query_metrics.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① PercentileTracker
+#   name_en: PercentileTracker
+#   intro: 轻量延迟百分位追踪器（保留最近 N 个样本）。
+#   desc: 轻量延迟百分位追踪器（保留最近 N 个样本）。；公共方法（定义序）: record, p50, p95, p99, stats；源码 L114-L168
+#   inputs: max_size
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② QueryMetrics
+#   name_en: QueryMetrics
+#   intro: SQL 查询性能监控器。
+#   desc: SQL 查询性能监控器。 参数 ---- db_path SQLite 数据库路径，默认 DB_PATH。slow_queries 表写入此库。 slow_threshold_m…；公共方法（定义序）: db_path…
+#   inputs: db_path slow_threshold_ms
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: PercentileTracker, QueryMetrics
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

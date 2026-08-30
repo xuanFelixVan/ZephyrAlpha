@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 Error Budget Burst Limiter — v0.11.0 错误预算Burst限流器。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: error_budget_burst_limiter.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① BurstLimiter
+#   name_en: BurstLimiter
+#   intro: class BurstLimiter 源码 L53-L96
+#   desc: 公共方法（定义序）: burst_window_s, max_burst, requests, allow；源码 L53-L96
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: BurstLimiter
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -21,6 +21,32 @@ D-DATA -> ServiceRegistry 注册模块
 将 D-DATA 的实现注册到 shared_core.ServiceRegistry，
 使 D-INFRA 能通过 ServiceRegistry.get() 获取实现，
 消除 D-INFRA->D-DATA 的直接 import 依赖。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: service_registration.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① register_services
+#   name_en: register_services
+#   intro: 将 D-DATA 实现注册到 ServiceRegistry。
+#   desc: 将 D-DATA 实现注册到 ServiceRegistry。幂等，可重复调用。；源码 L63-L120
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: register_services
+#   downstream: zephyr.trading.boot_hooks ; zephyr.__init__ (eager registration)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

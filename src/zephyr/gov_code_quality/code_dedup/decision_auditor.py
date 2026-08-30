@@ -15,7 +15,35 @@
 # [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""决策审计链 — DecisionFingerprint 不可变追加日志."""
+"""
+决策审计链 — DecisionFingerprint 不可变追加日志.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: decision_auditor.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① DecisionAuditor
+#   name_en: DecisionAuditor
+#   intro: 去重决策审计链.
+#   desc: 去重决策审计链.；公共方法（定义序）: log_decision, get_chain；源码 L54-L100
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: DecisionAuditor
+#   downstream: tests/decision/test_decision_auditor.py; tests/governance/code_quality/test_cod…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 import hashlib
 import json

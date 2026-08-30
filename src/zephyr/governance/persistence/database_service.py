@@ -30,6 +30,32 @@ registry L3627 明确记载"被两个 DatabaseService 类继承"——属多真�
 
 infrastructure 版为超集（含 ClickHouse/Redis 接口），governance 消费者获得
 完整能力。DatabaseCRUDMixin（SH-DB-001）的 [MODIFY-GUARD] 已同步更新为单真源。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: database_service.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包公共面再导出
+#   name_en: __init__ re-export
+#   intro: 再导出 DatabaseService（共 1 符号）
+#   desc: __init__ import L0；__all__ 1 项（AST 事实）
+#   inputs: I1
+#   outputs: __all__ 公共符号表
+# 层: 输出
+# - id: O1
+#   name_zh: 公共 API 面（1 符号）
+#   name_en: __all__
+#   intro: DatabaseService
+#   downstream: src/zephyr/governance/ ; tests/db/test_db_auto_ops.py ; tests/governance/data_l…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from zephyr.infrastructure.database_service import DatabaseService

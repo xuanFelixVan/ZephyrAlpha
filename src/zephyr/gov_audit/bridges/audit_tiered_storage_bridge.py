@@ -15,10 +15,37 @@
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Audit ↔ WarmHotGate 三层存储桥接.
+"""
+Audit ↔ WarmHotGate 三层存储桥接.
 
 蓝图 D-020-10 — 三层存储架构（热≤7d / 温8~90d / 冷>90d）。
 集成 shared/warm_hot_gate.py + shared/contracts/core/runtime_plane_tag.py。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: data_dir 参数
+#   fields: 参数 data_dir（无注解）
+#   code: audit_tiered_storage_bridge.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AuditTieredStorageBridge
+#   name_en: AuditTieredStorageBridge
+#   intro: 审计↔三层存储桥接器.
+#   desc: 审计↔三层存储桥接器. 将审计日志按时间分层: 热 (HOT): ≤7天 — JSONL 原文，SSD 级延迟 温 (WARM): 8~90天 — gzip 压缩 JSONL 冷…；公共方法（定义序）: cold_di…
+#   inputs: data_dir
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: AuditTieredStorageBridge
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

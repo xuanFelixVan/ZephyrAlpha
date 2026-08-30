@@ -33,6 +33,41 @@ D_COMPLIANCE — Governance & Compliance Layer
   - ComplianceEngine   : OCP D_COMPLIANCE-CPL — 合规规则引擎
 
 依赖方向：全层监控 -> 无上游依赖（D_COMPLIANCE 是横向 Johari 基础设施）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: security_gateway_base.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SecurityGateway
+#   name_en: SecurityGateway
+#   intro: AI Security Gateway 抽象基类
+#   desc: AI Security Gateway 抽象基类 所有 AI 生成内容必须经过： pre_filter -> security-scan -> decision -> audit…；公共方法（定义序）: pre_fil…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② ComplianceEngine
+#   name_en: ComplianceEngine
+#   intro: 合规规则引擎（OCP 扩展点 D_COMPLIANCE-CPL）
+#   desc: 合规规则引擎（OCP 扩展点 D_COMPLIANCE-CPL） 契约对齐：CTR-P1-012（ComplianceRule 出站）-> D_RISK, D_EXECUTION…；公共方法（定义序）: evaluat…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: SecurityGateway, ComplianceEngine
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

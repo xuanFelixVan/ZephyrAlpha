@@ -15,6 +15,87 @@
 # [A_module] module_id=MOD-INF-024 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: name 参数
+#   fields: 参数 name，类型注解 str
+#   code: tco_model.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: total_tokens 参数
+#   fields: 参数 total_tokens，类型注解 int
+#   code: tco_model.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① get_column
+#   name_en: get_column
+#   intro: get_column(name) 源码 L169-L170
+#   desc: 源码 L169-L170
+#   inputs: name
+#   outputs: BudgetColumn | None
+# - id: A2
+#   name_zh: ② total_annual
+#   name_en: total_annual
+#   intro: total_annual() 源码 L173-L174
+#   desc: 源码 L173-L174
+#   inputs: 无参数
+#   outputs: float
+# - id: A3
+#   name_zh: ③ total_monthly
+#   name_en: total_monthly
+#   intro: total_monthly() 源码 L177-L178
+#   desc: 源码 L177-L178
+#   inputs: 无参数
+#   outputs: float
+# - id: A4
+#   name_zh: ④ total_with_tolerance
+#   name_en: total_with_tolerance
+#   intro: total_with_tolerance() 源码 L181-L182
+#   desc: 源码 L181-L182
+#   inputs: 无参数
+#   outputs: float
+# - id: A5
+#   name_zh: ⑤ token_budget_distribution
+#   name_en: token_budget_distribution
+#   intro: token_budget_distribution(total_tokens) 源码 L185-L189
+#   desc: 源码 L185-L189
+#   inputs: total_tokens
+#   outputs: dict[str, int]
+# - id: A6
+#   name_zh: ⑥ column_summary
+#   name_en: column_summary
+#   intro: column_summary() 源码 L192-L202
+#   desc: 源码 L192-L202
+#   inputs: 无参数
+#   outputs: dict[str, dict[str, float]]
+#   （注：A6 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: BudgetColumn | None
+#   name_en: BudgetColumn | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-INF-020;MOD-INF-018;MOD-INF-027
+# - id: O2
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-INF-020;MOD-INF-018;MOD-INF-027
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
+"""
+
 from __future__ import annotations
 
 import logging

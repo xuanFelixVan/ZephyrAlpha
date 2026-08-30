@@ -48,6 +48,32 @@ battle_map_reader.py — 作战地图数据库只读查询工具模块
     steps = reader.get_steps_by_flow_stage('buy_flow')
     anchors = reader.get_anchors_by_step('BM-BUY-03')           # 方向A
     steps = reader.get_steps_by_target('depgraph', 'MOD-xxx')   # 方向B
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: db_path 参数
+#   fields: 参数 db_path（无注解）
+#   code: battle_map_reader.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① BattleMapReader
+#   name_en: BattleMapReader
+#   intro: 作战地图数据库只读读取器。
+#   desc: 作战地图数据库只读读取器。 懒加载连接，可作 context manager 使用： with BattleMapReader() as reader: steps = read…；公共方法（定义序）: close,…
+#   inputs: db_path
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: BattleMapReader
+#   downstream: scripts/governance/apply_battle_map.py; scripts/governance/align_battle_map.py;…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

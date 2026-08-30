@@ -15,7 +15,35 @@
 # [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Recovery Manifest Writer — R2纯文本base64 Manifest."""
+"""
+Recovery Manifest Writer — R2纯文本base64 Manifest.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: recovery_manifest_writer.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① RecoveryManifestWriter
+#   name_en: RecoveryManifestWriter
+#   intro: R2 纯文本 Recovery Manifest.
+#   desc: R2 纯文本 Recovery Manifest.；公共方法（定义序）: write；源码 L54-L85
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: RecoveryManifestWriter
+#   downstream: tests/governance/resilience/test_recovery_manifest_writer.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 import base64
 import hashlib

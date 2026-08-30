@@ -15,6 +15,63 @@
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: state 参数
+#   fields: 参数 state，类型注解 OrderState
+#   code: oms_risk_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: current 参数
+#   fields: 参数 current，类型注解 OrderState
+#   code: oms_risk_engine.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: next_state 参数
+#   fields: 参数 next_state，类型注解 OrderState
+#   code: oms_risk_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① OMSRiskEngine
+#   name_en: OMSRiskEngine
+#   intro: class OMSRiskEngine 源码 L136-L152
+#   desc: 公共方法（定义序）: pre_trade_check, at_trade_check, post_trade_evaluate；源码 L136-L152
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② is_terminal
+#   name_en: is_terminal
+#   intro: is_terminal(state) 源码 L155-L156
+#   desc: 源码 L155-L156
+#   inputs: state
+#   outputs: bool
+# - id: A3
+#   name_zh: ③ valid_transitions
+#   name_en: valid_transitions
+#   intro: valid_transitions(current, next_state) 源码 L159-L166
+#   desc: 源码 L159-L166
+#   inputs: current next_state
+#   outputs: bool
+#   （注：A3 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
+"""
+
 from __future__ import annotations
 
 import logging

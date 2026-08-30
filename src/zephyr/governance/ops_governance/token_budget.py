@@ -15,6 +15,35 @@
 # [A_module] module_id=MOD-INF-024 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: token_budget.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① TokenManager
+#   name_en: TokenManager
+#   intro: 三级 Token Budget 管理器。
+#   desc: 三级 Token Budget 管理器。 依据 SYS-MASTER-001 §0.3: - Hot Memory: ~800 tokens (每个 session 必读) -…；公共方法（定义序）: degraded…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: TokenManager
+#   downstream: MOD-INF-020;MOD-INF-018;MOD-INF-027
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 from __future__ import annotations
 
 import logging

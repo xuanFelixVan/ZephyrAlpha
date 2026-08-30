@@ -15,6 +15,55 @@
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: name 参数
+#   fields: 参数 name，类型注解 Environment
+#   code: environment_manager.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: current 参数
+#   fields: 参数 current，类型注解 Environment
+#   code: environment_manager.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: target 参数
+#   fields: 参数 target，类型注解 Environment
+#   code: environment_manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① get_env
+#   name_en: get_env
+#   intro: get_env(name) 源码 L139-L140
+#   desc: 源码 L139-L140
+#   inputs: name
+#   outputs: EnvConfig | None
+# - id: A2
+#   name_zh: ② switch_env
+#   name_en: switch_env
+#   intro: switch_env(current, target) 源码 L143-L146
+#   desc: 源码 L143-L146
+#   inputs: current target
+#   outputs: EnvConfig | None
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: EnvConfig | None
+#   name_en: EnvConfig | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
+
 from __future__ import annotations
 
 import os

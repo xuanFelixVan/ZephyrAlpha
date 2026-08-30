@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 G-CT-003 消费端 — Escalation.on_rollback_failure() + G-CT-004/G-CT-006/G-CT-008 升级入口.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: contracts.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① EscalationContracts
+#   name_en: EscalationContracts
+#   intro: 升级协议入口 — G-CT-003/004/006/008 消费端.
+#   desc: 升级协议入口 — G-CT-003/004/006/008 消费端.；公共方法（定义序）: on_rollback_failure, on_budget_alert, on_a2a_failure；源码 L58-L105
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: EscalationContracts
+#   downstream: zephyr.infrastructure.rollback;zephyr.governance.services.adapter
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

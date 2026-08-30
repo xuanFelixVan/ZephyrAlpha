@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 Escalation Metrics — D-022-07 指标收集器: 升级率/误升级率/响应延迟。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: escalation_metrics.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① EscalationMetrics
+#   name_en: EscalationMetrics
+#   intro: class EscalationMetrics 源码 L51-L115
+#   desc: 公共方法（定义序）: blocks, total_evals, auto_guards, autonomous, false_positives, latencies, record, escalation_rate,…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: EscalationMetrics
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

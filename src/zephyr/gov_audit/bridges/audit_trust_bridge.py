@@ -15,10 +15,37 @@
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Audit ↔ ContinuousTrust 信任分数桥接.
+"""
+Audit ↔ ContinuousTrust 信任分数桥接.
 
 蓝图 §2.3 D-020-17 — 渐进信任分数(0.0~1.0) + 时间衰减。
 集成 rollback/continuous_trust.py 的 TrustScore 到审计条目。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: audit_trust_bridge.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① AuditTrustBridge
+#   name_en: AuditTrustBridge
+#   intro: 审计↔信任分数桥接器.
+#   desc: 审计↔信任分数桥接器. 从 ContinuousTrust 引擎读取 Agent 信任分数， 注入审计条目的 trust-score 字段， 并在信任分数剧烈变化时触发 TRUS…；公共方法（定义序）: classif…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: AuditTrustBridge
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

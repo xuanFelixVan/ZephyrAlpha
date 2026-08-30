@@ -16,7 +16,8 @@
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: _build_forbidden_fallback与yaml_utils._build_ttl_fallback是同类frozenset包装器,趋同演化非复制粘贴;两者服务于不同词表(stability vs ttl)
 
-"""[BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md
+"""
+[BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md
 
 Stage 7 自愈闭环 — 修复->自测->回滚.
 
@@ -28,6 +29,42 @@ Stage 7 自愈闭环 — 修复->自测->回滚.
 
 数据流: 修复文本+目标文档 -> Stage 7 自愈闭环 -> HealResult
 
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: issue_aggregator 参数
+#   fields: 参数 issue_aggregator（无注解）
+#   code: self_healer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: llm_bridge 参数
+#   fields: 参数 llm_bridge（无注解）
+#   code: self_healer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: rollback_handler 参数
+#   fields: 参数 rollback_handler（无注解）
+#   code: self_healer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SelfHealer
+#   name_en: SelfHealer
+#   intro: Stage 7 自愈闭环 — 修复->自测->回滚.
+#   desc: Stage 7 自愈闭环 — 修复->自测->回滚. 接收 IssueAggregator 的聚合问题和 LLMBridge 的修复建议, 执行修复(原子写入), 自测验证(im…；公共方法（定义序）: heal, b…
+#   inputs: issue_aggregator llm_bridge rollback_handler
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: SelfHealer
+#   downstream: FixPrioritizer; AuditOrchestrator (MOD-INF-027)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -36,7 +73,7 @@ import logging
 import os
 import re
 import subprocess
-from functools import lru_cache
+from functools import cache, lru_cache
 from typing import TYPE_CHECKING, Any, Protocol
 
 if TYPE_CHECKING:
@@ -82,7 +119,7 @@ class _LLMBridgeProtocol(Protocol):
     # 治本（AI-AUDIT12 跨层契约对齐）：原 protocol 签名 generate_fix(issue: dict) -> str
     # 与 LLMBridge 实际契约 generate_fix(trigger) -> LLMFixResult 不匹配——真实装配即
     # AttributeError（dict 无 trigger_type）。protocol 与 LLMBridge 真实签名对齐。
-    def generate_fix(self, trigger: "TriggerResult") -> "LLMFixResult": ...
+    def generate_fix(self, trigger: TriggerResult) -> LLMFixResult: ...
 
 
 class _RollbackHandlerProtocol(Protocol):
@@ -95,7 +132,7 @@ def _build_forbidden_fallback(*items: str) -> frozenset[str]:
     return frozenset(items)
 
 
-@lru_cache(maxsize=None)
+@cache
 def _load_forbidden_stability() -> frozenset[str]:
     """从 stability_vocabulary.yaml 加载禁止修改的 stability 值集合（SSoT）。
 
@@ -112,7 +149,7 @@ def _load_forbidden_stability() -> frozenset[str]:
     return _build_forbidden_fallback("frozen")
 
 
-@lru_cache(maxsize=None)
+@cache
 def _load_forbidden_autonomy() -> frozenset[str]:
     """从 ai_autonomy_vocabulary.yaml 加载禁止修改的 ai_autonomy 值集合（SSoT）。
 

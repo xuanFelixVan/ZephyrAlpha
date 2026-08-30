@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 Memory Poison Guard — v0.9.0 记忆投毒防护: Memory写入内容审计+恶意注入检测。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: memory_poison_guard.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① MemoryPoisonGuard
+#   name_en: MemoryPoisonGuard
+#   intro: class MemoryPoisonGuard 源码 L51-L76
+#   desc: 公共方法（定义序）: trusted_agents, register_trusted, validate_write；源码 L51-L76
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: MemoryPoisonGuard
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

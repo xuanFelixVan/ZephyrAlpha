@@ -28,6 +28,38 @@ SSoT: cross_layer_contracts.yaml v3.0 — CTR-P1-012 (ComplianceRule)
 架构决策:  (LPC 双轨),  (沙箱)
 
 Phase F — LLM 安全门禁落地
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: context 参数
+#   fields: 参数 context（无注解）
+#   code: default_security_gateway.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: default_security_gateway.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DefaultSecurityGateway
+#   name_en: DefaultSecurityGateway
+#   intro: SecurityGateway 三层防御默认实现（OCP-004）
+#   desc: SecurityGateway 三层防御默认实现（OCP-004） OCP 扩展点： - 子类可覆盖 _custom_pre_filter() 添加自定义 L1 规则 - 子类可…；公共方法（定义序）: filter_…
+#   inputs: context project_root
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: DefaultSecurityGateway
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -22,7 +22,8 @@
 # F3: feed_batch 批量调度入口（达终局早停；空批返回当前快照）
 # O1: PromotionVerdict（state/decision/n/m_value/log_m——晋升/留观/回退三态裁决输出）
 # [/ALGO_FLOW]
-"""D_GOVERNANCE — mSPRT Champion-Challenger 晋升编排层（61 号 §3.3 纪律 1 通道化）。
+"""
+D_GOVERNANCE — mSPRT Champion-Challenger 晋升编排层（61 号 §3.3 纪律 1 通道化）。
 
 包装 MOD-PF-008 统计内核（``MSPRTChampionChallenger``）为可调度晋升通道：
 内核管"统计判定"（e-process 累加 + Ville 边界 + 满窗最小样本门），本层管
@@ -44,6 +45,48 @@
 
 依据: 61_lifecycle_multi_ai §3.3 纪律 1（mSPRT 施工伪代码 + 施工要点）+ 结案报告（载体重裁定留痕）
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: alpha 参数
+#   fields: 参数 alpha（无注解）
+#   code: msprt_promotion_channel.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: tau 参数
+#   fields: 参数 tau（无注解）
+#   code: msprt_promotion_channel.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: historical_effects 参数
+#   fields: 参数 historical_effects（无注解）
+#   code: msprt_promotion_channel.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: window_size 参数
+#   fields: 参数 window_size（无注解）
+#   code: msprt_promotion_channel.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① PromotionChannelManager
+#   name_en: PromotionChannelManager
+#   intro: mSPRT 晋升通道管理器（多通道登记 + 可调度投喂入口）。
+#   desc: mSPRT 晋升通道管理器（多通道登记 + 可调度投喂入口）。 用法：调度器（64 号 §6.4 基座）对每个 champion/challenger 配对 register 一…；公共方法（定义序）: registe…
+#   inputs: alpha tau historical_effects window_size
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: PromotionChannelManager
+#   downstream: zephyr.governance.lifecycle_governance.factor_promotion_wiring（因子晋升场景）; 调用方（BM-…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

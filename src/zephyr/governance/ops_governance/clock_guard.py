@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 Clock Guard — v0.8.0 时钟完整性防御: NTP漂移检测+wall clock monotonic验证。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: clock_guard.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ClockGuard
+#   name_en: ClockGuard
+#   intro: class ClockGuard 源码 L53-L88
+#   desc: 公共方法（定义序）: monotonic_start, wall_start, detect_drift, is_suspicious, validate_timestamp；源码 L53-L88
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: ClockGuard
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

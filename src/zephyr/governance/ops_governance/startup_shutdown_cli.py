@@ -15,6 +15,57 @@
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: range_str 参数
+#   fields: 参数 range_str，类型注解 str
+#   code: startup_shutdown_cli.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① build_argparser
+#   name_en: build_argparser
+#   intro: build_argparser() 源码 L74-L99
+#   desc: 源码 L74-L99
+#   inputs: 无参数
+#   outputs: argparse.ArgumentParser
+# - id: A2
+#   name_zh: ② parse_phase_range
+#   name_en: parse_phase_range
+#   intro: parse_phase_range(range_str) 源码 L102-L114
+#   desc: 源码 L102-L114
+#   inputs: range_str
+#   outputs: list[int]
+# - id: A3
+#   name_zh: ③ main
+#   name_en: main
+#   intro: main() 源码 L117-L130
+#   desc: 源码 L117-L130
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: argparse.ArgumentParser
+#   name_en: argparse.ArgumentParser
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: list[int]
+#   name_en: list[int]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
+"""
+
 from __future__ import annotations
 
 import argparse

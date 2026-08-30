@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-028 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""[BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md
+"""
+[BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md
 
 audit-trail.privacy — MOD-INF-020 · PII 检测与脱敏
 
@@ -39,6 +40,40 @@ PII 模式
 
   - 路径哈希/掩码
 
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: path 参数
+#   fields: 参数 path，类型注解 str
+#   code: privacy.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① PrivacyGuard
+#   name_en: PrivacyGuard
+#   intro: class PrivacyGuard 源码 L142-L221
+#   desc: 公共方法（定义序）: detect_pii, redact, hash_path；源码 L142-L221
+#   inputs: custom_patterns default_policy
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② hash_path
+#   name_en: hash_path
+#   intro: hash_path(path) 源码 L224-L227
+#   desc: 源码 L224-L227
+#   inputs: path
+#   outputs: str
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见蓝图 §4 接口契约
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

@@ -16,13 +16,41 @@
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 
-"""Stage 0: Git diff 变更检测器 — 函数粒度增量.
+"""
+Stage 0: Git diff 变更检测器 — 函数粒度增量.
 
 职责：
   - 运行 `git diff --name-only --cached` 检测暂存区变更
   - 运行 `git diff --name-only` 检测工作区变更
   - 过滤出 .py 文件
   - AST 解析变更文件,提取新增/变更的函数（函数粒度而非文件粒度）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: repo_root 参数
+#   fields: 参数 repo_root（无注解）
+#   code: diff_detector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DiffDetector
+#   name_en: DiffDetector
+#   intro: Git diff 变更检测——函数粒度增量.
+#   desc: Git diff 变更检测——函数粒度增量.；公共方法（定义序）: repo_root, git_diff_files, extract_functions, detect, detect_changed_files,…
+#   inputs: repo_root
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: DiffDetector
+#   downstream: tests/governance/drift/test_diff_detector.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 Model Version Detector — v0.10.0 模型版本突变检测: model version change->degraded auto_guard。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: model_version_detector.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ModelVersionDetector
+#   name_en: ModelVersionDetector
+#   intro: class ModelVersionDetector 源码 L51-L74
+#   desc: 公共方法（定义序）: known_versions, record_version, detect_change, should_degrade；源码 L51-L74
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: ModelVersionDetector
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

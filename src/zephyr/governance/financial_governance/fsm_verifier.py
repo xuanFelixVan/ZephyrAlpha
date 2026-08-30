@@ -15,6 +15,60 @@
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: spec 参数
+#   fields: 参数 spec，类型注解 FSMSpec
+#   code: fsm_verifier.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: local_state 参数
+#   fields: 参数 local_state，类型注解 FSMState
+#   code: fsm_verifier.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: broker_state 参数
+#   fields: 参数 broker_state，类型注解 FSMState
+#   code: fsm_verifier.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① generate_test_cases
+#   name_en: generate_test_cases
+#   intro: generate_test_cases(spec) 源码 L142-L149
+#   desc: 源码 L142-L149
+#   inputs: spec
+#   outputs: dict[str, list[str]]
+# - id: A2
+#   name_zh: ② reconcile_state
+#   name_en: reconcile_state
+#   intro: reconcile_state(local_state, broker_state) 源码 L152-L155
+#   desc: 源码 L152-L155
+#   inputs: local_state broker_state
+#   outputs: tuple[FSMState, str]
+#   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, list[str]]
+#   name_en: dict[str, list[str]]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: tuple[FSMState, str]
+#   name_en: tuple[FSMState, str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
+
 from __future__ import annotations
 
 import logging

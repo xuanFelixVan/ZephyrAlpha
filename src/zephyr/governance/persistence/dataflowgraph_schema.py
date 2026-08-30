@@ -75,6 +75,84 @@ PG 配置真源
   PG 连接配置真源：config/.env.postgres（depgraph_schema._PG_ENV_PATH）
   本模块复用 depgraph_schema._load_pg_config() / _build_pg_dsn()，避免配置真源分裂。
   连接入口独立：get_dataflowgraph_pg_connection()（与 depgraph 共享配置，但入口独立）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: superuser 参数
+#   fields: 参数 superuser（无注解）
+#   code: dataflowgraph_schema.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: read_only 参数
+#   fields: 参数 read_only（无注解）
+#   code: dataflowgraph_schema.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: autocommit 参数
+#   fields: 参数 autocommit（无注解）
+#   code: dataflowgraph_schema.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: replica 参数
+#   fields: 参数 replica（无注解）
+#   code: dataflowgraph_schema.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① get_dataflowgraph_pg_connection
+#   name_en: get_dataflowgraph_pg_connection
+#   intro: 返回 dataflowgraph (PostgreSQL) 连接。
+#   desc: 返回 dataflowgraph (PostgreSQL) 连接。 与 depgraph 同库不同表（共享 config/.env.postgres 配置）。 所有 datafl…；源码 L330-L379
+#   inputs: superuser read_only autocommit replica allow_design_delete
+#   outputs: PgConnection
+# - id: A2
+#   name_zh: ② init_dataflow_db
+#   name_en: init_dataflow_db
+#   intro: 验证 dataflowgraph (PostgreSQL) schema 健康性（幂等）。
+#   desc: 验证 dataflowgraph (PostgreSQL) schema 健康性（幂等）。 PG schema 由 scripts/governance/migrate_sqli…；源码 L382-L417
+#   inputs: echo
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ acquire_dataflow_write_lock
+#   name_en: acquire_dataflow_write_lock
+#   intro: 获取 dataflowgraph 写入互斥锁（pg_advisory_lock）。
+#   desc: 获取 dataflowgraph 写入互斥锁（pg_advisory_lock）。 与 depgraph 的 424242 锁互不干扰（key=424243）。 用于 sync_…；源码 L420-L431
+#   inputs: conn
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ release_dataflow_write_lock
+#   name_en: release_dataflow_write_lock
+#   intro: 释放 dataflowgraph 写入互斥锁。
+#   desc: 释放 dataflowgraph 写入互斥锁。；源码 L434-L439
+#   inputs: conn
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ dataflow_table_names
+#   name_en: dataflow_table_names
+#   intro: 返回 dataflowgraph 的 6 张表名（不含 depgraph 的 25 张表）。
+#   desc: 返回 dataflowgraph 的 6 张表名（不含 depgraph 的 25 张表）。；源码 L442-L444
+#   inputs: 无参数
+#   outputs: list[str]
+# 层: 输出
+# - id: O1
+#   name_zh: PgConnection
+#   name_en: PgConnection
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: apply_dataflowgraph.py ; sync_yaml_to_depgraph.py ; generate_dataflow_diagram.py
+# - id: O2
+#   name_zh: list[str]
+#   name_en: list[str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: apply_dataflowgraph.py ; sync_yaml_to_depgraph.py ; generate_dataflow_diagram.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations
@@ -256,7 +334,7 @@ def get_dataflowgraph_pg_connection(
     autocommit: bool = True,
     replica: bool = False,
     allow_design_delete: bool = False,
-) -> "PgConnection":
+) -> PgConnection:
     """返回 dataflowgraph (PostgreSQL) 连接。
 
     与 depgraph 同库不同表（共享 config/.env.postgres 配置）。
@@ -339,7 +417,7 @@ def init_dataflow_db(*, echo: bool = False) -> None:
         conn.close()
 
 
-def acquire_dataflow_write_lock(conn: "PgConnection") -> None:
+def acquire_dataflow_write_lock(conn: PgConnection) -> None:
     """获取 dataflowgraph 写入互斥锁（pg_advisory_lock）。
 
     与 depgraph 的 424242 锁互不干扰（key=424243）。
@@ -353,7 +431,7 @@ def acquire_dataflow_write_lock(conn: "PgConnection") -> None:
         conn.commit()
 
 
-def release_dataflow_write_lock(conn: "PgConnection") -> None:
+def release_dataflow_write_lock(conn: PgConnection) -> None:
     """释放 dataflowgraph 写入互斥锁。"""
     with conn.cursor() as cur:
         cur.execute("SELECT pg_advisory_unlock(%s)", (_DATAFLOW_ADVISORY_LOCK_KEY,))

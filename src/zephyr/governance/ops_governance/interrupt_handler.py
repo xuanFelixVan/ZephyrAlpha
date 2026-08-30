@@ -16,8 +16,34 @@
 # [TTL] permanent
 
 """
-
 Interrupt Handler — D-022-06 硬中断处理器: Owner紧急中断+优雅停止+状态保存。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: interrupt_handler.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① InterruptHandler
+#   name_en: InterruptHandler
+#   intro: class InterruptHandler 源码 L60-L90
+#   desc: 公共方法（定义序）: signal, interrupt, interrupted, save_state, resume；源码 L60-L90
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: InterruptHandler
+#   downstream: zephyr.governance.services.adapter;zephyr.trading
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

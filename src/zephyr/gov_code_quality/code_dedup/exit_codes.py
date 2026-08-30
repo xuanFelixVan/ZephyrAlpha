@@ -15,7 +15,59 @@
 # [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""退出码定义模块——五档exit code 0-4枚举+描述+判定逻辑."""
+"""
+退出码定义模块——五档exit code 0-4枚举+描述+判定逻辑.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: max_severity 参数
+#   fields: 参数 max_severity，类型注解 str
+#   code: exit_codes.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: mode 参数
+#   fields: 参数 mode，类型注解 RunMode
+#   code: exit_codes.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: tool_error 参数
+#   fields: 参数 tool_error，类型注解 bool
+#   code: exit_codes.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: degraded 参数
+#   fields: 参数 degraded，类型注解 bool
+#   code: exit_codes.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① determine_exit_code_mode
+#   name_en: determine_exit_code_mode
+#   intro: 根据运行模式和最大严重度判定退出码。
+#   desc: 根据运行模式和最大严重度判定退出码。 5.96.4 修复：用 RunMode 枚举替代 (tool_error, degraded) 双布尔参数，消除隐式优先级，提升可读性。；源码 L101-L114
+#   inputs: max_severity mode
+#   outputs: ExitCode
+# - id: A2
+#   name_zh: ② determine_exit_code
+#   name_en: determine_exit_code
+#   intro: 根据最大严重度和运行状态判定退出码（向后兼容入口）。
+#   desc: 根据最大严重度和运行状态判定退出码（向后兼容入口）。 5.96.4 修复：内部映射到 RunMode 枚举后委托给 determine_exit_code_mode， 消除双布尔…；源码 L117-L129
+#   inputs: max_severity tool_error degraded
+#   outputs: ExitCode
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ExitCode
+#   name_en: ExitCode
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_code_quality.code_dedup.cli; tests/gov_code_dedup/test_degradation_e…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
 
 from enum import Enum, IntEnum
 from typing import Final

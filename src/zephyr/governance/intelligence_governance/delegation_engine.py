@@ -21,6 +21,32 @@ Delegation Engine — MOD-INF-022
 Auto-delegation when owner absent, overloaded, or escalation rules demand it.
 Supports load-balanced, expertise-match, round-robin, and priority-queue strategies.
 Blueprint: docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md §4
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: deadlock_detector 参数
+#   fields: 参数 deadlock_detector（无注解）
+#   code: delegation_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DelegationEngine
+#   name_en: DelegationEngine
+#   intro: class DelegationEngine 源码 L71-L278
+#   desc: 公共方法（定义序）: delegate_load, deadlock_detector, register_delegate, unregister_delegate, delegate, get_delegation…
+#   inputs: deadlock_detector
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: DelegationEngine
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -24,7 +24,8 @@
 # F5: Step5 复盘——五骑士归因 classify_decay_knight + record_methodology 沉淀
 # O1: RetirementWorkflowResult（state/sustained_alerts/diagnosis/decision/executed_actions/knight/escalation_required）
 # [/ALGO_FLOW]
-"""D_GOVERNANCE — 策略退役 5 步工作流编排（61 号 §3.9，函数级 MVP）。
+"""
+D_GOVERNANCE — 策略退役 5 步工作流编排（61 号 §3.9，函数级 MVP）。
 
 判据执行体已由 55 号承载（``strategy_retirement_evaluator.StrategyRetirementEvaluator``
 production），本模块是 §3.9 伪代码的**编排层**：触发 → 诊断 → 决策 → 退役执行 → 复盘，
@@ -37,6 +38,69 @@ production），本模块是 §3.9 伪代码的**编排层**：触发 → 诊断
 
 依据: 61_lifecycle_multi_ai §3.9（退役流程 5 步施工伪代码 + 三选一决策矩阵 + 五骑士归因）
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: diagnosis 参数
+#   fields: 参数 diagnosis，类型注解 RetirementDiagnosis
+#   code: retirement_workflow.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: strategy_id 参数
+#   fields: 参数 strategy_id，类型注解 str
+#   code: retirement_workflow.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: ports 参数
+#   fields: 参数 ports，类型注解 RetirementPorts
+#   code: retirement_workflow.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: sustained_min_days 参数
+#   fields: 参数 sustained_min_days（无注解）
+#   code: retirement_workflow.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① decide_retirement
+#   name_en: decide_retirement
+#   intro: 三选一决策矩阵（61 号 §3.9 Step 3，唯一真源）。
+#   desc: 三选一决策矩阵（61 号 §3.9 Step 3，唯一真源）。；源码 L209-L215
+#   inputs: diagnosis
+#   outputs: RetirementDecision
+# - id: A2
+#   name_zh: ② classify_decay_knight
+#   name_en: classify_decay_knight
+#   intro: 五骑士归因 MVP 规则（61 号 §3.9 Step 5；完整归因须人工/因子证据，MVP 默认映射）。
+#   desc: 五骑士归因 MVP 规则（61 号 §3.9 Step 5；完整归因须人工/因子证据，MVP 默认映射）。；源码 L218-L222
+#   inputs: diagnosis
+#   outputs: DecayKnight
+# - id: A3
+#   name_zh: ③ run_retirement_workflow
+#   name_en: run_retirement_workflow
+#   intro: 退役 5 步工作流编排（61 号 §3.9）。
+#   desc: 退役 5 步工作流编排（61 号 §3.9）。 Args: strategy_id: 策略 ID。 ports: 执行端口（四必备诊断 + 六可选执行）。 sustained_m…；源码 L225-L330
+#   inputs: strategy_id ports sustained_min_days lookback_days human_approved kni…
+#   outputs: RetirementWorkflowResult
+#   （注：A3 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: RetirementDecision
+#   name_en: RetirementDecision
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 调用方（周/月退役评审编排；首个退役策略触发时由运营入口装配）
+# - id: O2
+#   name_zh: DecayKnight
+#   name_en: DecayKnight
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 调用方（周/月退役评审编排；首个退役策略触发时由运营入口装配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

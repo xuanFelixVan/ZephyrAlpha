@@ -15,13 +15,41 @@
 # [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Doom Loop 防护 — 修复升级阶梯 L0-L4 状态机.
+"""
+Doom Loop 防护 — 修复升级阶梯 L0-L4 状态机.
 
 职责：
   - L0 Direct Fix -> L1 Partial Fix -> L2 Retry Once -> L3 Escalate -> L4 Stop+Alert
   - 3次失败 -> freeze_dup_group -> 24h内不重复尝试
   - 冻结列表 doom-loop-freeze-list.json 维护
   - Session Log ALERT 写入
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: freeze_path 参数
+#   fields: 参数 freeze_path（无注解）
+#   code: doom_loop_guard.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DoomLoopGuard
+#   name_en: DoomLoopGuard
+#   intro: Doom Loop 防护器.
+#   desc: Doom Loop 防护器.；公共方法（定义序）: frozen, escalate, is_frozen, reset_group, get_frozen_groups, get_freeze_report；源码 L…
+#   inputs: freeze_path
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: DoomLoopGuard
+#   downstream: tests/governance/resilience/test_doom_loop_guard.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

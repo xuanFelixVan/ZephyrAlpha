@@ -15,9 +15,36 @@
 # [A_module] module_id=MOD-INF-028 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""[BLUEPRINT] MOD-INF-028 — 对齐引擎 Stage 4
+"""
+[BLUEPRINT] MOD-INF-028 — 对齐引擎 Stage 4
 
 三元对齐检测：蓝图声明清单 vs 磁盘实际文件 vs import 引用链。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: alignment_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AlignmentEngine
+#   name_en: AlignmentEngine
+#   intro: class AlignmentEngine 源码 L67-L219
+#   desc: 公共方法（定义序）: align；源码 L67-L219
+#   inputs: project_root
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: AlignmentEngine
+#   downstream: issue_aggregator
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

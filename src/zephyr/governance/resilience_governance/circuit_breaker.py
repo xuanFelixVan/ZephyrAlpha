@@ -21,6 +21,38 @@ Circuit Breaker — MOD-INF-022
 
 Half-open/closed/open state machine with error budget gating, cooldown, and auto-recovery.
 Blueprint: docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md §2.3
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: name 参数
+#   fields: 参数 name（无注解）
+#   code: circuit_breaker.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: circuit_breaker.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CircuitBreaker
+#   name_en: CircuitBreaker
+#   intro: class CircuitBreaker 源码 L86-L173
+#   desc: 公共方法（定义序）: failure_count, state, call, record_success, record_failure, force_open, force_close, error_budget_…
+#   inputs: name config
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: CircuitBreaker
+#   downstream: zephyr.governance.escalation.escalation_engine;zephyr.governance.escalation;zep…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

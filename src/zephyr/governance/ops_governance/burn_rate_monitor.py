@@ -21,6 +21,33 @@ Burn Rate Monitor — MOD-INF-024
 Four-window burn rate (5min/30min/2h/24h) with distribution shift detection
 and alert routing into the escalation protocol.
 Blueprint: docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md §5
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: dimension 参数
+#   fields: 参数 dimension（无注解）
+#   code: burn_rate_monitor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① BurnRateMonitor
+#   name_en: BurnRateMonitor
+#   intro: class BurnRateMonitor 源码 L85-L252
+#   desc: 公共方法（定义序）: wasserstein_1d, distribution_baseline, classify_burn, record_consumption, compute_burn_rates, get_…
+#   inputs: dimension
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: BurnRateMonitor
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

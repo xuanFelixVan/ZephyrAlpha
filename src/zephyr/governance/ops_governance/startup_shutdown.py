@@ -15,6 +15,74 @@
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: phase 参数
+#   fields: 参数 phase，类型注解 StartupPhase
+#   code: startup_shutdown.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① StartupOrchestrator
+#   name_en: StartupOrchestrator
+#   intro: class StartupOrchestrator 源码 L178-L199
+#   desc: 公共方法（定义序）: run；源码 L178-L199
+#   inputs: health_check_fn
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② ShutdownOrchestrator
+#   name_en: ShutdownOrchestrator
+#   intro: class ShutdownOrchestrator 源码 L202-L217
+#   desc: 公共方法（定义序）: run；源码 L202-L217
+#   inputs: shutdown_fn
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ get_phase_def
+#   name_en: get_phase_def
+#   intro: get_phase_def(phase) 源码 L220-L221
+#   desc: 源码 L220-L221
+#   inputs: phase
+#   outputs: StartupPhaseDef | None
+# - id: A4
+#   name_zh: ④ startup_ordered_phases
+#   name_en: startup_ordered_phases
+#   intro: startup_ordered_phases() 源码 L224-L225
+#   desc: 源码 L224-L225
+#   inputs: 无参数
+#   outputs: list[StartupPhase]
+# - id: A5
+#   name_zh: ⑤ shutdown_ordered_phases
+#   name_en: shutdown_ordered_phases
+#   intro: shutdown_ordered_phases() 源码 L228-L229
+#   desc: 源码 L228-L229
+#   inputs: 无参数
+#   outputs: list[StartupPhase]
+#   （注：A5 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: StartupPhaseDef | None
+#   name_en: StartupPhaseDef | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: list[StartupPhase]
+#   name_en: list[StartupPhase]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
+"""
+
 from __future__ import annotations
 
 import logging

@@ -20,6 +20,33 @@ Escalation Protocol data models — MOD-INF-022
 
 Defines escalation events, levels (L0-L4), rules, delegation decisions, and economic guards.
 Blueprint: docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: escalation_models.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① EconomicGuard
+#   name_en: EconomicGuard
+#   intro: class EconomicGuard 源码 L138-L169
+#   desc: 公共方法（定义序）: maybe_reset, can_proceed, consume；源码 L138-L169
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（9 定义）
+#   name_en: public defs
+#   intro: EconomicGuard
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

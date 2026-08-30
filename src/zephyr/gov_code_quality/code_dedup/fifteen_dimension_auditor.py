@@ -15,12 +15,40 @@
 # [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""15维超综合审计首页 — 逐项证明"做过且做对".
+"""
+15维超综合审计首页 — 逐项证明"做过且做对".
 
 职责：
   - 15维审计刹车：每一项给出 PASS/FAIL/WAIVED + 证据
   - Cluster 聚合报告
   - 审计证书格式输出
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: fifteen_dimension_auditor.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① FifteenDimensionAuditor
+#   name_en: FifteenDimensionAuditor
+#   intro: 15维超综合审计首页.
+#   desc: 15维超综合审计首页.；公共方法（定义序）: audit, generate_certificate；源码 L77-L182
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: FifteenDimensionAuditor
+#   downstream: tests/governance/audit/test_fifteen_dimension_auditor.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from dataclasses import dataclass, field

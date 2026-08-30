@@ -15,9 +15,37 @@
 # [A_module] module_id=MOD-INF-028 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""[BLUEPRINT] MOD-INF-028 — 安全边界 Stage 3
+"""
+[BLUEPRINT] MOD-INF-028 — 安全边界 Stage 3
 
 禁碰规则过滤 + 置信度阈值。输入 TriggerResult 列表,输出 SafetyDecision 分类。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config_path 参数
+#   fields: 参数 config_path（无注解）
+#   code: safety_boundary.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SafetyBoundary
+#   name_en: SafetyBoundary
+#   intro: class SafetyBoundary 源码 L76-L159
+#   desc: 公共方法（定义序）: filter, summary；源码 L76-L159
+#   inputs: config_path
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: SafetyBoundary
+#   downstream: issue_aggregator; alignment_engine
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

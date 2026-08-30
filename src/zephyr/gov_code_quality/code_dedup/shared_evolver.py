@@ -15,12 +15,40 @@
 # [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""共享函数自我进化引擎 — 自动升降级 + 行为漂移锁定.
+"""
+共享函数自我进化引擎 — 自动升降级 + 行为漂移锁定.
 
 职责：
   - shared函数被频繁使用(>50次) -> 自动晋升为[*A]autonomous
   - 连续2月Health下降 -> 自动降级
   - 时态漂移3个月 -> 自动锁定为[*R]劣化限制
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: shared_evolver.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SharedEvolver
+#   name_en: SharedEvolver
+#   intro: 共享函数自我进化引擎.
+#   desc: 共享函数自我进化引擎.；公共方法（定义序）: evaluate, get_autonomous_functions, get_restricted_functions；源码 L78-L145
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: SharedEvolver
+#   downstream: tests/governance/shared/test_shared_evolver.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from dataclasses import dataclass, field

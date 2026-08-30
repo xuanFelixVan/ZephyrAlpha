@@ -57,6 +57,77 @@ safety_level: M
 - 不引入 chromadb / httpx 等库；embedding 检索通过 ``EmbeddingSearcher``
   Protocol 注入；LLM 调用通过 ``LLMIntentCaller`` Protocol 注入。
 - 生产环境的 ChromaDB / Anthropic SDK 由调用方适配。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: result 参数
+#   fields: 参数 result，类型注解 IntentResult
+#   code: intent_parser.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: separator 参数
+#   fields: 参数 separator，类型注解 str
+#   code: intent_parser.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: parser_result 参数
+#   fields: 参数 parser_result，类型注解 IntentResult
+#   code: intent_parser.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: injector 参数
+#   fields: 参数 injector，类型注解 object
+#   code: intent_parser.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① IntentParser
+#   name_en: IntentParser
+#   intro: 三阶段级联意图解析器。
+#   desc: 三阶段级联意图解析器。 Parameters ---------- keyword_mapper : IntentKeywordMapper | None Stage 1 关键字…；公共方法（定义序）: thresho…
+#   inputs: keyword_mapper embedding_searcher llm_caller thresholds
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② plan_directive_chain
+#   name_en: plan_directive_chain
+#   intro: 把 IntentResult.suggested_directives 转成 DOSLauncher 用的链字符串。
+#   desc: 把 IntentResult.suggested_directives 转成 DOSLauncher 用的链字符串。 Returns ------- str ``"325+344…；源码 L494-L505
+#   inputs: result separator
+#   outputs: str
+# - id: A3
+#   name_zh: ③ inject_context_for
+#   name_en: inject_context_for
+#   intro: 用 IntentResult 的 primary_domain 去 ContextInjector 拉 KE 注入。
+#   desc: 用 IntentResult 的 primary_domain 去 ContextInjector 拉 KE 注入。 Parameters ---------- parser_r…；源码 L508-L534
+#   inputs: parser_result injector
+#   outputs: object
+# - id: A4
+#   name_zh: ④ classify
+#   name_en: classify
+#   intro: BUILD-C00 入口——将用户提示词分类为 IntentType。
+#   desc: BUILD-C00 入口——将用户提示词分类为 IntentType。 使用关键词匹配进行分类。BUILD-C00 要求 on_failure=flag（仅标记，不阻断后续流程）…；源码 L622-L663
+#   inputs: user_prompt
+#   outputs: IntentType
+#   （注：A4 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: object
+#   name_en: object
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

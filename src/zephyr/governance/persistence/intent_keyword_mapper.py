@@ -31,6 +31,41 @@ Cascading logic:
 
 Data contract ( section 4.3):
   IntentResult with primary_domain, confidence, source_stage, etc.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: intent 参数
+#   fields: 参数 intent，类型注解 str
+#   code: intent_keyword_mapper.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① IntentKeywordMapper
+#   name_en: IntentKeywordMapper
+#   intro: Stage 1 keyword-based intent mapper (
+#   desc: Stage 1 keyword-based intent mapper ( Parameters ---------- keywords : dict[str, list[str…；公共方法（定义序）: map_int…
+#   inputs: keywords confidence_threshold
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② map_intent_to_keywords
+#   name_en: map_intent_to_keywords
+#   intro: BUILD-C01 入口——将意图类型映射为检索关键词列表。
+#   desc: BUILD-C01 入口——将意图类型映射为检索关键词列表。 Parameters ---------- intent : str 意图类型字符串，应为 IntentType 枚…；源码 L642-L672
+#   inputs: intent
+#   outputs: list[str]
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[str]
+#   name_en: list[str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

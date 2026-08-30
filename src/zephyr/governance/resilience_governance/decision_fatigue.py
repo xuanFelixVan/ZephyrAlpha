@@ -15,6 +15,55 @@
 # [A_module] module_id=MOD-INF-022 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: tasks 参数
+#   fields: 参数 tasks，类型注解 list[TaskTriage]
+#   code: decision_fatigue.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: level 参数
+#   fields: 参数 level，类型注解 EisenhowerPriority
+#   code: decision_fatigue.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① triage
+#   name_en: triage
+#   intro: triage(tasks) 源码 L100-L105
+#   desc: 源码 L100-L105
+#   inputs: tasks
+#   outputs: dict[EisenhowerPriority, list[TaskTriag…
+# - id: A2
+#   name_zh: ② filter_priority
+#   name_en: filter_priority
+#   intro: filter_priority(tasks, level) 源码 L108-L109
+#   desc: 源码 L108-L109
+#   inputs: tasks level
+#   outputs: list[TaskTriage]
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: dict[EisenhowerPriority, list[TaskTriag…
+#   name_en: dict[EisenhowerPriority, list[TaskTriag…
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-INF-027;MOD-INF-020;MOD-INF-018
+# - id: O2
+#   name_zh: list[TaskTriage]
+#   name_en: list[TaskTriage]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-INF-027;MOD-INF-020;MOD-INF-018
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
+
 from __future__ import annotations
 
 from enum import Enum

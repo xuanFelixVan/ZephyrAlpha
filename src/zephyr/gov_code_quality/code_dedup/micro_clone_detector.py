@@ -15,7 +15,35 @@
 # [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""微型克隆检测器 — n-gram频率计数, 1-2行高频模式聚合."""
+"""
+微型克隆检测器 — n-gram频率计数, 1-2行高频模式聚合.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: micro_clone_detector.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① MicroCloneDetector
+#   name_en: MicroCloneDetector
+#   intro: 1-2行微克隆检测.
+#   desc: 1-2行微克隆检测.；公共方法（定义序）: detect, compute_density；源码 L51-L80
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: MicroCloneDetector
+#   downstream: zephyr.governance.intelligence_governance.self_benchmark; tests/governance/drif…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 from collections import Counter
 

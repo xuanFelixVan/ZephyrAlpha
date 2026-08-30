@@ -15,13 +15,41 @@
 # [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""报告生成器 — YAML/JSON 输出 + 退出码判定 + Health Score 聚合.
+"""
+报告生成器 — YAML/JSON 输出 + 退出码判定 + Health Score 聚合.
 
 职责：
   - 生成 dedup_report.yaml（含 engine_self_metrics / duplication_intake_rate / debt_projection）
   - 退出码五档映射：0=CLEAN / 1=WARN / 2=ERROR / 3=FAULT / 4=DEGRADED
   - 聚合各 Stage 结果输出标准格式
   - 降级标注（degradation_level）输出到报告头部
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: report.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ReportGenerator
+#   name_en: ReportGenerator
+#   intro: YAML/JSON 报告生成器.
+#   desc: YAML/JSON 报告生成器.；公共方法（定义序）: degradation_level, exit_code, generate, to_yaml_dict, to_json, set_degradation, s…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（8 定义）
+#   name_en: public defs
+#   intro: ReportGenerator
+#   downstream: zephyr.gov_code_quality.code_dedup.cli; tests/governance/observability/test_rep…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

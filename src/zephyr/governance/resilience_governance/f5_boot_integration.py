@@ -28,6 +28,41 @@ F5 = EscalationProtocol 五件套: EscalationEngine + DelegationEngine + Deadloc
 注: CircadianScheduler 定时任务注册（f5_deadlock_scan / f5_escalation_queue_scan）
 已于 2026-06-26 裁定随 CircadianScheduler 一并废除；F5 巡检改由 FLE
 _periodic_checks() 事件驱动触发。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root，类型注解 Path | None
+#   code: f5_boot_integration.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① F5BootIntegration
+#   name_en: F5BootIntegration
+#   intro: F5 系统启动/关闭集成。
+#   desc: F5 系统启动/关闭集成。 在系统启动时: 1. 初始化 DeadlockDetector (DFS循环检测 + Dijkstra排序 + 超时破解) 2. 初始化 Escala…；公共方法（定义序）: project…
+#   inputs: project_root
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② register_f5_boot_hook
+#   name_en: register_f5_boot_hook
+#   intro: 模块级便捷函数: 创建 F5BootIntegration 并注册到 boot_hooks。
+#   desc: 模块级便捷函数: 创建 F5BootIntegration 并注册到 boot_hooks。 供 zephyr.trading.boot_hooks 调用。；源码 L353-L360
+#   inputs: project_root
+#   outputs: F5BootIntegration
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: F5BootIntegration
+#   name_en: F5BootIntegration
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.trading.boot_hooks
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

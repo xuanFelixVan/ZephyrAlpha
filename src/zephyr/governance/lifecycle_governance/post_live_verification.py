@@ -15,6 +15,55 @@
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: registry_path 参数
+#   fields: 参数 registry_path，类型注解 Path | None
+#   code: post_live_verification.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: check 参数
+#   fields: 参数 check，类型注解 PLVCheck
+#   code: post_live_verification.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① build_plv_checks
+#   name_en: build_plv_checks
+#   intro: 从告警阈值注册表构建 PLV 五项规约（fail-closed；registry_path 为测试逃生门）。
+#   desc: 从告警阈值注册表构建 PLV 五项规约（fail-closed；registry_path 为测试逃生门）。 字符串规约值（"±1%" 等）保持字符串语义加载，不强行数值化（55…；源码 L127-L141
+#   inputs: registry_path
+#   outputs: dict[PLVCheck, PLVSpec]
+# - id: A2
+#   name_zh: ② get_plv_spec
+#   name_en: get_plv_spec
+#   intro: get_plv_spec(check) 源码 L148-L149
+#   desc: 源码 L148-L149
+#   inputs: check
+#   outputs: PLVSpec | None
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: dict[PLVCheck, PLVSpec]
+#   name_en: dict[PLVCheck, PLVSpec]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: PLVSpec | None
+#   name_en: PLVSpec | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
+
 from __future__ import annotations
 
 from enum import Enum

@@ -27,6 +27,51 @@ F5 = EscalationProtocol 五件套: EscalationEngine + DelegationEngine + Deadloc
 4. atexit.register 兜底: 注册 atexit 钩子, 进程退出时确保 shutdown 执行
 5. 10 分钟空闲自动回收: idle_timeout 检测, 长时间无活动自动关闭
 6. 状态恢复: 从 SQLite 恢复 DeadlockDetector 状态 (供下次启动使用)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: integration 参数
+#   fields: 参数 integration，类型注解 object
+#   code: f5_shutdown_manager.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: project_root 参数
+#   fields: 参数 project_root，类型注解 Path | None
+#   code: f5_shutdown_manager.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: db_path 参数
+#   fields: 参数 db_path，类型注解 Path | None
+#   code: f5_shutdown_manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① F5ShutdownManager
+#   name_en: F5ShutdownManager
+#   intro: F5 系统关闭/持久化/信号处理管理器。
+#   desc: F5 系统关闭/持久化/信号处理管理器。 生命周期: 1. install() — 注册 signal handler + atexit 钩子 + 启动 idle 监控线程 2.…；公共方法（定义序）: install…
+#   inputs: integration project_root db_path idle_timeout_seconds
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② register_f5_shutdown_hook
+#   name_en: register_f5_shutdown_hook
+#   intro: 模块级便捷函数: 创建 F5ShutdownManager 并 install。
+#   desc: 模块级便捷函数: 创建 F5ShutdownManager 并 install。 供 zephyr.trading.boot_hooks 在 F5 启动后调用。；源码 L659-L674
+#   inputs: integration project_root db_path
+#   outputs: F5ShutdownManager
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: F5ShutdownManager
+#   name_en: F5ShutdownManager
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.trading.boot_hooks
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

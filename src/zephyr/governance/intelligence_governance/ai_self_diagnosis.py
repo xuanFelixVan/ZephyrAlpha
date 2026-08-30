@@ -14,6 +14,37 @@
 # [TESTS]
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: error 参数
+#   fields: 参数 error，类型注解 str
+#   code: ai_self_diagnosis.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① auto_fix_known_pattern
+#   name_en: auto_fix_known_pattern
+#   intro: auto_fix_known_pattern(error) 源码 L63-L64
+#   desc: 源码 L63-L64
+#   inputs: error
+#   outputs: tuple[bool, str]
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: tuple[bool, str]
+#   name_en: tuple[bool, str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 from enum import Enum
 from typing import Final
 

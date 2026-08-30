@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Phase Manager — ZephyrAlpha 施工阶段门控引擎.
+"""
+Phase Manager — ZephyrAlpha 施工阶段门控引擎.
 
 五层强制集成架构 — Layer 3（阶段门控）:
     每个 ConstructionPhase 定义一组 gate_checks —— AI 在进入下一阶段前 MUST 全部 GREEN.
@@ -35,6 +36,85 @@ PhaseManager ↔ GateEngine 桥梁:
     新 AI session 进入本项目时，必须先读 docs/03_modules/_system_master/blueprint.md §0
     （81 域分派表）定位任务域，再使用本 PhaseManager 判断施工阶段。
     冷启动序列：AGENTS.md -> SYS-MASTER-001 §0 -> project_rules.md -> SessionContinuity -> PhaseManager
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: phase 参数
+#   fields: 参数 phase，类型注解 ConstructionPhase
+#   code: phase_manager.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: current 参数
+#   fields: 参数 current，类型注解 ConstructionPhase
+#   code: phase_manager.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: completed_gates 参数
+#   fields: 参数 completed_gates，类型注解 set[str]
+#   code: phase_manager.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: quick 参数
+#   fields: 参数 quick，类型注解 bool
+#   code: phase_manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① get_phase
+#   name_en: get_phase
+#   intro: get_phase(phase) 源码 L295-L296
+#   desc: 源码 L295-L296
+#   inputs: phase
+#   outputs: PhaseGate | None
+# - id: A2
+#   name_zh: ② get_next_phase
+#   name_en: get_next_phase
+#   intro: get_next_phase(current) 源码 L299-L307
+#   desc: 源码 L299-L307
+#   inputs: current
+#   outputs: ConstructionPhase | None
+# - id: A3
+#   name_zh: ③ phase_resolver
+#   name_en: phase_resolver
+#   intro: 根据已完成的 gate 集合判断当前施工阶段。
+#   desc: 根据已完成的 gate 集合判断当前施工阶段。；源码 L310-L322
+#   inputs: completed_gates
+#   outputs: ConstructionPhase
+# - id: A4
+#   name_zh: ④ session_startup
+#   name_en: session_startup
+#   intro: AI Session 冷启动门禁 — 进入项目后 MUST 调用的第一个函数.
+#   desc: AI Session 冷启动门禁 — 进入项目后 MUST 调用的第一个函数. 对标: K8s Pod Init Container — 主容器启动前必须完成初始化检查. 对标:…；源码 L325-L442
+#   inputs: quick
+#   outputs: dict
+# - id: A5
+#   name_zh: ⑤ session_shutdown
+#   name_en: session_shutdown
+#   intro: AI Session 关闭 handoff — commit 成功后写 handoff package 供下一 ses…
+#   desc: AI Session 关闭 handoff — commit 成功后写 handoff package 供下一 session 恢复. 对标: session_startup 的…；源码 L445-L467
+#   inputs: session_id summary
+#   outputs: dict
+#   （注：A5 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: PhaseGate | None
+#   name_en: PhaseGate | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: ConstructionPhase | None
+#   name_en: ConstructionPhase | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations

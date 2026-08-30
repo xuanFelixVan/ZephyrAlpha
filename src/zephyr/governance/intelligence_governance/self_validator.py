@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 Self Validator — v0.10.0 升级协议自验证器: protocol自身规则+代码一致性自检。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: self_validator.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SelfValidator
+#   name_en: SelfValidator
+#   intro: class SelfValidator 源码 L51-L64
+#   desc: 公共方法（定义序）: validate_rules, self_check；源码 L51-L64
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SelfValidator
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/lifecycle/test_factor_promotion_wiring.py
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_GOVERNANCE — mSPRT 晋升裁决 → 因子生命周期 FSM 消费方接线（61 号 §3.3 纪律 1）。
+"""
+D_GOVERNANCE — mSPRT 晋升裁决 → 因子生命周期 FSM 消费方接线（61 号 §3.3 纪律 1）。
 
 memo 指定的 champion-challenger 晋升场景落地：challenger 因子在 grayscale
 （灰度并行期）与 champion 同台跑 mSPRT 序贯检验，通道终局裁决驱动 FSM：
@@ -28,6 +29,37 @@ memo 指定的 champion-challenger 晋升场景落地：challenger 因子在 gra
 
 依据: 61_lifecycle_multi_ai §3.3 纪律 1 + 结案报告（MLflow 退役后载体重裁定）
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: verdict 参数
+#   fields: 参数 verdict，类型注解 PromotionVerdict
+#   code: factor_promotion_wiring.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: fsm 参数
+#   fields: 参数 fsm，类型注解 StateMachine[str]
+#   code: factor_promotion_wiring.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① apply_promotion_verdict_to_factor_fsm
+#   name_en: apply_promotion_verdict_to_factor_fsm
+#   intro: 把 mSPRT 通道裁决应用到因子生命周期 FSM。
+#   desc: 把 mSPRT 通道裁决应用到因子生命周期 FSM。 Args: verdict: 通道裁决快照（仅终局态产生副作用）。 fsm: challenger 因子的生命周期状态机实例…；源码 L86-L124
+#   inputs: verdict fsm
+#   outputs: str | None
+# 层: 输出
+# - id: O1
+#   name_zh: str | None
+#   name_en: str | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 调用方（因子灰度晋升评审：champion-challenger 并行期结束后应用裁决）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

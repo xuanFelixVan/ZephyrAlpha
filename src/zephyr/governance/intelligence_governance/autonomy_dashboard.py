@@ -27,6 +27,49 @@ Autonomy Dashboard — AI 自主感知健康仪表。
     - health < 0.3 连续 5 分钟 -> autonomy_downgrade
     - exit 35 (AUTONOMY_DOWNGRADED) + Owner 通知
     - 对标特斯拉 Autopilot disengagement 人工接管模式
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: data_dir 参数
+#   fields: 参数 data_dir（无注解）
+#   code: autonomy_dashboard.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AutonomyMetrics
+#   name_en: AutonomyMetrics
+#   intro: class AutonomyMetrics 源码 L87-L119
+#   desc: 公共方法（定义序）: success_rate, intervention_rate, false_positive_rate, avg_rto_ms；源码 L87-L119
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② HealthGauge
+#   name_en: HealthGauge
+#   intro: class HealthGauge 源码 L123-L154
+#   desc: 公共方法（定义序）: from_metrics；源码 L123-L154
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ AutonomyDashboard
+#   name_en: AutonomyDashboard
+#   intro: class AutonomyDashboard 源码 L166-L403
+#   desc: 公共方法（定义序）: load_metrics, data_dir, record_rollback, record_intervention, record_false_positive, evaluate_heal…
+#   inputs: data_dir
+#   outputs: 返回值
+#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: AutonomyMetrics, HealthGauge, AutonomyDashboard
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

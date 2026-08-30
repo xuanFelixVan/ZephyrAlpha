@@ -15,13 +15,49 @@
 # [A_module] module_id=MOD-INF-022 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Escalation Protocol Self-Test — MOD-INF-022.
+"""
+Escalation Protocol Self-Test — MOD-INF-022.
 
 Atomic self-check that validates the escalation engine's own health.
 Used by: cold start STEP 4.8, Phase Manager gate_escalation_protocol, CI/CD.
 
 Run: python -m zephyr.governance.intelligence_governance.self_test [--warn-only] [--json]
 Returns: 0 if fully healthy, 1 if degraded, 2 if critical failure.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: self_test.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① run_self_test
+#   name_en: run_self_test
+#   intro: run_self_test() 源码 L237-L254
+#   desc: 源码 L237-L254
+#   inputs: 无参数
+#   outputs: SelfTestReport
+# - id: A2
+#   name_zh: ② main
+#   name_en: main
+#   intro: main() 源码 L257-L287
+#   desc: 源码 L257-L287
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: SelfTestReport
+#   name_en: SelfTestReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

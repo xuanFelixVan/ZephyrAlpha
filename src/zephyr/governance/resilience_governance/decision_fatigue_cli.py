@@ -15,6 +15,44 @@
 # [A_module] module_id=MOD-INF-022 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: decision_fatigue_cli.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① build_parser
+#   name_en: build_parser
+#   intro: build_parser() 源码 L67-L70
+#   desc: 源码 L67-L70
+#   inputs: 无参数
+#   outputs: argparse.ArgumentParser
+# - id: A2
+#   name_zh: ② main
+#   name_en: main
+#   intro: main() 源码 L73-L92
+#   desc: 源码 L73-L92
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: argparse.ArgumentParser
+#   name_en: argparse.ArgumentParser
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-INF-027;MOD-INF-020;MOD-INF-018
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
+
 from __future__ import annotations
 
 import argparse

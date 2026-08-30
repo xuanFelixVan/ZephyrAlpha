@@ -16,8 +16,34 @@
 # [TTL] permanent
 
 """
-
 Strategy Scoper — v0.6.0 策略范围隔离器: SIG/Strat/Capital多层策略隔离。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: strategy_scoper.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① StrategyScoper
+#   name_en: StrategyScoper
+#   intro: class StrategyScoper 源码 L60-L83
+#   desc: 公共方法（定义序）: scopes, assign_scope, can_access；源码 L60-L83
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: StrategyScoper
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

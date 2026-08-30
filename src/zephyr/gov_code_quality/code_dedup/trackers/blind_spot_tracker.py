@@ -15,7 +15,36 @@
 # [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""盲点关闭追踪器 — 自动验证各轮盲点是否已覆盖."""
+"""
+盲点关闭追踪器 — 自动验证各轮盲点是否已覆盖.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: blind_spot_tracker.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① BlindSpotTracker
+#   name_en: BlindSpotTracker
+#   intro: 盲点关闭追踪器.
+#   desc: 盲点关闭追踪器.；公共方法（定义序）: audit, generate_report；源码 L63-L176
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: BlindSpotTracker
+#   downstream: zephyr.governance.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 from dataclasses import dataclass
 from datetime import UTC, datetime

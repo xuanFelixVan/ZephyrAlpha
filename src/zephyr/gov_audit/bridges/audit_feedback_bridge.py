@@ -15,12 +15,39 @@
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Audit ↔ Feedback Loop 三角闭环桥接.
+"""
+Audit ↔ Feedback Loop 三角闭环桥接.
 
 蓝图 §5 Evolve 支柱 — 审计异常数据驱动 FLE 策略演进。
 双向数据流:
   Audit -> FLE: 异常事件作为 FLE 输入信号
   FLE -> Audit: 进化提案写入审计日志
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: audit_feedback_bridge.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① AuditFeedbackBridge
+#   name_en: AuditFeedbackBridge
+#   intro: 审计↔反馈闭环桥接器.
+#   desc: 审计↔反馈闭环桥接器. 将审计异常事件转化为 FLE EvolutionEngine 可消费的信号， 并将 FLE 进化提案写回审计日志形成闭环。；公共方法（定义序）: anomaly_to_signal, class…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: AuditFeedbackBridge
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

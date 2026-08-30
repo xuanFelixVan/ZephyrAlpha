@@ -69,6 +69,82 @@ P2 迁移后 schema 真源（重要）
 
     init_decision_db()                          # 幂等，验证 4 张核心表存在
     conn = get_decisiongraph_pg_connection()    # 返回 PG 连接（与 depgraph 共享）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: allow_design_delete 参数
+#   fields: 参数 allow_design_delete（无注解）
+#   code: decisiongraph_schema.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: echo 参数
+#   fields: 参数 echo（无注解）
+#   code: decisiongraph_schema.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① load_build_status_order
+#   name_en: load_build_status_order
+#   intro: 从 decision_graph_model.yaml 动态加载 build_status 状态机顺序。
+#   desc: 从 decision_graph_model.yaml 动态加载 build_status 状态机顺序。 真源：architecture_model/domain/decisio…；源码 L168-L179
+#   inputs: 无参数
+#   outputs: list[str]
+# - id: A2
+#   name_zh: ② load_edge_type_values
+#   name_en: load_edge_type_values
+#   intro: 从 decision_edge_type_vocabulary.yaml 动态加载合法 edge_type 集合。
+#   desc: 从 decision_edge_type_vocabulary.yaml 动态加载合法 edge_type 集合。 真源：docs/01_policies_and_standar…；源码 L182-L190
+#   inputs: 无参数
+#   outputs: set[str]
+# - id: A3
+#   name_zh: ③ load_node_type_values
+#   name_en: load_node_type_values
+#   intro: 从 decision_graph_model.yaml 动态加载合法 node_type 集合。
+#   desc: 从 decision_graph_model.yaml 动态加载合法 node_type 集合。 真源：architecture_model/domain/decision_gr…；源码 L193-L201
+#   inputs: 无参数
+#   outputs: set[str]
+# - id: A4
+#   name_zh: ④ load_track_ids
+#   name_en: load_track_ids
+#   intro: 从 decision_graph_model.yaml 动态加载合法 track_id 集合。
+#   desc: 从 decision_graph_model.yaml 动态加载合法 track_id 集合。 真源：architecture_model/domain/decision_gra…；源码 L204-L212
+#   inputs: 无参数
+#   outputs: set[str]
+# - id: A5
+#   name_zh: ⑤ get_decisiongraph_pg_connection
+#   name_en: get_decisiongraph_pg_connection
+#   intro: 返回 decisiongraph (PostgreSQL) 连接。
+#   desc: 返回 decisiongraph (PostgreSQL) 连接。 decisiongraph 与 depgraph 共享同一个 PostgreSQL 实例（同一 DB，不同表）…；源码 L220-L240
+#   inputs: allow_design_delete
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ init_decision_db
+#   name_en: init_decision_db
+#   intro: 验证 decisiongraph (PostgreSQL) schema 健康性（幂等）。
+#   desc: 验证 decisiongraph (PostgreSQL) schema 健康性（幂等）。 decisiongraph 与 depgraph 共享 PG 实例，本函数仅验证 4…；源码 L396-L444
+#   inputs: echo
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: list[str]
+#   name_en: list[str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: apply_decisiongraph.py; extract_decisiongraph.py; generate_decision_graph.py
+# - id: O2
+#   name_zh: set[str]
+#   name_en: set[str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: apply_decisiongraph.py; extract_decisiongraph.py; generate_decision_graph.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
 """
 
 from __future__ import annotations

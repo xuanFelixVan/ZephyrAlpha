@@ -15,6 +15,53 @@
 # [A_module] module_id=MOD-INF-024 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: budget_tracker.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① BudgetSnapshot
+#   name_en: BudgetSnapshot
+#   intro: class BudgetSnapshot 源码 L90-L119
+#   desc: 公共方法（定义序）: total_tokens, is_expired, to_dict；源码 L90-L119
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② TrackerSummary
+#   name_en: TrackerSummary
+#   intro: class TrackerSummary 源码 L123-L137
+#   desc: 公共方法（定义序）: usage_ratio；源码 L123-L137
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ BudgetTracker
+#   name_en: BudgetTracker
+#   intro: class BudgetTracker 源码 L140-L256
+#   desc: 公共方法（定义序）: open_scope, record_request, record_turn, get_snapshot, summarize, dimension_usage, elapsed, dump,…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: BudgetSnapshot, TrackerSummary, BudgetTracker
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
+"""
+
 import json
 import time
 from dataclasses import dataclass, field

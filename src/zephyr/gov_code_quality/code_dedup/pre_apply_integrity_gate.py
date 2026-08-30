@@ -15,7 +15,35 @@
 # [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Pre-Apply 完整性门 — SHA256重新验证."""
+"""
+Pre-Apply 完整性门 — SHA256重新验证.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: pre_apply_integrity_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① PreApplyIntegrityGate
+#   name_en: PreApplyIntegrityGate
+#   intro: 修复前完整性门.
+#   desc: 修复前完整性门.；公共方法（定义序）: verify；源码 L52-L64
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: PreApplyIntegrityGate
+#   downstream: N/A (all consumers verified as phantom — stale references removed)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 import hashlib
 from pathlib import Path

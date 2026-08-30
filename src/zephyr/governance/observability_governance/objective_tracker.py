@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 Objective Tracker — v0.9.0 目标漂移检测器: agent目标函数稳定性+变更检测+rollback。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: objective_tracker.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ObjectiveTracker
+#   name_en: ObjectiveTracker
+#   intro: class ObjectiveTracker 源码 L51-L83
+#   desc: 公共方法（定义序）: objectives, versions, set_objective, detect_drift, rollback；源码 L51-L83
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: ObjectiveTracker
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

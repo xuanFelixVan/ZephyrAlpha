@@ -15,9 +15,36 @@
 # [A_module] module_id=MOD-INF-028 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""[BLUEPRINT] MOD-INF-028 — 问题聚合器 Stage 5
+"""
+[BLUEPRINT] MOD-INF-028 — 问题聚合器 Stage 5
 
 收集各阶段审计结果，去重合并排序输出。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: issue_aggregator.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① IssueAggregator
+#   name_en: IssueAggregator
+#   intro: class IssueAggregator 源码 L68-L128
+#   desc: 公共方法（定义序）: aggregate；源码 L68-L128
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: IssueAggregator
+#   downstream: cli
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

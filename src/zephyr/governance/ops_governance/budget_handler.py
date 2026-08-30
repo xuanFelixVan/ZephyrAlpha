@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 G-CT-006 消费端 — Escalation.on_budget_alert() 预算告急升级处理.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: alert 参数
+#   fields: 参数 alert，类型注解 BudgetAlert
+#   code: budget_handler.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① on_budget_alert
+#   name_en: on_budget_alert
+#   intro: on_budget_alert(alert) 源码 L60-L74
+#   desc: 源码 L60-L74
+#   inputs: alert
+#   outputs: dict[str, Any]
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, Any]
+#   name_en: dict[str, Any]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.governance.services.adapter
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

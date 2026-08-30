@@ -15,13 +15,69 @@
 # [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""配置管理 — 策略树 YAML 加载 + 项目规模感知四 Tier 自适应阈值.
+"""
+配置管理 — 策略树 YAML 加载 + 项目规模感知四 Tier 自适应阈值.
 
 职责：
   - PROJECT_SCALE_TIERS 四Tier参数表（5000/15000/50000行边界）
   - 每个Tier含 AST阈值/签名匹配严格度/auto_fix批次/Sensitivity Sweep频率/Shadow Manifest大小
   - 策略树配置加载
   - 退出码约定
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: total_lines 参数
+#   fields: 参数 total_lines，类型注解 int
+#   code: config.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① get_tier_for_project
+#   name_en: get_tier_for_project
+#   intro: 根据项目总行数返回对应的 Tier 配置.
+#   desc: 根据项目总行数返回对应的 Tier 配置.；源码 L218-L226
+#   inputs: total_lines
+#   outputs: dict[str, Any]
+# - id: A2
+#   name_zh: ② get_tier_name
+#   name_en: get_tier_name
+#   intro: 返回 Tier 名称字符串.
+#   desc: 返回 Tier 名称字符串.；源码 L229-L232
+#   inputs: total_lines
+#   outputs: str
+# - id: A3
+#   name_zh: ③ load_policy_tree
+#   name_en: load_policy_tree
+#   intro: 从 YAML 加载策略树配置，YAML 不存在或无效时 fallback 到硬编码 POLICY_TREE.
+#   desc: 从 YAML 加载策略树配置，YAML 不存在或无效时 fallback 到硬编码 POLICY_TREE.；源码 L238-L251
+#   inputs: 无参数
+#   outputs: dict[str, Any]
+# - id: A4
+#   name_zh: ④ load_policy_rules
+#   name_en: load_policy_rules
+#   intro: 从 YAML 加载策略规则列表，YAML 不存在时从硬编码 POLICY_TREE 推导.
+#   desc: 从 YAML 加载策略规则列表，YAML 不存在时从硬编码 POLICY_TREE 推导.；源码 L254-L302
+#   inputs: 无参数
+#   outputs: list[dict[str, Any]]
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, Any]
+#   name_en: dict[str, Any]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_code_quality.code_dedup.policy_tree_validator; tests/gov_code_dedup/…
+# - id: O2
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_code_quality.code_dedup.policy_tree_validator; tests/gov_code_dedup/…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations
