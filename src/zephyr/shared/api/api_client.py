@@ -41,6 +41,72 @@ AI 施工约定：
 
 SSoT: MOD-INF-016 §2.10 shared-api-client
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: provider 参数
+#   fields: 参数 provider（无注解）
+#   code: api_client.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: api_client.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: circuit_breaker 参数
+#   fields: 参数 circuit_breaker（无注解）
+#   code: api_client.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: observer 参数
+#   fields: 参数 observer（无注解）
+#   code: api_client.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ApiResponse
+#   name_en: ApiResponse
+#   intro: class ApiResponse 源码 L179-L195
+#   desc: 公共方法（定义序）: is_success, json；源码 L179-L195
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② HttpProvider
+#   name_en: HttpProvider
+#   intro: HTTP 传输层抽象——可替换为 aiohttp / httpx / mock。
+#   desc: HTTP 传输层抽象——可替换为 aiohttp / httpx / mock。；公共方法（定义序）: request；源码 L198-L209
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ ApiClient
+#   name_en: ApiClient
+#   intro: 统一 API Client——可组合超时/重试/熔断/metrics。
+#   desc: 统一 API Client——可组合超时/重试/熔断/metrics。 Usage:: client = ApiClient( provider=AioHttpProvider(…；公共方法（定义序）: base_ur…
+#   inputs: provider config circuit_breaker observer idempotency_store
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ AioHttpProvider
+#   name_en: AioHttpProvider
+#   intro: 基于 aiohttp 的 HTTP 传输实现。
+#   desc: 基于 aiohttp 的 HTTP 传输实现。 Usage:: provider = AioHttpProvider() client = ApiClient(provider=…；公共方法（定义序）: request…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A4 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（8 定义）
+#   name_en: public defs
+#   intro: ApiResponse, HttpProvider, ApiClient, AioHttpProvider
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

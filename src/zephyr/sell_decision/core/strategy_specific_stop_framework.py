@@ -14,7 +14,8 @@
 # [TESTS] tests/sell_decision/test_strategy_specific_stop_framework.py
 # [A_module] module_id=MOD-SELL-014 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Strategy Specific Stop Framework — 策略特异止损框架 (MOD-SELL-014)
+"""
+Strategy Specific Stop Framework — 策略特异止损框架 (MOD-SELL-014)
 
 不同策略**风格**适用不同止损结构（趋势策略给宽止损留喘息、均值回归
 给紧止损快认错）。框架提供"风格画像 → 止损参数"映射与统一止损状态
@@ -35,6 +36,56 @@
 
 纪律：纯函数、无 IO；价格/持有期由调用方注入。
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: profile 参数
+#   fields: 参数 profile，类型注解 StrategyProfile
+#   code: strategy_specific_stop_framework.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: position 参数
+#   fields: 参数 position，类型注解 StopPositionInput
+#   code: strategy_specific_stop_framework.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: overrides 参数
+#   fields: 参数 overrides（无注解）
+#   code: strategy_specific_stop_framework.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① default_stop_params
+#   name_en: default_stop_params
+#   intro: 取风格画像的默认止损参数。
+#   desc: 取风格画像的默认止损参数。；源码 L219-L221
+#   inputs: profile
+#   outputs: StopParams
+# - id: A2
+#   name_zh: ② compute_stop_state
+#   name_en: compute_stop_state
+#   intro: 计算持仓止损状态（纯函数）。
+#   desc: 计算持仓止损状态（纯函数）。 Args: position: 入场价/现价/入场后最高价/持有天数 profile: 策略风格画像 overrides: 参数覆写（缺省用画像默认…；源码 L236-L315
+#   inputs: position profile overrides
+#   outputs: StopEvaluation
+#   （注：A2 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: StopParams
+#   name_en: StopParams
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-SELL-013(离场情景规划) ; MOD-SELL-017(分批卖出架构) ; MOD-SELL-001(信号源)
+# - id: O2
+#   name_zh: StopEvaluation
+#   name_en: StopEvaluation
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-SELL-013(离场情景规划) ; MOD-SELL-017(分批卖出架构) ; MOD-SELL-001(信号源)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -103,20 +154,28 @@ class StopParams:
 # 风格画像 → 默认止损参数（经验基线，可经 overrides 覆写）
 _PROFILE_DEFAULTS: Final = {
     StrategyProfile.TREND_FOLLOWING: StopParams(
-        initial_stop_pct=0.12, trailing_stop_pct=0.08,
-        time_stop_days=60, breakeven_trigger_pct=0.05,
+        initial_stop_pct=0.12,
+        trailing_stop_pct=0.08,
+        time_stop_days=60,
+        breakeven_trigger_pct=0.05,
     ),
     StrategyProfile.MEAN_REVERSION: StopParams(
-        initial_stop_pct=0.05, trailing_stop_pct=0.03,
-        time_stop_days=10, breakeven_trigger_pct=0.03,
+        initial_stop_pct=0.05,
+        trailing_stop_pct=0.03,
+        time_stop_days=10,
+        breakeven_trigger_pct=0.03,
     ),
     StrategyProfile.BREAKOUT: StopParams(
-        initial_stop_pct=0.06, trailing_stop_pct=0.04,
-        time_stop_days=15, breakeven_trigger_pct=0.04,
+        initial_stop_pct=0.06,
+        trailing_stop_pct=0.04,
+        time_stop_days=15,
+        breakeven_trigger_pct=0.04,
     ),
     StrategyProfile.SWING: StopParams(
-        initial_stop_pct=0.08, trailing_stop_pct=0.05,
-        time_stop_days=30, breakeven_trigger_pct=0.06,
+        initial_stop_pct=0.08,
+        trailing_stop_pct=0.05,
+        time_stop_days=30,
+        breakeven_trigger_pct=0.06,
     ),
 }
 
@@ -171,9 +230,7 @@ def _validate_params(p: StopParams) -> None:
         if not math.isfinite(v) or v <= 0.0 or v >= 1.0:
             raise InvalidStopFrameworkInputError(f"{name} 非法（须 ∈(0,1)），got {v}")
     if p.time_stop_days < 1:
-        raise InvalidStopFrameworkInputError(
-            f"time_stop_days 非法（须 ≥1），got {p.time_stop_days}"
-        )
+        raise InvalidStopFrameworkInputError(f"time_stop_days 非法（须 ≥1），got {p.time_stop_days}")
 
 
 def compute_stop_state(
@@ -215,12 +272,8 @@ def compute_stop_state(
     initial_line = position.entry_price * (1.0 - params.initial_stop_pct)
 
     # 浮盈曾达 trigger → 激活移动止损线与保本线
-    activated = position.highest_since_entry >= position.entry_price * (
-        1.0 + params.breakeven_trigger_pct
-    )
-    trailing_line = (
-        position.highest_since_entry * (1.0 - params.trailing_stop_pct) if activated else None
-    )
+    activated = position.highest_since_entry >= position.entry_price * (1.0 + params.breakeven_trigger_pct)
+    trailing_line = position.highest_since_entry * (1.0 - params.trailing_stop_pct) if activated else None
     breakeven_line = position.entry_price if activated else None
 
     # 有效止损价=最紧（最高）线；归因优先级 TRAILING > BREAKEVEN > INITIAL

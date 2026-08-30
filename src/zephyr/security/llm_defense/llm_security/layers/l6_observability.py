@@ -14,7 +14,81 @@
 # [TESTS]
 # [A_module] module_id=MOD-LLM_SECURITY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""L6 Observability Layer — security event logging, alerting, and reporting."""
+"""
+L6 Observability Layer — security event logging, alerting, and reporting.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: alpha 参数
+#   fields: 参数 alpha（无注解）
+#   code: l6_observability.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: threshold 参数
+#   fields: 参数 threshold（无注解）
+#   code: l6_observability.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FrequencyAnomalyDetector
+#   name_en: FrequencyAnomalyDetector
+#   intro: Detects frequency-based anomalies using EWMA.
+#   desc: Detects frequency-based anomalies using EWMA.；公共方法（定义序）: record, get_baseline；源码 L169-L193
+#   inputs: alpha threshold
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② AlertSender
+#   name_en: AlertSender
+#   intro: Sends security alerts through configured channels.
+#   desc: Sends security alerts through configured channels.；公共方法（定义序）: send_alert, send_critical；源码 L196-L223
+#   inputs: config
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ ReportGenerator
+#   name_en: ReportGenerator
+#   intro: Generates security reports.
+#   desc: Generates security reports.；公共方法（定义序）: record_event, generate_daily_report, generate_weekly_report, generate,…
+#   inputs: config
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ PromptwareKillChainTracker
+#   name_en: PromptwareKillChainTracker
+#   intro: Tracks promptware kill chain progression.
+#   desc: Tracks promptware kill chain progression.；公共方法（定义序）: record_stage, track_stage, get_chain_progress；源码 L277-L3…
+#   inputs: config
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ SideChannelDefender
+#   name_en: SideChannelDefender
+#   intro: Defends against side-channel attacks via traffic padding an…
+#   desc: Defends against side-channel attacks via traffic padding and audit.；公共方法（定义序）: traffic_padding, side_channel_…
+#   inputs: padding_rate config
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ ObservabilityLayer
+#   name_en: ObservabilityLayer
+#   intro: L6 Observability Layer — aggregates logging, alerting, metr…
+#   desc: L6 Observability Layer — aggregates logging, alerting, metrics, reporting.；公共方法（定义序）: log_security_event, det…
+#   inputs: config feishu_alerter
+#   outputs: 返回值
+#   （注：A6 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（10 定义）
+#   name_en: public defs
+#   intro: FrequencyAnomalyDetector, AlertSender, ReportGenerator, PromptwareKillChainTrac…
+#   downstream: zephyr.security.llm_defense.llm_security.gateway; tests.llm_security.test_l6_ob…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
+"""
 
 from __future__ import annotations
 
@@ -276,7 +350,7 @@ class SideChannelDefender:
 class ObservabilityLayer:
     """L6 Observability Layer — aggregates logging, alerting, metrics, reporting."""
 
-    def __init__(self, config=None, feishu_alerter: "LsgFeishuAlerter | None" = None):
+    def __init__(self, config=None, feishu_alerter: LsgFeishuAlerter | None = None):
         self.config = config or {}
         self.events: list[SecurityEvent] = []
         self._alert_sender = AlertSender(self.config)
@@ -297,7 +371,9 @@ class ObservabilityLayer:
         if alerter is None:
             return
         try:
-            et_str = event.event_type.value if isinstance(event.event_type, SecurityEventType) else str(event.event_type)
+            et_str = (
+                event.event_type.value if isinstance(event.event_type, SecurityEventType) else str(event.event_type)
+            )
             sev_str = severity.value if isinstance(severity, AlertSeverity) else str(severity)
             alerter.send_high_risk_alert(
                 layer=event.source or "l6_observability",

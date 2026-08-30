@@ -40,6 +40,125 @@ AI 施工约定：
 
 SSoT: MOD-INF-016 §2.11 shared-file-utils
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: filepath 参数
+#   fields: 参数 filepath，类型注解 Path | str
+#   code: file_utils.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: content 参数
+#   fields: 参数 content，类型注解 str
+#   code: file_utils.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: encoding 参数
+#   fields: 参数 encoding（无注解）
+#   code: file_utils.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: auto_backup 参数
+#   fields: 参数 auto_backup（无注解）
+#   code: file_utils.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① atomic_write
+#   name_en: atomic_write
+#   intro: 原子写入文件——先写临时文件，再 rename 到目标路径。
+#   desc: 原子写入文件——先写临时文件，再 rename 到目标路径。 流程： 1. 在同一目录创建 .tmp 文件 2. 写入全部内容 + flush + fsync 3. os.rep…；源码 L225-L282
+#   inputs: filepath content encoding auto_backup max_backups newline
+#   outputs: Path
+# - id: A2
+#   name_zh: ② safe_read
+#   name_en: safe_read
+#   intro: 安全读取文件，可选校验 SHA-256。
+#   desc: 安全读取文件，可选校验 SHA-256。 Args: filepath: 文件路径。 encoding: 文件编码。 verify_sha256: 可选，期望的 SHA-256…；源码 L285-L313
+#   inputs: filepath encoding verify_sha256
+#   outputs: str
+# - id: A3
+#   name_zh: ③ backup_file
+#   name_en: backup_file
+#   intro: 创建文件备份，并清理超量的旧备份。
+#   desc: 创建文件备份，并清理超量的旧备份。 备份命名：{filename}.bak.0, {filename}.bak.1, ... Args: filepath: 要备份的文件路径。…；源码 L316-L356
+#   inputs: filepath max_backups
+#   outputs: Path | None
+# - id: A4
+#   name_zh: ④ restore_backup
+#   name_en: restore_backup
+#   intro: 从备份恢复文件。
+#   desc: 从备份恢复文件。 Args: filepath: 要恢复的目标文件路径。 backup_index: 备份序号（0 = 最新）。 Returns: 恢复后的目标文件 Path。…；源码 L359-L383
+#   inputs: filepath backup_index
+#   outputs: Path
+# - id: A5
+#   name_zh: ⑤ backup_and_rollback
+#   name_en: backup_and_rollback
+#   intro: 上下文管理器——操作前后自动备份，异常时自动回滚。
+#   desc: 上下文管理器——操作前后自动备份，异常时自动回滚。 Usage:: with backup_and_rollback("config/settings.yaml") as pat…；源码 L387-L419
+#   inputs: filepath max_backups
+#   outputs: Generator[Path, None, None]
+# - id: A6
+#   name_zh: ⑥ content_sha256
+#   name_en: content_sha256
+#   intro: UTF-8 语义内容 hash（调用方读文件后计算，作为 expected_base 传入）。
+#   desc: UTF-8 语义内容 hash（调用方读文件后计算，作为 expected_base 传入）。；源码 L474-L476
+#   inputs: text
+#   outputs: str
+# - id: A7
+#   name_zh: ⑦ is_hot_file
+#   name_en: is_hot_file
+#   intro: 热文件判定（公开接口——commit gate / 注册表写者共用，防第二真源）。
+#   desc: 热文件判定（公开接口——commit gate / 注册表写者共用，防第二真源）。；源码 L489-L495
+#   inputs: path repo_root
+#   outputs: bool
+# - id: A8
+#   name_zh: ⑧ safe_write_text
+#   name_en: safe_write_text
+#   intro: CAS 语义写文本文件：base 校验→原子写→回读校验→审计。
+#   desc: CAS 语义写文本文件：base 校验→原子写→回读校验→审计。 Args: path: 目标文件。 content: 新内容。 expected_base_sha256: 调用…；源码 L501-L575
+#   inputs: path content expected_base_sha256 repo_root encoding newline
+#   outputs: SafeWriteResult
+# - id: A9
+#   name_zh: ⑨ assert_safe_rmtree_target
+#   name_en: assert_safe_rmtree_target
+#   intro: rmtree 删除前硬断言三件套（CAND-GOVSEC-001 ①）。
+#   desc: rmtree 删除前硬断言三件套（CAND-GOVSEC-001 ①）。 ① resolve 后必须**严格**落在 allowed_prefix 之内（等于前缀本身亦拒绝——…；源码 L610-L646
+#   inputs: path allowed_prefix
+#   outputs: Path
+# - id: A10
+#   name_zh: ⑩ safe_rmtree
+#   name_en: safe_rmtree
+#   intro: 硬断言通过后执行删除（CAND-GOVSEC-001 ① 一站式入口）。
+#   desc: 硬断言通过后执行删除（CAND-GOVSEC-001 ① 一站式入口）。 目录走 ``shutil.rmtree``（透传 ignore_errors/onerror），单文件走…；源码 L649-L681
+#   inputs: path allowed_prefix ignore_errors onerror
+#   outputs: bool
+#   （注：A10 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: Path
+#   name_en: Path
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> A10
+# A10 --> O1
 """
 
 from __future__ import annotations

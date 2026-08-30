@@ -19,6 +19,55 @@
 architecture_context_loader — 加载 ``generate_architecture_context.py`` 产出的预编译 JSON
 
 真源文件默认路径：与本包同目录下的 ``architecture-context.json``（由脚本生成）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: path 参数
+#   fields: 参数 path，类型注解 Path | None
+#   code: architecture_context_loader.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: data 参数
+#   fields: 参数 data，类型注解 dict[str, Any]
+#   code: architecture_context_loader.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: max_chars 参数
+#   fields: 参数 max_chars（无注解）
+#   code: architecture_context_loader.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① load_architecture_context_dict
+#   name_en: load_architecture_context_dict
+#   intro: load_architecture_context_dict(path) 源码 L86-L90
+#   desc: 源码 L86-L90
+#   inputs: path
+#   outputs: dict[str, Any]
+# - id: A2
+#   name_zh: ② format_architecture_context_excerpt
+#   name_en: format_architecture_context_excerpt
+#   intro: 将 JSON 压成可注入 prompt 的摘录（避免整文件撑爆 token）。
+#   desc: 将 JSON 压成可注入 prompt 的摘录（避免整文件撑爆 token）。；源码 L93-L113
+#   inputs: data max_chars
+#   outputs: str
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, Any]
+#   name_en: dict[str, Any]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 import json

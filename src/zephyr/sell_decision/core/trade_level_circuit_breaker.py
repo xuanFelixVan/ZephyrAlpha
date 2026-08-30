@@ -20,13 +20,55 @@
 # F3: is_blocked()——连亏≥threshold+3 暂停该策略开新仓(只允许平仓)
 # O1: 仓位缩放因子 [0.25, 1.0] + 阻断标记 -> 策略级仓位合成链
 # [/ALGO_FLOW]
-"""D_SELL_DECISION — 交易级连续亏损熔断（42 号 §3.10，AI-NIGHT-001 包P）。
+"""
+D_SELL_DECISION — 交易级连续亏损熔断（42 号 §3.10，AI-NIGHT-001 包P）。
 
 时间熔断（日度/Kill Switch）在"每天小亏、连续多天"场景反应迟钝；本类按笔
 计数——策略连续亏损 N 笔即递减减仓，是时间熔断的前馈补充（42 号 §3.10）。
 参数真源：Li, Laryea & Ihlamur 2026（arXiv:2604.27150）网格最优
 （N=2 / reduction_factor=0.25）+ A 股适配（min_scale=0.25 减速非停车）。
 与 CUSUM 正交：本类管短期失配"急救减仓"，CUSUM 管结构性衰减"诊断停研"。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: consecutive_loss_threshold 参数
+#   fields: 参数 consecutive_loss_threshold（无注解）
+#   code: trade_level_circuit_breaker.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: reduction_factor 参数
+#   fields: 参数 reduction_factor（无注解）
+#   code: trade_level_circuit_breaker.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: min_scale 参数
+#   fields: 参数 min_scale（无注解）
+#   code: trade_level_circuit_breaker.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: reset_on_win 参数
+#   fields: 参数 reset_on_win（无注解）
+#   code: trade_level_circuit_breaker.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① TradeLevelCircuitBreaker
+#   name_en: TradeLevelCircuitBreaker
+#   intro: 策略级连续亏损熔断：连续 N 笔亏损→递减减仓，盈利→重置（42 号 §3.10 施工算法）。
+#   desc: 策略级连续亏损熔断：连续 N 笔亏损→递减减仓，盈利→重置（42 号 §3.10 施工算法）。；公共方法（定义序）: on_trade_close, get_position_scale, is_blocked；源码…
+#   inputs: consecutive_loss_threshold reduction_factor min_scale reset_on_win
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: TradeLevelCircuitBreaker
+#   downstream: 策略级仓位缩放链(42号§3.10: budget×position_cap×circuit_breaker_scale×conformal_scale 乘性…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

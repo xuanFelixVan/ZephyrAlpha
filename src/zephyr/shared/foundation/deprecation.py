@@ -35,6 +35,69 @@ AI 不确定是否可以删除旧代码的问题。
 
 SSoT: MOD-INF-016 §2.13 shared-deprecation
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: mode 参数
+#   fields: 参数 mode，类型注解 str
+#   code: deprecation.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: since 参数
+#   fields: 参数 since，类型注解 str
+#   code: deprecation.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: remove_in 参数
+#   fields: 参数 remove_in，类型注解 str | None
+#   code: deprecation.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: replacement 参数
+#   fields: 参数 replacement，类型注解 str | None
+#   code: deprecation.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① set_deprecation_mode
+#   name_en: set_deprecation_mode
+#   intro: 设置全局废弃策略模式。
+#   desc: 设置全局废弃策略模式。 Args: mode: "warn" (默认——发出 DeprecationWarning) "strict" (CI 模式——抛出 Deprecated…；源码 L142-L154
+#   inputs: mode
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② get_deprecation_mode
+#   name_en: get_deprecation_mode
+#   intro: 获取当前废弃策略模式。
+#   desc: 获取当前废弃策略模式。；源码 L157-L159
+#   inputs: 无参数
+#   outputs: str
+# - id: A3
+#   name_zh: ③ deprecated
+#   name_en: deprecated
+#   intro: 标记函数/类/方法为废弃。
+#   desc: 标记函数/类/方法为废弃。 Args: since: 废弃起始版本（如 "0.6.0"） remove_in: 计划移除版本（如 "0.8.0"）。None = 暂无移除计划 r…；源码 L162-L235
+#   inputs: since remove_in replacement reason
+#   outputs: Callable[[F], F]
+#   （注：A3 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: Callable[[F], F]
+#   name_en: Callable[[F], F]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

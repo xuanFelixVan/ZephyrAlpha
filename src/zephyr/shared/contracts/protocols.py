@@ -15,11 +15,111 @@
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Structural Protocol interfaces for cross-module contracts.
+"""
+Structural Protocol interfaces for cross-module contracts.
 
 These @runtime_checkable Protocols break bidirectional dependencies by
 defining shared structural interfaces that modules depend on instead of
 depending on each other's concrete implementations.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: provider 参数
+#   fields: 参数 provider，类型注解 Callable[[], ContractRegistryProtocol]
+#   code: protocols.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① GateActionProtocol
+#   name_en: GateActionProtocol
+#   intro: Structural interface for rollback/gate action execution.
+#   desc: Structural interface for rollback/gate action execution.；公共方法（定义序）: execute, name；源码 L141-L147
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② DriftBudgetCheckerProtocol
+#   name_en: DriftBudgetCheckerProtocol
+#   intro: Structural interface for drift budget checking.
+#   desc: Structural interface for drift budget checking.；公共方法（定义序）: check_budget_for_gate；源码 L151-L154
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ RecoveryTriggerProtocol
+#   name_en: RecoveryTriggerProtocol
+#   intro: Structural interface for drift recovery triggering.
+#   desc: Structural interface for drift recovery triggering.；公共方法（定义序）: trigger_recovery；源码 L158-L161
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ AuditWriterProtocol
+#   name_en: AuditWriterProtocol
+#   intro: Structural interface for immutable audit writing.
+#   desc: Structural interface for immutable audit writing.；公共方法（定义序）: write_audit；源码 L165-L168
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ DriftScannerProtocol
+#   name_en: DriftScannerProtocol
+#   intro: Structural interface for drift event scanning.
+#   desc: Structural interface for drift event scanning.；公共方法（定义序）: scan_drift_events；源码 L172-L175
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ SelfTestableProtocol
+#   name_en: SelfTestableProtocol
+#   intro: Structural interface for self-test / health check component…
+#   desc: Structural interface for self-test / health check components.；公共方法（定义序）: run_self_test；源码 L179-L182
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A7
+#   name_zh: ⑦ ModuleStatusProtocol
+#   name_en: ModuleStatusProtocol
+#   intro: Structural interface for module/pipeline status reporting.
+#   desc: Structural interface for module/pipeline status reporting.；公共方法（定义序）: get_status；源码 L186-L189
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A8
+#   name_zh: ⑧ EstimateCostFn
+#   name_en: EstimateCostFn
+#   intro: Structural interface for LLM cost estimation (5.
+#   desc: Structural interface for LLM cost estimation (5.12.2#2 签名漂移治本). Canonical 签名：estimate_cos…；公共方法（定义序）: estimat…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A9
+#   name_zh: ⑨ HealthCheckFn
+#   name_en: HealthCheckFn
+#   intro: Structural interface for health check (5.
+#   desc: Structural interface for health check (5.12.2#4 签名漂移治本). Canonical 签名：health_check() -> d…；公共方法（定义序）: health_…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A10
+#   name_zh: ⑩ ContractRegistryProtocol
+#   name_en: ContractRegistryProtocol
+#   intro: Structural interface for integration contract registry (5.
+#   desc: Structural interface for integration contract registry (5.60.2 治本). governance 门禁检查（phase…；公共方法（定义序）: list_al…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A10 之后另有 4 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ContractRegistryProtocol | None
+#   name_en: ContractRegistryProtocol | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_enforcement;zephyr.compliance.behavioral_auditor;ze…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> A10
+# A10 --> O1
 """
 
 from __future__ import annotations

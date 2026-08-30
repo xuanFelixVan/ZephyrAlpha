@@ -15,6 +15,84 @@
 # [A_module] module_id=MOD-INF-030 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: args 参数
+#   fields: 参数 args，类型注解 argparse.Namespace
+#   code: cli.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① run
+#   name_en: run
+#   intro: run(args) 源码 L111-L135
+#   desc: 源码 L111-L135
+#   inputs: args
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② list_scenarios
+#   name_en: list_scenarios
+#   intro: list_scenarios(args) 源码 L138-L146
+#   desc: 源码 L138-L146
+#   inputs: args
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ report_fn
+#   name_en: report_fn
+#   intro: report_fn(args) 源码 L149-L159
+#   desc: 源码 L149-L159
+#   inputs: args
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ status
+#   name_en: status
+#   intro: status(args) 源码 L162-L168
+#   desc: 源码 L162-L168
+#   inputs: args
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ gameday
+#   name_en: gameday
+#   intro: gameday(args) 源码 L171-L175
+#   desc: 源码 L171-L175
+#   inputs: args
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ onboard
+#   name_en: onboard
+#   intro: onboard(args) 源码 L178-L184
+#   desc: 源码 L178-L184
+#   inputs: args
+#   outputs: 返回值
+# - id: A7
+#   name_zh: ⑦ main
+#   name_en: main
+#   intro: main() 源码 L196-L236
+#   desc: 源码 L196-L236
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: run, list_scenarios, report_fn, status, gameday, onboard, main
+#   downstream: End users; CI/CD; MCP tool wrappers
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> O1
+"""
+
 from __future__ import annotations
 
 import argparse

@@ -14,12 +14,40 @@
 # [TESTS] tests/agent_rbac/test_novel_attack.py; tests/agent_rbac/test_vibe_coding.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""NovelAttackGuard — 新型攻击行为画像.
+"""
+NovelAttackGuard — 新型攻击行为画像.
 
 依据蓝图 MOD-INF-018 §novel_attack_guard:
 - 为每个 agent 建立行为画像
 - 检测偏离正常行为模式的新型攻击
 - 累积可疑分数
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: novel_attack_guard.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① NovelAttackGuard
+#   name_en: NovelAttackGuard
+#   intro: 新型攻击行为画像守卫.
+#   desc: 新型攻击行为画像守卫.；公共方法（定义序）: profile_action；源码 L96-L137
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: NovelAttackGuard
+#   downstream: tests/agent_rbac/test_novel_attack.py; tests/agent_rbac/test_vibe_coding.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

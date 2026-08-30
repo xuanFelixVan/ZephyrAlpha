@@ -14,7 +14,8 @@
 # [TESTS] tests/shared/capacity_governance/test_api_cost_governor.py
 # [A_module] module_id=MOD-SHARED-003 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""ApiCostGovernor — 外部API成本治理器（MOD-SHARED-003）。
+"""
+ApiCostGovernor — 外部API成本治理器（MOD-SHARED-003）。
 
 B1-00308（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-SHARED-001，C2 C-044）：
 外部API调用计量（按源计数/成本单价表）+ 成本预算（日/月预算注册，超预算
@@ -25,6 +26,33 @@ OpenTelemetry 计费思想单机化。
 预算裁定，不做估算模型）；api_rate_limiter=固定速率限流（本件=按预算剩余
 比例动态调速，不替代其执行面）；budget_aware_prompt=LLM prompt 预算感知
 （域不同零交集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: api_cost_governor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ApiCostGovernor
+#   name_en: ApiCostGovernor
+#   intro: 外部API成本治理器（计量 + 预算降级 + 动态令牌桶）。
+#   desc: 外部API成本治理器（计量 + 预算降级 + 动态令牌桶）。；公共方法（定义序）: register_source, register_budget, record_call, is_degraded, usage,…
+#   inputs: clock
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: ApiCostGovernor
+#   downstream: 运行时装配批（外部数据源适配层统一计量 / 预算降级标记读侧 / QPS 分配器）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -146,9 +174,7 @@ class ApiCostGovernor:
         existing = self._sources.get(source_id)
         if existing is not None:
             if existing.unit_cost != unit_cost or existing.base_qps != base_qps:
-                raise ApiCostGovernorError(
-                    f"源 {source_id!r} 已注册且参数冲突（单价/基准QPS 不可变）"
-                )
+                raise ApiCostGovernorError(f"源 {source_id!r} 已注册且参数冲突（单价/基准QPS 不可变）")
             return  # 同参数幂等
         state = _SourceState(unit_cost=float(unit_cost), base_qps=float(base_qps))
         state.tokens = float(base_qps)  # 满桶启动（容量=基准QPS，即 1s 突发）
@@ -162,9 +188,7 @@ class ApiCostGovernor:
             raise ApiCostGovernorError(f"预算限额非法: {limit!r}（须 > 0）")
         state = self._state_of(source_id)
         if period in state.budgets:
-            raise ApiCostGovernorError(
-                f"源 {source_id!r} 周期 {period.value} 预算已注册（不可重复注册）"
-            )
+            raise ApiCostGovernorError(f"源 {source_id!r} 周期 {period.value} 预算已注册（不可重复注册）")
         state.budgets[period] = float(limit)
 
     # ── 计量 ─────────────────────────────────────────────────────────────
@@ -189,7 +213,10 @@ class ApiCostGovernor:
                 state.degraded = True
                 _log.warning(
                     "源 %s 超 %s 预算（%.4f > %.4f），自动降级标记",
-                    source_id, period.value, state.period_costs[key], limit,
+                    source_id,
+                    period.value,
+                    state.period_costs[key],
+                    limit,
                 )
         return state.degraded
 

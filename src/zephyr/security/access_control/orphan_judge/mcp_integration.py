@@ -14,6 +14,36 @@
 # [TESTS] tests/orphan-judge/test_mcp_integration.py
 # [A_module] module_id=MOD-INF-029 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: mcp_integration.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① register_tools
+#   name_en: register_tools
+#   intro: register_tools() 源码 L112-L124
+#   desc: 源码 L112-L124
+#   inputs: 无参数
+#   outputs: bool
+# 层: 输出
+# - id: O1
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MCP Server Tool Registry; FastMCP clients
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 import logging
 from pathlib import Path
 from typing import Any

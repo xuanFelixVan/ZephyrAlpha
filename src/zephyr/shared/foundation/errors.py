@@ -37,6 +37,32 @@ AI 施工约定：
 
 SSoT: MOD-INF-016 §2.3 shared-errors
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: errors.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包公共面再导出
+#   name_en: __init__ re-export
+#   intro: 再导出 ConfigError, ContextError, ContractError, DataError, FeedbackError, GateErr…
+#   desc: __init__ import L0；__all__ 15 项（AST 事实）
+#   inputs: I1
+#   outputs: __all__ 公共符号表
+# 层: 输出
+# - id: O1
+#   name_zh: 数据契约声明（15 类）
+#   name_en: data classes
+#   intro: ZephyrBaseError, ConfigError, ContractError, SecurityError, SessionError, Valid…
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -15,6 +15,76 @@
 # [A_module] module_id=MOD-LLM_SECURITY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: log_dir 参数
+#   fields: 参数 log_dir（无注解）
+#   code: behavior_audit_logger.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: rotation 参数
+#   fields: 参数 rotation（无注解）
+#   code: behavior_audit_logger.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: max_file_size 参数
+#   fields: 参数 max_file_size（无注解）
+#   code: behavior_audit_logger.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: session_id 参数
+#   fields: 参数 session_id（无注解）
+#   code: behavior_audit_logger.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AuditEvent
+#   name_en: AuditEvent
+#   intro: class AuditEvent 源码 L142-L186
+#   desc: 公共方法（定义序）: to_dict, to_jsonl；源码 L142-L186
+#   inputs: timestamp model action target result session_id extra
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② AuditQuery
+#   name_en: AuditQuery
+#   intro: class AuditQuery 源码 L189-L236
+#   desc: 公共方法（定义序）: matches；源码 L189-L236
+#   inputs: session_id model action time_from time_to
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ AuditLogger
+#   name_en: AuditLogger
+#   intro: Append-only AI behavior audit logger.
+#   desc: Append-only AI behavior audit logger. Parameters ---------- log_dir : Path Directory wher…；公共方法（定义序）: log_dir…
+#   inputs: log_dir rotation max_file_size session_id model
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ open_audit_log
+#   name_en: open_audit_log
+#   intro: open_audit_log(log_dir, rotation, max_file_size, session_id…
+#   desc: 源码 L452-L466
+#   inputs: log_dir rotation max_file_size session_id model
+#   outputs: AuditLogger
+#   （注：A4 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: AuditLogger
+#   name_en: AuditLogger
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
+"""
+
 from __future__ import annotations
 
 from zephyr.shared.utils.time_utils import now_iso, parse_iso

@@ -44,6 +44,75 @@ pattern_mining_metrics.py —— 修复模式挖掘报告消费与汇总模块�
       {"kind": "promote_pattern", "cluster_key": "F001|auto_fix", "frequency": 5, "success_rate": 0.9}
     ]
   }
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: path 参数
+#   fields: 参数 path，类型注解 Path | str
+#   code: pattern_mining_metrics.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: reports 参数
+#   fields: 参数 reports，类型注解 list[dict[str, Any]]
+#   code: pattern_mining_metrics.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① load_reports_from_jsonl
+#   name_en: load_reports_from_jsonl
+#   intro: 从 JSONL 文件加载报告列表。
+#   desc: 从 JSONL 文件加载报告列表。 Args: path: JSONL 文件路径（默认 .runtime/security_ops/pattern_mining_reports.…；源码 L186-L219
+#   inputs: path
+#   outputs: list[dict[str, Any]]
+# - id: A2
+#   name_zh: ② compute_daily_hit_rates
+#   name_en: compute_daily_hit_rates
+#   intro: 按日分组计算命中率。
+#   desc: 按日分组计算命中率。 Args: reports: 报告字典列表（从 load_reports_from_jsonl 加载） Returns: DailyHitRate 列表，按…；源码 L222-L260
+#   inputs: reports
+#   outputs: list[DailyHitRate]
+# - id: A3
+#   name_zh: ③ compute_cumulative_stats
+#   name_en: compute_cumulative_stats
+#   intro: 计算累计命中率（全量统计）。
+#   desc: 计算累计命中率（全量统计）。 Args: reports: 报告字典列表 Returns: CumulativeStats 实例；源码 L263-L300
+#   inputs: reports
+#   outputs: CumulativeStats
+# - id: A4
+#   name_zh: ④ compute_suggestion_kind_stats
+#   name_en: compute_suggestion_kind_stats
+#   intro: 计算建议类别分布。
+#   desc: 计算建议类别分布。 Args: reports: 报告字典列表 Returns: SuggestionKindStats 实例；源码 L303-L332
+#   inputs: reports
+#   outputs: SuggestionKindStats
+# - id: A5
+#   name_zh: ⑤ summarize_reports
+#   name_en: summarize_reports
+#   intro: 汇总报告：日维度 + 累计 + 建议分布。
+#   desc: 汇总报告：日维度 + 累计 + 建议分布。 Args: reports: 报告字典列表（可选，与 path 二选一） path: JSONL 文件路径（可选，与 reports…；源码 L335-L405
+#   inputs: reports path
+#   outputs: dict[str, Any]
+#   （注：A5 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[dict[str, Any]]
+#   name_en: list[dict[str, Any]]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 仪表板 / 治理审计脚本
+# - id: O2
+#   name_zh: list[DailyHitRate]
+#   name_en: list[DailyHitRate]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 仪表板 / 治理审计脚本
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations
@@ -140,9 +209,7 @@ def load_reports_from_jsonl(path: Path | str) -> list[dict[str, Any]]:
                 try:
                     blob = json.loads(line)
                 except json.JSONDecodeError as exc:
-                    raise PatternMiningMetricsError(
-                        f"JSON 解析失败 (行 {line_no}): {exc}"
-                    ) from exc
+                    raise PatternMiningMetricsError(f"JSON 解析失败 (行 {line_no}): {exc}") from exc
                 if not isinstance(blob, dict):
                     raise PatternMiningMetricsError(f"行 {line_no} 不是 dict: {type(blob)}")
                 reports.append(blob)

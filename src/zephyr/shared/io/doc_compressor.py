@@ -60,6 +60,41 @@ CBAC 集成
 ---------
 compress() 在写文件时调用 capability_check("write", target_path)，
 确保目标路径在 capabilities.yaml allow 范围内。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: path 参数
+#   fields: 参数 path，类型注解 Path | None
+#   code: doc_compressor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① load_policy_from_yaml
+#   name_en: load_policy_from_yaml
+#   intro: 从 config/compression_policy.yaml 加载 CompressionPolicy。
+#   desc: 从 config/compression_policy.yaml 加载 CompressionPolicy。 文件不存在或解析失败时返回 DEFAULT_POLICY。 参数 -…；源码 L239-L278
+#   inputs: path
+#   outputs: CompressionPolicy
+# - id: A2
+#   name_zh: ② DocCompressor
+#   name_en: DocCompressor
+#   intro: 文档压缩服务单例。
+#   desc: 文档压缩服务单例。 M1 build() 通过 ``DocCompressor.instance()`` 注入， M3 触发器通过同一接口获取实例后调用 ``compress()…；公共方法（定义序）: instanc…
+#   inputs: policy policy_path
+#   outputs: 返回值
+#   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: CompressionPolicy
+#   name_en: CompressionPolicy
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

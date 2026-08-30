@@ -15,6 +15,66 @@
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: path 参数
+#   fields: 参数 path，类型注解 Path | str | None
+#   code: flags.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: registry 参数
+#   fields: 参数 registry（无注解）
+#   code: flags.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FeatureFlag
+#   name_en: FeatureFlag
+#   intro: class FeatureFlag 源码 L152-L208
+#   desc: 公共方法（定义序）: is_expired, is_enabled；源码 L152-L208
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② FlagRegistry
+#   name_en: FlagRegistry
+#   intro: 全局 FeatureFlag 注册表（单例）。
+#   desc: 全局 FeatureFlag 注册表（单例）。 Usage:: registry = FlagRegistry() registry.register(FeatureFlag("…；公共方法（定义序）: audit,…
+#   inputs: audit_path persist_audit
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ load_flags_from_yaml
+#   name_en: load_flags_from_yaml
+#   intro: 5.38.4 修复: 从 YAML 加载特性开关到 FlagRegistry。
+#   desc: 5.38.4 修复: 从 YAML 加载特性开关到 FlagRegistry。 默认读取 ``config/flags.yaml`` 的 ``flags:`` 段并注册到 ``g…；源码 L379-L414
+#   inputs: path registry
+#   outputs: int
+# - id: A4
+#   name_zh: ④ ensure_global_flags_loaded
+#   name_en: ensure_global_flags_loaded
+#   intro: 5.
+#   desc: 5.38.2 修复: 启动流程幂等加载入口——首次调用时把 config/flags.yaml 注册进 global_flag_registry，后续调用直接返回当前 flag…；源码 L420-L428
+#   inputs: 无参数
+#   outputs: int
+#   （注：A4 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
+"""
+
 from __future__ import annotations
 
 from typing import Self

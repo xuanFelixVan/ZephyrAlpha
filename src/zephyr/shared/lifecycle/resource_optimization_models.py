@@ -23,6 +23,32 @@ SSoT: MOD-RESOURCE_OPTIMIZATION_ENGINE resource-optimization-engine/blueprint.md
 
 Separated from resource_optimization_engine.py to avoid circular imports.
 io_cache.py and streaming_reader.py import from here, not from the engine.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: resource_optimization_models.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① 数据契约声明
+#   name_en: data class declarations
+#   intro: 纯声明类（无公共方法，AST 事实）: PressureLevel, OptimizationStrategy, DefensiveStrategy, Cir…
+#   desc: 数据契约/异常/枚举声明共 12 类；无算法流程（AST 事实）
+#   inputs: I1
+#   outputs: 数据契约类集合
+# 层: 输出
+# - id: O1
+#   name_zh: 数据契约声明（12 类）
+#   name_en: data classes
+#   intro: PressureLevel, OptimizationStrategy, DefensiveStrategy, CircuitBreakerState, Re…
+#   downstream: N/A (all consumers verified as phantom — stale references removed)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -15,6 +15,50 @@
 # [A_module] module_id=MOD-INF-029 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: orphan_collector.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: safety_fence 参数
+#   fields: 参数 safety_fence（无注解）
+#   code: orphan_collector.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: cascade_analyzer 参数
+#   fields: 参数 cascade_analyzer（无注解）
+#   code: orphan_collector.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: decision_table 参数
+#   fields: 参数 decision_table（无注解）
+#   code: orphan_collector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① OrphanCollector
+#   name_en: OrphanCollector
+#   intro: 孤儿文件收集与处置器——整合 SafetyFence 安全检查后执行处置动作。
+#   desc: 孤儿文件收集与处置器——整合 SafetyFence 安全检查后执行处置动作。 处置策略： KEEP / KEEP_AND_REGISTER -> 保留（计数 kept） DEL…；公共方法（定义序）: collect…
+#   inputs: project_root safety_fence cascade_analyzer decision_table dry_run
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: OrphanCollector
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
+"""
+
 from __future__ import annotations
 
 import logging

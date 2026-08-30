@@ -21,6 +21,33 @@ Event Reactor — 事件反应器（自动响应事件）。
 依据：
     蓝图 MOD-TASK_SYSTEM §6.13.4 + v0.6.0
     任务卡 TASK-INF-0125
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: event_bus 参数
+#   fields: 参数 event_bus（无注解）
+#   code: event_reactor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① EventReactor
+#   name_en: EventReactor
+#   intro: class EventReactor 源码 L68-L116
+#   desc: 公共方法（定义序）: bus, get_reactions；源码 L68-L116
+#   inputs: event_bus
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: EventReactor
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from dataclasses import dataclass

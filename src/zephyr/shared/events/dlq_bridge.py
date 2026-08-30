@@ -15,11 +15,64 @@
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""CT-DLQ-001: DeadLetterQueue -> System Event Bus integration bridge.
+"""
+CT-DLQ-001: DeadLetterQueue -> System Event Bus integration bridge.
 
 Connects the existing DeadLetterQueue (438 lines, shared/events/dlq.py)
 to the system event observer (shared/infra/observer.py) so that failed
 events are automatically persisted to DLQ.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: dlq 参数
+#   fields: 参数 dlq，类型注解 DeadLetterQueue
+#   code: dlq_bridge.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: observer 参数
+#   fields: 参数 observer，类型注解 Observer
+#   code: dlq_bridge.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_dlq_event_handler
+#   name_en: make_dlq_event_handler
+#   intro: make_dlq_event_handler(dlq) 源码 L98-L110
+#   desc: 源码 L98-L110
+#   inputs: dlq
+#   outputs: Callable[[str, dict[str, Any], Exceptio…
+# - id: A2
+#   name_zh: ② DLQEventBridge
+#   name_en: DLQEventBridge
+#   intro: class DLQEventBridge 源码 L113-L146
+#   desc: 公共方法（定义序）: attach, attached, replay_failed；源码 L113-L146
+#   inputs: dlq observer
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ attach_dlq_to_observer
+#   name_en: attach_dlq_to_observer
+#   intro: attach_dlq_to_observer(dlq, observer) 源码 L149-L155
+#   desc: 源码 L149-L155
+#   inputs: dlq observer
+#   outputs: DLQEventBridge
+# 层: 输出
+# - id: O1
+#   name_zh: Callable[[str, dict[str, Any], Exceptio…
+#   name_en: Callable[[str, dict[str, Any], Exceptio…
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: N/A (all consumers verified as phantom — stale references removed)
+# - id: O2
+#   name_zh: DLQEventBridge
+#   name_en: DLQEventBridge
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: N/A (all consumers verified as phantom — stale references removed)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

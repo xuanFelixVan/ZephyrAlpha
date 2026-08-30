@@ -44,6 +44,102 @@ kill-switch：ZEPHYR_RUNTIME_GATE=0 关闭（sitecustomize 引导与 install() �
 
 性能：patch 仅在目标库首次导入时执行一次；运行时仅在被 patch 的方法调用时做一次
 令牌检查（O(1)，纳秒级）。LSG 扫描路径不被 patch，扫描耗时不受影响。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: request_id 参数
+#   fields: 参数 request_id，类型注解 str | None
+#   code: runtime_interceptor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: ttl 参数
+#   fields: 参数 ttl，类型注解 float
+#   code: runtime_interceptor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① is_allowance_active
+#   name_en: is_allowance_active
+#   intro: 检查当前是否存在有效（未过期）的 LSG 放行令牌。
+#   desc: 检查当前是否存在有效（未过期）的 LSG 放行令牌。 优先查 contextvar（异步隔离），其次查 thread-local（同步兜底）。过期则清除。；源码 L219-L237
+#   inputs: 无参数
+#   outputs: bool
+# - id: A2
+#   name_zh: ② grant_allowance
+#   name_en: grant_allowance
+#   intro: 颁发 LSG 放行令牌。
+#   desc: 颁发 LSG 放行令牌。LSG 扫描通过后调用，使后续 LLM 调用放行。 同时写入 contextvar 与 thread-local，覆盖同步与异步两种合法调用链。 幂等：重…；源码 L240-L262
+#   inputs: request_id ttl
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ revoke_allowance
+#   name_en: revoke_allowance
+#   intro: 立即撤销放行令牌（用于测试或显式收尾）。
+#   desc: 立即撤销放行令牌（用于测试或显式收尾）。；源码 L265-L284
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ reset_allowance_for_request
+#   name_en: reset_allowance_for_request
+#   intro: 5.132.1 修复: 请求边界重置放行令牌, 防止线程池复用导致跨请求安全上下文泄漏。
+#   desc: 5.132.1 修复: 请求边界重置放行令牌, 防止线程池复用导致跨请求安全上下文泄漏。 线程池复用线程时, 上一个请求的 _tls.allowance 可能未过期(默认30s…；源码 L287-L298
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ allow_llm_call
+#   name_en: allow_llm_call
+#   intro: 同步上下文管理器：在代码块内允许裸调 LLM（供测试/显式受控调用）。
+#   desc: 同步上下文管理器：在代码块内允许裸调 LLM（供测试/显式受控调用）。 用法:: with allow_llm_call(): client.chat.completions.c…；源码 L302-L333
+#   inputs: ttl
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ allow_llm_call_async
+#   name_en: allow_llm_call_async
+#   intro: 异步上下文管理器：在代码块内允许裸调 LLM（异步版本）。
+#   desc: 异步上下文管理器：在代码块内允许裸调 LLM（异步版本）。 5.80.3/5.80.5 治本：与 allow_llm_call 相同的栈式恢复 + 进入时主动清理语义—— 嵌套不…；源码 L337-L360
+#   inputs: ttl
+#   outputs: 返回值
+# - id: A7
+#   name_zh: ⑦ install
+#   name_en: install
+#   intro: 安装运行时 LLM 裸调拦截器。
+#   desc: 安装运行时 LLM 裸调拦截器。 - 尊重 kill-switch：ZEPHYR_RUNTIME_GATE=0 -> 不安装，返回 False。 - 幂等：重复调用安全。 - 注…；源码 L588-L611
+#   inputs: 无参数
+#   outputs: bool
+# - id: A8
+#   name_zh: ⑧ uninstall
+#   name_en: uninstall
+#   intro: 卸载拦截器（供测试隔离）。
+#   desc: 卸载拦截器（供测试隔离）。 仅移除 finder 与令牌；已 patch 的方法不回滚（测试应使用独立子进程隔离， 或在测试内自行 monkeypatch）。保持简单：unins…；源码 L614-L626
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A9
+#   name_zh: ⑨ is_installed
+#   name_en: is_installed
+#   intro: 拦截器 finder 是否已注册。
+#   desc: 拦截器 finder 是否已注册。；源码 L629-L631
+#   inputs: 无参数
+#   outputs: bool
+#   （注：A9 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.security.llm_defense.llm_security.gateway
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> O1
 """
 
 from __future__ import annotations
@@ -327,7 +423,10 @@ def _patch_openai(module) -> None:
 def _patch_anthropic(module) -> None:
     """patch anthropic 的 messages.create（同步+异步）。"""
     try:
-        from anthropic.resources.messages import AsyncMessages, Messages  # noqa: import-integrity  anthropic 可选依赖，守卫失败即 return 跳过 patch
+        from anthropic.resources.messages import (  # noqa: import-integrity  anthropic 可选依赖，守卫失败即 return 跳过 patch
+            AsyncMessages,
+            Messages,
+        )
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return
     if not _is_guarded(Messages.create):
@@ -368,12 +467,18 @@ def _import_chat_classes() -> list:
     尝试两种 langchain 路径导入 ChatOpenAI/ChatAnthropic，失败返回空列表。
     """
     try:
-        from langchain.chat_models import ChatAnthropic, ChatOpenAI  # noqa: F401  # noqa: import-integrity  langchain 可选依赖，双路径 fallback 探测（守卫失败返回空表）
+        from langchain.chat_models import (  # noqa: F401  # noqa: import-integrity  langchain 可选依赖，双路径 fallback 探测（守卫失败返回空表）
+            ChatAnthropic,
+            ChatOpenAI,
+        )
 
         return [ChatOpenAI, ChatAnthropic]
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         try:
-            from langchain_community.chat_models import ChatAnthropic, ChatOpenAI  # noqa: F401  # noqa: import-integrity  langchain_community 可选依赖 fallback 探测（守卫失败返回空表）
+            from langchain_community.chat_models import (  # noqa: F401  # noqa: import-integrity  langchain_community 可选依赖 fallback 探测（守卫失败返回空表）
+                ChatAnthropic,
+                ChatOpenAI,
+            )
 
             return [ChatOpenAI, ChatAnthropic]
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -393,7 +498,7 @@ def _patch_langchain(module) -> None:
             invoke = getattr(cls, "invoke", None)
             if invoke is not None and not _is_guarded(invoke):
                 label = f"langchain.{cls.__name__}.invoke"
-                setattr(cls, "invoke", _make_guard(invoke, label))
+                cls.invoke = _make_guard(invoke, label)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.critical(
                 "_patch_langchain: %s.invoke patch 失败(%s: %s)，LLM 裸调守卫未挂载=安全绕过",

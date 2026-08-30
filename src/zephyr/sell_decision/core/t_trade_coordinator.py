@@ -14,7 +14,8 @@
 # [TESTS] tests/sell_decision/test_t_trade_coordinator.py
 # [A_module] module_id=MOD-SELL-018 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""T Trade Coordinator — 做T 协调器 (MOD-SELL-018，T+1 规则内)
+"""
+T Trade Coordinator — 做T 协调器 (MOD-SELL-018，T+1 规则内)
 
 A 股 T+1 下的日内做T（利用底仓赚日内价差、日终仓位复原）：
 
@@ -33,6 +34,33 @@ A 股 T+1 下的日内做T（利用底仓赚日内价差、日终仓位复原）
 
 纪律：纯函数、无 IO；价差预期与成本由调用方注入。
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: intent 参数
+#   fields: 参数 intent，类型注解 TTradeInput
+#   code: t_trade_coordinator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① plan_t_trade
+#   name_en: plan_t_trade
+#   intro: 规划做T（纯函数，Fail-Closed：不值得做→viable=False）。
+#   desc: 规划做T（纯函数，Fail-Closed：不值得做→viable=False）。 Raises: InvalidTTradeInputError: 输入非法；源码 L147-L191
+#   inputs: intent
+#   outputs: TTradePlan
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: TTradePlan
+#   name_en: TTradePlan
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: D-EX-CORE(日内执行) ; MOD-POS-018(盘中仓位约束复核)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -135,9 +163,7 @@ def plan_t_trade(intent: TTradeInput) -> TTradePlan:
         if not math.isfinite(v) or v < 0.0:
             raise InvalidTTradeInputError(f"{name} 非法（须为有限非负值），got {v}")
     if not math.isfinite(intent.expected_spread_pct):
-        raise InvalidTTradeInputError(
-            f"expected_spread_pct 非法（须为有限值），got {intent.expected_spread_pct}"
-        )
+        raise InvalidTTradeInputError(f"expected_spread_pct 非法（须为有限值），got {intent.expected_spread_pct}")
 
     constraints: list[str] = []
 

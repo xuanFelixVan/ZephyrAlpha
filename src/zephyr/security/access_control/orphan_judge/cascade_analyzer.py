@@ -15,6 +15,35 @@
 # [A_module] module_id=MOD-INF-029 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: cascade_analyzer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CascadeAnalyzer
+#   name_en: CascadeAnalyzer
+#   intro: 删除级联分析器——分析删除文件对项目的影响。
+#   desc: 删除级联分析器——分析删除文件对项目的影响。 基于简化版 import 引用图分析（grep 搜索 import 语句）， 识别直接和间接依赖者，评估级联风险。；公共方法（定义序）: analyze_cascade,…
+#   inputs: project_root
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: CascadeAnalyzer
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 from __future__ import annotations
 
 import logging

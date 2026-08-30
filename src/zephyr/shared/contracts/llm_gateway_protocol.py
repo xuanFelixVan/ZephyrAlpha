@@ -25,6 +25,33 @@ D-INFRA 和 D-ORCH 均依赖此接口，消除跨域直接依赖。
 消费者: zephyr.infrastructure.pipeline.llm_gateway
         zephyr.infrastructure.auto_fix_engine.llm_fix_adapter
         zephyr.integration.pipeline_orchestrator
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: llm_gateway_protocol.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① LLMGatewayProtocol
+#   name_en: LLMGatewayProtocol
+#   intro: LLM 网关 Protocol — 多模型智能路由 + 降级链。
+#   desc: LLM 网关 Protocol — 多模型智能路由 + 降级链。 实现方 MUST 提供以下 4 个 classmethod 签名。 消费方通过此 Protocol 类型注解，运…；公共方法（定义序）: call, r…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: LLMGatewayProtocol
+#   downstream: zephyr.infrastructure.pipeline; zephyr.infrastructure.auto_fix_engine
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

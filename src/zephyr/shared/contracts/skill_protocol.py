@@ -15,6 +15,65 @@
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: registry_path 参数
+#   fields: 参数 registry_path，类型注解 Path | None
+#   code: skill_protocol.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SkillLoaderProtocol
+#   name_en: SkillLoaderProtocol
+#   intro: Skill加载器协议——解耦D-INFRA/D-GOV对D-ORCH的直接依赖。
+#   desc: Skill加载器协议——解耦D-INFRA/D-GOV对D-ORCH的直接依赖。；公共方法（定义序）: list_skills, load, progressive_load, progressive_load_ful…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② SkillRouterProtocol
+#   name_en: SkillRouterProtocol
+#   intro: Skill路由协议——解耦D-GOV对D-ORCH的直接依赖。
+#   desc: Skill路由协议——解耦D-GOV对D-ORCH的直接依赖。；公共方法（定义序）: route, list_registered_skills；源码 L104-L109
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ create_skill_loader
+#   name_en: create_skill_loader
+#   intro: 延迟导入并创建SkillLoader实例。
+#   desc: 延迟导入并创建SkillLoader实例。；源码 L112-L116
+#   inputs: registry_path
+#   outputs: SkillLoaderProtocol
+# - id: A4
+#   name_zh: ④ create_skill_router
+#   name_en: create_skill_router
+#   intro: 延迟导入并创建SkillRouter实例。
+#   desc: 延迟导入并创建SkillRouter实例。；源码 L119-L123
+#   inputs: registry_path
+#   outputs: SkillRouterProtocol
+# 层: 输出
+# - id: O1
+#   name_zh: SkillLoaderProtocol
+#   name_en: SkillLoaderProtocol
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.infrastructure.mcp_servers; zephyr.governance.agent_spec; zephyr.infrast…
+# - id: O2
+#   name_zh: SkillRouterProtocol
+#   name_en: SkillRouterProtocol
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.infrastructure.mcp_servers; zephyr.governance.agent_spec; zephyr.infrast…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
+"""
+
 from __future__ import annotations
 
 import importlib

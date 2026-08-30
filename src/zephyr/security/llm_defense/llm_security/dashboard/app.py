@@ -15,9 +15,44 @@
 # [A_module] module_id=MOD-LLM_SECURITY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""LLM Security Gateway - Streamlit Dashboard.
+"""
+LLM Security Gateway - Streamlit Dashboard.
 
 提供实时安全监控、攻击检测统计、载荷分析、系统健康状态的可视化界面。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: app.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SecurityDashboard
+#   name_en: SecurityDashboard
+#   intro: 安全仪表板主类
+#   desc: 安全仪表板主类；公共方法（定义序）: setup_page_config, load_payloads, setup_sidebar, render_security_overview, render_attack_d…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② main
+#   name_en: main
+#   intro: 主函数
+#   desc: 主函数；源码 L769-L777
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: SecurityDashboard, main
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 import sys

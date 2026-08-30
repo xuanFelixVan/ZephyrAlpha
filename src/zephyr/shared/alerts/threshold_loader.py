@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/test_alert_threshold_consistency.py（红队 fail-closed 用例内嵌）
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""告警阈值注册表共享加载器（tracker #87 存量统读改造，55 号 §3.3 决策落地）。
+"""
+告警阈值注册表共享加载器（tracker #87 存量统读改造，55 号 §3.3 决策落地）。
 
 唯一职责：从 alert_threshold_registry.yaml（REG-ATH-001）fail-closed 加载阈值，
 供 9 个存量模块替代码内硬编码常量（加载范式对齐
@@ -24,6 +25,43 @@ fail-closed 四类失败一律 raise AlertThresholdConfigError（禁止第二真
   ① 注册表文件不存在  ② YAML 畸形  ③ 缺条目/缺 value 字段  ④ 类型畸形（cast 失败）
 
 字符串规约值（PLV "±1%" 等）经 cast="str" 保持字符串语义加载，不强行数值化。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: mapping 参数
+#   fields: 参数 mapping，类型注解 Mapping[str, str]
+#   code: threshold_loader.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: registry_path 参数
+#   fields: 参数 registry_path（无注解）
+#   code: threshold_loader.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: cast 参数
+#   fields: 参数 cast（无注解）
+#   code: threshold_loader.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① load_alert_thresholds
+#   name_en: load_alert_thresholds
+#   intro: 从告警阈值注册表加载阈值（fail-closed：缺文件/缺条目/类型畸形直接报错）。
+#   desc: 从告警阈值注册表加载阈值（fail-closed：缺文件/缺条目/类型畸形直接报错）。 Args: mapping: {threshold_id: 输出键} 映射，如 {"THD…；源码 L143-L184
+#   inputs: mapping registry_path cast
+#   outputs: dict[str, Any]
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, Any]
+#   name_en: dict[str, Any]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-RK-011(drawdown_tracker); MOD-INF-035(health_monitor); MOD-BT-001(decision_…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

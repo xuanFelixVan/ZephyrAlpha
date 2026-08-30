@@ -15,6 +15,50 @@
 # [A_module] module_id=MOD-INF-029 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: l0_checker 参数
+#   fields: 参数 l0_checker（无注解）
+#   code: judge.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: l1_checker 参数
+#   fields: 参数 l1_checker（无注解）
+#   code: judge.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: l2_checker 参数
+#   fields: 参数 l2_checker（无注解）
+#   code: judge.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: l3_checker 参数
+#   fields: 参数 l3_checker（无注解）
+#   code: judge.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① OrphanJudge
+#   name_en: OrphanJudge
+#   intro: 孤儿判定主控类——五层判定->决策路由->安全围栏->处置建议
+#   desc: 孤儿判定主控类——五层判定->决策路由->安全围栏->处置建议 编排 L0(注册检查)->L1(引用图)->L2(重复检测)->L3(独特价值)->L4(独立价值) 五层判定，经…；公共方法（定义序）: judge,…
+#   inputs: l0_checker l1_checker l2_checker l3_checker l4_checker jsonl_output
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: OrphanJudge
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
+"""
+
 from __future__ import annotations
 
 import importlib

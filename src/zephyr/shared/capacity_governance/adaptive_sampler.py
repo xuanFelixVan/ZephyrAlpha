@@ -14,6 +14,47 @@
 # [TESTS]
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: base_rate 参数
+#   fields: 参数 base_rate（无注解）
+#   code: adaptive_sampler.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: error_boost 参数
+#   fields: 参数 error_boost（无注解）
+#   code: adaptive_sampler.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: max_rate 参数
+#   fields: 参数 max_rate（无注解）
+#   code: adaptive_sampler.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AdaptiveSampler
+#   name_en: AdaptiveSampler
+#   intro: class AdaptiveSampler 源码 L71-L102
+#   desc: 公共方法（定义序）: base_rate, decide, update_base_rate；源码 L71-L102
+#   inputs: base_rate error_boost max_rate
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: AdaptiveSampler
+#   downstream: zephyr.feedback_loop.__init___from_obs
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
+"""
+
 from __future__ import annotations
 
 import random

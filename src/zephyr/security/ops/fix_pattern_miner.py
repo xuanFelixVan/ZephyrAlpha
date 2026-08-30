@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-055 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""修复模式挖掘器——Learn 回写闭环（16号文 §4.4 P2-1，MOD-INF-055 一部分）。
+"""
+修复模式挖掘器——Learn 回写闭环（16号文 §4.4 P2-1，MOD-INF-055 一部分）。
 
 闭环定位：Detect（security_event_bus）→ Diagnose（failure_matcher）→
 Remediate（auto_fix_engine 三通道）→ **Learn（本件）**。修复记录由
@@ -40,6 +41,51 @@ Remediate（auto_fix_engine 三通道）→ **Learn（本件）**。修复记录
 fix_actions 表挖掘）数据源不同——本件挖 16号文知识库 YAML 记录，是安全
 运维闭环的 Learn 件；两者互补不替代。周期调度属外部（Windows 任务计划），
 本件提供 ``run_once()`` 单次挖掘入口；LLM/DB/网络不在本模块。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: records 参数
+#   fields: 参数 records，类型注解 Sequence[Any]
+#   code: fix_pattern_miner.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: patterns 参数
+#   fields: 参数 patterns（无注解）
+#   code: fix_pattern_miner.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: fix_pattern_miner.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① mine_records
+#   name_en: mine_records
+#   intro: 纯内存挖掘：修复记录 + 模式库覆盖 → 命中率统计 + 策略库更新建议。
+#   desc: 纯内存挖掘：修复记录 + 模式库覆盖 → 命中率统计 + 策略库更新建议。 - 非 mapping 记录跳过并计数（``skipped_records``，fail-visibl…；源码 L195-L303
+#   inputs: records patterns config
+#   outputs: MiningReport
+# - id: A2
+#   name_zh: ② FixPatternMiner
+#   name_en: FixPatternMiner
+#   intro: Learn 回写闭环挖掘器：读知识库记录 → 挖掘 → 报告 append-only 落盘。
+#   desc: Learn 回写闭环挖掘器：读知识库记录 → 挖掘 → 报告 append-only 落盘。 不变量：只产建议不落策略库（A-L2 封顶，采纳 human_gated）；挖掘报告…；公共方法（定义序）: config,…
+#   inputs: config
+#   outputs: 返回值
+#   （注：A2 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: MiningReport
+#   name_en: MiningReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

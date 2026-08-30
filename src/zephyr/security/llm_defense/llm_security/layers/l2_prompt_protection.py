@@ -14,6 +14,35 @@
 # [TESTS]
 # [A_module] module_id=MOD-LLM_SECURITY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: l2_prompt_protection.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① PromptProtectionLayer
+#   name_en: PromptProtectionLayer
+#   intro: L2 Prompt 保护层：安全构建 + 泄露扫描 + 探测检测 + 话题边界。
+#   desc: L2 Prompt 保护层：安全构建 + 泄露扫描 + 探测检测 + 话题边界。；公共方法（定义序）: build_safe_prompt, scan_for_leak, detect_prompt_probing,…
+#   inputs: config
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: PromptProtectionLayer
+#   downstream: zephyr.security.llm_defense.llm_security.gateway; tests.llm_security.test_l2_pr…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 import re
 from dataclasses import dataclass, field
 from typing import Any

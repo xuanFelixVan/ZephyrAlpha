@@ -35,6 +35,75 @@ Phase 6 新增（盲点 B9）——解决 LifecycleManager 虽有单模块健康
 
 SSoT: MOD-INF-016 §2.16 shared-health
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: modules 参数
+#   fields: 参数 modules，类型注解 list[LifecycleAware]
+#   code: health.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: timeout 参数
+#   fields: 参数 timeout（无注解）
+#   code: health.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① HealthSummary
+#   name_en: HealthSummary
+#   intro: class HealthSummary 源码 L145-L178
+#   desc: 公共方法（定义序）: to_dict；源码 L145-L178
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② AggregateHealth
+#   name_en: AggregateHealth
+#   intro: 聚合所有 LifecycleAware 模块的健康状态。
+#   desc: 聚合所有 LifecycleAware 模块的健康状态。 Usage: agg = AggregateHealth(lifecycle_manager) summary = aw…；公共方法（定义序）: check,…
+#   inputs: lifecycle_manager
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ collect_health
+#   name_en: collect_health
+#   intro: 便利函数——从模块列表直接收集聚合健康状态。
+#   desc: 便利函数——从模块列表直接收集聚合健康状态。 Args: modules: LifecycleAware 模块列表 timeout: 每个模块的超时时间 Returns: Hea…；源码 L324-L342
+#   inputs: modules timeout
+#   outputs: HealthSummary
+# - id: A4
+#   name_zh: ④ subscribe_monitoring_events
+#   name_en: subscribe_monitoring_events
+#   intro: 订阅统一 EventBus 事件 — DM-201248.
+#   desc: 订阅统一 EventBus 事件 — DM-201248. 监控模块通过事件订阅实现事件驱动启动，而非轮询： 1. f5.deadlock_detected — 记录健康状态为…；源码 L351-L416
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ get_event_health_log
+#   name_en: get_event_health_log
+#   intro: 返回事件健康日志 — DM-201248.
+#   desc: 返回事件健康日志 — DM-201248.；源码 L419-L421
+#   inputs: 无参数
+#   outputs: list[dict[str, Any]]
+#   （注：A5 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: HealthSummary
+#   name_en: HealthSummary
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: list[dict[str, Any]]
+#   name_en: list[dict[str, Any]]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations

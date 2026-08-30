@@ -15,10 +15,37 @@
 # [A_module] module_id=MOD-INF-029 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""[BLUEPRINT] MOD-INF-029 — L4 独立价值评估器
+"""
+[BLUEPRINT] MOD-INF-029 — L4 独立价值评估器
 
 六指标加权评分: 文件大小(15%) + 代码行数(20%) + 定义数(20%)
 + 文档注释(10%) + 测试存在(10%) + 导入复杂度(25%)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: standalone_evaluator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① StandaloneEvaluator
+#   name_en: StandaloneEvaluator
+#   intro: class StandaloneEvaluator 源码 L80-L192
+#   desc: 公共方法（定义序）: check；源码 L80-L192
+#   inputs: project_root
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: StandaloneEvaluator
+#   downstream: orphan-judge.judge._run_layer L4
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

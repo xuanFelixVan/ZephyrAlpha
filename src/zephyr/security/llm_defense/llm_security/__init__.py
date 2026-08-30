@@ -2,6 +2,36 @@
 # [TTL] permanent
 # [A_module] module_id=MOD-SEC-llm_security | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 包内子模块公共符号
+#   fields: import 再导出符号: AuditAction, AuditEvent, AuditLogger, AuditQuery, RotationPolicy, ope…
+#   code: __init__.py import L35
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包公共面再导出
+#   name_en: __init__ re-export
+#   intro: 再导出 AuditAction, AuditEvent, AuditLogger, AuditQuery, CommandInjectionError, Co…
+#   desc: __init__ import L35；__all__ 34 项（AST 事实）
+#   inputs: I1
+#   outputs: __all__ 公共符号表
+# 层: 输出
+# - id: O1
+#   name_zh: 公共 API 面（34 符号）
+#   name_en: __all__
+#   intro: AuditAction, AuditEvent, AuditLogger, AuditQuery, CommandInjectionError, Contex…
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 from zephyr.security.llm_defense.llm_security.behavior_audit_logger import (
     AuditAction,
     AuditEvent,

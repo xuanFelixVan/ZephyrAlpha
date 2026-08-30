@@ -14,7 +14,8 @@
 # [TESTS] tests/security/llm_defense/test_spectral_guard.py
 # [A_module] module_id=MOD-SECLLM-002 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""SpectralGuard — Spectral 注意力谱幻觉检测器（MOD-SECLLM-002）。
+"""
+SpectralGuard — Spectral 注意力谱幻觉检测器（MOD-SECLLM-002）。
 
 B10-01868（AUD-DRAFT-001-DIGEST P2 波 P2-W15，CAND-SECLLM-001，A1
 §29.24-7）：注意力矩阵视作**动态图** → Laplacian **谱能量特征**（度矩阵
@@ -24,6 +25,38 @@ B10-01868（AUD-DRAFT-001-DIGEST P2 波 P2-W15，CAND-SECLLM-001，A1
 
 查重分工（蓝图 §0）：sentinel_hallucination_detector=哨兵幻觉检测语义
 （本件=注意力谱特征通路，不重建哨兵流水线）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: thresholds 参数
+#   fields: 参数 thresholds（无注解）
+#   code: spectral_guard.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: recall_first 参数
+#   fields: 参数 recall_first（无注解）
+#   code: spectral_guard.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SpectralGuard
+#   name_en: SpectralGuard
+#   intro: Spectral 注意力谱幻觉检测器（谱特征 + 双阈值 + recall 优先）。
+#   desc: Spectral 注意力谱幻觉检测器（谱特征 + 双阈值 + recall 优先）。；公共方法（定义序）: features, evaluate；源码 L128-L222
+#   inputs: thresholds recall_first
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: SpectralGuard
+#   downstream: 运行时装配批（LLM 输出护栏装配点注入模型阈值表后调用判定）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -111,8 +144,7 @@ class SpectralGuard:
                 raise SpectralGuardError(f"模型 {model} 阈值类型非法")
             if not (0.0 <= th.warn <= th.block <= 1.0):
                 raise SpectralGuardError(
-                    f"模型 {model} 阈值非法（须 0<=warn<=block<=1）: "
-                    f"warn={th.warn} block={th.block}"
+                    f"模型 {model} 阈值非法（须 0<=warn<=block<=1）: warn={th.warn} block={th.block}"
                 )
             table[model] = th
         self._thresholds = table
@@ -145,9 +177,7 @@ class SpectralGuard:
         total = float(eigvals.sum())
         if total <= 0.0:
             # 零能量（如全零/单位注意力）：完全集中，无分散
-            return SpectralFeatures(
-                size=n, spectral_entropy=0.0, concentration=1.0, dispersion=0.0
-            )
+            return SpectralFeatures(size=n, spectral_entropy=0.0, concentration=1.0, dispersion=0.0)
         p = eigvals / total
         positive = p[p > 0.0]
         entropy = float(-(positive * np.log(positive)).sum())
@@ -161,9 +191,7 @@ class SpectralGuard:
 
     # ── 幻觉判定 ─────────────────────────────────────────────────────────
 
-    def evaluate(
-        self, model: str, attention: Sequence[Sequence[float]]
-    ) -> GuardResult:
+    def evaluate(self, model: str, attention: Sequence[Sequence[float]]) -> GuardResult:
         """幻觉评分 + 分模型双阈值判定（recall 优先）。"""
         th = self._thresholds.get(model)
         if th is None:
@@ -177,14 +205,13 @@ class SpectralGuard:
         else:
             verdict = Verdict.CLEAN
         # recall 优先：SUSPECT 按阳性计（宁误报不漏报）
-        is_hallucination = (
-            verdict is Verdict.HALLUCINATED
-            or (verdict is Verdict.SUSPECT and self._recall_first)
-        )
+        is_hallucination = verdict is Verdict.HALLUCINATED or (verdict is Verdict.SUSPECT and self._recall_first)
         if is_hallucination:
             _log.warning(
                 "Spectral 幻觉判定: model=%s score=%.4f verdict=%s",
-                model, score, verdict.value,
+                model,
+                score,
+                verdict.value,
             )
         return GuardResult(
             model=model,

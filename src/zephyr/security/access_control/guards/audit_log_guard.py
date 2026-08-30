@@ -14,16 +14,43 @@
 # [TESTS] tests/audit/test_audit_log_guard.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""audit_log_guard.py — 审计日志注入防护守卫
+r"""
+audit_log_guard.py — 审计日志注入防护守卫
 
 治本（裁定#18 G4）：本文件原为桩实现（AuditLogGuard: pass），缺 sanitize/
 validate_entry/validate_dict 方法，导致 tests/audit/test_audit_log_guard.py 15 项
 失败。现按测试契约实现日志注入防护：
 
-- sanitize(value): 净化字符串中的控制字符（\\n/\\r/\\t/\\x00）与字面转义序列（\\n/\\r/\\t），
-  替换为空格（\\x00 直接删除），防止日志注入攻击。
+- sanitize(value): 净化字符串中的控制字符（\n/\r/\t/\x00）与字面转义序列（\n/\r/\t），
+  替换为空格（\x00 直接删除），防止日志注入攻击。
 - validate_entry(key, value): 校验单个键值对，返回 {key, clean, original_len}。
 - validate_dict(data): 批量校验字典，返回 {clean, issues}，非字符串值跳过。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: audit_log_guard.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① AuditLogGuard
+#   name_en: AuditLogGuard
+#   intro: 审计日志注入防护守卫——治本（ G4）。
+#   desc: 审计日志注入防护守卫——治本（ G4）。 提供 sanitize/validate_entry/validate_dict 三个方法，确保写入审计日志的 字符串不包含控制字符或转…；公共方法（定义序）: sanitiz…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: AuditLogGuard
+#   downstream: tests.agent_rbac.test_forensic_c
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from typing import Any, Final

@@ -14,12 +14,39 @@
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""PermissionGuard — 七层权限编排器.
+"""
+PermissionGuard — 七层权限编排器.
 
 依据蓝图 MOD-INF-018 §3:
 - 编排七层检查（L0-L6）
 - ALWAYS_BLOCKED_OPERATIONS 永远 BLOCKED
 - 角色权限决定 ALLOW/AUTO_GUARD
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: permission_guard.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① PermissionGuard
+#   name_en: PermissionGuard
+#   intro: 七层权限编排器.
+#   desc: 七层权限编排器. 编排 L0-L6 七层检查，决定操作是否允许。；公共方法（定义序）: l0, l1, is_blocked, explain, check；源码 L78-L235
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: PermissionGuard
+#   downstream: tests/agent_rbac/test_redteam_adversarial.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

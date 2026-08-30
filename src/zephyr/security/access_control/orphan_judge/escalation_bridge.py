@@ -15,6 +15,36 @@
 # [A_module] module_id=MOD-INF-029 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: escalation_bridge.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① EscalationBridge
+#   name_en: EscalationBridge
+#   intro: class EscalationBridge 源码 L58-L102
+#   desc: 公共方法（定义序）: escalate_judgment, evaluate_risk, is_available；源码 L58-L102
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: EscalationBridge
+#   downstream: orphan-judge.judge.OrphanJudge(ESCALATE判决)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 from __future__ import annotations
 
 import logging

@@ -25,6 +25,38 @@ Hook Dispatcher — 任务状态变更 -> 外部回调触发。
 功能：
     - 任务状态变更时触发外部回调（Webhook/脚本）
     - MTH-015 模板实现
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: event_bus 参数
+#   fields: 参数 event_bus（无注解）
+#   code: hook_dispatcher.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: data_dir 参数
+#   fields: 参数 data_dir（无注解）
+#   code: hook_dispatcher.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① HookDispatcher
+#   name_en: HookDispatcher
+#   intro: class HookDispatcher 源码 L104-L277
+#   desc: 公共方法（定义序）: bus, data_dir, hooks, register_hook, get_executions；源码 L104-L277
+#   inputs: event_bus data_dir
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: HookDispatcher
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

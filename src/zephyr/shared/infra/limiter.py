@@ -15,6 +15,63 @@
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: permits_per_second 参数
+#   fields: 参数 permits_per_second，类型注解 float
+#   code: limiter.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: burst_size 参数
+#   fields: 参数 burst_size（无注解）
+#   code: limiter.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: max_wait_seconds 参数
+#   fields: 参数 max_wait_seconds（无注解）
+#   code: limiter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① TokenBucketLimiter
+#   name_en: TokenBucketLimiter
+#   intro: Token Bucket 速率限制器——平滑突发 + 精确控速。
+#   desc: Token Bucket 速率限制器——平滑突发 + 精确控速。 Usage:: limiter = TokenBucketLimiter(permits_per_second=…；公共方法（定义序）: acquire…
+#   inputs: permits_per_second burst_size max_wait_seconds
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② async_limited
+#   name_en: async_limited
+#   intro: 装饰器：为异步函数自动加上速率限制。
+#   desc: 装饰器：为异步函数自动加上速率限制。 Usage:: @async_limited(perms_per_second=500.0) async def call_llm(prom…；源码 L228-L258
+#   inputs: permits_per_second burst_size max_wait_seconds
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ SyncTokenBucketLimiter
+#   name_en: SyncTokenBucketLimiter
+#   intro: 同步 Token Bucket 速率限制器——线程安全，阻塞式 try_acquire。
+#   desc: 同步 Token Bucket 速率限制器——线程安全，阻塞式 try_acquire。 对标 TokenBucketLimiter 的同步版本，用于同步代码路径（如 MCP g…；公共方法（定义序）: try_acq…
+#   inputs: permits_per_second burst_size max_wait_seconds
+#   outputs: 返回值
+#   （注：A3 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: TokenBucketLimiter, async_limited, SyncTokenBucketLimiter
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
+"""
+
 from __future__ import annotations
 
 from typing import Self

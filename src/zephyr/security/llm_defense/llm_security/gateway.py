@@ -15,6 +15,50 @@
 # [A_module] module_id=MOD-LLM_SECURITY | layer=module | stability=evolving | safety=L | ai_autonomy=human_gated
 # [TTL] permanent
 
+"""
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: model_digest_registry 参数
+#   fields: 参数 model_digest_registry（无注解）
+#   code: gateway.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: rules_file_baselines 参数
+#   fields: 参数 rules_file_baselines（无注解）
+#   code: gateway.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: gateway.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: max_tokens 参数
+#   fields: 参数 max_tokens（无注解）
+#   code: gateway.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① LSGSecurityGateway
+#   name_en: LSGSecurityGateway
+#   intro: LLM Security Gateway — L0-L8 九层纵深防御统一编排入口.
+#   desc: LLM Security Gateway — L0-L8 九层纵深防御统一编排入口. 原则：fail-closed —— 任一层 DENY -> 整体 DENY，LSG 不可用…；公共方法（定义序）: layers,…
+#   inputs: model_digest_registry rules_file_baselines project_root max_tokens ma…
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: LSGSecurityGateway
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
+"""
+
 import asyncio
 import time
 from dataclasses import dataclass, field

@@ -39,6 +39,49 @@ AI 施工约定：
 
 SSoT: MOD-INF-016 §2.21 shared-outbox
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: max_entries 参数
+#   fields: 参数 max_entries（无注解）
+#   code: outbox.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① OutboxStore
+#   name_en: OutboxStore
+#   intro: Outbox 存储后端接口。
+#   desc: Outbox 存储后端接口。；公共方法（定义序）: append, fetch_pending, mark_published, mark_failed, count_pending；源码 L141-L150
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② MemoryOutboxStore
+#   name_en: MemoryOutboxStore
+#   intro: 内存中的 Outbox 存储——开发/测试用。
+#   desc: 内存中的 Outbox 存储——开发/测试用。 Production 应替换为基于 SQLite/PostgreSQL 的实现。；公共方法（定义序）: append, fetch_pending, mark_publi…
+#   inputs: max_entries
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ OutboxPublisher
+#   name_en: OutboxPublisher
+#   intro: 后台轮询型 Outbox 发布器——从 outbox 表取 PENDING 消息 -> 调用 handler 发布。
+#   desc: 后台轮询型 Outbox 发布器——从 outbox 表取 PENDING 消息 -> 调用 handler 发布。 对标 Debezium 的轮询模式（非 CDC，简单可靠）。…；公共方法（定义序）: start,…
+#   inputs: store handler poll_interval_seconds batch_size max_retries
+#   outputs: 返回值
+#   （注：A3 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: OutboxStore, MemoryOutboxStore, OutboxPublisher
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

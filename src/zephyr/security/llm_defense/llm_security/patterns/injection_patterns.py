@@ -14,6 +14,128 @@
 # [TESTS]
 # [A_module] module_id=MOD-LLM_SECURITY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: text 参数
+#   fields: 参数 text，类型注解 str
+#   code: injection_patterns.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: patterns 参数
+#   fields: 参数 patterns，类型注解 list | None
+#   code: injection_patterns.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: context 参数
+#   fields: 参数 context，类型注解 object
+#   code: injection_patterns.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: filename 参数
+#   fields: 参数 filename，类型注解 str
+#   code: injection_patterns.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① InjectionPattern
+#   name_en: InjectionPattern
+#   intro: Legacy injection pattern descriptor.
+#   desc: Legacy injection pattern descriptor.；公共方法（定义序）: match；源码 L144-L156
+#   inputs: pattern_type regex severity
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② scan_direct
+#   name_en: scan_direct
+#   intro: Scan for direct prompt-injection and nested-structure patte…
+#   desc: Scan for direct prompt-injection and nested-structure patterns.；源码 L268-L278
+#   inputs: text patterns
+#   outputs: list[dict[str, Any]]
+# - id: A3
+#   name_zh: ③ scan_indirect
+#   name_en: scan_indirect
+#   intro: Scan for indirect injection (RAG poisoning) + context overf…
+#   desc: Scan for indirect injection (RAG poisoning) + context overflow.；源码 L281-L292
+#   inputs: text context
+#   outputs: list[dict[str, Any]]
+# - id: A4
+#   name_zh: ④ scan_jailbreak
+#   name_en: scan_jailbreak
+#   intro: Scan for jailbreak, encoding-obfuscation, token-smuggling,…
+#   desc: Scan for jailbreak, encoding-obfuscation, token-smuggling, emotional.；源码 L295-L304
+#   inputs: text
+#   outputs: list[dict[str, Any]]
+# - id: A5
+#   name_zh: ⑤ scan_shell
+#   name_en: scan_shell
+#   intro: Scan for shell-injection and dangerous-subprocess patterns.
+#   desc: Scan for shell-injection and dangerous-subprocess patterns.；源码 L307-L316
+#   inputs: text
+#   outputs: list[dict[str, Any]]
+# - id: A6
+#   name_zh: ⑥ scan_sql
+#   name_en: scan_sql
+#   intro: Scan for SQL-injection patterns.
+#   desc: Scan for SQL-injection patterns.；源码 L319-L328
+#   inputs: text
+#   outputs: list[dict[str, Any]]
+# - id: A7
+#   name_zh: ⑦ scan_path_traversal
+#   name_en: scan_path_traversal
+#   intro: Scan for path-traversal and sensitive-file-access patterns.
+#   desc: Scan for path-traversal and sensitive-file-access patterns.；源码 L331-L340
+#   inputs: text
+#   outputs: list[dict[str, Any]]
+# - id: A8
+#   name_zh: ⑧ scan_encoding_escape
+#   name_en: scan_encoding_escape
+#   intro: Scan for encoding-escape attacks (zero-width, hex, unicode).
+#   desc: Scan for encoding-escape attacks (zero-width, hex, unicode).；源码 L343-L352
+#   inputs: text
+#   outputs: list[dict[str, Any]]
+# - id: A9
+#   name_zh: ⑨ scan_semantic_attacks
+#   name_en: scan_semantic_attacks
+#   intro: Scan for semantic attacks (training-data extraction, model…
+#   desc: Scan for semantic attacks (training-data extraction, model theft, tool abuse).；源码 L355-L364
+#   inputs: text
+#   outputs: list[dict[str, Any]]
+# - id: A10
+#   name_zh: ⑩ check_file_type
+#   name_en: check_file_type
+#   intro: Return applicable scan patterns based on file extension.
+#   desc: Return applicable scan patterns based on file extension. Code/script files return shell p…；源码 L379-L394
+#   inputs: filename
+#   outputs: list
+# 层: 输出
+# - id: O1
+#   name_zh: list[dict[str, Any]]
+#   name_en: list[dict[str, Any]]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests.llm_security.test_injection_patterns
+# - id: O2
+#   name_zh: list
+#   name_en: list
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests.llm_security.test_injection_patterns
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> A10
+# A10 --> O1
+"""
+
 import os
 import re
 from typing import Any, Final

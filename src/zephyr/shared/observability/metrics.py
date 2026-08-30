@@ -41,6 +41,49 @@ AI 施工约定：
 
 SSoT: MOD-INF-016 §2.16 shared-metrics
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: metrics.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① MetricsRegistry
+#   name_en: MetricsRegistry
+#   intro: 线程安全的轻量级 Metrics 注册表。
+#   desc: 线程安全的轻量级 Metrics 注册表。 对标 Prometheus 的 Counter / Gauge / Histogram 三分类。 Usage:: reg = get_…；公共方法（定义序）: inc, se…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② get_registry
+#   name_en: get_registry
+#   intro: get_registry() 源码 L310-L314
+#   desc: 源码 L310-L314
+#   inputs: 无参数
+#   outputs: MetricsRegistry
+# - id: A3
+#   name_zh: ③ subscribe_metrics_events
+#   name_en: subscribe_metrics_events
+#   intro: 订阅统一 EventBus 事件并记录指标 — DM-201248.
+#   desc: 订阅统一 EventBus 事件并记录指标 — DM-201248. 当事件发生时，自动递增 counter 指标： - zephyr_event_f5_deadlock_tot…；源码 L322-L365
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A3 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: MetricsRegistry
+#   name_en: MetricsRegistry
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.wal_writer; zephyr.data.tick_subscriber; zephyr.data.ch_writer
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

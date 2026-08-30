@@ -40,6 +40,49 @@ AI 施工约定：
 
 SSoT: MOD-INF-016 §2.14 shared-idempotency
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: prefix 参数
+#   fields: 参数 prefix，类型注解 str
+#   code: idempotency.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① IdempotencyStore
+#   name_en: IdempotencyStore
+#   intro: 幂等性 key-value 存储——防止重复操作。
+#   desc: 幂等性 key-value 存储——防止重复操作。 对标 Stripe Idempotency-Key：24h TTL，相同 key 返回缓存结果。 Usage:: store…；公共方法（定义序）: get, sta…
+#   inputs: default_ttl_seconds
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② build_idempotency_key
+#   name_en: build_idempotency_key
+#   intro: 公共接口：build_idempotency_key（Stage 4 公共化，委托到 _build_idempoten…
+#   desc: 公共接口：build_idempotency_key（Stage 4 公共化，委托到 _build_idempotency_key）。；源码 L259-L261
+#   inputs: prefix
+#   outputs: str
+# - id: A3
+#   name_zh: ③ SQLiteIdempotencyStore
+#   name_en: SQLiteIdempotencyStore
+#   intro: SQLite 持久化幂等性存储——跨进程/重启保持幂等记录。
+#   desc: SQLite 持久化幂等性存储——跨进程/重启保持幂等记录。 对标 IdempotencyStore 的内存实现，但用 SQLite 作为后端，支持跨进程共享。 表结构：idem…；公共方法（定义序）: get, st…
+#   inputs: db_path default_ttl_seconds
+#   outputs: 返回值
+#   （注：A3 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

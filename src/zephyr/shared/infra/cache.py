@@ -40,6 +40,62 @@ AI 施工约定：
 
 SSoT: MOD-INF-016 §2.12 shared-cache
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: max_size 参数
+#   fields: 参数 max_size（无注解）
+#   code: cache.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: default_ttl_seconds 参数
+#   fields: 参数 default_ttl_seconds（无注解）
+#   code: cache.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CacheStats
+#   name_en: CacheStats
+#   intro: class CacheStats 源码 L134-L147
+#   desc: 公共方法（定义序）: hit_rate；源码 L134-L147
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② CacheProvider
+#   name_en: CacheProvider
+#   intro: 缓存后端接口——获取/设置/删除/清空/统计。
+#   desc: 缓存后端接口——获取/设置/删除/清空/统计。；公共方法（定义序）: get, set, delete, clear, stats；源码 L150-L157
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ MemoryCache
+#   name_en: MemoryCache
+#   intro: 内存缓存——TTL + LRU 驱逐 + 最大容量。
+#   desc: 内存缓存——TTL + LRU 驱逐 + 最大容量。 对标 Python functools.lru_cache + Guava Cache 的生产增强。 Usage:: cac…；公共方法（定义序）: get, se…
+#   inputs: max_size default_ttl_seconds
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ cache_key
+#   name_en: cache_key
+#   intro: 构造确定性缓存 key——用 ':' 分隔各段。
+#   desc: 构造确定性缓存 key——用 ':' 分隔各段。 Usage:: key = cache_key("llm", "chat", model, str(hash(json.dump…；源码 L254-L261
+#   inputs: 无参数
+#   outputs: str
+#   （注：A4 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: N/A (all consumers verified as phantom — stale references removed)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

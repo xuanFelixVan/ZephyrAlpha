@@ -30,6 +30,78 @@ StateMachine[S] — 通用状态机泛型基类 (MOD-INF-038)
 
 SSoT: MOD-INF-038 blueprint.md §4
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: state_machine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: initial 参数
+#   fields: 参数 initial（无注解）
+#   code: state_machine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① TransitionGuard
+#   name_en: TransitionGuard
+#   intro: class TransitionGuard 源码 L203-L205
+#   desc: 公共方法（定义序）: check；源码 L203-L205
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② SideEffect
+#   name_en: SideEffect
+#   intro: class SideEffect 源码 L208-L216
+#   desc: 公共方法（定义序）: on_enter, on_exit, on_transition；源码 L208-L216
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ StateMachineConfig
+#   name_en: StateMachineConfig
+#   intro: class StateMachineConfig 源码 L220-L247
+#   desc: 公共方法（定义序）: state_names, transition_map；源码 L220-L247
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ StateMachine
+#   name_en: StateMachine
+#   intro: class StateMachine 源码 L250-L336
+#   desc: 公共方法（定义序）: fsm_id, current_state, config, history, can_transition, can_transition_from, available_transitions…
+#   inputs: config initial
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ StateMachineRegistry
+#   name_en: StateMachineRegistry
+#   intro: class StateMachineRegistry 源码 L339-L436
+#   desc: 公共方法（定义序）: register, get, list_all, detect_conflicts；源码 L339-L436
+#   inputs: registry_path
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ get_state_machine_registry
+#   name_en: get_state_machine_registry
+#   intro: get_state_machine_registry() 源码 L442-L446
+#   desc: 源码 L442-L446
+#   inputs: 无参数
+#   outputs: StateMachineRegistry
+#   （注：A6 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: StateMachineRegistry
+#   name_en: StateMachineRegistry
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-TASK_SYSTEM(task) ; MOD-INF-023(drift) ; MOD-INF-021(rollback) ; MOD-INF-01…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
 """
 
 from __future__ import annotations

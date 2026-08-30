@@ -14,7 +14,8 @@
 # [TESTS] tests/sell_decision/test_exit_scenario_planner.py
 # [A_module] module_id=MOD-SELL-013 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Exit Scenario Planner — 离场情景规划器 (MOD-SELL-013)
+"""
+Exit Scenario Planner — 离场情景规划器 (MOD-SELL-013)
 
 给一个持仓生成候选离场情景集并给出推荐：
 
@@ -31,6 +32,33 @@
 纪律：纯函数、无 IO；紧迫度/止损状态由调用方注入（MOD-SELL-009/
 MOD-SELL-014 产出可直插）。
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: intent 参数
+#   fields: 参数 intent，类型注解 ExitPlanningInput
+#   code: exit_scenario_planner.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① plan_exit_scenarios
+#   name_en: plan_exit_scenarios
+#   intro: 规划离场情景（纯函数）。
+#   desc: 规划离场情景（纯函数）。 Raises: InvalidExitPlanInputError: 输入非法；源码 L162-L233
+#   inputs: intent
+#   outputs: ExitScenarioPlan
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ExitScenarioPlan
+#   name_en: ExitScenarioPlan
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-SELL-017(分批卖出架构) ; MOD-SELL-018(做T协调) ; D-EX-CORE(执行)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -143,9 +171,7 @@ def plan_exit_scenarios(intent: ExitPlanningInput) -> ExitScenarioPlan:
         if not math.isfinite(v) or v < 0.0:
             raise InvalidExitPlanInputError(f"{name} 非法（须为有限非负值），got {v}")
     if intent.sellable_weight > intent.weight + 1e-12:
-        raise InvalidExitPlanInputError(
-            f"可卖权重 {intent.sellable_weight} 超持仓权重 {intent.weight}（口径矛盾）"
-        )
+        raise InvalidExitPlanInputError(f"可卖权重 {intent.sellable_weight} 超持仓权重 {intent.weight}（口径矛盾）")
     if not math.isfinite(intent.urgency) or not (0.0 <= intent.urgency <= 1.0):
         raise InvalidExitPlanInputError(f"urgency 非法（须 ∈[0,1]），got {intent.urgency}")
     if intent.days_held < 0:
@@ -164,9 +190,7 @@ def plan_exit_scenarios(intent: ExitPlanningInput) -> ExitScenarioPlan:
     constraints: list[str] = []
     deferred = intent.weight - intent.sellable_weight
     if recommended is ExitScenario.IMMEDIATE_EXIT and deferred > 1e-12:
-        constraints.append(
-            f"T+1 约束：持仓 {intent.weight:.4f} 中 {deferred:.4f} 为当日买入冻结，顺延至次日可卖"
-        )
+        constraints.append(f"T+1 约束：持仓 {intent.weight:.4f} 中 {deferred:.4f} 为当日买入冻结，顺延至次日可卖")
 
     sellable = intent.sellable_weight
     options: list[ExitScenarioOption] = [
@@ -175,7 +199,8 @@ def plan_exit_scenarios(intent: ExitPlanningInput) -> ExitScenarioPlan:
             priority=0 if recommended is ExitScenario.IMMEDIATE_EXIT else 1,
             action_weight=sellable,
             rationale=(
-                f"立即离场：止损触发({intent.stop_reason})" if intent.stop_triggered
+                f"立即离场：止损触发({intent.stop_reason})"
+                if intent.stop_triggered
                 else f"立即离场：紧迫度 {intent.urgency:.2f} ≥ {_URGENT_THRESHOLD}"
             ),
         ),

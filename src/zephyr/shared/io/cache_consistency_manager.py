@@ -14,7 +14,8 @@
 # [TESTS] tests/shared/io/test_cache_consistency_manager.py
 # [A_module] module_id=MOD-SHARED-005 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""CacheConsistencyManager — 缓存一致性管理器（MOD-SHARED-005）。
+"""
+CacheConsistencyManager — 缓存一致性管理器（MOD-SHARED-005）。
 
 B13-04324（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-SHARED-003，A3数据架构）：
 分层缓存注册（L1内存/L2 Redis/L3 磁盘语义）+ 失效策略（TTL/事件失效/版本
@@ -24,6 +25,38 @@ B13-04324（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-SHARED-003，A3数据架�
 查重分工（蓝图 §0）：cache_invalidation=事件驱动失效广播（本件=策略注册
 与一致性裁定，消费其失效事件但不重建广播总线）；io_cache=读写缓存实现
 （本件不实现缓存存储，只治理元数据与一致性状态机）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: cache_consistency_manager.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: alert_sink 参数
+#   fields: 参数 alert_sink（无注解）
+#   code: cache_consistency_manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CacheConsistencyManager
+#   name_en: CacheConsistencyManager
+#   intro: 缓存一致性管理器（分层注册 + 失效策略 + 写策略裁定 + 巡检）。
+#   desc: 缓存一致性管理器（分层注册 + 失效策略 + 写策略裁定 + 巡检）。；公共方法（定义序）: register_entry, set_write_policy, write_policy_for, write, flu…
+#   inputs: clock alert_sink
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: CacheConsistencyManager
+#   downstream: 运行时装配批（分层缓存注册 / 写策略裁定读侧 / 一致性巡检计划任务）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -198,9 +231,7 @@ class CacheConsistencyManager:
         entry = self._entry_of(key)
         policy = self.write_policy_for(entry.data_type)
         if entry.written_at is not None and version <= entry.version:
-            raise CacheConsistencyError(
-                f"版本回退拒绝: {key!r} 当前 v{entry.version}，写入 v{version}"
-            )
+            raise CacheConsistencyError(f"版本回退拒绝: {key!r} 当前 v{entry.version}，写入 v{version}")
         entry.value = value
         entry.version = version
         entry.written_at = self._clock()
@@ -221,9 +252,7 @@ class CacheConsistencyManager:
         """事件失效（仅 EVENT 策略条目可事件失效，其余策略错配拒绝）。"""
         entry = self._entry_of(key)
         if entry.strategy is not InvalidationStrategy.EVENT:
-            raise CacheConsistencyError(
-                f"键 {key!r} 策略为 {entry.strategy.value}，不接受事件失效"
-            )
+            raise CacheConsistencyError(f"键 {key!r} 策略为 {entry.strategy.value}，不接受事件失效")
         entry.event_invalidated = True
         _log.info("缓存事件失效: %s", key)
 
@@ -284,13 +313,18 @@ class CacheConsistencyManager:
             if entry.written_at is not None and source_version == entry.version:
                 continue  # 版本戳一致
             cached = entry.version if entry.written_at is not None else -1
-            records.append(InconsistencyRecord(
-                key=key, cached_version=cached, source_version=source_version,
-            ))
+            records.append(
+                InconsistencyRecord(
+                    key=key,
+                    cached_version=cached,
+                    source_version=source_version,
+                )
+            )
         for record in records:
             _log.warning(
                 "缓存不一致: %s（缓存 v%d / 源 %s）",
-                record.key, record.cached_version,
+                record.key,
+                record.cached_version,
                 f"v{record.source_version}" if record.source_version is not None else "缺版本戳",
             )
             if self._alert_sink is not None:

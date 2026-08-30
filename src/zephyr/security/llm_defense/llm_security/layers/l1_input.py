@@ -14,6 +14,61 @@
 # [TESTS]
 # [A_module] module_id=MOD-LLM_SECURITY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: l1_input.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① InputDefense
+#   name_en: InputDefense
+#   intro: 兼容旧接口。
+#   desc: 兼容旧接口。；公共方法（定义序）: validate, sanitize, check_injection；源码 L180-L193
+#   inputs: config
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② InputDefenseLayer
+#   name_en: InputDefenseLayer
+#   intro: L1 输入防御层：直接注入/越狱/间接注入检测 + 编码绕过防御。
+#   desc: L1 输入防御层：直接注入/越狱/间接注入检测 + 编码绕过防御。；公共方法（定义序）: check_direct_injection, check_indirect_content, check_jailbreak,…
+#   inputs: config
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ EncodingBypassDefender
+#   name_en: EncodingBypassDefender
+#   intro: 编码绕过防御器：检测零宽字符 + 同形字混淆。
+#   desc: 编码绕过防御器：检测零宽字符 + 同形字混淆。；公共方法（定义序）: scan, normalize_homoglyphs, strip_zero_width, detect_encoding_attack, norm…
+#   inputs: config
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ ToolResultTransformGuard
+#   name_en: ToolResultTransformGuard
+#   intro: 工具结果转换守卫：包裹分隔符 + 注入扫描。
+#   desc: 工具结果转换守卫：包裹分隔符 + 注入扫描。；公共方法（定义序）: wrap, scan, validate_tool_result, sanitize_tool_output；源码 L340-L364
+#   inputs: config
+#   outputs: 返回值
+#   （注：A4 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: InputDefense, InputDefenseLayer, EncodingBypassDefender, ToolResultTransformGua…
+#   downstream: zephyr.security.llm_defense.llm_security.gateway; tests.llm_security.test_l1_in…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
+"""
+
 import re
 from dataclasses import dataclass, field
 from enum import Enum

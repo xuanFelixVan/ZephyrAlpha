@@ -14,11 +14,39 @@
 # [TESTS] tests/agent_rbac/test_crosscut_d.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""MemoryGuard — 内存访问守卫.
+"""
+MemoryGuard — 内存访问守卫.
 
 依据蓝图 MOD-INF-018 §3:
 - 限制 agent 的内存访问大小
 - 阻止特权内存操作（mprotect, mmap, mlock 等）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: max_size 参数
+#   fields: 参数 max_size（无注解）
+#   code: memory_guard.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① MemoryGuard
+#   name_en: MemoryGuard
+#   intro: 内存访问守卫器.
+#   desc: 内存访问守卫器.；公共方法（定义序）: check_access；源码 L87-L122
+#   inputs: max_size
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: MemoryGuard
+#   downstream: tests/agent_rbac/test_crosscut_d.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

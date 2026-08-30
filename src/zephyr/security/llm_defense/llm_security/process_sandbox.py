@@ -64,6 +64,48 @@ L2a 是 ZephyrAlpha RI（Runtime Integration）层的双层沙箱中的第一层
         timeout=30,
     )
     print(result.stdout)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: repo_root 参数
+#   fields: 参数 repo_root（无注解）
+#   code: process_sandbox.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: cwd_whitelist 参数
+#   fields: 参数 cwd_whitelist（无注解）
+#   code: process_sandbox.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: env_whitelist 参数
+#   fields: 参数 env_whitelist（无注解）
+#   code: process_sandbox.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: default_timeout 参数
+#   fields: 参数 default_timeout（无注解）
+#   code: process_sandbox.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① L2aSandbox
+#   name_en: L2aSandbox
+#   intro: L2a subprocess 白名单沙箱。
+#   desc: L2a subprocess 白名单沙箱。 参数 ---- repo_root 仓库根目录（绝对路径）；默认自动推断（从本文件向上 4 层）。 cwd_whitelist 允许的…；公共方法（定义序）: repo_ro…
+#   inputs: repo_root cwd_whitelist env_whitelist default_timeout
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: L2aSandbox
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -28,6 +28,32 @@ Gateway 组合 MCPProcessPool + DaemonRegistry，提供:
   - terminate_all(): 关闭所有池中进程
 
 设计根因: 裸 Popen/Process 绕过 MCPProcessPool -> 进程泄漏 -> 统一入口 + Gate 防绕过。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: idle_timeout_s 参数
+#   fields: 参数 idle_timeout_s（无注解）
+#   code: process_lifecycle_gateway.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ProcessLifecycleGateway
+#   name_en: ProcessLifecycleGateway
+#   intro: 进程生命周期统一入口。
+#   desc: 进程生命周期统一入口。 组合 MCPProcessPool（进程创建/复用/僵尸/超时）和 DaemonRegistry（注册/监控/降级）。 不持有业务逻辑，纯路由 + 生命周…；公共方法（定义序）: pool, l…
+#   inputs: idle_timeout_s
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: ProcessLifecycleGateway
+#   downstream: zephyr.trading.auto_runtime_core (ollama serve) ; scripts.mcp.launcher (MCP Ser…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

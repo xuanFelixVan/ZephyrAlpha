@@ -15,13 +15,72 @@
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""SHA-256 content fingerprint computation and verification.
+"""
+SHA-256 content fingerprint computation and verification.
 
 Provides file-level SHA-256 fingerprinting for scaffold legacy marking
 and beta migration verification.
 
 Task: T-1-10 | experimental | Composer 2
 ADR ref: ADR-0037 (pending Opus authoring)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: path 参数
+#   fields: 参数 path，类型注解 str | Path
+#   code: content_fingerprint.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: expected 参数
+#   fields: 参数 expected，类型注解 str
+#   code: content_fingerprint.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: paths 参数
+#   fields: 参数 paths，类型注解 list[str | Path]
+#   code: content_fingerprint.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① compute_hash
+#   name_en: compute_hash
+#   intro: compute_hash(path) 源码 L128-L142
+#   desc: 源码 L128-L142
+#   inputs: path
+#   outputs: str
+# - id: A2
+#   name_zh: ② verify_hash
+#   name_en: verify_hash
+#   intro: verify_hash(path, expected) 源码 L145-L147
+#   desc: 源码 L145-L147
+#   inputs: path expected
+#   outputs: bool
+# - id: A3
+#   name_zh: ③ compute_bulk
+#   name_en: compute_bulk
+#   intro: compute_bulk(paths) 源码 L150-L157
+#   desc: 源码 L150-L157
+#   inputs: paths
+#   outputs: dict[str, str | None]
+#   （注：A3 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

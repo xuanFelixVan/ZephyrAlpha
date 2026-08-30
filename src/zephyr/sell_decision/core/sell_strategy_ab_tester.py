@@ -14,7 +14,8 @@
 # [TESTS] tests/sell_decision/test_sell_strategy_ab_tester.py
 # [A_module] module_id=MOD-SELL-011 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Sell Strategy AB Tester — 卖出策略 AB 测试 (MOD-SELL-011)
+"""
+Sell Strategy AB Tester — 卖出策略 AB 测试 (MOD-SELL-011)
 
 策略生命周期闭环（宪章 §1.1：A/B 对比→B 胜出→A 自动退役）的卖出域
 统计判定器：比较两个卖出策略变体的逐笔结果样本（如同期超额收益/
@@ -32,6 +33,48 @@
 
 纪律：纯函数、无 IO。
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: a_outcomes 参数
+#   fields: 参数 a_outcomes，类型注解 Sequence[float]
+#   code: sell_strategy_ab_tester.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: b_outcomes 参数
+#   fields: 参数 b_outcomes，类型注解 Sequence[float]
+#   code: sell_strategy_ab_tester.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: min_samples 参数
+#   fields: 参数 min_samples（无注解）
+#   code: sell_strategy_ab_tester.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: alpha 参数
+#   fields: 参数 alpha（无注解）
+#   code: sell_strategy_ab_tester.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① evaluate_ab_test
+#   name_en: evaluate_ab_test
+#   intro: 卖出策略 AB 测试判定（纯函数）。
+#   desc: 卖出策略 AB 测试判定（纯函数）。 Args: a_outcomes: A 组（现策略）逐笔结果 b_outcomes: B 组（候选策略）逐笔结果 min_samples:…；源码 L153-L222
+#   inputs: a_outcomes b_outcomes min_samples alpha
+#   outputs: ABTestReport
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ABTestReport
+#   name_en: ABTestReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 策略生命周期管理(B胜出→A退役,宪章§1.1自迭代) ; MOD-SELL-010(衰退后替换验证)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -155,8 +198,7 @@ def evaluate_ab_test(
     sufficient = n_a >= min_samples and n_b >= min_samples
     if not sufficient:
         warnings.append(
-            f"样本不足（n_a={n_a}, n_b={n_b} < min_samples={min_samples}），"
-            "一律 INCONCLUSIVE（防小样本过拟合决策）"
+            f"样本不足（n_a={n_a}, n_b={n_b} < min_samples={min_samples}），一律 INCONCLUSIVE（防小样本过拟合决策）"
         )
         significant = False
 

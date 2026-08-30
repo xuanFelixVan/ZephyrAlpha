@@ -14,6 +14,71 @@
 # [TESTS]
 # [A_module] module_id=MOD-LLM_SECURITY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: l4_agent.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: hmac_key 参数
+#   fields: 参数 hmac_key（无注解）
+#   code: l4_agent.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: max_permission 参数
+#   fields: 参数 max_permission（无注解）
+#   code: l4_agent.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AgentSecurityLayer
+#   name_en: AgentSecurityLayer
+#   intro: L4 Agent 安全层：工具授权 + 参数验证 + 人工审批 + 金融合规。
+#   desc: L4 Agent 安全层：工具授权 + 参数验证 + 人工审批 + 金融合规。；公共方法（定义序）: authorize_tool_call, validate_tool_params, request_human_a…
+#   inputs: config hmac_key max_permission
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② FinancialComplianceGate
+#   name_en: FinancialComplianceGate
+#   intro: 金融合规门：检测内幕交易/市场操纵等金融威胁。
+#   desc: 金融合规门：检测内幕交易/市场操纵等金融威胁。；公共方法（定义序）: scan, check_compliance, validate_transaction；源码 L351-L392
+#   inputs: config
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ AgentImpersonationDefender
+#   name_en: AgentImpersonationDefender
+#   intro: 检测 agent 身份冒充（HMAC 不可伪造标记）。
+#   desc: 检测 agent 身份冒充（HMAC 不可伪造标记）。 5.62.4 治本：HMAC 密钥禁止硬编码默认（原默认 "l4-impersonation-secret" 公开可知，…；公共方法（定义序）: generate…
+#   inputs: config secret
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ LongHorizonAgentDefender
+#   name_en: LongHorizonAgentDefender
+#   intro: 检测长周期 agent 攻击（意图漂移检测）。
+#   desc: 检测长周期 agent 攻击（意图漂移检测）。；公共方法（定义序）: check_intent_consistency, detect_long_horizon_attack, analyze_behavior_pat…
+#   inputs: config
+#   outputs: 返回值
+#   （注：A4 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（11 定义）
+#   name_en: public defs
+#   intro: AgentSecurityLayer, FinancialComplianceGate, AgentImpersonationDefender, LongHo…
+#   downstream: zephyr.security.llm_defense.llm_security.gateway; tests.llm_security.test_l4_ag…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
+"""
+
 import hashlib
 import hmac
 import logging

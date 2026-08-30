@@ -26,6 +26,84 @@ Design:
   - Process reuse: same MCP server shares one subprocess across conversations
   - Zombie detection: periodic scan for dead processes
   - Graceful shutdown: terminate all pooled processes on engine stop
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: cmd 参数
+#   fields: 参数 cmd，类型注解 list[str]
+#   code: process_pool.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: cwd 参数
+#   fields: 参数 cwd（无注解）
+#   code: process_pool.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: env 参数
+#   fields: 参数 env（无注解）
+#   code: process_pool.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: stdin_to_devnull 参数
+#   fields: 参数 stdin_to_devnull（无注解）
+#   code: process_pool.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① run_subprocess_hidden
+#   name_en: run_subprocess_hidden
+#   intro: 统一无窗口 subprocess.run 入口（TRAE-067 铁律2 落地）。
+#   desc: 统一无窗口 subprocess.run 入口（TRAE-067 铁律2 落地）。 与原 subprocess.run 行为一致，唯一区别：Windows 下加 CREATE_N…；源码 L385-L410
+#   inputs: cmd
+#   outputs: subprocess.CompletedProcess
+# - id: A2
+#   name_zh: ② spawn_python_hidden
+#   name_en: spawn_python_hidden
+#   intro: 无窗口 spawn python 子进程（daemon/reconciler worker/scheduler 用）。
+#   desc: 无窗口 spawn python 子进程（daemon/reconciler worker/scheduler 用）。 与 subprocess.Popen 行为一致，区别： 1…；源码 L413-L512
+#   inputs: cmd cwd env stdin_to_devnull stdout_to_devnull stderr_to_devnull stdo…
+#   outputs: subprocess.Popen
+# - id: A3
+#   name_zh: ③ is_pid_alive
+#   name_en: is_pid_alive
+#   intro: 检查 PID 对应进程是否存活（跨平台，僵尸锁/PID 文件清理真源唯一）。
+#   desc: 检查 PID 对应进程是否存活（跨平台，僵尸锁/PID 文件清理真源唯一）。 根因：进程崩溃（kill/异常退出）时锁文件/PID 文件残留。仅靠 TTL 过期太慢 （如 gat…；源码 L515-L565
+#   inputs: pid
+#   outputs: bool
+# - id: A4
+#   name_zh: ④ PooledProcess
+#   name_en: PooledProcess
+#   intro: class PooledProcess 源码 L569-L582
+#   desc: 公共方法（定义序）: is_alive, pid；源码 L569-L582
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ MCPProcessPool
+#   name_en: MCPProcessPool
+#   intro: class MCPProcessPool 源码 L585-L789
+#   desc: 公共方法（定义序）: reap_zombies, idle_timeout_s, lock, pool, get_or_create, terminate, terminate_all, get_stats, star…
+#   inputs: max_processes zombie_check_interval idle_timeout_s
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: subprocess.CompletedProcess
+#   name_en: subprocess.CompletedProcess
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: subprocess.Popen
+#   name_en: subprocess.Popen
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations

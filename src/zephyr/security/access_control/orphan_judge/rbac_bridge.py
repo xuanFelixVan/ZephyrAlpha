@@ -14,6 +14,36 @@
 # [TESTS] tests/orphan-judge/test_rbac_bridge.py
 # [A_module] module_id=MOD-INF-029 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: rbac_bridge.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① RbacBridge
+#   name_en: RbacBridge
+#   intro: class RbacBridge 源码 L55-L85
+#   desc: 公共方法（定义序）: check_delete_permission, is_available；源码 L55-L85
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: RbacBridge
+#   downstream: orphan-judge.judge.OrphanJudge(DELETE动作前)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 import logging
 from typing import Any
 

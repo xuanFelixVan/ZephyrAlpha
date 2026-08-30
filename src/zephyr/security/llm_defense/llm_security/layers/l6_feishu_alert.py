@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-LLM_SECURITY | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""L6 飞书高危告警——复用 MOD-SEC-EVENTBUS FeishuAlertChannel（委托，不自建）。
+"""
+L6 飞书高危告警——复用 MOD-SEC-EVENTBUS FeishuAlertChannel（委托，不自建）。
 
 裁定记录（09 号文 §4.3 P1-1 前置裁定）
 --------------------------------------
@@ -25,6 +26,47 @@ webhook 发送、未配置/不可达/非 200 写 ``alerts_pending.jsonl`` 本地
 ``retry_pending()`` 重试 + 超 MAX_ALERT_RETRY 死信保留、dry_run 演练留痕。
 结论：**复用（委托）**——LSG 层内不重建 webhook/持久化设施，本模块只做
 LSG 事件语义 → 统一 SecurityEvent schema 的转换与通道委托。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: pending_path 参数
+#   fields: 参数 pending_path（无注解）
+#   code: l6_feishu_alert.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: webhook_url 参数
+#   fields: 参数 webhook_url（无注解）
+#   code: l6_feishu_alert.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: dry_run 参数
+#   fields: 参数 dry_run（无注解）
+#   code: l6_feishu_alert.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: timeout_sec 参数
+#   fields: 参数 timeout_sec（无注解）
+#   code: l6_feishu_alert.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① LsgFeishuAlerter
+#   name_en: LsgFeishuAlerter
+#   intro: LSG 高危事件飞书告警器（L6 层内件，委托 FeishuAlertChannel）。
+#   desc: LSG 高危事件飞书告警器（L6 层内件，委托 FeishuAlertChannel）。 用法:: alerter = LsgFeishuAlerter() delivered…；公共方法（定义序）: send_hig…
+#   inputs: pending_path webhook_url dry_run timeout_sec channel
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: LsgFeishuAlerter
+#   downstream: tests.llm_security.test_l6_feishu_alert
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

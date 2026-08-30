@@ -14,12 +14,40 @@
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""ABACGuard — 基于属性的权限守卫.
+"""
+ABACGuard — 基于属性的权限守卫.
 
 依据蓝图 MOD-INF-018 §3:
 - 基于属性（成熟度、时间、敏感度）判断权限
 - L0_INTERN 不能修改蓝图
 - 时间分类（正常/下班/周末/午餐高峰）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: abac_guard.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ABACGuard
+#   name_en: ABACGuard
+#   intro: 基于属性的权限守卫.
+#   desc: 基于属性的权限守卫. 根据属性（成熟度、时间、敏感度）判断权限。；公共方法（定义序）: classify_temporal, detect_sensitivity_from_content, record_sensit…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: ABACGuard
+#   downstream: tests/agent_rbac/test_redteam_adversarial.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

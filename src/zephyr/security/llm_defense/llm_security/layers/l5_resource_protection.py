@@ -14,6 +14,124 @@
 # [TESTS]
 # [A_module] module_id=MOD-LLM_SECURITY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: l5_resource_protection.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: max_tokens 参数
+#   fields: 参数 max_tokens（无注解）
+#   code: l5_resource_protection.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: max_cost_cents 参数
+#   fields: 参数 max_cost_cents（无注解）
+#   code: l5_resource_protection.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: rate_max 参数
+#   fields: 参数 rate_max（无注解）
+#   code: l5_resource_protection.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ResourceProtectionLayer
+#   name_en: ResourceProtectionLayer
+#   intro: L5 资源保护层：token/cost/rate 限额 + 成本不对称检测。
+#   desc: L5 资源保护层：token/cost/rate 限额 + 成本不对称检测。；公共方法（定义序）: check_token_budget, check_rate_limit, check_cost_budget, ev…
+#   inputs: config max_tokens max_cost_cents rate_max rate_window_seconds
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② AIRecursionGuard
+#   name_en: AIRecursionGuard
+#   intro: 防止 AI 递归攻击的递归深度守卫。
+#   desc: 防止 AI 递归攻击的递归深度守卫。；公共方法（定义序）: current_depth, enter, reset, check_recursion；源码 L211-L234
+#   inputs: config max_recursion_depth
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ AgentExecutionProtector
+#   name_en: AgentExecutionProtector
+#   intro: 保护 agent 执行免受资源滥用。
+#   desc: 保护 agent 执行免受资源滥用。；公共方法（定义序）: record_step, check_execution_limits；源码 L237-L252
+#   inputs: config max_steps
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ LLMCostCircuitBreaker
+#   name_en: LLMCostCircuitBreaker
+#   intro: LLM 成本断路器。
+#   desc: LLM 成本断路器。；公共方法（定义序）: state, record_failure, allow_request, reset, trip, check；源码 L263-L304
+#   inputs: config failure_threshold recovery_timeout_seconds
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ CostAsymmetryDefender
+#   name_en: CostAsymmetryDefender
+#   intro: 检测成本不对称攻击（少量输入榨取大量情报）。
+#   desc: 检测成本不对称攻击（少量输入榨取大量情报）。；公共方法（定义序）: scan, detect_asymmetry, calculate_cost_ratio；源码 L307-L339
+#   inputs: config
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ LSGPerformanceBudget
+#   name_en: LSGPerformanceBudget
+#   intro: LSG 性能预算追踪器（分位数统计 + SLO 判定）。
+#   desc: LSG 性能预算追踪器（分位数统计 + SLO 判定）。；公共方法（定义序）: record, stats, check_budget；源码 L399-L430
+#   inputs: max_tokens max_time_ms
+#   outputs: 返回值
+# - id: A7
+#   name_zh: ⑦ DegradationPlan
+#   name_en: DegradationPlan
+#   intro: 降级计划（蓝图 §40.4 enact_degradation 产物）。
+#   desc: 降级计划（蓝图 §40.4 enact_degradation 产物）。；公共方法（定义序）: degraded_layers；源码 L452-L461
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A8
+#   name_zh: ⑧ LSGPerformanceGuard
+#   name_en: LSGPerformanceGuard
+#   intro: LSG 性能预算管理（蓝图 §40.4）——安全不能以不可接受的延迟为代价。
+#   desc: LSG 性能预算管理（蓝图 §40.4）——安全不能以不可接受的延迟为代价。 - track_latency：每层延迟埋点（滚动窗口，有界）。 - check_budget：聚合…；公共方法（定义序）: track_l…
+#   inputs: p95_budget_ms p99_budget_ms approaching_ratio min_samples window_size
+#   outputs: 返回值
+# - id: A9
+#   name_zh: ⑨ ModelExtractionDefender
+#   name_en: ModelExtractionDefender
+#   intro: 检测模型提取攻击（高熵查询模式）。
+#   desc: 检测模型提取攻击（高熵查询模式）。；公共方法（定义序）: entropy_check, detect_extraction, check_query_similarity；源码 L570-L597
+#   inputs: config entropy_threshold
+#   outputs: 返回值
+# - id: A10
+#   name_zh: ⑩ SemanticCacheCollisionDefender
+#   name_en: SemanticCacheCollisionDefender
+#   intro: 检测语义缓存碰撞攻击（HMAC 签名验证）。
+#   desc: 检测语义缓存碰撞攻击（HMAC 签名验证）。；公共方法（定义序）: salt_key, sign_value, verify_integrity, detect_collision, validate_cache_en…
+#   inputs: config salt
+#   outputs: 返回值
+#   （注：A10 之后另有 5 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（15 定义）
+#   name_en: public defs
+#   intro: ResourceProtectionLayer, AIRecursionGuard, AgentExecutionProtector, LLMCostCirc…
+#   downstream: zephyr.security.llm_defense.llm_security.gateway; tests.llm_security.test_l5_re…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> A10
+# A10 --> O1
+"""
+
 import hashlib
 import hmac
 import math

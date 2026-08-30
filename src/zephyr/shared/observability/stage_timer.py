@@ -14,7 +14,8 @@
 # [TESTS] tests/zephyr/shared/observability/test_stage_timer.py
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""stage_timer —— 分段延迟打点助手（CAND-OBS-001 打点契约 MVP 施工件）。
+"""
+stage_timer —— 分段延迟打点助手（CAND-OBS-001 打点契约 MVP 施工件）。
 
 职责
 ----
@@ -45,6 +46,37 @@
     timer.end("parse")        # → observe tick_subscriber_parse_duration_seconds
 
 异常即未 begin 的阶段被 end（计时语义断裂，fail-closed 阻断契约漂移）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: module 参数
+#   fields: 参数 module（无注解）
+#   code: stage_timer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: registry 参数
+#   fields: 参数 registry（无注解）
+#   code: stage_timer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① StageTimer
+#   name_en: StageTimer
+#   intro: 单事务多阶段分段计时器——契约命名的打点样板消除器。
+#   desc: 单事务多阶段分段计时器——契约命名的打点样板消除器。 线程安全由底层 MetricsRegistry 保证（其 inc/observe 均持锁）； 本类自身只在 begin/en…；公共方法（定义序）: begin,…
+#   inputs: module registry
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: StageTimer
+#   downstream: zephyr.data.tick_subscriber（CAND-OBS-001 试点）；后续各生产模块按契约接入
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -87,9 +119,7 @@ class StageTimer:
             registry: 指标注册表（None=全局单例 get_registry()，测试可注入隔离实例）。
         """
         if not module or not _STAGE_NAME_RE.match(module):
-            raise ValueError(
-                f"module 名非法（须 snake_case 小写开头）: {module!r}"
-            )
+            raise ValueError(f"module 名非法（须 snake_case 小写开头）: {module!r}")
         self._module = module
         self._registry = registry if registry is not None else get_registry()
         self._open_stages: dict[str, float] = {}  # stage → begin 时刻（perf_counter）
@@ -97,9 +127,7 @@ class StageTimer:
     def begin(self, stage: str) -> None:
         """开始一个阶段计时。同阶段重复 begin 以末次为准（重置语义）。"""
         if not _STAGE_NAME_RE.match(stage):
-            raise ValueError(
-                f"stage 名非法（须 snake_case 小写开头）: {stage!r}"
-            )
+            raise ValueError(f"stage 名非法（须 snake_case 小写开头）: {stage!r}")
         self._open_stages[stage] = time.perf_counter()
 
     def end(self, stage: str) -> float:
@@ -109,9 +137,7 @@ class StageTimer:
             ValueError: 阶段未 begin（计时语义断裂，fail-closed）。
         """
         if stage not in self._open_stages:
-            raise ValueError(
-                f"stage 未 begin 即 end（计时语义断裂）: {stage!r}"
-            )
+            raise ValueError(f"stage 未 begin 即 end（计时语义断裂）: {stage!r}")
         t0 = self._open_stages.pop(stage)
         elapsed = time.perf_counter() - t0
         self._registry.observe(self._metric_name(stage), elapsed)
@@ -138,7 +164,7 @@ class _StageContext:
         self._stage = stage
         self.elapsed: float = 0.0
 
-    def __enter__(self) -> "_StageContext":
+    def __enter__(self) -> _StageContext:
         self._timer.begin(self._stage)
         return self
 

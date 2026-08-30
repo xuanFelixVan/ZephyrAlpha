@@ -14,7 +14,8 @@
 # [TESTS] tests/sell_decision/test_sell_signal_accuracy_monitor.py
 # [A_module] module_id=MOD-SELL-010 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Sell Signal Accuracy Monitor — 卖出信号准确度监控 (MOD-SELL-010)
+"""
+Sell Signal Accuracy Monitor — 卖出信号准确度监控 (MOD-SELL-010)
 
 闭环复盘（宪章 §1.1 自我迭代）：聚合信号的事后兑现记录，产出两类
 东西：
@@ -29,6 +30,48 @@
 
 纪律：纯函数、无 IO；兑现记录由调用方注入（禁自造数据管道）。
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: records 参数
+#   fields: 参数 records，类型注解 Sequence[SignalOutcomeRecord]
+#   code: sell_signal_accuracy_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: baseline_rate 参数
+#   fields: 参数 baseline_rate（无注解）
+#   code: sell_signal_accuracy_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: degradation_tolerance 参数
+#   fields: 参数 degradation_tolerance（无注解）
+#   code: sell_signal_accuracy_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: min_samples 参数
+#   fields: 参数 min_samples（无注解）
+#   code: sell_signal_accuracy_monitor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① evaluate_accuracy
+#   name_en: evaluate_accuracy
+#   intro: 评估卖出信号准确度（纯函数）。
+#   desc: 评估卖出信号准确度（纯函数）。 Args: records: 事后兑现记录序列 baseline_rate: 命中率基线 ∈[0,1]（默认 0.5） degradation_t…；源码 L140-L203
+#   inputs: records baseline_rate degradation_tolerance min_samples
+#   outputs: AccuracyMonitorReport
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: AccuracyMonitorReport
+#   name_en: AccuracyMonitorReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-SELL-002(准确率统计回喂评分) ; MOD-SELL-011(AB测试输入) ; D_RISK
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -125,16 +168,12 @@ def evaluate_accuracy(
     totals: dict[SellSignalType, int] = {}
     for rec in records:
         if not isinstance(rec.signal_type, SellSignalType):
-            raise InvalidAccuracyRecordError(
-                f"signal_type 须为 SellSignalType，got {rec.signal_type!r}"
-            )
+            raise InvalidAccuracyRecordError(f"signal_type 须为 SellSignalType，got {rec.signal_type!r}")
         totals[rec.signal_type] = totals.get(rec.signal_type, 0) + 1
         if rec.hit:
             hits[rec.signal_type] = hits.get(rec.signal_type, 0) + 1
 
-    by_type = {
-        st: AccuracyStat(hits=hits.get(st, 0), total=totals[st]) for st in sorted(totals, key=lambda x: x.value)
-    }
+    by_type = {st: AccuracyStat(hits=hits.get(st, 0), total=totals[st]) for st in sorted(totals, key=lambda x: x.value)}
 
     overall_hits = sum(hits.values())
     overall_total = sum(totals.values())

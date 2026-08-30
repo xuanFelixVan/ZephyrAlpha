@@ -14,6 +14,59 @@
 # [TESTS] tests/orphan-judge/test_swid_tag.py
 # [A_module] module_id=MOD-INF-029 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: record 参数
+#   fields: 参数 record，类型注解 JudgmentRecord
+#   code: swid_tag.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: file_content 参数
+#   fields: 参数 file_content，类型注解 str
+#   code: swid_tag.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: tag_creator 参数
+#   fields: 参数 tag_creator，类型注解 str
+#   code: swid_tag.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: tag_id 参数
+#   fields: 参数 tag_id，类型注解 str | None
+#   code: swid_tag.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SwidTag
+#   name_en: SwidTag
+#   intro: class SwidTag 源码 L79-L85
+#   desc: 公共方法（定义序）: build；源码 L79-L85
+#   inputs: tag_creator
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② generate_swid
+#   name_en: generate_swid
+#   intro: generate_swid(record, file_content, tag_creator, tag_id) 源码…
+#   desc: 源码 L88-L123
+#   inputs: record file_content tag_creator tag_id
+#   outputs: dict[str, Any]
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, Any]
+#   name_en: dict[str, Any]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: orphan-judge.db.JudgmentDB; report_generator
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
+
 import hashlib
 import uuid
 from typing import Any

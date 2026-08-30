@@ -27,6 +27,37 @@ Design:
   - Supports YAML and JSON files
   - Memory usage tracking
   - Warm-up for preloading hot files
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: max_entries 参数
+#   fields: 参数 max_entries（无注解）
+#   code: io_cache.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: ttl_seconds 参数
+#   fields: 参数 ttl_seconds（无注解）
+#   code: io_cache.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FileCache
+#   name_en: FileCache
+#   intro: class FileCache 源码 L94-L219
+#   desc: 公共方法（定义序）: get, get_or_load, invalidate, warm, clear, get_stats；源码 L94-L219
+#   inputs: max_entries ttl_seconds
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: FileCache
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

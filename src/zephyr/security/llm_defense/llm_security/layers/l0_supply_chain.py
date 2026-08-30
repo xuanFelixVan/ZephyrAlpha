@@ -15,6 +15,69 @@
 # [A_module] module_id=MOD-LLM_SECURITY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: l0_supply_chain.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SupplyChainValidator
+#   name_en: SupplyChainValidator
+#   intro: class SupplyChainValidator 源码 L97-L105
+#   desc: 公共方法（定义序）: validate, check_provenance；源码 L97-L105
+#   inputs: config
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② SupplyChainGuard
+#   name_en: SupplyChainGuard
+#   intro: L0 Supply Chain Guard.
+#   desc: L0 Supply Chain Guard. Verifies model digests, scans dependencies for vulnerabilities, au…；公共方法（定义序）: verify_…
+#   inputs: config model_digest_registry rules_file_baselines project_root
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ RulesFileSecurityGuard
+#   name_en: RulesFileSecurityGuard
+#   intro: Guard for rules-file integrity via sha256 baseline matching.
+#   desc: Guard for rules-file integrity via sha256 baseline matching.；公共方法（定义序）: add_baseline, verify, scan_directory,…
+#   inputs: config
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ SlopsquattingDetector
+#   name_en: SlopsquattingDetector
+#   intro: Detects slopsquatting (hallucinated packages) and typosquat…
+#   desc: Detects slopsquatting (hallucinated packages) and typosquatting.；公共方法（定义序）: detect, scan, scan_dependencies；源…
+#   inputs: config
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ MCPDeepSupplyChainScanner
+#   name_en: MCPDeepSupplyChainScanner
+#   intro: Deep scanner for MCP supply-chain components.
+#   desc: Deep scanner for MCP supply-chain components. Scans individual MCP server configs for RCE…；公共方法（定义序）: scan_se…
+#   inputs: config
+#   outputs: 返回值
+#   （注：A5 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（12 定义）
+#   name_en: public defs
+#   intro: SupplyChainValidator, SupplyChainGuard, RulesFileSecurityGuard, SlopsquattingDe…
+#   downstream: zephyr.security.llm_defense.llm_security.gateway ; tests.llm_security.test_l0_s…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
+"""
+
 import hashlib
 import json
 import re

@@ -16,6 +16,35 @@
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 
+"""
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: level 参数
+#   fields: 参数 level（无注解）
+#   code: isolation.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① LSGIsolation
+#   name_en: LSGIsolation
+#   intro: LSG 自身隔离策略.
+#   desc: LSG 自身隔离策略. 核心功能: - 文件系统访问最小化: 只读 src/zephyr/llm-security/, 只写 /tmp + 日志目录 - 网络隔离: 禁止 LSG…；公共方法（定义序）: check_f…
+#   inputs: level
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: LSGIsolation
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 import threading
 import time
 from enum import Enum

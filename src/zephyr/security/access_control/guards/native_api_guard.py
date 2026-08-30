@@ -14,11 +14,38 @@
 # [TESTS] tests/agent_rbac/test_crosscut_d.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""NativeApiGuard — 原生 API 守卫.
+"""
+NativeApiGuard — 原生 API 守卫.
 
 依据蓝图 MOD-INF-018 §3:
 - 检测代码中的原生 API 调用（ctypes, dlopen, mmap 等）
 - 阻止绕过 Python 安全机制的原生调用
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: native_api_guard.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① NativeApiGuard
+#   name_en: NativeApiGuard
+#   intro: 原生 API 守卫器.
+#   desc: 原生 API 守卫器.；公共方法（定义序）: scan；源码 L85-L113
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: NativeApiGuard
+#   downstream: tests/agent_rbac/test_crosscut_d.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

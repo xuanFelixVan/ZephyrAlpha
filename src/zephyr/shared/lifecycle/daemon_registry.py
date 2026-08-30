@@ -34,6 +34,41 @@ Core problems solved:
   - No resource pressure detection -> system freezes before anyone notices
 
 SSoT: MOD-INF-016 2.7 shared-lifecycle
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: daemon_registry.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① Stoppable
+#   name_en: Stoppable
+#   intro: class Stoppable 源码 L104-L105
+#   desc: 公共方法（定义序）: stop；源码 L104-L105
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② DaemonRegistry
+#   name_en: DaemonRegistry
+#   intro: class DaemonRegistry 源码 L120-L254
+#   desc: 公共方法（定义序）: register, start, stop, start_all, stop_all, stop_low_priority, status, is_running, reset；源码 L120-L…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: Stoppable, DaemonRegistry
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

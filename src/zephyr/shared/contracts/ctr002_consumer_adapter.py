@@ -14,7 +14,8 @@
 # [TESTS] tests/contracts/test_ctr002_consumer_adapter.py
 # [A_module] module_id=MOD-CON-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D-SIGNAL-163 CTR-002消费契约适配器（B13-04308 → MOD-CON-001）。
+"""
+D-SIGNAL-163 CTR-002消费契约适配器（B13-04308 → MOD-CON-001）。
 
 Schema版本协商（major不兼容即拒）+字段缺失/新增容忍策略+契约变更事件订阅。
 信号消费方统一经适配器取数。
@@ -23,6 +24,72 @@ Schema版本协商（major不兼容即拒）+字段缺失/新增容忍策略+契
   - 不直连因子存储/CH/Redis（provider 注入）
   - 不修改 CTR-002 契约定义（定义归 cross_layer_contracts.yaml codegen）
   - 不处理生产侧验证（归 MOD-CON-002 ctr002_producer_validator）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: version 参数
+#   fields: 参数 version，类型注解 str | None
+#   code: ctr002_consumer_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: incoming 参数
+#   fields: 参数 incoming，类型注解 str | None
+#   code: ctr002_consumer_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: supported 参数
+#   fields: 参数 supported，类型注解 Sequence[str]
+#   code: ctr002_consumer_adapter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SchemaSource
+#   name_en: SchemaSource
+#   intro: CTR-002 契约 Schema 真源（手工推导，与 cross_layer_contracts.yaml 对齐）。
+#   desc: CTR-002 契约 Schema 真源（手工推导，与 cross_layer_contracts.yaml 对齐）。；公共方法（定义序）: default_for, optional_default_map；源码 L…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② parse_semver
+#   name_en: parse_semver
+#   intro: 解析语义版本为 (major, minor)。
+#   desc: 解析语义版本为 (major, minor)。 支持 "X.Y" / "X.Y.Z"（忽略 patch）；失败返回 None。；源码 L211-L226
+#   inputs: version
+#   outputs: tuple[int, int] | None
+# - id: A3
+#   name_zh: ③ negotiate_version
+#   name_en: negotiate_version
+#   intro: 版本协商三态：exact / compatible / unsupported。
+#   desc: 版本协商三态：exact / compatible / unsupported。 - exact：incoming 等于任一 supported 版本。 - compatible…；源码 L229-L252
+#   inputs: incoming supported
+#   outputs: str
+# - id: A4
+#   name_zh: ④ Ctr002ConsumerAdapter
+#   name_en: Ctr002ConsumerAdapter
+#   intro: CTR-002 消费契约适配器。
+#   desc: CTR-002 消费契约适配器。 Args: supported_versions: 消费端支持的 schema 版本（默认 ("1.0",)）。；公共方法（定义序）: current_version, audit_l…
+#   inputs: supported_versions
+#   outputs: 返回值
+#   （注：A4 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: tuple[int, int] | None
+#   name_en: tuple[int, int] | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: D_SIGNAL 消费侧（运行时装配批接线）；factor_result_bridge 未建 provider 注入前瞻兼容
+# - id: O2
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: D_SIGNAL 消费侧（运行时装配批接线）；factor_result_bridge 未建 provider 注入前瞻兼容
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations
@@ -282,9 +349,7 @@ class Ctr002ConsumerAdapter:
         old_v = parse_semver(self._current_version)
         assert old_v is not None  # current_version 恒合法
         if pv <= old_v:
-            raise Ctr002AdapterError(
-                f"版本不得降级: {self._current_version} -> {new_version}"
-            )
+            raise Ctr002AdapterError(f"版本不得降级: {self._current_version} -> {new_version}")
         change = ContractChange(
             contract_id="CTR-002",
             old_version=self._current_version,
@@ -292,9 +357,7 @@ class Ctr002ConsumerAdapter:
             note=note,
         )
         self._current_version = new_version
-        self._audit_log.append(
-            f"CHANGE: CTR-002 {change.old_version}->{change.new_version} | {note}"
-        )
+        self._audit_log.append(f"CHANGE: CTR-002 {change.old_version}->{change.new_version} | {note}")
         notified = 0
         for cb in self._subscribers:
             try:

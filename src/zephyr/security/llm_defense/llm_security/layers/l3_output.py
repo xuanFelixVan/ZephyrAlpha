@@ -14,6 +14,61 @@
 # [TESTS]
 # [A_module] module_id=MOD-LLM_SECURITY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: l3_output.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① OutputFilterLayer
+#   name_en: OutputFilterLayer
+#   intro: 兼容旧接口的输出过滤层。
+#   desc: 兼容旧接口的输出过滤层。；公共方法（定义序）: validate, sanitize, detect_leak；源码 L108-L121
+#   inputs: config
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② OutputSecurityLayer
+#   name_en: OutputSecurityLayer
+#   intro: L3 输出安全层：schema 校验 + 沙箱 + 脱敏 + 幻觉检测 + 内容安全。
+#   desc: L3 输出安全层：schema 校验 + 沙箱 + 脱敏 + 幻觉检测 + 内容安全。；公共方法（定义序）: validate_schema, sandbox_execution, redact_sensitive_d…
+#   inputs: config
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ AIGeneratedCodeTrustBoundary
+#   name_en: AIGeneratedCodeTrustBoundary
+#   intro: AI 生成代码信任边界审计器。
+#   desc: AI 生成代码信任边界审计器。；公共方法（定义序）: audit, check_code_trust, validate_output_boundary, enforce_sandbox；源码 L283-L311
+#   inputs: config
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ AgentPublicInteractionGuard
+#   name_en: AgentPublicInteractionGuard
+#   intro: Agent 公共交互守卫：脱敏对外输出。
+#   desc: Agent 公共交互守卫：脱敏对外输出。；公共方法（定义序）: sanitize_for_github, sanitize_for_api, validate_interaction, check_public_saf…
+#   inputs: config
+#   outputs: 返回值
+#   （注：A4 之后另有 10 个公共定义未列入（含 10 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（14 定义）
+#   name_en: public defs
+#   intro: OutputFilterLayer, OutputSecurityLayer, AIGeneratedCodeTrustBoundary, AgentPubl…
+#   downstream: zephyr.security.llm_defense.llm_security.gateway ; tests.llm_security.test_l3_o…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
+"""
+
 import re
 from dataclasses import dataclass, field
 from typing import Any

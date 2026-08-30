@@ -14,12 +14,48 @@
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""TOCTOUGuard — TOCTOU (Time-of-Check to Time-of-Use) 防护.
+"""
+TOCTOUGuard — TOCTOU (Time-of-Check to Time-of-Use) 防护.
 
 依据蓝图 MOD-INF-018 §3:
 - 对文件做快照（mtime, size, hash）
 - 在使用前验证文件是否被修改
 - 防止检查与使用之间的时间窗口被利用
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: toctou_guard.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① FileIntegrityCheck
+#   name_en: FileIntegrityCheck
+#   intro: 文件完整性检查器 — 底层哈希计算工具.
+#   desc: 文件完整性检查器 — 底层哈希计算工具.；公共方法（定义序）: compute_hash, get_stat；源码 L83-L107
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② TOCTOUGuard
+#   name_en: TOCTOUGuard
+#   intro: TOCTOU 防护器 — 快照与验证.
+#   desc: TOCTOU 防护器 — 快照与验证. 在"检查"时刻对文件做快照，在"使用"时刻验证文件是否被修改。；公共方法（定义序）: pre_state, snapshot, verify, clear；源码 L110-L193
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: FileIntegrityCheck, TOCTOUGuard
+#   downstream: tests/agent_rbac/test_redteam_adversarial.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

@@ -14,7 +14,8 @@
 # [TESTS] tests/contracts/test_ctr002_producer_validator.py
 # [A_module] module_id=MOD-CON-002 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D-SIGNAL-158 CTR-002生产侧契约验证（B2-05118 → MOD-CON-002）。
+"""
+D-SIGNAL-158 CTR-002生产侧契约验证（B2-05118 → MOD-CON-002）。
 
 FactorSignal 出厂前强制验证：字段完整性/取值域/时间戳 PIT 校验；违约阻断
 （strict 模式抛 ProducerValidationError）或错误契约返回（collect 模式产
@@ -30,6 +31,46 @@ PIT 时间戳/整型域/其余必填非空规则——规则源不另造、不�
   - 不做消费侧版本协商/字段容忍（MOD-CON-001 职责）
 
 依据: D-SIGNAL §1.1；construction_backlog_dig.tsv B2-05118。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: signal 参数
+#   fields: 参数 signal，类型注解 Any
+#   code: ctr002_producer_validator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: strict 参数
+#   fields: 参数 strict（无注解）
+#   code: ctr002_producer_validator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① Ctr002ProducerValidator
+#   name_en: Ctr002ProducerValidator
+#   intro: CTR-002 生产侧契约验证器。
+#   desc: CTR-002 生产侧契约验证器。 Args: clock: 时钟注入（PIT 校验基准，默认 datetime.datetime.now）。 metrics_hook: 指标注…；公共方法（定义序）: schema,…
+#   inputs: clock metrics_hook
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② validate_ctr002_producer
+#   name_en: validate_ctr002_producer
+#   intro: 便捷函数：默认验证器验证单条 FactorSignal。
+#   desc: 便捷函数：默认验证器验证单条 FactorSignal。；源码 L308-L310
+#   inputs: signal strict
+#   outputs: ValidationReport
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ValidationReport
+#   name_en: ValidationReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: D_FACTOR 生产侧（运行时装配批接线；ctr002_producer MOD-L02-001 挂接候选）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -229,9 +270,7 @@ class Ctr002ProducerValidator:
         if isinstance(as_of, datetime.datetime):
             now = _to_local_naive(self._clock())
             if _to_local_naive(as_of) > now:
-                violations.append(
-                    f"as_of_date={as_of!r} PIT违规：晚于当前时点 {now!r}"
-                )
+                violations.append(f"as_of_date={as_of!r} PIT违规：晚于当前时点 {now!r}")
         else:
             violations.append(f"as_of_date={as_of!r} 必须为 datetime 类型")
         return violations

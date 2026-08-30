@@ -15,6 +15,35 @@
 # [A_module] module_id=MOD-LLM_SECURITY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: protocol.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① LLMSecurityProtocol
+#   name_en: LLMSecurityProtocol
+#   intro: LLM Security Gateway 九层防御统一接口契约（L0-L8）。
+#   desc: LLM Security Gateway 九层防御统一接口契约（L0-L8）。 所有 LSG 防御层 MUST 继承本协议并实现 evaluate()。 原则：fail-clos…；公共方法（定义序）: fail_cl…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: LLMSecurityProtocol
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any

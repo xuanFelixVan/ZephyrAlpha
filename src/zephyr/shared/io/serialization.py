@@ -41,6 +41,125 @@ AI 施工约定：
 
 SSoT: MOD-INF-016 §2.9 shared-serialization
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: value 参数
+#   fields: 参数 value，类型注解 Decimal
+#   code: serialization.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: obj 参数
+#   fields: 参数 obj，类型注解 object
+#   code: serialization.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: data 参数
+#   fields: 参数 data，类型注解 dict[str, Any]
+#   code: serialization.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: model 参数
+#   fields: 参数 model（无注解）
+#   code: serialization.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① serialize_decimal
+#   name_en: serialize_decimal
+#   intro: serialize_decimal(value) 源码 L218-L224
+#   desc: 源码 L218-L224
+#   inputs: value
+#   outputs: str
+# - id: A2
+#   name_zh: ② deserialize_decimal
+#   name_en: deserialize_decimal
+#   intro: deserialize_decimal(value) 源码 L227-L233
+#   desc: 源码 L227-L233
+#   inputs: value
+#   outputs: Decimal
+# - id: A3
+#   name_zh: ③ serialize_datetime
+#   name_en: serialize_datetime
+#   intro: serialize_datetime(value) 源码 L236-L245
+#   desc: 源码 L236-L245
+#   inputs: value
+#   outputs: str
+# - id: A4
+#   name_zh: ④ deserialize_datetime
+#   name_en: deserialize_datetime
+#   intro: deserialize_datetime(value) 源码 L248-L257
+#   desc: 源码 L248-L257
+#   inputs: value
+#   outputs: datetime
+# - id: A5
+#   name_zh: ⑤ to_dict
+#   name_en: to_dict
+#   intro: 将 Pydantic 模型或 dataclass 转换为确定性 dict。
+#   desc: 将 Pydantic 模型或 dataclass 转换为确定性 dict。 Decimal -> str / datetime -> ISO 8601 UTC / Enum ->…；源码 L303-L331
+#   inputs: obj
+#   outputs: dict[str, Any]
+# - id: A6
+#   name_zh: ⑥ from_dict
+#   name_en: from_dict
+#   intro: 从确定性 dict 恢复为 Pydantic 模型实例或原生 dict。
+#   desc: 从确定性 dict 恢复为 Pydantic 模型实例或原生 dict。 如果提供 model，则用 model(**deserialized_dict) 构造，Pydantic…；源码 L334-L360
+#   inputs: data model
+#   outputs: dict[str, Any] | object
+# - id: A7
+#   name_zh: ⑦ to_json
+#   name_en: to_json
+#   intro: 将对象序列化为确定性 JSON 字符串。
+#   desc: 将对象序列化为确定性 JSON 字符串。 Decimal -> str / datetime -> ISO 8601 UTC / Enum -> str(value) Args:…；源码 L363-L376
+#   inputs: obj indent
+#   outputs: str
+# - id: A8
+#   name_zh: ⑧ dumps
+#   name_en: dumps
+#   intro: 将任意对象序列化为确定性 JSON 字符串（5.147.4 SSoT）。
+#   desc: 将任意对象序列化为确定性 JSON 字符串（5.147.4 SSoT）。 替代裸 ``json.dumps(obj, default=str)``——使用 ``_serializ…；源码 L379-L416
+#   inputs: obj indent ensure_ascii sort_keys
+#   outputs: str
+# - id: A9
+#   name_zh: ⑨ filter_dataclass_fields
+#   name_en: filter_dataclass_fields
+#   intro: 过滤 dict，仅保留目标类实际声明的字段（5.147.5 SSoT）。
+#   desc: 过滤 dict，仅保留目标类实际声明的字段（5.147.5 SSoT）。 用于 ``_from_dict`` / ``**data`` 直接展开的版本兼容： 旧持久化数据中已删除…；源码 L419-L471
+#   inputs: data
+#   outputs: dict
+# - id: A10
+#   name_zh: ⑩ from_json
+#   name_en: from_json
+#   intro: 从确定性 JSON 字符串恢复对象。
+#   desc: 从确定性 JSON 字符串恢复对象。 Args: json_str: 由 to_json() 产出的 JSON 字符串。 model: 可选的 Pydantic 模型类——如果提…；源码 L474-L498
+#   inputs: json_str model
+#   outputs: dict[str, Any] | object
+#   （注：A10 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: Decimal
+#   name_en: Decimal
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> A10
+# A10 --> O1
 """
 
 from __future__ import annotations

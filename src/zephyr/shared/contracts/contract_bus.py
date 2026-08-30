@@ -25,6 +25,65 @@ ContractBus — 跨层通信抽象 + Pydantic v2 Schema Enforcement (M-09)
   - MANDATORY Schema 校验——不符合合约的消息直接拒绝
   - 支持同步/异步双模式
   - 合约注册表从 ContractBus YAML 加载
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: contract_id 参数
+#   fields: 参数 contract_id，类型注解 str
+#   code: contract_bus.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ContractRegistry
+#   name_en: ContractRegistry
+#   intro: class ContractRegistry 源码 L131-L142
+#   desc: 公共方法（定义序）: register, get, list_all；源码 L131-L142
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② ContractEnforcer
+#   name_en: ContractEnforcer
+#   intro: class ContractEnforcer 源码 L145-L170
+#   desc: 公共方法（定义序）: enforce；源码 L145-L170
+#   inputs: registry
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ ContractBus
+#   name_en: ContractBus
+#   intro: class ContractBus 源码 L173-L190
+#   desc: 公共方法（定义序）: validate, call, call_async；源码 L173-L190
+#   inputs: registry
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ enforce_contract
+#   name_en: enforce_contract
+#   intro: enforce_contract(contract_id) 源码 L193-L217
+#   desc: 源码 L193-L217
+#   inputs: contract_id
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ get_bus
+#   name_en: get_bus
+#   intro: get_bus() 源码 L223-L224
+#   desc: 源码 L223-L224
+#   inputs: 无参数
+#   outputs: ContractBus
+#   （注：A5 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ContractBus
+#   name_en: ContractBus
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 import asyncio

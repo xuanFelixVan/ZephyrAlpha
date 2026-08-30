@@ -40,6 +40,32 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
   ❌ 用 datetime.now(timezone.utc).isoformat() 代替 now_iso()
   ❌ 用 content.find("---", 3) + yaml.safe_load 代替 parse_frontmatter()
   ❌ 用 len(text) // 4 代替 estimate_tokens()
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: api_index.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① 模块占位（无公共定义）
+#   name_en: placeholder
+#   intro: api_index.py 无顶层公共函数/类/再导出（AST 事实）
+#   desc: 源码 L1-L531；包结构占位或纯内部模块
+#   inputs: I1
+#   outputs: 无（占位）
+# 层: 输出
+# - id: O1
+#   name_zh: 无输出（占位模块）
+#   name_en: none
+#   intro: 无公共定义无再导出（AST 事实）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 # ═══════════════════════════════════════════════════════════════════════════

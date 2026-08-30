@@ -14,12 +14,40 @@
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py; tests/test_cross_session_detector.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""CrossSessionDetector — 跨 Session 检测器.
+"""
+CrossSessionDetector — 跨 Session 检测器.
 
 依据蓝图 MOD-INF-018 §3:
 - 对 agent session token 进行 HMAC-SHA256 签名
 - 检测跨 session 身份盗用（agent_id 与签名时不一致）
 - 记录违规事件以供审计
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: secret_key 参数
+#   fields: 参数 secret_key（无注解）
+#   code: cross_session_detector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CrossSessionDetector
+#   name_en: CrossSessionDetector
+#   intro: 跨 session 检测器.
+#   desc: 跨 session 检测器.；公共方法（定义序）: active_sessions, secret, violations, sign_token, verify_token；源码 L88-L192
+#   inputs: secret_key
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: CrossSessionDetector
+#   downstream: tests/agent_rbac/test_redteam_adversarial.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -109,7 +137,7 @@ class CrossSessionDetector:
         nonce: str,
         timestamp,
     ) -> str:
-        payload = f"{agent_id}:{session_id}:{nonce}:{timestamp}".encode("utf-8")
+        payload = f"{agent_id}:{session_id}:{nonce}:{timestamp}".encode()
         return hmac.new(
             self._secret.encode("utf-8"),
             payload,

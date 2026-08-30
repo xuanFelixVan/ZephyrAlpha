@@ -14,6 +14,61 @@
 # [TESTS]
 # [A_module] module_id=MOD-LLM_SECURITY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: l7_validation.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ValidationLayer
+#   name_en: ValidationLayer
+#   intro: class ValidationLayer 源码 L79-L149
+#   desc: 公共方法（定义序）: validate, check_integrity, enforce_schema, validate_unit_tests, validate_integration_tests, trigge…
+#   inputs: config
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② DeepSeekSpecialRiskManager
+#   name_en: DeepSeekSpecialRiskManager
+#   intro: Manages special risks for DeepSeek models.
+#   desc: Manages special risks for DeepSeek models.；公共方法（定义序）: assess_risk, check_special_patterns, check_hallucinatio…
+#   inputs: config
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ LiteLLMProviderIsolator
+#   name_en: LiteLLMProviderIsolator
+#   intro: Isolates LiteLLM provider interactions for safety.
+#   desc: Isolates LiteLLM provider interactions for safety.；公共方法（定义序）: isolate_request, validate_response, run_provide…
+#   inputs: config
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ ProviderFailClosedAdapter
+#   name_en: ProviderFailClosedAdapter
+#   intro: Adapter that ensures providers fail closed (safe by default…
+#   desc: Adapter that ensures providers fail closed (safe by default).；公共方法（定义序）: call, is_fail_closed, get_strategy；源…
+#   inputs: provider default_safe_response
+#   outputs: 返回值
+#   （注：A4 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: ValidationLayer, DeepSeekSpecialRiskManager, LiteLLMProviderIsolator, ProviderF…
+#   downstream: zephyr.security.llm_defense.llm_security.gateway; tests.llm_security.test_l7_va…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
+"""
+
 import logging
 from enum import Enum
 from typing import Any

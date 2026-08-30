@@ -40,6 +40,56 @@ Phase 6 新增（盲点 B6）——解决 observer.emit() 静默吞 handler 异�
 
 SSoT: MOD-INF-016 §2.14 shared-events-dlq
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: observer 参数
+#   fields: 参数 observer，类型注解 Observer
+#   code: dlq.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: db_path 参数
+#   fields: 参数 db_path，类型注解 str
+#   code: dlq.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: retry_interval 参数
+#   fields: 参数 retry_interval（无注解）
+#   code: dlq.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: max_attempts 参数
+#   fields: 参数 max_attempts（无注解）
+#   code: dlq.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DeadLetterQueue
+#   name_en: DeadLetterQueue
+#   intro: 死信队列——拦截 observer 失败事件并持久化。
+#   desc: 死信队列——拦截 observer 失败事件并持久化。 Usage: from zephyr.shared.infra.observer import global_observ…；公共方法（定义序）: attach,…
+#   inputs: db_path retry_interval max_attempts max_age_hours
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② attach_dlq_to_observer
+#   name_en: attach_dlq_to_observer
+#   intro: 将死信队列挂载到事件总线的辅助函数。
+#   desc: 将死信队列挂载到事件总线的辅助函数。 用法: from zephyr.shared.infra.observer import global_observer from zeph…；源码 L556-L613
+#   inputs: observer db_path retry_interval max_attempts
+#   outputs: DeadLetterQueue
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: DeadLetterQueue
+#   name_en: DeadLetterQueue
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.shared.events.dlq_bridge; zephyr.integration.shared.events; zephyr.integ…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

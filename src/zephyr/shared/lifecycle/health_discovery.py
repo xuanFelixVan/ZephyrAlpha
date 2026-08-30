@@ -15,10 +15,50 @@
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""CT-HEALTH-001: System-wide Health Discovery Registration.
+"""
+CT-HEALTH-001: System-wide Health Discovery Registration.
 
 Registers AggregateHealth for all 12 infrastructure systems and provides
 a unified healthz endpoint consumable by external monitoring.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: system_name 参数
+#   fields: 参数 system_name，类型注解 str
+#   code: health_discovery.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: check_fn 参数
+#   fields: 参数 check_fn，类型注解 Callable[[], bool]
+#   code: health_discovery.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① HealthDiscovery
+#   name_en: HealthDiscovery
+#   intro: class HealthDiscovery 源码 L93-L136
+#   desc: 公共方法（定义序）: register, get_status, all_registered；源码 L93-L136
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② register_system_health
+#   name_en: register_system_health
+#   intro: register_system_health(system_name, check_fn) 源码 L142-L148
+#   desc: 源码 L142-L148
+#   inputs: system_name check_fn
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: HealthDiscovery, register_system_health
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

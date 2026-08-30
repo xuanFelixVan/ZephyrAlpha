@@ -14,7 +14,8 @@
 # [TESTS] tests/sell_decision/test_scaling_out_architect.py
 # [A_module] module_id=MOD-SELL-017 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Scaling Out Architect — 分批卖出架构师 (MOD-SELL-017)
+"""
+Scaling Out Architect — 分批卖出架构师 (MOD-SELL-017)
 
 设计分批离场的**批次结构**（几批、每批多少、什么触发），与既有
 scaling_out.py（三步法单步状态机：SELL/MOVE_STOP/HOLD）分工：
@@ -33,6 +34,48 @@ t1_deferred_weight 顺延。
 
 纪律：纯函数、无 IO。
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: total_weight 参数
+#   fields: 参数 total_weight（无注解）
+#   code: scaling_out_architect.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: sellable_weight 参数
+#   fields: 参数 sellable_weight（无注解）
+#   code: scaling_out_architect.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: urgency 参数
+#   fields: 参数 urgency（无注解）
+#   code: scaling_out_architect.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: tranche_count 参数
+#   fields: 参数 tranche_count（无注解）
+#   code: scaling_out_architect.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① design_scaling_plan
+#   name_en: design_scaling_plan
+#   intro: 设计分批卖出计划（纯函数）。
+#   desc: 设计分批卖出计划（纯函数）。 Args: total_weight: 计划卖出总权重 >0 sellable_weight: T+1 可卖权重 ∈[0, total_weight…；源码 L188-L271
+#   inputs: total_weight sellable_weight urgency tranche_count
+#   outputs: ScalingPlan
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ScalingPlan
+#   name_en: ScalingPlan
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-SELL-013(离场情景SCALED_EXIT落地) ; D-EX-CORE(批次执行)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -166,13 +209,9 @@ def design_scaling_plan(
     if not math.isfinite(total_weight) or total_weight <= 0.0:
         raise InvalidScalingPlanInputError(f"total_weight 非法（须为正有限值），got {total_weight}")
     if not math.isfinite(sellable_weight) or sellable_weight < 0.0:
-        raise InvalidScalingPlanInputError(
-            f"sellable_weight 非法（须为有限非负值），got {sellable_weight}"
-        )
+        raise InvalidScalingPlanInputError(f"sellable_weight 非法（须为有限非负值），got {sellable_weight}")
     if sellable_weight > total_weight + 1e-12:
-        raise InvalidScalingPlanInputError(
-            f"可卖权重 {sellable_weight} 超计划总权重 {total_weight}（口径矛盾）"
-        )
+        raise InvalidScalingPlanInputError(f"可卖权重 {sellable_weight} 超计划总权重 {total_weight}（口径矛盾）")
     if not math.isfinite(urgency) or not (0.0 <= urgency <= 1.0):
         raise InvalidScalingPlanInputError(f"urgency 非法（须 ∈[0,1]），got {urgency}")
     if not (_MIN_TRANCHES <= tranche_count <= _MAX_TRANCHES):
@@ -220,9 +259,7 @@ def design_scaling_plan(
             cumulative_fraction=first.cumulative_fraction,
         )
         tranches[0] = capped_first
-        notes.append(
-            f"T+1 约束：首批计划 {first.weight:.4f} 中 {deferred:.4f} 当日买入冻结，顺延至后续批次"
-        )
+        notes.append(f"T+1 约束：首批计划 {first.weight:.4f} 中 {deferred:.4f} 当日买入冻结，顺延至后续批次")
 
     return ScalingPlan(
         total_weight=total_weight,

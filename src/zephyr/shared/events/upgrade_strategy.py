@@ -15,13 +15,49 @@
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""EventBus 升级策略引擎
+"""
+EventBus 升级策略引擎
 
 从 infrastructure_runtime_integration.event_bus_upgrade 迁移至此。
 原始路径保留为 compat shim，新代码应从此处导入。
 
 模块 ID: M-16 EventBusUpgrade（曾用名: infrastructure_runtime_integration/event_bus_upgrade.py）
 # SRC-0037: 版本分叉->独立命名 — 升级策略（非事件版本化）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: upgrade_strategy.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① UpgradePlan
+#   name_en: UpgradePlan
+#   intro: class UpgradePlan 源码 L100-L118
+#   desc: 公共方法（定义序）: step_count, is_safe；源码 L100-L118
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② EventBusUpgrade
+#   name_en: EventBusUpgrade
+#   intro: 事件总线升级策略
+#   desc: 事件总线升级策略 管理事件总线从 V1（内存版）到 V2（持久化版）的升级过程： - 自动升级计划生成 - 渐进式迁移（不中断服务） - 自动回滚机制 - 升级后验证；公共方法（定义序）: generate_upgra…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: UpgradePlan, EventBusUpgrade
+#   downstream: zephyr.shared.events.__init__; zephyr.integration.shared.events.upgrade_strateg…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

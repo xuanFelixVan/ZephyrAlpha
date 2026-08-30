@@ -14,6 +14,53 @@
 # [TESTS] tests/test_evals.py
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: rubric 参数
+#   fields: 参数 rubric（无注解）
+#   code: evals.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① EvalResult
+#   name_en: EvalResult
+#   intro: class EvalResult 源码 L109-L120
+#   desc: 公共方法（定义序）: summary；源码 L109-L120
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② EvalSuiteResult
+#   name_en: EvalSuiteResult
+#   intro: class EvalSuiteResult 源码 L124-L146
+#   desc: 公共方法（定义序）: pass_count, fail_count, total, pass_rate, mean_score；源码 L124-L146
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ EvalRunner
+#   name_en: EvalRunner
+#   intro: class EvalRunner 源码 L149-L220
+#   desc: 公共方法（定义序）: add_case, add_cases, run_all, run_single, set_baseline, check_regression, simple_evaluate；源码 L149-…
+#   inputs: rubric
+#   outputs: 返回值
+#   （注：A3 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: EvalResult, EvalSuiteResult, EvalRunner
+#   downstream: tests
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
+"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field

@@ -14,13 +14,41 @@
 # [TESTS] tests/agent_rbac/test_novel_attack.py; tests/agent_rbac/test_vibe_coding.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Cybersec2026Guard — 2026 网络安全威胁检测.
+"""
+Cybersec2026Guard — 2026 网络安全威胁检测.
 
 依据蓝图 MOD-INF-018 §cybersec_2026_guard:
 - LMOPS 后门检测（模型权重篡改、对抗微调）
 - 多模态越狱检测（图像嵌入提示）
 - 合成身份检测（带外身份）
 - Agent 供应链检测（未验证模型）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: cybersec_2026_guard.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① Cybersec2026Guard
+#   name_en: Cybersec2026Guard
+#   intro: 2026 网络安全威胁检测器.
+#   desc: 2026 网络安全威胁检测器.；公共方法（定义序）: scan；源码 L84-L168
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: Cybersec2026Guard
+#   downstream: tests/agent_rbac/test_novel_attack.py; tests/agent_rbac/test_vibe_coding.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

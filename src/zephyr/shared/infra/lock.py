@@ -39,6 +39,57 @@ AI 施工约定：
 
 SSoT: MOD-INF-016 §2.20 shared-lock
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: counter_path 参数
+#   fields: 参数 counter_path，类型注解 Path | str
+#   code: lock.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① next_fencing_token
+#   name_en: next_fencing_token
+#   intro: 读取并递增持久化 fencing 计数器，返回新的单调递增 token（5.58.2）。
+#   desc: 读取并递增持久化 fencing 计数器，返回新的单调递增 token（5.58.2）。 调用方 MUST 已持有对应互斥锁——递增操作在锁保护下串行化，保证单调性。 计数器文件…；源码 L130-L151
+#   inputs: counter_path
+#   outputs: int
+# - id: A2
+#   name_zh: ② SyncLockRenewer
+#   name_en: SyncLockRenewer
+#   intro: TTL 锁自动续期 watchdog（5.58.3）——守护线程定期调用 refresh_fn 刷新锁时间戳。
+#   desc: TTL 锁自动续期 watchdog（5.58.3）——守护线程定期调用 refresh_fn 刷新锁时间戳。 refresh_fn() 续约前 MUST 验证持有者身份（own…；公共方法（定义序）: start,…
+#   inputs: refresh_fn interval_s name
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ DistributedLock
+#   name_en: DistributedLock
+#   intro: 分布式锁接口——acquire / release / stats。
+#   desc: 分布式锁接口——acquire / release / stats。；公共方法（定义序）: acquire, release, is_locked；源码 L205-L218
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ MemoryLock
+#   name_en: MemoryLock
+#   intro: 单进程异步锁——开发/测试用，不用于跨进程。
+#   desc: 单进程异步锁——开发/测试用，不用于跨进程。 对标 asyncio.Lock + context manager 语法糖。 Usage:: lock = MemoryLock()…；公共方法（定义序）: acquire…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A4 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

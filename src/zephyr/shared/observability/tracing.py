@@ -33,6 +33,55 @@ AI 施工约定：
   - span 属性仅允许 string/int/bool——禁止 float（OTLP 精度丢失）
 
 SSoT: MOD-INF-016 §2.19 shared-tracing
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: name 参数
+#   fields: 参数 name，类型注解 str
+#   code: tracing.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: attributes 参数
+#   fields: 参数 attributes，类型注解 dict[str, Any] | None
+#   code: tracing.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: kind 参数
+#   fields: 参数 kind，类型注解 str
+#   code: tracing.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① start_span
+#   name_en: start_span
+#   intro: start_span(name, attributes, kind) 源码 L138-L172
+#   desc: 源码 L138-L172
+#   inputs: name attributes kind
+#   outputs: Generator[Any, None, None]
+# - id: A2
+#   name_zh: ② traced
+#   name_en: traced
+#   intro: traced(name, kind) 源码 L175-L186
+#   desc: 源码 L175-L186
+#   inputs: name kind
+#   outputs: Callable[[Callable[..., Any]], Callable…
+# 层: 输出
+# - id: O1
+#   name_zh: Generator[Any, None, None]
+#   name_en: Generator[Any, None, None]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: Callable[[Callable[..., Any]], Callable…
+#   name_en: Callable[[Callable[..., Any]], Callable…
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

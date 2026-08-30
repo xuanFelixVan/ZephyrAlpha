@@ -24,6 +24,32 @@ D-ORCH / D-GOV / D-RESILIENCE 通过此 Protocol 访问任务持久化，
 
 类型策略：Protocol 内部使用 Any 代替 Task / TaskCard / TaskStatus 等域类型，
 避免 Protocol 反向依赖 D-DATA 层。消费者按需在调用侧做类型窄化。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: task_repository_protocol.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① TaskRepositoryProtocol
+#   name_en: TaskRepositoryProtocol
+#   intro: TaskRepository 的 Protocol — D-ORCH / D-GOV / D-RESILIENCE 通…
+#   desc: TaskRepository 的 Protocol — D-ORCH / D-GOV / D-RESILIENCE 通过此接口访问任务持久化。；公共方法（定义序）: close, create, get, get_or…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: TaskRepositoryProtocol
+#   downstream: zephyr.trading ; zephyr.governance
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

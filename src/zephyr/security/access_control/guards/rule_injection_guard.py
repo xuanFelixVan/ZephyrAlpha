@@ -14,12 +14,40 @@
 # [TESTS] tests/agent_rbac/test_forensic_b.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""RuleInjectionGuard — 规则注入守卫.
+"""
+RuleInjectionGuard — 规则注入守卫.
 
 依据蓝图 MOD-INF-018 §3:
 - 检测规则内容中的代码注入模式
 - 阻止 eval/exec/__import__/os.system 等危险调用
 - 保护规则引擎免受注入攻击
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: rule_injection_guard.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① RuleInjectionGuard
+#   name_en: RuleInjectionGuard
+#   intro: 规则注入守卫器.
+#   desc: 规则注入守卫器.；公共方法（定义序）: check；源码 L102-L136
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: RuleInjectionGuard
+#   downstream: tests/agent_rbac/test_forensic_b.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

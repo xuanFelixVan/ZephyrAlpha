@@ -15,6 +15,91 @@
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: repo 参数
+#   fields: 参数 repo，类型注解 object
+#   code: orchestration_protocol.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: batch_id 参数
+#   fields: 参数 batch_id，类型注解 str
+#   code: orchestration_protocol.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: worker_id 参数
+#   fields: 参数 worker_id，类型注解 str
+#   code: orchestration_protocol.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ShadowCanaryProtocol
+#   name_en: ShadowCanaryProtocol
+#   intro: Shadow canary deployment protocol - decouples D-RES/D-GOV f…
+#   desc: Shadow canary deployment protocol - decouples D-RES/D-GOV from D-ORCH.；公共方法（定义序）: shadow, promote；源码 L110-L115
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② ChaosEngineProtocol
+#   name_en: ChaosEngineProtocol
+#   intro: Chaos fault injection engine protocol - decouples D-RES/D-G…
+#   desc: Chaos fault injection engine protocol - decouples D-RES/D-GOV from D-ORCH.；公共方法（定义序）: get_injection_points, i…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ BatchOrchestratorProtocol
+#   name_en: BatchOrchestratorProtocol
+#   intro: Batch task orchestrator protocol - decouples D-RES/D-GOV fr…
+#   desc: Batch task orchestrator protocol - decouples D-RES/D-GOV from D-ORCH.；公共方法（定义序）: claim_next, mark_done, mark_…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ create_shadow_canary
+#   name_en: create_shadow_canary
+#   intro: create_shadow_canary() 源码 L154-L157
+#   desc: 源码 L154-L157
+#   inputs: 无参数
+#   outputs: ShadowCanaryProtocol
+# - id: A5
+#   name_zh: ⑤ create_chaos_engine
+#   name_en: create_chaos_engine
+#   intro: create_chaos_engine() 源码 L160-L163
+#   desc: 源码 L160-L163
+#   inputs: 无参数
+#   outputs: ChaosEngineProtocol
+# - id: A6
+#   name_zh: ⑥ create_batch_orchestrator
+#   name_en: create_batch_orchestrator
+#   intro: create_batch_orchestrator(repo, batch_id, worker_id) 源码 L16…
+#   desc: 源码 L166-L169
+#   inputs: repo batch_id worker_id
+#   outputs: BatchOrchestratorProtocol
+# 层: 输出
+# - id: O1
+#   name_zh: ShadowCanaryProtocol
+#   name_en: ShadowCanaryProtocol
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.infrastructure.rollback; zephyr.governance.ops_governance; zephyr.infras…
+# - id: O2
+#   name_zh: ChaosEngineProtocol
+#   name_en: ChaosEngineProtocol
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.infrastructure.rollback; zephyr.governance.ops_governance; zephyr.infras…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
+"""
+
 from __future__ import annotations
 
 import importlib

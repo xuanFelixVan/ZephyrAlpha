@@ -14,11 +14,38 @@
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""ContextDriftDetector — 上下文漂移与范围蔓延检测.
+"""
+ContextDriftDetector — 上下文漂移与范围蔓延检测.
 
 依据蓝图 MOD-INF-018 §3:
 - 记录 agent 操作序列
 - 检测操作是否超出基线范围（scope creep）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: context_drift_detector.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ContextDriftDetector
+#   name_en: ContextDriftDetector
+#   intro: 上下文漂移检测器 — 基于操作序列检测范围蔓延.
+#   desc: 上下文漂移检测器 — 基于操作序列检测范围蔓延.；公共方法（定义序）: contexts, record_operation, reset, detect_scope_creep；源码 L60-L135
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: ContextDriftDetector
+#   downstream: tests/agent_rbac/test_redteam_adversarial.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

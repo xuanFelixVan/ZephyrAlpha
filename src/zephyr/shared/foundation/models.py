@@ -25,6 +25,32 @@ DecompositionResult/GateCheckResult: 本模块本地定义
 TaskCard = Task 是纯别名，不是第二个模型。禁止对 TaskCard 做任何修改。
 SSoT 唯一入口: from zephyr.gov_enforcement.rule_enforcement.task_types import Task
 若需修改任务卡字段 -> 改 gates/task_types.py Task 模型 -> 同步 migration + INSERT + TEMPLATE_REQUIRED_FIELDS
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: models.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包公共面再导出
+#   name_en: __init__ re-export
+#   intro: 再导出 DecompositionResult, GateCheckResult, GateLevel, Task, TaskAuditFinding, Ta…
+#   desc: __init__ import L0；__all__ 8 项（AST 事实）
+#   inputs: I1
+#   outputs: __all__ 公共符号表
+# 层: 输出
+# - id: O1
+#   name_zh: 数据契约声明（2 类）
+#   name_en: data classes
+#   intro: DecompositionResult, GateCheckResult
+#   downstream: pipeline.* ; orchestrator.*
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

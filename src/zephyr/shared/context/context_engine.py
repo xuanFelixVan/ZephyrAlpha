@@ -35,6 +35,43 @@ Context Engine — AI 上下文组装与 Token 预算管理。
       DEGRADE-002 llm_summary→rule_based 降级 + 静态 IDE 能力矩阵路由）
     - register_rules: 三层规则注入（HOT/DOMAIN/COLD，code_dedup W3-8 消费位）
     - adjust_strategy: FLE 反馈通道（slot 预算动态调整 + TTL 到期回默认）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: context_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: max_tokens 参数
+#   fields: 参数 max_tokens（无注解）
+#   code: context_engine.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: now 参数
+#   fields: 参数 now（无注解）
+#   code: context_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ContextEngine
+#   name_en: ContextEngine
+#   intro: class ContextEngine 源码 L116-L549
+#   desc: 公共方法（定义序）: budget, max_tokens, project_root, assemble_context, check_token_budget, validate_pipeline_modules,…
+#   inputs: project_root max_tokens now
+#   outputs: 返回值
+#   （注：A1 之后另有 9 个公共定义未列入（含 9 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（10 定义）
+#   name_en: public defs
+#   intro: ContextEngine
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -407,13 +444,11 @@ class ContextEngine:
         violations: list[str] = []
         token_within = bundle.total_token_count <= bundle.token_budget
         if not token_within:
-            violations.append(
-                f"token_overflow: {bundle.total_token_count} > budget {bundle.token_budget}"
-            )
+            violations.append(f"token_overflow: {bundle.total_token_count} > budget {bundle.token_budget}")
         for content in bundle.slots.values():
             for trace in content.source_traces:
                 if trace.startswith("file://"):
-                    if not (self._project_root / trace[len("file://"):]).exists():
+                    if not (self._project_root / trace[len("file://") :]).exists():
                         violations.append(f"unresolvable_source: {trace}")
         return ValidationReport(
             passed=token_within and not violations,

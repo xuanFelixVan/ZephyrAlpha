@@ -14,6 +14,66 @@
 # [TESTS]
 # [A_module] module_id=MOD-LLM_SECURITY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: l8_multi_agent.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: hmac_key 参数
+#   fields: 参数 hmac_key（无注解）
+#   code: l8_multi_agent.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① MultiAgentSecurityLayer
+#   name_en: MultiAgentSecurityLayer
+#   intro: class MultiAgentSecurityLayer 源码 L81-L158
+#   desc: 公共方法（定义序）: validate, check_communication, enforce_boundary, authenticate_cross_agent, isolate_agent_communica…
+#   inputs: config hmac_key
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② AgentIdentityResolver
+#   name_en: AgentIdentityResolver
+#   intro: Resolves and verifies agent identities via attestation + me…
+#   desc: Resolves and verifies agent identities via attestation + message signing.；公共方法（定义序）: resolve, verify_identity…
+#   inputs: config
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ CrossAgentPermission
+#   name_en: CrossAgentPermission
+#   intro: Permission for a cross-agent interaction.
+#   desc: Permission for a cross-agent interaction. Instance-based (not an Enum) so callers can att…；公共方法（定义序）: is_expi…
+#   inputs: from_agent_id to_agent_id scope granted expires_at
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ TrustScoreCalculator
+#   name_en: TrustScoreCalculator
+#   intro: Calculates weighted trust scores for agents.
+#   desc: Calculates weighted trust scores for agents.；公共方法（定义序）: calculate, update_score；源码 L275-L312
+#   inputs: config
+#   outputs: 返回值
+#   （注：A4 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: MultiAgentSecurityLayer, AgentIdentityResolver, CrossAgentPermission, TrustScor…
+#   downstream: zephyr.security.llm_defense.llm_security.gateway; tests.llm_security.test_l8_mu…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
+"""
+
 from enum import Enum
 from typing import Any
 
@@ -57,7 +117,7 @@ class MultiAgentSecurityLayer:
         sender = getattr(item, "sender_id", "") or getattr(item, "source_id", "")
         receiver = getattr(item, "receiver_id", "") or getattr(item, "target_id", "")
         content = str(getattr(item, "content", ""))
-        sig = _hashlib.sha256(f"{sender}|{receiver}|{content}".encode("utf-8")).hexdigest()
+        sig = _hashlib.sha256(f"{sender}|{receiver}|{content}".encode()).hexdigest()
         result = _NS(verified=True, signature=sig, item=item)
         self.comm_history.append(result)
         return result
@@ -141,7 +201,7 @@ class AgentIdentityResolver:
         """Register an agent and return its derived secret."""
         import hashlib as _hashlib
 
-        secret = _hashlib.sha256(f"{agent_id}::registered".encode("utf-8")).hexdigest()
+        secret = _hashlib.sha256(f"{agent_id}::registered".encode()).hexdigest()
         self._agents[agent_id] = secret
         return secret
 
@@ -152,7 +212,7 @@ class AgentIdentityResolver:
         secret = self._agents.get(agent_id, "")
         if not secret:
             return ""
-        return _hashlib.sha256(f"{agent_id}:{secret}".encode("utf-8")).hexdigest()
+        return _hashlib.sha256(f"{agent_id}:{secret}".encode()).hexdigest()
 
     def verify_attestation(self, agent_id: str, attest: str) -> bool:
         expected = self.generate_attestation(agent_id)
@@ -163,7 +223,7 @@ class AgentIdentityResolver:
         import hashlib as _hashlib
 
         secret = self._agents.get(agent_id, "")
-        return _hashlib.sha256(f"{agent_id}|{message}|{secret}".encode("utf-8")).hexdigest()
+        return _hashlib.sha256(f"{agent_id}|{message}|{secret}".encode()).hexdigest()
 
     def verify_signature(self, agent_id: str, message: str, sig: str) -> bool:
         expected = self.sign_message(agent_id, message)

@@ -14,7 +14,8 @@
 # [TESTS] tests/shared/alerts/test_alert_precision_tracker.py
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""AlertPrecisionTracker — 告警精度/假阳性计数器（16号文 §4.3 P1-3② 落盘扩展）。
+"""
+AlertPrecisionTracker — 告警精度/假阳性计数器（16号文 §4.3 P1-3② 落盘扩展）。
 
 假阳性/告警精度记录从纯内存扩为 append-only 落盘（``.runtime/`` 下 JSONL，
 生产落点 ``DEFAULT_PERSIST_PATH``），启动时回放恢复计数。
@@ -25,7 +26,35 @@
   ``record_false_negative`` / ``compute`` / ``metrics``；
 - 传入 ``persist_path`` 才启用落盘：每次记录 append 一条 ``{"ts","kind"}``
   JSONL（只增不改），初始化时回放已有记录恢复计数。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: persist_path 参数
+#   fields: 参数 persist_path（无注解）
+#   code: alert_precision_tracker.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AlertPrecisionTracker
+#   name_en: AlertPrecisionTracker
+#   intro: 告警精度/假阳性计数器（可选 append-only 落盘 + 启动回放恢复）。
+#   desc: 告警精度/假阳性计数器（可选 append-only 落盘 + 启动回放恢复）。；公共方法（定义序）: persist_path, record_true_positive, record_false_positive…
+#   inputs: persist_path
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: AlertPrecisionTracker
+#   downstream: zephyr.infrastructure.capacity_assurance.modules.__init__ ; zephyr.feedback_loo…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
+
 from __future__ import annotations
 
 import json
@@ -37,9 +66,7 @@ from zephyr.shared.io.paths import REPO_ROOT
 from zephyr.shared.utils.time_utils import now_iso
 
 # 假阳性/告警精度记录生产落点（16号文 §4.3 P1-3②：.runtime/ 下 append-only JSONL）
-DEFAULT_PERSIST_PATH: Final[Path] = (
-    REPO_ROOT / ".runtime" / "shared" / "alerts" / "alert_precision.jsonl"
-)
+DEFAULT_PERSIST_PATH: Final[Path] = REPO_ROOT / ".runtime" / "shared" / "alerts" / "alert_precision.jsonl"
 
 _KIND_TRUE_POSITIVE: Final[str] = "true_positive"
 _KIND_FALSE_POSITIVE: Final[str] = "false_positive"
@@ -59,9 +86,7 @@ class AlertPrecisionTracker:
     """告警精度/假阳性计数器（可选 append-only 落盘 + 启动回放恢复）。"""
 
     def __init__(self, persist_path: str | Path | None = None) -> None:
-        self._persist_path: Path | None = (
-            Path(persist_path) if persist_path is not None else None
-        )
+        self._persist_path: Path | None = Path(persist_path) if persist_path is not None else None
         self._true_positives: int = 0
         self._false_positives: int = 0
         self._false_negatives: int = 0
@@ -102,10 +127,7 @@ class AlertPrecisionTracker:
             return
         self._persist_path.parent.mkdir(parents=True, exist_ok=True)
         with open(self._persist_path, "a", encoding="utf-8") as fh:
-            fh.write(
-                json.dumps({"ts": now_iso(), "kind": kind}, ensure_ascii=False, separators=(",", ":"))
-                + "\n"
-            )
+            fh.write(json.dumps({"ts": now_iso(), "kind": kind}, ensure_ascii=False, separators=(",", ":")) + "\n")
 
     def _replay(self) -> None:
         """启动回放：从 append-only JSONL 恢复计数（单写者假设，不做并发合并）。"""

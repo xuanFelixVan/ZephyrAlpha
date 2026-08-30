@@ -15,6 +15,36 @@
 # [A_module] module_id=MOD-INF-030 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: blast_radius 参数
+#   fields: 参数 blast_radius（无注解）
+#   code: injection_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① InjectionEngine
+#   name_en: InjectionEngine
+#   intro: class InjectionEngine 源码 L68-L204
+#   desc: 公共方法（定义序）: blast_radius, inject, recover, verify, injection_history；源码 L68-L204
+#   inputs: blast_radius
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: InjectionEngine
+#   downstream: validator.py ; game_day_runner.py ; chaos_engine.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 from __future__ import annotations
 
 import logging

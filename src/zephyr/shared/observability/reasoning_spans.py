@@ -14,6 +14,44 @@
 # [TESTS]
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: reasoning_spans.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ReasoningSpan
+#   name_en: ReasoningSpan
+#   intro: class ReasoningSpan 源码 L63-L74
+#   desc: 公共方法（定义序）: duration_ms；源码 L63-L74
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② ReasoningSpans
+#   name_en: ReasoningSpans
+#   intro: class ReasoningSpans 源码 L77-L94
+#   desc: 公共方法（定义序）: start, end, get_trace；源码 L77-L94
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: ReasoningSpan, ReasoningSpans
+#   downstream: zephyr.feedback_loop.__init___from_obs
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
+
 from __future__ import annotations
 
 import time

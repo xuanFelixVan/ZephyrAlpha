@@ -44,6 +44,68 @@ CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-INF-030).
     # 锁外（boot_hooks 启动消费线程）:
     from zephyr.security.adversarial_validation.commit_trigger import RedBlueTriggerConsumer
     RedBlueTriggerConsumer().start()
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: files 参数
+#   fields: 参数 files，类型注解 list[str]
+#   code: commit_trigger.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: commit_hash 参数
+#   fields: 参数 commit_hash，类型注解 str
+#   code: commit_trigger.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: session_id 参数
+#   fields: 参数 session_id，类型注解 str
+#   code: commit_trigger.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: formal_files 参数
+#   fields: 参数 formal_files，类型注解 list[str]
+#   code: commit_trigger.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① detect_formal_files
+#   name_en: detect_formal_files
+#   intro: 扫描提交文件前几行是否含 [BLUEPRINT]/[MODULE] 头部标记。
+#   desc: 扫描提交文件前几行是否含 [BLUEPRINT]/[MODULE] 头部标记。 毫秒级（无 YAML 解析、无 import）。script_manifest.yaml 精确交叉…；源码 L150-L175
+#   inputs: files
+#   outputs: list[str]
+# - id: A2
+#   name_zh: ② write_trigger_record
+#   name_en: write_trigger_record
+#   intro: 原子写一个触发记录到队列目录（锁内调用，毫秒级）。
+#   desc: 原子写一个触发记录到队列目录（锁内调用，毫秒级）。 对齐 manage_baseline._atomic_write 模式：写 .tmp 后 os.replace 原子替换， 避…；源码 L178-L218
+#   inputs: commit_hash session_id formal_files queue_dir
+#   outputs: Path
+# - id: A3
+#   name_zh: ③ RedBlueTriggerConsumer
+#   name_en: RedBlueTriggerConsumer
+#   intro: 事件驱动消费者：订阅 "red_blue.trigger.queued" 事件，门禁达标时跑 TIER_1 对抗验证。
+#   desc: 事件驱动消费者：订阅 "red_blue.trigger.queued" 事件，门禁达标时跑 TIER_1 对抗验证。 就位 + 门禁激活: - 始终订阅（就位：即使门禁未达标，…；公共方法（定义序）: queue_d…
+#   inputs: queue_dir
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: list[str]
+#   name_en: list[str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway; zephyr.trading.boot_hooks
+# - id: O2
+#   name_zh: Path
+#   name_en: Path
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway; zephyr.trading.boot_hooks
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

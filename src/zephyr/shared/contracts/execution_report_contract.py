@@ -14,7 +14,8 @@
 # [TESTS] tests/ex_core/test_execution_report_contract.py
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""CTR-P1-007 ExecutionReport 契约层——校验 / 序列化 / 消费方 Protocol 对接位（GAP-L06-003）。
+"""
+CTR-P1-007 ExecutionReport 契约层——校验 / 序列化 / 消费方 Protocol 对接位（GAP-L06-003）。
 
 与既有产物的关系（并存，不破坏既有消费方）：
 - 数据模型真源 = codegen frozen dataclass ``zephyr.shared.contracts.execution_report.
@@ -41,6 +42,109 @@ FIX 5.0 语义对标（字段取舍论证详见施工报告）：
   ``ChampionChallengerDeltaExtractor``（extract_delta(champion, challenger) -> float），
   ``NetPnlDeltaExtractor`` 为默认实现：配对报告（同标的同方向，Fail-Closed）逐笔
   delta = net_cashflow(challenger) − net_cashflow(champion)。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: report 参数
+#   fields: 参数 report，类型注解 ExecutionReport
+#   code: execution_report_contract.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: board_lot 参数
+#   fields: 参数 board_lot（无注解）
+#   code: execution_report_contract.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: price_limit_up 参数
+#   fields: 参数 price_limit_up（无注解）
+#   code: execution_report_contract.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: price_limit_down 参数
+#   fields: 参数 price_limit_down（无注解）
+#   code: execution_report_contract.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① validate_execution_report
+#   name_en: validate_execution_report
+#   intro: CTR-P1-007 消费方入站校验（Fail-Closed）。
+#   desc: CTR-P1-007 消费方入站校验（Fail-Closed）。 Args: report: 待校验 ExecutionReport（codegen frozen 契约）。 bo…；源码 L203-L296
+#   inputs: report board_lot price_limit_up price_limit_down
+#   outputs: ExecutionReport
+# - id: A2
+#   name_zh: ② execution_report_to_payload
+#   name_en: execution_report_to_payload
+#   intro: 序列化为可 JSON 化的 payload（Decimal→str 保精度，其余原样）。
+#   desc: 序列化为可 JSON 化的 payload（Decimal→str 保精度，其余原样）。 按 codegen 契约字段全集迭代——契约字段漂移时本函数随之漂移， tests 侧以…；源码 L299-L311
+#   inputs: report
+#   outputs: dict[str, object]
+# - id: A3
+#   name_zh: ③ execution_report_from_payload
+#   name_en: execution_report_from_payload
+#   intro: 从 payload 反序列化（缺键/类型错/版本不符 Fail-Closed；未知键忽略向前兼容）。
+#   desc: 从 payload 反序列化（缺键/类型错/版本不符 Fail-Closed；未知键忽略向前兼容）。 入站即校验：解析成功后过 validate_execution_report…；源码 L326-L360
+#   inputs: payload
+#   outputs: ExecutionReport
+# - id: A4
+#   name_zh: ④ report_net_cashflow
+#   name_en: report_net_cashflow
+#   intro: 单笔报告净现金流（组合视角）：SELL=+（成交额−佣金），BUY=−（成交额+佣金）。
+#   desc: 单笔报告净现金流（组合视角）：SELL=+（成交额−佣金），BUY=−（成交额+佣金）。；源码 L363-L368
+#   inputs: report
+#   outputs: Decimal
+# - id: A5
+#   name_zh: ⑤ ExecutionReportSource
+#   name_en: ExecutionReportSource
+#   intro: ExecutionReport 拉取口——A1③ 归因/TCA 消费方对接位（结构子类型，运行时可查）。
+#   desc: ExecutionReport 拉取口——A1③ 归因/TCA 消费方对接位（结构子类型，运行时可查）。；公共方法（定义序）: get_execution_report, iter_execution_reports；…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ ExecutionReportDeltaExtractor
+#   name_en: ExecutionReportDeltaExtractor
+#   intro: A8 mSPRT delta 提取对接位——签名对齐 pf_core ChampionChallengerDeltaE…
+#   desc: A8 mSPRT delta 提取对接位——签名对齐 pf_core ChampionChallengerDeltaExtractor 预留槽。；公共方法（定义序）: extract_delta；源码 L385-L390
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A7
+#   name_zh: ⑦ NetPnlDeltaExtractor
+#   name_en: NetPnlDeltaExtractor
+#   intro: 默认 delta 提取实现：净现金流差（Fail-Closed 校验配对合法性）。
+#   desc: 默认 delta 提取实现：净现金流差（Fail-Closed 校验配对合法性）。；公共方法（定义序）: extract_delta；源码 L393-L405
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A8
+#   name_zh: ⑧ ExecutionReportContract
+#   name_en: ExecutionReportContract
+#   intro: CTR-P1-007 契约门面——校验 + 序列化往返单一入口（无状态，全静态委托）。
+#   desc: CTR-P1-007 契约门面——校验 + 序列化往返单一入口（无状态，全静态委托）。；公共方法（定义序）: validate, to_payload, from_payload；源码 L408-L432
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A8 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ExecutionReport
+#   name_en: ExecutionReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: D_REPORTING(TCA); D_PF_CORE(A1③归因/A8 mSPRT delta提取); D_RESEARCH
+# - id: O2
+#   name_zh: dict[str, object]
+#   name_en: dict[str, object]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: D_REPORTING(TCA); D_PF_CORE(A1③归因/A8 mSPRT delta提取); D_RESEARCH
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> O1
 """
 
 from __future__ import annotations

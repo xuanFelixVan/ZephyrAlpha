@@ -14,12 +14,40 @@
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""RBACGuard — 基于角色的权限守卫.
+"""
+RBACGuard — 基于角色的权限守卫.
 
 依据蓝图 MOD-INF-018 §3:
 - 基于角色判断操作权限
 - READER 不能写
 - L0_INTERN 不能修改蓝图
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: immutable_core 参数
+#   fields: 参数 immutable_core（无注解）
+#   code: rbac_guard.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RBACGuard
+#   name_en: RBACGuard
+#   intro: 基于角色的权限守卫.
+#   desc: 基于角色的权限守卫. 根据角色和成熟度判断操作权限。；公共方法（定义序）: check, is_blocked, is_auto_guard；源码 L120-L327
+#   inputs: immutable_core
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: RBACGuard
+#   downstream: tests/agent_rbac/test_redteam_adversarial.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

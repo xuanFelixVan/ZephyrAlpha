@@ -26,6 +26,50 @@ Design:
   - stream_jsonl: generator-based line-by-line reading
   - Memory budget: tail_jsonl < 100KB for any file size
   - Graceful degradation: malformed lines skipped, not crashed
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: path 参数
+#   fields: 参数 path，类型注解 str | Path
+#   code: streaming_reader.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: n 参数
+#   fields: 参数 n，类型注解 int
+#   code: streaming_reader.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① tail_jsonl
+#   name_en: tail_jsonl
+#   intro: Read the last *n* JSONL records from a file without loading…
+#   desc: Read the last *n* JSONL records from a file without loading it all. Strategy: seek near t…；源码 L90-L134
+#   inputs: path n
+#   outputs: list[dict]
+# - id: A2
+#   name_zh: ② stream_jsonl
+#   name_en: stream_jsonl
+#   intro: Yield JSONL records one by one — never loads the whole file.
+#   desc: Yield JSONL records one by one — never loads the whole file. Memory budget: O(1) per reco…；源码 L137-L160
+#   inputs: path
+#   outputs: Generator[dict, None, None]
+# 层: 输出
+# - id: O1
+#   name_zh: list[dict]
+#   name_en: list[dict]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: Generator[dict, None, None]
+#   name_en: Generator[dict, None, None]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

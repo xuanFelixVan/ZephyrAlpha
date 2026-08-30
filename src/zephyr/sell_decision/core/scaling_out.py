@@ -20,7 +20,8 @@
 # F3: Step3 其余 → HOLD_WITH_TRAILING(highest_close(22) - 2.0×ATR; ATR 缺失降级 highest×0.92)
 # O1: ScalingOutAction(action/quantity/price/reason) -> 卖出执行层
 # [/ALGO_FLOW]
-"""D_SELL_DECISION — MOD-SELL-017 分批退出 simple_scaling_out 三步法（42 号 §3.7）。
+"""
+D_SELL_DECISION — MOD-SELL-017 分批退出 simple_scaling_out 三步法（42 号 §3.7）。
 
 MVP→阶段 2 的 80/20 过渡（arrowalgo 2026-03 实证：三步法捕获完整分批退出 85%
 收益，只需 1 个函数而非 4 模式状态机）：1/3 止盈 → 保本 → 剩余 trailing。
@@ -29,6 +30,48 @@ MVP→阶段 2 的 80/20 过渡（arrowalgo 2026-03 实证：三步法捕获完�
 `risk_reward >= 1.0` 且 Step1 先行 return，Step2 永不可达。本实现把
 "首批是否已卖/是否已保本"显式化为 ScalingOutState 入参（无隐藏状态、
 幂等可重放），三步按状态机推进。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: position 参数
+#   fields: 参数 position，类型注解 ScalingOutPositionView
+#   code: scaling_out.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: state 参数
+#   fields: 参数 state，类型注解 ScalingOutState
+#   code: scaling_out.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: atr_value 参数
+#   fields: 参数 atr_value，类型注解 Decimal | None
+#   code: scaling_out.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: highest_close_fn 参数
+#   fields: 参数 highest_close_fn，类型注解 Callable[[int], float]
+#   code: scaling_out.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① simple_scaling_out
+#   name_en: simple_scaling_out
+#   intro: 简单三步分批退出：1/3 止盈 → 保本 → 剩余 trailing（42 号 §3.7）。
+#   desc: 简单三步分批退出：1/3 止盈 → 保本 → 剩余 trailing（42 号 §3.7）。 Args: position: 持仓视图（数量/入场价/风险回报比）。 state:…；源码 L136-L202
+#   inputs: position state atr_value highest_close_fn
+#   outputs: ScalingOutAction
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ScalingOutAction
+#   name_en: ScalingOutAction
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 卖出决策层(42号§3.7 分批退出 80/20 过渡); MOD-SELL-007 融合引擎(装配批次接线)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

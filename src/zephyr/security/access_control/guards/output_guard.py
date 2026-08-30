@@ -14,13 +14,41 @@
 # [TESTS] tests/agent_rbac/test_output_guard_agent_rbac.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""OutputGuard — 输出内容守卫.
+"""
+OutputGuard — 输出内容守卫.
 
 依据蓝图 MOD-INF-018 §output_guard:
 - 检测输出中的 PII（个人身份信息）
 - 检测输出中的凭证（API key、token 等）
 - 大输出截断
 - 多源信息合成泄露检测
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: output_guard.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① OutputGuard
+#   name_en: OutputGuard
+#   intro: 输出内容守卫.
+#   desc: 输出内容守卫. 检测输出中的敏感信息并进行脱敏处理。；公共方法（定义序）: record_read, check；源码 L103-L211
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: OutputGuard
+#   downstream: tests/agent_rbac/test_output_guard_agent_rbac.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

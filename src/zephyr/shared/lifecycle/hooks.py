@@ -40,6 +40,41 @@ AI 施工约定：
 
 SSoT: MOD-INF-016 §2.7 shared-lifecycle
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: hooks.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① LifecycleAware
+#   name_en: LifecycleAware
+#   intro: 模块生命周期协议——零侵入式。
+#   desc: 模块生命周期协议——零侵入式。 各钩子均为可选实现。LifecycleManager 会按顺序调用。；公共方法（定义序）: module_name, on_init, on_startup, on_shutdown,…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② LifecycleManager
+#   name_en: LifecycleManager
+#   intro: 模块生命周期编排器。
+#   desc: 模块生命周期编排器。 Usage:: mgr = LifecycleManager() mgr.register(db_module) mgr.register(context-…；公共方法（定义序）: registe…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: LifecycleAware, LifecycleManager
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

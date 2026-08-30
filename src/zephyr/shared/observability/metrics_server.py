@@ -14,7 +14,8 @@
 # [TESTS] tests/zephyr/shared/observability/test_metrics_server.py
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Prometheus /metrics HTTP 端点（P1-5 可观测性改造）。
+"""
+Prometheus /metrics HTTP 端点（P1-5 可观测性改造）。
 
 启动 daemon 线程提供 /metrics 和 /health 端点，
 输出 MetricsRegistry 的 Prometheus 兼容文本。
@@ -34,6 +35,45 @@ health_provider 决定；默认=服务启动时刻）。
 
     curl http://localhost:9925/metrics
     curl http://localhost:9925/health
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: provider 参数
+#   fields: 参数 provider，类型注解 Callable[[], dict] | None
+#   code: metrics_server.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: port 参数
+#   fields: 参数 port，类型注解 int
+#   code: metrics_server.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① set_health_provider
+#   name_en: set_health_provider
+#   intro: 注入自定义 /health 负载提供者（契约 §3.4）。
+#   desc: 注入自定义 /health 负载提供者（契约 §3.4）。 Args: provider: 返回 dict 的可调用（须含 status/uptime_seconds）； Non…；源码 L101-L109
+#   inputs: provider
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② start_metrics_server
+#   name_en: start_metrics_server
+#   intro: 启动 /metrics HTTP 服务（daemon 线程）。
+#   desc: 启动 /metrics HTTP 服务（daemon 线程）。 Args: port: 监听端口（默认 9925） Returns: HTTPServer 实例（端口冲突时返回…；源码 L145-L164
+#   inputs: port
+#   outputs: HTTPServer | None
+# 层: 输出
+# - id: O1
+#   name_zh: HTTPServer | None
+#   name_en: HTTPServer | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.tick_subscriber
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -53,7 +93,7 @@ _METRICS_PORT = 9925
 
 # 契约 §3.4 health 负载提供者：() -> dict（须含 status/uptime_seconds）。
 # None = 默认实现（status=ok + 服务启动至今 uptime）。模块级注入可覆盖
-#（如 tick_subscriber 注入自身 started_ts 让 uptime 反映订阅器而非端点）。
+# （如 tick_subscriber 注入自身 started_ts 让 uptime 反映订阅器而非端点）。
 _health_provider: Callable[[], dict] | None = None
 _server_started_ts: float = 0.0
 

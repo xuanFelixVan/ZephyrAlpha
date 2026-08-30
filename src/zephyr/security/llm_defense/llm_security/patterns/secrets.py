@@ -15,6 +15,36 @@
 # [A_module] module_id=MOD-LLM_SECURITY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: content 参数
+#   fields: 参数 content，类型注解 str
+#   code: secrets.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① scan_secrets
+#   name_en: scan_secrets
+#   intro: scan_secrets(content) 源码 L266-L280
+#   desc: 源码 L266-L280
+#   inputs: content
+#   outputs: list[dict[str, Any]]
+# 层: 输出
+# - id: O1
+#   name_zh: list[dict[str, Any]]
+#   name_en: list[dict[str, Any]]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 import re
 from re import Pattern
 from typing import Any, Final

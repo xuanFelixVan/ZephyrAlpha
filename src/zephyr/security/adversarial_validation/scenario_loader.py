@@ -15,6 +15,36 @@
 # [A_module] module_id=MOD-INF-030 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: registry_path 参数
+#   fields: 参数 registry_path（无注解）
+#   code: scenario_loader.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ScenarioLoader
+#   name_en: ScenarioLoader
+#   intro: class ScenarioLoader 源码 L97-L199
+#   desc: 公共方法（定义序）: scenario_count, load, get, list_by_tier, list_by_target, list_by_severity, list_active, list_all,…
+#   inputs: registry_path
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: ScenarioLoader
+#   downstream: validator.py; attack_registry.py; game_day_runner.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 from __future__ import annotations
 
 import logging

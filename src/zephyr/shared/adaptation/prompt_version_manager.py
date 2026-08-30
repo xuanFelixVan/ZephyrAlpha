@@ -21,6 +21,33 @@ Prompt Version Manager — 版本化 Prompt 治理。
 依据：
     蓝图 MOD-TASK_SYSTEM §6.7 + v0.6.0
     任务卡 TASK-INF-0112
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: data_dir 参数
+#   fields: 参数 data_dir（无注解）
+#   code: prompt_version_manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① PromptVersionManager
+#   name_en: PromptVersionManager
+#   intro: class PromptVersionManager 源码 L79-L194
+#   desc: 公共方法（定义序）: data_dir, registry, register, get_current, deprecate, rollback_to, list_versions；源码 L79-L194
+#   inputs: data_dir
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: PromptVersionManager
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 import json
