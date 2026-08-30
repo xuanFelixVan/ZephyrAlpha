@@ -138,4 +138,4 @@ __all__.append("NextDayProbabilityGate")
 # ORPHAN-MODULE: 引用登记（让 depgraph 发现 import 边）
 from zephyr.signal_ashare.market_breadth_history_store import load_history_store  # noqa: F401
 from zephyr.signal_ashare.sentiment_cycle_evaluator import evaluate_locator_accuracy  # noqa: F401
-from zephyr.signal_ashare.strength_ic_data_assembler import assemble_rolling_ic_input  # noqa: F401
+from zephyr.signal_ashare.strength_ic_data_assembler import assemble_ic_window  # noqa: F401
