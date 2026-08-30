@@ -1170,6 +1170,9 @@ strategies:
     name_zh: "4 分钟涨速资金异动"
     aliases: []
     strategy_class: "multifactor"
+    relabel_note: "ARCH-301 GP1 人评真值修正 2026-08-31（AI 架构师代判，Owner 授权）"
+    relabel_proposal: "factor/momentum"
+    relabel_reason: "4 分钟涨速持续排名=单一可计算信号（服务打分/预警），非完整买卖决策链，GP1 人评裁定应归 factor/momentum；strategy_class 取值域（PS-VOC-TAX-001：strategy 6 类+other 6 类）不含 factor 类，暂保留 multifactor，待跨库迁移裁定"
     sleeve: "alpha"
     alpha_sources: []
     variant_of: null
@@ -3169,7 +3172,8 @@ strategies:
     name: "研报分类投研体系"
     name_zh: "研报分类投研体系"
     aliases: ["分行业对标研究机构"]
-    strategy_class: "multifactor"
+    strategy_class: "data_asset"
+    relabel_note: "ARCH-301 GP1 人评真值修正 2026-08-31（AI 架构师代判，Owner 授权）"
     sleeve: "alpha"
     alpha_sources: []
     variant_of: null
@@ -5249,7 +5253,8 @@ strategies:
     name: "加速第三买点"
     name_zh: "加速第三买点"
     aliases: ["风险点不买"]
-    strategy_class: "momentum_trend"
+    strategy_class: "risk_rule"
+    relabel_note: "ARCH-301 GP1 人评真值修正 2026-08-31（AI 架构师代判，Owner 授权）"
     sleeve: "alpha"
     alpha_sources: []
     variant_of: null
@@ -7089,7 +7094,8 @@ strategies:
     name: "J 值极端超买降级 B 类等回调"
     name_zh: "J 值极端超买降级 B 类等回调"
     aliases: []
-    strategy_class: "multifactor"
+    strategy_class: "risk_rule"
+    relabel_note: "ARCH-301 GP1 人评真值修正 2026-08-31（AI 架构师代判，Owner 授权）"
     sleeve: "alpha"
     alpha_sources: []
     variant_of: null
@@ -8851,7 +8857,8 @@ strategies:
     name: "围绕手上品种做 T"
     name_zh: "围绕手上品种做 T"
     aliases: ["被套自救", "intraday-surge-fall"]
-    strategy_class: "value_reversal"
+    strategy_class: "risk_rule"
+    relabel_note: "ARCH-301 GP1 人评真值修正 2026-08-31（AI 架构师代判，Owner 授权）"
     sleeve: "alpha"
     alpha_sources: []
     variant_of: null
@@ -9097,7 +9104,8 @@ strategies:
     name: "筑底/极限施压正向 T+0 纪律"
     name_zh: "筑底/极限施压正向 T+0 纪律"
     aliases: []
-    strategy_class: "value_reversal"
+    strategy_class: "risk_rule"
+    relabel_note: "ARCH-301 GP1 人评真值修正 2026-08-31（AI 架构师代判，Owner 授权）"
     sleeve: "alpha"
     alpha_sources: []
     variant_of: null
@@ -9177,7 +9185,8 @@ strategies:
     name: "行情三分仓位法"
     name_zh: "行情三分仓位法"
     aliases: ["仓位-周期匹配表", "牛熊周期仓位数值"]
-    strategy_class: "multifactor"
+    strategy_class: "risk_rule"
+    relabel_note: "ARCH-301 GP1 人评真值修正 2026-08-31（AI 架构师代判，Owner 授权）"
     sleeve: "alpha"
     alpha_sources: []
     variant_of: null
@@ -11500,7 +11509,8 @@ strategies:
     name: "竞价验证/盘中验证/盘后复核闭环"
     name_zh: "竞价验证/盘中验证/盘后复核闭环"
     aliases: []
-    strategy_class: "momentum_trend"
+    strategy_class: "knowledge_only"
+    relabel_note: "ARCH-301 GP1 人评真值修正 2026-08-31（AI 架构师代判，Owner 授权）"
     sleeve: "alpha"
     alpha_sources: []
     variant_of: null

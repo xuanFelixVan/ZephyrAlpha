@@ -2334,7 +2334,8 @@ factors:
   name: "缩量阳线规则族"
   name_zh: "缩量阳线规则族"
   aliases: ["缩量上涨=卖盘枯竭", "缩量看一天"]
-  factor_class: "technical"
+  factor_class: "risk_rule"
+  relabel_note: "ARCH-301 GP1 人评真值修正 2026-08-31（AI 架构师代判，Owner 授权）"
   formula: "①缩量阳线长出的空间=背离空间，怎么上去怎么下来；②缩量阳线未超前一日大阴线一半→次日冲高回落概率大；③缩量阳线次日仓位减半；④唯一化解条件=次日补量（上午 10 点整分时红盘+日 K 阳线+30 分钟量能柱放大，三要素缺一即背离未除，放量需上千亿）。 次日不补量按背离处理减仓；补量三要素齐则解除。"
   params: {}
   inputs: []
@@ -2408,7 +2409,8 @@ factors:
   name: "量比五分位标准"
   name_zh: "量比五分位标准"
   aliases: []
-  factor_class: "technical"
+  factor_class: "technical_indicator"
+  relabel_note: "ARCH-301 GP1 人评真值修正 2026-08-31（AI 架构师代判，Owner 授权）"
   formula: "量比>3=天量（顶部信号）；>1.5=放量（方向确认）；0.8-1.2=平量（观望）；<0.8=缩量（趋势延续）；<0.5=地量（底部信号）。二次背离（连续两次量价背离）确定性高于单次。"
   params: {}
   inputs: []
@@ -4406,7 +4408,8 @@ factors:
   name: "半导体带指数"
   name_zh: "半导体带指数"
   aliases: ["春江水暖鸭先知"]
-  factor_class: "momentum"
+  factor_class: "knowledge_only"
+  relabel_note: "ARCH-301 GP1 人评真值修正 2026-08-31（AI 架构师代判，Owner 授权）"
   formula: "半导体板块对大盘风向具有先导意义。半导体回落则大盘回落，半导体止跌则大盘止跌。半导体探底回升、尾盘放量往往预示大盘反弹。"
   params: {}
   inputs: []
@@ -5594,7 +5597,8 @@ factors:
   name: "连板高度周期律"
   name_zh: "连板高度周期律"
   aliases: ["变盘日体系", "回光返照次日两种走法", "穿越卡位高度限制"]
-  factor_class: "momentum"
+  factor_class: "sentiment"
+  relabel_note: "ARCH-301 GP1 人评真值修正 2026-08-31（AI 架构师代判，Owner 授权）"
   formula: "一波高度龙（≥8 板）打出后，通常一个半月内有四波≥6 板补涨龙行情（高弹性博弈环境）；连板高度从 8 板降至 4 板=回光返照阶段，需等新≥6 板品种确认情绪重新进入上升周期。"
   params: {}
   inputs: []
@@ -7148,7 +7152,8 @@ factors:
   name: "黄金避险因子"
   name_zh: "黄金避险因子"
   aliases: []
-  factor_class: "event"
+  factor_class: "knowledge_only"
+  relabel_note: "ARCH-301 GP1 人评真值修正 2026-08-31（AI 架构师代判，Owner 授权）"
   formula: "黄金作为避险资产，与权益资产相关性低（0.15，全场最低）。地缘风险升温→黄金上涨→权益承压；黄金 ETF 作为对冲工具配置。与原油（通胀/地缘）共同构成大宗商品宏观因子体系。"
   params: {}
   inputs: []
@@ -7518,7 +7523,8 @@ factors:
   name: "供应链动量"
   name_zh: "供应链动量"
   aliases: ["现货价格传导"]
-  factor_class: "event"
+  factor_class: "momentum"
+  relabel_note: "ARCH-301 GP1 人评真值修正 2026-08-31（AI 架构师代判，Owner 授权）"
   formula: "上游→下游传导时滞通常 1-5 个交易日；上游收益对下游收益预测 R²>5%=显著传导；偏离历史均值>2σ=传导异常。"
   params: {}
   inputs: []
@@ -8776,7 +8782,8 @@ factors:
   name: "股东增持信号"
   name_zh: "股东增持信号"
   aliases: []
-  factor_class: "liquidity"
+  factor_class: "event"
+  relabel_note: "ARCH-301 GP1 人评真值修正 2026-08-31（AI 架构师代判，Owner 授权）"
   formula: "大公司股东增持作为长期看多信号。"
   params: {}
   inputs: []
@@ -8924,7 +8931,8 @@ factors:
   name: "money_flow 五档拆解"
   name_zh: "money_flow 五档拆解"
   aliases: []
-  factor_class: "liquidity"
+  factor_class: "data_asset"
+  relabel_note: "ARCH-301 GP1 人评真值修正 2026-08-31（AI 架构师代判，Owner 授权）"
   formula: "资金流五档拆解——超大单/大单/中单/小单分层，识别\"主力买散户卖\"结构（健康）或\"对倒\"结构（可疑）。主力口径（东财）与超大单口径（iFinD）交叉验证。"
   params: {}
   inputs: []

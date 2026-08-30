@@ -23,8 +23,11 @@ from zephyr.shared.io.paths import REPO_ROOT
 _REGISTRY = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "strategy_registry.yaml"
 
 #: 已知策略族（schema 注释枚举真源：daban/multifactor/event_driven/value_reversal/momentum_trend/sector_rotation）
+#: 2026-08-31 起扩展 PS-VOC-TAX-001 other 6 类——GP1 人评真值修正（ARCH-301）允许策略条目
+#: 承载 other 类真值（如 STR-MOMTREND-021=risk_rule，见 knowledge_taxonomy_vocabulary.yaml anchors）。
 _KNOWN_CLASSES = frozenset(
-    {"daban", "multifactor", "event_driven", "value_reversal", "momentum_trend", "sector_rotation"}
+    {"daban", "multifactor", "event_driven", "value_reversal", "momentum_trend", "sector_rotation",
+     "risk_rule", "execution_algo", "data_asset", "technical_indicator", "tool", "knowledge_only"}
 )
 
 #: strategy_id CLASS 段 → strategy_class 映射（族归属一致性）
@@ -62,6 +65,10 @@ class TestFamilyAttribution:
             sid = e["strategy_id"]
             m = _ID_RE.match(sid)
             assert m, f"strategy_id 命名非法（须 STR-{{CLASS}}-{{NNN}}）: {sid}"
+            if e.get("relabel_note") or e.get("relabel_proposal"):
+                # 真值修正条目（ARCH-301）：strategy_id 为冻结历史标识，类已按 PS-VOC-TAX-001
+                # 边界标准改判并留痕，豁免 ID 段一致性（防"换名复活"检查对既判修正误报）。
+                continue
             prefix = m.group(1)
             assert prefix in _ID_PREFIX_TO_CLASS, f"{sid} 未知 CLASS 段: {prefix}"
             assert _ID_PREFIX_TO_CLASS[prefix] == e["strategy_class"], (
