@@ -41,7 +41,9 @@ import argparse
 import json
 import logging
 import sys
+import threading
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any
@@ -111,6 +113,40 @@ def publish_date_of(news: dict[str, Any]) -> str:
     return str(ts)[:10]
 
 
+def _write_prediction(f: Any, news: dict[str, Any], r: SentimentResult) -> None:
+    """单条预测落盘（顺序/并发路径共用）。"""
+    f.write(
+        json.dumps(
+            {
+                "news_id": str(news.get("news_id", "")),
+                "source": news.get("source", ""),
+                "publish_date": publish_date_of(news),
+                "category": str(news.get("category", "") or category_of(news.get("source", ""))),
+                "prompt": PROMPT_VERSION,
+                "sentiment": r.sentiment,
+                "score": r.score,
+                "polarity": r.polarity,
+                "cached": r.cached,
+                "error": r.error,
+            },
+            ensure_ascii=False,
+        )
+        + "\n"
+    )
+    f.flush()
+
+
+def _infer_one(news: dict[str, Any], *, chat: Any, config: InferConfig | None, cache: Any) -> SentimentResult:
+    return infer_sentiment(
+        title=str(news.get("title", "")),
+        content=str(news.get("content", "")),
+        chat=chat,
+        news_id=str(news.get("news_id", "")),
+        cache=cache,
+        config=config,
+    )
+
+
 def run_batch(
     news_items: list[dict[str, Any]],
     *,
@@ -119,6 +155,7 @@ def run_batch(
     config: InferConfig | None = None,
     resume: bool = True,
     cache: Any = None,
+    workers: int = 1,
 ) -> list[SentimentResult]:
     """批量推理 + 逐条追加写入 predictions.jsonl（断点续作）。
 
@@ -126,6 +163,8 @@ def run_batch(
     运行经 news_id 去重跳过（2026-08-25 修复：原先全量推完才落盘，
     12 万条批次中途被杀即全部白算）。单条失败由 infer_sentiment
     内部降级 neutral 不阻断。返回本次新推理结果（不含断点续作跳过的部分）。
+    workers>1 时线程池并发调推理后端（Ollama 服务端并行 slot 消化），
+    写入由锁串行化，落盘顺序不影响断点续作（按 news_id 集合去重）。
     """
     done = load_done_ids(pred_path) if resume else set()
     # 多版本行去重：同 news_id 只推一次（news_data 保留多版本，2026-08-26 实证 12.8% 冗余）
@@ -144,40 +183,35 @@ def run_batch(
     mode = "a" if resume and pred_path.exists() else "w"
     results: list[SentimentResult] = []
     t0 = time.time()
+
+    def _log_progress(count: int) -> None:
+        if count % 100 == 0:
+            elapsed = time.time() - t0
+            rate = count / elapsed if elapsed > 0 else 0.0
+            log.info("进度 %d/%d  %.1f 条/秒", count, len(todo), rate)
+
     with open(pred_path, mode, encoding="utf-8") as f:
-        for news in todo:
-            r = infer_sentiment(
-                title=str(news.get("title", "")),
-                content=str(news.get("content", "")),
-                chat=chat,
-                news_id=str(news.get("news_id", "")),
-                cache=cache,
-                config=config,
-            )
-            results.append(r)
-            f.write(
-                json.dumps(
-                    {
-                        "news_id": str(news.get("news_id", "")),
-                        "source": news.get("source", ""),
-                        "publish_date": publish_date_of(news),
-                        "category": str(news.get("category", "") or category_of(news.get("source", ""))),
-                        "prompt": PROMPT_VERSION,
-                        "sentiment": r.sentiment,
-                        "score": r.score,
-                        "polarity": r.polarity,
-                        "cached": r.cached,
-                        "error": r.error,
-                    },
-                    ensure_ascii=False,
-                )
-                + "\n"
-            )
-            f.flush()
-            if len(results) % 100 == 0:
-                elapsed = time.time() - t0
-                rate = len(results) / elapsed if elapsed > 0 else 0.0
-                log.info("进度 %d/%d  %.1f 条/秒", len(results), len(todo), rate)
+        if workers <= 1:
+            for news in todo:
+                r = _infer_one(news, chat=chat, config=config, cache=cache)
+                results.append(r)
+                _write_prediction(f, news, r)
+                _log_progress(len(results))
+        else:
+            log.info("并发推理 workers=%d（Ollama 并行 slot 消化）", workers)
+            write_lock = threading.Lock()
+            with ThreadPoolExecutor(max_workers=workers) as pool:
+                future_to_news = {
+                    pool.submit(_infer_one, news, chat=chat, config=config, cache=cache): news
+                    for news in todo
+                }
+                for future in as_completed(future_to_news):
+                    news = future_to_news[future]
+                    r = future.result()  # infer_sentiment 内部降级不抛；兜底异常向上抛
+                    results.append(r)
+                    with write_lock:
+                        _write_prediction(f, news, r)
+                    _log_progress(len(results))
     return results
 
 
@@ -239,6 +273,7 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--limit", type=int, default=0, help="限制推理条数（0=全部）")
     parser.add_argument("--no-resume", dest="resume", action="store_false")
     parser.add_argument("--timeout", type=float, default=120.0)
+    parser.add_argument("--workers", type=int, default=1, help="并发推理线程数（>1 走线程池，Ollama 并行 slot 消化）")
     return parser.parse_args()
 
 
@@ -273,7 +308,13 @@ def main() -> None:
     cfg = InferConfig(model_version=args.model)
     t_batch = time.time()
     results = run_batch(
-        news_items, chat=chat, pred_path=pred_path, config=cfg, resume=args.resume, cache=cache
+        news_items,
+        chat=chat,
+        pred_path=pred_path,
+        config=cfg,
+        resume=args.resume,
+        cache=cache,
+        workers=max(1, args.workers),
     )
     batch_elapsed = time.time() - t_batch
 
