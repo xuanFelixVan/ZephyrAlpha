@@ -24,7 +24,7 @@ parent: 30_multi_strategy_concurrency.md
 
 > ## 结案报告回填（2026-08-28 代码实证复核）
 > 原复核补记②"LPPL 未实现"已过时：src/zephyr/regime/features/lppl_detector.py 已实现 lppl_blowoff_score；overlay_features.py 的 put_call_ratio 参数已接入 capitulation 过滤器。
-> **仍真实未完工**（机构级维度，既定延期）：credit_spread/COT 拥挤度/IV/Margin Debt 零命中；CAPE 待 daily_valuation 管道（路 A）；§6.2.3 NetworkX PageRank 无；§9 备查升级路径（HSMM/Student-t）维持不施工裁定。
+> **仍真实未完工**（机构级维度，既定延期）：credit_spread/COT 拥挤度/PageRank 零命中；~~CAPE 待 daily_valuation 管道（路 A）~~ → **已过时（2026-08-30）**：路 A 管道已投产（index_valuation_daily），CAPE/IV/两融三维评分器已落码（institutional_regime_scorer.py，MOD-REGIME-015，53 用例），roadmap B13 拆分=已施工三维/剩余三维维持无源阻塞；§9 备查升级路径（HSMM/Student-t）维持不施工裁定。
 
 # regime 检测器完整 spec
 
