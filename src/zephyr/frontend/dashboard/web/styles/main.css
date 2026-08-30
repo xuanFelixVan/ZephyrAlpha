@@ -297,7 +297,8 @@
   .bar{height:8px;border-radius:4px;background:#23282F;overflow:hidden}
   .bar>i{display:block;height:100%;border-radius:4px;background:var(--blue)}
   .bar>i.g{background:var(--up)}.bar>i.r{background:var(--down)}.bar>i.y{background:var(--blue)}   /* v6：bar 黄段归进度条蓝 */
-  .bar-row{display:grid;grid-template-columns:110px 1fr 52px;gap:10px;align-items:center;font-size:12px;margin-bottom:8px}
+  .bar-row{display:grid;grid-template-columns:110px 1fr minmax(52px,max-content);gap:10px;align-items:center;font-size:12px;margin-bottom:8px}   /* v7 修订：值列 52px 定宽→minmax(52,max-content)——长值（71%（45.4/64 GB）族）不再溢出（sysstatus 19px 溢出事根治）；短值仍 52px 对齐 */
+.bar-row>span:last-child{text-align:right}
   .spark{display:block;width:100%;height:auto}
   .lv{display:flex;gap:14px;font-size:12px;color:var(--dim);flex-wrap:wrap;margin-top:4px}
   .param-strip{display:flex;gap:0;flex-wrap:wrap;font-size:13px;background:var(--panel);border:0.67px solid var(--border);border-radius:6px;padding:14px 16px;margin-bottom:14px}
@@ -636,6 +637,118 @@ body.mod-edit .mod-size{display:inline-flex}
 /* ═══════ 持仓明细表（同花顺口径） ═══════ */
 .pos-head{display:flex;gap:22px;flex-wrap:wrap;font-size:12px;padding:8px 2px 10px;border-bottom:1px solid var(--border);margin-bottom:8px}
 .pos-head .ph{display:flex;flex-direction:column;gap:2px}
+
+/* ==================== 色系 v7 · SharpLink 表面语法（2026-08-30 Owner 四步选型拍板，终版样板实证定稿） ====================
+   选型链（Owner 逐步拍板）：风格 A=SharpLink 半透明叠层语法 → 密度 L4=交易终端 → 宽度 W4=窄卡多列 → 同类合并排版 → 页头字号=L1 档（4K 可读性实测）
+   基准实物=终版样板 docs/_working/2026-08-30-sample-AF-final.html（验收后样板清理，规范页=唯一真源）
+   冲突登记：2026-08-27「.main 1760 锁宽」拍板被 Owner 2026-08-30「两边留白特别多」实测反馈取代→全宽流体（宽幅治理走 W4 列制，不再锁宽）；图表内部视觉（蜡烛/MA/网格/缩放/canvas 分层）仍归 DS-5 v4 不动
+   v6 色彩宪章延续：红绿仅涨跌 / 进度条蓝 #3D8BFF / 状态灯红黄绿 / 图表色板——本批仅新增「信息蓝 #99C5FF（图表信息线，非链接非按钮）」与提亮族 */
+:root{
+  --card7:rgba(238,238,240,.055);   /* v7 卡片底=半透明白叠黑（SharpLink 实测语法），取代 #121212 实底 */
+  --card7-hi:rgba(238,238,240,.095);/* v7 抬升一档（hover/嵌套） */
+  --hair:rgba(243,243,243,.09);     /* v7 发丝线（静态分隔） */
+  --dash:rgba(243,243,243,.16);     /* v7 虚线（分节/图表网格） */
+  --label:rgba(243,243,243,.45);    /* v7 标签灰（卡标题/表头/分区标） */
+  --up-strong:#EE6287;              /* 涨提亮档（chip 文字/蜡烛阳线填充） */
+  --down-strong:#3ECF7E;            /* 跌提亮档（chip 文字/蜡烛阴线填充） */
+  --up-bg:rgba(238,98,135,.13);     /* 涨半透明底（chip/高亮行） */
+  --down-bg:rgba(62,207,126,.12);   /* 跌半透明底 */
+  --iblue:#99C5FF;                  /* 信息蓝（SharpLink 实测）：仅图表信息线/图例，禁链接禁按钮 */
+  --iblue-bg:rgba(153,197,255,.10);
+}
+/* 页面底：纯黑 + 顶部藏青辉光（SharpLink hero 余韵，极克制一处） */
+body{background:radial-gradient(1400px 560px at 50% -180px, rgba(30,70,140,.42), rgba(10,22,44,.18) 45%, transparent 72%),#000000}
+/* 全宽流体 + L4 密度页边距（取代 1760 锁宽居中） */
+.main{padding:8px 10px 56px;overflow:auto;max-width:none;margin:0}
+/* 顶栏：半透明深色 + 毛玻璃 + 发丝线（SharpLink header 语法） */
+.topbar{background:rgba(4,8,16,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--hair);height:46px}
+/* 页头 L1 档字号（Owner 4K 实测"看得很清楚"：30/13） */
+h2.page-title{font-size:30px;font-weight:600;letter-spacing:-.01em;margin-bottom:4px}
+.page-sub{color:var(--dim);font-size:13px;margin-bottom:12px}
+/* 卡片 v7：半透明无实边 + 6px 圆角 + L4 紧致 padding；min-width:0=grid 子项可收缩（合并模块行内省流字省略号生效前提） */
+.card{background:var(--card7);border:none;border-radius:6px;padding:10px 12px;min-width:0}
+.row>*{min-width:0}
+/* 卡标题=标签语法（SharpLink：小字灰阶宽字距；醒目让位给数字与结论） */
+.card h3{font-size:11px;color:var(--label);font-weight:500;letter-spacing:.14em;margin-bottom:8px}
+.card h3 .dim{font-size:11px;letter-spacing:.02em}
+/* KPI 数字阶梯 v7（L4 密度实测）：主报价 23 / 指标卡 20 / 说明 11.5 */
+.metric .v{font-size:20px;font-weight:600;letter-spacing:-.01em}
+.metric .l{font-size:11px;color:var(--label);letter-spacing:.1em}
+.metric .s{font-size:11px;color:var(--dim)}
+/* badge → 清透胶囊（pill 99px；色底透明度族不变） */
+.badge{border-radius:99px;padding:1.5px 9px;font-size:10.5px}
+/* 表格 v7：去单元格实底，改发丝行线；表头标签语法；密度 L4 */
+table{font-size:11.5px}
+th{color:var(--label);font-weight:500;text-align:left;padding:3px 10px 6px 0;background:transparent;border-bottom:1px solid var(--hair);font-size:10px;letter-spacing:.1em}
+td{padding:5px 10px 5px 0;background:transparent;color:var(--dim);border-top:1px solid rgba(243,243,243,.05);font-variant-numeric:tabular-nums}
+table tr:first-child td{border-top:none}
+td:first-child{color:var(--text)}
+tr:hover td{background:rgba(243,243,243,.025)}
+/* 卡片网格 L4 间距 */
+.row{display:grid;gap:8px;margin-bottom:10px}
+/* 分区虚线（SharpLink 标志性 dashed section rule）+ 分区标签 */
+.rule{border:none;border-top:1px dashed var(--dash);margin:10px 0}
+.sec-title{font-size:11px;color:var(--label);letter-spacing:.14em;margin:10px 0 8px;font-weight:500}
+/* 参数条 → 胶囊项族（v7） */
+.param-strip{background:transparent;border:none;padding:0 0 2px;gap:6px;font-size:12px}
+.param-strip span{padding:3px 11px;border:none;background:rgba(243,243,243,.05);border-radius:99px;color:var(--dim);font-size:11px}
+/* 图表容器 v7 */
+.chart-box{background:rgba(238,238,240,.03);border:1px solid var(--hair);border-radius:6px;padding:8px;margin-bottom:10px}
+/* 底部 ticker：深色毛玻璃 */
+.ticker-bar{background:rgba(5,7,12,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--hair)}
+/* K线工作台三栏容器随 v7 */
+.sq-col{background:var(--card7);border-radius:8px}
+/* v7 通用新组件族（终版样板实证件，页面可直接取用） */
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:500;padding:1.5px 9px;border-radius:99px;white-space:nowrap}
+.chip.up{color:var(--up-strong);background:var(--up-bg)}
+.chip.down{color:var(--down-strong);background:var(--down-bg)}
+.chip.flat{color:var(--dim);background:rgba(243,243,243,.08)}
+.lab{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:500;letter-spacing:.14em;color:var(--label)}
+.lab .i{width:13px;height:13px;border:1px solid var(--faint);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-style:normal;letter-spacing:0;cursor:help}
+.mrow{display:flex;align-items:center;gap:8px;padding:8px 2px;border-top:1px solid rgba(243,243,243,.05)}
+.mrow:first-of-type{border-top:none}
+.mrow.cur{background:var(--up-bg);border-radius:5px;padding-left:8px;padding-right:8px;margin:0 -6px}
+.up-t{color:var(--up-strong)}.down-t{color:var(--down-strong)}
+/* ---------- R18 决策双卡 v7 统一化（Owner 裁定保留"划重点"：竖条+微渐变+大字彩色——表面归 v7 族，强调手段保留） ---------- */
+.dc2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dc-card{border-radius:8px;padding:12px 16px;border:1px solid var(--hair);background:var(--card7);position:relative;overflow:hidden}
+.dc-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px}
+.dc-card.dc-hold::before{background:#F0B90B}
+.dc-card.dc-buy::before{background:var(--up)}
+.dc-card.dc-sell::before{background:var(--down)}
+.dc-card.dc-hold{background:linear-gradient(135deg,rgba(240,185,11,.06),rgba(238,238,240,.04) 55%)}
+.dc-card.dc-buy{background:linear-gradient(135deg,rgba(202,63,100,.08),rgba(238,238,240,.04) 55%)}
+.dc-card.dc-sell{background:linear-gradient(135deg,rgba(37,167,80,.07),rgba(238,238,240,.04) 55%)}
+.dc-mkt{font-size:11px;color:var(--label);letter-spacing:.14em;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.dc-act{font-size:26px;font-weight:700;line-height:1.2;margin:4px 0 6px;letter-spacing:-.01em}
+.dc-hold .dc-act{color:#F0B90B}
+.dc-buy .dc-act{color:var(--up-strong)}
+.dc-sell .dc-act{color:var(--down-strong)}
+.dc-why{font-size:12px;color:var(--dim);line-height:1.7}
+.dc-sub-deal{font-size:11.5px;margin-top:8px;padding-top:8px;border-top:1px dashed var(--dash)}
+/* v7 窄窗口降级（≤1500px 折叠保护，终版样板实证规格） */
+@media (max-width:1500px){
+  .dc2{grid-template-columns:1fr}
+}
+/* v7 合并模块族（同类低密度卡片合一语法，终版样板实证）：副指数三合一/统计四合一/象限纵排 */
+.subidx{display:flex;flex-direction:column;height:100%}
+.subidx .rows{flex:1;display:flex;flex-direction:column;justify-content:space-evenly}
+.mn{font-size:12px;color:var(--text);font-weight:500;flex:none;width:62px}
+.subidx .chip{min-width:50px;justify-content:center}
+.mnum{font-size:15px;font-weight:600;flex:none;min-width:72px;text-align:right}
+.mnote{font-size:11px;color:var(--faint);flex:none;width:96px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mspark{flex:1;max-width:220px;min-width:48px;height:32px;margin:0 auto}
+.mst{font-size:11px;color:var(--dim);flex:none;min-width:34px;text-align:right}
+.sl{font-size:11.5px;color:var(--dim);flex:none;min-width:60px}
+.snum{font-size:15px;font-weight:600;flex:none;min-width:82px}
+.snum .faint{font-size:11px;color:var(--faint);font-weight:400}
+.smeta{flex:1;text-align:right;font-size:11px;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.sbar{flex:1;display:flex;height:6px;border-radius:3px;overflow:hidden;background:rgba(243,243,243,.06);min-width:60px}
+.qv{flex:1}
+.qv .mrow .snum{min-width:60px}
+/* 结论卡 v7（R21 verdict 卡面并入半透明族） */
+.vd{background:var(--card7);border:1px solid var(--hair);border-radius:6px;padding:8px 12px;margin:8px 0 0}
+.vd-wall .vd:hover{border-color:var(--faint)}
 .pos-head .ph .l{color:var(--dim);font-size:11px}
 .pos-head .ph .v{font-weight:700;font-size:14px;font-variant-numeric:tabular-nums}
 table.pos-table td, table.pos-table th{white-space:nowrap;font-variant-numeric:tabular-nums}

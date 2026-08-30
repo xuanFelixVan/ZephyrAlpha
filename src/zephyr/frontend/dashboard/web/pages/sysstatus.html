@@ -4,7 +4,7 @@
 
     <!-- R21 结论卡（本页标准输出口；首页墙聚合抓取本卡） -->
     <div class="vd" data-vd-order="15" data-vd-page="sysstatus">
-      <div class="vd-top"><span class="vd-tag">系统健康</span><span class="vd-src">{{page_name}</span>
+      <div class="vd-top"><span class="vd-tag">系统健康</span><span class="vd-src">系统状态</span>
         <span class="vd-fb"><button onclick="vdFb(this,1,event)" title="量化这个判断对了">✓</button><button onclick="vdFb(this,0,event)" title="判断错了，进纠错样本库">✗</button></span></div>
       <div class="vd-main">数据管线 1 失败（adj_factor 修复中）· 其余全绿 · 熔断待命 <span class="badge b-na" style="font-size:10px">演示</span></div>
       <div class="vd-sub">依据：156 任务心跳+QMT 桥+治理审计+GPU——异常自动升级为首页告警</div>
@@ -62,11 +62,11 @@
       <div class="card">
         <h3>券商连接</h3>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-          <div style="border:0.67px solid var(--border);border-radius:8px;padding:14px;background:var(--input)">
+          <div style="border:1px solid var(--hair);border-radius:8px;padding:14px;background:var(--input)">
             <div style="font-weight:700;margin-bottom:6px">QMT 实盘 <span class="badge b-fail">未连接</span></div>
             <div style="font-size:12px;color:var(--dim)">最后连接：08-18 15:30<br>用途：真实资金下单通道<br>断连影响：实盘交易全部暂停</div>
           </div>
-          <div style="border:0.67px solid var(--border);border-radius:8px;padding:14px;background:var(--input)">
+          <div style="border:1px solid var(--hair);border-radius:8px;padding:14px;background:var(--input)">
             <div style="font-weight:700;margin-bottom:6px">miniQMT 模拟盘 <span class="badge b-pass">已连接</span></div>
             <div style="font-size:12px;color:var(--dim)">延迟：38ms · 心跳正常<br>用途：模拟盘验证 / 回测-实盘对账<br>今日成交：1 笔</div>
           </div>

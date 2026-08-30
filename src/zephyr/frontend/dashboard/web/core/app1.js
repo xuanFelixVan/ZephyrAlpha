@@ -8,6 +8,7 @@ function go(id, el){
   document.querySelectorAll('.tb-grp').forEach(function(g){ g.classList.toggle('on', g.getAttribute('data-grp')===grp); });
   var initFn=window[{'stock':'stockInit','stockq':'sqInit','cryptomarket':'cmInit','cryptopos':'cpInit','screener':'scrInit','calendar':'calInit','review':'revInit','news':'annInit','policy':'polInit','experiment':'expInit','position':'posInit','index':'renderIdxAll','reglib':'reglibInit','pano':'panoInit','modledger':'modInit','strategy':'fwInit'}[id]];   /* I-5/I-6/I-8 页级初始化钩子（显式映射防短名失配，幂等） */
   if(typeof initFn==='function') initFn();
+  document.dispatchEvent(new CustomEvent('page:show',{detail:id}));   /* v7：切页广播——隐藏页 clientWidth=0 时图表退化坐标系，页面激活后需重绘（app2.js 大盘/板块图表组监听本事件） */
 }
 /* 规划页灰化占位负反馈（IA 市场轴 2026-08-27 Owner 裁定）：点击不出页面，toast 说明，不造假 */
 function navDis(e,name){ e.stopPropagation(); gToast('「'+name+'」规划中——币版 I-2 真源就绪后接入，结构占位不造假页面'); }

@@ -4,106 +4,169 @@
 
     <!-- R21 结论卡（本页标准输出口；首页墙聚合抓取本卡） -->
     <div class="vd" data-vd-order="4" data-vd-page="live">
-      <div class="vd-top"><span class="vd-tag">今天大盘状态</span><span class="vd-src">{{page_name}</span>
+      <div class="vd-top"><span class="vd-tag">今天大盘状态</span><span class="vd-src">大盘分析</span>
         <span class="vd-fb"><button onclick="vdFb(this,1,event)" title="量化这个判断对了">✓</button><button onclick="vdFb(this,0,event)" title="判断错了，进纠错样本库">✗</button></span></div>
       <div class="vd-main">晴偏多云：上涨 3,842 / 下跌 1,276 · 涨停 58 家 · 成交 9,860 亿 <span class="badge b-na" style="font-size:10px">演示</span></div>
       <div class="vd-sub">依据：市场宽度+涨停+成交额四指数综合——情绪细节去「市场情绪」页</div>
     </div>
     <div class="vd" data-vd-order="5" data-vd-page="live">
-      <div class="vd-top"><span class="vd-tag">接下来走势预期</span><span class="vd-src">{{page_name}</span>
+      <div class="vd-top"><span class="vd-tag">接下来走势预期</span><span class="vd-src">大盘分析</span>
         <span class="vd-fb"><button onclick="vdFb(this,1,event)" title="量化这个判断对了">✓</button><button onclick="vdFb(this,0,event)" title="判断错了，进纠错样本库">✗</button></span></div>
       <div class="vd-main">午后延续偏强 · 14:00 看量能确认 <span class="badge b-na" style="font-size:10px">演示</span></div>
       <div class="vd-sub">依据：上午段形态判定+量能结构+板块贡献度——只出状态与预期，不出点位（90 号铁律）</div>
     </div>
 
-    <!-- ① 四指数一主三辅 -->
-    <div class="row" style="grid-template-columns:2fr 1fr 1fr 1fr;display:grid;gap:12px;margin-bottom:14px">
+    <!-- ① 指数状态（终版排版：主卡 + 副指数三合一 + 市场统计四合一；Owner 2026-08-30 样板裁定） -->
+    <div class="row" style="grid-template-columns:1.8fr 1.15fr 1.05fr">
       <div class="card">
-        <h3>上证指数 <span class="dim">主版面 · 分钟级</span></h3>
-        <div style="display:flex;align-items:baseline;gap:12px">
-          <div class="v" style="font-size:26px;font-weight:600">3,847.23</div>
-          <div class="up" style="font-size:17px;font-weight:600">+0.61%</div>
-          <div class="dim" style="font-size:12px">成交 9,704 亿 · regime <b>震荡偏强</b></div>
+        <div class="lab">上证指数 <span class="i" title="主版面：日K蜡烛（红涨绿跌实芯）+ 10日均线；全功能 K 线去「个股行情」">i</span><span class="dim" style="margin-left:auto;letter-spacing:.02em">主版面 · 分钟级</span></div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:6px">
+          <span style="font-size:23px;font-weight:600;letter-spacing:-.01em;line-height:1.15">3,847.23</span>
+          <span class="chip up">↗ +0.61%</span>
+          <span class="dim" style="font-size:11px">成交 <b style="color:var(--text)">9,704 亿</b> · 状态 <b style="color:var(--text)">震荡偏强</b></span>
         </div>
-        <svg id="mk-sh" style="width:100%;height:90px;margin-top:8px"></svg>
-        <div class="kv-mini" style="margin-top:6px">状态带：趋势 <span class="badge b-pass">多</span> 波动 <span class="badge b-na">中</span> 四季 <span class="badge b-buy">秋·拉升段</span> 牛熊相位 <span class="badge b-na">WATCH</span>（MOD-SIG-036/039/041）</div>
+        <svg id="mk-sh" style="width:100%;height:124px;margin-top:6px"></svg>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">
+          <span class="badge b-pass">趋势 <b>多</b></span>
+          <span class="badge b-na">波动 <b>中</b></span>
+          <span class="badge b-buy">四季 <b>秋·拉升段</b></span>
+          <span class="badge b-na">牛熊相位 <b>观察</b></span>
+          <span class="badge b-na">MOD-SIG-036/039/041</span>
+        </div>
       </div>
-      <div class="card metric"><div class="l">深证成指</div><div class="v up">12,693.4</div><div class="s up">+0.84% · 成交 11,313 亿</div><svg id="mk-sz" style="width:100%;height:44px;margin-top:6px"></svg><div class="kv-mini" style="margin-top:4px">regime 偏多</div></div>
-      <div class="card metric"><div class="l">创业板指</div><div class="v up">2,681.15</div><div class="s up">+1.22% · 成长强于价值</div><svg id="mk-cy" style="width:100%;height:44px;margin-top:6px"></svg><div class="kv-mini" style="margin-top:4px">regime 多</div></div>
-      <div class="card metric"><div class="l">科创综指</div><div class="v down">1,342.88</div><div class="s down">-0.18% · 高位分歧</div><svg id="mk-kc" style="width:100%;height:44px;margin-top:6px"></svg><div class="kv-mini" style="margin-top:4px">regime 震荡</div></div>
-    </div>
-    <div class="card" style="margin-bottom:14px">
-      <h3>风格分化 <span class="dim">大小盘 × 价值成长四象限（MOD-REGIME-014 production）——四指数的价值不在四个数，在分化本身</span></h3>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;max-width:520px;font-size:12px">
-        <div style="background:var(--input);border:1px solid var(--border);border-radius:6px;padding:8px" class="dim">大盘价值 <span class="dim">银行/白酒</span><br><span class="down">-0.2%</span></div>
-        <div style="background:var(--input);border:1px solid var(--up);border-radius:6px;padding:8px"><b>大盘成长</b> <span class="dim">宁德/中芯</span><br><span class="up">+1.1%</span> <span class="badge b-buy">当前</span></div>
-        <div style="background:var(--input);border:1px solid var(--border);border-radius:6px;padding:8px" class="dim">小盘价值 <span class="dim">ST/壳</span><br><span class="down">-0.4%</span></div>
-        <div style="background:var(--input);border:1px solid var(--border);border-radius:6px;padding:8px" class="dim">小盘成长 <span class="dim">题材/微盘</span><br><span class="up">+0.6%</span></div>
+      <!-- 副指数三合一（原三张迷你卡合并，内容不变） -->
+      <div class="card subidx">
+        <div class="lab">副指数 · 深证 / 创业板 / 科创</div>
+        <div class="rows">
+          <div class="mrow">
+            <span class="mn">深证成指</span><span class="chip up">+0.84%</span>
+            <span class="mnum">12,693.4</span>
+            <span class="mnote">成交 11,313 亿</span>
+            <svg class="mspark" id="mk-sz"></svg>
+            <span class="mst">偏多</span>
+          </div>
+          <div class="mrow">
+            <span class="mn">创业板指</span><span class="chip up">+1.22%</span>
+            <span class="mnum">2,681.15</span>
+            <span class="mnote">成长强于价值</span>
+            <svg class="mspark" id="mk-cy"></svg>
+            <span class="mst">多</span>
+          </div>
+          <div class="mrow">
+            <span class="mn">科创综指</span><span class="chip down">-0.18%</span>
+            <span class="mnum">1,342.88</span>
+            <span class="mnote">高位分歧</span>
+            <svg class="mspark" id="mk-kc"></svg>
+            <span class="mst">震荡</span>
+          </div>
+        </div>
       </div>
-      <div class="note">判读：大盘成长领涨+科创微跌=资金主攻主线龙头而非全面进攻——与作战池结构一致（联动「作战指挥」）</div>
+      <!-- 市场统计四合一（成交/涨跌家数/涨停跌停/新高新低） -->
+      <div class="card subidx">
+        <div class="lab">市场统计</div>
+        <div class="rows">
+          <div class="mrow">
+            <span class="sl">两市成交</span><span class="snum">21,180 <span class="faint">亿</span></span>
+            <span class="chip up">+2.1%</span>
+            <span class="smeta">昨日 21,413 亿 · 放量</span>
+          </div>
+          <div class="mrow">
+            <span class="sl">涨跌家数</span><span class="snum">3,013 <span class="faint">/ 2,390</span></span>
+            <span class="sbar"><span style="width:54.3%;background:var(--up-strong)"></span><span style="width:2.6%;background:rgba(243,243,243,.25)"></span><span style="width:43.1%;background:var(--down-strong)"></span></span>
+            <span class="smeta" style="flex:0 1 auto;min-width:40px">宽度 1.26</span>
+          </div>
+          <div class="mrow">
+            <span class="sl">涨停/跌停</span><span class="snum">81 <span class="faint">/</span> <span class="down-t">2</span></span>
+            <span class="chip up">回暖</span>
+            <span class="smeta">封板率 81% · 跌停封板率 22%</span>
+          </div>
+          <div class="mrow">
+            <span class="sl">新高-新低</span><span class="snum up-t">+87</span>
+            <span class="chip up">偏多</span>
+            <span class="smeta">强势结构</span>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- ② 情绪快照：分档分布+涨停强度+板块归属 -->
-    <div class="row c2" style="margin-bottom:14px">
+    <!-- ② 情绪快照（终版排版：风格分化纵排 | 涨跌分布 | 涨停强度 | 成交额） -->
+    <div class="row" style="grid-template-columns:.95fr 1.1fr 1.15fr 1.15fr">
       <div class="card">
-        <h3>涨跌分档分布 <span class="dim">同花顺口径：分档家数直方图——分布尾部厚度决定情绪性质（跌 4000 家但多在 0~3% vs 3000 家跌 7%+ 完全不同）· 真源 B31</span></h3>
-        <svg id="mk-dist" style="width:100%;height:180px"></svg>
-        <div class="kv-mini" style="margin-top:6px">涨 <b class="up">3,013</b> · 平 144 · 跌 <b class="down">2,390</b>；判读：上涨家数过半且 &gt;5% 厚尾在涨侧=偏多结构</div>
+        <div class="lab">风格分化 <span class="i" title="大小盘 × 价值成长四象限（MOD-REGIME-014 production）——四指数的价值不在四个数，在分化本身">i</span></div>
+        <div class="qv" style="margin-top:2px">
+          <div class="mrow"><span class="sl">大盘价值</span><span class="smeta" style="text-align:left">银行/白酒</span><span class="snum down-t">-0.2%</span></div>
+          <div class="mrow cur"><span class="sl">大盘成长</span><span class="smeta" style="text-align:left">宁德/中芯</span><span class="snum up-t">+1.1%</span><span class="chip up">当前</span></div>
+          <div class="mrow"><span class="sl">小盘价值</span><span class="smeta" style="text-align:left">ST/壳</span><span class="snum down-t">-0.4%</span></div>
+          <div class="mrow"><span class="sl">小盘成长</span><span class="smeta" style="text-align:left">题材/微盘</span><span class="snum up-t">+0.6%</span></div>
+        </div>
+        <div class="note">判读：<b>大盘成长领涨 + 科创微跌 = 资金主攻主线龙头</b>——与作战池结构一致（联动「作战指挥」）</div>
       </div>
       <div class="card">
-        <h3>涨停强度 · 今 vs 昨 <span class="dim">同花顺标准件 · 真源 B32</span></h3>
-        <table>
+        <div class="lab">涨跌分档分布 <span class="i" title="同花顺口径：分档家数直方图——分布尾部厚度决定情绪性质（跌 4000 家但多在 0~3% vs 3000 家跌 7%+ 完全不同）· 真源 B31">i</span></div>
+        <div style="display:flex;gap:14px;margin:6px 0 0;font-size:12px">
+          <span>涨 <b class="up-t" style="font-size:15px">3,013</b></span>
+          <span class="dim" style="font-size:11px">平 <b>144</b></span>
+          <span>跌 <b class="down-t" style="font-size:15px">2,390</b></span>
+        </div>
+        <svg id="mk-dist" style="width:100%;height:126px"></svg>
+        <div class="note" style="margin-top:4px">判读：上涨过半且 &gt;5% 厚尾在涨侧 = <b class="up-t">偏多结构</b></div>
+      </div>
+      <div class="card">
+        <div class="lab">涨停强度 · 今昨对比 <span class="i" title="同花顺标准件 · 真源 B32">i</span></div>
+        <table style="margin-top:4px">
           <tr><th></th><th>今日</th><th>昨日</th><th>判定</th></tr>
-          <tr><td>涨停板</td><td class="up">81</td><td>77</td><td class="up">↑ 回暖</td></tr>
-          <tr><td>涨停封板率</td><td>81%</td><td>81%</td><td class="dim">持平</td></tr>
-          <tr><td>涨停打开</td><td>19</td><td>18</td><td class="dim">持平</td></tr>
-          <tr><td>跌停板</td><td class="down">2</td><td>4</td><td class="up">↓ 修复</td></tr>
-          <tr><td>跌停封板率</td><td>22%</td><td>100%</td><td class="up">恐慌消退</td></tr>
-          <tr><td>跌停打开</td><td>7</td><td>0</td><td class="dim">—</td></tr>
+          <tr><td>涨停板</td><td class="up" style="font-weight:600">81</td><td>77</td><td><span class="chip up">↑ 回暖</span></td></tr>
+          <tr><td>涨停封板率</td><td>81%</td><td>81%</td><td><span class="chip flat">持平</span></td></tr>
+          <tr><td>涨停打开</td><td>19</td><td>18</td><td><span class="chip flat">持平</span></td></tr>
+          <tr><td>跌停板</td><td class="down" style="font-weight:600">2</td><td>4</td><td><span class="chip up">↓ 修复</span></td></tr>
+          <tr><td>跌停封板率</td><td>22%</td><td>100%</td><td><span class="chip up">恐慌消退</span></td></tr>
+          <tr><td>跌停打开</td><td>7</td><td>0</td><td><span class="chip flat">—</span></td></tr>
         </table>
-        <div class="note">涨停增多+跌停减半+跌停封板率 100%→22%=<b>恐慌盘出逃后修复</b>；涨停的板块：半导体 12 / 软件 7 / 医药 5；跌停的板块：ST 2</div>
+        <div class="note">涨停增多 + 跌停减半 + 跌停封板率 100%→22% = <b>恐慌盘出逃后修复</b>；涨停板块：半导体 12 / 软件 7 / 医药 5；跌停：ST 2</div>
+      </div>
+      <div class="card">
+        <div class="lab">成交额 · 分时累计 <span class="i" title="今日分时累计 vs 昨日同时段 vs 预测线（近 20 日同时段均值外推）——量能是情绪的燃料 · 真源 B33">i</span></div>
+        <div style="display:flex;gap:12px;align-items:baseline;margin:6px 0 0;flex-wrap:wrap">
+          <span class="dim" style="font-size:11px">今日</span><span style="font-size:16px;font-weight:600">21,180 亿</span>
+          <span class="chip up">同时段 +2.1%</span>
+          <span class="dim" style="font-size:11px;margin-left:auto">昨日全日 21,413 亿</span>
+        </div>
+        <svg id="mk-vol" style="width:100%;height:112px"></svg>
+        <div class="note" style="margin-top:4px">判读：量能持续在昨日上方 = <b class="up-t">放量上攻</b>；午后斜率未衰减 = 资金未离场</div>
       </div>
     </div>
 
-    <!-- ③ 成交额对比 -->
-    <div class="card" style="margin-bottom:14px">
-      <h3>市场成交额对比 <span class="dim">今日分时累计 vs 昨日同时段 vs 预测线（同时段历史均值外推）——量能是情绪的燃料 · 真源 B33</span></h3>
-      <div style="display:flex;gap:18px;font-size:12px;margin-bottom:6px">
-        <span>今日累计 <b>21,180 亿</b></span>
-        <span>昨日全日 <b>21,413 亿</b></span>
-        <span>同时段差 <b class="up">+2.1%</b></span>
-        <span class="dim">预测线=近 20 日同时段均值</span>
-      </div>
-      <svg id="mk-vol" style="width:100%;height:120px"></svg>
-      <div class="kv-mini" style="margin-top:4px">判读：今日量能曲线持续在昨日上方=放量上攻结构；午后斜率未衰减=资金未离场</div>
-    </div>
-
-    <!-- ④ 因子构成面板（铁律：结果+全部因子证据） -->
+    <!-- ③ 因子构成面板（铁律：结果+全部因子证据；双列排布） -->
     <div class="card">
-      <h3>大盘状态 · 因子构成面板 <span class="dim">铁律：结论由哪些因子/数据构成全部呈现——你判断它分析得对不对、数据全不全（BFE-21 13 参数风险信号 production）</span></h3>
-      <div class="param-strip" style="margin-bottom:10px">
+      <div class="lab">大盘状态 · 因子构成面板 <span class="i" title="铁律：结论由哪些因子/数据构成全部呈现——你判断它分析得对不对、数据全不全（BFE-21 13 参数风险信号 production）">i</span></div>
+      <div class="param-strip" style="margin-bottom:8px">
         <span>综合结论 <b>震荡偏强</b>（13 参数加权）</span>
         <span>趋势×波动 <b>多×中</b>（九网格 MOD-SIG-036）</span>
-        <span>牛熊切换 <b>WATCH</b>（MOD-SIG-039）</span>
+        <span>牛熊切换 <b>观察</b>（MOD-SIG-039）</span>
         <span>四季 <b>秋·拉升段</b>（MOD-SIG-041）</span>
-        <span style="border-right:none">极端预警 <b class="dim">无赶顶信号</b>（BFE-23）</span>
+        <span>极端预警 <b class="dim">无赶顶信号</b>（BFE-23）</span>
       </div>
-      <table>
-        <tr><th>因子</th><th>当前值</th><th>方向</th><th>中文解释（ⓘ 一句人话）</th></tr>
-        <tr><td>市场宽度（涨跌家数比）</td><td>1.26</td><td class="up">偏多</td><td>涨的股票比跌的多，盘面有赚钱效应</td></tr>
-        <tr><td>涨停/跌停比</td><td>40.5</td><td class="up">强</td><td>敢涨停的多、恐慌跌停的少，短线情绪热</td></tr>
-        <tr><td>成交额（ vs 20 日均）</td><td>+2.1%</td><td class="up">放量</td><td>钱在进场不是离场</td></tr>
-        <tr><td>新高-新低家数差</td><td>+87</td><td class="up">偏多</td><td>创新高的远多于创新低的，强势结构</td></tr>
-        <tr><td>两融余额变化</td><td>+0.3%</td><td class="dim">中性</td><td>杠杆资金没大幅进出</td></tr>
-        <tr><td>北向准净流入（季度）</td><td>+42 亿</td><td class="up">偏多</td><td>外资在慢慢买（季度估算，港交所停发日频后唯一窗口）</td></tr>
-        <tr><td>Hurst 指数</td><td>0.58</td><td class="dim">趋势延续</td><td>当前走势有惯性，不太会马上反转</td></tr>
-        <tr><td>波动率（GARCH 族）</td><td>中位</td><td class="dim">中性</td><td>波动没爆炸也没极度压缩</td></tr>
-        <tr><td>筹码获利盘比例</td><td>61%</td><td class="dim">中性偏多</td><td>多数人赚钱，抛压温和（MOD-REGIME-005）</td></tr>
-        <tr><td>隔夜外盘传导</td><td>弱偏空</td><td class="dim">弱影响</td><td>美股小跌，对 A 股拖累有限（MOD-SIG-117）</td></tr>
-        <tr><td>合成 VIX 代理</td><td>低位</td><td class="up">无恐慌</td><td>市场不慌</td></tr>
-        <tr><td>政策事件窗</td><td>20:30 美联储讲话</td><td class="dim">待兑现</td><td>晚上有变量，尾盘别满仓赌</td></tr>
-        <tr><td>主力六阶段（BFE-05）</td><td>拉升段</td><td class="up">多</td><td>主力资金在拉升期不是出货期</td></tr>
-      </table>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 26px">
+        <table>
+          <tr><th style="width:30%">因子</th><th style="width:16%">当前值</th><th style="width:14%">方向</th><th>中文解释（一句人话）</th></tr>
+          <tr><td>市场宽度（涨跌家数比）</td><td>1.26</td><td class="up">偏多</td><td>涨的股票比跌的多，盘面有赚钱效应</td></tr>
+          <tr><td>涨停/跌停比</td><td>40.5</td><td class="up">强</td><td>敢涨停的多、恐慌跌停的少，短线情绪热</td></tr>
+          <tr><td>成交额（ vs 20 日均）</td><td>+2.1%</td><td class="up">放量</td><td>钱在进场不是离场</td></tr>
+          <tr><td>新高-新低家数差</td><td>+87</td><td class="up">偏多</td><td>创新高的远多于创新低的，强势结构</td></tr>
+          <tr><td>两融余额变化</td><td>+0.3%</td><td class="dim">中性</td><td>杠杆资金没大幅进出</td></tr>
+          <tr><td>北向准净流入（季度）</td><td>+42 亿</td><td class="up">偏多</td><td>外资在慢慢买（季度估算，港交所停发日频后唯一窗口）</td></tr>
+          <tr><td>Hurst 指数</td><td>0.58</td><td class="dim">趋势延续</td><td>当前走势有惯性，不太会马上反转</td></tr>
+        </table>
+        <table>
+          <tr><th style="width:30%">因子</th><th style="width:16%">当前值</th><th style="width:14%">方向</th><th>中文解释（一句人话）</th></tr>
+          <tr><td>波动率（GARCH 族）</td><td>中位</td><td class="dim">中性</td><td>波动没爆炸也没极度压缩</td></tr>
+          <tr><td>筹码获利盘比例</td><td>61%</td><td class="dim">中性偏多</td><td>多数人赚钱，抛压温和（MOD-REGIME-005）</td></tr>
+          <tr><td>隔夜外盘传导</td><td>弱偏空</td><td class="dim">弱影响</td><td>美股小跌，对 A 股拖累有限（MOD-SIG-117）</td></tr>
+          <tr><td>合成 VIX 代理</td><td>低位</td><td class="up">无恐慌</td><td>市场不慌</td></tr>
+          <tr><td>政策事件窗</td><td>20:30 美联储讲话</td><td class="dim">待兑现</td><td>晚上有变量，尾盘别满仓赌</td></tr>
+          <tr><td>主力六阶段（BFE-05）</td><td>拉升段</td><td class="up">多</td><td>主力资金在拉升期不是出货期</td></tr>
+        </table>
+      </div>
       <div class="note">算法查看：本结论=13 参数风险信号加权（<code>regime/risk_signal_builder.py</code>）+九网格/四季/牛熊相位交叉验证——因子明细与算法出处见「技术分析·算法注册表」（R2 流水线，I-2）</div>
     </div>
 

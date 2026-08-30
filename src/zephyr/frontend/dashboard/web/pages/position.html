@@ -4,7 +4,7 @@
 
     <!-- R21 结论卡（本页标准输出口；首页墙聚合抓取本卡） -->
     <div class="vd" data-vd-order="12" data-vd-page="position">
-      <div class="vd-top"><span class="vd-tag">持仓风险</span><span class="vd-src">{{page_name}</span>
+      <div class="vd-top"><span class="vd-tag">持仓风险</span><span class="vd-src">持仓监控</span>
         <span class="vd-fb"><button onclick="vdFb(this,1,event)" title="量化这个判断对了">✓</button><button onclick="vdFb(this,0,event)" title="判断错了，进纠错样本库">✗</button></span></div>
       <div class="vd-main">总仓位 76.8% · 宁德距止损线 1.8%（🔴 关注）· 其余安全 <span class="badge b-na" style="font-size:10px">演示</span></div>
       <div class="vd-sub">依据：逐仓止损距离+组合 VaR+回撤预算消耗——减仓建议走审批流（human_gated）</div>
@@ -100,7 +100,7 @@
           <tr><td><span class="badge b-test">实盘1</span> 实盘账户 1</td><td class="down">-0.36%</td><td class="down">-0.21%</td><td class="down">-2.57%</td></tr>
           <tr><td><span class="badge b-buy">实盘2</span> 实盘账户 2</td><td class="down">-0.37%</td><td class="down">-0.06%</td><td class="down">-4.65%</td></tr>
           <tr><td><span class="badge b-src-com">模拟</span> miniQMT 模拟</td><td class="up">+0.55%</td><td class="up">+0.26%</td><td class="up">+2.41%</td></tr>
-          <tr style="background:var(--panel2)"><td><b>汇总</b></td><td class="down"><b>-0.12%</b></td><td class="down"><b>-0.08%</b></td><td class="down"><b>-1.86%</b></td></tr>
+          <tr style="background:var(--card7-hi)"><td><b>汇总</b></td><td class="down"><b>-0.12%</b></td><td class="down"><b>-0.08%</b></td><td class="down"><b>-1.86%</b></td></tr>
           <tr><td>上证指数</td><td>+0.00%</td><td class="down">-1.20%</td><td class="up">+3.78%</td></tr>
         </table>
         <div class="note">口径：区间收益率=区间盈亏/期初资产；本月列与盈亏日历（-1,451/-0.08%）、收益分析区对账闭合；季度盈亏/年度盈亏两维度 <span class="badge b-na">待接入</span>（多口径聚合管线 I-2）</div>
@@ -138,7 +138,7 @@
 
     <!-- ========== I-7 账号视图（默认隐藏；现有持仓监控全部内容包入此容器） ========== -->
     <div id="pos-acct-view" style="display:none">
-    <div class="note" style="margin:0 0 12px;padding:8px 12px;background:var(--panel);border:0.67px solid var(--border);border-radius:6px">当前账号：<b id="pos-acct-name">实盘账户 1</b> <span class="dim" id="pos-acct-note">（实盘账户经上方「实盘账户 ▾」下拉切换；该账号演示数据与现状一致）</span></div>
+    <div class="note" style="margin:0 0 12px;padding:8px 12px;background:var(--card7);border:1px solid var(--hair);border-radius:6px">当前账号：<b id="pos-acct-name">实盘账户 1</b> <span class="dim" id="pos-acct-note">（实盘账户经上方「实盘账户 ▾」下拉切换；该账号演示数据与现状一致）</span></div>
     <div class="row c4" id="pos-kpi-row">
       <div class="card metric"><div class="l">总资产</div><div class="v">1,284,530</div></div>
       <div class="card metric"><div class="l">可用资金</div><div class="v">388,360</div></div>

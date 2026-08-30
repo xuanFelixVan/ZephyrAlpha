@@ -1,33 +1,41 @@
 <section class="page" id="p-design">
-    <h2 class="page-title">设计规范 <span class="badge b-na">§DS v1.0</span></h2>
-    <div class="page-sub">系统组 · 全仪表盘唯一设计标准——所有元素的颜色/字体/大小/间距/用法以此页为准（新元素先查此页，合规审查以此为尺）——规范=实物：色板吃 CSS 变量、组件真实渲染，样式演进自动同步零漂移</div>
+    <h2 class="page-title">设计规范 <span class="badge b-na">§DS v2.0</span></h2>
+    <div class="page-sub">系统组 · 全仪表盘唯一设计标准——所有元素的颜色/字体/大小/间距/用法以此页为准（新元素先查此页，合规审查以此为尺）——规范=实物：色板吃 CSS 变量、组件真实渲染，样式演进自动同步零漂移。<b>v2.0 = 色系 v7（2026-08-30 Owner 四步选型拍板）</b>：风格=SharpLink 半透明叠层语法 · 密度=L4 交易终端 · 宽度=W4 窄卡多列 · 排版=同类合并 · 页头字号=L1 档（4K 可读性实测）；K 线/图表内部视觉仍归 DS-5 v4（canvas 分层）不变</div>
 
     <!-- DS-1 色彩系统 -->
     <div class="card" style="margin-bottom:14px">
       <h3>DS-1 色彩系统 <span class="dim">色板=实时 CSS 变量渲染；改 :root 即全站+本页同步</span></h3>
-      <div class="sec-title" style="margin-top:4px">底色族（5）——结构色，不可用于文字/数据</div>
+      <div class="sec-title" style="margin-top:4px">底色族（5+4）——结构色，不可用于文字/数据；<b>v7（2026-08-30）：一级卡片底=半透明叠层 --card7（SharpLink 语法，黑底上呈现≈#121212 但带通透层次）</b>，#121212 实底降级为弹层/浮层专用</div>
       <table>
         <tr><th style="width:70px">色板</th><th>token</th><th>hex</th><th>用在哪</th><th>禁止</th></tr>
-        <tr><td><span style="display:inline-block;width:34px;height:18px;border-radius:4px;background:var(--bg);border:1px solid var(--border)"></span></td><td>--bg</td><td>#000000</td><td>页面底/图表底</td><td>不可做卡片底（层级消失）</td></tr>
-        <tr><td><span style="display:inline-block;width:34px;height:18px;border-radius:4px;background:var(--panel)"></span></td><td>--panel</td><td>#121212</td><td>卡片底（唯一）</td><td>不可做页面底</td></tr>
-        <tr><td><span style="display:inline-block;width:34px;height:18px;border-radius:4px;background:var(--panel2)"></span></td><td>--panel2</td><td>#1A1C1E</td><td>图表抬升底/弹层/hover 态</td><td>不可做一级卡片底</td></tr>
-        <tr><td><span style="display:inline-block;width:34px;height:18px;border-radius:4px;background:var(--input);border:1px solid var(--border)"></span></td><td>--input</td><td>#0D0D0D</td><td>表格单元格/输入框/次级容器</td><td>—</td></tr>
-        <tr><td><span style="display:inline-block;width:34px;height:18px;border-radius:4px;background:var(--border)"></span></td><td>--border</td><td>#2E2E2E</td><td>分隔线/发丝描边（仅 0.67~1px；欧易实测）</td><td>不可做可见粗边框</td></tr>
+        <tr><td><span style="display:inline-block;width:34px;height:18px;border-radius:4px;background:var(--bg);border:1px solid var(--border)"></span></td><td>--bg</td><td>#000000</td><td>页面底/图表底（+顶部藏青辉光 radial-gradient 一处，SharpLink hero 余韵）</td><td>不可做卡片底（层级消失）</td></tr>
+        <tr><td><span style="display:inline-block;width:34px;height:18px;border-radius:4px;background:var(--card7);border:1px solid var(--hair)"></span></td><td><b>--card7（v7 新增）</b></td><td>rgba(238,238,240,.055)</td><td><b>一级卡片底（唯一）</b>——半透明白叠黑底，无实边线</td><td>不可做弹层（通透漏底）</td></tr>
+        <tr><td><span style="display:inline-block;width:34px;height:18px;border-radius:4px;background:var(--card7-hi)"></span></td><td><b>--card7-hi（v7 新增）</b></td><td>rgba(238,238,240,.095)</td><td>卡片抬升一档（hover/嵌套块/汇总行）</td><td>不可做弹层</td></tr>
+        <tr><td><span style="display:inline-block;width:34px;height:18px;border-radius:4px;background:var(--panel)"></span></td><td>--panel</td><td>#121212</td><td><b>v7 起=弹层/浮层/下拉实底专用</b>（不再做一级卡片底）</td><td>不可做页面底/卡片底</td></tr>
+        <tr><td><span style="display:inline-block;width:34px;height:18px;border-radius:4px;background:var(--panel2)"></span></td><td>--panel2</td><td>#1A1C1E</td><td>弹层/tooltip/hover 态实底</td><td>不可做一级卡片底</td></tr>
+        <tr><td><span style="display:inline-block;width:34px;height:18px;border-radius:4px;background:var(--input);border:1px solid var(--border)"></span></td><td>--input</td><td>#0D0D0D</td><td>输入框/次级容器/卡内嵌块</td><td>—</td></tr>
+        <tr><td><span style="display:inline-block;width:34px;height:18px;border-radius:4px;background:var(--hair)"></span></td><td><b>--hair（v7 新增）</b></td><td>rgba(243,243,243,.09)</td><td><b>发丝线默认色</b>（卡片分隔/表格行线/容器描边 1px）</td><td>不可做可见粗边框</td></tr>
+        <tr><td><span style="display:inline-block;width:34px;height:18px;border-radius:4px;background:var(--dash)"></span></td><td><b>--dash（v7 新增）</b></td><td>rgba(243,243,243,.16)</td><td>虚线分节（.rule）/迷你图网格线</td><td>禁实线替代</td></tr>
+        <tr><td><span style="display:inline-block;width:34px;height:18px;border-radius:4px;background:var(--border)"></span></td><td>--border</td><td>#2E2E2E</td><td>输入框/按钮/下拉描边（实色发丝，欧易实测）</td><td>内容卡分隔请用 --hair</td></tr>
       </table>
-      <div class="sec-title">文字灰阶（3）——全部文字只许这三级</div>
+      <div class="sec-title">文字灰阶（3+1）——全部文字只许这几级；<b>v7 新增 --label=卡标题/表头/分区标专用标签灰（宽字距语法见 DS-4.1）</b></div>
       <table>
         <tr><th style="width:70px">示例</th><th>token</th><th>hex</th><th>用在哪</th></tr>
         <tr><td style="color:var(--text)">主文字 Aa</td><td>--text</td><td>#EDEFF2</td><td>标题/正文/数据/表头强调</td></tr>
-        <tr><td style="color:var(--dim)">次文字 Aa</td><td>--dim</td><td>#A0A6AD</td><td>标签/表头/次级说明/导航未激活</td></tr>
+        <tr><td style="color:var(--dim)">次文字 Aa</td><td>--dim</td><td>#A0A6AD</td><td>正文次级/说明/导航未激活</td></tr>
+        <tr><td style="color:var(--label)">标签文字 Aa</td><td><b>--label（v7）</b></td><td>rgba(243,243,243,.45)</td><td>卡标题/表头 th/分区标 sec-title（11px + letter-spacing .1~.14em）</td></tr>
         <tr><td style="color:var(--faint)">弱文字 Aa</td><td>--faint</td><td>#59626D</td><td>注释/占位/时间戳/ⓘ 图标</td></tr>
       </table>
-      <div class="sec-title">功能色（6）——色系 v6 极简功能主义（2026-08-28 Owner 裁定）：图表坐标系外一律灰阶，彩色只给功能</div>
+      <div class="sec-title">功能色（6+3）——色系 v6 极简功能主义延续：图表坐标系外一律灰阶，彩色只给功能；<b>v7 新增提亮族与信息蓝（SharpLink 实测）</b></div>
       <table>
         <tr><th style="width:70px">色板</th><th>token</th><th>hex</th><th>语义与用在哪</th><th>禁止</th></tr>
         <tr><td><span style="display:inline-block;width:34px;height:18px;border-radius:4px;background:var(--up)"></span></td><td>--up</td><td>#CA3F64</td><td>涨/盈利/买/多/异常红/卖点上方（A股红=欧易红原色）</td><td>不可表达"跌"或纯装饰</td></tr>
         <tr><td><span style="display:inline-block;width:34px;height:18px;border-radius:4px;background:var(--down)"></span></td><td>--down</td><td>#25A750</td><td>跌/亏损/卖/空/正常绿/通过（A股绿=欧易绿原色）</td><td>不可表达"涨"</td></tr>
+        <tr><td><span style="display:inline-block;width:34px;height:18px;border-radius:4px;background:var(--up-strong)"></span></td><td><b>--up-strong（v7）</b></td><td>#EE6287</td><td>涨提亮档：chip 胶囊文字/决策卡大字/高亮行</td><td>禁大面积填充（用 --up-bg）</td></tr>
+        <tr><td><span style="display:inline-block;width:34px;height:18px;border-radius:4px;background:var(--down-strong)"></span></td><td><b>--down-strong（v7）</b></td><td>#3ECF7E</td><td>跌提亮档：同上</td><td>同上</td></tr>
+        <tr><td><span style="display:inline-block;width:34px;height:18px;border-radius:4px;background:var(--iblue)"></span></td><td><b>--iblue（v7）</b></td><td>#99C5FF</td><td>信息蓝：图表信息线/迷你走势图/图例（SharpLink 实测）</td><td>禁链接/按钮/选中态（全站无蓝链铁律不变）</td></tr>
         <tr><td><span style="display:inline-block;width:34px;height:18px;border-radius:4px;background:var(--blue)"></span></td><td>--blue</td><td>#3D8BFF</td><td><b>仅两处</b>：进度条 fill + 图表系列线（KDJ-K/MA60/RSI 等）</td><td>禁链接/选中态/KPI 数字/info 框（v6 全归灰白）</td></tr>
-        <tr><td><span style="display:inline-block;width:34px;height:18px;border-radius:4px;background:var(--orange)"></span></td><td>--orange</td><td>#F0B90B</td><td><b>仅图表内</b>：成本线/MACD DIF/POC 筹码峰/图表系列</td><td>禁 KPI 数字/情绪值/分类标签（v6 归灰白）</td></tr>
+        <tr><td><span style="display:inline-block;width:34px;height:18px;border-radius:4px;background:var(--orange)"></span></td><td>--orange</td><td>#F0B90B</td><td><b>仅图表内</b>：成本线/MACD DIF/POC 筹码峰/图表系列 + 决策卡"观望"强调色（R18 例外登记）</td><td>禁 KPI 数字/情绪值/分类标签（v6 归灰白）</td></tr>
         <tr><td><span style="display:inline-block;width:34px;height:18px;border-radius:4px;background:var(--yellow)"></span></td><td>--yellow</td><td>#FFD54F</td><td><b>仅两处</b>：warn 告警黄字（无框）+ 图表标注/指标线</td><td>禁高亮/胜率/今日事件/选中框（v6 归灰白）</td></tr>
         <tr><td><span style="display:inline-block;width:34px;height:18px;border-radius:4px;background:var(--purple)"></span></td><td>--purple</td><td>#AB47BC</td><td><b>仅图表内</b>：基准线/MA20/对比系列第二色</td><td>禁分类标签/装饰 SVG（v6 归灰）</td></tr>
       </table>
@@ -42,9 +50,9 @@
       <div class="sec-title">OKX 清单照抄记录（2026-08-27，markets/favorite 页 getComputedStyle 全量实测；差距→动作全闭环）</div>
       <table>
         <tr><th>项</th><th>OKX 实测值</th><th>本站照抄结果</th></tr>
-        <tr><td>内容锁宽（响应式铁律）</td><td>≥1270px 锁 1248px 居中（padding=calc(50%−624px)）</td><td>.main <b>max-width 1760px 居中</b>（OKX 为简单表格页；本终端三栏 K 线工作台密度取 1760）——<b>超宽屏/4K 内容不再巨大化，图表与进度条恒在视觉舒适区</b></td></tr>
+        <tr><td>内容宽度（响应式铁律）</td><td>≥1270px 锁 1248px 居中（padding=calc(50%−624px)）</td><td><b>v7 取代（2026-08-30 Owner 实测"两边留白特别多"）</b>：.main 全宽流体（max-width:none，padding 10px），宽幅治理走 W4 窄卡多列列制（卡片变窄、一排更多模块），不再锁宽居中——原 1760 锁宽拍板废止登记</td></tr>
         <tr><td>滚动条</td><td>宽 4px · 滑块 hsla(0,0%,100%,.36) · 圆角 8 · 轨道透明</td><td>::-webkit-scrollbar 全站照抄</td></tr>
-        <tr><td>表格</td><td>14px · td padding 12px · 无行边框 · th 12px #969696</td><td>14px + td 10px 12px（60px 行高对终端过疏，padding 折中）+ th #969696</td></tr>
+        <tr><td>表格</td><td>14px · td padding 12px · 无行边框 · th 12px #969696</td><td><b>v7 L4 密度修订</b>：11.5px · td padding 5px 10px 5px 0 · 去单元格实底改发丝行线（rgba(243,243,243,.05)）· th 10px 标签灰 --label 宽字距</td></tr>
         <tr><td>分类 pill 激活</td><td>rgba(255,255,255,.13) 圆角 6</td><td>.tab.on 照抄</td></tr>
         <tr><td>文本链接</td><td><b>白色（全站无蓝色链接）</b></td><td>文本链接转白；蓝 #3D8BFF 只留图表系列色</td></tr>
         <tr><td>下拉阴影</td><td>rgba(14,32,66,.15) 0 12px 60px + .05 0 1px 2px</td><td>.tb-drop 照抄</td></tr>
@@ -80,20 +88,22 @@
       <div class="kv-mini" style="margin-bottom:8px">字体栈：<b>OKXSans</b>, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Microsoft YaHei" —— @font-face 400/500/600(700 映射 Bold)；行高全局 1.5；字距 normal（不额外加距）；<b>数字全局 tabular-nums 等宽</b>（对齐感来源）</div>
       <table>
         <tr><th>级别</th><th>规格</th><th>live 示例</th><th>用在哪（唯一允许处）</th></tr>
-        <tr><td>T1</td><td>20px / 700</td><td style="font-size:20px;font-weight:700">页标题</td><td>h2.page-title（每页唯一）</td></tr>
-        <tr><td>T2</td><td>16px / 700</td><td style="font-size:16px;font-weight:700">卡片标题</td><td>.card h3 / 弹层标题</td></tr>
+        <tr><td>T1</td><td><b>30px / 600（v7·L1 档）</b></td><td style="font-size:30px;font-weight:600;letter-spacing:-.01em">页标题</td><td>h2.page-title（每页唯一）——Owner 4K 实测"看得很清楚"选定档</td></tr>
+        <tr><td>T1.5</td><td>13px / 400（v7·L1 档）</td><td style="font-size:13px;color:var(--dim)">页副标题核心句</td><td>.page-sub（页标题下核心一句）</td></tr>
+        <tr><td>T2</td><td><b>11px / 500 宽字距（v7 标签语法）</b></td><td><span style="font-size:11px;font-weight:500;letter-spacing:.14em;color:var(--label)">卡片标题 标签灰</span></td><td>.card h3 / .lab——醒目让位给数字与结论（SharpLink 语法）</td></tr>
         <tr><td>T3</td><td>15px / 600</td><td style="font-size:15px;font-weight:600">指数价格 3,087.53</td><td>天气卡价格/面板报价</td></tr>
-        <tr><td>T4</td><td>14px / 400</td><td style="font-size:14px">正文与导航</td><td>body 正文/顶栏导航/卡内正文</td></tr>
-        <tr><td>T5</td><td>13px / 400·600</td><td style="font-size:13px">表格内容 贵州茅台</td><td>表格 td/下拉标题（600）/卡内列表</td></tr>
-        <tr><td>T6</td><td>12px / 400·500</td><td style="font-size:12px">次级说明与表头</td><td>表头 th/次级注解/dropdown 描述</td></tr>
-        <tr><td>T7</td><td>11.5px / 400</td><td style="font-size:11.5px;color:var(--dim)">KPI 标签</td><td>.metric .l/新闻条目/简介</td></tr>
-        <tr><td>T8</td><td>11px / 400·500</td><td style="font-size:11px;color:var(--dim)">小注与 badge</td><td>badge/note/ticker/时间戳</td></tr>
+        <tr><td>T4</td><td><b>12.5px / 400（v7·L4 密度）</b></td><td style="font-size:12.5px">正文与导航</td><td>body 正文/卡内正文（导航一级 14px 例外保留）</td></tr>
+        <tr><td>T5</td><td><b>11.5px（v7·L4 密度）</b></td><td style="font-size:11.5px">表格内容 贵州茅台</td><td>表格 td/卡内列表</td></tr>
+        <tr><td>T6</td><td>12px / 400·500</td><td style="font-size:12px">次级说明</td><td>次级注解/dropdown 描述</td></tr>
+        <tr><td>T7</td><td>11px / 400·500</td><td style="font-size:11px;color:var(--dim)">KPI 标签与小注</td><td>.metric .l/badge/note/ticker/表头 th（10px 宽字距）</td></tr>
         <tr><td>T9</td><td>10px / 400</td><td style="font-size:10px;color:var(--faint)">弱标注</td><td>图内标注/代码后缀/ⓘ</td></tr>
-        <tr><td>KPI</td><td><b>26px / 500</b></td><td style="font-size:26px;font-weight:500;font-variant-numeric:tabular-nums">173.85 万</td><td>.metric .v 核心数字（视觉锚点，全站唯一大字号）</td></tr>
+        <tr><td>主报价</td><td><b>23px / 600（v7 主指数档）</b></td><td style="font-size:23px;font-weight:600;font-variant-numeric:tabular-nums">3,847.23</td><td>大盘分析主卡/页级主报价</td></tr>
+        <tr><td>KPI</td><td><b>20px / 600（v7 修订，原 26px 废止）</b></td><td style="font-size:20px;font-weight:600;font-variant-numeric:tabular-nums">173.85 万</td><td>.metric .v 指标卡数字（L4 密度锚点）</td></tr>
         <tr><td>报价</td><td>20~22px / 500</td><td style="font-size:21px;font-weight:500;font-variant-numeric:tabular-nums">1,712.50</td><td>面板主报价（sq-qh/sq-head）</td></tr>
-        <tr><td>T-STAT</td><td>17~18px / 500·700</td><td style="font-size:18px;font-weight:700">震荡市 · 偏强</td><td>判定语文本大卡（regime/情绪/外盘环境）· 密集统计网格（回测 26 卡）· 个股名/复盘 KPI——合规审查登记（2026-08-27）：KPI 26px 数字锚点唯一性不动，本档仅给"非数字核心"场景</td></tr>
+        <tr><td>T-STAT</td><td>17~18px / 500·700</td><td style="font-size:18px;font-weight:700">震荡市 · 偏强</td><td>判定语文本大卡（regime/情绪/外盘环境）· 密集统计网格（回测 26 卡）· 个股名/复盘 KPI</td></tr>
+        <tr><td><b>决策大字</b></td><td><b>26px / 700（R18 划重点例外）</b></td><td style="font-size:26px;font-weight:700;color:var(--up-strong)">做多 BTC · 小仓试</td><td>仅 dc-act（全景总览今日决策卡）——全站唯一大字彩色例外</td></tr>
       </table>
-      <div class="note">层级铁律：核心数字（KPI 26 / 报价 21 / 价格 15）必须显著大于其标签（11.5/12）；任何 14px 以上新字号须先入本表（T-STAT 17~18px 已登记）<br><b>术语铁律</b>：英文术语禁止裸奔——中文在前+英文在后（风险价值 VaR / 持仓量 OI / 市值占比 Dominance），首见配 ⓘ 一句人话（Owner 2026-08-27：看不懂的术语等于没有）</div>
+      <div class="note">层级铁律：核心数字必须显著大于其标签；任何新字号须先入本表。<b>术语铁律</b>：英文术语禁止裸奔——中文在前+英文在后（风险价值 VaR / 持仓量 OI / 市值占比 Dominance），首见配 ⓘ 一句人话（Owner 2026-08-27：看不懂的术语等于没有）。<b>v7 字体修订（2026-08-30）</b>：页标题 20→30px（L1 档 4K 可读性实测）、卡标题 16/700→11/500 宽字距标签灰（SharpLink 语法）、正文 14→12.5px、表格 14→11.5px（L4 终端密度）、KPI 26→20px、决策大字 26px 彩色=R18 决策卡唯一例外。</div>
     </div>
 
     <!-- DS-3 间距与圆角 -->
@@ -101,13 +111,15 @@
       <h3>DS-3 间距与圆角</h3>
       <table>
         <tr><th>项</th><th>规格</th><th>用在哪</th></tr>
-        <tr><td>卡片内距</td><td>16px 18px</td><td>.card（唯一）</td></tr>
-        <tr><td>卡片间距</td><td>gap 12px / row margin-bottom 14px</td><td>.row 网格</td></tr>
-        <tr><td>表格单元</td><td>td 8px 12px · th 6px 12px</td><td>全站表格</td></tr>
-        <tr><td>组件内距</td><td>小件 4~8px · 列表项 7~9px</td><td>badge/tab/列表行</td></tr>
-        <tr><td>圆角</td><td>卡 12 · badge 10 · 弹层/大容器 8 · 小件 5~6 · 输入 5</td><td>对应组件（禁超 12px）</td></tr>
-        <tr><td>描边</td><td>卡片<b>无描边</b>；分隔仅 0.67~1px --border 发丝线</td><td>欧易实测（border 0px none）</td></tr>
+        <tr><td>卡片内距</td><td><b>10px 12px（v7·L4 密度，原 16/18 废止）</b></td><td>.card（唯一）</td></tr>
+        <tr><td>卡片间距</td><td><b>gap 8px / row margin-bottom 10px（v7·L4，原 12/14 废止）</b></td><td>.row 网格</td></tr>
+        <tr><td>页面边距</td><td><b>10px 全宽流体（v7，1760 锁宽废止）</b></td><td>.main</td></tr>
+        <tr><td>表格单元</td><td><b>td 5px 10px 5px 0 · th 3px 10px 6px 0（v7）</b></td><td>全站表格</td></tr>
+        <tr><td>组件内距</td><td>小件 4~8px · 列表行 5~8px（mrow 8px 2px）</td><td>badge/tab/列表行</td></tr>
+        <tr><td>圆角</td><td><b>卡 6（v7，原 12 废止）· badge/chip 99 胶囊（v7，原 10 废止）</b> · 弹层/大容器 8 · 小件 5~6 · 输入 5</td><td>对应组件</td></tr>
+        <tr><td>描边</td><td>卡片<b>无实色描边</b>（半透明底分层）；分隔仅 1px --hair 发丝线；决策卡等强调件可 1px --hair 描边</td><td>v7 修订</td></tr>
         <tr><td>阴影</td><td>仅浮层（下拉/弹层/tooltip）rgba(0,0,0,.45~.6)</td><td>卡片<b>无阴影</b></td></tr>
+        <tr><td>分节</td><td><b>1px dashed --dash 虚线（v7·SharpLink 语法）</b>+ .sec-title 标签灰宽字距</td><td>.rule / .sec-title</td></tr>
       </table>
     </div>
 
@@ -116,19 +128,19 @@
       <h3>DS-4 组件规范 <span class="dim">live 示例=真实 class 渲染</span></h3>
 
       <div class="sec-title" style="margin-top:4px">4.1 卡片（信息容器唯一形态）</div>
-      <div class="kv-mini">结构 = h3 标题（16/700）+ badge（可选）+ ⓘ 注解（&gt;14 字注解必收）+ 内容。禁止：卡内再嵌卡（用 --input 容器）、标题超 16px。</div>
+      <div class="kv-mini"><b>v7（2026-08-30）</b>：底=--card7 半透明无实边，圆角 6，内距 10px 12px；结构 = <b>标签式标题（11px/500/--label/宽字距 .14em，SharpLink 语法——醒目让位给数字与结论）</b>+ badge（可选）+ ⓘ 注解（&gt;14 字注解必收）+ 内容。禁止：卡内再嵌卡（用 --input 容器或 --card7-hi）、卡标题用大字。</div>
 
       <div class="sec-title">4.2 KPI 指标卡（核心数字=锚点）</div>
       <div style="display:flex;gap:12px;margin:6px 0">
-        <div class="card metric" style="flex:1;background:var(--input)"><div class="l">示例标签</div><div class="v">26px</div><div class="s">辅助行 11px</div></div>
+        <div class="card metric" style="flex:1;background:var(--card7-hi)"><div class="l">示例标签</div><div class="v">20px</div><div class="s">辅助行 11px</div></div>
       </div>
-      <div class="kv-mini">数字 26px/500 tabular-nums 唯一视觉锚点；标签 11.5px --dim；辅助行 11px。禁止：数字小于 22px（层级塌陷）、一卡多数字。</div>
+      <div class="kv-mini"><b>v7 修订</b>：数字 20px/600 tabular-nums（L4 密度锚点，原 26px 废止）；标签 11px --label 宽字距；辅助行 11px --dim。禁止：一卡多数字。</div>
 
       <div class="sec-title">4.3 badge 六族（语义映射唯一表）</div>
       <div style="margin:6px 0">
         <span class="badge b-pass">b-pass 通过/正常</span> <span class="badge b-fail">b-fail 未过/失败</span> <span class="badge b-warn">b-warn 警告/待办</span> <span class="badge b-na">b-na 演示/占位</span> <span class="badge b-buy">b-buy 买/多</span> <span class="badge b-sell">b-sell 卖/空</span>
       </div>
-      <div class="kv-mini">规格：13% 透明功能色底 + 功能色文字，11px/500，radius 10，padding 1px 8px。<b>"演示数据"badge 必须恒可见</b>（负反馈纪律，不入 ⓘ 收敛）。禁新增第七族——新语义先入 DS-6 宪章。<b>v6 补记（2026-08-28）</b>：六族保留不动（Owner 裁定）；来源族 b-test/b-src-*（模块总账页分类标签）非六族成员，统一归灰（同 b-na 规格），分类靠文字不靠色。</div>
+      <div class="kv-mini">规格：13% 透明功能色底 + 功能色文字，10.5px/500，<b>radius 99 胶囊（v7，原 10 废止）</b>，padding 1.5px 9px。<b>"演示数据"badge 必须恒可见</b>（负反馈纪律，不入 ⓘ 收敛）。禁新增第七族——新语义先入 DS-6 宪章。<b>v6 补记（2026-08-28）</b>：六族保留不动（Owner 裁定）；来源族 b-test/b-src-*（模块总账页分类标签）非六族成员，统一归灰（同 b-na 规格），分类靠文字不靠色。</div>
 
       <div class="sec-title">4.4 alert-row 族（v6 去框化：err/warn/info + .bad=err 别名，Owner 2026-08-28）</div>
       <div class="alert-row err" style="margin-bottom:6px">err：风控/数据异常（红 7% 底 22% 边——只给最重要最紧急）<span class="t">10:41</span></div>
@@ -137,7 +149,7 @@
       <div class="kv-mini">规格：padding 8px 10px · radius 6 · 12px；时间戳右置 .t 11px --faint；第四族 .bad（禁做清单）=err 别名同规格（v6 补 CSS 定义，此前规范有实现无）。禁止：自定义第五色；实色底；warn/info 加框（v6 新规——红框唯一，视觉焦点只留最紧急）。</div>
 
       <div class="sec-title">4.5 表格</div>
-      <div class="kv-mini">内容 13px · th 12px/500 #b3b3b3 · td padding 8px 12px <b>无行边框</b> · 行 hover #1A1D21 · 数字 tabular-nums 右对齐倾向 · 首列名称可 600。禁止：行边框线、斑马的第二种底色。</div>
+      <div class="kv-mini"><b>v7（2026-08-30·L4 密度）</b>：内容 11.5px · th 10px/500 --label 宽字距透明底 · td padding 5px 10px 5px 0 透明底 + 发丝行线 rgba(243,243,243,.05) · 行 hover rgba(243,243,243,.025) · 数字 tabular-nums · 首列名称 --text。禁止：单元格实底、斑马线双色。</div>
 
       <div class="sec-title">4.6 tab / 按钮 / 输入</div>
       <div style="margin:6px 0">
@@ -153,6 +165,18 @@
 
       <div class="sec-title">4.9 ticker 横条 / toast / 状态灯</div>
       <div class="kv-mini">ticker：11px，涨项 --up 跌项 --down，编辑态白底搜索面板；toast：底部居中 12px --panel2 卡；状态灯：.dot 8px 圆点 g=--down（正常）r=--up（异常）y=--yellow（警告）——<b>灯色语义锁死，禁反</b>。</div>
+
+      <div class="sec-title">4.10 chip 胶囊族（v7 新增，SharpLink 徽章语法）</div>
+      <div style="margin:6px 0;display:flex;gap:8px;align-items:center">
+        <span class="chip up">↗ +0.61%</span> <span class="chip down">-0.18%</span> <span class="chip flat">持平</span>
+      </div>
+      <div class="kv-mini">规格：10.5px/500，radius 99，padding 1.5px 9px；up=--up-strong 文字+--up-bg 底 / down=--down-strong+--down-bg / flat=灰。<b>用在哪</b>：涨跌徽章/判定标签（↗ 回暖/恐慌消退）——与 badge 六族分工：badge=状态语义（演示/通过/待办），chip=数值方向语义。禁：chip 做按钮。</div>
+
+      <div class="sec-title">4.11 合并模块族（v7 新增·终版样板实证——同类低密度卡片合一，消灭卡内留白）</div>
+      <div class="kv-mini">触发条件：同类型迷你卡 ≥3 张且单卡信息 ≤4 行 → 合并为一卡多行（.subidx>.rows>.mrow）。行语法：名称 .mn（定宽）+ chip + 数值 .mnum（定宽右对齐）+ 备注 .mnote（定宽省略号）+ 迷你图 .mspark（flex:1 上限 220px 居中，<b>各列定宽→多行图表同位同宽对齐</b>）+ 状态 .mst；统计行变体=.sl/.snum/.smeta/.sbar（占比条）。象限类 → .qv 纵排（当前项 .mrow.cur 红透底高亮）。实证：大盘分析页 副指数三合一 + 市场统计四合一 + 风格分化纵排。禁：合并后行高不一（用 space-evenly 均分卡高）。</div>
+
+      <div class="sec-title">4.12 决策卡 dc-card（R18 划重点例外件——全站唯一大字彩色强调）</div>
+      <div class="kv-mini">语法：v7 半透明卡面 + 左缘 3px 语义色竖条 + 135° 微渐变（色 6~9%→透明 55%）+ 26px/700 语义色大字（dc-act）+ 12px 理由 + 虚线分隔行动区。语义色：hold=观望 #F0B90B / buy=做多 --up-strong / sell=做空 --down-strong。<b>保留依据（Owner 2026-08-30 裁定）</b>：颜色+大字=信息传递速度，决策卡是全站唯一核心产出，允许例外强调；统一化约束=表面材质必须归 v7 族（半透明/发丝线/圆角 8）。</div>
     </div>
 
     <!-- DS-5 K线与图表专项 -->
@@ -177,9 +201,10 @@
       <div style="background:#000;border-radius:8px;padding:6px 4px">
         <svg id="ds-spec-chart" viewBox="0 0 1160 560" preserveAspectRatio="xMidYMid meet" style="width:100%;height:480px"></svg>
       </div>
-      <div class="note"><b>蓝图 v3（2026-08-28，OKX 线上像素实测照抄版）</b>：数据源=okx.com/trade-spot/btc-usdt 原生版图表 canvas getImageData 实测（暗色主题 15m，DPR1.5）——图表底 #000（与 v2 一致）· 网格 #171717 横竖双线挂刻度（旧 #2A2F36 三横线废止）· 右轴 #C6C6C6 12px · MA 默认 3 线色序纠正（MA10 品红/MA20 青，v2 标反）· 现价线点线 alpha.5+价签黑字 · VOL 无量均线（v2 量均线转可选）· 缩放全套（滚轮+拖拽平移+轴拖拽+双击复位，无过渡动画）· 筹码峰 v3 红绿分色细桶（TradingView 式，非 OKX 原生）· 左%轴=A股扩展（OKX 无，Owner v2 拍板保留）；任何页面图表与蓝图不一致=不合规；preserveAspectRatio=xMidYMid meet 等比缩放（4K 不变形）</div>
+      <div class="note"><b>蓝图 v4（2026-08-29，canvas 分层架构规范——QMT tick 级接入前提，TradingView/OKX 工业界验证方案）</b>：渲染底座从 SVG 换 <b>canvas 分层混合架构</b>（lightweight-charts 精确架构：主层 canvas 数据图形 + 顶层 canvas 十字光标 + DOM 覆盖层富 UI）。<b>分层依据</b>=失效频率分治：数据层（K线/指标/网格）数据变才重绘，光标层随鼠标 60fps 整层重绘不碰主层，DOM 层（tooltip/弹窗/画线属性面板/事件轴图标）保留免费交互能力。<b>为什么不做全 canvas</b>：canvas 文字不可选/不可复制/无障碍为零/命中检测手写=重写半个浏览器/富文本排版造轮子/HiDPI 发虚/局部更新粒度差——图内标签（轴刻度/价签）canvas fillText，图外富 UI 留 DOM。<b>视觉规格全部沿用 v3</b>（OKX 实测色值/网格/MA 色序/现价签/筹码峰/双轴/缩放交互不变），只换渲染底座；SVG 版为降级 fallback（无 canvas 环境/打印导出）。任何页面图表与蓝图不一致=不合规。</div>
       <table>
         <tr><th>元素</th><th>规格</th><th>用在哪</th></tr>
+        <tr><td><b>渲染底座（v4）</b></td><td><b>canvas 分层混合架构</b>：主层 canvas=K线/指标线/网格/VOL/MACD 柱（数据变才重绘）· 顶层 canvas=十字光标（60fps 独立重绘）· DOM 覆盖层=tooltip 读数卡/事件轴图标/弹层/画线属性面板；HiDPI 必须 devicePixelRatio 对齐（fancy-canvas 式封装）；SVG 版=降级 fallback（无 canvas 环境/打印导出）</td><td>全部坐标图</td></tr>
         <tr><td>涨蜡烛</td><td>#CA3F64 平涂<b>无晕光</b>（色系 v5：欧易 canvas 实测低饱和+无 glow，2026-08-27）</td><td>全部 K 线（主图/迷你）</td></tr>
         <tr><td>跌蜡烛</td><td>#25A750 平涂<b>无晕光</b>（同上）</td><td>同上</td></tr>
         <tr><td>蜡烛几何（v3）</td><td>体宽：间隙≈<b>7:2</b>（体占节距 78%，OKX 实测节距 6 CSS px/体芯 5 device px）；影线 1px 与实体同色；影线边缘 50% 抗锯齿（勿误判为空心蜡烛）</td><td>全部 K 线</td></tr>
@@ -192,7 +217,8 @@
         <tr><td>VOL 副图</td><td>柱随蜡烛红/绿，<b>50% 透明</b>（色系 v5：欧易 canvas 实测 50%，85% 过浓已纠）</td><td>成交量窗格</td></tr>
         <tr><td>MACD 副图</td><td>柱 正红/负绿 · DIF #F0B90B · DEA #CA3F64，宽 1.2</td><td>MACD 窗格</td></tr>
         <tr><td>KDJ 副图</td><td>K #3D8BFF · D #CA3F64 · J #F0B90B；80/20 虚线 #2A2F36</td><td>KDJ 窗格</td></tr>
-        <tr><td>sparkline</td><td>随 24h 涨跌红/绿，宽 1.2，无填充</td><td>表格内迷你走势</td></tr>
+        <tr><td>sparkline</td><td>随 24h 涨跌红/绿，宽 1.2，无填充；<b>v7 例外（2026-08-30）</b>：副指数合并模块的迷你走势=信息蓝 --iblue 统一（涨跌语义由同行 chip 承载，三行同色防色噪）</td><td>表格内迷你走势/副指数行</td></tr>
+        <tr><td><b>页面级主图（v7 新增）</b></td><td>大盘分析主图规格（终版样板实证）：日K 实芯蜡烛（红 --up / 绿 --down 平涂，阴阳均实芯）+ MA10 品红 #EC407A（MA 族色序）+ 虚线网格 --dash（2 5）+ 右轴价位 10px --faint + 底部月份刻度；高度 124px（M 半卡档）</td><td>大盘分析等页面级主图（非 K 线工作台——工作台全规格见本表 v3/v4 行）</td></tr>
         <tr><td>净值曲线</td><td>策略 #25A750 实线 / 基准 #8B949E 灰虚线 dash 4 3 / 对比蓝 #3D8BFF</td><td>回测/组合净值</td></tr>
         <tr><td>网格（v3）</td><td><b>#171717 1px 实线，横竖双线挂刻度</b>：横=每个价格刻度一条（默认窗口约 5~7 条），竖=每个时间刻度一条（约 4~6 条），密度随缩放自适应（OKX 实测 $1000→$400/$200 步进自适应）；旧 #2A2F36 三横线 25/50/75% 位废止（过亮过稀）；图表底 #000（OKX 实测一致）</td><td>全部坐标图</td></tr>
         <tr><td>十字光标（v3）</td><td>全十字 #EDEFF2 虚线 dash 4 3 ×75%（竖线+横线成对）+<b>双轴跟随签</b>（右轴=光标价色签灰底白字、底轴=光标时间签）+主图左上 OHLCV 读数随光标刷新（OKX web 自动化未渲染十字线，按 OKX app/TradingView 常规补齐，标待复测）</td><td>全图 hover 十字线</td></tr>
@@ -200,8 +226,8 @@
         <tr><td><b>双轴（v3）</b></td><td>右轴=价格 <b>#C6C6C6 12px OKXSans</b>（OKX 实测，v2 #A0A6AD 10px 偏暗偏小已纠），刻度 5~7 档等距·轴区底同图表 #000 无分隔线；左轴=涨跌幅%（窗口首收为 0 红正绿负 10px）=<b>A股扩展</b>（OKX 无左轴，Owner v2 拍板保留）；技术分析页主图 v3 补齐双轴（此前无轴=实现缺漏）</td><td>K 线工作台主图/分时</td></tr>
         <tr><td><b>当前价色签（v3）</b></td><td>色底矩形块（涨红跌绿）+<b>黑字</b> 10~12px（v2 白字与 OKX 相反，根治）+签下灰色倒计时小字（K 线剩余时间 mm:ss）+24h 高/低点标记（灰字+↑/→小箭头）</td><td>主图/分时</td></tr>
         <tr><td><b>高低点标注（v2）</b></td><td>窗口极值点右引 "值 →" 10px #A0A6AD+小圆点</td><td>主图/分时</td></tr>
-        <tr><td><b>日期轴事件图标（v2）</b></td><td>轴下 18×16 圆角底（--panel2+--border 描边）+emoji 10px+蓝 badge 计数；<b>新闻双日期规则</b>：披露日 📰+兑现日 📅 同弹层；末日后续未来空槽（FS=12）给未来事件</td><td>K 线工作台日期轴</td></tr>
-        <tr><td><b>OKX 式事件弹层（v2）</b></td><td>.sq-evpop2：--panel2 底+#2E2E2E 边+下拉阴影族，日期标题+事件列表（名称/公布/预期/前值）+披露/兑现 tag，点外关闭</td><td>事件轴点击</td></tr>
+        <tr><td><b>日期轴事件图标（v4）</b></td><td><b>DOM 覆盖层</b>（非 canvas）：轴下 18×16 圆角底（--panel2+--border 描边）+emoji 10px+蓝 badge 计数——保留 DOM 免费交互（点击/弹层/无障碍）；<b>新闻双日期规则</b>：披露日 📰+兑现日 📅 同弹层；末日后续未来空槽给未来事件</td><td>K 线工作台日期轴</td></tr>
+        <tr><td><b>OKX 式事件弹层（v4）</b></td><td><b>DOM 覆盖层</b>：.sq-evpop2：--panel2 底+#2E2E2E 边+下拉阴影族，日期标题+事件列表（名称/公布/预期/前值）+披露/兑现 tag，点外关闭</td><td>事件轴点击</td></tr>
         <tr><td><b>量均线（v3 转可选）</b></td><td>OKX 实测 VOL 窗格无量均线——v3 默认<b>关闭</b>（照抄 OKX）；MA5 白/MA10 琥珀量均线移入叠加层可选开关，不默认渲染</td><td>VOL 副图</td></tr>
         <tr><td><b>分时模式（v2）</b></td><td>白线价 #EDEFF2 1.5+黄均价 #F0B90B 1.2+面积微渐变 12%+昨收参考虚线+时间轴 5 刻度</td><td>个股行情"分时"tab</td></tr>
         <tr><td><b>筹码峰细腻版（v3）</b></td><td>桶数 <b>60~80</b>（每桶 2~3px 高，v2 仅 12~14 桶=粗块根因）· 条宽∝桶量，最大条 ≤图表宽 15%（右缘贴右轴）· <b>POC=白 1px 细线 #EDEFF2 alpha .8</b>（琥珀 2px 废止=抢焦点）· 价值区 70%（VAH~VAL）带内条 alpha 提至 .6 带外 .3（微层次替代琥珀高亮）· 统计小字保留（获利%/成本 9px #8B949E）</td><td>主图右侧（Owner 2026-08-28 拍板：红绿分色细桶案）</td></tr>
@@ -213,7 +239,7 @@
         <tr><td>状态灯 .dot 族（v6）</td><td>g=--down 正常 · r=--up 异常 · y=--yellow 警告 · w=#A0A6AD 弱/未启——<b>b 蓝灯废止归灰</b>（色系 v6：状态灯=红黄绿）</td><td>ticker 4 灯/系统状态/任务清单</td></tr>
         <tr><td><b>辅助标注色族（例外登记）</b></td><td>江恩/黄金分割 #C9A227 · MML #8D9E63 · 量能密集/扩展位 #7E57C2 · TD 序列 #78909C · 共振 #FF7043 · 等高池 #FF8A65 · 等低池 #4DB6AC · 周期分段灰蓝 #8A94A6 · 账户系列灰 #9AA3B2/#6E7889 · 情绪仪表阈值 #AA0066/#44AA88 · 宏观标注灰 #666666/#888888/#999999 · 实验标注 #9EC7EE · 蓝图注解 #8B9BD5</td><td>叠加层多线共存专用（合规审查第 3 步登记 2026-08-27）——禁用于主图四要素（蜡烛/MA/成本线/买卖点）与 badge/alert</td></tr>
       </table>
-      <div class="note">禁：图表内出现本表外颜色（彩虹指标族禁止）；新指标配色必须从功能色 6 色中取；辅助标注色族=登记例外（仅叠加层，禁主图四要素）；例外声明：模块总账域头行 border-top 为结构分隔例外（DS-4.5 无行边框规则的唯一豁免）</div>
+      <div class="note">禁：图表内出现本表外颜色（彩虹指标族禁止）；新指标配色必须从功能色 6 色中取；辅助标注色族=登记例外（仅叠加层，禁主图四要素）；例外声明：模块总账域头行 border-top 为结构分隔例外（DS-4.5 无行边框规则的唯一豁免）。<b>v4 补记（2026-08-29）</b>：canvas 分层架构下，颜色规范对 canvas fillStyle/strokeStyle 与 CSS 色值一视同仁——canvas 绘制同样禁调色板外颜色；DOM 覆盖层（tooltip/弹窗/事件轴）沿用 DS 全部规范。</div>
     </div>
 
     <!-- DS-6 语义色宪章 -->
@@ -260,11 +286,14 @@
       <table>
         <tr><th>组件</th><th>页面</th></tr>
         <tr><td>KPI 指标卡</td><td>全景总览/持仓监控/币圈盘面/币圈持仓风控/币圈回测/回测结果/宏观分析</td></tr>
-        <tr><td>K 线主图规范</td><td>技术分析/个股行情（+迷你 K：板块全景/做T分析/外盘速览）</td></tr>
-        <tr><td>表格规范</td><td>全 36 页（无例外）</td></tr>
-        <tr><td>badge 六族</td><td>全 36 页（演示数据 badge 全站覆盖）</td></tr>
+        <tr><td>K 线主图规范</td><td>技术分析/个股行情（+迷你 K：板块全景/做T分析/外盘速览）；<b>页面级主图 v7：大盘分析（实芯蜡烛+MA10 品红+虚线网格）</b></td></tr>
+        <tr><td>chip 胶囊族（v7）</td><td>大盘分析（涨跌徽章/判定）——新页面涨跌语义首选 chip 非 badge</td></tr>
+        <tr><td>合并模块族（v7）</td><td>大盘分析（副指数三合一/市场统计四合一/风格分化纵排）——同类低密度迷你卡 ≥3 张即触发</td></tr>
+        <tr><td>决策卡 dc-card（v7 统一化）</td><td>全景总览（A股/币圈今日决策——划重点例外件，见 DS-4.12）</td></tr>
+        <tr><td>表格规范</td><td>全 41 页（无例外）</td></tr>
+        <tr><td>badge 六族</td><td>全 41 页（演示数据 badge 全站覆盖）</td></tr>
         <tr><td>alert-row</td><td>全景总览/系统状态/任务进度</td></tr>
-        <tr><td>ⓘ 注解组件</td><td>全 36 页副标题+卡标题（slimAnnot 通用收敛）</td></tr>
+        <tr><td>ⓘ 注解组件</td><td>全 41 页副标题+卡标题（slimAnnot 通用收敛）</td></tr>
         <tr><td>bar-row 族</td><td>市场情绪/板块全景/币圈盘面/币圈持仓风控/做T分析</td></tr>
         <tr><td>资产折叠卡 / 全球排名榜 / 今日研判条</td><td>全景总览（L2 市场分层+L3 账户灯 / 天气三栏实时层 / 预测层独立条）</td></tr>
       </table>
@@ -277,7 +306,8 @@
         ① 三裁定：告警组件全归灰后细化=warn 黄字无框/info 灰字无框/err 红框只留最紧急；badge 六族保留不动（b-warn 橙沿用），来源族 b-test/b-src-* 非六族归灰同 b-na；JS 内嵌非图表色授权本线直改色值。<br>
         ② 施工（视觉规范线，写锁协议）：DS-1 功能色表/透明度族/色彩秩序 v6/禁色清单 + DS-4.3 补记 + DS-4.4 去框化（.bad=err 别名补 CSS 定义，规范有实现无根治）+ DS-6 宪章补记；<b>&lt;style&gt; 30+ 处</b>（蓝选中态/focus 边/蓝按钮/蓝灯 .dot.b/蓝链接/黄收藏星/装饰符号/时间轴事件/分类五色 badge 全归灰白，#1a2330/#14202e 蓝灰选中底废止，主按钮=白底黑字 OKX 同款）；<b>inline+JS 授权 57 处</b>（.runtime/v6_grayscale_sweep.py 计数断言原子过）：KPI 彩色数字（胜率/盈亏比/夏普/regime/情绪/炸板率）归白、war-cell 选中黄框归白框、角色卡（交易员/风控官）色左边归灰、日历分类六色/时间轴事件/评分中性色归灰、gauge 弧三段灰阶、股票链接蓝归白（全站无蓝链铁律落地）。<br>
         ③ 保留白名单：涨跌红绿全族（K线/数值/热力图/MACD 柱/badge 红绿）· 状态灯红黄绿 · 进度条蓝 · 图表色板（MA 族/指标线/系列区分/图例随线色=识别功能）· warn 黄字（.warn/lv-warn/从未演练/包络外判定）· 注册表状态分布（stable 绿/testing 黄/candidate 灰）。<br>
-        <b>DS-5 K线蓝图 v3（2026-08-28，原型 v3.8→v3.9，Owner 四拍板+OKX 线上实测）</b>——Owner 方向：K线与欧易一模一样（缩放/背景/网格），筹码峰做细腻，规范图不粗糙。<b>数据源</b>：okx.com/trade-spot/btc-usdt 原生版图表 canvas getImageData 像素实测（10 项数值全实测不猜）。<b>实测纠偏</b>：①背景 #000 本来就对 ②MA 色序 v2 标反根治（MA10 品红/MA20 青，OKX 默认仅 3 线，MA60 蓝转可选）③现价签=色底<b>黑字</b>（v2 白字相反）④右轴 #C6C6C6 12px（v2 偏暗偏小）⑤网格 #171717 横竖双线挂刻度（v2 #2A2F36 三横线废止）⑥VOL 无量均线（v2 量均线转可选）⑦缩放无过渡动画。<b>四拍板</b>：先实测再写规范✅/缩放全套照抄（滚轮锚定+拖拽平移+轴拖拽+双击复位）✅/筹码峰红绿分色细桶（60~80 桶+POC 白细线+VA70% 分档 alpha）✅/技术分析页补齐双轴✅。<b>分工</b>：DS-5 规范行 v3 全部落地（本线）→K 线引擎 JS 改造=功能会话按蓝图 v3 施工（网格/轴/现价线签/MA 色序/蜡烛几何 7:2/缩放交互/VPVR 细桶/十字光标双轴签，规范图 ds-spec-chart 随引擎自动细腻）。</div>
+        <b>DS-5 K线蓝图 v3（2026-08-28，原型 v3.8→v3.9，Owner 四拍板+OKX 线上实测）</b>——Owner 方向：K线与欧易一模一样（缩放/背景/网格），筹码峰做细腻，规范图不粗糙。<b>数据源</b>：okx.com/trade-spot/btc-usdt 原生版图表 canvas getImageData 像素实测（10 项数值全实测不猜）。<b>实测纠偏</b>：①背景 #000 本来就对 ②MA 色序 v2 标反根治（MA10 品红/MA20 青，OKX 默认仅 3 线，MA60 蓝转可选）③现价签=色底<b>黑字</b>（v2 白字相反）④右轴 #C6C6C6 12px（v2 偏暗偏小）⑤网格 #171717 横竖双线挂刻度（v2 #2A2F36 三横线废止）⑥VOL 无量均线（v2 量均线转可选）⑦缩放无过渡动画。<b>四拍板</b>：先实测再写规范✅/缩放全套照抄（滚轮锚定+拖拽平移+轴拖拽+双击复位）✅/筹码峰红绿分色细桶（60~80 桶+POC 白细线+VA70% 分档 alpha）✅/技术分析页补齐双轴✅。<b>分工</b>：DS-5 规范行 v3 全部落地（本线）→K 线引擎 JS 改造=功能会话按蓝图 v3 施工（网格/轴/现价线签/MA 色序/蜡烛几何 7:2/缩放交互/VPVR 细桶/十字光标双轴签，规范图 ds-spec-chart 随引擎自动细腻）。<br>
+        <b>色系 v7 SharpLink 表面语法（2026-08-30，§DS v1.0→v2.0，Owner 四步选型拍板+终版样板实证）</b>——过程：风格四样板（SharpLink/Vault/Ethena/融合）→Owner 选 A；密度四档（L1~L4）→选 L4 交易终端；宽度四档（W1~W4）→选 W4 窄卡多列；同类合并排版+页头 L1 字号；终版样板验收后全站落地。①施工：main.css 尾部 v7 覆写层（令牌新增 --card7/--card7-hi/--hair/--dash/--label/--up-strong/--down-strong/--up-bg/--down-bg/--iblue + 卡片半透明化+页头 30/13+表格 L4+决策卡统一化），41 页 inline style token 归一清扫（{{page_name} 模板 bug 根治 11 处），大盘分析页按终版样板重排（实芯蜡烛主图 app2.js candles()+副指数三合一+市场统计四合一+情绪快照四列+因子面板双列）。②冲突登记：2026-08-27「.main 1760 锁宽」被 Owner 2026-08-30 实测反馈取代（全宽流体）；KPI 锚点 26→20px；卡标题 16/700→11/500 标签语法；卡圆角 12→6。③延续不动：v6 色彩宪章（红绿仅涨跌/进度条蓝/状态灯红黄绿/图表色板）+ DS-5 v4 canvas 分层架构（K 线工作台）+ badge 六族语义映射。④验证：browser 全页 QA 见 v7 施工记录（41 页零 JS 错误）。</div>
     </div>
     <div class="card" style="margin-bottom:14px">
       <h3>DS-10 模块缩放规范 <span class="dim">2026-08-27 Owner 方向三案分级（边/角拖拽+内容自适应+相邻重排不重叠）</span></h3>
@@ -289,7 +319,6 @@
       </table>
       <div class="note">重叠防护：A 案拖拽仅纵向、grid 行自动撑开重排；⛶ 全屏为 fixed overlay 层，不产生布局重叠 bug</div>
     </div>
-  </section>
   </section>
 
   
