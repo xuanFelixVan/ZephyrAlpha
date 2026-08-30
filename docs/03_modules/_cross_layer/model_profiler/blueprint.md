@@ -4,7 +4,7 @@ submodule_path: src/zephyr/intelligence/model_profiling
 title: "Model Profiler 蓝图 — 模型画像器·LLM能力基线测量"
 doc_type: blueprint
 status: Active
-version: "2.2.8"
+version: "2.2.9"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -105,6 +105,9 @@ ModelProfiler 是 ZephyrAlpha 的 LLM 模型画像器——对所有可用模型
 | `exam_orchestrator.py` | § — | — | 已实现 | | 本模块 |
 | `exam_test_cases.py` | § — | — | 已实现 | | 本模块 |
 | `provider_data.py` | § — | — | 已实现 | | 本模块 |
+| `exam_trigger_scheduler.py` | §4 Phase 1（06号文 P1-1~P1-4） | 触发式考试调度器（MOD-INF-054）：新模型自动 Quick 考试 + TaskGate 连续 low_accuracy 超阈发复核建议（human_gated 只发不执行） | 已实现 | | 本模块 |
+
+> **MOD-INF-054 登记（2026-08-30）**：触发式考试调度器 `exam_trigger_scheduler.py` 及测试 `tests/model/test_exam_trigger_scheduler.py` 归属本蓝图（owner_blueprint=MOD-INF-054，path_ownership_map.yaml 两条目 declared_in 已补登 06 号文）；设计/施工真源为 [06_model_profiling_pipeline.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/06_model_profiling_pipeline.md) §4 Phase 1。生产端 dispatch 硬门为 opt-in（`runtime_assembly.assemble_agent_router(task_gate=None)` 默认关闭），开启留 Owner 裁定。
 
 ### §0.2 对齐验证矩阵
 
@@ -1060,6 +1063,7 @@ MAX_OLLAMA_MODELS, SKIP_MODEL_PATTERNS
 
 | 日期 | 版本 | 变更内容 |
 |------|------|---------|
+| 2026-08-30 | 2.2.9 | 登记 MOD-INF-054（触发式考试调度器）：§0.1 新增 `exam_trigger_scheduler.py` 行（已实现）+ MOD-INF-054 登记注记（owner_blueprint/declared_in 已补登 06 号文，dispatch 硬门 opt-in 默认关闭、开启留 Owner 裁定） |
 | 2026-05-23 | 2.2.0 | 新增 cost_efficiency 维度：TaskModelMatrix 综合评分公式从 speed×0.40+quality×0.35+consistency×0.25 调整为 speed×0.30+quality×0.35+consistency×0.20+cost_efficiency×0.15；§1.2 目标#4 更新为"性能+成本感知路由推荐"；§10.1 新增交易决策流水线 C-044⑤ 被依赖声明；§14 新增风险#9/#10；§18 新增决策 D-034-09 |
 | 2026-05-14 | 2.1.0 | v3.5 模板对齐升级：§0 前移至概述之后；§7 备选方案删除（信息由§18决策记录覆盖）；§15 后果删除（正面与§1重复，负面合并到§14风险+增加"类型"列）；§0.1 代码文件清单新增"存在性"列（已实现/已阻塞/已废弃）；§5.1 技术约束去掉"原因"列（原因属决策过程，记录在§18）；§10 拆为§10.1依赖声明+§10.2依赖图对齐声明+§10.3内部依赖图+§10.4自动化规格；铁律新增#13~#15；新增蓝图拆分判定标准段落；施工声明标注时态属性；§18 决策记录新增 D-034-06~D-034-08（承接§5.1 原因列） |
 | 2026-05-14 | 2.0.0 | v3.3 模板对齐升级：H1 格式更新；新增概述段+标准锚点；frontmatter 补全（generation/functional_domain/parent_module/references/codification_level/last_verified）；章节重排（概述→§1-§15→§0→§16-§18→规则参考）；补缺 §1.3/§1.4/§2.2/§3.2/§3.3/§4.3-§4.6/§5.3/§7/§8/§9/§12.1/§13/§15/§0/§16/§17/§18；v1.1.0 升级规划整合至 §17；绝对路径统一 D:\；construction_progress 与代码一致（8 文件）；actual_disk_path 与 §11 一致；蓝图特有内容保留（benchmark 用例/推荐策略/CLI/导出清单）；ASCII 图砍削（信息已在表格中） |

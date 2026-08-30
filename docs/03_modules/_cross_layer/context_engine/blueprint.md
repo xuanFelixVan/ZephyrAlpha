@@ -5,7 +5,7 @@ title: Context Engine 集成蓝图 — 上下文引擎集成索引
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: 1.2.7
+version: 1.2.8
 layer: L1_foundation
 blueprint_level: domain
 owner: ZephyrAlpha-Owner
@@ -182,6 +182,7 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 | `tests/context/test_context_debt_score.py` | ✅ 已实现 | |
 | `tests/context/test_context_engine_pipeline.py` | ✅ 已实现 | |
 | `tests/context/test_context_health_score.py` | ✅ 已实现 | |
+| `tests/context/test_context_injector_real_backend_integration.py` | ✅ 已实现 | |
 | `tests/context/test_context_model_strategy.py` | ✅ 已实现 | |
 | `tests/context/test_context_pipeline_auto.py` | ✅ 已实现 | |
 
@@ -268,7 +269,7 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-CONTEXT_ENGINE` 的 66 个 file 节点 | design | `extract_depgraph.py --modules MOD-CONTEXT_ENGINE` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-CONTEXT_ENGINE` 的 67 个 file 节点 | design | `extract_depgraph.py --modules MOD-CONTEXT_ENGINE` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -280,6 +281,6 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 | module_id | MOD-CONTEXT_ENGINE | MOD-CONTEXT_ENGINE | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | planned | planned | ✅ |
-| file_count | 66 文件 | N/A | — |
+| file_count | 67 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

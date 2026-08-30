@@ -4,7 +4,7 @@ submodule_path: src/zephyr/intelligence/research
 title: "Research Innovation Core 蓝图+施工图 — 研究创新层"
 doc_type: blueprint
 status: Active
-version: "2.1.2"
+version: "2.1.3"
 layer: L2_domain
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -58,7 +58,7 @@ design_maturity: production
 
 # Research Innovation Core 蓝图+施工图 — 研究创新层
 
-> module_id: MOD-L09-001 | version: 2.1.2 | status: active | domain: research
+> module_id: MOD-L09-001 | version: 2.1.3 | status: active | domain: research
 > actual_disk_path: src/zephyr/research/ | generation: 2 | construction_progress: partially_implemented
 
 ## 概述
@@ -128,7 +128,7 @@ design_maturity: production
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L09-001` 的 1 个 file 节点 | production | `extract_depgraph.py --modules MOD-L09-001` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L09-001` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-L09-001` |
 | 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -140,7 +140,7 @@ design_maturity: production
 | module_id | MOD-L09-001 | MOD-L09-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 1 文件 | 4 文件（§0.1） | ❌ |
+| file_count | 2 文件 | 4 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -851,7 +851,13 @@ class BacktestConfig:
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 1.1 测试文件
+### 1.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/research/__init__.py` | ⚠️ 骨架 | |
+
+### 1.2 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
