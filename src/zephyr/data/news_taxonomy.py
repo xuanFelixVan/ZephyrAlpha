@@ -13,7 +13,11 @@
 # [ERROR_CONTRACT] 无异常——未知源一律返回 news
 # [TESTS] tests/zephyr/data/test_news_taxonomy.py
 # [TTL] permanent
-"""news_taxonomy — 新闻语料四分分类法唯一真源（CAND-DAT-024）。
+"""
+
+
+
+news_taxonomy — 新闻语料四分分类法唯一真源（CAND-DAT-024）。
 
 四类（按源确定，无需模型）：
 - ``announcement``     公告（法定披露源：巨潮/cninfo 等）
@@ -25,6 +29,32 @@
 
 依据: CAND-DAT-024（candidate_module_registry.yaml v1.1.3）
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: source 参数
+#   fields: 参数 source，类型注解 str
+#   code: news_taxonomy.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① category_of
+#   name_en: category_of
+#   intro: 源标识 → category（未识别兜底 news；空串按 news 处理）。
+#   desc: 源标识 → category（未识别兜底 news；空串按 news 处理）。；源码 L81-L90
+#   inputs: source
+#   outputs: str
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: scripts.ch.tag_news_category; scripts.ml.run_sentiment_batch; zephyr.nlp.sentim…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

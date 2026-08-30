@@ -14,7 +14,11 @@
 # [TESTS] tests/feedback/test_feedback_policy.py
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""feedback_policy.py — Audit-findings → policy recommendation bridge.
+"""
+
+
+
+feedback_policy.py — Audit-findings → policy recommendation bridge.
 
 Two parallel APIs coexist in this module:
   1. `FeedbackPolicy` (legacy): audit-findings evaluator that delegates to
@@ -26,6 +30,70 @@ Two parallel APIs coexist in this module:
 
 The two APIs serve different consumers — both are kept to avoid breaking
 existing audit-orchestrator integrations.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: feedback 参数
+#   fields: 参数 feedback，类型注解 list[dict[str, Any]]
+#   code: feedback_policy.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: policies 参数
+#   fields: 参数 policies，类型注解 list[str] | None
+#   code: feedback_policy.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① PolicyDecision
+#   name_en: PolicyDecision
+#   intro: class PolicyDecision 源码 L140-L156
+#   desc: 公共方法（定义序）: to_dict；源码 L140-L156
+#   inputs: action confidence detail
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② FeedbackPolicy
+#   name_en: FeedbackPolicy
+#   intro: class FeedbackPolicy 源码 L159-L241
+#   desc: 公共方法（定义序）: evaluate, apply_high_confidence, is_available；源码 L159-L241
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ AnomalyPattern
+#   name_en: AnomalyPattern
+#   intro: Aggregated anomaly pattern — tracks frequency, severity, af…
+#   desc: Aggregated anomaly pattern — tracks frequency, severity, affected agents.；公共方法（定义序）: upgrade_severity, add_ag…
+#   inputs: anomaly_type severity frequency affected_agents
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ PolicyFeedbackBridge
+#   name_en: PolicyFeedbackBridge
+#   intro: Aggregates anomaly patterns and generates policy recommenda…
+#   desc: Aggregates anomaly patterns and generates policy recommendations. Stateful bridge: `aggre…；公共方法（定义序）: pattern…
+#   inputs: config
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ feedback_to_policy
+#   name_en: feedback_to_policy
+#   intro: Functional entry point — aggregate feedback and return reco…
+#   desc: Functional entry point — aggregate feedback and return recommendations. Args: feedback: l…；源码 L453-L472
+#   inputs: feedback policies
+#   outputs: list[PolicyRecommendation]
+#   （注：A5 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[PolicyRecommendation]
+#   name_en: list[PolicyRecommendation]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: audit-orchestrator.integrity(完整性校验后触发策略评估)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 import logging

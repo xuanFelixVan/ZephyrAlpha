@@ -14,7 +14,11 @@
 # [TESTS] tests/compliance/test_async_intercept_queue.py
 # [A_module] module_id=MOD-L10-001 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Async Intercept Queue — 合规异步拦截队列 (MOD-L10-001, GAP-L10-001)
+"""
+
+
+
+Async Intercept Queue — 合规异步拦截队列 (MOD-L10-001, GAP-L10-001)
 
 蓝图 §17 容量升级缺口 GAP-L10-001：SecurityGateway 同步拦截延迟 → 异步拦截队列 + 缓存
 （触发阈值 QPS > 100/s）。本模块把"提交拦截请求"与"安全网关判定"解耦：
@@ -24,6 +28,43 @@
                   decide 全委托既有 SecurityGateway（OCP 扩展点，不重造扫描逻辑）
   - 内容缓存      sha256(content)+source 键控的有界 LRU，重复内容免重扫
 Fail-Closed：网关执行异常 → 生成 BLOCK 裁决并留 error 痕迹（宁可误拦不可漏拦）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: gateway 参数
+#   fields: 参数 gateway（无注解）
+#   code: async_intercept_queue.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: max_queue_size 参数
+#   fields: 参数 max_queue_size（无注解）
+#   code: async_intercept_queue.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: cache_size 参数
+#   fields: 参数 cache_size（无注解）
+#   code: async_intercept_queue.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AsyncInterceptQueue
+#   name_en: AsyncInterceptQueue
+#   intro: 合规异步拦截队列（有界 + 缓存 + 线程安全）。
+#   desc: 合规异步拦截队列（有界 + 缓存 + 线程安全）。 Args: gateway: 既有安全网关实现（SecurityGateway OCP 扩展点）。 max_queue_siz…；公共方法（定义序）: submit,…
+#   inputs: gateway max_queue_size cache_size
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: AsyncInterceptQueue
+#   downstream: MOD-L10-001(DefaultSecurityGateway 调用方异步化) ; 治理链路 AI 指令拦截
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

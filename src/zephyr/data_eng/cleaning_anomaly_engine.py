@@ -13,7 +13,11 @@
 # [ERROR_CONTRACT] 空帧/缺列->空检出+空修复结果不抛异常; 未知列缺失按missing_pattern处理
 # [TESTS] tests/zephyr/data/test_cleaning_anomaly_engine.py
 # [TTL] permanent
-"""ZephyrAlpha — D_DATA_ENG 数据清洗与异常引擎（CAND-DATENG-001 / B1-00606）。
+"""
+
+
+
+ZephyrAlpha — D_DATA_ENG 数据清洗与异常引擎（CAND-DATENG-001 / B1-00606）。
 
 min_build_spec（AUD-DRAFT-001-DIGEST P0）：
   - 清洗规则库：价格跳变 / 复权断点 / 重复bar / 量能异常 / 缺失模式
@@ -25,6 +29,56 @@ min_build_spec（AUD-DRAFT-001-DIGEST P0）：
   - 纯 pandas 内存计算，不触网不触库；告警经 alert_sink 依赖注入，测试零副作用
   - 修复优先序：跨源仲裁 > 前值填充 > 剔除标记（能修不剔）
   - quality_flag 取值：ok / arbitrated / filled（剔除行出列，标记入 audit 与 quality_flags）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: price_jump_pct 参数
+#   fields: 参数 price_jump_pct（无注解）
+#   code: cleaning_anomaly_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: price_jump_z 参数
+#   fields: 参数 price_jump_z（无注解）
+#   code: cleaning_anomaly_engine.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: volume_spike_mult 参数
+#   fields: 参数 volume_spike_mult（无注解）
+#   code: cleaning_anomaly_engine.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: volume_z 参数
+#   fields: 参数 volume_z（无注解）
+#   code: cleaning_anomaly_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① default_alert_sink
+#   name_en: default_alert_sink
+#   intro: 惰性装配 zephyr.data.alerter 告警路由（复用 B13-04267 链路）。
+#   desc: 惰性装配 zephyr.data.alerter 告警路由（复用 B13-04267 链路）。 Returns: sink(level, title, message)：leve…；源码 L157-L170
+#   inputs: 无参数
+#   outputs: Callable[[str, str, str], None]
+# - id: A2
+#   name_zh: ② CleaningAnomalyEngine
+#   name_en: CleaningAnomalyEngine
+#   intro: 清洗规则库 + 自动修复策略引擎。
+#   desc: 清洗规则库 + 自动修复策略引擎。；公共方法（定义序）: detect, repair；源码 L173-L454
+#   inputs: price_jump_pct price_jump_z volume_spike_mult volume_z alert_sink
+#   outputs: 返回值
+#   （注：A2 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: Callable[[str, str, str], None]
+#   name_en: Callable[[str, str, str], None]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -290,7 +344,14 @@ class CleaningAnomalyEngine:
         # 1) 重复bar：去重留首行，审计留痕
         dup_mask = work.index.duplicated(keep="first")
         for ts in work.index[dup_mask]:
-            self._record(result, symbol, ts, RepairStrategy.DROP_AND_FLAG, "重复bar剔除（留首行）", rule=AnomalyRule.DUPLICATE_BAR)
+            self._record(
+                result,
+                symbol,
+                ts,
+                RepairStrategy.DROP_AND_FLAG,
+                "重复bar剔除（留首行）",
+                rule=AnomalyRule.DUPLICATE_BAR,
+            )
         work = work[~dup_mask]
 
         # 2) 缺失行：先跨源仲裁
@@ -299,14 +360,18 @@ class CleaningAnomalyEngine:
         for ts in missing_rows:
             if alt_source is not None and ts in alt_source.index:
                 alt_row = alt_source.loc[ts]
-                fillable = [c for c in cols if pd.isna(work.loc[ts, c]) and c in alt_row.index and not pd.isna(alt_row[c])]
+                fillable = [
+                    c for c in cols if pd.isna(work.loc[ts, c]) and c in alt_row.index and not pd.isna(alt_row[c])
+                ]
                 if fillable:
                     for c in fillable:
                         work.loc[ts, c] = alt_row[c]
                     if not work.loc[ts, cols].isna().any():
                         work.loc[ts, "quality_flag"] = "arbitrated"
                         result.quality_flags[str(ts)] = "arbitrated"
-                        self._record(result, symbol, ts, RepairStrategy.CROSS_SOURCE_ARBITRATE, f"跨源仲裁补齐字段 {fillable}")
+                        self._record(
+                            result, symbol, ts, RepairStrategy.CROSS_SOURCE_ARBITRATE, f"跨源仲裁补齐字段 {fillable}"
+                        )
                         continue
 
         # 3) 剩余缺失：按连续 run 判定 前值填充(≤3) / 剔除(>3)
@@ -334,7 +399,9 @@ class CleaningAnomalyEngine:
                         )
                     )
                     result.quality_flags[str(ts)] = "dropped"
-                    self._record(result, symbol, ts, RepairStrategy.DROP_AND_FLAG, f"连续缺失 {len(run)} 根>3，剔除标记")
+                    self._record(
+                        result, symbol, ts, RepairStrategy.DROP_AND_FLAG, f"连续缺失 {len(run)} 根>3，剔除标记"
+                    )
                 self._alert(
                     "ERROR",
                     f"cleaning_drop_{symbol or 'unknown'}",

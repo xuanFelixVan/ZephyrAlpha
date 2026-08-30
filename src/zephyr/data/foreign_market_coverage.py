@@ -15,7 +15,11 @@
 # [A_module] module_id=MOD-DAT-foreign_coverage | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-r"""MOD-DAT-foreign_coverage — 外盘 12 标的数据覆盖核查器（GAP-F-23 / GAP-F-D3）。
+"""
+
+
+
+MOD-DAT-foreign_coverage — 外盘 12 标的数据覆盖核查器（GAP-F-23 / GAP-F-D3）。
 
 外盘页 12 迷你卡标的：道指/纳指/标普/恒生/日经/KOSPI/A50/美元指数/离岸人民币/
 WTI/黄金/美债10Y。本模块职责：
@@ -36,6 +40,61 @@ FRED/EIA 在 ClickHouse 无落库表。→ 4/12 有覆盖（A50 仅单日盘中�
 HSI/N225/KOSPI/CL/GC（首采 9,967 行）；DXY/美债10Y 由 macro_data FRED 通道
 承载（FRED_DXY/FRED_DGS10_US 已刷新）；USDCNH 免费日频源全失效登记跳过。
 FOREIGN_WATCHLIST 探针已挂接实绩表——本核查器 missing 口径随接线实时反映。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: query_fn 参数
+#   fields: 参数 query_fn，类型注解 Callable[[str], str] | None
+#   code: foreign_market_coverage.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: check_date 参数
+#   fields: 参数 check_date，类型注解 str | date | datetime | None
+#   code: foreign_market_coverage.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: stale_calendar_days 参数
+#   fields: 参数 stale_calendar_days，类型注解 int
+#   code: foreign_market_coverage.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: watchlist 参数
+#   fields: 参数 watchlist，类型注解 tuple[ForeignTarget, ...] | list[Foreig…
+#   code: foreign_market_coverage.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① check_foreign_coverage
+#   name_en: check_foreign_coverage
+#   intro: 外盘 12 标的覆盖核查（只读；query_fn 注入位，测试全 mock）。
+#   desc: 外盘 12 标的覆盖核查（只读；query_fn 注入位，测试全 mock）。 Args: query_fn: SQL→TSV 查询函数（None=ch_reader 只读默认）…；源码 L339-L426
+#   inputs: query_fn check_date stale_calendar_days watchlist
+#   outputs: ForeignCoverageReport
+# - id: A2
+#   name_zh: ② gap_collector_slots
+#   name_en: gap_collector_slots
+#   intro: 缺口标的采集配置位：missing 标的 → FOREIGN_COLLECTOR_SLOTS 草案子集。
+#   desc: 缺口标的采集配置位：missing 标的 → FOREIGN_COLLECTOR_SLOTS 草案子集。；源码 L429-L439
+#   inputs: report
+#   outputs: dict[str, dict[str, str]]
+#   （注：A2 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ForeignCoverageReport
+#   name_en: ForeignCoverageReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: （候选：外盘 12 迷你卡数据健康条、GAP-F-24 对A股影响判定引擎前置）
+# - id: O2
+#   name_zh: dict[str, dict[str, str]]
+#   name_en: dict[str, dict[str, str]]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: （候选：外盘 12 迷你卡数据健康条、GAP-F-24 对A股影响判定引擎前置）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -135,15 +194,23 @@ FOREIGN_WATCHLIST: Final[tuple[ForeignTarget, ...]] = (
     ForeignTarget("nikkei", "日经225", "index", (TableProbeSpec("c1_market.kline_global", ("N225",)),), "nikkei_index"),
     ForeignTarget("kospi", "KOSPI", "index", (TableProbeSpec("c1_market.kline_global", ("KOSPI",)),), "kospi_index"),
     ForeignTarget("a50", "富时A50", "futures", (TableProbeSpec("c1_market.us_futures_intraday", ("CHA50CFD",)),), ""),
-    ForeignTarget("dxy", "美元指数", "forex",
-                  (TableProbeSpec("c1_market.macro_data", ("FRED_DXY",), "indicator_name", "report_date"),),
-                  "dxy_forex"),
+    ForeignTarget(
+        "dxy",
+        "美元指数",
+        "forex",
+        (TableProbeSpec("c1_market.macro_data", ("FRED_DXY",), "indicator_name", "report_date"),),
+        "dxy_forex",
+    ),
     ForeignTarget("usdcnh", "离岸人民币", "forex", (), "usdcnh_forex"),
     ForeignTarget("wti", "WTI原油", "commodity", (TableProbeSpec("c1_market.kline_global", ("CL",)),), "wti_commodity"),
     ForeignTarget("gold", "黄金", "commodity", (TableProbeSpec("c1_market.kline_global", ("GC",)),), "gold_commodity"),
-    ForeignTarget("ust10y", "美债10Y", "bond",
-                  (TableProbeSpec("c1_market.macro_data", ("FRED_DGS10_US",), "indicator_name", "report_date"),),
-                  "ust10y_bond"),
+    ForeignTarget(
+        "ust10y",
+        "美债10Y",
+        "bond",
+        (TableProbeSpec("c1_market.macro_data", ("FRED_DGS10_US",), "indicator_name", "report_date"),),
+        "ust10y_bond",
+    ),
 )
 
 #: 缺口标的采集配置位（2026-08-30 接线落地：草案 hint 已按实证裁定修订为实绩口径——
@@ -251,8 +318,11 @@ def _parse_probe_rows(tsv: str) -> list[TableProbe]:
             continue
         probes.append(
             TableProbe(
-                table="", symbol=parts[0], rows=rows,
-                first_date=parts[2][:10], last_date=parts[3][:10],
+                table="",
+                symbol=parts[0],
+                rows=rows,
+                first_date=parts[2][:10],
+                last_date=parts[3][:10],
             )
         )
     return probes
@@ -301,18 +371,23 @@ def check_foreign_coverage(
         probes: list[TableProbe] = []
         for spec in target.probes:
             sql = _SQL_PROBE_TEMPLATE.format(
-                table=spec.table, symbols=_escape_symbols(spec.symbols),
-                symbol_col=spec.symbol_col, date_col=spec.date_col,
+                table=spec.table,
+                symbols=_escape_symbols(spec.symbols),
+                symbol_col=spec.symbol_col,
+                date_col=spec.date_col,
             )
             try:
                 tsv = run_query(sql)
             except Exception as e:  # noqa: BLE001 — 探测异常留痕不误判
-                probes.append(TableProbe(table=spec.table, symbol="", rows=0, first_date="", last_date="", error=repr(e)))
+                probes.append(
+                    TableProbe(table=spec.table, symbol="", rows=0, first_date="", last_date="", error=repr(e))
+                )
                 continue
             for p in _parse_probe_rows(tsv):
                 probes.append(
-                    TableProbe(table=spec.table, symbol=p.symbol, rows=p.rows,
-                               first_date=p.first_date, last_date=p.last_date)
+                    TableProbe(
+                        table=spec.table, symbol=p.symbol, rows=p.rows, first_date=p.first_date, last_date=p.last_date
+                    )
                 )
         valid = [p for p in probes if not p.error and p.rows > 0 and p.symbol]
         if not valid:
@@ -328,8 +403,13 @@ def check_foreign_coverage(
                 note = f"数据陈旧（最新 {latest}，超 {stale_calendar_days} 天窗）"
         items.append(
             ForeignCoverageItem(
-                key=target.key, name_zh=target.name_zh, asset_class=target.asset_class,
-                status=status, probes=probes, collector_slot=target.collector_slot, note=note,
+                key=target.key,
+                name_zh=target.name_zh,
+                asset_class=target.asset_class,
+                status=status,
+                probes=probes,
+                collector_slot=target.collector_slot,
+                note=note,
             )
         )
 
@@ -338,8 +418,12 @@ def check_foreign_coverage(
     missing = sum(1 for i in items if i.status == STATUS_MISSING)
     notes.append(f"覆盖 {covered}/12，陈旧 {stale}，缺口 {missing}")
     return ForeignCoverageReport(
-        check_date=today.isoformat(), items=items,
-        covered_count=covered, stale_count=stale, missing_count=missing, notes=notes,
+        check_date=today.isoformat(),
+        items=items,
+        covered_count=covered,
+        stale_count=stale,
+        missing_count=missing,
+        notes=notes,
     )
 
 

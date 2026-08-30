@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md | §kline_resample
 # [MODULE] zephyr.data.kline_resampler
 # [DOMAIN] D_DATA
@@ -14,7 +13,11 @@
 # [ERROR_CONTRACT] ClickHouse查询失败->log+返回0; 合成0行->log warning; 单周期失败->log+继续下一周期
 # [TESTS] tests/zephyr/data/test_kline_resampler.py
 # [TTL] task_bound
-"""880xxx 板块K线合成器——从 1m/5m 合成 15m/30m/60m 写入 ClickHouse。
+"""
+
+
+
+880xxx 板块K线合成器——从 1m/5m 合成 15m/30m/60m 写入 ClickHouse。
 
 tqcenter 仅支持 1d/1m/5m 三周期，15m/30m/60m 需从分钟线合成。
 本模块通过 ClickHouse toStartOfInterval 聚合在 DB 内完成合成，避免数据搬运。
@@ -32,6 +35,32 @@ tqcenter 仅支持 1d/1m/5m 三周期，15m/30m/60m 需从分钟线合成。
     python -m zephyr.data.kline_resampler --days 30            # 合成最近30天
     python -m zephyr.data.kline_resampler --period 15m         # 仅合成15m
     python -m zephyr.data.kline_resampler --start 2026-07-01 --end 2026-07-22
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: kline_resampler.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① main
+#   name_en: main
+#   intro: K线合成器主入口。
+#   desc: K线合成器主入口。；源码 L211-L248
+#   inputs: 无参数
+#   outputs: int
+# 层: 输出
+# - id: O1
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

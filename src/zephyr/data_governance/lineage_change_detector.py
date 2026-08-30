@@ -14,7 +14,11 @@
 # [TESTS] tests/data_governance/test_lineage_change_detector.py
 # [A_module] module_id=MOD-DATA_GOV-010 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""lineage_change_detector — 血缘变更检测器（MOD-DATA_GOV-010）。
+"""
+
+
+
+lineage_change_detector — 血缘变更检测器（MOD-DATA_GOV-010）。
 
 B10-02319（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATGOV-007，A1 M8-S07；
 canonical 承接 CAND-DATGOV-012 归并）：血缘图快照 diff——周期快照（边集合
@@ -25,6 +29,48 @@ canonical 承接 CAND-DATGOV-012 归并）：血缘图快照 diff——周期快
 查重分工（蓝图 §0）：core/lineage_tracker=血缘图本体（本件不复用其存储，仅
 对齐 (source,target,transformation) 边语义做周期快照 diff）；本件不改图本
 体，只消费边集合快照。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: detector_id 参数
+#   fields: 参数 detector_id（无注解）
+#   code: lineage_change_detector.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: schedule 参数
+#   fields: 参数 schedule（无注解）
+#   code: lineage_change_detector.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: lineage_change_detector.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: notifier 参数
+#   fields: 参数 notifier（无注解）
+#   code: lineage_change_detector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① LineageChangeDetector
+#   name_en: LineageChangeDetector
+#   intro: 血缘变更检测器（基线快照 + diff + DFS 影响集合 + 通知回调）。
+#   desc: 血缘变更检测器（基线快照 + diff + DFS 影响集合 + 通知回调）。；公共方法（定义序）: detector_id, schedule, baseline, fingerprint_of, downstrea…
+#   inputs: detector_id schedule clock notifier
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: LineageChangeDetector
+#   downstream: 运行时装配批（drift 检测器注册表挂载 / 下游依赖方通知路由）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -143,7 +189,7 @@ class LineageChangeDetector:
         norm = LineageChangeDetector._normalize(edges)
         h = hashlib.sha256()
         for source, target, transformation in norm:
-            h.update(f"{source}->{target}|{transformation}\n".encode("utf-8"))
+            h.update(f"{source}->{target}|{transformation}\n".encode())
         return h.hexdigest()
 
     @staticmethod
@@ -265,7 +311,10 @@ class LineageChangeDetector:
                 _log.exception("notifier 通知失败: detector=%s", self._detector_id)
         _log.info(
             "血缘变更: detector=%s +%d -%d ~%d impacted=%d",
-            self._detector_id, len(final_added), len(final_removed),
-            len(final_redirected), len(impacted),
+            self._detector_id,
+            len(final_added),
+            len(final_removed),
+            len(final_redirected),
+            len(impacted),
         )
         return report

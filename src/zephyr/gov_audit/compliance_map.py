@@ -16,6 +16,10 @@
 # [TTL] permanent
 
 """
+
+
+
+
 audit-trail.compliance_map — MOD-INF-020 · 合规框架映射
 ========================================================
 蓝图 D-020-25 · GDPR/HIPAA/EU AI Act/NIST 映射表
@@ -24,6 +28,33 @@ audit-trail.compliance_map — MOD-INF-020 · 合规框架映射
 --------
   将审计事件类型映射到合规框架的具体条款/要求
   支持多框架交叉映射
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: custom_mappings 参数
+#   fields: 参数 custom_mappings（无注解）
+#   code: compliance_map.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ComplianceMapper
+#   name_en: ComplianceMapper
+#   intro: class ComplianceMapper 源码 L305-L341
+#   desc: 公共方法（定义序）: map_event, get_requirements, get_frameworks_for_event；源码 L305-L341
+#   inputs: custom_mappings
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: ComplianceMapper
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -14,7 +14,11 @@
 # [TESTS] tests/zephyr/data/test_buffered_writer.py
 # [A_module] module_id=MOD-GOV-buffered_writer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""批量聚合写入器（MOD-L00-004 §18.3 裁定 #ARCH-CH-003）。
+"""
+
+
+
+批量聚合写入器（MOD-L00-004 §18.3 裁定 #ARCH-CH-003）。
 
 在 Provider 和 ch_writer 之间插入缓冲层，攒批后一次性写入 ClickHouse。
 
@@ -36,6 +40,42 @@
 
     # 搭配 ReplacingMergeTree（裁定 #ARCH-CH-002）：
     # 直接 INSERT，CH 后台去重，无需先删后插。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: table 参数
+#   fields: 参数 table（无注解）
+#   code: buffered_writer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: max_rows 参数
+#   fields: 参数 max_rows（无注解）
+#   code: buffered_writer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: max_seconds 参数
+#   fields: 参数 max_seconds（无注解）
+#   code: buffered_writer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① BufferedWriter
+#   name_en: BufferedWriter
+#   intro: 批量聚合写入器——攒批后一次性写入 ClickHouse。
+#   desc: 批量聚合写入器——攒批后一次性写入 ClickHouse。 per-task 实例（每个下载任务一个 BufferedWriter），无需线程安全。 scheduler 的 ma…；公共方法（定义序）: add, fl…
+#   inputs: table max_rows max_seconds
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: BufferedWriter
+#   downstream: zephyr.data.scheduler
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

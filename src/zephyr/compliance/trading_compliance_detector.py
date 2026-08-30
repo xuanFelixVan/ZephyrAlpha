@@ -14,7 +14,11 @@
 # [TESTS] tests/compliance/test_trading_compliance_detector.py
 # [TTL] permanent
 
-"""交易合规检测（43_compliance_discipline §7，BM-BUY-15 补强）。
+"""
+
+
+
+交易合规检测（43_compliance_discipline §7，BM-BUY-15 补强）。
 
 区别于 BM-BUY-08-B（行为纪律，管"人"），本环节管"法"——监管规则符合性。
 检测目标：**自我监控 + 证据留存**（监管问询时可自证"未实施操纵"），
@@ -35,6 +39,38 @@
 （§7.5，降为记录性参数，见 compliance_report_registry）。
 
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: thresholds 参数
+#   fields: 参数 thresholds（无注解）
+#   code: trading_compliance_detector.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: logger 参数
+#   fields: 参数 logger（无注解）
+#   code: trading_compliance_detector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① TradingComplianceDetector
+#   name_en: TradingComplianceDetector
+#   intro: 交易合规检测器（§7.2 异常 2 条 + §7.3 操纵 4 类，嵌入 C-004）。
+#   desc: 交易合规检测器（§7.2 异常 2 条 + §7.3 操纵 4 类，嵌入 C-004）。 全部命中均为 Hard Block + 告警 + 落 compliance_log（证据…；公共方法（定义序）: thresho…
+#   inputs: thresholds logger
+#   outputs: 返回值
+#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（8 定义）
+#   name_en: public defs
+#   intro: TradingComplianceDetector
+#   downstream: C-004 风控引擎（Pre-Trade/盘中实时嵌入，43 号 §7.1）; 自我监控证据链 T+1 归档
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

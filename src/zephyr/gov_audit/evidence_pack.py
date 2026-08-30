@@ -16,6 +16,10 @@
 # [TTL] permanent
 
 """
+
+
+
+
 audit-trail.evidence_pack — MOD-INF-020 · 证据包导出器
 =======================================================
 蓝图 D-020-24 · 审计证据导出 (JSON / PDF / FCA 格式)
@@ -25,6 +29,38 @@ audit-trail.evidence_pack — MOD-INF-020 · 证据包导出器
   JSON — 结构化 JSON 证据包
   FCA  — FCA (Financial Conduct Authority) 合规格式
   PDF  — PDF 证据报告 (需 reportlab)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: data_dir 参数
+#   fields: 参数 data_dir（无注解）
+#   code: evidence_pack.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: output_dir 参数
+#   fields: 参数 output_dir（无注解）
+#   code: evidence_pack.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① EvidencePackExporter
+#   name_en: EvidencePackExporter
+#   intro: class EvidencePackExporter 源码 L109-L244
+#   desc: 公共方法（定义序）: data_dir, output_dir, export_json, export_fca；源码 L109-L244
+#   inputs: data_dir output_dir
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: EvidencePackExporter
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -14,7 +14,11 @@
 # [TESTS] tests/ex_core/test_order_splitter.py
 # [A_module] module_id=MOD-EX-014 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Order Splitter — 拆单器 TWAP/VWAP (MOD-EX-014)
+"""
+
+
+
+Order Splitter — 拆单器 TWAP/VWAP (MOD-EX-014)
 
 D-EX-CORE-14（2026-08-23 门禁降级版）：拆分策略选择 + 子订单生成 +
 时间窗口分配。原门禁依赖 Level-2 订单簿深度数据（撞硬边界约束三，
@@ -31,6 +35,38 @@ A 股合法性（真源 board_lot，40_execution_broker §决策⑰）：
     不足 min_unit 的片由最大片让渡补齐，补不齐→Fail-Closed 拒单）。
   - 卖出：中间片按 increment 对齐且 ≥ min_unit；零股尾量并入末片
     一次性申报（A 股零股卖出唯一合法形态）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: request 参数
+#   fields: 参数 request，类型注解 SplitRequest
+#   code: order_splitter.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: algo 参数
+#   fields: 参数 algo，类型注解 SplitAlgo
+#   code: order_splitter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① split_order
+#   name_en: split_order
+#   intro: 拆单（纯函数：同输入必同输出，可独立单测）。
+#   desc: 拆单（纯函数：同输入必同输出，可独立单测）。 Args: request: 拆单请求（symbol/side/总量/片数/VWAP 量能曲线）。 algo: TWAP=等量切片；…；源码 L245-L329
+#   inputs: request algo
+#   outputs: SplitPlan
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: SplitPlan
+#   name_en: SplitPlan
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-EX-062(Execution Strategy Selector 选定算法后切片) ; MOD-EX-012(Execution TCA 计划轨迹…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -192,11 +228,7 @@ def _enforce_min_unit(
     for idx in range(enforce_upto):
         need_units = int((min_unit - allocations[idx]) / increment)
         for _ in range(max(need_units, 0)):
-            donors = [
-                i
-                for i in range(len(allocations))
-                if i != idx and allocations[i] - increment >= min_unit
-            ]
+            donors = [i for i in range(len(allocations)) if i != idx and allocations[i] - increment >= min_unit]
             if not donors:
                 raise InvalidSplitRequestError(
                     "切片合法性不可满足（每片须≥最小申报单位）：请减少切片数或改用整单",
@@ -230,8 +262,8 @@ def split_order(request: SplitRequest, algo: SplitAlgo = SplitAlgo.TWAP) -> Spli
     increment = Decimal(rule.increment)
     total = request.total_quantity
 
-    weights = _resolve_weights(request) if algo is SplitAlgo.VWAP else tuple(
-        Decimal("1") for _ in range(request.slice_count)
+    weights = (
+        _resolve_weights(request) if algo is SplitAlgo.VWAP else tuple(Decimal("1") for _ in range(request.slice_count))
     )
 
     if request.side is OrderSide.SELL:
@@ -246,9 +278,7 @@ def split_order(request: SplitRequest, algo: SplitAlgo = SplitAlgo.TWAP) -> Spli
             enforce_upto=max(len(allocations) - 1, 0),
         )
     else:
-        if total < min_unit or total != min_unit + _floor_to_increment(
-            total - min_unit, increment
-        ):
+        if total < min_unit or total != min_unit + _floor_to_increment(total - min_unit, increment):
             raise InvalidSplitRequestError(
                 "买入总量非法（须≥min_unit且按increment对齐；先经 board_lot.round_buy_qty）",
                 details={

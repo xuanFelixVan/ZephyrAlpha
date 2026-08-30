@@ -14,7 +14,11 @@
 # [TESTS] tests/factor/test_factor_production_pipeline.py
 # [A_module] module_id=MOD-L02-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""C-009 因子与信号生产管线（CAND-FAC-009 / B1-00144）。
+"""
+
+
+
+C-009 因子与信号生产管线（CAND-FAC-009 / B1-00144）。
 
 双模管线编排：盘前全量批算（分块调度）+ 盘中增量（事件驱动 mode），因子值落
 feature_store 并广播，算力预算与超时降级，7000+标的×N_max-4 因子容量规划。
@@ -30,6 +34,48 @@ feature_store 并广播，算力预算与超时降级，7000+标的×N_max-4 因
     本件管全市场因子矩阵的日常批量生产。
 
 依据: §功能域模块·D-FACTOR；construction_backlog_dig.tsv B1-00144。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: compute_executor 参数
+#   fields: 参数 compute_executor（无注解）
+#   code: factor_production_pipeline.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: store_writer 参数
+#   fields: 参数 store_writer（无注解）
+#   code: factor_production_pipeline.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: broadcast_sink 参数
+#   fields: 参数 broadcast_sink（无注解）
+#   code: factor_production_pipeline.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: chunk_size 参数
+#   fields: 参数 chunk_size（无注解）
+#   code: factor_production_pipeline.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FactorProductionPipeline
+#   name_en: FactorProductionPipeline
+#   intro: 因子与信号生产管线编排器。
+#   desc: 因子与信号生产管线编排器。 Args: compute_executor: 计算执行委托 ``executor(symbols, factor_ids, mode) -> lis…；公共方法（定义序）: capacit…
+#   inputs: compute_executor store_writer broadcast_sink chunk_size max_symbols m…
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: FactorProductionPipeline
+#   downstream: 盘前/盘中调度器（运行时装配批接线）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -183,9 +229,7 @@ class FactorProductionPipeline:
         for i in range(0, len(symbols), size):
             yield tuple(symbols[i : i + size])
 
-    def _run(
-        self, symbols: Sequence[str], factor_ids: Sequence[str], mode: ComputeMode
-    ) -> BatchVerdict:
+    def _run(self, symbols: Sequence[str], factor_ids: Sequence[str], mode: ComputeMode) -> BatchVerdict:
         if not symbols or not factor_ids:
             return BatchVerdict(mode=mode, symbols_done=0, degraded=False)
 
@@ -213,9 +257,7 @@ class FactorProductionPipeline:
             chunk_elapsed = self._clock() - chunk_start
             if chunk_elapsed > self._batch_timeout:
                 timeout_count += 1
-                reasons.append(
-                    f"块超时（{chunk_elapsed:.1f}s>{self._batch_timeout:.1f}s）结果仍落库并标记"
-                )
+                reasons.append(f"块超时（{chunk_elapsed:.1f}s>{self._batch_timeout:.1f}s）结果仍落库并标记")
             if self._store_writer is not None and rows:
                 try:
                     self._store_writer(rows)

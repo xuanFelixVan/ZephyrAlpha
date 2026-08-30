@@ -14,11 +14,41 @@
 # [TESTS] tests/execution_simulation/
 # [A_module] module_id=MOD-EXEC_SIM | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""zephyr.execution_simulation — 执行仿真域包门面（D_EXEC_SIM）。
+"""
+
+
+
+zephyr.execution_simulation — 执行仿真域包门面（D_EXEC_SIM）。
 
 P2-W08 首件施工：MOD-EXSIM-001 almgren_chriss_impact_model（Almgren-Chriss
 冲击成本模型）。守卫式 import：子模块导入失败降级为 None 而不炸包，
 运行时装配批按 None 检测决定接线。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 包内子模块公共符号
+#   fields: import 再导出符号: annotations
+#   code: __init__.py import L53
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包公共面再导出
+#   name_en: __init__ re-export
+#   intro: 再导出 AlmgrenChrissError, AlmgrenChrissImpactModel, ImpactParams, ImpactQuote, Im…
+#   desc: __init__ import L53；__all__ 8 项（AST 事实）
+#   inputs: I1
+#   outputs: __all__ 公共符号表
+# 层: 输出
+# - id: O1
+#   name_zh: 公共 API 面（8 符号）
+#   name_en: __all__
+#   intro: AlmgrenChrissError, AlmgrenChrissImpactModel, ImpactParams, ImpactQuote, Impact…
+#   downstream: 运行时装配批（执行仿真/回测冲击成本真源装配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

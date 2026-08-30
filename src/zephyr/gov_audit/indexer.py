@@ -20,6 +20,54 @@
 # 完全不符。现重写为 SQLite 索引器，rebuild 从 events_path 读 JSONL 写入 db_path，
 # query_stats 聚合查询；保留旧 ABC 方法（build_index/lookup/cold_start_cache）满足
 # contracts.AuditIndexer 抽象基类，向后兼容。
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: db_path 参数
+#   fields: 参数 db_path（无注解）
+#   code: indexer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: events_path 参数
+#   fields: 参数 events_path（无注解）
+#   code: indexer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: index_dir 参数
+#   fields: 参数 index_dir（无注解）
+#   code: indexer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① IndexResult
+#   name_en: IndexResult
+#   intro: 索引重建结果——治本（ G5）：对齐 test_audit_indexer.py 契约。
+#   desc: 索引重建结果——治本（ G5）：对齐 test_audit_indexer.py 契约。 字段：status("ok"/"no_data")、events_scanned、eve…；公共方法（定义序）: model_d…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② AuditIndexer
+#   name_en: AuditIndexer
+#   intro: 审计事件索引器——治本（ G5）：对齐 test_audit_indexer.py 契约。
+#   desc: 审计事件索引器——治本（ G5）：对齐 test_audit_indexer.py 契约。 旧桩 __init__(index_dir) + build_index/lookup…；公共方法（定义序）: db_path…
+#   inputs: db_path events_path index_dir
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: IndexResult, AuditIndexer
+#   downstream: audit-orchestrator.query; pipeline_runner
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
+
 import json
 import logging
 import sqlite3

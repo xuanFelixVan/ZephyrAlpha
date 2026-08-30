@@ -14,6 +14,36 @@
 # [TESTS] tests/audit-orchestrator/test_evidence_pack.py
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: output_dir 参数
+#   fields: 参数 output_dir（无注解）
+#   code: evidence_pack.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① EvidencePack
+#   name_en: EvidencePack
+#   intro: class EvidencePack 源码 L61-L137
+#   desc: 公共方法（定义序）: pack, verify, list_packs；源码 L61-L137
+#   inputs: output_dir
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: EvidencePack
+#   downstream: zephyr.gov_audit.evidence_pack (re-export); zephyr.gov_audit.__init__ (lazy fac…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 import hashlib
 import json
 import logging

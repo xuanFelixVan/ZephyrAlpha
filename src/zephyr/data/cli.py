@@ -15,7 +15,10 @@
 # [A_module] module_id=MOD-GOV-cli | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m02-manual  M02豁免: CLI启动的常驻scheduler入口(python -m zephyr.data.cli start),由CLI触发启动,启动后自动运行;非reconciler无需事件触发
-"""数据源集成器 CLI（MOD-L00-004 §8.4）。
+"""
+
+
+数据源集成器 CLI（MOD-L00-004 §8.4）。
 
 7 个子命令（蓝图 §8.4）+ speed-test（§8.5）：
     integrator status [task_id]       查看所有任务今日状态 / 单任务详情
@@ -30,6 +33,50 @@
 入口：
 - pyproject.toml [project.scripts]: integrator = "zephyr.data.cli:main"
 - python -m zephyr.data -> __main__.py re-export cli.main
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: parser 参数
+#   fields: 参数 parser，类型注解 argparse.ArgumentParser
+#   code: cli.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: argv 参数
+#   fields: 参数 argv，类型注解 list[str] | None
+#   code: cli.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① get_subcommands
+#   name_en: get_subcommands
+#   intro: 返回 parser 注册的子命令集合（封装 argparse 私有访问，R5: 消除测试私有访问）。
+#   desc: 返回 parser 注册的子命令集合（封装 argparse 私有访问，R5: 消除测试私有访问）。 Args: parser: _build_parser() 返回的 Argu…；源码 L418-L430
+#   inputs: parser
+#   outputs: set[str]
+# - id: A2
+#   name_zh: ② main
+#   name_en: main
+#   intro: CLI 主入口。
+#   desc: CLI 主入口。 Args: argv: 命令行参数（None 表示从 sys.argv 读取） Returns: 退出码（0=成功，非零=失败）；源码 L433-L474
+#   inputs: argv
+#   outputs: int
+# 层: 输出
+# - id: O1
+#   name_zh: set[str]
+#   name_en: set[str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: integrator(CLI入口); python -m zephyr.data
+# - id: O2
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: integrator(CLI入口); python -m zephyr.data
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -82,14 +129,14 @@ def _print_table(rows: list[dict], columns: list[str], headers: list[str] | None
         print("  (无记录)")
         return
     headers = headers or columns
-    widths = [max(len(str(h)), *(len(str(r.get(c, ""))) for r in rows)) for c, h in zip(columns, headers)]
+    widths = [max(len(str(h)), *(len(str(r.get(c, ""))) for r in rows)) for c, h in zip(columns, headers, strict=False)]
     # 表头
-    header_line = "  ".join(h.ljust(w) for h, w in zip(headers, widths))
+    header_line = "  ".join(h.ljust(w) for h, w in zip(headers, widths, strict=False))
     sep_line = "  ".join("-" * w for w in widths)
     print(header_line)
     print(sep_line)
     for r in rows:
-        line = "  ".join(str(r.get(c, "")).ljust(w) for c, w in zip(columns, widths))
+        line = "  ".join(str(r.get(c, "")).ljust(w) for c, w in zip(columns, widths, strict=False))
         print(line)
 
 

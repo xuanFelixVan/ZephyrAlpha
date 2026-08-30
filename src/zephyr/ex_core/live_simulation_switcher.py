@@ -14,7 +14,11 @@
 # [TESTS] tests/ex_core/test_live_simulation_switcher.py
 # [A_module] module_id=MOD-EX-035 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
-"""Live/Simulation Switcher — 实盘/模拟切换开关 (MOD-EX-035)
+"""
+
+
+
+Live/Simulation Switcher — 实盘/模拟切换开关 (MOD-EX-035)
 
 D-EX-CORE-35（2026-08-23 门禁修正版）：A 股/QMT 实盘与模拟盘一键切换 +
 状态同步 + 资金隔离。原门禁依赖 OKX/XTP/CTP（超约束三，已删），现门禁为
@@ -28,6 +32,43 @@ D-EX-CORE-35（2026-08-23 门禁修正版）：A 股/QMT 实盘与模拟盘一�
   - 实盘→模拟是风险收敛方向，免令牌随时可切。
   - 全程留痕：SwitchRecord 记录时刻/方向/原因/操作人/令牌指纹
     （sha256 前 12 位，原文不落盘）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: token_verifier 参数
+#   fields: 参数 token_verifier（无注解）
+#   code: live_simulation_switcher.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: live_simulation_switcher.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: audit_sink 参数
+#   fields: 参数 audit_sink（无注解）
+#   code: live_simulation_switcher.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① LiveSimulationSwitcher
+#   name_en: LiveSimulationSwitcher
+#   intro: 实盘/模拟切换开关（默认模拟盘；切实盘需显式确认令牌+留痕）。
+#   desc: 实盘/模拟切换开关（默认模拟盘；切实盘需显式确认令牌+留痕）。 Args: token_verifier: 确认令牌验证器（注入；生产接线 Owner 签发的一次性 令牌校验，验…；公共方法（定义序）: current…
+#   inputs: token_verifier clock audit_sink
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: LiveSimulationSwitcher
+#   downstream: MOD-L06-001(TradingSession 模式门) ; MOD-EX-058(miniQMT Channel Manager 实盘通道)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

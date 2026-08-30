@@ -14,7 +14,11 @@
 # [TESTS] tests/data_security/test_ai_masking_pipeline.py
 # [A_module] module_id=MOD-DATSEC-001 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""AiMaskingPipeline — AI 分级脱敏管道（MOD-DATSEC-001）。
+"""
+
+
+
+AiMaskingPipeline — AI 分级脱敏管道（MOD-DATSEC-001）。
 
 B13-04183（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATSEC-001，A3数据架构）：
 L1-L4 **分级脱敏管道**——L4 禁发原文仅统计摘要 / L3 金额分桶泛化（大额/
@@ -22,6 +26,43 @@ L1-L4 **分级脱敏管道**——L4 禁发原文仅统计摘要 / L3 金额分�
 序列 / L1 无要求原样放行；**策略表驱动**（用途→MaskingPolicy 注册表，与
 MOD-DATSEC-003 共用策略表 schema 语义：Mapping 键查表、未注册 Fail-Closed）；
 每次 LLM 调用记录**脱敏前后对比**入审计回调。Presidio 分级思想单机化。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: policies 参数
+#   fields: 参数 policies（无注解）
+#   code: ai_masking_pipeline.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: ai_masking_pipeline.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: audit_sink 参数
+#   fields: 参数 audit_sink（无注解）
+#   code: ai_masking_pipeline.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AiMaskingPipeline
+#   name_en: AiMaskingPipeline
+#   intro: L1-L4 分级脱敏管道（策略表驱动 + 审计留痕）。
+#   desc: L1-L4 分级脱敏管道（策略表驱动 + 审计留痕）。；公共方法（定义序）: level_of, mask_for_llm；源码 L138-L250
+#   inputs: policies clock audit_sink
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: AiMaskingPipeline
+#   downstream: 运行时装配批（LLM 外发前统一脱敏装配点 / 审计接 gov_audit 路由）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -115,9 +156,7 @@ class AiMaskingPipeline:
             if not isinstance(policy.level, MaskingLevel):
                 raise AiMaskingError(f"非法级别: {policy.level!r}")
             if policy.medium_amount < 0 or policy.large_amount < policy.medium_amount:
-                raise AiMaskingError(
-                    f"非法分桶阈值: large={policy.large_amount} medium={policy.medium_amount}"
-                )
+                raise AiMaskingError(f"非法分桶阈值: large={policy.large_amount} medium={policy.medium_amount}")
             if policy.sequence_min_len < 2:
                 raise AiMaskingError(f"非法 sequence_min_len: {policy.sequence_min_len}")
         self._policies: dict[str, MaskingPolicy] = dict(policies)
@@ -132,9 +171,7 @@ class AiMaskingPipeline:
             raise AiMaskingError(f"未知用途: {purpose!r}（未在策略表中注册）")
         return policy
 
-    def _audit(
-        self, purpose: str, level: MaskingLevel, before: str, after: str, note: str
-    ) -> None:
+    def _audit(self, purpose: str, level: MaskingLevel, before: str, after: str, note: str) -> None:
         record = MaskingAuditRecord(
             purpose=purpose,
             level=level,
@@ -179,10 +216,7 @@ class AiMaskingPipeline:
             if len(values) < policy.sequence_min_len:
                 return m.group(0)
             mean = sum(values) / len(values)
-            return (
-                f"[原值序列已脱敏:共{len(values)}个值 "
-                f"均值={mean:.4f} 最小={min(values):.4f} 最大={max(values):.4f}]"
-            )
+            return f"[原值序列已脱敏:共{len(values)}个值 均值={mean:.4f} 最小={min(values):.4f} 最大={max(values):.4f}]"
 
         return _SEQ_RE.sub(_seq_sub, text)
 
@@ -192,10 +226,7 @@ class AiMaskingPipeline:
         digits = sum(1 for ch in text if ch.isdigit())
         tickers = len(_TICKER_RE.findall(text))
         amounts = len(_AMOUNT_RE.findall(text))
-        return (
-            f"[L4统计摘要] 字符数={len(text)} 数字字符数={digits} "
-            f"标的出现数={tickers} 数值token数={amounts}"
-        )
+        return f"[L4统计摘要] 字符数={len(text)} 数字字符数={digits} 标的出现数={tickers} 数值token数={amounts}"
 
     # ── 对外 ─────────────────────────────────────────────────────────────
 

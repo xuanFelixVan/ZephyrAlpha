@@ -38,6 +38,10 @@
 # A4 --> A5
 # A5 --> O1
 """
+
+
+
+
 Premarket Checker — 盘前检查器 (MOD-EX-063, D-TRADING-05 MVP)
 
 机构 OMS 与 vnpy RiskManager 标配的开盘前就绪闸。与 MOD-EX-024
@@ -51,6 +55,49 @@ boot_hooks 接线：经 `_subscribe_eventbus_consumers` 消费方注册模式接
 
 SSoT: docs/03_modules/_domain_execution_core/premarket_checker/blueprint.md
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: checker 参数
+#   fields: 参数 checker，类型注解 PremarketChecker | None
+#   code: premarket_checker.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① PremarketChecker
+#   name_en: PremarketChecker
+#   intro: 盘前检查器（四道关编排，全部 Fail-Closed）。
+#   desc: 盘前检查器（四道关编排，全部 Fail-Closed）。 Args: risk_limits_probe: 限额基线探针（生产接线限额真源；返回当日 RiskLimits）。 c…；公共方法（定义序）: run；源码…
+#   inputs: risk_limits_probe compliance_probe data_quality_probe system_readines…
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② register_checker
+#   name_en: register_checker
+#   intro: 注册/注销盘前检查器实例（运行时装配批注入生产探针）。
+#   desc: 注册/注销盘前检查器实例（运行时装配批注入生产探针）。；源码 L284-L288
+#   inputs: checker
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ subscribe_eventbus
+#   name_en: subscribe_eventbus
+#   intro: 订阅 premarket.check.requested（幂等；boot_hooks 统一调用）。
+#   desc: 订阅 premarket.check.requested（幂等；boot_hooks 统一调用）。；源码 L291-L328
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A3 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: PremarketChecker, register_checker, subscribe_eventbus
+#   downstream: boot_hooks(MOD-INF-035, _subscribe_eventbus_consumers 消费方注册)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations
@@ -174,9 +221,7 @@ class PremarketChecker:
         if limits.max_gross_leverage <= 0.0:
             invalid.append(f"max_gross_leverage={limits.max_gross_leverage}<=0")
         if invalid:
-            return PremarketCheckItem(
-                check_id, False, "LIMITS_INVALID", "限额取值域越界: " + "; ".join(invalid)
-            )
+            return PremarketCheckItem(check_id, False, "LIMITS_INVALID", "限额取值域越界: " + "; ".join(invalid))
         if limits.as_of_date.date() != day:
             return PremarketCheckItem(
                 check_id,
@@ -195,9 +240,7 @@ class PremarketChecker:
             _logger.error("PREMARKET_COMPLIANCE_PROBE_ERROR error=%s", exc)
             return PremarketCheckItem(check_id, False, "PROBE_ERROR", f"纪律预检探针异常（Fail-Closed）: {exc}")
         if violations:
-            return PremarketCheckItem(
-                check_id, False, "COMPLIANCE_VIOLATION", "纪律预检违规: " + "; ".join(violations)
-            )
+            return PremarketCheckItem(check_id, False, "COMPLIANCE_VIOLATION", "纪律预检违规: " + "; ".join(violations))
         return PremarketCheckItem(check_id, True, "OK", "纪律预检无违规")
 
     # ── 关 3: 数据完整性（QualityReport.passed）─────────────────────
@@ -228,9 +271,7 @@ class PremarketChecker:
             return PremarketCheckItem(check_id, False, "PROBE_ERROR", f"系统就绪探针异常（Fail-Closed）: {exc}")
         not_ready = sorted(name for name, ok in readiness.items() if not ok)
         if not_ready:
-            return PremarketCheckItem(
-                check_id, False, "SUBSYSTEM_NOT_READY", "子系统未就绪: " + ", ".join(not_ready)
-            )
+            return PremarketCheckItem(check_id, False, "SUBSYSTEM_NOT_READY", "子系统未就绪: " + ", ".join(not_ready))
         return PremarketCheckItem(check_id, True, "OK", "全部子系统就绪")
 
 

@@ -14,7 +14,11 @@
 # [TESTS] tests/zephyr/data/test_alerter.py
 # [A_module] module_id=MOD-GOV-alerter | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8 可观测性）。
+"""
+
+
+
+告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8 可观测性）。
 
 告警触发条件（蓝图 §6.5）：
 - 任务 DEAD（重试耗尽）-> 立即告警
@@ -34,6 +38,32 @@
 - ERROR/CRITICAL 告警在 failure file 实际写入后触达 IM/邮件通道（与 300s
   冷却对齐，防 crash-restart 循环刷屏）
 - 通道密钥走 .env（禁止入库），见 .env.example ZEPHYR_FEISHU_WEBHOOK / ZEPHYR_SMTP_*
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: failures_dir 参数
+#   fields: 参数 failures_dir（无注解）
+#   code: alerter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① Alerter
+#   name_en: Alerter
+#   intro: 告警管理器。
+#   desc: 告警管理器。 用法： alerter = Alerter() alerter.notify("kline_daily_incremental", "连接超时", level=LE…；公共方法（定义序）: notify,…
+#   inputs: failures_dir
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: Alerter
+#   downstream: zephyr.data.scheduler
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -191,9 +221,8 @@ class Alerter:
         try:
             self._failures_dir.mkdir(parents=True, exist_ok=True)
             filepath = self._failures_dir / filename
-            with self._lock:
-                with open(filepath, "w", encoding="utf-8") as f:
-                    json.dump(record, f, ensure_ascii=False, indent=2)
+            with self._lock, open(filepath, "w", encoding="utf-8") as f:
+                json.dump(record, f, ensure_ascii=False, indent=2)
             log.info("失败汇总已写入: %s", filepath)
             return True
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch

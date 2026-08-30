@@ -15,6 +15,65 @@
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: file_path 参数
+#   fields: 参数 file_path，类型注解 str
+#   code: code_archaeology.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: line 参数
+#   fields: 参数 line，类型注解 int
+#   code: code_archaeology.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: module_id 参数
+#   fields: 参数 module_id，类型注解 str
+#   code: code_archaeology.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: functions 参数
+#   fields: 参数 functions，类型注解 list[str]
+#   code: code_archaeology.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① blame
+#   name_en: blame
+#   intro: blame(file_path, line) 源码 L115-L116
+#   desc: 源码 L115-L116
+#   inputs: file_path line
+#   outputs: BlameRecord
+# - id: A2
+#   name_zh: ② auto_doc
+#   name_en: auto_doc
+#   intro: auto_doc(module_id, functions) 源码 L119-L125
+#   desc: 源码 L119-L125
+#   inputs: module_id functions
+#   outputs: str
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: BlameRecord
+#   name_en: BlameRecord
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-INF-027;MOD-INF-015;MOD-FEEDBACK_LOOP
+# - id: O2
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-INF-027;MOD-INF-015;MOD-FEEDBACK_LOOP
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
+
 from __future__ import annotations
 
 from datetime import UTC, datetime

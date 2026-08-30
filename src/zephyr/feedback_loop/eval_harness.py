@@ -14,6 +14,69 @@
 # [TESTS]
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: cases 参数
+#   fields: 参数 cases（无注解）
+#   code: eval_harness.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① EvalHarness
+#   name_en: EvalHarness
+#   intro: class EvalHarness 源码 L149-L277
+#   desc: 公共方法（定义序）: build_default, run_all, run_by_category, to_json；源码 L149-L277
+#   inputs: cases
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② build_intent_cases
+#   name_en: build_intent_cases
+#   intro: build_intent_cases() 源码 L296-L297
+#   desc: 源码 L296-L297
+#   inputs: 无参数
+#   outputs: list[EvalCase]
+# - id: A3
+#   name_zh: ③ build_orchestrator_cases
+#   name_en: build_orchestrator_cases
+#   intro: build_orchestrator_cases() 源码 L300-L301
+#   desc: 源码 L300-L301
+#   inputs: 无参数
+#   outputs: list[EvalCase]
+# - id: A4
+#   name_zh: ④ build_hallucination_cases
+#   name_en: build_hallucination_cases
+#   intro: build_hallucination_cases() 源码 L304-L305
+#   desc: 源码 L304-L305
+#   inputs: 无参数
+#   outputs: list[EvalCase]
+# - id: A5
+#   name_zh: ⑤ build_evolution_cases
+#   name_en: build_evolution_cases
+#   intro: build_evolution_cases() 源码 L308-L309
+#   desc: 源码 L308-L309
+#   inputs: 无参数
+#   outputs: list[EvalCase]
+#   （注：A5 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[EvalCase]
+#   name_en: list[EvalCase]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
+"""
+
 from __future__ import annotations
 
 import json

@@ -14,7 +14,11 @@
 # [TESTS] tests/governance/test_gov_policy_manager.py
 # [A_module] module_id=MOD-GOV-052 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""GovPolicyManager — 治理策略管理器（MOD-GOV-052）。
+"""
+
+
+
+GovPolicyManager — 治理策略管理器（MOD-GOV-052）。
 
 B9-10877（AUD-DRAFT-001-DIGEST P2 波 P2-W12，CAND-WORKTREE-003，B9
 D-GOVERNANCE-01）：GOV-* 策略 CRUD + 版本管理（版本递增 + 历史留存）
@@ -25,6 +29,38 @@ D-GOVERNANCE-01）：GOV-* 策略 CRUD + 版本管理（版本递增 + 历史留
 存储与状态机，不执行策略）；escalation/budget_enforcer=策略消费方
 （本件只产出策略记录，不挂运行时判定）；audit_trail=审计落证（本件
 sqlite 注入仅作策略持久化镜像，零交集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: gov_policy_manager.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: sqlite_conn 参数
+#   fields: 参数 sqlite_conn（无注解）
+#   code: gov_policy_manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① GovPolicyManager
+#   name_en: GovPolicyManager
+#   intro: GOV-* 策略生命周期管理器（CRUD + 版本递增 + sqlite 镜像持久化）。
+#   desc: GOV-* 策略生命周期管理器（CRUD + 版本递增 + sqlite 镜像持久化）。；公共方法（定义序）: create_policy, get_policy, update_policy, delete_poli…
+#   inputs: clock sqlite_conn
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: GovPolicyManager
+#   downstream: 运行时装配批（GOV-* 策略装配：sqlite 连接 + 时钟统一注入）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -49,7 +85,7 @@ __all__: Final = [
 _POLICY_PREFIX: Final = "GOV-"
 
 #: 状态机合法迁移表（词表闭合；retired 为终态）
-_TRANSITIONS: Final[dict["PolicyState", frozenset["PolicyState"]]] = {}
+_TRANSITIONS: Final[dict[PolicyState, frozenset[PolicyState]]] = {}
 
 
 class GovPolicyError(Exception):
@@ -68,12 +104,14 @@ class PolicyState(str, Enum):
     RETIRED = "retired"
 
 
-_TRANSITIONS.update({
-    PolicyState.DRAFT: frozenset({PolicyState.ACTIVE, PolicyState.RETIRED}),
-    PolicyState.ACTIVE: frozenset({PolicyState.SUSPENDED, PolicyState.RETIRED}),
-    PolicyState.SUSPENDED: frozenset({PolicyState.ACTIVE, PolicyState.RETIRED}),
-    PolicyState.RETIRED: frozenset(),
-})
+_TRANSITIONS.update(
+    {
+        PolicyState.DRAFT: frozenset({PolicyState.ACTIVE, PolicyState.RETIRED}),
+        PolicyState.ACTIVE: frozenset({PolicyState.SUSPENDED, PolicyState.RETIRED}),
+        PolicyState.SUSPENDED: frozenset({PolicyState.ACTIVE, PolicyState.RETIRED}),
+        PolicyState.RETIRED: frozenset(),
+    }
+)
 
 
 @dataclass(frozen=True)
@@ -122,9 +160,7 @@ class GovPolicyManager:
         if not policy_id:
             raise GovPolicyError("policy_id 为空")
         if not policy_id.startswith(_POLICY_PREFIX):
-            raise GovPolicyError(
-                f"policy_id 须以 {_POLICY_PREFIX!r} 前缀: {policy_id!r}"
-            )
+            raise GovPolicyError(f"policy_id 须以 {_POLICY_PREFIX!r} 前缀: {policy_id!r}")
 
     @staticmethod
     def _validate_content(content: str) -> None:
@@ -143,9 +179,7 @@ class GovPolicyManager:
             return
         try:
             self._conn.execute(
-                "INSERT INTO gov_policies "
-                "(policy_id, version, content, state, updated_at) "
-                "VALUES (?, ?, ?, ?, ?)",
+                "INSERT INTO gov_policies (policy_id, version, content, state, updated_at) VALUES (?, ?, ?, ?, ?)",
                 (
                     record.policy_id,
                     record.version,
@@ -156,9 +190,7 @@ class GovPolicyManager:
             )
             self._conn.commit()
         except sqlite3.Error as exc:
-            raise GovPolicyError(
-                f"sqlite 写入失败: {record.policy_id!r} v{record.version}: {exc}"
-            ) from exc
+            raise GovPolicyError(f"sqlite 写入失败: {record.policy_id!r} v{record.version}: {exc}") from exc
 
     def _append(self, record: PolicyRecord) -> PolicyRecord:
         """先写库后写内存（库失败则内存不变，Fail-Closed 不产生半态）。"""
@@ -166,7 +198,9 @@ class GovPolicyManager:
         self._policies.setdefault(record.policy_id, []).append(record)
         _log.info(
             "策略版本登记: %s v%d (%s)",
-            record.policy_id, record.version, record.state.value,
+            record.policy_id,
+            record.version,
+            record.state.value,
         )
         return record
 
@@ -178,13 +212,15 @@ class GovPolicyManager:
         self._validate_content(content)
         if policy_id in self._policies:
             raise GovPolicyError(f"策略已存在: {policy_id!r}（禁止重复创建）")
-        return self._append(PolicyRecord(
-            policy_id=policy_id,
-            version=1,
-            content=content,
-            state=PolicyState.DRAFT,
-            updated_at=self._clock(),
-        ))
+        return self._append(
+            PolicyRecord(
+                policy_id=policy_id,
+                version=1,
+                content=content,
+                state=PolicyState.DRAFT,
+                updated_at=self._clock(),
+            )
+        )
 
     def get_policy(self, policy_id: str, version: int | None = None) -> PolicyRecord:
         """取策略记录：默认最新版本；指定版本须存在（历史留存可查）。"""
@@ -205,35 +241,29 @@ class GovPolicyManager:
         self._validate_content(content)
         latest = self._latest(policy_id)
         if latest.state is PolicyState.RETIRED:
-            raise GovPolicyError(
-                f"非法状态迁移: {policy_id!r} 已 retired（终态禁止更新）"
+            raise GovPolicyError(f"非法状态迁移: {policy_id!r} 已 retired（终态禁止更新）")
+        return self._append(
+            PolicyRecord(
+                policy_id=policy_id,
+                version=latest.version + 1,
+                content=content,
+                state=latest.state,
+                updated_at=self._clock(),
             )
-        return self._append(PolicyRecord(
-            policy_id=policy_id,
-            version=latest.version + 1,
-            content=content,
-            state=latest.state,
-            updated_at=self._clock(),
-        ))
+        )
 
     def delete_policy(self, policy_id: str) -> None:
         """删除策略：仅 draft 允许硬删除；其余须走 retired 终态。"""
         self._validate_policy_id(policy_id)
         latest = self._latest(policy_id)
         if latest.state is not PolicyState.DRAFT:
-            raise GovPolicyError(
-                f"删除拒绝: {policy_id!r} 当前 {latest.state.value}，仅 draft 可删"
-            )
+            raise GovPolicyError(f"删除拒绝: {policy_id!r} 当前 {latest.state.value}，仅 draft 可删")
         if self._conn is not None:
             try:
-                self._conn.execute(
-                    "DELETE FROM gov_policies WHERE policy_id = ?", (policy_id,)
-                )
+                self._conn.execute("DELETE FROM gov_policies WHERE policy_id = ?", (policy_id,))
                 self._conn.commit()
             except sqlite3.Error as exc:
-                raise GovPolicyError(
-                    f"sqlite 删除失败: {policy_id!r}: {exc}"
-                ) from exc
+                raise GovPolicyError(f"sqlite 删除失败: {policy_id!r}: {exc}") from exc
         del self._policies[policy_id]
         _log.info("策略删除: %s（draft 硬删除）", policy_id)
 
@@ -250,13 +280,15 @@ class GovPolicyManager:
                 f"非法状态迁移: {policy_id!r} {latest.state.value} -> "
                 f"{target.value}（合法仅 draft→active→suspended→retired 系）"
             )
-        return self._append(PolicyRecord(
-            policy_id=policy_id,
-            version=latest.version + 1,
-            content=latest.content,
-            state=target,
-            updated_at=self._clock(),
-        ))
+        return self._append(
+            PolicyRecord(
+                policy_id=policy_id,
+                version=latest.version + 1,
+                content=latest.content,
+                state=target,
+                updated_at=self._clock(),
+            )
+        )
 
     # ── 查询 ─────────────────────────────────────────────────────────────
 

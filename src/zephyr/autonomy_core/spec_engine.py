@@ -16,6 +16,10 @@
 # [TTL] permanent
 
 """
+
+
+
+
 MOD-INF-019: Agent Spec — SpecEngine 蓝图->Skill 升级引擎
 ============================================================
 Blueprint: docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md
@@ -24,6 +28,41 @@ Version: 0.1.0
 
 SpecEngine 是 agent-spec 的统一入口，负责将静态蓝图转化为可执行 Agent Skill。
 四阶段流程: discover(发现) -> generate(生成) -> validate(验证) -> register(注册)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: blueprint_path 参数
+#   fields: 参数 blueprint_path（无注解）
+#   code: spec_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① UpgradeResult
+#   name_en: UpgradeResult
+#   intro: class UpgradeResult 源码 L105-L131
+#   desc: 公共方法（定义序）: to_dict；源码 L105-L131
+#   inputs: blueprint_path
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② SpecEngine
+#   name_en: SpecEngine
+#   intro: 蓝图->Skill 升级引擎 —— agent-spec 统一入口
+#   desc: 蓝图->Skill 升级引擎 —— agent-spec 统一入口 用法: engine = SpecEngine() result = engine.upgrade("docs…；公共方法（定义序）: discove…
+#   inputs: registry_path
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: UpgradeResult, SpecEngine
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

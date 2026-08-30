@@ -16,6 +16,10 @@
 # [TTL] permanent
 
 """
+
+
+
+
 depgraph Schema DDL + 版本化迁移框架
 ========================================
 依据：数据库合并方案（9库->3库），depgraph 作为依赖图专用数据库（PostgreSQL）
@@ -81,6 +85,125 @@ P2 迁移后路径真源（2026-06-27 治本）
   禁止定义 DB_PATH = .../depgraph.db 常量（路径污染源）。
   PG 连接入口唯一真源：get_depgraph_pg_connection()（本模块定义）。
   PG 连接配置真源（§5.34.5）：环境变量 DATABASE_URL 优先，config/.env.postgres（_PG_ENV_PATH）为 fallback。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: db_path 参数
+#   fields: 参数 db_path，类型注解 Path | str | None
+#   code: depgraph_schema.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: echo 参数
+#   fields: 参数 echo（无注解）
+#   code: depgraph_schema.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: conn 参数
+#   fields: 参数 conn，类型注解 psycopg2.extensions.connection | None
+#   code: depgraph_schema.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: superuser 参数
+#   fields: 参数 superuser（无注解）
+#   code: depgraph_schema.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① init_db
+#   name_en: init_db
+#   intro: 验证 depgraph (PostgreSQL) schema 健康性（幂等）。
+#   desc: 验证 depgraph (PostgreSQL) schema 健康性（幂等）。 P2迁移后：PG schema 由 scripts/governance/migrate_sql…；源码 L1498-L1537
+#   inputs: db_path echo
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② release_depgraph_pg_connection
+#   name_en: release_depgraph_pg_connection
+#   intro: 归还 get_depgraph_pg_connection() 获取的连接（§5.64.1 配套接口）。
+#   desc: 归还 get_depgraph_pg_connection() 获取的连接（§5.64.1 配套接口）。 池化连接：回滚悬挂事务 + 归一化 autocommit + RESET…；源码 L1636-L1676
+#   inputs: conn
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ get_depgraph_pg_connection
+#   name_en: get_depgraph_pg_connection
+#   intro: 返回 depgraph (PostgreSQL) 连接。
+#   desc: 返回 depgraph (PostgreSQL) 连接。 所有 depgraph 连接必须经此入口（统一 PG 配置，防止散点连接绕过连接池配置）。 角色分级访问控制 - 默认…；源码 L1695-L1761
+#   inputs: db_path superuser read_only autocommit replica pooled check_same_thre…
+#   outputs: psycopg2.extensions.connection
+# - id: A4
+#   name_zh: ④ table_names
+#   name_en: table_names
+#   intro: 返回 depgraph (PostgreSQL) 中所有 public schema 表名。
+#   desc: 返回 depgraph (PostgreSQL) 中所有 public schema 表名。；源码 L1804-L1817
+#   inputs: db_path
+#   outputs: list[str]
+# - id: A5
+#   name_zh: ⑤ schema_version
+#   name_en: schema_version
+#   intro: 返回当前 depgraph (PostgreSQL) 的 schema 版本。
+#   desc: 返回当前 depgraph (PostgreSQL) 的 schema 版本。；源码 L1820-L1826
+#   inputs: db_path
+#   outputs: int
+# - id: A6
+#   name_zh: ⑥ apply_pg_schema
+#   name_en: apply_pg_schema
+#   intro: 从 02_create_pg_schema.sql 执行 DDL（幂等，CREATE IF NOT EXISTS）。
+#   desc: 从 02_create_pg_schema.sql 执行 DDL（幂等，CREATE IF NOT EXISTS）。 5.18.12 治本（2026-07-02）：恢复 PG s…；源码 L1836-L1866
+#   inputs: version description
+#   outputs: 返回值
+# - id: A7
+#   name_zh: ⑦ backup_before_migration
+#   name_en: backup_before_migration
+#   intro: 在应用破坏性 migration 前备份 PG depgraph（pg_dump）。
+#   desc: 在应用破坏性 migration 前备份 PG depgraph（pg_dump）。 5.18.13 治本（2026-07-02）：为 PG migration 提供 downg…；源码 L1874-L1909
+#   inputs: backup_path
+#   outputs: Path
+# - id: A8
+#   name_zh: ⑧ restore_from_backup
+#   name_en: restore_from_backup
+#   intro: 从 pg_dump 备份恢复 PG depgraph（downgrade 执行入口）。
+#   desc: 从 pg_dump 备份恢复 PG depgraph（downgrade 执行入口）。 :param backup_path: 备份文件路径（.dump 格式，由 backup_…；源码 L1912-L1941
+#   inputs: backup_path
+#   outputs: 返回值
+# - id: A9
+#   name_zh: ⑨ build_pg_dsn
+#   name_en: build_pg_dsn
+#   intro: 公共接口：build_pg_dsn（Stage 4 公共化，委托到 _build_pg_dsn）。
+#   desc: 公共接口：build_pg_dsn（Stage 4 公共化，委托到 _build_pg_dsn）。；源码 L1968-L1970
+#   inputs: config superuser read_only
+#   outputs: dict[str, Any]
+# - id: A10
+#   name_zh: ⑩ get_current_version
+#   name_en: get_current_version
+#   intro: 公共接口：get_current_version（Stage 4 公共化）。
+#   desc: 公共接口：get_current_version（Stage 4 公共化）。；源码 L1974-L1976
+#   inputs: conn
+#   outputs: int
+#   （注：A10 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: psycopg2.extensions.connection
+#   name_en: psycopg2.extensions.connection
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: generate_project_depgraph.py; diagnose_depgraph.py; extract_depgraph.py; apply_…
+# - id: O2
+#   name_zh: list[str]
+#   name_en: list[str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: generate_project_depgraph.py; diagnose_depgraph.py; extract_depgraph.py; apply_…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> A10
+# A10 --> O1
 """
 
 from __future__ import annotations
@@ -1672,7 +1795,7 @@ class PgConnectionProvider(Protocol):
         *,
         autocommit: bool | None = None,
         read_only: bool = True,
-    ) -> "psycopg2.extensions.connection": ...
+    ) -> psycopg2.extensions.connection: ...
 
 
 # 默认提供者 = get_depgraph_pg_connection（保持向后兼容）

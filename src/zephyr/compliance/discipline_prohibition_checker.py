@@ -14,7 +14,11 @@
 # [TESTS] tests/compliance/test_discipline_prohibition_checker.py
 # [TTL] permanent
 
-"""四项严禁自动化检测 + Kill Switch 轻量版（43_compliance_discipline §4，BM-BUY-08-B）。
+"""
+
+
+
+四项严禁自动化检测 + Kill Switch 轻量版（43_compliance_discipline §4，BM-BUY-08-B）。
 
 订单提交前检测四类严禁交易行为——踏空追高 / 被套补仓 / 盈利骄傲 / 亏损报复。
 41 号已定"命名 + Hard Block/Warning 定位"（§2.3/§3.1），本篇补检测阈值 +
@@ -26,6 +30,51 @@ Kill Switch 轻量版（§4.3）：仅停触发策略（当日禁止新开仓）
 人工确认；失效 → 升级全局 Kill Switch（RC-03，35 号四级梯子）。
 
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: state_path 参数
+#   fields: 参数 state_path（无注解）
+#   code: discipline_prohibition_checker.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: on_escalate 参数
+#   fields: 参数 on_escalate（无注解）
+#   code: discipline_prohibition_checker.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: logger 参数
+#   fields: 参数 logger（无注解）
+#   code: discipline_prohibition_checker.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① KillSwitchLite
+#   name_en: KillSwitchLite
+#   intro: 策略级轻量熔断（§4.3）：仅停触发策略，当日有效，次日自动复位。
+#   desc: 策略级轻量熔断（§4.3）：仅停触发策略，当日有效，次日自动复位。 状态存储失效 → 升级全局 Kill Switch（on_escalate 回调，RC-03）。 state_…；公共方法（定义序）: trigger…
+#   inputs: state_path on_escalate logger
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② DisciplineGuard
+#   name_en: DisciplineGuard
+#   intro: 四项严禁检测引擎（D-COMPLIANCE-23 组件 B，嵌入 C-004 风控引擎）。
+#   desc: 四项严禁检测引擎（D-COMPLIANCE-23 组件 B，嵌入 C-004 风控引擎）。 订单提交前调用（§4.3）：任一 Hard Block 命中即拒单；仅命中骄傲 → W…；公共方法（定义序）: check；源…
+#   inputs: thresholds kill_switch logger
+#   outputs: 返回值
+#   （注：A2 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（9 定义）
+#   name_en: public defs
+#   intro: KillSwitchLite, DisciplineGuard
+#   downstream: C-004 风控引擎（订单提交前嵌入，43 号 §4.3）; MOD-PA-006 分批建仓（每批下单前过闸，41 号 §3.6）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

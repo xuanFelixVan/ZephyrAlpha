@@ -22,13 +22,43 @@
 # created: "2026-05-05"
 # ---
 
-"""D_FACTOR — Value Factor
+"""
+
+
+
+D_FACTOR — Value Factor
 
 估值因子。使用简易 PE proxy（价格/年化盈利估算）。
 
 CTR 契约：
   消费者 — CTR-001 (NormalizedMarketData) ← D_DATA
   生产者 — CTR-002 (FactorSignal) -> D_SIGNAL, D_RISK, D_PORTFOLIO_CORE
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: value_factor.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ValueFactor
+#   name_en: ValueFactor
+#   intro: class ValueFactor 源码 L71-L101
+#   desc: 公共方法（定义序）: compute, validate；源码 L71-L101
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: ValueFactor
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

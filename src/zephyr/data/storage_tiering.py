@@ -14,7 +14,11 @@
 # [TESTS] tests/zephyr/data/test_storage_tiering.py
 # [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""冷热分层 TTL 自动迁移 + 分区 + UFL 事实层 + 双副本校验 + 恢复演练（CAND-DAT-006 / B1-00584）。
+"""
+
+
+
+冷热分层 TTL 自动迁移 + 分区 + UFL 事实层 + 双副本校验 + 恢复演练（CAND-DAT-006 / B1-00584）。
 
 min_build_spec 对齐（深挖裁定=做 P0，复用现有 CH/Redis/backup 不重建）：
   1. 冷热分层 TTL 自动迁移：热 Redis（tick/bar 热键）→ 温 ClickHouse → 冷 Parquet 归档
@@ -26,6 +30,93 @@ min_build_spec 对齐（深挖裁定=做 P0，复用现有 CH/Redis/backup 不�
 后端全部注入式（redis_client / warm_insert / parquet_write / warm_drop），
 本模块只承载迁移决策与校验逻辑闭环；真实 IO 由调用方接 ch_writer/ch_reader/
 tick_redis_cache 现有能力，不重建存储栈。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: freq 参数
+#   fields: 参数 freq，类型注解 str
+#   code: storage_tiering.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: day 参数
+#   fields: 参数 day，类型注解 date
+#   code: storage_tiering.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: primary_root 参数
+#   fields: 参数 primary_root，类型注解 Path
+#   code: storage_tiering.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: replica_root 参数
+#   fields: 参数 replica_root，类型注解 Path
+#   code: storage_tiering.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① partition_key
+#   name_en: partition_key
+#   intro: 返回 Hive 风格分区键：日线 year=YYYY，分钟 year=YYYY/month=MM。
+#   desc: 返回 Hive 风格分区键：日线 year=YYYY，分钟 year=YYYY/month=MM。 Raises: ValueError: 未知频率（仅支持 daily/minu…；源码 L157-L167
+#   inputs: freq day
+#   outputs: str
+# - id: A2
+#   name_zh: ② StorageTiering
+#   name_en: StorageTiering
+#   intro: 冷热分层 TTL 自动迁移管理器（决策逻辑闭环，IO 后端注入）。
+#   desc: 冷热分层 TTL 自动迁移管理器（决策逻辑闭环，IO 后端注入）。 Usage: st = StorageTiering(TierPolicy(hot_ttl_seconds=3…；公共方法（定义序）: classif…
+#   inputs: policy
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ UFLFactLayer
+#   name_en: UFLFactLayer
+#   intro: 追加式事实层：只增不改，重复同值幂等，异值/改/删一律拒绝。
+#   desc: 追加式事实层：只增不改，重复同值幂等，异值/改/删一律拒绝。；公共方法（定义序）: count, append, get, update, delete；源码 L336-L365
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ ReplicaConsistencyReport
+#   name_en: ReplicaConsistencyReport
+#   intro: 双副本一致性报告。
+#   desc: 双副本一致性报告。；公共方法（定义序）: consistent；源码 L374-L383
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ check_replica_consistency
+#   name_en: check_replica_consistency
+#   intro: 比对主副本（D盘）与副副本（E盘）：文件集合 + sha256 逐一核对。
+#   desc: 比对主副本（D盘）与副副本（E盘）：文件集合 + sha256 逐一核对。；源码 L398-L409
+#   inputs: primary_root replica_root
+#   outputs: ReplicaConsistencyReport
+# - id: A6
+#   name_zh: ⑥ main
+#   name_en: main
+#   intro: 入口——待实现。
+#   desc: 入口——待实现。；源码 L447-L448
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A6 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.scheduler
+# - id: O2
+#   name_zh: ReplicaConsistencyReport
+#   name_en: ReplicaConsistencyReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.scheduler
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
 """
 
 from __future__ import annotations
@@ -187,9 +278,7 @@ class StorageTiering:
     ) -> MigrationReport:
         """温层分区超过 warm_retention_days → 写 Parquet 冷层后删除温层分区。"""
         pkey = partition_key(freq, partition_date)
-        partition_ts = datetime(
-            partition_date.year, partition_date.month, partition_date.day, tzinfo=now.tzinfo
-        )
+        partition_ts = datetime(partition_date.year, partition_date.month, partition_date.day, tzinfo=now.tzinfo)
         if self.classify(partition_ts, now) is not Tier.COLD:
             return MigrationReport(migrated=0, skipped=1)
         cold_path = f"{dataset}/{pkey}"
@@ -213,10 +302,7 @@ class StorageTiering:
         if level not in RECOVERY_LEVELS:
             raise ValueError(f"未知恢复级别: {level!r}（合法: {sorted(RECOVERY_LEVELS)}）")
         target = RECOVERY_LEVELS[level]
-        passed = (
-            observed_rto_minutes <= target.rto_minutes
-            and observed_rpo_seconds <= target.rpo_seconds
-        )
+        passed = observed_rto_minutes <= target.rto_minutes and observed_rpo_seconds <= target.rpo_seconds
         return DrillResult(
             level=level,
             passed=passed,
@@ -266,9 +352,7 @@ class UFLFactLayer:
         if existing is not None:
             if existing.value == fact.value:
                 return  # 幂等重放
-            raise UFLMutationError(
-                f"UFL 事实不可改: {fact.key} 已存在异值（追加式事实层禁改校验）"
-            )
+            raise UFLMutationError(f"UFL 事实不可改: {fact.key} 已存在异值（追加式事实层禁改校验）")
         self._facts[fact.key] = fact
 
     def get(self, key: str) -> Any:
@@ -309,11 +393,7 @@ def _sha256(path: Path) -> str:
 
 
 def _relative_files(root: Path) -> dict[str, Path]:
-    return {
-        str(p.relative_to(root)).replace("\\", "/"): p
-        for p in root.rglob("*")
-        if p.is_file()
-    }
+    return {str(p.relative_to(root)).replace("\\", "/"): p for p in root.rglob("*") if p.is_file()}
 
 
 def check_replica_consistency(primary_root: Path, replica_root: Path) -> ReplicaConsistencyReport:
@@ -321,12 +401,8 @@ def check_replica_consistency(primary_root: Path, replica_root: Path) -> Replica
     primary = _relative_files(Path(primary_root))
     replica = _relative_files(Path(replica_root))
     missing = sorted(k for k in primary if k not in replica)
-    mismatch = sorted(
-        k for k in primary if k in replica and _sha256(primary[k]) != _sha256(replica[k])
-    )
-    matched = sum(
-        1 for k in primary if k in replica and _sha256(primary[k]) == _sha256(replica[k])
-    )
+    mismatch = sorted(k for k in primary if k in replica and _sha256(primary[k]) != _sha256(replica[k]))
+    matched = sum(1 for k in primary if k in replica and _sha256(primary[k]) == _sha256(replica[k]))
     return ReplicaConsistencyReport(
         matched=matched,
         missing_in_replica=tuple(missing),

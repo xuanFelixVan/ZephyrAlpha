@@ -14,7 +14,11 @@
 # [TESTS] tests/data/test_source_sla_tracker.py
 # [A_module] module_id=MOD-DATA-066 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""SourceSlaTracker — 数据源可用性 SLA 追踪器（MOD-DATA-066）。
+"""
+
+
+
+SourceSlaTracker — 数据源可用性 SLA 追踪器（MOD-DATA-066）。
 
 B13-04332（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DAT-020，A3数据架构）：
 按源聚合可用率 / 延迟 P50·P99 / 失败原因分布（注入性能记录序列）+ 日周
@@ -24,6 +28,33 @@ Prometheus SLI/SLO 思想。
 查重分工（蓝图 §0）：source_health_check=在线探活执行（本件=探活记录的
 离线聚合与 SLO 裁定，不做探活）；data_source_reliability=源可靠性评分
 （本件=SLI 聚合与达标判定，不做综合评分模型）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: source_sla_tracker.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SourceSlaTracker
+#   name_en: SourceSlaTracker
+#   intro: 数据源 SLA 追踪器（SLI 聚合 + 日周报 + 达标判定 + 看板）。
+#   desc: 数据源 SLA 追踪器（SLI 聚合 + 日周报 + 达标判定 + 看板）。；公共方法（定义序）: register_target, target_of, ingest, aggregate, report_daily…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: SourceSlaTracker
+#   downstream: 运行时装配批（探测记录接入 / SLA 目标注册 / 日周报计划任务 / 看板读侧）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -68,8 +99,8 @@ class SlaTarget:
     """SLA 目标（frozen）。"""
 
     source: str
-    availability: float      # (0, 1]
-    p99_latency_ms: float    # > 0
+    availability: float  # (0, 1]
+    p99_latency_ms: float  # > 0
 
 
 @dataclass(frozen=True)
@@ -111,7 +142,9 @@ class SourceSlaTracker:
         if source in self._targets:
             raise SourceSlaError(f"源 {source!r} SLA 目标已注册")
         self._targets[source] = SlaTarget(
-            source=source, availability=availability, p99_latency_ms=p99_latency_ms,
+            source=source,
+            availability=availability,
+            p99_latency_ms=p99_latency_ms,
         )
 
     def target_of(self, source: str) -> SlaTarget:
@@ -160,9 +193,7 @@ class SourceSlaTracker:
         """按源窗口聚合：可用率 / P50 / P99 / 失败原因分布（空窗口 Fail-Closed）。"""
         self.target_of(source)
         if not (start < end):
-            raise SourceSlaError(
-                f"非法窗口: start={start.isoformat()} 须早于 end={end.isoformat()}"
-            )
+            raise SourceSlaError(f"非法窗口: start={start.isoformat()} 须早于 end={end.isoformat()}")
         window = [r for r in self._records if r.source == source and start <= r.ts < end]
         if not window:
             raise SourceSlaError(f"源 {source!r} 窗口内无记录")

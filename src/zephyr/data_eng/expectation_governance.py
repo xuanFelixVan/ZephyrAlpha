@@ -13,7 +13,11 @@
 # [ERROR_CONTRACT] 套件YAML缺expectations键->ValueError; 未知type->ValueError; 存档IO失败仅log不阻断验证
 # [TESTS] tests/zephyr/data/test_expectation_governance.py
 # [TTL] permanent
-"""ZephyrAlpha — D_DATA_ENG 期望治理门控（CAND-DATENG-002 / B1-00607）。
+"""
+
+
+
+ZephyrAlpha — D_DATA_ENG 期望治理门控（CAND-DATENG-002 / B1-00607）。
 
 min_build_spec（AUD-DRAFT-001-DIGEST P0）：
   - 期望套件 YAML：schema / 非空 / 值域 / 分布 / 时效
@@ -40,6 +44,38 @@ min_build_spec（AUD-DRAFT-001-DIGEST P0）：
       - type: freshness
         column: timestamp
         params: {max_age_hours: 48}
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: archive_path 参数
+#   fields: 参数 archive_path（无注解）
+#   code: expectation_governance.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: now_fn 参数
+#   fields: 参数 now_fn（无注解）
+#   code: expectation_governance.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ExpectationGovernance
+#   name_en: ExpectationGovernance
+#   intro: 期望套件验证器 + 三档质量门控。
+#   desc: 期望套件验证器 + 三档质量门控。；公共方法（定义序）: load_suite, suite_from_ctr001, validate；源码 L144-L327
+#   inputs: archive_path now_fn
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: ExpectationGovernance
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -65,6 +101,7 @@ __all__ = [
     "GateVerdict",
     "ValidationReport",
 ]
+
 
 class GateVerdict(str, Enum):
     """质量门控三档+放行裁定。"""

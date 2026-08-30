@@ -14,7 +14,11 @@
 # [TESTS] tests/zephyr/data/test_data_service.py
 # [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""数据服务接口层——统一数据服务门面（CAND-DAT-008 / B13-04033）。
+"""
+
+
+
+数据服务接口层——统一数据服务门面（CAND-DAT-008 / B13-04033）。
 
 min_build_spec 对齐（深挖裁定=做 P0，B1-00645 门户重复裁定亦归并本入口）：
   四能力统一入口与 SLA：
@@ -27,6 +31,56 @@ min_build_spec 对齐（深挖裁定=做 P0，B1-00645 门户重复裁定亦归�
 
 后端全部注入式（redis_client / pit / lineage_tracker / event_reader / clock），
 本模块只做口径统一、契约适配与 SLA 计量，不重建 Redis/CH/血缘存储。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: redis_client 参数
+#   fields: 参数 redis_client（无注解）
+#   code: data_service.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: pit 参数
+#   fields: 参数 pit（无注解）
+#   code: data_service.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: lineage_tracker 参数
+#   fields: 参数 lineage_tracker（无注解）
+#   code: data_service.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: event_reader 参数
+#   fields: 参数 event_reader（无注解）
+#   code: data_service.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DataService
+#   name_en: DataService
+#   intro: 统一数据服务门面（四能力一口径 + SLA 计量）。
+#   desc: 统一数据服务门面（四能力一口径 + SLA 计量）。 Usage: svc = DataService(redis_client=r, pit=FinancialPITQuery…；公共方法（定义序）: sla_rep…
+#   inputs: redis_client pit lineage_tracker event_reader clock
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② main
+#   name_en: main
+#   intro: 入口——待实现。
+#   desc: 入口——待实现。；源码 L307-L308
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: DataService, main
+#   downstream: zephyr.backtest.core.data_handler; L3 策略层 sleeve
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

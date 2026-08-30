@@ -14,7 +14,11 @@
 # [TESTS] tests/zephyr/data/test_wal_writer.py
 # [A_module] module_id=MOD-GOV-wal_writer | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""主动 WAL 写入器（P0-1 Phase A）。
+"""
+
+
+
+主动 WAL 写入器（P0-1 Phase A）。
 
 数据先落本地 WAL 段文件，再由后台 drain 线程异步排空到 ClickHouse。
 解决实时 tick 写入路径在 CH 慢/不可达时延迟突增的问题。
@@ -40,6 +44,47 @@
                 break  # critical 背压，生产者应减速/中断
     finally:
         writer.stop()  # flush 残留段 + 停止 drain 线程
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: table 参数
+#   fields: 参数 table（无注解）
+#   code: wal_writer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: segment_max_rows 参数
+#   fields: 参数 segment_max_rows（无注解）
+#   code: wal_writer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: segment_max_seconds 参数
+#   fields: 参数 segment_max_seconds（无注解）
+#   code: wal_writer.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: wal_dir_max_bytes 参数
+#   fields: 参数 wal_dir_max_bytes（无注解）
+#   code: wal_writer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① WalWriter
+#   name_en: WalWriter
+#   intro: 主动 WAL 写入器——数据先落本地段文件，再异步排空到 ClickHouse。
+#   desc: 主动 WAL 写入器——数据先落本地段文件，再异步排空到 ClickHouse。；公共方法（定义序）: drain_thread, add, flush, start, stop, total_segmented, t…
+#   inputs: table segment_max_rows segment_max_seconds wal_dir_max_bytes
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: WalWriter
+#   downstream: zephyr.data.tick_subscriber
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -94,7 +139,7 @@ def _serialize_tsv(rows: list[tuple]) -> bytes:
     return "\n".join(lines).encode("utf-8")
 
 
-def _append_rows(segment: list[tuple], result: "FetchResult", keep_indices: list[int] | None) -> None:
+def _append_rows(segment: list[tuple], result: FetchResult, keep_indices: list[int] | None) -> None:
     """按列过滤索引追加行到段缓冲。"""
     if keep_indices and len(keep_indices) < len(result.columns):
         for row in result.rows:
@@ -146,7 +191,7 @@ class WalWriter:
         """写入：drain_thread（Stage 4 公共化）。"""
         self._drain_thread = value
 
-    def add(self, result: "FetchResult") -> bool:
+    def add(self, result: FetchResult) -> bool:
         """添加 FetchResult 到当前段。达阈值时触发段落盘。
 
         Returns:
@@ -175,7 +220,7 @@ class WalWriter:
                 return self._flush_segment_locked()
         return True
 
-    def _init_columns(self, result: "FetchResult") -> None:
+    def _init_columns(self, result: FetchResult) -> None:
         """从首个 FetchResult 确定列子句（含列过滤，参照 BufferedWriter）。"""
         # #ARCH-CH-MATERIALIZED-INSERT：用可插入列集合（排除 MATERIALIZED/ALIAS）
         table_cols = ch_writer.get_insertable_columns_set(result.table)

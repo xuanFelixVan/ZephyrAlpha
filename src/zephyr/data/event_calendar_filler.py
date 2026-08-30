@@ -14,7 +14,11 @@
 # [TESTS] tests/zephyr/data/test_event_calendar_filler.py
 # [A_module] module_id=MOD-DATA-068 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""EventCalendarFiller — event_calendar 前瞻填充器（CAND-DAT-021，Q2-B 正解）。
+"""
+
+
+
+EventCalendarFiller — event_calendar 前瞻填充器（CAND-DAT-021，Q2-B 正解）。
 
 背景
 ----
@@ -39,6 +43,96 @@ event_calendar_registry.yaml（REG-EVT-001）仅是事件**类型**注册表；�
 
 PIT 纪律：只登记填充时点已公告（披露计划/解禁表）或规则可推导（宏观固定日程）
 的事件；规则推导条目带 certainty 分级，下游按等级决定置信使用。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: start 参数
+#   fields: 参数 start，类型注解 datetime.date
+#   code: event_calendar_filler.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: end 参数
+#   fields: 参数 end，类型注解 datetime.date
+#   code: event_calendar_filler.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: calendar 参数
+#   fields: 参数 calendar（无注解）
+#   code: event_calendar_filler.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: rows 参数
+#   fields: 参数 rows，类型注解 Iterable[tuple]
+#   code: event_calendar_filler.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① macro_rule_events
+#   name_en: macro_rule_events
+#   intro: 宏观固定日程规则事件（LPR/MLF/PMI/CPI，trading_calendar 同族先例）。
+#   desc: 宏观固定日程规则事件（LPR/MLF/PMI/CPI，trading_calendar 同族先例）。 - LPR：每月 20 日，非交易日顺延（rule_derived）； -…；源码 L237-L303
+#   inputs: start end calendar
+#   outputs: list[EventCalendarEntry]
+# - id: A2
+#   name_zh: ② entries_from_disclosure_rows
+#   name_en: entries_from_disclosure_rows
+#   intro: 财报披露计划行 → 日历条目（行=(symbol, report_period, scheduled_date, ac…
+#   desc: 财报披露计划行 → 日历条目（行=(symbol, report_period, scheduled_date, actual_date)）。 actual_date 落在窗口→…；源码 L313-L355
+#   inputs: rows start end
+#   outputs: list[EventCalendarEntry]
+# - id: A3
+#   name_zh: ③ entries_from_unlock_rows
+#   name_en: entries_from_unlock_rows
+#   intro: 限售解禁行 → 日历条目（行=(symbol, unlock_date, shares, ratio, amount)…
+#   desc: 限售解禁行 → 日历条目（行=(symbol, unlock_date, shares, ratio, amount)）。 交易所披露表口径→scheduled（数量/比例入 d…；源码 L358-L381
+#   inputs: rows start end
+#   outputs: list[EventCalendarEntry]
+# - id: A4
+#   name_zh: ④ load_disclosure_entries
+#   name_en: load_disclosure_entries
+#   intro: 从 disclosure_plan 表装配财报披露条目（注入式读取，fail-open）。
+#   desc: 从 disclosure_plan 表装配财报披露条目（注入式读取，fail-open）。；源码 L384-L397
+#   inputs: query_fn start end
+#   outputs: list[EventCalendarEntry]
+# - id: A5
+#   name_zh: ⑤ load_unlock_entries
+#   name_en: load_unlock_entries
+#   intro: 从 share_unlock 表装配解禁条目（注入式读取，fail-open）。
+#   desc: 从 share_unlock 表装配解禁条目（注入式读取，fail-open）。；源码 L400-L413
+#   inputs: query_fn start end
+#   outputs: list[EventCalendarEntry]
+# - id: A6
+#   name_zh: ⑥ dedupe_entries
+#   name_en: dedupe_entries
+#   intro: 幂等去重：同 (event_date, event_type, symbol_scope) 重复填充只保留首条。
+#   desc: 幂等去重：同 (event_date, event_type, symbol_scope) 重复填充只保留首条。；源码 L416-L427
+#   inputs: entries
+#   outputs: list[EventCalendarEntry]
+# - id: A7
+#   name_zh: ⑦ fill_event_calendar
+#   name_en: fill_event_calendar
+#   intro: 生成未来 N 日（默认 60）可预见事件日历（幂等）。
+#   desc: 生成未来 N 日（默认 60）可预见事件日历（幂等）。 Parameters ---------- as_of : 填充基准日（None=今天）。PIT 锚点——只登记基准日时点…；源码 L430-L464
+#   inputs: as_of horizon_days query_fn calendar extra_entries
+#   outputs: list[EventCalendarEntry]
+#   （注：A7 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[EventCalendarEntry]
+#   name_en: list[EventCalendarEntry]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 新闻可预测性打标（CAND-NLP-004 的正解：新闻流 join 日历判 scheduled/unscheduled）；盘前预案（未来 60 日可预见事件…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> O1
 """
 
 from __future__ import annotations
@@ -88,9 +182,7 @@ _SQL_DISCOVERY_WINDOW: Final[str] = (
     "OR (toDate(actual_date) BETWEEN '{start}' AND '{end}')"
 )
 _SQL_UNLOCK_WINDOW: Final[str] = (
-    "SELECT symbol, unlock_date, shares, ratio, amount "
-    "FROM {table} "
-    "WHERE unlock_date BETWEEN '{start}' AND '{end}'"
+    "SELECT symbol, unlock_date, shares, ratio, amount FROM {table} WHERE unlock_date BETWEEN '{start}' AND '{end}'"
 )
 
 
@@ -164,26 +256,50 @@ def macro_rule_events(
         lpr_day = _monthly_shifted_date(year, month, 20, cal)
         if start <= lpr_day <= end:
             entries.append(
-                EventCalendarEntry(lpr_day, ET_LPR, SCOPE_MARKET, CERT_RULE_DERIVED, SOURCE_MACRO_RULE,
-                                   f"{year}-{month:02d} LPR 公布日（每月20日顺延）")
+                EventCalendarEntry(
+                    lpr_day,
+                    ET_LPR,
+                    SCOPE_MARKET,
+                    CERT_RULE_DERIVED,
+                    SOURCE_MACRO_RULE,
+                    f"{year}-{month:02d} LPR 公布日（每月20日顺延）",
+                )
             )
         mlf_day = _monthly_shifted_date(year, month, 15, cal)
         if start <= mlf_day <= end:
             entries.append(
-                EventCalendarEntry(mlf_day, ET_MLF, SCOPE_MARKET, CERT_RULE_DERIVED, SOURCE_MACRO_RULE,
-                                   f"{year}-{month:02d} MLF 操作日（每月15日顺延）")
+                EventCalendarEntry(
+                    mlf_day,
+                    ET_MLF,
+                    SCOPE_MARKET,
+                    CERT_RULE_DERIVED,
+                    SOURCE_MACRO_RULE,
+                    f"{year}-{month:02d} MLF 操作日（每月15日顺延）",
+                )
             )
         pmi_day = _last_day_of_month(year, month)
         if start <= pmi_day <= end:
             entries.append(
-                EventCalendarEntry(pmi_day, ET_PMI, SCOPE_MARKET, CERT_RULE_DERIVED, SOURCE_MACRO_RULE,
-                                   f"{year}-{month:02d} 官方 PMI 发布（月末日，含周末照常）")
+                EventCalendarEntry(
+                    pmi_day,
+                    ET_PMI,
+                    SCOPE_MARKET,
+                    CERT_RULE_DERIVED,
+                    SOURCE_MACRO_RULE,
+                    f"{year}-{month:02d} 官方 PMI 发布（月末日，含周末照常）",
+                )
             )
         cpi_day = _monthly_shifted_date(year, month, 9, cal)
         if start <= cpi_day <= end:
             entries.append(
-                EventCalendarEntry(cpi_day, ET_CPI, SCOPE_MARKET, CERT_RULE_WINDOW, SOURCE_MACRO_RULE,
-                                   f"{year}-{month:02d} CPI 发布窗口（9-15日，锚首日顺延估计）")
+                EventCalendarEntry(
+                    cpi_day,
+                    ET_CPI,
+                    SCOPE_MARKET,
+                    CERT_RULE_WINDOW,
+                    SOURCE_MACRO_RULE,
+                    f"{year}-{month:02d} CPI 发布窗口（9-15日，锚首日顺延估计）",
+                )
             )
     return entries
 
@@ -217,13 +333,25 @@ def entries_from_disclosure_rows(
         scheduled = _parse_date(row[2])
         if actual is not None and start <= actual <= end:
             entries.append(
-                EventCalendarEntry(actual, ET_EARNINGS_DISCLOSURE, symbol, CERT_CONFIRMED,
-                                   _TBL_DISCLOSURE_PLAN, f"报告期 {report_period} 实际披露日")
+                EventCalendarEntry(
+                    actual,
+                    ET_EARNINGS_DISCLOSURE,
+                    symbol,
+                    CERT_CONFIRMED,
+                    _TBL_DISCLOSURE_PLAN,
+                    f"报告期 {report_period} 实际披露日",
+                )
             )
         elif scheduled is not None and start <= scheduled <= end:
             entries.append(
-                EventCalendarEntry(scheduled, ET_EARNINGS_DISCLOSURE, symbol, CERT_SCHEDULED,
-                                   _TBL_DISCLOSURE_PLAN, f"报告期 {report_period} 预约披露日（可改期）")
+                EventCalendarEntry(
+                    scheduled,
+                    ET_EARNINGS_DISCLOSURE,
+                    symbol,
+                    CERT_SCHEDULED,
+                    _TBL_DISCLOSURE_PLAN,
+                    f"报告期 {report_period} 预约披露日（可改期）",
+                )
             )
     return entries
 
@@ -247,8 +375,9 @@ def entries_from_unlock_rows(
             continue
         ratio = row[3] if len(row) > 3 else ""
         entries.append(
-            EventCalendarEntry(unlock, ET_SHARE_UNLOCK, symbol, CERT_SCHEDULED,
-                               _TBL_SHARE_UNLOCK, f"解禁占解禁前流通市值比例 {ratio}")
+            EventCalendarEntry(
+                unlock, ET_SHARE_UNLOCK, symbol, CERT_SCHEDULED, _TBL_SHARE_UNLOCK, f"解禁占解禁前流通市值比例 {ratio}"
+            )
         )
     return entries
 

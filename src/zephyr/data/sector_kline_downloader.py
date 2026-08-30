@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md | §sector_kline
 # [MODULE] zephyr.data.sector_kline_downloader
 # [DOMAIN] D_DATA
@@ -14,7 +13,11 @@
 # [ERROR_CONTRACT] tqcenter初始化失败->RuntimeError; 单批下载失败->log+继续(不中断); ClickHouse写入失败->log+继续
 # [TESTS] tests/zephyr/data/test_sector_kline_downloader.py
 # [TTL] task_bound
-"""880xxx 板块指数K线下载器——盘后从 tqcenter 下载日K/分钟K写入 ClickHouse。
+"""
+
+
+
+880xxx 板块指数K线下载器——盘后从 tqcenter 下载日K/分钟K写入 ClickHouse。
 
 支持周期：1d（日K立即可用）/ 1m / 5m（需通达信客户端先下载扩展市场分钟线）。
 15m/30m/60m 不被 tqcenter 直接支持，后续从 1m/5m 合成。
@@ -24,6 +27,55 @@
     python -m zephyr.data.sector_kline_downloader --period 1d --days 30
     python -m zephyr.data.sector_kline_downloader --period 1m --days 1
     python -m zephyr.data.sector_kline_downloader --period all      # 全周期
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: tq 参数
+#   fields: 参数 tq（无注解）
+#   code: sector_kline_downloader.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: sector_codes 参数
+#   fields: 参数 sector_codes，类型注解 list[str]
+#   code: sector_kline_downloader.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: period 参数
+#   fields: 参数 period，类型注解 str
+#   code: sector_kline_downloader.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: count 参数
+#   fields: 参数 count，类型注解 int
+#   code: sector_kline_downloader.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① download_period
+#   name_en: download_period
+#   intro: 下载指定周期的K线数据。
+#   desc: 下载指定周期的K线数据。；源码 L267-L292
+#   inputs: tq sector_codes period count
+#   outputs: int
+# - id: A2
+#   name_zh: ② main
+#   name_en: main
+#   intro: 盘后K线下载入口。
+#   desc: 盘后K线下载入口。；源码 L295-L319
+#   inputs: 无参数
+#   outputs: int
+# 层: 输出
+# - id: O1
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

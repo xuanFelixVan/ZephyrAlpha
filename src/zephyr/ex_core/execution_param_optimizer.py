@@ -14,7 +14,11 @@
 # [TESTS] tests/ex_core/test_execution_param_optimizer.py
 # [A_module] module_id=MOD-EX-064 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""ExecutionParamOptimizer — 执行运营自优化器（MOD-EX-064）。
+"""
+
+
+
+ExecutionParamOptimizer — 执行运营自优化器（MOD-EX-064）。
 
 B1-00218（AUD-DRAFT-001-DIGEST P2 波 P2-W08，CAND-EX-010，C2 C-026）：执行运
 营自优化——周期读 TCA 与成交质量（注入 tca_reader）+ optuna 搜索下单算法
@@ -29,6 +33,48 @@ canonical 承接：CAND-EX-011（同为 C-026 执行运营自优化，B10/B1 两
 费其周期读数，不重算 TCA）；execution_strategy_selector=策略选择规则（本
 件=参数寻优与人工确认队列，零交集）；风控硬阈值由风控域自持（本件仅经白
 名单拦截，绝不越权改写）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: param_space 参数
+#   fields: 参数 param_space（无注解）
+#   code: execution_param_optimizer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: whitelist 参数
+#   fields: 参数 whitelist（无注解）
+#   code: execution_param_optimizer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: tca_reader 参数
+#   fields: 参数 tca_reader（无注解）
+#   code: execution_param_optimizer.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: study_runner 参数
+#   fields: 参数 study_runner（无注解）
+#   code: execution_param_optimizer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ExecutionParamOptimizer
+#   name_en: ExecutionParamOptimizer
+#   intro: 执行运营自优化器（TCA 周期读数 + 参数搜索 + 人工确认 + 白名单拦截）。
+#   desc: 执行运营自优化器（TCA 周期读数 + 参数搜索 + 人工确认 + 白名单拦截）。；公共方法（定义序）: run_cycle, confirm, reject, active_params, proposal_stat…
+#   inputs: param_space whitelist tca_reader study_runner objective_fn clock audi…
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: ExecutionParamOptimizer
+#   downstream: 运行时装配批（执行参数周期优化调度 / 人工确认通道接线 / 风控硬阈值白名单声明）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -113,10 +159,7 @@ class ExecutionParamOptimizer:
             Mapping[str, object],
         ]
         | None = None,
-        objective_fn: Callable[
-            [Mapping[str, object], tuple[TcaSnapshot, ...]], Decimal
-        ]
-        | None = None,
+        objective_fn: Callable[[Mapping[str, object], tuple[TcaSnapshot, ...]], Decimal] | None = None,
         clock: Callable[[], datetime.datetime] | None = None,
         audit_sink: Callable[[dict], None] | None = None,
     ) -> None:
@@ -130,9 +173,7 @@ class ExecutionParamOptimizer:
             if not isinstance(spec, ParamSpec) or spec.name != name:
                 raise ExecutionOptimizerError(f"参数声明不符: {name!r}")
             if name not in whitelist:
-                raise ExecutionOptimizerError(
-                    f"参数 {name!r} 不在白名单（风控硬阈值等非白名单参数禁止自动优化）"
-                )
+                raise ExecutionOptimizerError(f"参数 {name!r} 不在白名单（风控硬阈值等非白名单参数禁止自动优化）")
             if not spec.candidates:
                 raise ExecutionOptimizerError(f"参数 {name!r} 候选为空")
             self._space[name] = spec
@@ -143,9 +184,7 @@ class ExecutionParamOptimizer:
         self._clock = clock or datetime.datetime.now
         self._audit_sink = audit_sink
         # 生效参数初值=各参数首候选（确定性默认）；仅人工确认后才会改变
-        self._defaults: dict[str, object] = {
-            name: spec.candidates[0] for name, spec in self._space.items()
-        }
+        self._defaults: dict[str, object] = {name: spec.candidates[0] for name, spec in self._space.items()}
         self._active: dict[str, object] = dict(self._defaults)
         self._proposals: dict[str, OptimizationProposal] = {}
 
@@ -172,18 +211,14 @@ class ExecutionParamOptimizer:
         """搜索结果白名单/候选校验（第二道闸：拦截风控硬阈值等越权参数）。"""
         for key, value in found.items():
             if key not in self._whitelist:
-                raise ExecutionOptimizerError(
-                    f"搜索结果含白名单外参数 {key!r}（风控硬阈值拦截，禁止自动优化）"
-                )
+                raise ExecutionOptimizerError(f"搜索结果含白名单外参数 {key!r}（风控硬阈值拦截，禁止自动优化）")
             spec = self._space.get(key)
             if spec is None:
                 raise ExecutionOptimizerError(f"搜索结果含未声明参数 {key!r}")
             if value not in spec.candidates:
                 raise ExecutionOptimizerError(f"参数 {key!r} 取值 {value!r} 不在候选空间")
 
-    def _grid_search(
-        self, objective: Callable[[Mapping[str, object]], Decimal]
-    ) -> tuple[dict, Decimal]:
+    def _grid_search(self, objective: Callable[[Mapping[str, object]], Decimal]) -> tuple[dict, Decimal]:
         """降级网格搜索：按 (参数名, 候选声明序) 确定性遍历，取最小目标。"""
         names = sorted(self._space)
         best_params: dict | None = None
@@ -245,7 +280,9 @@ class ExecutionParamOptimizer:
         self._proposals[proposal_id] = proposal
         _log.info(
             "优化提案入人工确认队列: %s source=%s objective=%s",
-            proposal_id, source, best_value,
+            proposal_id,
+            source,
+            best_value,
         )
         return proposal
 
@@ -269,24 +306,28 @@ class ExecutionParamOptimizer:
         self._proposals[proposal_id] = replace(proposal, status=ProposalStatus.CONFIRMED)
         self._active = dict(proposal.params)
         _log.info("提案已人工确认生效: %s (operator=%s)", proposal_id, confirmed_by)
-        self._audit({
-            "event": "proposal_confirmed",
-            "proposal_id": proposal_id,
-            "operator": confirmed_by,
-            "at": self._clock(),
-        })
+        self._audit(
+            {
+                "event": "proposal_confirmed",
+                "proposal_id": proposal_id,
+                "operator": confirmed_by,
+                "at": self._clock(),
+            }
+        )
 
     def reject(self, proposal_id: str, rejected_by: str) -> None:
         """人工驳回：仅 PENDING 可驳回；生效参数保持不变。"""
         proposal = self._pending_of(proposal_id, rejected_by)
         self._proposals[proposal_id] = replace(proposal, status=ProposalStatus.REJECTED)
         _log.info("提案已人工驳回: %s (operator=%s)", proposal_id, rejected_by)
-        self._audit({
-            "event": "proposal_rejected",
-            "proposal_id": proposal_id,
-            "operator": rejected_by,
-            "at": self._clock(),
-        })
+        self._audit(
+            {
+                "event": "proposal_rejected",
+                "proposal_id": proposal_id,
+                "operator": rejected_by,
+                "at": self._clock(),
+            }
+        )
 
     # ── 查询 ─────────────────────────────────────────────────────────────
 

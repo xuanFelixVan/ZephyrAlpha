@@ -23,7 +23,11 @@
 # A4: T+1 可用更新——align_to_broker=True 时以券商端交割持仓+资金为权威 rebuild_from_broker(T+1 交割确认后系统账对齐; 默认 False 仅报告不动账)
 # O1: EodReconcileResult(positions_matched/cash_diff/expired_order_ids/t1_aligned/matched)——调用方留痕+告警路由
 # [/ALGO_FLOW]
-"""D_EX_CORE — 盘后全量对账（40 号 §6.1 gap 10 Phase 2，PositionReconciler 扩展）。
+"""
+
+
+
+D_EX_CORE — 盘后全量对账（40 号 §6.1 gap 10 Phase 2，PositionReconciler 扩展）。
 
 40 号 §6.1 gap 10：券商对账单 vs 系统持仓 vs 资金三方核对、T+1 可用更新、
 未成交订单日终转 EXPIRED。查重分工：交易/持仓/资金三方流水级收口（含费用
@@ -40,6 +44,48 @@ production）承载，本件不重复实现流水级匹配——本件是执行�
 工程裁定：默认报告态（dry-run 语义）——④以券商为准动账属资金安全操作，
 须装配层显式 align_to_broker=True 且券商端交割持仓齐备，否则 Fail-Closed。
 本模块不挂调度、不接真实券商通道，全部数据源注入。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: position_reconciler 参数
+#   fields: 参数 position_reconciler（无注解）
+#   code: eod_reconciliation.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: order_manager 参数
+#   fields: 参数 order_manager（无注解）
+#   code: eod_reconciliation.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: position_tracker 参数
+#   fields: 参数 position_tracker（无注解）
+#   code: eod_reconciliation.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: cash_tolerance 参数
+#   fields: 参数 cash_tolerance（无注解）
+#   code: eod_reconciliation.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① EodReconciler
+#   name_en: EodReconciler
+#   intro: 盘后全量对账器（40 号 §6.1 gap 10 Phase 2）。
+#   desc: 盘后全量对账器（40 号 §6.1 gap 10 Phase 2）。 Args: position_reconciler: 持仓双源对账器（系统账 vs 券商账，注入即生效）。…；公共方法（定义序）: run_eod；…
+#   inputs: position_reconciler order_manager position_tracker cash_tolerance clo…
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: EodReconciler
+#   downstream: 运行时装配批(盘后 15:30 任务链/日终调度接线)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -14,7 +14,11 @@
 # [TESTS] tests/data_eng/test_stream_processing_engine.py
 # [A_module] module_id=MOD-DATENG-004 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""StreamProcessingEngine — 轻量单机流处理引擎（MOD-DATENG-004）。
+"""
+
+
+
+StreamProcessingEngine — 轻量单机流处理引擎（MOD-DATENG-004）。
 
 B5-07234（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATENG-007，B5）：事件时
 间**滚动/会话窗口**聚合（窗口注册 + 触发判定）+ 水位线与迟到数据处理
@@ -24,6 +28,48 @@ B5-07234（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATENG-007，B5）：事件
 边界声明（蓝图 §0）：kline_resampler（D_DATA）为 K 线周期重采样件——本
 件是通用事件时间窗口引擎，不重采样行情周期；引擎不拉取事件（事件流由
 调用方注入 ingest），聚合输出经注入 sink 回调，不直连存储。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: allowed_lateness 参数
+#   fields: 参数 allowed_lateness（无注解）
+#   code: stream_processing_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: sink 参数
+#   fields: 参数 sink（无注解）
+#   code: stream_processing_engine.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: side_output_sink 参数
+#   fields: 参数 side_output_sink（无注解）
+#   code: stream_processing_engine.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: backpressure_sink 参数
+#   fields: 参数 backpressure_sink（无注解）
+#   code: stream_processing_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① StreamProcessingEngine
+#   name_en: StreamProcessingEngine
+#   intro: 单机事件时间窗口引擎（注册 + ingest + poll 触发 + flush 排空）。
+#   desc: 单机事件时间窗口引擎（注册 + ingest + poll 触发 + flush 排空）。；公共方法（定义序）: register_window, watermark, ingest, poll, flush, sta…
+#   inputs: allowed_lateness sink side_output_sink backpressure_sink max_queue
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: StreamProcessingEngine
+#   downstream: 运行时装配批（行情事件流接 kline_resampler 上游 / 聚合指标落指标sink / 背压接流控）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -248,15 +294,11 @@ class StreamProcessingEngine:
         for (spec_name, key, start), (count, total) in self._tumbling.items():
             spec = self._specs[spec_name]
             assert spec.size is not None
-            emitted.append(
-                WindowAggregate(spec_name, key, start, start + spec.size, count, total)
-            )
+            emitted.append(WindowAggregate(spec_name, key, start, start + spec.size, count, total))
         self._tumbling.clear()
         for (spec_name, key), sessions in self._sessions.items():
             for s in sessions:
-                emitted.append(
-                    WindowAggregate(spec_name, key, s.start, s.last_ts + s.gap, s.count, s.total)
-                )
+                emitted.append(WindowAggregate(spec_name, key, s.start, s.last_ts + s.gap, s.count, s.total))
         self._sessions.clear()
         emitted.sort(key=lambda a: (a.spec_name, a.key, a.window_start))
         self._emit(emitted)
@@ -317,7 +359,8 @@ class StreamProcessingEngine:
     def _close_tumbling(self, wm: datetime.datetime) -> list[WindowAggregate]:
         out: list[WindowAggregate] = []
         due = [
-            k for k in self._tumbling
+            k
+            for k in self._tumbling
             if k[2] + self._specs[k[0]].size <= wm  # type: ignore[operator]
         ]
         for k in sorted(due):
@@ -334,9 +377,7 @@ class StreamProcessingEngine:
             keep: list[_SessionState] = []
             for s in sessions:
                 if s.last_ts + s.gap <= wm:
-                    out.append(
-                        WindowAggregate(sk[0], sk[1], s.start, s.last_ts + s.gap, s.count, s.total)
-                    )
+                    out.append(WindowAggregate(sk[0], sk[1], s.start, s.last_ts + s.gap, s.count, s.total))
                 else:
                     keep.append(s)
             self._sessions[sk] = keep

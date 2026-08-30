@@ -14,7 +14,11 @@
 # [TESTS] tests/autonomy/test_kill_switch_orchestrator.py
 # [A_module] module_id=MOD-AU-002 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
-"""KillSwitchOrchestrator — Kill Switch 两级编排器（MOD-AU-002）.
+"""
+
+
+
+KillSwitchOrchestrator — Kill Switch 两级编排器（MOD-AU-002）.
 
 设计真源：15号文（15_autonomy_boundary_risk.md）§3.4 / §4.1-S0.3：
 - 两级：系统级总开关（security/access_control/kill_switch.py，MOD-INF-018）
@@ -35,6 +39,56 @@ scope 语法：
   skills→skill_id；trading→KillSwitchLevel 值（如 CIRCUIT_BREAKER，空=全部五级）；
   rollback→"L1_SESSION:<id>" / "L2_SKILL:<id>" / "L3_GLOBAL:<target>"（L3 需 BREAK_GLASS token，
   无 token 时底层抛错并收入 errors）；capacity→忽略目标（单实例 fuse）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: runtime_dir 参数
+#   fields: 参数 runtime_dir（无注解）
+#   code: kill_switch_orchestrator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: repo_root 参数
+#   fields: 参数 repo_root（无注解）
+#   code: kill_switch_orchestrator.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: register_defaults 参数
+#   fields: 参数 register_defaults（无注解）
+#   code: kill_switch_orchestrator.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: system_switch 参数
+#   fields: 参数 system_switch（无注解）
+#   code: kill_switch_orchestrator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SwitchAdapter
+#   name_en: SwitchAdapter
+#   intro: 域级/系统级开关适配器协议（鸭子类型；
+#   desc: 域级/系统级开关适配器协议（鸭子类型；编排器只依赖本协议）.；公共方法（定义序）: trip, reset, is_tripped；源码 L129-L139
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② KillSwitchOrchestrator
+#   name_en: KillSwitchOrchestrator
+#   intro: Kill Switch 两级编排器（只编排不持态）.
+#   desc: Kill Switch 两级编排器（只编排不持态）. 用法:: orch = KillSwitchOrchestrator() # 默认注册系统级 + 4 套域级开关 orch.…；公共方法（定义序）: registe…
+#   inputs: runtime_dir repo_root register_defaults system_switch project_root
+#   outputs: 返回值
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: SwitchAdapter, KillSwitchOrchestrator
+#   downstream: tests/autonomy/test_kill_switch_orchestrator.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -117,9 +171,7 @@ class _SystemSwitchAdapter:
         self._switch = switch
 
     def trip(self, scope: str, reason: str) -> None:
-        self._switch.trigger(
-            trigger_name="orchestrator", reason=reason or f"orchestrator system trip: {scope}"
-        )
+        self._switch.trigger(trigger_name="orchestrator", reason=reason or f"orchestrator system trip: {scope}")
 
     def reset(self, scope: str) -> None:
         self._switch.reset()
@@ -285,9 +337,7 @@ class KillSwitchOrchestrator:
         self._domains: dict[str, SwitchAdapter] = {}
         self._audit_handle: Any = None
         if register_defaults:
-            failures = self.register_default_switches(
-                system_switch=system_switch, project_root=project_root
-            )
+            failures = self.register_default_switches(system_switch=system_switch, project_root=project_root)
             if failures:
                 logger.warning("KillSwitchOrchestrator 默认开关注册存在失败项: %r", failures)
 
@@ -337,9 +387,7 @@ class KillSwitchOrchestrator:
         try:
             from zephyr.infrastructure.rollback.kill_switch import KillSwitchManager
 
-            manager = KillSwitchManager(
-                project_root=Path(project_root) if project_root else None
-            )
+            manager = KillSwitchManager(project_root=Path(project_root) if project_root else None)
             self.register_domain("rollback", _RollbackSwitchAdapter(manager))
         except Exception as exc:  # noqa: BLE001
             failures["rollback"] = repr(exc)
@@ -355,9 +403,7 @@ class KillSwitchOrchestrator:
 
     # ── 核心 API ──────────────────────────────────────────────
 
-    def trip(
-        self, level: str | SwitchLevel, scope: str, reason: str = ""
-    ) -> OrchestrationResult:
+    def trip(self, level: str | SwitchLevel, scope: str, reason: str = "") -> OrchestrationResult:
         """拉闸（永不抛异常）.
 
         level="system"：拉系统级总开关，并向支持全域拉闸的域级开关传播（一致生效）。
@@ -372,22 +418,27 @@ class KillSwitchOrchestrator:
                 result = self._trip_domain(scope_str, str(reason))
             else:
                 result = self._result(
-                    "trip", lvl, scope_str, False,
+                    "trip",
+                    lvl,
+                    scope_str,
+                    False,
                     reason=str(reason),
                     errors={"level": f"未知级别: {level!r}（合法值: system/domain）"},
                 )
         except Exception as exc:  # noqa: BLE001 — ERROR_CONTRACT：永不抛异常
             result = self._result(
-                "trip", lvl, scope_str, False,
-                reason=str(reason), errors={"orchestrator": repr(exc)},
+                "trip",
+                lvl,
+                scope_str,
+                False,
+                reason=str(reason),
+                errors={"orchestrator": repr(exc)},
             )
         severity = "critical" if result.level == SwitchLevel.SYSTEM.value else "elevated"
         self._trace(result, severity=severity, threat_category="kill_switch_trip")
         return result
 
-    def reset(
-        self, level: str | SwitchLevel, scope: str, approver: str = ""
-    ) -> OrchestrationResult:
+    def reset(self, level: str | SwitchLevel, scope: str, approver: str = "") -> OrchestrationResult:
         """复位（永不抛异常；approver 非空 = Owner 批准语义，既有不变量不破）."""
         lvl = _level_value(level)
         scope_str = str(scope or "")
@@ -395,7 +446,10 @@ class KillSwitchOrchestrator:
         try:
             if not approver_str:
                 result = self._result(
-                    "reset", lvl, scope_str, False,
+                    "reset",
+                    lvl,
+                    scope_str,
+                    False,
                     errors={"approver": "复位须 Owner 批准：approver 不能为空"},
                 )
             elif lvl == SwitchLevel.SYSTEM.value:
@@ -404,20 +458,26 @@ class KillSwitchOrchestrator:
                 result = self._reset_domain(scope_str, approver_str)
             else:
                 result = self._result(
-                    "reset", lvl, scope_str, False, approver=approver_str,
+                    "reset",
+                    lvl,
+                    scope_str,
+                    False,
+                    approver=approver_str,
                     errors={"level": f"未知级别: {level!r}（合法值: system/domain）"},
                 )
         except Exception as exc:  # noqa: BLE001
             result = self._result(
-                "reset", lvl, scope_str, False,
-                approver=approver_str, errors={"orchestrator": repr(exc)},
+                "reset",
+                lvl,
+                scope_str,
+                False,
+                approver=approver_str,
+                errors={"orchestrator": repr(exc)},
             )
         self._trace(result, severity="info", threat_category="kill_switch_reset")
         return result
 
-    def route_incident(
-        self, incident_kind: str, reason: str = "", target: str = ""
-    ) -> OrchestrationResult:
+    def route_incident(self, incident_kind: str, reason: str = "", target: str = "") -> OrchestrationResult:
         """按 §3.4 收敛规则路由事故信号.
 
         funds/trading → 交易级先行，失败则系统级兜底；codebase/session → 系统级；
@@ -429,9 +489,7 @@ class KillSwitchOrchestrator:
             first = self.trip(SwitchLevel.DOMAIN, scope, reason or "资金异常")
             if first.success:
                 return first
-            fallback = self.trip(
-                SwitchLevel.SYSTEM, "global", f"交易级拉闸失败，系统级兜底: {reason or '资金异常'}"
-            )
+            fallback = self.trip(SwitchLevel.SYSTEM, "global", f"交易级拉闸失败，系统级兜底: {reason or '资金异常'}")
             return replace(
                 fallback,
                 errors={**fallback.errors, "trading_first_attempt": str(first.errors)},
@@ -441,7 +499,10 @@ class KillSwitchOrchestrator:
         if kind == "domain":
             if not target:
                 result = self._result(
-                    "trip", SwitchLevel.DOMAIN.value, "", False,
+                    "trip",
+                    SwitchLevel.DOMAIN.value,
+                    "",
+                    False,
                     reason=str(reason),
                     errors={"target": "domain 事故须指定 target=<域名>[:<目标>]"},
                 )
@@ -451,7 +512,10 @@ class KillSwitchOrchestrator:
         if kind == "global":
             return self.trip(SwitchLevel.SYSTEM, "global", reason or "全局事故")
         result = self._result(
-            "trip", SwitchLevel.SYSTEM.value, "", False,
+            "trip",
+            SwitchLevel.SYSTEM.value,
+            "",
+            False,
             reason=str(reason),
             errors={"incident_kind": f"未知事故类型: {incident_kind!r}"},
         )
@@ -552,8 +616,14 @@ class KillSwitchOrchestrator:
                 errors[name] = repr(exc)
         success = "system" in tripped and not errors
         return self._result(
-            "trip", SwitchLevel.SYSTEM.value, scope, success,
-            reason=reason, tripped=tripped, skipped=skipped, errors=errors,
+            "trip",
+            SwitchLevel.SYSTEM.value,
+            scope,
+            success,
+            reason=reason,
+            tripped=tripped,
+            skipped=skipped,
+            errors=errors,
         )
 
     def _trip_domain(self, scope: str, reason: str) -> OrchestrationResult:
@@ -570,8 +640,13 @@ class KillSwitchOrchestrator:
             except Exception as exc:  # noqa: BLE001
                 errors[name] = repr(exc)
         return self._result(
-            "trip", SwitchLevel.DOMAIN.value, scope, not errors and bool(tripped),
-            reason=reason, tripped=tripped, errors=errors,
+            "trip",
+            SwitchLevel.DOMAIN.value,
+            scope,
+            not errors and bool(tripped),
+            reason=reason,
+            tripped=tripped,
+            errors=errors,
         )
 
     def _reset_system(self, scope: str, approver: str) -> OrchestrationResult:
@@ -601,8 +676,14 @@ class KillSwitchOrchestrator:
                 errors["system"] = repr(exc)
         success = "system" in tripped and not errors
         return self._result(
-            "reset", SwitchLevel.SYSTEM.value, scope, success,
-            approver=approver, tripped=tripped, skipped=skipped, errors=errors,
+            "reset",
+            SwitchLevel.SYSTEM.value,
+            scope,
+            success,
+            approver=approver,
+            tripped=tripped,
+            skipped=skipped,
+            errors=errors,
         )
 
     def _reset_domain(self, scope: str, approver: str) -> OrchestrationResult:
@@ -622,8 +703,13 @@ class KillSwitchOrchestrator:
             except Exception as exc:  # noqa: BLE001
                 errors[name] = repr(exc)
         return self._result(
-            "reset", SwitchLevel.DOMAIN.value, scope, not errors and bool(tripped),
-            approver=approver, tripped=tripped, errors=errors,
+            "reset",
+            SwitchLevel.DOMAIN.value,
+            scope,
+            not errors and bool(tripped),
+            approver=approver,
+            tripped=tripped,
+            errors=errors,
         )
 
     @staticmethod

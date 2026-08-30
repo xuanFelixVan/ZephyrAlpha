@@ -14,7 +14,10 @@
 # [TESTS] tests/data_eng/test_quality_sla_breach_predictor.py
 # [A_module] module_id=MOD-DATENG-003 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""QualitySlaBreachPredictor — 质量 SLA 违约预测器（MOD-DATENG-003）。
+"""
+
+
+QualitySlaBreachPredictor — 质量 SLA 违约预测器（MOD-DATENG-003）。
 
 B14-04723（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATENG-006，A9运维架
 构）：基于历史达成率与消耗速率**趋势外推**的数据质量 SLO（数据新鲜度/
@@ -25,6 +28,48 @@ B14-04723（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATENG-006，A9运维架
 边界声明（蓝图 §0）：sla_monitor（D_INFRASTRUCTURE）为运行时 SLI 采集
 件——本件不采集指标，只对注入的达成率序列做外推预测；告警经注入
 alert_sink 回调，本件不接告警路由。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: quality_sla_breach_predictor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: alert_sink 参数
+#   fields: 参数 alert_sink（无注解）
+#   code: quality_sla_breach_predictor.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: elevated_threshold 参数
+#   fields: 参数 elevated_threshold（无注解）
+#   code: quality_sla_breach_predictor.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: critical_threshold 参数
+#   fields: 参数 critical_threshold（无注解）
+#   code: quality_sla_breach_predictor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① QualitySlaBreachPredictor
+#   name_en: QualitySlaBreachPredictor
+#   intro: 质量 SLO 违约预测件（注册表 + 趋势外推 + burn-rate 分级 + 告警）。
+#   desc: 质量 SLO 违约预测件（注册表 + 趋势外推 + burn-rate 分级 + 告警）。；公共方法（定义序）: register_slo, forecast；源码 L156-L288
+#   inputs: clock alert_sink elevated_threshold critical_threshold
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: QualitySlaBreachPredictor
+#   downstream: 运行时装配批（数据新鲜度/完整性/信号产出 SLO 巡检挂调度 / 告警接 alert 路由）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -92,14 +137,12 @@ def _linear_fit(xs: tuple[float, ...], ys: tuple[float, ...]) -> tuple[float, fl
     if var_x == 0.0:
         # 全部观测同一时刻：无法外推速率，斜率按 0 处理
         return 0.0, mean_y
-    cov = sum((x - mean_x) * (y - mean_y) for x, y in zip(xs, ys))
+    cov = sum((x - mean_x) * (y - mean_y) for x, y in zip(xs, ys, strict=False))
     slope = cov / var_x
     return slope, mean_y - slope * mean_x
 
 
-def _budget_crossing_x(
-    xs: tuple[float, ...], ys: tuple[float, ...], allowed: float
-) -> float | None:
+def _budget_crossing_x(xs: tuple[float, ...], ys: tuple[float, ...], allowed: float) -> float | None:
     """错误预算耗尽时刻（左黎曼累计消耗穿越 allowed 的线性插值 x 偏移秒）。"""
     consumed = 0.0
     for i in range(len(xs) - 1):
@@ -176,9 +219,7 @@ class QualitySlaBreachPredictor:
 
         span = xs[-1] - xs[0]
         allowed = budget_rate * span
-        consumed = sum(
-            (1.0 - ys[i]) * (xs[i + 1] - xs[i]) for i in range(len(xs) - 1)
-        )
+        consumed = sum((1.0 - ys[i]) * (xs[i + 1] - xs[i]) for i in range(len(xs) - 1))
         exhausted = consumed >= allowed > 0.0
 
         if exhausted:

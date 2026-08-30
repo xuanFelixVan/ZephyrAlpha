@@ -14,7 +14,11 @@
 # [TESTS] tests/factor/test_wq_alpha_87.py
 # [A_module] module_id=MOD-L02-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""92 87-Alpha：WorldQuant 101 精选 87 公式库（CAND-FAC-010 / B1-00847，GATE-92-01）。
+"""
+
+
+
+92 87-Alpha：WorldQuant 101 精选 87 公式库（CAND-FAC-010 / B1-00847，GATE-92-01）。
 
 范围裁定：
   - WorldQuant 101 Alphas（Kakushadze & Tulchinsky 2015, arXiv:1511.04310）中
@@ -36,6 +40,41 @@ IC/IR 验证：validate_ic 经 ic_hook 委托（复用 analysis/ic_ir_calc 语�
 register_hook 委托（FactorRegistry/feature_store 接线留装配批）。
 
 依据: §1.2 子模块；construction_backlog_dig.tsv B1-00847；GATE-92-01。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: wq_alpha_87.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ops
+#   name_en: ops
+#   intro: WorldQuant 101 时序/截面算子集（全部 rolling/shift 实现，天然 PIT）。
+#   desc: WorldQuant 101 时序/截面算子集（全部 rolling/shift 实现，天然 PIT）。；公共方法（定义序）: rank, delay, delta, ts_sum, ts_mean, ts_min,…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② WqAlpha87
+#   name_en: WqAlpha87
+#   intro: WorldQuant 101 精选 87 Alpha 公式库门面。
+#   desc: WorldQuant 101 精选 87 Alpha 公式库门面。 用法:: lib = WqAlpha87() values = lib.compute(101, {"open…；公共方法（定义序）: list_al…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: ops, WqAlpha87
+#   downstream: 因子注册表/feature_store（register_all/validate_ic 委托注入点）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -135,7 +174,7 @@ class ops:  # noqa: N801 — 算子命名空间按业界惯例小写
     def ts_rank(df: pd.DataFrame, d: float) -> pd.DataFrame:
         w = _w(d)
         return df.rolling(w, min_periods=w).apply(
-            lambda x: (pd.Series(x).rank(pct=True).iloc[-1] if np.isfinite(x).all() else np.nan),
+            lambda x: pd.Series(x).rank(pct=True).iloc[-1] if np.isfinite(x).all() else np.nan,
             raw=True,
         )
 
@@ -229,7 +268,9 @@ def _alpha_001(d):
 
 
 def _alpha_002(d):
-    return -ops.correlation(ops.rank(ops.delta(ops.log(d["volume"]), 2)), ops.rank((d["close"] - d["open"]) / d["open"]), 6)
+    return -ops.correlation(
+        ops.rank(ops.delta(ops.log(d["volume"]), 2)), ops.rank((d["close"] - d["open"]) / d["open"]), 6
+    )
 
 
 def _alpha_003(d):
@@ -260,12 +301,12 @@ def _alpha_008(d):
 
 def _alpha_009(d):
     dc = ops.delta(d["close"], 1)
-    return _where(0 < ops.ts_min(dc, 5), dc, _where(ops.ts_max(dc, 5) < 0, dc, -dc))
+    return _where(ops.ts_min(dc, 5) > 0, dc, _where(ops.ts_max(dc, 5) < 0, dc, -dc))
 
 
 def _alpha_010(d):
     dc = ops.delta(d["close"], 1)
-    return ops.rank(_where(0 < ops.ts_min(dc, 4), dc, _where(ops.ts_max(dc, 4) < 0, dc, -dc)))
+    return ops.rank(_where(ops.ts_min(dc, 4) > 0, dc, _where(ops.ts_max(dc, 4) < 0, dc, -dc)))
 
 
 def _alpha_011(d):
@@ -294,19 +335,29 @@ def _alpha_016(d):
 
 
 def _alpha_017(d):
-    return ((-ops.rank(ops.ts_rank(d["close"], 10))) * ops.rank(ops.delta(ops.delta(d["close"], 1), 1))) * ops.rank(ops.ts_rank(d["volume"] / d["adv20"], 5))
+    return ((-ops.rank(ops.ts_rank(d["close"], 10))) * ops.rank(ops.delta(ops.delta(d["close"], 1), 1))) * ops.rank(
+        ops.ts_rank(d["volume"] / d["adv20"], 5)
+    )
 
 
 def _alpha_018(d):
-    return -ops.rank(ops.stddev(abs(d["close"] - d["open"]), 5) + (d["close"] - d["open"]) + ops.correlation(d["close"], d["open"], 10))
+    return -ops.rank(
+        ops.stddev(abs(d["close"] - d["open"]), 5)
+        + (d["close"] - d["open"])
+        + ops.correlation(d["close"], d["open"], 10)
+    )
 
 
 def _alpha_019(d):
-    return (-ops.sign((d["close"] - ops.delay(d["close"], 7)) + ops.delta(d["close"], 7))) * (1 + ops.rank(1 + ops.ts_sum(d["returns"], 250)))
+    return (-ops.sign((d["close"] - ops.delay(d["close"], 7)) + ops.delta(d["close"], 7))) * (
+        1 + ops.rank(1 + ops.ts_sum(d["returns"], 250))
+    )
 
 
 def _alpha_020(d):
-    return ((-ops.rank(d["open"] - ops.delay(d["high"], 1))) * ops.rank(d["open"] - ops.delay(d["close"], 1))) * ops.rank(d["open"] - ops.delay(d["low"], 1))
+    return (
+        (-ops.rank(d["open"] - ops.delay(d["high"], 1))) * ops.rank(d["open"] - ops.delay(d["close"], 1))
+    ) * ops.rank(d["open"] - ops.delay(d["low"], 1))
 
 
 def _alpha_021(d):
@@ -336,7 +387,7 @@ def _alpha_026(d):
 
 
 def _alpha_027(d):
-    cond = 0.5 < ops.rank(ops.ts_sum(ops.correlation(ops.rank(d["volume"]), ops.rank(d["vwap"]), 6), 2) / 2.0)
+    cond = ops.rank(ops.ts_sum(ops.correlation(ops.rank(d["volume"]), ops.rank(d["vwap"]), 6), 2) / 2.0) > 0.5
     return _where(cond, -1.0, 1.0)
 
 
@@ -345,21 +396,36 @@ def _alpha_028(d):
 
 
 def _alpha_029(d):
-    inner = ops.rank(ops.rank(ops.scale(ops.log(ops.ts_sum(ops.ts_min(ops.rank(ops.rank(-ops.rank(ops.delta(d["close"] - 1, 5)))), 2), 1)))))
+    inner = ops.rank(
+        ops.rank(
+            ops.scale(
+                ops.log(ops.ts_sum(ops.ts_min(ops.rank(ops.rank(-ops.rank(ops.delta(d["close"] - 1, 5)))), 2), 1))
+            )
+        )
+    )
     return ops.ts_min(inner, 5) + ops.ts_rank(ops.delay(-d["returns"], 6), 5)
 
 
 def _alpha_030(d):
-    signs = ops.sign(d["close"] - ops.delay(d["close"], 1)) + ops.sign(ops.delay(d["close"], 1) - ops.delay(d["close"], 2)) + ops.sign(ops.delay(d["close"], 2) - ops.delay(d["close"], 3))
+    signs = (
+        ops.sign(d["close"] - ops.delay(d["close"], 1))
+        + ops.sign(ops.delay(d["close"], 1) - ops.delay(d["close"], 2))
+        + ops.sign(ops.delay(d["close"], 2) - ops.delay(d["close"], 3))
+    )
     return ((1.0 - ops.rank(signs)) * ops.ts_sum(d["volume"], 5)) / ops.ts_sum(d["volume"], 20)
 
 
 def _alpha_031(d):
-    return (ops.rank(ops.rank(ops.rank(ops.decay_linear(-ops.rank(ops.rank(ops.delta(d["close"], 10))), 10)))) + ops.rank(-ops.delta(d["close"], 3))) + ops.sign(ops.scale(ops.correlation(d["adv20"], d["low"], 12)))
+    return (
+        ops.rank(ops.rank(ops.rank(ops.decay_linear(-ops.rank(ops.rank(ops.delta(d["close"], 10))), 10))))
+        + ops.rank(-ops.delta(d["close"], 3))
+    ) + ops.sign(ops.scale(ops.correlation(d["adv20"], d["low"], 12)))
 
 
 def _alpha_032(d):
-    return ops.scale(ops.ts_mean(d["close"], 7) - d["close"]) + (20 * ops.scale(ops.correlation(d["vwap"], ops.delay(d["close"], 5), 230)))
+    return ops.scale(ops.ts_mean(d["close"], 7) - d["close"]) + (
+        20 * ops.scale(ops.correlation(d["vwap"], ops.delay(d["close"], 5), 230))
+    )
 
 
 def _alpha_033(d):
@@ -367,19 +433,35 @@ def _alpha_033(d):
 
 
 def _alpha_034(d):
-    return ops.rank((1 - ops.rank(ops.stddev(d["returns"], 2) / ops.stddev(d["returns"], 5))) + (1 - ops.rank(ops.delta(d["close"], 1))))
+    return ops.rank(
+        (1 - ops.rank(ops.stddev(d["returns"], 2) / ops.stddev(d["returns"], 5)))
+        + (1 - ops.rank(ops.delta(d["close"], 1)))
+    )
 
 
 def _alpha_035(d):
-    return (ops.ts_rank(d["volume"], 32) * (1 - ops.ts_rank((d["close"] + d["high"]) - d["low"], 16))) * (1 - ops.ts_rank(d["returns"], 32))
+    return (ops.ts_rank(d["volume"], 32) * (1 - ops.ts_rank((d["close"] + d["high"]) - d["low"], 16))) * (
+        1 - ops.ts_rank(d["returns"], 32)
+    )
 
 
 def _alpha_036(d):
-    return (((((2.21 * ops.rank(ops.correlation(d["close"] - d["open"], ops.delay(d["volume"], 1), 15))) + (0.7 * ops.rank(d["open"] - d["close"]))) + (0.73 * ops.rank(ops.ts_rank(ops.delay(-d["returns"], 6), 5)))) + ops.rank(abs(ops.correlation(d["vwap"], d["adv20"], 6)))) + (0.6 * ops.rank((ops.ts_mean(d["close"], 200) - d["open"]) * (d["close"] - d["open"]))))
+    return (
+        (
+            (
+                (2.21 * ops.rank(ops.correlation(d["close"] - d["open"], ops.delay(d["volume"], 1), 15)))
+                + (0.7 * ops.rank(d["open"] - d["close"]))
+            )
+            + (0.73 * ops.rank(ops.ts_rank(ops.delay(-d["returns"], 6), 5)))
+        )
+        + ops.rank(abs(ops.correlation(d["vwap"], d["adv20"], 6)))
+    ) + (0.6 * ops.rank((ops.ts_mean(d["close"], 200) - d["open"]) * (d["close"] - d["open"])))
 
 
 def _alpha_037(d):
-    return ops.rank(ops.correlation(ops.delay(d["open"] - d["close"], 1), d["close"], 200)) + ops.rank(d["open"] - d["close"])
+    return ops.rank(ops.correlation(ops.delay(d["open"] - d["close"], 1), d["close"], 200)) + ops.rank(
+        d["open"] - d["close"]
+    )
 
 
 def _alpha_038(d):
@@ -387,7 +469,9 @@ def _alpha_038(d):
 
 
 def _alpha_039(d):
-    return ((-ops.rank(ops.delta(d["close"], 7) * (1 - ops.rank(ops.decay_linear(d["volume"] / d["adv20"], 9))))) * (1 + ops.rank(ops.ts_sum(d["returns"], 250))))
+    return (-ops.rank(ops.delta(d["close"], 7) * (1 - ops.rank(ops.decay_linear(d["volume"] / d["adv20"], 9))))) * (
+        1 + ops.rank(ops.ts_sum(d["returns"], 250))
+    )
 
 
 def _alpha_040(d):
@@ -411,20 +495,31 @@ def _alpha_044(d):
 
 
 def _alpha_045(d):
-    return -(ops.rank(ops.ts_mean(ops.delay(d["close"], 5), 20)) * ops.correlation(d["close"], d["volume"], 2) * ops.rank(ops.correlation(ops.ts_sum(d["close"], 5), ops.ts_sum(d["close"], 20), 2)))
+    return -(
+        ops.rank(ops.ts_mean(ops.delay(d["close"], 5), 20))
+        * ops.correlation(d["close"], d["volume"], 2)
+        * ops.rank(ops.correlation(ops.ts_sum(d["close"], 5), ops.ts_sum(d["close"], 20), 2))
+    )
 
 
 def _alpha_046(d):
-    expr = ((ops.delay(d["close"], 20) - ops.delay(d["close"], 10)) / 10) - ((ops.delay(d["close"], 10) - d["close"]) / 10)
-    return _where(0.25 < expr, -1.0, _where(expr < 0, 1.0, -(d["close"] - ops.delay(d["close"], 1))))
+    expr = ((ops.delay(d["close"], 20) - ops.delay(d["close"], 10)) / 10) - (
+        (ops.delay(d["close"], 10) - d["close"]) / 10
+    )
+    return _where(expr > 0.25, -1.0, _where(expr < 0, 1.0, -(d["close"] - ops.delay(d["close"], 1))))
 
 
 def _alpha_047(d):
-    return (((ops.rank(1 / d["close"]) * d["volume"]) / d["adv20"]) * ((d["high"] * ops.rank(d["high"] - d["close"])) / ops.ts_mean(d["high"], 5))) - ops.rank(d["vwap"] - ops.delay(d["vwap"], 5))
+    return (
+        ((ops.rank(1 / d["close"]) * d["volume"]) / d["adv20"])
+        * ((d["high"] * ops.rank(d["high"] - d["close"])) / ops.ts_mean(d["high"], 5))
+    ) - ops.rank(d["vwap"] - ops.delay(d["vwap"], 5))
 
 
 def _alpha_049(d):
-    expr = ((ops.delay(d["close"], 20) - ops.delay(d["close"], 10)) / 10) - ((ops.delay(d["close"], 10) - d["close"]) / 10)
+    expr = ((ops.delay(d["close"], 20) - ops.delay(d["close"], 10)) / 10) - (
+        (ops.delay(d["close"], 10) - d["close"]) / 10
+    )
     return _where(expr < -0.1, 1.0, -(d["close"] - ops.delay(d["close"], 1)))
 
 
@@ -433,12 +528,17 @@ def _alpha_050(d):
 
 
 def _alpha_051(d):
-    expr = ((ops.delay(d["close"], 20) - ops.delay(d["close"], 10)) / 10) - ((ops.delay(d["close"], 10) - d["close"]) / 10)
+    expr = ((ops.delay(d["close"], 20) - ops.delay(d["close"], 10)) / 10) - (
+        (ops.delay(d["close"], 10) - d["close"]) / 10
+    )
     return _where(expr < -0.05, 1.0, -(d["close"] - ops.delay(d["close"], 1)))
 
 
 def _alpha_052(d):
-    return (((-ops.ts_min(d["low"], 5)) + ops.delay(ops.ts_min(d["low"], 5), 5)) * ops.rank((ops.ts_sum(d["returns"], 240) - ops.ts_sum(d["returns"], 20)) / 220)) * ops.ts_rank(d["volume"], 5)
+    return (
+        ((-ops.ts_min(d["low"], 5)) + ops.delay(ops.ts_min(d["low"], 5), 5))
+        * ops.rank((ops.ts_sum(d["returns"], 240) - ops.ts_sum(d["returns"], 20)) / 220)
+    ) * ops.ts_rank(d["volume"], 5)
 
 
 def _alpha_053(d):
@@ -450,7 +550,11 @@ def _alpha_054(d):
 
 
 def _alpha_055(d):
-    return -ops.correlation(ops.rank((d["close"] - ops.ts_min(d["low"], 12)) / (ops.ts_max(d["high"], 12) - ops.ts_min(d["low"], 12))), ops.rank(d["volume"]), 6)
+    return -ops.correlation(
+        ops.rank((d["close"] - ops.ts_min(d["low"], 12)) / (ops.ts_max(d["high"], 12) - ops.ts_min(d["low"], 12))),
+        ops.rank(d["volume"]),
+        6,
+    )
 
 
 def _alpha_057(d):
@@ -458,33 +562,61 @@ def _alpha_057(d):
 
 
 def _alpha_060(d):
-    return -(2 * ops.scale(ops.rank((((d["close"] - d["low"]) - (d["high"] - d["close"])) / (d["high"] - d["low"])) * d["volume"])) - ops.scale(ops.rank(ops.ts_argmax(d["close"], 10))))
+    return -(
+        2
+        * ops.scale(
+            ops.rank((((d["close"] - d["low"]) - (d["high"] - d["close"])) / (d["high"] - d["low"])) * d["volume"])
+        )
+        - ops.scale(ops.rank(ops.ts_argmax(d["close"], 10)))
+    )
 
 
 def _alpha_061(d):
-    return _boolf(ops.rank(d["vwap"] - ops.ts_min(d["vwap"], 16.1219)) < ops.rank(ops.correlation(d["vwap"], d["adv180"], 17.9282)))
+    return _boolf(
+        ops.rank(d["vwap"] - ops.ts_min(d["vwap"], 16.1219))
+        < ops.rank(ops.correlation(d["vwap"], d["adv180"], 17.9282))
+    )
 
 
 def _alpha_062(d):
-    inner_cmp = _boolf((ops.rank(d["open"]) + ops.rank(d["open"])) < (ops.rank((d["high"] + d["low"]) / 2) + ops.rank(d["high"])))
-    return _boolf(ops.rank(ops.correlation(d["vwap"], ops.ts_sum(d["adv20"], 22.4101), 9.91009)) < ops.rank(inner_cmp)) * -1
+    inner_cmp = _boolf(
+        (ops.rank(d["open"]) + ops.rank(d["open"])) < (ops.rank((d["high"] + d["low"]) / 2) + ops.rank(d["high"]))
+    )
+    return (
+        _boolf(ops.rank(ops.correlation(d["vwap"], ops.ts_sum(d["adv20"], 22.4101), 9.91009)) < ops.rank(inner_cmp))
+        * -1
+    )
 
 
 def _alpha_064(d):
     mix1 = (d["open"] * 0.178404) + (d["low"] * (1 - 0.178404))
     mix2 = (((d["high"] + d["low"]) / 2) * 0.178404) + (d["vwap"] * (1 - 0.178404))
-    return _boolf(ops.rank(ops.correlation(ops.ts_sum(mix1, 12.7054), ops.ts_sum(d["adv120"], 12.7054), 16.6208)) < ops.rank(ops.delta(mix2, 3.69741))) * -1
+    return (
+        _boolf(
+            ops.rank(ops.correlation(ops.ts_sum(mix1, 12.7054), ops.ts_sum(d["adv120"], 12.7054), 16.6208))
+            < ops.rank(ops.delta(mix2, 3.69741))
+        )
+        * -1
+    )
 
 
 def _alpha_065(d):
     mix = (d["open"] * 0.00817205) + (d["vwap"] * (1 - 0.00817205))
-    return _boolf(ops.rank(ops.correlation(mix, ops.ts_sum(d["adv60"], 8.6911), 6.40374)) < ops.rank(d["open"] - ops.ts_min(d["open"], 14.2415))) * -1
+    return (
+        _boolf(
+            ops.rank(ops.correlation(mix, ops.ts_sum(d["adv60"], 8.6911), 6.40374))
+            < ops.rank(d["open"] - ops.ts_min(d["open"], 14.2415))
+        )
+        * -1
+    )
 
 
 def _alpha_066(d):
     leg1 = ops.rank(ops.decay_linear(ops.delta(d["vwap"], 3.51013), 7.23052))
-    mix = ((d["low"] * 0.96633) + (d["low"] * (1 - 0.96633)))
-    leg2 = ops.ts_rank(ops.decay_linear((mix - d["vwap"]) / (d["open"] - ((d["high"] + d["low"]) / 2)), 11.4157), 6.72611)
+    mix = (d["low"] * 0.96633) + (d["low"] * (1 - 0.96633))
+    leg2 = ops.ts_rank(
+        ops.decay_linear((mix - d["vwap"]) / (d["open"] - ((d["high"] + d["low"]) / 2)), 11.4157), 6.72611
+    )
     return (leg1 + leg2) * -1
 
 
@@ -495,14 +627,23 @@ def _alpha_068(d):
 
 
 def _alpha_071(d):
-    leg1 = ops.ts_rank(ops.decay_linear(ops.correlation(ops.ts_rank(d["close"], 3.43976), ops.ts_rank(d["adv180"], 12.0647), 18.0175), 4.20501), 15.6948)
-    leg2 = ops.ts_rank(ops.decay_linear(ops.rank((d["low"] + d["open"]) - (d["vwap"] + d["vwap"])) ** 2, 16.4662), 4.4388)
+    leg1 = ops.ts_rank(
+        ops.decay_linear(
+            ops.correlation(ops.ts_rank(d["close"], 3.43976), ops.ts_rank(d["adv180"], 12.0647), 18.0175), 4.20501
+        ),
+        15.6948,
+    )
+    leg2 = ops.ts_rank(
+        ops.decay_linear(ops.rank((d["low"] + d["open"]) - (d["vwap"] + d["vwap"])) ** 2, 16.4662), 4.4388
+    )
     return _df_max(leg1, leg2)
 
 
 def _alpha_072(d):
     num = ops.rank(ops.decay_linear(ops.correlation((d["high"] + d["low"]) / 2, d["adv40"], 8.93345), 10.1519))
-    den = ops.rank(ops.correlation(ops.ts_rank((d["high"] + d["low"]) / 2, 3.72469), ops.ts_rank(d["volume"], 18.5188), 6.86671))
+    den = ops.rank(
+        ops.correlation(ops.ts_rank((d["high"] + d["low"]) / 2, 3.72469), ops.ts_rank(d["volume"], 18.5188), 6.86671)
+    )
     return num / den
 
 
@@ -521,7 +662,10 @@ def _alpha_074(d):
 
 
 def _alpha_075(d):
-    return _boolf(ops.rank(ops.correlation(d["vwap"], d["volume"], 4.24304)) < ops.rank(ops.correlation(ops.rank(d["low"]), ops.rank(d["adv50"]), 12.4413)))
+    return _boolf(
+        ops.rank(ops.correlation(d["vwap"], d["volume"], 4.24304))
+        < ops.rank(ops.correlation(ops.rank(d["low"]), ops.rank(d["adv50"]), 12.4413))
+    )
 
 
 def _alpha_077(d):
@@ -534,7 +678,7 @@ def _alpha_078(d):
     mix = ((d["low"] * 0.352233) + (d["vwap"] * (1 - 0.352233))) * d["volume"]
     leg1 = ops.rank(ops.correlation(ops.ts_sum(mix, 19.7428), ops.ts_sum(d["adv40"], 19.7428), 6.83313))
     leg2 = ops.rank(ops.correlation(ops.rank(d["vwap"]), ops.rank(d["volume"]), 5.77492))
-    return leg1 ** leg2
+    return leg1**leg2
 
 
 def _alpha_079(d):  # DEGRADED：IndNeutralize 降级全市场 demean
@@ -557,14 +701,18 @@ def _alpha_083(d):
 
 
 def _alpha_084(d):
-    return ops.signed_power(ops.ts_rank(d["vwap"] - ops.ts_max(d["vwap"], 15.3217), 20.7127), ops.delta(d["close"], 4.96796))
+    return ops.signed_power(
+        ops.ts_rank(d["vwap"] - ops.ts_max(d["vwap"], 15.3217), 20.7127), ops.delta(d["close"], 4.96796)
+    )
 
 
 def _alpha_085(d):
     mix = (d["high"] * 0.876703) + (d["close"] * (1 - 0.876703))
     leg1 = ops.rank(ops.correlation(mix, d["adv30"], 9.61331))
-    leg2 = ops.rank(ops.correlation(ops.ts_rank((d["high"] + d["low"]) / 2, 3.70596), ops.ts_rank(d["volume"], 10.1595), 7.11408))
-    return leg1 ** leg2
+    leg2 = ops.rank(
+        ops.correlation(ops.ts_rank((d["high"] + d["low"]) / 2, 3.70596), ops.ts_rank(d["volume"], 10.1595), 7.11408)
+    )
+    return leg1**leg2
 
 
 def _alpha_086(d):
@@ -576,13 +724,25 @@ def _alpha_086(d):
 def _alpha_087(d):  # DEGRADED：IndNeutralize 降级全市场 demean
     mix = (d["close"] * 0.369701) + (d["vwap"] * (1 - 0.369701))
     leg1 = ops.rank(ops.decay_linear(ops.delta(mix, 1.91233), 2.65461))
-    leg2 = ops.ts_rank(ops.decay_linear(abs(ops.correlation(ops.ind_neutralize_proxy(d["adv81"]), d["close"], 13.4132)), 4.89768), 14.4535)
+    leg2 = ops.ts_rank(
+        ops.decay_linear(abs(ops.correlation(ops.ind_neutralize_proxy(d["adv81"]), d["close"], 13.4132)), 4.89768),
+        14.4535,
+    )
     return _df_max(leg1, leg2) * -1
 
 
 def _alpha_088(d):
-    leg1 = ops.rank(ops.decay_linear((ops.rank(d["open"]) + ops.rank(d["low"])) - (ops.rank(d["high"]) + ops.rank(d["close"])), 8.06882))
-    leg2 = ops.ts_rank(ops.decay_linear(ops.correlation(ops.ts_rank(d["close"], 8.44728), ops.ts_rank(d["adv60"], 20.6966), 8.01266), 6.65053), 2.61957)
+    leg1 = ops.rank(
+        ops.decay_linear(
+            (ops.rank(d["open"]) + ops.rank(d["low"])) - (ops.rank(d["high"]) + ops.rank(d["close"])), 8.06882
+        )
+    )
+    leg2 = ops.ts_rank(
+        ops.decay_linear(
+            ops.correlation(ops.ts_rank(d["close"], 8.44728), ops.ts_rank(d["adv60"], 20.6966), 8.01266), 6.65053
+        ),
+        2.61957,
+    )
     return _df_min(leg1, leg2)
 
 
@@ -590,25 +750,37 @@ def _alpha_089(d):
     mix = (d["low"] * 0.967285) + (d["low"] * (1 - 0.967285))
     leg1 = ops.rank(ops.correlation(mix, d["adv10"], 6.94279))
     leg2 = ops.rank(ops.correlation(ops.ts_rank(d["vwap"], 5.41607), ops.ts_rank(d["volume"], 11.1839), 3.23082))
-    return leg1 ** leg2
+    return leg1**leg2
 
 
 def _alpha_091(d):  # DEGRADED：IndNeutralize 降级全市场 demean
-    leg1 = ops.ts_rank(ops.decay_linear(ops.decay_linear(ops.correlation(ops.ind_neutralize_proxy(d["close"]), d["volume"], 9.74928), 16.398), 3.90631), 15.225)
+    leg1 = ops.ts_rank(
+        ops.decay_linear(
+            ops.decay_linear(ops.correlation(ops.ind_neutralize_proxy(d["close"]), d["volume"], 9.74928), 16.398),
+            3.90631,
+        ),
+        15.225,
+    )
     mix = (d["high"] * 0.156179) + (d["low"] * (1 - 0.156179))
-    leg2 = ops.ts_rank(ops.decay_linear(ops.correlation(ops.rank(mix), ops.rank(d["adv30"]), 4.40754), 6.00313), 11.8984)
+    leg2 = ops.ts_rank(
+        ops.decay_linear(ops.correlation(ops.rank(mix), ops.rank(d["adv30"]), 4.40754), 6.00313), 11.8984
+    )
     return (leg1 - leg2) * -1
 
 
 def _alpha_092(d):
     cond = _boolf((((d["high"] + d["low"]) / 2) + d["close"]) < (d["low"] + d["open"]))
     leg1 = ops.ts_rank(ops.decay_linear(cond, 14.7221), 18.4617)
-    leg2 = ops.ts_rank(ops.decay_linear(ops.correlation(ops.rank(d["low"]), ops.rank(d["adv30"]), 7.58555), 6.94024), 6.80584)
+    leg2 = ops.ts_rank(
+        ops.decay_linear(ops.correlation(ops.rank(d["low"]), ops.rank(d["adv30"]), 7.58555), 6.94024), 6.80584
+    )
     return _df_min(leg1, leg2)
 
 
 def _alpha_093(d):  # DEGRADED：IndNeutralize 降级全市场 demean
-    leg1 = ops.ts_rank(ops.decay_linear(ops.correlation(ops.ind_neutralize_proxy(d["vwap"]), d["adv81"], 17.4193), 19.848), 7.54455)
+    leg1 = ops.ts_rank(
+        ops.decay_linear(ops.correlation(ops.ind_neutralize_proxy(d["vwap"]), d["adv81"], 17.4193), 19.848), 7.54455
+    )
     mix = (d["close"] * 0.524434) + (d["vwap"] * (1 - 0.524434))
     leg2 = ops.rank(ops.decay_linear(ops.delta(mix, 2.77377), 16.2664))
     return leg1 / leg2
@@ -616,13 +788,20 @@ def _alpha_093(d):  # DEGRADED：IndNeutralize 降级全市场 demean
 
 def _alpha_094(d):
     leg1 = ops.rank(d["vwap"] - ops.ts_min(d["vwap"], 11.5783))
-    leg2 = ops.ts_rank(ops.correlation(ops.ts_rank(d["vwap"], 19.6462), ops.ts_rank(d["adv60"], 4.02992), 18.0926), 2.70756)
-    return (leg1 ** leg2) * -1
+    leg2 = ops.ts_rank(
+        ops.correlation(ops.ts_rank(d["vwap"], 19.6462), ops.ts_rank(d["adv60"], 4.02992), 18.0926), 2.70756
+    )
+    return (leg1**leg2) * -1
 
 
 def _alpha_095(d):
     leg1 = ops.rank(d["open"] - ops.ts_min(d["open"], 12.4105))
-    corr = ops.rank(ops.correlation(ops.ts_mean((d["high"] + d["low"]) / 2, 19.1351), ops.ts_mean(d["adv40"], 19.1351), 12.8742)) ** 5
+    corr = (
+        ops.rank(
+            ops.correlation(ops.ts_mean((d["high"] + d["low"]) / 2, 19.1351), ops.ts_mean(d["adv40"], 19.1351), 12.8742)
+        )
+        ** 5
+    )
     leg2 = ops.ts_rank(corr, 11.7584)
     return _boolf(leg1 < leg2)
 
@@ -630,18 +809,35 @@ def _alpha_095(d):
 def _alpha_097(d):  # DEGRADED：IndNeutralize 降级全市场 demean
     mix = ops.ind_neutralize_proxy((d["low"] * 0.721001) + (d["vwap"] * (1 - 0.721001)))
     leg1 = ops.rank(ops.decay_linear(ops.delta(mix, 3.3705), 20.4523))
-    leg2 = ops.ts_rank(ops.decay_linear(ops.ts_rank(ops.correlation(ops.ts_rank(d["low"], 7.87871), ops.ts_rank(d["adv60"], 17.255), 4.97547), 18.5925), 15.7152), 6.71659)
+    leg2 = ops.ts_rank(
+        ops.decay_linear(
+            ops.ts_rank(
+                ops.correlation(ops.ts_rank(d["low"], 7.87871), ops.ts_rank(d["adv60"], 17.255), 4.97547), 18.5925
+            ),
+            15.7152,
+        ),
+        6.71659,
+    )
     return leg1 - leg2
 
 
 def _alpha_098(d):
     leg1 = ops.rank(ops.decay_linear(ops.correlation(d["vwap"], ops.ts_sum(d["adv5"], 26.4719), 4.58418), 7.18088))
-    leg2 = ops.rank(ops.decay_linear(ops.ts_rank(ops.ts_argmin(ops.correlation(ops.rank(d["open"]), ops.rank(d["adv15"]), 20.8187), 8.62571), 6.95668), 8.07206))
+    leg2 = ops.rank(
+        ops.decay_linear(
+            ops.ts_rank(
+                ops.ts_argmin(ops.correlation(ops.rank(d["open"]), ops.rank(d["adv15"]), 20.8187), 8.62571), 6.95668
+            ),
+            8.07206,
+        )
+    )
     return leg1 - leg2
 
 
 def _alpha_099(d):
-    leg1 = ops.rank(ops.correlation(ops.ts_mean((d["high"] + d["low"]) / 2, 19.8975), ops.ts_mean(d["adv60"], 19.8975), 8.8136))
+    leg1 = ops.rank(
+        ops.correlation(ops.ts_mean((d["high"] + d["low"]) / 2, 19.8975), ops.ts_mean(d["adv60"], 19.8975), 8.8136)
+    )
     leg2 = ops.rank(ops.correlation(d["low"], d["volume"], 6.28259))
     return _boolf(leg1 < leg2) * -1
 
@@ -651,24 +847,93 @@ def _alpha_101(d):
 
 
 _ALPHA_IMPL: dict[int, Callable[[Mapping[str, pd.DataFrame]], pd.DataFrame]] = {
-    1: _alpha_001, 2: _alpha_002, 3: _alpha_003, 4: _alpha_004, 5: _alpha_005,
-    6: _alpha_006, 7: _alpha_007, 8: _alpha_008, 9: _alpha_009, 10: _alpha_010,
-    11: _alpha_011, 12: _alpha_012, 13: _alpha_013, 14: _alpha_014, 15: _alpha_015,
-    16: _alpha_016, 17: _alpha_017, 18: _alpha_018, 19: _alpha_019, 20: _alpha_020,
-    21: _alpha_021, 22: _alpha_022, 23: _alpha_023, 24: _alpha_024, 25: _alpha_025,
-    26: _alpha_026, 27: _alpha_027, 28: _alpha_028, 29: _alpha_029, 30: _alpha_030,
-    31: _alpha_031, 32: _alpha_032, 33: _alpha_033, 34: _alpha_034, 35: _alpha_035,
-    36: _alpha_036, 37: _alpha_037, 38: _alpha_038, 39: _alpha_039, 40: _alpha_040,
-    41: _alpha_041, 42: _alpha_042, 43: _alpha_043, 44: _alpha_044, 45: _alpha_045,
-    46: _alpha_046, 47: _alpha_047, 49: _alpha_049, 50: _alpha_050, 51: _alpha_051,
-    52: _alpha_052, 53: _alpha_053, 54: _alpha_054, 55: _alpha_055, 57: _alpha_057,
-    60: _alpha_060, 61: _alpha_061, 62: _alpha_062, 64: _alpha_064, 65: _alpha_065,
-    66: _alpha_066, 68: _alpha_068, 71: _alpha_071, 72: _alpha_072, 73: _alpha_073,
-    74: _alpha_074, 75: _alpha_075, 77: _alpha_077, 78: _alpha_078, 79: _alpha_079,
-    81: _alpha_081, 83: _alpha_083, 84: _alpha_084, 85: _alpha_085, 86: _alpha_086,
-    87: _alpha_087, 88: _alpha_088, 89: _alpha_089, 91: _alpha_091, 92: _alpha_092,
-    93: _alpha_093, 94: _alpha_094, 95: _alpha_095, 97: _alpha_097, 98: _alpha_098,
-    99: _alpha_099, 101: _alpha_101,
+    1: _alpha_001,
+    2: _alpha_002,
+    3: _alpha_003,
+    4: _alpha_004,
+    5: _alpha_005,
+    6: _alpha_006,
+    7: _alpha_007,
+    8: _alpha_008,
+    9: _alpha_009,
+    10: _alpha_010,
+    11: _alpha_011,
+    12: _alpha_012,
+    13: _alpha_013,
+    14: _alpha_014,
+    15: _alpha_015,
+    16: _alpha_016,
+    17: _alpha_017,
+    18: _alpha_018,
+    19: _alpha_019,
+    20: _alpha_020,
+    21: _alpha_021,
+    22: _alpha_022,
+    23: _alpha_023,
+    24: _alpha_024,
+    25: _alpha_025,
+    26: _alpha_026,
+    27: _alpha_027,
+    28: _alpha_028,
+    29: _alpha_029,
+    30: _alpha_030,
+    31: _alpha_031,
+    32: _alpha_032,
+    33: _alpha_033,
+    34: _alpha_034,
+    35: _alpha_035,
+    36: _alpha_036,
+    37: _alpha_037,
+    38: _alpha_038,
+    39: _alpha_039,
+    40: _alpha_040,
+    41: _alpha_041,
+    42: _alpha_042,
+    43: _alpha_043,
+    44: _alpha_044,
+    45: _alpha_045,
+    46: _alpha_046,
+    47: _alpha_047,
+    49: _alpha_049,
+    50: _alpha_050,
+    51: _alpha_051,
+    52: _alpha_052,
+    53: _alpha_053,
+    54: _alpha_054,
+    55: _alpha_055,
+    57: _alpha_057,
+    60: _alpha_060,
+    61: _alpha_061,
+    62: _alpha_062,
+    64: _alpha_064,
+    65: _alpha_065,
+    66: _alpha_066,
+    68: _alpha_068,
+    71: _alpha_071,
+    72: _alpha_072,
+    73: _alpha_073,
+    74: _alpha_074,
+    75: _alpha_075,
+    77: _alpha_077,
+    78: _alpha_078,
+    79: _alpha_079,
+    81: _alpha_081,
+    83: _alpha_083,
+    84: _alpha_084,
+    85: _alpha_085,
+    86: _alpha_086,
+    87: _alpha_087,
+    88: _alpha_088,
+    89: _alpha_089,
+    91: _alpha_091,
+    92: _alpha_092,
+    93: _alpha_093,
+    94: _alpha_094,
+    95: _alpha_095,
+    97: _alpha_097,
+    98: _alpha_098,
+    99: _alpha_099,
+    101: _alpha_101,
 }
 
 assert len(_ALPHA_IMPL) == 87, f"87 公式集漂移: {len(_ALPHA_IMPL)}"

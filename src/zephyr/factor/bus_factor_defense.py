@@ -15,6 +15,73 @@
 # [A_module] module_id=MOD-L02-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: ownership 参数
+#   fields: 参数 ownership，类型注解 ModuleOwnership
+#   code: bus_factor_defense.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: decision_id 参数
+#   fields: 参数 decision_id，类型注解 str
+#   code: bus_factor_defense.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: problem 参数
+#   fields: 参数 problem，类型注解 str
+#   code: bus_factor_defense.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: options 参数
+#   fields: 参数 options，类型注解 list[str]
+#   code: bus_factor_defense.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① evaluate_bus_factor
+#   name_en: evaluate_bus_factor
+#   intro: evaluate_bus_factor(ownership) 源码 L137-L145
+#   desc: 源码 L137-L145
+#   inputs: ownership
+#   outputs: ModuleOwnership
+# - id: A2
+#   name_zh: ② create_decision_log
+#   name_en: create_decision_log
+#   intro: create_decision_log(decision_id, problem, options, decision…
+#   desc: 源码 L152-L170
+#   inputs: decision_id problem options decision rationale review_days
+#   outputs: DecisionLog
+# - id: A3
+#   name_zh: ③ generate_runbook
+#   name_en: generate_runbook
+#   intro: generate_runbook(module_id, content) 源码 L173-L179
+#   desc: 源码 L173-L179
+#   inputs: module_id content
+#   outputs: OpsRunbook
+#   （注：A3 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ModuleOwnership
+#   name_en: ModuleOwnership
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-INF-027;MOD-INF-020;MOD-INF-018
+# - id: O2
+#   name_zh: DecisionLog
+#   name_en: DecisionLog
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-INF-027;MOD-INF-020;MOD-INF-018
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
+"""
+
 from __future__ import annotations
 
 from datetime import UTC, datetime

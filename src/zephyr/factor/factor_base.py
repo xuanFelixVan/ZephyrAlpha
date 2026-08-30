@@ -22,6 +22,10 @@
 # created: "2026-05-04"
 # ---
 """
+
+
+
+
 ZephyrAlpha — D_FACTOR Alpha Factor Layer
 OCP Extension Point: FactorBase + FactorRegistry
 
@@ -31,6 +35,49 @@ OCP Extension Point: FactorBase + FactorRegistry
 设计原则（Open-Closed Principle）：
   - 扩展方式：继承 FactorBase，实现 compute()，用 @FactorRegistry.register 注册
   - 禁止方式：直接修改本文件中已有的抽象接口
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: package_path 参数
+#   fields: 参数 package_path，类型注解 str | None
+#   code: factor_base.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FactorBase
+#   name_en: FactorBase
+#   intro: 所有 Alpha 因子的抽象基类。
+#   desc: 所有 Alpha 因子的抽象基类。 用法示例： @FactorRegistry.register class Momentum20d(FactorBase): meta = Fa…；公共方法（定义序）: compute…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② FactorRegistry
+#   name_en: FactorRegistry
+#   intro: 因子全局注册表（单例）。
+#   desc: 因子全局注册表（单例）。 注册表提供： - @FactorRegistry.register 装饰器自动注册 - get(factor_id) 按 ID 查询 - list_al…；公共方法（定义序）: registe…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ autodiscover_factors
+#   name_en: autodiscover_factors
+#   intro: 扫描 factor/ 目录，自动 import 所有因子模块。
+#   desc: 扫描 factor/ 目录，自动 import 所有因子模块。 每个模块只要包含 @FactorRegistry.register 装饰的类， import 时就会自动触发注册，…；源码 L270-L309
+#   inputs: package_path
+#   outputs: 返回值
+#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: FactorBase, FactorRegistry, autodiscover_factors
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

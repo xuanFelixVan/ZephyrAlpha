@@ -14,9 +14,83 @@
 # [TESTS] scripts/connect/fle_db.py --verify
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""FLE 持久化写入器 — 写 metrics/alerts/dispatch_log 到 SQLite
+"""
+
+
+
+FLE 持久化写入器 — 写 metrics/alerts/dispatch_log 到 SQLite
 
 CT-FLE-DB-001: Feedback Loop 采集的指标和告警 -> Database 持久化落地。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: batch 参数
+#   fields: 参数 batch，类型注解 list[MetricPoint]
+#   code: db_writer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: event 参数
+#   fields: 参数 event，类型注解 AlertEvent
+#   code: db_writer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: event_id 参数
+#   fields: 参数 event_id，类型注解 str
+#   code: db_writer.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: target_system 参数
+#   fields: 参数 target_system，类型注解 str
+#   code: db_writer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FLEWriter
+#   name_en: FLEWriter
+#   intro: FLE 数据库写入器。
+#   desc: FLE 数据库写入器。；公共方法（定义序）: write_metrics, write_alert, write_dispatch_log, update_alert_status；源码 L115-L251
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② write_metrics_batch
+#   name_en: write_metrics_batch
+#   intro: 便捷函数：批量写入指标。
+#   desc: 便捷函数：批量写入指标。；源码 L254-L256
+#   inputs: batch
+#   outputs: int
+# - id: A3
+#   name_zh: ③ write_alert
+#   name_en: write_alert
+#   intro: 便捷函数：写入告警。
+#   desc: 便捷函数：写入告警。；源码 L259-L261
+#   inputs: event
+#   outputs: str | None
+# - id: A4
+#   name_zh: ④ write_dispatch_log
+#   name_en: write_dispatch_log
+#   intro: 便捷函数：写入分派日志。
+#   desc: 便捷函数：写入分派日志。；源码 L264-L272
+#   inputs: event_id target_system result task_id error_message
+#   outputs: int | None
+# 层: 输出
+# - id: O1
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.feedback_loop.metrics_collector ; zephyr.feedback_loop.alert_dispatcher
+# - id: O2
+#   name_zh: str | None
+#   name_en: str | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.feedback_loop.metrics_collector ; zephyr.feedback_loop.alert_dispatcher
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

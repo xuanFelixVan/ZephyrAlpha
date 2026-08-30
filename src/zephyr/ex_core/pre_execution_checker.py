@@ -14,7 +14,11 @@
 # [TESTS] tests/ex_core/test_pre_execution_checker.py
 # [A_module] module_id=MOD-EX-024 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Pre-Execution Checker — 执行前检查器 (MOD-EX-024)
+"""
+
+
+
+Pre-Execution Checker — 执行前检查器 (MOD-EX-024)
 
 下单前统一四级硬检查（编排层，对接 MOD-RK-25 快照 + MOD-RK-24 否决引擎 + 既有风控件）：
   1. Kill Switch 闸门  — 熔断激活拒绝全部新订单（短路，不建快照；
@@ -26,6 +30,41 @@
   4. 风险否决评估      — MOD-RK-24 RiskVetoEngine（判定核心为纯函数，本模块只编排）
 
 降级铁律（C-004 默认拒绝）：任何检查环节不可用 → 拒绝新订单，不放行。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: now 参数
+#   fields: 参数 now，类型注解 datetime
+#   code: pre_execution_checker.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① is_ashare_trading_window
+#   name_en: is_ashare_trading_window
+#   intro: A 股交易时段判定（L-003：非交易时段订单为废单，执行层内置校验）。
+#   desc: A 股交易时段判定（L-003：非交易时段订单为废单，执行层内置校验）。 naive datetime 按 Asia/Shanghai 口径解释；aware datetime 先…；源码 L112-L134
+#   inputs: now
+#   outputs: bool
+# - id: A2
+#   name_zh: ② PreExecutionChecker
+#   name_en: PreExecutionChecker
+#   intro: 执行前检查器（四级闸门编排，全部 Fail-Closed）。
+#   desc: 执行前检查器（四级闸门编排，全部 Fail-Closed）。；公共方法（定义序）: check；源码 L179-L310
+#   inputs: snapshot_builder kill_switch_probe session_window_probe veto_engine m…
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-L06-001(TradingSession._validate_and_submit 前置硬拦) ; MOD-EX-007(Execution Ri…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -114,10 +153,7 @@ def _is_trading_window(now: datetime, calendar: MarketCalendar) -> bool:
             return False
 
     now_time = local_now.time()
-    return any(
-        start <= now_time <= end
-        for start, end in calendar.session_windows(local_now.date())
-    )
+    return any(start <= now_time <= end for start, end in calendar.session_windows(local_now.date()))
 
 
 @dataclass(frozen=True)
@@ -169,9 +205,7 @@ class PreExecutionChecker:
             self._session_window_probe = lambda now: _is_trading_window(now, calendar)
         self._veto_engine = veto_engine or RiskVetoEngine()
 
-    def check(
-        self, request: OrderRiskRequest, *, now: datetime | None = None
-    ) -> PreExecutionReport:
+    def check(self, request: OrderRiskRequest, *, now: datetime | None = None) -> PreExecutionReport:
         """执行前四级检查。blocks 为空 → allowed=True。"""
         evaluated_at = now or datetime.now(tz=UTC)
         blocks: list[PreExecutionBlock] = []

@@ -20,7 +20,11 @@
 # F2: check_capability_api_whitelist_content（已登记 capability 的提取 API ⊆ allowed_apis；通配符前缀 THS_*/ifind.*；违例提示登记或换 API）
 # O1: 违规描述列表（空=通过）
 # [/ALGO_FLOW]
-"""capability 语义注册表 + API 白名单 AST gate（17 号 §5.3 施工项 2 + §5.4 施工项 3 合并收缩 MVP）。
+"""
+
+
+
+capability 语义注册表 + API 白名单 AST gate（17 号 §5.3 施工项 2 + §5.4 施工项 3 合并收缩 MVP）。
 
 病根（17 号 §5.1）：provider 声明的 capability 名携带市场/品种语义（hk_/industry_），
 但底层调用的 API 返回数据语义不符（#ARCH-DATA-001：hk_trade_calendar 用
@@ -35,6 +39,51 @@ AST 提取 ``_fetch_<cap>`` 方法体外部 API 符号，校验 ⊆ 白名单；
 
 依据: 17_special_trading_days_data_assets §5.3/§5.4/§5.8（#ARCH-DATA-002 施工项 2+3）
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: content 参数
+#   fields: 参数 content，类型注解 str
+#   code: capability_semantic_gate.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: registry 参数
+#   fields: 参数 registry，类型注解 tuple[CapabilitySemanticEntry, ...]
+#   code: capability_semantic_gate.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: file_path 参数
+#   fields: 参数 file_path，类型注解 Path
+#   code: capability_semantic_gate.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① check_capability_api_whitelist_content
+#   name_en: check_capability_api_whitelist_content
+#   intro: 校验 provider 文件内容的 capability-API 语义一致性（17 号 §5.8 项 3）。
+#   desc: 校验 provider 文件内容的 capability-API 语义一致性（17 号 §5.8 项 3）。 对已登记 capability：AST 提取 ``_fetch_<c…；源码 L228-L253
+#   inputs: content registry
+#   outputs: list[str]
+# - id: A2
+#   name_zh: ② check_capability_api_whitelist
+#   name_en: check_capability_api_whitelist
+#   intro: 校验 provider 文件的 capability-API 语义一致性（文件读取后委托 content 版）。
+#   desc: 校验 provider 文件的 capability-API 语义一致性（文件读取后委托 content 版）。；源码 L256-L265
+#   inputs: file_path registry
+#   outputs: list[str]
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[str]
+#   name_en: list[str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: commit gate（capability_validator AST gate 装配批，17 号 §5.4 施工项 3）; 调用方（capability-…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

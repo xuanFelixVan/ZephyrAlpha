@@ -14,6 +14,60 @@
 # [TESTS] tests/audit-orchestrator/test_log_rotation.py
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: log_dir 参数
+#   fields: 参数 log_dir（无注解）
+#   code: log_rotation.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: max_size_mb 参数
+#   fields: 参数 max_size_mb（无注解）
+#   code: log_rotation.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: max_age_days 参数
+#   fields: 参数 max_age_days（无注解）
+#   code: log_rotation.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: max_files 参数
+#   fields: 参数 max_files（无注解）
+#   code: log_rotation.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① LogRotation
+#   name_en: LogRotation
+#   intro: class LogRotation 源码 L94-L190
+#   desc: 公共方法（定义序）: rotate, stats；源码 L94-L190
+#   inputs: log_dir max_size_mb max_age_days max_files extra_dirs
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② LogRotationManager
+#   name_en: LogRotationManager
+#   intro: 审计日志轮转管理器——按天轮转 events.jsonl，支持压缩和过期清理。
+#   desc: 审计日志轮转管理器——按天轮转 events.jsonl，支持压缩和过期清理。；公共方法（定义序）: max_rotated_days, compress_rotated, extract_date, rotate,…
+#   inputs: data_dir compress_rotated max_rotated_days config
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: LogRotation, LogRotationManager
+#   downstream: audit-orchestrator.writer; tiered_storage
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
+
 from __future__ import annotations
 
 import gzip

@@ -14,7 +14,10 @@
 # [TESTS] tests/feedback_loop/test_module_matcher.py
 # [A_module] module_id=MOD-FBL-002 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""ModuleMatcher — 模块匹配器（MOD-FBL-002）。
+"""
+
+
+ModuleMatcher — 模块匹配器（MOD-FBL-002）。
 
 B12-03549（AUD-DRAFT-001-DIGEST P2 波 P2-W14，CAND-FBL-004，B12）：
 提取知识包功能需求 → 按 capability_tags 注册表搜索（tag 命中预筛）→
@@ -25,6 +28,43 @@ PARTIAL(0.5~0.85) / NO_MATCH(<0.5) 三档判定输出（阈值边界恰等归低
 路由）；llm_agent_router=LLM 服务选路（零交集）；skill_library=技能条目
 向量检索（本件=模块 capability 匹配，不建技能库）。embedder 全注入，本件
 仅实现注册表 + 余弦 + 三档判定。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: embedder 参数
+#   fields: 参数 embedder（无注解）
+#   code: module_matcher.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: exact_threshold 参数
+#   fields: 参数 exact_threshold（无注解）
+#   code: module_matcher.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: partial_threshold 参数
+#   fields: 参数 partial_threshold（无注解）
+#   code: module_matcher.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ModuleMatcher
+#   name_en: ModuleMatcher
+#   intro: 模块匹配器（capability_tags 注册表 + embedding 余弦 + 三档判定）。
+#   desc: 模块匹配器（capability_tags 注册表 + embedding 余弦 + 三档判定）。；公共方法（定义序）: register_module, match；源码 L141-L273
+#   inputs: embedder exact_threshold partial_threshold
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: ModuleMatcher
+#   downstream: 运行时装配批（capability_tags 注册表装配 / embedder 接 EmbeddingRouter / 知识包功能需求匹配路由）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -116,8 +156,7 @@ class ModuleMatcher:
                 raise ModuleMatcherError(f"非法阈值类型: {name}={v!r}")
         if not (0.0 < float(partial_threshold) < float(exact_threshold) <= 1.0):
             raise ModuleMatcherError(
-                f"非法阈值区间: partial={partial_threshold!r} exact={exact_threshold!r}"
-                "（须 0 < partial < exact <= 1）"
+                f"非法阈值区间: partial={partial_threshold!r} exact={exact_threshold!r}（须 0 < partial < exact <= 1）"
             )
         self._embedder = embedder
         self._exact = float(exact_threshold)
@@ -153,7 +192,7 @@ class ModuleMatcher:
         """余弦相似度（本地计算；零范数向量按 0.0 处理）。"""
         if len(a) != len(b):
             raise ModuleMatcherError(f"向量维度不一致: {len(a)} vs {len(b)}")
-        dot = math.fsum(x * y for x, y in zip(a, b))
+        dot = math.fsum(x * y for x, y in zip(a, b, strict=False))
         na = math.sqrt(math.fsum(x * x for x in a))
         nb = math.sqrt(math.fsum(y * y for y in b))
         if na == 0.0 or nb == 0.0:
@@ -214,9 +253,7 @@ class ModuleMatcher:
             if entry.description:
                 cap_text = f"{cap_text} {entry.description}"
             score = self._cosine(req_vec, self._embed(cap_text))
-            candidates.append(MatchCandidate(
-                module_id=module_id, score=score, matched_tags=hits
-            ))
+            candidates.append(MatchCandidate(module_id=module_id, score=score, matched_tags=hits))
 
         candidates.sort(key=lambda c: (-c.score, c.module_id))
         best = candidates[0] if candidates else None
@@ -228,8 +265,7 @@ class ModuleMatcher:
             tier = MatchTier.PARTIAL
         else:
             tier = MatchTier.NO_MATCH
-        _log.info("模块匹配: %r -> %s (best=%s)", requirement, tier.value,
-                  best.module_id if best else None)
+        _log.info("模块匹配: %r -> %s (best=%s)", requirement, tier.value, best.module_id if best else None)
         return MatchResult(
             requirement=requirement,
             tier=tier,

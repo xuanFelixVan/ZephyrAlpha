@@ -14,7 +14,11 @@
 # [TESTS] tests/autonomy/test_per_agent_gate.py
 # [A_module] module_id=MOD-AU-006 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
-"""PerAgentGate — 单 Agent 门控层 (MOD-AU-006)
+"""
+
+
+
+PerAgentGate — 单 Agent 门控层 (MOD-AU-006)
 
 CAND-AUTONOMYCORE-005（B11-02462）：规则集（允许动作 / 禁止动作 / 限额 / 时段）
 内嵌 Agent Card（capability_card，MOD-INF-035），门控为纯内存规则匹配
@@ -26,6 +30,54 @@ MOD-SEC-EVENTBUS 为持久化委托，本模块不 import）。
 
 判定序（短路）：①黑名单 DENY → ②白名单未命中 DENY → ③超限额 DENY →
 ④窗外 DENY → ⑤ALLOW。未登记 agent / 空 action → fail-closed DENY。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: rulesets 参数
+#   fields: 参数 rulesets（无注解）
+#   code: per_agent_gate.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: event_sink 参数
+#   fields: 参数 event_sink（无注解）
+#   code: per_agent_gate.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① TimeWindow
+#   name_en: TimeWindow
+#   intro: 日内分钟窗 [start_min, end_min)（0<=start<end<=1440）。
+#   desc: 日内分钟窗 [start_min, end_min)（0<=start<end<=1440）。；公共方法（定义序）: contains；源码 L111-L124
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② AgentGateVerdict
+#   name_en: AgentGateVerdict
+#   intro: 单次门控判定结果（不可变）。
+#   desc: 单次门控判定结果（不可变）。；公共方法（定义序）: allowed, to_security_event；源码 L161-L188
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ PerAgentGate
+#   name_en: PerAgentGate
+#   intro: 单 Agent 门控层（纯内存规则匹配核心）。
+#   desc: 单 Agent 门控层（纯内存规则匹配核心）。 Args: rulesets: 初始规则集集合。 event_sink: DENY 安全事件回调；异常不阻断 DENY 判定。；公共方法（定义序）: register,…
+#   inputs: rulesets event_sink
+#   outputs: 返回值
+#   （注：A3 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: TimeWindow, AgentGateVerdict, PerAgentGate
+#   downstream: MOD-INF-035(capability_card 规则集宿点) ; MOD-SEC-EVENTBUS(DENY 安全事件)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations
@@ -113,7 +165,9 @@ class AgentGateVerdict:
     agent_id: str
     action: str
     decision: GateDecision
-    matched_rule: str  # deny_actions/allow_actions/max_notional_per_order/allowed_windows/unregistered/invalid_input/pass
+    matched_rule: (
+        str  # deny_actions/allow_actions/max_notional_per_order/allowed_windows/unregistered/invalid_input/pass
+    )
     reason: str
     fail_closed: bool = False
 
@@ -174,27 +228,44 @@ class PerAgentGate:
             return self._deny(agent_id, action, "invalid_input", "agent_id/action 必须为非空字符串", fail_closed=True)
         rs = self._rules.get(agent_id)
         if rs is None:
-            return self._deny(agent_id, action, "unregistered", "agent 未登记规则集，fail-closed 拦截", fail_closed=True)
+            return self._deny(
+                agent_id, action, "unregistered", "agent 未登记规则集，fail-closed 拦截", fail_closed=True
+            )
         if action in rs.deny_actions:
             return self._deny(agent_id, action, "deny_actions", "动作命中黑名单")
         if rs.allow_actions and action not in rs.allow_actions:
             return self._deny(agent_id, action, "allow_actions", "动作不在白名单")
         if rs.max_notional_per_order is not None and notional is not None and notional > rs.max_notional_per_order:
             return self._deny(
-                agent_id, action, "max_notional_per_order",
+                agent_id,
+                action,
+                "max_notional_per_order",
                 f"单笔名义 {notional} 超限额 {rs.max_notional_per_order}",
             )
-        if rs.allowed_windows and minute_of_day is not None and not any(w.contains(minute_of_day) for w in rs.allowed_windows):
+        if (
+            rs.allowed_windows
+            and minute_of_day is not None
+            and not any(w.contains(minute_of_day) for w in rs.allowed_windows)
+        ):
             return self._deny(agent_id, action, "allowed_windows", f"分钟 {minute_of_day} 不在允许时段窗")
         return AgentGateVerdict(
-            agent_id=agent_id, action=action, decision=GateDecision.ALLOW,
-            matched_rule="pass", reason="规则全通过",
+            agent_id=agent_id,
+            action=action,
+            decision=GateDecision.ALLOW,
+            matched_rule="pass",
+            reason="规则全通过",
         )
 
-    def _deny(self, agent_id: str, action: str, rule: str, reason: str, *, fail_closed: bool = False) -> AgentGateVerdict:
+    def _deny(
+        self, agent_id: str, action: str, rule: str, reason: str, *, fail_closed: bool = False
+    ) -> AgentGateVerdict:
         verdict = AgentGateVerdict(
-            agent_id=agent_id, action=action, decision=GateDecision.DENY,
-            matched_rule=rule, reason=reason, fail_closed=fail_closed,
+            agent_id=agent_id,
+            action=action,
+            decision=GateDecision.DENY,
+            matched_rule=rule,
+            reason=reason,
+            fail_closed=fail_closed,
         )
         if self._event_sink is not None:
             try:

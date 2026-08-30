@@ -14,7 +14,11 @@
 # [TESTS] tests/zephyr/data/test_news_dedup.py
 # [A_module] module_id=MOD-GOV-news_dedup | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""新闻数据去重模块（MOD-L00-004 §4.3）。
+"""
+
+
+
+新闻数据去重模块（MOD-L00-004 §4.3）。
 
 基于标题 MD5 哈希对新闻数据进行查重去重。
 不同新闻源（AKShare/财联社/东方财富/RSS）获取的内容可能不同，
@@ -25,6 +29,68 @@
 - 过滤掉已存在的标题哈希
 - 同时过滤同一批次内的重复标题
 - fail-open：去重异常时跳过去重，返回原始数据（不阻断写入）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: where 参数
+#   fields: 参数 where，类型注解 str
+#   code: news_dedup.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: pub_date 参数
+#   fields: 参数 pub_date，类型注解 str
+#   code: news_dedup.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: title 参数
+#   fields: 参数 title，类型注解 str
+#   code: news_dedup.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: link 参数
+#   fields: 参数 link，类型注解 str
+#   code: news_dedup.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① existing_news_ids
+#   name_en: existing_news_ids
+#   intro: 写前预检：库内满足 where 条件的已存在 news_id 集合（CAND-DAT-025）。
+#   desc: 写前预检：库内满足 where 条件的已存在 news_id 集合（CAND-DAT-025）。 供批量回填脚本在写入侧过滤多版本冗余行（ReplacingMergeTree 按…；源码 L171-L191
+#   inputs: where
+#   outputs: set[str]
+# - id: A2
+#   name_zh: ② build_news_row
+#   name_en: build_news_row
+#   intro: 构造 news_data 表标准行，对齐 ClickHouse schema。
+#   desc: 构造 news_data 表标准行，对齐 ClickHouse schema。 自动计算 news_id（MD5 of source+title+publish_time）， 解…；源码 L194-L247
+#   inputs: pub_date title link summary source data_source region language
+#   outputs: tuple
+# - id: A3
+#   name_zh: ③ dedup_news_result
+#   name_en: dedup_news_result
+#   intro: 对 FetchResult 中的新闻数据去重。
+#   desc: 对 FetchResult 中的新闻数据去重。 基于 title 的 MD5 哈希，过滤掉已存在于 ClickHouse 中的重复新闻。 同时过滤同一批次内的重复新闻。 Args…；源码 L277-L327
+#   inputs: result
+#   outputs: FetchResult
+# 层: 输出
+# - id: O1
+#   name_zh: set[str]
+#   name_en: set[str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.scheduler
+# - id: O2
+#   name_zh: tuple
+#   name_en: tuple
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.scheduler
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations
@@ -166,7 +232,7 @@ def build_news_row(
     region_str = str(region) or "CN"
     language_str = str(language) or "zh"
 
-    news_id = hashlib.md5(f"{source_str}{title_str}{publish_time}".encode("utf-8")).hexdigest()
+    news_id = hashlib.md5(f"{source_str}{title_str}{publish_time}".encode()).hexdigest()
 
     return (
         news_id,

@@ -14,7 +14,11 @@
 # [TESTS] tests/ex_core/test_execution_strategy_selector.py
 # [A_module] module_id=MOD-EX-062 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Execution Strategy Selector — 执行策略选择器 (MOD-EX-062)
+"""
+
+
+
+Execution Strategy Selector — 执行策略选择器 (MOD-EX-062)
 
 按订单特征选择执行算法（40_execution_broker §决策② 分档表的
 门禁降落地，算法集限 EX-014 降级后的 TWAP/VWAP + 限价直发）：
@@ -28,6 +32,33 @@
 
 Fail-Closed：ADV 非正 / 数量非正一律拒判（无量能真源不做拍脑袋选择）。
 判定核心为纯函数（同输入必同输出，可独立单测）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: features 参数
+#   fields: 参数 features，类型注解 OrderFeatures
+#   code: execution_strategy_selector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① select_execution_strategy
+#   name_en: select_execution_strategy
+#   intro: 按订单特征选执行策略（纯函数：同输入必同输出，可独立单测）。
+#   desc: 按订单特征选执行策略（纯函数：同输入必同输出，可独立单测）。 Raises: StrategySelectionError: ADV/数量非正（Fail-Closed），或订单…；源码 L140-L196
+#   inputs: features
+#   outputs: StrategySelection
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: StrategySelection
+#   name_en: StrategySelection
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-EX-014(Order Splitter 消费选定算法) ; MOD-L06-001(TradingSession 执行编排)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

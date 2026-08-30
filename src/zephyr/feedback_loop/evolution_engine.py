@@ -14,6 +14,60 @@
 # [TESTS]
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: collector 参数
+#   fields: 参数 collector，类型注解 object
+#   code: evolution_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: baseline_avg_score 参数
+#   fields: 参数 baseline_avg_score（无注解）
+#   code: evolution_engine.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: baseline_low_score_rate 参数
+#   fields: 参数 baseline_low_score_rate（无注解）
+#   code: evolution_engine.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: dry_run 参数
+#   fields: 参数 dry_run（无注解）
+#   code: evolution_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① EvolutionEngine
+#   name_en: EvolutionEngine
+#   intro: class EvolutionEngine 源码 L170-L518
+#   desc: 公共方法（定义序）: thresholds, now, get_q, set_q, update, select_action, consolidate_knowledge, evolve；源码 L170-L518
+#   inputs: collector on_low_score apply_fn now thresholds
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② evolve
+#   name_en: evolve
+#   intro: evolve(collector, baseline_avg_score, baseline_low_score_ra…
+#   desc: 源码 L521-L539
+#   inputs: collector baseline_avg_score baseline_low_score_rate dry_run owner_ap…
+#   outputs: EvolutionReport
+#   （注：A2 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: EvolutionReport
+#   name_en: EvolutionReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
+
 import logging
 from typing import Final
 

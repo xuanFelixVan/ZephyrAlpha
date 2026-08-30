@@ -14,7 +14,11 @@
 # [TESTS] tests/compliance/test_info_asymmetry_manipulation_detector.py
 # [A_module] module_id=MOD-CMP-014 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""InfoAsymmetryManipulationDetector — 信息不对称期与操纵检测器（MOD-CMP-014）。
+"""
+
+
+
+InfoAsymmetryManipulationDetector — 信息不对称期与操纵检测器（MOD-CMP-014）。
 
 B10-01426（AUD-DRAFT-001-DIGEST P2 波 P2-W10，CAND-CMP-005，A1 模块54）：
 **空窗期判定**（披露间隔 >90 天 / 11月-次年4月30日窗口）+ 异常波动 **z>2
@@ -32,6 +36,38 @@ B10-01426（AUD-DRAFT-001-DIGEST P2 波 P2-W10，CAND-CMP-005，A1 模块54）�
 查重分工：trading_compliance_detector=盘中合规规则族（无披露空窗语义）；
 intraday_manipulation_detector=盘中流式操纵检测（本件=信息披露空窗期视角 +
 三模式离线评分，零交集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: info_asymmetry_manipulation_detector.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: info_asymmetry_manipulation_detector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① InfoAsymmetryManipulationDetector
+#   name_en: InfoAsymmetryManipulationDetector
+#   intro: 信息不对称期与操纵检测器（空窗判定 + z 扫描 + 三模式评分 + 回避名单）。
+#   desc: 信息不对称期与操纵检测器（空窗判定 + z 扫描 + 三模式评分 + 回避名单）。 Args: clock: 时钟注入（报告/回避条目时戳确定性来源）。 config: 阈值配置…；公共方法（定义序）: registe…
+#   inputs: clock config
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: InfoAsymmetryManipulationDetector
+#   downstream: 运行时装配批（披露登记与行情特征统一注入 / 回避名单供漏斗排除）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -66,37 +102,37 @@ class InfoAsymmetryError(Exception):
 class ManipulationMode(str, Enum):
     """操纵嫌疑模式（词表闭合）。"""
 
-    SPOOFING = "spoofing"      # 幌骗（大额虚假申报+高撤单）
+    SPOOFING = "spoofing"  # 幌骗（大额虚假申报+高撤单）
     WASH_TRADE = "wash_trade"  # 对敲（自成交+量集中）
-    TAIL = "tail"              # 尾盘操纵（尾盘拉抬/打压）
+    TAIL = "tail"  # 尾盘操纵（尾盘拉抬/打压）
 
 
 @dataclass(frozen=True)
 class DetectorConfig:
     """检测阈值配置（注入式；全部确定性）。"""
 
-    gap_days: int = 90               # 披露间隔空窗阈值（天）
-    z_threshold: float = 2.0         # 异常波动 z 阈值
-    score_threshold: float = 0.6     # 操纵嫌疑入选阈值
-    spoofing_cancel_weight: float = 0.7   # 幌骗：撤单率权重
-    spoofing_dev_weight: float = 0.3      # 幌骗：偏离度权重
-    wash_self_weight: float = 0.6         # 对敲：自成交占比权重
-    wash_conc_weight: float = 0.4         # 对敲：量集中度权重
-    tail_vol_weight: float = 0.5          # 尾盘：尾盘量占比权重
-    tail_dev_weight: float = 0.5          # 尾盘：尾盘偏离度权重
+    gap_days: int = 90  # 披露间隔空窗阈值（天）
+    z_threshold: float = 2.0  # 异常波动 z 阈值
+    score_threshold: float = 0.6  # 操纵嫌疑入选阈值
+    spoofing_cancel_weight: float = 0.7  # 幌骗：撤单率权重
+    spoofing_dev_weight: float = 0.3  # 幌骗：偏离度权重
+    wash_self_weight: float = 0.6  # 对敲：自成交占比权重
+    wash_conc_weight: float = 0.4  # 对敲：量集中度权重
+    tail_vol_weight: float = 0.5  # 尾盘：尾盘量占比权重
+    tail_dev_weight: float = 0.5  # 尾盘：尾盘偏离度权重
 
 
 @dataclass(frozen=True)
 class ManipulationFeatures:
     """三模式操纵评分特征（数据注入；比率类 ∈ [0,1]，偏离度 ≥ 0）。"""
 
-    deviation: float            # 价格偏离度（相对基准，≥0）
-    cancel_rate: float          # 撤单率 ∈ [0,1]
+    deviation: float  # 价格偏离度（相对基准，≥0）
+    cancel_rate: float  # 撤单率 ∈ [0,1]
     order_intervals: tuple[float, ...]  # 申报间隔序列（秒，均 ≥0）
     volume_concentration: float  # 量集中度 ∈ [0,1]
-    tail_volume_ratio: float    # 尾盘成交量占比 ∈ [0,1]
-    tail_deviation: float       # 尾盘价格偏离度 ≥0
-    self_trade_ratio: float     # 自成交占比 ∈ [0,1]
+    tail_volume_ratio: float  # 尾盘成交量占比 ∈ [0,1]
+    tail_deviation: float  # 尾盘价格偏离度 ≥0
+    self_trade_ratio: float  # 自成交占比 ∈ [0,1]
 
 
 @dataclass(frozen=True)
@@ -223,26 +259,19 @@ class InfoAsymmetryManipulationDetector:
             if not isinstance(interval, (int, float)) or interval < 0:
                 raise InfoAsymmetryError(f"order_intervals 含负值/非数值: {interval!r}")
 
-    def score_manipulation(
-        self, features: ManipulationFeatures
-    ) -> dict[ManipulationMode, float]:
+    def score_manipulation(self, features: ManipulationFeatures) -> dict[ManipulationMode, float]:
         """三模式嫌疑评分（各 ∈ [0,1]，确定性加权归一）。"""
         self._validate_features(features)
         cfg = self._config
         # 幌骗：撤单率 + 偏离度（偏离度按 0.1 封顶归一）
-        spoofing = (
-            cfg.spoofing_cancel_weight * features.cancel_rate
-            + cfg.spoofing_dev_weight * min(features.deviation / 0.1, 1.0)
+        spoofing = cfg.spoofing_cancel_weight * features.cancel_rate + cfg.spoofing_dev_weight * min(
+            features.deviation / 0.1, 1.0
         )
         # 对敲：自成交占比 + 量集中度
-        wash = (
-            cfg.wash_self_weight * features.self_trade_ratio
-            + cfg.wash_conc_weight * features.volume_concentration
-        )
+        wash = cfg.wash_self_weight * features.self_trade_ratio + cfg.wash_conc_weight * features.volume_concentration
         # 尾盘操纵：尾盘量占比 + 尾盘偏离度（同封顶归一）
-        tail = (
-            cfg.tail_vol_weight * features.tail_volume_ratio
-            + cfg.tail_dev_weight * min(features.tail_deviation / 0.1, 1.0)
+        tail = cfg.tail_vol_weight * features.tail_volume_ratio + cfg.tail_dev_weight * min(
+            features.tail_deviation / 0.1, 1.0
         )
         return {
             ManipulationMode.SPOOFING: min(max(spoofing, 0.0), 1.0),
@@ -264,10 +293,7 @@ class InfoAsymmetryManipulationDetector:
         z_score = self.z_scan(returns)
         anomaly = abs(z_score) > self._config.z_threshold
         mode_scores = self.score_manipulation(features)
-        hit_modes = tuple(
-            mode.value for mode, score in mode_scores.items()
-            if score >= self._config.score_threshold
-        )
+        hit_modes = tuple(mode.value for mode, score in mode_scores.items() if score >= self._config.score_threshold)
         suspected = bool(hit_modes)
         report = ScanReport(
             symbol=symbol,
@@ -297,9 +323,7 @@ class InfoAsymmetryManipulationDetector:
         existing = self._avoidance.get(symbol)
         if existing is not None and existing.score >= score:
             return  # 保留更高分条目（幂等）
-        self._avoidance[symbol] = AvoidanceEntry(
-            symbol=symbol, score=score, reasons=reasons, raised_at=self._clock()
-        )
+        self._avoidance[symbol] = AvoidanceEntry(symbol=symbol, score=score, reasons=reasons, raised_at=self._clock())
         _log.warning("回避名单: %s score=%.3f reasons=%s", symbol, score, reasons)
 
     def avoid_list(self) -> tuple[AvoidanceEntry, ...]:

@@ -17,6 +17,10 @@
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 
 """
+
+
+
+
 EventStore — Event Sourcing 事件追加与回放（DW-0002）
 =====================================================
 append-only 事件存储，支持：
@@ -25,6 +29,38 @@ append-only 事件存储，支持：
 - verify_integrity: 校验事件链完整性（时间戳单调递增 + event_id 唯一性）
 
 线程安全：通过 SQLite BEGIN IMMEDIATE 事务保证写串行化。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: db_path 参数
+#   fields: 参数 db_path（无注解）
+#   code: event_store.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: auto_init 参数
+#   fields: 参数 auto_init（无注解）
+#   code: event_store.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① EventStore
+#   name_en: EventStore
+#   intro: Event Sourcing 事件存储——append-only 写入 + 时间顺序回放 + 完整性校验。
+#   desc: Event Sourcing 事件存储——append-only 写入 + 时间顺序回放 + 完整性校验。 参数 ---- db_path SQLite 数据库路径；默认 DB_…；公共方法（定义序）: close,…
+#   inputs: db_path auto_init
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: EventStore
+#   downstream: zephyr.governance.observability_governance.projection_engine; zephyr.governance…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

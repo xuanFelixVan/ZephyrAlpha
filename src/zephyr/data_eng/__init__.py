@@ -1,6 +1,37 @@
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 包内子模块公共符号
+#   fields: import 再导出符号: CleaningAnomalyEngine, DataAnomalyAlerter, ExpectationGovernance
+#   code: __init__.py import L31
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包公共面再导出
+#   name_en: __init__ re-export
+#   intro: 再导出 CleaningAnomalyEngine, DataAnomalyAlerter, ExpectationGovernance（共 3 符号）
+#   desc: __init__ import L31；__all__ 0 项（AST 事实）
+#   inputs: I1
+#   outputs: __all__ 公共符号表
+# 层: 输出
+# - id: O1
+#   name_zh: 公共 API 面（3 符号）
+#   name_en: __all__
+#   intro: CleaningAnomalyEngine, DataAnomalyAlerter, ExpectationGovernance
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 from zephyr.data_eng.cleaning_anomaly_engine import CleaningAnomalyEngine
-from zephyr.data_eng.expectation_governance import ExpectationGovernance
 from zephyr.data_eng.data_anomaly_alerter import DataAnomalyAlerter
+from zephyr.data_eng.expectation_governance import ExpectationGovernance
+
 # NOTE(P1W24 并行协调): 并行会话 scaffold incremental_update_engine 时 eager import
 # 先于类落地（stub 尚无 IncrementalUpdateEngine）致包门面断链；按可逆模式改守卫式
 # 导入（目标类落地即自愈，无需再改本行），frontend/components/__init__.py 同模式在案。

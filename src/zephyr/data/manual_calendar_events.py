@@ -29,12 +29,42 @@
 #   name_zh: 合法行 + 错误清单
 #   name_en: (list[dict], list[str])
 #   intro: 合法行可直接映射 calendar_event INSERT_COLUMNS；错误带 CSV 行号供台账修正
-"""manual 日历事件 CSV 录入校验（17号 §6.3，2026-08-20 AI-NIGHT-001 施工）。
+"""
+
+
+
+manual 日历事件 CSV 录入校验（17号 §6.3，2026-08-20 AI-NIGHT-001 施工）。
 
 裁定真源：17号 §6.3（v1.0.0 定稿）——fomc_meeting / major_meeting / stamp_duty_change
 三个 manual event_type 采纳"方案① CSV 录入 + 一次性 IMPORT"为标准填充路径。
 本模块只做格式定义的消费侧（校验函数）；CSV schema 真源见
 config/manual_calendar_events_schema.yaml；一次性 IMPORT 执行不在本批次范围。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: path 参数
+#   fields: 参数 path，类型注解 str | Path
+#   code: manual_calendar_events.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① validate_manual_events_csv
+#   name_en: validate_manual_events_csv
+#   intro: 校验 manual 日历事件 CSV，返回 (合法行, 错误清单)。
+#   desc: 校验 manual 日历事件 CSV，返回 (合法行, 错误清单)。 Args: path: CSV 文件路径（utf-8-sig 容忍 BOM；# 开头注释行与空行跳过）。 R…；源码 L85-L152
+#   inputs: path
+#   outputs: tuple[list[dict[str, str]], list[str]]
+# 层: 输出
+# - id: O1
+#   name_zh: tuple[list[dict[str, str]], list[str]]
+#   name_en: tuple[list[dict[str, str]], list[str]]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 一次性 IMPORT 脚本（17号 §6.3，本批次不施工 IMPORT 执行）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

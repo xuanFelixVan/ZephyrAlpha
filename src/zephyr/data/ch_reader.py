@@ -14,7 +14,11 @@
 # [TESTS]
 # [A_module] module_id=MOD-GOV-ch_reader | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""ClickHouse 统一读取层（裁定 #ARCH-CH-007）。
+"""
+
+
+
+ClickHouse 统一读取层（裁定 #ARCH-CH-007）。
 
 对 ReplacingMergeTree 表自动注入 FINAL 关键字，
 保证查询返回去重后的数据。
@@ -32,6 +36,76 @@
 - query(sql): 执行查询（自动注入 FINAL），返回 TSV 字符串
 - count(table, where): 计数查询（自动注入 FINAL），返回 int
 - query_table(table, columns, where, ...): 便捷表查询
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: sql 参数
+#   fields: 参数 sql，类型注解 str
+#   code: ch_reader.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: timeout 参数
+#   fields: 参数 timeout，类型注解 int
+#   code: ch_reader.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: table 参数
+#   fields: 参数 table，类型注解 str
+#   code: ch_reader.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: where 参数
+#   fields: 参数 where，类型注解 str
+#   code: ch_reader.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① inject_final
+#   name_en: inject_final
+#   intro: 对 SQL 中的 ReplacingMergeTree 表自动注入 FINAL 关键字。
+#   desc: 对 SQL 中的 ReplacingMergeTree 表自动注入 FINAL 关键字。 纯函数，不执行查询，不抛异常。 规则： - 检测 FROM 子句中的表名 - 对 Rep…；源码 L128-L162
+#   inputs: sql
+#   outputs: str
+# - id: A2
+#   name_zh: ② query
+#   name_en: query
+#   intro: 执行查询，自动对 ReplacingMergeTree 表注入 FINAL。
+#   desc: 执行查询，自动对 ReplacingMergeTree 表注入 FINAL。 基于 ch_writer.query()，返回 TSV 格式字符串。 失败时返回空字符串（同 ch_…；源码 L165-L179
+#   inputs: sql timeout
+#   outputs: str
+# - id: A3
+#   name_zh: ③ count
+#   name_en: count
+#   intro: 计数查询，自动注入 FINAL。
+#   desc: 计数查询，自动注入 FINAL。 对 ReplacingMergeTree 表，执行 SELECT count() FROM table FINAL， 保证计数不含重复行。 Ar…；源码 L182-L210
+#   inputs: table where timeout
+#   outputs: int
+# - id: A4
+#   name_zh: ④ query_table
+#   name_en: query_table
+#   intro: 便捷表查询，自动注入 FINAL。
+#   desc: 便捷表查询，自动注入 FINAL。 Args: table: 表名（如 "c1_market.kline_daily"） columns: 列名（如 "date, symbol,…；源码 L213-L247
+#   inputs: table columns where order_by limit timeout
+#   outputs: str
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.backfill_checker; zephyr.backtest.core.data_handler
+# - id: O2
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.backfill_checker; zephyr.backtest.core.data_handler
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

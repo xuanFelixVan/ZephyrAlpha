@@ -16,6 +16,10 @@
 # [TTL] permanent
 
 """
+
+
+
+
 audit-trail.integrity — MOD-INF-020 · 密码学完整性验证器
 ===========================================================
 蓝图 §5 · 哈希链验证 + HMAC验证 + Agent签名验证 + Merkle树聚合 (§2.2)
@@ -28,6 +32,45 @@ audit-trail.integrity — MOD-INF-020 · 密码学完整性验证器
   - Merkle 树聚合: 按批次(batch_id)构建 Merkle 树，产出 merkle_root
   - 批量验证: 一次性验证整个 event log 的完整性
   - 报告: 返回被篡改/中断的 entry_id 列表
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: event_log_path 参数
+#   fields: 参数 event_log_path（无注解）
+#   code: integrity.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: hmac_key 参数
+#   fields: 参数 hmac_key（无注解）
+#   code: integrity.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① MerkleAggregator
+#   name_en: MerkleAggregator
+#   intro: Merkle 树构建器——蓝图 §2.2 cryptographic_integrity.merkle_aggrega…
+#   desc: Merkle 树构建器——蓝图 §2.2 cryptographic_integrity.merkle_aggregation。 将一批审计事件的 entry_hash 作为叶子…；公共方法（定义序）: build,…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② IntegrityVerifier
+#   name_en: IntegrityVerifier
+#   intro: class IntegrityVerifier 源码 L143-L371
+#   desc: 公共方法（定义序）: event_log_path, hmac_key, verify_chain, verify_single；源码 L143-L371
+#   inputs: event_log_path hmac_key
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: MerkleAggregator, IntegrityVerifier
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

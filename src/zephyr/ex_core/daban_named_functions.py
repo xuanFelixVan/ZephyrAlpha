@@ -26,7 +26,11 @@
 # F8: detect_quant_seat_warning——hard 70%/soft 58% 双阈值降权
 # O1: 各函数 dict 结果（标签/score/区间/降权+reason）
 # [/ALGO_FLOW]
-"""打板 8 具名函数（24_daban_strategy_detail §3.1/§3.9/§3.11 施工，首批回测校准项）。
+"""
+
+
+
+打板 8 具名函数（24_daban_strategy_detail §3.1/§3.9/§3.11 施工，首批回测校准项）。
 
 memo 对 8 支函数给出一行式裁定，本模块按裁定语义落成可测函数；
 经验映射参数（溢价区间分档、良性回封时限等）以 memo 数字为真源，
@@ -36,6 +40,108 @@ memo 对 8 支函数给出一行式裁定，本模块按裁定语义落成可测
   §3.9：score_auction_3d / detect_auction_paper_tiger
   §3.11：score_seal_structure / forecast_next_day_premium /
          classify_reflush_board / detect_quant_seat_warning
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: height_counts 参数
+#   fields: 参数 height_counts，类型注解 dict
+#   code: daban_named_functions.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: base_score 参数
+#   fields: 参数 base_score，类型注解 float
+#   code: daban_named_functions.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: echelon_height 参数
+#   fields: 参数 echelon_height，类型注解 int
+#   code: daban_named_functions.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: echelon_health 参数
+#   fields: 参数 echelon_health，类型注解 str
+#   code: daban_named_functions.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① classify_echelon_health
+#   name_en: classify_echelon_health
+#   intro: 梯队健康度四档判定（§3.1，v1.5.0）：PERFECT/FRACTURE/LONE_DRAGON/COLLAPS…
+#   desc: 梯队健康度四档判定（§3.1，v1.5.0）：PERFECT/FRACTURE/LONE_DRAGON/COLLAPSE。 height_counts: {连板高度: 家数}，如…；源码 L160-L178
+#   inputs: height_counts
+#   outputs: str
+# - id: A2
+#   name_zh: ② score_consecutive_height_with_death_pool
+#   name_en: score_consecutive_height_with_death_pool
+#   intro: 中位股死亡池（§3.1，v1.5.0）：梯队断层/孤龙/崩塌时 3 板扣 40、4 板扣 30；完美梯队维持原评分。
+#   desc: 中位股死亡池（§3.1，v1.5.0）：梯队断层/孤龙/崩塌时 3 板扣 40、4 板扣 30；完美梯队维持原评分。 COLLAPSE 比 FRACTURE 更凶险（梯队全崩），…；源码 L181-L199
+#   inputs: base_score echelon_height echelon_health
+#   outputs: dict
+# - id: A3
+#   name_zh: ③ score_auction_3d
+#   name_en: score_auction_3d
+#   intro: 集合竞价三维 100 分（§3.9，v1.6.0）：大盘 30+板块 30+个股 40，9:25 竞价定格后调用。
+#   desc: 集合竞价三维 100 分（§3.9，v1.6.0）：大盘 30+板块 30+个股 40，9:25 竞价定格后调用。 输入为各维原始分（自动夹取到 0~上限）；总分≥80 打板确认…；源码 L202-L224
+#   inputs: market_score sector_score stock_score
+#   outputs: dict
+# - id: A4
+#   name_zh: ④ detect_auction_paper_tiger
+#   name_en: detect_auction_paper_tiger
+#   intro: 纸老虎识别（§3.9，v1.6.0）：竞价涨幅 7-8% 但匹配量<总量 3%=主力演戏，一票否决（IC 胜率 95%…
+#   desc: 纸老虎识别（§3.9，v1.6.0）：竞价涨幅 7-8% 但匹配量<总量 3%=主力演戏，一票否决（IC 胜率 95%+）。 auction_gain: 竞价涨幅（小数，0.07…；源码 L227-L238
+#   inputs: auction_gain matched_volume_ratio
+#   outputs: dict
+# - id: A5
+#   name_zh: ⑤ score_seal_structure
+#   name_en: score_seal_structure
+#   intro: 封单结构双指标（§3.11①，v1.8.0）：封流比≥5%稳定/<2%薄弱 + 封成比>10稳定/<1不牢。
+#   desc: 封单结构双指标（§3.11①，v1.8.0）：封流比≥5%稳定/<2%薄弱 + 封成比>10稳定/<1不牢。 双指标各 50 分：封流比≥5%→50 / 2%-5%→25 / <…；源码 L241-L269
+#   inputs: seal_flow_ratio seal_success_ratio
+#   outputs: dict
+# - id: A6
+#   name_zh: ⑥ forecast_next_day_premium
+#   name_en: forecast_next_day_premium
+#   intro: 次日溢价三维预测（§3.11②，v1.8.0）：封板时间×量能×封单→预期溢价区间+操作建议。
+#   desc: 次日溢价三维预测（§3.11②，v1.8.0）：封板时间×量能×封单→预期溢价区间+操作建议。 只输出预测不做决策（决策归 §3.13#1 NextDayExitDecision…；源码 L272-L308
+#   inputs: seal_time volume_surge seal_strength
+#   outputs: dict
+# - id: A7
+#   name_zh: ⑦ classify_reflush_board
+#   name_en: classify_reflush_board
+#   intro: 回封生死线决策（§3.11③，v1.8.0）：15 分钟内回封+封单递增=良性；20-30 分钟无法回封=承接崩塌。
+#   desc: 回封生死线决策（§3.11③，v1.8.0）：15 分钟内回封+封单递增=良性；20-30 分钟无法回封=承接崩塌。；源码 L311-L335
+#   inputs: resealed minutes_since_break seal_increasing
+#   outputs: dict
+# - id: A8
+#   name_zh: ⑧ detect_quant_seat_warning
+#   name_en: detect_quant_seat_warning
+#   intro: 龙虎榜量化席位双阈值预警（§3.11④，v1.8.0）：hard 70% 降权 30%+预警 / soft 58% 降…
+#   desc: 龙虎榜量化席位双阈值预警（§3.11④，v1.8.0）：hard 70% 降权 30%+预警 / soft 58% 降权 15%。 PIT 注意：本函数只判定占比，龙虎榜数据的…；源码 L338-L362
+#   inputs: quant_seat_ratio
+#   outputs: dict
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: （首批回测校准接线前暂无）
+# - id: O2
+#   name_zh: dict
+#   name_en: dict
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: （首批回测校准接线前暂无）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> O1
 """
 
 from __future__ import annotations

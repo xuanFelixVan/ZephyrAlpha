@@ -14,7 +14,11 @@
 # [TESTS] tests/compliance/test_compliance_rule_engine.py
 # [A_module] module_id=MOD-CMP-012 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
-"""ComplianceRuleEngine — §10.8.1.2 合规引擎 (MOD-CMP-012)
+"""
+
+
+
+ComplianceRuleEngine — §10.8.1.2 合规引擎 (MOD-CMP-012)
 
 CAND-CMP-002（B5-07849）：DSL 规则解析器 + 规则版本管理器（不可变历史 +
 当前活跃指针）+ 实时评估器（Pre-Trade 同步调用，Hard Block 拒单 /
@@ -38,6 +42,62 @@ DSL 规则定义（dict）::
 op ∈ ``>, >=, <, <=, ==, !=, in``。解析期校验（InvalidComplianceRuleError）。
 字段缺失等评估错误 → Fail-Closed：HARD_BLOCK + engine_error（检测引擎失效
 拒发任何订单，对齐 MOD-CMP-007 不变量）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: manager 参数
+#   fields: 参数 manager（无注解）
+#   code: compliance_rule_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: hit_sink 参数
+#   fields: 参数 hit_sink（无注解）
+#   code: compliance_rule_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RuleDslParser
+#   name_en: RuleDslParser
+#   intro: DSL 规则解析器（解析期校验，Fail-Closed 拒绝坏规则）。
+#   desc: DSL 规则解析器（解析期校验，Fail-Closed 拒绝坏规则）。；公共方法（定义序）: parse；源码 L204-L269
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② RuleVersionManager
+#   name_en: RuleVersionManager
+#   intro: 规则版本管理器：不可变历史 + 当前活跃指针。
+#   desc: 规则版本管理器：不可变历史 + 当前活跃指针。；公共方法（定义序）: register, activate, deactivate, active, history, active_rules；源码 L272-L306
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ ComplianceRuleEngine
+#   name_en: ComplianceRuleEngine
+#   intro: 合规引擎：实时评估器（Pre-Trade 同步）+ 盘后批量审计器。
+#   desc: 合规引擎：实时评估器（Pre-Trade 同步）+ 盘后批量审计器。 Args: manager: 版本管理器（None 自建新实例）。 hit_sink: 命中留痕回调（com…；公共方法（定义序）: manager…
+#   inputs: manager hit_sink
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ trading_compliance_rule_pack
+#   name_en: trading_compliance_rule_pack
+#   intro: 收编现有检测散件阈值语义为 DSL 规则包（MOD-CMP-007 §7.2 MVP 初始值）。
+#   desc: 收编现有检测散件阈值语义为 DSL 规则包（MOD-CMP-007 §7.2 MVP 初始值）。 仅表达阈值语义为 DSL 规则；散件检测逻辑本体不迁移不复制（收编渐进， 全量迁…；源码 L418-L439
+#   inputs: 无参数
+#   outputs: tuple[dict[str, Any], ...]
+#   （注：A4 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: tuple[dict[str, Any], ...]
+#   name_en: tuple[dict[str, Any], ...]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-EX-024(pre_execution_checker Pre-Trade 接线, 运行时装配批) ; MOD-CMP-010(compliance…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations
@@ -205,7 +265,9 @@ class RuleDslParser:
             for child in children:
                 RuleDslParser._validate_condition(child)
             return
-        raise InvalidComplianceRuleError(f"condition 形状非法: {sorted(keys)}（原子须为 field/op/(value|value_from_field)，复合须单键 all/any）")
+        raise InvalidComplianceRuleError(
+            f"condition 形状非法: {sorted(keys)}（原子须为 field/op/(value|value_from_field)，复合须单键 all/any）"
+        )
 
 
 class RuleVersionManager:

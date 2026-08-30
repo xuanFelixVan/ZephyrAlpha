@@ -23,7 +23,11 @@
 # A4: IDEMPOTENT_RETURN——返回已有 broker_order_id(幂等)
 # O1: RejectionActionResult(outcome/broker_order_id/frozen_strategy_id)——调用方留痕
 # [/ALGO_FLOW]
-"""D_EX_CORE — 拒单分类动作执行器（40 号 §6.1 gap 4 闭合，AI-NIGHT-001 包P）。
+"""
+
+
+
+D_EX_CORE — 拒单分类动作执行器（40 号 §6.1 gap 4 闭合，AI-NIGHT-001 包P）。
 
 40 号 §2.7 层3：分类映射 + classify_rejection + _handle_rejection 日志已实现，
 RETRY_ONCE / ALERT_FREEZE / ALERT_RECONCILE **实际动作**待 OrderExecutionSaga
@@ -40,6 +44,43 @@ RETRY_ONCE / ALERT_FREEZE / ALERT_RECONCILE **实际动作**待 OrderExecutionSa
 工程裁定：分类映射不重复实现——复用 OrderManager.classify_rejection 唯一真源；
 注入缺失一律降级"日志+放弃"（Fail-Closed：宁可放弃不可盲目重试，40 号 §2.7
 原则 + BM-EXE-04 撤单率 ≤15% 防线）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: retry_fn 参数
+#   fields: 参数 retry_fn（无注解）
+#   code: rejection_action_handler.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: alert_sink 参数
+#   fields: 参数 alert_sink（无注解）
+#   code: rejection_action_handler.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: reconcile_trigger 参数
+#   fields: 参数 reconcile_trigger（无注解）
+#   code: rejection_action_handler.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RejectionActionExecutor
+#   name_en: RejectionActionExecutor
+#   intro: 拒单分类动作执行器（策略冻结表 + 执行器注入）。
+#   desc: 拒单分类动作执行器（策略冻结表 + 执行器注入）。 Args: retry_fn: 重试执行器 callable(order, error) -> broker_order_id…；公共方法（定义序）: is_stra…
+#   inputs: retry_fn alert_sink reconcile_trigger
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: RejectionActionExecutor
+#   downstream: TradingSession._handle_rejection(装配批次接线); OrderExecutionSaga(接管后归口)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

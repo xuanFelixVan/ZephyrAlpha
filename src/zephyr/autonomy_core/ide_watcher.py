@@ -16,10 +16,40 @@
 # [TTL] permanent
 
 """
+
+
+
+
 MOD-INF-019: Agent Spec — IDE Watcher
 Blueprint: docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md
 Author: factory-agent
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: skills_dir 参数
+#   fields: 参数 skills_dir（无注解）
+#   code: ide_watcher.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① IDEWatcher
+#   name_en: IDEWatcher
+#   intro: IDE 热重载监视器——Skill 文件变更自动刷新 AGENTS.
+#   desc: IDE 热重载监视器——Skill 文件变更自动刷新 AGENTS.md；公共方法（定义序）: callbacks, last_mtimes, scan, on_change；源码 L60-L108
+#   inputs: skills_dir
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: IDEWatcher
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 import os

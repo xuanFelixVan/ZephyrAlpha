@@ -14,7 +14,11 @@
 # [TESTS] tests/compliance/test_evidence_chain_generator.py
 # [A_module] module_id=MOD-CMP-013 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""EvidenceChainGenerator — 合规证据链生成器（MOD-CMP-013）。
+"""
+
+
+
+EvidenceChainGenerator — 合规证据链生成器（MOD-CMP-013）。
 
 B1-00312（AUD-DRAFT-001-DIGEST P2 波 P2-W10，CAND-CMP-003，C2）：委托/成交/
 决策快照**自动采集**（采集器注册表注入）→ **哈希链式落盘**（append-only +
@@ -31,6 +35,38 @@ prev_hash 链，复用 compliance_log 的 WORM 语义）+ **检索导出**（按
 
 查重分工：compliance_log=通用合规日志 JSONL 载体（无哈希链/无采集注册表）；
 audit_trail=审计轨迹族（无 prev_hash 链校验语义）。本件=证据链生成与校验层。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: evidence_chain_generator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: root 参数
+#   fields: 参数 root（无注解）
+#   code: evidence_chain_generator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① EvidenceChainGenerator
+#   name_en: EvidenceChainGenerator
+#   intro: 证据链生成器（采集注册表 + append-only 哈希链 + 检索导出）。
+#   desc: 证据链生成器（采集注册表 + append-only 哈希链 + 检索导出）。 Args: clock: 时钟注入（记录时戳确定性来源）。 root: 落盘根目录注入；None…；公共方法（定义序）: register…
+#   inputs: clock root
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: EvidenceChainGenerator
+#   downstream: 运行时装配批（采集器注册表统一注入点装配 / 检索导出供合规审计）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -95,13 +131,15 @@ def _canonical(obj: object) -> str:
 
 
 def _snapshot_canonical(snapshot: EvidenceSnapshot) -> str:
-    return _canonical({
-        "snapshot_id": snapshot.snapshot_id,
-        "evidence_type": snapshot.evidence_type,
-        "symbol": snapshot.symbol,
-        "payload": snapshot.payload,
-        "taken_at": snapshot.taken_at.isoformat(),
-    })
+    return _canonical(
+        {
+            "snapshot_id": snapshot.snapshot_id,
+            "evidence_type": snapshot.evidence_type,
+            "symbol": snapshot.symbol,
+            "payload": snapshot.payload,
+            "taken_at": snapshot.taken_at.isoformat(),
+        }
+    )
 
 
 class EvidenceChainGenerator:
@@ -142,18 +180,17 @@ class EvidenceChainGenerator:
         try:
             _snapshot_canonical(snapshot)
         except (TypeError, ValueError) as exc:
-            raise EvidenceChainError(
-                f"payload 不可序列化: {snapshot.snapshot_id!r} ({exc})"
-            ) from exc
+            raise EvidenceChainError(f"payload 不可序列化: {snapshot.snapshot_id!r} ({exc})") from exc
 
-    def _record_hash(self, seq: int, prev_hash: str, snapshot: EvidenceSnapshot,
-                     recorded_at: datetime.datetime) -> str:
-        material = "|".join([
-            str(seq),
-            prev_hash,
-            _snapshot_canonical(snapshot),
-            recorded_at.isoformat(),
-        ])
+    def _record_hash(self, seq: int, prev_hash: str, snapshot: EvidenceSnapshot, recorded_at: datetime.datetime) -> str:
+        material = "|".join(
+            [
+                str(seq),
+                prev_hash,
+                _snapshot_canonical(snapshot),
+                recorded_at.isoformat(),
+            ]
+        )
         return hashlib.sha256(material.encode("utf-8")).hexdigest()
 
     def _append(self, snapshot: EvidenceSnapshot) -> ChainRecord:
@@ -176,13 +213,15 @@ class EvidenceChainGenerator:
 
     def _persist(self, record: ChainRecord) -> None:
         """落盘（注入 root 时）：JSONL 单行一条合法 JSON，追加写。"""
-        line = _canonical({
-            "seq": record.seq,
-            "prev_hash": record.prev_hash,
-            "record_hash": record.record_hash,
-            "recorded_at": record.recorded_at.isoformat(),
-            "snapshot": json.loads(_snapshot_canonical(record.snapshot)),
-        })
+        line = _canonical(
+            {
+                "seq": record.seq,
+                "prev_hash": record.prev_hash,
+                "record_hash": record.record_hash,
+                "recorded_at": record.recorded_at.isoformat(),
+                "snapshot": json.loads(_snapshot_canonical(record.snapshot)),
+            }
+        )
         try:
             self._root.mkdir(parents=True, exist_ok=True)
             with (self._root / self._LOG_NAME).open("a", encoding="utf-8") as fh:
@@ -193,9 +232,7 @@ class EvidenceChainGenerator:
 
     # ── 采集器注册表 ──────────────────────────────────────────────────────
 
-    def register_collector(
-        self, name: str, collector: Callable[[], Iterable[EvidenceSnapshot]]
-    ) -> None:
+    def register_collector(self, name: str, collector: Callable[[], Iterable[EvidenceSnapshot]]) -> None:
         """登记快照采集器（名称唯一；重复登记 Fail-Closed）。"""
         if not name:
             raise EvidenceChainError("采集器名称为空")
@@ -223,20 +260,12 @@ class EvidenceChainGenerator:
         prev_hash = GENESIS_HASH
         for expect_seq, record in enumerate(self._chain, start=1):
             if record.seq != expect_seq:
-                raise EvidenceChainError(
-                    f"链序号断裂: 期望 {expect_seq} 实际 {record.seq}"
-                )
+                raise EvidenceChainError(f"链序号断裂: 期望 {expect_seq} 实际 {record.seq}")
             if record.prev_hash != prev_hash:
-                raise EvidenceChainError(
-                    f"prev_hash 链断裂: seq={record.seq} id={record.snapshot.snapshot_id!r}"
-                )
-            recomputed = self._record_hash(
-                record.seq, record.prev_hash, record.snapshot, record.recorded_at
-            )
+                raise EvidenceChainError(f"prev_hash 链断裂: seq={record.seq} id={record.snapshot.snapshot_id!r}")
+            recomputed = self._record_hash(record.seq, record.prev_hash, record.snapshot, record.recorded_at)
             if recomputed != record.record_hash:
-                raise EvidenceChainError(
-                    f"record_hash 校验失败（疑似篡改）: seq={record.seq}"
-                )
+                raise EvidenceChainError(f"record_hash 校验失败（疑似篡改）: seq={record.seq}")
             prev_hash = record.record_hash
         return True
 
@@ -274,13 +303,15 @@ class EvidenceChainGenerator:
         """导出 JSONL（默认导出全链；单行一条合法 JSON）。"""
         items = list(records) if records is not None else list(self._chain)
         lines = [
-            _canonical({
-                "seq": r.seq,
-                "prev_hash": r.prev_hash,
-                "record_hash": r.record_hash,
-                "recorded_at": r.recorded_at.isoformat(),
-                "snapshot": json.loads(_snapshot_canonical(r.snapshot)),
-            })
+            _canonical(
+                {
+                    "seq": r.seq,
+                    "prev_hash": r.prev_hash,
+                    "record_hash": r.record_hash,
+                    "recorded_at": r.recorded_at.isoformat(),
+                    "snapshot": json.loads(_snapshot_canonical(r.snapshot)),
+                }
+            )
             for r in items
         ]
         return "\n".join(lines) + ("\n" if lines else "")

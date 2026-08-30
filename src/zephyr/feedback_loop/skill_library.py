@@ -14,7 +14,10 @@
 # [TESTS] tests/feedback_loop/test_skill_library.py
 # [A_module] module_id=MOD-FBL-003 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""SkillLibrary — Voyager 式技能库（MOD-FBL-003）。
+"""
+
+
+SkillLibrary — Voyager 式技能库（MOD-FBL-003）。
 
 B12-03612（AUD-DRAFT-001-DIGEST P2 波 P2-W14，CAND-FBL-005，B12）：技能条目
 Schema（**代码片段 / 策略模板 / 因子公式**三类词表闭合 + 来源任务 + 成功指标）
@@ -22,6 +25,38 @@ Schema（**代码片段 / 策略模板 / 因子公式**三类词表闭合 + 来�
 + **版本递增**（每次更新 version+1，内容变更重算向量）。
 
 纯内存确定性：embedder/时钟全注入，无网络/无子进程；同输入必同输出。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: embedder 参数
+#   fields: 参数 embedder（无注解）
+#   code: skill_library.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: skill_library.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SkillLibrary
+#   name_en: SkillLibrary
+#   intro: Voyager 式技能库（注册 + 向量检索 TopK + 复用登记 + 版本递增）。
+#   desc: Voyager 式技能库（注册 + 向量检索 TopK + 复用登记 + 版本递增）。；公共方法（定义序）: register_skill, update_skill, retrieve, register_reuse…
+#   inputs: embedder clock
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: SkillLibrary
+#   downstream: 运行时装配批（反馈回路技能检索/复用登记/版本演进统一注入点装配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -54,9 +89,9 @@ class SkillLibraryError(Exception):
 class SkillKind(str, Enum):
     """技能类别（词表闭合）。"""
 
-    CODE_SNIPPET = "code_snippet"          # 代码片段
+    CODE_SNIPPET = "code_snippet"  # 代码片段
     STRATEGY_TEMPLATE = "strategy_template"  # 策略模板
-    FACTOR_FORMULA = "factor_formula"      # 因子公式
+    FACTOR_FORMULA = "factor_formula"  # 因子公式
 
 
 @dataclass(frozen=True)
@@ -99,7 +134,7 @@ def _cosine(a: tuple[float, ...], b: tuple[float, ...]) -> float:
     """余弦相似度（确定性；零向量按 0.0 处理；维度不符 Fail-Closed）。"""
     if len(a) != len(b):
         raise SkillLibraryError(f"向量维度不符: {len(a)} vs {len(b)}")
-    dot = sum(x * y for x, y in zip(a, b))
+    dot = sum(x * y for x, y in zip(a, b, strict=False))
     norm_a = math.sqrt(sum(x * x for x in a))
     norm_b = math.sqrt(sum(y * y for y in b))
     if norm_a == 0.0 or norm_b == 0.0:
@@ -132,9 +167,7 @@ class SkillLibrary:
         raw = self._embedder(text)
         if raw is None:
             raise SkillLibraryError("embedder 返回 None")
-        vec = tuple(
-            _require_finite_number(v, "embedding 分量") for v in raw
-        )
+        vec = tuple(_require_finite_number(v, "embedding 分量") for v in raw)
         if not vec:
             raise SkillLibraryError("embedder 返回空向量")
         return vec
@@ -147,10 +180,7 @@ class SkillLibrary:
             try:
                 return SkillKind(kind)
             except ValueError:
-                raise SkillLibraryError(
-                    f"非法技能类别: {kind!r}（词表闭合: "
-                    f"{[k.value for k in SkillKind]}）"
-                ) from None
+                raise SkillLibraryError(f"非法技能类别: {kind!r}（词表闭合: {[k.value for k in SkillKind]}）") from None
         raise SkillLibraryError(f"非法技能类别类型: {kind!r}")
 
     @staticmethod
@@ -219,11 +249,7 @@ class SkillLibrary:
         new_content = old.content if content is None else content
         if not isinstance(new_content, str) or not new_content:
             raise SkillLibraryError("content 为空")
-        new_metrics = (
-            old.success_metrics
-            if success_metrics is None
-            else self._validate_metrics(success_metrics)
-        )
+        new_metrics = old.success_metrics if success_metrics is None else self._validate_metrics(success_metrics)
         new_embedding = old.embedding if content is None else self._embed(new_content)
         entry = SkillEntry(
             skill_id=old.skill_id,
@@ -242,9 +268,7 @@ class SkillLibrary:
 
     # ── 向量检索（TopK） ──────────────────────────────────────────────────
 
-    def retrieve(
-        self, task_description: str, *, top_k: int = 1
-    ) -> tuple[SkillEntry, ...]:
+    def retrieve(self, task_description: str, *, top_k: int = 1) -> tuple[SkillEntry, ...]:
         """新任务检索：余弦相似度 TopK（同分按 skill_id 升序，确定性）。"""
         if not isinstance(task_description, str) or not task_description:
             raise SkillLibraryError("task_description 为空")
@@ -253,18 +277,13 @@ class SkillLibrary:
         if not self._skills:
             return ()
         query = self._embed(task_description)
-        scored = [
-            (_cosine(query, entry.embedding), entry.skill_id, entry)
-            for entry in self._skills.values()
-        ]
+        scored = [(_cosine(query, entry.embedding), entry.skill_id, entry) for entry in self._skills.values()]
         scored.sort(key=lambda item: (-item[0], item[1]))
         return tuple(entry for _, _, entry in scored[:top_k])
 
     # ── 复用登记 ──────────────────────────────────────────────────────────
 
-    def register_reuse(
-        self, skill_id: str, *, task_description: str, similarity: float
-    ) -> SkillReuseRecord:
+    def register_reuse(self, skill_id: str, *, task_description: str, similarity: float) -> SkillReuseRecord:
         """复用登记：仅已注册技能；similarity 须 [-1,1] 有限实数。"""
         self._entry_of(skill_id)
         if not isinstance(task_description, str) or not task_description:

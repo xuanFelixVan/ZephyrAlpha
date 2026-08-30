@@ -14,7 +14,11 @@
 # [TESTS] tests/zephyr/data/test_policy_registry.py
 # [A_module] module_id=MOD-GOV-policy_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""per-source 调用策略注册表（MOD-L00-004 §5）。
+"""
+
+
+
+per-source 调用策略注册表（MOD-L00-004 §5）。
 
 每个数据源有自己的限流/重试/反爬/登录刷新策略，集中管理、yaml 热更新。
 
@@ -24,6 +28,48 @@
 核心组件：
 - SourcePolicy：单数据源策略（RPM/并发/重试/退避/反爬/登录刷新）
 - PolicyRegistry：策略注册表，从 yaml 加载，支持热更新
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: policy_registry.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SourcePolicy
+#   name_en: SourcePolicy
+#   intro: 单数据源调用策略。
+#   desc: 单数据源调用策略。 Attributes: rpm: 每分钟最大请求数（0=不限或配额制） concurrency: 最大并发数（1=串行） min_interval_sec:…；公共方法（定义序）: from_dic…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② PolicyRegistry
+#   name_en: PolicyRegistry
+#   intro: 策略注册表：从 yaml 加载 per-source 策略，支持热更新。
+#   desc: 策略注册表：从 yaml 加载 per-source 策略，支持热更新。 用法： registry = PolicyRegistry() registry.load_yaml("…；公共方法（定义序）: load_ya…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ get_registry
+#   name_en: get_registry
+#   intro: 获取全局 PolicyRegistry 单例。
+#   desc: 获取全局 PolicyRegistry 单例。首次调用时尝试加载 config/policies.yaml。；源码 L308-L319
+#   inputs: 无参数
+#   outputs: PolicyRegistry
+# 层: 输出
+# - id: O1
+#   name_zh: PolicyRegistry
+#   name_en: PolicyRegistry
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.scheduler, zephyr.data.provider_base
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations
@@ -82,7 +128,7 @@ class SourcePolicy:
     extra: dict = field(default_factory=dict)
 
     @classmethod
-    def from_dict(cls, d: dict) -> "SourcePolicy":
+    def from_dict(cls, d: dict) -> SourcePolicy:
         """从字典构造（yaml 加载后）。忽略未知字段。"""
         known = {f for f in cls.__dataclass_fields__}
         return cls(**{k: v for k, v in d.items() if k in known})

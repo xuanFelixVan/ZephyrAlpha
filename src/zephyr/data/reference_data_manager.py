@@ -14,7 +14,11 @@
 # [TESTS] tests/zephyr/data/test_reference_data_manager.py
 # [A_module] module_id=MOD-DAT-REF-DATA | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""ReferenceDataManager — 参考数据管理器（MOD-DAT-REF-DATA）
+"""
+
+
+
+ReferenceDataManager — 参考数据管理器（MOD-DAT-REF-DATA）
 
 B13-04240（AUD-DRAFT-001-DIGEST P1 波 W-P1-09，D-DATA-08，§17.1）：
 行业分类（GICS+申万）、指数成分（PIT effective_date）、多源 ID 映射
@@ -24,6 +28,33 @@ B13-04240（AUD-DRAFT-001-DIGEST P1 波 W-P1-09，D-DATA-08，§17.1）：
 查重裁定：instrument_master（MOD-L00-IM）为轻量 IM 15 字段+ST/板块 PIT
 最小核，本模块复用其最小字段集为锚、不复制，只补行业分类/指数成分/多源
 映射/变更事件四项缺口。B13-04355（D-TRADING-14）dig 已裁定重复并入本模块。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: event_publisher 参数
+#   fields: 参数 event_publisher（无注解）
+#   code: reference_data_manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ReferenceDataManager
+#   name_en: ReferenceDataManager
+#   intro: 参考数据管理器（判定核心纯内存，事件外发注入式）。
+#   desc: 参考数据管理器（判定核心纯内存，事件外发注入式）。；公共方法（定义序）: change_events, upsert_industry, industry_of, set_index_constituent, remo…
+#   inputs: event_publisher
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: ReferenceDataManager
+#   downstream: 运行时装配批（SQLite 建表读写 / event_publisher 接 event_bus / akshare 行业与指数成分采集接线）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -98,15 +129,15 @@ class IndexConstituent:
     index_code: str
     symbol: str
     effective_date: datetime.date
-    removed_date: Optional[datetime.date] = None
+    removed_date: datetime.date | None = None
 
 
 @dataclass(frozen=True)
 class IdMapping:
     symbol: str
-    minqmt: Optional[str] = None
-    tushare: Optional[str] = None
-    akshare: Optional[str] = None
+    minqmt: str | None = None
+    tushare: str | None = None
+    akshare: str | None = None
 
 
 @dataclass(frozen=True)
@@ -119,7 +150,7 @@ class RefChangeEvent:
 class ReferenceDataManager:
     """参考数据管理器（判定核心纯内存，事件外发注入式）。"""
 
-    def __init__(self, event_publisher: Optional[Callable[[RefChangeEvent], None]] = None) -> None:
+    def __init__(self, event_publisher: Callable[[RefChangeEvent], None] | None = None) -> None:
         self._publisher = event_publisher
         self._industry: dict[str, IndustryRecord] = {}
         self._constituents: list[IndexConstituent] = []
@@ -169,21 +200,17 @@ class ReferenceDataManager:
         self._emit("industry_upsert", {"symbol": symbol, "gics": rec.gics, "sw": rec.sw})
         return rec
 
-    def industry_of(self, symbol: str) -> Optional[IndustryRecord]:
+    def industry_of(self, symbol: str) -> IndustryRecord | None:
         return self._industry.get(symbol)
 
     # ── 指数成分（PIT）──
 
-    def set_index_constituent(
-        self, index_code: str, symbol: str, effective_date: datetime.date
-    ) -> IndexConstituent:
+    def set_index_constituent(self, index_code: str, symbol: str, effective_date: datetime.date) -> IndexConstituent:
         if not index_code:
             raise ValueError("index_code 不能为空")
         if not symbol:
             raise ValueError("symbol 不能为空")
-        rec = IndexConstituent(
-            index_code=index_code, symbol=symbol, effective_date=effective_date
-        )
+        rec = IndexConstituent(index_code=index_code, symbol=symbol, effective_date=effective_date)
         self._constituents.append(rec)
         self._emit(
             "index_constituent_add",
@@ -191,9 +218,7 @@ class ReferenceDataManager:
         )
         return rec
 
-    def remove_index_constituent(
-        self, index_code: str, symbol: str, removed_date: datetime.date
-    ) -> None:
+    def remove_index_constituent(self, index_code: str, symbol: str, removed_date: datetime.date) -> None:
         active = [
             c
             for c in self._constituents
@@ -228,11 +253,7 @@ class ReferenceDataManager:
                 if cur is not None and c.effective_date == cur.effective_date and cur.removed_date is not None:
                     continue  # 同 effective_date 保留移除记录（后到优先）
                 best[c.symbol] = c
-        return frozenset(
-            sym
-            for sym, c in best.items()
-            if c.removed_date is None or c.removed_date > as_of
-        )
+        return frozenset(sym for sym, c in best.items() if c.removed_date is None or c.removed_date > as_of)
 
     # ── 多源 ID 映射 ──
 
@@ -252,7 +273,7 @@ class ReferenceDataManager:
         self._emit("id_mapping_register", {"symbol": symbol})
         return m
 
-    def map_id(self, symbol: str, source: str, target: str) -> Optional[str]:
+    def map_id(self, symbol: str, source: str, target: str) -> str | None:
         if source not in MAPPING_SOURCES:
             raise ValueError(f"未知映射源: {source!r}（合法: {MAPPING_SOURCES}）")
         if target not in MAPPING_SOURCES:

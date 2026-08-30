@@ -14,7 +14,11 @@
 # [TESTS] tests/compliance/test_discipline_must_do_checker.py
 # [TTL] permanent
 
-"""四项必做清单完成度检测（43_compliance_discipline §3，BM-BUY-08-A）。
+"""
+
+
+
+四项必做清单完成度检测（43_compliance_discipline §3，BM-BUY-08-A）。
 
 交易日 4 个关键时点（盘前/盘中/盘后/晚间）自动检测四项必做清单完成度，
 是操作合规的"自律层"——防"AI 全自动跑、人不复盘"的纪律衰减。
@@ -35,6 +39,48 @@
 内部逻辑（§3.4）。
 
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: completion_provider 参数
+#   fields: 参数 completion_provider（无注解）
+#   code: discipline_must_do_checker.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: logger 参数
+#   fields: 参数 logger（无注解）
+#   code: discipline_must_do_checker.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: pre_market_deadline 参数
+#   fields: 参数 pre_market_deadline（无注解）
+#   code: discipline_must_do_checker.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: post_market_deadline 参数
+#   fields: 参数 post_market_deadline（无注解）
+#   code: discipline_must_do_checker.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ChecklistCompletionChecker
+#   name_en: ChecklistCompletionChecker
+#   intro: 四项必做清单完成度检查器（D-COMPLIANCE-23 组件 A）。
+#   desc: 四项必做清单完成度检查器（D-COMPLIANCE-23 组件 A）。 Args: completion_provider: 完成度信号源（工作流 artifact 存在性抽象）…；公共方法（定义序）: check_c…
+#   inputs: completion_provider logger pre_market_deadline post_market_deadline e…
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: ChecklistCompletionChecker
+#   downstream: C-004 风控引擎（盘中执行项 Pre-Trade 嵌入，43 号 §3.4）; 盘前/盘后/晚间工作流编排
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

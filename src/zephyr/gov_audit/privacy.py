@@ -16,6 +16,10 @@
 # [TTL] permanent
 
 """
+
+
+
+
 audit-trail.privacy — MOD-INF-020 · PII 检测与脱敏
 ====================================================
 蓝图 D-020-11 · PII 模式检测 + 路径哈希 + 脱敏策略
@@ -28,6 +32,41 @@ PII 模式
   - 信用卡号
   - API 密钥
   - 路径哈希/掩码
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: path 参数
+#   fields: 参数 path，类型注解 str
+#   code: privacy.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① PrivacyGuard
+#   name_en: PrivacyGuard
+#   intro: class PrivacyGuard 源码 L122-L211
+#   desc: 公共方法（定义序）: default_policy, patterns, detect_pii, redact, hash_path；源码 L122-L211
+#   inputs: custom_patterns default_policy
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② hash_path
+#   name_en: hash_path
+#   intro: hash_path(path) 源码 L214-L216
+#   desc: 源码 L214-L216
+#   inputs: path
+#   outputs: str
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

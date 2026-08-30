@@ -15,11 +15,41 @@
 # [A_module] module_id=MOD-OBS-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-REGIME-DEADZONE-001 #ARCH-OBS-EXP-TRACK-001
-"""L_INFRA_TELEMETRY — JSON 实验跟踪器（单一后端实现）。
+"""
+
+
+
+L_INFRA_TELEMETRY — JSON 实验跟踪器（单一后端实现）。
 
 与 ExperimentTracker 同接口，数据写本地 JSON 文件，供 query.py 扫描查询。
 依据: 51_panel_experiment_history_mlflow_retirement.md 工作流 A（单一 JSON 后端）
 Version: 0.2.0（MLflow 退役）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: fallback_dir 参数
+#   fields: 参数 fallback_dir（无注解）
+#   code: fallback_tracker.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FallbackBackend
+#   name_en: FallbackBackend
+#   intro: 单一 JSON 实验跟踪后端（MLflow 已退役，本后端即唯一生产后端）。
+#   desc: 单一 JSON 实验跟踪后端（MLflow 已退役，本后端即唯一生产后端）。 每次 run 写一个 JSON 文件到 {fallback_dir}/{component}/{ru…；公共方法（定义序）: start_r…
+#   inputs: fallback_dir
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: FallbackBackend
+#   downstream: zephyr.experiment_tracking.experiment_tracker
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

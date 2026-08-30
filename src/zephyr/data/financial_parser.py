@@ -14,7 +14,11 @@
 # [TESTS] tests/zephyr/data/test_financial_parser.py
 # [A_module] module_id=MOD-DAT-FIN-PARSER | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""FinancialParser — 财报结构化解析器（MOD-DAT-FIN-PARSER）
+"""
+
+
+
+FinancialParser — 财报结构化解析器（MOD-DAT-FIN-PARSER）
 
 B13-04263（AUD-DRAFT-001-DIGEST P1 波 W-P1-09，D-DATA-80，§17.1）：
 年报/季报/快报/更正公告 PDF 与 XBRL → 结构化指标——XBRL(Arelle) 解析 /
@@ -26,6 +30,43 @@ pdfplumber 表格抽取双路径 + 指标标准化映射 c3 财务表口径；�
 （PDF/XBRL→指标），消费其公告元数据定位财报附件，不复制采集链。
 B1-00619 dig 已裁定重复并入本模块；B13-04280（Filing NLP，公告文本 NLP）
 复用本模块 PDF 解析产物，互补不重复。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: pdf_extractor 参数
+#   fields: 参数 pdf_extractor（无注解）
+#   code: financial_parser.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: xbrl_parser 参数
+#   fields: 参数 xbrl_parser（无注解）
+#   code: financial_parser.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: llm_fallback 参数
+#   fields: 参数 llm_fallback（无注解）
+#   code: financial_parser.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FinancialParser
+#   name_en: FinancialParser
+#   intro: 财报解析管道（判定核心纯内存，解析器全注入式）。
+#   desc: 财报解析管道（判定核心纯内存，解析器全注入式）。；公共方法（定义序）: parse_report；源码 L141-L266
+#   inputs: pdf_extractor xbrl_parser llm_fallback
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: FinancialParser
+#   downstream: 运行时装配批（巨潮 PDF 下载执行 / pdfplumber·Arelle 真实绑定 / qwen3:8b 本地调用 / c3 财务表写入接线）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -78,10 +119,10 @@ class ReportRef:
     symbol: str
     report_type: str
     period: str
-    pdf_path: Optional[str] = None
-    raw_tables: Optional[list] = None
-    xbrl_facts: Optional[dict] = None
-    text: Optional[str] = None
+    pdf_path: str | None = None
+    raw_tables: list | None = None
+    xbrl_facts: dict | None = None
+    text: str | None = None
 
 
 @dataclass(frozen=True)
@@ -103,9 +144,9 @@ class FinancialParser:
 
     def __init__(
         self,
-        pdf_extractor: Optional[Callable[[str], list]] = None,
-        xbrl_parser: Optional[Callable[[str], dict]] = None,
-        llm_fallback: Optional[Callable[[str], dict]] = None,
+        pdf_extractor: Callable[[str], list] | None = None,
+        xbrl_parser: Callable[[str], dict] | None = None,
+        llm_fallback: Callable[[str], dict] | None = None,
     ) -> None:
         self._pdf_extractor = pdf_extractor
         self._xbrl_parser = xbrl_parser
@@ -114,7 +155,7 @@ class FinancialParser:
     # ── 数值清洗 ──
 
     @staticmethod
-    def _clean_number(raw: object) -> Optional[float]:
+    def _clean_number(raw: object) -> float | None:
         """千分位/括号负数/单位倍率（万元/亿元→元）归一；不可解析返回 None。"""
         if isinstance(raw, (int, float)):
             return float(raw)
@@ -183,7 +224,7 @@ class FinancialParser:
         if not report.period:
             raise ValueError("period 不能为空")
 
-        facts: Optional[dict] = None
+        facts: dict | None = None
         parser_used = ""
         if report.xbrl_facts:
             facts = dict(report.xbrl_facts)

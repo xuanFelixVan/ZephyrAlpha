@@ -21,7 +21,11 @@
 # F2: classify_decision_v192——冰点/反核门控反核路径；否则 PHASE_THRESHOLDS 打板路径六类
 # O1: {pass, score, reason} / 决策类标签（BOARD/CONTINUE/INVERSE_BOARD/REFLUSH_DIVE/WATCH/REJECT/WAIT）
 # [/ALGO_FLOW]
-"""打板信号前置门控 + 7 类交易动作决策（24_daban_strategy_detail §3.14#8 + §3.13#3 施工）。
+"""
+
+
+
+打板信号前置门控 + 7 类交易动作决策（24_daban_strategy_detail §3.14#8 + §3.13#3 施工）。
 
 缺失#8 pre_validate_daban_signal（首批实盘前必做）：§3.1 连板梯队识别
 与 §3.2 情绪周期定位之间的前置质量门控——低质量梯队（孤板/断层）即使
@@ -35,6 +39,60 @@
 PHASE_THRESHOLDS 取值说明（spec 伪代码引用未定义，按 §3.2 阶段评分区间
 下界落定）：冰点 20 / 反核 40 / 主升 40 / 疯狂 65 / 退潮 85（退潮期阈值
 拉满，事实禁止 BOARD——与 §3.2 退潮"≤1 成（清仓）"仓位裁定一致）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: echelon_health 参数
+#   fields: 参数 echelon_health，类型注解 str
+#   code: daban_signal_decision.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: echelon_height 参数
+#   fields: 参数 echelon_height，类型注解 int
+#   code: daban_signal_decision.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: sector_resonance 参数
+#   fields: 参数 sector_resonance，类型注解 float
+#   code: daban_signal_decision.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: follow_count 参数
+#   fields: 参数 follow_count，类型注解 int
+#   code: daban_signal_decision.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① pre_validate_daban_signal
+#   name_en: pre_validate_daban_signal
+#   intro: 打板信号前置质量评估（v1.9.3 补，梯队质量→yes/no门控），在 §3.2 情绪周期定位器之前调用。
+#   desc: 打板信号前置质量评估（v1.9.3 补，梯队质量→yes/no门控），在 §3.2 情绪周期定位器之前调用。 理论背书：arXiv:2607.27063 羊群 agent-bas…；源码 L111-L147
+#   inputs: echelon_health echelon_height sector_resonance follow_count
+#   outputs: dict
+# - id: A2
+#   name_zh: ② classify_decision_v192
+#   name_en: classify_decision_v192
+#   intro: 双引擎融合 7 类决策（v1.9.2 补第7类 REFLUSH_DIVE + 情绪周期门控切换）。
+#   desc: 双引擎融合 7 类决策（v1.9.2 补第7类 REFLUSH_DIVE + 情绪周期门控切换）。 §3.5 INVERSE_BOARD 是"地天反包"非"反核"，§3.12 反…；源码 L150-L174
+#   inputs: emotion_score tech_score phase is_limit_down_rebound
+#   outputs: str
+# 层: 输出
+# - id: O1
+#   name_zh: dict
+#   name_en: dict
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.ex_core.daban_pit_safety（PIT 回测框架主循环）
+# - id: O2
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.ex_core.daban_pit_safety（PIT 回测框架主循环）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

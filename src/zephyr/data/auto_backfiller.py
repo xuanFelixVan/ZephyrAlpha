@@ -14,7 +14,11 @@
 # [TESTS] tests/zephyr/data/test_auto_backfiller.py
 # [A_module] module_id=MOD-DAT-AUTO-BACKFILLER | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""AutoBackfiller — 事件触发式自动回填器（MOD-DAT-AUTO-BACKFILLER）
+"""
+
+
+
+AutoBackfiller — 事件触发式自动回填器（MOD-DAT-AUTO-BACKFILLER）
 
 B10-01815（AUD-DRAFT-001-DIGEST P1 波 W-P1-09，§29.2-7）：输入触发事件
 （新因子上线 new_factor / 公式升级 formula_upgrade / 数据源修复
@@ -24,6 +28,48 @@ data_source_fix），按日期分片规划回填，经注入 executor 逐分片�
 查重裁定：不复制 MOD-L00-004 backfill_checker（L10 周末行情缺口检测+
 精准补下载，定时/数据面向）逻辑；本模块为因子/公式/数据源修复**事件**
 触发的回填编排，缺口语义对齐走设计边。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: auto_backfiller.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: executor 参数
+#   fields: 参数 executor（无注解）
+#   code: auto_backfiller.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: trading_days_provider 参数
+#   fields: 参数 trading_days_provider（无注解）
+#   code: auto_backfiller.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: sample_validator 参数
+#   fields: 参数 sample_validator（无注解）
+#   code: auto_backfiller.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AutoBackfiller
+#   name_en: AutoBackfiller
+#   intro: 事件触发式自动回填器（判定核心纯内存，执行体/外发全注入）。
+#   desc: 事件触发式自动回填器（判定核心纯内存，执行体/外发全注入）。；公共方法（定义序）: plan, run；源码 L160-L297
+#   inputs: config executor trading_days_provider sample_validator lineage_sink r…
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: AutoBackfiller
+#   downstream: 运行时装配批（触发事件装配 / executor 接因子重算 / lineage_sink 接血缘真源 / retrain_sink 接 auto-retra…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -118,11 +164,11 @@ class AutoBackfiller:
     def __init__(
         self,
         config: AutoBackfillConfig | None = None,
-        executor: Optional[Callable[[BackfillShard], ShardResult]] = None,
-        trading_days_provider: Optional[Callable[[datetime.date, datetime.date], list]] = None,
-        sample_validator: Optional[Callable[[BackfillShard, ShardResult], bool]] = None,
-        lineage_sink: Optional[Callable[[BackfillReport], None]] = None,
-        retrain_sink: Optional[Callable[[BackfillTrigger], None]] = None,
+        executor: Callable[[BackfillShard], ShardResult] | None = None,
+        trading_days_provider: Callable[[datetime.date, datetime.date], list] | None = None,
+        sample_validator: Callable[[BackfillShard, ShardResult], bool] | None = None,
+        lineage_sink: Callable[[BackfillReport], None] | None = None,
+        retrain_sink: Callable[[BackfillTrigger], None] | None = None,
         rng_seed: int | None = None,
     ) -> None:
         self._config = config or AutoBackfillConfig()
@@ -193,9 +239,7 @@ class AutoBackfiller:
                 results.append(self._executor(shard))
             except Exception as exc:  # noqa: BLE001 — 单片失败不中断其余
                 log.warning("分片 %s 执行异常: %s", shard.shard_id, exc)
-                results.append(
-                    ShardResult(shard_id=shard.shard_id, rows_written=0, success=False, error=str(exc))
-                )
+                results.append(ShardResult(shard_id=shard.shard_id, rows_written=0, success=False, error=str(exc)))
         succeeded = sum(1 for r in results if r.success)
         failed = len(results) - succeeded
 
@@ -204,9 +248,7 @@ class AutoBackfiller:
         n_sample = max(1, round(len(ok_results) * plan.sample_ratio)) if ok_results else 0
         sampled = self._rng.sample(ok_results, k=min(n_sample, len(ok_results))) if ok_results else []
         shard_by_id = {s.shard_id: s for s in plan.shards}
-        sample_passed = all(
-            self._sample_validator(shard_by_id[r.shard_id], r) for r in sampled
-        ) if sampled else False
+        sample_passed = all(self._sample_validator(shard_by_id[r.shard_id], r) for r in sampled) if sampled else False
 
         # 血缘+重训：全成功且样本通过才触发；sink 异常留痕不阻断
         sink_errors: list[str] = []

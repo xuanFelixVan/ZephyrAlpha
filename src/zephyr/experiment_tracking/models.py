@@ -15,11 +15,41 @@
 # [A_module] module_id=MOD-OBS-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-REGIME-DEADZONE-001 #ARCH-OBS-EXP-TRACK-001
-"""L_INFRA_TELEMETRY — 实验跟踪数据模型（RunSummary / RunDetail）。
+"""
+
+
+
+L_INFRA_TELEMETRY — 实验跟踪数据模型（RunSummary / RunDetail）。
 
 统一本地 JSON 源的查询模型（MLflow 已退役），Panel/AI 只消费统一模型。
 依据: 51_panel_experiment_history_mlflow_retirement.md 工作流 A2 + backtest_observability_mlflow_plan.md M1 query.py 设计
 Version: 0.1.1（RunDetail.artifact_paths=dict[str,str] 契约实证归一，见 query.py 治本留痕）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: models.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① 数据契约声明
+#   name_en: data class declarations
+#   intro: 纯声明类（无公共方法，AST 事实）: RunSummary, RunDetail
+#   desc: 数据契约/异常/枚举声明共 2 类；无算法流程（AST 事实）
+#   inputs: I1
+#   outputs: 数据契约类集合
+# 层: 输出
+# - id: O1
+#   name_zh: 数据契约声明（2 类）
+#   name_en: data classes
+#   intro: RunSummary, RunDetail
+#   downstream: zephyr.experiment_tracking.query ; zephyr.frontend.dashboard.components.experim…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

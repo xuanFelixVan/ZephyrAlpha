@@ -14,7 +14,11 @@
 # [TESTS] tests/compliance/test_compliance_policy_engine.py
 # [A_module] module_id=MOD-CMP-015 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""CompliancePolicyEngine — 合规策略即代码引擎（MOD-CMP-015）。
+"""
+
+
+
+CompliancePolicyEngine — 合规策略即代码引擎（MOD-CMP-015）。
 
 B14-04651（AUD-DRAFT-001-DIGEST P2 波 P2-W10，CAND-CMP-006，A9 D-COMPLIANCE-16）：
 合规规则**声明式 DSL**（YAML 规则 schema：条件/动作/严重度）+ **版本管理** +
@@ -32,6 +36,46 @@ B14-04651（AUD-DRAFT-001-DIGEST P2 波 P2-W10，CAND-CMP-006，A9 D-COMPLIANCE-
 查重分工：compliance_rule_engine=既有规则执行族（无版本管理/审批队列/
 回放验证语义）；governance 合规门=治理裁决（零交集）。本件=策略即代码的
 声明、版本化与安全激活层。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: condition 参数
+#   fields: 参数 condition，类型注解 str
+#   code: compliance_policy_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: context 参数
+#   fields: 参数 context，类型注解 Mapping
+#   code: compliance_policy_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① evaluate_condition
+#   name_en: evaluate_condition
+#   intro: 条件求值：or 分段 → and 分段 → 单子句（纯函数，确定性）。
+#   desc: 条件求值：or 分段 → and 分段 → 单子句（纯函数，确定性）。；源码 L246-L253
+#   inputs: condition context
+#   outputs: bool
+# - id: A2
+#   name_zh: ② CompliancePolicyEngine
+#   name_en: CompliancePolicyEngine
+#   intro: 合规策略即代码引擎（DSL + 版本管理 + 回放验证 + 审批队列 + 热加载门禁）。
+#   desc: 合规策略即代码引擎（DSL + 版本管理 + 回放验证 + 审批队列 + 热加载门禁）。 Args: clock: 时钟注入。 replayer: 回放器注入（old_rules…；公共方法（定义序）: submit_…
+#   inputs: clock replayer is_non_trading_time
+#   outputs: 返回值
+#   （注：A2 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 运行时装配批（规则库版本装配 / 回放器与时段判定统一注入）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -68,8 +112,8 @@ class CompliancePolicyError(Exception):
 class PolicyAction(str, Enum):
     """规则动作（词表闭合）。"""
 
-    BLOCK = "block"    # 拦截
-    ALERT = "alert"    # 告警
+    BLOCK = "block"  # 拦截
+    ALERT = "alert"  # 告警
     RECORD = "record"  # 留痕
 
 
@@ -114,7 +158,7 @@ class PolicyDecision:
 class ReplayReport:
     """回放比对报告（回放器注入返回载体）。"""
 
-    matched: bool                # 历史重放新旧规则结果是否一致（或符合预期）
+    matched: bool  # 历史重放新旧规则结果是否一致（或符合预期）
     details: tuple[str, ...] = ()
 
 
@@ -145,9 +189,7 @@ def _parse_literal(text: str) -> object:
         if not inner:
             return []
         return [_parse_literal(part.strip()) for part in inner.split(",")]
-    if (text.startswith("'") and text.endswith("'")) or (
-        text.startswith('"') and text.endswith('"')
-    ):
+    if (text.startswith("'") and text.endswith("'")) or (text.startswith('"') and text.endswith('"')):
         return text[1:-1]
     if text in ("true", "false"):
         return text == "true"
@@ -222,17 +264,13 @@ def _validate_condition_syntax(condition: str) -> None:
             if match is None:
                 raise CompliancePolicyError(f"条件子句语法非法: {clause!r}")
             _parse_literal(match.group("literal"))  # 字面量可解析
-            if match.group("op") == "in" and not isinstance(
-                _parse_literal(match.group("literal")), list
-            ):
+            if match.group("op") == "in" and not isinstance(_parse_literal(match.group("literal")), list):
                 raise CompliancePolicyError(f"in 右值须为列表: {clause!r}")
 
 
 # ── 引擎 ────────────────────────────────────────────────────────────────────
 
-_RULE_REQUIRED_KEYS: Final[frozenset[str]] = frozenset(
-    {"rule_id", "condition", "action", "severity"}
-)
+_RULE_REQUIRED_KEYS: Final[frozenset[str]] = frozenset({"rule_id", "condition", "action", "severity"})
 
 
 class CompliancePolicyEngine:
@@ -317,10 +355,15 @@ class CompliancePolicyEngine:
             description = raw.get("description", "")
             if not isinstance(description, str):
                 raise CompliancePolicyError(f"rules[{idx}] description 非字符串")
-            rules.append(PolicyRule(
-                rule_id=rule_id, condition=condition,
-                action=action, severity=severity, description=description,
-            ))
+            rules.append(
+                PolicyRule(
+                    rule_id=rule_id,
+                    condition=condition,
+                    action=action,
+                    severity=severity,
+                    description=description,
+                )
+            )
         return version, tuple(rules)
 
     # ── 人工审批队列 ──────────────────────────────────────────────────────
@@ -333,8 +376,11 @@ class CompliancePolicyEngine:
             raise CompliancePolicyError(f"change_id 重复: {change_id!r}")
         version, rules = self._parse_rules(payload)
         change = PolicyChange(
-            change_id=change_id, version=version, rules=rules,
-            status=ChangeStatus.PENDING, submitted_at=self._clock(),
+            change_id=change_id,
+            version=version,
+            rules=rules,
+            status=ChangeStatus.PENDING,
+            submitted_at=self._clock(),
         )
         self._changes[change_id] = change
         _log.info("规则变更入审批队列: %s version=%s rules=%d", change_id, version, len(rules))
@@ -350,25 +396,24 @@ class CompliancePolicyEngine:
         """审批通过：回放验证（注入时）→ 非交易时段门禁 → 激活新版本。"""
         change = self._change_of(change_id)
         if change.status is not ChangeStatus.PENDING:
-            raise CompliancePolicyError(
-                f"非法审批: {change_id!r} 当前 {change.status.value}（重复审批/已拒绝）"
-            )
+            raise CompliancePolicyError(f"非法审批: {change_id!r} 当前 {change.status.value}（重复审批/已拒绝）")
         if self._replayer is not None:
             old_rules = self._versions.get(self._active_version, ()) if self._active_version else ()
             report = self._replayer(tuple(old_rules), change.rules)
             if not isinstance(report, ReplayReport):
                 raise CompliancePolicyError("回放器返回非法（须为 ReplayReport）")
             if not report.matched:
-                raise CompliancePolicyError(
-                    f"回放验证不通过: {change_id!r} details={list(report.details)}"
-                )
+                raise CompliancePolicyError(f"回放验证不通过: {change_id!r} details={list(report.details)}")
         if not self._is_non_trading_time():
             raise CompliancePolicyError("当前为交易时段（热加载仅限非交易时段）")
         self._versions[change.version] = change.rules
         self._active_version = change.version
         approved = PolicyChange(
-            change_id=change.change_id, version=change.version, rules=change.rules,
-            status=ChangeStatus.APPROVED, submitted_at=change.submitted_at,
+            change_id=change.change_id,
+            version=change.version,
+            rules=change.rules,
+            status=ChangeStatus.APPROVED,
+            submitted_at=change.submitted_at,
         )
         self._changes[change_id] = approved
         _log.info("规则版本激活: %s (%s)", change.version, change_id)
@@ -378,12 +423,13 @@ class CompliancePolicyEngine:
         """审批拒绝（仅 PENDING 可拒绝）。"""
         change = self._change_of(change_id)
         if change.status is not ChangeStatus.PENDING:
-            raise CompliancePolicyError(
-                f"非法拒绝: {change_id!r} 当前 {change.status.value}"
-            )
+            raise CompliancePolicyError(f"非法拒绝: {change_id!r} 当前 {change.status.value}")
         rejected = PolicyChange(
-            change_id=change.change_id, version=change.version, rules=change.rules,
-            status=ChangeStatus.REJECTED, submitted_at=change.submitted_at,
+            change_id=change.change_id,
+            version=change.version,
+            rules=change.rules,
+            status=ChangeStatus.REJECTED,
+            submitted_at=change.submitted_at,
         )
         self._changes[change_id] = rejected
         _log.info("规则变更拒绝: %s", change_id)
@@ -400,10 +446,14 @@ class CompliancePolicyEngine:
         out: list[PolicyDecision] = []
         for rule in self._versions[self._active_version]:
             if evaluate_condition(rule.condition, context):
-                out.append(PolicyDecision(
-                    rule_id=rule.rule_id, action=rule.action,
-                    severity=rule.severity, condition=rule.condition,
-                ))
+                out.append(
+                    PolicyDecision(
+                        rule_id=rule.rule_id,
+                        action=rule.action,
+                        severity=rule.severity,
+                        condition=rule.condition,
+                    )
+                )
         out.sort(key=lambda d: d.rule_id)
         return out
 

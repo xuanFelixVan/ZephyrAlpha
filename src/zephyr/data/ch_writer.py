@@ -14,7 +14,11 @@
 # [TESTS] tests/zephyr/data/test_ch_writer.py
 # [A_module] module_id=MOD-GOV-ch_writer | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""ClickHouse 写入器（MOD-L00-004 §3.2 数据流第6步 + §7.3 幂等性）。
+r"""
+
+
+
+ClickHouse 写入器（MOD-L00-004 §3.2 数据流第6步 + §7.3 幂等性）。
 
 二级传输架构（Hyper-V 迁移，2026-07-16 修订）：
 - query/delete_where → clickhouse-driver TCP（9000端口）
@@ -24,7 +28,7 @@
 
 提供：
 - write_result(result): 把 FetchResult.rows 转 TSV 写入 CH
-- tsv_escape(v): 转义字段值（None/NaN -> \\N，字符串去换行制表符）
+- tsv_escape(v): 转义字段值（None/NaN -> \N，字符串去换行制表符）
 - delete_where(table, condition): 写前删除（MergeTree 幂等性）
 - query(sql): 查询 CH（用于 DESCRIBE TABLE 获取列清单）
 - ensure_database(name): 建库前置容错（#256③ 路线B：存在即过，缺失才 CREATE，权限不足 fail-visible）
@@ -39,6 +43,125 @@
 - 不依赖 tmp/_ds_common.py（TTL=task_bound，src/ 不能长期依赖 tmp/）
 - 自封装 http_insert / tsv_escape / get_insert_columns 逻辑
 - 端点配置从 config/.env.clickhouse 读取，不硬编码 IP/端口
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: sql 参数
+#   fields: 参数 sql，类型注解 str
+#   code: ch_writer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: tsv_bytes 参数
+#   fields: 参数 tsv_bytes，类型注解 bytes
+#   code: ch_writer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: timeout 参数
+#   fields: 参数 timeout，类型注解 int
+#   code: ch_writer.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: name 参数
+#   fields: 参数 name，类型注解 str
+#   code: ch_writer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① WriteOutcome
+#   name_en: WriteOutcome
+#   intro: 写入结果；禁止把本地持久化伪装成 ClickHouse 已提交。
+#   desc: 写入结果；禁止把本地持久化伪装成 ClickHouse 已提交。；公共方法（定义序）: is_ch_committed；源码 L240-L248
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② get_client
+#   name_en: get_client
+#   intro: 获取 clickhouse-driver TCP 客户端单例（懒初始化）。
+#   desc: 获取 clickhouse-driver TCP 客户端单例（懒初始化）。 clickhouse-driver 使用 ClickHouse 原生 TCP 协议（9000 端口）。…；源码 L266-L320
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ get_http_host
+#   name_en: get_http_host
+#   intro: 获取可用的 ClickHouse HTTP 主机。
+#   desc: 获取可用的 ClickHouse HTTP 主机。 策略（Hyper-V 迁移，2026-07-16）： - 直连配置的 CLICKHOUSE_HOST（默认 172.24.30…；源码 L335-L380
+#   inputs: 无参数
+#   outputs: str
+# - id: A4
+#   name_zh: ④ http_insert
+#   name_en: http_insert
+#   intro: 通过 ClickHouse HTTP API（8123端口）执行 INSERT。
+#   desc: 通过 ClickHouse HTTP API（8123端口）执行 INSERT。 HTTP API 作为 TCP 失败时的降级通道： - 端点从 config/.env.clic…；源码 L434-L471
+#   inputs: sql tsv_bytes timeout
+#   outputs: bool
+# - id: A5
+#   name_zh: ⑤ query
+#   name_en: query
+#   intro: 执行 CH 查询，返回 TSV 格式字符串。
+#   desc: 执行 CH 查询，返回 TSV 格式字符串。 二级传输（Hyper-V 迁移，2026-07-16）： - clickhouse-driver TCP → HTTP API（二级…；源码 L483-L540
+#   inputs: sql timeout
+#   outputs: str
+# - id: A6
+#   name_zh: ⑥ ensure_database
+#   name_en: ensure_database
+#   intro: 确保数据库存在（#256③ 路线B：writer 无 CREATE DATABASE 权限的容错通道）。
+#   desc: 确保数据库存在（#256③ 路线B：writer 无 CREATE DATABASE 权限的容错通道）。 语义： - 库已存在（system.databases 可查，write…；源码 L543-L572
+#   inputs: name timeout
+#   outputs: bool
+# - id: A7
+#   name_zh: ⑦ tsv_escape
+#   name_en: tsv_escape
+#   intro: 转义字段值用于 TSV。
+#   desc: 转义字段值用于 TSV。 - None / NaN -> ``\N`` - 字符串去掉换行制表符（替换为空格） - 反斜杠转义 Returns: TSV 安全的字符串。；源码 L575-L595
+#   inputs: v
+#   outputs: str
+# - id: A8
+#   name_zh: ⑧ get_insert_columns
+#   name_en: get_insert_columns
+#   intro: 查询表的可插入列清单（用于 INSERT 时显式指定列）。
+#   desc: 查询表的可插入列清单（用于 INSERT 时显式指定列）。 DESCRIBE TABLE 输出字段: name, type, default_type, default_expr…；源码 L612-L650
+#   inputs: table
+#   outputs: str
+# - id: A9
+#   name_zh: ⑨ get_table_columns_set
+#   name_en: get_table_columns_set
+#   intro: 查询表的全部列名集合（含 DEFAULT/MATERIALIZED/ALIAS 列）。
+#   desc: 查询表的全部列名集合（含 DEFAULT/MATERIALIZED/ALIAS 列）。 用于 write_result 列过滤：只插入表中存在的列。 线程安全：double-ch…；源码 L663-L691
+#   inputs: table
+#   outputs: set[str]
+# - id: A10
+#   name_zh: ⑩ get_insertable_columns_set
+#   name_en: get_insertable_columns_set
+#   intro: 查询表的可插入列名集合（排除 MATERIALIZED/ALIAS，保留 DEFAULT 和普通列）。
+#   desc: 查询表的可插入列名集合（排除 MATERIALIZED/ALIAS，保留 DEFAULT 和普通列）。 用于 write_result / buffered_writer / w…；源码 L703-L746
+#   inputs: table
+#   outputs: set[str]
+#   （注：A10 之后另有 9 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.scheduler
+# - id: O2
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.scheduler
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> A10
+# A10 --> O1
 """
 
 from __future__ import annotations

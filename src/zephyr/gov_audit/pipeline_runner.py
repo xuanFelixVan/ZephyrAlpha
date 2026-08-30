@@ -15,6 +15,42 @@
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: scripts_dir 参数
+#   fields: 参数 scripts_dir（无注解）
+#   code: pipeline_runner.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: max_workers 参数
+#   fields: 参数 max_workers（无注解）
+#   code: pipeline_runner.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① PipelineRunner
+#   name_en: PipelineRunner
+#   intro: class PipelineRunner 源码 L299-L1242
+#   desc: 公共方法（定义序）: discover_from_gate_registry, discover_from_depgraph, discover_from_manifest, dimension_scripts, ru…
+#   inputs: scripts_dir max_workers
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: PipelineRunner
+#   downstream: audit-orchestrator.cli; audit_admission_controller
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
+"""
+
 from __future__ import annotations
 
 import logging

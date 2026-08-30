@@ -14,7 +14,11 @@
 # [TESTS] tests/data_governance/test_ml_lineage_tracker.py
 # [A_module] module_id=MOD-DATA_GOV-013 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""ml_lineage_tracker — AI-ML 管线血缘追踪器（MOD-DATA_GOV-013）。
+"""
+
+
+
+ml_lineage_tracker — AI-ML 管线血缘追踪器（MOD-DATA_GOV-013）。
 
 B10-02324（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATGOV-010，A1 M8-NEW-05）：
 ML 血缘——串接 **训练数据集版本 -> 特征版本 -> 模型版本 -> 线上预测** 四类血
@@ -24,6 +28,38 @@ ML 血缘——串接 **训练数据集版本 -> 特征版本 -> 模型版本 ->
 查重分工（蓝图 §0）：core/lineage_tracker=通用表级血缘（本件=ML 域四类节点
 /边词表闭合的专用链，不改其存储）；ml_train/training_dataset_manager=数据
 集版本本体（本件只登记版本 ID 血缘，不管数据集内容）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: ml_lineage_tracker.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: event_adapter 参数
+#   fields: 参数 event_adapter（无注解）
+#   code: ml_lineage_tracker.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① MlLineageTracker
+#   name_en: MlLineageTracker
+#   intro: ML 管线血缘追踪器（词表闭合登记 + 全链反查 + 预测溯源）。
+#   desc: ML 管线血缘追踪器（词表闭合登记 + 全链反查 + 预测溯源）。；公共方法（定义序）: register_node, register_edge, register_event, node_kind, edges,…
+#   inputs: clock event_adapter
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: MlLineageTracker
+#   downstream: 运行时装配批（experiment_tracking 适配器绑定 / 模型评审全链反查 / 预测溯源查询）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -192,20 +228,17 @@ class MlLineageTracker:
     def datasets_of_model(self, model_id: str) -> tuple[str, ...]:
         """模型到数据全链反查：可达的全部数据集版本 ID（排序去重）。"""
         self._require_kind(model_id, MlNodeKind.MODEL)
-        return tuple(sorted(n for n in self._upstream_closure(model_id)
-                            if self._kinds[n] is MlNodeKind.DATASET))
+        return tuple(sorted(n for n in self._upstream_closure(model_id) if self._kinds[n] is MlNodeKind.DATASET))
 
     def features_of_model(self, model_id: str) -> tuple[str, ...]:
         """模型上游全部特征版本 ID（排序去重）。"""
         self._require_kind(model_id, MlNodeKind.MODEL)
-        return tuple(sorted(n for n in self._upstream_closure(model_id)
-                            if self._kinds[n] is MlNodeKind.FEATURE))
+        return tuple(sorted(n for n in self._upstream_closure(model_id) if self._kinds[n] is MlNodeKind.FEATURE))
 
     def model_of_prediction(self, prediction_id: str) -> str:
         """预测所属模型版本（恰一个，否则 Fail-Closed）。"""
         self._require_kind(prediction_id, MlNodeKind.PREDICTION)
-        models = sorted(n for n in self._upstream_closure(prediction_id)
-                        if self._kinds[n] is MlNodeKind.MODEL)
+        models = sorted(n for n in self._upstream_closure(prediction_id) if self._kinds[n] is MlNodeKind.MODEL)
         if len(models) != 1:
             raise MlLineageError(f"预测 {prediction_id!r} 上游模型数={len(models)}（须恰为 1）")
         return models[0]

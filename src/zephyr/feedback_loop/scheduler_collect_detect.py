@@ -14,6 +14,36 @@
 # [TESTS]
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: scheduler_collect_detect.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① CollectDetectHandler
+#   name_en: CollectDetectHandler
+#   intro: class CollectDetectHandler 源码 L75-L223
+#   desc: 公共方法（定义序）: run_collect, run_detect, run_diagnose；源码 L75-L223
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: CollectDetectHandler
+#   downstream: zephyr.feedback_loop.scheduler
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 import logging
 import time
 from dataclasses import dataclass, field

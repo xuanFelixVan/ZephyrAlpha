@@ -14,7 +14,11 @@
 # [TESTS] tests/data_governance/test_asset_auto_discovery.py
 # [A_module] module_id=MOD-DATA_GOV-014 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""asset_auto_discovery — 数据资产自动发现器（MOD-DATA_GOV-014）。
+"""
+
+
+
+asset_auto_discovery — 数据资产自动发现器（MOD-DATA_GOV-014）。
 
 B10-02326（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATGOV-011，A1 M8-NEW-07）：
 资产自动发现——扫描源注册（**ClickHouse 表 / 因子注册表 / 信号注册表**三类
@@ -25,6 +29,43 @@ diff 只更新变更**）。
 查重分工（蓝图 §0）：infrastructure/asset_inventory=资产台账本体（本件=发
 现与增量推送协调，不重建台账）；core/metadata_registry=元数据注册实现（本
 件仅注入其注册回调）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: asset_auto_discovery.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: registry_sink 参数
+#   fields: 参数 registry_sink（无注解）
+#   code: asset_auto_discovery.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: default_quality_score 参数
+#   fields: 参数 default_quality_score（无注解）
+#   code: asset_auto_discovery.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AssetAutoDiscovery
+#   name_en: AssetAutoDiscovery
+#   intro: 资产自动发现器（scanner 注册 + 卡片生成 + 指纹 diff 增量推送）。
+#   desc: 资产自动发现器（scanner 注册 + 卡片生成 + 指纹 diff 增量推送）。；公共方法（定义序）: register_scanner, fingerprint_of, run；源码 L143-L248
+#   inputs: clock registry_sink default_quality_score
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: AssetAutoDiscovery
+#   downstream: 运行时装配批（CH表/因子注册表/信号注册表 scanner 绑定 / metadata_registry 注册回调）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -136,9 +177,9 @@ class AssetAutoDiscovery:
     def fingerprint_of(raw: RawAssetInfo) -> str:
         """资产指纹（sha256；与 attributes 字典序无关）。"""
         h = hashlib.sha256()
-        h.update(f"{raw.asset_id}|{raw.owner}|{raw.update_frequency}\n".encode("utf-8"))
+        h.update(f"{raw.asset_id}|{raw.owner}|{raw.update_frequency}\n".encode())
         for key in sorted(raw.attributes):
-            h.update(f"{key}={raw.attributes[key]}\n".encode("utf-8"))
+            h.update(f"{key}={raw.attributes[key]}\n".encode())
         return h.hexdigest()
 
     # ── 发现运行 ──────────────────────────────────────────────────────────
@@ -198,9 +239,7 @@ class AssetAutoDiscovery:
                     raise AssetDiscoveryError(f"registry_sink 注册失败: {card.asset_id}: {exc}") from exc
 
         self._cards = {c.asset_id: c for c in cards}
-        _log.info(
-            "资产发现: +%d ~%d =%d", len(added), len(updated), len(unchanged)
-        )
+        _log.info("资产发现: +%d ~%d =%d", len(added), len(updated), len(unchanged))
         return DiscoveryReport(
             run_at=now,
             added=tuple(added),

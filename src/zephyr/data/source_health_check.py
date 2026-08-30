@@ -47,7 +47,11 @@
 #   name_zh: 健康状态查询面
 #   name_en: get_latest_results
 #   intro: 供 scheduler 健康门查询各源 healthy/test_fail；日志落盘供人工巡检
-"""数据源健康检查模块（每日调度器启动时执行）。
+"""
+
+
+
+数据源健康检查模块（每日调度器启动时执行）。
 
 功能：
 - 对所有注册的 provider 执行连接 + 简单 API 调用测试
@@ -56,6 +60,53 @@
 - 异常数据源记录但不自动禁用（由人工或 fallback 机制处理）
 
 集成点：scheduler.start() -> run_source_health_check()
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: source 参数
+#   fields: 参数 source，类型注解 str
+#   code: source_health_check.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① run_source_health_check
+#   name_en: run_source_health_check
+#   intro: 执行全量数据源健康检查（供 scheduler.start() 调用）。
+#   desc: 执行全量数据源健康检查（供 scheduler.start() 调用）。 Returns: {source_name: result_dict} 最新健康状态。；源码 L564-L626
+#   inputs: 无参数
+#   outputs: dict[str, dict]
+# - id: A2
+#   name_zh: ② get_source_health
+#   name_en: get_source_health
+#   intro: 查询单个数据源的最新健康状态（供 scheduler 调度决策用）。
+#   desc: 查询单个数据源的最新健康状态（供 scheduler 调度决策用）。 Returns: 最新健康状态 dict，或 None（未检查过）。；源码 L681-L688
+#   inputs: source
+#   outputs: dict | None
+# - id: A3
+#   name_zh: ③ get_all_source_health
+#   name_en: get_all_source_health
+#   intro: 查询所有数据源的最新健康状态。
+#   desc: 查询所有数据源的最新健康状态。；源码 L691-L694
+#   inputs: 无参数
+#   outputs: dict[str, dict]
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, dict]
+#   name_en: dict[str, dict]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.scheduler
+# - id: O2
+#   name_zh: dict | None
+#   name_en: dict | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.scheduler
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

@@ -14,7 +14,11 @@
 # [TESTS] tests/execution_simulation/test_almgren_chriss_impact_model.py
 # [A_module] module_id=MOD-EXSIM-001 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""AlmgrenChrissImpactModel — Almgren-Chriss 冲击成本模型（MOD-EXSIM-001）。
+"""
+
+
+
+AlmgrenChrissImpactModel — Almgren-Chriss 冲击成本模型（MOD-EXSIM-001）。
 
 B3-06286（AUD-DRAFT-001-DIGEST P2 波 P2-W08，CAND-EXSIM-001，B3 R-118）：
 **临时冲击**（η × 参与率^β × σ，段后按 λ 几何衰减）+ **永久冲击**
@@ -26,6 +30,38 @@ B3-06286（AUD-DRAFT-001-DIGEST P2 波 P2-W08，CAND-EXSIM-001，B3 R-118）：
 平衡 NAV loop 场景）；本件=order-driven 参与率冲击建模（单笔订单执行
 场景），含衰减曲线与参数估计器，不改动既有 slippage 链路。本件纯数学
 无时间/随机需求——无需时钟/随机源注入点。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: params 参数
+#   fields: 参数 params（无注解）
+#   code: almgren_chriss_impact_model.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: decay_lambda 参数
+#   fields: 参数 decay_lambda（无注解）
+#   code: almgren_chriss_impact_model.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AlmgrenChrissImpactModel
+#   name_en: AlmgrenChrissImpactModel
+#   intro: Almgren-Chriss 冲击成本模型（临时+永久参数化 + 衰减曲线 + 估计器）。
+#   desc: Almgren-Chriss 冲击成本模型（临时+永久参数化 + 衰减曲线 + 估计器）。；公共方法（定义序）: params, temporary_impact, permanent_impact, quote, d…
+#   inputs: params decay_lambda
+#   outputs: 返回值
+#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（8 定义）
+#   name_en: public defs
+#   intro: AlmgrenChrissImpactModel
+#   downstream: 运行时装配批（执行仿真/回测冲击成本真源装配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -158,7 +194,7 @@ def _schedule_fractions(schedule: ScheduleType, slices: int) -> list[float]:
     if schedule is ScheduleType.FRONT:
         weights = [float(slices - i) for i in range(slices)]  # 前重后轻
     else:  # BACK
-        weights = [float(i + 1) for i in range(slices)]       # 前轻后重
+        weights = [float(i + 1) for i in range(slices)]  # 前轻后重
     total = sum(weights)
     return [w / total for w in weights]
 
@@ -187,12 +223,12 @@ class AlmgrenChrissImpactModel:
     def temporary_impact(self, participation: float) -> float:
         """临时冲击 = η × 参与率^β × σ（价格相对位移比例，段后衰减）。"""
         p = _validate_participation(participation)
-        return self._params.eta * (p ** self._params.beta) * self._params.sigma
+        return self._params.eta * (p**self._params.beta) * self._params.sigma
 
     def permanent_impact(self, participation: float) -> float:
         """永久冲击 = γ × 参与率^permanent_exponent × σ（默认档 sqrt）。"""
         p = _validate_participation(participation)
-        return self._params.gamma * (p ** self._params.permanent_exponent) * self._params.sigma
+        return self._params.gamma * (p**self._params.permanent_exponent) * self._params.sigma
 
     # ── 单笔报价（真源输出） ─────────────────────────────────────────────
 
@@ -215,7 +251,12 @@ class AlmgrenChrissImpactModel:
         )
         _log.debug(
             "冲击报价: qty=%s vol=%s p=%.4f temp=%.6f perm=%.6f bps=%.3f",
-            order_qty, market_volume, participation, temp, perm, quote.cost_bps,
+            order_qty,
+            market_volume,
+            participation,
+            temp,
+            perm,
+            quote.cost_bps,
         )
         return quote
 
@@ -235,9 +276,7 @@ class AlmgrenChrissImpactModel:
         （residual_i = Σ_{j≤i} temp_j × λ^(i-j)）；总成本按成交占比加权。
         """
         if not isinstance(schedule, ScheduleType):
-            raise AlmgrenChrissError(
-                f"未知成交节奏: {schedule!r}（词表闭合 uniform|front|back）"
-            )
+            raise AlmgrenChrissError(f"未知成交节奏: {schedule!r}（词表闭合 uniform|front|back）")
         if not isinstance(slices, int) or isinstance(slices, bool) or slices < 1:
             raise AlmgrenChrissError(f"slices 须为正整数: {slices!r}")
         if not isinstance(order_qty, (int, float)) or isinstance(order_qty, bool) or order_qty <= 0:
@@ -260,21 +299,32 @@ class AlmgrenChrissImpactModel:
             residual = sum(t * (self._lambda ** (i - j)) for j, t in enumerate(temps + [temp_i]))
             effective_perm = cum_perm + 0.5 * perm_i
             seg_cost = effective_perm + residual
-            points.append(TrajectoryPoint(
-                step=i, fraction=frac, participation=p_i,
-                temporary=temp_i, residual_temporary=residual,
-                effective_permanent=effective_perm, segment_cost=seg_cost,
-            ))
+            points.append(
+                TrajectoryPoint(
+                    step=i,
+                    fraction=frac,
+                    participation=p_i,
+                    temporary=temp_i,
+                    residual_temporary=residual,
+                    effective_permanent=effective_perm,
+                    segment_cost=seg_cost,
+                )
+            )
             total_cost += frac * seg_cost
             cum_perm += perm_i
             temps.append(temp_i)
         trajectory = ImpactTrajectory(
-            schedule=schedule, slices=slices, points=tuple(points),
-            total_cost=total_cost, total_cost_bps=total_cost * 1e4,
+            schedule=schedule,
+            slices=slices,
+            points=tuple(points),
+            total_cost=total_cost,
+            total_cost_bps=total_cost * 1e4,
         )
         _log.debug(
             "衰减曲线: schedule=%s slices=%d total_bps=%.3f",
-            schedule.value, slices, trajectory.total_cost_bps,
+            schedule.value,
+            slices,
+            trajectory.total_cost_bps,
         )
         return trajectory
 
@@ -311,20 +361,26 @@ class AlmgrenChrissImpactModel:
             raise AlmgrenChrissError(f"reference_participation 越界: {reference_participation!r}")
         if beta <= 0 or gamma_ratio < 0 or permanent_exponent <= 0:
             raise AlmgrenChrissError(
-                f"估计器超参非法: beta={beta!r} gamma_ratio={gamma_ratio!r} "
-                f"permanent_exponent={permanent_exponent!r}"
+                f"估计器超参非法: beta={beta!r} gamma_ratio={gamma_ratio!r} permanent_exponent={permanent_exponent!r}"
             )
         mean_range = sum(b.range_pct for b in rows) / len(rows)
         sigma_daily = mean_range * math.sqrt(minutes_per_day)
         if sigma_daily == 0:
             raise AlmgrenChrissError("bars 全零波幅（σ_daily=0，无法校准 η）")
-        eta = mean_range / ((reference_participation ** beta) * sigma_daily)
+        eta = mean_range / ((reference_participation**beta) * sigma_daily)
         params = ImpactParams(
-            eta=eta, beta=beta, gamma=gamma_ratio * eta,
-            sigma=sigma_daily, permanent_exponent=permanent_exponent,
+            eta=eta,
+            beta=beta,
+            gamma=gamma_ratio * eta,
+            sigma=sigma_daily,
+            permanent_exponent=permanent_exponent,
         )
         _log.debug(
             "参数估计: bars=%d mean_range=%.6f sigma=%.6f eta=%.6f gamma=%.6f",
-            len(rows), mean_range, sigma_daily, eta, params.gamma,
+            len(rows),
+            mean_range,
+            sigma_daily,
+            eta,
+            params.gamma,
         )
         return params

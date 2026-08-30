@@ -14,7 +14,11 @@
 # [TESTS] tests/zephyr/data/test_capability_validator.py
 # [A_module] module_id=MOD-GOV-capability_validator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Provider Capability 行为契约校验器（裁定 #ARCH-CH-022）。
+"""
+
+
+
+Provider Capability 行为契约校验器（裁定 #ARCH-CH-022）。
 
 在 scheduler 启动时校验 tasks.yaml 的 task 声明与 provider.meta.capability_contracts
 的行为契约一致性，把"注释契约"升级为"机器可执行契约"。
@@ -36,6 +40,101 @@
 公共接口：
 - Violation: 校验违规（severity + message + task_id + capability_id）
 - validate_task_capability_contracts(tasks, providers): 校验入口
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: tasks 参数
+#   fields: 参数 tasks，类型注解 list[dict]
+#   code: capability_validator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: metas 参数
+#   fields: 参数 metas，类型注解 dict[str, IngestProviderMeta]
+#   code: capability_validator.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: violations 参数
+#   fields: 参数 violations，类型注解 list[Violation]
+#   code: capability_validator.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: file_path 参数
+#   fields: 参数 file_path，类型注解 Path
+#   code: capability_validator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① validate_task_capability_contracts
+#   name_en: validate_task_capability_contracts
+#   intro: 校验 tasks.yaml 的 task 声明与 provider 行为契约一致性。
+#   desc: 校验 tasks.yaml 的 task 声明与 provider 行为契约一致性。 Args: tasks: tasks.yaml 加载的任务列表 metas: {source…；源码 L271-L302
+#   inputs: tasks metas
+#   outputs: list[Violation]
+# - id: A2
+#   name_zh: ② has_blocking_violations
+#   name_en: has_blocking_violations
+#   intro: 判断是否存在 ERROR 级违规（阻断启动）。
+#   desc: 判断是否存在 ERROR 级违规（阻断启动）。；源码 L305-L307
+#   inputs: violations
+#   outputs: bool
+# - id: A3
+#   name_zh: ③ format_violations
+#   name_en: format_violations
+#   intro: 格式化违规列表为日志字符串。
+#   desc: 格式化违规列表为日志字符串。；源码 L310-L317
+#   inputs: violations
+#   outputs: str
+# - id: A4
+#   name_zh: ④ extract_route_capabilities
+#   name_en: extract_route_capabilities
+#   intro: AST 解析 provider 文件，提取所有路由能力集。
+#   desc: AST 解析 provider 文件，提取所有路由能力集。 文件不存在/解析失败返回 None（fail-open）。 内容解析逻辑委托给 ``_route_caps_from_…；源码 L404-L424
+#   inputs: file_path
+#   outputs: set[str] | None
+# - id: A5
+#   name_zh: ⑤ extract_meta_capabilities
+#   name_en: extract_meta_capabilities
+#   intro: AST 解析 provider 文件，提取 IngestProviderMeta(capabilities=[...]…
+#   desc: AST 解析 provider 文件，提取 IngestProviderMeta(capabilities=[...]) 的 capability_id 集合。 文件不存在/解析…；源码 L474-L494
+#   inputs: file_path
+#   outputs: set[str] | None
+# - id: A6
+#   name_zh: ⑥ check_route_meta_consistency_content
+#   name_en: check_route_meta_consistency_content
+#   intro: 校验 provider 文件内容（字符串）的路由-meta 一致性（裁定 Phase 4.4）。
+#   desc: 校验 provider 文件内容（字符串）的路由-meta 一致性（裁定 Phase 4.4）。 Phase 4.4 commit gate 的入口：gate 从 staged…；源码 L497-L526
+#   inputs: content
+#   outputs: list[str]
+# - id: A7
+#   name_zh: ⑦ check_route_meta_consistency
+#   name_en: check_route_meta_consistency
+#   intro: 校验 provider 文件的路由能力集 vs meta.capabilities 一致性（裁定 ）。
+#   desc: 校验 provider 文件的路由能力集 vs meta.capabilities 一致性（裁定 ）。 治本本次 8 条 ERROR 根因：fetch 路由支持某 capabil…；源码 L529-L547
+#   inputs: file_path
+#   outputs: list[str]
+#   （注：A7 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[Violation]
+#   name_en: list[Violation]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.scheduler
+# - id: O2
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.scheduler
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> O1
 """
 
 from __future__ import annotations

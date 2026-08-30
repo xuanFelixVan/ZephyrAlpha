@@ -14,7 +14,11 @@
 # [TESTS] tests/governance/test_depmap_engine.py
 # [A_module] module_id=MOD-GOV-051 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""DepmapEngine — DepMap 依赖扫描引擎（MOD-GOV-051）。
+"""
+
+
+
+DepmapEngine — DepMap 依赖扫描引擎（MOD-GOV-051）。
 
 B13-04303（AUD-DRAFT-001-DIGEST P2 波 P2-W12，CAND-WORKTREE-002，A3
 MOD-INF-040）：AST 依赖扫描引擎——全仓 import 解析（ast.walk + 目录过滤）
@@ -25,6 +29,38 @@ depgraph_reader 回调）→ 循环依赖 / 越层调用报告（接 CI 门禁�
 注入 reader 比对）；architecture_governance/dependency_manager=运行时依赖
 治理（本件=静态 AST 扫描与 diff 报告，零交集）；import 方向门禁族=提交门
 禁实现（本件只产出报告，不挂 hook）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: layer_registry 参数
+#   fields: 参数 layer_registry（无注解）
+#   code: depmap_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: depgraph_reader 参数
+#   fields: 参数 depgraph_reader（无注解）
+#   code: depmap_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DepmapEngine
+#   name_en: DepmapEngine
+#   intro: AST 依赖扫描引擎（解析 + 分层存储 + depgraph diff + 循环/越层报告）。
+#   desc: AST 依赖扫描引擎（解析 + 分层存储 + depgraph diff + 循环/越层报告）。；公共方法（定义序）: scan_sources, edges, edges_by_layer, diff_depgrap…
+#   inputs: layer_registry depgraph_reader
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: DepmapEngine
+#   downstream: 运行时装配批（CI 门禁装配：仓源码供给回调 + depgraph reader + L0/L1/L2 层注册表统一注入）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -47,7 +83,7 @@ __all__: Final = [
 ]
 
 #: 层序号（合法依赖方向仅 rank 大 → rank 小，或同层）
-_LAYER_RANK: Final[dict["DepmapLayer", int]] = {}
+_LAYER_RANK: Final[dict[DepmapLayer, int]] = {}
 
 
 class DepmapError(Exception):
@@ -65,11 +101,13 @@ class DepmapLayer(str, Enum):
     L2 = "L2"
 
 
-_LAYER_RANK.update({
-    DepmapLayer.L0: 0,
-    DepmapLayer.L1: 1,
-    DepmapLayer.L2: 2,
-})
+_LAYER_RANK.update(
+    {
+        DepmapLayer.L0: 0,
+        DepmapLayer.L1: 1,
+        DepmapLayer.L2: 2,
+    }
+)
 
 
 @dataclass(frozen=True)
@@ -123,9 +161,7 @@ class DepmapEngine:
         self._registry: dict[str, DepmapLayer] = dict(layer_registry)
         self._reader = depgraph_reader
         self._edges: set[ImportEdge] = set()
-        self._by_layer: dict[DepmapLayer, set[ImportEdge]] = {
-            layer: set() for layer in DepmapLayer
-        }
+        self._by_layer: dict[DepmapLayer, set[ImportEdge]] = {layer: set() for layer in DepmapLayer}
 
     # ── 内部 ─────────────────────────────────────────────────────────────
 
@@ -164,9 +200,7 @@ class DepmapEngine:
                     if node.module:
                         base += node.module.split(".")
                     if not base:
-                        raise DepmapError(
-                            f"越顶相对导入: {relpath!r} 第 {node.lineno} 行"
-                        )
+                        raise DepmapError(f"越顶相对导入: {relpath!r} 第 {node.lineno} 行")
                     if node.module:
                         out.append((".".join(base), node.lineno))
                     else:
@@ -203,9 +237,7 @@ class DepmapEngine:
         added = 0
         for relpath in sorted(sources):
             norm = relpath.replace("\\", "/")
-            if include_prefixes and not any(
-                norm.startswith(p) for p in include_prefixes
-            ):
+            if include_prefixes and not any(norm.startswith(p) for p in include_prefixes):
                 continue
             if any(norm.startswith(p) for p in exclude_prefixes):
                 continue
@@ -226,17 +258,13 @@ class DepmapEngine:
 
     def edges(self) -> tuple[ImportEdge, ...]:
         """全部依赖边（按 (importer, imported, lineno) 确定性排序）。"""
-        return tuple(
-            sorted(self._edges, key=lambda e: (e.importer, e.imported, e.lineno))
-        )
+        return tuple(sorted(self._edges, key=lambda e: (e.importer, e.imported, e.lineno)))
 
     def edges_by_layer(self, layer: DepmapLayer) -> tuple[ImportEdge, ...]:
         """按 importer 层取边（分层存储视图；非法层 Fail-Closed）。"""
         if not isinstance(layer, DepmapLayer):
             raise DepmapError(f"非法层级: {layer!r}")
-        return tuple(
-            sorted(self._by_layer[layer], key=lambda e: (e.importer, e.imported, e.lineno))
-        )
+        return tuple(sorted(self._by_layer[layer], key=lambda e: (e.importer, e.imported, e.lineno)))
 
     # ── depgraph diff ────────────────────────────────────────────────────
 
@@ -282,7 +310,7 @@ class DepmapEngine:
             path.append(node)
             for nxt in adjacency[node]:
                 if color[nxt] == 1:
-                    cycle = path[path.index(nxt):]
+                    cycle = path[path.index(nxt) :]
                     pivot = cycle.index(min(cycle))
                     cycles.add(tuple(cycle[pivot:] + cycle[:pivot]))
                 elif color[nxt] == 0:
@@ -307,16 +335,18 @@ class DepmapEngine:
             if src_layer is None or dst_layer is None:
                 continue
             if _LAYER_RANK[src_layer] < _LAYER_RANK[dst_layer]:
-                out.append(LayerViolation(
-                    importer=edge.importer,
-                    importer_layer=src_layer,
-                    imported=edge.imported,
-                    imported_layer=dst_layer,
-                    reason=(
-                        f"越层调用: {edge.importer}({src_layer.value}) -> "
-                        f"{edge.imported}({dst_layer.value})，合法仅高层→低层或同层"
-                    ),
-                ))
+                out.append(
+                    LayerViolation(
+                        importer=edge.importer,
+                        importer_layer=src_layer,
+                        imported=edge.imported,
+                        imported_layer=dst_layer,
+                        reason=(
+                            f"越层调用: {edge.importer}({src_layer.value}) -> "
+                            f"{edge.imported}({dst_layer.value})，合法仅高层→低层或同层"
+                        ),
+                    )
+                )
         if out:
             _log.warning("DepMap 越层调用: %d 条", len(out))
         return out

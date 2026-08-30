@@ -14,7 +14,11 @@
 # [TESTS] tests/autonomy/test_non_ai_boundary_guard.py
 # [A_module] module_id=MOD-AU-012 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
-"""NonAIBoundaryGuard — Non-AI 边界守卫 (MOD-AU-012)
+"""
+
+
+
+NonAIBoundaryGuard — Non-AI 边界守卫 (MOD-AU-012)
 
 B10-02362 / D-AUTONOMY-33（AUD-DRAFT-001-DIGEST P1 波 W-P1-12，§30.5.2）：
 AI/非AI**决策权重占比计量器** + 超限（默认 >30%）阻断信号——guardrails 思路的
@@ -31,6 +35,43 @@ AI/非AI**决策权重占比计量器** + 超限（默认 >30%）阻断信号—
   其动作面，装配批接线）。
 本模块唯一缺口 = 决策流的 **AI/非AI 权重占比计量与超限阻断信号**。
 决策溯源落账委托 D_GOV_AUDIT（audit_sink 回调，不 import 不复制）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: thresholds 参数
+#   fields: 参数 thresholds（无注解）
+#   code: non_ai_boundary_guard.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: block_trigger 参数
+#   fields: 参数 block_trigger（无注解）
+#   code: non_ai_boundary_guard.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: audit_sink 参数
+#   fields: 参数 audit_sink（无注解）
+#   code: non_ai_boundary_guard.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① NonAIBoundaryGuard
+#   name_en: NonAIBoundaryGuard
+#   intro: AI/非AI 决策权重边界守卫（判定纯函数 + 信号回调委托）。
+#   desc: AI/非AI 决策权重边界守卫（判定纯函数 + 信号回调委托）。 Args: thresholds: 边界阈值（None 用默认：>30% 硬顶 / 窗口 200 / 最小样本…；公共方法（定义序）: threshol…
+#   inputs: thresholds block_trigger audit_sink
+#   outputs: 返回值
+#   （注：A1 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（9 定义）
+#   name_en: public defs
+#   intro: NonAIBoundaryGuard
+#   downstream: 运行时装配批（决策流接入 / 风控执行闸阻断执行体 / D_GOV_AUDIT 决策溯源落账）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -110,9 +151,7 @@ class BoundaryThresholds:
                 details={"max_ai_share": self.max_ai_share},
             )
         if int(self.window_size) < 1:
-            raise InvalidBoundaryConfigError(
-                "window_size 必须 >= 1", details={"window_size": self.window_size}
-            )
+            raise InvalidBoundaryConfigError("window_size 必须 >= 1", details={"window_size": self.window_size})
         if int(self.min_samples) < 1 or int(self.min_samples) > int(self.window_size):
             raise InvalidBoundaryConfigError(
                 "min_samples 必须落在 [1, window_size]",
@@ -145,20 +184,14 @@ class BoundaryAction:
 def _validate_record(record: DecisionRecord) -> DecisionOrigin:
     """决策记录 Fail-Closed 校验，返回归一化 origin。"""
     if not isinstance(record.decision_id, str) or not record.decision_id.strip():
-        raise InvalidDecisionRecordError(
-            "decision_id 不能为空", details={"decision_id": record.decision_id}
-        )
+        raise InvalidDecisionRecordError("decision_id 不能为空", details={"decision_id": record.decision_id})
     try:
         origin = record.origin if isinstance(record.origin, DecisionOrigin) else DecisionOrigin(str(record.origin))
     except (ValueError, TypeError) as exc:
-        raise InvalidDecisionRecordError(
-            "origin 非法（仅 ai/non_ai）", details={"origin": str(record.origin)}
-        ) from exc
+        raise InvalidDecisionRecordError("origin 非法（仅 ai/non_ai）", details={"origin": str(record.origin)}) from exc
     weight = float(record.weight)
     if not math.isfinite(weight) or weight <= 0.0:
-        raise InvalidDecisionRecordError(
-            "weight 必须为正且有限", details={"weight": str(record.weight)}
-        )
+        raise InvalidDecisionRecordError("weight 必须为正且有限", details={"weight": str(record.weight)})
     return origin
 
 
@@ -239,9 +272,7 @@ class NonAIBoundaryGuard:
             reason=f"AI决策权重占比 {ai_share:.3f} 未越界（≤{self._thresholds.max_ai_share:.2f}）",
         )
 
-    def admit(
-        self, record: DecisionRecord, window: Iterable[DecisionRecord]
-    ) -> BoundaryAction:
+    def admit(self, record: DecisionRecord, window: Iterable[DecisionRecord]) -> BoundaryAction:
         """单条新决策准入判定：计量窗口 → 非AI恒 ALLOW / AI 超限 BLOCK_NEW_AI。
 
         阻断仅产 block_trigger 信号（不直接阻断下单，执行委托装配层风控闸）；

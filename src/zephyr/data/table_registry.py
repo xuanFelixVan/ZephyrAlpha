@@ -14,7 +14,11 @@
 # [TESTS] tests/zephyr/data/test_table_registry.py
 # [A_module] module_id=MOD-GOV-table_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""表名/品类注册表消费层（裁定 #ARCH-CH-024 Phase 2）。
+"""
+
+
+
+表名/品类注册表消费层（裁定 #ARCH-CH-024 Phase 2）。
 
 背景：
     business_data_categories.yaml 是业务数据品类唯一真源（声明态规则数据，真源是 YAML），
@@ -46,6 +50,48 @@ Phase 2 范围（本次落地）：
 Phase 5 长期方向（不实施，登记为后续）：
     - 240 处硬编码表名替换为 TableRegistry.table() 常量引用
     - commit gate（GATE-TABLE-NAME-REGISTRY）升级为 block
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: categories 参数
+#   fields: 参数 categories（无注解）
+#   code: table_registry.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① TableRegistry
+#   name_en: TableRegistry
+#   intro: 表名/品类注册表消费层。
+#   desc: 表名/品类注册表消费层。 启动时加载 business_data_categories.yaml，构建： _by_category: category_id -> "{datab…；公共方法（定义序）: table,…
+#   inputs: categories
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② get_registry
+#   name_en: get_registry
+#   intro: 返回 TableRegistry 单例（幂等加载，线程安全）。
+#   desc: 返回 TableRegistry 单例（幂等加载，线程安全）。；源码 L240-L249
+#   inputs: 无参数
+#   outputs: TableRegistry
+# - id: A3
+#   name_zh: ③ reset_registry_singleton
+#   name_en: reset_registry_singleton
+#   intro: 重置单例（仅供测试使用，确保测试间隔离）。
+#   desc: 重置单例（仅供测试使用，确保测试间隔离）。；源码 L252-L256
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: TableRegistry
+#   name_en: TableRegistry
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.scheduler; zephyr.data.implementations.*_provider
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations
@@ -67,7 +113,7 @@ _CATEGORIES_PATH: Path = (
 
 # 单例锁（幂等加载）
 _load_lock = threading.Lock()
-_singleton: "TableRegistry | None" = None
+_singleton: TableRegistry | None = None
 
 
 class TableRegistry:

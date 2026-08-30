@@ -14,7 +14,11 @@
 # [TESTS] tests/feedback_loop/test_meta_harness_optimizer.py
 # [A_module] module_id=MOD-FBL-004 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""MetaHarnessOptimizer — Meta-Harness 元优化器（MOD-FBL-004）。
+"""
+
+
+
+MetaHarnessOptimizer — Meta-Harness 元优化器（MOD-FBL-004）。
 
 B12-03617（AUD-DRAFT-001-DIGEST P2 波 P2-W14，CAND-FBL-006，B12）：学习系统
 **自身超参**（变异率 mutation_rate / 匹配阈值 match_threshold / 审核策略
@@ -23,6 +27,48 @@ review_policy，词表白名单）的 **A/B 实验台**（两组配置 → 注�
 **递归优化护栏**（仅调学习参数、**不动策略参数**硬约束 + 递归深度上限）。
 
 纯内存确定性：evaluator/时钟全注入，无网络/无子进程；同输入必同输出。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: initial_config 参数
+#   fields: 参数 initial_config（无注解）
+#   code: meta_harness_optimizer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: evaluator 参数
+#   fields: 参数 evaluator（无注解）
+#   code: meta_harness_optimizer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: meta_harness_optimizer.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: significance_margin 参数
+#   fields: 参数 significance_margin（无注解）
+#   code: meta_harness_optimizer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① MetaHarnessOptimizer
+#   name_en: MetaHarnessOptimizer
+#   intro: Meta-Harness 元优化器（A/B 实验台 + 优胜保留 + 递归护栏）。
+#   desc: Meta-Harness 元优化器（A/B 实验台 + 优胜保留 + 递归护栏）。；公共方法（定义序）: run_ab_experiment, current_config, max_depth, history；源码…
+#   inputs: initial_config evaluator clock significance_margin max_depth
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: MetaHarnessOptimizer
+#   downstream: 运行时装配批（学习系统超参 A/B 实验台统一注入点装配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -56,9 +102,9 @@ class MetaHarnessError(Exception):
 class ReviewPolicy(str, Enum):
     """审核策略（词表白名单闭合）。"""
 
-    STRICT = "strict"      # 严格审核
+    STRICT = "strict"  # 严格审核
     STANDARD = "standard"  # 标准审核
-    LENIENT = "lenient"    # 宽松审核
+    LENIENT = "lenient"  # 宽松审核
 
 
 class ArmWinner(str, Enum):
@@ -89,9 +135,7 @@ class LearningConfig:
             or not math.isfinite(float(mr))
             or not (0.0 < float(mr) <= 1.0)
         ):
-            raise MetaHarnessError(
-                f"非法 mutation_rate: {mr!r}（须 0<rate<=1 有限实数）"
-            )
+            raise MetaHarnessError(f"非法 mutation_rate: {mr!r}（须 0<rate<=1 有限实数）")
         mt = self.match_threshold
         if (
             isinstance(mt, bool)
@@ -99,13 +143,10 @@ class LearningConfig:
             or not math.isfinite(float(mt))
             or not (0.0 <= float(mt) <= 1.0)
         ):
-            raise MetaHarnessError(
-                f"非法 match_threshold: {mt!r}（须 0<=threshold<=1 有限实数）"
-            )
+            raise MetaHarnessError(f"非法 match_threshold: {mt!r}（须 0<=threshold<=1 有限实数）")
         if not isinstance(self.review_policy, ReviewPolicy):
             raise MetaHarnessError(
-                f"非法 review_policy: {self.review_policy!r}（词表白名单: "
-                f"{[p.value for p in ReviewPolicy]}）"
+                f"非法 review_policy: {self.review_policy!r}（词表白名单: {[p.value for p in ReviewPolicy]}）"
             )
 
 
@@ -148,22 +189,17 @@ class MetaHarnessOptimizer:
     ) -> None:
         if not isinstance(initial_config, LearningConfig):
             raise MetaHarnessError(
-                f"initial_config 非 LearningConfig: {initial_config!r}"
-                "（策略参数禁入：仅学习超参白名单 Schema）"
+                f"initial_config 非 LearningConfig: {initial_config!r}（策略参数禁入：仅学习超参白名单 Schema）"
             )
         if evaluator is None:
-            raise MetaHarnessError(
-                "evaluator 未注入（A/B 实验强制注入评估器，Fail-Closed）"
-            )
+            raise MetaHarnessError("evaluator 未注入（A/B 实验强制注入评估器，Fail-Closed）")
         if (
             isinstance(significance_margin, bool)
             or not isinstance(significance_margin, (int, float))
             or not math.isfinite(float(significance_margin))
             or float(significance_margin) < 0.0
         ):
-            raise MetaHarnessError(
-                f"非法 significance_margin: {significance_margin!r}（须 >=0 有限实数）"
-            )
+            raise MetaHarnessError(f"非法 significance_margin: {significance_margin!r}（须 >=0 有限实数）")
         if isinstance(max_depth, bool) or not isinstance(max_depth, int) or max_depth < 0:
             raise MetaHarnessError(f"非法 max_depth: {max_depth!r}（须 >=0 整数）")
         self._current = initial_config
@@ -191,10 +227,7 @@ class MetaHarnessOptimizer:
     def _require_learning_config(config: object, field: str) -> LearningConfig:
         """策略参数不动硬约束：仅 LearningConfig 实例可入实验。"""
         if not isinstance(config, LearningConfig):
-            raise MetaHarnessError(
-                f"{field} 非 LearningConfig: {config!r}"
-                "（仅学习超参白名单；策略参数禁入，硬约束）"
-            )
+            raise MetaHarnessError(f"{field} 非 LearningConfig: {config!r}（仅学习超参白名单；策略参数禁入，硬约束）")
         return config
 
     # ── A/B 实验台 ────────────────────────────────────────────────────────
@@ -217,9 +250,7 @@ class MetaHarnessOptimizer:
         if isinstance(depth, bool) or not isinstance(depth, int) or depth < 0:
             raise MetaHarnessError(f"非法 depth: {depth!r}（须 >=0 整数）")
         if depth > self._max_depth:
-            raise MetaHarnessError(
-                f"递归深度超限: depth={depth} > max_depth={self._max_depth}（护栏）"
-            )
+            raise MetaHarnessError(f"递归深度超限: depth={depth} > max_depth={self._max_depth}（护栏）")
         score_a = self._evaluate(cfg_a, "score_a")
         score_b = self._evaluate(cfg_b, "score_b")
         diff = score_a - score_b
@@ -250,8 +281,12 @@ class MetaHarnessOptimizer:
         self._history.append(result)
         _log.info(
             "A/B 实验: %s depth=%d A=%.4f B=%.4f winner=%s significant=%s",
-            result.experiment_id, depth, score_a, score_b,
-            winner.value, significant,
+            result.experiment_id,
+            depth,
+            score_a,
+            score_b,
+            winner.value,
+            significant,
         )
         return result
 

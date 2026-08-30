@@ -14,7 +14,11 @@
 # [TESTS] tests/zephyr/data/test_multi_timeframe_fusion.py
 # [A_module] module_id=MOD-DAT-MTF-FUSION | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""MultiTimeframeFusion — 多时间尺度数据融合（MOD-DAT-MTF-FUSION）
+"""
+
+
+
+MultiTimeframeFusion — 多时间尺度数据融合（MOD-DAT-MTF-FUSION）
 
 B13-04249（AUD-DRAFT-001-DIGEST P1 波 W-P1-09，D-DATA-25，§17.1）：
 ``resample()`` 统一接口（1min~1d）——交易日历对齐 + 时间戳归一
@@ -25,6 +29,33 @@ B13-04249（AUD-DRAFT-001-DIGEST P1 波 W-P1-09，D-DATA-25，§17.1）：
 15m/30m/60m ClickHouse 库内合成（DB 面向、板块专用）；本模块为内存态
 统一重采样接口（任意标的、1min~1d 全域、质量评分面向），不复制其 SQL
 合成路径。B1-00634 dig 已裁定重复并入本模块。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: multi_timeframe_fusion.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① MultiTimeframeFusion
+#   name_en: MultiTimeframeFusion
+#   intro: 多周期数据融合器（纯 pandas 内存计算，零 IO）。
+#   desc: 多周期数据融合器（纯 pandas 内存计算，零 IO）。；公共方法（定义序）: resample；源码 L126-L276
+#   inputs: config
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: MultiTimeframeFusion
+#   downstream: 运行时装配批（miniqmt_service/mkt_data 多周期消费接线 / 交易日历真源装配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -122,11 +153,11 @@ class MultiTimeframeFusion:
         bars: pd.DataFrame,
         source_freq: str,
         target_freq: str,
-        trading_days: Optional[Sequence[datetime.date]] = None,
-        ffill_limit: Optional[int] = None,
-        expected_start: Optional[pd.Timestamp] = None,
-        expected_end: Optional[pd.Timestamp] = None,
-        calendar: Optional["MarketCalendar"] = None,
+        trading_days: Sequence[datetime.date] | None = None,
+        ffill_limit: int | None = None,
+        expected_start: pd.Timestamp | None = None,
+        expected_end: pd.Timestamp | None = None,
+        calendar: MarketCalendar | None = None,
     ) -> FusionResult:
         """统一重采样：交易日历对齐 + bar close 归一 + ffill 上限 + 质量评分。
 
@@ -137,12 +168,7 @@ class MultiTimeframeFusion:
                 对齐集合；显式 trading_days 永远优先。未注入时行为与现状逐字节一致。
         """
         self._validate(bars, source_freq, target_freq)
-        if (
-            trading_days is None
-            and calendar is not None
-            and expected_start is not None
-            and expected_end is not None
-        ):
+        if trading_days is None and calendar is not None and expected_start is not None and expected_end is not None:
             trading_days = calendar.trading_days_in_range(
                 pd.Timestamp(expected_start).date(),
                 pd.Timestamp(expected_end).date(),

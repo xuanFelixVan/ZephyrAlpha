@@ -14,7 +14,11 @@
 # [TESTS] tests/autonomy/test_autonomy_level_registry.py
 # [A_module] module_id=MOD-AU-005 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
-"""AutonomyLevelRegistry — Agent 自治边界四级自治模型 (MOD-AU-005)
+"""
+
+
+
+AutonomyLevelRegistry — Agent 自治边界四级自治模型 (MOD-AU-005)
 
 CAND-AUTONOMYCORE-004（B11-02454）：四级自治注册表。
 每 Agent 角色声明自治级别入 Agent Card：
@@ -33,6 +37,46 @@ CAND-AUTONOMYCORE-004（B11-02454）：四级自治注册表。
 
 判定核心 ``check_action`` 为纯内存纯函数（无 IO，<1ms 热路径兼容）；
 ``violation_hook`` 为可选回调，hook 异常不阻断判定（留痕降级）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: declarations 参数
+#   fields: 参数 declarations（无注解）
+#   code: autonomy_level_registry.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: violation_hook 参数
+#   fields: 参数 violation_hook（无注解）
+#   code: autonomy_level_registry.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AutonomyCheckVerdict
+#   name_en: AutonomyCheckVerdict
+#   intro: 单次动作判定结果（不可变）。
+#   desc: 单次动作判定结果（不可变）。；公共方法（定义序）: allowed, audit_record；源码 L153-L185
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② AutonomyLevelRegistry
+#   name_en: AutonomyLevelRegistry
+#   intro: 四级自治注册表（纯内存判定核心）。
+#   desc: 四级自治注册表（纯内存判定核心）。 Args: declarations: 初始声明映射 {agent_role: AutonomyLevel}。 violation_hook:…；公共方法（定义序）: registe…
+#   inputs: declarations violation_hook
+#   outputs: 返回值
+#   （注：A2 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: AutonomyCheckVerdict, AutonomyLevelRegistry
+#   downstream: MOD-AU-001(autonomy_boundary_gate 运行时按级别拦截) ; MOD-AU-002(kill_switch_orchestrat…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

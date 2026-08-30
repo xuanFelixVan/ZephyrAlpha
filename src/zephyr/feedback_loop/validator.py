@@ -1,3 +1,54 @@
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: rel_path 参数
+#   fields: 参数 rel_path，类型注解 str
+#   code: validator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① missing_files
+#   name_en: missing_files
+#   intro: 返回尚未生成的骨骼文件列表.
+#   desc: 返回尚未生成的骨骼文件列表.；源码 L92-L103
+#   inputs: 无参数
+#   outputs: list[str]
+# - id: A2
+#   name_zh: ② validate_one
+#   name_en: validate_one
+#   intro: 验证单个骨骼文件是否存在.
+#   desc: 验证单个骨骼文件是否存在.；源码 L106-L111
+#   inputs: rel_path
+#   outputs: bool
+# - id: A3
+#   name_zh: ③ validate_all
+#   name_en: validate_all
+#   intro: 验证所有骨骼文件的完整性.
+#   desc: 验证所有骨骼文件的完整性. 返回 {rel_path: exists}；源码 L114-L122
+#   inputs: 无参数
+#   outputs: dict[str, bool]
+# 层: 输出
+# - id: O1
+#   name_zh: list[str]
+#   name_en: list[str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
+"""
+
 from typing import Final
 
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §3-§9

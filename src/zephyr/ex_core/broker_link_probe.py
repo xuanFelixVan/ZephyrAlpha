@@ -22,7 +22,11 @@
 # A1: snapshot()——健康汇总: 连接状态/下单延迟(avg/max)/回报延迟(avg/max)/样本量 -> LinkHealth(HEALTHY/DEGRADED/DOWN)
 # O1: ConnectionProbeResult + LinkHealthSnapshot(55 号 §3.2 健康总览消费)
 # [/ALGO_FLOW]
-"""D_EX_CORE — miniQMT 下单链路探针（55 号 §3.2 缺口，随 40 号 P0 清单施工）。
+"""
+
+
+
+D_EX_CORE — miniQMT 下单链路探针（55 号 §3.2 缺口，随 40 号 P0 清单施工）。
 
 55 号 §3.2："miniQMT 下单链路专门探针（连接状态/下单延迟/回报延迟）——
 40_execution_broker P0 缺口清单已含断线重连，探针随其一并施工"。
@@ -30,6 +34,48 @@
 函数级探针、注入式：ping_fn / submit_fn / clock 全部注入，本模块不接真实
 miniQMT 连接（真实接线由健康巡检批次把 MiniQmtBroker 回调适配进来）。
 只读观测——不改下单链路任何状态；样本有界（deque）防内存膨胀。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: warn_latency_ms 参数
+#   fields: 参数 warn_latency_ms（无注解）
+#   code: broker_link_probe.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: crit_latency_ms 参数
+#   fields: 参数 crit_latency_ms（无注解）
+#   code: broker_link_probe.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: max_consecutive_failures 参数
+#   fields: 参数 max_consecutive_failures（无注解）
+#   code: broker_link_probe.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: broker_link_probe.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① BrokerLinkProbe
+#   name_en: BrokerLinkProbe
+#   intro: miniQMT 下单链路探针（连接状态/下单延迟/回报延迟）。
+#   desc: miniQMT 下单链路探针（连接状态/下单延迟/回报延迟）。 Args: warn_latency_ms: 延迟预警线（超过→DEGRADED）。 crit_latency_m…；公共方法（定义序）: probe_c…
+#   inputs: warn_latency_ms crit_latency_ms max_consecutive_failures clock max_sa…
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: BrokerLinkProbe
+#   downstream: 55_monitoring_review §3.2 系统健康总览看板; 调用方(健康巡检事件驱动)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

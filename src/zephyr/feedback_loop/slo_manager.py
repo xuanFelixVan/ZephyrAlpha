@@ -1,3 +1,41 @@
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: slo_manager.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SLOManager
+#   name_en: SLOManager
+#   intro: class SLOManager 源码 L90-L182
+#   desc: 公共方法（定义序）: get_slos, list_contracts, check, record_duration, subscribe_eventbus；源码 L90-L182
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② get_slo_manager
+#   name_en: get_slo_manager
+#   intro: 5.39.6: SLOManager 进程级单例（boot_hooks 启动时实例化）。
+#   desc: 5.39.6: SLOManager 进程级单例（boot_hooks 启动时实例化）。；源码 L188-L193
+#   inputs: 无参数
+#   outputs: SLOManager
+# 层: 输出
+# - id: O1
+#   name_zh: SLOManager
+#   name_en: SLOManager
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
+
 from typing import Final
 
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md

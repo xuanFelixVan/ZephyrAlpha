@@ -14,7 +14,11 @@
 # [TESTS] tests/compliance/test_compliance_log.py
 # [TTL] permanent
 
-"""合规日志 JSONL 落库（43_compliance_discipline §3.2/§7.6）。
+"""
+
+
+
+合规日志 JSONL 落库（43_compliance_discipline §3.2/§7.6）。
 
 MVP 载体裁定：合规检测结果落 ``data/compliance_log/compliance_log.jsonl``
 （结构化 JSONL），达 3-5 个同类 artifact 再议生成器/数据库（01 号规范 §6）。
@@ -27,6 +31,33 @@ MVP 载体裁定：合规检测结果落 ``data/compliance_log/compliance_log.js
 - **测试隔离**：路径可注入，测试写 tmp_path，不污染生产证据链。
 
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: path 参数
+#   fields: 参数 path（无注解）
+#   code: compliance_log.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ComplianceLogger
+#   name_en: ComplianceLogger
+#   intro: compliance_log JSONL 追写器。
+#   desc: compliance_log JSONL 追写器。 Args: path: 日志文件路径；None 时用默认生产路径（MAIN_REPO_ROOT 锚定）。；公共方法（定义序）: path, log, read_all…
+#   inputs: path
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: ComplianceLogger
+#   downstream: zephyr.compliance.discipline_must_do_checker ; zephyr.compliance.discipline_pro…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

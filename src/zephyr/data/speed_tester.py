@@ -14,7 +14,11 @@
 # [TESTS] tests/zephyr/data/test_speed_tester.py
 # [A_module] module_id=MOD-GOV-speed_tester | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""数据源测速器（MOD-L00-004 §8.5）。
+"""
+
+
+
+数据源测速器（MOD-L00-004 §8.5）。
 
 对每个数据能力×每个可用数据源做小样本测速，记录 rows/sec、symbols/sec、错误率，
 用于主用/备用源选型和数据源健康监控。
@@ -27,6 +31,77 @@
 
 CLI:
     integrator speed-test [--source <src>] [--capability <cap>]
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: cfg 参数
+#   fields: 参数 cfg，类型注解 SpeedTestConfig
+#   code: speed_tester.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: source_filter 参数
+#   fields: 参数 source_filter，类型注解 str | None
+#   code: speed_tester.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: cap_filter 参数
+#   fields: 参数 cap_filter，类型注解 str | None
+#   code: speed_tester.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: results 参数
+#   fields: 参数 results，类型注解 list[dict]
+#   code: speed_tester.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① speed_test_one
+#   name_en: speed_test_one
+#   intro: 测试一个 (source, capability) 组合的下载速度。
+#   desc: 测试一个 (source, capability) 组合的下载速度。 Args: cfg: 测速配置（封装所有参数） Returns: dict: 测速结果；源码 L523-L568
+#   inputs: cfg
+#   outputs: dict
+# - id: A2
+#   name_zh: ② run_speed_tests
+#   name_en: run_speed_tests
+#   intro: 批量执行测速。
+#   desc: 批量执行测速。 Args: source_filter: 只测某数据源（None=全部） cap_filter: 只测某能力（None=全部） Returns: list[dic…；源码 L572-L642
+#   inputs: source_filter cap_filter
+#   outputs: list[dict]
+# - id: A3
+#   name_zh: ③ save_to_clickhouse
+#   name_en: save_to_clickhouse
+#   intro: 把测速结果写入 c0_meta.fetch_perf 表。
+#   desc: 把测速结果写入 c0_meta.fetch_perf 表。；源码 L646-L683
+#   inputs: results
+#   outputs: bool
+# - id: A4
+#   name_zh: ④ print_report
+#   name_en: print_report
+#   intro: 打印测速对比报告。
+#   desc: 打印测速对比报告。；源码 L687-L734
+#   inputs: results
+#   outputs: 返回值
+#   （注：A4 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: dict
+#   name_en: dict
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.cli
+# - id: O2
+#   name_zh: list[dict]
+#   name_en: list[dict]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.cli
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

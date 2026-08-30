@@ -22,7 +22,11 @@
 # A1: _dispatch——命中一律 logging.error 告警+MANIPULATION_REALTIME_ALERT 落 compliance_log+冻结标的(线程安全)
 # O1: is_frozen/frozen_symbols(阻断判定, C-002 既有闸抛转 ComplianceGateBlockError) + release_freeze(人工复解释放, MANIPULATION_FREEZE_RELEASE 留痕)
 # [/ALGO_FLOW]
-"""D_COMPLIANCE — 盘中操纵 4 类检测实时流驱动接线层（43 号 §7.2/§7.3，A8 批）。
+"""
+
+
+
+D_COMPLIANCE — 盘中操纵 4 类检测实时流驱动接线层（43 号 §7.2/§7.3，A8 批）。
 
 43 号 §10 边界："Spoofing/Layering/WashTrade 需订单/成交历史，由盘中实时流以
 同一 detector 实例驱动，不在 Pre-Trade 链范围"。本模块即实时流驱动接线：
@@ -52,6 +56,56 @@ is_frozen → ComplianceGateBlockError 拒发新申报），本层不接任何�
 降级语义（防误伤，43 号 §7.3）：分钟均量缺失/≤0 → Spoofing 跳过；tick 缺失或
 冷启动观测不足 → 拉抬打压跳过；counterparty_resolver 缺失 → WashTrade 仅
 守"两侧同账户"显式标记，不对正常成交误判。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: redis_conn 参数
+#   fields: 参数 redis_conn（无注解）
+#   code: manipulation_realtime_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: manipulation_realtime_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: mono 参数
+#   fields: 参数 mono（无注解）
+#   code: manipulation_realtime_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: window_seconds 参数
+#   fields: 参数 window_seconds（无注解）
+#   code: manipulation_realtime_monitor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RedisTickMarketProvider
+#   name_en: RedisTickMarketProvider
+#   intro: tick 行情流供给——懒读 tick_subscriber 的 Redis tick 缓存（CP-01 通道）。
+#   desc: tick 行情流供给——懒读 tick_subscriber 的 Redis tick 缓存（CP-01 通道）。 事件驱动零定时器：仅在监测器评估时刻（委托/成交事件）拉取 t…；公共方法（定义序）: minute_…
+#   inputs: redis_conn clock mono window_seconds
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② ManipulationRealtimeMonitor
+#   name_en: ManipulationRealtimeMonitor
+#   intro: 盘中操纵 4 类检测实时监测器（事件驱动，同一 detector 实例驱动）。
+#   desc: 盘中操纵 4 类检测实时监测器（事件驱动，同一 detector 实例驱动）。 Args: detector: TradingComplianceDetector 实例（None…；公共方法（定义序）: attach_…
+#   inputs: detector minute_volume_provider market_window_provider logger own_acc…
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: RedisTickMarketProvider, ManipulationRealtimeMonitor
+#   downstream: zephyr.ex_core.order_manager(可选注入 manipulation_monitor——C-002 闸抛转 is_frozen; 委托…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

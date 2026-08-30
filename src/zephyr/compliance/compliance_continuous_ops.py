@@ -14,7 +14,11 @@
 # [TESTS] tests/compliance/test_compliance_continuous_ops.py
 # [A_module] module_id=MOD-CMP-004 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Compliance Continuous Ops — 合规持续运营 (MOD-CMP-004)
+"""
+
+
+
+Compliance Continuous Ops — 合规持续运营 (MOD-CMP-004)
 
 合规域的持续运营巡检（非一次性门禁）：每次运行产出结构化合规健康报告。
 三类常态化检查（宪章 §4.4 B-016 / §6 合规性 P0 映射）：
@@ -28,6 +32,51 @@
 
 数据全部经探针注入（生产接线: 审计存储/规则注册表/拦截队列），
 本模块只做纯函数评估 + 单次有界编排（无持续循环，调度由上层任务系统负责）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: ops_input 参数
+#   fields: 参数 ops_input，类型注解 ComplianceOpsInput
+#   code: compliance_continuous_ops.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: config 参数
+#   fields: 参数 config，类型注解 ComplianceOpsConfig
+#   code: compliance_continuous_ops.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: run_id 参数
+#   fields: 参数 run_id（无注解）
+#   code: compliance_continuous_ops.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① evaluate_continuous_ops
+#   name_en: evaluate_continuous_ops
+#   intro: 合规持续运营评估（纯函数：同输入必同输出，可单测）。
+#   desc: 合规持续运营评估（纯函数：同输入必同输出，可单测）。；源码 L159-L240
+#   inputs: ops_input config run_id
+#   outputs: ComplianceOpsReport
+# - id: A2
+#   name_zh: ② ComplianceContinuousOps
+#   name_en: ComplianceContinuousOps
+#   intro: 合规持续运营编排器（单次有界 run_once；探针失败 fail-closed 转 CRITICAL）。
+#   desc: 合规持续运营编排器（单次有界 run_once；探针失败 fail-closed 转 CRITICAL）。；公共方法（定义序）: run_once；源码 L243-L311
+#   inputs: retention_probe rule_update_probe queue_pending_probe config
+#   outputs: 返回值
+#   （注：A2 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ComplianceOpsReport
+#   name_en: ComplianceOpsReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-L10-001(合规域运营巡检) ; D_FRONTEND(合规健康面板)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -75,9 +124,7 @@ class ComplianceOpsConfig:
 
     intercept_queue_backlog_threshold: int = 500
     rule_stale_days: int = 365
-    retention_requirements: tuple[RetentionRequirement, ...] = (
-        DEFAULT_RETENTION_REQUIREMENTS
-    )
+    retention_requirements: tuple[RetentionRequirement, ...] = DEFAULT_RETENTION_REQUIREMENTS
 
 
 @dataclass(frozen=True)
@@ -127,10 +174,7 @@ def evaluate_continuous_ops(
                 OpsFinding(
                     check_id="retention_unverifiable",
                     severity="CRITICAL",
-                    message=(
-                        f"留存无法验证: {requirement.category} 无探针数据"
-                        "（fail-closed: 不可验证即违规, B-016）"
-                    ),
+                    message=(f"留存无法验证: {requirement.category} 无探针数据（fail-closed: 不可验证即违规, B-016）"),
                     details=(("category", requirement.category),),
                 )
             )
@@ -169,10 +213,7 @@ def evaluate_continuous_ops(
                     OpsFinding(
                         check_id="rule_stale",
                         severity="WARNING",
-                        message=(
-                            f"合规规则超期未更新: {rule_id} "
-                            f"已 {int(age_seconds // 86400)} 天"
-                        ),
+                        message=(f"合规规则超期未更新: {rule_id} 已 {int(age_seconds // 86400)} 天"),
                         details=(("rule_id", rule_id),),
                     )
                 )
@@ -187,9 +228,7 @@ def evaluate_continuous_ops(
                     f"异步拦截队列积压: {ops_input.intercept_queue_pending} > "
                     f"{config.intercept_queue_backlog_threshold}"
                 ),
-                details=(
-                    ("pending", str(ops_input.intercept_queue_pending)),
-                ),
+                details=(("pending", str(ops_input.intercept_queue_pending)),),
             )
         )
 
@@ -244,12 +283,8 @@ class ComplianceContinuousOps:
                 collected[probe_name] = None
 
         ops_input = ComplianceOpsInput(
-            retention_status=collected["retention"]
-            if collected["retention"] is not None
-            else {},
-            rule_updates=collected["rule_update"]
-            if collected["rule_update"] is not None
-            else {},
+            retention_status=collected["retention"] if collected["retention"] is not None else {},
+            rule_updates=collected["rule_update"] if collected["rule_update"] is not None else {},
             intercept_queue_pending=(
                 collected["queue_pending"]
                 if collected["queue_pending"] is not None

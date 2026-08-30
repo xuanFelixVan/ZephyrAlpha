@@ -22,13 +22,43 @@
 # created: "2026-05-05"
 # ---
 
-"""D_FACTOR — Momentum Factor
+"""
+
+
+
+D_FACTOR — Momentum Factor
 
 20 日动量因子。计算过去 20 个交易日的价格变化率。
 
 CTR 契约：
   消费者 — CTR-001 (NormalizedMarketData) ← D_DATA
   生产者 — CTR-002 (FactorSignal) -> D_SIGNAL, D_RISK, D_PORTFOLIO_CORE
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: momentum_factor.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① Momentum20d
+#   name_en: Momentum20d
+#   intro: class Momentum20d 源码 L71-L115
+#   desc: 公共方法（定义序）: compute, incremental_compute, validate；源码 L71-L115
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: Momentum20d
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

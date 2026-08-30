@@ -14,7 +14,11 @@
 # [TESTS] tests/zephyr/data/test_ch_config.py
 # [A_module] module_id=MOD-GOV-ch_config | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""ClickHouse 连接配置单真源加载器（裁定 #ARCH-CH-017 / #ARCH-CH-019）。
+"""
+
+
+
+ClickHouse 连接配置单真源加载器（裁定 #ARCH-CH-017 / #ARCH-CH-019）。
 
 背景：
     Hyper-V 迁移前，ch_writer.py 用 `os.environ.get("CLICKHOUSE_HOST", "172.24.30.100")`
@@ -31,6 +35,70 @@
 公共接口：
     - ensure_ch_env_loaded(): 将 .env.clickhouse 加载到 os.environ（幂等）
     - load_ch_config(): 返回 CH 连接配置字典，读不到抛 CHConfigError
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: ch_config.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ensure_ch_env_loaded
+#   name_en: ensure_ch_env_loaded
+#   intro: 将 config/.env.clickhouse 加载到 os.environ（幂等）。
+#   desc: 将 config/.env.clickhouse 加载到 os.environ（幂等）。 优先级：已有 os.environ 不覆盖（允许环境变量显式 override）。 文件…；源码 L137-L170
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② load_ch_config
+#   name_en: load_ch_config
+#   intro: 返回 CH 连接配置字典。
+#   desc: 返回 CH 连接配置字典。 优先级：os.environ > config/.env.clickhouse > 抛 CHConfigError。 禁止任何默认 IP 值（裁定 ）…；源码 L173-L200
+#   inputs: 无参数
+#   outputs: dict[str, str]
+# - id: A3
+#   name_zh: ③ get_ch_env_path
+#   name_en: get_ch_env_path
+#   intro: 返回 CH 配置文件路径（供测试/诊断使用）。
+#   desc: 返回 CH 配置文件路径（供测试/诊断使用）。；源码 L203-L205
+#   inputs: 无参数
+#   outputs: Path
+# - id: A4
+#   name_zh: ④ load_ch_reader_config
+#   name_en: load_ch_reader_config
+#   intro: 返回 CH 只读账号配置（audit 9.4 RBAC 治本 ）。
+#   desc: 返回 CH 只读账号配置（audit 9.4 RBAC 治本 ）。 优先使用 CLICKHOUSE_READER_USER/PASSWORD，未配置时回退到 CLICKHOUSE…；源码 L208-L221
+#   inputs: 无参数
+#   outputs: dict[str, str]
+# - id: A5
+#   name_zh: ⑤ load_ch_writer_config
+#   name_en: load_ch_writer_config
+#   intro: 返回 CH 写入账号配置（audit 9.4 RBAC 治本 ）。
+#   desc: 返回 CH 写入账号配置（audit 9.4 RBAC 治本 ）。 优先使用 CLICKHOUSE_WRITER_USER/PASSWORD，未配置时回退到 CLICKHOUSE…；源码 L224-L236
+#   inputs: 无参数
+#   outputs: dict[str, str]
+#   （注：A5 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, str]
+#   name_en: dict[str, str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.ch_writer; zephyr.data.scheduler; zephyr.data.cli; zephyr.infrastru…
+# - id: O2
+#   name_zh: Path
+#   name_en: Path
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.ch_writer; zephyr.data.scheduler; zephyr.data.cli; zephyr.infrastru…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations

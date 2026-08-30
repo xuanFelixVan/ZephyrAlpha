@@ -14,7 +14,11 @@
 # [TESTS] tests/zephyr/data/test_trading_calendar.py
 # [A_module] module_id=MOD-GOV-trading_calendar | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""A 股交易日历守卫（MOD-L00-004）。
+"""
+
+
+
+A 股交易日历守卫（MOD-L00-004）。
 
 基于 exchange_calendars 包的 XSHG（上海证券交易所）日历，
 精确判断每个交易日（含节假日/调休），纯 Python 本地计算不依赖网络/DB。
@@ -24,6 +28,55 @@
 
 回退策略：exchange_calendars 未安装时降级为 weekday 判断（周一~周五），
 保证 scheduler 不因依赖缺失而崩溃。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: date 参数
+#   fields: 参数 date，类型注解 datetime.date | None
+#   code: trading_calendar.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: start 参数
+#   fields: 参数 start，类型注解 datetime.date
+#   code: trading_calendar.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: end 参数
+#   fields: 参数 end，类型注解 datetime.date
+#   code: trading_calendar.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① is_trading_day
+#   name_en: is_trading_day
+#   intro: 判断给定日期是否为 A 股交易日。
+#   desc: 判断给定日期是否为 A 股交易日。 使用 exchange_calendars 的 XSHG 日历精确判断（含节假日/调休）。 exchange_calendars 不可用时回退…；源码 L114-L137
+#   inputs: date
+#   outputs: bool
+# - id: A2
+#   name_zh: ② trading_days_in_range
+#   name_en: trading_days_in_range
+#   intro: 返回 [start, end] 闭区间内 A 股交易日列表（XSHG 真日历，升序）。
+#   desc: 返回 [start, end] 闭区间内 A 股交易日列表（XSHG 真日历，升序）。 用途：回测 PIT Embargo 真交易日历注入（15号 §7③ BDay→真日历切换）…；源码 L140-L195
+#   inputs: start end
+#   outputs: list[datetime.date]
+# 层: 输出
+# - id: O1
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.scheduler
+# - id: O2
+#   name_zh: list[datetime.date]
+#   name_en: list[datetime.date]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.scheduler
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

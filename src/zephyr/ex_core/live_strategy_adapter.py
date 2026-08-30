@@ -15,7 +15,11 @@
 # [A_module] module_id=MOD-L06-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: 监督循环为"有界 while not stop_event + close_at 收盘截止 + sleeper 轮询"（start_paper_session.py 保活同口径，PERM-TRIGGER 门禁批准的过渡形态结构），非 while True 永久轮询
-"""LiveStrategyAdapter — 模拟盘策略常驻服务适配器（57 号文 GAP-2 常驻服务化）。
+"""
+
+
+
+LiveStrategyAdapter — 模拟盘策略常驻服务适配器（57 号文 GAP-2 常驻服务化）。
 
 真源
 ----
@@ -45,6 +49,48 @@
 实盘边界（Owner 窗口铁律）：本适配器仅承载模拟盘会话（slot 由装配方注入，
 如 start_paper_session.assemble_session 口径连 QMT 模拟账户）；本模块不创建
 broker、无任何下单路径；实盘启用一律 Owner 窗口。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: slots 参数
+#   fields: 参数 slots（无注解）
+#   code: live_strategy_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: heartbeat_path 参数
+#   fields: 参数 heartbeat_path（无注解）
+#   code: live_strategy_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: heartbeat_interval_seconds 参数
+#   fields: 参数 heartbeat_interval_seconds（无注解）
+#   code: live_strategy_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: max_restart_attempts 参数
+#   fields: 参数 max_restart_attempts（无注解）
+#   code: live_strategy_adapter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① LiveStrategyAdapter
+#   name_en: LiveStrategyAdapter
+#   intro: 模拟盘策略常驻服务——多 slot 承载 TradingSession 的生命周期管理器。
+#   desc: 模拟盘策略常驻服务——多 slot 承载 TradingSession 的生命周期管理器。 用法（CLI/调度接线层）:: adapter = LiveStrategyAdapt…；公共方法（定义序）: is_runn…
+#   inputs: slots heartbeat_path heartbeat_interval_seconds max_restart_attempts…
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: LiveStrategyAdapter
+#   downstream: 57 号文 GAP-2 常驻服务化——CLI 接线已落（scripts/start_paper_session.py --service：assemble_s…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -359,9 +405,7 @@ class LiveStrategyAdapter:
             "ts": self._now_fn().isoformat(timespec="seconds"),
             "pid": os.getpid(),
             "started_ts": (
-                datetime.fromtimestamp(started, tz=_SHANGHAI_TZ).isoformat(timespec="seconds")
-                if started
-                else None
+                datetime.fromtimestamp(started, tz=_SHANGHAI_TZ).isoformat(timespec="seconds") if started else None
             ),
             "running": self._running,
             **self._summary_counts(),

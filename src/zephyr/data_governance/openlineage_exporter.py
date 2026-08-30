@@ -14,7 +14,11 @@
 # [TESTS] tests/data_governance/test_openlineage_exporter.py
 # [A_module] module_id=MOD-DATA_GOV-011 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""openlineage_exporter — OpenLineage 事件导出器（MOD-DATA_GOV-011）。
+"""
+
+
+
+openlineage_exporter — OpenLineage 事件导出器（MOD-DATA_GOV-011）。
 
 B10-02320（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATGOV-008，A1 M8-NEW-01）：
 lineage_tracker 事件模型对齐 OpenLineage 规范——**RunEvent** dataclass
@@ -25,6 +29,77 @@ lineage_tracker 事件模型对齐 OpenLineage 规范——**RunEvent** dataclas
 查重分工（蓝图 §0）：core/lineage_tracker=血缘图本体（本件只消费其边三元组
 做事件转换，不改图）；runtime_lineage_collector=运行时采集（零交集，本件=
 规范序列化与导出）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: event 参数
+#   fields: 参数 event，类型注解 RunEvent
+#   code: openlineage_exporter.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: edge 参数
+#   fields: 参数 edge，类型注解 Edge
+#   code: openlineage_exporter.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: run_id 参数
+#   fields: 参数 run_id（无注解）
+#   code: openlineage_exporter.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: job_namespace 参数
+#   fields: 参数 job_namespace（无注解）
+#   code: openlineage_exporter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① validate_event
+#   name_en: validate_event
+#   intro: 必填字段闭合校验：eventType 词表 + run/job 标识非空。
+#   desc: 必填字段闭合校验：eventType 词表 + run/job 标识非空。；源码 L161-L173
+#   inputs: event
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② event_to_jsonl
+#   name_en: event_to_jsonl
+#   intro: RunEvent → 单行 JSONL（sort_keys 确定性序列化）。
+#   desc: RunEvent → 单行 JSONL（sort_keys 确定性序列化）。；源码 L176-L188
+#   inputs: event
+#   outputs: str
+# - id: A3
+#   name_zh: ③ edge_to_event
+#   name_en: edge_to_event
+#   intro: 内部血缘边 (source,target,transformation) → OpenLineage RunEvent。
+#   desc: 内部血缘边 (source,target,transformation) → OpenLineage RunEvent。 job.name 取 transformation（空则…；源码 L191-L222
+#   inputs: edge run_id job_namespace event_type event_time facets
+#   outputs: RunEvent
+# - id: A4
+#   name_zh: ④ OpenLineageExporter
+#   name_en: OpenLineageExporter
+#   intro: OpenLineage JSONL 导出器（追加写注入 root，或注入 line_sink）。
+#   desc: OpenLineage JSONL 导出器（追加写注入 root，或注入 line_sink）。；公共方法（定义序）: export, export_edges；源码 L225-L281
+#   inputs: root clock line_sink file_name
+#   outputs: 返回值
+#   （注：A4 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 运行时装配批（JSONL 落盘 root 绑定 / Marquez 兼容消费方对接）
+# - id: O2
+#   name_zh: RunEvent
+#   name_en: RunEvent
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 运行时装配批（JSONL 落盘 root 绑定 / Marquez 兼容消费方对接）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

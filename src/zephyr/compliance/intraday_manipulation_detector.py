@@ -22,7 +22,11 @@
 # A1: 窗口口径=detector.thresholds.spoof_repeat_window_s(1800s, 43号§7.3)——trim_before(placed_at-窗口)后喂入, 与实时喂入命中集合一致
 # O1: ManipulationBatchReport(首命中去重后 hits) + compliance_log 双类事件(MANIPULATION_VERDICT 逐命中/MANIPULATION_BATCH_SCAN 批汇总)
 # [/ALGO_FLOW]
-"""D_COMPLIANCE — 盘中操纵检测三规则离线批处理口径 MVP（43 号 §7.3，BM-BUY-15 补强残余）。
+"""
+
+
+
+D_COMPLIANCE — 盘中操纵检测三规则离线批处理口径 MVP（43 号 §7.3，BM-BUY-15 补强残余）。
 
 43 号结案残余："对敲/拉抬/洗售（Spoofing/Layering/WashTrade）盘中实时检测未做
 ——需盘中实时流驱动"。实时侧适配已由 manipulation_stream_driver（2026-08-20）
@@ -61,6 +65,43 @@
   （与 43 号 §8 开放问题登记一致，本模块不预设自动调阈）。
 
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: detector 参数
+#   fields: 参数 detector（无注解）
+#   code: intraday_manipulation_detector.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: minute_volume_provider 参数
+#   fields: 参数 minute_volume_provider（无注解）
+#   code: intraday_manipulation_detector.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: logger 参数
+#   fields: 参数 logger（无注解）
+#   code: intraday_manipulation_detector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① IntradayManipulationDetector
+#   name_en: IntradayManipulationDetector
+#   intro: Spoofing/Layering/WashTrade 离线批处理检测器。
+#   desc: Spoofing/Layering/WashTrade 离线批处理检测器。 Args: detector: TradingComplianceDetector 实例（None=自…；公共方法（定义序）: run_bat…
+#   inputs: detector minute_volume_provider logger
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: IntradayManipulationDetector
+#   downstream: T+1 合规审计/日终复盘编排(43号§7.6 数据流末端 compliance_log→T+1 归档); 未来盘中流编排就绪后实时侧由 manipulati…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

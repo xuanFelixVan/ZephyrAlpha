@@ -15,6 +15,50 @@
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: term 参数
+#   fields: 参数 term，类型注解 str
+#   code: glossary_matrix.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① lookup
+#   name_en: lookup
+#   intro: lookup(term) 源码 L100-L101
+#   desc: 源码 L100-L101
+#   inputs: term
+#   outputs: GlossaryEntry | None
+# - id: A2
+#   name_zh: ② list_terms
+#   name_en: list_terms
+#   intro: list_terms() 源码 L104-L105
+#   desc: 源码 L104-L105
+#   inputs: 无参数
+#   outputs: list[str]
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: GlossaryEntry | None
+#   name_en: GlossaryEntry | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-INF-027;MOD-INF-015;MOD-FEEDBACK_LOOP
+# - id: O2
+#   name_zh: list[str]
+#   name_en: list[str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-INF-027;MOD-INF-015;MOD-FEEDBACK_LOOP
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
+
 from __future__ import annotations
 
 from pydantic import BaseModel

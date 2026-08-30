@@ -13,7 +13,11 @@
 # [ERROR_CONTRACT] 空注册表->coverage=0.0+BLOCKED不抛异常; 告警回调失败仅log不阻断计算
 # [TESTS] tests/factor/test_factor_availability_monitor.py
 # [TTL] permanent
-"""ZephyrAlpha — D_FACTOR 因子可用性监控器（CAND-FAC-006 canonical / B13-04305，合并 B2-05116 定义）。
+"""
+
+
+
+ZephyrAlpha — D_FACTOR 因子可用性监控器（CAND-FAC-006 canonical / B13-04305，合并 B2-05116 定义）。
 
 合并定义裁定（AUD-DRAFT-001-DIGEST P0 合并对）：
   本模块为 D-SIGNAL-77 因子可用性监控器唯一 canonical 实现——
@@ -27,6 +31,46 @@ min_build_spec（合并版）：
   - is_degraded 降级标记（coverage < 50%）
   - 低于 20% 阻断信号合成（block_signal_synthesis）
   - 降级状态写 FactorSignal 元数据（CTR-002 extra 字段）供下游降权
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: registry 参数
+#   fields: 参数 registry（无注解）
+#   code: factor_availability_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: alert_sink 参数
+#   fields: 参数 alert_sink（无注解）
+#   code: factor_availability_monitor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① default_alert_sink
+#   name_en: default_alert_sink
+#   intro: 惰性装配 shared.alerts.alert_manager 告警路由（数据告警路由复用）。
+#   desc: 惰性装配 shared.alerts.alert_manager 告警路由（数据告警路由复用）。 Returns: sink(severity, title, message)：…；源码 L123-L146
+#   inputs: 无参数
+#   outputs: Callable[[str, str, str], None]
+# - id: A2
+#   name_zh: ② FactorAvailabilityMonitor
+#   name_en: FactorAvailabilityMonitor
+#   intro: 因子覆盖率 + 缺失比例监控，三级阈值门控。
+#   desc: 因子覆盖率 + 缺失比例监控，三级阈值门控。；公共方法（定义序）: compute_daily, signal_weight, annotate_signal；源码 L149-L286
+#   inputs: registry alert_sink
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: Callable[[str, str, str], None]
+#   name_en: Callable[[str, str, str], None]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -137,7 +181,7 @@ class FactorAvailabilityMonitor:
 
     def compute_daily(
         self,
-        factor_values: Mapping[str, "pd.Series | None"],
+        factor_values: Mapping[str, pd.Series | None],
         as_of: str,
     ) -> FactorAvailabilityReport:
         """覆盖率 + 缺失比例逐日计算，三级阈值裁定 + 缺失告警。

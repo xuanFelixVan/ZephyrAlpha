@@ -14,7 +14,11 @@
 # [TESTS] tests/compliance/test_regulatory_change_tracker.py
 # [A_module] module_id=MOD-CMP-017 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""RegulatoryChangeTracker — 监管变更追踪器（MOD-CMP-017）。
+"""
+
+
+
+RegulatoryChangeTracker — 监管变更追踪器（MOD-CMP-017）。
 
 B14-04671（AUD-DRAFT-001-DIGEST P2 波 P2-W10，CAND-CMP-008，A9 M36-S05）：
 证监会/交易所**公告采集**（注入源，不真发请求）+ **NLP 变更抽取**（注入
@@ -34,6 +38,48 @@ llm：变更类型/生效日期/涉及条款**结构化校验**）+ **影响域�
 查重分工：feedback_loop 可靠性族 regulatory_audit=反馈回路审计（无公告采
 集/影响域映射/评审任务语义）；compliance_policy_engine=规则库版本与激活
 （本件只产出评审任务，确认后由装配批入规则库，不直连引擎）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: regulatory_change_tracker.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: source 参数
+#   fields: 参数 source（无注解）
+#   code: regulatory_change_tracker.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: extractor 参数
+#   fields: 参数 extractor（无注解）
+#   code: regulatory_change_tracker.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: impact_table 参数
+#   fields: 参数 impact_table（无注解）
+#   code: regulatory_change_tracker.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RegulatoryChangeTracker
+#   name_en: RegulatoryChangeTracker
+#   intro: 监管变更追踪器（采集 → 抽取校验 → 影响域映射 → 评审任务）。
+#   desc: 监管变更追踪器（采集 → 抽取校验 → 影响域映射 → 评审任务）。 Args: clock: 时钟注入。 source: 公告采集源注入（不真发请求）；None → Fail-…；公共方法（定义序）: collect…
+#   inputs: clock source extractor impact_table
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: RegulatoryChangeTracker
+#   downstream: 运行时装配批（公告源与LLM抽取统一注入 / 评审任务入人工确认队列）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -67,9 +113,9 @@ class RegulatoryTrackerError(Exception):
 class ChangeType(str, Enum):
     """监管变更类型（词表闭合）。"""
 
-    NEW_RULE = "new_rule"          # 新规发布
-    AMENDMENT = "amendment"        # 修订
-    REPEAL = "repeal"              # 废止
+    NEW_RULE = "new_rule"  # 新规发布
+    AMENDMENT = "amendment"  # 修订
+    REPEAL = "repeal"  # 废止
     INTERPRETATION = "interpretation"  # 解释/指引
 
 
@@ -115,9 +161,7 @@ class ReviewTask:
     created_at: datetime.datetime
 
 
-_EXTRACTION_KEYS: Final[frozenset[str]] = frozenset(
-    {"change_type", "effective_date", "clauses"}
-)
+_EXTRACTION_KEYS: Final[frozenset[str]] = frozenset({"change_type", "effective_date", "clauses"})
 
 
 class RegulatoryChangeTracker:
@@ -179,9 +223,7 @@ class RegulatoryChangeTracker:
         try:
             change_type = ChangeType(raw["change_type"])
         except ValueError as exc:
-            raise RegulatoryTrackerError(
-                f"变更类型越词表: {notice_id!r} {raw['change_type']!r}"
-            ) from exc
+            raise RegulatoryTrackerError(f"变更类型越词表: {notice_id!r} {raw['change_type']!r}") from exc
         effective = raw["effective_date"]
         if not isinstance(effective, datetime.date):
             raise RegulatoryTrackerError(f"生效日期非法: {notice_id!r} {effective!r}")
@@ -221,9 +263,7 @@ class RegulatoryChangeTracker:
             existing = self._tasks.get(announcement.notice_id)
             if existing is not None:
                 continue  # notice_id 去重幂等
-            change = self._validate_extraction(
-                announcement.notice_id, self._extractor(announcement)
-            )
+            change = self._validate_extraction(announcement.notice_id, self._extractor(announcement))
             task = ReviewTask(
                 task_id=f"REV-{announcement.notice_id}",
                 notice_id=announcement.notice_id,
@@ -239,7 +279,10 @@ class RegulatoryChangeTracker:
             out.append(task)
             _log.info(
                 "监管变更评审任务: %s type=%s effective=%s domains=%s",
-                task.task_id, task.change_type.value, task.effective_date, task.affected_domains,
+                task.task_id,
+                task.change_type.value,
+                task.effective_date,
+                task.affected_domains,
             )
         return out
 
@@ -249,14 +292,17 @@ class RegulatoryChangeTracker:
         """人工确认评审任务（仅 PENDING；确认后语义上入 Policy-as-Code 规则库）。"""
         task = self._find_task(task_id)
         if task.status is not ReviewStatus.PENDING:
-            raise RegulatoryTrackerError(
-                f"非法确认: {task_id!r} 当前 {task.status.value}（重复确认）"
-            )
+            raise RegulatoryTrackerError(f"非法确认: {task_id!r} 当前 {task.status.value}（重复确认）")
         confirmed = ReviewTask(
-            task_id=task.task_id, notice_id=task.notice_id, issuer=task.issuer,
-            change_type=task.change_type, effective_date=task.effective_date,
-            clauses=task.clauses, affected_domains=task.affected_domains,
-            status=ReviewStatus.CONFIRMED, created_at=task.created_at,
+            task_id=task.task_id,
+            notice_id=task.notice_id,
+            issuer=task.issuer,
+            change_type=task.change_type,
+            effective_date=task.effective_date,
+            clauses=task.clauses,
+            affected_domains=task.affected_domains,
+            status=ReviewStatus.CONFIRMED,
+            created_at=task.created_at,
         )
         self._tasks[task.notice_id] = confirmed
         _log.info("评审任务确认: %s（人工确认后入规则库）", task_id)

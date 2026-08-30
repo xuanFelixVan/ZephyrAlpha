@@ -14,7 +14,10 @@
 # [TESTS] tests/factor/test_signature_feature_extractor.py
 # [A_module] module_id=MOD-FAC-002 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""SignatureFeatureExtractor — 签名方法特征提取器（MOD-FAC-002）。
+"""
+
+
+SignatureFeatureExtractor — 签名方法特征提取器（MOD-FAC-002）。
 
 B10-01834（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-FAC-018，A1 §29.8）：路径
 **截断 2-4 阶 log-signature** 特征向量——逐分量对数变换 + 增量累积 + 张量
@@ -23,6 +26,41 @@ B10-01834（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-FAC-018，A1 §29.8）：�
 查重分工（蓝图 §0）：casebook=形态案例库检索（语义图案匹配）；本件=路径签名
 **代数不变量**数值特征（ rough path 理论截断签名，无形态库、无检索），二者
 零交集。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: order 参数
+#   fields: 参数 order（无注解）
+#   code: signature_feature_extractor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SignatureFeatures
+#   name_en: SignatureFeatures
+#   intro: 截断 log-signature 特征向量（frozen；names 与 values 等长对齐）。
+#   desc: 截断 log-signature 特征向量（frozen；names 与 values 等长对齐）。；公共方法（定义序）: as_dict；源码 L96-L106
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② SignatureFeatureExtractor
+#   name_en: SignatureFeatureExtractor
+#   intro: 截断 log-signature 提取器（2-4 阶护栏，纯内存确定性）。
+#   desc: 截断 log-signature 提取器（2-4 阶护栏，纯内存确定性）。 Args: order: 截断阶数（∈ [2,4]，越界 Fail-Closed）。；公共方法（定义序）: order, feature_na…
+#   inputs: order
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: SignatureFeatures, SignatureFeatureExtractor
+#   downstream: 运行时装配批（路径签名特征批量提取 / 因子库草稿治理串行合并）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -66,7 +104,7 @@ class SignatureFeatures:
 
     def as_dict(self) -> dict[str, float]:
         """特征名 → 取值映射（按键序确定性）。"""
-        return dict(zip(self.names, self.values))
+        return dict(zip(self.names, self.values, strict=False))
 
 
 class SignatureFeatureExtractor:
@@ -80,9 +118,7 @@ class SignatureFeatureExtractor:
         if isinstance(order, bool) or not isinstance(order, int):
             raise SignatureError(f"order 非法（须为 int）: {order!r}")
         if not (MIN_ORDER <= order <= MAX_ORDER):
-            raise SignatureError(
-                f"order 越界: {order}（护栏 {MIN_ORDER}≤order≤{MAX_ORDER} 防组合爆炸）"
-            )
+            raise SignatureError(f"order 越界: {order}（护栏 {MIN_ORDER}≤order≤{MAX_ORDER} 防组合爆炸）")
         self._order = order
 
     @property
@@ -109,8 +145,7 @@ class SignatureFeatureExtractor:
         dim = len(rows[0])
         log_rows = [tuple(math.log(v) for v in row) for row in rows]  # ① 对数变换
         increments = [  # ② 增量
-            tuple(log_rows[t + 1][i] - log_rows[t][i] for i in range(dim))
-            for t in range(len(log_rows) - 1)
+            tuple(log_rows[t + 1][i] - log_rows[t][i] for i in range(dim)) for t in range(len(log_rows) - 1)
         ]
         # ③ 张量积迭代截断：分段线性路径签名 S ← S ⊗ exp(Δ)
         levels: list[list[float]] = [[0.0] * (dim**k) for k in range(1, self._order + 1)]

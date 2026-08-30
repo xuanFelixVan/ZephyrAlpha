@@ -14,7 +14,11 @@
 # [TESTS] tests/zephyr/data/test_integrity_checker.py
 # [A_module] module_id=MOD-GOV-integrity_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""数据完整性巡检器——每天盘后检测全表当日数据是否达标。
+"""
+
+
+
+数据完整性巡检器——每天盘后检测全表当日数据是否达标。
 
 设计理念（数据韧性三层机制 §3）：
   - 复用 backfill_checker._discover_backfill_tables() 动态发现全表
@@ -25,6 +29,32 @@
 调用方式：
   scheduler.run_schedule("integrity_check") → run_daily_check(scheduler)
   也可独立调用：python -c "from zephyr.data.integrity_checker import run_daily_check; run_daily_check()"
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: scheduler 参数
+#   fields: 参数 scheduler（无注解）
+#   code: integrity_checker.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① run_daily_check
+#   name_en: run_daily_check
+#   intro: 每天盘后数据完整性巡检主入口。
+#   desc: 每天盘后数据完整性巡检主入口。 动态发现 tasks.yaml 中所有表，逐表检查当天数据行数是否达标。 不达标的表通过 alerter 告警，结果记录到 progress_st…；源码 L219-L330
+#   inputs: scheduler
+#   outputs: dict
+# 层: 输出
+# - id: O1
+#   name_zh: dict
+#   name_en: dict
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.scheduler.run_schedule("integrity_check")
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

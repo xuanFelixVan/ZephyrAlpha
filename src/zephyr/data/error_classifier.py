@@ -14,7 +14,11 @@
 # [TESTS] tests/zephyr/data/test_error_classifier.py
 # [A_module] module_id=MOD-GOV-error_classifier | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""数据源错误分类器——根据错误字符串判断可恢复性。
+"""
+
+
+
+数据源错误分类器——根据错误字符串判断可恢复性。
 
 设计理念（数据韧性三层机制 §2）：
   - 不可恢复错误（配额耗尽/接口废弃/认证失败）→ 立即 fallback 到副源
@@ -30,6 +34,53 @@ Usage::
     if is_unrecoverable(result.error):
         # 立即 fallback 到副源
         ...
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: error 参数
+#   fields: 参数 error，类型注解 str | None
+#   code: error_classifier.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① classify_error
+#   name_en: classify_error
+#   intro: 分类错误类型。
+#   desc: 分类错误类型。 Args: error: 错误字符串（FetchResult.error）。 Returns: "unrecoverable" | "recoverable" |…；源码 L146-L161
+#   inputs: error
+#   outputs: str
+# - id: A2
+#   name_zh: ② is_unrecoverable
+#   name_en: is_unrecoverable
+#   intro: 是否不可恢复错误（应立即 fallback）。
+#   desc: 是否不可恢复错误（应立即 fallback）。；源码 L164-L166
+#   inputs: error
+#   outputs: bool
+# - id: A3
+#   name_zh: ③ is_recoverable
+#   name_en: is_recoverable
+#   intro: 是否可恢复错误（应重试）。
+#   desc: 是否可恢复错误（应重试）。；源码 L169-L171
+#   inputs: error
+#   outputs: bool
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.scheduler
+# - id: O2
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.scheduler
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

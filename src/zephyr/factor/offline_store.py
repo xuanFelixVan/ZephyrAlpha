@@ -22,7 +22,10 @@
 # A4: 读取——DuckDB read_parquet 递归扫描+因子/日期/质量过滤+ROW_NUMBER同键取最新
 # O1: WriteReceipt(写入回执) / list[dict](7列行)
 # [/ALGO_FLOW]
-"""离线存储 Offline Store（CAND-FAC-015 / B13-04144，feast 式 Parquet/DuckDB 离线仓）。
+"""
+
+
+离线存储 Offline Store（CAND-FAC-015 / B13-04144，feast 式 Parquet/DuckDB 离线仓）。
 
 特征仓批量分析面：Parquet 离线三目录（daily/intraday/snapshots）+ 7 列 Schema
 （trade_date/symbol/factor_name/value/version/computed_at/quality_flag）+
@@ -49,6 +52,64 @@ trade_date 以 VARCHAR 存储——ISO 日期字典序=时序，hive 目录仅�
     （parquet_write 注入式），非因子 7 列离线仓、无 DuckDB 读取 API。
 
 依据: A3数据架构 §11.1.1；construction_backlog_dig.tsv B13-04144。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: rows 参数
+#   fields: 参数 rows，类型注解 Iterable[Mapping]
+#   code: offline_store.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: layer 参数
+#   fields: 参数 layer，类型注解 str
+#   code: offline_store.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: trade_date 参数
+#   fields: 参数 trade_date，类型注解 str
+#   code: offline_store.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① validate_rows
+#   name_en: validate_rows
+#   intro: 7 列 Schema fail-closed 校验。
+#   desc: 7 列 Schema fail-closed 校验。 Raises: ValueError: 缺列/非法 quality_flag/非法 trade_date/非法 comput…；源码 L205-L248
+#   inputs: rows
+#   outputs: list[FactorValueRow]
+# - id: A2
+#   name_zh: ② partition_path
+#   name_en: partition_path
+#   intro: 分区相对路径：daily/intraday→trade_date=YYYY-MM-DD；snapshots→year=…
+#   desc: 分区相对路径：daily/intraday→trade_date=YYYY-MM-DD；snapshots→year=YYYY/month=MM。 Raises: ValueEr…；源码 L251-L262
+#   inputs: layer trade_date
+#   outputs: str
+# - id: A3
+#   name_zh: ③ OfflineStore
+#   name_en: OfflineStore
+#   intro: 因子 Parquet 离线仓门面：三目录分区写 + DuckDB 批量读。
+#   desc: 因子 Parquet 离线仓门面：三目录分区写 + DuckDB 批量读。 Args: root_dir: 离线仓根目录（本地路径；不存在时首个 write 创建）。；公共方法（定义序）: root, write, r…
+#   inputs: root_dir
+#   outputs: 返回值
+#   （注：A3 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[FactorValueRow]
+#   name_en: list[FactorValueRow]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: （候选：ML 训练特征抽取/回测批量读取/因子评估/PIT 验证装配批——D_BACKTEST;D_ML_TRAIN）
+# - id: O2
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: （候选：ML 训练特征抽取/回测批量读取/因子评估/PIT 验证装配批——D_BACKTEST;D_ML_TRAIN）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations
@@ -206,8 +267,7 @@ def _canonical_tuples(rows: Sequence[FactorValueRow]) -> tuple[tuple, ...]:
     """规范化排序行 tuple（内容寻址与字节级幂等的基准序）。"""
     ordered = sorted(rows, key=lambda r: (r.trade_date, r.symbol, r.factor_name, r.version, r.computed_at))
     return tuple(
-        (r.trade_date, r.symbol, r.factor_name, r.value, r.version, r.computed_at, r.quality_flag)
-        for r in ordered
+        (r.trade_date, r.symbol, r.factor_name, r.value, r.version, r.computed_at, r.quality_flag) for r in ordered
     )
 
 
@@ -370,4 +430,4 @@ class OfflineStore:
         )
         cursor = conn.execute(sql, params)
         out_cols = [d[0] for d in cursor.description]
-        return [dict(zip(out_cols, record)) for record in cursor.fetchall()]
+        return [dict(zip(out_cols, record, strict=False)) for record in cursor.fetchall()]

@@ -1,3 +1,46 @@
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: skeletons 参数
+#   fields: 参数 skeletons，类型注解 dict[str, str] | None
+#   code: generator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: target_root 参数
+#   fields: 参数 target_root，类型注解 str | None
+#   code: generator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① generate
+#   name_en: generate
+#   intro: 执行骨骼代码生成.
+#   desc: 执行骨骼代码生成. 返回 (created, skipped, errors). 从 _gen_inherited.py 的 __main__ 块拆分而来. target_roo…；源码 L91-L148
+#   inputs: skeletons target_root
+#   outputs: tuple[int, int, int]
+# - id: A2
+#   name_zh: ② main
+#   name_en: main
+#   intro: CLI 入口 - 与 _gen_inherited.
+#   desc: CLI 入口 - 与 _gen_inherited.py 的 __main__ 块行为一致.；源码 L151-L156
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: tuple[int, int, int]
+#   name_en: tuple[int, int, int]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
+
 from typing import Final
 
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §3-§9

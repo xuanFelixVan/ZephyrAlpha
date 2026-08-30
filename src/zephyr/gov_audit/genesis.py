@@ -14,10 +14,51 @@
 # [TESTS] tests/audit-orchestrator/test_genesis.py
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=frozen | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
-"""audit-trail.genesis — MOD-INF-020 · 创世块管理
+"""
+
+
+
+audit-trail.genesis — MOD-INF-020 · 创世块管理
 
 提供创世块 (GenesisBlock) 的创建、持久化、验证能力，以及见证签名
 (WitnessSignature) 与验证结果 (GenesisVerificationResult) 数据模型。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: data_dir 参数
+#   fields: 参数 data_dir（无注解）
+#   code: genesis.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: system_id 参数
+#   fields: 参数 system_id（无注解）
+#   code: genesis.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: creator 参数
+#   fields: 参数 creator（无注解）
+#   code: genesis.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① GenesisManager
+#   name_en: GenesisManager
+#   intro: 创世块管理器——负责创建、持久化与验证创世块。
+#   desc: 创世块管理器——负责创建、持久化与验证创世块。；公共方法（定义序）: system_id, data_dir, genesis_path, create_genesis, verify_genesis；源码 L150-…
+#   inputs: data_dir system_id creator
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: GenesisManager
+#   downstream: audit-orchestrator.integrity; cold_start
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

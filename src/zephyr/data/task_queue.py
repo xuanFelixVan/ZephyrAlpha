@@ -14,7 +14,11 @@
 # [TESTS] tests/zephyr/data/test_task_queue.py
 # [A_module] module_id=MOD-GOV-task_queue | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""任务依赖图 + 优先级队列（MOD-L00-004 §6.3 任务依赖图 + §6.4 并发控制）。
+"""
+
+
+
+任务依赖图 + 优先级队列（MOD-L00-004 §6.3 任务依赖图 + §6.4 并发控制）。
 
 管理任务间的 DAG 依赖关系，决定哪些任务可以执行：
 - 前置全部 SUCCESS -> 当前任务 READY
@@ -27,6 +31,32 @@ DAG 依赖示例（蓝图 §6.3）：
     stock_list -> (所有依赖标的列表的任务)
 
 线程安全：所有状态操作用 threading.Lock 保护。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: task_queue.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① TaskQueue
+#   name_en: TaskQueue
+#   intro: 任务依赖图 + 优先级队列。
+#   desc: 任务依赖图 + 优先级队列。 用法： q = TaskQueue() q.load_yaml("config/tasks.yaml") for task_id in q.get_…；公共方法（定义序）: load_ya…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: TaskQueue
+#   downstream: zephyr.data.scheduler
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -158,9 +188,7 @@ class TaskQueue:
                 if status != PENDING:
                     continue
                 deps = self._dependencies.get(tid, [])
-                if not deps:
-                    ready.append(tid)
-                elif all(d not in self._tasks or self._status.get(d) == SUCCESS for d in deps):
+                if not deps or all(d not in self._tasks or self._status.get(d) == SUCCESS for d in deps):
                     ready.append(tid)
                 elif any(self._status.get(d) == FAILED for d in deps):
                     # 前置有失败 -> 标记 BLOCKED

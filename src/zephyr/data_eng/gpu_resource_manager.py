@@ -14,7 +14,11 @@
 # [TESTS] tests/data_eng/test_gpu_resource_manager.py
 # [A_module] module_id=MOD-DATENG-005 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""GpuResourceManager — GPU 资源管理器（MOD-DATENG-005）。
+"""
+
+
+
+GpuResourceManager — GPU 资源管理器（MOD-DATENG-005）。
 
 B5-07239（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATENG-008，B5 R-100）：
 CUDA 显存分区与预算（训练/推理配额注册表）+ 时段优先调度（盘中推理优
@@ -24,6 +28,48 @@ CUDA 显存分区与预算（训练/推理配额注册表）+ 时段优先调度
 边界声明（蓝图 §0）：gpu_monitor（D_TRADING）为 NVML 采集件——本件不采
 集，只对注入 probe 的采样做配额/时段/OOM 裁决；降级只是标记
 （degraded_to_cpu=True），不执行进程/设备切换（OS 副作用零）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: total_memory_mb 参数
+#   fields: 参数 total_memory_mb（无注解）
+#   code: gpu_resource_manager.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: gpu_resource_manager.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: nvml_probe 参数
+#   fields: 参数 nvml_probe（无注解）
+#   code: gpu_resource_manager.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: telemetry_sink 参数
+#   fields: 参数 telemetry_sink（无注解）
+#   code: gpu_resource_manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① GpuResourceManager
+#   name_en: GpuResourceManager
+#   intro: GPU 资源裁决件（配额 + 时段优先 + 水位监控 + OOM 降级）。
+#   desc: GPU 资源裁决件（配额 + 时段优先 + 水位监控 + OOM 降级）。；公共方法（定义序）: register_quota, set_schedule, acquire, release, check_waterm…
+#   inputs: total_memory_mb clock nvml_probe telemetry_sink alert_sink oom_waterm…
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: GpuResourceManager
+#   downstream: 运行时装配批（盘中推理/盘后训练调度挂时段表 / 显存水位接 gpu_monitor 探针 / 降级标记接推理运行时）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -139,23 +185,17 @@ class GpuResourceManager:
         prev_end = -1
         for rule in items:
             if not 0 <= rule.start_minute < rule.end_minute <= 1440:
-                raise GpuResourceError(
-                    f"时段窗口非法: [{rule.start_minute}, {rule.end_minute})"
-                )
+                raise GpuResourceError(f"时段窗口非法: [{rule.start_minute}, {rule.end_minute})")
             if not isinstance(rule.preferred, WorkloadKind):
                 raise GpuResourceError(f"非法优先类型: {rule.preferred!r}")
             if rule.start_minute < prev_end:
-                raise GpuResourceError(
-                    f"时段规则重叠: [{rule.start_minute}, {rule.end_minute}) 与前一规则相交"
-                )
+                raise GpuResourceError(f"时段规则重叠: [{rule.start_minute}, {rule.end_minute}) 与前一规则相交")
             prev_end = rule.end_minute
         self._rules = tuple(items)
 
     # ── 分配裁决 ──────────────────────────────────────────────────────────
 
-    def acquire(
-        self, workload_id: str, kind: WorkloadKind, request_mb: int
-    ) -> AllocationVerdict:
+    def acquire(self, workload_id: str, kind: WorkloadKind, request_mb: int) -> AllocationVerdict:
         """分配裁决：时段优先 → 配额预算 → OOM 水位，任一不通过即降级 CPU。"""
         if not workload_id:
             raise GpuResourceError("workload_id 为空")
@@ -170,9 +210,7 @@ class GpuResourceManager:
         if verdict.on_gpu:
             self._allocations[workload_id] = _Allocation(kind=kind, granted_mb=request_mb)
         else:
-            self._alert(
-                f"GPU分配降级CPU: {workload_id} kind={kind.value} reason={verdict.reason}"
-            )
+            self._alert(f"GPU分配降级CPU: {workload_id} kind={kind.value} reason={verdict.reason}")
         self._emit_telemetry(verdict)
         return verdict
 
@@ -183,17 +221,23 @@ class GpuResourceManager:
         for rule in self._rules:
             if rule.start_minute <= minute < rule.end_minute and rule.preferred is not kind:
                 return self._verdict(
-                    workload_id, kind, request_mb, 0, False,
+                    workload_id,
+                    kind,
+                    request_mb,
+                    0,
+                    False,
                     f"TIME_WINDOW_PRIORITY({minute}min 窗口优先 {rule.preferred.value})",
                 )
         # ② 配额预算：本类已批 + 请求 > 预算 → 降级
-        used_by_kind = sum(
-            a.granted_mb for a in self._allocations.values() if a.kind is kind
-        )
+        used_by_kind = sum(a.granted_mb for a in self._allocations.values() if a.kind is kind)
         budget = self._quotas[kind]
         if used_by_kind + request_mb > budget:
             return self._verdict(
-                workload_id, kind, request_mb, 0, False,
+                workload_id,
+                kind,
+                request_mb,
+                0,
+                False,
                 f"QUOTA_EXCEEDED({used_by_kind}+{request_mb}>{budget}MB)",
             )
         # ③ OOM 水位：probe 当前占用 + 请求 > total*watermark → 降级
@@ -201,7 +245,11 @@ class GpuResourceManager:
             sample = self._probe()
             if sample.used_mb + request_mb > self._total_mb * self._oom_watermark:
                 return self._verdict(
-                    workload_id, kind, request_mb, 0, False,
+                    workload_id,
+                    kind,
+                    request_mb,
+                    0,
+                    False,
                     f"OOM_GUARD({sample.used_mb}+{request_mb}>{self._total_mb * self._oom_watermark:.0f}MB)",
                 )
         return self._verdict(workload_id, kind, request_mb, request_mb, True, "GRANTED")
@@ -245,10 +293,7 @@ class GpuResourceManager:
             raise GpuResourceError(f"probe 采样非法: {sample!r}")
         self._emit_telemetry(sample)
         if sample.used_mb >= sample.total_mb * self._oom_watermark:
-            self._alert(
-                f"显存水位告警: {sample.used_mb}/{sample.total_mb}MB "
-                f">= watermark {self._oom_watermark}"
-            )
+            self._alert(f"显存水位告警: {sample.used_mb}/{sample.total_mb}MB >= watermark {self._oom_watermark}")
         return sample
 
     # ── 状态快照 ──────────────────────────────────────────────────────────

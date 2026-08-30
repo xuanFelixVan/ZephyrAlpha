@@ -16,6 +16,10 @@
 # [TTL] permanent
 
 """
+
+
+
+
 Feedback Loop Decision Engine
 ================================
 
@@ -31,6 +35,41 @@ CT-FLE-ORC-001 桥接模块：FLE 异常检测 -> Orchestrator 调度调整
 ----
 FLE 单向依赖原则（ 不直接 import Orchestrator，
 通过 Protocol 适配器 fire-and-forget，防止循环依赖。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: payload 参数
+#   fields: 参数 payload，类型注解 dict[str, Any]
+#   code: decision_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DecisionEngine
+#   name_en: DecisionEngine
+#   intro: class DecisionEngine 源码 L137-L221
+#   desc: 公共方法（定义序）: adapter, pending, evaluate_anomaly, flush_pending, pending_count；源码 L137-L221
+#   inputs: adapter
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② reflect_on_blueprint
+#   name_en: reflect_on_blueprint
+#   intro: reflect_on_blueprint(payload) 源码 L224-L249
+#   desc: 源码 L224-L249
+#   inputs: payload
+#   outputs: dict[str, Any]
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, Any]
+#   name_en: dict[str, Any]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

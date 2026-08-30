@@ -16,10 +16,64 @@
 # [TTL] permanent
 
 """
+
+
+
+
 MOD-INF-019: Agent Spec — Phase Planner
 Blueprint: docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md
 Author: factory-agent
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: name 参数
+#   fields: 参数 name（无注解）
+#   code: phase_planner.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: seq 参数
+#   fields: 参数 seq（无注解）
+#   code: phase_planner.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: description 参数
+#   fields: 参数 description（无注解）
+#   code: phase_planner.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: depends_on 参数
+#   fields: 参数 depends_on（无注解）
+#   code: phase_planner.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① Phase
+#   name_en: Phase
+#   intro: class Phase 源码 L91-L117
+#   desc: 公共方法（定义序）: to_dict, can_start；源码 L91-L117
+#   inputs: name seq description depends_on status
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② PhasePlanner
+#   name_en: PhasePlanner
+#   intro: class PhasePlanner 源码 L120-L206
+#   desc: 公共方法（定义序）: get_phase, set_status, get_ready_phases, all_phases, phase_summary, current_projection；源码 L120-L206
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: Phase, PhasePlanner
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from datetime import UTC, datetime

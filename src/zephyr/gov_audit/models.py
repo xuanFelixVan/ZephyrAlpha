@@ -20,6 +20,61 @@
 # 契约不符（不接受 ide_source/counter，tick/now 不返回元组），_generate_entry_id 不接受
 # 位置参数，IntegrityReport 用 valid 字段而非 is_valid。现按 tests/audit/ 契约重写为
 # Enum + frozen dataclass，values 全部小写对齐 compliance_map.py 测试期望。
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: entry 参数
+#   fields: 参数 entry，类型注解 tuple[str, int] | object
+#   code: models.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① LamportClock
+#   name_en: LamportClock
+#   intro: Lamport 逻辑时钟——治本（ G2）：对齐测试契约。
+#   desc: Lamport 逻辑时钟——治本（ G2）：对齐测试契约。 旧实现仅接受 initial:int，tick() 返回 int，无 ide_source。现对齐契约： - Lamp…；公共方法（定义序）: tick, m…
+#   inputs: ide_source counter
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② IntegrityReport
+#   name_en: IntegrityReport
+#   intro: 完整性报告——治本（ G2）：frozen dataclass。
+#   desc: 完整性报告——治本（ G2）：frozen dataclass。 对齐 test_audit_models.py / test_audit_core.py / test_quer…；公共方法（定义序）: valid,…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ AuditChain
+#   name_en: AuditChain
+#   intro: 审计哈希链——治本（ G2）：dataclass 接受 chain_hash/entry_count 构造。
+#   desc: 审计哈希链——治本（ G2）：dataclass 接受 chain_hash/entry_count 构造。 对齐 test_audit_models.py 契约：AuditCh…；公共方法（定义序）: add_ent…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ audit_entry_sort_key
+#   name_en: audit_entry_sort_key
+#   intro: 审计条目排序键——治本（ G2）：接受 (ide, counter) 元组。
+#   desc: 审计条目排序键——治本（ G2）：接受 (ide, counter) 元组。 对齐 test_audit_models.py 契约： audit_entry_sort_key((…；源码 L541-L551
+#   inputs: entry
+#   outputs: tuple[str, int] | int
+#   （注：A4 之后另有 22 个公共定义未列入（含 22 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: tuple[str, int] | int
+#   name_en: tuple[str, int] | int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: audit-orchestrator.*; gates; pipeline
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
+"""
+
 from __future__ import annotations
 
 import warnings

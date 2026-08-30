@@ -22,7 +22,11 @@
 # F3: reflush_next_day_exit_decision——反核后次日：高开≥5%止盈/低开≤-3%止损/持5天时间止盈/其余观察
 # O1: {action, qty_ratio, reason}（action∈STOP_LOSS/SELL_ALL/SELL_HALF/HOLD）
 # [/ALGO_FLOW]
-"""打板次日出场决策族（24_daban_strategy_detail §3.13 缺失#1/#7 施工）。
+"""
+
+
+
+打板次日出场决策族（24_daban_strategy_detail §3.13 缺失#1/#7 施工）。
 
 缺失#1 NextDayExitDecision（首批实盘前必做）：T+1 闭环断裂修复——
 T 日打板买入后 T+1 日开盘竞价的完整出场决策（硬退出三件套 + 高开两档止盈
@@ -34,6 +38,50 @@ T 日打板买入后 T+1 日开盘竞价的完整出场决策（硬退出三件�
 
 理论背书：北大 Jiang & Li 理性预期模型——封死涨停平均隔夜收益 +2.43%，
 打开涨停平均回撤 -5.25%（回撤不对称性支撑"低开闷杀硬止损"纪律）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: position 参数
+#   fields: 参数 position，类型注解 dict
+#   code: daban_exit_decision.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: auction_data 参数
+#   fields: 参数 auction_data，类型注解 dict
+#   code: daban_exit_decision.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: holding_days 参数
+#   fields: 参数 holding_days，类型注解 int
+#   code: daban_exit_decision.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① NextDayExitDecision
+#   name_en: NextDayExitDecision
+#   intro: 次日出场完整决策（v1.9.2 补，整合 forecast_next_day_premium + 20号三档退出）。
+#   desc: 次日出场完整决策（v1.9.2 补，整合 forecast_next_day_premium + 20号三档退出）。；公共方法（定义序）: decide, classify_position_status；源码 L97…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② reflush_next_day_exit_decision
+#   name_en: reflush_next_day_exit_decision
+#   intro: 反核二次出场决策（v1.9.2 补，Phase 5 候选）——§3.12 反核后次日不同走势的分别出场决策。
+#   desc: 反核二次出场决策（v1.9.2 补，Phase 5 候选）——§3.12 反核后次日不同走势的分别出场决策。；源码 L164-L180
+#   inputs: position auction_data holding_days
+#   outputs: dict
+# 层: 输出
+# - id: O1
+#   name_zh: dict
+#   name_en: dict
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.ex_core.daban_pit_safety（PIT 回测框架调用次日出场）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

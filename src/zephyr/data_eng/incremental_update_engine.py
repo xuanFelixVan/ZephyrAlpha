@@ -24,7 +24,11 @@
 # A1: 输入非法/未知因子/tolerance<0→Fail-Closed; sink 异常仅日志不阻断
 # O1: ChangeVerdict / SampleReconcileResult / FactorWindowState(快照可持久化)
 # [/ALGO_FLOW]
-"""D_DATA_ENG — Incremental Update Engine（91 增量更新协调引擎，§1 子模块清单）。
+"""
+
+
+
+D_DATA_ENG — Incremental Update Engine（91 增量更新协调引擎，§1 子模块清单）。
 
 增量更新**协调层**（不重写同步逻辑）。与既有件边界：
   - data/scheduler（MOD-L00-004，D_DATA）：增量同步执行器（incremental+
@@ -40,6 +44,62 @@
   3. 增量因子注册表：窗口状态登记+快照持久化（to_snapshot/from_snapshot）。
 
 设计真源：B1-00635 / CAND-DATENG-003（AUD-DRAFT-001-DIGEST P1 波 W-P1-23）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: previous 参数
+#   fields: 参数 previous，类型注解 ChangeSignal | None
+#   code: incremental_update_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: current 参数
+#   fields: 参数 current，类型注解 ChangeSignal
+#   code: incremental_update_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① detect_change
+#   name_en: detect_change
+#   intro: 统一变更检测：三通道任一前进/变化即判变更（确定性，Fail-Closed）。
+#   desc: 统一变更检测：三通道任一前进/变化即判变更（确定性，Fail-Closed）。 reasons 取值：FIRST_OBSERVATION / WATERMARK_ADVANCED…；源码 L149-L170
+#   inputs: previous current
+#   outputs: ChangeVerdict
+# - id: A2
+#   name_zh: ② SamplingReconciler
+#   name_en: SamplingReconciler
+#   intro: 增量结果抽样全量对账器（偏差告警不静默；sink 异常不阻断）。
+#   desc: 增量结果抽样全量对账器（偏差告警不静默；sink 异常不阻断）。 alert_sink：注入式告警出口（装配批接 alerter）；缺失仅记 WARNING 日志。；公共方法（定义序）: reconcile；源码 L1…
+#   inputs: tolerance_ratio alert_sink
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ IncrementalFactorRegistry
+#   name_en: IncrementalFactorRegistry
+#   intro: 增量因子注册表（incremental_compute 挂调度前置协调）。
+#   desc: 增量因子注册表（incremental_compute 挂调度前置协调）。 窗口状态持久化：to_snapshot()/from_snapshot() 往返无损；运行时由调用方…；公共方法（定义序）: register…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ IncrementalUpdateEngine
+#   name_en: IncrementalUpdateEngine
+#   intro: 增量更新协调引擎门面：统一变更检测 + 抽样全量对账 + 增量因子注册表。
+#   desc: 增量更新协调引擎门面：统一变更检测 + 抽样全量对账 + 增量因子注册表。 三职责单一入口（装配批挂调度）；各子件亦可独立使用。；公共方法（定义序）: detect_change, reconcile_sample；源…
+#   inputs: tolerance_ratio alert_sink
+#   outputs: 返回值
+#   （注：A4 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ChangeVerdict
+#   name_en: ChangeVerdict
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.scheduler（MOD-L00-004，运行时装配批挂调度）; zephyr.factor.factor_base（increme…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations
@@ -98,9 +158,7 @@ def detect_change(previous: ChangeSignal | None, current: ChangeSignal) -> Chang
     if previous is None:
         return ChangeVerdict(source_id=current.source_id, changed=True, reasons=("FIRST_OBSERVATION",))
     if previous.source_id != current.source_id:
-        raise InvalidIncrementalInputError(
-            f"source_id 不一致: {previous.source_id} vs {current.source_id}"
-        )
+        raise InvalidIncrementalInputError(f"source_id 不一致: {previous.source_id} vs {current.source_id}")
     reasons: list[str] = []
     if current.watermark != previous.watermark:
         reasons.append("WATERMARK_ADVANCED")
@@ -255,7 +313,7 @@ class IncrementalFactorRegistry:
         }
 
     @classmethod
-    def from_snapshot(cls, snapshot: Mapping[str, Mapping[str, Any]]) -> "IncrementalFactorRegistry":
+    def from_snapshot(cls, snapshot: Mapping[str, Mapping[str, Any]]) -> IncrementalFactorRegistry:
         """快照恢复（与 to_snapshot 往返无损）。"""
         registry = cls()
         for factor_id, payload in snapshot.items():

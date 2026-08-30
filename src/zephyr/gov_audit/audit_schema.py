@@ -16,6 +16,10 @@
 # [TTL] permanent
 
 """
+
+
+
+
 audit_schema — 审计视图与查询入口（SH-DB-001 v2.0）
 ======================================================
 Task       : SH-DB-001 v2.0 | audit_schema
@@ -42,6 +46,37 @@ Safety     : M（只读查询，不修改数据）
 
     aq = AuditQuery(db_path="data/databases/governance.db")
     trail = aq.query_audit_for_session("session-20260501")
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: db_path 参数
+#   fields: 参数 db_path（无注解）
+#   code: audit_schema.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: auto_init 参数
+#   fields: 参数 auto_init（无注解）
+#   code: audit_schema.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AuditQuery
+#   name_en: AuditQuery
+#   intro: 审计视图查询器。
+#   desc: 审计视图查询器。 参数 ---- db_path SQLite 数据库路径，默认 DB_PATH。 auto_init True 时构造时自动 init_db()。；公共方法（定义序）: get_conn, query…
+#   inputs: db_path auto_init
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: AuditQuery
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

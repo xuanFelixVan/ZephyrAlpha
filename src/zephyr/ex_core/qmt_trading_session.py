@@ -14,7 +14,11 @@
 # [TESTS] tests/ex_core/test_qmt_trading_session.py
 # [A_module] module_id=MOD-L06-001-QMTFB | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""QMT Trading Session——QMT 文件桥交易会话（一键装配）
+"""
+
+
+
+QMT Trading Session——QMT 文件桥交易会话（一键装配）
 
 职责:
   - 策略层无感知入口：env + universe + strategy + 两个 provider 即可起跑
@@ -26,6 +30,48 @@
   - 价格/信号均为 Callable 注入，不耦合具体数据源
 
 SSoT: docs/03_modules/_domain_execution_core/blueprint_qmt_file_bridge.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: env 参数
+#   fields: 参数 env（无注解）
+#   code: qmt_trading_session.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: universe 参数
+#   fields: 参数 universe（无注解）
+#   code: qmt_trading_session.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: strategy 参数
+#   fields: 参数 strategy（无注解）
+#   code: qmt_trading_session.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: signal_provider 参数
+#   fields: 参数 signal_provider（无注解）
+#   code: qmt_trading_session.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① QmtTradingSession
+#   name_en: QmtTradingSession
+#   intro: QMT 文件桥交易会话
+#   desc: QMT 文件桥交易会话 Usage: session = QmtTradingSession( env="sim", universe=["510300.SH"], strate…；公共方法（定义序）: order_m…
+#   inputs: env universe strategy signal_provider price_provider options
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: QmtTradingSession
+#   downstream: scripts.construction.test_qmt_file_bridge_full; scripts.start_paper_session
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -50,8 +96,8 @@ class QmtSessionOptions:
     """会话可选参数（调优项，默认值即生产配置）"""
 
     enable_algo_queue: bool = False  # 是否启用算法单本地排队
-    queue_interval: float = 180.0    # 队列默认发送间隔（秒）
-    sync_interval: float = 3.0       # 柜台同步轮询间隔（秒）
+    queue_interval: float = 180.0  # 队列默认发送间隔（秒）
+    sync_interval: float = 3.0  # 柜台同步轮询间隔（秒）
 
 
 class QmtTradingSession:

@@ -1,3 +1,102 @@
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: rows 参数
+#   fields: 参数 rows，类型注解 list[dict[str, Any]] | None
+#   code: fitness_functions.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: gate_total 参数
+#   fields: 参数 gate_total（无注解）
+#   code: fitness_functions.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: gate_passed 参数
+#   fields: 参数 gate_passed（无注解）
+#   code: fitness_functions.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: coverage_pct 参数
+#   fields: 参数 coverage_pct（无注解）
+#   code: fitness_functions.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FitnessReport
+#   name_en: FitnessReport
+#   intro: class FitnessReport 源码 L168-L178
+#   desc: 公共方法（定义序）: get_metric；源码 L168-L178
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② FitnessFunctionFramework
+#   name_en: FitnessFunctionFramework
+#   intro: class FitnessFunctionFramework 源码 L190-L417
+#   desc: 公共方法（定义序）: measure_module_coupling, measure_test_coverage, measure_compliance_rate, measure_knowledge_activat…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ from_gate_results
+#   name_en: from_gate_results
+#   intro: from_gate_results(rows, gate_total, gate_passed, coverage_p…
+#   desc: 源码 L420-L447
+#   inputs: rows gate_total gate_passed coverage_pct ke_total ke_activated halluc…
+#   outputs: FitnessInputs
+# - id: A4
+#   name_zh: ④ fitness_anomaly_detection_precision
+#   name_en: fitness_anomaly_detection_precision
+#   intro: fitness_anomaly_detection_precision(true_positives, false_p…
+#   desc: 源码 L453-L458
+#   inputs: true_positives false_positives
+#   outputs: float
+# - id: A5
+#   name_zh: ⑤ fitness_false_positive_rate
+#   name_en: fitness_false_positive_rate
+#   intro: fitness_false_positive_rate(false_positives, total_negative…
+#   desc: 源码 L461-L466
+#   inputs: false_positives total_negatives
+#   outputs: float
+# - id: A6
+#   name_zh: ⑥ fitness_mtti_seconds
+#   name_en: fitness_mtti_seconds
+#   intro: fitness_mtti_seconds(detection_timestamps, anomaly_timestam…
+#   desc: 源码 L469-L480
+#   inputs: detection_timestamps anomaly_timestamps
+#   outputs: float
+# - id: A7
+#   name_zh: ⑦ fitness_owner_override_rate
+#   name_en: fitness_owner_override_rate
+#   intro: fitness_owner_override_rate(overrides, total_owner_notifica…
+#   desc: 源码 L483-L487
+#   inputs: overrides total_owner_notifications
+#   outputs: float
+#   （注：A7 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: FitnessInputs
+#   name_en: FitnessInputs
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> O1
+"""
+
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Final

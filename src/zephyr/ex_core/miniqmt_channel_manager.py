@@ -14,7 +14,11 @@
 # [TESTS] tests/ex_core/test_miniqmt_channel_manager.py
 # [A_module] module_id=MOD-EX-058 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""miniQMT 交易通道管理器 (MOD-EX-058)
+"""
+
+
+
+miniQMT 交易通道管理器 (MOD-EX-058)
 
 D-EX-CORE-58：xtquant 接口封装的通道底座——连接生命周期 + 心跳 +
 断线重连状态机。约束三（miniQMT 下单 10 笔/秒、Tick=3 秒）的接口底座，
@@ -27,6 +31,51 @@ MiniQmtChannelError 拒出（本批禁止真实下单路径，本模块只提供
 接口抽象：ChannelTransport 协议（connect/disconnect/ping）注入，本模块
 不 import xtquant、不建网络连接；生产接线由适配层把 xttrader 会话适配进
 ChannelTransport，测试用 FakeTransport 全确定性。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: transport 参数
+#   fields: 参数 transport（无注解）
+#   code: miniqmt_channel_manager.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: max_reconnect_attempts 参数
+#   fields: 参数 max_reconnect_attempts（无注解）
+#   code: miniqmt_channel_manager.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: max_heartbeat_failures 参数
+#   fields: 参数 max_heartbeat_failures（无注解）
+#   code: miniqmt_channel_manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ChannelTransport
+#   name_en: ChannelTransport
+#   intro: 通道传输协议（生产接线: xttrader 会话适配；测试: 假实现）。
+#   desc: 通道传输协议（生产接线: xttrader 会话适配；测试: 假实现）。 约定： - connect() 返回 True=连接建立；抛异常或返回 False=失败。 - ping…；公共方法（定义序）: connect…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② MiniQmtChannelManager
+#   name_en: MiniQmtChannelManager
+#   intro: miniQMT 通道管理器（连接生命周期/心跳/断线重连状态机）。
+#   desc: miniQMT 通道管理器（连接生命周期/心跳/断线重连状态机）。 Args: transport: ChannelTransport 协议实现（注入，禁真实连接硬编码）。 ma…；公共方法（定义序）: state,…
+#   inputs: transport max_reconnect_attempts max_heartbeat_failures
+#   outputs: 返回值
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: ChannelTransport, MiniQmtChannelManager
+#   downstream: MOD-EX-035(Live/Simulation Switcher 实盘通道就绪判定) ; MOD-L06-001(真单通道唯一入口)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

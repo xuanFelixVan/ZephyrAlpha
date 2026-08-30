@@ -16,6 +16,10 @@
 # [TTL] permanent
 
 """
+
+
+
+
 MOD-INF-019: Agent Spec — Self Evolution Fidelity Gate
 Blueprint: docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md
 Author: factory-agent
@@ -29,6 +33,40 @@ EchoTrap 自进化保真度门控 —— RAGEN 保真度验证引擎
   3. ToxicityGuard: 检测进化过程中是否引入了危险指令（注入/越权/后门）
   4. CoherenceCheck: 确保进化后内容与蓝图源头的一致性
   5. FidelityScore: 加权综合评分 0-100，低于阈值拒绝进化
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: self_evolution_fidelity_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SemanticSignature
+#   name_en: SemanticSignature
+#   intro: class SemanticSignature 源码 L81-L103
+#   desc: 公共方法（定义序）: diff；源码 L81-L103
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② SelfEvolutionFidelityGate
+#   name_en: SelfEvolutionFidelityGate
+#   intro: 自进化保真度门控——EchoTrap 验证引擎
+#   desc: 自进化保真度门控——EchoTrap 验证引擎；公共方法（定义序）: extract_signature, score_toxicity, score_coherence, compute_similarity, ve…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: SemanticSignature, SelfEvolutionFidelityGate
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

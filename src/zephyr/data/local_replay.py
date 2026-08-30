@@ -14,7 +14,11 @@
 # [TESTS] tests/zephyr/data/test_local_replay.py
 # [A_module] module_id=MOD-GOV-local_replay | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""本地落盘兜底 + 自动回灌（裁定 #ARCH-CH-013 Phase 1）。
+"""
+
+
+
+本地落盘兜底 + 自动回灌（裁定 #ARCH-CH-013 Phase 1）。
 
 当 ClickHouse 二级降级链（TCP→HTTP）全部失败时（VM/CH 不可达），
 ch_writer.write_tsv 将数据写入本地 TSV 文件而非丢弃。
@@ -33,6 +37,84 @@ scheduler 启动时 + 每 30 分钟检查并回灌积压文件到 CH。
     2. 逐文件调用 ch_writer.write_tsv 回灌
     3. 成功则删除文件 + 从 manifest 移除条目
     4. 失败则保留，等下次重试
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: table 参数
+#   fields: 参数 table，类型注解 str
+#   code: local_replay.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: cols_clause 参数
+#   fields: 参数 cols_clause，类型注解 str | None
+#   code: local_replay.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: tsv_bytes 参数
+#   fields: 参数 tsv_bytes，类型注解 bytes
+#   code: local_replay.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: max_files 参数
+#   fields: 参数 max_files，类型注解 int
+#   code: local_replay.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① save_fallback
+#   name_en: save_fallback
+#   intro: 将 TSV 数据落盘到本地文件（TCP+HTTP 均失败时的第三级降级）。
+#   desc: 将 TSV 数据落盘到本地文件（TCP+HTTP 均失败时的第三级降级）。 原子写入：先写 .tmp 文件，再 rename 为 .tsv，避免半写文件。 追加 manifest…；源码 L158-L208
+#   inputs: table cols_clause tsv_bytes
+#   outputs: bool
+# - id: A2
+#   name_zh: ② has_backlog
+#   name_en: has_backlog
+#   intro: 是否有积压的待回灌文件。
+#   desc: 是否有积压的待回灌文件。；源码 L211-L218
+#   inputs: 无参数
+#   outputs: bool
+# - id: A3
+#   name_zh: ③ get_backlog_summary
+#   name_en: get_backlog_summary
+#   intro: 获取积压摘要：{table: pending_rows}。
+#   desc: 获取积压摘要：{table: pending_rows}。；源码 L221-L237
+#   inputs: 无参数
+#   outputs: dict[str, int]
+# - id: A4
+#   name_zh: ④ read_manifest
+#   name_en: read_manifest
+#   intro: 读取 manifest 全部条目（公共接口，R5: 消除测试私有访问）。
+#   desc: 读取 manifest 全部条目（公共接口，R5: 消除测试私有访问）。；源码 L257-L259
+#   inputs: 无参数
+#   outputs: list[dict]
+# - id: A5
+#   name_zh: ⑤ replay_batch
+#   name_en: replay_batch
+#   intro: 回灌积压文件到 ClickHouse。
+#   desc: 回灌积压文件到 ClickHouse。 读取 manifest，逐文件调用 ch_writer.write_tsv 回灌。 成功的文件删除 + 从 manifest 移除；失败的…；源码 L332-L420
+#   inputs: max_files
+#   outputs: dict[str, int]
+# 层: 输出
+# - id: O1
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.scheduler
+# - id: O2
+#   name_zh: dict[str, int]
+#   name_en: dict[str, int]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.scheduler
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations

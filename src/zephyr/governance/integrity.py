@@ -14,6 +14,36 @@
 # [TESTS] tests/audit-orchestrator/test_integrity.py
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: integrity.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① IntegrityGuard
+#   name_en: IntegrityGuard
+#   intro: class IntegrityGuard 源码 L74-L129
+#   desc: 公共方法（定义序）: check, verify_merkle, health_report；源码 L74-L129
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: IntegrityGuard
+#   downstream: zephyr.gov_audit.cli; zephyr.feedback_loop.scheduler; zephyr.gov_audit.__init__…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 import logging
 from typing import Any
 

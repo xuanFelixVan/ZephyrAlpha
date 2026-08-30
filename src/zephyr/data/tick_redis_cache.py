@@ -14,7 +14,11 @@
 # [TESTS] tests/zephyr/data/test_tick_redis_cache.py
 # [A_module] module_id=MOD-H1_REDIS_HOT | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""tick → Redis tick:{symbol}:latest 双写器（D-DATA → H1 集成适配器）。
+"""
+
+
+
+tick → Redis tick:{symbol}:latest 双写器（D-DATA → H1 集成适配器）。
 
 真源：
     - H1 蓝图 §3.3 Tick 缓存（tick:{symbol}:latest Hash）
@@ -39,6 +43,40 @@
     from zephyr.data.tick_redis_cache import TickRedisCache
     cache = TickRedisCache(redis_conn)
     cache.write_batch([("000001.SZ", tick_dict), ("600000.SH", tick_dict2)])
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: tick 参数
+#   fields: 参数 tick，类型注解 dict
+#   code: tick_redis_cache.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① tick_to_cache_dict
+#   name_en: tick_to_cache_dict
+#   intro: QMT tick dict → Redis tick:{symbol}:latest Hash fields。
+#   desc: QMT tick dict → Redis tick:{symbol}:latest Hash fields。 输出字段（H1 蓝图 §3.3：price/volume/bid1…；源码 L119-L163
+#   inputs: tick
+#   outputs: dict[str, float | int] | None
+# - id: A2
+#   name_zh: ② TickRedisCache
+#   name_en: TickRedisCache
+#   intro: tick → Redis tick:{symbol}:latest PIPELINE 批量双写器。
+#   desc: tick → Redis tick:{symbol}:latest PIPELINE 批量双写器。 蓝图 §3.3 Tick 缓存 + §9 D-DATA→H1 集成点实现。 设…；公共方法（定义序）: write_b…
+#   inputs: redis_conn
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, float | int] | None
+#   name_en: dict[str, float | int] | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.tick_subscriber
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

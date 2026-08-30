@@ -14,7 +14,11 @@
 # [TESTS]
 # [A_module] module_id=MOD-GOV_BACKFILL_CHECKER | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""L10 周末补下载检测器——检测过去N天缺失数据并精准补下载。
+"""
+
+
+
+L10 周末补下载检测器——检测过去N天缺失数据并精准补下载。
 
 设计理念（裁定 #ARCH-BACKFILL-001）：
   - 不依赖 last_key：直接查 ClickHouse 实际行数，发现真实缺口
@@ -29,6 +33,108 @@
 调用方式：
   scheduler.run_schedule("weekend_backfill") → run_weekend_backfill(scheduler)
   也可独立调用：python -c "from zephyr.data.backfill_checker import run_weekend_backfill; run_weekend_backfill()"
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: days 参数
+#   fields: 参数 days，类型注解 int
+#   code: backfill_checker.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: calendar 参数
+#   fields: 参数 calendar（无注解）
+#   code: backfill_checker.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: table 参数
+#   fields: 参数 table，类型注解 str
+#   code: backfill_checker.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: dates 参数
+#   fields: 参数 dates，类型注解 list[datetime.date]
+#   code: backfill_checker.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① get_trade_dates
+#   name_en: get_trade_dates
+#   intro: 获取过去N天的交易日列表（默认 A 股日历，可注入其他市场日历）。
+#   desc: 获取过去N天的交易日列表（默认 A 股日历，可注入其他市场日历）。 优先从 trade_calendar 表查 is_open=1；fallback 到 kline_daily…；源码 L235-L272
+#   inputs: days calendar
+#   outputs: list[datetime.date]
+# - id: A2
+#   name_zh: ② detect_missing_dates
+#   name_en: detect_missing_dates
+#   intro: 检测指定表在哪些日期的数据行数低于阈值。
+#   desc: 检测指定表在哪些日期的数据行数低于阈值。 Args: table: 全表名含 db 前缀（如 c1_market.tick_data，来自品类注册表） dates: 待检测的日期…；源码 L278-L306
+#   inputs: table dates threshold
+#   outputs: list[datetime.date]
+# - id: A3
+#   name_zh: ③ detect_missing_dates_generic
+#   name_en: detect_missing_dates_generic
+#   intro: 通用缺失检测（支持任意日期列名）。
+#   desc: 通用缺失检测（支持任意日期列名）。 Args: table: 表名（如 kline_daily） date_col: 日期列名（如 trade_date） dates: 待检测的…；源码 L473-L503
+#   inputs: table date_col dates threshold
+#   outputs: list[datetime.date]
+# - id: A4
+#   name_zh: ④ backfill_tick_data
+#   name_en: backfill_tick_data
+#   intro: 补下载指定日期的 tick 数据。
+#   desc: 补下载指定日期的 tick 数据。 通过 QMT xtdata 下载 + ch_writer 写入 ClickHouse。 每天分 09:30-10:00 和 10:00-15:…；源码 L612-L654
+#   inputs: dates
+#   outputs: int
+# - id: A5
+#   name_zh: ⑤ backfill_kline_index
+#   name_en: backfill_kline_index
+#   intro: 补下载 kline_index 指定缺失日期（显式窗口，绕开 last_key）。
+#   desc: 补下载 kline_index 指定缺失日期（显式窗口，绕开 last_key）。 与 scheduler.run_task 增量重跑的本质区别：run_task 窗口下限 =…；源码 L796-L857
+#   inputs: missing_dates symbols
+#   outputs: int
+# - id: A6
+#   name_zh: ⑥ run_known_gap_backfill
+#   name_en: run_known_gap_backfill
+#   intro: 检测并补下载已知数据缺口（audit 2.7/3.8 治本， ）。
+#   desc: 检测并补下载已知数据缺口（audit 2.7/3.8 治本， ）。 与 run_weekend_backfill（7天窗口）互补： - run_weekend_backfill:…；源码 L1133-L1220
+#   inputs: scheduler calendar
+#   outputs: dict
+# - id: A7
+#   name_zh: ⑦ run_weekend_backfill
+#   name_en: run_weekend_backfill
+#   intro: L10 周末补下载主入口（全表覆盖）。
+#   desc: L10 周末补下载主入口（全表覆盖）。 流程： 1. 获取过去N天的交易日列表 2. 动态发现所有表（从 tasks.yaml 自动读取，新增表自动纳入） 3. 逐表检测缺失日期…；源码 L1223-L1303
+#   inputs: scheduler days skip_known_gaps calendar
+#   outputs: dict
+# - id: A8
+#   name_zh: ⑧ run_daily_backfill
+#   name_en: run_daily_backfill
+#   intro: L10.5 每日盘后补下载主入口（检测当日缺口并补下载）。
+#   desc: L10.5 每日盘后补下载主入口（检测当日缺口并补下载）。 治本场景（2026-07-30， ）： - 7-29 QMT 客户端 15:31 断连 → intraday_real…；源码 L1306-L1339
+#   inputs: scheduler
+#   outputs: dict
+# 层: 输出
+# - id: O1
+#   name_zh: list[datetime.date]
+#   name_en: list[datetime.date]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.scheduler
+# - id: O2
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.scheduler
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> O1
 """
 
 from __future__ import annotations
@@ -646,9 +752,7 @@ def _detect_index_symbol_gap(
 
     counts: dict[datetime.date, int] = {}
     for d in dates:
-        cnt = ch_reader.query(
-            _SQL_COUNT_BY_CUSTOM_DATE.format(table=table, date_col="trade_date", d_str=d.isoformat())
-        )
+        cnt = ch_reader.query(_SQL_COUNT_BY_CUSTOM_DATE.format(table=table, date_col="trade_date", d_str=d.isoformat()))
         try:
             counts[d] = int(cnt.strip()) if cnt and cnt.strip() else 0
         except ValueError:

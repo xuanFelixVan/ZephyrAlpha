@@ -14,7 +14,11 @@
 # [TESTS] tests/zephyr/data/test_data_anomaly_alerter.py
 # [A_module] module_id=MOD-DATENG-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""DataAnomalyAlerter — 数据异常告警器（MOD-DATENG-001）。
+"""
+
+
+
+DataAnomalyAlerter — 数据异常告警器（MOD-DATENG-001）。
 
 B13-04267（AUD-DRAFT-001-DIGEST P1 波 W-P1-24，CAND-DATENG-004，A3数据架构
 §17.1 D-DATA-112）：多维度数据异常检测（跳变 z-score / 缺失率 / 量价背离 /
@@ -25,6 +29,80 @@ B13-04267（AUD-DRAFT-001-DIGEST P1 波 W-P1-24，CAND-DATENG-004，A3数据架�
 五维检测+自动修复闭环；本件**不做修复**，检出即告警，检测维度与输出去向
 均不同。告警通道不重建——经 alert_sink 依赖注入复用 Alerter（与
 integrity_checker "告警通过alerter" 同口径）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: closes 参数
+#   fields: 参数 closes，类型注解 np.ndarray | list[float]
+#   code: data_anomaly_alerter.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: symbol 参数
+#   fields: 参数 symbol，类型注解 str
+#   code: data_anomaly_alerter.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: z_threshold 参数
+#   fields: 参数 z_threshold，类型注解 float
+#   code: data_anomaly_alerter.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: window 参数
+#   fields: 参数 window，类型注解 int
+#   code: data_anomaly_alerter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① detect_price_jumps
+#   name_en: detect_price_jumps
+#   intro: 价格跳变检测：对数收益相对滚动窗口的 z-score，|z|≥阈值 → 信号。
+#   desc: 价格跳变检测：对数收益相对滚动窗口的 z-score，|z|≥阈值 → 信号。；源码 L226-L258
+#   inputs: closes symbol z_threshold window
+#   outputs: list[AnomalySignal]
+# - id: A2
+#   name_zh: ② detect_missing_rate
+#   name_en: detect_missing_rate
+#   intro: 缺失率检测：缺失率=1−actual/expected ≥ warn → 信号。
+#   desc: 缺失率检测：缺失率=1−actual/expected ≥ warn → 信号。；源码 L261-L285
+#   inputs: expected actual symbol warn
+#   outputs: list[AnomalySignal]
+# - id: A3
+#   name_zh: ③ detect_volume_price_divergence
+#   name_en: detect_volume_price_divergence
+#   intro: 量价背离检测：滚动窗口收盘价与成交量相关系数 < 阈值 → 信号。
+#   desc: 量价背离检测：滚动窗口收盘价与成交量相关系数 < 阈值 → 信号。；源码 L288-L317
+#   inputs: closes volumes symbol window corr_threshold
+#   outputs: list[AnomalySignal]
+# - id: A4
+#   name_zh: ④ detect_cross_source_deviation
+#   name_en: detect_cross_source_deviation
+#   intro: 跨源偏差检测：双通道同标的价偏差 |Δ|/ref×10⁴ bps 最大值超容差 → 信号。
+#   desc: 跨源偏差检测：双通道同标的价偏差 |Δ|/ref×10⁴ bps 最大值超容差 → 信号。；源码 L320-L347
+#   inputs: primary secondary symbol tolerance_bps
+#   outputs: list[AnomalySignal]
+# - id: A5
+#   name_zh: ⑤ DataAnomalyAlerter
+#   name_en: DataAnomalyAlerter
+#   intro: 数据异常告警器（MOD-DATENG-001）。
+#   desc: 数据异常告警器（MOD-DATENG-001）。 用法： alerter = DataAnomalyAlerter(alert_sink=my_sink, merge_windo…；公共方法（定义序）: grade,…
+#   inputs: alert_sink merge_window_sec maintenance_windows
+#   outputs: 返回值
+#   （注：A5 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[AnomalySignal]
+#   name_en: list[AnomalySignal]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 运行时装配批（数据质量门控事件消费 / B13-04305 因子可用性 / B13-04309 信号退化复用本件路由）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations
@@ -157,14 +235,12 @@ def detect_price_jumps(
     if z_threshold <= 0:
         raise DataAnomalyAlerterError("z_threshold 须为正")
     if arr.size < window + 2:
-        raise DataAnomalyAlerterError(
-            f"closes 长度 {arr.size} 不足以滚动窗口 {window} 计算"
-        )
+        raise DataAnomalyAlerterError(f"closes 长度 {arr.size} 不足以滚动窗口 {window} 计算")
     if np.any(arr <= 0):
         raise DataAnomalyAlerterError("closes 须为正价格序列")
     log_ret = np.diff(np.log(arr))
     # 末日收益相对前 window 根收益的 z-score（事前预警口径：只用历史窗）
-    hist = log_ret[-window - 1:-1]
+    hist = log_ret[-window - 1 : -1]
     mu = float(np.mean(hist))
     sigma = float(np.std(hist))
     if sigma <= 0:
@@ -285,8 +361,9 @@ _GRADE_RATIOS: Final[tuple[tuple[float, AlertGrade], ...]] = (
 )
 
 
-def _default_alert_sink(task_id: str, error: str, level: str,
-                        source: str | None = None, extra: dict | None = None) -> bool:
+def _default_alert_sink(
+    task_id: str, error: str, level: str, source: str | None = None, extra: dict | None = None
+) -> bool:
     """默认告警通道：惰性复用 zephyr.data.alerter.Alerter（可注入替代）。"""
     from zephyr.data.alerter import Alerter  # 惰性：避免模块级依赖与文件副作用
 
@@ -327,9 +404,7 @@ class DataAnomalyAlerter:
             raise DataAnomalyAlerterError("signal.threshold 须为正")
         ratio = signal.metric_value / signal.threshold
         if ratio < 1.0:
-            raise DataAnomalyAlerterError(
-                f"信号值 {signal.metric_value} 低于阈值 {signal.threshold}，不应进入分级"
-            )
+            raise DataAnomalyAlerterError(f"信号值 {signal.metric_value} 低于阈值 {signal.threshold}，不应进入分级")
         for bar, grade in _GRADE_RATIOS:
             if ratio >= bar:
                 return grade
@@ -371,8 +446,11 @@ class DataAnomalyAlerter:
             self._dedup_state[key] = (now_ts, new_count)
             alerts.append(
                 AnomalyAlert(
-                    signal=sig, grade=grade, silenced=silenced,
-                    merged_count=new_count, dedup_key=key,
+                    signal=sig,
+                    grade=grade,
+                    silenced=silenced,
+                    merged_count=new_count,
+                    dedup_key=key,
                 )
             )
             events.append(
@@ -397,8 +475,12 @@ class DataAnomalyAlerter:
                     f"[{grade.value}] {sig.symbol} {sig.kind.value}: {sig.detail}",
                     level=_GRADE_TO_ROUTE_LEVEL[grade],
                     source=source,
-                    extra={"symbol": sig.symbol, "metric_value": sig.metric_value,
-                           "threshold": sig.threshold, "grade": grade.value},
+                    extra={
+                        "symbol": sig.symbol,
+                        "metric_value": sig.metric_value,
+                        "threshold": sig.threshold,
+                        "grade": grade.value,
+                    },
                 )
             except Exception as exc:  # noqa: BLE001 — 通道异常不阻断判定（对齐 alerter 不变式）
                 _log.error("告警通道路由异常（已吞掉）: %s", exc)
@@ -429,21 +511,11 @@ class DataAnomalyAlerter:
         if closes is not None:
             signals.extend(detect_price_jumps(closes, symbol, z_threshold=z_threshold))
             if volumes is not None:
-                signals.extend(
-                    detect_volume_price_divergence(
-                        closes, volumes, symbol, corr_threshold=corr_threshold
-                    )
-                )
+                signals.extend(detect_volume_price_divergence(closes, volumes, symbol, corr_threshold=corr_threshold))
         if expected is not None and actual is not None:
-            signals.extend(
-                detect_missing_rate(expected, actual, symbol, warn=missing_warn)
-            )
+            signals.extend(detect_missing_rate(expected, actual, symbol, warn=missing_warn))
         if primary is not None and secondary is not None:
-            signals.extend(
-                detect_cross_source_deviation(
-                    primary, secondary, symbol, tolerance_bps=tolerance_bps
-                )
-            )
+            signals.extend(detect_cross_source_deviation(primary, secondary, symbol, tolerance_bps=tolerance_bps))
         if not signals:
             return [], []
         return self.evaluate(signals, now_utc=now_utc, source=source)

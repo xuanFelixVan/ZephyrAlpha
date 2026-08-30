@@ -15,6 +15,37 @@
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: audit_dir 参数
+#   fields: 参数 audit_dir（无注解）
+#   code: finding_ingest.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FindingIngest
+#   name_en: FindingIngest
+#   intro: class FindingIngest 源码 L77-L303
+#   desc: 公共方法（定义序）: emit_event, writer_initialized, writer, ingest_file, ingest_string, ingest_findings；源码 L77-L303
+#   inputs: audit_dir
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: FindingIngest
+#   downstream: pipeline_runner.py; run_all.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 from __future__ import annotations
 
 import logging

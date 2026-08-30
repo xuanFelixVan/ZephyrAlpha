@@ -14,7 +14,11 @@
 # [TESTS] tests/zephyr/data/test_intraday_sentiment_loop.py
 # [A_module] module_id=MOD-DATA-063 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-r"""MOD-DATA-063 — M1-④ 盘中情绪实时调度回路（92号清单 §8.2，44号备忘 §2 M1-④ 行）。
+"""
+
+
+
+MOD-DATA-063 — M1-④ 盘中情绪实时调度回路（92号清单 §8.2，44号备忘 §2 M1-④ 行）。
 
 单拍链路（run_once 一次执行）：
     读 c1_market.market_breadth_snapshot 最新交易日全部分钟快照
@@ -46,6 +50,61 @@ r"""MOD-DATA-063 — M1-④ 盘中情绪实时调度回路（92号清单 §8.2�
 
 fail-open 纪律：单次失败留痕（errors/nodes）不炸调度；全链路任一环节缺数据
 按 degraded=True 返回结构化结果（观测可用性由消费方判定）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: rows 参数
+#   fields: 参数 rows，类型注解 list[dict[str, Any]]
+#   code: intraday_sentiment_loop.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: ch_client 参数
+#   fields: 参数 ch_client，类型注解 Any | None
+#   code: intraday_sentiment_loop.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: db_path 参数
+#   fields: 参数 db_path（无注解）
+#   code: intraday_sentiment_loop.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: previous_board 参数
+#   fields: 参数 previous_board（无注解）
+#   code: intraday_sentiment_loop.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① rows_to_time_series
+#   name_en: rows_to_time_series
+#   intro: 快照行序列 → MarketSentimentInput.time_series 契约装配（纯函数，无 I/O）。
+#   desc: 快照行序列 → MarketSentimentInput.time_series 契约装配（纯函数，无 I/O）。 Args: rows: list[dict]，键=_BREAD…；源码 L246-L286
+#   inputs: rows
+#   outputs: tuple[BreadthTimeSeries, str] | None
+# - id: A2
+#   name_zh: ② run_once
+#   name_en: run_once
+#   intro: M1-④ 盘中情绪回路单拍执行（有界形态——常驻节拍交 APScheduler/P0-5 盘中族，本函数不含循环）。
+#   desc: M1-④ 盘中情绪回路单拍执行（有界形态——常驻节拍交 APScheduler/P0-5 盘中族，本函数不含循环）。 Args: ch_client: clickhouse-dr…；源码 L386-L530
+#   inputs: ch_client db_path previous_board analyzer sector_window_minutes
+#   outputs: IntradayLoopResult
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: tuple[BreadthTimeSeries, str] | None
+#   name_en: tuple[BreadthTimeSeries, str] | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: （常驻节拍交 APScheduler/P0-5 日循环 SOP 调度族挂接，本模块不注册任务——波5 交付单拍函数）
+# - id: O2
+#   name_zh: IntradayLoopResult
+#   name_en: IntradayLoopResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: （常驻节拍交 APScheduler/P0-5 日循环 SOP 调度族挂接，本模块不注册任务——波5 交付单拍函数）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -235,9 +294,7 @@ def _load_index_change_pct(client: Any, trade_date: str) -> tuple[float | None, 
         (pct, error_note)；任一侧失败 → (None, 留痕串)，调用方降级 0.0+notes。
     """
     try:
-        rows = client.execute(
-            SQL_INDEX_LATEST_PRICE.format(index_symbol=_INDEX_SYMBOL, trade_date=trade_date)
-        )
+        rows = client.execute(SQL_INDEX_LATEST_PRICE.format(index_symbol=_INDEX_SYMBOL, trade_date=trade_date))
     except Exception as e:  # noqa: BLE001 — fail-open
         return None, f"index_quote 最新价查询失败: {e!r}"
     if not rows:
@@ -247,9 +304,7 @@ def _load_index_change_pct(client: Any, trade_date: str) -> tuple[float | None, 
         return None, f"index_quote 最新价非法: {rows[0][0]!r}"
 
     try:
-        prev_rows = client.execute(
-            SQL_INDEX_PREV_CLOSE.format(index_bare=_INDEX_BARE, trade_date=trade_date)
-        )
+        prev_rows = client.execute(SQL_INDEX_PREV_CLOSE.format(index_bare=_INDEX_BARE, trade_date=trade_date))
     except Exception as e:  # noqa: BLE001 — fail-open
         return None, f"kline_index 昨收查询失败: {e!r}"
     if not prev_rows:

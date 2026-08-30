@@ -14,7 +14,11 @@
 # [TESTS] tests/data_security/test_data_masking_engine.py
 # [A_module] module_id=MOD-DATSEC-003 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""DataMaskingEngine — 数据脱敏引擎（MOD-DATSEC-003）。
+"""
+
+
+
+DataMaskingEngine — 数据脱敏引擎（MOD-DATSEC-003）。
 
 B13-04295（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATSEC-003，A3数据架构）：
 **格式保留加密 FPE**（身份证/账号：注入 cipher 回调，默认**确定性伪 FPE 占
@@ -22,6 +26,43 @@ B13-04295（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATSEC-003，A3数据架�
 敏**（按查询角色策略表：同字段不同角色不同掩码）+ **差分隐私噪声**（统计
 输出拉普拉斯噪声，ε 可配，随机源注入）。策略表与 MOD-DATSEC-001 共用 schema
 语义（Mapping 键查表、未注册 Fail-Closed）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: key 参数
+#   fields: 参数 key（无注解）
+#   code: data_masking_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: cipher 参数
+#   fields: 参数 cipher（无注解）
+#   code: data_masking_engine.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: rng 参数
+#   fields: 参数 rng（无注解）
+#   code: data_masking_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DataMaskingEngine
+#   name_en: DataMaskingEngine
+#   intro: 脱敏引擎（FPE + 角色动态脱敏 + 拉普拉斯差分隐私噪声）。
+#   desc: 脱敏引擎（FPE + 角色动态脱敏 + 拉普拉斯差分隐私噪声）。；公共方法（定义序）: fpe_encrypt, fpe_decrypt, register_policy, policy_of, mask_field,…
+#   inputs: key cipher rng
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: DataMaskingEngine
+#   downstream: 运行时装配批（身份证/账号出库加密装配点 / 按角色查询出参动态脱敏 / 统计输出差分隐私）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -86,7 +127,7 @@ class DataMaskingEngine:
     # ── 格式保留加密（默认伪 FPE 占位，非密码学安全） ─────────────────────
 
     def _keystream_byte(self, class_id: str, index: int) -> int:
-        digest = hashlib.sha256(f"{self._key}|{class_id}|{index}".encode("utf-8")).digest()
+        digest = hashlib.sha256(f"{self._key}|{class_id}|{index}".encode()).digest()
         return int.from_bytes(digest[:4], "big")
 
     def _fpe_default(self, text: str, encrypt: bool) -> str:
@@ -166,9 +207,7 @@ class DataMaskingEngine:
 
     # ── 差分隐私（拉普拉斯噪声） ──────────────────────────────────────────
 
-    def add_laplace_noise(
-        self, value: float, epsilon: float, sensitivity: float = 1.0
-    ) -> float:
+    def add_laplace_noise(self, value: float, epsilon: float, sensitivity: float = 1.0) -> float:
         """拉普拉斯机制：value + Lap(0, sensitivity/ε)，随机源注入可复现。"""
         if not isinstance(value, (int, float)):
             raise DataMaskingError(f"value 非数值: {type(value).__name__}")

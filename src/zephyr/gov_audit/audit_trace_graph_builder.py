@@ -14,7 +14,11 @@
 # [TESTS] tests/gov_audit/test_audit_trace_graph_builder.py
 # [A_module] module_id=MOD-GOV-053 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""AuditTraceGraphBuilder — 审计追踪依赖构建器（MOD-GOV-053）。
+"""
+
+
+
+AuditTraceGraphBuilder — 审计追踪依赖构建器（MOD-GOV-053）。
 
 B14-04667（AUD-DRAFT-001-DIGEST P2 波 P2-W12，CAND-GOVAUDIT-004，A9
 M48-S01）：审计追踪依赖图——决策→代码→测试→部署四段全链边登记
@@ -25,6 +29,33 @@ M48-S01）：审计追踪依赖图——决策→代码→测试→部署四段�
 不做哈希）；provenance_tracker=产物来源追踪（本件=决策到部署全链完
 整性缺口，零交集）；evidence_pack=证据包组装（本件图数据供其复用，
 不组装证据包）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: audit_trace_graph_builder.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① AuditTraceGraphBuilder
+#   name_en: AuditTraceGraphBuilder
+#   intro: 审计追踪依赖图（四段边登记 + 全链反查 + 缺口检测 + 补齐建议）。
+#   desc: 审计追踪依赖图（四段边登记 + 全链反查 + 缺口检测 + 补齐建议）。；公共方法（定义序）: register_node, register_edge, nodes, edges, chain_of, reachab…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（8 定义）
+#   name_en: public defs
+#   intro: AuditTraceGraphBuilder
+#   downstream: 运行时装配批（合规证据包装配：四段边登记 + 缺口报告统一注入）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -48,7 +79,7 @@ __all__: Final = [
 ]
 
 #: 段序号（合法边仅 rank 大 = rank 小 + 1 相邻向下）
-_SEGMENT_RANK: Final[dict["TraceSegment", int]] = {}
+_SEGMENT_RANK: Final[dict[TraceSegment, int]] = {}
 
 
 class AuditTraceError(Exception):
@@ -67,17 +98,17 @@ class TraceSegment(str, Enum):
     DEPLOY = "deploy"
 
 
-_SEGMENT_RANK.update({
-    TraceSegment.DECISION: 0,
-    TraceSegment.CODE: 1,
-    TraceSegment.TEST: 2,
-    TraceSegment.DEPLOY: 3,
-})
+_SEGMENT_RANK.update(
+    {
+        TraceSegment.DECISION: 0,
+        TraceSegment.CODE: 1,
+        TraceSegment.TEST: 2,
+        TraceSegment.DEPLOY: 3,
+    }
+)
 
 #: 段序 → 段名（缺口建议文案用；词表闭合派生）
-_SEGMENT_ORDER: Final[dict[int, str]] = {
-    rank: seg.value for seg, rank in _SEGMENT_RANK.items()
-}
+_SEGMENT_ORDER: Final[dict[int, str]] = {rank: seg.value for seg, rank in _SEGMENT_RANK.items()}
 
 
 class GapKind(str, Enum):
@@ -167,9 +198,7 @@ class AuditTraceGraphBuilder:
 
     # ── 登记 ─────────────────────────────────────────────────────────────
 
-    def register_node(
-        self, node_id: str, segment: TraceSegment, label: str = ""
-    ) -> None:
+    def register_node(self, node_id: str, segment: TraceSegment, label: str = "") -> None:
         """登记节点：段词表闭合；node_id 重复 Fail-Closed。"""
         if not node_id:
             raise AuditTraceError("node_id 为空")
@@ -188,8 +217,7 @@ class AuditTraceGraphBuilder:
             raise AuditTraceError(f"自环非法: {src_id!r}")
         if _SEGMENT_RANK[dst.segment] != _SEGMENT_RANK[src.segment] + 1:
             raise AuditTraceError(
-                f"越段/逆向边拒绝: {src_id}({src.segment.value}) -> "
-                f"{dst_id}({dst.segment.value})，合法仅相邻段向下"
+                f"越段/逆向边拒绝: {src_id}({src.segment.value}) -> {dst_id}({dst.segment.value})，合法仅相邻段向下"
             )
         self._edges.add(TraceEdge(src_id=src_id, dst_id=dst_id))  # set 幂等
 
@@ -222,9 +250,7 @@ class AuditTraceGraphBuilder:
     def reachable_segments(self, node_id: str) -> tuple[TraceSegment, ...]:
         """自该节点沿出边可达的段集合（段序排序，确定性）。"""
         self._node(node_id)
-        segs = {
-            self._nodes[i].segment for i in self._downstream(node_id) if i != node_id
-        }
+        segs = {self._nodes[i].segment for i in self._downstream(node_id) if i != node_id}
         return tuple(sorted(segs, key=lambda s: _SEGMENT_RANK[s]))
 
     # ── 缺口检测 ──────────────────────────────────────────────────────────
@@ -233,9 +259,7 @@ class AuditTraceGraphBuilder:
         """缺口自动检测：缺段（决策链不达四段）+ 断链（缺入/出边）+ 补齐建议。"""
         gaps: list[TraceGap] = []
         suggestions: list[str] = []
-        ordered = sorted(
-            self._nodes.values(), key=lambda n: (_SEGMENT_RANK[n.segment], n.node_id)
-        )
+        ordered = sorted(self._nodes.values(), key=lambda n: (_SEGMENT_RANK[n.segment], n.node_id))
         incoming: dict[str, list[TraceEdge]] = {n.node_id: [] for n in ordered}
         outgoing: dict[str, list[TraceEdge]] = {n.node_id: [] for n in ordered}
         for edge in self._edges:
@@ -249,49 +273,40 @@ class AuditTraceGraphBuilder:
                 reached = set(self.reachable_segments(node.node_id))
                 for seg in (TraceSegment.CODE, TraceSegment.TEST, TraceSegment.DEPLOY):
                     if seg not in reached:
-                        gaps.append(TraceGap(
-                            kind=GapKind.MISSING_SEGMENT,
-                            node_id=node.node_id,
-                            segment=seg,
-                            detail=(
-                                f"缺段: 决策 {node.node_id} 全链不可达 "
-                                f"{seg.value} 段"
-                            ),
-                        ))
+                        gaps.append(
+                            TraceGap(
+                                kind=GapKind.MISSING_SEGMENT,
+                                node_id=node.node_id,
+                                segment=seg,
+                                detail=(f"缺段: 决策 {node.node_id} 全链不可达 {seg.value} 段"),
+                            )
+                        )
                         suggestions.append(
                             f"为决策 {node.node_id} 补齐 {seg.value} 段节点并登记 "
                             f"{_SEGMENT_ORDER[_SEGMENT_RANK[seg] - 1]}→{seg.value} 相邻边"
                         )
             if rank > 0 and not incoming[node.node_id]:
                 prev = _SEGMENT_ORDER[rank - 1]
-                gaps.append(TraceGap(
-                    kind=GapKind.BROKEN_LINK,
-                    node_id=node.node_id,
-                    segment=node.segment,
-                    detail=(
-                        f"断链: 节点 {node.node_id}({node.segment.value}) "
-                        f"无 {prev} 段入边"
-                    ),
-                ))
-                suggestions.append(
-                    f"为节点 {node.node_id}({node.segment.value}) 登记来自 "
-                    f"{prev} 段的上游边"
+                gaps.append(
+                    TraceGap(
+                        kind=GapKind.BROKEN_LINK,
+                        node_id=node.node_id,
+                        segment=node.segment,
+                        detail=(f"断链: 节点 {node.node_id}({node.segment.value}) 无 {prev} 段入边"),
+                    )
                 )
+                suggestions.append(f"为节点 {node.node_id}({node.segment.value}) 登记来自 {prev} 段的上游边")
             if rank < 3 and not outgoing[node.node_id]:
                 nxt = _SEGMENT_ORDER[rank + 1]
-                gaps.append(TraceGap(
-                    kind=GapKind.BROKEN_LINK,
-                    node_id=node.node_id,
-                    segment=node.segment,
-                    detail=(
-                        f"断链: 节点 {node.node_id}({node.segment.value}) "
-                        f"无 {nxt} 段出边"
-                    ),
-                ))
-                suggestions.append(
-                    f"为节点 {node.node_id}({node.segment.value}) 登记指向 "
-                    f"{nxt} 段的下游边"
+                gaps.append(
+                    TraceGap(
+                        kind=GapKind.BROKEN_LINK,
+                        node_id=node.node_id,
+                        segment=node.segment,
+                        detail=(f"断链: 节点 {node.node_id}({node.segment.value}) 无 {nxt} 段出边"),
+                    )
                 )
+                suggestions.append(f"为节点 {node.node_id}({node.segment.value}) 登记指向 {nxt} 段的下游边")
         if gaps:
             _log.warning("审计追踪缺口: %d 条", len(gaps))
         return GapReport(gaps=tuple(gaps), suggestions=tuple(suggestions))

@@ -17,6 +17,10 @@
 
 # AI-generated: YAML-driven prompt template registry with version management and token budget
 """
+
+
+
+
 PromptRegistry: YAML-driven Prompt 模板注册表
 =============================================
 Task ID  : T-2-28 (B12)
@@ -49,6 +53,33 @@ templates:
     template_text: |
       Analyze task {task_id}:
       {context}
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: prompt_registry.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① PromptRegistry
+#   name_en: PromptRegistry
+#   intro: YAML 驱动的 Prompt 模板注册表。
+#   desc: YAML 驱动的 Prompt 模板注册表。 功能 ---- - ``load_yaml(path)``：从 YAML 文件加载模板 - ``load_yaml_text(tex…；公共方法（定义序）: load_ya…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（9 定义）
+#   name_en: public defs
+#   intro: PromptRegistry
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

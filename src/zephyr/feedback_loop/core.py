@@ -16,11 +16,42 @@
 # [TTL] permanent
 
 """
+
+
+
+
 FeedbackLoop core — 反馈闭环核心类。
 
 从 src/zephyr/trading/feedback_loop.py 迁入 src/zephyr/feedback_loop/ 包内，解决包/文件同名覆盖问题。
 ARCH-032 迁移创建 feedback_loop/ 包后未删除旧 feedback_loop.py 文件，
 导致 Python 包优先级覆盖文件，from zephyr.feedback_loop import FeedbackLoop 失败。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: proposal_dir 参数
+#   fields: 参数 proposal_dir（无注解）
+#   code: core.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FeedbackLoop
+#   name_en: FeedbackLoop
+#   intro: 反馈闭环——登记表裁定驱动规则进化。
+#   desc: 反馈闭环——登记表裁定驱动规则进化。 借鉴: - K8s Controller: 调和失败->调整->重试 - LangGraph: Human-in-the-Loop 反馈注入…；公共方法（定义序）: analyze…
+#   inputs: proposal_dir
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: FeedbackLoop
+#   downstream: zephyr.trading.auto_runtime_core; zephyr.trading.lifecycle_manager; zephyr.gov_…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from datetime import datetime

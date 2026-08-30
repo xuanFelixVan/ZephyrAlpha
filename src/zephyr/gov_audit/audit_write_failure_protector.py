@@ -17,10 +17,40 @@
 
 """
 
+
+
+
+
 Audit Write Failure Protector — v0.13.0 审计写入失败保护器。
 
 委托 zephyr.gov_audit.writer.AuditWriter 内置的写入失败保护机制。
 AuditWriter.write() 内部已实现连续5次失败后自动进入 readonly 模式。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: writer 参数
+#   fields: 参数 writer（无注解）
+#   code: audit_write_failure_protector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AuditWriteProtector
+#   name_en: AuditWriteProtector
+#   intro: 审计写入失败保护器——委托 AuditWriter 内置保护。
+#   desc: 审计写入失败保护器——委托 AuditWriter 内置保护。；公共方法（定义序）: record_failure, can_write, reset；源码 L64-L100
+#   inputs: writer
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: AuditWriteProtector
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

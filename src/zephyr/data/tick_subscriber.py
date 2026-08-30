@@ -14,13 +14,82 @@
 # [TESTS] tests/zephyr/data/test_tick_subscriber.py
 # [TTL] task_bound
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
-"""QMT 实时 Tick 订阅服务——subscribe_quote 实时推送，写入 ClickHouse tick_data。
+"""
+
+
+
+QMT 实时 Tick 订阅服务——subscribe_quote 实时推送，写入 ClickHouse tick_data。
 
 独立常驻进程，不走 scheduler cron。QMT callback 线程把 tick dict 放入
 queue.Queue，后台 flush 线程批量出队转14字段 tuple，WalWriter 先落盘段文件
 再异步 drain 到 ClickHouse（P0-1 主动 WAL 架构，裁定 #ARCH-CH-013 升级）。
 
 启动: python -m zephyr.data.tick_subscriber
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: stock_code 参数
+#   fields: 参数 stock_code，类型注解 str
+#   code: tick_subscriber.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: tick 参数
+#   fields: 参数 tick，类型注解 dict
+#   code: tick_subscriber.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: data_source 参数
+#   fields: 参数 data_source，类型注解 str
+#   code: tick_subscriber.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① infer_market_type
+#   name_en: infer_market_type
+#   intro: 从 QMT stock_code 推导 market_type。
+#   desc: 从 QMT stock_code 推导 market_type。 Args: stock_code: QMT 格式，如 "000001.SZ"、"600000.SH"、"1599…；源码 L161-L192
+#   inputs: stock_code
+#   outputs: str
+# - id: A2
+#   name_zh: ② tick_to_row
+#   name_en: tick_to_row
+#   intro: 将 xtdata tick dict 转换为 tick_data 表的15字段 tuple。
+#   desc: 将 xtdata tick dict 转换为 tick_data 表的15字段 tuple。 P0-1 双时间戳：timestamp=上游市场时间(event_time)，rec…；源码 L221-L282
+#   inputs: stock_code tick data_source
+#   outputs: tuple | None
+# - id: A3
+#   name_zh: ③ TickSubscriber
+#   name_en: TickSubscriber
+#   intro: QMT 实时 Tick 订阅器——常驻订阅全市场 tick，写入 ClickHouse。
+#   desc: QMT 实时 Tick 订阅器——常驻订阅全市场 tick，写入 ClickHouse。 线程模型（P0-1 主动 WAL 架构）： - QMT callback 线程：_on_…；公共方法（定义序）: start,…
+#   inputs: symbols batch_rows batch_seconds heartbeat backup_provider tick_cache…
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ main
+#   name_en: main
+#   intro: 常驻进程入口——启动 TickSubscriber 并阻塞直到 Ctrl+C。
+#   desc: 常驻进程入口——启动 TickSubscriber 并阻塞直到 Ctrl+C。；源码 L1290-L1337
+#   inputs: 无参数
+#   outputs: int
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: tuple | None
+#   name_en: tuple | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations
@@ -275,6 +344,7 @@ class TickSubscriber:
         # CAND-OBS-001: 契约分段计时器（消灭手写 perf_counter 样板）
         # 阶段拆分对齐契约 §3.2 L00 数据接入：on_tick（WS recv）/queue_wait/convert（parse+quality_gate）/wal_add（emit）
         from zephyr.shared.observability.stage_timer import StageTimer
+
         self._stage_timer = StageTimer(module="tick_subscriber")
 
         # xtdata 模块（延迟导入）

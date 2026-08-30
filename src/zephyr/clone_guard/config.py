@@ -14,9 +14,47 @@
 # [TESTS] tests/clone_guard/test_config.py
 # [A_module] module_id=MOD-CLONE_GUARD | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""CloneGuard 配置加载器——从 clone_guard.yml 读取统一配置。
+"""
+
+
+
+CloneGuard 配置加载器——从 clone_guard.yml 读取统一配置。
 
 配置缺失或解析失败时使用安全默认值（extract 级阻断 + 30s 超时 + echo-guard 启用）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: repo_root 参数
+#   fields: 参数 repo_root，类型注解 Path
+#   code: config.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CloneGuardConfig
+#   name_en: CloneGuardConfig
+#   intro: CloneGuard 统一配置（从 clone_guard.yml 加载）。
+#   desc: CloneGuard 统一配置（从 clone_guard.yml 加载）。；公共方法（定义序）: block_severities；源码 L75-L146
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② load_config
+#   name_en: load_config
+#   intro: 从 repo_root/clone_guard.yml 加载配置，失败时返回安全默认值。
+#   desc: 从 repo_root/clone_guard.yml 加载配置，失败时返回安全默认值。 Args: repo_root: 仓库根目录路径。 Returns: CloneGuar…；源码 L149-L218
+#   inputs: repo_root
+#   outputs: CloneGuardConfig
+# 层: 输出
+# - id: O1
+#   name_zh: CloneGuardConfig
+#   name_en: CloneGuardConfig
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.clone_guard.orchestrator; zephyr.clone_guard.engines.echo_guard_adapter
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

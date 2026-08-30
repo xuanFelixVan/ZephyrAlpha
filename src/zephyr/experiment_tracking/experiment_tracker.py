@@ -15,7 +15,11 @@
 # [A_module] module_id=MOD-OBS-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-REGIME-DEADZONE-001 #ARCH-OBS-EXP-TRACK-001
-"""L_INFRA_TELEMETRY — 实验跟踪器主类（单一 JSON FallbackBackend，MLflow 已退役）。
+"""
+
+
+
+L_INFRA_TELEMETRY — 实验跟踪器主类（单一 JSON FallbackBackend，MLflow 已退役）。
 
 Zephyr 语义 → 存储映射:
   component (零件类型) → 子目录名 (logs/experiment_tracking_fallback/{component}/)
@@ -33,6 +37,71 @@ Zephyr 语义 → 存储映射:
 依据: 11_regime_backtest_validation_plan §3 ② + 51_panel_experiment_history_mlflow_retirement.md 工作流 A
 SSoT: depgraph MOD-OBS-001
 Version: 0.2.0（MLflow 退役，单一 JSON 后端）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: backend 参数
+#   fields: 参数 backend（无注解）
+#   code: experiment_tracker.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: run_id 参数
+#   fields: 参数 run_id（无注解）
+#   code: experiment_tracker.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: component 参数
+#   fields: 参数 component（无注解）
+#   code: experiment_tracker.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: run_name 参数
+#   fields: 参数 run_name（无注解）
+#   code: experiment_tracker.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RunContext
+#   name_en: RunContext
+#   intro: 单次 run 的上下文管理器。
+#   desc: 单次 run 的上下文管理器。 用法: with tracker.start_run("c1-validation", tags={...}) as run: run.log_p…；公共方法（定义序）: log_par…
+#   inputs: backend run_id component run_name
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② ExperimentTracker
+#   name_en: ExperimentTracker
+#   intro: 统一实验跟踪入口（单一 JSON 后端）。
+#   desc: 统一实验跟踪入口（单一 JSON 后端）。 自动选择 backend: - enable_tracking=False → _NullBackend - 否则 → Fallbac…；公共方法（定义序）: availab…
+#   inputs: config
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ get_tracker
+#   name_en: get_tracker
+#   intro: 获取全局 tracker 单例（首次调用按 config 初始化）。
+#   desc: 获取全局 tracker 单例（首次调用按 config 初始化）。；源码 L257-L262
+#   inputs: 无参数
+#   outputs: ExperimentTracker
+# - id: A4
+#   name_zh: ④ reset_tracker
+#   name_en: reset_tracker
+#   intro: 重置单例（测试用：改环境变量后重新初始化）。
+#   desc: 重置单例（测试用：改环境变量后重新初始化）。；源码 L265-L268
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: ExperimentTracker
+#   name_en: ExperimentTracker
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.experiment_tracking.adapters.c1_adapter ; zephyr.experiment_tracking.que…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations
@@ -74,7 +143,7 @@ class RunContext:
         self._component = component
         self.run_name = run_name
 
-    def __enter__(self) -> "RunContext":
+    def __enter__(self) -> RunContext:
         return self
 
     def __exit__(self, exc_type: Any, exc: Any, tb: Any) -> bool:

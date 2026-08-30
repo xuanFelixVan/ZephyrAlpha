@@ -14,7 +14,11 @@
 # [TESTS] tests/autonomy/test_embedding_provider_adapter.py
 # [A_module] module_id=MOD-AU-003 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""EmbeddingRouterAdapter — S1.3 语义复核嵌入设施桥接 + 批量档手动 CLI（15号文 §4.2 S1.3）.
+"""
+
+
+
+EmbeddingRouterAdapter — S1.3 语义复核嵌入设施桥接 + 批量档手动 CLI（15号文 §4.2 S1.3）.
 
 设计真源：15号文 §3.2 / §4.2-S1.3：
 - 深度语义复核走批量档（日/周频），嵌入模型不新造——本适配器把既有
@@ -27,11 +31,53 @@
 
 用法::
 
-    python -m zephyr.autonomy_core.embedding_provider_adapter \
-        --sessions .runtime/drift_review/sessions.json \
-        --report-dir .runtime/drift_review/reports --frequency weekly
+    python -m zephyr.autonomy_core.embedding_provider_adapter         --sessions .runtime/drift_review/sessions.json         --report-dir .runtime/drift_review/reports --frequency weekly
 
 sessions JSON 格式：[{"session_ref", "original_intent", "action_summary"}, ...]
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: argv 参数
+#   fields: 参数 argv，类型注解 list[str] | None
+#   code: embedding_provider_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: at 参数
+#   fields: 参数 at（无注解）
+#   code: embedding_provider_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: provider 参数
+#   fields: 参数 provider（无注解）
+#   code: embedding_provider_adapter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① EmbeddingRouterAdapter
+#   name_en: EmbeddingRouterAdapter
+#   intro: EmbeddingProvider 协议适配器：把 EmbeddingRouter（MOD-INF-042）桥接给 S…
+#   desc: EmbeddingProvider 协议适配器：把 EmbeddingRouter（MOD-INF-042）桥接给 S1.3 复核核. 首次嵌入调用时按需 warmup 一次（a…；公共方法（定义序）: collect…
+#   inputs: router collection_name auto_warmup
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② main
+#   name_en: main
+#   intro: S1.3 批量档手动 CLI 入口。
+#   desc: S1.3 批量档手动 CLI 入口。返回码：0 成功；2 输入/配置非法；3 盘中时段拒绝执行. Args: argv: CLI 参数（None → sys.argv）。 at:…；源码 L185-L244
+#   inputs: argv at provider
+#   outputs: int
+# 层: 输出
+# - id: O1
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests/autonomy/test_embedding_provider_adapter.py；手动 CLI（python -m zephyr.auton…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -126,10 +172,7 @@ def _load_sessions(path: Path) -> list[SessionChainReview]:
         if not isinstance(item, dict) or not all(
             isinstance(item.get(k), str) and item.get(k).strip() for k in _SESSION_FIELDS
         ):
-            raise SemanticReviewError(
-                f"会话清单第 {i} 项非法（须含非空字符串字段 "
-                f"{'/'.join(_SESSION_FIELDS)}）"
-            )
+            raise SemanticReviewError(f"会话清单第 {i} 项非法（须含非空字符串字段 {'/'.join(_SESSION_FIELDS)}）")
         sessions.append(
             SessionChainReview(
                 session_ref=item["session_ref"].strip(),
@@ -175,17 +218,14 @@ def main(
 
     if is_intraday(at):
         print(
-            "[盘中禁跑] S1.3 语义复核为日/周频批量档，工作日 09:30-15:00 CST 拒绝执行"
-            "（15号文 §3.2/约束二）",
+            "[盘中禁跑] S1.3 语义复核为日/周频批量档，工作日 09:30-15:00 CST 拒绝执行（15号文 §3.2/约束二）",
             file=sys.stderr,
         )
         return 3
 
     try:
         sessions = _load_sessions(Path(args.sessions))
-        config = SemanticReviewConfig(
-            similarity_threshold=args.similarity_threshold, frequency=args.frequency
-        )
+        config = SemanticReviewConfig(similarity_threshold=args.similarity_threshold, frequency=args.frequency)
         config.validate()
     except SemanticReviewError as exc:
         print(f"[输入非法] {exc}", file=sys.stderr)
@@ -195,9 +235,7 @@ def main(
     if embedder is None:
         from zephyr.integration.local_model.embedding_router import EmbeddingRouter
 
-        embedder = EmbeddingRouterAdapter(
-            EmbeddingRouter(backend=args.backend), collection_name=args.collection
-        )
+        embedder = EmbeddingRouterAdapter(EmbeddingRouter(backend=args.backend), collection_name=args.collection)
 
     report, name = run_batch(sessions, embedder, args.report_dir, config)
     print(

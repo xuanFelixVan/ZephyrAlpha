@@ -15,7 +15,11 @@
 # [A_module] module_id=MOD-OBS-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-REGIME-DEADZONE-001 #ARCH-OBS-EXP-TRACK-001
-"""L_INFRA_TELEMETRY — 实验跟踪查询接口（统一本地 JSON 源，MLflow 已退役）。
+"""
+
+
+
+L_INFRA_TELEMETRY — 实验跟踪查询接口（统一本地 JSON 源，MLflow 已退役）。
 
 list_runs / get_run 扫 fallback JSON 目录返回 RunSummary / RunDetail；
 download_artifact 按 run 目录路径规则读 artifact bytes（nav CSV / report MD）。
@@ -23,6 +27,84 @@ Panel/AI/脚本只消费统一模型。
 
 依据: 51_panel_experiment_history_mlflow_retirement.md 工作流 A2/B1
 Version: 0.2.0（MLflow 退役，单一 JSON 源 + download_artifact）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: component 参数
+#   fields: 参数 component，类型注解 str | None
+#   code: query.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: max_results 参数
+#   fields: 参数 max_results，类型注解 int
+#   code: query.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: config 参数
+#   fields: 参数 config，类型注解 ExperimentTrackingConfig | None
+#   code: query.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: run_id 参数
+#   fields: 参数 run_id，类型注解 str
+#   code: query.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① list_runs
+#   name_en: list_runs
+#   intro: 列出 runs（统一返回 RunSummary，单一 JSON 源）。
+#   desc: 列出 runs（统一返回 RunSummary，单一 JSON 源）。 Args: component: 零件类型过滤（None=所有零件）。 max_results: 最大返回…；源码 L282-L302
+#   inputs: component max_results config
+#   outputs: list[RunSummary]
+# - id: A2
+#   name_zh: ② get_run
+#   name_en: get_run
+#   intro: 获取单次 run 详情（统一返回 RunDetail，单一 JSON 源）。
+#   desc: 获取单次 run 详情（统一返回 RunDetail，单一 JSON 源）。 Args: run_id: 运行 ID。 component: 零件类型（fallback 扫描需要…；源码 L305-L325
+#   inputs: run_id component config
+#   outputs: RunDetail | None
+# - id: A3
+#   name_zh: ③ compare_runs
+#   name_en: compare_runs
+#   intro: 对比多次 run（逐个 get_run，失败的跳过）。
+#   desc: 对比多次 run（逐个 get_run，失败的跳过）。 Args: run_ids: 要对比的 run_id 列表。 component: 零件类型。 config: 配置。 R…；源码 L328-L348
+#   inputs: run_ids component config
+#   outputs: list[RunDetail]
+# - id: A4
+#   name_zh: ④ download_artifact
+#   name_en: download_artifact
+#   intro: 从 fallback run 目录读 artifact bytes。
+#   desc: 从 fallback run 目录读 artifact bytes。 路径规则 = {fallback_dir}/{component}/{run_id}/{artifact_p…；源码 L351-L387
+#   inputs: run_id component artifact_path filename config
+#   outputs: bytes | None
+# - id: A5
+#   name_zh: ⑤ download_artifact_text
+#   name_en: download_artifact_text
+#   intro: download_artifact 薄包装（返回 str 或 None，便于直接读 c1_summary.md）。
+#   desc: download_artifact 薄包装（返回 str 或 None，便于直接读 c1_summary.md）。；源码 L390-L405
+#   inputs: run_id component artifact_path filename config
+#   outputs: str | None
+# 层: 输出
+# - id: O1
+#   name_zh: list[RunSummary]
+#   name_en: list[RunSummary]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.frontend.dashboard ; AI/人查询
+# - id: O2
+#   name_zh: RunDetail | None
+#   name_en: RunDetail | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.frontend.dashboard ; AI/人查询
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations

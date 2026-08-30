@@ -14,7 +14,11 @@
 # [TESTS] tests/zephyr/data/test_provider_base.py
 # [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""数据源 Provider 抽象基类（MOD-L00-004 §4）。
+"""
+
+
+
+数据源 Provider 抽象基类（MOD-L00-004 §4）。
 
 定义所有数据源封装的统一接口：
 - IngestProviderBase：抽象基类，子类实现 connect/health_check/fetch/disconnect
@@ -29,6 +33,41 @@ SourcePolicy 定义在 policy_registry.py，本模块用 TYPE_CHECKING 前向引
 - Provider 只负责"拉数据"，返回 list[tuple]；写入 ClickHouse 由上层调度器负责
 - fetch 返回 Iterator[FetchResult] 支持分批，每批一个 FetchResult
 - 策略作为参数传入 fetch，由基类辅助方法 _call_with_policy 应用
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: provider_base.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① IngestProviderMeta
+#   name_en: IngestProviderMeta
+#   intro: 数据源元数据（静态描述）。
+#   desc: 数据源元数据（静态描述）。 Attributes: name: 数据源标识（"miniqmt"/"akshare"/"tushare"...） display_name: 中文显…；公共方法（定义序）: capabil…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② IngestProviderBase
+#   name_en: IngestProviderBase
+#   intro: 数据源 Provider 抽象基类。
+#   desc: 数据源 Provider 抽象基类。 子类需实现： - connect(): 建立连接/登录（线程局部） - health_check(): 探活 - fetch(payload…；公共方法（定义序）: connect…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: IngestProviderMeta, IngestProviderBase
+#   downstream: zephyr.data.scheduler, zephyr.data.implementations.*_provider
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -233,7 +272,7 @@ class IngestProviderBase(abc.ABC):
         ...
 
     @abc.abstractmethod
-    def fetch(self, payload: FetchPayload, policy: "SourcePolicy") -> Iterator[FetchResult]:
+    def fetch(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """按策略拉取数据，返回 FetchResult 迭代器（支持分批）。
 
         实现要点：
@@ -253,7 +292,7 @@ class IngestProviderBase(abc.ABC):
     def call_with_policy(
         self,
         fn: Callable,
-        policy: "SourcePolicy",
+        policy: SourcePolicy,
         *args,
         **kwargs,
     ) -> object:
@@ -308,7 +347,7 @@ class IngestProviderBase(abc.ABC):
     def _call_with_policy(
         self,
         fn: Callable,
-        policy: "SourcePolicy",
+        policy: SourcePolicy,
         *args,
         **kwargs,
     ) -> object:
@@ -338,7 +377,7 @@ class IngestProviderBase(abc.ABC):
         resp.raise_for_status()
         return resp
 
-    def rate_limit_sleep(self, policy: "SourcePolicy") -> None:
+    def rate_limit_sleep(self, policy: SourcePolicy) -> None:
         """按 RPM 限流：确保两次调用间隔 >= 60/RPM 秒（Stage 4 公共化，primary）。"""
         if not policy or policy.rpm <= 0:
             return
@@ -351,7 +390,7 @@ class IngestProviderBase(abc.ABC):
                 threading.Event().wait(min_interval - elapsed)
             self._last_call_ts = time.time()
 
-    def _rate_limit_sleep(self, policy: "SourcePolicy") -> None:
+    def _rate_limit_sleep(self, policy: SourcePolicy) -> None:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
         return self.rate_limit_sleep(policy)
 

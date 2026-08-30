@@ -14,7 +14,11 @@
 # [TESTS] tests/data_governance/test_column_lineage_tracker.py
 # [A_module] module_id=MOD-DATA_GOV-012 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""column_lineage_tracker — 列级血缘追踪器（MOD-DATA_GOV-012）。
+"""
+
+
+
+column_lineage_tracker — 列级血缘追踪器（MOD-DATA_GOV-012）。
 
 B10-02321（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATGOV-009，A1 M8-NEW-02）：
 列级血缘——血缘边扩展 **column 映射**（source_col -> target_col + transform
@@ -24,6 +28,41 @@ B10-02321（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATGOV-009，A1 M8-NEW-02�
 查重分工（蓝图 §0）：core/lineage_tracker=表/因子/信号级血缘图（本件=列级
 粒度独立图，不改其存储）；core/column_lineage_analyzer=SQL 静态解析产出列映
 射（本件=映射登记与查询门面，解析结果经登记接口注入）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: column_lineage_tracker.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ColumnRef
+#   name_en: ColumnRef
+#   intro: 列引用（table.column 二元闭合，frozen）。
+#   desc: 列引用（table.column 二元闭合，frozen）。；公共方法（定义序）: parse；源码 L91-L108
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② ColumnLineageTracker
+#   name_en: ColumnLineageTracker
+#   intro: 列级血缘追踪器（映射登记 + 上下游查询 + 删列影响面）。
+#   desc: 列级血缘追踪器（映射登记 + 上下游查询 + 删列影响面）。；公共方法（定义序）: register, register_mapping, mappings, direct_upstream, direct_downs…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: ColumnRef, ColumnLineageTracker
+#   downstream: 运行时装配批（SQL 解析列映射登记 / 删列影响面评审 / 重构门禁）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -100,8 +139,7 @@ class ColumnLineageTracker:
         """登记列映射：空名/自映射/成环拒绝；同边幂等更新 transform。"""
         if not source_table or not source_column or not target_table or not target_column:
             raise ColumnLineageError(
-                f"表/列名存在空值: {source_table!r}.{source_column!r} -> "
-                f"{target_table!r}.{target_column!r}"
+                f"表/列名存在空值: {source_table!r}.{source_column!r} -> {target_table!r}.{target_column!r}"
             )
         return self.register_mapping(
             ColumnMapping(
@@ -175,9 +213,7 @@ class ColumnLineageTracker:
         return False
 
     @staticmethod
-    def _closure(
-        seed: ColumnRef, index: dict[ColumnRef, set[ColumnRef]]
-    ) -> tuple[ColumnRef, ...]:
+    def _closure(seed: ColumnRef, index: dict[ColumnRef, set[ColumnRef]]) -> tuple[ColumnRef, ...]:
         visited: set[ColumnRef] = set()
         stack: list[ColumnRef] = list(index.get(seed, ()))
         while stack:

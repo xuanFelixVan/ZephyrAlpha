@@ -22,7 +22,11 @@
 # A4: 读侧过滤——filter_deterministic 只留确定性因子行
 # O1: 打标行/过滤行/视图 SQL/确定性因子集合
 # [/ALGO_FLOW]
-"""UFL 确定性事实层（v8.1，CAND-FAC-011 / B10-01176）。
+"""
+
+
+
+UFL 确定性事实层（v8.1，CAND-FAC-011 / B10-01176）。
 
 feast 式"标记+视图"管理特征子集：确定性事实层 = 特征仓（feature_store）中
 is_deterministic=True 的因子子集。确定性 = 同一输入同一输出可重放（纯价量派生）；
@@ -44,6 +48,85 @@ schema-change 守卫件，is_deterministic 不落成物理列，落元数据层�
 
 依据: A1交易决策架构 §1.1（§29.24 Feature Store 子集 is_deterministic=True）；
 construction_backlog_dig.tsv B10-01176。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: inputs 参数
+#   fields: 参数 inputs，类型注解 Iterable[str]
+#   code: ufl_deterministic_layer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: rows 参数
+#   fields: 参数 rows，类型注解 Iterable[Mapping]
+#   code: ufl_deterministic_layer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: layer 参数
+#   fields: 参数 layer，类型注解 UflDeterministicLayer
+#   code: ufl_deterministic_layer.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: table 参数
+#   fields: 参数 table，类型注解 str
+#   code: ufl_deterministic_layer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① classify_from_inputs
+#   name_en: classify_from_inputs
+#   intro: 输入集推导确定性：非空且全集 ⊆ 价量基础集 → True。
+#   desc: 输入集推导确定性：非空且全集 ⊆ 价量基础集 → True。 空输入集 fail-closed=False（无输入证据不可断定为确定性）。；源码 L171-L179
+#   inputs: inputs
+#   outputs: bool
+# - id: A2
+#   name_zh: ② UflDeterministicLayer
+#   name_en: UflDeterministicLayer
+#   intro: UFL 确定性事实层门面：标记台账 + 行级打标 + 确定性视图 + 读侧过滤。
+#   desc: UFL 确定性事实层门面：标记台账 + 行级打标 + 确定性视图 + 读侧过滤。 Args: markings: 初始标记映射 {factor_id: is_determinis…；公共方法（定义序）: mark, i…
+#   inputs: markings
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ tag_feature_rows
+#   name_en: tag_feature_rows
+#   intro: 特征值长表行 → 附加 is_deterministic 键的新行列表（原行不被修改）。
+#   desc: 特征值长表行 → 附加 is_deterministic 键的新行列表（原行不被修改）。 Args: rows: 长表行（至少含 factor_id 键；其余键原样保留）。 la…；源码 L256-L276
+#   inputs: rows layer
+#   outputs: list[dict]
+# - id: A4
+#   name_zh: ④ filter_deterministic
+#   name_en: filter_deterministic
+#   intro: 读侧过滤：只留确定性因子的行（未标记 fail-closed 滤除）。
+#   desc: 读侧过滤：只留确定性因子的行（未标记 fail-closed 滤除）。 Args: rows: 长表行（含 factor_id 键）。 layer: 确定性标记台账。 Retur…；源码 L279-L298
+#   inputs: rows layer
+#   outputs: list[dict]
+# - id: A5
+#   name_zh: ⑤ build_deterministic_view_sql
+#   name_en: build_deterministic_view_sql
+#   intro: 确定性查询视图 DDL：feature_store 上 is_deterministic=True 因子子集。
+#   desc: 确定性查询视图 DDL：feature_store 上 is_deterministic=True 因子子集。 空确定性集合 → WHERE 1=0 空视图（fail-close…；源码 L301-L330
+#   inputs: table layer view_name
+#   outputs: str
+#   （注：A5 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: （候选：factor_production_pipeline 落库批/盘前因子评估/ML 训练特征抽取的确定性子集过滤接线）
+# - id: O2
+#   name_zh: list[dict]
+#   name_en: list[dict]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: （候选：factor_production_pipeline 落库批/盘前因子评估/ML 训练特征抽取的确定性子集过滤接线）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations

@@ -15,6 +15,10 @@
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
+
+
+
+
 BootstrapCache — 审计冷启动共享单例缓存。
 
 治本(2026-07-20): SSoT 收敛——本文件原含 7 个与 gov_drift/cold_start.py 重复的符号
@@ -23,6 +27,32 @@ REQUIRED_DIRS/detect_missing_env)，已全部删除，真源统一归 gov_drift/
 本文件仅保留 BootstrapCache（审计专用缓存，存储审计维度/最近报告/熔断状态等，
 与 drift cold start 协议无关）。调用方 zephyr.gov_audit.__init__ lazy registry
 仍指向本文件。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: cold_start.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① BootstrapCache
+#   name_en: BootstrapCache
+#   intro: class BootstrapCache 源码 L78-L151
+#   desc: 公共方法（定义序）: load, get, set, persist, invalidate, stats；源码 L78-L151
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: BootstrapCache
+#   downstream: N/A (all consumers verified as phantom — stale references removed)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

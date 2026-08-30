@@ -30,6 +30,49 @@
 
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: channel 参数
+#   fields: 参数 channel，类型注解 str
+#   code: bridge.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: payload 参数
+#   fields: 参数 payload，类型注解 dict[str, Any]
+#   code: bridge.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① write_to_core
+#   name_en: write_to_core
+#   intro: 写入核心审计链——治本（ G7 + 5.37.1）：真实落盘 events.jsonl。
+#   desc: 写入核心审计链——治本（ G7 + 5.37.1）：真实落盘 events.jsonl。 旧实现是 no-op（仅 log），_get_writer 恒返回 None，导致： -…；源码 L85-L128
+#   inputs: channel payload
+#   outputs: str | None
+# - id: A2
+#   name_zh: ② OrchestratorBridge
+#   name_en: OrchestratorBridge
+#   intro: class OrchestratorBridge 源码 L131-L235
+#   desc: 公共方法（定义序）: check_drift, analyze_findings, report_delegation_failure, verify_merkle, health_check；源码 L131-L235
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: str | None
+#   name_en: str | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: audit-orchestrator.*; pipeline_runner
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
+
 import logging
 from typing import Any
 

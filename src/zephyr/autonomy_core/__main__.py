@@ -15,13 +15,104 @@
 # [A_module] module_id=MOD-INF-019 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""agent-spec MOD-INF-019 CLI — 蓝图->Skill 升级引擎入口.
+"""
+
+
+
+agent-spec MOD-INF-019 CLI — 蓝图->Skill 升级引擎入口.
 
 用法
 ----
     python -m zephyr.autonomy_core list          # 列出所有已注册 Skill
     python -m zephyr.autonomy_core status        # 显示模块健康状态
     python -m zephyr.autonomy_core help          # 显示帮助
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: args 参数
+#   fields: 参数 args（无注解）
+#   code: __main__.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① cmd_list
+#   name_en: cmd_list
+#   intro: 列出所有已注册 Skill.
+#   desc: 列出所有已注册 Skill.；源码 L135-L155
+#   inputs: 无参数
+#   outputs: int
+# - id: A2
+#   name_zh: ② cmd_status
+#   name_en: cmd_status
+#   intro: 显示模块健康状态.
+#   desc: 显示模块健康状态.；源码 L158-L194
+#   inputs: 无参数
+#   outputs: int
+# - id: A3
+#   name_zh: ③ main
+#   name_en: main
+#   intro: main() 源码 L197-L209
+#   desc: 源码 L197-L209
+#   inputs: 无参数
+#   outputs: int
+# - id: A4
+#   name_zh: ④ cmd_self_test
+#   name_en: cmd_self_test
+#   intro: 公共接口：cmd_self_test（Stage 4 公共化）。
+#   desc: 公共接口：cmd_self_test（Stage 4 公共化）。；源码 L237-L239
+#   inputs: args
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ cmd_scan
+#   name_en: cmd_scan
+#   intro: 公共接口：cmd_scan（Stage 4 公共化）。
+#   desc: 公共接口：cmd_scan（Stage 4 公共化）。；源码 L243-L245
+#   inputs: args
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ cmd_budget
+#   name_en: cmd_budget
+#   intro: 公共接口：cmd_budget（Stage 4 公共化）。
+#   desc: 公共接口：cmd_budget（Stage 4 公共化）。；源码 L249-L251
+#   inputs: args
+#   outputs: 返回值
+# - id: A7
+#   name_zh: ⑦ registry_path
+#   name_en: registry_path
+#   intro: 公共接口：registry_path（Stage 4 公共化）。
+#   desc: 公共接口：registry_path（Stage 4 公共化）。；源码 L255-L257
+#   inputs: 无参数
+#   outputs: Path
+# - id: A8
+#   name_zh: ⑧ load_registry
+#   name_en: load_registry
+#   intro: 公共接口：load_registry（Stage 4 公共化）。
+#   desc: 公共接口：load_registry（Stage 4 公共化）。；源码 L261-L263
+#   inputs: 无参数
+#   outputs: dict
+# 层: 输出
+# - id: O1
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: Path
+#   name_en: Path
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> O1
 """
 
 from __future__ import annotations

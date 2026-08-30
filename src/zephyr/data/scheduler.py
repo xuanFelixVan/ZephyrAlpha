@@ -53,7 +53,11 @@
 #   name_zh: 数据落库与进度面
 #   name_en: CH rows + progress_store
 #   intro: ClickHouse 目标表行写入；SQLite task_progress.last_key 游标 + task_runs 运行记录；subscribe() 事件回调（config_changed/shutdown/task_completed）
-"""数据源调度编排层（MOD-L00-004 §6）。
+"""
+
+
+
+数据源调度编排层（MOD-L00-004 §6）。
 
 APScheduler 常驻进程，按 cron 时段触发任务批次，管理 DAG 依赖，
 调用 Provider 拉数据，写入 ClickHouse，记录进度，失败告警。
@@ -67,6 +71,66 @@ APScheduler 常驻进程，按 cron 时段触发任务批次，管理 DAG 依赖
 事件订阅（满足永久系统全自动要求）：
 - subscribe(event, handler)：注册事件处理器
 - 支持事件：config_changed（策略热更新）/ shutdown（优雅关闭）/ task_completed（任务完成回调）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: lock_path 参数
+#   fields: 参数 lock_path，类型注解 str | Path | None
+#   code: scheduler.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: scheduler 参数
+#   fields: 参数 scheduler，类型注解 IntegratorScheduler
+#   code: scheduler.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: port 参数
+#   fields: 参数 port，类型注解 int
+#   code: scheduler.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① acquire_single_instance_lock
+#   name_en: acquire_single_instance_lock
+#   intro: 获取调度器进程级单实例锁（OS 级文件锁）。
+#   desc: 获取调度器进程级单实例锁（OS 级文件锁）。 根因（D1 遗留，2026-08-24 实证）：看门狗 start_scheduler.ps1 的 PID 文件锁存在 check-…；源码 L175-L218
+#   inputs: lock_path
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② IntegratorScheduler
+#   name_en: IntegratorScheduler
+#   intro: 数据源集成器调度器。
+#   desc: 数据源集成器调度器。 用法： sched = IntegratorScheduler() sched.start() # 启动常驻进程，按 cron 自动触发 # 手动执行单个任…；公共方法（定义序）: provide…
+#   inputs: config_dir progress_db jobs_db startup_probes calendar
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ start_monitor
+#   name_en: start_monitor
+#   intro: 启动监控 HTTP server（后台守护线程）。
+#   desc: 启动监控 HTTP server（后台守护线程）。 Args: scheduler: 调度器实例 port: 监听端口，默认 9100（Prometheus 标准端口段） 容错：…；源码 L2180-L2202
+#   inputs: scheduler port
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ main
+#   name_en: main
+#   intro: 调度器入口：启动常驻进程。
+#   desc: 调度器入口：启动常驻进程。 用法： python -m zephyr.data.scheduler；源码 L2222-L2279
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: acquire_single_instance_lock, IntegratorScheduler, start_monitor, main
+#   downstream: CLI(zephyr.data.cli 阶段3+); main()入口
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations
@@ -85,6 +149,7 @@ from typing import Any, Callable
 from zephyr.data import local_replay
 from zephyr.data.alerter import LEVEL_CRITICAL, LEVEL_ERROR, Alerter
 from zephyr.data.buffered_writer import BufferedWriter
+from zephyr.data.calendar import MarketCalendar, get_market_calendar
 from zephyr.data.ch_parts_monitor import check_and_alert
 from zephyr.data.metrics import IntegratorMetrics, get_metrics
 from zephyr.data.policy_registry import PolicyRegistry, get_registry
@@ -92,7 +157,6 @@ from zephyr.data.progress_store import ProgressStore, get_store
 from zephyr.data.provider_base import FetchPayload, FetchResult, IngestProviderBase
 from zephyr.data.source_circuit_breaker import CircuitBreakerRegistry
 from zephyr.data.task_queue import FAILED, PENDING, RUNNING, SUCCESS, TaskQueue
-from zephyr.data.calendar import MarketCalendar, get_market_calendar
 from zephyr.data.trading_calendar import TRADING_DAY_GUARDED_SCHEDULES
 from zephyr.shared.io.paths import REPO_ROOT
 
@@ -153,6 +217,7 @@ def acquire_single_instance_lock(lock_path: str | Path | None = None):
     except OSError:
         pass
     return fh
+
 
 # SQL 模板常量（NO-BARE-SQL gate 豁免：_SQL_* 前缀，裁定 #ARCH-CH-015）
 _SQL_FIND_PART = "SELECT database, table FROM system.parts WHERE name='{part_name}' AND active=1 LIMIT 1"
@@ -427,9 +492,7 @@ class IntegratorScheduler:
             calendar: 市场日历注入（CAND-CRYPTO-001，交易日守卫/任务过滤用）。
                 None=默认 A股日历（现状行为）；币侧装配传 get_market_calendar("crypto")。
         """
-        self._calendar: MarketCalendar = (
-            calendar if calendar is not None else get_market_calendar("ashare")
-        )
+        self._calendar: MarketCalendar = calendar if calendar is not None else get_market_calendar("ashare")
         self._config_dir = Path(config_dir) if config_dir else _DEFAULT_CONFIG_DIR
         self._jobs_db = jobs_db or _DEFAULT_JOBS_DB
         # 组件

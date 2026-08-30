@@ -14,13 +14,59 @@
 # [TESTS] tests/data_security/test_data_access_auditor.py
 # [A_module] module_id=MOD-DATSEC-002 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""DataAccessAuditor — 数据访问审计器（MOD-DATSEC-002）。
+"""
+
+
+
+DataAccessAuditor — 数据访问审计器（MOD-DATSEC-002）。
 
 B13-04294（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATSEC-002，A3数据架构）：
 CH/SQLite/Parquet 访问日志**统一采集**（AccessEvent Schema）+ 查询模式**基线
 画像**（按主体常用表/常用时段/量级）+ **异常访问检测**（非常用表/大批量导
 出/非常时段三维规则）+ 敏感数据访问追踪（敏感表注册表），事件写 gov_audit
 回调。UEBA 轻量单机版。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: data_access_auditor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: audit_sink 参数
+#   fields: 参数 audit_sink（无注解）
+#   code: data_access_auditor.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: alert_sink 参数
+#   fields: 参数 alert_sink（无注解）
+#   code: data_access_auditor.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: bulk_multiplier 参数
+#   fields: 参数 bulk_multiplier（无注解）
+#   code: data_access_auditor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DataAccessAuditor
+#   name_en: DataAccessAuditor
+#   intro: 数据访问审计器（采集 + 基线画像 + 三维异常检测 + 敏感表追踪）。
+#   desc: 数据访问审计器（采集 + 基线画像 + 三维异常检测 + 敏感表追踪）。；公共方法（定义序）: register_sensitive_table, is_sensitive, sensitive_tables, rec…
+#   inputs: clock audit_sink alert_sink bulk_multiplier min_repeat baseline_min_s…
+#   outputs: 返回值
+#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（8 定义）
+#   name_en: public defs
+#   intro: DataAccessAuditor
+#   downstream: 运行时装配批（CH/SQLite/Parquet 访问切面统一采集 / 事件写 gov_audit 路由）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -171,11 +217,7 @@ class DataAccessAuditor:
             raise DataAccessAuditError(f"row_count 为负: {event.row_count}")
 
     def _subject_events(self, subject: str, exclude_id: str | None = None) -> list[AccessEvent]:
-        out = [
-            e
-            for e in self._events.values()
-            if e.subject == subject and e.event_id != exclude_id
-        ]
+        out = [e for e in self._events.values() if e.subject == subject and e.event_id != exclude_id]
         out.sort(key=lambda e: (e.occurred_at, e.event_id))
         return out
 
@@ -186,13 +228,15 @@ class DataAccessAuditor:
             table_count[e.table_name] = table_count.get(e.table_name, 0) + 1
             hour_count[e.occurred_at.hour] = hour_count.get(e.occurred_at.hour, 0) + 1
         common_tables = tuple(
-            t for t, _ in sorted(
+            t
+            for t, _ in sorted(
                 ((t, c) for t, c in table_count.items() if c >= self._min_repeat),
                 key=lambda kv: (-kv[1], kv[0]),
             )
         )
         common_hours = tuple(
-            h for h, _ in sorted(
+            h
+            for h, _ in sorted(
                 ((h, c) for h, c in hour_count.items() if c >= self._min_repeat),
                 key=lambda kv: (-kv[1], kv[0]),
             )
@@ -251,9 +295,7 @@ class DataAccessAuditor:
     def record(self, event: AccessEvent) -> tuple[AnomalyKind, ...]:
         """采集事件：校验 → 写审计回调 → 三维异常检测（命中告警）。"""
         self._validate_event(event)
-        kinds = self._detect_against(
-            event, self._subject_events(event.subject, exclude_id=event.event_id)
-        )
+        kinds = self._detect_against(event, self._subject_events(event.subject, exclude_id=event.event_id))
         self._events[event.event_id] = event
         if self._audit_sink is not None:
             try:
@@ -264,9 +306,7 @@ class DataAccessAuditor:
             self._alert(event, kinds)
         return kinds
 
-    def _detect_against(
-        self, event: AccessEvent, history: list[AccessEvent]
-    ) -> tuple[AnomalyKind, ...]:
+    def _detect_against(self, event: AccessEvent, history: list[AccessEvent]) -> tuple[AnomalyKind, ...]:
         """三维规则检测（基线样本不足 → 不判异常，防误报）。"""
         if len(history) < self._baseline_min_samples:
             return ()
@@ -287,9 +327,7 @@ class DataAccessAuditor:
             raise DataAccessAuditError(f"非法事件: {event!r}")
         if not event.subject or not event.table_name:
             raise DataAccessAuditError("事件字段为空")
-        return self._detect_against(
-            event, self._subject_events(event.subject, exclude_id=event.event_id)
-        )
+        return self._detect_against(event, self._subject_events(event.subject, exclude_id=event.event_id))
 
     # ── 基线画像 / 查询 ───────────────────────────────────────────────────
 
@@ -308,9 +346,7 @@ class DataAccessAuditor:
             raise DataAccessAuditError("subject 为空")
         return self._subject_events(subject)
 
-    def sensitive_events(
-        self, table_name: str | None = None, subject: str | None = None
-    ) -> list[AccessEvent]:
+    def sensitive_events(self, table_name: str | None = None, subject: str | None = None) -> list[AccessEvent]:
         """敏感表访问追踪（可选按表/主体过滤，确定性排序）。"""
         out = [
             e

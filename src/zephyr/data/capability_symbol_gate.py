@@ -21,7 +21,10 @@
 # F3: 反向校验（memo §5.5 范围=frozenset/set + CapabilityContract 声明：无 _fetch_<cap> 方法 且 无路由证据（==/in 字面量比较、共享方法路由 in <var>、dict 方法引用已定义）→ 声明残留）
 # O1: 违规描述列表（空=通过；语法错误 fail-open 空）
 # [/ALGO_FLOW]
-"""Provider 声明-实现符号一致性双向 AST gate（17 号 §5.5 施工项 4，§5.8 定稿最优先）。
+"""
+
+
+Provider 声明-实现符号一致性双向 AST gate（17 号 §5.5 施工项 4，§5.8 定稿最优先）。
 
 针对缺陷：internal_compute 曾出现「fetch 路由调用方法、方法却不存在」的 AttributeError
 状态；akshare 曾出现 frozenset/Contract 声明了 capability 但对应 ``_fetch_<cap>`` 方法
@@ -41,6 +44,45 @@
 
 依据: 17_special_trading_days_data_assets §5.5/§5.8（#ARCH-DATA-002 施工项 4）
 Version: 0.2.0（按真实 provider 路由形态校准反向豁免规则，消除参数化路由表误报）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: content 参数
+#   fields: 参数 content，类型注解 str
+#   code: capability_symbol_gate.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: file_path 参数
+#   fields: 参数 file_path，类型注解 Path
+#   code: capability_symbol_gate.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① check_declaration_impl_consistency_content
+#   name_en: check_declaration_impl_consistency_content
+#   intro: 校验 provider 文件内容（字符串）的声明-实现符号一致性（17 号 §5.8 项 4）。
+#   desc: 校验 provider 文件内容（字符串）的声明-实现符号一致性（17 号 §5.8 项 4）。 Returns: 违规描述列表（空=一致；语法错误 fail-open 返回空）…；源码 L242-L296
+#   inputs: content
+#   outputs: list[str]
+# - id: A2
+#   name_zh: ② check_declaration_impl_consistency
+#   name_en: check_declaration_impl_consistency
+#   intro: 校验 provider 文件的声明-实现符号一致性（文件读取后委托 content 版，真源唯一）。
+#   desc: 校验 provider 文件的声明-实现符号一致性（文件读取后委托 content 版，真源唯一）。；源码 L299-L305
+#   inputs: file_path
+#   outputs: list[str]
+# 层: 输出
+# - id: O1
+#   name_zh: list[str]
+#   name_en: list[str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: commit gate（gov_enforcement commit_gates，装配批接入）; 调用方（provider 声明-实现一致性校验）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -51,9 +93,9 @@ from pathlib import Path
 from typing import Final
 
 from zephyr.data.capability_validator import (
-    _meta_caps_from_tree,
     _ROUTE_VAR_PATTERN,
     _extract_str_constant,
+    _meta_caps_from_tree,
 )
 
 log = logging.getLogger(__name__)
@@ -155,7 +197,7 @@ def _collect_route_vars(tree: ast.Module) -> tuple[dict[str, set[str]], dict[str
         value = node.value
         if isinstance(value, ast.Dict):
             entries: dict[str, str] = {}
-            for k, v in zip(value.keys, value.values):
+            for k, v in zip(value.keys, value.values, strict=False):
                 if isinstance(k, ast.Constant) and isinstance(k.value, str):
                     entries[k.value] = v.value if isinstance(v, ast.Constant) and isinstance(v.value, str) else ""
             dict_vars[var_name] = entries

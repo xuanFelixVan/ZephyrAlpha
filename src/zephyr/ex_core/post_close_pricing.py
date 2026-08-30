@@ -21,7 +21,11 @@
 # F4: convert_to_post_close_order(order, close_price, at_time)——生成盘后固定价格申报规格(不可撤单+15:30 自动作废)
 # O1: PostCloseOrderSpec -> 调用方(申报通道装配层)
 # [/ALGO_FLOW]
-"""D_EX_CORE — 盘后固定价格交易通道（40 号 §6.1 gap 16，函数级 MVP）。
+"""
+
+
+
+D_EX_CORE — 盘后固定价格交易通道（40 号 §6.1 gap 16，函数级 MVP）。
 
 40 号 §2.12：尾盘清退时可选择将未成交订单转入盘后固定价格交易
 （2026-07-06 新规扩容至全部 A 股/ETF，15:05-15:30 以收盘价按时间优先
@@ -32,6 +36,77 @@
 （miniQMT 盘后定价申报接口归 Phase 1.5 装配批次）。MVP 参与口径维持
 40 号决策"暂不参与"——本模块仅供有以收盘价建仓/减仓需求时（指数调仓/
 ETF 套利）显式调用。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: at_time 参数
+#   fields: 参数 at_time，类型注解 time
+#   code: post_close_pricing.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: symbol 参数
+#   fields: 参数 symbol，类型注解 str
+#   code: post_close_pricing.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: side 参数
+#   fields: 参数 side，类型注解 OrderSide
+#   code: post_close_pricing.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: limit_price 参数
+#   fields: 参数 limit_price，类型注解 Decimal
+#   code: post_close_pricing.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① is_in_post_close_window
+#   name_en: is_in_post_close_window
+#   intro: 盘后固定价格窗口判定（15:05 ≤ t ≤ 15:30，含端点）。
+#   desc: 盘后固定价格窗口判定（15:05 ≤ t ≤ 15:30，含端点）。；源码 L149-L151
+#   inputs: at_time
+#   outputs: bool
+# - id: A2
+#   name_zh: ② is_post_close_eligible
+#   name_en: is_post_close_eligible
+#   intro: 标的是否适用盘后固定价格交易（沪深 A 股+ETF；北交所暂未开通）。
+#   desc: 标的是否适用盘后固定价格交易（沪深 A 股+ETF；北交所暂未开通）。 北交所代码前缀：4xxxxx / 8xxxxx / 920xxx。；源码 L154-L161
+#   inputs: symbol
+#   outputs: bool
+# - id: A3
+#   name_zh: ③ validate_post_close_price
+#   name_en: validate_post_close_price
+#   intro: 价格规则校验：买入限价≥收盘价、卖出限价≤收盘价（违规拒绝）。
+#   desc: 价格规则校验：买入限价≥收盘价、卖出限价≤收盘价（违规拒绝）。；源码 L164-L185
+#   inputs: side limit_price close_price
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ convert_to_post_close_order
+#   name_en: convert_to_post_close_order
+#   intro: 未成交订单 → 盘后固定价格申报规格（40 号 §2.12 可选通道）。
+#   desc: 未成交订单 → 盘后固定价格申报规格（40 号 §2.12 可选通道）。 Args: order: 尾盘清退的未成交委托单。 close_price: 当日收盘价（盘后定价撮合基…；源码 L188-L238
+#   inputs: order close_price at_time
+#   outputs: PostCloseOrderSpec
+#   （注：A4 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: OpenOrderResolver/TradingSession 尾盘清退可选通道(40号§2.12, Phase 1.5 装配批次接线)
+# - id: O2
+#   name_zh: PostCloseOrderSpec
+#   name_en: PostCloseOrderSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: OpenOrderResolver/TradingSession 尾盘清退可选通道(40号§2.12, Phase 1.5 装配批次接线)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

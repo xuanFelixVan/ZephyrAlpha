@@ -14,7 +14,11 @@
 # [TESTS] tests/zephyr/data/test_market_breadth_snapshot.py
 # [A_module] module_id=MOD-DATA-062 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-r"""MOD-DATA-062 — 全市场分钟级宽度快照采集纯函数（92号清单 §8.2，44号备忘 §2 M1-④ 行 + §6 数据源表）。
+"""
+
+
+
+MOD-DATA-062 — 全市场分钟级宽度快照采集纯函数（92号清单 §8.2，44号备忘 §2 M1-④ 行 + §6 数据源表）。
 
 取数通道实证（2026-08-22 代码实证，真源=miniqmt_provider 既有实现）：
     miniqmt 实时全市场快照通道 = xtdata.get_stock_list_in_sector("沪深A股") 取全市场
@@ -39,6 +43,69 @@ r"""MOD-DATA-062 — 全市场分钟级宽度快照采集纯函数（92号清单
 fail-open 纪律：
     本模块所有 I/O 边界（ST 集加载）异常→空集+log.warning，不抛——单次失败留痕
     不炸调度（调度器FetchResult error 通道在 miniqmt_provider 侧兜底）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: ticks 参数
+#   fields: 参数 ticks，类型注解 Mapping[str, Mapping[str, Any]]
+#   code: market_breadth_collector.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: st_codes 参数
+#   fields: 参数 st_codes，类型注解 frozenset[str] | set[str] | None
+#   code: market_breadth_collector.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: trade_date 参数
+#   fields: 参数 trade_date（无注解）
+#   code: market_breadth_collector.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: agg 参数
+#   fields: 参数 agg，类型注解 BreadthAggregate
+#   code: market_breadth_collector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① aggregate_market_ticks
+#   name_en: aggregate_market_ticks
+#   intro: 全市场 tick 字典 → 单分钟宽度聚合（纯函数，无 I/O）。
+#   desc: 全市场 tick 字典 → 单分钟宽度聚合（纯函数，无 I/O）。 Args: ticks: xtdata.get_full_tick 返回的 {stock_code: tick…；源码 L208-L290
+#   inputs: ticks st_codes trade_date
+#   outputs: BreadthAggregate
+# - id: A2
+#   name_zh: ② build_insert_row
+#   name_en: build_insert_row
+#   intro: 聚合结果 → market_breadth_snapshot INSERT 行（列序=schemas INSERT_C…
+#   desc: 聚合结果 → market_breadth_snapshot INSERT 行（列序=schemas INSERT_COLUMNS 真源）。 Args: agg: aggrega…；源码 L293-L327
+#   inputs: agg trade_date ts data_source degraded
+#   outputs: tuple
+# - id: A3
+#   name_zh: ③ load_current_st_codes
+#   name_en: load_current_st_codes
+#   intro: 加载当前有效 ST/*ST 裸码集合（fail-open：异常→(空集, False)+log，由调用方置 degra…
+#   desc: 加载当前有效 ST/*ST 裸码集合（fail-open：异常→(空集, False)+log，由调用方置 degraded=1）。 Args: query_fn: CH 查询函…；源码 L330-L364
+#   inputs: query_fn as_of
+#   outputs: tuple[set[str], bool]
+#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: BreadthAggregate
+#   name_en: BreadthAggregate
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.implementations.miniqmt_provider（market_breadth_snapshot capability…
+# - id: O2
+#   name_zh: tuple
+#   name_en: tuple
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.implementations.miniqmt_provider（market_breadth_snapshot capability…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

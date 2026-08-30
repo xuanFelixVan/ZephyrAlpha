@@ -14,7 +14,11 @@
 # [TESTS] tests/clone_guard/test_mcp_server.py
 # [A_module] module_id=MOD-CLONE_GUARD | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""CloneGuardMCPServer — L0 源头预防 + L2 技术债可达性 MCP Server（Phase C）
+"""
+
+
+
+CloneGuardMCPServer — L0 源头预防 + L2 技术债可达性 MCP Server（Phase C）
 
 治本 100% AI 开发场景下的"重复造轮子"病根。L0 层让 AI 在写代码前主动查重，
 返回 advisory findings + import_suggestion，引导 AI 复用已有代码而非重复实现。
@@ -57,6 +61,46 @@ Usage::
     if status["health_score"] in ("D", "F"):
         for plan in status["refactoring_plan"]:
             print(f"  待还债: {plan}")
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: repo_root 参数
+#   fields: 参数 repo_root（无注解）
+#   code: mcp_server.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: enable_rbac 参数
+#   fields: 参数 enable_rbac（无注解）
+#   code: mcp_server.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① create_server
+#   name_en: create_server
+#   intro: 工厂函数，返回配置好的 CloneGuardMCPServer 实例。
+#   desc: 工厂函数，返回配置好的 CloneGuardMCPServer 实例。 Args: repo_root: 仓库根目录（默认当前目录）。 enable_rbac: 是否启用 RBA…；源码 L648-L659
+#   inputs: repo_root enable_rbac
+#   outputs: CloneGuardMCPServer
+# - id: A2
+#   name_zh: ② main
+#   name_en: main
+#   intro: 启动 CloneGuard MCP Server（stdio 传输）。
+#   desc: 启动 CloneGuard MCP Server（stdio 传输）。 日志输出到 stderr——stdout 保留给 JSON-RPC 协议帧。；源码 L662-L676
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: CloneGuardMCPServer
+#   name_en: CloneGuardMCPServer
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: config/mcp.json (servers.clone_guard); AI agent (L0 源头预防 + L2 技术债可达性)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

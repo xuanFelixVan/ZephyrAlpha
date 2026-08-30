@@ -23,7 +23,11 @@
 # F3: run_backtest——加载+PIT 断言→pre_validate 门控→情绪周期定位→classify_decision_v192→次日出场→汇总
 # O1: 龙虎榜行列表 / run_backtest 汇总 dict(trades/total/by_decision)
 # [/ALGO_FLOW]
-"""打板 PIT 安全族（24_daban_strategy_detail §3.13#5 + §3.14#10 施工）。
+"""
+
+
+
+打板 PIT 安全族（24_daban_strategy_detail §3.13#5 + §3.14#10 施工）。
 
 缺失#5 get_dragon_tiger_pit（首批实盘前必须修复）：龙虎榜 T 日盘后 17:00
 公布，T 日盘中决策只能用 T-1 日及之前龙虎榜（INV-004 铁律）——T 日盘中用
@@ -39,6 +43,50 @@ source_loaders 显式注入（DB 落库接线属数据层工程，未注入加�
 
 理论背书：北大 Jiang & Li 理性预期模型——打板 alpha 来自信息未完全纳入，
 回测必须严格 PIT 否则虚高（PIT 违规=虚高 alpha）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: symbol 参数
+#   fields: 参数 symbol，类型注解 str
+#   code: daban_pit_safety.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: as_of_date 参数
+#   fields: 参数 as_of_date，类型注解 date
+#   code: daban_pit_safety.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: db_session 参数
+#   fields: 参数 db_session（无注解）
+#   code: daban_pit_safety.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① get_dragon_tiger_pit
+#   name_en: get_dragon_tiger_pit
+#   intro: 龙虎榜PIT安全查询（v1.9.2 补，as_of_date 边界断言）。
+#   desc: 龙虎榜PIT安全查询（v1.9.2 补，as_of_date 边界断言）。 龙虎榜盘后17:00公布，T日盘中决策若用T日龙虎榜=未来函数=回测虚高+实盘失效， 只能用T-1日及…；源码 L109-L125
+#   inputs: symbol as_of_date db_session
+#   outputs: list[dict]
+# - id: A2
+#   name_zh: ② DabanPITBacktestFramework
+#   name_en: DabanPITBacktestFramework
+#   intro: 打板 PIT 安全回测框架（v1.9.3 补，全数据源 PIT 断言，扩展 §3.13#5 到全数据源）。
+#   desc: 打板 PIT 安全回测框架（v1.9.3 补，全数据源 PIT 断言，扩展 §3.13#5 到全数据源）。 PIT_RULES + assert_pit + run_backte…；公共方法（定义序）: from_db…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: list[dict]
+#   name_en: list[dict]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: （首批回测接线前暂无）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -132,7 +180,9 @@ class DabanPITBacktestFramework:
                 )
             return loader(source, d)
 
-        return cls(data_loader=data_loader, trading_days=calendar.trading_days_in_range, next_trading_day=_next_trading_day)
+        return cls(
+            data_loader=data_loader, trading_days=calendar.trading_days_in_range, next_trading_day=_next_trading_day
+        )
 
     PIT_RULES = {
         "dragon_tiger": {"publish_time": "T日17:00", "available_for": "T+1日盘中"},  # §3.13#5

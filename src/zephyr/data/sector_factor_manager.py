@@ -14,7 +14,11 @@
 # [TESTS] tests/zephyr/data/test_sector_factor_manager.py
 # [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""板块因子数据管理器（CAND-DAT-011 / B1-00598，86 板块因子数据管理器）。
+"""
+
+
+
+板块因子数据管理器（CAND-DAT-011 / B1-00598，86 板块因子数据管理器）。
 
 深挖裁定=做(P1)：880板块K线下载/快照/排名/盘中聚合已建（sector_kline_downloader
 /sector_snapshot_collector/sector_ranking_engine/sector_intraday_aggregator），
@@ -29,6 +33,33 @@
 
 复用纪律：不直读 CH/不直采网络——K线行/资金流/成分映射全部注入，
 采集面复用 sector_kline_downloader / sector_fund_flow_collector 现有产出。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: sector_factor_manager.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SectorFactorManager
+#   name_en: SectorFactorManager
+#   intro: 板块因子数据管理器——完整性校验/成分挂接/轮动因子/质量评分。
+#   desc: 板块因子数据管理器——完整性校验/成分挂接/轮动因子/质量评分。；公共方法（定义序）: check_coverage, attach_constituent_map, compute_rotation_factors,…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: SectorFactorManager
+#   downstream: （P1 接线：因子库写入方 + sector_report_builder）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -225,15 +256,11 @@ class SectorFactorManager:
         for i, day in enumerate(days):
             rels = rel_by_date[day]
             n = len(rels)
-            flow_pcts = self._percentile_map(
-                {c: flow_map.get(c, 0.0) for c in rels}
-            )
+            flow_pcts = self._percentile_map({c: flow_map.get(c, 0.0) for c in rels})
             prev_day = days[i - 1] if i >= 1 else None
             for code, rel in rels.items():
                 rank = rank_by_date[day][code]
-                prev_rank = (
-                    rank_by_date[prev_day].get(code) if prev_day else None
-                )
+                prev_rank = rank_by_date[prev_day].get(code) if prev_day else None
                 rank_change = (prev_rank - rank) if prev_rank is not None else 0
                 rel_pct = 1.0 - (rank - 1) / max(n - 1, 1)
                 composite = 0.6 * rel_pct + 0.4 * flow_pcts[code]
@@ -262,9 +289,7 @@ class SectorFactorManager:
         """板块数据质量评分 = 覆盖度×0.6 + 新鲜度×0.3 + 资金流齐备×0.1。"""
         issues: list[str] = []
         if coverage.ratio < 0.95:
-            issues.append(
-                f"覆盖度不足: {coverage.actual}/{coverage.expected}（缺失 {len(coverage.missing)} 日）"
-            )
+            issues.append(f"覆盖度不足: {coverage.actual}/{coverage.expected}（缺失 {len(coverage.missing)} 日）")
         lag = (as_of - latest_date).days
         freshness = max(0.0, 1.0 - 0.2 * max(lag - 1, 0))
         if lag > 1:

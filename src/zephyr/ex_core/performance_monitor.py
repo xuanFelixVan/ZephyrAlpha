@@ -15,11 +15,47 @@
 # [A_module] module_id=MOD-EX-036 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""执行核心性能监控器（MOD-EX-036）——单机轻量实现。
+"""
+
+
+
+执行核心性能监控器（MOD-EX-036）——单机轻量实现。
 
 记录执行链路关键操作的延迟/数值样本（下单延迟/成交回报延迟/风控门耗时等），
 滑动窗口内存态聚合（count/mean/min/max/p95），阈值越线经注入的 alerter 回调外发。
 约束二单机前提：无 DB/网络/后台线程，调用方线程内 record + check_alerts 即可。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: window_size 参数
+#   fields: 参数 window_size（无注解）
+#   code: performance_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: alerter 参数
+#   fields: 参数 alerter（无注解）
+#   code: performance_monitor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① PerformanceMonitor
+#   name_en: PerformanceMonitor
+#   intro: 执行核心性能监控器（单机轻量）。
+#   desc: 执行核心性能监控器（单机轻量）。；公共方法（定义序）: record, metrics, stats, set_threshold, check_alerts, snapshot；源码 L103-L195
+#   inputs: window_size alerter
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: PerformanceMonitor
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

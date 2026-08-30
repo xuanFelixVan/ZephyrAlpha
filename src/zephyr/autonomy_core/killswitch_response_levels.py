@@ -14,7 +14,11 @@
 # [TESTS] tests/autonomy_core/test_killswitch_response_levels.py
 # [A_module] module_id=MOD-AU-004 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
-"""KillSwitchResponseLayer — KILLSWITCH 三级响应策略层（MOD-AU-004）.
+"""
+
+
+
+KillSwitchResponseLayer — KILLSWITCH 三级响应策略层（MOD-AU-004）.
 
 设计真源：16号文（16_ai_security_ops.md）§3.4/§3.13/§4.4 P2-3 + 15号文 §3.4/§4.1 S0.3：
 - 分层框架：策略层（本层，只裁决「这次事件该停什么」）→ 路由层（MOD-AU-002 两级
@@ -34,6 +38,56 @@
 - 留痕：响应/复位动作按 16号文 §4.2 P0-1 统一事件 schema 写
   .runtime/audit/killswitch_response_levels.jsonl（source_domain=access_control）；
   KILLSWITCH.md 变更写 killswitch_md_change 事件（§3.13）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: orchestrator 参数
+#   fields: 参数 orchestrator（无注解）
+#   code: killswitch_response_levels.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: runtime_dir 参数
+#   fields: 参数 runtime_dir（无注解）
+#   code: killswitch_response_levels.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: system_switch 参数
+#   fields: 参数 system_switch（无注解）
+#   code: killswitch_response_levels.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: downgrader 参数
+#   fields: 参数 downgrader（无注解）
+#   code: killswitch_response_levels.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① render_killswitch_md
+#   name_en: render_killswitch_md
+#   intro: 渲染 KILLSWITCH.
+#   desc: 渲染 KILLSWITCH.md 全文（16号文 §3.13 开放标准 8 要素对标+三级定义+复位不变量）.；源码 L162-L164
+#   inputs: 无参数
+#   outputs: str
+# - id: A2
+#   name_zh: ② KillSwitchResponseLayer
+#   name_en: KillSwitchResponseLayer
+#   intro: KILLSWITCH 三级响应策略层.
+#   desc: KILLSWITCH 三级响应策略层. 用法:: layer = KillSwitchResponseLayer( orchestrator=orch, runtime_dir=…；公共方法（定义序）: respond…
+#   inputs: orchestrator runtime_dir system_switch downgrader
+#   outputs: 返回值
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests/autonomy_core/test_killswitch_response_levels.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -169,8 +223,12 @@ class KillSwitchResponseLayer:
         except Exception as exc:  # noqa: BLE001 — ERROR_CONTRACT：永不抛异常
             errors["response_layer"] = repr(exc)
         result = self._result(
-            not errors, lvl, target_mode=target_mode, tripped=tripped,
-            actions=actions, errors=errors,
+            not errors,
+            lvl,
+            target_mode=target_mode,
+            tripped=tripped,
+            actions=actions,
+            errors=errors,
         )
         self._trace("killswitch_response", result, incident=incident, severity=severity)
         return result
@@ -185,9 +243,15 @@ class KillSwitchResponseLayer:
         """level_1：技能熔断（编排器域级拉闸）+ 自治降级暂降 IM 模式."""
         for skill_id in incident.skill_ids:
             self._call_orchestrator(
-                "trip", f"skills_trip:{skill_id}", errors,
-                "domain", f"skills:{skill_id}", incident.reason,
-                actions=actions, tripped=tripped, tripped_name=f"skills:{skill_id}",
+                "trip",
+                f"skills_trip:{skill_id}",
+                errors,
+                "domain",
+                f"skills:{skill_id}",
+                incident.reason,
+                actions=actions,
+                tripped=tripped,
+                tripped_name=f"skills:{skill_id}",
             )
         self._downgrade_to_im(incident, actions, errors)
 
@@ -219,9 +283,15 @@ class KillSwitchResponseLayer:
         """level_3：系统级全局熔断 + 交易级联动（传播漏网显式兜底）+ IM 基线."""
         self._downgrade_to_im(incident, actions, errors)
         orch_result = self._call_orchestrator(
-            "trip", "system_trip:global", errors,
-            "system", "global", incident.reason,
-            actions=actions, tripped=tripped, tripped_name="system",
+            "trip",
+            "system_trip:global",
+            errors,
+            "system",
+            "global",
+            incident.reason,
+            actions=actions,
+            tripped=tripped,
+            tripped_name="system",
         )
         if orch_result is not None:
             for name in getattr(orch_result, "tripped", ()) or ():
@@ -233,10 +303,15 @@ class KillSwitchResponseLayer:
         skipped = set(getattr(orch_result, "skipped", ()) or ()) if orch_result else set()
         if TRADING_DOMAIN in skipped:
             fallback = self._call_orchestrator(
-                "trip", "trading_link:explicit_fallback", errors,
-                "domain", TRADING_DOMAIN,
+                "trip",
+                "trading_link:explicit_fallback",
+                errors,
+                "domain",
+                TRADING_DOMAIN,
                 f"交易级联动显式兜底: {incident.reason}",
-                actions=actions, tripped=tripped, tripped_name=TRADING_DOMAIN,
+                actions=actions,
+                tripped=tripped,
+                tripped_name=TRADING_DOMAIN,
             )
             if fallback is not None:
                 for key, value in (getattr(fallback, "errors", {}) or {}).items():
@@ -308,9 +383,15 @@ class KillSwitchResponseLayer:
             if lvl == ResponseLevel.LEVEL_1.value:
                 for skill_id in skill_ids:
                     self._call_orchestrator(
-                        "reset", f"skills_reset:{skill_id}", errors,
-                        "domain", f"skills:{skill_id}", approver_str,
-                        actions=actions, tripped=tripped, tripped_name=f"skills:{skill_id}",
+                        "reset",
+                        f"skills_reset:{skill_id}",
+                        errors,
+                        "domain",
+                        f"skills:{skill_id}",
+                        approver_str,
+                        actions=actions,
+                        tripped=tripped,
+                        tripped_name=f"skills:{skill_id}",
                     )
             elif lvl == ResponseLevel.LEVEL_2.value:
                 if self._system_switch is None:
@@ -323,17 +404,27 @@ class KillSwitchResponseLayer:
                         errors["system_switch"] = repr(exc)
             elif lvl == ResponseLevel.LEVEL_3.value:
                 self._call_orchestrator(
-                    "reset", "system_reset:global", errors,
-                    "system", "global", approver_str,
-                    actions=actions, tripped=tripped, tripped_name="system",
+                    "reset",
+                    "system_reset:global",
+                    errors,
+                    "system",
+                    "global",
+                    approver_str,
+                    actions=actions,
+                    tripped=tripped,
+                    tripped_name="system",
                 )
             else:
                 errors["level"] = f"未知响应级别: {level!r}"
         except Exception as exc:  # noqa: BLE001 — ERROR_CONTRACT：永不抛异常
             errors["response_layer"] = repr(exc)
         result = self._result(
-            not errors, lvl, tripped=tripped, actions=actions,
-            approver=approver_str, errors=errors,
+            not errors,
+            lvl,
+            tripped=tripped,
+            actions=actions,
+            approver=approver_str,
+            errors=errors,
         )
         self._trace("killswitch_response_reset", result, severity="info")
         return result
@@ -363,7 +454,9 @@ class KillSwitchResponseLayer:
         self._trace(
             "killswitch_md_change",
             self._result(True, "", actions=[f"write_killswitch_md:{target.name}"]),
-            severity="info", author=author_str, path=str(target),
+            severity="info",
+            author=author_str,
+            path=str(target),
         )
         return target
 

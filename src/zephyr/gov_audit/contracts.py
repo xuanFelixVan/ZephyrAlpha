@@ -30,6 +30,69 @@
 
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: contracts.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① AuditDiscoverer
+#   name_en: AuditDiscoverer
+#   intro: class AuditDiscoverer 源码 L183-L188
+#   desc: 公共方法（定义序）: discover_changes, get_changed_files；源码 L183-L188
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② AuditIndexer
+#   name_en: AuditIndexer
+#   intro: class AuditIndexer 源码 L191-L199
+#   desc: 公共方法（定义序）: build_index, lookup, cold_start_cache；源码 L191-L199
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ AuditWriter
+#   name_en: AuditWriter
+#   intro: 审计写入器契约——治本（test_p0_i2_construction_order.
+#   desc: 审计写入器契约——治本（test_p0_i2_construction_order.py）： 原 ABC 含 @abstractmethod 导致 ``AuditWriter()…；公共方法（定义序）: write_r…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ AuditQuery
+#   name_en: AuditQuery
+#   intro: class AuditQuery 源码 L290-L298
+#   desc: 公共方法（定义序）: get_status, get_history, get_issues；源码 L290-L298
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ IntegrityChecker
+#   name_en: IntegrityChecker
+#   intro: class IntegrityChecker 源码 L301-L306
+#   desc: 公共方法（定义序）: check, verify_merkle；源码 L301-L306
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A5 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: AuditDiscoverer, AuditIndexer, AuditWriter, AuditQuery, IntegrityChecker
+#   downstream: audit-orchestrator.*; pipeline_runner
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
+"""
+
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any

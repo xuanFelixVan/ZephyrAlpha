@@ -14,7 +14,11 @@
 # [TESTS] tests/compliance/test_compliance_tech_enabler.py
 # [A_module] module_id=MOD-CMP-003 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Compliance Tech Enabler — 合规技术使能器 (MOD-CMP-003)
+"""
+
+
+
+Compliance Tech Enabler — 合规技术使能器 (MOD-CMP-003)
 
 把声明式合规规则定义（配置/注册表载荷，Mapping 序列）物化为 CTR-P1-012
 ComplianceRule 生效规则集，供 ComplianceEngine（MOD-L10-001 OCP 扩展点）装载。
@@ -24,6 +28,46 @@ ComplianceRule 生效规则集，供 ComplianceEngine（MOD-L10-001 OCP 扩展�
   - 物化核心 materialize_compliance_rules 为纯函数（同输入必同输出，可单测）
   - 枚举未知值/必填缺失/重复 rule_id → rejected 结构化留痕（Fail-Closed，
     绝不把无法识别的 enforcement_action 静默降级为 log/warn）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: definitions 参数
+#   fields: 参数 definitions，类型注解 Iterable[Mapping[str, Any]]
+#   code: compliance_tech_enabler.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: now 参数
+#   fields: 参数 now（无注解）
+#   code: compliance_tech_enabler.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① materialize_compliance_rules
+#   name_en: materialize_compliance_rules
+#   intro: 声明式规则定义 → ComplianceRule 生效集（纯函数）。
+#   desc: 声明式规则定义 → ComplianceRule 生效集（纯函数）。 拒绝路径（Fail-Closed，全部留痕不静默）： - 非 Mapping 条目 / 必填字段缺失 / 空…；源码 L166-L214
+#   inputs: definitions now
+#   outputs: RuleEnablementResult
+# - id: A2
+#   name_zh: ② ComplianceTechEnabler
+#   name_en: ComplianceTechEnabler
+#   intro: 合规技术使能器（薄封装：定义源持有 + 活跃规则装载 + 最近结果留痕）。
+#   desc: 合规技术使能器（薄封装：定义源持有 + 活跃规则装载 + 最近结果留痕）。；公共方法（定义序）: load_active_rules, last_result；源码 L221-L254
+#   inputs: definition_source
+#   outputs: 返回值
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: RuleEnablementResult
+#   name_en: RuleEnablementResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-L10-001(ComplianceEngine 规则装载) ; MOD-CMP-004(合规持续运营 规则新鲜度核查)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -89,19 +133,14 @@ class RuleEnablementResult:
     active_count: int
 
 
-def _materialize_one(
-    definition: Mapping[str, Any], *, now: datetime
-) -> ComplianceRule | str:
+def _materialize_one(definition: Mapping[str, Any], *, now: datetime) -> ComplianceRule | str:
     """单条物化；返回 ComplianceRule 或拒绝原因字符串。"""
     for field_name in _REQUIRED_FIELDS:
         if field_name not in definition:
             return f"missing_required_field:{field_name}"
     enforcement_action = str(definition["enforcement_action"])
     if enforcement_action not in _ALLOWED_ENFORCEMENT_ACTIONS:
-        return (
-            f"unknown_enforcement_action:{enforcement_action}"
-            "（合法域 block/warn/log，不静默降级）"
-        )
+        return f"unknown_enforcement_action:{enforcement_action}（合法域 block/warn/log，不静默降级）"
     severity = str(definition["severity"])
     if severity not in _SEVERITY_RANK:
         return f"unknown_severity:{severity}（合法域 critical/high/medium/low）"
@@ -144,22 +183,14 @@ def materialize_compliance_rules(
 
     for index, definition in enumerate(definitions):
         if not isinstance(definition, Mapping):
-            rejected.append(
-                RuleDefinitionIssue(
-                    index=index, rule_id=None, reason="not_a_mapping"
-                )
-            )
+            rejected.append(RuleDefinitionIssue(index=index, rule_id=None, reason="not_a_mapping"))
             continue
         outcome = _materialize_one(definition, now=now)
         if isinstance(outcome, str):
             rejected.append(
                 RuleDefinitionIssue(
                     index=index,
-                    rule_id=(
-                        str(definition.get("rule_id"))
-                        if definition.get("rule_id") is not None
-                        else None
-                    ),
+                    rule_id=(str(definition.get("rule_id")) if definition.get("rule_id") is not None else None),
                     reason=outcome,
                 )
             )

@@ -23,7 +23,11 @@
 # F3: DynamicCapacityCalculator——sar/seal/float/nav 四约束取 min→max_qty+binding_constraint
 # O1: 执行计划 list[dict] / 时点决策 dict / 容量测算 dict
 # [/ALGO_FLOW]
-"""打板执行族（24_daban_strategy_detail §3.13 缺失#4 + §3.14 缺失#11/#12 施工，Phase 3）。
+"""
+
+
+
+打板执行族（24_daban_strategy_detail §3.13 缺失#4 + §3.14 缺失#11/#12 施工，Phase 3）。
 
 缺失#4 DabanExecutionAlgorithm（分笔建仓，容量管理执行层）：v1.9.3 升级
 arXiv:2607.28323 Passive Market Impact——限价单填充概率随距 midprice 距离指数
@@ -46,6 +50,48 @@ spec 转写登记（语义锁定不偏移）：
      不可达——逐字保留 spec 分支结构，概率模型校准属 Phase 3 回测工程。
   ② AMBUSH 的 limit_price 为 spec 占位标记 "涨停价-0.01"（实际限价由 G22
      执行层按价格笼子规则解析，本类只产出时点/单型决策）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: daban_execution.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① DabanExecutionAlgorithm
+#   name_en: DabanExecutionAlgorithm
+#   intro: 打板分笔建仓（v1.9.2 补，v1.9.3 升级 passive impact 理论背书）。
+#   desc: 打板分笔建仓（v1.9.2 补，v1.9.3 升级 passive impact 理论背书）。依赖 G22 执行层。；公共方法（定义序）: estimate_fill_probability, estimate_sar…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② DabanTimingDecision
+#   name_en: DabanTimingDecision
+#   intro: 打板时点决策（v1.9.3 补，追板 vs 埋伏权衡）。
+#   desc: 打板时点决策（v1.9.3 补，追板 vs 埋伏权衡）。；公共方法（定义序）: decide_timing；源码 L172-L210
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ DynamicCapacityCalculator
+#   name_en: DynamicCapacityCalculator
+#   intro: 打板容量动态测算（v1.9.3 补，实时流动性→可下仓量）。
+#   desc: 打板容量动态测算（v1.9.3 补，实时流动性→可下仓量）。与 §3.4 13 约束链（静态阈值）互补。；公共方法（定义序）: calculate；源码 L214-L247
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: DabanExecutionAlgorithm, DabanTimingDecision, DynamicCapacityCalculator
+#   downstream: （首批实盘接线前暂无；G22 执行层落线后由 sleeve 组装消费）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations
@@ -132,7 +178,9 @@ class DabanTimingDecision:
     max_ambush_wait_sec: int = 120  # 埋伏最长等待120秒
     seal_strength_required: float = 0.05  # 封流比>5%才追板
 
-    def decide_timing(self, near_limit: bool, seal_strength: float, volume_surge: float, time_to_close_min: int) -> dict:
+    def decide_timing(
+        self, near_limit: bool, seal_strength: float, volume_surge: float, time_to_close_min: int
+    ) -> dict:
         """打板时点决策：封板概率≥85%+封流比≥5%→追板；50-85%→板前埋伏；<50%→观望。"""
         seal_prob = self._estimate_seal_probability(near_limit, seal_strength, volume_surge)  # 封板概率估算
         if seal_prob >= self.chase_threshold and seal_strength >= self.seal_strength_required:
@@ -182,8 +230,15 @@ class DynamicCapacityCalculator:
         sar_capacity = int(self.max_sar_tolerance * depth / max((1 + concentration) * eta, 0.001))
         seal_capacity = int(seal_volume * self.max_seal_ratio)  # ② 封单量约束
         float_capacity = int(float_shares * self.max_float_turnover)  # ③ 流通盘约束
-        nav_capacity = int(nav * self.nav_ratio_cap / price) if price > 0 else 0  # ④ NAV 约束（C12）；price<=0→0（Fail-Closed）
-        capacities = {"sar": sar_capacity, "seal": seal_capacity, "float": float_capacity, "nav": nav_capacity}  # 取最小值
+        nav_capacity = (
+            int(nav * self.nav_ratio_cap / price) if price > 0 else 0
+        )  # ④ NAV 约束（C12）；price<=0→0（Fail-Closed）
+        capacities = {
+            "sar": sar_capacity,
+            "seal": seal_capacity,
+            "float": float_capacity,
+            "nav": nav_capacity,
+        }  # 取最小值
         binding = min(capacities, key=capacities.get)
         return {
             "max_qty": capacities[binding],

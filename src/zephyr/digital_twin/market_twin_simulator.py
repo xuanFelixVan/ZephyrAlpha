@@ -14,7 +14,10 @@
 # [TESTS] tests/digital_twin/test_market_twin_simulator.py
 # [A_module] module_id=MOD-DT-001 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""MarketTwinSimulator — 数字孪生市场仿真（MOD-DT-001，Phase1 规则 ABM 纯 CPU）。
+"""
+
+
+MarketTwinSimulator — 数字孪生市场仿真（MOD-DT-001，Phase1 规则 ABM 纯 CPU）。
 
 B10-01864（AUD-DRAFT-001-DIGEST P2 波 P2-W08，CAND-DIGITALT-001，A1 §29.23）：
 **多智能体**（信念→愿望→意图 BDI 规则库注入）+ **订单驱动撮合**（限价
@@ -27,6 +30,48 @@ B10-01864（AUD-DRAFT-001-DIGEST P2 波 P2-W08，CAND-DIGITALT-001，A1 §29.23�
 验协议面）；ex_core 撮合=实盘订单路由（零交集）；strategy_simulator=单
 策略 NAV 回放（无多智能体/无情绪传染）。随机源不内置——需要噪声的规则
 由调用方在注入规则库闭包内自带。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: initial_price 参数
+#   fields: 参数 initial_price（无注解）
+#   code: market_twin_simulator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: rules 参数
+#   fields: 参数 rules（无注解）
+#   code: market_twin_simulator.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: adjacency 参数
+#   fields: 参数 adjacency（无注解）
+#   code: market_twin_simulator.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: contagion_weight 参数
+#   fields: 参数 contagion_weight（无注解）
+#   code: market_twin_simulator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① MarketTwinSimulator
+#   name_en: MarketTwinSimulator
+#   intro: 数字孪生市场仿真器（Phase1 规则 ABM：BDI + 三模式撮合 + 情绪传染 + 统计校验）。
+#   desc: 数字孪生市场仿真器（Phase1 规则 ABM：BDI + 三模式撮合 + 情绪传染 + 统计校验）。；公共方法（定义序）: register_agent, submit_order, match, step_sent…
+#   inputs: initial_price rules adjacency contagion_weight clock audit_sink stats…
+#   outputs: 返回值
+#   （注：A1 之后另有 15 个公共定义未列入（含 15 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（16 定义）
+#   name_en: public defs
+#   intro: MarketTwinSimulator
+#   downstream: 运行时装配批（规则库绑定 / 邻接网络注入 / 审计路由绑定 / 压测验证编排装配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -92,9 +137,7 @@ class MatchMode(str, Enum):
 def _check_simulated(flag: bool, *, what: str) -> None:
     """simulated=True 硬标注校验：任何输出载荷禁止伪造为实盘。"""
     if flag is not True:
-        raise MarketTwinError(
-            f"{what} simulated 硬标注必须为 True（仅验证压测，不可实盘），got {flag!r}"
-        )
+        raise MarketTwinError(f"{what} simulated 硬标注必须为 True（仅验证压测，不可实盘），got {flag!r}")
 
 
 @dataclass(frozen=True)
@@ -255,7 +298,7 @@ def _autocorr_lag1(xs: tuple[float, ...] | list[float]) -> float:
     a, b = xs[:-1], xs[1:]
     ma = sum(a) / (n - 1)
     mb = sum(b) / (n - 1)
-    cov = sum((x - ma) * (y - mb) for x, y in zip(a, b)) / (n - 1)
+    cov = sum((x - ma) * (y - mb) for x, y in zip(a, b, strict=False)) / (n - 1)
     va = sum((x - ma) ** 2 for x in a) / (n - 1)
     vb = sum((y - mb) ** 2 for y in b) / (n - 1)
     if va == 0 or vb == 0:
@@ -297,9 +340,7 @@ class MarketTwinSimulator:
             raise MarketTwinError(f"contagion_weight 须 ∈ [0,1]: {contagion_weight!r}")
         self._last_price = float(initial_price)
         self._rules = rules
-        self._adjacency: dict[str, tuple[str, ...]] = {
-            str(k): tuple(v) for k, v in (adjacency or {}).items()
-        }
+        self._adjacency: dict[str, tuple[str, ...]] = {str(k): tuple(v) for k, v in (adjacency or {}).items()}
         self._w = float(contagion_weight)
         self._clock = clock or datetime.datetime.now
         self._audit_sink = audit_sink
@@ -372,11 +413,17 @@ class MarketTwinSimulator:
         self._orders[order.order_id] = order
         self._remaining[order.order_id] = order.quantity
         self._order_seq[order.order_id] = self._order_counter
-        self._audit("order_submitted", {
-            "order_id": order.order_id, "agent_id": order.agent_id,
-            "side": order.side.value, "order_type": order.order_type.value,
-            "price": order.price, "quantity": order.quantity,
-        })
+        self._audit(
+            "order_submitted",
+            {
+                "order_id": order.order_id,
+                "agent_id": order.agent_id,
+                "side": order.side.value,
+                "order_type": order.order_type.value,
+                "price": order.price,
+                "quantity": order.quantity,
+            },
+        )
 
     # ── 撮合（三模式） ────────────────────────────────────────────────────
 
@@ -384,18 +431,21 @@ class MarketTwinSimulator:
         return [
             self._orders[oid]
             for oid, rem in self._remaining.items()
-            if rem > 0
-            and self._orders[oid].side is side
-            and self._orders[oid].order_type is order_type
+            if rem > 0 and self._orders[oid].side is side and self._orders[oid].order_type is order_type
         ]
 
     def _execute(self, buy: Order, sell: Order, price: float, qty: int, mode: MatchMode) -> Trade:
         self._trade_counter += 1
         trade = Trade(
             trade_id=f"trd-{self._trade_counter:05d}",
-            buy_order_id=buy.order_id, sell_order_id=sell.order_id,
-            buy_agent=buy.agent_id, sell_agent=sell.agent_id,
-            price=price, quantity=qty, mode=mode, matched_at=self._clock(),
+            buy_order_id=buy.order_id,
+            sell_order_id=sell.order_id,
+            buy_agent=buy.agent_id,
+            sell_agent=sell.agent_id,
+            price=price,
+            quantity=qty,
+            mode=mode,
+            matched_at=self._clock(),
         )
         self._remaining[buy.order_id] -= qty
         self._remaining[sell.order_id] -= qty
@@ -405,11 +455,17 @@ class MarketTwinSimulator:
         self._position[sell.agent_id] -= qty
         self._last_price = price
         self._trades.append(trade)
-        self._audit("trade_matched", {
-            "trade_id": trade.trade_id, "price": price, "quantity": qty,
-            "buy_agent": trade.buy_agent, "sell_agent": trade.sell_agent,
-            "mode": mode.value,
-        })
+        self._audit(
+            "trade_matched",
+            {
+                "trade_id": trade.trade_id,
+                "price": price,
+                "quantity": qty,
+                "buy_agent": trade.buy_agent,
+                "sell_agent": trade.sell_agent,
+                "mode": mode.value,
+            },
+        )
         return trade
 
     def _match_continuous(self) -> list[Trade]:
@@ -476,18 +532,10 @@ class MarketTwinSimulator:
             candidates = sorted(set(candidates) | {self._last_price})
 
         def _buy_qty(p: float) -> int:
-            return sum(
-                self._remaining[o.order_id]
-                for o in bids
-                if o.order_type is OrderType.MARKET or o.price >= p
-            )
+            return sum(self._remaining[o.order_id] for o in bids if o.order_type is OrderType.MARKET or o.price >= p)
 
         def _sell_qty(p: float) -> int:
-            return sum(
-                self._remaining[o.order_id]
-                for o in asks
-                if o.order_type is OrderType.MARKET or o.price <= p
-            )
+            return sum(self._remaining[o.order_id] for o in asks if o.order_type is OrderType.MARKET or o.price <= p)
 
         best_price, best_qty = None, 0
         for p in candidates:  # 升序遍历 → 平局天然取低价（确定性）
@@ -501,14 +549,16 @@ class MarketTwinSimulator:
             bids,
             key=lambda o: (
                 0 if o.order_type is OrderType.MARKET else 1,
-                -(o.price or 0.0), self._order_seq[o.order_id],
+                -(o.price or 0.0),
+                self._order_seq[o.order_id],
             ),
         )
         sell_side = sorted(
             asks,
             key=lambda o: (
                 0 if o.order_type is OrderType.MARKET else 1,
-                o.price or 0.0, self._order_seq[o.order_id],
+                o.price or 0.0,
+                self._order_seq[o.order_id],
             ),
         )
         trades: list[Trade] = []
@@ -573,14 +623,17 @@ class MarketTwinSimulator:
             raise MarketTwinError("rules 未注入（BDI 规则库缺失，Fail-Closed 不空转）")
         self._round_no += 1
         view = MarketView(
-            last_price=self._last_price, round_no=self._round_no,
+            last_price=self._last_price,
+            round_no=self._round_no,
             sentiments=dict(sorted(self._sentiment.items())),
         )
         submitted = 0
         for agent_id in sorted(self._cash):
             agent = TwinAgent(
-                agent_id=agent_id, cash=self._cash[agent_id],
-                position=self._position[agent_id], sentiment=self._sentiment[agent_id],
+                agent_id=agent_id,
+                cash=self._cash[agent_id],
+                position=self._position[agent_id],
+                sentiment=self._sentiment[agent_id],
             )
             belief = float(self._rules.belief_fn(agent, view))
             desire = int(self._rules.desire_fn(agent, belief, view))
@@ -593,13 +646,20 @@ class MarketTwinSimulator:
         sentiments = self.step_sentiment()
         self._price_history.append(self._last_price)
         self._volume_history.append(float(sum(t.quantity for t in trades)))
-        self._audit("round_done", {
-            "round_no": self._round_no, "orders_submitted": submitted,
-            "trades": len(trades), "last_price": self._last_price,
-        })
+        self._audit(
+            "round_done",
+            {
+                "round_no": self._round_no,
+                "orders_submitted": submitted,
+                "trades": len(trades),
+                "last_price": self._last_price,
+            },
+        )
         return RoundResult(
-            round_no=self._round_no, orders_submitted=submitted,
-            trades=trades, sentiments=sentiments,
+            round_no=self._round_no,
+            orders_submitted=submitted,
+            trades=trades,
+            sentiments=sentiments,
         )
 
     # ── 统计特征校验（注入统计器优先，缺省内置） ──────────────────────────
@@ -617,9 +677,7 @@ class MarketTwinSimulator:
         px = tuple(float(p) for p in (prices if prices is not None else self._price_history))
         vol = tuple(float(v) for v in (volumes if volumes is not None else self._volume_history))
         if len(px) < 5:
-            raise MarketTwinError(
-                f"统计校验数据不足: 价格点 {len(px)} < 5（Fail-Closed 拒出结论）"
-            )
+            raise MarketTwinError(f"统计校验数据不足: 价格点 {len(px)} < 5（Fail-Closed 拒出结论）")
         rets = tuple(math.log(px[i] / px[i - 1]) for i in range(1, len(px)))
         series = TwinSeries(prices=px, volumes=vol, returns=rets)
         if self._stats_verifier is not None:
@@ -631,22 +689,23 @@ class MarketTwinSimulator:
             ek = _excess_kurtosis(rets)
             va = _autocorr_lag1(vol)
             th = self._thresholds
-            passed = (
-                vc > th.min_volatility_clustering
-                and ek > th.min_excess_kurtosis
-                and va > th.min_volume_autocorr
-            )
+            passed = vc > th.min_volatility_clustering and ek > th.min_excess_kurtosis and va > th.min_volume_autocorr
             report = StylizedFactReport(
-                volatility_clustering=vc, excess_kurtosis=ek, volume_autocorr=va,
+                volatility_clustering=vc,
+                excess_kurtosis=ek,
+                volume_autocorr=va,
                 passed=passed,
                 detail="三项指标均超阈值" if passed else "存在未达阈值指标",
             )
-        self._audit("stylized_check", {
-            "volatility_clustering": report.volatility_clustering,
-            "excess_kurtosis": report.excess_kurtosis,
-            "volume_autocorr": report.volume_autocorr,
-            "passed": report.passed,
-        })
+        self._audit(
+            "stylized_check",
+            {
+                "volatility_clustering": report.volatility_clustering,
+                "excess_kurtosis": report.excess_kurtosis,
+                "volume_autocorr": report.volume_autocorr,
+                "passed": report.passed,
+            },
+        )
         return report
 
     # ── 查询 ─────────────────────────────────────────────────────────────
@@ -660,8 +719,7 @@ class MarketTwinSimulator:
         """孪生体快照（agents 按 id 确定性排序；simulated=True 硬标注）。"""
         return TwinSnapshot(
             agents=tuple(
-                (aid, self._cash[aid], self._position[aid], self._sentiment[aid])
-                for aid in sorted(self._cash)
+                (aid, self._cash[aid], self._position[aid], self._sentiment[aid]) for aid in sorted(self._cash)
             ),
             last_price=self._last_price,
             round_no=self._round_no,

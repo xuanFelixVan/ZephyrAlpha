@@ -14,7 +14,11 @@
 # [TESTS] tests/zephyr/data/test_cleaning_rule_engine.py
 # [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""数据清洗规则引擎（CAND-DAT-007 / B10-01347）。
+"""
+
+
+
+数据清洗规则引擎（CAND-DAT-007 / B10-01347）。
 
 min_build_spec 对齐（深挖裁定=做 P0）：
   规则DSL + 阈值滚动分位自进化（上下护栏 + 超限人工审批）接入 quality_gate 并输出拦截报告。
@@ -28,6 +32,93 @@ min_build_spec 对齐（深挖裁定=做 P0）：
   - run_quality_gate(engine, table, rows)：输出形态对齐
     gov_enforcement.rule_enforcement.quality_gate.apply_quality_gate
     （返回 (rows, stats)），stats 增列 intercepted/by_rule/pending_approvals 拦截报告。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: specs 参数
+#   fields: 参数 specs，类型注解 list[dict[str, Any]]
+#   code: cleaning_rule_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: engine 参数
+#   fields: 参数 engine，类型注解 CleaningRuleEngine
+#   code: cleaning_rule_engine.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: table 参数
+#   fields: 参数 table，类型注解 str
+#   code: cleaning_rule_engine.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: rows 参数
+#   fields: 参数 rows，类型注解 list[dict[str, Any]]
+#   code: cleaning_rule_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RollingQuantileThreshold
+#   name_en: RollingQuantileThreshold
+#   intro: 滚动分位阈值：窗口观测重算，护栏内自动生效，超限挂起待人工审批。
+#   desc: 滚动分位阈值：窗口观测重算，护栏内自动生效，超限挂起待人工审批。 Args: quantile: 分位点（如 0.99 表示取窗口 99% 分位为阈值） window: 滚动窗口…；公共方法（定义序）: current…
+#   inputs: quantile window guard_lower guard_upper seed
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② CleaningRule
+#   name_en: CleaningRule
+#   intro: 单条清洗规则（DSL 解析产物）。
+#   desc: 单条清洗规则（DSL 解析产物）。 op 语义（violation 判定）： gt: value > rule.value → 违规（上限） lt: value < rule.v…；公共方法（定义序）: is_viol…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ parse_rules
+#   name_en: parse_rules
+#   intro: 解析 DSL（dict 列表）为 CleaningRule 列表。
+#   desc: 解析 DSL（dict 列表）为 CleaningRule 列表。 Raises: CleaningRuleError: op 非法 / 必填字段缺失 / action 非法；源码 L300-L342
+#   inputs: specs
+#   outputs: list[CleaningRule]
+# - id: A4
+#   name_zh: ④ CleaningRuleEngine
+#   name_en: CleaningRuleEngine
+#   intro: 清洗规则引擎：对 dict 记录逐行判定，flag 打标 / block 拦截。
+#   desc: 清洗规则引擎：对 dict 记录逐行判定，flag 打标 / block 拦截。 Usage: engine = CleaningRuleEngine(parse_rules([…；公共方法（定义序）: evaluat…
+#   inputs: rules
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ run_quality_gate
+#   name_en: run_quality_gate
+#   intro: 对批量记录执行清洗规则门控，输出拦截报告。
+#   desc: 对批量记录执行清洗规则门控，输出拦截报告。 对齐 gov_enforcement.rule_enforcement.quality_gate.apply_quality_gate…；源码 L463-L496
+#   inputs: engine table rows
+#   outputs: tuple[list[dict[str, Any]], dict[str, A…
+# - id: A6
+#   name_zh: ⑥ main
+#   name_en: main
+#   intro: 入口——待实现。
+#   desc: 入口——待实现。；源码 L499-L500
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A6 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[CleaningRule]
+#   name_en: list[CleaningRule]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.ch_writer
+# - id: O2
+#   name_zh: tuple[list[dict[str, Any]], dict[str, A…
+#   name_en: tuple[list[dict[str, Any]], dict[str, A…
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.ch_writer
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
 """
 
 from __future__ import annotations
