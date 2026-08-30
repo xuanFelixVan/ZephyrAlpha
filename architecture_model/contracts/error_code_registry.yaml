@@ -86,6 +86,23 @@ error_codes:
   class: AssemblyError
   module: zephyr.autonomy_core.context.context_assembler
   file: src/zephyr/autonomy_core/context/context_assembler.py
+# --- 2026-08-30 aiarch 清单 2.4 残余收口（MOD-FACTORY-001/002 占位码转正） ---
+- code: ZA-AC-0006
+  class: KnowledgeClassifierError
+  module: zephyr.autonomy_core.module_factory.knowledge_classifier
+  file: src/zephyr/autonomy_core/module_factory/knowledge_classifier.py
+  introduced: '2026-08-30: aiarch 2.4 残余收口 MOD-FACTORY-001 占位码 ZA-FACTORY-UNREGISTERED-001 转正'
+- code: ZA-AC-0007
+  class: ModuleMapperError
+  module: zephyr.autonomy_core.module_factory.module_mapper
+  file: src/zephyr/autonomy_core/module_factory/module_mapper.py
+  introduced: '2026-08-30: aiarch 2.4 残余收口 MOD-FACTORY-002 占位码 ZA-FACTORY-UNREGISTERED-002 转正'
+# --- 2026-08-30 aiarch 清单 2.7 技能库自动生成路径 MVP（MOD-INF-059） ---
+- code: ZA-AC-0008
+  class: SkillTrajectoryMinerError
+  module: zephyr.autonomy_core.skills.skill_trajectory_miner
+  file: src/zephyr/autonomy_core/skills/skill_trajectory_miner.py
+  introduced: '2026-08-30: aiarch 清单 2.7 轨迹挖掘器（11号文 §4.4 P2-1）；初取 ZA-AC-0006 与当日并发批次（module_factory）撞号，按并集 max+1 改取 0008'
 - code: ZA-BT-0001
   class: WalkForwardError
   module: zephyr.backtest.core.walk_forward
@@ -2432,6 +2449,11 @@ error_codes:
   module: zephyr.security.ops.ops_maturity
   file: src/zephyr/security/ops/ops_maturity.py
   introduced: '2026-08-24: AI-K3-T4-INF053 MOD-INF-055 新增'
+- code: ZA-SC-0038
+  class: FixPatternMinerError
+  module: zephyr.security.ops.fix_pattern_miner
+  file: src/zephyr/security/ops/fix_pattern_miner.py
+  introduced: '2026-08-30: aiarch 2.2 残余 MOD-INF-055 新增'
 - code: ZA-IT-0011
   class: ExamTriggerError
   module: zephyr.intelligence.model_profiling.exam_trigger_scheduler

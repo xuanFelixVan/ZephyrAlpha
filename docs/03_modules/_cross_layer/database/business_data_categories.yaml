@@ -2216,3 +2216,19 @@
   frequency: 日频
   data_source: [akshare]
   blueprint: null
+
+- category_id: market_kline_global
+  name: "外盘日K线（全球指数+商品：HSI恒生/N225日经225/KOSPI首尔综合/CL WTI原油/GC COMEX黄金；GAP-F-23 外盘12迷你卡缺口，designmemos 清单 #6）"
+  engine: clickhouse
+  database: c1_market
+  table: kline_global
+  schema_file: schemas/categories/market_kline_global.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "新浪免费通道无 SLA；index_global_hist_sina 单次上限1000行（≈4年深度）；源早期年份 volume/position 可为 0；USDCNH 无源登记跳过（预留 symbol）"
+  calc_mode: lazy
+  frequency: 日频
+  data_source: [akshare]
+  blueprint: null

@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] 构造期阈值非法/语料注入类型错误 -> ModuleMapperError；classify 未通过（verdict!=classified）的知识强行映射 -> ModuleMapperError；schema_plan 生成 LLM 失败/JSON 校验失败 -> ModuleSpec(verdict="error") 不抛（fail-closed）；注册表 YAML 缺失/解析失败 -> ModuleMapperError
+# [ERROR_CONTRACT] 构造期阈值非法/语料注入类型错误 -> ModuleMapperError(ZA-AC-0007)；classify 未通过（verdict!=classified）的知识强行映射 -> ModuleMapperError；schema_plan 生成 LLM 失败/JSON 校验失败 -> ModuleSpec(verdict="error") 不抛（fail-closed）；注册表 YAML 缺失/解析失败 -> ModuleMapperError
 # [TESTS] tests/autonomy/test_module_mapper.py
 # [A_module] module_id=MOD-FACTORY-002 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -106,7 +106,9 @@ _FTS_CANDIDATE_LIMIT: Final[int] = 200
 
 
 class ModuleMapperError(Exception):
-    """模块映射器构造/调用契约错误（占位 ZA-FACTORY-UNREGISTERED-002）。"""
+    """ZA-AC-0007: 模块映射器构造/调用契约错误（阈值非法/语料类型错误/注册表 YAML 不可读）。"""
+
+    error_code = "ZA-AC-0007"
 
 
 @runtime_checkable

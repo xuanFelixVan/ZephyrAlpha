@@ -244,8 +244,12 @@ class IndexValuationComputeProvider(IngestProviderBase):
         pe_pct = self._expanding_percentile(df["pe_ttm"])
         cape_5y_pct = self._expanding_percentile(cape_5y)
 
-        # 7. 计算 ERP
-        erp = self._compute_erp(df["pe_ttm"], bond_series)
+        # 7. 计算 ERP（df 为整数索引，需换日期索引与 bond_series（日期索引）对齐，
+        #    否则 reindex(RangeIndex) 全 NaN——同 _compute_cape_5y 的 date_index 口径）
+        pe_by_date = pd.Series(
+            df["pe_ttm"].values, index=pd.DatetimeIndex(df["trade_date"].values)
+        )
+        erp = self._compute_erp(pe_by_date, bond_series)
         erp_pct = self._expanding_percentile(erp)
 
         # 8. 组装行

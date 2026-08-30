@@ -6,12 +6,14 @@
 """security.ops — 自治运维闭环子包（16号文 §4.3/§4.4）。
 
 统一事件流消费 → 诊断 → auto_fix_engine 三通道判决管线（incident_pipeline，
-MOD-INF-053）与自治运维成熟度 A-L0→A-L2 状态机（ops_maturity，MOD-INF-055）。
+MOD-INF-053）、自治运维成熟度 A-L0→A-L2 状态机（ops_maturity，MOD-INF-055）
+与修复模式挖掘 Learn 回写件（fix_pattern_miner，MOD-INF-055）。
 """
 
-from . import incident_pipeline, ops_maturity
+from . import fix_pattern_miner, incident_pipeline, ops_maturity
 
 __all__ = [
+    "fix_pattern_miner",
     "incident_pipeline",
     "ops_maturity",
 ]

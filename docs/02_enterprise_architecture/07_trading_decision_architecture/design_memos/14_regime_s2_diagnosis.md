@@ -5,9 +5,9 @@ title: "S2 评分算法时点错配诊断与治本方案——capitulation 过�
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.5.2"
+version: "0.5.3"
 date: "2026-08-15"
-last_updated: "2026-08-15"
+last_updated: "2026-08-30"
 topic: regime_s2_diagnosis
 scope: 07_trading_decision_architecture
 doc_id: 14_regime_s2_diagnosis
@@ -572,6 +572,9 @@ def _capitulation_daily(
 
 > **lookback / halflife 分阶段**（v0.4.0 给占位值，见 §6 开放问题 1）：trigger 阶段（近 1 月有 capitulation）`halflife=10, lookback=20`；confirm 阶段复苏确认可能在危机后数月（§4.12.4 政策底→市场底滞后 1.5-3 月），衰减应更慢 `halflife=30, lookback=40`（占位，待 §4.5 walk-forward 校准）。施工时按 stage 分参数化，不能全局一个值。
 
+> **参数终值回写（v0.5.3，2026-08-30；Owner 2026-08-29 裁定选项 1 落产，commit c5c23036）**：walk-forward 组合扫描（12 组预注册，IS 2010-2018 / OOS 2019-2026，三事件全程未参与选型）终选 **`base_mode=precrisis_z + wick_mode=close_pos + vol_filter_mode=pct250 + agg_mode=decayed_max`**，`halflife=10 / lookback=20 / trigger≥60` 未动（生产接线实证：[overlay_signals_builder.py:339-340](file:///d:/ZephyrAlpha/src/zephyr/regime/overlay_signals_builder.py#L339)）。验收六层（[验证报告 2026-08-29](file:///d:/ZephyrAlpha/docs/_working/reports/2026-08-29-s2-walkforward-validation.md) §三）：WFE=3.44 ✅ / 负样本 fp@≥60=0.8% ✅ / 参数平移 ±10% 命中率零变化 ✅ / **MC 置换 p=0.87 ❌（诚实标注，DSR N=17 备案）** / MinTRL 低置信标注 ✅ / 预注册纪律 ✅。三事件窗口峰值：2015=0 / 2020=40.2 / 2024=90；2024 接线后窗口末日 73.1≥60，walk-forward 权威路径 confirm 于 Δ=+3/+4/+5d 触发（2026-08-30 实证）。
+> **数值边界勘正**：本节"单日 90 分仅贡献 ~12 分（w₀≈0.13）"对应 `agg_mode=wavg`（归一化衰减加权和）；终选 `decayed_max`（衰减峰值）语义为 `max(daily_i × e^(-age_i·0.693/halflife))`——单日 90 分当日即 90，逐日 ×0.933 衰减（2024-10-10 峰值 90 → 10-15 衰减至 73.1 实证）。分阶段参数（trigger halflife=10/lookback=20）维持 trigger 档单档运行，confirm 档（30/40）未启用。
+
 ### 4.2 P1-E9b: valuation 基本面化（CAPE/PB 优先）或阈值校准
 
 **现状**（[overlay_features.py:282-303](file:///d:/ZephyrAlpha/src/zephyr/regime/features/overlay_features.py#L282) `s2_valuation_score`）：`close/rolling_max(250, min_periods=20)`，分档 `pos<0.60→20 / <0.50→40 / <0.40→60 / <0.30→80`。用价格回撤代理估值。**调用方**（[overlay_signals_builder.py:310](file:///d:/ZephyrAlpha/src/zephyr/regime/overlay_signals_builder.py#L310)）仅 `s2_valuation_score(close)` 传 1 参数。
@@ -677,6 +680,8 @@ def s2_valuation_score_fundamental(
 > 若表未含 CAPE，需先建 CAPE 计算管道（5 年 EPS 通胀调整均值），工期可能超 P1，故先做路 B。
 > ERP 绝对值/巴菲特指标字段若表未含，路 A 仍可降级运行（仅 CAPE+PB 分位，少 15 分加分）——
 > 这两个 v0.4.1 补强项是"锦上添花"非阻断，Step 0 勘探无字段时不阻断路 A。
+
+> **参数终值回写（v0.5.3，2026-08-30）**：**路 A 已建成并接线**（越过路 B 直做治本）——`c1_market.index_valuation_daily` 已回填（中证官网主源 + 内部真 CAPE/分位计算，000300/000905 双指数 2010-01~2026-08 年度连续无断点）；生产路径 [overlay_signals_builder.py:511-547](file:///d:/ZephyrAlpha/src/zephyr/regime/overlay_signals_builder.py#L511) 路 A 优先、路 B 降级告警留痕；评分映射即本节 CAPE 分位三档（<10%→80 / <25%→60 / <40%→40）。实证（2026-08-30 dump + ClickHouse 勘探）：2024 事件 valuation 0→80（09-13 cape_5y_pct=0.0003）→60（10-08 起分位回升）；**2015 事件日 cape_5y_pct=0.34、2020 事件日 0.448 → 0 分经勘探判定为正确信号**（泡沫顶急跌后/疫情底反弹两周后均非深度低估，非数据缺口——2020 底部 03-23 分位 0.298 已正确产出 40 分档）。字段就绪度：`cape_5y_pct` ✅ / `pe_pct` ✅ / `erp`、`erp_pct` ❌ 全表 NULL（ERP 管道未建，已登记 known_data_gaps accepted）/ `pb_pct`、`broken_net_ratio`、`buffett_ratio` ❌（一期暂缺/二期预留）——路 A 当前以 CAPE 分位主轴运行（少 ERP/PB/巴菲特最高 +25 加分，2024 confirm 实证不依赖加分项）。开放问题 2（路 A 数据就绪度）就此关闭。
 
 ### 4.3 P1-E9c: spring 复用 wyckoff_engine + 深度分级 + 验收 checklist
 
@@ -924,6 +929,8 @@ def s2_three_yang_flag(
 
 > **strong_confirm 门槛适配**：当前 `keys_gte: {"three_yang": 1}`，升级后建议改为 `{"three_yang": 2}`（标准红三兵及以上），三个白武士(3)作加分但非必要。
 
+> **参数终值回写（v0.5.3，2026-08-30；Owner 2026-08-29 裁定落产，commit c5c23036）**：three_yang 终选 **`grading="v2_index"`**——d5 位置维度回撤门槛 **-30%→-15%**（指数单一口径，Owner 裁定）+ 删 d4 误抄维 + 核心维合取定级/辅助维分级（生产接线实证：[overlay_signals_builder.py:367-370](file:///d:/ZephyrAlpha/src/zephyr/regime/overlay_signals_builder.py#L367)，签名已扩 5 参数 OHLCV）；strong_confirm 门槛 `three_yang≥2` 已按本节建议落码（regime_detector.py S2 strong_confirm keys_gte）。walk-forward 验证（验证报告 §四）：legacy 基线 IS/OOS = 0%/0%，v2_index **IS 12.9%（4/31 簇）/ OOS 0%**——方向正确（IS 破零）但强度不足以单独承载 strong_confirm；OOS 簇（2019-05/2020-02~03/2022/2024-10/2025-04）以 V 反转型为主，红三兵本非该类底部必经形态，与本节"strong_confirm 辅助维"定位一致。三事件窗口 three_yang 仍全 0（2026-08-30 dump 实证），strong_confirm 阶段三事件均不可达（另卡 spring/total≥250）。
+
 ### 4.5 P1-E9 验证闭环与防过拟合方法论栈 ★ v0.4.3 重写
 
 > **v0.4.3 重写说明**：v0.4.2 历程声称"§4.5 新增防过拟合方法论栈"但正文未落地（名实不符）。本次重写为完整方法论栈，核心问题：**N=3 历史事件样本极小**，传统 PBO/CSCV 需 N≥10-12 不可用（[archimedes #819 2026-06](https://github.com/)），须用事件研究法 + 预注册 + DSR + CPCV + MinTRL 替代。
@@ -1029,6 +1036,7 @@ v0.4.1 记录 4 个 + v0.4.3 补 2 个 = 6 个 2026 研究发现的更优算法�
 
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
+| 2026-08-30 | 0.5.3 | 参数终值回写（S2 校准专项收尾，roadmap A1 残余）：§4.1 回写 capitulation 终选组合（precrisis_z+close_pos+pct250+decayed_max，halflife=10/lookback=20/trigger≥60 未动）+ 六层验收结果 + wavg/decayed_max 数值边界勘正；§4.2 回写路 A 已建成接线（index_valuation_daily CAPE 分位主轴）+ 2015/2020 的 0 分经勘探判定为正确信号 + ERP 列全空登记 + 开放问题 2 关闭；§4.4b 回写 three_yang v2_index 终值（d5=-15%）+ IS 12.9%/OOS 0% 验证结论 | Owner 2026-08-29 裁定选项 1 落产（commit c5c23036）后参数终值须回写详设真源；B4 重跑（2026-08-30，A1/B4/A2/B1 全 PASS）+ EVT-2024 design_match 翻 true（confirm Δ=+3/+4/+5d 实证）后终值定稿 |
 | 2026-08-15 | 0.5.2 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-02）——§1.4/§2.2-2.4 裁定散文紧凑化；§4.1 三层升级解释精简；§4.3 现状段改指针（诊断详见 §1.2.3）；§4.5 防过拟合 6 层方法论栈列表转段落；§4.6 演进方向 6 条精简；§6 开放问题 9/10/11 与 §4.0 警告去重（改指针+保留关键阈值） | 文档压缩治理（第一轮 ab3df58d9d 后续）；章节编号零改动，参数/裁定/锚点零丢失 |
 | 2026-08-09 | 0.4.5 | 文档头统一：frontmatter 补 owner/language/topic/scope + 字段顺序统一（doc_id/priority/depends_on/related_modules/related_issues 扩展字段保留），H1 去文件名前缀与 title 对齐；文末补建本「修订记录」章节（§7）；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾）；14 号此前无修订记录章节，补齐对齐 01_design_memo_management_spec §4.3 规范 |
 | 2026-08-12 | 0.5.0 | 第十一轮审查（AI-15）：① §0.1 事件经过表回填 2026-08-07 两个 commit（eb3db21bd8 合成 VIX 后备 + 981d59d8cc S1 correlation 门槛校准）+ 新增因果链完整性注记（数据层根因 vs 算法层根因两层区分）；② 新增 §0.3 已施工设施盘点（通用规则 #11：12 维度函数/合成 VIX/wyckoff_engine/design_match 字段/诊断脚本/测试/治理登记 + P1-E9 未施工清单）；③ §4.4b 校正实参名（s2_three_yang_flag 传 pct_change 非 close）；④ §6 开放问题新增 12-14（ARCH 状态三方不一致 / 12+13 号闭环叙事未同步 / 10 号 §4.12.10 十二维体系演进对齐） | 因果时间线完整性（thresholds 过高/NLP stub=0/合成 VIX 缺失的第一层根因及修复方案此前未入本文档）；规则 #11 基础设施盘点合规；跨文档一致性缺口登记（不越界改 10/12/13 号） |

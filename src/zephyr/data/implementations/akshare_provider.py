@@ -5726,11 +5726,15 @@ class AkshareIngestProvider(IngestProviderBase):
         GAP-B3-03（2026-08-24）：新快照非空时先 yield 闭旧批（旧 open 版本同键
         闭合行，valid_to=新快照生效日）再 yield 开新批（valid_to=NULL），
         修复日快照 SCD-2 从不闭合缺陷；空快照不闭旧（无可接续版本）。
+        2026-08-30 修复：闭旧批/开新批统一 7 列（开新批 valid_to=None）——
+        BufferedWriter 列子句由首个 FetchResult 固定，混宽批次合并 flush 会导致
+        CH TSV 解析 Code 27（000300 闭旧 7 列 + 开新 6 列混合实证）。
         """
         import akshare as ak
 
         table = payload.table or _TBL_INDEX_CONSTITUENT
         columns = ["trade_date", "index_code", "symbol", "weight", "action", "data_source"]
+        columns_with_valid_to = [*columns, "valid_to"]
         t0 = time.monotonic()
         fallback_date = payload.end.isoformat() if payload.end else datetime.date.today().isoformat()
         for raw_code, l3_code in self._INDEX_MEMBER_CODES:
@@ -5747,15 +5751,15 @@ class AkshareIngestProvider(IngestProviderBase):
                         )
                         yield FetchResult(
                             table=table,
-                            columns=[*columns, "valid_to"],
+                            columns=columns_with_valid_to,
                             rows=closure_rows,
                             last_key=trade_date,
                             elapsed_sec=time.monotonic() - t0,
                         )
                 yield FetchResult(
                     table=table,
-                    columns=columns,
-                    rows=rows,
+                    columns=columns_with_valid_to,
+                    rows=[(*row, None) for row in rows],
                     last_key=trade_date,
                     elapsed_sec=time.monotonic() - t0,
                 )

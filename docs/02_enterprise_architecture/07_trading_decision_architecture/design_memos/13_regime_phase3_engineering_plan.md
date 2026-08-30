@@ -4,10 +4,10 @@ doc_type: architecture_view
 title: "Phase 3 工程规划——降态数 + 两阶段校准 + NLP 管道 + S2/T3 数据激活"
 owner: ZephyrAlpha-Owner
 language: zh
-status: draft
-version: "0.4.1"
+status: active
+version: "0.4.2"
 date: "2026-08-15"
-last_updated: "2026-08-15"
+last_updated: "2026-08-30"
 topic: regime_phase3_engineering_plan
 scope: 07_trading_decision_architecture
 doc_id: 13_regime_phase3_engineering_plan
@@ -40,6 +40,9 @@ related_modules:
 
 > ## B4 S2 重验注记（AI-WAVE1-001，2026-08-28）
 > E9 落码后按生产路径（OverlaySignalsConstructor.build_for_date → RegimeDetector.record_transition，B4 ±5 交易日窗口语义）重跑 S2 三事件：**0/3 未命中，design_match 维持 false，本文档保持 draft**（status→active 条件未达成）。环境一致性对照：同日 run_phase2_validation --first-batch 权威重跑 A1 PASS + B4 PASS(3/3，S1 三事件 Δ=+1d/+0d/+2d)。差距详见 14 号同日重验注记——核心：E9a capitulation 三事件 ±25 交易日全程 0.0（三过滤器联玩过严+衰减权重 w₀≈0.09 致 trigger≥60 不可达）；E9b 2020/2024 valuation 路 B=0（路 A CAPE 分位管道未建、未接线）；2015 confirm 另卡 fund=0。
+>
+> ## status→active 注记（S2 校准专项收尾，2026-08-30）
+> 升级条件（§9-9：P1-E9 完成且 B4 S2 翻 true）已达成：① Owner 2026-08-29 裁定选项 1（接受低置信接线）落产（commit c5c23036：capitulation=precrisis_z+close_pos+pct250+decayed_max、three_yang=v2_index d5=-15%、valuation 路A CAPE 分位管道）；② EVT-2024-RECOVERY design_match 翻 true——权威重跑 `run_phase2_validation.py` 实证 **B4 PASS(4/4)**：S1 3/3 + S2 1/1（EVT-2024 confirm @2024-09-27 Δ=+3d，total_score≈307），A1/A2/B1 同批全 PASS（A2 OOS/IS=1.042、B1 ECE=5.4%）；③ 2015/2020 维持 false 并补边界注记（capitulation 主峰距事件日 14+/12+ 交易日超 halflife=10 衰减物理极限 + fund=0 跨工程项 P1-E4，转 14 号开放问题 3）；④ 14 号 §4.1/§4.2/§4.4b 参数终值已回写（v0.5.3）。**低置信注记**：capitulation 组合 MC 置换 p=0.87 未过预注册门槛（DSR N=17 备案），S2 激活按"低置信部分通过"口径接纳；three_yang v2_index OOS 命中 0% 维持辅助维定位。详见 docs/_working/reports/2026-08-30-s2-closure-report.md。
 
 # Phase 3 工程规划——降态数 + 两阶段校准 + NLP 管道 + S2/T3 数据激活
 

@@ -1607,10 +1607,12 @@ class TestAKShareData015CapabilitiesContinued:
         # len=0→weight 降级 0）；data_source 细化为 akshare_csindex
         assert len(results) == 5  # GAP-B3-02（2026-08-24）：+中证800 五指数
         assert results[0].error is None
-        assert results[0].columns == ["trade_date", "index_code", "symbol", "weight", "action", "data_source"]
+        # 2026-08-30：闭旧批/开新批统一 7 列（开新批 valid_to=None）——
+        # BufferedWriter 列子句由首个 FetchResult 固定，混宽批次合并 flush 会 Code 27
+        assert results[0].columns == ["trade_date", "index_code", "symbol", "weight", "action", "data_source", "valid_to"]
         assert results[0].rows == [
-            ("2026-08-14", "000300.SH", "600000.SH", 0, "", "akshare_csindex"),
-            ("2026-08-14", "000300.SH", "000001.SZ", 0, "", "akshare_csindex"),
+            ("2026-08-14", "000300.SH", "600000.SH", 0, "", "akshare_csindex", None),
+            ("2026-08-14", "000300.SH", "000001.SZ", 0, "", "akshare_csindex", None),
         ]
         # 五指数代码顺序固定
         assert [r.rows[0][1] for r in results] == [

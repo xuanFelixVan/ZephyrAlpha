@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] 构造期配置非法（空词表/权重非正/阈值越界）-> KnowledgeClassifierError；LLM 网关 status!=ok / JSON 解析失败 / schema 校验失败 -> ClassificationResult(verdict="error") 不抛（fail-closed 不产半成品分类）
+# [ERROR_CONTRACT] 构造期配置非法（空词表/权重非正/阈值越界）-> KnowledgeClassifierError(ZA-AC-0006)；LLM 网关 status!=ok / JSON 解析失败 / schema 校验失败 -> ClassificationResult(verdict="error") 不抛（fail-closed 不产半成品分类）
 # [TESTS] tests/autonomy/test_knowledge_classifier.py
 # [A_module] module_id=MOD-FACTORY-001 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -141,7 +141,9 @@ DEFAULT_TAG_SYNONYMS: Final[dict[str, str]] = {
 
 
 class KnowledgeClassifierError(Exception):
-    """构造期配置非法（占位 ZA-FACTORY-UNREGISTERED-001）。"""
+    """ZA-AC-0006: 知识分类器构造期配置非法（空词表/权重非正/阈值越界）。"""
+
+    error_code = "ZA-AC-0006"
 
 
 # ── LLM 网关注入协议（MOD-INF-051 既有 infer 签名，只消费不修改）──

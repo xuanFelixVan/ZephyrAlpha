@@ -31,6 +31,11 @@ GAP-F-D3 实测（2026-08-23，本模块核查函数产出）：us_index=DJI/IXI
 2026-08-22 单日快照）；kline_us_daily 仅 1 个空 symbol 19 行（垃圾数据）；
 kline_index 1,097 只无全球指数；macro_data 无 DXY/USDCNH/WTI/黄金/美债10Y；
 FRED/EIA 在 ClickHouse 无落库表。→ 4/12 有覆盖（A50 仅单日盘中快照），8 缺口。
+
+2026-08-30 接线落地（designmemos 清单 #6）：kline_global 新表承载
+HSI/N225/KOSPI/CL/GC（首采 9,967 行）；DXY/美债10Y 由 macro_data FRED 通道
+承载（FRED_DXY/FRED_DGS10_US 已刷新）；USDCNH 免费日频源全失效登记跳过。
+FOREIGN_WATCHLIST 探针已挂接实绩表——本核查器 missing 口径随接线实时反映。
 """
 
 from __future__ import annotations
@@ -66,6 +71,8 @@ class TableProbeSpec:
 
     table: str  # 全限定表名
     symbols: tuple[str, ...]  # 候选 symbol（IN 查询）
+    symbol_col: str = "symbol"  # 标的列名（macro_data=indicator_name）
+    date_col: str = "trade_date"  # 日期列名（macro_data=report_date）
 
 
 @dataclass(frozen=True, slots=True)
@@ -124,81 +131,87 @@ FOREIGN_WATCHLIST: Final[tuple[ForeignTarget, ...]] = (
     ForeignTarget("dow_jones", "道琼斯", "index", (TableProbeSpec("c1_market.us_index", ("DJI", ".DJI")),), ""),
     ForeignTarget("nasdaq", "纳斯达克", "index", (TableProbeSpec("c1_market.us_index", ("IXIC", ".IXIC")),), ""),
     ForeignTarget("sp500", "标普500", "index", (TableProbeSpec("c1_market.us_index", ("SPX", ".INX")),), ""),
-    ForeignTarget("hsi", "恒生指数", "index", (), "hsi_index"),
-    ForeignTarget("nikkei", "日经225", "index", (), "nikkei_index"),
-    ForeignTarget("kospi", "KOSPI", "index", (), "kospi_index"),
+    ForeignTarget("hsi", "恒生指数", "index", (TableProbeSpec("c1_market.kline_global", ("HSI",)),), "hsi_index"),
+    ForeignTarget("nikkei", "日经225", "index", (TableProbeSpec("c1_market.kline_global", ("N225",)),), "nikkei_index"),
+    ForeignTarget("kospi", "KOSPI", "index", (TableProbeSpec("c1_market.kline_global", ("KOSPI",)),), "kospi_index"),
     ForeignTarget("a50", "富时A50", "futures", (TableProbeSpec("c1_market.us_futures_intraday", ("CHA50CFD",)),), ""),
-    ForeignTarget("dxy", "美元指数", "forex", (), "dxy_forex"),
+    ForeignTarget("dxy", "美元指数", "forex",
+                  (TableProbeSpec("c1_market.macro_data", ("FRED_DXY",), "indicator_name", "report_date"),),
+                  "dxy_forex"),
     ForeignTarget("usdcnh", "离岸人民币", "forex", (), "usdcnh_forex"),
-    ForeignTarget("wti", "WTI原油", "commodity", (), "wti_commodity"),
-    ForeignTarget("gold", "黄金", "commodity", (), "gold_commodity"),
-    ForeignTarget("ust10y", "美债10Y", "bond", (), "ust10y_bond"),
+    ForeignTarget("wti", "WTI原油", "commodity", (TableProbeSpec("c1_market.kline_global", ("CL",)),), "wti_commodity"),
+    ForeignTarget("gold", "黄金", "commodity", (TableProbeSpec("c1_market.kline_global", ("GC",)),), "gold_commodity"),
+    ForeignTarget("ust10y", "美债10Y", "bond",
+                  (TableProbeSpec("c1_market.macro_data", ("FRED_DGS10_US",), "indicator_name", "report_date"),),
+                  "ust10y_bond"),
 )
 
-#: 缺口标的采集配置位（草案；禁真连外网采集——接线走 tasks.yaml + CTR 流程）
+#: 缺口标的采集配置位（2026-08-30 接线落地：草案 hint 已按实证裁定修订为实绩口径——
+#: 5 只价格型落 c1_market.kline_global，DXY/美债10Y 走 macro_data FRED 既有通道，
+#: USDCNH 免费日频源全失效登记跳过；tasks.yaml 已登记，详见 .runtime/foreign8_wiring/20260830_report.md）
 FOREIGN_COLLECTOR_SLOTS: Final[dict[str, dict[str, str]]] = {
     "hsi_index": {
         "target": "恒生指数",
-        "provider_hint": "akshare stock_hk_index_daily_em / sina hf 港股指数",
-        "capability_hint": "hk_index_daily（新品类，business_data_categories 待登记）",
-        "table_hint": "c1_market.kline_hk_index（新表，CTR 流程）",
-        "schedule_hint": "daily_postmarket",
+        "provider_hint": "akshare stock_hk_index_daily_sina(HSI)（index_global_em 已于 1.18.75 下架，实证不可用）",
+        "capability_hint": "global_index_daily（新品类；provider 接线待 akshare 窗口，tasks.yaml 已 disabled 登记）",
+        "table_hint": "c1_market.kline_global（已建，CTR 2026-08-30）",
+        "schedule_hint": "daily_kline",
     },
     "nikkei_index": {
         "target": "日经225",
-        "provider_hint": "akshare index_global_em / sina hf 全球指数",
-        "capability_hint": "global_index_daily（新品类待登记）",
-        "table_hint": "c1_market.kline_global_index（新表，CTR 流程）",
-        "schedule_hint": "daily_postmarket",
+        "provider_hint": "akshare index_global_hist_sina(日经225指数)（sina 全球指数历史，实测 1000 行上限≈4年）",
+        "capability_hint": "global_index_daily（同上品类复用）",
+        "table_hint": "c1_market.kline_global（同表，symbol=N225）",
+        "schedule_hint": "daily_kline",
     },
     "kospi_index": {
         "target": "KOSPI",
-        "provider_hint": "akshare index_global_em / sina hf 全球指数",
+        "provider_hint": "akshare index_global_hist_sina(首尔综合指数)（源末日常见 close=0 坏点，采集端已过滤）",
         "capability_hint": "global_index_daily（同上品类复用）",
-        "table_hint": "c1_market.kline_global_index（同上表）",
-        "schedule_hint": "daily_postmarket",
+        "table_hint": "c1_market.kline_global（同表，symbol=KOSPI）",
+        "schedule_hint": "daily_kline",
     },
     "dxy_forex": {
         "target": "美元指数",
-        "provider_hint": "sina hf 外汇（DINIW）/ akshare currency",
-        "capability_hint": "forex_daily（新品类待登记）",
-        "table_hint": "c1_market.kline_forex（新表，CTR 流程）",
-        "schedule_hint": "daily_postmarket",
+        "provider_hint": "fred_provider DTWEXBGS（sina DINIW/DX 实证失效、东财不可达；FRED 广义美元指数为项目既有命名口径）",
+        "capability_hint": "macro_fred（既有能力，macro_fred_incremental 任务承载）",
+        "table_hint": "c1_market.macro_data（indicator_name=FRED_DXY）",
+        "schedule_hint": "daily_capital",
     },
     "usdcnh_forex": {
         "target": "离岸人民币",
-        "provider_hint": "sina hf 外汇（USDCNH）/ akshare currency",
-        "capability_hint": "forex_daily（同品类复用）",
-        "table_hint": "c1_market.kline_forex（同表）",
-        "schedule_hint": "daily_postmarket",
+        "provider_hint": "无可用免费日频历史源（sina forex JSONP 404 / hf null / 东财不可达 / FRED 无 CNH / currencyscoop 需付费 key）——登记跳过",
+        "capability_hint": "forex_daily（待有源后登记）",
+        "table_hint": "c1_market.kline_global（预留，symbol=USDCNH）",
+        "schedule_hint": "daily_kline",
     },
     "wti_commodity": {
         "target": "WTI原油",
-        "provider_hint": "sina hf 商品（CL）/ EIA provider（库存面）",
-        "capability_hint": "commodity_daily（新品类待登记）",
-        "table_hint": "c1_market.kline_commodity（新表，CTR 流程）",
-        "schedule_hint": "daily_postmarket",
+        "provider_hint": "akshare futures_foreign_hist(CL)（sina hf 外盘期货日K，实测 2016 起可用）",
+        "capability_hint": "a50_futures_daily（provider 既有通用机制：payload.symbols 覆盖默认品种直写 kline_global）",
+        "table_hint": "c1_market.kline_global（已建，symbol=CL）",
+        "schedule_hint": "pre_market",
     },
     "gold_commodity": {
         "target": "黄金",
-        "provider_hint": "sina hf 商品（GC）/ akshare spot_goods",
-        "capability_hint": "commodity_daily（同品类复用）",
-        "table_hint": "c1_market.kline_commodity（同表）",
-        "schedule_hint": "daily_postmarket",
+        "provider_hint": "akshare futures_foreign_hist(GC)（COMEX 黄金期货，sina hf 同上通道）",
+        "capability_hint": "a50_futures_daily（同上通用机制复用）",
+        "table_hint": "c1_market.kline_global（已建，symbol=GC）",
+        "schedule_hint": "pre_market",
     },
     "ust10y_bond": {
         "target": "美债10Y",
-        "provider_hint": "fred_provider 已 prod（DGS10）——CH 无落库表（GAP-F-D3 实测），接线位现成",
-        "capability_hint": "fred_macro（fred_provider 既有能力，落库表 CTR 流程）",
-        "table_hint": "c1_market.macro_rates 或复用 macro_data（CTR 裁定）",
-        "schedule_hint": "daily_postmarket",
+        "provider_hint": "fred_provider DGS10（prod 现成，macro_fred_incremental 承载；2026-08-30 已一次性刷新至 2026-08-27）",
+        "capability_hint": "macro_fred（既有能力）",
+        "table_hint": "c1_market.macro_data（indicator_name=FRED_DGS10_US）",
+        "schedule_hint": "daily_capital",
     },
 }
 
-#: 探测 SQL（§5.160.2 集中化；symbol IN 列表由代码内部转义构造）
+#: 探测 SQL（§5.160.2 集中化；symbol IN 列表由代码内部转义构造；列名经 TableProbeSpec 注入，默认 symbol/trade_date）
 _SQL_PROBE_TEMPLATE: Final = (
-    "SELECT symbol, count(), min(trade_date), max(trade_date) FROM {table} "
-    "WHERE symbol IN ({symbols}) GROUP BY symbol"
+    "SELECT {symbol_col}, count(), min({date_col}), max({date_col}) FROM {table} "
+    "WHERE {symbol_col} IN ({symbols}) GROUP BY {symbol_col}"
 )
 
 
@@ -287,7 +300,10 @@ def check_foreign_coverage(
     for target in targets:
         probes: list[TableProbe] = []
         for spec in target.probes:
-            sql = _SQL_PROBE_TEMPLATE.format(table=spec.table, symbols=_escape_symbols(spec.symbols))
+            sql = _SQL_PROBE_TEMPLATE.format(
+                table=spec.table, symbols=_escape_symbols(spec.symbols),
+                symbol_col=spec.symbol_col, date_col=spec.date_col,
+            )
             try:
                 tsv = run_query(sql)
             except Exception as e:  # noqa: BLE001 — 探测异常留痕不误判

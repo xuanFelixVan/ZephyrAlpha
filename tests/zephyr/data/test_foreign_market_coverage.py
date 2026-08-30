@@ -100,10 +100,10 @@ def test_probe_error_not_covered():
 
 def test_no_probe_table_target_missing_with_slot():
     report = check_foreign_coverage(query_fn=_fake_query, check_date=TD)
-    hsi = next(i for i in report.items if i.key == "hsi")
-    assert hsi.status == STATUS_MISSING
-    assert hsi.collector_slot == "hsi_index"
-    assert "无探测表" in hsi.note
+    usdcnh = next(i for i in report.items if i.key == "usdcnh")
+    assert usdcnh.status == STATUS_MISSING
+    assert usdcnh.collector_slot == "usdcnh_forex"
+    assert "无探测表" in usdcnh.note
 
 
 def test_gap_collector_slots_subset():

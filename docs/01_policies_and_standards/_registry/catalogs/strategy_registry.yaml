@@ -8768,7 +8768,7 @@ strategies:
   - strategy_id: "STR-MULTIFACTOR-069"
     name: "正 T / 反 T"
     name_zh: "正 T / 反 T"
-    aliases: []
+    aliases: ["vwap-reversion", "intraday-surge-fall"]
     strategy_class: "multifactor"
     sleeve: "alpha"
     alpha_sources: []
@@ -8777,16 +8777,18 @@ strategies:
     exit_logic: ""
     position_sizing: ""
     risk_rules: []
-    holding_period: "波段"
-    benchmark_id: "BMK-INDEX-001"
+    holding_period: "T+0"
+    benchmark_id: "BMK-ABSOLUTE-001"
+    universe_id: "UNI-RULE-001"
+    cost_model_id: "CST-ASTOCK-001"
     module_id: "MOD-STRATEGY"
     doc_ref: "29_factor_strategy_extraction.md §S13.1"
-    code_path: ""
-    lifecycle_status: "candidate"
-    status: "candidate"
+    code_path: "src/zephyr/pf_core/vwap_reversion_strategy.py + src/zephyr/pf_core/intraday_surge_fall_strategy.py"
+    lifecycle_status: "backtest"
+    status: "active"
     version: "1.0.0"
     created_at: "2026-08-15"
-    updated_at: "2026-08-15"
+    updated_at: "2026-08-30"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -8804,7 +8806,7 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
@@ -8840,15 +8842,15 @@ strategies:
     entry_role: "trigger"
     applies_to: ["stock"]
     tags: ["分时", "形态"]
-    algorithm_status: "pending_backtest"
-    evidence: ""
-    code_symbol: null
-    code_fingerprint: null
+    algorithm_status: "quantized"
+    evidence: "A4 首批激活（2026-08-30 strategy_activation 批）：伞条双锚——正 T（先买后卖）=vwap-reversion、反 T（先卖后买）=intraday-surge-fall（均 [MATURITY] production）；code_path 双锚（+ 连接，同 UNI-RULE-001 先例），code_symbol/指纹登记正 T 腿 VWAPReversionStrategy；策略级未回测"
+    code_symbol: "src/zephyr/pf_core/vwap_reversion_strategy.py::VWAPReversionStrategy"
+    code_fingerprint: "0feb65f29885c1bc"
 
   - strategy_id: "STR-VREV-017"
     name: "围绕手上品种做 T"
     name_zh: "围绕手上品种做 T"
-    aliases: ["被套自救"]
+    aliases: ["被套自救", "intraday-surge-fall"]
     strategy_class: "value_reversal"
     sleeve: "alpha"
     alpha_sources: []
@@ -8857,16 +8859,18 @@ strategies:
     exit_logic: ""
     position_sizing: ""
     risk_rules: []
-    holding_period: "波段"
-    benchmark_id: "BMK-INDEX-001"
+    holding_period: "T+0"
+    benchmark_id: "BMK-ABSOLUTE-001"
+    universe_id: "UNI-RULE-001"
+    cost_model_id: "CST-ASTOCK-001"
     module_id: "MOD-STRATEGY"
     doc_ref: "29_factor_strategy_extraction.md §S13.3"
-    code_path: ""
-    lifecycle_status: "candidate"
-    status: "candidate"
+    code_path: "src/zephyr/pf_core/intraday_surge_fall_strategy.py"
+    lifecycle_status: "backtest"
+    status: "active"
     version: "1.0.0"
     created_at: "2026-08-15"
-    updated_at: "2026-08-15"
+    updated_at: "2026-08-30"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -8884,7 +8888,7 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
@@ -8920,33 +8924,35 @@ strategies:
     entry_role: "trigger"
     applies_to: ["stock"]
     tags: []
-    algorithm_status: "pending_backtest"
-    evidence: ""
-    code_symbol: null
-    code_fingerprint: null
+    algorithm_status: "quantized"
+    evidence: "A4 首批激活（2026-08-30 strategy_activation 批）：代码锚定 intraday-surge-fall（IntradaySurgeFallStrategy，[MATURITY] production，tests/pf_core/test_intraday_surge_fall_strategy.py 单测）；语义对应=依赖既有底仓 T+0 round-trip（冲高回落卖出→回落买回），对齐围绕手上品种做 T、不开新仓；参考因子实证 FCT-INTRADAY-030 intraday_close IC=-0.0182（.runtime/factor_ic_backfill/20260830_report.md）；策略级未回测"
+    code_symbol: "src/zephyr/pf_core/intraday_surge_fall_strategy.py::IntradaySurgeFallStrategy"
+    code_fingerprint: "dbeae6c1cfdc518e"
 
   - strategy_id: "STR-VREV-018"
     name: "分时做 T"
     name_zh: "分时做 T"
-    aliases: ["量价背离低吸"]
+    aliases: ["量价背离低吸", "vwap-reversion"]
     strategy_class: "value_reversal"
     sleeve: "alpha"
-    alpha_sources: []
+    alpha_sources: ["FCT-INTRADAY-029"]
     variant_of: null
     entry_logic: "分时明显感觉跌的量价背离、跌不动、缩量时低吸，等反抽卖出。"
     exit_logic: ""
     position_sizing: ""
     risk_rules: []
-    holding_period: "波段"
-    benchmark_id: "BMK-INDEX-001"
+    holding_period: "T+0"
+    benchmark_id: "BMK-ABSOLUTE-001"
+    universe_id: "UNI-RULE-001"
+    cost_model_id: "CST-ASTOCK-001"
     module_id: "MOD-STRATEGY"
     doc_ref: "29_factor_strategy_extraction.md §S13.4"
-    code_path: ""
-    lifecycle_status: "candidate"
-    status: "candidate"
+    code_path: "src/zephyr/pf_core/vwap_reversion_strategy.py"
+    lifecycle_status: "backtest"
+    status: "active"
     version: "1.0.0"
     created_at: "2026-08-15"
-    updated_at: "2026-08-15"
+    updated_at: "2026-08-30"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -8964,7 +8970,7 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
@@ -9000,33 +9006,35 @@ strategies:
     entry_role: "trigger"
     applies_to: ["stock"]
     tags: ["分时", "缩量", "背离", "量价"]
-    algorithm_status: "pending_backtest"
-    evidence: ""
-    code_symbol: null
-    code_fingerprint: null
+    algorithm_status: "quantized"
+    evidence: "A4 首批激活（2026-08-30 strategy_activation 批）：代码锚定 vwap-reversion（VWAPReversionStrategy，[MATURITY] production）；语义对应=分时低吸等反抽→低于 VWAP 买入/回归卖出（均值回归腿）；因子实证 FCT-INTRADAY-029 intraday_vwap IC=-0.0174（.runtime/factor_ic_backfill/20260830_report.md）；条目量价背离/缩量滤子未量化（超出现有实现，诚实标注）；策略级未回测"
+    code_symbol: "src/zephyr/pf_core/vwap_reversion_strategy.py::VWAPReversionStrategy"
+    code_fingerprint: "0feb65f29885c1bc"
 
   - strategy_id: "STR-VREV-019"
     name: "卫星仓做 T"
     name_zh: "卫星仓做 T"
-    aliases: ["VWAP±1ATR"]
+    aliases: ["VWAP±1ATR", "vwap-reversion"]
     strategy_class: "value_reversal"
     sleeve: "alpha"
-    alpha_sources: []
+    alpha_sources: ["FCT-INTRADAY-029"]
     variant_of: null
     entry_logic: "卫星仓位做 T——价格>VWAP+1ATR 卖部分、<VWAP-1ATR 买回；配合 S14.27 核心-卫星仓位模型使用。"
     exit_logic: ""
     position_sizing: ""
     risk_rules: []
-    holding_period: "波段"
-    benchmark_id: "BMK-INDEX-001"
+    holding_period: "T+0"
+    benchmark_id: "BMK-ABSOLUTE-001"
+    universe_id: "UNI-RULE-001"
+    cost_model_id: "CST-ASTOCK-001"
     module_id: "MOD-STRATEGY"
     doc_ref: "29_factor_strategy_extraction.md §S13.6"
-    code_path: ""
-    lifecycle_status: "candidate"
-    status: "candidate"
+    code_path: "src/zephyr/pf_core/vwap_reversion_strategy.py"
+    lifecycle_status: "backtest"
+    status: "active"
     version: "1.0.0"
     created_at: "2026-08-15"
-    updated_at: "2026-08-15"
+    updated_at: "2026-08-30"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -9044,7 +9052,7 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
@@ -9080,10 +9088,10 @@ strategies:
     entry_role: "trigger"
     applies_to: ["stock"]
     tags: ["仓位", "均值回归", "形态", "量价"]
-    algorithm_status: "pending_backtest"
-    evidence: ""
-    code_symbol: null
-    code_fingerprint: null
+    algorithm_status: "quantized"
+    evidence: "A4 首批激活（2026-08-30 strategy_activation 批）：代码锚定 vwap-reversion（VWAPReversionStrategy，[MATURITY] production，tests/pf_core/test_vwap_reversion_strategy.py 单测）；语义对应=VWAP 偏离均值回归（条目 VWAP±1ATR 带宽↔实现 entry/exit_threshold）；因子实证 FCT-INTRADAY-029 intraday_vwap IC=-0.0174（.runtime/factor_ic_backfill/20260830_report.md）；策略级未回测"
+    code_symbol: "src/zephyr/pf_core/vwap_reversion_strategy.py::VWAPReversionStrategy"
+    code_fingerprint: "0feb65f29885c1bc"
 
   - strategy_id: "STR-VREV-020"
     name: "筑底/极限施压正向 T+0 纪律"

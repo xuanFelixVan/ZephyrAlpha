@@ -2443,3 +2443,95 @@ tasks:
   fallback_sources: []    # 源评估裁定：无免费稳定等价源（东财历史不可用/tushare 无 SGX 品种/SGX 官方付费）
   extra:
     description: "富时中国A50期货日K增量（akshare futures_foreign_hist 新浪源，单次全量本地窗口过滤；44号 §9.6 通道1）"
+
+  # ============== 外盘日K（GAP-F-23 / designmemos 清单 #6，2026-08-30 CTR 落地）==============
+  # 落库裁定：kline_index 实证纯沪深 1097 只（ES/NQ 先例=专用外表 us_futures_intraday），
+  # 外盘日K独立成表 c1_market.kline_global（DDL 真源 schemas/categories/market_kline_global.py，
+  # 列序与 a50_futures_daily 同构）。
+  # DXY/美债10Y 不单独登记任务：由既有 macro_fred_incremental 承载（DTWEXBGS/DGS10 在 fred_provider
+  # 22 序列 _FRED_SERIES 内，落 macro_data.FRED_DXY / FRED_DGS10_US），2026-08-30 已一次性刷新留证。
+- task_id: global_wti_daily_incremental
+  table: c1_market.kline_global
+  source: akshare
+  schedule: pre_market    # 盘前 08:30（NYMEX WTI 北京 ~05:00-06:00 已收，同 a50 槽位口径）
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: a50_futures_daily    # 机制复用：provider 以 payload.symbols 覆盖默认品种（futures_foreign_hist 通用新浪hf日K通道，列序与 kline_global INSERT_COLUMNS 同构）
+  symbols: ["CL"]         # NYMEX WTI 原油（新浪 hf 代码）
+  fallback_sources: []    # 无免费稳定等价源（同 a50 源评估裁定；东财不可达/tushare 无 NYMEX 品种）
+  extra:
+    description: "WTI原油日K增量（akshare futures_foreign_hist 新浪CL，单次全量本地窗口过滤；GAP-F-23 外盘8标的，清单#6）"
+
+- task_id: global_gold_daily_incremental
+  table: c1_market.kline_global
+  source: akshare
+  schedule: pre_market    # 盘前 08:30（COMEX 黄金北京 ~05:00-06:00 已收）
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: a50_futures_daily    # 机制复用同上
+  symbols: ["GC"]         # COMEX 黄金（新浪 hf 代码）
+  fallback_sources: []
+  extra:
+    description: "COMEX黄金日K增量（akshare futures_foreign_hist 新浪GC；GAP-F-23 外盘8标的，清单#6）"
+
+- task_id: global_hsi_daily_incremental
+  table: c1_market.kline_global
+  source: akshare
+  schedule: daily_kline   # 盘后 16:30（港股 16:00 收盘）
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: global_index_daily
+  symbols: ["HSI"]        # 源=akshare stock_hk_index_daily_sina(HSI)（index_global_em 已于 akshare 1.18.75 下架）
+  fallback_sources: []
+  extra:
+    disabled: true
+    disabled_reason: "capability global_index_daily 未入 akshare_provider（并发代理改修窗口，本工单禁改）；源接口实证可用（首采已落库 2,620 行 2016-01-04~2026-08-28），provider 封装落地后移除本两行即启用。"
+    description: "恒生指数日K增量（GAP-F-23 外盘8标的，清单#6；写 kline_global）"
+
+- task_id: global_nikkei_daily_incremental
+  table: c1_market.kline_global
+  source: akshare
+  schedule: daily_kline   # 盘后 16:30（日股 15:00 收盘，北京 14:00）
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: global_index_daily
+  symbols: ["N225"]       # 源=akshare index_global_hist_sina(日经225指数)（sina 全球指数历史，单次上限1000行≈4年）
+  fallback_sources: []
+  extra:
+    disabled: true
+    disabled_reason: "同 global_hsi_daily_incremental——capability 待 provider 窗口；首采已落库 1,000 行 2022-08-17~2026-08-28。"
+    description: "日经225日K增量（GAP-F-23 外盘8标的，清单#6；写 kline_global）"
+
+- task_id: global_kospi_daily_incremental
+  table: c1_market.kline_global
+  source: akshare
+  schedule: daily_kline   # 盘后 16:30（韩股 15:30 收盘，北京 14:30）
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: global_index_daily
+  symbols: ["KOSPI"]      # 源=akshare index_global_hist_sina(首尔综合指数)（源末日常见 close=0 坏点，采集端须过滤）
+  fallback_sources: []
+  extra:
+    disabled: true
+    disabled_reason: "同 global_hsi_daily_incremental——capability 待 provider 窗口；首采已落库 999 行 2022-08-03~2026-08-27。"
+    description: "韩国KOSPI日K增量（GAP-F-23 外盘8标的，清单#6；写 kline_global）"
+
+- task_id: global_usdcnh_daily_incremental
+  table: c1_market.kline_global
+  source: akshare
+  schedule: daily_kline
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: forex_daily
+  symbols: ["USDCNH"]
+  fallback_sources: []
+  extra:
+    disabled: true
+    disabled_reason: "登记跳过——免费日频历史源实证全失效（2026-08-30）：sina forex JSONP 404 / sina hf USDCNH 返回 null / 东财 push2his 不可达 / FRED 无 CNH 序列 / currencyscoop 需付费 key。有源后启用。"
+    description: "离岸人民币USDCNH日K（GAP-F-23 外盘8标的，清单#6；暂无源登记跳过）"

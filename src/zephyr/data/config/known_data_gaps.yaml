@@ -196,6 +196,50 @@ gaps:
     created: "2026-08-15"
     last_updated: "2026-08-15"
 
+  # === 2026-08-30: index_valuation_daily ERP 列全空（S2 收尾勘探实证，roadmap A1 残余）===
+  # 勘探背景：S2 校准专项 2015/2020 valuation 仍 0 的归因勘探（批次报告
+  #   docs/_working/reports/2026-08-30-s2-closure-report.md）。结论：2015/2020 的 0 分是
+  #   正确信号（事件日 cape_5y_pct=0.34/0.448，非深度低估），非数据缺口；但 ERP 列从未产出。
+  - id: "index_valuation_daily_erp_not_computed"
+    table: "c1_market.index_valuation_daily"
+    gap_type: "empty_column"
+    start_date: "2010-01-01"
+    end_date: null  # 持续中——ERP 计算管道未建
+    date_column: "trade_date"
+    detection_threshold: 1
+    status: "accepted"  # 已接受——valuation 路A 降级运行（仅 CAPE 分位主轴，少 ERP 最高 +10 加分）
+    root_cause: "erp/erp_pct 两列全表 NULL（000300 8009/8009 行、000905 4047/4047 行，2026-08-30 实测）：
+      ERP=1/PE−10Y 国债收益率的计算管道（含 10Y 国债收益率取数+分位化）从未施工。
+      同期 pb_mrq/pb_pct/broken_net_ratio/buffett_ratio 亦全空（schema 注释标注一期暂缺/二期预留）。
+      影响：S2 valuation 路A（s2_valuation_score_fundamental）的 ERP 分位/绝对值双确认加分项
+      （>5% +5 / >6% 熊末 +10）不可用；2015-09/2020-04 窗口 PE≈12 对应 ERP 估算 5.0%/5.7%，
+      若有管道两事件 valuation 可再 +5~+10（仍不足以改 confirm 判定，fund=0 才是主堵点）。"
+    resolution_plan: "建 ERP 计算管道：10Y 国债收益率（macro_data chinabond 已有）+ pe_ttm 即算；
+      随 PB/破净率/巴菲特指标二期一并回填后重跑 CAPE/ERP 分位。"
+    primary_alternative: "CAPE 分位主轴单独运行（已实证 2024 事件 valuation 0→60/80 有效）"
+    created: "2026-08-30"
+    last_updated: "2026-08-30"
+
+  # === 2026-08-30: index_valuation_daily 同键双行 + 399006 无数据 ===
+  - id: "index_valuation_daily_duplicate_rows"
+    table: "c1_market.index_valuation_daily"
+    gap_type: "upstream_data_corruption"
+    start_date: "2010-01-01"
+    end_date: null  # 持续中——双写并存未合并
+    date_column: "trade_date"
+    detection_threshold: 1
+    status: "monitoring"  # 消费端已有兜底（FINAL + drop_duplicates keep=last），转监控
+    root_cause: "同一 (trade_date, symbol) 存在双行：原始 akshare_csindex 行（仅 pe_ttm，cape 全空）
+      与 CAPE 回填批行并存（000300 cape_5y_pct NULL 5138/8009 行即原始行），表引擎 FINAL 未消除；
+      另 schema 注释列示的 399006（创业板指）实际 0 行，仅 000300/000905 有数据。
+      消费端 RegimeDataLoader._load_index_valuation 以 FINAL + drop_duplicates(keep=last) 兜底，
+      2026-08-30 dump 实证取值正确（PIT 对齐后分位与评分一致）。"
+    resolution_plan: "择期合并双写（OPTIMIZE/ALTER DELETE 原始空 cape 行或重写入校）；
+      399006 若需启用先跑历史回填；消费端兜底逻辑保留。"
+    primary_alternative: "消费端 FINAL+drop_duplicates 兜底（已在位，实证有效）"
+    created: "2026-08-30"
+    last_updated: "2026-08-30"
+
   # === 2026-08-15: tushare hk_hold 2026Q2 响应 ts_code 撞码（联调实证，AI-NORTH-001）===
   - id: "tushare_hk_hold_2026q2_code_collision"
     table: "c1_market.northbound_hold_snapshot"

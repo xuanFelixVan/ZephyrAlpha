@@ -17,7 +17,7 @@
 #   - BREAKOUT 主升浪启动点需人工量价识别，第一批 MVP 暂不纳入验证（见 todo）
 
 schema_version: "1.0"
-last_updated: "2026-08-08"
+last_updated: "2026-08-30"
 
 events:
   # ════════════════════════════════════════════════════════════════════
@@ -58,12 +58,17 @@ events:
   #           + wyckoff + policy + valuation + fund（confirm）
   # data_ready: true —— NLP(policy/bad_news_flat)+high/low(wyckoff) 数据管道 2026-08-08 已就绪
 #   （overlay 可算维度 25→31，policy/bad_news_flat=NLP，wyckoff=engine）。
-# design_match: false —— S2 Wyckoff 吸筹模板与 A 股复苏模式不符，2026-08-08 实证 0/3：
+# design_match 演变:
+#   2026-08-08 false —— S2 Wyckoff 吸筹模板与 A 股复苏模式不符，实证 0/3：
 #   ① capitulation（投降高潮）在底部触发，早于复苏确认事件日数周，落在 ±5 天窗口外；
 #   ② 2020/2024 为 V 反转/政策驱动型复苏，不走 Wyckoff 吸筹（valuation/wyckoff 合法不达标）；
 #   ③ 修复 capitulation 阈值(z>2→z>1)+valuation warmup bug 后仍 0/3，确认是设计域不符非 bug。
-#   待 S2 重设计（加政策/V 反转信号，解耦 capitulation 与复苏确认时滞）后激活。
-#   （原 12_regime_phase2_validation §10.4:431 裁定 S2 0/3 需 P2 数据 → P2 数据已就位，现升级为设计域不符）
+#   （原 12_regime_phase2_validation §10.4:431 裁定 S2 0/3 需 P2 数据 → P2 数据已就位，升级为设计域不符）
+#   2026-08-30 EVT-2024 翻 true —— P1-E9 治本 + Owner 2026-08-29 选项 1 裁定接线
+#   （capitulation=precrisis_z+close_pos+pct250+decayed_max、three_yang=v2_index、valuation 路A
+#   CAPE 分位管道，commit c5c23036）后，walk-forward 权威路径实证 confirm 于 Δ=+3/+4/+5d 触发
+#   （09-27/09-30/10-08，total_score 307~325）；2015/2020 维持 false（边界注记录各事件行内）。
+#   裁定口径：低置信部分通过（验证报告 2026-08-29 §七 + 收尾报告 2026-08-30）。
   # ════════════════════════════════════════════════════════════════════
   - id: EVT-2008-RECOVERY
     date: "2008-11-10"
@@ -79,7 +84,9 @@ events:
     desc: "股灾后反弹企稳，政策救市（降准降息+限制做空）见效"
     in_data_range: true
     data_ready: true
-    design_match: false  # capitulation 在 08-24/25 底部触发，早于 09-15 事件日 3 周（窗口外）
+    design_match: false  # 2026-08-30 边界注记：capitulation 主峰在 08-24~26 真实底部，距 09-15 事件日
+    # 14+ 交易日，超 halflife=10 衰减物理极限（walk-forward 实证窗口峰值 0）；confirm 另卡 fund=0
+    # （P1-E4 跨工程项）。属事件标注/阶段期望问题（14 号开放问题 3），非算法设计域不符。
 
   - id: EVT-2020-RECOVERY
     date: "2020-04-10"
@@ -88,7 +95,10 @@ events:
     desc: "全球流动性宽松，A股复苏反弹，北向资金回流"
     in_data_range: true
     data_ready: true
-    design_match: false  # V 型反转不走 Wyckoff 吸筹，valuation/wyckoff 合法不达标
+    design_match: false  # 2026-08-30 边界注记：capitulation 主峰在 03-23 疫情底（峰值 40.2），
+    # 距 04-10 事件日 12+ 交易日，超 halflife=10 衰减物理极限（事件日衰减至 21.6）；confirm 卡
+    # fund≤25/valuation 事件日 0（CAPE 分位 0.448 属"非深度低估"正确信号）。属事件标注/阶段期望
+    # 问题（14 号开放问题 3），非算法设计域不符。
 
   - id: EVT-2024-RECOVERY
     date: "2024-09-24"
@@ -97,7 +107,9 @@ events:
     desc: "924 政策行情启动：央行降准+创设互换便利+回购增持再贷款，A股暴涨（上证+4.15%→+8.06%）"
     in_data_range: true
     data_ready: true
-    design_match: false  # 政策驱动 V 反转不走 Wyckoff 吸筹，bad_news_flat/capitulation 不达标
+    design_match: true  # 2026-08-30 翻 true（Owner 选项 1 低置信接线 + AI 自裁定通道）：
+    # walk-forward 权威路径实证 confirm 于 09-27/09-30/10-08（Δ=+3/+4/+5d）触发，
+    # total_score 307~325；capitulation 峰值 90（10-10）/73.1（10-15）≥60 恒 0 锁死解除。
 
 # ════════════════════════════════════════════════════════════════════
 # BREAKOUT 主升浪启动点（待人工标注，第一批 MVP 暂不验证）

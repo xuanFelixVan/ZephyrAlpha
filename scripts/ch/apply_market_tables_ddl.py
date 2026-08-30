@@ -362,6 +362,7 @@ from schemas.categories.market_daban_board_event import MARKET_DABAN_BOARD_EVENT
 from schemas.categories.market_execution_report import MARKET_EXECUTION_REPORT_DDL
 from schemas.categories.market_index_valuation_daily import MARKET_INDEX_VALUATION_DAILY_DDL
 from schemas.categories.market_ipo_calendar import IPO_CALENDAR_DDL
+from schemas.categories.market_kline_global import KLINE_GLOBAL_DDL
 from schemas.categories.market_limit_up_pool import MARKET_LIMIT_UP_POOL_DDL
 from schemas.categories.market_news_sentiment_window import NEWS_SENTIMENT_WINDOW_DDL
 from schemas.categories.market_reconciliation_differences import (
@@ -408,6 +409,8 @@ _ALL_DDL: list[tuple[str, str]] = [
     # 2026-08-29 S2 估值路A + A22（44号 §9.6 通道1）
     ("c1_market.index_valuation_daily", MARKET_INDEX_VALUATION_DAILY_DDL),
     ("c1_market.a50_futures_daily", A50_FUTURES_DAILY_DDL),
+    # 2026-08-30 designmemos 清单 #6 / GAP-F-23：外盘日K线（HSI/N225/KOSPI/CL/GC）
+    ("c1_market.kline_global", KLINE_GLOBAL_DDL),
 ]
 
 # 增量迁移（ALTER TABLE ADD COLUMN IF NOT EXISTS）
@@ -457,6 +460,8 @@ _EXPECTED_ENGINES: dict[str, str] = {
     # 2026-08-29 S2 估值路A + A22：日频快照按 (symbol, trade_date) 同键替换幂等
     "index_valuation_daily": "ReplacingMergeTree",
     "a50_futures_daily": "ReplacingMergeTree",
+    # 2026-08-30 GAP-F-23：日频按 (symbol, trade_date) 同键替换幂等
+    "kline_global": "ReplacingMergeTree",
 }
 
 _DATABASE = "c1_market"

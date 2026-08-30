@@ -47113,6 +47113,20 @@ entries:
   desc_zh: "LiveStrategyAdapter 单元测试（57号文GAP-2）：配置校验/启动停止/心跳原子写与失败隔离/slot异常隔离（装配启动停止崩溃不扩散）/退避重启与EXHAUSTED熔断/run有界循环三通道收场，19用例。"
   desc_en: "Unit tests for LiveStrategyAdapter (57 GAP-2): config validation, lifecycle, heartbeat atomic write and failure isolation, per-slot crash isolation, backoff restart with exhaustion cap, bounded run loop shutdown channels. 19 cases."
   plain_zh: "给策略保姆配的体检表：装错配置会不会报错、策略崩了隔壁房间是不是真不受影响、崩了重拉超过3次会不会熔断停摆、到收盘点会不会自动收摊——共19项检查全过才算合格。"
+- module_path: src/zephyr/security/ops/fix_pattern_miner.py
+  domain_id: D_SECURITY
+  name_zh: "修复模式挖掘器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "MOD-INF-055。周期性挖掘修复策略库（data/fix_patterns/pattern_index.yaml）修复记录，产出修复策略库更新建议（只产建议不落库，A-L2封顶采纳走人工审批）与 Diagnose 匹配命中率统计（只观测不设目标值）；挖掘报告 append-only 落盘留痕。"
+- module_path: src/zephyr/autonomy_core/skills/skill_trajectory_miner.py
+  domain_id: D_AUTONOMY_CORE
+  name_zh: "技能轨迹挖掘器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把已验证研究假设和轨迹归纳成技能草稿，先查退役指纹库防换皮复活，产出未验证草稿到临时区等三道门验证"
 
 battle_map_steps:
 - step_id: BM-BUY-04

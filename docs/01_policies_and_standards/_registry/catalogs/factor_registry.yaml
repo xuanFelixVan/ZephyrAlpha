@@ -11855,15 +11855,15 @@ factors:
   created_at: "2026-08-24"
   updated_at: "2026-08-24"
   owner: "MOD-GOVERNANCE"
-  ic: -0.0399
-  ir: -0.2042
+  ic: -0.0634
+  ir: -0.4079
   decay_halflife: null
   decay_detection_method: null
   last_decay_scan_at: null
-  turnover: 0.5476
-  capacity: null
-  last_evaluated_at: "2026-08-24"
-  evidence: "ICBATCH 2026-08-24 .runtime/construction_20260823/_icbatch_factor_ic_summary.json 窗2026-02-23~08-21 universe≈UNI-RULE-001(N=5169) horizon=5 oos_pos=0.20 overfit=false n=118"
+  turnover: 0.5345
+  capacity: 2.18
+  last_evaluated_at: "2026-08-30"
+  evidence: "factor_ic_backfill 2026-08-30 .runtime/factor_ic_backfill/factor_ic_backfill_summary.json 窗2024-09-01~2026-08-28 universe≈UNI-RULE-001(N=5079) horizon=5 oos_pos=0.45 overfit=false n=477；decay未衰减至半值(|IC|随lag升至0.080平台)记null；capacity=周频top20等权10%ADV20约束均值2.18亿(min 0.13亿)"
   code_symbol: "src/zephyr/factor/momentum_factor.py::Momentum20d"
   code_fingerprint: null
   entry_role: "factor"
@@ -11895,15 +11895,15 @@ factors:
   created_at: "2026-08-24"
   updated_at: "2026-08-24"
   owner: "MOD-GOVERNANCE"
-  ic: 0.0216
-  ir: 0.1111
-  decay_halflife: null
+  ic: -0.0019
+  ir: -0.0106
+  decay_halflife: 2
   decay_detection_method: null
   last_decay_scan_at: null
-  turnover: 0.064
-  capacity: null
-  last_evaluated_at: "2026-08-24"
-  evidence: "ICBATCH 2026-08-24 _icbatch_factor_ic_summary.json 同窗同池 horizon=5 oos_pos=0.71 overfit=false n=118"
+  turnover: 0.0485
+  capacity: 0.28
+  last_evaluated_at: "2026-08-30"
+  evidence: "factor_ic_backfill 2026-08-30 .runtime/factor_ic_backfill/factor_ic_backfill_summary.json 窗2024-09-01~2026-08-28 universe≈UNI-RULE-001(N=5079) horizon=5 oos_pos=0.51 overfit=true* n=477；decay_halflife=2(原始1.76)=lag1 IC+0.0052快速穿零轴产物非真实衰减语义；capacity=周频top20等权10%ADV20约束均值0.28亿(min=0，含ADV20≈0停牌票)"
   code_symbol: "src/zephyr/factor/value_factor.py::ValueFactor"
   code_fingerprint: null
   entry_role: "factor"
@@ -11935,15 +11935,15 @@ factors:
   created_at: "2026-08-24"
   updated_at: "2026-08-24"
   owner: "MOD-GOVERNANCE"
-  ic: 0.0013
-  ir: 0.0055
+  ic: -0.0174
+  ir: -0.0878
   decay_halflife: null
   decay_detection_method: null
   last_decay_scan_at: null
-  turnover: 0.098
-  capacity: null
-  last_evaluated_at: "2026-08-24"
-  evidence: "ICBATCH 2026-08-24 _icbatch_factor_ic_summary.json 同窗同池 horizon=5 oos_pos=0.29 overfit=true* n=118"
+  turnover: 0.0637
+  capacity: 8.08
+  last_evaluated_at: "2026-08-30"
+  evidence: "factor_ic_backfill 2026-08-30 .runtime/factor_ic_backfill/factor_ic_backfill_summary.json 窗2024-09-01~2026-08-28 universe≈UNI-RULE-001(N=5079) horizon=5 oos_pos=0.48 overfit=false n=477；decay未衰减至半值记null；capacity=周频top20等权10%ADV20约束均值8.08亿(min 2.24亿)"
   code_symbol: "src/zephyr/factor/intraday_snapshot_factors.py::IntradayVwap"
   code_fingerprint: null
   entry_role: "factor"
@@ -11975,15 +11975,15 @@ factors:
   created_at: "2026-08-24"
   updated_at: "2026-08-24"
   owner: "MOD-GOVERNANCE"
-  ic: 0.001
-  ir: 0.0041
+  ic: -0.0182
+  ir: -0.0916
   decay_halflife: null
   decay_detection_method: null
   last_decay_scan_at: null
-  turnover: 0.102
-  capacity: null
-  last_evaluated_at: "2026-08-24"
-  evidence: "ICBATCH 2026-08-24 _icbatch_factor_ic_summary.json 同窗同池 horizon=5 oos_pos=0.29 overfit=true* n=118"
+  turnover: 0.0637
+  capacity: 8.1
+  last_evaluated_at: "2026-08-30"
+  evidence: "factor_ic_backfill 2026-08-30 .runtime/factor_ic_backfill/factor_ic_backfill_summary.json 窗2024-09-01~2026-08-28 universe≈UNI-RULE-001(N=5079) horizon=5 oos_pos=0.48 overfit=false n=477；decay未衰减至半值记null；capacity=周频top20等权10%ADV20约束均值8.10亿(min 2.24亿)"
   code_symbol: "src/zephyr/factor/intraday_snapshot_factors.py::IntradayClose"
   code_fingerprint: null
   entry_role: "factor"
