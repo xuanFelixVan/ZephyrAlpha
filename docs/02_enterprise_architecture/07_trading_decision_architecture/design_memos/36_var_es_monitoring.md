@@ -5,8 +5,8 @@ title: VaR/ES 与波动率监控
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.11.2"
-date: 2026-08-16
+version: "1.11.3"
+date: 2026-08-31
 topic: var_es_monitoring
 scope: 07_trading_decision_architecture
 ---
@@ -20,11 +20,11 @@ scope: 07_trading_decision_architecture
 > **未做事项及原因**：
 > - ~~FHS/QbSD/Vol-Targeting 三增强未做——裁定远期项，本期不落码。~~ **部分已闭环（2026-08-19 复核补正）**：FHS 引擎已施工（2026-08-18 AI-FHS-001，`fhs_engine.py` MOD-RK-26，#ARCH-121，CAND-AUTONOMYCORE-002 转正 MVP）——引擎就位，编排层接线（三触发+冷却期）仍属远期（tracker #147）；QbSD/Vol-Targeting 维持远期裁定（§3.16/§6）。
 > - ~~2026-08-16 双轮审查发现 F1 ES 插值口径、F2+F4 NaN/Inf 过滤等算法缺陷——已派单算法修复批 AI-RFIX-001，在途未合并。~~ **✅ 已闭环（2026-08-17 merge f8a14cf7；2026-08-19 复核补正）**：ES/VaR 分位数 `method='lower'` 统一（v1.11.0 ES 侧 + v1.11.2 VaR 侧）、NaN/Inf Fail-Closed 过滤（`nan_dropped` 计数+超阈值 raise）、POT 小样本降级（`pot_fallback_historical`）、5 级仓位上限单调性修正（ORANGE 0.7→0.5）全部落码实证。
-> - §3.11 daily_auditor 集成包装层（`run_var_backtest` + `log_entry_var`/`log_baseline`/`log_recalibration`）未落码——2026-08-19 复核新发现文档漂移（原标"✅ 已施工"不实，已就地勘正）；回测 4 法本体已在 `var_backtester.py`，裁定=未来工程-小型（包装层+3 日志方法，单批可闭环）。
+> - ~~§3.11 daily_auditor 集成包装层（`run_var_backtest` + `log_entry_var`/`log_baseline`/`log_recalibration`）未落码——2026-08-19 复核新发现文档漂移（原标"✅ 已施工"不实，已就地勘正）；回测 4 法本体已在 `var_backtester.py`，裁定=未来工程-小型（包装层+3 日志方法，单批可闭环）。~~ **✅ 已闭环（2026-08-31 复核补正）**：包装层四方法已落码 `daily_auditor.py`（`run_var_backtest` L1049 / `log_entry_var` L1199 / `log_baseline` L1220 / `log_recalibration` L1231，AI-NIGHT-001 包J commit 3508d0b3bb，2026-08-24），#ARCH-200 已核销（status=resolved：契约逐条核对与 §3.11/§3.10 全吻合，tests/risk/test_daily_auditor_var_backtest.py 33 测绿）。
 
 > ## 结案报告回填（2026-08-28 代码实证复核）
 > 原"FHS 编排层接线仍属远期（tracker #147）"已过时：ex_core/risk_layer_orchestrator.py 已实现 FHS 编排（I5/A5：should_switch_to_fhs 三触发+try_activate_fhs+10 日冷却/3 次永久禁用）；fhs_engine.py（MOD-RK-26）+var_backtester.py+var_breach_state_machine.py+var_intraday_recalc.py 全在位。
-> **仍真实未完工**：daily_auditor 集成包装层未落码（原报告已自勘正属实，维持登记）。
+> ~~**仍真实未完工**：daily_auditor 集成包装层未落码（原报告已自勘正属实，维持登记）。~~ **已过时（2026-08-31 复核）**：包装层已于 2026-08-24 落码（见上条），本文档施工项全部闭环，无遗留。
 
 # VaR/ES 与波动率监控
 
@@ -429,7 +429,7 @@ else:
 
 ### §3.11 回测验证端到端施工流程（daily_auditor 集成）
 
-> **⚠️ 施工状态（2026-08-19 AI-NIGHT-001 复核补正）**：本节 `run_var_backtest`/`log_entry_var`/`log_baseline`/`log_recalibration` 四方法**未落码**——`daily_auditor.py` 实测 v0.1.0（production，方法集=reconcile_pnl/detect_attribution_bias/run_compliance_check/run_daily_checklist/audit/generate_risk_metrics_report），全 src+tests+git 历史 grep 均无 `run_var_backtest`（docs-only 声明，原"✅ 已施工 v0.2.0"标注不实）。**已落码部分**：回测 4 法本体在 `var_backtester.py`（`full_report`，production/evolving）。以下内容为设计契约（集成包装层待施工，裁定=未来工程-小型：var_backtester 输出 → daily_auditor 包装 + 3 审计日志方法，单批可闭环）。
+> **✅ 施工状态（2026-08-31 复核补正：四方法已落码）**：本节 `run_var_backtest`/`log_entry_var`/`log_baseline`/`log_recalibration` 四方法**已落码** `daily_auditor.py`（L1049/L1199/L1220/L1231，AI-NIGHT-001 包J commit 3508d0b3bb，2026-08-24），契约逐条核对与 §3.11/§3.10 全吻合，tests/risk/test_daily_auditor_var_backtest.py 33 测绿，#ARCH-200 已核销（resolved）。（历史记录：2026-08-19 复核曾发现"✅ 已施工"标注不实并勘正为未落码，裁定=未来工程-小型；2026-08-24 单批闭环。）回测 4 法本体在 `var_backtester.py`（`full_report`，production/evolving）。
 
 **综合定级**（设计契约：`DailyAuditor.run_var_backtest()`，对齐 §3.10 矩阵，v1.4.0 一致性修复后含 Christoffersen reject）：
 - `basel_zone == "red"` 或 `overall_reject` 或 `ebt_alert == "black"` → action = REBUILD
@@ -450,7 +450,7 @@ else:
 | var_calculator.py | ✅ production v0.1.0 | 参数法 + 历史模拟 + conservative_max（v1.11.0 +非有限值 Fail-Closed：nan_dropped 计数 + 超阈值 raise） |
 | tail_risk_monitor.py | ✅ production v0.1.0 | ES（method='lower' 口径）+ POT GPD（小样本降级 pot_fallback_historical）+ 跳跃检测 + FRTB |
 | var_backtester.py | ✅ evolving v0.1.0 | MVP 4 法 + Basel traffic light |
-| daily_auditor.py | ✅ production v0.1.0（2026-08-19 复核勘正：原标 v0.2.0 + "run_var_backtest+3 审计日志方法"不实，实测无此四方法） | 日终 PnL 对账/归因偏差/合规检查/5 项清单/audit；§3.11 集成包装层未落码 |
+| daily_auditor.py | ✅ production（2026-08-31 复核补正：§3.11 集成包装层四方法已落码 L1049+，AI-NIGHT-001 包J 3508d0b3bb，#ARCH-200 核销） | 日终 PnL 对账/归因偏差/合规检查/5 项清单/audit + §3.11 包装层（run_var_backtest/log_entry_var/log_baseline/log_recalibration） |
 | drawdown_controller.py | ✅ production v0.1.0 | 5 级（v1.11.0 仓位上限单调性修正：ORANGE 0.7→0.5）+ 7 黑天鹅 + BlackSwanSignal API |
 | RiskOrchestrator（落地名 `RiskLayerOrchestrator`，MOD-L06-001） | ✅ 已建（AI-RWIRE-001，#ARCH-100） | 盘中风控编排（evaluate_intraday/Kill Switch/对账冻结）已接线；§3.10/§3.15/§3.17 动作表校准执行者语义仍=设计契约，未接入编排层 |
 | backtest_store | ⚠️ 待施工 | 回测结果持久化层 |
@@ -1194,3 +1194,4 @@ Phase 4+ (远期): + TailRisk-Trans Transformer 动态 VaR/ES (§4.16) + ReSGA �
 | 2026-08-16 | 1.11.0 | 双轮审查算法修复批（AI-RFIX-001）六要素勘正——§3.2/§3.5/§3.7/§3.9.1/§3.10/§3.11/§3.15 | ①§3.2 ES 分位数 method='lower' 口径裁定（防线性插值虚拟分位值）+ POT 小样本降级 pot_fallback_historical；②§3.5 ORANGE 仓位上限 0.7→0.5（五级单调性裁定 P1-4）；③§3.7 窗口表勘正（60 日负日占比 50% 常态 exceedances≈3<5 降级而非硬拟合）；④§3.9.1 回测 4 法表；⑤§3.10 REBUILD 静态映射状态标注；⑥§3.11 示例数值勘正；⑦§3.15 VarBreachStateMachine 未落码标注。frontmatter 1.10.4→1.11.0（修订行漏登，2026-08-18 AI-R3 复审补登） |
 | 2026-08-17 | 1.11.1 | RiskOrchestrator 命名对账（AI-GOVB-001 #106）：§3.10 执行者状态标注/组件状态表/「production 口径澄清」三处同步 RWIRE-001 完工现实——编排层已建（落地名 RiskLayerOrchestrator，MOD-L06-001，盘中编排已接线），§3.10 校准动作调用点未接入仍=设计契约 | 仅命名/状态对账，零语义变更；「禁止按可执行语气直读」标注保留 |
 | 2026-08-18 | 1.11.2 | §3.1 历史模拟法 VaR 分位数口径统一 `method='lower'`（AI-R5 审查批，F1 裁定延伸） | v1.11.0 F1 裁定只统一 ES 侧，VaR 侧遗留线性插值致同模块双口径（es_var_ratio 分子分母不同口径、5 级分级对插值虚拟值敏感）；统一后 ES≥VaR 不变量同口径下更严格成立；tail_risk_monitor.compute_var 同步落码 |
+| 2026-08-31 | 1.11.3 | §3.11 daily_auditor 集成包装层"未落码"过时表述回写为已落码（头部结案报告 2 处 + §3.11 施工状态注 + 组件状态表） | 四方法 run_var_backtest/log_entry_var/log_baseline/log_recalibration 已于 2026-08-24 落码 daily_auditor.py L1049+（AI-NIGHT-001 包J commit 3508d0b3bb），#ARCH-200 已核销（resolved），文档与代码实证对齐 |

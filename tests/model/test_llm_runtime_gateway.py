@@ -30,6 +30,7 @@ import pytest
 gw_mod = pytest.importorskip("zephyr.integration.llm_runtime_gateway")
 secrets_mod = pytest.importorskip("zephyr.shared.security.secrets")
 budget_models = pytest.importorskip("zephyr.governance.ops_governance.budget_models")
+budget_engine_mod = pytest.importorskip("zephyr.governance.ops_governance.budget_engine")
 
 InferResult = gw_mod.InferResult
 LLMRuntimeGateway = gw_mod.LLMRuntimeGateway
@@ -80,7 +81,13 @@ class _FakeBudgetEngine:
         self.recorded: list[tuple] = []
 
     def pre_flight_check(self, request_id, estimated_tokens=0, estimated_cost=0.0, prompt=""):
-        self.calls.append({"request_id": request_id, "estimated_tokens": estimated_tokens})
+        self.calls.append(
+            {
+                "request_id": request_id,
+                "estimated_tokens": estimated_tokens,
+                "estimated_cost": estimated_cost,
+            }
+        )
         if self._exc is not None:
             raise self._exc
         return GateResult(
@@ -490,10 +497,69 @@ class TestBudgetGate:
         gw = _make_gateway(tmp_path, {"deepseek": _FakeClient()}, budget_engine=engine)
         r = gw.infer("summary_extraction", "文本")
         assert r.status == "ok"
-        assert len(engine.recorded) == 1
-        policy_id, tokens, _cost, _minutes = engine.recorded[0]
-        assert policy_id == "BP-TOKEN-001"
-        assert tokens == r.tokens_in + r.tokens_out > 0
+        # ARCH-303：TOKEN（二级兜底）+ COST（主维度）双维回填，各一条
+        assert len(engine.recorded) == 2
+        by_policy = {policy_id: (tokens, cost) for policy_id, tokens, cost, _m in engine.recorded}
+        assert by_policy["BP-TOKEN-001"][0] == r.tokens_in + r.tokens_out > 0
+        assert by_policy["BP-COST-001"][1] == pytest.approx(r.cost_yuan)
+
+
+class TestCostDimensionGate:
+    """ARCH-303（2026-08-31 裁定）：预算硬门主维度=COST（元），TOKEN 降为二级兜底。
+
+    - 预检 estimated_cost 由 est_tokens 按内置价表峰时保守价折算（元）传入 pre_flight_check
+    - 真实 BudgetEngine：COST 维日耗超 hard_stop -> DENY 阻断（不发起通道调用）
+    - TOKEN 维超限仍兜底 DENY（防跑飞二级保险丝）
+    - 成功调用回填真实 result.cost_yuan，COST 维真实累加
+    """
+
+    def test_pre_flight_receives_estimated_cost_priced_from_est_tokens(self, tmp_path):
+        """_budget_gate 预检成本 = est 输入按峰时输入价 + max_tokens 按峰时输出价合并估（元）。"""
+        engine = _FakeBudgetEngine()
+        gw = _make_gateway(tmp_path, {"deepseek": _FakeClient()}, budget_engine=engine)
+        prompt = "压缩这段文本" * 10
+        r = gw.infer("summary_extraction", prompt, max_tokens=4096)
+        assert r.status == "ok"
+        call = engine.calls[0]
+        in_est = gw_mod._estimate_tokens(prompt)
+        # 峰时保守价（deepseek-chat 档 3.0/9.0 元每百万）：输入 est + 输出 max_tokens 上限
+        expected_cost = (in_est * 3.0 + 4096 * 9.0) / 1_000_000
+        assert call["estimated_cost"] == pytest.approx(expected_cost)
+        assert call["estimated_cost"] > 0.0
+        assert call["estimated_tokens"] == in_est + 4096
+
+    def test_cost_hard_stop_denies_with_real_engine(self, tmp_path):
+        """真 BudgetEngine：COST 维日耗≥hard_stop（日限 10 元）-> blocked，不发起通道调用。"""
+        engine = budget_engine_mod.BudgetEngine()
+        engine.record_consumption("BP-COST-001", tokens=0, cost=9.9, time_minutes=0.0)  # 99% ≥ 98%
+        ds = _FakeClient()
+        gw = _make_gateway(tmp_path, {"deepseek": ds}, budget_engine=engine)
+        r = gw.infer("summary_extraction", "文本")
+        assert r.status == "blocked"
+        assert "budget_denied" in r.error and "COST" in r.error
+        assert ds.calls == 0
+
+    def test_token_hard_stop_still_backstop_denies(self, tmp_path):
+        """TOKEN 降为二级兜底但仍生效：token 日耗≥98% 且成本未超 -> DENY。"""
+        engine = budget_engine_mod.BudgetEngine()
+        engine.record_consumption("BP-TOKEN-001", tokens=990_000, cost=0.0, time_minutes=0.0)
+        ds = _FakeClient()
+        gw = _make_gateway(tmp_path, {"deepseek": ds}, budget_engine=engine)
+        r = gw.infer("summary_extraction", "文本")
+        assert r.status == "blocked"
+        assert "budget_denied" in r.error and "TOKEN" in r.error
+        assert ds.calls == 0
+
+    def test_real_cost_yuan_backfilled_to_cost_dimension(self, tmp_path):
+        """成功调用后真实 cost_yuan 回填：COST 维累加元成本、TOKEN 维累加 token。"""
+        engine = budget_engine_mod.BudgetEngine()
+        ds = _FakeClient(model="deepseek-v4-flash", reply="好" * 100)
+        gw = _make_gateway(tmp_path, {"deepseek": ds}, budget_engine=engine)
+        r = gw.infer("summary_extraction", "压缩这段文本")
+        assert r.status == "ok" and r.cost_yuan > 0.0
+        summary = engine.get_consumption_summary()
+        assert summary["BP-COST-001"]["daily"] == pytest.approx(r.cost_yuan)
+        assert summary["BP-TOKEN-001"]["daily"] == r.tokens_in + r.tokens_out
 
 
 class TestLLMDegRouting:

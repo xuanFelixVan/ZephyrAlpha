@@ -5,7 +5,7 @@
 # [CONSUMERS] 06号文 Phase 2 dispatch 链 + AutoRuntime（经 assemble_agent_router 取装配完成的 LlmAgentRouter）；手动 CLI 冒烟入口（python -m zephyr.intelligence.model_routing.runtime_assembly）
 # [STARTUP] manual
 # [MATURITY] testing
-# [INVARIANTS] 只装配不改被接方逻辑（cascade_orchestrator/model_router/llm_agent_router 源文件零改动）; 级联异常降级返回 model=None 由门面走既有静态兜底（级联异常绝不阻断运行时路由）; 运行时装配默认懒加载（orchestrator/台账/日历/审计落盘均在首次调用时解析，assemble 本身不构造重基座）; 全部构造期依赖可注入 fake（测试零网络零真 LLM）; 时段词表=策略 period_rules 键（pre_open/call_auction/trading/post_close），门面旧词 intraday 由适配器映射为 trading; 审计落盘 append-only JSONL（16号文统一事件 schema：schema_version/event_id/ts/source/event_type/payload）; task_gate dispatch 硬门 opt-in（缺省 None 零行为变化；门控钩子异常 fail-closed 按拦截处理不阻断路由；复核建议 human_gated 不变量不动）
+# [INVARIANTS] 只装配不改被接方逻辑（cascade_orchestrator/model_router/llm_agent_router 源文件零改动）; 级联异常降级返回 model=None 由门面走既有静态兜底（级联异常绝不阻断运行时路由）; 运行时装配默认懒加载（orchestrator/台账/日历/审计落盘均在首次调用时解析，assemble 本身不构造重基座）; 全部构造期依赖可注入 fake（测试零网络零真 LLM）; 时段词表=策略 period_rules 键（pre_open/call_auction/trading/post_close），门面旧词 intraday 由适配器映射为 trading; 审计落盘 append-only JSONL（16号文统一事件 schema：schema_version/event_id/ts/source/event_type/payload）; task_gate dispatch 硬门 opt-in（缺省 None 零行为变化；门控钩子异常 fail-closed 按拦截处理不阻断路由；复核建议 human_gated 不变量不动）; task_gate 影子模式 observe-only（ARCH-302：ZEPHYR_TASK_GATE_SHADOW=1 时记录 would-block 决策到 data/brain/task_gate_shadow_log.jsonl 但一律放行，shadow 下任何异常也只告警放行，绝不阻断路由）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -41,6 +41,13 @@ runtime_assembly — 模型路由级联的运行时装配层（11号文 §4.3 Ph
   经 ExamTriggerScheduler.check_and_record 适配为门面 task_gate 缝（判定同时
   登记拦截计数，连续 low_accuracy 超阈发复核建议，human_gated 不变量不动）；
   门控/调度器异常 fail-closed 按拦截处理，不阻断路由返回。
+- **task_gate 影子模式（ARCH-302 金丝雀发布，observe-only）**：环境变量
+  ``ZEPHYR_TASK_GATE_SHADOW=1`` 且 ``assemble_agent_router(task_gate=True)``
+  时，dispatch 钩子照常过 TaskGate+调度器判定，但**一律放行**——决策
+  （model_id/capability/gate_allowed/reason）append-only 落盘
+  ``data/brain/task_gate_shadow_log.jsonl``（16号文统一事件信封），供观察期
+  would-block 画像评审；shadow 下任何异常（含门控/落盘故障）也只告警放行，
+  绝不阻断路由。影子日志路径可用 ``ZEPHYR_TASK_GATE_SHADOW_LOG`` 覆盖。
 
 时段词表说明：门面 LlmAgentRouter 既有逻辑只特判 "intraday"（盘中强制本地），
 级联策略 period_rules 词表为 pre_open/call_auction/trading/post_close。装配层
@@ -65,6 +72,7 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import os
 import uuid
 from dataclasses import asdict
 from datetime import UTC, datetime, time as dt_time
@@ -87,11 +95,14 @@ from zephyr.intelligence.model_routing.cascade_orchestrator import (
     DEFAULT_POLICY_PATH,
     CascadeOrchestrator,
 )
-from zephyr.shared.io.paths import AUDIT_DATA_DIR
+from zephyr.shared.io.paths import AUDIT_DATA_DIR, REPO_ROOT
 
 __all__: Final = [
     "AUDIT_SCHEMA_VERSION",
     "DEFAULT_AUDIT_LOG_PATH",
+    "DEFAULT_TASK_GATE_SHADOW_LOG_PATH",
+    "TASK_GATE_SHADOW_ENV",
+    "TASK_GATE_SHADOW_LOG_ENV",
     "assemble_agent_router",
     "budget_cost_ledger",
     "cascade_decision_engine",
@@ -100,6 +111,7 @@ __all__: Final = [
     "jsonl_audit_sink",
     "main",
     "task_gate_dispatch_hook",
+    "task_gate_shadow_enabled",
 ]
 
 _log = logging.getLogger(__name__)
@@ -121,6 +133,14 @@ _COST_POLICY_ID: Final = "BP-COST-001"
 # 审计落盘默认路径与 16号文统一事件 schema 版本
 DEFAULT_AUDIT_LOG_PATH: Final[Path] = AUDIT_DATA_DIR / "agent_router_audit.jsonl"
 AUDIT_SCHEMA_VERSION: Final = "1.0"
+
+# task_gate 影子模式（ARCH-302 observe-only）：开关环境变量 + 影子日志默认路径
+# （与模型画像域同区 data/brain/，路径真源 REPO_ROOT 对齐 capability_passport 口径）
+TASK_GATE_SHADOW_ENV: Final = "ZEPHYR_TASK_GATE_SHADOW"
+TASK_GATE_SHADOW_LOG_ENV: Final = "ZEPHYR_TASK_GATE_SHADOW_LOG"
+DEFAULT_TASK_GATE_SHADOW_LOG_PATH: Final[Path] = (
+    REPO_ROOT / "data" / "brain" / "task_gate_shadow_log.jsonl"
+)
 
 # 级联路由表 preferred -> 门面 task_kinds 词表（门面 local_pref 判定：kind in (local, hybrid)）
 _PREFERRED_TO_FACADE_KIND: Final[dict[str, str]] = {
@@ -270,35 +290,109 @@ def jsonl_audit_sink(path: Path | str | None = None) -> Any:
 
 
 # ── task_gate 缝：TaskGate + ExamTriggerScheduler dispatch 硬门（06号文 §2.1，opt-in）──
+#            + ARCH-302 影子模式（observe-only 金丝雀：记录 would-block 但一律放行）
 
 
-def task_gate_dispatch_hook(gate: Any | None = None, scheduler: Any | None = None) -> Any:
+def task_gate_shadow_enabled(env: Any | None = None) -> bool:
+    """影子模式开关（ARCH-302）：``ZEPHYR_TASK_GATE_SHADOW`` 真值（1/true/yes/on）即启用。
+
+    仅决定 task_gate=True 时装配影子钩子还是硬门钩子；不自行开启 task_gate
+    （opt-in 语义不变——task_gate=None 时本开关零效果）。
+    """
+    source = os.environ if env is None else env
+    return str(source.get(TASK_GATE_SHADOW_ENV, "")).strip().lower() in ("1", "true", "yes", "on")
+
+
+def _record_shadow_decision(
+    path: Path | str | None,
+    model_id: str,
+    capability: str,
+    gate_allowed: bool,
+    reason: str,
+) -> None:
+    """影子决策 append-only JSONL 落盘（16号文统一事件信封；gate_allowed=门原始判定）。
+
+    path 缺省解析顺序：``ZEPHYR_TASK_GATE_SHADOW_LOG`` 环境变量 ->
+    DEFAULT_TASK_GATE_SHADOW_LOG_PATH（data/brain/task_gate_shadow_log.jsonl）。
+    调用方负责异常兜底（shadow 语义下落盘故障绝不阻断路由）。
+    """
+    if path is None:
+        path = os.environ.get(TASK_GATE_SHADOW_LOG_ENV) or DEFAULT_TASK_GATE_SHADOW_LOG_PATH
+    p = Path(path)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    event = {
+        "schema_version": AUDIT_SCHEMA_VERSION,
+        "event_id": uuid.uuid4().hex[:16],
+        "ts": datetime.now(tz=UTC).isoformat(),
+        "source": "task_gate_dispatch_hook",
+        "event_type": "task_gate_shadow_decision",
+        "payload": {
+            "model_id": model_id,
+            "capability": capability,
+            "gate_allowed": gate_allowed,
+            "would_block": not gate_allowed,
+            "reason": reason,
+        },
+    }
+    with p.open("a", encoding="utf-8") as fh:
+        fh.write(json.dumps(event, ensure_ascii=False, sort_keys=True) + "\n")
+
+
+def task_gate_dispatch_hook(
+    gate: Any | None = None,
+    scheduler: Any | None = None,
+    *,
+    shadow: bool = False,
+    shadow_log_path: Path | str | None = None,
+) -> Any:
     """task_gate 缝：TaskGate + ExamTriggerScheduler 适配为门面 task_gate 契约
     ``(model_id, capability) -> (bool, reason)``。
 
     判定经 ExamTriggerScheduler.check_and_record 透传 TaskGate.can_dispatch 并登记
     拦截计数（连续 low_accuracy 超阈自动发复核建议，human_gated 不变量不动）。
     gate/scheduler 缺省首次调用时懒构造（TaskGate.load_passports 全量护照 +
-    ExamTriggerScheduler 默认参数）；任何异常不抛 -> (False, reason) fail-closed
-    由门面按拦截语义处理。
+    ExamTriggerScheduler 默认参数）。
+
+    非 shadow（默认）：任何异常不抛 -> (False, reason) fail-closed 由门面按拦截
+    语义处理。
+
+    shadow=True（ARCH-302 影子模式，observe-only）：照常过门判定并登记计数，
+    决策落盘影子日志（_record_shadow_decision），但**一律返回放行**——
+    would-block 仅供观察期画像评审；任何异常（门控/调度器/落盘故障）也只告警
+    放行，绝不阻断路由。
     """
     holder: list[Any] = [gate, scheduler]
 
+    def _resolve() -> tuple[Any, Any]:
+        if holder[0] is None:
+            from zephyr.trading.task_gate import TaskGate
+
+            real_gate = TaskGate()
+            real_gate.load_passports()
+            holder[0] = real_gate
+        if holder[1] is None:
+            from zephyr.intelligence.model_profiling.exam_trigger_scheduler import (
+                ExamTriggerScheduler,
+            )
+
+            holder[1] = ExamTriggerScheduler()
+        return holder[0], holder[1]
+
     def hook(model_id: str, capability: str) -> tuple[bool, str]:
-        try:
-            if holder[0] is None:
-                from zephyr.trading.task_gate import TaskGate
-
-                real_gate = TaskGate()
-                real_gate.load_passports()
-                holder[0] = real_gate
-            if holder[1] is None:
-                from zephyr.intelligence.model_profiling.exam_trigger_scheduler import (
-                    ExamTriggerScheduler,
+        if shadow:
+            try:
+                g, s = _resolve()
+                allowed, reason = s.check_and_record(g, model_id, capability)
+                _record_shadow_decision(
+                    shadow_log_path, model_id, capability, bool(allowed), str(reason)
                 )
-
-                holder[1] = ExamTriggerScheduler()
-            allowed, reason = holder[1].check_and_record(holder[0], model_id, capability)
+                return (True, f"shadow 放行(gate_allowed={bool(allowed)}): {reason}")
+            except Exception as exc:  # noqa: BLE001 — shadow observe-only：异常只告警放行，绝不阻断路由
+                _log.warning("task_gate shadow 钩子异常，observe-only 放行: %s", exc)
+                return (True, f"shadow 放行(钩子异常 {type(exc).__name__}): {exc}")
+        try:
+            g, s = _resolve()
+            allowed, reason = s.check_and_record(g, model_id, capability)
             return (bool(allowed), str(reason))
         except Exception as exc:  # noqa: BLE001 — 门控异常 fail-closed 按拦截处理，不阻断路由调用
             _log.warning("task_gate 钩子异常，fail-closed 按拦截处理: %s", exc)
@@ -357,7 +451,9 @@ def assemble_agent_router(
     JSONL 落盘。
     task_gate（06号文 §2.1 dispatch 硬门）opt-in：缺省 None 不启用（零行为变化）；
     True 接 TaskGate+ExamTriggerScheduler 生产硬门（首次调用懒构造）；可直接注入
-    fake callable 测试。
+    fake callable 测试。task_gate=True 且环境变量 ZEPHYR_TASK_GATE_SHADOW 为真值时
+    装配影子钩子（ARCH-302 observe-only：照常判定+落影子日志但一律放行，见
+    task_gate_dispatch_hook）；task_gate=None 时影子开关零效果（opt-in 语义不变）。
     """
     if config is None:
         config = default_router_config(daily_budget_usd=daily_budget_usd, policy_path=policy_path)
@@ -369,7 +465,7 @@ def assemble_agent_router(
         return holder[0]
 
     if task_gate is True:
-        task_gate = task_gate_dispatch_hook()
+        task_gate = task_gate_dispatch_hook(shadow=task_gate_shadow_enabled())
 
     return LlmAgentRouter(
         config,

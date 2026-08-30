@@ -5,8 +5,8 @@
 # [CONSUMERS] git_commit_gateway (_register_default_reconcilers: make_worktree_drift_watchdog_reconciler); CLI python -m ... [--once|--daemon|--status]
 # [STARTUP] manual / post-commit reconciler ensure-daemon
 # [MATURITY] production
-# [INVARIANTS] 锚主仓工作区（anchor_main_root）；只告警不阻断（fail-open 不干扰主流程）；快照先于告警；审计写 .runtime/（永不回 tracked 区）；同签名告警去重；漂移消解自动写 clean 自愈消音；#ARCH-264：critical_warn 唯一写者=daemon（网关即时扫 observe-only）；热文件 10s 快扫+interval 全量双频节拍；quarantine 30 天 retention 自管+带外删除 tamper 审计
-# [MODIFY-GUARD] scan_once 判定逻辑（claimed/grace/dedup/alert 四路分流 + observe-only 观察员模式 + hot_only 快扫过滤）；快照目录格式 .runtime/quarantine/drift_<ts>/；_sweep_quarantine 只清理 drift_<ts> 规范命名目录
+# [INVARIANTS] 锚主仓工作区（anchor_main_root）；只告警不阻断（fail-open 不干扰主流程）；快照先于告警；审计写 .runtime/（永不回 tracked 区）；同签名告警去重；漂移消解自动写 clean 自愈消音；#ARCH-264：critical_warn 唯一写者=daemon（网关即时扫 observe-only）；热文件 10s 快扫+interval 全量双频节拍；quarantine 30 天 retention 自管+带外删除 tamper 审计；#ARCH-304：恰好 1 个活跃注册会话→auto-claim 替代告警（归属无歧义），0/>1 会话或 claim 失败→维持原处置（fail-closed 不放松）
+# [MODIFY-GUARD] scan_once 判定逻辑（claimed/grace/dedup/auto_claim/alert 分流 + observe-only 观察员模式 + hot_only 快扫过滤）；快照目录格式 .runtime/quarantine/drift_<ts>/；_sweep_quarantine 只清理 drift_<ts> 规范命名目录
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -37,7 +37,12 @@ commit 层有网关+串行锁+审计，工作区写层曾是三不管地带（�
 - claimed：文件在活跃 session 的 claim 快照中 → 合法 WIP，不告警只记录
 - grace：最近一次 commit 后 GRACE_SECONDS 内 → post-commit reconciler 合法派生写窗口，不告警只记录
 - dedup：漂移内容相对上一周期未变 → 同签名不重复告警
-- alert：以上皆非 → 未登记写入方实锤 → 快照 + critical_warn + 归因审计
+- auto_claim（#ARCH-304）：全项目恰好 1 个活跃注册会话 → 漂移写入归属无歧义，
+  走既有 claim_files(adopt_prior_work=True) 自动认领 + 审计留痕，替代告警处置
+  （2026-08-31 实证：AI 会话直改 tracked 文件未先 claim 被处置致工作丢失——
+  单会话时回退/告警是误伤，pave the road）；observe-only 模式不触发（O6 不落状态变更）
+- alert：以上皆非（0 或 >1 活跃会话=归属歧义 / claim 失败）→ 未登记写入方实锤 →
+  快照 + critical_warn + 归因审计（fail-closed，多会话歧义场景行为零变化）
 
 自愈：已告警文件回到干净态（diff 消失或 HEAD 推进吸收）→ clean 记录，既有
 critical_warn 被 auto-ack-healed 消音。
@@ -182,11 +187,54 @@ def _active_sessions_and_claims(root: Path) -> tuple[list[str], dict[str, str]]:
                 continue
             try:
                 data = json.loads(snap.read_text(encoding="utf-8"))
-                for f in data.get("files", []):
-                    claimed[str(f)] = sid
+                files = data.get("files")
+                if files is None:
+                    # 网关 save_session_snapshot 持久化格式：
+                    # {"session_id", "snapshots": {abs_path: baseline_diff}, "claim_head"}
+                    # ——键归一化为仓相对 POSIX 路径，与扫描的 rel 对齐
+                    files = []
+                    for k in data.get("snapshots", {}):
+                        try:
+                            r = os.path.relpath(str(k), str(root)).replace(os.sep, "/")
+                        except ValueError:
+                            continue  # 跨盘符等异常路径不入豁免
+                        if r.startswith(".."):
+                            continue
+                        files.append(r)
+                for f in files:
+                    claimed[str(f).replace("\\", "/")] = sid
             except Exception:  # noqa: BLE001 — 单个快照损坏不影响其他
                 continue
     return sessions, claimed
+
+
+def _auto_claim_single_session(root: Path, rel: str, session_id: str) -> bool:
+    """#ARCH-304：单活跃会话归属无歧义 → 既有 claim_files(adopt_prior_work=True) 自动认领。
+
+    认领走网关既有机制：SessionRegistry.claim_file（冲突检测）+ 基线快照持久化
+    （.runtime/claim_snapshots/<sid>.json）+ adopt 审计（<sid>_adopted.jsonl，
+    存空基线使 FOREIGN-CHANGE gate 放行且留痕）。每事件新构造网关实例（漂移是低频
+    事件）——从磁盘加载最新快照，杜绝长驻缓存陈旧导致 release 后重 claim 漏持久化。
+    任何异常/冲突返回 False，调用方回落原告警路径（fail-closed 不放松）。
+    """
+    try:
+        from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (  # noqa: PLC0415
+            GitCommitGateway,
+        )
+
+        gateway = GitCommitGateway(project_root=root)
+        claimed = gateway.claim_files(session_id, [str(root / rel)], adopt_prior_work=True)
+        if claimed:
+            return True
+        logger.warning(
+            "drift watchdog auto-claim conflict: file=%s not claimable by session=%s",
+            rel,
+            session_id,
+        )
+        return False
+    except Exception as e:  # noqa: BLE001 — claim 链路异常回落 alert（fail-closed）
+        logger.warning("drift watchdog auto-claim failed: file=%s session=%s err=%s", rel, session_id, e)
+        return False
 
 
 # ── 状态/审计/快照/告警 ──────────────────────────────────────────────────────
@@ -353,7 +401,7 @@ def scan_once(
             DEFAULT_HOT_FILES ∪ design_memos/（daemon 10s 快扫周期用）。
 
     Returns:
-        摘要 dict：{scanned, drifted, alerted, observed, claimed, grace_suppressed, dedup_skipped, healed}。
+        摘要 dict：{scanned, drifted, alerted, observed, claimed, auto_claimed, grace_suppressed, dedup_skipped, healed}。
     """
     from zephyr.shared.io.paths import anchor_main_root  # noqa: PLC0415
 
@@ -364,6 +412,7 @@ def scan_once(
         "alerted": 0,
         "observed": 0,
         "claimed": 0,
+        "auto_claimed": 0,
         "grace_suppressed": 0,
         "dedup_skipped": 0,
         "healed": 0,
@@ -460,31 +509,53 @@ def scan_once(
             summary["grace_suppressed"] += 1
             _audit(root, {**base, "verdict": "grace_suppressed"})
         else:
-            snap = _snapshot(root, rel, wh)
-            if not alert_enabled:
-                # O6 observe-only：快照存证+归因审计照记，但不告警、不推进告警状态
-                _audit(root, {**base, "verdict": "observed", "snapshot": snap})
-                summary["observed"] += 1
-                continue  # 不更新 files_state/alerted——daemon 下轮仍按全状态告警，防吞
-            detail = (
-                f"未登记写入方致 tracked 文件内容漂移: {rel} "
-                f"(work {prev.get('work_hash', '∅')[:8]}→{wh[:8]}, HEAD blob {hb[:8]}, "
-                f"快照 {snap or '失败'}, 活跃会话 {','.join(sessions) or '无'}，非 claim 非宽限窗）"
-            )
-            # #ARCH-279 裁定B2：WriteAudit 联动——告警附 write_audit 同窗口嫌疑清单
-            # （PID→session_id 归因），守护未跑/无事件返回空串不拼接。
-            wa_suspects = _write_audit_suspects(root, rel)
-            if wa_suspects:
-                detail += f"；WriteAudit 嫌疑: {wa_suspects}"
-            _log_results(root, "critical_warn", detail)
-            _audit(root, {**base, "verdict": "alerted", "snapshot": snap, "write_audit_suspects": wa_suspects})
-            alerted[rel] = wh
-            if snap:
-                # O4：快照目录登记（带外删除可观测），容量封顶防状态膨胀
-                known_q = state.setdefault("known_quarantine", [])
-                known_q.append(snap)
-                del known_q[:-_KNOWN_QUARANTINE_CAP]
-            summary["alerted"] += 1
+            # #ARCH-304（2026-08-31 裁定）：恰好 1 个活跃注册会话 → 漂移写入归属无歧义，
+            # 走既有 claim_files(adopt_prior_work=True) 自动认领+审计留痕，替代告警处置；
+            # 0/>1 活跃会话（归属歧义）或 claim 失败 → 维持原快照+告警路径（fail-closed
+            # 不放松）。observe-only（alert_enabled=False）不触发——O6 观察员不落状态变更。
+            if (
+                alert_enabled
+                and len(sessions) == 1
+                and _auto_claim_single_session(root, rel, sessions[0])
+            ):
+                summary["auto_claimed"] += 1
+                claimed[rel] = sessions[0]  # 本周期后续一致视为已认领
+                _audit(
+                    root,
+                    {
+                        **base,
+                        "verdict": "auto_claimed",
+                        "auto_claim_session": sessions[0],
+                        "drift_hash": wh,
+                    },
+                )
+                # fall through → files_state 推进（同签名下轮 dedup，不重复 claim）
+            else:
+                snap = _snapshot(root, rel, wh)
+                if not alert_enabled:
+                    # O6 observe-only：快照存证+归因审计照记，但不告警、不推进告警状态
+                    _audit(root, {**base, "verdict": "observed", "snapshot": snap})
+                    summary["observed"] += 1
+                    continue  # 不更新 files_state/alerted——daemon 下轮仍按全状态告警，防吞
+                detail = (
+                    f"未登记写入方致 tracked 文件内容漂移: {rel} "
+                    f"(work {prev.get('work_hash', '∅')[:8]}→{wh[:8]}, HEAD blob {hb[:8]}, "
+                    f"快照 {snap or '失败'}, 活跃会话 {','.join(sessions) or '无'}，非 claim 非宽限窗）"
+                )
+                # #ARCH-279 裁定B2：WriteAudit 联动——告警附 write_audit 同窗口嫌疑清单
+                # （PID→session_id 归因），守护未跑/无事件返回空串不拼接。
+                wa_suspects = _write_audit_suspects(root, rel)
+                if wa_suspects:
+                    detail += f"；WriteAudit 嫌疑: {wa_suspects}"
+                _log_results(root, "critical_warn", detail)
+                _audit(root, {**base, "verdict": "alerted", "snapshot": snap, "write_audit_suspects": wa_suspects})
+                alerted[rel] = wh
+                if snap:
+                    # O4：快照目录登记（带外删除可观测），容量封顶防状态膨胀
+                    known_q = state.setdefault("known_quarantine", [])
+                    known_q.append(snap)
+                    del known_q[:-_KNOWN_QUARANTINE_CAP]
+                summary["alerted"] += 1
         files_state[rel] = {"work_hash": wh, "head_blob": hb, "last_seen": _now_iso()}
 
     # 自愈：曾告警文件本轮已干净（diff 消失=恢复/HEAD 推进=已提交吸收）

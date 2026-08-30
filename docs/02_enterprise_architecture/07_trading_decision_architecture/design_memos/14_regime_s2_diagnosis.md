@@ -5,9 +5,9 @@ title: "S2 评分算法时点错配诊断与治本方案——capitulation 过�
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.5.3"
+version: "0.5.4"
 date: "2026-08-15"
-last_updated: "2026-08-30"
+last_updated: "2026-08-31"
 topic: regime_s2_diagnosis
 scope: 07_trading_decision_architecture
 doc_id: 14_regime_s2_diagnosis
@@ -44,6 +44,10 @@ related_issues:
 > - **EVT-2020-RECOVERY**：trigger 卡 capitulation=0（vix 60@03-30 / bad_news_flat 80 在位）；confirm 卡 valuation=0（路 B pos≈0.86-0.90 不给分）+ fund 峰 50@03-05 与 breadth_thrust 60@03-06 不同日；spring max=3@03-23。
 > - **EVT-2024-RECOVERY**：confirm 仅卡 valuation=0——E9d breadth_thrust 析取通路实证有效（09-27/09-30/10-08 breadth=80、policy 40-60、fund 50-70 同日在位）；trigger 三维（capitulation/vix/bad_news_flat）全 0。
 > **差距结论**：①E9a capitulation 三过滤器（量能>2.0×均量 + 实体>40%ATR + 下影线>50%）联玩过严（A 股暴跌日 close≈low 致下影线比≈0），叠加衰减权重 w₀≈0.09（单日 90 分仅贡献 ~8 分），trigger≥60 实际不可达——三事件 ±25 交易日全程 0.0，含 2015-08-26/2020-03-23 真实底部；②E9b 路 A（s2_valuation_score_fundamental）未接线——builder 仍走路 B s2_valuation_score(close)（overlay_signals_builder.py:349-350 注明"路 A CAPE 待 daily_valuation 管道，Step 0 ①"），V 反转 pos 高→0；③E9e three_yang 三事件窗口全 0（strong_confirm 门槛 three_yang≥2 不可达）；④2015 fund=0（资金数据源覆盖不足）。后续方向：capitulation 过滤器/衰减参数需按 §4.5 walk-forward 校准（非简单降阈值凑分）；路 A CAPE 分位管道（daily_valuation）建设后接线。
+
+> ## 结案报告回填（2026-08-31 复核：S2 校准已落产 + B4 重验闭环）
+> 上述 2026-08-28 重验注记的"三过滤器需 walk-forward 校准"已闭环——**S2 校准专项已落产**：Owner 2026-08-29 裁定选项 1（commit c5c23036），capitulation 终选组合 `precrisis_z + close_pos + pct250 + decayed_max`（halflife=10 / lookback=20 / trigger≥60 未动）经 walk-forward 组合扫描（12 组预注册，IS 2010-2018 / OOS 2019-2026，三事件全程未参与选型）选型并接线生产（overlay_signals_builder.py:339-340）；three_yang 终选 `v2_index`（d5=-15%，删 d4 误抄维）同步落产；valuation 路 A（index_valuation_daily CAPE 分位主轴）已建成接线，2015/2020 的 0 分经勘探判定为正确信号（非深度低估）。六层验收：WFE=3.44 ✅ / fp@≥60=0.8% ✅ / 参数平移 ±10% 零变化 ✅ / MC 置换 p=0.87 ❌（诚实标注，DSR N=17 备案）/ MinTRL 低置信标注 ✅ / 预注册纪律 ✅（验证报告 2026-08-29 已归档 docs/_archive/）。B4 全量重跑（2026-08-30）A1/B4/A2/B1 全 PASS——EVT-2024 design_match 翻 true（confirm Δ=+3/+4/+5d 实证），2015/2020 维持 false 带边界注记（事件标注时点距真实底部超 halflife=10 衰减物理极限）。参数终值已回写 §4.1/§4.2/§4.4b（v0.5.3）。
+> **仍真实未完工**：ERP 列全表 NULL（known_data_gaps 登记 accepted，路 A 加分项不可用但不改 confirm 判定）；2015/2020 两事件 design_match 维持 false（开放问题 3）；fund/vix 维度升级归 P1-E4/P1-E7 跨工程项（开放问题 7/10/11）；演进方向 6 项（AH-HMM/LVI 等）远期登记（既定）。
 
 # S2 评分算法时点错配诊断与治本方案——capitulation 过程化 + valuation 基本面化 + V 反转通路
 
@@ -1036,6 +1040,7 @@ v0.4.1 记录 4 个 + v0.4.3 补 2 个 = 6 个 2026 研究发现的更优算法�
 
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
+| 2026-08-31 | 0.5.4 | 头部结案报告区追加"2026-08-31 复核：S2 校准已落产 + B4 重验闭环"回填块 | 2026-08-28 B4 重验注记（0/3 未通过、三过滤器需校准）已过时：S2 capitulation 三过滤器校准已落产（Owner 2026-08-29 裁定选项 1，commit c5c23036，walk-forward 选型+接线生产），B4 全量重跑全 PASS（2026-08-30）；头部无此闭环记录，补登并标注残余项（ERP 全空/2015/2020 design_match 维持 false/演进方向远期） |
 | 2026-08-30 | 0.5.3 | 参数终值回写（S2 校准专项收尾，roadmap A1 残余）：§4.1 回写 capitulation 终选组合（precrisis_z+close_pos+pct250+decayed_max，halflife=10/lookback=20/trigger≥60 未动）+ 六层验收结果 + wavg/decayed_max 数值边界勘正；§4.2 回写路 A 已建成接线（index_valuation_daily CAPE 分位主轴）+ 2015/2020 的 0 分经勘探判定为正确信号 + ERP 列全空登记 + 开放问题 2 关闭；§4.4b 回写 three_yang v2_index 终值（d5=-15%）+ IS 12.9%/OOS 0% 验证结论 | Owner 2026-08-29 裁定选项 1 落产（commit c5c23036）后参数终值须回写详设真源；B4 重跑（2026-08-30，A1/B4/A2/B1 全 PASS）+ EVT-2024 design_match 翻 true（confirm Δ=+3/+4/+5d 实证）后终值定稿 |
 | 2026-08-15 | 0.5.2 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-02）——§1.4/§2.2-2.4 裁定散文紧凑化；§4.1 三层升级解释精简；§4.3 现状段改指针（诊断详见 §1.2.3）；§4.5 防过拟合 6 层方法论栈列表转段落；§4.6 演进方向 6 条精简；§6 开放问题 9/10/11 与 §4.0 警告去重（改指针+保留关键阈值） | 文档压缩治理（第一轮 ab3df58d9d 后续）；章节编号零改动，参数/裁定/锚点零丢失 |
 | 2026-08-09 | 0.4.5 | 文档头统一：frontmatter 补 owner/language/topic/scope + 字段顺序统一（doc_id/priority/depends_on/related_modules/related_issues 扩展字段保留），H1 去文件名前缀与 title 对齐；文末补建本「修订记录」章节（§7）；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾）；14 号此前无修订记录章节，补齐对齐 01_design_memo_management_spec §4.3 规范 |

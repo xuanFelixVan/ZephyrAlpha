@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.integration.local_model.deepseek_chat; zephyr.integration.local_model.ollama_chat; zephyr.integration.local_model.lsg_gate; zephyr.shared.foundation.constants; zephyr.shared.io.paths(DB_PATH SSoT); zephyr.shared.io.sqlite_factory(get_db_connection); zephyr.shared.security.secrets(get_required_secret); zephyr.governance.ops_governance.budget_engine(pre_flight_check); zephyr.governance.ops_governance.budget_models(GateResult/GateDecision/BudgetLevel/ModelTier); zephyr.governance.intelligence_governance.model_router(ModelRouter perf-aware)
 # [CONSUMERS] 波5 统筹接线（44号 M3-⑨ MOD-PLAN-007 客户端注入）
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 调用必登记（每次 infer 含失败/被拦均落 llm_call_log，append-only 仅 INSERT）; LSG 不过不调用（enforce_input 判决 BLOCK/DENY 或 LSG 异常 -> 不发起任何通道调用）; 预算硬门（pre_flight_check DENY -> 不发起任何通道调用；预算引擎解析/调用异常 -> fail-closed 同径 blocked）; LLMDeg-0~4 降级注入路由决策（10号文 §3.6 降级表：1=非关键本地优先，2=仅关键任务用 API，3/4=仅本地，显式 API 钉死在 2+非关键/3+ 被拒）; L2 无旁路（无 L2 专属 LSG/预算旁路配置项，Ollama 与 API 通道同一 LSG+预算闸门）; 降级链留痕（每一通道尝试各落一行）; infer 不承载业务语义（task_type 仅登记/对账维度，critical 仅成本治理降级维度，complexity/max_cost 仅路由分发维度）; complexity 路由分发（Phase 1.1：ECONOMY/MINIMAL tier 且本地通道在链 -> 本地优先，其余 -> API 优先；channel 显式钉死优先于 complexity；分发后仍经 §3.6 降级收窄）; SQL 参数化+常量（NO-BARE-SQL）; db_path 默认 None 走 DB_PATH SSoT（测试注入临时库，prediction_log_writer 同款隔离先例）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
@@ -34,6 +34,9 @@ llm_runtime_gateway — L2/L3 统一 LLM 推理门面 MVP（10号文 §4 + 18号
 - 预算硬门（10号文 §4 Phase 1.2，GP1 落地）：infer 入口统一调 BudgetEngine.pre_flight_check，
   DENY 阻断不发起调用；LLMDeg-0~4 降级级别（§3.6）注入路由决策——
   级别由 GateResult.budget_level 映射（L0→0 … L4/L5/L6→4），驱动通道链重排/收窄。
+  ARCH-303（2026-08-31 裁定）：预算硬门主维度=COST（元）——预检 estimated_cost 由
+  est_tokens 按内置价表峰时保守价折算（_estimate_pre_flight_cost_yuan），成功调用回填真实
+  cost_yuan（COST/TOKEN 双维）；TOKEN 策略保留为防跑飞二级保险丝。
 - route() 接 MOD-INF-024 ModelRouter perf-aware 决策（10号文 §4 Phase 1.4），
   返回 RoutingDecision（含 tier/reason/performance_score 字段）；LLMDeg 级别对 tier 封顶。
 - L2 无旁路：Ollama（L2）与 API 通道过同一 LSG 入口闸门 + 同一预算硬门，
@@ -170,8 +173,9 @@ _TIER_RANK: Final[dict[ModelTier, int]] = {
     ModelTier.STANDARD: 2,
     ModelTier.PREMIUM: 3,
 }
-# 预算消费回填策略（记录 token 维；成本元/美元口径未校准，成本维走 reconcile_daily_calls 对账件）
+# 预算消费回填策略（ARCH-303：COST 元成本=主维度，TOKEN=二级兜底；成功调用双维回填真实值）
 _BUDGET_TOKEN_POLICY_ID: Final[str] = "BP-TOKEN-001"
+_BUDGET_COST_POLICY_ID: Final[str] = "BP-COST-001"
 
 
 def llmdeg_from_budget_level(level: BudgetLevel) -> int:
@@ -204,6 +208,9 @@ _PROVIDER_FALLBACK_PRICE_KEY: Final[dict[str, str]] = {
     CHANNEL_DEEPSEEK: "deepseek-chat",
     CHANNEL_QWEN: "qwen-flash",
 }
+# 预算硬门预检计价档（ARCH-303）：链首主力 deepseek-chat 峰时价——保守防低估（谷时半价不用，
+# 与 is_valley_period 无 tz 按峰时同纪律）；输出侧按 max_tokens 上限估
+_PRE_FLIGHT_PRICE_KEY: Final[str] = "deepseek-chat"
 
 _QWEN_DEFAULT_BASE_URL: Final[str] = "https://dashscope.aliyuncs.com/compatible-mode/v1"
 _QWEN_DEFAULT_MODEL: Final[str] = "qwen-flash"
@@ -307,6 +314,16 @@ def _estimate_tokens(text: str) -> int:
     if not text:
         return 0
     return max(1, (len(text) + 3) // 4)
+
+
+def _estimate_pre_flight_cost_yuan(tokens_in_est: int, max_tokens_out: int) -> float:
+    """预算硬门预估成本（元，ARCH-303 主维度口径）。
+
+    输入按 est 值、输出按 max_tokens 上限，统一取 _PRE_FLIGHT_PRICE_KEY 档峰时价合并估
+    （输入+输出合并，峰时保守价防低估）。
+    """
+    price = _PRICING_PER_MILLION[_PRE_FLIGHT_PRICE_KEY]
+    return (tokens_in_est * price["peak_in"] + max_tokens_out * price["peak_out"]) / 1_000_000
 
 
 def _now_beijing() -> datetime:
@@ -463,21 +480,22 @@ class LLMRuntimeGateway:
         task_type: str,
         est_tokens: int,
         *,
+        est_cost: float,
         entry_ts: datetime,
         entry_start: float,
     ) -> InferResult | None:
         """预算硬门（10号文 §4 Phase 1.2）：DENY/引擎异常 -> InferResult(status=blocked)，否则 None。
 
         每次调用同步刷新 _last_llmdeg（GateResult.budget_level -> LLMDeg-0~4，§3.6 注入点）。
-        estimated_cost 恒 0：登记成本为元、BudgetEngine 默认 COST 策略为美元口径，
-        单位未校准前成本维不双写（成本硬门=TOKEN 维+drift 预算，元成本对账归 reconcile）。
+        ARCH-303：主维度=COST（元）——est_cost 由 est_tokens 按内置价表峰时保守价折算传入
+        pre_flight_check（_estimate_pre_flight_cost_yuan）；TOKEN 维降为二级兜底保险丝。
         """
         try:
             engine = self._resolve_budget_engine()
             gate: GateResult = engine.pre_flight_check(
                 request_id=f"gw-{task_type}-{int(entry_start * 1000)}",
                 estimated_tokens=est_tokens,
-                estimated_cost=0.0,
+                estimated_cost=est_cost,
             )
         except Exception as exc:  # noqa: BLE001 — 预算门故障=fail-closed（成本刹车不可静默缺失）
             summary = f"budget_gate_unavailable: {type(exc).__name__}: {exc}"[:_ERR_MAX_LEN]
@@ -592,17 +610,15 @@ class LLMRuntimeGateway:
         return level >= 2 and not critical
 
     def _record_budget_consumption(self, result: InferResult) -> None:
-        """成功调用后回填 token 维消费（预算闭环；失败不阻断 infer 返回，仅告警留痕）。"""
+        """成功调用后双维回填（ARCH-303：COST 主维度回填真实 result.cost_yuan 元成本，
+        TOKEN 二级兜底回填 token 数；失败不阻断 infer 返回，仅告警留痕）。"""
         recorder = getattr(self._budget_engine, "record_consumption", None)
         if not callable(recorder):
             return
+        total_tokens = result.tokens_in + result.tokens_out
         try:
-            recorder(
-                _BUDGET_TOKEN_POLICY_ID,
-                result.tokens_in + result.tokens_out,
-                0.0,
-                0.0,
-            )
+            for policy_id in (_BUDGET_COST_POLICY_ID, _BUDGET_TOKEN_POLICY_ID):
+                recorder(policy_id, total_tokens, result.cost_yuan, 0.0)
         except Exception as exc:  # noqa: BLE001 — 回填失败不破坏已成功的推理结果
             _log.warning("llm_runtime_gateway 预算消费回填失败: %s", exc)
 
@@ -642,7 +658,8 @@ class LLMRuntimeGateway:
         """统一推理入口（纯网关，不承载业务语义；task_type 仅登记维度，critical 仅成本治理维度）。
 
         流程：LSG 入口闸门（fail-closed）-> 预算硬门（pre_flight_check，DENY/异常 blocked）
-        -> LLMDeg 级别注入通道链（§3.6）-> 按链/显式通道尝试 -> 成功即返回并回填 token 消费；
+        -> LLMDeg 级别注入通道链（§3.6）-> 按链/显式通道尝试 -> 成功即返回并双维回填消费
+        （ARCH-303：COST 主维度=真实 cost_yuan 元成本，TOKEN 二级兜底=token 数）；
         单通道失败降级留痕；全失败 status=error；LSG/预算判决 status=blocked 不降级。
 
         Phase 1.1 路由分发（complexity 显式传入时生效，缺省保持 E1 裁定降级链语义零变化）：
@@ -677,8 +694,13 @@ class LLMRuntimeGateway:
             return result
 
         # 预算硬门（10号文 §4 Phase 1.2）：DENY/引擎异常 -> blocked 不发起调用
-        est_tokens = _estimate_tokens(system + prompt) + max_tokens
-        budget_blocked = self._budget_gate(task_type, est_tokens, entry_ts=entry_ts, entry_start=entry_start)
+        # ARCH-303：est 拆分复用——tokens_in_est 供峰时保守价折算预估成本（COST 主维度预检）
+        tokens_in_est = _estimate_tokens(system + prompt)
+        est_tokens = tokens_in_est + max_tokens
+        est_cost = _estimate_pre_flight_cost_yuan(tokens_in_est, max_tokens)
+        budget_blocked = self._budget_gate(
+            task_type, est_tokens, est_cost=est_cost, entry_ts=entry_ts, entry_start=entry_start
+        )
         if budget_blocked is not None:
             return budget_blocked
 
@@ -757,7 +779,7 @@ class LLMRuntimeGateway:
                 continue
             latency_ms = int((time.monotonic() - start) * 1000)
             resolved_model = getattr(client, "model", None) or model or ""
-            tokens_in = _estimate_tokens(system + prompt)
+            tokens_in = tokens_in_est  # 复用预算门 est（同调用内 system+prompt 不变）
             tokens_out = _estimate_tokens(text)
             result = InferResult(
                 text=text,

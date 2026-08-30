@@ -18,6 +18,9 @@ CascadeOrchestrator/BudgetEngine/日历/审计落盘全 fake 或 tmp_path，零�
 - period 缝：盘前/竞价/盘中/盘后边界、非交易日、日历异常 fail-closed=trading
 - CLI 冒烟：router_factory 注入 dry-run 打印；非法参数 fail-closed
 - 懒加载：装配期不构造 CascadeOrchestrator（缺策略文件也不炸），首次 route 才解析
+- task_gate 影子模式（ARCH-302 observe-only）：shadow 记录 would-block 决策落 JSONL
+  但一律放行（含异常路径）、非 shadow 真阻断不落影子日志、env 开关不自行开闸、
+  默认缺省零行为变化
 """
 
 from __future__ import annotations
@@ -415,3 +418,190 @@ class TestTaskGateWiring:
         allowed, reason = hook("m", "c")
         assert allowed is False  # 钩子异常 fail-closed 按拦截处理，不抛出
         assert "task_gate 异常" in reason
+
+
+# ── task_gate 影子模式：ARCH-302 observe-only 金丝雀（记录 would-block 但一律放行）──
+
+
+class TestTaskGateShadow:
+    class _FixedGate:
+        """固定门判定（duck-typed can_dispatch）。"""
+
+        def __init__(self, allowed=False, reason="low_accuracy: x"):
+            self._allowed = allowed
+            self._reason = reason
+
+        def can_dispatch(self, model_id, capability):
+            return (self._allowed, self._reason)
+
+    class _RecordingScheduler:
+        def __init__(self):
+            self.calls = []
+
+        def check_and_record(self, gate, model_id, capability):
+            self.calls.append((model_id, capability))
+            return gate.can_dispatch(model_id, capability)
+
+    @staticmethod
+    def _read_events(path):
+        return [json.loads(line) for line in path.read_text(encoding="utf-8").strip().splitlines()]
+
+    def _shadow_hook(self, log_path, *, gate_allowed=False, reason="low_accuracy: x"):
+        sched = self._RecordingScheduler()
+        hook = ra.task_gate_dispatch_hook(
+            gate=self._FixedGate(allowed=gate_allowed, reason=reason),
+            scheduler=sched,
+            shadow=True,
+            shadow_log_path=log_path,
+        )
+        return hook, sched
+
+    def test_shadow_records_would_block_and_allows(self, tmp_path):
+        log = tmp_path / "shadow.jsonl"
+        hook, sched = self._shadow_hook(log)
+        allowed, reason = hook(MODEL, "code_fix")
+        assert allowed is True  # observe-only：门拒也放行
+        assert "shadow" in reason and "low_accuracy" in reason
+        assert sched.calls == [(MODEL, "code_fix")]  # 照常过调度器登记拦截计数
+        events = self._read_events(log)
+        assert len(events) == 1
+        ev = events[0]  # 16号文统一事件信封
+        assert ev["schema_version"] == ra.AUDIT_SCHEMA_VERSION
+        assert ev["event_id"] and ev["ts"]
+        assert ev["source"] == "task_gate_dispatch_hook"
+        assert ev["event_type"] == "task_gate_shadow_decision"
+        payload = ev["payload"]
+        assert payload["model_id"] == MODEL
+        assert payload["capability"] == "code_fix"
+        assert payload["gate_allowed"] is False
+        assert payload["would_block"] is True
+        assert payload["reason"] == "low_accuracy: x"
+
+    def test_shadow_records_allow_decision_too(self, tmp_path):
+        log = tmp_path / "shadow.jsonl"
+        hook, _ = self._shadow_hook(log, gate_allowed=True, reason="ok")
+        allowed, _ = hook(MODEL, TASK)
+        assert allowed is True
+        payload = self._read_events(log)[0]["payload"]
+        assert payload["gate_allowed"] is True
+        assert payload["would_block"] is False
+
+    def test_shadow_append_only_two_calls_two_lines(self, tmp_path):
+        log = tmp_path / "shadow.jsonl"
+        hook, _ = self._shadow_hook(log)
+        hook(MODEL, "code_fix")
+        hook(MODEL, TASK)
+        assert len(self._read_events(log)) == 2
+
+    def test_shadow_exception_still_allows(self, tmp_path):
+        class _BadScheduler:
+            def check_and_record(self, gate, model_id, capability):
+                raise RuntimeError("scheduler down")
+
+        hook = ra.task_gate_dispatch_hook(
+            gate=object(),
+            scheduler=_BadScheduler(),
+            shadow=True,
+            shadow_log_path=tmp_path / "s.jsonl",
+        )
+        allowed, reason = hook(MODEL, TASK)
+        assert allowed is True  # observe-only：钩子异常也只告警放行，绝不阻断
+        assert "shadow" in reason
+
+    def test_shadow_log_write_failure_still_allows(self, tmp_path):
+        blocker = tmp_path / "blocker"
+        blocker.write_text("x", encoding="utf-8")  # 文件占位 -> 其子路径 mkdir/open 必失败
+        hook, _ = self._shadow_hook(blocker / "sub" / "s.jsonl")
+        allowed, reason = hook(MODEL, TASK)
+        assert allowed is True  # 落盘故障不阻断（观察降级）
+        assert "shadow" in reason
+
+    def test_shadow_route_not_blocked_and_logged(self, tmp_path):
+        log = tmp_path / "shadow.jsonl"
+        hook, _ = self._shadow_hook(log)
+        router = ra.assemble_agent_router(
+            _config(),
+            orchestrator=_FakeOrchestrator(decision=_decision()),
+            cost_ledger=lambda: 0.0,
+            audit_sink=lambda rec: None,
+            task_gate=hook,
+        )
+        dec = router.route(_period_req())
+        assert dec.selected_model == MODEL  # observe-only 不阻断路由
+        assert not any("task_gate 拦截" in r for r in dec.reasons)
+        assert len(self._read_events(log)) == 1  # would-block 已留痕
+
+    def test_non_shadow_still_blocks_and_no_log(self, tmp_path):
+        log = tmp_path / "shadow.jsonl"
+        hook = ra.task_gate_dispatch_hook(
+            gate=self._FixedGate(allowed=False),
+            scheduler=self._RecordingScheduler(),
+            shadow=False,
+            shadow_log_path=log,
+        )
+        allowed, reason = hook(MODEL, "code_fix")
+        assert allowed is False  # 非 shadow 真阻断
+        assert reason == "low_accuracy: x"
+        assert not log.exists()  # 不落影子日志
+
+    def test_default_hook_is_hard_gate(self):
+        hook = ra.task_gate_dispatch_hook(
+            gate=self._FixedGate(allowed=False), scheduler=self._RecordingScheduler()
+        )
+        assert hook(MODEL, "code_fix")[0] is False  # 缺省 shadow=False 零行为变化
+
+    def test_shadow_enabled_env_parsing(self, monkeypatch):
+        monkeypatch.setenv(ra.TASK_GATE_SHADOW_ENV, "1")
+        assert ra.task_gate_shadow_enabled() is True
+        monkeypatch.setenv(ra.TASK_GATE_SHADOW_ENV, "true")
+        assert ra.task_gate_shadow_enabled() is True
+        monkeypatch.setenv(ra.TASK_GATE_SHADOW_ENV, "0")
+        assert ra.task_gate_shadow_enabled() is False
+        monkeypatch.delenv(ra.TASK_GATE_SHADOW_ENV)
+        assert ra.task_gate_shadow_enabled() is False
+
+    def test_shadow_env_does_not_enable_gate_by_itself(self, monkeypatch):
+        monkeypatch.setenv(ra.TASK_GATE_SHADOW_ENV, "1")
+        router = ra.assemble_agent_router(
+            _config(),
+            orchestrator=_FakeOrchestrator(decision=_decision()),
+            cost_ledger=lambda: 0.0,
+            audit_sink=lambda rec: None,
+        )
+        assert router._task_gate is None  # opt-in 语义不变：无 task_gate=True 影子开关零效果
+
+    def test_assemble_shadow_env_wires_shadow_hook(self, monkeypatch, tmp_path):
+        log = tmp_path / "shadow.jsonl"
+        monkeypatch.setenv(ra.TASK_GATE_SHADOW_ENV, "1")
+        monkeypatch.setenv(ra.TASK_GATE_SHADOW_LOG_ENV, str(log))
+        router = ra.assemble_agent_router(
+            _config(),
+            orchestrator=_FakeOrchestrator(decision=_decision()),
+            cost_ledger=lambda: 0.0,
+            audit_sink=lambda rec: None,
+            task_gate=True,
+        )
+        allowed, reason = router._task_gate("no_such_model_shadow_probe", TASK)
+        assert allowed is True  # 影子钩子：无护照 would-block 也放行
+        assert "shadow" in reason
+        payload = self._read_events(log)[0]["payload"]
+        assert payload["model_id"] == "no_such_model_shadow_probe"
+        assert payload["capability"] == TASK
+        assert payload["gate_allowed"] is False
+        assert payload["would_block"] is True
+        assert payload["reason"] == "no_passport"
+
+    def test_assemble_without_shadow_env_is_hard_gate(self, monkeypatch, tmp_path):
+        log = tmp_path / "shadow.jsonl"
+        monkeypatch.delenv(ra.TASK_GATE_SHADOW_ENV, raising=False)
+        monkeypatch.setenv(ra.TASK_GATE_SHADOW_LOG_ENV, str(log))
+        router = ra.assemble_agent_router(
+            _config(),
+            orchestrator=_FakeOrchestrator(decision=_decision()),
+            cost_ledger=lambda: 0.0,
+            audit_sink=lambda rec: None,
+            task_gate=True,
+        )
+        allowed, reason = router._task_gate("no_such_model_shadow_probe", TASK)
+        assert (allowed, reason) == (False, "no_passport")  # 硬门语义不变
+        assert not log.exists()

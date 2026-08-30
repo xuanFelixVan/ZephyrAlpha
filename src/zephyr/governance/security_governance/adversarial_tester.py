@@ -312,9 +312,11 @@ class AdversarialTester:
 
         v1 = engine.get_consumption_version(BudgetDimension.COST)
 
-        ok1, v2, _ = engine.try_claim_budget("provider-zhipu", BudgetDimension.COST, 5.0, expected_version=v1)
+        # ARCH-303：COST 维元口径化后 hourly_limit=3.0，claim 2.0 保持限额内（原 5.0 为美元口径），
+        # 保证本用例拒绝原因=stale version 而非余额不足
+        ok1, v2, _ = engine.try_claim_budget("provider-zhipu", BudgetDimension.COST, 2.0, expected_version=v1)
 
-        ok2, v3, _ = engine.try_claim_budget("provider-deepseek", BudgetDimension.COST, 5.0, expected_version=v1)
+        ok2, v3, _ = engine.try_claim_budget("provider-deepseek", BudgetDimension.COST, 2.0, expected_version=v1)
 
         detected = not ok2
 
@@ -379,7 +381,8 @@ class AdversarialTester:
 
         def _claim(provider: str) -> None:
 
-            ok, _, _ = engine.try_claim_budget(provider, BudgetDimension.COST, 5.0, expected_version=v1)
+            # ARCH-303：COST 维元口径化后 hourly_limit=3.0，claim 2.0 保持限额内（原 5.0 为美元口径）
+            ok, _, _ = engine.try_claim_budget(provider, BudgetDimension.COST, 2.0, expected_version=v1)
 
             with results_lock:
                 results.append(ok)

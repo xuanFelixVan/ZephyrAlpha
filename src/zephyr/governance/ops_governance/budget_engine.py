@@ -20,6 +20,8 @@ Budget Enforcer core engine — MOD-INF-024
 
 Pre-flight gate, model router, degradation manager, and budget consumption tracking.
 3D budget system: Token/Cost/Time with seven-level escalation.
+ARCH-303（2026-08-31 裁定）：预算硬门主维度=COST（单位=元人民币，对齐 Owner sanction 口径），
+TOKEN 策略保留为防跑飞二级兜底保险丝。
 Blueprint: docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md §2-4
 """
 
@@ -103,13 +105,16 @@ class BudgetEngine:
             hourly_limit=100_000,
             per_request_limit=16_000,
         ),
+        # ARCH-303：预算硬门主维度=COST，TOKEN 降为二级兜底。单位=元人民币
+        # （2026-08-31 ARCH-303 校准，对齐 Owner sanction 口径）：实测全量评估 242 条批次
+        # 耗 ¥3.4~6.7，¥10/日≈最大批次 1.5 倍余量，对齐 ¥50 sanction 规模。
         BudgetDimension.COST: BudgetPolicy(
             policy_id="BP-COST-001",
-            name="Cost Budget (Dollar)",
+            name="Cost Budget (Yuan)",
             dimension=BudgetDimension.COST,
-            daily_limit=50.0,
-            hourly_limit=10.0,
-            per_request_limit=1.0,
+            daily_limit=10.0,
+            hourly_limit=3.0,
+            per_request_limit=0.5,
         ),
         BudgetDimension.TIME: BudgetPolicy(
             policy_id="BP-TIME-001",

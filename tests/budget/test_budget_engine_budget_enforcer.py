@@ -51,9 +51,10 @@ class TestBudgetEngineInstantiation:
     def test_default_policy_cost_limits(self, engine: BudgetEngine) -> None:
         policy = engine.get_active_policy(BudgetDimension.COST)
         assert policy is not None
-        assert policy.daily_limit == 50.0
-        assert policy.hourly_limit == 10.0
-        assert policy.per_request_limit == 1.0
+        # ARCH-303（2026-08-31 校准）：单位=元人民币，对齐 Owner sanction 口径
+        assert policy.daily_limit == 10.0
+        assert policy.hourly_limit == 3.0
+        assert policy.per_request_limit == 0.5
 
     def test_default_policy_time_limits(self, engine: BudgetEngine) -> None:
         policy = engine.get_active_policy(BudgetDimension.TIME)
@@ -98,6 +99,20 @@ class TestPreFlightCheck:
         )
         result = engine.pre_flight_check("req-006", estimated_tokens=100)
         assert result.decision == GateDecision.DENY
+
+    def test_deny_when_cost_daily_past_hard_stop(self, engine: BudgetEngine) -> None:
+        """ARCH-303：COST 为预算硬门主维度——元成本日耗≥hard_stop 即 DENY（与 token 无关）。"""
+        cost_policy = engine.get_active_policy(BudgetDimension.COST)
+        assert cost_policy is not None
+        engine.record_consumption(
+            cost_policy.policy_id,
+            tokens=0,
+            cost=cost_policy.daily_limit * 0.99,
+            time_minutes=0.0,
+        )
+        result = engine.pre_flight_check("req-cost-001", estimated_tokens=100, estimated_cost=0.01)
+        assert result.decision == GateDecision.DENY
+        assert "COST" in result.reason
 
     def test_degrade_when_daily_consumed_past_emergency(self, engine: BudgetEngine) -> None:
         cost_policy = engine.get_active_policy(BudgetDimension.COST)

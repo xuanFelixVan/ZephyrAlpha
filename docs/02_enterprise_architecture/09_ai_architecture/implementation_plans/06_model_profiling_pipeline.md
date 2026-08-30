@@ -5,8 +5,8 @@ title: 模型画像→考试→护照流水线施工图
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.3.1"
-date: 2026-08-18
+version: "0.3.3"
+date: 2026-08-31
 topic: model_profiling_pipeline
 scope: 09_ai_architecture
 ---
@@ -16,7 +16,7 @@ scope: 09_ai_architecture
 > ## 结案报告（2026-08-28 全量审查批，代码实证）
 > **实际开发**：GP0 手动链路 5/5 PASS（P0-1~P0-5 逐项，P0-3 因 Ollama 离线降级实证）——task_gate.py 门控本体+data/brain/passports/ 7 份护照 JSON（deepseek-v4-flash/pro×thinking/non-thinking+qwen2.5-coder:14b/qwen3-coder:30b/qwen3:8b）；护照 ID 口径治本（list_all() 真源改护照内 model_id 字段）。
 > **最终成果**：画像→考试→护照→门控手动链路全通（GP0 验收口径）。**本案已结案（GP0 口径）**。
-> **未做+原因**：端到端自动闭环（自动画像→考试→护照→门控调度器）未建属 GP1+；护照落盘 schema 缺 cost/tool 字段待下次 Standard 考试自然补齐（文中已声明不单独施工）。
+> **未做+原因**：护照落盘 schema 缺 cost/tool 字段待下次 Standard 考试自然补齐（文中已声明不单独施工）；生产端 dispatch 门 opt-in 开启留 Owner 裁定（2026-08-30 登记，见 §4 Phase 1 注）。**GP1（触发式考试调度器）已闭环 2026-08-30**：`src/zephyr/intelligence/model_profiling/exam_trigger_scheduler.py`（MOD-INF-054）落地，P1-1~P1-4 全绿（见 §4 Phase 1）。
 
 > 本文定位：模型画像（7 维评测）→ 能力考试（五轴评测）→ 能力护照（CapabilityPassport）→ 任务门控（TaskGate）的完整流水线施工。
 > 与其他文件的分工：结构设计见 [00_index.md](00_index.md)，盘点见 [02_design_asset_inventory.md](02_design_asset_inventory.md)；模型路由消费侧见 [11_evidence_skill_router.md](11_evidence_skill_router.md)，LLM 运行时环境见 [10_llm_infrastructure.md](10_llm_infrastructure.md)。
@@ -262,12 +262,16 @@ ZephyrAlpha 是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道�
 
 | 步骤 | 内容 | 验收标准 | 状态 |
 |---|---|---|---|
-| P1-1 | **depgraph 登记**：将「触发式考试调度器」（挂 MOD-INF-036 下）登记到 depgraph 设计态（status=planned） | depgraph 设计态新增条目 | 待施工 |
-| P1-2 | 实现新模型入库触发：ModelDiscovery 发现新模型 → Quick 考试 → QuickProfile | 新模型自动产生 QuickProfile 落盘 data/brain/quick_profiles/ | 待施工 |
-| P1-3 | 实现门控拦截计数：TaskGate 连续 low_accuracy 拦截超阈值 → 发出复核考试建议（只发建议，不自动跑 Deep） | 拦截日志含触发建议记录 | 待施工 |
-| P1-4 | 测试通过后 depgraph status planned→production | depgraph 状态翻转 | 待施工 |
+| P1-1 | **depgraph 登记**：将「触发式考试调度器」（MOD-INF-054）登记到 depgraph 设计态（status=planned）→ production | depgraph 设计态新增条目；path_ownership_map.yaml 两条目补登 declared_in 指向本文 | **已施工 2026-08-30**（`src/zephyr/intelligence/model_profiling/exam_trigger_scheduler.py`，353行） |
+| P1-2 | 实现新模型入库触发：ModelDiscovery 发现新模型 → Quick 考试 → QuickProfile | 新模型自动产生 QuickProfile 落盘 data/brain/quick_profiles/；单模型失败记 errors 留痕不中断批量；成败均记 seen 防重复触发风暴 | **已施工 2026-08-30**（`ExamTriggerScheduler.trigger_quick_exams()`） |
+| P1-3 | 实现门控拦截计数：TaskGate 连续 low_accuracy 拦截超阈值 → 发出复核考试建议（只发建议，不自动跑 Deep） | 拦截日志含触发建议记录；复核建议落盘 JSONL；`human_gated=True` 明示不自动执行 Standard/Deep | **已施工 2026-08-30**（`ExamTriggerScheduler.record_gate_decision()`） |
+| P1-4 | 测试通过后 depgraph status planned→production | 契约测试 `tests/model/test_exam_trigger_scheduler.py` 全绿 | **已施工 2026-08-30**（pytest 全绿） |
 
 > Phase 1 纪律：触发器只产生「建议/QuickProfile」，Standard/Deep 考试始终人工确认后执行——对齐 capability_passport.py / exam_orchestrator.py 头部 `AI_AUTONOMY=human_gated`（实测）。
+>
+> **生产端激活评估（2026-08-30 登记）**：dispatch 硬门当前为 opt-in——`runtime_assembly.assemble_agent_router(task_gate=None)` 默认关闭（`task_gate=True` 时经 `task_gate_dispatch_hook()` 接 TaskGate+ExamTriggerScheduler.check_and_record）；定时扫描注册（config/tasks.yaml）亦未开启。**生产端 dispatch 门 opt-in 开启留 Owner 裁定**（开启属 Owner 裁定，本轮只评估+登记，不擅自开启）。
+>
+> **影子模式已施工（2026-08-31，registry #ARCH-302）**：Owner 裁定 dispatch 门不直接硬开也不继续默认关闭，采金丝雀发布——先影子模式（shadow/observe-only）运行观察，后续再晋升硬门。施工落点 `runtime_assembly.task_gate_dispatch_hook(shadow=...)`：`assemble_agent_router(task_gate=True)` 且环境变量 `ZEPHYR_TASK_GATE_SHADOW=1`（真值集 1/true/yes/on）时装配影子钩子——照常过 TaskGate+ExamTriggerScheduler.check_and_record 判定并登记拦截计数（复核建议 human_gated 不变量不动），决策以 16号文统一事件信封 append-only 落盘 `data/brain/task_gate_shadow_log.jsonl`（`source=task_gate_dispatch_hook` / `event_type=task_gate_shadow_decision`，payload 含 model_id/capability/gate_allowed/would_block/reason；路径可用 `ZEPHYR_TASK_GATE_SHADOW_LOG` 覆盖），但**一律放行**（observe-only）；shadow 下任何异常（门控/调度器/落盘故障）也只告警放行，绝不阻断路由。启用方式：生产装配处 `task_gate=True` + 设 `ZEPHYR_TASK_GATE_SHADOW=1`；`task_gate=None` 时影子开关零效果（opt-in 语义不变，默认行为零变化）。**晋升硬门条件**：观察期对影子日志做 would-block 画像评审（按模型×能力×原因分布复核误拦率，重点排查 no_passport/capability_not_tested 等护照覆盖问题与 low_accuracy 真拦比例），评审通过后在生产装配处取消 `ZEPHYR_TASK_GATE_SHADOW`（置 0/移除）即晋升硬门；晋升前任何时刻移除开关即回退。契约测试 `TestTaskGateShadow`（12 项：记录且放行/异常放行/落盘故障放行/路由不阻断/非 shadow 真阻断不落日志/默认零变化/env 不自行开闸/env 装配影子钩子）全绿。
 
 ### Phase 2：与模型路由集成（11 号文 v0.3.0 已填充，本文作为配合方）
 
@@ -347,6 +351,7 @@ ZephyrAlpha 是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道�
 | 2026-08-17 | 0.2.0 | 第 1 轮填充：§2 背景+§3 设计决策+§4 施工计划+§5 不做什么+§6 开放问题 | AI-FILL-06 按指令集填充 |
 | 2026-08-18 | 0.3.0 | 第 2 轮（红蓝对抗纠错+依赖对齐+扩充）：①实测纠错——护照 10 份→7 份（无 deepseek-r1 护照）、18 文件行数全部按 Get-Content 实测更新、tests 路径 tests/model/（23 文件）、pipeline_routing 行数更正；②Q4/Q5 闭环——10/11 号文 v0.3.0 均已填充，接口假设升级为已对齐契约（§3.6/§4 接口契约节），修正"llama.cpp+GPTQ INT4"过时假设（10 号文已实证否决 GPTQ）；③Q6 回填——三个数据目录内容实测入 §2.4；④新增 §3.0 总览/§3.4 阈值与评分/§3.5 幻觉与成本定位/§3.7 前沿演进（2026 登记 5 项）；⑤新增开放问题 Q9~Q13（.tmp 残留/schema 滞后/00_index 版本标注/蓝图不一致/TaskGate 锚点悬空）；⑥P0-4 标记完成、P0 验收样本按实测护照修正 | 第 1 轮数据凭首轮快照未逐条实测，本轮按指令集规则 15/17 全量实测纠正；10/11 号文填充完成消除阻塞 |
 | 2026-08-18 | 0.3.1 | Owner 裁定回填+施工事实登记（裁定 3/4/5）：①Q3 关闭——pipeline_routing 子包已裁定合并，顶层为唯一真源（profiler 上移 6 公共 API、task_model_learner 上移 3 def，纯超集零行为丢弃；消费方 pipeline_orchestrator/integration __init__/5 测试文件已重定向；子包 6 文件删除，commit de393cc0fc，790 测试绿），§2.2/§2.4/§5 第 6 条同步更新为已合并口径；②Q9 关闭——24 个 0 字节 .tmp 已清除，results_writer 原子写入加异常清理治本加固（commit de23915d1f），§2.3/§2.4 同步；③Q13 关闭——task_gate.py 与 test_task_gate.py 头注对齐 MOD-INF-035+auto_runtime_core 真实路径，src/zephyr/__init__.py MOD-INF-002 锚点同修，model_capability_exam 蓝图 3 处不存在引用勘正（commit 3bb6651c2f），§1/§2.1/§2.4 同步 | AI-ADJ-004 按 Owner 裁定回填 |
+| 2026-08-30 | 0.3.2 | GP1 收尾回写（纯文档+登记，零代码改动）：①§4 Phase 1（P1-1~P1-4）全标**已施工 2026-08-30**——`src/zephyr/intelligence/model_profiling/exam_trigger_scheduler.py`（MOD-INF-054，353行）落地：新模型自动 Quick 考试（seen 快照防重复触发风暴）+ TaskGate 连续 low_accuracy 超阈发复核建议（human_gated 只发不执行）；②蓝图登记补齐——path_ownership_map.yaml 两条目（src + tests/model/test_exam_trigger_scheduler.py）declared_in 补登本文；`docs/03_modules/_cross_layer/model_profiler/blueprint.md` §0.1 新增 MOD-INF-054 行+登记注记；③生产端激活评估登记——dispatch 硬门 opt-in（`assemble_agent_router(task_gate=None)` 默认关闭），开启留 Owner 裁定；④结案报告"端到端自动闭环未建"stale 表述修正为 GP1 已闭环；⑤动态终验 tests/model/test_exam_trigger_scheduler.py 全绿 | C3 收尾项：代码已落地（2026-08-30），本轮登记+文档回写对齐实态 |
 
 ---
 

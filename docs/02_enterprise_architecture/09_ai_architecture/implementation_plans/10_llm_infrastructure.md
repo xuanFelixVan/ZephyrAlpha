@@ -4,9 +4,9 @@ doc_type: architecture_view
 title: LLM 基础设施施工图
 owner: ZephyrAlpha-Owner
 language: zh
-status: draft
-version: "0.3.0"
-date: 2026-08-17
+status: active
+version: "0.4.0"
+date: 2026-08-31
 topic: llm_infrastructure
 scope: 09_ai_architecture
 ---
@@ -16,7 +16,14 @@ scope: 09_ai_architecture
 > ## 结案报告（2026-08-28 全量审查批，代码实证）
 > **实际开发**：Phase 0 三件+gateway MVP 落地——llm_runtime_gateway.py（MOD-INF-051：单一 infer 签名+DeepSeek/Qwen/Ollama 三通道优先级链+llm_call_log append-only 落库+LSG 入口闸门+LLMDeg-0~4 降级注入）；真实消费方 plan_engine/llm_premarket_analysis.py（M3-⑨/MOD-PLAN-007）接线；降级链生产实证（DeepSeek 402→Qwen 接管成功，llm_daily_analysis 落库）；model_pricing 谷时价按 DeepSeek 官网 2026-08-17 调价真源校准（42 用例绿）。
 > **最终成果**：三通道降级链+成本对账+真跑验证全闭环（GP0 验收口径）。
-> **未做+原因**：预算硬门/路由级联（Phase 1）属 GP1（文中已声明）；MCP 运行时动态发现、模型注册 SSoT 收敛方向裁定未完成（GP1+/开放问题）。
+> **未做+原因**：~~预算硬门/路由级联（Phase 1）属 GP1（文中已声明）~~ **已过时，见下方 2026-08-31 回填**；MCP 运行时动态发现、模型注册 SSoT 收敛方向裁定未完成（GP1+/开放问题）。
+
+> ## 结案报告回填（2026-08-31 施工闭环，代码实证）
+> **Phase 1（GP1）已收口**：预算硬门+路由级联落码——llm_runtime_gateway.py（MOD-INF-051）infer 入口统一调 BudgetEngine.pre_flight_check（DENY 阻断），LLMDeg-0~4 降级级别注入路由决策（§3.6 运行时镜像），route() 接 MOD-INF-024 ModelRouter perf-aware 决策返回 RoutingDecision（tier/reason/performance_score）；MOD-INF-051 [MATURITY] testing→production 翻转（#ARCH-301：2026-08-31 Owner 授权代判 GP1 验收口径甲 40/40 通过）。预算硬门主维度 token→元成本切换裁定登记（#ARCH-303，校准在途）。
+> **Phase 2.3 显存预算表已施工**：config/gguf_vram_budget.yaml（human_gated）+ src/zephyr/intelligence/gguf_model_manager.py（MOD-INF-060，Ollama 已拉模型清单登记 + 加载显存 vs 21.6GB 上限预算阻断）。
+> **Phase 2.4 qwen3:8b 基线已施工**：scripts/run_qwen3_baseline_exam.py 跑基线考试，成绩单落盘 data/model_profiles/（benchmark_20260830_154428.jsonl），tests/model/test_qwen3_baseline_profile.py 守卫。
+> **Phase 3 已收口**：3.1 注册对账脚本 scripts/governance/audit_llm_registry_reconciliation.py 已施工（MOD-INF-039 ↔ REG-ML-001 ↔ model_pricing.yaml 三向比对）；3.2 文档收尾=本次回写；3.3 成熟度翻转已随 #ARCH-301 闭环（production）。
+> **仍遗留**：Phase 2.1/2.2（MCP Client 动态发现 + 漂移对账入遥测）未施工，P2 排期待定；开放问题 Q1/Q6/Q7/Q8/Q9 待裁定（见 §6）。
 
 > 本文定位：LLM 基础设施的施工——三层运行时（L1/L2/L3）、MCP 工具调用、推理优化、模型注册、数据增强。
 > 与其他文件的分工：结构设计见 [00_index.md](00_index.md)，盘点见 [02_design_asset_inventory.md](02_design_asset_inventory.md)。
@@ -31,7 +38,7 @@ scope: 09_ai_architecture
 | 所属 | [00_index.md](00_index.md) §1 目标架构·基础设施层 |
 | 依赖 | AutoRuntime Core 蓝图（04 号文） |
 | 优先级 | P1——LLM 推理是所有 AI 能力的底层支撑 |
-| 状态 | draft（GP0 已施工：gateway MVP+三通道降级链落地；Phase 1 预算门/级联属 GP1） |
+| 状态 | active（GP0+GP1 已施工：gateway MVP+三通道降级链+预算硬门/路由级联落地，MOD-INF-051 production（#ARCH-301）；Phase 2.3/2.4+Phase 3 已施工；Phase 2.1/2.2 MCP 动态发现属 P2 遗留） |
 
 ---
 
@@ -293,6 +300,8 @@ LLM 调用能力在项目中**并非空白，而是"两套平行体系 + 若干�
 
 ### Phase 0：登记与对齐（P1，纯治理无代码）
 
+> **状态回写（2026-08-28 已闭环）**：0.1~0.3 三件已落地（depgraph 设计态登记 + 三处注册对账基线 + 漂移项裁定），见头部结案报告。
+
 | 步骤 | 内容 | 验收标准 |
 |---|---|---|
 | 0.1 | **depgraph 设计态登记**：用 `apply_depgraph.py` 登记新模块 `llm_runtime_gateway`（拟名，L2/L3 统一门面，归属 D_INTEGRATION，依赖 MOD-INF-016 协议 + MOD-INF-019 网关 + MOD-INF-042 local_model + MOD-INF-024 ModelRouter），status=planned | depgraph 查询可见 planned 节点 + 4 条设计态依赖边 |
@@ -300,6 +309,8 @@ LLM 调用能力在项目中**并非空白，而是"两套平行体系 + 若干�
 | 0.3 | mcp.json ↔ tool_contracts.yaml 漂移项裁定（sandbox/red_blue_validator/clone_guard/resource_optimization 四个不一致 server 的归属，见 Q8） | 漂移项收敛为 0 或登记为带理由的已知偏差 |
 
 ### Phase 1：L2/L3 统一入口（P1，核心施工）
+
+> **状态回写（2026-08-31 已闭环）**：1.1 门面 `llm_runtime_gateway.py`（MOD-INF-051）已建（2026-08-28 GP0 批次）；1.2 预算硬门接线 + LLMDeg-0~4 注入路由决策已落码（infer 入口统一 `BudgetEngine.pre_flight_check`，DENY 阻断）；1.3 LSG 同闸门 fail-closed 已落地（L2 无旁路配置项）；1.4 route() 已接 MOD-INF-024 ModelRouter perf-aware 决策（返回 RoutingDecision 含 tier/reason/performance_score）。MOD-INF-051 [MATURITY] testing→production（#ARCH-301，2026-08-31）。预算门主维度 token→元成本切换见 #ARCH-303（在途）。
 
 | 步骤 | 内容 | 验收标准 |
 |---|---|---|
@@ -310,6 +321,8 @@ LLM 调用能力在项目中**并非空白，而是"两套平行体系 + 若干�
 
 ### Phase 2：MCP 动态发现与推理优化落地（P2）
 
+> **状态回写（2026-08-31）**：2.3 GGUF 模型管理件已施工（config/gguf_vram_budget.yaml + `src/zephyr/intelligence/gguf_model_manager.py` MOD-INF-060，超预算加载阻断）；2.4 qwen3:8b 基线考试已施工（`scripts/run_qwen3_baseline_exam.py`，成绩单落盘 data/model_profiles/ benchmark_20260830_154428.jsonl）。**2.1/2.2（MCP Client 动态发现 + 漂移对账入遥测）未施工**，P2 排期待定。
+
 | 步骤 | 内容 | 验收标准 |
 |---|---|---|
 | 2.1 | MCP Client 发现件：连接后 list_tools 拉取实况，与 tool_contracts.yaml 契约 diff；未知工具告警 + 默认拒绝写操作（safety_level M/H 必须契约命中才放行）；传输层仅 localhost HTTP+SSE、STDIO 禁用（§3.2.2）；工具注册时执行 MCP-Scan 扫描并剥离指令性语言 | 人为增删一个 mock 工具，diff 报告正确检出；STDIO 类型 server 配置被拒绝 |
@@ -318,6 +331,8 @@ LLM 调用能力在项目中**并非空白，而是"两套平行体系 + 若干�
 | 2.4 | 本地推理质量基线：用 model_profiling 的 exam 链路对 qwen3:8b 跑基线考试，成绩单存档（为后续换模型/换量化档位提供对比基准） | 基线成绩入库 data/model_profiles/ |
 
 ### Phase 3：注册对账自动化与收口（P2）
+
+> **状态回写（2026-08-31 已闭环）**：3.1 注册对账脚本已施工（`scripts/governance/audit_llm_registry_reconciliation.py`，MOD-INF-039 ↔ REG-ML-001 ↔ model_pricing.yaml 三向比对）；3.2 本文 Phase 完成状态回写 = 本条及头部 2026-08-31 回填；3.3 成熟度翻转已随 #ARCH-301 闭环（llm_runtime_gateway MOD-INF-051 [MATURITY] production，2026-08-31）。
 
 | 步骤 | 内容 | 验收标准 |
 |---|---|---|
@@ -374,6 +389,7 @@ LLM 调用能力在项目中**并非空白，而是"两套平行体系 + 若干�
 | 2026-08-17 | 0.2.1 | 开放问题新增 Q9（目录隔离搬迁事件记录）+ 拼接处空行修正 + doc_type 修正（implementation_plan→blueprint，按 doc_type_vocabulary 弃用映射 construction_plan→blueprint） | 并行 coord 收口流程将 09_ai_architecture 整树迁至 quarantine，本文回迁并记录事件待裁定；TTL-METADATA 门禁 hard block 要求合法 doc_type |
 | 2026-08-17 | 0.2.2 | Q9 表述更新：implementation_plans 已恢复、依赖图/架构图子树仍在隔离区 | 提交后复核发现 02-D-DATA-数据域.md 引用暂不可解析，修正事件记录准确性 |
 | 2026-08-17 | 0.3.0 | 回填五项：§3.2.1 交易域 MCP Server 规划（5 Server+安全边界 4 规则+ttlMs，Phase 4 交易执行 Server ❌不能建登记 §5）；§3.2.2 MCP Triple Gate 工程裁定（llm_proxy.exe 双重角色/STDIO 禁用/MCP-Scan 注册扫描/MCPTox 72.8%+ToxicSkills 36.8% 威胁证据）；§3.3 显存管理补 GPU 时段分时维度（盘中训练 0GB/推理 8-10GB、夜间训练 16-18GB、风控 NN 常驻 2GB 不可卸载、CPU RAM 热备 ~5s、OOM/温度>85°C/延迟>2×基线处置、时段优先级回测>推理>训练）；§3.4 注册治理字段补充（training_data_hash/版本四元组/审计哈希链≥5 年，对齐 REG-ML-001+MOD-INF-039 对账口径）；新增 §3.6 成本治理（LLMDeg-0~4 五级降级+月¥500/日¥30/单次¥0.5 预算+Redis 预算池月/Agent/模型三维+Token 计数器日快照 Parquet+成本仪表盘 5 视图+API→本地降级条件预算>80%且性能损失<5%）；开放问题 Q3/Q5 闭环（04 v0.2.1/11 v0.2.0 确认假设成立）、Q4 按 09 v0.2.0 P0-1 裁定闭环（L2 同闸门无旁路）并同步修订 Phase 1.2/1.3/2.1/2.3/3.1 与 §5 不做清单 | AI-FILL-10-R2 回填；源：.runtime/aidrafts/09_drafts_audit 依赖图 12/13/24/25/26 + 架构图/集成架构 §5.2~5.4 + 04/09/11 号文接口复审；依赖图/架构图子树仍在隔离区（Q9），以草稿副本为读取源并逐节标注 |
+| 2026-08-31 | 0.4.0 | 施工闭环状态回写（Phase 3.2 文档收尾执行）：头部结案报告追加 2026-08-31 回填（Phase 1 GP1 预算硬门/路由级联已落码 + MOD-INF-051 production 翻转 #ARCH-301；Phase 2.3 显存预算表 config/gguf_vram_budget.yaml + gguf_model_manager.py MOD-INF-060；Phase 2.4 qwen3:8b 基线 data/model_profiles/；Phase 3.1 注册对账脚本 audit_llm_registry_reconciliation.py）；原"预算硬门/路由级联属 GP1 未做"表述划除；§1 状态行 + §4 Phase 0/1/2/3 状态回写；frontmatter status draft→active | 长城任务 2026-08-30/31 施工完毕，文档状态与代码实证对齐；遗留仅 Phase 2.1/2.2 MCP 动态发现（P2）+ Q1/Q6/Q7/Q8/Q9 待裁定 |
 
 ---
 

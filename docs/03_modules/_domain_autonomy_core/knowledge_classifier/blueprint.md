@@ -4,13 +4,13 @@ module_name: knowledge_classifier
 domain: D_AUTONOMY_CORE
 doc_type: blueprint
 ttl: permanent
-design_maturity: testing
+design_maturity: production
 stability: evolving
 safety_level: M
 ai_autonomy: human_gated
 version: "0.1.0"
 created: 2026-08-29
-last_updated: 2026-08-29
+last_updated: 2026-08-31
 owner: ZephyrAlpha-Owner
 priority: P1
 blueprint_level: module

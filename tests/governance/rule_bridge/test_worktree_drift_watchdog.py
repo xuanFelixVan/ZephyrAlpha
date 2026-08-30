@@ -343,3 +343,108 @@ def test_quarantine_tamper_detected(git_repo: Path) -> None:
     wd.scan_once(git_repo, grace_seconds=0)
     audit = _read_audit(git_repo)
     assert any(r.get("verdict") == "quarantine_tamper" for r in audit)
+
+
+# ── #ARCH-304 裁定落地（2026-08-31）：单活跃会话 auto-claim 替代告警处置 ──────
+
+
+def test_auto_claim_single_active_session(git_repo: Path) -> None:
+    """#ARCH-304：恰好 1 个活跃注册会话 → auto-claim 替代告警，零 critical_warn。"""
+    from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+    reg = SessionRegistry(git_repo)
+    reg.register("sess-ai")
+    (git_repo / "hot.txt").write_text("v2-unclaimed\n", encoding="utf-8")
+    s = wd.scan_once(git_repo, grace_seconds=0)
+    assert s["auto_claimed"] == 1 and s["alerted"] == 0, s
+
+    # 零告警落库
+    rows = _read_log_actions(git_repo)
+    assert not any(r[1] == "critical_warn" for r in rows)
+
+    # 审计留痕：auto-claim 事件（文件/会话/时间/漂移 hash）
+    audit = _read_audit(git_repo)
+    ac = [r for r in audit if r.get("verdict") == "auto_claimed"]
+    assert len(ac) == 1
+    assert ac[0]["file"] == "hot.txt"
+    assert ac[0]["auto_claim_session"] == "sess-ai"
+    assert ac[0]["work_hash"] and ac[0]["ts"]
+
+    # 既有 claim 机制生效：registry 持有 + 快照持久化 + adopt 审计
+    info = reg.get_session("sess-ai")
+    assert info is not None and any("hot.txt" in f for f in info.held_files)
+    assert (git_repo / ".runtime" / "claim_snapshots" / "sess-ai.json").exists()
+    assert (git_repo / ".runtime" / "claim_snapshots" / "sess-ai_adopted.jsonl").exists()
+
+    # 二轮扫描：同签名 dedup，仍零告警零重复 claim
+    s2 = wd.scan_once(git_repo, grace_seconds=0)
+    assert s2["alerted"] == 0 and s2["auto_claimed"] == 0
+
+    # 进一步漂移（新签名）：已被认领 → claimed 豁免，不告警不再 auto-claim
+    (git_repo / "hot.txt").write_text("v3-more-work\n", encoding="utf-8")
+    s3 = wd.scan_once(git_repo, grace_seconds=0)
+    assert s3["alerted"] == 0 and s3["auto_claimed"] == 0 and s3["claimed"] == 1, s3
+
+
+def test_multi_active_sessions_keep_alert(git_repo: Path) -> None:
+    """#ARCH-304 安全闸：>1 活跃会话（归属歧义）→ 维持原快照+告警，零 auto-claim。"""
+    from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+    reg = SessionRegistry(git_repo)
+    reg.register("sess-a")
+    reg.register("sess-b")
+    (git_repo / "hot.txt").write_text("v2-ambiguous\n", encoding="utf-8")
+    s = wd.scan_once(git_repo, grace_seconds=0)
+    assert s["alerted"] == 1 and s["auto_claimed"] == 0, s
+    rows = _read_log_actions(git_repo)
+    assert any(r[0] == wd.GATE_ID and r[1] == "critical_warn" for r in rows)
+    # 快照存证照常
+    snaps = list((git_repo / ".runtime" / "quarantine").glob("drift_*/hot.txt"))
+    assert len(snaps) == 1
+    # 歧义场景不得擅自归属：两 session 均未被动持有该文件
+    for sid in ("sess-a", "sess-b"):
+        info = reg.get_session(sid)
+        assert info is not None and not any("hot.txt" in f for f in info.held_files)
+
+
+def test_zero_sessions_keep_alert(git_repo: Path) -> None:
+    """#ARCH-304 安全闸：0 活跃会话 → 维持原告警路径（与裁定前行为一致）。"""
+    (git_repo / "hot.txt").write_text("v2-orphan\n", encoding="utf-8")
+    s = wd.scan_once(git_repo, grace_seconds=0)
+    assert s["alerted"] == 1 and s["auto_claimed"] == 0, s
+    rows = _read_log_actions(git_repo)
+    assert any(r[1] == "critical_warn" for r in rows)
+
+
+def test_auto_claim_failure_falls_back_to_alert(git_repo: Path, monkeypatch) -> None:
+    """#ARCH-304 fail-closed：单会话但 claim 失败（冲突/异常）→ 回落原告警路径不放松。"""
+    monkeypatch.setattr(wd, "_active_sessions_and_claims", lambda root: (["sess-x"], {}))
+    monkeypatch.setattr(wd, "_auto_claim_single_session", lambda root, rel, sid: False)
+    (git_repo / "hot.txt").write_text("v2-claimfail\n", encoding="utf-8")
+    s = wd.scan_once(git_repo, grace_seconds=0)
+    assert s["alerted"] == 1 and s["auto_claimed"] == 0, s
+    rows = _read_log_actions(git_repo)
+    assert any(r[1] == "critical_warn" for r in rows)
+
+
+def test_claimed_gateway_snapshot_format_exempt(git_repo: Path) -> None:
+    """claim 快照读取兼容网关 save_session_snapshot 格式（{"snapshots": {abs: baseline}}）。"""
+    from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+    SessionRegistry(git_repo).register("sess-x")
+    snap_dir = git_repo / ".runtime" / "claim_snapshots"
+    snap_dir.mkdir(parents=True, exist_ok=True)
+    (snap_dir / "sess-x.json").write_text(
+        json.dumps(
+            {
+                "session_id": "sess-x",
+                "snapshots": {str((git_repo / "hot.txt").resolve()): ""},
+                "claim_head": "",
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    (git_repo / "hot.txt").write_text("v2-claimed-wip\n", encoding="utf-8")
+    s = wd.scan_once(git_repo, grace_seconds=0)
+    assert s["claimed"] == 1 and s["alerted"] == 0 and s["auto_claimed"] == 0, s

@@ -93,7 +93,8 @@ class TestMultiProviderRace:
         results_lock = threading.Lock()
 
         def _claim(provider: str) -> None:
-            ok, ver, reason = engine.try_claim_budget(provider, BudgetDimension.COST, 5.0, expected_version=v1)
+            # ARCH-303：COST 维元口径化后 hourly_limit=3.0，claim 2.0 保持在限额内（原 5.0 为美元口径）
+            ok, ver, reason = engine.try_claim_budget(provider, BudgetDimension.COST, 2.0, expected_version=v1)
             with results_lock:
                 results.append((ok, ver, reason))
 

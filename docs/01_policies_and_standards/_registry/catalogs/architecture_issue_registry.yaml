@@ -21099,7 +21099,7 @@ entries:
   - '17号文 §3.6（触发式排期）'
   created: '2026-08-29'
   last_updated: '2026-08-29'
-- issue_id: ARCH-287
+- issue_id: '#ARCH-287'
   title: GP1 分类器验收口径裁定（原代号 GP1-EVAL-CALIBER-001）——人判语义合理性口径甲 + 双指标 + 任务输入补全路径
   severity: P1
   adjudication: 验收口径=口径甲（人判语义合理性，回归 13号文 人评一致率 原文）；废弃注册表真值口径（策展意图不在文本孤本内，测量工具错误）。双指标：主=原样接受率（85% 门槛不降格），辅=可辩护率。当前成绩如实登记未过线（R3 严格 58%，标准复判 46%）。达标路径=PS-VOC-TAX-001 知识分类边界标准（22 类边界+裁决规则+主观术语锚定，Owner 口述+全网搜证）+分类器 prompt 注入；防过拟合铁律=教学集禁当考试集，复测新抽样。Owner 2026-08-30 逐题确认（含词不达意豁免条款 R6）。
@@ -21109,7 +21109,7 @@ entries:
   created: '2026-08-30'
   last_updated: '2026-08-30'
 # --- 2026-08-30 远期愿景/过度工程正式裁定不建设批（D1~D10，依据 2026-08-30 未施工内容优先级评估） ---
-- issue_id: ARCH-288
+- issue_id: '#ARCH-288'
   title: D1 裁定不建设——11号文 技能库自动生成（AutoSkill / Voyager 式自进化）
   severity: P3低
   adjudication: 单 GPU（21.6GB 显存）无法支撑 Voyager 式技能自进化的探索-试错-固化循环；技能库现由人工策展+知识分类器覆盖，无自动生成需求。判定为过度工程。
@@ -21117,7 +21117,7 @@ entries:
   status: deprecated
   created: '2026-08-30'
   last_updated: '2026-08-30'
-- issue_id: ARCH-289
+- issue_id: '#ARCH-289'
   title: D2 裁定不建设——12号文 L2/L3 反思（N=5 累积触发 Reflexion）
   severity: P3低
   adjudication: Reflexion 式反思依赖大量真实任务历史作素材，当前任务历史零积累，无反思语料；单 GPU 也无法承载多 Agent 反思的并行推理开销。触发条件（N=5 累积）在当前规模下永不满足。判定为过度工程。
@@ -21125,7 +21125,7 @@ entries:
   status: deprecated
   created: '2026-08-30'
   last_updated: '2026-08-30'
-- issue_id: ARCH-290
+- issue_id: '#ARCH-290'
   title: D3 裁定不建设——13号文 Phase 2 受控生成器（GP2 内容）
   severity: P3低
   adjudication: Phase 2 受控生成器属 GP2 范畴，但 GP1（Phase 1 知识分类器）尚未验收，前置链未闭环；按触发式排期纪律不提前施工 GP2 内容。
@@ -21133,7 +21133,7 @@ entries:
   status: deprecated
   created: '2026-08-30'
   last_updated: '2026-08-30'
-- issue_id: ARCH-291
+- issue_id: '#ARCH-291'
   title: D4 裁定不建设——13号文 Phase 3 ICL 案例库（远期 P4）
   severity: P3低
   adjudication: ICL 案例库属远期 P4 愿景，依赖 Phase 1/2 全部落地且积累足够高质量案例；当前 Phase 1 未验收，案例积累为零。判定为远期愿景，暂不建设。
@@ -21141,7 +21141,7 @@ entries:
   status: deprecated
   created: '2026-08-30'
   last_updated: '2026-08-30'
-- issue_id: ARCH-292
+- issue_id: '#ARCH-292'
   title: D5 裁定不建设——16号文 KILLSWITCH 三级响应统一编排
   severity: P3低
   adjudication: 现有两级 KILLSWITCH（软停/硬停）已覆盖当前单机单账户场景的全部风险处置需求；三级统一编排增加的复杂度无对应收益。判定为过度工程。
@@ -21149,7 +21149,7 @@ entries:
   status: deprecated
   created: '2026-08-30'
   last_updated: '2026-08-30'
-- issue_id: ARCH-293
+- issue_id: '#ARCH-293'
   title: D6 裁定不建设——91号文 量子 QNN（量子神经网络密度预测）
   severity: P3低
   adjudication: 91号文已裁定量子 QNN 为过度工程（无量子硬件、无对应 alpha 证据）；本条为正式登记关闭，防止后续 AI 会话重复立项。
@@ -21157,7 +21157,7 @@ entries:
   status: deprecated
   created: '2026-08-30'
   last_updated: '2026-08-30'
-- issue_id: ARCH-294
+- issue_id: '#ARCH-294'
   title: D7 裁定不建设——90/91号文 conformal 五变体栈（等 90号 P-2 拍板）
   severity: P3低
   adjudication: conformal 预测五变体栈（含密度预测）属方法论开放问题，依赖 90号文 P-2 裁定结论；在 P-2 拍板前不具备施工前提，且单 GPU 约束下五变体并行训练不现实。判定为暂不建设。
@@ -21166,7 +21166,7 @@ entries:
   related_adjudication: '90_methodology_open_questions P-2'
   created: '2026-08-30'
   last_updated: '2026-08-30'
-- issue_id: ARCH-295
+- issue_id: '#ARCH-295'
   title: D8 裁定不建设——94/95号文 币圈 CAND-003/004/008/009/010（外部条件未就绪）
   severity: P3低
   adjudication: 币圈量化扩展候选集 CAND-003/004/008/009/010 依赖外部条件（币圈数据管道、交易所接入、资金划转链路）未就绪；按等外部条件纪律不主动施工。
@@ -21174,7 +21174,7 @@ entries:
   status: deprecated
   created: '2026-08-30'
   last_updated: '2026-08-30'
-- issue_id: ARCH-296
+- issue_id: '#ARCH-296'
   title: D9 裁定不建设——04号文 容量升级 12 项 GAP（触发条件 T1/T2/T3 未到）
   severity: P3低
   adjudication: 04号文容量升级 12 项 GAP 的施工触发条件（T1/T2/T3 性能/容量阈值）经实证未达到；当前容量满足需求，提前升级为过度工程。
@@ -21182,7 +21182,7 @@ entries:
   status: deprecated
   created: '2026-08-30'
   last_updated: '2026-08-30'
-- issue_id: ARCH-297
+- issue_id: '#ARCH-297'
   title: D10 裁定不建设——27号文 第二批次策略（需首批 3 个月 track record）
   severity: P3低
   adjudication: 27号文第二批次策略扩展依赖首批策略 3 个月实盘 track record 作为扩容依据；当前首批策略尚未形成有效样本，扩批无数据支撑。判定为暂不建设，待 track record 满足后重新立项。
@@ -21190,7 +21190,7 @@ entries:
   status: deprecated
   created: '2026-08-30'
   last_updated: '2026-08-30'
-- issue_id: ARCH-298
+- issue_id: '#ARCH-298'
   title: A1 正式裁定——61号文 mSPRT 晋升编排层载体重裁定（MLflow 退役后载体归宿）
   severity: P1
   adjudication: '正式裁定：mSPRT Champion-Challenger 晋升/回滚/归档的落地载体 = 因子生命周期状态机 MOD-L02-013（注册表状态机等价物），替代已退役的 MLflow alias（@champion/@challenger/@archived，51号文 2026-08-16 裁定完全卸载）。语义不变：61号文 §3.3 纪律 1 的 mSPRT 序贯晋升判定逻辑不受载体切换影响，仅物理执行层由 MLflow alias 换为 FSM 状态转换。三件套已在库 production：统计内核 pf_core/core/msprt_champion_challenger.py（MOD-PF-008）+ 晋升编排层 governance/lifecycle_governance/msprt_promotion_channel.py + 消费方 governance/lifecycle_governance/factor_promotion_wiring.py（2026-08-24 ARCH-210 落地）。残余阻塞：ExecutionReport delta 产出逻辑（CTR-P1-007）未施工，delta 当前为合成/外部源——54号文 BM-REC-02-B 绩效归因待其解锁。'
@@ -21199,7 +21199,7 @@ entries:
   related_adjudication: '#ARCH-210'
   created: '2026-08-30'
   last_updated: '2026-08-30'
-- issue_id: ARCH-300
+- issue_id: '#ARCH-300'
   title: 63号文批次B/C补文档前置缺口——concept_sector/sector_list/convertible_bond_list 三表采集任务已配置但 0 行在库
   severity: P2
   adjudication: 'B7 评估实证（2026-08-30，ClickHouse system.tables+count 直查）：63号文 §6.2 批次 B/C 目标表中 concept_sector（c1_market，tasks.yaml concept_sector_refresh/monthly_static/akshare）、sector_list（c1_market，sector_list_refresh/monthly_static/miniqmt，trading_day_only）、convertible_bond_list（c1_market，convertible_bond_list_refresh/monthly_static/akshare）三张采集任务配置在位但库内 0 行，与 63号文 v2.1.0"代码活跃✓"（代码引用扫描口径）不矛盾但与"数据已落库可补文档"前提不符——按 §7.0.1 六字段模板补消费级文档时，"下游逻辑/消费频率"对空表无法通过 §7.0.6 L3 语义抽检。前置条件：排查三表月度任务执行链（miniqmt 月初遇周末跳过/akshare 接口变更/静默失败待定位）并实证灌数；灌数前三表仅可落最小文档+空表状态标注。其余 14 张批次 B/C 目标表在库有数据（本日实证行数），纯文档补全无此前置，清单见 docs/_working/2026-08-30-b7-batch-bc-doc-supplement-checklist.md。'
@@ -21207,3 +21207,36 @@ entries:
   status: open
   created: '2026-08-30'
   last_updated: '2026-08-30'
+- issue_id: '#ARCH-301'
+  title: A2 裁定——13号文 GP1 知识分类器验收通过（口径甲 40/40）+ production 翻转
+  severity: P1
+  adjudication: 'GP1 验收裁定（Owner 2026-08-31 授权 AI 架构师按口径甲代判）：全量 309 条（factor160+strategy149，deepseek-v4-flash，拦截率经治本修复 78.3%→0.3%）+ 分层抽样 40 条人评（20 match+20 mismatch）。结果：40/40 语义可接受（24 reasonable + 16 registry_truth_stale + 0 unreasonable），口径甲原样接受率 100% ≥ 85% 门槛 → 验收通过。关键实证：16 条 mismatch 全部是分类器比注册表真值更精准（如供应链动量 momentum 优于 event、研报分类 data_asset 优于 multifactor），零分类器错误——证明 PS-VOC-TAX-001 边界标准注入生效，且 mismatch 主因是注册表真值滞后（测量工具偏差，ARCH-287 已裁定）。动作：knowledge_classifier（MOD-FACTORY-001）+ llm_runtime_gateway（MOD-INF-051）[MATURITY]/design_maturity testing→production。'
+  fix_phase: 已落地（2026-08-31：人评包裁定回填 + 双模块 production 翻转）
+  status: resolved
+  related_adjudication: '#ARCH-287'
+  created: '2026-08-31'
+  last_updated: '2026-08-31'
+- issue_id: '#ARCH-302'
+  title: 裁定——06号文 生产端 dispatch 硬门（TaskGate）采用影子模式先行启用
+  severity: P2
+  adjudication: '裁定（Owner 2026-08-31 授权代判）：生产端 dispatch 门不按"直接硬门全开"也不"继续默认关闭"，采用专业机构金丝雀发布实践——先影子模式（shadow/observe-only：记录 would-block 决策但不真阻断）运行观察，确认 passport 覆盖率与误拦率后再晋升硬门。理由：硬门直开的风险是 passport 缺失/过期时误拦合法 dispatch（当前 7 份签名护照+quick_profiles 覆盖有限）；但永久关闭则考试调度器+TaskGate 形同虚设。影子模式零风险获得真实拦截画像，是第一性原理下的最优路径。'
+  fix_phase: 施工中（影子模式启用，观察期后晋升硬门）
+  status: decided
+  created: '2026-08-31'
+  last_updated: '2026-08-31'
+- issue_id: '#ARCH-303'
+  title: 裁定——预算硬门主维度由 token 数切换为元成本（对齐 Owner sanction 口径）
+  severity: P1
+  adjudication: '裁定（Owner 2026-08-31 授权代判）：预算硬门主维度 = COST（元），TOKEN 降为二级兜底。理由（第一性原理）：预算硬门的存在意义=防止花费失控，Owner 的真实约束是钱（¥50 sanction）不是 token；token 是代理变量，随模型/定价/推理 token 占比失真（2026-08-30 78.3% 拦截事故即 token 口径失真所致）。专业机构实践（OpenAI/Anthropic/云成本治理）一律按货币预算。施工：①COST 策略单位由美元口径校准为元（daily/hourly 限额按 sanction 规模与实测消耗标定）②llm_runtime_gateway 预检 estimated_cost 由 est_tokens×价表（峰时保守价）算出并传入 pre_flight_check ③成功调用回填真实 cost_yuan。TOKEN 策略保留为防跑飞的二级保险丝。'
+  fix_phase: 施工中（成本维校准 + 网关 estimated_cost 接线）
+  status: decided
+  created: '2026-08-31'
+  last_updated: '2026-08-31'
+- issue_id: '#ARCH-304'
+  title: 裁定——claim 前移做进漂移看门狗：单活跃会话时自动认领替代回退（治本流程摩擦）
+  severity: P2
+  adjudication: '裁定（Owner 2026-08-31 授权代判）：GATE-WORKTREE-DRIFT-WATCHDOG 对"未登记写入方"的处置分级——当全项目恰好 1 个活跃注册会话时，漂移写入归属无歧义，自动 claim 到该会话 + 审计留痕，替代直接回退；多活跃会话（归属有歧义）时维持现状隔离+人工。理由（第一性原理）：看门狗目的是抓"无主的漂移"，单会话时归属确定，回退是误伤（2026-08-31 实证：本会话 registry/61号文编辑被回退一次）；把安全路径设为默认（pave the road）比靠 AI 自觉先 claim 更符合 100% AI 开发的工程现实。多会话歧义场景不放松（防互踩）。'
+  fix_phase: 施工中（看门狗 auto-claim 改造）
+  status: decided
+  created: '2026-08-31'
+  last_updated: '2026-08-31'

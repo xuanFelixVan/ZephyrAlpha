@@ -5,8 +5,8 @@ title: 数据源与下载体系规范
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.4.3"
-date: 2026-08-15
+version: "1.4.4"
+date: 2026-08-31
 topic: data_source_download_spec
 scope: 07_trading_decision_architecture
 depends_on:
@@ -40,7 +40,7 @@ related_issues:
 
 > ## 结案报告回填（2026-08-28 代码实证复核）
 > 原 Q16/Q17/Q18 待裁定项已闭环：Q16/Q17 熔断器（source_circuit_breaker.py+scheduler 记失败/fetch_perf 被动记录）；Q18 internal 源（internal_compute_provider.py+tasks.yaml hk_trade_calendar_refresh source:internal+commit fff1cd05 create_provider 补 internal 分支）；tasks.yaml 现 173 任务/schedule.yaml 16 档/data_sources_registry 18 源（超原口径 130+/11 档/15 源）。
-> **仍真实未完工**：Q8 data parts>100 告警零命中（§16.2 裁定施工 14 项中唯一未落项）。
+> ~~**仍真实未完工**：Q8 data parts>100 告警零命中（§16.2 裁定施工 14 项中唯一未落项）。~~ **已闭环（2026-08-31 施工）**：Q8 已落码——`src/zephyr/data/ch_parts_monitor.py`（`check_parts_threshold` 逐表比对 system.parts active parts vs 阈值 100=THD-HEALTH-005 裁定值统读 + `check_and_alert` 经既有 Alerter 通道产 critical 告警）已接线 `scheduler._run_schedule_dag` 时段写库收尾（scheduler.py L88/L387，`check_and_alert(alerter=scheduler._alerter)`，INSERT 产生点即探测点）；CLI 巡检入口供看板消费。至此 §16.2 裁定施工 14 项全部落码，无遗留。
 
 # 数据源与下载体系规范
 
@@ -1015,7 +1015,7 @@ test_ch_batch_size_gate / test_ch_final_gate / test_ch_version_col_gate / test_d
 
 **裁定（v1.4.0 定稿，理由与重评条件见 §16）**：
 - [x] 8 个 MergeTree 遗留表迁移 RMT → **暂缓**——写前 DELETE 逻辑稳定运行，merge 压力未再现；RMT 去重键验证成本>收益时迁移（§16.2 Q7）。
-- [x] data parts 监控告警 → **施工，P1**——防 CH 事故重演，parts>100 告警阈值 + Grafana 面板（§16.2 Q8）。
+- [x] data parts 监控告警 → **施工，P1**——防 CH 事故重演，parts>100 告警阈值 + Grafana 面板（§16.2 Q8）。**✅ 已施工 2026-08-31**：ch_parts_monitor.py（check_and_alert）接 scheduler._alerter，阈值 THD-HEALTH-005=100。
 - [x] 冷归档落地 → **施工，P2**——18 号 draft v0.1.0 转施工队列（§16.2 Q6）。
 - [x] WAL 兜底常态化 → **已常态化**——BufferedWriter 写 CH 失败即落本地 TSV，integrity_checker 补录机制验证通过（无需再裁定）。
 
@@ -1162,7 +1162,7 @@ fallback_sources 中 35 处引用无 Provider 实现的 source（§9.1 死 fallb
 | Q5 | **19 号北向快照是否落地施工**？draft v0.1.0，tushare hk_hold 季度替代方案。 | **施工，P1** | 项目层面已有裁定（日频断档→tushare hk_hold 季度快照，akshare fallback）；19 号 draft v0.1.0 转施工队列，fetcher+落表+外资行为方法论三步走 | CAND 候选库 |
 | Q6 | **18 号冷归档是否落地施工**？draft v0.1.0，数据保留铁律要求 Cold 层手动触发。 | **施工，P2** | 18 号 draft v0.1.0 转施工队列；Cold 层手动触发机制 + 冷热分层存储（Hot ClickHouse / Cold Parquet on disk）；PS-CTR-003 铁律合规 | CAND 候选库 |
 | Q7 | **8 个 MergeTree 遗留表是否迁移 ReplacingMergeTree**？需验证去重键正确性。 | **暂缓** | 写前 DELETE 逻辑稳定运行，merge 压力未再现；迁移收益（去 DELETE 逻辑）< 验证成本（去重键正确性+数据风险）；重评条件：DELETE 逻辑维护成本累积到痛点时 | §15 待裁定 |
-| Q8 | **data parts 监控告警是否加**？system.parts > 100 告警，防止 parts 爆炸重演。 | **施工，P1** | 防 CH 事故重演——2026-07-09 parts 爆炸致 CH merge 满载崩溃事故教训；parts>100 告警阈值 + Grafana 面板 + alerter 通知 | CAND 候选库 |
+| Q8 | **data parts 监控告警是否加**？system.parts > 100 告警，防止 parts 爆炸重演。 | **施工，P1 → ✅ 已施工 2026-08-31** | 防 CH 事故重演——2026-07-09 parts 爆炸致 CH merge 满载崩溃事故教训；parts>100 告警阈值 + Grafana 面板 + alerter 通知。**落码实证**：ch_parts_monitor.py（check_parts_threshold/check_and_alert，阈值统读 THD-HEALTH-005=100）接 scheduler._alerter 时段写库收尾探测，CLI 巡检入口供看板消费 | ~~CAND 候选库~~ 已落码 |
 | Q9 | **质量门控是否前移**？关键表（kline_daily/财务三表）写入时加轻量校验？ | **暂缓** | 当前写入后零脏数据事故，quality_gate 读取端已兜底；前移增加吞吐损失无收益；重评条件：关键表出现脏数据污染下游时 | §15 待裁定 |
 | Q10 | **东方财富专用爬虫 provider 是否做**？akshare.money_flow blocked 长期无解时。 | **暂缓** | 先验证 fallback 链实效 + 评估 tushare moneyflow 积分（Q19），专用爬虫 ROI 不足时再说；重评条件：akshare.money_flow blocked 长期无解且 tushare 积分不经济时 | §15 待裁定 |
 | Q12 | **调度器高可用是否够用**？单进程 + Task Scheduler watchdog + misfire_grace_time，还是要双活？ | **够用** | Task Scheduler watchdog + misfire_grace_time 已治本（2026-08-07 事故后零复发）；双活引入分布式锁/脑裂复杂度，个人项目过度工程 | 无需登记 |
@@ -1272,3 +1272,4 @@ fallback_sources 中 35 处引用无 Provider 实现的 source（§9.1 死 fallb
 | 2026-08-14 | 1.4.1 | 压缩精简：噪音去除+施工细节梳理，零信息丢失审查通过（AI-DOCS-001） | AI-DOCS-001 文档压缩：折叠调研过程叙述与重复解释（§3 ASCII 总览图压为紧凑管线描述、选型对比只留结论、重复 why 去重、§4.3 影响范围/§7.5 表全景/§10.4 实测/§11.5 测试清单压为紧凑单行、§10.5 部署块与 §10.12 去重、§10.6 验证明细表压为一行、§12.12.2 处置选项讨论并入裁定），35 项裁定（Q1-Q26）与 §16 三表逐条完整保留，15 源/154 任务/15 时段清单、费用裁定、落库/韧性规则、#ARCH/BM 锚点与跨文档链接全部保留；章节标题与编号一字未动 |
 | 2026-08-15 | 1.4.2 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-08） | ① §17.5 #ARCH-BOOT-001 重复行合并为一条（含 §10.6 + §10.11 双指针）；② §9.1 死 fallback 逐源计数去重（真源=§16.2 Q14）；③ §12.12.2 同项计数去重留指针；④ §1 状态 cell 精简（保留 35 项裁定 2/14/19 口径）；35 项裁定 Q1-Q26 与 §16 三表逐条零丢失，数据源/调度/落库规则/#ARCH/BM 锚点/跨文档链接零丢失；章节标题与编号一字未动 |
 | 2026-08-22 | 1.4.3 | §9.1 补注记：爬虫源禁盘中关键路径 | 92 号清单波 1（ALG-06）文档注记——akshare/baostock 类爬虫源零 SLA、盘中多线程扫全市场必封 IP，只能作离线补充（盘后/回填/兜底）；盘中关键路径故障转移链=QMT→券商自带，不挂爬虫源。akshare_provider/baostock_provider 模块 docstring 同款注记同步 |
+| 2026-08-31 | 1.4.4 | Q8 data parts>100 告警"零命中"过时表述回写为已施工（头部结案报告回填 + §12.8 checkbox + §16.2 Q8 行三处） | §16.2 裁定施工 14 项最后一项落码：ch_parts_monitor.py（check_parts_threshold 逐表比对 system.parts active parts vs THD-HEALTH-005=100 + check_and_alert 经 Alerter 产 critical 告警 + CLI 巡检入口）接 scheduler._alerter 时段写库收尾探测（scheduler.py L88/L387），文档与代码实证对齐 |

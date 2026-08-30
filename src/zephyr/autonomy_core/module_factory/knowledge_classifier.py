@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.integration.llm_runtime_gateway（仅消费既有 infer 签名，不改其源文件）；pydantic v2（输出 schema 强校验）；pyyaml（PS-VOC-TAX-001 知识分类边界标准 YAML 直读，GP1-EVAL-CALIBER-001 路径①）
 # [CONSUMERS] 模块工厂流水线人工编排（Phase 1 手动触发；module_mapper 消费其 ClassificationResult）
 # [STARTUP] manual
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 产出=建议草稿，100% human_gated；不直写注册表 YAML；LLM 输出 schema 校验失败即 fail-closed；受控词表外分类一律拒绝；tags 只归并不静默造词（新词进 tags_pending_registration）
 # [MODIFY-GUARD] 变更须同步 13号文 §3.2
 # [STABILITY] evolving
