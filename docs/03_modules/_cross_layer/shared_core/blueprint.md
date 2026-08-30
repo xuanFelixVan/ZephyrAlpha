@@ -4,7 +4,7 @@ submodule_path: src/zephyr/shared
 title: "Shared+Core 蓝图"
 doc_type: blueprint
 status: Active
-version: "0.19.18"
+version: "0.19.19"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -132,8 +132,8 @@ build_status: generated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-016` 的 346 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-016` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-016` 的 348 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-016` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -144,7 +144,7 @@ build_status: generated
 | module_id | MOD-INF-016 | MOD-INF-016 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 346 文件 | 14 文件（§0.1） | ❌ |
+| file_count | 348 文件 | 14 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -452,6 +452,7 @@ build_status: generated
 | `src/zephyr/shared/infra/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/shared/lifecycle/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/maintenance/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/observability/stage_timer.py` | ✅ 已实现 | |
 | `src/zephyr/shared/reliability/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/resilience/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/shared/schema/__init__.py` | ⚠️ 骨架 | |
@@ -528,6 +529,7 @@ build_status: generated
 | `tests/utils/test_utils_testing.py` | ✅ 已实现 | |
 | `tests/utils/test_utils_time_utils.py` | ✅ 已实现 | |
 | `tests/utils/test_version.py` | ✅ 已实现 | |
+| `tests/zephyr/shared/observability/test_stage_timer.py` | ✅ 已实现 | |
 
 ### 5.5 路径索引使用指南
 

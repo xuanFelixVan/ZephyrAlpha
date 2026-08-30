@@ -259,7 +259,7 @@ scope: 09_ai_architecture
 - 责任不混：基础设施 ≠ 自我进化 ≠ 执行 ≠ 横切 ≠ 元设计
 - 每个文档聚焦一个主题，可独立施工
 
-**施工顺序与解锁点**（详细指令见 [AI_fill_instructions.md](AI_fill_instructions.md)）：
+**施工顺序与解锁点**（详细指令见 [AI_fill_instructions.md](../../../_archive/AI_fill_instructions.md)——2026-08-30 已归档）：
 
 ```
 轨道 A：前置与基础设施（P0，无业务依赖，立即开工）
@@ -336,7 +336,7 @@ scope: 09_ai_architecture
 
 ## 6. 待办（按施工顺序）
 
-> 施工顺序详细指令见 [AI_fill_instructions.md](AI_fill_instructions.md)。
+> 施工顺序详细指令见 [AI_fill_instructions.md](../../../_archive/AI_fill_instructions.md)（2026-08-30 已归档）。
 > 文档填充施工（AI-FILL-01~17）已全部完成，各文档 status/version 实测值见 §5.1 标注；以下为当前剩余待办。
 
 ### 6.1 填充收口（已完成）

@@ -129,17 +129,18 @@ pytest --cov=zephyr --cov-report=term-missing   # 覆盖率（阈值 70%）
 
 | 指标 | 值 |
 |------|----|
-| 域总数 / Total domains | 73 |
-| 节点总数 / Total nodes | 6869 |
-| 依赖边总数 / Total edges | 14614 |
-| 孤儿节点数 / Orphan nodes | 0 |
+| 域总数 / Total domains | 74 |
+| 节点总数 / Total nodes | 7942 |
+| 依赖边总数 / Total edges | 19944 |
+| 孤儿节点数 / Orphan nodes | 426 |
 
 | build_status | 节点数 |
 |--------------|--------|
-| `deprecated` | 94 |
-| `generated` | 4619 |
-| `planned` | 85 |
-| `stable` | 2071 |
+| `deprecated` | 93 |
+| `generated` | 4824 |
+| `planned` | 41 |
+| `production` | 2930 |
+| `stable` | 54 |
 <!-- AUTO-END:dependency_stats -->
 
 <!-- AUTO-START:external_deps -->
@@ -148,6 +149,7 @@ pytest --cov=zephyr --cov-report=term-missing   # 覆盖率（阈值 70%）
 | `pydantic>=2.0.0,<3.0.0` | 数据验证 / Data validation |
 | `pyyaml>=6.0,<7.0` | YAML 配置解析 / YAML config parsing |
 | `pandas>=2.0.0,<3.0.0` | 数据处理 / Data processing |
+| `scikit-learn>=1.5.0,<2.0.0` | — / — |
 | `psutil>=5.9.0,<7.0` | 系统监控 / System monitoring |
 | `chromadb>=0.4.24,<1.0.0` | 向量数据库（知识库）/ Vector DB (KB) |
 | `mcp>=1.0.0,<2.0.0` | MCP 协议 / MCP protocol |

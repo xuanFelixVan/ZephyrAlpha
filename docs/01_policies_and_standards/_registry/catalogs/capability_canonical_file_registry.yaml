@@ -4977,6 +4977,22 @@ creation_tokens:
   token: auto-test-attribution-meta-iteration-20260830
   created_by: traesid-20260829-1308
   capability: attribution_meta_iteration
+- file: scripts/audit_news_publish_time.py
+  token: auto-audit-news-publish-time-20260830
+  created_by: greatwall_20260830
+  capability: news_publish_time_audit
+- file: tests/scripts/test_audit_news_publish_time.py
+  token: auto-test-audit-news-publish-time-20260830
+  created_by: greatwall_20260830
+  capability: news_publish_time_audit
+- file: src/zephyr/data/event_calendar_filler.py
+  token: auto-event-calendar-filler-20260830
+  created_by: greatwall_20260830
+  capability: event_calendar_forward_fill
+- file: tests/zephyr/data/test_event_calendar_filler.py
+  token: auto-test-event-calendar-filler-20260830
+  created_by: greatwall_20260830
+  capability: event_calendar_forward_fill
 - file: src/zephyr/risk/core/drawdown_broker_side_stop.py
   token: auto-drawdown-broker-side-stop-20260830
   created_by: traesid-20260829-1308
@@ -10901,6 +10917,54 @@ creation_tokens:
   token: auto-s2-walkforward-validation-20260829
   created_by: AI-WAVE4-001（S2 校准专项 walk-forward 验证报告，DSR N=17）
   capability: regime_s2_calibration
+- file: src/zephyr/research/sell_news_event_study.py
+  token: auto-sell-news-event-study-20260830
+  created_by: greatwall_20260830
+  capability: sell_news_event_study
+- file: tests/research/test_sell_news_event_study.py
+  token: auto-test-sell-news-event-study-20260830
+  created_by: greatwall_20260830
+  capability: sell_news_event_study
+- file: src/zephyr/ml_train/experiment_anomaly_detector.py
+  token: auto-experiment-anomaly-detector-20260830
+  created_by: greatwall_20260830
+  capability: experiment_anomaly_detection
+- file: tests/ml_train/test_experiment_anomaly_detector.py
+  token: auto-test-experiment-anomaly-detector-20260830
+  created_by: greatwall_20260830
+  capability: experiment_anomaly_detection
+- file: src/zephyr/risk/core/liquidity_crisis_scenarios.py
+  token: auto-liquidity-crisis-scenarios-20260830
+  created_by: greatwall_20260830
+  capability: liquidity_crisis_manager
+- file: tests/risk/core/test_liquidity_crisis_scenarios.py
+  token: auto-test-liquidity-crisis-scenarios-20260830
+  created_by: greatwall_20260830
+  capability: liquidity_crisis_manager
+- file: src/zephyr/signal_ashare/strategy_vote_integrator.py
+  token: auto-strategy-vote-integrator-20260830
+  created_by: greatwall_20260830
+  capability: strategy_cross_vote_funnel
+- file: tests/signal_ashare/test_strategy_vote_integrator.py
+  token: auto-test-strategy-vote-integrator-20260830
+  created_by: greatwall_20260830
+  capability: strategy_cross_vote_funnel
+- file: scripts/governance/check_test_symbol_validity.py
+  token: auto-check-test-symbol-validity-20260830
+  created_by: greatwall_20260830
+  capability: vocab_hardcode_detector
+- file: tests/governance/test_check_test_symbol_validity.py
+  token: auto-test-check-test-symbol-validity-20260830
+  created_by: greatwall_20260830
+  capability: vocab_hardcode_detector
+- file: scripts/governance/gateway_post_commit_ritual.py
+  token: auto-gateway-post-commit-ritual-20260830
+  created_by: greatwall_20260830
+  capability: commit_gateway_audit_reconciler
+- file: tests/governance/test_gateway_post_commit_ritual.py
+  token: auto-test-gateway-post-commit-ritual-20260830
+  created_by: greatwall_20260830
+  capability: commit_gateway_audit_reconciler
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

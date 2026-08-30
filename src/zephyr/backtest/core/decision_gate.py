@@ -27,12 +27,16 @@
   - IS->WFA->OOS不可跳级:IS未通过不进入WFA;WFA未通过不进入OOS
   - 进入OOS后参数锁定,不可调整
   - 正式上线需人工审批(can_deploy仅表示技术门控通过)
+  - Phase5后置双闸(11号文⑨ BM-BT-07):regime适配+参数收缩稳定性,均为可选注入
+    (None=跳过不阻断,向后兼容);触发降格=附加人工复核标记(downgraded+
+    manual_review_required)且can_deploy=False,而非直接拒(overall_passed不变)
 
 SSoT: docs/03_modules/_domain_backtest/blueprint.md §3.3 P0-14
 """
 
 from __future__ import annotations
 
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Final
@@ -52,6 +56,173 @@ class DecisionGateError(Exception):
         super().__init__(*args)
         if error_code is not None:
             self.error_code = error_code
+
+
+# ===== Phase 5 后置双闸(11号文⑨ BM-BT-07): regime适配 + 参数收缩稳定性 =====
+
+#: regime 状态全集(口径=13号文 §2.1 降态后: r1低波震荡/r2中波震荡/r3牛市趋势/r4熊市阴跌
+#: + overlay r10 CRISIS/r11 RECOVERY/r12 BREAKOUT; 本地声明避免 backtest->regime 跨域依赖)
+KNOWN_REGIME_STATES: Final[frozenset[str]] = frozenset(
+    {"r1", "r2", "r3", "r4", "r10", "r11", "r12"}
+)
+
+#: 默认 regime 适配矩阵: 策略类型 -> 不适配(降格)的 regime 集合。
+#: 键为策略类型短名(trend/daban/multifactor/event_driven, 对应 sleeve 策略
+#: daban-sleeve/multifactor-sleeve/eventdriven-sleeve), 调用方可用自定义矩阵覆盖。
+DEFAULT_REGIME_SUITABILITY_MATRIX: Final[dict[str, frozenset[str]]] = {
+    # 趋势策略在震荡态(r1/r2)/熊市阴跌(r4)降格
+    "trend": frozenset({"r1", "r2", "r4"}),
+    # 打板策略在低波动态(r1)/熊市阴跌(r4)/危机(r10)降格
+    "daban": frozenset({"r1", "r4", "r10"}),
+    # 多因子策略在熊市阴跌(r4)/危机(r10)降格
+    "multifactor": frozenset({"r4", "r10"}),
+    # 事件驱动策略在危机(r10)降格
+    "event_driven": frozenset({"r10"}),
+}
+
+#: 默认参数收缩稳定性阈值: IS->OOS 单参数相对收缩幅度超过 30% 降格
+DEFAULT_SHRINKAGE_STABILITY_THRESHOLD: Final[float] = 0.30
+
+
+@dataclass(frozen=True)
+class RegimeSuitabilityVerdict:
+    """regime 适配性判定结果
+
+    Attributes:
+        downgraded: 是否降格(策略类型与当前 regime 不适配)
+        reason: 判定原因
+    """
+
+    downgraded: bool
+    reason: str
+
+
+@dataclass(frozen=True)
+class ShrinkageStabilityVerdict:
+    """参数收缩稳定性判定结果
+
+    Attributes:
+        downgraded: 是否降格(IS/OOS 参数收缩幅度超阈值)
+        max_shrinkage: 参与比较参数中的最大相对收缩幅度(无可比参数时为0.0)
+        reason: 判定原因
+    """
+
+    downgraded: bool
+    max_shrinkage: float
+    reason: str
+
+
+def default_regime_suitability_checker(
+    strategy_type: str,
+    current_regime: str,
+    matrix: Mapping[str, frozenset[str]] | None = None,
+) -> RegimeSuitabilityVerdict:
+    """默认 regime 适配性判定器(策略类型 × 当前 regime)
+
+    规则(默认矩阵口径见 DEFAULT_REGIME_SUITABILITY_MATRIX):
+      - 策略类型未登记于适配矩阵 -> 降格(保守,转人工复核)
+      - 当前 regime 非已知状态(13号文口径 r1-r4/r10-r12) -> 降格(fail-closed)
+      - (策略类型, regime) 命中不适配集合 -> 降格;否则通过
+
+    Args:
+        strategy_type: 策略类型短名(如 "trend"/"daban"/"multifactor"/"event_driven")
+        current_regime: 当前市场状态(如 "r1"/"r3"/"r10")
+        matrix: 自定义适配矩阵,None 时使用 DEFAULT_REGIME_SUITABILITY_MATRIX
+
+    Returns:
+        RegimeSuitabilityVerdict: 适配性判定结果(降格非拒绝)
+    """
+    active_matrix = DEFAULT_REGIME_SUITABILITY_MATRIX if matrix is None else matrix
+    if strategy_type not in active_matrix:
+        return RegimeSuitabilityVerdict(
+            downgraded=True,
+            reason=f"策略类型'{strategy_type}'未登记于regime适配矩阵,降格转人工复核",
+        )
+    if current_regime not in KNOWN_REGIME_STATES:
+        return RegimeSuitabilityVerdict(
+            downgraded=True,
+            reason=f"未知regime'{current_regime}'(已知状态={sorted(KNOWN_REGIME_STATES)}),降格(fail-closed)",
+        )
+    if current_regime in active_matrix[strategy_type]:
+        return RegimeSuitabilityVerdict(
+            downgraded=True,
+            reason=f"策略类型'{strategy_type}'与当前regime'{current_regime}'不适配,降格",
+        )
+    return RegimeSuitabilityVerdict(
+        downgraded=False,
+        reason=f"策略类型'{strategy_type}'与当前regime'{current_regime}'适配",
+    )
+
+
+def default_shrinkage_stability_checker(
+    is_params: Mapping[str, Any],
+    oos_params: Mapping[str, Any],
+    threshold: float = DEFAULT_SHRINKAGE_STABILITY_THRESHOLD,
+) -> ShrinkageStabilityVerdict:
+    """默认参数收缩稳定性判定器(IS/OOS 参数收缩幅度)
+
+    规则: 对 IS/OOS 共有的数值型参数计算相对收缩幅度 |oos-is|/|is|
+    (is==0 时: oos==0 记 0,否则记 1.0);最大收缩幅度 > threshold 则降格;
+    无可比数值参数时通过并在 reason 中注明跳过。
+
+    Args:
+        is_params: IS 阶段最优参数字典
+        oos_params: OOS 阶段(收缩后)参数字典
+        threshold: 收缩幅度阈值(默认 0.30)
+
+    Returns:
+        ShrinkageStabilityVerdict: 收缩稳定性判定结果(降格非拒绝)
+    """
+    shrinkages: dict[str, float] = {}
+    for name, is_val in is_params.items():
+        if name not in oos_params:
+            continue
+        oos_val = oos_params[name]
+        if isinstance(is_val, bool) or isinstance(oos_val, bool):
+            continue
+        if not isinstance(is_val, (int, float)) or not isinstance(oos_val, (int, float)):
+            continue
+        if is_val == 0:
+            shrinkages[name] = 0.0 if oos_val == 0 else 1.0
+        else:
+            shrinkages[name] = abs(float(oos_val) - float(is_val)) / abs(float(is_val))
+
+    if not shrinkages:
+        return ShrinkageStabilityVerdict(
+            downgraded=False,
+            max_shrinkage=0.0,
+            reason="无IS/OOS可比数值参数,跳过收缩稳定性判定",
+        )
+
+    max_name = max(shrinkages, key=lambda k: shrinkages[k])
+    max_shrinkage = shrinkages[max_name]
+    downgraded = max_shrinkage > threshold
+    if downgraded:
+        reason = (
+            f"参数收缩幅度超阈值:参数'{max_name}'收缩{max_shrinkage:.2%} > 阈值{threshold:.0%},降格"
+        )
+    else:
+        reason = f"参数收缩稳定性通过:最大收缩{max_shrinkage:.2%} <= 阈值{threshold:.0%}"
+    return ShrinkageStabilityVerdict(
+        downgraded=downgraded,
+        max_shrinkage=max_shrinkage,
+        reason=reason,
+    )
+
+
+@dataclass(frozen=True)
+class DecisionGateContext:
+    """Phase 5 后置双闸注入上下文(可选)
+
+    Attributes:
+        strategy_type: 策略类型短名(regime 适配判定用)
+        current_regime: 当前市场状态(regime 适配判定用)
+        oos_params: OOS 阶段(收缩后)参数字典(收缩稳定性判定用)
+    """
+
+    strategy_type: str | None = None
+    current_regime: str | None = None
+    oos_params: dict[str, Any] | None = None
 
 
 #: 回测-实盘偏离阈值 ↔ 注册表条目映射（55 号 §3.3 统读：THD-DEVIATION-001/002）
@@ -89,6 +260,12 @@ class DecisionGateConfig:
         dsr_threshold: OOS段DSR可选判定器阈值(默认None=关闭,不破坏既有行为;
             52号§7③待决策项的可选注入——配置后OOS段追加第四条件dsr>=dsr_threshold,
             调用方须用metrics.calculate_dsr预计算并注入dsr,未注入按不通过处理(fail-closed))
+        regime_suitability_checker: Phase5 regime适配判定器(默认None=跳过不阻断;
+            11号文⑨ BM-BT-07可选注入,签名(strategy_type, current_regime)->RegimeSuitabilityVerdict;
+            默认实现见 default_regime_suitability_checker,适配矩阵可用其 matrix 参数覆盖)
+        shrinkage_stability_checker: Phase5 参数收缩稳定性判定器(默认None=跳过不阻断;
+            11号文⑨ BM-BT-07可选注入,签名(is_params, oos_params)->ShrinkageStabilityVerdict;
+            默认实现见 default_shrinkage_stability_checker,阈值可用其 threshold 参数覆盖)
     """
 
     is_sharpe_threshold: float = 0.5
@@ -101,6 +278,12 @@ class DecisionGateConfig:
     backtest_live_deviation_warn: float = _DEVIATION_DEFAULTS["backtest_live_deviation_warn"]
     backtest_live_deviation_retire: float = _DEVIATION_DEFAULTS["backtest_live_deviation_retire"]
     dsr_threshold: float | None = None
+    regime_suitability_checker: (
+        Callable[[str, str], RegimeSuitabilityVerdict] | None
+    ) = None
+    shrinkage_stability_checker: (
+        Callable[[Mapping[str, Any], Mapping[str, Any]], ShrinkageStabilityVerdict] | None
+    ) = None
 
 
 @dataclass(frozen=True)
@@ -175,6 +358,9 @@ class DecisionGateResult:
         overall_passed: 三阶段是否全部通过
         can_deploy: 是否可上线(技术门控通过,仍需人工审批)
         reasons: 综合判定原因列表
+        downgraded: Phase5后置双闸(regime适配/参数收缩)是否触发降格(降格非拒绝,
+            overall_passed不受影响,仅附加人工复核标记并阻止can_deploy)
+        manual_review_required: 是否需附加人工复核(降格时为True)
     """
 
     is_stage: ISStageResult
@@ -183,6 +369,8 @@ class DecisionGateResult:
     overall_passed: bool
     can_deploy: bool
     reasons: list[str] = field(default_factory=list)
+    downgraded: bool = False
+    manual_review_required: bool = False
 
 
 class DecisionGate:
@@ -470,12 +658,20 @@ class DecisionGate:
         oos_sharpe: float,
         params_locked: bool = True,
         dsr: float | None = None,
+        *,
+        phase5_context: DecisionGateContext | None = None,
     ) -> DecisionGateResult:
-        """编排3阶段决策门控(IS->WFA->OOS)
+        """编排3阶段决策门控(IS->WFA->OOS) + Phase5后置双闸
 
         阶段不可跳级:
           - IS未通过 -> 不进入WFA(WFA/OOS标记为跳过)
           - WFA未通过 -> 不进入OOS(OOS标记为跳过)
+
+        Phase5后置双闸(11号文⑨ BM-BT-07):
+          仅在IS/WFA/OOS三阶段全部通过后执行;regime适配+参数收缩稳定性均为
+          可选注入(config内regime_suitability_checker/shrinkage_stability_checker),
+          None=跳过不阻断,向后兼容。触发降格时overall_passed不变,can_deploy=False,
+          并附加downgraded+manual_review_required标记。
 
         Args:
             is_sharpe: 样本内Sharpe比率
@@ -486,9 +682,10 @@ class DecisionGate:
             params_locked: 参数是否已锁定
             dsr: 调用方预计算的DSR值(可选判定器注入;config.dsr_threshold
                 未配置时忽略,不破坏既有行为)
+            phase5_context: Phase5后置双闸运行时上下文(可选)
 
         Returns:
-            DecisionGateResult: 三阶段综合判定结果
+            DecisionGateResult: 三阶段综合判定结果(含Phase5降格标记)
         """
         # 阶段1: IS
         is_result = self.check_is_stage(is_sharpe, params, param_sensitivity)
@@ -556,6 +753,21 @@ class DecisionGate:
             aggregate_reasons.append("三阶段全部通过,可上线(需人工审批)")
         else:
             aggregate_reasons.append("OOS阶段未通过,不可上线")
+
+        # Phase 5 后置双闸(仅三阶段全部通过后执行)
+        downgraded = False
+        manual_review_required = False
+        if overall_passed:
+            downgraded, phase5_reasons = self._apply_phase5_checks(
+                is_params=params,
+                phase5_context=phase5_context,
+            )
+            aggregate_reasons.extend(phase5_reasons)
+            manual_review_required = downgraded
+            if downgraded:
+                can_deploy = False
+                aggregate_reasons.append("Phase5后置双闸触发降格,需人工复核(降格非拒绝)")
+
         return DecisionGateResult(
             is_stage=is_result,
             wfa_stage=wfa_result,
@@ -563,7 +775,77 @@ class DecisionGate:
             overall_passed=overall_passed,
             can_deploy=can_deploy,
             reasons=aggregate_reasons,
+            downgraded=downgraded,
+            manual_review_required=manual_review_required,
         )
+
+    def _apply_phase5_checks(
+        self,
+        is_params: dict[str, Any],
+        phase5_context: DecisionGateContext | None,
+    ) -> tuple[bool, list[str]]:
+        """运行 Phase 5 后置双闸(regime适配+参数收缩稳定性)
+
+        规则:
+          - checker为None时跳过不阻断(向后兼容)
+          - checker已启用但缺少必要运行时输入 -> raise DecisionGateError(fail-closed)
+
+        Args:
+            is_params: IS阶段最优参数字典
+            phase5_context: Phase5运行时上下文(含strategy_type/current_regime/oos_params)
+
+        Returns:
+            tuple[bool, list[str]]: (是否降格, Phase5判定原因列表)
+
+        Raises:
+            DecisionGateError: checker启用但上下文缺失必填字段
+        """
+        reasons: list[str] = []
+        downgraded = False
+
+        regime_checker = self.config.regime_suitability_checker
+        shrinkage_checker = self.config.shrinkage_stability_checker
+        has_checker = regime_checker is not None or shrinkage_checker is not None
+
+        if phase5_context is None:
+            if has_checker:
+                # fail-closed: checker已启用但无上下文 -> 视为缺失输入
+                if regime_checker is not None:
+                    raise DecisionGateError(
+                        "regime_suitability_checker已启用但phase5_context为None",
+                        error_code="ZA-BT-0038",
+                    )
+                # shrinkage_checker is not None
+                raise DecisionGateError(
+                    "shrinkage_stability_checker已启用但phase5_context为None",
+                    error_code="ZA-BT-0039",
+                )
+            return downgraded, reasons
+
+        if regime_checker is not None:
+            st = phase5_context.strategy_type
+            cr = phase5_context.current_regime
+            if st is None or cr is None:
+                raise DecisionGateError(
+                    "regime_suitability_checker已启用但phase5_context缺少strategy_type或current_regime",
+                    error_code="ZA-BT-0038",
+                )
+            verdict = regime_checker(st, cr)
+            reasons.append(verdict.reason)
+            downgraded = downgraded or verdict.downgraded
+
+        if shrinkage_checker is not None:
+            op = phase5_context.oos_params
+            if op is None:
+                raise DecisionGateError(
+                    "shrinkage_stability_checker已启用但phase5_context缺少oos_params",
+                    error_code="ZA-BT-0039",
+                )
+            verdict = shrinkage_checker(is_params, op)
+            reasons.append(verdict.reason)
+            downgraded = downgraded or verdict.downgraded
+
+        return downgraded, reasons
 
     def check_stability_plateau(
         self,
@@ -771,9 +1053,14 @@ class DecisionGate:
 __all__ = [
     "DecisionGate",
     "DecisionGateConfig",
+    "DecisionGateContext",
     "DecisionGateError",
     "DecisionGateResult",
     "ISStageResult",
     "OOSStageResult",
+    "RegimeSuitabilityVerdict",
+    "ShrinkageStabilityVerdict",
     "WFAStageResult",
+    "default_regime_suitability_checker",
+    "default_shrinkage_stability_checker",
 ]

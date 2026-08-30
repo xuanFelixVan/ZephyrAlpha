@@ -64,7 +64,7 @@ partitions:
   description: P0/P1跨域数据契约、OCP扩展点、外部系统契约、AI治理接口签名
 - id: events
   path: events/domain_events.yaml
-  description: 25条领域事件（7域）、事件链、频率等级与运行时声明
+  description: 27条领域事件（8域）、事件链、频率等级与运行时声明
 - id: ddd-model
   path: domain/ddd_model.yaml
   description: DDD战术模式：8 Aggregate Root + 6 Entity + 12 Value Object + 边界铁律
@@ -165,20 +165,6 @@ domains:
 - id: D_AUTONOMY_PERM
   name: 自治保护
   layer_id: L2_domain
-  scope_paths:
-    # AUTPERM-001 逻辑归位（Owner 2026-08-27 批准，#ARCH-276）——11 目录元数据归域，消费方零感知；
-    # operational_domain 列为现行运营域（domain_mapping/蓝图头真源，不变更）；物理迁移降 P3 可选远期项。
-    - {name: agent_rbac, path: src/zephyr/security/access_control/, nature: 实体包(84+orphan_judge嵌套25), operational_domain: D_SECURITY, py_files: 109}
-    - {name: audit_trail, path: src/zephyr/compliance/audit_trail/, nature: re-export壳(2), operational_domain: D_COMPLIANCE, entity: src/zephyr/gov_audit/(64, D_GOV_AUDIT)}
-    - {name: auto_fix_engine, path: src/zephyr/infrastructure/auto_fix_engine/, nature: 实体包(30), operational_domain: D_INFRA_RUNTIME}
-    - {name: behavioral_auditor, path: src/zephyr/compliance/behavioral_auditor/, nature: re-export壳(1), operational_domain: D_COMPLIANCE, entity: src/zephyr/gov_drift/(67, D_GOV_DRIFT)}
-    - {name: budget_enforcer, path: src/zephyr/integration/budget_enforcer/, nature: 实体包(2), operational_domain: D_INTEGRATION, note: 登记~40口径不存(疑指ops_governance预算族~38)}
-    - {name: escalation_engine, path: src/zephyr/governance/escalation/, nature: 实体包(20), operational_domain: D_GOV_OPS_RESILIENCE, note: 登记~100口径不存}
-    - {name: rollback, path: src/zephyr/infrastructure/rollback/, nature: 实体包(56+gov壳2), operational_domain: D_INFRA_RUNTIME}
-    - {name: llm_security, path: src/zephyr/security/llm_defense/llm_security/, nature: 实体包(39), operational_domain: D_SECURITY_LLM}
-    - {name: semantic_auditor, path: src/zephyr/governance/semantic_audit/, nature: 实体包(20)+散布~5, operational_domain: D_GOV_AUDIT}
-    - {name: orphan_judge, path: src/zephyr/security/access_control/orphan_judge/, nature: 实体包(25), operational_domain: D_SECURITY, note: 登记~2口径失真(实测25)}
-    - {name: red_blue_validator, path: src/zephyr/red_blue_validator/, nature: re-export壳(1), operational_domain: D_SECURITY, entity: src/zephyr/security/adversarial_validation/(25)}
 - id: D_BACKTEST
   name: 回测
   layer_id: L2_domain
@@ -341,6 +327,9 @@ domains:
 - id: D_REPORTING
   name: 报告
   layer_id: L1_foundation
+- id: D_RESEARCH
+  name: 研究域
+  layer_id:
 - id: D_RISK
   name: 风控
   layer_id: L2_domain
@@ -371,9 +360,6 @@ domains:
 - id: D_STRUCT_SCRIPTS
   name: 结构治理脚本
   layer_id: L2_domain
-- id: D_TEST
-  name: Test Domain
-  layer_id:
 - id: D_TRADING
   name: 交易运营
   layer_id: L2_domain
@@ -390,7 +376,7 @@ global_stats:
     74域唯一物理分类体系，4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。
     b_track 13横切基础设施模块（从 layers/b_*.yaml 物理文件派生）。
     结构化数据从depgraph + 物理蓝图文件派生，禁止硬编码会变化的数字。
-  last_updated: '2026-08-27'
+  last_updated: '2026-08-31'
 
 query_hints:
 - question: 系统有哪些域？

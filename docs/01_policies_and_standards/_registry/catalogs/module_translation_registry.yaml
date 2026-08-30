@@ -47190,6 +47190,97 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "从DailyStrengthRecord装配60日滚动窗口子分数和前瞻收益，输出直接喂给IC权重校准器"
+- module_path: src/zephyr/risk/core/liquidity_crisis_scenarios.py
+  domain_id: D_RISK
+  name_zh: "流动性危机情景族"
+  name_en: "LiquidityCrisisScenarios"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "压测预制情景库：市场枯竭、持仓封死、融资断裂三维冲击加全员出逃极端情形，并算出每笔持仓的出场滑点和压力退出天数"
+- module_path: src/zephyr/signal_ashare/strategy_vote_integrator.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "多策略投票加权整合器"
+  name_en: "StrategyVoteIntegrator"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把多个策略的投票按IC权重汇总，先按信号龄期衰减、再对高相关的策略对降权，同向权重占比过三分之二才输出统一决策信号"
+- module_path: tests/risk/core/test_liquidity_crisis_scenarios.py
+  domain_id: D_RISK
+  name_zh: "流动性危机情景族单测"
+  name_en: "TestLiquidityCrisisScenarios"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证流动性危机三族情景的冲击幅度、封死持仓不可卖且滑点封顶、ADV地板抬升滑点以及与压测引擎的消费集成"
+- module_path: tests/signal_ashare/test_strategy_vote_integrator.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "多策略投票加权整合器单测"
+  name_en: "TestStrategyVoteIntegrator"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证一致通过、分歧否决、相关性惩罚降权翻转裁定、衰减自适应生效四类路径及非法输入拦截"
+- module_path: tests/signal/test_default_signal_aggregator.py
+  domain_id: D_FUNDAMENTAL_SIGNAL
+  name_zh: "默认信号聚合器单测"
+  name_en: "TestDefaultSignalAggregator"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证等权与置信度加权聚合、降级路径、方向判定与截断、PIT时间戳以及组合级标的清单和归一化权重输出"
+- module_path: scripts/governance/gateway_post_commit_ritual.py
+  domain_id: D_GOVERNANCE
+  name_zh: "网关批次收尾仪式"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "提交完成后检查这批改动有没有碰规则或契约文件，碰了就自动重新生成契约、冻结快照、刷新完整性基线，任何一步失败就把生成的文件回滚"
+- module_path: scripts/audit_news_publish_time.py
+  domain_id: D_DATA
+  name_zh: "新闻发布时间口径审计器"
+  name_en: "News Publish Time Auditor"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "抽样比对新闻库里记录声称的发布时间和实际采集入库时间，识别拿采集时间冒充发布时间的假时间戳和整点吸附记录，给回测能不能直接信这列出可信度结论"
+- module_path: src/zephyr/data/event_calendar_filler.py
+  domain_id: D_DATA
+  name_zh: "前瞻事件日历填充器"
+  name_en: "Event Calendar Forward Filler"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把未来六十天能提前知道的事拼成一张结构化日历：财报披露计划和限售解禁从库里读，LPR、MLF、PMI、CPI 按固定日程规则推，供新闻可预测性打标和盘前预案使用"
+- module_path: tests/scripts/test_audit_news_publish_time.py
+  domain_id: D_DATA
+  name_zh: "新闻发布时间口径审计测试"
+  name_en: "News Publish Time Audit Tests"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "用内存假数据验证发布时间审计器的延迟分布统计、假时间戳指纹识别、多源极差比对和可信度四档评级逻辑，全程不连真实数据库"
+- module_path: tests/zephyr/data/test_event_calendar_filler.py
+  domain_id: D_DATA
+  name_zh: "前瞻事件日历填充器测试"
+  name_en: "Event Calendar Filler Tests"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "用内存假数据和桩日历验证事件日历填充器的宏观规则日期推导、财报解禁两路装配、窗口过滤和重复填充幂等去重逻辑"
+- module_path: src/zephyr/research/sell_news_event_study.py
+  domain_id: D_RESEARCH
+  name_zh: "高位利好落地事件研究"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把事前涨幅高的强利好事件和低位的分开，统计公告落地后若干交易日相对基准的超额收益分布，验证利好出尽是否成立，并给出 priced-in 阈值规则建议"
+- module_path: src/zephyr/ml_train/experiment_anomaly_detector.py
+  domain_id: D_ML_TRAIN
+  name_zh: "实验指标异常检测器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "盯着每个实验的指标序列，用滚动z分数抓突变、双侧CUSUM抓缓慢漂移、连续不改进计数抓停滞，输出带严重度的异常报告"
+- module_path: scripts/governance/check_test_symbol_validity.py
+  domain_id: D_GOVERNANCE
+  name_zh: "孤儿测试符号检测门禁"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "扫描测试文件的import语句，凡是引用了真源模块里不存在符号的超前孤儿测试一律报出，防止测试引用空气"
 
 battle_map_steps:
 - step_id: BM-BUY-04
@@ -56774,19 +56865,19 @@ algo_submodules:
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A1
-  name_zh: 维护手册
+  name_zh: ① Agent上手上下文生成
   name_en: Handbook.generate_onboarding_context
   plain_zh: 把核心约束、关键目录、任务状态机、关键工具拼成一段固定markdown给新Agent看
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A2
-  name_zh: 维护手册
+  name_zh: ② 任务卡模板提供
   name_en: Handbook.get_task_card_template
   plain_zh: 返回一张固定的任务卡markdown表格模板，照填即可
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A3
-  name_zh: 维护手册
+  name_zh: ③ 目录地图提供
   name_en: Handbook.get_directory_map
   plain_zh: 返回核心源码/蓝图/任务系统目录到中文说明的映射字典
 - module_path: src/zephyr/shared/io/sqlite_factory.py

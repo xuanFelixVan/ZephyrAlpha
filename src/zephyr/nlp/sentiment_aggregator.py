@@ -5,7 +5,7 @@
 # [CONSUMERS] scripts/ml/run_sentiment_batch.py; 26_event_driven_strategy_detail §2.5 event_score sentiment_score 维度; regime S2 bad_news_flat（Phase 7 替换关键词 MVP 的 negative_count 源）
 # [STARTUP] imported
 # [MATURITY] design
-# [INVARIANTS] 跨源一致性投票——≥2 源同向才输出强信号，单源孤证降级弱信号（×0.5），多源冲突→0；tanh 软投票有界 [-1,1]；空输入→空结果不抛异常；polarity 越界输入裁剪 [-1,1]
+# [INVARIANTS] 跨源一致性投票——≥2 源同向才输出强信号，单源孤证降级弱信号（×0.5），多源冲突→0；tanh 软投票有界 [-1,1]；空输入→空结果不抛异常；polarity 越界输入裁剪 [-1,1]；scope 过滤（CAND-NLP-003）——市场级聚合仅纳入 scope=market，scope 缺失视为 market（向后兼容 v2 无轴数据）
 # [MODIFY-GUARD] docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md Phase 7; 26_event_driven_strategy_detail.md §2.7
 # [STABILITY] evolving
 # [SAFETY] L
@@ -41,7 +41,8 @@
 依据: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md Phase 7
       docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/26_event_driven_strategy_detail.md §2.7
 SSoT: #ARCH-NLP-PIPELINE-001
-Version: 0.1.0
+Version: 0.2.0（2026-08-30 CAND-NLP-003：scope 主体范围轴过滤——aggregate_daily 市场级聚合
+        可按 market_scope_only=True 仅纳入 scope=market 记录，缺失视为 market 向后兼容）
 """
 
 from __future__ import annotations
@@ -51,6 +52,8 @@ from dataclasses import dataclass, field
 from typing import Any, Final, Sequence
 
 import pandas as pd
+
+from zephyr.nlp.nlp_inference import SCOPE_MARKET
 
 # ── 跨源投票参数（26 号 §2.7 裁定）──
 MIN_AGREE_SOURCES: Final[int] = 2  # ≥2 源同向才输出强信号
@@ -76,6 +79,8 @@ class SourceSentiment:
     symbol : 关联标的/板块标签（可选，板块聚合用）。
     category : 语料四类标（announcement/research_report/macro_data/news，
         zephyr.data.news_taxonomy；空串归 "unknown" 桶，CAND-DAT-024）。
+    scope : 影响主体范围（market/sector/stock，nlp_inference v3 输出；空串=缺失，
+        市场级聚合时视为 market 向后兼容，CAND-NLP-003）。
     """
 
     source: str
@@ -83,6 +88,7 @@ class SourceSentiment:
     publish_date: str
     symbol: str = ""
     category: str = ""
+    scope: str = ""
 
 
 @dataclass(frozen=True, slots=True)
@@ -144,6 +150,20 @@ def _sign(x: float) -> int:
     if x < -_DIRECTION_EPS:
         return -1
     return 0
+
+
+def normalize_scope(scope: str | None) -> str:
+    """scope 归一化（CAND-NLP-003）：缺失/空串 → market（向后兼容 v2 无轴数据）。"""
+    s = (scope or "").strip().lower()
+    return s if s else SCOPE_MARKET
+
+
+def filter_market_scope(items: Sequence[SourceSentiment]) -> list[SourceSentiment]:
+    """仅保留市场级主体记录（scope=market；缺失视为 market 向后兼容）。
+
+    用途：市场级日聚合前过滤个股/板块级情感，防"某公司中标"污染大盘情绪口径。
+    """
+    return [it for it in items if normalize_scope(it.scope) == SCOPE_MARKET]
 
 
 def vote_cross_source(
@@ -242,13 +262,25 @@ def _aggregate_group(day: str, symbol: str, group: list[SourceSentiment]) -> Dai
     )
 
 
-def aggregate_daily(items: Sequence[SourceSentiment]) -> list[DailySentiment]:
+def aggregate_daily(
+    items: Sequence[SourceSentiment],
+    *,
+    market_scope_only: bool = False,
+) -> list[DailySentiment]:
     """按日聚合（13 号 Phase 7 主口径：全市场日级情绪）。
+
+    Parameters
+    ----------
+    market_scope_only : True 时先按 scope=market 过滤（CAND-NLP-003 口径防污染——
+        个股/板块级利好利空不进市场级聚合；scope 缺失视为 market 向后兼容）。
+        默认 False 保持 v2 全量口径不变。
 
     Returns
     -------
     list[DailySentiment] —— 按 day 升序；空输入返回空列表。
     """
+    if market_scope_only:
+        items = filter_market_scope(items)
     by_day: dict[str, list[SourceSentiment]] = {}
     for it in items:
         by_day.setdefault(it.publish_date, []).append(it)
@@ -290,16 +322,20 @@ def source_sentiment_from_result(
     """从 nlp_inference SentimentResult（或含 polarity 的 dict/对象）构造聚合输入。
 
     鸭型消费：``result.polarity`` 或 ``result["polarity"]``；缺失 → 0.0。
+    ``scope``（CAND-NLP-003 v3）同样鸭型提取；缺失 → ""（聚合视为 market）。
     """
     if isinstance(result, dict):
         polarity = result.get("polarity", 0.0)
+        scope = result.get("scope", "")
     else:
         polarity = getattr(result, "polarity", 0.0)
+        scope = getattr(result, "scope", "")
     return SourceSentiment(
         source=source,
         polarity=_clip_polarity(polarity),
         publish_date=publish_date,
         symbol=symbol,
+        scope=str(scope or ""),
     )
 
 
@@ -318,4 +354,6 @@ __all__: Final = [
     "aggregate_daily_by_symbol",
     "to_negative_count_series",
     "source_sentiment_from_result",
+    "normalize_scope",
+    "filter_market_scope",
 ]

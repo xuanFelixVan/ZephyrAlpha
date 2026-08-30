@@ -1,6 +1,7 @@
 # [A_module] module_id=MOD-L11-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L11-001 | docs/03_modules/_domain_machine_learning_train/blueprint.md
 # [MODULE] zephyr.ml_train
+# [DOMAIN] D_ML_TRAIN
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving
@@ -75,3 +76,7 @@ def __getattr__(name):
         mod = importlib.import_module(_lazy[name], __name__)
         return getattr(mod, name)
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+
+# ORPHAN-MODULE: 引用登记（让 depgraph 发现 import 边；纯 stdlib 模块，eager 安全）
+from zephyr.ml_train.experiment_anomaly_detector import detect_experiment_anomalies  # noqa: F401

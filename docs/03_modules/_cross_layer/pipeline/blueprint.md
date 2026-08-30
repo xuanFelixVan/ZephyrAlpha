@@ -4,7 +4,7 @@ submodule_path: src/zephyr/integration
 title: "Pipeline 蓝图 — 管线编排器·M1-M11门控流水线"
 doc_type: blueprint
 status: Active
-version: "0.39.9"
+version: "0.39.10"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -38,7 +38,7 @@ build_status: generated
 responsibility_domain: 
 ---
 
-> module_id: MOD-INF-009 | version: 0.39.9 | status: active | layer: cross_layer
+> module_id: MOD-INF-009 | version: 0.39.10 | status: active | layer: cross_layer
 > actual_disk_path: src/zephyr/integration/pipeline_orchestrator.py | generation: 2 | construction_progress: partially_implemented
 
 # Pipeline 蓝图 — 管线编排器·M1-M11门控流水线
@@ -143,8 +143,8 @@ responsibility_domain:
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-009` 的 32 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-009` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-009` 的 33 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-009` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -155,7 +155,7 @@ responsibility_domain:
 | module_id | MOD-INF-009 | MOD-INF-009 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 32 文件 | 31 文件（§0.1） | ❌ |
+| file_count | 33 文件 | 31 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1036,6 +1036,7 @@ STEP 3: 拆分后验证
 | `tests/contracts/test_ct_pipe_routing_root.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_preemption_manager.py` | ✅ 已实现 | |
 | `tests/llm_security/test_llm_gateway.py` | ✅ 已实现 | |
+| `tests/llm_security/test_llm_gateway_route_perf_aware.py` | ✅ 已实现 | |
 | `tests/model/test_model_router.py` | ✅ 已实现 | |
 | `tests/pipeline/conftest.py` | ✅ 已实现 | |
 | `tests/pipeline/test_pipeline_agent_bridge.py` | ✅ 已实现 | |

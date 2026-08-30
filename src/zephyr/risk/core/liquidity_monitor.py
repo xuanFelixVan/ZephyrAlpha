@@ -120,6 +120,7 @@ import logging
 import uuid
 from dataclasses import dataclass
 from datetime import UTC, datetime
+from enum import Enum
 from typing import Optional
 
 import numpy as np
@@ -133,9 +134,14 @@ __all__ = [
     "InvalidLiquidityInputError",
     "LiquidityMetrics",
     "LiquidityMonitor",
+    "LiquiditySpiralAlert",
+    "LiquiditySpiralConfig",
+    "LiquiditySpiralGrade",
+    "LiquiditySpiralInput",
     "OpeningPermission",
     "compute_stress_exit_days",
     "compute_lvar",
+    "detect_liquidity_spiral",
 ]
 
 
@@ -239,6 +245,223 @@ def compute_lvar(var: float, exit_days: float, half_spread: float) -> float:
     if var < 0 or exit_days < 0 or half_spread < 0:
         raise ValueError("VaR/退出天数/半价差不能为负")
     return var * float(np.sqrt(exit_days)) + half_spread
+
+
+# ── 流动性螺旋检测（CAND-RSK-015 残面：价差扩大×量缩×连环跌停三因子合成）──
+
+
+class LiquiditySpiralGrade(str, Enum):
+    """流动性螺旋等级（四档递进）。"""
+
+    NONE = "none"  # 无螺旋（单因子不满堂不判螺旋）
+    EARLY = "early"  # 早期（多因子共振初起）
+    ACCELERATING = "accelerating"  # 加速（双因子重度恶化）
+    SEVERE = "severe"  # 严重（三因子近满堂或满堂）
+
+
+@dataclass(frozen=True)
+class LiquiditySpiralConfig:
+    """流动性螺旋检测阈值配置（C 类参数，有行业默认值可调）。
+
+    Attributes:
+        spread_expansion_early: 价差扩大倍数早警线（current/baseline ≥ 此值计半分）
+        spread_expansion_severe: 价差扩大倍数严重线（≥ 此值计满分）
+        volume_shrink_early: 量比早警线（V_t/MA(V,N) ≤ 此值计半分）
+        volume_shrink_severe: 量比严重线（≤ 此值计满分）
+        limit_down_day_count: 单日全市场跌停家数 ≥ 此值计为一个"跌停日"
+        chain_early_days: 连环跌停天数早警线（≥ 此值计半分）
+        chain_severe_days: 连环跌停天数严重线（≥ 此值计满分）
+    """
+
+    spread_expansion_early: float = 1.5
+    spread_expansion_severe: float = 2.5
+    volume_shrink_early: float = 0.7
+    volume_shrink_severe: float = 0.4
+    limit_down_day_count: int = 30
+    chain_early_days: int = 2
+    chain_severe_days: int = 3
+
+    def __post_init__(self) -> None:
+        if not 1.0 < self.spread_expansion_early < self.spread_expansion_severe:
+            raise InvalidLiquidityInputError(
+                f"spread_expansion 阈值须满足 1 < early < severe: "
+                f"{self.spread_expansion_early}/{self.spread_expansion_severe}"
+            )
+        if not 0.0 < self.volume_shrink_severe < self.volume_shrink_early < 1.0:
+            raise InvalidLiquidityInputError(
+                f"volume_shrink 阈值须满足 0 < severe < early < 1: "
+                f"{self.volume_shrink_severe}/{self.volume_shrink_early}"
+            )
+        if self.limit_down_day_count < 1:
+            raise InvalidLiquidityInputError(f"limit_down_day_count 须 ≥1: {self.limit_down_day_count}")
+        if not 1 <= self.chain_early_days < self.chain_severe_days:
+            raise InvalidLiquidityInputError(
+                f"chain_days 阈值须满足 1 ≤ early < severe: {self.chain_early_days}/{self.chain_severe_days}"
+            )
+
+
+@dataclass(frozen=True)
+class LiquiditySpiralInput:
+    """流动性螺旋检测输入（三因子快照）。
+
+    Attributes:
+        symbol: 标的代码
+        current_spread: 当前买卖价差 (ask-bid)/mid（≥0）
+        baseline_spread: 基准买卖价差（N日均值，>0）
+        volume_ratio: 成交量萎缩比率 V_t/MA(V,N)（可复用 compute_volume_shrinkage 产出，≥0）
+        limit_down_counts: 最近逐日全市场跌停家数（按日期升序）
+        timestamp: 评估时间（None=UTC now）
+    """
+
+    symbol: str
+    current_spread: float
+    baseline_spread: float
+    volume_ratio: float
+    limit_down_counts: tuple[int, ...]
+    timestamp: datetime | None = None
+
+
+@dataclass(frozen=True)
+class LiquiditySpiralAlert:
+    """流动性螺旋告警载荷（不可变）。
+
+    Attributes:
+        symbol: 标的代码
+        grade: 螺旋等级（none/early/accelerating/severe）
+        composite_score: 三因子子分（0/0.5/1）均值 ∈ [0,1]
+        spread_expansion_ratio: 价差扩大倍数（current/baseline）
+        volume_shrink_ratio: 成交量萎缩比率（透传输入）
+        limit_down_chain_days: 尾部连环跌停天数
+        active_factors: 已触发（子分>0）的因子名
+        message: 人类可读告警描述
+        timestamp: 评估时间（UTC）
+    """
+
+    symbol: str
+    grade: LiquiditySpiralGrade
+    composite_score: float
+    spread_expansion_ratio: float
+    volume_shrink_ratio: float
+    limit_down_chain_days: int
+    active_factors: tuple[str, ...]
+    message: str
+    timestamp: datetime
+
+
+#: 等级映射阈值（合成均值 → 四档）
+_SPIRAL_EARLY_MIN: float = 0.34  # ≥此值脱离 none（须多因子共振）
+_SPIRAL_ACCELERATING_MIN: float = 0.55  # ≥此值 accelerating
+_SPIRAL_SEVERE_MIN: float = 0.8  # ≥此值 severe
+
+
+def _count_limit_down_chain(counts: tuple[int, ...], min_count: int) -> int:
+    """尾部连环跌停天数：从最新日向前连续 ≥min_count 的天数。"""
+    chain = 0
+    for c in reversed(counts):
+        if c >= min_count:
+            chain += 1
+        else:
+            break
+    return chain
+
+
+def _factor_sub_score(value: float, early: float, severe: float, *, lower_is_worse: bool) -> float:
+    """单因子子分：未达早警=0，达早警=0.5，达严重=1。"""
+    if lower_is_worse:
+        if value <= severe:
+            return 1.0
+        return 0.5 if value <= early else 0.0
+    if value >= severe:
+        return 1.0
+    return 0.5 if value >= early else 0.0
+
+
+def detect_liquidity_spiral(
+    inp: LiquiditySpiralInput,
+    *,
+    config: LiquiditySpiralConfig | None = None,
+) -> LiquiditySpiralAlert:
+    """流动性螺旋检测——三因子合成（CAND-RSK-015）。
+
+    合成逻辑：价差扩大率（current/baseline）、成交量萎缩率（V_t/MA）、
+    市场连环跌停计数（尾部连续 ≥limit_down_day_count 的天数）各映射子分
+    （未达早警 0 / 达早警 0.5 / 达严重 1），均值映射四档等级：
+      <0.34 → none（单因子不满堂不判螺旋——螺旋本质是多因子共振）
+      <0.55 → early；<0.8 → accelerating；≥0.8 → severe。
+
+    与 Amihud/LVaR 正交：那些是结构性日频恶化，本函数是盘内多因子共振
+    加速段检测（合成信号面）。
+
+    Args:
+        inp: 三因子输入快照（LiquiditySpiralInput）
+        config: 阈值配置（默认 LiquiditySpiralConfig()）
+
+    Returns:
+        LiquiditySpiralAlert 告警载荷
+
+    Raises:
+        InvalidLiquidityInputError: 输入非法（负价差/零基准/负量比/负跌停数）
+    """
+    cfg = config or LiquiditySpiralConfig()
+    if not inp.symbol or not inp.symbol.strip():
+        raise InvalidLiquidityInputError("symbol 不可为空")
+    if inp.current_spread < 0:
+        raise InvalidLiquidityInputError(f"current_spread 不能为负: {inp.current_spread}")
+    if inp.baseline_spread <= 0:
+        raise InvalidLiquidityInputError(f"baseline_spread 必须为正: {inp.baseline_spread}")
+    if inp.volume_ratio < 0:
+        raise InvalidLiquidityInputError(f"volume_ratio 不能为负: {inp.volume_ratio}")
+    if any(c < 0 for c in inp.limit_down_counts):
+        raise InvalidLiquidityInputError(f"limit_down_counts 含负数: {inp.limit_down_counts}")
+
+    expansion = inp.current_spread / inp.baseline_spread
+    chain_days = _count_limit_down_chain(inp.limit_down_counts, cfg.limit_down_day_count)
+
+    scores = {
+        "spread_expansion": _factor_sub_score(
+            expansion, cfg.spread_expansion_early, cfg.spread_expansion_severe, lower_is_worse=False
+        ),
+        "volume_shrink": _factor_sub_score(
+            inp.volume_ratio, cfg.volume_shrink_early, cfg.volume_shrink_severe, lower_is_worse=True
+        ),
+        "limit_down_chain": _factor_sub_score(
+            float(chain_days), float(cfg.chain_early_days), float(cfg.chain_severe_days), lower_is_worse=False
+        ),
+    }
+    composite = sum(scores.values()) / len(scores)
+
+    if composite >= _SPIRAL_SEVERE_MIN:
+        grade = LiquiditySpiralGrade.SEVERE
+    elif composite >= _SPIRAL_ACCELERATING_MIN:
+        grade = LiquiditySpiralGrade.ACCELERATING
+    elif composite >= _SPIRAL_EARLY_MIN:
+        grade = LiquiditySpiralGrade.EARLY
+    else:
+        grade = LiquiditySpiralGrade.NONE
+
+    active = tuple(name for name, s in scores.items() if s > 0)
+    message = (
+        f"流动性螺旋[{grade.value}] symbol={inp.symbol} 价差×{expansion:.2f} "
+        f"量比={inp.volume_ratio:.2f} 连环跌停={chain_days}日 触发因子={','.join(active) or '无'}"
+    )
+    timestamp = inp.timestamp or datetime.now(UTC)
+
+    if grade in (LiquiditySpiralGrade.ACCELERATING, LiquiditySpiralGrade.SEVERE):
+        _logger.warning("Liquidity spiral %s: %s", grade.value, message)
+    else:
+        _logger.info("Liquidity spiral check: %s", message)
+
+    return LiquiditySpiralAlert(
+        symbol=inp.symbol,
+        grade=grade,
+        composite_score=composite,
+        spread_expansion_ratio=expansion,
+        volume_shrink_ratio=inp.volume_ratio,
+        limit_down_chain_days=chain_days,
+        active_factors=active,
+        message=message,
+        timestamp=timestamp,
+    )
 
 
 # ── 流动性监控器 ──────────────────────────────────────────────────────

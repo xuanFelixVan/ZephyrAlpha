@@ -57,6 +57,7 @@ domain_prefixes:
   XC: D_EX_CORE
   XS: D_EX_SOR
   OBS: D_GOVERNANCE
+  SIG: D_ASHARE_SIGNAL
 # ============================================================
 # 段位规划
 # ============================================================
@@ -225,6 +226,16 @@ error_codes:
   module: zephyr.backtest.services.nan_processor
   file: src/zephyr/backtest/services/nan_processor.py
   introduced: '2026-08-17: AI-AUDIT07 补登'
+- code: ZA-BT-0038
+  class: DecisionGateError
+  module: zephyr.backtest.core.decision_gate
+  file: src/zephyr/backtest/core/decision_gate.py
+  introduced: '2026-08-30: CAND-BT-002 Phase5 regime适配缺失输入（0027 与 e2_stationary_bootstrap 重码，顺延 0038）'
+- code: ZA-BT-0039
+  class: DecisionGateError
+  module: zephyr.backtest.core.decision_gate
+  file: src/zephyr/backtest/core/decision_gate.py
+  introduced: '2026-08-30: CAND-BT-002 Phase5 收缩稳定性缺失输入（0028 与 e3_param_sensitivity 重码，顺延 0039）'
 - code: ZA-CMP-0001
   class: ChecklistCheckerError
   module: zephyr.compliance.discipline_must_do_checker
@@ -2753,6 +2764,26 @@ error_codes:
   module: zephyr.position.core.budget_change_handler
   file: src/zephyr/position/core/budget_change_handler.py
   introduced: '2026-08-30: A13 TierState 跨日持久化落码补登（33号文 blueprint §6 段位 0040~0044 早已声明，本次快照损坏/schema 不符 fail-closed 落码，session-20260830-A13）'
+- code: ZA-RE-0032
+  class: SellNewsStudyError
+  module: zephyr.research.sell_news_event_study
+  file: src/zephyr/research/sell_news_event_study.py
+  introduced: '2026-08-30: 候选核销批桶B CAND-RES-030 转正（greatwall_20260830，MOD-RES-001 高位利好落地事件研究；RE 段顺延 0031 后）'
+- code: ZA-MLT-0015
+  class: ExperimentAnomalyError
+  module: zephyr.ml_train.experiment_anomaly_detector
+  file: src/zephyr/ml_train/experiment_anomaly_detector.py
+  introduced: '2026-08-30: 候选核销批桶B CAND-RES-006 转正（greatwall_20260830，MOD-ML-023 实验指标异常检测；MLT 段顺延 0014 后）'
+- code: ZA-RK-0047
+  class: InvalidLiquidityScenarioError
+  module: zephyr.risk.core.liquidity_crisis_scenarios
+  file: src/zephyr/risk/core/liquidity_crisis_scenarios.py
+  introduced: '2026-08-30: 候选核销批桶B CAND-RSK-022 转正（greatwall_20260830，MOD-RK-047 流动性危机情景族；RK 段顺延 0046 后）'
+- code: ZA-SIG-0134
+  class: StrategyVoteIntegratorError
+  module: zephyr.signal_ashare.strategy_vote_integrator
+  file: src/zephyr/signal_ashare/strategy_vote_integrator.py
+  introduced: '2026-08-30: 候选核销批桶B CAND-SIG-004 转正（greatwall_20260830，MOD-SIG-134 多策略投票整合；SIG 段顺延 0133 后）'
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）

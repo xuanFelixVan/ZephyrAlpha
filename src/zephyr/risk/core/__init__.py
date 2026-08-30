@@ -201,3 +201,6 @@ def __getattr__(name: str):
 from zephyr.risk.core.factor_exposure_manager import FactorExposureManager
 
 __all__.append("FactorExposureManager")
+
+# ORPHAN-MODULE: 引用登记（让 depgraph 发现 import 边）
+from zephyr.risk.core.liquidity_crisis_scenarios import run_liquidity_crisis_family  # noqa: F401

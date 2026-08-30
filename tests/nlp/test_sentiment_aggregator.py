@@ -32,14 +32,25 @@ from zephyr.nlp.sentiment_aggregator import (
     SourceSentiment,
     aggregate_daily,
     aggregate_daily_by_symbol,
+    filter_market_scope,
+    normalize_scope,
     source_sentiment_from_result,
     to_negative_count_series,
     vote_cross_source,
 )
 
 
-def _mk(source: str, polarity: float, day: str = "2026-08-19", symbol: str = "", category: str = "") -> SourceSentiment:
-    return SourceSentiment(source=source, polarity=polarity, publish_date=day, symbol=symbol, category=category)
+def _mk(
+    source: str,
+    polarity: float,
+    day: str = "2026-08-19",
+    symbol: str = "",
+    category: str = "",
+    scope: str = "",
+) -> SourceSentiment:
+    return SourceSentiment(
+        source=source, polarity=polarity, publish_date=day, symbol=symbol, category=category, scope=scope
+    )
 
 
 # ============ 1. vote_cross_source ============
@@ -247,3 +258,79 @@ class TestSourceSentimentFromResult:
     def test_out_of_range_clipped(self):
         ss = source_sentiment_from_result(_FakeResult(2.5), source="cls", publish_date="2026-08-19")
         assert ss.polarity == 1.0
+
+    def test_scope_extracted_from_dict_and_object(self):
+        """CAND-NLP-003：scope 鸭型提取（dict/对象两路），缺失 → ""。"""
+        ss_dict = source_sentiment_from_result(
+            {"polarity": 0.5, "scope": "sector"}, source="cls", publish_date="2026-08-19"
+        )
+        assert ss_dict.scope == "sector"
+
+        class _V3Result:
+            polarity = -0.6
+            scope = "stock"
+
+        ss_obj = source_sentiment_from_result(_V3Result(), source="rss", publish_date="2026-08-19")
+        assert ss_obj.scope == "stock"
+
+        ss_none = source_sentiment_from_result({"polarity": 0.1}, source="rss", publish_date="2026-08-19")
+        assert ss_none.scope == ""
+
+
+# ============ 6. scope 过滤（CAND-NLP-003 主体范围轴）============
+
+
+class TestNormalizeScope:
+    def test_missing_scope_defaults_market(self):
+        assert normalize_scope("") == "market"
+        assert normalize_scope(None) == "market"
+
+    def test_case_and_whitespace_normalized(self):
+        assert normalize_scope(" SECTOR ") == "sector"
+        assert normalize_scope("Stock") == "stock"
+
+
+class TestFilterMarketScope:
+    def test_keeps_market_and_missing_only(self):
+        items = [
+            _mk("eastmoney", 0.8, scope="market"),
+            _mk("cls", 0.6),  # 缺失 → 视为 market（向后兼容）
+            _mk("rss", -0.5, scope="stock"),
+            _mk("eastmoney", 0.4, scope="sector"),
+        ]
+        kept = filter_market_scope(items)
+        assert len(kept) == 2
+        assert all(normalize_scope(it.scope) == "market" for it in kept)
+
+    def test_empty_input(self):
+        assert filter_market_scope([]) == []
+
+
+class TestAggregateDailyScopeFilter:
+    def test_market_scope_only_excludes_stock_sector(self):
+        """市场级聚合口径：scope=stock/sector 不进入大盘情绪（口径污染防线）。"""
+        items = [
+            _mk("eastmoney", 0.9, "2026-08-19", scope="market"),
+            _mk("cls", 0.8, "2026-08-19", scope="market"),
+            _mk("rss", -0.9, "2026-08-19", scope="stock"),  # 个股利空不进市场级
+            _mk("eastmoney", -0.7, "2026-08-19", scope="sector"),  # 板块利空不进市场级
+        ]
+        (d,) = aggregate_daily(items, market_scope_only=True)
+        assert d.n_news == 2
+        assert d.n_negative == 0  # 两条非 market 利空被滤掉
+        assert d.mean_polarity > 0
+
+    def test_default_unchanged_includes_all_scopes(self):
+        """向后兼容：默认（不过滤）口径与 v2 一致——全部记录纳入。"""
+        items = [
+            _mk("eastmoney", 0.9, "2026-08-19", scope="market"),
+            _mk("rss", -0.9, "2026-08-19", scope="stock"),
+        ]
+        (d,) = aggregate_daily(items)
+        assert d.n_news == 2
+
+    def test_missing_scope_treated_as_market(self):
+        """scope 缺失（v2 存量数据）视为 market，市场级过滤不丢存量。"""
+        items = [_mk("eastmoney", 0.5, "2026-08-19"), _mk("cls", 0.4, "2026-08-19")]
+        (d,) = aggregate_daily(items, market_scope_only=True)
+        assert d.n_news == 2

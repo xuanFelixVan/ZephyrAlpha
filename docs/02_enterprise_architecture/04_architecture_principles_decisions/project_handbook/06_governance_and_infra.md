@@ -30,7 +30,7 @@ language: zh
 | 指标 | 值 |
 |------|----|
 | commit_gates 目录 / Directory | `src\zephyr\gov_enforcement\commit_gates` |
-| 门禁 .py 文件数 / Gate files (excl. __init__) | 102 |
+| 门禁 .py 文件数 / Gate files (excl. __init__) | 103 |
 
 > 门禁按 priority 升序执行（AST/diff/路径/命名/依赖/blueprint 格式/depgraph 预登记/能力反查等维度）。
 <!-- AUTO-END:gate_counts -->

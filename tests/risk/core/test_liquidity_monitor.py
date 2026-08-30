@@ -37,6 +37,10 @@ from zephyr.risk.core.liquidity_monitor import (  # noqa: E402
     InvalidLiquidityInputError,
     LiquidityMetrics,
     LiquidityMonitor,
+    LiquiditySpiralConfig,
+    LiquiditySpiralGrade,
+    LiquiditySpiralInput,
+    detect_liquidity_spiral,
 )
 from zephyr.risk.risk_manager_base import RiskCheckResult  # noqa: E402
 
@@ -388,3 +392,153 @@ class TestToRiskCheckResult:
         r = mon.to_risk_check_result(m)
         assert r.passed is True
         assert r.severity == "info"
+
+
+# ── 流动性螺旋检测（CAND-RSK-015）──────────────────────────────────────
+
+
+def _spiral_input(
+    *,
+    current_spread: float = 0.001,
+    baseline_spread: float = 0.001,
+    volume_ratio: float = 1.0,
+    limit_down_counts: tuple[int, ...] = (5, 8, 10),
+) -> LiquiditySpiralInput:
+    """默认三因子平静输入（不触发任何子分）。"""
+    return LiquiditySpiralInput(
+        symbol="600000.SH",
+        current_spread=current_spread,
+        baseline_spread=baseline_spread,
+        volume_ratio=volume_ratio,
+        limit_down_counts=limit_down_counts,
+        timestamp=datetime(2026, 8, 30, 10, 0, tzinfo=UTC),
+    )
+
+
+class TestLiquiditySpiralConfig:
+    def test_defaults_valid(self):
+        cfg = LiquiditySpiralConfig()
+        assert cfg.spread_expansion_early == 1.5
+        assert cfg.chain_severe_days == 3
+
+    def test_spread_thresholds_inverted_raises(self):
+        with pytest.raises(InvalidLiquidityInputError):
+            LiquiditySpiralConfig(spread_expansion_early=2.5, spread_expansion_severe=1.5)
+
+    def test_shrink_thresholds_inverted_raises(self):
+        with pytest.raises(InvalidLiquidityInputError):
+            LiquiditySpiralConfig(volume_shrink_early=0.4, volume_shrink_severe=0.7)
+
+    def test_chain_days_inverted_raises(self):
+        with pytest.raises(InvalidLiquidityInputError):
+            LiquiditySpiralConfig(chain_early_days=3, chain_severe_days=2)
+
+
+class TestDetectLiquiditySpiral:
+    def test_all_calm_none(self):
+        alert = detect_liquidity_spiral(_spiral_input())
+        assert alert.grade is LiquiditySpiralGrade.NONE
+        assert alert.composite_score == pytest.approx(0.0)
+        assert alert.active_factors == ()
+        assert alert.limit_down_chain_days == 0
+
+    def test_single_factor_not_spiral(self):
+        """单因子满堂（价差×3）仍不判螺旋——螺旋须多因子共振"""
+        alert = detect_liquidity_spiral(_spiral_input(current_spread=0.003))
+        assert alert.spread_expansion_ratio == pytest.approx(3.0)
+        assert alert.composite_score == pytest.approx(1.0 / 3.0)
+        assert alert.grade is LiquiditySpiralGrade.NONE
+
+    def test_spread_severe_plus_shrink_early_is_early(self):
+        """价差满分 + 量缩半分 = 0.5 → early"""
+        alert = detect_liquidity_spiral(_spiral_input(current_spread=0.003, volume_ratio=0.6))
+        assert alert.composite_score == pytest.approx(0.5)
+        assert alert.grade is LiquiditySpiralGrade.EARLY
+        assert set(alert.active_factors) == {"spread_expansion", "volume_shrink"}
+
+    def test_all_half_is_early(self):
+        """三因子均半分 = 0.5 → early"""
+        alert = detect_liquidity_spiral(
+            _spiral_input(current_spread=0.0015, volume_ratio=0.7, limit_down_counts=(10, 40, 50))
+        )
+        assert alert.limit_down_chain_days == 2
+        assert alert.composite_score == pytest.approx(0.5)
+        assert alert.grade is LiquiditySpiralGrade.EARLY
+
+    def test_two_severe_is_accelerating(self):
+        """价差满分 + 量缩满分 = 2/3 → accelerating"""
+        alert = detect_liquidity_spiral(_spiral_input(current_spread=0.003, volume_ratio=0.3))
+        assert alert.composite_score == pytest.approx(2.0 / 3.0)
+        assert alert.grade is LiquiditySpiralGrade.ACCELERATING
+
+    def test_two_severe_one_half_is_severe(self):
+        """2×1 + 0.5 合成 5/6 ≈ 0.833 → severe"""
+        alert = detect_liquidity_spiral(
+            _spiral_input(current_spread=0.003, volume_ratio=0.3, limit_down_counts=(10, 40, 50))
+        )
+        assert alert.composite_score == pytest.approx(2.5 / 3.0)
+        assert alert.grade is LiquiditySpiralGrade.SEVERE
+
+    def test_all_severe_is_severe(self):
+        """三因子满堂 = 1.0 → severe"""
+        alert = detect_liquidity_spiral(
+            _spiral_input(current_spread=0.005, volume_ratio=0.2, limit_down_counts=(50, 60, 80))
+        )
+        assert alert.composite_score == pytest.approx(1.0)
+        assert alert.grade is LiquiditySpiralGrade.SEVERE
+        assert len(alert.active_factors) == 3
+        assert "severe" in alert.message
+
+    def test_chain_counts_trailing_only(self):
+        """连环跌停只数尾部连续段：[40, 5, 60, 70] → 2（中间断层重置）"""
+        alert = detect_liquidity_spiral(_spiral_input(limit_down_counts=(40, 5, 60, 70)))
+        assert alert.limit_down_chain_days == 2
+
+    def test_spread_boundary_at_early(self):
+        """价差扩大恰好 = 早警线 1.5 → 计半分"""
+        alert = detect_liquidity_spiral(_spiral_input(current_spread=0.0015))
+        assert alert.spread_expansion_ratio == pytest.approx(1.5)
+        assert "spread_expansion" in alert.active_factors
+
+    def test_shrink_boundary_at_early(self):
+        """量比恰好 = 早警线 0.7 → 计半分"""
+        alert = detect_liquidity_spiral(_spiral_input(volume_ratio=0.7))
+        assert "volume_shrink" in alert.active_factors
+
+    def test_timestamp_passthrough(self):
+        ts = datetime(2026, 8, 30, 14, 30, tzinfo=UTC)
+        inp = LiquiditySpiralInput(
+            symbol="X",
+            current_spread=0.001,
+            baseline_spread=0.001,
+            volume_ratio=1.0,
+            limit_down_counts=(),
+            timestamp=ts,
+        )
+        assert detect_liquidity_spiral(inp).timestamp == ts
+
+    def test_empty_counts_chain_zero(self):
+        alert = detect_liquidity_spiral(_spiral_input(limit_down_counts=()))
+        assert alert.limit_down_chain_days == 0
+        assert alert.grade is LiquiditySpiralGrade.NONE
+
+    def test_invalid_inputs_raise(self):
+        with pytest.raises(InvalidLiquidityInputError):
+            detect_liquidity_spiral(_spiral_input(current_spread=-0.001))
+        with pytest.raises(InvalidLiquidityInputError):
+            detect_liquidity_spiral(_spiral_input(baseline_spread=0.0))
+        with pytest.raises(InvalidLiquidityInputError):
+            detect_liquidity_spiral(_spiral_input(volume_ratio=-0.1))
+        with pytest.raises(InvalidLiquidityInputError):
+            detect_liquidity_spiral(_spiral_input(limit_down_counts=(10, -1)))
+
+    def test_empty_symbol_raises(self):
+        inp = LiquiditySpiralInput(
+            symbol="  ",
+            current_spread=0.001,
+            baseline_spread=0.001,
+            volume_ratio=1.0,
+            limit_down_counts=(),
+        )
+        with pytest.raises(InvalidLiquidityInputError):
+            detect_liquidity_spiral(inp)

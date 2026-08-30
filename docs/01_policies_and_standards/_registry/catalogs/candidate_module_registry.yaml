@@ -141,7 +141,10 @@ entries:
     q1_implemented: {result: false, equivalent_nodes: [], evidence: "observability_triad 只有 counter/gauge 原子接口，无分段计时器/health 助手/契约命名规约——本件是契约层+轻量助手，非重复"}
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'shared/observability/stage_timer.py + metrics_server.py /health 契约 + tick_subscriber 试点'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：MVP 已施工完毕（2026-08-28，observability_contract_todo.md 结案注记在案）"
   priority: P2
   created_at: '2026-08-28'
   last_reviewed_at: '2026-08-28'
@@ -190,7 +193,10 @@ entries:
     q1_implemented: {result: false, equivalent_nodes: [], evidence: "现有 _persist_stale_state 死进程分支(L407-424)有 clean 路径但 2026-08-14 实测未覆盖硬杀场景(3 例残留),属部分实现而非重复——增强既有节点非新建"}
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'reconcile_runner.py 死进程孤儿分支自愈 + reconciliation_registry 自动 ack'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：死进程告警自动消音已落地"
   priority: P2
   created_at: '2026-08-14'
   last_reviewed_at: '2026-08-14'
@@ -2824,7 +2830,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'trading/manual_instruction_channel.py（MOD-TRADING-011）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：跨条目覆盖核销（superseded-by CAND-TRD-003）"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -3178,7 +3187,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'risk/core/liquidity_monitor.py detect_liquidity_spiral（MOD-RK-08 扩展，+18 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：流动性螺旋检测三因子合成"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -3237,7 +3249,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'risk/core/ashare_stop_loss_engine.py（MOD-RK-09 production，38 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：INV-003 三级限额与 spec 全等"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -3355,7 +3370,9 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: rejected
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：源环节弃用转 rejected：battle_map_09 BM-RC-11-A 有效状态=弃用态（deprecated）；能力面由 MOD-RK-25 risk_data_pipeline + var_calculator + tail_risk_monitor + stress_test_engine 承载。"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -3414,7 +3431,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'reporting/risk_report_engine.py（MOD-RPT-008 production，37 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：能力落 D_REPORTING 域承接"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -3591,7 +3611,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'risk/core/liquidity_crisis_scenarios.py（MOD-RK-047，22 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：流动性危机情景族（三维+全员出逃）"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -3650,7 +3673,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'factor/offline_store.py + feature_store_writer.py + backtest/core/pit_manager.py（61 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：能力已自建落地（未走 Feast），候选漂移未核销"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -3709,7 +3735,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'ml_train/research_data_sandbox.py（MOD-ML-021，16 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：已落码"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -3768,7 +3797,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'ml_train/research_asset_versioning.py（17 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：已落码（未走 DVC）"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -3827,7 +3859,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'experiment_tracking/（4 文件 77 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：已落码（未走 MLflow）"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -3886,7 +3921,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'ml_train/reproducibility_manager.py（MOD-ML-020，16 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：已落码"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -3945,7 +3983,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'ml_train/experiment_anomaly_detector.py（MOD-ML-023，10 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：实验异常检测（突变/漂移/停滞三检测器）"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -4122,7 +4163,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'research/evidence/hypothesis_registry.py（42 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：假设生命周期状态机已落码"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -4181,7 +4225,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'knowledge/knowledge_artifact_store.py 族（22+24+28 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：D_KNOWLEDGE 族承接，D1 合并纪律"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -4240,7 +4287,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'knowledge/research_catalog.py（MOD-KNW-012，28 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：已落码"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -4358,7 +4408,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'knowledge/research_workflow_engine.py（MOD-KNW-014，26 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：DAG 编排已落码"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -4653,7 +4706,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'intelligence/llm_research_agent.py（26 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：CAND-AISA-017 已转正承接"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -4712,7 +4768,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'knowledge/paper_tracker.py（25 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：CAND-KNW-016 已转正承接"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -4771,7 +4830,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'research/ 全家桶（gp_strategy_discovery/llm_evolutionary_search 等，163 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：策略进化+因子挖掘已落码；错误模式学习由 skill_trajectory_miner 承接"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -4830,7 +4892,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'module_factory/knowledge_classifier.py 族（MOD-FACTORY-001，28 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：13号文架构吸收"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -4889,7 +4954,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'module_factory 清洗链（MOD-FACTORY-001/002，53 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：13号文架构吸收"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -4948,7 +5016,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'module_factory/knowledge_classifier.py（MOD-FACTORY-001）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：知识分类+策略分流已落码"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -5007,7 +5078,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'module_factory/knowledge_classifier.py（MOD-FACTORY-001）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：受控词表分类体系已落码"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -5066,7 +5140,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'module_factory/module_mapper.py（MOD-FACTORY-002，25 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：模块映射已落码"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -5125,7 +5202,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'module_factory 包 + 62号生命周期门禁'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：架构已落（Phase 1 两环节 53 测）"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -5243,7 +5323,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/signal_factory.py（MOD-SIG-087，15 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：九阶段生命周期已落码"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -5302,7 +5385,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/strategy_vote_integrator.py（MOD-SIG-134，26 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：投票整合（相关性惩罚+2/3 同向阈值）"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -5361,7 +5447,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'signal_fundamental/gen/implementations/default_signal_aggregator.py aggregate_portfolio（MOD-L03-001 扩展，22 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：组合级输出+直属测试补齐"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -5420,7 +5509,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'capital_behavior_orchestrator + fake_move_distribution + institutional_behavior_analyzer（17+24+27 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：三件覆盖"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -5479,7 +5571,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/banker_pattern_simulator.py（MOD-SIG-113 production，20 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：C-035 六阶段识别+沙盒已落码"
   priority: P2
   created_at: '2026-08-07'
   last_reviewed_at: '2026-08-07'
@@ -6743,7 +6838,10 @@ entries:
     （@pytest.mark.parametrize 逐脚本生成），让 load 调度天然均摊到 4 个 worker；
     配套保留分层 fixture（quick/critical/integration/full 标记入 item 级 marker）。
     预期收益：-n 4 尾部耗时从 12 分钟级降到 60s 级（单脚本 timeout 上界），耗时可预期。
-  status: candidate
+  status: promoted
+  promoted_to: 'tests/governance/integration/test_all_scripts.py parametrize 拆分'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：mega-class 拆分为按脚本参数化（2045 item 收集）"
   priority: P2
   source: 'B1 工单治本方案 C（2026-08-19 AI-00 审计侧登记；兜底链 A 已落地，本候选非阻断）'
   created: '2026-08-19'
@@ -6777,6 +6875,8 @@ entries:
   source: '循环审计 R1 杠杆#4（2026-08-19 AI-00 登记）'
   created: '2026-08-19'
   last_updated: '2026-08-19'
+  last_reviewed_at: '2026-08-30'
+  review_note: '2026-08-30 候选核销批（greatwall_20260830）复核=维持 candidate：前置=无并发施工的规划冻结窗口（当前存在并发会话，不满足）；零语义变更，不阻断功能，择窗执行即可。'
 
 # --- CAND-GOVTEST-003: ALGO_FLOW 标记 2186 模块批量补登（drafter 分批+抽查） ---
 - id: CAND-GOVTEST-003
@@ -6823,7 +6923,10 @@ entries:
     聚合层二分：内容判定（findings/exit code）与 files-modified（hook 副作用）分列呈现，
     全量复审以内容判定为准；files-modified 降级为干扰标注而非 Failed。
     实施点=pre-commit 输出聚合器（ai00_precommit 复跑链）+报告模板。
-  status: candidate
+  status: promoted
+  promoted_to: 'governance/run_gate_chain.py 报告二分（19 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：内容判定 vs hook 副作用分列"
   priority: P2
   source: '循环审计 R3 终轮移交清单 4①（2026-08-19 AI-00 建议登记，统筹承接）'
   created: '2026-08-19'
@@ -6845,7 +6948,10 @@ entries:
   proposal: >-
     复核分批聚合器退出码逻辑：全批 0 findings 必须 exit 0；
     补聚合层单测（0-findings 多批/单批、混合 findings 批三态）。
-  status: candidate
+  status: promoted
+  promoted_to: 'governance/run_gate_chain.py severity 聚合（19 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：末位覆盖缺陷修复（ERROR 2>FINDINGS 1>PASS 0）"
   priority: P2
   source: '循环审计 R3 终轮移交清单 4②（2026-08-19 AI-00 建议登记，统筹承接）'
   created: '2026-08-19'
@@ -6868,7 +6974,10 @@ entries:
     清单，完整性保护聚焦手写规则文件；②再生+注册原子化——派生器与 validate_rules_
     integrity.py --register 同事务执行，消除窗口期。建议①优先（派生物本不该锚定，
     与"派生产物禁入 git"同哲学）。
-  status: candidate
+  status: promoted
+  promoted_to: 'governance/meta/validate_rules_integrity.py 锚定清单摘除派生物'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：script_manifest.yaml 移出锚定清单（GATE-21 兜底）"
   priority: P2
   source: '循环审计 R3 终轮移交清单 4③（2026-08-19 AI-00 建议登记，统筹承接）'
   created: '2026-08-19'
@@ -6895,6 +7004,8 @@ entries:
   source: '循环审计 R3 终轮移交清单 4④（2026-08-19 AI-00 建议登记，统筹承接）'
   created: '2026-08-19'
   last_updated: '2026-08-19'
+  last_reviewed_at: '2026-08-30'
+  review_note: '2026-08-30 候选核销批（greatwall_20260830）复核=维持 candidate：涉全部门禁执行路径的结构改造，需影响面评估后专项施工；本批已落地受害面缓解件（GATEMECH-001/003/005/007），本项为同根治本专项，不在本批范围。'
 # --- CAND-GATEMECH-005: 网关批次收尾仪式（批量批自动联动 C2 freeze+INTEGRITY 重钉） ---
 - id: CAND-GATEMECH-005
   name: 网关批次收尾仪式——ruff/codegen 批量批自动联动 C2 freeze + INTEGRITY 重钉
@@ -6914,7 +7025,10 @@ entries:
     自动触发收尾仪式链：generate_contracts.py → check_contract_code_drift.py --freeze →
     validate_rules_integrity.py --register，三步原子化联动。消除"批次合法变更→
     快照/基线滞后"的结构性漂移窗口。
-  status: candidate
+  status: promoted
+  promoted_to: 'governance/gateway_post_commit_ritual.py（MOD-GOV-059，17 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：网关批次收尾三步原子联动"
   priority: P2
   source: '2026-08-19 Owner 裁定 P1-2①（#ARCH-130 施工令）'
   created: '2026-08-19'
@@ -6937,7 +7051,10 @@ entries:
     pre-commit 门禁：migrate_*.sql 新增/修改时，强制核对 _DDL_MAP 常量是否同步更新
     （AST 比对 ALTER TABLE 列清单 vs parse_ddl_columns 声明列）。漂移拦截前移到
     落地瞬间，消除"只落 DB 不回写"的结构性通道。
-  status: candidate
+  status: promoted
+  promoted_to: 'depgraph_schema.py _MIGRATIONS DDL-as-Code + verify_schema_health.py（GATE-SCHEMA-HEALTH）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：结构性覆盖核销（散置 migrate_*.sql 已零存在）"
   priority: P2
   source: '2026-08-19 Owner 裁定 P1-2②（#ARCH-130 施工令）'
   created: '2026-08-19'
@@ -6959,7 +7076,10 @@ entries:
     pre-commit 门禁：AST 扫描测试文件 import/引用符号，比对真源模块 __all__/函数定义——
     引用不存在符号即红（防超前孤儿测试+接口漂移双场景）。与 test_schema_stability
     互补（前者守数据结构快照，本候选守符号存在性）。
-  status: candidate
+  status: promoted
+  promoted_to: 'governance/check_test_symbol_validity.py（MOD-GOV-058，13 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：孤儿测试符号检测门禁（增量守门注册，存量 39 处待清）"
   priority: P2
   source: '2026-08-19 Owner 裁定 P1-2③（#ARCH-130 施工令）'
   created: '2026-08-19'
@@ -7186,7 +7306,10 @@ entries:
   sub_layer: 事件驱动策略
   problem: 依赖知识图谱 BM-SEL-11 design 态+NLP 管道就绪，依赖链未闭合。
   proposal: 触发=NLP 管道 Phase 8 验收通过+知识图谱落地；当前 event_score 公式族已函数级承载。
-  status: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/event_driven_screener.py（MOD-SIG-049）+ intelligence/event_funnel.py（MOD-INT_EVENT_FUNNEL，13+33 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：BM-SEL-19 双件落码（归并裁定另挂架构议题）"
   priority: P2
   source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 26号节'
   created: '2026-08-20'
@@ -7251,7 +7374,10 @@ entries:
   sub_layer: 回测验证
   problem: 依赖首批策略层就绪（sleeve 策略类落地）。
   proposal: 触发=首批策略层就绪；届时 DecisionGate 接入 regime/shrinkage 判定（DSR 注入点已就位）。
-  status: candidate
+  status: promoted
+  promoted_to: 'backtest/core/decision_gate.py regime/shrinkage 双闸注入（17 测，tests/backtest 969 全绿）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：Phase 5 决策门控接入 regime 适配+收缩稳定性双闸（降格语义=人工复核不直接拒；ZA-BT-0027/0028 补登）"
   priority: P2
   source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 11号节'
   created: '2026-08-20'
@@ -7342,7 +7468,10 @@ entries:
   sub_layer: 指令通道
   problem: 出站实发后评估；入站指令解析涉交易安全边界。
   proposal: 触发=WeChat 出站实发稳定+入站需求实证；须安全评审（指令白名单+二次确认）。
-  status: candidate
+  status: promoted
+  promoted_to: 'frontend/implementations/wechat_bot_handler.py（production）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：安全边界全落码（白名单+二次确认）"
   priority: P2
   source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 54号节'
   created: '2026-08-20'
@@ -7355,7 +7484,10 @@ entries:
   sub_layer: 策略生命周期
   problem: 需先裁定 MLflow 退役后的载体（experiment_tracking 包为候选承载）。
   proposal: 触发=载体裁定（建议 experiment_tracking，2026-08-20 五零件 adapter 已就位）+首批策略上线。
-  status: candidate
+  status: promoted
+  promoted_to: 'governance/lifecycle_governance/msprt_promotion_channel.py'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：61号文波4 已落码（c9d0b346）"
   priority: P2
   source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 61号节'
   created: '2026-08-20'
@@ -7368,7 +7500,10 @@ entries:
   sub_layer: 策略生命周期
   problem: 随首批上线后监控批。
   proposal: 触发=首批策略上线；CUSUM/PSI 漂移监控函数级组件已就位可编排。
-  status: candidate
+  status: promoted
+  promoted_to: 'governance/lifecycle_governance/drift_observatory_orchestrator.py'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：61号文波4 已落码"
   priority: P2
   source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 61号节'
   created: '2026-08-20'
@@ -7381,7 +7516,10 @@ entries:
   sub_layer: 模型运维
   problem: MLOps Level 2 批。
   proposal: 触发=ML 模型首批上线（当前无生产 ML 模型）。
-  status: candidate
+  status: promoted
+  promoted_to: 'gray_release_shadow_deployer.py（MOD-ML-004）+ adversarial_robustness_validator.py（MOD-ML-005）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：双件 production"
   priority: P2
   source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 61号节'
   created: '2026-08-20'
@@ -7433,7 +7571,10 @@ entries:
   sub_layer: 因子工厂
   problem: factor_registry 140 条 candidate 待落码+experiment_registry 跑批回填 IC/IR；依赖回测跑批基础设施。
   proposal: 触发=回测跑批基础设施就绪（walkforward/CPCV 已函数级就位）+Owner 排期；建议按因子族分批。
-  status: candidate
+  status: promoted
+  promoted_to: 'factor_registry.yaml IC 回填（commit 2a16988d）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：长城批已闭环（4/4 code-anchored + 143 条 NL 裁定）"
   priority: P1
   source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack2 29号节/pack3 62号节'
   created: '2026-08-20'
@@ -7446,7 +7587,10 @@ entries:
   sub_layer: 密度预测应用
   problem: 激活=密度预测验证通过。
   proposal: 触发=密度预测验证通过（91 号路线）；survival_line_monitor 简易骨架已在库。
-  status: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/survival_time_predictor.py（MOD-SIG-045 production，13 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：AFT 本体已落码（KM+Weibull MLE）"
   priority: P2
   source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 91号节'
   created: '2026-08-20'
@@ -7485,7 +7629,10 @@ entries:
   sub_layer: git 安全治理
   problem: 队列目录协议+enqueue/status/drain CLI+入队自举排空+专用 worktree 落盘+compaction+_commit_auto 改道入队；大工程量单项。
   proposal: 触发=Owner 排期（66号 §10 验收：3 会话 50 提交零丢失/零搭便车/FIFO 序）；当前 GitCommitGateway+锁承载主路径。
-  status: candidate
+  status: promoted
+  promoted_to: 'scripts/commit_queue.py（MOD-GOV-046）+ governance/commit_queue_landing.py（MOD-GOV-047）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：commit queue MVP 已上线运行（flag 08-22 翻开）"
   priority: P1
   source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 66号节'
   created: '2026-08-20'
@@ -7498,7 +7645,10 @@ entries:
   sub_layer: git 安全治理
   problem: P1 级联标记+死信重入队+done TTL+worktree 强制升硬联动；P2 监控接入+temp-index+多分支评估。
   proposal: 触发=CAND-GOVTEST-004 MVP 验收通过。
-  status: candidate
+  status: promoted
+  promoted_to: 'commit_queue.py P1 三件套（级联/死信 requeue/TTL 清理）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：P1 主体核销；P2 监控残余另行登记"
   priority: P2
   source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 66号节'
   created: '2026-08-20'
@@ -8689,7 +8839,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/nlp/nlp_inference.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'alt_data/filing_nlp_engine.py（MOD-ALT-003，29 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-25，P1W14）——canonical=MOD-ALT-003 filing_nlp_engine（spec 全等，其蓝图 §0 已预先声明归并）；公告采集残留语归 announcement_provider"
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -8795,7 +8948,10 @@ entries:
       evidence: '深挖场内对账: 部分：src/zephyr/alt_data/'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'alt_data/social_sentiment_collector.py（MOD-ALT-001，30 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：社媒面归并核销；残留面（数字足迹/卫星）留后续批"
   review_note: "# REVIEW: 归并不施工（2026-08-25，P1W15）——社媒面与 MOD-ALT-001 全等归并；数字足迹/产业链付费 API/卫星接口位=残留面留后续批"
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -8875,7 +9031,10 @@ entries:
       evidence: '深挖场内对账: 部分：src/zephyr/data/news_collector.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'alt_data/ 族（limit_up_pool_collector + MOD-ALT-004 聚合）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：逐面归并核销；残留面（司法 tyc/Whisper）留后续批"
   review_note: "# REVIEW: 归并不施工（2026-08-25，P1W15）——逐面归并：情绪面板数据层 limit_up_pool 已建+聚合判定归 SentimentEngine+板块热度已建；司法 tyc/Whisper ASR=残留面"
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -8901,7 +9060,10 @@ entries:
       evidence: '深挖场内对账: 无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'alt_data/alt_data_catalog.py（MOD-ALT-008，17 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 CAND-TESTA-024 同为 AltDataCatalog（B1/B5 两稿重登），canonical=CAND-TESTA-024→MOD-ALT-008 alt_data_catalog（标签+血缘+FTS5 检索含其生命周期语义）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -8954,7 +9116,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/data/policy_registry.py(stable/production)'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'alt_data/policy_expectation_analyzer.py（MOD-ALT-010，25 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 CAND-TESTA-026 同为 A股政策预期分析（B10/B5 两稿重登），canonical=CAND-TESTA-026→MOD-ALT-010（LLM 预期打分+国家队识别含其窗口指导/事件日历语义）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -8980,7 +9145,10 @@ entries:
       evidence: '深挖场内对账: 部分：src/zephyr/nlp/sentiment_aggregator.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'alt_data/sentiment_engine.py（MOD-ALT-004，24 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 P1 已建 MOD-ALT-004 sentiment_engine 同为 D-ALT-02（B13 稿重登），canonical=src/zephyr/alt_data/sentiment_engine.py（三路情绪+Bayesian 聚合语义已在）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -9006,7 +9174,10 @@ entries:
       evidence: '深挖场内对账: 无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'alt_data/filing_nlp_engine.py（MOD-ALT-003）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：重登归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 P1 已建 MOD-ALT-003 filing_nlp_engine 同为 D-ALT-04（B13 稿重登），canonical=src/zephyr/alt_data/filing_nlp_engine.py"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -9058,7 +9229,10 @@ entries:
       evidence: '深挖场内对账: 无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'alt_data/policy_theme_mapper.py（MOD-ALT-005，27 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 P1 已建 MOD-ALT-005 policy_theme_mapper 同为 D-ALT-19（B13 稿重登），canonical=src/zephyr/alt_data/policy_theme_mapper.py"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -9084,7 +9258,10 @@ entries:
       evidence: '深挖场内对账: 部分：src/zephyr/signal_ashare/causal_inference_engine.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/event_causal_reasoner.py（MOD-SIG-112，18 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：W05 已建归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 CAND-TESTB-029（W05 波）同为 D-ALT-22 事件因果推理（B13/B1/B10 三稿重登），canonical=CAND-TESTB-029（DoWhy 反事实校验为最宽 spec，W05 施工），本波不施工"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -9136,7 +9313,10 @@ entries:
       evidence: '深挖场内对账: 无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'alt_data/alt_data_compliance_reviewer.py（MOD-ALT-015，24 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 CAND-TESTA-016 同为 D-ALT-DATA-14 合规审查器（B13/B14 两稿重登），canonical=CAND-TESTA-016→MOD-ALT-015（四要素台账+审查清单+复核提醒含其授权/robots/许可语义）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -9740,7 +9920,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/plan_engine/auction_hit_recorder.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/auction_microstructure_analyzer.py（MOD-SIG-089，13 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：P1W04 归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-25，P1W04）——canonical=MOD-SIG-089 auction_microstructure_analyzer（七族特征+行为四族覆盖 spec 全项）"
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -9768,7 +9951,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/chanlun_structure.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/unified_pattern_engine.py（MOD-SIG-091，13 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：P1W04 归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-25，P1W04）——canonical=MOD-SIG-091 unified_pattern_engine（蓝图 §0 canonical 声明既定兑现）"
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -10110,7 +10296,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/chanlun_structure.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/unified_pattern_engine.py（MOD-SIG-091）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：P2-W05 重登归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W05）——与 P1 已建 MOD-SIG-091 unified_pattern_engine 同为统一技术图形识别引擎（B1-00172/B1-01010 同条目两稿），canonical=src/zephyr/signal_ashare/unified_pattern_engine.py（规则+DTW Phase1 已在，CNN/Transformer 两稿均明示后续档）；CAND-FAC-023（W07 波）同此归并"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -10163,7 +10352,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/supply_chain_gnn.py(设计态)'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/stock_relation_gnn.py（MOD-SIG-126 production，22 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：P2-W06 归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W06）——与 CAND-TESTB-049 同为 GNN 股票关系建模（B10-01197/01830 三稿重登之一），canonical=CAND-TESTB-049→MOD-SIG-126 stock_relation_gnn（基类 3 邻接图+GAT/GCN 聚合含其 RGCN 语义）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -10189,7 +10381,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/causal_inference_engine.py(设计态)'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/causal_ml_engine.py（MOD-SIG-127 production，25 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：P2-W06 归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W06）——与 CAND-TESTB-051 同为 Causal ML（B10-01198/01858 三稿重登之一），canonical=CAND-TESTB-051→MOD-SIG-127 causal_ml_engine（DML+CausalForest+DoWhy+因果发现含其语义）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -10476,7 +10671,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/supply_chain_gnn.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/stock_relation_gnn.py（MOD-SIG-126）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：v3.6 重登归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W06）——与 CAND-TESTB-049 同为 GNN 关系建模消费（v3.6 稿），canonical=CAND-TESTB-049→MOD-SIG-126（图统计特征作嵌入接密度预测语义并入基类节点特征面）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -10503,7 +10701,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/causal_inference_engine.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/causal_ml_engine.py（MOD-SIG-127）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：v3.6 重登归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W06）——与 CAND-TESTB-051 同为 Causal ML 深度补充（v3.6 稿），canonical=CAND-TESTB-051→MOD-SIG-127"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -10638,7 +10839,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/event_driven_screener.py;causal_inference_engine.py;foreign_impact_judge.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/event_causal_reasoner.py（MOD-SIG-112，18 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：P2-W06 归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W06）——与 CAND-TESTB-029（W05 已建）同为 D-ALT-22 事件因果推理（B10/B1/B13 三稿重登），canonical=MOD-SIG-112 event_causal_reasoner"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -10744,7 +10948,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/regime/features/chip_distribution_engine.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/fake_move_distribution.py（MOD-SIG-124 production，24 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：P2-W06 归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W06）——与 CAND-TESTB-044（W05 已建）同为 模块27 主力假动作识别（B11/B10 两稿重登），canonical=MOD-SIG-124 fake_move_distribution（三维打分语义入 7 维打分）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -10770,7 +10977,10 @@ entries:
       evidence: '深挖场内对账: 无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/intraday_volume_orderflow.py（MOD-SIG-093，13 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：P2-W06 归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W06）——与 P1 已建 intraday_volume_orderflow 同为日内量能结构与订单流分析，canonical=src/zephyr/signal_ashare/intraday_volume_orderflow.py（Volume Profile/CVD/VPIN 近似语义已在）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -10796,7 +11006,10 @@ entries:
       evidence: '深挖场内对账: 部分：src/zephyr/plan_engine/auction_hit_recorder.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/auction_microstructure_analyzer.py（MOD-SIG-089）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：B13 稿重登归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W06）——与 P1 已建 auction_microstructure_analyzer 同为开盘竞价微结构分析（B13/B1 两稿），canonical=src/zephyr/signal_ashare/auction_microstructure_analyzer.py"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -11085,7 +11298,10 @@ entries:
       evidence: '深挖场内对账: 部分：src/zephyr/research/factor_mining_pipeline.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'autonomy_core/agents/researcher_agent.py（MOD-AU-008）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：GP1 裁定口径核销（#ARCH-285）"
   review_note: "# REVIEW: 归并不施工（2026-08-25，P1W12）——canonical=MOD-AU-008 researcher_agent（P1 R1 已建，蓝图 §0 已声明）"
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -11112,7 +11328,10 @@ entries:
       evidence: '深挖场内对账: 部分：src/zephyr/signal_ashare/intraday_buy_sell_point_analyzer.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'autonomy_core/agents/timing_analyst_agent.py（MOD-AU-010）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：GP1 裁定口径核销"
   review_note: "# REVIEW: 归并不施工（2026-08-25，P1W12）——canonical=MOD-AU-010 timing_analyst_agent：L1 建议级/择时融合裁决/人工确认回路三要素全等；触发评估面 MOD-TRIG-001 production，买卖点归 MOD-SIG-024/068，无独立缺口"
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -11166,7 +11385,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/integration/llm_bridge.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'integration/ai_service_route_matrix.py（MOD-INT-AIROUTE）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：W13 已建归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W14）——与 W13 已建 MOD-INT-AIROUTE ai_service_route_matrix 同为 LLM 路由+成本+降级链（Router Agent 角色化封装语义=路由表+选路留痕已在），canonical=src/zephyr/integration/ai_service_route_matrix.py"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -11192,7 +11414,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/autonomy_core/agents/algorithm_agent_entry.py;src/zephyr/orchestrator/'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'intelligence/llm_research_agent.py（MOD-INT-RESEARCH-AGENT）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W14）——与 CAND-AISA-017 同为 D-RESEARCH-11 LLM 研究助手（B10/B6 两稿跨域重登），canonical=CAND-AISA-017→MOD-INT-RESEARCH-AGENT（W04 波漏处理，本波补施工）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -11296,7 +11521,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/feedback_loop/verifiers/build_reproducibility_verifier.py（构建级可复现有，研究实验级缺）'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'ml_train/reproducibility_manager.py（MOD-ML-020）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W08）——与 CAND-MLT-028（W07 已建）同为 D-RESEARCH-05 可复现性管理（B14/B13/B10 三稿重登），canonical=MOD-ML-020 reproducibility_manager（种子+hash校验+复现报告含其四要素语义）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -11322,7 +11550,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/feedback_loop/verifiers/dry_run_sandbox.py（执行沙箱非研究数据沙箱）'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'ml_train/research_data_sandbox.py（MOD-ML-021）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W08）——与 CAND-MLT-029（W07 已建）同为 D-RESEARCH-12 研究数据沙箱（B14/B13 两稿重登），canonical=MOD-ML-021 research_data_sandbox（PIT 只读视图语义入只读视图+评审回写）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -11401,7 +11632,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/feedback_loop/forensic/guard_configuration_drift_monitor.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'compliance/compliance_drift_detector.py（MOD-CMP-016）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W10）——与 CAND-CMP-007 同为合规漂移检测器（B1/B14 两稿重登），canonical=CAND-CMP-007→MOD-CMP-016（AL-P3 告警+证据快照+整改任务含其基线快照/纠正建议语义，配置中心 MOD-INF-091 已为其供基线）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -11557,7 +11791,10 @@ entries:
       evidence: '深挖场内对账: 部分：src/zephyr/shared/contracts/'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'ex_core/multi_contract_adapter.py（MOD-EX-055）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：P1W16 实证归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-25，P1W16）——canonical=MOD-EX-055 multi_contract_adapter（stable/production，CTR-004/005/006 注册+版本演进+变更通知全覆盖；深挖批'未收口'被实证推翻）"
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -11694,7 +11931,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/data/provider_base.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'provider 体系/调度/回填/quality_gate/storage_tiering 全 production'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：豁免核销（08-25 豁免不施工裁定，新建即重复）"
   review_note: "# REVIEW: 豁免不施工（2026-08-25，P1W08）——iFind 2026-08-14 已整体退役（#ARCH-DATA-IFIND-RETIRE-001，主源转正 akshare/tushare）；provider 体系/调度/回填/交叉校验/quality_gate 全 production；event_bus 已建；分层存储已由 storage_tiering 收口。新建即重复"
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -12537,7 +12777,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/data_governance/core/lineage_tracker.py（血缘追踪有，变更检测缺）'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'data_governance/lineage_change_detector.py（MOD-DATA_GOV-010）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W02）——与 CAND-DATGOV-007 同为 M8-S07 血缘变更检测器（快照diff+影响分析+下游通知语义完全重合），REVIREW 归并 canonical=CAND-DATGOV-007→MOD-DATA_GOV-010 lineage_change_detector"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -12723,7 +12966,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/ex_core/execution_strategy_selector.py(设计态)'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'ex_core/execution_strategy_selector.py（MOD-EX-062 production）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-25，P1W12）——canonical=MOD-EX-062（production/stable，TSV 设计态注记过期）；POV/紧迫度面被门禁降级不变量显式排除，扩面须另起裁定"
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -12749,7 +12995,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/ex_core/execution_tca.py(设计态)'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'reporting/default_tca_engine.py（MOD-L07-001 production）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销（TCA 四桶+多基准）"
   review_note: "# REVIEW: 归并不施工（2026-08-25，P1W13）——canonical=MOD-L07-001（production，滑点+IS 四桶含冲击成本+多基准）+MOD-L06-001（ex_core 侧滑点产出）功能全等；execution_tca.py 不存在（TSV 注记过期）"
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -12801,7 +13050,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/trading/resource_optimization.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'ex_core/execution_param_optimizer.py（MOD-EX-064）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：EX-010 已 promoted 归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W08）——与 CAND-EX-010 同为 C-026 执行运营自优化（B10/B1 两稿重登），canonical=CAND-EX-010→MOD-EX-064（optuna+TCA 目标+人工确认含其拆单/等待参数语义）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -12882,7 +13134,10 @@ entries:
       evidence: '深挖场内对账: 无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'factor/factor_availability_monitor.py（production）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销（80-50-20 三级阈值并入）"
   priority: P0
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -13012,7 +13267,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/causal_factor_validator.py(设计态)'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'causal_factor_validator.py + causal_inference_engine.py'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：豁免核销（重模型线 25号 BM-SEL-02-M 裁定远期）"
   review_note: "# REVIEW: 豁免不施工（2026-08-25，P1W07）——causal_factor_validator（MOD-SIG-054 production）+causal_inference_engine（MOD-SIG-042 production）已覆盖筛因果→加权入库；DoWhy/DML 被 25 号 memo BM-SEL-02-M 裁定远期 Phase 4"
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -13065,7 +13323,10 @@ entries:
       evidence: '深挖场内对账: 无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'factor_factory.py + signal_factory.py + strategy_factory.py（MOD-PF-009）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：豁免核销（统一基类=重抽象重复）"
   review_note: "# REVIEW: 豁免不施工（2026-08-25，P1W07）——spec 即三工厂总称：factor_factory（C-027）/signal_factory（C-028）已建，StrategyFactory（C-006）归后续波；新建基类=重抽象重复"
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -13308,7 +13569,10 @@ entries:
       evidence: '深挖场内对账: 部分：src/zephyr/signal_ashare/chanlun_structure.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/unified_pattern_engine.py（MOD-SIG-091）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：W05 同族归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W07）——与 P1 已建 MOD-SIG-091 unified_pattern_engine 同为统一技术图形识别引擎（B13/B1 两稿），canonical=src/zephyr/signal_ashare/unified_pattern_engine.py（W05 已裁定同族归并）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -13361,7 +13625,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/feedback_loop/verifiers/build_reproducibility_verifier.py;src/zephyr/feedback_loop/forensic/deterministic_replay.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'ml_train/reproducibility_manager.py（MOD-ML-020）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W14）——与 CAND-MLT-028（W07 已建）同为 D-RESEARCH-05 可复现性管理（B10/B13/B14 三稿重登），canonical=MOD-ML-020 reproducibility_manager"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -13387,7 +13654,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/feedback_loop/evolution/ewc_kb_review.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'ml_train/continual_learning_antiforget.py（MOD-ML-018 production）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W14）——与 CAND-MLT-025（W07 已建）同为持续学习抗遗忘（B10-01228/01881 两稿），canonical=MOD-ML-018 continual_learning_antiforget（EWC+回放+回滚含其伪回放语义）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -13517,7 +13787,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/reporting/alert_aggregator.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'frontend/dashboard/components/alert_center.py（MOD-FE-003）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：前端领土归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W11）——与 P1 已建 MOD-FE-003 alert_center 同为 D-FE-08 告警面板（收敛视图+分级列表+筛选语义已在），canonical=src/zephyr/frontend/dashboard/components/alert_center.py；风暴折叠摘要卡属呈现层细节归页面设计批"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -13569,7 +13842,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/shared/observability/tracing.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'frontend/trace_waterfall_view.py（MOD-FE-009）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：前端领土归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W11）——与 CAND-FE-010 同为端到端追踪可视化（B1/B14 两稿重登），canonical=CAND-FE-010→MOD-FE-009（四视图+Redis聚合+慢链路高亮含其 trace 检索/瀑布图语义）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -13986,7 +14262,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/gov_drift/'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'gov_drift/agent_stability_index.py（MOD-GOV-055 production）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W12）——与 CAND-GOVDRIFT-003 同为 Agent 行为漂移检测（B1/B11 两稿），canonical=CAND-GOVDRIFT-003→MOD-GOV-055（ASI 可落子集含其调用模式/工具分布基线语义；人工确认纠正流复用 drift 调度既有通道）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -14117,7 +14396,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/gov_enforcement/rule_enforcement/task_types.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'gov_rule/standards_manager.py（MOD-GOV-057）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W12）——与 CAND-PC-002 同为 D-GOV-06 StandardsManager（B9/B1 两稿重登），canonical=CAND-PC-002→MOD-GOV-057（硬边界目录+校验锚点+人工门禁含其标准注册/元标准语义，PS-STD/PS-REG 元标准入元数据字段）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -15239,7 +15521,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/intelligence/model_evaluation/;scripts/run_deepseek_v4_exam.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'intelligence/llm_self_evaluation.py（MOD-INT-LLM-SELFEVAL，20 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：08-26 P2-W04 归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 CAND-AISA-013 同为 LLM 自评估与交叉验证（B10-01235/01883 两稿重登），canonical=CAND-AISA-013→MOD-INT-LLM-SELFEVAL（Judge 三维+CoT 自校验+三模型投票含其语义）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -15295,7 +15580,10 @@ entries:
       evidence: '深挖场内对账: 部分：src/zephyr/intelligence/venra_double_lock_anchor.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'intelligence/universal_fact_ledger.py（MOD-INT-FACT-LEDGER，21 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 CAND-AISA-014 同为 §29.24 VeNRA 神经符号融合（B10-01865/01952 两稿重登），canonical=CAND-AISA-014→MOD-INT-FACT-LEDGER（UFL+DoubleLock 单模块具体 spec 含其 Sentinel 语义）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -15378,7 +15666,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/plan_engine/llm_premarket_analysis.py;src/zephyr/shared/contracts/llm_gateway_protocol.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'intelligence/llm_market_interpreter.py（MOD-INT-MKT-INTERPRETER，14 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 P1 已建 llm_market_interpreter（MOD-INT-MKT-INTERPRETER）同为 D-ALT-DATA-11（B10 稿重登），canonical=src/zephyr/intelligence/llm_market_interpreter.py"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -15404,7 +15695,10 @@ entries:
       evidence: '深挖场内对账: 部分：src/zephyr/plan_engine/llm_premarket_analysis.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'intelligence/llm_market_interpreter.py（MOD-INT-MKT-INTERPRETER）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：三稿重登归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 P1 已建 llm_market_interpreter（MOD-INT-MKT-INTERPRETER）同为 D-ALT-DATA-11（B13 稿重登），canonical=src/zephyr/intelligence/llm_market_interpreter.py"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -15508,7 +15802,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/gov_audit/kb_gate.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'knowledge/knowledge_quality_assessor.py（MOD-KNW-002，29 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：08-26 P2-W03 归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W03）——与 CAND-KNW-013 同为 D-KNOW-11 知识质量评估（三稿重登之一），canonical=CAND-KNW-013→MOD-KNW-002（四维评分+隔离降权+复核队列为最宽 spec，含其来源分级/时效衰减语义）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -15586,7 +15883,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/feedback_loop/collectors/knowledge_freshness.py;src/zephyr/orchestrator/quality/knowledge_freshness.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'knowledge/knowledge_quality_assessor.py（MOD-KNW-002）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：三稿重登归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W03）——与 CAND-KNW-013 同为 D-KNOW-11 知识质量评估（三稿重登之二），canonical=CAND-KNW-013→MOD-KNW-002（其三打分器语义被四维评分覆盖）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -15689,7 +15989,10 @@ entries:
       evidence: '深挖场内对账: 部分：src/zephyr/signal_ashare/supply_chain_gnn.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'knowledge/financial_knowledge_graph.py（MOD-KNW-003，35 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W03）——与 CAND-KNW-001 同为金融知识图谱（五类/六类枚举姊妹稿），canonical=CAND-KNW-001→MOD-KNW-003 financial_knowledge_graph（六类实体关系表+子图+邻居/路径 API 含其语义，LLM 抽取审核入图接口并入施工）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -15899,7 +16202,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/research/evidence/'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'knowledge/knowledge_artifact_store.py（MOD-KNW-004，22 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W03）——与 CAND-KNW-008 同为 6 类知识产出不可变 schema+版本化存储，canonical=CAND-KNW-008→MOD-KNW-004 knowledge_artifact_store（聚合根不变量与 6 类 schema 挂载语义并入）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -15925,7 +16231,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/integration/vector_memory/sqlite_metadata_store.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'knowledge/kb_engine.py（MOD-KNW-001，28 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：B6 稿重登归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W03）——与 CAND-KNW-002 同为 D-KNOW-06 KB Engine（B6/B1 两稿重登），canonical=CAND-KNW-002→MOD-KNW-001 kb_engine（spec 含其 CRUD+版本+FTS5 全语义）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -15978,7 +16287,10 @@ entries:
       evidence: '深挖场内对账: 部分：schemas/categories/market_auction.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'market_data/auction_data_manager.py（MOD-MKT-007）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-25，P1W16）——canonical=MOD-MKT-007 auction_data_manager（同号 D-DATA-32 同一建设项；miniQMT 源/3 秒节奏/尾盘竞价/字段校验四面已并入）"
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -16309,7 +16621,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/xlstm_long_memory.py(设计态)'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/xlstm_long_memory.py（MOD-SIG-053）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销（真训练属 B-007 人工窗口）"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W07）——canonical=MOD-SIG-053 xlstm_long_memory（接口契约+EMA 占位实现+单测已在 production）；真训练/真推理属 B-007 Owner 人工窗口（RLSP GPU 真训练排除项），本波不施工"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -16335,7 +16650,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/ml_train/strategy_digital_twin.py(设计态)'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'ml_train/strategy_digital_twin.py（MOD-ML-006）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W07）——canonical=MOD-ML-006 strategy_digital_twin（镜像推演+权益曲线/回撤/Sharpe 已在 production）+decay_monitor（衰减预警已在）；健康评分为二者组合面，不独立施工"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -16390,7 +16708,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/simulation/scenario_generator.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'ml_train/implementations/ts_augmentation.py（MOD-ML-015）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：三稿重登归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W07）——与 CAND-MLT-019 同为 §29.19 金融时序数据增强（B10-01859/B1-00639/B10-01940 三稿重登之一），canonical=CAND-MLT-019→MOD-ML-015 ts_augmentation（KS 质量门+≤30% 混入硬约束含其 augmented=True/权重0.5 语义）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -16472,7 +16793,10 @@ entries:
       evidence: '深挖场内对账: 无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'ml_train/implementations/ts_augmentation.py（MOD-ML-015）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：三稿重登归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W07）——与 CAND-MLT-019 同为 §29.19 金融时序数据增强（三稿重登之二），canonical=CAND-MLT-019→MOD-ML-015"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -16815,7 +17139,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/pf_alloc/core/multi_strategy_capital_allocator.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'pf_core/core/strategy_capacity_estimator.py（MOD-PF-012）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销（ADV+冲击+容量上限）"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W09）——与 P1 已建 MOD-PF-012 strategy_capacity_estimator 同为策略容量估算（C-042/PC-17 三稿重登之一），canonical=src/zephyr/pf_core/core/strategy_capacity_estimator.py（ADV+冲击+容量上限语义已在，capacity 表消费接线归运行时装配批）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -16841,7 +17168,10 @@ entries:
       evidence: '深挖场内对账: 无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'pf_core/core/strategy_capacity_estimator.py（MOD-PF-012）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：B10/B14 重登归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W09）——与 P1 已建 MOD-PF-012 同为 PC-17 Strategy Capacity Estimator（B10/B14 同条目两稿），canonical=src/zephyr/pf_core/core/strategy_capacity_estimator.py"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -17080,7 +17410,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/risk/core/liquidity_monitor.py（流动性监控有，策略容量估算缺）'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'pf_core/core/strategy_capacity_estimator.py（MOD-PF-012）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：重登归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W09）——与 P1 已建 MOD-PF-012 同为 PC-17（B14 稿），canonical=src/zephyr/pf_core/core/strategy_capacity_estimator.py"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -17343,7 +17676,9 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/regime/core/regime_detector.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: rejected
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：W3 裁定豁免不施工转 rejected：29 态前身被 BIC+A2 实证否决（OOS/IS 0.34<0.7），能力面已由 4 态 HMM（MOD-REGIME-001 production 59 测）覆盖，另建=双真源。留证伪记录防 29 态路线复活。"
   priority: P0
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -17848,7 +18183,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/risk/implementations/default_stop_loss_engine.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'risk/atr_stop_engine.py（MOD-RK-35 production，17 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：ATR+Bayesian 优化全落地；P1W13 归并注记在案"
   review_note: "# REVIEW: 归并不施工（2026-08-25，P1W13）——canonical=MOD-RK-35（在码 k×ATR14+体制自适应 k+GP/EI 贝叶斯优化全评估点留痕）；spec 残余（Optuna/walk-forward/回写/联动）=装配面"
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -18225,7 +18563,10 @@ entries:
       evidence: '深挖场内对账: 无'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'risk/post_entry_instant_validator.py（MOD-RK-40，18 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：spec 全等归并；MATURITY=design 待运行时装配批接线"
   review_note: "# REVIEW: 归并不施工（2026-08-25，P1W22）——canonical=MOD-RK-40 post_entry_instant_validator（R3 #ARCH-240 预告裁定，spec 全等）"
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -18543,7 +18884,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/trading/health_monitor.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'ex_core/premarket_checker.py（MOD-EX-063）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销（已接线 boot_hooks）"
   review_note: "# REVIEW: 归并不施工（2026-08-25，P1W22）——canonical=MOD-EX-063 premarket_checker（四道关覆盖就绪清单+boot_hooks 已接线）"
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -18595,7 +18939,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/compliance/discipline_must_do_checker.py（纪律必做检查有，系统就绪Go/NoGo裁决缺）'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'ex_core/premarket_checker.py（MOD-EX-063）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：P1W22 重登归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-25，P1W22）——canonical=MOD-EX-063（头部即 D-TRADING-05 MVP，Go/NoGo=ready、阻断清单=failed_checks）"
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -18621,7 +18968,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/trading/settlement_reconciliation.py（对账/收盘定价/日审散件有，EOD统一编排缺）'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'trading/eod_processor.py（MOD-TRADING-012）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销；残留子缺口（断点续跑/合规触发/备份归档）见 P1W23"
   review_note: "# REVIEW: 归并不施工（2026-08-25，P1W23）——同号 D-TRADING-04 同名同域，canonical=CAND-TRD-005 eod_processor（W22 先建，git 实证口径逐字吻合）；独有子缺口（断点续跑/合规触发/备份归档）留归并注记"
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -18647,7 +18997,10 @@ entries:
       evidence: '深挖场内对账: 部分:src/zephyr/trading/(settlement_reconciliation.py,post_settlement_pipeline.py,recon_runner.py)'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'trading 包 MOD-TRADING-002~013 族'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：豁免核销（域级条目无独立施工单元）"
   review_note: "# REVIEW: 豁免不施工（2026-08-25，P1W23）——problem 为域级描述无独立最小施工单元，trading 包已承载（MOD-TRADING-002~012），聚合部分归并 MOD-TRADING-009/010"
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -18751,7 +19104,10 @@ entries:
       evidence: '深挖场内对账: 部分：src/zephyr/trading/post_settlement_pipeline.py'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'trading/eod_processor.py（MOD-TRADING-012）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：P2-W08 重登归并核销"
   review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W08）——与 P1 已建 MOD-TRADING-011 eod_processor 同为 D-TRADING-04（B13/B14 两稿），canonical=src/zephyr/trading/eod_processor.py（15:30 任务链+断点续跑已在）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
@@ -19519,7 +19875,10 @@ entries:
       evidence: '场内对账: nlp_inference.py v2 prompt 无 scope 字段'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'nlp/nlp_inference.py v3 scope + sentiment_aggregator scope 过滤（MOD-NLP-INFERENCE-001 扩展，+23 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：v3 prompt scope 字段（默认仍 v2 灰度切换）"
   priority: P2
   source: 2026-08-25 新闻情感三层模型讨论批（Owner 拍板 Q1~Q5）【2026-08-26 自 bcfaa597 补回】
   created: '2026-08-25'
@@ -19542,7 +19901,10 @@ entries:
       evidence: '场内对账: nlp_inference.py 无 predictability 字段'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'nlp/news_dual_tagger.py（MOD-NLP-DUALTAG-001）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：语义已被双标签器覆盖（原 MVP 路径被取代）"
   priority: P2
   source: 2026-08-25 新闻情感三层模型讨论批（Owner 拍板 Q1~Q5）【2026-08-26 自 bcfaa597 补回】
   created: '2026-08-25'
@@ -19565,7 +19927,10 @@ entries:
       evidence: '场内对账: event_calendar 注册表有机制无前瞻填充器'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'data/event_calendar_filler.py（MOD-DATA-068，19 测，CH 冒烟 191 条）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：前瞻事件日历填充（披露+解禁+宏观规则）"
   priority: P2
   source: 2026-08-25 新闻情感三层模型讨论批（Owner 拍板 Q1~Q5）【2026-08-26 自 bcfaa597 补回】
   created: '2026-08-25'
@@ -19588,7 +19953,10 @@ entries:
       evidence: '场内对账: 无高位利好事件研究产物'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'research/sell_news_event_study.py（MOD-RES-001，9 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：高位利好落地事件研究（CAR 分布+priced_in 判定）"
   priority: P1
   source: 2026-08-25 新闻情感三层模型讨论批（Owner 拍板 Q1~Q5）【2026-08-26 自 bcfaa597 补回】
   created: '2026-08-25'
@@ -19611,7 +19979,10 @@ entries:
       evidence: '场内对账: 无 publish_time 口径审计产物'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'scripts/audit_news_publish_time.py（MOD-DATA-067，27 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：publish_time 口径审计——真实审计结论 DISTRUSTED（报告 .runtime/news_publish_time_audit_20260830.md）"
   priority: P1
   source: 2026-08-25 新闻情感三层模型讨论批（Owner 拍板 Q1~Q5）【2026-08-26 自 bcfaa597 补回】
   created: '2026-08-25'
@@ -19657,7 +20028,10 @@ entries:
       evidence: '场内对账: akshare_provider 有 research_report 增量采集无 2025 专项回溯'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'scripts/ch/backfill_research_report_2025.py'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：已施工（断点续作+限速+幂等）"
   priority: P1
   source: 2026-08-26 2025 年语料塌陷治理批（Owner 指令）
   created: '2026-08-26'
@@ -19680,7 +20054,10 @@ entries:
       evidence: '场内对账: news_data.category 全库 8,289,333 条 general/50 财经/30 公告，列虚设'
     blocking_question: null
     result: candidate
-  status: candidate
+  status: promoted
+  promoted_to: 'scripts/ch/tag_news_category.py + data/news_taxonomy.py + sentiment_aggregator 四类分桶'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：三件套全落"
   priority: P1
   source: 2026-08-26 2025 年语料塌陷治理批（Owner 指令）
   created: '2026-08-26'

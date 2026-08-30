@@ -5,7 +5,7 @@
 # [CONSUMERS] scripts/ml/eval_sentiment.py; P1-E3 NLP 管道 Phase 2/3
 # [STARTUP] imported
 # [MATURITY] design
-# [INVARIANTS] 单一推理源——复用 Ollama/DeepSeek local_model 层；零 torch 依赖；CacheLayer 缓存去重；推理失败降级 neutral 不抛异常
+# [INVARIANTS] 单一推理源——复用 Ollama/DeepSeek local_model 层；零 torch 依赖；CacheLayer 缓存去重；推理失败降级 neutral 不抛异常；prompt v3（scope 主体范围轴，CAND-NLP-003）与 v2 并存，默认仍 v2，灰度走 ZEPHYR_NLP_PROMPT_VERSION/InferConfig.prompt_version
 # [MODIFY-GUARD] docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md Phase 2
 # [STABILITY] evolving
 # [SAFETY] L
@@ -32,7 +32,8 @@ MOD-NLP-INFERENCE-001 NLPImply — 新闻情感推理（零样本基线）。
 
 依据: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md Phase 2
 SSoT: #ARCH-NLP-PIPELINE-001
-Version: 0.2.0（2026-08-25 prompt v2：边界规则+few-shot，金标评估集 Macro-F1 目标 ≥0.80）
+Version: 0.3.0（2026-08-30 prompt v3：scope 影响主体范围轴 market/sector/stock，CAND-NLP-003；
+        v2/v3 并存，默认仍 v2，灰度=InferConfig.prompt_version 或环境变量 ZEPHYR_NLP_PROMPT_VERSION=v3-scope）
 
 # [ALGO_FLOW]
 # 层: 输入
@@ -124,6 +125,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import re
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Final, Protocol, runtime_checkable
@@ -170,6 +172,53 @@ USER_TEMPLATE = """新闻标题: {title}
 
 请分析这条新闻的情感倾向，输出 JSON。"""
 
+# ── 影响主体范围轴（CAND-NLP-003：v3 prompt scope 字段）──
+# 背景：个股/板块级利好利空直接进日级市场级聚合造成口径污染（"某公司中标"被当大盘情绪）。
+# v3 要求模型额外输出 scope ∈ {market, sector, stock}；聚合层按 scope=market 过滤。
+SCOPE_MARKET = "market"
+SCOPE_SECTOR = "sector"
+SCOPE_STOCK = "stock"
+_VALID_SCOPES = frozenset({SCOPE_MARKET, SCOPE_SECTOR, SCOPE_STOCK})
+
+PROMPT_VERSION_V3: Final = "v3-scope"
+#: 灰度开关环境变量（InferConfig.prompt_version 显式指定优先；缺省=默认 PROMPT_VERSION 即 v2）
+PROMPT_VERSION_ENV: Final = "ZEPHYR_NLP_PROMPT_VERSION"
+
+SYSTEM_PROMPT_V3 = """你是 A 股金融新闻情感分析专家。判断新闻对 A 股市场或相关上市公司的方向性影响，并判定影响主体范围。
+
+分类标准:
+- positive: 利好消息（政策支持/降准降息/增长超预期/盈利改善/订单中标/扩产增产/回暖企稳/救助保供/复苏迹象等）
+- negative: 利空消息（亏损/违约/处罚立案/暴跌/减持解禁/退市/疫情扩散/停产停运/风险事件/恐慌等）
+- neutral: 无明确市场方向（常规公告/人事变动/纯数据发布/事实通报/海外无关新闻/社会新闻/科普等）
+
+判定边界（重要）:
+- 事实通报若有明确恶化/好转含义，按方向判（如"新增确诊47例"=negative，"治愈出院"=positive）
+- 仅程序性/仪式性内容（周简报/任命/展会开幕/纪念日）一律 neutral
+- 与公司直接相关的善举/保供/中标按 positive（温和），宏观政策支持按 positive（强）
+
+影响主体范围（scope，重要）:
+- market: 影响全市场/大盘整体（宏观政策/降准降息/系统性风险/全市场制度变革/国际局势外溢）
+- sector: 影响特定行业/板块（行业政策/板块性事件/产业链供需变化）
+- stock: 仅影响个别上市公司（公司公告/个股订单中标/减持/诉讼/人事）
+
+示例:
+新闻"央行宣布降准0.5个百分点，释放长期资金约1万亿元" → {"sentiment": "positive", "score": 0.95, "scope": "market"}
+新闻"某公司股东拟合计减持不超过26%股份" → {"sentiment": "negative", "score": 0.85, "scope": "stock"}
+新闻"工信部发布新能源汽车产业支持政策" → {"sentiment": "positive", "score": 0.8, "scope": "sector"}
+新闻"江西新增47例新冠肺炎确诊病例 累计333例" → {"sentiment": "negative", "score": 0.6, "scope": "market"}
+新闻"某某股份有限公司股票二级市场表现周简报" → {"sentiment": "neutral", "score": 0.5, "scope": "stock"}
+新闻"某公司任命张某担任中国区总裁" → {"sentiment": "neutral", "score": 0.5, "scope": "stock"}
+
+输出 JSON: {"sentiment": "positive|negative|neutral", "score": 0.0-1.0, "scope": "market|sector|stock"}
+score 表示情感强度（1.0=极强正向/负向，0.5=温和，0.0=完全中性）。
+scope 表示影响主体范围（拿不准时给最接近的一档，禁止输出其他取值）。
+只输出 JSON，不要输出其他内容。"""
+
+USER_TEMPLATE_V3 = """新闻标题: {title}
+新闻内容: {content}
+
+请分析这条新闻的情感倾向与影响主体范围，输出 JSON。"""
+
 
 class NLPInferenceError(Exception):
     """NLP 推理编程错误（ZA-NLP-0001）——仅 chat 为 None 等契约违反时抛。"""
@@ -202,6 +251,8 @@ class SentimentResult:
     raw : 模型原始输出（调试用，截断 500 字符）
     cached : 是否命中 CacheLayer
     error : 推理错误信息（非空表示降级，此时 sentiment=neutral）
+    scope : 影响主体范围 market/sector/stock（CAND-NLP-003 v3；v2 输出或解析缺失=空串，
+        聚合层视为 market 向后兼容）
     """
 
     sentiment: str
@@ -211,6 +262,7 @@ class SentimentResult:
     raw: str = ""
     cached: bool = False
     error: str = ""
+    scope: str = ""
 
 
 # ── 解析 ──────────────────────────────────────────────────────────────
@@ -222,6 +274,8 @@ _JSON_OBJ_RE = re.compile(r"\{[^{}]*\}", re.DOTALL)
 # 仍能从残缺输出中提取 sentiment/score 字段，避免一律降级 neutral。
 _SENTIMENT_FIELD_RE = re.compile(r'"sentiment"\s*:\s*"(positive|negative|neutral)"', re.IGNORECASE)
 _SCORE_FIELD_RE = re.compile(r'"score"\s*:\s*([0-9]*\.?[0-9]+)', re.IGNORECASE)
+# scope 字段级正则（CAND-NLP-003 v3）：非法取值不匹配→落 ""（聚合层视为 market 向后兼容）
+_SCOPE_FIELD_RE = re.compile(r'"scope"\s*:\s*"(market|sector|stock)"', re.IGNORECASE)
 
 
 def parse_sentiment(raw: str) -> tuple[str, float]:
@@ -238,8 +292,23 @@ def parse_sentiment(raw: str) -> tuple[str, float]:
     -------
     (sentiment, score) — sentiment ∈ {positive, negative, neutral}，score ∈ [0, 1]。
     """
+    sentiment, score, _scope = _parse_full(raw)
+    return sentiment, score
+
+
+def parse_sentiment_v3(raw: str) -> tuple[str, float, str]:
+    """从模型原始输出解析 ``(sentiment, score, scope)``（CAND-NLP-003 v3）。
+
+    解析容错与 :func:`parse_sentiment` 同管线；scope 缺失/非法 → ``""``
+    （空串由聚合层视为 market，向后兼容 v2 口径）。
+    """
+    return _parse_full(raw)
+
+
+def _parse_full(raw: str) -> tuple[str, float, str]:
+    """三级兜底解析 (sentiment, score, scope)——全失败降级 (neutral, 0.5, "")。"""
     if not raw or not raw.strip():
-        return NEUTRAL, 0.5
+        return NEUTRAL, 0.5, ""
 
     text = _THINK_RE.sub("", raw).strip()
 
@@ -251,20 +320,20 @@ def parse_sentiment(raw: str) -> tuple[str, float]:
             text = text[:-3].strip()
 
     # 尝试直接解析
-    sentiment, score = _try_parse_json(text)
+    sentiment, score, scope = _try_parse_json_full(text)
     if sentiment is not None:
-        return sentiment, score
+        return sentiment, score, scope
 
     # 回退：正则提取第一个 JSON 对象
     m = _JSON_OBJ_RE.search(text)
     if m:
-        sentiment, score = _try_parse_json(m.group(0))
+        sentiment, score, scope = _try_parse_json_full(m.group(0))
         if sentiment is not None:
-            return sentiment, score
+            return sentiment, score, scope
 
     # 终极兜底：字段级正则——不依赖花括号配对，容忍开头 "{" 丢失 / 前缀噪声。
     # SFT 早期或 batch generate 切片边界瑕疵时，JSON 主体仍完整但缺 "{"，
-    # 此时 _JSON_OBJ_RE 匹配不到，用字段正则直接提取 sentiment/score。
+    # 此时 _JSON_OBJ_RE 匹配不到，用字段正则直接提取 sentiment/score/scope。
     sm = _SENTIMENT_FIELD_RE.search(text)
     if sm:
         sentiment = sm.group(1).lower()
@@ -275,21 +344,22 @@ def parse_sentiment(raw: str) -> tuple[str, float]:
                 score = max(0.0, min(1.0, float(scm.group(1))))
             except ValueError:
                 pass
-        return sentiment, score
+        scope_m = _SCOPE_FIELD_RE.search(text)
+        return sentiment, score, (scope_m.group(1).lower() if scope_m else "")
 
     _log.warning("parse_sentiment: 解析失败，降级 neutral; raw=%s", raw[:200])
-    return NEUTRAL, 0.5
+    return NEUTRAL, 0.5, ""
 
 
-def _try_parse_json(text: str) -> tuple[str | None, float]:
-    """尝试解析 JSON 文本为 (sentiment, score)；失败返回 (None, 0.0)。"""
+def _try_parse_json_full(text: str) -> tuple[str | None, float, str]:
+    """尝试解析 JSON 文本为 (sentiment, score, scope)；失败返回 (None, 0.0, "")。"""
     try:
         obj = json.loads(text)
     except json.JSONDecodeError:
-        return None, 0.0
+        return None, 0.0, ""
     if not isinstance(obj, dict):
-        return None, 0.0
-    return _extract_sentiment(obj), _extract_score(obj)
+        return None, 0.0, ""
+    return _extract_sentiment(obj), _extract_score(obj), _extract_scope(obj)
 
 
 def _extract_sentiment(obj: dict[str, Any]) -> str:
@@ -305,6 +375,12 @@ def _extract_score(obj: dict[str, Any]) -> float:
     except (TypeError, ValueError):
         return 0.5
     return max(0.0, min(1.0, score))
+
+
+def _extract_scope(obj: dict[str, Any]) -> str:
+    """从 dict 提取并校验 scope（CAND-NLP-003）；缺失/非法 → ""（聚合层视为 market）。"""
+    scope = str(obj.get("scope", "") or "").strip().lower()
+    return scope if scope in _VALID_SCOPES else ""
 
 
 def sentiment_to_score(sentiment: str, score: float) -> float:
@@ -334,14 +410,27 @@ _CACHE_COLLECTION = "news_sentiment"
 
 @dataclass(frozen=True)
 class InferConfig:
-    """推理配置——封装 model_version / temperature / max_content_chars。
+    """推理配置——封装 model_version / temperature / max_content_chars / prompt_version。
 
     用 dataclass 打包避免 ``infer_sentiment`` 参数列表 >7（§5.150 Long Parameter List）。
+
+    prompt_version：``""``=跟随环境变量/默认（v2）；``"v3-scope"``=启用 v3 scope 轴
+    （CAND-NLP-003 灰度入口）。
     """
 
     model_version: str = ""
     temperature: float = 0.0
     max_content_chars: int = 300
+    prompt_version: str = ""
+
+
+def _resolve_prompt_version(cfg: InferConfig) -> str:
+    """prompt 版本解析链：InferConfig.prompt_version > 环境变量 > 默认 PROMPT_VERSION（v2）。
+
+    未知版本号回退 v2 路径（fail-safe：宁可用旧模板也不让推理崩）。
+    """
+    version = cfg.prompt_version or os.environ.get(PROMPT_VERSION_ENV, "") or PROMPT_VERSION
+    return version if version in (PROMPT_VERSION, PROMPT_VERSION_V3) else PROMPT_VERSION
 
 
 def infer_sentiment(
@@ -382,8 +471,9 @@ def infer_sentiment(
 
     cfg = config or InferConfig()
     content_snippet = (content or "")[: cfg.max_content_chars]
-    # model_version 入键：换模型时缓存自动失效（避免读到旧模型结果）
-    cache_key_text = f"[{cfg.model_version}]{title}\n{content_snippet}"
+    version = _resolve_prompt_version(cfg)
+    # model_version+prompt_version 入键：换模型/换模板时缓存自动失效（v2/v3 不串读）
+    cache_key_text = f"[{cfg.model_version}|{version}]{title}\n{content_snippet}"
 
     # 缓存命中
     if cache is not None:
@@ -400,12 +490,17 @@ def infer_sentiment(
                 news_id=news_id,
                 raw="(cached)",
                 cached=True,
+                scope=str(item.get("scope", "") or ""),
             )
 
-    # 推理
-    prompt = USER_TEMPLATE.format(title=title, content=content_snippet)
+    # 推理（v2/v3 模板并存，默认 v2；v3 增 scope 主体范围轴）
+    if version == PROMPT_VERSION_V3:
+        system_prompt, user_template = SYSTEM_PROMPT_V3, USER_TEMPLATE_V3
+    else:
+        system_prompt, user_template = SYSTEM_PROMPT, USER_TEMPLATE
+    prompt = user_template.format(title=title, content=content_snippet)
     try:
-        raw = chat.ask(prompt, system=SYSTEM_PROMPT, temperature=cfg.temperature)
+        raw = chat.ask(prompt, system=system_prompt, temperature=cfg.temperature)
     except Exception as exc:  # noqa: BLE001 — 推理后端异常降级，不阻断批量
         _log.warning("infer_sentiment: 推理失败 news_id=%s: %s", news_id, exc)
         return SentimentResult(
@@ -417,7 +512,11 @@ def infer_sentiment(
             error=str(exc)[:200],
         )
 
-    sentiment, score_val = parse_sentiment(raw)
+    if version == PROMPT_VERSION_V3:
+        sentiment, score_val, scope = parse_sentiment_v3(raw)
+    else:
+        sentiment, score_val = parse_sentiment(raw)
+        scope = ""
     polarity = sentiment_to_score(sentiment, score_val)
 
     # 写缓存
@@ -425,7 +524,7 @@ def infer_sentiment(
         cache.put_query_result(
             cache_key_text,
             _CACHE_COLLECTION,
-            [{"sentiment": sentiment, "score": score_val}],
+            [{"sentiment": sentiment, "score": score_val, "scope": scope}],
         )
 
     return SentimentResult(
@@ -434,6 +533,7 @@ def infer_sentiment(
         polarity=polarity,
         news_id=news_id,
         raw=raw[:500],
+        scope=scope,
     )
 
 
@@ -476,14 +576,22 @@ __all__: Final = [
     "POSITIVE",
     "NEGATIVE",
     "NEUTRAL",
+    "SCOPE_MARKET",
+    "SCOPE_SECTOR",
+    "SCOPE_STOCK",
     "PROMPT_VERSION",
+    "PROMPT_VERSION_V3",
+    "PROMPT_VERSION_ENV",
     "SYSTEM_PROMPT",
+    "SYSTEM_PROMPT_V3",
     "USER_TEMPLATE",
+    "USER_TEMPLATE_V3",
     "ChatBackend",
     "SentimentResult",
     "InferConfig",
     "NLPInferenceError",
     "parse_sentiment",
+    "parse_sentiment_v3",
     "sentiment_to_score",
     "infer_sentiment",
     "infer_batch",

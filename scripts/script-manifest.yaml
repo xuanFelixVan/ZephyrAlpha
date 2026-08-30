@@ -3,8 +3,8 @@
 #
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
-generated_at: '2026-08-28'
-total_scripts: 741
+generated_at: '2026-08-31'
+total_scripts: 748
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -18,6 +18,14 @@ scripts:
   path: a2a_full_verification.py
   description: import sys
   domain: a2a
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: audit_news_publish_time.py
+  path: audit_news_publish_time.py
+  description: '----'
+  domain: audit
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -54,6 +62,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: crypto_daily_review.py
+  path: crypto_daily_review.py
+  description: '----'
+  domain: crypto_daily_review.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: diagnose_breadth_failed.py
   path: diagnose_breadth_failed.py
   description: 诊断 breadth_failed 能力的根因。
@@ -66,6 +82,14 @@ scripts:
   path: dm90971_add_test_headers.py
   description: 'Usage:'
   domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: estimate_pit_backfill_cost.py
+  path: estimate_pit_backfill_cost.py
+  description: '----'
+  domain: estimate_pit_backfill_cost.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -174,6 +198,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: run_boot_sla_probe.py
+  path: run_boot_sla_probe.py
+  description: from __future__ import annotations
+  domain: run_boot_sla_probe.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: run_deepseek_v4_exam.py
   path: run_deepseek_v4_exam.py
   description: DeepSeek V4 入职考试运行脚本
@@ -194,6 +226,14 @@ scripts:
   path: run_post_settlement.py
   description: '----'
   domain: run_post_settlement.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: run_qwen3_baseline_exam.py
+  path: run_qwen3_baseline_exam.py
+  description: 验收口径：基线成绩入库 data/model_profiles/（ModelRouter.load_benchmark_from_disk
+  domain: run_qwen3_baseline_exam.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -846,14 +886,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/_test_lock_target.py
-  path: governance/_test_lock_target.py
-  description: print('hello')
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: governance/add_deferred_design_edges.py
   path: governance/add_deferred_design_edges.py
   description: 为暂缓模块添加设计态依赖边（dep_maturity='design'）。
@@ -918,6 +950,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/audit_llm_registry_reconciliation.py
+  path: governance/audit_llm_registry_reconciliation.py
+  description: 三向比对（10号文 §3.4 收敛裁定：三处收敛对账，不建第四套）：
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/audit_precommit_incremental_baseline.py
   path: governance/audit_precommit_incremental_baseline.py
   description: 用途（Task 6，2026-08-06）：
@@ -963,6 +1003,14 @@ scripts:
   description: 检测 staged 新增 .py 文件是否违反 SSoT（四层硬阻断）：
   domain: governance
   execution_plane: hot-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/check_test_symbol_validity.py
+  path: governance/check_test_symbol_validity.py
+  description: 检测"测试文件 import 了真源不存在的符号"（超前孤儿测试）：
+  domain: governance
+  execution_plane: warm-path
   status: registered
   timeout_seconds: 60
   dimensions: []
@@ -1027,6 +1075,14 @@ scripts:
   description: '三层安全网:'
   domain: governance
   execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/gateway_post_commit_ritual.py
+  path: governance/gateway_post_commit_ritual.py
+  description: 病根（#ARCH-130 实证）：ruff/codegen 批量批落码后，契约快照与 rules_integrity_db
+  domain: governance
+  execution_plane: hot-path
   status: registered
   timeout_seconds: 60
   dimensions: []

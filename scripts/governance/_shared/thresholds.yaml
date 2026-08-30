@@ -187,6 +187,10 @@ blueprint_sync:
 # 九、并发与分布式执行阈值（对标 §35 分布式执行架构）
 # ═══════════════════════════════════════════════════════════════════
 
+gateway_ritual:
+  # 网关批次收尾仪式单步超时（秒）——generate_contracts/freeze/integrity 重钉单步上限
+  step_timeout_seconds: 300
+
 concurrency:
   # ── 规模-架构映射（对齐蓝图 §8.4）──
   # S: ≤500 脚本 / ≤8 Worker   → 单机单进程

@@ -131,3 +131,6 @@ __all__.append("ReferenceDataManager")
 from zephyr.data import trading_calendar  # noqa: E402,F401 — test_market_calendar 需要的导出（TEST-SOURCE-CONSISTENCY 门）
 
 __all__.append("trading_calendar")
+
+# ORPHAN-MODULE: 引用登记（让 depgraph 发现 import 边）
+from zephyr.data.event_calendar_filler import fill_event_calendar  # noqa: E402,F401

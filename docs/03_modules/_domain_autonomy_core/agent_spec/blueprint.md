@@ -4,7 +4,7 @@ submodule_path: src/zephyr/autonomy_core
 title: "可执行 Agent Spec 蓝图 — 蓝图→Skill 升级引擎"
 doc_type: blueprint
 status: Active
-version: "0.19.6"
+version: "0.19.7"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -75,7 +75,7 @@ build_status: deprecated
 > **什么时候建**: 当未注册 Skill ≥3（新模块大量增加），或 Skill 加载失败率 ≥10%，或 Owner 要求 Skill 自发现自注册时。
 > **自动化宿主**: CircadianScheduler `hour=4` → `_skill_registration_scan()` + FLE `_periodic_checks()` → `_skill_health_check()`
 
-> module_id: MOD-INF-019 | version: 0.19.6 | status: Active | layer: cross_layer
+> module_id: MOD-INF-019 | version: 0.19.7 | status: Active | layer: cross_layer
 > actual_disk_path: src/zephyr/agent-spec/ | generation: 2 | construction_progress: partially_implemented
 
 ## 概述
@@ -236,7 +236,7 @@ build_status: deprecated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-019` 的 203 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-019` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-019` 的 205 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-019` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -248,7 +248,7 @@ build_status: deprecated
 | module_id | MOD-INF-019 | MOD-INF-019 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | deprecated | deprecated | ✅ |
-| file_count | 203 文件 | 67 文件（§0.1） | ❌ |
+| file_count | 205 文件 | 67 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1533,6 +1533,7 @@ Factory Agent 问 3 个问题：Q1 核心操作？Q2 独特约束/模式？Q3 �
 |---------|:---:|------|
 | `src/zephyr/autonomy_core/integration/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/autonomy_core/skills/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/autonomy_core/skills/skill_trajectory_miner.py` | ✅ 已实现 | |
 | `src/zephyr/governance/agent-spec/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/governance/agent_spec/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/governance/agent_spec/registry.py` | ✅ 已实现 | |
@@ -1664,6 +1665,7 @@ Factory Agent 问 3 个问题：Q1 核心操作？Q2 独特约束/模式？Q3 �
 | `tests/skill/test_skill_telemetry.py` | ✅ 已实现 | |
 | `tests/skill/test_skill_temperature.py` | ✅ 已实现 | |
 | `tests/skill/test_skill_tokenomics.py` | ✅ 已实现 | |
+| `tests/skill/test_skill_trajectory_miner.py` | ✅ 已实现 | |
 | `tests/skill/test_skill_translator.py` | ✅ 已实现 | |
 | `tests/skill/test_skill_workflow.py` | ✅ 已实现 | |
 

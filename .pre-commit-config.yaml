@@ -563,6 +563,24 @@ repos:
         files: "^src/zephyr/.*\\.py$|^tests/.*\\.py$"
         description: "测试门禁合并——GATE-18(pytest --collect-only，保留 -m not slow and not e2e) + GATE-19(测试结构合规)，run_gate_chain 顺序执行"
 
+      # ── GATE-TEST-SYMBOL: 孤儿测试符号检测（CAND-GATEMECH-007，2026-08-30 落地）──
+      # 权威依据：2026-08-19 Owner 裁定 P1-2③（#ARCH-130 施工令）
+      # 病根：test_warn_in_main_workspace 引用 _warn_worktree_isolation 符号在源码与 git 全史
+      #       零命中——超前孤儿测试滞留存量红基线 18 天，无门禁拦截。
+      # 检测内容：AST 扫描 staged 测试文件 from-import，比对目标模块 __all__∪顶层符号并集，
+      #           引用不存在符号即硬阻断。防误报：无法解析到仓内真源的 import（stdlib/三方）跳过，
+      #           star-import 跳过，动态 __all__ 模块跳过，子模块导入豁免。
+      # 模式：增量守门（pass_filenames 只扫 staged 测试文件，不拦存量 39 处历史发现；
+      #       全量审计：python scripts/governance/check_test_symbol_validity.py）
+      - id: gate-test-symbol-validity
+        name: "GATE-TEST-SYMBOL: 孤儿测试符号检测（CAND-GATEMECH-007）"
+        entry: python scripts/governance/check_test_symbol_validity.py --ci
+        language: system
+        pass_filenames: true
+        always_run: false
+        files: "^tests/.*\\.py$"
+        description: "检测测试文件 import 引用真源不存在的符号（超前孤儿测试），增量守门不拦存量，全量审计走手动"
+
       # ── GATE-ERRCODE: error_code 注册表↔代码真源双向对账（#ARCH-ERRCODE-001）──
       # 目的声明（D2）：防新增未登记 error_code 静默入仓——「注册表声明不被机器执行=不存在」
       #   教训（2026-08-15 实证 130 码未登记漂移），本 gate 把登记纪律从人审软约束升级为
@@ -792,6 +810,23 @@ repos:
         always_run: true
         stages: [post-commit]
         description: "每次 git commit 成功后执行 tmp/+logs/ TTL 退役（事件触发，非时间驱动；gitignored 产物不入库，仅本地磁盘清理；治本 W3 manual-only 无强制调度缺口）"
+
+      # ── GATEWAY-POST-COMMIT-RITUAL: 批次收尾仪式联动（CAND-GATEMECH-005，2026-08-30 落地）──
+      # 权威依据：2026-08-19 Owner 裁定 P1-2①（#ARCH-130 施工令）
+      # 病根：ruff/codegen 批量批落码后契约快照与 rules_integrity_db 黄金哈希不自动跟进——
+      #       C2 契约漂移与 INTEGRITY 赛跑滞留到下一审计周期才暴露。
+      # 机制：post-commit 检测 HEAD 批次是否触碰 rules/contracts 特征路径 → 是则自动执行
+      #       重钉链 generate_contracts → check_contract_code_drift --freeze →
+      #       validate_rules_integrity --register，三步原子联动（任一失败整体回滚派生产物）。
+      # 未触碰特征路径时零写入零副作用（恒 exit 0）。
+      - id: gateway-post-commit-ritual
+        name: "RITUAL: 批次收尾仪式（rules/contracts 批次自动联动 C2 freeze + INTEGRITY 重钉）"
+        entry: python scripts/governance/gateway_post_commit_ritual.py --warn-only
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [post-commit]
+        description: "post-commit 检测批次触碰 rules/contracts → 自动执行重钉链（失败回滚派生产物），warn-only 不阻断 commit 后流程"
 
       # ── GATE-C1 已删除（脚本 validate_ssot_status.py 已归档至 scripts/_archive/，status 校验由 validate_ssot.py 覆盖）──
 

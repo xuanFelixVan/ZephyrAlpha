@@ -4,7 +4,7 @@ submodule_path: src/zephyr/risk
 title: "Risk Management Core 蓝图+施工图 — 风险管理引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.16"
+version: "2.2.18"
 layer: L2_domain
 layer_name: risk_management
 functional_domain: risk
@@ -59,7 +59,7 @@ build_status: generated
 > 本蓝图仅做审查、回填、压缩、对齐，不触发任何代码变更。
 
 > actual_disk_path: src/zephyr/risk/ (10 .py files)
-> module_id: MOD-L04-001 | version: 2.2.16 | status: Active | layer: L2_domain
+> module_id: MOD-L04-001 | version: 2.2.18 | status: Active | layer: L2_domain
 > generation: 2 | construction_progress: partially_implemented
 
 # Risk Management Core 蓝图+施工图 — 风险管理引擎
@@ -143,7 +143,7 @@ build_status: generated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L04-001` 的 144 个 file 节点 | production | `extract_depgraph.py --modules MOD-L04-001` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L04-001` 的 145 个 file 节点 | production | `extract_depgraph.py --modules MOD-L04-001` |
 | 数据流图 (dataflow) | 1 个 Dataset / 2 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 76 个决策节点 / 2 个决策层 | design | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -155,7 +155,7 @@ build_status: generated
 | module_id | MOD-L04-001 | MOD-L04-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 144 文件 | 14 文件（§0.1） | ❌ |
+| file_count | 145 文件 | 14 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -940,6 +940,7 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/fundamental_share_unlock.py` | ✅ 已实现 | |
 | `schemas/categories/macro_edb_data.py` | ✅ 已实现 | |
 | `schemas/categories/macro_macro_data.py` | ✅ 已实现 | |
+| `schemas/categories/market_a50_futures_daily.py` | ✅ 已实现 | |
 | `schemas/categories/market_account_nav_daily.py` | ✅ 已实现 | |
 | `schemas/categories/market_adj_factor.py` | ✅ 已实现 | |
 | `schemas/categories/market_auction.py` | ✅ 已实现 | |
@@ -977,6 +978,7 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/market_index_constituent.py` | ✅ 已实现 | |
 | `schemas/categories/market_index_list.py` | ✅ 已实现 | |
 | `schemas/categories/market_index_meta.py` | ✅ 已实现 | |
+| `schemas/categories/market_index_valuation_daily.py` | ✅ 已实现 | |
 | `schemas/categories/market_index_weight.py` | ✅ 已实现 | |
 | `schemas/categories/market_ipo_calendar.py` | ✅ 已实现 | |
 | `schemas/categories/market_ipo_schedule.py` | ✅ 已实现 | |
@@ -995,6 +997,7 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/market_kline_etf_60min.py` | ✅ 已实现 | |
 | `schemas/categories/market_kline_etf_daily.py` | ✅ 已实现 | |
 | `schemas/categories/market_kline_futures.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_global.py` | ✅ 已实现 | |
 | `schemas/categories/market_kline_hk_daily.py` | ✅ 已实现 | |
 | `schemas/categories/market_kline_index.py` | ✅ 已实现 | |
 | `schemas/categories/market_kline_lof_15min.py` | ✅ 已实现 | |

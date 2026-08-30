@@ -73,7 +73,7 @@ scope: 07_trading_decision_architecture
 | [53_simulation_live_path.md](53_simulation_live_path.md) | G24 模拟与实盘验证路径（5 态 FSM 已落码 AI-DGR-001，MOD-GOV-045 production） | active v1.7.9 |
 | [54_reconciliation_attribution.md](54_reconciliation_attribution.md) | G25 对账归因 | active v1.15.8 |
 | [55_monitoring_review.md](55_monitoring_review.md) | G26 监控告警与复盘 | active v1.2.0（2026-08-17 AI-THD-001 存量 9 模块阈值统读完工） |
-| [56_backtest_vs_sim_reconciliation_plan.md](56_backtest_vs_sim_reconciliation_plan.md) | 回测 vs 模拟盘对账方案（P0-1②：不变量 I1-I4+三层 diff 复用+归因三分类+10 项对照清单；G1/G6 转 Owner 窗口） | active v1.0.0（2026-08-21 P0 批） |
+| [56_backtest_vs_sim_reconciliation_plan.md](../../../_archive/56_backtest_vs_sim_reconciliation_plan.md) | 回测 vs 模拟盘对账方案（P0-1②：不变量 I1-I4+三层 diff 复用+归因三分类+10 项对照清单；G1/G6 转 Owner 窗口） | **已归档** v1.0.0（2026-08-21 P0 批→2026-08-30 归档） |
 | [57_daily_cycle_sop.md](57_daily_cycle_sop.md) | 交易日模拟盘+收盘后回测 日循环 SOP（P0-5：六环节命令清单+开盘前 QMT 人工确认项+缺口 GAP1-5+首跑彩排记录+RUN-05 断网断电断点恢复演练节） | active v1.1.0（2026-08-24 RUN-05 入册，真实演练留 Owner 窗口） |
 | [60_cross_cutting_cleanup.md](60_cross_cutting_cleanup.md) | G27 冲突矩阵清理与事件总线（31条仲裁→3条firm硬上限+任务系统总线+三档节奏） | active v1.1.0 |
 | [61_lifecycle_multi_ai.md](61_lifecycle_multi_ai.md) | G28 策略生命周期与多 AI 协作 | active v2.13.3 |
@@ -86,7 +86,7 @@ scope: 07_trading_decision_architecture
 | [68_code_algorithm_review_pipeline.md](68_code_algorithm_review_pipeline.md) | 代码与算法多模型审查流水线（跨切治理层；施工后审查线——5+5 路并发：施工 5 对话+审查修复 5 对话复用 audit 20 域每路 4 域，Kimi-K3/GLM-5.3/Qwen3.8-Max 多模型轮流交叉审查已 merge 模块代码/算法/运行情况，全自动化零打扰自主治本修复，冲突防护五机制，统一统筹调度；执行蓝本 docs/audit_prompts_20_ai.md；模型池已定 Kimi-K3/GLM-5.3/Qwen3.8-Max（Trae CN 切换）+轮换矩阵+调度卡一键复制指令模板库） | active v1.2.1 |
 | [90_methodology_open_questions.md](90_methodology_open_questions.md) | 方法论遗留提案（P0/P1 施工优先级表+远期开放问题） | active v2.0.3 |
 | [91_density_prediction.md](91_density_prediction.md) | 密度预测与 QNN 远期愿景（待讨论） | draft v0.1.4 |
-| [92_phase2_business_construction_order.md](92_phase2_business_construction_order.md) | 阶段二业务层施工顺序清单（44 号升级+2026-08 架构审查升级项全量按依赖/冲突面排序成波次，并发施工派单真源；ClickHouse 数据实证分支裁定） | active v1.0.0（2026-08-22 Owner 指令落盘） |
+| [92_phase2_business_construction_order.md](../../../_archive/92_phase2_business_construction_order.md) | 阶段二业务层施工顺序清单（44 号升级+2026-08 架构审查升级项全量按依赖/冲突面排序成波次，并发施工派单真源；ClickHouse 数据实证分支裁定） | **已归档** v1.0.0（2026-08-22 Owner 指令落盘→2026-08-30 归档） |
 | [94_crypto_quant_expansion.md](94_crypto_quant_expansion.md) | 数字货币量化扩展设计（30 域复用矩阵三类划分+五横切改造点[含 §4.5 市场归属标注三道闸]+CAND-CRYPTO 族 10 条+施工波次 W0-W4+§7 外部实战参考；**Q1-Q6 已 Owner 拍板**；W0 市场日历抽象已施工 commit 69e5dc9f） | active v1.3.1 |
 
 ## 1. 文档定位
@@ -682,10 +682,10 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 64_data_source_download_spec | G29 数据源与下载体系（跨切治理层·6x 段位） | ✅ 已定稿 | active v1.4.3 |
 | 44_premarket_intraday_decision_upgrade | 盘前与盘中决策支持升级（28/41/90 号升级备忘，4x 交易流层） | ✅ Owner 五项裁定全批（2026-08-21） | active v1.3.0 |
 | 45_warroom_playbook | 作战手册体系（作战室）施工设计（4x 交易流层） | ✅ 已定稿 | active v1.0.0（2026-08-22 Owner 裁定新增页） |
-| 56_backtest_vs_sim_reconciliation_plan | 回测 vs 模拟盘对账方案（5x 验证层，P0-1②） | ✅ 已定稿 | active v1.0.0（2026-08-21 P0 批） |
+| 56_backtest_vs_sim_reconciliation_plan | 回测 vs 模拟盘对账方案（5x 验证层，P0-1②） | ✅ 已定稿→**已归档** | active v1.0.0（2026-08-21 P0 批→2026-08-30 归档） |
 | 57_daily_cycle_sop | 日循环 SOP（5x 验证层，P0-5） | ✅ 已定稿 | active v1.1.0（2026-08-24 RUN-05 演练节入册） |
 | 68_code_algorithm_review_pipeline | 代码与算法多模型审查流水线（跨切治理层） | ✅ 已定稿 | active v1.2.1 |
-| 92_phase2_business_construction_order | 阶段二业务层施工顺序清单（9x 开放问题与施工排序段） | ✅ 已定稿 | active v1.0.0（2026-08-22 Owner 指令落盘） |
+| 92_phase2_business_construction_order | 阶段二业务层施工顺序清单（9x 开放问题与施工排序段） | ✅ 已定稿→**已归档** | active v1.0.0（2026-08-22 Owner 指令落盘→2026-08-30 归档） |
 | 94_crypto_quant_expansion | 数字货币量化扩展设计（9x 新战线启动段；CAND-CRYPTO-001~010 登记真源） | 本会话落盘 | active v1.3.1（Q1-Q6 已拍板+R1-R3 循环审查+§4.5 市场归属标注；W0 已施工 commit 69e5dc9f [GW:AI-CAL-001]，原派单 dispatch/2026-08-26-crypto-w0-market-calendar-order.md） |
 
 ## 8. 产出物命名规范

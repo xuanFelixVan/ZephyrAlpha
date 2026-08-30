@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS]
+# [TESTS] tests/signal/test_default_signal_aggregator.py
 # [A_module] module_id=MOD-L03-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
@@ -38,7 +38,9 @@ from __future__ import annotations
 import logging
 import time
 import uuid
+from dataclasses import dataclass
 from datetime import UTC, datetime
+from typing import Final
 
 from zephyr.shared.contracts.factor_signal import FactorSignal
 from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
@@ -47,6 +49,48 @@ from zephyr.signal_fundamental.gen.aggregator_base import SignalAggregatorBase
 _logger = logging.getLogger(__name__)
 
 __aggregator_id__ = "default-signal-aggregator"
+
+
+@dataclass(frozen=True)
+class PortfolioSignalEntry:
+    """组合级信号条目（单标的，CAND-SIG-005）。
+
+    Attributes:
+        symbol: 标的代码
+        weight: 归一化权重（同批 entries Σ=1）
+        direction: 合成信号方向（组合级只纳入 LONG 候选，A股无做空）
+        signal_value: 合成信号值（[-3,3]）
+        confidence: 合成置信度
+        trigger_conditions: 触发条件明细（贡献因子+权重，"factor_id:w=..." 升序）
+        idempotency_key: 条目幂等键（父键-标的派生）
+    """
+
+    symbol: str
+    weight: float
+    direction: str
+    signal_value: float
+    confidence: float
+    trigger_conditions: tuple[str, ...]
+    idempotency_key: str
+
+
+@dataclass(frozen=True)
+class PortfolioSignalOutput:
+    """组合级聚合输出（标的清单+归一化权重+触发条件明细，CAND-SIG-005）。
+
+    Attributes:
+        entries: 入选标的条目（按 symbol 升序，确定性）
+        total_weight: 权重合计（归一化后=1.0；空组合=0.0）
+        degraded_symbols: 降级（有效因子不足/无信号）被剔除的标的
+        timestamp: 组合时间戳（取入选信号 as_of_timestamp 最大值，PIT 一致）
+        idempotency_key: 组合级幂等键
+    """
+
+    entries: tuple[PortfolioSignalEntry, ...]
+    total_weight: float
+    degraded_symbols: tuple[str, ...]
+    timestamp: datetime
+    idempotency_key: str
 
 
 class DefaultSignalAggregator(SignalAggregatorBase):
@@ -110,6 +154,81 @@ class DefaultSignalAggregator(SignalAggregatorBase):
             contributing_factors={c["factor_id"]: c["weight"] for c in contributions},
         )
 
+    # ── 组合级输出（CAND-SIG-005：标的清单+归一化权重+触发条件明细）──
+
+    def aggregate_portfolio(
+        self,
+        signals_by_symbol: dict[str, list[FactorSignal]],
+        idempotency_key: str,
+    ) -> PortfolioSignalOutput:
+        """组合级聚合：多标的因子信号 → 标的清单 + 归一化权重 + 触发条件明细。
+
+        流程：逐标的调 aggregate() 单标的聚合 → 剔除降级/非正向信号（A股无做空，
+        组合级只纳入 LONG 候选）→ 原始分 = |signal_value| × confidence →
+        归一化权重（Σ=1）。权重非正（零信号）标的同样剔除。
+
+        Args:
+            signals_by_symbol: {symbol: [FactorSignal]}（CTR-002 因子信号分组）
+            idempotency_key: 组合级幂等键（条目键按 父键-symbol 派生）
+
+        Returns:
+            PortfolioSignalOutput（entries 按 symbol 升序，确定性）
+        """
+        included: list[tuple[str, SynthesizedSignal, float]] = []
+        degraded: list[str] = []
+
+        for symbol in sorted(signals_by_symbol):
+            sig = self.aggregate(
+                signals_by_symbol[symbol],
+                symbol,
+                f"{idempotency_key}-{symbol}",
+            )
+            if sig.is_degraded:
+                degraded.append(symbol)
+                continue
+            if sig.signal_value <= 0:
+                continue  # NEUTRAL/SHORT 不入组合清单（A股无做空）
+            included.append((symbol, sig, abs(sig.signal_value) * sig.confidence))
+
+        if not included:
+            return PortfolioSignalOutput(
+                entries=(),
+                total_weight=0.0,
+                degraded_symbols=tuple(degraded),
+                timestamp=datetime.now(UTC),
+                idempotency_key=idempotency_key,
+            )
+
+        total_score = sum(score for _, _, score in included)
+        entries = tuple(
+            PortfolioSignalEntry(
+                symbol=symbol,
+                weight=(score / total_score) if total_score > 0 else 0.0,
+                direction=sig.signal_direction,
+                signal_value=sig.signal_value,
+                confidence=sig.confidence,
+                trigger_conditions=tuple(
+                    f"{fid}:w={w:.4f}" for fid, w in sorted(sig.contributing_factors.items())
+                ),
+                idempotency_key=sig.idempotency_key,
+            )
+            for symbol, sig, score in included
+        )
+        timestamp = max(sig.as_of_timestamp for _, sig, _ in included)
+        _logger.info(
+            "Portfolio aggregation: symbols=%d degraded=%d total_weight=%.4f",
+            len(entries),
+            len(degraded),
+            sum(e.weight for e in entries),
+        )
+        return PortfolioSignalOutput(
+            entries=entries,
+            total_weight=sum(e.weight for e in entries),
+            degraded_symbols=tuple(degraded),
+            timestamp=timestamp,
+            idempotency_key=idempotency_key,
+        )
+
     def _equal_weight(self, signals: list[FactorSignal]) -> tuple[float, list[dict], float]:
         n = len(signals)
         raw = sum(s.normalized_value or s.raw_value for s in signals) / n
@@ -154,4 +273,4 @@ class DefaultSignalAggregator(SignalAggregatorBase):
         )
 
 
-__all__ = ["DefaultSignalAggregator"]
+__all__: Final = ["DefaultSignalAggregator", "PortfolioSignalEntry", "PortfolioSignalOutput"]

@@ -1715,3 +1715,23 @@ entries:
   stability: deprecated
   ai_autonomy: human_gated
 
+- domain: D_RESEARCH
+  subdomain: research
+  domain_name_zh: 研究域
+  ssot_module: MOD-RES-001
+  ssot_path: src/zephyr/research/
+  covers:
+  - 事件研究（sell-the-news 事件研究 sell_news_event_study）
+  - 假设验证（假设注册/证据链研究资产管理）
+  - 研究资产管理
+  aliases:
+  - research
+  - 研究
+  - event study
+  - 事件研究
+  - hypothesis validation
+  - 假设验证
+  stability: evolving
+  ai_autonomy: ai_modifiable
+  note: 2026-08-30 补登（候选核销批 CAND-RES-030 落地触发）。**冲突留痕**：2026-08-22 统筹裁定曾将本域归并 D_KNOWLEDGE（research/ 下既有 12 文件标 D_FACTOR/D_KNOWLEDGE），本次按新件落地需要补登；归并 vs 独立的终局裁定留 Owner 窗口，现状两口径并存已如实登记。
+

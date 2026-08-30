@@ -8,25 +8,30 @@
 # [TESTS] —
 # [A_module] module_id=MOD-TEST-276 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
-"""治理脚本分层冒烟测试 — ThreadPoolExecutor 并行执行 + 标签/维度分层
+"""治理脚本分层冒烟测试 — 按脚本 parametrize（CAND-GOVTEST-001 落地，2026-08-30）。
 
 覆盖 D-B-01a~D-B-02（exit code 语义、--help 可用、--warn-only 不崩溃）。
 
 测试分层：
-  - Quick (always):  --help + --warn-only on D1-D4, D8 scripts (< 2min)
-  - Critical (always): --help + --warn-only on D5-D7 scripts (< 3min)
-  - Integration (always): --jsonl on ALL scripts (质量检查)
+  - Quick (always):  --help + --warn-only on D1-D4, D8 scripts
+  - Critical (always): --help + --warn-only on D5-D7 scripts
+  - Integration (always): --jsonl on ALL scripts（质量检查）
   - Full (@slow):  --help + --warn-only + timing on ALL scripts
+
+拆分说明（CAND-GOVTEST-001）：
+  原 4 个 mega-class 内部 ThreadPoolExecutor(8) 串行跑几十~100+ 脚本子进程，
+  xdist --dist=load 逐 item 分发时 mega-item 独占 worker 堆积尾部（B1 工单实证
+  93% 假挂起）。现拆为按脚本 parametrize 的小 item（单脚本单子进程），
+  load 调度天然均摊；单脚本失败隔离定位（item id=脚本路径），分层语义经
+  item 级 marker（quick/critical/slow）保留。
 
 标签推导对标 run_all.py _derive_tags():
   - D1-D4, D8 → "Quick"
   - D5-D7 → "Critical"
-  - D6, D11 → "Security"
-  - D9, D12 → "AI-Generated"/"Periodic"
 
 性能优化:
-  - ThreadPoolExecutor(max_workers=8) 并行跑子进程 (subprocess I/O 释放 GIL)
-  - temp file 替代 subprocess.PIPE 解决 Windows 孙进程 handle 继承死锁
+  - temp file 替代 subprocess.PIPE 解决 Windows 孙进程 handle 继承死锁（保留）
+  - 并行调度移交 pytest-xdist（不再模块内 ThreadPoolExecutor）
 """
 
 from __future__ import annotations
@@ -43,15 +48,27 @@ from contextlib import suppress
 from pathlib import Path
 
 import pytest
+import yaml
 
-# B1 治本（2026-08-19）：本文件 4 个 mega-item 内部 ThreadPoolExecutor(8) 串行跑
-# 几十~100+ 脚本子进程（manifest timeout_seconds=60），合法最坏 ≈12 分钟级——全局
-# timeout=120（pyproject）会误杀。模块级豁免放宽到 1800s（2026-08-24 六轮 sweep
-# 实证：三路并发极限负载下 900s 被环境性撑爆而非真异常，stuck 强杀后隔离复跑全绿）；
-# 治本拆分（parametrize 小 item 化）登记 CAND 候选后续施工。
-pytestmark = pytest.mark.timeout(1800)
+# CAND-GOVTEST-001：拆分后单 item 最坏=1 个子进程（manifest timeout_seconds 级），
+# 模块级 1800s 豁免收敛为 600s 兜底（多重防护，防回归挂起）。
+pytestmark = pytest.mark.timeout(600)
 
 _DIMENSION_RE = re.compile(r"d(\d+)[_/]")
+
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+_MANIFEST_PATH = _REPO_ROOT / "scripts" / "script-manifest.yaml"
+_SMOKE_TEST = "governance/d1_structure/run_script_smoke_test.py"
+
+# #ARCH-092 存量批量改写损伤——xfail(strict=False) 保留原 mega-item 的非阻断语义
+_XFAIL_ARCH092 = pytest.mark.xfail(
+    strict=False,
+    reason="#ARCH-092：存量批量改写损伤（_shared import 收拢到 sys.path bootstrap 前/迁入子目录未修 bootstrap）致脚本 --help/--warn 崩溃——健康探测器如实报警，待专项清偿批修脚本后摘除",
+)
+_XFAIL_JSONL = pytest.mark.xfail(
+    strict=False,
+    reason="#ARCH-092 附带裁定：手写 argv 解析冒烟脚本（如 git_health_smoke.py）吞未知 flag+多行 JSON 输出，与 JSONL 质量门契约不合——补 argparse 主干 或 质量门豁免范围，待裁定",
+)
 
 
 def _extract_dimension(script_name: str) -> str | None:
@@ -69,6 +86,17 @@ def _is_critical(script_name: str) -> bool:
     return d in {"D5", "D6", "D7"}
 
 
+def _load_script_entries() -> list[dict]:
+    """收集期加载脚本清单（scripts/script-manifest.yaml，与 conftest script_entries 同真源）。"""
+    with open(_MANIFEST_PATH, encoding="utf-8") as f:
+        manifest = yaml.safe_load(f)
+    return [
+        e
+        for e in manifest.get("scripts", [])
+        if e.get("path", "").startswith("governance/") and e.get("path", "") != _SMOKE_TEST
+    ]
+
+
 def _load_test_cases(script_entries: list[dict]) -> dict[str, list[tuple[str, int, str, str]]]:
     all_cases = [
         (
@@ -82,6 +110,22 @@ def _load_test_cases(script_entries: list[dict]) -> dict[str, list[tuple[str, in
     quick = [tc for tc in all_cases if _is_quick(tc[0])]
     critical = [tc for tc in all_cases if _is_critical(tc[0])]
     return {"all": all_cases, "quick": quick, "critical": critical}
+
+
+_CASES = _load_test_cases(_load_script_entries())
+
+
+def _params(cases: list[tuple[str, int, str, str]], mark: pytest.Mark | None = None) -> list:
+    """按脚本生成 parametrize 参数（item id=脚本路径，item 级 marker 保留分层）。"""
+    return [
+        pytest.param(name, timeout, id=name, marks=mark if mark is not None else ())
+        for name, timeout, _desc, _dims in cases
+    ]
+
+
+_QUICK_PARAMS = _params(_CASES["quick"], pytest.mark.quick)
+_CRITICAL_PARAMS = _params(_CASES["critical"], pytest.mark.critical)
+_ALL_PARAMS = _params(_CASES["all"])
 
 
 def _safe_unlink(file_path: str) -> None:
@@ -242,253 +286,92 @@ def _run_timing_one(script_name: str, timeout: int, repo_root: Path) -> tuple[fl
     return (elapsed, script_name)
 
 
-class TestGovernanceScriptsQuick:
-    """Quick layer: D1-D4 + D8 scripts. Always run, target < 2min."""
+class TestGovernanceScriptsMeta:
+    """清单完整性（原 TestGovernanceScriptsQuick.test_count，单 item 保留）。"""
 
-    _MAX_WORKERS: int = 8
-
-    @pytest.fixture(scope="class")
-    def categorized(self, script_entries: list[dict]) -> dict:
-        return _load_test_cases(script_entries)
-
-    def test_count(self, categorized):
-        total = len(categorized["all"])
-        quick = len(categorized["quick"])
+    def test_count(self) -> None:
+        total = len(_CASES["all"])
+        quick = len(_CASES["quick"])
         assert total >= 100, f"治理脚本总数异常: {total}"
-        print(f"\n  治理脚本: {total} total / {quick} Quick / {len(categorized['critical'])} Critical")
-
-    @pytest.mark.xfail(
-        strict=False,
-        reason="#ARCH-092：存量批量改写损伤（_shared import 收拢到 sys.path bootstrap 前/迁入子目录未修 bootstrap）致脚本 --help/--warn 崩溃——健康探测器如实报警，待专项清偿批修脚本后摘除",
-    )
-    def test_help_quick(self, repo_root, categorized):
-        test_cases = categorized["quick"]
-        failed: list[str] = []
-        no_help: list[str] = []
-
-        with ThreadPoolExecutor(max_workers=self._MAX_WORKERS) as executor:
-            futures = {
-                executor.submit(_run_help_one, name, timeout, repo_root): name for name, timeout, _, _ in test_cases
-            }
-            for future in as_completed(futures):
-                result = future.result()
-                status = result[0]
-                if status == "ok":
-                    continue
-                elif status == "missing":
-                    failed.append(f"{result[1]}: 文件不存在")
-                elif status == "crash":
-                    failed.append(f"{result[1]}: --help crash (exit={result[2]})")
-                elif status == "no_help":
-                    no_help.append(result[1])
-
-        if no_help:
-            print(f"  [INFO] {len(no_help)} Quick 脚本无 --help: {', '.join(no_help[:5])}")
-        if failed:
-            pytest.fail(f"{len(failed)}/{len(test_cases)} Quick 脚本 --help 崩溃:\n" + "\n".join(failed[:15]))
-
-    def test_warn_quick(self, repo_root, categorized):
-        test_cases = categorized["quick"]
-        failed: list[str] = []
-        crashed: list[str] = []
-
-        with ThreadPoolExecutor(max_workers=self._MAX_WORKERS) as executor:
-            futures = {
-                executor.submit(_run_warn_only_one, name, timeout, repo_root): name
-                for name, timeout, _, _ in test_cases
-            }
-            for future in as_completed(futures):
-                result = future.result()
-                status = result[0]
-                if status == "ok":
-                    continue
-                elif status == "missing":
-                    pass
-                elif status == "timeout":
-                    failed.append(f"{result[1]}: 超时 ({result[2]}s)")
-                elif status == "import_error":
-                    crashed.append(f"{result[1]}: import error")
-                elif status == "crash":
-                    crashed.append(f"{result[1]}: crash exit=2")
-                elif status == "no_warn_only":
-                    crashed.append(f"{result[1]}: exit=2 (no --warn-only)")
-                elif status == "abnormal":
-                    failed.append(f"{result[1]}: 异常 exit={result[2]}")
-
-        if crashed:
-            print(f"  [INFO] {len(crashed)} Quick 脚本 --warn-only 不兼容")
-        if failed:
-            pytest.fail(f"{len(failed)} Quick 脚本异常:\n  " + "\n  ".join(failed[:10]))
+        print(f"\n  治理脚本: {total} total / {quick} Quick / {len(_CASES['critical'])} Critical")
 
 
+@pytest.mark.quick
+class TestGovernanceScriptsQuick:
+    """Quick layer: D1-D4 + D8 scripts（按脚本 parametrize，单脚本失败隔离定位）。"""
+
+    @_XFAIL_ARCH092
+    @pytest.mark.parametrize(("name", "timeout"), _QUICK_PARAMS)
+    def test_help_quick(self, name: str, timeout: int, repo_root: Path) -> None:
+        # no_help 与原聚合语义一致：仅打印不失败
+        status = _run_help_one(name, timeout, repo_root)[0]
+        assert status not in ("missing", "crash"), f"{name}: --help {status}"
+
+    @pytest.mark.parametrize(("name", "timeout"), _QUICK_PARAMS)
+    def test_warn_quick(self, name: str, timeout: int, repo_root: Path) -> None:
+        # crash/import_error/no_warn_only 与原聚合语义一致：仅打印不失败
+        result = _run_warn_only_one(name, timeout, repo_root)
+        status = result[0]
+        assert status not in ("timeout", "abnormal"), f"{name}: --warn-only {result}"
+
+
+@pytest.mark.critical
 class TestGovernanceScriptsCritical:
-    """Critical layer: D5-D7 scripts. Always run, target < 3min."""
+    """Critical layer: D5-D7 scripts（按脚本 parametrize）。"""
 
-    _MAX_WORKERS: int = 8
+    @_XFAIL_ARCH092
+    @pytest.mark.parametrize(("name", "timeout"), _CRITICAL_PARAMS)
+    def test_help_critical(self, name: str, timeout: int, repo_root: Path) -> None:
+        # no_help 与原聚合语义一致：忽略
+        status = _run_help_one(name, timeout, repo_root)[0]
+        assert status not in ("missing", "crash"), f"{name}: --help {status}"
 
-    @pytest.fixture(scope="class")
-    def categorized(self, script_entries: list[dict]) -> dict:
-        return _load_test_cases(script_entries)
-
-    @pytest.mark.xfail(
-        strict=False,
-        reason="#ARCH-092：存量批量改写损伤（_shared import 收拢到 sys.path bootstrap 前/迁入子目录未修 bootstrap）致脚本 --help/--warn 崩溃——健康探测器如实报警，待专项清偿批修脚本后摘除",
-    )
-    def test_help_critical(self, repo_root, categorized):
-        test_cases = categorized["critical"]
-        failed: list[str] = []
-
-        with ThreadPoolExecutor(max_workers=self._MAX_WORKERS) as executor:
-            futures = {
-                executor.submit(_run_help_one, name, timeout, repo_root): name for name, timeout, _, _ in test_cases
-            }
-            for future in as_completed(futures):
-                result = future.result()
-                status = result[0]
-                if status == "ok":
-                    continue
-                elif status == "missing":
-                    failed.append(f"{result[1]}: 文件不存在")
-                elif status == "crash":
-                    failed.append(f"{result[1]}: --help crash (exit={result[2]})")
-                elif status == "no_help":
-                    pass
-
-        if failed:
-            pytest.fail(f"{len(failed)}/{len(test_cases)} Critical 脚本 --help 崩溃:\n" + "\n".join(failed[:15]))
-
-    @pytest.mark.xfail(
-        strict=False,
-        reason="#ARCH-092：存量批量改写损伤（_shared import 收拢到 sys.path bootstrap 前/迁入子目录未修 bootstrap）致脚本 --help/--warn 崩溃——健康探测器如实报警，待专项清偿批修脚本后摘除",
-    )
-    def test_warn_critical(self, repo_root, categorized):
-        test_cases = categorized["critical"]
-        failed: list[str] = []
-
-        with ThreadPoolExecutor(max_workers=self._MAX_WORKERS) as executor:
-            futures = {
-                executor.submit(_run_warn_only_one, name, timeout, repo_root): name
-                for name, timeout, _, _ in test_cases
-            }
-            for future in as_completed(futures):
-                result = future.result()
-                status = result[0]
-                if status == "ok":
-                    continue
-                elif status == "missing":
-                    pass
-                elif status == "timeout":
-                    failed.append(f"{result[1]}: 超时 ({result[2]}s)")
-                elif status in ("import_error", "crash"):
-                    failed.append(f"{result[1]}: {status}")
-                elif status == "abnormal":
-                    failed.append(f"{result[1]}: 异常 exit={result[2]}")
-
-        if failed:
-            pytest.fail(f"{len(failed)} Critical 脚本异常:\n  " + "\n  ".join(failed[:10]))
+    @_XFAIL_ARCH092
+    @pytest.mark.parametrize(("name", "timeout"), _CRITICAL_PARAMS)
+    def test_warn_critical(self, name: str, timeout: int, repo_root: Path) -> None:
+        result = _run_warn_only_one(name, timeout, repo_root)
+        status = result[0]
+        # 与原聚合语义一致：timeout/import_error/crash/abnormal 失败；missing/no_warn_only 忽略
+        assert status in ("ok", "missing", "no_warn_only"), f"{name}: --warn-only {result}"
 
 
 class TestGovernanceScriptsIntegration:
-    """Integration layer: JSONL quality check on ALL scripts. Always run."""
+    """Integration layer: JSONL quality check on ALL scripts（按脚本 parametrize）。"""
 
-    _MAX_WORKERS: int = 8
-
-    @pytest.fixture(scope="class")
-    def categorized(self, script_entries: list[dict]) -> dict:
-        return _load_test_cases(script_entries)
-
-    @pytest.mark.xfail(
-        strict=False,
-        reason="#ARCH-092 附带裁定：手写 argv 解析冒烟脚本（如 git_health_smoke.py）吞未知 flag+多行 JSON 输出，与 JSONL 质量门契约不合——补 argparse 主干 或 质量门豁免范围，待裁定",
-    )
-    def test_jsonl_all(self, repo_root, categorized):
-        test_cases = categorized["all"]
-        supported = 0
-        unsupported = 0
-        invalid_jsonl: list[str] = []
-
-        with ThreadPoolExecutor(max_workers=self._MAX_WORKERS) as executor:
-            futures = {
-                executor.submit(_run_jsonl_one, name, timeout, repo_root): name for name, timeout, _, _ in test_cases
-            }
-            for future in as_completed(futures):
-                result = future.result()
-                status = result[0]
-                if status == "supported":
-                    supported += 1
-                    invalid_jsonl.extend(result[1])
-                elif status == "unsupported":
-                    unsupported += 1
-
-        print(f"\n  --jsonl 支持: {supported}/{supported + unsupported}")
-        if invalid_jsonl and len(invalid_jsonl) > 5:
-            pytest.fail(f"{len(invalid_jsonl)} 脚本 JSONL 输出无效:\n" + "\n".join(invalid_jsonl[:10]))
-        elif invalid_jsonl:
-            print(f"  [INFO] {len(invalid_jsonl)} 个脚本 JSONL 缺少 severity（非阻断）")
+    @_XFAIL_JSONL
+    @pytest.mark.parametrize(("name", "timeout"), _ALL_PARAMS)
+    def test_jsonl_one(self, name: str, timeout: int, repo_root: Path) -> None:
+        result = _run_jsonl_one(name, timeout, repo_root)
+        if result[0] != "supported":
+            return  # unsupported/missing 与原聚合语义一致：仅计数不失败
+        invalid_entries = result[1]
+        # 原语义：>5 条无效才失败（聚合阈值）；拆分后等价=item 内任意无效即失败
+        assert not invalid_entries, f"{name} JSONL 输出无效:\n" + "\n".join(invalid_entries[:10])
 
 
 @pytest.mark.slow
 class TestGovernanceScriptsFull:
     """Full layer: all scripts comprehensive check. Nightly/Pre-release only."""
 
-    _MAX_WORKERS: int = 8
+    @_XFAIL_ARCH092
+    @pytest.mark.parametrize(("name", "timeout"), _ALL_PARAMS)
+    def test_help_full(self, name: str, timeout: int, repo_root: Path) -> None:
+        status = _run_help_one(name, timeout, repo_root)[0]
+        assert status not in ("crash", "missing"), f"{name}: --help {status}"
 
-    @pytest.fixture(scope="class")
-    def categorized(self, script_entries: list[dict]) -> dict:
-        return _load_test_cases(script_entries)
+    @_XFAIL_ARCH092
+    @pytest.mark.parametrize(("name", "timeout"), _ALL_PARAMS)
+    def test_warn_full(self, name: str, timeout: int, repo_root: Path) -> None:
+        result = _run_warn_only_one(name, timeout, repo_root)
+        status = result[0]
+        assert status not in ("timeout", "crash", "import_error", "abnormal"), f"{name}: --warn-only {result}"
 
-    @pytest.mark.xfail(
-        strict=False,
-        reason="#ARCH-092：存量批量改写损伤（_shared import 收拢到 sys.path bootstrap 前/迁入子目录未修 bootstrap）致脚本 --help/--warn 崩溃——健康探测器如实报警，待专项清偿批修脚本后摘除",
-    )
-    def test_help_full(self, repo_root, categorized):
-        test_cases = categorized["all"]
-        failed: list[str] = []
-
-        with ThreadPoolExecutor(max_workers=self._MAX_WORKERS) as executor:
-            futures = {
-                executor.submit(_run_help_one, name, timeout, repo_root): name for name, timeout, _, _ in test_cases
-            }
-            for future in as_completed(futures):
-                result = future.result()
-                status = result[0]
-                if status == "ok":
-                    continue
-                elif status in ("crash", "missing"):
-                    failed.append(f"{result[1]}: {status}")
-
-        if failed:
-            pytest.fail(f"{len(failed)}/{len(test_cases)} 脚本 --help 崩溃:\n" + "\n".join(failed[:15]))
-
-    @pytest.mark.xfail(
-        strict=False,
-        reason="#ARCH-092：存量批量改写损伤（_shared import 收拢到 sys.path bootstrap 前/迁入子目录未修 bootstrap）致脚本 --help/--warn 崩溃——健康探测器如实报警，待专项清偿批修脚本后摘除",
-    )
-    def test_warn_full(self, repo_root, categorized):
-        test_cases = categorized["all"]
-        failed: list[str] = []
-
-        with ThreadPoolExecutor(max_workers=self._MAX_WORKERS) as executor:
-            futures = {
-                executor.submit(_run_warn_only_one, name, timeout, repo_root): name
-                for name, timeout, _, _ in test_cases
-            }
-            for future in as_completed(futures):
-                result = future.result()
-                status = result[0]
-                if status == "ok":
-                    continue
-                elif status in ("timeout", "crash", "import_error", "abnormal"):
-                    failed.append(f"{result[1]}: {status}")
-
-        if failed:
-            pytest.fail(f"{len(failed)} 脚本异常:\n  " + "\n  ".join(failed[:10]))
-
-    def test_timing_report(self, repo_root, categorized):
-        test_cases = categorized["all"]
+    def test_timing_report(self, repo_root: Path) -> None:
+        """聚合报告保留为单 item（top10 榜单语义，parametrize 无意义）。"""
+        test_cases = _CASES["all"]
         timings: list[tuple[float, str]] = []
 
-        with ThreadPoolExecutor(max_workers=self._MAX_WORKERS) as executor:
+        with ThreadPoolExecutor(max_workers=8) as executor:
             futures = {
                 executor.submit(_run_timing_one, name, timeout, repo_root): name for name, timeout, _, _ in test_cases
             }

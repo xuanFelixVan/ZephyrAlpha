@@ -1,17 +1,17 @@
-# 自动生成于 2026-08-22T15:57:22Z
+# 自动生成于 2026-08-30T16:38:48Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-22T15:57:22Z'
+generated_at: '2026-08-30T16:38:48Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 408
-with_manifest: 406
-missing_manifest: 2
+total_scripts: 413
+with_manifest: 408
+missing_manifest: 5
 categories:
   governance:_sync: 4
   governance:_tasks: 3
-  governance: 40
+  governance: 45
   governance:d10_performance: 1
   governance:d11_compliance: 24
   governance:d12_ai_hallucination: 4
@@ -200,6 +200,16 @@ scripts:
   description: AST-based import rewriter for governance directory migration.
   tags:
   - Quick
+- name: audit_llm_registry_reconciliation.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: audit_precommit_incremental_baseline.py
   owner: governance
   dimensions:
@@ -271,6 +281,37 @@ scripts:
   description: 'GATE-SSOT: SSoT 创建门禁（pre-commit hook 双保险）。'
   tags:
   - Quick
+- name: check_test_symbol_validity.py
+  owner: governance
+  dimensions:
+  - D7
+  priority: P1
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: 孤儿测试符号检测——测试 import 引用真源不存在的符号即报（CAND-GATEMECH-007）
+  tags:
+  - Critical
+- name: check_wiring_orphan.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: collect_write_audit_4663.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: commit_queue_landing.py
   owner: governance
   dimensions: []
@@ -3805,6 +3846,17 @@ scripts:
   tags:
   - Disruptive
   - Quick
+- name: gateway_post_commit_ritual.py
+  owner: governance
+  dimensions:
+  - D11
+  priority: P1
+  timeout_seconds: 120
+  args: []
+  warn_only: false
+  description: 网关批次收尾仪式——批次触碰 rules/contracts 自动联动 C2 freeze + INTEGRITY 重钉（CAND-GATEMECH-005）
+  tags:
+  - Security
 - name: generate_decision_graph.py
   owner: governance
   dimensions:
@@ -4960,7 +5012,7 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: run_gate_chain.py — 顺序运行多个门禁脚本，任一失败即整体失败。
+  description: run_gate_chain.py — 顺序运行多个门禁脚本，内容判定聚合退出码 + files-modified 副作用分列报告。
   tags:
   - Quick
 - name: run_silent_failure_regression.py

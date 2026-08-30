@@ -88,7 +88,13 @@ _STATIC_MANIFEST: list[dict] = [
     {"path": "config/runtime/shadow_mode_state.yaml", "critical": False, "desc": "Shadow Mode 状态"},
     {"path": "config/runtime/error_budget_state.yaml", "critical": True, "desc": "Error Budget 状态"},
     {"path": "scripts/governance/quality_standard.md", "critical": True, "desc": "脚本质量标准"},
-    {"path": "scripts/governance/script_manifest.yaml", "critical": True, "desc": "脚本注册表"},
+    # CAND-GATEMECH-003 治本（2026-08-30）：script_manifest.yaml 移出 golden hash 锚定清单。
+    # 该文件是 generators/generate_script_manifest.py 的可再生派生物（__manifest__ 块扫描生成），
+    # 锚定它导致"改了生成器/脚本→manifest 再生→hash 不匹配→TAMPERED 赛跑"（循环审计 R3 实证：
+    # hash 1cf189a8→07023da9 撞上复跑采样瞬间必红，需 reconciler 自愈波次重注册才回绿）。
+    # 与"派生产物禁入 git"同哲学：golden hash 保护聚焦手写规则文件；派生物的一致性由
+    # GATE-21（validate_static_manifest_drift --check，生成器幂等校验）兜底，语义更精确。
+
     {
         "path": "scripts/governance/d5_architecture/checkers/check_precommit_id_uniqueness.py",
         "critical": True,

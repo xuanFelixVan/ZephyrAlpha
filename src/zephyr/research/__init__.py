@@ -54,3 +54,6 @@ DORMANT 标注；翻译注册表 build_status dormant→active 回写建议见
 """
 
 __all__ = []
+
+# ORPHAN-MODULE: 引用登记（让 depgraph 发现 import 边；不进 __all__，保持包根不 re-export 约定）
+from zephyr.research.sell_news_event_study import run_sell_news_study  # noqa: F401

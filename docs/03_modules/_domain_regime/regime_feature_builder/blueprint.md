@@ -3,7 +3,7 @@ module_id: MOD-REGIME-002
 title: "Regime特征管道蓝图 — ClickHouse→RegimeFeatures/OverlaySignals/RiskSignalInputs（C1一票否决验证的数据地基）"
 doc_type: blueprint
 status: Active
-version: "0.1.5"
+version: "0.1.6"
 design_maturity: production
 build_status: production
 ttl: permanent
@@ -904,6 +904,7 @@ MOD-REGIME-002 → D_DATA (ClickHouse 行情)
 | `tests/regime/test_july_case_e2e.py` | ✅ 已实现 | |
 | `tests/regime/test_overlay_features.py` | ✅ 已实现 | |
 | `tests/regime/test_overlay_signals_builder.py` | ✅ 已实现 | |
+| `tests/regime/test_overlay_signals_builder_valuation.py` | ✅ 已实现 | |
 | `tests/regime/test_risk_signal_builder.py` | ✅ 已实现 | |
 | `tests/regime/test_synthetic_vix.py` | ✅ 已实现 | |
 

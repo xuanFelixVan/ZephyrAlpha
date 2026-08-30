@@ -25,12 +25,21 @@ from zephyr.nlp.nlp_inference import (
     NEGATIVE,
     NEUTRAL,
     POSITIVE,
+    PROMPT_VERSION,
+    PROMPT_VERSION_ENV,
+    PROMPT_VERSION_V3,
+    SCOPE_MARKET,
+    SCOPE_SECTOR,
+    SCOPE_STOCK,
+    SYSTEM_PROMPT,
+    SYSTEM_PROMPT_V3,
     InferConfig,
     NLPInferenceError,
     SentimentResult,
     infer_batch,
     infer_sentiment,
     parse_sentiment,
+    parse_sentiment_v3,
     sentiment_to_score,
 )
 
@@ -322,3 +331,122 @@ class TestInferBatch:
         assert results[0].cached is False
         assert results[1].cached is True
         assert len(chat.calls) == 1  # 第二条命中缓存，未推理
+
+
+# ============ TestPromptV3Scope（CAND-NLP-003 主体范围轴）============
+
+
+class TestPromptV3Template:
+    """v3 prompt 模板契约：scope 三分类指令 + JSON 输出 schema。"""
+
+    def test_default_version_stays_v2(self) -> None:
+        """默认版本不翻牌——PROMPT_VERSION 仍为 v2（v3 走灰度）。"""
+        assert PROMPT_VERSION == "v2-fewshot"
+        assert PROMPT_VERSION_V3 == "v3-scope"
+
+    def test_v3_system_prompt_has_scope_contract(self) -> None:
+        assert '"scope": "market|sector|stock"' in SYSTEM_PROMPT_V3
+        assert "影响主体范围" in SYSTEM_PROMPT_V3
+        # v2 模板不带 scope（并存不串扰）
+        assert "scope" not in SYSTEM_PROMPT
+
+
+class TestParseSentimentV3:
+    """parse_sentiment_v3 —— scope 提取/缺失降级/解析容错。"""
+
+    def test_clean_json_with_scope(self) -> None:
+        s, sc, scope = parse_sentiment_v3('{"sentiment": "positive", "score": 0.9, "scope": "sector"}')
+        assert s == POSITIVE and sc == pytest.approx(0.9) and scope == SCOPE_SECTOR
+
+    def test_missing_scope_degrades_empty(self) -> None:
+        """scope 字段缺失 → ""（聚合层视为 market，向后兼容 v2 输出）。"""
+        s, sc, scope = parse_sentiment_v3('{"sentiment": "negative", "score": 0.7}')
+        assert s == NEGATIVE and sc == pytest.approx(0.7) and scope == ""
+
+    def test_invalid_scope_degrades_empty(self) -> None:
+        """scope 非法取值 → ""（不进 _VALID_SCOPES 的一律降级）。"""
+        _s, _sc, scope = parse_sentiment_v3('{"sentiment": "positive", "score": 0.8, "scope": "universe"}')
+        assert scope == ""
+
+    def test_markdown_fenced_with_scope(self) -> None:
+        raw = '```json\n{"sentiment": "positive", "score": 0.85, "scope": "market"}\n```'
+        s, sc, scope = parse_sentiment_v3(raw)
+        assert s == POSITIVE and scope == SCOPE_MARKET
+
+    def test_field_regex_fallback_with_scope(self) -> None:
+        """缺开头花括号的残缺输出仍能从字段级正则抠出 scope。"""
+        raw = '"sentiment": "negative", "score": 0.6, "scope": "stock"}'
+        s, sc, scope = parse_sentiment_v3(raw)
+        assert s == NEGATIVE and sc == pytest.approx(0.6) and scope == SCOPE_STOCK
+
+    def test_garbage_full_degrade(self) -> None:
+        assert parse_sentiment_v3("完全不是 JSON") == (NEUTRAL, 0.5, "")
+        assert parse_sentiment_v3("") == (NEUTRAL, 0.5, "")
+
+    def test_v2_parse_ignores_scope(self) -> None:
+        """v2 parse_sentiment 对 v3 输出保持原契约（丢 scope 不报错）。"""
+        s, sc = parse_sentiment('{"sentiment": "positive", "score": 0.9, "scope": "sector"}')
+        assert s == POSITIVE and sc == pytest.approx(0.9)
+
+
+class TestInferSentimentV3:
+    """infer_sentiment —— v3 版本路由 / 灰度开关 / 缓存隔离。"""
+
+    def test_explicit_v3_returns_scope(self) -> None:
+        chat = _FakeChat('{"sentiment": "positive", "score": 0.8, "scope": "stock"}')
+        r = infer_sentiment("某公司中标大单", "内容", chat=chat, config=InferConfig(prompt_version=PROMPT_VERSION_V3))
+        assert r.scope == SCOPE_STOCK
+        assert r.sentiment == POSITIVE
+        # 走的是 v3 system prompt
+        assert chat.calls[0][1] == SYSTEM_PROMPT_V3
+
+    def test_default_path_stays_v2_no_scope(self) -> None:
+        chat = _FakeChat('{"sentiment": "positive", "score": 0.8, "scope": "stock"}')
+        r = infer_sentiment("标题", "内容", chat=chat)
+        assert chat.calls[0][1] == SYSTEM_PROMPT  # v2 模板
+        assert r.scope == ""  # v2 路径不产出 scope
+
+    def test_env_var_gray_switch(self, monkeypatch) -> None:
+        """ZEPHYR_NLP_PROMPT_VERSION=v3-scope 环境变量灰度启用 v3。"""
+        monkeypatch.setenv(PROMPT_VERSION_ENV, PROMPT_VERSION_V3)
+        chat = _FakeChat('{"sentiment": "neutral", "score": 0.5, "scope": "market"}')
+        r = infer_sentiment("标题", "内容", chat=chat)
+        assert chat.calls[0][1] == SYSTEM_PROMPT_V3
+        assert r.scope == SCOPE_MARKET
+
+    def test_config_overrides_env(self, monkeypatch) -> None:
+        """InferConfig.prompt_version 显式指定优先于环境变量。"""
+        monkeypatch.setenv(PROMPT_VERSION_ENV, PROMPT_VERSION_V3)
+        chat = _FakeChat('{"sentiment": "neutral", "score": 0.5, "scope": "stock"}')
+        r = infer_sentiment("标题", "内容", chat=chat, config=InferConfig(prompt_version=PROMPT_VERSION))
+        assert chat.calls[0][1] == SYSTEM_PROMPT
+        assert r.scope == ""
+
+    def test_unknown_version_falls_back_v2(self) -> None:
+        """未知版本号 fail-safe 回退 v2 路径。"""
+        chat = _FakeChat('{"sentiment": "neutral", "score": 0.5}')
+        r = infer_sentiment("标题", "内容", chat=chat, config=InferConfig(prompt_version="v9-x"))
+        assert chat.calls[0][1] == SYSTEM_PROMPT
+        assert r.scope == ""
+
+    def test_cache_isolation_between_versions(self) -> None:
+        """同一标题 v2/v3 缓存键隔离（版本入键，不串读）。"""
+        cache = CacheLayer()
+        chat = _FakeChat('{"sentiment": "positive", "score": 0.9, "scope": "sector"}')
+        r1 = infer_sentiment("同一条新闻", "内容", chat=chat, cache=cache)
+        r2 = infer_sentiment(
+            "同一条新闻", "内容", chat=chat, cache=cache, config=InferConfig(prompt_version=PROMPT_VERSION_V3)
+        )
+        assert r1.cached is False and r2.cached is False
+        assert len(chat.calls) == 2  # v2/v3 各自推理一次
+        assert r1.scope == "" and r2.scope == SCOPE_SECTOR
+
+    def test_v3_cache_roundtrip_keeps_scope(self) -> None:
+        """v3 结果写缓存后命中读取仍带 scope。"""
+        cache = CacheLayer()
+        chat = _FakeChat('{"sentiment": "negative", "score": 0.7, "scope": "stock"}')
+        cfg = InferConfig(prompt_version=PROMPT_VERSION_V3)
+        infer_sentiment("标题", "内容", chat=chat, cache=cache, config=cfg)
+        r = infer_sentiment("标题", "内容", chat=chat, cache=cache, config=cfg)
+        assert r.cached is True and r.scope == SCOPE_STOCK
+        assert len(chat.calls) == 1

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/signal
 title: "Signal Generation Core 蓝图+施工图 — 信号工厂·策略生命周期管理"
 doc_type: blueprint
 status: Active
-version: "3.0.5"
+version: "3.0.6"
 layer: L2_domain
 layer_name: signal_generation
 functional_domain: research
@@ -166,7 +166,7 @@ design_maturity: production
 > 开工条件已满足：Owner 已解除 C 轨占位禁令，基础设施已就绪。
 > 任何修改需 Owner 审批。
 
-> module_id: MOD-L03-001 | version: 3.0.5 | status: active | domain: signal
+> module_id: MOD-L03-001 | version: 3.0.6 | status: active | domain: signal
 > actual_disk_path: src/zephyr/signal_ashare/ + src/zephyr/signal_fundamental/ + src/zephyr/signal_quality/ | generation: 3 | construction_progress: partially_implemented
 > 子模块体系: D-SIGNAL-01~164（蓝图内部编号，不进blueprint_registry）
 
@@ -255,8 +255,8 @@ design_maturity: production
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L03-001` 的 19 个 file 节点 | production | `extract_depgraph.py --modules MOD-L03-001` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L03-001` 的 20 个 file 节点 | production | `extract_depgraph.py --modules MOD-L03-001` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -267,7 +267,7 @@ design_maturity: production
 | module_id | MOD-L03-001 | MOD-L03-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | production | production | ✅ |
-| file_count | 19 文件 | 15 文件（§0.1） | ❌ |
+| file_count | 20 文件 | 15 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1037,6 +1037,7 @@ D_FACTOR Alpha Factor 层产出因子信号后，需要标准化聚合、合成�
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `tests/signal/test_default_signal_aggregator.py` | ✅ 已实现 | |
 | `tests/trading/pipeline/test_l03_signal_generation.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南

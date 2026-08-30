@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-08-29T10:58:41Z'
+generated_at: '2026-08-30T11:31:46Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 222
+total_files: 223
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -3446,6 +3446,21 @@ files:
   doc_type: index
   status: active
   version: 2.1.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/vocabularies/knowledge_taxonomy_vocabulary.yaml
+  module_id: PS-VOC-TAX-001
+  title: 知识分类边界标准（factor/strategy/other 受控类语义边界）
+  doc_type: vocabulary
+  status: active
+  version: 1.0.0
   rule_form: ''
   scope: ''
   stability: ''
