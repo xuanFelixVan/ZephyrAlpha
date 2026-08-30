@@ -23,7 +23,8 @@
 # A4: assess_pair_drift(单对一站式: CUSUM主检测+PSI辅助→PairDriftReport)
 # O1: CusumResult / PSI值 / PairDriftReport(cusum_alarm+psi_level+degraded)
 # [/ALGO_FLOW]
-"""D_FACTOR — G07 §5.4 相关性漂移监控（上线后持续，函数级）
+"""
+D_FACTOR — G07 §5.4 相关性漂移监控（上线后持续，函数级）
 
 §3.2 block-bootstrap 验证施工前静态相关性；上线后相关性会漂移（regime 变化/
 拥挤度上升/共同因子暴露变化），<0.6 的组合可能漂到 >0.8——分散假设静默失效。
@@ -35,6 +36,77 @@
   - 分级响应（告警→权重×0.5→停新入场→重跑 block-bootstrap）由调用方编排，
     本模块只产出检测结论；复用 deadman/reconciler 基础设施风格（轻量状态机 +
     dataclass 报告 + degraded 降级标记），不新建独立监控系统。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: series_a 参数
+#   fields: 参数 series_a，类型注解 pd.Series
+#   code: correlation_drift_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: series_b 参数
+#   fields: 参数 series_b，类型注解 pd.Series
+#   code: correlation_drift_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: window 参数
+#   fields: 参数 window，类型注解 int
+#   code: correlation_drift_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: rho_series 参数
+#   fields: 参数 rho_series，类型注解 pd.Series
+#   code: correlation_drift_monitor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① compute_rolling_spearman
+#   name_en: compute_rolling_spearman
+#   intro: 滚动 Spearman ρ_t（每窗口内重排名的精确版，非全样本排名的 Pearson 近似）。
+#   desc: 滚动 Spearman ρ_t（每窗口内重排名的精确版，非全样本排名的 Pearson 近似）。 Args: series_a/series_b: 收益率序列（按 index 交…；源码 L203-L228
+#   inputs: series_a series_b window
+#   outputs: pd.Series
+# - id: A2
+#   name_zh: ② cusum_upper_alarm
+#   name_en: cusum_upper_alarm
+#   intro: 单边上行 CUSUM：S⁺ₜ=max(0, S⁺ₜ₋₁+(ρ_t−ρ₀)−k)，S⁺>h 告警。
+#   desc: 单边上行 CUSUM：S⁺ₜ=max(0, S⁺ₜ₋₁+(ρ_t−ρ₀)−k)，S⁺>h 告警。 只检测相关性**结构性上升**（分散失效方向）；NaN ρ（滚动窗口预热段）跳过…；源码 L231-L275
+#   inputs: rho_series baseline_rho k h sigma
+#   outputs: CusumResult
+# - id: A3
+#   name_zh: ③ population_stability_index
+#   name_en: population_stability_index
+#   intro: PSI（Population Stability Index）：基线 vs 近期 ρ 分布漂移度。
+#   desc: PSI（Population Stability Index）：基线 vs 近期 ρ 分布漂移度。 分箱取基线分位数边界（等频）；占比 <eps 以 eps 兜底。常数基线（分位…；源码 L278-L315
+#   inputs: baseline recent n_bins
+#   outputs: float
+# - id: A4
+#   name_zh: ④ assess_pair_drift
+#   name_en: assess_pair_drift
+#   intro: 单策略对一站式漂移评估：CUSUM 主检测 + PSI 辅助。
+#   desc: 单策略对一站式漂移评估：CUSUM 主检测 + PSI 辅助。 Args: rho_series: 滚动相关 ρ_t（compute_rolling_spearman 产出） b…；源码 L318-L354
+#   inputs: rho_series baseline_rho baseline_dist recent_dist k h sigma n_bins
+#   outputs: PairDriftReport
+#   （注：A4 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: pd.Series
+#   name_en: pd.Series
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: G07 上线后相关性漂移持续监控（复用 deadman/reconciler 监控风格, 函数级）
+# - id: O2
+#   name_zh: CusumResult
+#   name_en: CusumResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: G07 上线后相关性漂移持续监控（复用 deadman/reconciler 监控风格, 函数级）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

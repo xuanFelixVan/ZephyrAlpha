@@ -15,9 +15,104 @@
 # [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-DATA-SYMBOL-001 TRAE-082 #ARCH-SYMBOL-NORMALIZE-001
-"""symbol 标准化核心实现——TRAE-082 symbol 约定铁律。
+"""
+symbol 标准化核心实现——TRAE-082 symbol 约定铁律。
 
 详见 zephyr.data.symbol_normalizer.__init__ 模块文档。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: symbol 参数
+#   fields: 参数 symbol，类型注解 str
+#   code: normalizer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: symbol_with_suffix 参数
+#   fields: 参数 symbol_with_suffix，类型注解 str
+#   code: normalizer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: symbol_with_prefix 参数
+#   fields: 参数 symbol_with_prefix，类型注解 str
+#   code: normalizer.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: exchange 参数
+#   fields: 参数 exchange，类型注解 str
+#   code: normalizer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① derive_exchange
+#   name_en: derive_exchange
+#   intro: 从裸码推导 A 股交易所码（TRAE-082 1.1.0 分层前缀消歧）。
+#   desc: 从裸码推导 A 股交易所码（TRAE-082 1.1.0 分层前缀消歧）。 推导优先级（与 CH MATERIALIZED multiIf 严格对齐，更具体优先）： 1. 3 位…；源码 L192-L237
+#   inputs: symbol
+#   outputs: str | None
+# - id: A2
+#   name_zh: ② derive_exchange_index
+#   name_en: derive_exchange_index
+#   intro: 从裸码推导指数交易所码（kline_index 表专用，TRAE-082 核心消歧）。
+#   desc: 从裸码推导指数交易所码（kline_index 表专用，TRAE-082 核心消歧）。 指数代码与股票代码前缀规则不同（同一裸码在不同表语义推导不同 exchange）： - 0…；源码 L240-L276
+#   inputs: symbol
+#   outputs: str | None
+# - id: A3
+#   name_zh: ③ split_suffix_symbol
+#   name_en: split_suffix_symbol
+#   intro: 拆分带后缀的 symbol 为 (裸码, exchange)。
+#   desc: 拆分带后缀的 symbol 为 (裸码, exchange)。 后缀式 symbol（tushare/akshare 格式）：159865.SZ / 600519.SH / 00…；源码 L279-L307
+#   inputs: symbol_with_suffix
+#   outputs: tuple[str, str | None]
+# - id: A4
+#   name_zh: ④ split_prefix_symbol
+#   name_en: split_prefix_symbol
+#   intro: 拆分前缀式 symbol 为 (裸码, exchange)。
+#   desc: 拆分前缀式 symbol 为 (裸码, exchange)。 前缀式 symbol（lof_list 旧格式）：sh501001 / sz159915 / bj430047 拆分…；源码 L310-L345
+#   inputs: symbol_with_prefix
+#   outputs: tuple[str, str | None]
+# - id: A5
+#   name_zh: ⑤ to_canonical
+#   name_en: to_canonical
+#   intro: 构造 symbol_canonical（跨表 JOIN 的 canonical 身份键）。
+#   desc: 构造 symbol_canonical（跨表 JOIN 的 canonical 身份键）。 symbol_canonical = concat(symbol, '.', exch…；源码 L348-L371
+#   inputs: symbol exchange
+#   outputs: str
+# - id: A6
+#   name_zh: ⑥ normalize_symbol
+#   name_en: normalize_symbol
+#   intro: 归一化任意格式 symbol 为 (裸码, exchange)。
+#   desc: 归一化任意格式 symbol 为 (裸码, exchange)。 自动识别三种格式（TRAE-082 三套约定归一）： 1. 裸码（600519）→ derive_exchang…；源码 L374-L413
+#   inputs: symbol
+#   outputs: tuple[str, str | None]
+# - id: A7
+#   name_zh: ⑦ is_bare_symbol
+#   name_en: is_bare_symbol
+#   intro: 判断 symbol 是否为裸码（无后缀无前缀）。
+#   desc: 判断 symbol 是否为裸码（无后缀无前缀）。 裸码 = 纯代码，不含 '.' 且不以交易所前缀（sh/sz/bj/hk）开头。 用于 provider 写入路径校验（TRAE…；源码 L416-L445
+#   inputs: symbol
+#   outputs: bool
+# 层: 输出
+# - id: O1
+#   name_zh: str | None
+#   name_en: str | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.symbol_normalizer.__init__
+# - id: O2
+#   name_zh: tuple[str, str | None]
+#   name_en: tuple[str, str | None]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.symbol_normalizer.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> O1
 """
 
 from __future__ import annotations
@@ -273,7 +368,7 @@ def to_canonical(symbol: str, exchange: str) -> str:
         return ""
     if not exchange:
         return str(symbol)
-    return "{}.{}".format(symbol, exchange)
+    return f"{symbol}.{exchange}"
 
 
 def normalize_symbol(symbol: str) -> tuple[str, str | None]:

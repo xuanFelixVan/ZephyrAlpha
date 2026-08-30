@@ -18,7 +18,8 @@
 # F2: run_backtest主循环(①因子值AS OF JOIN+断言 ②IC历史截止t-1+断言 ③降级链决策(forward_returns=None防前瞻) ④合成因子分 ⑤协方差+断言 ⑥组合优化+仲裁(注入) ⑦换仓触发(首次=INIT) ⑧非换仓日持仓偏差监控(critical→DRIFT_CRITICAL强制换仓) ⑨记录)
 # O1: list[BacktestDayRecord](日期/方法/触发器/偏差警报数/skipped)
 # [/ALGO_FLOW]
-"""25号memo §3.7#7 多因子 PIT 安全回测框架（MultifactorPITBacktestFramework，MOD-L02-015）。
+"""
+25号memo §3.7#7 多因子 PIT 安全回测框架（MultifactorPITBacktestFramework，MOD-L02-015）。
 
 与 24 号 DabanPITBacktestFramework 对称的回测验证基础设施——多因子 PIT 更复杂，
 5 层 PIT 断言防回测虚高（PIT 违规=回测虚高+实盘失效）：
@@ -32,6 +33,80 @@
 
 注入式骨架：数据加载/组合优化/换仓触发/偏差监控均经回调注入，
 本框架只编排主循环 + 强制 5 层 PIT 断言（首批回测前必做）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: factor_date 参数
+#   fields: 参数 factor_date，类型注解 pd.Timestamp
+#   code: multifactor_pit_backtest.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: decision_date 参数
+#   fields: 参数 decision_date，类型注解 pd.Timestamp
+#   code: multifactor_pit_backtest.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: ic_window_end 参数
+#   fields: 参数 ic_window_end，类型注解 pd.Timestamp
+#   code: multifactor_pit_backtest.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: cov_window_end 参数
+#   fields: 参数 cov_window_end，类型注解 pd.Timestamp
+#   code: multifactor_pit_backtest.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① assert_factor_pit
+#   name_en: assert_factor_pit
+#   intro: factor_value 层：t 日决策只用 t 日及之前因子值（AS OF JOIN）。
+#   desc: factor_value 层：t 日决策只用 t 日及之前因子值（AS OF JOIN）。；源码 L151-L154
+#   inputs: factor_date decision_date
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② assert_ic_weight_pit
+#   name_en: assert_ic_weight_pit
+#   intro: ic_weight 层：IC 窗口截止日 < 决策日（ROLLING t-1，防 t 日 IC 算 t 日权重）。
+#   desc: ic_weight 层：IC 窗口截止日 < 决策日（ROLLING t-1，防 t 日 IC 算 t 日权重）。；源码 L157-L160
+#   inputs: ic_window_end decision_date
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ assert_covariance_pit
+#   name_en: assert_covariance_pit
+#   intro: covariance 层：协方差截止日 < 决策日（ROLLING t-1）。
+#   desc: covariance 层：协方差截止日 < 决策日（ROLLING t-1）。；源码 L163-L168
+#   inputs: cov_window_end decision_date
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ assert_industry_pit
+#   name_en: assert_industry_pit
+#   intro: industry_class 层：行业分类 AS OF JOIN（t 日及之前）。
+#   desc: industry_class 层：行业分类 AS OF JOIN（t 日及之前）。；源码 L171-L176
+#   inputs: industry_date decision_date
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ MultifactorPITBacktestFramework
+#   name_en: MultifactorPITBacktestFramework
+#   intro: 多因子 PIT 安全回测框架——注入式主循环 + 5 层 PIT 断言。
+#   desc: 多因子 PIT 安全回测框架——注入式主循环 + 5 层 PIT 断言。 数据回调契约（全部注入，框架不直接读数仓）： load_factors(date) -> (factor…；公共方法（定义序）: run_bac…
+#   inputs: load_factors load_ic_history load_covariance load_industry optimize_f…
+#   outputs: 返回值
+#   （注：A5 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（8 定义）
+#   name_en: public defs
+#   intro: assert_factor_pit, assert_ic_weight_pit, assert_covariance_pit, assert_industry…
+#   downstream: 多因子 sleeve 首批回测
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations
@@ -43,8 +118,8 @@ from typing import Callable
 import pandas as pd
 
 from zephyr.factor.analysis.multifactor_degradation_chain import (
-    synthesize_with_degradation,
     SynthesisDecision,
+    synthesize_with_degradation,
 )
 
 log = logging.getLogger(__name__)

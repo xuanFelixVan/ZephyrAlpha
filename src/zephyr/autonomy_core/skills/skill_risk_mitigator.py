@@ -20,6 +20,32 @@ MOD-INF-019: Agent Spec — Skill Risk Mitigator
 Blueprint: docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 Author: factory-agent
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: skill_risk_mitigator.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① RiskMitigator
+#   name_en: RiskMitigator
+#   intro: R1-R65 风险缓解引擎
+#   desc: R1-R65 风险缓解引擎；公共方法（定义序）: get_risk, all_risks, by_severity, high_severity_risks；源码 L54-L114
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: RiskMitigator
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from typing import Any

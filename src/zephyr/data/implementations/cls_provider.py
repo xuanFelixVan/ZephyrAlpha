@@ -14,7 +14,8 @@
 # [TESTS] tests/zephyr/data/test_providers.py::TestClsProvider
 # [A_module] module_id=MOD-GOV-cls_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""财联社电报数据源 Provider 实现（MOD-L00-004 §4.3）。
+"""
+财联社电报数据源 Provider 实现（MOD-L00-004 §4.3）。
 
 通过RSSHub公共实例获取财联社电报，继承IngestProviderBase。
 - 匿名访问，无需登录
@@ -24,6 +25,32 @@
 
 数据转换目标表 c3_fundamental.news_data：
     pub_date, title, link, summary, source
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: cls_provider.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ClsProvider
+#   name_en: ClsProvider
+#   intro: 财联社电报数据源 Provider。
+#   desc: 财联社电报数据源 Provider。 匿名访问、shared 线程安全模型。 已知问题：无认证，高频请求可能被限制。；公共方法（定义序）: connect, health_check, disconnect, fetc…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: ClsProvider
+#   downstream: zephyr.data.scheduler
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

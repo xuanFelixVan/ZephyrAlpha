@@ -18,6 +18,32 @@
 """
 R523: GuardComplexityBudget
 守卫数量边际收益递减追踪 — 1人团队可维护上限告警
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: guard_complexity_budget.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① GuardComplexityBudget
+#   name_en: GuardComplexityBudget
+#   intro: class GuardComplexityBudget 源码 L53-L118
+#   desc: 公共方法（定义序）: register_guard_addition, get_complexity_report；源码 L53-L118
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: GuardComplexityBudget
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from dataclasses import dataclass, field

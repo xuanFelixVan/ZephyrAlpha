@@ -14,7 +14,8 @@
 # [TESTS] tests/zephyr/data/test_sina_tencent_provider.py
 # [A_module] module_id=MOD-L00-007 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""新浪/腾讯免登快照第三级备源适配器（CAND-DAT-012 / B1-00602，96 Sina+Tencent Real-Time）。
+"""
+新浪/腾讯免登快照第三级备源适配器（CAND-DAT-012 / B1-00602，96 Sina+Tencent Real-Time）。
 
 深挖裁定=做(P1)：实时冗余链 QMT 主 + TDX 备已建（backup_tick_poller/source_switcher
 /heartbeat_monitor），新浪/腾讯免登快照作第三级备份未接入——QMT 与 TDX 同时故障时
@@ -30,6 +31,48 @@
    偏差超 ``deviation_threshold`` 触发 ``on_alert`` 告警。
 
 注：tickflow_provider 为美股 K线 provider，与本 A 股实时链无关，不复用不冲突。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: text 参数
+#   fields: 参数 text，类型注解 str
+#   code: sina_tencent_provider.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① parse_sina_snapshot
+#   name_en: parse_sina_snapshot
+#   intro: 解析 hq.sinajs 报文 → CTR-001 字段映射 tick dict 列表。
+#   desc: 解析 hq.sinajs 报文 → CTR-001 字段映射 tick dict 列表。 字段序：0 名称,1 今开,2 昨收,3 现价,4 最高,5 最低,6 买一,7 卖一,…；源码 L125-L158
+#   inputs: text
+#   outputs: list[dict]
+# - id: A2
+#   name_zh: ② parse_tencent_snapshot
+#   name_en: parse_tencent_snapshot
+#   intro: 解析 qt.gtimg 报文 → 与新浪同构的 tick dict 列表。
+#   desc: 解析 qt.gtimg 报文 → 与新浪同构的 tick dict 列表。 字段序（~分隔）：1 名称,2 代码,3 现价,4 昨收,5 今开,30 时间, 33 最高,34 最…；源码 L161-L192
+#   inputs: text
+#   outputs: list[dict]
+# - id: A3
+#   name_zh: ③ SinaTencentProvider
+#   name_en: SinaTencentProvider
+#   intro: 新浪/腾讯免登快照第三级备源（SourceProvider 接口）。
+#   desc: 新浪/腾讯免登快照第三级备源（SourceProvider 接口）。 start() 起轮询线程；poll_once() 单轮拉取（新浪优先、失败落腾讯）， 供单测与手动兜底直调。；公共方法（定义序）: name, s…
+#   inputs: symbols on_tick_callback http_get poll_interval min_request_interval…
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: list[dict]
+#   name_en: list[dict]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: （P1 接线：SourceSwitcher 优先级末位第三级备源）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations
@@ -195,9 +238,7 @@ class SinaTencentProvider(SourceProvider):
         if self._running:
             return True
         self._running = True
-        self._thread = threading.Thread(
-            target=self._poll_loop, daemon=True, name="sina-tencent-poller"
-        )
+        self._thread = threading.Thread(target=self._poll_loop, daemon=True, name="sina-tencent-poller")
         self._thread.start()
         log.info(
             "SinaTencentProvider 已启动 (symbols=%d, interval=%.1fs)",
@@ -239,9 +280,7 @@ class SinaTencentProvider(SourceProvider):
         if not ticks:
             self._rate_limit_wait()
             try:
-                ticks = parse_tencent_snapshot(
-                    self._http_get(_TENCENT_URL.format(codes=codes))
-                )
+                ticks = parse_tencent_snapshot(self._http_get(_TENCENT_URL.format(codes=codes)))
             except Exception as e:  # noqa: BLE001
                 log.error("腾讯快照亦失败: %s", e)
         if not ticks:

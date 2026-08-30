@@ -23,6 +23,48 @@ Version: 0.3.0
 
 Skill 可观测性 —— Trace/Span/Metric/Log 四维信号.
 集成: skill_feedback -> metrics, skill_executor -> traces, skill_lifecycle -> events.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: skill_observability.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① Span
+#   name_en: Span
+#   intro: class Span 源码 L80-L91
+#   desc: 公共方法（定义序）: to_dict；源码 L80-L91
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② Trace
+#   name_en: Trace
+#   intro: class Trace 源码 L95-L111
+#   desc: 公共方法（定义序）: to_dict；源码 L95-L111
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ SkillObservability
+#   name_en: SkillObservability
+#   intro: Skill 可观测性 —— Trace/Span/Metric/Log.
+#   desc: Skill 可观测性 —— Trace/Span/Metric/Log.；公共方法（定义序）: start_trace, add_span, end_span, end_trace, get_trace, record…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: Span, Trace, SkillObservability
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

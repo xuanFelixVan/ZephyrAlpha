@@ -14,7 +14,8 @@
 # [TESTS] tests/ex_core/adapters/test_qmt_file_bridge_quote.py
 # [A_module] module_id=MOD-L06-002-QMTFQ | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""QMT File Bridge Quote Provider——反向文件桥行情适配器
+"""
+QMT File Bridge Quote Provider——反向文件桥行情适配器
 
 职责:
   - 读取 QMT 沙箱策略(ZEPHYR_QUOTE v15)写入的 quote.csv
@@ -28,6 +29,46 @@
   - 双环境物理隔离: env="real"(实盘) / env="sim"(模拟)
 
 SSoT: docs/03_modules/_domain_execution_core/blueprint_qmt_file_bridge.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: env 参数
+#   fields: 参数 env（无注解）
+#   code: qmt_file_bridge_quote.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: stale_seconds 参数
+#   fields: 参数 stale_seconds（无注解）
+#   code: qmt_file_bridge_quote.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① QuoteSnapshot
+#   name_en: QuoteSnapshot
+#   intro: 单标的行情快照（5档）
+#   desc: 单标的行情快照（5档）；公共方法（定义序）: bid1, ask1；源码 L102-L126
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② QmtFileBridgeQuoteProvider
+#   name_en: QmtFileBridgeQuoteProvider
+#   intro: 反向文件桥行情 Provider
+#   desc: 反向文件桥行情 Provider Usage: provider = QmtFileBridgeQuoteProvider(env="sim") provider.connect…；公共方法（定义序）: provide…
+#   inputs: env stale_seconds
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: QuoteSnapshot, QmtFileBridgeQuoteProvider
+#   downstream: zephyr.ex_core.trading_session; scripts.start_paper_session
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -129,13 +170,13 @@ class QmtFileBridgeQuoteProvider:
         """校验行情文件存在（QMT 端策略启动后由 init 创建）"""
         if not self._quote_file.exists():
             raise QmtFileBridgeQuoteError(
-                f"行情文件不存在: {self._quote_file}，"
-                f"请确认 QMT 端 ZEPHYR_QUOTE v15 策略已启动"
+                f"行情文件不存在: {self._quote_file}，请确认 QMT 端 ZEPHYR_QUOTE v15 策略已启动"
             )
         self._connected = True
         _logger.info(
             "QmtFileBridgeQuoteProvider connected env=%s file=%s",
-            self._env, self._quote_file,
+            self._env,
+            self._quote_file,
         )
         return True
 
@@ -225,11 +266,13 @@ class QmtFileBridgeQuoteProvider:
 
         新鲜度检查: 行情中断时返回空 dict（调用方按缺价处理，不会用错价下单）
         """
+
         def price_provider(symbols: list[str]) -> dict[str, Decimal]:
             if not self.is_fresh():
                 _logger.warning(
                     "行情不新鲜(file=%s, stale_seconds=%s)，返回空价格",
-                    self._quote_file, self._stale_seconds,
+                    self._quote_file,
+                    self._stale_seconds,
                 )
                 return {}
             quotes = self.get_quotes(symbols)

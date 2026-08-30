@@ -14,7 +14,8 @@
 # [TESTS] tests/data_governance/test_record_lineage_tracker.py
 # [A_module] module_id=MOD-DATA_GOV-008 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""M8-NEW-09 Metaxy Record-Level Tracker（MOD-DATA_GOV-008）。
+"""
+M8-NEW-09 Metaxy Record-Level Tracker（MOD-DATA_GOV-008）。
 
 真源：construction_backlog_dig.tsv B13-04278（A3 数据架构 §17.2，裁定=做 P1）
 + CAND-DATGOV-005。
@@ -28,6 +29,33 @@
 其内容寻址批文件名（batch_<sha256[:16]>，去 .parquet），**只引用约定不重算摘要、
 不重复存因子值**；批次 Parquet 写归 OfflineStore，本模块只管 sidecar 元数据
 原子写（tmp+os.replace，对齐其原子写哲学）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: sidecar_path 参数
+#   fields: 参数 sidecar_path（无注解）
+#   code: record_lineage_tracker.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RecordLineageTracker
+#   name_en: RecordLineageTracker
+#   intro: 记录级血缘台账——批次溯源登记/反查 + sidecar JSONL 持久化。
+#   desc: 记录级血缘台账——批次溯源登记/反查 + sidecar JSONL 持久化。 幂等哲学对齐 MOD-DATA_GOV-002（同键重放幂等）；同键异内容 Fail-Closed…；公共方法（定义序）: registe…
+#   inputs: sidecar_path
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: RecordLineageTracker
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -123,14 +151,10 @@ class RecordLineageTracker:
         if existing is not None:
             if existing == prov:
                 return False
-            raise RecordLineageError(
-                f"batch_id {prov.batch_id!r} 已登记且内容不一致（溯源漂移 Fail-Closed）"
-            )
+            raise RecordLineageError(f"batch_id {prov.batch_id!r} 已登记且内容不一致（溯源漂移 Fail-Closed）")
         self._by_batch[prov.batch_id] = prov
         for trade_date in prov.trade_dates:
-            self._by_factor_date.setdefault((prov.factor_name, trade_date), []).append(
-                prov.batch_id
-            )
+            self._by_factor_date.setdefault((prov.factor_name, trade_date), []).append(prov.batch_id)
         return True
 
     def get(self, batch_id: str) -> FeatureBatchProvenance | None:
@@ -142,20 +166,14 @@ class RecordLineageTracker:
         """单条因子值反查：(factor_name, trade_date) → 批次溯源列表（source_files 落点）。"""
         factor = _validate_text(factor_name, field_name="factor_name")
         date = _validate_text(trade_date, field_name="trade_date")
-        return [
-            self._by_batch[bid]
-            for bid in self._by_factor_date.get((factor, date), [])
-        ]
+        return [self._by_batch[bid] for bid in self._by_factor_date.get((factor, date), [])]
 
     def flush(self) -> int:
         """sidecar JSONL 原子写（tmp+os.replace；无 sidecar 路径 Fail-Closed）。"""
         if self._sidecar_path is None:
             raise RecordLineageError("未配置 sidecar_path（纯内存台账不支持 flush）")
         records = sorted(self._by_batch.values(), key=lambda p: p.batch_id)
-        payload = "".join(
-            json.dumps(asdict(prov), ensure_ascii=False, sort_keys=True) + "\n"
-            for prov in records
-        )
+        payload = "".join(json.dumps(asdict(prov), ensure_ascii=False, sort_keys=True) + "\n" for prov in records)
         self._sidecar_path.parent.mkdir(parents=True, exist_ok=True)
         tmp_path = self._sidecar_path.with_suffix(self._sidecar_path.suffix + ".tmp")
         tmp_path.write_text(payload, encoding="utf-8")
@@ -185,9 +203,7 @@ class RecordLineageTracker:
                     row_count=raw.get("row_count", 0),
                 )
             except (json.JSONDecodeError, KeyError, TypeError) as exc:
-                raise RecordLineageError(
-                    f"sidecar 坏行 @{lineno}（Fail-Closed 不静默错读）: {exc}"
-                ) from exc
+                raise RecordLineageError(f"sidecar 坏行 @{lineno}（Fail-Closed 不静默错读）: {exc}") from exc
             tracker.register(prov)
         return tracker
 

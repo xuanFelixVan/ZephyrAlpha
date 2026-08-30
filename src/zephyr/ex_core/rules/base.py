@@ -14,12 +14,40 @@
 # [ERROR_CONTRACT] 纯接口无异常约定
 # [TESTS] tests/ex_core/rules/
 # [TTL] permanent
-"""交易规则包抽象接口（Trading Rule Pack，CAND-CRYPTO-006 / 94号 §4.3）。
+"""
+交易规则包抽象接口（Trading Rule Pack，CAND-CRYPTO-006 / 94号 §4.3）。
 
 每市场一份规则包，订单校验时按标的所属市场加载。
 纪律：
 - 业务代码禁止 if/else 判市场——市场差异只走"按市场注入实现"（策略模式）；
 - A股现有逻辑零行为变化（A股实现=board_lot/price_cage 真源委托收编）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: base.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① TradingRulePack
+#   name_en: TradingRulePack
+#   intro: 交易规则包策略对象（抽象接口）。
+#   desc: 交易规则包策略对象（抽象接口）。 属性： market: 市场标签（"ashare"/"crypto"，治理闸市场标注用）。；公共方法（定义序）: lot_rule, price_cage_rule, settleme…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: TradingRulePack
+#   downstream: zephyr.ex_core.rules.ashare; zephyr.ex_core.rules.crypto; zephyr.ex_core.rules
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

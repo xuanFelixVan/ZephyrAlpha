@@ -14,7 +14,8 @@
 # [TESTS]
 # [TTL] permanent
 # [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
-"""过拟合检测模块(三维度 + 三层)
+"""
+过拟合检测模块(三维度 + 三层)
 
 职责:
   - 过拟合检测三维度(D-FACTOR-03):
@@ -32,6 +33,33 @@
   - 样本内外比率使用Sharpe(年化), 样本内Sharpe<=0时不适用比率判定
 
 SSoT: docs/03_modules/_domain_backtest/blueprint.md §16.7
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: overfitting_detector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① OverfittingDetector
+#   name_en: OverfittingDetector
+#   intro: 过拟合检测器(三维度 + 三层)
+#   desc: 过拟合检测器(三维度 + 三层) 消费Walk-Forward结果/参数扰动结果/跨时段结果与样本内外Sharpe, 输出is_overfitting标志供SIM-56上线前自动…；公共方法（定义序）: check_w…
+#   inputs: config
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: OverfittingDetector
+#   downstream: zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.implementati…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-OBS-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-REGIME-DEADZONE-001 #ARCH-OBS-EXP-TRACK-001
-"""L_INFRA_TELEMETRY — 各零件领域对象 → 实验跟踪语义适配器包（单一 JSON 后端，MLflow 已退役）。
+"""
+L_INFRA_TELEMETRY — 各零件领域对象 → 实验跟踪语义适配器包（单一 JSON 后端，MLflow 已退役）。
 
 M1: c1_adapter（C1ComparisonResult → tracking）
 M4（50 号 §3 ⑥ 五零件接入）: regime_adapter（regime_detector 检测）/
@@ -26,6 +27,32 @@ M4（50 号 §3 ⑥ 五零件接入）: regime_adapter（regime_detector 检测�
 全链路 lineage：各 adapter 的 lineage 参数把上游零件 run_id 写入 tags
 （lineage_regime_run_id / lineage_feature_run_id / lineage_c1_run_id ...），
 供 query/Panel 按 run 串联 regime→feature→backtest→C1 链。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 包内子模块公共符号
+#   fields: import 再导出符号: annotations, Final
+#   code: __init__.py import L58
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包公共面再导出
+#   name_en: __init__ re-export
+#   intro: 再导出 annotations, Final（共 2 符号）
+#   desc: __init__ import L58；__all__ 0 项（AST 事实）
+#   inputs: I1
+#   outputs: __all__ 公共符号表
+# 层: 输出
+# - id: O1
+#   name_zh: 公共 API 面（2 符号）
+#   name_en: __all__
+#   intro: annotations, Final
+#   downstream: zephyr.backtest.regime_validation.c1_runner ; (后续 regime/feature/backtest/full_…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

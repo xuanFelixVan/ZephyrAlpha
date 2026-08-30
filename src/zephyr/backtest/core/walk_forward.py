@@ -14,7 +14,8 @@
 # [TESTS]
 # [TTL] permanent
 # [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
-"""Walk-Forward分析与多重比较偏差校正模块
+"""
+Walk-Forward分析与多重比较偏差校正模块
 
 职责:
   - Walk-Forward三模式切分(R-93/P1-29): 滚动(rolling)/锚定(anchored)/扩展(expanding)
@@ -27,6 +28,33 @@
   - 年化基准: 252交易日
 
 SSoT: docs/03_modules/_domain_backtest/blueprint.md §16.7
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: walk_forward.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① WalkForwardAnalyzer
+#   name_en: WalkForwardAnalyzer
+#   intro: Walk-Forward分析器
+#   desc: Walk-Forward分析器 提供三模式时间序列切分与White's Reality Check多重比较偏差校正。 按策略类型选择切分模式: - rolling: 短周期/非平…；公共方法（定义序）: split_r…
+#   inputs: config
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: WalkForwardAnalyzer
+#   downstream: zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.implementati…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

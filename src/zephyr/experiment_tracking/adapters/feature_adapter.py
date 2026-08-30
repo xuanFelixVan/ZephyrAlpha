@@ -22,13 +22,55 @@
 # F3: track_feature_build(start_run(component=feature-build) → log_* → run_id)
 # O1: run_id（NullBackend="null-run"）
 # [/ALGO_FLOW]
-"""L_INFRA_TELEMETRY — regime_feature_builder 特征矩阵 → 实验跟踪语义适配器（50 号 §3 ⑥，M4）。
+"""
+L_INFRA_TELEMETRY — regime_feature_builder 特征矩阵 → 实验跟踪语义适配器（50 号 §3 ⑥，M4）。
 
 把一次特征构建产出（DataFrame）翻译为一个实验跟踪 run：特征矩阵 schema + 缺失率 +
 快照 artifact（50 号 §3 ⑥ 接入要求）。运行时全鸭子类型（不 import regime 域）。
 
 依据: 50_backtest_observability_workplan §3 ⑥
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: features 参数
+#   fields: 参数 features，类型注解 pd.DataFrame
+#   code: feature_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: builder_info 参数
+#   fields: 参数 builder_info（无注解）
+#   code: feature_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: snapshot_rows 参数
+#   fields: 参数 snapshot_rows（无注解）
+#   code: feature_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: lineage 参数
+#   fields: 参数 lineage（无注解）
+#   code: feature_adapter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① track_feature_build
+#   name_en: track_feature_build
+#   intro: 把一次特征矩阵构建记录为一个实验跟踪 run。
+#   desc: 把一次特征矩阵构建记录为一个实验跟踪 run。 Args: features: 特征矩阵（DataFrame 鸭子类型，读 columns/shape/isna/index）。…；源码 L91-L145
+#   inputs: features builder_info snapshot_rows lineage extra_tags
+#   outputs: str
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: regime 特征构建入口（track 时 lazy import 调用）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -47,7 +89,7 @@ _COMPONENT = "feature-build"
 
 
 def track_feature_build(
-    features: "pd.DataFrame",
+    features: pd.DataFrame,
     *,
     builder_info: dict[str, Any] | None = None,
     snapshot_rows: int = 20,

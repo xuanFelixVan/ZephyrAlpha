@@ -14,7 +14,8 @@
 # [TESTS] tests/factor/test_bhy_fdr.py
 # [A_module] module_id=MOD-L02-BHY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_FACTOR — BHY FDR 多重检验校正（90 号 Phase2 项，#2 因子IC 双轨采纳）
+"""
+D_FACTOR — BHY FDR 多重检验校正（90 号 Phase2 项，#2 因子IC 双轨采纳）
 
 裁定真源：90_methodology_open_questions.md §2（v2.0.0）：
   硬性统计门禁：ICIR≥0.5 + BHY 控制 FDR q=10%（单批筛选 >100 因子时
@@ -27,6 +28,43 @@
 
 注：memo 原述"statsmodels multipletests 直接可用"，但 statsmodels 非项目依赖
 （requirements.txt 无）；BHY 为闭式程序，此处纯 numpy 实现等价语义。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: p_values 参数
+#   fields: 参数 p_values，类型注解 list[float] | np.ndarray
+#   code: bhy_fdr.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: q 参数
+#   fields: 参数 q，类型注解 float
+#   code: bhy_fdr.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: arbitrary_dependence 参数
+#   fields: 参数 arbitrary_dependence（无注解）
+#   code: bhy_fdr.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① bhy_fdr
+#   name_en: bhy_fdr
+#   intro: BHY FDR 校正。
+#   desc: BHY FDR 校正。 Args: p_values: 单批检验 p 值序列 q: FDR 控制水平（默认 0.10，90 号 §2） arbitrary_dependence:…；源码 L93-L148
+#   inputs: p_values q arbitrary_dependence
+#   outputs: BHYFDRResult
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: BHYFDRResult
+#   name_en: BHYFDRResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: factor_pool_manager 入池门禁（abs001_gate，接线待排期，本批仅交付模块本体）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

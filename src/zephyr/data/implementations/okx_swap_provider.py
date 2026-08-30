@@ -14,7 +14,8 @@
 # [TESTS] tests/zephyr/data/test_okx_swap_provider.py
 # [A_module] module_id=MOD-MKT-DATA | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""OKX 永续合约数据 Provider（CAND-CRYPTO-003，94号 §4.4 Phase 2 数据集）。
+"""
+OKX 永续合约数据 Provider（CAND-CRYPTO-003，94号 §4.4 Phase 2 数据集）。
 
 公开 REST 端点（无需签名）采集永续合约四类专属数据：
 - 资金费率历史：GET /api/v5/public/funding-rate-history（分页 before=毫秒时间戳，100 条/页）
@@ -26,6 +27,32 @@
 爆仓数据（liquidation）OKX 仅 WS 推送无历史回填，不在本 provider 范围（registry 风险提示项）。
 
 instId 约定：永续合约为 BTC-USDT-SWAP 形式；现货指数价对应 BTC-USDT。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: okx_swap_provider.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① OkxSwapProvider
+#   name_en: OkxSwapProvider
+#   intro: OKX 永续合约数据 Provider（CAND-CRYPTO-003）。
+#   desc: OKX 永续合约数据 Provider（CAND-CRYPTO-003）。 公开 REST 端点（无需签名），shared 线程安全模型。 已知问题：OI/标记价格/基差为当前快…；公共方法（定义序）: connect…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: OkxSwapProvider
+#   downstream: zephyr.data.scheduler
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -183,7 +210,7 @@ class OkxSwapProvider(IngestProviderBase):
 
     # ---- 拉取入口 ----
 
-    def fetch(self, payload: FetchPayload, policy: "SourcePolicy") -> Iterator[FetchResult]:
+    def fetch(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """按 capability 路由到具体获取方法。"""
         if not self._connected:
             yield FetchResult(
@@ -236,7 +263,7 @@ class OkxSwapProvider(IngestProviderBase):
 
     # ---- 资金费率历史 ----
 
-    def _fetch_funding_rate_history(self, payload: FetchPayload, policy: "SourcePolicy") -> Iterator[FetchResult]:
+    def _fetch_funding_rate_history(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """拉取资金费率历史（公开端点，分页全覆盖）。
 
         /api/v5/public/funding-rate-history 时间倒序返回（最新在前），
@@ -301,13 +328,15 @@ class OkxSwapProvider(IngestProviderBase):
                     ts_ms = int(rec["fundingTime"])
                     if ts_ms < start_ts_ms or ts_ms > end_ts_ms:
                         continue
-                    all_rows.append((
-                        symbol,
-                        _ms_to_iso(ts_ms),
-                        float(rec["fundingRate"]),
-                        float(rec.get("realizedRate") or rec["fundingRate"]),
-                        rec.get("method", ""),
-                    ))
+                    all_rows.append(
+                        (
+                            symbol,
+                            _ms_to_iso(ts_ms),
+                            float(rec["fundingRate"]),
+                            float(rec.get("realizedRate") or rec["fundingRate"]),
+                            rec.get("method", ""),
+                        )
+                    )
 
                 # 分页：最早一条的 fundingTime - 1ms
                 earliest_ts = min(int(rec["fundingTime"]) for rec in records)
@@ -328,7 +357,7 @@ class OkxSwapProvider(IngestProviderBase):
 
     # ---- 持仓量 OI（当前快照） ----
 
-    def _fetch_open_interest(self, payload: FetchPayload, policy: "SourcePolicy") -> Iterator[FetchResult]:
+    def _fetch_open_interest(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """拉取持仓量 OI 当前快照（/api/v5/public/open-interest?instType=SWAP）。"""
         symbols = self._require_symbols(payload, "open_interest")
         if symbols is None:
@@ -371,13 +400,15 @@ class OkxSwapProvider(IngestProviderBase):
             rows: list[tuple] = []
             for rec in data.get("data", []):
                 ts_ms = int(rec["ts"])
-                rows.append((
-                    symbol,
-                    _ms_to_iso(ts_ms),
-                    float(rec["oi"]),
-                    float(rec.get("oiCcy") or 0.0),
-                    float(rec.get("oiUsd") or 0.0),
-                ))
+                rows.append(
+                    (
+                        symbol,
+                        _ms_to_iso(ts_ms),
+                        float(rec["oi"]),
+                        float(rec.get("oiCcy") or 0.0),
+                        float(rec.get("oiUsd") or 0.0),
+                    )
+                )
 
             last_key = max(r[1] for r in rows) if rows else ""
             yield FetchResult(
@@ -390,7 +421,7 @@ class OkxSwapProvider(IngestProviderBase):
 
     # ---- 标记价格（当前快照） ----
 
-    def _fetch_mark_price(self, payload: FetchPayload, policy: "SourcePolicy") -> Iterator[FetchResult]:
+    def _fetch_mark_price(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """拉取标记价格当前快照（/api/v5/public/mark-price?instType=SWAP）。"""
         symbols = self._require_symbols(payload, "mark_price")
         if symbols is None:
@@ -433,11 +464,13 @@ class OkxSwapProvider(IngestProviderBase):
             rows: list[tuple] = []
             for rec in data.get("data", []):
                 ts_ms = int(rec["ts"])
-                rows.append((
-                    symbol,
-                    _ms_to_iso(ts_ms),
-                    float(rec["markPx"]),
-                ))
+                rows.append(
+                    (
+                        symbol,
+                        _ms_to_iso(ts_ms),
+                        float(rec["markPx"]),
+                    )
+                )
 
             last_key = max(r[1] for r in rows) if rows else ""
             yield FetchResult(
@@ -457,7 +490,7 @@ class OkxSwapProvider(IngestProviderBase):
             return swap_symbol[: -len("-SWAP")]
         return swap_symbol
 
-    def _fetch_basis(self, payload: FetchPayload, policy: "SourcePolicy") -> Iterator[FetchResult]:
+    def _fetch_basis(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """拉取基差（SWAP 标记价格 - 现货指数价，两公开端点衍生计算）。"""
         symbols = self._require_symbols(payload, "basis")
         if symbols is None:

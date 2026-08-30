@@ -22,7 +22,8 @@
 # A3: 综合裁决 can_deploy = gate.can_deploy ∧ ¬is_overfitting
 # O1: StrategyValidationVerdict(gate三阶段结果+过拟合结论+can_deploy+理由)
 # [/ALGO_FLOW]
-"""策略验证流水线编排入口模块(52号 §7①)
+"""
+策略验证流水线编排入口模块(52号 §7①)
 
 职责:
   - 统一"策略验证流水线"调用入口: 过拟合三维度检测 → IS→WFA→OOS 三阶段门控
@@ -36,6 +37,43 @@
     由调用方供给, 本模块不直接跑回测
 
 SSoT: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/52_backtest_framework_docking.md §7①
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: request 参数
+#   fields: 参数 request，类型注解 StrategyValidationRequest
+#   code: strategy_validation_pipeline.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: gate 参数
+#   fields: 参数 gate（无注解）
+#   code: strategy_validation_pipeline.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: detector 参数
+#   fields: 参数 detector（无注解）
+#   code: strategy_validation_pipeline.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① run_strategy_validation
+#   name_en: run_strategy_validation
+#   intro: 策略验证流水线编排入口(过拟合检测 → 三阶段门控 → 综合裁决)
+#   desc: 策略验证流水线编排入口(过拟合检测 → 三阶段门控 → 综合裁决) Args: request: 验证请求(各阶段回测产物输入注入) gate: 决策门控实例(可注入自定义配置;…；源码 L158-L222
+#   inputs: request gate detector
+#   outputs: StrategyValidationVerdict
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: StrategyValidationVerdict
+#   name_en: StrategyValidationVerdict
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 首批策略上线验证(52号§7①编排入口)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

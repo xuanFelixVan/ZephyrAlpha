@@ -14,7 +14,8 @@
 # [TESTS] tests/ex_sor/test_sor_agent.py
 # [A_module] module_id=MOD-XS-015 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
-"""SorAgent — 路由Agent（SOR）（MOD-XS-015）。
+"""
+SorAgent — 路由Agent（SOR）（MOD-XS-015）。
 
 B11-02491（AUD-DRAFT-001-DIGEST P1 波 W-P1-24，CAND-SOR-001，A7-Agent架构
 §1.4）：SOR Agent 实体（族卡模式，与 MOD-AU-011 T0TraderAgent 同族）。
@@ -26,6 +27,48 @@ B11-02491（AUD-DRAFT-001-DIGEST P1 波 W-P1-24，CAND-SOR-001，A7-Agent架构
 实体：族卡+技能编排+回放+反馈循环）；order_splitter=拆单纯函数（委托不
 重建）；llm_agent_router=LLM 模型路由（零交集）；smart_order_router 全仓
 不存在。与 C-026/C-046 对齐：本 Agent 无下单语义，执行委托券商通道装配批。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: weights 参数
+#   fields: 参数 weights（无注解）
+#   code: sor_agent.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: min_liquidity 参数
+#   fields: 参数 min_liquidity（无注解）
+#   code: sor_agent.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: splitter_fn 参数
+#   fields: 参数 splitter_fn（无注解）
+#   code: sor_agent.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: feedback_sink 参数
+#   fields: 参数 feedback_sink（无注解）
+#   code: sor_agent.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SorAgent
+#   name_en: SorAgent
+#   intro: 路由Agent（SOR，MOD-XS-015）——Level 0 纯规则。
+#   desc: 路由Agent（SOR，MOD-XS-015）——Level 0 纯规则。 用法： agent = SorAgent(splitter_fn=my_splitter, feedb…；公共方法（定义序）: decide,…
+#   inputs: weights min_liquidity splitter_fn feedback_sink replay_sink
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: SorAgent
+#   downstream: 运行时装配批（MOD-XS-001 路由算法委托 / EX-CORE Pre-Trade 风控链 / broker_api_connector 券商通道执行…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -197,9 +240,7 @@ def _default_splitter(
         side=OrderSide(side),
         total_quantity=Decimal(total_quantity),
         slice_count=slice_count,
-        volume_profile=(
-            tuple(Decimal(str(w)) for w in volume_profile) if volume_profile else None
-        ),
+        volume_profile=(tuple(Decimal(str(w)) for w in volume_profile) if volume_profile else None),
     )
     return split_order(request, algo=SplitAlgo(algo))
 
@@ -211,9 +252,7 @@ def _assert_rule_only(name: str, fn: Callable | None) -> None:
     module = getattr(fn, "__module__", "") or ""
     segments = {seg.lower() for seg in module.replace("/", ".").split(".")}
     if segments & _FORBIDDEN_MODULE_SEGMENTS:
-        raise SorAgentError(
-            f"Level 0 纯规则红线：{name} 来自禁域模块 {module}（禁 LLM 调用）"
-        )
+        raise SorAgentError(f"Level 0 纯规则红线：{name} 来自禁域模块 {module}（禁 LLM 调用）")
 
 
 class SorAgent:
@@ -276,15 +315,11 @@ class SorAgent:
             now_utc = datetime.now(timezone.utc)
         self._validate_request(request)
         if request.split_algo not in _SPLIT_ALGO_MAP:
-            raise SorAgentError(
-                f"未知拆单算法: {request.split_algo!r}（支持 {sorted(_SPLIT_ALGO_MAP)}）"
-            )
+            raise SorAgentError(f"未知拆单算法: {request.split_algo!r}（支持 {sorted(_SPLIT_ALGO_MAP)}）")
         # 流动性评估：低于门槛的通道先行剔除
         liquid = [c for c in candidates if c.liquidity_score >= self._min_liquidity]
         if not liquid:
-            raise SorAgentError(
-                f"无满足流动性门槛 {self._min_liquidity} 的通道候选（Fail-Closed）"
-            )
+            raise SorAgentError(f"无满足流动性门槛 {self._min_liquidity} 的通道候选（Fail-Closed）")
         scored = sorted(liquid, key=self._score, reverse=True)
         best = scored[0]
         best_score = self._score(best)
@@ -345,9 +380,7 @@ class SorAgent:
 
     # ── 滑点回写反馈循环 ──
 
-    def record_fill_feedback(
-        self, replay_id: str, actual_slippage_bps: float
-    ) -> SlippageFeedback:
+    def record_fill_feedback(self, replay_id: str, actual_slippage_bps: float) -> SlippageFeedback:
         """成交回报 → 滑点实际 vs 预估配对 + per-broker 偏差校准统计。"""
         pair = self._decision_index.get(replay_id)
         if pair is None:

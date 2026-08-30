@@ -23,7 +23,8 @@
 # A4: phase_weight_frame(灰度软分配权重帧, 30号§6.5过渡期天按P比例; 兜底行全押保守阶段)
 # O1: PhaseLabelResult / dict[phase→PhaseSlice] / 权重DataFrame
 # [/ALGO_FLOW]
-"""D_FACTOR — G07 情绪周期分层标签器（23 号 memo §3.1②，消费 BM-SEL-23-B）
+"""
+D_FACTOR — G07 情绪周期分层标签器（23 号 memo §3.1②，消费 BM-SEL-23-B）
 
 用情绪周期 4+1 阶段（冰点/反核/主升/疯狂/退潮）给每个交易日打标签，分 5 段
 分别算相关矩阵——全样本相关性可能被主升/疯狂态主导（"情绪 beta 穿多件衣服"
@@ -36,6 +37,77 @@ confidence<0.60 → 默认保守（冰点）并留痕 fallback_mask。
 
 本模块只消费 market_sentiment_analyzer 的输出契约（duck-typed），不 import 其内部；
 5 档中文阶段名与 SentimentPhase enum value 一致（BM-SEL-23-B 输出契约）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: labels 参数
+#   fields: 参数 labels，类型注解 pd.Series
+#   code: correlation_sentiment_stratifier.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: confidences 参数
+#   fields: 参数 confidences，类型注解 pd.Series | None
+#   code: correlation_sentiment_stratifier.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: confidence_threshold 参数
+#   fields: 参数 confidence_threshold，类型注解 float
+#   code: correlation_sentiment_stratifier.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: fallback_phase 参数
+#   fields: 参数 fallback_phase，类型注解 str
+#   code: correlation_sentiment_stratifier.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① build_phase_labels
+#   name_en: build_phase_labels
+#   intro: 由硬标签+置信度构建有效分层标签（低置信度→保守兜底）。
+#   desc: 由硬标签+置信度构建有效分层标签（低置信度→保守兜底）。 Args: labels: index=交易日，values=5 档中文阶段名（BM-SEL-23-B 硬标签） con…；源码 L185-L222
+#   inputs: labels confidences confidence_threshold fallback_phase
+#   outputs: PhaseLabelResult
+# - id: A2
+#   name_zh: ② labels_from_grayscale
+#   name_en: labels_from_grayscale
+#   intro: 消费 analyze_grayscale() 输出映射（duck-typed）构建分层标签。
+#   desc: 消费 analyze_grayscale() 输出映射（duck-typed）构建分层标签。 每个值须含 phase_prob/dominant_phase/confidence…；源码 L225-L255
+#   inputs: grayscale_map confidence_threshold fallback_phase
+#   outputs: PhaseLabelResult
+# - id: A3
+#   name_zh: ③ split_by_phase
+#   name_en: split_by_phase
+#   intro: 按情绪阶段切分收益率面板（5 阶段全量返回，缺样本阶段标注不足）。
+#   desc: 按情绪阶段切分收益率面板（5 阶段全量返回，缺样本阶段标注不足）。 Args: returns_panel: 对齐收益率面板（T×k） labels: 有效阶段标签（build_…；源码 L258-L287
+#   inputs: returns_panel labels min_samples
+#   outputs: dict[str, PhaseSlice]
+# - id: A4
+#   name_zh: ④ phase_weight_frame
+#   name_en: phase_weight_frame
+#   intro: 灰度软分配权重帧（30 号 §6.5：过渡期天按 P 比例贡献给多阶段）。
+#   desc: 灰度软分配权重帧（30 号 §6.5：过渡期天按 P 比例贡献给多阶段）。 每行为一日的 5 阶段权重（Σ=1）；confidence<阈值的兜底日全押保守阶段 （定位器不可信时…；源码 L290-L328
+#   inputs: grayscale_map confidence_threshold fallback_phase
+#   outputs: pd.DataFrame
+#   （注：A4 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: PhaseLabelResult
+#   name_en: PhaseLabelResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: G07 策略相关性验证报告（分层 5×5×5 矩阵）
+# - id: O2
+#   name_zh: dict[str, PhaseSlice]
+#   name_en: dict[str, PhaseSlice]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: G07 策略相关性验证报告（分层 5×5×5 矩阵）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

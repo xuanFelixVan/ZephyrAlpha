@@ -14,7 +14,8 @@
 # [TESTS] tests/backtest/test_overfitting_adjudicator.py
 # [TTL] permanent
 # [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
-"""P-5 过拟合裁定协议组件(三检验器 + 上线门禁挂钩点预留)
+"""
+P-5 过拟合裁定协议组件(三检验器 + 上线门禁挂钩点预留)
 
 职责:
   - 检验器① walk-forward 汇总: 各折 OOS/IS 衰减比分布(mean/std/min) + 最差折定位,
@@ -36,6 +37,93 @@
   - Φ⁻¹ 用 Acklam 有理逼近 + 一步 Newton 精化(纯 math, 无 scipy 硬依赖)
 
 SSoT: docs/03_modules/_domain_backtest/blueprint.md §16.7
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: num_trials 参数
+#   fields: 参数 num_trials，类型注解 int
+#   code: overfitting_adjudicator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: sharpe 参数
+#   fields: 参数 sharpe，类型注解 float
+#   code: overfitting_adjudicator.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: num_obs 参数
+#   fields: 参数 num_obs，类型注解 int
+#   code: overfitting_adjudicator.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: skewness 参数
+#   fields: 参数 skewness，类型注解 float
+#   code: overfitting_adjudicator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① expected_max_sharpe_z
+#   name_en: expected_max_sharpe_z
+#   intro: 多重试验期望最大值 E[max(Z_N)](Bailey & López de Prado 2014 闭式)。
+#   desc: 多重试验期望最大值 E[max(Z_N)](Bailey & López de Prado 2014 闭式)。 N=1: 0(无多重试验膨胀) N>1: E[max(Z_N)]≈…；源码 L263-L285
+#   inputs: num_trials
+#   outputs: float
+# - id: A2
+#   name_zh: ② adjudicate_dsr
+#   name_en: adjudicate_dsr
+#   intro: DSR 裁定: 多次试验后真实 Sharpe 折减(Bailey & López de Prado 2014)。
+#   desc: DSR 裁定: 多次试验后真实 Sharpe 折减(Bailey & López de Prado 2014)。 DSR = Φ((SR − E[max SR]) / √V[SR…；源码 L317-L391
+#   inputs: sharpe num_trials num_obs skewness kurtosis threshold
+#   outputs: DSRVerdict
+# - id: A3
+#   name_zh: ③ summarize_walk_forward
+#   name_en: summarize_walk_forward
+#   intro: 检验器①: 各折 OOS/IS 衰减比分布 + 最差折汇总。
+#   desc: 检验器①: 各折 OOS/IS 衰减比分布 + 最差折汇总。 Args: folds: 各折 (is_sharpe, oos_sharpe) 对, 至少 1 折; IS<=0 折…；源码 L428-L494
+#   inputs: folds threshold
+#   outputs: WalkForwardDecaySummary
+# - id: A4
+#   name_zh: ④ perturbation_stability
+#   name_en: perturbation_stability
+#   intro: 检验器③: 策略参数 ±pct one-at-a-time 扰动, 统计绩效衰减率与稳健区间占比。
+#   desc: 检验器③: 策略参数 ±pct one-at-a-time 扰动, 统计绩效衰减率与稳健区间占比。 回测引擎走契约接口: backtest_fn(params) -> 绩效标量(…；源码 L550-L642
+#   inputs: base_params backtest_fn pct tolerance min_robust_share
+#   outputs: PerturbationStabilityReport
+# - id: A5
+#   name_zh: ⑤ OverfitGateHook
+#   name_en: OverfitGateHook
+#   intro: 上线门禁挂钩点 Protocol——预留接口, 默认不接真门禁。
+#   desc: 上线门禁挂钩点 Protocol——预留接口, 默认不接真门禁。 真门禁实现方(上线流水线)按本 Protocol 注入: 裁定完成后收到 OverfitAdjudication…；公共方法（定义序）: on_adju…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ OverfittingAdjudicator
+#   name_en: OverfittingAdjudicator
+#   intro: P-5 过拟合裁定器: 三检验器编排 + 门禁挂钩点回调。
+#   desc: P-5 过拟合裁定器: 三检验器编排 + 门禁挂钩点回调。 未提供的检验器视为未检测(不参与否决), 与 overfitting_detector.detect 口径一致。 ga…；公共方法（定义序）: adjudic…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A6 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 上线评审流程(挂钩点预留, 未接真门禁)
+# - id: O2
+#   name_zh: DSRVerdict
+#   name_en: DSRVerdict
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 上线评审流程(挂钩点预留, 未接真门禁)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
 """
 
 from __future__ import annotations
@@ -134,24 +222,30 @@ def _inverse_normal_cdf(p: float) -> float:
 
     if p < _ACKLAM_P_LOW:
         q = math.sqrt(-2.0 * math.log(p))
-        x = (((((_ACKLAM_C[0] * q + _ACKLAM_C[1]) * q + _ACKLAM_C[2]) * q + _ACKLAM_C[3]) * q + _ACKLAM_C[4]) * q + _ACKLAM_C[5]) / (
-            (((_ACKLAM_D[0] * q + _ACKLAM_D[1]) * q + _ACKLAM_D[2]) * q + _ACKLAM_D[3]) * q + 1.0
-        )
+        x = (
+            ((((_ACKLAM_C[0] * q + _ACKLAM_C[1]) * q + _ACKLAM_C[2]) * q + _ACKLAM_C[3]) * q + _ACKLAM_C[4]) * q
+            + _ACKLAM_C[5]
+        ) / ((((_ACKLAM_D[0] * q + _ACKLAM_D[1]) * q + _ACKLAM_D[2]) * q + _ACKLAM_D[3]) * q + 1.0)
     elif p <= _ACKLAM_P_HIGH:
         q = p - 0.5
         r = q * q
         x = (
-            (((((_ACKLAM_A[0] * r + _ACKLAM_A[1]) * r + _ACKLAM_A[2]) * r + _ACKLAM_A[3]) * r + _ACKLAM_A[4]) * r + _ACKLAM_A[5])
+            (
+                ((((_ACKLAM_A[0] * r + _ACKLAM_A[1]) * r + _ACKLAM_A[2]) * r + _ACKLAM_A[3]) * r + _ACKLAM_A[4]) * r
+                + _ACKLAM_A[5]
+            )
             * q
             / (
-                ((((_ACKLAM_B[0] * r + _ACKLAM_B[1]) * r + _ACKLAM_B[2]) * r + _ACKLAM_B[3]) * r + _ACKLAM_B[4]) * r + 1.0
+                ((((_ACKLAM_B[0] * r + _ACKLAM_B[1]) * r + _ACKLAM_B[2]) * r + _ACKLAM_B[3]) * r + _ACKLAM_B[4]) * r
+                + 1.0
             )
         )
     else:
         q = math.sqrt(-2.0 * math.log(1.0 - p))
-        x = -(((((_ACKLAM_C[0] * q + _ACKLAM_C[1]) * q + _ACKLAM_C[2]) * q + _ACKLAM_C[3]) * q + _ACKLAM_C[4]) * q + _ACKLAM_C[5]) / (
-            (((_ACKLAM_D[0] * q + _ACKLAM_D[1]) * q + _ACKLAM_D[2]) * q + _ACKLAM_D[3]) * q + 1.0
-        )
+        x = -(
+            ((((_ACKLAM_C[0] * q + _ACKLAM_C[1]) * q + _ACKLAM_C[2]) * q + _ACKLAM_C[3]) * q + _ACKLAM_C[4]) * q
+            + _ACKLAM_C[5]
+        ) / ((((_ACKLAM_D[0] * q + _ACKLAM_D[1]) * q + _ACKLAM_D[2]) * q + _ACKLAM_D[3]) * q + 1.0)
 
     # 一步 Newton 精化: x -= (Φ(x)-p)/φ(x)
     err = _normal_cdf(x) - p

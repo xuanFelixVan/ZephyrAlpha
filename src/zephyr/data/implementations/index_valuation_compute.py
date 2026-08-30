@@ -14,7 +14,8 @@
 # [TESTS] tests/zephyr/data/test_index_valuation_compute.py
 # [A_module] module_id=MOD-L00-004-IDXVAL | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""指数估值内部计算 Provider（S2 路A 管道，2026-08-28 S2 治本方案 §5.2）。
+"""
+指数估值内部计算 Provider（S2 路A 管道，2026-08-28 S2 治本方案 §5.2）。
 
 区别于外部数据源 Provider（akshare 采集 PE_TTM 原始值），本 Provider 负责：
   1. 从 c1_market.index_valuation_daily 读取已落库的 PE_TTM/股息率原始序列
@@ -36,6 +37,32 @@ ERP 口径：
 分位口径：
     全历史扩展窗分位（expanding percentile），非滚动窗口。
     与 s2_valuation_score_fundamental 消费端语义一致（危机期分位<25%→60 分）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: index_valuation_compute.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① IndexValuationComputeProvider
+#   name_en: IndexValuationComputeProvider
+#   intro: 指数估值内部计算 Provider（CAPE/分位/ERP）。
+#   desc: 指数估值内部计算 Provider（CAPE/分位/ERP）。 用法（由 scheduler 自动调用，source=internal, capability=index_val…；公共方法（定义序）: connect…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: IndexValuationComputeProvider
+#   downstream: zephyr.data.scheduler (source=internal 分支，capability=index_valuation_daily)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -183,9 +210,7 @@ class IndexValuationComputeProvider(IngestProviderBase):
                 error=None,
             )
 
-    def _compute_one_symbol(
-        self, symbol: str, start: datetime.date, end: datetime.date
-    ) -> list[tuple]:
+    def _compute_one_symbol(self, symbol: str, start: datetime.date, end: datetime.date) -> list[tuple]:
         """计算单只指数的 CAPE/分位/ERP 并返回行列表。
 
         数据源：
@@ -246,9 +271,7 @@ class IndexValuationComputeProvider(IngestProviderBase):
 
         # 7. 计算 ERP（df 为整数索引，需换日期索引与 bond_series（日期索引）对齐，
         #    否则 reindex(RangeIndex) 全 NaN——同 _compute_cape_5y 的 date_index 口径）
-        pe_by_date = pd.Series(
-            df["pe_ttm"].values, index=pd.DatetimeIndex(df["trade_date"].values)
-        )
+        pe_by_date = pd.Series(df["pe_ttm"].values, index=pd.DatetimeIndex(df["trade_date"].values))
         erp = self._compute_erp(pe_by_date, bond_series)
         erp_pct = self._expanding_percentile(erp)
 

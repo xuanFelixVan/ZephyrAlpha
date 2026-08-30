@@ -14,7 +14,8 @@
 # [TESTS] tests/factor/test_intraday_factor_loop.py
 # [A_module] module_id=MOD-L02-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""盘中因子调度循环——3秒拉 tick → DataFrame → DagExecutor → H1 Redis。
+"""
+盘中因子调度循环——3秒拉 tick → DataFrame → DagExecutor → H1 Redis。
 
 真源：
     - D-FACTOR 蓝图 §D-FACTOR-04 Pipeline（双模运行：盘前全量/盘中增量）
@@ -49,6 +50,47 @@
     loop.start()  # 启动3秒循环
     # ... 运行中 ...
     loop.stop()   # 优雅停止
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: redis_conn 参数
+#   fields: 参数 redis_conn（无注解）
+#   code: intraday_factor_loop.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: symbols 参数
+#   fields: 参数 symbols（无注解）
+#   code: intraday_factor_loop.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: factor_ids 参数
+#   fields: 参数 factor_ids（无注解）
+#   code: intraday_factor_loop.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: cycle_seconds 参数
+#   fields: 参数 cycle_seconds（无注解）
+#   code: intraday_factor_loop.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① IntradayFactorLoop
+#   name_en: IntradayFactorLoop
+#   intro: 盘中因子调度循环——3秒拉 tick → DataFrame → DagExecutor → H1。
+#   desc: 盘中因子调度循环——3秒拉 tick → DataFrame → DagExecutor → H1。 蓝图 §D-FACTOR-04 Pipeline 双模运行的盘中增量路径实现。；公共方法（定义序）: read_ti…
+#   inputs: redis_conn symbols factor_ids cycle_seconds dag_executor
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: IntradayFactorLoop
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

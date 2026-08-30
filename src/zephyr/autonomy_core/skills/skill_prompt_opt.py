@@ -28,6 +28,32 @@ Skill Prompt 自动优化器
   2. Compression: 在不丢失语义的前提下压缩冗余措辞
   3. StructuralOptimization: 重组 section 顺序到最优阅读流
   4. TokenReduction: 量化压缩带来的 Token 节省
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: skill_prompt_opt.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SkillPromptOptimizer
+#   name_en: SkillPromptOptimizer
+#   intro: Skill Prompt 自动优化器
+#   desc: Skill Prompt 自动优化器；公共方法（定义序）: compute_readability, compress, reorder_sections, optimize；源码 L65-L236
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SkillPromptOptimizer
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

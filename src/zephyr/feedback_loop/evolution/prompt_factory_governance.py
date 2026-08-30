@@ -15,12 +15,40 @@
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Prompt Factory Governance — v0.16.0 R224
+"""
+Prompt Factory Governance — v0.16.0 R224
 
 Blindspot: Prompt templates proliferate without version control; no AB testing of prompt variants.
 Risk: R224 — Unversioned prompt changes degrade diagnosis quality; no controlled experiment.
 
 Mitigation: Prompt template factory with versioning, audit trail, and A/B test support.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: prompt_factory_governance.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① PromptFactoryGovernance
+#   name_en: PromptFactoryGovernance
+#   intro: class PromptFactoryGovernance 源码 L73-L94
+#   desc: 公共方法（定义序）: register, latest；源码 L73-L94
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: PromptFactoryGovernance
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

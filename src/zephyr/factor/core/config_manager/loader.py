@@ -14,11 +14,46 @@
 # [TESTS] tests/factor/test_config_manager.py
 # [A_module] module_id=MOD-L02-001 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_FACTOR core config_manager 加载器——加载 core/_config.yaml 策略参数。
+"""
+D_FACTOR core config_manager 加载器——加载 core/_config.yaml 策略参数。
 
 借鉴 analysis/__init__.py:load_analysis_config() 模式。提供：
 - load_core_config(): 加载完整配置 dict
 - get_section(name): 取子节（如 "backpressure"），缺失返回 {}
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: name 参数
+#   fields: 参数 name，类型注解 str
+#   code: loader.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① load_core_config
+#   name_en: load_core_config
+#   intro: 加载 core/_config.yaml 完整配置。
+#   desc: 加载 core/_config.yaml 完整配置。 Returns: 配置 dict。文件不存在或为空时返回 {}（开发友好，不抛异常）。；源码 L72-L82
+#   inputs: 无参数
+#   outputs: dict[str, Any]
+# - id: A2
+#   name_zh: ② get_section
+#   name_en: get_section
+#   intro: 取配置子节。
+#   desc: 取配置子节。 Args: name: 子节名（如 "backpressure" / "batch_output" / "dag_manager" / "dist_feature_…；源码 L85-L98
+#   inputs: name
+#   outputs: dict[str, Any]
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, Any]
+#   name_en: dict[str, Any]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.factor.core.dag_manager; zephyr.factor.core.dist_feature_eng; zephyr.fac…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

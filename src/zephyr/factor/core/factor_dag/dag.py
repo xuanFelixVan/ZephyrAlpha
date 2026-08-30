@@ -14,7 +14,8 @@
 # [TESTS] tests/factor/test_factor_dag.py
 # [A_module] module_id=MOD-L02-001 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-r"""D_FACTOR core factor_dag.dag——因子 DAG 数据结构 + Kahn 拓扑分层算法。
+r"""
+D_FACTOR core factor_dag.dag——因子 DAG 数据结构 + Kahn 拓扑分层算法。
 
 提供：
 - FactorNode / FactorEdge / FactorDAG：pydantic 数据结构（复用 BASE_CONFIG）
@@ -27,6 +28,38 @@ r"""D_FACTOR core factor_dag.dag——因子 DAG 数据结构 + Kahn 拓扑分�
   与 factor_id 语义不符），factor_dag 是因子域专用 DAG
 - dependencies 字段语义：FactorNode.dependencies 列出该因子依赖的上游 factor_id
 - topological_layers 返回分层结果，层内因子可并行计算
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: factor_ids 参数
+#   fields: 参数 factor_ids，类型注解 list[str]
+#   code: dag.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: dag_id 参数
+#   fields: 参数 dag_id，类型注解 str
+#   code: dag.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① build_dag_from_registry
+#   name_en: build_dag_from_registry
+#   intro: 从 FactorRegistry 查询 factor_ids 的 dependencies，自动构建 DAG。
+#   desc: 从 FactorRegistry 查询 factor_ids 的 dependencies，自动构建 DAG。 自动过滤 dependencies 中不在 factor_ids…；源码 L277-L313
+#   inputs: factor_ids dag_id
+#   outputs: FactorDAG
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: FactorDAG
+#   name_en: FactorDAG
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.factor.core.dag_manager; zephyr.factor.core.dist_feature_eng
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

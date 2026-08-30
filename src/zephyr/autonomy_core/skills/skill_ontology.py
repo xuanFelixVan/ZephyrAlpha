@@ -28,6 +28,32 @@ Skill 本体对齐引擎
   2. OntologyMatch: 匹配到 KB 中已有实体
   3. GapDetection: 发现 Skill 引用了 KB 中不存在的概念
   4. AlignmentScore: 计算本体对齐度
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: skill_ontology.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SkillOntology
+#   name_en: SkillOntology
+#   intro: Skill 本体对齐器
+#   desc: Skill 本体对齐器；公共方法（定义序）: extract_entities, match_entities, detect_gaps；源码 L65-L172
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SkillOntology
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

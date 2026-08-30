@@ -28,6 +28,32 @@ LLM 升级影响评估引擎
   2. PromptStyleCompat: 评估 Skill 的指令风格是否与新模型对齐
   3. TokenBudgetImpact: 模型切换后 Token 预算是否仍满足
   4. FallbackPlan: 若不兼容，生成降级/回退方案
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: skill_model_evolution.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SkillModelEvolution
+#   name_en: SkillModelEvolution
+#   intro: Skill 模型进化兼容性评估器
+#   desc: Skill 模型进化兼容性评估器；公共方法（定义序）: find_model, check_tool_compat, check_style_compat, check_budget_impact, compute_r…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SkillModelEvolution
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

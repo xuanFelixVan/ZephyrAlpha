@@ -14,7 +14,8 @@
 # [TESTS] tests/clone_guard/test_ast_grep_adapter.py
 # [A_module] module_id=MOD-CLONE_GUARD | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""AstGrepAdapter — ast-grep 规则引擎适配器（Phase B）。
+"""
+AstGrepAdapter — ast-grep 规则引擎适配器（Phase B）。
 
 封装 ast-grep CLI 的 scan 命令，对编排层暴露统一 detect() 接口。
 通过 `ast-grep scan --rule <rule.yaml> --json=compact --include-metadata FILES` 调用，
@@ -29,6 +30,37 @@ ast-grep 职责：YAML 自定义结构化模式匹配（业务规则，如"禁�
   - 超时 → degraded=True, 返回空列表
   - CLI 崩溃 → degraded=True, 返回空列表
   - 正常执行 → 返回 Finding 列表
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: repo_root 参数
+#   fields: 参数 repo_root（无注解）
+#   code: ast_grep_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: ast_grep_adapter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AstGrepAdapter
+#   name_en: AstGrepAdapter
+#   intro: ast-grep 规则引擎适配器。
+#   desc: ast-grep 规则引擎适配器。 封装 ast-grep CLI 调用，对编排层暴露统一 detect() 接口。 引擎升级/替换不影响编排层（Adapter 模式）。；公共方法（定义序）: health_check…
+#   inputs: repo_root config
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: AstGrepAdapter
+#   downstream: zephyr.clone_guard.orchestrator
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

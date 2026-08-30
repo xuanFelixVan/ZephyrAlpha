@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-L00-004-INTERNAL | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa  M02豁免: 由 scheduler 按 daily_kline 时段调度, 非常驻服务
-"""内部计算数据源 Provider（#ARCH-DATA-TI-001，Phase 2 多周期落地 2026-08-10）。
+"""
+内部计算数据源 Provider（#ARCH-DATA-TI-001，Phase 2 多周期落地 2026-08-10）。
 
 区别于外部数据源 Provider（miniqmt/akshare/tushare 等），本 Provider 不从外部 API 拉数据，
 而是：
@@ -31,6 +32,32 @@
 
 接入调度器：scheduler.create_provider() 的 `source == "internal"` 分支返回本类实例。
 tasks.yaml 中 source=internal 的任务（technical_indicator_incremental/full_refresh）使用本 Provider。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: internal_compute_provider.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① InternalComputeProvider
+#   name_en: InternalComputeProvider
+#   intro: 内部计算 Provider——读 CH K线→本地计算指标→返回 FetchResult。
+#   desc: 内部计算 Provider——读 CH K线→本地计算指标→返回 FetchResult。 用法（由 scheduler 自动调用）： provider = InternalCo…；公共方法（定义序）: connect…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: InternalComputeProvider
+#   downstream: zephyr.data.scheduler (source=internal 分支)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

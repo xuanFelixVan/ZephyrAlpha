@@ -14,7 +14,8 @@
 # [TESTS] tests/factor/test_dist_feature_eng.py
 # [A_module] module_id=MOD-L02-001 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_FACTOR core dist_feature_eng.engine——分布式特征工程引擎。
+"""
+D_FACTOR core dist_feature_eng.engine——分布式特征工程引擎。
 
 用 ProcessPoolExecutor 跨进程并行计算因子（绕开 GIL，适合 CPU 密集计算）。
 按标的分片，每片在子进程内独立调用因子 compute。
@@ -39,6 +40,56 @@
 - 调用方须在主进程 import 因子模块（如 zephyr.factor.momentum_factor），
   子进程通过 fork/spawn 继承注册表（spawn 模式下子进程会重新 import 主模块）
 - 运行时动态注册的因子（非 import 时注册）在 spawn 子进程不可见，须用 max_workers<=1
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: factor_id 参数
+#   fields: 参数 factor_id，类型注解 str
+#   code: engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: symbol 参数
+#   fields: 参数 symbol，类型注解 str
+#   code: engine.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: data 参数
+#   fields: 参数 data，类型注解 pd.DataFrame
+#   code: engine.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: kwargs 参数
+#   fields: 参数 kwargs，类型注解 dict | None
+#   code: engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① compute_factor_for_symbol
+#   name_en: compute_factor_for_symbol
+#   intro: 子进程入口纯函数：单标的单因子计算。
+#   desc: 子进程入口纯函数：单标的单因子计算。 必须是模块级函数（pickle 要求）。子进程通过 FactorRegistry.get 查询因子类。 Args: factor_id: 已…；源码 L152-L181
+#   inputs: factor_id symbol data kwargs
+#   outputs: tuple[str, str, pd.Series | None, str]
+# - id: A2
+#   name_zh: ② DistributedFeatureEngine
+#   name_en: DistributedFeatureEngine
+#   intro: 分布式特征工程引擎——跨标的并行计算因子。
+#   desc: 分布式特征工程引擎——跨标的并行计算因子。 Usage:: dag = build_dag_from_registry(["momentum_20d", "value_5d"])…；公共方法（定义序）: execute…
+#   inputs: config backpressure
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: tuple[str, str, pd.Series | None, str]
+#   name_en: tuple[str, str, pd.Series | None, str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

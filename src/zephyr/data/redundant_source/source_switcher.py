@@ -1,7 +1,8 @@
 # [BLUEPRINT] MOD-L00-005 | docs/03_modules/_domain_data/redundant_source_blueprint.md
 # [A_module] module_id=MOD-L00-005 | layer=module | stability=evolving | safety=M
 # [TTL] permanent
-"""数据源切换控制器——主源中断时自动切换备源，恢复后切回。
+"""
+数据源切换控制器——主源中断时自动切换备源，恢复后切回。
 
 设计：
 - SourceProvider 抽象接口：主源和备源都实现此接口
@@ -16,6 +17,56 @@ Usage::
     switcher.start()
     provider = switcher.get_active_provider()
     ticks = provider.fetch_ticks()
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: primary 参数
+#   fields: 参数 primary（无注解）
+#   code: source_switcher.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: backup 参数
+#   fields: 参数 backup（无注解）
+#   code: source_switcher.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: heartbeat 参数
+#   fields: 参数 heartbeat（无注解）
+#   code: source_switcher.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: check_interval 参数
+#   fields: 参数 check_interval（无注解）
+#   code: source_switcher.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SourceProvider
+#   name_en: SourceProvider
+#   intro: 数据源提供者抽象接口。
+#   desc: 数据源提供者抽象接口。 主源（QMT）和备源（通达信/其他）都实现此接口。；公共方法（定义序）: name, start, stop, is_running；源码 L89-L109
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② SourceSwitcher
+#   name_en: SourceSwitcher
+#   intro: 数据源切换控制器。
+#   desc: 数据源切换控制器。 状态机： - PRIMARY: 主源活跃 - BACKUP: 备源活跃（主源中断） - RECOVERY_WAIT: 主源恢复，等待稳定期；公共方法（定义序）: start, stop, get_a…
+#   inputs: primary backup heartbeat check_interval recovery_stable_period
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: SourceProvider, SourceSwitcher
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

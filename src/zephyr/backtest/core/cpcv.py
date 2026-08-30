@@ -21,7 +21,8 @@
 # A2: compute_pbo(每split取IS最优trial→其OOS相对秩ω=rank/(M+1)→logit(ω)→PBO=P(logit<0))
 # O1: list[CPCVSplit] / PBO报告dict(pbo/logits/omega)
 # [/ALGO_FLOW]
-"""CPCV(组合净化交叉验证) + PBO(回测过拟合概率)模块
+"""
+CPCV(组合净化交叉验证) + PBO(回测过拟合概率)模块
 
 职责(52号 memo §6 暂缓项函数级落地, 重评条件触发后启用):
   - generate_cpcv_splits: Combinatorial Purged CV 路径生成(López de Prado),
@@ -34,6 +35,69 @@
   - 纯 numpy 操作, 不依赖外部数据连接, 性能矩阵由调用方注入(输入注入式)
 
 SSoT: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/52_backtest_framework_docking.md §6
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: n_groups 参数
+#   fields: 参数 n_groups，类型注解 int
+#   code: cpcv.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: k_test 参数
+#   fields: 参数 k_test，类型注解 int
+#   code: cpcv.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: n_samples 参数
+#   fields: 参数 n_samples，类型注解 int
+#   code: cpcv.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: t1 参数
+#   fields: 参数 t1（无注解）
+#   code: cpcv.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① expected_n_splits
+#   name_en: expected_n_splits
+#   intro: CPCV 切分组合数 = C(n_groups, k_test)
+#   desc: CPCV 切分组合数 = C(n_groups, k_test)；源码 L148-L154
+#   inputs: n_groups k_test
+#   outputs: int
+# - id: A2
+#   name_zh: ② generate_cpcv_splits
+#   name_en: generate_cpcv_splits
+#   intro: 生成 CPCV 全组合切分(净化+隔离)
+#   desc: 生成 CPCV 全组合切分(净化+隔离) 算法: 1. 将样本均分为 n_groups 个连续组, 取 k_test 组的全组合 C(n_groups, k_test) 作 te…；源码 L172-L251
+#   inputs: n_samples n_groups k_test t1 embargo
+#   outputs: list[CPCVSplit]
+# - id: A3
+#   name_zh: ③ compute_pbo
+#   name_en: compute_pbo
+#   intro: 计算 PBO(Probability of Backtest Overfitting, Bailey et al.
+#   desc: 计算 PBO(Probability of Backtest Overfitting, Bailey et al. 2014) 算法: 每折 split: n* = argmax…；源码 L270-L325
+#   inputs: is_performance oos_performance
+#   outputs: dict
+#   （注：A3 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 预留(策略验证流水线/过拟合检测升级, 52号§6重评触发后接线)
+# - id: O2
+#   name_zh: list[CPCVSplit]
+#   name_en: list[CPCVSplit]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 预留(策略验证流水线/过拟合检测升级, 52号§6重评触发后接线)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

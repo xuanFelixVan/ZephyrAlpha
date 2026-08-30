@@ -48,7 +48,8 @@
 #   name_zh: FetchResult 流
 #   name_en: Iterator[FetchResult]
 #   intro: rows + last_key 供 scheduler 写 CH 与推进断点游标；data_source='akshare' 标记区分跨源口径
-"""AKShare 数据源 Provider 实现（MOD-L00-004 §4.3）。
+"""
+AKShare 数据源 Provider 实现（MOD-L00-004 §4.3）。
 
 封装 AKShare 开源金融数据 SDK，继承 IngestProviderBase。
 - 匿名访问，无需登录；但须断开 VPN（爬国内网站，海外 IP 会被拒）
@@ -59,6 +60,66 @@
 
 数据转换目标表 c1_market.macro_data：
     report_date, indicator_name, indicator_value, unit, frequency
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: v 参数
+#   fields: 参数 v（无注解）
+#   code: akshare_provider.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: text 参数
+#   fields: 参数 text，类型注解 str
+#   code: akshare_provider.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① safe_float
+#   name_en: safe_float
+#   intro: 安全转 float，失败返回 None。
+#   desc: 安全转 float，失败返回 None。；源码 L427-L432
+#   inputs: v
+#   outputs: float | None
+# - id: A2
+#   name_zh: ② safe_int
+#   name_en: safe_int
+#   intro: 安全转 int，失败返回 None。
+#   desc: 安全转 int，失败返回 None。兼容 float 字符串（如 '7987.0'）。；源码 L435-L443
+#   inputs: v
+#   outputs: int | None
+# - id: A3
+#   name_zh: ③ parse_sina_hf_futures_quotes
+#   name_en: parse_sina_hf_futures_quotes
+#   intro: 解析新浪 hf 外盘期货行情载荷（纯函数，可离线单测）。
+#   desc: 解析新浪 hf 外盘期货行情载荷（纯函数，可离线单测）。 载荷形如 ``var hq_str_hf_ES="7689.850,,7687.500,...,04:59:59,...…；源码 L649-L690
+#   inputs: text
+#   outputs: dict[str, dict]
+# - id: A4
+#   name_zh: ④ AkshareIngestProvider
+#   name_en: AkshareIngestProvider
+#   intro: AKShare 免费开源数据源 Provider。
+#   desc: AKShare 免费开源数据源 Provider。 匿名访问、无需登录；线程安全模型为 shared（多线程共享 akshare 模块）。 已知问题：须断开 VPN；东财接口反爬…；公共方法（定义序）: connect…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: float | None
+#   name_en: float | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.scheduler
+# - id: O2
+#   name_zh: int | None
+#   name_en: int | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.data.scheduler
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

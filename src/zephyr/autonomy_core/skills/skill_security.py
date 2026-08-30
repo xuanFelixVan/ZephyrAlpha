@@ -20,6 +20,32 @@ MOD-INF-019: Agent Spec — Skill Security
 Blueprint: docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 Author: factory-agent
 Version: 0.3.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: skill_security.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SkillSecurity
+#   name_en: SkillSecurity
+#   intro: Skill 安全审计与防护
+#   desc: Skill 安全审计与防护；公共方法（定义序）: vet, scan_vulnerabilities；源码 L93-L176
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SkillSecurity
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 import re

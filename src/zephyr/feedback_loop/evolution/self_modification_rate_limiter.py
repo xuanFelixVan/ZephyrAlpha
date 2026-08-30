@@ -18,6 +18,32 @@
 """
 R522: SelfModificationRateLimiter
 TokenBucket自修改速率限制 — 每小时最多N次，防止失控螺旋
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: self_modification_rate_limiter.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SelfModificationRateLimiter
+#   name_en: SelfModificationRateLimiter
+#   intro: class SelfModificationRateLimiter 源码 L54-L112
+#   desc: 公共方法（定义序）: request_modification, get_status, emergency_override；源码 L54-L112
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SelfModificationRateLimiter
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 import time

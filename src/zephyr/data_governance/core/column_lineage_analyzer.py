@@ -14,7 +14,8 @@
 # [TESTS] tests/data_governance/test_column_lineage_analyzer.py
 # [A_module] module_id=MOD-DATA_GOV-007 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""M8-NEW-02 Column-Level Lineage Analyzer（MOD-DATA_GOV-007）。
+"""
+M8-NEW-02 Column-Level Lineage Analyzer（MOD-DATA_GOV-007）。
 
 真源：construction_backlog_dig.tsv B13-04276（A3 数据架构 §17.2，裁定=做 P1）
 + CAND-DATGOV-004。
@@ -28,6 +29,77 @@
 sqlglot 依赖裁定：未登记三方依赖（同 M8-S02）——懒加载，未安装时解析面
 Fail-Closed 显式不可用（ColumnLineageError），不做 regex 兜底错抽；登记后补
 抽取 happy-path 集成测试。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: table 参数
+#   fields: 参数 table，类型注解 str
+#   code: column_lineage_analyzer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: column 参数
+#   fields: 参数 column，类型注解 str
+#   code: column_lineage_analyzer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: sql 参数
+#   fields: 参数 sql，类型注解 str
+#   code: column_lineage_analyzer.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: target_table 参数
+#   fields: 参数 target_table（无注解）
+#   code: column_lineage_analyzer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① column_node
+#   name_en: column_node
+#   intro: 列节点命名 `table.column`（空表名/列名 Fail-Closed）。
+#   desc: 列节点命名 `table.column`（空表名/列名 Fail-Closed）。；源码 L176-L178
+#   inputs: table column
+#   outputs: str
+# - id: A2
+#   name_zh: ② extract_column_lineage
+#   name_en: extract_column_lineage
+#   intro: sqlglot AST 解析 SELECT/视图 → 列级血缘边（薄胶水，依赖登记后补 happy-path 测）。
+#   desc: sqlglot AST 解析 SELECT/视图 → 列级血缘边（薄胶水，依赖登记后补 happy-path 测）。 每个输出列（含别名）→ 其表达式引用的全部源列；无表前缀列在…；源码 L191-L237
+#   inputs: sql target_table dialect
+#   outputs: list[ColumnLineageEdge]
+# - id: A3
+#   name_zh: ③ ingest_columns_into_tracker
+#   name_en: ingest_columns_into_tracker
+#   intro: 列边 → `table.column` 节点入 DAG（幂等/环/去重复用 MOD-DATA_GOV-004 语义）。
+#   desc: 列边 → `table.column` 节点入 DAG（幂等/环/去重复用 MOD-DATA_GOV-004 语义）。 transformation 记转换表达式（截断 80 字…；源码 L240-L258
+#   inputs: edges tracker
+#   outputs: LineageParseReport
+# - id: A4
+#   name_zh: ④ column_impact
+#   name_en: column_impact
+#   intro: 字段级影响面查询：列节点的全部上游/下游（变更评审用；未知节点空结果）。
+#   desc: 字段级影响面查询：列节点的全部上游/下游（变更评审用；未知节点空结果）。；源码 L261-L270
+#   inputs: tracker table column
+#   outputs: ColumnImpact
+#   （注：A4 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: list[ColumnLineageEdge]
+#   name_en: list[ColumnLineageEdge]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations
@@ -112,9 +184,7 @@ def _import_sqlglot():
         import sqlglot
         from sqlglot import exp
     except ImportError as exc:
-        raise ColumnLineageError(
-            "sqlglot 未安装（三方依赖登记申请中），列级血缘解析不可用"
-        ) from exc
+        raise ColumnLineageError("sqlglot 未安装（三方依赖登记申请中），列级血缘解析不可用") from exc
     return sqlglot, exp
 
 
@@ -153,9 +223,7 @@ def extract_column_lineage(
             source_table = column.table
             if not source_table:
                 if len(from_tables) != 1:
-                    raise ColumnLineageError(
-                        f"列 {column.name!r} 无表前缀且 FROM 多表歧义（Fail-Closed）"
-                    )
+                    raise ColumnLineageError(f"列 {column.name!r} 无表前缀且 FROM 多表歧义（Fail-Closed）")
                 source_table = next(iter(from_tables))
             edges.append(
                 ColumnLineageEdge(

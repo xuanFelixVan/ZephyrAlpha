@@ -14,7 +14,8 @@
 # [TESTS] tests/zephyr/data/test_sentiment_panel_provider.py
 # [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""币圈宏观情绪面板 Provider（CAND-CRYPTO-010，94号 §5 + §9 Q6 裁定）。
+"""
+币圈宏观情绪面板 Provider（CAND-CRYPTO-010，94号 §5 + §9 Q6 裁定）。
 
 轻量日频采集四个宏观情绪指标，定位=市场级风险节流输入（regime 分工：非 alpha 择时）：
 - 恐惧贪婪指数（Fear & Greed Index）：alternative.me 免费 API（无需 key）
@@ -26,6 +27,32 @@
 
 统一行格式：(metric, trade_date, value, value_classification, source, extra)。
 骨架能力（ETF/USDT 溢价）返回 error 标注"骨架"，失败降级可见、不进决策硬链。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: sentiment_panel_provider.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SentimentPanelProvider
+#   name_en: SentimentPanelProvider
+#   intro: 币圈宏观情绪面板 Provider。
+#   desc: 币圈宏观情绪面板 Provider。 免费公开端点（alternative.me 无需 key；CMC 需免费 key），shared 线程安全模型。 已知问题：免费源稳定性（限…；公共方法（定义序）: connect…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SentimentPanelProvider
+#   downstream: zephyr.data.scheduler
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -157,7 +184,7 @@ class SentimentPanelProvider(IngestProviderBase):
 
     # ---- 拉取入口 ----
 
-    def fetch(self, payload: FetchPayload, policy: "SourcePolicy") -> Iterator[FetchResult]:
+    def fetch(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """按 capability 路由到具体获取方法。"""
         if not self._connected:
             yield FetchResult(
@@ -189,7 +216,7 @@ class SentimentPanelProvider(IngestProviderBase):
 
     # ---- 恐惧贪婪指数（alternative.me） ----
 
-    def _fetch_fear_greed(self, payload: FetchPayload, policy: "SourcePolicy") -> Iterator[FetchResult]:
+    def _fetch_fear_greed(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """拉取恐惧贪婪指数历史（alternative.me，limit 条数=天数，时间倒序）。"""
         t0 = time.time()
         end = payload.end or datetime.date.today()
@@ -222,14 +249,16 @@ class SentimentPanelProvider(IngestProviderBase):
             d = datetime.datetime.fromtimestamp(ts, tz=datetime.timezone.utc).date()
             if not (start <= d <= end):
                 continue
-            rows.append((
-                "fear_greed_index",
-                d.isoformat(),
-                float(entry["value"]),
-                entry.get("value_classification", ""),
-                "alternative.me",
-                "",
-            ))
+            rows.append(
+                (
+                    "fear_greed_index",
+                    d.isoformat(),
+                    float(entry["value"]),
+                    entry.get("value_classification", ""),
+                    "alternative.me",
+                    "",
+                )
+            )
 
         last_key = max(r[1] for r in rows) if rows else ""
         yield FetchResult(
@@ -242,7 +271,7 @@ class SentimentPanelProvider(IngestProviderBase):
 
     # ---- BTC 占比（CoinMarketCap） ----
 
-    def _fetch_btc_dominance(self, payload: FetchPayload, policy: "SourcePolicy") -> Iterator[FetchResult]:
+    def _fetch_btc_dominance(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """拉取 BTC 占比最新快照（CMC global-metrics，免费 basic tier 需 key）。"""
         t0 = time.time()
         api_key = get_secret_or_default("CMC_API_KEY", "")
@@ -291,14 +320,16 @@ class SentimentPanelProvider(IngestProviderBase):
 
         global_data = data.get("data", {})
         today = datetime.date.today().isoformat()
-        rows = [(
-            "btc_dominance",
-            today,
-            float(global_data["btc_dominance"]),
-            "",
-            "coinmarketcap",
-            "",
-        )]
+        rows = [
+            (
+                "btc_dominance",
+                today,
+                float(global_data["btc_dominance"]),
+                "",
+                "coinmarketcap",
+                "",
+            )
+        ]
         yield FetchResult(
             table=payload.table,
             columns=_SENTIMENT_COLUMNS,

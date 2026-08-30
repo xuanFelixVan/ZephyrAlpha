@@ -14,7 +14,8 @@
 # [TESTS]
 # [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""回测数据处理器模块（v1.1.0 扩展：多源化 + ClickHouse 实现 + Tick 源）
+"""
+回测数据处理器模块（v1.1.0 扩展：多源化 + ClickHouse 实现 + Tick 源）
 
 职责:
   - 按 bar 推送 OHLCV 数据（PIT 正确）
@@ -31,6 +32,56 @@
   - 禁止裸 clickhouse_driver.connect
 
 SSoT: docs/03_modules/_domain_backtest/blueprint.md §3.2 §5.1 §16.7 data_handler.py
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: data 参数
+#   fields: 参数 data（无注解）
+#   code: data_handler.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: date_column 参数
+#   fields: 参数 date_column（无注解）
+#   code: data_handler.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: symbol_column 参数
+#   fields: 参数 symbol_column（无注解）
+#   code: data_handler.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: pit_manager 参数
+#   fields: 参数 pit_manager（无注解）
+#   code: data_handler.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① BacktestDataHandler
+#   name_en: BacktestDataHandler
+#   intro: 回测数据处理器（日线/分钟线 bar 模式）
+#   desc: 回测数据处理器（日线/分钟线 bar 模式） 支持两种模式: 1. DataFrame模式:直接接收DataFrame,按日期迭代推送bar 2. ClickHouse模式:通过…；公共方法（定义序）: get_bar…
+#   inputs: data date_column symbol_column pit_manager fundamental_data
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② MultiSourceDataHandler
+#   name_en: MultiSourceDataHandler
+#   intro: 多源数据处理器（v1.
+#   desc: 多源数据处理器（v1.1.0 新增，Tick + 批量双源） 支持双源切换: - Tick 源: MiniQmtQuoteProvider.fetch_historical(in…；公共方法（定义序）: next_ba…
+#   inputs: symbols start end mode tick_provider batch_data database_service table
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: BacktestDataHandler, MultiSourceDataHandler
+#   downstream: zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.implementati…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -331,7 +382,7 @@ class BacktestDataHandler:
         database_service: object | None = None,
         table: str = "daily_kline",
         fundamental_tables: list[str] | None = None,
-    ) -> "BacktestDataHandler":
+    ) -> BacktestDataHandler:
         """从ClickHouse加载OHLCV数据（通过 DatabaseService）
 
         v1.1.0 实现：通过 DatabaseService 访问 ClickHouse(c1_market)，

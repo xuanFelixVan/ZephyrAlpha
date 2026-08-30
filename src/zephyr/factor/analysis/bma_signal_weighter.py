@@ -22,7 +22,8 @@
 # A4: 一致性置信度——方向加权多数派占比 agreement；双低（agreement<0.6 且 top_weight<0.5）→ NO_TRADE
 # O1: BmaWeightReport(weights/gated_out/direction/agreement/confidence/decision)
 # [/ALGO_FLOW]
-"""模块48 动态信号权重模型（Bayesian Model Averaging，CAND-FAC-013 / B10-01481）。
+"""
+模块48 动态信号权重模型（Bayesian Model Averaging，CAND-FAC-013 / B10-01481）。
 
 多信号动态加权：以 BMA 后验模型权重替代静态等权/经验权重——每个信号视为一个
 "预测模型"，按其伪似然（IC×ICIR，效果×稳定性）softmax 归一为后验权重，体制条件
@@ -48,6 +49,51 @@ IC 作硬过滤，时间平滑 α=0.9 防权重跳变，方向一致性+主导�
     atr_stop_engine 的 Bayesian 为风控 ATR 参数优化（D_RISK），域与职能均不同。
 
 依据: A1交易决策架构 §9 模块48；construction_backlog_dig.tsv B10-01481。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: evaluations 参数
+#   fields: 参数 evaluations，类型注解 Iterable[SignalEvaluation]
+#   code: bma_signal_weighter.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: bma_signal_weighter.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: prev_weights 参数
+#   fields: 参数 prev_weights（无注解）
+#   code: bma_signal_weighter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① compute_bma_weights
+#   name_en: compute_bma_weights
+#   intro: BMA 动态权重纯函数：门禁 → 伪似然后验 → 平滑 → 一致性置信度/不操作裁定。
+#   desc: BMA 动态权重纯函数：门禁 → 伪似然后验 → 平滑 → 一致性置信度/不操作裁定。 Args: evaluations: 各信号预测力评估（IC/ICIR/IC 衰减/体制条…；源码 L266-L310
+#   inputs: evaluations config prev_weights
+#   outputs: BmaWeightReport
+# - id: A2
+#   name_zh: ② BmaSignalWeighter
+#   name_en: BmaSignalWeighter
+#   intro: BMA 动态信号权重器（TSV 核心类）：跨轮次时间平滑状态载体。
+#   desc: BMA 动态信号权重器（TSV 核心类）：跨轮次时间平滑状态载体。 Args: config: 权重器参数（缺省 BmaWeighterConfig()）。；公共方法（定义序）: prev_weights, updat…
+#   inputs: config
+#   outputs: 返回值
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: BmaWeightReport
+#   name_en: BmaWeightReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: （候选：决策编排上游信号合成层/多因子叠加择时 B10-01482 装配批）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -201,10 +247,7 @@ def _smooth(
     """时间平滑：w=α·prev+(1-α)·raw（prev 中已出局信号权重归 0），后重归一。"""
     if not raw:
         return {}
-    blended = {
-        sid: alpha * float(prev.get(sid, 0.0)) + (1.0 - alpha) * w
-        for sid, w in raw.items()
-    }
+    blended = {sid: alpha * float(prev.get(sid, 0.0)) + (1.0 - alpha) * w for sid, w in raw.items()}
     return _normalize(blended)
 
 

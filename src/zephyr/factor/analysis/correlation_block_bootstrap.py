@@ -22,7 +22,8 @@
 # A3: bootstrap_correlation_ci(2000×重采样→每对Pearson/Spearman的90%CI+P(ρ>0.6); Fisher z参数CI互验, 不一致以bootstrap为准)
 # O1: BootstrapCIResult(per-pair CI/概率/点估计/块长)
 # [/ALGO_FLOW]
-"""D_FACTOR — G07 multivariate stationary block-bootstrap 引擎（23 号 memo §3.2）
+"""
+D_FACTOR — G07 multivariate stationary block-bootstrap 引擎（23 号 memo §3.2）
 
 Politis-Romano stationary bootstrap（块长几何分布）+ Patton-Politis-White (2009)
 自动块长选择（b.star，估计值在真实最优 90%-110%），2000× **同步行重采样**——
@@ -34,6 +35,77 @@ Politis-Romano stationary bootstrap（块长几何分布）+ Patton-Politis-Whit
 
 与 walk_forward.whites_reality_check 的关系：既有实现为单变量（White RC 差分序列
 专用），本模块为多元同步版（memo §7"复用还是新建"裁定：新建，复用其块生成模式）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: panel 参数
+#   fields: 参数 panel，类型注解 pd.DataFrame | np.ndarray
+#   code: correlation_block_bootstrap.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: n 参数
+#   fields: 参数 n，类型注解 int
+#   code: correlation_block_bootstrap.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: avg_block_size 参数
+#   fields: 参数 avg_block_size，类型注解 int
+#   code: correlation_block_bootstrap.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: rng 参数
+#   fields: 参数 rng，类型注解 np.random.Generator
+#   code: correlation_block_bootstrap.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ppw_block_size
+#   name_en: ppw_block_size
+#   intro: 多元面板 PPW 自动块长：逐列 b.star 取 max（保留最强记忆列的依赖结构）。
+#   desc: 多元面板 PPW 自动块长：逐列 b.star 取 max（保留最强记忆列的依赖结构）。 Args: panel: T×k 对齐收益率面板（DataFrame 或 ndarray…；源码 L239-L253
+#   inputs: panel
+#   outputs: int
+# - id: A2
+#   name_zh: ② stationary_bootstrap_indices
+#   name_en: stationary_bootstrap_indices
+#   intro: Stationary bootstrap 环绕索引（Politis-Romano 1994）。
+#   desc: Stationary bootstrap 环绕索引（Politis-Romano 1994）。 块长 L~Geometric(p=1/avg_block)，块起点均匀随机，索引环…；源码 L256-L283
+#   inputs: n avg_block_size rng
+#   outputs: np.ndarray
+# - id: A3
+#   name_zh: ③ fisher_z_ci
+#   name_en: fisher_z_ci
+#   intro: Fisher z-transform 参数 CI：z=atanh(ρ)~N(0, 1/(n−3))，CI=tanh(z…
+#   desc: Fisher z-transform 参数 CI：z=atanh(ρ)~N(0, 1/(n−3))，CI=tanh(z±z_α/√(n−3))。 与 block-bootstra…；源码 L286-L298
+#   inputs: rho n confidence
+#   outputs: tuple[float, float]
+# - id: A4
+#   name_zh: ④ bootstrap_correlation_ci
+#   name_en: bootstrap_correlation_ci
+#   intro: Multivariate stationary block-bootstrap 相关性 90% CI + P(ρ>th…
+#   desc: Multivariate stationary block-bootstrap 相关性 90% CI + P(ρ>threshold)。 每次重采样生成一次环绕索引并同步应用于所…；源码 L359-L437
+#   inputs: returns_panel n_bootstrap block_size confidence threshold seed
+#   outputs: BootstrapCIResult
+#   （注：A4 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: G07 策略相关性验证报告（施工前一次性）
+# - id: O2
+#   name_zh: np.ndarray
+#   name_en: np.ndarray
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: G07 策略相关性验证报告（施工前一次性）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

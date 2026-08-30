@@ -28,6 +28,32 @@ Version: 0.2.0
   2. 逐层追问"为什么"直到找到根因
   3. 每层推导基于 Skill 已知约束和依赖
   4. 输出根因 + 纠正措施 + 预防措施
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: skill_postmortem.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SkillPostmortem
+#   name_en: SkillPostmortem
+#   intro: 追问到底根因分析器
+#   desc: 追问到底根因分析器；公共方法（定义序）: infer_symptom_category, unwind_why, generate_actions, analyze；源码 L188-L371
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SkillPostmortem
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

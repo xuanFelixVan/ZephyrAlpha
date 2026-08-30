@@ -14,7 +14,8 @@
 # [TESTS] tests/zephyr/data/test_crypto_profile_provider.py
 # [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""币圈档案 Provider（发行/流通/链上信息，CoinGecko/CoinMarketCap 免费 API）。
+"""
+币圈档案 Provider（发行/流通/链上信息，CoinGecko/CoinMarketCap 免费 API）。
 
 采集币种档案，覆盖两类信息：
 - 基本信息：发行时间（launch_date）/流通量（circulating_supply）/总量（total_supply）/
@@ -36,6 +37,40 @@
 代币级浏览器链接：命中 _PLATFORM_EXPLORERS 的平台且有 contract_address 时，
 explorer 构造为 {平台浏览器}/token/{contract}（如 USDT→etherscan.io/token/0xdAC17...）；
 否则回退 links.blockchain_site 首个非空链接。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: crypto_profile_provider.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① CoinProfile
+#   name_en: CoinProfile
+#   intro: 币种档案（解析中间态；统一行格式经 to_row() 输出）。
+#   desc: 币种档案（解析中间态；统一行格式经 to_row() 输出）。 whitepaper/contract_address 属"支持采集"字段（白皮书、合约地址）， 不进入 7 列统…；公共方法（定义序）: to_row；…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② CryptoProfileProvider
+#   name_en: CryptoProfileProvider
+#   intro: 币圈档案 Provider（CoinGecko 免费 API 默认源 / CoinMarketCap 免费 tier…
+#   desc: 币圈档案 Provider（CoinGecko 免费 API 默认源 / CoinMarketCap 免费 tier 备选源）。 shared 线程安全模型；CoinGecko…；公共方法（定义序）: connect,…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: CoinProfile, CryptoProfileProvider
+#   downstream: zephyr.data.scheduler
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -213,7 +248,7 @@ class CryptoProfileProvider(IngestProviderBase):
 
     # ---- 拉取入口 ----
 
-    def fetch(self, payload: FetchPayload, policy: "SourcePolicy") -> Iterator[FetchResult]:
+    def fetch(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """按 capability 拉取币种档案（默认 coin_profile）。"""
         if not self._connected:
             yield FetchResult(
@@ -253,7 +288,7 @@ class CryptoProfileProvider(IngestProviderBase):
 
     # ---- capability 拉取入口（CAP-CONSISTENCY：每 capability 一个 _fetch_<cap> 方法） ----
 
-    def _fetch_coin_profile(self, payload: FetchPayload, policy: "SourcePolicy") -> Iterator[FetchResult]:
+    def _fetch_coin_profile(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """逐币种拉取档案，每币一个 FetchResult（一行 7 列统一格式）。"""
         source = ((payload.extra or {}).get("source") or "coingecko").lower()
         if source not in _SUPPORTED_SOURCES:
@@ -285,7 +320,7 @@ class CryptoProfileProvider(IngestProviderBase):
 
     # ---- CoinGecko 免费源 ----
 
-    def _resolve_gecko_id(self, symbol: str, policy: "SourcePolicy") -> tuple[str, str | None]:
+    def _resolve_gecko_id(self, symbol: str, policy: SourcePolicy) -> tuple[str, str | None]:
         """symbol→coingecko id 映射（/coins/list 进程内缓存）。返回 (coin_id, error)。"""
         if not self._gecko_id_map:
             try:
@@ -297,12 +332,10 @@ class CryptoProfileProvider(IngestProviderBase):
                 return "", f"coingecko API 响应格式异常: {str(data)[:120]}"
             for item in data:
                 if isinstance(item, dict):
-                    self._gecko_id_map.setdefault(
-                        str(item.get("symbol", "")).lower(), str(item.get("id", ""))
-                    )
+                    self._gecko_id_map.setdefault(str(item.get("symbol", "")).lower(), str(item.get("id", "")))
         return self._gecko_id_map.get(symbol.lower(), ""), None
 
-    def _fetch_gecko_profile(self, symbol: str, policy: "SourcePolicy") -> tuple[CoinProfile | None, str | None]:
+    def _fetch_gecko_profile(self, symbol: str, policy: SourcePolicy) -> tuple[CoinProfile | None, str | None]:
         """CoinGecko /coins/{id} → CoinProfile。返回 (profile, error)。"""
         coin_id, error = self._resolve_gecko_id(symbol, policy)
         if error:
@@ -354,7 +387,7 @@ class CryptoProfileProvider(IngestProviderBase):
 
     # ---- CoinMarketCap 免费 tier 源 ----
 
-    def _fetch_cmc_profile(self, symbol: str, policy: "SourcePolicy") -> tuple[CoinProfile | None, str | None]:
+    def _fetch_cmc_profile(self, symbol: str, policy: SourcePolicy) -> tuple[CoinProfile | None, str | None]:
         """CoinMarketCap /info + /quotes/latest → CoinProfile。返回 (profile, error)。"""
         if not self._cmc_api_key:
             return None, "coinmarketcap 源需要 CMC_API_KEY（connect 时注入，未配置）"
@@ -372,9 +405,7 @@ class CryptoProfileProvider(IngestProviderBase):
             return None, f"coinmarketcap API 请求失败: {e}"
         return self._parse_cmc_profile(symbol, info, quotes)
 
-    def _parse_cmc_profile(
-        self, symbol: str, info: dict, quotes: dict
-    ) -> tuple[CoinProfile | None, str | None]:
+    def _parse_cmc_profile(self, symbol: str, info: dict, quotes: dict) -> tuple[CoinProfile | None, str | None]:
         """解析 CoinMarketCap 响应：info（官网/白皮书/浏览器/合约/date_added）+ quotes（供应量）。"""
         info_data = (info or {}).get("data") or {}
         quote_data = (quotes or {}).get("data") or {}

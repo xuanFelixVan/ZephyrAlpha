@@ -49,7 +49,8 @@
 #   name_zh: FetchResult 流
 #   name_en: Iterator[FetchResult]
 #   intro: 每标的/批次一条 FetchResult；异常路径 yield error 不抛出（见 ERROR_CONTRACT）
-"""MOD-L00-004 数据源集成器 · MiniQmtIngestProvider 实现。
+"""
+MOD-L00-004 数据源集成器 · MiniQmtIngestProvider 实现。
 
 封装 xtquant SDK（miniQMT），继承 IngestProviderBase。
 
@@ -59,6 +60,32 @@
 - xtquant 在方法内部 import，避免模块加载时就要求 SDK 安装
 - stock_code 格式 "000001.SZ" / "600000.SH"，period 如 "1d"/"5m"/"1m"
 - start_time/end_time 格式 "YYYYMMDD"
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: miniqmt_provider.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① MiniQmtIngestProvider
+#   name_en: MiniQmtIngestProvider
+#   intro: miniQMT（迅投 xtquant）数据源 Provider。
+#   desc: miniQMT（迅投 xtquant）数据源 Provider。 通过本地 XtMiniQmt.exe 进程获取行情/财务/指数成分数据。 单线程使用（xtquant 非线程安全…；公共方法（定义序）: connect…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: MiniQmtIngestProvider
+#   downstream: zephyr.data.scheduler
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

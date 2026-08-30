@@ -36,6 +36,45 @@ decision_nodes 表的 INSERT 参数，建立回测->决策流图的关联。
     -> backtest_result_to_decision_node() -> decision_node 参数 dict
     -> register_backtest_result_in_decisiongraph() -> 写入 PostgreSQL decision_nodes 表
     -> L5 学习层决策节点（供 L6 自评估层消费）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: result 参数
+#   fields: 参数 result，类型注解 BacktestResult
+#   code: decisiongraph_adapter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① backtest_result_to_decision_node
+#   name_en: backtest_result_to_decision_node
+#   intro: 将 BacktestResult 映射为 decision_nodes INSERT 参数。
+#   desc: 将 BacktestResult 映射为 decision_nodes INSERT 参数。 纯映射函数，不写 DB。调用方可将返回的 dict 传给 apply_decisio…；源码 L115-L176
+#   inputs: result
+#   outputs: dict[str, Any]
+# - id: A2
+#   name_zh: ② register_backtest_result_in_decisiongraph
+#   name_en: register_backtest_result_in_decisiongraph
+#   intro: 将 BacktestResult 注册为 decisiongraph L5 学习层决策节点。
+#   desc: 将 BacktestResult 注册为 decisiongraph L5 学习层决策节点。 便捷函数：映射 + 写入 PostgreSQL decision_nodes 表，返…；源码 L179-L221
+#   inputs: result
+#   outputs: int
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, Any]
+#   name_en: dict[str, Any]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 回测管线（vectorized_engine / event_driven_engine 完成后调用）
+# - id: O2
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 回测管线（vectorized_engine / event_driven_engine 完成后调用）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

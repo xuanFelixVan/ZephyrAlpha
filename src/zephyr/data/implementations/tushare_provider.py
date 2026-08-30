@@ -14,7 +14,8 @@
 # [TESTS] tests/zephyr/data/test_providers.py::TestTushareProvider
 # [A_module] module_id=MOD-GOV-tushare_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Tushare 数据源 Provider 实现（MOD-L00-004 §4.3）。
+"""
+Tushare 数据源 Provider 实现（MOD-L00-004 §4.3）。
 
 封装 tushare SDK，继承 IngestProviderBase。
 - token 认证（环境变量 TUSHARE_TOKEN）
@@ -29,6 +30,32 @@
 关键设计：
 - connect() 读取 TUSHARE_TOKEN 环境变量，初始化 pro_api 客户端
 - fetch() 按 payload.extra["capability"] 路由到各 _fetch_* 方法
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: tushare_provider.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① TushareProvider
+#   name_en: TushareProvider
+#   intro: Tushare 数据源 Provider。
+#   desc: Tushare 数据源 Provider。 token 认证、shared 线程安全模型。 已知问题：历史数据截止 2024-08；积分不足 API 受限。；公共方法（定义序）: connect, health_che…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: TushareProvider
+#   downstream: zephyr.data.scheduler
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

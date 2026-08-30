@@ -14,7 +14,8 @@
 # [TESTS] tests/factor/test_batch_output.py
 # [A_module] module_id=MOD-L02-001 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_FACTOR core batch_output.buffer——FactorSignal 批量缓冲写入器。
+r"""
+D_FACTOR core batch_output.buffer——FactorSignal 批量缓冲写入器。
 
 将 FactorSignal 列表缓冲，按定量（batch_size）或定时（flush_interval_s）触发刷新，
 转换为 TSV 字节流后调用 ch_writer.write_tsv_outcome 写入 ClickHouse。
@@ -24,6 +25,59 @@
 - target_table 参数化（默认 c1_market.factor_signal，调用方可覆盖）
 - writer 参数可注入（测试用，生产用默认 ch_writer.write_tsv_outcome）
 - 线程安全：threading.Lock 保护内部 list 和 _last_flush_ts
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: s 参数
+#   fields: 参数 s，类型注解 FactorSignal
+#   code: buffer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: signals 参数
+#   fields: 参数 signals，类型注解 list[FactorSignal]
+#   code: buffer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① signal_to_tsv_row
+#   name_en: signal_to_tsv_row
+#   intro: 单条 FactorSignal → TSV 行。
+#   desc: 单条 FactorSignal → TSV 行。 字段顺序与 _SIGNAL_COLUMNS 一致。NULL 值（None/NaN）由 ch_writer.tsv_escape…；源码 L163-L189
+#   inputs: s
+#   outputs: str
+# - id: A2
+#   name_zh: ② signals_to_tsv
+#   name_en: signals_to_tsv
+#   intro: 批量转 TSV 字节流。
+#   desc: 批量转 TSV 字节流。 Args: signals: FactorSignal 列表 Returns: UTF-8 编码的 TSV 字节流（每行一个信号，以 \n 分隔，末尾含…；源码 L192-L204
+#   inputs: signals
+#   outputs: bytes
+# - id: A3
+#   name_zh: ③ FactorSignalBuffer
+#   name_en: FactorSignalBuffer
+#   intro: FactorSignal 批量缓冲写入器。
+#   desc: FactorSignal 批量缓冲写入器。 Usage:: buf = FactorSignalBuffer(BatchOutputConfig(batch_size=100))…；公共方法（定义序）: add, ad…
+#   inputs: config table writer
+#   outputs: 返回值
+#   （注：A3 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: bytes
+#   name_en: bytes
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

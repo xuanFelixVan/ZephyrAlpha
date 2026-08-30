@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-OBS-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-REGIME-DEADZONE-001 #ARCH-OBS-EXP-TRACK-001
-"""L_INFRA_TELEMETRY — C1 对比结果 → 实验跟踪语义适配器（M1-3，单一 JSON 后端）。
+"""
+L_INFRA_TELEMETRY — C1 对比结果 → 实验跟踪语义适配器（M1-3，单一 JSON 后端）。
 
 把 ``C1ComparisonResult`` 翻译为一个实验跟踪 run，使人/AI 能通过 Panel「实验历史」Tab 或
 ``experiment_tracking.query`` 对比多次 C1 运行（开/关四项指标 + 净值曲线）。
@@ -43,6 +44,47 @@ Zephyr 语义 → 实验跟踪映射:
 
 依据: 11_regime_backtest_validation_plan §3 ② + backtest_observability_mlflow_plan.md M1-3
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: result 参数
+#   fields: 参数 result，类型注解 C1ComparisonResult
+#   code: c1_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: comparator 参数
+#   fields: 参数 comparator（无注解）
+#   code: c1_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: mode 参数
+#   fields: 参数 mode（无注解）
+#   code: c1_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: strategy_name 参数
+#   fields: 参数 strategy_name（无注解）
+#   code: c1_adapter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① track_c1_result
+#   name_en: track_c1_result
+#   intro: 把 ``C1ComparisonResult`` 记录为一个实验跟踪 run。
+#   desc: 把 ``C1ComparisonResult`` 记录为一个实验跟踪 run。 Args: result: C1 开/关对比结果（含四项 verdicts + passed +…；源码 L263-L310
+#   inputs: result comparator mode strategy_name extra_tags
+#   outputs: str
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.backtest.regime_validation.c1_runner (track=True 时 lazy import 调用)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -68,8 +110,8 @@ _COMPONENT = "c1-validation"
 
 
 def _extract_params(
-    result: "C1ComparisonResult",
-    comparator: "C1ShrinkageComparator" | None,
+    result: C1ComparisonResult,
+    comparator: C1ShrinkageComparator | None,
     mode: str,
     strategy_name: str,
 ) -> dict[str, Any]:
@@ -101,7 +143,7 @@ def _extract_params(
     return params
 
 
-def _extract_metrics(result: "C1ComparisonResult") -> dict[str, float]:
+def _extract_metrics(result: C1ComparisonResult) -> dict[str, float]:
     """提取 metrics：baseline_/experiment_ 核心指标 + per-verdict 值 + passed。"""
     br, er = result.baseline_result, result.experiment_result
     metrics: dict[str, float] = {
@@ -164,7 +206,7 @@ def _render_nav_png(nav_data: dict[str, Any]) -> bytes | None:
 
 def _log_nav_artifacts(
     run: Any,
-    comparator: "C1ShrinkageComparator" | None,
+    comparator: C1ShrinkageComparator | None,
 ) -> None:
     """把 baseline/experiment 净值曲线写为 CSV + PNG artifact（comparator=None 或无 nav 时跳过）。"""
     if comparator is None:
@@ -197,7 +239,7 @@ def _log_nav_artifacts(
             _logger.warning("c1_adapter: 渲染净值曲线 PNG 失败(跳过): %s", e)
 
 
-def _build_summary_md(result: "C1ComparisonResult") -> str:
+def _build_summary_md(result: C1ComparisonResult) -> str:
     """构建 c1_summary.md：人类可读总结 + verdicts 表。"""
     lines = [
         "# C1 Shrinkage 开/关对比结果",
@@ -219,9 +261,9 @@ def _build_summary_md(result: "C1ComparisonResult") -> str:
 
 
 def track_c1_result(
-    result: "C1ComparisonResult",
+    result: C1ComparisonResult,
     *,
-    comparator: "C1ShrinkageComparator" | None = None,
+    comparator: C1ShrinkageComparator | None = None,
     mode: str = "unknown",
     strategy_name: str = "c1-shrinkage",
     extra_tags: dict[str, str] | None = None,

@@ -1,12 +1,13 @@
 # [BLUEPRINT] MOD-L00-006 | docs/03_modules/_domain_data/wal_codec_blueprint.md
 # [A_module] module_id=MOD-L00-006 | layer=module | stability=evolving | safety=L
 # [TTL] permanent
-"""Codec 注册表——按 magic number 路由到对应编解码器。
+r"""
+Codec 注册表——按 magic number 路由到对应编解码器。
 
 设计：
 - 每个 codec 有唯一的 magic number（4 字节前缀）
 - TSV 无 magic（b""），因此纯文本段文件默认按 TSV 解码
-- Proto 段以 PB\\x01 开头（P3 远期实现）
+- Proto 段以 PB\x01 开头（P3 远期实现）
 - drain 线程根据 magic number 自动选择解码器
 
 Usage::
@@ -15,6 +16,48 @@ Usage::
     registry = get_registry()
     codec = registry.get_codec(data)
     rows = codec.decode(data)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: codec_registry.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① CodecProtocol
+#   name_en: CodecProtocol
+#   intro: 编解码器协议。
+#   desc: 编解码器协议。；公共方法（定义序）: encode, decode；源码 L76-L83
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② CodecRegistry
+#   name_en: CodecRegistry
+#   intro: Codec 注册表——按 magic number 路由。
+#   desc: Codec 注册表——按 magic number 路由。 线程安全：注册表在初始化后只读（运行时不动态注册新 codec）。；公共方法（定义序）: get_codec, encode, decode；源码 L86-L…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ get_registry
+#   name_en: get_registry
+#   intro: 获取全局 CodecRegistry 单例。
+#   desc: 获取全局 CodecRegistry 单例。；源码 L173-L178
+#   inputs: 无参数
+#   outputs: CodecRegistry
+# 层: 输出
+# - id: O1
+#   name_zh: CodecRegistry
+#   name_en: CodecRegistry
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

@@ -19,7 +19,8 @@
 # A1: purged_kfold_split(K折连续块→test; 其余train; 按t1重叠purge+test末端embargo剔除)
 # O1: list[(train_indices, test_indices)] 长度=n_splits
 # [/ALGO_FLOW]
-"""Purged K-Fold 交叉验证切分模块(BM-BT-04-C)
+"""
+Purged K-Fold 交叉验证切分模块(BM-BT-04-C)
 
 职责(52号 memo §6 暂缓项函数级落地, 标签重叠窗口策略上线时启用):
   - purged_kfold_split: López de Prado Purged K-Fold——连续 K 折切分,
@@ -35,6 +36,48 @@
   - 纯 numpy 操作
 
 SSoT: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/52_backtest_framework_docking.md §6
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: n_samples 参数
+#   fields: 参数 n_samples，类型注解 int
+#   code: purged_kfold.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: n_splits 参数
+#   fields: 参数 n_splits，类型注解 int
+#   code: purged_kfold.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: t1 参数
+#   fields: 参数 t1（无注解）
+#   code: purged_kfold.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: embargo 参数
+#   fields: 参数 embargo（无注解）
+#   code: purged_kfold.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① purged_kfold_split
+#   name_en: purged_kfold_split
+#   intro: Purged K-Fold 切分(净化+隔离)
+#   desc: Purged K-Fold 切分(净化+隔离) 算法: 1. 将 [0, n_samples) 均分为 n_splits 个连续折(前 remainder 折多 1 样本) 2.…；源码 L104-L175
+#   inputs: n_samples n_splits t1 embargo
+#   outputs: list[tuple[tuple[int, ...], tuple[int,…
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[tuple[tuple[int, ...], tuple[int,…
+#   name_en: list[tuple[tuple[int, ...], tuple[int,…
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 预留(标签重叠窗口策略上线时接入, 52号§6 BM-BT-04-C)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

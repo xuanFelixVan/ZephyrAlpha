@@ -14,7 +14,8 @@
 # [TESTS] tests/clone_guard/test_relate_adapter.py
 # [A_module] module_id=MOD-CLONE_GUARD | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""RelateAdapter — relate 快速预筛适配器（Phase C L2/L3 加速器，Path B: datasketch MinHash LSH）。
+"""
+RelateAdapter — relate 快速预筛适配器（Phase C L2/L3 加速器，Path B: datasketch MinHash LSH）。
 
 封装 datasketch 的 MinHash + LSH（局部敏感哈希）进程内调用，对编排层暴露统一
 detect() 接口 + search() 方法（L0 按语义搜已有函数）。
@@ -44,6 +45,37 @@ relate 不直接判 extract（预筛结果保守，仅 review/acknowledged），
   - 语料为空（无可索引文件）→ 返回空（degraded=False，无匹配非故障）
   - 异常 → degraded=True, 返回空列表
   - 正常执行 → 返回 Finding 列表（severity 仅 review/acknowledged）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: repo_root 参数
+#   fields: 参数 repo_root（无注解）
+#   code: relate_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: relate_adapter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RelateAdapter
+#   name_en: RelateAdapter
+#   intro: relate 快速预筛适配器（Phase C L2/L3 加速器，Path B: datasketch MinHash…
+#   desc: relate 快速预筛适配器（Phase C L2/L3 加速器，Path B: datasketch MinHash LSH）。 封装 datasketch MinHash L…；公共方法（定义序）: health_…
+#   inputs: repo_root config
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: RelateAdapter
+#   downstream: zephyr.clone_guard.orchestrator; zephyr.clone_guard.mcp_server
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

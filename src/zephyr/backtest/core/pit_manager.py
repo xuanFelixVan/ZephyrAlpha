@@ -14,7 +14,8 @@
 # [TESTS]
 # [TTL] permanent
 # [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
-"""PIT(Point-In-Time)铁律管理器模块
+"""
+PIT(Point-In-Time)铁律管理器模块
 
 职责:
   - 落实PIT三公理: 时点标记 / 版本对齐 / 泄漏防护
@@ -29,6 +30,33 @@
   - 禁止使用后续修正数据(版本对齐)
 
 SSoT: docs/03_modules/_domain_backtest/blueprint.md §5.1 PIT铁律
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: pit_manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① PITManager
+#   name_en: PITManager
+#   intro: PIT(Point-In-Time)铁律管理器
+#   desc: PIT(Point-In-Time)铁律管理器 落实蓝图 §5.1 PIT三公理: 1. 时点标记 - 数据点须区分 event_time(生效时间) 与 available_a…；公共方法（定义序）: as_of_j…
+#   inputs: config
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: PITManager
+#   downstream: zephyr.backtest.core.data_handler
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

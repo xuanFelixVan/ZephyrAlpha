@@ -14,7 +14,8 @@
 # [TESTS] tests/zephyr/data/test_okx_provider.py
 # [A_module] module_id=MOD-MKT-DATA | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""OKX 交易所行情 Provider（CAND-CRYPTO-002，94号 Q1 裁定：OKX 备/数据互备源）。
+"""
+OKX 交易所行情 Provider（CAND-CRYPTO-002，94号 Q1 裁定：OKX 备/数据互备源）。
 
 公开 REST 端点拉取 BTC/ETH 现货 K 线数据，接入现有 WAL→CH 落库管道。
 - 近期 3 个月：GET /api/v5/market/candles
@@ -24,6 +25,32 @@
 
 响应格式：{code: "0", data: [[ts_ms, open, high, low, close, vol, volCcy, volCcyQuote, confirm], ...]}
 时间倒序（最新在前），分页用 after/before 毫秒时间戳。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: okx_provider.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① OkxProvider
+#   name_en: OkxProvider
+#   intro: OKX 交易所行情 Provider。
+#   desc: OKX 交易所行情 Provider。 公开 REST 端点（无需签名），shared 线程安全模型。 已知问题：公开端点限频 20req/2s；历史 K 线仅主流币种。；公共方法（定义序）: connect, hea…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: OkxProvider
+#   downstream: zephyr.data.scheduler
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -133,7 +160,7 @@ class OkxProvider(IngestProviderBase):
 
     # ---- 拉取入口 ----
 
-    def fetch(self, payload: FetchPayload, policy: "SourcePolicy") -> Iterator[FetchResult]:
+    def fetch(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """按 capability 路由到具体获取方法。"""
         if not self._connected:
             yield FetchResult(
@@ -161,7 +188,7 @@ class OkxProvider(IngestProviderBase):
 
     # ---- K 线拉取 ----
 
-    def _fetch_kline_crypto(self, payload: FetchPayload, policy: "SourcePolicy") -> Iterator[FetchResult]:
+    def _fetch_kline_crypto(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """拉取数字货币 K 线（公开端点，分页全覆盖）。
 
         近期 3 个月走 /candles，更早走 /history-candles。
@@ -249,18 +276,20 @@ class OkxProvider(IngestProviderBase):
                 for c in candles:
                     ts_ms = int(c[0])
                     trade_date = datetime.datetime.fromtimestamp(ts_ms / 1000, tz=datetime.timezone.utc).date()
-                    all_rows.append((
-                        symbol,
-                        trade_date.isoformat(),
-                        float(c[1]),  # open
-                        float(c[2]),  # high
-                        float(c[3]),  # low
-                        float(c[4]),  # close
-                        float(c[5]),  # volume
-                        float(c[6]) if len(c) > 6 else 0.0,  # volCcy (amount)
-                        okx_bar,
-                        int(c[8]) if len(c) > 8 else 0,  # confirm
-                    ))
+                    all_rows.append(
+                        (
+                            symbol,
+                            trade_date.isoformat(),
+                            float(c[1]),  # open
+                            float(c[2]),  # high
+                            float(c[3]),  # low
+                            float(c[4]),  # close
+                            float(c[5]),  # volume
+                            float(c[6]) if len(c) > 6 else 0.0,  # volCcy (amount)
+                            okx_bar,
+                            int(c[8]) if len(c) > 8 else 0,  # confirm
+                        )
+                    )
 
                 # 分页：最早一根的时间戳 - 1ms
                 earliest_ts = int(candles[-1][0])

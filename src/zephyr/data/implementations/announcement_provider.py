@@ -14,7 +14,8 @@
 # [TESTS] tests/zephyr/data/test_announcement_provider.py
 # [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""巨潮/交易所公告采集器（CAND-DAT-013 / B10-01344，交易所公告/新闻源）。
+"""
+巨潮/交易所公告采集器（CAND-DAT-013 / B10-01344，交易所公告/新闻源）。
 
 深挖裁定=做(P1)：库内新闻读取器 news_collector 已有（MOD-DATA-NEWS-001），
 rss_provider 覆盖财经媒体 RSS，但巨潮/交易所公告上游 HTTP/RSS 采集器缺口。
@@ -26,6 +27,47 @@ rss_provider 覆盖财经媒体 RSS，但巨潮/交易所公告上游 HTTP/RSS �
    extra.feeds 配置，不虚构官方路由），feedparser 解析。
 3. 落库形态：``build_news_row`` 对齐 NEWS_DATA_COLUMNS 写 fund_news_data 表；
    每批必经 ``dedup_news_result``（标题 MD5，批内+已库 7 日窗口）去重。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: http_post 参数
+#   fields: 参数 http_post（无注解）
+#   code: announcement_provider.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: http_get 参数
+#   fields: 参数 http_get（无注解）
+#   code: announcement_provider.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: feed_parse 参数
+#   fields: 参数 feed_parse（无注解）
+#   code: announcement_provider.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: feeds 参数
+#   fields: 参数 feeds（无注解）
+#   code: announcement_provider.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AnnouncementProvider
+#   name_en: AnnouncementProvider
+#   intro: 巨潮/交易所公告 Provider——announcement_news 能力。
+#   desc: 巨潮/交易所公告 Provider——announcement_news 能力。 匿名访问、shared 线程安全模型。生产 HTTP 走 requests（延迟 import）…；公共方法（定义序）: connect…
+#   inputs: http_post http_get feed_parse feeds
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: AnnouncementProvider
+#   downstream: zephyr.data.scheduler（P1 接线：tasks.yaml announcement_news 任务）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -175,20 +217,12 @@ class AnnouncementProvider(IngestProviderBase):
             if not title:
                 continue
             ts_ms = ann.get("announcementTime")
-            pub = (
-                datetime.datetime.fromtimestamp(ts_ms / 1000, tz=_CST).strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                )
-                if ts_ms
-                else ""
-            )
+            pub = datetime.datetime.fromtimestamp(ts_ms / 1000, tz=_CST).strftime("%Y-%m-%d %H:%M:%S") if ts_ms else ""
             adjunct = ann.get("adjunctUrl", "")
             link = f"{_CNINFO_STATIC_PREFIX}{adjunct}" if adjunct else _CNINFO_QUERY_URL
             sec = ann.get("secName") or ann.get("secCode") or ""
             summary = f"{sec} 公告" if sec else "交易所公告"
-            rows.append(
-                build_news_row(pub, title, link, summary, "cninfo", self.source_name)
-            )
+            rows.append(build_news_row(pub, title, link, summary, "cninfo", self.source_name))
         self._log.info(f"巨潮公告: {len(rows)} 行")
         return rows
 

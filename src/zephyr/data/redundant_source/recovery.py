@@ -1,7 +1,8 @@
 # [BLUEPRINT] MOD-L00-005 | docs/03_modules/_domain_data/redundant_source_blueprint.md
 # [A_module] module_id=MOD-L00-005 | layer=module | stability=evolving | safety=M
 # [TTL] permanent
-"""CH 恢复后 SQLite→CH 回灌管理器。
+"""
+CH 恢复后 SQLite→CH 回灌管理器。
 
 设计：
 - 监听 HeartbeatMonitor 的 CH 状态变化
@@ -13,6 +14,47 @@ Usage::
 
     recovery = RecoveryManager(sqlite_fallback, heartbeat_monitor)
     recovery.start()  # CH 恢复后自动回灌
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: sqlite_fallback 参数
+#   fields: 参数 sqlite_fallback（无注解）
+#   code: recovery.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: heartbeat 参数
+#   fields: 参数 heartbeat（无注解）
+#   code: recovery.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: tables 参数
+#   fields: 参数 tables（无注解）
+#   code: recovery.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: batch_size 参数
+#   fields: 参数 batch_size（无注解）
+#   code: recovery.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RecoveryManager
+#   name_en: RecoveryManager
+#   intro: CH 恢复后 SQLite→CH 回灌管理器。
+#   desc: CH 恢复后 SQLite→CH 回灌管理器。 线程安全：回灌操作在独立线程中执行，通过 _running 标志控制。；公共方法（定义序）: start, stop, is_recovering；源码 L79-L190
+#   inputs: sqlite_fallback heartbeat tables batch_size check_interval
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: RecoveryManager
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

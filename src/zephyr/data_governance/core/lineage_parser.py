@@ -14,7 +14,8 @@
 # [TESTS] tests/data_governance/test_lineage_parser.py
 # [A_module] module_id=MOD-DATA_GOV-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""M8-S01 血缘解析器（MOD-DATA_GOV-004）。
+"""
+M8-S01 血缘解析器（MOD-DATA_GOV-004）。
 
 真源：construction_backlog_dig.tsv B10-02313（A1 交易决策架构 §30.4.3，
 裁定=做 P1）+ CAND-DATGOV-001。
@@ -30,6 +31,77 @@ tracker 现有实现，不重造：
      `# [CONSUMERS]` 括号内模块名/独立 MOD-id 令牌 → module --consumed_by--> consumer；
   ③ 入图：批内 (source,target) 去重（首条胜出），tracker 幂等重加计
      updated，环 ValueError 捕获记 rejected 不中断批，产出 LineageParseReport。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: contract 参数
+#   fields: 参数 contract，类型注解 Mapping[str, object]
+#   code: lineage_parser.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: text 参数
+#   fields: 参数 text，类型注解 str
+#   code: lineage_parser.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: annotations 参数
+#   fields: 参数 annotations，类型注解 ModuleHeaderAnnotations
+#   code: lineage_parser.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: edges 参数
+#   fields: 参数 edges，类型注解 Sequence[LineageEdge]
+#   code: lineage_parser.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① parse_ctr_contract
+#   name_en: parse_ctr_contract
+#   intro: 解析单条 CTR 契约为血缘边（缺 id/source_domain Fail-Closed）。
+#   desc: 解析单条 CTR 契约为血缘边（缺 id/source_domain Fail-Closed）。 边集：source_domain --produces--> contract_…；源码 L192-L215
+#   inputs: contract
+#   outputs: list[LineageEdge]
+# - id: A2
+#   name_zh: ② parse_module_header
+#   name_en: parse_module_header
+#   intro: 解析模块头 `# [MODULE]`/`# [DEPENDENCIES]`/`# [CONSUMERS]` 三注解。
+#   desc: 解析模块头 `# [MODULE]`/`# [DEPENDENCIES]`/`# [CONSUMERS]` 三注解。 DEPENDENCIES 按 `;` 分隔；仅 zephyr…；源码 L218-L264
+#   inputs: text
+#   outputs: ModuleHeaderAnnotations
+# - id: A3
+#   name_zh: ③ edges_of_annotations
+#   name_en: edges_of_annotations
+#   intro: 模块头注解 → 血缘边：dep --imports--> module；module --consumed_by-->…
+#   desc: 模块头注解 → 血缘边：dep --imports--> module；module --consumed_by--> consumer。；源码 L267-L273
+#   inputs: annotations
+#   outputs: list[LineageEdge]
+# - id: A4
+#   name_zh: ④ ingest_into_tracker
+#   name_en: ingest_into_tracker
+#   intro: 边集入 lineage_tracker（幂等与环检测复用 MOD-DATA_GOV-002 实现）。
+#   desc: 边集入 lineage_tracker（幂等与环检测复用 MOD-DATA_GOV-002 实现）。 - 批内 (source,target) 去重：首条胜出，其余计 skipp…；源码 L276-L326
+#   inputs: edges tracker sources
+#   outputs: LineageParseReport
+#   （注：A4 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[LineageEdge]
+#   name_en: list[LineageEdge]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: ModuleHeaderAnnotations
+#   name_en: ModuleHeaderAnnotations
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations
@@ -125,14 +197,10 @@ def parse_ctr_contract(contract: Mapping[str, object]) -> list[LineageEdge]:
     produces 边；非列表 → Fail-Closed。
     """
     contract_id = _validate_node(str(contract.get("id") or ""), field_name="id")
-    source_domain = _validate_node(
-        str(contract.get("source_domain") or ""), field_name="source_domain"
-    )
+    source_domain = _validate_node(str(contract.get("source_domain") or ""), field_name="source_domain")
     raw_targets = contract.get("target_domains") or []
     if not isinstance(raw_targets, (list, tuple)):
-        raise LineageParseError(
-            f"契约 {contract_id} target_domains 非列表: {type(raw_targets).__name__}"
-        )
+        raise LineageParseError(f"契约 {contract_id} target_domains 非列表: {type(raw_targets).__name__}")
     edges = [
         LineageEdge(source_domain, contract_id, TRANSFORMATION_PRODUCES),
     ]
@@ -198,13 +266,9 @@ def parse_module_header(text: str) -> ModuleHeaderAnnotations:
 
 def edges_of_annotations(annotations: ModuleHeaderAnnotations) -> list[LineageEdge]:
     """模块头注解 → 血缘边：dep --imports--> module；module --consumed_by--> consumer。"""
-    edges = [
-        LineageEdge(dep, annotations.module, TRANSFORMATION_IMPORTS)
-        for dep in annotations.dependencies
-    ]
+    edges = [LineageEdge(dep, annotations.module, TRANSFORMATION_IMPORTS) for dep in annotations.dependencies]
     edges.extend(
-        LineageEdge(annotations.module, consumer, TRANSFORMATION_CONSUMED_BY)
-        for consumer in annotations.consumers
+        LineageEdge(annotations.module, consumer, TRANSFORMATION_CONSUMED_BY) for consumer in annotations.consumers
     )
     return edges
 

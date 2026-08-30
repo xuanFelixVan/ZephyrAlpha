@@ -27,6 +27,32 @@ Version: 0.2.0
   1. StyleAdaptation: 从 {structured, step-by-step, table} -> {section-by-section, chain-of-thought}
   2. TerminologyTranslation: 从 DeepSeek 术语 -> Claude 等效术语
   3. ToolRemapping: 工具名差异校正
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: skill_translator.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SkillTranslator
+#   name_en: SkillTranslator
+#   intro: 跨模型 Skill 翻译器
+#   desc: 跨模型 Skill 翻译器；公共方法（定义序）: infer_source_family, apply_adaptation, translate；源码 L106-L212
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SkillTranslator
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

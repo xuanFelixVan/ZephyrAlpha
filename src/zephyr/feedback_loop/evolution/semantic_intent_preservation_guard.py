@@ -18,6 +18,32 @@
 """
 R505: SemanticIntentPreservationGuard
 自修改语义意图保真校验 — cosine similarity 检测意图漂移
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: semantic_intent_preservation_guard.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SemanticIntentPreservationGuard
+#   name_en: SemanticIntentPreservationGuard
+#   intro: class SemanticIntentPreservationGuard 源码 L54-L116
+#   desc: 公共方法（定义序）: snapshot_pre_state, verify_post_state, get_drift_history；源码 L54-L116
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SemanticIntentPreservationGuard
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 import math

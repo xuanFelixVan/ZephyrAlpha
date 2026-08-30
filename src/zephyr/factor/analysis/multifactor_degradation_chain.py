@@ -22,7 +22,8 @@
 # F2: synthesize_with_degradation(decide后分派到 multifactor_synthesis 三方法, 纯增量不替换既有方法)
 # O1: SynthesisDecision + 合成信号 pd.Series
 # [/ALGO_FLOW]
-"""25号memo §3.7#1 合成降级链决策算法（SynthesisDegradationChain）。
+"""
+25号memo §3.7#1 合成降级链决策算法（SynthesisDegradationChain）。
 
 降级链：回归优化 → IC 加权 → 等权兜底。决定"何时降级"的触发条件与降级路径，
 与 §3.3 衰减监控联动（全池 |IC|<0.02 信号衰竭即降级等权）。
@@ -36,6 +37,61 @@
 
 synthesize_with_degradation() 为统一入口：decide() 后分派到
 multifactor_synthesis 的三个 production 方法，纯增量不替换现有方法。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: factor_panel 参数
+#   fields: 参数 factor_panel，类型注解 dict[str, pd.Series]
+#   code: multifactor_degradation_chain.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: ic_history 参数
+#   fields: 参数 ic_history，类型注解 dict[str, Sequence[float]]
+#   code: multifactor_degradation_chain.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: forward_returns 参数
+#   fields: 参数 forward_returns，类型注解 pd.Series | None
+#   code: multifactor_degradation_chain.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: params 参数
+#   fields: 参数 params，类型注解 DegradationChainParams | None
+#   code: multifactor_degradation_chain.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① decide
+#   name_en: decide
+#   intro: 合成降级链决策——regression → ic_weighted → equal_weight 三级降级。
+#   desc: 合成降级链决策——regression → ic_weighted → equal_weight 三级降级。 Args: factor_panel: factor_id → 因子…；源码 L176-L239
+#   inputs: factor_panel ic_history forward_returns params
+#   outputs: SynthesisDecision
+# - id: A2
+#   name_zh: ② synthesize_with_degradation
+#   name_en: synthesize_with_degradation
+#   intro: 合成统一入口——decide() 后分派到 3 个 production 合成方法。
+#   desc: 合成统一入口——decide() 后分派到 3 个 production 合成方法。 Returns: (合成信号 pd.Series, SynthesisDecision)；源码 L242-L261
+#   inputs: factor_values ic_history forward_returns params
+#   outputs: tuple[pd.Series, SynthesisDecision]
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: SynthesisDecision
+#   name_en: SynthesisDecision
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: multifactor_pit_backtest
+# - id: O2
+#   name_zh: tuple[pd.Series, SynthesisDecision]
+#   name_en: tuple[pd.Series, SynthesisDecision]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: multifactor_pit_backtest
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

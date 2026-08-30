@@ -28,6 +28,32 @@ Version: 0.2.0
   2. PartialSuccess: 5 项检查中 3 项过但 2 项默默失败
   3. AssumptionViolation: Skill 的前提条件实际不满足但未告警
   4. DeterministicNonIdempotency: 同一输入两次执行结果不一致
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: skill_silent_failure.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SilentFailureDetector
+#   name_en: SilentFailureDetector
+#   intro: 静默失败检测器
+#   desc: 静默失败检测器；公共方法（定义序）: anomalies, execution_history, scan, get_session_anomalies；源码 L67-L278
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SilentFailureDetector
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

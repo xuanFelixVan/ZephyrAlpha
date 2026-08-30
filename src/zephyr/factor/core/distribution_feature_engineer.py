@@ -21,7 +21,8 @@
 # A3: 交互项——{a}_x_{b} 列对乘积；全特征统一 shift（PIT 对齐）
 # O1: 增强 DataFrame（原列 + 派生特征列，副本返回）
 # [/ALGO_FLOW]
-"""分布特征工程器（MOD-L02-026，D_FACTOR core）。
+"""
+分布特征工程器（MOD-L02-026，D_FACTOR core）。
 
 给因子加料——滞后项、交互项、滚动统计量（均值/标准差/偏度/峰度/分位数），
 专门喂给密度预测模型（BM-SEL-13 conditional_density_predictor 的条件分布特征）。
@@ -32,6 +33,72 @@ PIT 铁律（INV-004 对齐）：默认 shift=1——t 行特征只使用 ≤t�
 消费 t−1 特征，无未来函数）；滚动统计全部 trailing 窗口，不用 center=True。
 签名方法（signature features）登记远期——路径签名张量需 esig 依赖，当前滚动
 统计量已覆盖密度预测所需分布信息，不引入。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: df 参数
+#   fields: 参数 df，类型注解 pd.DataFrame
+#   code: distribution_feature_engineer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: columns 参数
+#   fields: 参数 columns，类型注解 tuple[str, ...]
+#   code: distribution_feature_engineer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: lags 参数
+#   fields: 参数 lags，类型注解 tuple[int, ...]
+#   code: distribution_feature_engineer.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: windows 参数
+#   fields: 参数 windows，类型注解 tuple[int, ...]
+#   code: distribution_feature_engineer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① add_lag_features
+#   name_en: add_lag_features
+#   intro: 滞后项：{col}_lag{k}（沿索引下移 k 行，头部 NaN）。
+#   desc: 滞后项：{col}_lag{k}（沿索引下移 k 行，头部 NaN）。；源码 L149-L162
+#   inputs: df columns lags
+#   outputs: pd.DataFrame
+# - id: A2
+#   name_zh: ② add_rolling_distribution_features
+#   name_en: add_rolling_distribution_features
+#   intro: 滚动分布统计：trailing 窗口 mean/std/skew/kurt(Fisher)/分位数。
+#   desc: 滚动分布统计：trailing 窗口 mean/std/skew/kurt(Fisher)/分位数。 列命名：{col}_rollmean{w} / _rollstd{w} /…；源码 L165-L193
+#   inputs: df columns windows quantiles min_periods
+#   outputs: pd.DataFrame
+# - id: A3
+#   name_zh: ③ add_interaction_features
+#   name_en: add_interaction_features
+#   intro: 交互项：{a}_x_{b} 列对乘积。
+#   desc: 交互项：{a}_x_{b} 列对乘积。；源码 L196-L206
+#   inputs: df pairs
+#   outputs: pd.DataFrame
+# - id: A4
+#   name_zh: ④ build_distribution_features
+#   name_en: build_distribution_features
+#   intro: 全量构建：滞后 + 滚动分布统计 + 交互 → 派生列统一 PIT 右移。
+#   desc: 全量构建：滞后 + 滚动分布统计 + 交互 → 派生列统一 PIT 右移。 shift>0 时全部**派生**特征列右移 shift 行（原样列不动）——t 行派生特征 只含 ≤…；源码 L209-L229
+#   inputs: df config
+#   outputs: pd.DataFrame
+#   （注：A4 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: pd.DataFrame
+#   name_en: pd.DataFrame
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.signal_ashare.conditional_density_predictor（特征输入）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

@@ -18,6 +18,32 @@
 """
 R514: PromptOptimizationRegressionDetector
 提示优化前A/B验证 — 新旧提示对比held-out验证集，p<0.05才允许部署
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: prompt_optimization_regression_detector.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① PromptOptimizationRegressionDetector
+#   name_en: PromptOptimizationRegressionDetector
+#   intro: class PromptOptimizationRegressionDetector 源码 L53-L114
+#   desc: 公共方法（定义序）: run_ab_test；源码 L53-L114
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: PromptOptimizationRegressionDetector
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from dataclasses import dataclass, field

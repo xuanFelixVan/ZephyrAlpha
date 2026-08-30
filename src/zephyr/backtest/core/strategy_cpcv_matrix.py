@@ -22,7 +22,8 @@
 # A3: select_candidates(稳健池≤threshold→≥min_votes交集→票数降序+稳健分升序→≤30封顶)
 # O1: StrategyCPCVReport(split_scores/robust_scores/robust_pool/selected_candidates/degraded)
 # [/ALGO_FLOW]
-"""第五层：多策略交叉验证——策略级 CPCV 打分矩阵 + 多策略交集筛选（MOD-BT-028）。
+"""
+第五层：多策略交叉验证——策略级 CPCV 打分矩阵 + 多策略交集筛选（MOD-BT-028）。
 
 真源：construction_backlog_dig.tsv B10-01272（A1交易决策架构 §1.1，裁定=做 P1）
 + CAND-WFO-003。（改铸注记：初铸 MOD-BT-027 与并行会话 W-P1-18 C-003
@@ -50,6 +51,77 @@ degraded=True 留痕（不伪造放行）。
 不产出下单信号（只出候选名单与打分矩阵）。
 
 SSoT: docs/03_modules/_domain_backtest/strategy_cpcv_matrix/blueprint.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: performance 参数
+#   fields: 参数 performance，类型注解 Sequence[Sequence[float]]
+#   code: strategy_cpcv_matrix.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: strategy_ids 参数
+#   fields: 参数 strategy_ids，类型注解 Sequence[str]
+#   code: strategy_cpcv_matrix.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: config 参数
+#   fields: 参数 config，类型注解 StrategyCPCVConfig | None
+#   code: strategy_cpcv_matrix.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: split_scores 参数
+#   fields: 参数 split_scores，类型注解 Sequence[SplitScore]
+#   code: strategy_cpcv_matrix.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① build_score_matrix
+#   name_en: build_score_matrix
+#   intro: 构建策略级 CPCV 打分矩阵（逐折各策略 IS/OOS 均值）。
+#   desc: 构建策略级 CPCV 打分矩阵（逐折各策略 IS/OOS 均值）。 切分复用 MOD-BT-001 generate_cpcv_splits（purge+embargo 语义继承…；源码 L243-L273
+#   inputs: performance strategy_ids config
+#   outputs: list[SplitScore]
+# - id: A2
+#   name_zh: ② compute_robust_scores
+#   name_en: compute_robust_scores
+#   intro: 计算策略稳健分：逐折 OOS 均值降序秩（秩1=最优，同值平均秩）→ mean(秩)/M。
+#   desc: 计算策略稳健分：逐折 OOS 均值降序秩（秩1=最优，同值平均秩）→ mean(秩)/M。 返回值 ∈ (0,1]，越小越稳健（PBO 同族秩口径：秩/(M+1) 的中位秩=0.…；源码 L292-L314
+#   inputs: split_scores
+#   outputs: dict[str, float]
+# - id: A3
+#   name_zh: ③ select_candidates
+#   name_en: select_candidates
+#   intro: 多策略交集筛选：稳健池 ∩ ≥min_votes 提名 → 票数降序取 ≤max_candidates。
+#   desc: 多策略交集筛选：稳健池 ∩ ≥min_votes 提名 → 票数降序取 ≤max_candidates。 排序键确定性：（提名数降序, 最佳提名者稳健分升序, 候选代码升序）。…；源码 L317-L363
+#   inputs: robust_scores candidate_votes config
+#   outputs: StrategyCPCVReport
+# - id: A4
+#   name_zh: ④ run_strategy_cpcv
+#   name_en: run_strategy_cpcv
+#   intro: 第五层全链路：打分矩阵 → 稳健分 → 交集筛选（三段合一便捷入口）。
+#   desc: 第五层全链路：打分矩阵 → 稳健分 → 交集筛选（三段合一便捷入口）。；源码 L366-L383
+#   inputs: performance strategy_ids candidate_votes config
+#   outputs: StrategyCPCVReport
+#   （注：A4 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[SplitScore]
+#   name_en: list[SplitScore]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 运行时装配批（策略池候选注入/筛选漏斗离线验证段接线）
+# - id: O2
+#   name_zh: dict[str, float]
+#   name_en: dict[str, float]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 运行时装配批（策略池候选注入/筛选漏斗离线验证段接线）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations
@@ -155,9 +227,7 @@ def _validate_performance(
         raise StrategyCPCVError("strategy_ids不得重复")
     rows = [list(row) for row in performance]
     if len(rows) != len(strategy_ids):
-        raise StrategyCPCVError(
-            f"performance行数({len(rows)})必须等于strategy_ids数({len(strategy_ids)})"
-        )
+        raise StrategyCPCVError(f"performance行数({len(rows)})必须等于strategy_ids数({len(strategy_ids)})")
     if not rows or not rows[0]:
         raise StrategyCPCVError("performance不能为空矩阵")
     width = len(rows[0])
@@ -183,23 +253,15 @@ def build_score_matrix(
     cfg = config or StrategyCPCVConfig()
     arr = _validate_performance(performance, strategy_ids)
     n_samples = arr.shape[1]
-    splits = generate_cpcv_splits(
-        n_samples, cfg.n_groups, cfg.k_test, t1=cfg.t1, embargo=cfg.embargo
-    )
+    splits = generate_cpcv_splits(n_samples, cfg.n_groups, cfg.k_test, t1=cfg.t1, embargo=cfg.embargo)
     out: list[SplitScore] = []
     for split in splits:
         train_idx = np.asarray(split.train_indices, dtype=int)
         test_idx = np.asarray(split.test_indices, dtype=int)
         if train_idx.size == 0 or test_idx.size == 0:
-            raise StrategyCPCVError(
-                f"split {split.split_id} 切分后 train/test 为空（purge+embargo 过严），拒绝打分"
-            )
-        is_means = {
-            sid: float(np.mean(arr[r, train_idx])) for r, sid in enumerate(strategy_ids)
-        }
-        oos_means = {
-            sid: float(np.mean(arr[r, test_idx])) for r, sid in enumerate(strategy_ids)
-        }
+            raise StrategyCPCVError(f"split {split.split_id} 切分后 train/test 为空（purge+embargo 过严），拒绝打分")
+        is_means = {sid: float(np.mean(arr[r, train_idx])) for r, sid in enumerate(strategy_ids)}
+        oos_means = {sid: float(np.mean(arr[r, test_idx])) for r, sid in enumerate(strategy_ids)}
         out.append(
             SplitScore(
                 split_id=split.split_id,

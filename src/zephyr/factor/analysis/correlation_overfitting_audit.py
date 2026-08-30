@@ -22,7 +22,8 @@
 # A3: audit(函数级入口: 汇总硬指标+可选dsr/pbo→LIKELY_REAL/INCONCLUSIVE/LIKELY_OVERFIT)
 # O1: OverfitAuditResult(各指标值+per-check状态+三态verdict)
 # [/ALGO_FLOW]
-"""D_FACTOR — G07 过拟合检测引擎（23 号 memo §3.3，PDR/PSI/DFR 自实现核心）
+"""
+D_FACTOR — G07 过拟合检测引擎（23 号 memo §3.3，PDR/PSI/DFR 自实现核心）
 
 三指标补 DSR/PBO 盲区（digitalninjasystems 2026-05 / backtrex 2026-05）：
   - PDR=(IS_SR−OOS_SR)/IS_SR，≥0.5 严重过拟合
@@ -33,6 +34,93 @@
 外部 deflated-alpha v0.3.0 vendor 不引入（夜班裁定）；audit() 为函数级集成入口：
 DSR 由调用方经 DeflatedSharpeCalculator（MOD-SIM-024 已 production）预算后传入，
 PBO/CSCV 同理留口； verdict 保守策略"任一 fail 即不上线"（memo §5.3）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: is_sharpe 参数
+#   fields: 参数 is_sharpe，类型注解 float
+#   code: correlation_overfitting_audit.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: oos_sharpe 参数
+#   fields: 参数 oos_sharpe，类型注解 float
+#   code: correlation_overfitting_audit.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: best_sharpe 参数
+#   fields: 参数 best_sharpe，类型注解 float
+#   code: correlation_overfitting_audit.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: avg_sharpe 参数
+#   fields: 参数 avg_sharpe，类型注解 float
+#   code: correlation_overfitting_audit.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① compute_pdr
+#   name_en: compute_pdr
+#   intro: PDR 性能退化比 = (IS_SR − OOS_SR)/IS_SR。
+#   desc: PDR 性能退化比 = (IS_SR − OOS_SR)/IS_SR。 IS_SR≤0（无 IS edge）约定返回 1.0（全额退化，判 fail）。负 OOS 使 PDR>1。；源码 L189-L196
+#   inputs: is_sharpe oos_sharpe
+#   outputs: float
+# - id: A2
+#   name_zh: ② compute_parameter_stability_index
+#   name_en: compute_parameter_stability_index
+#   intro: PSI 参数稳定指数 = Best_SR/Avg_SR（与 §5.4 PSI 同名异义）。
+#   desc: PSI 参数稳定指数 = Best_SR/Avg_SR（与 §5.4 PSI 同名异义）。 avg_sharpe≤0（试探均值无 edge）→ inf（判 fail）。；源码 L199-L206
+#   inputs: best_sharpe avg_sharpe
+#   outputs: float
+# - id: A3
+#   name_zh: ③ compute_degrees_of_freedom_ratio
+#   name_en: compute_degrees_of_freedom_ratio
+#   intro: DFR 自由度比 = N_obs/N_params（≥30 通过）。
+#   desc: DFR 自由度比 = N_obs/N_params（≥30 通过）。 Raises: ValueError: n_params<1 或 n_obs<1；源码 L209-L219
+#   inputs: n_obs n_params
+#   outputs: float
+# - id: A4
+#   name_zh: ④ compute_oos_degradation_slope
+#   name_en: compute_oos_degradation_slope
+#   intro: OOS 退化斜率：OOS_SR 对 IS_SR 的最小二乘回归斜率（>0 通过）。
+#   desc: OOS 退化斜率：OOS_SR 对 IS_SR 的最小二乘回归斜率（>0 通过）。 注意机械陷阱（deflated-alpha README Limitations）：IS/OO…；源码 L222-L240
+#   inputs: is_sharpes oos_sharpes
+#   outputs: float
+# - id: A5
+#   name_zh: ⑤ check_extreme_backtest_metrics
+#   name_en: check_extreme_backtest_metrics
+#   intro: 胜率/PF 警戒线（软警告）：胜率>70% 或 PF>3.0 需极端怀疑。
+#   desc: 胜率/PF 警戒线（软警告）：胜率>70% 或 PF>3.0 需极端怀疑。；源码 L243-L250
+#   inputs: win_rate profit_factor
+#   outputs: list[str]
+# - id: A6
+#   name_zh: ⑥ audit
+#   name_en: audit
+#   intro: 过拟合审计函数级入口：PDR/PSI/DFR 三核心 + 可选 DSR/PBO/退化斜率。
+#   desc: 过拟合审计函数级入口：PDR/PSI/DFR 三核心 + 可选 DSR/PBO/退化斜率。 verdict 规则（memo §5.3 保守策略"任一 fail 即不上线"）： -…；源码 L253-L313
+#   inputs: is_sharpe oos_sharpe n_obs n_params best_sharpe avg_sharpe dsr pbo
+#   outputs: OverfitAuditResult
+#   （注：A6 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: G07 策略相关性验证报告（过拟合检测矩阵）
+# - id: O2
+#   name_zh: list[str]
+#   name_en: list[str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: G07 策略相关性验证报告（过拟合检测矩阵）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
 """
 
 from __future__ import annotations

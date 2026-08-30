@@ -14,11 +14,39 @@
 # [TESTS] tests/zephyr/data/test_connectors.py
 # [A_module] module_id=MOD-L00-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""数据连接器抽象基类（MOD-L00-005 data/connectors/ 核心抽象）。
+"""
+数据连接器抽象基类（MOD-L00-005 data/connectors/ 核心抽象）。
 
 连接器 = 外部数据源的传输适配层：只负责"连得上、拉得到"，返回统一批结构；
 落库/调度归上层（与 data/provider_base 的 Provider 抽象分工——Provider 面向
 表级采集策略，Connector 面向传输会话与批量拉取）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: connector_base.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① DataConnector
+#   name_en: DataConnector
+#   intro: 数据连接器抽象：connect / health_check / fetch_batch / close 四件套。
+#   desc: 数据连接器抽象：connect / health_check / fetch_batch / close 四件套。；公共方法（定义序）: connect, health_check, fetch_batch, clos…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: DataConnector
+#   downstream: zephyr.data.connectors.file_connector; zephyr.data.connectors.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

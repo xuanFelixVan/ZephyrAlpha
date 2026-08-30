@@ -14,10 +14,37 @@
 # [ERROR_CONTRACT] 与真源一致
 # [TESTS] tests/ex_core/rules/
 # [TTL] permanent
-"""A股交易规则包实现（94号 §4.3：A股实现=现有规则收编）。
+"""
+A股交易规则包实现（94号 §4.3：A股实现=现有规则收编）。
 
 收编方式=薄封装委托：lot_rule 委托 board_lot.get_board_lot_rule 真源；
 price_cage_rule 委托 price_cage._get_cage_params 真源；真源本体一行不动。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: ashare.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① AshareRulePack
+#   name_en: AshareRulePack
+#   intro: A股交易规则包（T+1、整手100股、涨跌停±10%/20%）。
+#   desc: A股交易规则包（T+1、整手100股、涨跌停±10%/20%）。 无状态（全部委托真源），可安全共享单例。；公共方法（定义序）: lot_rule, price_cage_rule, settlement_cycle,…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: AshareRulePack
+#   downstream: zephyr.ex_core.rules
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

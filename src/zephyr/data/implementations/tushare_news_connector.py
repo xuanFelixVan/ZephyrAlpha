@@ -14,7 +14,8 @@
 # [TESTS] tests/data/implementations/test_tushare_news_connector.py
 # [A_module] module_id=MOD-DATA-065 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""TushareNewsConnector — tushare 新闻源接入器（MOD-DATA-065）。
+"""
+TushareNewsConnector — tushare 新闻源接入器（MOD-DATA-065）。
 
 B13-04324 系列（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DAT-019，A3数据架构）：
 tushare 新闻权限开通后的接入面——API 调用全注入（不真发请求）：news 快讯
@@ -26,6 +27,48 @@ tushare 新闻权限开通后的接入面——API 调用全注入（不真发�
 不重复行情契约）；news_collector=多源聚合管道（本件=tushare 单源适配与
 去重指纹供给，不重建聚合管道）；source_health_check=源健康探活（本件只
 做接入契约，不做探活）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: api 参数
+#   fields: 参数 api（无注解）
+#   code: tushare_news_connector.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: tushare_news_connector.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: gate 参数
+#   fields: 参数 gate（无注解）
+#   code: tushare_news_connector.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: dedup_window_seconds 参数
+#   fields: 参数 dedup_window_seconds（无注解）
+#   code: tushare_news_connector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① TushareNewsConnector
+#   name_en: TushareNewsConnector
+#   intro: tushare 新闻源接入器（注入API + 去重指纹 + 回补校验 + 质量门控）。
+#   desc: tushare 新闻源接入器（注入API + 去重指纹 + 回补校验 + 质量门控）。；公共方法（定义序）: fingerprint, fetch_latest, backfill, seen_count；源码 L13…
+#   inputs: api clock gate dedup_window_seconds source
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: TushareNewsConnector
+#   downstream: 运行时装配批（tushare 权限开通后 API 适配器绑定 / news_collector 管道挂接 / 质量门控装配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -105,9 +148,7 @@ class TushareNewsConnector:
         source: str = "tushare",
     ) -> None:
         if dedup_window_seconds <= 0:
-            raise TushareNewsError(
-                f"dedup_window_seconds 非法: {dedup_window_seconds!r}（须 > 0）"
-            )
+            raise TushareNewsError(f"dedup_window_seconds 非法: {dedup_window_seconds!r}（须 > 0）")
         if not source:
             raise TushareNewsError("source 为空")
         self._api = api
@@ -179,9 +220,7 @@ class TushareNewsConnector:
         if self._api is None:
             raise TushareNewsError("api 回调未注入（不真发请求，禁止旁路）")
         if not (start < end):
-            raise TushareNewsError(
-                f"非法区间: start={start.isoformat()} 须早于 end={end.isoformat()}"
-            )
+            raise TushareNewsError(f"非法区间: start={start.isoformat()} 须早于 end={end.isoformat()}")
         raws = list(self._api(start, end))
         accepted: list[NewsItem] = []
         dedup_dropped = 0
@@ -202,7 +241,9 @@ class TushareNewsConnector:
         self._seen.update(batch_seen)
         _log.info(
             "tushare 新闻抓取: 接受 %d / 去重丢弃 %d / 门控丢弃 %d",
-            len(accepted), dedup_dropped, gate_dropped,
+            len(accepted),
+            dedup_dropped,
+            gate_dropped,
         )
         return FetchReport(
             accepted=tuple(accepted),
@@ -225,9 +266,7 @@ class TushareNewsConnector:
             if cursor >= start or cursor + datetime.timedelta(seconds=self._window) > start:
                 expected.append(cursor)
             cursor += datetime.timedelta(seconds=self._window)
-        covered = {
-            self._bucket_of(item.published_at, self._window) for item in report.accepted
-        }
+        covered = {self._bucket_of(item.published_at, self._window) for item in report.accepted}
         missing = tuple(w for w in expected if w not in covered)  # expected 已升序
         return BackfillReport(
             start=start,

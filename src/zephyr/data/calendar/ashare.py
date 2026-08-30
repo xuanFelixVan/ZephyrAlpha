@@ -14,7 +14,8 @@
 # [TESTS] tests/zephyr/data/calendar/test_market_calendar.py
 # [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""A股市场日历实现（94号 §4.1：A股实现=现有交易日历逻辑收编）。
+"""
+A股市场日历实现（94号 §4.1：A股实现=现有交易日历逻辑收编）。
 
 收编方式=薄封装委托：is_trading_day / trading_days_in_range 全部委托
 zephyr.data.trading_calendar 真源（XSHG 单例，含 weekday 降级链），真源本体
@@ -23,6 +24,32 @@ zephyr.data.trading_calendar 真源（XSHG 单例，含 weekday 降级链），�
 session_windows 收编 ex_core/pre_execution_checker._ASHARE_SESSION_WINDOWS
 语义（连续竞价两段 09:30-11:30 / 13:00-15:00，复制语义不改 ex_core 文件——
 ex_core 为避让施工面，其注入式改造登记后续波次）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: ashare.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ASHareCalendar
+#   name_en: ASHareCalendar
+#   intro: A股断点日历（交易日历+午休+隔夜+节假日）。
+#   desc: A股断点日历（交易日历+午休+隔夜+节假日）。 无状态（全部委托真源模块级函数），可安全共享单例。；公共方法（定义序）: is_trading_day, trading_days_in_range, session_w…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: ASHareCalendar
+#   downstream: zephyr.data.scheduler; zephyr.data.multi_timeframe_fusion; zephyr.data.pit_quer…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

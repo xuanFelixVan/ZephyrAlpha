@@ -28,6 +28,32 @@ Skill 影子部署引擎
   2. DivergenceAnalysis: 分析输出差异
   3. AutomaticPromotion: 无差异则自动提升
   4. TrafficSplitting: 渐进式切流
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: skill_shadow.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SkillShadowDeploy
+#   name_en: SkillShadowDeploy
+#   intro: Skill 影子部署器
+#   desc: Skill 影子部署器；公共方法（定义序）: current_shadow_pct, shadow_runs, shadow_run, analyze_results, promote, rollback_shadow…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SkillShadowDeploy
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

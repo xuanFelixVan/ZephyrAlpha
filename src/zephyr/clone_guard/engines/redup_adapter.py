@@ -14,7 +14,8 @@
 # [TESTS] tests/clone_guard/test_redup_adapter.py
 # [A_module] module_id=MOD-CLONE_GUARD | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""RedupAdapter — reDUP 深度分析引擎适配器（Phase B 补齐）。
+"""
+RedupAdapter — reDUP 深度分析引擎适配器（Phase B 补齐）。
 
 封装 reDUP CLI 的 scan 命令，对编排层暴露统一 detect() 接口。
 reDUP 职责：六层语义克隆检测（T1/T2/T3/T4）+ 重构规划 + 影响评分 + 跨项目比较。
@@ -40,6 +41,37 @@ reDUP 职责：六层语义克隆检测（T1/T2/T3/T4）+ 重构规划 + 影响�
   - 超时 → degraded=True, 返回空列表
   - CLI 崩溃 → degraded=True, 返回空列表
   - 正常执行 → 返回 Finding 列表
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: repo_root 参数
+#   fields: 参数 repo_root（无注解）
+#   code: redup_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: redup_adapter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RedupAdapter
+#   name_en: RedupAdapter
+#   intro: reDUP 深度分析引擎适配器。
+#   desc: reDUP 深度分析引擎适配器。 封装 reDUP CLI 调用，对编排层暴露统一 detect() 接口。 引擎升级/替换不影响编排层（Adapter 模式）。；公共方法（定义序）: health_check, de…
+#   inputs: repo_root config
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: RedupAdapter
+#   downstream: zephyr.clone_guard.orchestrator
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

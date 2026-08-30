@@ -14,7 +14,8 @@
 # [TESTS]
 # [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Tick 回放引擎模块（v1.1.0 新增，秒级做T专用）
+"""
+Tick 回放引擎模块（v1.1.0 新增，秒级做T专用）
 
 职责:
   - 按 timestamp 严格排序逐 Tick 推送，禁止跨 Tick 跳跃
@@ -32,6 +33,48 @@
   - 禁止跨 Tick 跳跃（即使时间戳间隔很大也按原始顺序推送）
 
 SSoT: docs/03_modules/_domain_backtest/blueprint.md §16.7 tick_replay.py 详细规格
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: provider 参数
+#   fields: 参数 provider（无注解）
+#   code: tick_replay.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: symbols 参数
+#   fields: 参数 symbols（无注解）
+#   code: tick_replay.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: start 参数
+#   fields: 参数 start（无注解）
+#   code: tick_replay.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: end 参数
+#   fields: 参数 end（无注解）
+#   code: tick_replay.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① TickReplayEngine
+#   name_en: TickReplayEngine
+#   intro: Tick 回放引擎（秒级做T专用）
+#   desc: Tick 回放引擎（秒级做T专用） 按 timestamp 严格排序逐 Tick 推送，支持多标的按时间戳对齐回放。 回放速度控制: - real_time: 每Tick间隔=原…；公共方法（定义序）: run, ge…
+#   inputs: provider symbols start end config
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: TickReplayEngine
+#   downstream: zephyr.backtest.implementations.event_driven_engine; zephyr.frontend.dashboard.…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

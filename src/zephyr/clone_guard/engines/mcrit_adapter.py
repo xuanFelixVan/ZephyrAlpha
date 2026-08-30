@@ -14,7 +14,8 @@
 # [TESTS] tests/clone_guard/test_mcrit_adapter.py
 # [A_module] module_id=MOD-CLONE_GUARD | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""McritAdapter —— 已废弃降级占位（Phase C 引擎核实裁定）。
+"""
+McritAdapter —— 已废弃降级占位（Phase C 引擎核实裁定）。
 
 **已废弃**：经第一性原理核实（见 .trae/documents/clone-guard-engine-verification-ruling.md
 §1.3 / §2.1），mcrit（github.com/danielplohmann/mcrit）实为 Fraunhofer FKIE 的
@@ -33,6 +34,37 @@ fulfill 该角色，故裁定废弃。
 mcrit 原承担的两个角色已重新分配（裁定 §2.2）：
   - L2 预筛底座 → relate（压缩相似度）/ reDUP
   - L0 语义搜函数 → relate ``similar`` / echo-guard 索引；均不可用时降级返回空
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: repo_root 参数
+#   fields: 参数 repo_root（无注解）
+#   code: mcrit_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: mcrit_adapter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① McritAdapter
+#   name_en: McritAdapter
+#   intro: mcrit 适配器（已废弃·占位降级）。
+#   desc: mcrit 适配器（已废弃·占位降级）。 保留类名以维持 orchestrator 导入兼容；所有方法恒返回降级，不执行任何真实检测。 mcrit_enabled 默认 Fals…；公共方法（定义序）: health_…
+#   inputs: repo_root config
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: McritAdapter
+#   downstream: zephyr.clone_guard.orchestrator
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

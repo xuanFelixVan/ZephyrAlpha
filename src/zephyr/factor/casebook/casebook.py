@@ -14,7 +14,8 @@
 # [TESTS] tests/factor/test_casebook.py
 # [A_module] module_id=MOD-L02-027 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D-FACTOR-CASE-01 因子研究案例库——成功/失败→修复案例沉淀，防 AI 重复试错。
+"""
+D-FACTOR-CASE-01 因子研究案例库——成功/失败→修复案例沉淀，防 AI 重复试错。
 
 设计依据：2026-08 架构审查报告 §4.2（ALG-03）——借鉴 RD-Agent CoSTEER 实证的
 「成功案例库+失败→修复库」机制（只借鉴机制，不引入 RD-Agent/Qlib 框架本体），
@@ -28,6 +29,69 @@
 
 存储：SQLite 单文件 data/databases/factor_casebook.db（92 号清单 D2 裁定授权新库）；
 WAL 模式 + busy_timeout + 进程内 threading.Lock，支持多线程并发写。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: hypothesis 参数
+#   fields: 参数 hypothesis，类型注解 str
+#   code: casebook.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: verdict 参数
+#   fields: 参数 verdict（无注解）
+#   code: casebook.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: factor_expr 参数
+#   fields: 参数 factor_expr（无注解）
+#   code: casebook.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: factor_json 参数
+#   fields: 参数 factor_json（无注解）
+#   code: casebook.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① record_case
+#   name_en: record_case
+#   intro: 写入一条因子研究案例，返回自增 case id。
+#   desc: 写入一条因子研究案例，返回自增 case id。 Args: hypothesis: 研究假设（必填，空串/纯空白拒绝）。 verdict: 结论词表值：success / fa…；源码 L207-L266
+#   inputs: hypothesis verdict factor_expr factor_json ic icir turnover failure_d…
+#   outputs: int
+# - id: A2
+#   name_zh: ② query_similar
+#   name_en: query_similar
+#   intro: 按因子族标签/结论检索案例（向量检索后置，本版只做标签+词表过滤）。
+#   desc: 按因子族标签/结论检索案例（向量检索后置，本版只做标签+词表过滤）。 Args: family_tag: 因子族标签，按 tags 元素精确匹配；None 不按标签过滤。 ver…；源码 L269-L329
+#   inputs: family_tag verdict limit db_path
+#   outputs: list[dict]
+# - id: A3
+#   name_zh: ③ get_case
+#   name_en: get_case
+#   intro: 按 id 取单条案例；不存在返回 None（不抛异常）。
+#   desc: 按 id 取单条案例；不存在返回 None（不抛异常）。；源码 L332-L350
+#   inputs: case_id db_path
+#   outputs: dict | None
+#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (暂无；数据期 LLM 挖因子流程为首个计划消费者)
+# - id: O2
+#   name_zh: list[dict]
+#   name_en: list[dict]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (暂无；数据期 LLM 挖因子流程为首个计划消费者)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations
@@ -124,8 +188,7 @@ def _normalize_tags(tags: str | Iterable[str] | None) -> str | None:
 
 def _row_to_dict(row: sqlite3.Row | tuple) -> dict:
     """行转 dict；tags 由逗号字符串还原为 list[str]（空为 []）。"""
-    (cid, hypothesis, factor_expr, factor_json, ic, icir, turnover,
-     verdict, failure_diag, tags, created_at) = row
+    (cid, hypothesis, factor_expr, factor_json, ic, icir, turnover, verdict, failure_diag, tags, created_at) = row
     return {
         "id": cid,
         "hypothesis": hypothesis,
@@ -178,9 +241,7 @@ def record_case(
     if not hyp:
         raise CasebookError("hypothesis 不能为空（fail-closed）")
     if verdict not in VERDICTS:
-        raise CasebookError(
-            f"verdict 非法: {verdict!r}，合法词表: {sorted(VERDICTS)}"
-        )
+        raise CasebookError(f"verdict 非法: {verdict!r}，合法词表: {sorted(VERDICTS)}")
     ic_v = _validate_metric("ic", ic)
     icir_v = _validate_metric("icir", icir)
     turnover_v = _validate_metric("turnover", turnover)
@@ -195,8 +256,7 @@ def record_case(
                 "INSERT INTO cases(hypothesis, factor_expr, factor_json, ic, icir,"
                 " turnover, verdict, failure_diag, tags, created_at)"
                 " VALUES(?,?,?,?,?,?,?,?,?,?)",
-                (hyp, factor_expr, factor_json, ic_v, icir_v, turnover_v,
-                 verdict, failure_diag, tags_s, created_at),
+                (hyp, factor_expr, factor_json, ic_v, icir_v, turnover_v, verdict, failure_diag, tags_s, created_at),
             )
             conn.commit()
             case_id = int(cur.lastrowid)
@@ -228,9 +288,7 @@ def query_similar(
         CasebookError: verdict 词表外或 limit 非正整数。
     """
     if verdict is not None and verdict not in VERDICTS:
-        raise CasebookError(
-            f"verdict 非法: {verdict!r}，合法词表: {sorted(VERDICTS)}"
-        )
+        raise CasebookError(f"verdict 非法: {verdict!r}，合法词表: {sorted(VERDICTS)}")
     try:
         lim = int(limit)
     except (TypeError, ValueError) as exc:
@@ -239,8 +297,10 @@ def query_similar(
         raise CasebookError(f"limit 必须为正整数，拒绝值: {limit!r}")
     lim = min(lim, _MAX_LIMIT)
 
-    sql = ("SELECT id, hypothesis, factor_expr, factor_json, ic, icir, turnover,"
-           " verdict, failure_diag, tags, created_at FROM cases")
+    sql = (
+        "SELECT id, hypothesis, factor_expr, factor_json, ic, icir, turnover,"
+        " verdict, failure_diag, tags, created_at FROM cases"
+    )
     clauses: list[str] = []
     params: list[object] = []
     if family_tag is not None:

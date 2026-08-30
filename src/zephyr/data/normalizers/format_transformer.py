@@ -14,7 +14,8 @@
 # [TESTS] tests/zephyr/data/test_format_transformer.py
 # [A_module] module_id=MOD-L00-006 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Schema 驱动的多源格式转换器（CAND-DAT-010 / B1-00343 / D-INT-16 DataFormatTransformer）。
+"""
+Schema 驱动的多源格式转换器（CAND-DAT-010 / B1-00343 / D-INT-16 DataFormatTransformer）。
 
 深挖裁定=做(P1)：normalizers 仅 normalizer_base/ohlcv_normalizer 骨架，
 多格式（json/csv/parquet 行记录）与 Schema 映射验证未成组件。本模块收口：
@@ -29,6 +30,41 @@
 与既有分工：normalizer_base 管"形状统一"（列名归一/排序去重），
 本模块管"源格式→CTR-001 契约"的语义级转换；quality_gate 管质量判定，
 本模块仅向其供给隔离样本，不替代判定。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: schema 参数
+#   fields: 参数 schema（无注解）
+#   code: format_transformer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① TransformResult
+#   name_en: TransformResult
+#   intro: 转换输出：合格契约记录 + 隔离样本。
+#   desc: 转换输出：合格契约记录 + 隔离样本。；公共方法（定义序）: quarantine_report；源码 L205-L226
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② FormatTransformer
+#   name_en: FormatTransformer
+#   intro: Schema 驱动的源记录 → CTR-001 NormalizedMarketData 转换器。
+#   desc: Schema 驱动的源记录 → CTR-001 NormalizedMarketData 转换器。 Usage:: tf = FormatTransformer("ctr001_…；公共方法（定义序）: schema,…
+#   inputs: schema
+#   outputs: 返回值
+#   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: TransformResult, FormatTransformer
+#   downstream: （P1 接线：scheduler/provider 落库前格式收口）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -183,10 +219,7 @@ class TransformResult:
             "samples": [
                 {
                     "index": q.index,
-                    "issues": [
-                        {"field": i.field, "reason": i.reason, "raw": i.raw}
-                        for i in q.issues
-                    ],
+                    "issues": [{"field": i.field, "reason": i.reason, "raw": i.raw} for i in q.issues],
                 }
                 for q in self.quarantined[:max_samples]
             ],
@@ -215,9 +248,7 @@ class FormatTransformer:
         else:
             spec = SCHEMA_REGISTRY.get(schema)
             if spec is None:
-                raise ValueError(
-                    f"未知 schema: {schema!r}（已注册: {sorted(SCHEMA_REGISTRY)}）"
-                )
+                raise ValueError(f"未知 schema: {schema!r}（已注册: {sorted(SCHEMA_REGISTRY)}）")
             self._spec = spec
         self._tz = ZoneInfo(self._spec.source_tz)
 
@@ -233,27 +264,21 @@ class FormatTransformer:
         for idx, raw in enumerate(records):
             values, issues = self._validate_record(idx, raw)
             if issues:
-                result.quarantined.append(
-                    QuarantinedRecord(index=idx, raw=raw, issues=tuple(issues))
-                )
+                result.quarantined.append(QuarantinedRecord(index=idx, raw=raw, issues=tuple(issues)))
                 continue
             result.records.append(self._to_contract(values))
         return result
 
     # -- 校验 ------------------------------------------------------------
 
-    def _validate_record(
-        self, index: int, raw: Mapping[str, Any]
-    ) -> tuple[dict[str, Any], list[TransformIssue]]:
+    def _validate_record(self, index: int, raw: Mapping[str, Any]) -> tuple[dict[str, Any], list[TransformIssue]]:
         values: dict[str, Any] = {}
         issues: list[TransformIssue] = []
         for fspec in self._spec.fields:
             raw_val = raw.get(fspec.source)
             if raw_val is None or (isinstance(raw_val, str) and not raw_val.strip()):
                 if fspec.required:
-                    issues.append(
-                        TransformIssue(index, fspec.target, "必填字段缺失", str(raw_val))
-                    )
+                    issues.append(TransformIssue(index, fspec.target, "必填字段缺失", str(raw_val)))
                 continue
             val, err = self._coerce(fspec, raw_val)
             if err is not None:
@@ -315,9 +340,7 @@ class FormatTransformer:
     def _to_contract(self, values: dict[str, Any]) -> NormalizedMarketData:
         symbol = self._normalize_symbol(values["symbol"])
         ts = values["timestamp"]
-        idem = hashlib.md5(
-            f"{self._spec.data_source}|{symbol}|{ts.isoformat()}".encode("utf-8")
-        ).hexdigest()
+        idem = hashlib.md5(f"{self._spec.data_source}|{symbol}|{ts.isoformat()}".encode()).hexdigest()
         return NormalizedMarketData(
             symbol=symbol,
             timestamp=ts,

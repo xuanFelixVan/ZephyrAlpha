@@ -21,7 +21,8 @@
 # A1: bootstrap_sharpe_difference(B 次成对重采样→Sharpe 差值分布→percentile CI + P(diff>0))
 # O1: E2BootstrapResult(observed_diff / CI / prob_positive / passed), prob_positive≥0.75 对齐 §4.3 C4 判定
 # [/ALGO_FLOW]
-"""D_BACKTEST — E2 Stationary Bootstrap 重采样引擎（11 号 memo §0.6.3 缺口 3）。
+"""
+D_BACKTEST — E2 Stationary Bootstrap 重采样引擎（11 号 memo §0.6.3 缺口 3）。
 
 替代原方案 §4.3 C4 的固定 21-day block-bootstrap：块长按几何分布随机
 （Politis & Romano 1994），保留序列平稳性、避免固定块边界的人为不连续
@@ -33,6 +34,69 @@
 
 依据: 11_regime_backtest_validation_plan §0.6.3 / §4.3 C4 / §5
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: n 参数
+#   fields: 参数 n，类型注解 int
+#   code: e2_stationary_bootstrap.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: mean_block 参数
+#   fields: 参数 mean_block，类型注解 int
+#   code: e2_stationary_bootstrap.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: rng 参数
+#   fields: 参数 rng，类型注解 np.random.Generator
+#   code: e2_stationary_bootstrap.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: returns 参数
+#   fields: 参数 returns，类型注解 Sequence[float]
+#   code: e2_stationary_bootstrap.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① stationary_bootstrap_indices
+#   name_en: stationary_bootstrap_indices
+#   intro: 生成一组 stationary bootstrap 索引（Politis & Romano 1994）。
+#   desc: 生成一组 stationary bootstrap 索引（Politis & Romano 1994）。 每步以概率 p=1/mean_block 从均匀分布重开新块，否则顺移到…；源码 L159-L185
+#   inputs: n mean_block rng
+#   outputs: np.ndarray
+# - id: A2
+#   name_zh: ② annualized_sharpe
+#   name_en: annualized_sharpe
+#   intro: 逐期收益 → 年化 Sharpe。
+#   desc: 逐期收益 → 年化 Sharpe。样本<2 或零波动退化为 0.0。；源码 L188-L196
+#   inputs: returns periods_per_year
+#   outputs: float
+# - id: A3
+#   name_zh: ③ bootstrap_sharpe_difference
+#   name_en: bootstrap_sharpe_difference
+#   intro: E2 主入口：开/关两组收益序列的 stationary bootstrap Sharpe 差显著性。
+#   desc: E2 主入口：开/关两组收益序列的 stationary bootstrap Sharpe 差显著性。 开/关序列成对重采样（共用同一组索引，保留逐期配对结构）， 产出 Shar…；源码 L199-L259
+#   inputs: returns_on returns_off config
+#   outputs: E2BootstrapResult
+#   （注：A3 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: np.ndarray
+#   name_en: np.ndarray
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 人工审查; 11_regime_backtest_validation_plan Phase 4 E2 / C4 统计显著性
+# - id: O2
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 人工审查; 11_regime_backtest_validation_plan Phase 4 E2 / C4 统计显著性
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

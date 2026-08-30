@@ -18,6 +18,33 @@
 """
 R531: InterruptCoherenceValidator
 崩溃/重启后状态一致性校验 — 无半应用动作/无孤立锁/无悬空引用
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: interrupt_coherence_validator.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① InterruptCoherenceValidator
+#   name_en: InterruptCoherenceValidator
+#   intro: class InterruptCoherenceValidator 源码 L62-L130
+#   desc: 公共方法（定义序）: register_lock, register_action_in_flight, register_reference, mark_lock_released, mark_action_comp…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: InterruptCoherenceValidator
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 import time

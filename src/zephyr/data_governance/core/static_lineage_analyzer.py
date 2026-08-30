@@ -14,7 +14,8 @@
 # [TESTS] tests/data_governance/test_static_lineage_analyzer.py
 # [A_module] module_id=MOD-DATA_GOV-005 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""M8-S02 静态分析器（MOD-DATA_GOV-005）。
+"""
+M8-S02 静态分析器（MOD-DATA_GOV-005）。
 
 真源：construction_backlog_dig.tsv B10-02314（A1 交易决策架构 §30.4.3，
 裁定=做 P1）+ CAND-DATGOV-002。
@@ -32,6 +33,69 @@ sqlglot 依赖裁定：TSV 指定 sqlglot 解析 SQL 表级血缘，但 sqlglot 
 依赖（requirements/pyproject 均无）——SQL 面走懒加载，未安装时批跑 fail-open
 记 degraded 不中断（Python AST 面不受影响）；依赖登记后补 SQL 面 happy-path
 集成测试。不内置 regex SQL 解析器（易碎且非 TSV 指定形态）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: source 参数
+#   fields: 参数 source，类型注解 str
+#   code: static_lineage_analyzer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: module 参数
+#   fields: 参数 module（无注解）
+#   code: static_lineage_analyzer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: sql 参数
+#   fields: 参数 sql，类型注解 str
+#   code: static_lineage_analyzer.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: dialect 参数
+#   fields: 参数 dialect（无注解）
+#   code: static_lineage_analyzer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① extract_python_io_edges
+#   name_en: extract_python_io_edges
+#   intro: ast 解析 Python 读写调用 → 血缘边（读 path→module；写 module→path）。
+#   desc: ast 解析 Python 读写调用 → 血缘边（读 path→module；写 module→path）。 仅字符串字面量路径成边；变量/拼接等动态路径跳过（保守不错抽）。 语…；源码 L192-L221
+#   inputs: source module
+#   outputs: list[LineageEdge]
+# - id: A2
+#   name_zh: ② extract_sql_table_edges
+#   name_en: extract_sql_table_edges
+#   intro: sqlglot 解析单条 SQL → 表级血缘边（源表 --sql--> 目标表）。
+#   desc: sqlglot 解析单条 SQL → 表级血缘边（源表 --sql--> 目标表）。 无目标表的纯查询不出边；空 SQL Fail-Closed；sqlglot 未安装 → Sq…；源码 L245-L262
+#   inputs: sql dialect
+#   outputs: list[LineageEdge]
+# - id: A3
+#   name_zh: ③ analyze_sources
+#   name_en: analyze_sources
+#   intro: 批量静态分析入图（离线批跑；幂等/环/去重复用 MOD-DATA_GOV-004 入图语义）。
+#   desc: 批量静态分析入图（离线批跑；幂等/环/去重复用 MOD-DATA_GOV-004 入图语义）。 - python_sources: {模块名: 源码文本}，逐文件 ast 抽取；…；源码 L265-L314
+#   inputs: python_sources sql_sources tracker dialect sources
+#   outputs: StaticLineageReport
+#   （注：A3 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[LineageEdge]
+#   name_en: list[LineageEdge]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: StaticLineageReport
+#   name_en: StaticLineageReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations
@@ -65,9 +129,7 @@ _READ_FUNCS: Final = frozenset(
     {"read_parquet", "read_csv", "read_sql", "read_table", "read_json", "read_feather", "read_orc"}
 )
 #: Python 写函数词表
-_WRITE_FUNCS: Final = frozenset(
-    {"to_parquet", "to_csv", "to_json", "to_feather", "to_orc", "write_parquet"}
-)
+_WRITE_FUNCS: Final = frozenset({"to_parquet", "to_csv", "to_json", "to_feather", "to_orc", "write_parquet"})
 #: 路径关键字参数词表（位置参数缺位时兜底）
 _PATH_KWARGS: Final = frozenset({"path", "filepath", "file_path"})
 
@@ -122,11 +184,7 @@ def _literal_path(call: ast.Call) -> str | None:
             return first.value
         return None  # 位置参数非字面量（变量/拼接/表达式）→ 不成边
     for kw in call.keywords:
-        if (
-            kw.arg in _PATH_KWARGS
-            and isinstance(kw.value, ast.Constant)
-            and isinstance(kw.value.value, str)
-        ):
+        if kw.arg in _PATH_KWARGS and isinstance(kw.value, ast.Constant) and isinstance(kw.value.value, str):
             return kw.value.value
     return None
 
@@ -169,9 +227,7 @@ def _import_sqlglot():
         import sqlglot
         from sqlglot import exp
     except ImportError as exc:
-        raise SqlglotUnavailableError(
-            "sqlglot 未安装（三方依赖登记申请中），SQL 表级血缘解析不可用"
-        ) from exc
+        raise SqlglotUnavailableError("sqlglot 未安装（三方依赖登记申请中），SQL 表级血缘解析不可用") from exc
     return sqlglot, exp
 
 
@@ -202,11 +258,7 @@ def extract_sql_table_edges(sql: str, *, dialect: str | None = None) -> list[Lin
     target = _target_table_name(statement, exp)
     if target is None:
         return []
-    sources = {
-        table.name
-        for table in statement.find_all(exp.Table)
-        if table.name and table.name != target
-    }
+    sources = {table.name for table in statement.find_all(exp.Table) if table.name and table.name != target}
     return [LineageEdge(src, target, TRANSFORMATION_SQL) for src in sorted(sources)]
 
 

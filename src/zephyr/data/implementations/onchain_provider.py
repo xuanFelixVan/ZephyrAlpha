@@ -14,7 +14,8 @@
 # [TESTS] tests/zephyr/data/test_onchain_provider.py
 # [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""链上数据 Provider 骨架（CAND-CRYPTO-004，94号 §5：链上数据接入）。
+"""
+链上数据 Provider 骨架（CAND-CRYPTO-004，94号 §5：链上数据接入）。
 
 数字货币特有另类数据源（A股无对应物），只读不交互：
 - Glassnode 免费端点：交易所净流入（exchange netflow）、活跃地址（active addresses）
@@ -25,6 +26,32 @@
 - get_service_secret("CRYPTOQUANT_API_KEY", "cryptoquant", required=False)
 密钥未配置时使用确定性 mock 序列（is_mock=1）保证管道可跑通；
 密钥配置后自动切换真实 HTTP 端点（is_mock=0），无需改代码。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: onchain_provider.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① OnchainProvider
+#   name_en: OnchainProvider
+#   intro: 链上数据 Provider（Glassnode/CryptoQuant 免费端点骨架）。
+#   desc: 链上数据 Provider（Glassnode/CryptoQuant 免费端点骨架）。 无付费 key 时输出确定性 mock 序列（is_mock=1）， 配置 key 后切…；公共方法（定义序）: connect…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: OnchainProvider
+#   downstream: zephyr.data.scheduler
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -189,7 +216,7 @@ class OnchainProvider(IngestProviderBase):
 
     # ---- 拉取入口 ----
 
-    def fetch(self, payload: FetchPayload, policy: "SourcePolicy") -> Iterator[FetchResult]:
+    def fetch(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """按 capability 路由到 Glassnode/CryptoQuant 端点（或 mock 序列）。"""
         if not self._connected:
             yield FetchResult(
@@ -203,7 +230,9 @@ class OnchainProvider(IngestProviderBase):
             return
 
         capability = (payload.extra or {}).get("capability", "")
-        supported = capability == "exchange_netflow" or capability == "active_addresses" or capability == "stablecoin_flows"
+        supported = (
+            capability == "exchange_netflow" or capability == "active_addresses" or capability == "stablecoin_flows"
+        )
         if not supported:
             yield FetchResult(
                 table=payload.table,
@@ -236,21 +265,21 @@ class OnchainProvider(IngestProviderBase):
 
     # ---- capability 拉取入口（CAP-CONSISTENCY：每 capability 一个 _fetch_<cap> 方法） ----
 
-    def _fetch_exchange_netflow(self, payload: FetchPayload, policy: "SourcePolicy") -> Iterator[FetchResult]:
+    def _fetch_exchange_netflow(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """Glassnode 交易所净流入（币进出交易所=潜在卖压信号）。"""
         yield from self._fetch_metric(payload, policy, "exchange_netflow")
 
-    def _fetch_active_addresses(self, payload: FetchPayload, policy: "SourcePolicy") -> Iterator[FetchResult]:
+    def _fetch_active_addresses(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """Glassnode 活跃地址数（链上活跃度）。"""
         yield from self._fetch_metric(payload, policy, "active_addresses")
 
-    def _fetch_stablecoin_flows(self, payload: FetchPayload, policy: "SourcePolicy") -> Iterator[FetchResult]:
+    def _fetch_stablecoin_flows(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """CryptoQuant 稳定币交易所净流（干火药购买力）。"""
         yield from self._fetch_metric(payload, policy, "stablecoin_flows")
 
     # ---- 指标拉取 ----
 
-    def _fetch_metric(self, payload: FetchPayload, policy: "SourcePolicy", capability: str) -> Iterator[FetchResult]:
+    def _fetch_metric(self, payload: FetchPayload, policy: SourcePolicy, capability: str) -> Iterator[FetchResult]:
         """逐资产拉取链上指标日频序列；无 key 时生成确定性 mock 序列。"""
         source, url, _default_asset = _CAPABILITY_ROUTES[capability]
         key_service, key_name = _CAPABILITY_KEYS[capability]
@@ -288,7 +317,7 @@ class OnchainProvider(IngestProviderBase):
     def _fetch_live(
         self,
         request: _LiveFetchRequest,
-        policy: "SourcePolicy",
+        policy: SourcePolicy,
     ) -> tuple[list[tuple], str | None]:
         """真实端点拉取（付费 key 已配置）。返回 (rows, error)。"""
         params = {
@@ -311,14 +340,16 @@ class OnchainProvider(IngestProviderBase):
         for point in data:
             ts = int(point.get("t", 0))
             trade_date = datetime.datetime.fromtimestamp(ts, tz=datetime.timezone.utc).date()
-            rows.append((
-                request.capability,
-                request.asset,
-                trade_date.isoformat(),
-                float(point.get("v", 0.0)),
-                request.source,
-                0,
-            ))
+            rows.append(
+                (
+                    request.capability,
+                    request.asset,
+                    trade_date.isoformat(),
+                    float(point.get("v", 0.0)),
+                    request.source,
+                    0,
+                )
+            )
         return rows, None
 
     def _mock_series(
@@ -337,15 +368,17 @@ class OnchainProvider(IngestProviderBase):
         rows = []
         day = start
         while day <= end:
-            digest = hashlib.sha256(f"{capability}|{asset}|{day.isoformat()}".encode("utf-8")).hexdigest()
+            digest = hashlib.sha256(f"{capability}|{asset}|{day.isoformat()}".encode()).hexdigest()
             value = int(digest[:12], 16) / float(0xFFFFFFFFFFFF) * 1000.0 - 500.0
-            rows.append((
-                capability,
-                asset,
-                day.isoformat(),
-                round(value, 6),
-                source,
-                1,
-            ))
+            rows.append(
+                (
+                    capability,
+                    asset,
+                    day.isoformat(),
+                    round(value, 6),
+                    source,
+                    1,
+                )
+            )
             day += datetime.timedelta(days=1)
         return rows

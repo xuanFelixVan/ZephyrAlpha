@@ -19,7 +19,8 @@
 # A1: run_deflated_sharpe_batch(逐变体调 DeflatedSharpeCalculator.calculate→年化Sharpe最优者裁定)
 # O1: C4BatchReport(逐变体 DSR + best_variant + is_significant + passed)
 # [/ALGO_FLOW]
-"""D_BACKTEST — C4 Deflated Sharpe 跑批封装入口（11 号 memo §0.6.3 / §4.3 C4）。
+"""
+D_BACKTEST — C4 Deflated Sharpe 跑批封装入口（11 号 memo §0.6.3 / §4.3 C4）。
 
 对既有回测收益序列产物（如 Shrinkage 开/关两组、参数网格各变体）批量
 计算 Deflated Sharpe Ratio——多重比较修正（测了 N 个变体取最优，Sharpe
@@ -31,6 +32,43 @@
 
 依据: 11_regime_backtest_validation_plan §0.6.3 / §4.3 C4 / §5
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: returns_by_variant 参数
+#   fields: 参数 returns_by_variant，类型注解 Mapping[str, Sequence[float]]
+#   code: c4_deflated_sharpe_runner.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: config 参数
+#   fields: 参数 config，类型注解 DSRConfig | None
+#   code: c4_deflated_sharpe_runner.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: num_trials 参数
+#   fields: 参数 num_trials，类型注解 int | None
+#   code: c4_deflated_sharpe_runner.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① run_deflated_sharpe_batch
+#   name_en: run_deflated_sharpe_batch
+#   intro: C4 主入口：多变体收益序列的 DSR 批量计算与最优裁定。
+#   desc: C4 主入口：多变体收益序列的 DSR 批量计算与最优裁定。 Args: returns_by_variant: {变体名: 逐期收益序列}（每个 ≥3 样本，有限值）。 con…；源码 L127-L197
+#   inputs: returns_by_variant config num_trials
+#   outputs: C4BatchReport
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: C4BatchReport
+#   name_en: C4BatchReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 人工审查; 11_regime_backtest_validation_plan C4 统计显著性(BM-BT-05-G)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

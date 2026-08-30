@@ -14,7 +14,8 @@
 # [TESTS] tests/zephyr/data/test_crypto_event_calendar.py
 # [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""币版事件日历 Provider（CAND-CRYPTO-010，94号 §5/§9：减半与解锁事件日历）。
+"""
+币版事件日历 Provider（CAND-CRYPTO-010，94号 §5/§9：减半与解锁事件日历）。
 
 event_calendar 币版实例——采集三类影响币价的中观/宏观事件，统一稀疏事件表输出：
 - 减半事件（halving）：BTC/LTC/BCH/ETC/ZEC/DASH 等 PoW 币减半日期。
@@ -35,6 +36,32 @@ event_calendar 币版实例——采集三类影响币价的中观/宏观事件�
 
 全部数据为公开静态快照，无网络依赖、无密钥需求；输出确定性（同输入恒同输出），
 测试与下游管道可重复。事件日历定位=风险节流输入（sit_out_list/regime），非 alpha 择时。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: crypto_event_calendar.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① CryptoEventCalendarProvider
+#   name_en: CryptoEventCalendarProvider
+#   intro: 币版事件日历 Provider（减半/大额解锁/宏观事件）。
+#   desc: 币版事件日历 Provider（减半/大额解锁/宏观事件）。 全部数据为公开静态快照，无需密钥、无网络依赖；输出确定性。 shared 线程安全模型（无状态）。；公共方法（定义序）: connect, health_c…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: CryptoEventCalendarProvider
+#   downstream: zephyr.data.scheduler
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -99,9 +126,9 @@ _HALVING_EVENTS: Final[tuple[tuple[str, str, str], ...]] = (
 # ---- 一次性大额 cliff 解锁（Token Unlocks 公开数据快照）----
 # (symbol, event_date, impact)；source 统一为 token_unlocks_public_snapshot
 _TOKEN_UNLOCK_ONESHOT: Final[tuple[tuple[str, str, str], ...]] = (
-    ("ARB", "2024-03-16", "high"),   # 团队/投资人 cliff（约 11.1 亿枚，公开报道）
-    ("APT", "2024-11-12", "high"),   # 投资人/基金会 cliff
-    ("SUI", "2024-09-01", "high"),   # 大额 cliff 解锁
+    ("ARB", "2024-03-16", "high"),  # 团队/投资人 cliff（约 11.1 亿枚，公开报道）
+    ("APT", "2024-11-12", "high"),  # 投资人/基金会 cliff
+    ("SUI", "2024-09-01", "high"),  # 大额 cliff 解锁
     ("SEI", "2024-08-15", "medium"),
     ("STRK", "2024-04-15", "medium"),
     ("IMX", "2024-10-22", "medium"),
@@ -111,24 +138,39 @@ _TOKEN_UNLOCK_ONESHOT: Final[tuple[tuple[str, str, str], ...]] = (
 # ---- 月度规则型解锁（公开 vesting 计划，按规则在请求区间内有界展开）----
 # (symbol, day_of_month, impact)
 _TOKEN_UNLOCK_MONTHLY: Final[tuple[tuple[str, int, str], ...]] = (
-    ("APT", 11, "medium"),   # 每月 11 日解锁（社区/基金会月度份额）
-    ("SUI", 1, "medium"),    # 每月 1 日解锁
-    ("OP", 30, "low"),       # 每月末解锁
+    ("APT", 11, "medium"),  # 每月 11 日解锁（社区/基金会月度份额）
+    ("SUI", 1, "medium"),  # 每月 1 日解锁
+    ("OP", 30, "low"),  # 每月末解锁
     ("STRK", 15, "medium"),  # 每月 15 日解锁
-    ("WLD", 25, "low"),      # 每月线性解锁批次
+    ("WLD", 25, "low"),  # 每月线性解锁批次
 )
 
 # ---- 宏观事件静态表（官方提前公布日程，无需密钥）----
 # FOMC 议息决议公布日（federalreserve.gov 公布的 2026 会议日程，决议=会议第二日）
 _FOMC_DATES_2026: Final = (
-    "2026-01-28", "2026-03-18", "2026-04-29", "2026-06-17",
-    "2026-07-29", "2026-09-16", "2026-10-28", "2026-12-09",
+    "2026-01-28",
+    "2026-03-18",
+    "2026-04-29",
+    "2026-06-17",
+    "2026-07-29",
+    "2026-09-16",
+    "2026-10-28",
+    "2026-12-09",
 )
 # 美国 CPI 发布日（bls.gov 公布的 2026 发布日程）
 _CPI_DATES_2026: Final = (
-    "2026-01-13", "2026-02-11", "2026-03-11", "2026-04-10",
-    "2026-05-12", "2026-06-10", "2026-07-14", "2026-08-12",
-    "2026-09-11", "2026-10-13", "2026-11-10", "2026-12-10",
+    "2026-01-13",
+    "2026-02-11",
+    "2026-03-11",
+    "2026-04-10",
+    "2026-05-12",
+    "2026-06-10",
+    "2026-07-14",
+    "2026-08-12",
+    "2026-09-11",
+    "2026-10-13",
+    "2026-11-10",
+    "2026-12-10",
 )
 # (event_date, event_type, impact, source)；symbol 统一为 MACRO
 _MACRO_EVENTS: Final[tuple[tuple[str, str, str, str], ...]] = tuple(
@@ -211,7 +253,7 @@ class CryptoEventCalendarProvider(IngestProviderBase):
 
     # ---- 拉取入口 ----
 
-    def fetch(self, payload: FetchPayload, policy: "SourcePolicy") -> Iterator[FetchResult]:
+    def fetch(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """按 capability 路由到减半/解锁/宏观事件采集。"""
         if not self._connected:
             yield FetchResult(

@@ -22,7 +22,8 @@
 # F2: track_regime_detection(start_run(component=regime-detector) → log_params/log_metrics → run_id)
 # O1: run_id（NullBackend="null-run"）
 # [/ALGO_FLOW]
-"""L_INFRA_TELEMETRY — regime_detector 检测结果 → 实验跟踪语义适配器（50 号 §3 ⑥，M4）。
+"""
+L_INFRA_TELEMETRY — regime_detector 检测结果 → 实验跟踪语义适配器（50 号 §3 ⑥，M4）。
 
 把一次 ``RegimeDetector.detect`` 产出（7 态概率分布 + Shrinkage）翻译为一个实验跟踪 run：
 输入特征统计 + 输出状态分布 + 模型参数（50 号 §3 ⑥ 接入要求）。运行时全鸭子类型
@@ -30,6 +31,47 @@
 
 依据: 50_backtest_observability_workplan §3 ⑥
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: probabilities 参数
+#   fields: 参数 probabilities，类型注解 RegimeProbabilities
+#   code: regime_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: shrinkage 参数
+#   fields: 参数 shrinkage，类型注解 ShrinkageResult | None
+#   code: regime_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: feature_stats 参数
+#   fields: 参数 feature_stats（无注解）
+#   code: regime_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: model_params 参数
+#   fields: 参数 model_params（无注解）
+#   code: regime_adapter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① track_regime_detection
+#   name_en: track_regime_detection
+#   intro: 把一次 regime 检测产出记录为一个实验跟踪 run。
+#   desc: 把一次 regime 检测产出记录为一个实验跟踪 run。 Args: probabilities: 7 态概率分布（鸭子类型，读 probabilities/dominant_…；源码 L92-L147
+#   inputs: probabilities shrinkage feature_stats model_params lineage extra_tags
+#   outputs: str
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: regime 验证/运行入口（track 时 lazy import 调用）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -48,8 +90,8 @@ _COMPONENT = "regime-detector"
 
 
 def track_regime_detection(
-    probabilities: "RegimeProbabilities",
-    shrinkage: "ShrinkageResult | None" = None,
+    probabilities: RegimeProbabilities,
+    shrinkage: ShrinkageResult | None = None,
     *,
     feature_stats: dict[str, Any] | None = None,
     model_params: dict[str, Any] | None = None,

@@ -22,7 +22,8 @@
 # A2: compute_strategy_correlation(策略级Pearson+Spearman双版本矩阵)
 # O1: PreprocessResult(aligned_log_returns + adf + outliers) / 双版本相关矩阵
 # [/ALGO_FLOW]
-"""D_FACTOR — G07 策略相关性验证·数据预处理 pipeline（23 号 memo §3.1①）
+"""
+D_FACTOR — G07 策略相关性验证·数据预处理 pipeline（23 号 memo §3.1①）
 
 强制四步防伪相关（CSDN 2026-03 实证 38.6% 序列非平稳→伪相关率 61.2%）：
   1. 对数收益率统一 r_t=ln(P_t/P_{t-1})
@@ -32,6 +33,93 @@
 
 相关性必须用 PnL stream（收益率序列），禁用 binary 信号序列（tetrachoric 效应
 使 binary 估计高估分散 56%，Soloviov 2026）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: prices 参数
+#   fields: 参数 prices，类型注解 pd.Series
+#   code: correlation_preprocessing.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: series 参数
+#   fields: 参数 series，类型注解 pd.Series
+#   code: correlation_preprocessing.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: max_lags 参数
+#   fields: 参数 max_lags，类型注解 int | None
+#   code: correlation_preprocessing.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: threshold 参数
+#   fields: 参数 threshold，类型注解 float
+#   code: correlation_preprocessing.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① to_log_returns
+#   name_en: to_log_returns
+#   intro: 对数收益率 r_t=ln(P_t/P_{t-1})。
+#   desc: 对数收益率 r_t=ln(P_t/P_{t-1})。 Args: prices: 价格/净值序列（必须全为正，index 时间升序） Returns: 对数收益率序列（首期为 N…；源码 L211-L228
+#   inputs: prices
+#   outputs: pd.Series
+# - id: A2
+#   name_zh: ② adf_test
+#   name_en: adf_test
+#   intro: ADF 平稳性检验（含常数项、无趋势，自实现 OLS，statsmodels 非项目依赖）。
+#   desc: ADF 平稳性检验（含常数项、无趋势，自实现 OLS，statsmodels 非项目依赖）。 回归：Δy_t = α + β·y_{t-1} + Σ_{i=1..L} γ_i·Δ…；源码 L244-L289
+#   inputs: series max_lags
+#   outputs: ADFTestResult
+# - id: A3
+#   name_zh: ③ modified_zscore_flags
+#   name_en: modified_zscore_flags
+#   intro: Modified Z-score 异常值标注（Iglewicz-Hoaglin，MAD 法，只标注不剔除）。
+#   desc: Modified Z-score 异常值标注（Iglewicz-Hoaglin，MAD 法，只标注不剔除）。 M_i = 0.6745·(x_i − median)/MAD，|M…；源码 L292-L311
+#   inputs: series threshold
+#   outputs: pd.Series
+# - id: A4
+#   name_zh: ④ align_trading_days
+#   name_en: align_trading_days
+#   intro: 交易日对齐：仅保留所有策略均有值的日期交集，禁前向填充。
+#   desc: 交易日对齐：仅保留所有策略均有值的日期交集，禁前向填充。 Args: returns_map: 策略名 → 收益率序列 Returns: 对齐面板 DataFrame（index…；源码 L314-L332
+#   inputs: returns_map
+#   outputs: pd.DataFrame
+# - id: A5
+#   name_zh: ⑤ preprocess_strategy_returns
+#   name_en: preprocess_strategy_returns
+#   intro: 预处理 pipeline：对数化 → ADF → 异常值标注 → 交易日交集对齐。
+#   desc: 预处理 pipeline：对数化 → ADF → 异常值标注 → 交易日交集对齐。 Args: nav_map: 策略名 → 净值/价格序列 adf_max_lags: ADF…；源码 L335-L357
+#   inputs: nav_map adf_max_lags outlier_threshold
+#   outputs: PreprocessResult
+# - id: A6
+#   name_zh: ⑥ compute_strategy_correlation
+#   name_en: compute_strategy_correlation
+#   intro: 策略级 Pearson + Spearman 双版本相关矩阵（23 号 memo §3.1①）。
+#   desc: 策略级 Pearson + Spearman 双版本相关矩阵（23 号 memo §3.1①）。 Pearson 对齐门禁 MOD-PA-004 消费口径；Spearman 抗打…；源码 L360-L387
+#   inputs: returns_panel methods
+#   outputs: dict[str, pd.DataFrame]
+#   （注：A6 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: pd.Series
+#   name_en: pd.Series
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.factor.analysis.correlation_block_bootstrap; zephyr.factor.analysis.corr…
+# - id: O2
+#   name_zh: ADFTestResult
+#   name_en: ADFTestResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.factor.analysis.correlation_block_bootstrap; zephyr.factor.analysis.corr…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
 """
 
 from __future__ import annotations

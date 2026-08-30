@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-DATA-SYMBOL-001 TRAE-082 #ARCH-SYMBOL-NORMALIZE-001
-"""Symbol 标准化模块——TRAE-082 symbol 约定铁律的实现真源。
+"""
+Symbol 标准化模块——TRAE-082 symbol 约定铁律的实现真源。
 
 治本 #ARCH-DATA-SYMBOL-001：000001 裸码跨表碰撞（kline_daily 平安银行 vs kline_index 上证指数）。
 三字段模型：symbol(裸码) + exchange(交易所码) + symbol_canonical(派生 = symbol.exchange)。
@@ -40,6 +41,32 @@ exchange 码体系（TRAE-082）：
   9xx 消歧（1.1.0）：3 位 900/901/902/903 → SH（沪市 B 股）；
                     2 位 92/93/94 → BJ（北交所 920xxx，避免 '9'→SH 误判）
   与 CH MATERIALIZED multiIf 表达式严格对齐（单一真源，DRY）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 包内子模块公共符号
+#   fields: import 再导出符号: _INDEX_PREFIX3_TO_EXCHANGE, _PREFIX2_TO_EXCHANGE, _PREFIX3_TO_EXCHANG…
+#   code: __init__.py import L72
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包公共面再导出
+#   name_en: __init__ re-export
+#   intro: 再导出 EXCHANGE_SH, EXCHANGE_SZ, EXCHANGE_BJ, EXCHANGE_HK, EXCHANGE_US, _PREFIX_TO…
+#   desc: __init__ import L72；__all__ 16 项（AST 事实）
+#   inputs: I1
+#   outputs: __all__ 公共符号表
+# 层: 输出
+# - id: O1
+#   name_zh: 公共 API 面（16 符号）
+#   name_en: __all__
+#   intro: EXCHANGE_SH, EXCHANGE_SZ, EXCHANGE_BJ, EXCHANGE_HK, EXCHANGE_US, _PREFIX_TO_EXC…
+#   downstream: zephyr.market_data.normalized_market_data_producer.producer; zephyr.data.c1_mar…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from zephyr.data.symbol_normalizer.normalizer import (

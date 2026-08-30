@@ -20,6 +20,49 @@ MOD-INF-019: Agent Spec — Skill Tokenomics
 Blueprint: docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 Author: factory-agent
 Version: 0.2.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: daily_budget_tokens 参数
+#   fields: 参数 daily_budget_tokens（无注解）
+#   code: skill_tokenomics.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① TokenBudget
+#   name_en: TokenBudget
+#   intro: class TokenBudget 源码 L84-L108
+#   desc: 公共方法（定义序）: remaining, usage_ratio, is_exhausted, is_warning；源码 L84-L108
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② UsageRecord
+#   name_en: UsageRecord
+#   intro: class UsageRecord 源码 L112-L129
+#   desc: 公共方法（定义序）: estimated_cost_usd；源码 L112-L129
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ SkillTokenomics
+#   name_en: SkillTokenomics
+#   intro: class SkillTokenomics 源码 L132-L354
+#   desc: 公共方法（定义序）: daily_budget, set_budget, set_preset_budget, get_budget, reset_budget, reset_all, consume, evaluat…
+#   inputs: daily_budget_tokens
+#   outputs: 返回值
+#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: TokenBudget, UsageRecord, SkillTokenomics
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 import time

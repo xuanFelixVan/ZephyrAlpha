@@ -14,16 +14,43 @@
 # [ERROR_CONTRACT] 未知市场名→ValueError
 # [TESTS] tests/ex_core/rules/
 # [TTL] permanent
-"""交易规则包（Trading Rule Packs，CAND-CRYPTO-006 / 94号 §4.3）。
+"""
+交易规则包（Trading Rule Packs，CAND-CRYPTO-006 / 94号 §4.3）。
 
 每市场一份规则包，订单校验时按标的所属市场加载。
 A股实现=现有 board_lot/price_cage 函数委托收编（零行为变化）；
 币实现=骨架（step_size/tick_size 元数据接口预留，T+0 规则）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: market 参数
+#   fields: 参数 market，类型注解 str
+#   code: __init__.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① get_trading_rule_pack
+#   name_en: get_trading_rule_pack
+#   intro: 装配层注入入口：按市场名取规则包单例（无状态共享）。
+#   desc: 装配层注入入口：按市场名取规则包单例（无状态共享）。 Args: market: 市场名（"ashare"/"crypto"）。 Returns: 对应市场的 TradingRu…；源码 L74-L89
+#   inputs: market
+#   outputs: TradingRulePack
+# 层: 输出
+# - id: O1
+#   name_zh: TradingRulePack
+#   name_en: TradingRulePack
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 装配层（TradingSession/PreExecutionChecker/回测装配 按市场注入）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
 
-from functools import lru_cache
+from functools import cache, lru_cache
 from typing import Final
 
 from zephyr.ex_core.rules.ashare import AshareRulePack
@@ -43,7 +70,7 @@ _REGISTRY: Final = {
 }
 
 
-@lru_cache(maxsize=None)
+@cache
 def get_trading_rule_pack(market: str) -> TradingRulePack:
     """装配层注入入口：按市场名取规则包单例（无状态共享）。
 

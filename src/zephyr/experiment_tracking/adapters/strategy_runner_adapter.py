@@ -22,7 +22,8 @@
 # F2: track_strategy_runner_result(start_run(component=full-chain-backtest) → log_* → run_id)
 # O1: run_id（NullBackend="null-run"）
 # [/ALGO_FLOW]
-"""L_INFRA_TELEMETRY — StrategyRunner 全链路回测 → 实验跟踪语义适配器（50 号 §3 ⑥，M4）。
+"""
+L_INFRA_TELEMETRY — StrategyRunner 全链路回测 → 实验跟踪语义适配器（50 号 §3 ⑥，M4）。
 
 把一次 ``StrategyRunner.run_backtest`` 产出（BacktestResult）翻译为一个实验跟踪 run：
 全链路配置（因子 → 合成 → 策略产权重 → 回测引擎，含滑点/手续费成本细节，50 号 §3 ⑥
@@ -30,6 +31,47 @@
 
 依据: 50_backtest_observability_workplan §3 ⑥
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: result 参数
+#   fields: 参数 result，类型注解 BacktestResult
+#   code: strategy_runner_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: runner_config 参数
+#   fields: 参数 runner_config（无注解）
+#   code: strategy_runner_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: lineage 参数
+#   fields: 参数 lineage（无注解）
+#   code: strategy_runner_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: extra_tags 参数
+#   fields: 参数 extra_tags（无注解）
+#   code: strategy_runner_adapter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① track_strategy_runner_result
+#   name_en: track_strategy_runner_result
+#   intro: 把一次 StrategyRunner 全链路回测记录为一个实验跟踪 run。
+#   desc: 把一次 StrategyRunner 全链路回测记录为一个实验跟踪 run。 Args: result: CTR-P1-016 回测结果（鸭子类型）。 runner_config…；源码 L93-L159
+#   inputs: result runner_config lineage extra_tags
+#   outputs: str
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: StrategyRunner 全链路回测入口（track 时 lazy import 调用）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -49,9 +91,9 @@ _COMPONENT = "full-chain-backtest"
 
 
 def track_strategy_runner_result(
-    result: "BacktestResult",
+    result: BacktestResult,
     *,
-    runner_config: "StrategyRunnerConfig | None" = None,
+    runner_config: StrategyRunnerConfig | None = None,
     lineage: dict[str, str] | None = None,
     extra_tags: dict[str, str] | None = None,
 ) -> str:

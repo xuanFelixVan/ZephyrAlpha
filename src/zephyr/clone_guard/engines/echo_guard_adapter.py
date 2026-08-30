@@ -14,7 +14,8 @@
 # [TESTS] tests/clone_guard/test_echo_guard_adapter.py
 # [A_module] module_id=MOD-CLONE_GUARD | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""EchoGuardAdapter — Echo-Guard 引擎适配器（Phase A MVP）。
+"""
+EchoGuardAdapter — Echo-Guard 引擎适配器（Phase A MVP）。
 
 封装 echo-guard CLI 的 check 命令，对编排层暴露统一 detect() 接口。
 通过 `echo-guard check --output json FILES...` 调用，解析 JSON 输出为 Finding 列表。
@@ -39,6 +40,38 @@
   （文件缺失/解析失败/定位失败/歧义）一律保守保留；多语句函数（真克隆
   检测面）不受影响。回归锁定：tests/clone_guard/test_echo_guard_adapter.py
   TestTrivialAccessorFilter。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: repo_root 参数
+#   fields: 参数 repo_root（无注解）
+#   code: echo_guard_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: echo_guard_adapter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① EchoGuardAdapter
+#   name_en: EchoGuardAdapter
+#   intro: Echo-Guard 引擎适配器。
+#   desc: Echo-Guard 引擎适配器。 封装 echo-guard CLI 调用，对编排层暴露统一 detect() 接口。 引擎升级/替换不影响编排层（Adapter 模式）。；公共方法（定义序）: health_che…
+#   inputs: repo_root config
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: EchoGuardAdapter
+#   downstream: zephyr.clone_guard.orchestrator
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -666,9 +699,7 @@ class EchoGuardAdapter:
             return False
 
         candidates = [
-            n
-            for n in ast.walk(tree)
-            if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and n.name == name
+            n for n in ast.walk(tree) if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and n.name == name
         ]
         if not candidates:
             return False

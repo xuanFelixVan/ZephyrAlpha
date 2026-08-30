@@ -20,7 +20,8 @@
 # A2: 判定: r4+CRISIS 贡献份额≥60% 且 r3 均值 Shrinkage≥0.85(牛市基本不缩)
 # O1: C3AttributionReport(逐态归因 + defensive_share + bull_mean_shrinkage + passed)
 # [/ALGO_FLOW]
-"""D_BACKTEST — C3 节流归因分析（11 号 memo §4.3 C3）。
+"""
+D_BACKTEST — C3 节流归因分析（11 号 memo §4.3 C3）。
 
 纯分析函数：基于 C1 既有回测产物（零新回测成本），按 Viterbi 主导态 +
 overlay 态分组归因：各态天数占比、平均 Shrinkage、避免损失
@@ -33,6 +34,48 @@ overlay 态分组归因：各态天数占比、平均 Shrinkage、避免损失
 
 依据: 11_regime_backtest_validation_plan §4.3 C3 / §0.5.7
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: records 参数
+#   fields: 参数 records，类型注解 pd.DataFrame
+#   code: c3_throttle_attribution.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: defensive_states 参数
+#   fields: 参数 defensive_states，类型注解 Sequence[Hashable]
+#   code: c3_throttle_attribution.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: bull_state 参数
+#   fields: 参数 bull_state，类型注解 Hashable
+#   code: c3_throttle_attribution.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: defensive_share_min 参数
+#   fields: 参数 defensive_share_min，类型注解 float
+#   code: c3_throttle_attribution.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① attribute_throttle
+#   name_en: attribute_throttle
+#   intro: C3 主入口：各态 Shrinkage 贡献归因。
+#   desc: C3 主入口：各态 Shrinkage 贡献归因。 Args: records: 逐日 DataFrame，列 = state / shrinkage / ret_baselin…；源码 L134-L216
+#   inputs: records defensive_states bull_state defensive_share_min bull_shrink_m…
+#   outputs: C3AttributionReport
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: C3AttributionReport
+#   name_en: C3AttributionReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 人工审查; 11_regime_backtest_validation_plan C3 节流归因
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

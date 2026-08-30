@@ -24,7 +24,8 @@
 # A4: metrics 纯函数汇总（IC/IR/OOS/分组收益）
 # O1: EvaluationResult（IC/IR 等评估指标；数据不足字段为 0）
 # [/ALGO_FLOW]
-"""D-FACTOR-03 因子评估回测运行器——端到端因子评估。
+"""
+D-FACTOR-03 因子评估回测运行器——端到端因子评估。
 
 封装 ch_reader 数据访问 + metrics 纯函数计算，实现：
 加载数据 → 逐标的计算因子值 → 组装面板 → 计算 IC/IR/OOS → 返回 EvaluationResult。
@@ -39,6 +40,85 @@ INV-004 PIT 铁律落实：
 - ch_reader 对 ReplacingMergeTree 自动注入 FINAL，去重后查询
 - 前向收益 shift(-horizon) 仅用于回测评估，不参与实盘信号生成
 - 不使用 ingested_at（可能引入未来函数），仅用 trade_date 做截面对齐
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: symbols 参数
+#   fields: 参数 symbols，类型注解 Sequence[str]
+#   code: backtest.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: start 参数
+#   fields: 参数 start，类型注解 str
+#   code: backtest.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: end 参数
+#   fields: 参数 end，类型注解 str
+#   code: backtest.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: factor_id 参数
+#   fields: 参数 factor_id，类型注解 str
+#   code: backtest.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① load_history
+#   name_en: load_history
+#   intro: 从 ClickHouse 加载历史日 K 行情。
+#   desc: 从 ClickHouse 加载历史日 K 行情。 Args: symbols: 标的代码列表（如 ['600519.SH', '000001.SZ']） start: 起始日期…；源码 L242-L272
+#   inputs: symbols start end
+#   outputs: pd.DataFrame
+# - id: A2
+#   name_zh: ② evaluate_factor
+#   name_en: evaluate_factor
+#   intro: 端到端因子评估：加载数据 → 计算因子值 → 计算 IC/IR/OOS → 返回结果。
+#   desc: 端到端因子评估：加载数据 → 计算因子值 → 计算 IC/IR/OOS → 返回结果。 Args: factor_id: 已注册的因子ID（FactorRegistry.get…；源码 L329-L366
+#   inputs: factor_id symbols start end horizon oos_ratio
+#   outputs: EvaluationResult
+# - id: A3
+#   name_zh: ③ tsv_to_dataframe
+#   name_en: tsv_to_dataframe
+#   intro: 公共接口：tsv_to_dataframe（Stage 4 公共化）。
+#   desc: 公共接口：tsv_to_dataframe（Stage 4 公共化）。；源码 L370-L372
+#   inputs: tsv
+#   outputs: pd.DataFrame
+# - id: A4
+#   name_zh: ④ format_symbols
+#   name_en: format_symbols
+#   intro: 公共接口：format_symbols（Stage 4 公共化）。
+#   desc: 公共接口：format_symbols（Stage 4 公共化）。；源码 L376-L378
+#   inputs: symbols
+#   outputs: str
+# - id: A5
+#   name_zh: ⑤ compute_factor_panel
+#   name_en: compute_factor_panel
+#   intro: 公共接口：逐标的计算因子值并组装 (date×symbol) 面板。
+#   desc: 公共接口：逐标的计算因子值并组装 (date×symbol) 面板。 供 D_PORTFOLIO_CORE StrategyRunner 复用（裁定：策略层直连因子评估运行器，…；源码 L382-L397
+#   inputs: factor_cls history
+#   outputs: pd.DataFrame
+#   （注：A5 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: pd.DataFrame
+#   name_en: pd.DataFrame
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: EvaluationResult
+#   name_en: EvaluationResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations

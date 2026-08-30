@@ -14,7 +14,8 @@
 # [TESTS] tests/zephyr/data/test_providers.py::TestEastmoneyNewsProvider
 # [A_module] module_id=MOD-GOV-eastmoney_news_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""东方财富新闻数据源 Provider 实现（MOD-L00-004 §4.3）。
+"""
+东方财富新闻数据源 Provider 实现（MOD-L00-004 §4.3）。
 
 HTTP直连东方财富7x24快讯API，继承IngestProviderBase。
 - 匿名访问，无需登录
@@ -23,6 +24,32 @@ HTTP直连东方财富7x24快讯API，继承IngestProviderBase。
 
 数据转换目标表 c3_fundamental.news_data：
     pub_date, title, link, summary, source
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: eastmoney_news_provider.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① EastmoneyNewsProvider
+#   name_en: EastmoneyNewsProvider
+#   intro: 东方财富新闻数据源 Provider。
+#   desc: 东方财富新闻数据源 Provider。 匿名访问、shared 线程安全模型。 已知问题：无认证，高频请求可能被限制。；公共方法（定义序）: connect, health_check, disconnect, fet…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: EastmoneyNewsProvider
+#   downstream: zephyr.data.scheduler
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

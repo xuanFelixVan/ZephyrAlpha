@@ -14,7 +14,8 @@
 # [TESTS] tests/zephyr/data/calendar/test_market_calendar.py
 # [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""市场日历抽象接口（Market Calendar，CAND-CRYPTO-001 / 94号 §4.1）。
+"""
+市场日历抽象接口（Market Calendar，CAND-CRYPTO-001 / 94号 §4.1）。
 
 定义"什么时间有交易、K 线如何切分"的策略对象。双市场同内核的第一地基：
 A股=断点日历（交易日历+午休+隔夜+节假日），数字货币=7×24 连续日历。
@@ -26,6 +27,33 @@ A股=断点日历（交易日历+午休+隔夜+节假日），数字货币=7×24
 
 同名区分：feedback_loop.collectors.market_calendar.MarketCalendar 为 FLE 假日
 防误报采集器（holiday 集合 dataclass），与本接口语义不同，以包路径区分。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: base.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① MarketCalendar
+#   name_en: MarketCalendar
+#   intro: 市场日历策略对象（抽象接口）。
+#   desc: 市场日历策略对象（抽象接口）。 属性： market: 市场标签（"ashare"/"crypto"，治理闸市场标注用）。 timezone: 日历日归属时区（A股="Asia/…；公共方法（定义序）: is_trad…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: MarketCalendar
+#   downstream: zephyr.data.scheduler; zephyr.data.multi_timeframe_fusion; zephyr.data.pit_query
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

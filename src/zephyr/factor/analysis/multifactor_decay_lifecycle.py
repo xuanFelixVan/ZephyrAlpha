@@ -21,7 +21,8 @@
 # F4: check_retirement(DORMANT≥120日无恢复→RETIRED清理)
 # O1: FactorDecayState(state/weight_multiplier/days_in_state) + DECAY_TO_REGISTRY_STATUS(6态↔registry 5态映射常量)
 # [/ALGO_FLOW]
-"""25号memo §3.7#3 因子衰减→动作全生命周期（DecayActionLifecycle 6态状态机）。
+"""
+25号memo §3.7#3 因子衰减→动作全生命周期（DecayActionLifecycle 6态状态机）。
 
 补齐 §3.3 三层衰减监控（decay_monitor.py 半衰期）与池管理（factor_pool_manager.py）
 之间的编排断裂："检测到衰减后降权/观察/淘汰/复激活"的统一动作状态机。
@@ -40,6 +41,57 @@ DORMANT（0.0，不参与合成）/ RECOVERY（0.3 复激活观察）/ RETIRED�
   NEW→experimental（入池试运行）/ ACTIVE→active / OBSERVE→active（仍参与合成）/
   DORMANT→deprecated / RECOVERY→experimental（复激活试运行）/ RETIRED→retired。
   反向：registry candidate 入池即初始化 NEW。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: state 参数
+#   fields: 参数 state，类型注解 DecayState
+#   code: multifactor_decay_lifecycle.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① registry_status_for
+#   name_en: registry_status_for
+#   intro: 运行时 6 态 → factor_registry status 5态映射。
+#   desc: 运行时 6 态 → factor_registry status 5态映射。；源码 L136-L138
+#   inputs: state
+#   outputs: str
+# - id: A2
+#   name_zh: ② FactorDecayState
+#   name_en: FactorDecayState
+#   intro: 单因子衰减生命周期状态（factor_pool_manager 的 decay_state 字段载体）。
+#   desc: 单因子衰减生命周期状态（factor_pool_manager 的 decay_state 字段载体）。；公共方法（定义序）: participates_in_synthesis；源码 L159-L173
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ CusumMonitor
+#   name_en: CusumMonitor
+#   intro: §3.3 CUSUM 预警层——累积 IC 下行偏移检测。
+#   desc: §3.3 CUSUM 预警层——累积 IC 下行偏移检测。 S_t = max(0, S_{t-1} + (μ_IC - k - IC_t))，k=0.5σ，h=4σ； S_t…；公共方法（定义序）: update,…
+#   inputs: mu_ic sigma_ic k_mult h_mult
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ DecayActionLifecycle
+#   name_en: DecayActionLifecycle
+#   intro: 6 态衰减动作状态机——每日调 transition_with_boundaries() 更新状态+权重乘子。
+#   desc: 6 态衰减动作状态机——每日调 transition_with_boundaries() 更新状态+权重乘子。；公共方法（定义序）: states, init_new_factor, transition_with_b…
+#   inputs: params
+#   outputs: 返回值
+#   （注：A4 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: factor_pool_manager(decay_state字段); multifactor_pit_backtest
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

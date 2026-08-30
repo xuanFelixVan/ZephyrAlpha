@@ -14,7 +14,8 @@
 # [TESTS] tests/clone_guard/test_vendetect_adapter.py
 # [A_module] module_id=MOD-CLONE_GUARD | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""VendetectAdapter — Vendetect 跨仓库合规审计适配器（Phase C L3）。
+"""
+VendetectAdapter — Vendetect 跨仓库合规审计适配器（Phase C L3）。
 
 封装 Vendetect CLI 的 compare 命令，对编排层暴露统一 detect() 接口。
 Vendetect 职责：检测跨仓库 vendored 代码，识别许可证合规风险（如 AGPL 代码
@@ -45,6 +46,37 @@ Vendetect JSON 序列化修复后补全）：
   - 超时 → degraded=True, 返回空列表
   - CLI 崩溃 → degraded=True, 返回空列表
   - 正常执行 → 返回 Finding 列表
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: repo_root 参数
+#   fields: 参数 repo_root（无注解）
+#   code: vendetect_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: vendetect_adapter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① VendetectAdapter
+#   name_en: VendetectAdapter
+#   intro: Vendetect 跨仓库合规审计适配器（Phase C L3）。
+#   desc: Vendetect 跨仓库合规审计适配器（Phase C L3）。 封装 Vendetect CLI 调用（位置参数 TEST_REPO SOURCE_REPO + --form…；公共方法（定义序）: health_…
+#   inputs: repo_root config
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: VendetectAdapter
+#   downstream: zephyr.clone_guard.orchestrator
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

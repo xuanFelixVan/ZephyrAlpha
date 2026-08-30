@@ -13,7 +13,8 @@
 # [TESTS] tests/zephyr/data/transport/test_cross_border_dual.py
 # [A_module] module_id=CAND-CRYPTO-009 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""跨境网络双活传输层（CAND-CRYPTO-009 / 94号 §7.2）。
+"""
+跨境网络双活传输层（CAND-CRYPTO-009 / 94号 §7.2）。
 
 境内基建↔境外交易所双线路：
 - 主线路（PRIMARY）=HTTPS 直连（Caddy TLS 终结+DNS-01 证书+来源 IP 白名单）
@@ -35,6 +36,41 @@ Usage::
     ))
     # ... 60 秒后
     event = dual.maybe_probe_primary()
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: spec 参数
+#   fields: 参数 spec，类型注解 CloudflareTunnelSpec
+#   code: cross_border_dual.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① render_cloudflared_config
+#   name_en: render_cloudflared_config
+#   intro: 生成 cloudflared tunnel 配置 YAML 文本。
+#   desc: 生成 cloudflared tunnel 配置 YAML 文本。 Args: spec: 隧道配置输入。 Returns: cloudflared config.yml 内容（…；源码 L118-L137
+#   inputs: spec
+#   outputs: str
+# - id: A2
+#   name_zh: ② CrossBorderDualTransport
+#   name_en: CrossBorderDualTransport
+#   intro: 双线路热切换状态机（PRIMARY ⇄ BACKUP）。
+#   desc: 双线路热切换状态机（PRIMARY ⇄ BACKUP）。 - record_bucket(): 主线路活跃期喂入 5 秒桶观测；三感知同时成立即切备。 - maybe_probe…；公共方法（定义序）: active_…
+#   inputs: config probe clock
+#   outputs: 返回值
+#   （注：A2 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 装配层（CAND-CRYPTO-002 行情 WS / CAND-CRYPTO-005 执行回传 注入）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -165,8 +201,8 @@ class CrossBorderDualTransport:
         self._clock = clock
         self._path = TransportPath.PRIMARY
         self._backlog = 0
-        self._switched_at: Optional[float] = None
-        self._last_probe_at: Optional[float] = None
+        self._switched_at: float | None = None
+        self._last_probe_at: float | None = None
         self._events: list[SwitchEvent] = []
 
     @property
@@ -202,7 +238,7 @@ class CrossBorderDualTransport:
             self._backlog = max(0, self._backlog - n)
         return self._backlog
 
-    def record_bucket(self, stats: BucketStats) -> Optional[SwitchEvent]:
+    def record_bucket(self, stats: BucketStats) -> SwitchEvent | None:
         """喂入一个 5 秒桶观测；主线路期三感知同时成立即切备。
 
         Args:
@@ -214,9 +250,7 @@ class CrossBorderDualTransport:
         self._backlog = max(0, stats.backlog)
         if self._path is not TransportPath.PRIMARY:
             return None
-        throughput_dropped = (
-            stats.throughput_bps < self._cfg.baseline_throughput_bps * self._cfg.throughput_drop_ratio
-        )
+        throughput_dropped = stats.throughput_bps < self._cfg.baseline_throughput_bps * self._cfg.throughput_drop_ratio
         if not (stats.connection_failed and throughput_dropped and stats.backlog > self._cfg.backlog_threshold):
             return None
         reason = (
@@ -226,7 +260,7 @@ class CrossBorderDualTransport:
         )
         return self._switch(TransportPath.BACKUP, reason)
 
-    def maybe_probe_primary(self) -> Optional[SwitchEvent]:
+    def maybe_probe_primary(self) -> SwitchEvent | None:
         """备线路期纯时间驱动探测切回（纪律②：不依赖积压=0 等静态条件）。
 
         距切备/上次探测满 probe_interval_seconds 才发起探测；探测成功切回
@@ -248,7 +282,9 @@ class CrossBorderDualTransport:
             log.warning("cross_border_dual probe raised, stay on backup", exc_info=True)
             ok = False
         if not ok:
-            log.info("cross_border_dual probe failed, stay on backup (next probe in %.0fs)", self._cfg.probe_interval_seconds)
+            log.info(
+                "cross_border_dual probe failed, stay on backup (next probe in %.0fs)", self._cfg.probe_interval_seconds
+            )
             return None
         return self._switch(TransportPath.PRIMARY, f"时间驱动探测成功（{self._cfg.probe_interval_seconds:.0f}s 周期）")
 

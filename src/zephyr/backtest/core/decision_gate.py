@@ -14,7 +14,8 @@
 # [TESTS] tests/backtest/test_decision_gate.py
 # [TTL] permanent
 # [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
-"""3阶段决策门控模块(IS->WFA->OOS)
+"""
+3阶段决策门控模块(IS->WFA->OOS)
 
 职责:
   - IS(In-Sample)阶段:样本内Sharpe准入(>0.5)+参数稳定性门控(避悬崖型参数)
@@ -32,6 +33,69 @@
     manual_review_required)且can_deploy=False,而非直接拒(overall_passed不变)
 
 SSoT: docs/03_modules/_domain_backtest/blueprint.md §3.3 P0-14
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: strategy_type 参数
+#   fields: 参数 strategy_type，类型注解 str
+#   code: decision_gate.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: current_regime 参数
+#   fields: 参数 current_regime，类型注解 str
+#   code: decision_gate.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: matrix 参数
+#   fields: 参数 matrix，类型注解 Mapping[str, frozenset[str]] | None
+#   code: decision_gate.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: is_params 参数
+#   fields: 参数 is_params，类型注解 Mapping[str, Any]
+#   code: decision_gate.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① default_regime_suitability_checker
+#   name_en: default_regime_suitability_checker
+#   intro: 默认 regime 适配性判定器(策略类型 × 当前 regime)
+#   desc: 默认 regime 适配性判定器(策略类型 × 当前 regime) 规则(默认矩阵口径见 DEFAULT_REGIME_SUITABILITY_MATRIX): - 策略类型未…；源码 L177-L216
+#   inputs: strategy_type current_regime matrix
+#   outputs: RegimeSuitabilityVerdict
+# - id: A2
+#   name_zh: ② default_shrinkage_stability_checker
+#   name_en: default_shrinkage_stability_checker
+#   intro: 默认参数收缩稳定性判定器(IS/OOS 参数收缩幅度)
+#   desc: 默认参数收缩稳定性判定器(IS/OOS 参数收缩幅度) 规则: 对 IS/OOS 共有的数值型参数计算相对收缩幅度 |oos-is|/|is| (is==0 时: oos==0…；源码 L219-L270
+#   inputs: is_params oos_params threshold
+#   outputs: ShrinkageStabilityVerdict
+# - id: A3
+#   name_zh: ③ DecisionGate
+#   name_en: DecisionGate
+#   intro: 3阶段决策门控(IS->WFA->OOS)
+#   desc: 3阶段决策门控(IS->WFA->OOS) 按蓝图§3.3 P0-14编排三阶段决策: 1. IS阶段:样本内Sharpe准入+参数稳定性门控 2. WFA阶段:Walk-For…；公共方法（定义序）: check_i…
+#   inputs: config
+#   outputs: 返回值
+#   （注：A3 之后另有 9 个公共定义未列入（含 9 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: RegimeSuitabilityVerdict
+#   name_en: RegimeSuitabilityVerdict
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.implementati…
+# - id: O2
+#   name_zh: ShrinkageStabilityVerdict
+#   name_en: ShrinkageStabilityVerdict
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.implementati…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations
@@ -62,9 +126,7 @@ class DecisionGateError(Exception):
 
 #: regime 状态全集(口径=13号文 §2.1 降态后: r1低波震荡/r2中波震荡/r3牛市趋势/r4熊市阴跌
 #: + overlay r10 CRISIS/r11 RECOVERY/r12 BREAKOUT; 本地声明避免 backtest->regime 跨域依赖)
-KNOWN_REGIME_STATES: Final[frozenset[str]] = frozenset(
-    {"r1", "r2", "r3", "r4", "r10", "r11", "r12"}
-)
+KNOWN_REGIME_STATES: Final[frozenset[str]] = frozenset({"r1", "r2", "r3", "r4", "r10", "r11", "r12"})
 
 #: 默认 regime 适配矩阵: 策略类型 -> 不适配(降格)的 regime 集合。
 #: 键为策略类型短名(trend/daban/multifactor/event_driven, 对应 sleeve 策略
@@ -198,9 +260,7 @@ def default_shrinkage_stability_checker(
     max_shrinkage = shrinkages[max_name]
     downgraded = max_shrinkage > threshold
     if downgraded:
-        reason = (
-            f"参数收缩幅度超阈值:参数'{max_name}'收缩{max_shrinkage:.2%} > 阈值{threshold:.0%},降格"
-        )
+        reason = f"参数收缩幅度超阈值:参数'{max_name}'收缩{max_shrinkage:.2%} > 阈值{threshold:.0%},降格"
     else:
         reason = f"参数收缩稳定性通过:最大收缩{max_shrinkage:.2%} <= 阈值{threshold:.0%}"
     return ShrinkageStabilityVerdict(
@@ -278,12 +338,10 @@ class DecisionGateConfig:
     backtest_live_deviation_warn: float = _DEVIATION_DEFAULTS["backtest_live_deviation_warn"]
     backtest_live_deviation_retire: float = _DEVIATION_DEFAULTS["backtest_live_deviation_retire"]
     dsr_threshold: float | None = None
-    regime_suitability_checker: (
-        Callable[[str, str], RegimeSuitabilityVerdict] | None
-    ) = None
-    shrinkage_stability_checker: (
-        Callable[[Mapping[str, Any], Mapping[str, Any]], ShrinkageStabilityVerdict] | None
-    ) = None
+    regime_suitability_checker: Callable[[str, str], RegimeSuitabilityVerdict] | None = None
+    shrinkage_stability_checker: Callable[[Mapping[str, Any], Mapping[str, Any]], ShrinkageStabilityVerdict] | None = (
+        None
+    )
 
 
 @dataclass(frozen=True)

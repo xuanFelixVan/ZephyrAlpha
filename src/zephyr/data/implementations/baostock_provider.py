@@ -22,7 +22,8 @@
 # A3: 退市股回填链(_fetch_delisted_universe→_kline_span_map 缺口探测→_fetch_one_delisted_kline 逐标的补缺)
 # O1: Iterator[FetchResult](CH 表行；fetch 异常->yield FetchResult(error=str))
 # [/ALGO_FLOW]
-"""Baostock 数据源 Provider 实现（MOD-L00-004 §4.3）。
+"""
+Baostock 数据源 Provider 实现（MOD-L00-004 §4.3）。
 
 封装 baostock SDK，继承 IngestProviderBase。
 - 匿名访问（bs.login() 无需 token）
@@ -36,6 +37,32 @@
 - disconnect() 登出当前线程
 
 注记：爬虫源零 SLA，禁入盘中关键路径，仅离线补充（盘后/回填/兜底）——64 号规范注记（64_data_source_download_spec §9.1）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: baostock_provider.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① BaostockProvider
+#   name_en: BaostockProvider
+#   intro: Baostock 免费数据源 Provider。
+#   desc: Baostock 免费数据源 Provider。 匿名访问、thread_local 登录模型。每线程独立 bs.login() 会话。 已知问题：数据滞后约 1 周。；公共方法（定义序）: tls, connect,…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: BaostockProvider
+#   downstream: zephyr.data.scheduler
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

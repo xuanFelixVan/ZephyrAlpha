@@ -14,7 +14,8 @@
 # [TESTS] tests/zephyr/factor/technical_indicators/
 # [A_module] module_id=MOD-L02-TI | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""ZephyrAlpha — 技术指标计算子包（D_FACTOR 域，#ARCH-DATA-TI-001）。
+"""
+ZephyrAlpha — 技术指标计算子包（D_FACTOR 域，#ARCH-DATA-TI-001）。
 
 ~40 个技术指标（KDJ/MACD/RSI/BOLL/ATR 等），分五类：
   - trend: MA/EMA/WMA/DEMA/MACD/ADX/DMI/CCI/SAR/TRIX
@@ -34,6 +35,32 @@
   - 盘中实时：sleeve 内 alpha 择时调用 compute() 即时计算（不入表）
 
 设计文档：docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/16_technical_indicator_catalog.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 包内子模块公共符号
+#   fields: import 再导出符号: annotations, Final, momentum, reversal, trend, volatility, volume, Te…
+#   code: __init__.py import L66
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包公共面再导出
+#   name_en: __init__ re-export
+#   intro: 再导出 annotations, Final, momentum, reversal, trend, volatility, volume, Technica…
+#   desc: __init__ import L66；__all__ 0 项（AST 事实）
+#   inputs: I1
+#   outputs: __all__ 公共符号表
+# 层: 输出
+# - id: O1
+#   name_zh: 公共 API 面（11 符号）
+#   name_en: __all__
+#   intro: annotations, Final, momentum, reversal, trend, volatility, volume, TechnicalInd…
+#   downstream: zephyr.data.implementations.internal_compute_provider; sleeve alpha 择时
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

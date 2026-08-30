@@ -14,7 +14,8 @@
 # [TESTS]
 # [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""回测绩效指标计算模块
+"""
+回测绩效指标计算模块
 
 职责:
   - 计算回测绩效指标:总收益率/年化收益率/Sharpe/Sortino/最大回撤/胜率
@@ -27,6 +28,72 @@
   - 年化基准:252交易日
 
 SSoT: docs/03_modules/_domain_backtest/blueprint.md §4.2
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: nav_series 参数
+#   fields: 参数 nav_series，类型注解 pd.Series
+#   code: metrics.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: trades_count 参数
+#   fields: 参数 trades_count，类型注解 int
+#   code: metrics.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: risk_free_rate 参数
+#   fields: 参数 risk_free_rate，类型注解 float
+#   code: metrics.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: periods_per_year 参数
+#   fields: 参数 periods_per_year，类型注解 int
+#   code: metrics.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① calculate_metrics
+#   name_en: calculate_metrics
+#   intro: 计算回测绩效指标
+#   desc: 计算回测绩效指标 Args: nav_series: 净值序列(按日期排序,首值为初始资金) trades_count: 总交易笔数 risk_free_rate: 年化无风险利…；源码 L141-L229
+#   inputs: nav_series trades_count risk_free_rate periods_per_year
+#   outputs: dict
+# - id: A2
+#   name_zh: ② calculate_ic_ir
+#   name_en: calculate_ic_ir
+#   intro: 计算因子IC/IR(信息系数/信息比率)
+#   desc: 计算因子IC/IR(信息系数/信息比率) 用于因子快速筛选(向量化回测场景)。 Args: factor_values: 因子值序列(截面排序) forward_returns:…；源码 L244-L297
+#   inputs: factor_values forward_returns periods_per_year
+#   outputs: dict
+# - id: A3
+#   name_zh: ③ calculate_dsr
+#   name_en: calculate_dsr
+#   intro: 计算Deflated Sharpe Ratio(修正夏普比率,多重测试偏差修正)
+#   desc: 计算Deflated Sharpe Ratio(修正夏普比率,多重测试偏差修正) 基于Bailey & López de Prado (2014)公式,对原始Sharpe进行两层…；源码 L308-L394
+#   inputs: sharpe_ratio n_trials n_samples skewness kurtosis risk_free_rate
+#   outputs: dict
+# - id: A4
+#   name_zh: ④ calculate_full_metrics
+#   name_en: calculate_full_metrics
+#   intro: 计算完整绩效指标(基础指标 + Deflated Sharpe Ratio)
+#   desc: 计算完整绩效指标(基础指标 + Deflated Sharpe Ratio) 在calculate_metrics基础上,额外计算: - 收益率偏度(skewness)与峰度(k…；源码 L397-L461
+#   inputs: nav_series trades_count n_trials risk_free_rate periods_per_year
+#   outputs: dict
+#   （注：A4 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: dict
+#   name_en: dict
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.backtest.implementations.vectorized_engine
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

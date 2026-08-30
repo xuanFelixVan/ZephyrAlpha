@@ -21,7 +21,8 @@
 # A2: effective_bets(特征值分解Neff=(Σλ)²/Σλ²; 等相关近似N/(1+(N−1)ρ̄)仅辅助)
 # O1: ShrinkageResult(shrunk_corr+alpha) / NeffResult(neff+alpha+eigenvalues+neff_equicorr)
 # [/ALGO_FLOW]
-"""D_FACTOR — G07 组合层有效下注数 Neff 引擎（23 号 memo §3.1⑤）
+"""
+D_FACTOR — G07 组合层有效下注数 Neff 引擎（23 号 memo §3.1⑤）
 
 Neff=(Σλ)²/Σλ² 衡量组合真正有多少独立风险方向——两两相关都 <0.6 但 Neff<3
 仍危险（5 策略实际只有 <3 个独立下注，stockalpha 2026-02）。
@@ -34,6 +35,64 @@ Neff=(Σλ)²/Σλ² 衡量组合真正有多少独立风险方向——两两�
 判据需结合 α 共读——α 大（重收缩）即使 Neff≥3 也应警惕；α 小+Neff≥3 才稳健。
 等相关近似 Neff≈N/(1+(N−1)ρ̄) 仅辅助（Soloviov 2026 警告 PnL stream 偏差
 −56%~+91%），以特征值分解为准。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: panel 参数
+#   fields: 参数 panel，类型注解 pd.DataFrame | np.ndarray
+#   code: correlation_neff.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: corr 参数
+#   fields: 参数 corr，类型注解 np.ndarray
+#   code: correlation_neff.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: shrink 参数
+#   fields: 参数 shrink，类型注解 bool
+#   code: correlation_neff.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ledoit_wolf_shrinkage
+#   name_en: ledoit_wolf_shrinkage
+#   intro: Ledoit-Wolf 闭式最优收缩（相关矩阵版，目标 F=I）。
+#   desc: Ledoit-Wolf 闭式最优收缩（相关矩阵版，目标 F=I）。 S*=（1−α)S+αI；d²=||S−I||²_F/p；b̄²=(1/(pT²))Σ_t||z_tz_tᵀ−…；源码 L170-L200
+#   inputs: panel
+#   outputs: ShrinkageResult
+# - id: A2
+#   name_zh: ② equicorrelation_neff
+#   name_en: equicorrelation_neff
+#   intro: 等相关近似 Neff≈N/(1+(N−1)ρ̄)（ρ̄=平均两两相关，仅辅助对照）。
+#   desc: 等相关近似 Neff≈N/(1+(N−1)ρ̄)（ρ̄=平均两两相关，仅辅助对照）。 Soloviov 2026 警告 PnL stream 偏差随共同因子载荷 β 从 −56%…；源码 L203-L218
+#   inputs: corr
+#   outputs: float
+# - id: A3
+#   name_zh: ③ effective_bets
+#   name_en: effective_bets
+#   intro: 组合层有效下注数 Neff=(Σλ)²/Σλ²（特征值分解，可选 LW 收缩前置）。
+#   desc: 组合层有效下注数 Neff=(Σλ)²/Σλ²（特征值分解，可选 LW 收缩前置）。 Args: panel: T×k 对齐收益率面板 shrink: 是否先做 Ledoit-W…；源码 L221-L246
+#   inputs: panel shrink
+#   outputs: NeffResult
+#   （注：A3 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ShrinkageResult
+#   name_en: ShrinkageResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: G07 策略相关性验证报告（组合层有效下注数）
+# - id: O2
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: G07 策略相关性验证报告（组合层有效下注数）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

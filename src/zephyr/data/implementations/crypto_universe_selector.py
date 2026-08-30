@@ -14,7 +14,8 @@
 # [TESTS] tests/zephyr/data/test_crypto_universe_selector.py
 # [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""条件选币（市值前 20 框架）——95号 §3.1 / 94号 §9 Q2 / CAND-CRYPTO-007 Phase 2 扩池。
+"""
+条件选币（市值前 20 框架）——95号 §3.1 / 94号 §9 Q2 / CAND-CRYPTO-007 Phase 2 扩池。
 
 条件宇宙=市值前 N（默认 20），框架共用 A股 universe 选择骨架语义
 （frozen dataclass 结果契约 + 依赖注入 + 降级兜底 + source 留痕），宇宙独立
@@ -29,6 +30,48 @@
 输出：选币结果列表（symbol, market_cap_rank, source），稳定币/锚定资产
 （USDT/USDC/WBTC/stETH 等）默认排除——与 A股框架 filter_rules（剔 ST/退市）
 同构，宇宙是"可交易标的集"非"市值榜单"。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: top_n 参数
+#   fields: 参数 top_n（无注解）
+#   code: crypto_universe_selector.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: api_key 参数
+#   fields: 参数 api_key（无注解）
+#   code: crypto_universe_selector.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: static_universe 参数
+#   fields: 参数 static_universe（无注解）
+#   code: crypto_universe_selector.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: exclude_symbols 参数
+#   fields: 参数 exclude_symbols（无注解）
+#   code: crypto_universe_selector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CryptoUniverseSelector
+#   name_en: CryptoUniverseSelector
+#   intro: 条件选币器（市值前 N 宇宙）。
+#   desc: 条件选币器（市值前 N 宇宙）。 主路径 CoinMarketCap 免费 API；无 key 或 CMC 异常时静态配置兜底。 http_get 可注入（测试 mock，不依赖…；公共方法（定义序）: select；…
+#   inputs: top_n api_key static_universe exclude_symbols http_get
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: CryptoUniverseSelector
+#   downstream: universe_registry UNI-CRYPTO-001 Phase 2 扩池（候选：币版回测/信号装配层）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -65,10 +108,26 @@ DEFAULT_TOP_N: Final = 20
 
 #: 默认排除集：稳定币/锚定封装资产（市值榜单在列但不可作为 alpha 交易标的，
 #: 与 A股 filter_rules 剔 ST/*ST 同构——宇宙=可交易标的集，非榜单照抄）
-DEFAULT_EXCLUDE_SYMBOLS: Final = frozenset({
-    "USDT", "USDC", "DAI", "FDUSD", "USDE", "SUSDE", "USDS", "USD1",
-    "WBTC", "WETH", "STETH", "WSTETH", "CBBTC", "LBTC", "BNSOL", "WBETH",
-})
+DEFAULT_EXCLUDE_SYMBOLS: Final = frozenset(
+    {
+        "USDT",
+        "USDC",
+        "DAI",
+        "FDUSD",
+        "USDE",
+        "SUSDE",
+        "USDS",
+        "USD1",
+        "WBTC",
+        "WETH",
+        "STETH",
+        "WSTETH",
+        "CBBTC",
+        "LBTC",
+        "BNSOL",
+        "WBETH",
+    }
+)
 
 #: 静态配置快照（可交易标的市值前 20，已剔除稳定币/锚定资产）。
 #: 快照日期 2026-08，排名会漂移——仅作 CMC 不可用时的兜底宇宙，

@@ -21,7 +21,8 @@
 # A2: perturb_pm20(基线值×0.8/×1.2 扰动值生成器)
 # O1: E3SensitivityReport(逐参数判定 + max_rel_change + passed + 悬崖参数清单)
 # [/ALGO_FLOW]
-"""D_BACKTEST — E3 参数敏感性 ±20% 网格分析（11 号 memo §4.5 E3 / §4.4）。
+"""
+D_BACKTEST — E3 参数敏感性 ±20% 网格分析（11 号 memo §4.5 E3 / §4.4）。
 
 纯分析函数：不重跑回测，只消费既有 ±20% 扰动网格回测产出的效果指标
 （如 MaxDD 改善幅度），按 §5 E3 门槛「±20% 扰动效果变化 < 30%」判定稳健性，
@@ -29,6 +30,61 @@
 
 依据: 11_regime_backtest_validation_plan §4.4 / §4.5 E3 / §5
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: base_value 参数
+#   fields: 参数 base_value，类型注解 float
+#   code: e3_param_sensitivity.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: baseline_effect 参数
+#   fields: 参数 baseline_effect，类型注解 float
+#   code: e3_param_sensitivity.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: points 参数
+#   fields: 参数 points，类型注解 list[E3PerturbationPoint]
+#   code: e3_param_sensitivity.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: tolerance 参数
+#   fields: 参数 tolerance，类型注解 float
+#   code: e3_param_sensitivity.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① perturb_pm20
+#   name_en: perturb_pm20
+#   intro: ±20% 扰动值生成器：返回 (×0.8, ×1.2)。
+#   desc: ±20% 扰动值生成器：返回 (×0.8, ×1.2)。；源码 L142-L144
+#   inputs: base_value
+#   outputs: tuple[float, float]
+# - id: A2
+#   name_zh: ② analyze_param_sensitivity
+#   name_en: analyze_param_sensitivity
+#   intro: E3 主入口：±20% 扰动网格的稳健性判定。
+#   desc: E3 主入口：±20% 扰动网格的稳健性判定。 Args: baseline_effect: 基线参数下的效果指标（如 MaxDD 改善幅度）。 points: 各参数 ±20%…；源码 L155-L216
+#   inputs: baseline_effect points tolerance
+#   outputs: E3SensitivityReport
+#   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: tuple[float, float]
+#   name_en: tuple[float, float]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 人工审查; 11_regime_backtest_validation_plan Phase 4 E3
+# - id: O2
+#   name_zh: E3SensitivityReport
+#   name_en: E3SensitivityReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 人工审查; 11_regime_backtest_validation_plan Phase 4 E3
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

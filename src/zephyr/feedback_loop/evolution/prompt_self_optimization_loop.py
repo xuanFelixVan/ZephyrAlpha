@@ -18,6 +18,33 @@
 """
 R502: PromptSelfOptimizationLoop
 DSPy/GEPA封闭自提示进化闭环 — 观察效果->LLM反思->生成变体->A/B测试->采纳
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: prompt_self_optimization_loop.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① PromptSelfOptimizationLoop
+#   name_en: PromptSelfOptimizationLoop
+#   intro: class PromptSelfOptimizationLoop 源码 L75-L164
+#   desc: 公共方法（定义序）: get_baseline_effectiveness, register_current_prompt, record_effectiveness, propose_variant, evalua…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: PromptSelfOptimizationLoop
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 import hashlib

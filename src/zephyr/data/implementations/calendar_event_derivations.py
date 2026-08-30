@@ -22,7 +22,8 @@
 # F4: derive_a50_futures_delivery（富时 A50 交割日：每月倒数第 2 个工作日，SGX 口径 Mon-Fri）
 # O1: list[tuple(event_date, event_type, description, "internal")]（未去重未排序，由调用方 _dedupe_and_sort_events 收口）
 # [/ALGO_FLOW]
-"""日历事件派生函数（17 号 §2.4 待评估项，函数级 MVP）。
+"""
+日历事件派生函数（17 号 §2.4 待评估项，函数级 MVP）。
 
 四个待评估 event_type 的派生实现（行格式与 ``internal_compute_provider`` 既有派生
 函数一致，可直接被 ``_fetch_calendar_event`` 接线消费）：
@@ -41,6 +42,71 @@
 
 依据: 17_special_trading_days_data_assets §2.4
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: by_month 参数
+#   fields: 参数 by_month，类型注解 dict[tuple[int, int], datetime.date]
+#   code: calendar_event_derivations.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: trading_days_set 参数
+#   fields: 参数 trading_days_set，类型注解 set[datetime.date]
+#   code: calendar_event_derivations.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: range_start 参数
+#   fields: 参数 range_start，类型注解 datetime.date
+#   code: calendar_event_derivations.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: range_end 参数
+#   fields: 参数 range_end，类型注解 datetime.date
+#   code: calendar_event_derivations.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① derive_earnings_deadline
+#   name_en: derive_earnings_deadline
+#   intro: 财报强制披露截止窗口（每年 4/30、8/31、10/31，遇非交易日取前一交易日）。
+#   desc: 财报强制披露截止窗口（每年 4/30、8/31、10/31，遇非交易日取前一交易日）。；源码 L192-L216
+#   inputs: by_month trading_days_set range_start range_end
+#   outputs: list[tuple]
+# - id: A2
+#   name_zh: ② derive_mlf_operation
+#   name_en: derive_mlf_operation
+#   intro: MLF 操作日（每月 15 日，遇非交易日顺延下一交易日——与 LPR 派生同口径）。
+#   desc: MLF 操作日（每月 15 日，遇非交易日顺延下一交易日——与 LPR 派生同口径）。 calendar: 市场日历注入（94号 §4.1/#261；None=ASHareCal…；源码 L219-L236
+#   inputs: by_month range_start range_end calendar
+#   outputs: list[tuple]
+# - id: A3
+#   name_zh: ③ derive_bond_futures_delivery
+#   name_en: derive_bond_futures_delivery
+#   intro: 国债期货交割日（季月 3/6/9/12 第 2 个周五，非交易日顺延下一交易日）。
+#   desc: 国债期货交割日（季月 3/6/9/12 第 2 个周五，非交易日顺延下一交易日）。；源码 L239-L263
+#   inputs: by_month trading_days_set range_start range_end
+#   outputs: list[tuple]
+# - id: A4
+#   name_zh: ④ derive_a50_futures_delivery
+#   name_en: derive_a50_futures_delivery
+#   intro: 富时 A50 期货交割日（每月倒数第 2 个工作日，SGX 口径 Mon-Fri）。
+#   desc: 富时 A50 期货交割日（每月倒数第 2 个工作日，SGX 口径 Mon-Fri）。；源码 L266-L284
+#   inputs: by_month range_start range_end
+#   outputs: list[tuple]
+# 层: 输出
+# - id: O1
+#   name_zh: list[tuple]
+#   name_en: list[tuple]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 待评估登记后由 internal_compute_provider._fetch_calendar_event 接线（17 号 §2.4 待评估项）；当前为函…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

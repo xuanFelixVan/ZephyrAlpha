@@ -14,7 +14,8 @@
 # [TESTS] tests/data_governance/test_runtime_lineage_collector.py
 # [A_module] module_id=MOD-DATA_GOV-006 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""M8-S03 动态采集器（MOD-DATA_GOV-006）。
+"""
+M8-S03 动态采集器（MOD-DATA_GOV-006）。
 
 真源：construction_backlog_dig.tsv B10-02315（A1 交易决策架构 §30.4.3，
 裁定=做 P1）+ CAND-DATGOV-003。
@@ -29,6 +30,33 @@
   ③ 盘后汇总 `aggregate_into_tracker`：排空缓冲 → LineageEdge → 复用 S01
      `ingest_into_tracker`（批内去重首条胜出/幂等 updated/环 rejected 不中断）；
      幂等与环检测复用 MOD-DATA_GOV-002 不重造。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: max_buffer 参数
+#   fields: 参数 max_buffer（无注解）
+#   code: runtime_lineage_collector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RuntimeLineageCollector
+#   name_en: RuntimeLineageCollector
+#   intro: 运行时血缘采集器——轻量缓冲 + fail-open + 盘后汇总。
+#   desc: 运行时血缘采集器——轻量缓冲 + fail-open + 盘后汇总。 emit/flush 路径不抛异常（fail-open 不阻塞交易主链路）；构造参数与 汇总面 tracke…；公共方法（定义序）: emit, e…
+#   inputs: max_buffer
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: RuntimeLineageCollector
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -183,10 +211,7 @@ class RuntimeLineageCollector:
             raise RuntimeLineageError("tracker 不能为空（Fail-Closed）")
         drained = self._buffer
         self._buffer = []
-        edges = [
-            LineageEdge(ev.source.strip(), ev.target.strip(), ev.transformation)
-            for ev in drained
-        ]
+        edges = [LineageEdge(ev.source.strip(), ev.target.strip(), ev.transformation) for ev in drained]
         return ingest_into_tracker(edges, tracker, sources=("runtime",))
 
     def stats(self) -> CollectorStats:

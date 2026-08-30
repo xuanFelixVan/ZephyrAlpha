@@ -15,12 +15,40 @@
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Architectural SoD — v0.15.0 R205
+"""
+Architectural SoD — v0.15.0 R205
 
 Blindspot: Single FLE role can diagnose AND execute repair; no separation of duties.
 Risk: R205 — Same entity that diagnoses also fixes; no internal challenge to diagnosis correctness.
 
 Mitigation: Separation of Duties—diagnoser cannot also be executor without external approval gate.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: architectural_sod.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ArchitecturalSoD
+#   name_en: ArchitecturalSoD
+#   intro: class ArchitecturalSoD 源码 L76-L93
+#   desc: 公共方法（定义序）: register, check_conflict, require_dual_approval；源码 L76-L93
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: ArchitecturalSoD
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

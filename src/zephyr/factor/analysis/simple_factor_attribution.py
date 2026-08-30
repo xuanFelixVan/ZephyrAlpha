@@ -18,7 +18,8 @@
 # F2: 汇总(contribution_ratio=pnl_i/total_pnl; avg_active_exposure; residual=total-Σ; explained_ratio=Σ/total; 按pnl排序标记低贡献)
 # O1: AttributionReport(rows按pnl降序 + residual + explained_ratio + low_contribution_factors)
 # [/ALGO_FLOW]
-"""25号memo §3.7#4 MVP 因子归因（SimpleFactorAttribution，MOD-L02-014）。
+"""
+25号memo §3.7#4 MVP 因子归因（SimpleFactorAttribution，MOD-L02-014）。
 
 Brinson 式因子 PnL 分解，不依赖 Barra 基础设施（Phase 4.5 远期候选前的过渡方案）。
 benchmark='csi300'（沪深300）。验证 §3.3 衰减监控的因子贡献与 §3.1 合成方法的
@@ -26,6 +27,48 @@ benchmark='csi300'（沪深300）。验证 §3.3 衰减监控的因子贡献与 
 
 归因公式：PnL_i = Σ_t (w_{i,t} - w_{benchmark,t}) × r_{i,t}
   w = t 日因子 i 的组合暴露，r = t 日因子 i 的截面收益。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: factor_exposures 参数
+#   fields: 参数 factor_exposures，类型注解 dict[str, pd.Series]
+#   code: simple_factor_attribution.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: factor_returns 参数
+#   fields: 参数 factor_returns，类型注解 dict[str, pd.Series]
+#   code: simple_factor_attribution.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: total_pnl 参数
+#   fields: 参数 total_pnl，类型注解 float
+#   code: simple_factor_attribution.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: benchmark_exposures 参数
+#   fields: 参数 benchmark_exposures，类型注解 dict[str, pd.Series | float] | None
+#   code: simple_factor_attribution.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① attribute
+#   name_en: attribute
+#   intro: Brinson 式因子 PnL 分解。
+#   desc: Brinson 式因子 PnL 分解。 Args: factor_exposures: factor_id → t 日组合暴露 w_{i,t}（pd.Series） factor…；源码 L113-L165
+#   inputs: factor_exposures factor_returns total_pnl benchmark_exposures
+#   outputs: AttributionReport
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: AttributionReport
+#   name_en: AttributionReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: decay_monitor(低贡献因子联动衰减复检)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

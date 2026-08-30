@@ -14,7 +14,8 @@
 # [TESTS] tests/ex_sor/test_execution_route_policy.py
 # [A_module] module_id=MOD-XS-ROUTE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_EX_SOR — 执行路由策略（90 号 Phase1 项③：默认限价单 + 打板专用路径）
+"""
+D_EX_SOR — 执行路由策略（90 号 Phase1 项③：默认限价单 + 打板专用路径）
 
 裁定真源：90_methodology_open_questions.md §19（v2.0.0）：
   ① 删除"单笔>5% ADV 切算法执行"硬条款——个人资金量级永远触不到，伪精确；
@@ -28,6 +29,48 @@
 
 注意：本模块为 90 号 Phase1 交付物，MATURITY=testing；与 MOD-XS-011 算法选择器
 /OrderGateway 的生产接线挂起待 Owner（宪章 B-007 纪律）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: order_qty 参数
+#   fields: 参数 order_qty，类型注解 Decimal
+#   code: execution_route_policy.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: minute_avg_volume 参数
+#   fields: 参数 minute_avg_volume，类型注解 Decimal
+#   code: execution_route_policy.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: is_daban 参数
+#   fields: 参数 is_daban（无注解）
+#   code: execution_route_policy.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: seal_ratio 参数
+#   fields: 参数 seal_ratio（无注解）
+#   code: execution_route_policy.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① route_order
+#   name_en: route_order
+#   intro: 执行路由判定。
+#   desc: 执行路由判定。 Args: order_qty: 订单数量（股） minute_avg_volume: 该票分钟级均量（股） is_daban: 是否打板策略订单 seal_ra…；源码 L121-L186
+#   inputs: order_qty minute_avg_volume is_daban seal_ratio policy
+#   outputs: RouteDecision
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: RouteDecision
+#   name_en: RouteDecision
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 执行层下单入口（接线待排期，本批仅交付模块本体）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

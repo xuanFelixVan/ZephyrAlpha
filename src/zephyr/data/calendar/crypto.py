@@ -14,13 +14,40 @@
 # [TESTS] tests/zephyr/data/calendar/test_market_calendar.py
 # [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""数字货币市场日历实现（94号 §4.1：币实现=7×24 连续日历）。
+"""
+数字货币市场日历实现（94号 §4.1：币实现=7×24 连续日历）。
 
 7×24 连续：无交易日历/午休/隔夜/节假日概念——每日皆交易日，全天单一时段。
 日历日归属 UTC（交易所 K 线惯例 UTC 00:00 锚定日界，币安/OKX 一致）。
 
 顺带支持 4h 周期（现有 A股 9 周期未含）：7×24 连续下 4h=240min 原生 floor
 锚定 UTC 00:00 天然正确，无需配对聚合。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: crypto.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① CryptoCalendar
+#   name_en: CryptoCalendar
+#   intro: 数字货币 7×24 连续日历。
+#   desc: 数字货币 7×24 连续日历。无状态、行为完全确定，可安全共享单例。；公共方法（定义序）: is_trading_day, trading_days_in_range, session_windows, is_open…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: CryptoCalendar
+#   downstream: 装配层 get_market_calendar("crypto"); 币版 K线聚合（4h 周期）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

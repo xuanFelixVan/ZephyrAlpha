@@ -30,6 +30,32 @@ Skill 沙箱隔离执行引擎
   3. NetworkBoundary: 阻止未授权的网络调用
   4. ResourceQuota: CPU/内存/IO 配额限制
   5. TaintTracking: 标记来自沙箱的输出为"需审核"
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: skill_id 参数
+#   fields: 参数 skill_id（无注解）
+#   code: skill_sandbox.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SkillSandbox
+#   name_en: SkillSandbox
+#   intro: Skill 沙箱隔离执行器
+#   desc: Skill 沙箱隔离执行器；公共方法（定义序）: active, allowed_tools, file_boundary, network_allowed, sandbox_dir, skill_id, isolat…
+#   inputs: skill_id
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SkillSandbox
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

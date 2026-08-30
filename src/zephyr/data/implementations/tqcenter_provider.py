@@ -14,7 +14,8 @@
 # [TESTS] tests/zephyr/data/test_providers.py::TestTQCenterHelpers::TestTQCenterFetchRoute
 # [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""tqcenter 数据源 Provider 实现。
+r"""
+tqcenter 数据源 Provider 实现。
 
 封装 tqcenter SDK（通达信插件），继承 IngestProviderBase。
 - 880xxx 板块指数日K线（get_market_data）
@@ -23,10 +24,36 @@
 - K线重采样（DB内聚合，不依赖tqcenter）
 
 关键设计：
-- connect() 注入 E:\\tdx\\PYPlugins\\user 路径，初始化 tq
+- connect() 注入 E:\tdx\PYPlugins\user 路径，初始化 tq
 - fetch() 按 payload.extra["capability"] 路由到具体方法
 - 50只/批分批下载避免tqcenter超时
 - requires_process=True（需通达信客户端运行）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: tqcenter_provider.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① TQCenterProvider
+#   name_en: TQCenterProvider
+#   intro: tqcenter（通达信插件）数据源 Provider。
+#   desc: tqcenter（通达信插件）数据源 Provider。 封装 tqcenter SDK，支持 880xxx 板块日K线、成分股、快照。 需通达信客户端运行（requires_p…；公共方法（定义序）: connect…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: TQCenterProvider
+#   downstream: zephyr.data.scheduler
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
