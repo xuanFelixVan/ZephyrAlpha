@@ -21199,3 +21199,11 @@ entries:
   related_adjudication: '#ARCH-210'
   created: '2026-08-30'
   last_updated: '2026-08-30'
+- issue_id: ARCH-300
+  title: 63号文批次B/C补文档前置缺口——concept_sector/sector_list/convertible_bond_list 三表采集任务已配置但 0 行在库
+  severity: P2
+  adjudication: 'B7 评估实证（2026-08-30，ClickHouse system.tables+count 直查）：63号文 §6.2 批次 B/C 目标表中 concept_sector（c1_market，tasks.yaml concept_sector_refresh/monthly_static/akshare）、sector_list（c1_market，sector_list_refresh/monthly_static/miniqmt，trading_day_only）、convertible_bond_list（c1_market，convertible_bond_list_refresh/monthly_static/akshare）三张采集任务配置在位但库内 0 行，与 63号文 v2.1.0"代码活跃✓"（代码引用扫描口径）不矛盾但与"数据已落库可补文档"前提不符——按 §7.0.1 六字段模板补消费级文档时，"下游逻辑/消费频率"对空表无法通过 §7.0.6 L3 语义抽检。前置条件：排查三表月度任务执行链（miniqmt 月初遇周末跳过/akshare 接口变更/静默失败待定位）并实证灌数；灌数前三表仅可落最小文档+空表状态标注。其余 14 张批次 B/C 目标表在库有数据（本日实证行数），纯文档补全无此前置，清单见 docs/_working/2026-08-30-b7-batch-bc-doc-supplement-checklist.md。'
+  fix_phase: 待排查采集执行链并实证灌数（三表月度任务）；灌数后回补 26/22 号对应六字段小节
+  status: open
+  created: '2026-08-30'
+  last_updated: '2026-08-30'
