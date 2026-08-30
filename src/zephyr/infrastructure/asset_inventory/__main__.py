@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-026 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Asset Inventory CLI — MOD-INF-026 蓝图 §31
+"""
+Asset Inventory CLI — MOD-INF-026 蓝图 §31
 
 用法:
     python -m zephyr.data.asset_inventory scan       # 全量文件系统扫描
@@ -27,6 +28,32 @@
     python -m zephyr.data.asset_inventory clean       # 清理过期产物
 
 共享标志: --dry-run, --output json/yaml/text, --verbose, --help
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: __main__.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① main
+#   name_en: main
+#   intro: main() 源码 L612-L633
+#   desc: 源码 L612-L633
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: main
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

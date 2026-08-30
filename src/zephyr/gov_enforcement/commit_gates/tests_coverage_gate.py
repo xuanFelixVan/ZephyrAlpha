@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_tests_coverage_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""tests_coverage_gate.py — Gate 测试覆盖率校验 meta-gate（META-TESTS-COVERAGE，#ARCH-057）
+"""
+tests_coverage_gate.py — Gate 测试覆盖率校验 meta-gate（META-TESTS-COVERAGE，#ARCH-057）
 
 检测 ``src/zephyr/gov_enforcement/commit_gates/*.py`` 的 ``[TESTS]`` 头部声明的测试文件
 是否实际存在——"声明但不兑现"的系统性缺口治本。
@@ -52,6 +53,32 @@ Usage::
     from zephyr.gov_enforcement.commit_gates.tests_coverage_gate import make_tests_coverage_gate
 
     registry.register(make_tests_coverage_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: tests_coverage_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_tests_coverage_gate
+#   name_en: make_tests_coverage_gate
+#   intro: 构造 Gate 测试覆盖率校验 meta-gate（硬阻断型）。
+#   desc: 构造 Gate 测试覆盖率校验 meta-gate（硬阻断型）。 Returns: GateSpec(gate_id="META-TESTS-COVERAGE", priorit…；源码 L105-L179
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -112,7 +139,7 @@ def make_tests_coverage_gate() -> GateSpec:
                 continue
 
             try:
-                with open(gate_file, "r", encoding="utf-8", errors="replace") as f:
+                with open(gate_file, encoding="utf-8", errors="replace") as f:
                     head_lines = [f.readline() for _ in range(30)]
                 head = "".join(head_lines)
             except OSError as e:

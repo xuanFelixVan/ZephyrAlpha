@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
-"""pure_shim_gate.py — 纯 re-export shim 阻断门禁（PURE-SHIM，P6 治本 2026-07-09）
+"""
+pure_shim_gate.py — 纯 re-export shim 阻断门禁（PURE-SHIM，P6 治本 2026-07-09）
 
 治本 --no-verify 绕过 GATE-NO-PURE-SHIM：check_pure_shim.py 是 pre-commit hook
 （GATE-SSOT-CODE 三合一之一），``git commit --no-verify`` 绕过所有 pre-commit hooks。
@@ -48,6 +49,32 @@ Usage::
 
     registry.register(make_pure_shim_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: pure_shim_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_pure_shim_gate
+#   name_en: make_pure_shim_gate
+#   intro: 构造纯 re-export shim 阻断门禁 GateSpec（硬阻断型）。
+#   desc: 构造纯 re-export shim 阻断门禁 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="PURE-SHIM", priority=6…；源码 L226-L256
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

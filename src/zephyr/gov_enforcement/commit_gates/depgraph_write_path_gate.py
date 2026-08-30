@@ -14,7 +14,8 @@
 # [TESTS] —
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""depgraph_write_path_gate.py — depgraph 写入路径白名单门禁（DEPGRAPH-WRITE-PATH）
+"""
+depgraph_write_path_gate.py — depgraph 写入路径白名单门禁（DEPGRAPH-WRITE-PATH）
 
 裁定#ARCH-DEPGRAPH_ACCESS_CONTROL: 角色分级访问控制的技术执行层
 
@@ -49,6 +50,32 @@ Usage::
     from zephyr.gov_enforcement.commit_gates.depgraph_write_path_gate import make_depgraph_write_path_gate
 
     registry.register(make_depgraph_write_path_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: depgraph_write_path_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_depgraph_write_path_gate
+#   name_en: make_depgraph_write_path_gate
+#   intro: 构造 depgraph 写入路径白名单 GateSpec（硬阻断型）。
+#   desc: 构造 depgraph 写入路径白名单 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="DEPGRAPH-WRITE-PATH", prio…；源码 L141-L188
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

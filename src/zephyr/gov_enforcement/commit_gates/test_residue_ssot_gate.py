@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # M03豁免: AI趋同演化(与blueprint_node_id_hardcode_gate.py相似结构),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
-"""test_residue_ssot_gate.py — 测试残留前缀硬编码阻断门禁（TEST-RESIDUE-SSOT）
+"""
+test_residue_ssot_gate.py — 测试残留前缀硬编码阻断门禁（TEST-RESIDUE-SSOT）
 
 检测 staged .py 文件中是否硬编码测试残留目录前缀集合（重复造轮子风险）。
 in-process gate，注册到 CommitGateRegistry，在 GitCommitGateway 的 check_all() 阶段执行。
@@ -63,6 +64,32 @@ Usage::
     from zephyr.gov_enforcement.commit_gates.test_residue_ssot_gate import make_test_residue_ssot_gate
     registry.register(make_test_residue_ssot_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: test_residue_ssot_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_test_residue_ssot_gate
+#   name_en: make_test_residue_ssot_gate
+#   intro: 构造测试残留前缀硬编码阻断门禁 GateSpec（硬阻断型）。
+#   desc: 构造测试残留前缀硬编码阻断门禁 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="TEST-RESIDUE-SSOT", priority=5…；源码 L238-L294
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -238,7 +265,7 @@ def make_test_residue_ssot_gate() -> GateSpec:
             if not os.path.isfile(abs_path):
                 continue
             try:
-                with open(abs_path, "r", encoding="utf-8", errors="replace") as fh:
+                with open(abs_path, encoding="utf-8", errors="replace") as fh:
                     source = fh.read()
                 tree = ast.parse(source, filename=rel)
             except (OSError, SyntaxError, ValueError) as exc:

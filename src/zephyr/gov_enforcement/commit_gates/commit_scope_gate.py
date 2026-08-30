@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_commit_scope_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""commit_scope_gate.py — 提交边界域一致性门禁（COMMIT-SCOPE）
+"""
+commit_scope_gate.py — 提交边界域一致性门禁（COMMIT-SCOPE）
 
 检测一个 commit 的目标文件是否跨越多个功能域（D_XXX）。跨域时硬阻断，
 要求拆分为多个 commit，每个域一个。对标 AGENTS.md「一个任务=1次commit」原则。
@@ -55,6 +56,32 @@ Usage::
     from zephyr.gov_enforcement.commit_gates.commit_scope_gate import make_commit_scope_gate
 
     registry.register(make_commit_scope_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: commit_scope_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_commit_scope_gate
+#   name_en: make_commit_scope_gate
+#   intro: 构造提交边界域一致性门禁 GateSpec（硬阻断型）。
+#   desc: 构造提交边界域一致性门禁 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="COMMIT-SCOPE", priority=48)。 prio…；源码 L216-L272
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -104,7 +131,7 @@ def _load_path_domain_map(gateway) -> dict[str, str] | None:
         # _read_staged_file 已能读到；此处兜底新建/异常场景）
         try:
             abs_path = str(gateway.project_root / _DOMAIN_REGISTRY_REL)
-            with open(abs_path, "r", encoding="utf-8", errors="replace") as f:
+            with open(abs_path, encoding="utf-8", errors="replace") as f:
                 content = f.read()
         except Exception:  # noqa: BLE001 — fail-open
             content = None
@@ -167,7 +194,7 @@ def _get_file_domain(gateway, abs_file: str, path_map: dict[str, str] | None) ->
     # 1. .py 文件读 [DOMAIN] 头部
     if rel.endswith(".py"):
         try:
-            with open(abs_file, "r", encoding="utf-8", errors="replace") as f:
+            with open(abs_file, encoding="utf-8", errors="replace") as f:
                 for _ in range(_HEADER_SCAN_LINES):
                     line = f.readline()
                     if not line:

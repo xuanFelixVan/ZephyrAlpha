@@ -20,6 +20,32 @@ risk_ssot — 从 ``config/risk_params.yaml`` 加载风险真源（INV-002 等�
 
 供 G10–G12 交易类门禁在 **Orc 任务路径** 上做参数与 SSoT 一致性校验；
 不涉及组合持仓运行时数据。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root，类型注解 Path
+#   code: risk_ssot.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① load_risk_params_ssot
+#   name_en: load_risk_params_ssot
+#   intro: load_risk_params_ssot(project_root) 源码 L57-L64
+#   desc: 源码 L57-L64
+#   inputs: project_root
+#   outputs: dict[str, Any]
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, Any]
+#   name_en: dict[str, Any]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from pathlib import Path

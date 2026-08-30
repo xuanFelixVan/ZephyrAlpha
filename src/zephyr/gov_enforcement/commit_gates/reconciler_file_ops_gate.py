@@ -13,7 +13,8 @@
 # [ERROR_CONTRACT] 扫描异常 → fail-open 放行 + reason 注明（不阻断无关 commit）
 # [TESTS] —
 # [TTL] permanent
-"""reconciler_file_ops_gate.py — 治理代理裸删除原语静态扫描门禁（RECONCILER-FILE-OPS）
+"""
+reconciler_file_ops_gate.py — 治理代理裸删除原语静态扫描门禁（RECONCILER-FILE-OPS）
 
 #ARCH-RECONCILER-AUTO-DELETE-GOV-001 T1③ 双保险之一（2026-08-14 裁定）：
 reconciler 删除/移动原语已全量收敛 ops_guard 安全 API（file_ops 声明制+审计+
@@ -26,6 +27,45 @@ os.rmdir/os.rename/shutil.rmtree/shutil.move 调用即阻断。
 - scripts/ops_guard.py 自身（补丁真源）
 - tests/ 测试代码
 - 行内 ``# ops-guard-exempt: <理由>`` 显式豁免标记
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: path 参数
+#   fields: 参数 path，类型注解 Path
+#   code: reconciler_file_ops_gate.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① scan_file_for_bare_primitives
+#   name_en: scan_file_for_bare_primitives
+#   intro: 扫描单文件裸删除/移动原语调用行。
+#   desc: 扫描单文件裸删除/移动原语调用行。 Returns: [(lineno, line_stripped), ...] 违规行清单（注释行/豁免标记行/docstring 行已过滤）。；源码 L114-L143
+#   inputs: path
+#   outputs: list[tuple[int, str]]
+# - id: A2
+#   name_zh: ② make_reconciler_file_ops_gate
+#   name_en: make_reconciler_file_ops_gate
+#   intro: 构造 RECONCILER-FILE-OPS 静态扫描门禁 GateSpec。
+#   desc: 构造 RECONCILER-FILE-OPS 静态扫描门禁 GateSpec。 priority=117：在 CONSUMERS-ACCURACY(116) 之后——语义层门禁先…；源码 L146-L187
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: list[tuple[int, str]]
+#   name_en: list[tuple[int, str]]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: gate_auto_registrar（in_process_gate_registry.yaml 条目驱动）
+# - id: O2
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: gate_auto_registrar（in_process_gate_registry.yaml 条目驱动）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

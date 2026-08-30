@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_arch_reference_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""arch_reference_gate.py — #ARCH-NNN / #ARCH-DOMAIN-NNN 悬空引用自动检测门禁（ARCH-REFERENCE）
+r"""
+arch_reference_gate.py — #ARCH-NNN / #ARCH-DOMAIN-NNN 悬空引用自动检测门禁（ARCH-REFERENCE）
 
 检测 staged 文件中**新增的** ``#ARCH-NNN`` / ``#ARCH-CH-NNN`` / ``#ARCH-MM-NNN`` /
 ``#ARCH-GOV-SHIM-NNN`` 等引用（支持纯数字、两段式域前缀和多段式域前缀）
@@ -41,12 +42,12 @@ architecture_issue_registry.yaml 编号铁律#6 规定："任何 #ARCH-XXX 引�
 3. **issue_id 从工作区 registry 提取**：commit 后 registry 的新真源即工作区版本。
 4. **priority=75**：紧跟 DANGLING-REFERENCE(70) 之后、CAPABILITY-OVERLAP(200) 之前
    ——同属"引用完整性"类检查，集中执行。
-5. **正则提取**：``#ARCH-(\\d+|[A-Z][A-Z0-9-]*[A-Z0-9])`` 匹配 ``#ARCH-008`` /
+5. **正则提取**：``#ARCH-(\d+|[A-Z][A-Z0-9-]*[A-Z0-9])`` 匹配 ``#ARCH-008`` /
    ``#ARCH-037`` / ``#ARCH-CH-007`` / ``#ARCH-GOV-SHIM-001`` / ``#ARCH-DOC-REF-FILE-URL`` 等，
    捕获组为编号后缀（纯数字、域前缀-数字、多段式、或描述性名称无数字后缀）。
    registry 中 issue_id 形如 ``'#ARCH-008'`` / ``'#ARCH-CH-007'`` / ``'#ARCH-GOV-SHIM-001'``，
    提取后缀后比较。多段式支持治本 ARCH-GOV-SHIM-001 三段式格式漏检（2026-07-17）；
-   描述性 ID 支持治本 gate 正则盲区——旧正则要求末尾数字（\\d+），导致 ``#ARCH-DOC-REF-FILE-URL``
+   描述性 ID 支持治本 gate 正则盲区——旧正则要求末尾数字（\d+），导致 ``#ARCH-DOC-REF-FILE-URL``
    等无数字后缀的描述性 ID 完全逃逸检测（2026-08-05）。
    模板占位符过滤：``#ARCH-NNN`` / ``#ARCH-XXX`` / ``#ARCH-CH-NNN`` 等格式描述文本
    被 ``_is_template_ref`` 过滤，不误报为未登记引用（2026-08-05）。
@@ -64,6 +65,32 @@ Usage::
 
     registry.register(make_arch_reference_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: arch_reference_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_arch_reference_gate
+#   name_en: make_arch_reference_gate
+#   intro: 构造 悬空引用检测门禁 GateSpec（fail-closed，阻断型）。
+#   desc: 构造 悬空引用检测门禁 GateSpec（fail-closed，阻断型）。 Returns: GateSpec(gate_id="ARCH-REFERENCE", priori…；源码 L326-L390
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -24,6 +24,69 @@ Detects cycles across all module directories + shared/contracts.
 
 SSoT: cross_layer_contracts.yaml v3.0 — partition.cross-cutting-contracts
 Architecture Decision:  (LPC 双轨)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: file_path 参数
+#   fields: 参数 file_path（无注解）
+#   code: en_001_circular_dependency.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ScanResult
+#   name_en: ScanResult
+#   intro: class ScanResult 源码 L138-L150
+#   desc: 公共方法（定义序）: summary；源码 L138-L150
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② run_scan
+#   name_en: run_scan
+#   intro: run_scan() 源码 L257-L277
+#   desc: 源码 L257-L277
+#   inputs: 无参数
+#   outputs: ScanResult
+# - id: A3
+#   name_zh: ③ check
+#   name_en: check
+#   intro: check() 源码 L280-L282
+#   desc: 源码 L280-L282
+#   inputs: 无参数
+#   outputs: tuple[bool, str]
+# - id: A4
+#   name_zh: ④ parse_imports
+#   name_en: parse_imports
+#   intro: 公共接口：parse_imports（Stage 4 公共化）。
+#   desc: 公共接口：parse_imports（Stage 4 公共化）。；源码 L292-L294
+#   inputs: file_path
+#   outputs: set[str]
+# - id: A5
+#   name_zh: ⑤ build_dependency_graph
+#   name_en: build_dependency_graph
+#   intro: 公共接口：build_dependency_graph（Stage 4 公共化）。
+#   desc: 公共接口：build_dependency_graph（Stage 4 公共化）。；源码 L298-L300
+#   inputs: 无参数
+#   outputs: dict[str, set[str]]
+# 层: 输出
+# - id: O1
+#   name_zh: ScanResult
+#   name_en: ScanResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: tuple[bool, str]
+#   name_en: tuple[bool, str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations

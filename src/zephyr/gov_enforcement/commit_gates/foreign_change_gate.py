@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-054]
-"""foreign_change_gate.py — 外来变更检测门禁（FOREIGN-CHANGE-DETECTION，ARCH-054 治本）
+"""
+foreign_change_gate.py — 外来变更检测门禁（FOREIGN-CHANGE-DETECTION，ARCH-054 治本）
 
 检测 commit 目标文件在 claim_files 时刻是否已有外来变更（其他 session 的 WIP）。
 命中则阻断（``FOREIGN_CHANGE_VIOLATION``）。``allow_overlap=True`` 时放行（逃生通道），
@@ -72,6 +73,32 @@ Usage::
 
     registry.register(make_foreign_change_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, allow_overlap=False)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: foreign_change_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_foreign_change_gate
+#   name_en: make_foreign_change_gate
+#   intro: 构造外来变更检测门禁 GateSpec。
+#   desc: 构造外来变更检测门禁 GateSpec。 Returns: GateSpec(gate_id="FOREIGN-CHANGE-DETECTION", priority=45)。…；源码 L232-L292
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

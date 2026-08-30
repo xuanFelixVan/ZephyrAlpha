@@ -15,12 +15,48 @@
 # [A_module] module_id=MOD-INF-022 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""SLO-Driven Escalation Contract — D-022-12.
+"""
+SLO-Driven Escalation Contract — D-022-12.
 
 SLI/SLO/Error Budget system with 4-tier budget policy and contract SLO,
 tightly coupled to escalation level selection.
 
 Reference: Google SRE (SLI/SLO/Error Budget/Burn Rate), Nasdaq Pre-Trade Risk.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: tier 参数
+#   fields: 参数 tier，类型注解 BudgetTier
+#   code: slo_contract.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SLOContractEngine
+#   name_en: SLOContractEngine
+#   intro: SLO-driven escalation contract engine.
+#   desc: SLO-driven escalation contract engine. Tracks SLI readings against SLO targets, manages e…；公共方法（定义序）: cooldow…
+#   inputs: slis contracts window_seconds
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② budget_tier_ordering
+#   name_en: budget_tier_ordering
+#   intro: budget_tier_ordering(tier) 源码 L477-L484
+#   desc: 源码 L477-L484
+#   inputs: tier
+#   outputs: int
+#   （注：A2 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

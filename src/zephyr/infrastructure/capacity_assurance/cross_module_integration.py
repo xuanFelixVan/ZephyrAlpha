@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Cross-module integration — CT-1~CT-4 跨模块集成契约实现（对标蓝图 §17）.
+"""
+Cross-module integration — CT-1~CT-4 跨模块集成契约实现（对标蓝图 §17）.
 
 CT-1: capacity-assurance -> predict-router（Error Budget L3+ 触发模型路由切换）
 CT-2: capacity-assurance -> market-data-ingestor（Kill Switch ON -> 暂停高风险通道）
@@ -23,6 +24,73 @@ CT-3: task-system -> capacity-assurance（Token Budget 耗尽 -> 返回限流而
 CT-4: capacity-assurance -> iguana-rebalancer（资本容量告警 -> 禁止新开仓）
 
 所有跨模块集成调用含 OTel Span 传播 + W3C TraceContext.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: daily_budget 参数
+#   fields: 参数 daily_budget（无注解）
+#   code: cross_module_integration.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① PredictRouterIntegration
+#   name_en: PredictRouterIntegration
+#   intro: CT-1: capacity-assurance -> predict-router.
+#   desc: CT-1: capacity-assurance -> predict-router. Error Budget L3+ (Critical/Emergency) 触发自动模型路…；公共方法（定义序）: send_ca…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② MarketDataIngestorIntegration
+#   name_en: MarketDataIngestorIntegration
+#   intro: CT-2: capacity-assurance -> market-data-ingestor.
+#   desc: CT-2: capacity-assurance -> market-data-ingestor. Kill Switch ON -> 暂停高风险通道，低风险通道（国债/货币市场…；公共方法（定义序）: broadca…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ TaskSystemIntegration
+#   name_en: TaskSystemIntegration
+#   intro: CT-3: task-system -> capacity-assurance.
+#   desc: CT-3: task-system -> capacity-assurance. Token Budget 耗尽 -> 标记任务为 RATE_LIMITED 而非 FAILED.…；公共方法（定义序）: deduct_…
+#   inputs: daily_budget
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ IguanaRebalancerIntegration
+#   name_en: IguanaRebalancerIntegration
+#   intro: CT-4: capacity-assurance -> iguana-rebalancer.
+#   desc: CT-4: capacity-assurance -> iguana-rebalancer. 资本容量告警 -> 禁止新开仓. OTel Span: capacity.capit…；公共方法（定义序）: evaluat…
+#   inputs: capacity_threshold
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ CrossModuleIntegrator
+#   name_en: CrossModuleIntegrator
+#   intro: 跨模块集成管理器——统一管理 CT-1~CT-4 四条集成契约.
+#   desc: 跨模块集成管理器——统一管理 CT-1~CT-4 四条集成契约.；公共方法（定义序）: isolate, reconnect, is_isolated, validate_cross_module_state, not…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ get_cross_module_integrator
+#   name_en: get_cross_module_integrator
+#   intro: get_cross_module_integrator() 源码 L324-L330
+#   desc: 源码 L324-L330
+#   inputs: 无参数
+#   outputs: CrossModuleIntegrator
+#   （注：A6 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: CrossModuleIntegrator
+#   name_en: CrossModuleIntegrator
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
 """
 
 import threading

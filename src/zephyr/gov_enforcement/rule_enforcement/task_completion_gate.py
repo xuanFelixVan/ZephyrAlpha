@@ -29,6 +29,57 @@ Detects residual files that should not exist in a target directory:
   - *.pyc compiled files
 
 Output: list of residual files with suggested disposition (delete/move/keep)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: task_card 参数
+#   fields: 参数 task_card，类型注解 dict
+#   code: task_completion_gate.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① GateReport
+#   name_en: GateReport
+#   intro: class GateReport 源码 L134-L158
+#   desc: 公共方法（定义序）: passed, by_type, by_disposition；源码 L134-L158
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② G7CompletenessGate
+#   name_en: G7CompletenessGate
+#   intro: G7 完整度门禁——验证任务卡防漂移字段是否完整填充
+#   desc: G7 完整度门禁——验证任务卡防漂移字段是否完整填充 Checks: 1. upstream_files 非空 + 路径格式 2. downstream_outputs 非空 +…；公共方法（定义序）: check,…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ TaskCompletionGate
+#   name_en: TaskCompletionGate
+#   intro: Scan a directory for residual files not in files_in_scope.
+#   desc: Scan a directory for residual files not in files_in_scope. Parameters ---------- scan_dir…；公共方法（定义序）: scan, f…
+#   inputs: scan_dir files_in_scope extra_patterns
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ g7_check_delegate
+#   name_en: g7_check_delegate
+#   intro: G7 委托层 — 桥接 TaskLifecycleManager.gate_g7_output()。
+#   desc: G7 委托层 — 桥接 TaskLifecycleManager.gate_g7_output()。 TASK-INF-0131: 确保两个 G7 实现路径一致且互补。；源码 L332-L356
+#   inputs: task_card
+#   outputs: G7CheckResult
+#   （注：A4 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: G7CheckResult
+#   name_en: G7CheckResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

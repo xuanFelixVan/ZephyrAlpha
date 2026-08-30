@@ -14,9 +14,45 @@
 # [TESTS]
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""零残留检查器——验证治理操作后无残留文件/目录/引用。
+"""
+零残留检查器——验证治理操作后无残留文件/目录/引用。
 
 扫描工作区确保清理操作（如 deprecate/migrate）无遗漏，返回残留清单供 reconciler 兜底。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: zero_residue_check.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ResidueReport
+#   name_en: ResidueReport
+#   intro: class ResidueReport 源码 L78-L92
+#   desc: 公共方法（定义序）: add；源码 L78-L92
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② ZeroResidueScanner
+#   name_en: ZeroResidueScanner
+#   intro: class ZeroResidueScanner 源码 L109-L235
+#   desc: 公共方法（定义序）: root, scripts_dir, scan, run_script, parse_findings, scan_temp_files, scan_residual_files, scan_ru…
+#   inputs: project_root
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: ResidueReport, ZeroResidueScanner
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 import os

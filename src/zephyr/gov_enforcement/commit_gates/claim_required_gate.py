@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_claim_required_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""claim_required_gate.py — claim_files 前置检查门禁（CLAIM-REQUIRED，2026-06-30 治本）
+"""
+claim_required_gate.py — claim_files 前置检查门禁（CLAIM-REQUIRED，2026-06-30 治本）
 
 检测 commit 目标文件是否已被当前 session claim。session 已注册但目标文件
 未 claim 时阻断——防止 AI 直接调 ``commit()`` 绕过 ``claim_files`` 导致
@@ -33,6 +34,32 @@ Usage::
 
     from zephyr.gov_enforcement.commit_gates.claim_required_gate import make_claim_required_gate
     registry.register(make_claim_required_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: claim_required_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_claim_required_gate
+#   name_en: make_claim_required_gate
+#   intro: 构造 claim_files 前置检查门禁 GateSpec。
+#   desc: 构造 claim_files 前置检查门禁 GateSpec。 Returns: GateSpec(gate_id="CLAIM-REQUIRED", priority=40)。…；源码 L74-L115
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

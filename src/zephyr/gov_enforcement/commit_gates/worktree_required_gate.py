@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_worktree_required_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""worktree_required_gate.py — worktree 隔离强制门禁（WORKTREE-REQUIRED，#ARCH-WORKTREE-GATE-001 治本 2026-08-04）
+"""
+worktree_required_gate.py — worktree 隔离强制门禁（WORKTREE-REQUIRED，#ARCH-WORKTREE-GATE-001 治本 2026-08-04）
 
 治本"君子协定在 100% AI 场景下系统性失效"——``warn_non_worktree_commit`` 只 WARN
 不阻断，AI 把 WARN 当"通过"。本 gate 将并发非 worktree commit 从 WARN 升级为
@@ -58,6 +59,32 @@ Usage::
 
     from zephyr.gov_enforcement.commit_gates.worktree_required_gate import make_worktree_required_gate
     registry.register(make_worktree_required_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: worktree_required_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_worktree_required_gate
+#   name_en: make_worktree_required_gate
+#   intro: 构造 worktree 隔离强制门禁 GateSpec。
+#   desc: 构造 worktree 隔离强制门禁 GateSpec。 Returns: GateSpec(gate_id="WORKTREE-REQUIRED", priority=44)。…；源码 L97-L155
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

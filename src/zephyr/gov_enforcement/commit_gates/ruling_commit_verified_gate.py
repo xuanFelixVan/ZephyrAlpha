@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001
-"""ruling_commit_verified_gate.py — 文档"已完成"声明 commit hash 真实性硬验证门禁（RULING-COMMIT-VERIFIED）
+r"""
+ruling_commit_verified_gate.py — 文档"已完成"声明 commit hash 真实性硬验证门禁（RULING-COMMIT-VERIFIED）
 
 检测 staged 触发文件中**新增的**"已完成（commit XXX）"声明，验证 XXX 在 git history 中真实存在。
 命中不存在的 hash 则阻断 commit（``RULING_COMMIT_VERIFIED_VIOLATION``）。
@@ -50,7 +51,7 @@ commit hash，用 ``git cat-file -e <hash>`` 验证存在性。只检测新增�
    CAPABILITY-LOOKUP-REQUIRED 强制 AI 查 capability，都是 AI 行为约束）。
    历史先例（后到者让位）：DATA-TASK 78->41 / RENAME-DEPGRAPH-SYNC 36->39 /
    ORPHAN-MODULE 86->89 / DOC-REF-BROKEN 88->91 / RULING-COMMIT-VERIFIED 77->109
-5. **正则提取**：``已完成.*?commit\\s+([0-9a-f]{7,40})`` 匹配
+5. **正则提取**：``已完成.*?commit\s+([0-9a-f]{7,40})`` 匹配
    "已完成（commit fadd3fdc）" / "已完成 2026-07-20，commit 2cee176f81，merge ..." 等。
 6. **逃生通道**：commit message 含 ``[no-verify-ruling:<reason>]`` 标记时 skip
    （对标 CAPABILITY-LOOKUP-REQUIRED 的 [no-lookup] 模式）。
@@ -62,6 +63,32 @@ Usage::
 
     registry.register(make_ruling_commit_verified_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: ruling_commit_verified_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_ruling_commit_verified_gate
+#   name_en: make_ruling_commit_verified_gate
+#   intro: 构造"已完成"声明 commit hash 硬验证门禁 GateSpec（fail-closed，阻断型）。
+#   desc: 构造"已完成"声明 commit hash 硬验证门禁 GateSpec（fail-closed，阻断型）。 Returns: GateSpec(gate_id="RULING-…；源码 L285-L312
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

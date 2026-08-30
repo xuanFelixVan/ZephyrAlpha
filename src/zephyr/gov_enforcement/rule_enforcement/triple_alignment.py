@@ -42,6 +42,80 @@ list[AlignmentViolation]；caller 统一 add_violation。关键行为保持：
 
 注：原 Check 3（stale-state check）已随 ARCH-FRONTMATTER-STATE-001
 Phase 3 退役移除——相关字段已从蓝图 frontmatter 与 blueprint_registry.yaml 中删除。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: specific_module 参数
+#   fields: 参数 specific_module，类型注解 str | None
+#   code: triple_alignment.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: warn_only 参数
+#   fields: 参数 warn_only，类型注解 bool
+#   code: triple_alignment.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: path 参数
+#   fields: 参数 path（无注解）
+#   code: triple_alignment.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① TripleAlignmentResult
+#   name_en: TripleAlignmentResult
+#   intro: class TripleAlignmentResult 源码 L160-L177
+#   desc: 公共方法（定义序）: add_violation, summary；源码 L160-L177
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② check_triple_alignment
+#   name_en: check_triple_alignment
+#   intro: check_triple_alignment(specific_module, warn_only) 源码 L498-…
+#   desc: 源码 L498-L542
+#   inputs: specific_module warn_only
+#   outputs: TripleAlignmentResult
+# - id: A3
+#   name_zh: ③ main
+#   name_en: main
+#   intro: main() 源码 L545-L563
+#   desc: 源码 L545-L563
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ load_yaml
+#   name_en: load_yaml
+#   intro: 公共接口：load_yaml（Stage 4 公共化）。
+#   desc: 公共接口：load_yaml（Stage 4 公共化）。；源码 L571-L573
+#   inputs: path
+#   outputs: dict | list | None
+# - id: A5
+#   name_zh: ⑤ extract_dep_map_modules
+#   name_en: extract_dep_map_modules
+#   intro: 公共接口：extract_dep_map_modules（Stage 4 公共化）。
+#   desc: 公共接口：extract_dep_map_modules（Stage 4 公共化）。；源码 L577-L579
+#   inputs: 无参数
+#   outputs: dict[str, dict[str, str]]
+#   （注：A5 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: TripleAlignmentResult
+#   name_en: TripleAlignmentResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: GateEngine;phase_manager;session_gate_checklist
+# - id: O2
+#   name_zh: dict | list | None
+#   name_en: dict | list | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: GateEngine;phase_manager;session_gate_checklist
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations

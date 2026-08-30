@@ -15,10 +15,55 @@
 # [A_module] module_id=MOD-INF-026 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""ReconciliationEngine — MOD-INF-026 L4 注册表 vs 磁盘对账引擎
+"""
+ReconciliationEngine — MOD-INF-026 L4 注册表 vs 磁盘对账引擎
 
 蓝图 §3.4：比对新扫描结果 vs unified-asset-index.yaml -> 检测三类偏移
 （孤儿/幽灵/漂移），产出 reconciliation-report.md。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: orphan_tolerance_hours 参数
+#   fields: 参数 orphan_tolerance_hours（无注解）
+#   code: reconciler.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: ghost_max_age_days 参数
+#   fields: 参数 ghost_max_age_days（无注解）
+#   code: reconciler.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: root 参数
+#   fields: 参数 root（无注解）
+#   code: reconciler.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① Reconciler
+#   name_en: Reconciler
+#   intro: 对账引擎——对比磁盘实际 vs 注册表记录（蓝图 §3.4）。
+#   desc: 对账引擎——对比磁盘实际 vs 注册表记录（蓝图 §3.4）。；公共方法（定义序）: reconcile, save；源码 L92-L266
+#   inputs: orphan_tolerance_hours ghost_max_age_days root
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② main
+#   name_en: main
+#   intro: main() 源码 L353-L354
+#   desc: 源码 L353-L354
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: Reconciler, main
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 import logging

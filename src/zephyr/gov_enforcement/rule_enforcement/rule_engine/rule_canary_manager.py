@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 Rule Canary Manager — v0.10.0 规则金丝雀: 1%用户先上新规则->A/B对比->rollback。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: rule_canary_manager.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① RuleCanaryManager
+#   name_en: RuleCanaryManager
+#   intro: class RuleCanaryManager 源码 L51-L100
+#   desc: 公共方法（定义序）: baseline_metrics, canary_metrics, canary_weight, set_baseline, set_canary_metrics, should_rollback…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: RuleCanaryManager
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

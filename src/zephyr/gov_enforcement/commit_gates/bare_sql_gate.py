@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_bare_sql_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""bare_sql_gate.py — 裸SQL字面量阻断门禁（NO-BARE-SQL，§5.160.2 防复发）
+"""
+bare_sql_gate.py — 裸SQL字面量阻断门禁（NO-BARE-SQL，§5.160.2 防复发）
 
 检测 staged .py 文件 added 行中的裸 SQL 字面量。
 违反 §5.160 SQL 集中化原则。
@@ -45,6 +46,32 @@ Usage::
     from zephyr.gov_enforcement.commit_gates.bare_sql_gate import make_bare_sql_gate
 
     registry.register(make_bare_sql_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: bare_sql_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_bare_sql_gate
+#   name_en: make_bare_sql_gate
+#   intro: 构造裸SQL字面量阻断 GateSpec（硬阻断型）。
+#   desc: 构造裸SQL字面量阻断 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="NO-BARE-SQL", priority=94)。；源码 L121-L168
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

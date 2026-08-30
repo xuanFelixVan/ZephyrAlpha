@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_r5_digit_suffix_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""r5_digit_suffix_gate.py — R5 数字后缀目录禁止门禁（治本：弥补 --no-verify 绕过 pre-commit 的缺口）
+r"""
+r5_digit_suffix_gate.py — R5 数字后缀目录禁止门禁（治本：弥补 --no-verify 绕过 pre-commit 的缺口）
 
 GitCommitGateway 用 ``git commit --no-verify`` 绕过 pre-commit 钩子，导致
 gov_doc_003_directory_semantics R5（数字后缀目录禁止）在 gateway 路径完全失效。
@@ -31,7 +32,7 @@ gov_doc_003_directory_semantics R5（数字后缀目录禁止）在 gateway 路�
 治本方案
 --------
 gate 内部增量检测（非 subprocess 复用真源模式），理由：
-1. R5 检测逻辑极简（正则 ``_\\d+$``），无需 subprocess 开销
+1. R5 检测逻辑极简（正则 ``_\d+$``），无需 subprocess 开销
 2. 需要增量校验（只检测本次 commit 文件涉及的目录），避免全量扫描历史违规
 3. validate_directory_structure.py 是全量扫描且 warning-only，不适合直接 subprocess 复用
 
@@ -56,6 +57,32 @@ Usage::
 
     registry.register(make_r5_digit_suffix_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: r5_digit_suffix_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_r5_digit_suffix_gate
+#   name_en: make_r5_digit_suffix_gate
+#   intro: 构造 R5 数字后缀目录禁止门禁 GateSpec（fail-closed，阻断型）。
+#   desc: 构造 R5 数字后缀目录禁止门禁 GateSpec（fail-closed，阻断型）。 Returns: GateSpec(gate_id="R5-DIGIT-SUFFIX",…；源码 L107-L173
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -22,7 +22,8 @@
 # created: "2026-05-05"
 # ---
 
-"""D_DATA — Default Data Quality Gate
+"""
+D_DATA — Default Data Quality Gate
 
 数据质量门禁具体实现。对齐 DataQualityGate (OCP 扩展点) + CTR-ERR-001 (DataQualityError)。
 
@@ -35,6 +36,42 @@ CTR 契约：
   生产者 — CTR-ERR-001 (DataQualityError) -> D_FACTOR
 
 SSoT: cross_layer_contracts.yaml -> CTR-ERR-001
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: max_stale_seconds 参数
+#   fields: 参数 max_stale_seconds（无注解）
+#   code: default_quality_gate.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: max_price_change_pct 参数
+#   fields: 参数 max_price_change_pct（无注解）
+#   code: default_quality_gate.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: min_volume_threshold 参数
+#   fields: 参数 min_volume_threshold（无注解）
+#   code: default_quality_gate.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DefaultQualityGate
+#   name_en: DefaultQualityGate
+#   intro: 默认数据质量门禁——5 项质检规则
+#   desc: 默认数据质量门禁——5 项质检规则；公共方法（定义序）: check, check_batch；源码 L158-L258
+#   inputs: max_stale_seconds max_price_change_pct min_volume_threshold
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: DefaultQualityGate
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

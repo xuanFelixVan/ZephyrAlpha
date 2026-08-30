@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-MODEL-LIFECYCLE-001
-"""protected_paths_gate.py — 受保护路径写入检测门禁（PROTECTED-PATHS，#ARCH-MODEL-LIFECYCLE-001 P1 治本）
+"""
+protected_paths_gate.py — 受保护路径写入检测门禁（PROTECTED-PATHS，#ARCH-MODEL-LIFECYCLE-001 P1 治本）
 
 检测 staged 文件中是否包含受保护路径（.gitignore/.gitattributes/AGENTS.md 等）。
 命中时硬阻断，除非 commit message 含 ``[ARCH-APPROVAL:ISSUE_ID]`` 逃生通道标记。
@@ -56,6 +57,58 @@
 - 手动工具真源: scripts/governance/d6_security/check_protected_paths.py
 - issue 登记: docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
 - pre-commit hook: .pre-commit-config.yaml (gate-protected-paths)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: file_path 参数
+#   fields: 参数 file_path，类型注解 str
+#   code: protected_paths_gate.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: files 参数
+#   fields: 参数 files，类型注解 list[str]
+#   code: protected_paths_gate.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_protected_paths_gate
+#   name_en: make_protected_paths_gate
+#   intro: 构造受保护路径写入检测 GateSpec。
+#   desc: 构造受保护路径写入检测 GateSpec。 Returns: GateSpec(gate_id="PROTECTED-PATHS", priority=28)。 priority…；源码 L259-L354
+#   inputs: 无参数
+#   outputs: GateSpec
+# - id: A2
+#   name_zh: ② is_protected
+#   name_en: is_protected
+#   intro: 公共接口：检查文件路径是否受保护（Stage 4 公共化）。
+#   desc: 公共接口：检查文件路径是否受保护（Stage 4 公共化）。；源码 L358-L360
+#   inputs: file_path
+#   outputs: bool
+# - id: A3
+#   name_zh: ③ find_protected_hits
+#   name_en: find_protected_hits
+#   intro: 公共接口：找出 staged 文件中的受保护路径命中（Stage 4 公共化）。
+#   desc: 公共接口：找出 staged 文件中的受保护路径命中（Stage 4 公共化）。；源码 L363-L365
+#   inputs: files
+#   outputs: list[tuple[str, str]]
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__…
+# - id: O2
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

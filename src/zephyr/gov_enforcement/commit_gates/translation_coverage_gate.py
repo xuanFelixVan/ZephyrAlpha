@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_translation_coverage_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""translation_coverage_gate.py — 新建 .py 文件大白话简介覆盖率门禁（TRANSLATION-COVERAGE）
+"""
+translation_coverage_gate.py — 新建 .py 文件大白话简介覆盖率门禁（TRANSLATION-COVERAGE）
 
 检测 staged 新增 .py 文件（src/zephyr/ + scripts/ 下，tests/ 豁免）在翻译真源
 ``module_translation_registry.yaml`` 中是否有**非空且非通用模板**的 plain_zh 大白话简介。
@@ -65,6 +66,32 @@ Usage::
 
     registry.register(make_translation_coverage_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: translation_coverage_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_translation_coverage_gate
+#   name_en: make_translation_coverage_gate
+#   intro: 构造新建 .py 文件大白话简介覆盖率门禁 GateSpec。
+#   desc: 构造新建 .py 文件大白话简介覆盖率门禁 GateSpec。 Returns: GateSpec(gate_id="TRANSLATION-COVERAGE", priorit…；源码 L280-L347
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -16,6 +16,97 @@
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: db_path 参数
+#   fields: 参数 db_path（无注解）
+#   code: fix_reliability.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: ttl_hours 参数
+#   fields: 参数 ttl_hours（无注解）
+#   code: fix_reliability.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① IdempotencyGuard
+#   name_en: IdempotencyGuard
+#   intro: class IdempotencyGuard 源码 L136-L214
+#   desc: 公共方法（定义序）: ttl, check, record；源码 L136-L214
+#   inputs: db_path ttl_hours
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② ConflictResolver
+#   name_en: ConflictResolver
+#   intro: class ConflictResolver 源码 L217-L270
+#   desc: 公共方法（定义序）: queue, locks, acquire, resolve, is_conflict；源码 L217-L270
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ FixOrderResolver
+#   name_en: FixOrderResolver
+#   intro: class FixOrderResolver 源码 L273-L310
+#   desc: 公共方法（定义序）: dependency_map, add_dependency, resolve；源码 L273-L310
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ FixResultCache
+#   name_en: FixResultCache
+#   intro: class FixResultCache 源码 L313-L343
+#   desc: 公共方法（定义序）: max_size, get, set, invalidate；源码 L313-L343
+#   inputs: max_size
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ BlastRadiusEstimator
+#   name_en: BlastRadiusEstimator
+#   intro: class BlastRadiusEstimator 源码 L346-L368
+#   desc: 公共方法（定义序）: estimate；源码 L346-L368
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ DeadLetterQueue
+#   name_en: DeadLetterQueue
+#   intro: class DeadLetterQueue 源码 L371-L434
+#   desc: 公共方法（定义序）: queue, max_retries, add, retry, get_pending, get_escalated, size；源码 L371-L434
+#   inputs: max_retries db_path
+#   outputs: 返回值
+# - id: A7
+#   name_zh: ⑦ ApprovalQueue
+#   name_en: ApprovalQueue
+#   intro: class ApprovalQueue 源码 L437-L470
+#   desc: 公共方法（定义序）: enqueue, approve, reject, get_pending, size；源码 L437-L470
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A8
+#   name_zh: ⑧ CanaryFixer
+#   name_en: CanaryFixer
+#   intro: class CanaryFixer 源码 L473-L517
+#   desc: 公共方法（定义序）: delay_sec, ratios, get_ratio, advance, should_apply, reset；源码 L473-L517
+#   inputs: ratios delay_sec
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（8 定义）
+#   name_en: public defs
+#   intro: IdempotencyGuard, ConflictResolver, FixOrderResolver, FixResultCache, BlastRadi…
+#   downstream: engine.py;batch_fixer.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> O1
+"""
+
 from __future__ import annotations
 
 import logging

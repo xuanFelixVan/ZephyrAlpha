@@ -49,6 +49,48 @@ Fail-Closed 铁律：审批/告警/审计端口异常不阻断检测主流程（
 
 SSoT: docs/03_modules/_domain_gov_enforcement/threshold_split_detector/blueprint.md
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: threshold_split_detector.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: approval_gateway 参数
+#   fields: 参数 approval_gateway（无注解）
+#   code: threshold_split_detector.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: alert_sink 参数
+#   fields: 参数 alert_sink（无注解）
+#   code: threshold_split_detector.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: audit_sink 参数
+#   fields: 参数 audit_sink（无注解）
+#   code: threshold_split_detector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ThresholdSplitDetector
+#   name_en: ThresholdSplitDetector
+#   intro: 阈值拆分检测器（登记即检测，Fail-Closed）。
+#   desc: 阈值拆分检测器（登记即检测，Fail-Closed）。 Args: config: 双阈值 + alert_ratio + window_minutes + symbol 覆盖。…；公共方法（定义序）: registe…
+#   inputs: config approval_gateway alert_sink audit_sink clock
+#   outputs: 返回值
+#   （注：A1 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（9 定义）
+#   name_en: public defs
+#   intro: ThresholdSplitDetector
+#   downstream: 交易意图登记入口(运行时装配批串接下单链路); default_approval_gateway(MOD-L08-001, 提请审批载体)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -235,7 +277,12 @@ class ThresholdSplitDetector:
                 window_delta = timedelta(minutes=self._config.window_minutes)
                 w30 = [(ts, i) for ts, i in dq if now - ts <= window_delta]
                 return self._result(
-                    SplitVerdict.BLOCKED, intent, thresholds, now, None, None,
+                    SplitVerdict.BLOCKED,
+                    intent,
+                    thresholds,
+                    now,
+                    None,
+                    None,
                     "该（标的,方向）已因拆分判定被阻断，意图未登记入窗",
                     qty_30m=sum(i.quantity for _, i in w30),
                     amt_30m=sum((i.amount for _, i in w30), Decimal("0")),
@@ -258,23 +305,34 @@ class ThresholdSplitDetector:
             amt_day = sum((i.amount for _, i in day), Decimal("0"))
 
             trigger = self._detect(
-                w30_qty=qty_30m, w30_amt=amt_30m, w30_items=w30,
-                day_qty=qty_day, day_amt=amt_day, day_items=day,
+                w30_qty=qty_30m,
+                w30_amt=amt_30m,
+                w30_items=w30,
+                day_qty=qty_day,
+                day_amt=amt_day,
+                day_items=day,
                 thresholds=thresholds,
             )
 
             if trigger is None:
                 return self._result(
-                    SplitVerdict.CLEAN, intent, thresholds, now, None, None,
+                    SplitVerdict.CLEAN,
+                    intent,
+                    thresholds,
+                    now,
+                    None,
+                    None,
                     "窗内未达拆分判据",
-                    qty_30m=qty_30m, amt_30m=amt_30m, qty_day=qty_day, amt_day=amt_day,
+                    qty_30m=qty_30m,
+                    amt_30m=amt_30m,
+                    qty_day=qty_day,
+                    amt_day=amt_day,
                     n_items=max(len(w30), len(day)),
                 )
 
             # ── 判拆分：阻断必先生效（Fail-Closed），再提请审批/审计/告警 ──
             self._blocked.add(key)
-            escalation_id = self._escalate(intent, thresholds, now, trigger,
-                                           qty_day=qty_day, amt_day=amt_day)
+            escalation_id = self._escalate(intent, thresholds, now, trigger, qty_day=qty_day, amt_day=amt_day)
             payload = {
                 "symbol": intent.symbol,
                 "side": intent.side.value,
@@ -291,12 +349,24 @@ class ThresholdSplitDetector:
             self._emit_alert("CRITICAL", {"event": "threshold_split_suspected", **payload})
             _logger.critical(
                 "THRESHOLD_SPLIT_SUSPECTED symbol=%s side=%s window=%s qty_day=%d amt_day=%s",
-                intent.symbol, intent.side.value, trigger, qty_day, amt_day,
+                intent.symbol,
+                intent.side.value,
+                trigger,
+                qty_day,
+                amt_day,
             )
             return self._result(
-                SplitVerdict.SPLIT_SUSPECTED, intent, thresholds, now, trigger, escalation_id,
+                SplitVerdict.SPLIT_SUSPECTED,
+                intent,
+                thresholds,
+                now,
+                trigger,
+                escalation_id,
                 f"窗内多笔低于阈值但累计≥阈值{self._config.alert_ratio:.0%}（{trigger}档），判拆分",
-                qty_30m=qty_30m, amt_30m=amt_30m, qty_day=qty_day, amt_day=amt_day,
+                qty_30m=qty_30m,
+                amt_30m=amt_30m,
+                qty_day=qty_day,
+                amt_day=amt_day,
                 n_items=max(len(w30), len(day)),
             )
 
@@ -354,22 +424,11 @@ class ThresholdSplitDetector:
         amt_line = thresholds.amount * Decimal(str(ratio))
 
         def _all_singles_below(items: list[tuple[datetime, OrderIntent]]) -> bool:
-            return all(
-                i.quantity < thresholds.quantity and i.amount < thresholds.amount
-                for _, i in items
-            )
+            return all(i.quantity < thresholds.quantity and i.amount < thresholds.amount for _, i in items)
 
-        if (
-            len(w30_items) >= 2
-            and _all_singles_below(w30_items)
-            and (w30_qty >= qty_line or w30_amt >= amt_line)
-        ):
+        if len(w30_items) >= 2 and _all_singles_below(w30_items) and (w30_qty >= qty_line or w30_amt >= amt_line):
             return "30m"
-        if (
-            len(day_items) >= 2
-            and _all_singles_below(day_items)
-            and (day_qty >= qty_line or day_amt >= amt_line)
-        ):
+        if len(day_items) >= 2 and _all_singles_below(day_items) and (day_qty >= qty_line or day_amt >= amt_line):
             return "day"
         return None
 

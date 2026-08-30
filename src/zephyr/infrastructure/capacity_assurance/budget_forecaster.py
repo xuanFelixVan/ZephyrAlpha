@@ -16,7 +16,36 @@
 # [TTL] permanent
 # SRC-0041 (P3 迁移恢复, 2026-07-02): 文件从 autonomy_core/budget_forecaster.py 迁移至
 #   infrastructure/capacity_assurance/budget_forecaster.py（blueprint actual_disk_path 真源）。
-"""budget_forecaster.py — Token 预算预测 (DD120-extra, TASK-020)"""
+"""
+budget_forecaster.py — Token 预算预测 (DD120-extra, TASK-020)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: budget_forecaster.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① BudgetForecaster
+#   name_en: BudgetForecaster
+#   intro: Historical task token->predict next task budget (machine le…
+#   desc: Historical task token->predict next task budget (machine learning approach).；公共方法（定义序）: forecast；源码 L61-L72
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: BudgetForecaster
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 from dataclasses import dataclass
 

@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_hot_file_base_freshness_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""hot_file_base_freshness_gate.py — 热文件 base 新鲜度门禁（HOT-FILE-BASE-FRESHNESS）
+"""
+hot_file_base_freshness_gate.py — 热文件 base 新鲜度门禁（HOT-FILE-BASE-FRESHNESS）
 
 2026-08-23 陈旧快照覆写事故治本（与 safe_write_text CAS 文件级防线互补的 git 级防线）。
 
@@ -65,6 +66,32 @@ Usage::
     )
 
     registry.register(make_hot_file_base_freshness_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: hot_file_base_freshness_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_hot_file_base_freshness_gate
+#   name_en: make_hot_file_base_freshness_gate
+#   intro: 构造热文件 base 新鲜度门禁 GateSpec（硬阻断型）。
+#   desc: 构造热文件 base 新鲜度门禁 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="HOT-FILE-BASE-FRESHNESS", pri…；源码 L155-L211
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -104,9 +131,7 @@ def _current_head(gateway) -> str:
 def _upstream_touched(gateway, claim_head: str, current_head: str, rel: str) -> bool:
     """判定文件在 claim_head..current_head 区间是否被上游改动；异常返回 False（fail-open）。"""
     try:
-        result = gateway.run_git(
-            ["git", "diff", "--name-only", f"{claim_head}..{current_head}", "--", rel]
-        )
+        result = gateway.run_git(["git", "diff", "--name-only", f"{claim_head}..{current_head}", "--", rel])
         if result.returncode != 0:
             logger.warning(
                 "HOT-FILE-BASE-FRESHNESS gate fail-open: diff %s..%s -- %s 失败(rc=%d)。",

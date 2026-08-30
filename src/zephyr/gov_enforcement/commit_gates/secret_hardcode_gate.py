@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_secret_hardcode_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""secret_hardcode_gate.py — 密钥值硬编码阻断门禁（NO-SECRET-HARDCODE，#ARCH-SECRETS-GOV-001 Phase 3）
+"""
+secret_hardcode_gate.py — 密钥值硬编码阻断门禁（NO-SECRET-HARDCODE，#ARCH-SECRETS-GOV-001 Phase 3）
 
 检测 staged 文件 added 行中的硬编码密钥/Token/凭证——与 NO-BARE-GETENV(81) 互补：
   - NO-BARE-GETENV 检测"读密钥方式违规"（裸 ``os.getenv`` / ``os.environ``）
@@ -60,6 +61,32 @@ Usage::
     from zephyr.gov_enforcement.commit_gates.secret_hardcode_gate import make_secret_hardcode_gate
 
     registry.register(make_secret_hardcode_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: secret_hardcode_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_secret_hardcode_gate
+#   name_en: make_secret_hardcode_gate
+#   intro: 构造密钥值硬编码阻断 GateSpec（硬阻断型）。
+#   desc: 构造密钥值硬编码阻断 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="NO-SECRET-HARDCODE", priority=128)。…；源码 L242-L273
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

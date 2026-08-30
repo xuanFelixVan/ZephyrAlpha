@@ -22,6 +22,72 @@ AST 扫描检测裸 subprocess.Popen / multiprocessing.Process 调用。
 CI 阶段阻断绕过 ProcessLifecycleGateway 的代码。
 
 SSoT: MOD-INF-016 §2.10 | DEP-GRAPH-process-lifecycle-001
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: file_path 参数
+#   fields: 参数 file_path，类型注解 str
+#   code: en_process_lifecycle_gateway.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: root 参数
+#   fields: 参数 root，类型注解 str | Path
+#   code: en_process_lifecycle_gateway.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: exclude_dirs 参数
+#   fields: 参数 exclude_dirs，类型注解 Iterable[str] | None
+#   code: en_process_lifecycle_gateway.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ProcessCreationScanner
+#   name_en: ProcessCreationScanner
+#   intro: AST 扫描器：检测裸 subprocess.Popen / multiprocessing.Process 调用。
+#   desc: AST 扫描器：检测裸 subprocess.Popen / multiprocessing.Process 调用。；公共方法（定义序）: imported_gateway, resolve_call_path, vi…
+#   inputs: file_path
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② scan_file
+#   name_en: scan_file
+#   intro: scan_file(file_path) 源码 L203-L217
+#   desc: 源码 L203-L217
+#   inputs: file_path
+#   outputs: list[Violation]
+# - id: A3
+#   name_zh: ③ scan_directory
+#   name_en: scan_directory
+#   intro: scan_directory(root, exclude_dirs) 源码 L220-L253
+#   desc: 源码 L220-L253
+#   inputs: root exclude_dirs
+#   outputs: GateResult
+# - id: A4
+#   name_zh: ④ result
+#   name_en: result
+#   intro: result() 源码 L256-L257
+#   desc: 源码 L256-L257
+#   inputs: 无参数
+#   outputs: GateResult
+#   （注：A4 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[Violation]
+#   name_en: list[Violation]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: CI Pipeline (phase_manager.py Gate 检查)
+# - id: O2
+#   name_zh: GateResult
+#   name_en: GateResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: CI Pipeline (phase_manager.py Gate 检查)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_consumers_accuracy_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""consumers_accuracy_gate.py — CONSUMERS 字段准确性 warn-only 门禁（CONSUMERS-ACCURACY）
+"""
+consumers_accuracy_gate.py — CONSUMERS 字段准确性 warn-only 门禁（CONSUMERS-ACCURACY）
 
 #ARCH-CONSUMERS-ACCURACY-001 治本（2026-07-21 立项，P3低→P2中升级）：
 
@@ -76,6 +77,76 @@ Usage::
         make_consumers_accuracy_gate,
     )
     registry.register(make_consumers_accuracy_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: file_content 参数
+#   fields: 参数 file_content，类型注解 str
+#   code: consumers_accuracy_gate.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: py_file 参数
+#   fields: 参数 py_file，类型注解 str
+#   code: consumers_accuracy_gate.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: project_root 参数
+#   fields: 参数 project_root，类型注解 Path
+#   code: consumers_accuracy_gate.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: noqa_files 参数
+#   fields: 参数 noqa_files，类型注解 set[str] | None
+#   code: consumers_accuracy_gate.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① parse_consumers_field
+#   name_en: parse_consumers_field
+#   intro: 解析 [CONSUMERS] 字段内容，返回 (consumer_decl, parens_content) 列表。
+#   desc: 解析 [CONSUMERS] 字段内容，返回 (consumer_decl, parens_content) 列表。 支持格式： 1. `module1; module2` —…；源码 L352-L389
+#   inputs: file_content
+#   outputs: list[tuple[str, str]]
+# - id: A2
+#   name_zh: ② check_consumers_accuracy
+#   name_en: check_consumers_accuracy
+#   intro: 检查单个文件的 [CONSUMERS] 字段准确性，返回违规消息列表（空=通过）。
+#   desc: 检查单个文件的 [CONSUMERS] 字段准确性，返回违规消息列表（空=通过）。 检测三类违规： - orphan（轻）：括号内声明的函数名在当前文件中不存在 - phanto…；源码 L392-L504
+#   inputs: py_file file_content project_root noqa_files
+#   outputs: list[str]
+# - id: A3
+#   name_zh: ③ make_consumers_accuracy_gate
+#   name_en: make_consumers_accuracy_gate
+#   intro: 构造 CONSUMERS-ACCURACY pre-commit warn-only 门禁（priority=116）。
+#   desc: 构造 CONSUMERS-ACCURACY pre-commit warn-only 门禁（priority=116）。 检测 staged scripts/governance…；源码 L520-L596
+#   inputs: 无参数
+#   outputs: GateSpec
+# - id: A4
+#   name_zh: ④ scan_all_for_consumers_accuracy
+#   name_en: scan_all_for_consumers_accuracy
+#   intro: 全仓 baseline 扫描 scripts/governance/** + src/**.py 的 [CONSUME…
+#   desc: 全仓 baseline 扫描 scripts/governance/** + src/**.py 的 [CONSUMERS] 字段准确性。 与 make_consumers_ac…；源码 L603-L653
+#   inputs: project_root
+#   outputs: tuple[list[str], str | None]
+# 层: 输出
+# - id: O1
+#   name_zh: list[tuple[str, str]]
+#   name_en: list[tuple[str, str]]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# - id: O2
+#   name_zh: list[str]
+#   name_en: list[str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

@@ -23,6 +23,41 @@ TechStackValidator — 技术栈可用性校验器
   - 零依赖优先：能 import 检查的不引入额外依赖
   - 优雅降级：不可用组件给出明确建议，不阻止启动
   - 可观测：report() 输出结构化状态报告
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: manifest_path 参数
+#   fields: 参数 manifest_path，类型注解 str | None
+#   code: tech_stack.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① TechStackValidator
+#   name_en: TechStackValidator
+#   intro: 启动时逐一校验 16 项技术栈组件的可用性。
+#   desc: 启动时逐一校验 16 项技术栈组件的可用性。 支持从 YAML manifest 加载决策清单，然后逐项检查。；公共方法（定义序）: default_decisions, validate, inspect_pydan…
+#   inputs: manifest_path
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② validate_on_startup
+#   name_en: validate_on_startup
+#   intro: validate_on_startup(manifest_path) 源码 L315-L325
+#   desc: 源码 L315-L325
+#   inputs: manifest_path
+#   outputs: bool
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 import logging

@@ -30,6 +30,32 @@ DriftBridge — 漂移检测器事件桥接 (MOD-INF-023).
         subscribe_eventbus,
     )
     subscribe_eventbus()  # 在 boot_hooks 中统一调用
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: drift_bridge.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① subscribe_eventbus
+#   name_en: subscribe_eventbus
+#   intro: 订阅 EventBusBackpressure 的 gate_blocked / task_completed 事件。
+#   desc: 订阅 EventBusBackpressure 的 gate_blocked / task_completed 事件。 幂等：重复调用安全。Backpressure 总线不可用时…；源码 L73-L91
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: subscribe_eventbus
+#   downstream: zephyr.trading.boot_hooks
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

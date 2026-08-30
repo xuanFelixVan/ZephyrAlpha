@@ -14,6 +14,84 @@
 # [TESTS]
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: rule_name 参数
+#   fields: 参数 rule_name，类型注解 str
+#   code: vibe_coding_enforcer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: level 参数
+#   fields: 参数 level（无注解）
+#   code: vibe_coding_enforcer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: checks 参数
+#   fields: 参数 checks，类型注解 dict[str, VibeRuleLevel | None]
+#   code: vibe_coding_enforcer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① enforce
+#   name_en: enforce
+#   intro: enforce(rule_name, level) 源码 L126-L135
+#   desc: 源码 L126-L135
+#   inputs: rule_name level
+#   outputs: bool
+# - id: A2
+#   name_zh: ② enforce_all
+#   name_en: enforce_all
+#   intro: enforce_all(checks) 源码 L138-L139
+#   desc: 源码 L138-L139
+#   inputs: checks
+#   outputs: dict[str, bool]
+# - id: A3
+#   name_zh: ③ must
+#   name_en: must
+#   intro: must(rule_name) 源码 L142-L156
+#   desc: 源码 L142-L156
+#   inputs: rule_name
+#   outputs: Callable[[F], F]
+# - id: A4
+#   name_zh: ④ should
+#   name_en: should
+#   intro: should(rule_name) 源码 L159-L170
+#   desc: 源码 L159-L170
+#   inputs: rule_name
+#   outputs: Callable[[F], F]
+# - id: A5
+#   name_zh: ⑤ list_rules_by_level
+#   name_en: list_rules_by_level
+#   intro: list_rules_by_level(level) 源码 L173-L174
+#   desc: 源码 L173-L174
+#   inputs: level
+#   outputs: dict[str, str]
+#   （注：A5 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: dict[str, bool]
+#   name_en: dict[str, bool]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
+"""
+
 from __future__ import annotations
 
 from enum import Enum

@@ -18,13 +18,46 @@
 #   infrastructure/capacity_assurance/kill_switch.py（blueprint actual_disk_path 真源）。
 #   原始 autonomy_core/kill_switch.py 的 SRC-0041 注释提到 shared/kill_switch.py 为
 #   统一 SSoT 导出，但该文件当前不存在；本文件保留独立实现，待 future review 决定是否合并。
-"""kill_switch.py -- safety circuit breaker (DD110, TASK-019).
+"""
+kill_switch.py -- safety circuit breaker (DD110, TASK-019).
 
 Extends the basic per-session error-count fuse with:
   - `auto_kill_threshold`: batch error threshold for `check_errors_and_kill`.
   - `register_cleanup` / `trigger_shutdown`: resource cleanup callbacks that
     fire exactly once when the fuse trips (exceptions in one callback do not
     block subsequent callbacks).
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: threshold 参数
+#   fields: 参数 threshold（无注解）
+#   code: kill_switch.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: auto_kill_threshold 参数
+#   fields: 参数 auto_kill_threshold（无注解）
+#   code: kill_switch.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① KillSwitch
+#   name_en: KillSwitch
+#   intro: per-session err>threshold -> fuse off.
+#   desc: per-session err>threshold -> fuse off. needs manual reset (DD110). Extended with batch er…；公共方法（定义序）: fuse_on…
+#   inputs: threshold auto_kill_threshold
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: KillSwitch
+#   downstream: zephyr.autonomy_core.context.context_pipeline_auto
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_ruling_reference_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""_reference_helpers.py — 引用检测门禁共享工具函数（ARCH-REFERENCE / RULING-REFERENCE / DANGLING-REFERENCE）
+"""
+_reference_helpers.py — 引用检测门禁共享工具函数（ARCH-REFERENCE / RULING-REFERENCE / DANGLING-REFERENCE）
 
 治本（2026-07-18，FUNCTION-DUP 消除）：arch_reference_gate.py 与 ruling_reference_gate.py
 存在 5 个函数体完全相同的私有 helper（_get_head_content / _scan_file_violations /
@@ -38,6 +39,84 @@ extract_registered_nums_fn / registry_rel），共享同一实现。
 3. **dangling_reference_gate 部分迁移**：dangling_reference_gate 仅用 get_head_content
    一个 helper（其余逻辑与 arch/ruling 不同），通过 `from ... import get_head_content`
    导入在调用方命名空间创建绑定。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root，类型注解 Path
+#   code: _reference_helpers.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: rel_path 参数
+#   fields: 参数 rel_path，类型注解 str
+#   code: _reference_helpers.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: files 参数
+#   fields: 参数 files，类型注解 list[str]
+#   code: _reference_helpers.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: registered_nums 参数
+#   fields: 参数 registered_nums，类型注解 set[str]
+#   code: _reference_helpers.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① get_head_content
+#   name_en: get_head_content
+#   intro: 获取文件在 HEAD 版本的内容。
+#   desc: 获取文件在 HEAD 版本的内容。 Args: project_root: 仓库根路径。 rel_path: 相对路径（正斜杠）。 Returns: HEAD 版本文件内容；文件…；源码 L143-L166
+#   inputs: project_root rel_path
+#   outputs: str | None
+# - id: A2
+#   name_zh: ② scan_file_violations
+#   name_en: scan_file_violations
+#   intro: 检测 staged 文件中新增的悬空引用。
+#   desc: 检测 staged 文件中新增的悬空引用。 Args: extract_refs_fn: 从文本提取引用编号的 callable（gate 专用正则）。；源码 L169-L210
+#   inputs: project_root files registered_nums extract_refs_fn
+#   outputs: tuple[list[tuple[str, list[str]]], str…
+# - id: A3
+#   name_zh: ③ load_head_registered_nums
+#   name_en: load_head_registered_nums
+#   intro: 获取 HEAD 版本 registry 中已登记的编号集合（L2 同提交原子性检查用）。
+#   desc: 获取 HEAD 版本 registry 中已登记的编号集合（L2 同提交原子性检查用）。 Args: registry_rel: registry 文件相对路径（gate 专用）…；源码 L213-L254
+#   inputs: project_root registry_rel extract_registered_nums_fn
+#   outputs: set[str] | None
+# - id: A4
+#   name_zh: ④ collect_new_refs_by_file
+#   name_en: collect_new_refs_by_file
+#   intro: 收集 staged 文件中不在 HEAD registry 的新增引用（L2 同提交原子性检查用）。
+#   desc: 收集 staged 文件中不在 HEAD registry 的新增引用（L2 同提交原子性检查用）。 排除 registry 自身——registry 文件引用自己的 id 不算…；源码 L257-L288
+#   inputs: project_root files head_nums registry_rel extract_refs_fn
+#   outputs: dict[str, set[str]]
+# - id: A5
+#   name_zh: ⑤ check_atomicity
+#   name_en: check_atomicity
+#   intro: L2 同提交原子性检查：新引用不在 HEAD registry 时，要求 registry 同 commit。
+#   desc: L2 同提交原子性检查：新引用不在 HEAD registry 时，要求 registry 同 commit。；源码 L291-L295
+#   inputs: new_refs_by_file registry_in_commit
+#   outputs: list[tuple[str, list[str]]]
+# 层: 输出
+# - id: O1
+#   name_zh: str | None
+#   name_en: str | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.commit_gates.ruling_reference_gate; zephyr.gov_enforceme…
+# - id: O2
+#   name_zh: tuple[list[tuple[str, list[str]]], str…
+#   name_en: tuple[list[tuple[str, list[str]]], str…
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.commit_gates.ruling_reference_gate; zephyr.gov_enforceme…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations

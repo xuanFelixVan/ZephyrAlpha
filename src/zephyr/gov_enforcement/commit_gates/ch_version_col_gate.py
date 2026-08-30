@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_ch_version_col_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""ch_version_col_gate.py — CH version 列语义误用阻断门禁（CH-VERSION-COL，裁定 #ARCH-CH-009）
+"""
+ch_version_col_gate.py — CH version 列语义误用阻断门禁（CH-VERSION-COL，裁定 #ARCH-CH-009）
 
 病根：ReplacingMergeTree(version_col) 的 version 参数决定后台 merge 时保留哪个版本。
 quality_flag UInt8 DEFAULT 1（100% 行值为 1）作 version 列时，所有行"版本号"相同，
@@ -35,6 +36,32 @@ ReplacingMergeTree(col_name) 后检查 col_name 是否在 blocked 集合中。
 - git diff 失败/异常 → fail-open（passed=True，logger.warning）
 - 检出违规 → fail-closed（passed=False，阻断 commit）
 - 无 staged 文件 → 放行
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: ch_version_col_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_ch_version_col_gate
+#   name_en: make_ch_version_col_gate
+#   intro: 构造 CH version 列语义误用阻断 GateSpec（硬阻断型）。
+#   desc: 构造 CH version 列语义误用阻断 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="CH-VERSION-COL", priorit…；源码 L152-L177
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

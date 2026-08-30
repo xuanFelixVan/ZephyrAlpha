@@ -15,7 +15,35 @@
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""KISS 约束执行器（CT-KISS-001）——AI产出复杂度检测+bloat check。"""
+"""
+KISS 约束执行器（CT-KISS-001）——AI产出复杂度检测+bloat check。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: kiss_enforcer.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① KissEnforcer
+#   name_en: KissEnforcer
+#   intro: class KissEnforcer 源码 L49-L74
+#   desc: 公共方法（定义序）: check_class_count, check_method_length, check_inheritance_depth, self_check；源码 L49-L74
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: KissEnforcer
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 
 class KissEnforcer:

@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/rule_bridge/test_commit_gate_registry.py
 # [A_module] module_id=MOD-GOV_COMMIT_GATE_REGISTRY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""commit_gate_registry.py — GitCommitGateway pre-commit 门禁注册表（架构债务 #AD-001 治本）
+"""
+commit_gate_registry.py — GitCommitGateway pre-commit 门禁注册表（架构债务 #AD-001 治本）
 
 把 ``commit()`` 方法体中硬编码的 ``_check_*`` 调用升级为声明式 registry：
 每个 pre-commit gate 注册一个 ``GateSpec``，commit 前由 registry 统一调度。
@@ -52,6 +53,69 @@ Usage::
     ))
     results = registry.check_all(gateway, files, session_id="sess-001", allow_overlap=False)
     # results == [GateResult(gate_id="HELD-OVERLAP", passed=True, detail="")]
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: file_path 参数
+#   fields: 参数 file_path，类型注解 str
+#   code: commit_gate_registry.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: script_path 参数
+#   fields: 参数 script_path，类型注解 str | Path
+#   code: commit_gate_registry.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: args 参数
+#   fields: 参数 args，类型注解 list[str]
+#   code: commit_gate_registry.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: cwd 参数
+#   fields: 参数 cwd（无注解）
+#   code: commit_gate_registry.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① is_test_exempt
+#   name_en: is_test_exempt
+#   intro: 判断文件是否在 tests/ 豁免区（路径段匹配，覆盖嵌套测试目录如 scripts/tests/）。
+#   desc: 判断文件是否在 tests/ 豁免区（路径段匹配，覆盖嵌套测试目录如 scripts/tests/）。 治本2：封装归一化+比对逻辑，消除两 gate 实现不一致（create_…；源码 L198-L219
+#   inputs: file_path
+#   outputs: bool
+# - id: A2
+#   name_zh: ② run_checker_script
+#   name_en: run_checker_script
+#   intro: 运行 checker 脚本的共享 helper（5.176.4 治本：消除各 gate 的 subprocess 样板…
+#   desc: 运行 checker 脚本的共享 helper（5.176.4 治本：消除各 gate 的 subprocess 样板重复）。 封装 ``[sys.executable, scr…；源码 L222-L277
+#   inputs: script_path args cwd timeout text env
+#   outputs: subprocess.CompletedProcess
+# - id: A3
+#   name_zh: ③ CommitGateRegistry
+#   name_en: CommitGateRegistry
+#   intro: pre-commit 门禁注册表（声明式，参考 ReconciliationRegistry）。
+#   desc: pre-commit 门禁注册表（声明式，参考 ReconciliationRegistry）。 register 幂等（同 gate_id 覆盖旧 spec）。 check_a…；公共方法（定义序）: specs,…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A3 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway; zephyr.…
+# - id: O2
+#   name_zh: subprocess.CompletedProcess
+#   name_en: subprocess.CompletedProcess
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway; zephyr.…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

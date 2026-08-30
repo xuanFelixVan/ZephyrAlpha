@@ -15,10 +15,130 @@
 # [A_module] module_id=MOD-INF-026 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""AssetInventory MCP Server — MOD-INF-026 蓝图 §21
+"""
+AssetInventory MCP Server — MOD-INF-026 蓝图 §21
 
 8 tool + 2 resource 暴露盘点功能给 IDE AI agent。
 通过 FastMCP 协议。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: path 参数
+#   fields: 参数 path，类型注解 str
+#   code: mcp_server.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: asset_type 参数
+#   fields: 参数 asset_type，类型注解 str
+#   code: mcp_server.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: limit 参数
+#   fields: 参数 limit，类型注解 int
+#   code: mcp_server.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: tag 参数
+#   fields: 参数 tag，类型注解 str
+#   code: mcp_server.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① get_asset_summary
+#   name_en: get_asset_summary
+#   intro: get_asset_summary() 源码 L179-L197
+#   desc: 源码 L179-L197
+#   inputs: 无参数
+#   outputs: str
+# - id: A2
+#   name_zh: ② get_asset_detail
+#   name_en: get_asset_detail
+#   intro: get_asset_detail(path) 源码 L200-L208
+#   desc: 源码 L200-L208
+#   inputs: path
+#   outputs: str
+# - id: A3
+#   name_zh: ③ search_asset_by_type
+#   name_en: search_asset_by_type
+#   intro: search_asset_by_type(asset_type, limit) 源码 L211-L217
+#   desc: 源码 L211-L217
+#   inputs: asset_type limit
+#   outputs: str
+# - id: A4
+#   name_zh: ④ search_asset_by_tag
+#   name_en: search_asset_by_tag
+#   intro: search_asset_by_tag(tag, limit) 源码 L220-L226
+#   desc: 源码 L220-L226
+#   inputs: tag limit
+#   outputs: str
+# - id: A5
+#   name_zh: ⑤ search_asset_by_layer
+#   name_en: search_asset_by_layer
+#   intro: search_asset_by_layer(layer, limit) 源码 L229-L235
+#   desc: 源码 L229-L235
+#   inputs: layer limit
+#   outputs: str
+# - id: A6
+#   name_zh: ⑥ list_all_tags
+#   name_en: list_all_tags
+#   intro: list_all_tags() 源码 L238-L253
+#   desc: 源码 L238-L253
+#   inputs: 无参数
+#   outputs: str
+# - id: A7
+#   name_zh: ⑦ get_health_dashboard
+#   name_en: get_health_dashboard
+#   intro: get_health_dashboard() 源码 L256-L260
+#   desc: 源码 L256-L260
+#   inputs: 无参数
+#   outputs: str
+# - id: A8
+#   name_zh: ⑧ list_registry_ids
+#   name_en: list_registry_ids
+#   intro: list_registry_ids() 源码 L263-L278
+#   desc: 源码 L263-L278
+#   inputs: 无参数
+#   outputs: str
+# - id: A9
+#   name_zh: ⑨ dispatch_tool
+#   name_en: dispatch_tool
+#   intro: dispatch_tool(name) 源码 L332-L344
+#   desc: 源码 L332-L344
+#   inputs: name
+#   outputs: str
+# - id: A10
+#   name_zh: ⑩ list_tools
+#   name_en: list_tools
+#   intro: list_tools() 源码 L347-L348
+#   desc: 源码 L347-L348
+#   inputs: 无参数
+#   outputs: list[dict[str, str]]
+#   （注：A10 之后另有 1 个公共定义未列入（含 0 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: list[dict[str, str]]
+#   name_en: list[dict[str, str]]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> A10
+# A10 --> O1
 """
 
 import json

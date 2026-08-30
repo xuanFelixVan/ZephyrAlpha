@@ -16,6 +16,37 @@
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: offline_autonomy.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① AutonomyState
+#   name_en: AutonomyState
+#   intro: class AutonomyState 源码 L61-L82
+#   desc: 公共方法（定义序）: mode, transition, cache_command, has_cached_commands；源码 L61-L82
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: AutonomyState
+#   downstream: MOD-INF-027;MOD-INF-018;MOD-INF-022
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 from __future__ import annotations
 
 from enum import Enum

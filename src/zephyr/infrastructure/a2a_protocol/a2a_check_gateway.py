@@ -14,7 +14,8 @@
 # [TESTS] tests/a2a/test_a2a_check_gateway.py
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""A2A 检查网关（B11-02516 / CAND-INFRAA2A-001）。
+"""
+A2A 检查网关（B11-02516 / CAND-INFRAA2A-001）。
 
 A2A 调用前三段校验 + 三态门控：
   1. 身份校验——双方 Agent Card 已注册 + 层级签名验证（复用 gov_audit.agent_signer
@@ -37,6 +38,41 @@ OWASP ASI01-10 映射（tests/a2a/test_a2a_check_gateway.py 逐条用例）：
 热路径：<1ms——注册表 dict 查找 + 单次 Ed25519 验证 + 内存规则匹配，零 IO。
 与既有件分工：本网关管"调用前检查"；a2a_check.verify_a2a_pair 管通信对简表；
 governance/policy_engine 管策略、rate_limiter 管限流（本网关不重复实现）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: request 参数
+#   fields: 参数 request，类型注解 A2AGateRequest
+#   code: a2a_check_gateway.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① build_signed_event
+#   name_en: build_signed_event
+#   intro: 签名规范结构——调用方与网关 MUST 用本函数构造待签名事件（防结构歧义）。
+#   desc: 签名规范结构——调用方与网关 MUST 用本函数构造待签名事件（防结构歧义）。；源码 L139-L147
+#   inputs: request
+#   outputs: dict[str, Any]
+# - id: A2
+#   name_zh: ② A2aCheckGateway
+#   name_en: A2aCheckGateway
+#   intro: A2A 检查网关：身份→能力→边界三段校验，PASS/DENY/GATED 三态。
+#   desc: A2A 检查网关：身份→能力→边界三段校验，PASS/DENY/GATED 三态。；公共方法（定义序）: check, pending_approvals, approve；源码 L150-L271
+#   inputs: registry approval_queue clock
+#   outputs: 返回值
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, Any]
+#   name_en: dict[str, Any]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -201,10 +237,7 @@ class A2aCheckGateway:
         if self._zone(from_card) != self._zone(to_card):
             return self._gate(request, request_id, "cross_zone_call")
 
-        if (
-            to_card.metadata.get("autonomy_level", "L1") == "L0"
-            and request.capability in _L0_RESTRICTED_CAPABILITIES
-        ):
+        if to_card.metadata.get("autonomy_level", "L1") == "L0" and request.capability in _L0_RESTRICTED_CAPABILITIES:
             return self._gate(request, request_id, "autonomy_escalation")
 
         return GateDecision.PASS, "ok"
@@ -231,7 +264,7 @@ class A2aCheckGateway:
     @staticmethod
     def _role(agent_id: str) -> str:
         """Agent ID → 通信对角色归一化（strip "agent-" 前缀对齐 ALLOWED_TALK_PAIRS 角色表）。"""
-        return agent_id[len(_AGENT_ID_PREFIX):] if agent_id.startswith(_AGENT_ID_PREFIX) else agent_id
+        return agent_id[len(_AGENT_ID_PREFIX) :] if agent_id.startswith(_AGENT_ID_PREFIX) else agent_id
 
     @staticmethod
     def _zone(card: AgentCard) -> str:

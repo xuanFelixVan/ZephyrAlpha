@@ -28,6 +28,32 @@ ZephyrAlpha — 基础设施 Infrastructure Layer — Configuration Management
 
 5.93.7 修复：业务类/函数已迁移到 app_config.py 子模块。
 本 __init__.py 仅做 re-export，符合"__init__.py 不应定义业务类/函数"原则。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 包内子模块公共符号
+#   fields: import 再导出符号: AppConfig, ConfigHolder, load_config, reload_config
+#   code: __init__.py import L59
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包公共面再导出
+#   name_en: __init__ re-export
+#   intro: 再导出 AppConfig, ConfigHolder, load_config, reload_config（共 4 符号）
+#   desc: __init__ import L59；__all__ 4 项（AST 事实）
+#   inputs: I1
+#   outputs: __all__ 公共符号表
+# 层: 输出
+# - id: O1
+#   name_zh: 公共 API 面（4 符号）
+#   name_en: __all__
+#   intro: AppConfig, ConfigHolder, load_config, reload_config
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from zephyr.infrastructure.config.app_config import (

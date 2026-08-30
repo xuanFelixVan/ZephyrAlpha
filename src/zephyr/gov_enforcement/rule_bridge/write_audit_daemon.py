@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/rule_bridge/test_write_audit_daemon.py
 # [A_module] module_id=MOD-GOV_DRIFT_WATCHDOG | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""write_audit_daemon.py — WriteAudit PID 级写删审计守护（#ARCH-279 裁定B，#ARCH-264 O3-P1 施工化）
+"""
+write_audit_daemon.py — WriteAudit PID 级写删审计守护（#ARCH-279 裁定B，#ARCH-264 O3-P1 施工化）
 
 第一性原理
 ----------
@@ -39,6 +40,100 @@ Usage::
     python -m zephyr.gov_enforcement.rule_bridge.write_audit_daemon <root> --daemon
     python -m zephyr.gov_enforcement.rule_bridge.write_audit_daemon <root> --once-scan
     python -m zephyr.gov_enforcement.rule_bridge.write_audit_daemon <root> --status
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: handler 参数
+#   fields: 参数 handler，类型注解 WriteAuditHandler
+#   code: write_audit_daemon.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: path 参数
+#   fields: 参数 path，类型注解 str
+#   code: write_audit_daemon.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: seconds 参数
+#   fields: 参数 seconds，类型注解 float
+#   code: write_audit_daemon.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: root 参数
+#   fields: 参数 root，类型注解 str | Path
+#   code: write_audit_daemon.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① WriteAuditHandler
+#   name_en: WriteAuditHandler
+#   intro: 热目录文件系统事件 → write_audit.jsonl（五要素+三层归因）。
+#   desc: 热目录文件系统事件 → write_audit.jsonl（五要素+三层归因）。 不依赖 watchdog 包事件对象也可直接调用 record()（单测友好）； 经 make_…；公共方法（定义序）: record；…
+#   inputs: root
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② make_watchdog_handler
+#   name_en: make_watchdog_handler
+#   intro: 把 WriteAuditHandler 包装成 watchdog.events.FileSystemEventHand…
+#   desc: 把 WriteAuditHandler 包装成 watchdog.events.FileSystemEventHandler。；源码 L374-L397
+#   inputs: handler
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ recent_events_for
+#   name_en: recent_events_for
+#   intro: 读 write_audit.jsonl 尾部，返回指定路径近 seconds 秒的事件（新→旧）。
+#   desc: 读 write_audit.jsonl 尾部，返回指定路径近 seconds 秒的事件（新→旧）。 drift 告警联动（ 裁定B2）：告警从"有人动了"升级为"谁动的"—— 调…；源码 L405-L439
+#   inputs: path seconds root limit
+#   outputs: list[dict[str, Any]]
+# - id: A4
+#   name_zh: ④ suspect_summary
+#   name_en: suspect_summary
+#   intro: 裁定B2 告警联动：指定路径近 seconds 秒的 WriteAudit 嫌疑摘要。
+#   desc: 裁定B2 告警联动：指定路径近 seconds 秒的 WriteAudit 嫌疑摘要。 返回紧凑单行（drift 告警 detail 直接拼接）： - 有会话命中：`sess-x…；源码 L442-L467
+#   inputs: path root seconds limit
+#   outputs: str
+# - id: A5
+#   name_zh: ⑤ ensure_daemon
+#   name_en: ensure_daemon
+#   intro: 确保 WriteAudit daemon 在跑（幂等；pytest 内不 spawn 真守护——对标 drift wa…
+#   desc: 确保 WriteAudit daemon 在跑（幂等；pytest 内不 spawn 真守护——对标 drift watchdog）。；源码 L510-L549
+#   inputs: project_root
+#   outputs: bool
+# - id: A6
+#   name_zh: ⑥ run_daemon
+#   name_en: run_daemon
+#   intro: 守护主循环：RDCW 监听热目录集，事件落 write_audit.jsonl。
+#   desc: 守护主循环：RDCW 监听热目录集，事件落 write_audit.jsonl。；源码 L552-L598
+#   inputs: project_root
+#   outputs: int
+# - id: A7
+#   name_zh: ⑦ main
+#   name_en: main
+#   intro: main(argv) 源码 L623-L642
+#   desc: 源码 L623-L642
+#   inputs: argv
+#   outputs: int
+# 层: 输出
+# - id: O1
+#   name_zh: list[dict[str, Any]]
+#   name_en: list[dict[str, Any]]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: worktree_drift_watchdog (recent_events_for 告警联动); CLI python -m ... [--daemon|-…
+# - id: O2
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: worktree_drift_watchdog (recent_events_for 告警联动); CLI python -m ... [--daemon|-…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> O1
 """
 
 from __future__ import annotations
@@ -176,9 +271,7 @@ def _snapshot_processes() -> list[dict[str, Any]]:
     return snapshot
 
 
-def _attribute_sessions(
-    snapshot: list[dict[str, Any]], session_map: dict[int, dict[str, Any]]
-) -> list[dict[str, Any]]:
+def _attribute_sessions(snapshot: list[dict[str, Any]], session_map: dict[int, dict[str, Any]]) -> list[dict[str, Any]]:
     """进程快照 × session_registry → 命中会话清单（归因核心产出）。"""
     hits: list[dict[str, Any]] = []
     for proc in snapshot:

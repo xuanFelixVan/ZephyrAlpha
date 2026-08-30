@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: 本文件是PERM-TRIGGER检测器自身,源码含检测模式字符串(while True/time.sleep/APScheduler等)用于AST匹配,非实际时间触发
-"""perm_trigger_gate.py — 永久系统脚本时间触发模式无事件订阅阻断门禁（PERM-TRIGGER）
+"""
+perm_trigger_gate.py — 永久系统脚本时间触发模式无事件订阅阻断门禁（PERM-TRIGGER）
 
 检测 staged 新增 .py 文件中 [TTL] permanent 头标的脚本是否使用时间触发模式
 （``while True`` / ``time.sleep`` / ``schedule.`` / APScheduler）但未注册任何
@@ -55,6 +56,32 @@ Usage::
 
     registry.register(make_perm_trigger_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: perm_trigger_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_perm_trigger_gate
+#   name_en: make_perm_trigger_gate
+#   intro: 构造永久系统脚本时间触发无事件订阅阻断门禁 GateSpec（硬阻断型）。
+#   desc: 构造永久系统脚本时间触发无事件订阅阻断门禁 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="PERM-TRIGGER", priority=…；源码 L325-L385
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -320,7 +347,7 @@ def make_perm_trigger_gate() -> GateSpec:
                 continue
 
             try:
-                with open(abs_path, "r", encoding="utf-8", errors="replace") as f:
+                with open(abs_path, encoding="utf-8", errors="replace") as f:
                     content = f.read()
             except OSError as e:
                 logger.warning(

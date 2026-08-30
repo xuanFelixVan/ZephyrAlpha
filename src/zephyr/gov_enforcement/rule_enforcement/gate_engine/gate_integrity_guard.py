@@ -16,7 +16,44 @@
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 
-"""门禁引擎完整性守卫——自检SHA-256校验+trust root自验证（beta）"""
+"""
+门禁引擎完整性守卫——自检SHA-256校验+trust root自验证（beta）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: manifest_path 参数
+#   fields: 参数 manifest_path（无注解）
+#   code: gate_integrity_guard.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① GateIntegrityGuard
+#   name_en: GateIntegrityGuard
+#   intro: class GateIntegrityGuard 源码 L78-L154
+#   desc: 公共方法（定义序）: compute_sha256, verify, verify_self, reports, all_valid；源码 L78-L154
+#   inputs: manifest_path
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② main
+#   name_en: main
+#   intro: main() 源码 L160-L161
+#   desc: 源码 L160-L161
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: GateIntegrityGuard, main
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
 
 import hashlib
 import logging

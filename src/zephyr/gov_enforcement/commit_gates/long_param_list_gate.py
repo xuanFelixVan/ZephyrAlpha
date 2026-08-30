@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_long_param_list_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""long_param_list_gate.py — 长参数列表阻断门禁（NO-LONG-PARAM-LIST，§5.150 防复发）
+"""
+long_param_list_gate.py — 长参数列表阻断门禁（NO-LONG-PARAM-LIST，§5.150 防复发）
 
 检测 staged .py 文件中**新增**函数的参数数 > 7（排除 self/cls）。
 违反 §5.150 Long Parameter List 反模式。
@@ -48,6 +49,32 @@ Usage::
     from zephyr.gov_enforcement.commit_gates.long_param_list_gate import make_long_param_list_gate
 
     registry.register(make_long_param_list_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: long_param_list_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_long_param_list_gate
+#   name_en: make_long_param_list_gate
+#   intro: 构造长参数列表阻断 GateSpec（硬阻断型）。
+#   desc: 构造长参数列表阻断 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="NO-LONG-PARAM-LIST", priority=95)。；源码 L122-L162
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

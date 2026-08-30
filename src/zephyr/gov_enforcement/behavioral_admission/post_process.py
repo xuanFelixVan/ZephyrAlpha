@@ -23,7 +23,8 @@
 # moved_from: zephyr.shared.post_process
 # ---
 
-"""post_process.py —— AI 生成代码后处理管道（Phase 13 | 盲点 B31）
+"""
+post_process.py —— AI 生成代码后处理管道（Phase 13 | 盲点 B31）
 
 痛点修复：AI 生成代码后缺乏自动化的 lint/format/typecheck 后处理。
 Boris Cherny 核心技巧：后处理管道是最有效的质量保障手段之一。
@@ -44,6 +45,65 @@ AI 施工约定：
   - auto-fix 模式 MUST 先备份原始文件
 
 SSoT: DOM-GOV-001 §12 盲点 B31
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: files 参数
+#   fields: 参数 files，类型注解 list[str] | None
+#   code: post_process.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① PipelineResult
+#   name_en: PipelineResult
+#   intro: 后处理管道执行结果。
+#   desc: 后处理管道执行结果。；公共方法（定义序）: all_passed；源码 L143-L154
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② PostProcessPipeline
+#   name_en: PostProcessPipeline
+#   intro: AI 生成代码后处理管道——注册 hook -> 按序执行 -> 策略决策。
+#   desc: AI 生成代码后处理管道——注册 hook -> 按序执行 -> 策略决策。 Usage:: pipeline = PostProcessPipeline() pipeline.…；公共方法（定义序）: hooks,…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ lint_hook
+#   name_en: lint_hook
+#   intro: 内置 lint hook——调用 ruff check。
+#   desc: 内置 lint hook——调用 ruff check。；源码 L301-L327
+#   inputs: files
+#   outputs: HookResult
+# - id: A4
+#   name_zh: ④ format_hook
+#   name_en: format_hook
+#   intro: 内置 format hook——调用 ruff format --check。
+#   desc: 内置 format hook——调用 ruff format --check。；源码 L330-L356
+#   inputs: files
+#   outputs: HookResult
+# - id: A5
+#   name_zh: ⑤ typecheck_hook
+#   name_en: typecheck_hook
+#   intro: 内置 typecheck hook——调用 pyright / mypy。
+#   desc: 内置 typecheck hook——调用 pyright / mypy。；源码 L359-L385
+#   inputs: files
+#   outputs: HookResult
+#   （注：A5 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: HookResult
+#   name_en: HookResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.shared (re-export)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations

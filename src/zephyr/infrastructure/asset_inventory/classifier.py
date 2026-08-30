@@ -15,10 +15,50 @@
 # [A_module] module_id=MOD-INF-026 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""AssetClassifier — MOD-INF-026 L2 资产自动分类器
+"""
+AssetClassifier — MOD-INF-026 L2 资产自动分类器
 
 蓝图 §3.2：读取扫描结果，按 config/asset_inventory.yaml 中
 classifier.type_mapping 将每个文件分类为 module/script/gate/doc/config/test/data/registry/unknown。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: type_mapping 参数
+#   fields: 参数 type_mapping（无注解）
+#   code: classifier.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: unknown_threshold_pct 参数
+#   fields: 参数 unknown_threshold_pct（无注解）
+#   code: classifier.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① Classifier
+#   name_en: Classifier
+#   intro: 基于类型映射的资产自动分类器——Phase 1 实现（蓝图 §3.2）。
+#   desc: 基于类型映射的资产自动分类器——Phase 1 实现（蓝图 §3.2）。；公共方法（定义序）: classify, main；源码 L175-L282
+#   inputs: type_mapping unknown_threshold_pct
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② main
+#   name_en: main
+#   intro: main() 源码 L291-L292
+#   desc: 源码 L291-L292
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: Classifier, main
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

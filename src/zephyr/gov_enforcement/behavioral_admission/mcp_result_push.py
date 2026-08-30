@@ -14,6 +14,52 @@
 # [TESTS] tests/test_mcp_result_push.py
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: state_dir 参数
+#   fields: 参数 state_dir（无注解）
+#   code: mcp_result_push.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: max_retries 参数
+#   fields: 参数 max_retries（无注解）
+#   code: mcp_result_push.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: retry_delay 参数
+#   fields: 参数 retry_delay（无注解）
+#   code: mcp_result_push.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: callback_timeout 参数
+#   fields: 参数 callback_timeout（无注解）
+#   code: mcp_result_push.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ResultPushManager
+#   name_en: ResultPushManager
+#   intro: class ResultPushManager 源码 L146-L428
+#   desc: 公共方法（定义序）: register_task, push_result, get_pending_tasks, retry_failed, subscribe_event, set_file_watcher_pat…
+#   inputs: state_dir max_retries retry_delay callback_timeout
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: ResultPushManager
+#   downstream: GovernanceServer;run_all.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
+"""
+
 import json
 import logging
 import os

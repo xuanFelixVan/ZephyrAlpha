@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m01-vocab-hardcode  M01豁免: 本文件是VOCAB-CHAIN检测器自身,源码含SSoT路径模式字符串用于AST匹配,非实际硬编码
-"""vocab_chain_gate.py — SSoT 引用硬编码阻断门禁（VOCAB-CHAIN，#ARCH-GOV-CONVERGENCE-META Phase 3.6 补齐 rc2 enforceability）
+"""
+vocab_chain_gate.py — SSoT 引用硬编码阻断门禁（VOCAB-CHAIN，#ARCH-GOV-CONVERGENCE-META Phase 3.6 补齐 rc2 enforceability）
 
 病根（裁定#221，原 ai_first_governance_principles.md §二，文档已删 2026-07-30，git 历史可查）
 ------------------------------------------------
@@ -48,6 +49,32 @@ Usage::
     from zephyr.gov_enforcement.commit_gates.vocab_chain_gate import make_vocab_chain_gate
 
     registry.register(make_vocab_chain_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: vocab_chain_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_vocab_chain_gate
+#   name_en: make_vocab_chain_gate
+#   intro: 构造 SSoT 引用硬编码阻断门禁 GateSpec（硬阻断型）。
+#   desc: 构造 SSoT 引用硬编码阻断门禁 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="VOCAB-CHAIN", priority=73)。…；源码 L217-L266
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -213,7 +240,7 @@ def make_vocab_chain_gate() -> GateSpec:
                 continue
 
             try:
-                with open(abs_path, "r", encoding="utf-8", errors="replace") as f:
+                with open(abs_path, encoding="utf-8", errors="replace") as f:
                     content = f.read()
             except OSError as e:
                 logger.warning(

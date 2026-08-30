@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_data_task_completeness_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""data_task_completeness_gate.py — 数据任务完整性门禁（warn 级，提醒型）
+"""
+data_task_completeness_gate.py — 数据任务完整性门禁（warn 级，提醒型）
 
 当 AI 在 tasks.yaml 新增任务时，检测是否配置了 fallback_sources。
 未配置时发出警告（不阻断 commit），提醒 AI 为数据韧性配置副数据源。
@@ -41,6 +42,45 @@ Usage::
     from zephyr.gov_enforcement.commit_gates.data_task_completeness_gate import make_data_task_completeness_gate
 
     registry.register(make_data_task_completeness_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: data_task_completeness_gate.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_data_task_completeness_gate
+#   name_en: make_data_task_completeness_gate
+#   intro: 构造数据任务完整性门禁 GateSpec（warn 级，提醒型）。
+#   desc: 构造数据任务完整性门禁 GateSpec（warn 级，提醒型）。 Returns: GateSpec(gate_id="DATA-TASK-COMPLETENESS", pri…；源码 L160-L226
+#   inputs: 无参数
+#   outputs: GateSpec
+# - id: A2
+#   name_zh: ② load_tasks_yaml
+#   name_en: load_tasks_yaml
+#   intro: 公共接口：load_tasks_yaml（Stage 4 公共化）。
+#   desc: 公共接口：load_tasks_yaml（Stage 4 公共化）。；源码 L230-L232
+#   inputs: project_root
+#   outputs: list[dict]
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# - id: O2
+#   name_zh: list[dict]
+#   name_en: list[dict]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

@@ -16,6 +16,52 @@
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: mode 参数
+#   fields: 参数 mode（无注解）
+#   code: fix_scheduler.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: batch_interval_sec 参数
+#   fields: 参数 batch_interval_sec（无注解）
+#   code: fix_scheduler.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: fix_fn 参数
+#   fields: 参数 fix_fn（无注解）
+#   code: fix_scheduler.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: scan_fn 参数
+#   fields: 参数 scan_fn（无注解）
+#   code: fix_scheduler.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FixScheduler
+#   name_en: FixScheduler
+#   intro: class FixScheduler 源码 L86-L169
+#   desc: 公共方法（定义序）: mode, is_running, batch_count, start, stop, submit_event, get_status；源码 L86-L169
+#   inputs: mode batch_interval_sec fix_fn scan_fn
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: FixScheduler
+#   downstream: engine.py;__main__.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
+"""
+
 from __future__ import annotations
 
 import logging

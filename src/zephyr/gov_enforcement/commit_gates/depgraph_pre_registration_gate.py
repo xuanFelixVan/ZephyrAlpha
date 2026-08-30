@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH] ARCH-DEP-PREMERGE-ENFORCE
-"""depgraph_pre_registration_gate.py — depgraph planned→production 流转强制门禁（DEPGRAPH-PRE-REGISTRATION）
+"""
+depgraph_pre_registration_gate.py — depgraph planned→production 流转强制门禁（DEPGRAPH-PRE-REGISTRATION）
 
 落地 #ARCH-DEP-PREMERGE-ENFORCE：L1 铁律"施工完成转 production"从君子协定升级为
 技术强制。补强 NEW-FILE-DEPGRAPH-ENFORCEMENT（priority=58）的盲区——
@@ -60,6 +61,61 @@ Usage::
     )
 
     registry.register(make_depgraph_pre_registration_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: file_path 参数
+#   fields: 参数 file_path（无注解）
+#   code: depgraph_pre_registration_gate.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_depgraph_pre_registration_gate
+#   name_en: make_depgraph_pre_registration_gate
+#   intro: 构造 depgraph planned→production 流转强制 GateSpec（硬阻断型）。
+#   desc: 构造 depgraph planned→production 流转强制 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="DEPGRAPH-P…；源码 L343-L369
+#   inputs: 无参数
+#   outputs: GateSpec
+# - id: A2
+#   name_zh: ② query_build_status
+#   name_en: query_build_status
+#   intro: 公共接口：query_build_status（Stage 4 公共化）。
+#   desc: 公共接口：query_build_status（Stage 4 公共化）。；源码 L373-L375
+#   inputs: file_path
+#   outputs: str | None
+# - id: A3
+#   name_zh: ③ extract_ttl
+#   name_en: extract_ttl
+#   intro: 公共接口：extract_ttl（Stage 4 公共化）。
+#   desc: 公共接口：extract_ttl（Stage 4 公共化）。；源码 L379-L381
+#   inputs: file_path
+#   outputs: str | None
+# - id: A4
+#   name_zh: ④ count_impl_lines
+#   name_en: count_impl_lines
+#   intro: 公共接口：count_impl_lines（Stage 4 公共化）。
+#   desc: 公共接口：count_impl_lines（Stage 4 公共化）。；源码 L385-L387
+#   inputs: file_path
+#   outputs: int
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# - id: O2
+#   name_zh: str | None
+#   name_en: str | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

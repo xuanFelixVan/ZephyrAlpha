@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_high_complexity_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""high_complexity_gate.py — 高循环复杂度阻断门禁（NO-HIGH-COMPLEXITY，§5.158 防复发）
+"""
+high_complexity_gate.py — 高循环复杂度阻断门禁（NO-HIGH-COMPLEXITY，§5.158 防复发）
 
 检测 staged .py 文件中**新增**函数的循环复杂度（McCabe）> 15。
 违反 §5.158 循环复杂度反模式。
@@ -53,6 +54,32 @@ Usage::
     from zephyr.gov_enforcement.commit_gates.high_complexity_gate import make_high_complexity_gate
 
     registry.register(make_high_complexity_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: high_complexity_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_high_complexity_gate
+#   name_en: make_high_complexity_gate
+#   intro: 构造高循环复杂度阻断 GateSpec（硬阻断型）。
+#   desc: 构造高循环复杂度阻断 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="NO-HIGH-COMPLEXITY", priority=92)。；源码 L150-L196
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -107,11 +134,11 @@ def _cyclomatic_complexity(node: ast.FunctionDef | ast.AsyncFunctionDef) -> int:
     """
     complexity = 1
     for child in _walk_excluding_nested_funcs(node):
-        if isinstance(child, (ast.If, ast.IfExp)):
-            complexity += 1
-        elif isinstance(child, (ast.For, ast.AsyncFor, ast.While)):
-            complexity += 1
-        elif isinstance(child, ast.ExceptHandler):
+        if (
+            isinstance(child, (ast.If, ast.IfExp))
+            or isinstance(child, (ast.For, ast.AsyncFor, ast.While))
+            or isinstance(child, ast.ExceptHandler)
+        ):
             complexity += 1
         elif isinstance(child, ast.BoolOp):
             complexity += len(child.values) - 1

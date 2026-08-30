@@ -52,6 +52,76 @@ Usage::
     python -m zephyr.gov_enforcement.rule_bridge.worktree_drift_watchdog <root> --once
     python -m zephyr.gov_enforcement.rule_bridge.worktree_drift_watchdog <root> --daemon
     python -m zephyr.gov_enforcement.rule_bridge.worktree_drift_watchdog <root> --status
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root，类型注解 str | Path
+#   code: worktree_drift_watchdog.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: grace_seconds 参数
+#   fields: 参数 grace_seconds（无注解）
+#   code: worktree_drift_watchdog.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: alert_enabled 参数
+#   fields: 参数 alert_enabled（无注解）
+#   code: worktree_drift_watchdog.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: hot_only 参数
+#   fields: 参数 hot_only（无注解）
+#   code: worktree_drift_watchdog.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① scan_once
+#   name_en: scan_once
+#   intro: 单周期扫描：tracked 漂移四路分流（claimed/grace/dedup/alert）+ 自愈。
+#   desc: 单周期扫描：tracked 漂移四路分流（claimed/grace/dedup/alert）+ 自愈。 Args: project_root: 项目根（worktree 调用自…；源码 L455-L649
+#   inputs: project_root grace_seconds alert_enabled hot_only
+#   outputs: dict
+# - id: A2
+#   name_zh: ② ensure_daemon
+#   name_en: ensure_daemon
+#   intro: 确保看门狗 daemon 在跑（post-commit reconciler 事件轨调用点）。
+#   desc: 确保看门狗 daemon 在跑（post-commit reconciler 事件轨调用点）。 幂等：PID 文件存活则直接返回；否则 detached spawn 并写 PID…；源码 L672-L719
+#   inputs: project_root interval
+#   outputs: bool
+# - id: A3
+#   name_zh: ③ run_daemon
+#   name_en: run_daemon
+#   intro: 看门狗主循环：周期 scan_once；无活跃 session 超 _IDLE_EXIT_SECONDS 自动退出。
+#   desc: 看门狗主循环：周期 scan_once；无活跃 session 超 _IDLE_EXIT_SECONDS 自动退出。；源码 L745-L798
+#   inputs: project_root interval
+#   outputs: int
+# - id: A4
+#   name_zh: ④ make_worktree_drift_watchdog_reconciler
+#   name_en: make_worktree_drift_watchdog_reconciler
+#   intro: 构造 GATE-WORKTREE-DRIFT-WATCHDOG post-commit reconciler（ensu…
+#   desc: 构造 GATE-WORKTREE-DRIFT-WATCHDOG post-commit reconciler（ensure-daemon + 即时一扫）。 trigger：任何非…；源码 L804-L852
+#   inputs: gateway
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: dict
+#   name_en: dict
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: git_commit_gateway (_register_default_reconcilers: make_worktree_drift_watchdog…
+# - id: O2
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: git_commit_gateway (_register_default_reconcilers: make_worktree_drift_watchdog…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations
@@ -513,11 +583,7 @@ def scan_once(
             # 走既有 claim_files(adopt_prior_work=True) 自动认领+审计留痕，替代告警处置；
             # 0/>1 活跃会话（归属歧义）或 claim 失败 → 维持原快照+告警路径（fail-closed
             # 不放松）。observe-only（alert_enabled=False）不触发——O6 观察员不落状态变更。
-            if (
-                alert_enabled
-                and len(sessions) == 1
-                and _auto_claim_single_session(root, rel, sessions[0])
-            ):
+            if alert_enabled and len(sessions) == 1 and _auto_claim_single_session(root, rel, sessions[0]):
                 summary["auto_claimed"] += 1
                 claimed[rel] = sessions[0]  # 本周期后续一致视为已认领
                 _audit(
@@ -752,7 +818,7 @@ def make_worktree_drift_watchdog_reconciler(gateway: object):
     def _trigger(committed_files: list[str]) -> bool:
         return bool(committed_files)
 
-    def _reconcile(committed_files: list[str], session_id: str) -> "ReconcileResult":
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
         try:
             ensure_daemon(project_root)
             # #ARCH-279 裁定B1：WriteAudit 守护随 post-commit 链幂等挂载（已跑直接返回；

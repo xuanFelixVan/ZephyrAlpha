@@ -31,6 +31,32 @@ ZephyrAlpha 容量保障体系 (Capacity Assurance) — MOD-INF-001 · 基础设
 Version: 2.6.0
 Module ID: MOD-INF-001
 Source: docs/03_modules/_domain-infra_ops/capacity-assurance/blueprint.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: __init__.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包公共面再导出
+#   name_en: __init__ re-export
+#   intro: 再导出 contracts, cross_module_integration, module_id, risk_mitigation, schema, sl…
+#   desc: __init__ import L0；__all__ 12 项（AST 事实）
+#   inputs: I1
+#   outputs: __all__ 公共符号表
+# 层: 输出
+# - id: O1
+#   name_zh: 公共 API 面（12 符号）
+#   name_en: __all__
+#   intro: contracts, cross_module_integration, module_id, risk_mitigation, schema, sli_in…
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 __version__ = "2.6.0"  # 5.153.12 修复: 使用 __version__ 双下划线约定

@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_dangling_reference_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""dangling_reference_gate.py — AGENTS.md §X.Y 悬空引用自动检测门禁（DANGLING-REFERENCE）
+r"""
+dangling_reference_gate.py — AGENTS.md §X.Y 悬空引用自动检测门禁（DANGLING-REFERENCE）
 
 检测 staged 文件中**新增的** ``AGENTS.md §X.Y`` 引用是否指向 AGENTS.md 中
 实际存在的章节号。命中则阻断 commit（``DANGLING_REFERENCE_VIOLATION``）。
@@ -51,9 +52,9 @@ canonical 扩展点也不覆盖 §X.Y——全项目无任何机制检测 AGENTS
    根因级检查，但应在能力重叠检查前完成。
 5. **不检测 blueprint.md §X.Y**：蓝图内部引用是合法的（blueprint.md 有自己
    的章节体系），只有 ``AGENTS.md §X.Y`` 才检测。
-6. **正则提取章节号**：``^#{2,4}\\s+(\\d+(?:\\.\\d+)*)`` 匹配 ``## 4.``、
+6. **正则提取章节号**：``^#{2,4}\s+(\d+(?:\.\d+)*)`` 匹配 ``## 4.``、
    ``### 4.1``、``#### 4.2.1`` 等格式，捕获组为 ``4`` / ``4.1`` / ``4.2.1``。
-7. **引用正则**：``AGENTS\\.md\\s*§(\\d+(?:\\.\\d+)*)`` 匹配
+7. **引用正则**：``AGENTS\.md\s*§(\d+(?:\.\d+)*)`` 匹配
    ``AGENTS.md §6.9`` / ``AGENTS.md§6.9`` 等变体。
 
 Usage::
@@ -62,6 +63,32 @@ Usage::
 
     registry.register(make_dangling_reference_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: dangling_reference_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_dangling_reference_gate
+#   name_en: make_dangling_reference_gate
+#   intro: 构造 AGENTS.md §X.Y 悬空引用检测门禁 GateSpec（fail-closed，阻断型）。
+#   desc: 构造 AGENTS.md §X.Y 悬空引用检测门禁 GateSpec（fail-closed，阻断型）。 Returns: GateSpec(gate_id="DANGLING…；源码 L177-L250
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

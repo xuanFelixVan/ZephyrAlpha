@@ -14,7 +14,8 @@
 # [TESTS] —
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""blueprint_format_gate.py — [BLUEPRINT] 头部 module_id 格式阻断门禁（BLUEPRINT-FORMAT，裁定#214 Phase 0 防蔓延）
+"""
+blueprint_format_gate.py — [BLUEPRINT] 头部 module_id 格式阻断门禁（BLUEPRINT-FORMAT，裁定#214 Phase 0 防蔓延）
 
 检测 staged .py 文件 added 行中的 [BLUEPRINT] 头部，校验 module_id 格式
 是否符合裁定#208 双轨制（MOD-/SH- 前缀）。
@@ -47,6 +48,32 @@ Usage::
 
     from zephyr.gov_enforcement.commit_gates.blueprint_format_gate import make_blueprint_format_gate
     registry.register(make_blueprint_format_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: blueprint_format_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_blueprint_format_gate
+#   name_en: make_blueprint_format_gate
+#   intro: 构造 [BLUEPRINT] 头部格式门禁 GateSpec（硬阻断型）。
+#   desc: 构造 [BLUEPRINT] 头部格式门禁 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="BLUEPRINT-FORMAT", prior…；源码 L147-L194
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

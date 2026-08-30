@@ -15,6 +15,65 @@
 # [A_module] module_id=MOD-INF-031 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: fix_budget.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: db_path 参数
+#   fields: 参数 db_path（无注解）
+#   code: fix_budget.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FixBudget
+#   name_en: FixBudget
+#   intro: class FixBudget 源码 L97-L254
+#   desc: 公共方法（定义序）: daily_limit, monthly_limit, llm_token_limit, check, consume, get_info；源码 L97-L254
+#   inputs: config db_path
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② DriftBudgetLink
+#   name_en: DriftBudgetLink
+#   intro: class DriftBudgetLink 源码 L257-L293
+#   desc: 公共方法（定义序）: drift_fix_limit, drift_fix_count, evaluate_drift_budget, record_drift_fix；源码 L257-L293
+#   inputs: fix_budget
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ FixStormGuard
+#   name_en: FixStormGuard
+#   intro: class FixStormGuard 源码 L296-L350
+#   desc: 公共方法（定义序）: short_window, short_threshold, long_window, long_threshold, record, check, is_active；源码 L296-L350
+#   inputs: config
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ LLMCostEstimator
+#   name_en: LLMCostEstimator
+#   intro: class LLMCostEstimator 源码 L353-L381
+#   desc: 公共方法（定义序）: cost_per_1k_input, cost_per_1k_output, estimate, estimate_for_fix；源码 L353-L381
+#   inputs: cost_per_1k_input cost_per_1k_output
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: FixBudget, DriftBudgetLink, FixStormGuard, LLMCostEstimator
+#   downstream: engine.py;llm_fix_adapter.py;batch_fixer.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
+"""
+
 from __future__ import annotations
 
 import logging

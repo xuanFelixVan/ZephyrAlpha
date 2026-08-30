@@ -14,9 +14,37 @@
 # [TESTS]
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""门禁类型定义——GateType 枚举与 gate 相关 dataclass（GateContext/GateResult 等）。
+"""
+门禁类型定义——GateType 枚举与 gate 相关 dataclass（GateContext/GateResult 等）。
 
 定义门禁系统的类型契约，供 gate_engine / gate_pipeline / gate_simulator 共用。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: gate_types.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① GateResult
+#   name_en: GateResult
+#   intro: class GateResult 源码 L77-L99
+#   desc: 公共方法（定义序）: p0_violations, has_p0, summary；源码 L77-L99
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: GateResult
+#   downstream: zephyr.gov_enforcement.rule_enforcement.gate_engine; zephyr.shared.contracts.co…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

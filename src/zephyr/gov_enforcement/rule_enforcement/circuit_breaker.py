@@ -51,6 +51,85 @@ CircuitBreakerGateway (CBG) — 模块间调用单向熔断器
 
 CLOSED 状态：装饰器零运行时开销（仅在抛出异常时写 SQLite）。
 OPEN 状态：调用立即抛出 CircuitOpenError，不执行被装饰函数。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: target_module 参数
+#   fields: 参数 target_module，类型注解 str
+#   code: circuit_breaker.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: threshold 参数
+#   fields: 参数 threshold（无注解）
+#   code: circuit_breaker.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: caller_module 参数
+#   fields: 参数 caller_module（无注解）
+#   code: circuit_breaker.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: db_path 参数
+#   fields: 参数 db_path（无注解）
+#   code: circuit_breaker.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CircuitBreakerCheck
+#   name_en: CircuitBreakerCheck
+#   intro: GateEngine 第 17 种 CheckType 实现接口。
+#   desc: GateEngine 第 17 种 CheckType 实现接口。 在 gate_engine.py `_run_check()` 分发块中以 ct == "circuit_br…；公共方法（定义序）: is_open…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② CBGManager
+#   name_en: CBGManager
+#   intro: 熔断器状态管理器：SQLite circuit_breaker_state 表的 CRUD 封装。
+#   desc: 熔断器状态管理器：SQLite circuit_breaker_state 表的 CRUD 封装。 参数 ---- db_path SQLite 数据库路径；默认 DB_PATH…；公共方法（定义序）: get_sta…
+#   inputs: db_path auto_init
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ circuit_breaker
+#   name_en: circuit_breaker
+#   intro: 装饰跨模块调用，自动统计失败并在达到阈值时触发 CLOSED->OPEN。
+#   desc: 装饰跨模块调用，自动统计失败并在达到阈值时触发 CLOSED->OPEN。 参数 ---- target_module 被调用模块的标识字符串（如 "M2"、"L2a"）。 th…；源码 L507-L581
+#   inputs: target_module threshold caller_module db_path
+#   outputs: Callable[[_F], _F]
+# - id: A4
+#   name_zh: ④ register_compliance
+#   name_en: register_compliance
+#   intro: 注册 L08 重试 + 限流策略到 CBG 全局注册表。
+#   desc: 注册 L08 重试 + 限流策略到 CBG 全局注册表。 由各模块初始化代码调用，与 gate_engine 注册表协作：gate_engine 在 circuit_breake…；源码 L592-L630
+#   inputs: caller_module target_module max_retries retry_delay_s rate_limit_per_…
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ get_compliance
+#   name_en: get_compliance
+#   intro: 查询 L08 策略注册表。
+#   desc: 查询 L08 策略注册表。；源码 L633-L635
+#   inputs: caller_module target_module
+#   outputs: dict[str, Any] | None
+#   （注：A5 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: Callable[[_F], _F]
+#   name_en: Callable[[_F], _F]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: dict[str, Any] | None
+#   name_en: dict[str, Any] | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations

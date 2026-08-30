@@ -14,7 +14,8 @@
 # [TESTS] —
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-r"""relative_path_literal_gate.py — 相对路径字面量硬阻断门禁（RELATIVE-PATH-LITERAL）
+r"""
+relative_path_literal_gate.py — 相对路径字面量硬阻断门禁（RELATIVE-PATH-LITERAL）
 
 补强 DIRECTORY-CONTRACT-GATE（目录区约束）和 HARDCODED-URL（URL 硬编码）的盲区——
 代码内字符串字面量中的相对路径（"./" / "../" / "~/"）违反"所有路径必须使用绝对路径"
@@ -55,6 +56,32 @@ Usage::
     )
 
     registry.register(make_relative_path_literal_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: relative_path_literal_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_relative_path_literal_gate
+#   name_en: make_relative_path_literal_gate
+#   intro: 构造相对路径字面量硬阻断 GateSpec（硬阻断型）。
+#   desc: 构造相对路径字面量硬阻断 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="RELATIVE-PATH-LITERAL", priority=…；源码 L187-L215
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

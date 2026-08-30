@@ -14,7 +14,8 @@
 # [TESTS] —
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""ch_final_gate.py — ch_writer.query() 直接调用阻断门禁（CH-FINAL-GATE，裁定 #ARCH-CH-007 B5）
+"""
+ch_final_gate.py — ch_writer.query() 直接调用阻断门禁（CH-FINAL-GATE，裁定 #ARCH-CH-007 B5）
 
 检测 staged .py 文件中是否直接调用 ch_writer.query()。
 违反裁定 #ARCH-CH-007：所有 ClickHouse 查询应走 ch_reader.query() 自动注入 FINAL。
@@ -38,6 +39,32 @@ Usage::
     from zephyr.gov_enforcement.commit_gates.ch_final_gate import make_ch_final_gate
 
     registry.register(make_ch_final_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: ch_final_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_ch_final_gate
+#   name_en: make_ch_final_gate
+#   intro: 构造 ch_writer.query() 直接调用阻断门禁 GateSpec（硬阻断型）。
+#   desc: 构造 ch_writer.query() 直接调用阻断门禁 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="CH-FINAL-GATE",…；源码 L214-L236
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -101,7 +128,7 @@ def _is_infra_exempt(rel_path: str) -> bool:
 def _check_new_file(abs_path: str, rel_path: str) -> str | None:
     """新增文件全文件 AST 检测，返回违规描述或 None。"""
     try:
-        with open(abs_path, "r", encoding="utf-8", errors="replace") as f:
+        with open(abs_path, encoding="utf-8", errors="replace") as f:
             content = f.read()
     except OSError as e:
         logger.warning("CH-FINAL-GATE skip %s: 读取失败(%s)", abs_path, e)

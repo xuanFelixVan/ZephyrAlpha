@@ -23,6 +23,115 @@ SYS-MASTER-001 Compliance Checker
 
 用法：python -m zephyr.gov_enforcement.rule_enforcement.sys_master_compliance [--json]
 exit: 0=pass, 1=findings
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: module_id 参数
+#   fields: 参数 module_id，类型注解 str
+#   code: sys_master_compliance.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: filepath 参数
+#   fields: 参数 filepath，类型注解 Path
+#   code: sys_master_compliance.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① load_blueprint_path
+#   name_en: load_blueprint_path
+#   intro: 从 blueprint_registry.yaml（SSoT 派生）查询蓝图磁盘路径，不硬编码。
+#   desc: 从 blueprint_registry.yaml（SSoT 派生）查询蓝图磁盘路径，不硬编码。 真源链：blueprint.md frontmatter -> sync_reg…；源码 L165-L181
+#   inputs: module_id
+#   outputs: Path | None
+# - id: A2
+#   name_zh: ② extract_frontmatter
+#   name_en: extract_frontmatter
+#   intro: extract_frontmatter(filepath) 源码 L189-L201
+#   desc: 源码 L189-L201
+#   inputs: filepath
+#   outputs: dict
+# - id: A3
+#   name_zh: ③ check_blueprint_existence
+#   name_en: check_blueprint_existence
+#   intro: check_blueprint_existence() 源码 L204-L226
+#   desc: 源码 L204-L226
+#   inputs: 无参数
+#   outputs: list[dict]
+# - id: A4
+#   name_zh: ④ check_cold_start_integration
+#   name_en: check_cold_start_integration
+#   intro: check_cold_start_integration() 源码 L229-L258
+#   desc: 源码 L229-L258
+#   inputs: 无参数
+#   outputs: list[dict]
+# - id: A5
+#   name_zh: ⑤ check_depends_on_integrity
+#   name_en: check_depends_on_integrity
+#   intro: check_depends_on_integrity() 源码 L261-L294
+#   desc: 源码 L261-L294
+#   inputs: 无参数
+#   outputs: list[dict]
+# - id: A6
+#   name_zh: ⑥ check_ai_rules_count
+#   name_en: check_ai_rules_count
+#   intro: check_ai_rules_count() 源码 L297-L312
+#   desc: 源码 L297-L312
+#   inputs: 无参数
+#   outputs: list[dict]
+# - id: A7
+#   name_zh: ⑦ check_gate_registry_entry
+#   name_en: check_gate_registry_entry
+#   intro: check_gate_registry_entry() 源码 L315-L334
+#   desc: 源码 L315-L334
+#   inputs: 无参数
+#   outputs: list[dict]
+# - id: A8
+#   name_zh: ⑧ check_version_consistency
+#   name_en: check_version_consistency
+#   intro: check_version_consistency() 源码 L337-L410
+#   desc: 源码 L337-L410
+#   inputs: 无参数
+#   outputs: list[dict]
+# - id: A9
+#   name_zh: ⑨ check_sli_data_sources
+#   name_en: check_sli_data_sources
+#   intro: check_sli_data_sources() 源码 L413-L470
+#   desc: 源码 L413-L470
+#   inputs: 无参数
+#   outputs: list[dict]
+# - id: A10
+#   name_zh: ⑩ check_crosscheck_script
+#   name_en: check_crosscheck_script
+#   intro: check_crosscheck_script() 源码 L473-L505
+#   desc: 源码 L473-L505
+#   inputs: 无参数
+#   outputs: list[dict]
+#   （注：A10 之后另有 2 个公共定义未列入（含 0 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: Path | None
+#   name_en: Path | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: dict
+#   name_en: dict
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> A10
+# A10 --> O1
 """
 
 from __future__ import annotations

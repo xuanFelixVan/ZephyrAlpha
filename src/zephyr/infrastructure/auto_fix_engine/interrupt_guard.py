@@ -15,6 +15,41 @@
 # [A_module] module_id=MOD-INF-031 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: wal_dir 参数
+#   fields: 参数 wal_dir（无注解）
+#   code: interrupt_guard.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: db_path 参数
+#   fields: 参数 db_path（无注解）
+#   code: interrupt_guard.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① InterruptGuard
+#   name_en: InterruptGuard
+#   intro: class InterruptGuard 源码 L70-L265
+#   desc: 公共方法（定义序）: wal_dir, db_path, active_fixes, handlers_installed, install_handlers, remove_handlers, begin_fix,…
+#   inputs: wal_dir db_path
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: InterruptGuard
+#   downstream: engine.py;fix_scheduler.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
+"""
+
 from __future__ import annotations
 
 import atexit

@@ -15,7 +15,84 @@
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""对抗样本生成器——5 种攻击策略用于门禁验证（Adversarial sample generator with 5 attack strategies for gate validation）"""
+"""
+对抗样本生成器——5 种攻击策略用于门禁验证（Adversarial sample generator with 5 attack strategies for gate validation）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: adversarial_strategies.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① AttackStrategy
+#   name_en: AttackStrategy
+#   intro: class AttackStrategy 源码 L139-L148
+#   desc: 公共方法（定义序）: name, generate, detect；源码 L139-L148
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② PromptInjection
+#   name_en: PromptInjection
+#   intro: class PromptInjection 源码 L151-L179
+#   desc: 公共方法（定义序）: name, generate, detect；源码 L151-L179
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ Jailbreak
+#   name_en: Jailbreak
+#   intro: class Jailbreak 源码 L182-L211
+#   desc: 公共方法（定义序）: name, generate, detect；源码 L182-L211
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ DataPoisoning
+#   name_en: DataPoisoning
+#   intro: class DataPoisoning 源码 L214-L235
+#   desc: 公共方法（定义序）: name, generate, detect；源码 L214-L235
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ ModelEvasion
+#   name_en: ModelEvasion
+#   intro: class ModelEvasion 源码 L238-L264
+#   desc: 公共方法（定义序）: name, generate, detect；源码 L238-L264
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ OutputManipulation
+#   name_en: OutputManipulation
+#   intro: class OutputManipulation 源码 L267-L288
+#   desc: 公共方法（定义序）: name, generate, detect；源码 L267-L288
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A7
+#   name_zh: ⑦ AdversarialSampleGenerator
+#   name_en: AdversarialSampleGenerator
+#   intro: class AdversarialSampleGenerator 源码 L291-L315
+#   desc: 公共方法（定义序）: generate, detect, list_strategies；源码 L291-L315
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A7 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（9 定义）
+#   name_en: public defs
+#   intro: AttackStrategy, PromptInjection, Jailbreak, DataPoisoning, ModelEvasion, Output…
+#   downstream: zephyr.gov_enforcement.rule_enforcement.adversarial_validation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> O1
+"""
 
 from __future__ import annotations
 

@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/rule_bridge/test_gate_auto_registrar.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""gate_auto_registrar.py — YAML 驱动的 in-process gate 自动注册器（#ARCH-GATE-REGISTRY-AUTO-001 Phase 3）
+"""
+gate_auto_registrar.py — YAML 驱动的 in-process gate 自动注册器（#ARCH-GATE-REGISTRY-AUTO-001 Phase 3）
 
 从 in_process_gate_registry.yaml 读取 gate 注册信息，动态 import + register，
 替代 git_commit_gateway.py 中的 75 个显式 import + register 硬编码。
@@ -54,6 +55,50 @@ Usage::
     failed = auto_register_gates(self._gate_registry, self.project_root)
     if failed:
         logger.warning(f"gate_auto_registrar failed for {len(failed)} gates: {failed}")
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root，类型注解 Path
+#   code: gate_auto_registrar.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: registry 参数
+#   fields: 参数 registry，类型注解 CommitGateRegistry
+#   code: gate_auto_registrar.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① load_gate_entries
+#   name_en: load_gate_entries
+#   intro: 从 in_process_gate_registry.yaml 加载 gate 注册条目。
+#   desc: 从 in_process_gate_registry.yaml 加载 gate 注册条目。 Args: project_root: 项目根路径。 Returns: gate 条目…；源码 L126-L149
+#   inputs: project_root
+#   outputs: list[dict[str, Any]]
+# - id: A2
+#   name_zh: ② auto_register_gates
+#   name_en: auto_register_gates
+#   intro: 从 YAML 动态 import + register 所有 enabled 的 in-process gate。
+#   desc: 从 YAML 动态 import + register 所有 enabled 的 in-process gate。 Args: registry: CommitGateRegis…；源码 L152-L224
+#   inputs: registry project_root
+#   outputs: list[tuple[str, str]]
+# 层: 输出
+# - id: O1
+#   name_zh: list[dict[str, Any]]
+#   name_en: list[dict[str, Any]]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# - id: O2
+#   name_zh: list[tuple[str, str]]
+#   name_en: list[tuple[str, str]]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

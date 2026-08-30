@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_hardcoded_url_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""hardcoded_url_gate.py — 硬编码 localhost URL 阻断门禁（NO-HARDCODED-URL，§5.160.9 防复发）
+"""
+hardcoded_url_gate.py — 硬编码 localhost URL 阻断门禁（NO-HARDCODED-URL，§5.160.9 防复发）
 
 检测 staged .py 文件 added 行中的 ``http://localhost:`` / ``https://localhost:``
 字面量——违反 DEFAULT_OLLAMA_URL SSoT 原则（§5.160.9），应改用
@@ -51,6 +52,32 @@ Usage::
     from zephyr.gov_enforcement.commit_gates.hardcoded_url_gate import make_hardcoded_url_gate
 
     registry.register(make_hardcoded_url_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: hardcoded_url_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_hardcoded_url_gate
+#   name_en: make_hardcoded_url_gate
+#   intro: 构造硬编码 localhost URL 阻断 GateSpec（硬阻断型）。
+#   desc: 构造硬编码 localhost URL 阻断 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="NO-HARDCODED-URL", prio…；源码 L160-L190
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

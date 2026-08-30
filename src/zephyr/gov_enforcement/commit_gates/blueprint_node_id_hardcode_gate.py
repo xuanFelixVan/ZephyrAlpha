@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # M03豁免: AI趋同演化(与pure_shim_gate.py相似结构),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
-"""blueprint_node_id_hardcode_gate.py — blueprint.md node_id/edge_id 硬编码阻断门禁
+r"""
+blueprint_node_id_hardcode_gate.py — blueprint.md node_id/edge_id 硬编码阻断门禁
 
 检测 staged blueprint.md 文件中是否硬编码 node_id/edge_id（文档引用铁律）。
 in-process gate，注册到 CommitGateRegistry，在 GitCommitGateway 的 check_all() 阶段执行。
@@ -35,7 +36,7 @@ SSoT 治本（2026-08-04，三源→单源）
 -----------------------------------
 原设计：本 gate 内联 _NODE_ID_HARDCODE_RE 正则，与 check_doc_node_id_hardcode.py
 （GATE-DOC-NODE-ID）和 validate_blueprint_provenance.py（GATE-12）形成三源。三源正则
-已漂移（check_doc_node_id_hardcode.py 无尾 \\b，另两处有尾 \\b，行为差异已实证）。
+已漂移（check_doc_node_id_hardcode.py 无尾 \b，另两处有尾 \b，行为差异已实证）。
 
 治本：检测逻辑真源 = check_doc_node_id_hardcode.py（专门检测器，已有 --ci --files 接口）。
 本 gate 改为 subprocess 调用（对标 pure_shim_gate.py → check_pure_shim.py 模式），
@@ -58,6 +59,32 @@ Usage::
 
     registry.register(make_blueprint_node_id_hardcode_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: blueprint_node_id_hardcode_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_blueprint_node_id_hardcode_gate
+#   name_en: make_blueprint_node_id_hardcode_gate
+#   intro: 构造 blueprint.md node_id/edge_id 硬编码阻断门禁 GateSpec（硬阻断型）。
+#   desc: 构造 blueprint.md node_id/edge_id 硬编码阻断门禁 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="BLUEPR…；源码 L241-L271
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

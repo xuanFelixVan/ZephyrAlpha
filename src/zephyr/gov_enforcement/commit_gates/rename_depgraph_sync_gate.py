@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_rename_depgraph_sync_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""rename_depgraph_sync_gate.py — 文件重命名后 depgraph 未同步阻断门禁（RENAME-DEPGRAPH-SYNC）
+"""
+rename_depgraph_sync_gate.py — 文件重命名后 depgraph 未同步阻断门禁（RENAME-DEPGRAPH-SYNC）
 
 检测 staged .py 文件重命名的新路径在 depgraph (PostgreSQL) nodes 表中无对应
 ``file_path`` 记录——文件改名后未重建 depgraph，导致生成器读 stale depgraph
@@ -60,6 +61,32 @@ Usage::
 
     registry.register(make_rename_depgraph_sync_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: rename_depgraph_sync_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_rename_depgraph_sync_gate
+#   name_en: make_rename_depgraph_sync_gate
+#   intro: 构造文件重命名 depgraph 同步阻断门禁 GateSpec（硬阻断型）。
+#   desc: 构造文件重命名 depgraph 同步阻断门禁 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="RENAME-DEPGRAPH-SYNC",…；源码 L196-L256
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

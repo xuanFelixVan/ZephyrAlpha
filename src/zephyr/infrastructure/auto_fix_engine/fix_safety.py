@@ -15,6 +15,84 @@
 # [A_module] module_id=MOD-INF-031 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: fix_safety.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SafetyGate
+#   name_en: SafetyGate
+#   intro: class SafetyGate 源码 L134-L174
+#   desc: 公共方法（定义序）: enabled, check；源码 L134-L174
+#   inputs: config
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② LockGuard
+#   name_en: LockGuard
+#   intro: class LockGuard 源码 L177-L207
+#   desc: 公共方法（定义序）: locks_dir, is_locked, check；源码 L177-L207
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ WriteSafety
+#   name_en: WriteSafety
+#   intro: class WriteSafety 源码 L210-L227
+#   desc: 公共方法（定义序）: atomic_write, verify_write；源码 L210-L227
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ FixValidator
+#   name_en: FixValidator
+#   intro: class FixValidator 源码 L230-L326
+#   desc: 公共方法（定义序）: project_root, validate_fix, run_pytest, run_mypy, run_ruff；源码 L230-L326
+#   inputs: project_root
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ CascadeBreaker
+#   name_en: CascadeBreaker
+#   intro: class CascadeBreaker 源码 L329-L406
+#   desc: 公共方法（定义序）: global_threshold, module_threshold, record, check；源码 L329-L406
+#   inputs: config
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ SandboxExecutor
+#   name_en: SandboxExecutor
+#   intro: class SandboxExecutor 源码 L409-L438
+#   desc: 公共方法（定义序）: base_dir, execute；源码 L409-L438
+#   inputs: base_dir
+#   outputs: 返回值
+# - id: A7
+#   name_zh: ⑦ SecretLeakGuard
+#   name_en: SecretLeakGuard
+#   intro: class SecretLeakGuard 源码 L441-L472
+#   desc: 公共方法（定义序）: patterns, scan, scan_and_redact；源码 L441-L472
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: SafetyGate, LockGuard, WriteSafety, FixValidator, CascadeBreaker, SandboxExecut…
+#   downstream: engine.py;llm_fix_adapter.py;self_heal_agent.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> O1
+"""
+
 from __future__ import annotations
 
 import logging

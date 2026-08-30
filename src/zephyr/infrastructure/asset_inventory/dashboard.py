@@ -15,10 +15,55 @@
 # [A_module] module_id=MOD-INF-026 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""AssetDashboard — MOD-INF-026 资产健康仪表盘生成器
+"""
+AssetDashboard — MOD-INF-026 资产健康仪表盘生成器
 
 蓝图 §5 + §27：读取 unified-asset-index.yaml -> 生成 dashboard.json
-含健康评分、分类统计、趋势数据、告警。"""
+含健康评分、分类统计、趋势数据、告警。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: root 参数
+#   fields: 参数 root（无注解）
+#   code: dashboard.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① Dashboard
+#   name_en: Dashboard
+#   intro: 资产健康仪表盘生成器——Phase 1 实现（蓝图 §5）。
+#   desc: 资产健康仪表盘生成器——Phase 1 实现（蓝图 §5）。；公共方法（定义序）: generate, save, print_summary, main；源码 L83-L164
+#   inputs: root
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② main
+#   name_en: main
+#   intro: main() 源码 L173-L174
+#   desc: 源码 L173-L174
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ KnowledgeTransferGate
+#   name_en: KnowledgeTransferGate
+#   intro: Session 手交时的资产摘要注入——下一个 AI session 从 unified-asset-index 快速…
+#   desc: Session 手交时的资产摘要注入——下一个 AI session 从 unified-asset-index 快速定位。；公共方法（定义序）: root, generate_summary, write_hando…
+#   inputs: project_root
+#   outputs: 返回值
+#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: Dashboard, main, KnowledgeTransferGate
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
+"""
 
 import json
 import logging

@@ -15,6 +15,41 @@
 # [A_module] module_id=MOD-INF-031 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: max_rounds 参数
+#   fields: 参数 max_rounds（无注解）
+#   code: self_heal_agent.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: circuit_threshold 参数
+#   fields: 参数 circuit_threshold（无注解）
+#   code: self_heal_agent.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SelfHealAgent
+#   name_en: SelfHealAgent
+#   intro: class SelfHealAgent 源码 L70-L242
+#   desc: 公共方法（定义序）: max_rounds, circuit_threshold, consecutive_failures, circuit_open, heal, observe, orient, decide,…
+#   inputs: max_rounds circuit_threshold
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SelfHealAgent
+#   downstream: engine.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
+"""
+
 from __future__ import annotations
 
 import logging

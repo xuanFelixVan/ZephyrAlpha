@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/shared/test_phase4_gate_check.py
 # [A_module] module_id=MOD-INF-024 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""budget_enforcement.rbac_bridge — 基础设施层 RBAC 桥接适配器。
+"""
+budget_enforcement.rbac_bridge — 基础设施层 RBAC 桥接适配器。
 
 本模块是 infrastructure 层对 governance.agent_spec.rbac_bridge.BudgetRBACBridge
 的适配层——不是纯 re-export shim。它在真源之上增加：
@@ -26,6 +27,38 @@
 本模块（适配层）：增加 infra 层关切，不重复评估逻辑（委托给真源）。
 
 test_phase4_gate_check.test_phase4_gate_all_contracts_exist 期望本模块可导入。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: token_limit 参数
+#   fields: 参数 token_limit（无注解）
+#   code: rbac_bridge.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: warning_threshold 参数
+#   fields: 参数 warning_threshold（无注解）
+#   code: rbac_bridge.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① BudgetEnforcementRBACBridge
+#   name_en: BudgetEnforcementRBACBridge
+#   intro: 基础设施层预算-RBAC 桥接适配器。
+#   desc: 基础设施层预算-RBAC 桥接适配器。 在 governance.agent_spec.rbac_bridge.BudgetRBACBridge（真源）之上增加： - 基础设施层…；公共方法（定义序）: evaluat…
+#   inputs: token_limit warning_threshold
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: BudgetEnforcementRBACBridge
+#   downstream: zephyr.infrastructure.budget_enforcement
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

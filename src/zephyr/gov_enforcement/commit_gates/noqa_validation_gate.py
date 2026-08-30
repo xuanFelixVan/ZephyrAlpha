@@ -14,7 +14,8 @@
 # [TESTS] —
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""noqa_validation_gate.py — 自定义 noqa 标记合规性门禁（NOQA-VALIDATION，ARCH-NOQA-GOV-001 治本）
+r"""
+noqa_validation_gate.py — 自定义 noqa 标记合规性门禁（NOQA-VALIDATION，ARCH-NOQA-GOV-001 治本）
 
 治本（2026-07-17，ARCH-NOQA-GOV-001）：项目5种自定义 noqa 标记（m02-manual /
 m03-duplicate / m07-orphan / m10-time-trigger / gate-vocab）散落221处使用但无门禁
@@ -25,7 +26,7 @@ m03-duplicate / m07-orphan / m10-time-trigger / gate-vocab）散落221处使用�
     1. 加载 noqa_exempt_registry.yaml（SSoT，合法标记清单）
     2. 遍历 staged .py 文件
     3. 正则提取 `# noqa: <marker>` 标记
-    4. 跳过 ruff/flake8 标准码（格式 `^[A-Z]+\\d+$`，如 E402/BLE001/S324）
+    4. 跳过 ruff/flake8 标准码（格式 `^[A-Z]+\d+$`，如 E402/BLE001/S324）
     5. 自定义标记 MUST 在 registry 预登记（阻断未登记标记）
     6. 标记行 MUST 附理由（marker 之后同行文本 >= 10 字符，阻断裸豁免）
 
@@ -39,6 +40,32 @@ Usage::
 
     from zephyr.gov_enforcement.commit_gates.noqa_validation_gate import make_noqa_validation_gate
     registry.register(make_noqa_validation_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: noqa_validation_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_noqa_validation_gate
+#   name_en: make_noqa_validation_gate
+#   intro: 构造 noqa 标记合规性门禁 GateSpec（硬阻断型）。
+#   desc: 构造 noqa 标记合规性门禁 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="NOQA-VALIDATION", priority=71)…；源码 L233-L267
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

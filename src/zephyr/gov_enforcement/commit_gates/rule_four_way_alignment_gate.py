@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_rule_four_way_alignment_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""rule_four_way_alignment_gate.py — 规则四方对齐门禁（RULE-FOUR-WAY-ALIGN）
+"""
+rule_four_way_alignment_gate.py — 规则四方对齐门禁（RULE-FOUR-WAY-ALIGN）
 
 检测 staged 文件中规则文件或 rule_catalog_registry.yaml 变更时，触发四方对齐检查
 （YAML ↔ Catalog ↔ Disk ↔ Code）。命中则阻断 commit。
@@ -43,6 +44,32 @@ Usage::
     )
 
     registry.register(make_rule_four_way_alignment_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: rule_four_way_alignment_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_rule_four_way_alignment_gate
+#   name_en: make_rule_four_way_alignment_gate
+#   intro: 构造规则四方对齐门禁 GateSpec（fail-open on env error, fail-closed on…
+#   desc: 构造规则四方对齐门禁 GateSpec（fail-open on env error, fail-closed on violations）。 Returns: GateSpec…；源码 L129-L202
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -15,6 +15,51 @@
 # [A_module] module_id=MOD-INF-031 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: max_workers 参数
+#   fields: 参数 max_workers（无注解）
+#   code: batch_fixer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: fix_budget 参数
+#   fields: 参数 fix_budget（无注解）
+#   code: batch_fixer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: storm_guard 参数
+#   fields: 参数 storm_guard（无注解）
+#   code: batch_fixer.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: idempotency_guard 参数
+#   fields: 参数 idempotency_guard（无注解）
+#   code: batch_fixer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① BatchFixer
+#   name_en: BatchFixer
+#   intro: class BatchFixer 源码 L80-L225
+#   desc: 公共方法（定义序）: conflict_resolver, idempotency, storm_guard, budget, max_workers, execute_batch；源码 L80-L225
+#   inputs: max_workers fix_budget storm_guard idempotency_guard conflict_resolver
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: BatchFixer
+#   downstream: engine.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
+"""
+
 from __future__ import annotations
 
 import logging

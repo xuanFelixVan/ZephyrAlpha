@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_id_uniqueness_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""id_uniqueness_gate.py — pre-commit hook ID 唯一性门禁（Phase 3 reconciler->gate 收敛）
+"""
+id_uniqueness_gate.py — pre-commit hook ID 唯一性门禁（Phase 3 reconciler->gate 收敛）
 
 从 make_precommit_id_uniqueness_reconciler（post-commit warn）升级为 pre-commit 阻断 gate。
 --no-verify 绕不过 in-process gate，same-repo 重复 hook id 在 commit 前即被阻断。
@@ -26,6 +27,32 @@ fail-open/fail-closed 约定：
 - exit 0 = clean -> pass
 - exit 1 = violations -> block (fail-closed)
 - exit 2 = script error -> pass with warning (fail-open)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: id_uniqueness_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_id_uniqueness_gate
+#   name_en: make_id_uniqueness_gate
+#   intro: 构造 pre-commit hook ID 唯一性门禁 GateSpec（fail-closed 阻断型）。
+#   desc: 构造 pre-commit hook ID 唯一性门禁 GateSpec（fail-closed 阻断型）。 Returns: GateSpec(gate_id="ID-UNIQ…；源码 L76-L112
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

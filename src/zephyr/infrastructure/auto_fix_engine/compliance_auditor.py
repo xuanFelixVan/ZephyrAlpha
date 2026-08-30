@@ -15,6 +15,41 @@
 # [A_module] module_id=MOD-INF-031 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: db_path 参数
+#   fields: 参数 db_path（无注解）
+#   code: compliance_auditor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: retention_days 参数
+#   fields: 参数 retention_days（无注解）
+#   code: compliance_auditor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ComplianceAuditor
+#   name_en: ComplianceAuditor
+#   intro: class ComplianceAuditor 源码 L68-L207
+#   desc: 公共方法（定义序）: retention_days, audit_fix, verify_evidence, get_evidence, cleanup_expired；源码 L68-L207
+#   inputs: db_path retention_days
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: ComplianceAuditor
+#   downstream: engine.py;MOD-INF-020(audit-trail)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
+"""
+
 from __future__ import annotations
 
 import hashlib

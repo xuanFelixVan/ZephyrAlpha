@@ -15,10 +15,83 @@
 # [A_module] module_id=MOD-INF-026 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""AssetDiscoveryScanner — MOD-INF-026 L1 全量文件系统扫描器
+"""
+AssetDiscoveryScanner — MOD-INF-026 L1 全量文件系统扫描器
 
 蓝图 §3.1：遍历六大目录，为每个文件计算 SHA-256/大小/mtime，
 使用 ThreadPoolExecutor 并行计算，产出 raw-asset-scan.json。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: scan_a 参数
+#   fields: 参数 scan_a，类型注解 ScanResult
+#   code: scanner.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: scan_b 参数
+#   fields: 参数 scan_b，类型注解 ScanResult
+#   code: scanner.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① Scanner
+#   name_en: Scanner
+#   intro: 全量文件系统扫描器——Phase 1 实现（蓝图 §3.1）。
+#   desc: 全量文件系统扫描器——Phase 1 实现（蓝图 §3.1）。；公共方法（定义序）: tokenize_and_normalize, jaccard_estimate, get_threshold, compute_m…
+#   inputs: directories excludes max_workers timeout_seconds max_file_size_mb max…
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② main
+#   name_en: main
+#   intro: main() 源码 L540-L541
+#   desc: 源码 L540-L541
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ ConcurrentScanner
+#   name_en: ConcurrentScanner
+#   intro: 跨会话并发扫描器——Glide Window + SHA256 重试 + 锁感知跳过。
+#   desc: 跨会话并发扫描器——Glide Window + SHA256 重试 + 锁感知跳过。；公共方法（定义序）: verify_sha, scan_normal, lock_dir, is_locked, root, sc…
+#   inputs: project_root
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ merge_scans
+#   name_en: merge_scans
+#   intro: 多 Scanner 产出合并策略——保留最新 mtime 的版本。
+#   desc: 多 Scanner 产出合并策略——保留最新 mtime 的版本。；源码 L671-L697
+#   inputs: scan_a scan_b
+#   outputs: ScanResult
+# - id: A5
+#   name_zh: ⑤ SecurityFilter
+#   name_en: SecurityFilter
+#   intro: 安全隐私边界过滤器——六不得铁律的机械化执行。
+#   desc: 安全隐私边界过滤器——六不得铁律的机械化执行。；公共方法（定义序）: should_scan；源码 L736-L772
+#   inputs: max_size_bytes secret_patterns excluded_dirs
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ SecurityAccessLogger
+#   name_en: SecurityAccessLogger
+#   intro: 审计追踪——盘点器每次扫描的文件级访问记录。
+#   desc: 审计追踪——盘点器每次扫描的文件级访问记录。；公共方法（定义序）: log_skip, log_ok, recent_skips；源码 L775-L828
+#   inputs: log_dir
+#   outputs: 返回值
+#   （注：A6 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ScanResult
+#   name_en: ScanResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
 """
 
 import hashlib
@@ -322,7 +395,7 @@ class Scanner:
             return 0.0
         if len(a) != len(b):
             return 0.0
-        matches = sum(1 for x, y in zip(a, b) if x == y)
+        matches = sum(1 for x, y in zip(a, b, strict=False) if x == y)
         return matches / len(a)
 
     def _get_threshold(self, path: str) -> float:

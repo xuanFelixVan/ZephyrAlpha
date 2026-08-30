@@ -15,6 +15,36 @@
 # [A_module] module_id=MOD-INF-031 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: shadow_workspace.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ShadowWorkspace
+#   name_en: ShadowWorkspace
+#   intro: class ShadowWorkspace 源码 L119-L269
+#   desc: 公共方法（定义序）: run_type_check, run_test, run_ruff, run_pytest, run_mypy, run_lint, pytest_timeout, base_dir, pref…
+#   inputs: config
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: ShadowWorkspace
+#   downstream: engine.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 from __future__ import annotations
 
 import logging

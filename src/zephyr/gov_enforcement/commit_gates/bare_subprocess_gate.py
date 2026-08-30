@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: bare-subprocess  自身豁免: 本文件是BARE-SUBPROCESS检测器,源码含检测模式字符串(subprocess.run/Popen)用于AST匹配,非实际调用
-"""bare_subprocess_gate.py — 裸 subprocess 调用硬阻断门禁（BARE-SUBPROCESS）
+"""
+bare_subprocess_gate.py — 裸 subprocess 调用硬阻断门禁（BARE-SUBPROCESS）
 
 对应铁律 trae_067 RULE-EIGHTEEN-INV-001（CREATE_NO_WINDOW 强制）。
 裁定 #ARCH-RUNCOMMAND-WINDOW-FLASH-001 Phase 1.6 补漏后立项（P8）。
@@ -57,6 +58,32 @@ Usage::
     from zephyr.gov_enforcement.commit_gates.bare_subprocess_gate import make_bare_subprocess_gate
 
     registry.register(make_bare_subprocess_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: bare_subprocess_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_bare_subprocess_gate
+#   name_en: make_bare_subprocess_gate
+#   intro: 构造裸 subprocess 调用 fail-closed GateSpec。
+#   desc: 构造裸 subprocess 调用 fail-closed GateSpec。 Returns: GateSpec(gate_id="BARE-SUBPROCESS", prio…；源码 L223-L306
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

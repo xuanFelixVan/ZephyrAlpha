@@ -15,6 +15,45 @@
 # [A_module] module_id=MOD-INF-026 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: trust_anchor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① TripleTrustAnchorGate
+#   name_en: TripleTrustAnchorGate
+#   intro: class TripleTrustAnchorGate 源码 L90-L235
+#   desc: 公共方法（定义序）: root, cache, verify, check_audit_continuity, calculate_trust, recommend；源码 L90-L235
+#   inputs: project_root
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② BypassManager
+#   name_en: BypassManager
+#   intro: 紧急旁路协议——inventory_override.yaml -> 强制 GREEN + 自动过期 24h。
+#   desc: 紧急旁路协议——inventory_override.yaml -> 强制 GREEN + 自动过期 24h。；公共方法（定义序）: override_path, get_bypass_state, is_bypass…
+#   inputs: project_root
+#   outputs: 返回值
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: TripleTrustAnchorGate, BypassManager
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
+
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 """MOD-INF-026 §26 — 三重信任锚验证门 R20。

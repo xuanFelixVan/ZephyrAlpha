@@ -15,7 +15,128 @@
 # [A_module] module_id=MOD-INF-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Risk mitigation — R1~R16 全量风险缓解实现（对标蓝图 §14 风险与缓解 + 多轮盲点审计）."""
+"""
+Risk mitigation — R1~R16 全量风险缓解实现（对标蓝图 §14 风险与缓解 + 多轮盲点审计）.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: db_path 参数
+#   fields: 参数 db_path，类型注解 str
+#   code: risk_mitigation.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: mode 参数
+#   fields: 参数 mode，类型注解 str
+#   code: risk_mitigation.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: chunk_size 参数
+#   fields: 参数 chunk_size，类型注解 int
+#   code: risk_mitigation.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: input_text 参数
+#   fields: 参数 input_text，类型注解 str
+#   code: risk_mitigation.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① enable_wal_mode
+#   name_en: enable_wal_mode
+#   intro: R1: 启用 WAL 模式.
+#   desc: R1: 启用 WAL 模式.；源码 L159-L168
+#   inputs: db_path
+#   outputs: bool
+# - id: A2
+#   name_zh: ② perform_wal_checkpoint
+#   name_en: perform_wal_checkpoint
+#   intro: R1: 定期 WAL checkpoint.
+#   desc: R1: 定期 WAL checkpoint.；源码 L171-L184
+#   inputs: db_path mode
+#   outputs: bool
+# - id: A3
+#   name_zh: ③ DeadlockDetector
+#   name_en: DeadlockDetector
+#   intro: R2: 跨模块死锁检测——超时 + 重试 + 指数退避 + 有序锁获取.
+#   desc: R2: 跨模块死锁检测——超时 + 重试 + 指数退避 + 有序锁获取.；公共方法（定义序）: acquire_with_timeout, retry_with_backoff, ordered_lock_acquis…
+#   inputs: timeout max_retries base_delay
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ AlertLinkIsolator
+#   name_en: AlertLinkIsolator
+#   intro: R3: 告警链路隔离——fire-and-forget + ThreadPoolExecutor.
+#   desc: R3: 告警链路隔离——fire-and-forget + ThreadPoolExecutor.；公共方法（定义序）: fire_and_forget, shutdown；源码 L235-L264
+#   inputs: max_workers queue_size
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ SchemaVersionGuard
+#   name_en: SchemaVersionGuard
+#   intro: R4: Pydantic Schema 版本漂移防护——双向版本校验.
+#   desc: R4: Pydantic Schema 版本漂移防护——双向版本校验.；公共方法（定义序）: validate_config_version, check_schema_field；源码 L267-L277
+#   inputs: expected_version
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ TokenCalibration
+#   name_en: TokenCalibration
+#   intro: R5: Token 预估校准——滚动窗口修正.
+#   desc: R5: Token 预估校准——滚动窗口修正.；公共方法（定义序）: record, get_correction_factor, get_accuracy_ratio；源码 L280-L303
+#   inputs: window_size
+#   outputs: 返回值
+# - id: A7
+#   name_zh: ⑦ KillSwitchSafeguard
+#   name_en: KillSwitchSafeguard
+#   intro: R6: Kill Switch 误触发保护——脉冲过滤 + 多条件非AND.
+#   desc: R6: Kill Switch 误触发保护——脉冲过滤 + 多条件非AND.；公共方法（定义序）: register_condition, should_trigger, manual_override；源码 L306…
+#   inputs: sustain_duration
+#   outputs: 返回值
+# - id: A8
+#   name_zh: ⑧ SandboxHardener
+#   name_en: SandboxHardener
+#   intro: R7: Sandbox 硬边界加固.
+#   desc: R7: Sandbox 硬边界加固.；公共方法（定义序）: enforce；源码 L336-L352
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A9
+#   name_zh: ⑨ ProvenanceIntegrityChecker
+#   name_en: ProvenanceIntegrityChecker
+#   intro: R8: Provenance hash 链定期校验.
+#   desc: R8: Provenance hash 链定期校验.；公共方法（定义序）: verify_chain；源码 L355-L383
+#   inputs: db_path
+#   outputs: 返回值
+# - id: A10
+#   name_zh: ⑩ incremental_hash_verify
+#   name_en: incremental_hash_verify
+#   intro: R9: 增量 hash 校验——盲点 #14 缓解.
+#   desc: R9: 增量 hash 校验——盲点 #14 缓解.；源码 L386-L393
+#   inputs: db_path chunk_size
+#   outputs: bool
+#   （注：A10 之后另有 7 个公共定义未列入（含 0 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: dict
+#   name_en: dict
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> A10
+# A10 --> O1
+"""
 
 import contextvars
 import hashlib

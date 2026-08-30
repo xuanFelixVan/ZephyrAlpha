@@ -25,6 +25,59 @@ __init__.py 仅做 re-export，符合"__init__.py 不应定义业务类/函数"�
 - load_config: 从 YAML + 环境变量加载配置
 - reload_config: 热重载（按上次成功路径）
 - ConfigHolder: 配置中心持有者（订阅者模式，解决 reload 后旧引用问题）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config_path 参数
+#   fields: 参数 config_path，类型注解 str | None
+#   code: app_config.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: env_override 参数
+#   fields: 参数 env_override，类型注解 bool
+#   code: app_config.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: current 参数
+#   fields: 参数 current，类型注解 AppConfig | None
+#   code: app_config.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① load_config
+#   name_en: load_config
+#   intro: 加载应用配置。
+#   desc: 加载应用配置。 解析顺序 -------- 1. 显式 ``config_path``（存在且为文件）。 2. 环境变量 ``ZEPHYR_APP_CONFIG_PATH``。…；源码 L173-L223
+#   inputs: config_path env_override
+#   outputs: AppConfig
+# - id: A2
+#   name_zh: ② reload_config
+#   name_en: reload_config
+#   intro: 热重载：按上次成功加载的路径（或默认搜索链）重新构建 ``AppConfig``。
+#   desc: 热重载：按上次成功加载的路径（或默认搜索链）重新构建 ``AppConfig``。 ``current`` 参数保留以兼容旧调用方，当前未使用（避免在 frozen datacl…；源码 L226-L236
+#   inputs: current env_override
+#   outputs: AppConfig
+# - id: A3
+#   name_zh: ③ ConfigHolder
+#   name_en: ConfigHolder
+#   intro: 配置中心持有者 — 解决 reload_config 后消费者持有旧引用的问题。
+#   desc: 配置中心持有者 — 解决 reload_config 后消费者持有旧引用的问题。 5.54.3 修复：AppConfig 是 frozen dataclass，reload_co…；公共方法（定义序）: get, se…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: AppConfig
+#   name_en: AppConfig
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.infrastructure.config (__init__.py re-export)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

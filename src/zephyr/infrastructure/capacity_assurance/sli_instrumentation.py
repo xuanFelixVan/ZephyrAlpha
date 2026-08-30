@@ -16,7 +16,51 @@
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 
-"""SLI instrumentation — SLI采集插桩点（对标蓝图 §13 SLI Registry CAP-001~CAP-014）."""
+"""
+SLI instrumentation — SLI采集插桩点（对标蓝图 §13 SLI Registry CAP-001~CAP-014）.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: sli_instrumentation.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SLIStats
+#   name_en: SLIStats
+#   intro: class SLIStats 源码 L71-L92
+#   desc: 公共方法（定义序）: avg_duration_ms, p50_duration_ms, p99_duration_ms；源码 L71-L92
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② SLIInstrumentation
+#   name_en: SLIInstrumentation
+#   intro: SLI 插桩采集器——记录 capacity-assurance 各子模块的运行时性能数据。
+#   desc: SLI 插桩采集器——记录 capacity-assurance 各子模块的运行时性能数据。 对标蓝图 §13 SLI Registry + v2.2.0 插桩点扩展: - ca…；公共方法（定义序）: record_…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ get_instrumentation
+#   name_en: get_instrumentation
+#   intro: 获取全局单例 SLIInstrumentation.
+#   desc: 获取全局单例 SLIInstrumentation.；源码 L162-L169
+#   inputs: 无参数
+#   outputs: SLIInstrumentation
+# 层: 输出
+# - id: O1
+#   name_zh: SLIInstrumentation
+#   name_en: SLIInstrumentation
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
+"""
 
 import threading
 from collections import defaultdict

@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 Rule Shadow Runner — v0.10.0 规则影子模式: 新规则shadow运行3天->diff old vs new->promote。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: rule_shadow_runner.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① RuleShadowRunner
+#   name_en: RuleShadowRunner
+#   intro: class RuleShadowRunner 源码 L53-L82
+#   desc: 公共方法（定义序）: shadow_rules, deploy_shadow, record_shadow_decision, diff, promote；源码 L53-L82
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: RuleShadowRunner
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

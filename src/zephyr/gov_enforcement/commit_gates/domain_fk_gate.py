@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_domain_fk_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""domain_fk_gate.py — [DOMAIN] 头部域注册表 FK 校验门禁（GATE-DOMAIN-FK）
+"""
+domain_fk_gate.py — [DOMAIN] 头部域注册表 FK 校验门禁（GATE-DOMAIN-FK）
 
 裁定#ARCH-DRIFT-PREVENTION-001 (ADP-1)：从"检测驱动"转向"约束驱动"。
 
@@ -50,6 +51,32 @@ Usage::
     from zephyr.gov_enforcement.commit_gates.domain_fk_gate import make_domain_fk_gate
 
     registry.register(make_domain_fk_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: domain_fk_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_domain_fk_gate
+#   name_en: make_domain_fk_gate
+#   intro: 构造 [DOMAIN] 头部域 FK 校验 GateSpec（硬阻断型）。
+#   desc: 构造 [DOMAIN] 头部域 FK 校验 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="GATE-DOMAIN-FK", priorit…；源码 L177-L201
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

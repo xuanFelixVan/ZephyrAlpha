@@ -16,7 +16,51 @@
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 
-"""门禁模拟器——dry-run 全链路门禁演练，不修改任何状态（beta）"""
+"""
+门禁模拟器——dry-run 全链路门禁演练，不修改任何状态（beta）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: gate_simulator.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SimulationReport
+#   name_en: SimulationReport
+#   intro: class SimulationReport 源码 L76-L90
+#   desc: 公共方法（定义序）: summary；源码 L76-L90
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② GateSimulator
+#   name_en: GateSimulator
+#   intro: class GateSimulator 源码 L93-L120
+#   desc: 公共方法（定义序）: simulate, history, clear_history；源码 L93-L120
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ main
+#   name_en: main
+#   intro: main() 源码 L126-L127
+#   desc: 源码 L126-L127
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: SimulationReport, GateSimulator, main
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
+"""
 
 import logging
 from dataclasses import dataclass, field

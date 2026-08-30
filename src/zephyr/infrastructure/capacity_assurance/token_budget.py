@@ -29,6 +29,41 @@ token_budget.py — Token 估算工具 SSoT
 对标：
   - OpenAI tiktoken: token 计算应统一入口
   - LangChain: token 估算使用统一工具函数
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: text 参数
+#   fields: 参数 text，类型注解 str
+#   code: token_budget.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① TokenBudgetManager
+#   name_en: TokenBudgetManager
+#   intro: class TokenBudgetManager 源码 L98-L150
+#   desc: 公共方法（定义序）: level, cap, consumed, remaining, degraded, set_level, consume, can_consume, reset, to_dict；源码 L98-…
+#   inputs: session_id
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② estimate_tokens
+#   name_en: estimate_tokens
+#   intro: 估算文本的 token 数量。
+#   desc: 估算文本的 token 数量。 使用简单的 1 token ≈ 4 字符启发式估算。 对于中文等非拉丁语系，此估算偏低，但作为预算控制足够。 Args: text: 待估算的文本…；源码 L153-L167
+#   inputs: text
+#   outputs: int
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.autonomy_core.*; zephyr.governance.context_governance.*; zephyr.orchestr…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 DEFAULT_CONTEXT_TOKEN_BUDGET: int = 8000

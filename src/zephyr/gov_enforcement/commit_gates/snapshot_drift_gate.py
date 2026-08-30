@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m20-snapshot-drift  M20豁免: 本文件是SNAPSHOT-DRIFT检测器自身,源码引用snapshot路径用于校验,非实际drift
-"""snapshot_drift_gate.py — 运行时违规快照漂移阻断门禁（SNAPSHOT-DRIFT，#ARCH-GOV-CONVERGENCE-META Phase 3.6 补齐 rc1 enforceability）
+"""
+snapshot_drift_gate.py — 运行时违规快照漂移阻断门禁（SNAPSHOT-DRIFT，#ARCH-GOV-CONVERGENCE-META Phase 3.6 补齐 rc1 enforceability）
 
 病根（裁定#221，原 ai_first_governance_principles.md §二，文档已删 2026-07-30，git 历史可查）
 ------------------------------------------------
@@ -44,6 +45,32 @@ Usage::
     from zephyr.gov_enforcement.commit_gates.snapshot_drift_gate import make_snapshot_drift_gate
 
     registry.register(make_snapshot_drift_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: snapshot_drift_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_snapshot_drift_gate
+#   name_en: make_snapshot_drift_gate
+#   intro: 构造运行时违规快照漂移阻断门禁 GateSpec（硬阻断型）。
+#   desc: 构造运行时违规快照漂移阻断门禁 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="SNAPSHOT-DRIFT", priority=63)。…；源码 L204-L251
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -192,7 +219,7 @@ def make_snapshot_drift_gate() -> GateSpec:
         # 2. 读取快照文件内容
         abs_path = os.path.join(wt_root, _SNAPSHOT_REL_PATH.replace("/", os.sep))
         try:
-            with open(abs_path, "r", encoding="utf-8") as f:
+            with open(abs_path, encoding="utf-8") as f:
                 content = f.read()
         except OSError as e:
             return False, (f"snapshot file 读取失败({type(e).__name__}: {e}) — 无法验证 drift")

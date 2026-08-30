@@ -35,6 +35,50 @@ CLI:
     python -m zephyr.gov_enforcement.rule_enforcement.rule_watcher          # 持续轮询
     python -m zephyr.gov_enforcement.rule_enforcement.rule_watcher --once    # 检查一次
     python -m zephyr.gov_enforcement.rule_enforcement.rule_watcher --poll-interval 10
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: rules_dir 参数
+#   fields: 参数 rules_dir（无注解）
+#   code: rule_watcher.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: db_path 参数
+#   fields: 参数 db_path（无注解）
+#   code: rule_watcher.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: poll_interval 参数
+#   fields: 参数 poll_interval（无注解）
+#   code: rule_watcher.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RuleWatcher
+#   name_en: RuleWatcher
+#   intro: YAML 规则文件变更检测器 — mtime 轮询 + 自动同步 + 验证。
+#   desc: YAML 规则文件变更检测器 — mtime 轮询 + 自动同步 + 验证。；公共方法（定义序）: start, stop, check_changes, sync_changed, verify_changed；源码…
+#   inputs: rules_dir db_path poll_interval
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② main
+#   name_en: main
+#   intro: CLI 入口点。
+#   desc: CLI 入口点。；源码 L378-L435
+#   inputs: 无参数
+#   outputs: int
+# 层: 输出
+# - id: O1
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: cold_start sequence; AI sessions; governance pipeline
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

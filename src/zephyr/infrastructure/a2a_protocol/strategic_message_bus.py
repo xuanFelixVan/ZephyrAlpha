@@ -14,13 +14,56 @@
 # [TESTS] tests/infrastructure/test_strategic_message_bus.py
 # [A_module] module_id=MOD-INF-090 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""StrategicMessageBus — 战略层三层逻辑消息总线（MOD-INF-090）。
+"""
+StrategicMessageBus — 战略层三层逻辑消息总线（MOD-INF-090）。
 
 B11-02493（AUD-DRAFT-001-DIGEST P2 波 P2-W01，CAND-INFRAA2A-002，A7-Agent
 架构）：strategic.* / tactical.* / execution.* 三层 topic 命名空间校验 +
 发布订阅权限按 Agent 层级校验（层级表注入）+ 跨层消息强制流经 A2A 检查
 网关（注入网关回调，未注入 Fail-Closed）+ 层内直连层间留痕（审计回
 调）。战术层/执行层总线作为同机制实例（layer 参数实例化）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: layer 参数
+#   fields: 参数 layer（无注解）
+#   code: strategic_message_bus.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: agent_layers 参数
+#   fields: 参数 agent_layers（无注解）
+#   code: strategic_message_bus.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: a2a_gateway 参数
+#   fields: 参数 a2a_gateway（无注解）
+#   code: strategic_message_bus.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: audit_sink 参数
+#   fields: 参数 audit_sink（无注解）
+#   code: strategic_message_bus.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① StrategicMessageBus
+#   name_en: StrategicMessageBus
+#   intro: 三层逻辑总线件（命名空间校验 + 层级权限 + 跨层网关 + 审计）。
+#   desc: 三层逻辑总线件（命名空间校验 + 层级权限 + 跨层网关 + 审计）。；公共方法（定义序）: subscribe, publish, layer, subscriber_count；源码 L116-L225
+#   inputs: layer agent_layers a2a_gateway audit_sink clock
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: StrategicMessageBus
+#   downstream: 运行时装配批（战略/战术/执行三层总线实例装配 / A2A 检查网关绑定 / 审计留痕路由）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -105,9 +148,7 @@ class StrategicMessageBus:
             raise StrategicBusError("topic 为空")
         prefix, sep, _ = topic.partition(".")
         if not sep or prefix not in _PREFIX_TO_LAYER:
-            raise StrategicBusError(
-                f"topic 命名空间非法: {topic!r}（须 strategic.*/tactical.*/execution.* 前缀）"
-            )
+            raise StrategicBusError(f"topic 命名空间非法: {topic!r}（须 strategic.*/tactical.*/execution.* 前缀）")
         return _PREFIX_TO_LAYER[prefix]
 
     def _layer_of(self, agent_id: str) -> BusLayer:
@@ -137,9 +178,7 @@ class StrategicMessageBus:
         agent_layer = self._layer_of(agent_id)
         topic_layer = self._topic_layer(topic)
         if topic_layer is not agent_layer:
-            raise StrategicBusError(
-                f"越权订阅拒绝: {agent_id}({agent_layer.value}) 订 {topic!r}（仅可订本层 topic）"
-            )
+            raise StrategicBusError(f"越权订阅拒绝: {agent_id}({agent_layer.value}) 订 {topic!r}（仅可订本层 topic）")
         self._subs.setdefault(topic, []).append((agent_id, handler))
 
     # ── 发布（同层直连 / 跨层强制网关） ─────────────────────────────────────
@@ -154,9 +193,7 @@ class StrategicMessageBus:
         if topic_layer is not agent_layer:
             # 跨层消息：强制流经 A2A 检查网关，禁止旁路直传
             if self._gateway is None:
-                raise StrategicBusError(
-                    "a2a_gateway 未注入（跨层消息强制 A2A 检查网关，禁止旁路）"
-                )
+                raise StrategicBusError("a2a_gateway 未注入（跨层消息强制 A2A 检查网关，禁止旁路）")
             try:
                 ok = bool(self._gateway(agent_id, topic, dict(payload)))
             except Exception as exc:  # noqa: BLE001 — 网关异常按拒绝处理

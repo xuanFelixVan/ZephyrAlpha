@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_datetime_now_forbidden_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""datetime_now_forbidden_gate.py — 时间戳约定硬阻断门禁（DATETIME-NOW-FORBIDDEN）
+r"""
+datetime_now_forbidden_gate.py — 时间戳约定硬阻断门禁（DATETIME-NOW-FORBIDDEN）
 
 检测 staged 代码（.py）新增行中的时间戳误用，覆盖两类场景：
   1. 生成器代码中 ``datetime.now()`` 任何形式（违反 AGENTS.md §11.1.1 生成器幂等约定）
@@ -43,8 +44,8 @@
    src/zephyr/ 全量中只禁 ``time.time()`` 和 ``datetime.now()`` 无参数
    （运行时服务使用 ``datetime.now(UTC)`` 是合法的）。
 2. **只检测 added 行**：存量违规由仪表盘 M02/M21 监控，gate 只防新增。
-3. **正则匹配**：``datetime\\.now\\s*\\(\\s*\\)`` 精确匹配无参数形式，
-   ``time\\.time\\s*\\(`` 匹配 ``time.time()`` 调用。
+3. **正则匹配**：``datetime\.now\s*\(\s*\)`` 精确匹配无参数形式，
+   ``time\.time\s*\(`` 匹配 ``time.time()`` 调用。
 4. **fail-open on git error**：git diff 失败时不阻断（由其他 gate 管完整性）。
 5. **priority=34**：在 FILE-PLACEMENT-TTL(33) 之后、R5-DIGIT-SUFFIX(35) 之前。
 6. **hard-block**：时间戳误用是确定性违规，应硬阻断。
@@ -56,6 +57,32 @@ Usage::
 
     registry.register(make_datetime_now_forbidden_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: datetime_now_forbidden_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_datetime_now_forbidden_gate
+#   name_en: make_datetime_now_forbidden_gate
+#   intro: 构造时间戳约定硬阻断 GateSpec（双轨检测面）。
+#   desc: 构造时间戳约定硬阻断 GateSpec（双轨检测面）。 Returns: GateSpec(gate_id="DATETIME-NOW-FORBIDDEN", priority=…；源码 L263-L295
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_unsafe_dict_spread_gate.py
 # [A_module] module_id=MOD-GOV_COMMIT_GATES | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""unsafe_dict_spread_gate.py — ``**data`` 直接展开模式 warn 级门禁
+r"""
+unsafe_dict_spread_gate.py — ``**data`` 直接展开模式 warn 级门禁
 
 检测 staged .py 文件新增行中的 ``SomeClass(**varname)`` 直接展开模式（5.147.12 同族防复发）。
 
@@ -26,11 +27,11 @@
 - 但新 AI 写新功能时若不自觉，仍会制造同类债务 -> 需 Gate 持续盯
 
 治本（warn 级，不阻断）:
-- 检测 ``\\b(\\w+)\\(\\*\\*([A-Za-z_]\\w*)\\s*\\)`` 模式
+- 检测 ``\b(\w+)\(\*\*([A-Za-z_]\w*)\s*\)`` 模式
 - 豁免 ``**kwargs`` / ``**kwds``（显式关键字参数透传，合法）
 - 豁免 ``**filter_dataclass_fields(...)``（已用 SSoT 过滤——但正则要求 ``**`` 后是纯标识符，
   函数调用 ``filter_dataclass_fields(...)`` 后跟 ``(`` 不会匹配，天然豁免）
-- 豁免 ``**{...}``（字典字面量，正则要求 ``**`` 后是 ``\\w``，``{`` 不匹配）
+- 豁免 ``**{...}``（字典字面量，正则要求 ``**`` 后是 ``\w``，``{`` 不匹配）
 - tests/ 豁免；import/注释/docstring 豁免
 - 命中时 stderr + logger.warning 输出告警，**不阻断 commit**
 - 选择 warn 而非 hard-block：避免误报阻断正常开发（如 ``dict(**other)`` 合法用法）；
@@ -46,6 +47,32 @@ Usage::
 
     from zephyr.gov_enforcement.commit_gates.unsafe_dict_spread_gate import make_unsafe_dict_spread_gate
     registry.register(make_unsafe_dict_spread_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: unsafe_dict_spread_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_unsafe_dict_spread_gate
+#   name_en: make_unsafe_dict_spread_gate
+#   intro: 构造 ``**data`` 直接展开 warn 级 GateSpec。
+#   desc: 构造 ``**data`` 直接展开 warn 级 GateSpec。 Returns: GateSpec(gate_id="UNSAFE-DICT-SPREAD", prior…；源码 L169-L193
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -15,10 +15,50 @@
 # [A_module] module_id=MOD-INF-026 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""AssetLifecycle — MOD-INF-026 L5 ITIL生命周期自动化管理器
+"""
+AssetLifecycle — MOD-INF-026 L5 ITIL生命周期自动化管理器
 
 蓝图 §3.5 + §22：三条自动化规则（TIME-DECAY / ZERO-REF / DIR-CONVENTION）
 从 active -> stale -> deprecated -> archived 全自动生命周期管理。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: decay_days 参数
+#   fields: 参数 decay_days（无注解）
+#   code: lifecycle.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: root 参数
+#   fields: 参数 root（无注解）
+#   code: lifecycle.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① Lifecycle
+#   name_en: Lifecycle
+#   intro: ITIL 生命周期自动化管理器——Phase 1 实现（蓝图 §3.5）。
+#   desc: ITIL 生命周期自动化管理器——Phase 1 实现（蓝图 §3.5）。；公共方法（定义序）: evaluate, main；源码 L93-L256
+#   inputs: decay_days root
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② main
+#   name_en: main
+#   intro: main() 源码 L265-L266
+#   desc: 源码 L265-L266
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: Lifecycle, main
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 import logging

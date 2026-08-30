@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_new_file_depgraph_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""new_file_depgraph_gate.py — 新建 .py 文件 depgraph 未登记硬阻断门禁（NEW-FILE-DEPGRAPH-ENFORCEMENT）
+"""
+new_file_depgraph_gate.py — 新建 .py 文件 depgraph 未登记硬阻断门禁（NEW-FILE-DEPGRAPH-ENFORCEMENT）
 
 检测 staged 新增 .py 文件（src/zephyr/ + scripts/ 下，tests/ 豁免）在 depgraph
 (PostgreSQL) nodes 表中完全无记录（build_status 为 generated/planned/stable 任一
@@ -84,6 +85,32 @@ Usage::
 
     registry.register(make_new_file_depgraph_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: new_file_depgraph_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_new_file_depgraph_gate
+#   name_en: make_new_file_depgraph_gate
+#   intro: 构造新建 .py 文件 depgraph 未登记硬阻断门禁 GateSpec（硬阻断型）。
+#   desc: 构造新建 .py 文件 depgraph 未登记硬阻断门禁 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="NEW-FILE-DEPGRAP…；源码 L233-L323
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

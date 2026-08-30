@@ -23,6 +23,100 @@ Reads cross_layer_contracts.yaml field definitions, imports the corresponding
 Python dataclass, and diffs: field presence, type, required/optional alignment.
 
 SSoT: cross_layer_contracts.yaml v3.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: module_path 参数
+#   fields: 参数 module_path，类型注解 str
+#   code: en_003_contract_compatibility.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: class_name 参数
+#   fields: 参数 class_name，类型注解 str
+#   code: en_003_contract_compatibility.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: physical_path 参数
+#   fields: 参数 physical_path，类型注解 str
+#   code: en_003_contract_compatibility.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: t 参数
+#   fields: 参数 t，类型注解 str
+#   code: en_003_contract_compatibility.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CompatibilityResult
+#   name_en: CompatibilityResult
+#   intro: class CompatibilityResult 源码 L176-L186
+#   desc: 公共方法（定义序）: summary；源码 L176-L186
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② load_contracts
+#   name_en: load_contracts
+#   intro: load_contracts() 源码 L189-L191
+#   desc: 源码 L189-L191
+#   inputs: 无参数
+#   outputs: dict[str, Any]
+# - id: A3
+#   name_zh: ③ get_dataclass_fields
+#   name_en: get_dataclass_fields
+#   intro: get_dataclass_fields(module_path, class_name) 源码 L197-L213
+#   desc: 源码 L197-L213
+#   inputs: module_path class_name
+#   outputs: dict[str, str] | None
+# - id: A4
+#   name_zh: ④ strip_module_path
+#   name_en: strip_module_path
+#   intro: strip_module_path(physical_path) 源码 L219-L238
+#   desc: 源码 L219-L238
+#   inputs: physical_path
+#   outputs: tuple[str, str] | None
+# - id: A5
+#   name_zh: ⑤ normalize_type
+#   name_en: normalize_type
+#   intro: normalize_type(t) 源码 L244-L248
+#   desc: 源码 L244-L248
+#   inputs: t
+#   outputs: str
+# - id: A6
+#   name_zh: ⑥ run_check
+#   name_en: run_check
+#   intro: run_check() 源码 L254-L322
+#   desc: 源码 L254-L322
+#   inputs: 无参数
+#   outputs: CompatibilityResult
+# - id: A7
+#   name_zh: ⑦ check
+#   name_en: check
+#   intro: check() 源码 L325-L327
+#   desc: 源码 L325-L327
+#   inputs: 无参数
+#   outputs: tuple[bool, str]
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, Any]
+#   name_en: dict[str, Any]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: dict[str, str] | None
+#   name_en: dict[str, str] | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> O1
 """
 
 from __future__ import annotations

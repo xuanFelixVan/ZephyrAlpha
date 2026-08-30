@@ -14,13 +14,51 @@
 # [TESTS] tests/infrastructure/test_config_center.py
 # [A_module] module_id=MOD-INF-091 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""ConfigCenter — 统一配置中心（MOD-INF-091）。
+"""
+ConfigCenter — 统一配置中心（MOD-INF-091）。
 
 B1-00203（AUD-DRAFT-001-DIGEST P2 波 P2-W01，CAND-INFRASTR-001，C2）：统
 一配置注册表（内存后端）+ 参数版本快照（每次变更 version 递增 + 快照
 留存）+ 变更审计日志（注入 audit_sink 回调）+ 回滚 API（按版本回退，
 回滚本身亦生成新版本）+ 热更新守卫语义（set/rollback 前经注入 guard
 钩子校验，拒绝即 Fail-Closed）。Nacos/Apollo 单机化，不触网。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: audit_sink 参数
+#   fields: 参数 audit_sink（无注解）
+#   code: config_center.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: guard 参数
+#   fields: 参数 guard（无注解）
+#   code: config_center.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: config_center.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ConfigCenter
+#   name_en: ConfigCenter
+#   intro: 统一配置中心件（注册表 + 版本快照 + 审计 + 回滚 + 守卫）。
+#   desc: 统一配置中心件（注册表 + 版本快照 + 审计 + 回滚 + 守卫）。；公共方法（定义序）: register, set, rollback, get, version_of, list_versions, snaps…
+#   inputs: audit_sink guard clock
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: ConfigCenter
+#   downstream: 运行时装配批（配置注册与热更新装配 / 审计路由 / 热更新守卫钩子绑定）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

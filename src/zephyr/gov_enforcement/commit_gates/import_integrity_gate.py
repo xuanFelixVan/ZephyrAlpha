@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: 本模块由 commit 事件触发（非 cron/manual）
-"""import_integrity_gate.py — IMPORT-INTEGRITY 门禁（悬空 import 硬阻断）
+"""
+import_integrity_gate.py — IMPORT-INTEGRITY 门禁（悬空 import 硬阻断）
 
 #ARCH-CROSS-COMMIT-ATOMICITY-001 治本（2026-07-20 立项）：
 
@@ -90,6 +91,68 @@ Usage::
         make_import_integrity_gate,
     )
     registry.register(make_import_integrity_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root，类型注解 Path
+#   code: import_integrity_gate.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: module_path 参数
+#   fields: 参数 module_path，类型注解 str
+#   code: import_integrity_gate.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: current_session_id 参数
+#   fields: 参数 current_session_id，类型注解 str | None
+#   code: import_integrity_gate.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: py_file 参数
+#   fields: 参数 py_file，类型注解 str
+#   code: import_integrity_gate.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① find_target_in_active_sessions
+#   name_en: find_target_in_active_sessions
+#   intro: 检查目标模块是否在其他活跃 session 的 held_files 中（Phase 2.5 友好提示）。
+#   desc: 检查目标模块是否在其他活跃 session 的 held_files 中（Phase 2.5 友好提示）。 Phase 2.5： GATE-IMPORT-INTEGRITY 阻断…；源码 L816-L865
+#   inputs: project_root module_path current_session_id
+#   outputs: list[tuple[str, str]]
+# - id: A2
+#   name_zh: ② scan_content_for_dangling_imports
+#   name_en: scan_content_for_dangling_imports
+#   intro: 扫描单文件内容的悬空 import（目标模块不可解析），返回违规消息列表（空=通过）。
+#   desc: 扫描单文件内容的悬空 import（目标模块不可解析），返回违规消息列表（空=通过）。 Args: py_file: 文件相对路径（用于诊断消息） content: 文件内容 s…；源码 L868-L929
+#   inputs: py_file content staged_files gateway
+#   outputs: list[str]
+# - id: A3
+#   name_zh: ③ make_import_integrity_gate
+#   name_en: make_import_integrity_gate
+#   intro: 构造 IMPORT-INTEGRITY pre-commit 门禁（priority=107）。
+#   desc: 构造 IMPORT-INTEGRITY pre-commit 门禁（priority=107）。 检测 staged scripts/governance/** + src/**…；源码 L932-L1007
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: list[tuple[str, str]]
+#   name_en: list[tuple[str, str]]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__…
+# - id: O2
+#   name_zh: list[str]
+#   name_en: list[str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

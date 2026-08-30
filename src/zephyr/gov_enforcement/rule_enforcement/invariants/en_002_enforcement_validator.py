@@ -23,6 +23,61 @@ Reads cross_layer_contracts.yaml, validates that every P0 contract declares
 an enforcement mode, and that the mode value is consistent with routing config.
 
 SSoT: cross_layer_contracts.yaml v3.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: en_002_enforcement_validator.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① EnforcementResult
+#   name_en: EnforcementResult
+#   intro: class EnforcementResult 源码 L115-L124
+#   desc: 公共方法（定义序）: summary；源码 L115-L124
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② run_check
+#   name_en: run_check
+#   intro: run_check() 源码 L132-L163
+#   desc: 源码 L132-L163
+#   inputs: 无参数
+#   outputs: EnforcementResult
+# - id: A3
+#   name_zh: ③ check
+#   name_en: check
+#   intro: check() 源码 L166-L168
+#   desc: 源码 L166-L168
+#   inputs: 无参数
+#   outputs: tuple[bool, str]
+# - id: A4
+#   name_zh: ④ load_contracts
+#   name_en: load_contracts
+#   intro: 公共接口：load_contracts（Stage 4 公共化）。
+#   desc: 公共接口：load_contracts（Stage 4 公共化）。；源码 L178-L180
+#   inputs: 无参数
+#   outputs: dict[str, Any]
+# 层: 输出
+# - id: O1
+#   name_zh: EnforcementResult
+#   name_en: EnforcementResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: tuple[bool, str]
+#   name_en: tuple[bool, str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

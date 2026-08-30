@@ -15,9 +15,85 @@
 # [A_module] module_id=MOD-INF-026 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""AssetInventoryTelemetry — MOD-INF-026 自监控指标
+"""
+AssetInventoryTelemetry — MOD-INF-026 自监控指标
 
 蓝图 §27：OpenTelemetry 三支柱（Metrics/Traces/Logs）风格的盘点器自监控。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: webhook_url 参数
+#   fields: 参数 webhook_url（无注解）
+#   code: telemetry.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① InventorySelfMetrics
+#   name_en: InventorySelfMetrics
+#   intro: 盘点系统自监控——内存中累计，可导出到 JSON / stdout / OTEL。
+#   desc: 盘点系统自监控——内存中累计，可导出到 JSON / stdout / OTEL。；公共方法（定义序）: start_operation, end_operation, inc, set_gauge, record_e…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② get_telemetry
+#   name_en: get_telemetry
+#   intro: 惰性返回 InventorySelfMetrics 单例（首次调用时实例化）。
+#   desc: 惰性返回 InventorySelfMetrics 单例（首次调用时实例化）。；源码 L207-L212
+#   inputs: 无参数
+#   outputs: InventorySelfMetrics
+# - id: A3
+#   name_zh: ③ NotificationChannel
+#   name_en: NotificationChannel
+#   intro: 通知通道抽象基类。
+#   desc: 通知通道抽象基类。；公共方法（定义序）: send, channel_name；源码 L252-L260
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ ConsoleChannel
+#   name_en: ConsoleChannel
+#   intro: 控制台通知通道。
+#   desc: 控制台通知通道。；公共方法（定义序）: channel_name, send；源码 L263-L279
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ FeishuWebhook
+#   name_en: FeishuWebhook
+#   intro: 飞书 Webhook 通知通道。
+#   desc: 飞书 Webhook 通知通道。；公共方法（定义序）: channel_name, send；源码 L282-L321
+#   inputs: webhook_url
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ SmtpEmailChannel
+#   name_en: SmtpEmailChannel
+#   intro: SMTP 邮件通知通道。
+#   desc: SMTP 邮件通知通道。；公共方法（定义序）: channel_name, send；源码 L324-L396
+#   inputs: smtp_host smtp_port smtp_user smtp_password from_addr to_addrs use_tls
+#   outputs: 返回值
+# - id: A7
+#   name_zh: ⑦ NotificationManager
+#   name_en: NotificationManager
+#   intro: 通知通道选择与路由——宽进严出。
+#   desc: 通知通道选择与路由——宽进严出。；公共方法（定义序）: channels, notify_all, notify_specific；源码 L399-L451
+#   inputs: console feishu_url smtp_host smtp_port smtp_user smtp_password email_…
+#   outputs: 返回值
+#   （注：A7 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: InventorySelfMetrics
+#   name_en: InventorySelfMetrics
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> O1
 """
 
 import logging

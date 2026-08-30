@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_issue_resolved_integrity_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""issue_resolved_integrity_gate.py — ISSUE-RESOLVED-INTEGRITY warn-only 门禁
+"""
+issue_resolved_integrity_gate.py — ISSUE-RESOLVED-INTEGRITY warn-only 门禁
 
 #ARCH-CONSUMERS-ACCURACY-003 Phase 2 / #ARCH-ISSUE-RESOLVED-INTEGRITY-001 治本（2026-07-22）：
 
@@ -54,6 +55,63 @@ Usage::
         make_issue_resolved_integrity_gate,
     )
     registry.register(make_issue_resolved_integrity_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: impact_value 参数
+#   fields: 参数 impact_value，类型注解 object
+#   code: issue_resolved_integrity_gate.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: issue_id 参数
+#   fields: 参数 issue_id，类型注解 str
+#   code: issue_resolved_integrity_gate.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: project_root 参数
+#   fields: 参数 project_root，类型注解 Path
+#   code: issue_resolved_integrity_gate.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① extract_file_paths_from_impact
+#   name_en: extract_file_paths_from_impact
+#   intro: 从 impact 字段值提取文件路径列表。
+#   desc: 从 impact 字段值提取文件路径列表。 impact 可以是 YAML 列表或字符串。提取含 / 和 .py/.yaml/.json 后缀的路径。 Args: impact_…；源码 L153-L178
+#   inputs: impact_value
+#   outputs: list[tuple[str, str]]
+# - id: A2
+#   name_zh: ② check_impact_files_exist
+#   name_en: check_impact_files_exist
+#   intro: 检查 issue 的 impact 字段中提到的文件路径是否存在。
+#   desc: 检查 issue 的 impact 字段中提到的文件路径是否存在。 跳过含"删除/待建/Phase 2"等关键词的条目（合法的不存在）。 Args: issue_id: issu…；源码 L181-L207
+#   inputs: issue_id impact_value project_root
+#   outputs: list[str]
+# - id: A3
+#   name_zh: ③ make_issue_resolved_integrity_gate
+#   name_en: make_issue_resolved_integrity_gate
+#   intro: 构造 ISSUE-RESOLVED-INTEGRITY pre-commit warn-only 门禁（priorit…
+#   desc: 构造 ISSUE-RESOLVED-INTEGRITY pre-commit warn-only 门禁（priority=130）。 检测 staged architecture…；源码 L210-L285
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: list[tuple[str, str]]
+#   name_en: list[tuple[str, str]]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# - id: O2
+#   name_zh: list[str]
+#   name_en: list[str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

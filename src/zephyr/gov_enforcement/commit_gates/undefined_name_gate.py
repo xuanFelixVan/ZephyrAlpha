@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_undefined_name_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""undefined_name_gate.py — UNDEFINED-NAME 门禁（F821 未定义符号硬阻断）
+"""
+undefined_name_gate.py — UNDEFINED-NAME 门禁（F821 未定义符号硬阻断）
 
 GATE-DEPGRAPH-OPS 治本 Phase 1（F821 零防护缺口）：
 AI 提交路径（GitCommitGateway / session_worktree）以 --no-verify 绕过外部
@@ -32,6 +33,63 @@ builtins / dunder 全场景。与 ruff F821 全扫比对 0 误报（2026-07-19�
 post-commit 补强：make_undefined_name_baseline_reconciler（reconciliation_registry，
 GATE-UNDEFINED-NAME-BASELINE, priority=211）全仓 baseline 扫描，覆盖 gate
 上线前存量债务与 --no-verify 绕过盲区。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: py_file 参数
+#   fields: 参数 py_file，类型注解 str
+#   code: undefined_name_gate.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: content 参数
+#   fields: 参数 content，类型注解 str
+#   code: undefined_name_gate.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: project_root 参数
+#   fields: 参数 project_root，类型注解 Path
+#   code: undefined_name_gate.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① scan_content_for_undefined_names
+#   name_en: scan_content_for_undefined_names
+#   intro: 扫描单文件内容的未定义符号（F821），返回违规消息列表（空=通过）。
+#   desc: 扫描单文件内容的未定义符号（F821），返回违规消息列表（空=通过）。 fail-open：语法错误返回空（语法问题由其他阶段检测，不在本 gate 职责）。 wildcard…；源码 L297-L319
+#   inputs: py_file content
+#   outputs: list[str]
+# - id: A2
+#   name_zh: ② scan_all_for_undefined_names
+#   name_en: scan_all_for_undefined_names
+#   intro: 全仓 baseline 扫描 scripts/governance/** + src/**.py 的未定义符号。
+#   desc: 全仓 baseline 扫描 scripts/governance/** + src/**.py 的未定义符号。 与 make_undefined_name_gate（pre-c…；源码 L322-L362
+#   inputs: project_root
+#   outputs: tuple[list[str], str | None]
+# - id: A3
+#   name_zh: ③ make_undefined_name_gate
+#   name_en: make_undefined_name_gate
+#   intro: 构造 UNDEFINED-NAME pre-commit 门禁（priority=106）。
+#   desc: 构造 UNDEFINED-NAME pre-commit 门禁（priority=106）。 检测 staged scripts/governance/** + src/**.p…；源码 L365-L408
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: list[str]
+#   name_en: list[str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway; zephyr.governance.audit.…
+# - id: O2
+#   name_zh: tuple[list[str], str | None]
+#   name_en: tuple[list[str], str | None]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway; zephyr.governance.audit.…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations
@@ -152,7 +210,7 @@ def _extract_getattr_lazy_names(stmt: ast.AST, name_sets: dict[str, set[str]]) -
             continue
         if not (isinstance(node.left, ast.Name) and node.left.id == param):
             continue
-        for op, comparator in zip(node.ops, node.comparators):
+        for op, comparator in zip(node.ops, node.comparators, strict=False):
             if isinstance(op, ast.Eq) and isinstance(comparator, ast.Constant) and isinstance(comparator.value, str):
                 lazy.add(comparator.value)
             elif isinstance(op, ast.In) and isinstance(comparator, ast.Name):

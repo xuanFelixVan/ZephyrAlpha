@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""自适应阈值——双模式：概率型（PASS/FAIL outcome 调节）+ 次数型（EWMA 基线 × factor）。
+"""
+自适应阈值——双模式：概率型（PASS/FAIL outcome 调节）+ 次数型（EWMA 基线 × factor）。
 
 P3-0 扩展（#ARCH-PREVENTABILITY-LAYER-001 Phase 3，2026-07-20）:
 原仅支持 probability_threshold 模式（0.1-0.99），与 abuse_monitor 的"次数阈值"
@@ -34,6 +35,46 @@ P3-0 扩展（#ARCH-PREVENTABILITY-LAYER-001 Phase 3，2026-07-20）:
 4. **mode 不可变更**: 同一 gate_id 第一次 observe 时确定 mode，后续调用必须
    使用同 mode 的方法，否则 fail-safe 返回当前阈值不变。防止运行中切换模式
    导致 history 混淆（概率值与计数值混在同一 deque）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: window 参数
+#   fields: 参数 window（无注解）
+#   code: adaptive_threshold.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: smoothing 参数
+#   fields: 参数 smoothing（无注解）
+#   code: adaptive_threshold.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AdaptiveThreshold
+#   name_en: AdaptiveThreshold
+#   intro: 双模式自适应阈值管理器。
+#   desc: 双模式自适应阈值管理器。 Usage（概率型，向后兼容）:: at = AdaptiveThreshold() at.observe("gate-A", 0.8, "PASS")…；公共方法（定义序）: smoothi…
+#   inputs: window smoothing
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② main
+#   name_en: main
+#   intro: main() 源码 L320-L321
+#   desc: 源码 L320-L321
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: AdaptiveThreshold, main
+#   downstream: zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler (P3-1 接入 count_…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 import logging

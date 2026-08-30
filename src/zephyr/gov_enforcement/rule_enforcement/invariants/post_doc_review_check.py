@@ -14,6 +14,58 @@
 # [TESTS] tests/test_post_doc_review.py
 # [A_module] module_id=MOD-GOV-post_doc_review_check | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: post_doc_review_check.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: session_id 参数
+#   fields: 参数 session_id（无注解）
+#   code: post_doc_review_check.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DocReviewReport
+#   name_en: DocReviewReport
+#   intro: 文档审查报告。
+#   desc: 文档审查报告。；公共方法（定义序）: add_finding, needs_regularization, to_dict；源码 L217-L276
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② PostDocReviewScanner
+#   name_en: PostDocReviewScanner
+#   intro: Session 关门时文档内容审查扫描器。
+#   desc: Session 关门时文档内容审查扫描器。；公共方法（定义序）: scan, save_report；源码 L279-L619
+#   inputs: project_root session_id
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ main
+#   name_en: main
+#   intro: CLI 入口——扫描指定 session 的文档。
+#   desc: CLI 入口——扫描指定 session 的文档。；源码 L622-L641
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A3 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: DocReviewReport, PostDocReviewScanner, main
+#   downstream: gate_engine.py (ct=="post_doc_review_check"); project_rules.md 关门步骤12
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
+"""
+
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 """

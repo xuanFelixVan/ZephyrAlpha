@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m11-perm-manual-legitimate  M11豁免: in-process 门禁检测器（GitCommitGateway 事件触发，STARTUP=imported），检测模式字符串非真实 manual 触发
-"""no_import_side_effect_gate.py — 模块导入零副作用门禁（NO-IMPORT-SIDE-EFFECT，S4-C 2026-07-17）
+"""
+no_import_side_effect_gate.py — 模块导入零副作用门禁（NO-IMPORT-SIDE-EFFECT，S4-C 2026-07-17）
 
 检测 staged src/ .py 文件 added 行中的模块级副作用——违反"模块导入零副作用原则"
 （import 一个模块不应触发 I/O、网络、子进程、DB 连接或急切实例化）。
@@ -68,6 +69,32 @@ Usage::
     from zephyr.gov_enforcement.commit_gates.no_import_side_effect_gate import make_no_import_side_effect_gate
 
     registry.register(make_no_import_side_effect_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: no_import_side_effect_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_no_import_side_effect_gate
+#   name_en: make_no_import_side_effect_gate
+#   intro: 构造模块导入零副作用门禁 GateSpec（硬阻断型）。
+#   desc: 构造模块导入零副作用门禁 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="NO-IMPORT-SIDE-EFFECT", priority=…；源码 L301-L346
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

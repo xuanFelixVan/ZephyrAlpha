@@ -36,6 +36,32 @@ SRC-0038: 副本文件 — 保持独立实现，待后续审核。
   7. 返回结构化恢复结果
 
 对标: MOD-INF-023 blueprint.md §2.5（自动对账策略）+ trigger_router.yaml drift_detected
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: payload 参数
+#   fields: 参数 payload，类型注解 dict[str, Any]
+#   code: drift_detector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① trigger_recovery
+#   name_en: trigger_recovery
+#   intro: ``drift_detected`` 触发器恢复入口。
+#   desc: ``drift_detected`` 触发器恢复入口。 Parameters ---------- payload : dict trigger_router.dispatch(…；源码 L86-L182
+#   inputs: payload
+#   outputs: dict[str, Any]
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, Any]
+#   name_en: dict[str, Any]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -173,8 +199,8 @@ def _check_hotfix_bypass(result: dict[str, Any], module_id: str, commit_message:
 
 
 def _run_drift_scan(
-    scan_fn: Callable[..., Any], level: "ScanLevel", changed_files: list[str], result: dict[str, Any]
-) -> "ScanResult | None":
+    scan_fn: Callable[..., Any], level: ScanLevel, changed_files: list[str], result: dict[str, Any]
+) -> ScanResult | None:
     """执行漂移扫描；失败时记录错误并返回 None（调用方应直接 return）。"""
     # 5.52.4 修复：run_coroutine_sync 统一处理无 loop/有 loop 两情形，
     # 替代 get_event_loop().run_until_complete + new_event_loop 回退（3.12 下 get_event_loop 已废弃）。
@@ -186,7 +212,7 @@ def _run_drift_scan(
         return None
 
 
-def _detect_cascade_and_check_lockout(scan_result: "ScanResult", module_id: str, result: dict[str, Any]) -> bool:
+def _detect_cascade_and_check_lockout(scan_result: ScanResult, module_id: str, result: dict[str, Any]) -> bool:
     """级联检测；若 auto-fix 被暂停则置位 result 并返回 True（调用方应直接 return）。"""
     try:
         from zephyr.gov_drift.cascade_detector import detect_cascade, is_auto_fix_paused
@@ -224,7 +250,7 @@ def _detect_cascade_and_check_lockout(scan_result: "ScanResult", module_id: str,
 
 
 def _run_auto_fixes(
-    fixer: "AutoFixer", scan_result: "ScanResult", changed_files: list[str]
+    fixer: AutoFixer, scan_result: ScanResult, changed_files: list[str]
 ) -> tuple[list[dict[str, Any]], int, int]:
     """对每个漂移事件执行自动修复；返回 (fix_results, fixed_count, failed_count)。"""
     fix_results: list[dict[str, Any]] = []

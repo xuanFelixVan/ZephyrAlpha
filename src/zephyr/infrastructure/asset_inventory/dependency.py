@@ -15,10 +15,69 @@
 # [A_module] module_id=MOD-INF-026 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""MOD-INF-026 §18 — 资产依赖图。
+"""
+MOD-INF-026 §18 — 资产依赖图。
 
 DependencyExtractor：从 Python AST 提取 import 关系。
 DependencyGraph：项目级依赖图 + 环路检测（DFS）+ 优先级联动。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: scan_entries 参数
+#   fields: 参数 scan_entries，类型注解 list
+#   code: dependency.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: project_root 参数
+#   fields: 参数 project_root，类型注解 Path
+#   code: dependency.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: imported_by_count 参数
+#   fields: 参数 imported_by_count，类型注解 int
+#   code: dependency.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DependencyExtractor
+#   name_en: DependencyExtractor
+#   intro: class DependencyExtractor 源码 L122-L163
+#   desc: 公共方法（定义序）: extract, classify_import；源码 L122-L163
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② build_dependency_graph
+#   name_en: build_dependency_graph
+#   intro: build_dependency_graph(scan_entries, project_root) 源码 L166-…
+#   desc: 源码 L166-L201
+#   inputs: scan_entries project_root
+#   outputs: DependencyGraph
+# - id: A3
+#   name_zh: ③ priority_from_dependency
+#   name_en: priority_from_dependency
+#   intro: priority_from_dependency(imported_by_count) 源码 L362-L369
+#   desc: 源码 L362-L369
+#   inputs: imported_by_count
+#   outputs: str
+#   （注：A3 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: DependencyGraph
+#   name_en: DependencyGraph
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 import ast

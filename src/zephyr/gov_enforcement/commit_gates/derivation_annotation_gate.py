@@ -14,7 +14,8 @@
 # [TESTS] —
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""derivation_annotation_gate.py — 派生关系声明真实性校验门禁（DERIVATION-ANNOTATION）
+"""
+derivation_annotation_gate.py — 派生关系声明真实性校验门禁（DERIVATION-ANNOTATION）
 
 补强 SSOT-REDEFINITION（priority=65，符号级重定义检测）的盲区——
 SSOT-REDEFINITION 只管"符号重定义"，本 gate 管"派生声明真实性"：
@@ -55,6 +56,32 @@ Usage::
     )
 
     registry.register(make_derivation_annotation_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: derivation_annotation_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_derivation_annotation_gate
+#   name_en: make_derivation_annotation_gate
+#   intro: 构造派生关系声明真实性校验 GateSpec（硬阻断型）。
+#   desc: 构造派生关系声明真实性校验 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="DERIVATION-ANNOTATION", priority…；源码 L185-L211
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

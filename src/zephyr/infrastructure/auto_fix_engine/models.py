@@ -15,6 +15,34 @@
 # [A_module] module_id=MOD-INF-031 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: models.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① 数据契约声明
+#   name_en: data class declarations
+#   intro: 纯声明类（无公共方法，AST 事实）: FixLevel, FixConfidence, FixStatus, BlastRadius, Validation…
+#   desc: 数据契约/异常/枚举声明共 16 类；无算法流程（AST 事实）
+#   inputs: I1
+#   outputs: 数据契约类集合
+# 层: 输出
+# - id: O1
+#   name_zh: 数据契约声明（16 类）
+#   name_en: data classes
+#   intro: FixLevel, FixConfidence, FixStatus, BlastRadius, ValidationResult, BudgetInfo,…
+#   downstream: MOD-INF-027(audit-orchestrator);MOD-INF-023(drift-detector);MOD-INF-029(orphan-…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 from __future__ import annotations
 
 import hashlib

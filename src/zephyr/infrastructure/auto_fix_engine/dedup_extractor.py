@@ -16,6 +16,36 @@
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: min_occurrences 参数
+#   fields: 参数 min_occurrences（无注解）
+#   code: dedup_extractor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DedupExtractor
+#   name_en: DedupExtractor
+#   intro: class DedupExtractor 源码 L72-L250
+#   desc: 公共方法（定义序）: normalize_code, min_occurrences, scan, fix, validate, rollback；源码 L72-L250
+#   inputs: min_occurrences
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: DedupExtractor
+#   downstream: engine.py;MOD-INF-017(code-dedup-engine)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 from __future__ import annotations
 
 import ast

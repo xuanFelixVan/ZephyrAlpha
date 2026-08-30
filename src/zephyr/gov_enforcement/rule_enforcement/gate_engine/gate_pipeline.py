@@ -15,12 +15,48 @@
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""门禁评估管线——排序解析、组合逻辑（AND/OR/NOT）、并行调度（beta）
+"""
+门禁评估管线——排序解析、组合逻辑（AND/OR/NOT）、并行调度（beta）
 
 v0.2.0: 统一 GateResult + GatePipeline 可编排 GateEngine
   - GateStep.checker 返回 gate_context.GateResult（统一模型）
   - 新增 from_engine_step() 工厂方法：将 GateEngine.evaluate() 包装为 GateStep
   - run() 中自动通过 GateResult.from_engine_result() 桥接旧版 Engine 输出
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: name 参数
+#   fields: 参数 name（无注解）
+#   code: gate_pipeline.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① GatePipeline
+#   name_en: GatePipeline
+#   intro: class GatePipeline 源码 L90-L194
+#   desc: 公共方法（定义序）: add, from_engine_step, run, evaluate；源码 L90-L194
+#   inputs: name
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② main
+#   name_en: main
+#   intro: main() 源码 L200-L201
+#   desc: 源码 L200-L201
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: GatePipeline, main
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

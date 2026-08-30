@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_module_id_consistency_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""module_id_consistency_gate.py — module_id 三声明轨道一致性 + count 派生 + 跨文件唯一性门禁（Phase 3 reconciler->gate 收敛）
+"""
+module_id_consistency_gate.py — module_id 三声明轨道一致性 + count 派生 + 跨文件唯一性门禁（Phase 3 reconciler->gate 收敛）
 
 从 make_module_id_consistency_reconciler（post-commit warn）升级为 pre-commit 阻断 gate。
 
@@ -28,6 +29,32 @@
 治本动机：原 reconciler 是 post-commit 非阻断 warn，不一致已入 git 历史仅告警。
 本 gate 在 commit() 内嵌等效校验，阻断新引入的不一致。
 第三维治本：原 gate 只检查单文件三声明轨道一致性，不检测跨文件重复，12 组撞车漏检。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: module_id_consistency_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_module_id_consistency_gate
+#   name_en: make_module_id_consistency_gate
+#   intro: 构造 module_id 一致性门禁 GateSpec（fail-closed 阻断型）。
+#   desc: 构造 module_id 一致性门禁 GateSpec（fail-closed 阻断型）。 Returns: GateSpec(gate_id="MODULE-ID-CONSIS…；源码 L277-L310
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

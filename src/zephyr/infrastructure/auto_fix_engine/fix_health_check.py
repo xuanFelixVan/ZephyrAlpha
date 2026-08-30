@@ -15,6 +15,36 @@
 # [A_module] module_id=MOD-INF-031 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: db_path 参数
+#   fields: 参数 db_path（无注解）
+#   code: fix_health_check.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FixHealthCheck
+#   name_en: FixHealthCheck
+#   intro: class FixHealthCheck 源码 L62-L143
+#   desc: 公共方法（定义序）: check_config, db_path, check_db, check；源码 L62-L143
+#   inputs: db_path
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: FixHealthCheck
+#   downstream: engine.py;__main__.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 from __future__ import annotations
 
 import logging

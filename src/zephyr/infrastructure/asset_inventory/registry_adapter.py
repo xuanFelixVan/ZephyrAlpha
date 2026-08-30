@@ -15,10 +15,125 @@
 # [A_module] module_id=MOD-INF-026 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""MOD-INF-026 §17 — 24 个异构注册表统一解析适配器。
+"""
+MOD-INF-026 §17 — 24 个异构注册表统一解析适配器。
 
 RegistryAdapter 抽象基类 + 7 个适配器实现 + RegistryManager。
 对标 ETL 管道 + abc.ABC 抽象基类模式。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: registry_id 参数
+#   fields: 参数 registry_id（无注解）
+#   code: registry_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: path_pattern 参数
+#   fields: 参数 path_pattern（无注解）
+#   code: registry_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: asset_key 参数
+#   fields: 参数 asset_key（无注解）
+#   code: registry_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: id_key 参数
+#   fields: 参数 id_key（无注解）
+#   code: registry_adapter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RegistryAdapter
+#   name_en: RegistryAdapter
+#   intro: class RegistryAdapter 源码 L277-L286
+#   desc: 公共方法（定义序）: parse, can_handle, registry_id；源码 L277-L286
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② YamlListAdapter
+#   name_en: YamlListAdapter
+#   intro: class YamlListAdapter 源码 L289-L373
+#   desc: 公共方法（定义序）: registry_id, can_handle, parse；源码 L289-L373
+#   inputs: registry_id path_pattern asset_key id_key
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ YamlDictAdapter
+#   name_en: YamlDictAdapter
+#   intro: class YamlDictAdapter 源码 L376-L448
+#   desc: 公共方法（定义序）: registry_id, can_handle, parse；源码 L376-L448
+#   inputs: registry_id path_pattern asset_key
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ MarkdownTableAdapter
+#   name_en: MarkdownTableAdapter
+#   intro: class MarkdownTableAdapter 源码 L451-L503
+#   desc: 公共方法（定义序）: registry_id, can_handle, parse；源码 L451-L503
+#   inputs: registry_id filename path_column
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ FrontmatterAdapter
+#   name_en: FrontmatterAdapter
+#   intro: class FrontmatterAdapter 源码 L506-L547
+#   desc: 公共方法（定义序）: registry_id, can_handle, parse；源码 L506-L547
+#   inputs: registry_id filename
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ CsvAdapter
+#   name_en: CsvAdapter
+#   intro: class CsvAdapter 源码 L550-L580
+#   desc: 公共方法（定义序）: registry_id, can_handle, parse；源码 L550-L580
+#   inputs: registry_id path_column
+#   outputs: 返回值
+# - id: A7
+#   name_zh: ⑦ TomlAdapter
+#   name_en: TomlAdapter
+#   intro: class TomlAdapter 源码 L648-L681
+#   desc: 公共方法（定义序）: registry_id, can_handle, parse；源码 L648-L681
+#   inputs: registry_id key
+#   outputs: 返回值
+# - id: A8
+#   name_zh: ⑧ SqliteAdapter
+#   name_en: SqliteAdapter
+#   intro: class SqliteAdapter 源码 L684-L730
+#   desc: 公共方法（定义序）: registry_id, can_handle, parse；源码 L684-L730
+#   inputs: registry_id db_path table path_column
+#   outputs: 返回值
+# - id: A9
+#   name_zh: ⑨ RegistryManager
+#   name_en: RegistryManager
+#   intro: 管理所有注册表的解析——从 registry_of_registries.
+#   desc: 管理所有注册表的解析——从 registry_of_registries.yaml 自动发现 + 损坏隔离；公共方法（定义序）: find_adapter, known, root, discover_registry…
+#   inputs: project_root
+#   outputs: 返回值
+# - id: A10
+#   name_zh: ⑩ discover_all_registries
+#   name_en: discover_all_registries
+#   intro: 读取 registry_of_registries.yaml（ROOR，SSoT），返回全部 registry 的元数…
+#   desc: 读取 registry_of_registries.yaml（ROOR，SSoT），返回全部 registry 的元数据列表。 裁定（2026-07-30）：AI 代码启动时调用…；源码 L944-L987
+#   inputs: 无参数
+#   outputs: list[dict]
+#   （注：A10 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[dict]
+#   name_en: list[dict]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> A10
+# A10 --> O1
 """
 
 import csv

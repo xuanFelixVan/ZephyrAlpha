@@ -20,6 +20,33 @@ Can-I-Deploy 预部署门禁（GATE-CDC-1）
 
 依据：MOD-MASTER-002 蓝图 §十六 CT-CDC-001
 4项预部署检查：consumer_expectations/schema_version/contract_consistency/health。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: can_i_deploy.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① CanIDeploy
+#   name_en: CanIDeploy
+#   intro: class CanIDeploy 源码 L70-L94
+#   desc: 公共方法（定义序）: check；源码 L70-L94
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: CanIDeploy
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from enum import Enum

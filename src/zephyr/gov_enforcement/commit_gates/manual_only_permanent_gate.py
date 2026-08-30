@@ -16,7 +16,8 @@
 # [TTL] permanent
 # noqa: m02-manual-trigger  M02豁免: 本文件是MANUAL-ONLY-PERMANENT检测器自身,源码含检测模式字符串(argparse/input/sys.argv)用于AST匹配,非实际manual触发
 # noqa: m11-perm-manual-legitimate  M11豁免: 本文件是 MANUAL-ONLY-PERMANENT 检测器自身（GitCommitGateway in-process 事件触发），源码含检测模式字符串用于 AST 匹配非真实 manual 触发
-"""manual_only_permanent_gate.py — 永久系统脚本 manual 触发无事件订阅阻断门禁（MANUAL-ONLY-PERMANENT，#ARCH-GOV-CONVERGENCE-META Phase 3.6 补齐 rc4 enforceability）
+"""
+manual_only_permanent_gate.py — 永久系统脚本 manual 触发无事件订阅阻断门禁（MANUAL-ONLY-PERMANENT，#ARCH-GOV-CONVERGENCE-META Phase 3.6 补齐 rc4 enforceability）
 
 病根（裁定#221，原 ai_first_governance_principles.md §二，文档已删 2026-07-30，git 历史可查）
 ------------------------------------------------
@@ -46,6 +47,32 @@ manual-only permanent 脚本。本 gate 在 GitCommitGateway pre-commit 阶段
 5. **priority=36**：在 R5-DIGIT-SUFFIX(35) 之后、CH-BATCH-SIZE(36 冲突)→调整为 36 与 CH-BATCH-SIZE 不冲突（CH-BATCH-SIZE 实际 priority=36，本 gate 用 36 会冲突，改为 43）。
 
 实际 priority=43（避开 CH-BATCH-SIZE=36 / CH-FINAL=37 / CH-VERSION-COL=38 / RENAME-DEPGRAPH-SYNC=39 / FILE-PLACEMENT-TTL=33-40 区间）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: manual_only_permanent_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_manual_only_permanent_gate
+#   name_en: make_manual_only_permanent_gate
+#   intro: 构造永久系统脚本 manual 触发无事件订阅阻断门禁 GateSpec（硬阻断型）。
+#   desc: 构造永久系统脚本 manual 触发无事件订阅阻断门禁 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="MANUAL-ONLY-PERMAN…；源码 L401-L463
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -397,7 +424,7 @@ def make_manual_only_permanent_gate() -> GateSpec:
                 continue
 
             try:
-                with open(abs_path, "r", encoding="utf-8", errors="replace") as f:
+                with open(abs_path, encoding="utf-8", errors="replace") as f:
                     content = f.read()
             except OSError as e:
                 logger.warning(

@@ -16,8 +16,52 @@
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 
-"""Owner 紧急旁路——时间限定的门禁临时绕过 + 审计追踪（beta）
-同时写入核心 zephyr.gov_audit.writer.AuditWriter 不可变审计链。"""
+"""
+Owner 紧急旁路——时间限定的门禁临时绕过 + 审计追踪（beta）
+同时写入核心 zephyr.gov_audit.writer.AuditWriter 不可变审计链。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: gate_override.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① OverrideRecord
+#   name_en: OverrideRecord
+#   intro: class OverrideRecord 源码 L76-L86
+#   desc: 公共方法（定义序）: is_expired；源码 L76-L86
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② GateOverride
+#   name_en: GateOverride
+#   intro: class GateOverride 源码 L89-L159
+#   desc: 公共方法（定义序）: active, grant, is_overridden, revoke, cleanup_expired, audit_trail；源码 L89-L159
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ main
+#   name_en: main
+#   intro: main() 源码 L165-L166
+#   desc: 源码 L165-L166
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: OverrideRecord, GateOverride, main
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
+"""
 
 import logging
 from dataclasses import dataclass, field

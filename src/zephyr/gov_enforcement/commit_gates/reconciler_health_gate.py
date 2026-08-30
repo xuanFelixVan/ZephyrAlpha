@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_reconciler_health_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""reconciler_health_gate.py — reconciler 健康度门禁（#ARCH-DATAQUALITY-V1.7）
+"""
+reconciler_health_gate.py — reconciler 健康度门禁（#ARCH-DATAQUALITY-V1.7）
 
 治本目标
 --------
@@ -53,6 +54,32 @@ Usage::
 
     from zephyr.gov_enforcement.commit_gates.reconciler_health_gate import make_reconciler_health_gate
     registry.register(make_reconciler_health_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: reconciler_health_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_reconciler_health_gate
+#   name_en: make_reconciler_health_gate
+#   intro: 构造 reconciler 健康度门禁 GateSpec（dual-level，阻断型）。
+#   desc: 构造 reconciler 健康度门禁 GateSpec（dual-level，阻断型）。 Returns: GateSpec(gate_id="RECONCILER-HEALT…；源码 L144-L240
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

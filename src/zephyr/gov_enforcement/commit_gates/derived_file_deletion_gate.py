@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-BP-REGISTRY-DELETION-001] P1 治本——GATE-21 守护洞封堵（in-process gate，gateway --no-verify 绕不过）
-"""derived_file_deletion_gate.py — 派生文件删除保护门禁（DERIVED-FILE-DELETION-PROTECTION）
+"""
+derived_file_deletion_gate.py — 派生文件删除保护门禁（DERIVED-FILE-DELETION-PROTECTION）
 
 治本目标（#ARCH-BP-REGISTRY-DELETION-001 P1）
 --------------------------------------------
@@ -66,6 +67,32 @@ Usage::
     registry.register(make_derived_file_deletion_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid,
     #                                  allow_derived_deletion=False, ...)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: derived_file_deletion_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_derived_file_deletion_gate
+#   name_en: make_derived_file_deletion_gate
+#   intro: 构造派生文件删除保护门禁 GateSpec（硬阻断型）。
+#   desc: 构造派生文件删除保护门禁 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="DERIVED-FILE-DELETION-PROTECTION"…；源码 L158-L192
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

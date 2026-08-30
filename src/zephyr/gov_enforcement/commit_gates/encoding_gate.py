@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_encoding_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""encoding_gate.py — 编码安全校验门禁（治本：弥补 --no-verify 绕过 pre-commit GATE-ENCODING 的缺口）
+"""
+encoding_gate.py — 编码安全校验门禁（治本：弥补 --no-verify 绕过 pre-commit GATE-ENCODING 的缺口）
 
 GitCommitGateway 用 ``git commit --no-verify`` 绕过 pre-commit 钩子（包括
 GATE-ENCODING），导致编码合规校验在 gateway 路径完全失效。本 gate 在 commit()
@@ -59,6 +60,32 @@ Usage::
 
     registry.register(make_encoding_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: encoding_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_encoding_gate
+#   name_en: make_encoding_gate
+#   intro: 构造编码安全校验门禁 GateSpec（fail-closed，阻断型）。
+#   desc: 构造编码安全校验门禁 GateSpec（fail-closed，阻断型）。 Returns: GateSpec(gate_id="ENCODING-SAFETY", priori…；源码 L110-L183
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

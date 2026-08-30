@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_empty_handler_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""empty_handler_gate.py — 空事件 handler 函数阻断门禁（EMPTY-HANDLER）
+"""
+empty_handler_gate.py — 空事件 handler 函数阻断门禁（EMPTY-HANDLER）
 
 检测 staged 新增 .py 文件中的事件订阅 handler 函数是否为空壳（函数体仅含
 logger/pass/return/docstring，无实际业务逻辑）——空 handler 是死代码，注册了
@@ -52,6 +53,32 @@ Usage::
 
     registry.register(make_empty_handler_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: empty_handler_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_empty_handler_gate
+#   name_en: make_empty_handler_gate
+#   intro: 构造空事件 handler 函数阻断门禁 GateSpec（硬阻断型）。
+#   desc: 构造空事件 handler 函数阻断门禁 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="EMPTY-HANDLER", priority=…；源码 L272-L312
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -202,7 +229,7 @@ def _resolve_abs_files(new_py_files: list[str], wt_root: str) -> list[str]:
 def _read_file_content(abs_path: str) -> str | None:
     """读取文件内容，失败返回 None 并记录 warning。"""
     try:
-        with open(abs_path, "r", encoding="utf-8", errors="replace") as f:
+        with open(abs_path, encoding="utf-8", errors="replace") as f:
             return f.read()
     except OSError as e:
         logger.warning(

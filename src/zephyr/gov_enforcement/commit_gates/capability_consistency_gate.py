@@ -14,7 +14,8 @@
 # [TESTS] tests/zephyr/data/test_capability_validator.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""capability_consistency_gate.py — Provider 路由-meta 一致性门禁（CAP-CONSISTENCY，裁定 #ARCH-CH-022 Phase 4.4）
+"""
+capability_consistency_gate.py — Provider 路由-meta 一致性门禁（CAP-CONSISTENCY，裁定 #ARCH-CH-022 Phase 4.4）
 
 检测 staged ``*_provider.py`` 文件中 "fetch 路由能力集" 与 "meta.capabilities 声明集"
 的一致性——不一致则硬阻断 commit。
@@ -52,6 +53,32 @@ Usage::
     )
 
     registry.register(make_capability_consistency_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: capability_consistency_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_capability_consistency_gate
+#   name_en: make_capability_consistency_gate
+#   intro: 构造 Provider 路由-meta 一致性 GateSpec（硬阻断型）。
+#   desc: 构造 Provider 路由-meta 一致性 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="CAP-CONSISTENCY", prio…；源码 L148-L196
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

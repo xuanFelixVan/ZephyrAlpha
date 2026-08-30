@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_msg_exposure_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""msg_exposure_gate.py — 错误消息暴露敏感信息阻断门禁（MSG-EXPOSURE）
+"""
+msg_exposure_gate.py — 错误消息暴露敏感信息阻断门禁（MSG-EXPOSURE）
 
 检测 staged .py 文件中 ``raise XxxError(f"...{sensitive_var}...")`` 模式——
 异常消息 f-string 中插值了路径/tx_id/密钥/连接串等敏感变量，违反"敏感信息
@@ -60,6 +61,32 @@ Usage::
     from zephyr.gov_enforcement.commit_gates.msg_exposure_gate import make_msg_exposure_gate
 
     registry.register(make_msg_exposure_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: msg_exposure_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_msg_exposure_gate
+#   name_en: make_msg_exposure_gate
+#   intro: 构造错误消息暴露敏感信息阻断门禁 GateSpec（硬阻断型）。
+#   desc: 构造错误消息暴露敏感信息阻断门禁 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="MSG-EXPOSURE", priority=83)。…；源码 L415-L469
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -420,7 +447,7 @@ def make_msg_exposure_gate() -> GateSpec:
             if not os.path.isfile(abs_path):
                 continue
             try:
-                with open(abs_path, "r", encoding="utf-8", errors="replace") as f:
+                with open(abs_path, encoding="utf-8", errors="replace") as f:
                     content = f.read()
             except OSError as e:
                 logger.warning(

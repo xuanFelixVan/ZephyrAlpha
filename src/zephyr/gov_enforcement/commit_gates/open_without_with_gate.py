@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_open_without_with_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""open_without_with_gate.py — open() 未在 with 内硬阻断门禁（OPEN-WITHOUT-WITH）
+"""
+open_without_with_gate.py — open() 未在 with 内硬阻断门禁（OPEN-WITHOUT-WITH）
 
 检测 staged 代码（src/zephyr/ 全量 .py）新增行中 ``open()`` 调用不在 ``with`` 语句内
 —— 文件句柄泄漏风险（5.144 资源清理顺序防复发）。
@@ -55,6 +56,32 @@ Usage::
     from zephyr.gov_enforcement.commit_gates.open_without_with_gate import make_open_without_with_gate
 
     registry.register(make_open_without_with_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: open_without_with_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_open_without_with_gate
+#   name_en: make_open_without_with_gate
+#   intro: 构造 open() 未在 with 内硬阻断 GateSpec。
+#   desc: 构造 open() 未在 with 内硬阻断 GateSpec。 Returns: GateSpec(gate_id="OPEN-WITHOUT-WITH", priority=…；源码 L218-L249
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

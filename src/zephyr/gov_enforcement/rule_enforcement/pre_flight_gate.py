@@ -14,6 +14,45 @@
 # [TESTS]
 # [A_module] module_id=MOD-INF-024 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: engine 参数
+#   fields: 参数 engine（无注解）
+#   code: pre_flight_gate.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① PreFlightReport
+#   name_en: PreFlightReport
+#   intro: class PreFlightReport 源码 L72-L82
+#   desc: 公共方法（定义序）: all_green；源码 L72-L82
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② PreFlightGate
+#   name_en: PreFlightGate
+#   intro: class PreFlightGate 源码 L85-L140
+#   desc: 公共方法（定义序）: engine, gate, get_engine；源码 L85-L140
+#   inputs: engine
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: PreFlightReport, PreFlightGate
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
+
 import time
 from dataclasses import dataclass, field
 from enum import Enum, auto

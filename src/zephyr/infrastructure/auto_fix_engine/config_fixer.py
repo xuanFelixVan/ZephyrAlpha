@@ -15,6 +15,36 @@
 # [A_module] module_id=MOD-INF-031 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: config_fixer.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ConfigFixer
+#   name_en: ConfigFixer
+#   intro: class ConfigFixer 源码 L69-L259
+#   desc: 公共方法（定义序）: fix_trailing_whitespace, fix_tabs, fix_merge_conflicts, scan, fix, validate, rollback；源码 L69-L259
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: ConfigFixer
+#   downstream: engine.py;MOD-INF-023(drift-detector)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 from __future__ import annotations
 
 import logging

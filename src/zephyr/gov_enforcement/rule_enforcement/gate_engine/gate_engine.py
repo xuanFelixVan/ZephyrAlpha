@@ -63,6 +63,48 @@ Safety : M（治理层代码，门禁失败阻断任务启动）
   circuit_breaker  - 模块间熔断状态检查（T-V2-005 第 17 种，CBG experimental）
   blueprint_read_check - 蓝图读取合规检查（T-V2-011 第 18 种，G6 beta 硬合规）
   drift_budget        - 漂移预算检查（T-V2-012 第 19 种，G1/G6 实验性）—— 模块漂移事件数是否超出 SLO 预算
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: gate_dir 参数
+#   fields: 参数 gate_dir（无注解）
+#   code: gate_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: db_path 参数
+#   fields: 参数 db_path（无注解）
+#   code: gate_engine.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: gate_engine.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: auto_init 参数
+#   fields: 参数 auto_init（无注解）
+#   code: gate_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① GateEngine
+#   name_en: GateEngine
+#   intro: 门禁裁决引擎。
+#   desc: 门禁裁决引擎。 参数 ---- gate_dir 存放各门禁 YAML（含 ``task/*.yaml``）的目录；默认与本模块同级。 db_path SQLite 数据库路径；…；公共方法（定义序）: is_mand…
+#   inputs: gate_dir db_path project_root auto_init
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: GateEngine
+#   downstream: zephyr.governance.persistence.task_repo; zephyr.governance.lifecycle_governance…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -1486,12 +1528,12 @@ class GateEngine:
         return self._load_gate_configs_from_registry()
 
     @property
-    def gate_cache(self) -> "dict[str, GateConfig] | None":
+    def gate_cache(self) -> dict[str, GateConfig] | None:
         """门禁配置缓存（Stage 4 R5 公共化）。"""
         return self._gate_cache
 
     @gate_cache.setter
-    def gate_cache(self, value: "dict[str, GateConfig] | None") -> None:
+    def gate_cache(self, value: dict[str, GateConfig] | None) -> None:
         self._gate_cache = value
 
     # ------------------------------------------------------------------

@@ -15,6 +15,68 @@
 # [A_module] module_id=MOD-INF-031 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: args 参数
+#   fields: 参数 args，类型注解 argparse.Namespace
+#   code: __main__.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① cmd_fix
+#   name_en: cmd_fix
+#   intro: cmd_fix(args) 源码 L94-L106
+#   desc: 源码 L94-L106
+#   inputs: args
+#   outputs: int
+# - id: A2
+#   name_zh: ② cmd_scan
+#   name_en: cmd_scan
+#   intro: cmd_scan(args) 源码 L109-L119
+#   desc: 源码 L109-L119
+#   inputs: args
+#   outputs: int
+# - id: A3
+#   name_zh: ③ cmd_health
+#   name_en: cmd_health
+#   intro: cmd_health(args) 源码 L122-L136
+#   desc: 源码 L122-L136
+#   inputs: args
+#   outputs: int
+# - id: A4
+#   name_zh: ④ cmd_report
+#   name_en: cmd_report
+#   intro: cmd_report(args) 源码 L139-L149
+#   desc: 源码 L139-L149
+#   inputs: args
+#   outputs: int
+# - id: A5
+#   name_zh: ⑤ main
+#   name_en: main
+#   intro: main() 源码 L152-L183
+#   desc: 源码 L152-L183
+#   inputs: 无参数
+#   outputs: int
+# 层: 输出
+# - id: O1
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: CLI用户;CI/CD pipeline
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
+"""
+
 from __future__ import annotations
 
 import argparse

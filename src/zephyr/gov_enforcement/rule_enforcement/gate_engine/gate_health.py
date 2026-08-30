@@ -15,7 +15,51 @@
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""门禁健康仪表板——per-gate SLI 报告、误报率、延迟分布、1人+AI运维视图（beta）"""
+"""
+门禁健康仪表板——per-gate SLI 报告、误报率、延迟分布、1人+AI运维视图（beta）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: gate_health.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① GateSLI
+#   name_en: GateSLI
+#   intro: class GateSLI 源码 L71-L98
+#   desc: 公共方法（定义序）: pass_rate, false_positive_rate, p50_latency_ms, p99_latency_ms；源码 L71-L98
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② GateHealth
+#   name_en: GateHealth
+#   intro: class GateHealth 源码 L110-L137
+#   desc: 公共方法（定义序）: get_or_create, record, summary, health_score；源码 L110-L137
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ main
+#   name_en: main
+#   intro: main() 源码 L143-L144
+#   desc: 源码 L143-L144
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: GateSLI, GateHealth, main
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
+"""
 
 import logging
 from dataclasses import dataclass, field

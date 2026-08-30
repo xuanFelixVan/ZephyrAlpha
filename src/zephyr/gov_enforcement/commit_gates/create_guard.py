@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_create_guard.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""create_guard.py — 新建 .py / 非 rules/ .yaml 文件 creation_token 阻断门禁（CREATE-GUARD，2026-06-30 治本）
+"""
+create_guard.py — 新建 .py / 非 rules/ .yaml 文件 creation_token 阻断门禁（CREATE-GUARD，2026-06-30 治本）
 
 检测 staged 新增 .py 文件与非 rules/ .yaml 文件是否在 capability_canonical_file_registry.yaml 的
 creation_tokens 字段登记。无 token 的 .py / .yaml 文件 -> 硬阻断，提示"无 creation_token，
@@ -113,6 +114,32 @@ Usage::
 
     registry.register(make_create_guard())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: create_guard.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_create_guard
+#   name_en: make_create_guard
+#   intro: 构造新建 .py 文件 creation_token 阻断门禁 GateSpec（硬阻断型）。
+#   desc: 构造新建 .py 文件 creation_token 阻断门禁 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="CREATE-GUARD",…；源码 L711-L768
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

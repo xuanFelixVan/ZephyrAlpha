@@ -38,6 +38,48 @@ PRAGMA 基线：
     mgr = SchemaManager()
     mgr.init_db("path/to/capacity.db")
     mgr.verify()
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: db_path 参数
+#   fields: 参数 db_path（无注解）
+#   code: schema.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SchemaManager
+#   name_en: SchemaManager
+#   intro: 容量保障数据库 Schema 的完整生命周期管理器。
+#   desc: 容量保障数据库 Schema 的完整生命周期管理器。；公共方法（定义序）: init_db, migrate, verify, ttl_cleanup, compute_hash；源码 L111-L369
+#   inputs: db_path
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② MetricsWriteBuffer
+#   name_en: MetricsWriteBuffer
+#   intro: Metrics 写入缓冲层（盲点 #20 实现）。
+#   desc: Metrics 写入缓冲层（盲点 #20 实现）。 批量写入 capacity_metrics，事务包裹，防止逐行写入锁竞争。；公共方法（定义序）: add, flush；源码 L372-L430
+#   inputs: db_path
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ get_db_path
+#   name_en: get_db_path
+#   intro: get_db_path() 源码 L433-L444
+#   desc: 源码 L433-L444
+#   inputs: 无参数
+#   outputs: str
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 import hashlib

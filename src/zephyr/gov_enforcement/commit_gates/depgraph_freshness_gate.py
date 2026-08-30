@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_depgraph_freshness_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""depgraph_freshness_gate.py — depgraph 新鲜度门禁（dual-threshold，#ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3.1）
+"""
+depgraph_freshness_gate.py — depgraph 新鲜度门禁（dual-threshold，#ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3.1）
 
 治本目标（fail-silent 三要素之「可阻断」补强）：
   - Phase 2/3/4.2/4.3 已实现持久化 + 可发现 + 严重错误 block_next 硬阻断
@@ -53,6 +54,32 @@ Usage::
 
     registry.register(make_depgraph_freshness_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: depgraph_freshness_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_depgraph_freshness_gate
+#   name_en: make_depgraph_freshness_gate
+#   intro: 构造 depgraph 新鲜度门禁 GateSpec（dual-threshold，阻断型）。
+#   desc: 构造 depgraph 新鲜度门禁 GateSpec（dual-threshold，阻断型）。 Returns: GateSpec(gate_id="DEPGRAPH-FRESH…；源码 L130-L224
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

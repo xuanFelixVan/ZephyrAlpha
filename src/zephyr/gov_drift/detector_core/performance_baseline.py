@@ -15,6 +15,55 @@
 # [A_module] module_id=MOD-INF-023 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: name 参数
+#   fields: 参数 name，类型注解 str
+#   code: performance_baseline.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: segments 参数
+#   fields: 参数 segments，类型注解 dict[str, int]
+#   code: performance_baseline.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① get_segment
+#   name_en: get_segment
+#   intro: get_segment(name) 源码 L96-L100
+#   desc: 源码 L96-L100
+#   inputs: name
+#   outputs: LatencySegment | None
+# - id: A2
+#   name_zh: ② validate_e2e
+#   name_en: validate_e2e
+#   intro: validate_e2e(segments) 源码 L103-L111
+#   desc: 源码 L103-L111
+#   inputs: segments
+#   outputs: tuple[bool, str]
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: LatencySegment | None
+#   name_en: LatencySegment | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-GATE_ENGINE;MOD-INF-021;MOD-INF-020
+# - id: O2
+#   name_zh: tuple[bool, str]
+#   name_en: tuple[bool, str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-GATE_ENGINE;MOD-INF-021;MOD-INF-020
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass

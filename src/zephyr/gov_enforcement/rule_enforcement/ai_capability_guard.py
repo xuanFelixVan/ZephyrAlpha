@@ -40,6 +40,56 @@ AI 能力边界守卫——@require_capability 装饰器运行时检查（AI cap
 - 与 ContractEnforcer 互补：enforcer 管数据，capability guard 管行为
 
 SSoT: config/ai_capability_matrix.yaml
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: operation 参数
+#   fields: 参数 operation，类型注解 str
+#   code: ai_capability_guard.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: min_level 参数
+#   fields: 参数 min_level，类型注解 CapabilityLevel
+#   code: ai_capability_guard.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: filepath 参数
+#   fields: 参数 filepath（无注解）
+#   code: ai_capability_guard.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① require_capability
+#   name_en: require_capability
+#   intro: 装饰器——标记函数需要的 AI 能力等级。
+#   desc: 装饰器——标记函数需要的 AI 能力等级。 在开发阶段，此装饰器记录操作需求到日志，供 CI 检查脚本分析。 在生产模式 (ZEPHYR_ENFORCE_CAPABILITY=t…；源码 L189-L238
+#   inputs: operation min_level
+#   outputs: Callable
+# - id: A2
+#   name_zh: ② check_file_level
+#   name_en: check_file_level
+#   intro: 公共接口：check_file_level（Stage 4 公共化）。
+#   desc: 公共接口：check_file_level（Stage 4 公共化）。；源码 L318-L320
+#   inputs: filepath
+#   outputs: CapabilityLevel
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: Callable
+#   name_en: Callable
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: CapabilityLevel
+#   name_en: CapabilityLevel
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -67,7 +117,7 @@ _AI_CAPABILITY_MATRIX_PATH: Path = (
 )
 
 
-def _load_capability_matrix_entries() -> list[tuple[str, "CapabilityLevel"]]:
+def _load_capability_matrix_entries() -> list[tuple[str, CapabilityLevel]]:
     """从 SSoT 加载 (scope_pattern, level) 列表。
 
     YAML 结构: matrix.entries: [{scope: "...", level: "IMMUTABLE|EXTEND|FULL"}]

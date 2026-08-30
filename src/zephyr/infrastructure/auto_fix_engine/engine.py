@@ -15,6 +15,36 @@
 # [A_module] module_id=MOD-INF-031 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config_path 参数
+#   fields: 参数 config_path（无注解）
+#   code: engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AutoFixEngine
+#   name_en: AutoFixEngine
+#   intro: class AutoFixEngine 源码 L117-L410
+#   desc: 公共方法（定义序）: safety_gate, cascade_breaker, fix_budget, storm_guard, idempotency, conflict_resolver, blast_radiu…
+#   inputs: config_path
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: AutoFixEngine
+#   downstream: MOD-INF-027(audit-orchestrator);MOD-INF-023(drift-detector);MOD-INF-029(orphan-…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 from __future__ import annotations
 
 import logging

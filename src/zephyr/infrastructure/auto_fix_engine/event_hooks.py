@@ -16,6 +16,45 @@
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: event_hooks.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① EventHooks
+#   name_en: EventHooks
+#   intro: class EventHooks 源码 L89-L183
+#   desc: 公共方法（定义序）: event_log, hooks, register, unregister, emit, emit_for_status, get_event_log, clear_hooks, clear_l…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② subscribe_eventbus
+#   name_en: subscribe_eventbus
+#   intro: 订阅 EventBusBackpressure 的 drift_detected / validation_resul…
+#   desc: 订阅 EventBusBackpressure 的 drift_detected / validation_result 事件。 幂等：重复调用安全。Backpressure 总…；源码 L192-L213
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: EventHooks, subscribe_eventbus
+#   downstream: engine.py;fix_scheduler.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
+
 from __future__ import annotations
 
 import logging

@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_table_name_registry_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""table_name_registry_gate.py — TABLE-NAME-REGISTRY block 门禁
+"""
+table_name_registry_gate.py — TABLE-NAME-REGISTRY block 门禁
 
 裁定 #ARCH-CH-024 Phase 4：SSoT 真源强制闭环。
 
@@ -58,6 +59,68 @@ Usage::
         make_table_name_registry_gate,
     )
     registry.register(make_table_name_registry_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: gateway 参数
+#   fields: 参数 gateway（无注解）
+#   code: table_name_registry_gate.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: py_file 参数
+#   fields: 参数 py_file，类型注解 str
+#   code: table_name_registry_gate.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: registered_tables 参数
+#   fields: 参数 registered_tables，类型注解 set[str]
+#   code: table_name_registry_gate.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: table_name_pattern 参数
+#   fields: 参数 table_name_pattern，类型注解 re.Pattern | None
+#   code: table_name_registry_gate.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① check_hardcoded_tables_in_file
+#   name_en: check_hardcoded_tables_in_file
+#   intro: 检测单个 staged .py 文件 added 行中的硬编码表名。
+#   desc: 检测单个 staged .py 文件 added 行中的硬编码表名。 diff-based 检测：只检查 added 行中的 ast.Constant 字符串节点。 精确匹配=直…；源码 L178-L233
+#   inputs: gateway py_file registered_tables table_name_pattern
+#   outputs: list[str]
+# - id: A2
+#   name_zh: ② check_tasks_yaml_tables
+#   name_en: check_tasks_yaml_tables
+#   intro: 校验 staged tasks.yaml 的表名是否在 TableRegistry 注册。
+#   desc: 校验 staged tasks.yaml 的表名是否在 TableRegistry 注册。 Args: gateway: GitCommitGateway 实例。 registr…；源码 L236-L267
+#   inputs: gateway registry
+#   outputs: list[str]
+# - id: A3
+#   name_zh: ③ make_table_name_registry_gate
+#   name_en: make_table_name_registry_gate
+#   intro: 构造 TABLE-NAME-REGISTRY pre-commit block 门禁（priority=120）。
+#   desc: 构造 TABLE-NAME-REGISTRY pre-commit block 门禁（priority=120）。 检测 staged .py added 行中的硬编码表名（绕过…；源码 L270-L333
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: list[str]
+#   name_en: list[str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# - id: O2
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

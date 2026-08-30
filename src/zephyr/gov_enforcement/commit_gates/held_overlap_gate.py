@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_held_overlap_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""held_overlap_gate.py — 搭便车防护门禁（HELD-OVERLAP，2026-06-30 治本）
+"""
+held_overlap_gate.py — 搭便车防护门禁（HELD-OVERLAP，2026-06-30 治本）
 
 检测 commit 目标文件是否被其他**活跃** session 持有，命中则阻断
 （``HELD_OVERLAP_VIOLATION``）。``allow_overlap=True`` 时放行（逃生通道），
@@ -41,6 +42,32 @@ Usage::
 
     registry.register(make_held_overlap_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, allow_overlap=False)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: held_overlap_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_held_overlap_gate
+#   name_en: make_held_overlap_gate
+#   intro: 构造搭便车防护门禁 GateSpec。
+#   desc: 构造搭便车防护门禁 GateSpec。 Returns: GateSpec(gate_id="HELD-OVERLAP", priority=50)。 priority=50 优…；源码 L82-L124
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

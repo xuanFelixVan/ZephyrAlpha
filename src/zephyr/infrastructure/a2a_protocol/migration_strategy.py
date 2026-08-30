@@ -15,6 +15,50 @@
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: phase 参数
+#   fields: 参数 phase，类型注解 MigrationPhase
+#   code: migration_strategy.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① get_phase_def
+#   name_en: get_phase_def
+#   intro: get_phase_def(phase) 源码 L133-L134
+#   desc: 源码 L133-L134
+#   inputs: phase
+#   outputs: PhaseDef | None
+# - id: A2
+#   name_zh: ② get_next_phase
+#   name_en: get_next_phase
+#   intro: get_next_phase(phase) 源码 L137-L139
+#   desc: 源码 L137-L139
+#   inputs: phase
+#   outputs: MigrationPhase | None
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: PhaseDef | None
+#   name_en: PhaseDef | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-INF-027;MOD-INF-018;MOD-INF-022
+# - id: O2
+#   name_zh: MigrationPhase | None
+#   name_en: MigrationPhase | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-INF-027;MOD-INF-018;MOD-INF-022
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
+
 from __future__ import annotations
 
 from enum import Enum

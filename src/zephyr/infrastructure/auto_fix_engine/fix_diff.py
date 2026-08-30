@@ -15,6 +15,36 @@
 # [A_module] module_id=MOD-INF-031 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: fix_diff.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① FixDiff
+#   name_en: FixDiff
+#   intro: class FixDiff 源码 L57-L115
+#   desc: 公共方法（定义序）: compute, compute_text, reverse；源码 L57-L115
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: FixDiff
+#   downstream: engine.py;fix_report.py;compliance_auditor.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 from __future__ import annotations
 
 import difflib

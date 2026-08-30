@@ -23,6 +23,41 @@ are imported from zephyr.shared.protocols.a2a.a2a_coordination.
 
 Local types (AgentRole, AgentCard, TaskDispatch) are multi-agent-specific
 and differ from the shared Protocol-level types of the same name.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: multi_agent.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① AgentCard
+#   name_en: AgentCard
+#   intro: Multi-agent orchestration AgentCard (dataclass; differs fro…
+#   desc: Multi-agent orchestration AgentCard (dataclass; differs from shared Pydantic AgentCard).；公共方法（定义序）: to_dict,…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② TaskDispatch
+#   name_en: TaskDispatch
+#   intro: 任务分派器——将 task 分派给合适的 Agent。
+#   desc: 任务分派器——将 task 分派给合适的 Agent。；公共方法（定义序）: register_agent, unregister_agent, assign, assign_to_capable, get_agent…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: AgentCard, TaskDispatch
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

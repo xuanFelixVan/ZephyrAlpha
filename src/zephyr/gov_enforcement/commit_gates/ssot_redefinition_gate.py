@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_ssot_redefinition_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""ssot_redefinition_gate.py — SSoT 符号重复定义硬阻断门禁
+"""
+ssot_redefinition_gate.py — SSoT 符号重复定义硬阻断门禁
 
 检测 staged .py 文件的新增行中是否重新定义了已 SSoT 化的符号（class 定义或变量赋值）。
 命中则硬阻断 commit，提示扩展现有 canonical 文件而非重新定义。
@@ -38,6 +39,32 @@ Usage::
 
     from zephyr.gov_enforcement.commit_gates.ssot_redefinition_gate import make_ssot_redefinition_gate
     registry.register(make_ssot_redefinition_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: ssot_redefinition_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_ssot_redefinition_gate
+#   name_en: make_ssot_redefinition_gate
+#   intro: 构造 SSoT 符号重复定义硬阻断 GateSpec。
+#   desc: 构造 SSoT 符号重复定义硬阻断 GateSpec。 Returns: GateSpec(gate_id="SSOT-REDEFINITION", priority=65)。…；源码 L244-L276
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

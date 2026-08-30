@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/commit_gates/test_import_direction_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""import_direction_gate.py — shared 层向上依赖阻断门禁（NO-UPWARD-IMPORT，§5.152 防复发）
+"""
+import_direction_gate.py — shared 层向上依赖阻断门禁（NO-UPWARD-IMPORT，§5.152 防复发）
 
 检测 staged shared 层（src/zephyr/shared/）.py 文件中是否含向上依赖 import——
 违反架构分层原则（L0 shared 禁止依赖 L2 governance / L3 trading / L1 integration 等
@@ -60,6 +61,32 @@ Usage::
     from zephyr.gov_enforcement.commit_gates.import_direction_gate import make_import_direction_gate
 
     registry.register(make_import_direction_gate())
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: import_direction_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_import_direction_gate
+#   name_en: make_import_direction_gate
+#   intro: 构造 shared 层向上依赖阻断 GateSpec（硬阻断型）。
+#   desc: 构造 shared 层向上依赖阻断 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="NO-UPWARD-IMPORT", priority=…；源码 L213-L267
+#   inputs: 无参数
+#   outputs: GateSpec
+# 层: 输出
+# - id: O1
+#   name_zh: GateSpec
+#   name_en: GateSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -115,10 +142,7 @@ def _collect_type_checking_imports(tree: ast.Module) -> set[int]:
         test = node.test
         is_tc = False
         # if TYPE_CHECKING:
-        if isinstance(test, ast.Name) and test.id == "TYPE_CHECKING":
-            is_tc = True
-        # if typing.TYPE_CHECKING:
-        elif (
+        if (isinstance(test, ast.Name) and test.id == "TYPE_CHECKING") or (
             isinstance(test, ast.Attribute)
             and test.attr == "TYPE_CHECKING"
             and isinstance(test.value, ast.Name)
@@ -154,7 +178,7 @@ def _find_violations_in_file(abs_path: str, wt_root: str) -> list[str]:
     TYPE_CHECKING 块内的 ImportFrom 通过 _collect_type_checking_imports 豁免。
     """
     try:
-        with open(abs_path, "r", encoding="utf-8", errors="replace") as f:
+        with open(abs_path, encoding="utf-8", errors="replace") as f:
             content = f.read()
     except OSError as e:
         logger.warning("NO-UPWARD-IMPORT gate skip %s: %s", abs_path, e)
