@@ -117,3 +117,7 @@ def __getattr__(name):
         globals()[name] = mod
         return mod
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+
+# ORPHAN-MODULE: 引用登记（让 depgraph 发现 import 边）
+from zephyr.pf_core.strategy_correlation_pipeline import run_strategy_correlation_pipeline  # noqa: F401

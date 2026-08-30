@@ -56,6 +56,7 @@ domain_prefixes:
   TRIG: D_TRADING
   XC: D_EX_CORE
   XS: D_EX_SOR
+  OBS: D_GOVERNANCE
 # ============================================================
 # 段位规划
 # ============================================================
@@ -70,6 +71,10 @@ error_codes:
   class: PromptRegistryError
   module: zephyr.autonomy_core.prompt_registry
   file: src/zephyr/autonomy_core/prompt_registry.py
+- code: ZA-OBS-0001
+  class: PatternMiningMetricsError
+  module: zephyr.shared.observability.pattern_mining_metrics
+  file: src/zephyr/shared/observability/pattern_mining_metrics.py
 - code: ZA-AC-0002
   class: TokenBudgetExceededError
   module: zephyr.autonomy_core.prompt_registry
@@ -2034,6 +2039,12 @@ error_codes:
   module: zephyr.regime.validation.e1_walkforward_cv
   file: src/zephyr/regime/validation/e1_walkforward_cv.py
   introduced: '2026-08-21: AI-RESIDUAL-001 补登（Owner 批准，#63 测试债专项批遗留2）'
+- code: ZA-REGIME-0038
+  class: InstitutionalRegimeConfigError
+  module: zephyr.regime.institutional_regime_scorer
+  file: src/zephyr/regime/institutional_regime_scorer.py
+  description: '机构级 regime 评分配置非法（权重负值/权重和为 0）——MOD-REGIME-015（B13a 三维机构级评分器，10号文 §4.7.6/§4.8.5/§4.11.10）'
+  introduced: '2026-08-30: B13a 施工新增（三维机构级 regime 评分器 MOD-REGIME-015）'
 - code: ZA-RK-0030
   class: InvalidVarBreachConfigError
   module: zephyr.risk.core.var_breach_state_machine

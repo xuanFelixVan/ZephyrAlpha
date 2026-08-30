@@ -57,3 +57,6 @@ __all__.append("VolatilityRegimeAlerter")
 # （market_forecast_fusion/volatility_squeeze_breakout 按字母序入列），恢复本包
 # "纯模块名导出"约定；RegimeCycleAnalyzer/VolatilityRegimeAlerter 行首 eager import
 # 为前波残留，本波未动。
+
+# ORPHAN-MODULE: 引用登记（让 depgraph 发现 import 边）
+from zephyr.regime.institutional_regime_scorer import InstitutionalRegimeScorer  # noqa: F401

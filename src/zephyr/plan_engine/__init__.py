@@ -62,3 +62,6 @@ __all__: Final = [
     "scenario_probability_model",
     "track_fusion",
 ]
+
+# ORPHAN-MODULE: 引用登记（让 depgraph 发现 import 边）
+from zephyr.plan_engine.similar_day_evaluator import evaluate_similar_day_hit_rate  # noqa: F401

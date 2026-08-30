@@ -21,3 +21,6 @@ __all__: Final = [
     "stage_timer",
     "tracing",
 ]
+
+# ORPHAN-MODULE: 引用登记（让 depgraph 发现 import 边）
+from zephyr.shared.observability.pattern_mining_metrics import compute_daily_hit_rates  # noqa: F401

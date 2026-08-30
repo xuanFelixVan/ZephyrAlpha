@@ -94,9 +94,9 @@ B 段接口预留点（2026-08-21 B 段已接通）
   （<queue_root>/worktree）+ GitCommitGateway 全门禁零适配 + `[GW:{sid}:{qid}]` 标记
   （POST-COMMIT-GUARD / REFERENCE-TRANSACTION-GUARD `[GW:` 子串匹配兼容）+
   is-ancestor/标记 grep 幂等 + dev update-ref CAS 推进。
-- flag 接入：config/flags.yaml `commit_queue_serializer`（默认 enabled:false=
-  ALWAYS_OFF）；ON 时 _commit_auto 改道 enqueue（git_commit_gateway 内一处改动，
-  66 号 §7），启用属 Owner 窗口（宪章 B-007）。
+- flag 接入：config/flags.yaml `commit_queue_serializer`（出厂默认 enabled:false=
+  ALWAYS_OFF）。【2026-08-22 Owner 裁定翻开，当前 enabled:true，已运行 8 天】；
+  ON 时 _commit_auto 改道 enqueue（git_commit_gateway 内一处改动，66 号 §7）。
 - task_board 联动（P1 已落地 2026-08-28）：死信时若队列项 meta.task_id 存在，
   经 _notify_task_board_dead_letter → scripts.task_board.tag_dead_letter 把
   {qid, reason, owner, tagged_at} 写入 task_board metadata_json.deadletter

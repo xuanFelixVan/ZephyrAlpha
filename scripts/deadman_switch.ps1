@@ -5,35 +5,35 @@
 # deadman_switch.ps1 - Dead-man switch: independent heartbeat staleness monitor (#ARCH-BOOT-002 E)
 #
 # Architecture (stateless one-shot Task Scheduler task, NOT a guard):
-#   Task Scheduler "ZephyrAlpha_DeadmanSwitch" (AtLogOn + PT5M repeat, interactive user)
-#     -> this script (one-shot: read heartbeats -> alert if stale -> exit, no while-true)
+# Task Scheduler "ZephyrAlpha_DeadmanSwitch" (AtLogOn + PT5M repeat, interactive user)
+# -> this script (one-shot: read heartbeats -> alert if stale -> exit, no while-true)
 #
 # Independence principle (first-principles, #ARCH-BOOT-002 E):
-#   This monitor is NOT one of the 3 monitored services. It only READS heartbeat files
-#   written by others. If all 3 services die, this task still fires (separate Task Scheduler
-#   task) and alerts. Closes the "total layer failure, nobody knows" loop (08-06/08-07 outage:
-#   2-day stall discovered by a human, not the system).
+# This monitor is NOT one of the 3 monitored services. It only READS heartbeat files
+# written by others. If all 3 services die, this task still fires (separate Task Scheduler
+# task) and alerts. Closes the "total layer failure, nobody knows" loop (08-06/08-07 outage:
+# 2-day stall discovered by a human, not the system).
 #
 # Fail-safe: if this task itself dies, system degrades to pre-E state (no monitoring) -
-#   not a regression. No infinite regress needed (its failure is fail-safe, not fail-deadly).
+# not a regression. No infinite regress needed (its failure is fail-safe, not fail-deadly).
 #
 # Why .ps1 not .py: independence from the Python stack. If the failure is caused by broken
-#   Python (bad import, venv crash), a .py monitor would also die. .ps1 reads files + sends
-#   webhook with zero Python dependency.
+# Python (bad import, venv crash), a .py monitor would also die. .ps1 reads files + sends
+# webhook with zero Python dependency.
 #
 # Alert channels:
-#   1. Local alert log: tmp/deadman_switch_alerts.log (always, full audit)
-#   2. Feishu webhook: ZEPHYR_FEISHU_WEBHOOK env (push to phone, survives service failure)
-#   3. Windows Event Log: Application log (visible in Event Viewer, survives process crash)
+# 1. Local alert log: tmp/deadman_switch_alerts.log (always, full audit)
+# 2. Feishu webhook: ZEPHYR_FEISHU_WEBHOOK env (push to phone, survives service failure)
+# 3. Windows Event Log: Application log (visible in Event Viewer, survives process crash)
 # Cooldown: Feishu webhook sent at most every DEADMAN_ALERT_COOLDOWN_MIN (default 30) per
-#   stale-service-set, prevents spamming phone during a multi-hour outage. Local log + Event
-#   Log always fire (full audit). Alert latency: check every 5min, alert when stale >10min
-#   -> worst case 10-15min after service death.
+# stale-service-set, prevents spamming phone during a multi-hour outage. Local log + Event
+# Log always fire (full audit). Alert latency: check every 5min, alert when stale >10min
+# -> worst case 10-15min after service death.
 #
 # Config (env, optional):
-#   DEADMAN_STALE_MIN            stale threshold minutes (default 10)
-#   DEADMAN_ALERT_COOLDOWN_MIN   webhook cooldown minutes (default 30)
-#   ZEPHYR_FEISHU_WEBHOOK        Feishu bot webhook URL (same as Alerter)
+# DEADMAN_STALE_MIN stale threshold minutes (default 10)
+# DEADMAN_ALERT_COOLDOWN_MIN webhook cooldown minutes (default 30)
+# ZEPHYR_FEISHU_WEBHOOK Feishu bot webhook URL (same as Alerter)
 #
 # Deploy: registered by scripts/register_guard_tasks.ps1 (4th task ZephyrAlpha_DeadmanSwitch).
 # Manual run: powershell -ExecutionPolicy Bypass -File scripts\deadman_switch.ps1
@@ -116,7 +116,7 @@ if ($isMarketHours) {
             $biz = Get-Content $BizHb -Raw -Encoding utf8 | ConvertFrom-Json
             $skipBiz = ($null -ne $biz.is_trading_day -and -not [bool]$biz.is_trading_day)  # holiday (business-side calendar ground truth)
             if (-not $skipBiz) {
-                # last_tick_ts null (never received): anchor = max(started_ts, today 09:30) (preopen-start grace)
+ # last_tick_ts null (never received): anchor = max(started_ts, today 09:30) (preopen-start grace)
                 $anchor = $null
                 if ($biz.last_tick_ts) {
                     $anchor = [datetime]$biz.last_tick_ts
@@ -132,6 +132,47 @@ if ($isMarketHours) {
             }
         } catch {
             $staleServices += "tick_subscriber_biz: biz heartbeat parse error ($($_.Exception.Message))"
+        }
+    }
+}
+
+# ============== live_strategy_biz heartbeat (A6 : 57 GAP-2 , tracker #273) ==============
+# Process-level aliveness of the paper-session service is covered by Task Scheduler
+# ZephyrAlpha_PaperSession (Daily 09:25, register_paper_session_task.ps1); this section
+# checks BUSINESS aliveness: LiveStrategyAdapter biz heartbeat (JSON written by the
+# adapter itself every 15s) stale beyond threshold during market hours
+# (weekday 09:30-15:00). Off-hours/weekend are skipped (no false alerts); holiday
+# gating uses business-side is_trading_day when the heartbeat carries it, else
+# weekday+hours only (paper session does not embed a calendar).
+$LiveBizHb = Join-Path $TmpDir "live_strategy_biz.heartbeat"
+$LiveBizStaleMin = 10
+if ($env:DEADMAN_LIVE_STRATEGY_BIZ_STALE_MIN -match '^\d+$') { $LiveBizStaleMin = [int]$env:DEADMAN_LIVE_STRATEGY_BIZ_STALE_MIN }
+if ($isMarketHours) {
+    if (-not (Test-Path $LiveBizHb)) {
+        $staleServices += "live_strategy_biz: biz heartbeat MISSING during market hours (paper session service not running / adapter not writing)"
+    } else {
+        try {
+            $liveBiz = Get-Content $LiveBizHb -Raw -Encoding utf8 | ConvertFrom-Json
+            $skipLiveBiz = ($null -ne $liveBiz.is_trading_day -and -not [bool]$liveBiz.is_trading_day)  # holiday (if adapter stamps it)
+            if (-not $skipLiveBiz) {
+ # anchor = heartbeat ts (adapter writes every 15s; stale = adapter died / hung)
+                $liveAnchor = $null
+                if ($liveBiz.ts) {
+                    $liveAnchor = [datetime]$liveBiz.ts
+                } elseif ($liveBiz.started_ts) {
+                    $liveAnchor = [datetime]$liveBiz.started_ts
+                }
+                if ($null -eq $liveAnchor) {
+                    $staleServices += "live_strategy_biz: biz heartbeat has no ts/started_ts (malformed)"
+                } else {
+                    $liveBizAgeMin = ($now - $liveAnchor).TotalMinutes
+                    if ($liveBizAgeMin -gt $LiveBizStaleMin) {
+                        $staleServices += "live_strategy_biz: biz heartbeat stale $([int]$liveBizAgeMin)min in market hours (threshold ${LiveBizStaleMin}min; running=$($liveBiz.running)) -- restart: schtasks /run /tn ZephyrAlpha_PaperSession"
+                    }
+                }
+            }
+        } catch {
+            $staleServices += "live_strategy_biz: biz heartbeat parse error ($($_.Exception.Message))"
         }
     }
 }
@@ -155,7 +196,9 @@ Possible total-layer failure (08-06/08-07 outage root cause recurrence).
 Check: schtasks /query /tn ZephyrAlpha_DataScheduler /fo LIST
        schtasks /query /tn ZephyrAlpha_TickSubscriber /fo LIST
        schtasks /query /tn ZephyrAlpha_CHHealthProbe /fo LIST
+       schtasks /query /tn ZephyrAlpha_PaperSession /fo LIST  (live_strategy_biz 4th channel, DISABLED at registration = expected when not enabled)
 Restart: schtasks /run /tn ZephyrAlpha_DataScheduler ; schtasks /run /tn ZephyrAlpha_TickSubscriber ; schtasks /run /tn ZephyrAlpha_CHHealthProbe
+         live_strategy_biz stale only: Enable-ScheduledTask ZephyrAlpha_PaperSession ; schtasks /run /tn ZephyrAlpha_PaperSession
 "@
 
 # 1. Local alert log (always, full audit - no cooldown)
@@ -167,7 +210,7 @@ try {
     $msg = "ZephyrAlpha dead-man switch: $($staleServices.Count) service(s) stale > ${StaleMin}min: $staleKey. Details: $AlertLog"
     Write-EventLog -LogName Application -Source "ZephyrAlpha" -EntryType Error -EventId 9002 -Message $msg -ErrorAction SilentlyContinue
 } catch {
-    # Event source may not be registered (needs admin one-time: New-EventLog). Silently fall back to log only.
+ # Event source may not be registered (needs admin one-time: New-EventLog). Silently fall back to log only.
     Write-AlertLog "Windows Event Log write skipped (source not registered): $($_.Exception.Message)"
 }
 
@@ -191,7 +234,7 @@ if (Test-Path $StateFile) {
             }
         }
     } catch {
-        # State file corrupt -> alert anyway (fail-safe)
+ # State file corrupt -> alert anyway (fail-safe)
         Write-AlertLog "State file parse error, alerting anyway (fail-safe): $($_.Exception.Message)"
     }
 }
@@ -204,7 +247,7 @@ if ($shouldAlert) {
     } catch {
         Write-AlertLog "Feishu webhook FAILED: $($_.Exception.Message)"
     }
-    # Update state (always, even on send failure - retry cooldown still applies to avoid spam)
+ # Update state (always, even on send failure - retry cooldown still applies to avoid spam)
     $newState = @{ stale_key = $staleKey; last_alert_ts = $now.ToString("o"); stale_count = $staleServices.Count } | ConvertTo-Json -Depth 2
     $newState | Out-File -FilePath $StateFile -Encoding utf8 -NoNewline
 }

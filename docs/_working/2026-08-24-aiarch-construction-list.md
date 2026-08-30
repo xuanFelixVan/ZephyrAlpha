@@ -10,7 +10,7 @@ ttl: task_bound
 
 > **结案审查（2026-08-30 复核）**：P1/P2 全量核销完毕（2026-08-30 长城批）
 > - 已实证落地（2026-08-30 核销）：1.1 `agentic_drift_guard.py`+`drift_semantic_reviewer.py`；1.2 `security/ops/incident_pipeline.py`+`data/fix_patterns/`；1.3 预算硬门 pre_flight_check+LLMDeg 降级注入；1.4 `intelligence/model_routing/`；1.5 `exam_trigger_scheduler.py`；1.6 inject_by_keyword+doc_compressor 三档；1.7 `lsg_security_gate.yml`+LSGPerformanceGuard+check_lsg_security；2.1~2.9 逐项核销（证据随条目行尾注记，含 2.4 已由 W1 批落地 autonomy_core/module_factory、2.8 缺陷 08-22 已修）；3.9 derived_graphs 6 篇。commit 2a16988d。
-> - 仍有效：W2~W5 Owner 窗口/裁定项（W1 已随 B-007 全战役闭环）+ P3 其余项；施工前须先 grep 实证当前状态再派单（防重造）。
+> - 仍有效：W3~W5 Owner 窗口/裁定项（W1 已随 B-007 全战役闭环；~~W2~~ commit_queue flag 已翻开 ✅ 2026-08-22 Owner 裁定，281b7f469）+ P3 其余项；施工前须先 grep 实证当前状态再派单（防重造）。
 
 ---
 

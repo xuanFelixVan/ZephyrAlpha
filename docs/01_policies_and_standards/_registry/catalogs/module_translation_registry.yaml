@@ -47127,6 +47127,69 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "把已验证研究假设和轨迹归纳成技能草稿，先查退役指纹库防换皮复活，产出未验证草稿到临时区等三道门验证"
+- module_path: scripts/estimate_pit_backfill_cost.py
+  domain_id: D_GOVERNANCE
+  name_zh: "PIT回填成本估算"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "dry-run估算LLM历史回填730交易日的token成本，输出双通道单价对比表，不调用真实API"
+- module_path: scripts/run_boot_sla_probe.py
+  domain_id: D_GOVERNANCE
+  name_zh: "Boot SLA连跑探针"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "循环执行start_brain.py --once共20次，自动收集boot耗时并算P99，判定是否小于10秒达标"
+- module_path: src/zephyr/pf_core/strategy_correlation_pipeline.py
+  domain_id: D_PF_CORE
+  name_zh: "策略相关矩阵管线"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "输入策略日收益率面板，输出七部分相关性验证报告：双矩阵+Neff+分层+bootstrap+漂移监控"
+- module_path: src/zephyr/plan_engine/similar_day_evaluator.py
+  domain_id: D_PLAN_ENGINE
+  name_zh: "相似日命中率评估器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "消费prediction_log中的scenario_plan和outcome，按滚动窗口walk-forward算命中率，输出Brier校准和启用建议"
+- module_path: src/zephyr/regime/institutional_regime_scorer.py
+  domain_id: D_REGIME
+  name_zh: "机构级regime三维评分器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "按CAPE估值分位、期权隐波、两融余额三个机构常用维度，综合判断当前市场处于泡沫/恐慌/中性哪个状态"
+- module_path: src/zephyr/shared/observability/pattern_mining_metrics.py
+  domain_id: D_GOVERNANCE
+  name_zh: "修复模式命中率指标"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "消费pattern_mining_reports.jsonl，产出日/累计命中率汇总和类别分布统计"
+- module_path: src/zephyr/signal_ashare/market_breadth_history_store.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "市场宽度历史读取器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "从ClickHouse读取市场宽度分钟快照，30时点重采样后输出给相似日推演模块使用"
+- module_path: src/zephyr/signal_ashare/sentiment_cycle_evaluator.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "情绪周期定位器评估器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "按28号文标准签名实现，消费历史回测口径的预测和实际阶段记录，评估定位器准确率"
+- module_path: src/zephyr/signal_ashare/strength_ic_data_assembler.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "IC权重数据装配器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "从DailyStrengthRecord装配60日滚动窗口子分数和前瞻收益，输出直接喂给IC权重校准器"
 
 battle_map_steps:
 - step_id: BM-BUY-04

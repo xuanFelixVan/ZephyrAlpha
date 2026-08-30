@@ -68,9 +68,10 @@ ttl: task_bound
 - 优先级：P1（44 号 M1/M3 消费链完整性；外盘页/传导引擎输入）
 - 验收标准：① 12 条 FCT 条目入册（formula/alpha_source 齐全，candidate 态，挂 IC 回填链路）；② 8 标的落库（品类+任务注册+首次采集成功行数留证），check_foreign_coverage 输出 missing=0；③ ES/NQ/A50/us_index 历史回填任务登记。
 
-### 7. 作战室样本积累日常编排接线（45 号 W0 前置） ✅ 已核销（2026-08-30 实证在案）
+### 7. 作战室样本积累日常编排接线（45 号 W0 前置） ◐ 拆记（2026-08-30 核销口径修正）
 - 来源文档：45_warroom_playbook.md（W0/W6 验证闭环）；WARROOM_report.md §5（GAP-F-01 解锁评估建议）
 - 设计声明摘要：scenario_plan 族需「盘前 9:00 compute_and_record + 盘后 writeback_scenario_outcome」每日跑才能积累 W0 窗口（20 日）样本；当前治理库历史行=0（落库通道 08-23 才建）。MOD-PLAN-008/010/017 消费端已就位，只欠日常编排。
+- **拆记**：①**模块落码 ✅**（MOD-PLAN-008/010/017 已在码，2026-08-30 长城批核销）；②**调度挂接 ⏳**——prediction_log 日行落库的调度未注册（"日行落库逐日递增"验收口径无在跑证据），挂 57 号日循环 SOP 环节④属 Owner 窗口（同 tracker #273 调度启用批）
 - 建议模块落点：运行时编排（挂 57 号日循环 SOP 环节④/事件驱动管线）；batch_runner 的 target_date 次交易日解析接 market_trade_calendar（WARROOM 遗留 3）。
 - 建议 MOD 号：—（编排接线，模块已在码 MOD-PLAN-008~017）
 - 优先级：P1（校准样本每晚一天积累即晚一天可用；作战室 W0/W2 概率格真源）
@@ -150,9 +151,15 @@ ttl: task_bound
 - 优先级：P2（BM-RC-04-F）/P3（余者等触发）
 - 验收标准：BM-RC-04-F 行为基线统计+异常告警落码 testing（fail-visible 不阻断）；余者触发条件达成后按 61 号伪代码施工。
 
-### 17. 44 号 Phase 3 数据期件（挂账跟踪，不抢跑）
+### 17. 44 号 Phase 3 数据期件（挂账跟踪，里程碑更新，2026-08-30）
 - 来源文档：44_premarket_intraday_decision_upgrade.md §7 Phase 3
 - 设计声明摘要：M1-③ 相似日推演启用（需 ≥60 交易日快照积累）/M1-④ 实时调度回路生产化/M2 边界修正闭环实盘验证/M3-② 新闻情绪（tracker #138/#139 闭环后）/M3-⑨ 历史 PIT 全量回填（3 个月验证后，~￥25-60）。
+- **里程碑更新（2026-08-30）**：
+  - 快照积累进度：~5/60 交易日（market_breadth_snapshot_minute 自 08-24 起采）
+  - similar_day 生产读取器已落码（`market_breadth_history_store.py`，30 时点重采样，零数据 fail-open，8 用例绿）
+  - walk-forward 命中率评估器已落码（`similar_day_evaluator.py`，Brier 校准+启用/停用建议，8 用例绿）
+  - PIT 回填成本核算脚本已出：DeepSeek v1 ¥15.11 / Qwen v1 ¥1.97（730 日）
+  - 60 日达标预计窗口：2026-11 中下旬
 - 建议模块落点：已在码（similar_day_inference/intraday_sentiment_loop/boundary_revision_engine/llm_premarket_analysis），本期=数据积累+编排。
 - 建议 MOD 号：—（启用/标定动作，非新模块）
 - 优先级：P2（数据期）
