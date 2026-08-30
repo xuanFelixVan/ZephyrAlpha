@@ -39,6 +39,7 @@ generated: '2026-08-17'
 | governance_family_vocabulary.yaml | governance_family 受控词表（4 值） |
 | granularity_vocabulary.yaml | granularity 受控词表（4 值：file/directory/module/aggregated） |
 | header_format_vocabulary.yaml | header_format 受控词表（7 值） |
+| knowledge_taxonomy_vocabulary.yaml | 知识分类边界标准（factor 10 + strategy 6 + other 6 类语义边界+冲突裁决+主观术语锚定，GP1-EVAL-CALIBER-001） |
 | language_vocabulary.yaml | language 受控词表（3 值） |
 | layer_vocabulary.yaml | layer 受控词表（4 值） |
 | maturity_vocabulary.yaml | maturity 受控词表（4 值） |

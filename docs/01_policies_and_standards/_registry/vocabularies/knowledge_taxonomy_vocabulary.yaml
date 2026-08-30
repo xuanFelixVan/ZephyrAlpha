@@ -1,0 +1,286 @@
+# [A_config] module_id=CFG-knowledge-taxonomy-vocabulary | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-GOVERNANCE
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# ============================================================================
+# 知识分类边界标准（Knowledge Taxonomy Boundary Standard）— 唯一真源（SSoT）
+# ============================================================================
+# 版本: 1.0.0 | 创建: 2026-08-30 | owner: ZephyrAlpha-Owner
+#
+# module_id: PS-VOC-TAX-001
+# doc_type: vocabulary
+#
+# 背景: 13号文 Phase 1 分类器 50 条人评包终审（docs/_working/reports/2026-08-29-gp1-eval50-review.md
+#       §六 裁定书 GP1-EVAL-CALIBER-001）裁定四路径①——任务输入补全：分类器只见文本孤本
+#       而答案含策展挂载意图，根因=缺类别边界定义。本表把 16 个受控类（factor 10 + strategy 6）
+#       + 其他分流 6 类的语义边界定死，供：①知识分类器 prompt 注入（knowledge_classifier.py
+#       运行时加载本文件）；②后续所有 AI 会话分类/入库判断；③人审复核基准。
+#
+# 裁定依据: 62号文 S2/S3（类集合真源：factor 10 类=Barra 6 + A股特色 4；strategy 6 类）；
+#           本表不增删类，只补边界定义；类集合变更须走 62号文修订。
+# 对标: MSCI/Barra 风格因子定义（value/quality/momentum/volatility/size/liquidity）+
+#       A股特色 4 类（event/intraday/technical/sentiment）Owner 策展口径。
+# Owner 裁定（2026-08-30）: "我挂的可能词不达意，但 AI 能理解的正常也算对"——
+#       注册表挂载与文本语义冲突时，以文本语义为准（词不达意豁免条款）。
+# ============================================================================
+
+module_id: PS-VOC-TAX-001
+schema_version: "1.0.0"
+doc_type: vocabulary
+title: "知识分类边界标准（factor/strategy/other 受控类语义边界）"
+version: "1.0.0"
+status: active
+owner: ZephyrAlpha-Owner
+vocabulary_name: knowledge_taxonomy
+ttl: permanent
+created: "2026-08-30"
+last_updated: "2026-08-30"
+related_ruling: "GP1-EVAL-CALIBER-001（2026-08-29-gp1-eval50-review.md §六）"
+derived_from:
+  - source: "62_business_registry_construction.md"
+    relationship: "类集合真源（S2/S3 裁定）"
+    at: "factor_class 10 类 / strategy_class 6 类"
+  - source: "MSCI/Barra 风格因子方法论"
+    relationship: "Barra 6 类行业标准定义对标"
+    at: "value/quality/momentum/volatility/size/liquidity"
+
+# ============================================================================
+# 分层链（上下游）——分类第一问：它在链条哪一层？
+# ============================================================================
+# 数据 → 指标 → 因子 → 信号 → 策略 → 执行
+# 数据（data_asset）：原始/加工数据与其构造方法——只描述"数据是什么"，不产生判断
+# 指标（technical_indicator）：对数据的单向度量——有数值、无买卖裁决（如基差率）
+# 因子（factor）：可计算、用于解释/预测收益或风险差异的量——服务于打分/排序/择时
+# 信号：因子/指标触发的事件化买卖点（不是独立类，体现在 entry_role=trigger）
+# 策略（strategy）：完整决策链——能直接回答"买什么/何时买/买多少/何时卖"
+# 执行（execution_algo）：怎么下单（拆单/TWAP/拒单处理）——不决定买卖，只决定执行方式
+# 风控（risk_rule）：禁令与纪律——"不做什么/什么时候必须做"
+# 旁支：tool=工具用法说明；knowledge_only=无生产服务对象的纯方法论/口诀/心法
+layer_chain:
+  order: ["data_asset", "technical_indicator", "factor", "signal", "strategy", "execution_algo"]
+  factor_vs_strategy_test: "把条目拿去问：它能直接告诉我现在买什么、买多少、什么时候卖吗？能→strategy；只能给打分/排序/参考量→factor"
+  strategy_vs_rule_test: "它是在下禁令/定纪律（不做什么）→risk_rule；它是在给完整打法（做什么、怎么做）→strategy"
+
+# ============================================================================
+# 冲突裁决规则（一条文本像多类时，按优先级从高到低判）
+# ============================================================================
+decision_rules:
+  - "R1 含完整买卖决策链（入场+出场+仓位）→ strategy，不管文字多像指标或因子"
+  - "R2 禁令/纪律/时机约束（不抄底、不追高、空仓等待、急跌不杀跌）→ risk_rule"
+  - "R3 单一可计算量、服务于打分排序 → factor；按度量对象选子类：钱（资金进出/承接/偷袭/吸筹/换手/大单）→liquidity；价格趋势强弱（涨跌幅/领涨/龙头跟随/宽度）→momentum；价格形态判据（K线/均线/突破/斜率）→technical；基本面便宜程度（PE/PB/ERP/估值分位）→value；基本面好坏质地（增速/PEG/盈利稳定性）→quality；量的极端与波动（天量/振幅/波动率）→volatility；人心与热度（炸板率/连板情绪/预期差情绪面）→sentiment；事件驱动（公告/政策/财报/外部突发）→event；日内分时（T+1/涨跌停制度下的盘中形态与信号）→intraday；市值大小→size"
+  - "R4 数据与构造方法（指数怎么编/数据怎么算/口径怎么治）→ data_asset；单向度量工具（基差率）→ technical_indicator；使用说明 → tool"
+  - "R5 以上都不沾（纯口诀/心法/流程方法论，无生产服务对象）→ knowledge_only"
+  - "R6 注册表挂载与文本语义冲突时以文本语义为准（Owner 2026-08-30 词不达意豁免）；两者均可时记边界争议，不强行二选一"
+
+# ============================================================================
+# 受控类边界（22 类 = factor 10 + strategy 6 + other 6）
+# anchors = 50 条终审已判示例（GP1-EVAL-CALIBER-001 教学集，2026-08-30）
+# ============================================================================
+values:
+  # ── factor 10 类（Barra 6 + A股特色 4）──
+  - value: value
+    kind: factor
+    name_zh: 价值
+    definition: "价格相对基本面价值的便宜程度（低 PE/PB、ERP 股权风险溢价、估值分位）"
+    boundary_in: "估值比较、便宜程度度量"
+    boundary_out: "公司质地好坏 → quality；价格趋势 → momentum"
+    anchors: []
+  - value: quality
+    kind: factor
+    name_zh: 质量
+    definition: "公司质地：盈利稳定性、成长性、资产负债表健康度（增速/PEG/低杠杆）"
+    boundary_in: "业绩增速、PEG、盈利质量（MSCI 惯例：成长质量归此族）"
+    boundary_out: "便宜程度 → value"
+    anchors: ["FCT-QUAL-001（业绩维因子：增速/PEG=质量族）"]
+  - value: momentum
+    kind: factor
+    name_zh: 动量
+    definition: "过去表现强者恒强：涨跌幅排序、领涨/跟风联动、板块宽度覆盖、相对强度"
+    boundary_in: "N 日动量、龙头跟随关系、板块涨跌覆盖率"
+    boundary_out: "资金承接行为 → liquidity；图表形态判据 → technical"
+    anchors: ["FCT-MOM-029（20日动量）"]
+  - value: volatility
+    kind: factor
+    name_zh: 波动
+    definition: "波动与量的极端：波动率、振幅、历史天量（量的极端值信号）"
+    boundary_in: "波动率度量、天量/地量"
+    boundary_out: "量能作资金方向 → liquidity；量能作情绪温度计 → sentiment"
+    anchors: []
+  - value: size
+    kind: factor
+    name_zh: 规模
+    definition: "市值大小暴露（小市值溢价等）"
+    boundary_in: "市值分位、大小盘风格"
+    boundary_out: "流动性好坏 → liquidity"
+    anchors: []
+  - value: liquidity
+    kind: factor
+    name_zh: 流动性/资金流
+    definition: "钱的动向：资金净流入/流出、承接、大单、换手、尾盘异动、吸筹/派发、偷袭识别"
+    boundary_in: "尾盘偷袭（预期差资金检测：大资金对未知事件的提前押注，抢筹 vs 诱多看量能/时间/板块共振/位置）、抗跌吸筹（威科夫特征：大盘跌它跌得少+净流入为正=弱中显强有人接筹）、两融、ETF 资金"
+    boundary_out: "纯价格趋势 → momentum；市场情绪热度 → sentiment"
+    anchors: ["FCT-LIQ-041（ETF 成交异动）", "FCT-LIQ-052（两融余额变化）", "FCT-LIQ-054（尾盘偷袭识别）", "FCT-LIQ-057（逆势强度比=吸筹识别）"]
+  - value: event
+    kind: factor
+    name_zh: 事件
+    definition: "有明确事件源的驱动：公告、政策、财报、并购、外部突发"
+    boundary_in: "事件背离信号（消息面错位=诱多）、利好落地变利空、事件日历驱动"
+    boundary_out: "无明确事件源的市场心理 → sentiment"
+    anchors: ["FCT-EVENT-011（消息面错位=诱多）", "FCT-EVENT-016（利好落地变利空）"]
+  - value: intraday
+    kind: factor
+    name_zh: 日内
+    definition: "T+1/涨跌停制度下的日内形态与分时信号"
+    boundary_in: "分时量价背离（价涨量缩=虚涨要回调/价跌量放大=恐慌见底）、急跌必有急反（放量恐慌盘杀出=反转临近；操作含义=急跌时不卖、等反弹再卖）、日内分时形态"
+    boundary_out: "日线及以上形态 → technical"
+    anchors: ["FCT-INTRADAY-017（分时量价背离）"]
+  - value: technical
+    kind: factor
+    name_zh: 技术
+    definition: "K 线形态/均线/突破/斜率等图表判据衍生（日线及以上）"
+    boundary_in: "均线支撑、假突破参数、浪型判据、下跌斜率形态"
+    boundary_out: "日内分时 → intraday；趋势强弱度量 → momentum"
+    anchors: ["FCT-TECH-058（月线20日均线支撑）", "FCT-TECH-083（假突破统计参数）", "FCT-TECH-060（下跌斜率放缓）"]
+  - value: sentiment
+    kind: factor
+    name_zh: 情绪
+    definition: "市场情绪与热度：炸板率、连板高度、涨跌家数、预期差情绪面（无人格化的市场心理）"
+    boundary_in: "炸板率/回封时间、涨跌家数及其加速度、市场宽度情绪"
+    boundary_out: "资金实际进出 → liquidity；明确事件源 → event"
+    anchors: ["FCT-SENT-028（涨跌家数二阶加速度）"]
+  # ── strategy 6 类 ──
+  - value: daban
+    kind: strategy
+    name_zh: 打板
+    definition: "涨停板战法：打板、接力、连板操作的完整打法"
+    boundary_in: "含打板入场/出场/仓位的完整规则链"
+    boundary_out: "只是打板相关纪律 → risk_rule（并记服务对象）"
+    anchors: []
+  - value: multifactor
+    kind: strategy
+    name_zh: 多因子
+    definition: "多条件合成打分/共振的完整策略（Owner 2026-08-30 确认：共振=多因子合成）"
+    boundary_in: "共振触发条件矩阵、多因子打分组装、共振等级→仓位"
+    boundary_out: "单个因子/指标 → factor 或 technical_indicator"
+    anchors: ["STR-MULTIFACTOR-049（ETF 多只对比四维选优）", "STR-MULTIFACTOR-096（多因子 sleeve 组装）", "STR-MULTIFACTOR-056（共振触发条件矩阵）"]
+  - value: event_driven
+    kind: strategy
+    name_zh: 事件驱动
+    definition: "围绕事件日历/公告/周期的完整操作手法"
+    boundary_in: "年报空窗期庄股四步法（事件日历驱动的完整操作法）"
+    boundary_out: "单个事件信号 → factor/event"
+    anchors: ["STR-MULTIFACTOR-090 反面教材已迁出；FCT-EVENT-009 语义属此族（策略手法）"]
+  - value: value_reversal
+    kind: strategy
+    name_zh: 价值反转
+    definition: "超跌反弹/均值回归的完整打法"
+    boundary_in: "完整的抄底/反弹决策链"
+    boundary_out: "只讲不抄底纪律 → risk_rule"
+    anchors: []
+  - value: momentum_trend
+    kind: strategy
+    name_zh: 动量趋势
+    definition: "趋势跟随/强者恒强的完整操作法"
+    boundary_in: "强中强双重共振筛选（选股策略链）、趋势买卖点体系"
+    boundary_out: "单个动量指标 → factor/momentum"
+    anchors: ["STR-MOMTREND-012（强中强双重共振筛选=选股策略非因子）"]
+  - value: sector_rotation
+    kind: strategy
+    name_zh: 板块轮动
+    definition: "行业/板块间切换的完整打法"
+    boundary_in: "轮动规则链"
+    boundary_out: "板块强弱度量 → factor/momentum 或 factor/liquidity"
+    anchors: []
+  # ── other 6 类（分流）──
+  - value: risk_rule
+    kind: other
+    name_zh: 风控规则
+    definition: "禁令与纪律：不做什么、什么时候必须做（含卖出时机纪律）"
+    boundary_in: "急跌不杀跌等反弹（卖出时机纪律）、不抄底、空仓等待、禁止买入规则、口径矛盾处理铁律"
+    boundary_out: "完整打法 → strategy"
+    anchors: ["FCT-LIQ-043（口径矛盾处理铁律）", "STR-MOMTREND-021（加速第三买点禁买规则）"]
+  - value: execution_algo
+    kind: other
+    name_zh: 执行算法
+    definition: "下单执行方式：拆单、TWAP、仓位映射执行"
+    boundary_in: "共振等级→仓位映射（执行层视角）"
+    boundary_out: "仓位决策本身 → strategy"
+    anchors: ["STR-MULTIFACTOR-078（共振等级→仓位映射，边界争议在册）"]
+  - value: data_asset
+    kind: other
+    name_zh: 数据资产
+    definition: "数据与其构造/治理方法：指数怎么编、口径怎么治"
+    boundary_in: "子板块等权指数构造方法"
+    boundary_out: "用数据做的判断 → factor"
+    anchors: ["FCT-MOM-012（子板块等权指数构造）"]
+  - value: technical_indicator
+    kind: other
+    name_zh: 技术指标
+    definition: "对数据的单向度量工具：有数值、无买卖裁决"
+    boundary_in: "期指基差率（度量方式）"
+    boundary_out: "用于打分预测 → factor"
+    anchors: ["FCT-SENT-016（期指基差率，边界争议在册）"]
+  - value: tool
+    kind: other
+    name_zh: 工具
+    definition: "软件/方法的使用说明"
+    boundary_in: "辅助确认工具指定法（工具用法）"
+    boundary_out: "工具产生的内容 → 按内容归"
+    anchors: ["STR-MOMTREND-010（辅助确认工具指定法）"]
+  - value: knowledge_only
+    kind: other
+    name_zh: 纯方法论
+    definition: "无生产服务对象的口诀/心法/流程方法论"
+    boundary_in: "策略生命周期八阶段（流程方法论）、空仓等主线（心法纪律——见下方存疑修正注记）"
+    boundary_out: "明确服务于某类生产使用的口诀/纪律 → 按服务对象归（策展口径，Q-B 修复已钉入 prompt）"
+    anchors: []
+
+# ============================================================================
+# 主观术语锚定表（Owner 2026-08-30 口述定义 + 全网搜证）
+# 用途：分类器遇到这些 A股主观/游资术语时，按本表归类，不自由发挥
+# ============================================================================
+term_anchors:
+  - term: "尾盘偷袭/尾盘拉升"
+    maps_to: "factor/liquidity"
+    note: "预期差资金检测：大资金对未知事件（外盘/讲话/突发）的提前押注。抢筹 vs 诱多四维判别：放量否/拉升时间（14:30 前良性、14:50 后偷袭）/板块共振否/位置高低（全网搜证一致）"
+  - term: "温和放量（老奶奶上楼梯）"
+    maps_to: "factor/intraday 或 factor/technical（按级别）"
+    note: "量柱持续高于昨日且无爆量、价格小碎步连续收红=吸筹形态（量价齐升的稳步变体）"
+  - term: "抗跌/吸筹/威科夫"
+    maps_to: "factor/liquidity"
+    note: "大盘跌它跌得少+资金净流入为正=有人接筹（威科夫吸筹特征，弱中显强）；抗跌榜/领涨榜语义"
+  - term: "急跌必有急反"
+    maps_to: "factor/intraday（形态）；作卖出时机用 → other/risk_rule"
+    note: "放量恐慌盘杀出=反转临近；操作含义=急跌时不卖、等反弹再卖（Owner 2026-08-30 口述）"
+  - term: "量价背离"
+    maps_to: "factor/intraday（分时）或 factor/technical（日线）"
+    note: "价涨量缩=顶背离（卖出）；价跌量增=底背离（恐慌见底）"
+  - term: "共振"
+    maps_to: "strategy/multifactor"
+    note: "多条件/多因子合成（Owner 2026-08-30 确认）"
+  - term: "预期差"
+    maps_to: "factor/sentiment（情绪面）或 factor/event（有明确事件源）"
+    note: "预期与实际之差；有事件源归 event，纯心理归 sentiment"
+
+# ============================================================================
+# 存疑条目治理注记（GP1-EVAL-CALIBER-001 裁定四③）
+# ============================================================================
+governance_notes:
+  - "STR-MULTIFACTOR-090（策略生命周期八阶段）：文本=流程方法论非策略，2026-08-30 起 status=deprecated 迁出策略候选池，知识由 61号文生命周期治理承载"
+  - "STR-MULTIFACTOR-034（空仓等主线）：文本=仓位心法纪律非多因子策略，2026-08-30 起 status=deprecated 迁出策略候选池，语义由 risk_rule 族（混沌期空仓纪律）承载"
+
+ai_consumption:
+  when_to_use: "任何 AI 会话做知识分类/因子策略入库/注册表归类判断时，必须先读本表边界定义"
+  how_to_use: "先走 layer_chain 定位层（数据/指标/因子/策略/执行），再按 decision_rules R1~R6 裁决冲突，主观术语查 term_anchors；knowledge_classifier.py 运行时自动加载本表注入 prompt"
+  ai_keywords:
+    - "知识分类"
+    - "factor_class"
+    - "strategy_class"
+    - "分类边界"
+    - "尾盘偷袭"
+    - "共振"

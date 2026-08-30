@@ -1583,10 +1583,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S9.4"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "candidate"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-15"
-    updated_at: "2026-08-15"
+    updated_at: "2026-08-30"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -11093,6 +11093,9 @@ strategies:
     code_symbol: null
     code_fingerprint: null
 
+  # ⚠ 2026-08-30 deprecated（GP1-EVAL-CALIBER-001 裁定四③）：文本实为流程方法论（策略生命周期 SOP），
+  # 非可交易策略——迁出策略候选池；知识由 61号文生命周期治理体系承载。分类边界见
+  # vocabularies/knowledge_taxonomy_vocabulary.yaml（knowledge_only 族）。
   - strategy_id: "STR-MULTIFACTOR-090"
     name: "策略生命周期八阶段与通过标准"
     name_zh: "策略生命周期八阶段与通过标准"
@@ -11111,10 +11114,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S15.51"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "candidate"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-15"
-    updated_at: "2026-08-15"
+    updated_at: "2026-08-30"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"

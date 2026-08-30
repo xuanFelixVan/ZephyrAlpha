@@ -339,3 +339,53 @@ class TestKeyAliasNormalization:
         clf = KnowledgeClassifier(llm=_FakeGateway(payload))
         result = clf.classify(_item())
         assert result.verdict == "error"
+
+
+class TestTaxonomyBoundaryInjection:
+    """GP1-EVAL-CALIBER-001 裁定四路径①：知识分类边界标准（PS-VOC-TAX-001）prompt 注入。
+
+    验收点：显式路径注入进 prompt / 显式路径缺失 fail-closed / 内容非法 fail-closed /
+    默认 SSoT 在位自动注入。
+    """
+
+    def test_explicit_path_injected_into_prompt(self, tmp_path) -> None:
+        tax = tmp_path / "tax.yaml"
+        tax.write_text(
+            "values:\n"
+            "  - value: liquidity\n"
+            "    kind: factor\n"
+            "    name_zh: 流动性\n"
+            "    definition: 资金的动向\n"
+            "    boundary_out: 纯价格趋势→momentum\n"
+            "decision_rules:\n"
+            "  - R1 决策链完整归 strategy\n",
+            encoding="utf-8",
+        )
+        gw = _FakeGateway(_factor_payload())
+        clf = KnowledgeClassifier(llm=gw, taxonomy_path=tax)
+        result = clf.classify(_item())
+        assert result.verdict == "classified"
+        prompt = gw.calls[0][1]
+        assert "liquidity（流动性）: 资金的动向" in prompt
+        assert "不挂: 纯价格趋势→momentum" in prompt
+        assert "裁决优先级：R1 决策链完整归 strategy" in prompt
+
+    def test_explicit_path_missing_fail_closed(self, tmp_path) -> None:
+        with pytest.raises(KnowledgeClassifierError, match="不存在"):
+            KnowledgeClassifier(llm=_FakeGateway(), taxonomy_path=tmp_path / "nope.yaml")
+
+    def test_explicit_path_malformed_fail_closed(self, tmp_path) -> None:
+        tax = tmp_path / "bad.yaml"
+        tax.write_text("foo: bar\n", encoding="utf-8")
+        with pytest.raises(KnowledgeClassifierError, match="values"):
+            KnowledgeClassifier(llm=_FakeGateway(), taxonomy_path=tax)
+
+    def test_default_ssot_injected(self) -> None:
+        """仓库内默认 SSoT 在位 → 构造自动加载并注入 prompt（含 liquidity 边界行）。"""
+        gw = _FakeGateway(_factor_payload())
+        clf = KnowledgeClassifier(llm=gw)
+        result = clf.classify(_item())
+        assert result.verdict == "classified"
+        prompt = gw.calls[0][1]
+        assert "知识分类边界标准" in prompt
+        assert "liquidity" in prompt and "不挂" in prompt

@@ -4901,6 +4901,10 @@ creation_tokens:
   token: auto-pit-backfill-cost-20260830
   created_by: greatwall_20260830
   capability: cost_tracker
+- file: docs/01_policies_and_standards/_registry/vocabularies/knowledge_taxonomy_vocabulary.yaml
+  token: auto-knowledge-taxonomy-vocab-20260830
+  created_by: AI-WAVE5
+  capability: knowledge_taxonomy
 - file: scripts/run_boot_sla_probe.py
   token: auto-boot-sla-probe-20260830
   created_by: greatwall_20260830

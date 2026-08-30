@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-FACTORY-001 | docs/03_modules/_domain_autonomy_core/knowledge_classifier/blueprint.md | §
 # [MODULE] zephyr.autonomy_core.module_factory.knowledge_classifier
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES] zephyr.integration.llm_runtime_gateway（仅消费既有 infer 签名，不改其源文件）；pydantic v2（输出 schema 强校验）
+# [DEPENDENCIES] zephyr.integration.llm_runtime_gateway（仅消费既有 infer 签名，不改其源文件）；pydantic v2（输出 schema 强校验）；pyyaml（PS-VOC-TAX-001 知识分类边界标准 YAML 直读，GP1-EVAL-CALIBER-001 路径①）
 # [CONSUMERS] 模块工厂流水线人工编排（Phase 1 手动触发；module_mapper 消费其 ClassificationResult）
 # [STARTUP] manual
 # [MATURITY] testing
@@ -141,9 +141,17 @@ DEFAULT_TAG_SYNONYMS: Final[dict[str, str]] = {
 
 
 class KnowledgeClassifierError(Exception):
-    """ZA-AC-0006: 知识分类器构造期配置非法（空词表/权重非正/阈值越界）。"""
+    """ZA-AC-0006: 知识分类器构造期配置非法（空词表/权重非正/阈值越界/边界标准非法）。
+
+    details 结构化上下文（MSG-EXPOSURE：路径/敏感值入 details 不入消息文本）。
+    """
 
     error_code = "ZA-AC-0006"
+
+    def __init__(self, message: str, *, details: dict[str, Any] | None = None) -> None:
+        super().__init__(message)
+        self.message = message
+        self.details: dict[str, Any] = details or {}
 
 
 # ── LLM 网关注入协议（MOD-INF-051 既有 infer 签名，只消费不修改）──
@@ -320,6 +328,58 @@ _SYSTEM_PROMPT: Final[str] = (
     "你只输出一个 JSON 对象，不输出任何其他文字、解释或 markdown 围栏之外的字符。"
 )
 
+# 知识分类边界标准 SSoT（GP1-EVAL-CALIBER-001 裁定四路径①：任务输入补全——
+# 类集合真源在 62号文/本模块常量，语义边界真源在该 YAML；默认路径缺失=降级不注入，
+# 显式路径不可读/内容非法=fail-closed 构造报错）
+# 注：Path/yaml 走函数内局部导入（控制模块导入成本，对齐本文件 _resolve_llm 惰性模式）
+_DEFAULT_TAXONOMY_REL: Final[str] = (
+    "docs/01_policies_and_standards/_registry/vocabularies/knowledge_taxonomy_vocabulary.yaml"
+)
+
+
+def _default_taxonomy_path() -> "Path":
+    """默认边界标准绝对路径（repo 根 = 本文件 parents[4]）。"""
+    from pathlib import Path
+
+    return Path(__file__).resolve().parents[4] / _DEFAULT_TAXONOMY_REL
+
+
+def _load_taxonomy_boundaries(path: Path) -> str:
+    """从知识分类边界标准 YAML 构建 prompt 注入块（SSoT 直读，不镜像数值）。
+
+    Returns:
+        拼好的边界说明文本（逐类一行 + 裁决优先级摘要）。
+
+    Raises:
+        KnowledgeClassifierError: 文件不可读 / YAML 非法 / values 结构缺失（fail-closed）。
+    """
+    import yaml
+
+    try:
+        data = yaml.safe_load(path.read_text(encoding="utf-8"))
+        values = data.get("values") if isinstance(data, dict) else None
+        rules = data.get("decision_rules") if isinstance(data, dict) else None
+    except Exception as exc:
+        raise KnowledgeClassifierError(
+            "知识分类边界标准解析失败", details={"path": str(path), "cause": str(exc)}
+        ) from exc
+    if not values or not isinstance(values, list):
+        raise KnowledgeClassifierError("知识分类边界标准缺 values 列表", details={"path": str(path)})
+    lines: list[str] = []
+    for v in values:
+        if not isinstance(v, dict) or not v.get("value") or not v.get("definition"):
+            raise KnowledgeClassifierError(
+                "知识分类边界标准条目缺 value/definition",
+                details={"entry_keys": sorted(map(str, v)) if isinstance(v, dict) else []},
+            )
+        line = f"- {v['value']}（{v.get('name_zh', '')}）: {v['definition']}"
+        if v.get("boundary_out"):
+            line += f"｜不挂: {v['boundary_out']}"
+        lines.append(line)
+    if rules:
+        lines.append("裁决优先级：" + "；".join(str(r) for r in rules))
+    return "\n".join(lines)
+
 _PROMPT_TEMPLATE: Final[str] = """对以下知识片段做分类与多维适用性标注。严格输出 JSON（不要任何额外文字）。
 
 【信息价值四维评分】（各 0~1 浮点）
@@ -337,6 +397,9 @@ _PROMPT_TEMPLATE: Final[str] = """对以下知识片段做分类与多维适用�
   不默认 knowledge_only；knowledge_only 仅用于无生产服务对象的纯方法论
   （risk_rule=风控规则 / execution_algo=执行算法 / data_asset=数据资产 /
    technical_indicator=技术指标 / tool=工具 / knowledge_only=纯方法论知识）
+
+【类别边界说明】（PS-VOC-TAX-001 知识分类边界标准——判定按此边界，不只按类名）
+{class_boundaries}
 
 【v2.0 多维标注】
 - primary_timeframe 主时间级别（词表：{timeframes}；无时间语义为 null）
@@ -449,6 +512,7 @@ class KnowledgeClassifier:
         tag_synonyms: dict[str, str] | None = None,
         max_tokens: int = 2048,
         temperature: float = 0.1,
+        taxonomy_path: "str | Path | None" = None,
     ) -> None:
         weights = (
             quality_gate.weight_relevance,
@@ -471,6 +535,20 @@ class KnowledgeClassifier:
         self._synonyms = dict(tag_synonyms) if tag_synonyms is not None else dict(DEFAULT_TAG_SYNONYMS)
         self._max_tokens = max_tokens
         self._temperature = temperature
+        # 知识分类边界标准注入（GP1-EVAL-CALIBER-001 路径①）：显式路径非法=fail-closed；
+        # 默认 SSoT 缺失=降级不注入（向后兼容测试环境），存在但非法=fail-closed
+        from pathlib import Path
+
+        if taxonomy_path is not None:
+            tp = Path(taxonomy_path)
+            if not tp.is_file():
+                raise KnowledgeClassifierError("知识分类边界标准不存在", details={"path": str(tp)})
+            self._class_boundaries = _load_taxonomy_boundaries(tp)
+        elif _default_taxonomy_path().is_file():
+            self._class_boundaries = _load_taxonomy_boundaries(_default_taxonomy_path())
+        else:
+            self._class_boundaries = ""
+            _log.warning("知识分类边界标准缺失（%s），降级为无边界注入模式", _DEFAULT_TAXONOMY_REL)
 
     def _resolve_llm(self) -> LLMInferProtocol:
         if self._llm is None:
@@ -508,6 +586,7 @@ class KnowledgeClassifier:
             entry_roles="/".join(ENTRY_ROLES),
             applies_to="/".join(APPLIES_TO),
             tag_vocab="、".join(sorted(self._known_tags)),
+            class_boundaries=self._class_boundaries or "（边界标准未加载，仅按类名与策展口径判断）",
             title=item.title,
             source_ref=item.source_ref or "未标注",
             content=item.content,

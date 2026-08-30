@@ -82,11 +82,11 @@ factor/strategy/other 三层命中仅 54-60%——"口诀类"文本被分进 kno
 | 30 | FCT-MOM-029 | 20日动量（代码锚） | 因子/momentum | 20 日动量 | 因子/momentum | **一致** | 对 |
 | 31 | FCT-SENT-028 | 涨跌家数二阶加速度 | 因子/sentiment（R3 恢复） | 市场宽度情绪拐点 | 因子/sentiment | **一致**（R3 恢复即命中） | 对 |
 | 32 | FCT-QUAL-001 | 业绩维因子 | 因子/value | 基本面因子集 | 因子/quality | 注册表合理（增速/PEG=质量族） | 错 |
-| 33 | FCT-SENT-014 | 逼空检测量化 | 因子/event（R3 恢复） | 逼空量化指标 | 因子/sentiment | 边界争议（逼空=情绪极端态 vs 事件触发） | 对 |
+| 33 | FCT-SENT-014 | 逼空检测量化 | 因子/event（R3 恢复） | 逼空量化指标 | 因子/sentiment | 边界争议（逼空=情绪极端态 vs 事件触发） | 错†（标准：无明确事件源的情绪极端→sentiment） |
 | 34 | FCT-INTRADAY-018 | 分时均线压制 | 因子/technical | 日内技术信号 | 因子/intraday | 边界争议（日内技术双属性） | 对 |
 | 35 | FCT-EVENT-016 | 利好落地变利空判定 | 因子/event | 事件透支指标 | 因子/event | **一致** | 对 |
 | 36 | STR-MULTIFACTOR-073 | 首批+二批+现金机动仓位 | 策略/daban | 仓位分配策略 | 策略/multifactor | 边界争议（仓位管理规则） | 对 |
-| 37 | STR-MULTIFACTOR-058 | 买点三档裁决 | 策略/daban | 入场止损完整策略 | 策略/multifactor | 边界争议（通用裁决纪律） | 对 |
+| 37 | STR-MULTIFACTOR-058 | 买点三档裁决 | 策略/daban | 入场止损完整策略 | 策略/multifactor | 边界争议（通用裁决纪律） | 错†（标准：通用裁决纪律非打板专属，AI daban 无据） |
 | 38 | STR-MULTIFACTOR-053 | "单列观察"中间分类 | 未产出（拦截，R3 仍拦截） | — | 策略/multifactor | AI拦截（模型能力上限） | 错 |
 | 39 | STR-MULTIFACTOR-090 | 策略生命周期八阶段 | 策略/multifactor（R3 恢复） | 生命周期与通过标准 | 策略/multifactor | **一致**（R3 恢复即命中）；注册表存疑成立（文本是方法论）→注册表修正待办 | 对（随注册表；存疑转治理） |
 | 40 | STR-MOMTREND-010 | 辅助确认工具指定法 | 其他/tool（R3 恢复） | 板块趋势确认工具用法 | 策略/momentum_trend | **AI合理**（文本是工具方法论；注册表为策展挂载） | 对 |
@@ -95,9 +95,9 @@ factor/strategy/other 三层命中仅 54-60%——"口诀类"文本被分进 kno
 | 43 | STR-MULTIFACTOR-078 | 共振等级→仓位映射 | 其他/execution_algo | 仓位映射规则 | 策略/multifactor | 边界争议（执行层视角成立） | 对 |
 | 44 | STR-MULTIFACTOR-045 | 双策略 5 分 | 策略/daban | 共振打分系统 | 策略/multifactor | 注册表合理（共振族） | 错 |
 | 45 | STR-MULTIFACTOR-034 | 空仓等主线 | 策略/value_reversal | 空仓策略 | 策略/multifactor | 双方都不准（实为交易纪律）→注册表修正待办 | 错 |
-| 46 | STR-VREV-002 | 下跌趋势不选/不抄底 | 策略/momentum_trend（R3；R2=knowledge_only） | 下跌趋势避抄底、上涨趋势找拐点 | 策略/value_reversal | **AI合理**（文本是纪律；R3 kind 对类偏仍可辩护） | 对 |
+| 46 | STR-VREV-002 | 下跌趋势不选/不抄底 | 策略/momentum_trend（R3；R2=knowledge_only） | 下跌趋势避抄底、上涨趋势找拐点 | 策略/value_reversal | **AI合理**（文本是纪律；R3 kind 对类偏仍可辩护） | 错†（标准 R2：不选/不抄底=禁令纪律→risk_rule，AI 归策略类偏） |
 | 47 | STR-MOMTREND-012 | 强中强双重共振筛选 | 因子/technical（R3 恢复） | 均线+突破筛选 | 策略/momentum_trend | 注册表合理（共振筛选=选股策略族） | 错 |
-| 48 | STR-MULTIFACTOR-038 | 选股四要素 | 其他/knowledge_only | 选股条件知识 | 策略/multifactor | 边界争议 | 对 |
+| 48 | STR-MULTIFACTOR-038 | 选股四要素 | 其他/knowledge_only | 选股条件知识 | 策略/multifactor | 边界争议 | 错†（标准策展口径：选股知识服务 multifactor 体系，knowledge_only 丢弃服务对象） |
 | 49 | STR-MOMTREND-021 | 加速第三买点 | 其他/risk_rule | 禁止买入规则 | 策略/momentum_trend | 边界争议 | 对 |
 | 50 | STR-MULTIFACTOR-096 | 多因子 sleeve 组装策略 | 策略/multifactor | 完整多因子策略 | 策略/multifactor | **一致** | 对 |
 
@@ -130,3 +130,10 @@ factor/strategy/other 三层命中仅 54-60%——"口诀类"文本被分进 kno
 - **复测门槛**：原样接受率 ≥85%（数值维持 13号文原门槛不降格）；若路径①+②完成后仍 <80%，转评审"分类器存废"——其定位是提效工具非生存项，fallback=纯人工分类（13号文 §3.2 已预留）。
 
 **裁定五（Q-C 消解）**：kind 层混淆随裁定一部分消解；残余 kind 错配（可计算指标误分流 other 族，如 #3）并入路径①复测验证，不单独施工。
+
+**裁定六（Owner 复核确认 + 标准复判，2026-08-30）**：Owner 逐题复核裁定一~五全部确认，补充如下——
+1. **题1补充条款（词不达意豁免）**："我挂的可能词不达意，AI 能理解的正常也算对"——注册表挂载与文本语义冲突时以文本语义为准（已写入 PS-VOC-TAX-001 decision_rules R6）。
+2. **题4执行变更**：DeepSeek 暂缓充值；生产分类器仍由本地模型担任（Kimi 属会话制不可调度不可复现，不当生产组件，角色=教师：定标准/审教材/裁疑难——强模型产教材、弱模型跑生产的行业标准蒸馏模式）；#6（行业因子构造与轮动）备注=换模型复跑时优先验证；DeepSeek 费用评估=本管线非持续运行（仅新知识条目进入时触发），全量 286 条跑一遍约元级成本，投产比不构成阻塞。
+3. **路径①落地形式升级**：Owner 指令"把边界定清楚写入系统文档最核心地方让以后 AI 都看得见"——由 prompt 补丁升级为系统级标准：**PS-VOC-TAX-001 knowledge_taxonomy_vocabulary.yaml**（vocabularies/ 词表目录，全 AI 可见 SSoT），含分层链（数据→指标→因子→信号→策略→执行）+ 22 类边界 + 冲突裁决 R1~R6 + 主观术语锚定表（尾盘偷袭/温和放量/抗跌吸筹/急跌必有急反/量价背离/共振，Owner 口述定义+全网搜证）；knowledge_classifier 运行时直读注入 prompt（本批落码）。
+4. **标准复判**：用新标准复判 50 条，6 条翻转（§五 † 标记），复判后原样接受率 46%——数字更难看但方向更对：翻转条全部死于"AI 无边界知识"，正是路径①要修的。
+5. **注册表修正已执行**：#39/#45 于 2026-08-30 标 deprecated 迁出策略候选池（strategy_registry.yaml 注释留痕 + 指向本标准）。

@@ -44,6 +44,17 @@ if _src_abs not in _existing_pp.split(_os.pathsep):
 if sys.stdout.encoding != "utf-8":
     sys.stdout.reconfigure(encoding="utf-8")
 
+# 治本（2026-08-30，AI-WAVE5）：pytest.approx 的 numpy 探针（sys.modules.get("numpy")
+# 命中即调 isscalar）与 zephyr __init__ auto_bootstrap 后台 daemon Timer 重模块链导入
+# 存在时序竞争——后台线程 numpy 导入进行中（partially initialized）时主线程 approx
+# 调用即炸 AttributeError（实证：test_knowledge_classifier 四次连跑 2 挂 2 过）。
+# 主线程预导入 numpy 使 sys.modules["numpy"] 永远=完整模块，确定性关闭竞争窗口；
+# numpy 不可用则静默跳过（approx 探针本来就不查）。
+try:
+    import numpy as _numpy_preload  # noqa: F401
+except Exception:  # noqa: BLE001 — 预加载失败静默，不阻断收集
+    pass
+
 # CAND-GOVSEC-001 ②（2026-08-23 装；批5b 2026-08-26 裁定永久 audit-only）：
 # pytest 进程纳入 in-process 删除护栏观测面。批5b 翻硬拦范围=四治理入口
 # （git_commit/session_worktree CLI/commit_queue drain/sweep 库入口）；
