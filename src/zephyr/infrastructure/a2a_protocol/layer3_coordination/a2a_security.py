@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""A2A 安全内容扫描器 — 六大类威胁检测
+"""
+A2A 安全内容扫描器 — 六大类威胁检测
 
 对 A2A 消息 payload 进行内容安全扫描:
   1. prompt_injection: 提示词注入 — "ignore previous instructions" / "system:" 前缀劫持
@@ -26,6 +27,56 @@
   6. oversized_payload: 超大 payload — 单消息超过 token 预算
 
 输出: A2ASecurityReport — 每个 Message Part 的安全判定
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: max_payload_bytes 参数
+#   fields: 参数 max_payload_bytes（无注解）
+#   code: a2a_security.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: scan_prompt_injection 参数
+#   fields: 参数 scan_prompt_injection（无注解）
+#   code: a2a_security.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: scan_code_execution 参数
+#   fields: 参数 scan_code_execution（无注解）
+#   code: a2a_security.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: scan_credentials 参数
+#   fields: 参数 scan_credentials（无注解）
+#   code: a2a_security.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① A2ASecurityReport
+#   name_en: A2ASecurityReport
+#   intro: class A2ASecurityReport 源码 L114-L126
+#   desc: 公共方法（定义序）: blocked, suspicious_count；源码 L114-L126
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② A2ASecurityScanner
+#   name_en: A2ASecurityScanner
+#   intro: A2A 消息安全扫描器.
+#   desc: A2A 消息安全扫描器. 扫描跨 Agent 消息 payload 的六个维度: prompt_injection / code_execution / credential_l…；公共方法（定义序）: scan, s…
+#   inputs: max_payload_bytes scan_prompt_injection scan_code_execution scan_cred…
+#   outputs: 返回值
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: A2ASecurityReport, A2ASecurityScanner
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

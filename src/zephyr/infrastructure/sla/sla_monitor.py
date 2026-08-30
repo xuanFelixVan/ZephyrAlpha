@@ -24,6 +24,33 @@ SLA Monitor — 服务等级协议 (SLA) 监控 RTO/RPO。
 
 RTO: Recovery Time Objective ≤ 300s
 RPO: Recovery Point Objective ≤ 1 task
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: data_dir 参数
+#   fields: 参数 data_dir（无注解）
+#   code: sla_monitor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SLAMonitor
+#   name_en: SLAMonitor
+#   intro: class SLAMonitor 源码 L120-L353
+#   desc: 公共方法（定义序）: data_dir, rpo_counts, rto_samples, record_rto, record_rpo, record_recovery, get_statistics, subscr…
+#   inputs: data_dir
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: SLAMonitor
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

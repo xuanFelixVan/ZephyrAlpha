@@ -14,7 +14,8 @@
 # [TESTS] tests/infrastructure/test_cascade_failure_simulator.py
 # [A_module] module_id=MOD-INF-089 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""CascadeFailureSimulator — 级联失效仿真器（MOD-INF-089）。
+"""
+CascadeFailureSimulator — 级联失效仿真器（MOD-INF-089）。
 
 B14-04693（AUD-DRAFT-001-DIGEST P2 波 P2-W01，CAND-DR-002，A9运维架构）：
 单机级联失效仿真——进程崩溃/Redis 中断/GPU 失效组合场景脚本化（FailureScenario
@@ -24,6 +25,48 @@ Schema + run 编排），失效传播路径有向事件链记录，恢复时间�
 
 查重分工（蓝图 §0）：chaos_injector=故障注入原语实现（本件只做场景编排并强
 制经回调执行）；rollback_drill=回滚演练（本件为失效传播仿真，零交集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: injector 参数
+#   fields: 参数 injector（无注解）
+#   code: cascade_failure_simulator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: is_trading_hours 参数
+#   fields: 参数 is_trading_hours（无注解）
+#   code: cascade_failure_simulator.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: backup_confirmed 参数
+#   fields: 参数 backup_confirmed（无注解）
+#   code: cascade_failure_simulator.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: cascade_failure_simulator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CascadeFailureSimulator
+#   name_en: CascadeFailureSimulator
+#   intro: 级联失效仿真器（场景编排 + 护栏 + 传播记录 + 恢复测量）。
+#   desc: 级联失效仿真器（场景编排 + 护栏 + 传播记录 + 恢复测量）。；公共方法（定义序）: run, history；源码 L160-L272
+#   inputs: injector is_trading_hours backup_confirmed clock timeout_minutes
+#   outputs: 返回值
+#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（8 定义）
+#   name_en: public defs
+#   intro: CascadeFailureSimulator
+#   downstream: 运行时装配批（灾备演练编排 / 恢复时间度量 / 失效传播复盘）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -165,13 +208,9 @@ class CascadeFailureSimulator:
         """运行场景：护栏三件套 → 逐步注入 → 事件链/传播路径/恢复时间。"""
         self._validate(scenario)
         if self._is_trading_hours():
-            raise CascadeSimError(
-                f"交易时段拒绝运行仿真: {scenario.scenario_id!r}（安全护栏）"
-            )
+            raise CascadeSimError(f"交易时段拒绝运行仿真: {scenario.scenario_id!r}（安全护栏）")
         if not self._backup_confirmed():
-            raise CascadeSimError(
-                f"备份未确认，拒绝运行仿真: {scenario.scenario_id!r}（安全护栏）"
-            )
+            raise CascadeSimError(f"备份未确认，拒绝运行仿真: {scenario.scenario_id!r}（安全护栏）")
 
         started = self._clock()
         events: list[SimEvent] = []
@@ -183,7 +222,8 @@ class CascadeFailureSimulator:
                 status = RunStatus.ABORTED_TIMEOUT
                 _log.warning(
                     "仿真超时终止: %s 已运行超过 %.0f 分钟，剩余步骤跳过",
-                    scenario.scenario_id, self._timeout.total_seconds() / 60.0,
+                    scenario.scenario_id,
+                    self._timeout.total_seconds() / 60.0,
                 )
                 break
             ts = self._clock()
@@ -191,13 +231,16 @@ class CascadeFailureSimulator:
                 self._injector(step)
             except Exception as exc:  # noqa: BLE001 — 注入异常 Fail-Closed
                 _log.exception("injector 执行异常: %s", step.step_id)
-                raise CascadeSimError(
-                    f"injector 执行异常: {step.step_id!r} ({exc})"
-                ) from exc
-            events.append(SimEvent(
-                seq=len(events), step_id=step.step_id, kind=step.kind,
-                target=step.target, ts=ts,
-            ))
+                raise CascadeSimError(f"injector 执行异常: {step.step_id!r} ({exc})") from exc
+            events.append(
+                SimEvent(
+                    seq=len(events),
+                    step_id=step.step_id,
+                    kind=step.kind,
+                    target=step.target,
+                    ts=ts,
+                )
+            )
             if prev_target is not None:
                 edges.append((prev_target, step.target))
             prev_target = step.target
@@ -213,8 +256,13 @@ class CascadeFailureSimulator:
             finished_at=finished,
         )
         self._history.append(result)
-        _log.info("仿真完成: %s status=%s 事件=%d 恢复=%.1fms",
-                  scenario.scenario_id, status.value, len(events), result.recovery_ms)
+        _log.info(
+            "仿真完成: %s status=%s 事件=%d 恢复=%.1fms",
+            scenario.scenario_id,
+            status.value,
+            len(events),
+            result.recovery_ms,
+        )
         return result
 
     # ── 查询 ─────────────────────────────────────────────────────────────

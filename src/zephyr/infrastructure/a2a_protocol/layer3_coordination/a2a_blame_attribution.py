@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""A2A 责任归属引擎 — 因果链分析 + 责任分配
+"""
+A2A 责任归属引擎 — 因果链分析 + 责任分配
 
 当 A2A 系统出现问题(数据损坏/错误输出), 追溯根本原因:
   1. 构建因果图 (causal_trace graph)
@@ -23,6 +24,41 @@
   3. 输出 blame_ratio — 各 Agent 的责任占比
 
 方法: 基于 A2ACausalTrace 的因果图 + 破坏性贡献度分析
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: a2a_blame_attribution.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① BlameReport
+#   name_en: BlameReport
+#   intro: class BlameReport 源码 L78-L87
+#   desc: 公共方法（定义序）: primary_blame；源码 L78-L87
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② A2ABlameAttribution
+#   name_en: A2ABlameAttribution
+#   intro: class A2ABlameAttribution 源码 L90-L129
+#   desc: 公共方法（定义序）: add_record, attribute；源码 L90-L129
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: BlameReport, A2ABlameAttribution
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""A2A 治理适配器 — 连接 A2A 协议与 Governance 层
+"""
+A2A 治理适配器 — 连接 A2A 协议与 Governance 层
 
 桥接 A2A 协议层与 Governance(RBAC/Audit/Escalation) 层:
   1. 每次跨 Agent 通信前: 先通过 RBAC 验证 Agent 对是否合法
@@ -24,6 +25,33 @@
 
 此适配器是 zephyr/a2a/governance_adapter.py 的 layer3 版本,
 提供更接近协议的治理集成点.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: a2a_governance_adapter.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① A2AGovernanceAdapter
+#   name_en: A2AGovernanceAdapter
+#   intro: class A2AGovernanceAdapter 源码 L121-L179
+#   desc: 公共方法（定义序）: scan, apply_policy；源码 L121-L179
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: A2AGovernanceAdapter
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

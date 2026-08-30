@@ -14,7 +14,8 @@
 # [TESTS] tests/infrastructure/test_observability_triad.py
 # [A_module] module_id=MOD-INF-082 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""ObservabilityTriad — 可观测性三支柱整合门面（MOD-INF-082）。
+"""
+ObservabilityTriad — 可观测性三支柱整合门面（MOD-INF-082）。
 
 B11-02678（AUD-DRAFT-001-DIGEST P2 波 P2-W01，CAND-INFRATEL-002，A7-Agent架构）：
 Traces/Metrics/Logs 三支柱统一 TriadSink 入口——Metrics Prometheus 文本格式导出
@@ -25,6 +26,48 @@ Traces/Metrics/Logs 三支柱统一 TriadSink 入口——Metrics Prometheus 文
 
 查重分工（蓝图 §0）：shared/observability/tracing.py=OTel 接线（本件为门面语义
 层，不做 SDK 初始化）；archive 族=归档存储实现（本件只裁决窗口并经回调执行）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: observability_triad.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: audit_sink 参数
+#   fields: 参数 audit_sink（无注解）
+#   code: observability_triad.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: archive_executor 参数
+#   fields: 参数 archive_executor（无注解）
+#   code: observability_triad.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: hot_days 参数
+#   fields: 参数 hot_days（无注解）
+#   code: observability_triad.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ObservabilityTriad
+#   name_en: ObservabilityTriad
+#   intro: 可观测性三支柱门面（统一入口 + 归档裁决 + 审计对接）。
+#   desc: 可观测性三支柱门面（统一入口 + 归档裁决 + 审计对接）。；公共方法（定义序）: emit_trace, traces, register_counter, register_gauge, inc_counter,…
+#   inputs: clock audit_sink archive_executor hot_days
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: ObservabilityTriad
+#   downstream: 运行时装配批（三支柱统一入口装配 / 审计链对接 / 冷归档调度）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -90,8 +133,7 @@ class LogEntry:
     entry_hash: str
 
 
-def _entry_hash(seq: int, ts: datetime.datetime, level: str, message: str,
-                fields: Mapping, prev_hash: str) -> str:
+def _entry_hash(seq: int, ts: datetime.datetime, level: str, message: str, fields: Mapping, prev_hash: str) -> str:
     """日志条目 sha256（canonical JSON 覆盖全字段 + prev_hash 链）。"""
     payload = {
         "seq": seq,
@@ -153,9 +195,7 @@ class ObservabilityTriad:
             raise ObservabilityTriadError("trace_id 为空")
         if not name:
             raise ObservabilityTriadError("trace name 为空")
-        record = TraceRecord(
-            trace_id=trace_id, name=name, attributes=dict(attributes or {}), ts=self._clock()
-        )
+        record = TraceRecord(trace_id=trace_id, name=name, attributes=dict(attributes or {}), ts=self._clock())
         self._traces.append(record)
         self._audit("trace", {"trace_id": trace_id, "name": name})
         return record
@@ -256,8 +296,10 @@ class ObservabilityTriad:
         for entry in self._logs:
             if entry.prev_hash != prev:
                 return False
-            if _entry_hash(entry.seq, entry.ts, entry.level, entry.message,
-                           entry.fields, entry.prev_hash) != entry.entry_hash:
+            if (
+                _entry_hash(entry.seq, entry.ts, entry.level, entry.message, entry.fields, entry.prev_hash)
+                != entry.entry_hash
+            ):
                 return False
             prev = entry.entry_hash
         return True

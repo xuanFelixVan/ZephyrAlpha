@@ -29,6 +29,84 @@ Results Writer — 持久化 benchmark 结果，支持历史对比（漂移检�
     write_benchmark_results(profiles, "data/model_profiles/")
     history = load_benchmark_history("qwen3:8b")
     drift_report = detect_drift(history)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: profiles 参数
+#   fields: 参数 profiles，类型注解 list[ModelProfile]
+#   code: results_writer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: output_dir 参数
+#   fields: 参数 output_dir，类型注解 str
+#   code: results_writer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: model_name 参数
+#   fields: 参数 model_name，类型注解 str
+#   code: results_writer.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: results_dir 参数
+#   fields: 参数 results_dir，类型注解 str
+#   code: results_writer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① write_benchmark_results
+#   name_en: write_benchmark_results
+#   intro: 将 benchmark 结果写入 JSONL 文件（每行一个模型的结果）。
+#   desc: 将 benchmark 结果写入 JSONL 文件（每行一个模型的结果）。 ARCH-BENCH-LEAK-001：profiles 为空时跳过写入并返回 ""——空文件无消费价…；源码 L133-L170
+#   inputs: profiles output_dir
+#   outputs: str
+# - id: A2
+#   name_zh: ② load_benchmark_history
+#   name_en: load_benchmark_history
+#   intro: 加载某个模型的所有历史 benchmark 结果（按时间排序）。
+#   desc: 加载某个模型的所有历史 benchmark 结果（按时间排序）。；源码 L173-L195
+#   inputs: model_name results_dir
+#   outputs: list[dict[str, Any]]
+# - id: A3
+#   name_zh: ③ load_latest_benchmark_results
+#   name_en: load_latest_benchmark_results
+#   intro: 读取最近一次落盘的 benchmark 结果——供 boot 健康判断，不触发跑分（ ）。
+#   desc: 读取最近一次落盘的 benchmark 结果——供 boot 健康判断，不触发跑分（ ）。 返回 (results, meta)： - results: to_model_ben…；源码 L198-L242
+#   inputs: results_dir max_age_hours
+#   outputs: tuple[list[dict[str, Any]], dict[str, A…
+# - id: A4
+#   name_zh: ④ detect_drift
+#   name_en: detect_drift
+#   intro: 检测模型性能漂移——对比最新与历史的分数/延迟变化。
+#   desc: 检测模型性能漂移——对比最新与历史的分数/延迟变化。；源码 L272-L315
+#   inputs: history threshold_score_decline threshold_latency_increase_pct
+#   outputs: dict[str, Any]
+# - id: A5
+#   name_zh: ⑤ to_model_benchmark_result
+#   name_en: to_model_benchmark_result
+#   intro: 将 ModelProfile 转换为 Pipeline 中 ModelBenchmarkResult 格式。
+#   desc: 将 ModelProfile 转换为 Pipeline 中 ModelBenchmarkResult 格式。；源码 L318-L338
+#   inputs: profile
+#   outputs: dict[str, Any]
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-INF-009;MOD-INF-036
+# - id: O2
+#   name_zh: list[dict[str, Any]]
+#   name_en: list[dict[str, Any]]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-INF-009;MOD-INF-036
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations

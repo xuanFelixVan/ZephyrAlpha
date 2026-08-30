@@ -15,7 +15,35 @@
 # [A_module] module_id=MOD-INF-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Batch3 集成层契约 — 14条 Pydantic v2 Schema（OTel/W3C/跨模块CT-1~4/DR/容量预测/语义缓存）."""
+"""
+Batch3 集成层契约 — 14条 Pydantic v2 Schema（OTel/W3C/跨模块CT-1~4/DR/容量预测/语义缓存）.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: batch3_integration.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① 数据契约声明
+#   name_en: data class declarations
+#   intro: 纯声明类（无公共方法，AST 事实）: CtOt001, CtOt002, CtHs001, CtCt1, CtCt2, CtCt3, CtCt4, CtGd…
+#   desc: 数据契约/异常/枚举声明共 14 类；无算法流程（AST 事实）
+#   inputs: I1
+#   outputs: 数据契约类集合
+# 层: 输出
+# - id: O1
+#   name_zh: 数据契约声明（14 类）
+#   name_en: data classes
+#   intro: CtOt001, CtOt002, CtHs001, CtCt1, CtCt2, CtCt3, CtCt4, CtGd004
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 from pydantic import BaseModel, Field
 

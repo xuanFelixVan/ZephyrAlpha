@@ -14,7 +14,8 @@
 # [TESTS] tests/infrastructure/system_telemetry/test_ops_incident_aggregate.py
 # [A_module] module_id=MOD-OPS-001 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""OpsIncidentAggregate — 运维事件聚合根（MOD-OPS-001）。
+"""
+OpsIncidentAggregate — 运维事件聚合根（MOD-OPS-001）。
 
 B9-11460（AUD-DRAFT-001-DIGEST P2 波 P2-W13，CAND-OPS-001，B9 D-OPS）：
 OpsIncident 核心聚合——incident_id + 分级（P0~P2 词表闭合）+ 状态机
@@ -24,6 +25,43 @@ OpsIncident 核心聚合——incident_id + 分级（P0~P2 词表闭合）+ 状�
 查重分工（蓝图 §0）：本件只做事件生命周期聚合与状态机，不做自动处置
 （incident_responder 职责）、不做资产视角（asset_inventory 职责）；外部副
 作用（事件总线/持久化/时钟）全注入，纯内存确定性，同输入必同输出。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: ops_incident_aggregate.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: event_sink 参数
+#   fields: 参数 event_sink（无注解）
+#   code: ops_incident_aggregate.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: store 参数
+#   fields: 参数 store（无注解）
+#   code: ops_incident_aggregate.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① OpsIncidentAggregate
+#   name_en: OpsIncidentAggregate
+#   intro: 运维事件聚合根（注册表 + 状态机 + 三件套事件 + 持久化注入）。
+#   desc: 运维事件聚合根（注册表 + 状态机 + 三件套事件 + 持久化注入）。；公共方法（定义序）: detect, acknowledge, start_mitigation, resolve, close_postmort…
+#   inputs: clock event_sink store
+#   outputs: 返回值
+#   （注：A1 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（9 定义）
+#   name_en: public defs
+#   intro: OpsIncidentAggregate
+#   downstream: 运行时装配批（运维事件聚合注册 / 事件总线绑定 / 持久化适配器装配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -49,10 +87,10 @@ __all__: Final = [
 ]
 
 #: 严重级序号（序号越小越严重；升级 = 序号减小）
-_SEVERITY_RANK: Final[dict["IncidentSeverity", int]] = {}
+_SEVERITY_RANK: Final[dict[IncidentSeverity, int]] = {}
 
 #: 状态机合法迁移（仅正向单步）
-_TRANSITIONS: Final[dict["IncidentStatus", "IncidentStatus"]] = {}
+_TRANSITIONS: Final[dict[IncidentStatus, IncidentStatus]] = {}
 
 
 class OpsIncidentError(Exception):
@@ -70,11 +108,13 @@ class IncidentSeverity(str, Enum):
     P2 = "P2"
 
 
-_SEVERITY_RANK.update({
-    IncidentSeverity.P0: 0,
-    IncidentSeverity.P1: 1,
-    IncidentSeverity.P2: 2,
-})
+_SEVERITY_RANK.update(
+    {
+        IncidentSeverity.P0: 0,
+        IncidentSeverity.P1: 1,
+        IncidentSeverity.P2: 2,
+    }
+)
 
 
 class IncidentStatus(str, Enum):
@@ -87,18 +127,22 @@ class IncidentStatus(str, Enum):
     POSTMORTEM = "postmortem"
 
 
-_TRANSITIONS.update({
-    IncidentStatus.OPEN: IncidentStatus.ACK,
-    IncidentStatus.ACK: IncidentStatus.MITIGATING,
-    IncidentStatus.MITIGATING: IncidentStatus.RESOLVED,
-    IncidentStatus.RESOLVED: IncidentStatus.POSTMORTEM,
-})
+_TRANSITIONS.update(
+    {
+        IncidentStatus.OPEN: IncidentStatus.ACK,
+        IncidentStatus.ACK: IncidentStatus.MITIGATING,
+        IncidentStatus.MITIGATING: IncidentStatus.RESOLVED,
+        IncidentStatus.RESOLVED: IncidentStatus.POSTMORTEM,
+    }
+)
 
 #: 终态（禁止升级/再迁移）
-_TERMINAL: Final[frozenset[IncidentStatus]] = frozenset({
-    IncidentStatus.RESOLVED,
-    IncidentStatus.POSTMORTEM,
-})
+_TERMINAL: Final[frozenset[IncidentStatus]] = frozenset(
+    {
+        IncidentStatus.RESOLVED,
+        IncidentStatus.POSTMORTEM,
+    }
+)
 
 
 class IncidentEventKind(str, Enum):
@@ -191,9 +235,7 @@ class OpsIncidentAggregate:
             raise OpsIncidentError(f"未知 incident: {incident_id!r}")
         return incident
 
-    def _transition(
-        self, incident_id: str, expected: IncidentStatus, target: IncidentStatus
-    ) -> OpsIncident:
+    def _transition(self, incident_id: str, expected: IncidentStatus, target: IncidentStatus) -> OpsIncident:
         current = self._get(incident_id)
         if current.status is not expected:
             raise OpsIncidentError(
@@ -258,9 +300,7 @@ class OpsIncidentAggregate:
         """解决：mitigating → resolved（ResolvedEvent 留痕）。"""
         if not event.resolution:
             raise OpsIncidentError("resolution 为空")
-        incident = self._transition(
-            event.incident_id, IncidentStatus.MITIGATING, IncidentStatus.RESOLVED
-        )
+        incident = self._transition(event.incident_id, IncidentStatus.MITIGATING, IncidentStatus.RESOLVED)
         incident = OpsIncident(
             incident_id=incident.incident_id,
             severity=incident.severity,
@@ -286,19 +326,14 @@ class OpsIncidentAggregate:
         """升级：仅向更高严重级（P2→P1→P0）；终态禁止；EscalatedEvent 留痕。"""
         current = self._get(event.incident_id)
         if current.status in _TERMINAL:
-            raise OpsIncidentError(
-                f"终态禁止升级: incident {event.incident_id!r} 当前 {current.status.value}"
-            )
+            raise OpsIncidentError(f"终态禁止升级: incident {event.incident_id!r} 当前 {current.status.value}")
         if not isinstance(event.to_severity, IncidentSeverity):
             raise OpsIncidentError(f"非法目标分级: {event.to_severity!r}")
         if event.from_severity is not current.severity:
-            raise OpsIncidentError(
-                f"升级源分级不符: 声明 {event.from_severity!r}，当前 {current.severity!r}"
-            )
+            raise OpsIncidentError(f"升级源分级不符: 声明 {event.from_severity!r}，当前 {current.severity!r}")
         if _SEVERITY_RANK[event.to_severity] >= _SEVERITY_RANK[current.severity]:
             raise OpsIncidentError(
-                f"非法升级: {current.severity.value} → {event.to_severity.value}，"
-                "仅允许向更高严重级"
+                f"非法升级: {current.severity.value} → {event.to_severity.value}，仅允许向更高严重级"
             )
         if not event.reason:
             raise OpsIncidentError("升级 reason 为空")
@@ -317,7 +352,10 @@ class OpsIncidentAggregate:
         self._persist(nxt)
         _log.warning(
             "事件升级: %s %s → %s (%s)",
-            event.incident_id, current.severity.value, event.to_severity.value, event.reason,
+            event.incident_id,
+            current.severity.value,
+            event.to_severity.value,
+            event.reason,
         )
         return nxt
 
@@ -331,9 +369,6 @@ class OpsIncidentAggregate:
         """事件列表（可按状态过滤；按 (detected_at, incident_id) 确定性排序）。"""
         if status is not None and not isinstance(status, IncidentStatus):
             raise OpsIncidentError(f"非法状态过滤: {status!r}")
-        out = [
-            inc for inc in self._incidents.values()
-            if status is None or inc.status is status
-        ]
+        out = [inc for inc in self._incidents.values() if status is None or inc.status is status]
         out.sort(key=lambda i: (i.detected_at, i.incident_id))
         return out

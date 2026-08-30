@@ -39,6 +39,51 @@ JSONL 格式:
 Merkle 树验证：
     每张表的数据行分别计算 SHA-256 哈希 -> 构建 Merkle 树 -> 根哈希签名
     HMAC-SHA256 用于 JSONL 文件级别的完整性验证
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: db_path 参数
+#   fields: 参数 db_path（无注解）
+#   code: sqlite_dumper.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: output_dir 参数
+#   fields: 参数 output_dir（无注解）
+#   code: sqlite_dumper.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: hmac_key 参数
+#   fields: 参数 hmac_key（无注解）
+#   code: sqlite_dumper.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① VerifyResult
+#   name_en: VerifyResult
+#   intro: class VerifyResult 源码 L162-L173
+#   desc: 公共方法（定义序）: passed；源码 L162-L173
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② SqliteDumper
+#   name_en: SqliteDumper
+#   intro: class SqliteDumper 源码 L176-L584
+#   desc: 公共方法（定义序）: compute_merkle_root, output_dir, hmac_key, db_path, check_sqlite_health, wal_checkpoint, dump, res…
+#   inputs: db_path output_dir hmac_key
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: VerifyResult, SqliteDumper
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

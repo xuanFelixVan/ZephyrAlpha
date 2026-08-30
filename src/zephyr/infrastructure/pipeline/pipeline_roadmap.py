@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-009 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Pipeline 未来版本路线图——v0.10.0 -> v0.12.0 规划骨架。
+"""
+Pipeline 未来版本路线图——v0.10.0 -> v0.12.0 规划骨架。
 
 本文件包含蓝图 §22-§24 定义的未来版本特性基类/桩实现。
 对标：蓝图 §22 (v0.10.0 / B173-B234)、§23 (v0.11.0 / B233-B289)、§24 (v0.12.0 / B284-B325)。
@@ -24,6 +25,97 @@
 
 真源声明（治本 2026-06-30）：本文件是 pipeline_roadmap 的唯一真源。
 integration/pipeline_roadmap.py 副本已删除，所有消费者改从本文件导入。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: task_card 参数
+#   fields: 参数 task_card（无注解）
+#   code: pipeline_roadmap.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① HealthReport
+#   name_en: HealthReport
+#   intro: class HealthReport 源码 L296-L330
+#   desc: 公共方法（定义序）: as_json, as_markdown；源码 L296-L330
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② PipelineOrchestratorRoadmapMixin
+#   name_en: PipelineOrchestratorRoadmapMixin
+#   intro: v0.10.0-v0.12.0 特性混合基类。
+#   desc: v0.10.0-v0.12.0 特性混合基类。 此基类标记 PipelineOrchestrator 未来将支持的特性入口点。 当前为桩，生产实现将在对应版本完成。；公共方法（定义序）: generate_sessio…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ DriftReport
+#   name_en: DriftReport
+#   intro: class DriftReport 源码 L372-L376
+#   desc: 公共方法（定义序）: has_drifts；源码 L372-L376
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ BlueprintCodeDriftChecker
+#   name_en: BlueprintCodeDriftChecker
+#   intro: 每次CI/PR自动验证 blueprint↔code的一致性。
+#   desc: 每次CI/PR自动验证 blueprint↔code的一致性。；公共方法（定义序）: check；源码 L379-L383
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ MutationTestResult
+#   name_en: MutationTestResult
+#   intro: class MutationTestResult 源码 L392-L401
+#   desc: 公共方法（定义序）: mutation_score；源码 L392-L401
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ ROICalculator
+#   name_en: ROICalculator
+#   intro: class ROICalculator 源码 L410-L417
+#   desc: 公共方法（定义序）: roi_for_module；源码 L410-L417
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A7
+#   name_zh: ⑦ ConstructionPhaseTracker
+#   name_en: ConstructionPhaseTracker
+#   intro: 蓝图 §26 施工 Phase 规划——38行施工条目状态追踪器。
+#   desc: 蓝图 §26 施工 Phase 规划——38行施工条目状态追踪器。 覆盖从 scaffold->foundation->...->dynamic_reroute 的全部施工活动。…；公共方法（定义序）: total_e…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A8
+#   name_zh: ⑧ DependencyHealthChecker
+#   name_en: DependencyHealthChecker
+#   intro: class DependencyHealthChecker 源码 L660-L677
+#   desc: 公共方法（定义序）: check_all, missing_required；源码 L660-L677
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A9
+#   name_zh: ⑨ select_profile
+#   name_en: select_profile
+#   intro: select_profile(task_card) 源码 L1050-L1059
+#   desc: 源码 L1050-L1059
+#   inputs: task_card
+#   outputs: SchedulingProfileDef
+#   （注：A9 之后另有 49 个公共定义未列入（含 49 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: SchedulingProfileDef
+#   name_en: SchedulingProfileDef
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> O1
 """
 
 from __future__ import annotations

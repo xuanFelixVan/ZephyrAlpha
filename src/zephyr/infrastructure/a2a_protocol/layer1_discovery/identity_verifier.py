@@ -15,7 +15,35 @@
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Identity Verifier — JWT 身份验证器"""
+"""
+Identity Verifier — JWT 身份验证器
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: shared_secret 参数
+#   fields: 参数 shared_secret（无注解）
+#   code: identity_verifier.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① IdentityVerifier
+#   name_en: IdentityVerifier
+#   intro: A2A 身份验证器
+#   desc: A2A 身份验证器；公共方法（定义序）: sign, verify, generate_challenge；源码 L52-L73
+#   inputs: shared_secret
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: IdentityVerifier
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 import hashlib
 import hmac

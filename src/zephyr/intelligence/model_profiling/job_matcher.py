@@ -37,6 +37,69 @@ match_score 公式 (0-1, 四维加权):
     profile = QuickProfile(...)
     recs = matcher.match_top(profile, n=3)
     # recs[0].job_title, recs[0].match_score, recs[0].qualified
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: profile 参数
+#   fields: 参数 profile，类型注解 QuickProfile
+#   code: job_matcher.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: n 参数
+#   fields: 参数 n，类型注解 int
+#   code: job_matcher.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: matrix_path 参数
+#   fields: 参数 matrix_path，类型注解 Path | None
+#   code: job_matcher.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: scores 参数
+#   fields: 参数 scores，类型注解 dict[str, float]
+#   code: job_matcher.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① JobMatcher
+#   name_en: JobMatcher
+#   intro: 模型岗位匹配器 — 基于 QuickProfile 匹配 job_matrix.yaml 中的岗位。
+#   desc: 模型岗位匹配器 — 基于 QuickProfile 匹配 job_matrix.yaml 中的岗位。 用法: matcher = JobMatcher() recs = matc…；公共方法（定义序）: match,…
+#   inputs: matrix_path
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② match_jobs
+#   name_en: match_jobs
+#   intro: 便捷函数: 一行调用获取 Top-N 岗位推荐。
+#   desc: 便捷函数: 一行调用获取 Top-N 岗位推荐。；源码 L397-L404
+#   inputs: profile n matrix_path
+#   outputs: list[JobRecommendation]
+# - id: A3
+#   name_zh: ③ grades_from_scores
+#   name_en: grades_from_scores
+#   intro: 便捷函数: 从原始分 dict 转为分级 dict。
+#   desc: 便捷函数: 从原始分 dict 转为分级 dict。；源码 L407-L409
+#   inputs: scores
+#   outputs: dict[str, str]
+#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[JobRecommendation]
+#   name_en: list[JobRecommendation]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-INF-034
+# - id: O2
+#   name_zh: dict[str, str]
+#   name_en: dict[str, str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-INF-034
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

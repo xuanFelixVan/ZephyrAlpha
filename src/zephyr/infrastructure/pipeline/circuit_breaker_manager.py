@@ -33,6 +33,47 @@ Usage:
             cb.record_result("task:module:model", success=True)
         except Exception:
             cb.record_result("task:module:model", success=False)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: log_fn 参数
+#   fields: 参数 log_fn（无注解）
+#   code: circuit_breaker_manager.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: failure_window_s 参数
+#   fields: 参数 failure_window_s（无注解）
+#   code: circuit_breaker_manager.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: failure_threshold 参数
+#   fields: 参数 failure_threshold（无注解）
+#   code: circuit_breaker_manager.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: cooldown_s 参数
+#   fields: 参数 cooldown_s（无注解）
+#   code: circuit_breaker_manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CircuitBreakerManager
+#   name_en: CircuitBreakerManager
+#   intro: 模型调用断路器管理器。
+#   desc: 模型调用断路器管理器。 每个 cb_key 独立维护状态机和失败窗口。；公共方法（定义序）: cooldown_s, failure_threshold, failure_window_s, states, allow…
+#   inputs: log_fn failure_window_s failure_threshold cooldown_s
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: CircuitBreakerManager
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

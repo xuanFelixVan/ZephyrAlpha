@@ -28,6 +28,55 @@
 - 大文件按 max_chars_per_file 截断，避免单题上下文爆炸。
 - 真实文件缺失时用占位符降级（保证模块可导入、mock 测试不抛异常），
   真实模型重跑时文件必然存在（同仓库）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: rel_path 参数
+#   fields: 参数 rel_path，类型注解 str
+#   code: case_assembler.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: max_chars 参数
+#   fields: 参数 max_chars，类型注解 int
+#   code: case_assembler.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: file_specs 参数
+#   fields: 参数 file_specs，类型注解 list[str]
+#   code: case_assembler.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: needles 参数
+#   fields: 参数 needles，类型注解 list[dict[str, Any]] | None
+#   code: case_assembler.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① read_real_file
+#   name_en: read_real_file
+#   intro: 读取白名单内的真实文件，返回（可能截断的）内容。
+#   desc: 读取白名单内的真实文件，返回（可能截断的）内容。 缺失时返回占位符（不抛异常），保证模块可导入。；源码 L117-L134
+#   inputs: rel_path max_chars
+#   outputs: str
+# - id: A2
+#   name_zh: ② assemble_real_context
+#   name_en: assemble_real_context
+#   intro: 读取真实文件 + 注入埋针，拼成带文件名标注的大上下文。
+#   desc: 读取真实文件 + 注入埋针，拼成带文件名标注的大上下文。 Args: file_specs: 相对项目根的文件路径列表（必须在白名单内）。 needles: 埋针列表，每项 {"…；源码 L162-L203
+#   inputs: file_specs needles max_chars_per_file extra_files
+#   outputs: str
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.intelligence.model_profiling.exam_test_cases
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

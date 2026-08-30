@@ -16,7 +16,8 @@
 # [TTL] permanent
 # M03豁免: AI趋同演化,非复制粘贴（项目内部标注，非 ruff code）
 
-"""H1 Redis 热缓存 Key Schema（DDL-as-Code）。
+"""
+H1 Redis 热缓存 Key Schema（DDL-as-Code）。
 
 真源：
     - 数据架构.md §11.1.2（在线存储 Online Store）
@@ -37,6 +38,106 @@ Key 命名规范（§3.4）：
     Tick缓存 ~100MB
     持仓/信号/风控 ~5MB
     Redis内部开销 ~45MB
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: symbol 参数
+#   fields: 参数 symbol，类型注解 str
+#   code: h1_redis_schema.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: factor_name 参数
+#   fields: 参数 factor_name，类型注解 str
+#   code: h1_redis_schema.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: version 参数
+#   fields: 参数 version，类型注解 str
+#   code: h1_redis_schema.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① feature_key
+#   name_en: feature_key
+#   intro: 因子截面 Key：feature:{symbol}
+#   desc: 因子截面 Key：feature:{symbol} 数据结构：Hash Field：{factor_name}:{ver}（窄表理念 DD-P3-01，新增因子不改 Key 结构…；源码 L168-L180
+#   inputs: symbol
+#   outputs: str
+# - id: A2
+#   name_zh: ② factor_field
+#   name_en: factor_field
+#   intro: 因子 Hash Field：{factor_name}:{version}
+#   desc: 因子 Hash Field：{factor_name}:{version} 窄表理念（DD-P3-01）：Field 含因子名+版本，新增因子不改 Key 结构。 Example…；源码 L183-L192
+#   inputs: factor_name version
+#   outputs: str
+# - id: A3
+#   name_zh: ③ feature_updated_at_field
+#   name_en: feature_updated_at_field
+#   intro: 因子截面 Hash 的 updated_at 元数据 Field 名。
+#   desc: 因子截面 Hash 的 updated_at 元数据 Field 名。 与 factor_field（{factor_name}:{version}）区分：下划线前缀避免与任何因…；源码 L203-L216
+#   inputs: 无参数
+#   outputs: str
+# - id: A4
+#   name_zh: ④ position_key
+#   name_en: position_key
+#   intro: 当前持仓 Key：position:{symbol}
+#   desc: 当前持仓 Key：position:{symbol} 数据结构：Hash（amount/cost/avg_price/updated_at） 更新频率：实时（OrderFille…；源码 L224-L234
+#   inputs: symbol
+#   outputs: str
+# - id: A5
+#   name_zh: ⑤ signal_active_key
+#   name_en: signal_active_key
+#   intro: 活跃信号 Key：signal:active
+#   desc: 活跃信号 Key：signal:active 数据结构：Set（活跃信号 symbol 集合）+ Hash（信号详情） 更新频率：实时（SignalEvent） 查询延迟：<5ms；源码 L237-L244
+#   inputs: 无参数
+#   outputs: str
+# - id: A6
+#   name_zh: ⑥ trade_today_key
+#   name_en: trade_today_key
+#   intro: 当日交易 Key：trade:today:{symbol}
+#   desc: 当日交易 Key：trade:today:{symbol} 数据结构：List（当日成交记录） 更新频率：实时（ExecutionEvent） 查询延迟：<5ms 盘后清理：盘后…；源码 L247-L255
+#   inputs: symbol
+#   outputs: str
+# - id: A7
+#   name_zh: ⑦ risk_status_key
+#   name_en: risk_status_key
+#   intro: 风控状态 Key：risk:status
+#   desc: 风控状态 Key：risk:status 数据结构：Hash（level/rule_id/updated_at） 更新频率：实时（RiskEvent） 查询延迟：<5ms；源码 L258-L265
+#   inputs: 无参数
+#   outputs: str
+# - id: A8
+#   name_zh: ⑧ account_summary_key
+#   name_en: account_summary_key
+#   intro: 账户状态 Key：account:summary
+#   desc: 账户状态 Key：account:summary 数据结构：Hash（total_asset/cash/available/updated_at） 更新频率：实时 查询延迟：<5…；源码 L268-L276
+#   inputs: 无参数
+#   outputs: str
+# - id: A9
+#   name_zh: ⑨ tick_latest_key
+#   name_en: tick_latest_key
+#   intro: 盘中最新 tick Key：tick:{symbol}:latest
+#   desc: 盘中最新 tick Key：tick:{symbol}:latest 数据结构：Hash（price/volume/bid1-5/ask1-5） TTL：盘中无 TTL / 盘后…；源码 L284-L293
+#   inputs: symbol
+#   outputs: str
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.infrastructure.h1_redis_hot.h1_redis_writer; h1_redis_reader; h1_cqrs_pr…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> O1
 """
 
 from __future__ import annotations

@@ -14,7 +14,8 @@
 # [TESTS] tests/infrastructure/system_telemetry/test_asset_inventory.py
 # [A_module] module_id=MOD-OPS-003 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""AssetInventory — 资产盘点器（MOD-OPS-003）。
+"""
+AssetInventory — 资产盘点器（MOD-OPS-003）。
 
 B9-11648（AUD-DRAFT-001-DIGEST P2 波 P2-W13，CAND-OPS-003，B9 OPS-06）：
 unified_asset_index 统一资产索引（资产类型词表 + 注册表）+ 资产健康评分
@@ -23,6 +24,38 @@ unified_asset_index 统一资产索引（资产类型词表 + 注册表）+ 资�
 
 查重分工（蓝图 §0）：registry_governance=注册表治理（本件不重建注册框
 架，只做运维视角资产盘点）；本件纯内存确定性，时钟注入，同输入必同输出。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: asset_inventory.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: freshness_ttl_seconds 参数
+#   fields: 参数 freshness_ttl_seconds（无注解）
+#   code: asset_inventory.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AssetInventory
+#   name_en: AssetInventory
+#   intro: 统一资产索引（注册表 + 健康评分 + 孤儿率 + 依赖图）。
+#   desc: 统一资产索引（注册表 + 健康评分 + 孤儿率 + 依赖图）。；公共方法（定义序）: register, deregister, get, list_assets, health_score, orphan_stats…
+#   inputs: clock freshness_ttl_seconds
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: AssetInventory
+#   downstream: 运行时装配批（统一资产索引装配 / 健康评分入面板 / 依赖图供运维拓扑消费）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -123,9 +156,7 @@ class AssetInventory:
         freshness_ttl_seconds: float = 3600.0,
     ) -> None:
         if freshness_ttl_seconds <= 0:
-            raise AssetInventoryError(
-                f"freshness_ttl_seconds 须 >0: {freshness_ttl_seconds}"
-            )
+            raise AssetInventoryError(f"freshness_ttl_seconds 须 >0: {freshness_ttl_seconds}")
         self._clock = clock or datetime.datetime.now
         self._ttl = float(freshness_ttl_seconds)
         self._assets: dict[str, Asset] = {}
@@ -169,10 +200,7 @@ class AssetInventory:
         """资产列表（可按类型过滤；按 asset_id 确定性排序）。"""
         if asset_type is not None and not isinstance(asset_type, AssetType):
             raise AssetInventoryError(f"非法类型过滤: {asset_type!r}")
-        out = [
-            a for a in self._assets.values()
-            if asset_type is None or a.asset_type is asset_type
-        ]
+        out = [a for a in self._assets.values() if asset_type is None or a.asset_type is asset_type]
         out.sort(key=lambda a: a.asset_id)
         return out
 
@@ -181,17 +209,11 @@ class AssetInventory:
     def health_score(self, asset_id: str) -> HealthScore:
         """健康评分：元数据完整度 / 依赖连通 / 新鲜度 三分量均值。"""
         asset = self.get(asset_id)
-        completeness = (
-            sum(1 for k in REQUIRED_METADATA_KEYS if asset.metadata.get(k))
-            / len(REQUIRED_METADATA_KEYS)
-        )
+        completeness = sum(1 for k in REQUIRED_METADATA_KEYS if asset.metadata.get(k)) / len(REQUIRED_METADATA_KEYS)
         if not asset.dependencies:
             connectivity = 1.0
         else:
-            connectivity = (
-                sum(1 for d in asset.dependencies if d in self._assets)
-                / len(asset.dependencies)
-            )
+            connectivity = sum(1 for d in asset.dependencies if d in self._assets) / len(asset.dependencies)
         age = (self._clock() - asset.refreshed_at).total_seconds()
         if age <= self._ttl:
             freshness = 1.0
@@ -214,11 +236,9 @@ class AssetInventory:
 
     def orphan_stats(self) -> OrphanStats:
         """孤儿率：无依赖且无归属（owner 空）资产占比（id 确定性排序）。"""
-        orphans = tuple(sorted(
-            a.asset_id
-            for a in self._assets.values()
-            if not a.dependencies and not (a.owner or "").strip()
-        ))
+        orphans = tuple(
+            sorted(a.asset_id for a in self._assets.values() if not a.dependencies and not (a.owner or "").strip())
+        )
         total = len(self._assets)
         return OrphanStats(
             total_assets=total,
@@ -232,10 +252,7 @@ class AssetInventory:
     def dependency_graph(self) -> DependencyGraph:
         """依赖图：节点=全部注册资产；边=(资产, 依赖) 仅含已注册端点，均排序。"""
         nodes = tuple(sorted(self._assets))
-        edges = tuple(sorted(
-            (a.asset_id, dep)
-            for a in self._assets.values()
-            for dep in a.dependencies
-            if dep in self._assets
-        ))
+        edges = tuple(
+            sorted((a.asset_id, dep) for a in self._assets.values() for dep in a.dependencies if dep in self._assets)
+        )
         return DependencyGraph(nodes=nodes, edges=edges)

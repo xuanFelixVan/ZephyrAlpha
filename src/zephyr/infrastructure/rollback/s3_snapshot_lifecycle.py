@@ -27,6 +27,41 @@ S3 Snapshot Lifecycle Manager — 快照防生命周期过期。
     - S3 lifecycle policy: 标记过期 checkpoint 为 Glacier/GD 归档
     - fasclen 净化 cron: 定期清理 >90天未引用的快照
     - 恢复前检查 S3 对象存在性
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: snapshot_dir 参数
+#   fields: 参数 snapshot_dir（无注解）
+#   code: s3_snapshot_lifecycle.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① LifecyclePolicy
+#   name_en: LifecyclePolicy
+#   intro: class LifecyclePolicy 源码 L79-L100
+#   desc: 公共方法（定义序）: to_dict；源码 L79-L100
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② S3SnapshotLifecycle
+#   name_en: S3SnapshotLifecycle
+#   intro: class S3SnapshotLifecycle 源码 L129-L325
+#   desc: 公共方法（定义序）: snapshot_dir, save_manifest, manifest_dir, load_manifests, apply_lifecycle_policy, classify_snapsh…
+#   inputs: snapshot_dir
+#   outputs: 返回值
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: LifecyclePolicy, S3SnapshotLifecycle
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

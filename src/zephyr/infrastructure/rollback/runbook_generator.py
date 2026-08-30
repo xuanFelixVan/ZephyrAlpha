@@ -22,6 +22,32 @@ RunbookGenerator — 回滚操作 Runbook 自动生成。
 
 从审计日志中提取回滚操作历史，自动生成下次可用的标准化 Runbook。
 格式: 零依赖 Markdown，含触发条件 / 前置检查 / 执行步骤 / 回滚方法。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: runbook_generator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RunbookGenerator
+#   name_en: RunbookGenerator
+#   intro: class RunbookGenerator 源码 L71-L142
+#   desc: 公共方法（定义序）: generate；源码 L71-L142
+#   inputs: project_root
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: RunbookGenerator
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

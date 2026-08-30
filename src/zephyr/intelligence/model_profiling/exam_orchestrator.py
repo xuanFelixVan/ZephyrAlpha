@@ -26,6 +26,47 @@ ExamOrchestrator --- 五轴入职考试主控
     5. DriftTest   (稳轴) — 长时间漂移 (cold -> load -> hot 三阶段)
 
 输出: CapabilityPassport -> data/brain/passports/{model_id}.json
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: chat 参数
+#   fields: 参数 chat（无注解）
+#   code: exam_orchestrator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: model_id 参数
+#   fields: 参数 model_id（无注解）
+#   code: exam_orchestrator.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: randomize_order 参数
+#   fields: 参数 randomize_order（无注解）
+#   code: exam_orchestrator.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: judge_chat 参数
+#   fields: 参数 judge_chat（无注解）
+#   code: exam_orchestrator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ExamOrchestrator
+#   name_en: ExamOrchestrator
+#   intro: 五轴入职考试主控。
+#   desc: 五轴入职考试主控。 用法: chat = OllamaChat(model="qwen3:8b") orch = ExamOrchestrator(chat) passport…；公共方法（定义序）: run_brea…
+#   inputs: chat model_id randomize_order judge_chat depth_samples_per_case
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: ExamOrchestrator
+#   downstream: MOD-INF-034
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

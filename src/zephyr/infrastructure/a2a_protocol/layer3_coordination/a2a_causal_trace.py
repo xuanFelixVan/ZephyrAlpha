@@ -15,13 +15,49 @@
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""A2A 因果追踪 — 跨 Agent 操作因果链图谱
+"""
+A2A 因果追踪 — 跨 Agent 操作因果链图谱
 
 构建 Agent 间操作的因果关系图:
   Agent A 写文件 X -> Agent B 读到 X 的旧版本 -> Agent B 输出错误 -> 错误传播
   通过序列表 + 时间戳 + 文件依赖关系追溯到根因
 
 输出: CausalPath — 端到端因果路径
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: a2a_causal_trace.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① CausalGraph
+#   name_en: CausalGraph
+#   intro: class CausalGraph 源码 L85-L97
+#   desc: 公共方法（定义序）: add_node, add_edge, trace_path；源码 L85-L97
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② A2ACausalTrace
+#   name_en: A2ACausalTrace
+#   intro: class A2ACausalTrace 源码 L100-L130
+#   desc: 公共方法（定义序）: open_trace, add_node, add_dependency, get_graph, trace_path；源码 L100-L130
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: CausalGraph, A2ACausalTrace
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

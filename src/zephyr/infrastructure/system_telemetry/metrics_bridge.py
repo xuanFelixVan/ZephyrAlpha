@@ -14,10 +14,67 @@
 # [TESTS] scripts/connect/tele_fle.py --trigger
 # [A_module] module_id=MOD-INF-015 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""TELE->FLE 指标桥接 — emit_metrics() 生产者
+"""
+TELE->FLE 指标桥接 — emit_metrics() 生产者
 
 CT-TELE-FLE-001: SystemTelemetry -> FeedbackLoop 数据管道。
 Telemetry 暴露 metrics 聚合 API，FLE collector 定期拉取并缓存。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: metrics 参数
+#   fields: 参数 metrics，类型注解 list[MetricPoint]
+#   code: metrics_bridge.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① MetricPoint
+#   name_en: MetricPoint
+#   intro: TELE->FLE 协议数据单元
+#   desc: TELE->FLE 协议数据单元；公共方法（定义序）: to_db_row, to_dict；源码 L117-L172
+#   inputs: timestamp source_system metric_name value unit tags ttl_seconds
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② get_metrics_queue
+#   name_en: get_metrics_queue
+#   intro: get_metrics_queue() 源码 L189-L190
+#   desc: 源码 L189-L190
+#   inputs: 无参数
+#   outputs: queue.Queue[MetricPoint]
+# - id: A3
+#   name_zh: ③ MetricsBridge
+#   name_en: MetricsBridge
+#   intro: 指标桥接 — 批量写入 telemetry_metrics + 广播到内存队列
+#   desc: 指标桥接 — 批量写入 telemetry_metrics + 广播到内存队列；公共方法（定义序）: instance, emit_metrics；源码 L221-L268
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ emit_metrics
+#   name_en: emit_metrics
+#   intro: 便捷函数 — 等价于 MetricsBridge.
+#   desc: 便捷函数 — 等价于 MetricsBridge.instance().emit_metrics(metrics)；源码 L279-L281
+#   inputs: metrics
+#   outputs: int
+#   （注：A4 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: queue.Queue[MetricPoint]
+#   name_en: queue.Queue[MetricPoint]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.feedback_loop.metrics_collector; zephyr.trading.health_monitor
+# - id: O2
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.feedback_loop.metrics_collector; zephyr.trading.health_monitor
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

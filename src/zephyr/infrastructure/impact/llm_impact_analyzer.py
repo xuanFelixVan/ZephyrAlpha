@@ -21,6 +21,33 @@ LLM Impact Analyzer — 语义影响分析器。
 依据：
     蓝图 MOD-TASK_SYSTEM §6.11.2 + v0.6.0
     任务卡 TASK-INF-0117
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: llm_impact_analyzer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① LLMImpactAnalyzer
+#   name_en: LLMImpactAnalyzer
+#   intro: class LLMImpactAnalyzer 源码 L77-L191
+#   desc: 公共方法（定义序）: project_root, analyze_impact, compute_file_similarity, cluster_dependencies；源码 L77-L191
+#   inputs: project_root
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: LLMImpactAnalyzer
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 import hashlib

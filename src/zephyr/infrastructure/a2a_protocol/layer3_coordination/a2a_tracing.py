@@ -15,12 +15,47 @@
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""A2A 分布式追踪 — 跨 Agent 请求链追踪 (Span-based)
+"""
+A2A 分布式追踪 — 跨 Agent 请求链追踪 (Span-based)
 
 每个跨 Agent 请求生成一个 TraceId + 每跳生成 Span:
   Span 记录: trace_id / span_id / parent_span_id / agent_id / action / duration
 
 方法: 类似 OpenTelemetry Span 模型, Agent 级分布式追踪
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: a2a_tracing.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① Span
+#   name_en: Span
+#   intro: class Span 源码 L67-L79
+#   desc: 公共方法（定义序）: duration；源码 L67-L79
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② A2ATracing
+#   name_en: A2ATracing
+#   intro: class A2ATracing 源码 L82-L129
+#   desc: 公共方法（定义序）: start_span, end_span, get_trace, summary；源码 L82-L129
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: Span, A2ATracing
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

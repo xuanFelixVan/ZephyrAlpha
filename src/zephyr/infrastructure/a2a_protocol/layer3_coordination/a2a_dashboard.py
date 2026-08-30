@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""A2A 监控仪表盘 — Agent 集群运行状态可视化面板
+"""
+A2A 监控仪表盘 — Agent 集群运行状态可视化面板
 
 实时展示:
   - Agent 负载: 每个 Agent 当前 task 数量 + 队列深度
@@ -25,6 +26,40 @@
   - 桥接状态: RBAC/Audit/Escalation 三向桥接健康
 
 输出: DashboardPanel — 可渲染为文本/JSON/MCP 的监控视图
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: a2a_dashboard.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① DashboardPanel
+#   name_en: DashboardPanel
+#   intro: class DashboardPanel 源码 L71-L114
+#   desc: 公共方法（定义序）: render, to_dict；源码 L71-L114
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② A2ADashboard
+#   name_en: A2ADashboard
+#   intro: class A2ADashboard 源码 L117-L150
+#   desc: 公共方法（定义序）: update_agent, update_conflicts, update_anomalies, update_security, update_bridge, snapshot；源码 L117…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: DashboardPanel, A2ADashboard
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

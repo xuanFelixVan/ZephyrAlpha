@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""A2A 行为指纹 — Agent 行为模式学习与画像
+"""
+A2A 行为指纹 — Agent 行为模式学习与画像
 
 记录每个 Agent 的操作历史, 建立行为指纹:
   - action_distribution: action 名称 -> 频率分布
@@ -24,6 +25,40 @@
   - inter_agent_interaction_rate: 与其他 Agent 的通信频率
 
 当 Agent 行为偏离其历史指纹时 -> 触发 A2AAnomalyDetector
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: a2a_behavior_fingerprint.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① BehaviorFingerprint
+#   name_en: BehaviorFingerprint
+#   intro: class BehaviorFingerprint 源码 L70-L95
+#   desc: 公共方法（定义序）: similarity, top_actions, avg_session_seconds；源码 L70-L95
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② A2ABehaviorFingerprint
+#   name_en: A2ABehaviorFingerprint
+#   intro: class A2ABehaviorFingerprint 源码 L98-L134
+#   desc: 公共方法（定义序）: record_action, record_file_touch, record_session, record_interaction, get_fingerprint, compare；源码…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: BehaviorFingerprint, A2ABehaviorFingerprint
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

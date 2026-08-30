@@ -21,6 +21,59 @@ CT-RBK-GATE-001 集成契约落地——Rollback System Exit Code 完整定义�
 依据: 蓝图 MOD-INF-021 §9 + MOD-MASTER_BLUEPRINT §4
 
 全部 46 个 exit code 枚举 + Gate 判定映射 + Pipeline 行为映射。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: exit_code 参数
+#   fields: 参数 exit_code，类型注解 int
+#   code: contract.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: gate_action 参数
+#   fields: 参数 gate_action，类型注解 str
+#   code: contract.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① get_gate_action
+#   name_en: get_gate_action
+#   intro: get_gate_action(exit_code) 源码 L212-L213
+#   desc: 源码 L212-L213
+#   inputs: exit_code
+#   outputs: tuple[str, str]
+# - id: A2
+#   name_zh: ② get_pipeline_action
+#   name_en: get_pipeline_action
+#   intro: get_pipeline_action(gate_action) 源码 L216-L217
+#   desc: 源码 L216-L217
+#   inputs: gate_action
+#   outputs: str
+# - id: A3
+#   name_zh: ③ resolve_exit_code
+#   name_en: resolve_exit_code
+#   intro: resolve_exit_code(exit_code) 源码 L220-L228
+#   desc: 源码 L220-L228
+#   inputs: exit_code
+#   outputs: dict[str, str]
+#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: tuple[str, str]
+#   name_en: tuple[str, str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from enum import IntEnum

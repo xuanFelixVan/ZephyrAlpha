@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-034 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""ExamExecutor --- 执行式代码评测（HumanEval pass@1 风格，v3.0.5）。
+"""
+ExamExecutor --- 执行式代码评测（HumanEval pass@1 风格，v3.0.5）。
 
 在隔离的子进程中执行模型生成的代码 + 测试断言，验证算法正确性
 （而非仅检查语法/结构）。
@@ -31,6 +32,33 @@
     executor = ExamExecutor()
     res = executor.execute(code_string, ["assert f(1)==2", "assert f(2)==4"])
     print(res.pass_rate, res.passed, res.total, res.errors)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: exam_executor.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ExamExecutor
+#   name_en: ExamExecutor
+#   intro: 执行式评测——运行模型生成代码 + 测试断言，沙箱隔离。
+#   desc: 执行式评测——运行模型生成代码 + 测试断言，沙箱隔离。 参考 HumanEval pass@1: pass_rate = 通过测试数 / 总测试数。 语法错误/超时/异常 ->…；公共方法（定义序）: execute…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: ExamExecutor
+#   downstream: zephyr.intelligence.model_profiling.exam_orchestrator
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -14,7 +14,8 @@
 # [TESTS] tests/infrastructure/test_latency_attributor.py
 # [A_module] module_id=MOD-INF-084 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""LatencyAttributor — 延迟归因器（MOD-INF-084）。
+"""
+LatencyAttributor — 延迟归因器（MOD-INF-084）。
 
 B14-04702（AUD-DRAFT-001-DIGEST P2 波 P2-W01，CAND-INFRATEL-004，A9运维架构
 §8.3.11）：基于注入 Span 序列对 Tick→信号→订单链路分段统计，各阶段占比排序
@@ -24,6 +25,38 @@ B14-04702（AUD-DRAFT-001-DIGEST P2 波 P2-W01，CAND-INFRATEL-004，A9运维架
 查重分工（蓝图 §0）：performance_monitor=实时性能计数（本件为离线归因聚合，
 不重建实时计数）；latency_budget_allocator=预算分配（本件只做归因统计，零交
 集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: slow_threshold_ms 参数
+#   fields: 参数 slow_threshold_ms（无注解）
+#   code: latency_attributor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: capacity 参数
+#   fields: 参数 capacity（无注解）
+#   code: latency_attributor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① LatencyAttributor
+#   name_en: LatencyAttributor
+#   intro: 延迟归因器（占比归因 + 慢样本环形缓冲 + 周报聚合）。
+#   desc: 延迟归因器（占比归因 + 慢样本环形缓冲 + 周报聚合）。；公共方法（定义序）: attribute, slow_samples, weekly_report；源码 L135-L215
+#   inputs: slow_threshold_ms capacity
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: LatencyAttributor
+#   downstream: 运行时装配批（Tick→信号→订单链路巡检 / 周报聚合消费）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -131,18 +164,17 @@ class LatencyAttributor:
             if not span.stage:
                 raise LatencyAttributorError("stage 为空")
             if span.duration_ms < 0:
-                raise LatencyAttributorError(
-                    f"duration_ms 负值: {span.stage}={span.duration_ms!r}"
-                )
+                raise LatencyAttributorError(f"duration_ms 负值: {span.stage}={span.duration_ms!r}")
         total = sum(s.duration_ms for s in spans)
         if total <= 0:
             raise LatencyAttributorError(f"总时长为零，无法归因: {trace_id!r}")
 
-        shares = tuple(sorted(
-            (StageShare(stage=s.stage, duration_ms=s.duration_ms,
-                        share=s.duration_ms / total) for s in spans),
-            key=lambda s: (-s.duration_ms, s.stage),
-        ))
+        shares = tuple(
+            sorted(
+                (StageShare(stage=s.stage, duration_ms=s.duration_ms, share=s.duration_ms / total) for s in spans),
+                key=lambda s: (-s.duration_ms, s.stage),
+            )
+        )
         report = AttributionReport(
             trace_id=trace_id,
             total_ms=total,
@@ -156,8 +188,7 @@ class LatencyAttributor:
             self._ring[self._ring_next] = sample
             self._ring_next = (self._ring_next + 1) % self._capacity
             self._ring_count = min(self._ring_count + 1, self._capacity)
-            _log.info("慢链路样本留存: %s total=%.1fms top=%s",
-                      trace_id, total, report.top_stage)
+            _log.info("慢链路样本留存: %s total=%.1fms top=%s", trace_id, total, report.top_stage)
         return report
 
     # ── 慢链路样本 ────────────────────────────────────────────────────────
@@ -166,10 +197,7 @@ class LatencyAttributor:
         """慢样本按留存先后（环形缓冲先进先出覆盖语义）。"""
         if self._ring_count < self._capacity:
             return tuple(s for s in self._ring[: self._ring_count] if s is not None)
-        return tuple(
-            s for s in (self._ring[self._ring_next:] + self._ring[: self._ring_next])
-            if s is not None
-        )
+        return tuple(s for s in (self._ring[self._ring_next :] + self._ring[: self._ring_next]) if s is not None)
 
     # ── 周报聚合 ──────────────────────────────────────────────────────────
 

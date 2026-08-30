@@ -16,7 +16,8 @@
 # [TTL] permanent
 # M03豁免: AI趋同演化,非复制粘贴（项目内部标注，非 ruff code）
 
-"""H1CqrsProjectors — 事件→Redis 物化视图投影器。
+"""
+H1CqrsProjectors — 事件→Redis 物化视图投影器。
 
 真源：
     - 蓝图 §4.3（PositionProjector 接口定义）
@@ -42,6 +43,57 @@
     projector = PositionProjector(ds.get_redis_conn())
     # EventBus 订阅时：
     # event_bus.subscribe("OrderFilled", projector.handle)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: h1_cqrs_projectors.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① PositionProjector
+#   name_en: PositionProjector
+#   intro: OrderFilled 事件 → position:{symbol} Hash 物化视图。
+#   desc: OrderFilled 事件 → position:{symbol} Hash 物化视图。 蓝图 §4.3 / 数据架构.md §12.4.2 PositionProjector…；公共方法（定义序）: handle；…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② SignalProjector
+#   name_en: SignalProjector
+#   intro: SignalEvent → signal:active Set 物化视图。
+#   desc: SignalEvent → signal:active Set 物化视图。 蓝图 §3.2 活跃信号 Key。D-SIGNAL 产生信号时投影到 signal:active Se…；公共方法（定义序）: handle；…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ RiskProjector
+#   name_en: RiskProjector
+#   intro: RiskEvent → risk:status Hash 物化视图。
+#   desc: RiskEvent → risk:status Hash 物化视图。 蓝图 §3.2 风控状态 Key。D-RISK 风控状态变更时投影到 risk:status。；公共方法（定义序）: handle；源码 L295-…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ TradeProjector
+#   name_en: TradeProjector
+#   intro: ExecutionEvent → trade:today:{symbol} List 物化视图。
+#   desc: ExecutionEvent → trade:today:{symbol} List 物化视图。 蓝图 §3.2 当日交易 Key。D-TRADING 成交回报时投影到 trad…；公共方法（定义序）: handle；…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A4 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: PositionProjector, SignalProjector, RiskProjector, TradeProjector
+#   downstream: zephyr.trading; zephyr.signal; zephyr.risk
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

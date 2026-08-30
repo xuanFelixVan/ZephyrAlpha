@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""A2A 工作窃取调度器 — 跨 Agent 负载均衡
+"""
+A2A 工作窃取调度器 — 跨 Agent 负载均衡
 
 当某 Agent 空闲而其他 Agent 队列有排队任务时，触发工作窃取:
   1. 空闲 Agent 广播 "available" 消息
@@ -27,6 +28,50 @@
   - 优先窃取高优先级任务
   - 防止重复窃取 (task_id 去重)
   - max_steal_per_cycle 限制单次窃取数量
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: max_steal_per_cycle 参数
+#   fields: 参数 max_steal_per_cycle（无注解）
+#   code: a2a_work_steal.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: steal_threshold 参数
+#   fields: 参数 steal_threshold（无注解）
+#   code: a2a_work_steal.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: idle_threshold 参数
+#   fields: 参数 idle_threshold（无注解）
+#   code: a2a_work_steal.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① TaskQueue
+#   name_en: TaskQueue
+#   intro: class TaskQueue 源码 L83-L104
+#   desc: 公共方法（定义序）: add, remove, load, has_spare_capacity；源码 L83-L104
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② A2AWorkSteal
+#   name_en: A2AWorkSteal
+#   intro: A2A 工作窃取引擎 — 跨 Agent 负载均衡.
+#   desc: A2A 工作窃取引擎 — 跨 Agent 负载均衡. 策略: 检查所有 Agent 队列 -> 选负载最高的 -> 窃取其最高优先级任务 已窃取的任务标记 "stolen_by"…；公共方法（定义序）: max_ste…
+#   inputs: max_steal_per_cycle steal_threshold idle_threshold
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: TaskQueue, A2AWorkSteal
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

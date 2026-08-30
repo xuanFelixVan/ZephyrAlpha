@@ -49,6 +49,41 @@ composite_score = speed_norm * 0.40 + quality_norm * 0.35 + consistency_norm * 0
 - 样本数 >= 3: 用实际运行数据推荐
 - 样本数 <  3: 用 benchmark 基准数据兜底
 - 样本数 =  0: 返回 static mapping (M_MODULE_SPECS)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: storage_dir 参数
+#   fields: 参数 storage_dir（无注解）
+#   code: task_model_learner.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ModelTaskEntry
+#   name_en: ModelTaskEntry
+#   intro: class ModelTaskEntry 源码 L107-L145
+#   desc: 公共方法（定义序）: update；源码 L107-L145
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② ModelTaskMatrix
+#   name_en: ModelTaskMatrix
+#   intro: 任务×模型性能矩阵——增量学习 + 推荐引擎。
+#   desc: 任务×模型性能矩阵——增量学习 + 推荐引擎。；公共方法（定义序）: save, dir, record, recommend, recommend_all, load_benchmark_baseline, snap…
+#   inputs: storage_dir
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: ModelTaskEntry, ModelTaskMatrix
+#   downstream: MOD-INF-034;MOD-INF-009
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

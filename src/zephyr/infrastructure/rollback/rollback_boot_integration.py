@@ -20,6 +20,41 @@ RollbackBootIntegration — 回滚系统自动启动/关闭集成 (MOD-INF-021 �
 蓝图要求: "回滚必须自动触发，不能等 Owner 确认"
 实现: 注册到 boot_hooks 启动序列，系统启动时自动初始化 WAL + Verifier，
 系统关闭时自动 flush WAL + 清理临时文件。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: rollback_boot_integration.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RollbackBootIntegration
+#   name_en: RollbackBootIntegration
+#   intro: 回滚系统启动/关闭集成。
+#   desc: 回滚系统启动/关闭集成。 在系统启动时: 1. 初始化 RollbackWAL（检查完整性 + 恢复未完成的回滚） 2. 初始化 RollbackVerifier（G0 门禁就绪…；公共方法（定义序）: registe…
+#   inputs: project_root
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② subscribe_eventbus
+#   name_en: subscribe_eventbus
+#   intro: 订阅 EventBusBackpressure 的3个失败事件。
+#   desc: 订阅 EventBusBackpressure 的3个失败事件。 幂等：重复调用安全。Backpressure 总线不可用时静默跳过。 供 boot_hooks 统一调用。 事件…；源码 L207-L231
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: RollbackBootIntegration, subscribe_eventbus
+#   downstream: zephyr.trading.boot_hooks
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

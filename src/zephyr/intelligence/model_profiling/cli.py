@@ -26,6 +26,80 @@ model-profiler.cli — 模型性能检测命令行入口
     python -m zephyr.intelligence.model_profiling.cli drift qwen3:8b   # 漂移检测
     python -m zephyr.intelligence.model_profiling.cli best         # 显示最佳模型
     python -m zephyr.intelligence.model_profiling.cli history      # 查看历史 benchmark 记录
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: model_name 参数
+#   fields: 参数 model_name，类型注解 str
+#   code: cli.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① cmd_discover
+#   name_en: cmd_discover
+#   intro: cmd_discover() 源码 L115-L132
+#   desc: 源码 L115-L132
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② cmd_quick
+#   name_en: cmd_quick
+#   intro: cmd_quick(model_name) 源码 L135-L155
+#   desc: 源码 L135-L155
+#   inputs: model_name
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ cmd_benchmark
+#   name_en: cmd_benchmark
+#   intro: cmd_benchmark() 源码 L158-L169
+#   desc: 源码 L158-L169
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ cmd_best
+#   name_en: cmd_best
+#   intro: cmd_best() 源码 L172-L200
+#   desc: 源码 L172-L200
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ cmd_drift
+#   name_en: cmd_drift
+#   intro: cmd_drift(model_name) 源码 L203-L234
+#   desc: 源码 L203-L234
+#   inputs: model_name
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ cmd_history
+#   name_en: cmd_history
+#   intro: cmd_history() 源码 L237-L260
+#   desc: 源码 L237-L260
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A7
+#   name_zh: ⑦ main
+#   name_en: main
+#   intro: main() 源码 L263-L291
+#   desc: 源码 L263-L291
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: cmd_discover, cmd_quick, cmd_benchmark, cmd_best, cmd_drift, cmd_history, main
+#   downstream: MOD-INF-034
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> O1
 """
 
 from __future__ import annotations

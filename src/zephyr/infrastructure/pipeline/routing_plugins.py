@@ -39,6 +39,89 @@ Pipeline Routing Plugin System — K8s Scheduling Framework 对标
         priority = 60
         def apply(self, ctx: RoutingContext) -> None: ...
     router = PipelineRouter([MyPlugin(), *DEFAULT_PLUGINS])
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: plugins 参数
+#   fields: 参数 plugins（无注解）
+#   code: routing_plugins.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RoutingPlugin
+#   name_en: RoutingPlugin
+#   intro: Pipeline 路由插件基类——对标 K8s Scheduling Framework Plugin。
+#   desc: Pipeline 路由插件基类——对标 K8s Scheduling Framework Plugin。 子类 MUST 定义： - name: ClassVar[str] ——…；公共方法（定义序）: apply；源…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② TaskTypeFilter
+#   name_en: TaskTypeFilter
+#   intro: 过滤：节点的 task_type 白名单不匹配 -> 淘汰。
+#   desc: 过滤：节点的 task_type 白名单不匹配 -> 淘汰。；公共方法（定义序）: apply；源码 L225-L241
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ ComplexityFilter
+#   name_en: ComplexityFilter
+#   intro: 过滤：高复杂度任务只能选支持高复杂度的节点。
+#   desc: 过滤：高复杂度任务只能选支持高复杂度的节点。；公共方法（定义序）: apply；源码 L244-L263
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ LayerFilter
+#   name_en: LayerFilter
+#   intro: 过滤：DOC_WRITE/REFACTOR 按 target_layer 限定节点范围。
+#   desc: 过滤：DOC_WRITE/REFACTOR 按 target_layer 限定节点范围。；公共方法（定义序）: apply；源码 L266-L291
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ PriorityScorer
+#   name_en: PriorityScorer
+#   intro: 打分：任务优先级越高 -> 高分节点获得的加成越多。
+#   desc: 打分：任务优先级越高 -> 高分节点获得的加成越多。 P0 AUDIT -> M3(opus级审计) 得高分；P2 MODEL_BUILD -> M2(标准) 得高分。；公共方法（定义序）: apply；源码 L294…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ PipelineAffinityScorer
+#   name_en: PipelineAffinityScorer
+#   intro: 打分：A区任务偏好A区节点，B区任务偏好B区节点。
+#   desc: 打分：A区任务偏好A区节点，B区任务偏好B区节点。；公共方法（定义序）: apply；源码 L319-L337
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A7
+#   name_zh: ⑦ CostScorer
+#   name_en: CostScorer
+#   intro: 打分：便宜模型得分更高——同等条件下优先选 DeepSeek/GLM。
+#   desc: 打分：便宜模型得分更高——同等条件下优先选 DeepSeek/GLM。 不阻断高成本节点，仅降低其排序。；公共方法（定义序）: apply；源码 L340-L355
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A8
+#   name_zh: ⑧ PipelineRouter
+#   name_en: PipelineRouter
+#   intro: Pipeline 路由引擎——Filter->Score->Bind 三阶段。
+#   desc: Pipeline 路由引擎——Filter->Score->Bind 三阶段。 Parameters ---------- plugins : list[RoutingPlugi…；公共方法（定义序）: route；源…
+#   inputs: plugins
+#   outputs: 返回值
+#   （注：A8 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（10 定义）
+#   name_en: public defs
+#   intro: RoutingPlugin, TaskTypeFilter, ComplexityFilter, LayerFilter, PriorityScorer, P…
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> O1
 """
 
 from __future__ import annotations

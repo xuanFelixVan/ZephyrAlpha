@@ -36,6 +36,108 @@ Exit Codes:
     2  = 无可回滚历史
     3  = revert 冲突
     10 = BOOTSTRAP_ESCALATED (主回滚器失败->bootstrap接管)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: args 参数
+#   fields: 参数 args，类型注解 list[str]
+#   code: rollback_bootstrap.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: cwd 参数
+#   fields: 参数 cwd，类型注解 Path | None
+#   code: rollback_bootstrap.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: timeout 参数
+#   fields: 参数 timeout，类型注解 int
+#   code: rollback_bootstrap.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: project_root 参数
+#   fields: 参数 project_root，类型注解 Path
+#   code: rollback_bootstrap.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① git
+#   name_en: git
+#   intro: git(args, cwd, timeout) 源码 L152-L159
+#   desc: 源码 L152-L159
+#   inputs: args cwd timeout
+#   outputs: subprocess.CompletedProcess[str]
+# - id: A2
+#   name_zh: ② check_git_available
+#   name_en: check_git_available
+#   intro: check_git_available() 源码 L167-L169
+#   desc: 源码 L167-L169
+#   inputs: 无参数
+#   outputs: bool
+# - id: A3
+#   name_zh: ③ get_recent_commits
+#   name_en: get_recent_commits
+#   intro: get_recent_commits(project_root, count) 源码 L177-L181
+#   desc: 源码 L177-L181
+#   inputs: project_root count
+#   outputs: list[str]
+# - id: A4
+#   name_zh: ④ git_revert
+#   name_en: git_revert
+#   intro: git_revert(project_root, commit_sha) 源码 L189-L191
+#   desc: 源码 L189-L191
+#   inputs: project_root commit_sha
+#   outputs: bool
+# - id: A5
+#   name_zh: ⑤ git_status_clean
+#   name_en: git_status_clean
+#   intro: git_status_clean(project_root) 源码 L199-L201
+#   desc: 源码 L199-L201
+#   inputs: project_root
+#   outputs: bool
+# - id: A6
+#   name_zh: ⑥ git_head_short
+#   name_en: git_head_short
+#   intro: git_head_short(project_root) 源码 L209-L211
+#   desc: 源码 L209-L211
+#   inputs: project_root
+#   outputs: str
+# - id: A7
+#   name_zh: ⑦ bootstrap_rollback
+#   name_en: bootstrap_rollback
+#   intro: bootstrap_rollback(project_root, commit_sha) 源码 L219-L248
+#   desc: 源码 L219-L248
+#   inputs: project_root commit_sha
+#   outputs: int
+# - id: A8
+#   name_zh: ⑧ bootstrap_from_failure_log
+#   name_en: bootstrap_from_failure_log
+#   intro: bootstrap_from_failure_log(failure_log_path) 源码 L251-L270
+#   desc: 源码 L251-L270
+#   inputs: failure_log_path
+#   outputs: int
+# 层: 输出
+# - id: O1
+#   name_zh: subprocess.CompletedProcess[str]
+#   name_en: subprocess.CompletedProcess[str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> O1
 """
 
 from __future__ import annotations

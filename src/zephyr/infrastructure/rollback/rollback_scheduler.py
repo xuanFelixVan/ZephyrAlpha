@@ -31,6 +31,43 @@ rollback_boot_integration._on_rollback_completed）。
 依赖:
     - RollbackWAL (WAL GC)
     - RollbackDrill (演练调度)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: rollback_scheduler.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: wal 参数
+#   fields: 参数 wal（无注解）
+#   code: rollback_scheduler.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: drill 参数
+#   fields: 参数 drill（无注解）
+#   code: rollback_scheduler.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RollbackScheduler
+#   name_en: RollbackScheduler
+#   intro: 回滚系统事件驱动调度器。
+#   desc: 回滚系统事件驱动调度器。 治本修复：移除时间触发守护线程，仅保留事件驱动可调用方法。 - schedule_wal_gc(): 由 rollback_completed 事件触发…；公共方法（定义序）: schedul…
+#   inputs: project_root wal drill
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: RollbackScheduler
+#   downstream: zephyr.infrastructure.rollback.rollback_boot_integration（事件驱动 schedule_wal_gc）;…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

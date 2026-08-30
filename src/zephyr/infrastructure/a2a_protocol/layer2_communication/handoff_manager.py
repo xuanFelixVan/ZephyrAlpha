@@ -15,10 +15,37 @@
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Handoff Manager — Agent 间任务交接
+"""
+Handoff Manager — Agent 间任务交接
 
 Core type (HandoffRecord) is imported from
 zephyr.shared.protocols.a2a.a2a_schemas.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: handoff_manager.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① HandoffManager
+#   name_en: HandoffManager
+#   intro: class HandoffManager 源码 L54-L71
+#   desc: 公共方法（定义序）: handoff, acknowledge, get_active_handoffs；源码 L54-L71
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: HandoffManager
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from zephyr.shared.protocols.a2a.a2a_schemas import HandoffRecord

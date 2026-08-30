@@ -24,6 +24,33 @@ G0 门禁: 文件存在性 + YAML/JSON 语法校验 + Python AST 解析
 __pycache__ 清理: 回滚后删除所有 .pyc bytecode 缓存
 DB 一致性自愈: 比较 tasks 表与文件状态，不一致时自动修正
 Differential Check: 回滚前后逐行比较 tasks/gates/events 表
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: rollback_verifier.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RollbackVerifier
+#   name_en: RollbackVerifier
+#   intro: class RollbackVerifier 源码 L142-L281
+#   desc: 公共方法（定义序）: project_root, g0_verify, clean_pycache, heal_db_consistency, differential_check；源码 L142-L281
+#   inputs: project_root
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: RollbackVerifier
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -26,6 +26,33 @@ CheckpointGC — Checkpoint 垃圾回收。
     - 保留最近 5 个 knowngoodstate 快照（不可清）
 
 周期清理: 每周清理过期快照。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: checkpoint_gc.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CheckpointGC
+#   name_en: CheckpointGC
+#   intro: class CheckpointGC 源码 L78-L153
+#   desc: 公共方法（定义序）: collect；源码 L78-L153
+#   inputs: project_root
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: CheckpointGC
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -42,6 +42,53 @@ M->Role 映射（B36）:
     from zephyr.infrastructure.pipeline.pipeline_agent_bridge import PipelineAgentBridge
     bridge = PipelineAgentBridge(agent_orchestrator)
     orchestration_results = bridge.bridge(pipeline_result)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: module_id 参数
+#   fields: 参数 module_id，类型注解 str
+#   code: pipeline_agent_bridge.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: pipeline 参数
+#   fields: 参数 pipeline，类型注解 str
+#   code: pipeline_agent_bridge.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① role_for_module
+#   name_en: role_for_module
+#   intro: 返回 Mx 节点绑定的 Agent Role 名。
+#   desc: 返回 Mx 节点绑定的 Agent Role 名。；源码 L147-L149
+#   inputs: module_id
+#   outputs: str
+# - id: A2
+#   name_zh: ② domain_for_pipeline
+#   name_en: domain_for_pipeline
+#   intro: 返回管线对应的域 D0-D9。
+#   desc: 返回管线对应的域 D0-D9。；源码 L152-L154
+#   inputs: pipeline
+#   outputs: str
+# - id: A3
+#   name_zh: ③ PipelineAgentBridge
+#   name_en: PipelineAgentBridge
+#   intro: Pipeline -> Agent 编排器桥接。
+#   desc: Pipeline -> Agent 编排器桥接。 Parameters ---------- agent_orchestrator : AgentOrchestrator 已构造…；公共方法（定义序）: agent_o…
+#   inputs: agent_orchestrator
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

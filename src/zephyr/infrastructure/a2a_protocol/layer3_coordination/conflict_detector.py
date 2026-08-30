@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""A2A 冲突检测引擎 — 语义+文本+资源三维冲突检测
+"""
+A2A 冲突检测引擎 — 语义+文本+资源三维冲突检测
 
 检测两个 Agent 提交的变更是否冲突。
 方法:
@@ -25,6 +26,46 @@
 
 输入: Agent A 和 Agent B 的变更集 (changed_files + changed_symbols)
 输出: 冲突列表 + 严重度 + 重叠区域
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: line_overlap_tolerance 参数
+#   fields: 参数 line_overlap_tolerance（无注解）
+#   code: conflict_detector.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: resource_exclusive 参数
+#   fields: 参数 resource_exclusive（无注解）
+#   code: conflict_detector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ChangeSet
+#   name_en: ChangeSet
+#   intro: class ChangeSet 源码 L100-L111
+#   desc: 公共方法（定义序）: add_file；源码 L100-L111
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② ConflictDetector
+#   name_en: ConflictDetector
+#   intro: A2A 冲突检测引擎.
+#   desc: A2A 冲突检测引擎. 在 Supervisor 调度前运行——检测两个 Agent 的变更集是否存在冲突。 若存在冲突 -> 交由 Arbitrator 仲裁。；公共方法（定义序）: detect, has_conf…
+#   inputs: line_overlap_tolerance resource_exclusive
+#   outputs: 返回值
+#   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: ChangeSet, ConflictDetector
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

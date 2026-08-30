@@ -14,10 +14,37 @@
 # [TESTS] python -c "import zephyr.infrastructure.a2a_protocol.layer3_coordination"
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Re-export bridge for layer3_coordination security and economics symbols.
+"""
+Re-export bridge for layer3_coordination security and economics symbols.
 
 Aggregates 22 symbols from 10 source modules to preserve backward compatibility
 for ``from layer3_coordination._security_and_economics import ...`` consumers.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: _security_and_economics.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包公共面再导出
+#   name_en: __init__ re-export
+#   intro: 再导出 A2AAnomalyDetector, A2ADelegationChain, A2AEconomics, A2AForgetting, A2AIde…
+#   desc: __init__ import L0；__all__ 22 项（AST 事实）
+#   inputs: I1
+#   outputs: __all__ 公共符号表
+# 层: 输出
+# - id: O1
+#   name_zh: 公共 API 面（22 符号）
+#   name_en: __all__
+#   intro: A2AAnomalyDetector, A2ADelegationChain, A2AEconomics, A2AForgetting, A2AIdempot…
+#   downstream: zephyr.infrastructure.a2a_protocol.layer3_coordination.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_anomaly_detector import (

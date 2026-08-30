@@ -14,6 +14,53 @@
 # [TESTS]
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: rate_limiter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RateLimiter
+#   name_en: RateLimiter
+#   intro: Sliding window 速率限制器，支持 per-key 分桶。
+#   desc: Sliding window 速率限制器，支持 per-key 分桶。 5.36.4 修复：原 allow(key="default") 接收 key 参数但操作单一 self.…；公共方法（定义序）: allow,…
+#   inputs: max_requests window_seconds
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② create_rate_limiter
+#   name_en: create_rate_limiter
+#   intro: create_rate_limiter(config) 源码 L114-L119
+#   desc: 源码 L114-L119
+#   inputs: config
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ PerToolRateLimiter
+#   name_en: PerToolRateLimiter
+#   intro: class PerToolRateLimiter 源码 L125-L142
+#   desc: 公共方法（定义序）: allow, reset；源码 L125-L142
+#   inputs: config
+#   outputs: 返回值
+#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: RateLimiter, create_rate_limiter, PerToolRateLimiter
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
+"""
+
 import threading
 import time
 

@@ -15,11 +15,47 @@
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""A2A 红队测试 — 攻击向量定义与执行框架
+"""
+A2A 红队测试 — 攻击向量定义与执行框架
 
 R81-C04 Phase 2: 实现具体攻击逻辑，集成 CI 红白对抗 pipeline.
 
 对标: A2ASECBENCH 六大攻击面 + OWASP ASI07 Agent间消息安全 + "Agents of Chaos" 11种无越狱系统性失败
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: a2a_red_team.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① RedTeamReport
+#   name_en: RedTeamReport
+#   intro: class RedTeamReport 源码 L160-L181
+#   desc: 公共方法（定义序）: penetration_rate, defense_rate；源码 L160-L181
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② A2ARedTeam
+#   name_en: A2ARedTeam
+#   intro: A2A 红队引擎 — 攻击向量定义 + 实际执行框架.
+#   desc: A2A 红队引擎 — 攻击向量定义 + 实际执行框架. Phase 2: 所有 6 个攻击向量均已实现具体攻击逻辑。 每次 attack() 实际执行攻击并验证防御是否有效。 约…；公共方法（定义序）: attack_…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: RedTeamReport, A2ARedTeam
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

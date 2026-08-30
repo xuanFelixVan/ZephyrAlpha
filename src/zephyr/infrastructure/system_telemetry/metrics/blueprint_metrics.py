@@ -39,6 +39,48 @@ Task ID  : T-V2-011（experimental — 量化追踪 P2-1）
 Codified Context (arXiv 2602.20478) §5.2 Maintenance Cost:
   "codified context infrastructure itself has maintenance cost—
    tracking usage patterns enables informed refactoring decisions"
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: blueprint_id 参数
+#   fields: 参数 blueprint_id，类型注解 str
+#   code: blueprint_metrics.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: session_id 参数
+#   fields: 参数 session_id，类型注解 str
+#   code: blueprint_metrics.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: task_id 参数
+#   fields: 参数 task_id，类型注解 str
+#   code: blueprint_metrics.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: agent_model 参数
+#   fields: 参数 agent_model，类型注解 str
+#   code: blueprint_metrics.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① record_blueprint_read
+#   name_en: record_blueprint_read
+#   intro: 记录一次蓝图被 AI 读取的事件。
+#   desc: 记录一次蓝图被 AI 读取的事件。 写入 ``data/telemetry/blueprint_reads.jsonl``——每行一个 JSON 事件。 写入失败时静默降级，不抛…；源码 L120-L177
+#   inputs: blueprint_id session_id task_id agent_model
+#   outputs: bool
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: N/A (all consumers verified as phantom — stale references removed)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

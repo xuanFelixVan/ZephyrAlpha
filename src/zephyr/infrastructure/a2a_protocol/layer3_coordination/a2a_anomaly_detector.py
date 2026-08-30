@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""A2A 统计异常检测引擎 — 基线学习 + 实时异常判断
+"""
+A2A 统计异常检测引擎 — 基线学习 + 实时异常判断
 
 监控每个 Agent 的运行时行为指标，检测偏离历史基线的异常:
   - task_rate: 任务提交速率异常 — 突增(DoS前兆) / 突降(Agent僵死前兆)
@@ -27,6 +28,46 @@
 方法: 基于 Z-Score 的相对基线偏离检测
   基线: 过去 N 个时间窗口的滑动平均值 + 标准差
   异常: |z_score| > threshold -> 触发告警
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: baseline_window 参数
+#   fields: 参数 baseline_window（无注解）
+#   code: a2a_anomaly_detector.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: min_samples_before_detect 参数
+#   fields: 参数 min_samples_before_detect（无注解）
+#   code: a2a_anomaly_detector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① MetricBaseline
+#   name_en: MetricBaseline
+#   intro: class MetricBaseline 源码 L110-L141
+#   desc: 公共方法（定义序）: update, mean, std, z_score；源码 L110-L141
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② A2AAnomalyDetector
+#   name_en: A2AAnomalyDetector
+#   intro: Agent 行为统计异常检测器.
+#   desc: Agent 行为统计异常检测器. 学习每个 (Agent, Metric) 对的基线，偏差超过阈值时报告异常.；公共方法（定义序）: record, record_batch, get_baseline, get_ba…
+#   inputs: baseline_window min_samples_before_detect
+#   outputs: 返回值
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: MetricBaseline, A2AAnomalyDetector
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

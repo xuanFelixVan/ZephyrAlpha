@@ -23,6 +23,33 @@ RollbackAbuseDetector — 回滚滥用检测。
 检测异常高频回滚模式:
     - >5 次/h -> exit 44 (ROLLBACK_ABUSE_DETECTED) -> L2 Skill Kill
     - 连续 3 次同文件 -> 怀疑目标文件系统性 bug -> escalate
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: rollback_abuse_detector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RollbackAbuseDetector
+#   name_en: RollbackAbuseDetector
+#   intro: class RollbackAbuseDetector 源码 L107-L193
+#   desc: 公共方法（定义序）: project_root, check_abuse；源码 L107-L193
+#   inputs: project_root
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: RollbackAbuseDetector
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

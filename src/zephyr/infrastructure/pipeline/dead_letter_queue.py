@@ -33,6 +33,32 @@ DeadLetterQueue — 死信队列
     entry = dlq.enqueue(task_card, results, status, max_retries=3)
     for dead in dlq.drain():
         ...
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: dead_letter_queue.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① DeadLetterQueue
+#   name_en: DeadLetterQueue
+#   intro: 死信队列——B169 永久失败任务存储。
+#   desc: 死信队列——B169 永久失败任务存储。；公共方法（定义序）: enqueue, drain, entries, count, save_state, load_state；源码 L69-L129
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: DeadLetterQueue
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""A2A 形式化验证 — 协议属性模型检查
+"""
+A2A 形式化验证 — 协议属性模型检查
 
 对 A2A 协议的关键属性进行形式化验证:
   1. Deadlock Freedom: 死锁不可能发生 (型号检查)
@@ -26,6 +27,41 @@ Phase 1 策略: 有限状态机可达性分析 -> 通过枚举所有状态序列
 Phase 5+ 策略: TLA+/Coq 完整形式化证明
 
 输出: VerificationReport — 验证通过/失败 + 反例路径
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: state_graph 参数
+#   fields: 参数 state_graph（无注解）
+#   code: a2a_formal_verification.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① VerificationReport
+#   name_en: VerificationReport
+#   intro: class VerificationReport 源码 L88-L94
+#   desc: 公共方法（定义序）: violation_count；源码 L88-L94
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② A2AFormalVerification
+#   name_en: A2AFormalVerification
+#   intro: class A2AFormalVerification 源码 L97-L164
+#   desc: 公共方法（定义序）: verify；源码 L97-L164
+#   inputs: state_graph
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: VerificationReport, A2AFormalVerification
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

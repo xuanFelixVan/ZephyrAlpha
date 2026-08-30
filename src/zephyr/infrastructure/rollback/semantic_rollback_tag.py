@@ -26,6 +26,33 @@ TASK/refactor/migration 边界自动 git tag:
     rollback/migration/{migration_id}:before / :after
 
 Tag 作为语义化回滚目标: zephyr rollback --to rollback/refactor/auth:before
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: semantic_rollback_tag.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SemanticRollbackTag
+#   name_en: SemanticRollbackTag
+#   intro: class SemanticRollbackTag 源码 L88-L217
+#   desc: 公共方法（定义序）: project_root, tag_task, tag_refactor, tag_migration, list_tags, resolve_tag, delete_tag_safe, find…
+#   inputs: project_root
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: SemanticRollbackTag
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -14,7 +14,8 @@
 # [TESTS] tests/infrastructure/test_agent_call_tracer.py
 # [A_module] module_id=MOD-INF-083 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""AgentCallTracer — AI Agent 调用链追踪器（MOD-INF-083）。
+"""
+AgentCallTracer — AI Agent 调用链追踪器（MOD-INF-083）。
 
 B14-04637（AUD-DRAFT-001-DIGEST P2 波 P2-W01，CAND-INFRATEL-003，A9运维架构）：
 Agent 调用链 Span 模型（意图 INTENT → 工具调用 TOOL_CALL → LLM → 决策输出
@@ -25,6 +26,46 @@ DECISION 四段）关联 TraceID，Span 树构建/闭合校验（未闭合查询
 查重分工（蓝图 §0）：a2a_tracing=A2A 协议层追踪（本件为 Agent 内部四段调用
 语义，不重建协议层）；observability_triad=三支柱门面（本件产出 Span 供其消
 费，零交集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: agent_call_tracer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: audit_sink 参数
+#   fields: 参数 audit_sink（无注解）
+#   code: agent_call_tracer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AgentSpan
+#   name_en: AgentSpan
+#   intro: Agent 调用链 Span（frozen；end_span 以 replace 生成闭合实例）。
+#   desc: Agent 调用链 Span（frozen；end_span 以 replace 生成闭合实例）。；公共方法（定义序）: duration_ms；源码 L115-L135
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② AgentCallTracer
+#   name_en: AgentCallTracer
+#   intro: Agent 调用链追踪器（Span 树构建 + 闭合校验 + 高亮 + 审计）。
+#   desc: Agent 调用链追踪器（Span 树构建 + 闭合校验 + 高亮 + 审计）。；公共方法（定义序）: start_span, end_span, get_span, unclosed_spans, trace_spa…
+#   inputs: clock audit_sink
+#   outputs: 返回值
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: AgentSpan, AgentCallTracer
+#   downstream: 运行时装配批（Agent 调用链回放 / 审计落链 / 超预算巡检）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -133,9 +174,7 @@ class AgentCallTracer:
             if parent is None:
                 raise AgentCallTracerError(f"未知父 span: {parent_id!r}")
             if parent.trace_id != trace_id:
-                raise AgentCallTracerError(
-                    f"跨 trace 父子非法: 父 {parent.trace_id!r} != {trace_id!r}"
-                )
+                raise AgentCallTracerError(f"跨 trace 父子非法: 父 {parent.trace_id!r} != {trace_id!r}")
             if parent.status is not SpanStatus.RUNNING:
                 raise AgentCallTracerError(f"父 span 已闭合，禁止再开子 span: {parent_id!r}")
         self._seq += 1
@@ -176,16 +215,15 @@ class AgentCallTracer:
             status=status,
             error=error,
         )
-        over = (
-            closed.budget_ms is not None
-            and closed.duration_ms is not None
-            and closed.duration_ms > closed.budget_ms
-        )
+        over = closed.budget_ms is not None and closed.duration_ms is not None and closed.duration_ms > closed.budget_ms
         if over:
             closed = replace(closed, over_budget=True)
             _log.warning(
                 "超预算调用高亮: %s (%s) %.1fms > %.1fms",
-                span_id, closed.name, closed.duration_ms, closed.budget_ms,
+                span_id,
+                closed.name,
+                closed.duration_ms,
+                closed.budget_ms,
             )
         if status is SpanStatus.ERROR:
             _log.warning("异常调用标记: %s (%s) error=%s", span_id, closed.name, error)
@@ -209,7 +247,8 @@ class AgentCallTracer:
     def unclosed_spans(self, trace_id: str | None = None) -> tuple[AgentSpan, ...]:
         """未闭合 Span 查询（存在即告警留痕；按 (start, span_id) 排序）。"""
         out = [
-            s for s in self._spans.values()
+            s
+            for s in self._spans.values()
             if s.status is SpanStatus.RUNNING and (trace_id is None or s.trace_id == trace_id)
         ]
         out.sort(key=lambda s: (s.start, s.span_id))

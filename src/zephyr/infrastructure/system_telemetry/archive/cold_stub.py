@@ -15,9 +15,97 @@
 # [A_module] module_id=MOD-INF-015 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""遥测 · archive/cold_stub — 冷存储归档管道。
+"""
+遥测 · archive/cold_stub — 冷存储归档管道。
 
 蓝图 §8: 分级 TTL + gzip 压缩 + SQLite backup + 成本感知降级 + 灾备 RTO/RPO。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: archive_dir 参数
+#   fields: 参数 archive_dir，类型注解 Path | None
+#   code: cold_stub.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: db_path 参数
+#   fields: 参数 db_path，类型注解 Path | None
+#   code: cold_stub.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: backup_dir 参数
+#   fields: 参数 backup_dir，类型注解 Path | None
+#   code: cold_stub.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: cost_limit_gb 参数
+#   fields: 参数 cost_limit_gb，类型注解 float | None
+#   code: cold_stub.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① configure
+#   name_en: configure
+#   intro: configure(archive_dir, db_path, backup_dir, cost_limit_gb,…
+#   desc: 源码 L153-L174
+#   inputs: archive_dir db_path backup_dir cost_limit_gb policy_overrides
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② next_archive_batch_id
+#   name_en: next_archive_batch_id
+#   intro: next_archive_batch_id(prefix) 源码 L177-L179
+#   desc: 源码 L177-L179
+#   inputs: prefix
+#   outputs: str
+# - id: A3
+#   name_zh: ③ compress_dir
+#   name_en: compress_dir
+#   intro: compress_dir(src, dst_name) 源码 L182-L200
+#   desc: 源码 L182-L200
+#   inputs: src dst_name
+#   outputs: Path | None
+# - id: A4
+#   name_zh: ④ rotate_by_ttl
+#   name_en: rotate_by_ttl
+#   intro: rotate_by_ttl(base_dir, max_age_days) 源码 L203-L219
+#   desc: 源码 L203-L219
+#   inputs: base_dir max_age_days
+#   outputs: int
+# - id: A5
+#   name_zh: ⑤ cost_status
+#   name_en: cost_status
+#   intro: cost_status() 源码 L228-L243
+#   desc: 源码 L228-L243
+#   inputs: 无参数
+#   outputs: dict[str, Any]
+# - id: A6
+#   name_zh: ⑥ apply_cost_degradation
+#   name_en: apply_cost_degradation
+#   intro: apply_cost_degradation() 源码 L246-L258
+#   desc: 源码 L246-L258
+#   inputs: 无参数
+#   outputs: list[str]
+#   （注：A6 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: N/A (all consumers verified as phantom — stale references removed)
+# - id: O2
+#   name_zh: Path | None
+#   name_en: Path | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: N/A (all consumers verified as phantom — stale references removed)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
 """
 
 from __future__ import annotations

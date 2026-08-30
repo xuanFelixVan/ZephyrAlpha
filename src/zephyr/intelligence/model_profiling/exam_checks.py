@@ -14,7 +14,8 @@
 # [TESTS] tests/model/test_exam_orchestrator.py
 # [A_module] module_id=MOD-INF-034 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""exam_checks.py — 考试检测纯函数模块（Stage 4 试点：从 exam_orchestrator 提取）
+"""
+exam_checks.py — 考试检测纯函数模块（Stage 4 试点：从 exam_orchestrator 提取）
 
 治本（Stage 4 私有成员断言消除，2026-07-27）：
 ExamOrchestrator 的 10 个 _check_* 静态方法 + 2 个模块级工具函数
@@ -29,6 +30,125 @@ ExamOrchestrator 的 10 个 _check_* 静态方法 + 2 个模块级工具函数
 3. **向后兼容**：exam_orchestrator 中的 _check_* 私有方法保留为 thin wrapper，
    委托到本模块的公共函数，避免破坏内部调用链
 4. **类型安全**：所有函数对非法输入（None/非 dict/空值）返回安全默认值
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: candidate 参数
+#   fields: 参数 candidate，类型注解 str
+#   code: exam_checks.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: assertions 参数
+#   fields: 参数 assertions，类型注解 list[str]
+#   code: exam_checks.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: result 参数
+#   fields: 参数 result，类型注解 dict
+#   code: exam_checks.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: expected_keys 参数
+#   fields: 参数 expected_keys，类型注解 list[str]
+#   code: exam_checks.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① check_static_assertions
+#   name_en: check_static_assertions
+#   intro: P1-4: 静态文本断言 — 检查候选答案是否包含期望的关键文本。
+#   desc: P1-4: 静态文本断言 — 检查候选答案是否包含期望的关键文本。 Args: candidate: 被测模型的输出文本 assertions: 期望包含的文本片段列表 (大小写…；源码 L185-L198
+#   inputs: candidate assertions
+#   outputs: float
+# - id: A2
+#   name_zh: ② check_structure
+#   name_en: check_structure
+#   intro: 检查结果 dict 是否包含所有期望键且值非空。
+#   desc: 检查结果 dict 是否包含所有期望键且值非空。；源码 L201-L217
+#   inputs: result expected_keys
+#   outputs: bool
+# - id: A3
+#   name_zh: ③ check_fabrication
+#   name_en: check_fabrication
+#   intro: P2: 检查编造 — old_str 不在原始 prompt 中（编造了不存在的代码段）。
+#   desc: P2: 检查编造 — old_str 不在原始 prompt 中（编造了不存在的代码段）。；源码 L220-L235
+#   inputs: case result
+#   outputs: bool
+# - id: A4
+#   name_zh: ④ outputs_similar
+#   name_en: outputs_similar
+#   intro: 判断两个输出是否相似（过滤 _ 前缀内部字段后比较）。
+#   desc: 判断两个输出是否相似（过滤 _ 前缀内部字段后比较）。；源码 L238-L249
+#   inputs: a b
+#   outputs: bool
+# - id: A5
+#   name_zh: ⑤ check_refusal
+#   name_en: check_refusal
+#   intro: P2: 检查拒绝 — 结果为空或 error 含拒绝关键词。
+#   desc: P2: 检查拒绝 — 结果为空或 error 含拒绝关键词。；源码 L252-L258
+#   inputs: result
+#   outputs: bool
+# - id: A6
+#   name_zh: ⑥ check_overclaim
+#   name_en: check_overclaim
+#   intro: P2: 检查过度声称 — 声称做了但实际未做。
+#   desc: P2: 检查过度声称 — 声称做了但实际未做。 启发式: 输出含"已完成/已修复/已创建"等动词, 但对应字段为空。；源码 L261-L301
+#   inputs: case result
+#   outputs: bool
+# - id: A7
+#   name_zh: ⑦ check_source_confusion
+#   name_en: check_source_confusion
+#   intro: P2: 检查来源混淆 — 引用了 prompt/input_files 中不存在的文件名。
+#   desc: P2: 检查来源混淆 — 引用了 prompt/input_files 中不存在的文件名。 启发式: result 中引用的 xxx.py 不在 case.prompt 或 in…；源码 L304-L321
+#   inputs: case result
+#   outputs: bool
+# - id: A8
+#   name_zh: ⑧ check_instruction_drift
+#   name_en: check_instruction_drift
+#   intro: P2: 检查指令偏离 — 输出结构不符合 expected_structure_keys。
+#   desc: P2: 检查指令偏离 — 输出结构不符合 expected_structure_keys。 启发式: 复用 check_structure 判断输出是否包含指令要求的字段。 若…；源码 L324-L332
+#   inputs: case result
+#   outputs: bool
+# - id: A9
+#   name_zh: ⑨ check_format_hallucination
+#   name_en: check_format_hallucination
+#   intro: P2: 检查格式幻觉 — 字段值类型异常。
+#   desc: P2: 检查格式幻觉 — 字段值类型异常。 启发式检测: 1. list 字段被序列化为字符串 (如 "["a","b"]" 而非 ["a","b"]) 2. 字段值类型与常见预…；源码 L335-L364
+#   inputs: case result
+#   outputs: bool
+# - id: A10
+#   name_zh: ⑩ check_quantity_hallucination
+#   name_en: check_quantity_hallucination
+#   intro: P2: 检查数量幻觉 — 输出集合异常膨胀。
+#   desc: P2: 检查数量幻觉 — 输出集合异常膨胀。 启发式: list/dict 字段长度超过阈值 (默认 20) 视为异常膨胀。 常见于模型"刷量"行为 (如编造大量虚假标签/文件)。；源码 L367-L381
+#   inputs: case result
+#   outputs: bool
+#   （注：A10 之后另有 5 个公共定义未列入（含 0 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.intelligence.model_profiling.exam_orchestrator; tests/model/test_exam_or…
+# - id: O2
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.intelligence.model_profiling.exam_orchestrator; tests/model/test_exam_or…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> A10
+# A10 --> O1
 """
 
 from __future__ import annotations
@@ -173,7 +293,7 @@ def check_overclaim(case: ExamTestCase, result: dict) -> bool:
     }
     for field, kws in field_kws.items():
         if any(kw in text for kw in kws):
-            val = result.get(field, None)
+            val = result.get(field)
             if val is None:
                 return True
             if isinstance(val, (list, str)) and len(val) == 0:

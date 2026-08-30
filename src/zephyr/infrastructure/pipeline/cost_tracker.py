@@ -28,6 +28,32 @@ CostTracker —— LLM 调用成本追踪器（SRC-0025）
   - 状态持久化（save_state / load_state）
 
 依据：重组蓝图 §3.3 + B161 成本追踪
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: cost_tracker.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① CostTracker
+#   name_en: CostTracker
+#   intro: LLM 调用成本追踪器。
+#   desc: LLM 调用成本追踪器。 记录每次模型调用的 token 使用量和美元成本，支持： - 实际 API 返回的成本记录 - 基于定价常量的模拟成本估算 - 按模型分组的成本汇总 -…；公共方法（定义序）: records…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: CostTracker
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

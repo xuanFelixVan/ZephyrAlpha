@@ -14,9 +14,55 @@
 # [TESTS] scripts/connect/script_gate.py --trigger
 # [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Script->Gate 门禁桥接器 — submit_findings() 生产者
+"""
+Script->Gate 门禁桥接器 — submit_findings() 生产者
 
 CT-SCRIPT-GATE-001: 审计脚本执行完成后将 findings 按12维度聚合提交给 Gate Engine。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: findings 参数
+#   fields: 参数 findings，类型注解 list[dict[str, Any]]
+#   code: gate_bridge.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: task_id 参数
+#   fields: 参数 task_id，类型注解 str
+#   code: gate_bridge.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: session_id 参数
+#   fields: 参数 session_id，类型注解 str
+#   code: gate_bridge.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① GateBridge
+#   name_en: GateBridge
+#   intro: class GateBridge 源码 L109-L175
+#   desc: 公共方法（定义序）: submit_findings；源码 L109-L175
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② submit_to_gate
+#   name_en: submit_to_gate
+#   intro: submit_to_gate(findings, task_id, session_id) 源码 L178-L183
+#   desc: 源码 L178-L183
+#   inputs: findings task_id session_id
+#   outputs: GateSubmitResult
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: GateSubmitResult
+#   name_en: GateSubmitResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.orchestrator.script_runner; AutoRuntime Core post-scan phase
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

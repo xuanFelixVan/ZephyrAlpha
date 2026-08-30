@@ -30,6 +30,33 @@ Rollback Integration — executor 集成增强层。
     - 0259: Git Binary 完整性验证
     - 0260: 反向预言自我实现防护
     - 0261: 青野检查点密度控制
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: rollback_integration.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RollbackIntegration
+#   name_en: RollbackIntegration
+#   intro: class RollbackIntegration 源码 L155-L562
+#   desc: 公共方法（定义序）: last_checkpoint_time, notify_state, project_root, three_way_merge, acl_check_to_target, scan_promp…
+#   inputs: project_root
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: RollbackIntegration
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

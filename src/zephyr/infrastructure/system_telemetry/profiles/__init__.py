@@ -10,10 +10,42 @@
 # [ERROR_CONTRACT] RuntimeError
 # [TESTS] tests/system-telemetry/test_profiles.py
 # [TTL] permanent
-"""ProfileSubsystem — 系统资源画像（MOD-INF-015 §6 · profiles）.
+"""
+ProfileSubsystem — 系统资源画像（MOD-INF-015 §6 · profiles）.
 
 提供轻量级 CPU/内存/磁盘使用率采集，支持 start/stop/snapshot API。
 在 test_mode=True 时返回模拟数据，不调用 psutil。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: module_id 参数
+#   fields: 参数 module_id（无注解）
+#   code: __init__.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: test_mode 参数
+#   fields: 参数 test_mode（无注解）
+#   code: __init__.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ProfileSubsystem
+#   name_en: ProfileSubsystem
+#   intro: class ProfileSubsystem 源码 L57-L120
+#   desc: 公共方法（定义序）: start, stop, snapshot；源码 L57-L120
+#   inputs: module_id test_mode
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: ProfileSubsystem
+#   downstream: zephyr.security.access_control
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

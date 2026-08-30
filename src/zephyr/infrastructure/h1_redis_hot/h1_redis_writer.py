@@ -16,7 +16,8 @@
 # [TTL] permanent
 # M03豁免: AI趋同演化,非复制粘贴（项目内部标注，非 ruff code）
 
-"""H1RedisWriter — D-FACTOR Engine 每 3 秒截面写入 Redis（PIPELINE 模式）。
+"""
+H1RedisWriter — D-FACTOR Engine 每 3 秒截面写入 Redis（PIPELINE 模式）。
 
 真源：
     - 蓝图 §4.1（H1RedisWriter 接口定义）
@@ -42,6 +43,33 @@
         "000001.SZ": {"momentum_20d": 0.0234, "close": 12.50},
         "600000.SH": {"momentum_20d": -0.0156, "close": 8.32},
     })
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: redis_conn 参数
+#   fields: 参数 redis_conn（无注解）
+#   code: h1_redis_writer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① H1RedisWriter
+#   name_en: H1RedisWriter
+#   intro: D-FACTOR Engine 每 3 秒截面写入 Redis（PIPELINE 模式）。
+#   desc: D-FACTOR Engine 每 3 秒截面写入 Redis（PIPELINE 模式）。 蓝图 §4.1 接口实现。；公共方法（定义序）: write_factor_cross_section, write_tick…
+#   inputs: redis_conn
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: H1RedisWriter
+#   downstream: zephyr.factor.engine; zephyr.data.ch_writer
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

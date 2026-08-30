@@ -14,7 +14,8 @@
 # [TESTS] tests/infrastructure/system_telemetry/test_incident_responder.py
 # [A_module] module_id=MOD-OPS-002 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""IncidentResponder — 事件响应器（MOD-OPS-002）。
+"""
+IncidentResponder — 事件响应器（MOD-OPS-002）。
 
 B9-11645（AUD-DRAFT-001-DIGEST P2 波 P2-W13，CAND-OPS-002，B9 OPS-03）：
 AIOps Detect-Diagnose-Remediate-Learn 闭环——事件分级（P0~P2 词表）+
@@ -24,6 +25,48 @@ AIOps Detect-Diagnose-Remediate-Learn 闭环——事件分级（P0~P2 词表）
 查重分工（蓝图 §0）：ops_incident_aggregate=事件生命周期聚合（本件复用其
 OpsIncident/IncidentSeverity 类型，不重建状态机）；本件只做处置执行与学
 习统计；处置动作副作用全部经注入 handler，纯内存确定性，同输入必同输出。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: incident_responder.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: policies 参数
+#   fields: 参数 policies（无注解）
+#   code: incident_responder.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: rules 参数
+#   fields: 参数 rules（无注解）
+#   code: incident_responder.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: escalation_sink 参数
+#   fields: 参数 escalation_sink（无注解）
+#   code: incident_responder.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① IncidentResponder
+#   name_en: IncidentResponder
+#   intro: 事件响应器（策略表 + 升级规则 + 效果学习）。
+#   desc: 事件响应器（策略表 + 升级规则 + 效果学习）。；公共方法（定义序）: classify, register_policy, respond, policy_effectiveness, effectiveness_…
+#   inputs: clock policies rules escalation_sink
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: IncidentResponder
+#   downstream: 运行时装配批（事件类型策略表绑定 / 升级路由接告警 / 效果统计入面板）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -136,9 +179,7 @@ class IncidentResponder:
         if rule.max_attempts < 1:
             raise IncidentResponderError(f"max_attempts 须 ≥1: {rule.max_attempts}")
         if rule.timeout_seconds <= 0:
-            raise IncidentResponderError(
-                f"timeout_seconds 须 >0: {rule.timeout_seconds}"
-            )
+            raise IncidentResponderError(f"timeout_seconds 须 >0: {rule.timeout_seconds}")
 
     def _rule_for(self, severity: IncidentSeverity) -> EscalationRule:
         return self._rules.get(severity, self.DEFAULT_RULE)
@@ -159,9 +200,7 @@ class IncidentResponder:
 
     # ── 策略表 ───────────────────────────────────────────────────────────
 
-    def register_policy(
-        self, event_type: str, handler: Callable[[OpsIncident], bool]
-    ) -> None:
+    def register_policy(self, event_type: str, handler: Callable[[OpsIncident], bool]) -> None:
         """登记自动处置策略：事件类型 → 处置 handler（注入，返回 True=成功）。"""
         if not event_type:
             raise IncidentResponderError("event_type 为空")
@@ -180,9 +219,7 @@ class IncidentResponder:
             raise IncidentResponderError("event_type 为空")
         handler = self._policies.get(event_type)
         if handler is None:
-            raise IncidentResponderError(
-                f"未注册事件类型: {event_type!r}（策略表闭合，Fail-Closed）"
-            )
+            raise IncidentResponderError(f"未注册事件类型: {event_type!r}（策略表闭合，Fail-Closed）")
         rule = self._rule_for(incident.severity)
         started_at = self._clock()
         elapsed = 0.0
@@ -208,10 +245,7 @@ class IncidentResponder:
 
         escalated = False
         if outcome is not RemediationOutcome.SUCCESS and self._escalation_sink is not None:
-            reason = (
-                f"处置{outcome.value}: incident {incident.incident_id} "
-                f"event_type {event_type} attempts {attempts}"
-            )
+            reason = f"处置{outcome.value}: incident {incident.incident_id} event_type {event_type} attempts {attempts}"
             try:
                 self._escalation_sink(incident, reason)
                 escalated = True
@@ -231,7 +265,11 @@ class IncidentResponder:
         self._records.append(record)
         _log.info(
             "处置完成: %s/%s → %s (attempts=%d, escalated=%s)",
-            incident.incident_id, event_type, outcome.value, attempts, escalated,
+            incident.incident_id,
+            event_type,
+            outcome.value,
+            attempts,
+            escalated,
         )
         return record
 
@@ -256,10 +294,7 @@ class IncidentResponder:
 
     def effectiveness_table(self) -> list[PolicyEffectiveness]:
         """全策略效果表（按 event_type 确定性排序）。"""
-        return [
-            self.policy_effectiveness(et)
-            for et in sorted({r.event_type for r in self._records})
-        ]
+        return [self.policy_effectiveness(et) for et in sorted({r.event_type for r in self._records})]
 
     def records(self) -> list[ResponseRecord]:
         """全量处置记录（按处置发生顺序，确定性）。"""

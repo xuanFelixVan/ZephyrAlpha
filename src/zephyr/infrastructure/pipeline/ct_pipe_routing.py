@@ -31,6 +31,77 @@ CT-PIPE-ORC-001 — TaskCard -> 管线入口节点路由
 可选补充（字段或等价 tag，`ct_pipe.*`）：
   - `target_layer` / `ct_pipe.layer=` / `ct_pipe.target_layer=`
   - `estimated_complexity` / `ct_pipe.complexity=`
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: task 参数
+#   fields: 参数 task，类型注解 TaskCard
+#   code: ct_pipe_routing.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: node_id 参数
+#   fields: 参数 node_id，类型注解 str
+#   code: ct_pipe_routing.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: hints 参数
+#   fields: 参数 hints，类型注解 CtPipeRoutingHints
+#   code: ct_pipe_routing.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: decision 参数
+#   fields: 参数 decision，类型注解 PipelineRouteDecision
+#   code: ct_pipe_routing.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ct_pipe_hints_from_task_card
+#   name_en: ct_pipe_hints_from_task_card
+#   intro: 若未激活 CT-PIPE 路由则返回 None（走整链 M1 或 M6 入口的既有行为）。
+#   desc: 若未激活 CT-PIPE 路由则返回 None（走整链 M1 或 M6 入口的既有行为）。；源码 L196-L227
+#   inputs: task
+#   outputs: CtPipeRoutingHints | None
+# - id: A2
+#   name_zh: ② modules_slice_from_node
+#   name_en: modules_slice_from_node
+#   intro: 从入口模块起执行到该区末端（含入口）。
+#   desc: 从入口模块起执行到该区末端（含入口）。；源码 L230-L238
+#   inputs: node_id
+#   outputs: tuple[Literal['A', 'B'], list[str]]
+# - id: A3
+#   name_zh: ③ resolve_ct_pipe_orc001
+#   name_en: resolve_ct_pipe_orc001
+#   intro: 实现 CT-PIPE-ORC-001 decision_tree（+ 契约提示中的 OPS->M2）。
+#   desc: 实现 CT-PIPE-ORC-001 decision_tree（+ 契约提示中的 OPS->M2）。；源码 L252-L283
+#   inputs: hints
+#   outputs: PipelineRouteDecision
+# - id: A4
+#   name_zh: ④ enforce_affinity
+#   name_en: enforce_affinity
+#   intro: 校验 affinity 约束——违反 HARD 约束返回 ABORT 信息。
+#   desc: 校验 affinity 约束——违反 HARD 约束返回 ABORT 信息。 遍历 AFFINITY_CONSTRAINTS，对当前决策和已激活节点进行约束检查： - model…；源码 L328-L353
+#   inputs: decision active_nodes
+#   outputs: list[str]
+#   （注：A4 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: CtPipeRoutingHints | None
+#   name_en: CtPipeRoutingHints | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: tuple[Literal['A', 'B'], list[str]]
+#   name_en: tuple[Literal['A', 'B'], list[str]]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

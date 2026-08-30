@@ -10,7 +10,49 @@
 # [ERROR_CONTRACT] ValueError; RuntimeError
 # [TESTS] tests/system-telemetry/test_health.py
 # [TTL] permanent
-"""health subsystem — 模块健康注册与 LifecycleManager 对接."""
+"""
+health subsystem — 模块健康注册与 LifecycleManager 对接.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: module_id 参数
+#   fields: 参数 module_id（无注解）
+#   code: __init__.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: test_mode 参数
+#   fields: 参数 test_mode（无注解）
+#   code: __init__.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① HealthSubsystem
+#   name_en: HealthSubsystem
+#   intro: class HealthSubsystem 源码 L63-L135
+#   desc: 公共方法（定义序）: register, heartbeat, set_unhealthy, set_healthy, status, shutdown；源码 L63-L135
+#   inputs: module_id test_mode
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② collect_health
+#   name_en: collect_health
+#   intro: collect_health() 源码 L164-L165
+#   desc: 源码 L164-L165
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: HealthSubsystem, collect_health
+#   downstream: zephyr.security.access_control
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
 
 from __future__ import annotations
 

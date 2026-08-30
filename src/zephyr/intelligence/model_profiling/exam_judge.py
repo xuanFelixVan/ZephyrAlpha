@@ -22,6 +22,41 @@ ExamJudge --- LLM-as-judge 评分器
 作为裁判，按多维 rubric 打分。裁判模型与被测模型不同（防自评偏差）。
 
 v3.0.5 新增：阶段三极限深度测试的核心评分机制之一。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: judge_chat 参数
+#   fields: 参数 judge_chat（无注解）
+#   code: exam_judge.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ExamJudge
+#   name_en: ExamJudge
+#   intro: LLM-as-judge：用强模型对开放式题评分。
+#   desc: LLM-as-judge：用强模型对开放式题评分。 用法: judge_chat = DeepSeekV4Chat(model="deepseek-v4-pro-thinking…；公共方法（定义序）: judge；源…
+#   inputs: judge_chat
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② DeterministicJudge
+#   name_en: DeterministicJudge
+#   intro: P1-4: 确定性裁判 — 无 LLM judge_chat 时的 judge 轨回退。
+#   desc: P1-4: 确定性裁判 — 无 LLM judge_chat 时的 judge 轨回退。 用关键词覆盖率 + 结构完整性 + 长度合理性 给出独立评分。 比 rubric 严格…；公共方法（定义序）: judge；源码…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: ExamJudge, DeterministicJudge
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

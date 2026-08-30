@@ -27,6 +27,38 @@ RollbackLock — 全局回滚锁管理。
     - SQLite advisory lock 备份
     - 队列管理 + 优先级排序
     - 超时重试机制
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: rollback_lock.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: lock_dir 参数
+#   fields: 参数 lock_dir（无注解）
+#   code: rollback_lock.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RollbackLock
+#   name_en: RollbackLock
+#   intro: class RollbackLock 源码 L125-L542
+#   desc: 公共方法（定义序）: lock_dir, lock_path, queue_path, try_steal_expired_lock, enqueue_request, count_queue, validate_fe…
+#   inputs: project_root lock_dir
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: RollbackLock
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

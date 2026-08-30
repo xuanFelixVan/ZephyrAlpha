@@ -34,6 +34,32 @@ ModelRouter — 模型路由与降级链管理
     model = ModelRouter.resolve_model(task_card)
     chain = ModelRouter.fallback_chain_for("deepseek")
     cost = ModelRouter.estimate_cost("deepseek", 5000)  # -> float（总成本 USD）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: model_router.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ModelRouter
+#   name_en: ModelRouter
+#   intro: 模型路由器 — 模型选择、降级链、成本估算。
+#   desc: 模型路由器 — 模型选择、降级链、成本估算。 所有属性和方法均为类级别（静态），无需实例化。；公共方法（定义序）: resolve_model, fallback_chain_for, estimate_cost, e…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: ModelRouter
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

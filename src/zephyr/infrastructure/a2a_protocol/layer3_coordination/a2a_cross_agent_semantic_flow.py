@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""A2A 跨 Agent 语义流追踪 — 知识+意图在 Agent 间传递
+"""
+A2A 跨 Agent 语义流追踪 — 知识+意图在 Agent 间传递
 
 追踪一个任务从 Agent A 传递到 Agent B 再到 Agent C 的过程中:
   - 初始意图是什么
@@ -24,6 +25,41 @@
   - 中间有语义漂移吗?
 
 对标: Cross-Agent Intent Preservation (跨Agent意图保真)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: a2a_cross_agent_semantic_flow.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SemanticFlow
+#   name_en: SemanticFlow
+#   intro: class SemanticFlow 源码 L79-L89
+#   desc: 公共方法（定义序）: depth, agents_involved；源码 L79-L89
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② CrossAgentSemanticFlow
+#   name_en: CrossAgentSemanticFlow
+#   intro: class CrossAgentSemanticFlow 源码 L92-L133
+#   desc: 公共方法（定义序）: open_flow, add_node, get_flow, trace；源码 L92-L133
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: SemanticFlow, CrossAgentSemanticFlow
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

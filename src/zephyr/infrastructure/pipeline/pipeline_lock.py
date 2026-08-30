@@ -34,6 +34,62 @@ v0.8.0 新增 FileLockBackend——跨进程锁，覆盖 Trae+Cursor+RooCode 多
     if result.acquired:
         ...  # 安全执行
         lock.release("task-001")
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: lock_root 参数
+#   fields: 参数 lock_root（无注解）
+#   code: pipeline_lock.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: lock_ttl_s 参数
+#   fields: 参数 lock_ttl_s（无注解）
+#   code: pipeline_lock.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① LockBackend
+#   name_en: LockBackend
+#   intro: 锁后端抽象——Memory / SQLite / etcd。
+#   desc: 锁后端抽象——Memory / SQLite / etcd。；公共方法（定义序）: try_acquire, release, list_locks, is_locked, reset；源码 L131-L162
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② MemoryLockBackend
+#   name_en: MemoryLockBackend
+#   intro: 内存锁后端——测试 + 单进程场景。
+#   desc: 内存锁后端——测试 + 单进程场景。；公共方法（定义序）: try_acquire, release, list_locks, is_locked, reset；源码 L199-L274
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ FileLockBackend
+#   name_en: FileLockBackend
+#   intro: 跨进程文件锁后端——覆盖 Trae+Cursor+RooCode 多 IDE 并发场景。
+#   desc: 跨进程文件锁后端——覆盖 Trae+Cursor+RooCode 多 IDE 并发场景。 基于原子目录创建（os.mkdir）实现互斥： - 锁目录路径 = lock_root…；公共方法（定义序）: validate…
+#   inputs: lock_root lock_ttl_s
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ PipelineLock
+#   name_en: PipelineLock
+#   intro: 双管线并发锁——Orchestrator 集成入口。
+#   desc: 双管线并发锁——Orchestrator 集成入口。 Parameters ---------- backend : LockBackend | None 锁后端。None 时使…；公共方法（定义序）: backend…
+#   inputs: backend
+#   outputs: 返回值
+#   （注：A4 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: LockBackend, MemoryLockBackend, FileLockBackend, PipelineLock
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

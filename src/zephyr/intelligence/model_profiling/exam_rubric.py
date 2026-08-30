@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-034 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""ExamRubric --- 奥赛题结构化多维清单评分（v3.0.5）。
+"""
+ExamRubric --- 奥赛题结构化多维清单评分（v3.0.5）。
 
 对 OLYMPIAD/EXTREME 难度题做多维精确评分，超越单维关键词/结构匹配。
 自包含纯 Python，不需要外部模型。
@@ -29,6 +30,33 @@
     rubric = ExamRubric()
     result = rubric.score("architecture_design", model_output_dict)
     print(result.score, result.items)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: exam_rubric.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ExamRubric
+#   name_en: ExamRubric
+#   intro: 结构化清单评分——对奥赛题做多维精确评分。
+#   desc: 结构化清单评分——对奥赛题做多维精确评分。 用法: rubric = ExamRubric() # 注入期望值供 checker 使用 result_with_expected…；公共方法（定义序）: score；源码…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: ExamRubric
+#   downstream: zephyr.intelligence.model_profiling.exam_orchestrator
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

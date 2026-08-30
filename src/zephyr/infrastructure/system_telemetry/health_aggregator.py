@@ -20,6 +20,33 @@
 
 依据：MOD-MASTER-002 蓝图 §十四
 每15s轮询11系统三态探针->生成健康面板快照->年度审计。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: probe_manager 参数
+#   fields: 参数 probe_manager（无注解）
+#   code: health_aggregator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① HealthAggregator
+#   name_en: HealthAggregator
+#   intro: class HealthAggregator 源码 L80-L157
+#   desc: 公共方法（定义序）: snapshots, poll_all, latest_snapshots, annual_report, subscribe_eventbus；源码 L80-L157
+#   inputs: probe_manager
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: HealthAggregator
+#   downstream: zephyr.security.access_control; zephyr.infrastructure.budget_enforcement
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

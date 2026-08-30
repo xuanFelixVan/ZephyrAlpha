@@ -23,6 +23,33 @@ KnowngoodstateLedger — 已验证正确状态收据。
 回滚后自动声明当前状态为 "已知好状态" (known good state):
     每个 commit_sha -> 验证轮次 -> 通过则签名 + 时间戳。
     下次回滚目标若存在 knowngoodstate 记录，优先选择。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: knowngoodstate_ledger.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① KnowngoodstateLedger
+#   name_en: KnowngoodstateLedger
+#   intro: class KnowngoodstateLedger 源码 L74-L172
+#   desc: 公共方法（定义序）: ledger_path, project_root, declare_known_good, get_latest_known_good, find_known_good, is_known_go…
+#   inputs: project_root
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: KnowngoodstateLedger
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -21,6 +21,33 @@ Quality Monitor — 生成代码质量门禁。
 依据：
     蓝图 MOD-TASK_SYSTEM §6.9 + v0.6.0
     任务卡 TASK-INF-0114
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: quality_monitor.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① QualityMonitor
+#   name_en: QualityMonitor
+#   intro: class QualityMonitor 源码 L76-L218
+#   desc: 公共方法（定义序）: analyze_file, validate_python_file；源码 L76-L218
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: QualityMonitor
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 import ast

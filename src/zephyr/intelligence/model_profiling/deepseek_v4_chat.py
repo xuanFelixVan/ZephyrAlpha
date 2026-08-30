@@ -32,6 +32,47 @@ DeepSeekV4Chat --- DeepSeek V4 系列模型 API 客户端
     from zephyr.shared.security.secrets import get_required_secret
     chat = DeepSeekV4Chat(model="deepseek-v4-pro", api_key=get_required_secret("DEEPSEEK_API_KEY"), thinking=True)
     result = chat.inference("task_classification", "这段代码有什么问题?")
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: model 参数
+#   fields: 参数 model（无注解）
+#   code: deepseek_v4_chat.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: api_key 参数
+#   fields: 参数 api_key（无注解）
+#   code: deepseek_v4_chat.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: base_url 参数
+#   fields: 参数 base_url（无注解）
+#   code: deepseek_v4_chat.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: thinking 参数
+#   fields: 参数 thinking（无注解）
+#   code: deepseek_v4_chat.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DeepSeekV4Chat
+#   name_en: DeepSeekV4Chat
+#   intro: DeepSeek V4 系列模型客户端——兼容 ExamOrchestrator 的 inference 接口。
+#   desc: DeepSeek V4 系列模型客户端——兼容 ExamOrchestrator 的 inference 接口。 Attributes: model_id: 模型标识（deeps…；公共方法（定义序）: model,…
+#   inputs: model api_key base_url thinking temperature max_tokens timeout_s
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: DeepSeekV4Chat
+#   downstream: MOD-INF-034
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

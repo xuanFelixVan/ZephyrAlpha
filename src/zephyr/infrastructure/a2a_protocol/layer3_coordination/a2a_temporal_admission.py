@@ -1,1 +1,82 @@
-# [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain_infrastructure_operations/agent_to_agent_protocol/blueprint.md# [MODULE] zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_temporal_admission# [DOMAIN] D_INFRA_A2A# [DEPENDENCIES]# [CONSUMERS]# [STARTUP] imported# [MATURITY] production# [INVARIANTS] none# [MODIFY-GUARD] none# [STABILITY] stable# [SAFETY] M# [AI_AUTONOMY] ai_modifiable# [ERROR_CONTRACT]# [TESTS]# [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable# [TTL] permanent"""时序准入控制"""class A2ATemporalAdmission:    def __init__(self, max_concurrent: int = 10):        self.max_concurrent = max_concurrent        self._active: set = set()    def admit(self, agent_id: str) -> bool:        return len(self._active) < self.max_concurrent    def enter(self, agent_id: str) -> None:        self._active.add(agent_id)    def leave(self, agent_id: str) -> None:        self._active.discard(agent_id)
+# [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain_infrastructure_operations/agent_to_agent_protocol/blueprint.md
+
+# [MODULE] zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_temporal_admission
+
+# [DOMAIN] D_INFRA_A2A
+
+# [DEPENDENCIES]
+
+# [CONSUMERS]
+
+# [STARTUP] imported
+
+# [MATURITY] production
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [STABILITY] stable
+
+# [SAFETY] M
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
+# [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+
+# [TTL] permanent
+
+
+"""
+时序准入控制
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: max_concurrent 参数
+#   fields: 参数 max_concurrent（无注解）
+#   code: a2a_temporal_admission.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① A2ATemporalAdmission
+#   name_en: A2ATemporalAdmission
+#   intro: class A2ATemporalAdmission 源码 L65-L82
+#   desc: 公共方法（定义序）: admit, enter, leave；源码 L65-L82
+#   inputs: max_concurrent
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: A2ATemporalAdmission
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
+
+class A2ATemporalAdmission:
+    def __init__(self, max_concurrent: int = 10):
+
+        self.max_concurrent = max_concurrent
+
+        self._active: set = set()
+
+    def admit(self, agent_id: str) -> bool:
+
+        return len(self._active) < self.max_concurrent
+
+    def enter(self, agent_id: str) -> None:
+
+        self._active.add(agent_id)
+
+    def leave(self, agent_id: str) -> None:
+
+        self._active.discard(agent_id)

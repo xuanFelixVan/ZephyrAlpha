@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""A2A Living Spec 同步 — 蓝图与实现的双向漂移管理
+"""
+A2A Living Spec 同步 — 蓝图与实现的双向漂移管理
 
 当 Agent 修改了实现(代码/YAML/配置), 自动:
   1. 检测蓝图是否需要更新 (Blueprint Drift Detection)
@@ -23,6 +24,33 @@
   3. 报告漂移并建议同步方向
 
 方法: 基于 ConstructionVerifier 的漂移检测 + 增量同步记录
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: spec_sync.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SpecSync
+#   name_en: SpecSync
+#   intro: class SpecSync 源码 L70-L102
+#   desc: 公共方法（定义序）: register, check, sync, list_drifted；源码 L70-L102
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: SpecSync
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -14,10 +14,37 @@
 # [TESTS] python -c "import zephyr.infrastructure.a2a_protocol.layer3_coordination"
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Re-export bridge for layer3_coordination intelligence symbols.
+"""
+Re-export bridge for layer3_coordination intelligence symbols.
 
 Aggregates 19 symbols from 7 source modules to preserve backward compatibility
 for ``from layer3_coordination._intelligence import ...`` consumers.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: _intelligence.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包公共面再导出
+#   name_en: __init__ re-export
+#   intro: 再导出 A2ABehaviorFingerprint, A2ABlameAttribution, A2ACausalTrace, A2ACollusionDe…
+#   desc: __init__ import L0；__all__ 19 项（AST 事实）
+#   inputs: I1
+#   outputs: __all__ 公共符号表
+# 层: 输出
+# - id: O1
+#   name_zh: 公共 API 面（19 符号）
+#   name_en: __all__
+#   intro: A2ABehaviorFingerprint, A2ABlameAttribution, A2ACausalTrace, A2ACollusionDetect…
+#   downstream: zephyr.infrastructure.a2a_protocol.layer3_coordination.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_behavior_fingerprint import (

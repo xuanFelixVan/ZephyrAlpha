@@ -23,6 +23,33 @@ SemanticSimilarDetector — 语义变形攻击检测。
 检测 AI 通过 AST 改写绕过回滚门禁的 "morphing" 攻击:
     回滚前代码 vs 回滚后代码的 AST 语义相似度。
     >70% 相似度 -> 语义变形 (malicious rewrite) -> exit code 12 -> L2 Skill Kill。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: semantic_similar_detector.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SemanticSimilarDetector
+#   name_en: SemanticSimilarDetector
+#   intro: class SemanticSimilarDetector 源码 L94-L236
+#   desc: 公共方法（定义序）: parse_safe, count_sensitive_api_matches, ast_structure_similarity, compare, compare_files, is_morp…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: SemanticSimilarDetector
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

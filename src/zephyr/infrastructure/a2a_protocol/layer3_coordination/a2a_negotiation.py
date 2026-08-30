@@ -15,13 +15,46 @@
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""A2A 协商协议 — Agent 间资源/任务分配协商
+"""
+A2A 协商协议 — Agent 间资源/任务分配协商
 
 当 Agent A 需要 Agent B 的资源(文件锁/DB表/计算资源)时触发协商:
   Agent A -> propose -> Agent B -> counter/accept/reject
   循环直到达成协议或超时
 
 输出: NegotiationResult — 协议内容 + 妥协条款
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: max_rounds 参数
+#   fields: 参数 max_rounds（无注解）
+#   code: a2a_negotiation.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: round_timeout 参数
+#   fields: 参数 round_timeout（无注解）
+#   code: a2a_negotiation.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① A2ANegotiation
+#   name_en: A2ANegotiation
+#   intro: A2A 协商引擎.
+#   desc: A2A 协商引擎. 双向提议-反提议循环: initiator propose -> responder evaluate -> accept/counter/reject ma…；公共方法（定义序）: max_rou…
+#   inputs: max_rounds round_timeout
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: A2ANegotiation
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

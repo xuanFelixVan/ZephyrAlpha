@@ -29,6 +29,47 @@ P0/P1 任务可抢占 P2/P3 任务。被抢占的任务迁移到 WAITING 状态,
 - re_dispatch_callback: 重新分发被抢占任务的回调函数
 
 SRC-0027: 从 PipelineOrchestrator 提取.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: task_repo 参数
+#   fields: 参数 task_repo（无注解）
+#   code: preemption_manager.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: dispatched_ids 参数
+#   fields: 参数 dispatched_ids（无注解）
+#   code: preemption_manager.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: active_dispatches 参数
+#   fields: 参数 active_dispatches（无注解）
+#   code: preemption_manager.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: re_dispatch_callback 参数
+#   fields: 参数 re_dispatch_callback（无注解）
+#   code: preemption_manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① PreemptionManager
+#   name_en: PreemptionManager
+#   intro: 优先级抢占管理器.
+#   desc: 优先级抢占管理器. 通过依赖注入完全解耦 PipelineOrchestrator: - ``task_repo``: 用于 list/get/transition 任务状态 -…；公共方法（定义序）: should_…
+#   inputs: task_repo dispatched_ids active_dispatches re_dispatch_callback prior…
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: PreemptionManager
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

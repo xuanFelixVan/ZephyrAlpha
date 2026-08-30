@@ -22,6 +22,33 @@ RollbackDashboard — 回滚仪表盘（零依赖 Markdown）。
 
 生成 Markdown 零依赖仪表盘，包含：
     回滚次数 / MTTR / 成功率 / 活跃 Kill Switch / 预算剩余 / IM 推送格式
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: rollback_dashboard.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RollbackDashboard
+#   name_en: RollbackDashboard
+#   intro: class RollbackDashboard 源码 L70-L127
+#   desc: 公共方法（定义序）: output_path, project_root, generate, generate_im_format；源码 L70-L127
+#   inputs: project_root
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: RollbackDashboard
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

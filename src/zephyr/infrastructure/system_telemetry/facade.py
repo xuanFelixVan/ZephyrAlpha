@@ -19,7 +19,8 @@
 # structured_sink.py既有豁免实践；2026-06-29治本记录（删daily_backup定时任务）实证治理方
 # 已在案裁定修剪本循环，仅保留探活/维护类任务；PERM-TRIGGER门禁只管新增文件（diff-filter=A）
 
-"""Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0）
+"""
+Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0）
 
 一行接入，9 子系统，完全自动化:
     telemetry = Telemetry("my_module")
@@ -40,6 +41,80 @@
     - test_mode=True 时静默所有出站操作，不启动后台线程
     - fail-closed: 任何子系统写入失败不阻塞主流程
     - shutdown() 按逆序关闭 9 子系统 + 停止后台线程
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: limit 参数
+#   fields: 参数 limit，类型注解 int
+#   code: facade.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① get_recent_metrics
+#   name_en: get_recent_metrics
+#   intro: get_recent_metrics(limit) 源码 L229-L241
+#   desc: 源码 L229-L241
+#   inputs: limit
+#   outputs: list[dict]
+# - id: A2
+#   name_zh: ② MetricsFacade
+#   name_en: MetricsFacade
+#   intro: class MetricsFacade 源码 L244-L273
+#   desc: 公共方法（定义序）: gauge, counter, histogram, summary；源码 L244-L273
+#   inputs: module_id test_mode
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ LogsFacade
+#   name_en: LogsFacade
+#   intro: class LogsFacade 源码 L276-L301
+#   desc: 公共方法（定义序）: info, warning, error；源码 L276-L301
+#   inputs: module_id test_mode
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ TracesFacade
+#   name_en: TracesFacade
+#   intro: class TracesFacade 源码 L340-L353
+#   desc: 公共方法（定义序）: span；源码 L340-L353
+#   inputs: module_id test_mode
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ AIBehaviorFacade
+#   name_en: AIBehaviorFacade
+#   intro: class AIBehaviorFacade 源码 L393-L438
+#   desc: 公共方法（定义序）: record；源码 L393-L438
+#   inputs: module_id test_mode
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ ArchiveFacade
+#   name_en: ArchiveFacade
+#   intro: class ArchiveFacade 源码 L441-L460
+#   desc: 公共方法（定义序）: next_batch_id；源码 L441-L460
+#   inputs: module_id test_mode
+#   outputs: 返回值
+# - id: A7
+#   name_zh: ⑦ Telemetry
+#   name_en: Telemetry
+#   intro: class Telemetry 源码 L463-L606
+#   desc: 公共方法（定义序）: shutdown_called, shutdown；源码 L463-L606
+#   inputs: module_id environment test_mode
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: list[dict]
+#   name_en: list[dict]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: auto_bootstrap.py; zephyr.security.access_control; zephyr.infrastructure.budget…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> O1
 """
 
 from __future__ import annotations

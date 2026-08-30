@@ -15,10 +15,46 @@
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""A2A GovernanceAdapter — Phase 4 治理集成桥接器
+"""
+A2A GovernanceAdapter — Phase 4 治理集成桥接器
 
 G-CT-008: A2A -> RBAC + Escalation
 触发条件：Phase 4 激活后，A2A 通信需要经过 RBAC 验证 + Escalation 升级。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: governance_adapter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① GovernanceAdapter
+#   name_en: GovernanceAdapter
+#   intro: A2A GovernanceAdapter — G-CT-008 消费端.
+#   desc: A2A GovernanceAdapter — G-CT-008 消费端. Phase 4 激活后，A2A 通信对在执行前 MUST 通过此适配器： 1. verify_a2a_…；公共方法（定义序）: verify_…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② MCPAdapter
+#   name_en: MCPAdapter
+#   intro: class MCPAdapter 源码 L172-L180
+#   desc: 公共方法（定义序）: adapt, validate；源码 L172-L180
+#   inputs: config
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: GovernanceAdapter, MCPAdapter
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 import logging

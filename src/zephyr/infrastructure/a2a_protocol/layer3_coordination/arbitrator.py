@@ -16,7 +16,8 @@
 # [TTL] permanent
 # P1-3: 本地 AgentRole(IntEnum) 已删除，改 import shared 版 ArbitrationRole as AgentRole（兼容层）
 
-"""A2A 三级仲裁引擎 — priority -> rule -> escalation
+"""
+A2A 三级仲裁引擎 — priority -> rule -> escalation
 
 当 ConflictDetector 检测到冲突后，Arbitrator 按三级策略仲裁:
   Tier 1 (priority):    按 Agent 优先级 — site:safety operator:superadmin > role:reviewer > role:builder
@@ -25,6 +26,43 @@
 
 输入: ConflictDetector 输出的冲突列表 + 两个 Agent 的 metadata
 输出: 仲裁结果 — winner + reason + 失败方补偿建议
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: ownership_rules 参数
+#   fields: 参数 ownership_rules（无注解）
+#   code: arbitrator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: escalation_engine 参数
+#   fields: 参数 escalation_engine（无注解）
+#   code: arbitrator.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: deadlock_detector 参数
+#   fields: 参数 deadlock_detector（无注解）
+#   code: arbitrator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① Arbitrator
+#   name_en: Arbitrator
+#   intro: A2A 三级仲裁引擎.
+#   desc: A2A 三级仲裁引擎. Tier 1: 角色优先级 — SUPERADMIN > SAFETY_OPERATOR > ... > BUILDER Tier 2: 文件归属 — 检…；公共方法（定义序）: escalat…
+#   inputs: ownership_rules escalation_engine deadlock_detector
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: Arbitrator
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

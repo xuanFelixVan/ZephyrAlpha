@@ -15,13 +15,49 @@
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""A2A Saga 事务协议 — 多 Agent 跨步分布式事务
+"""
+A2A Saga 事务协议 — 多 Agent 跨步分布式事务
 
 当跨 Agent 操作需要原子性保证时，使用 Saga 模式:
   每个 Agent 执行一步操作 + 提供补偿函数
   任一步失败 -> 逆序执行所有已完成步骤的补偿函数
 
 对标: 微服务 Saga Orchestrator + 长期事务(Long Lived Transaction)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: saga_id 参数
+#   fields: 参数 saga_id（无注解）
+#   code: a2a_saga.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SagaResult
+#   name_en: SagaResult
+#   intro: class SagaResult 源码 L94-L106
+#   desc: 公共方法（定义序）: executed_count, compensated_count；源码 L94-L106
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② A2ASaga
+#   name_en: A2ASaga
+#   intro: A2A Saga 事务协调器.
+#   desc: A2A Saga 事务协调器. 执行模式: 顺序执行 -> 失败触发逆序补偿 补偿注册: 每个 step 在 add_step 时声明其 compensate 策略；公共方法（定义序）: compensations,…
+#   inputs: saga_id
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: SagaResult, A2ASaga
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

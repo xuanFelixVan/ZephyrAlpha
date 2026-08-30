@@ -22,6 +22,33 @@ ComplexityBudget — 回滚复杂度元 Budget 监控。
 
 McCCabe 复杂度 > 15 / 文件 -> 反向回溯 + Lint 阻断。
 复杂度超过阈值 -> exit 38 (COMPLEXITY_OVER_BUDGET)。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: complexity_budget.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ComplexityBudget
+#   name_en: ComplexityBudget
+#   intro: class ComplexityBudget 源码 L75-L129
+#   desc: 公共方法（定义序）: check_file, check_module；源码 L75-L129
+#   inputs: project_root
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: ComplexityBudget
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

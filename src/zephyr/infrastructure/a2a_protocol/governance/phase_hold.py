@@ -15,13 +15,40 @@
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Phase 4 Hold — governance 子包派生扩展（真源收敛）。
+"""
+Phase 4 Hold — governance 子包派生扩展（真源收敛）。
 
 治本（AI-14 审计 R1-06）：本模块原与 ``a2a_protocol.phase_hold`` 全量重复定义
 ``PHASE_HOLD_ACTIVE``/``PHASE_HOLD_REASON``/``Phase4Hold``（双胞胎双真源，漂移温床）。
 现收敛：常量与基础类唯一真源 = ``zephyr.infrastructure.a2a_protocol.phase_hold``，
 本模块仅保留 governance 子包派生扩展（``is_hold_active`` 便捷判定），保持
 ``zephyr.infrastructure.a2a_protocol.governance.phase_hold`` 导入路径不变（向后兼容）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: phase_hold.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① Phase4Hold
+#   name_en: Phase4Hold
+#   intro: A2A Phase 4 施工锁定（governance 子包派生扩展）。
+#   desc: A2A Phase 4 施工锁定（governance 子包派生扩展）。 继承真源全部行为（check/can_proceed），新增 is_hold_active 便捷判定。；公共方法（定义序）: is_hold_a…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: Phase4Hold
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

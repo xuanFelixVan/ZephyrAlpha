@@ -28,6 +28,32 @@ BenchmarkSuite — 多维度模型性能测试用例集
   - max_tokens: 输出上限
   - expected_output_type: 输出类型 ("code" | "text" | "json" | "classification")
   - category: 测试分类
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: benchmark_suite.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① BenchmarkCase
+#   name_en: BenchmarkCase
+#   intro: class BenchmarkCase 源码 L66-L80
+#   desc: 公共方法（定义序）: full_name；源码 L66-L80
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: BenchmarkCase
+#   downstream: MOD-INF-034
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

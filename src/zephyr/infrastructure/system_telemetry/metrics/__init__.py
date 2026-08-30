@@ -10,7 +10,44 @@
 # [ERROR_CONTRACT] JSONL写入失败->日志warning
 # [TESTS] tests/infrastructure/
 # [TTL] permanent
-"""遥测 · metrics — SLI/SLO 与业务指标流"""
+"""
+遥测 · metrics — SLI/SLO 与业务指标流
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: __init__.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① MetricsRegistry
+#   name_en: MetricsRegistry
+#   intro: class MetricsRegistry 源码 L79-L87
+#   desc: 公共方法（定义序）: register, get；源码 L79-L87
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② get_registry
+#   name_en: get_registry
+#   intro: get_registry() 源码 L90-L91
+#   desc: 源码 L90-L91
+#   inputs: 无参数
+#   outputs: MetricsRegistry
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: MetricsRegistry
+#   name_en: MetricsRegistry
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: facade.py; auto_bootstrap.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
 
 __all__ = ["blueprint_metrics"]
 

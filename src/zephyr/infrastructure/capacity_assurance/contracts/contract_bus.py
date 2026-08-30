@@ -16,12 +16,47 @@
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 
-"""ContractBus loader — 加载全部44条容量保障契约的Pydantic v2 Schema（DD-9三批迁移）.
+"""
+ContractBus loader — 加载全部44条容量保障契约的Pydantic v2 Schema（DD-9三批迁移）.
 
 对标蓝图 §5.3 ContractBus 分三批迁移:
   批1 (15条): 基础设施层 — SLO/Error Budget/Token Budget/Kill Switch/Sandbox/Graceful Degradation
   批2 (15条): 治理层 — Provenance/AI审计守卫/TechStackValidator/Governance Loop
   批3 (14条): 集成层 — OTel/W3C/跨模块CT-1~4/DR/容量预测/语义缓存
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: contract_bus.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ContractBusLoader
+#   name_en: ContractBusLoader
+#   intro: ContractBus 契约加载器——加载并校验全部 44 条 Pydantic v2 契约 Schema.
+#   desc: ContractBus 契约加载器——加载并校验全部 44 条 Pydantic v2 契约 Schema.；公共方法（定义序）: contract_count, batch_summary, get_contract…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② get_contract_bus_loader
+#   name_en: get_contract_bus_loader
+#   intro: get_contract_bus_loader() 源码 L112-L116
+#   desc: 源码 L112-L116
+#   inputs: 无参数
+#   outputs: ContractBusLoader
+# 层: 输出
+# - id: O1
+#   name_zh: ContractBusLoader
+#   name_en: ContractBusLoader
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from pydantic import BaseModel

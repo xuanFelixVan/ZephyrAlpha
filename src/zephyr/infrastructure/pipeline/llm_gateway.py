@@ -26,6 +26,41 @@ v0.2.0: 接入真实 LLM API（OpenAI-compatible / Anthropic SDK）
   - base_url 从环境变量读取，无硬编码密钥
   - 降级链：provider 不可用时 fallback 到下一个
   - LSG 安全：输入/输出经 sanitizer 过滤
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: llm_gateway.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① reload_providers
+#   name_en: reload_providers
+#   intro: 5.54.1 修复：重新读取环境变量并刷新 _PROVIDERS，使配置变更生效。
+#   desc: 5.54.1 修复：重新读取环境变量并刷新 _PROVIDERS，使配置变更生效。；源码 L214-L218
+#   inputs: 无参数
+#   outputs: dict[str, ProviderConfig]
+# - id: A2
+#   name_zh: ② LLMGateway
+#   name_en: LLMGateway
+#   intro: LLM 网关——多模型智能路由 + 降级链 + 真实 API 调用
+#   desc: LLM 网关——多模型智能路由 + 降级链 + 真实 API 调用 __implements__: zephyr.shared.contracts.llm_gateway_pro…；公共方法（定义序）: call, r…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, ProviderConfig]
+#   name_en: dict[str, ProviderConfig]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

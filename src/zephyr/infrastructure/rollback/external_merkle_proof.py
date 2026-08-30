@@ -27,6 +27,33 @@ External Merkle Proof — 外部可验证回滚完整性证明。
     - 外部（审计者/第三方）无需完整仓库即可验证
     - Merkle root 写入回滚审计日志——不可伪造
     - 对标区块链式可验证状态 + Git LFS verifiable-pointer
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: external_merkle_proof.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ExternalMerkleProof
+#   name_en: ExternalMerkleProof
+#   intro: class ExternalMerkleProof 源码 L106-L321
+#   desc: 公共方法（定义序）: project_root, merklize_file_tree, generate_proof, verify_proof, verify_file_in_tree, sign_merkle_r…
+#   inputs: project_root
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: ExternalMerkleProof
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

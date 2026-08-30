@@ -32,6 +32,56 @@ cascade_orchestrator — 模型路由级联编排层（11号文 §3.3/§4.3，P1
 
 级联降级链：任一段异常 -> degraded_stages 记录 + alerts 告警 + 静态映射/兜底返回，
 不中断路由返回。风控类任务（non_degradable）任一段故障仍落外部 API。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: policy_path 参数
+#   fields: 参数 policy_path（无注解）
+#   code: cascade_orchestrator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: passport_loader 参数
+#   fields: 参数 passport_loader（无注解）
+#   code: cascade_orchestrator.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: profile_loader 参数
+#   fields: 参数 profile_loader（无注解）
+#   code: cascade_orchestrator.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: job_matcher 参数
+#   fields: 参数 job_matcher（无注解）
+#   code: cascade_orchestrator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CascadeDecision
+#   name_en: CascadeDecision
+#   intro: 级联路由决策（JSON 可序列化；reason+估成本+降级留痕字段完整，P1-3 验收口径）。
+#   desc: 级联路由决策（JSON 可序列化；reason+估成本+降级留痕字段完整，P1-3 验收口径）。；公共方法（定义序）: to_dict；源码 L142-L160
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② CascadeOrchestrator
+#   name_en: CascadeOrchestrator
+#   intro: 级联编排器——L1 能力门 -> L2 任务适配排序 -> L3 成本/层级路由。
+#   desc: 级联编排器——L1 能力门 -> L2 任务适配排序 -> L3 成本/层级路由。 全部外部依赖可注入（测试全 fake；生产缺省惰性构造真实基座）： passport_load…；公共方法（定义序）: route；源…
+#   inputs: policy_path passport_loader profile_loader job_matcher learner model_…
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: CascadeDecision, CascadeOrchestrator
+#   downstream: zephyr.intelligence.model_routing.runtime_assembly（已接线：route 适配为 llm_agent_rout…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -301,7 +351,9 @@ class CascadeOrchestrator:
     ) -> CascadeDecision:
         """静态映射兜底（task_model_learner 样本=0 先例同款兜底链末端）。"""
         mapping = self._policy["static_mapping"].get(task_type) or self._policy["static_mapping"]["default"]
-        pick = next((m for m in mapping if m in candidates), mapping[0] if mapping else self._policy["default_local_model"])
+        pick = next(
+            (m for m in mapping if m in candidates), mapping[0] if mapping else self._policy["default_local_model"]
+        )
         return CascadeDecision(
             task_type=task_type,
             model_key=pick,
@@ -408,12 +460,8 @@ class CascadeOrchestrator:
         if not passed:
             alerts.append("L1 过滤后候选为空")
             if risk_locked:
-                return self._risk_locked_decision(
-                    task_type, complexity, "L1 候选为空", alerts, degraded
-                )
-            return self._static_decision(
-                task_type, candidates, "L1 候选为空->静态映射兜底", alerts, degraded
-            )
+                return self._risk_locked_decision(task_type, complexity, "L1 候选为空", alerts, degraded)
+            return self._static_decision(task_type, candidates, "L1 候选为空->静态映射兜底", alerts, degraded)
 
         # L2 任务适配排序
         try:
@@ -426,9 +474,7 @@ class CascadeOrchestrator:
 
         # L3 成本/层级路由（本地优先 API 兜底 + 时段限制 + 风控不可降级）
         if risk_locked:
-            return self._risk_locked_decision(
-                task_type, complexity, route_spec["reason"], alerts, degraded
-            )
+            return self._risk_locked_decision(task_type, complexity, route_spec["reason"], alerts, degraded)
 
         local_only = False
         if period is not None:
@@ -443,7 +489,8 @@ class CascadeOrchestrator:
 
         try:
             local_ranked = [
-                m for m in ranked
+                m
+                for m in ranked
                 if _provider_of(m, self._api_providers, self._local_providers) in self._local_providers
             ]
             modes = ["local"] if local_only else [route_spec["preferred"], *route_spec.get("fallbacks", [])]
@@ -472,9 +519,7 @@ class CascadeOrchestrator:
                     decision = self._api_decision(task_type, complexity, alerts)
                     decision.degraded_stages = degraded
                     decision.match_score = float(scores.get(ranked[0], {}).get("match", 0.0)) if ranked else 0.0
-                    decision.composite_score = (
-                        float(scores.get(ranked[0], {}).get("composite", 0.0)) if ranked else 0.0
-                    )
+                    decision.composite_score = float(scores.get(ranked[0], {}).get("composite", 0.0)) if ranked else 0.0
                     return decision
                 if mode == "rule_engine":
                     return CascadeDecision(
@@ -488,9 +533,7 @@ class CascadeOrchestrator:
                         alerts=alerts,
                     )
             # 模式链全部落空（如本地任务但候选全 API 且时段受限）-> 静态映射兜底
-            return self._static_decision(
-                task_type, ranked, "模式链落空->静态映射兜底", alerts, degraded
-            )
+            return self._static_decision(task_type, ranked, "模式链落空->静态映射兜底", alerts, degraded)
         except CascadeRoutingError:
             raise
         except Exception as exc:  # noqa: BLE001 — 级联降级链：L3 故障静态映射+告警不中断

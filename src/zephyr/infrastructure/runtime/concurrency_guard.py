@@ -25,6 +25,77 @@ concurrency_guard — 回滚操作并发安全守卫。
 
 根因：回滚系统与文件锁系统(RULE-ZERO .ailocks/)是两套独立机制未联动。
 本模块作为桥梁，在回滚执行前检测并发冲突，防止 session B 回滚覆盖 session A 的工作。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root，类型注解 Path
+#   code: concurrency_guard.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: files_in_scope 参数
+#   fields: 参数 files_in_scope，类型注解 list[str]
+#   code: concurrency_guard.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: current_session_id 参数
+#   fields: 参数 current_session_id，类型注解 str
+#   code: concurrency_guard.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: uncommitted_files 参数
+#   fields: 参数 uncommitted_files，类型注解 list[str]
+#   code: concurrency_guard.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① scan_active_locks
+#   name_en: scan_active_locks
+#   intro: 扫描 .ailocks/registry.json，返回所有活跃（非过期）文件锁。
+#   desc: 扫描 .ailocks/registry.json，返回所有活跃（非过期）文件锁。 只读操作，不修改锁状态。与 lock_files.py 的 _load_registry 对齐。；源码 L188-L216
+#   inputs: project_root
+#   outputs: list[LockInfo]
+# - id: A2
+#   name_zh: ② check_rollback_conflict
+#   name_en: check_rollback_conflict
+#   intro: 检测回滚文件范围是否与活跃文件锁冲突。
+#   desc: 检测回滚文件范围是否与活跃文件锁冲突。 冲突 = 回滚范围内的文件被其他 session 锁定。 本 session 自己的锁不算冲突（允许回滚自己锁的文件）。；源码 L219-L250
+#   inputs: files_in_scope current_session_id project_root
+#   outputs: ConflictResult
+# - id: A3
+#   name_zh: ③ classify_uncommitted_files
+#   name_en: classify_uncommitted_files
+#   intro: 将未提交文件按归属分类：本 session 的 vs 其他 session 的。
+#   desc: 将未提交文件按归属分类：本 session 的 vs 其他 session 的。 归属判定： - 文件被 .ailocks 锁定且 owner != current_sessio…；源码 L253-L289
+#   inputs: uncommitted_files current_session_id project_root
+#   outputs: StashPlan
+# - id: A4
+#   name_zh: ④ build_stash_plan
+#   name_en: build_stash_plan
+#   intro: 构建 git stash 安全计划（classify_uncommitted_files 的语义别名）。
+#   desc: 构建 git stash 安全计划（classify_uncommitted_files 的语义别名）。；源码 L292-L298
+#   inputs: uncommitted_files current_session_id project_root
+#   outputs: StashPlan
+#   （注：A4 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[LockInfo]
+#   name_en: list[LockInfo]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: RollbackExecutor._execute; RollbackExecutor.discard_changes
+# - id: O2
+#   name_zh: ConflictResult
+#   name_en: ConflictResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: RollbackExecutor._execute; RollbackExecutor.discard_changes
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

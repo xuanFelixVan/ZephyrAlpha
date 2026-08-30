@@ -27,6 +27,45 @@ ModelDiscovery — 枚举所有本地 Ollama 模型 + 远程 API 模型
     models = discovery.discover_all()
     for m in models:
         print(f"{m.name} | {m.source} | {m.size_gb:.1f}GB")
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: ollama_url 参数
+#   fields: 参数 ollama_url（无注解）
+#   code: model_discovery.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: timeout_s 参数
+#   fields: 参数 timeout_s（无注解）
+#   code: model_discovery.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DiscoveredModel
+#   name_en: DiscoveredModel
+#   intro: class DiscoveredModel 源码 L85-L98
+#   desc: 公共方法（定义序）: size_gb；源码 L85-L98
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② ModelDiscovery
+#   name_en: ModelDiscovery
+#   intro: 模型发现器——枚举所有可用模型（本地 Ollama + 远程 API）。
+#   desc: 模型发现器——枚举所有可用模型（本地 Ollama + 远程 API）。；公共方法（定义序）: timeout, url, discover_ollama, discover_remote, discover_all,…
+#   inputs: ollama_url timeout_s
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: DiscoveredModel, ModelDiscovery
+#   downstream: MOD-INF-034;MOD-INF-009
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

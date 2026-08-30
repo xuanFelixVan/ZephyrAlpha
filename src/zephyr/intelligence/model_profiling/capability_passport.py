@@ -28,6 +28,73 @@ CapabilityPassport --- AI 模型能力护照
     - hallucination: 幻轴 (幻觉率)
     - drift:   稳轴 (长时间漂移)
     - recommendations: 推荐 (safe_capabilities, unsafe_capabilities)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: score 参数
+#   fields: 参数 score，类型注解 float
+#   code: capability_passport.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CostBreakdown
+#   name_en: CostBreakdown
+#   intro: P2: 成本明细 — 从 _all_tokens/_all_latencies_ms 派生。
+#   desc: P2: 成本明细 — 从 _all_tokens/_all_latencies_ms 派生。 成本是岗位匹配的一个维度，不是一票否决 (D-MCE-07)。 claude 贵但必…；公共方法（定义序）: cost_sc…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② CapabilityPassport
+#   name_en: CapabilityPassport
+#   intro: class CapabilityPassport 源码 L334-L457
+#   desc: 公共方法（定义序）: from_dict, to_dict, save, load, list_all；源码 L334-L457
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ compute_grade
+#   name_en: compute_grade
+#   intro: compute_grade(score) 源码 L460-L482
+#   desc: 源码 L460-L482
+#   inputs: score
+#   outputs: str
+# - id: A4
+#   name_zh: ④ compute_grade_simple
+#   name_en: compute_grade_simple
+#   intro: P2: 五级粗粒度能力分级 A/B/C/D/F，用于岗位匹配。
+#   desc: P2: 五级粗粒度能力分级 A/B/C/D/F，用于岗位匹配。 比 compute_grade 更粗，避免 0.612 vs 0.618 的过拟合： A (>=0.75) 精通，…；源码 L490-L511
+#   inputs: score
+#   outputs: str
+# - id: A5
+#   name_zh: ⑤ HallucinationBreakdown
+#   name_en: HallucinationBreakdown
+#   intro: P2: 幻觉率多维细分（参考 ChatGPT 建议 + 业界实践）。
+#   desc: P2: 幻觉率多维细分（参考 ChatGPT 建议 + 业界实践）。 任何模型都有幻觉，Claude 也不例外，只是高低问题。 幻觉率正常评分（不硬门），但在岗位匹配时权重较高。…；公共方法（定义序）: overall…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ QuickProfile
+#   name_en: QuickProfile
+#   intro: P2: 快速能力画像 — Quick Mode 输出。
+#   desc: P2: 快速能力画像 — Quick Mode 输出。 比 CapabilityPassport 精简，面向"岗位匹配"而非"精确评分"： - 29 能力的粗分级 A/B/C/D…；公共方法（定义序）: save, l…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A6 之后另有 9 个公共定义未列入（含 9 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-INF-034;MOD-INF-009
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
 """
 
 from __future__ import annotations

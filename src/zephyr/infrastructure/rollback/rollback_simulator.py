@@ -23,6 +23,33 @@ RollbackSimulator — 回滚模拟器（CI 集成）。
 在临时 git worktree 中模拟回滚流程。
 CI 集成: 每次 PR 运行真实回滚 -> 确认回滚可行 + 无副作用。
 返回是否安全回滚 + 影响面分析 + 冲突报告。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: rollback_simulator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RollbackSimulator
+#   name_en: RollbackSimulator
+#   intro: class RollbackSimulator 源码 L80-L166
+#   desc: 公共方法（定义序）: run_git, project_root, simulate_rollback；源码 L80-L166
+#   inputs: project_root
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: RollbackSimulator
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

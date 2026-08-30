@@ -14,7 +14,8 @@
 # [TESTS] tests/infrastructure/test_reproducibility_packager.py
 # [A_module] module_id=MOD-INF-081 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""ReproducibilityPackager — 实验可复现打包器（MOD-INF-081）。
+"""
+ReproducibilityPackager — 实验可复现打包器（MOD-INF-081）。
 
 B1-00401（AUD-DRAFT-001-DIGEST P2 波 P2-W01，CAND-INFRATEL-001，C2）：
 实验一键打包——代码 commit + 参数 + 数据快照指针 + 依赖锁哈希 → 可回放包
@@ -23,6 +24,41 @@ B1-00401（AUD-DRAFT-001-DIGEST P2 波 P2-W01，CAND-INFRATEL-001，C2）：
 
 查重分工（蓝图 §0）：experiment_tracker=实验元数据登记（本件不登记元数据，
 只产出可回放包清单）；archive 族=冷数据归档（本件为实验包快照，零交集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: manifest 参数
+#   fields: 参数 manifest，类型注解 PackageManifest
+#   code: reproducibility_packager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① manifest_digest
+#   name_en: manifest_digest
+#   intro: 清单内容 sha256（不含 digest 本身；created_at 取 ISO 格式）。
+#   desc: 清单内容 sha256（不含 digest 本身；created_at 取 ISO 格式）。；源码 L112-L122
+#   inputs: manifest
+#   outputs: str
+# - id: A2
+#   name_zh: ② ReproducibilityPackager
+#   name_en: ReproducibilityPackager
+#   intro: 实验可复现打包器（打包/校验/回放指针解析三接口）。
+#   desc: 实验可复现打包器（打包/校验/回放指针解析三接口）。；公共方法（定义序）: root, build_package, verify_package, resolve_replay_pointer；源码 L125-L256
+#   inputs: root clock
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 运行时装配批（实验跟踪回放装配 / 审计快照引用）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

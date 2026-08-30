@@ -14,7 +14,8 @@
 # [TESTS] tests/zephyr/infrastructure/h1_redis_hot/test_h1_integration.py
 # [A_module] module_id=MOD-H1_REDIS_HOT | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""H1 Redis 集成适配器——连接 D-FACTOR/SIGNAL/RISK 与 H1 热缓存。
+"""
+H1 Redis 集成适配器——连接 D-FACTOR/SIGNAL/RISK 与 H1 热缓存。
 
 蓝图 §9 集成点的实现层，提供三组接口：
 
@@ -35,6 +36,71 @@
    - 幂等——同一截面重复写入覆盖旧值（HSET 语义），无副作用
 
 SSoT: docs/03_modules/_cross_layer/database/sub_blueprints/h1_redis_hot.md §9
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: results 参数
+#   fields: 参数 results，类型注解 dict[str, Any]
+#   code: h1_integration.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: redis_conn 参数
+#   fields: 参数 redis_conn，类型注解 redis_lib.Redis
+#   code: h1_integration.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: factor_version 参数
+#   fields: 参数 factor_version，类型注解 str
+#   code: h1_integration.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① dag_report_to_cross_section
+#   name_en: dag_report_to_cross_section
+#   intro: 将 DagExecutionReport.results 转为 H1RedisWriter 所需的截面格式。
+#   desc: 将 DagExecutionReport.results 转为 H1RedisWriter 所需的截面格式。 DagExecutionReport.results 是 {fact…；源码 L119-L161
+#   inputs: results
+#   outputs: dict[str, dict[str, float]]
+# - id: A2
+#   name_zh: ② write_dag_results_to_h1
+#   name_en: write_dag_results_to_h1
+#   intro: 将 DagExecutionReport.results 写入 H1 Redis 热缓存（便捷函数）。
+#   desc: 将 DagExecutionReport.results 写入 H1 Redis 热缓存（便捷函数）。 内部调用 dag_report_to_cross_section() 转换…；源码 L164-L203
+#   inputs: results redis_conn factor_version
+#   outputs: int
+# - id: A3
+#   name_zh: ③ create_h1_factor_sink
+#   name_en: create_h1_factor_sink
+#   intro: 工厂——创建 DagExecutor.execute(on_results_callback=...) 的 H1 写入…
+#   desc: 工厂——创建 DagExecutor.execute(on_results_callback=...) 的 H1 写入回调。 返回一个闭包，接收 DagExecutionRepo…；源码 L206-L233
+#   inputs: redis_conn factor_version
+#   outputs: Callable[[dict[str, Any]], None]
+# - id: A4
+#   name_zh: ④ create_h1_reader
+#   name_en: create_h1_reader
+#   intro: 工厂——创建 H1RedisReader 供 D-SIGNAL/D-RISK 读取因子/持仓/风控数据。
+#   desc: 工厂——创建 H1RedisReader 供 D-SIGNAL/D-RISK 读取因子/持仓/风控数据。 Usage: >>> from zephyr.infrastructur…；源码 L236-L255
+#   inputs: redis_conn
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, dict[str, float]]
+#   name_en: dict[str, dict[str, float]]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.factor.core.dag_manager.executor; zephyr.signal_fundamental; zephyr.risk
+# - id: O2
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.factor.core.dag_manager.executor; zephyr.signal_fundamental; zephyr.risk
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

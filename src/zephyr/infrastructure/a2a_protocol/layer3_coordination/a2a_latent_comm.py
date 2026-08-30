@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""A2A 隐性通信检测 — 检测 Agent 通过副作用隐式通信
+"""
+A2A 隐性通信检测 — 检测 Agent 通过副作用隐式通信
 
 检测 Agent 是否通过非消息通道隐式传递信息:
   模式1: 文件系统副作用 — Agent A 写文件, Agent B 读文件, 内容含隐式指
@@ -23,6 +24,33 @@
   模式3: 存储共享 — 通过 DB 表/KV 存储共享状态
 
 方法: 分析 Agent 间没有显式 A2A 消息但访问了相同资源的场景
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: confidence_threshold 参数
+#   fields: 参数 confidence_threshold（无注解）
+#   code: a2a_latent_comm.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① A2ALatentComm
+#   name_en: A2ALatentComm
+#   intro: class A2ALatentComm 源码 L70-L98
+#   desc: 公共方法（定义序）: record_access, detect；源码 L70-L98
+#   inputs: confidence_threshold
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: A2ALatentComm
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

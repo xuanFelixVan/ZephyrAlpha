@@ -16,9 +16,96 @@
 # [A_module] module_id=MOD-INF-015 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""logs/structured_sink — 结构化日志管道（D_SYSTEM_TELEMETRY）。
+"""
+logs/structured_sink — 结构化日志管道（D_SYSTEM_TELEMETRY）。
 
 蓝图 §5: structlog 配置 + JSONL 写入 + trace_id 注入 + ring buffer + RULE-ONE 原子写入。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: log_dir 参数
+#   fields: 参数 log_dir，类型注解 Path | None
+#   code: structured_sink.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: buffer_size 参数
+#   fields: 参数 buffer_size，类型注解 int | None
+#   code: structured_sink.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: max_file_bytes 参数
+#   fields: 参数 max_file_bytes，类型注解 int | None
+#   code: structured_sink.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: record 参数
+#   fields: 参数 record，类型注解 dict[str, Any]
+#   code: structured_sink.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① configure
+#   name_en: configure
+#   intro: configure(log_dir, buffer_size, max_file_bytes) 源码 L143-L154
+#   desc: 源码 L143-L154
+#   inputs: log_dir buffer_size max_file_bytes
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② append_jsonl_record
+#   name_en: append_jsonl_record
+#   intro: append_jsonl_record(record, labels) 源码 L169-L190
+#   desc: 源码 L169-L190
+#   inputs: record labels
+#   outputs: bool
+# - id: A3
+#   name_zh: ③ log_record_stub
+#   name_en: log_record_stub
+#   intro: log_record_stub(level, message) 源码 L193-L205
+#   desc: 源码 L193-L205
+#   inputs: level message
+#   outputs: dict[str, Any]
+# - id: A4
+#   name_zh: ④ flush
+#   name_en: flush
+#   intro: flush() 源码 L208-L217
+#   desc: 源码 L208-L217
+#   inputs: 无参数
+#   outputs: int
+# - id: A5
+#   name_zh: ⑤ panic_flush
+#   name_en: panic_flush
+#   intro: panic_flush() 源码 L247-L248
+#   desc: 源码 L247-L248
+#   inputs: 无参数
+#   outputs: int
+# - id: A6
+#   name_zh: ⑥ buffer_depth
+#   name_en: buffer_depth
+#   intro: buffer_depth() 源码 L251-L253
+#   desc: 源码 L251-L253
+#   inputs: 无参数
+#   outputs: int
+# 层: 输出
+# - id: O1
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: N/A (all consumers verified as phantom — stale references removed)
+# - id: O2
+#   name_zh: dict[str, Any]
+#   name_en: dict[str, Any]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: N/A (all consumers verified as phantom — stale references removed)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
 """
 
 from __future__ import annotations

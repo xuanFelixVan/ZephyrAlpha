@@ -36,6 +36,51 @@ exam_trigger_scheduler — 触发式考试调度器（06号文 §4 Phase 1，P1-
     sched = ExamTriggerScheduler()
     report = sched.trigger_quick_exams()          # 扫描+自动 Quick 考试
     ok, reason = sched.check_and_record(gate, "qwen3:8b", "code_fix")  # dispatch 钩子
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: argv 参数
+#   fields: 参数 argv，类型注解 list[str] | None
+#   code: exam_trigger_scheduler.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: scheduler_factory 参数
+#   fields: 参数 scheduler_factory（无注解）
+#   code: exam_trigger_scheduler.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: intraday_check 参数
+#   fields: 参数 intraday_check（无注解）
+#   code: exam_trigger_scheduler.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ExamTriggerScheduler
+#   name_en: ExamTriggerScheduler
+#   intro: 触发式考试调度器——新模型自动 Quick 考试 + 门控拦截复核建议。
+#   desc: 触发式考试调度器——新模型自动 Quick 考试 + 门控拦截复核建议。 discovery/quick_exam_runner 支持测试注入；缺省走真实 ModelDiscov…；公共方法（定义序）: scan_ne…
+#   inputs: discovery quick_exam_runner low_accuracy_threshold seen_store_path su…
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② main
+#   name_en: main
+#   intro: CLI 入口：``scan-new-models [--dry-run]``。
+#   desc: CLI 入口：``scan-new-models [--dry-run]``。 --dry-run 只列新模型不跑考试（只读预览，不碰 GPU，盘中可用）；真实模式跑 Quick…；源码 L332-L389
+#   inputs: argv scheduler_factory intraday_check
+#   outputs: int
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.intelligence.model_routing.runtime_assembly（task_gate_dispatch_hook 经 ch…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -116,9 +161,7 @@ class ExamTriggerScheduler:
         self._quick_exam_runner = quick_exam_runner
         self._threshold = low_accuracy_threshold
         self._seen_store_path = Path(seen_store_path) if seen_store_path is not None else None
-        self._suggestion_sink_path = (
-            Path(suggestion_sink_path) if suggestion_sink_path is not None else None
-        )
+        self._suggestion_sink_path = Path(suggestion_sink_path) if suggestion_sink_path is not None else None
         self._seen: set[str] = set()
         self._block_streaks: dict[tuple[str, str], int] = {}
         self._suggestions: list[dict[str, Any]] = []
@@ -145,9 +188,7 @@ class ExamTriggerScheduler:
             return
         self._seen_store_path.parent.mkdir(parents=True, exist_ok=True)
         payload = {"seen": sorted(self._seen), "saved_at": datetime.now(tz=UTC).isoformat()}
-        self._seen_store_path.write_text(
-            json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
-        )
+        self._seen_store_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
     def _append_suggestion_sink(self, suggestion: dict[str, Any]) -> None:
         if self._suggestion_sink_path is None:

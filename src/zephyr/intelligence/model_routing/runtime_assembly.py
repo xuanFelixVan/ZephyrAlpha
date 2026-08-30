@@ -63,8 +63,117 @@ runtime_assembly — 模型路由级联的运行时装配层（11号文 §4.3 Ph
 
 CLI 冒烟（dry-run 打印路由决策，不真调 LLM）：
 
-    python -m zephyr.intelligence.model_routing.runtime_assembly \
-        --task-type signal_generation --candidates qwen3:8b,qwen2.5-coder:14b
+    python -m zephyr.intelligence.model_routing.runtime_assembly         --task-type signal_generation --candidates qwen3:8b,qwen2.5-coder:14b
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: now 参数
+#   fields: 参数 now，类型注解 datetime | None
+#   code: runtime_assembly.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: calendar 参数
+#   fields: 参数 calendar（无注解）
+#   code: runtime_assembly.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: market 参数
+#   fields: 参数 market（无注解）
+#   code: runtime_assembly.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: orchestrator 参数
+#   fields: 参数 orchestrator，类型注解 Any
+#   code: runtime_assembly.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① current_trading_period
+#   name_en: current_trading_period
+#   intro: 当前交易时段（策略 period_rules 词表：pre_open/call_auction/trading/pos…
+#   desc: 当前交易时段（策略 period_rules 词表：pre_open/call_auction/trading/post_close）。 日历真源：data/calendar g…；源码 L266-L301
+#   inputs: now calendar market
+#   outputs: str
+# - id: A2
+#   name_zh: ② cascade_decision_engine
+#   name_en: cascade_decision_engine
+#   intro: 把 CascadeOrchestrator.route 适配为门面 decision_engine 契约（RouteR…
+#   desc: 把 CascadeOrchestrator.route 适配为门面 decision_engine 契约（RouteRequest -> dict）。 orchestrator…；源码 L307-L347
+#   inputs: orchestrator
+#   outputs: Any
+# - id: A3
+#   name_zh: ③ budget_cost_ledger
+#   name_en: budget_cost_ledger
+#   intro: cost_ledger（() -> float）：BudgetEngine COST 维（BP-COST-001）当日…
+#   desc: cost_ledger（() -> float）：BudgetEngine COST 维（BP-COST-001）当日已耗美元。 engine 缺省首次调用时懒解析 Budget…；源码 L353-L369
+#   inputs: engine
+#   outputs: Any
+# - id: A4
+#   name_zh: ④ jsonl_audit_sink
+#   name_en: jsonl_audit_sink
+#   intro: audit_sink（RouteAuditRecord -> None）：统一事件信封 append-only JSO…
+#   desc: audit_sink（RouteAuditRecord -> None）：统一事件信封 append-only JSONL 落盘。 信封口径对齐 16号文 §4.2 P0-1（s…；源码 L375-L397
+#   inputs: path
+#   outputs: Any
+# - id: A5
+#   name_zh: ⑤ task_gate_shadow_enabled
+#   name_en: task_gate_shadow_enabled
+#   intro: 影子模式开关（ARCH-302）：``ZEPHYR_TASK_GATE_SHADOW`` 真值（1/true/yes/…
+#   desc: 影子模式开关（ARCH-302）：``ZEPHYR_TASK_GATE_SHADOW`` 真值（1/true/yes/on）即启用。 仅决定 task_gate=True 时装配…；源码 L404-L411
+#   inputs: env
+#   outputs: bool
+# - id: A6
+#   name_zh: ⑥ task_gate_dispatch_hook
+#   name_en: task_gate_dispatch_hook
+#   intro: task_gate 缝：TaskGate + ExamTriggerScheduler 适配为门面 task_gate…
+#   desc: task_gate 缝：TaskGate + ExamTriggerScheduler 适配为门面 task_gate 契约 ``(model_id, capability) -…；源码 L449-L507
+#   inputs: gate scheduler shadow shadow_log_path
+#   outputs: Any
+# - id: A7
+#   name_zh: ⑦ default_router_config
+#   name_en: default_router_config
+#   intro: 缺省门面配置：task_kinds 源自级联策略 task_routes；
+#   desc: 缺省门面配置：task_kinds 源自级联策略 task_routes；日预算缺省=BudgetEngine COST 维策略 daily_limit（BP-COST-001，…；源码 L525-L537
+#   inputs: daily_budget_usd policy_path
+#   outputs: AgentRouterConfig
+# - id: A8
+#   name_zh: ⑧ assemble_agent_router
+#   name_en: assemble_agent_router
+#   intro: 装配运行时 LlmAgentRouter：四缝接真源，全部构造期依赖可注入 fake。
+#   desc: 装配运行时 LlmAgentRouter：四缝接真源，全部构造期依赖可注入 fake。 config 缺省走 default_router_config（task_kinds 源…；源码 L540-L583
+#   inputs: config orchestrator cost_ledger audit_sink clock policy_path audit_lo…
+#   outputs: LlmAgentRouter
+# - id: A9
+#   name_zh: ⑨ main
+#   name_en: main
+#   intro: CLI 入口：装配 -> 单次路由 -> 打印决策 JSON。
+#   desc: CLI 入口：装配 -> 单次路由 -> 打印决策 JSON。audit 打印到 stdout（不落盘）。；源码 L589-L626
+#   inputs: argv router_factory
+#   outputs: int
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 06号文 Phase 2 dispatch 链 + AutoRuntime（经 assemble_agent_router 取装配完成的 LlmAgentRo…
+# - id: O2
+#   name_zh: Any
+#   name_en: Any
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 06号文 Phase 2 dispatch 链 + AutoRuntime（经 assemble_agent_router 取装配完成的 LlmAgentRo…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> O1
 """
 
 from __future__ import annotations
@@ -75,7 +184,8 @@ import logging
 import os
 import uuid
 from dataclasses import asdict
-from datetime import UTC, datetime, time as dt_time
+from datetime import UTC, datetime
+from datetime import time as dt_time
 from pathlib import Path
 from typing import Any, Final
 from zoneinfo import ZoneInfo
@@ -138,9 +248,7 @@ AUDIT_SCHEMA_VERSION: Final = "1.0"
 # （与模型画像域同区 data/brain/，路径真源 REPO_ROOT 对齐 capability_passport 口径）
 TASK_GATE_SHADOW_ENV: Final = "ZEPHYR_TASK_GATE_SHADOW"
 TASK_GATE_SHADOW_LOG_ENV: Final = "ZEPHYR_TASK_GATE_SHADOW_LOG"
-DEFAULT_TASK_GATE_SHADOW_LOG_PATH: Final[Path] = (
-    REPO_ROOT / "data" / "brain" / "task_gate_shadow_log.jsonl"
-)
+DEFAULT_TASK_GATE_SHADOW_LOG_PATH: Final[Path] = REPO_ROOT / "data" / "brain" / "task_gate_shadow_log.jsonl"
 
 # 级联路由表 preferred -> 门面 task_kinds 词表（门面 local_pref 判定：kind in (local, hybrid)）
 _PREFERRED_TO_FACADE_KIND: Final[dict[str, str]] = {
@@ -383,9 +491,7 @@ def task_gate_dispatch_hook(
             try:
                 g, s = _resolve()
                 allowed, reason = s.check_and_record(g, model_id, capability)
-                _record_shadow_decision(
-                    shadow_log_path, model_id, capability, bool(allowed), str(reason)
-                )
+                _record_shadow_decision(shadow_log_path, model_id, capability, bool(allowed), str(reason))
                 return (True, f"shadow 放行(gate_allowed={bool(allowed)}): {reason}")
             except Exception as exc:  # noqa: BLE001 — shadow observe-only：异常只告警放行，绝不阻断路由
                 _log.warning("task_gate shadow 钩子异常，observe-only 放行: %s", exc)

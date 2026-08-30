@@ -16,11 +16,39 @@
 # [TTL] permanent
 # noqa: m02-manual  M02豁免: 系统遥测watchdog常驻服务(python -m zephyr.infrastructure.system_telemetry.watchdog),CLI触发启动,启动后自动运行;非reconciler无需事件触发
 
-"""三冗余 Watchdog（CT-WATCHDOG-001）——互检+Panic Mode+Dead Man's Switch。
+"""
+三冗余 Watchdog（CT-WATCHDOG-001）——互检+Panic Mode+Dead Man's Switch。
 
 支持两种运行模式:
     1. 库模式: Watchdog(watchdog_id="wd-1") -> 嵌入其他进程
     2. 独立进程: python -m zephyr.infrastructure.system_telemetry.watchdog --id wd-1 [--interval 10]
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: watchdog_id 参数
+#   fields: 参数 watchdog_id（无注解）
+#   code: watchdog.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① Watchdog
+#   name_en: Watchdog
+#   intro: class Watchdog 源码 L74-L154
+#   desc: 公共方法（定义序）: external_file, panic_mode, check_peers, write_external_heartbeat, should_alert_dead_mans_switch, r…
+#   inputs: watchdog_id
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: Watchdog
+#   downstream: zephyr.security.access_control
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

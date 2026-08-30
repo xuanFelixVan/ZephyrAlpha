@@ -27,6 +27,33 @@ Submodule Sync — Submodule/Monorepo 多仓库同步回滚。
     - 逐 submodule 回滚 + 更新主仓库引用
     - 引用不同步 -> exit code 16 (SUBMODULE_OUT_OF_SYNC)
     - 多仓库版本视为单一单元回滚
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: submodule_sync.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SubmoduleSync
+#   name_en: SubmoduleSync
+#   intro: class SubmoduleSync 源码 L98-L316
+#   desc: 公共方法（定义序）: project_root, detect_layout, list_submodules, get_submodule_shas, sync_submodule, sync_all_submodu…
+#   inputs: project_root
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: SubmoduleSync
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

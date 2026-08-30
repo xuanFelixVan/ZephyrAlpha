@@ -35,6 +35,77 @@ ZephyrAlpha — system-telemetry/contract_metrics.py
 - 集成点：ContractEnforcer 违规 -> 本模块记录 -> Grafana dashboard 展示
 
 SSoT: cross_layer_contracts.yaml -> CTR-SLA-001~006
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: contract_id 参数
+#   fields: 参数 contract_id，类型注解 str
+#   code: contract_metrics.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: trace_id 参数
+#   fields: 参数 trace_id，类型注解 str
+#   code: contract_metrics.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: latency_us 参数
+#   fields: 参数 latency_us，类型注解 int
+#   code: contract_metrics.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: start_span_id 参数
+#   fields: 参数 start_span_id，类型注解 str
+#   code: contract_metrics.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ContractMetricsCollector
+#   name_en: ContractMetricsCollector
+#   intro: class ContractMetricsCollector 源码 L147-L276
+#   desc: 公共方法（定义序）: sla_buffer, enabled, violation_counts, field_baselines, enable, disable, measure_sla, detect_contr…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② get_contract_metrics
+#   name_en: get_contract_metrics
+#   intro: get_contract_metrics() 源码 L283-L287
+#   desc: 源码 L283-L287
+#   inputs: 无参数
+#   outputs: ContractMetricsCollector
+# - id: A3
+#   name_zh: ③ measure_ct_tel_sla
+#   name_en: measure_ct_tel_sla
+#   intro: measure_ct_tel_sla(contract_id, trace_id, latency_us, start…
+#   desc: 源码 L318-L336
+#   inputs: contract_id trace_id latency_us start_span_id end_span_id
+#   outputs: SlaRecord | None
+# - id: A4
+#   name_zh: ④ get_ct_tel_stats
+#   name_en: get_ct_tel_stats
+#   intro: get_ct_tel_stats() 源码 L339-L345
+#   desc: 源码 L339-L345
+#   inputs: 无参数
+#   outputs: dict
+#   （注：A4 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ContractMetricsCollector
+#   name_en: ContractMetricsCollector
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.security.access_control
+# - id: O2
+#   name_zh: SlaRecord | None
+#   name_en: SlaRecord | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.security.access_control
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

@@ -15,9 +15,80 @@
 # [A_module] module_id=MOD-INF-015 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""遥测 · ai_behavior/event_sink — AI 行为遥测事件管道。
+"""
+遥测 · ai_behavior/event_sink — AI 行为遥测事件管道。
 
 蓝图 §7: 7 大监测维度 + B37 Error Taxonomy + OTel GenAI Semantic Conventions 对齐。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: ctx 参数
+#   fields: 参数 ctx，类型注解 ErrorContext
+#   code: event_sink.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: model_name 参数
+#   fields: 参数 model_name，类型注解 str
+#   code: event_sink.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: task_type 参数
+#   fields: 参数 task_type，类型注解 str
+#   code: event_sink.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: module_id 参数
+#   fields: 参数 module_id，类型注解 str
+#   code: event_sink.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ErrorContext
+#   name_en: ErrorContext
+#   intro: class ErrorContext 源码 L118-L137
+#   desc: 公共方法（定义序）: snapshot；源码 L118-L137
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② validate_error_context
+#   name_en: validate_error_context
+#   intro: validate_error_context(ctx) 源码 L146-L156
+#   desc: 源码 L146-L156
+#   inputs: ctx
+#   outputs: list[str]
+# - id: A3
+#   name_zh: ③ AIBehaviorEvent
+#   name_en: AIBehaviorEvent
+#   intro: class AIBehaviorEvent 源码 L160-L274
+#   desc: 公共方法（定义序）: total_tokens, token_efficiency, is_suspicious, snapshot；源码 L160-L274
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ emit_ai_behavior_event
+#   name_en: emit_ai_behavior_event
+#   intro: emit_ai_behavior_event(model_name, task_type, module_id, in…
+#   desc: 源码 L277-L321
+#   inputs: model_name task_type module_id input_tokens output_tokens cost_usd de…
+#   outputs: AIBehaviorEvent
+# 层: 输出
+# - id: O1
+#   name_zh: list[str]
+#   name_en: list[str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: N/A (all consumers verified as phantom — stale references removed)
+# - id: O2
+#   name_zh: AIBehaviorEvent
+#   name_en: AIBehaviorEvent
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: N/A (all consumers verified as phantom — stale references removed)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

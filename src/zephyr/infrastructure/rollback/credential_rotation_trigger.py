@@ -31,6 +31,33 @@ registry 跟踪的内存密钥生命周期，无法轮换第三方文件凭据�
 provider 侧执行，本地改写 .env 不等于服务端轮换，反而破坏可用性）——
 故本类正名为 Detector 语义：仅检测 + 通知（notify_rotation_needed），轮换为人工动作。
 原名 CredentialRotationTrigger / scan_and_rotate 保留为向后兼容别名（蓝图/YAML/测试引用）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: credential_rotation_trigger.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CredentialRotationDetector
+#   name_en: CredentialRotationDetector
+#   intro: 凭据泄露检测器（仅检测，不轮换——5.62.5 治本名实分离）。
+#   desc: 凭据泄露检测器（仅检测，不轮换——5.62.5 治本名实分离）。 扫描 SENSITIVE_FILES 中的凭据模式，检测泄露并以 exit 43 通知人工轮换。 轮换本身 MU…；公共方法（定义序）: project…
+#   inputs: project_root
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: CredentialRotationDetector
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

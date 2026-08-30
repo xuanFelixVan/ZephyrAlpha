@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""A2A 结构化辩论协议 — 多轮主张->反驳->合成
+"""
+A2A 结构化辩论协议 — 多轮主张->反驳->合成
 
 当两个 Agent 对同一决策持不同意见时，触发结构化辩论:
   Round 1: Agent A 主张 + Agent B 主张
@@ -23,6 +24,33 @@
   Round 3: Agent A 综合 + Agent B 综合 -> Synthesis(共识输出)
 
 输出: DebateResult — winner/consensus/synthesis
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: max_rounds 参数
+#   fields: 参数 max_rounds（无注解）
+#   code: a2a_debate.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① A2ADebate
+#   name_en: A2ADebate
+#   intro: A2A 结构化辩论协议.
+#   desc: A2A 结构化辩论协议. 三轮递进式辩论: claim -> rebuttal -> synthesis max_rounds=3 为默认深度，Phase 3+ 可扩展到 N+1…；公共方法（定义序）: debate；…
+#   inputs: max_rounds
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: A2ADebate
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

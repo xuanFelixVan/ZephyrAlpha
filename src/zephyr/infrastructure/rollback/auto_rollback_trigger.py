@@ -29,6 +29,41 @@ AutoRollbackTrigger — 自动回滚触发器。
     Hard:   Drift Detector 检测 / CI FAIL / G6 secrets leak / DB corruption
     Soft:   G0-G3 格式/语法门禁失败 / lint 失败 / 缩进错误
     Transient: timeout / network / rate_limit / temp_file_lock
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: max_retries 参数
+#   fields: 参数 max_retries（无注解）
+#   code: auto_rollback_trigger.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① TriggerDecision
+#   name_en: TriggerDecision
+#   intro: class TriggerDecision 源码 L117-L132
+#   desc: 公共方法（定义序）: should_rollback, retry_allowed, forward_fix_allowed；源码 L117-L132
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② AutoRollbackTrigger
+#   name_en: AutoRollbackTrigger
+#   intro: class AutoRollbackTrigger 源码 L186-L276
+#   desc: 公共方法（定义序）: max_retries, classify, process_guard_result, retry_counts；源码 L186-L276
+#   inputs: max_retries
+#   outputs: 返回值
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: TriggerDecision, AutoRollbackTrigger
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

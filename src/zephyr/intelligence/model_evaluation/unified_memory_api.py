@@ -53,6 +53,77 @@ Collection: ``unified_memory``
 ----------
 - 不直接 import M1 / M3 / M4 模块（避免循环依赖）
 - 通过 ``get_chroma_client()`` 复用 ChromaDB 单例
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: backend 参数
+#   fields: 参数 backend（无注解）
+#   code: unified_memory_api.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: enforce_capability 参数
+#   fields: 参数 enforce_capability（无注解）
+#   code: unified_memory_api.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: reset 参数
+#   fields: 参数 reset（无注解）
+#   code: unified_memory_api.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: prefer_vms 参数
+#   fields: 参数 prefer_vms（无注解）
+#   code: unified_memory_api.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① UnifiedMemoryAPI
+#   name_en: UnifiedMemoryAPI
+#   intro: RI-02 统一记忆 API（三件套：recall / write / search）。
+#   desc: RI-02 统一记忆 API（三件套：recall / write / search）。 生产用法 -------- from zephyr.intelligence.model…；公共方法（定义序）: backend…
+#   inputs: backend enforce_capability
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② get_unified_memory_api
+#   name_en: get_unified_memory_api
+#   intro: 返回 UnifiedMemoryAPI 模块级单例（线程安全）。
+#   desc: 返回 UnifiedMemoryAPI 模块级单例（线程安全）。 参数 ---- backend 指定后端；None 时按 prefer_vms 策略自动选择。 enforce_…；源码 L409-L448
+#   inputs: backend enforce_capability reset prefer_vms
+#   outputs: UnifiedMemoryAPI
+# - id: A3
+#   name_zh: ③ reset_unified_memory_api
+#   name_en: reset_unified_memory_api
+#   intro: 重置模块级单例（仅测试使用）。
+#   desc: 重置模块级单例（仅测试使用）。；源码 L451-L455
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ build_provenance
+#   name_en: build_provenance
+#   intro: 便捷构造器：避免调用方重复 import WriteTrace。
+#   desc: 便捷构造器：避免调用方重复 import WriteTrace。 示例 ---- prov = build_provenance( origin="M3:trigger_rout…；源码 L458-L474
+#   inputs: origin audit_chain arbitration
+#   outputs: WriteTrace
+#   （注：A4 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: UnifiedMemoryAPI
+#   name_en: UnifiedMemoryAPI
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: WriteTrace
+#   name_en: WriteTrace
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

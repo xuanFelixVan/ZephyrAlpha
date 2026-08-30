@@ -23,6 +23,33 @@ RollbackWAL — 回滚预写日志。
 回滚操作本身的 WAL (Write-Ahead Log):
     每次回滚前记入 WAL -> 确保回滚本身可回滚。
     WAL 不完整 -> exit 45 (ROLLBACK_WAL_INCOMPLETE)。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: rollback_wal.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RollbackWAL
+#   name_en: RollbackWAL
+#   intro: class RollbackWAL 源码 L85-L222
+#   desc: 公共方法（定义序）: wal_path, read_all, project_root, write_ahead, mark_complete, check_incomplete, get_reverse_operat…
+#   inputs: project_root
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: RollbackWAL
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -19,6 +19,38 @@
 Pipeline 数据模型
 =================
 依据：MOD-TASK_SYSTEM §3.2.2 + GOV-AI-002 v2.0.0 模型路由策略
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: module_id 参数
+#   fields: 参数 module_id，类型注解 str
+#   code: models.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: output 参数
+#   fields: 参数 output，类型注解 dict[str, Any]
+#   code: models.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① validate_module_output
+#   name_en: validate_module_output
+#   intro: 对模块输出做 Schema 校验。
+#   desc: 对模块输出做 Schema 校验。失败时附加 _validation_errors 不抛异常。；源码 L1084-L1095
+#   inputs: module_id output
+#   outputs: dict[str, Any]
+#   （注：A1 之后另有 42 个公共定义未列入（含 42 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, Any]
+#   name_en: dict[str, Any]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

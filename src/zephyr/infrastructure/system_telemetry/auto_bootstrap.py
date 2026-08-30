@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-015 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""auto_bootstrap — 全自动遥测注入钩子（MOD-INF-015 v2.1.0）
+"""
+auto_bootstrap — 全自动遥测注入钩子（MOD-INF-015 v2.1.0）
 
 触发时机 —— 零手动代码，完全自动：
     zephyr 包被 import -> auto_bootstrap 执行 -> 全局 Telemetry 单例创建
@@ -26,6 +27,66 @@
     from zephyr.infrastructure.system_telemetry.auto_bootstrap import register_module
     t = register_module("MOD-INF-XXX")  # 首次创建，后续返回同一实例
     # 或更简单：任何模块 import zephyr 后自动获得全局单例
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: module_id 参数
+#   fields: 参数 module_id，类型注解 str
+#   code: auto_bootstrap.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: environment 参数
+#   fields: 参数 environment，类型注解 str
+#   code: auto_bootstrap.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① register_module
+#   name_en: register_module
+#   intro: 自动注册模块到全局 Telemetry（线程安全，幂等）。
+#   desc: 自动注册模块到全局 Telemetry（线程安全，幂等）。 首次调用创建 Telemetry 实例并注册，后续调用返回同一实例。 自动发送 module.registered 事…；源码 L119-L142
+#   inputs: module_id environment
+#   outputs: object
+# - id: A2
+#   name_zh: ② get_registered_modules
+#   name_en: get_registered_modules
+#   intro: 返回所有已自动注册的模块 ID 列表。
+#   desc: 返回所有已自动注册的模块 ID 列表。；源码 L145-L148
+#   inputs: 无参数
+#   outputs: list[str]
+# - id: A3
+#   name_zh: ③ get_global_telemetry
+#   name_en: get_global_telemetry
+#   intro: 获取全局 Telemetry 单例（惰性创建，避免循环 import）
+#   desc: 获取全局 Telemetry 单例（惰性创建，避免循环 import）；源码 L151-L164
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ bootstrap
+#   name_en: bootstrap
+#   intro: 执行全自动遥测注入。
+#   desc: 执行全自动遥测注入。 调用方: zephyr/__init__.py（包加载末尾自动执行） 返回: bootstrap 状态摘要；源码 L253-L282
+#   inputs: 无参数
+#   outputs: dict
+# 层: 输出
+# - id: O1
+#   name_zh: object
+#   name_en: object
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.trading; zephyr.autonomy_core
+# - id: O2
+#   name_zh: list[str]
+#   name_en: list[str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.trading; zephyr.autonomy_core
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

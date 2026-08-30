@@ -14,7 +14,44 @@
 # [TESTS] scripts/connect/health_check.py --trigger
 # [A_module] module_id=MOD-INF-035 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""全系统健康聚合 — check_all_systems()"""
+"""
+全系统健康聚合 — check_all_systems()
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: health_aggregator.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① HealthAggregator
+#   name_en: HealthAggregator
+#   intro: class HealthAggregator 源码 L99-L142
+#   desc: 公共方法（定义序）: check_all；源码 L99-L142
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② check_all
+#   name_en: check_all
+#   intro: check_all() 源码 L145-L146
+#   desc: 源码 L145-L146
+#   inputs: 无参数
+#   outputs: HealthReport
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: HealthReport
+#   name_en: HealthReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: AutoRuntime Core health check phase
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
 
 import logging
 import time

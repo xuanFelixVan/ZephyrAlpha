@@ -10,7 +10,35 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] permanent
-"""Layer 3: 协调+仲裁 — Coordinator, Living Spec 同步, 死锁防护, 全量 25 模块落地"""
+"""
+Layer 3: 协调+仲裁 — Coordinator, Living Spec 同步, 死锁防护, 全量 25 模块落地
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 包内子模块公共符号
+#   fields: import 再导出符号: A2ADebate, A2ANegotiation, A2ASaga, A2AVoting, A2AWorkSteal, DebatePh…
+#   code: __init__.py import L43
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包公共面再导出
+#   name_en: __init__ re-export
+#   intro: 再导出 A2AAgentBlocklist, A2AAnomalyDetector, A2ABehaviorFingerprint, A2ABlameAttr…
+#   desc: __init__ import L43；__all__ 153 项（AST 事实）
+#   inputs: I1
+#   outputs: __all__ 公共符号表
+# 层: 输出
+# - id: O1
+#   name_zh: 公共 API 面（153 符号）
+#   name_en: __all__
+#   intro: A2AAgentBlocklist, A2AAnomalyDetector, A2ABehaviorFingerprint, A2ABlameAttribut…
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 from zephyr.infrastructure.a2a_protocol.layer3_coordination._consensus import (
     A2ADebate,

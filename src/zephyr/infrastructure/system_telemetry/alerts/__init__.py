@@ -10,10 +10,43 @@
 # [ERROR_CONTRACT] yaml.YAMLError; OSError; RuntimeError
 # [TESTS] tests/system-telemetry/test_alerts.py
 # [TTL] permanent
-"""AlertSubsystem — 告警规则评估引擎（MOD-INF-015 §9 · alerts）.
+"""
+AlertSubsystem — 告警规则评估引擎（MOD-INF-015 §9 · alerts）.
 
 加载 config/alert_rules.yaml，提供 fire / health / evaluate / ack / pending API。
 AlertLevel: INFO < WARNING < ERROR < CRITICAL 四级严重度。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: module_id 参数
+#   fields: 参数 module_id（无注解）
+#   code: __init__.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: test_mode 参数
+#   fields: 参数 test_mode（无注解）
+#   code: __init__.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AlertSubsystem
+#   name_en: AlertSubsystem
+#   intro: class AlertSubsystem 源码 L75-L167
+#   desc: 公共方法（定义序）: fire, health, pending, evaluate, ack；源码 L75-L167
+#   inputs: module_id test_mode
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: AlertSubsystem
+#   downstream: zephyr.security.access_control; zephyr.security.budget_enforcement
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

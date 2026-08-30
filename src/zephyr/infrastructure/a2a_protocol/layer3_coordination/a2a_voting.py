@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""A2A 加权投票协议 — 多 Agent 共识达成机制
+"""
+A2A 加权投票协议 — 多 Agent 共识达成机制
 
 当多个 Agent 需要集体决策同一问题时，触发加权投票:
   - 每个 Agent 有一票，权重由 AgentRole/A2AVectorReputation 决定
@@ -23,6 +24,38 @@
   - 支持 approve/reject/abstain 三种投票动作
 
 输出: VotingResult — 计票结果 + 是否通过
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: default_quorum 参数
+#   fields: 参数 default_quorum（无注解）
+#   code: a2a_voting.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: vote_timeout_seconds 参数
+#   fields: 参数 vote_timeout_seconds（无注解）
+#   code: a2a_voting.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① A2AVoting
+#   name_en: A2AVoting
+#   intro: A2A 加权投票引擎.
+#   desc: A2A 加权投票引擎. 支持 approve/reject/abstain + quorum 检验. 权重来源: AgentMeta.role + reputation vect…；公共方法（定义序）: default…
+#   inputs: default_quorum vote_timeout_seconds
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: A2AVoting
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

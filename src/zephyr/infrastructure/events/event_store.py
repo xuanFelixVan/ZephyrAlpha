@@ -21,6 +21,33 @@ Event Store — 事件持久化存储。
 依据：
     蓝图 MOD-TASK_SYSTEM §6.13.3 + v0.6.0
     任务卡 TASK-INF-0124
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: data_dir 参数
+#   fields: 参数 data_dir（无注解）
+#   code: event_store.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① EventStore
+#   name_en: EventStore
+#   intro: class EventStore 源码 L73-L130
+#   desc: 公共方法（定义序）: append, append_batch, query, get_all_for_task, get_event_count；源码 L73-L130
+#   inputs: data_dir
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: EventStore
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 import json

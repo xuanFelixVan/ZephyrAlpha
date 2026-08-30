@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""A2A 语义差异引擎 — 结构感知的 Agent 间差异检测
+"""
+A2A 语义差异引擎 — 结构感知的 Agent 间差异检测
 
 超越 line-level diff——识别函数/类/段落级别的语义差异:
   - 同一函数被 Agent A 加日志、Agent B 改算法 -> 语义冲突
@@ -23,6 +24,41 @@
   - 同一段落 Agent A 改措辞、Agent B 删段落 -> 上下文冲突
 
 输出: SemanticDiffReport — 冲突区域 + 类型 + 重合度评分
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: semantic_diff.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SemanticDiffReport
+#   name_en: SemanticDiffReport
+#   intro: class SemanticDiffReport 源码 L100-L114
+#   desc: 公共方法（定义序）: has_conflict, max_conflict_risk；源码 L100-L114
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② SemanticDiffEngine
+#   name_en: SemanticDiffEngine
+#   intro: 结构感知的语义差异引擎.
+#   desc: 结构感知的语义差异引擎. 比较两个 Agent 对同一文件的修改——提取函数/类/段落级别的差异.；公共方法（定义序）: diff, extract_regions；源码 L117-L268
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: SemanticDiffReport, SemanticDiffEngine
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
