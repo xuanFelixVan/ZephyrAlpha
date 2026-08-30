@@ -15,6 +15,36 @@
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: wqa_scorer.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① WQAScore
+#   name_en: WQAScore
+#   intro: class WQAScore 源码 L54-L98
+#   desc: 公共方法（定义序）: composite, rating；源码 L54-L98
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: WQAScore
+#   downstream: MOD-INF-027;MOD-INF-015;MOD-FEEDBACK_LOOP
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass

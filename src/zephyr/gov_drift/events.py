@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-023 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""G-CT-005 — ManagedDriftEvent Pydantic V2 BaseModel 漂移事件定义.
+"""
+G-CT-005 — ManagedDriftEvent Pydantic V2 BaseModel 漂移事件定义.
 
 ARCH-034 P3 改名说明（防 AI 重新造轮子）：
   本模块的 DriftState/DriftEvent 已改名为 ManagedDriftState/ManagedDriftEvent，
@@ -31,6 +32,32 @@ ARCH-034 P3 改名说明（防 AI 重新造轮子）：
 
   DriftType(5值) 未改名——本模块是其唯一定义源，无同名冲突。
   model_drift_monitor 的 DriftType(3值) 已改名 ModelDriftType（ARCH-034 P3 批B）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: events.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① 数据契约声明
+#   name_en: data class declarations
+#   intro: 纯声明类（无公共方法，AST 事实）: DriftType, ManagedDriftState, ManagedDriftEvent
+#   desc: 数据契约/异常/枚举声明共 3 类；无算法流程（AST 事实）
+#   inputs: I1
+#   outputs: 数据契约类集合
+# 层: 输出
+# - id: O1
+#   name_zh: 数据契约声明（3 类）
+#   name_en: data classes
+#   intro: DriftType, ManagedDriftState, ManagedDriftEvent
+#   downstream: behavioral_auditor包内所有模块
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from datetime import UTC, datetime

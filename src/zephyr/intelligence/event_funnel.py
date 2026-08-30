@@ -24,7 +24,8 @@
 # F4: 排序输出（评分降序+输入序 tie-break，容量截断 ~50→~30）
 # O1: EventFunnelResult(kept/excluded{symbol:reason}/scores{symbol:score}/skipped/degraded/truncated)
 # [/ALGO_FLOW]
-"""MOD-INT_EVENT_FUNNEL — 事件驱动选股漏斗（BM-SEL-19 第四层事件侧编排，~50→~30）。
+"""
+MOD-INT_EVENT_FUNNEL — 事件驱动选股漏斗（BM-SEL-19 第四层事件侧编排，~50→~30）。
 
 26 号 §2.5「事件信号→选股映射」施工化：事件源 → 事件分类（六类）+ 情绪分数 →
 **事件影响评分** → 注入选股漏斗第四层。本模块承载漏斗编排（候选池生成→过滤→
@@ -62,6 +63,61 @@ BM-SEL-19，评分真源唯一在 event_score。
 
 依据: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/26_event_driven_strategy_detail.md §2.5
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: prescreened 参数
+#   fields: 参数 prescreened，类型注解 Sequence[str]
+#   code: event_funnel.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: events 参数
+#   fields: 参数 events，类型注解 Mapping[str, EventRecord]
+#   code: event_funnel.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: earnings_map 参数
+#   fields: 参数 earnings_map（无注解）
+#   code: event_funnel.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: prob_shift_map 参数
+#   fields: 参数 prob_shift_map（无注解）
+#   code: event_funnel.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① build_candidate_pool
+#   name_en: build_candidate_pool
+#   intro: 候选池生成（26 号 §2.5：事件触发标的即候选，非固定池）。
+#   desc: 候选池生成（26 号 §2.5：事件触发标的即候选，非固定池）。 精筛输出（BM-SEL-18 下游 ~50）∪ 事件触发标的，合并去重——精筛序优先、 事件触发追加在后（稳定序…；源码 L203-L245
+#   inputs: prescreened events earnings_map prob_shift_map conduction_risk_map
+#   outputs: list[EventFunnelCandidate]
+# - id: A2
+#   name_zh: ② run_event_funnel
+#   name_en: run_event_funnel
+#   intro: 事件驱动分布筛选主入口（BM-SEL-19，~50→~30）。
+#   desc: 事件驱动分布筛选主入口（BM-SEL-19，~50→~30）。 ``event_source_ready=False`` → skipped 直通（开通条件=事件数据源+知识图谱…；源码 L266-L329
+#   inputs: candidates config event_source_ready degraded
+#   outputs: EventFunnelResult
+#   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[EventFunnelCandidate]
+#   name_en: list[EventFunnelCandidate]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 事件驱动 sleeve（event_driven_sleeve_strategy 选股收敛上游，BM-SEL-19 第四层事件侧编排，待接线——本包 stra…
+# - id: O2
+#   name_zh: EventFunnelResult
+#   name_en: EventFunnelResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 事件驱动 sleeve（event_driven_sleeve_strategy 选股收敛上游，BM-SEL-19 第四层事件侧编排，待接线——本包 stra…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

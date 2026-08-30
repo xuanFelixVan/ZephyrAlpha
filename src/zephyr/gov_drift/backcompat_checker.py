@@ -37,7 +37,95 @@ impact_analysis: 扫描调用方 BREAKING_CHANGE_REPORT
 INTENTIONAL_BREAK: 标记宽恕
 
 
-对标 blueprint.md §6.23。"""
+对标 blueprint.md §6.23。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: file_path 参数
+#   fields: 参数 file_path，类型注解 str
+#   code: backcompat_checker.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: baseline_sigs 参数
+#   fields: 参数 baseline_sigs，类型注解 list[FunctionSignature]
+#   code: backcompat_checker.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: current_sigs 参数
+#   fields: 参数 current_sigs，类型注解 list[FunctionSignature]
+#   code: backcompat_checker.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: threshold 参数
+#   fields: 参数 threshold，类型注解 float
+#   code: backcompat_checker.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① extract_signatures
+#   name_en: extract_signatures
+#   intro: extract_signatures(file_path) 源码 L181-L214
+#   desc: 源码 L181-L214
+#   inputs: file_path
+#   outputs: list[FunctionSignature]
+# - id: A2
+#   name_zh: ② compare_signatures
+#   name_en: compare_signatures
+#   intro: compare_signatures(baseline_sigs, current_sigs) 源码 L217-L274
+#   desc: 源码 L217-L274
+#   inputs: baseline_sigs current_sigs
+#   outputs: list[CompatBreakEvent]
+# - id: A3
+#   name_zh: ③ find_renamed_functions
+#   name_en: find_renamed_functions
+#   intro: find_renamed_functions(baseline_sigs, current_sigs, thresho…
+#   desc: 源码 L277-L311
+#   inputs: baseline_sigs current_sigs threshold
+#   outputs: list[CompatBreakEvent]
+# - id: A4
+#   name_zh: ④ scan_impact
+#   name_en: scan_impact
+#   intro: scan_impact(breaks, src_root) 源码 L314-L337
+#   desc: 源码 L314-L337
+#   inputs: breaks src_root
+#   outputs: dict[str, list[str]]
+# - id: A5
+#   name_zh: ⑤ detect_intentional_breaks
+#   name_en: detect_intentional_breaks
+#   intro: detect_intentional_breaks(file_path) 源码 L340-L354
+#   desc: 源码 L340-L354
+#   inputs: file_path
+#   outputs: list[str]
+# - id: A6
+#   name_zh: ⑥ run_backcompat_check
+#   name_en: run_backcompat_check
+#   intro: run_backcompat_check(project_root, baseline_snapshots_dir)…
+#   desc: 源码 L357-L420
+#   inputs: project_root baseline_snapshots_dir
+#   outputs: dict[str, object]
+#   （注：A6 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[FunctionSignature]
+#   name_en: list[FunctionSignature]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests/audit/test_backcompat_checker.py
+# - id: O2
+#   name_zh: list[CompatBreakEvent]
+#   name_en: list[CompatBreakEvent]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests/audit/test_backcompat_checker.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
+"""
 
 from __future__ import annotations
 

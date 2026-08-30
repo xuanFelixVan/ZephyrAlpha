@@ -14,7 +14,8 @@
 # [TESTS] tests/orchestrator/test_layered_command_chain.py
 # [A_module] module_id=MOD-ORCH-001 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""LayeredCommandChain — Agent 分层指挥链（MOD-ORCH-001）。
+"""
+LayeredCommandChain — Agent 分层指挥链（MOD-ORCH-001）。
 
 B11-02451（AUD-DRAFT-001-DIGEST P1 波 W-P1-25，CAND-ORCH-001，A7-Agent架构
 §0边界声明/§1）：军事 C2 式**三层交易指挥链**——战略层（组合/风控目标）
@@ -27,6 +28,48 @@ B11-02451（AUD-DRAFT-001-DIGEST P1 波 W-P1-25，CAND-ORCH-001，A7-Agent架构
 与协议层，不新建 Agent）；a2a_registry=L1 卡片发现（复用 agent_id 语义，
 不重建注册表）；A2A 网关族=协议实现（本件强制经注入网关回调，不实现协
 议）；reflctrl_gate=反思频率分层（零交集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: agent_layers 参数
+#   fields: 参数 agent_layers（无注解）
+#   code: layered_command_chain.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: layered_command_chain.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: a2a_gateway 参数
+#   fields: 参数 a2a_gateway（无注解）
+#   code: layered_command_chain.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: alert_sink 参数
+#   fields: 参数 alert_sink（无注解）
+#   code: layered_command_chain.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① LayeredCommandChain
+#   name_en: LayeredCommandChain
+#   intro: 三层指挥链协议件（注册表 + 委托 + 上报 + 越层门禁）。
+#   desc: 三层指挥链协议件（注册表 + 委托 + 上报 + 越层门禁）。；公共方法（定义序）: register_link, delegate, report, packet_status, chain_of, pending_…
+#   inputs: agent_layers clock a2a_gateway alert_sink
+#   outputs: 返回值
+#   （注：A1 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（9 定义）
+#   name_en: public defs
+#   intro: LayeredCommandChain
+#   downstream: 运行时装配批（五交易 Agent 层级声明 / 真实 A2A 网关绑定 / 告警接 alert 路由）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -52,7 +95,7 @@ __all__: Final = [
 ]
 
 #: 层级序号（委托方向只能序号 +1 逐层向下）
-_LAYER_RANK: Final[dict["ChainLayer", int]] = {}
+_LAYER_RANK: Final[dict[ChainLayer, int]] = {}
 
 
 class CommandChainError(Exception):
@@ -70,11 +113,13 @@ class ChainLayer(str, Enum):
     EXECUTION = "execution"
 
 
-_LAYER_RANK.update({
-    ChainLayer.STRATEGIC: 0,
-    ChainLayer.TACTICAL: 1,
-    ChainLayer.EXECUTION: 2,
-})
+_LAYER_RANK.update(
+    {
+        ChainLayer.STRATEGIC: 0,
+        ChainLayer.TACTICAL: 1,
+        ChainLayer.EXECUTION: 2,
+    }
+)
 
 
 class PacketStatus(str, Enum):
@@ -164,9 +209,7 @@ class LayeredCommandChain:
     # ── 内部 ─────────────────────────────────────────────────────────────
 
     def _alert(self, parent: str, child: str, reason: str) -> None:
-        violation = ChainViolation(
-            parent_agent=parent, child_agent=child, reason=reason, raised_at=self._clock()
-        )
+        violation = ChainViolation(parent_agent=parent, child_agent=child, reason=reason, raised_at=self._clock())
         _log.warning("指挥链违规: %s -> %s (%s)", parent, child, reason)
         if self._alert_sink is not None:
             try:
@@ -245,9 +288,7 @@ class LayeredCommandChain:
                 f"非法状态迁移: packet {report.packet_id!r} 当前 {status.value}，须 ACCEPTED 方可上报"
             )
         if report.child_agent != packet.child_agent:
-            raise CommandChainError(
-                f"上报方不符: {report.child_agent!r} 非受托方 {packet.child_agent!r}"
-            )
+            raise CommandChainError(f"上报方不符: {report.child_agent!r} 非受托方 {packet.child_agent!r}")
         self._packets[report.packet_id] = (packet, PacketStatus.REPORTED)
 
     # ── 查询 ─────────────────────────────────────────────────────────────

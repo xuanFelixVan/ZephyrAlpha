@@ -14,7 +14,8 @@
 # [TESTS] tests/ml_train/test_decision_annotation_dataset.py
 # [A_module] module_id=MOD-ML-014 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""DecisionAnnotationDataset — 交易决策标注数据集（MOD-ML-014）。
+"""
+DecisionAnnotationDataset — 交易决策标注数据集（MOD-ML-014）。
 
 B1-00631（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-MLT-018，C2 71）：
 **决策标注七要素 Schema**（decision_id/标的/时点/理由/情绪标签/图表引用/
@@ -25,6 +26,38 @@ B1-00631（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-MLT-018，C2 71）：
 查重分工（蓝图 §0）：training_dataset_manager=训练样本集管理（本件=人工
 决策标注库与导出，不管训练 batch）；sentiment_sft_trainer=SFT 训练执行
 （本件仅产出 SFT 样本载荷，不训练）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: connection 参数
+#   fields: 参数 connection（无注解）
+#   code: decision_annotation_dataset.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: decision_annotation_dataset.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DecisionAnnotationDataset
+#   name_en: DecisionAnnotationDataset
+#   intro: 交易决策标注数据集（SQLite 注入连接 + 版本管理）。
+#   desc: 交易决策标注数据集（SQLite 注入连接 + 版本管理）。；公共方法（定义序）: add_annotation, fill_outcome, export_sft_samples, export_review_dat…
+#   inputs: connection clock
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: DecisionAnnotationDataset
+#   downstream: 运行时装配批（SFT 样本导出/复盘数据集导出统一注入点装配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -49,9 +82,16 @@ __all__: Final = [
 ]
 
 #: 情绪标签词表（闭合）
-EMOTION_TAGS: Final[frozenset[str]] = frozenset({
-    "calm", "confident", "anxious", "fearful", "greedy", "neutral",
-})
+EMOTION_TAGS: Final[frozenset[str]] = frozenset(
+    {
+        "calm",
+        "confident",
+        "anxious",
+        "fearful",
+        "greedy",
+        "neutral",
+    }
+)
 
 
 class DecisionAnnotationError(Exception):
@@ -168,9 +208,7 @@ class DecisionAnnotationDataset:
 
     def _content_hash(self) -> str:
         """全表内容确定性 hash（按主键序拼接）。"""
-        rows = self._conn.execute(
-            "SELECT * FROM decision_annotations ORDER BY decision_id"
-        ).fetchall()
+        rows = self._conn.execute("SELECT * FROM decision_annotations ORDER BY decision_id").fetchall()
         digest = hashlib.sha256()
         for row in rows:
             digest.update("|".join("" if c is None else str(c) for c in row).encode("utf-8"))
@@ -188,9 +226,7 @@ class DecisionAnnotationDataset:
         if not entry.rationale:
             raise DecisionAnnotationError("理由 rationale 为空")
         if entry.emotion_tag not in EMOTION_TAGS:
-            raise DecisionAnnotationError(
-                f"情绪标签词表外: {entry.emotion_tag!r}（合法: {sorted(EMOTION_TAGS)}）"
-            )
+            raise DecisionAnnotationError(f"情绪标签词表外: {entry.emotion_tag!r}（合法: {sorted(EMOTION_TAGS)}）")
         if not entry.chart_ref:
             raise DecisionAnnotationError("图表引用 chart_ref 为空")
         exists = self._conn.execute(
@@ -229,8 +265,7 @@ class DecisionAnnotationDataset:
         if annotation.outcome_return is not None:
             raise DecisionAnnotationError(f"重复回填拒绝: {decision_id!r} 已有结果")
         self._conn.execute(
-            "UPDATE decision_annotations SET outcome_return = ?, outcome_note = ? "
-            "WHERE decision_id = ?",
+            "UPDATE decision_annotations SET outcome_return = ?, outcome_note = ? WHERE decision_id = ?",
             (float(outcome_return), note, decision_id),
         )
         self._conn.commit()
@@ -239,11 +274,10 @@ class DecisionAnnotationDataset:
 
     # ── 导出 ──────────────────────────────────────────────────────────────
 
-    def export_sft_samples(self) -> list["SftSample"]:
+    def export_sft_samples(self) -> list[SftSample]:
         """导出 SFT 样本（仅含已回填标注；按 (decision_time, decision_id) 排序）。"""
         rows = self._conn.execute(
-            "SELECT * FROM decision_annotations WHERE outcome_return IS NOT NULL "
-            "ORDER BY decision_time, decision_id"
+            "SELECT * FROM decision_annotations WHERE outcome_return IS NOT NULL ORDER BY decision_time, decision_id"
         ).fetchall()
         samples = []
         for row in rows:
@@ -253,19 +287,19 @@ class DecisionAnnotationDataset:
                 f"情绪: {ann.emotion_tag}\n图表: {ann.chart_ref}"
             )
             completion = f"决策理由: {ann.rationale}\n事后收益: {ann.outcome_return:.6f}"
-            samples.append(SftSample(
-                decision_id=ann.decision_id,
-                prompt=prompt,
-                completion=completion,
-                outcome_return=float(ann.outcome_return),
-            ))
+            samples.append(
+                SftSample(
+                    decision_id=ann.decision_id,
+                    prompt=prompt,
+                    completion=completion,
+                    outcome_return=float(ann.outcome_return),
+                )
+            )
         return samples
 
     def export_review_dataset(self) -> list[DecisionAnnotation]:
         """导出复盘数据集（全量标注；按 (decision_time, decision_id) 排序）。"""
-        rows = self._conn.execute(
-            "SELECT * FROM decision_annotations ORDER BY decision_time, decision_id"
-        ).fetchall()
+        rows = self._conn.execute("SELECT * FROM decision_annotations ORDER BY decision_time, decision_id").fetchall()
         return [self._row_to_annotation(row) for row in rows]
 
     # ── 版本管理 ──────────────────────────────────────────────────────────
@@ -274,14 +308,10 @@ class DecisionAnnotationDataset:
         """创建版本快照（不可变；tag 冲突拒绝）。"""
         if not version_tag:
             raise DecisionAnnotationError("version_tag 为空")
-        exists = self._conn.execute(
-            "SELECT 1 FROM dataset_versions WHERE version_tag = ?", (version_tag,)
-        ).fetchone()
+        exists = self._conn.execute("SELECT 1 FROM dataset_versions WHERE version_tag = ?", (version_tag,)).fetchone()
         if exists is not None:
             raise DecisionAnnotationError(f"版本冲突: {version_tag!r} 已存在（快照不可变）")
-        n_annotations = self._conn.execute(
-            "SELECT COUNT(*) FROM decision_annotations"
-        ).fetchone()[0]
+        n_annotations = self._conn.execute("SELECT COUNT(*) FROM decision_annotations").fetchone()[0]
         n_filled = self._conn.execute(
             "SELECT COUNT(*) FROM decision_annotations WHERE outcome_return IS NOT NULL"
         ).fetchone()[0]

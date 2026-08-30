@@ -14,7 +14,8 @@
 # [TESTS] tests/orchestrator/test_agent_coordination_skill.py
 # [A_module] module_id=MOD-ORCH-004 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""AgentCoordinationSkill — Agent 协调技能（MOD-ORCH-004）。
+"""
+AgentCoordinationSkill — Agent 协调技能（MOD-ORCH-004）。
 
 B11-02580（AUD-DRAFT-001-DIGEST P2 波 P2-W13，CAND-ORCH-004，A7）：
 agent-coordination 技能封装——分工协议（按 Agent Card 能力匹配，卡片库注入）
@@ -26,6 +27,48 @@ agent-coordination 技能封装——分工协议（按 Agent Card 能力匹配�
 级协调/仲裁，不建指挥链）；voting_first_multi_agent=投票策略实现（本件仲
 裁仅计票+优先级决胜，不实现投票策略）；A2A 网关族=协议实现（本件强制经
 注入网关回调，不实现协议）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: cards 参数
+#   fields: 参数 cards（无注解）
+#   code: agent_coordination_skill.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: agent_coordination_skill.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: consensus 参数
+#   fields: 参数 consensus（无注解）
+#   code: agent_coordination_skill.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: audit_sink 参数
+#   fields: 参数 audit_sink（无注解）
+#   code: agent_coordination_skill.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AgentCoordinationSkill
+#   name_en: AgentCoordinationSkill
+#   intro: Agent 协调技能（卡片库 + 分工 + 仲裁 + 共识 + A2A 网关 + 审计）。
+#   desc: Agent 协调技能（卡片库 + 分工 + 仲裁 + 共识 + A2A 网关 + 审计）。；公共方法（定义序）: register_card, card_of, agents, assign, arbitrate, t…
+#   inputs: cards clock consensus audit_sink a2a_gateway
+#   outputs: 返回值
+#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（8 定义）
+#   name_en: public defs
+#   intro: AgentCoordinationSkill
+#   downstream: 运行时装配批（Agent Card 卡片库绑定 / 共识引擎回调 / 审计落库 / 真实 A2A 网关绑定）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -195,9 +238,12 @@ class AgentCoordinationSkill:
                 raise AgentCoordinationError(f"未知能力: {req!r}（无 Agent 覆盖）")
             candidates.sort(key=lambda c: (-c.priority, c.agent_id))
             out.append(Assignment(requirement=req, agent_id=candidates[0].agent_id))
-        self._record(CoordinationKind.ASSIGN, {
-            "assignments": tuple((a.requirement, a.agent_id) for a in out),
-        })
+        self._record(
+            CoordinationKind.ASSIGN,
+            {
+                "assignments": tuple((a.requirement, a.agent_id) for a in out),
+            },
+        )
         return tuple(out)
 
     # ── 冲突仲裁（投票/优先级） ───────────────────────────────────────────
@@ -231,9 +277,7 @@ class AgentCoordinationSkill:
             tally = {}
             for voter, target in votes.items():
                 if target not in candidates:
-                    raise AgentCoordinationError(
-                        f"非法投票: {voter!r} 投给非候选 {target!r}"
-                    )
+                    raise AgentCoordinationError(f"非法投票: {voter!r} 投给非候选 {target!r}")
                 tally[target] = tally.get(target, 0) + 1
             # 计票降序 → 优先级降序 → agent_id 字典序升（确定性决胜）
             ranked = sorted(tally, key=lambda a: (-tally[a], -self._cards[a].priority, a))
@@ -246,9 +290,15 @@ class AgentCoordinationSkill:
             votes=dict(tally),
             resolved_at=self._clock(),
         )
-        self._record(CoordinationKind.ARBITRATE, {
-            "topic": topic, "mode": mode.value, "winner": winner, "votes": dict(tally),
-        })
+        self._record(
+            CoordinationKind.ARBITRATE,
+            {
+                "topic": topic,
+                "mode": mode.value,
+                "winner": winner,
+                "votes": dict(tally),
+            },
+        )
         return resolution
 
     def _by_priority(self, candidates: tuple[str, ...]) -> str:
@@ -270,9 +320,14 @@ class AgentCoordinationSkill:
         except Exception:  # noqa: BLE001 — 共识异常按未达成处理不抛
             _log.exception("consensus 回调异常: %s", topic)
             reached = False
-        self._record(CoordinationKind.CONSENSUS, {
-            "topic": topic, "reached": reached, "proposal": dict(proposal),
-        })
+        self._record(
+            CoordinationKind.CONSENSUS,
+            {
+                "topic": topic,
+                "reached": reached,
+                "proposal": dict(proposal),
+            },
+        )
         return reached
 
     # ── 跨 Agent 调用（强制 A2A 网关） ────────────────────────────────────
@@ -286,17 +341,20 @@ class AgentCoordinationSkill:
         if not isinstance(message, Mapping):
             raise AgentCoordinationError("message 非法（须为 Mapping）")
         if self._gateway is None:
-            raise AgentCoordinationError(
-                "a2a_gateway 未注入（跨Agent调用强制 A2A 网关，禁止旁路）"
-            )
+            raise AgentCoordinationError("a2a_gateway 未注入（跨Agent调用强制 A2A 网关，禁止旁路）")
         try:
             ok = bool(self._gateway(sender, recipient, message))
         except Exception:  # noqa: BLE001 — 网关异常按 NACK 处理不抛
             _log.exception("a2a_gateway 传递异常: %s -> %s", sender, recipient)
             ok = False
-        self._record(CoordinationKind.A2A, {
-            "sender": sender, "recipient": recipient, "delivered": ok,
-        })
+        self._record(
+            CoordinationKind.A2A,
+            {
+                "sender": sender,
+                "recipient": recipient,
+                "delivered": ok,
+            },
+        )
         return ok
 
     # ── 审计查询 ──────────────────────────────────────────────────────────

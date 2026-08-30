@@ -31,7 +31,8 @@
 # created: "2026-05-05"
 # ---
 
-"""D_REPORTING — Default TCA Engine
+"""
+D_REPORTING — Default TCA Engine
 
 交易成本分析引擎具体实现。成交回报 -> 执行分析报告。
 
@@ -41,6 +42,32 @@ CTR 契约：
   生产者 — CTR-P1-007 (ExecutionReport) -> D_FRONTEND, D_GOV_ENFORCEMENT
 
 SSoT: cross_layer_contracts.yaml -> CTR-005 + CTR-P1-007
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: benchmark_price_source 参数
+#   fields: 参数 benchmark_price_source（无注解）
+#   code: default_tca_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DefaultTCAEngine
+#   name_en: DefaultTCAEngine
+#   intro: 默认 TCA 引擎——滑点/佣金/冲击成本分析
+#   desc: 默认 TCA 引擎——滑点/佣金/冲击成本分析；公共方法（定义序）: analyze, analyze_batch；源码 L88-L203
+#   inputs: benchmark_price_source
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: DefaultTCAEngine
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

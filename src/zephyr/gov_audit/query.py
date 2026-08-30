@@ -14,6 +14,52 @@
 # [TESTS] tests/audit-orchestrator/test_query.py
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: report_dir 参数
+#   fields: 参数 report_dir（无注解）
+#   code: query.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AuditQueryEngine
+#   name_en: AuditQueryEngine
+#   intro: 旧版查询引擎（保留以兼容现有调用方）。
+#   desc: 旧版查询引擎（保留以兼容现有调用方）。；公共方法（定义序）: get_status, get_history, get_issues, get_recent_findings；源码 L111-L177
+#   inputs: report_dir
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② MetaAuditLogger
+#   name_en: MetaAuditLogger
+#   intro: 元审计日志器（补全测试期望接口）。
+#   desc: 元审计日志器（补全测试期望接口）。；公共方法（定义序）: entries, log_audit_query, log_index_rebuild, log_integrity_check, log_retention_…
+#   inputs: config
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ AuditQuery
+#   name_en: AuditQuery
+#   intro: 审计查询接口（补全测试期望接口）。
+#   desc: 审计查询接口（补全测试期望接口）。 支持按 agent/session/event_type/timerange/target/anomaly/drift/cost/task/p…；公共方法（定义序）: events,…
+#   inputs: event_log_path
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: AuditQueryEngine, MetaAuditLogger, AuditQuery
+#   downstream: audit-orchestrator.cli; MCP governance_server
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
+"""
+
 import json
 import logging
 import re

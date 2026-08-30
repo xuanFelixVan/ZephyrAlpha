@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-REGIME-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #10_regime_detector_spec §4 #D-SIGNAL-68 #MOD-REGIME-002 #Phase2b #C1-shrinkage-comparator
-"""OverlaySignals 构造器（MOD-REGIME-002 Phase 2b）。
+"""
+OverlaySignals 构造器（MOD-REGIME-002 Phase 2b）。
 
 把原始特征转换成 RegimeDetector._run_overlay 期望的 8 转换 overlay_signals 输入 dict：
     {"transitions": {"S1": {"vix_panic": 85.0, "correlation": 70.0, ...}, ...}}
@@ -68,6 +69,47 @@ S2 confirm/trigger 全阶段解锁。8 转换全部可触发。
 
 依据: 10_regime_detector_spec v1.3.1 §4 / Phase 2 计划 §Phase2b
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: backtest_start 参数
+#   fields: 参数 backtest_start（无注解）
+#   code: overlay_signals_builder.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: backtest_end 参数
+#   fields: 参数 backtest_end（无注解）
+#   code: overlay_signals_builder.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: data_load_start 参数
+#   fields: 参数 data_load_start（无注解）
+#   code: overlay_signals_builder.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: feature_builder 参数
+#   fields: 参数 feature_builder（无注解）
+#   code: overlay_signals_builder.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① OverlaySignalsConstructor
+#   name_en: OverlaySignalsConstructor
+#   intro: 8 转换 OverlaySignals 构造器（MOD-REGIME-002 Phase 2b）。
+#   desc: 8 转换 OverlaySignals 构造器（MOD-REGIME-002 Phase 2b）。 Usage（由 RegimeFeatureBuilder.build_shri…；公共方法（定义序）: build_f…
+#   inputs: backtest_start backtest_end data_load_start feature_builder risk_cons…
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: OverlaySignalsConstructor
+#   downstream: MOD-REGIME-002(RegimeFeatureBuilder.build_shrinkage_schedule消费→overlay_signals)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -335,9 +377,17 @@ class OverlaySignalsConstructor:
             # walk-forward 终选组合 precrisis_z+close_pos+pct250+decayed_max（WFE 3.44/fp60 0.8%；
             # MC p=0.87 未过已注记 reports/2026-08-29-s2-walkforward-validation.md §七）
             cache["capitulation"] = overlay_features.s2_capitulation_score(
-                vol_z, pct_change, volume, high, low, open_, close,
-                base_mode="precrisis_z", wick_mode="close_pos",
-                vol_filter_mode="pct250", agg_mode="decayed_max",
+                vol_z,
+                pct_change,
+                volume,
+                high,
+                low,
+                open_,
+                close,
+                base_mode="precrisis_z",
+                wick_mode="close_pos",
+                vol_filter_mode="pct250",
+                agg_mode="decayed_max",
             )
         elif vol_z is not None and pct_change is not None:
             _logger.warning("S2 capitulation 缺 OHLCV/open，降级瞬时两维版（治标 z>1）")
@@ -367,7 +417,9 @@ class OverlaySignalsConstructor:
         # 2026-08-29 治本接线：grading="v2_index"（d5 回撤 30%→15% 指数口径 + 删 d4 误抄维，
         # AI-WAVE4-001，Owner 裁定；14号 §4.4b 回源核对结论见 overlay_features docstring）
         if open_ is not None and high is not None and low is not None and close is not None and volume is not None:
-            cache["three_yang"] = overlay_features.s2_three_yang_flag(open_, high, low, close, volume, grading="v2_index")
+            cache["three_yang"] = overlay_features.s2_three_yang_flag(
+                open_, high, low, close, volume, grading="v2_index"
+            )
         else:
             _logger.warning("S2 three_yang 数据缺失（需 OHLCV），降级 0.0")
         # P1-E9d：breadth_thrust V 反转通路（需广度指数涨跌家数，confirm 析取维度）
@@ -544,7 +596,9 @@ class OverlaySignalsConstructor:
                     erp_percentile=erp_pct,
                     erp_absolute=erp_abs,
                 )
-        _logger.warning("S2 valuation 路A 数据缺失（index_valuation_daily 无 CAPE 分位），降级路B s2_valuation_score(close)")
+        _logger.warning(
+            "S2 valuation 路A 数据缺失（index_valuation_daily 无 CAPE 分位），降级路B s2_valuation_score(close)"
+        )
         return overlay_features.s2_valuation_score(close)
 
     def _compute_vix_pct(self, index: pd.DatetimeIndex) -> pd.Series | None:

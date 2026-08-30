@@ -28,7 +28,77 @@ over_ignored_critical_files: 规则模拟检查误匹配
 gitignore_pattern_coverage: 新文件类型未被覆盖建议添加
 
 
-对标 blueprint.md §6.24。"""
+对标 blueprint.md §6.24。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root，类型注解 str
+#   code: gitignore_auditor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: rules 参数
+#   fields: 参数 rules，类型注解 list[str]
+#   code: gitignore_auditor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① parse_gitignore
+#   name_en: parse_gitignore
+#   intro: parse_gitignore(project_root) 源码 L185-L204
+#   desc: 源码 L185-L204
+#   inputs: project_root
+#   outputs: list[str]
+# - id: A2
+#   name_zh: ② find_untracked_generated
+#   name_en: find_untracked_generated
+#   intro: find_untracked_generated(project_root, rules) 源码 L220-L242
+#   desc: 源码 L220-L242
+#   inputs: project_root rules
+#   outputs: list[str]
+# - id: A3
+#   name_zh: ③ find_over_ignored_critical
+#   name_en: find_over_ignored_critical
+#   intro: find_over_ignored_critical(project_root, rules) 源码 L245-L267
+#   desc: 源码 L245-L267
+#   inputs: project_root rules
+#   outputs: list[str]
+# - id: A4
+#   name_zh: ④ find_uncovered_types
+#   name_en: find_uncovered_types
+#   intro: find_uncovered_types(project_root, rules) 源码 L270-L295
+#   desc: 源码 L270-L295
+#   inputs: project_root rules
+#   outputs: list[str]
+# - id: A5
+#   name_zh: ⑤ audit_gitignore
+#   name_en: audit_gitignore
+#   intro: audit_gitignore(project_root) 源码 L298-L330
+#   desc: 源码 L298-L330
+#   inputs: project_root
+#   outputs: GitignoreAudit
+#   （注：A5 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[str]
+#   name_en: list[str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests/audit/test_gitignore_auditor.py
+# - id: O2
+#   name_zh: GitignoreAudit
+#   name_en: GitignoreAudit
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests/audit/test_gitignore_auditor.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
+"""
 
 from __future__ import annotations
 

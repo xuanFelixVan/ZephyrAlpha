@@ -14,7 +14,8 @@
 # [TESTS] tests/market_data/test_auction_data_manager.py
 # [A_module] module_id=MOD-MKT-007 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D-DATA-32 A股集合竞价数据管理器（B10-02234 canonical + B13-04251 归并 → MOD-MKT-007）。
+"""
+D-DATA-32 A股集合竞价数据管理器（B10-02234 canonical + B13-04251 归并 → MOD-MKT-007）。
 
 数据管理面（与信号分析面 MOD-SIG-089 正交）：
 
@@ -35,6 +36,69 @@
 
 依据: D-DATA-32 §30.3.1（B10-02234）+ A3数据架构 §17.1（B13-04251）；
 construction_backlog_dig.tsv 双 D-DATA-32 撞名裁定。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: ts 参数
+#   fields: 参数 ts，类型注解 datetime.datetime
+#   code: auction_data_manager.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: raw 参数
+#   fields: 参数 raw，类型注解 Mapping[str, Any]
+#   code: auction_data_manager.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: trade_date 参数
+#   fields: 参数 trade_date（无注解）
+#   code: auction_data_manager.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: session 参数
+#   fields: 参数 session（无注解）
+#   code: auction_data_manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① session_of
+#   name_en: session_of
+#   intro: 判定时间戳所属竞价时段（含端点），窗口外返回 None。
+#   desc: 判定时间戳所属竞价时段（含端点），窗口外返回 None。；源码 L176-L182
+#   inputs: ts
+#   outputs: AuctionSession | None
+# - id: A2
+#   name_zh: ② validate_tick
+#   name_en: validate_tick
+#   intro: 把原始 tick 规范化为 AuctionSnapshotRecord（Fail-Closed）。
+#   desc: 把原始 tick 规范化为 AuctionSnapshotRecord（Fail-Closed）。 Args: raw: 原始 tick（fetcher/loader 产出的 M…；源码 L317-L361
+#   inputs: raw trade_date session data_source
+#   outputs: AuctionSnapshotRecord
+# - id: A3
+#   name_zh: ③ AuctionDataManager
+#   name_en: AuctionDataManager
+#   intro: A股集合竞价数据管理器（采集编排 + 回放供数，三面全注入无 IO）。
+#   desc: A股集合竞价数据管理器（采集编排 + 回放供数，三面全注入无 IO）。；公共方法（定义序）: collect_session, replay；源码 L369-L558
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A3 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: AuctionSession | None
+#   name_en: AuctionSession | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-SIG-089 auction_microstructure_analyzer（快照注入面）；MOD-PLAN-015 auction_hit_rec…
+# - id: O2
+#   name_zh: AuctionSnapshotRecord
+#   name_en: AuctionSnapshotRecord
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-SIG-089 auction_microstructure_analyzer（快照注入面）；MOD-PLAN-015 auction_hit_rec…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations
@@ -162,21 +226,15 @@ class AuctionSnapshotRecord:
             and self.canceled_volume is not None
             and self.canceled_volume > self.placed_volume
         ):
-            raise InvalidAuctionTickError(
-                f"撤单量({self.canceled_volume}) 不得大于申报量({self.placed_volume})"
-            )
+            raise InvalidAuctionTickError(f"撤单量({self.canceled_volume}) 不得大于申报量({self.placed_volume})")
         if self.quality_flag not in (0, 1):
             raise InvalidAuctionTickError(f"quality_flag 须∈(0,1): {self.quality_flag!r}")
         if not isinstance(self.ts, datetime.datetime):
             raise InvalidAuctionTickError(f"ts 须为 datetime: {type(self.ts).__name__}")
         if self.ts.date() != self.trade_date:
-            raise InvalidAuctionTickError(
-                f"PIT违规: ts 日期 {self.ts.date()} != trade_date {self.trade_date}"
-            )
+            raise InvalidAuctionTickError(f"PIT违规: ts 日期 {self.ts.date()} != trade_date {self.trade_date}")
         if session_of(self.ts) != self.session:
-            raise InvalidAuctionTickError(
-                f"ts {self.ts.time()} 不在声明时段 {self.session.value} 窗口内"
-            )
+            raise InvalidAuctionTickError(f"ts {self.ts.time()} 不在声明时段 {self.session.value} 窗口内")
 
 
 # ──────────────────────────────────────────────────────────────────────────────

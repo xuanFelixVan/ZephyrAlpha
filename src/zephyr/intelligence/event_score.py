@@ -29,7 +29,8 @@
 # A3: 薄封装 trading_days_ago（交易日历）/ volume_series / volume_ma（kline_daily 薄查询）
 # O1: 评分 float / 入场 True|"EXIT"|("WAIT_CONFIRM",2)|False / 出场 "DECAY_TIMEOUT"|"EXTREME_REACTION"|"CONTRADICTION"|False
 # [/ALGO_FLOW]
-"""MOD-INT-EVENT-SCORE — 事件驱动 sleeve 事件影响评分与进出场触发（26 号 §2.5 施工化）。
+"""
+MOD-INT-EVENT-SCORE — 事件驱动 sleeve 事件影响评分与进出场触发（26 号 §2.5 施工化）。
 
 公式族（26 号 §2.5 首版/v1.2.0/v1.3.0 逐式落码）：
 - ``event_score_single_factor``：六类通用首版
@@ -60,6 +61,125 @@
 
 依据: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/26_event_driven_strategy_detail.md §2.4/§2.5
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: event 参数
+#   fields: 参数 event，类型注解 EventRecord
+#   code: event_score.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: data 参数
+#   fields: 参数 data，类型注解 EarningsFactorData
+#   code: event_score.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: actual_eps 参数
+#   fields: 参数 actual_eps，类型注解 float
+#   code: event_score.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: report_type 参数
+#   fields: 参数 report_type，类型注解 str
+#   code: event_score.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① EarningsFactorData
+#   name_en: EarningsFactorData
+#   intro: 业绩类事件外部因子数据（调用方从数据层获取注入）。
+#   desc: 业绩类事件外部因子数据（调用方从数据层获取注入）。 dual 必需：consensus_eps / surprise_std / ear。 triple 追加：consensus…；公共方法（定义序）: has_tri…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② MarketEventStore
+#   name_en: MarketEventStore
+#   intro: 市场事件存储协议（26 号 v1.9.1 接口契约薄封装）。
+#   desc: 市场事件存储协议（26 号 v1.9.1 接口契约薄封装）。 生产实现（fund_news_data + 事件分类落库）依赖事件分类管道，未闭合； MVP 用 ``ListEve…；公共方法（定义序）: query；源…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ ListEventStore
+#   name_en: ListEventStore
+#   intro: MarketEventStore 内存 MVP 实现（上游管道 add 事件，sleeve query 消费）。
+#   desc: MarketEventStore 内存 MVP 实现（上游管道 add 事件，sleeve query 消费）。；公共方法（定义序）: add, query；源码 L336-L346
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ VolumeProvider
+#   name_en: VolumeProvider
+#   intro: 量能数据协议（26 号 v1.9.1 薄封装：个股日K 表 PIT 查询基座）。
+#   desc: 量能数据协议（26 号 v1.9.1 薄封装：个股日K 表 PIT 查询基座）。；公共方法（定义序）: volume_series, volume_ma；源码 L350-L354
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ event_score_single_factor
+#   name_en: event_score_single_factor
+#   intro: 首版单因子评分（六类通用）。
+#   desc: 首版单因子评分（六类通用）。∈ [-1.5, +1.5]。 ``weight[class_] × surprise_direction × sentiment_score × d…；源码 L360-L372
+#   inputs: event
+#   outputs: float
+# - id: A6
+#   name_zh: ⑥ event_score_dual_factor
+#   name_en: event_score_dual_factor
+#   intro: 业绩类双因子：SUE(基本面惊喜) + EAR(市场反应)。
+#   desc: 业绩类双因子：SUE(基本面惊喜) + EAR(市场反应)。 Rockstead 2026-05：SUE 与 EAR 近零相关（r=0.004），组合年化 18.50%； EAR…；源码 L379-L390
+#   inputs: event data
+#   outputs: float
+# - id: A7
+#   name_zh: ⑦ expectation_gap_with_revision_momentum
+#   name_en: expectation_gap_with_revision_momentum
+#   intro: A 股预期差 + 分析师修正动量（Whisper Number 本土化，§2.5 v1.3.0）。
+#   desc: A 股预期差 + 分析师修正动量（Whisper Number 本土化，§2.5 v1.3.0）。 季报/半年报用财报后一致预期**变动**（上调=超预期）；年报用静态预期差且降…；源码 L393-L410
+#   inputs: actual_eps report_type consensus consensus_before consensus_after
+#   outputs: float
+# - id: A8
+#   name_zh: ⑧ overnight_return_jump
+#   name_en: overnight_return_jump
+#   intro: ORJ 隔夜跳空 = 次日开盘价 / 事件日收盘价 - 1（Bahcivan 2023，§2.5 v1.3.0）。
+#   desc: ORJ 隔夜跳空 = 次日开盘价 / 事件日收盘价 - 1（Bahcivan 2023，§2.5 v1.3.0）。 A 股 T+1 下财报多盘后披露 → 次日开盘 = 市场隔夜消…；源码 L413-L421
+#   inputs: open_next close_event
+#   outputs: float
+# - id: A9
+#   name_zh: ⑨ event_score_triple_factor
+#   name_en: event_score_triple_factor
+#   intro: SUE(预期差增强) + EAR(日内反应) + ORJ(隔夜跳空) 三因子融合（v1.3.0 主选）。
+#   desc: SUE(预期差增强) + EAR(日内反应) + ORJ(隔夜跳空) 三因子融合（v1.3.0 主选）。 三因子两两近正交 → 真分散化。ORJ 极端（>3%）触发反转修正（与…；源码 L424-L454
+#   inputs: event data
+#   outputs: float
+# - id: A10
+#   name_zh: ⑩ compute_event_score
+#   name_en: compute_event_score
+#   intro: 评分调度器（26 号 v1.7.0）：业绩类→双/三因子，其他五类→首版单因子。
+#   desc: 评分调度器（26 号 v1.7.0）：业绩类→双/三因子，其他五类→首版单因子。 降级链：业绩+三因子数据→triple（主选）→ 业绩+双因子数据→dual（降级默认） → 业…；源码 L457-L469
+#   inputs: event data
+#   outputs: float
+#   （注：A10 之后另有 13 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 事件驱动 sleeve（首批策略C，选股漏斗 BM-SEL-19 第四层输入，待开通降级不阻塞）
+# - id: O2
+#   name_zh: object
+#   name_en: object
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 事件驱动 sleeve（首批策略C，选股漏斗 BM-SEL-19 第四层输入，待开通降级不阻塞）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> A10
+# A10 --> O1
 """
 
 from __future__ import annotations

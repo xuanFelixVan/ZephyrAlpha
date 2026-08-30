@@ -31,7 +31,87 @@ anomaly_detection: 总行数减少/批量清洗/回溯修改 -> P0 CRITICAL从Gi
 对标 blueprint.md §6.26。
 
 
-同时写入核心 zephyr.gov_audit.writer.AuditWriter 不可变审计链。"""
+同时写入核心 zephyr.gov_audit.writer.AuditWriter 不可变审计链。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: db_path 参数
+#   fields: 参数 db_path，类型注解 str
+#   code: tamper_proof_audit.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: scan_id 参数
+#   fields: 参数 scan_id，类型注解 str
+#   code: tamper_proof_audit.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: project_root 参数
+#   fields: 参数 project_root，类型注解 str
+#   code: tamper_proof_audit.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: current 参数
+#   fields: 参数 current，类型注解 AuditRecord
+#   code: tamper_proof_audit.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① setup_append_only
+#   name_en: setup_append_only
+#   intro: setup_append_only(db_path) 源码 L210-L226
+#   desc: 源码 L210-L226
+#   inputs: db_path
+#   outputs: bool
+# - id: A2
+#   name_zh: ② snapshot_event_hash
+#   name_en: snapshot_event_hash
+#   intro: snapshot_event_hash(db_path) 源码 L229-L246
+#   desc: 源码 L229-L246
+#   inputs: db_path
+#   outputs: str
+# - id: A3
+#   name_zh: ③ count_states
+#   name_en: count_states
+#   intro: count_states(db_path) 源码 L249-L267
+#   desc: 源码 L249-L267
+#   inputs: db_path
+#   outputs: dict[str, int]
+# - id: A4
+#   name_zh: ④ generate_audit_log
+#   name_en: generate_audit_log
+#   intro: generate_audit_log(scan_id, db_path, project_root) 源码 L270-…
+#   desc: 源码 L270-L391
+#   inputs: scan_id db_path project_root
+#   outputs: AuditRecord
+# - id: A5
+#   name_zh: ⑤ detect_anomalies
+#   name_en: detect_anomalies
+#   intro: detect_anomalies(current, previous) 源码 L394-L430
+#   desc: 源码 L394-L430
+#   inputs: current previous
+#   outputs: list[AnomalyAlert]
+#   （注：A5 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_drift/_analysis.py ; tests/audit/test_tamper_proof_audit.py
+# - id: O2
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_drift/_analysis.py ; tests/audit/test_tamper_proof_audit.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
+"""
 
 from __future__ import annotations
 

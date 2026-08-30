@@ -14,7 +14,8 @@
 # [TESTS] tests/ml_train/test_continual_learning_antiforget.py
 # [A_module] module_id=MOD-ML-018 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""ContinualLearningAntiForget — 持续学习抗遗忘框架（MOD-ML-018）。
+"""
+ContinualLearningAntiForget — 持续学习抗遗忘框架（MOD-ML-018）。
 
 B10-01881（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-MLT-025，A1 §29.35）：
 **EWC 正则**（Fisher 信息盘后批处理注入计算，重要性权重缓存 + 锚点参数）
@@ -24,6 +25,48 @@ B10-01881（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-MLT-025，A1 §29.35）：
 
 分工：本件只做抗遗忘协议面（正则/缓冲/门禁/回滚），不做真训练；
 Fisher 估计器为盘后批处理注入回调，本件不实现估计算法。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: fisher_estimator 参数
+#   fields: 参数 fisher_estimator（无注解）
+#   code: continual_learning_antiforget.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: continual_learning_antiforget.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: max_replay_per_regime 参数
+#   fields: 参数 max_replay_per_regime（无注解）
+#   code: continual_learning_antiforget.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: max_drop_ratio 参数
+#   fields: 参数 max_drop_ratio（无注解）
+#   code: continual_learning_antiforget.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ContinualLearningAntiForget
+#   name_en: ContinualLearningAntiForget
+#   intro: 持续学习抗遗忘框架（EWC + 经验回放 + 旧状态验证 + 快照回滚）。
+#   desc: 持续学习抗遗忘框架（EWC + 经验回放 + 旧状态验证 + 快照回滚）。；公共方法（定义序）: compute_importance, importance_weights, ewc_penalty, add_rep…
+#   inputs: fisher_estimator clock max_replay_per_regime max_drop_ratio
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: ContinualLearningAntiForget
+#   downstream: 运行时装配批（Fisher 盘后批处理绑定 / regime 标注源绑定 / 微调流水线门禁装配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -121,9 +164,7 @@ class ContinualLearningAntiForget:
         max_drop_ratio: float = DEFAULT_MAX_DROP_RATIO,
     ) -> None:
         if max_replay_per_regime <= 0:
-            raise ContinualLearnError(
-                f"max_replay_per_regime 须为正: {max_replay_per_regime!r}"
-            )
+            raise ContinualLearnError(f"max_replay_per_regime 须为正: {max_replay_per_regime!r}")
         if not 0.0 < max_drop_ratio <= 1.0:
             raise ContinualLearnError(f"max_drop_ratio 越界: {max_drop_ratio!r}（需 ∈(0,1]）")
         self._fisher_estimator = fisher_estimator
@@ -178,16 +219,11 @@ class ContinualLearningAntiForget:
         _validate_params(new_params, what="new_params")
         if set(new_params) != set(self._anchor):
             raise ContinualLearnError("new_params 参数集与锚点不一致")
-        return sum(
-            self._fisher[k] * (float(new_params[k]) - self._anchor[k]) ** 2
-            for k in sorted(self._anchor)
-        )
+        return sum(self._fisher[k] * (float(new_params[k]) - self._anchor[k]) ** 2 for k in sorted(self._anchor))
 
     # ── 经验回放（每市场状态代表样本硬约束） ───────────────────────────────
 
-    def add_replay_sample(
-        self, sample_id: str, regime: str, payload: Mapping
-    ) -> ReplaySample:
+    def add_replay_sample(self, sample_id: str, regime: str, payload: Mapping) -> ReplaySample:
         """注入 regime 标注的代表样本入缓冲；超每状态上限 Fail-Closed。"""
         if not sample_id:
             raise ContinualLearnError("sample_id 为空")
@@ -199,12 +235,8 @@ class ContinualLearningAntiForget:
             raise ContinualLearnError(f"sample_id 重复: {sample_id!r}")
         buf = self._replay.setdefault(regime, {})
         if len(buf) >= self._max_replay:
-            raise ContinualLearnError(
-                f"regime {regime!r} 回放缓冲已满（≤{self._max_replay} 条硬约束）"
-            )
-        sample = ReplaySample(
-            sample_id=sample_id, regime=regime, payload=dict(payload), added_at=self._clock()
-        )
+            raise ContinualLearnError(f"regime {regime!r} 回放缓冲已满（≤{self._max_replay} 条硬约束）")
+        sample = ReplaySample(sample_id=sample_id, regime=regime, payload=dict(payload), added_at=self._clock())
         buf[sample_id] = sample
         return sample
 
@@ -279,13 +311,15 @@ class ContinualLearningAntiForget:
             if isinstance(new, bool) or not isinstance(new, (int, float)):
                 raise ContinualLearnError(f"new_metrics[{regime!r}] 非数值: {new!r}")
             drop = (float(old) - float(new)) / float(old)
-            results.append(ValidationResult(
-                regime=regime,
-                old_metric=float(old),
-                new_metric=float(new),
-                drop_ratio=drop,
-                passed=drop <= self._max_drop,
-            ))
+            results.append(
+                ValidationResult(
+                    regime=regime,
+                    old_metric=float(old),
+                    new_metric=float(new),
+                    drop_ratio=drop,
+                    passed=drop <= self._max_drop,
+                )
+            )
         return tuple(results)
 
     def finetune_gate(
@@ -310,9 +344,7 @@ class ContinualLearningAntiForget:
         failed = [r.regime for r in results if not r.passed]
         _log.warning("旧状态验证失败 regime=%s，触发回滚", failed)
         if not self._snapshot_order:
-            raise ContinualLearnError(
-                f"旧状态验证失败（{failed!r} 降幅超阈）且无参数快照可回滚（Fail-Closed）"
-            )
+            raise ContinualLearnError(f"旧状态验证失败（{failed!r} 降幅超阈）且无参数快照可回滚（Fail-Closed）")
         snap_id = self._snapshot_order[-1]
         return GateDecision(
             accepted=False,

@@ -14,7 +14,8 @@
 # [TESTS] tests/knowledge/test_paper_tracker.py
 # [A_module] module_id=MOD-KNW-013 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""PaperTracker — 论文追踪器（MOD-KNW-013）。
+"""
+PaperTracker — 论文追踪器（MOD-KNW-013）。
 
 B6-08549（AUD-DRAFT-001-DIGEST P2 波 P2-W03，CAND-KNW-016，B6 D-RESEARCH-07）：
 Zotero 式论文追踪——arXiv API 按主题订阅（API 调用全注入不真发）+
@@ -25,6 +26,48 @@ Zotero 式论文追踪——arXiv API 按主题订阅（API 调用全注入不�
 knowledge_quality_assessor=条目质量四维评分（零交集）；rag_pipeline=问答
 管道（本件产出 PaperRecord 可供其 ingest，不实现检索）；假设实体注册归
 hypothesis_registry（本件仅经注入 sink 上报候选词，不新建假设实体）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: arxiv_fetcher 参数
+#   fields: 参数 arxiv_fetcher（无注解）
+#   code: paper_tracker.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: summarizer 参数
+#   fields: 参数 summarizer（无注解）
+#   code: paper_tracker.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: hypothesis_sink 参数
+#   fields: 参数 hypothesis_sink（无注解）
+#   code: paper_tracker.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: paper_tracker.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① PaperTracker
+#   name_en: PaperTracker
+#   intro: 论文追踪器（订阅注册表 + 注入抓取 + 指纹去重 + 趋势 + 假设对接）。
+#   desc: 论文追踪器（订阅注册表 + 注入抓取 + 指纹去重 + 趋势 + 假设对接）。；公共方法（定义序）: subscribe, unsubscribe, list_subscriptions, fetch_topic, f…
+#   inputs: arxiv_fetcher summarizer hypothesis_sink clock trend_window trend_rec…
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: PaperTracker
+#   downstream: 运行时装配批（主题订阅注册 / arXiv 抓取适配器绑定 / 假设提取对接）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -55,12 +98,34 @@ _TITLE_TOKEN_RE: Final = re.compile(r"\w+")
 _KEYWORD_RE: Final = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 _DOI_PREFIXES: Final = ("https://doi.org/", "http://doi.org/", "doi:")
 _MIN_KEYWORD_LEN: Final = 4
-_STOPWORDS: Final = frozenset({
-    "about", "against", "based", "been", "between", "could", "from",
-    "have", "into", "should", "that", "their", "there", "this",
-    "through", "under", "using", "were", "when", "where", "which",
-    "will", "with", "would",
-})
+_STOPWORDS: Final = frozenset(
+    {
+        "about",
+        "against",
+        "based",
+        "been",
+        "between",
+        "could",
+        "from",
+        "have",
+        "into",
+        "should",
+        "that",
+        "their",
+        "there",
+        "this",
+        "through",
+        "under",
+        "using",
+        "were",
+        "when",
+        "where",
+        "which",
+        "will",
+        "with",
+        "would",
+    }
+)
 
 
 class PaperTrackerError(Exception):
@@ -123,7 +188,7 @@ def _normalize_doi(doi: object) -> str | None:
     text = doi.strip().lower()
     for prefix in _DOI_PREFIXES:
         if text.startswith(prefix):
-            text = text[len(prefix):]
+            text = text[len(prefix) :]
     return text or None
 
 
@@ -156,9 +221,7 @@ class PaperTracker:
         if trend_window <= 0:
             raise PaperTrackerError(f"trend_window 非法: {trend_window}（须 > 0）")
         if trend_recent <= 0 or trend_recent > trend_window:
-            raise PaperTrackerError(
-                f"trend_recent 非法: {trend_recent}（须 0 < recent <= window={trend_window}）"
-            )
+            raise PaperTrackerError(f"trend_recent 非法: {trend_recent}（须 0 < recent <= window={trend_window}）")
         if trend_min_count <= 0:
             raise PaperTrackerError(f"trend_min_count 非法: {trend_min_count}（须 > 0）")
         if trend_growth <= 0:
@@ -172,8 +235,8 @@ class PaperTracker:
         self._trend_growth = trend_growth
         self._subs: dict[str, Subscription] = {}
         self._papers: dict[str, PaperRecord] = {}
-        self._fp_index: dict[str, str] = {}     # 标题指纹 -> paper_id
-        self._doi_index: dict[str, str] = {}    # 规范化 DOI -> paper_id
+        self._fp_index: dict[str, str] = {}  # 标题指纹 -> paper_id
+        self._doi_index: dict[str, str] = {}  # 规范化 DOI -> paper_id
         self._arxiv_index: dict[str, str] = {}  # arXiv id -> paper_id
         # 滚动窗：每篇入库论文的关键词集合（文档频次统计用）
         self._history: deque[tuple[str, ...]] = deque(maxlen=trend_window)
@@ -187,9 +250,7 @@ class PaperTracker:
         if not subscription.query:
             raise PaperTrackerError(f"query 为空: topic {subscription.topic_id!r}")
         if subscription.max_results <= 0:
-            raise PaperTrackerError(
-                f"max_results 非法: {subscription.max_results}（须 > 0）"
-            )
+            raise PaperTrackerError(f"max_results 非法: {subscription.max_results}（须 > 0）")
         if subscription.topic_id in self._subs:
             raise PaperTrackerError(f"重复订阅: {subscription.topic_id!r}")
         self._subs[subscription.topic_id] = subscription
@@ -236,9 +297,11 @@ class PaperTracker:
         fingerprint = _title_fingerprint(title)
         if not fingerprint:
             return "skipped"
-        if (doi and doi in self._doi_index) or (
-            arxiv_id and arxiv_id in self._arxiv_index
-        ) or fingerprint in self._fp_index:
+        if (
+            (doi and doi in self._doi_index)
+            or (arxiv_id and arxiv_id in self._arxiv_index)
+            or fingerprint in self._fp_index
+        ):
             return "duplicate"
 
         authors_obj = raw.get("authors") or ()
@@ -318,19 +381,15 @@ class PaperTracker:
 
     def fetch_all(self) -> tuple[FetchReport, ...]:
         """全量抓取：仅 active 订阅，按 topic_id 确定性顺序。"""
-        return tuple(
-            self.fetch_topic(tid)
-            for tid in sorted(self._subs)
-            if self._subs[tid].active
-        )
+        return tuple(self.fetch_topic(tid) for tid in sorted(self._subs) if self._subs[tid].active)
 
     # ── 关键词趋势（滚动窗文档频次） ───────────────────────────────────────
 
     def keyword_trends(self) -> tuple[KeywordTrend, ...]:
         """滚动窗趋势：recent 段 vs older 段文档频次；按关键词确定性排序。"""
         history = list(self._history)
-        recent = history[-self._trend_recent:]
-        older = history[:-self._trend_recent]
+        recent = history[-self._trend_recent :]
+        older = history[: -self._trend_recent]
         recent_counts: Counter[str] = Counter()
         older_counts: Counter[str] = Counter()
         for keywords in recent:
@@ -341,16 +400,15 @@ class PaperTracker:
         for keyword in sorted(set(recent_counts) | set(older_counts)):
             recent_count = recent_counts.get(keyword, 0)
             older_count = older_counts.get(keyword, 0)
-            rising = (
-                recent_count >= self._trend_min_count
-                and recent_count > older_count * self._trend_growth
+            rising = recent_count >= self._trend_min_count and recent_count > older_count * self._trend_growth
+            trends.append(
+                KeywordTrend(
+                    keyword=keyword,
+                    recent_count=recent_count,
+                    older_count=older_count,
+                    rising=rising,
+                )
             )
-            trends.append(KeywordTrend(
-                keyword=keyword,
-                recent_count=recent_count,
-                older_count=older_count,
-                rising=rising,
-            ))
         return tuple(trends)
 
     # ── 查询 ─────────────────────────────────────────────────────────────
@@ -364,9 +422,6 @@ class PaperTracker:
 
     def list_papers(self, topic_id: str | None = None) -> tuple[PaperRecord, ...]:
         """论文列表（可按主题过滤；按 (fetched_at, paper_id) 确定性排序）。"""
-        records = [
-            r for r in self._papers.values()
-            if topic_id is None or r.topic_id == topic_id
-        ]
+        records = [r for r in self._papers.values() if topic_id is None or r.topic_id == topic_id]
         records.sort(key=lambda r: (r.fetched_at, r.paper_id))
         return tuple(records)

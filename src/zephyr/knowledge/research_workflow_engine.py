@@ -14,7 +14,8 @@
 # [TESTS] tests/knowledge/test_research_workflow_engine.py
 # [A_module] module_id=MOD-KNW-014 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""ResearchWorkflowEngine — 研究工作流引擎轻量版（MOD-KNW-014）。
+"""
+ResearchWorkflowEngine — 研究工作流引擎轻量版（MOD-KNW-014）。
 
 B6-08551（AUD-DRAFT-001-DIGEST P2 波 P2-W03，CAND-KNW-017，B6 D-RESEARCH-09）：
 复用 task_scheduler 语义的研究 pipeline——DAG 节点依赖拓扑执行 +
@@ -26,6 +27,56 @@ B6-08551（AUD-DRAFT-001-DIGEST P2 波 P2-W03，CAND-KNW-017，B6 D-RESEARCH-09�
 不重建调度原语）；research_project_aggregate=项目聚合根状态机（本件=单
 次运行执行引擎，不管项目生命周期）；layered_command_chain=Agent 层级委
 托（零交集）。上线门禁实体归 gov_audit kb_gate 族（本件仅注入回调）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: research_workflow_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: sleeper 参数
+#   fields: 参数 sleeper（无注解）
+#   code: research_workflow_engine.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: gate 参数
+#   fields: 参数 gate（无注解）
+#   code: research_workflow_engine.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: audit_sink 参数
+#   fields: 参数 audit_sink（无注解）
+#   code: research_workflow_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ResearchTemplate
+#   name_en: ResearchTemplate
+#   intro: 研究模板（DAG 定义载体，frozen）。
+#   desc: 研究模板（DAG 定义载体，frozen）。；公共方法（定义序）: factor_research；源码 L162-L193
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② ResearchWorkflowEngine
+#   name_en: ResearchWorkflowEngine
+#   intro: 研究工作流引擎（模板注册表 + DAG 拓扑执行 + 退避重试 + 门禁 + 审计）。
+#   desc: 研究工作流引擎（模板注册表 + DAG 拓扑执行 + 退避重试 + 门禁 + 审计）。；公共方法（定义序）: register_template, get_template, list_templates, run,…
+#   inputs: clock sleeper gate audit_sink base_backoff_seconds max_backoff_seconds
+#   outputs: 返回值
+#   （注：A2 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（10 定义）
+#   name_en: public defs
+#   intro: ResearchTemplate, ResearchWorkflowEngine
+#   downstream: 运行时装配批（研究模板注册 / 上线门禁绑定 / 审计路由）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -122,7 +173,7 @@ class ResearchTemplate:
         *,
         template_id: str = "factor_research",
         description: str = "因子挖掘→IC验证→注册→灰度标准研究模板",
-    ) -> "ResearchTemplate":
+    ) -> ResearchTemplate:
         """标准因子研究模板：四阶段逐依赖链，灰度阶段强制上线门禁。"""
         missing = [stage for stage in _FACTOR_STAGES if stage not in tasks]
         if missing:
@@ -130,12 +181,14 @@ class ResearchTemplate:
         nodes: list[WorkflowNode] = []
         prev: str | None = None
         for stage in _FACTOR_STAGES:
-            nodes.append(WorkflowNode(
-                node_id=stage,
-                task=tasks[stage],
-                depends_on=(prev,) if prev is not None else (),
-                requires_gate=(stage == "canary_release"),
-            ))
+            nodes.append(
+                WorkflowNode(
+                    node_id=stage,
+                    task=tasks[stage],
+                    depends_on=(prev,) if prev is not None else (),
+                    requires_gate=(stage == "canary_release"),
+                )
+            )
             prev = stage
         return cls(template_id=template_id, description=description, nodes=tuple(nodes))
 
@@ -189,13 +242,9 @@ class ResearchWorkflowEngine:
         max_backoff_seconds: float = 60.0,
     ) -> None:
         if base_backoff_seconds <= 0:
-            raise ResearchWorkflowError(
-                f"base_backoff_seconds 非法: {base_backoff_seconds}（须 > 0）"
-            )
+            raise ResearchWorkflowError(f"base_backoff_seconds 非法: {base_backoff_seconds}（须 > 0）")
         if max_backoff_seconds <= 0:
-            raise ResearchWorkflowError(
-                f"max_backoff_seconds 非法: {max_backoff_seconds}（须 > 0）"
-            )
+            raise ResearchWorkflowError(f"max_backoff_seconds 非法: {max_backoff_seconds}（须 > 0）")
         self._clock = clock or datetime.datetime.now
         self._sleeper = sleeper or (lambda seconds: None)  # 默认空操作，绝不真睡
         self._gate = gate
@@ -284,16 +333,12 @@ class ResearchWorkflowEngine:
             if not callable(node.task):
                 raise ResearchWorkflowError(f"节点 task 不可调用: {node.node_id!r}")
             if node.max_retries < 0:
-                raise ResearchWorkflowError(
-                    f"max_retries 非法: {node.max_retries}（须 >= 0）"
-                )
+                raise ResearchWorkflowError(f"max_retries 非法: {node.max_retries}（须 >= 0）")
             for dep in node.depends_on:
                 if dep == node.node_id:
                     raise ResearchWorkflowError(f"节点自环: {node.node_id!r}")
                 if dep not in {n.node_id for n in template.nodes}:
-                    raise ResearchWorkflowError(
-                        f"未知依赖: {node.node_id!r} -> {dep!r}（依赖引用须闭合）"
-                    )
+                    raise ResearchWorkflowError(f"未知依赖: {node.node_id!r} -> {dep!r}（依赖引用须闭合）")
         order = self._topo_order(template.nodes)
         self._templates[template.template_id] = template
         self._topo[template.template_id] = order
@@ -333,19 +378,21 @@ class ResearchWorkflowEngine:
                         self._max_backoff,
                     )
                     self._audit(
-                        run_id, node.node_id, "node_retry",
+                        run_id,
+                        node.node_id,
+                        "node_retry",
                         f"{error}；退避 {delay}s 后进行第 {attempts + 1} 次尝试",
                     )
                     self._sleeper(delay)
                     continue
                 self._audit(
-                    run_id, node.node_id, "node_failed",
+                    run_id,
+                    node.node_id,
+                    "node_failed",
                     f"共 {attempts} 次尝试均失败: {error}",
                 )
                 return NodeResult(node.node_id, NodeStatus.FAILED, attempts, None, error)
-            self._audit(
-                run_id, node.node_id, "node_succeeded", f"第 {attempts} 次尝试成功"
-            )
+            self._audit(run_id, node.node_id, "node_succeeded", f"第 {attempts} 次尝试成功")
             return NodeResult(node.node_id, NodeStatus.SUCCEEDED, attempts, output, None)
 
     def run(
@@ -374,10 +421,7 @@ class ResearchWorkflowEngine:
         results: list[NodeResult] = []
         for node_id in self._topo[template_id]:
             node = nodes_by_id[node_id]
-            bad_upstream = sorted(
-                dep for dep in node.depends_on
-                if statuses[dep] is not NodeStatus.SUCCEEDED
-            )
+            bad_upstream = sorted(dep for dep in node.depends_on if statuses[dep] is not NodeStatus.SUCCEEDED)
             if bad_upstream:
                 detail = f"上游未成功: {bad_upstream}"
                 self._audit(run_id, node_id, "node_skipped", detail)
@@ -438,7 +482,4 @@ class ResearchWorkflowEngine:
 
     def audit_trail(self, run_id: str | None = None) -> tuple[AuditEvent, ...]:
         """审计留痕（可按 run 过滤；按 seq 单调序）。"""
-        return tuple(
-            e for e in self._audit_log
-            if run_id is None or e.run_id == run_id
-        )
+        return tuple(e for e in self._audit_log if run_id is None or e.run_id == run_id)

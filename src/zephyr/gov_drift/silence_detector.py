@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 Silence Detector — v0.8.0 静默窗口检测器: agent无响应超时+heartbeat缺失检测。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: silence_detector.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SilenceDetector
+#   name_en: SilenceDetector
+#   intro: class SilenceDetector 源码 L53-L88
+#   desc: 公共方法（定义序）: last_activity, timeout_s, record_activity, detect_silence, is_silent；源码 L53-L88
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SilenceDetector
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

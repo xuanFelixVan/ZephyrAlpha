@@ -14,7 +14,8 @@
 # [TESTS] tests/gov_enforcement/test_construction_governor_gate.py
 # [A_module] module_id=MOD-GOV-056 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""ConstructionGovernorGate — AI 施工门禁器（MOD-GOV-056）。
+"""
+ConstructionGovernorGate — AI 施工门禁器（MOD-GOV-056）。
 
 B10-02423（AUD-DRAFT-001-DIGEST P2 波 P2-W12，CAND-GOVENFOR-002，A1
 D-GOVERNANCE-15）：施工门禁挂 GatePipeline 语义——产物**公式 Hash 校验**
@@ -24,6 +25,48 @@ D-GOVERNANCE-15）：施工门禁挂 GatePipeline 语义——产物**公式 Has
 查重分工（蓝图 §0）：commit_gates 包=GitCommitGateway pre-commit 门禁实现
 （本件=施工产物公式指纹与影响面门禁，不挂 git hook）；behavioral_admission
 =行为准入（本件=产物内容指纹与影响面，零交集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: construction_governor_gate.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: impact_threshold 参数
+#   fields: 参数 impact_threshold（无注解）
+#   code: construction_governor_gate.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: approval_sink 参数
+#   fields: 参数 approval_sink（无注解）
+#   code: construction_governor_gate.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: record_sink 参数
+#   fields: 参数 record_sink（无注解）
+#   code: construction_governor_gate.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ConstructionGovernorGate
+#   name_en: ConstructionGovernorGate
+#   intro: AI 施工门禁件（公式指纹校验 + 回归截断升级审批 + 判定留痕）。
+#   desc: AI 施工门禁件（公式指纹校验 + 回归截断升级审批 + 判定留痕）。；公共方法（定义序）: register_formula, verify, registrations, verdicts；源码 L163-L311
+#   inputs: clock impact_threshold approval_sink record_sink
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: ConstructionGovernorGate
+#   downstream: 运行时装配批（施工产物门装配 / GatePipeline 挂接 / 升级审批回调与判定留痕路由）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -154,9 +197,7 @@ class ConstructionGovernorGate:
             raise ConstructionGateError("artifact_id 为空")
         if not isinstance(product.produced_text, str):
             raise ConstructionGateError("produced_text 须为 str")
-        if not isinstance(product.affected_paths, tuple) or any(
-            not isinstance(p, str) for p in product.affected_paths
-        ):
+        if not isinstance(product.affected_paths, tuple) or any(not isinstance(p, str) for p in product.affected_paths):
             raise ConstructionGateError("affected_paths 须为 tuple[str, ...]")
 
     def _request_approval(self, product: ArtifactProduct, impact: int) -> bool:
@@ -167,7 +208,7 @@ class ConstructionGovernorGate:
             artifact_id=product.artifact_id,
             impact_size=impact,
             impact_threshold=self._threshold,
-            truncated_paths=product.affected_paths[self._threshold:],
+            truncated_paths=product.affected_paths[self._threshold :],
         )
         try:
             approved = self._approval_sink(request)
@@ -232,7 +273,7 @@ class ConstructionGovernorGate:
             else:
                 decision = GateDecision.ESCALATE
                 allowed = product.affected_paths[: self._threshold]
-                truncated = product.affected_paths[self._threshold:]
+                truncated = product.affected_paths[self._threshold :]
                 reason = f"影响面 {impact} 超阈值 {self._threshold}，回归截断待升级审批"
         else:
             decision = GateDecision.PASS

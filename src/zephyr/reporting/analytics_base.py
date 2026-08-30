@@ -38,6 +38,40 @@ D_REPORTING — Post-Trade Analytics Layer
   - AttributionEngineBase : OCP D_REPORTING-ATTR — PositionSnapshot -> PerformanceAttributionReport
 
 依赖方向：D_EXECUTION_CORE -> D_REPORTING -> D_FRONTEND / D_RESEARCH / D_GOV_ENFORCEMENT
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: analytics_base.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① TCAEngineBase
+#   name_en: TCAEngineBase
+#   intro: 交易成本分析引擎（OCP 扩展点 D_REPORTING-TCA）
+#   desc: 交易成本分析引擎（OCP 扩展点 D_REPORTING-TCA） 契约对齐：CTR-005（Fill 入站）+ CTR-004（Order 入站）-> CTR-P1-007（E…；公共方法（定义序）: analyze…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② AttributionEngineBase
+#   name_en: AttributionEngineBase
+#   intro: 绩效归因引擎（OCP 扩展点 D_REPORTING-ATTR）
+#   desc: 绩效归因引擎（OCP 扩展点 D_REPORTING-ATTR） 契约对齐：CTR-P1-009（PerformanceAttributionReport 出站）-> D_FRO…；公共方法（定义序）: attribu…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: TCAEngineBase, AttributionEngineBase
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

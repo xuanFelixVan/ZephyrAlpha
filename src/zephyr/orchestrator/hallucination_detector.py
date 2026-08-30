@@ -67,6 +67,51 @@ Depends      :  三阶段）、 策略）、
 - 只引入 pydantic（已是项目 BASE_CONFIG 依赖）
 - LLM 调用通过 Protocol 注入，生产环境再提供真实 caller
 - 审计写入通过可选的 ``audit_logger`` 注入，默认跳过
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: primary_caller 参数
+#   fields: 参数 primary_caller（无注解）
+#   code: hallucination_detector.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: verifier_caller 参数
+#   fields: 参数 verifier_caller（无注解）
+#   code: hallucination_detector.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: repo_root 参数
+#   fields: 参数 repo_root（无注解）
+#   code: hallucination_detector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① HallucinationDetector
+#   name_en: HallucinationDetector
+#   intro: CoVe 幻觉检测器。
+#   desc: CoVe 幻觉检测器。 Parameters ---------- primary_caller : Optional[ModelCaller] Step 1 Baseline+…；公共方法（定义序）: budget,…
+#   inputs: primary_caller verifier_caller execution_model_name verifier_model_na…
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② build_detector_with_defaults
+#   name_en: build_detector_with_defaults
+#   intro: 便捷构造：使用默认预算 / 模型名，主要用于 beta 联调阶段。
+#   desc: 便捷构造：使用默认预算 / 模型名，主要用于 beta 联调阶段。 单元测试应直接使用 ``HallucinationDetector(...)`` 以便显式注入参数。；源码 L951-L965
+#   inputs: primary_caller verifier_caller repo_root
+#   outputs: HallucinationDetector
+#   （注：A2 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: HallucinationDetector
+#   name_en: HallucinationDetector
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

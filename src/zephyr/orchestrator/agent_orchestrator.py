@@ -65,6 +65,54 @@ Agent / MCP 工具调用链**，**不读写** ``TaskCard.status``。**任务十�
 - **纯内存状态**：Orchestrator 本身无持久化；健康指标累计保留在
   ``HealthMonitor`` 内部的固定窗口滑动队列中。
 - **可测试**：时间源 ``now`` 与 UUID 生成器 ``id_factory`` 均可注入。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: matrix 参数
+#   fields: 参数 matrix（无注解）
+#   code: agent_orchestrator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: agent_pool 参数
+#   fields: 参数 agent_pool（无注解）
+#   code: agent_orchestrator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AgentRouter
+#   name_en: AgentRouter
+#   intro: 6 角色 × 10 域的无状态路由器。
+#   desc: 6 角色 × 10 域的无状态路由器。 Parameters ---------- matrix : dict[RoutingRole, dict[str, float]] |…；公共方法（定义序）: pool, po…
+#   inputs: matrix agent_pool
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② HealthMonitor
+#   name_en: HealthMonitor
+#   intro: 滑窗口累计 5 项 SLO 的健康监控器。
+#   desc: 滑窗口累计 5 项 SLO 的健康监控器。 Parameters ---------- window_size : int 最近 N 次 orchestrate 的事件窗口（默认…；公共方法（定义序）: record,…
+#   inputs: window_size thresholds throughput_window_sec now
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ AgentOrchestrator
+#   name_en: AgentOrchestrator
+#   intro: Orchestrator Agent：将 directive 序列编排为 MCP 工具链，并运行 CoVe post-…
+#   desc: Orchestrator Agent：将 directive 序列编排为 MCP 工具链，并运行 CoVe post-hook。 Parameters ---------- ro…；公共方法（定义序）: lsg_sca…
+#   inputs: router tool_invoker hallucination_caller directive_mapping monitor no…
+#   outputs: 返回值
+#   （注：A3 之后另有 9 个公共定义未列入（含 9 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（12 定义）
+#   name_en: public defs
+#   intro: AgentRouter, HealthMonitor, AgentOrchestrator
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

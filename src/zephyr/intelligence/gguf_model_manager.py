@@ -19,7 +19,8 @@
 # F1: 读表校验（结构/数值 fail-closed）→ F2: check_load 三重门（登记命中 -> 单模型 ≤ 时段配额 -> 合计 ≤ 时段配额且 ≤ 硬上限）→ F3: to_pool_budgets 折算 PoolBudgets 供 local_llm_pool 消费
 # O1: LoadGateDecision(allowed/reasons)；O2: DiscoveryDriftReport（已拉未登记/已登记未拉）；O3: PoolBudgets
 # [/ALGO_FLOW]
-"""GgufModelManager — GGUF 模型显存预算管理件（MOD-INF-060，10号文 §4 Phase 2.3）。
+"""
+GgufModelManager — GGUF 模型显存预算管理件（MOD-INF-060，10号文 §4 Phase 2.3）。
 
 设计真源：10号文 §3.3「推理优化设计：GGUF/Ollama 为主路径」+ §3.3 显存时段配额表
 + §4 Phase 2.3 验收口径「显存预算表落 config/（human_gated），超预算加载被阻断」。
@@ -32,6 +33,64 @@
   本件只负责"新模型引入前查表 + 超预算阻断加载"的判定核。
 - 模型清单枚举复用 ModelDiscovery（MOD-INF-034），sync_with_discovery 只做对账
   不自动改表（human_gated：表只能人改）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: hour 参数
+#   fields: 参数 hour，类型注解 int
+#   code: gguf_model_manager.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: minute 参数
+#   fields: 参数 minute，类型注解 int
+#   code: gguf_model_manager.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: path 参数
+#   fields: 参数 path，类型注解 str | Path
+#   code: gguf_model_manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① period_from_time
+#   name_en: period_from_time
+#   intro: 按 10号文 §3.3 时段表把 Asia/Shanghai 本地时刻映射到时段键。
+#   desc: 按 10号文 §3.3 时段表把 Asia/Shanghai 本地时刻映射到时段键。 窗口外时刻（09:00-09:15 集合竞价间隙等）按下一临近窗口归属： 盘前结束→盘中开始…；源码 L183-L199
+#   inputs: hour minute
+#   outputs: str
+# - id: A2
+#   name_zh: ② load_budget_table
+#   name_en: load_budget_table
+#   intro: 读取并校验显存预算表（fail-closed：文件缺失/结构非法即抛 GgufBudgetTableError）。
+#   desc: 读取并校验显存预算表（fail-closed：文件缺失/结构非法即抛 GgufBudgetTableError）。；源码 L202-L213
+#   inputs: path
+#   outputs: GgufModelManager
+# - id: A3
+#   name_zh: ③ GgufModelManager
+#   name_en: GgufModelManager
+#   intro: GGUF 模型显存预算判定核（判定路径纯内存无 IO）。
+#   desc: GGUF 模型显存预算判定核（判定路径纯内存无 IO）。 用法:: mgr = load_budget_table() decision = mgr.check_load("qw…；公共方法（定义序）: hard_ca…
+#   inputs: table
+#   outputs: 返回值
+#   （注：A3 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: local_llm_pool 装配件（预算注入）; tests/intelligence/test_gguf_model_manager.py; 新模型引入人…
+# - id: O2
+#   name_zh: GgufModelManager
+#   name_en: GgufModelManager
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: local_llm_pool 装配件（预算注入）; tests/intelligence/test_gguf_model_manager.py; 新模型引入人…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

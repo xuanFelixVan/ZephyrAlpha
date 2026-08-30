@@ -15,12 +15,40 @@
 # [A_module] module_id=MOD-ML-004 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
 
-"""D_ML_TRAIN — MOD-ML-004 灰度/影子部署器。
+"""
+D_ML_TRAIN — MOD-ML-004 灰度/影子部署器。
 
 影子部署语义（红线 B-009）：模型预测只**记录**用于观测对比，**永不生效**——
 ``record_shadow_predictions`` 返回 ``effective=False``，本模块无任何把影子流量
 接入真实决策面的接口。灰度比例 ``shadow_ratio`` 仅声明观测覆盖面（留痕用），
 不代表真实流量切分。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: gray_release_shadow_deployer.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① GrayReleaseShadowDeployer
+#   name_en: GrayReleaseShadowDeployer
+#   intro: 灰度/影子部署器（MOD-ML-004）。
+#   desc: 灰度/影子部署器（MOD-ML-004）。；公共方法（定义序）: deploy_shadow, retire_shadow, record_shadow_predictions, shadow_report；源码 L8…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: GrayReleaseShadowDeployer
+#   downstream: MOD-ML-002 ai_operator（影子部署申请留痕）；MOD-ML-009 learning_effect_feedback（影子表现回喂）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

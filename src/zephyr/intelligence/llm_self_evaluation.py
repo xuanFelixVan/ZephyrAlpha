@@ -14,7 +14,8 @@
 # [TESTS] tests/intelligence/test_llm_self_evaluation.py
 # [A_module] module_id=MOD-INT-LLM-SELFEVAL | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""LlmSelfEvaluation — LLM 自评估与交叉验证（MOD-INT-LLM-SELFEVAL）。
+"""
+LlmSelfEvaluation — LLM 自评估与交叉验证（MOD-INT-LLM-SELFEVAL）。
 
 B10-01883（AUD-DRAFT-001-DIGEST P2 波 P2-W04，CAND-AISA-013，A1 §29.37）：
 LLM-as-Judge **三维评分**（事实/逻辑/风险，judge 注入）+ CoT 推理链
@@ -26,6 +27,48 @@ AISA-010 归并。
 查重分工（蓝图 §0）：exam_judge=模型考试评分器（本件经注入 judge 消费其
 语义，不重建评分实现）；model_profiling=模型画像（零交集）；本件输出仅
 advisory 信号，无下单语义。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: judge 参数
+#   fields: 参数 judge（无注解）
+#   code: llm_self_evaluation.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: models 参数
+#   fields: 参数 models（无注解）
+#   code: llm_self_evaluation.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: cot_rechecker 参数
+#   fields: 参数 cot_rechecker（无注解）
+#   code: llm_self_evaluation.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: consistency_threshold 参数
+#   fields: 参数 consistency_threshold（无注解）
+#   code: llm_self_evaluation.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① LlmSelfEvaluation
+#   name_en: LlmSelfEvaluation
+#   intro: LLM 自评估件（Judge 三维 + CoT 自校验 + 三模型投票 + 争议处置）。
+#   desc: LLM 自评估件（Judge 三维 + CoT 自校验 + 三模型投票 + 争议处置）。；公共方法（定义序）: evaluate；源码 L157-L275
+#   inputs: judge models cot_rechecker consistency_threshold dispute_weight revie…
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: LlmSelfEvaluation
+#   downstream: 运行时装配批（judge 接 exam_judge / 三模型接 llm 池回调 / 争议人工审核队列 / CoT 审计接审计链）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -130,9 +173,7 @@ class LlmSelfEvaluation:
         if not callable(cot_rechecker):
             raise LlmSelfEvalError("cot_rechecker 未注入")
         if not models or len(models) != 3:
-            raise LlmSelfEvalError(
-                f"三模型投票须恰为 3 个独立模型，实收 {len(models) if models else 0}"
-            )
+            raise LlmSelfEvalError(f"三模型投票须恰为 3 个独立模型，实收 {len(models) if models else 0}")
         for name, fn in models.items():
             if not name:
                 raise LlmSelfEvalError("模型名为空")
@@ -223,7 +264,9 @@ class LlmSelfEvaluation:
         if disputed:
             _log.warning(
                 "LLM 结论争议: consistency=%.4f cot_consistent=%s → 降权 %.2f + 人工审核",
-                consistency, cot_consistent, verdict.weight,
+                consistency,
+                cot_consistent,
+                verdict.weight,
             )
             if self._review_sink is not None:
                 self._review_sink(verdict)

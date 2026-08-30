@@ -15,12 +15,55 @@
 # [A_module] module_id=MOD-ML-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""对抗鲁棒性验证器（MOD-ML-005）——轻量可单测实现。
+"""
+对抗鲁棒性验证器（MOD-ML-005）——轻量可单测实现。
 
 对注入的 predict_fn 施加高斯噪声扰动（多档 epsilon × n_trials 蒙特卡洛），
 度量预测漂移（mean L2 shift / max shift）；供给标签时同时报告扰动下准确率
 降级（decision_threshold 符号化判定）。真对抗样本生成（FGSM/PGD 需梯度）
 属模型侧能力，本模块做黑盒噪声鲁棒性基线。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: predict_fn 参数
+#   fields: 参数 predict_fn，类型注解 Callable[[np.ndarray], np.ndarray]
+#   code: adversarial_robustness_validator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: samples 参数
+#   fields: 参数 samples，类型注解 np.ndarray
+#   code: adversarial_robustness_validator.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: labels 参数
+#   fields: 参数 labels（无注解）
+#   code: adversarial_robustness_validator.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: epsilons 参数
+#   fields: 参数 epsilons（无注解）
+#   code: adversarial_robustness_validator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① validate_robustness
+#   name_en: validate_robustness
+#   intro: 黑盒噪声鲁棒性验证。
+#   desc: 黑盒噪声鲁棒性验证。输入非法 → ZA-MLT-0009。；源码 L111-L169
+#   inputs: predict_fn samples labels epsilons n_trials seed decision_threshold
+#   outputs: RobustnessReport
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: RobustnessReport
+#   name_en: RobustnessReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: （模型晋升前鲁棒性门禁消费方）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

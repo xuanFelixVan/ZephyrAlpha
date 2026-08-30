@@ -25,7 +25,35 @@ P0 Hotfix 快速旁路处理：[HOTFIX]/[EMERGENCY] commit 自动标记为 ACKNO
 对标 blueprint.md §2.12（热修复/紧急变更旁路）。
 
 
-同时写入核心 zephyr.gov_audit.writer.AuditWriter 不可变审计链。"""
+同时写入核心 zephyr.gov_audit.writer.AuditWriter 不可变审计链。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: drift_hotfix_bypass.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① HotfixBypass
+#   name_en: HotfixBypass
+#   intro: class HotfixBypass 源码 L99-L260
+#   desc: 公共方法（定义序）: audit_dir, audit_log_path, core_writer, project_root, is_hotfix_commit, process_hotfix, check_expi…
+#   inputs: project_root
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: HotfixBypass
+#   downstream: src/zephyr/gov_drift/_drift.py ; src/zephyr/gov_enforcement/rule_enforcement/dr…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 from __future__ import annotations
 

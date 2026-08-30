@@ -34,6 +34,41 @@ ArtifactScanner — SSRF / Path Traversal / Credential / Token 防御扫描器
 
 SSoT: cross_layer_contracts.yaml v3.0
 Phase F — LLM 安全门禁落地
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: artifact_scanner.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ScanReport
+#   name_en: ScanReport
+#   intro: class ScanReport 源码 L94-L109
+#   desc: 公共方法（定义序）: is_clean, error_count, warning_count；源码 L94-L109
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② ArtifactScanner
+#   name_en: ArtifactScanner
+#   intro: 多类别 artifact 安全扫描器
+#   desc: 多类别 artifact 安全扫描器 使用方式： scanner = ArtifactScanner() report = scanner.scan_file(Path("src…；公共方法（定义序）: scan_co…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: ScanReport, ArtifactScanner
+#   downstream: tests/governance/security/test_artifact_scanner.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

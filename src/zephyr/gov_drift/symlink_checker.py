@@ -31,7 +31,35 @@ symlink_to_outside: VCS边界外的文件链接
 dead_reference_pages: symlink引用已被清理的文档页面
 
 
-对标 blueprint.md §6.29。"""
+对标 blueprint.md §6.29。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root，类型注解 str
+#   code: symlink_checker.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① check_broken_symlinks
+#   name_en: check_broken_symlinks
+#   intro: check_broken_symlinks(project_root) 源码 L86-L121
+#   desc: 源码 L86-L121
+#   inputs: project_root
+#   outputs: list[SymlinkIssue]
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[SymlinkIssue]
+#   name_en: list[SymlinkIssue]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_drift/_scanners.py ; tests/audit/test_symlink_checker.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 from __future__ import annotations
 

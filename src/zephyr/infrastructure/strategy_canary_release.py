@@ -14,7 +14,8 @@
 # [TESTS] tests/infrastructure/test_strategy_canary_release.py
 # [A_module] module_id=MOD-INF-072 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
-"""StrategyCanaryRelease — 策略灰度发布（MOD-INF-072）。
+"""
+StrategyCanaryRelease — 策略灰度发布（MOD-INF-072）。
 
 B14-04678（AUD-DRAFT-001-DIGEST P1 波 W-P1-24，CAND-INFRAOPS-002，A9运维架构
 §8.3.6 D-SIGNAL-140）：config 驱动 1-5% → 25-50% → 100% 三阶段放量阶梯 +
@@ -25,6 +26,46 @@ B14-04678（AUD-DRAFT-001-DIGEST P1 波 W-P1-24，CAND-INFRAOPS-002，A9运维�
 生效）；canary_manager=通用权重桩；grayscale_rollout/lifecycle_state_machine
 =因子级放量与生命周期；本件=**策略级**真实流量分阶段灰度状态机。本件只产
 目标 ratio 与状态，不直接切流量（执行归运行时装配批）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: strategy_id 参数
+#   fields: 参数 strategy_id，类型注解 str
+#   code: strategy_canary_release.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: raw 参数
+#   fields: 参数 raw，类型注解 dict
+#   code: strategy_canary_release.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① config_from_dict
+#   name_en: config_from_dict
+#   intro: 从 config/canary.yaml 语义的 dict 构造配置（装配批加载 YAML 后调用）。
+#   desc: 从 config/canary.yaml 语义的 dict 构造配置（装配批加载 YAML 后调用）。；源码 L196-L225
+#   inputs: strategy_id raw
+#   outputs: StrategyCanaryConfig
+# - id: A2
+#   name_zh: ② StrategyCanaryRelease
+#   name_en: StrategyCanaryRelease
+#   intro: 策略灰度发布状态机（MOD-INF-072）。
+#   desc: 策略灰度发布状态机（MOD-INF-072）。 用法： rel = StrategyCanaryRelease() rel.start(config, now_utc, is_t…；公共方法（定义序）: start,…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: StrategyCanaryConfig
+#   name_en: StrategyCanaryConfig
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 运行时装配批（D_ASHARE_SIGNAL 策略运行面按 ratio 切流 / D_RISK 风控完整性指标供给 / config/canary.yaml…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -125,9 +166,7 @@ class StrategyCanaryConfig:
 
     strategy_id: str
     stages: tuple[CanaryStage, ...] = DEFAULT_STAGES
-    validation_thresholds: dict[ValidationDimension, float] = field(
-        default_factory=lambda: dict(_DEFAULT_THRESHOLDS)
-    )
+    validation_thresholds: dict[ValidationDimension, float] = field(default_factory=lambda: dict(_DEFAULT_THRESHOLDS))
     rollback_timeout_sec: int = 10  # 配置回滚语义 <10s
     freeze_during_trading: bool = True  # HC-05 交易时段禁启动
 
@@ -216,16 +255,13 @@ class StrategyCanaryRelease:
         sid = config.strategy_id
         # HC-05 时段门禁优先于重复启动检查（安全闸口先行）
         if config.freeze_during_trading and is_trading_session:
-            raise StrategyCanaryError(
-                f"HC-05：交易时段禁止启动灰度发布（策略 {sid}）"
-            )
+            raise StrategyCanaryError(f"HC-05：交易时段禁止启动灰度发布（策略 {sid}）")
         prev = self._states.get(sid)
         if prev is not None and prev.status in (CanaryStatus.RUNNING, CanaryStatus.COMPLETED):
             raise StrategyCanaryError(f"策略 {sid} 已在 {prev.status.value} 状态，禁止重复 start")
         stage = config.stages[0]
-        note = (
-            f"{now_utc.isoformat()} start → {stage.name} ratio={stage.min_ratio}"
-            + (f"（重启，前态 {prev.status.value}）" if prev else "")
+        note = f"{now_utc.isoformat()} start → {stage.name} ratio={stage.min_ratio}" + (
+            f"（重启，前态 {prev.status.value}）" if prev else ""
         )
         st = CanaryReleaseState(
             strategy_id=sid,
@@ -277,9 +313,7 @@ class StrategyCanaryRelease:
                 status=CanaryStatus.RUNNING,
                 stage_index=next_index,
                 current_ratio=stage.min_ratio,
-                history=st.history + (
-                    f"{now_utc.isoformat()} 6维验证通过 → {stage.name} ratio={stage.min_ratio}",
-                ),
+                history=st.history + (f"{now_utc.isoformat()} 6维验证通过 → {stage.name} ratio={stage.min_ratio}",),
             )
         self._states[strategy_id] = new_st
         return new_st
@@ -299,9 +333,7 @@ class StrategyCanaryRelease:
         if st is None:
             raise StrategyCanaryError(f"策略 {strategy_id} 未启动，无法回滚")
         if st.status != CanaryStatus.RUNNING:
-            raise StrategyCanaryError(
-                f"策略 {strategy_id} 当前 {st.status.value}，仅 RUNNING 可回滚"
-            )
+            raise StrategyCanaryError(f"策略 {strategy_id} 当前 {st.status.value}，仅 RUNNING 可回滚")
         new_st = CanaryReleaseState(
             strategy_id=strategy_id,
             status=CanaryStatus.ROLLED_BACK,
@@ -320,8 +352,10 @@ class StrategyCanaryRelease:
         st = self._states.get(strategy_id)
         if st is None:
             return CanaryReleaseState(
-                strategy_id=strategy_id, status=CanaryStatus.IDLE,
-                stage_index=-1, current_ratio=0.0,
+                strategy_id=strategy_id,
+                status=CanaryStatus.IDLE,
+                stage_index=-1,
+                current_ratio=0.0,
             )
         return st
 
@@ -335,9 +369,7 @@ class StrategyCanaryRelease:
         return st, config
 
     @staticmethod
-    def _validate(
-        config: StrategyCanaryConfig, metrics: dict[ValidationDimension, float]
-    ) -> list[str]:
+    def _validate(config: StrategyCanaryConfig, metrics: dict[ValidationDimension, float]) -> list[str]:
         """6 维验证：按维度方向判定，返回未过维度清单（空=全过）。"""
         failures: list[str] = []
         for dim in ValidationDimension:

@@ -22,7 +22,8 @@
 # created: "2026-05-05"
 # ---
 
-"""D_PORTFOLIO_CORE — Default Equity Long-Only Strategy
+"""
+D_PORTFOLIO_CORE — Default Equity Long-Only Strategy
 
 默认股票多头策略。实现 StrategyBase (OCP-002)，等权或信号加权配置。
 
@@ -33,6 +34,48 @@ CTR 契约：
   生产者 — CTR-004 (Order) -> D_EXECUTION_CORE
 
 SSoT: cross_layer_contracts.yaml -> OCP-002 + CTR-004
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: universe 参数
+#   fields: 参数 universe（无注解）
+#   code: default_equity_strategy.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: mode 参数
+#   fields: 参数 mode（无注解）
+#   code: default_equity_strategy.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: max_positions 参数
+#   fields: 参数 max_positions（无注解）
+#   code: default_equity_strategy.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: nav 参数
+#   fields: 参数 nav（无注解）
+#   code: default_equity_strategy.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DefaultEquityStrategy
+#   name_en: DefaultEquityStrategy
+#   intro: 默认 A 股股票多头策略——等权/信号加权/最小方差配置
+#   desc: 默认 A 股股票多头策略——等权/信号加权/最小方差配置；公共方法（定义序）: generate_target_weights, generate_orders, update_signals, update_hold…
+#   inputs: universe mode max_positions nav risk_limits
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: DefaultEquityStrategy
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -14,6 +14,80 @@
 # [TESTS] tests/audit-orchestrator/test_writer.py
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: data_dir 参数
+#   fields: 参数 data_dir，类型注解 Path | str | None
+#   code: writer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: enable_merkle 参数
+#   fields: 参数 enable_merkle，类型注解 bool
+#   code: writer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: hmac_key 参数
+#   fields: 参数 hmac_key，类型注解 str | None
+#   code: writer.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: ide_source 参数
+#   fields: 参数 ide_source，类型注解 str | None
+#   code: writer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AuditReportWriter
+#   name_en: AuditReportWriter
+#   intro: class AuditReportWriter 源码 L159-L236
+#   desc: 公共方法（定义序）: write_report, write_issue, write_json, list_reports；源码 L159-L236
+#   inputs: report_dir
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② AuditWriter
+#   name_en: AuditWriter
+#   intro: 不可变审计写入器——JSONL 追加 + SHA-256 哈希链 + HMAC-SHA256 签名 + Lamport…
+#   desc: 不可变审计写入器——JSONL 追加 + SHA-256 哈希链 + HMAC-SHA256 签名 + Lamport 时钟。 5.17.1 修复：从 no-op 桩升级为真正落…；公共方法（定义序）: max_wri…
+#   inputs: data_dir enable_merkle hmac_key ide_source backend
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ get_audit_writer
+#   name_en: get_audit_writer
+#   intro: 双重检查锁定单例工厂。
+#   desc: 双重检查锁定单例工厂。；源码 L452-L471
+#   inputs: data_dir enable_merkle hmac_key ide_source backend
+#   outputs: AuditWriter
+# - id: A4
+#   name_zh: ④ resolve_audit_hmac_secret
+#   name_en: resolve_audit_hmac_secret
+#   intro: 解析审计 HMAC 密钥为字符串（供 IntegrityVerifier 等消费方使用）。
+#   desc: 解析审计 HMAC 密钥为字符串（供 IntegrityVerifier 等消费方使用）。 委托至 _resolve_hmac_key() 并解码为 str。测试 SSoT： I…；源码 L498-L504
+#   inputs: 无参数
+#   outputs: str
+# 层: 输出
+# - id: O1
+#   name_zh: AuditWriter
+#   name_en: AuditWriter
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: audit-orchestrator.pipeline_runner; cli
+# - id: O2
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: audit-orchestrator.pipeline_runner; cli
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
+"""
+
 import hashlib
 import hmac
 import json

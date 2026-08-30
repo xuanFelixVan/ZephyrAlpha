@@ -15,10 +15,50 @@
 # [A_module] module_id=MOD-INF-022 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Drift Detector — 兼容别名，SSoT已迁移至 zephyr.gov_drift (MOD-INF-023).
+"""
+Drift Detector — 兼容别名，SSoT已迁移至 zephyr.gov_drift (MOD-INF-023).
 
 原欧氏距离基线检测已被MOD-INF-023的39+检测器超集覆盖。
 本模块保留API兼容性，内部实现保持独立（SSoT为异步扫描架构，不适合同步调用）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: drift_event 参数
+#   fields: 参数 drift_event，类型注解 object
+#   code: drift_detector.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: strategy 参数
+#   fields: 参数 strategy，类型注解 str | None
+#   code: drift_detector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DriftDetector
+#   name_en: DriftDetector
+#   intro: class DriftDetector 源码 L73-L117
+#   desc: 公共方法（定义序）: baseline, establish_baseline, detect, is_drifting；源码 L73-L117
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② trigger_recovery
+#   name_en: trigger_recovery
+#   intro: trigger_recovery(drift_event, strategy) 源码 L120-L121
+#   desc: 源码 L120-L121
+#   inputs: drift_event strategy
+#   outputs: bool
+# 层: 输出
+# - id: O1
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.governance.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

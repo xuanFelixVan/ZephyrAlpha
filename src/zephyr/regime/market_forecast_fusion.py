@@ -14,7 +14,8 @@
 # [TESTS] tests/regime/test_market_forecast_fusion.py
 # [A_module] module_id=MOD-REGIME-012 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""C-014 大盘预测三层融合（MOD-REGIME-012）。
+"""
+C-014 大盘预测三层融合（MOD-REGIME-012）。
 
 真源：construction_backlog_dig.tsv B1-00154（跨域元文档 §功能域模块·D-SIGNAL，
 裁定=做 P1）+ CAND-CYCLE-004。
@@ -29,6 +30,51 @@
 边界声明（对齐 90 号 §7 裁定与 MOD-SIG-037）：本模块**只输出概率分布与置信度，
 不出点位、不出买卖信号**；预测日志经 log_sink 回调委托 MOD-RPT-028
 prediction_log_writer 落库（装配批接线），写库异常不阻断融合产出。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: window 参数
+#   fields: 参数 window（无注解）
+#   code: market_forecast_fusion.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: prior_strength 参数
+#   fields: 参数 prior_strength（无注解）
+#   code: market_forecast_fusion.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: min_weight 参数
+#   fields: 参数 min_weight（无注解）
+#   code: market_forecast_fusion.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RollingAccuracyTracker
+#   name_en: RollingAccuracyTracker
+#   intro: 滚动准确率动态加权器（层3）。
+#   desc: 滚动准确率动态加权器（层3）。 按源维护尾部 window 次众数态命中记录；accuracy 用 Beta 先验平滑 （p0=1/8 八态随机命中率，强度 α=prior_st…；公共方法（定义序）: window,…
+#   inputs: window prior_strength min_weight
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② MarketForecastFusion
+#   name_en: MarketForecastFusion
+#   intro: C-014 三层融合判定核心（纯函数 + 回调信号契约，执行体委托装配批）。
+#   desc: C-014 三层融合判定核心（纯函数 + 回调信号契约，执行体委托装配批）。；公共方法（定义序）: fuse, settle, build_log_payload；源码 L236-L353
+#   inputs: tracker log_sink
+#   outputs: 返回值
+#   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: RollingAccuracyTracker, MarketForecastFusion
+#   downstream: 运行时装配批（外部主播信号注入 / log_sink 接 prediction_log_writer）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -110,14 +156,10 @@ class ExternalForecast:
         if not self.source_id or not self.source_id.strip():
             raise InvalidExternalForecastError("source_id 为空")
         if self.source_id == INTERNAL_SOURCE_ID:
-            raise InvalidExternalForecastError(
-                f"source_id={INTERNAL_SOURCE_ID!r} 为内部层保留字"
-            )
+            raise InvalidExternalForecastError(f"source_id={INTERNAL_SOURCE_ID!r} 为内部层保留字")
         if not 0.0 <= self.confidence <= 1.0:
             raise InvalidExternalForecastError(f"confidence 须 ∈[0,1]: {self.confidence}")
-        object.__setattr__(
-            self, "probabilities", _validate_state_distribution(self.probabilities)
-        )
+        object.__setattr__(self, "probabilities", _validate_state_distribution(self.probabilities))
 
 
 @dataclass(frozen=True)
@@ -219,9 +261,7 @@ class MarketForecastFusion:
                 MOD-RPT-028；sink 异常不阻断，log_signaled 如实记录）。
         """
         dists: dict[str, dict[str, float]] = {
-            INTERNAL_SOURCE_ID: _validate_state_distribution(
-                {s.value: p for s, p in internal.probabilities.items()}
-            )
+            INTERNAL_SOURCE_ID: _validate_state_distribution({s.value: p for s, p in internal.probabilities.items()})
         }
         for ef in external:
             if ef.source_id in dists:

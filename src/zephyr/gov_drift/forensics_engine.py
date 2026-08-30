@@ -22,7 +22,79 @@ replay: git checkout还原代码 + drift_events表活跃漂移 + baseline历史�
 
 forensics_report: timeline + state_diffs + actor_trace + dependency_impact
 
-对标 blueprint.md §6.17。"""
+对标 blueprint.md §6.17。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: file_path 参数
+#   fields: 参数 file_path，类型注解 str
+#   code: forensics_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: baseline_history 参数
+#   fields: 参数 baseline_history，类型注解 list[dict[str, str]]
+#   code: forensics_engine.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: drift_events 参数
+#   fields: 参数 drift_events，类型注解 list[dict[str, object]]
+#   code: forensics_engine.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: commit_hash 参数
+#   fields: 参数 commit_hash，类型注解 str
+#   code: forensics_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① replay_baseline_history
+#   name_en: replay_baseline_history
+#   intro: 重放baseline历史，重构时间线。
+#   desc: 重放baseline历史，重构时间线。；源码 L169-L262
+#   inputs: file_path baseline_history drift_events
+#   outputs: ForensicsReport
+# - id: A2
+#   name_zh: ② git_checkout_snapshot
+#   name_en: git_checkout_snapshot
+#   intro: 用git checkout还原代码到指定commit状态。
+#   desc: 用git checkout还原代码到指定commit状态。；源码 L265-L287
+#   inputs: commit_hash file_path project_root
+#   outputs: str | None
+# - id: A3
+#   name_zh: ③ generate_forensics_report
+#   name_en: generate_forensics_report
+#   intro: 生成完整的取证报告。
+#   desc: 生成完整的取证报告。；源码 L290-L327
+#   inputs: drift_event_id source_file project_root baseline_history drift_events
+#   outputs: ForensicsReport
+# - id: A4
+#   name_zh: ④ serialize_report
+#   name_en: serialize_report
+#   intro: 序列化取证报告为JSON。
+#   desc: 序列化取证报告为JSON。；源码 L330-L381
+#   inputs: report output_dir
+#   outputs: str
+#   （注：A4 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ForensicsReport
+#   name_en: ForensicsReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_drift/_analysis.py ; src/zephyr/gov_drift/brain_integration.py ;…
+# - id: O2
+#   name_zh: str | None
+#   name_en: str | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_drift/_analysis.py ; src/zephyr/gov_drift/brain_integration.py ;…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
+"""
 
 from __future__ import annotations
 

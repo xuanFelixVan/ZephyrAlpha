@@ -15,6 +15,68 @@
 # [A_module] module_id=MOD-INF-002 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: watch_dir 参数
+#   fields: 参数 watch_dir（无注解）
+#   code: file_watcher.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: patterns 参数
+#   fields: 参数 patterns（无注解）
+#   code: file_watcher.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: poll_interval 参数
+#   fields: 参数 poll_interval（无注解）
+#   code: file_watcher.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: on_change 参数
+#   fields: 参数 on_change（无注解）
+#   code: file_watcher.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FileChangeEvent
+#   name_en: FileChangeEvent
+#   intro: class FileChangeEvent 源码 L106-L113
+#   desc: 公共方法（定义序）: suffix；源码 L106-L113
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② FileWatcher
+#   name_en: FileWatcher
+#   intro: class FileWatcher 源码 L125-L245
+#   desc: 公共方法（定义序）: on_change, start, stop, is_running, tracked_count, scan_once；源码 L125-L245
+#   inputs: watch_dir patterns poll_interval on_change
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ BlueprintWatcher
+#   name_en: BlueprintWatcher
+#   intro: class BlueprintWatcher 源码 L248-L334
+#   desc: 公共方法（定义序）: start, stop, is_running；源码 L248-L334
+#   inputs: blueprints_dir poll_interval auto_decompose
+#   outputs: 返回值
+#   （注：A3 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: FileChangeEvent, FileWatcher, BlueprintWatcher
+#   downstream: auto_runtime_core.py; blueprint_decomposer.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
+"""
+
 from __future__ import annotations
 
 import hashlib

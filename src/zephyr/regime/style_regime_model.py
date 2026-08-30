@@ -14,7 +14,8 @@
 # [TESTS] tests/regime/test_style_regime_model.py
 # [A_module] module_id=MOD-REGIME-014 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""StyleRegimeModel — 市场风格体制识别模型（MOD-REGIME-014）。
+"""
+StyleRegimeModel — 市场风格体制识别模型（MOD-REGIME-014）。
 
 B10-01447（AUD-DRAFT-001-DIGEST P2 波 P2-W06，CAND-CYCLE-006，A1 模块32）：
 **大小盘/价值成长收益差风格序列构建** + **HMM 风格态识别**（注入
@@ -26,6 +27,41 @@ hmm_runner；hmmlearn 未装时不引依赖，降级**规则分档**：差值正
 截面风格相对强弱，不产出大盘概率）；regime_cycle_analyzer=体制周期节律
 （零交集）；本件风格态/SizeAxis 供 strategy_matrix_3d（MOD-SIG-130）作
 风格轴复用。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: state 参数
+#   fields: 参数 state，类型注解 StyleState
+#   code: style_regime_model.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① size_axis_of
+#   name_en: size_axis_of
+#   intro: 风格态 → 大小盘 2 轴映射（确定性）。
+#   desc: 风格态 → 大小盘 2 轴映射（确定性）。；源码 L111-L117
+#   inputs: state
+#   outputs: SizeAxis
+# - id: A2
+#   name_zh: ② StyleRegimeModel
+#   name_en: StyleRegimeModel
+#   intro: 市场风格体制识别（HMM 注入 / 规则降级 + 防抖确认，纯内存确定性）。
+#   desc: 市场风格体制识别（HMM 注入 / 规则降级 + 防抖确认，纯内存确定性）。；公共方法（定义序）: build_spread_series, identify_raw, confirm, params_for, ana…
+#   inputs: param_map hmm_runner magnitude_threshold confirm_periods
+#   outputs: 返回值
+#   （注：A2 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: SizeAxis
+#   name_en: SizeAxis
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 运行时装配批（风格参数档查找 / MOD-SIG-130 三维矩阵风格轴复用）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -59,9 +95,9 @@ class StyleRegimeError(Exception):
 class StyleState(str, Enum):
     """风格态 4 档（词表闭合：大小盘 × 价值成长）。"""
 
-    LARGE_VALUE = "large_value"    # 大盘价值
+    LARGE_VALUE = "large_value"  # 大盘价值
     LARGE_GROWTH = "large_growth"  # 大盘成长
-    SMALL_VALUE = "small_value"    # 小盘价值
+    SMALL_VALUE = "small_value"  # 小盘价值
     SMALL_GROWTH = "small_growth"  # 小盘成长
 
 
@@ -161,7 +197,7 @@ class StyleRegimeModel:
         for value in lead + lag:
             if not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(value):
                 raise StyleRegimeError(f"收益序列含非法值: {value!r}")
-        return tuple(a - b for a, b in zip(lead, lag))
+        return tuple(a - b for a, b in zip(lead, lag, strict=False))
 
     # ── 风格态识别（HMM 注入 / 规则降级） ──────────────────────────────────
 
@@ -205,7 +241,7 @@ class StyleRegimeModel:
             _log.debug("HMM 风格态识别: %d 期", len(states))
             return tuple(states), True
 
-        raw = tuple(self._rule_bucket(s, v) for s, v in zip(size, value))
+        raw = tuple(self._rule_bucket(s, v) for s, v in zip(size, value, strict=False))
         _log.debug("规则降级风格分档: %d 期（未决 %d 期）", len(raw), sum(1 for r in raw if r is None))
         return raw, False
 
@@ -275,9 +311,7 @@ class StyleRegimeModel:
         size_spread = self.build_spread_series(large_returns, small_returns)
         value_spread = self.build_spread_series(value_returns, growth_returns)
         if len(size_spread) != len(value_spread):
-            raise StyleRegimeError(
-                f"大小盘与价值成长序列不等长: {len(size_spread)} vs {len(value_spread)}"
-            )
+            raise StyleRegimeError(f"大小盘与价值成长序列不等长: {len(size_spread)} vs {len(value_spread)}")
         raw, used_hmm = self.identify_raw(size_spread, value_spread)
         confirmed = self.confirm(raw)
         current = confirmed[-1]

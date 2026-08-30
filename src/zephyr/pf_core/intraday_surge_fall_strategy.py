@@ -22,7 +22,8 @@
 # created: "2026-07-31"
 # ---
 
-"""D_PORTFOLIO_CORE — 30秒冲高回落做T策略（路径 B 示例策略）
+"""
+D_PORTFOLIO_CORE — 30秒冲高回落做T策略（路径 B 示例策略）
 
 Tick 级 intraday 做 T 策略，基于 TickStrategyBase。每个 tick 被 EDE 调用一次，
 接收含 5 档盘口的 TickEvent，返回 {symbol: target_weight}，EDE 负责 delta 撮合。
@@ -47,6 +48,47 @@ StrategyRunner.run_tick_strategy_backtest(strategy_id="intraday-surge-fall") 调
 
 SSoT: docs/03_modules/_domain_backtest/blueprint.md §16.7（EDE 做T场景）
       docs/03_modules/_domain_portfolio_core/blueprint.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: window_seconds 参数
+#   fields: 参数 window_seconds（无注解）
+#   code: intraday_surge_fall_strategy.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: surge_threshold 参数
+#   fields: 参数 surge_threshold（无注解）
+#   code: intraday_surge_fall_strategy.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: fall_threshold 参数
+#   fields: 参数 fall_threshold（无注解）
+#   code: intraday_surge_fall_strategy.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: dip_threshold 参数
+#   fields: 参数 dip_threshold（无注解）
+#   code: intraday_surge_fall_strategy.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① IntradaySurgeFallStrategy
+#   name_en: IntradaySurgeFallStrategy
+#   intro: 30秒冲高回落做T策略（A 股 intraday T+0）。
+#   desc: 30秒冲高回落做T策略（A 股 intraday T+0）。 用法： strategy = IntradaySurgeFallStrategy( window_seconds=3…；公共方法（定义序）: on_tick…
+#   inputs: window_seconds surge_threshold fall_threshold dip_threshold base_weig…
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: IntradaySurgeFallStrategy
+#   downstream: zephyr.pf_core.strategy_engine.strategy_runner
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

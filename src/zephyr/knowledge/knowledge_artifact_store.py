@@ -14,7 +14,8 @@
 # [TESTS] tests/knowledge/test_knowledge_artifact_store.py
 # [A_module] module_id=MOD-KNW-004 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""KnowledgeArtifactStore — 知识工件库（MOD-KNW-004）。
+"""
+KnowledgeArtifactStore — 知识工件库（MOD-KNW-004）。
 
 B12-03637（AUD-DRAFT-001-DIGEST P2 波 P2-W03，CAND-KNW-008，B12）：6 类知
 识产出（RawKnowledgePacket/StructuredKnowledgeFragment/
@@ -26,6 +27,33 @@ ClassifiedKnowledgePackage/ModuleMappingResult/NewModule/TrialResult 词表
 查重分工：research/evidence/evidence_chain=证据链挂载（本件=产出版本链归
 档基座，不做证据关联）；kb_engine=通用条目 CRUD（本件=闭合 schema 的聚
 合根存储，零交集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: knowledge_artifact_store.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① KnowledgeArtifactStore
+#   name_en: KnowledgeArtifactStore
+#   intro: 6 类产出不可变 schema + 版本链存储 + 6 维索引查询（聚合根）。
+#   desc: 6 类产出不可变 schema + 版本链存储 + 6 维索引查询（聚合根）。；公共方法（定义序）: put, get, history, query；源码 L124-L269
+#   inputs: clock
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: KnowledgeArtifactStore
+#   downstream: 运行时装配批（研究产出版本链归档 / 六维索引检索 / 聚合根不变量挂载）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -164,8 +192,7 @@ class KnowledgeArtifactStore:
         required = ARTIFACT_SCHEMAS[atype]
         if keys != required:
             raise ArtifactStoreError(
-                f"schema 键不符: {atype.value} 要求 {sorted(required)!r}，实收 {sorted(keys)!r}"
-                "（闭合不可变 schema）"
+                f"schema 键不符: {atype.value} 要求 {sorted(required)!r}，实收 {sorted(keys)!r}（闭合不可变 schema）"
             )
         chain = self._chains.setdefault(artifact_id, [])
         artifact = Artifact(
@@ -192,9 +219,7 @@ class KnowledgeArtifactStore:
         if version is None:
             return chain[-1]
         if version < 1 or version > len(chain):
-            raise ArtifactStoreError(
-                f"未知版本: {artifact_id!r} v{version}（现存 1..{len(chain)}）"
-            )
+            raise ArtifactStoreError(f"未知版本: {artifact_id!r} v{version}（现存 1..{len(chain)}）")
         return chain[version - 1]
 
     def history(self, artifact_id: str) -> list[Artifact]:
@@ -218,9 +243,7 @@ class KnowledgeArtifactStore:
         else:
             atype = None
         if created_from is not None and created_to is not None and created_from > created_to:
-            raise ArtifactStoreError(
-                f"非法时间窗: from {created_from!r} > to {created_to!r}"
-            )
+            raise ArtifactStoreError(f"非法时间窗: from {created_from!r} > to {created_to!r}")
         filters = (
             ("source", source),
             ("author", author),
@@ -236,9 +259,7 @@ class KnowledgeArtifactStore:
             hit = set(bucket) if hit is None else (hit & bucket)
             if not hit:
                 return []
-        keys = hit if hit is not None else {
-            (aid, a.version) for aid, chain in self._chains.items() for a in chain
-        }
+        keys = hit if hit is not None else {(aid, a.version) for aid, chain in self._chains.items() for a in chain}
         out = [self._chains[aid][ver - 1] for aid, ver in keys]
         if created_from is not None:
             out = [a for a in out if a.created_at >= created_from]

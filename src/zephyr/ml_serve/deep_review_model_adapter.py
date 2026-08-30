@@ -14,7 +14,8 @@
 # [TESTS] tests/ml_serve/test_deep_review_model_adapter.py
 # [A_module] module_id=MOD-MLS-004 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""DeepReviewModelAdapter — 深度审查模型适配器（MOD-MLS-004）。
+"""
+DeepReviewModelAdapter — 深度审查模型适配器（MOD-MLS-004）。
 
 B10-02297（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-MLS-004，A1 D-ML-47）：
 model_router 注册 **GLM-5.1** 深度审查 profile + **考试校准**（校准集评分
@@ -25,6 +26,48 @@ model_router 注册 **GLM-5.1** 深度审查 profile + **考试校准**（校准
 （本件经 profile_registrar 挂钩装配，不重建注册表）；codegen_model_
 adapter（MOD-MLS-003）=DeepSeek-V4-Pro 代码生成适配（零交集，本件=深度
 审查）；model_compression_accelerator（MOD-MLS-002）=压缩编排（零交集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: reviewer 参数
+#   fields: 参数 reviewer（无注解）
+#   code: deep_review_model_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: exam_runner 参数
+#   fields: 参数 exam_runner（无注解）
+#   code: deep_review_model_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: profile_registrar 参数
+#   fields: 参数 profile_registrar（无注解）
+#   code: deep_review_model_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: deep_review_model_adapter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DeepReviewModelAdapter
+#   name_en: DeepReviewModelAdapter
+#   intro: GLM-5.1 深度审查适配（profile 注册 + 考试校准 + findings 输出校验）。
+#   desc: GLM-5.1 深度审查适配（profile 注册 + 考试校准 + findings 输出校验）。；公共方法（定义序）: register_profile, calibrate, review, profile_of…
+#   inputs: reviewer exam_runner profile_registrar clock
+#   outputs: 返回值
+#   （注：A1 之后另有 9 个公共定义未列入（含 9 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（10 定义）
+#   name_en: public defs
+#   intro: DeepReviewModelAdapter
+#   downstream: 运行时装配批（model_router GLM-5.1 profile 装配 / 考试校准与阈值标定 / 深度审查调用适配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -156,9 +199,7 @@ class ReviewReport:
     reviewed_at: datetime.datetime
 
 
-def _calibrate_threshold(
-    scores: Mapping[str, float], samples: tuple[CalibrationSample, ...]
-) -> tuple[float, float]:
+def _calibrate_threshold(scores: Mapping[str, float], samples: tuple[CalibrationSample, ...]) -> tuple[float, float]:
     """平衡准确率最优阈值（并列取更严高阈值，Fail-Closed 语义）。"""
     positives = sum(1 for s in samples if s.label)
     negatives = len(samples) - positives
@@ -168,9 +209,7 @@ def _calibrate_threshold(
         tp = sum(1 for s in samples if s.label and scores[s.sample_id] >= threshold)
         tn = sum(1 for s in samples if not s.label and scores[s.sample_id] < threshold)
         balanced = (tp / positives + tn / negatives) / 2.0
-        if balanced > best_balanced or (
-            balanced == best_balanced and threshold > best_threshold
-        ):
+        if balanced > best_balanced or (balanced == best_balanced and threshold > best_threshold):
             best_balanced = balanced
             best_threshold = threshold
     return best_threshold, best_balanced
@@ -216,17 +255,13 @@ class DeepReviewModelAdapter:
             try:
                 self._registrar(profile)
             except Exception as exc:  # noqa: BLE001 — model_router 挂钩失败 Fail-Closed
-                raise DeepReviewAdapterError(
-                    f"profile_registrar 注册失败: {profile.model_id!r}"
-                ) from exc
+                raise DeepReviewAdapterError(f"profile_registrar 注册失败: {profile.model_id!r}") from exc
         self._profiles[profile.model_id] = profile
         _log.info("深度审查 profile 注册: %s (%s)", profile.model_id, profile.provider)
 
     # ── 考试校准（评分分布 → 通过阈值标定） ────────────────────────────────
 
-    def calibrate(
-        self, model_id: str, samples: Sequence[CalibrationSample]
-    ) -> CalibrationResult:
+    def calibrate(self, model_id: str, samples: Sequence[CalibrationSample]) -> CalibrationResult:
         """考试校准：exam_runner 跑分 → 评分分布标定通过阈值（一次性，重复拒绝）。"""
         self.profile_of(model_id)
         if model_id in self._calibrations:
@@ -261,9 +296,7 @@ class DeepReviewModelAdapter:
             if isinstance(score, bool) or not isinstance(score, (int, float)):
                 raise DeepReviewAdapterError(f"exam 分数非数值: {sample.sample_id!r}")
             if not math.isfinite(score) or not 0.0 <= score <= 1.0:
-                raise DeepReviewAdapterError(
-                    f"exam 分数越界 [0,1]: {sample.sample_id!r}={score!r}"
-                )
+                raise DeepReviewAdapterError(f"exam 分数越界 [0,1]: {sample.sample_id!r}={score!r}")
             clean[sample.sample_id] = float(score)
         threshold, balanced = _calibrate_threshold(clean, tuple(samples))
         result = CalibrationResult(
@@ -274,9 +307,7 @@ class DeepReviewModelAdapter:
             calibrated_at=self._clock(),
         )
         self._calibrations[model_id] = result
-        _log.info(
-            "考试校准完成: %s 阈值=%s 平衡准确率=%s", model_id, threshold, balanced
-        )
+        _log.info("考试校准完成: %s 阈值=%s 平衡准确率=%s", model_id, threshold, balanced)
         return result
 
     # ── 审查调用（reviewer 注入不真发） ────────────────────────────────────
@@ -292,9 +323,7 @@ class DeepReviewModelAdapter:
         profile = self.profile_of(task.model_id)
         calibration = self._calibrations.get(task.model_id)
         if calibration is None:
-            raise DeepReviewAdapterError(
-                f"未校准模型不得审查: {task.model_id!r}（Fail-Closed）"
-            )
+            raise DeepReviewAdapterError(f"未校准模型不得审查: {task.model_id!r}（Fail-Closed）")
         if not isinstance(task.review_type, ReviewType):
             raise DeepReviewAdapterError(f"非法审查类型: {task.review_type!r}")
         if task.review_type not in profile.review_types:
@@ -322,7 +351,10 @@ class DeepReviewModelAdapter:
         self._reports[task.task_id] = report
         _log.info(
             "深度审查完成: %s %s score=%s passed=%s",
-            task.task_id, task.review_type.value, score, report.passed,
+            task.task_id,
+            task.review_type.value,
+            score,
+            report.passed,
         )
         return report
 
@@ -350,14 +382,10 @@ class DeepReviewModelAdapter:
             try:
                 severity = FindingSeverity(severity_raw)
             except ValueError as exc:
-                raise DeepReviewAdapterError(
-                    f"finding severity 越词表: {severity_raw!r}"
-                ) from exc
+                raise DeepReviewAdapterError(f"finding severity 越词表: {severity_raw!r}") from exc
             description = item.get("description")
             if not isinstance(description, str) or not description:
-                raise DeepReviewAdapterError(
-                    f"finding description 缺失或为空: {finding_id!r}"
-                )
+                raise DeepReviewAdapterError(f"finding description 缺失或为空: {finding_id!r}")
             category = item.get("category", "")
             if not isinstance(category, str):
                 raise DeepReviewAdapterError(f"finding category 类型非法: {finding_id!r}")

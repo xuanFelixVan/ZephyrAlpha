@@ -34,7 +34,87 @@ time_budget_ratio: 租金值越高越容易休眠
 safe_operate: admin可设置severe级别限制
 
 
-对标 blueprint.md §6.32。"""
+对标 blueprint.md §6.32。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: owner_id 参数
+#   fields: 参数 owner_id，类型注解 str
+#   code: absence_manager.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: status 参数
+#   fields: 参数 status，类型注解 OwnerStatus
+#   code: absence_manager.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: last_activity 参数
+#   fields: 参数 last_activity，类型注解 datetime
+#   code: absence_manager.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: max_severity 参数
+#   fields: 参数 max_severity，类型注解 str
+#   code: absence_manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① record_activity
+#   name_en: record_activity
+#   intro: record_activity(owner_id) 源码 L210-L219
+#   desc: 源码 L210-L219
+#   inputs: owner_id
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② check_absence
+#   name_en: check_absence
+#   intro: check_absence(owner_id) 源码 L222-L257
+#   desc: 源码 L222-L257
+#   inputs: owner_id
+#   outputs: OwnerStatus
+# - id: A3
+#   name_zh: ③ escalate_if_absent
+#   name_en: escalate_if_absent
+#   intro: escalate_if_absent(status) 源码 L260-L276
+#   desc: 源码 L260-L276
+#   inputs: status
+#   outputs: EscalationEntry | None
+# - id: A4
+#   name_zh: ④ detect_owner_return
+#   name_en: detect_owner_return
+#   intro: detect_owner_return(owner_id, last_activity) 源码 L279-L282
+#   desc: 源码 L279-L282
+#   inputs: owner_id last_activity
+#   outputs: bool
+# - id: A5
+#   name_zh: ⑤ set_severity_limit
+#   name_en: set_severity_limit
+#   intro: set_severity_limit(owner_id, max_severity, admin) 源码 L285-L…
+#   desc: 源码 L285-L303
+#   inputs: owner_id max_severity admin
+#   outputs: bool
+#   （注：A5 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: OwnerStatus
+#   name_en: OwnerStatus
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_drift/_infrastructure.py ; tests/audit/test_absence_manager.py
+# - id: O2
+#   name_zh: EscalationEntry | None
+#   name_en: EscalationEntry | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_drift/_infrastructure.py ; tests/audit/test_absence_manager.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
+"""
 
 from __future__ import annotations
 

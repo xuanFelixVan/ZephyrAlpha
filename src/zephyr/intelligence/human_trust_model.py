@@ -14,7 +14,8 @@
 # [TESTS] tests/intelligence/test_human_trust_model.py
 # [A_module] module_id=MOD-INT-HUMAN-TRUST | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""HumanTrustModel — 人机信任模型（MOD-INT-HUMAN-TRUST）。
+"""
+HumanTrustModel — 人机信任模型（MOD-INT-HUMAN-TRUST）。
 
 B1-00221（AUD-DRAFT-001-DIGEST P2 波 P2-W04，CAND-AISA-009，C2 C-031）：
 AI 协作信任模型——置信度**三层路由**（自动执行 auto / 需人工确认 confirm /
@@ -24,6 +25,43 @@ AI 协作信任模型——置信度**三层路由**（自动执行 auto / 需�
 
 查重分工（蓝图 §0）：risk_veto_engine=交易侧风控否决执行（本件=人机协作
 信任分与路由，不执行否决）；reflctrl_gate=反思频率分层（零交集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: thresholds 参数
+#   fields: 参数 thresholds（无注解）
+#   code: human_trust_model.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: human_trust_model.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: audit_sink 参数
+#   fields: 参数 audit_sink（无注解）
+#   code: human_trust_model.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① HumanTrustModel
+#   name_en: HumanTrustModel
+#   intro: 人机信任模型件（三层路由 + 否决学习 + 周期校准）。
+#   desc: 人机信任模型件（三层路由 + 否决学习 + 周期校准）。；公共方法（定义序）: route, record_veto, veto_pattern, trust_score, recalibrate；源码 L149-L2…
+#   inputs: thresholds clock audit_sink
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: HumanTrustModel
+#   downstream: 运行时装配批（决策域阈值表装配 / 人工否决录入接 HITL 前端 / 分数变更审计接审计链）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -133,15 +171,11 @@ class HumanTrustModel:
                 if not (_SCORE_MIN <= v <= _SCORE_MAX):
                     raise HumanTrustError(f"{domain}.{name} 越界 [0,1]: {v!r}")
             if th.auto_threshold < th.confirm_threshold:
-                raise HumanTrustError(
-                    f"{domain} 阈值倒挂: auto {th.auto_threshold} < confirm {th.confirm_threshold}"
-                )
+                raise HumanTrustError(f"{domain} 阈值倒挂: auto {th.auto_threshold} < confirm {th.confirm_threshold}")
         self._thresholds: dict[str, TrustThresholds] = dict(thresholds)
         self._clock = clock or datetime.datetime.now
         self._audit_sink = audit_sink
-        self._scores: dict[str, float] = {
-            d: th.initial_trust for d, th in thresholds.items()
-        }
+        self._scores: dict[str, float] = {d: th.initial_trust for d, th in thresholds.items()}
         self._vetoes: dict[str, list[VetoRecord]] = {d: [] for d in thresholds}
         self._calibrated_periods: dict[str, set[str]] = {d: set() for d in thresholds}
 
@@ -217,9 +251,7 @@ class HumanTrustModel:
             raise HumanTrustError(f"decisions_observed 非正: {decisions_observed!r}")
         veto_count = len(self._vetoes[domain])
         if veto_count > decisions_observed:
-            raise HumanTrustError(
-                f"否决数 {veto_count} 超过观测决策数 {decisions_observed}"
-            )
+            raise HumanTrustError(f"否决数 {veto_count} 超过观测决策数 {decisions_observed}")
         veto_rate = veto_count / decisions_observed
         old = self._scores[domain]
         new = min(_SCORE_MAX, max(_SCORE_MIN, old * (1.0 - veto_rate)))
@@ -236,7 +268,11 @@ class HumanTrustModel:
         self._calibrated_periods[domain].add(period_id)
         _log.info(
             "信任分校准: %s %s %.4f -> %.4f (veto_rate=%.4f)",
-            domain, period_id, old, new, veto_rate,
+            domain,
+            period_id,
+            old,
+            new,
+            veto_rate,
         )
         if self._audit_sink is not None:
             self._audit_sink(change)

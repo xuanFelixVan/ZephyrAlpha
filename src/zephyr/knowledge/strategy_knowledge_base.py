@@ -14,7 +14,8 @@
 # [TESTS] tests/knowledge/test_strategy_knowledge_base.py
 # [A_module] module_id=MOD-KNW-006 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""StrategyKnowledgeBase — 策略知识库（MOD-KNW-006）。
+"""
+StrategyKnowledgeBase — 策略知识库（MOD-KNW-006）。
 
 B10-02182（AUD-DRAFT-001-DIGEST P2 波 P2-W03，CAND-KNW-005，A1 D-KNOWLEDGE-03）：
 **策略卡**（定义+表现+教训三要素 Schema）入 vector_memory decisions 集合语义
@@ -25,6 +26,48 @@ B10-02182（AUD-DRAFT-001-DIGEST P2 波 P2-W03，CAND-KNW-005，A1 D-KNOWLEDGE-0
 查重分工（蓝图 §0）：experiment_tracking=实验指标真源（本件仅经注入适配器回
 填快照，不重算指标）；kb_engine=通用 CRUD 门面（本件仅挂其 decisions 集合语
 义）；factor_knowledge_base=因子三表（本件=策略卡，零交集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: strategy_knowledge_base.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: kb_writer 参数
+#   fields: 参数 kb_writer（无注解）
+#   code: strategy_knowledge_base.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: backfill_adapter 参数
+#   fields: 参数 backfill_adapter（无注解）
+#   code: strategy_knowledge_base.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: sqlite_conn 参数
+#   fields: 参数 sqlite_conn（无注解）
+#   code: strategy_knowledge_base.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① StrategyKnowledgeBase
+#   name_en: StrategyKnowledgeBase
+#   intro: 策略知识库（策略卡三要素 + 回填 + FTS 教训检索 + 确定性查询）。
+#   desc: 策略知识库（策略卡三要素 + 回填 + FTS 教训检索 + 确定性查询）。；公共方法（定义序）: register_card, get_card, get_status, refresh_performance, g…
+#   inputs: clock kb_writer backfill_adapter sqlite_conn
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: StrategyKnowledgeBase
+#   downstream: 运行时装配批（策略卡注册入库 / experiment_tracking 回填适配器绑定 / 教训 FTS 挂 sqlite 连接）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -49,7 +92,7 @@ __all__: Final = [
 ]
 
 #: 合法状态迁移（DRAFT→ACTIVE→RETIRED 闭合；DRAFT 可直接下线）
-_ALLOWED_TRANSITIONS: Final[dict["StrategyStatus", frozenset["StrategyStatus"]]] = {}
+_ALLOWED_TRANSITIONS: Final[dict[StrategyStatus, frozenset[StrategyStatus]]] = {}
 
 #: 教训 FTS5 表名（注入 sqlite 连接上建表）
 _FTS_TABLE: Final[str] = "strategy_lesson_fts"
@@ -70,11 +113,13 @@ class StrategyStatus(str, Enum):
     RETIRED = "retired"
 
 
-_ALLOWED_TRANSITIONS.update({
-    StrategyStatus.DRAFT: frozenset({StrategyStatus.ACTIVE, StrategyStatus.RETIRED}),
-    StrategyStatus.ACTIVE: frozenset({StrategyStatus.RETIRED}),
-    StrategyStatus.RETIRED: frozenset(),
-})
+_ALLOWED_TRANSITIONS.update(
+    {
+        StrategyStatus.DRAFT: frozenset({StrategyStatus.ACTIVE, StrategyStatus.RETIRED}),
+        StrategyStatus.ACTIVE: frozenset({StrategyStatus.RETIRED}),
+        StrategyStatus.RETIRED: frozenset(),
+    }
+)
 
 
 @dataclass(frozen=True)
@@ -174,13 +219,15 @@ class StrategyKnowledgeBase:
             raise StrategyKbError(f"策略卡重复注册: {card.strategy_id!r}")
         self._cards[card.strategy_id] = card
         self._status[card.strategy_id] = StrategyStatus.DRAFT
-        self._write_kb({
-            "kind": "strategy_card",
-            "strategy_id": card.strategy_id,
-            "name": card.name,
-            "style": card.style,
-            "status": StrategyStatus.DRAFT.value,
-        })
+        self._write_kb(
+            {
+                "kind": "strategy_card",
+                "strategy_id": card.strategy_id,
+                "name": card.name,
+                "style": card.style,
+                "status": StrategyStatus.DRAFT.value,
+            }
+        )
 
     def get_card(self, strategy_id: str) -> StrategyCard:
         """单卡查询（未知 → Fail-Closed）。"""
@@ -219,12 +266,14 @@ class StrategyKnowledgeBase:
             updated_at=self._clock(),
         )
         self._performance[strategy_id] = record
-        self._write_kb({
-            "kind": "strategy_performance",
-            "strategy_id": strategy_id,
-            "metrics": dict(clean),
-            "source": record.source,
-        })
+        self._write_kb(
+            {
+                "kind": "strategy_performance",
+                "strategy_id": strategy_id,
+                "metrics": dict(clean),
+                "source": record.source,
+            }
+        )
         return record
 
     def get_performance(self, strategy_id: str) -> PerformanceRecord:
@@ -261,8 +310,7 @@ class StrategyKnowledgeBase:
         """单卡教训列表（lesson_id 确定性排序）。"""
         self._require_card(strategy_id)
         return tuple(
-            self._lessons[lid] for lid in sorted(self._lessons)
-            if self._lessons[lid].strategy_id == strategy_id
+            self._lessons[lid] for lid in sorted(self._lessons) if self._lessons[lid].strategy_id == strategy_id
         )
 
     def search_lessons(self, query: str) -> tuple[Lesson, ...]:
@@ -273,8 +321,7 @@ class StrategyKnowledgeBase:
             raise StrategyKbError("检索查询为空")
         try:
             rows = self._conn.execute(
-                f"SELECT lesson_id, rank FROM {_FTS_TABLE} WHERE text MATCH ? "
-                "ORDER BY rank, lesson_id",
+                f"SELECT lesson_id, rank FROM {_FTS_TABLE} WHERE text MATCH ? ORDER BY rank, lesson_id",
                 (query,),
             ).fetchall()
         except sqlite3.Error as exc:
@@ -290,9 +337,7 @@ class StrategyKnowledgeBase:
             raise StrategyKbError(f"非法状态: {to_status!r}（词表闭合）")
         from_status = self._status[strategy_id]
         if to_status not in _ALLOWED_TRANSITIONS[from_status]:
-            raise StrategyKbError(
-                f"非法状态迁移: {strategy_id!r} {from_status.value} -> {to_status.value}"
-            )
+            raise StrategyKbError(f"非法状态迁移: {strategy_id!r} {from_status.value} -> {to_status.value}")
         transition = StatusTransition(
             strategy_id=strategy_id,
             from_status=from_status,
@@ -301,12 +346,14 @@ class StrategyKnowledgeBase:
         )
         self._status[strategy_id] = to_status
         self._transitions.setdefault(strategy_id, []).append(transition)
-        self._write_kb({
-            "kind": "strategy_status",
-            "strategy_id": strategy_id,
-            "from_status": from_status.value,
-            "to_status": to_status.value,
-        })
+        self._write_kb(
+            {
+                "kind": "strategy_status",
+                "strategy_id": strategy_id,
+                "from_status": from_status.value,
+                "to_status": to_status.value,
+            }
+        )
         return transition
 
     def status_history(self, strategy_id: str) -> tuple[StatusTransition, ...]:
@@ -320,19 +367,13 @@ class StrategyKnowledgeBase:
         """按状态查询（strategy_id 确定性排序）。"""
         if not isinstance(status, StrategyStatus):
             raise StrategyKbError(f"非法状态: {status!r}（词表闭合）")
-        return tuple(
-            self._cards[sid] for sid in sorted(self._cards)
-            if self._status[sid] is status
-        )
+        return tuple(self._cards[sid] for sid in sorted(self._cards) if self._status[sid] is status)
 
     def by_style(self, style: str) -> tuple[StrategyCard, ...]:
         """按风格查询（strategy_id 确定性排序）。"""
         if not style:
             raise StrategyKbError("style 为空")
-        return tuple(
-            self._cards[sid] for sid in sorted(self._cards)
-            if self._cards[sid].style == style
-        )
+        return tuple(self._cards[sid] for sid in sorted(self._cards) if self._cards[sid].style == style)
 
     def by_performance_range(
         self,

@@ -31,7 +31,74 @@ expected_output_drift: assert expected_value来源
 auto_fixable=false: 测试漂移最隐蔽——测试通过不代表系统正确
 
 
-对标 blueprint.md §6.20。"""
+对标 blueprint.md §6.20。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: test_root 参数
+#   fields: 参数 test_root，类型注解 str
+#   code: test_fixture_checker.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: src_root 参数
+#   fields: 参数 src_root，类型注解 str
+#   code: test_fixture_checker.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: project_root 参数
+#   fields: 参数 project_root，类型注解 str
+#   code: test_fixture_checker.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① scan_fixture_schema_drift
+#   name_en: scan_fixture_schema_drift
+#   intro: 检查测试夹具中硬编码数据结构是否与 ORM/pydantic schema 一致。
+#   desc: 检查测试夹具中硬编码数据结构是否与 ORM/pydantic schema 一致。；源码 L132-L200
+#   inputs: test_root src_root
+#   outputs: list[FixtureDriftEvent]
+# - id: A2
+#   name_zh: ② scan_mock_target_drift
+#   name_en: scan_mock_target_drift
+#   intro: 检查 mock.patch 路径是否匹配实际模块路径。
+#   desc: 检查 mock.patch 路径是否匹配实际模块路径。；源码 L203-L253
+#   inputs: test_root src_root
+#   outputs: list[FixtureDriftEvent]
+# - id: A3
+#   name_zh: ③ scan_expected_output_drift
+#   name_en: scan_expected_output_drift
+#   intro: 检查 assert 中的 expected_value 是否有明确来源标注。
+#   desc: 检查 assert 中的 expected_value 是否有明确来源标注。；源码 L256-L295
+#   inputs: test_root
+#   outputs: list[FixtureDriftEvent]
+# - id: A4
+#   name_zh: ④ run_fixture_check
+#   name_en: run_fixture_check
+#   intro: 运行完整的测试夹具漂移检查。
+#   desc: 运行完整的测试夹具漂移检查。；源码 L298-L356
+#   inputs: project_root
+#   outputs: dict[str, object]
+#   （注：A4 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[FixtureDriftEvent]
+#   name_en: list[FixtureDriftEvent]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_drift/_scanners.py ; tests/audit/test_test_fixture_checker.py
+# - id: O2
+#   name_zh: dict[str, object]
+#   name_en: dict[str, object]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_drift/_scanners.py ; tests/audit/test_test_fixture_checker.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
+"""
 
 from __future__ import annotations
 

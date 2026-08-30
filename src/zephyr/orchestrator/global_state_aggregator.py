@@ -14,7 +14,8 @@
 # [TESTS] tests/orchestrator/test_global_state_aggregator.py
 # [A_module] module_id=MOD-ORCH-002 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""GlobalStateAggregator — 全局状态聚合器（MOD-ORCH-002）。
+"""
+GlobalStateAggregator — 全局状态聚合器（MOD-ORCH-002）。
 
 B1-00201（AUD-DRAFT-001-DIGEST P2 波 P2-W13，CAND-ORCH-002，C2）：只读聚合
 服务——定时采集**持仓/资金/风控/策略/市场/系统健康**六域（采集器注入）→
@@ -23,6 +24,46 @@ B1-00201（AUD-DRAFT-001-DIGEST P2 波 P2-W13，CAND-ORCH-002，C2）：只读�
 查重分工（蓝图 §0）：status_dashboard=面板渲染消费方（本件=其上游只读数据
 源，不渲染）；agent_health_monitor=Agent 维度 SLO（本件=系统域采集目标之一，
 不重建监控）；state_synchronizer=运行时状态传播（写向，本件零写入纯只读）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: collectors 参数
+#   fields: 参数 collectors（无注解）
+#   code: global_state_aggregator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: global_state_aggregator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① StateSnapshot
+#   name_en: StateSnapshot
+#   intro: 统一全局状态快照（frozen；readings 按枚举序确定性排列）。
+#   desc: 统一全局状态快照（frozen；readings 按枚举序确定性排列）。；公共方法（定义序）: healthy, reading_of, to_dict, to_json；源码 L120-L162
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② GlobalStateAggregator
+#   name_en: GlobalStateAggregator
+#   intro: 六域只读聚合器（采集器注入 + 降级标记 + 快照查询）。
+#   desc: 六域只读聚合器（采集器注入 + 降级标记 + 快照查询）。；公共方法（定义序）: register_collector, registered_domains, collect, latest；源码 L165-L263
+#   inputs: collectors clock
+#   outputs: 返回值
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: StateSnapshot, GlobalStateAggregator
+#   downstream: 运行时装配批（状态面板数据源 / 告警路由快照供给 / 六域采集器绑定）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -156,17 +197,27 @@ class GlobalStateAggregator:
         except Exception as exc:  # noqa: BLE001 — 单域采集失败降级不阻断他域
             _log.warning("域采集失败(降级): %s (%s)", domain.value, exc)
             return DomainReading(
-                domain=domain, ok=False, payload={}, error=f"{type(exc).__name__}: {exc}",
+                domain=domain,
+                ok=False,
+                payload={},
+                error=f"{type(exc).__name__}: {exc}",
                 collected_at=now,
             )
         if not isinstance(payload, Mapping):
             _log.warning("域采集返回非 Mapping(降级): %s", domain.value)
             return DomainReading(
-                domain=domain, ok=False, payload={}, error="collector 返回值非 Mapping",
+                domain=domain,
+                ok=False,
+                payload={},
+                error="collector 返回值非 Mapping",
                 collected_at=now,
             )
         return DomainReading(
-            domain=domain, ok=True, payload=dict(payload), error=None, collected_at=now,
+            domain=domain,
+            ok=True,
+            payload=dict(payload),
+            error=None,
+            collected_at=now,
         )
 
     # ── 采集器注册 ────────────────────────────────────────────────────────

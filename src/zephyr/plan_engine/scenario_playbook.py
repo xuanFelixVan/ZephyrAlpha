@@ -21,7 +21,8 @@
 # A3: settle(Beta(1,1)命中率平滑→review payload→review_sink回调)
 # O1: PlaybookMatch / PlaybookConfirmation.status / settle payload
 # [/ALGO_FLOW]
-"""C-005 多情景对策——预案模板库 + 盘中实时匹配 + 执行确认流（MOD-PLAN-019）。
+"""
+C-005 多情景对策——预案模板库 + 盘中实时匹配 + 执行确认流（MOD-PLAN-019）。
 
 真源：construction_backlog_dig.tsv B1-00190（跨域元文档 §功能域模块·D-PORTFOLIO，
 裁定=做 P1）+ CAND-PLAN-013。TSV 现状注记："情景规划器在，情景预案模板库与
@@ -46,6 +47,57 @@
 （只出对策建议与确认状态）。
 
 SSoT: docs/03_modules/_domain_plan_engine/scenario_playbook/blueprint.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: match 参数
+#   fields: 参数 match（无注解）
+#   code: scenario_playbook.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① PlaybookTemplate
+#   name_en: PlaybookTemplate
+#   intro: 情景对策模板（不可变）。
+#   desc: 情景对策模板（不可变）。 Attributes: template_id: 模板唯一标识 scenario: 适用情景（必须 ∈ SCENARIO_LIST，语义对齐 MOD-P…；公共方法（定义序）: is_stan…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② PlaybookConfirmation
+#   name_en: PlaybookConfirmation
+#   intro: 执行确认流状态机（PROPOSED→CONFIRMED→EXECUTED / REJECTED / EXPIRED）。
+#   desc: 执行确认流状态机（PROPOSED→CONFIRMED→EXECUTED / REJECTED / EXPIRED）。；公共方法（定义序）: match, status, confirmed_by, closed_ba…
+#   inputs: match
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ PlaybookLibrary
+#   name_en: PlaybookLibrary
+#   intro: 预案模板库：匹配 + 复盘命中率统计（Beta(1,1) 平滑）。
+#   desc: 预案模板库：匹配 + 复盘命中率统计（Beta(1,1) 平滑）。；公共方法（定义序）: templates, scenarios, match, settle；源码 L298-L380
+#   inputs: templates
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ default_library
+#   name_en: default_library
+#   intro: 默认模板库：9 情景全覆盖（SCENARIO_LIST 语义对齐 MOD-PLAN-002）。
+#   desc: 默认模板库：9 情景全覆盖（SCENARIO_LIST 语义对齐 MOD-PLAN-002）。 档位哲学（44号 §9.5/§9.6 对齐）：真涨/假跌顺势加仓、假涨/真跌逆势减…；源码 L383-L460
+#   inputs: 无参数
+#   outputs: PlaybookLibrary
+#   （注：A4 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: PlaybookLibrary
+#   name_en: PlaybookLibrary
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 运行时装配批（盘中状态/事件注入；复盘 review_sink 接 scenario_probability_model 更新）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations
@@ -287,9 +339,7 @@ class PlaybookLibrary:
                 continue
             if t.is_standing:
                 hits.append((t, "standing"))
-            elif market_state in t.trigger_states and (
-                not t.trigger_events or event_set & t.trigger_events
-            ):
+            elif market_state in t.trigger_states and (not t.trigger_events or event_set & t.trigger_events):
                 hits.append((t, f"state:{market_state}"))
         if not hits:
             return None

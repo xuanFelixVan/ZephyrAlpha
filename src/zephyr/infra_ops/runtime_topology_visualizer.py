@@ -14,13 +14,51 @@
 # [TESTS] tests/infra_ops/test_runtime_topology_visualizer.py
 # [A_module] module_id=MOD-INF-087 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""RuntimeTopologyVisualizer — 运行时依赖拓扑数据模型（MOD-INF-087）。
+"""
+RuntimeTopologyVisualizer — 运行时依赖拓扑数据模型（MOD-INF-087）。
 
 B14-04635（AUD-DRAFT-001-DIGEST P2 波 P2-W01，CAND-INFRAOPS-005，A9运维
 架构）：P1~P5 进程 / Redis / GPU / miniQMT(BROKER) / iFind(DATAFEED) 节
 点注册 + 心跳状态着色（green/yellow/red 由心跳新鲜度与注入时钟判定）+
 数据流边标注（Pub/Sub/KV/List），snapshot() 输出 JSON 字典供仪表盘消费
 （本件只做后端数据，不做前端页面接线），随健康检查注入刷新。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: runtime_topology_visualizer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: yellow_after_s 参数
+#   fields: 参数 yellow_after_s（无注解）
+#   code: runtime_topology_visualizer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: red_after_s 参数
+#   fields: 参数 red_after_s（无注解）
+#   code: runtime_topology_visualizer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RuntimeTopologyVisualizer
+#   name_en: RuntimeTopologyVisualizer
+#   intro: 运行时依赖拓扑件（节点/边注册 + 心跳着色 + JSON 快照）。
+#   desc: 运行时依赖拓扑件（节点/边注册 + 心跳着色 + JSON 快照）。；公共方法（定义序）: register_node, register_edge, heartbeat, refresh_status, snapsh…
+#   inputs: clock yellow_after_s red_after_s
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: RuntimeTopologyVisualizer
+#   downstream: 运行时装配批（进程/Redis/GPU/消息/数据馈节点注册与心跳上报 / 仪表盘 JSON 消费）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -110,9 +148,7 @@ class RuntimeTopologyVisualizer:
         if yellow_after_s < 0 or red_after_s < 0:
             raise RuntimeTopologyError("着色阈值不可为负")
         if yellow_after_s >= red_after_s:
-            raise RuntimeTopologyError(
-                f"着色阈值非法: yellow({yellow_after_s}) 须严格小于 red({red_after_s})"
-            )
+            raise RuntimeTopologyError(f"着色阈值非法: yellow({yellow_after_s}) 须严格小于 red({red_after_s})")
         self._clock = clock or datetime.datetime.now
         self._yellow_s = yellow_after_s
         self._red_s = red_after_s

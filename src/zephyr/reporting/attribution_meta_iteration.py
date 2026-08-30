@@ -14,7 +14,8 @@
 # [TESTS] tests/reporting/test_attribution_meta_iteration.py
 # [A_module] module_id=MOD-RPT-038 | layer=module | stability=evolving | safety=L | ai_autonomy=human_gated
 # [TTL] permanent
-"""D_REPORTING — 归因反哺元级迭代评审建议编排（54 号 BM-REC-03-D 元级迭代，A9 残余清偿）。
+"""
+D_REPORTING — 归因反哺元级迭代评审建议编排（54 号 BM-REC-03-D 元级迭代，A9 残余清偿）。
 
 环节语义（battle_map_11 BM-REC-03-D 元级迭代与二阶优化 + 54 号 §3.1 闭环反馈）：
 归因结果（MOD-RPT-036 计算的 Brinson 超额来源分解 / MOD-RPT-037 落库查询）
@@ -41,6 +42,51 @@ transaction_cost_drag，MOD-RPT-036 守恒口径）。
 
 依据: 54_reconciliation_attribution §3.1/§5.1 + battle_map_11 BM-REC-03-D + 61 号 §3.3
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: strategy_id 参数
+#   fields: 参数 strategy_id，类型注解 str
+#   code: attribution_meta_iteration.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: benchmark_id 参数
+#   fields: 参数 benchmark_id，类型注解 str
+#   code: attribution_meta_iteration.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: reports 参数
+#   fields: 参数 reports，类型注解 Sequence[PerformanceAttributionReport]
+#   code: attribution_meta_iteration.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① window_from_reports
+#   name_en: window_from_reports
+#   intro: 从 CTR-P1-009 归因报告序列构建窗口（MOD-RPT-036/037 产物的消费桥）。
+#   desc: 从 CTR-P1-009 归因报告序列构建窗口（MOD-RPT-036/037 产物的消费桥）。 delta = report.total_return（几何超额 − trans…；源码 L206-L237
+#   inputs: strategy_id benchmark_id reports
+#   outputs: StrategyAttributionWindow
+# - id: A2
+#   name_zh: ② AttributionMetaIterationEngine
+#   name_en: AttributionMetaIterationEngine
+#   intro: 归因反哺元级迭代评审建议引擎（BM-REC-03-D；只产建议，human_gated）。
+#   desc: 归因反哺元级迭代评审建议引擎（BM-REC-03-D；只产建议，human_gated）。 用法：调度方按策略逐期归因结果构建窗口（window_from_reports 或手工…；公共方法（定义序）: channel…
+#   inputs: channel_manager
+#   outputs: 返回值
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: StrategyAttributionWindow
+#   name_en: StrategyAttributionWindow
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 调用方(盘后/周度元级迭代评审调度，battle_map_11 BM-REC-03-D); 人工评审裁定方(建议唯一消费出口)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -205,9 +251,7 @@ class AttributionMetaIterationEngine:
 
     def __init__(self, *, channel_manager: PromotionChannelManager | None = None) -> None:
         """channel_manager: A10 mSPRT 通道 DI（None=内部自建默认内核参数实例）。"""
-        self._channels = (
-            channel_manager if channel_manager is not None else PromotionChannelManager()
-        )
+        self._channels = channel_manager if channel_manager is not None else PromotionChannelManager()
 
     @property
     def channel_manager(self) -> PromotionChannelManager:
@@ -218,9 +262,7 @@ class AttributionMetaIterationEngine:
         """幂等预注册监控通道（champion=基准 / challenger=策略；已注册跳过）。"""
         if (benchmark_id, strategy_id) not in self._channels.pairs():
             self._channels.register(benchmark_id, strategy_id)
-            _logger.info(
-                "元级迭代监控通道预注册: champion=%s challenger=%s", benchmark_id, strategy_id
-            )
+            _logger.info("元级迭代监控通道预注册: champion=%s challenger=%s", benchmark_id, strategy_id)
 
     def evaluate(self, window: StrategyAttributionWindow) -> MetaIterationRecommendation:
         """评估单策略归因窗口 → 评审建议（只产建议，零副作用到策略/因子状态）。
@@ -237,14 +279,10 @@ class AttributionMetaIterationEngine:
         """
         w = _validate_window(window)
         self.ensure_channel(w.benchmark_id, w.strategy_id)
-        verdict = self._channels.feed_batch(
-            w.benchmark_id, w.strategy_id, list(w.period_active_returns)
-        )
+        verdict = self._channels.feed_batch(w.benchmark_id, w.strategy_id, list(w.period_active_returns))
 
         n_periods = len(w.period_active_returns)
-        negative_period_share = (
-            sum(1 for v in w.period_active_returns if v < 0.0) / n_periods
-        )
+        negative_period_share = sum(1 for v in w.period_active_returns if v < 0.0) / n_periods
         cum_active = math.fsum(w.period_active_returns)
         cum_alloc = math.fsum(w.period_allocation_effects)
         cum_selec = math.fsum(w.period_selection_effects)

@@ -14,7 +14,8 @@
 # [TESTS] tests/reporting/test_attribution_calculator.py
 # [A_module] module_id=MOD-RPT-036 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_REPORTING — 绩效归因计算器（54 号 BM-REC-02-B，memo §3.2 施工算法落码）。
+"""
+D_REPORTING — 绩效归因计算器（54 号 BM-REC-02-B，memo §3.2 施工算法落码）。
 
 施工范围（BM-REC-02-B 残余阻塞之"归因计算实现缺失"）：
   1. calc_single_period_brinson——纯 BHB 三因子单期分解（beginning-of-period
@@ -38,6 +39,93 @@
 
 浮点口径：全部 float（CTR-P1-009 契约为 float）；金额/PnL 精度敏感链路
 （trading/pnl_calculator）用 Decimal 不属本模块职责。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: mapping 参数
+#   fields: 参数 mapping，类型注解 Mapping[str, str] | None
+#   code: attribution_calculator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: symbol 参数
+#   fields: 参数 symbol，类型注解 str
+#   code: attribution_calculator.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: portfolio_weights 参数
+#   fields: 参数 portfolio_weights，类型注解 Mapping[str, float]
+#   code: attribution_calculator.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: benchmark_weights 参数
+#   fields: 参数 benchmark_weights，类型注解 Mapping[str, float]
+#   code: attribution_calculator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① set_sector_map
+#   name_en: set_sector_map
+#   intro: 注入/清空申万一级板块映射（None=清空，测试隔离用）。
+#   desc: 注入/清空申万一级板块映射（None=清空，测试隔离用）。；源码 L168-L172
+#   inputs: mapping
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② get_sector
+#   name_en: get_sector
+#   intro: 申万一级板块映射（symbol → 板块名；映射缺失降级 "未知板块"）。
+#   desc: 申万一级板块映射（symbol → 板块名；映射缺失降级 "未知板块"）。；源码 L175-L177
+#   inputs: symbol
+#   outputs: str
+# - id: A3
+#   name_zh: ③ calc_single_period_brinson
+#   name_en: calc_single_period_brinson
+#   intro: 单期 Brinson BHB 三因子分解（54 号 §3.2 v1.15.0 守恒修正口径）。
+#   desc: 单期 Brinson BHB 三因子分解（54 号 §3.2 v1.15.0 守恒修正口径）。 纯 BHB（beginning-of-period 权重，T-1 收盘）： all…；源码 L187-L226
+#   inputs: portfolio_weights benchmark_weights portfolio_returns benchmark_retur…
+#   outputs: dict[str, float]
+# - id: A4
+#   name_zh: ④ carino_link_periods
+#   name_en: carino_link_periods
+#   intro: Carino 对数链接——多期单期 Brinson 效应链接为多期归因（54 号 §3.2）。
+#   desc: Carino 对数链接——多期单期 Brinson 效应链接为多期归因（54 号 §3.2）。 v1.15.8 公式修正版（原版 k_t=ln(1+R_p,t)/R_p,t 零基…；源码 L229-L297
+#   inputs: period_effects portfolio_period_returns benchmark_period_returns
+#   outputs: dict[str, float | str]
+# - id: A5
+#   name_zh: ⑤ calc_brinson_with_t1_settlement
+#   name_en: calc_brinson_with_t1_settlement
+#   intro: Brinson 三因子 + A 股 T+1 已实现/浮盈分离（54 号 §3.2 v1.15.0 口径）。
+#   desc: Brinson 三因子 + A 股 T+1 已实现/浮盈分离（54 号 §3.2 v1.15.0 口径）。 将 selection effect 拆为： - realized_s…；源码 L300-L370
+#   inputs: portfolio_weights benchmark_weights portfolio_returns benchmark_retur…
+#   outputs: dict[str, float | bool]
+# - id: A6
+#   name_zh: ⑥ build_linked_attribution_report
+#   name_en: build_linked_attribution_report
+#   intro: 多期归因全链计算：逐期单期 Brinson → Carino 链接 → CTR-P1-009 报告。
+#   desc: 多期归因全链计算：逐期单期 Brinson → Carino 链接 → CTR-P1-009 报告。 total_return = 几何超额收益 − transaction_co…；源码 L383-L455
+#   inputs: portfolio_id period_start period_end idempotency_key period_inputs tr…
+#   outputs: LinkedAttribution
+#   （注：A6 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.reporting.attribution_result_store(落库); 归因报告生成链路(54号 BM-REC-02-B)
+# - id: O2
+#   name_zh: dict[str, float]
+#   name_en: dict[str, float]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.reporting.attribution_result_store(落库); 归因报告生成链路(54号 BM-REC-02-B)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
 """
 
 from __future__ import annotations
@@ -160,9 +248,7 @@ def carino_link_periods(
     """
     if not period_effects:
         raise ValueError("period_effects 不能为空")
-    if not (
-        len(period_effects) == len(portfolio_period_returns) == len(benchmark_period_returns)
-    ):
+    if not (len(period_effects) == len(portfolio_period_returns) == len(benchmark_period_returns)):
         raise ValueError(
             "三期序列长度不一致: "
             f"effects={len(period_effects)} portfolio={len(portfolio_period_returns)} "
@@ -240,7 +326,10 @@ def calc_brinson_with_t1_settlement(
 
     # 1. 标准 Brinson 三因子（纯 BHB）
     base = calc_single_period_brinson(
-        portfolio_weights, benchmark_weights, portfolio_returns, benchmark_returns,
+        portfolio_weights,
+        benchmark_weights,
+        portfolio_returns,
+        benchmark_returns,
         benchmark_total_return,
     )
 
@@ -276,9 +365,7 @@ def calc_brinson_with_t1_settlement(
         "interaction_effect": base["interaction_effect"],
         "t1_locked_weight": sum(info["weight"] for info in new_positions.values()),
         "t1_warning": (
-            unrealized_selection / total_selection > _T1_WARNING_RATIO
-            if abs(total_selection) > 1e-12
-            else False
+            unrealized_selection / total_selection > _T1_WARNING_RATIO if abs(total_selection) > 1e-12 else False
         ),
     }
 
@@ -344,9 +431,7 @@ def build_linked_attribution_report(
     residual = float(linked["carino_residual"])
     quality = "PASS" if abs(residual) < residual_tolerance else "FAIL"
     if strict and quality != "PASS":
-        raise ValueError(
-            f"Carino residual 超门禁拒发: residual={residual} tolerance={residual_tolerance}"
-        )
+        raise ValueError(f"Carino residual 超门禁拒发: residual={residual} tolerance={residual_tolerance}")
 
     # 3. 产出 CTR-P1-009 契约报告
     geometric_active = float(linked["geometric_active_return"])

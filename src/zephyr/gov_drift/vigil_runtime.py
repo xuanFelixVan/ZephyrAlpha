@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 Vigil Runtime — v0.6.0 VIGIL维护运行时: 运维token预算+手动override窗口。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: vigil_runtime.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① VigilRuntime
+#   name_en: VigilRuntime
+#   intro: class VigilRuntime 源码 L53-L116
+#   desc: 公共方法（定义序）: override_expiry, override_window_open, token_budget, tokens_used, consume, open_override_window, o…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: VigilRuntime
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

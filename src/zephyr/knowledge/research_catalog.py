@@ -14,7 +14,8 @@
 # [TESTS] tests/knowledge/test_research_catalog.py
 # [A_module] module_id=MOD-KNW-012 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""ResearchCatalog — 研究目录（MOD-KNW-012）。
+"""
+ResearchCatalog — 研究目录（MOD-KNW-012）。
 
 B6-08548（AUD-DRAFT-001-DIGEST P2 波 P2-W03，CAND-KNW-015，B6 D-RESEARCH-06）：
 研究资产**元数据索引**（资产类型词表闭合）+ **标签系统**（多对多）+
@@ -26,6 +27,43 @@ SQLite **FTS5 全文检索**（注入连接）+ **引用关系表**（cites/cite
 录索引与分级可见性，不管条目正文版本）；research_project_aggregate=项目
 维度聚合（本件=资产维度目录与引用）；cross_collection_retriever=向量库
 跨集合检索（本件语义检索仅挂注入适配器）。纯内存/DI，不触网不起子进程。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: conn 参数
+#   fields: 参数 conn（无注解）
+#   code: research_catalog.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: research_catalog.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: semantic_adapter 参数
+#   fields: 参数 semantic_adapter（无注解）
+#   code: research_catalog.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ResearchCatalog
+#   name_en: ResearchCatalog
+#   intro: 研究资产目录件（索引 + 标签 + FTS5 + 引用 + 语义检索 + 分级过滤）。
+#   desc: 研究资产目录件（索引 + 标签 + FTS5 + 引用 + 语义检索 + 分级过滤）。；公共方法（定义序）: index_asset, get_asset, list_assets, add_tags, remove_…
+#   inputs: conn clock semantic_adapter
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: ResearchCatalog
+#   downstream: 运行时装配批（研究资产索引 / 引用图谱 / L1-L4 分级检索注入点装配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -213,9 +251,7 @@ class ResearchCatalog:
     # ── 内部 ─────────────────────────────────────────────────────────────
 
     def _exists(self, asset_id: str) -> bool:
-        return self._conn.execute(
-            "SELECT 1 FROM catalog_assets WHERE asset_id = ?", (asset_id,)
-        ).fetchone() is not None
+        return self._conn.execute("SELECT 1 FROM catalog_assets WHERE asset_id = ?", (asset_id,)).fetchone() is not None
 
     def _require(self, asset_id: str) -> None:
         if not asset_id:
@@ -229,9 +265,7 @@ class ResearchCatalog:
 
     def _refresh_fts_tags(self, asset_id: str) -> None:
         tags = _expand_for_fts(" ".join(self.tags_of(asset_id)))
-        self._conn.execute(
-            "UPDATE catalog_fts SET tags = ? WHERE asset_id = ?", (tags, asset_id)
-        )
+        self._conn.execute("UPDATE catalog_fts SET tags = ? WHERE asset_id = ?", (tags, asset_id))
 
     # ── 元数据索引 ──────────────────────────────────────────────────────────
 
@@ -252,8 +286,7 @@ class ResearchCatalog:
             "INSERT INTO catalog_assets "
             "(asset_id, asset_type, title, abstract, level, created_at) "
             "VALUES (?, ?, ?, ?, ?, ?)",
-            (meta.asset_id, meta.asset_type.value, meta.title, meta.abstract,
-             meta.level.value, _ts(meta.created_at)),
+            (meta.asset_id, meta.asset_type.value, meta.title, meta.abstract, meta.level.value, _ts(meta.created_at)),
         )
         self._conn.execute(
             "INSERT INTO catalog_fts (asset_id, title, abstract, tags) VALUES (?, ?, ?, '')",
@@ -267,17 +300,18 @@ class ResearchCatalog:
         _validate_level(caller_level)
         self._require(asset_id)
         row = self._conn.execute(
-            "SELECT asset_id, asset_type, title, abstract, level, created_at "
-            "FROM catalog_assets WHERE asset_id = ?",
+            "SELECT asset_id, asset_type, title, abstract, level, created_at FROM catalog_assets WHERE asset_id = ?",
             (asset_id,),
         ).fetchone()
         if not self._visible(row[4], caller_level):
-            raise ResearchCatalogError(
-                f"资产不可见: {asset_id!r}（{row[4]} 高于调用方 {caller_level.value}）"
-            )
+            raise ResearchCatalogError(f"资产不可见: {asset_id!r}（{row[4]} 高于调用方 {caller_level.value}）")
         return AssetMeta(
-            asset_id=row[0], asset_type=AssetType(row[1]), title=row[2],
-            abstract=row[3], level=AccessLevel(row[4]), created_at=_parse(row[5]),
+            asset_id=row[0],
+            asset_type=AssetType(row[1]),
+            title=row[2],
+            abstract=row[3],
+            level=AccessLevel(row[4]),
+            created_at=_parse(row[5]),
         )
 
     def list_assets(
@@ -291,17 +325,19 @@ class ResearchCatalog:
         if asset_type is not None and not isinstance(asset_type, AssetType):
             raise ResearchCatalogError(f"非法资产类型: {asset_type!r}")
         rows = self._conn.execute(
-            "SELECT asset_id, asset_type, title, abstract, level, created_at "
-            "FROM catalog_assets ORDER BY asset_id"
+            "SELECT asset_id, asset_type, title, abstract, level, created_at FROM catalog_assets ORDER BY asset_id"
         ).fetchall()
         out = [
             AssetMeta(
-                asset_id=r[0], asset_type=AssetType(r[1]), title=r[2],
-                abstract=r[3], level=AccessLevel(r[4]), created_at=_parse(r[5]),
+                asset_id=r[0],
+                asset_type=AssetType(r[1]),
+                title=r[2],
+                abstract=r[3],
+                level=AccessLevel(r[4]),
+                created_at=_parse(r[5]),
             )
             for r in rows
-            if self._visible(r[4], caller_level)
-            and (asset_type is None or AssetType(r[1]) is asset_type)
+            if self._visible(r[4], caller_level) and (asset_type is None or AssetType(r[1]) is asset_type)
         ]
         return tuple(out)
 
@@ -361,8 +397,12 @@ class ResearchCatalog:
         ).fetchall()
         return tuple(
             AssetMeta(
-                asset_id=r[0], asset_type=AssetType(r[1]), title=r[2],
-                abstract=r[3], level=AccessLevel(r[4]), created_at=_parse(r[5]),
+                asset_id=r[0],
+                asset_type=AssetType(r[1]),
+                title=r[2],
+                abstract=r[3],
+                level=AccessLevel(r[4]),
+                created_at=_parse(r[5]),
             )
             for r in rows
             if self._visible(r[4], caller_level)
@@ -394,9 +434,7 @@ class ResearchCatalog:
             (match,),
         ).fetchall()
         hits = [
-            CatalogHit(asset_id=r[0], title=r[1], score=-float(r[2]))
-            for r in rows
-            if self._visible(r[3], caller_level)
+            CatalogHit(asset_id=r[0], title=r[1], score=-float(r[2])) for r in rows if self._visible(r[3], caller_level)
         ]
         return tuple(hits[:limit])
 
@@ -453,9 +491,7 @@ class ResearchCatalog:
             raw = list(self._semantic(query.strip(), limit))
         except Exception as exc:  # noqa: BLE001 — 适配器失败 Fail-Closed 包装
             raise ResearchCatalogError(f"语义检索适配器失败: {exc}") from exc
-        level_rows = self._conn.execute(
-            "SELECT asset_id, title, level FROM catalog_assets"
-        ).fetchall()
+        level_rows = self._conn.execute("SELECT asset_id, title, level FROM catalog_assets").fetchall()
         assets = {r[0]: (r[1], r[2]) for r in level_rows}
         hits: list[CatalogHit] = []
         for asset_id, score in raw:

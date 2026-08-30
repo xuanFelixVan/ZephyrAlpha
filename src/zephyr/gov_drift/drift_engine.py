@@ -28,7 +28,110 @@ Drift Engine — 编排器核心 (SRC-0030 精简后)
 + drift_result_types + drift_training。
 
 
-对标 blueprint.md §2.1/§2.3/§2.4/§2.6/§2.9/§2.10/§2.11/§2.13/§5.1。"""
+对标 blueprint.md §2.1/§2.3/§2.4/§2.6/§2.9/§2.10/§2.11/§2.13/§5.1。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: registry_path 参数
+#   fields: 参数 registry_path，类型注解 str | None
+#   code: drift_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: level 参数
+#   fields: 参数 level，类型注解 ScanLevel
+#   code: drift_engine.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: scope 参数
+#   fields: 参数 scope，类型注解 list[str] | None
+#   code: drift_engine.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: commit_message 参数
+#   fields: 参数 commit_message，类型注解 str
+#   code: drift_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① load_detector_registry
+#   name_en: load_detector_registry
+#   intro: load_detector_registry(registry_path) 源码 L212-L232
+#   desc: 源码 L212-L232
+#   inputs: registry_path
+#   outputs: list[Detector]
+# - id: A2
+#   name_zh: ② scan
+#   name_en: scan
+#   intro: scan(level, scope, registry_path, commit_message, jsonl_out…
+#   desc: 源码 L344-L415
+#   inputs: level scope registry_path commit_message jsonl_output
+#   outputs: ScanResult
+# - id: A3
+#   name_zh: ③ scan_on_commit
+#   name_en: scan_on_commit
+#   intro: scan_on_commit(changed_files) 源码 L433-L434
+#   desc: 源码 L433-L434
+#   inputs: changed_files
+#   outputs: ScanResult
+# - id: A4
+#   name_zh: ④ scheduled_light
+#   name_en: scheduled_light
+#   intro: scheduled_light() 源码 L437-L438
+#   desc: 源码 L437-L438
+#   inputs: 无参数
+#   outputs: ScanResult
+# - id: A5
+#   name_zh: ⑤ scheduled_deep
+#   name_en: scheduled_deep
+#   intro: scheduled_deep() 源码 L441-L442
+#   desc: 源码 L441-L442
+#   inputs: 无参数
+#   outputs: ScanResult
+# - id: A6
+#   name_zh: ⑥ scan_phase_gate
+#   name_en: scan_phase_gate
+#   intro: scan_phase_gate(module_id) 源码 L445-L446
+#   desc: 源码 L445-L446
+#   inputs: module_id
+#   outputs: ScanResult
+# - id: A7
+#   name_zh: ⑦ build_report
+#   name_en: build_report
+#   intro: build_report(result, registry_path) 源码 L449-L470
+#   desc: 源码 L449-L470
+#   inputs: result registry_path
+#   outputs: DriftReport
+# - id: A8
+#   name_zh: ⑧ push_to_evolution_engine
+#   name_en: push_to_evolution_engine
+#   intro: Evolution Engine feedback — 3 suggested actions from drift…
+#   desc: Evolution Engine feedback — 3 suggested actions from drift signal.；源码 L784-L810
+#   inputs: result
+#   outputs: dict[str, object]
+# 层: 输出
+# - id: O1
+#   name_zh: list[Detector]
+#   name_en: list[Detector]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_audit/cli.py
+# - id: O2
+#   name_zh: ScanResult
+#   name_en: ScanResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_audit/cli.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> O1
+"""
 
 from __future__ import annotations
 

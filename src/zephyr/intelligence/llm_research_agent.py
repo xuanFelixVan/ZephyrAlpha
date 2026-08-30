@@ -14,7 +14,8 @@
 # [TESTS] tests/intelligence/test_llm_research_agent.py
 # [A_module] module_id=MOD-INT-RESEARCH-AGENT | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""LlmResearchAgent — LLM 研究助手（MOD-INT-RESEARCH-AGENT）。
+"""
+LlmResearchAgent — LLM 研究助手（MOD-INT-RESEARCH-AGENT）。
 
 B6-08553（AUD-DRAFT-001-DIGEST P2 波 P2-W14，CAND-AISA-017，B6 D-RESEARCH-11）：
 规划器（任务→步骤计划）+ 工具白名单（检索/计算/数据库工具注册表注入，白名单
@@ -26,6 +27,48 @@ B6-08553（AUD-DRAFT-001-DIGEST P2 波 P2-W14，CAND-AISA-017，B6 D-RESEARCH-11
 查重分工（蓝图 §0）：llm_agent_router=LLM 路由选路（本件不做路由）；
 episodic_memory_store=情景记忆存储（本件仅经 kb_writer 回调写记忆，不建存储）；
 sentinel_hallucination_detector=幻觉检测（本件事实回查经注入回调，不实现检测）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: tools 参数
+#   fields: 参数 tools（无注解）
+#   code: llm_research_agent.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: planner 参数
+#   fields: 参数 planner（无注解）
+#   code: llm_research_agent.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: thinker 参数
+#   fields: 参数 thinker（无注解）
+#   code: llm_research_agent.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: reflector 参数
+#   fields: 参数 reflector（无注解）
+#   code: llm_research_agent.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① LlmResearchAgent
+#   name_en: LlmResearchAgent
+#   intro: LLM 研究助手（规划 + 白名单工具 + ReAct 循环 + 事实回查）。
+#   desc: LLM 研究助手（规划 + 白名单工具 + ReAct 循环 + 事实回查）。；公共方法（定义序）: plan, invoke_tool, run, plans, reports；源码 L164-L343
+#   inputs: tools planner thinker reflector fact_checker kb_writer clock max_roun…
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: LlmResearchAgent
+#   downstream: 运行时装配批（本地模型优先绑定规划/思考/反思回调 / 检索计算数据库工具白名单注册 / KB 写库与事实回查装配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -149,9 +192,7 @@ class LlmResearchAgent:
         # 本地模型优先语义：装配批应优先将 thinker/reflector 绑定本地模型
         self._thinker = thinker or (lambda step: f"思考：准备执行 {step.action}")
         self._reflector = reflector or (
-            lambda step, thought, observation: (
-                f"反思：步骤 {step.step_id} 完成，观察 {len(observation)} 字符"
-            )
+            lambda step, thought, observation: f"反思：步骤 {step.step_id} 完成，观察 {len(observation)} 字符"
         )
         self._fact_checker = fact_checker
         self._kb_writer = kb_writer
@@ -193,9 +234,7 @@ class LlmResearchAgent:
                 raise LlmResearchAgentError(f"step_id 重复: {step.step_id!r}")
             seen.add(step.step_id)
             if step.tool not in self._tools:
-                raise LlmResearchAgentError(
-                    f"白名单外工具拒绝: {step.tool!r}（步骤 {step.step_id!r}）"
-                )
+                raise LlmResearchAgentError(f"白名单外工具拒绝: {step.tool!r}（步骤 {step.step_id!r}）")
         self._plan_seq += 1
         plan = ResearchPlan(
             plan_id=f"plan-{self._plan_seq:04d}",
@@ -231,9 +270,7 @@ class LlmResearchAgent:
         """执行研究：规划 → ReAct 循环（轮次护栏）→ 事实回查 → 写 KB → 报告。"""
         plan = self.plan(task)
         if len(plan.steps) > self._max_rounds:
-            raise LlmResearchAgentError(
-                f"轮次护栏触发: 计划 {len(plan.steps)} 步超 max_rounds={self._max_rounds}"
-            )
+            raise LlmResearchAgentError(f"轮次护栏触发: 计划 {len(plan.steps)} 步超 max_rounds={self._max_rounds}")
 
         rounds: list[ReactRound] = []
         for round_no, step in enumerate(plan.steps, start=1):
@@ -246,14 +283,16 @@ class LlmResearchAgent:
                 reflection = str(self._reflector(step, thought, observation))
             except Exception as exc:  # noqa: BLE001 — 反思回调异常 Fail-Closed
                 raise LlmResearchAgentError(f"反思回调异常: {exc!r}") from exc
-            rounds.append(ReactRound(
-                round_no=round_no,
-                step_id=step.step_id,
-                thought=thought,
-                action=step.action,
-                observation=observation,
-                reflection=reflection,
-            ))
+            rounds.append(
+                ReactRound(
+                    round_no=round_no,
+                    step_id=step.step_id,
+                    thought=thought,
+                    action=step.action,
+                    observation=observation,
+                    reflection=reflection,
+                )
+            )
 
         conclusion = "；".join(r.observation for r in rounds)
 
@@ -263,17 +302,14 @@ class LlmResearchAgent:
         if claims:
             if self._fact_checker is None:
                 raise LlmResearchAgentError(
-                    "fact_checker 未注入（关键数字/标的强制事实回查，禁止旁路）: "
-                    + ",".join(claims)
+                    "fact_checker 未注入（关键数字/标的强制事实回查，禁止旁路）: " + ",".join(claims)
                 )
             for claim in claims:
                 try:
                     passed = bool(self._fact_checker(claim))
                 except Exception as exc:  # noqa: BLE001 — 回查异常按未过处理
                     raise LlmResearchAgentError(f"事实回查异常: {claim!r}: {exc!r}") from exc
-                fact_checks.append(FactCheckRecord(
-                    claim=claim, passed=passed, checked_at=self._clock()
-                ))
+                fact_checks.append(FactCheckRecord(claim=claim, passed=passed, checked_at=self._clock()))
                 if not passed:
                     raise LlmResearchAgentError(f"事实回查未过: {claim!r}")
 

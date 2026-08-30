@@ -14,7 +14,8 @@
 # [TESTS] tests/knowledge/test_research_project_aggregate.py
 # [A_module] module_id=MOD-KNW-011 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""ResearchProjectAggregate — 研究项目聚合根（MOD-KNW-011）。
+"""
+ResearchProjectAggregate — 研究项目聚合根（MOD-KNW-011）。
 
 B6-08533（AUD-DRAFT-001-DIGEST P2 波 P2-W03，CAND-KNW-014，B6）：
 ResearchProject **聚合根**——project_id + 状态机（draft→active→review→
@@ -27,6 +28,48 @@ experiment_tracking / 因子库**联动接口**（注入适配器，挂载即回
 挂引用不重建登记）；evidence_chain=证据链不可变追加（本件只挂引用）；
 experiment_tracking=实验运行记录（本件只挂引用）；knowledge_artifact_store
 =6 类产出不可变工件（本件=项目维度聚合视图）。纯内存/DI，不触网不起子进程。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: conn 参数
+#   fields: 参数 conn（无注解）
+#   code: research_project_aggregate.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: research_project_aggregate.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: hypothesis_registry 参数
+#   fields: 参数 hypothesis_registry（无注解）
+#   code: research_project_aggregate.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: evidence_chain 参数
+#   fields: 参数 evidence_chain（无注解）
+#   code: research_project_aggregate.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ResearchProjectAggregate
+#   name_en: ResearchProjectAggregate
+#   intro: 研究项目聚合根（状态机 + 子实体挂载 + SQLite 持久化 + 联动）。
+#   desc: 研究项目聚合根（状态机 + 子实体挂载 + SQLite 持久化 + 联动）。；公共方法（定义序）: create_project, get_project, list_projects, transition, at…
+#   inputs: conn clock hypothesis_registry evidence_chain experiment_tracker fact…
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: ResearchProjectAggregate
+#   downstream: 运行时装配批（研究项目建模 / hypothesis_registry 等联动注入点装配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -184,14 +227,17 @@ class ResearchProjectAggregate:
     @staticmethod
     def _view(row) -> ProjectView:
         return ProjectView(
-            project_id=row[0], name=row[1], status=ProjectStatus(row[2]),
-            version=int(row[3]), created_at=_parse(row[4]), updated_at=_parse(row[5]),
+            project_id=row[0],
+            name=row[1],
+            status=ProjectStatus(row[2]),
+            version=int(row[3]),
+            created_at=_parse(row[4]),
+            updated_at=_parse(row[5]),
         )
 
     def _bump(self, project_id: str, now: datetime.datetime) -> None:
         self._conn.execute(
-            "UPDATE research_projects SET version = version + 1, updated_at = ? "
-            "WHERE project_id = ?",
+            "UPDATE research_projects SET version = version + 1, updated_at = ? WHERE project_id = ?",
             (_ts(now), project_id),
         )
 
@@ -203,9 +249,7 @@ class ResearchProjectAggregate:
             raise ResearchProjectError("project_id 为空")
         if not name:
             raise ResearchProjectError("项目名称为空")
-        exists = self._conn.execute(
-            "SELECT 1 FROM research_projects WHERE project_id = ?", (project_id,)
-        ).fetchone()
+        exists = self._conn.execute("SELECT 1 FROM research_projects WHERE project_id = ?", (project_id,)).fetchone()
         if exists is not None:
             raise ResearchProjectError(f"project_id 重复: {project_id!r}")
         now = self._clock()
@@ -252,8 +296,7 @@ class ResearchProjectAggregate:
             )
         now = self._clock()
         self._conn.execute(
-            "UPDATE research_projects SET status = ?, version = version + 1, updated_at = ? "
-            "WHERE project_id = ?",
+            "UPDATE research_projects SET status = ?, version = version + 1, updated_at = ? WHERE project_id = ?",
             (to_status.value, _ts(now), project_id),
         )
         self._conn.commit()
@@ -279,8 +322,7 @@ class ResearchProjectAggregate:
         if view.status is ProjectStatus.ARCHIVED:
             raise ResearchProjectError(f"项目已归档，禁止挂载子实体: {project_id!r}")
         prev = self._conn.execute(
-            "SELECT version FROM research_project_children "
-            "WHERE project_id = ? AND kind = ? AND ref_id = ?",
+            "SELECT version FROM research_project_children WHERE project_id = ? AND kind = ? AND ref_id = ?",
             (project_id, kind.value, ref_id),
         ).fetchone()
         version = 1 if prev is None else int(prev[0]) + 1
@@ -328,8 +370,11 @@ class ResearchProjectAggregate:
             ).fetchall()
         return tuple(
             ChildRef(
-                kind=ChildKind(r[0]), ref_id=r[1], version=int(r[2]),
-                note=r[3], attached_at=_parse(r[4]),
+                kind=ChildKind(r[0]),
+                ref_id=r[1],
+                version=int(r[2]),
+                note=r[3],
+                attached_at=_parse(r[4]),
             )
             for r in rows
         )
@@ -340,12 +385,9 @@ class ResearchProjectAggregate:
             raise ResearchProjectError(f"非法子实体类型: {kind!r}")
         self._row(project_id)
         row = self._conn.execute(
-            "SELECT version FROM research_project_children "
-            "WHERE project_id = ? AND kind = ? AND ref_id = ?",
+            "SELECT version FROM research_project_children WHERE project_id = ? AND kind = ? AND ref_id = ?",
             (project_id, kind.value, ref_id),
         ).fetchone()
         if row is None:
-            raise ResearchProjectError(
-                f"子实体未挂载: {project_id!r} {kind.value}/{ref_id!r}"
-            )
+            raise ResearchProjectError(f"子实体未挂载: {project_id!r} {kind.value}/{ref_id!r}")
         return int(row[0])

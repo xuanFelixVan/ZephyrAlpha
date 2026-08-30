@@ -14,7 +14,8 @@
 # [TESTS] tests/infrastructure/test_process_supervisor.py
 # [A_module] module_id=MOD-INF-066 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""NSSM+5 进程架构与自研 Supervisor（MOD-INF-066）——P1~P5 启停编排与崩溃策略唯一真源。
+"""
+NSSM+5 进程架构与自研 Supervisor（MOD-INF-066）——P1~P5 启停编排与崩溃策略唯一真源。
 
 真源：A9 运维架构 §1.1 + CAND-H1FS-002（B14-04521）。
 
@@ -32,6 +33,120 @@ MOD-INF-039 startup_sequencer）不变；本模块收口 NSSM 服务化定义与
 系统级动作 AI 一律不执行——本模块只产出配置就绪件（服务定义声明 +
 安装脚本草稿文本 + 编排判定代码）；实际 spawn 通道归 MOD-INF-016
 ProcessLifecycleGateway（本 MVP 不发起进程）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: process_id 参数
+#   fields: 参数 process_id，类型注解 str
+#   code: process_supervisor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: is_trading_hours 参数
+#   fields: 参数 is_trading_hours（无注解）
+#   code: process_supervisor.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: consecutive_failures 参数
+#   fields: 参数 consecutive_failures（无注解）
+#   code: process_supervisor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① get_process_spec
+#   name_en: get_process_spec
+#   intro: 按进程 ID 取注册表条目；未知 ID Fail-Closed。
+#   desc: 按进程 ID 取注册表条目；未知 ID Fail-Closed。；源码 L283-L288
+#   inputs: process_id
+#   outputs: SupervisorProcessSpec
+# - id: A2
+#   name_zh: ② compute_start_order
+#   name_en: compute_start_order
+#   intro: 启动序列：优先级数值升序（高优先级先启动）→ P1→P3→P2→P4→P5。
+#   desc: 启动序列：优先级数值升序（高优先级先启动）→ P1→P3→P2→P4→P5。；源码 L291-L293
+#   inputs: 无参数
+#   outputs: list[str]
+# - id: A3
+#   name_zh: ③ compute_shutdown_order
+#   name_en: compute_shutdown_order
+#   intro: 关闭序列：优先级降序 → P5→P4→P2→P3→P1（P3 先于 P1，挂单先撤回）。
+#   desc: 关闭序列：优先级降序 → P5→P4→P2→P3→P1（P3 先于 P1，挂单先撤回）。；源码 L296-L298
+#   inputs: 无参数
+#   outputs: list[str]
+# - id: A4
+#   name_zh: ④ shutdown_sequence_with_redis
+#   name_en: shutdown_sequence_with_redis
+#   intro: 含 Redis 的完整关闭序列：P1 先于 Redis（末条行情先持久化）。
+#   desc: 含 Redis 的完整关闭序列：P1 先于 Redis（末条行情先持久化）。；源码 L301-L303
+#   inputs: 无参数
+#   outputs: list[str]
+# - id: A5
+#   name_zh: ⑤ heartbeat_key
+#   name_en: heartbeat_key
+#   intro: 进程心跳键：hb:{process_name}（A9 §1.1.3）。
+#   desc: 进程心跳键：hb:{process_name}（A9 §1.1.3）。；源码 L306-L308
+#   inputs: process_id
+#   outputs: str
+# - id: A6
+#   name_zh: ⑥ heartbeat_ttl_seconds
+#   name_en: heartbeat_ttl_seconds
+#   intro: 心跳 TTL = 超时阈值 + 30s 缓冲（规则复用 MOD-INF-063 hb dynamic_ttl，不重造）。
+#   desc: 心跳 TTL = 超时阈值 + 30s 缓冲（规则复用 MOD-INF-063 hb dynamic_ttl，不重造）。；源码 L311-L315
+#   inputs: process_id
+#   outputs: int
+# - id: A7
+#   name_zh: ⑦ decide_crash_action
+#   name_en: decide_crash_action
+#   intro: 崩溃重启判定（A9 §1.1.3 + §3.1；纯数据判定，执行归 P4 与 Owner 窗口）。
+#   desc: 崩溃重启判定（A9 §1.1.3 + §3.1；纯数据判定，执行归 P4 与 Owner 窗口）。 - P3（critical_no_restart）：HC-01 任何时段不自动…；源码 L318-L351
+#   inputs: process_id is_trading_hours consecutive_failures
+#   outputs: CrashAction
+# - id: A8
+#   name_zh: ⑧ check_supervisor_consistency
+#   name_en: check_supervisor_consistency
+#   intro: 注册表一致性自检：五进程/优先级唯一/心跳不倒挂/核号无重叠/启停序列硬约束。
+#   desc: 注册表一致性自检：五进程/优先级唯一/心跳不倒挂/核号无重叠/启停序列硬约束。；源码 L354-L375
+#   inputs: 无参数
+#   outputs: dict[str, object]
+# - id: A9
+#   name_zh: ⑨ render_nssm_service_definitions
+#   name_en: render_nssm_service_definitions
+#   intro: 产出五进程 NSSM 服务定义声明（按启动序列；仅就绪件不执行注册）。
+#   desc: 产出五进程 NSSM 服务定义声明（按启动序列；仅就绪件不执行注册）。 硬边界：nssm install/set 注册与开机自启属 Owner 窗口（applied_by_ai=…；源码 L378-L410
+#   inputs: 无参数
+#   outputs: list[dict[str, object]]
+# - id: A10
+#   name_zh: ⑩ render_nssm_install_script
+#   name_en: render_nssm_install_script
+#   intro: 产出 NSSM 安装脚本草稿（PowerShell 文本；DRAFT 仅就绪件，AI 不执行注册）。
+#   desc: 产出 NSSM 安装脚本草稿（PowerShell 文本；DRAFT 仅就绪件，AI 不执行注册）。；源码 L413-L436
+#   inputs: 无参数
+#   outputs: str
+#   （注：A10 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: SupervisorProcessSpec
+#   name_en: SupervisorProcessSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: list[str]
+#   name_en: list[str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> A10
+# A10 --> O1
 """
 
 from __future__ import annotations
@@ -162,9 +277,7 @@ FIVE_PROCESS_REGISTRY: Final[tuple[SupervisorProcessSpec, ...]] = (
     ),
 )
 
-_REGISTRY_BY_ID: Final[dict[str, SupervisorProcessSpec]] = {
-    spec.process_id: spec for spec in FIVE_PROCESS_REGISTRY
-}
+_REGISTRY_BY_ID: Final[dict[str, SupervisorProcessSpec]] = {spec.process_id: spec for spec in FIVE_PROCESS_REGISTRY}
 
 
 def get_process_spec(process_id: str) -> SupervisorProcessSpec:
@@ -182,10 +295,7 @@ def compute_start_order() -> list[str]:
 
 def compute_shutdown_order() -> list[str]:
     """关闭序列：优先级降序 → P5→P4→P2→P3→P1（P3 先于 P1，挂单先撤回）。"""
-    return [
-        spec.process_id
-        for spec in sorted(FIVE_PROCESS_REGISTRY, key=lambda s: s.priority, reverse=True)
-    ]
+    return [spec.process_id for spec in sorted(FIVE_PROCESS_REGISTRY, key=lambda s: s.priority, reverse=True)]
 
 
 def shutdown_sequence_with_redis() -> list[str]:

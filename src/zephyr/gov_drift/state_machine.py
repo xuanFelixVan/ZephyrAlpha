@@ -15,14 +15,43 @@
 # [A_module] module_id=MOD-INF-023 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""[BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
+"""
+[BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
 
 Drift State Machine — state_machine.py
 
 
 10 状态漂移生命周期状态机。控制 DETECTED->VERIFIED 正向修复链路和异常路径。
 
-对标 blueprint.md §2.3（漂移状态机）。"""
+对标 blueprint.md §2.3（漂移状态机）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: state_machine.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① DriftStateMachine
+#   name_en: DriftStateMachine
+#   intro: class DriftStateMachine 源码 L95-L300
+#   desc: 公共方法（定义序）: validate_transition, transition, auto_transition, trigger_rollback, check_ttl, suppress, get_state…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: DriftStateMachine
+#   downstream: src/zephyr/gov_drift/_core.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 from __future__ import annotations
 

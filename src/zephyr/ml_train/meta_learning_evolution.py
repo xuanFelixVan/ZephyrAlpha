@@ -15,12 +15,40 @@
 # [A_module] module_id=MOD-ML-007 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""D_ML_TRAIN — MOD-ML-007 元学习演进（跨任务经验库，轻量）。
+"""
+D_ML_TRAIN — MOD-ML-007 元学习演进（跨任务经验库，轻量）。
 
 统一框架派路线（宪章 §3 约束二）的轻量载体：跨训练任务沉淀
 ``(任务, 上下文, 指标)`` 经验，新任务启动时按上下文匹配推荐历史最佳配置作
 训练先验。纯内存/标准库实现，不引重依赖；推荐结果仅为候选先验，是否采纳
 走人工/治理闸门（B-007/B-009）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: meta_learning_evolution.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① MetaLearningStore
+#   name_en: MetaLearningStore
+#   intro: 跨任务经验库（MOD-ML-007）。
+#   desc: 跨任务经验库（MOD-ML-007）。；公共方法（定义序）: record, recall, recommend, evolution_summary；源码 L81-L133
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: MetaLearningStore
+#   downstream: MOD-ML-001 training_pipeline（超参先验推荐位）；MOD-ML-009 learning_effect_feedback（经验回写）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -82,9 +110,7 @@ class MetaLearningStore:
         pool = self._experiences.get(task_id)
         if not pool:
             return None
-        matched = [
-            e for e in pool if all(e.context.get(k) == v for k, v in context.items())
-        ]
+        matched = [e for e in pool if all(e.context.get(k) == v for k, v in context.items())]
         candidates = matched if matched else pool
         best = max(candidates, key=lambda e: e.metrics.get(metric, float("-inf")))
         _log.info("经验推荐: %s matched=%d best=%s", task_id, len(matched), best.metrics)

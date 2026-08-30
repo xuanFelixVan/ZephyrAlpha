@@ -22,7 +22,8 @@
 # A1: 双条件判定 is_anomaly = corr<阈值 AND |excess|>阈值；方向=sign(excess)
 # O1: AnomalyResult(is_anomaly/anomaly_type/excess_return/rolling_corr/degraded)
 # [/ALGO_FLOW]
-"""MOD-INT-EVENT-ANOMALY — 异动识别器（国盛证券异动雷达 2026-03 施工化，26 号 §2.5）。
+"""
+MOD-INT-EVENT-ANOMALY — 异动识别器（国盛证券异动雷达 2026-03 施工化，26 号 §2.5）。
 
 方法：个股与基准分钟序列价格/成交量**相关系数 < 0** 触发"异动"（脱离同向
 才是真异动——固定涨幅阈值会把大盘联动误判为异动），叠加**超额收益方向显著**
@@ -41,6 +42,56 @@
 
 依据: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/26_event_driven_strategy_detail.md §2.5
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: symbol 参数
+#   fields: 参数 symbol，类型注解 str
+#   code: event_anomaly_detector.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: intraday_returns 参数
+#   fields: 参数 intraday_returns，类型注解 Sequence[float]
+#   code: event_anomaly_detector.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: benchmark_returns 参数
+#   fields: 参数 benchmark_returns，类型注解 Sequence[float]
+#   code: event_anomaly_detector.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: window 参数
+#   fields: 参数 window，类型注解 int
+#   code: event_anomaly_detector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AnomalyResult
+#   name_en: AnomalyResult
+#   intro: 异动识别结果。
+#   desc: 异动识别结果。 degraded : True 表示输入退化（序列过短/零方差/NaN），is_anomaly 恒 False。；公共方法（定义序）: to_dict；源码 L134-L155
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② detect_anomaly
+#   name_en: detect_anomaly
+#   intro: 异动识别（国盛异动雷达施工化）：相关系数<阈值 + 超额收益方向显著。
+#   desc: 异动识别（国盛异动雷达施工化）：相关系数<阈值 + 超额收益方向显著。 Parameters ---------- symbol : 标的代码（追踪用，不参与计算）。 intra…；源码 L175-L235
+#   inputs: symbol intraday_returns benchmark_returns window corr_threshold exces…
+#   outputs: AnomalyResult
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: AnomalyResult
+#   name_en: AnomalyResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 事件驱动 sleeve（异动事件源→事件分类/评分，26 号 §2.2 异动行）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

@@ -14,6 +14,36 @@
 # [TESTS] tests/audit-orchestrator/test_self_monitor.py
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: self_monitor.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SelfMonitor
+#   name_en: SelfMonitor
+#   intro: class SelfMonitor 源码 L59-L96
+#   desc: 公共方法（定义序）: increment, set_gauge, snapshot；源码 L59-L96
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SelfMonitor
+#   downstream: audit-orchestrator.cli; MCP governance_server
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 import logging
 import time
 from datetime import datetime

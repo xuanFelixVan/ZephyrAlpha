@@ -14,7 +14,8 @@
 # [TESTS] tests/knowledge/test_knowledge_quality_assessor.py
 # [A_module] module_id=MOD-KNW-002 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""KnowledgeQualityAssessor — 知识质量评估器（MOD-KNW-002）。
+"""
+KnowledgeQualityAssessor — 知识质量评估器（MOD-KNW-002）。
 
 B14-04624（AUD-DRAFT-001-DIGEST P2 波 P2-W03，CAND-KNW-013，A9
 D-KNOWLEDGE-11）：RAGAS 思想单机版——知识条目四维评分（准确性/时效性/
@@ -25,6 +26,48 @@ D-KNOWLEDGE-11）：RAGAS 思想单机版——知识条目四维评分（准确
 
 查重分工：gov_audit/kb_gate=入闸门禁（本件=入库后质量评分与隔离，不做门
 禁判定）；kb_engine=条目存取（本件经注入回调写回质量分，不直连存储）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: weights 参数
+#   fields: 参数 weights（无注解）
+#   code: knowledge_quality_assessor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: quarantine_threshold 参数
+#   fields: 参数 quarantine_threshold（无注解）
+#   code: knowledge_quality_assessor.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: quarantine_weight 参数
+#   fields: 参数 quarantine_weight（无注解）
+#   code: knowledge_quality_assessor.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: half_life_days 参数
+#   fields: 参数 half_life_days（无注解）
+#   code: knowledge_quality_assessor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① KnowledgeQualityAssessor
+#   name_en: KnowledgeQualityAssessor
+#   intro: 知识条目四维评分 + 时效衰减 + 隔离降权 + 复核队列。
+#   desc: 知识条目四维评分 + 时效衰减 + 隔离降权 + 复核队列。；公共方法（定义序）: assess, get_score, retrieval_weight, enqueue_review, next_review, r…
+#   inputs: weights quarantine_threshold quarantine_weight half_life_days citatio…
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: KnowledgeQualityAssessor
+#   downstream: 运行时装配批（KBEngine 质量分写回 / 检索降权 / 定期复核编排）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -157,18 +200,14 @@ class KnowledgeQualityAssessor:
         now = self._clock()
         age_seconds = (now - published_at).total_seconds()
         if age_seconds < 0:
-            raise KnowledgeQualityError(
-                f"published_at 晚于当前时钟: {published_at!r}（时钟回拨拒绝）"
-            )
+            raise KnowledgeQualityError(f"published_at 晚于当前时钟: {published_at!r}（时钟回拨拒绝）")
         age_days = age_seconds / 86400.0
         return 0.5 ** (age_days / self._half_life)
 
     def _enqueue(self, entry_id: str, reason: str) -> None:
         if entry_id in self._queued:
             return
-        self._review_queue.append(
-            ReviewItem(entry_id=entry_id, reason=reason, enqueued_at=self._clock())
-        )
+        self._review_queue.append(ReviewItem(entry_id=entry_id, reason=reason, enqueued_at=self._clock()))
         self._queued.add(entry_id)
         _log.info("复核入队: %s (%s)", entry_id, reason)
 
@@ -213,13 +252,15 @@ class KnowledgeQualityAssessor:
         )
         self._scores[entry_id] = score
         if self._audit_sink is not None:
-            self._audit_sink(QualityAuditRecord(
-                entry_id=entry_id,
-                old_total=old.total if old is not None else None,
-                new_total=total,
-                quarantined=quarantined,
-                at=self._clock(),
-            ))
+            self._audit_sink(
+                QualityAuditRecord(
+                    entry_id=entry_id,
+                    old_total=old.total if old is not None else None,
+                    new_total=total,
+                    quarantined=quarantined,
+                    at=self._clock(),
+                )
+            )
         if self._kb_writer is not None:
             self._kb_writer(entry_id, total)  # 质量分写回 KBEngine 元数据语义
         if quarantined:

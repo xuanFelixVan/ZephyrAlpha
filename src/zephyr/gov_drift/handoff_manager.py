@@ -28,7 +28,111 @@ resume_workflow: 自动加载注入context推进状态
 abort: 文件状态不一致->重新生成+通知Owner
 
 
-对标 blueprint.md §6.14。"""
+对标 blueprint.md §6.14。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: drift_event_id 参数
+#   fields: 参数 drift_event_id，类型注解 str
+#   code: handoff_manager.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: detector_id 参数
+#   fields: 参数 detector_id，类型注解 str
+#   code: handoff_manager.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: severity 参数
+#   fields: 参数 severity，类型注解 str
+#   code: handoff_manager.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: source_file 参数
+#   fields: 参数 source_file，类型注解 str
+#   code: handoff_manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① build_handoff_package
+#   name_en: build_handoff_package
+#   intro: 构建跨Session交接包。
+#   desc: 构建跨Session交接包。；源码 L203-L265
+#   inputs: drift_event_id detector_id severity source_file related_files owner_i…
+#   outputs: HandoffPackage
+# - id: A2
+#   name_zh: ② serialize_package
+#   name_en: serialize_package
+#   intro: 序列化handoff package为JSON文件，应用RULE-ONE temp-file+rename。
+#   desc: 序列化handoff package为JSON文件，应用RULE-ONE temp-file+rename。；源码 L268-L312
+#   inputs: pkg output_dir
+#   outputs: str
+# - id: A3
+#   name_zh: ③ load_package
+#   name_en: load_package
+#   intro: 从JSON文件加载handoff package。
+#   desc: 从JSON文件加载handoff package。；源码 L315-L354
+#   inputs: filepath
+#   outputs: HandoffPackage | None
+# - id: A4
+#   name_zh: ④ verify_integrity
+#   name_en: verify_integrity
+#   intro: 验证handoff package中文件完整性是否一致。
+#   desc: 验证handoff package中文件完整性是否一致。；源码 L357-L381
+#   inputs: pkg
+#   outputs: tuple[bool, list[str]]
+# - id: A5
+#   name_zh: ⑤ resume_workflow
+#   name_en: resume_workflow
+#   intro: 恢复跨Session修复流程——自动注入context并推进状态。
+#   desc: 恢复跨Session修复流程——自动注入context并推进状态。；源码 L384-L422
+#   inputs: pkg project_root target_state
+#   outputs: dict[str, object]
+# - id: A6
+#   name_zh: ⑥ abort_handoff
+#   name_en: abort_handoff
+#   intro: 中止handoff：当文件状态不一致时重新生成并通知Owner。
+#   desc: 中止handoff：当文件状态不一致时重新生成并通知Owner。；源码 L425-L440
+#   inputs: pkg reason
+#   outputs: dict[str, object]
+# - id: A7
+#   name_zh: ⑦ HandoffRecord
+#   name_en: HandoffRecord
+#   intro: 跨 Agent 任务交接记录——治本（ F3）：对齐 test_handoff_manager.py 契约。
+#   desc: 跨 Agent 任务交接记录——治本（ F3）：对齐 test_handoff_manager.py 契约。 旧桩仅含 record_id/from_agent/to_agent…；公共方法（定义序）: to_dict…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A8
+#   name_zh: ⑧ HandoffManager
+#   name_en: HandoffManager
+#   intro: 跨 Agent 任务交接管理器——治本（ F3）：对齐 test_handoff_manager.py 契约。
+#   desc: 跨 Agent 任务交接管理器——治本（ F3）：对齐 test_handoff_manager.py 契约。 旧桩仅含 create_handoff/get_pending，缺…；公共方法（定义序）: get_act…
+#   inputs: config
+#   outputs: 返回值
+#   （注：A8 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: HandoffPackage
+#   name_en: HandoffPackage
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_drift/_infrastructure.py ; tests/audit/test_handoff_manager.py ;…
+# - id: O2
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_drift/_infrastructure.py ; tests/audit/test_handoff_manager.py ;…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> O1
+"""
 
 from __future__ import annotations
 

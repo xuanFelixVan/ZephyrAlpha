@@ -22,7 +22,8 @@
 # A1: to_negative_count_series（DailySentiment→negative_count 日序列，供 S2 bad_news_flat）
 # O1: CrossSourceVote（direction/score/strength）+ DailySentiment 列表
 # [/ALGO_FLOW]
-"""MOD-NLP-AGGREGATOR-001 SentimentAggregator — 跨源情绪一致性投票聚合（NLP Phase 7）。
+"""
+MOD-NLP-AGGREGATOR-001 SentimentAggregator — 跨源情绪一致性投票聚合（NLP Phase 7）。
 
 设计依据：
 - 13 号 §3.1.11 步骤 9：情感聚合层 ``sentiment_aggregator.py``，按日/板块聚合。
@@ -43,6 +44,101 @@
 SSoT: #ARCH-NLP-PIPELINE-001
 Version: 0.2.0（2026-08-30 CAND-NLP-003：scope 主体范围轴过滤——aggregate_daily 市场级聚合
         可按 market_scope_only=True 仅纳入 scope=market 记录，缺失视为 market 向后兼容）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: scope 参数
+#   fields: 参数 scope，类型注解 str | None
+#   code: sentiment_aggregator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: items 参数
+#   fields: 参数 items，类型注解 Sequence[SourceSentiment]
+#   code: sentiment_aggregator.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: min_agree_sources 参数
+#   fields: 参数 min_agree_sources（无注解）
+#   code: sentiment_aggregator.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: weak_gain 参数
+#   fields: 参数 weak_gain（无注解）
+#   code: sentiment_aggregator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① normalize_scope
+#   name_en: normalize_scope
+#   intro: scope 归一化（CAND-NLP-003）：缺失/空串 → market（向后兼容 v2 无轴数据）。
+#   desc: scope 归一化（CAND-NLP-003）：缺失/空串 → market（向后兼容 v2 无轴数据）。；源码 L251-L254
+#   inputs: scope
+#   outputs: str
+# - id: A2
+#   name_zh: ② filter_market_scope
+#   name_en: filter_market_scope
+#   intro: 仅保留市场级主体记录（scope=market；缺失视为 market 向后兼容）。
+#   desc: 仅保留市场级主体记录（scope=market；缺失视为 market 向后兼容）。 用途：市场级日聚合前过滤个股/板块级情感，防"某公司中标"污染大盘情绪口径。；源码 L257-L262
+#   inputs: items
+#   outputs: list[SourceSentiment]
+# - id: A3
+#   name_zh: ③ vote_cross_source
+#   name_en: vote_cross_source
+#   intro: 跨源一致性投票（26 号 §2.7 RavenPack 裁定施工化）。
+#   desc: 跨源一致性投票（26 号 §2.7 RavenPack 裁定施工化）。 源内等权求均 polarity → 源方向 → 票决： - ``≥min_agree_sources``…；源码 L265-L319
+#   inputs: items min_agree_sources weak_gain
+#   outputs: CrossSourceVote
+# - id: A4
+#   name_zh: ④ aggregate_daily
+#   name_en: aggregate_daily
+#   intro: 按日聚合（13 号 Phase 7 主口径：全市场日级情绪）。
+#   desc: 按日聚合（13 号 Phase 7 主口径：全市场日级情绪）。 Parameters ---------- market_scope_only : True 时先按 scope=…；源码 L359-L381
+#   inputs: items market_scope_only
+#   outputs: list[DailySentiment]
+# - id: A5
+#   name_zh: ⑤ aggregate_daily_by_symbol
+#   name_en: aggregate_daily_by_symbol
+#   intro: 按 (日, 标的/板块) 聚合（13 号 Phase 7 板块口径）。
+#   desc: 按 (日, 标的/板块) 聚合（13 号 Phase 7 板块口径）。 ``symbol`` 为空的记录归入 "" 组。返回按 (day, symbol) 升序；空输入返回空列表。；源码 L384-L392
+#   inputs: items
+#   outputs: list[DailySentiment]
+# - id: A6
+#   name_zh: ⑥ to_negative_count_series
+#   name_en: to_negative_count_series
+#   intro: DailySentiment → negative_count 日序列（DatetimeIndex）。
+#   desc: DailySentiment → negative_count 日序列（DatetimeIndex）。 桥接 regime S2 ``s2_bad_news_flat_score…；源码 L395-L406
+#   inputs: daily
+#   outputs: pd.Series
+# - id: A7
+#   name_zh: ⑦ source_sentiment_from_result
+#   name_en: source_sentiment_from_result
+#   intro: 从 nlp_inference SentimentResult（或含 polarity 的 dict/对象）构造聚合输…
+#   desc: 从 nlp_inference SentimentResult（或含 polarity 的 dict/对象）构造聚合输入。 鸭型消费：``result.polarity`` 或…；源码 L409-L433
+#   inputs: result source publish_date symbol
+#   outputs: SourceSentiment
+#   （注：A7 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: scripts/ml/run_sentiment_batch.py; 26_event_driven_strategy_detail §2.5 event_s…
+# - id: O2
+#   name_zh: list[SourceSentiment]
+#   name_en: list[SourceSentiment]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: scripts/ml/run_sentiment_batch.py; 26_event_driven_strategy_detail §2.5 event_s…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> O1
 """
 
 from __future__ import annotations
@@ -227,9 +323,7 @@ def _per_category_stats(group: list[SourceSentiment]) -> dict[str, dict[str, Any
     """四类分桶统计（CAND-DAT-024）：空 category 归 "unknown" 桶。"""
     buckets: dict[str, list[float]] = {}
     for it in group:
-        buckets.setdefault((it.category or "").strip() or "unknown", []).append(
-            _clip_polarity(it.polarity)
-        )
+        buckets.setdefault((it.category or "").strip() or "unknown", []).append(_clip_polarity(it.polarity))
     return {
         cat: {
             "n_news": len(pols),

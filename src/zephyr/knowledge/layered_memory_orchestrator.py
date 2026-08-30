@@ -14,7 +14,8 @@
 # [TESTS] tests/knowledge/test_layered_memory_orchestrator.py
 # [A_module] module_id=MOD-KNW-009 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""LayeredMemoryOrchestrator — 五层记忆编排器（MOD-KNW-009）。
+"""
+LayeredMemoryOrchestrator — 五层记忆编排器（MOD-KNW-009）。
 
 B13-04342（AUD-DRAFT-001-DIGEST P2 波 P2-W03，CAND-KNW-011，A3 D-AUTONOMY-05）：
 MemGPT 分层思想单机版——FAISS 语义 / SQLite FTS5 全文 / 知识图谱 / Git 仓库 /
@@ -26,6 +27,38 @@ RAG **五层记忆收口编排**：层适配器**全注入**（缺层标记 degr
 检索编排）；rag_pipeline=RAG 问答生成管道（本件把 RAG 当一层检索源，不做生成）；
 cross_collection_retriever=向量库内跨集合检索（本件=跨异构记忆层编排，层适配
 器由装配批注入）。纯内存/DI，不触网不起子进程。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: adapters 参数
+#   fields: 参数 adapters（无注解）
+#   code: layered_memory_orchestrator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: layered_memory_orchestrator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① LayeredMemoryOrchestrator
+#   name_en: LayeredMemoryOrchestrator
+#   intro: 五层记忆收口编排件（层注册 + 统一检索 + 降级 + 健康检查）。
+#   desc: 五层记忆收口编排件（层注册 + 统一检索 + 降级 + 健康检查）。；公共方法（定义序）: register_layer, unregister_layer, registered_layers, search, he…
+#   inputs: adapters clock
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: LayeredMemoryOrchestrator
+#   downstream: 运行时装配批（五层记忆统一注入点装配 / RAG 检索收口）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -130,9 +163,7 @@ class LayeredMemoryOrchestrator:
     ) -> None:
         self._clock = clock or datetime.datetime.now
         self._adapters: dict[MemoryLayer, LayerAdapter] = {}
-        self._failures: dict[MemoryLayer, tuple[int, str | None]] = {
-            layer: (0, None) for layer in _LAYER_ORDER
-        }
+        self._failures: dict[MemoryLayer, tuple[int, str | None]] = {layer: (0, None) for layer in _LAYER_ORDER}
         for layer, adapter in (adapters or {}).items():
             self.register_layer(layer, adapter)
 
@@ -202,9 +233,7 @@ class LayeredMemoryOrchestrator:
                 continue
             for hit in raw_hits:
                 if not isinstance(hit, LayerHit):
-                    raise LayeredMemoryError(
-                        f"层 {layer.value} 适配器返回非法命中: {hit!r}（须为 LayerHit）"
-                    )
+                    raise LayeredMemoryError(f"层 {layer.value} 适配器返回非法命中: {hit!r}（须为 LayerHit）")
                 if not hit.doc_id:
                     raise LayeredMemoryError(f"层 {layer.value} 命中 doc_id 为空")
                 entry = best.get(hit.doc_id)

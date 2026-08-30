@@ -14,7 +14,8 @@
 # [TESTS] tests/regime/test_volatility_squeeze_breakout.py
 # [A_module] module_id=MOD-REGIME-013 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""模块51 波动率压缩与突破模型（MOD-REGIME-013）。
+"""
+模块51 波动率压缩与突破模型（MOD-REGIME-013）。
 
 真源：construction_backlog_dig.tsv B10-01387（A1 交易决策架构 §3 模块51，
 裁定=做 P1）+ CAND-CYCLE-005。
@@ -34,6 +35,41 @@ rv_ratio<0.8 压缩**早标记**且其 docstring 明示"<0.5 强压缩归模块5
 
 降级哲学（对齐 MOD-REGIME-011）：样本不足/非有限数据 → 全维度=0 + degraded
 不抛错；仅配置非法/输入契约违反（量价长度不齐）Fail-Closed。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: volatility_squeeze_breakout.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SqueezeBreakoutSignal
+#   name_en: SqueezeBreakoutSignal
+#   intro: 压缩突破信号（降级时全维度=0，对齐 overlay 契约哲学）。
+#   desc: 压缩突破信号（降级时全维度=0，对齐 overlay 契约哲学）。 Attributes: rv_ratio: RV_5d/RV_20d 年化波动比（长窗零波动为 inf） bb…；公共方法（定义序）: overlay…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② VolatilitySqueezeBreakout
+#   name_en: VolatilitySqueezeBreakout
+#   intro: 模块51 波动率压缩与突破判定器（纯函数，降级不抛错）。
+#   desc: 模块51 波动率压缩与突破判定器（纯函数，降级不抛错）。；公共方法（定义序）: config, assess；源码 L205-L350
+#   inputs: config
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: SqueezeBreakoutSignal, VolatilitySqueezeBreakout
+#   downstream: 运行时装配批（regime 特征链 / overlay_signals_builder overlay_dims 契约供数）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -99,29 +135,21 @@ class SqueezeConfig:
                 f"rv_long_window({self.rv_long_window}) 须 > rv_short_window({self.rv_short_window})"
             )
         if not 0.0 < self.strong_compression_threshold < 1.0:
-            raise SqueezeConfigError(
-                f"strong_compression_threshold 须 ∈(0,1): {self.strong_compression_threshold}"
-            )
+            raise SqueezeConfigError(f"strong_compression_threshold 须 ∈(0,1): {self.strong_compression_threshold}")
         if self.bb_window < 2:
             raise SqueezeConfigError(f"bb_window 须 >=2: {self.bb_window}")
         if self.bb_num_std <= 0.0:
             raise SqueezeConfigError(f"bb_num_std 须 >0: {self.bb_num_std}")
         if not 0.0 < self.bb_percentile_threshold < 1.0:
-            raise SqueezeConfigError(
-                f"bb_percentile_threshold 须 ∈(0,1): {self.bb_percentile_threshold}"
-            )
+            raise SqueezeConfigError(f"bb_percentile_threshold 须 ∈(0,1): {self.bb_percentile_threshold}")
         if self.direction_window < 2:
             raise SqueezeConfigError(f"direction_window 须 >=2: {self.direction_window}")
         if self.sustain_days < 1:
             raise SqueezeConfigError(f"sustain_days 须 >=1: {self.sustain_days}")
         if not self.confirm_rv_expansion > 1.0:
-            raise SqueezeConfigError(
-                f"confirm_rv_expansion 须 >1: {self.confirm_rv_expansion}"
-            )
+            raise SqueezeConfigError(f"confirm_rv_expansion 须 >1: {self.confirm_rv_expansion}")
         if not self.confirm_volume_expansion > 1.0:
-            raise SqueezeConfigError(
-                f"confirm_volume_expansion 须 >1: {self.confirm_volume_expansion}"
-            )
+            raise SqueezeConfigError(f"confirm_volume_expansion 须 >1: {self.confirm_volume_expansion}")
         if self.min_history < self.rv_long_window + self.bb_window:
             raise SqueezeConfigError(
                 f"min_history({self.min_history}) 须 >= rv_long_window+bb_window"
@@ -195,9 +223,7 @@ class VolatilitySqueezeBreakout:
         c = np.asarray(closes, dtype=float).ravel()
         v = np.asarray(volumes, dtype=float).ravel()
         if len(c) != len(v):
-            raise SqueezeConfigError(
-                f"收盘价与成交量长度不一致: {len(c)} != {len(v)}（输入契约违反）"
-            )
+            raise SqueezeConfigError(f"收盘价与成交量长度不一致: {len(c)} != {len(v)}（输入契约违反）")
         # 非有限/非法值成对过滤（量价同天剔除，保持对齐）
         mask = np.isfinite(c) & np.isfinite(v) & (c > 0) & (v >= 0)
         c, v = c[mask], v[mask]
@@ -209,8 +235,8 @@ class VolatilitySqueezeBreakout:
         vr = v[1:]  # 与收益对齐（首日无前收剔除）
 
         # ── ① RV 强压缩腿（年化口径复用 MOD-REGIME-011） ──
-        rv_short = float(np.std(r[-cfg.rv_short_window:], ddof=1)) * np.sqrt(_ANNUALIZATION)
-        rv_long = float(np.std(r[-cfg.rv_long_window:], ddof=1)) * np.sqrt(_ANNUALIZATION)
+        rv_short = float(np.std(r[-cfg.rv_short_window :], ddof=1)) * np.sqrt(_ANNUALIZATION)
+        rv_long = float(np.std(r[-cfg.rv_long_window :], ddof=1)) * np.sqrt(_ANNUALIZATION)
         rv_ratio = rv_short / rv_long if rv_long > 0 else float("inf")
         strong_rv_leg = 1 if rv_ratio < cfg.strong_compression_threshold else 0
 
@@ -305,8 +331,8 @@ class VolatilitySqueezeBreakout:
     def _volume_ratio(self, vr: np.ndarray) -> float:
         """5 日均量/20 日均量（20 日均量为 0 → inf 交阈值判定）。"""
         cfg = self._config
-        vol_short = float(np.mean(vr[-cfg.rv_short_window:]))
-        vol_long = float(np.mean(vr[-cfg.rv_long_window:]))
+        vol_short = float(np.mean(vr[-cfg.rv_short_window :]))
+        vol_long = float(np.mean(vr[-cfg.rv_long_window :]))
         return vol_short / vol_long if vol_long > 0 else float("inf")
 
     def _consecutive_same_sign_tail(self, c: np.ndarray, r: np.ndarray) -> int:

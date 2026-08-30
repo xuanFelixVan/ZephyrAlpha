@@ -34,7 +34,71 @@ encoding_regression: UTF-8->其他编码(编码退化检测)
 size_anomaly: 修改后体积突变(>10× or <0.1×)
 
 
-对标 blueprint.md §6.30。"""
+对标 blueprint.md §6.30。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root，类型注解 str
+#   code: file_attr_checker.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: snapshot_id 参数
+#   fields: 参数 snapshot_id，类型注解 str
+#   code: file_attr_checker.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: baseline 参数
+#   fields: 参数 baseline，类型注解 dict[str, dict[str, object]]
+#   code: file_attr_checker.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: file_path 参数
+#   fields: 参数 file_path，类型注解 str
+#   code: file_attr_checker.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① capture_baseline
+#   name_en: capture_baseline
+#   intro: capture_baseline(project_root, snapshot_id) 源码 L147-L154
+#   desc: 源码 L147-L154
+#   inputs: project_root snapshot_id
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② check_size_anomaly
+#   name_en: check_size_anomaly
+#   intro: check_size_anomaly(project_root, baseline) 源码 L157-L199
+#   desc: 源码 L157-L199
+#   inputs: project_root baseline
+#   outputs: list[FileAttrIssue]
+# - id: A3
+#   name_zh: ③ check_encoding
+#   name_en: check_encoding
+#   intro: check_encoding(file_path) 源码 L202-L225
+#   desc: 源码 L202-L225
+#   inputs: file_path
+#   outputs: str | None
+#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[FileAttrIssue]
+#   name_en: list[FileAttrIssue]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests/file/test_file_attr_checker.py
+# - id: O2
+#   name_zh: str | None
+#   name_en: str | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests/file/test_file_attr_checker.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
+"""
 
 from __future__ import annotations
 

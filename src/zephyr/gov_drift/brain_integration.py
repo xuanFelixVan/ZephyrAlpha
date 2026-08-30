@@ -15,7 +15,62 @@
 # [A_module] module_id=MOD-INF-023 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""ProbeHierarchy - K8s 3-Probe + Terraform Reconciliation"""
+"""
+ProbeHierarchy - K8s 3-Probe + Terraform Reconciliation
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root，类型注解 str
+#   code: brain_integration.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: scan_level 参数
+#   fields: 参数 scan_level，类型注解 str
+#   code: brain_integration.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FullProbeResult
+#   name_en: FullProbeResult
+#   intro: class FullProbeResult 源码 L199-L263
+#   desc: 公共方法（定义序）: mark_completed, summary；源码 L199-L263
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② execute_full_probe
+#   name_en: execute_full_probe
+#   intro: execute_full_probe(project_root, scan_level) 源码 L556-L584
+#   desc: 源码 L556-L584
+#   inputs: project_root scan_level
+#   outputs: FullProbeResult
+# - id: A3
+#   name_zh: ③ session_entry_full_probe
+#   name_en: session_entry_full_probe
+#   intro: session_entry_full_probe(project_root) 源码 L587-L602
+#   desc: 源码 L587-L602
+#   inputs: project_root
+#   outputs: tuple[ColdStartResult, FullProbeResult…
+#   （注：A3 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: FullProbeResult
+#   name_en: FullProbeResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests/audit/test_brain_integration_root.py
+# - id: O2
+#   name_zh: tuple[ColdStartResult, FullProbeResult…
+#   name_en: tuple[ColdStartResult, FullProbeResult…
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests/audit/test_brain_integration_root.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
+"""
 
 from __future__ import annotations
 

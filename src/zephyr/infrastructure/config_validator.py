@@ -23,6 +23,41 @@ M-12 ConfigValidator — 配置参数校验器
 使用方式：
     validator = ConfigValidator(schema_path="config/schemas/")
     result = validator.validate("config/thresholds.yaml")
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: schema_path 参数
+#   fields: 参数 schema_path（无注解）
+#   code: config_validator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ValidationResult
+#   name_en: ValidationResult
+#   intro: class ValidationResult 源码 L86-L96
+#   desc: 公共方法（定义序）: total_issues；源码 L86-L96
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② ConfigValidator
+#   name_en: ConfigValidator
+#   intro: 配置参数校验器
+#   desc: 配置参数校验器 对配置文件进行多维度校验： - 必需字段检查 - 类型匹配 - 取值区间验证 - 引用完整性；公共方法（定义序）: schema_path, validate；源码 L99-L220
+#   inputs: schema_path
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: ValidationResult, ConfigValidator
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

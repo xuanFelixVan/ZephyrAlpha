@@ -15,13 +15,54 @@
 # [A_module] module_id=MOD-ML-008 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""元学习 RSI（MOD-ML-008）——轻量可单测实现。
+"""
+元学习 RSI（MOD-ML-008）——轻量可单测实现。
 
 两层结构：
 1. ``compute_rsi``：标准 Wilder RSI（SMA 种子 + 平滑递推），纯 numpy。
 2. ``MetaLearningRsi``：跨任务经验库——按 regime 记录各候选周期的历史表现分
    （如 IC/Sharpe），recommend_period 返回该 regime 历史均分最优周期；
    无记录 regime fail-closed 回默认周期（source="default" 显式标记）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: prices 参数
+#   fields: 参数 prices，类型注解 np.ndarray
+#   code: meta_learning_rsi.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: period 参数
+#   fields: 参数 period（无注解）
+#   code: meta_learning_rsi.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① compute_rsi
+#   name_en: compute_rsi
+#   intro: Wilder RSI。
+#   desc: Wilder RSI。返回长度 len(prices)-1，前 period-1 项为 NaN（warmup）。；源码 L89-L120
+#   inputs: prices period
+#   outputs: np.ndarray
+# - id: A2
+#   name_zh: ② MetaLearningRsi
+#   name_en: MetaLearningRsi
+#   intro: RSI 周期元学习（按 regime 推荐历史最优周期）。
+#   desc: RSI 周期元学习（按 regime 推荐历史最优周期）。；公共方法（定义序）: record_performance, recommend_period, rsi；源码 L123-L168
+#   inputs: candidate_periods default_period
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: np.ndarray
+#   name_en: np.ndarray
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: （RSI 类信号按 regime 自适应周期消费方）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

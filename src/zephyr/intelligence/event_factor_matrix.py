@@ -22,7 +22,8 @@
 # F3: compute_overnight_trend = (open_t/close_{t-1}-1) 的 20 日滚动均值
 # O1: int / JumpDecomposition / pd.Series（原始因子值，z-score 归一化归因子工厂）
 # [/ALGO_FLOW]
-"""MOD-INT-EVENT-FACTOR — 事件驱动六因子矩阵数值项（26 号 §2.4 v1.5.0 施工化）。
+"""
+MOD-INT-EVENT-FACTOR — 事件驱动六因子矩阵数值项（26 号 §2.4 v1.5.0 施工化）。
 
 三项待施工数值因子（实证齐备、优先级最高，NLP 管道未就绪前的数值 alpha 补充，
 与 ORJ 同属降级算法、不依赖 NLP）：
@@ -44,6 +45,69 @@ extreme_reaction_modifier 口径），本模块不重复。AStockEvent Feed 远�
 
 依据: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/26_event_driven_strategy_detail.md §2.4
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: statutory_deadline 参数
+#   fields: 参数 statutory_deadline，类型注解 date
+#   code: event_factor_matrix.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: actual_disclosure_date 参数
+#   fields: 参数 actual_disclosure_date，类型注解 date
+#   code: event_factor_matrix.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: daily_abnormal_returns 参数
+#   fields: 参数 daily_abnormal_returns，类型注解 Sequence[float]
+#   code: event_factor_matrix.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: jump_threshold 参数
+#   fields: 参数 jump_threshold，类型注解 float
+#   code: event_factor_matrix.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① compute_dreport
+#   name_en: compute_dreport
+#   intro: dReport = 法定披露截止日 - 实际披露日（自然日，正值=提前）。
+#   desc: dReport = 法定披露截止日 - 实际披露日（自然日，正值=提前）。 招商证券 10 年回测：年化超额 4.88%/Sharpe 1.44；大幅提前 T+5 上涨概率 70…；源码 L142-L148
+#   inputs: statutory_deadline actual_disclosure_date
+#   outputs: int
+# - id: A2
+#   name_zh: ② compute_jump_on_pead
+#   name_en: compute_jump_on_pead
+#   intro: Jump on PEAD：公告后 5 日窗口 CAR 的跳跃分量（华泰金工 5 日 IC=10.96%）。
+#   desc: Jump on PEAD：公告后 5 日窗口 CAR 的跳跃分量（华泰金工 5 日 IC=10.96%）。 Parameters ---------- daily_abnorma…；源码 L165-L197
+#   inputs: daily_abnormal_returns jump_threshold
+#   outputs: JumpDecomposition
+# - id: A3
+#   name_zh: ③ compute_overnight_trend
+#   name_en: compute_overnight_trend
+#   intro: 隔夜趋势：隔夜收益率 20 日滚动均值（西部证券 Rank IC=-0.1687）。
+#   desc: 隔夜趋势：隔夜收益率 20 日滚动均值（西部证券 Rank IC=-0.1687）。 隔夜收益率 = ``open_t / close_{t-1} - 1``（A 股 T+1 天…；源码 L200-L227
+#   inputs: opens closes window
+#   outputs: pd.Series
+#   （注：A3 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 事件驱动 sleeve（六因子矩阵数值项，event_impact_score = w1·ORJ_z + w2·dReport_z + w3·Jump_on_…
+# - id: O2
+#   name_zh: JumpDecomposition
+#   name_en: JumpDecomposition
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 事件驱动 sleeve（六因子矩阵数值项，event_impact_score = w1·ORJ_z + w2·dReport_z + w3·Jump_on_…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

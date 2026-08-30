@@ -14,7 +14,8 @@
 # [TESTS] tests/infra_runtime/test_ha_sla_framework.py
 # [A_module] module_id=MOD-INF-076 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""HaSlaFramework — 高性能高可用保障框架（MOD-INF-076）。
+"""
+HaSlaFramework — 高性能高可用保障框架（MOD-INF-076）。
 
 B10-02366（AUD-DRAFT-001-DIGEST P2 波 P2-W01，CAND-H1FS-009，A9运维架构）：
 SLA 注册表（register_sla）+ 健康探针编排（register_probe 周期/超时/降级）
@@ -24,6 +25,38 @@ SLA 注册表（register_sla）+ 健康探针编排（register_probe 周期/超�
 
 纯内存确定性：时钟注入（探针耗时=时钟差，假时钟可模拟耗时/超时）；
 restart/升级回调异常不阻断编排，仅留痕。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: ha_sla_framework.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: escalation_sink 参数
+#   fields: 参数 escalation_sink（无注解）
+#   code: ha_sla_framework.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① HaSlaFramework
+#   name_en: HaSlaFramework
+#   intro: 单机 HA/SLA 框架（SLA 注册表 + 探针编排 + 自动重启编排）。
+#   desc: 单机 HA/SLA 框架（SLA 注册表 + 探针编排 + 自动重启编排）。；公共方法（定义序）: register_sla, register_probe, bind_restart, run_probe, due_…
+#   inputs: clock escalation_sink
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: HaSlaFramework
+#   downstream: 运行时装配批（单机进程 SLA 登记/健康探针编排/自动重启编排）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -227,13 +260,15 @@ class HaSlaFramework:
             return
         last_restart = self._last_restart_at.get(name)
         if last_restart is not None and now - last_restart < binding.cooldown:
-            self._restart_events[name].append(RestartEvent(
-                probe=name,
-                at=now,
-                consecutive_failures=failures,
-                invoked=False,
-                detail=f"冷却期内抑制（距上次重启 {now - last_restart:.6f}s < {binding.cooldown}s）",
-            ))
+            self._restart_events[name].append(
+                RestartEvent(
+                    probe=name,
+                    at=now,
+                    consecutive_failures=failures,
+                    invoked=False,
+                    detail=f"冷却期内抑制（距上次重启 {now - last_restart:.6f}s < {binding.cooldown}s）",
+                )
+            )
             return
         detail = "重启回调已调用"
         try:
@@ -243,9 +278,9 @@ class HaSlaFramework:
             detail = "restart 回调异常（已留痕）"
         self._last_restart_at[name] = now
         self._consecutive_failures[name] = 0
-        self._restart_events[name].append(RestartEvent(
-            probe=name, at=now, consecutive_failures=failures, invoked=True, detail=detail
-        ))
+        self._restart_events[name].append(
+            RestartEvent(probe=name, at=now, consecutive_failures=failures, invoked=True, detail=detail)
+        )
 
     def due_probes(self) -> tuple[str, ...]:
         """到期探针（从未运行或距上次 ≥ interval；确定性排序）。"""

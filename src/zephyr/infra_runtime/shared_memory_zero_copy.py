@@ -14,7 +14,8 @@
 # [TESTS] tests/infra_runtime/test_shared_memory_zero_copy.py
 # [A_module] module_id=MOD-INF-075 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""ZeroCopyChannelManager — 共享内存零拷贝通道（MOD-INF-075）。
+"""
+ZeroCopyChannelManager — 共享内存零拷贝通道（MOD-INF-075）。
 
 B10-01807（AUD-DRAFT-001-DIGEST P2 波 P2-W01，CAND-H1FS-008，A1交易决策架构
 §29.1）：``multiprocessing.shared_memory`` 实现 42 万条因子值零拷贝传递
@@ -24,6 +25,48 @@ fallback 回调并标记 downgraded）。不重复 A9 进程隔离建设。
 
 降级通道以内存 buffer 兜底读写（确定性），每次写同步转发 fallback 回调
 （承载降级 Redis 语义，本件不触网）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: namespace 参数
+#   fields: 参数 namespace（无注解）
+#   code: shared_memory_zero_copy.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: size_threshold 参数
+#   fields: 参数 size_threshold（无注解）
+#   code: shared_memory_zero_copy.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: fallback 参数
+#   fields: 参数 fallback（无注解）
+#   code: shared_memory_zero_copy.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: shared_memory_zero_copy.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ZeroCopyChannelManager
+#   name_en: ZeroCopyChannelManager
+#   intro: 零拷贝通道管理器（命名空间隔离 + 生命周期 + 超限降级）。
+#   desc: 零拷贝通道管理器（命名空间隔离 + 生命周期 + 超限降级）。；公共方法（定义序）: create, attach, detach, free, write, read, info, channel_names；源码…
+#   inputs: namespace size_threshold fallback clock
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: ZeroCopyChannelManager
+#   downstream: 运行时装配批（42万条因子值跨进程零拷贝传递通道装配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -106,9 +149,7 @@ class ZeroCopyChannelManager:
 
     def _full_name(self, name: str) -> str:
         if not name or "/" in name:
-            raise ZeroCopyError(
-                f"通道名非法: {name!r}（须为命名空间内短名，全名 {self._namespace}/<name>）"
-            )
+            raise ZeroCopyError(f"通道名非法: {name!r}（须为命名空间内短名，全名 {self._namespace}/<name>）")
         return f"{self._namespace}/{name}"
 
     def _channel_of(self, name: str) -> _Channel:
@@ -219,9 +260,7 @@ class ZeroCopyChannelManager:
         self._require_io_state(ch, "写入")
         payload = bytes(data)
         if offset < 0 or offset + len(payload) > ch.info.size:
-            raise ZeroCopyError(
-                f"写越界: offset={offset} len={len(payload)} size={ch.info.size}"
-            )
+            raise ZeroCopyError(f"写越界: offset={offset} len={len(payload)} size={ch.info.size}")
         if ch.info.downgraded:
             assert ch.buffer is not None
             ch.buffer[offset : offset + len(payload)] = payload
@@ -240,9 +279,7 @@ class ZeroCopyChannelManager:
         self._require_io_state(ch, "读取")
         end = ch.info.size if length is None else offset + length
         if offset < 0 or end > ch.info.size or (length is not None and length < 0):
-            raise ZeroCopyError(
-                f"读越界: offset={offset} length={length} size={ch.info.size}"
-            )
+            raise ZeroCopyError(f"读越界: offset={offset} length={length} size={ch.info.size}")
         if ch.info.downgraded:
             assert ch.buffer is not None
             return bytes(ch.buffer[offset:end])

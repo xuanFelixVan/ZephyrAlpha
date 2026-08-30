@@ -28,7 +28,95 @@ Config Consistency Checker — 配置多源一致性 D-023-29 · §6.21。
 YAML为SSoT，auto_fix生成config_sync.yaml
 
 
-对标 blueprint.md §6.21。"""
+对标 blueprint.md §6.21。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: filepath 参数
+#   fields: 参数 filepath，类型注解 str
+#   code: config_consistency.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: src_root 参数
+#   fields: 参数 src_root，类型注解 str
+#   code: config_consistency.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: yaml_source 参数
+#   fields: 参数 yaml_source，类型注解 ConfigSource
+#   code: config_consistency.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: env_source 参数
+#   fields: 参数 env_source，类型注解 ConfigSource
+#   code: config_consistency.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① parse_yaml_config
+#   name_en: parse_yaml_config
+#   intro: parse_yaml_config(filepath) 源码 L193-L210
+#   desc: 源码 L193-L210
+#   inputs: filepath
+#   outputs: ConfigSource
+# - id: A2
+#   name_zh: ② parse_env_config
+#   name_en: parse_env_config
+#   intro: parse_env_config(filepath) 源码 L213-L230
+#   desc: 源码 L213-L230
+#   inputs: filepath
+#   outputs: ConfigSource
+# - id: A3
+#   name_zh: ③ extract_hardcoded_defaults
+#   name_en: extract_hardcoded_defaults
+#   intro: extract_hardcoded_defaults(src_root) 源码 L233-L252
+#   desc: 源码 L233-L252
+#   inputs: src_root
+#   outputs: ConfigSource
+# - id: A4
+#   name_zh: ④ detect_conflicts
+#   name_en: detect_conflicts
+#   intro: detect_conflicts(yaml_source, env_source, code_source) 源码 L…
+#   desc: 源码 L255-L313
+#   inputs: yaml_source env_source code_source
+#   outputs: ConfigAuditReport
+# - id: A5
+#   name_zh: ⑤ generate_config_sync
+#   name_en: generate_config_sync
+#   intro: 生成 config_sync.yaml 作为 SSoT 同步输出。
+#   desc: 生成 config_sync.yaml 作为 SSoT 同步输出。；源码 L316-L354
+#   inputs: report yaml_source
+#   outputs: str
+# - id: A6
+#   name_zh: ⑥ run_config_audit
+#   name_en: run_config_audit
+#   intro: 执行完整的多源配置审计。
+#   desc: 执行完整的多源配置审计。；源码 L357-L388
+#   inputs: project_root
+#   outputs: dict[str, object]
+#   （注：A6 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ConfigSource
+#   name_en: ConfigSource
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_drift/_core.py ; src/zephyr/gov_drift/_infrastructure.py ; tests…
+# - id: O2
+#   name_zh: ConfigAuditReport
+#   name_en: ConfigAuditReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_drift/_core.py ; src/zephyr/gov_drift/_infrastructure.py ; tests…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
+"""
 
 from __future__ import annotations
 

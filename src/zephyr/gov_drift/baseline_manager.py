@@ -23,7 +23,35 @@ Baseline Manager — baseline_manager.py
 基线快照的拍摄、存储、对比、版本化管理。
 
 
-对标 blueprint.md §2.2（基线快照管理器）。"""
+对标 blueprint.md §2.2（基线快照管理器）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: baseline_manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① BaselineManager
+#   name_en: BaselineManager
+#   intro: class BaselineManager 源码 L91-L549
+#   desc: 公共方法（定义序）: baselines_root, module_baseline_dir, snapshot_tree_hash, snapshot_interface, snapshot_import_graph…
+#   inputs: project_root
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: BaselineManager
+#   downstream: src/zephyr/gov_drift/_infrastructure.py ; tests/audit/test_baseline_manager.py…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 from __future__ import annotations
 

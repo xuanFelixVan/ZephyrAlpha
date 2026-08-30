@@ -14,7 +14,8 @@
 # [TESTS] tests/research/test_factor_model_co_evaluator.py
 # [A_module] module_id=MOD-FAC-005 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""FactorModelCoEvaluator — 因子模型联合评估器（MOD-FAC-005）。
+"""
+FactorModelCoEvaluator — 因子模型联合评估器（MOD-FAC-005）。
 
 B10-01230（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-FAC-017，A1 v8.2）：
 R&D-Agent-Quant 联合优化——因子↔模型**双向评估**（因子贡献于模型性能 / 模型
@@ -24,6 +25,48 @@ R&D-Agent-Quant 联合优化——因子↔模型**双向评估**（因子贡献
 查重分工（蓝图 §0）：factor_vote_mining=多 Agent 因子**产出**协议（上游）；
 本件=存量因子×存量模型的**双向贡献/利用度体检**（下游治理面，不产新因子、
 不改注册表，仅产版本化评估报告）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: contribution_evaluator 参数
+#   fields: 参数 contribution_evaluator（无注解）
+#   code: factor_model_co_evaluator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: utilization_evaluator 参数
+#   fields: 参数 utilization_evaluator（无注解）
+#   code: factor_model_co_evaluator.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: eliminate_threshold 参数
+#   fields: 参数 eliminate_threshold（无注解）
+#   code: factor_model_co_evaluator.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: high_contribution 参数
+#   fields: 参数 high_contribution（无注解）
+#   code: factor_model_co_evaluator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FactorModelCoEvaluator
+#   name_en: FactorModelCoEvaluator
+#   intro: 因子↔模型双向评估器（淘汰/迭代建议 + 报告版本化）。
+#   desc: 因子↔模型双向评估器（淘汰/迭代建议 + 报告版本化）。 Args: contribution_evaluator: 注入贡献评估器，``(factor_id, model_id…；公共方法（定义序）: evaluat…
+#   inputs: contribution_evaluator utilization_evaluator eliminate_threshold high…
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: FactorModelCoEvaluator
+#   downstream: 运行时装配批（因子↔模型联合评估批 / 淘汰清单与迭代方向入研究治理流）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -168,15 +211,9 @@ class FactorModelCoEvaluator:
         models = self._ids("model_ids", model_ids)
         # 双向评分矩阵（每对仅评估一次，确定性）
         contrib_m = {
-            (f, m): self._score(self._contrib, f, m, "contribution_evaluator")
-            for f in factors
-            for m in models
+            (f, m): self._score(self._contrib, f, m, "contribution_evaluator") for f in factors for m in models
         }
-        util_m = {
-            (m, f): self._score(self._util, m, f, "utilization_evaluator")
-            for m in models
-            for f in factors
-        }
+        util_m = {(m, f): self._score(self._util, m, f, "utilization_evaluator") for m in models for f in factors}
         f_scores: list[FactorDirectionScore] = []
         for f in factors:
             contrib = round(sum(contrib_m[(f, m)] for m in models) / len(models), 6)
@@ -221,7 +258,11 @@ class FactorModelCoEvaluator:
         self._reports[version] = report  # 写后不可变（frozen 报告）
         _log.info(
             "联合评估报告 v%d: 因子 %d / 模型 %d / 淘汰 %d / 迭代 %d",
-            version, len(factors), len(models), len(elim), len(it),
+            version,
+            len(factors),
+            len(models),
+            len(elim),
+            len(it),
         )
         return report
 

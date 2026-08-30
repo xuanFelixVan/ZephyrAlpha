@@ -28,7 +28,71 @@ action: 暂停自动修复锁定1h + P0通知Owner + cascade_forensics report
 prevention: dry-run影响面分析(临时目录模拟修复diff跑关联检测器)
 
 
-对标 blueprint.md §6.15。"""
+对标 blueprint.md §6.15。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: events 参数
+#   fields: 参数 events，类型注解 list[dict[str, object]]
+#   code: cascade_detector.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: fix_diff 参数
+#   fields: 参数 fix_diff，类型注解 str
+#   code: cascade_detector.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: detector_id 参数
+#   fields: 参数 detector_id，类型注解 str
+#   code: cascade_detector.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: project_root 参数
+#   fields: 参数 project_root，类型注解 str
+#   code: cascade_detector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① detect_cascade
+#   name_en: detect_cascade
+#   intro: detect_cascade(events) 源码 L203-L290
+#   desc: 源码 L203-L290
+#   inputs: events
+#   outputs: list[CascadeAlert]
+# - id: A2
+#   name_zh: ② dry_run_impact_analysis
+#   name_en: dry_run_impact_analysis
+#   intro: Dry-run影响面分析：临时目录模拟修复diff跑关联检测器。
+#   desc: Dry-run影响面分析：临时目录模拟修复diff跑关联检测器。；源码 L319-L353
+#   inputs: fix_diff detector_id project_root
+#   outputs: dict[str, object]
+# - id: A3
+#   name_zh: ③ is_auto_fix_paused
+#   name_en: is_auto_fix_paused
+#   intro: is_auto_fix_paused(module) 源码 L356-L377
+#   desc: 源码 L356-L377
+#   inputs: module
+#   outputs: bool
+#   （注：A3 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[CascadeAlert]
+#   name_en: list[CascadeAlert]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_enforcement/rule_enforcement/drift_detector.py ; tests/audit/tes…
+# - id: O2
+#   name_zh: dict[str, object]
+#   name_en: dict[str, object]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_enforcement/rule_enforcement/drift_detector.py ; tests/audit/tes…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
+"""
 
 from __future__ import annotations
 

@@ -26,6 +26,36 @@
 # [A_module] module_id=MOD-INF-011 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # ARCH-034 P3: ConfigConflict canonical 真源为 config_consistency（drift_models 存根已删除）
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: _core.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包公共面再导出
+#   name_en: __init__ re-export
+#   intro: 再导出 BaselineSnapshot, BreakingChange, BulkDriftEvent, CascadeEvent, ConfigConfl…
+#   desc: __init__ import L0；__all__ 32 项（AST 事实）
+#   inputs: I1
+#   outputs: __all__ 公共符号表
+# 层: 输出
+# - id: O1
+#   name_zh: 公共 API 面（32 符号）
+#   name_en: __all__
+#   intro: BaselineSnapshot, BreakingChange, BulkDriftEvent, CascadeEvent, ConfigConflict,…
+#   downstream: zephyr.gov_drift.__init__
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 from zephyr.gov_drift.config_consistency import ConfigConflict
 from zephyr.gov_drift.drift_engine import (
     build_report,

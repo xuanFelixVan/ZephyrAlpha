@@ -14,7 +14,8 @@
 # [TESTS] tests/reporting/test_trading_review_engine.py
 # [A_module] module_id=MOD-RPT-034 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""TradingReviewEngine — A股交易审查引擎（MOD-RPT-034）。
+"""
+TradingReviewEngine — A股交易审查引擎（MOD-RPT-034）。
 
 B14-04662（AUD-DRAFT-001-DIGEST P2 波 P2-W10，CAND-RPT-009，A9
 D-REPORTING-15）：**日终交易审查**——撤单率/申报速率/自成交/拉抬打压
@@ -25,6 +26,43 @@ D-REPORTING-15）：**日终交易审查**——撤单率/申报速率/自成交
 边界：trading_compliance_detector（compliance）=盘中实时合规检测（本件
 消费其日终汇总指标，不重复盘中判定）；处置建议=确定性模式映射文案（本件
 不做自动处置执行）；本件纯内存/DI，不触网不落盘。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: thresholds 参数
+#   fields: 参数 thresholds（无注解）
+#   code: trading_review_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: detector_metrics 参数
+#   fields: 参数 detector_metrics（无注解）
+#   code: trading_review_engine.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: trading_review_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① TradingReviewEngine
+#   name_en: TradingReviewEngine
+#   intro: 日终四模式交易审查件（扫描 + 报告产出 + 版本化查询）。
+#   desc: 日终四模式交易审查件（扫描 + 报告产出 + 版本化查询）。；公共方法（定义序）: run_daily_review, report_of, versions_of；源码 L154-L240
+#   inputs: thresholds detector_metrics clock
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: TradingReviewEngine
+#   downstream: 运行时装配批（日终四模式审查扫描 / 审查报告产出与版本化查询）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -131,9 +169,7 @@ class TradingReviewEngine:
             value = float(thresholds[pattern])
             if not math.isfinite(value) or value < 0.0:
                 raise TradingReviewError(f"非法阈值: {pattern.value}={thresholds[pattern]!r}")
-        self._thresholds: dict[ReviewPattern, float] = {
-            p: float(thresholds[p]) for p in ReviewPattern
-        }
+        self._thresholds: dict[ReviewPattern, float] = {p: float(thresholds[p]) for p in ReviewPattern}
         self._detector = detector_metrics
         self._clock = clock or datetime.datetime.now
         self._reports: dict[datetime.date, list[ReviewReport]] = {}
@@ -176,9 +212,7 @@ class TradingReviewEngine:
             generated_at=self._clock(),
         )
         versions.append(report)
-        _log.info(
-            "日终审查完成: %s v%d 异常 %d 项", trade_date, report.version, len(findings)
-        )
+        _log.info("日终审查完成: %s v%d 异常 %d 项", trade_date, report.version, len(findings))
         return report
 
     # ── 查询 ─────────────────────────────────────────────────────────────
@@ -195,9 +229,7 @@ class TradingReviewEngine:
         if version is None:
             return versions[-1]
         if version < 1 or version > len(versions):
-            raise TradingReviewError(
-                f"未知报告版本: {trade_date} v{version}（现存 v1..v{len(versions)}）"
-            )
+            raise TradingReviewError(f"未知报告版本: {trade_date} v{version}（现存 v1..v{len(versions)}）")
         return versions[version - 1]
 
     def versions_of(self, trade_date: datetime.date) -> tuple[int, ...]:

@@ -33,6 +33,49 @@ OCP 扩展点：
   - KillSwitchManagerBase       — 熔断控制策略
 
 依赖方向：基础设施 -> D_DATA(data) / D_FACTOR~实验(all via CTR-P1-010)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: infrastructure_base.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① InfrastructureManagerBase
+#   name_en: InfrastructureManagerBase
+#   intro: 系统基础设施管理器（OCP 扩展点）
+#   desc: 系统基础设施管理器（OCP 扩展点） 实现者要求： - initialize(): 按依赖序初始化子系统（config -> db -> kb -> gates -> pipel…；公共方法（定义序）: initial…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② ConfigManagerBase
+#   name_en: ConfigManagerBase
+#   intro: 配置管理器（OCP 扩展点）
+#   desc: 配置管理器（OCP 扩展点） 实现者要求： - load(source): 从文件/环境/远程加载配置 - validate(config): 校验配置合法性 - reload(…；公共方法（定义序）: load, v…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ KillSwitchManagerBase
+#   name_en: KillSwitchManagerBase
+#   intro: 熔断管理器（OCP 扩展点）
+#   desc: 熔断管理器（OCP 扩展点） 实现者要求： - trigger(reason, scope): 触发熔断，暂停指定范围的交易 - reset(confirmation): 人工确…；公共方法（定义序）: trigger…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: InfrastructureManagerBase, ConfigManagerBase, KillSwitchManagerBase
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

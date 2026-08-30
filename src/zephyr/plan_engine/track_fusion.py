@@ -21,7 +21,8 @@
 # A3: 自动轨融合(双轨同向强共振min weight/单轨中等/反向CONFLICT_L6不出指令)
 # O1: FusedDirective(direction/target_weight/priority_track/strength/needs_l6_review/reason)
 # [/ALGO_FLOW]
-"""四轨融合器（Multi-Track Fusion，v8.0）（MOD-PLAN-020）。
+"""
+四轨融合器（Multi-Track Fusion，v8.0）（MOD-PLAN-020）。
 
 真源：construction_backlog_dig.tsv B10-01212（A1交易决策架构 §1.1，裁定=做 P1）
 + CAND-PLAN-014。TSV 现状注记：position_sizing_engine 头注明示"不包含(阶段2):
@@ -42,6 +43,33 @@
 不采集轨道信号（调用方注入）。
 
 SSoT: docs/03_modules/_domain_plan_engine/track_fusion/blueprint.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: track_fusion.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① MultiTrackFusion
+#   name_en: MultiTrackFusion
+#   intro: 四轨融合器：应急 > 人工 > 自动 优先级裁决。
+#   desc: 四轨融合器：应急 > 人工 > 自动 优先级裁决。；公共方法（定义序）: fuse；源码 L199-L291
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: MultiTrackFusion
+#   downstream: 运行时装配批（四轨信号注入；FusedDirective 交 MOD-POS-001 精裁；verdict 供 MOD-POS-009 审计落库）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -232,10 +260,7 @@ class MultiTrackFusion:
                 priority_track=TrackId.MANUAL,
                 strength=FusionStrength.MANUAL_OVERRIDE,
                 needs_l6_review=ai_flag or conflict,
-                reason=(
-                    "轨道3人工指令优先"
-                    + ("；与自动轨方向冲突，升L6审查" if conflict else "；与自动轨无冲突")
-                ),
+                reason=("轨道3人工指令优先" + ("；与自动轨方向冲突，升L6审查" if conflict else "；与自动轨无冲突")),
             )
 
         # ③ 自动轨融合（轨道1/2）
@@ -247,10 +272,7 @@ class MultiTrackFusion:
                 priority_track=None,
                 strength=FusionStrength.CONFLICT_L6,
                 needs_l6_review=True,
-                reason=(
-                    f"自动轨反向冲突({autos[0].direction.value} vs "
-                    f"{autos[1].direction.value})，不出指令升L6审查"
-                ),
+                reason=(f"自动轨反向冲突({autos[0].direction.value} vs {autos[1].direction.value})，不出指令升L6审查"),
             )
         priority = max(a.track for a in autos)
         if len(autos) == 2:

@@ -14,7 +14,8 @@
 # [TESTS] tests/infrastructure/test_warm_plane_budget.py
 # [A_module] module_id=MOD-INF-071 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Warm 平面（10ms~1s）时延预算与 11 态路由表 SSOT（MOD-INF-071）。
+"""
+Warm 平面（10ms~1s）时延预算与 11 态路由表 SSOT（MOD-INF-071）。
 
 真源：A9 运维架构 §2.3 + CAND-H1FS-007（B14-04547）。
 
@@ -36,6 +37,59 @@ Warm 1s 端到端预算分解与 11 种市场状态路由表：
 market:state 传递，P3 订阅消费；Cold→Hot 禁止直连。
 
 硬边界：核绑定/资源隔离/进程调度等系统级应用属 Owner 窗口，AI 不执行。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: measured_ms 参数
+#   fields: 参数 measured_ms，类型注解 dict[str, float]
+#   code: warm_plane_budget.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: state_code 参数
+#   fields: 参数 state_code，类型注解 str
+#   code: warm_plane_budget.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① check_budget
+#   name_en: check_budget
+#   intro: Warm 平面预算判定（A9 §2.3.1；纯数据判定，过期信号替换执行归 P3/P4）。
+#   desc: Warm 平面预算判定（A9 §2.3.1；纯数据判定，过期信号替换执行归 P3/P4）。 任一阶段超限或总和 >1000ms → within_budget=False， 动作…；源码 L278-L308
+#   inputs: measured_ms
+#   outputs: BudgetVerdict
+# - id: A2
+#   name_zh: ② get_routing
+#   name_en: get_routing
+#   intro: 按市场状态码（①~⑪）取路由行；未知状态码 Fail-Closed。
+#   desc: 按市场状态码（①~⑪）取路由行；未知状态码 Fail-Closed。；源码 L311-L316
+#   inputs: state_code
+#   outputs: MarketStateRouting
+# - id: A3
+#   name_zh: ③ render_warm_plane_declaration
+#   name_en: render_warm_plane_declaration
+#   intro: 产出 Warm 平面配置就绪件声明 dict（**仅声明不执行**——Owner 窗口）。
+#   desc: 产出 Warm 平面配置就绪件声明 dict（**仅声明不执行**——Owner 窗口）。；源码 L319-L352
+#   inputs: 无参数
+#   outputs: dict
+#   （注：A3 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: BudgetVerdict
+#   name_en: BudgetVerdict
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: MarketStateRouting
+#   name_en: MarketStateRouting
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations
@@ -188,9 +242,7 @@ MARKET_STATE_ROUTING: Final[tuple[MarketStateRouting, ...]] = (
     ),
 )
 
-_STAGE_BY_NAME: Final[dict[str, WarmPlaneStage]] = {
-    stage.name: stage for stage in WARM_PLANE_BUDGET.stages
-}
+_STAGE_BY_NAME: Final[dict[str, WarmPlaneStage]] = {stage.name: stage for stage in WARM_PLANE_BUDGET.stages}
 
 _ROUTING_BY_CODE: Final[dict[str, MarketStateRouting]] = {
     code: row for row in MARKET_STATE_ROUTING for code in row.state_codes
@@ -205,17 +257,13 @@ def _validate_routing_table() -> None:
     for row in MARKET_STATE_ROUTING:
         total = sum(row.signal_weights.values())
         if abs(total - 1.0) > _WEIGHT_SUM_TOLERANCE:
-            raise WarmPlaneRoutingError(
-                f"路由行 {row.state_label} 信号权重 Σ={total} ≠ 1.0（§2.3.2 真源畸形）"
-            )
+            raise WarmPlaneRoutingError(f"路由行 {row.state_label} 信号权重 Σ={total} ≠ 1.0（§2.3.2 真源畸形）")
         if any(w < 0.0 for w in row.signal_weights.values()):
             raise WarmPlaneRoutingError(f"路由行 {row.state_label} 存在负权重")
         if row.position_cap_range is not None:
             lo, hi = row.position_cap_range
             if not (0.0 <= lo <= hi <= 1.0):
-                raise WarmPlaneRoutingError(
-                    f"路由行 {row.state_label} 仓位上限区间越界: {row.position_cap_range}"
-                )
+                raise WarmPlaneRoutingError(f"路由行 {row.state_label} 仓位上限区间越界: {row.position_cap_range}")
         for code in row.state_codes:
             if code in seen:
                 raise WarmPlaneRoutingError(f"市场状态码 {code} 重复映射（11 态须唯一）")
@@ -242,17 +290,11 @@ def check_budget(measured_ms: dict[str, float]) -> BudgetVerdict:
     if any(v < 0 for v in measured_ms.values()):
         raise WarmPlaneBudgetError(f"负时延属畸形输入: {measured_ms}")
 
-    overrun = tuple(
-        name
-        for name, stage in _STAGE_BY_NAME.items()
-        if measured_ms[name] > stage.budget_ms
-    )
+    overrun = tuple(name for name, stage in _STAGE_BY_NAME.items() if measured_ms[name] > stage.budget_ms)
     total = sum(measured_ms.values())
     within = not overrun and total <= WARM_PLANE_BUDGET.total_budget_ms
     if within:
-        return BudgetVerdict(
-            within_budget=True, overrun_stages=(), action="none", reason="全程在 1s 预算内"
-        )
+        return BudgetVerdict(within_budget=True, overrun_stages=(), action="none", reason="全程在 1s 预算内")
     reasons: list[str] = []
     if overrun:
         reasons.append(f"阶段超限: {list(overrun)}")
@@ -270,9 +312,7 @@ def get_routing(state_code: str) -> MarketStateRouting:
     """按市场状态码（①~⑪）取路由行；未知状态码 Fail-Closed。"""
     row = _ROUTING_BY_CODE.get(state_code)
     if row is None:
-        raise WarmPlaneRoutingError(
-            f"未知市场状态码: {state_code!r}（11 态真源=A9 §2.3.2）"
-        )
+        raise WarmPlaneRoutingError(f"未知市场状态码: {state_code!r}（11 态真源=A9 §2.3.2）")
     return row
 
 
@@ -299,9 +339,7 @@ def render_warm_plane_declaration() -> dict:
                 "state_label": row.state_label,
                 "route_strategy": row.route_strategy,
                 "signal_weights": dict(row.signal_weights),
-                "position_cap_range": (
-                    list(row.position_cap_range) if row.position_cap_range is not None else None
-                ),
+                "position_cap_range": (list(row.position_cap_range) if row.position_cap_range is not None else None),
             }
             for row in MARKET_STATE_ROUTING
         ],

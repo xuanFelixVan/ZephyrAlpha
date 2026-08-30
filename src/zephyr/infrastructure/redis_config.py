@@ -14,7 +14,8 @@
 # [TESTS] tests/zephyr/infrastructure/test_redis_config.py
 # [A_module] module_id=MOD-INF-002 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Redis 连接配置单真源加载器（H1 业务热缓存 INFRA-DB-007）。
+"""
+Redis 连接配置单真源加载器（H1 业务热缓存 INFRA-DB-007）。
 
 背景：
     仿 ch_config.py（裁定 #ARCH-CH-017 同源思想）。Redis 7.0.15 部署在 Hyper-V
@@ -32,6 +33,54 @@
 公共接口：
     - ensure_redis_env_loaded(): 将 .env.redis 加载到 os.environ（幂等）
     - load_redis_config(): 返回 Redis 连接配置字典，读不到抛 RedisConfigError
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: redis_config.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ensure_redis_env_loaded
+#   name_en: ensure_redis_env_loaded
+#   intro: 将 config/.env.redis 加载到 os.environ（幂等）。
+#   desc: 将 config/.env.redis 加载到 os.environ（幂等）。 优先级：已有 os.environ 不覆盖（允许环境变量显式 override）。 文件不存在时…；源码 L113-L146
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② load_redis_config
+#   name_en: load_redis_config
+#   intro: 返回 Redis 连接配置字典。
+#   desc: 返回 Redis 连接配置字典。 优先级：os.environ > config/.env.redis > 抛 RedisConfigError。 禁止任何默认 IP/密码值（裁…；源码 L149-L192
+#   inputs: 无参数
+#   outputs: dict[str, str | int | bool]
+# - id: A3
+#   name_zh: ③ get_redis_env_path
+#   name_en: get_redis_env_path
+#   intro: 返回 Redis 配置文件路径（供测试/诊断使用）。
+#   desc: 返回 Redis 配置文件路径（供测试/诊断使用）。；源码 L195-L197
+#   inputs: 无参数
+#   outputs: Path
+#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, str | int | bool]
+#   name_en: dict[str, str | int | bool]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.infrastructure.database_service; zephyr.infrastructure.h1_redis_hot
+# - id: O2
+#   name_zh: Path
+#   name_en: Path
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.infrastructure.database_service; zephyr.infrastructure.h1_redis_hot
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

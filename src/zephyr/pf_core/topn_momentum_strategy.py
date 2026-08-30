@@ -22,7 +22,8 @@
 # created: "2026-07-30"
 # ---
 
-"""D_PORTFOLIO_CORE — TopN 动量等权策略
+"""
+D_PORTFOLIO_CORE — TopN 动量等权策略
 
 截面动量打分取前 N 等权配置。Phase A MVP 证链策略——验证 因子→策略→回测 端到端链路。
 
@@ -41,6 +42,32 @@ CTR 契约：
   生产者 — 目标权重 dict → MatchingEngine（回测）/ ExecutionAdapter（实盘）
 
 SSoT: docs/03_modules/_domain_portfolio_core/blueprint.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: topn_momentum_strategy.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① TopNMomentumStrategy
+#   name_en: TopNMomentumStrategy
+#   intro: TopN 动量等权策略——截面信号打分取前 N 等权。
+#   desc: TopN 动量等权策略——截面信号打分取前 N 等权。 用法： strategy = TopNMomentumStrategy() weights = strategy.gene…；公共方法（定义序）: generat…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: TopNMomentumStrategy
+#   downstream: zephyr.pf_core.strategy_engine.strategy_runner
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

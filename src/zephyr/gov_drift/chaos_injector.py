@@ -28,7 +28,95 @@ Drift Chaos Injector — 混沌工程主动漂移注入 §6.13。
 metrics: detection_rate / time_to_detect / false_negative_trend
 
 
-对标 blueprint.md §6.13。"""
+对标 blueprint.md §6.13。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: target_file 参数
+#   fields: 参数 target_file，类型注解 Path
+#   code: chaos_injector.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: project_root 参数
+#   fields: 参数 project_root，类型注解 str
+#   code: chaos_injector.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: state_dir 参数
+#   fields: 参数 state_dir，类型注解 str
+#   code: chaos_injector.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: skip_safeguards 参数
+#   fields: 参数 skip_safeguards，类型注解 bool
+#   code: chaos_injector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ChaosMetrics
+#   name_en: ChaosMetrics
+#   intro: class ChaosMetrics 源码 L196-L215
+#   desc: 公共方法（定义序）: summary；源码 L196-L215
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② inject_path_rename
+#   name_en: inject_path_rename
+#   intro: 改名类操作：将目标文件中某变量重命名为混淆版本。
+#   desc: 改名类操作：将目标文件中某变量重命名为混淆版本。；源码 L245-L268
+#   inputs: target_file
+#   outputs: tuple[str, str]
+# - id: A3
+#   name_zh: ③ inject_yaml_field_flip
+#   name_en: inject_yaml_field_flip
+#   intro: YAML字段翻转：将布尔字段值反转。
+#   desc: YAML字段翻转：将布尔字段值反转。；源码 L271-L290
+#   inputs: target_file
+#   outputs: tuple[str, str]
+# - id: A4
+#   name_zh: ④ inject_fake_todo_bomb
+#   name_en: inject_fake_todo_bomb
+#   intro: Fake TODO地雷：插入看似无害实际会触发parse错误的内容。
+#   desc: Fake TODO地雷：插入看似无害实际会触发parse错误的内容。；源码 L293-L308
+#   inputs: target_file
+#   outputs: tuple[str, str]
+# - id: A5
+#   name_zh: ⑤ import_hallucination
+#   name_en: import_hallucination
+#   intro: 导入幻觉：添加一个不存在的import语句。
+#   desc: 导入幻觉：添加一个不存在的import语句。；源码 L311-L320
+#   inputs: target_file
+#   outputs: tuple[str, str]
+# - id: A6
+#   name_zh: ⑥ run_chaos_experiment
+#   name_en: run_chaos_experiment
+#   intro: 执行一次混沌实验：基线->注入->检测->回滚。
+#   desc: 执行一次混沌实验：基线->注入->检测->回滚。；源码 L359-L433
+#   inputs: project_root state_dir skip_safeguards
+#   outputs: list[ChaosInjection]
+#   （注：A6 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: tuple[str, str]
+#   name_en: tuple[str, str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/governance/ops_governance/phase_check_registry.py
+# - id: O2
+#   name_zh: list[ChaosInjection]
+#   name_en: list[ChaosInjection]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/governance/ops_governance/phase_check_registry.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
+"""
 
 from __future__ import annotations
 

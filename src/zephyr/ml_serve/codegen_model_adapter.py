@@ -14,7 +14,8 @@
 # [TESTS] tests/ml_serve/test_codegen_model_adapter.py
 # [A_module] module_id=MOD-MLS-003 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""CodegenModelAdapter — 代码生成模型适配器（MOD-MLS-003）。
+"""
+CodegenModelAdapter — 代码生成模型适配器（MOD-MLS-003）。
 
 B10-02296（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-MLS-003，A1 D-ML-46）：
 model_router 注册 **DeepSeek-V4-Pro** 代码生成 profile（能力声明/上下文
@@ -25,6 +26,48 @@ model_router 注册 **DeepSeek-V4-Pro** 代码生成 profile（能力声明/上�
 （本件经 profile_registrar 挂钩装配，不重建注册表）；deep_review_model_
 adapter（MOD-MLS-004）=GLM-5.1 深度审查适配（零交集，本件=代码生成）；
 model_compression_accelerator（MOD-MLS-002）=压缩编排（零交集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: client 参数
+#   fields: 参数 client（无注解）
+#   code: codegen_model_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: profile_registrar 参数
+#   fields: 参数 profile_registrar（无注解）
+#   code: codegen_model_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: budget_alert_sink 参数
+#   fields: 参数 budget_alert_sink（无注解）
+#   code: codegen_model_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: budget_limit 参数
+#   fields: 参数 budget_limit（无注解）
+#   code: codegen_model_adapter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CodegenModelAdapter
+#   name_en: CodegenModelAdapter
+#   intro: DeepSeek-V4-Pro 代码生成适配（profile 注册 + 成本计量 + schema 规范化）。
+#   desc: DeepSeek-V4-Pro 代码生成适配（profile 注册 + 成本计量 + schema 规范化）。；公共方法（定义序）: register_profile, normalize_request, invok…
+#   inputs: client profile_registrar budget_alert_sink budget_limit warn_ratio cl…
+#   outputs: 返回值
+#   （注：A1 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（9 定义）
+#   name_en: public defs
+#   intro: CodegenModelAdapter
+#   downstream: 运行时装配批（model_router DeepSeek-V4-Pro profile 装配 / 代码生成调用适配 / token 成本预算门禁）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -213,9 +256,7 @@ class CodegenModelAdapter:
             try:
                 self._registrar(profile)
             except Exception as exc:  # noqa: BLE001 — model_router 挂钩失败 Fail-Closed
-                raise CodegenAdapterError(
-                    f"profile_registrar 注册失败: {profile.model_id!r}"
-                ) from exc
+                raise CodegenAdapterError(f"profile_registrar 注册失败: {profile.model_id!r}") from exc
         self._profiles[profile.model_id] = profile
         self._usage[profile.model_id] = [0, 0, 0]
         self._cost[profile.model_id] = 0.0
@@ -233,9 +274,7 @@ class CodegenModelAdapter:
         if not isinstance(request.capability, CodegenCapability):
             raise CodegenAdapterError(f"非法能力: {request.capability!r}")
         if request.capability not in profile.capabilities:
-            raise CodegenAdapterError(
-                f"能力越界: {request.capability.value} 未在 {profile.model_id} 能力声明中"
-            )
+            raise CodegenAdapterError(f"能力越界: {request.capability.value} 未在 {profile.model_id} 能力声明中")
         if not request.prompt:
             raise CodegenAdapterError("prompt 为空")
         if isinstance(request.max_tokens, bool) or not isinstance(request.max_tokens, int):
@@ -243,9 +282,7 @@ class CodegenModelAdapter:
         if request.max_tokens <= 0:
             raise CodegenAdapterError("max_tokens 须为正")
         if request.max_tokens > profile.context_window:
-            raise CodegenAdapterError(
-                f"max_tokens 越上下文窗: {request.max_tokens} > {profile.context_window}"
-            )
+            raise CodegenAdapterError(f"max_tokens 越上下文窗: {request.max_tokens} > {profile.context_window}")
         return {
             "model": profile.model_id,
             "capability": request.capability.value,
@@ -255,9 +292,7 @@ class CodegenModelAdapter:
             "stream": False,
         }
 
-    def _normalize_response(
-        self, request: CodegenRequest, profile: CodegenProfile, raw: object
-    ) -> CodegenResponse:
+    def _normalize_response(self, request: CodegenRequest, profile: CodegenProfile, raw: object) -> CodegenResponse:
         """响应 schema 规范化（缺键/负 token/越窗 Fail-Closed）。"""
         if not isinstance(raw, Mapping):
             raise CodegenAdapterError("响应 schema 非法（须映射）")
@@ -276,8 +311,7 @@ class CodegenModelAdapter:
                 raise CodegenAdapterError(f"响应 {name} 为负: {value}")
         if prompt_tokens + completion_tokens > profile.context_window:
             raise CodegenAdapterError(
-                f"响应 token 越上下文窗: "
-                f"{prompt_tokens + completion_tokens} > {profile.context_window}"
+                f"响应 token 越上下文窗: {prompt_tokens + completion_tokens} > {profile.context_window}"
             )
         cost = (
             prompt_tokens / 1000.0 * profile.input_price_per_1k
@@ -342,7 +376,10 @@ class CodegenModelAdapter:
         )
         _log.warning(
             "代码生成预算告警: %s %s 累计 %s / 预算 %s",
-            model_id, kind.value, total, self._budget_limit,
+            model_id,
+            kind.value,
+            total,
+            self._budget_limit,
         )
         if self._alert_sink is not None:
             try:

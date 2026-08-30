@@ -14,7 +14,8 @@
 # [TESTS] tests/ml_train/test_decision_tree_decision_architecture.py
 # [A_module] module_id=MOD-ML-016 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""DecisionTreeDecisionArchitecture — 决策树交易决策架构（MOD-ML-016）。
+"""
+DecisionTreeDecisionArchitecture — 决策树交易决策架构（MOD-ML-016）。
 
 B10-01480（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-MLT-022，A1 模块46）：
 **GBM 决策树学习历史决策日志**（特征=模块输出向量 / 标签=事后收益符号，
@@ -25,6 +26,51 @@ shap_explainer，未注入降级**特征重要性兜底**）+ **关键节点人�
 查重分工（蓝图 §0）：backtest=回测引擎（本件消费其事后收益标签语义，
 不回测）；ml_model_factory=模型生命周期编排（本件=决策架构本体，不管
 注册晋级）；qnn_two_stage=分位数密度模型（本件=决策符号分类，零交集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: gbm_trainer 参数
+#   fields: 参数 gbm_trainer（无注解）
+#   code: decision_tree_decision_architecture.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: shap_explainer 参数
+#   fields: 参数 shap_explainer（无注解）
+#   code: decision_tree_decision_architecture.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: decision_tree_decision_architecture.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RuleStump
+#   name_en: RuleStump
+#   intro: 降级规则 stump（单特征中位阈值分裂，确定性，frozen）。
+#   desc: 降级规则 stump（单特征中位阈值分裂，确定性，frozen）。；公共方法（定义序）: predict_one；源码 L119-L136
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② DecisionTreeDecisionArchitecture
+#   name_en: DecisionTreeDecisionArchitecture
+#   intro: 决策树交易决策架构（GBM 注入 / 规则 stump 降级 + SHAP 注入 / 重要性兜底 + 人工干预钩子）。
+#   desc: 决策树交易决策架构（GBM 注入 / 规则 stump 降级 + SHAP 注入 / 重要性兜底 + 人工干预钩子）。；公共方法（定义序）: train, register_intervention_hook, pre…
+#   inputs: gbm_trainer shap_explainer clock
+#   outputs: 返回值
+#   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: RuleStump, DecisionTreeDecisionArchitecture
+#   downstream: 运行时装配批（决策日志学习/决策解释/人工干预统一注入点装配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -49,8 +95,7 @@ __all__: Final = [
 
 #: RL(PPO) 仅离线评估语义（本模块不施工在线 RL）
 RL_PPO_OFFLINE_ONLY: Final[str] = (
-    "RL(PPO) 仅离线评估语义：本架构不施工在线 RL 训练/推理，"
-    "离线评估由回测域在 Owner 人工窗口执行"
+    "RL(PPO) 仅离线评估语义：本架构不施工在线 RL 训练/推理，离线评估由回测域在 Owner 人工窗口执行"
 )
 
 
@@ -142,9 +187,7 @@ class DecisionTreeDecisionArchitecture:
         if not features:
             raise DecisionTreeArchError("特征向量为空")
         if self._feature_names and sorted(features) != self._feature_names:
-            raise DecisionTreeArchError(
-                f"特征键集不齐: 期望 {self._feature_names}，实得 {sorted(features)}"
-            )
+            raise DecisionTreeArchError(f"特征键集不齐: 期望 {self._feature_names}，实得 {sorted(features)}")
 
     def _model_predict(self, features: dict[str, float]) -> tuple[int, tuple[str, ...]]:
         if self._stump is not None:
@@ -161,16 +204,14 @@ class DecisionTreeDecisionArchitecture:
         path = ("root", "gbm_ensemble", f"leaf={'long' if sign > 0 else 'short'}")
         return (1 if sign >= 0 else -1), path
 
-    def _fit_stump(
-        self, rows: list[dict[str, float]], labels: list[int]
-    ) -> RuleStump:
+    def _fit_stump(self, rows: list[dict[str, float]], labels: list[int]) -> RuleStump:
         """确定性规则 stump：逐特征取中位阈值，选左右均值分离度最大者。"""
         best: tuple[float, str, float, int, int] | None = None
         for feature in self._feature_names:  # 已排序，平局确定
             values = sorted(row[feature] for row in rows)
             threshold = float(statistics.median(values))
-            left = [lab for row, lab in zip(rows, labels) if row[feature] <= threshold]
-            right = [lab for row, lab in zip(rows, labels) if row[feature] > threshold]
+            left = [lab for row, lab in zip(rows, labels, strict=False) if row[feature] <= threshold]
+            right = [lab for row, lab in zip(rows, labels, strict=False) if row[feature] > threshold]
             mean_left = statistics.fmean(left) if left else 0.0
             mean_right = statistics.fmean(right) if right else 0.0
             score = abs(mean_left - mean_right)
@@ -185,9 +226,7 @@ class DecisionTreeDecisionArchitecture:
                 )
         assert best is not None  # feature_names 非空（训练校验保证）
         _, feature, threshold, left_sign, right_sign = best
-        return RuleStump(
-            feature=feature, threshold=threshold, left_sign=left_sign, right_sign=right_sign
-        )
+        return RuleStump(feature=feature, threshold=threshold, left_sign=left_sign, right_sign=right_sign)
 
     # ── 训练 ──────────────────────────────────────────────────────────────
 
@@ -203,8 +242,7 @@ class DecisionTreeDecisionArchitecture:
         for entry in entries:
             if sorted(entry.features) != feature_names:
                 raise DecisionTreeArchError(
-                    f"特征键集不齐: {entry.decision_id!r} 期望 {feature_names}，"
-                    f"实得 {sorted(entry.features)}"
+                    f"特征键集不齐: {entry.decision_id!r} 期望 {feature_names}，实得 {sorted(entry.features)}"
                 )
             rows.append(dict(entry.features))
             labels.append(self._label_of(entry.realized_return))
@@ -234,9 +272,7 @@ class DecisionTreeDecisionArchitecture:
 
     # ── 预测 + 人工干预 ───────────────────────────────────────────────────
 
-    def register_intervention_hook(
-        self, node_key: str, hook: Callable[[Mapping[str, float], int], int | None]
-    ) -> None:
+    def register_intervention_hook(self, node_key: str, hook: Callable[[Mapping[str, float], int], int | None]) -> None:
         """注册关键节点人工干预钩子（node_key 或 "*" 通配）。"""
         if not node_key:
             raise DecisionTreeArchError("node_key 为空")
@@ -262,19 +298,21 @@ class DecisionTreeDecisionArchitecture:
                 continue
             override_signal = 1 if int(override) >= 0 else -1
             if override_signal != signal:
-                self._interventions.append(InterventionRecord(
-                    node_key=node_key,
-                    original_signal=signal,
-                    override_signal=override_signal,
-                    intervened_at=self._clock(),
-                ))
-                _log.warning(
-                    "人工干预: node=%s %d -> %d", node_key, signal, override_signal
+                self._interventions.append(
+                    InterventionRecord(
+                        node_key=node_key,
+                        original_signal=signal,
+                        override_signal=override_signal,
+                        intervened_at=self._clock(),
+                    )
                 )
+                _log.warning("人工干预: node=%s %d -> %d", node_key, signal, override_signal)
                 signal = override_signal
                 intervened = True
         return Prediction(
-            signal=signal, path=path, intervened=intervened,
+            signal=signal,
+            path=path,
+            intervened=intervened,
             detail={"model_kind": "rule_stump" if self._stump is not None else "gbm_injected"},
         )
 
@@ -301,12 +339,9 @@ class DecisionTreeDecisionArchitecture:
             importances = list(model.feature_importances_)
             if len(importances) != len(self._feature_names):
                 raise DecisionTreeArchError("feature_importances_ 长度与特征数不符")
-            return {name: float(imp) for name, imp in zip(self._feature_names, importances)}
+            return {name: float(imp) for name, imp in zip(self._feature_names, importances, strict=False)}
         if self._stump is not None:
-            return {
-                name: (1.0 if name == self._stump.feature else 0.0)
-                for name in self._feature_names
-            }
+            return {name: (1.0 if name == self._stump.feature else 0.0) for name in self._feature_names}
         return {name: 0.0 for name in self._feature_names}  # pragma: no cover — 防御分支
 
     # ── 查询 ─────────────────────────────────────────────────────────────

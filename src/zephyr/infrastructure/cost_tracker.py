@@ -25,6 +25,51 @@ RI-15 CostTracker — 成本追踪器
     tracker = CostTracker()  # 默认使用 DB_PATH (governance.db)
     tracker.record_usage(model="deepseek-chat", tokens_in=2500, tokens_out=1200)
     report = tracker.daily_report()
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: db_path 参数
+#   fields: 参数 db_path（无注解）
+#   code: cost_tracker.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: daily_budget_usd 参数
+#   fields: 参数 daily_budget_usd（无注解）
+#   code: cost_tracker.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: auto_init 参数
+#   fields: 参数 auto_init（无注解）
+#   code: cost_tracker.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① UsageRecord
+#   name_en: UsageRecord
+#   intro: class UsageRecord 源码 L130-L151
+#   desc: 公共方法（定义序）: tokens_total, estimated_cost；源码 L130-L151
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② CostTracker
+#   name_en: CostTracker
+#   intro: 成本追踪器——Token/API调用成本实时监控
+#   desc: 成本追踪器——Token/API调用成本实时监控 特性： - 多模型定价支持 - 按组件/日期聚合 - 成本超限告警；公共方法（定义序）: record_usage, daily_report, get_budget_…
+#   inputs: db_path daily_budget_usd auto_init
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: UsageRecord, CostTracker
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

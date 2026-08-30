@@ -31,7 +31,66 @@ type_hint_incompatibility: X|Y vs Union[X,Y] 等语法糖检测
 auto_fixable: 自动降级语法到目标Python版本
 
 
-对标 blueprint.md §6.22。"""
+对标 blueprint.md §6.22。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root，类型注解 str
+#   code: python_compat.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: target_python 参数
+#   fields: 参数 target_python，类型注解 str
+#   code: python_compat.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: issues 参数
+#   fields: 参数 issues，类型注解 list[PythonCompatIssue]
+#   code: python_compat.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① scan_python_compat
+#   name_en: scan_python_compat
+#   intro: scan_python_compat(project_root, target_python) 源码 L246-L282
+#   desc: 源码 L246-L282
+#   inputs: project_root target_python
+#   outputs: list[PythonCompatIssue]
+# - id: A2
+#   name_zh: ② auto_fix_compat
+#   name_en: auto_fix_compat
+#   intro: 生成自动修复 diff（降级语法到目标版本）。
+#   desc: 生成自动修复 diff（降级语法到目标版本）。；源码 L285-L305
+#   inputs: issues
+#   outputs: dict[str, str]
+# - id: A3
+#   name_zh: ③ generate_compat_report
+#   name_en: generate_compat_report
+#   intro: 生成兼容性报告。
+#   desc: 生成兼容性报告。；源码 L308-L339
+#   inputs: issues target_python
+#   outputs: str
+#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[PythonCompatIssue]
+#   name_en: list[PythonCompatIssue]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_drift/_scanners.py ; tests/audit/test_python_compat.py
+# - id: O2
+#   name_zh: dict[str, str]
+#   name_en: dict[str, str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_drift/_scanners.py ; tests/audit/test_python_compat.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
+"""
 
 from __future__ import annotations
 

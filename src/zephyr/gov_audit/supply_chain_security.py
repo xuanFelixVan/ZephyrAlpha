@@ -15,6 +15,73 @@
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: lock_file_path 参数
+#   fields: 参数 lock_file_path，类型注解 str
+#   code: supply_chain_security.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: last_update 参数
+#   fields: 参数 last_update，类型注解 str
+#   code: supply_chain_security.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: months_threshold 参数
+#   fields: 参数 months_threshold，类型注解 int
+#   code: supply_chain_security.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: project_name 参数
+#   fields: 参数 project_name，类型注解 str
+#   code: supply_chain_security.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① scan_dependencies
+#   name_en: scan_dependencies
+#   intro: scan_dependencies(lock_file_path) 源码 L111-L116
+#   desc: 源码 L111-L116
+#   inputs: lock_file_path
+#   outputs: SupplyChainReport
+# - id: A2
+#   name_zh: ② check_vendor_lockin
+#   name_en: check_vendor_lockin
+#   intro: check_vendor_lockin(last_update, months_threshold) 源码 L119-…
+#   desc: 源码 L119-L129
+#   inputs: last_update months_threshold
+#   outputs: VendorRisk
+# - id: A3
+#   name_zh: ③ generate_spdx
+#   name_en: generate_spdx
+#   intro: generate_spdx(project_name, packages) 源码 L132-L143
+#   desc: 源码 L132-L143
+#   inputs: project_name packages
+#   outputs: dict[str, object]
+#   （注：A3 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: SupplyChainReport
+#   name_en: SupplyChainReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-INF-027;MOD-INF-015;MOD-FEEDBACK_LOOP
+# - id: O2
+#   name_zh: VendorRisk
+#   name_en: VendorRisk
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-INF-027;MOD-INF-015;MOD-FEEDBACK_LOOP
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
+"""
+
 from __future__ import annotations
 
 import logging

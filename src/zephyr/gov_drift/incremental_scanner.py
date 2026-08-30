@@ -22,7 +22,43 @@ Incremental Scanner — incremental_scanner.py
 git diff 驱动的增量扫描器，变更影响范围计算与检测器匹配。
 
 
-对标 blueprint.md §2.4（增量扫描与性能 SLO）。"""
+对标 blueprint.md §2.4（增量扫描与性能 SLO）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: incremental_scanner.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DetectorFileMapping
+#   name_en: DetectorFileMapping
+#   intro: class DetectorFileMapping 源码 L96-L110
+#   desc: 公共方法（定义序）: register, find_detectors；源码 L96-L110
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② IncrementalScanner
+#   name_en: IncrementalScanner
+#   intro: class IncrementalScanner 源码 L113-L224
+#   desc: 公共方法（定义序）: project_root, mapping, extract_module, get_changed_files, compute_impact, register_mapping, file_h…
+#   inputs: project_root
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: DetectorFileMapping, IncrementalScanner
+#   downstream: src/zephyr/gov_drift/_scanners.py ; tests/audit/test_incremental_scanner.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
 
 from __future__ import annotations
 

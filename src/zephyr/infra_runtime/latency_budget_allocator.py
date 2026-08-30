@@ -14,7 +14,8 @@
 # [TESTS] tests/infra_runtime/test_latency_budget_allocator.py
 # [A_module] module_id=MOD-INF-080 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""LatencyBudgetAllocator — 延迟预算分配器（MOD-INF-080）。
+"""
+LatencyBudgetAllocator — 延迟预算分配器（MOD-INF-080）。
 
 B14-04701（AUD-DRAFT-001-DIGEST P2 波 P2-W01，CAND-H1FS-013，A9 运维架构
 §8.3.10）：Hot <10ms / Warm <1s **端到端预算**分解至各阶段并登记 SSOT
@@ -26,6 +27,38 @@ Fail-Closed 拒绝登记。
 查重分工（蓝图 §0）：cold_plane_isolation=Cold 平面通道门禁（零交集）；
 latency_attributor=基于 Span 的延迟归因（本件只做预算登记/上报/报表，不做
 Span 归因）；performance_monitor=执行核性能采集（本件不复用其采集面）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: latency_budget_allocator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: alert_sink 参数
+#   fields: 参数 alert_sink（无注解）
+#   code: latency_budget_allocator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① LatencyBudgetAllocator
+#   name_en: LatencyBudgetAllocator
+#   intro: 延迟预算分配件（分解登记 + 耗时上报 + 超支判定 + 消耗率报表）。
+#   desc: 延迟预算分配件（分解登记 + 耗时上报 + 超支判定 + 消耗率报表）。；公共方法（定义序）: allocate, table, record, report；源码 L135-L265
+#   inputs: clock alert_sink
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: LatencyBudgetAllocator
+#   downstream: 运行时装配批（Hot/Warm 平面阶段预算登记 / 实际耗时上报 / 预算消耗率报表）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -157,9 +190,7 @@ class LatencyBudgetAllocator:
         total = sum(sb.budget_ms for sb in items)
         cap = PLANE_BUDGET_MS[plane]
         if total > cap:
-            raise LatencyBudgetError(
-                f"阶段预算总和超平面预算: {total}ms > {cap}ms（{plane.value}，Fail-Closed）"
-            )
+            raise LatencyBudgetError(f"阶段预算总和超平面预算: {total}ms > {cap}ms（{plane.value}，Fail-Closed）")
         items.sort(key=lambda sb: sb.stage)  # SSOT 确定性排序
         version = self._versions.get(plane, 0) + 1
         self._versions[plane] = version
@@ -194,13 +225,15 @@ class LatencyBudgetAllocator:
         self._actuals[plane][stage].append(float(actual_ms))
         over = actual_ms > budget_ms
         if over:
-            self._alert(BudgetViolation(
-                plane=plane,
-                stage=stage,
-                budget_ms=budget_ms,
-                actual_ms=float(actual_ms),
-                raised_at=self._clock(),
-            ))
+            self._alert(
+                BudgetViolation(
+                    plane=plane,
+                    stage=stage,
+                    budget_ms=budget_ms,
+                    actual_ms=float(actual_ms),
+                    raised_at=self._clock(),
+                )
+            )
         return over
 
     # ── 报表 ─────────────────────────────────────────────────────────────

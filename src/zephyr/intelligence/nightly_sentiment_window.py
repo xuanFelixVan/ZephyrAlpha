@@ -33,6 +33,69 @@ MOD-INT-NEWS-NIGHT NightlySentimentWindow — 夜间新闻情绪窗口聚合器�
 
 依据: 92号清单 §8.4 + 44号备忘 §4 表 M3-② 行 + 26号备忘 §2.7 + tracker #138/#139
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: trade_date 参数
+#   fields: 参数 trade_date，类型注解 datetime.date
+#   code: nightly_sentiment_window.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: analyzer 参数
+#   fields: 参数 analyzer（无注解）
+#   code: nightly_sentiment_window.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: linker 参数
+#   fields: 参数 linker（无注解）
+#   code: nightly_sentiment_window.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: persist 参数
+#   fields: 参数 persist（无注解）
+#   code: nightly_sentiment_window.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① NightlySentimentResult
+#   name_en: NightlySentimentResult
+#   intro: 夜间新闻情绪窗口聚合结果（JSON 可序列化）。
+#   desc: 夜间新闻情绪窗口聚合结果（JSON 可序列化）。 window 归属日=交易日（次日）：窗口=[前一交易日 18:00, 交易日 08:00)。 degraded=True 表示…；公共方法（定义序）: to_dict…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② nightly_window
+#   name_en: nightly_window
+#   intro: 夜间窗口边界：[前一交易日 18:00, 交易日 08:00)，左闭右开。
+#   desc: 夜间窗口边界：[前一交易日 18:00, 交易日 08:00)，左闭右开。 注：前一"交易日"按自然日前推一天（周末/节假日新闻同样落入窗口， 窗口语义=时间窗非交易日历推导——…；源码 L203-L212
+#   inputs: trade_date
+#   outputs: tuple[datetime.datetime, datetime.datet…
+# - id: A3
+#   name_zh: ③ compute_nightly_sentiment
+#   name_en: compute_nightly_sentiment
+#   intro: 夜间新闻情绪窗口聚合主入口（M3-②）。
+#   desc: 夜间新闻情绪窗口聚合主入口（M3-②）。 Args: trade_date: 交易日（ISO 字符串或 date，窗口归属日=次日）。 analyzer: 情绪分析器（None=…；源码 L249-L397
+#   inputs: trade_date analyzer linker persist writer top_n
+#   outputs: NightlySentimentResult
+#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: tuple[datetime.datetime, datetime.datet…
+#   name_en: tuple[datetime.datetime, datetime.datet…
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 夜间批/盘前流程调用方（92号 §8.4③）；MOD-PLAN-004 overnight_boundary_reviser 消费接线待统筹裁定（本模块输出契…
+# - id: O2
+#   name_zh: NightlySentimentResult
+#   name_en: NightlySentimentResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 夜间批/盘前流程调用方（92号 §8.4③）；MOD-PLAN-004 overnight_boundary_reviser 消费接线待统筹裁定（本模块输出契…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations
@@ -230,10 +293,17 @@ def compute_nightly_sentiment(
     if news_df.empty:
         reasons.append("夜间窗口无新闻（degraded）")
         result = NightlySentimentResult(
-            date=iso, window_start=win_start, window_end=win_end,
-            sentiment_index=0.0, avg_polarity=0.0,
-            positive_count=0, negative_count=0, neutral_count=0, total_count=0,
-            degraded=True, reasons=tuple(reasons),
+            date=iso,
+            window_start=win_start,
+            window_end=win_end,
+            sentiment_index=0.0,
+            avg_polarity=0.0,
+            positive_count=0,
+            negative_count=0,
+            neutral_count=0,
+            total_count=0,
+            degraded=True,
+            reasons=tuple(reasons),
         )
         return _maybe_persist(result, persist, writer, reasons)
 
@@ -250,10 +320,17 @@ def compute_nightly_sentiment(
             f"窗口 [{win_start:%m-%d %H:%M}, {win_end:%m-%d %H:%M}) 内无新闻（共扫描 {len(work)} 条，degraded）"
         )
         result = NightlySentimentResult(
-            date=iso, window_start=win_start, window_end=win_end,
-            sentiment_index=0.0, avg_polarity=0.0,
-            positive_count=0, negative_count=0, neutral_count=0, total_count=0,
-            degraded=True, reasons=tuple(reasons),
+            date=iso,
+            window_start=win_start,
+            window_end=win_end,
+            sentiment_index=0.0,
+            avg_polarity=0.0,
+            positive_count=0,
+            negative_count=0,
+            neutral_count=0,
+            total_count=0,
+            degraded=True,
+            reasons=tuple(reasons),
         )
         return _maybe_persist(result, persist, writer, reasons)
 
@@ -293,24 +370,28 @@ def compute_nightly_sentiment(
         for _, row in top_df.iterrows()
     )
 
-    reasons.append(
-        f"夜间窗口 {total} 条（正 {pos_n}/负 {neg_n}/中性 {neu_n}），sentiment_index={avg_p:+.4f}"
-    )
+    reasons.append(f"夜间窗口 {total} 条（正 {pos_n}/负 {neg_n}/中性 {neu_n}），sentiment_index={avg_p:+.4f}")
     if linker is not None:
-        reasons.append(
-            f"标的关联：{linked_n} 条关联标的（歧义 {ambiguous_n}），{market_n} 条 market 级"
-        )
+        reasons.append(f"标的关联：{linked_n} 条关联标的（歧义 {ambiguous_n}），{market_n} 条 market 级")
 
     # 打分方法留痕（单一方法→该值；混合→mixed；写表 data_source 列）
     methods = set(scored["method"].astype(str).unique())
     data_source = methods.pop() if len(methods) == 1 else "mixed"
 
     result = NightlySentimentResult(
-        date=iso, window_start=win_start, window_end=win_end,
-        sentiment_index=avg_p, avg_polarity=avg_p,
-        positive_count=pos_n, negative_count=neg_n, neutral_count=neu_n, total_count=total,
+        date=iso,
+        window_start=win_start,
+        window_end=win_end,
+        sentiment_index=avg_p,
+        avg_polarity=avg_p,
+        positive_count=pos_n,
+        negative_count=neg_n,
+        neutral_count=neu_n,
+        total_count=total,
         top_events=top_events,
-        linked_symbol_count=linked_n, ambiguous_count=ambiguous_n, market_level_count=market_n,
+        linked_symbol_count=linked_n,
+        ambiguous_count=ambiguous_n,
+        market_level_count=market_n,
         reasons=tuple(reasons),
     )
     return _maybe_persist(result, persist, writer, list(reasons), data_source=data_source)
@@ -348,13 +429,13 @@ def _maybe_persist(
         log.warning("news_sentiment_window 写表异常，降级 persisted=False: %s", exc)
         reasons.append(f"写表异常降级（fail-open）：{exc}")
         return _replace_result(result, persisted=False, reasons=reasons)
-    reasons.append("已写 news_sentiment_window（ReplacingMergeTree 同键替换幂等）" if ok else "写表返回 False（降级留痕）")
+    reasons.append(
+        "已写 news_sentiment_window（ReplacingMergeTree 同键替换幂等）" if ok else "写表返回 False（降级留痕）"
+    )
     return _replace_result(result, persisted=ok, reasons=reasons)
 
 
-def _replace_result(
-    result: NightlySentimentResult, *, persisted: bool, reasons: list[str]
-) -> NightlySentimentResult:
+def _replace_result(result: NightlySentimentResult, *, persisted: bool, reasons: list[str]) -> NightlySentimentResult:
     """frozen dataclass 字段替换（persist 状态/理由链回填）。"""
     return replace(result, persisted=persisted, reasons=tuple(reasons))
 

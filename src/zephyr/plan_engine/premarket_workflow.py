@@ -21,7 +21,8 @@
 # A3: 进度追踪(状态机+mandatory失败阻断+人工接管点+state_sink回调)
 # O1: WorkDAG / progress快照(ready/blocked/takeover_point/by_stage)
 # [/ALGO_FLOW]
-"""D-TRADING-15 A股盘前标准化工作流（MOD-PLAN-021）。
+"""
+D-TRADING-15 A股盘前标准化工作流（MOD-PLAN-021）。
 
 真源：construction_backlog_dig.tsv B10-02213（D-TRADING-15 §30.2.5，裁定=做 P1）
 + CAND-PLAN-015。TSV 裁定注记："盘前SOP分钟级编排单人项目用work_dag即可承载，
@@ -51,6 +52,59 @@ takeover_point（人工接管点）；ready = 全部 mandatory DONE 且无 block
 模型（MOD-INF-035 直用）。
 
 SSoT: docs/03_modules/_domain_plan_engine/premarket_workflow/blueprint.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: trading_date 参数
+#   fields: 参数 trading_date，类型注解 str
+#   code: premarket_workflow.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: stages 参数
+#   fields: 参数 stages，类型注解 Sequence[StageSpec] | None
+#   code: premarket_workflow.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① default_stages
+#   name_en: default_stages
+#   intro: 默认三段式 SOP（08:00-09:15 分钟级排程，§30.2.5）。
+#   desc: 默认三段式 SOP（08:00-09:15 分钟级排程，§30.2.5）。；源码 L203-L275
+#   inputs: 无参数
+#   outputs: tuple[StageSpec, ...]
+# - id: A2
+#   name_zh: ② build_premarket_dag
+#   name_en: build_premarket_dag
+#   intro: 构建盘前三段式 WorkDAG（复用 MOD-INF-035 模型，纯声明不调度执行）。
+#   desc: 构建盘前三段式 WorkDAG（复用 MOD-INF-035 模型，纯声明不调度执行）。；源码 L296-L333
+#   inputs: trading_date stages
+#   outputs: WorkDAG
+# - id: A3
+#   name_zh: ③ PremarketWorkflowTracker
+#   name_en: PremarketWorkflowTracker
+#   intro: 盘前工作流进度追踪器（状态机 + 阻断/接管点 + state_sink 回调）。
+#   desc: 盘前工作流进度追踪器（状态机 + 阻断/接管点 + state_sink 回调）。；公共方法（定义序）: blocked, takeover_point, ready, mark_running, mark_done,…
+#   inputs: trading_date stages state_sink
+#   outputs: 返回值
+#   （注：A3 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: tuple[StageSpec, ...]
+#   name_en: tuple[StageSpec, ...]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 运行时装配批（conductor 执行 DAG；进度 state_sink 接 state_store 落库）
+# - id: O2
+#   name_zh: WorkDAG
+#   name_en: WorkDAG
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 运行时装配批（conductor 执行 DAG；进度 state_sink 接 state_store 落库）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations
@@ -135,13 +189,9 @@ class StageSpec:
             if not isinstance(hhmm, str) or len(hhmm) != 5 or hhmm[2] != ":":
                 raise PremarketWorkflowError(f"{label}必须HH:MM格式, got {hhmm!r}")
             if not _WINDOW_START <= hhmm <= _WINDOW_END:
-                raise PremarketWorkflowError(
-                    f"{label}必须在{_WINDOW_START}-{_WINDOW_END}窗口内, got {hhmm}"
-                )
+                raise PremarketWorkflowError(f"{label}必须在{_WINDOW_START}-{_WINDOW_END}窗口内, got {hhmm}")
         if self.scheduled_at > self.deadline:
-            raise PremarketWorkflowError(
-                f"scheduled_at({self.scheduled_at})不得晚于deadline({self.deadline})"
-            )
+            raise PremarketWorkflowError(f"scheduled_at({self.scheduled_at})不得晚于deadline({self.deadline})")
         if self.deadline > _PHASE_DEADLINE[self.phase]:
             raise PremarketWorkflowError(
                 f"段{self.phase}工序deadline不得晚于{_PHASE_DEADLINE[self.phase]}, got {self.deadline}"
@@ -271,11 +321,7 @@ def build_premarket_dag(
         )
         for s in specs
     ]
-    edges = [
-        WorkEdge(from_node=dep, to_node=s.stage_id, condition="success")
-        for s in specs
-        for dep in s.depends_on
-    ]
+    edges = [WorkEdge(from_node=dep, to_node=s.stage_id, condition="success") for s in specs for dep in s.depends_on]
     return WorkDAG(
         dag_id=f"premarket_sop:{trading_date}",
         name="A股盘前标准化工作流(D-TRADING-15)",
@@ -308,10 +354,7 @@ class PremarketWorkflowTracker:
     @property
     def blocked(self) -> bool:
         """mandatory 工序失败 → 阻断。"""
-        return any(
-            self._status[sid] is StageStatus.FAILED and self._specs[sid].mandatory
-            for sid in self._specs
-        )
+        return any(self._status[sid] is StageStatus.FAILED and self._specs[sid].mandatory for sid in self._specs)
 
     @property
     def takeover_point(self) -> str | None:
@@ -326,11 +369,7 @@ class PremarketWorkflowTracker:
         """就绪 = 全部 mandatory DONE 且无阻断。"""
         if self.blocked:
             return False
-        return all(
-            self._status[sid] is StageStatus.DONE
-            for sid, spec in self._specs.items()
-            if spec.mandatory
-        )
+        return all(self._status[sid] is StageStatus.DONE for sid, spec in self._specs.items() if spec.mandatory)
 
     def _emit(self) -> None:
         if self._state_sink is None:
@@ -348,27 +387,21 @@ class PremarketWorkflowTracker:
     def mark_running(self, stage_id: str) -> None:
         self._stage(stage_id)
         if self._status[stage_id] is not StageStatus.PENDING:
-            raise PremarketWorkflowError(
-                f"工序{stage_id}仅PENDING可转RUNNING, 当前{self._status[stage_id].value}"
-            )
+            raise PremarketWorkflowError(f"工序{stage_id}仅PENDING可转RUNNING, 当前{self._status[stage_id].value}")
         self._status[stage_id] = StageStatus.RUNNING
         self._emit()
 
     def mark_done(self, stage_id: str) -> None:
         self._stage(stage_id)
         if self._status[stage_id] is not StageStatus.RUNNING:
-            raise PremarketWorkflowError(
-                f"工序{stage_id}仅RUNNING可转DONE, 当前{self._status[stage_id].value}"
-            )
+            raise PremarketWorkflowError(f"工序{stage_id}仅RUNNING可转DONE, 当前{self._status[stage_id].value}")
         self._status[stage_id] = StageStatus.DONE
         self._emit()
 
     def mark_failed(self, stage_id: str, reason: str = "") -> None:
         self._stage(stage_id)
         if self._status[stage_id] is not StageStatus.RUNNING:
-            raise PremarketWorkflowError(
-                f"工序{stage_id}仅RUNNING可转FAILED, 当前{self._status[stage_id].value}"
-            )
+            raise PremarketWorkflowError(f"工序{stage_id}仅RUNNING可转FAILED, 当前{self._status[stage_id].value}")
         self._status[stage_id] = StageStatus.FAILED
         self._failed_reason[stage_id] = reason
         self._emit()
@@ -378,9 +411,7 @@ class PremarketWorkflowTracker:
         if spec.mandatory:
             raise PremarketWorkflowError(f"mandatory工序{stage_id}不可跳过")
         if self._status[stage_id] is not StageStatus.PENDING:
-            raise PremarketWorkflowError(
-                f"工序{stage_id}仅PENDING可转SKIPPED, 当前{self._status[stage_id].value}"
-            )
+            raise PremarketWorkflowError(f"工序{stage_id}仅PENDING可转SKIPPED, 当前{self._status[stage_id].value}")
         self._status[stage_id] = StageStatus.SKIPPED
         self._failed_reason[stage_id] = reason
         self._emit()

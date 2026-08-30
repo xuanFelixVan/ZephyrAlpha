@@ -23,7 +23,8 @@
 # A1: daily_sink 注入推送（可选；空产物不调用）
 # O1: PipelineOutcome（n_input/n_inferred/n_degraded/n_daily/elapsed_s/daily）
 # [/ALGO_FLOW]
-"""MOD-NLP-SENT-PIPE SentimentPipeline — 离线批量端到端接线件（NLP Phase 7）。
+"""
+MOD-NLP-SENT-PIPE SentimentPipeline — 离线批量端到端接线件（NLP Phase 7）。
 
 设计依据：
 - 13 号 §3.1.6 管道架构：news_data → 采集 → NLP 推理 → 情感聚合 → 指标。
@@ -44,6 +45,69 @@
 依据: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md Phase 7
 SSoT: #ARCH-NLP-PIPELINE-001
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: news 参数
+#   fields: 参数 news，类型注解 dict[str, Any]
+#   code: sentiment_pipeline.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: news_items 参数
+#   fields: 参数 news_items，类型注解 list[dict[str, Any]]
+#   code: sentiment_pipeline.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: chat 参数
+#   fields: 参数 chat（无注解）
+#   code: sentiment_pipeline.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: daily_sink 参数
+#   fields: 参数 daily_sink（无注解）
+#   code: sentiment_pipeline.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① publish_date_of
+#   name_en: publish_date_of
+#   intro: 从新闻记录提取日键 'YYYY-MM-DD'（兼容 datetime/字符串 publish_time）。
+#   desc: 从新闻记录提取日键 'YYYY-MM-DD'（兼容 datetime/字符串 publish_time）。；源码 L150-L153
+#   inputs: news
+#   outputs: str
+# - id: A2
+#   name_zh: ② run_offline_pipeline
+#   name_en: run_offline_pipeline
+#   intro: 离线批量端到端管道：推理 → 日级聚合 → 产物下沉。
+#   desc: 离线批量端到端管道：推理 → 日级聚合 → 产物下沉。 Parameters ---------- news_items : 新闻 dict 列表（需含 ``title``；``…；源码 L164-L207
+#   inputs: news_items chat daily_sink config
+#   outputs: PipelineOutcome
+# - id: A3
+#   name_zh: ③ write_daily_jsonl
+#   name_en: write_daily_jsonl
+#   intro: 日级聚合产物 JSONL 落盘（13 号 Phase 7 默认下沉口径，父目录自动创建）。
+#   desc: 日级聚合产物 JSONL 落盘（13 号 Phase 7 默认下沉口径，父目录自动创建）。 产物字段含 ``negative_count``（S2 bad_news_flat 入…；源码 L210-L219
+#   inputs: daily out_path
+#   outputs: 返回值
+#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: scripts/ml/run_sentiment_batch.py（CLI 壳，后续接入位）; .runtime 跑批驱动（离线批量 smoke）; regi…
+# - id: O2
+#   name_zh: PipelineOutcome
+#   name_en: PipelineOutcome
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: scripts/ml/run_sentiment_batch.py（CLI 壳，后续接入位）; .runtime 跑批驱动（离线批量 smoke）; regi…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

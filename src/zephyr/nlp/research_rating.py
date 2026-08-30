@@ -13,7 +13,8 @@
 # [ERROR_CONTRACT] 无异常——解析失败字段为空/None，不抛
 # [TESTS] tests/nlp/test_research_rating.py
 # [TTL] permanent
-"""research_rating — 研报结构化评级提取（CAND-NLP-006）。
+"""
+research_rating — 研报结构化评级提取（CAND-NLP-006）。
 
 研报的机构级信号不在通用情感分（卖方多头偏见：实证 买入69%+增持22%=91%），
 而在结构化字段（朝阳永续/Wind 一致预期口径）：
@@ -23,6 +24,85 @@
 - **目标价**：标题/内容 ``目标价 X 元`` → 预期幅度锚（覆盖率低，可选字段）
 
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: summary 参数
+#   fields: 参数 summary，类型注解 str
+#   code: research_rating.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: rating 参数
+#   fields: 参数 rating，类型注解 str
+#   code: research_rating.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: title 参数
+#   fields: 参数 title，类型注解 str
+#   code: research_rating.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: text 参数
+#   fields: 参数 text，类型注解 str
+#   code: research_rating.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① parse_summary_fields
+#   name_en: parse_summary_fields
+#   intro: 解析 summary 的 机构/评级/行业 三个结构化字段（缺失则键不存在）。
+#   desc: 解析 summary 的 机构/评级/行业 三个结构化字段（缺失则键不存在）。；源码 L167-L169
+#   inputs: summary
+#   outputs: dict[str, str]
+# - id: A2
+#   name_zh: ② rating_score
+#   name_en: rating_score
+#   intro: 评级原文 → 立场分；未知/缺失 → None（不猜值）。
+#   desc: 评级原文 → 立场分；未知/缺失 → None（不猜值）。；源码 L172-L174
+#   inputs: rating
+#   outputs: float | None
+# - id: A3
+#   name_zh: ③ detect_revision
+#   name_en: detect_revision
+#   intro: 标题 → (变动类型, 细节片段)。
+#   desc: 标题 → (变动类型, 细节片段)。 顺序敏感：首次覆盖 > 下调 > 上调 > 维持 > none。 细节片段=命中关键词起最多 20 字（如"下调盈利预测及目标价"），调试用。；源码 L177-L193
+#   inputs: title
+#   outputs: tuple[str, str]
+# - id: A4
+#   name_zh: ④ extract_target_price
+#   name_en: extract_target_price
+#   intro: 标题/内容提取目标价（"目标价 58.5 元"形态；未命中 → None）。
+#   desc: 标题/内容提取目标价（"目标价 58.5 元"形态；未命中 → None）。；源码 L196-L204
+#   inputs: text
+#   outputs: float | None
+# - id: A5
+#   name_zh: ⑤ analyze_report
+#   name_en: analyze_report
+#   intro: 单篇研报全字段提取（组合 parse_summary_fields/detect_revision/extract_t…
+#   desc: 单篇研报全字段提取（组合 parse_summary_fields/detect_revision/extract_target_price）。；源码 L207-L220
+#   inputs: title summary
+#   outputs: ReportRating
+#   （注：A5 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, str]
+#   name_en: dict[str, str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: scripts.ml.run_research_rating_batch
+# - id: O2
+#   name_zh: float | None
+#   name_en: float | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: scripts.ml.run_research_rating_batch
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations

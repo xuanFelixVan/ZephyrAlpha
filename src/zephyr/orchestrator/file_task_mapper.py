@@ -35,6 +35,41 @@ FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重写）
 3. rollback — 删除 tasks + task_files + events；不碰磁盘文件
 4. resolve — 反向查询 file_path -> task_id 列表（N:N，可能多个）
 5. resolve_reverse — 正向查询 task_id -> file_path 列表（N:N，可能多个）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: file_path 参数
+#   fields: 参数 file_path，类型注解 str
+#   code: file_task_mapper.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① classify_file_to_namespace
+#   name_en: classify_file_to_namespace
+#   intro: 从文件路径推导命名空间（#21 裁定：分类字段，不是 ID 的一部分）。
+#   desc: 从文件路径推导命名空间（#21 裁定：分类字段，不是 ID 的一部分）。 推导优先级： 1. KBG -> 路径含 02_enterprise_architecture（企业架构…；源码 L127-L160
+#   inputs: file_path
+#   outputs: TaskNamespace
+# - id: A2
+#   name_zh: ② FileTaskMapper
+#   name_en: FileTaskMapper
+#   intro: 文件路径 ↔ Task N:N 映射器。
+#   desc: 文件路径 ↔ Task N:N 映射器。 #21 裁定实现：通过 task_files 表实现多对多映射， 取代 KBG-0038 的 1:1 双向映射。；公共方法（定义序）: resolve, resolve_rev…
+#   inputs: db_path
+#   outputs: 返回值
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: TaskNamespace
+#   name_en: TaskNamespace
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

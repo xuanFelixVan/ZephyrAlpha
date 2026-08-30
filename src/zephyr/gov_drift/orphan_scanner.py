@@ -31,7 +31,71 @@ orphan_doc: docs/下.md 无蓝图引用
 orphan_config: yaml/config 无代码读取
 
 
-对标 blueprint.md §6.28。"""
+对标 blueprint.md §6.28。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root，类型注解 str
+#   code: orphan_scanner.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① OrphanResource
+#   name_en: OrphanResource
+#   intro: class OrphanResource 源码 L113-L133
+#   desc: 公共方法（定义序）: to_dict；源码 L113-L133
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② find_orphan_scripts
+#   name_en: find_orphan_scripts
+#   intro: find_orphan_scripts(project_root) 源码 L136-L177
+#   desc: 源码 L136-L177
+#   inputs: project_root
+#   outputs: list[OrphanResource]
+# - id: A3
+#   name_zh: ③ find_orphan_data
+#   name_en: find_orphan_data
+#   intro: find_orphan_data(project_root) 源码 L180-L217
+#   desc: 源码 L180-L217
+#   inputs: project_root
+#   outputs: list[OrphanResource]
+# - id: A4
+#   name_zh: ④ find_orphan_docs
+#   name_en: find_orphan_docs
+#   intro: find_orphan_docs(project_root) 源码 L220-L258
+#   desc: 源码 L220-L258
+#   inputs: project_root
+#   outputs: list[OrphanResource]
+# - id: A5
+#   name_zh: ⑤ scan_orphan_resources
+#   name_en: scan_orphan_resources
+#   intro: scan_orphan_resources(project_root) 源码 L261-L288
+#   desc: 源码 L261-L288
+#   inputs: project_root
+#   outputs: dict[str, object]
+# 层: 输出
+# - id: O1
+#   name_zh: list[OrphanResource]
+#   name_en: list[OrphanResource]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_drift/_scanners.py ; src/zephyr/gov_drift/brain_integration.py ;…
+# - id: O2
+#   name_zh: dict[str, object]
+#   name_en: dict[str, object]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_drift/_scanners.py ; src/zephyr/gov_drift/brain_integration.py ;…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
+"""
 
 from __future__ import annotations
 

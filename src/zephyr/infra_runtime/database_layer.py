@@ -14,7 +14,8 @@
 # [TESTS] tests/infra_runtime/test_database_layer.py
 # [A_module] module_id=MOD-INF-077 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""DatabaseLayer — 数据库统一抽象层（MOD-INF-077）。
+"""
+DatabaseLayer — 数据库统一抽象层（MOD-INF-077）。
 
 B13-04299（AUD-DRAFT-001-DIGEST P2 波 P2-W01，CAND-H1FS-010，A3数据架构）：
 DuckDB/SQLite/PG/ClickHouse 语义统一的后端注册（``DbBackend`` 协议：
@@ -23,6 +24,46 @@ query/execute/health/close）+ 统一查询门面 ``route(key)`` 路由 + 连接
 收编直调点的适配入口（register_backend / facade 查询路由）。
 
 纯内存确定性：本件不建真实连接池、不触网；后端实例由装配方注入。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: database_layer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: sleeper 参数
+#   fields: 参数 sleeper（无注解）
+#   code: database_layer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DbBackend
+#   name_en: DbBackend
+#   intro: 数据库后端协议（query/execute/health/close 语义统一）。
+#   desc: 数据库后端协议（query/execute/health/close 语义统一）。；公共方法（定义序）: query, execute, health, close；源码 L93-L110
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② DatabaseLayer
+#   name_en: DatabaseLayer
+#   intro: 数据库统一门面（后端注册表 + 路由 + 借还 + 超时重试）。
+#   desc: 数据库统一门面（后端注册表 + 路由 + 借还 + 超时重试）。；公共方法（定义序）: register_backend, route, connection, borrowed, query_with_retry,…
+#   inputs: clock sleeper
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: DbBackend, DatabaseLayer
+#   downstream: 运行时装配批（sqlite/duckdb/pg/clickhouse 后端注册与统一查询路由门面）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -97,9 +138,7 @@ class DatabaseLayer:
         if name in self._backends:
             raise DatabaseLayerError(f"后端重复注册: {name!r}")
         if not isinstance(backend, DbBackend):
-            raise DatabaseLayerError(
-                f"后端协议不符: {name!r} 须实现 query/execute/health/close"
-            )
+            raise DatabaseLayerError(f"后端协议不符: {name!r} 须实现 query/execute/health/close")
         self._backends[name] = backend
         self._borrowed[name] = 0
 
@@ -161,17 +200,13 @@ class DatabaseLayer:
             else:
                 elapsed = self._clock() - started
                 if timeout is not None and elapsed > timeout:
-                    last_exc = TimeoutError(
-                        f"{op} 超时: elapsed={elapsed:.6f}s > timeout={timeout}s"
-                    )
+                    last_exc = TimeoutError(f"{op} 超时: elapsed={elapsed:.6f}s > timeout={timeout}s")
                     _log.warning("后端 %s %s 第 %d 次超时", name, op, attempt)
                 else:
                     return result
             if attempt < attempts:
                 self._sleeper(float(backoff) * attempt)
-        raise DatabaseLayerError(
-            f"后端 {name!r} {op} 重试 {attempts} 次耗尽: {last_exc}"
-        ) from last_exc
+        raise DatabaseLayerError(f"后端 {name!r} {op} 重试 {attempts} 次耗尽: {last_exc}") from last_exc
 
     def query_with_retry(
         self,

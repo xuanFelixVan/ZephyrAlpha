@@ -15,12 +15,53 @@
 # [A_module] module_id=MOD-INF-048 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""投票优先多智能体编排（MOD-INF-048）。
+"""
+投票优先多智能体编排（MOD-INF-048）。
 
 多 agent 对同一任务独立提案，裁定**投票优先**：tally_votes 纯函数聚票
 （可选权重），多数/相对多数者胜；平票确定性裁决（并列中字典序小者胜，
 保证同输入同输出、可审计复现）。单 agent 异常容错（记 failed_agents 不阻断），
 全部失败 fail-closed 返回 winner=None——由调用方走人工/降级通道。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: votes 参数
+#   fields: 参数 votes，类型注解 dict[str, str]
+#   code: voting_first_multi_agent.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: weights 参数
+#   fields: 参数 weights，类型注解 dict[str, float] | None
+#   code: voting_first_multi_agent.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① tally_votes
+#   name_en: tally_votes
+#   intro: 纯函数聚票：加权 plurality；平票时字典序小者确定性胜。
+#   desc: 纯函数聚票：加权 plurality；平票时字典序小者确定性胜。；源码 L108-L125
+#   inputs: votes weights
+#   outputs: VoteOutcome
+# - id: A2
+#   name_zh: ② VotingFirstMultiAgent
+#   name_en: VotingFirstMultiAgent
+#   intro: 投票优先多智能体编排器。
+#   desc: 投票优先多智能体编排器。；公共方法（定义序）: register_agent, run；源码 L128-L168
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: VoteOutcome
+#   name_en: VoteOutcome
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

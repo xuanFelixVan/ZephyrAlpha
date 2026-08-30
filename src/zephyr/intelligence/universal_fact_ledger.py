@@ -14,7 +14,8 @@
 # [TESTS] tests/intelligence/test_universal_fact_ledger.py
 # [A_module] module_id=MOD-INT-FACT-LEDGER | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""UniversalFactLedger — 通用事实账本与双重锚定（MOD-INT-FACT-LEDGER）。
+"""
+UniversalFactLedger — 通用事实账本与双重锚定（MOD-INT-FACT-LEDGER）。
 
 B10-01952（AUD-DRAFT-001-DIGEST P2 波 P2-W04，CAND-AISA-014，A1 §29.24-1）：
 VeNRA 架构 UFL——**追加式事实账本**（{entity/attribute/value/timestamp/
@@ -26,6 +27,41 @@ source} 五要素 + 数值/枚举/关系 3 类型词表闭合，confidence=1.0 �
 查重分工（蓝图 §0）：venra_double_lock_anchor=VeNRA 锚定门禁（本件=事实
 账本与其上的 grounding 校验语义，不重建锚定流水线）；sentinel_hallucination
 _detector=幻觉检测哨兵（本件=双锁拒绝不评分，零交集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: universal_fact_ledger.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① UniversalFactLedger
+#   name_en: UniversalFactLedger
+#   intro: UFL 追加式事实账本（写后不可改；查询确定性排序）。
+#   desc: UFL 追加式事实账本（写后不可改；查询确定性排序）。；公共方法（定义序）: append, contains, get, facts_of, entities, size；源码 L152-L210
+#   inputs: clock
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② DoubleLockGrounding
+#   name_en: DoubleLockGrounding
+#   intro: DoubleLockGrounding 校验器（实体锁 + 数值锁；拒绝不可降级须修正重提）。
+#   desc: DoubleLockGrounding 校验器（实体锁 + 数值锁；拒绝不可降级须修正重提）。 - 实体锁：LLM 输出引用的每个实体须存在于 UFL； - 数值锁：每条数值断言…；公共方法（定义序）: validat…
+#   inputs: ledger strength numeric_tolerance
+#   outputs: 返回值
+#   （注：A2 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（9 定义）
+#   name_en: public defs
+#   intro: UniversalFactLedger, DoubleLockGrounding
+#   downstream: 运行时装配批（事实写入接数据检索层 / DoubleLock 校验接 LLM 输出管线 / 强度档位装配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -135,9 +171,7 @@ class UniversalFactLedger:
         if not isinstance(fact.fact_type, FactType):
             raise FactLedgerError(f"非法事实类型: {fact.fact_type!r}")
         if fact.confidence != 1.0:
-            raise FactLedgerError(
-                f"confidence={fact.confidence!r} 违反硬约束（UFL 事实恒为 1.0）"
-            )
+            raise FactLedgerError(f"confidence={fact.confidence!r} 违反硬约束（UFL 事实恒为 1.0）")
         if fact.fact_type is FactType.NUMERIC:
             if isinstance(fact.value, bool) or not isinstance(fact.value, (int, float)):
                 raise FactLedgerError(f"NUMERIC 事实值须为数: {fact.value!r}")
@@ -155,10 +189,7 @@ class UniversalFactLedger:
 
     def get(self, entity: str, attribute: str) -> FactRecord:
         """最新事实（同刻按写入序后者优先；无 → Fail-Closed）。"""
-        matches = [
-            (i, f) for i, f in enumerate(self._facts)
-            if f.entity == entity and f.attribute == attribute
-        ]
+        matches = [(i, f) for i, f in enumerate(self._facts) if f.entity == entity and f.attribute == attribute]
         if not matches:
             raise FactLedgerError(f"UFL 无事实: {entity!r}.{attribute!r}")
         matches.sort(key=lambda kv: (kv[1].timestamp, kv[0]))
@@ -166,10 +197,7 @@ class UniversalFactLedger:
 
     def facts_of(self, entity: str, attribute: str) -> tuple[FactRecord, ...]:
         """全历史（按 (timestamp, 写入序) 确定性升序）。"""
-        matches = [
-            (i, f) for i, f in enumerate(self._facts)
-            if f.entity == entity and f.attribute == attribute
-        ]
+        matches = [(i, f) for i, f in enumerate(self._facts) if f.entity == entity and f.attribute == attribute]
         matches.sort(key=lambda kv: (kv[1].timestamp, kv[0]))
         return tuple(f for _, f in matches)
 
@@ -212,10 +240,7 @@ class DoubleLockGrounding:
 
     def _numeric_hit(self, claim: NumericClaim) -> bool:
         history = self._ledger.facts_of(claim.entity, claim.attribute)
-        numerics = [
-            float(f.value) for f in history
-            if f.fact_type is FactType.NUMERIC
-        ]
+        numerics = [float(f.value) for f in history if f.fact_type is FactType.NUMERIC]
         if not numerics:
             return False
         if self._strength is ConstraintStrength.STANDARD:
@@ -237,24 +262,30 @@ class DoubleLockGrounding:
         violations: list[GroundingViolation] = []
         for entity in entities:
             if not entity or not self._ledger.contains(entity):
-                violations.append(GroundingViolation(
-                    kind="entity_miss",
-                    detail=f"实体 {entity!r} 不存在于 UFL",
-                ))
+                violations.append(
+                    GroundingViolation(
+                        kind="entity_miss",
+                        detail=f"实体 {entity!r} 不存在于 UFL",
+                    )
+                )
         for claim in numeric_claims:
             if not self._ledger.contains(claim.entity):
-                violations.append(GroundingViolation(
-                    kind="entity_miss",
-                    detail=f"数值断言实体 {claim.entity!r} 不存在于 UFL",
-                ))
+                violations.append(
+                    GroundingViolation(
+                        kind="entity_miss",
+                        detail=f"数值断言实体 {claim.entity!r} 不存在于 UFL",
+                    )
+                )
             elif not self._numeric_hit(claim):
-                violations.append(GroundingViolation(
-                    kind="numeric_miss",
-                    detail=(
-                        f"数值断言 {claim.entity!r}.{claim.attribute!r}={claim.value!r} "
-                        f"非检索自 UFL（强度 {self._strength.value}）"
-                    ),
-                ))
+                violations.append(
+                    GroundingViolation(
+                        kind="numeric_miss",
+                        detail=(
+                            f"数值断言 {claim.entity!r}.{claim.attribute!r}={claim.value!r} "
+                            f"非检索自 UFL（强度 {self._strength.value}）"
+                        ),
+                    )
+                )
         accepted = not violations
         if not accepted:
             _log.warning("DoubleLock 拒绝（不可降级，须修正重提）: %d 项违规", len(violations))
@@ -273,6 +304,4 @@ class DoubleLockGrounding:
         """强制校验：拒绝即抛（Fail-Closed；调用方须修正后重新提交）。"""
         result = self.validate(entities=entities, numeric_claims=numeric_claims)
         if not result.accepted:
-            raise FactLedgerError(
-                "DoubleLockGrounding 拒绝: " + "; ".join(v.detail for v in result.violations)
-            )
+            raise FactLedgerError("DoubleLockGrounding 拒绝: " + "; ".join(v.detail for v in result.violations))

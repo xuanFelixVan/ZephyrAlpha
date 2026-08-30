@@ -20,7 +20,58 @@ Headless Scanner — headless_scanner.py
 
 LIGHT+DEEP 与会话日志 _interrupt_log.jsonl 扫描。
 
-对标 blueprint.md §2.18 / D-023-32。"""
+对标 blueprint.md §2.18 / D-023-32。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: modules 参数
+#   fields: 参数 modules，类型注解 list[str]
+#   code: headless_scanner.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: project_root 参数
+#   fields: 参数 project_root，类型注解 str | None
+#   code: headless_scanner.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: log_path 参数
+#   fields: 参数 log_path，类型注解 str
+#   code: headless_scanner.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① headless_scan_light
+#   name_en: headless_scan_light
+#   intro: headless_scan_light(modules, project_root) 源码 L150-L174
+#   desc: 源码 L150-L174
+#   inputs: modules project_root
+#   outputs: ScanResult
+# - id: A2
+#   name_zh: ② parse_interrupt_log
+#   name_en: parse_interrupt_log
+#   intro: parse_interrupt_log(log_path) 源码 L177-L210
+#   desc: 源码 L177-L210
+#   inputs: log_path
+#   outputs: list[InterruptLog]
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ScanResult
+#   name_en: ScanResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests/audit/test_headless_scanner.py
+# - id: O2
+#   name_zh: list[InterruptLog]
+#   name_en: list[InterruptLog]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests/audit/test_headless_scanner.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
 
 from __future__ import annotations
 

@@ -16,7 +16,8 @@
 # [TTL] permanent
 # [ARCH-REF] #10_regime_detector_spec §3 #11_regime_backtest_validation_plan §4.5 #MOD-REGIME-001 #C1-shrinkage-comparator
 
-"""MOD-REGIME-002 RegimeFeatureBuilder — Regime 特征管道编排器。
+"""
+MOD-REGIME-002 RegimeFeatureBuilder — Regime 特征管道编排器。
 
 把 ClickHouse 多源数据转换成 RegimeDetector.detect() 的三参输入，是 regime 链的
 "数据入口"（ClickHouse → 特征 → 检测器 → Shrinkage → budget）。
@@ -49,6 +50,48 @@ ALG-01 横截面结构特征开关（2026-08 架构审查 P1，默认关）：
 依据: 10_regime_detector_spec v1.3.1 §3 / 11_regime_backtest_validation_plan v1.0.0 §4.5/§6
 SSoT: depgraph MOD-REGIME-002
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: backtest_start 参数
+#   fields: 参数 backtest_start（无注解）
+#   code: regime_feature_builder.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: backtest_end 参数
+#   fields: 参数 backtest_end（无注解）
+#   code: regime_feature_builder.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: data_load_start 参数
+#   fields: 参数 data_load_start（无注解）
+#   code: regime_feature_builder.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: market_proxy 参数
+#   fields: 参数 market_proxy（无注解）
+#   code: regime_feature_builder.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RegimeFeatureBuilder
+#   name_en: RegimeFeatureBuilder
+#   intro: Regime 特征管道编排器（MOD-REGIME-002）。
+#   desc: Regime 特征管道编排器（MOD-REGIME-002）。 Usage（C1 real 模式）: builder = RegimeFeatureBuilder( backte…；公共方法（定义序）: build_f…
+#   inputs: backtest_start backtest_end data_load_start market_proxy cross_asset_…
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: RegimeFeatureBuilder
+#   downstream: scripts/tests/run_c1_shrinkage_validation.py(real模式); BM-BT-03-E(回测验证)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

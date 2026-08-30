@@ -14,7 +14,8 @@
 # [TESTS] tests/knowledge/test_collection_schema_manager.py
 # [A_module] module_id=MOD-KNW-010 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""CollectionSchemaManager — Collection 模式管理器（MOD-KNW-010）。
+"""
+CollectionSchemaManager — Collection 模式管理器（MOD-KNW-010）。
 
 B13-04346（AUD-DRAFT-001-DIGEST P2 波 P2-W03，CAND-KNW-012，A3 D-AUTONOMY-187）：
 8 大 Collection schema **版本注册**（schema_id/version/字段定义 dict）+
@@ -26,6 +27,38 @@ dry-run 先行）+ **破坏性变更检测**（字段删除/类型变更 → CI 
 置声明（本件=其版本演进与迁移编排，不改静态声明）；kb_engine=按 Collection
 做 CRUD（本件不管条目数据）；跨 Collection 查询沿用 kb_engine/检索层语义
 （本件只保证 schema 演进不破坏查询契约）。纯内存/DI，不触网不起子进程。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: collection_schema_manager.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: migration_runner 参数
+#   fields: 参数 migration_runner（无注解）
+#   code: collection_schema_manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CollectionSchemaManager
+#   name_en: CollectionSchemaManager
+#   intro: 8 Collection schema 版本注册 + 迁移编排 + 破坏性变更检测件。
+#   desc: 8 Collection schema 版本注册 + 迁移编排 + 破坏性变更检测件。；公共方法（定义序）: register_schema, get_schema, list_versions, detect_bre…
+#   inputs: clock migration_runner
+#   outputs: 返回值
+#   （注：A1 之后另有 9 个公共定义未列入（含 9 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（10 定义）
+#   name_en: public defs
+#   intro: CollectionSchemaManager
+#   downstream: 运行时装配批（8 Collection schema 注册 / 迁移编排 / CI 破坏性变更报告）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -178,16 +211,26 @@ def _diff_breaking(
     new_map = {f.name: f for f in new}
     changes: list[BreakingChange] = []
     for name in sorted(old_map.keys() - new_map.keys()):
-        changes.append(BreakingChange(
-            collection=collection, field=name, kind="removed",
-            from_type=old_map[name].field_type, to_type=None,
-        ))
+        changes.append(
+            BreakingChange(
+                collection=collection,
+                field=name,
+                kind="removed",
+                from_type=old_map[name].field_type,
+                to_type=None,
+            )
+        )
     for name in sorted(old_map.keys() & new_map.keys()):
         if old_map[name].field_type is not new_map[name].field_type:
-            changes.append(BreakingChange(
-                collection=collection, field=name, kind="type_changed",
-                from_type=old_map[name].field_type, to_type=new_map[name].field_type,
-            ))
+            changes.append(
+                BreakingChange(
+                    collection=collection,
+                    field=name,
+                    kind="type_changed",
+                    from_type=old_map[name].field_type,
+                    to_type=new_map[name].field_type,
+                )
+            )
     return tuple(changes)
 
 
@@ -226,9 +269,7 @@ class CollectionSchemaManager:
             raise CollectionSchemaError(f"schema 重复注册: {collection.value} v{version}")
         latest = max(versions) if versions else 0
         if version != latest + 1:
-            raise CollectionSchemaError(
-                f"版本须严格递增: {collection.value} 当前最新 v{latest}，拒绝注册 v{version}"
-            )
+            raise CollectionSchemaError(f"版本须严格递增: {collection.value} 当前最新 v{latest}，拒绝注册 v{version}")
         if latest:
             changes = _diff_breaking(collection, versions[latest].fields, field_tuple)
             if changes:
@@ -240,11 +281,14 @@ class CollectionSchemaManager:
                     )
                 _log.warning(
                     "force 注册破坏性 schema: %s v%s (%s)",
-                    collection.value, version,
+                    collection.value,
+                    version,
                     ", ".join(f"{c.field}:{c.kind}" for c in changes),
                 )
         schema = SchemaVersion(
-            collection=collection, version=version, fields=field_tuple,
+            collection=collection,
+            version=version,
+            fields=field_tuple,
             registered_at=self._clock(),
         )
         versions[version] = schema
@@ -279,9 +323,7 @@ class CollectionSchemaManager:
         old = self.get_schema(collection, from_version)
         new = self.get_schema(collection, to_version)
         if from_version >= to_version:
-            raise CollectionSchemaError(
-                f"版本区间非法: v{from_version} -> v{to_version}（须 from < to）"
-            )
+            raise CollectionSchemaError(f"版本区间非法: v{from_version} -> v{to_version}（须 from < to）")
         return _diff_breaking(collection, old.fields, new.fields)
 
     def ci_report(self) -> dict:
@@ -317,9 +359,7 @@ class CollectionSchemaManager:
         if not isinstance(migration.kind, MigrationKind):
             raise CollectionSchemaError(f"非法迁移类型: {migration.kind!r}")
         if migration.from_version >= migration.to_version:
-            raise CollectionSchemaError(
-                f"迁移版本区间非法: v{migration.from_version} -> v{migration.to_version}"
-            )
+            raise CollectionSchemaError(f"迁移版本区间非法: v{migration.from_version} -> v{migration.to_version}")
         self.get_schema(migration.collection, migration.from_version)
         self.get_schema(migration.collection, migration.to_version)
         if migration.migration_id in self._migrations:

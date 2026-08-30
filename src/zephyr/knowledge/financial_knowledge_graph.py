@@ -14,7 +14,8 @@
 # [TESTS] tests/knowledge/test_financial_knowledge_graph.py
 # [A_module] module_id=MOD-KNW-003 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""FinancialKnowledgeGraph — 金融知识图谱（MOD-KNW-003）。
+"""
+FinancialKnowledgeGraph — 金融知识图谱（MOD-KNW-003）。
 
 B1-00126（AUD-DRAFT-001-DIGEST P2 波 P2-W03，CAND-KNW-001，C2 D-KNOW-01）：
 SQLite 邻接表轻量图谱（严禁 Neo4j）——六类实体（公司/行业/供应链/股东/
@@ -26,6 +27,48 @@ KNW-010（五类/六类枚举姊妹稿）归并。
 查重分工：signal_ashare/supply_chain_gnn=供应链 GNN 打分（本件=图存储与
 遍历基座，不算分）；layered_memory_orchestrator=图谱层适配消费方（本件不
 做编排）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: conn 参数
+#   fields: 参数 conn（无注解）
+#   code: financial_knowledge_graph.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: relation_types 参数
+#   fields: 参数 relation_types（无注解）
+#   code: financial_knowledge_graph.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: max_edges 参数
+#   fields: 参数 max_edges（无注解）
+#   code: financial_knowledge_graph.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: financial_knowledge_graph.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FinancialKnowledgeGraph
+#   name_en: FinancialKnowledgeGraph
+#   intro: SQLite 邻接表图谱（实体/关系 + 遍历 + LLM 审核入图 + 规模护栏）。
+#   desc: SQLite 邻接表图谱（实体/关系 + 遍历 + LLM 审核入图 + 规模护栏）。；公共方法（定义序）: add_entity, remove_entity, get_entity, entity_count, e…
+#   inputs: conn relation_types max_edges clock
+#   outputs: 返回值
+#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（8 定义）
+#   name_en: public defs
+#   intro: FinancialKnowledgeGraph
+#   downstream: 运行时装配批（供应链推理 / 概念联动检索 / LLM抽取人工审核入图）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -204,16 +247,13 @@ class FinancialKnowledgeGraph:
 
     def _guard_edge_capacity(self) -> None:
         if self._edge_count() >= self._max_edges:
-            raise FinancialGraphError(
-                f"规模护栏触发: 边数已达 {self._max_edges}（≤百万边计数拒绝）"
-            )
+            raise FinancialGraphError(f"规模护栏触发: 边数已达 {self._max_edges}（≤百万边计数拒绝）")
 
     def _live_entity_ids(self, entity_ids: Iterable[str]) -> dict[str, tuple]:
         out: dict[str, tuple] = {}
         for entity_id in entity_ids:
             row = self._conn.execute(
-                "SELECT type, name, attrs FROM fkg_entities "
-                "WHERE entity_id = ? AND review_status = ?",
+                "SELECT type, name, attrs FROM fkg_entities WHERE entity_id = ? AND review_status = ?",
                 (entity_id, ReviewStatus.APPROVED.value),
             ).fetchone()
             if row is None:
@@ -222,25 +262,30 @@ class FinancialKnowledgeGraph:
         return out
 
     def _insert_entity(
-        self, entity_id: str, entity_type: EntityType, name: str,
-        attrs: Mapping | None, status: ReviewStatus,
+        self,
+        entity_id: str,
+        entity_type: EntityType,
+        name: str,
+        attrs: Mapping | None,
+        status: ReviewStatus,
     ) -> None:
         self._conn.execute(
-            "INSERT INTO fkg_entities (entity_id, type, name, attrs, review_status) "
-            "VALUES (?, ?, ?, ?, ?)",
-            (entity_id, entity_type.value, name, json.dumps(dict(attrs or {}), sort_keys=True),
-             status.value),
+            "INSERT INTO fkg_entities (entity_id, type, name, attrs, review_status) VALUES (?, ?, ?, ?, ?)",
+            (entity_id, entity_type.value, name, json.dumps(dict(attrs or {}), sort_keys=True), status.value),
         )
 
     def _insert_edge(
-        self, src: str, dst: str, rel_type: str, weight: float,
-        attrs: Mapping | None, status: ReviewStatus,
+        self,
+        src: str,
+        dst: str,
+        rel_type: str,
+        weight: float,
+        attrs: Mapping | None,
+        status: ReviewStatus,
     ) -> None:
         self._conn.execute(
-            "INSERT INTO fkg_edges (src, dst, rel_type, weight, attrs, review_status) "
-            "VALUES (?, ?, ?, ?, ?, ?)",
-            (src, dst, rel_type, weight,
-             json.dumps(dict(attrs or {}), sort_keys=True), status.value),
+            "INSERT INTO fkg_edges (src, dst, rel_type, weight, attrs, review_status) VALUES (?, ?, ?, ?, ?, ?)",
+            (src, dst, rel_type, weight, json.dumps(dict(attrs or {}), sort_keys=True), status.value),
         )
 
     # ── 实体增删查 ────────────────────────────────────────────────────────
@@ -259,9 +304,7 @@ class FinancialKnowledgeGraph:
         etype = self._entity_type_of(entity_type)
         if not name:
             raise FinancialGraphError("实体名为空")
-        row = self._conn.execute(
-            "SELECT review_status FROM fkg_entities WHERE entity_id = ?", (entity_id,)
-        ).fetchone()
+        row = self._conn.execute("SELECT review_status FROM fkg_entities WHERE entity_id = ?", (entity_id,)).fetchone()
         if row is not None:
             raise FinancialGraphError(f"实体已存在: {entity_id!r}（重复登记拒绝）")
         self._insert_entity(entity_id, etype, name, attrs, ReviewStatus.APPROVED)
@@ -270,9 +313,7 @@ class FinancialKnowledgeGraph:
     def remove_entity(self, entity_id: str) -> None:
         """删除实体并级联删除其全部边（未知 → Fail-Closed）。"""
         self._live_entity_ids([entity_id])
-        self._conn.execute(
-            "DELETE FROM fkg_edges WHERE src = ? OR dst = ?", (entity_id, entity_id)
-        )
+        self._conn.execute("DELETE FROM fkg_edges WHERE src = ? OR dst = ?", (entity_id, entity_id))
         self._conn.execute("DELETE FROM fkg_entities WHERE entity_id = ?", (entity_id,))
 
     def get_entity(self, entity_id: str) -> EntityView:
@@ -330,8 +371,7 @@ class FinancialKnowledgeGraph:
         """删除指定边（未知 → Fail-Closed）。"""
         self._require_rel_type(rel_type)
         cur = self._conn.execute(
-            "DELETE FROM fkg_edges WHERE src = ? AND dst = ? AND rel_type = ? "
-            "AND review_status = ?",
+            "DELETE FROM fkg_edges WHERE src = ? AND dst = ? AND rel_type = ? AND review_status = ?",
             (src, dst, rel_type, ReviewStatus.APPROVED.value),
         )
         if cur.rowcount == 0:
@@ -346,8 +386,7 @@ class FinancialKnowledgeGraph:
             (entity_id, ReviewStatus.APPROVED.value),
         ).fetchall()
         return tuple(
-            EdgeView(src=entity_id, dst=r[0], rel_type=r[1], weight=r[2], attrs=json.loads(r[3]))
-            for r in rows
+            EdgeView(src=entity_id, dst=r[0], rel_type=r[1], weight=r[2], attrs=json.loads(r[3])) for r in rows
         )
 
     # ── 遍历 ─────────────────────────────────────────────────────────────
@@ -370,26 +409,25 @@ class FinancialKnowledgeGraph:
                 break
         entity_rows = self._conn.execute(
             "SELECT entity_id, type, name, attrs FROM fkg_entities "
-            "WHERE review_status = ? AND entity_id IN (%s) ORDER BY entity_id"
-            % ",".join("?" * len(visited)),
+            "WHERE review_status = ? AND entity_id IN (%s) ORDER BY entity_id" % ",".join("?" * len(visited)),
             (ReviewStatus.APPROVED.value, *sorted(visited)),
         ).fetchall()
         edge_rows = self._conn.execute(
             "SELECT src, dst, rel_type, weight, attrs FROM fkg_edges "
-            "WHERE review_status = ? AND src IN (%s) ORDER BY src, dst, rel_type"
-            % ",".join("?" * len(visited)),
+            "WHERE review_status = ? AND src IN (%s) ORDER BY src, dst, rel_type" % ",".join("?" * len(visited)),
             (ReviewStatus.APPROVED.value, *sorted(visited)),
         ).fetchall()
         entities = tuple(
             EntityView(
-                entity_id=r[0], entity_type=self._entity_type_of(r[1]),
-                name=r[2], attrs=json.loads(r[3]),
+                entity_id=r[0],
+                entity_type=self._entity_type_of(r[1]),
+                name=r[2],
+                attrs=json.loads(r[3]),
             )
             for r in entity_rows
         )
         edges = tuple(
-            EdgeView(src=r[0], dst=r[1], rel_type=r[2], weight=r[3], attrs=json.loads(r[4]))
-            for r in edge_rows
+            EdgeView(src=r[0], dst=r[1], rel_type=r[2], weight=r[3], attrs=json.loads(r[4])) for r in edge_rows
         )
         return SubGraph(entities=entities, edges=edges)
 
@@ -399,14 +437,10 @@ class FinancialKnowledgeGraph:
             return []
         rows = self._conn.execute(
             "SELECT src, dst, rel_type, weight, attrs FROM fkg_edges "
-            "WHERE review_status = ? AND src IN (%s) ORDER BY src, dst, rel_type"
-            % ",".join("?" * len(ids)),
+            "WHERE review_status = ? AND src IN (%s) ORDER BY src, dst, rel_type" % ",".join("?" * len(ids)),
             (ReviewStatus.APPROVED.value, *ids),
         ).fetchall()
-        return [
-            EdgeView(src=r[0], dst=r[1], rel_type=r[2], weight=r[3], attrs=json.loads(r[4]))
-            for r in rows
-        ]
+        return [EdgeView(src=r[0], dst=r[1], rel_type=r[2], weight=r[3], attrs=json.loads(r[4])) for r in rows]
 
     def shortest_path(self, src: str, dst: str) -> tuple[str, ...] | None:
         """BFS 最短路径（出向；邻居按实体 id 字典序访问保证确定性；不可达 → None）。"""
@@ -493,9 +527,13 @@ class FinancialKnowledgeGraph:
             "INSERT INTO fkg_submissions "
             "(submission_id, status, entity_ids, edge_keys, submitted_at) "
             "VALUES (?, ?, ?, ?, ?)",
-            (submission_id, ReviewStatus.PENDING.value,
-             json.dumps(entity_ids), json.dumps([list(k) for k in edge_keys]),
-             self._clock().isoformat()),
+            (
+                submission_id,
+                ReviewStatus.PENDING.value,
+                json.dumps(entity_ids),
+                json.dumps([list(k) for k in edge_keys]),
+                self._clock().isoformat(),
+            ),
         )
         _log.info("LLM抽取入队: %s (实体%d 边%d)", submission_id, len(entity_ids), len(edge_keys))
         return submission_id
@@ -512,9 +550,7 @@ class FinancialKnowledgeGraph:
     def _transition(self, submission_id: str, target: ReviewStatus) -> None:
         status, entity_ids, edge_keys = self._submission(submission_id)
         if status != ReviewStatus.PENDING.value:
-            raise FinancialGraphError(
-                f"非法审核迁移: {submission_id!r} 当前 {status}（仅 pending 可迁移，单向不可逆）"
-            )
+            raise FinancialGraphError(f"非法审核迁移: {submission_id!r} 当前 {status}（仅 pending 可迁移，单向不可逆）")
         for entity_id in json.loads(entity_ids):
             self._conn.execute(
                 "UPDATE fkg_entities SET review_status = ? WHERE entity_id = ?",
@@ -522,8 +558,7 @@ class FinancialKnowledgeGraph:
             )
         for src, dst, rel_type in json.loads(edge_keys):
             self._conn.execute(
-                "UPDATE fkg_edges SET review_status = ? "
-                "WHERE src = ? AND dst = ? AND rel_type = ?",
+                "UPDATE fkg_edges SET review_status = ? WHERE src = ? AND dst = ? AND rel_type = ?",
                 (target.value, src, dst, rel_type),
             )
         self._conn.execute(

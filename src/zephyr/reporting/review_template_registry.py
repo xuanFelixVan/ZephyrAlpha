@@ -14,7 +14,8 @@
 # [TESTS] tests/reporting/test_review_template_registry.py
 # [A_module] module_id=MOD-RPT-032 | layer=module | stability=testing | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""MOD-RPT-032 — 复盘模板注册表（55 号 §6 模板引擎固化外化，GAP-F-40 模板迁出）。
+"""
+MOD-RPT-032 — 复盘模板注册表（55 号 §6 模板引擎固化外化，GAP-F-40 模板迁出）。
 
 55 号 §6 暂缓项"复盘模板内容固化进代码（模板引擎）"施工：GAP-F-40
 ai_review_summary 的战报/prompt/兜底结语三模板从代码常量迁出到注册位
@@ -36,6 +37,56 @@ ai_review_summary 的战报/prompt/兜底结语三模板从代码常量迁出到
   - prompt_summary   LLM 结语 prompt 参数化模板
   - fallback_summary 网关降级兜底结语模板
   新增 kind 免占位符校验（通用注册表位）；既有三 kind 占位符全闭合校验。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: templates 参数
+#   fields: 参数 templates（无注解）
+#   code: review_template_registry.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: default_version 参数
+#   fields: 参数 default_version（无注解）
+#   code: review_template_registry.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: source 参数
+#   fields: 参数 source（无注解）
+#   code: review_template_registry.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: statuses 参数
+#   fields: 参数 statuses（无注解）
+#   code: review_template_registry.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① TemplateSpec
+#   name_en: TemplateSpec
+#   intro: 单条模板产出（kind+version 定位，notes 留痕回退原因）。
+#   desc: 单条模板产出（kind+version 定位，notes 留痕回退原因）。；公共方法（定义序）: to_dict；源码 L182-L193
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② ReviewTemplateRegistry
+#   name_en: ReviewTemplateRegistry
+#   intro: 复盘模板注册表（版本可切换 + 默认模板回退）。
+#   desc: 复盘模板注册表（版本可切换 + 默认模板回退）。 Args: templates: {kind: {version: body}} 映射。 default_version: 默认…；公共方法（定义序）: embedde…
+#   inputs: templates default_version source statuses notes
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: TemplateSpec, ReviewTemplateRegistry
+#   downstream: MOD-RPT-009_summary(ai_review_summary 战报/prompt/兜底模板供给) ; 复盘页调用方(版本切换)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -202,9 +253,7 @@ class ReviewTemplateRegistry:
             self._statuses[kind] = {}
             for version, body in versions.items():
                 if not isinstance(version, str) or not version.strip():
-                    raise ReviewTemplateRegistryError(
-                        f"模板 {kind} 版本名不允许为空", details={"kind": kind}
-                    )
+                    raise ReviewTemplateRegistryError(f"模板 {kind} 版本名不允许为空", details={"kind": kind})
                 if not isinstance(body, str) or not body.strip():
                     raise ReviewTemplateRegistryError(
                         f"模板 {kind}@{version} body 非法（强制非空字符串）",
@@ -237,7 +286,7 @@ class ReviewTemplateRegistry:
     # ── 构造入口 ──
 
     @classmethod
-    def embedded_default(cls, *, notes: Sequence[str] = ()) -> "ReviewTemplateRegistry":
+    def embedded_default(cls, *, notes: Sequence[str] = ()) -> ReviewTemplateRegistry:
         """打包默认注册表（v1=GAP-F-40 迁移前代码常量原文）。"""
         return cls(
             {kind: {_EMBEDDED_DEFAULT_VERSION: body} for kind, body in _EMBEDDED_V1_BODIES.items()},
@@ -247,7 +296,7 @@ class ReviewTemplateRegistry:
         )
 
     @classmethod
-    def from_dict(cls, raw: Mapping[str, Any], *, source: str = "registry_file") -> "ReviewTemplateRegistry":
+    def from_dict(cls, raw: Mapping[str, Any], *, source: str = "registry_file") -> ReviewTemplateRegistry:
         """从 YAML 解析产物构造（schema 畸形 fail-closed）。"""
         if not isinstance(raw, Mapping):
             raise ReviewTemplateRegistryError("注册表根节点非法（须映射）", details={})
@@ -259,14 +308,10 @@ class ReviewTemplateRegistry:
         statuses: dict[str, dict[str, str]] = {}
         for kind, entry in templates_raw.items():
             if not isinstance(entry, Mapping):
-                raise ReviewTemplateRegistryError(
-                    f"模板 {kind} 条目非法（须映射）", details={"kind": str(kind)}
-                )
+                raise ReviewTemplateRegistryError(f"模板 {kind} 条目非法（须映射）", details={"kind": str(kind)})
             versions_raw = entry.get("versions")
             if not isinstance(versions_raw, Mapping):
-                raise ReviewTemplateRegistryError(
-                    f"模板 {kind} 缺 versions 映射", details={"kind": str(kind)}
-                )
+                raise ReviewTemplateRegistryError(f"模板 {kind} 缺 versions 映射", details={"kind": str(kind)})
             templates[str(kind)] = {}
             statuses[str(kind)] = {}
             for version, ver_entry in versions_raw.items():
@@ -285,7 +330,7 @@ class ReviewTemplateRegistry:
         )
 
     @classmethod
-    def load(cls, path: Path | str | None = None) -> "ReviewTemplateRegistry":
+    def load(cls, path: Path | str | None = None) -> ReviewTemplateRegistry:
         """从注册表文件加载（默认 REVIEW_TEMPLATES_PATH）。
 
         文件缺失 → 打包默认模板回退（fail-open 留痕，展示件口径）；
@@ -308,9 +353,7 @@ class ReviewTemplateRegistry:
                 details={"path": str(target), "error": str(exc)},
             ) from exc
         if raw is None:
-            raise ReviewTemplateRegistryError(
-                f"模板注册表为空文件: {target}", details={"path": str(target)}
-            )
+            raise ReviewTemplateRegistryError(f"模板注册表为空文件: {target}", details={"path": str(target)})
         return cls.from_dict(raw, source="registry_file")
 
     # ── 查询面 ──
@@ -328,9 +371,7 @@ class ReviewTemplateRegistry:
 
     def versions(self, kind: str) -> list[str]:
         if kind not in self._templates:
-            raise ReviewTemplateRegistryError(
-                f"未知模板 kind: {kind}", details={"kind": str(kind)}
-            )
+            raise ReviewTemplateRegistryError(f"未知模板 kind: {kind}", details={"kind": str(kind)})
         return sorted(self._templates[kind])
 
     def get(self, kind: str, version: str | None = None) -> TemplateSpec:

@@ -16,10 +16,36 @@
 # [TTL] permanent
 
 """
-
 Registry Governance — MOD-INF-037
 
 Functional domain registry management + SSoT gate + consistency checks.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: registry_path 参数
+#   fields: 参数 registry_path（无注解）
+#   code: registry_governance.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FunctionalDomainRegistry
+#   name_en: FunctionalDomainRegistry
+#   intro: class FunctionalDomainRegistry 源码 L89-L264
+#   desc: 公共方法（定义序）: load, query_domain, check_overlap, register, list_domains, list_subdomains, entry_count；源码 L89-L264
+#   inputs: registry_path
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: FunctionalDomainRegistry
+#   downstream: scripts/scaffold.py;scripts/governance/d5_architecture/checkers/check_ssot_uniq…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

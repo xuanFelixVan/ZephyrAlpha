@@ -16,7 +16,6 @@
 # [TTL] permanent
 
 """
-
 D_REPORTING — Review Orchestrator (MOD-RPT-009)
 
 复盘编排器——日/周/月三频复盘链路的编排与归档（55 号 G26 §3.6 决策落地）。
@@ -40,6 +39,48 @@ ReportPublisher 归档均已 production，缺的是「把它们串成人能用�
 由调用方在日终/周末/月末事件（如 DailyAuditor 完成、交易日历事件）触发。
 
 SSoT: depgraph MOD-RPT-009 | blueprint.md §3 | 55 号 §3.6
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: auditor 参数
+#   fields: 参数 auditor（无注解）
+#   code: review_orchestrator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: report_engine 参数
+#   fields: 参数 report_engine（无注解）
+#   code: review_orchestrator.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: publisher 参数
+#   fields: 参数 publisher（无注解）
+#   code: review_orchestrator.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: deviation_monitor 参数
+#   fields: 参数 deviation_monitor（无注解）
+#   code: review_orchestrator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ReviewOrchestrator
+#   name_en: ReviewOrchestrator
+#   intro: 复盘编排器（55 号 §3.6）：串联 daily→weekly→monthly 链路并归档。
+#   desc: 复盘编排器（55 号 §3.6）：串联 daily→weekly→monthly 链路并归档。 全部依赖构造注入（Fake 友好）；deviation_monitor / ret…；公共方法（定义序）: run_dai…
+#   inputs: auditor report_engine publisher deviation_monitor retirement_evaluato…
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: ReviewOrchestrator
+#   downstream: 调用方(日终/周末/月末事件驱动的复盘触发)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

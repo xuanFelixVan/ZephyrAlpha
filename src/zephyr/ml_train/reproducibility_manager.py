@@ -14,7 +14,8 @@
 # [TESTS] tests/ml_train/test_reproducibility_manager.py
 # [A_module] module_id=MOD-ML-020 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""ReproducibilityManager — 可复现性管理器（MOD-ML-020）。
+"""
+ReproducibilityManager — 可复现性管理器（MOD-ML-020）。
 
 B13-04338（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-MLT-028，A3 D-RESEARCH-05）：
 **环境快照**（python/pip lock/关键 lib 版本采集注入）+ **全局种子登记**
@@ -23,6 +24,48 @@ B13-04338（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-MLT-028，A3 D-RESEARCH-05
 
 分工（蓝图 §0）：MOD-INF-081 打包器=产物打包；本件=种子/校验/报告协议面。
 canonical 承接 WFO-004/FBLVERIF-001 归并。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: env_collector 参数
+#   fields: 参数 env_collector（无注解）
+#   code: reproducibility_manager.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: reproducibility_manager.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: tracking_sink 参数
+#   fields: 参数 tracking_sink（无注解）
+#   code: reproducibility_manager.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: hasher 参数
+#   fields: 参数 hasher（无注解）
+#   code: reproducibility_manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ReproducibilityManager
+#   name_en: ReproducibilityManager
+#   intro: 可复现性管理器（环境快照 + 种子登记 + hash 校验 + 复现报告）。
+#   desc: 可复现性管理器（环境快照 + 种子登记 + hash 校验 + 复现报告）。；公共方法（定义序）: capture_environment, register_run, record_result, verify_re…
+#   inputs: env_collector clock tracking_sink hasher
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: ReproducibilityManager
+#   downstream: 运行时装配批（环境采集器绑定 / experiment_tracking 回调绑定 / 重跑比对编排装配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -181,9 +224,7 @@ class ReproducibilityManager:
 
     # ── 运行登记（全局种子） ────────────────────────────────────────────────
 
-    def register_run(
-        self, run_id: str, seed: int, env_snapshot_id: str | None = None
-    ) -> RunRecord:
+    def register_run(self, run_id: str, seed: int, env_snapshot_id: str | None = None) -> RunRecord:
         """登记运行：全局种子 + 环境快照绑定（缺省取最近快照）。"""
         if not run_id:
             raise ReproducibilityError("run_id 为空")
@@ -260,13 +301,15 @@ class ReproducibilityManager:
         self._reports.append(report)
         if self._tracking_sink is not None:
             try:
-                self._tracking_sink({
-                    "event": "repro_verify",
-                    "run_id": run_id,
-                    "rerun_id": rerun_id,
-                    "matched": matched,
-                    "diff_count": len(diffs),
-                })
+                self._tracking_sink(
+                    {
+                        "event": "repro_verify",
+                        "run_id": run_id,
+                        "rerun_id": rerun_id,
+                        "matched": matched,
+                        "diff_count": len(diffs),
+                    }
+                )
             except Exception:  # noqa: BLE001 — tracking 回调异常不阻断
                 _log.exception("tracking_sink 回调失败")
         _log.info("复现报告: %s vs %s matched=%s diffs=%d", run_id, rerun_id, matched, len(diffs))

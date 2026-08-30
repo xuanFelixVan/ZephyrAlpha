@@ -15,12 +15,45 @@
 # [A_module] module_id=MOD-ML-009 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""D_ML_TRAIN — MOD-ML-009 学习效果反馈回喂。
+"""
+D_ML_TRAIN — MOD-ML-009 学习效果反馈回喂。
 
 闭环语义：模型上线（含影子）后，预测 vs 实际计算 Spearman IC 与 IC 衰减
 （相对 baseline），衰减超阈值产出 retrain 回喂信号。**红线**：信号只回喂
 登记（供 MOD-ML-007 经验库/MOD-ML-002 巡检消费），``triggered_training``
 恒 False——真训练触发权属 Owner（B-007），AI 不得自动重启训练。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: decay_threshold 参数
+#   fields: 参数 decay_threshold（无注解）
+#   code: learning_effect_feedback.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: min_pairs 参数
+#   fields: 参数 min_pairs（无注解）
+#   code: learning_effect_feedback.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① LearningEffectFeedback
+#   name_en: LearningEffectFeedback
+#   intro: 学习效果反馈回喂器（MOD-ML-009）。
+#   desc: 学习效果反馈回喂器（MOD-ML-009）。 Parameters ---------- decay_threshold : IC 衰减阈值（超过则推荐重训）。 min_pair…；公共方法（定义序）: compute…
+#   inputs: decay_threshold min_pairs
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: LearningEffectFeedback
+#   downstream: MOD-ML-007 meta_learning_evolution（经验回写位）；MOD-ML-002 ai_operator（巡检效果输入）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -117,7 +150,10 @@ class LearningEffectFeedback:
         self._signals.setdefault(model_id, []).append(signal)
         _log.info(
             "效果回喂: %s ic=%.3f decay=%.3f retrain=%s",
-            model_id, effect["ic"], effect["ic_decay"], signal["retrain_recommended"],
+            model_id,
+            effect["ic"],
+            effect["ic_decay"],
+            signal["retrain_recommended"],
         )
         return signal
 

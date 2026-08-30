@@ -21,7 +21,8 @@
 # F4: report_archive——报告归档表(§3.7 ReportPublisher DB 归档位, 对齐哈希链模式)
 # O1: ALL_TABLES 有序 DDL 元组 + table_names() 查询
 # [/ALGO_FLOW]
-"""D_REPORTING — 对账/归因 DB 持久化 schema 定义（54 号 §7 开放问题落地前提）。
+"""
+D_REPORTING — 对账/归因 DB 持久化 schema 定义（54 号 §7 开放问题落地前提）。
 
 **只做 schema 定义，不执行 DDL**（施工口径：schema 定义文件级）。
 落库执行（连接管理/迁移/30 天 read-only 触发器安装）归后续持久化批次。
@@ -34,6 +35,45 @@
     append-only + prev_hash/record_hash 哈希链，30 天 read-only 触发器位预留）
   - report_archive：报告归档（ReportPublisher DB 归档位，哈希链对齐
     report_publisher.py _compute_record_hash 模式）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: table_name 参数
+#   fields: 参数 table_name，类型注解 str
+#   code: reconciliation_schema.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① table_names
+#   name_en: table_names
+#   intro: 返回已定义的表名（有序）。
+#   desc: 返回已定义的表名（有序）。；源码 L171-L173
+#   inputs: 无参数
+#   outputs: tuple[str, ...]
+# - id: A2
+#   name_zh: ② get_ddl
+#   name_en: get_ddl
+#   intro: 按表名取 DDL；未知表名抛 KeyError。
+#   desc: 按表名取 DDL；未知表名抛 KeyError。；源码 L176-L178
+#   inputs: table_name
+#   outputs: str
+# 层: 输出
+# - id: O1
+#   name_zh: tuple[str, ...]
+#   name_en: tuple[str, ...]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 54_reconciliation_attribution §3.3/§3.7 落库施工批次(DDL 执行方)
+# - id: O2
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 54_reconciliation_attribution §3.3/§3.7 落库施工批次(DDL 执行方)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

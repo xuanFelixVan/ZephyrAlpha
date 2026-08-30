@@ -14,7 +14,8 @@
 # [TESTS] tests/pf_core/test_rl_portfolio_execution.py
 # [A_module] module_id=MOD-PF-013 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""RlPortfolioExecutionOrchestrator — RL 组合优化与执行（MOD-PF-013）。
+"""
+RlPortfolioExecutionOrchestrator — RL 组合优化与执行（MOD-PF-013）。
 
 B10-01835（AUD-DRAFT-001-DIGEST P2 波 P2-W09，CAND-PF004-006，A1 §29.9）：
 RL **三场景分立编排**——
@@ -34,6 +35,48 @@ RL **三场景分立编排**——
 
 查重分工（蓝图 §0）：portfolio_optimizer=确定性组合优化（非 RL）；本件=
 RL 提案的**约束编排与门禁层**，不实现 RL 算法本身。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: trainer 参数
+#   fields: 参数 trainer（无注解）
+#   code: rl_portfolio_execution.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: backtest_gate 参数
+#   fields: 参数 backtest_gate（无注解）
+#   code: rl_portfolio_execution.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: risk_budget_cap 参数
+#   fields: 参数 risk_budget_cap（无注解）
+#   code: rl_portfolio_execution.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: ac_deviation_threshold 参数
+#   fields: 参数 ac_deviation_threshold（无注解）
+#   code: rl_portfolio_execution.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RlPortfolioExecutionOrchestrator
+#   name_en: RlPortfolioExecutionOrchestrator
+#   intro: RL 三场景编排器（trainer/门禁/风控全注入，纯内存确定性）。
+#   desc: RL 三场景编排器（trainer/门禁/风控全注入，纯内存确定性）。；公共方法（定义序）: run_portfolio_optimization, run_optimal_execution, run_t0；源码 L…
+#   inputs: trainer backtest_gate risk_budget_cap ac_deviation_threshold t0_risk_…
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: RlPortfolioExecutionOrchestrator
+#   downstream: 运行时装配批（RL离线评估流水线装配 / Constrained RL trainer 绑定 / C-003 门禁接线）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -82,9 +125,9 @@ class RlScenario(str, Enum):
 class RlRunStatus(str, Enum):
     """编排运行状态。"""
 
-    ENABLED = "enabled"                # 门禁通过，（钳制后）生效
-    GATE_REJECTED = "gate_rejected"    # C-003 回测门禁不过 → 不启用
-    FUSED_TO_AC = "fused_to_ac"        # 偏离AC轨迹超阈值熔断 → 回落AC计划轨迹
+    ENABLED = "enabled"  # 门禁通过，（钳制后）生效
+    GATE_REJECTED = "gate_rejected"  # C-003 回测门禁不过 → 不启用
+    FUSED_TO_AC = "fused_to_ac"  # 偏离AC轨迹超阈值熔断 → 回落AC计划轨迹
 
 
 @dataclass(frozen=True)
@@ -178,9 +221,7 @@ class RlPortfolioExecutionOrchestrator:
         if not isinstance(proposal, RlProposal):
             raise RlPortfolioError(f"trainer 须返回 RlProposal: {type(proposal).__name__}")
         if proposal.scenario is not request.scenario:
-            raise RlPortfolioError(
-                f"场景错配: 请求 {request.scenario.value}，提案 {proposal.scenario.value}"
-            )
+            raise RlPortfolioError(f"场景错配: 请求 {request.scenario.value}，提案 {proposal.scenario.value}")
         if proposal.offline_only is not True:
             raise RlPortfolioError("RL 仅离线评估语义标注被摘除（offline_only 须=True）")
         if not proposal.actions:
@@ -192,9 +233,11 @@ class RlPortfolioExecutionOrchestrator:
         _require_decimal("risk_budget_used", proposal.risk_budget_used)
         if proposal.risk_budget_used < 0:
             raise RlPortfolioError(f"risk_budget_used 须非负: {proposal.risk_budget_used!r}")
-        if isinstance(proposal.expected_reward, bool) or not isinstance(
-            proposal.expected_reward, (int, float)
-        ) or not math.isfinite(proposal.expected_reward):
+        if (
+            isinstance(proposal.expected_reward, bool)
+            or not isinstance(proposal.expected_reward, (int, float))
+            or not math.isfinite(proposal.expected_reward)
+        ):
             raise RlPortfolioError(f"expected_reward 须为有限数值: {proposal.expected_reward!r}")
         return proposal
 
@@ -251,9 +294,7 @@ class RlPortfolioExecutionOrchestrator:
 
     # ── 场景②：RL 最优执行（增强 Almgren-Chriss）────────────────────────
 
-    def run_optimal_execution(
-        self, *, state: Mapping[str, float], ac_trajectory: Sequence[Decimal]
-    ) -> RlRunResult:
+    def run_optimal_execution(self, *, state: Mapping[str, float], ac_trajectory: Sequence[Decimal]) -> RlRunResult:
         """RL 最优执行：AC 计划轨迹注入，偏离超阈值熔断回落 AC。"""
         _validate_state(state)
         if not ac_trajectory:
@@ -266,9 +307,13 @@ class RlPortfolioExecutionOrchestrator:
             if v < prev:
                 raise RlPortfolioError(f"ac_trajectory[{i}] 非法递减（累计轨迹须单调不减）: {v!r}<{prev!r}")
             prev = v
-        proposal = self._propose(RlRequest(
-            scenario=RlScenario.OPTIMAL_EXECUTION, state=state, ac_trajectory=trajectory,
-        ))
+        proposal = self._propose(
+            RlRequest(
+                scenario=RlScenario.OPTIMAL_EXECUTION,
+                state=state,
+                ac_trajectory=trajectory,
+            )
+        )
         expected_keys = [f"step_{i}" for i in range(len(trajectory))]
         if sorted(proposal.actions) != expected_keys:
             raise RlPortfolioError(
@@ -276,9 +321,7 @@ class RlPortfolioExecutionOrchestrator:
             )
         if not self._gate(proposal):
             return self._gate_rejected(RlScenario.OPTIMAL_EXECUTION)
-        deviation = max(
-            abs(proposal.actions[f"step_{i}"] - trajectory[i]) for i in range(len(trajectory))
-        )
+        deviation = max(abs(proposal.actions[f"step_{i}"] - trajectory[i]) for i in range(len(trajectory)))
         if deviation > self._ac_deviation_threshold:
             effective = {f"step_{i}": trajectory[i] for i in range(len(trajectory))}
             return RlRunResult(
@@ -306,9 +349,7 @@ class RlPortfolioExecutionOrchestrator:
 
     # ── 场景③：RL 做T ────────────────────────────────────────────────────
 
-    def run_t0(
-        self, *, state: Mapping[str, float], base_positions: Mapping[str, Decimal]
-    ) -> RlRunResult:
+    def run_t0(self, *, state: Mapping[str, float], base_positions: Mapping[str, Decimal]) -> RlRunResult:
         """RL 做T：底仓不变校验 + 风控硬约束校验 → C-003 门禁。"""
         _validate_state(state)
         if not base_positions:
@@ -319,16 +360,18 @@ class RlPortfolioExecutionOrchestrator:
             _require_decimal(f"base_positions[{symbol!r}]", qty)
         if self._t0_risk_checker is None:
             raise RlPortfolioError("做T风控硬约束校验器未注入")
-        proposal = self._propose(RlRequest(
-            scenario=RlScenario.T0_TRADING, state=state, base_positions=dict(base_positions),
-        ))
+        proposal = self._propose(
+            RlRequest(
+                scenario=RlScenario.T0_TRADING,
+                state=state,
+                base_positions=dict(base_positions),
+            )
+        )
         for symbol, delta in proposal.actions.items():
             if symbol not in base_positions:
                 raise RlPortfolioError(f"做T标的越出底仓: {symbol!r} 不在 base_positions")
             if delta != 0:
-                raise RlPortfolioError(
-                    f"底仓不变校验失败: {symbol!r} 净变动 {delta!r} ≠ 0"
-                )
+                raise RlPortfolioError(f"底仓不变校验失败: {symbol!r} 净变动 {delta!r} ≠ 0")
         try:
             risk_ok = bool(self._t0_risk_checker(proposal))
         except Exception as exc:  # noqa: BLE001 — 风控校验异常 Fail-Closed

@@ -20,6 +20,64 @@ Finding->TaskCard 桥接器
 ======================
 职责：将脚本系统的审计发现自动转换为任务卡，打通反馈回路（P0集成缺口修复）。
 数据流：script-system Findings -> FindingTaskBridge -> TaskRepository -> TaskCards
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: findings 参数
+#   fields: 参数 findings，类型注解 list[AuditFinding]
+#   code: finding_task_bridge.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: db_path 参数
+#   fields: 参数 db_path，类型注解 str | Path
+#   code: finding_task_bridge.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: namespace 参数
+#   fields: 参数 namespace，类型注解 TaskNamespace | None
+#   code: finding_task_bridge.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: dry_run 参数
+#   fields: 参数 dry_run，类型注解 bool
+#   code: finding_task_bridge.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① BridgeResult
+#   name_en: BridgeResult
+#   intro: 桥接操作结果
+#   desc: 桥接操作结果；公共方法（定义序）: success_rate；源码 L186-L200
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② FindingTaskBridge
+#   name_en: FindingTaskBridge
+#   intro: 将脚本审计发现桥接到任务系统，自动创建 TaskCard。
+#   desc: 将脚本审计发现桥接到任务系统，自动创建 TaskCard。 使用方式： bridge = FindingTaskBridge(repo) result = bridge.brid…；公共方法（定义序）: bridge；…
+#   inputs: task_repo default_namespace min_severity_for_bridge dry_run
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ bridge_findings_to_tasks
+#   name_en: bridge_findings_to_tasks
+#   intro: 便捷函数：从 Finding 列表到数据库持久化的全链路桥接。
+#   desc: 便捷函数：从 Finding 列表到数据库持久化的全链路桥接。；源码 L367-L383
+#   inputs: findings db_path namespace dry_run
+#   outputs: BridgeResult
+#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: BridgeResult
+#   name_en: BridgeResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: scripts/governance/run_all.py (bridge_findings_to_tasks)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 import logging

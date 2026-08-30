@@ -14,7 +14,8 @@
 # [TESTS] tests/gov_rule/test_standards_manager.py
 # [A_module] module_id=MOD-GOV-057 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""StandardsManager — 硬边界标准管理器（MOD-GOV-057）。
+"""
+StandardsManager — 硬边界标准管理器（MOD-GOV-057）。
 
 B1-00289（AUD-DRAFT-001-DIGEST P2 波 P2-W12，CAND-PC-002，C2 D-GOV-06）：
 硬边界目录（**编号 / 约束语句 / 校验脚本锚点 / 违反响应**四要素 + 元标准
@@ -25,6 +26,43 @@ PS-REG 元标准语义并入元数据字段）。
 查重分工（蓝图 §0）：rule_patterns=治理正则 SSoT（本件=边界目录与变更审
 批流，不定义正则）；gov_enforcement 门禁族=校验执行（本件仅经注入回调登
 记脚本锚点，不执行校验）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: standards_manager.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: script_registrar 参数
+#   fields: 参数 script_registrar（无注解）
+#   code: standards_manager.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: initial_boundaries 参数
+#   fields: 参数 initial_boundaries（无注解）
+#   code: standards_manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① StandardsManager
+#   name_en: StandardsManager
+#   intro: 硬边界标准管理件（目录 + 校验脚本挂接 + 人工审批队列硬约束）。
+#   desc: 硬边界标准管理件（目录 + 校验脚本挂接 + 人工审批队列硬约束）。；公共方法（定义序）: propose_change, decide_change, get, catalog, pending, history,…
+#   inputs: clock script_registrar initial_boundaries
+#   outputs: 返回值
+#   （注：A1 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（9 定义）
+#   name_en: public defs
+#   intro: StandardsManager
+#   downstream: 运行时装配批（硬边界目录装配 / gov_enforcement 校验脚本挂接 / 人工审批台）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

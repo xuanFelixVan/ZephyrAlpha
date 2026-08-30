@@ -19,6 +19,41 @@
 D_ML_TRAIN — ML Training Base
 
 模型训练核心抽象。包含模型元数据、训练器基类和模型注册表。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: trainer_base.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ModelTrainerBase
+#   name_en: ModelTrainerBase
+#   intro: 模型训练器抽象基类（OCP 扩展点 D_ML_TRAIN-TRN）
+#   desc: 模型训练器抽象基类（OCP 扩展点 D_ML_TRAIN-TRN） 实现者要求： - train(): 接收训练数据，产出训练指标 - validate(): 验证模型性能，返回…；公共方法（定义序）: train,…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② ModelRegistry
+#   name_en: ModelRegistry
+#   intro: 模型注册表（OCP 扩展点 D_ML_TRAIN-REG）
+#   desc: 模型注册表（OCP 扩展点 D_ML_TRAIN-REG） 管理模型版本生命周期： - 注册（register）-> 激活（activate）-> 废弃（deprecate） -…；公共方法（定义序）: registe…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: ModelTrainerBase, ModelRegistry
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

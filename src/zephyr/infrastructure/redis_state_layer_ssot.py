@@ -14,7 +14,8 @@
 # [TESTS] tests/infrastructure/test_redis_state_layer_ssot.py
 # [A_module] module_id=MOD-INF-063 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Redis 共享状态层 SSOT（MOD-INF-063）——13 命名空间三层结构/TTL 矩阵/混合持久化收口。
+"""
+Redis 共享状态层 SSOT（MOD-INF-063）——13 命名空间三层结构/TTL 矩阵/混合持久化收口。
 
 真源：A9 运维架构 §1.2（docs/_working/架构图/运维架构.md）+ CAND-H1FS-004（B14-04531）。
 
@@ -29,6 +30,83 @@
 
 硬边界：本模块只产出 redis.conf 配置就绪件草稿文本与恢复 runbook 声明；
 系统级应用（写 redis.conf / CONFIG SET / 服务重启）属 Owner 窗口，AI 不执行。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: name 参数
+#   fields: 参数 name，类型注解 str
+#   code: redis_state_layer_ssot.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: key 参数
+#   fields: 参数 key，类型注解 str
+#   code: redis_state_layer_ssot.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① get_namespace
+#   name_en: get_namespace
+#   intro: 按名取命名空间声明；未知命名空间 Fail-Closed。
+#   desc: 按名取命名空间声明；未知命名空间 Fail-Closed。；源码 L351-L356
+#   inputs: name
+#   outputs: NamespaceSpec
+# - id: A2
+#   name_zh: ② ttl_for
+#   name_en: ttl_for
+#   intro: 命名空间静态 TTL（秒）；None=永不过期；未知命名空间 Fail-Closed。
+#   desc: 命名空间静态 TTL（秒）；None=永不过期；未知命名空间 Fail-Closed。；源码 L359-L361
+#   inputs: name
+#   outputs: int | None
+# - id: A3
+#   name_zh: ③ validate_key
+#   name_en: validate_key
+#   intro: 校验 Key 属于已登记命名空间，返回命名空间名；未知/畸形 Fail-Closed。
+#   desc: 校验 Key 属于已登记命名空间，返回命名空间名；未知/畸形 Fail-Closed。；源码 L364-L372
+#   inputs: key
+#   outputs: str
+# - id: A4
+#   name_zh: ④ render_redis_conf_draft
+#   name_en: render_redis_conf_draft
+#   intro: 产出 redis.conf 配置就绪件草稿文本（仅文本，不执行任何系统写入）。
+#   desc: 产出 redis.conf 配置就绪件草稿文本（仅文本，不执行任何系统写入）。 硬边界：实际应用（写 redis.conf / CONFIG SET / 重启 Redis 服务）…；源码 L375-L395
+#   inputs: 无参数
+#   outputs: str
+# - id: A5
+#   name_zh: ⑤ recovery_runbook
+#   name_en: recovery_runbook
+#   intro: AOF 重放优先混合恢复 runbook 步骤（声明；演练执行属 Owner 窗口）。
+#   desc: AOF 重放优先混合恢复 runbook 步骤（声明；演练执行属 Owner 窗口）。；源码 L398-L408
+#   inputs: 无参数
+#   outputs: list[str]
+# - id: A6
+#   name_zh: ⑥ check_registry_consistency
+#   name_en: check_registry_consistency
+#   intro: 注册表一致性自检：13 命名空间/三层归属合法/TTL 矩阵完整/Key 前缀无冲突。
+#   desc: 注册表一致性自检：13 命名空间/三层归属合法/TTL 矩阵完整/Key 前缀无冲突。；源码 L411-L434
+#   inputs: 无参数
+#   outputs: dict[str, object]
+#   （注：A6 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: NamespaceSpec
+#   name_en: NamespaceSpec
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: int | None
+#   name_en: int | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
 """
 
 from __future__ import annotations
@@ -64,9 +142,7 @@ LAYER_REALTIME_DATA: Final[str] = "realtime_data"  # 实时数据层（TTL 驱�
 LAYER_STATE_COORDINATION: Final[str] = "state_coordination"  # 状态协调层（持久化）
 LAYER_OPS_CONTROL: Final[str] = "ops_control"  # 运维控制层（Pub/Sub+配置）
 
-_VALID_LAYERS: Final[frozenset[str]] = frozenset(
-    {LAYER_REALTIME_DATA, LAYER_STATE_COORDINATION, LAYER_OPS_CONTROL}
-)
+_VALID_LAYERS: Final[frozenset[str]] = frozenset({LAYER_REALTIME_DATA, LAYER_STATE_COORDINATION, LAYER_OPS_CONTROL})
 
 _HB_TTL_BUFFER_SECONDS: Final[int] = 30  # hb TTL = 进程超时阈值 + 30s 缓冲（§1.2 表注）
 
@@ -240,9 +316,7 @@ REDIS_NAMESPACE_REGISTRY: Final[tuple[NamespaceSpec, ...]] = (
 
 # TTL 矩阵（A9 §1.2：tick=5s, signal=60s, factor=300s, 其余永不过期；
 # hb 按进程动态计算不入静态矩阵）
-NAMESPACE_TTL_MATRIX: Final[dict[str, int | None]] = {
-    spec.name: spec.ttl_seconds for spec in REDIS_NAMESPACE_REGISTRY
-}
+NAMESPACE_TTL_MATRIX: Final[dict[str, int | None]] = {spec.name: spec.ttl_seconds for spec in REDIS_NAMESPACE_REGISTRY}
 
 REDIS_PERSISTENCE_PROFILE: Final[PersistenceProfile] = PersistenceProfile(
     rdb_save_rules=(("3600", "1"),),  # RDB 每小时基线
@@ -254,9 +328,7 @@ REDIS_PERSISTENCE_PROFILE: Final[PersistenceProfile] = PersistenceProfile(
     recovery_target_seconds=15,
 )
 
-_REGISTRY_BY_NAME: Final[dict[str, NamespaceSpec]] = {
-    spec.name: spec for spec in REDIS_NAMESPACE_REGISTRY
-}
+_REGISTRY_BY_NAME: Final[dict[str, NamespaceSpec]] = {spec.name: spec for spec in REDIS_NAMESPACE_REGISTRY}
 
 # Key 首段 → 命名空间名（market_state 的 Key 首段是 market，特判）
 _KEY_PREFIX_TO_NAMESPACE: Final[dict[str, str]] = {
@@ -280,9 +352,7 @@ def get_namespace(name: str) -> NamespaceSpec:
     """按名取命名空间声明；未知命名空间 Fail-Closed。"""
     spec = _REGISTRY_BY_NAME.get(name)
     if spec is None:
-        raise RedisStateLayerSotError(
-            f"未知 Redis 命名空间: {name!r}（13 命名空间真源=A9 §1.2，禁止临时发明）"
-        )
+        raise RedisStateLayerSotError(f"未知 Redis 命名空间: {name!r}（13 命名空间真源=A9 §1.2，禁止临时发明）")
     return spec
 
 
@@ -298,9 +368,7 @@ def validate_key(key: str) -> str:
     prefix = key.split(":", 1)[0]
     namespace = _KEY_PREFIX_TO_NAMESPACE.get(prefix)
     if namespace is None:
-        raise RedisStateLayerSotError(
-            f"Redis Key 命中未登记命名空间: {key!r}（13 命名空间真源=A9 §1.2）"
-        )
+        raise RedisStateLayerSotError(f"Redis Key 命中未登记命名空间: {key!r}（13 命名空间真源=A9 §1.2）")
     return namespace
 
 

@@ -14,7 +14,8 @@
 # [TESTS] tests/plan_engine/test_plan_deviation_monitor.py
 # [A_module] module_id=MOD-PLAN-022 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""PlanDeviationMonitor — 计划偏差检测与机会评估（MOD-PLAN-022）。
+"""
+PlanDeviationMonitor — 计划偏差检测与机会评估（MOD-PLAN-022）。
 
 B10-01479（AUD-DRAFT-001-DIGEST P2 波 P2-W09，CAND-PLAN-016，A1 模块38）：
 
@@ -29,6 +30,48 @@ B10-01479（AUD-DRAFT-001-DIGEST P2 波 P2-W09，CAND-PLAN-016，A1 模块38）�
 查重分工（蓝图 §0）：execution_deviation_attributor=执行偏差的**事后归因**
 （滑点/时滞分解）；本件=**盘中实时**偏差监控与计划外机会三重闸评估，不
 做事后归因。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: deviation_z_threshold 参数
+#   fields: 参数 deviation_z_threshold（无注解）
+#   code: plan_deviation_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: strong_signal_z 参数
+#   fields: 参数 strong_signal_z（无注解）
+#   code: plan_deviation_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: min_expected_return 参数
+#   fields: 参数 min_expected_return（无注解）
+#   code: plan_deviation_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: max_offplan_position_ratio 参数
+#   fields: 参数 max_offplan_position_ratio（无注解）
+#   code: plan_deviation_monitor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① PlanDeviationMonitor
+#   name_en: PlanDeviationMonitor
+#   intro: 盘中计划偏差监控与计划外机会评估器（纯内存确定性，留痕/时钟注入）。
+#   desc: 盘中计划偏差监控与计划外机会评估器（纯内存确定性，留痕/时钟注入）。；公共方法（定义序）: assess_deviation, assess_offplan_signal, records；源码 L158-L282
+#   inputs: deviation_z_threshold strong_signal_z min_expected_return max_offplan…
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: PlanDeviationMonitor
+#   downstream: 运行时装配批（盘中监控循环装配 / 留痕落 state_store / 计划外信号评审闸）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -68,9 +111,9 @@ class PlanDeviationError(Exception):
 class DeviationKind(str, Enum):
     """偏差分类。"""
 
-    NONE = "none"            # 未越 2σ
+    NONE = "none"  # 未越 2σ
     FAVORABLE = "favorable"  # 有利偏差持有
-    ADVERSE = "adverse"      # 不利纠错
+    ADVERSE = "adverse"  # 不利纠错
 
 
 @dataclass(frozen=True)
@@ -136,9 +179,7 @@ class PlanDeviationMonitor:
             raise PlanDeviationError(f"min_expected_return 须非负: {min_expected_return!r}")
         _require_decimal("max_offplan_position_ratio", max_offplan_position_ratio)
         if not (Decimal("0") < max_offplan_position_ratio <= Decimal("1")):
-            raise PlanDeviationError(
-                f"max_offplan_position_ratio 须在(0,1]: {max_offplan_position_ratio!r}"
-            )
+            raise PlanDeviationError(f"max_offplan_position_ratio 须在(0,1]: {max_offplan_position_ratio!r}")
         self._deviation_z_threshold = deviation_z_threshold
         self._strong_signal_z = strong_signal_z
         self._min_expected_return = min_expected_return
@@ -213,9 +254,7 @@ class PlanDeviationMonitor:
         _require_decimal("expected_return", expected_return)
         _require_decimal("offplan_position_ratio", offplan_position_ratio)
         if not (Decimal("0") <= offplan_position_ratio <= Decimal("1")):
-            raise PlanDeviationError(
-                f"offplan_position_ratio 须在[0,1]: {offplan_position_ratio!r}"
-            )
+            raise PlanDeviationError(f"offplan_position_ratio 须在[0,1]: {offplan_position_ratio!r}")
         gate_z = z_score > self._strong_signal_z
         gate_expected = expected_return > self._min_expected_return
         gate_position = offplan_position_ratio <= self._max_offplan_position_ratio

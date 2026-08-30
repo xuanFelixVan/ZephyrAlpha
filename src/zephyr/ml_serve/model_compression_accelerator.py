@@ -14,7 +14,8 @@
 # [TESTS] tests/ml_serve/test_model_compression_accelerator.py
 # [A_module] module_id=MOD-MLS-002 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""ModelCompressionAccelerator — 模型压缩与推理加速器（MOD-MLS-002）。
+"""
+ModelCompressionAccelerator — 模型压缩与推理加速器（MOD-MLS-002）。
 
 B10-01872（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-MLS-002，A1 §29.28）：
 **三阶段压缩编排**——Phase1 ONNX+INT8（校准集防泄漏校验 + 数值误差<1e-5
@@ -29,6 +30,48 @@ validation_pipeline（MOD-BT-027）=C-003 回测门禁本体（本件注入判�
 不重跑回测）；venra_double_lock_anchor（MOD-INF-049）=Double-Lock 锚定
 门禁（本件注入检查回调）；model_drift_monitor（MOD-MLS-001）=推理漂移监
 控（零交集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: phase_executors 参数
+#   fields: 参数 phase_executors（无注解）
+#   code: model_compression_accelerator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: numeric_error_validator 参数
+#   fields: 参数 numeric_error_validator（无注解）
+#   code: model_compression_accelerator.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: double_lock_checker 参数
+#   fields: 参数 double_lock_checker（无注解）
+#   code: model_compression_accelerator.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: c003_gate 参数
+#   fields: 参数 c003_gate（无注解）
+#   code: model_compression_accelerator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ModelCompressionAccelerator
+#   name_en: ModelCompressionAccelerator
+#   intro: 三阶段压缩编排器（执行器/验证器全注入 + 压缩登记册）。
+#   desc: 三阶段压缩编排器（执行器/验证器全注入 + 压缩登记册）。；公共方法（定义序）: register_model, run_phase, record_of, records_of, next_phase, regist…
+#   inputs: phase_executors numeric_error_validator double_lock_checker c003_gate…
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: ModelCompressionAccelerator
+#   downstream: 运行时装配批（三阶段压缩流水线装配 / 留出集登记与校准防泄漏 / 压缩登记册查询）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -147,9 +190,7 @@ class ModelCompressionAccelerator:
             raise ModelCompressionError("phase_executors 非法（须按阶段注入执行器映射）")
         missing = [p for p in _PHASE_ORDER if p not in phase_executors]
         if missing:
-            raise ModelCompressionError(
-                f"阶段执行器缺失: {[p.value for p in missing]}（三阶段执行器须全注入）"
-            )
+            raise ModelCompressionError(f"阶段执行器缺失: {[p.value for p in missing]}（三阶段执行器须全注入）")
         for key in phase_executors:
             if not isinstance(key, CompressionPhase):
                 raise ModelCompressionError(f"非法阶段键: {key!r}")
@@ -203,9 +244,7 @@ class ModelCompressionAccelerator:
                 raise ModelCompressionError("calibration_ids 含空标识")
         leaked = sorted(set(job.calibration_ids) & self._holdout)
         if leaked:
-            raise ModelCompressionError(
-                f"校准集防泄漏校验失败: {leaked} 命中留出集（校准集∩留出集须为空）"
-            )
+            raise ModelCompressionError(f"校准集防泄漏校验失败: {leaked} 命中留出集（校准集∩留出集须为空）")
         if job.phase is CompressionPhase.ONNX_INT8 and not job.calibration_ids:
             raise ModelCompressionError("Phase1 ONNX+INT8 须声明非空校准集")
 
@@ -214,9 +253,7 @@ class ModelCompressionAccelerator:
         numeric_error: float | None = None
 
         try:
-            candidate = _validate_metrics(
-                "candidate_metrics", self._executors[job.phase](job)
-            )
+            candidate = _validate_metrics("candidate_metrics", self._executors[job.phase](job))
         except ModelCompressionError as exc:
             reasons.append(f"执行器产出非法: {exc}")
         except Exception:  # noqa: BLE001 — 执行器异常按阶段失败登记不抛
@@ -267,9 +304,7 @@ class ModelCompressionAccelerator:
         )
         self._records[job.job_id] = record
         self._records_by_model[job.model_id].append(record)
-        _log.info(
-            "压缩阶段登记: %s %s -> %s", job.model_id, job.phase.value, record.outcome.value
-        )
+        _log.info("压缩阶段登记: %s %s -> %s", job.model_id, job.phase.value, record.outcome.value)
         return record
 
     # ── 查询 ─────────────────────────────────────────────────────────────
@@ -291,11 +326,7 @@ class ModelCompressionAccelerator:
         """下一待执行阶段（三阶段全 PASSED → None）。"""
         if model_id not in self._baselines:
             raise ModelCompressionError(f"未注册模型: {model_id!r}")
-        passed = {
-            rec.phase
-            for rec in self._records_by_model[model_id]
-            if rec.outcome is PhaseOutcome.PASSED
-        }
+        passed = {rec.phase for rec in self._records_by_model[model_id] if rec.outcome is PhaseOutcome.PASSED}
         for phase in _PHASE_ORDER:
             if phase not in passed:
                 return phase

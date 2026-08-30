@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-050 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""sentinel 幻觉检测器（MOD-INF-050）——intelligence 域哨兵封装。
+"""
+sentinel 幻觉检测器（MOD-INF-050）——intelligence 域哨兵封装。
 
  backlog 裁定：不另立重复引擎。检测语义 100% 委托
 :mod:`zephyr.orchestrator.hallucination_detector` 的 CoVe 引擎
@@ -24,6 +25,33 @@
 1. **审计留痕**：每次 detect 追加一条 SentinelAuditRecord（claim 只存
    sha256 指纹不存原文），prev_hash 链式防篡改，verify_audit_chain() 可离线校验。
 2. **观测统计**：stats() 汇总检测次数/幻觉命中/兜底分布，供哨兵看板消费。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: detector 参数
+#   fields: 参数 detector（无注解）
+#   code: sentinel_hallucination_detector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SentinelHallucinationDetector
+#   name_en: SentinelHallucinationDetector
+#   intro: CoVe 幻觉检测引擎的 intelligence 域哨兵封装（委托模式）。
+#   desc: CoVe 幻觉检测引擎的 intelligence 域哨兵封装（委托模式）。；公共方法（定义序）: detector, detect, audit_trail, verify_audit_chain, stats；源码…
+#   inputs: detector
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: SentinelHallucinationDetector
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

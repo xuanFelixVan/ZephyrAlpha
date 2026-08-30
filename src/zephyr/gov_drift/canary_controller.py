@@ -25,7 +25,87 @@ v2独立ID运行，不入drift_events，对比v1分类NEW_FINDING/LOST_FINDING/C
 auto_rollback: v2 FP率>2×v1自动回退
 
 
-对标 blueprint.md §6.11。"""
+对标 blueprint.md §6.11。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: v1_id 参数
+#   fields: 参数 v1_id，类型注解 str
+#   code: canary_controller.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: v2_ids 参数
+#   fields: 参数 v2_ids，类型注解 set[str]
+#   code: canary_controller.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: v1_events 参数
+#   fields: 参数 v1_events，类型注解 list[dict[str, object]]
+#   code: canary_controller.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: v2_events 参数
+#   fields: 参数 v2_events，类型注解 list[dict[str, object]]
+#   code: canary_controller.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① classify_event_id
+#   name_en: classify_event_id
+#   intro: 将单事件分类为NEW/LOST/CHANGED/IDENTICAL。
+#   desc: 将单事件分类为NEW/LOST/CHANGED/IDENTICAL。；源码 L227-L259
+#   inputs: v1_id v2_ids v1_events v2_events classification
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② run_canary
+#   name_en: run_canary
+#   intro: 执行金丝雀运行：v1+v2独立运行，对比结果。
+#   desc: 执行金丝雀运行：v1+v2独立运行，对比结果。；源码 L262-L319
+#   inputs: v1_detector_id v2_detector_id v1_run_fn v2_run_fn
+#   outputs: CanaryRun
+# - id: A3
+#   name_zh: ③ promote_detector
+#   name_en: promote_detector
+#   intro: Owner审查通过后将v2全量切换。
+#   desc: Owner审查通过后将v2全量切换。；源码 L322-L342
+#   inputs: canary_run
+#   outputs: bool
+# - id: A4
+#   name_zh: ④ rollback_detector
+#   name_en: rollback_detector
+#   intro: 回退v2，恢复v1。
+#   desc: 回退v2，恢复v1。；源码 L345-L362
+#   inputs: canary_run reason
+#   outputs: bool
+# - id: A5
+#   name_zh: ⑤ get_canary_history
+#   name_en: get_canary_history
+#   intro: 获取指定检测器的金丝雀历史。
+#   desc: 获取指定检测器的金丝雀历史。；源码 L365-L375
+#   inputs: detector_id
+#   outputs: list[dict[str, object]]
+#   （注：A5 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: CanaryRun
+#   name_en: CanaryRun
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_drift/_infrastructure.py ; tests/ba/test_ba_canary_controller.py…
+# - id: O2
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_drift/_infrastructure.py ; tests/ba/test_ba_canary_controller.py…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
+"""
 
 from __future__ import annotations
 

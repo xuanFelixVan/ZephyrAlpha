@@ -23,6 +23,41 @@ RI-14 DryRunSimulator — 干运行模拟器
 使用方式：
     sim = DryRunSimulator(sandbox_root="data/dry_runs/")
     result = sim.simulate(operation_plan)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: sandbox_root 参数
+#   fields: 参数 sandbox_root（无注解）
+#   code: dry_run_simulator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SimulationResult
+#   name_en: SimulationResult
+#   intro: class SimulationResult 源码 L106-L120
+#   desc: 公共方法（定义序）: is_safe；源码 L106-L120
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② DryRunSimulator
+#   name_en: DryRunSimulator
+#   intro: 干运行模拟器
+#   desc: 干运行模拟器 在真实执行前，在隔离沙箱中进行操作预演： - 文件操作模拟（只读/不修改真实文件） - 权限预检查 - 破坏性操作识别 - 回滚计划生成；公共方法（定义序）: simulate, simulate_bat…
+#   inputs: sandbox_root
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: SimulationResult, DryRunSimulator
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

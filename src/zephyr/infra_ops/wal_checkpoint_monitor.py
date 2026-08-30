@@ -14,7 +14,8 @@
 # [TESTS] tests/infra_ops/test_wal_checkpoint_monitor.py
 # [A_module] module_id=MOD-INF-085 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""WalCheckpointMonitor — SQLite WAL 检查点监控器（MOD-INF-085）。
+"""
+WalCheckpointMonitor — SQLite WAL 检查点监控器（MOD-INF-085）。
 
 B13-04268（AUD-DRAFT-001-DIGEST P2 波 P2-W01，CAND-INFRAOPS-003，A3数据
 架构）：SQLite WAL 运行态监控——wal 文件大小 / checkpoint 耗时 / 写入速率
@@ -22,6 +23,48 @@ B13-04268（AUD-DRAFT-001-DIGEST P2 波 P2-W01，CAND-INFRAOPS-003，A3数据
 （OK/WARN/CRITICAL），自动 checkpoint 策略裁决（达 WARN 阈→PASSIVE，达
 CRITICAL 阈→TRUNCATE；执行经注入 checkpoint_runner 回调，未注入
 Fail-Closed），并挂 telemetry 指标回调供仪表盘消费。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: warn_threshold_bytes 参数
+#   fields: 参数 warn_threshold_bytes（无注解）
+#   code: wal_checkpoint_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: critical_threshold_bytes 参数
+#   fields: 参数 critical_threshold_bytes（无注解）
+#   code: wal_checkpoint_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: metrics_probe 参数
+#   fields: 参数 metrics_probe（无注解）
+#   code: wal_checkpoint_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: checkpoint_runner 参数
+#   fields: 参数 checkpoint_runner（无注解）
+#   code: wal_checkpoint_monitor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① WalCheckpointMonitor
+#   name_en: WalCheckpointMonitor
+#   intro: WAL 监控件（采集 + 分级 + 策略裁决 + telemetry）。
+#   desc: WAL 监控件（采集 + 分级 + 策略裁决 + telemetry）。；公共方法（定义序）: collect, assess, decide_checkpoint, tick, last_metrics；源码 L12…
+#   inputs: warn_threshold_bytes critical_threshold_bytes metrics_probe checkpoin…
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: WalCheckpointMonitor
+#   downstream: 运行时装配批（SQLite WAL 库绑定 probe / checkpoint 执行器 / telemetry 指标路由）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -136,8 +179,7 @@ class WalCheckpointMonitor:
             raise WalMonitorError(f"probe 返回值非法: {type(m)!r}（须为 WalMetrics）")
         if m.wal_bytes < 0 or m.checkpoint_ms < 0 or m.write_rate < 0:
             raise WalMonitorError(
-                f"采集值非法（负值）: wal_bytes={m.wal_bytes} "
-                f"checkpoint_ms={m.checkpoint_ms} write_rate={m.write_rate}"
+                f"采集值非法（负值）: wal_bytes={m.wal_bytes} checkpoint_ms={m.checkpoint_ms} write_rate={m.write_rate}"
             )
         self._last = m
         self._emit_telemetry(m)
@@ -173,9 +215,7 @@ class WalCheckpointMonitor:
             return level
         self._alert(level, m)
         if self._runner is None:
-            raise WalMonitorError(
-                f"checkpoint_runner 未注入（{level.value} 级须执行 {mode.value}，禁止旁路）"
-            )
+            raise WalMonitorError(f"checkpoint_runner 未注入（{level.value} 级须执行 {mode.value}，禁止旁路）")
         try:
             ok = bool(self._runner(mode))
         except Exception as exc:  # noqa: BLE001 — 执行异常按失败处理

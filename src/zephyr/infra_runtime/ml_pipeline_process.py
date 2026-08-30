@@ -14,7 +14,8 @@
 # [TESTS] tests/infra_runtime/test_ml_pipeline_process.py
 # [A_module] module_id=MOD-INF-078 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""MlPipelineProcess — P5 ML 管线进程编排（MOD-INF-078）。
+"""
+MlPipelineProcess — P5 ML 管线进程编排（MOD-INF-078）。
 
 B14-04526（AUD-DRAFT-001-DIGEST P2 波 P2-W01，CAND-H1FS-011，A9 运维架构
 §进程拓扑）：ml_pipeline 独立进程 spec 与编排——推理调度/离线训练/显存管理/
@@ -27,6 +28,43 @@ B14-04526（AUD-DRAFT-001-DIGEST P2 波 P2-W01，CAND-H1FS-011，A9 运维架构
 不做 cgroup 级隔离，仅做 ML 进程内部任务编排）；trainer_base=训练执行体（本
 件只做任务排队与时隙裁决，不实现训练）；ha_sla_framework=SLA 健康编排（零
 交集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: ml_pipeline_process.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: is_trading_hours 参数
+#   fields: 参数 is_trading_hours（无注解）
+#   code: ml_pipeline_process.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: gpu_schedule 参数
+#   fields: 参数 gpu_schedule（无注解）
+#   code: ml_pipeline_process.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① MlPipelineProcess
+#   name_en: MlPipelineProcess
+#   intro: P5 ML 管线进程编排件（四职责队列 + 交易时段退让 + GPU 夜间互斥）。
+#   desc: P5 ML 管线进程编排件（四职责队列 + 交易时段退让 + GPU 夜间互斥）。；公共方法（定义序）: resource_declaration, enqueue, dequeue, cancel, pending,…
+#   inputs: clock is_trading_hours gpu_schedule
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: MlPipelineProcess
+#   downstream: 运行时装配批（P5 ML 管线进程四职责任务队列装配 / 交易时段退让与 GPU 夜间互斥裁决）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -123,9 +161,7 @@ class MlPipelineProcess:
         return True
 
     def _ordered(self) -> list[MlTask]:
-        entries = sorted(
-            self._queue.values(), key=lambda e: (e[0].priority, e[1], e[0].task_id)
-        )
+        entries = sorted(self._queue.values(), key=lambda e: (e[0].priority, e[1], e[0].task_id))
         return [task for task, _seq in entries]
 
     # ── 队列协议 ──────────────────────────────────────────────────────────
@@ -141,9 +177,7 @@ class MlPipelineProcess:
         if not isinstance(task.kind, TaskKind):
             raise MlPipelineError(f"非法职责: {task.kind!r}")
         if not (0 <= task.priority <= BASE_PRIORITY):
-            raise MlPipelineError(
-                f"优先级越界: {task.priority}（合法区间 [0, {BASE_PRIORITY}]，40 最低）"
-            )
+            raise MlPipelineError(f"优先级越界: {task.priority}（合法区间 [0, {BASE_PRIORITY}]，40 最低）")
         self._queue[task.task_id] = (task, self._seq)
         self._seq += 1
 

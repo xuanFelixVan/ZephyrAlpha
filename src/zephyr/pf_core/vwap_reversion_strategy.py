@@ -22,7 +22,8 @@
 # created: "2026-07-31"
 # ---
 
-"""D_PORTFOLIO_CORE — VWAP 回归做T策略（路径 B 策略）
+"""
+D_PORTFOLIO_CORE — VWAP 回归做T策略（路径 B 策略）
 
 Tick 级均值回归策略，基于 TickStrategyBase。利用日内 VWAP（Volume Weighted Average
 Price）作为公允价格基准，当价格偏离 VWAP 超过阈值时反向操作，预期价格回归 VWAP。
@@ -51,6 +52,47 @@ PIT 铁律：VWAP 使用当前 tick 的累计 amount/volume，不预读未来 ti
 
 SSoT: docs/03_modules/_domain_backtest/blueprint.md §16.7（EDE 做T场景）
       docs/03_modules/_domain_portfolio_core/blueprint.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: entry_threshold 参数
+#   fields: 参数 entry_threshold（无注解）
+#   code: vwap_reversion_strategy.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: exit_threshold 参数
+#   fields: 参数 exit_threshold（无注解）
+#   code: vwap_reversion_strategy.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: base_weight 参数
+#   fields: 参数 base_weight（无注解）
+#   code: vwap_reversion_strategy.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: use_order_book 参数
+#   fields: 参数 use_order_book（无注解）
+#   code: vwap_reversion_strategy.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① VWAPReversionStrategy
+#   name_en: VWAPReversionStrategy
+#   intro: VWAP 回归做T策略（A 股 intraday T+0 均值回归）。
+#   desc: VWAP 回归做T策略（A 股 intraday T+0 均值回归）。 用法： strategy = VWAPReversionStrategy( entry_threshold…；公共方法（定义序）: on_tick…
+#   inputs: entry_threshold exit_threshold base_weight use_order_book ob_block_th…
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: VWAPReversionStrategy
+#   downstream: zephyr.pf_core.strategy_engine.strategy_runner
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

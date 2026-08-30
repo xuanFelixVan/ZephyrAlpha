@@ -14,7 +14,8 @@
 # [TESTS] tests/intelligence/test_llm_market_interpreter.py
 # [A_module] module_id=MOD-INT-MKT-INTERPRETER | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""LlmMarketInterpreter — LLM 市场解读引擎（MOD-INT-MKT-INTERPRETER）
+"""
+LlmMarketInterpreter — LLM 市场解读引擎（MOD-INT-MKT-INTERPRETER）
 
 B1-00118（AUD-DRAFT-001-DIGEST P1 波 W-P1-09，D-ALT-11）：三路输入
 （新闻/研报摘要/社媒）统一市场解读——本地 LLM 盘后 + API 盘中双模，
@@ -26,6 +27,48 @@ B1-00118（AUD-DRAFT-001-DIGEST P1 波 W-P1-09，D-ALT-11）：三路输入
 治理）、llm_gateway（MOD-INF-009，真实调用面）、llm_premarket_analysis
 （MOD-PLAN-007，盘前复盘单点）；本模块为三路统一解读引擎，LLM 能力经
 注入 callable 消费，零密钥零直连。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: local_llm 参数
+#   fields: 参数 local_llm（无注解）
+#   code: llm_market_interpreter.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: api_llm 参数
+#   fields: 参数 api_llm（无注解）
+#   code: llm_market_interpreter.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: mode_selector 参数
+#   fields: 参数 mode_selector（无注解）
+#   code: llm_market_interpreter.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: audit_sink 参数
+#   fields: 参数 audit_sink（无注解）
+#   code: llm_market_interpreter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① LlmMarketInterpreter
+#   name_en: LlmMarketInterpreter
+#   intro: 三路统一市场解读引擎（判定核心纯内存，LLM/审计全注入式）。
+#   desc: 三路统一市场解读引擎（判定核心纯内存，LLM/审计全注入式）。；公共方法（定义序）: sink_errors, interpret；源码 L137-L225
+#   inputs: local_llm api_llm mode_selector audit_sink
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: LlmMarketInterpreter
+#   downstream: 运行时装配批（local_llm 接本地池 qwen3:8b / api_llm 接 API 池·gateway / mode_selector 接交易时段真…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -65,7 +108,7 @@ class MarketInputBundle:
     news: tuple = ()
     research: tuple = ()
     social: tuple = ()
-    as_of: Optional[datetime.datetime] = None
+    as_of: datetime.datetime | None = None
 
 
 @dataclass(frozen=True)
@@ -96,10 +139,10 @@ class LlmMarketInterpreter:
 
     def __init__(
         self,
-        local_llm: Optional[Callable[[str], str]] = None,
-        api_llm: Optional[Callable[[str], str]] = None,
-        mode_selector: Optional[Callable[[Optional[datetime.datetime]], str]] = None,
-        audit_sink: Optional[Callable[[AuditRecord], None]] = None,
+        local_llm: Callable[[str], str] | None = None,
+        api_llm: Callable[[str], str] | None = None,
+        mode_selector: Callable[[datetime.datetime | None], str] | None = None,
+        audit_sink: Callable[[AuditRecord], None] | None = None,
     ) -> None:
         self._local_llm = local_llm
         self._api_llm = api_llm
@@ -137,9 +180,7 @@ class LlmMarketInterpreter:
 
     # ── 主接口 ──
 
-    def interpret(
-        self, bundle: MarketInputBundle, mode: Optional[str] = None
-    ) -> MarketInterpretation:
+    def interpret(self, bundle: MarketInputBundle, mode: str | None = None) -> MarketInterpretation:
         sources = tuple(c for c in CHANNELS if getattr(bundle, c))
         if not sources:
             raise ValueError("三路输入全空（news/research/social 至少一路非空）")

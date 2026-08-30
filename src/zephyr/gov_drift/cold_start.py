@@ -25,6 +25,75 @@ first_scan_seed: 首次运行空目录时产生占位扫描
 auto_config: 需要config但.env/config.yaml不存在建议
 
 对标 blueprint.md §6.31。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root，类型注解 str
+#   code: cold_start.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: required_vars 参数
+#   fields: 参数 required_vars，类型注解 list[str] | None
+#   code: cold_start.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① init_directories
+#   name_en: init_directories
+#   intro: 创建缺失的必需目录，返回已创建的目录相对路径列表。
+#   desc: 创建缺失的必需目录，返回已创建的目录相对路径列表。；源码 L197-L208
+#   inputs: project_root
+#   outputs: list[str]
+# - id: A2
+#   name_zh: ② init_database
+#   name_en: init_database
+#   intro: 初始化 drift_events 数据库——创建目录、表、索引。
+#   desc: 初始化 drift_events 数据库——创建目录、表、索引。；源码 L211-L230
+#   inputs: project_root
+#   outputs: bool
+# - id: A3
+#   name_zh: ③ detect_missing_env
+#   name_en: detect_missing_env
+#   intro: 检测缺失的环境变量，返回缺失变量名列表。
+#   desc: 检测缺失的环境变量，返回缺失变量名列表。 可选参数 required_vars 允许调用方覆盖默认检测变量集 （与 gov_audit 旧版签名对齐，向后兼容无参调用）。；源码 L233-L244
+#   inputs: required_vars
+#   outputs: list[str]
+# - id: A4
+#   name_zh: ④ bootstrap
+#   name_en: bootstrap
+#   intro: bootstrap(project_root) 源码 L247-L268
+#   desc: 源码 L247-L268
+#   inputs: project_root
+#   outputs: ColdStartResult
+# - id: A5
+#   name_zh: ⑤ session_entry_activate
+#   name_en: session_entry_activate
+#   intro: STEP 4.9: 每次 session 进入时触发的冷启动激活。
+#   desc: STEP 4.9: 每次 session 进入时触发的冷启动激活。 1. 确保目录和DB存在 2. 触发 LIGHT 扫描 3. 检查预算状态；源码 L285-L305
+#   inputs: project_root
+#   outputs: ColdStartResult
+#   （注：A5 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[str]
+#   name_en: list[str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/compliance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_inf…
+# - id: O2
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/compliance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_inf…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations

@@ -23,7 +23,34 @@ Gate Persistence — gate_persistence.py
 
 注意（#62 裁定 2026-08-21）：本文件 data/drift_audit/drift_events.db 不再含 drift_events
 表（空壳 schema B 已废止）；drift_events 唯一真源=DB_PATH governance.db（drift_engine 写）。
-对标 blueprint.md §2.17门禁持久化 / D-023-31。"""
+对标 blueprint.md §2.17门禁持久化 / D-023-31。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: gate_persistence.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① GatePersistence
+#   name_en: GatePersistence
+#   intro: class GatePersistence 源码 L69-L305
+#   desc: 公共方法（定义序）: project_root, audit_dir, db_path, persist_scan_result, persist_gate_decision, verify_integrity, up…
+#   inputs: project_root
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: GatePersistence
+#   downstream: src/zephyr/gov_drift/_infrastructure.py ; tests/gate/test_gate_persistence.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 from __future__ import annotations
 

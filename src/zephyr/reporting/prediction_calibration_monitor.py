@@ -15,7 +15,6 @@
 # [A_module] module_id=MOD-RPT-029 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
 prediction_calibration_monitor — 日志→参数校准反馈闭环骨架（92号清单 §8.7 M4-④）
 
 设计真源：44号备忘 §12.1 M4-④（"AI 通过日志调参"——实验结果→参数调整的
@@ -47,6 +46,69 @@ outcome_payload 含 ``hit: bool``（事后真值评估结果，fail-closed 校�
 异常，收敛为 TriggerVerdict(triggered=False, reason='error') + logging 留痕；
 触发事件落盘失败不翻转判定（verdict 仍 triggered=True，evidence 记
 persistence_error）——本模块只出建议，判定与留痕解耦，绝不自动改参。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: trade_date 参数
+#   fields: 参数 trade_date，类型注解 str
+#   code: prediction_calibration_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: module 参数
+#   fields: 参数 module，类型注解 str
+#   code: prediction_calibration_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: outcome_payload 参数
+#   fields: 参数 outcome_payload，类型注解 object
+#   code: prediction_calibration_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: asof_ts 参数
+#   fields: 参数 asof_ts，类型注解 str | None
+#   code: prediction_calibration_monitor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① record_outcome
+#   name_en: record_outcome
+#   intro: 事后真值回写（裁定一/二）：写 prediction_log 本表 outcome 族。
+#   desc: 事后真值回写（裁定一/二）：写 prediction_log 本表 outcome 族。 Args: trade_date: 被评估预测所属交易日 "YYYY-MM-DD"（非法…；源码 L255-L294
+#   inputs: trade_date module outcome_payload asof_ts db_path
+#   outputs: int
+# - id: A2
+#   name_zh: ② compute_hit_rate_stats
+#   name_en: compute_hit_rate_stats
+#   intro: 统计器：从 prediction_log 读某模块窗口期预测序列，算命中率/样本量/趋势。
+#   desc: 统计器：从 prediction_log 读某模块窗口期预测序列，算命中率/样本量/趋势。 口径（裁定二）：样本=窗口内 outcome 行且当日存在该模块预测行（剔除 outc…；源码 L297-L390
+#   inputs: module window_days db_path
+#   outputs: CalibrationStats
+# - id: A3
+#   name_zh: ③ evaluate_calibration_trigger
+#   name_en: evaluate_calibration_trigger
+#   intro: 触发器：样本量守卫+阈值规则 → 参数校准评审建议（fail-open，不改参）。
+#   desc: 触发器：样本量守卫+阈值规则 → 参数校准评审建议（fail-open，不改参）。 规则（92号 §8.7）：样本量 < min_samples（默认 30）→ 不触发 （ins…；源码 L463-L581
+#   inputs: module stats config db_path runtime_dir
+#   outputs: TriggerVerdict
+#   （注：A3 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: G04 参数校准流程（评审建议工单消费方——人审）; CAND-SELL-001 同族触发器族（规划）; 55号 周/月复盘编排（规划）
+# - id: O2
+#   name_zh: CalibrationStats
+#   name_en: CalibrationStats
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: G04 参数校准流程（评审建议工单消费方——人审）; CAND-SELL-001 同族触发器族（规划）; 55号 周/月复盘编排（规划）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations
@@ -267,8 +329,7 @@ def compute_hit_rate_stats(
     rows = query_predictions(module=v_module, limit=_STATS_QUERY_LIMIT, db_path=db_path)
     in_window = [r for r in rows if window_start <= r["trade_date"] <= window_end]
     predictions = [
-        r for r in in_window
-        if r["prediction_type"] not in (OUTCOME_PREDICTION_TYPE, TRIGGER_PREDICTION_TYPE)
+        r for r in in_window if r["prediction_type"] not in (OUTCOME_PREDICTION_TYPE, TRIGGER_PREDICTION_TYPE)
     ]
     outcomes = [r for r in in_window if r["prediction_type"] == OUTCOME_PREDICTION_TYPE]
     prediction_dates = {r["trade_date"] for r in predictions}
@@ -442,8 +503,14 @@ def evaluate_calibration_trigger(
     evaluated_at = datetime.now(UTC).isoformat()
 
     try:
-        st = stats if stats is not None else compute_hit_rate_stats(
-            v_module, window_days=cfg.window_days, db_path=db_path,
+        st = (
+            stats
+            if stats is not None
+            else compute_hit_rate_stats(
+                v_module,
+                window_days=cfg.window_days,
+                db_path=db_path,
+            )
         )
     except Exception as exc:  # noqa: BLE001 — fail-open：统计异常=不触发+留痕，绝不阻断调用方
         logger.warning("calibration 统计异常 fail-open（module=%s）: %s: %s", v_module, type(exc).__name__, exc)

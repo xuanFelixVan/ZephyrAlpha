@@ -28,7 +28,111 @@ graceful_degradation四级: >75%并行减半 / >87.5%暂停非HIGH / >97.6% GC+c
 scalability: 10->100->500->1500模块渐进路线
 
 
-对标 blueprint.md §6.16。"""
+对标 blueprint.md §6.16。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: directory 参数
+#   fields: 参数 directory，类型注解 str
+#   code: resource_guard.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: snap 参数
+#   fields: 参数 snap，类型注解 ResourceSnapshot
+#   code: resource_guard.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: current_pool 参数
+#   fields: 参数 current_pool，类型注解 int
+#   code: resource_guard.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: check_interval_sec 参数
+#   fields: 参数 check_interval_sec，类型注解 float
+#   code: resource_guard.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① snapshot
+#   name_en: snapshot
+#   intro: snapshot(directory) 源码 L245-L282
+#   desc: 源码 L245-L282
+#   inputs: directory
+#   outputs: ResourceSnapshot
+# - id: A2
+#   name_zh: ② apply_degradation
+#   name_en: apply_degradation
+#   intro: apply_degradation(snap, current_pool) 源码 L285-L313
+#   desc: 源码 L285-L313
+#   inputs: snap current_pool
+#   outputs: tuple[int, DegradationLevel]
+# - id: A3
+#   name_zh: ③ guard_loop
+#   name_en: guard_loop
+#   intro: guard_loop(check_interval_sec, directory, on_degraded) 源码 L…
+#   desc: 源码 L322-L378
+#   inputs: check_interval_sec directory on_degraded
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ stop_guard_loop
+#   name_en: stop_guard_loop
+#   intro: stop_guard_loop() 源码 L381-L386
+#   desc: 源码 L381-L386
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ is_guard_running
+#   name_en: is_guard_running
+#   intro: is_guard_running() 源码 L389-L390
+#   desc: 源码 L389-L390
+#   inputs: 无参数
+#   outputs: bool
+# - id: A6
+#   name_zh: ⑥ set_critical_handler
+#   name_en: set_critical_handler
+#   intro: 设置OOM临界处理器。
+#   desc: 设置OOM临界处理器。；源码 L419-L424
+#   inputs: handler
+#   outputs: 返回值
+# - id: A7
+#   name_zh: ⑦ validate_scalability
+#   name_en: validate_scalability
+#   intro: validate_scalability() 源码 L427-L441
+#   desc: 源码 L427-L441
+#   inputs: 无参数
+#   outputs: dict[str, object]
+# - id: A8
+#   name_zh: ⑧ get_memory_usage_mb
+#   name_en: get_memory_usage_mb
+#   intro: 公共接口：get_memory_usage_mb（Stage 4 公共化）。
+#   desc: 公共接口：get_memory_usage_mb（Stage 4 公共化）。；源码 L445-L447
+#   inputs: 无参数
+#   outputs: float
+#   （注：A8 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ResourceSnapshot
+#   name_en: ResourceSnapshot
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_drift/_infrastructure.py ; tests/resource/test_resource_guard.py
+# - id: O2
+#   name_zh: tuple[int, DegradationLevel]
+#   name_en: tuple[int, DegradationLevel]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_drift/_infrastructure.py ; tests/resource/test_resource_guard.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> O1
+"""
 
 from __future__ import annotations
 

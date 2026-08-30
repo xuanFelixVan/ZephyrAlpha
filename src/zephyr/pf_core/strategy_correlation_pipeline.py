@@ -29,7 +29,8 @@
 # 层: 输出
 # - id: O1 StrategyCorrelationReport(七部分+漂移附录) + render_markdown(23号文报告模板)
 # [/ALGO_FLOW]
-"""G07 策略间相关性验证管线骨架（23 号 memo §3.1⑤ 七部分报告模板）。
+"""
+G07 策略间相关性验证管线骨架（23 号 memo §3.1⑤ 七部分报告模板）。
 
 编排层——不重复造轮子，全部计算委托 factor/analysis 已测试的五个引擎：
   1. correlation_preprocessing（对数收益率统一 + ADF + 异常值标注 + 交易日对齐）
@@ -49,6 +50,56 @@ preprocess_strategy_returns——ln(nav_t/nav_{t-1}) ≡ ln(1+r_t)，对数口�
 待定问题"参数搜索 history 的留存"），本管线只接受调用方预算好的
 OverfitAuditResult 映射作留口；第 7 部分（正交性验证）接受策略→正交维度映射
 做覆盖度检查，量化互验以第 4 部分 Neff 为准。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: returns 参数
+#   fields: 参数 returns，类型注解 pd.DataFrame
+#   code: strategy_correlation_pipeline.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: params 参数
+#   fields: 参数 params（无注解）
+#   code: strategy_correlation_pipeline.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: report 参数
+#   fields: 参数 report，类型注解 StrategyCorrelationReport
+#   code: strategy_correlation_pipeline.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① run_strategy_correlation_pipeline
+#   name_en: run_strategy_correlation_pipeline
+#   intro: G07 策略间相关性验证管线（施工前一次性，非 runtime 周期任务）。
+#   desc: G07 策略间相关性验证管线（施工前一次性，非 runtime 周期任务）。 Args: returns: 策略日收益率面板（算术口径，index=date，columns=策略…；源码 L458-L490
+#   inputs: returns params
+#   outputs: StrategyCorrelationReport
+# - id: A2
+#   name_zh: ② render_markdown
+#   name_en: render_markdown
+#   intro: 按 23 号 memo §3.1⑤ 七部分模板渲染报告（markdown）。
+#   desc: 按 23 号 memo §3.1⑤ 七部分模板渲染报告（markdown）。；源码 L700-L711
+#   inputs: report
+#   outputs: str
+#   （注：A2 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: StrategyCorrelationReport
+#   name_en: StrategyCorrelationReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: G07 施工前一次性验证批次; MOD-PA-004 门禁(strategy_correlation_gate)上游生产者
+# - id: O2
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: G07 施工前一次性验证批次; MOD-PA-004 门禁(strategy_correlation_gate)上游生产者
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -62,6 +113,8 @@ import pandas as pd
 
 from zephyr.factor.analysis.correlation_block_bootstrap import (
     MIN_OBS as BOOTSTRAP_MIN_OBS,
+)
+from zephyr.factor.analysis.correlation_block_bootstrap import (
     BootstrapCIResult,
     bootstrap_correlation_ci,
 )
@@ -437,9 +490,7 @@ def run_strategy_correlation_pipeline(
     return _execute_pipeline(returns, p)
 
 
-def _execute_pipeline(
-    returns: pd.DataFrame, p: StrategyCorrelationParams
-) -> StrategyCorrelationReport:
+def _execute_pipeline(returns: pd.DataFrame, p: StrategyCorrelationParams) -> StrategyCorrelationReport:
     """管线执行主体（拆自 run_strategy_correlation_pipeline，降循环复杂度）。"""
     # ① 数据预处理 pipeline（对数收益率统一 + ADF + 异常值标注 + 交易日交集对齐）
     prep = preprocess_strategy_returns(_returns_to_pseudo_nav(returns))
@@ -532,8 +583,7 @@ def _render_part2_stratified(report: StrategyCorrelationReport) -> list[str]:
     else:
         p2 = report.part2_stratified
         out.append(
-            f"置信度阈值={p2.confidence_threshold}，兜底天数={p2.fallback_count}，"
-            f"阶段可信最小样本={p2.min_samples}。"
+            f"置信度阈值={p2.confidence_threshold}，兜底天数={p2.fallback_count}，阶段可信最小样本={p2.min_samples}。"
         )
         for sec in p2.phases:
             out.append(f"### 阶段：{sec.phase}（n={sec.n_obs}）")
@@ -575,8 +625,7 @@ def _render_part4_neff(report: StrategyCorrelationReport) -> list[str]:
     return [
         "",
         "## 4. 组合层有效下注数 Neff（Ledoit-Wolf 收缩前置）",
-        f"- Neff=(Σλ)²/Σλ² = **{p4.neff:.3f}** / {p4.n_assets} 策略"
-        f"（等相关近似 {p4.neff_equicorr:.3f} 仅辅助）",
+        f"- Neff=(Σλ)²/Σλ² = **{p4.neff:.3f}** / {p4.n_assets} 策略（等相关近似 {p4.neff_equicorr:.3f} 仅辅助）",
         f"- LW 收缩强度 α={p4.alpha:.4f}（α 大=噪声大/相关结构弱，Neff 偏乐观需共读）；"
         f"特征值={[round(float(v), 4) for v in p4.eigenvalues]}",
     ]

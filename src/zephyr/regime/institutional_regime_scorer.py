@@ -16,7 +16,8 @@
 # [TTL] permanent
 # [ARCH-REF] #10_regime_detector_spec §4.7.6/§4.8.5/§4.11.10 #MOD-REGIME-015
 
-"""MOD-REGIME-015 InstitutionalRegimeScorer — 三维机构级 regime 评分器。
+"""
+MOD-REGIME-015 InstitutionalRegimeScorer — 三维机构级 regime 评分器。
 
 真源：10_regime_detector_spec §4.7.6（CAPE 估值分位）、§4.8.5（Margin Debt/两融
 杠杆极端）、§4.11.10（IV 隐含波动率维度）。三维度独立评分、fail-open 降级、
@@ -30,6 +31,43 @@
 评分语义（对齐 10 号文）：
   score ∈ [0, 100]，越高越危险/越极端（泡沫/恐慌方向）。
   0-33 低位安全区，34-66 中性区，67-100 高位极端区。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: weight_cape 参数
+#   fields: 参数 weight_cape（无注解）
+#   code: institutional_regime_scorer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: weight_iv 参数
+#   fields: 参数 weight_iv（无注解）
+#   code: institutional_regime_scorer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: weight_margin 参数
+#   fields: 参数 weight_margin（无注解）
+#   code: institutional_regime_scorer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① InstitutionalRegimeScorer
+#   name_en: InstitutionalRegimeScorer
+#   intro: 三维机构级 regime 评分器。
+#   desc: 三维机构级 regime 评分器。 消费 index_valuation_daily / option_iv_surface_incremental / margin_tradi…；公共方法（定义序）: score；源…
+#   inputs: weight_cape weight_iv weight_margin
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: InstitutionalRegimeScorer
+#   downstream: 运行时装配批（regime 层综合评分 / 机构级三维数据融合）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -65,44 +103,44 @@ class InstitutionalRegimeConfigError(ZephyrBaseError):
 class RegimeState(str):
     """regime 态词表（闭合）。"""
 
-    EXTREME_BUBBLE = "extreme_bubble"      # 极端泡沫（CAPE/IV/两融三高位）
-    BUBBLE = "bubble"                      # 泡沫区（高估+杠杆+IV 偏高）
-    NEUTRAL = "neutral"                    # 中性区
-    PANIC = "panic"                        # 恐慌区（IV 飙升+两融骤降）
-    EXTREME_PANIC = "extreme_panic"        # 极端恐慌（IV 极端+去杠杆完成）
+    EXTREME_BUBBLE = "extreme_bubble"  # 极端泡沫（CAPE/IV/两融三高位）
+    BUBBLE = "bubble"  # 泡沫区（高估+杠杆+IV 偏高）
+    NEUTRAL = "neutral"  # 中性区
+    PANIC = "panic"  # 恐慌区（IV 飙升+两融骤降）
+    EXTREME_PANIC = "extreme_panic"  # 极端恐慌（IV 极端+去杠杆完成）
 
 
 # ──────────────────────────────────────────────────────────────────────────────
 # 维度权重（对齐 10 号文 §4.8.5/§4.7.6/§4.11.10 权重表）
 # ──────────────────────────────────────────────────────────────────────────────
-WEIGHT_CAPE: Final[float] = 0.35   # 宏观估值（长期锚，§4.8.5 "高"）
-WEIGHT_IV: Final[float] = 0.35     # IV 维度（前瞻性强，§4.11.10 "高"）
+WEIGHT_CAPE: Final[float] = 0.35  # 宏观估值（长期锚，§4.8.5 "高"）
+WEIGHT_IV: Final[float] = 0.35  # IV 维度（前瞻性强，§4.11.10 "高"）
 WEIGHT_MARGIN: Final[float] = 0.30  # 杠杆结构（平仓风险，§4.8.5 "高"）
 
 # ──────────────────────────────────────────────────────────────────────────────
 # CAPE 维度阈值（§4.7.6 维度⑨ / §4.8.5 维度④）
 # ──────────────────────────────────────────────────────────────────────────────
-CAPE_PERCENTILE_EXTREME: Final[float] = 0.95   # 近 20 年 >95 分位 → 极端
-CAPE_PERCENTILE_HIGH: Final[float] = 0.80      # 近 20 年 >80 分位 → 高估
-CAPE_PERCENTILE_LOW: Final[float] = 0.15       # 近 20 年 <15 分位 → 底部
+CAPE_PERCENTILE_EXTREME: Final[float] = 0.95  # 近 20 年 >95 分位 → 极端
+CAPE_PERCENTILE_HIGH: Final[float] = 0.80  # 近 20 年 >80 分位 → 高估
+CAPE_PERCENTILE_LOW: Final[float] = 0.15  # 近 20 年 <15 分位 → 底部
 CAPE_PERCENTILE_DEEP_LOW: Final[float] = 0.10  # 近 20 年 <10 分位 → 大底
 
 # ──────────────────────────────────────────────────────────────────────────────
 # IV 维度阈值（§4.11.10 维度⑨）
 # ──────────────────────────────────────────────────────────────────────────────
-IV_ABSOLUTE_PANIC: Final[float] = 35.0    # 合成 VIX >35 → 恐慌
+IV_ABSOLUTE_PANIC: Final[float] = 35.0  # 合成 VIX >35 → 恐慌
 IV_ABSOLUTE_EXTREME: Final[float] = 40.0  # 合成 VIX >40 → 极端恐慌
 IV_PERCENTILE_EXTREME: Final[float] = 0.90  # IV 分位 >90 分位近 1 年 → 极端
-IV_PERCENTILE_HIGH: Final[float] = 0.75     # IV 分位 >75 分位 → 偏高
+IV_PERCENTILE_HIGH: Final[float] = 0.75  # IV 分位 >75 分位 → 偏高
 
 # ──────────────────────────────────────────────────────────────────────────────
 # 两融维度阈值（§4.7.6 维度⑩ / §4.8.5 维度⑥）
 # ──────────────────────────────────────────────────────────────────────────────
-MARGIN_RATIO_EXTREME: Final[float] = 0.025   # 两融余额/流通市值 >2.5% → 杠杆极端
-MARGIN_RATIO_HIGH: Final[float] = 0.020      # 两融余额/流通市值 >2.0% → 杠杆高
-MARGIN_DROP_EXTREME: Final[float] = 0.25     # 两融余额降幅从峰值 >25% → 去杠杆极端
-MARGIN_DROP_HIGH: Final[float] = 0.15        # 两融余额降幅从峰值 >15% → 去杠杆
-MARGIN_BUY_RATIO_COLD: Final[float] = 0.07   # 融资买入额占比 <7% → 冰点
+MARGIN_RATIO_EXTREME: Final[float] = 0.025  # 两融余额/流通市值 >2.5% → 杠杆极端
+MARGIN_RATIO_HIGH: Final[float] = 0.020  # 两融余额/流通市值 >2.0% → 杠杆高
+MARGIN_DROP_EXTREME: Final[float] = 0.25  # 两融余额降幅从峰值 >25% → 去杠杆极端
+MARGIN_DROP_HIGH: Final[float] = 0.15  # 两融余额降幅从峰值 >15% → 去杠杆
+MARGIN_BUY_RATIO_COLD: Final[float] = 0.07  # 融资买入额占比 <7% → 冰点
 MARGIN_BUY_RATIO_EXTREME_COLD: Final[float] = 0.05  # 融资买入额占比 <5% → 极端冰点
 
 
@@ -110,21 +148,21 @@ MARGIN_BUY_RATIO_EXTREME_COLD: Final[float] = 0.05  # 融资买入额占比 <5% 
 class RegimeDimensionScore:
     """单维度评分结果（frozen）。"""
 
-    score: float           # ∈ [0, 100]
-    weight: float          # ∈ [0, 1]
-    available: bool        # 数据是否可用（False=degraded）
-    detail: dict[str, Any] # 维度内明细（调试用）
+    score: float  # ∈ [0, 100]
+    weight: float  # ∈ [0, 1]
+    available: bool  # 数据是否可用（False=degraded）
+    detail: dict[str, Any]  # 维度内明细（调试用）
 
 
 @dataclass(frozen=True)
 class InstitutionalRegimeScore:
     """机构级 regime 综合评分输出（frozen）。"""
 
-    regime_score: float              # 综合评分 ∈ [0, 100]
-    regime_state: str                # RegimeState 词表
-    confidence: float                # ∈ [0, 1]
+    regime_score: float  # 综合评分 ∈ [0, 100]
+    regime_state: str  # RegimeState 词表
+    confidence: float  # ∈ [0, 1]
     dimensions: dict[str, RegimeDimensionScore]  # cape / iv / margin
-    degraded: bool                   # 是否降级（任一维度缺失）
+    degraded: bool  # 是否降级（任一维度缺失）
     degraded_dimensions: tuple[str, ...]  # 缺失维度列表
 
 
@@ -192,9 +230,7 @@ class InstitutionalRegimeScorer:
 
         dims["cape"] = self._score_cape(cape_percentile, cape_value)
         dims["iv"] = self._score_iv(iv_synthetic_vix, iv_percentile_1y)
-        dims["margin"] = self._score_margin(
-            margin_balance_ratio, margin_drop_from_peak, margin_buy_ratio
-        )
+        dims["margin"] = self._score_margin(margin_balance_ratio, margin_drop_from_peak, margin_buy_ratio)
 
         # 有效维度权重归一
         valid = [(d.score, d.weight) for d in dims.values() if d.available]
@@ -262,19 +298,19 @@ class InstitutionalRegimeScorer:
         # 分位映射（§4.7.6：PE 分位 <15% 底部 / >95% 极端）
         # 语义：percentile 越高 → 估值越极端 → score 越高（泡沫方向）
         if percentile >= CAPE_PERCENTILE_EXTREME:
-            score = 95.0   # >95% 极端泡沫
+            score = 95.0  # >95% 极端泡沫
         elif percentile >= CAPE_PERCENTILE_HIGH:
-            score = 75.0   # 80%~95% 高估
+            score = 75.0  # 80%~95% 高估
         elif percentile >= 0.50:
-            score = 50.0   # 50%~80% 中性
+            score = 50.0  # 50%~80% 中性
         elif percentile >= 0.25:
-            score = 40.0   # 25%~50% 偏低
+            score = 40.0  # 25%~50% 偏低
         elif percentile >= CAPE_PERCENTILE_LOW:
-            score = 25.0   # 15%~25% 底部区间
+            score = 25.0  # 15%~25% 底部区间
         elif percentile >= CAPE_PERCENTILE_DEEP_LOW:
-            score = 10.0   # 10%~15% 大底
+            score = 10.0  # 10%~15% 大底
         else:
-            score = 5.0    # <10% 极端大底
+            score = 5.0  # <10% 极端大底
 
         detail: dict[str, Any] = {"percentile": percentile}
         if value is not None:

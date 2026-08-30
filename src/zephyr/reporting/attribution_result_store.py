@@ -14,7 +14,8 @@
 # [TESTS] tests/reporting/test_attribution_result_store.py
 # [A_module] module_id=MOD-RPT-037 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_REPORTING — 归因结果落库 + 查询接口（54 号 BM-REC-02-B 残余清偿）。
+"""
+D_REPORTING — 归因结果落库 + 查询接口（54 号 BM-REC-02-B 残余清偿）。
 
 残余阻塞清偿口径（#ARCH-214 留痕："BM-REC-02-B 数据模型+产出逻辑+契约层
 三段齐备；残余阻塞=消费落库 DDL" + 54 号 §2.4 横向缺口"归因结果表无 DDL 执行
@@ -37,6 +38,85 @@
 落库库位：governance.db（DB_PATH SSoT，对齐 reconciliation_differences 落
 治理库先例，见 trading/recon_runner.py）。本模块只消费既有表/内核，不改
 SettlementReconciler/PositionReconciler/DailyAuditor。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: db_path 参数
+#   fields: 参数 db_path，类型注解 str | Path | None
+#   code: attribution_result_store.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: report 参数
+#   fields: 参数 report，类型注解 PerformanceAttributionReport
+#   code: attribution_result_store.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: layer 参数
+#   fields: 参数 layer（无注解）
+#   code: attribution_result_store.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: net_pnl 参数
+#   fields: 参数 net_pnl（无注解）
+#   code: attribution_result_store.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ensure_attribution_results_table
+#   name_en: ensure_attribution_results_table
+#   intro: 幂等建表（CREATE TABLE IF NOT EXISTS；DDL 真源=reconciliation_schem…
+#   desc: 幂等建表（CREATE TABLE IF NOT EXISTS；DDL 真源=reconciliation_schema）。 Args: db_path: 库路径；None=DB…；源码 L230-L246
+#   inputs: db_path
+#   outputs: Path
+# - id: A2
+#   name_zh: ② store_attribution_report
+#   name_en: store_attribution_report
+#   intro: CTR-P1-009 归因报告落库（幂等：同 idempotency_key 重复写=跳过保首条）。
+#   desc: CTR-P1-009 归因报告落库（幂等：同 idempotency_key 重复写=跳过保首条）。 Args: report: CTR-P1-009 契约报告（firm 层=账…；源码 L249-L305
+#   inputs: report layer net_pnl invariant_status db_path
+#   outputs: int
+# - id: A3
+#   name_zh: ③ persist_two_layer_attribution
+#   name_en: persist_two_layer_attribution
+#   intro: 两层归因编排落库（54 号 §3.5：firm 层 + 策略层 + 求和不变量硬门禁）。
+#   desc: 两层归因编排落库（54 号 §3.5：firm 层 + 策略层 + 求和不变量硬门禁）。 流程：①键集一致性 fail-closed → ②求和不变量校验（复用 zephyr.r…；源码 L308-L380
+#   inputs: firm_report strategy_reports strategy_pnls firm_pnl tolerance_bps db_…
+#   outputs: TwoLayerPersistResult
+# - id: A4
+#   name_zh: ④ query_attribution_results
+#   name_en: query_attribution_results
+#   intro: 查询归因结果（过滤器可组合，按 period/id 倒序）。
+#   desc: 查询归因结果（过滤器可组合，按 period/id 倒序）。 Args: portfolio_id: 组合/策略 ID 过滤（None=不限；给定须非空）。 period: 周期…；源码 L383-L435
+#   inputs: portfolio_id period layer limit db_path
+#   outputs: list[dict]
+# - id: A5
+#   name_zh: ⑤ get_attribution_by_key
+#   name_en: get_attribution_by_key
+#   intro: 按幂等键精确查询归因结果（未命中返回 None）。
+#   desc: 按幂等键精确查询归因结果（未命中返回 None）。 Raises: ValueError: idempotency_key 非法（fail-closed）。；源码 L438-L453
+#   inputs: idempotency_key db_path
+#   outputs: dict | None
+#   （注：A5 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: Path
+#   name_en: Path
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 归因报告生成链路(54号 BM-REC-02-B); 55号复盘(归因结果消费)
+# - id: O2
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 归因报告生成链路(54号 BM-REC-02-B); 55号复盘(归因结果消费)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations
@@ -88,9 +168,7 @@ _SQL_INSERT: Final = (
     "invariant_status, computed_at, idempotency_key, schema_version) "
     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 )
-_SQL_SELECT_ID_BY_KEY: Final = (
-    "SELECT id FROM attribution_results WHERE idempotency_key = ?"
-)
+_SQL_SELECT_ID_BY_KEY: Final = "SELECT id FROM attribution_results WHERE idempotency_key = ?"
 _SQL_QUERY_BASE: Final = (
     "SELECT id, period, portfolio_id, layer, allocation_effect, selection_effect, "
     "interaction_effect, total_return, transaction_cost_drag, net_pnl, "
@@ -145,9 +223,7 @@ def _derive_period(report: PerformanceAttributionReport) -> str:
     start = report.period_start.strip() if isinstance(report.period_start, str) else ""
     end = report.period_end.strip() if isinstance(report.period_end, str) else ""
     if not start or not end:
-        raise ValueError(
-            f"period_start/period_end 不能为空: {report.period_start!r}/{report.period_end!r}"
-        )
+        raise ValueError(f"period_start/period_end 不能为空: {report.period_start!r}/{report.period_end!r}")
     return start if start == end else f"{start}~{end}"
 
 
@@ -270,9 +346,7 @@ def persist_two_layer_attribution(
             f"only_pnls={sorted(pnl_keys - report_keys)}"
         )
 
-    invariant = validate_strategy_pnl_invariant(
-        dict(strategy_pnls), firm_pnl, tolerance_bps
-    )
+    invariant = validate_strategy_pnl_invariant(dict(strategy_pnls), firm_pnl, tolerance_bps)
     status = str(invariant["invariant_status"])
     if status != "PASS":
         _logger.warning(
@@ -282,12 +356,17 @@ def persist_two_layer_attribution(
         )
 
     firm_row_id = store_attribution_report(
-        firm_report, layer=LAYER_FIRM, net_pnl=firm_pnl, invariant_status=status,
+        firm_report,
+        layer=LAYER_FIRM,
+        net_pnl=firm_pnl,
+        invariant_status=status,
         db_path=db_path,
     )
     strategy_row_ids = {
         sid: store_attribution_report(
-            strategy_reports[sid], layer=LAYER_STRATEGY, net_pnl=strategy_pnls[sid],
+            strategy_reports[sid],
+            layer=LAYER_STRATEGY,
+            net_pnl=strategy_pnls[sid],
             db_path=db_path,
         )
         for sid in strategy_reports

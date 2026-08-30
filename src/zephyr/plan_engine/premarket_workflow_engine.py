@@ -14,7 +14,8 @@
 # [TESTS] tests/plan_engine/test_premarket_workflow_engine.py
 # [A_module] module_id=MOD-PLAN-023 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""PremarketWorkflowEngine — 盘前标准化工作流引擎（MOD-PLAN-023）。
+"""
+PremarketWorkflowEngine — 盘前标准化工作流引擎（MOD-PLAN-023）。
 
 B14-04681（AUD-DRAFT-001-DIGEST P2 波 P2-W09，CAND-PLAN-017，A9 D-TRADING-15）：
 盘前标准**六工序编排**——数据同步 → 隔夜复盘 → 情绪扫描 → 预案生成 →
@@ -30,6 +31,43 @@ B14-04681（AUD-DRAFT-001-DIGEST P2 波 P2-W09，CAND-PLAN-017，A9 D-TRADING-15
 查重分工（蓝图 §0）：premarket_workflow（MOD-PLAN-021）=08:00-09:15 三
 段式**分钟级排程 DAG**（复用 WorkDAG，重排程窗口/段序）；本件=**六工序
 handler 编排**（重 handler 注入/人工接管点/耗时统计），不重造排程 DAG。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: handlers 参数
+#   fields: 参数 handlers（无注解）
+#   code: premarket_workflow_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: premarket_workflow_engine.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: manual_steps 参数
+#   fields: 参数 manual_steps（无注解）
+#   code: premarket_workflow_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① PremarketWorkflowEngine
+#   name_en: PremarketWorkflowEngine
+#   intro: 盘前六工序编排引擎（handler/时钟注入，纯内存确定性）。
+#   desc: 盘前六工序编排引擎（handler/时钟注入，纯内存确定性）。；公共方法（定义序）: run, confirm_manual；源码 L167-L326
+#   inputs: handlers clock manual_steps
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: PremarketWorkflowEngine
+#   downstream: 运行时装配批（盘前SOP六工序handler绑定 / 人工接管确认回路接线）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -67,12 +105,12 @@ class PremarketWorkflowError(Exception):
 class WorkflowStepId(str, Enum):
     """盘前六工序（定义序即执行序，词表闭合）。"""
 
-    DATA_SYNC = "data_sync"                    # 数据同步
-    OVERNIGHT_REVIEW = "overnight_review"      # 隔夜复盘
-    SENTIMENT_SCAN = "sentiment_scan"          # 情绪扫描
-    PLAN_GENERATION = "plan_generation"        # 预案生成
-    PREMARKET_CHECK = "premarket_check"        # 盘前检查
-    READINESS_CONFIRM = "readiness_confirm"    # 就绪确认
+    DATA_SYNC = "data_sync"  # 数据同步
+    OVERNIGHT_REVIEW = "overnight_review"  # 隔夜复盘
+    SENTIMENT_SCAN = "sentiment_scan"  # 情绪扫描
+    PLAN_GENERATION = "plan_generation"  # 预案生成
+    PREMARKET_CHECK = "premarket_check"  # 盘前检查
+    READINESS_CONFIRM = "readiness_confirm"  # 就绪确认
 
 
 _STEP_ORDER: Final = tuple(WorkflowStepId)
@@ -143,9 +181,7 @@ class PremarketWorkflowEngine:
         missing = expected - keys
         extra = keys - expected
         if missing:
-            raise PremarketWorkflowError(
-                f"缺少工序 handler: {[s.value for s in _STEP_ORDER if s in missing]}"
-            )
+            raise PremarketWorkflowError(f"缺少工序 handler: {[s.value for s in _STEP_ORDER if s in missing]}")
         if extra:
             raise PremarketWorkflowError(f"未知工序 handler 键: {sorted(str(k) for k in extra)}")
         for step_id, handler in handlers.items():
@@ -181,9 +217,7 @@ class PremarketWorkflowEngine:
             step = _STEP_ORDER[idx]
             if step in self._manual_steps:
                 now = self._clock()
-                self._records[step] = StepRecord(
-                    step, StepStatus.WAITING_MANUAL, "人工接管点等待确认", now, None, None
-                )
+                self._records[step] = StepRecord(step, StepStatus.WAITING_MANUAL, "人工接管点等待确认", now, None, None)
                 self._waiting_step = step
                 _log.info("盘前工作流人工接管点: %s 等待确认", step.value)
                 return
@@ -195,17 +229,19 @@ class PremarketWorkflowEngine:
                 _log.exception("盘前工序失败: %s", step.value)
                 finished = self._clock()
                 self._records[step] = StepRecord(
-                    step, StepStatus.FAILED, f"{type(exc).__name__}: {exc}",
-                    started, finished, _duration(started, finished),
+                    step,
+                    StepStatus.FAILED,
+                    f"{type(exc).__name__}: {exc}",
+                    started,
+                    finished,
+                    _duration(started, finished),
                 )
                 self._blocked_step = step
                 self._skip_rest(idx + 1)
                 self._finished_at = finished
                 return
             if out is not None and not isinstance(out, str):
-                raise PremarketWorkflowError(
-                    f"工序产出须为 str|None: {step.value} 返回 {type(out).__name__}"
-                )
+                raise PremarketWorkflowError(f"工序产出须为 str|None: {step.value} 返回 {type(out).__name__}")
             finished = self._clock()
             detail = out or ""
             self._records[step] = StepRecord(
@@ -216,8 +252,7 @@ class PremarketWorkflowEngine:
 
     def _report(self) -> WorkflowReport:
         steps = tuple(
-            self._records.get(s, StepRecord(s, StepStatus.PENDING, "", None, None, None))
-            for s in _STEP_ORDER
+            self._records.get(s, StepRecord(s, StepStatus.PENDING, "", None, None, None)) for s in _STEP_ORDER
         )
         ready = (
             self._active
@@ -225,9 +260,7 @@ class PremarketWorkflowEngine:
             and self._blocked_step is None
             and all(r.status is StepStatus.DONE for r in steps)
         )
-        total = sum(
-            (r.duration_seconds for r in steps if r.duration_seconds is not None), Decimal("0")
-        )
+        total = sum((r.duration_seconds for r in steps if r.duration_seconds is not None), Decimal("0"))
         return WorkflowReport(
             trading_date=self._trading_date or "",
             steps=steps,
@@ -246,9 +279,7 @@ class PremarketWorkflowEngine:
         if not isinstance(trading_date, str) or not trading_date:
             raise PremarketWorkflowError("trading_date 为空")
         if self._active and self._waiting_step is not None:
-            raise PremarketWorkflowError(
-                f"上一轮在人工接管点 {self._waiting_step.value} 等待确认，禁止并发启动"
-            )
+            raise PremarketWorkflowError(f"上一轮在人工接管点 {self._waiting_step.value} 等待确认，禁止并发启动")
         self._reset()
         self._active = True
         self._trading_date = trading_date
@@ -270,14 +301,22 @@ class PremarketWorkflowEngine:
         idx = _STEP_ORDER.index(step)
         if approved:
             self._records[step] = StepRecord(
-                step, StepStatus.DONE, "人工确认通过", rec.started_at, finished,
+                step,
+                StepStatus.DONE,
+                "人工确认通过",
+                rec.started_at,
+                finished,
                 _duration(rec.started_at, finished) if rec.started_at is not None else None,
             )
             self._outputs[step] = "人工确认通过"
             self._execute_from(idx + 1)
         else:
             self._records[step] = StepRecord(
-                step, StepStatus.FAILED, "人工接管否决", rec.started_at, finished,
+                step,
+                StepStatus.FAILED,
+                "人工接管否决",
+                rec.started_at,
+                finished,
                 _duration(rec.started_at, finished) if rec.started_at is not None else None,
             )
             self._blocked_step = step

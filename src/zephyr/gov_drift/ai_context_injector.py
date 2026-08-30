@@ -25,7 +25,87 @@ AI Context Injector — 施工前预检D-023-16 · §6.8。
 注入点：session_manager派发task时 + MCP discover_applicable_gates
 
 
-对标 blueprint.md §6.8。"""
+对标 blueprint.md §6.8。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: module_id 参数
+#   fields: 参数 module_id，类型注解 str
+#   code: ai_context_injector.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: active_events 参数
+#   fields: 参数 active_events，类型注解 list[dict[str, object]]
+#   code: ai_context_injector.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: limit 参数
+#   fields: 参数 limit，类型注解 int
+#   code: ai_context_injector.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: snapshot 参数
+#   fields: 参数 snapshot，类型注解 HealthSnapshot
+#   code: ai_context_injector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① build_health_snapshot
+#   name_en: build_health_snapshot
+#   intro: build_health_snapshot(module_id, active_events) 源码 L162-L175
+#   desc: 源码 L162-L175
+#   inputs: module_id active_events
+#   outputs: HealthSnapshot
+# - id: A2
+#   name_zh: ② build_top_drifts
+#   name_en: build_top_drifts
+#   intro: build_top_drifts(active_events, limit) 源码 L178-L201
+#   desc: 源码 L178-L201
+#   inputs: active_events limit
+#   outputs: list[TopDriftItem]
+# - id: A3
+#   name_zh: ③ inject_minimal
+#   name_en: inject_minimal
+#   intro: inject_minimal(snapshot) 源码 L204-L229
+#   desc: 源码 L204-L229
+#   inputs: snapshot
+#   outputs: InjectedContext
+# - id: A4
+#   name_zh: ④ inject_standard
+#   name_en: inject_standard
+#   intro: inject_standard(snapshot, top_drifts) 源码 L232-L251
+#   desc: 源码 L232-L251
+#   inputs: snapshot top_drifts
+#   outputs: InjectedContext
+# - id: A5
+#   name_zh: ⑤ inject_full
+#   name_en: inject_full
+#   intro: inject_full(snapshot, all_events) 源码 L254-L295
+#   desc: 源码 L254-L295
+#   inputs: snapshot all_events
+#   outputs: InjectedContext
+#   （注：A5 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: HealthSnapshot
+#   name_en: HealthSnapshot
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_drift/_infrastructure.py ; tests/ai/test_ai_context_injector.py
+# - id: O2
+#   name_zh: list[TopDriftItem]
+#   name_en: list[TopDriftItem]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_drift/_infrastructure.py ; tests/ai/test_ai_context_injector.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
+"""
 
 from __future__ import annotations
 

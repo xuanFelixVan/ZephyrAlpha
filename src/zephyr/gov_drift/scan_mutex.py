@@ -27,7 +27,35 @@ validate_fencing() 供受保护操作前验证未被取代。
 5.58.4：锁创建使用 os.open(O_CREAT|O_EXCL) 原子创建，禁止 os.replace 覆盖他人锁。
 5.58.5：LIGHT 扫描遇 DEEP 持锁时排队等待，禁止 force_release 强抢。
 
-对标 blueprint.md §2.15（多实例竞态控制）。"""
+对标 blueprint.md §2.15（多实例竞态控制）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: scan_mutex.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ScanMutex
+#   name_en: ScanMutex
+#   intro: class ScanMutex 源码 L100-L435
+#   desc: 公共方法（定义序）: lock_dir, lock_path, project_root, is_locked, read_lock, try_acquire, acquire, release, force_rele…
+#   inputs: project_root
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: ScanMutex
+#   downstream: src/zephyr/gov_drift/_scanners.py ; tests/audit/test_scan_mutex.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 from __future__ import annotations
 

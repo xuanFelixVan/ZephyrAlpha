@@ -22,7 +22,35 @@ Drift Detector 数据模型 — drift_models.py
 定义漂移检测系统的所有核心数据类、枚举和类型别名。
 
 
-对标 blueprint.md §2.3（漂移状态机数据表）、§7（文件组成）。"""
+对标 blueprint.md §2.3（漂移状态机数据表）、§7（文件组成）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: drift_models.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① DriftBudget
+#   name_en: DriftBudget
+#   intro: class DriftBudget 源码 L196-L224
+#   desc: 公共方法（定义序）: tier_budget, consume, is_exhausted；源码 L196-L224
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 14 个公共定义未列入（含 14 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（15 定义）
+#   name_en: public defs
+#   intro: DriftBudget
+#   downstream: drift_engine;detector_dispatcher;correlation_engine
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 from __future__ import annotations
 

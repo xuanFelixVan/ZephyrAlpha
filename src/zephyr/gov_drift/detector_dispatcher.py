@@ -23,7 +23,51 @@ Detector Dispatcher — detector_dispatcher.py
 并行调度器：asyncio subprocess pool 执行检测器脚本，含结果缓存和并行度控制。
 
 
-对标 blueprint.md §2.4（增量扫描与性能 SLO）。"""
+对标 blueprint.md §2.4（增量扫描与性能 SLO）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: level 参数
+#   fields: 参数 level，类型注解 ScanLevel
+#   code: detector_dispatcher.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ResultCache
+#   name_en: ResultCache
+#   intro: class ResultCache 源码 L111-L121
+#   desc: 公共方法（定义序）: get, put, clear；源码 L111-L121
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② DetectorDispatcher
+#   name_en: DetectorDispatcher
+#   intro: class DetectorDispatcher 源码 L124-L328
+#   desc: 公共方法（定义序）: max_parallel, registry_path, scripts_root, dispatch, cache_key, build_cache_key；源码 L124-L328
+#   inputs: registry_path max_parallel
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ get_max_parallel_for_level
+#   name_en: get_max_parallel_for_level
+#   intro: get_max_parallel_for_level(level) 源码 L331-L336
+#   desc: 源码 L331-L336
+#   inputs: level
+#   outputs: int
+#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests/audit/test_detector_dispatcher.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
+"""
 
 from __future__ import annotations
 

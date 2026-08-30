@@ -22,7 +22,35 @@ Alert Router — alert_router.py
 告警路由与疲劳管理：四级路由 + 去重(6h) + 聚合(batch/causal) + 静默策略。
 
 
-对标 blueprint.md §5.4 / TASK-INF-0028 / D-023-13。"""
+对标 blueprint.md §5.4 / TASK-INF-0028 / D-023-13。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: alert_router.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① AlertRouter
+#   name_en: AlertRouter
+#   intro: class AlertRouter 源码 L86-L208
+#   desc: 公共方法（定义序）: classify, should_silence, start_focus_time, should_deduplicate, record_alert, route, batch_alerts；…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: AlertRouter
+#   downstream: src/zephyr/gov_drift/_infrastructure.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 from __future__ import annotations
 

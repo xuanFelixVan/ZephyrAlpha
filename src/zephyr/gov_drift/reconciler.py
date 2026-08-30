@@ -21,7 +21,35 @@ Auto Reconciler — reconciler.py
 
 自动对账引擎：pre-fix 快照 -> 自动修复 -> 验证 -> 回滚闭环。
 
-对标 blueprint.md §2.5（自动对账策略）。"""
+对标 blueprint.md §2.5（自动对账策略）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: reconciler.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AutoFixer
+#   name_en: AutoFixer
+#   intro: class AutoFixer 源码 L137-L532
+#   desc: 公共方法（定义序）: pre_fix_snapshot, auto_fix, verify_fix, rollback_fix, verify_rollback, generate_suggestion, cleanu…
+#   inputs: project_root
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: AutoFixer
+#   downstream: src/zephyr/gov_drift/_analysis.py ; src/zephyr/gov_enforcement/rule_enforcement…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 from __future__ import annotations
 
@@ -59,7 +87,7 @@ _VALIDATOR_SCRIPT_MAP: dict[str, str] = {
 _THREE_WAY_VALIDATOR = "d5_architecture/validators/validate_three_way_consistency.py"
 
 
-def _atomic_write_text(path: "os.PathLike[str] | str", content: str) -> None:
+def _atomic_write_text(path: os.PathLike[str] | str, content: str) -> None:
     """RULE-ONE 原子写入：tmp+flush+fsync+os.replace（reconciler fix-in-place 纪律）。"""
     tmp_path = f"{path}.{os.getpid()}.tmp"
     try:

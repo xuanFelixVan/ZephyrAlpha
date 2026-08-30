@@ -22,7 +22,8 @@
 # F3: validate_attribution_result（registry 写入前形状校验：method 枚举 + 数值字段 NaN/非数值拒）
 # O1: attribution_result dict（62 号 §7.2 形状：method/allocation_effect/selection_effect/interaction_effect/factor_contributions/alpha）
 # [/ALGO_FLOW]
-"""D_REPORTING — 归因结果 → experiment_registry.attribution_result 字段映射（62 号未施工清单 #4）。
+"""
+D_REPORTING — 归因结果 → experiment_registry.attribution_result 字段映射（62 号未施工清单 #4）。
 
 54 号归因执行体已落地（``reporting.attribution``：StrategyPnlAccountant /
 validate_strategy_pnl_invariant / shapley_strategy_attribution）；本模块把其产出 dict
@@ -36,6 +37,77 @@ validate_strategy_pnl_invariant / shapley_strategy_attribution）；本模块把
 
 依据: 62_business_registry_construction §7.2（attribution_result schema）+ 54 号 §3.5/§3.12
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: method 参数
+#   fields: 参数 method，类型注解 str
+#   code: attribution_registry_mapper.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: allocation_effect 参数
+#   fields: 参数 allocation_effect（无注解）
+#   code: attribution_registry_mapper.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: selection_effect 参数
+#   fields: 参数 selection_effect（无注解）
+#   code: attribution_registry_mapper.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: interaction_effect 参数
+#   fields: 参数 interaction_effect（无注解）
+#   code: attribution_registry_mapper.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① build_attribution_result
+#   name_en: build_attribution_result
+#   intro: 构造 62 号 §7.2 attribution_result 字段形状（None 字段不写出）。
+#   desc: 构造 62 号 §7.2 attribution_result 字段形状（None 字段不写出）。 Raises: AttributionMappingError: method…；源码 L150-L179
+#   inputs: method allocation_effect selection_effect interaction_effect factor_c…
+#   outputs: dict
+# - id: A2
+#   name_zh: ② map_shapley_to_attribution_result
+#   name_en: map_shapley_to_attribution_result
+#   intro: ``shapley_strategy_attribution`` 产出 → attribution_result（54…
+#   desc: ``shapley_strategy_attribution`` 产出 → attribution_result（54 号 §3.12 → 62 号 §7.2）。 Shapley…；源码 L182-L196
+#   inputs: shapley_result
+#   outputs: dict
+# - id: A3
+#   name_zh: ③ map_invariant_to_attribution_result
+#   name_en: map_invariant_to_attribution_result
+#   intro: ``validate_strategy_pnl_invariant`` 产出 → attribution_result…
+#   desc: ``validate_strategy_pnl_invariant`` 产出 → attribution_result（54 号 §3.5 → 62 号 §7.2）。 facto…；源码 L199-L215
+#   inputs: invariant_result
+#   outputs: dict
+# - id: A4
+#   name_zh: ④ validate_attribution_result
+#   name_en: validate_attribution_result
+#   intro: attribution_result 形状校验（registry 写入前 gate；空列表=合规）。
+#   desc: attribution_result 形状校验（registry 写入前 gate；空列表=合规）。 校验：method 必填且在枚举内；数值字段可解析且非 NaN/inf； f…；源码 L218-L246
+#   inputs: obj
+#   outputs: list[str]
+#   （注：A4 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: dict
+#   name_en: dict
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 调用方（experiment_registry attribution_result 回填批——62 号未施工清单 #4；本模块仅提供映射，不批量执行回填）
+# - id: O2
+#   name_zh: list[str]
+#   name_en: list[str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 调用方（experiment_registry attribution_result 回填批——62 号未施工清单 #4；本模块仅提供映射，不批量执行回填）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

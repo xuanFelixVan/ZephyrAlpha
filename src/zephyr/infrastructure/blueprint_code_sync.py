@@ -21,6 +21,41 @@ Blueprint-Code Sync — 蓝图-代码索引同步验证。
 依据：
     蓝图 MOD-TASK_SYSTEM §6.4.2 + v0.6.0
     任务卡 TASK-INF-0111 (Part 2/2)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: blueprint_code_sync.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① BlueprintCodeSync
+#   name_en: BlueprintCodeSync
+#   intro: class BlueprintCodeSync 源码 L85-L173
+#   desc: 公共方法（定义序）: registry_path, project_root, collect_entries, verify_sync, validate_task_card；源码 L85-L173
+#   inputs: project_root
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② BlueprintCodeSyncService
+#   name_en: BlueprintCodeSyncService
+#   intro: class BlueprintCodeSyncService 源码 L184-L192
+#   desc: 公共方法（定义序）: sync, check_drift；源码 L184-L192
+#   inputs: config
+#   outputs: 返回值
+#   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: BlueprintCodeSync, BlueprintCodeSyncService
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from dataclasses import dataclass

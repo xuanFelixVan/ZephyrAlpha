@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-PLAN-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-r"""MOD-PLAN-016 — 相似日 KNN 尾盘推演 walk-forward 命中率评估器（44号 §9.3 纪律开关落地）。
+"""
+MOD-PLAN-016 — 相似日 KNN 尾盘推演 walk-forward 命中率评估器（44号 §9.3 纪律开关落地）。
 
 设计真源：44号 §9.3（walk-forward 验证命中率 <55% → 自动停用）+ 92号 §8.7
 （M4-④ 日志→参数校准反馈闭环）。本模块消费 prediction_log 中
@@ -36,6 +37,51 @@ module="plan_engine.scenario_planner" 的 scenario_plan 预测行与 outcome 回
 与 brier_calibration（MOD-PLAN-010）的分工：MOD-PLAN-010 是通用校准报告器
 （W0/W6 消费），本模块是 similar_day_inference 专用纪律开关评估器
 （44号 §9.3 命中率阈值 + walk-forward 时序输出）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: eval_date 参数
+#   fields: 参数 eval_date，类型注解 str | date | None
+#   code: similar_day_evaluator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: similar_day_evaluator.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: db_path 参数
+#   fields: 参数 db_path（无注解）
+#   code: similar_day_evaluator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SimilarDayEvalReport
+#   name_en: SimilarDayEvalReport
+#   intro: 相似日 walk-forward 评估报告（JSON 可序列化）。
+#   desc: 相似日 walk-forward 评估报告（JSON 可序列化）。；公共方法（定义序）: to_dict；源码 L159-L180
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② evaluate_similar_day_hit_rate
+#   name_en: evaluate_similar_day_hit_rate
+#   intro: 相似日 walk-forward 命中率评估主入口。
+#   desc: 相似日 walk-forward 命中率评估主入口。 Args: eval_date: 评估基准日（None=今日）；walk-forward 仅用 < eval_date 的样…；源码 L342-L388
+#   inputs: eval_date config db_path
+#   outputs: SimilarDayEvalReport
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: SimilarDayEvalReport
+#   name_en: SimilarDayEvalReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: similar_day_inference（walkforward_hit_rate 回填）; G04 参数校准流程（评审建议）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -77,14 +123,16 @@ class SimilarDayEvalConfig:
     """相似日评估配置（frozen 容器）。"""
 
     hit_rate_floor: float = DEFAULT_HIT_RATE_FLOOR  # 命中率阈值 <55% → 停用
-    window_days: int = DEFAULT_WINDOW_DAYS           # 滚动窗口天数（自然日）
-    min_samples: int = DEFAULT_MIN_SAMPLES           # 样本量守卫下限
-    module: str = _MODULE_LOG_NAME                   # prediction_log.module 过滤
+    window_days: int = DEFAULT_WINDOW_DAYS  # 滚动窗口天数（自然日）
+    min_samples: int = DEFAULT_MIN_SAMPLES  # 样本量守卫下限
+    module: str = _MODULE_LOG_NAME  # prediction_log.module 过滤
 
     def __post_init__(self) -> None:
-        if isinstance(self.hit_rate_floor, bool) or not isinstance(
-            self.hit_rate_floor, (int, float)
-        ) or not 0.0 < float(self.hit_rate_floor) < 1.0:
+        if (
+            isinstance(self.hit_rate_floor, bool)
+            or not isinstance(self.hit_rate_floor, (int, float))
+            or not 0.0 < float(self.hit_rate_floor) < 1.0
+        ):
             raise ValueError(f"hit_rate_floor 非法（须 0<t<1）: {self.hit_rate_floor!r}")
         if isinstance(self.window_days, bool) or not isinstance(self.window_days, int) or self.window_days < 1:
             raise ValueError(f"window_days 非法（须正整数）: {self.window_days!r}")
@@ -96,15 +144,15 @@ class SimilarDayEvalConfig:
 class HitRatePoint:
     """walk-forward 命中率时序单点。"""
 
-    eval_date: str          # 评估日（该日收盘后评估）
-    window_start: str       # 窗口起点（含）
-    window_end: str         # 窗口终点（含，= eval_date）
-    sample_size: int        # 窗口内有效样本数
-    hit_count: int          # 命中数
+    eval_date: str  # 评估日（该日收盘后评估）
+    window_start: str  # 窗口起点（含）
+    window_end: str  # 窗口终点（含，= eval_date）
+    sample_size: int  # 窗口内有效样本数
+    hit_count: int  # 命中数
     hit_rate: float | None  # 命中率（sample_size=0 → None）
-    brier: float | None     # Brier 评分（sample_size<3 → None）
+    brier: float | None  # Brier 评分（sample_size<3 → None）
     suggested_enabled: bool  # 建议启用/停用
-    reason: str             # 判定原因
+    reason: str  # 判定原因
 
 
 @dataclass(frozen=True)
@@ -114,9 +162,9 @@ class SimilarDayEvalReport:
     module: str
     eval_date: str
     config: dict[str, Any]
-    series: tuple[HitRatePoint, ...]   # 按 eval_date 升序
-    latest: HitRatePoint | None        # 最新评估点（series 为空 → None）
-    suggested_enabled: bool            # 综合建议（= latest.suggested_enabled）
+    series: tuple[HitRatePoint, ...]  # 按 eval_date 升序
+    latest: HitRatePoint | None  # 最新评估点（series 为空 → None）
+    suggested_enabled: bool  # 综合建议（= latest.suggested_enabled）
     walkforward_hit_rate: float | None  # 最新命中率（供 SimilarDayConfig 回填）
 
     def to_dict(self) -> dict[str, Any]:
@@ -182,11 +230,7 @@ def _evaluate_single_window(
     hit_rate = hit_count / n if n > 0 else None
 
     # Brier 校准（confidence_scale 作为概率代理，hit 作为 0/1）
-    brier_pairs = [
-        (conf, 1.0 if hit else 0.0)
-        for _, hit, conf in samples
-        if conf is not None
-    ]
+    brier_pairs = [(conf, 1.0 if hit else 0.0) for _, hit, conf in samples if conf is not None]
     brier: float | None = None
     if len(brier_pairs) >= 3:
         try:
@@ -205,9 +249,7 @@ def _evaluate_single_window(
         suggested = True
         reason = f"命中率 {hit_rate:.2%} ≥ {config.hit_rate_floor:.0%}，维持启用"
 
-    window_start = (
-        date.fromisoformat(eval_date) - timedelta(days=config.window_days - 1)
-    ).isoformat()
+    window_start = (date.fromisoformat(eval_date) - timedelta(days=config.window_days - 1)).isoformat()
     return HitRatePoint(
         eval_date=eval_date,
         window_start=window_start,

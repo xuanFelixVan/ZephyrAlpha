@@ -14,7 +14,8 @@
 # [TESTS] tests/intelligence/test_api_llm_pool.py
 # [A_module] module_id=MOD-INT-API-LLM-POOL | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""ApiLlmPool — API LLM 池 (MOD-INT-API-LLM-POOL)
+"""
+ApiLlmPool — API LLM 池 (MOD-INT-API-LLM-POOL)
 
 B11-02629（AUD-DRAFT-001-DIGEST P1 波 W-P1-11，§8.1）：provider 池注册
 （模型/价格/限额/超时）+ token 计费台账（按 Agent/任务归集，经
@@ -24,6 +25,38 @@ LLM 池 B11-02628 与 llm_gateway 降级链，本模块不执行）。
 
 查重裁定：不复制 llm_gateway（MOD-INF-009，真实调用面）与 model_router
 （任务→模型静态路由）逻辑；密钥零字段（secrets 管理在 llm_gateway 层）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: api_llm_pool.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: usage_sink 参数
+#   fields: 参数 usage_sink（无注解）
+#   code: api_llm_pool.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ApiLlmPool
+#   name_en: ApiLlmPool
+#   intro: API LLM 池：注册 + 计费台账 + 健康度调度（判定核心纯内存无 IO）。
+#   desc: API LLM 池：注册 + 计费台账 + 健康度调度（判定核心纯内存无 IO）。 Args: config: 池配置（不健康阈值/成本上限）。 usage_sink: 台账外发…；公共方法（定义序）: registe…
+#   inputs: config usage_sink
+#   outputs: 返回值
+#   （注：A1 之后另有 9 个公共定义未列入（含 9 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（10 定义）
+#   name_en: public defs
+#   intro: ApiLlmPool
+#   downstream: 运行时装配批（provider 注册表装配 / usage_sink 接 cost_tracker / degrade_to_local 接本地池切换）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

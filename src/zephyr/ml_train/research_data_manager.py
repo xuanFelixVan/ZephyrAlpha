@@ -14,7 +14,8 @@
 # [TESTS] tests/ml_train/test_research_data_manager.py
 # [A_module] module_id=MOD-ML-019 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""ResearchDataManager — 研究数据管理器（MOD-ML-019）。
+"""
+ResearchDataManager — 研究数据管理器（MOD-ML-019）。
 
 B13-04336（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-MLT-027，A3 D-RESEARCH-01）：
 **数据集快照**（manifest + hash，Git-like 单向版本链）+ **血缘挂 lineage 回调**
@@ -24,6 +25,48 @@ B13-04336（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-MLT-027，A3 D-RESEARCH-01
 
 分工：training_dataset_manager=训练数据集内容管理；本件=研究数据快照版本链
 与血缘/质量/保留协议面，不碰真实存储（root/ sink 全注入）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: research_data_manager.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: lineage_sink 参数
+#   fields: 参数 lineage_sink（无注解）
+#   code: research_data_manager.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: quality_scorer 参数
+#   fields: 参数 quality_scorer（无注解）
+#   code: research_data_manager.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: min_quality 参数
+#   fields: 参数 min_quality（无注解）
+#   code: research_data_manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ResearchDataManager
+#   name_en: ResearchDataManager
+#   intro: 研究数据管理器（快照版本链 + 血缘 + 质量 + 检索 + 保留）。
+#   desc: 研究数据管理器（快照版本链 + 血缘 + 质量 + 检索 + 保留）。；公共方法（定义序）: commit_snapshot, head, history, get_version, list_datasets, se…
+#   inputs: clock lineage_sink quality_scorer min_quality retention_ttl hasher
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: ResearchDataManager
+#   downstream: 运行时装配批（lineage 回调绑定 / 质量门控评分器绑定 / 保留策略 TTL 声明装配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -125,9 +168,7 @@ class ResearchDataManager:
 
     # ── 快照提交（Git-like 版本链） ─────────────────────────────────────────
 
-    def commit_snapshot(
-        self, dataset_id: str, manifest: Mapping, message: str = ""
-    ) -> DatasetSnapshot:
+    def commit_snapshot(self, dataset_id: str, manifest: Mapping, message: str = "") -> DatasetSnapshot:
         """提交数据集快照：hash + 质量门禁 + 链尾追加 + 血缘事件。"""
         if not dataset_id:
             raise ResearchDataError("dataset_id 为空")
@@ -142,9 +183,7 @@ class ResearchDataManager:
             if not 0.0 <= quality <= 1.0:
                 raise ResearchDataError(f"质量评分越界: {quality!r}（需 ∈[0,1]）")
             if self._min_quality is not None and quality < self._min_quality:
-                raise ResearchDataError(
-                    f"质量评分 {quality:.4f} 低于门禁 {self._min_quality:.4f}（拒绝入链）"
-                )
+                raise ResearchDataError(f"质量评分 {quality:.4f} 低于门禁 {self._min_quality:.4f}（拒绝入链）")
         chain = self._datasets.setdefault(dataset_id, [])
         parent = chain[-1].version_id if chain else None
         snap = DatasetSnapshot(
@@ -158,14 +197,16 @@ class ResearchDataManager:
             created_at=self._clock(),
         )
         chain.append(snap)
-        self._emit_lineage({
-            "event": "commit",
-            "dataset_id": dataset_id,
-            "version_id": snap.version_id,
-            "parent_version": parent,
-            "content_hash": content_hash,
-            "at": snap.created_at.isoformat(),
-        })
+        self._emit_lineage(
+            {
+                "event": "commit",
+                "dataset_id": dataset_id,
+                "version_id": snap.version_id,
+                "parent_version": parent,
+                "content_hash": content_hash,
+                "at": snap.created_at.isoformat(),
+            }
+        )
         _log.info("数据集快照: %s (parent=%s)", snap.version_id, parent)
         return snap
 
@@ -216,18 +257,30 @@ class ResearchDataManager:
             head_id = chain[-1].version_id
             for snap in chain:
                 if snap.version_id == head_id:
-                    decisions.append(RetentionDecision(
-                        dataset_id=dataset_id, version_id=snap.version_id,
-                        keep=True, reason="版本链头恒保留",
-                    ))
+                    decisions.append(
+                        RetentionDecision(
+                            dataset_id=dataset_id,
+                            version_id=snap.version_id,
+                            keep=True,
+                            reason="版本链头恒保留",
+                        )
+                    )
                 elif now - snap.created_at > self._retention_ttl:
-                    decisions.append(RetentionDecision(
-                        dataset_id=dataset_id, version_id=snap.version_id,
-                        keep=False, reason=f"超过保留期 {self._retention_ttl}",
-                    ))
+                    decisions.append(
+                        RetentionDecision(
+                            dataset_id=dataset_id,
+                            version_id=snap.version_id,
+                            keep=False,
+                            reason=f"超过保留期 {self._retention_ttl}",
+                        )
+                    )
                 else:
-                    decisions.append(RetentionDecision(
-                        dataset_id=dataset_id, version_id=snap.version_id,
-                        keep=True, reason="保留期内",
-                    ))
+                    decisions.append(
+                        RetentionDecision(
+                            dataset_id=dataset_id,
+                            version_id=snap.version_id,
+                            keep=True,
+                            reason="保留期内",
+                        )
+                    )
         return tuple(decisions)

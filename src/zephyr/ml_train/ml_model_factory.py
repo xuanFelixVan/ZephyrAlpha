@@ -14,7 +14,8 @@
 # [TESTS] tests/ml_train/test_ml_model_factory.py
 # [A_module] module_id=MOD-ML-013 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""MlModelFactory — ML 模型工厂（MOD-ML-013）。
+"""
+MlModelFactory — ML 模型工厂（MOD-ML-013）。
 
 B1-00253（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-MLT-017，C2 C-029）：
 **模型注册表**（名称/版本/元数据）+ **全生命周期状态机**
@@ -26,6 +27,48 @@ B1-00253（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-MLT-017，C2 C-029）：
 编排与门禁，不重建版本存储）；gray_release_shadow_deployer=影子部署实现
 （本件仅注入其编排语义回调，不实现影子逻辑）；adversarial_robustness_
 validator=鲁棒性评估实现（本件仅注入其判定回调）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: ml_model_factory.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: robustness_validator 参数
+#   fields: 参数 robustness_validator（无注解）
+#   code: ml_model_factory.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: gray_orchestrator 参数
+#   fields: 参数 gray_orchestrator（无注解）
+#   code: ml_model_factory.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: gpu_scheduler 参数
+#   fields: 参数 gpu_scheduler（无注解）
+#   code: ml_model_factory.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① MlModelFactory
+#   name_en: MlModelFactory
+#   intro: ML 模型工厂（注册表 + 生命周期状态机 + 门禁/编排/队列注入）。
+#   desc: ML 模型工厂（注册表 + 生命周期状态机 + 门禁/编排/队列注入）。；公共方法（定义序）: register_model, submit_candidate, promote_to_staging, promote…
+#   inputs: clock robustness_validator gray_orchestrator gpu_scheduler
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: MlModelFactory
+#   downstream: 运行时装配批（模型注册/晋级编排/训练提交统一注入点装配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -47,8 +90,8 @@ __all__: Final = [
 ]
 
 #: 前进迁移（含退役）；回退迁移单独定义
-_FORWARD: Final[dict["ModelStage", frozenset]] = {}
-_ROLLBACK: Final[dict["ModelStage", "ModelStage"]] = {}
+_FORWARD: Final[dict[ModelStage, frozenset]] = {}
+_ROLLBACK: Final[dict[ModelStage, ModelStage]] = {}
 
 
 class MlModelFactoryError(Exception):
@@ -68,17 +111,21 @@ class ModelStage(str, Enum):
     RETIRED = "retired"
 
 
-_FORWARD.update({
-    ModelStage.DEV: frozenset({ModelStage.CANDIDATE, ModelStage.RETIRED}),
-    ModelStage.CANDIDATE: frozenset({ModelStage.STAGING, ModelStage.RETIRED}),
-    ModelStage.STAGING: frozenset({ModelStage.PRODUCTION, ModelStage.RETIRED}),
-    ModelStage.PRODUCTION: frozenset({ModelStage.RETIRED}),
-    ModelStage.RETIRED: frozenset(),
-})
-_ROLLBACK.update({
-    ModelStage.PRODUCTION: ModelStage.STAGING,
-    ModelStage.STAGING: ModelStage.CANDIDATE,
-})
+_FORWARD.update(
+    {
+        ModelStage.DEV: frozenset({ModelStage.CANDIDATE, ModelStage.RETIRED}),
+        ModelStage.CANDIDATE: frozenset({ModelStage.STAGING, ModelStage.RETIRED}),
+        ModelStage.STAGING: frozenset({ModelStage.PRODUCTION, ModelStage.RETIRED}),
+        ModelStage.PRODUCTION: frozenset({ModelStage.RETIRED}),
+        ModelStage.RETIRED: frozenset(),
+    }
+)
+_ROLLBACK.update(
+    {
+        ModelStage.PRODUCTION: ModelStage.STAGING,
+        ModelStage.STAGING: ModelStage.CANDIDATE,
+    }
+)
 
 
 @dataclass(frozen=True)
@@ -150,17 +197,23 @@ class MlModelFactory:
             updated_at=now,
         )
         self._records[(record.name, record.version)] = new_record
-        self._history[(record.name, record.version)].append(StageTransition(
-            name=record.name,
-            version=record.version,
-            from_stage=record.stage,
-            to_stage=to_stage,
-            reason=reason,
-            transitioned_at=now,
-        ))
+        self._history[(record.name, record.version)].append(
+            StageTransition(
+                name=record.name,
+                version=record.version,
+                from_stage=record.stage,
+                to_stage=to_stage,
+                reason=reason,
+                transitioned_at=now,
+            )
+        )
         _log.info(
             "模型迁移: %s@%s %s -> %s (%s)",
-            record.name, record.version, record.stage.value, to_stage.value, reason,
+            record.name,
+            record.version,
+            record.stage.value,
+            to_stage.value,
+            reason,
         )
         return new_record
 
@@ -168,8 +221,7 @@ class MlModelFactory:
         record = self._record_of(name, version)
         if to_stage not in _FORWARD[record.stage]:
             raise MlModelFactoryError(
-                f"非法状态迁移: {name!r}@{version!r} 当前 {record.stage.value}，"
-                f"不可前进至 {to_stage.value}"
+                f"非法状态迁移: {name!r}@{version!r} 当前 {record.stage.value}，不可前进至 {to_stage.value}"
             )
         return self._transit(record, to_stage, reason)
 
@@ -217,22 +269,16 @@ class MlModelFactory:
         """
         record = self._record_of(name, version)
         if self._robustness_validator is None:
-            raise MlModelFactoryError(
-                "robustness_validator 未注入（对抗鲁棒门禁强制，禁止旁路上线）"
-            )
+            raise MlModelFactoryError("robustness_validator 未注入（对抗鲁棒门禁强制，禁止旁路上线）")
         try:
             robust_ok = bool(self._robustness_validator(name, version, record.metadata))
         except Exception:  # noqa: BLE001 — 门禁异常按不过处理不抛
             _log.exception("robustness_validator 判定异常: %s@%s", name, version)
             robust_ok = False
         if not robust_ok:
-            raise MlModelFactoryError(
-                f"对抗鲁棒门禁未通过: {name!r}@{version!r}（禁上线）"
-            )
+            raise MlModelFactoryError(f"对抗鲁棒门禁未通过: {name!r}@{version!r}（禁上线）")
         if self._gray_orchestrator is None:
-            raise MlModelFactoryError(
-                "gray_orchestrator 未注入（灰度发布编排强制，禁止直上线）"
-            )
+            raise MlModelFactoryError("gray_orchestrator 未注入（灰度发布编排强制，禁止直上线）")
         promoted = self._forward(name, version, ModelStage.PRODUCTION, "鲁棒门禁通过+灰度编排晋级")
         try:
             ok = bool(self._gray_orchestrator(promoted))
@@ -248,9 +294,7 @@ class MlModelFactory:
         record = self._record_of(name, version)
         target = _ROLLBACK.get(record.stage)
         if target is None:
-            raise MlModelFactoryError(
-                f"非法回退: {name!r}@{version!r} 当前 {record.stage.value} 无回退路径"
-            )
+            raise MlModelFactoryError(f"非法回退: {name!r}@{version!r} 当前 {record.stage.value} 无回退路径")
         return self._transit(record, target, reason or "回退")
 
     def retire(self, name: str, version: str, reason: str = "") -> ModelRecord:
@@ -263,9 +307,7 @@ class MlModelFactory:
         """提交 GPU 训练任务（scheduler 未注入 Fail-Closed）。"""
         self._record_of(name, version)
         if self._gpu_scheduler is None:
-            raise MlModelFactoryError(
-                "gpu_scheduler 未注入（GPU 任务队列强制，禁止旁路）"
-            )
+            raise MlModelFactoryError("gpu_scheduler 未注入（GPU 任务队列强制，禁止旁路）")
         return self._gpu_scheduler(f"{name}@{version}", dict(payload))
 
     # ── 查询 ─────────────────────────────────────────────────────────────
@@ -281,9 +323,6 @@ class MlModelFactory:
 
     def list_models(self, stage: ModelStage | None = None) -> tuple[ModelRecord, ...]:
         """模型清单（按 (name, version) 确定性排序；可按阶段过滤）。"""
-        records = [
-            r for r in self._records.values()
-            if stage is None or r.stage is stage
-        ]
+        records = [r for r in self._records.values() if stage is None or r.stage is stage]
         records.sort(key=lambda r: (r.name, r.version))
         return tuple(records)

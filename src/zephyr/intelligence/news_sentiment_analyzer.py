@@ -29,6 +29,54 @@ MOD-INT-AISA NewsSentimentAnalyzer — A股舆情分析器MVP。
 不建表、默认不持久化——sentiment 结果以内存态返回，由下游消费方决定是否落盘；
 可选 persist_windows 钩子（92号 §8.4 / tracker #138，默认关）把 SentimentWindow
 写 c1_market.news_sentiment_window（window_type='1h'，ReplacingMergeTree 同键替换幂等）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: positive_keywords 参数
+#   fields: 参数 positive_keywords（无注解）
+#   code: news_sentiment_analyzer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: negative_keywords 参数
+#   fields: 参数 negative_keywords（无注解）
+#   code: news_sentiment_analyzer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RuleBasedSentimentScorer
+#   name_en: RuleBasedSentimentScorer
+#   intro: 规则法情绪打分器——关键词匹配，零外部依赖，O(n) 线性扫描。
+#   desc: 规则法情绪打分器——关键词匹配，零外部依赖，O(n) 线性扫描。；公共方法（定义序）: score；源码 L273-L325
+#   inputs: positive_keywords negative_keywords
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② SentimentAggregator
+#   name_en: SentimentAggregator
+#   intro: 时间窗口聚合器——将单条 sentiment 极性聚合成窗口级指标。
+#   desc: 时间窗口聚合器——将单条 sentiment 极性聚合成窗口级指标。；公共方法（定义序）: aggregate_from_df；源码 L341-L409
+#   inputs: window_minutes
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ NewsSentimentAnalyzer
+#   name_en: NewsSentimentAnalyzer
+#   intro: 舆情分析器主类——MVP 提供 rule-based 分析，LLM 由调用方注入。
+#   desc: 舆情分析器主类——MVP 提供 rule-based 分析，LLM 由调用方注入。；公共方法（定义序）: analyze_news_df, analyze_date_range, persist_windows；源码…
+#   inputs: window_minutes positive_threshold negative_threshold llm_scorer
+#   outputs: 返回值
+#   （注：A3 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: RuleBasedSentimentScorer, SentimentAggregator, NewsSentimentAnalyzer
+#   downstream: MOD-SIG-002(信号生成器, 消费 SentimentEvent); zephyr.intelligence.nightly_sentiment_wi…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

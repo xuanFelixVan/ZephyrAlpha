@@ -14,7 +14,8 @@
 # [TESTS] tests/infra_runtime/test_resource_scheduler.py
 # [A_module] module_id=MOD-INF-074 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""ResourceScheduler — 资源调度器（MOD-INF-074，IR-06）。
+"""
+ResourceScheduler — 资源调度器（MOD-INF-074，IR-06）。
 
 B7-09926（AUD-DRAFT-001-DIGEST P2 波 P2-W01，CAND-H1FS-014，D-INFRA-RUNTIME
 §2）：CPU 核心亲和绑定 + 内存预算强制 + Cold/Warm/Hot 三平面资源隔离 +
@@ -24,6 +25,48 @@ QPS 限流统一入口。业界对标 cgroup 式资源隔离 + CPU 亲和 + 令�
 ``admit`` 统一裁决入口，超预算拒绝（返回 ``AdmitDecision(granted=False)``
 并告警留痕）；实际 OS 级设置经注入 ``executor`` 回调，默认 None 仅记录到
 ``applied_records``。本件不做真实 cgroup/亲和系统调用。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: quotas 参数
+#   fields: 参数 quotas（无注解）
+#   code: resource_scheduler.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: resource_scheduler.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: executor 参数
+#   fields: 参数 executor（无注解）
+#   code: resource_scheduler.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: alert_sink 参数
+#   fields: 参数 alert_sink（无注解）
+#   code: resource_scheduler.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ResourceScheduler
+#   name_en: ResourceScheduler
+#   intro: 三平面资源调度器（配额注册表 + 统一准入裁决 + executor 注入）。
+#   desc: 三平面资源调度器（配额注册表 + 统一准入裁决 + executor 注入）。；公共方法（定义序）: admit, plane_usage, applied_records；源码 L182-L339
+#   inputs: quotas clock executor alert_sink
+#   outputs: 返回值
+#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（8 定义）
+#   name_en: public defs
+#   intro: ResourceScheduler
+#   downstream: 运行时装配批（Hot/Warm/Cold 三平面进程资源准入统一入口）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -157,9 +200,7 @@ class ResourceScheduler:
             if not isinstance(plane, ResourcePlane):
                 raise ResourceSchedulerError(f"非法平面键: {plane!r}")
             if quota.plane is not plane:
-                raise ResourceSchedulerError(
-                    f"配额平面不符: 键 {plane.value} vs 配额 {quota.plane.value}"
-                )
+                raise ResourceSchedulerError(f"配额平面不符: 键 {plane.value} vs 配额 {quota.plane.value}")
             if not quota.cpu_cores or any(not isinstance(c, int) or c < 0 for c in quota.cpu_cores):
                 raise ResourceSchedulerError(f"平面 {plane.value} cpu_cores 非法: {quota.cpu_cores!r}")
             if quota.mem_budget_bytes <= 0:
@@ -168,8 +209,7 @@ class ResourceScheduler:
                 raise ResourceSchedulerError(f"平面 {plane.value} qps_limit 非正: {quota.qps_limit}")
             self._quotas[plane] = quota
         self._buckets: dict[ResourcePlane, _TokenBucket] = {
-            plane: _TokenBucket(quota.qps_limit, self._clock)
-            for plane, quota in self._quotas.items()
+            plane: _TokenBucket(quota.qps_limit, self._clock) for plane, quota in self._quotas.items()
         }
         self._allocations: dict[str, ResourceRequest] = {}
         self._applied: list[ExecutorRecord] = []
@@ -235,20 +275,18 @@ class ResourceScheduler:
 
         reasons: list[str] = []
         if not cores <= quota.cpu_cores:
-            reasons.append(
-                f"亲和核越界: {sorted(cores - quota.cpu_cores)} 不在平面 {plane.value} 核集内"
-            )
-        occupied = set().union(
-            *(r.cpu_cores for r in self._allocations.values() if r.plane is plane)
-        ) if any(r.plane is plane for r in self._allocations.values()) else set()
+            reasons.append(f"亲和核越界: {sorted(cores - quota.cpu_cores)} 不在平面 {plane.value} 核集内")
+        occupied = (
+            set().union(*(r.cpu_cores for r in self._allocations.values() if r.plane is plane))
+            if any(r.plane is plane for r in self._allocations.values())
+            else set()
+        )
         conflict = cores & occupied
         if conflict:
             reasons.append(f"亲和核冲突: {sorted(conflict)} 已被平面 {plane.value} 内其他 requester 独占")
         mem_used = sum(r.mem_bytes for r in self._allocations.values() if r.plane is plane)
         if mem_used + mem_bytes > quota.mem_budget_bytes:
-            reasons.append(
-                f"内存超预算: 已用 {mem_used} + 请求 {mem_bytes} > 预算 {quota.mem_budget_bytes}"
-            )
+            reasons.append(f"内存超预算: 已用 {mem_used} + 请求 {mem_bytes} > 预算 {quota.mem_budget_bytes}")
         if qps > quota.qps_limit:
             reasons.append(f"qps 超平面限流上限: {qps} > {quota.qps_limit}")
 

@@ -42,6 +42,56 @@ SystemSnapshot 是 M1 build() pipeline 末尾生成的系统状态镜像，记�
 - SystemSnapshotter.capture()：M1 backward 兼容（现有调用方无需改动）
 - 快照写入失败时仅 warn，不抛出异常（不阻断 M1 主流程）
 - TTL 30 天归档由 T-V2-013（V-16 归档脚本）负责
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: repo_root 参数
+#   fields: 参数 repo_root（无注解）
+#   code: system_snapshot.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: snapshots_dir 参数
+#   fields: 参数 snapshots_dir（无注解）
+#   code: system_snapshot.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: db_path 参数
+#   fields: 参数 db_path（无注解）
+#   code: system_snapshot.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: gates_dir 参数
+#   fields: 参数 gates_dir（无注解）
+#   code: system_snapshot.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SystemSnapshotter
+#   name_en: SystemSnapshotter
+#   intro: M1 内部组件：在 build() pipeline 末尾生成系统状态镜像。
+#   desc: M1 内部组件：在 build() pipeline 末尾生成系统状态镜像。 参数 ---- repo_root 仓库根目录；默认自动推断。 snapshots_dir 快照输出…；公共方法（定义序）: capture…
+#   inputs: repo_root snapshots_dir db_path gates_dir module_manifests
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② take_snapshot
+#   name_en: take_snapshot
+#   intro: 采集系统运行状态快照。
+#   desc: 采集系统运行状态快照。 零外部依赖——可独立调用。 Returns ------- CESnapshot 不可变快照对象；源码 L432-L451
+#   inputs: 无参数
+#   outputs: CESnapshot
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: CESnapshot
+#   name_en: CESnapshot
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

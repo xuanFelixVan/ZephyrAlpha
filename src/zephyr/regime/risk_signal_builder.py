@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-REGIME-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #10_regime_detector_spec §5.3 #MOD-REGIME-002 #Phase2a #C1-shrinkage-comparator
-"""RiskSignalInputs 构造器（MOD-REGIME-002 Phase 2a）。
+"""
+RiskSignalInputs 构造器（MOD-REGIME-002 Phase 2a）。
 
 把原始特征转换成 RegimeDetector._compute_risk_signal 期望的 13 参数输入 dict：
     {"params": {1: coef, ..., 10: coef, 12: coef},  # 11 风险参数（#1-10,#12）
@@ -41,6 +42,47 @@ Phase 2a MVP 参数范围（Phase 2 计划 §13参数数据来源）：
 
 依据: 10_regime_detector_spec v1.3.1 §5.3.3 / Phase 2 计划 §Phase2a
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: backtest_start 参数
+#   fields: 参数 backtest_start（无注解）
+#   code: risk_signal_builder.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: backtest_end 参数
+#   fields: 参数 backtest_end（无注解）
+#   code: risk_signal_builder.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: data_load_start 参数
+#   fields: 参数 data_load_start（无注解）
+#   code: risk_signal_builder.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: feature_builder 参数
+#   fields: 参数 feature_builder（无注解）
+#   code: risk_signal_builder.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RiskSignalConstructor
+#   name_en: RiskSignalConstructor
+#   intro: 13 参数 RiskSignalInputs 构造器（MOD-REGIME-002 Phase 2a）。
+#   desc: 13 参数 RiskSignalInputs 构造器（MOD-REGIME-002 Phase 2a）。 Usage（由 RegimeFeatureBuilder.build_s…；公共方法（定义序）: build_f…
+#   inputs: backtest_start backtest_end data_load_start feature_builder market_pr…
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: RiskSignalConstructor
+#   downstream: MOD-REGIME-002(RegimeFeatureBuilder.build_shrinkage_schedule消费→risk_signal_inpu…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

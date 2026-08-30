@@ -19,6 +19,32 @@
 D_ML_TRAIN — ML Inference Base
 
 模型推理引擎抽象基类。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: inference_base.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① InferenceEngineBase
+#   name_en: InferenceEngineBase
+#   intro: 推理引擎抽象基类（OCP 扩展点 D_ML_TRAIN-INF）
+#   desc: 推理引擎抽象基类（OCP 扩展点 D_ML_TRAIN-INF） 契约对齐：CTR-P1-004（ModelServingRequest 入站）-> CTR-P1-005（Mod…；公共方法（定义序）: predict…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: InferenceEngineBase
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

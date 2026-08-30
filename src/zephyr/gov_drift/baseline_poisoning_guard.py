@@ -26,7 +26,87 @@ git_as_ultimate_truth: baseline_hash_chain=SHA256(prev+current)写入commit mess
 
 integrity_manifest: 每DEEP scan签名存Git
 
-对标 blueprint.md §6.25。"""
+对标 blueprint.md §6.25。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: baseline_content 参数
+#   fields: 参数 baseline_content，类型注解 str
+#   code: baseline_poisoning_guard.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: git_commit 参数
+#   fields: 参数 git_commit，类型注解 str
+#   code: baseline_poisoning_guard.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: file_path 参数
+#   fields: 参数 file_path，类型注解 str
+#   code: baseline_poisoning_guard.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: project_root 参数
+#   fields: 参数 project_root，类型注解 str
+#   code: baseline_poisoning_guard.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① cross_validate_baseline
+#   name_en: cross_validate_baseline
+#   intro: cross_validate_baseline(baseline_content, git_commit, file_…
+#   desc: 源码 L182-L234
+#   inputs: baseline_content git_commit file_path project_root
+#   outputs: dict[str, object]
+# - id: A2
+#   name_zh: ② multi_baseline_vote
+#   name_en: multi_baseline_vote
+#   intro: multi_baseline_vote(snapshots, threshold) 源码 L237-L273
+#   desc: 源码 L237-L273
+#   inputs: snapshots threshold
+#   outputs: list[MultiBaselineVote]
+# - id: A3
+#   name_zh: ③ build_hash_chain
+#   name_en: build_hash_chain
+#   intro: build_hash_chain(prev_hash, current_data, index, git_commit…
+#   desc: 源码 L276-L301
+#   inputs: prev_hash current_data index git_commit
+#   outputs: HashChainEntry
+# - id: A4
+#   name_zh: ④ verify_hash_chain
+#   name_en: verify_hash_chain
+#   intro: verify_hash_chain(entries) 源码 L304-L321
+#   desc: 源码 L304-L321
+#   inputs: entries
+#   outputs: list[str]
+# - id: A5
+#   name_zh: ⑤ generate_integrity_manifest
+#   name_en: generate_integrity_manifest
+#   intro: generate_integrity_manifest(scan_id, file_hashes) 源码 L324-L…
+#   desc: 源码 L324-L348
+#   inputs: scan_id file_hashes
+#   outputs: str
+#   （注：A5 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, object]
+#   name_en: dict[str, object]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests/audit/test_baseline_poisoning_guard.py
+# - id: O2
+#   name_zh: list[MultiBaselineVote]
+#   name_en: list[MultiBaselineVote]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests/audit/test_baseline_poisoning_guard.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
+"""
 
 from __future__ import annotations
 

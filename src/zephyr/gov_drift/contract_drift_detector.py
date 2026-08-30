@@ -15,10 +15,53 @@
 # [A_module] module_id=MOD-INF-023 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""contract_drift_detector — 契约漂移检测器。
+"""
+contract_drift_detector — 契约漂移检测器。
 
 从 MOD-INF-015 contract_metrics.py 迁移而来（v3.0.0 委托决策）。
 职责归属：MOD-INF-023 (Drift Detector)。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: contract_id 参数
+#   fields: 参数 contract_id，类型注解 str
+#   code: contract_drift_detector.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: field_name 参数
+#   fields: 参数 field_name，类型注解 str
+#   code: contract_drift_detector.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: current_value 参数
+#   fields: 参数 current_value，类型注解 float
+#   code: contract_drift_detector.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: baseline_median 参数
+#   fields: 参数 baseline_median，类型注解 float | None
+#   code: contract_drift_detector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① detect_contract_drift
+#   name_en: detect_contract_drift
+#   intro: detect_contract_drift(contract_id, field_name, current_valu…
+#   desc: 源码 L85-L129
+#   inputs: contract_id field_name current_value baseline_median baseline_std fie…
+#   outputs: DriftAlert | None
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: DriftAlert | None
+#   name_en: DriftAlert | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: N/A (all consumers verified as phantom — stale references removed)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

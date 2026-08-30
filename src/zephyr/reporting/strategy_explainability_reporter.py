@@ -14,7 +14,8 @@
 # [TESTS] tests/reporting/test_strategy_explainability_reporter.py
 # [A_module] module_id=MOD-RPT-035 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""StrategyExplainabilityReporter — 策略可解释性报告器（MOD-RPT-035）。
+"""
+StrategyExplainabilityReporter — 策略可解释性报告器（MOD-RPT-035）。
 
 B4-06655（AUD-DRAFT-001-DIGEST P2 波 P2-W10，CAND-RPT-010，B4
 D-REPORTING-14）：**SHAP+LIME 双归因**报告（shap/lime 解释器全注入，
@@ -25,6 +26,48 @@ Fail-Closed）+ **可解释性门控**（解释覆盖度 < 阈值 → 策略降�
 边界：default_attribution_engine（本域）=收益归因（本件=模型特征可归因
 性/解释覆盖度，不重复收益分解）；策略降权/拦截的执行归决策门（本件仅产
 出门控结论与报告）；本件纯内存/DI，不触网不落盘。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: shap_explainer 参数
+#   fields: 参数 shap_explainer（无注解）
+#   code: strategy_explainability_reporter.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: lime_explainer 参数
+#   fields: 参数 lime_explainer（无注解）
+#   code: strategy_explainability_reporter.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: rule_importance 参数
+#   fields: 参数 rule_importance（无注解）
+#   code: strategy_explainability_reporter.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: fallback_coverage 参数
+#   fields: 参数 fallback_coverage（无注解）
+#   code: strategy_explainability_reporter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① StrategyExplainabilityReporter
+#   name_en: StrategyExplainabilityReporter
+#   intro: 策略可解释性报告件（双归因 + 门控 + 发布对接）。
+#   desc: 策略可解释性报告件（双归因 + 门控 + 发布对接）。；公共方法（定义序）: build_report, report_of, history_of；源码 L149-L300
+#   inputs: shap_explainer lime_explainer rule_importance fallback_coverage pass_…
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: StrategyExplainabilityReporter
+#   downstream: 运行时装配批（策略 SHAP+LIME 双归因报告 / 可解释性门控降权拦截 / 报告发布对接）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -126,18 +169,14 @@ class StrategyExplainabilityReporter:
             if not (0.0 <= float(value) <= 1.0):
                 raise ExplainabilityError(f"{name} 越界: {value!r}（须∈[0,1]）")
         if float(downweight_threshold) > float(pass_threshold):
-            raise ExplainabilityError(
-                f"门控阈值倒挂: downweight={downweight_threshold!r} > pass={pass_threshold!r}"
-            )
+            raise ExplainabilityError(f"门控阈值倒挂: downweight={downweight_threshold!r} > pass={pass_threshold!r}")
         if rule_importance is not None:
             for feature, weight in rule_importance.items():
                 if not feature:
                     raise ExplainabilityError("rule_importance 特征名为空")
                 if not math.isfinite(float(weight)):
                     raise ExplainabilityError(f"rule_importance 权重非有限实数: {feature!r}")
-            self._rule: dict[str, float] | None = {
-                f: float(w) for f, w in rule_importance.items()
-            }
+            self._rule: dict[str, float] | None = {f: float(w) for f, w in rule_importance.items()}
         else:
             self._rule = None
         self._shap = shap_explainer
@@ -206,9 +245,7 @@ class StrategyExplainabilityReporter:
 
         if shap_res is None and lime_res is None:
             if self._rule is None:
-                raise ExplainabilityError(
-                    "SHAP/LIME 双解释器缺失且 rule_importance 未注入（无兜底，Fail-Closed）"
-                )
+                raise ExplainabilityError("SHAP/LIME 双解释器缺失且 rule_importance 未注入（无兜底，Fail-Closed）")
             method = AttributionMethod.RULE_FALLBACK
             shap_importances = self._sorted_importances(self._rule)
             lime_importances: tuple[FeatureImportance, ...] = ()
@@ -219,15 +256,9 @@ class StrategyExplainabilityReporter:
                 if shap_res is not None and lime_res is not None
                 else (AttributionMethod.SHAP if shap_res is not None else AttributionMethod.LIME)
             )
-            shap_importances = (
-                self._sorted_importances(shap_res.importances) if shap_res is not None else ()
-            )
-            lime_importances = (
-                self._sorted_importances(lime_res.importances) if lime_res is not None else ()
-            )
-            coverages = [
-                r.coverage for r in (shap_res, lime_res) if r is not None
-            ]
+            shap_importances = self._sorted_importances(shap_res.importances) if shap_res is not None else ()
+            lime_importances = self._sorted_importances(lime_res.importances) if lime_res is not None else ()
+            coverages = [r.coverage for r in (shap_res, lime_res) if r is not None]
             coverage = sum(coverages) / len(coverages)
 
         gate = self._gate(coverage)

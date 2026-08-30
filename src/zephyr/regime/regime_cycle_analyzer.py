@@ -16,7 +16,8 @@
 # [TTL] permanent
 # [ARCH-REF] #ARCH-120 #CAND-CYCLE-001 #REG-CYCLE-001
 
-"""MOD-REGIME-006 RegimeCycleAnalyzer — 时间周期分析 MVP（辅助参考信号，非独立交易信号）。
+"""
+MOD-REGIME-006 RegimeCycleAnalyzer — 时间周期分析 MVP（辅助参考信号，非独立交易信号）。
 
 定位（边界声明，防滥用）：
   本模块输出"何时可能变盘"的时间窗口辅助参考信号，服务 regime 层节流参数调整
@@ -39,6 +40,117 @@ MVP 范围（两件套，对齐 REG-CYCLE-001 注册表）：
 
 依据: regime_cycle_registry.yaml v1.2.0 / CAND-CYCLE-001 / #ARCH-120
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: p_adj 参数
+#   fields: 参数 p_adj，类型注解 float
+#   code: regime_cycle_analyzer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: dates 参数
+#   fields: 参数 dates，类型注解 pd.DatetimeIndex
+#   code: regime_cycle_analyzer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: metric 参数
+#   fields: 参数 metric，类型注解 pd.Series
+#   code: regime_cycle_analyzer.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: event_mask 参数
+#   fields: 参数 event_mask，类型注解 pd.Series
+#   code: regime_cycle_analyzer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CycleEvidence
+#   name_en: CycleEvidence
+#   intro: 事件研究统计证据（显著性自证）。
+#   desc: 事件研究统计证据（显著性自证）。 p_adj 为 Bonferroni 校正后 p 值（检验族=N_HYPOTHESES）。 significant=False 时 confid…；公共方法（定义序）: to_dict…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② CycleWindow
+#   name_en: CycleWindow
+#   intro: 时间窗口（变盘风险提示，非交易信号）。
+#   desc: 时间窗口（变盘风险提示，非交易信号）。 direction 语义：risk_on=统计效应方向偏多 / risk_off=统计效应方向偏空 / neutral=方向中性（周年日变…；公共方法（定义序）: to_dict…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ CycleAnalysisResult
+#   name_en: CycleAnalysisResult
+#   intro: analyze() 输出——辅助参考信号集合（is_advisory_only 恒 True，防滥用钉死）。
+#   desc: analyze() 输出——辅助参考信号集合（is_advisory_only 恒 True，防滥用钉死）。；公共方法（定义序）: to_dict；源码 L291-L307
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ confidence_from_p_adj
+#   name_en: confidence_from_p_adj
+#   intro: Bonferroni 校正后 p 值 → confidence 三档映射（不显著=0.0）。
+#   desc: Bonferroni 校正后 p 值 → confidence 三档映射（不显著=0.0）。；源码 L315-L323
+#   inputs: p_adj
+#   outputs: float
+# - id: A5
+#   name_zh: ⑤ trading_day_features
+#   name_en: trading_day_features
+#   intro: 交易日历结构特征：月末/月初/节后标记（纯日历派生，不依赖 calendar_event 表）。
+#   desc: 交易日历结构特征：月末/月初/节后标记（纯日历派生，不依赖 calendar_event 表）。 返回 DataFrame（index=dates），列： is_month_en…；源码 L326-L359
+#   inputs: dates
+#   outputs: pd.DataFrame
+# - id: A6
+#   name_zh: ⑥ event_study
+#   name_en: event_study
+#   intro: Welch t 检验事件研究：事件组 metric 均值 vs 基准组，Bonferroni 校正。
+#   desc: Welch t 检验事件研究：事件组 metric 均值 vs 基准组，Bonferroni 校正。 metric 语义由调用方决定（日历效应=日收益；周年日=|日收益|）。 事…；源码 L362-L400
+#   inputs: metric event_mask n_hypotheses min_n
+#   outputs: CycleEvidence
+# - id: A7
+#   name_zh: ⑦ detect_swing_extremes
+#   name_en: detect_swing_extremes
+#   intro: 显著高低点识别：±lookback 窗口局部极值 + 波段幅度 ≥min_move_pct 过滤。
+#   desc: 显著高低点识别：±lookback 窗口局部极值 + 波段幅度 ≥min_move_pct 过滤。 返回 DataFrame[date, kind(high/low), pric…；源码 L403-L467
+#   inputs: close lookback min_move_pct
+#   outputs: pd.DataFrame
+# - id: A8
+#   name_zh: ⑧ anniversary_windows
+#   name_en: anniversary_windows
+#   intro: 显著高低点周年日窗口生成：每年周年日 ±tolerance 自然日。
+#   desc: 显著高低点周年日窗口生成：每年周年日 ±tolerance 自然日。 返回 DataFrame[start, end, kind, origin_date, year_offse…；源码 L470-L497
+#   inputs: extremes tolerance max_years
+#   outputs: pd.DataFrame
+# - id: A9
+#   name_zh: ⑨ RegimeCycleAnalyzer
+#   name_en: RegimeCycleAnalyzer
+#   intro: 时间周期分析编排器（MOD-REGIME-006）。
+#   desc: 时间周期分析编排器（MOD-REGIME-006）。 Usage: analyzer = RegimeCycleAnalyzer() result = analyzer.anal…；公共方法（定义序）: analyze…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A9 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 无（MVP 阶段输出供 regime 层时间窗口节流参考，接线属后续 WFA 验证达标后施工）
+# - id: O2
+#   name_zh: pd.DataFrame
+#   name_en: pd.DataFrame
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 无（MVP 阶段输出供 regime 层时间窗口节流参考，接线属后续 WFA 验证达标后施工）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> O1
 """
 
 from __future__ import annotations

@@ -14,7 +14,8 @@
 # [TESTS] tests/infrastructure/test_signal_engine_process_spec.py
 # [A_module] module_id=MOD-INF-070 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""P2 信号引擎进程规格 SSOT（MOD-INF-070）——signal_engine 独立进程参数唯一真源。
+"""
+P2 信号引擎进程规格 SSOT（MOD-INF-070）——signal_engine 独立进程参数唯一真源。
 
 真源：A9 运维架构 §1.1.1 进程矩阵（P2 行）+ §1.1.3 健康检查（P2 行）+
 CAND-H1FS-006（B14-04523）。
@@ -33,6 +34,62 @@ process_supervisor 的 FIVE_PROCESS_REGISTRY 已含 P2 注册行（启停编排�
 
 硬边界：核亲和/内存硬限/进程 spawn 等系统级动作属 Owner 窗口与
 MOD-INF-016 ProcessLifecycleGateway，本模块只产出配置声明，AI 不执行。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: spec 参数
+#   fields: 参数 spec，类型注解 SignalEngineProcessSpec
+#   code: signal_engine_process_spec.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① heartbeat_key
+#   name_en: heartbeat_key
+#   intro: P2 心跳键：hb:signal_engine（A9 §1.1.3）。
+#   desc: P2 心跳键：hb:signal_engine（A9 §1.1.3）。；源码 L177-L179
+#   inputs: 无参数
+#   outputs: str
+# - id: A2
+#   name_zh: ② heartbeat_ttl_seconds
+#   name_en: heartbeat_ttl_seconds
+#   intro: 心跳 TTL = 超时阈值 + 30s 缓冲（规则复用 MOD-INF-063 dynamic_ttl，不重造）。
+#   desc: 心跳 TTL = 超时阈值 + 30s 缓冲（规则复用 MOD-INF-063 dynamic_ttl，不重造）。；源码 L182-L186
+#   inputs: 无参数
+#   outputs: int
+# - id: A3
+#   name_zh: ③ check_supervisor_alignment
+#   name_en: check_supervisor_alignment
+#   intro: 与 MOD-INF-066 FIVE_PROCESS_REGISTRY P2 注册行双向对账（漂移即 Fail-Clo…
+#   desc: 与 MOD-INF-066 FIVE_PROCESS_REGISTRY P2 注册行双向对账（漂移即 Fail-Closed）。 两真源分工：supervisor 管 P1~P5…；源码 L189-L218
+#   inputs: 无参数
+#   outputs: SignalEngineProcessSpec
+# - id: A4
+#   name_zh: ④ render_process_spec_declaration
+#   name_en: render_process_spec_declaration
+#   intro: 产出 P2 进程配置就绪件声明 dict（**仅声明不执行**——Owner 窗口）。
+#   desc: 产出 P2 进程配置就绪件声明 dict（**仅声明不执行**——Owner 窗口）。；源码 L221-L251
+#   inputs: spec
+#   outputs: dict
+#   （注：A4 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations
@@ -101,8 +158,7 @@ class SignalEngineProcessSpec:
             raise SignalEngineSpecError(f"内存预算非正: {self.memory_budget_gb}GB")
         if self.restart_class != _P2_RESTART_CLASS:
             raise SignalEngineSpecError(
-                f"P2 恒 core_degrade（收到 {self.restart_class!r}；"
-                "critical_no_restart 属 P3 HC-01、non_core 属 P4/P5）"
+                f"P2 恒 core_degrade（收到 {self.restart_class!r}；critical_no_restart 属 P3 HC-01、non_core 属 P4/P5）"
             )
         if self.trading_hours_degrade != "alert_and_p3_cached_signal":
             raise SignalEngineSpecError(
@@ -150,21 +206,15 @@ def check_supervisor_alignment() -> SignalEngineProcessSpec:
     if row.memory_budget_gb != spec.memory_budget_gb:
         mismatches.append(f"memory_budget_gb: {row.memory_budget_gb} != {spec.memory_budget_gb}")
     if row.heartbeat_interval_s != spec.heartbeat_interval_s:
-        mismatches.append(
-            f"heartbeat_interval_s: {row.heartbeat_interval_s} != {spec.heartbeat_interval_s}"
-        )
+        mismatches.append(f"heartbeat_interval_s: {row.heartbeat_interval_s} != {spec.heartbeat_interval_s}")
     if row.heartbeat_timeout_s != spec.heartbeat_timeout_s:
-        mismatches.append(
-            f"heartbeat_timeout_s: {row.heartbeat_timeout_s} != {spec.heartbeat_timeout_s}"
-        )
+        mismatches.append(f"heartbeat_timeout_s: {row.heartbeat_timeout_s} != {spec.heartbeat_timeout_s}")
     if row.duties != "/".join(spec.duties):
         mismatches.append(f"duties: {row.duties!r} != {'/'.join(spec.duties)!r}")
     if row.restart_class != spec.restart_class:
         mismatches.append(f"restart_class: {row.restart_class!r} != {spec.restart_class!r}")
     if mismatches:
-        raise SignalEngineSpecError(
-            "P2 规格与 MOD-INF-066 注册行漂移（两真源对账失败）: " + "; ".join(mismatches)
-        )
+        raise SignalEngineSpecError("P2 规格与 MOD-INF-066 注册行漂移（两真源对账失败）: " + "; ".join(mismatches))
     return spec
 
 

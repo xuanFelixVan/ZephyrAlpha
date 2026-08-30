@@ -22,7 +22,127 @@ Drift Detector 基础设施 — drift_infrastructure.py
 维护窗口、预算系统、检查点写入器、恢复管理器、环境感知/差分检测、部分部署检测。
 
 
-从 drift_engine.py 提取，对标 blueprint.md §2.6/§2.9/§2.10/§2.13。"""
+从 drift_engine.py 提取，对标 blueprint.md §2.6/§2.9/§2.10/§2.13。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: hours 参数
+#   fields: 参数 hours，类型注解 int
+#   code: drift_infrastructure.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: triggered_by_auto 参数
+#   fields: 参数 triggered_by_auto，类型注解 bool
+#   code: drift_infrastructure.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: threshold 参数
+#   fields: 参数 threshold，类型注解 int
+#   code: drift_infrastructure.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: module_id 参数
+#   fields: 参数 module_id，类型注解 str
+#   code: drift_infrastructure.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① MaintenanceWindow
+#   name_en: MaintenanceWindow
+#   intro: class MaintenanceWindow 源码 L164-L179
+#   desc: 公共方法（定义序）: is_active, time_remaining；源码 L164-L179
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② get_maintenance_window
+#   name_en: get_maintenance_window
+#   intro: get_maintenance_window() 源码 L191-L192
+#   desc: 源码 L191-L192
+#   inputs: 无参数
+#   outputs: MaintenanceWindow | None
+# - id: A3
+#   name_zh: ③ declare_maintenance_window
+#   name_en: declare_maintenance_window
+#   intro: declare_maintenance_window(hours, triggered_by_auto) 源码 L19…
+#   desc: 源码 L195-L204
+#   inputs: hours triggered_by_auto
+#   outputs: MaintenanceWindow
+# - id: A4
+#   name_zh: ④ check_large_diff
+#   name_en: check_large_diff
+#   intro: check_large_diff(threshold) 源码 L207-L216
+#   desc: 源码 L207-L216
+#   inputs: threshold
+#   outputs: bool
+# - id: A5
+#   name_zh: ⑤ get_or_create_budget
+#   name_en: get_or_create_budget
+#   intro: get_or_create_budget(module_id, tier) 源码 L222-L234
+#   desc: 源码 L222-L234
+#   inputs: module_id tier
+#   outputs: DriftBudget
+# - id: A6
+#   name_zh: ⑥ consume_budget
+#   name_en: consume_budget
+#   intro: consume_budget(module_id, tier) 源码 L237-L242
+#   desc: 源码 L237-L242
+#   inputs: module_id tier
+#   outputs: bool
+# - id: A7
+#   name_zh: ⑦ check_budget_for_gate
+#   name_en: check_budget_for_gate
+#   intro: check_budget_for_gate(module_id, tier, break_glass) 源码 L245…
+#   desc: 源码 L245-L261
+#   inputs: module_id tier break_glass
+#   outputs: dict[str, object]
+# - id: A8
+#   name_zh: ⑧ CheckpointWriter
+#   name_en: CheckpointWriter
+#   intro: class CheckpointWriter 源码 L267-L330
+#   desc: 公共方法（定义序）: write, cleanup；源码 L267-L330
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A9
+#   name_zh: ⑨ RecoveryManager
+#   name_en: RecoveryManager
+#   intro: class RecoveryManager 源码 L333-L384
+#   desc: 公共方法（定义序）: check_orphaned, on_startup；源码 L333-L384
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A10
+#   name_zh: ⑩ register_env_tags
+#   name_en: register_env_tags
+#   intro: register_env_tags(module_id, tags) 源码 L393-L394
+#   desc: 源码 L393-L394
+#   inputs: module_id tags
+#   outputs: 返回值
+#   （注：A10 之后另有 4 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: MaintenanceWindow | None
+#   name_en: MaintenanceWindow | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_drift/__main__.py ; src/zephyr/gov_drift/_drift.py (+9 more)
+# - id: O2
+#   name_zh: MaintenanceWindow
+#   name_en: MaintenanceWindow
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_drift/__main__.py ; src/zephyr/gov_drift/_drift.py (+9 more)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> A10
+# A10 --> O1
+"""
 
 from __future__ import annotations
 

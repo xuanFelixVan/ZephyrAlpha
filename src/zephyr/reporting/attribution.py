@@ -24,7 +24,8 @@
 # A2: fill_id 幂等——重复 record_fill 同一 fill_id 直接跳过(事件流重放安全)
 # O1: all_strategy_pnls() -> {strategy_id: net_pnl}; open_positions(); 不变量校验 verdict; Shapley 分解结果
 # [/ALGO_FLOW]
-"""D_REPORTING — 对账归因函数级实现（54 号 G25 §3.5/§3.12）。
+"""
+D_REPORTING — 对账归因函数级实现（54 号 G25 §3.5/§3.12）。
 
 施工范围（AI-NIGHT-001 包P，54 号未施工清单 #1/#6）：
   1. StrategyBook 独立 PnL 核算（#ARCH-REG-005 proposed 对接）——策略层归因
@@ -41,6 +42,64 @@
     与 PnlCalculator 口径一致（阶段2对账差异另行比对）。
   - 本模块不改 position/core/strategy_book.py（MOD-POS-020 由其他批次施工），
     策略层 PnL 数据源以"成交回报按 strategy_id 归集"方式独立承载。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: strategy_pnls 参数
+#   fields: 参数 strategy_pnls，类型注解 dict[str, float]
+#   code: attribution.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: firm_pnl 参数
+#   fields: 参数 firm_pnl，类型注解 float
+#   code: attribution.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: tolerance_bps 参数
+#   fields: 参数 tolerance_bps，类型注解 float
+#   code: attribution.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: strategy_returns 参数
+#   fields: 参数 strategy_returns，类型注解 dict[str, list[float]]
+#   code: attribution.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① StrategyPnlAccountant
+#   name_en: StrategyPnlAccountant
+#   intro: StrategyBook 独立 PnL 核算器（54 号 §3.5 策略层数据源）。
+#   desc: StrategyBook 独立 PnL 核算器（54 号 §3.5 策略层数据源）。 按 Fill.strategy_id 归集成交，(strategy_id, symbol)…；公共方法（定义序）: record_f…
+#   inputs: fee_calculator
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② validate_strategy_pnl_invariant
+#   name_en: validate_strategy_pnl_invariant
+#   intro: 校验 Σ(strategy_pnl) == firm_pnl 求和不变量（归因报告硬门禁）。
+#   desc: 校验 Σ(strategy_pnl) == firm_pnl 求和不变量（归因报告硬门禁）。 FAIL 语义（54 号 §3.5）：归因报告拒绝发布 + 触发告警，差异来源定位方…；源码 L289-L323
+#   inputs: strategy_pnls firm_pnl tolerance_bps
+#   outputs: dict
+# - id: A3
+#   name_zh: ③ shapley_strategy_attribution
+#   name_en: shapley_strategy_attribution
+#   intro: Shapley 值策略贡献分解——公平分配各策略对组合总收益的边际贡献。
+#   desc: Shapley 值策略贡献分解——公平分配各策略对组合总收益的边际贡献。 特征函数：子组合的等权（或 weights 加权）日收益复合累计收益。 效率公理保证 Σ Shapley…；源码 L329-L401
+#   inputs: strategy_returns weights
+#   outputs: dict
+#   （注：A3 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: dict
+#   name_en: dict
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 调用方(日终对账归因链路, BM-REC-02-B); 54_reconciliation_attribution §3.5/§3.12
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

@@ -24,7 +24,119 @@ Drift Detector 结果类型 + 专项检测函数 — drift_result_types.py
 
 文档代码共演化、测试覆盖、知识图谱同步。
 
-从 drift_engine.py 提取，对标 blueprint.md §6.3-§6.10。"""
+从 drift_engine.py 提取，对标 blueprint.md §6.3-§6.10。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: yaml_a_path 参数
+#   fields: 参数 yaml_a_path，类型注解 str
+#   code: drift_result_types.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: yaml_b_path 参数
+#   fields: 参数 yaml_b_path，类型注解 str
+#   code: drift_result_types.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: key_path 参数
+#   fields: 参数 key_path，类型注解 str
+#   code: drift_result_types.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: field_path 参数
+#   fields: 参数 field_path，类型注解 str
+#   code: drift_result_types.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① detect_concept_cardinality
+#   name_en: detect_concept_cardinality
+#   intro: 检测概念基数漂移 — 对比两 YAML 在 key_path 下的条目数。
+#   desc: 检测概念基数漂移 — 对比两 YAML 在 key_path 下的条目数。 Args: yaml_a_path: 第一个 YAML 文件路径。 yaml_b_path: 第二个…；源码 L197-L242
+#   inputs: yaml_a_path yaml_b_path key_path
+#   outputs: SemanticDriftResult
+# - id: A2
+#   name_zh: ② detect_enum_value_sync
+#   name_en: detect_enum_value_sync
+#   intro: 检测枚举值同步 — 对比两 YAML 在 field_path 下的枚举集合是否一致。
+#   desc: 检测枚举值同步 — 对比两 YAML 在 field_path 下的枚举集合是否一致。 Args: yaml_a_path: 第一个 YAML 文件路径。 yaml_b_path…；源码 L245-L294
+#   inputs: yaml_a_path yaml_b_path field_path
+#   outputs: SemanticDriftResult
+# - id: A3
+#   name_zh: ③ detect_ownership_consistency
+#   name_en: detect_ownership_consistency
+#   intro: 检测所有权一致性 — 同一文件在被多次读取期间 owner 字段是否漂移。
+#   desc: 检测所有权一致性 — 同一文件在被多次读取期间 owner 字段是否漂移。 Args: paths: YAML 文件路径列表。 owner_field: 文件中表示所有者的字段名…；源码 L297-L349
+#   inputs: paths owner_field
+#   outputs: list[SemanticDriftResult]
+# - id: A4
+#   name_zh: ④ detect_db_schema_drift
+#   name_en: detect_db_schema_drift
+#   intro: 检测 DB Schema 三方对账漂移 — SQLite 实际 schema vs ORM 模型 vs 迁移脚本。
+#   desc: 检测 DB Schema 三方对账漂移 — SQLite 实际 schema vs ORM 模型 vs 迁移脚本。 过程： 1. 扫描项目下所有 ``*.db`` 文件，读取 `…；源码 L524-L552
+#   inputs: project_root
+#   outputs: list[DriftEvent]
+# - id: A5
+#   name_zh: ⑤ detect_dep_version_drift
+#   name_en: detect_dep_version_drift
+#   intro: 检测依赖版本漂移 — ``requirements.txt`` vs ``pip freeze`` 三方对账。
+#   desc: 检测依赖版本漂移 — ``requirements.txt`` vs ``pip freeze`` 三方对账。 对比 declared（requirements.txt）、ins…；源码 L632-L716
+#   inputs: project_root
+#   outputs: list[DriftEvent]
+# - id: A6
+#   name_zh: ⑥ detect_security_policy_drift
+#   name_en: detect_security_policy_drift
+#   intro: 检测安全策略漂移 — 端点安全检查与密钥泄露扫描。
+#   desc: 检测安全策略漂移 — 端点安全检查与密钥泄露扫描。 三步检测： 1. 扫描路由/CLI 端点文件是否缺少输入消毒（sanitizer）。 2. 检查端点文件是否缺少认证中间件（a…；源码 L786-L910
+#   inputs: project_root
+#   outputs: list[DriftEvent]
+# - id: A7
+#   name_zh: ⑦ detect_doc_code_coevolution
+#   name_en: detect_doc_code_coevolution
+#   intro: 检测文档-代码共演化漂移 — 蓝图与代码的双向同步检查。
+#   desc: 检测文档-代码共演化漂移 — 蓝图与代码的双向同步检查。 两个维度： 1. **时序漂移**: 代码文件 mtime 比对应蓝图晚 >7 天 -> 蓝图过期。 2. **接口漂移…；源码 L1039-L1074
+#   inputs: project_root
+#   outputs: list[DriftEvent]
+# - id: A8
+#   name_zh: ⑧ detect_test_coverage_drift
+#   name_en: detect_test_coverage_drift
+#   intro: 检测测试覆盖漂移 — 模块级 test/src 行数比低于 30% 阈值即告警。
+#   desc: 检测测试覆盖漂移 — 模块级 test/src 行数比低于 30% 阈值即告警。 统计每个 ``src/<module>/`` 与 ``tests/<module>/`` 下的…；源码 L1101-L1187
+#   inputs: project_root
+#   outputs: list[DriftEvent]
+# - id: A9
+#   name_zh: ⑨ detect_knowledge_graph_sync
+#   name_en: detect_knowledge_graph_sync
+#   intro: 检测知识图谱同步漂移 — 将 DriftEvent 流同步为 KG 实体与关系。
+#   desc: 检测知识图谱同步漂移 — 将 DriftEvent 流同步为 KG 实体与关系。 从事件流中提取 detector_id 和 module_id，与 ``load_detecto…；源码 L1218-L1322
+#   inputs: project_root events
+#   outputs: list[DriftEvent]
+#   （注：A9 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: SemanticDriftResult
+#   name_en: SemanticDriftResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_drift/_drift.py ; tests/drift/test_drift_result_types.py ; tests…
+# - id: O2
+#   name_zh: list[SemanticDriftResult]
+#   name_en: list[SemanticDriftResult]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_drift/_drift.py ; tests/drift/test_drift_result_types.py ; tests…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> O1
+"""
 
 from __future__ import annotations
 

@@ -14,7 +14,8 @@
 # [TESTS] tests/research/test_auto_feature_discoverer.py
 # [A_module] module_id=MOD-FAC-001 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""AutoFeatureDiscoverer — AI 自动特征发现器（MOD-FAC-001）。
+"""
+AutoFeatureDiscoverer — AI 自动特征发现器（MOD-FAC-001）。
 
 B1-00630（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-FAC-016，C2 74）：价量算子
 模板库（算术/滚动统计算子词表闭合）**笛卡尔组合**批量生成特征 + IC/IR 初筛
@@ -23,6 +24,48 @@ B1-00630（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-FAC-016，C2 74）：价量
 查重分工（蓝图 §0）：factor_mining_pipeline=论文→LLM 假说→沙箱五段链（外部知
 识驱动）；本件=价量算子模板**组合枚举**驱动（无 LLM、无论文），产出仅入内存
 确认队列，禁直改 factor_registry（同候选草稿治理口径，由运行时装配批串行合并）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: ic_calculator 参数
+#   fields: 参数 ic_calculator（无注解）
+#   code: auto_feature_discoverer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: min_ic 参数
+#   fields: 参数 min_ic（无注解）
+#   code: auto_feature_discoverer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: min_ir 参数
+#   fields: 参数 min_ir（无注解）
+#   code: auto_feature_discoverer.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: top_n 参数
+#   fields: 参数 top_n（无注解）
+#   code: auto_feature_discoverer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AutoFeatureDiscoverer
+#   name_en: AutoFeatureDiscoverer
+#   intro: 价量算子模板组合特征发现器（生成 + IC/IR 初筛 + TopN 人工确认队列）。
+#   desc: 价量算子模板组合特征发现器（生成 + IC/IR 初筛 + TopN 人工确认队列）。 Args: ic_calculator: 注入 IC/IR 计算器，签名 ``expres…；公共方法（定义序）: generat…
+#   inputs: ic_calculator min_ic min_ir top_n base_series windows clock
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: AutoFeatureDiscoverer
+#   downstream: 运行时装配批（研究轨特征发现入口 / 因子库草稿治理串行合并）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

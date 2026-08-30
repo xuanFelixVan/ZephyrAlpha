@@ -14,7 +14,8 @@
 # [TESTS] tests/knowledge/test_ai_knowledge_extractor.py
 # [A_module] module_id=MOD-KNW-007 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""AiKnowledgeExtractor — AI 自动知识提取器（MOD-KNW-007）。
+"""
+AiKnowledgeExtractor — AI 自动知识提取器（MOD-KNW-007）。
 
 B10-02191（AUD-DRAFT-001-DIGEST P2 波 P2-W03，CAND-KNW-007，A1 D-KNOWLEDGE-17）：
 实验报告/研究笔记/策略代码**三类源**（词表闭合）经 LLM 抽取写 KB 的**批处理
@@ -27,6 +28,48 @@ COMPLETED 幂等跳过、FAILED 可重试）+ **写 KB 注入回调**。
 （事件流逐条，本件=离线批处理管线）；kb_engine=通用 CRUD 门面（本件仅经注入
 kb_writer 写入）；strategy_knowledge_base/factor_knowledge_base=目的端 KB
 Schema（本件产物经 kb_writer 路由，不识目的端结构）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: llm_extractor 参数
+#   fields: 参数 llm_extractor（无注解）
+#   code: ai_knowledge_extractor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: kb_writer 参数
+#   fields: 参数 kb_writer（无注解）
+#   code: ai_knowledge_extractor.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: ai_knowledge_extractor.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: confidence_threshold 参数
+#   fields: 参数 confidence_threshold（无注解）
+#   code: ai_knowledge_extractor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AiKnowledgeExtractor
+#   name_en: AiKnowledgeExtractor
+#   intro: AI 知识抽取批处理管线（源注册→LLM抽取→人工队列/写KB→断点续跑）。
+#   desc: AI 知识抽取批处理管线（源注册→LLM抽取→人工队列/写KB→断点续跑）。；公共方法（定义序）: register_source, source_status, run_batch, export_checkpoin…
+#   inputs: llm_extractor kb_writer clock confidence_threshold checkpoint
+#   outputs: 返回值
+#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（8 定义）
+#   name_en: public defs
+#   intro: AiKnowledgeExtractor
+#   downstream: 运行时装配批（三类源注册 / 真实 LLM 回调绑定 / KB 写入接 knowledge 集合 / 人工复核队列消费）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -181,14 +224,16 @@ class AiKnowledgeExtractor:
             if not isinstance(tags, (list, tuple)) or not all(isinstance(t, str) for t in tags):
                 raise AiExtractorError(f"LLM 输出 tags 非法: {source_id!r}")
             self._item_seq += 1
-            items.append(KnowledgeItem(
-                item_key=f"{source_id}#K{self._item_seq:04d}",
-                source_id=source_id,
-                title=title,
-                content=content,
-                confidence=float(confidence),
-                tags=tuple(tags),
-            ))
+            items.append(
+                KnowledgeItem(
+                    item_key=f"{source_id}#K{self._item_seq:04d}",
+                    source_id=source_id,
+                    title=title,
+                    content=content,
+                    confidence=float(confidence),
+                    tags=tuple(tags),
+                )
+            )
         return items
 
     def _write_kb(self, item: KnowledgeItem) -> None:
@@ -318,7 +363,4 @@ class AiKnowledgeExtractor:
     def items_of(self, source_id: str) -> tuple[KnowledgeItem, ...]:
         """单源抽取产物（item_key 确定性排序）。"""
         self._require_source(source_id)
-        return tuple(
-            self._items[key] for key in sorted(self._items)
-            if self._items[key].source_id == source_id
-        )
+        return tuple(self._items[key] for key in sorted(self._items) if self._items[key].source_id == source_id)

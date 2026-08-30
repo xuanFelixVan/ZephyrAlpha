@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-REGIME-008 | layer=module | stability=testing | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #architecture_review_2026_08_module_upgrade_audit §11.3裁定一(1引擎×4代理) #§11.5 IDX-01 #92_phase2_business_construction_order §7.9 #MOD-REGIME-001 #MOD-REGIME-002
-"""MOD-REGIME-008 IndexRegimePanel — 四指数 regime 面板（1 引擎 × 4 代理）。
+"""
+MOD-REGIME-008 IndexRegimePanel — 四指数 regime 面板（1 引擎 × 4 代理）。
 
 设计真源（architecture_review_2026_08_module_upgrade_audit §11.3 裁定一）：
   四指数**不建 4 个独立预测模型**，建"1 引擎 × 4 代理"的 regime 面板：
@@ -61,6 +62,56 @@ MOD-REGIME-002 build_shrinkage_schedule 同款）；强弱排序用 ≤ as_of �
 92_phase2_business_construction_order §7.9 / 90号 §7（点预测铁律）
 SSoT: depgraph MOD-REGIME-008
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: trade_date 参数
+#   fields: 参数 trade_date，类型注解 str | None
+#   code: index_regime_panel.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: ch_client 参数
+#   fields: 参数 ch_client，类型注解 Callable[[str], str] | Any | None
+#   code: index_regime_panel.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: config 参数
+#   fields: 参数 config，类型注解 IndexRegimePanelConfig | None
+#   code: index_regime_panel.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: m1_distortion 参数
+#   fields: 参数 m1_distortion（无注解）
+#   code: index_regime_panel.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① IndexRegimePanel
+#   name_en: IndexRegimePanel
+#   intro: 四指数 regime 面板（IDX-01 输出契约，frozen，JSON 可序列化）。
+#   desc: 四指数 regime 面板（IDX-01 输出契约，frozen，JSON 可序列化）。 Attributes: trade_date: 面板交易日（入参 as-of；None…；公共方法（定义序）: to_dict,…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② compute_index_regime_panel
+#   name_en: compute_index_regime_panel
+#   intro: 计算四指数 regime 面板（1 引擎 × 4 代理）。
+#   desc: 计算四指数 regime 面板（1 引擎 × 4 代理）。 流程：加载 4 代理 + F3/F4 共享指数日 K → 每代理按同一 6 特征族构建特征 （PIT shift(1)…；源码 L351-L418
+#   inputs: trade_date ch_client config m1_distortion
+#   outputs: IndexRegimePanel
+#   （注：A2 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: IndexRegimePanel
+#   name_en: IndexRegimePanel
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: IDX-02(Dashboard 四指数状态卡，随前端批落地)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -333,11 +384,7 @@ def compute_index_regime_panel(
     end = trade_date or pd.Timestamp.now().strftime("%Y-%m-%d")
     index_df = _load_index_kline(query_fn, cfg, end)
 
-    cards = tuple(
-        _compute_card(proxy, index_df, cfg, trade_date)
-        for proxy in cfg.proxies
-        if proxy.enabled
-    )
+    cards = tuple(_compute_card(proxy, index_df, cfg, trade_date) for proxy in cfg.proxies if proxy.enabled)
 
     # 强弱排序：非 degraded 且 strength_score 有效的卡按 score 降序
     ranked = sorted(
@@ -351,9 +398,7 @@ def compute_index_regime_panel(
 
     alerts = _build_divergence_alerts(cards, index_df, cfg, m1_distortion)
 
-    panel_trade_date = trade_date or max(
-        (c.trade_date for c in cards if c.trade_date), default=end
-    )
+    panel_trade_date = trade_date or max((c.trade_date for c in cards if c.trade_date), default=end)
     panel_degraded = bool(cards) and all(c.degraded for c in cards)
     panel = IndexRegimePanel(
         trade_date=panel_trade_date,
@@ -403,9 +448,7 @@ def _resolve_query_fn(ch_client: Callable[[str], str] | Any | None) -> Callable[
     query = getattr(ch_client, "query", None)
     if callable(query):
         return query
-    raise IndexRegimePanelError(
-        f"ch_client 形态非法（需 callable 或带 .query 方法）: {type(ch_client).__name__}"
-    )
+    raise IndexRegimePanelError(f"ch_client 形态非法（需 callable 或带 .query 方法）: {type(ch_client).__name__}")
 
 
 def _load_index_kline(

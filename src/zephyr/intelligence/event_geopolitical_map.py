@@ -21,7 +21,8 @@
 # F2: event_score = 1.4 × direction × sentiment × decay(rising_hl 内 1.0 否则 0.5) × 1.0
 # O1: (beneficiary_sectors, victim_sectors, event_score)
 # [/ALGO_FLOW]
-"""MOD-INT-EVENT-GEO — 地缘/宏观事件→A 股板块受益传导链（26 号 §2.5b 施工化）。
+"""
+MOD-INT-EVENT-GEO — 地缘/宏观事件→A 股板块受益传导链（26 号 §2.5b 施工化）。
 
 MVP 静态映射表（Phase 2 演进为 NLP 动态识别）。三层正交边界：
 本 sleeve 作**选股 alpha**（买受益/卖受损）；32 号作风控压力测试（RMATS）；
@@ -34,6 +35,42 @@ entity list"→trade_war_escalation），NLP 就绪后升级语义分类。
 
 依据: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/26_event_driven_strategy_detail.md §2.5b
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: event_nlp_tag 参数
+#   fields: 参数 event_nlp_tag，类型注解 str
+#   code: event_geopolitical_map.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: sentiment_score 参数
+#   fields: 参数 sentiment_score，类型注解 float
+#   code: event_geopolitical_map.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: days_since_event 参数
+#   fields: 参数 days_since_event，类型注解 int
+#   code: event_geopolitical_map.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① map_geopolitical_event_to_sectors
+#   name_en: map_geopolitical_event_to_sectors
+#   intro: 地缘事件→受益/受害板块映射 + event_score（§2.5b）。
+#   desc: 地缘事件→受益/受害板块映射 + event_score（§2.5b）。 Parameters ---------- event_nlp_tag : NLP 产出的事件标签（GE…；源码 L130-L166
+#   inputs: event_nlp_tag sentiment_score days_since_event
+#   outputs: tuple[list[str], list[str], float]
+# 层: 输出
+# - id: O1
+#   name_zh: tuple[list[str], list[str], float]
+#   name_en: tuple[list[str], list[str], float]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 事件驱动 sleeve（地缘/宏观事件类→受益/受害板块 alpha 方向）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

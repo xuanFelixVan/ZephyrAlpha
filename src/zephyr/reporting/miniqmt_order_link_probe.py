@@ -14,7 +14,8 @@
 # [TESTS] tests/reporting/test_miniqmt_order_link_probe.py
 # [A_module] module_id=MOD-EX-058_probe | layer=module | stability=testing | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""miniQMT 下单链路探针（55 号 §3.2 缺口，MOD-EX-058 伴随件，source_health 族）。
+"""
+miniQMT 下单链路探针（55 号 §3.2 缺口，MOD-EX-058 伴随件，source_health 族）。
 
 55 号 §3.2："缺口待施工：miniQMT 下单链路专门探针（连接状态/下单延迟/回报延迟）"。
 本探针消费 MiniQmtChannelManager（MOD-EX-058）``is_ready``/``status()`` 快照输出
@@ -34,6 +35,63 @@
 口径闭包）；未注入/异常 → 保守按交易时段判定（监控哲学：缺接线宁误报不漏报，
 notes 留痕）。下单/回报延迟走 ``latency_probe`` 注入位（生产接线
 execution_quality_scorer/algo_trading_engine 延迟源，本批零真实下单，测试 mock）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: channel_manager 参数
+#   fields: 参数 channel_manager，类型注解 OrderLinkChannel
+#   code: miniqmt_order_link_probe.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: is_trading_time 参数
+#   fields: 参数 is_trading_time（无注解）
+#   code: miniqmt_order_link_probe.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: latency_probe 参数
+#   fields: 参数 latency_probe（无注解）
+#   code: miniqmt_order_link_probe.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: miniqmt_order_link_probe.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① OrderLinkChannel
+#   name_en: OrderLinkChannel
+#   intro: 下单通道鸭型协议（MiniQmtChannelManager 消费面，只读）。
+#   desc: 下单通道鸭型协议（MiniQmtChannelManager 消费面，只读）。；公共方法（定义序）: is_ready, status；源码 L130-L140
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② OrderLinkHealth
+#   name_en: OrderLinkHealth
+#   intro: 下单链路健康快照（source_health 族结果口径，JSON 可序列化）。
+#   desc: 下单链路健康快照（source_health 族结果口径，JSON 可序列化）。；公共方法（定义序）: to_dict；源码 L144-L159
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ probe_order_link
+#   name_en: probe_order_link
+#   intro: 探测一次下单链路健康状态（只读，不触发连接/下单/心跳）。
+#   desc: 探测一次下单链路健康状态（只读，不触发连接/下单/心跳）。 Args: channel_manager: MiniQmtChannelManager 鸭型（is_ready +…；源码 L162-L264
+#   inputs: channel_manager is_trading_time latency_probe clock source
+#   outputs: OrderLinkHealth
+# 层: 输出
+# - id: O1
+#   name_zh: OrderLinkHealth
+#   name_en: OrderLinkHealth
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 系统健康总览看板(55号§3.2, 持仓监控 Tab 旁) ; 运维自治(下单链路健康查询面)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

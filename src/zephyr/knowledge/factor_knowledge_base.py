@@ -14,7 +14,8 @@
 # [TESTS] tests/knowledge/test_factor_knowledge_base.py
 # [A_module] module_id=MOD-KNW-005 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""FactorKnowledgeBase — 因子知识库（MOD-KNW-005）。
+"""
+FactorKnowledgeBase — 因子知识库（MOD-KNW-005）。
 
 B10-02181（AUD-DRAFT-001-DIGEST P2 波 P2-W03，CAND-KNW-004，A1 D-KNOWLEDGE-02）：
 因子**定义/关系/历史三表**——定义表（formula/类别/假设）、关系表（同族/正交/
@@ -26,6 +27,38 @@ knowledge 集合语义（**注入 kb_writer 回调**，因子注册与状态变�
 与关系词表，不存案例叙事）；kb_engine=八 Collection 通用 CRUD 门面（本件仅经
 注入 kb_writer 挂接其 knowledge 集合语义，不自建存储）；financial_knowledge_
 graph=六类实体邻接图谱（本件关系仅因子间三类闭合词表，零交集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: factor_knowledge_base.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: kb_writer 参数
+#   fields: 参数 kb_writer（无注解）
+#   code: factor_knowledge_base.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FactorKnowledgeBase
+#   name_en: FactorKnowledgeBase
+#   intro: 因子知识库（定义/关系/历史三表 + kb 写入回调 + 确定性查询）。
+#   desc: 因子知识库（定义/关系/历史三表 + kb 写入回调 + 确定性查询）。；公共方法（定义序）: register_factor, get_definition, get_status, add_relation, re…
+#   inputs: clock kb_writer
+#   outputs: 返回值
+#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（8 定义）
+#   name_en: public defs
+#   intro: FactorKnowledgeBase
+#   downstream: 运行时装配批（因子注册入库 / vector_memory knowledge 集合写入绑定 / 因子查询路由）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -50,7 +83,7 @@ __all__: Final = [
 ]
 
 #: 合法状态迁移（DRAFT→ACTIVE→DEPRECATED 闭合；DRAFT 可直接废弃）
-_ALLOWED_TRANSITIONS: Final[dict["FactorStatus", frozenset["FactorStatus"]]] = {}
+_ALLOWED_TRANSITIONS: Final[dict[FactorStatus, frozenset[FactorStatus]]] = {}
 
 
 class FactorKbError(Exception):
@@ -68,11 +101,13 @@ class FactorStatus(str, Enum):
     DEPRECATED = "deprecated"
 
 
-_ALLOWED_TRANSITIONS.update({
-    FactorStatus.DRAFT: frozenset({FactorStatus.ACTIVE, FactorStatus.DEPRECATED}),
-    FactorStatus.ACTIVE: frozenset({FactorStatus.DEPRECATED}),
-    FactorStatus.DEPRECATED: frozenset(),
-})
+_ALLOWED_TRANSITIONS.update(
+    {
+        FactorStatus.DRAFT: frozenset({FactorStatus.ACTIVE, FactorStatus.DEPRECATED}),
+        FactorStatus.ACTIVE: frozenset({FactorStatus.DEPRECATED}),
+        FactorStatus.DEPRECATED: frozenset(),
+    }
+)
 
 
 class RelationType(str, Enum):
@@ -170,14 +205,16 @@ class FactorKnowledgeBase:
             raise FactorKbError(f"因子重复注册: {definition.factor_id!r}")
         self._definitions[definition.factor_id] = definition
         self._status[definition.factor_id] = FactorStatus.DRAFT
-        self._write_kb({
-            "kind": "factor_definition",
-            "factor_id": definition.factor_id,
-            "formula": definition.formula,
-            "category": definition.category,
-            "hypothesis": definition.hypothesis,
-            "status": FactorStatus.DRAFT.value,
-        })
+        self._write_kb(
+            {
+                "kind": "factor_definition",
+                "factor_id": definition.factor_id,
+                "formula": definition.formula,
+                "category": definition.category,
+                "hypothesis": definition.hypothesis,
+                "status": FactorStatus.DRAFT.value,
+            }
+        )
 
     def get_definition(self, factor_id: str) -> FactorDefinition:
         """单因子定义查询（未知 → Fail-Closed）。"""
@@ -218,8 +255,7 @@ class FactorKnowledgeBase:
         neighbors = {
             dst if src == factor_id else src
             for src, dst, rtype in self._relations
-            if (src == factor_id or dst == factor_id)
-            and (relation_type is None or rtype is relation_type)
+            if (src == factor_id or dst == factor_id) and (relation_type is None or rtype is relation_type)
         }
         return tuple(sorted(neighbors))
 
@@ -248,10 +284,12 @@ class FactorKnowledgeBase:
     def ic_series(self, factor_id: str) -> tuple[IcRecord, ...]:
         """IC 序列（按 (observed_at, seq) 确定性排序）。"""
         self._require_factor(factor_id)
-        return tuple(sorted(
-            self._ic_history.get(factor_id, ()),
-            key=lambda r: (r.observed_at, r.seq),
-        ))
+        return tuple(
+            sorted(
+                self._ic_history.get(factor_id, ()),
+                key=lambda r: (r.observed_at, r.seq),
+            )
+        )
 
     def ic_decay(self, factor_id: str) -> float:
         """IC 衰减斜率（对观测序号最小二乘；<2 样本 Fail-Closed）。
@@ -268,7 +306,7 @@ class FactorKnowledgeBase:
         denom = sum((x - x_bar) ** 2 for x in xs)
         if denom == 0:
             return 0.0
-        return sum((x - x_bar) * (y - y_bar) for x, y in zip(xs, ys)) / denom
+        return sum((x - x_bar) * (y - y_bar) for x, y in zip(xs, ys, strict=False)) / denom
 
     # ── 状态机 ────────────────────────────────────────────────────────────
 
@@ -279,9 +317,7 @@ class FactorKnowledgeBase:
             raise FactorKbError(f"非法状态: {to_status!r}（词表闭合）")
         from_status = self._status[factor_id]
         if to_status not in _ALLOWED_TRANSITIONS[from_status]:
-            raise FactorKbError(
-                f"非法状态迁移: {factor_id!r} {from_status.value} -> {to_status.value}"
-            )
+            raise FactorKbError(f"非法状态迁移: {factor_id!r} {from_status.value} -> {to_status.value}")
         transition = StatusTransition(
             factor_id=factor_id,
             from_status=from_status,
@@ -290,12 +326,14 @@ class FactorKnowledgeBase:
         )
         self._status[factor_id] = to_status
         self._transitions.setdefault(factor_id, []).append(transition)
-        self._write_kb({
-            "kind": "factor_status",
-            "factor_id": factor_id,
-            "from_status": from_status.value,
-            "to_status": to_status.value,
-        })
+        self._write_kb(
+            {
+                "kind": "factor_status",
+                "factor_id": factor_id,
+                "from_status": from_status.value,
+                "to_status": to_status.value,
+            }
+        )
         return transition
 
     def status_history(self, factor_id: str) -> tuple[StatusTransition, ...]:
@@ -310,17 +348,11 @@ class FactorKnowledgeBase:
         if not category:
             raise FactorKbError("category 为空")
         return tuple(
-            self._definitions[fid]
-            for fid in sorted(self._definitions)
-            if self._definitions[fid].category == category
+            self._definitions[fid] for fid in sorted(self._definitions) if self._definitions[fid].category == category
         )
 
     def by_status(self, status: FactorStatus) -> tuple[FactorDefinition, ...]:
         """按状态查询（factor_id 确定性排序）。"""
         if not isinstance(status, FactorStatus):
             raise FactorKbError(f"非法状态: {status!r}（词表闭合）")
-        return tuple(
-            self._definitions[fid]
-            for fid in sorted(self._definitions)
-            if self._status[fid] is status
-        )
+        return tuple(self._definitions[fid] for fid in sorted(self._definitions) if self._status[fid] is status)

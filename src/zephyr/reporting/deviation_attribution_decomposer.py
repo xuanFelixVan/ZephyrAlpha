@@ -14,7 +14,8 @@
 # [TESTS] tests/reporting/test_deviation_attribution_decomposer.py
 # [A_module] module_id=MOD-RPT-031 | layer=module | stability=testing | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""MOD-RPT-031 — 回测-实盘偏离归因分解器（battle_map BM-BT-05-H 四因子汇总点）。
+"""
+MOD-RPT-031 — 回测-实盘偏离归因分解器（battle_map BM-BT-05-H 四因子汇总点）。
 
 55 号 §6 暂缓项"偏离度量两口径之外加归因分解（H-A~D 四因子）"施工。
 **口径裁定（派单纪律"源文档口径不同以源文档为准"）**：55 号 §6 的 H-A~D 指向
@@ -43,6 +44,46 @@ battle_map_03_backtest_validation.md BM-BT-05-H 四孙环节，本模块按其�
     "归因到子维度"是划分不是罗列；
   - 本模块不做告警阈值判定（>30% 告警/>50% 退役归 decision_gate/MOD-RK-23），
     只产分解快照；|残差|>|已解释| 时 notes 提示"四因子解释力不足"（复盘口径）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: total_deviation 参数
+#   fields: 参数 total_deviation，类型注解 float
+#   code: deviation_attribution_decomposer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: factors 参数
+#   fields: 参数 factors，类型注解 Sequence[FactorBias]
+#   code: deviation_attribution_decomposer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DeviationAttribution
+#   name_en: DeviationAttribution
+#   intro: 四因子归因分解快照（BM-BT-05-H 汇总点产出，JSON 可序列化）。
+#   desc: 四因子归因分解快照（BM-BT-05-H 汇总点产出，JSON 可序列化）。；公共方法（定义序）: to_dict；源码 L163-L176
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② decompose_deviation_attribution
+#   name_en: decompose_deviation_attribution
+#   intro: 回测 vs 实盘总偏差的 BM-BT-05-H 四因子归因分解。
+#   desc: 回测 vs 实盘总偏差的 BM-BT-05-H 四因子归因分解。 Args: total_deviation: 总偏差（实盘−回测，收益口径带符号；供给方=MOD-RK-23 偏…；源码 L218-L287
+#   inputs: total_deviation factors
+#   outputs: DeviationAttribution
+#   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: DeviationAttribution
+#   name_en: DeviationAttribution
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-RK-23(偏离告警触发后按需分解, 55号§6重评条件) ; MOD-RPT-009(周复盘"偏离与告警事件"段) ; decision_gate(…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

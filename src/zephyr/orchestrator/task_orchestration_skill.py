@@ -14,7 +14,8 @@
 # [TESTS] tests/orchestrator/test_task_orchestration_skill.py
 # [A_module] module_id=MOD-ORCH-003 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""TaskOrchestrationSkill — 任务编排技能（MOD-ORCH-003）。
+"""
+TaskOrchestrationSkill — 任务编排技能（MOD-ORCH-003）。
 
 B11-02579（AUD-DRAFT-001-DIGEST P2 波 P2-W13，CAND-ORCH-003，A7）：
 task-orchestration 技能封装——任务分解 → DAG 生成（work_dag 语义：拓扑分层 +
@@ -26,6 +27,59 @@ DLQ + 技能契约（输入输出 Schema 登记）+ 产出编排计划需 **huma
 力评分，只做任务图编排）；layered_command_chain=Agent 层级委托协议（本件=
 任务 DAG 执行面，不建指挥链）；execution/dlq_manager=DLQ 持久化实现（本件经
 注入 dlq_sink 回调，不实现持久化）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: task_orchestration_skill.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: executor 参数
+#   fields: 参数 executor（无注解）
+#   code: task_orchestration_skill.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: dlq_sink 参数
+#   fields: 参数 dlq_sink（无注解）
+#   code: task_orchestration_skill.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ExecutionReport
+#   name_en: ExecutionReport
+#   intro: 整计划执行报告（records 按波次/层内序确定性排列，frozen）。
+#   desc: 整计划执行报告（records 按波次/层内序确定性排列，frozen）。；公共方法（定义序）: succeeded, status_of；源码 L168-L186
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② WorkDAG
+#   name_en: WorkDAG
+#   intro: 轻量 DAG（work_dag 语义：拓扑分层 + 未知依赖/循环拒绝）。
+#   desc: 轻量 DAG（work_dag 语义：拓扑分层 + 未知依赖/循环拒绝）。 参照 agent_orchestrator 纯内存/DI 既有模式内建；边仅经 depends_on…；公共方法（定义序）: add_node…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ TaskOrchestrationSkill
+#   name_en: TaskOrchestrationSkill
+#   intro: 任务编排技能（契约登记 + 分解成 DAG + 人工确认 + 波次执行 + 重试/DLQ）。
+#   desc: 任务编排技能（契约登记 + 分解成 DAG + 人工确认 + 波次执行 + 重试/DLQ）。；公共方法（定义序）: register_contract, contract_of, contracts, decompos…
+#   inputs: clock executor dlq_sink
+#   outputs: 返回值
+#   （注：A3 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（9 定义）
+#   name_en: public defs
+#   intro: ExecutionReport, WorkDAG, TaskOrchestrationSkill
+#   downstream: 运行时装配批（任务分解入口 / 真实执行器绑定 / DLQ 落库路由 / 人工确认闸门）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations
@@ -169,9 +223,7 @@ class WorkDAG:
         for task_id, deps in self._deps.items():
             for dep in deps:
                 if dep not in self._deps:
-                    raise TaskOrchestrationError(
-                        f"未知依赖: 任务 {task_id!r} 依赖未登记任务 {dep!r}"
-                    )
+                    raise TaskOrchestrationError(f"未知依赖: 任务 {task_id!r} 依赖未登记任务 {dep!r}")
         self._reject_cycle()
         indegree = {t: len(deps) for t, deps in self._deps.items()}
         dependents: dict[str, list[str]] = {t: [] for t in self._deps}
@@ -244,9 +296,7 @@ class TaskOrchestrationSkill:
         """登记技能契约（空名/重复/非法 Schema → Fail-Closed）。"""
         if not contract.skill_name:
             raise TaskOrchestrationError("skill_name 为空")
-        if not isinstance(contract.input_schema, Mapping) or not isinstance(
-            contract.output_schema, Mapping
-        ):
+        if not isinstance(contract.input_schema, Mapping) or not isinstance(contract.output_schema, Mapping):
             raise TaskOrchestrationError(f"契约 Schema 非法: {contract.skill_name!r}")
         if contract.skill_name in self._contracts:
             raise TaskOrchestrationError(f"契约重复登记: {contract.skill_name!r}")
@@ -282,9 +332,7 @@ class TaskOrchestrationSkill:
                 raise TaskOrchestrationError(f"max_retries 非法: {node.task_id!r}")
             dag.add_node(node.task_id, node.depends_on)
         waves = dag.waves()
-        plan = OrchestrationPlan(
-            plan_id=plan_id, nodes=nodes, waves=waves, created_at=self._clock()
-        )
+        plan = OrchestrationPlan(plan_id=plan_id, nodes=nodes, waves=waves, created_at=self._clock())
         self._plans[plan_id] = plan
         self._confirmed[plan_id] = False
         return plan
@@ -307,9 +355,7 @@ class TaskOrchestrationSkill:
         """波次执行：未确认/executor 缺失 → Fail-Closed；失败重试上限后入 DLQ。"""
         plan = self._plan_of(plan_id)
         if not self._confirmed[plan_id]:
-            raise TaskOrchestrationError(
-                f"编排计划 {plan_id!r} 未经 human_gated 确认（硬约束，禁止执行）"
-            )
+            raise TaskOrchestrationError(f"编排计划 {plan_id!r} 未经 human_gated 确认（硬约束，禁止执行）")
         if self._executor is None:
             raise TaskOrchestrationError("executor 未注入（Fail-Closed 不旁路）")
         node_by_id = {n.task_id: n for n in plan.nodes}
@@ -319,15 +365,17 @@ class TaskOrchestrationSkill:
         for wave in plan.waves:
             for task_id in wave:
                 node = node_by_id[task_id]
-                if any(
-                    statuses.get(dep) in (TaskStatus.DLQ, TaskStatus.SKIPPED)
-                    for dep in node.depends_on
-                ):
+                if any(statuses.get(dep) in (TaskStatus.DLQ, TaskStatus.SKIPPED) for dep in node.depends_on):
                     statuses[task_id] = TaskStatus.SKIPPED
-                    records.append(ExecutionRecord(
-                        task_id=task_id, status=TaskStatus.SKIPPED, attempts=0,
-                        error="依赖任务失败级联跳过", finished_at=self._clock(),
-                    ))
+                    records.append(
+                        ExecutionRecord(
+                            task_id=task_id,
+                            status=TaskStatus.SKIPPED,
+                            attempts=0,
+                            error="依赖任务失败级联跳过",
+                            finished_at=self._clock(),
+                        )
+                    )
                     continue
                 attempts, error = 0, None
                 for _ in range(1 + node.max_retries):
@@ -338,9 +386,7 @@ class TaskOrchestrationSkill:
                         break
                     except Exception as exc:  # noqa: BLE001 — 执行异常收敛为重试/DLQ
                         error = f"{type(exc).__name__}: {exc}"
-                        _log.warning(
-                            "任务执行失败(第%d次): %s (%s)", attempts, task_id, error
-                        )
+                        _log.warning("任务执行失败(第%d次): %s (%s)", attempts, task_id, error)
                 if error is None:
                     statuses[task_id] = TaskStatus.SUCCEEDED
                 else:
@@ -351,10 +397,15 @@ class TaskOrchestrationSkill:
                             self._dlq_sink(node, error)
                         except Exception:  # noqa: BLE001 — DLQ 回调异常不阻断
                             _log.exception("dlq_sink 回调失败: %s", task_id)
-                records.append(ExecutionRecord(
-                    task_id=task_id, status=statuses[task_id], attempts=attempts,
-                    error=error, finished_at=self._clock(),
-                ))
+                records.append(
+                    ExecutionRecord(
+                        task_id=task_id,
+                        status=statuses[task_id],
+                        attempts=attempts,
+                        error=error,
+                        finished_at=self._clock(),
+                    )
+                )
         report = ExecutionReport(
             plan_id=plan_id,
             records=tuple(records),

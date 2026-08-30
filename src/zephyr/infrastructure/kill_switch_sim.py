@@ -34,6 +34,48 @@ INV-001 / CAP-009：Kill Switch 延迟 < 1ms（现阶段 T0 模拟器验证）
 
 用法：
   ZEPHYR_T1_KILL_SWITCH_PROBE=1 python -m zephyr.infrastructure.kill_switch_sim
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: target_ms 参数
+#   fields: 参数 target_ms（无注解）
+#   code: kill_switch_sim.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① KillSwitchProbe
+#   name_en: KillSwitchProbe
+#   intro: Kill Switch 单次探测结果
+#   desc: Kill Switch 单次探测结果；公共方法（定义序）: latency_ms, to_dict；源码 L101-L124
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② KillSwitchSimulator
+#   name_en: KillSwitchSimulator
+#   intro: T0 级 Kill Switch 模拟器
+#   desc: T0 级 Kill Switch 模拟器 模拟硬件 Kill Switch 的信号回路： 1. trigger() -> 发送 KILL 信号 2. wait_ack() ->…；公共方法（定义序）: metrics_…
+#   inputs: target_ms
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ main
+#   name_en: main
+#   intro: main() 源码 L207-L214
+#   desc: 源码 L207-L214
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: KillSwitchProbe, KillSwitchSimulator, main
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

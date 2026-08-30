@@ -33,6 +33,67 @@ MOD-INT-NEWS-LINK NewsSymbolLinker — 新闻/公告→标的关联层 MVP（tra
 
 依据: 92号清单 §8.4 + 44号备忘 §4 表 M3-② 行 + tracker #139
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: text 参数
+#   fields: 参数 text，类型注解 str
+#   code: news_symbol_linker.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: code 参数
+#   fields: 参数 code，类型注解 str
+#   code: news_symbol_linker.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: symbol 参数
+#   fields: 参数 symbol，类型注解 str
+#   code: news_symbol_linker.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① normalize_text
+#   name_en: normalize_text
+#   intro: 文本归一化：全角 ASCII→半角、去全部空白、转大写（简称精确匹配前提）。
+#   desc: 文本归一化：全角 ASCII→半角、去全部空白、转大写（简称精确匹配前提）。；源码 L167-L171
+#   inputs: text
+#   outputs: str
+# - id: A2
+#   name_zh: ② code_to_canonical
+#   name_en: code_to_canonical
+#   intro: 6 位裸码→canonical 形式（前缀推导交易所，与 stock_basic TRAE-082 派生规则同口径）。
+#   desc: 6 位裸码→canonical 形式（前缀推导交易所，与 stock_basic TRAE-082 派生规则同口径）。 110/113/204/900/901/902/903→S…；源码 L174-L197
+#   inputs: code
+#   outputs: str
+# - id: A3
+#   name_zh: ③ to_canonical
+#   name_en: to_canonical
+#   intro: 任意形式标的代码→canonical（已带后缀的原样返回，6 位裸码按前缀推导）。
+#   desc: 任意形式标的代码→canonical（已带后缀的原样返回，6 位裸码按前缀推导）。；源码 L200-L207
+#   inputs: symbol
+#   outputs: str
+# - id: A4
+#   name_zh: ④ NewsSymbolLinker
+#   name_en: NewsSymbolLinker
+#   intro: 新闻/公告→标的关联器（规则法 MVP）。
+#   desc: 新闻/公告→标的关联器（规则法 MVP）。 词表经构造注入或 from_ch 加载；空词表 fail-open（全部关联结果为 market 级）。；公共方法（定义序）: from_ch, lexicon_size,…
+#   inputs: entries
+#   outputs: 返回值
+#   （注：A4 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.intelligence.nightly_sentiment_window（夜间情绪聚合标的关联）；MOD-SIG-002 信号生成器（后续波次…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations
@@ -151,10 +212,7 @@ def to_canonical(symbol: str) -> str:
 # ============================================================================
 
 # SQL 常量（NO-BARE-SQL gate 豁免：_SQL_ 前缀，与 ch_reader/overnight_boundary_reviser 同约定）
-_SQL_LEXICON = (
-    "SELECT symbol, name FROM {table} FINAL "
-    "WHERE trade_date = (SELECT max(trade_date) FROM {table})"
-)
+_SQL_LEXICON = "SELECT symbol, name FROM {table} FINAL WHERE trade_date = (SELECT max(trade_date) FROM {table})"
 
 
 class NewsSymbolLinker:
@@ -188,9 +246,7 @@ class NewsSymbolLinker:
             if canonical not in bucket:
                 bucket.append(canonical)
         # 长名优先扫描序（最长匹配优先的剔除依据）
-        self._names_sorted: Final[tuple[str, ...]] = tuple(
-            sorted(self._name_map.keys(), key=len, reverse=True)
-        )
+        self._names_sorted: Final[tuple[str, ...]] = tuple(sorted(self._name_map.keys(), key=len, reverse=True))
 
     # ------------------------------------------------------------------
     # 词表加载
@@ -258,8 +314,9 @@ class NewsSymbolLinker:
         if not direct and str(related_symbol or "").strip():
             direct = [to_canonical(str(related_symbol))]
         if direct:
-            return SymbolLinkage(news_id=nid, symbols=tuple(dict.fromkeys(direct)),
-                                 confidence=CONFIDENCE_ANNOUNCEMENT, ambiguous=False)
+            return SymbolLinkage(
+                news_id=nid, symbols=tuple(dict.fromkeys(direct)), confidence=CONFIDENCE_ANNOUNCEMENT, ambiguous=False
+            )
 
         text = normalize_text(f"{title} {content}" if content else str(title or ""))
         if not text or (not self._name_map and not self._code_map):

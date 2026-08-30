@@ -35,6 +35,32 @@ Redis H1 热缓存（INFRA-DB-007）已于 2026-08-02 部署——Redis 7.0.15 @
 （172.24.30.100:6379，与 ClickHouse 同 VM，D1 决策），get_redis_conn() 已实现。
 
 注：market.duckdb（旧 DuckDB 业务时序库）已于 2026-07-05 删除（524KB 残留文件，无有价值数据）。业务行情数据已迁移至 ClickHouse c1_market。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: database_service.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① DatabaseService
+#   name_en: DatabaseService
+#   intro: 统一数据库服务层（治理 + 依赖图 + 业务数据库预留）
+#   desc: 统一数据库服务层（治理 + 依赖图 + 业务数据库预留） P-PLAN 专项工程：CRUD 方法（get_task/create_task/get_node 等 9 个）已抽取到…；公共方法（定义序）: get_gov…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: DatabaseService
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 import logging

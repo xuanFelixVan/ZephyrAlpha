@@ -14,7 +14,8 @@
 # [TESTS] tests/knowledge/test_rag_pipeline.py
 # [A_module] module_id=MOD-KNW-008 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""RagPipeline — RAG 问答管道（MOD-KNW-008）。
+"""
+RagPipeline — RAG 问答管道（MOD-KNW-008）。
 
 B13-04034（AUD-DRAFT-001-DIGEST P2 波 P2-W03，CAND-KNW-009，A3）：RAG 问答管道
 ——文档**分块**（重叠滑窗，确定性 chunk_id）→ **hybrid 双路检索**（向量+关键词
@@ -26,6 +27,48 @@ B13-04034（AUD-DRAFT-001-DIGEST P2 波 P2-W03，CAND-KNW-009，A3）：RAG 问�
 集合检索实现（本件仅注入其检索语义为双路之一，不实现向量存储）；kb_engine=通
 用 CRUD 门面（本件 ingest 产物为内存 chunk 表，可选外挂）；layered_memory_
 orchestrator=五层记忆编排（本件=单管道路由，零交集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: rag_pipeline.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: vector_searcher 参数
+#   fields: 参数 vector_searcher（无注解）
+#   code: rag_pipeline.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: keyword_searcher 参数
+#   fields: 参数 keyword_searcher（无注解）
+#   code: rag_pipeline.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: reranker 参数
+#   fields: 参数 reranker（无注解）
+#   code: rag_pipeline.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RagPipeline
+#   name_en: RagPipeline
+#   intro: RAG 问答管道（分块→hybrid RRF 检索→重排→生成→引用溯源）。
+#   desc: RAG 问答管道（分块→hybrid RRF 检索→重排→生成→引用溯源）。；公共方法（定义序）: ingest, get_chunk, chunks_of, query；源码 L144-L305
+#   inputs: clock vector_searcher keyword_searcher reranker generator chunk_size…
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: RagPipeline
+#   downstream: 运行时装配批（文档统一 ingest / 向量+关键词双路检索器绑定 / 本地 LLM 生成器绑定 / 问答路由）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -22,7 +22,111 @@ Drift Detector AI 训练闭环 + 跨语言检测 — drift_training.py
 漂移事件 -> 训练模式提取 -> Prompt 注入 -> 效果追踪 -> 跨语言漂移检测框架。
 
 
-从 drift_engine.py 提取，对标 blueprint.md §6.12/§6.18。"""
+从 drift_engine.py 提取，对标 blueprint.md §6.12/§6.18。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root，类型注解 str
+#   code: drift_training.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: days 参数
+#   fields: 参数 days，类型注解 int
+#   code: drift_training.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: patterns 参数
+#   fields: 参数 patterns，类型注解 list[DriftTrainingPattern]
+#   code: drift_training.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: pattern 参数
+#   fields: 参数 pattern，类型注解 DriftTrainingPattern
+#   code: drift_training.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① extract_training_patterns
+#   name_en: extract_training_patterns
+#   intro: 从 ``data/drift/`` 目录中提取重复漂移事件作为训练模式。
+#   desc: 从 ``data/drift/`` 目录中提取重复漂移事件作为训练模式。 扫描 drift JSON 日志，对同一 detector_id 多次出现的事件 聚合成 ``Drift…；源码 L237-L317
+#   inputs: project_root days
+#   outputs: list[DriftTrainingPattern]
+# - id: A2
+#   name_zh: ② inject_patterns_to_prompt
+#   name_en: inject_patterns_to_prompt
+#   intro: 将训练模式注入 Prompt — 生成 Markdown 格式的防御规则文本。
+#   desc: 将训练模式注入 Prompt — 生成 Markdown 格式的防御规则文本。 选取频次最高的 5 个模式，生成 ``## AI Error-Prone Patterns`` 段…；源码 L320-L355
+#   inputs: patterns
+#   outputs: str
+# - id: A3
+#   name_zh: ③ track_training_effectiveness
+#   name_en: track_training_effectiveness
+#   intro: 追踪训练效果 — 计算注入后的复发减少率。
+#   desc: 追踪训练效果 — 计算注入后的复发减少率。 Args: pattern: 已注入的训练模式。 post_injection_freq: 注入后的复发次数。 Returns: fl…；源码 L358-L387
+#   inputs: pattern post_injection_freq
+#   outputs: float
+# - id: A4
+#   name_zh: ④ detect_ai_training_loop
+#   name_en: detect_ai_training_loop
+#   intro: 检测 AI 训练闭环 — 周期性提取模式并评估注入效果。
+#   desc: 检测 AI 训练闭环 — 周期性提取模式并评估注入效果。 组合 ``extract_training_patterns`` + ``inject_patterns_to_prom…；源码 L390-L465
+#   inputs: project_root
+#   outputs: list[DriftEvent]
+# - id: A5
+#   name_zh: ⑤ parse_python_imports
+#   name_en: parse_python_imports
+#   intro: 解析 Python 文件的 import 语句列表。
+#   desc: 解析 Python 文件的 import 语句列表。 Args: file_path: Python 源文件路径。 Returns: list[str]: 所有 ``import…；源码 L521-L557
+#   inputs: file_path
+#   outputs: list[str]
+# - id: A6
+#   name_zh: ⑥ parse_python_public_api
+#   name_en: parse_python_public_api
+#   intro: 解析 Python 文件的公开 API — 非下划线开头的顶层函数名。
+#   desc: 解析 Python 文件的公开 API — 非下划线开头的顶层函数名。 Args: file_path: Python 源文件路径。 Returns: list[str]: 公开…；源码 L560-L596
+#   inputs: file_path
+#   outputs: list[str]
+# - id: A7
+#   name_zh: ⑦ detect_python_dead_code
+#   name_en: detect_python_dead_code
+#   intro: 检测 Python 死代码 — 仅定义一次且仅调用一次的公开函数。
+#   desc: 检测 Python 死代码 — 仅定义一次且仅调用一次的公开函数。 对于每个非下划线开头的顶层函数，统计其调用次数。 若调用次数 ≤ 定义次数（且只定义了一次），视为死代码。 A…；源码 L599-L654
+#   inputs: file_path
+#   outputs: list[str]
+# - id: A8
+#   name_zh: ⑧ detect_cross_language_drift
+#   name_en: detect_cross_language_drift
+#   intro: 检测跨语言漂移 — 按启用的语言枚举文件覆盖与维度对齐（§6.18）。
+#   desc: 检测跨语言漂移 — 按启用的语言枚举文件覆盖与维度对齐（§6.18）。 对每种启用的语言统计源文件数量，与语言无关维度数对比， 生成覆盖率事件。未来可扩展为语言特定检测器的路由。…；源码 L664-L736
+#   inputs: project_root
+#   outputs: list[DriftEvent]
+#   （注：A8 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[DriftTrainingPattern]
+#   name_en: list[DriftTrainingPattern]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_drift/_drift.py ; tests/drift/test_drift_training.py
+# - id: O2
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: src/zephyr/gov_drift/_drift.py ; tests/drift/test_drift_training.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> O1
+"""
 
 from __future__ import annotations
 

@@ -25,6 +25,38 @@ audit-trail.supply_chain — MOD-INF-020 · 供应链审计
   - 包安装检测: 检测 pip/npm 等包安装事件
   - SHA-256 完整性验证: 验证安装包的哈希完整性
   - 供应链攻击检测: 检测可疑的包来源
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: trusted_sources 参数
+#   fields: 参数 trusted_sources（无注解）
+#   code: supply_chain.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: verify_hashes 参数
+#   fields: 参数 verify_hashes（无注解）
+#   code: supply_chain.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SupplyChainAuditor
+#   name_en: SupplyChainAuditor
+#   intro: class SupplyChainAuditor 源码 L126-L266
+#   desc: 公共方法（定义序）: trusted_sources, verify_hashes, audit_package, verify_integrity, get_audited_packages；源码 L126-L266
+#   inputs: trusted_sources verify_hashes
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: SupplyChainAuditor
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

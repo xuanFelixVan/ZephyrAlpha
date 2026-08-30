@@ -14,7 +14,8 @@
 # [TESTS] tests/knowledge/test_kb_engine.py
 # [A_module] module_id=MOD-KNW-001 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""KbEngine — 统一知识库引擎（MOD-KNW-001）。
+"""
+KbEngine — 统一知识库引擎（MOD-KNW-001）。
 
 B1-00128（AUD-DRAFT-001-DIGEST P2 波 P2-W03，CAND-KNW-002，C2 D-KNOW-06）：
 LlamaIndex 式知识库单机版——八 Collection 通用 CRUD（collection 词表注入
@@ -25,6 +26,48 @@ audit 回调）+ 按版本回滚 + FTS5 全文搜索（注入 sqlite 连接，�
 查重分工：vector_memory/sqlite_metadata_store=向量集合元数据底座（本件为其
 上层通用门面，不复用实现）；knowledge_quality_assessor=质量分计算（本件仅
 提供质量分写回的元数据语义挂载点，不算分）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: conn 参数
+#   fields: 参数 conn（无注解）
+#   code: kb_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: collections 参数
+#   fields: 参数 collections（无注解）
+#   code: kb_engine.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: kb_engine.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: audit_sink 参数
+#   fields: 参数 audit_sink（无注解）
+#   code: kb_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① KbEngine
+#   name_en: KbEngine
+#   intro: 八 Collection 统一 KB 门面（CRUD + 版本 + 回滚 + FTS5 + 审计）。
+#   desc: 八 Collection 统一 KB 门面（CRUD + 版本 + 回滚 + FTS5 + 审计）。；公共方法（定义序）: create, get, update, delete, history, rollback,…
+#   inputs: conn collections clock audit_sink
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: KbEngine
+#   downstream: 运行时装配批（八Collection统一KB门面 / 质量分写回语义挂接点）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -273,9 +316,7 @@ class KbEngine:
         self._live(collection, entry_id)
         versions = self._versions(collection, entry_id)
         if version < 1 or version > len(versions):
-            raise KbEngineError(
-                f"未知版本: {collection}/{entry_id!r} v{version}（现存 1..{len(versions)}）"
-            )
+            raise KbEngineError(f"未知版本: {collection}/{entry_id!r} v{version}（现存 1..{len(versions)}）")
         target = versions[version - 1]
         entry = self._append(collection, entry_id, target.content, target.metadata)
         self._index(collection, entry_id, target.content)
@@ -287,11 +328,7 @@ class KbEngine:
     def list_entries(self, collection: str) -> list[KbEntry]:
         """Collection 内存活条目（按 entry_id 确定性排序）。"""
         self._require_collection(collection)
-        out = [
-            versions[-1]
-            for entry_id, versions in self._store[collection].items()
-            if not versions[-1].deleted
-        ]
+        out = [versions[-1] for entry_id, versions in self._store[collection].items() if not versions[-1].deleted]
         out.sort(key=lambda e: e.entry_id)
         return out
 

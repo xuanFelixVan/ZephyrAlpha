@@ -20,13 +20,56 @@
 # A1: 段标题渲染顺序=WEEKLY_REVIEW_SECTIONS 常量序(四段固定)
 # O1: markdown 字符串(调用方经 ReportPublisher TRADING_REVIEW 源归档)
 # [/ALGO_FLOW]
-"""D_REPORTING — 周复盘模板引擎（55 号 §6 暂缓项固化，函数级 MVP）。
+"""
+D_REPORTING — 周复盘模板引擎（55 号 §6 暂缓项固化，函数级 MVP）。
 
 55 号 §6："复盘模板内容固化进代码（模板引擎）——先人工维护模板，跑 3 个月
 稳定后再固化"。本模块把 weekly_review_template.md 的四段结构固化为纯函数
 渲染器（段标题单一真源=review_orchestrator.WEEKLY_REVIEW_SECTIONS，不复制
 常量）；渲染产物由调用方经 ReportPublisher（TRADING_REVIEW 源）归档——
 本引擎只渲染不归档（归档唯一出口铁律 D-RPT-D05）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: period 参数
+#   fields: 参数 period，类型注解 str
+#   code: review_template_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: pnl_attribution 参数
+#   fields: 参数 pnl_attribution，类型注解 str
+#   code: review_template_engine.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: deviation_events 参数
+#   fields: 参数 deviation_events，类型注解 str
+#   code: review_template_engine.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: threshold_changes 参数
+#   fields: 参数 threshold_changes，类型注解 str
+#   code: review_template_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① render_weekly_review
+#   name_en: render_weekly_review
+#   intro: 渲染四段式周复盘 markdown（结构固定，空段降级）。
+#   desc: 渲染四段式周复盘 markdown（结构固定，空段降级）。 Args: period: 复盘周期标识（如 "2026-W34"）。 pnl_attribution: 第①段 本周…；源码 L105-L154
+#   inputs: period pnl_attribution deviation_events threshold_changes action_item…
+#   outputs: str
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-RPT-009(ReviewOrchestrator.run_weekly 装配可选升级); 调用方(周复盘事件驱动)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

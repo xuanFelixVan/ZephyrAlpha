@@ -16,7 +16,8 @@
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: _read_single_source与self_test_verifier._read_single_py是同类源码读取工具,趋同演化非复制粘贴
 
-"""[BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
+"""
+[BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
 
 Drift Detector AI 施工检测器 — ai_construction_detectors.py
 
@@ -25,7 +26,34 @@ AI 生成代码的质量/安全检测：幻觉导入、死代码、损坏逻辑�
 
 会话风格漂移、知识污染、跨会话修复冲突。
 
-从 drift_engine.py 提取，对标 blueprint.md §5.1。"""
+从 drift_engine.py 提取，对标 blueprint.md §5.1。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: ai_construction_detectors.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① AIConstructionDetectors
+#   name_en: AIConstructionDetectors
+#   intro: class AIConstructionDetectors 源码 L203-L711
+#   desc: 公共方法（定义序）: detect_ai_hallucination_import, detect_ai_dead_code, detect_ai_broken_logic, detect_ai_duplicate_f…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: AIConstructionDetectors
+#   downstream: tests/ai/test_ai_construction_detectors.py (+3 more)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 from __future__ import annotations
 
