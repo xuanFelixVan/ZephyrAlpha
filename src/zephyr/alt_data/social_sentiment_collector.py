@@ -14,7 +14,11 @@
 # [TESTS] tests/alt_data/test_social_sentiment_collector.py
 # [A_module] module_id=MOD-ALT-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""SocialSentimentCollector — 社媒情绪采集器（MOD-ALT-001）
+"""
+
+
+
+SocialSentimentCollector — 社媒情绪采集器（MOD-ALT-001）
 
 B10-01341（AUD-DRAFT-001-DIGEST P1 波 W-P1-15，A1 §2.1）：帖子级社媒文本
 （股吧/雪球，fetcher 注入）→ 标准化 SocialPost → 情感打分（scorer 注入委托
@@ -27,6 +31,48 @@ news_sentiment_analyzer / nlp_inference / LLM 池，本模块不内嵌打分引�
 （§29.12）①社媒情绪面归并本模块；B13-04069（A3 情绪面板族）归并见 fragment。
 LLM 解读面归 llm_market_interpreter（MOD-INT-MKT-INTERPRETER），本模块只产
 日频聚合行，仅信号输入语义无下单含义。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: fetcher 参数
+#   fields: 参数 fetcher（无注解）
+#   code: social_sentiment_collector.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: scorer 参数
+#   fields: 参数 scorer（无注解）
+#   code: social_sentiment_collector.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: sink 参数
+#   fields: 参数 sink（无注解）
+#   code: social_sentiment_collector.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: max_posts 参数
+#   fields: 参数 max_posts（无注解）
+#   code: social_sentiment_collector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SocialSentimentCollector
+#   name_en: SocialSentimentCollector
+#   intro: 帖子级社媒情绪日频采集器（判定核心纯内存，IO 全注入）。
+#   desc: 帖子级社媒情绪日频采集器（判定核心纯内存，IO 全注入）。 Args: fetcher: (trade_date: str, symbols: list[str]) -> Ite…；公共方法（定义序）: collect…
+#   inputs: fetcher scorer sink max_posts
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: SocialSentimentCollector
+#   downstream: 运行时装配批（fetcher 接股吧/雪球页面抓取 / scorer 接 news_sentiment_analyzer·nlp_inference·LLM…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -101,9 +147,9 @@ class SocialSentimentDaily:
     symbol: str
     post_count: int
     scored_count: int
-    sentiment_mean: Optional[float]
-    engagement_weighted_mean: Optional[float]
-    positive_ratio: Optional[float]
+    sentiment_mean: float | None
+    engagement_weighted_mean: float | None
+    positive_ratio: float | None
     sources: tuple[str, ...]
 
 
@@ -141,7 +187,7 @@ class SocialSentimentCollector:
         self,
         fetcher: Callable[[str, Sequence[str]], Iterable],
         scorer: Callable[[str], float],
-        sink: Optional[Callable[[tuple[SocialSentimentDaily, ...]], None]] = None,
+        sink: Callable[[tuple[SocialSentimentDaily, ...]], None] | None = None,
         *,
         max_posts: int = 20000,
     ) -> None:
@@ -235,7 +281,7 @@ class SocialSentimentCollector:
             return []
 
     @staticmethod
-    def _coerce(item) -> Optional[SocialPost]:
+    def _coerce(item) -> SocialPost | None:
         try:
             if isinstance(item, SocialPost):
                 return item
@@ -254,7 +300,7 @@ class SocialSentimentCollector:
             return None
         return None
 
-    def _score(self, text: str, errors: list[str]) -> Optional[float]:
+    def _score(self, text: str, errors: list[str]) -> float | None:
         try:
             value = float(self._scorer(text))
         except Exception as exc:  # noqa: BLE001 - scorer 异常不出伪情感分

@@ -14,7 +14,11 @@
 # [TESTS] tests/alt_data/test_filing_nlp_engine.py
 # [A_module] module_id=MOD-ALT-003 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""FilingNlpEngine — 监管文件 NLP 引擎（MOD-ALT-003）
+"""
+
+
+
+FilingNlpEngine — 监管文件 NLP 引擎（MOD-ALT-003）
 
 B10-02196（AUD-DRAFT-001-DIGEST P1 波 W-P1-15，D-ALT-DATA-04 §30.2.4）：A 股
 公告文本事件级 NLP（范围限 A 股公告，SEC 美股剔除）——巨潮公告文本（消费
@@ -33,6 +37,43 @@ financial_parser（MOD-DAT-FIN-PARSER）为财报 PDF/XBRL→**数字指标**解
 news_dual_tagger（MOD-NLP-DUALTAG-001）为新闻双标签面。本模块为公告**文本**
 事件级 NLP，解析粒度=事件类型+影响分，LLM 能力经 llm_extractor 注入委托
 intelligence 族（api_llm_pool），零密钥零直连。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: llm_extractor 参数
+#   fields: 参数 llm_extractor（无注解）
+#   code: filing_nlp_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: keyword_rules 参数
+#   fields: 参数 keyword_rules（无注解）
+#   code: filing_nlp_engine.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: sink 参数
+#   fields: 参数 sink（无注解）
+#   code: filing_nlp_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FilingNlpEngine
+#   name_en: FilingNlpEngine
+#   intro: A 股公告文本事件级 NLP（判定核心纯内存，IO 全注入）。
+#   desc: A 股公告文本事件级 NLP（判定核心纯内存，IO 全注入）。 Args: llm_extractor: 可选，(FilingInput) -> {"event_type","i…；公共方法（定义序）: classif…
+#   inputs: llm_extractor keyword_rules sink
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: FilingNlpEngine
+#   downstream: 运行时装配批（公告文本接 announcement_provider 采集产物 / llm_extractor 接 api_llm_pool·llm_gate…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -195,10 +236,10 @@ class FilingNlpEngine:
 
     def __init__(
         self,
-        llm_extractor: Optional[Callable[[FilingInput], dict]] = None,
+        llm_extractor: Callable[[FilingInput], dict] | None = None,
         *,
-        keyword_rules: Optional[dict[str, tuple[str, ...]]] = None,
-        sink: Optional[Callable[[tuple[FilingEvent, ...]], None]] = None,
+        keyword_rules: dict[str, tuple[str, ...]] | None = None,
+        sink: Callable[[tuple[FilingEvent, ...]], None] | None = None,
     ) -> None:
         if llm_extractor is not None and not callable(llm_extractor):
             raise InvalidFilingNlpConfigError("llm_extractor 非 callable")
@@ -264,7 +305,7 @@ class FilingNlpEngine:
     # ------------------------------------------------------------------
 
     @staticmethod
-    def _coerce(item) -> Optional[FilingInput]:
+    def _coerce(item) -> FilingInput | None:
         try:
             if isinstance(item, FilingInput):
                 return item
@@ -280,7 +321,7 @@ class FilingNlpEngine:
             return None
         return None
 
-    def _classify_one_inner(self, filing: FilingInput, errors: list[str]) -> tuple[FilingEvent, Optional[bool]]:
+    def _classify_one_inner(self, filing: FilingInput, errors: list[str]) -> tuple[FilingEvent, bool | None]:
         if self._llm is not None:
             event = self._try_llm(filing, errors)
             if event is not None:
@@ -289,7 +330,7 @@ class FilingNlpEngine:
             return self._rule_event(filing), False
         return self._rule_event(filing), None
 
-    def _try_llm(self, filing: FilingInput, errors: list[str]) -> Optional[FilingEvent]:
+    def _try_llm(self, filing: FilingInput, errors: list[str]) -> FilingEvent | None:
         try:
             out = self._llm(filing)
         except Exception as exc:  # noqa: BLE001 - LLM 异常回落规则不出伪结论

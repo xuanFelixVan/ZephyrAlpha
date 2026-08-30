@@ -14,7 +14,11 @@
 # [TESTS] tests/alt_data/test_alt_data_catalog.py
 # [A_module] module_id=MOD-ALT-008 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""AltDataCatalog — 另类数据目录（MOD-ALT-008）。
+"""
+
+
+
+AltDataCatalog — 另类数据目录（MOD-ALT-008）。
 
 B5-07089（AUD-DRAFT-001-DIGEST P2 波 P2-W04，CAND-TESTA-024，B5 D-ALT-DATA-09，
 canonical 承接 TESTA-011 归并）：数据源/数据集**元数据登记**（source_id/类型/
@@ -25,6 +29,43 @@ canonical 承接 TESTA-011 归并）：数据源/数据集**元数据登记**（
 不重建图）；alt_data_connector=接入同步协议（本件=目录元数据面，不做抓取）；
 alt_data_compliance_reviewer=合规台账（本件生命周期仅接入状态，不做合规审
 查）；web_scraper_engine=采集引擎（零交集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: alt_data_catalog.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: lineage_sink 参数
+#   fields: 参数 lineage_sink（无注解）
+#   code: alt_data_catalog.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: fts_connection 参数
+#   fields: 参数 fts_connection（无注解）
+#   code: alt_data_catalog.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AltDataCatalog
+#   name_en: AltDataCatalog
+#   intro: 另类数据目录（元数据登记 + 标签 + 血缘回调 + FTS5 检索 + 生命周期）。
+#   desc: 另类数据目录（元数据登记 + 标签 + 血缘回调 + FTS5 检索 + 生命周期）。；公共方法（定义序）: register, get, add_tags, remove_tags, tags_of, approve…
+#   inputs: clock lineage_sink fts_connection
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: AltDataCatalog
+#   downstream: 运行时装配批（元数据登记入目录 / 真实 LineageTracker 与 SQLite FTS5 连接绑定 / 生命周期审批流）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -101,7 +142,7 @@ class CatalogRecord:
     state_updated_at: datetime.datetime
 
 
-def _validate_tags(tags: "tuple[str, ...] | list[str]") -> tuple[str, ...]:
+def _validate_tags(tags: tuple[str, ...] | list[str]) -> tuple[str, ...]:
     """标签校验 + 归一（去重升序，确定性）。"""
     if not isinstance(tags, (tuple, list)):
         raise AltDataCatalogError(f"tags 类型非法: {type(tags)!r}（须 tuple/list[str]）")
@@ -119,7 +160,7 @@ class AltDataCatalog:
         *,
         clock: Callable[[], datetime.datetime] | None = None,
         lineage_sink: Callable[[str, str, str], None] | None = None,
-        fts_connection: "sqlite3.Connection | None" = None,
+        fts_connection: sqlite3.Connection | None = None,
     ) -> None:
         if clock is not None and not callable(clock):
             raise AltDataCatalogError("clock 非 callable")
@@ -131,8 +172,7 @@ class AltDataCatalog:
         self._records: dict[str, CatalogRecord] = {}
         if self._fts is not None:
             self._fts.execute(
-                f"CREATE VIRTUAL TABLE IF NOT EXISTS {_FTS_TABLE} "
-                "USING fts5(source_id UNINDEXED, description, tags)"
+                f"CREATE VIRTUAL TABLE IF NOT EXISTS {_FTS_TABLE} USING fts5(source_id UNINDEXED, description, tags)"
             )
             self._fts.commit()
 
@@ -197,14 +237,14 @@ class AltDataCatalog:
 
     # ── 标签系统 ──────────────────────────────────────────────────────────
 
-    def add_tags(self, source_id: str, tags: "tuple[str, ...] | list[str]") -> tuple[str, ...]:
+    def add_tags(self, source_id: str, tags: tuple[str, ...] | list[str]) -> tuple[str, ...]:
         """加标签（合并去重升序）；返回更新后标签视图。"""
         record = self._record_of(source_id)
         merged = tuple(sorted(set(record.entry.tags) | set(_validate_tags(tags))))
         self._replace_entry(source_id, replace(record.entry, tags=merged))
         return merged
 
-    def remove_tags(self, source_id: str, tags: "tuple[str, ...] | list[str]") -> tuple[str, ...]:
+    def remove_tags(self, source_id: str, tags: tuple[str, ...] | list[str]) -> tuple[str, ...]:
         """移除标签（不存在者静默略过）；返回更新后标签视图。"""
         record = self._record_of(source_id)
         doomed = set(_validate_tags(tags))
@@ -235,8 +275,7 @@ class AltDataCatalog:
         record = self._record_of(source_id)
         if record.state is not expect:
             raise AltDataCatalogError(
-                f"非法状态迁移: {source_id!r} 当前 {record.state.value}，"
-                f"仅 {expect.value} → {target.value}"
+                f"非法状态迁移: {source_id!r} 当前 {record.state.value}，仅 {expect.value} → {target.value}"
             )
         self._records[source_id] = replace(record, state=target, state_updated_at=self._clock())
         _log.info("生命周期迁移: %s %s -> %s", source_id, expect.value, target.value)
@@ -262,9 +301,7 @@ class AltDataCatalog:
         try:
             self._lineage_sink(upstream, source_id, transformation)
         except Exception as exc:
-            raise AltDataCatalogError(
-                f"lineage_sink 回调失败: {upstream!r} -> {source_id!r}: {exc}"
-            ) from exc
+            raise AltDataCatalogError(f"lineage_sink 回调失败: {upstream!r} -> {source_id!r}: {exc}") from exc
 
     # ── FTS5 检索 ─────────────────────────────────────────────────────────
 

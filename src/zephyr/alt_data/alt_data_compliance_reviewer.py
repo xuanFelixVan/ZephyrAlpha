@@ -14,7 +14,11 @@
 # [TESTS] tests/alt_data/test_alt_data_compliance_reviewer.py
 # [A_module] module_id=MOD-ALT-015 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""AltDataComplianceReviewer — 另类数据合规审查器（MOD-ALT-015）。
+"""
+
+
+
+AltDataComplianceReviewer — 另类数据合规审查器（MOD-ALT-015）。
 
 B13-04283（AUD-DRAFT-001-DIGEST P2 波 P2-W04，CAND-TESTA-016，A3
 D-ALT-DATA-14）：数据源合规台账——**四要素登记**（采集方式/ToS 条款/许可
@@ -25,6 +29,43 @@ canonical 承接 TESTA-020 归并。
 查重分工（蓝图 §0）：compliance/compliance_log=合规审计日志持久化（本件=
 审查判定核心与名单输出，不 import 不重建日志实现，仅产生审查事件可注入
 回调）；本件不做采集（在 connector 族），仅做数据源准入前合规判定。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: checklist 参数
+#   fields: 参数 checklist（无注解）
+#   code: alt_data_compliance_reviewer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: review_interval_days 参数
+#   fields: 参数 review_interval_days（无注解）
+#   code: alt_data_compliance_reviewer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: alt_data_compliance_reviewer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AltDataComplianceReviewer
+#   name_en: AltDataComplianceReviewer
+#   intro: 另类数据合规审查器（四要素 + 清单审查 + 复核 + 白名单/禁用清单）。
+#   desc: 另类数据合规审查器（四要素 + 清单审查 + 复核 + 白名单/禁用清单）。；公共方法（定义序）: register, review, ban, pending_reviews, whitelist, blacklis…
+#   inputs: checklist review_interval_days clock
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: AltDataComplianceReviewer
+#   downstream: 运行时装配批（数据源上线前接 alt_data_connector 准入 / 白名单输出接健康度管理器准入 / 审查记录接 compliance_log 路由）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -57,10 +98,10 @@ class AltComplianceError(Exception):
 class SourceStatus(str, Enum):
     """数据源合规状态（生命周期）。"""
 
-    PENDING = "pending"      # 已登记四要素，待审查
-    APPROVED = "approved"    # 清单全部通过
-    BANNED = "banned"        # 禁用（不论清单结果）
-    EXPIRED = "expired"      # 审查过期（需定期复核）
+    PENDING = "pending"  # 已登记四要素，待审查
+    APPROVED = "approved"  # 清单全部通过
+    BANNED = "banned"  # 禁用（不论清单结果）
+    EXPIRED = "expired"  # 审查过期（需定期复核）
 
 
 @dataclass(frozen=True)
@@ -189,9 +230,7 @@ class AltDataComplianceReviewer:
         if set(results) != set(self._checklist):
             missing = set(self._checklist) - set(results)
             extra = set(results) - set(self._checklist)
-            raise AltComplianceError(
-                f"审查项不齐: 缺 {missing!r} 多 {extra!r}"
-            )
+            raise AltComplianceError(f"审查项不齐: 缺 {missing!r} 多 {extra!r}")
         clean: list[tuple[str, bool, str]] = []
         for item in self._checklist:
             passed, evidence = results[item]
@@ -237,17 +276,12 @@ class AltDataComplianceReviewer:
 
     def whitelist(self) -> tuple[str, ...]:
         """合规白名单（已批准且审查未过期）。"""
-        out = [
-            sid for sid in self._records
-            if self._status_effective(sid) is SourceStatus.APPROVED
-        ]
+        out = [sid for sid in self._records if self._status_effective(sid) is SourceStatus.APPROVED]
         return tuple(sorted(out))
 
     def blacklist(self) -> tuple[str, ...]:
         """禁用源清单。"""
-        return tuple(sorted(
-            sid for sid, st in self._status.items() if st is SourceStatus.BANNED
-        ))
+        return tuple(sorted(sid for sid, st in self._status.items() if st is SourceStatus.BANNED))
 
     # ── 查询 ─────────────────────────────────────────────────────────────
 

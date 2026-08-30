@@ -14,7 +14,11 @@
 # [TESTS] tests/alt_data/test_alt_data_signal_extractor.py
 # [A_module] module_id=MOD-ALT-013 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""AltDataSignalExtractor — 另类数据信号提取网关（MOD-ALT-013）。
+"""
+
+
+
+AltDataSignalExtractor — 另类数据信号提取网关（MOD-ALT-013）。
 
 B5-07085（AUD-DRAFT-001-DIGEST P2 波 P2-W04，CAND-TESTA-023，B5
 D-ALT-DATA-05）：另类数据信号**唯一输出网关**——特征工程（**特征注册表**）
@@ -28,6 +32,48 @@ alphalens/Barra 思想单机版。
 产出契约校验实现（本件经注入委托，不 import 不重建）；alphalens=全量
 分层回测框架（本件仅 IC/衰减/正交三判定面）；本件不做因子计算本身
 （原始特征在采集族），仅做注册、检验与统一出口。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: ic_calculator 参数
+#   fields: 参数 ic_calculator（无注解）
+#   code: alt_data_signal_extractor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: ic_threshold 参数
+#   fields: 参数 ic_threshold（无注解）
+#   code: alt_data_signal_extractor.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: regressor 参数
+#   fields: 参数 regressor（无注解）
+#   code: alt_data_signal_extractor.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: validator 参数
+#   fields: 参数 validator（无注解）
+#   code: alt_data_signal_extractor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AltDataSignalExtractor
+#   name_en: AltDataSignalExtractor
+#   intro: 另类数据信号提取网关（注册表 + IC + 衰减 + 正交化 + CTR-002 出口）。
+#   desc: 另类数据信号提取网关（注册表 + IC + 衰减 + 正交化 + CTR-002 出口）。；公共方法（定义序）: register_feature, features, test_ic, decay_weight, a…
+#   inputs: ic_calculator ic_threshold regressor validator clock
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: AltDataSignalExtractor
+#   downstream: 运行时装配批（另类数据因子统一输出网关接信号族 / 校验器接 shared/contracts/ctr002_producer_validator）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -137,9 +183,7 @@ class AltDataSignalExtractor:
             raise AltSignalExtractorError(f"feature_id 重复: {feature_id!r}")
         if half_life_days <= 0:
             raise AltSignalExtractorError(f"half_life_days 非正: {half_life_days!r}")
-        feat = FeatureDefinition(
-            feature_id=feature_id, description=description, half_life_days=float(half_life_days)
-        )
+        feat = FeatureDefinition(feature_id=feature_id, description=description, half_life_days=float(half_life_days))
         self._features[feature_id] = feat
         return feat
 
@@ -160,9 +204,7 @@ class AltDataSignalExtractor:
         fv = self._as_floats(factor_values, "factor_values")
         fr = self._as_floats(forward_returns, "forward_returns")
         if len(fv) != len(fr):
-            raise AltSignalExtractorError(
-                f"样本长度不齐: factor={len(fv)} vs returns={len(fr)}"
-            )
+            raise AltSignalExtractorError(f"样本长度不齐: factor={len(fv)} vs returns={len(fr)}")
         if len(fv) < 2:
             raise AltSignalExtractorError(f"样本不足: {len(fv)}（须≥2）")
         try:
@@ -216,9 +258,7 @@ class AltDataSignalExtractor:
                 raise AltSignalExtractorError("代理变量名空白")
             vals = self._as_floats(series, f"proxies[{name!r}]")
             if len(vals) != len(fv):
-                raise AltSignalExtractorError(
-                    f"代理变量 {name!r} 长度不齐: {len(vals)} vs factor={len(fv)}"
-                )
+                raise AltSignalExtractorError(f"代理变量 {name!r} 长度不齐: {len(vals)} vs factor={len(fv)}")
             clean_proxies[name] = vals
         try:
             residuals = tuple(float(r) for r in self._regressor(fv, clean_proxies))
@@ -227,9 +267,7 @@ class AltDataSignalExtractor:
         except Exception as exc:  # noqa: BLE001 — 回归器违约 Fail-Closed
             raise AltSignalExtractorError(f"regressor 执行异常: {exc}") from exc
         if len(residuals) != len(fv):
-            raise AltSignalExtractorError(
-                f"残差长度违约: {len(residuals)} vs factor={len(fv)}"
-            )
+            raise AltSignalExtractorError(f"残差长度违约: {len(residuals)} vs factor={len(fv)}")
         return residuals
 
     # ── 统一 CTR-002 兼容输出（注入校验器） ─────────────────────────────────
@@ -274,8 +312,6 @@ class AltDataSignalExtractor:
         except Exception as exc:  # noqa: BLE001 — 校验器违约 Fail-Closed
             raise AltSignalExtractorError(f"validator 执行异常: {exc}") from exc
         if not ok:
-            raise AltSignalExtractorError(
-                f"CTR-002 校验拒绝: feature {feature_id!r}（Fail-Closed 不出伪信号）"
-            )
+            raise AltSignalExtractorError(f"CTR-002 校验拒绝: feature {feature_id!r}（Fail-Closed 不出伪信号）")
         _log.info("另类数据信号出网: %s（%d 标的）", feature_id, len(clean_values))
         return signal

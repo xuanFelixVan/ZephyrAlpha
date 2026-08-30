@@ -14,7 +14,11 @@
 # [TESTS] tests/autonomy/test_autonomy_boundary_gate.py
 # [A_module] module_id=MOD-AU-001 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
-"""AutonomyBoundaryGate — 运行时写操作三分类判定门（MOD-AU-001）.
+"""
+
+
+
+AutonomyBoundaryGate — 运行时写操作三分类判定门（MOD-AU-001）.
 
 设计真源：15号文（15_autonomy_boundary_risk.md）§3.1 / §4.1-S0.2：
 - 写操作（文件写入/注册表变更/配置修改）发生前查 GOV-AI-001 注册表：
@@ -37,6 +41,72 @@ S1.2 内联漂移挂接（15号文 §4.2，默认启用，drift_check_enabled=Fa
 - DRIFT_WARNING → 不阻断，verdict 打 auto_guard 降级标记（autonomy_regressor 的
   auto_guard 档语义）；DRIFT_DETECTED → 原放行判定升级为 BLOCK（Hard-Gate），
   P0 告警由 AgenticDriftGuard 按 16号文统一事件 schema 落盘。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: action_id 参数
+#   fields: 参数 action_id，类型注解 str
+#   code: autonomy_boundary_gate.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: target_path_or_resource 参数
+#   fields: 参数 target_path_or_resource，类型注解 str
+#   code: autonomy_boundary_gate.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: session_context 参数
+#   fields: 参数 session_context，类型注解 dict[str, Any] | None
+#   code: autonomy_boundary_gate.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① GateVerdict
+#   name_en: GateVerdict
+#   intro: 单次写操作判定结果（不可变）.
+#   desc: 单次写操作判定结果（不可变）. auto_guard / drift_level / drift_verdict_id 为 S1.2 漂移内联检查投影字段： 未启用或无 sess…；公共方法（定义序）: allowed…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② AutonomyBoundaryGate
+#   name_en: AutonomyBoundaryGate
+#   intro: 运行时写操作三分类判定门.
+#   desc: 运行时写操作三分类判定门. 用法:: gate = AutonomyBoundaryGate() verdict = gate.check_write_permission("a…；公共方法（定义序）: check_w…
+#   inputs: registry_path runtime_dir repo_root drift_check_enabled drift_config…
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ get_default_gate
+#   name_en: get_default_gate
+#   intro: 获取默认 gate 单例（默认注册表 + 仓根 .
+#   desc: 获取默认 gate 单例（默认注册表 + 仓根 .runtime/ 留痕）.；源码 L626-L631
+#   inputs: 无参数
+#   outputs: AutonomyBoundaryGate
+# - id: A4
+#   name_zh: ④ check_write_permission
+#   name_en: check_write_permission
+#   intro: 模块级便捷入口：默认 gate 的写操作三分类判定.
+#   desc: 模块级便捷入口：默认 gate 的写操作三分类判定.；源码 L634-L640
+#   inputs: action_id target_path_or_resource session_context
+#   outputs: GateVerdict
+#   （注：A4 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: AutonomyBoundaryGate
+#   name_en: AutonomyBoundaryGate
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests/autonomy/test_autonomy_boundary_gate.py; tests/autonomy/test_autonomy_gat…
+# - id: O2
+#   name_zh: GateVerdict
+#   name_en: GateVerdict
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests/autonomy/test_autonomy_boundary_gate.py; tests/autonomy/test_autonomy_gat…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations
@@ -70,9 +140,7 @@ SCHEMA_VERSION: Final[str] = "1.0"
 SOURCE_DOMAIN: Final[str] = "access_control"
 
 # 注册表中无法做路径匹配的占位 path（子模块注解行/仓外资源），加载时跳过
-_SKIP_PATH_MARKERS: Final[frozenset[str]] = frozenset(
-    {"", "同上 子模块", "见 §2.9", "项目外 os 级"}
-)
+_SKIP_PATH_MARKERS: Final[frozenset[str]] = frozenset({"", "同上 子模块", "见 §2.9", "项目外 os 级"})
 
 
 class GateDecision(str, Enum):
@@ -269,9 +337,7 @@ class AutonomyBoundaryGate:
         drift_guard: AgenticDriftGuard | None = None,
     ) -> None:
         self._repo_root = Path(repo_root) if repo_root else _REPO_ROOT
-        self._registry_path = (
-            Path(registry_path) if registry_path else self._repo_root / _REGISTRY_REL
-        )
+        self._registry_path = Path(registry_path) if registry_path else self._repo_root / _REGISTRY_REL
         self._runtime_dir = Path(runtime_dir) if runtime_dir else self._repo_root / ".runtime"
         self._audit_path = self._runtime_dir / "audit" / "autonomy_boundary_gate.jsonl"
         self._queue_dir = self._runtime_dir / "autonomy_gate" / "queue"
@@ -285,9 +351,7 @@ class AutonomyBoundaryGate:
         self._drift_window_size: int = 10
         self._session_ops: dict[str, deque[ChainOperation]] = {}
         if drift_check_enabled:
-            self._drift_guard = drift_guard or AgenticDriftGuard(
-                runtime_dir=self._runtime_dir, config=drift_config
-            )
+            self._drift_guard = drift_guard or AgenticDriftGuard(runtime_dir=self._runtime_dir, config=drift_config)
             self._drift_window_size = self._drift_guard.config.window_size
 
     def check_write_permission(
@@ -406,9 +470,7 @@ class AutonomyBoundaryGate:
                 return layer, raw_path, module
         return None, "", ""
 
-    def _drift_inline_check(
-        self, verdict: GateVerdict, session_context: dict[str, Any] | None
-    ) -> GateVerdict:
+    def _drift_inline_check(self, verdict: GateVerdict, session_context: dict[str, Any] | None) -> GateVerdict:
         """S1.2 操作链内联漂移检查（15号文 §4.2，挂在留痕判定链路上）.
 
         操作链真源 = 本 gate 审计事件流（session_id 键控有序事件），此处以每会话
@@ -455,17 +517,12 @@ class AutonomyBoundaryGate:
         if drift.level is DriftLevel.WARNING:
             return replace(
                 verdict,
-                reason=(
-                    f"{verdict.reason}；agentic drift WARNING（{drift.reason}），"
-                    "降级 auto_guard"
-                ),
+                reason=(f"{verdict.reason}；agentic drift WARNING（{drift.reason}），降级 auto_guard"),
                 auto_guard=True,
                 drift_level=drift.level.value,
                 drift_verdict_id=drift.verdict_id,
             )
-        return replace(
-            verdict, drift_level=drift.level.value, drift_verdict_id=drift.verdict_id
-        )
+        return replace(verdict, drift_level=drift.level.value, drift_verdict_id=drift.verdict_id)
 
     def _trace(self, verdict: GateVerdict) -> None:
         severity = {
@@ -475,9 +532,7 @@ class AutonomyBoundaryGate:
         }[verdict.decision]
         threat_category = {
             GateDecision.ALLOW: "none",
-            GateDecision.ESCALATE: (
-                "unauthorized_write_attempt" if verdict.fail_closed else "human_approval_required"
-            ),
+            GateDecision.ESCALATE: ("unauthorized_write_attempt" if verdict.fail_closed else "human_approval_required"),
             GateDecision.BLOCK: "immutable_core_violation",
         }[verdict.decision]
         if verdict.drift_level in (DriftLevel.WARNING.value, DriftLevel.DETECTED.value):
@@ -522,9 +577,7 @@ class AutonomyBoundaryGate:
                 "session_context": session_context or {},
                 "verdict": verdict.to_dict(),
             }
-            ticket_file.write_text(
-                json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
-            )
+            ticket_file.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
             try:
                 rel_path = ticket_file.relative_to(self._repo_root).as_posix()
             except ValueError:
@@ -585,9 +638,7 @@ def check_write_permission(
     session_context: dict[str, Any] | None = None,
 ) -> GateVerdict:
     """模块级便捷入口：默认 gate 的写操作三分类判定."""
-    return get_default_gate().check_write_permission(
-        action_id, target_path_or_resource, session_context
-    )
+    return get_default_gate().check_write_permission(action_id, target_path_or_resource, session_context)
 
 
 __all__ = [

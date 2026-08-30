@@ -14,7 +14,11 @@
 # [TESTS] tests/alt_data/test_alt_data_connector.py
 # [A_module] module_id=MOD-ALT-007 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""AltDataConnector — 另类数据统一接入器（MOD-ALT-007）。
+"""
+
+
+
+AltDataConnector — 另类数据统一接入器（MOD-ALT-007）。
 
 B5-07081（AUD-DRAFT-001-DIGEST P2 波 P2-W04，CAND-TESTA-022，B5 D-ALT-DATA-01）：
 统一另类数据接入层——新闻/公告/社交**三类连接器注册表**（免费源优先）+
@@ -27,6 +31,48 @@ B5-07081（AUD-DRAFT-001-DIGEST P2 波 P2-W04，CAND-TESTA-022，B5 D-ALT-DATA-0
 同步协议层，不实现具体源抓取）；social_sentiment_collector=社媒帖子级采集
 （本件仅注册其连接器声明）；alt_source_health_manager=健康度评分/降级阶梯
 （本件仅登记 source_health 原始事实，不做评分/切源）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: alt_data_connector.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: fetcher 参数
+#   fields: 参数 fetcher（无注解）
+#   code: alt_data_connector.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: cipher_encrypt 参数
+#   fields: 参数 cipher_encrypt（无注解）
+#   code: alt_data_connector.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: cipher_decrypt 参数
+#   fields: 参数 cipher_decrypt（无注解）
+#   code: alt_data_connector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AltDataConnector
+#   name_en: AltDataConnector
+#   intro: 另类数据统一接入器（注册表 + 格式适配 + 增量游标 + 密钥保管 + 健康登记）。
+#   desc: 另类数据统一接入器（注册表 + 格式适配 + 增量游标 + 密钥保管 + 健康登记）。；公共方法（定义序）: register, set_adapter, list_connectors, store_api_key,…
+#   inputs: clock fetcher cipher_encrypt cipher_decrypt health_sink
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: AltDataConnector
+#   downstream: 运行时装配批（三类连接器声明 / 真实 fetcher 与 cipher 绑定 / source_health 接健康度路由）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -112,7 +158,7 @@ class AltDataConnector:
         self,
         *,
         clock: Callable[[], datetime.datetime] | None = None,
-        fetcher: Callable[[ConnectorSpec, "str | None"], "tuple[list[Mapping], str]"] | None = None,
+        fetcher: Callable[[ConnectorSpec, str | None], tuple[list[Mapping], str]] | None = None,
         cipher_encrypt: Callable[[str], str] | None = None,
         cipher_decrypt: Callable[[str], str] | None = None,
         health_sink: Callable[[SourceHealth], None] | None = None,
@@ -132,7 +178,7 @@ class AltDataConnector:
         self._decrypt = cipher_decrypt
         self._health_sink = health_sink
         self._connectors: dict[str, ConnectorSpec] = {}
-        self._adapters: dict[str, Callable[[Mapping], "tuple[str, Mapping]"]] = {}
+        self._adapters: dict[str, Callable[[Mapping], tuple[str, Mapping]]] = {}
         self._cursors: dict[str, str] = {}
         self._records: dict[str, list[AltDataRecord]] = {}
         self._seen: dict[str, set[str]] = {}
@@ -173,9 +219,7 @@ class AltDataConnector:
         if not isinstance(spec.connector_id, str) or not spec.connector_id:
             raise AltDataConnectorError("connector_id 为空")
         if not isinstance(spec.kind, ConnectorKind):
-            raise AltDataConnectorError(
-                f"非法连接器类别: {spec.kind!r}（词表闭合 news|announcement|social）"
-            )
+            raise AltDataConnectorError(f"非法连接器类别: {spec.kind!r}（词表闭合 news|announcement|social）")
         if not isinstance(spec.free, bool):
             raise AltDataConnectorError(f"free 必须为 bool: {spec.free!r}")
         if spec.connector_id in self._connectors:
@@ -184,7 +228,7 @@ class AltDataConnector:
         self._records[spec.connector_id] = []
         self._seen[spec.connector_id] = set()
 
-    def set_adapter(self, connector_id: str, adapter: Callable[[Mapping], "tuple[str, Mapping]"]) -> None:
+    def set_adapter(self, connector_id: str, adapter: Callable[[Mapping], tuple[str, Mapping]]) -> None:
         """绑定格式适配器（协议：原始载荷 → (external_id, 规范化载荷)）。"""
         self._spec_of(connector_id)
         if not callable(adapter):
@@ -267,12 +311,14 @@ class AltDataConnector:
                 raise AltDataConnectorError(f"payload 类型非法: {type(payload)!r}（须 Mapping）")
             if external_id in self._seen[connector_id]:
                 continue  # 幂等去重（断点重传安全）
-            self._records[connector_id].append(AltDataRecord(
-                connector_id=connector_id,
-                external_id=external_id,
-                payload=dict(payload),
-                fetched_at=self._clock(),
-            ))
+            self._records[connector_id].append(
+                AltDataRecord(
+                    connector_id=connector_id,
+                    external_id=external_id,
+                    payload=dict(payload),
+                    fetched_at=self._clock(),
+                )
+            )
             self._seen[connector_id].add(external_id)
             new_count += 1
         self._cursors[connector_id] = next_cursor
@@ -306,12 +352,12 @@ class AltDataConnector:
         self._spec_of(connector_id)
         return tuple(self._records[connector_id])
 
-    def cursor_of(self, connector_id: str) -> "str | None":
+    def cursor_of(self, connector_id: str) -> str | None:
         """当前增量游标（未同步过 → None）。"""
         self._spec_of(connector_id)
         return self._cursors.get(connector_id)
 
-    def latest_health(self, connector_id: str) -> "SourceHealth | None":
+    def latest_health(self, connector_id: str) -> SourceHealth | None:
         """最近一次 source_health（未同步过 → None）。"""
         self._spec_of(connector_id)
         return self._health.get(connector_id)

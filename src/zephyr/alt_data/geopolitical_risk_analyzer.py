@@ -14,7 +14,11 @@
 # [TESTS] tests/alt_data/test_geopolitical_risk_analyzer.py
 # [A_module] module_id=MOD-ALT-014 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""GeopoliticalRiskAnalyzer — 地缘政治风险分析器（MOD-ALT-014）。
+"""
+
+
+
+GeopoliticalRiskAnalyzer — 地缘政治风险分析器（MOD-ALT-014）。
 
 B5-07092（AUD-DRAFT-001-DIGEST P2 波 P2-W04，CAND-TESTA-025，B5
 D-ALT-DATA-12）：地缘风险分析——**事件采集**（免费新闻/RSS 注入源）
@@ -25,6 +29,48 @@ D-ALT-DATA-12）：地缘风险分析——**事件采集**（免费新闻/RSS �
 查重分工（蓝图 §0）：intelligence/event_geopolitical_map=地缘事件→板块
 静态映射（本件=事件评分/制裁筛查/总线发布运行时面，不重建映射表，传导
 矩阵全注入）；本件不做新闻抓取（采集在 connector 族），事件源注入委托。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: event_source 参数
+#   fields: 参数 event_source（无注解）
+#   code: geopolitical_risk_analyzer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: transmission_matrix 参数
+#   fields: 参数 transmission_matrix（无注解）
+#   code: geopolitical_risk_analyzer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: sanction_list 参数
+#   fields: 参数 sanction_list（无注解）
+#   code: geopolitical_risk_analyzer.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: publish_threshold 参数
+#   fields: 参数 publish_threshold（无注解）
+#   code: geopolitical_risk_analyzer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① GeopoliticalRiskAnalyzer
+#   name_en: GeopoliticalRiskAnalyzer
+#   intro: 地缘风险分析器（采集注入 + 传导矩阵评分 + 制裁筛查 + 总线发布）。
+#   desc: 地缘风险分析器（采集注入 + 传导矩阵评分 + 制裁筛查 + 总线发布）。；公共方法（定义序）: assess, run, history；源码 L144-L264
+#   inputs: event_source transmission_matrix sanction_list publish_threshold high…
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: GeopoliticalRiskAnalyzer
+#   downstream: 运行时装配批（事件源接免费新闻/RSS 采集族 / 风险事件入事件总线仅作信号输入 / 传导矩阵接 intelligence 地缘映射）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -113,9 +159,7 @@ class GeopoliticalRiskAnalyzer:
         if event_source is None or not callable(event_source):
             raise GeopoliticalRiskError("event_source 未注入（事件采集强制注入，禁止旁路）")
         if not 0.0 <= publish_threshold <= high_threshold <= 1.0:
-            raise GeopoliticalRiskError(
-                f"阈值须满足 0<=publish<=high<=1: {publish_threshold!r}/{high_threshold!r}"
-            )
+            raise GeopoliticalRiskError(f"阈值须满足 0<=publish<=high<=1: {publish_threshold!r}/{high_threshold!r}")
         matrix: dict[str, dict[str, float]] = {}
         for country, row in transmission_matrix.items():
             if not country or not str(country).strip():
@@ -125,9 +169,7 @@ class GeopoliticalRiskAnalyzer:
                 if not commodity or not str(commodity).strip():
                     raise GeopoliticalRiskError(f"传导矩阵商品键空白: {country!r}")
                 if not 0.0 <= coef <= 1.0:
-                    raise GeopoliticalRiskError(
-                        f"传导系数越界: {country!r}/{commodity!r}={coef!r}（须∈[0,1]）"
-                    )
+                    raise GeopoliticalRiskError(f"传导系数越界: {country!r}/{commodity!r}={coef!r}（须∈[0,1]）")
                 clean_row[str(commodity)] = float(coef)
             matrix[str(country)] = clean_row
 
@@ -150,9 +192,7 @@ class GeopoliticalRiskAnalyzer:
         if not event.country or not event.country.strip():
             raise GeopoliticalRiskError(f"country 空白: {event.event_id!r}")
         if not 0.0 <= event.severity <= 1.0:
-            raise GeopoliticalRiskError(
-                f"severity 越界: {event.severity!r}（须∈[0,1]，event {event.event_id!r}）"
-            )
+            raise GeopoliticalRiskError(f"severity 越界: {event.severity!r}（须∈[0,1]，event {event.event_id!r}）")
 
     def _level_of(self, risk_score: float) -> RiskLevel:
         if risk_score >= self._high_threshold:
@@ -170,11 +210,7 @@ class GeopoliticalRiskAnalyzer:
         if known is not None:
             return known  # 幂等：同 event_id 返回首次评估产物
 
-        coefs = [
-            self._matrix[event.country][c]
-            for c in event.commodities
-            if c in self._matrix.get(event.country, {})
-        ]
+        coefs = [self._matrix[event.country][c] for c in event.commodities if c in self._matrix.get(event.country, {})]
         max_coef = max(coefs) if coefs else 1.0  # 无传导映射→保守按原烈度
         risk_score = min(1.0, max(0.0, event.severity * max_coef))
         hit_entities = tuple(sorted(e for e in event.entities if e in self._sanctions))
@@ -215,8 +251,10 @@ class GeopoliticalRiskAnalyzer:
                         _log.exception("event_bus 发布失败: %s", risk_event.event_id)
                 _log.info(
                     "地缘风险事件入总线: %s（%s score=%.3f sanction=%s）",
-                    risk_event.event_id, risk_event.country,
-                    risk_event.risk_score, risk_event.sanction_hit,
+                    risk_event.event_id,
+                    risk_event.country,
+                    risk_event.risk_score,
+                    risk_event.sanction_hit,
                 )
         return published
 
@@ -224,6 +262,4 @@ class GeopoliticalRiskAnalyzer:
 
     def history(self) -> tuple[RiskEvent, ...]:
         """全部已评估事件（按 (occurred_at, event_id) 确定性排序）。"""
-        return tuple(sorted(
-            self._assessed.values(), key=lambda r: (r.occurred_at, r.event_id)
-        ))
+        return tuple(sorted(self._assessed.values(), key=lambda r: (r.occurred_at, r.event_id)))

@@ -22,7 +22,11 @@
 # F4: Challenge 工单——字段=原始任务意图复述+动作链对齐说明+检测器证据；degraded=True → degraded_human_review
 # O1: DriftVerdict（level/blocked/auto_guard/熵值/证据）；O2: 16号文统一事件 schema jsonl（audit + P0 alerts）；O3: challenge-<id>.json 工单
 # [/ALGO_FLOW]
-"""AgenticDriftGuard — Agentic Drift 防护实时档（MOD-AU-003，15号文 §4.2 S1.1/S1.2）.
+"""
+
+
+
+AgenticDriftGuard — Agentic Drift 防护实时档（MOD-AU-003，15号文 §4.2 S1.1/S1.2）.
 
 设计真源：15号文（15_autonomy_boundary_risk.md）§3.2 / §4.2 + RBAC 蓝图决策 D-018-21：
 - S1.1 行为基线：复用 governance.lifecycle_governance.ai_behavior_baseline（61 号备忘
@@ -42,6 +46,125 @@
 - 全量检查 → .runtime/audit/agentic_drift_guard.jsonl
 - DETECTED P0 告警 → .runtime/audit/agentic_drift_guard_alerts.jsonl（severity=critical）
 - challenge 工单 → 调用方指定目录 challenge-<ticket_id>.json
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: counts 参数
+#   fields: 参数 counts，类型注解 Sequence[int]
+#   code: agentic_drift_guard.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: ops 参数
+#   fields: 参数 ops，类型注解 Sequence[ChainOperation]
+#   code: agentic_drift_guard.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: config 参数
+#   fields: 参数 config，类型注解 DriftCheckConfig | None
+#   code: agentic_drift_guard.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: confidence 参数
+#   fields: 参数 confidence，类型注解 float
+#   code: agentic_drift_guard.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DriftCheckConfig
+#   name_en: DriftCheckConfig
+#   intro: S1.2 内联检查参数（RBAC 蓝图决策 D-018-21 口径；参数>7 收 dataclass 纪律）。
+#   desc: S1.2 内联检查参数（RBAC 蓝图决策 D-018-21 口径；参数>7 收 dataclass 纪律）。；公共方法（定义序）: validate；源码 L211-L231
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② shannon_entropy
+#   name_en: shannon_entropy
+#   intro: Shannon 熵（log2）。
+#   desc: Shannon 熵（log2）。空序列/全零 → 0.0。；源码 L261-L272
+#   inputs: counts
+#   outputs: float
+# - id: A3
+#   name_zh: ③ check_operation_chain
+#   name_en: check_operation_chain
+#   intro: S1.2 操作链内联漂移检查（纯函数核，无 IO，性能预算 ≈0.25ms 量级）。
+#   desc: S1.2 操作链内联漂移检查（纯函数核，无 IO，性能预算 ≈0.25ms 量级）。 取最近 window_size 步：类型熵>阈值且类型偏离率>drift_tolerance…；源码 L291-L359
+#   inputs: ops config
+#   outputs: DriftVerdict
+# - id: A4
+#   name_zh: ④ evaluate_dual_dimension
+#   name_en: evaluate_dual_dimension
+#   intro: 双维度阈值 Hard-Gate（置信度 × 意图偏差度，15号文 §3.2）。
+#   desc: 双维度阈值 Hard-Gate（置信度 × 意图偏差度，15号文 §3.2）。 低置信（<confidence_floor）× 高意图偏差（>drift_tolerance）双坏…；源码 L362-L399
+#   inputs: confidence intent_deviation config
+#   outputs: DriftVerdict
+# - id: A5
+#   name_zh: ⑤ build_behavior_baseline
+#   name_en: build_behavior_baseline
+#   intro: S1.1：从历史会话统计行为基线（操作频率 + 触碰模块集合；委托 BM-RC-04-F 实现）。
+#   desc: S1.1：从历史会话统计行为基线（操作频率 + 触碰模块集合；委托 BM-RC-04-F 实现）。；源码 L405-L411
+#   inputs: sessions min_sessions
+#   outputs: BehaviorBaseline
+# - id: A6
+#   name_zh: ⑥ check_session_against_baseline
+#   name_en: check_session_against_baseline
+#   intro: S1.1：单会话异常检出（z-score 偏离 + 首次触碰基线外模块；空列表=正常）。
+#   desc: S1.1：单会话异常检出（z-score 偏离 + 首次触碰基线外模块；空列表=正常）。 告警通道待 55 号定型承接，当前 interim=logger.warning + 异…；源码 L414-L431
+#   inputs: session baseline z_threshold
+#   outputs: list[BehaviorAnomaly]
+# - id: A7
+#   name_zh: ⑦ ChallengeTicket
+#   name_en: ChallengeTicket
+#   intro: Agent Challenge 工单（Q2 裁定：统一落盘载体与降级形态，人兜底不可省）。
+#   desc: Agent Challenge 工单（Q2 裁定：统一落盘载体与降级形态，人兜底不可省）。；公共方法（定义序）: to_dict；源码 L438-L460
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A8
+#   name_zh: ⑧ build_challenge_ticket
+#   name_en: build_challenge_ticket
+#   intro: 检测器判疑 → 生成 challenge 工单（degraded=True 即降级直进人审队列）。
+#   desc: 检测器判疑 → 生成 challenge 工单（degraded=True 即降级直进人审队列）。；源码 L463-L490
+#   inputs: verdict original_intent_restatement action_chain_alignment degraded
+#   outputs: ChallengeTicket
+# - id: A9
+#   name_zh: ⑨ write_challenge_ticket
+#   name_en: write_challenge_ticket
+#   intro: 工单落盘接口位：写 challenge-<ticket_id>.json，返回文件名（交叉会话复审由外部编排消费）。
+#   desc: 工单落盘接口位：写 challenge-<ticket_id>.json，返回文件名（交叉会话复审由外部编排消费）。；源码 L493-L499
+#   inputs: ticket tickets_dir
+#   outputs: str
+# - id: A10
+#   name_zh: ⑩ AgenticDriftGuard
+#   name_en: AgenticDriftGuard
+#   intro: S1.2 编排壳：纯函数核 + 审计/P0 告警落盘（挂 S0.2 gate 链路的内联点）。
+#   desc: S1.2 编排壳：纯函数核 + 审计/P0 告警落盘（挂 S0.2 gate 链路的内联点）。 用法:: guard = AgenticDriftGuard() verdict…；公共方法（定义序）: config,…
+#   inputs: runtime_dir config
+#   outputs: 返回值
+#   （注：A10 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests/autonomy_core/test_agentic_drift_guard.py；S0.2 gate 链路（内联挂点预留）
+# - id: O2
+#   name_zh: DriftVerdict
+#   name_en: DriftVerdict
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests/autonomy_core/test_agentic_drift_guard.py；S0.2 gate 链路（内联挂点预留）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> A10
+# A10 --> O1
 """
 
 from __future__ import annotations
@@ -204,28 +327,22 @@ def check_operation_chain(
     type_entropy = shannon_entropy(list(type_counts.values()))
     path_entropy = shannon_entropy(list(path_counts.values()))
     type_drift = (
-        type_entropy > cfg.type_entropy_threshold
-        and _drift_ratio(list(type_counts.values())) > cfg.drift_tolerance
+        type_entropy > cfg.type_entropy_threshold and _drift_ratio(list(type_counts.values())) > cfg.drift_tolerance
     )
     path_drift = (
-        path_entropy > cfg.path_entropy_threshold
-        and _drift_ratio(list(path_counts.values())) > cfg.drift_tolerance
+        path_entropy > cfg.path_entropy_threshold and _drift_ratio(list(path_counts.values())) > cfg.drift_tolerance
     )
 
     if path_drift:
         level = DriftLevel.DETECTED
         dimension = "both" if type_drift else "path"
         reason = (
-            f"路径熵={path_entropy:.2f}>{cfg.path_entropy_threshold}（路径漂移，"
-            f"维度={dimension}）→ blocked + P0 告警"
+            f"路径熵={path_entropy:.2f}>{cfg.path_entropy_threshold}（路径漂移，维度={dimension}）→ blocked + P0 告警"
         )
     elif type_drift:
         level = DriftLevel.WARNING
         dimension = "type"
-        reason = (
-            f"类型熵={type_entropy:.2f}>{cfg.type_entropy_threshold}（类型漂移）"
-            "→ 降级 auto_guard"
-        )
+        reason = f"类型熵={type_entropy:.2f}>{cfg.type_entropy_threshold}（类型漂移）→ 降级 auto_guard"
     else:
         level = DriftLevel.OK
         dimension = "none"
@@ -268,9 +385,7 @@ def evaluate_dual_dimension(
         )
     elif low_conf or high_dev:
         level, dimension = DriftLevel.WARNING, "dual_dimension"
-        reason = "单维异常（%s）→ 降级 auto_guard" % (
-            "低置信但守规矩" if low_conf else "高置信但跑偏"
-        )
+        reason = "单维异常（%s）→ 降级 auto_guard" % ("低置信但守规矩" if low_conf else "高置信但跑偏")
     else:
         level, dimension = DriftLevel.OK, "none"
         reason = "双维均在阈值内"
@@ -381,9 +496,7 @@ def write_challenge_ticket(ticket: ChallengeTicket, tickets_dir: str | Path) -> 
     out_dir = Path(tickets_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     name = f"challenge-{ticket.ticket_id}.json"
-    (out_dir / name).write_text(
-        json.dumps(ticket.to_dict(), ensure_ascii=False, indent=2), encoding="utf-8"
-    )
+    (out_dir / name).write_text(json.dumps(ticket.to_dict(), ensure_ascii=False, indent=2), encoding="utf-8")
     return name
 
 

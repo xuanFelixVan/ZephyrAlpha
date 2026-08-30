@@ -14,7 +14,11 @@
 # [TESTS] tests/alt_data/test_concept_factor_mapper.py
 # [A_module] module_id=MOD-ALT-006 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""ConceptFactorMapper — 概念因子映射引擎（MOD-ALT-006）
+"""
+
+
+
+ConceptFactorMapper — 概念因子映射引擎（MOD-ALT-006）
 
 B1-00596（AUD-DRAFT-001-DIGEST P1 波 W-P1-14，§1 子模块清单 37）：股票↔概念
 映射字典 + 逆向索引（概念→成分）+ 质量校验（成分数合理性/更新及时性）+
@@ -28,6 +32,33 @@ B1-00596（AUD-DRAFT-001-DIGEST P1 波 W-P1-14，§1 子模块清单 37）：股
 "attach_constituent_map 注入式 provider（37 概念因子映射引擎产出位的挂接
 点）"——本模块即该产出位；sector_ranking_engine=板块排名面。本模块为
 个股↔概念统一映射入口，与采集/因子化/排名各面正交不重复。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: concept_factor_mapper.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ConceptFactorMapper
+#   name_en: ConceptFactorMapper
+#   intro: 概念因子映射引擎（双向索引 + 质量校验 + PIT 版本判定核心）。
+#   desc: 概念因子映射引擎（双向索引 + 质量校验 + PIT 版本判定核心）。 Args: config: ConceptMapperConfig（None=默认阈值）；公共方法（定义序）: config, parse_exc…
+#   inputs: config
+#   outputs: 返回值
+#   （注：A1 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（9 定义）
+#   name_en: public defs
+#   intro: ConceptFactorMapper
+#   downstream: 运行时装配批（成分行接 akshare_provider market_concept_board 系列表产物；输出供 signal_ashare 与 sec…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -77,12 +108,8 @@ class ConceptConstituentRow:
             if not isinstance(v, str) or not v.strip():
                 raise InvalidConceptRowError(f"{name} 不能为空: {v!r}")
             object.__setattr__(self, name, v.strip())
-        if not isinstance(self.effective_date, datetime.date) or isinstance(
-            self.effective_date, datetime.datetime
-        ):
-            raise InvalidConceptRowError(
-                f"effective_date 必须为 date: {type(self.effective_date).__name__}"
-            )
+        if not isinstance(self.effective_date, datetime.date) or isinstance(self.effective_date, datetime.datetime):
+            raise InvalidConceptRowError(f"effective_date 必须为 date: {type(self.effective_date).__name__}")
 
 
 @dataclass(frozen=True)
@@ -92,7 +119,7 @@ class ConceptMappingIndex:
     symbol_to_concepts: Mapping[str, tuple[str, ...]]  # 股票→概念（字典序）
     concept_to_symbols: Mapping[str, tuple[str, ...]]  # 概念→成分（字典序逆向索引）
     row_count: int
-    latest_effective_date: Optional[datetime.date]
+    latest_effective_date: datetime.date | None
 
 
 @dataclass(frozen=True)
@@ -103,12 +130,8 @@ class MappingVersion:
     index: ConceptMappingIndex
 
     def __post_init__(self) -> None:
-        if not isinstance(self.effective_date, datetime.date) or isinstance(
-            self.effective_date, datetime.datetime
-        ):
-            raise InvalidConceptRowError(
-                f"version effective_date 必须为 date: {type(self.effective_date).__name__}"
-            )
+        if not isinstance(self.effective_date, datetime.date) or isinstance(self.effective_date, datetime.datetime):
+            raise InvalidConceptRowError(f"version effective_date 必须为 date: {type(self.effective_date).__name__}")
         if not isinstance(self.index, ConceptMappingIndex):
             raise InvalidConceptRowError(f"index 类型非法: {type(self.index).__name__}")
 
@@ -162,9 +185,7 @@ class ConceptFactorMapper:
 
     def __init__(self, config: ConceptMapperConfig | None = None) -> None:
         if config is not None and not isinstance(config, ConceptMapperConfig):
-            raise InvalidConceptMapperConfigError(
-                f"config 类型非法: {type(config).__name__}"
-            )
+            raise InvalidConceptMapperConfigError(f"config 类型非法: {type(config).__name__}")
         self._config = config or ConceptMapperConfig()
 
     @property
@@ -193,9 +214,7 @@ class ConceptFactorMapper:
         for idx, raw in enumerate(rows or []):
             try:
                 row = (
-                    raw
-                    if isinstance(raw, ConceptConstituentRow)
-                    else ConceptConstituentRow(**raw)  # type: ignore[arg-type]
+                    raw if isinstance(raw, ConceptConstituentRow) else ConceptConstituentRow(**raw)  # type: ignore[arg-type]
                 )
                 key = (row.symbol, row.concept, row.effective_date)
                 if key in seen:
@@ -206,7 +225,7 @@ class ConceptFactorMapper:
                 errors.append((idx, f"{type(exc).__name__}: {exc}"))
         symbol_map: dict[str, set[str]] = {}
         concept_map: dict[str, set[str]] = {}
-        latest: Optional[datetime.date] = None
+        latest: datetime.date | None = None
         for row in accepted:
             symbol_map.setdefault(row.symbol, set()).add(row.concept)
             concept_map.setdefault(row.concept, set()).add(row.symbol)
@@ -220,9 +239,7 @@ class ConceptFactorMapper:
         )
         return index, tuple(errors)
 
-    def check_quality(
-        self, index: ConceptMappingIndex, as_of: datetime.date
-    ) -> QualityReport:
+    def check_quality(self, index: ConceptMappingIndex, as_of: datetime.date) -> QualityReport:
         """质量校验：成分数合理性 + 更新及时性；issues 确定性排序。"""
         if not isinstance(index, ConceptMappingIndex):
             raise InvalidConceptRowError(f"index 类型非法: {type(index).__name__}")
@@ -254,9 +271,7 @@ class ConceptFactorMapper:
         stale = False
         if index.latest_effective_date is None:
             stale = True
-            issues.append(
-                QualityIssue(kind="STALE_MAPPING", concept="", detail="无任何成分行")
-            )
+            issues.append(QualityIssue(kind="STALE_MAPPING", concept="", detail="无任何成分行"))
         else:
             lag = (as_of - index.latest_effective_date).days
             if lag > self._config.stale_days:
@@ -282,9 +297,7 @@ class ConceptFactorMapper:
         )
 
     @staticmethod
-    def asof(
-        versions: Sequence[MappingVersion], date: datetime.date
-    ) -> Optional[ConceptMappingIndex]:
+    def asof(versions: Sequence[MappingVersion], date: datetime.date) -> ConceptMappingIndex | None:
         """PIT 查询：取 effective_date ≤ date 的最新版本索引；无 → None。"""
         if not isinstance(date, datetime.date) or isinstance(date, datetime.datetime):
             raise InvalidConceptRowError(f"date 必须为 date: {type(date).__name__}")

@@ -14,7 +14,11 @@
 # [TESTS] tests/alt_data/test_policy_expectation_analyzer.py
 # [A_module] module_id=MOD-ALT-010 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""PolicyExpectationAnalyzer — A股政策预期分析器（MOD-ALT-010）。
+"""
+
+
+
+PolicyExpectationAnalyzer — A股政策预期分析器（MOD-ALT-010）。
 
 B5-07096（AUD-DRAFT-001-DIGEST P2 波 P2-W04，CAND-TESTA-026，B5 D-ALT-DATA-16，
 canonical 承接 TESTA-013 归并）：监管/交易所**公开表态采集**（注入源）+
@@ -27,6 +31,48 @@ llm，[-1,1] 闭合校验）+**国家队持仓变动识别**（季报公开数�
 义，不注册策略）；policy_theme_mapper=政策→主题映射（本件=预期倾向打分与
 预期差信号，不做主题映射）；llm_market_interpreter=市场解读 LLM 面（本件
 LLM 能力一律注入，不内嵌）；sentiment_engine=情绪聚合（零交集）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: policy_expectation_analyzer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: statement_source 参数
+#   fields: 参数 statement_source（无注解）
+#   code: policy_expectation_analyzer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: llm_scorer 参数
+#   fields: 参数 llm_scorer（无注解）
+#   code: policy_expectation_analyzer.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: keyword_library 参数
+#   fields: 参数 keyword_library（无注解）
+#   code: policy_expectation_analyzer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① PolicyExpectationAnalyzer
+#   name_en: PolicyExpectationAnalyzer
+#   intro: A股政策预期分析器（表态采集 + 关键词扫描 + 事件日历 + LLM 打分 + 持仓异动 + 审核队列）。
+#   desc: A股政策预期分析器（表态采集 + 关键词扫描 + 事件日历 + LLM 打分 + 持仓异动 + 审核队列）。；公共方法（定义序）: collect_statements, statements, scan_window…
+#   inputs: clock statement_source llm_scorer keyword_library etf_change_threshol…
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: PolicyExpectationAnalyzer
+#   downstream: 运行时装配批（监管表态源绑定 / LLM 打分器绑定 / 预期差信号接人工审核路由与信号漏斗）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -115,7 +161,7 @@ class PolicyExpectationAnalyzer:
         self,
         *,
         clock: Callable[[], datetime.datetime] | None = None,
-        statement_source: Callable[[], "list[PolicyStatement]"] | None = None,
+        statement_source: Callable[[], list[PolicyStatement]] | None = None,
         llm_scorer: Callable[[str], float] | None = None,
         keyword_library: Iterable[str] = (),
         etf_change_threshold: float = 0.10,
@@ -285,7 +331,7 @@ class PolicyExpectationAnalyzer:
 
     # ── 国家队持仓变动识别 ────────────────────────────────────────────────
 
-    def register_etf_snapshot(self, snapshot: EtfSharesSnapshot) -> "HoldingChange | None":
+    def register_etf_snapshot(self, snapshot: EtfSharesSnapshot) -> HoldingChange | None:
         """登记 ETF 份额快照：|份额变动率| ≥ 阈值 → 国家队持仓异动。
 
         as_of 单调：乱序拒绝；同日同额幂等（None）；同日异额冲突 Fail-Closed。
@@ -310,10 +356,8 @@ class PolicyExpectationAnalyzer:
             if snapshot.as_of == previous.as_of:
                 if shares == previous.shares:
                     return None  # 幂等
-                raise PolicyExpectationError(
-                    f"同日期快照份额冲突: {snapshot.etf_code!r} as_of {snapshot.as_of}"
-                )
-        change: "HoldingChange | None" = None
+                raise PolicyExpectationError(f"同日期快照份额冲突: {snapshot.etf_code!r} as_of {snapshot.as_of}")
+        change: HoldingChange | None = None
         if previous is not None:
             ratio = (shares - previous.shares) / previous.shares
             if abs(ratio) >= self._threshold:
@@ -328,7 +372,9 @@ class PolicyExpectationAnalyzer:
                 self._holding_changes.append(change)
                 _log.info("国家队持仓异动: %s 变动率 %.3f", snapshot.etf_code, ratio)
         self._etf[snapshot.etf_code] = EtfSharesSnapshot(
-            etf_code=snapshot.etf_code, shares=shares, as_of=snapshot.as_of,
+            etf_code=snapshot.etf_code,
+            shares=shares,
+            as_of=snapshot.as_of,
         )
         return change
 
@@ -352,6 +398,4 @@ class PolicyExpectationAnalyzer:
             if signal.topic == topic and signal.generated_at == generated_at:
                 del self._review_queue[index]
                 return
-        raise PolicyExpectationError(
-            f"审核队列无匹配信号: topic={topic!r} generated_at={generated_at!r}"
-        )
+        raise PolicyExpectationError(f"审核队列无匹配信号: topic={topic!r} generated_at={generated_at!r}")

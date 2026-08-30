@@ -14,7 +14,11 @@
 # [TESTS] tests/alt_data/test_alt_source_health_manager.py
 # [A_module] module_id=MOD-ALT-011 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""AltSourceHealthManager — 另类数据源健康度管理器（MOD-ALT-011）。
+"""
+
+
+
+AltSourceHealthManager — 另类数据源健康度管理器（MOD-ALT-011）。
 
 B14-04617（AUD-DRAFT-001-DIGEST P2 波 P2-W04，CAND-TESTA-019，A9
 D-ALT-DATA-31）：另类数据源健康度——成功率/新鲜度/延迟**滑动窗口评分**
@@ -25,6 +29,48 @@ D-ALT-DATA-31）：另类数据源健康度——成功率/新鲜度/延迟**滑
 查重分工（蓝图 §0）：market_data/failover/manager=行情主备源切换执行器
 （本件=另类数据源健康度判定面，不执行切换，仅输出状态与告警）；本件不做
 采集（采集在 alt_data_connector 族），仅消费样本做评分与阶梯裁决。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: source_ids 参数
+#   fields: 参数 source_ids（无注解）
+#   code: alt_source_health_manager.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: weights 参数
+#   fields: 参数 weights（无注解）
+#   code: alt_source_health_manager.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: window_size 参数
+#   fields: 参数 window_size（无注解）
+#   code: alt_source_health_manager.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: downweight_threshold 参数
+#   fields: 参数 downweight_threshold（无注解）
+#   code: alt_source_health_manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AltSourceHealthManager
+#   name_en: AltSourceHealthManager
+#   intro: 另类数据源健康度管理器（滑动窗口评分 + 降级阶梯 + 半开恢复）。
+#   desc: 另类数据源健康度管理器（滑动窗口评分 + 降级阶梯 + 半开恢复）。；公共方法（定义序）: record_sample, evaluate, probe, state_of, health_of, score_of,…
+#   inputs: source_ids weights window_size downweight_threshold failover_threshol…
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: AltSourceHealthManager
+#   downstream: 运行时装配批（另类数据连接器族健康面上报 / failover 切换决策输入 / 质量事件接 alert 路由）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -48,7 +94,7 @@ __all__: Final = [
 ]
 
 #: 降级阶梯序号（0 最优，3 最差；HALF_OPEN 为恢复试探过渡态不入阶梯）
-_LADDER_RANK: Final[dict["HealthState", int]] = {}
+_LADDER_RANK: Final[dict[HealthState, int]] = {}
 
 _WEIGHT_KEYS: Final = ("success", "freshness", "latency")
 
@@ -63,19 +109,21 @@ class AltSourceHealthError(Exception):
 class HealthState(str, Enum):
     """数据源健康状态机（降级阶梯 + 半开试探）。"""
 
-    NORMAL = "normal"                # 正常
-    DOWNWEIGHTED = "downweighted"    # 降权
-    FAILOVER = "failover"            # 切源
-    DISABLED = "disabled"            # 停用
-    HALF_OPEN = "half_open"          # 半开试探（恢复过渡态）
+    NORMAL = "normal"  # 正常
+    DOWNWEIGHTED = "downweighted"  # 降权
+    FAILOVER = "failover"  # 切源
+    DISABLED = "disabled"  # 停用
+    HALF_OPEN = "half_open"  # 半开试探（恢复过渡态）
 
 
-_LADDER_RANK.update({
-    HealthState.NORMAL: 0,
-    HealthState.DOWNWEIGHTED: 1,
-    HealthState.FAILOVER: 2,
-    HealthState.DISABLED: 3,
-})
+_LADDER_RANK.update(
+    {
+        HealthState.NORMAL: 0,
+        HealthState.DOWNWEIGHTED: 1,
+        HealthState.FAILOVER: 2,
+        HealthState.DISABLED: 3,
+    }
+)
 
 
 @dataclass(frozen=True)
@@ -131,11 +179,15 @@ class AltSourceHealthManager:
                 raise AltSourceHealthError(f"source_id 重复: {sid!r}")
             seen.add(sid)
 
-        w = dict(weights) if weights is not None else {
-            "success": 0.5,
-            "freshness": 0.3,
-            "latency": 0.2,
-        }
+        w = (
+            dict(weights)
+            if weights is not None
+            else {
+                "success": 0.5,
+                "freshness": 0.3,
+                "latency": 0.2,
+            }
+        )
         if set(w) != set(_WEIGHT_KEYS):
             raise AltSourceHealthError(f"权重键须为 {_WEIGHT_KEYS}: {sorted(w)!r}")
         for key, val in w.items():
@@ -296,7 +348,9 @@ class AltSourceHealthManager:
                 self._probe_streak.pop(source_id)
                 self._states[source_id] = HealthState.NORMAL
                 self._alert(
-                    source_id, HealthState.HALF_OPEN, HealthState.NORMAL,
+                    source_id,
+                    HealthState.HALF_OPEN,
+                    HealthState.NORMAL,
                     f"半开试探连续 {self._probe_needed} 次成功（原态 {origin.value}），恢复健康",
                 )
         else:

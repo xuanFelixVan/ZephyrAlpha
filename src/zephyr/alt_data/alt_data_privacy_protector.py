@@ -14,7 +14,11 @@
 # [TESTS] tests/alt_data/test_alt_data_privacy_protector.py
 # [A_module] module_id=MOD-ALT-012 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""AltDataPrivacyProtector — 另类数据隐私保护器（MOD-ALT-012）。
+"""
+
+
+
+AltDataPrivacyProtector — 另类数据隐私保护器（MOD-ALT-012）。
 
 B14-04665（AUD-DRAFT-001-DIGEST P2 波 P2-W04，CAND-TESTA-021，A9
 D-ALT-DATA-17）：另类数据 **PII 识别**（手机号/身份证/姓名默认正则 +
@@ -25,6 +29,43 @@ D-ALT-DATA-17）：另类数据 **PII 识别**（手机号/身份证/姓名默�
 查重分工（蓝图 §0）：gov_audit/privacy=治理域隐私台账（本件=另类数据
 入库路径上的识别/脱敏/留存执行面，只输出清洗产物与审计事件）；本件不做
 采集与落库（在 connector 族），仅在管道内做字段级裁决。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: extra_patterns 参数
+#   fields: 参数 extra_patterns（无注解）
+#   code: alt_data_privacy_protector.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: alt_data_privacy_protector.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: audit_sink 参数
+#   fields: 参数 audit_sink（无注解）
+#   code: alt_data_privacy_protector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AltDataPrivacyProtector
+#   name_en: AltDataPrivacyProtector
+#   intro: 另类数据隐私保护器（PII 识别 + 脱敏管道 + 最小化留存 + 访问审计）。
+#   desc: 另类数据隐私保护器（PII 识别 + 脱敏管道 + 最小化留存 + 访问审计）。；公共方法（定义序）: detect_pii, sanitize_text, sanitize_record, register_ttl,…
+#   inputs: extra_patterns clock audit_sink
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: AltDataPrivacyProtector
+#   downstream: 运行时装配批（另类数据入库前脱敏管道挂 connector 落库路径 / 访问审计接 alert·gov_audit 路由）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -133,9 +174,7 @@ class AltDataPrivacyProtector:
         findings: list[PiiFinding] = []
         for p, rx in self._patterns:
             for m in rx.finditer(text):
-                findings.append(PiiFinding(
-                    pii_type=p.pii_type, matched=m.group(0), start=m.start(), end=m.end()
-                ))
+                findings.append(PiiFinding(pii_type=p.pii_type, matched=m.group(0), start=m.start(), end=m.end()))
         findings.sort(key=lambda f: (f.start, f.pii_type))
         return findings
 
@@ -200,9 +239,7 @@ class AltDataPrivacyProtector:
         for name, val in (("accessor", accessor), ("dataset_id", dataset_id), ("purpose", purpose)):
             if not val or not val.strip():
                 raise AltPrivacyError(f"{name} 空白")
-        audit = AccessAudit(
-            accessor=accessor, dataset_id=dataset_id, purpose=purpose, accessed_at=self._clock()
-        )
+        audit = AccessAudit(accessor=accessor, dataset_id=dataset_id, purpose=purpose, accessed_at=self._clock())
         _log.info("另类数据访问审计: %s 访问 %s（%s）", accessor, dataset_id, purpose)
         self._access_log.append(audit)
         if self._audit_sink is not None:

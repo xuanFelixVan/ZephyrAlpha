@@ -16,10 +16,40 @@
 # [TTL] permanent
 
 """
+
+
+
+
 MOD-INF-019: Agent Spec — All Skill Modules
 Blueprint: docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 Author: factory-agent
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: all_skill_modules.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① AllSkillModules
+#   name_en: AllSkillModules
+#   intro: 全量 Skill 模块索引——从蓝图全部代码块落地
+#   desc: 全量 Skill 模块索引——从蓝图全部代码块落地；公共方法（定义序）: all_modules, count；源码 L55-L124
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: AllSkillModules
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 

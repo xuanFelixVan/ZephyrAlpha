@@ -14,7 +14,11 @@
 # [TESTS] tests/autonomy/test_ai_ops_autonomy_card.py
 # [A_module] module_id=MOD-AU-013 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
-"""AiOpsAutonomyCard — C-008 AI 自治运维能力卡片 (MOD-AU-013)
+"""
+
+
+
+AiOpsAutonomyCard — C-008 AI 自治运维能力卡片 (MOD-AU-013)
 
 B14-04565（AUD-DRAFT-001-DIGEST P1 波 W-P1-12，A9 §3.5 / A1§12.2 迁移）：
 自监控→自诊断→自修复→自保障（Learn）四阶段闭环的**运维自治判定核心**——
@@ -35,6 +39,48 @@ B-016（禁AI自动清理未归档交易日志审计）动作 → 必 ESCALATE_H
 - auto_fix_engine（infrastructure）：开发侧代码自愈，不管交易运行时；
 - process_supervisor（MOD-INF-066）：进程守护执行体（repair_sink 委托）；
 - health_monitor（trading）：健康监控散件（检测源之一）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: grade 参数
+#   fields: 参数 grade（无注解）
+#   code: ai_ops_autonomy_card.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: repair_sink 参数
+#   fields: 参数 repair_sink（无注解）
+#   code: ai_ops_autonomy_card.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: rollback_trigger 参数
+#   fields: 参数 rollback_trigger（无注解）
+#   code: ai_ops_autonomy_card.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: audit_sink 参数
+#   fields: 参数 audit_sink（无注解）
+#   code: ai_ops_autonomy_card.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AiOpsAutonomyCard
+#   name_en: AiOpsAutonomyCard
+#   intro: C-008 AI 自治运维能力卡片（判定纯函数 + 信号回调委托）。
+#   desc: C-008 AI 自治运维能力卡片（判定纯函数 + 信号回调委托）。 Args: grade: 卡当前自治分级（默认 A_L2；禁区硬编码不受其抬升影响）。 repair_sin…；公共方法（定义序）: grade,…
+#   inputs: grade repair_sink rollback_trigger audit_sink
+#   outputs: 返回值
+#   （注：A1 之后另有 10 个公共定义未列入（含 10 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（11 定义）
+#   name_en: public defs
+#   intro: AiOpsAutonomyCard
+#   downstream: 运行时装配批（7类检测源事件接入 / process_supervisor 修复执行体 / 健康度回读装配 / D_GOV_AUDIT 运维审计落账）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -202,14 +248,10 @@ class RemediateAction:
 def _validate_incident(incident: OpsIncident) -> tuple[DetectorSource, DiagnosisRoute]:
     """运维事件 Fail-Closed 校验，返回归一化 (source, route)。"""
     if not isinstance(incident.incident_id, str) or not incident.incident_id.strip():
-        raise InvalidOpsIncidentError(
-            "incident_id 不能为空", details={"incident_id": incident.incident_id}
-        )
+        raise InvalidOpsIncidentError("incident_id 不能为空", details={"incident_id": incident.incident_id})
     try:
         source = (
-            incident.source
-            if isinstance(incident.source, DetectorSource)
-            else DetectorSource(str(incident.source))
+            incident.source if isinstance(incident.source, DetectorSource) else DetectorSource(str(incident.source))
         )
     except (ValueError, TypeError) as exc:
         raise InvalidOpsIncidentError(
@@ -227,13 +269,9 @@ def _validate_incident(incident: OpsIncident) -> tuple[DetectorSource, Diagnosis
             details={"diagnosis_route": str(incident.diagnosis_route)},
         ) from exc
     if incident.severity not in _VALID_SEVERITIES:
-        raise InvalidOpsIncidentError(
-            "severity 非法（仅 P1/P2/P3）", details={"severity": incident.severity}
-        )
+        raise InvalidOpsIncidentError("severity 非法（仅 P1/P2/P3）", details={"severity": incident.severity})
     if not isinstance(incident.action_tag, str) or not incident.action_tag.strip():
-        raise InvalidOpsIncidentError(
-            "action_tag 不能为空", details={"action_tag": incident.action_tag}
-        )
+        raise InvalidOpsIncidentError("action_tag 不能为空", details={"action_tag": incident.action_tag})
     return source, route
 
 
@@ -273,9 +311,7 @@ class AiOpsAutonomyCard:
         try:
             self._grade = grade if isinstance(grade, AutonomyGrade) else AutonomyGrade(int(grade))
         except (ValueError, TypeError) as exc:
-            raise InvalidAutonomyCardConfigError(
-                "grade 非法（仅 A_L1~A_L4）", details={"grade": str(grade)}
-            ) from exc
+            raise InvalidAutonomyCardConfigError("grade 非法（仅 A_L1~A_L4）", details={"grade": str(grade)}) from exc
         self._repair_sink = repair_sink
         self._rollback_trigger = rollback_trigger
         self._audit_sink = audit_sink
@@ -321,8 +357,7 @@ class AiOpsAutonomyCard:
                 incident,
                 RemediateVerdict.ESCALATE_HUMAN,
                 strategy,
-                f"策略 {strategy.strategy_id}（{strategy.name}）不可逆，"
-                "TNR 可撤销修复不满足，任何自治级别均人工",
+                f"策略 {strategy.strategy_id}（{strategy.name}）不可逆，TNR 可撤销修复不满足，任何自治级别均人工",
                 extra_audit="escalate",
             )
 
@@ -342,8 +377,7 @@ class AiOpsAutonomyCard:
                 incident,
                 RemediateVerdict.ESCALATE_HUMAN,
                 strategy,
-                f"策略 {strategy.strategy_id} 分级 L{int(strategy.grade)} 超卡分级 "
-                f"L{int(self._grade)}，转人工",
+                f"策略 {strategy.strategy_id} 分级 L{int(strategy.grade)} 超卡分级 L{int(self._grade)}，转人工",
                 extra_audit="escalate",
             )
 

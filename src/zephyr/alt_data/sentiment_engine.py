@@ -14,7 +14,11 @@
 # [TESTS] tests/alt_data/test_sentiment_engine.py
 # [A_module] module_id=MOD-ALT-004 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""SentimentEngine — 统一情绪引擎（MOD-ALT-004）
+"""
+
+
+
+SentimentEngine — 统一情绪引擎（MOD-ALT-004）
 
 B1-00112（AUD-DRAFT-001-DIGEST P1 波 W-P1-14，D-ALT-02）：聚合价量情绪（复用
 sentiment_cycle 产出口径）+ 社媒/新闻情感分（采集/打分面产物注入）→ 复合
@@ -28,6 +32,38 @@ news_sentiment_analyzer（MOD-INT-AISA）=新闻情感**打分**；sentiment_agg
 detector（MOD-SIG-099）=极端情绪**反转事件检测**。本模块为跨**类别**聚合
 +历史分位状态判定引擎，与采集/打分/投票/检测各面正交不重复。LLM 能力不内嵌，
 分数一律注入；仅信号输入语义，无下单含义。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: sentiment_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: history_provider 参数
+#   fields: 参数 history_provider（无注解）
+#   code: sentiment_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SentimentEngine
+#   name_en: SentimentEngine
+#   intro: 统一情绪引擎（跨类别聚合 + 历史分位状态判定核心）。
+#   desc: 统一情绪引擎（跨类别聚合 + 历史分位状态判定核心）。 Args: config: SentimentEngineConfig（None=默认） history_provider…；公共方法（定义序）: config,…
+#   inputs: config history_provider
+#   outputs: 返回值
+#   （注：A1 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（9 定义）
+#   name_en: public defs
+#   intro: SentimentEngine
+#   downstream: 运行时装配批（价量情绪分接 sentiment_cycle 产出 / 社媒分接 social_sentiment_collector 日频聚合 / 新闻分接…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -71,7 +107,7 @@ class SentimentState(str, Enum):
     INSUFFICIENT_HISTORY = "INSUFFICIENT_HISTORY"  # 样本不足不出判定
 
 
-def _score_or_none(name: str, value: Optional[float]) -> Optional[float]:
+def _score_or_none(name: str, value: float | None) -> float | None:
     if value is None:
         return None
     v = float(value)
@@ -90,17 +126,13 @@ class SentimentInput:
 
     trade_date: datetime.date
     symbol: str
-    price_volume_score: Optional[float] = None  # 价量情绪分（sentiment_cycle 产出口径）
-    social_score: Optional[float] = None  # 社媒情感分（MOD-ALT-001 日频聚合）
-    news_score: Optional[float] = None  # 新闻情感分（MOD-INT-AISA 打分面）
+    price_volume_score: float | None = None  # 价量情绪分（sentiment_cycle 产出口径）
+    social_score: float | None = None  # 社媒情感分（MOD-ALT-001 日频聚合）
+    news_score: float | None = None  # 新闻情感分（MOD-INT-AISA 打分面）
 
     def __post_init__(self) -> None:
-        if not isinstance(self.trade_date, datetime.date) or isinstance(
-            self.trade_date, datetime.datetime
-        ):
-            raise InvalidSentimentInputError(
-                f"trade_date 必须为 date: {type(self.trade_date).__name__}"
-            )
+        if not isinstance(self.trade_date, datetime.date) or isinstance(self.trade_date, datetime.datetime):
+            raise InvalidSentimentInputError(f"trade_date 必须为 date: {type(self.trade_date).__name__}")
         if not isinstance(self.symbol, str) or not self.symbol.strip():
             raise InvalidSentimentInputError(f"symbol 不能为空: {self.symbol!r}")
         pv = _score_or_none("price_volume_score", self.price_volume_score)
@@ -122,12 +154,8 @@ class HistoryPoint:
     composite: float
 
     def __post_init__(self) -> None:
-        if not isinstance(self.trade_date, datetime.date) or isinstance(
-            self.trade_date, datetime.datetime
-        ):
-            raise InvalidSentimentInputError(
-                f"history trade_date 必须为 date: {type(self.trade_date).__name__}"
-            )
+        if not isinstance(self.trade_date, datetime.date) or isinstance(self.trade_date, datetime.datetime):
+            raise InvalidSentimentInputError(f"history trade_date 必须为 date: {type(self.trade_date).__name__}")
         v = float(self.composite)
         if not math.isfinite(v):
             raise InvalidSentimentInputError(f"history composite 必须为有限值: {self.composite}")
@@ -141,7 +169,7 @@ class SentimentDaily:
     trade_date: datetime.date
     symbol: str
     composite: float
-    percentile: Optional[float]  # 样本不足为 None
+    percentile: float | None  # 样本不足为 None
     state: SentimentState
     components_present: int  # 在场分路数（1~3）
 
@@ -187,9 +215,7 @@ class SentimentEngineConfig:
             if not math.isfinite(p) or p < 0.0 or p > 1.0:
                 raise InvalidSentimentConfigError(f"{name} 必须 ∈ [0,1]: {getattr(self, name)}")
         if self.ice_pct >= self.overheat_pct:
-            raise InvalidSentimentConfigError(
-                f"ice_pct({self.ice_pct}) 必须 < overheat_pct({self.overheat_pct})"
-            )
+            raise InvalidSentimentConfigError(f"ice_pct({self.ice_pct}) 必须 < overheat_pct({self.overheat_pct})")
 
 
 class SentimentEngine:
@@ -237,9 +263,7 @@ class SentimentEngine:
             composite = sum(s * w for s, w in pairs) / w_sum
         return _clip(composite, -1.0, 1.0), len(pairs)
 
-    def _window_history(
-        self, symbol: str, trade_date: datetime.date
-    ) -> list[float]:
+    def _window_history(self, symbol: str, trade_date: datetime.date) -> list[float]:
         if self._history_provider is None:
             return []
         raw = self._history_provider(symbol, trade_date)
@@ -266,9 +290,7 @@ class SentimentEngine:
                 state=SentimentState.INSUFFICIENT_HISTORY,
                 components_present=present,
             )
-        percentile = _clip(
-            sum(1 for h in history if h <= composite) / len(history), 0.0, 1.0
-        )
+        percentile = _clip(sum(1 for h in history if h <= composite) / len(history), 0.0, 1.0)
         if percentile < self._config.ice_pct:
             state = SentimentState.ICE
         elif percentile > self._config.overheat_pct:
@@ -291,9 +313,7 @@ class SentimentEngine:
         for idx, raw in enumerate(rows or []):
             try:
                 row = (
-                    raw
-                    if isinstance(raw, SentimentInput)
-                    else SentimentInput(**raw)  # type: ignore[arg-type]
+                    raw if isinstance(raw, SentimentInput) else SentimentInput(**raw)  # type: ignore[arg-type]
                 )
                 records.append(self.evaluate_one(row))
             except Exception as exc:  # noqa: BLE001 —— 单条 Fail-Closed 到条

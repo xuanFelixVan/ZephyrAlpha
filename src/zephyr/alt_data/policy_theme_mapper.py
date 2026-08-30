@@ -14,7 +14,11 @@
 # [TESTS] tests/alt_data/test_policy_theme_mapper.py
 # [A_module] module_id=MOD-ALT-005 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""PolicyThemeMapper — 政策主题映射器（MOD-ALT-005）
+"""
+
+
+
+PolicyThemeMapper — 政策主题映射器（MOD-ALT-005）
 
 B1-00123（AUD-DRAFT-001-DIGEST P1 波 W-P1-14，D-ALT-19）：政策主题库（货币/
 产业/监管/财政/贸易）+ 规则关键词主题归类（可选 llm_classifier 注入升级，
@@ -27,6 +31,38 @@ B1-00123（AUD-DRAFT-001-DIGEST P1 波 W-P1-14，D-ALT-19）：政策主题库�
 （MOD-L00-004）=板块资金流采集；api_llm_pool=LLM 池化治理（本件零密钥零直连，
 llm_classifier 注入委托）。本模块为政策主题→行业映射与影响持续度评估判定
 核心，口径不重复。仅信号输入语义，无下单含义。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: theme_library 参数
+#   fields: 参数 theme_library（无注解）
+#   code: policy_theme_mapper.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: llm_classifier 参数
+#   fields: 参数 llm_classifier（无注解）
+#   code: policy_theme_mapper.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① PolicyThemeMapper
+#   name_en: PolicyThemeMapper
+#   intro: 政策主题映射器（主题归类 + 半衰期热度 + 受益/受损清单判定核心）。
+#   desc: 政策主题映射器（主题归类 + 半衰期热度 + 受益/受损清单判定核心）。 Args: theme_library: 主题库（None=DEFAULT_THEME_LIBRARY）…；公共方法（定义序）: theme_l…
+#   inputs: theme_library llm_classifier
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: PolicyThemeMapper
+#   downstream: 运行时装配批（政策类新闻接 data 域采集族产物 / llm_classifier 接 api_llm_pool·llm_gateway；主题热度与受益/受…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -123,12 +159,8 @@ class PolicyNewsItem:
             v = getattr(self, name)
             if not isinstance(v, str) or not v.strip():
                 raise InvalidPolicyNewsError(f"{name} 不能为空: {v!r}")
-        if not isinstance(self.publish_date, datetime.date) or isinstance(
-            self.publish_date, datetime.datetime
-        ):
-            raise InvalidPolicyNewsError(
-                f"publish_date 必须为 date: {type(self.publish_date).__name__}"
-            )
+        if not isinstance(self.publish_date, datetime.date) or isinstance(self.publish_date, datetime.datetime):
+            raise InvalidPolicyNewsError(f"publish_date 必须为 date: {type(self.publish_date).__name__}")
         object.__setattr__(self, "news_id", self.news_id.strip())
         object.__setattr__(self, "title", self.title.strip())
         object.__setattr__(self, "text", self.text if isinstance(self.text, str) else "")
@@ -180,9 +212,7 @@ def _validate_library(library: Sequence[PolicyTheme]) -> tuple[PolicyTheme, ...]
             or not isinstance(theme.half_life_days, int)
             or theme.half_life_days <= 0
         ):
-            raise InvalidPolicyThemeConfigError(
-                f"{theme.theme_id} half_life_days 必须为正 int: {theme.half_life_days}"
-            )
+            raise InvalidPolicyThemeConfigError(f"{theme.theme_id} half_life_days 必须为正 int: {theme.half_life_days}")
     return tuple(library)
 
 
@@ -201,9 +231,7 @@ class PolicyThemeMapper:
         theme_library: Sequence[PolicyTheme] | None = None,
         llm_classifier: Callable[[PolicyNewsItem], Mapping[str, object]] | None = None,
     ) -> None:
-        self._library = _validate_library(
-            DEFAULT_THEME_LIBRARY if theme_library is None else theme_library
-        )
+        self._library = _validate_library(DEFAULT_THEME_LIBRARY if theme_library is None else theme_library)
         if llm_classifier is not None and not callable(llm_classifier):
             raise InvalidPolicyThemeConfigError(
                 f"llm_classifier 必须为 callable 或 None: {type(llm_classifier).__name__}"
@@ -215,14 +243,14 @@ class PolicyThemeMapper:
     def theme_library(self) -> tuple[PolicyTheme, ...]:
         return self._library
 
-    def _rule_classify(self, item: PolicyNewsItem) -> Optional[str]:
+    def _rule_classify(self, item: PolicyNewsItem) -> str | None:
         haystack = f"{item.title}\n{item.text}"
         for theme in self._library:  # 库定义优先序，首中即定
             if any(k in haystack for k in theme.keywords):
                 return theme.theme_id
         return None
 
-    def classify_one(self, item: PolicyNewsItem) -> tuple[Optional[str], str, bool]:
+    def classify_one(self, item: PolicyNewsItem) -> tuple[str | None, str, bool]:
         """单条归类 → (theme_id|None, classifier=rule|llm, llm_invalid)。"""
         if not isinstance(item, PolicyNewsItem):
             raise InvalidPolicyNewsError(f"item 类型非法: {type(item).__name__}")
@@ -260,14 +288,10 @@ class PolicyThemeMapper:
         for idx, raw in enumerate(items or []):
             try:
                 item = (
-                    raw
-                    if isinstance(raw, PolicyNewsItem)
-                    else PolicyNewsItem(**raw)  # type: ignore[arg-type]
+                    raw if isinstance(raw, PolicyNewsItem) else PolicyNewsItem(**raw)  # type: ignore[arg-type]
                 )
                 if item.publish_date > as_of:  # PIT 严格
-                    raise InvalidPolicyNewsError(
-                        f"publish_date {item.publish_date} 晚于 as_of {as_of}（未来新闻拒绝）"
-                    )
+                    raise InvalidPolicyNewsError(f"publish_date {item.publish_date} 晚于 as_of {as_of}（未来新闻拒绝）")
                 theme_id, _classifier, invalid = self.classify_one(item)
                 llm_invalid += int(invalid)
                 accepted += 1

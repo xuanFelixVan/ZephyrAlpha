@@ -14,7 +14,11 @@
 # [TESTS] tests/alt_data/test_web_scraper_engine.py
 # [A_module] module_id=MOD-ALT-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""WebScraperEngine — 网页爬取引擎（MOD-ALT-002）
+"""
+
+
+
+WebScraperEngine — 网页爬取引擎（MOD-ALT-002）
 
 B10-02195（AUD-DRAFT-001-DIGEST P1 波 W-P1-15，D-ALT-DATA-03 §30.2.4）：
 **无 API 页面定向爬取通用核心**——目标登记（URL/域名/提取器/限速）→ 合规
@@ -28,6 +32,48 @@ announcement_provider（均 MOD-L00-004）为 **API/RSS 结构化源** source-sp
 provider；news_collector（MOD-DATA-NEWS-001）为库内读取面。本模块承接无 API
 页面（雪球热帖页/股吧列表页等）定向爬取，不复制任何具体源 provider 逻辑与
 news_dedup 窗口查询。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: fetcher 参数
+#   fields: 参数 fetcher（无注解）
+#   code: web_scraper_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: extractors 参数
+#   fields: 参数 extractors（无注解）
+#   code: web_scraper_engine.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: seen 参数
+#   fields: 参数 seen（无注解）
+#   code: web_scraper_engine.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: sink 参数
+#   fields: 参数 sink（无注解）
+#   code: web_scraper_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① WebScraperEngine
+#   name_en: WebScraperEngine
+#   intro: 无 API 页面定向爬取引擎（判定核心纯内存，IO 全注入）。
+#   desc: 无 API 页面定向爬取引擎（判定核心纯内存，IO 全注入）。 Args: fetcher: (url: str) -> str，返回页面 html/text extractor…；公共方法（定义序）: registe…
+#   inputs: fetcher extractors seen sink allowed_domains max_records_per_target
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: WebScraperEngine
+#   downstream: 运行时装配批（fetcher 接 requests/playwright 抓取层 / seen 接 news_dedup 库窗口 / sink 接 ch_wr…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -98,7 +144,7 @@ class ScrapedRecord:
     record_id: str
     title: str
     content: str
-    publish_time: Optional[str]
+    publish_time: str | None
     url: str
     content_hash: str
 
@@ -157,10 +203,10 @@ class WebScraperEngine:
         self,
         fetcher: Callable[[str], str],
         *,
-        extractors: Optional[dict[str, Callable[[str], Iterable]]] = None,
-        seen: Optional[Callable[[str], bool]] = None,
-        sink: Optional[Callable[[tuple[ScrapedRecord, ...]], None]] = None,
-        allowed_domains: Optional[Sequence[str]] = None,
+        extractors: dict[str, Callable[[str], Iterable]] | None = None,
+        seen: Callable[[str], bool] | None = None,
+        sink: Callable[[tuple[ScrapedRecord, ...]], None] | None = None,
+        allowed_domains: Sequence[str] | None = None,
         max_records_per_target: int = 200,
     ) -> None:
         if not callable(fetcher):
@@ -217,7 +263,7 @@ class WebScraperEngine:
     def scrape(
         self,
         now: datetime.datetime,
-        target_ids: Optional[Sequence[str]] = None,
+        target_ids: Sequence[str] | None = None,
     ) -> ScrapeReport:
         ids = list(target_ids) if target_ids is not None else sorted(self._targets)
         unknown = [i for i in ids if i not in self._targets]
@@ -269,7 +315,7 @@ class WebScraperEngine:
     # 内部
     # ------------------------------------------------------------------
 
-    def _fetch(self, target: ScrapeTarget, errors: list[str]) -> Optional[str]:
+    def _fetch(self, target: ScrapeTarget, errors: list[str]) -> str | None:
         try:
             content = self._fetcher(target.url)
         except Exception as exc:  # noqa: BLE001 - 单目标失败不阻断批次
@@ -281,7 +327,7 @@ class WebScraperEngine:
             return None
         return content
 
-    def _extract(self, target: ScrapeTarget, content: str, errors: list[str]) -> Iterable[Optional[ScrapedRecord]]:
+    def _extract(self, target: ScrapeTarget, content: str, errors: list[str]) -> Iterable[ScrapedRecord | None]:
         extractor = self._extractors[target.extractor]
         try:
             items = list(extractor(content) or [])
@@ -299,7 +345,7 @@ class WebScraperEngine:
             yield record
 
     @staticmethod
-    def _coerce(target: ScrapeTarget, item) -> Optional[ScrapedRecord]:
+    def _coerce(target: ScrapeTarget, item) -> ScrapedRecord | None:
         if isinstance(item, ScrapedRecord):
             return item if item.record_id.strip() and item.title.strip() else None
         if not isinstance(item, dict):
