@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-EX-014 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 Order Splitter — 拆单器 TWAP/VWAP (MOD-EX-014)
 
 D-EX-CORE-14（2026-08-23 门禁降级版）：拆分策略选择 + 子订单生成 +
@@ -51,7 +48,7 @@ A 股合法性（真源 board_lot，40_execution_broker §决策⑰）：
 #   name_zh: ① split_order
 #   name_en: split_order
 #   intro: 拆单（纯函数：同输入必同输出，可独立单测）。
-#   desc: 拆单（纯函数：同输入必同输出，可独立单测）。 Args: request: 拆单请求（symbol/side/总量/片数/VWAP 量能曲线）。 algo: TWAP=等量切片；…；源码 L245-L329
+#   desc: 拆单（纯函数：同输入必同输出，可独立单测）。 Args: request: 拆单请求（symbol/side/总量/片数/VWAP 量能曲线）。 algo: TWAP=等量切片…；源码 L243-L327
 #   inputs: request algo
 #   outputs: SplitPlan
 #   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）

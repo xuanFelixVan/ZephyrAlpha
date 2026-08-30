@@ -15,8 +15,6 @@
 # [A_module] module_id=MOD-FAC-002 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
 SignatureFeatureExtractor — 签名方法特征提取器（MOD-FAC-002）。
 
 B10-01834（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-FAC-018，A1 §29.8）：路径
@@ -38,7 +36,7 @@ B10-01834（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-FAC-018，A1 §29.8）：�
 #   name_zh: ① SignatureFeatures
 #   name_en: SignatureFeatures
 #   intro: 截断 log-signature 特征向量（frozen；names 与 values 等长对齐）。
-#   desc: 截断 log-signature 特征向量（frozen；names 与 values 等长对齐）。；公共方法（定义序）: as_dict；源码 L96-L106
+#   desc: 截断 log-signature 特征向量（frozen；names 与 values 等长对齐）。；公共方法（定义序）: as_dict；源码 L95-L105
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A2

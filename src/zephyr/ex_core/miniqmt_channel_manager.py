@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-EX-058 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 miniQMT 交易通道管理器 (MOD-EX-058)
 
 D-EX-CORE-58：xtquant 接口封装的通道底座——连接生命周期 + 心跳 +
@@ -58,7 +55,7 @@ ChannelTransport，测试用 FakeTransport 全确定性。
 #   name_zh: ② MiniQmtChannelManager
 #   name_en: MiniQmtChannelManager
 #   intro: miniQMT 通道管理器（连接生命周期/心跳/断线重连状态机）。
-#   desc: miniQMT 通道管理器（连接生命周期/心跳/断线重连状态机）。 Args: transport: ChannelTransport 协议实现（注入，禁真实连接硬编码）。 ma…；公共方法（定义序）: state,…
+#   desc: miniQMT 通道管理器（连接生命周期/心跳/断线重连状态机）。 Args: transport: ChannelTransport 协议实现（注入，禁真实连接硬编码）。 ma…；公共方法（定义序）: state…
 #   inputs: transport max_reconnect_attempts max_heartbeat_failures
 #   outputs: 返回值
 #   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）

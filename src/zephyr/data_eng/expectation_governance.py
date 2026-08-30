@@ -14,9 +14,6 @@
 # [TESTS] tests/zephyr/data/test_expectation_governance.py
 # [TTL] permanent
 """
-
-
-
 ZephyrAlpha — D_DATA_ENG 期望治理门控（CAND-DATENG-002 / B1-00607）。
 
 min_build_spec（AUD-DRAFT-001-DIGEST P0）：
@@ -60,7 +57,7 @@ min_build_spec（AUD-DRAFT-001-DIGEST P0）：
 #   name_zh: ① ExpectationGovernance
 #   name_en: ExpectationGovernance
 #   intro: 期望套件验证器 + 三档质量门控。
-#   desc: 期望套件验证器 + 三档质量门控。；公共方法（定义序）: load_suite, suite_from_ctr001, validate；源码 L144-L327
+#   desc: 期望套件验证器 + 三档质量门控。；公共方法（定义序）: load_suite, suite_from_ctr001, validate；源码 L142-L325
 #   inputs: archive_path now_fn
 #   outputs: 返回值
 #   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）

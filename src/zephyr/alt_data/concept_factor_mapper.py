@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-ALT-006 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 ConceptFactorMapper — 概念因子映射引擎（MOD-ALT-006）
 
 B1-00596（AUD-DRAFT-001-DIGEST P1 波 W-P1-14，§1 子模块清单 37）：股票↔概念

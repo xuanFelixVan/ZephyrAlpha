@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-GOV-trading_calendar | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 A 股交易日历守卫（MOD-L00-004）。
 
 基于 exchange_calendars 包的 XSHG（上海证券交易所）日历，
@@ -48,14 +45,14 @@ A 股交易日历守卫（MOD-L00-004）。
 #   name_zh: ① is_trading_day
 #   name_en: is_trading_day
 #   intro: 判断给定日期是否为 A 股交易日。
-#   desc: 判断给定日期是否为 A 股交易日。 使用 exchange_calendars 的 XSHG 日历精确判断（含节假日/调休）。 exchange_calendars 不可用时回退…；源码 L114-L137
+#   desc: 判断给定日期是否为 A 股交易日。 使用 exchange_calendars 的 XSHG 日历精确判断（含节假日/调休）。 exchange_calendars 不可用时回退…；源码 L112-L135
 #   inputs: date
 #   outputs: bool
 # - id: A2
 #   name_zh: ② trading_days_in_range
 #   name_en: trading_days_in_range
 #   intro: 返回 [start, end] 闭区间内 A 股交易日列表（XSHG 真日历，升序）。
-#   desc: 返回 [start, end] 闭区间内 A 股交易日列表（XSHG 真日历，升序）。 用途：回测 PIT Embargo 真交易日历注入（15号 §7③ BDay→真日历切换）…；源码 L140-L195
+#   desc: 返回 [start, end] 闭区间内 A 股交易日列表（XSHG 真日历，升序）。 用途：回测 PIT Embargo 真交易日历注入（15号 §7③ BDay→真日历切换）…；源码 L138-L193
 #   inputs: start end
 #   outputs: list[datetime.date]
 # 层: 输出

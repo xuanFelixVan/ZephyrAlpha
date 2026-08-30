@@ -16,10 +16,6 @@
 # [TTL] permanent
 
 """
-
-
-
-
 MOD-INF-019: Agent Spec — Agent Observability
 Blueprint: docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md
 Author: factory-agent
@@ -36,7 +32,7 @@ Version: 0.1.0
 #   name_zh: ① AgentObservability
 #   name_en: AgentObservability
 #   intro: Agent Trace 全链路可观测性
-#   desc: Agent Trace 全链路可观测性；公共方法（定义序）: traces, traces, start_trace, add_span, get_trace；源码 L58-L88
+#   desc: Agent Trace 全链路可观测性；公共方法（定义序）: traces, start_trace, add_span, get_trace；源码 L55-L85
 #   inputs: 无参数
 #   outputs: 返回值
 # 层: 输出

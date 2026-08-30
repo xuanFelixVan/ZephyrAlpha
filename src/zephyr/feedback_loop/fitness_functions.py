@@ -1,3 +1,4 @@
+# [TTL] permanent
 """
 
 
@@ -23,14 +24,14 @@
 # - id: A1
 #   name_zh: ① FitnessReport
 #   name_en: FitnessReport
-#   intro: class FitnessReport 源码 L168-L178
-#   desc: 公共方法（定义序）: get_metric；源码 L168-L178
+#   intro: class FitnessReport 源码 L169-L179
+#   desc: 公共方法（定义序）: get_metric；源码 L169-L179
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A2
 #   name_zh: ② FitnessFunctionFramework
 #   name_en: FitnessFunctionFramework
-#   intro: class FitnessFunctionFramework 源码 L190-L417
+#   intro: class FitnessFunctionFramework 源码 L191-L418
 #   desc: 公共方法（定义序）: measure_module_coupling, measure_test_coverage, measure_compliance_rate, measure_knowledge_activat…
 #   inputs: 无参数
 #   outputs: 返回值
@@ -38,35 +39,35 @@
 #   name_zh: ③ from_gate_results
 #   name_en: from_gate_results
 #   intro: from_gate_results(rows, gate_total, gate_passed, coverage_p…
-#   desc: 源码 L420-L447
+#   desc: 源码 L421-L448
 #   inputs: rows gate_total gate_passed coverage_pct ke_total ke_activated halluc…
 #   outputs: FitnessInputs
 # - id: A4
 #   name_zh: ④ fitness_anomaly_detection_precision
 #   name_en: fitness_anomaly_detection_precision
 #   intro: fitness_anomaly_detection_precision(true_positives, false_p…
-#   desc: 源码 L453-L458
+#   desc: 源码 L454-L459
 #   inputs: true_positives false_positives
 #   outputs: float
 # - id: A5
 #   name_zh: ⑤ fitness_false_positive_rate
 #   name_en: fitness_false_positive_rate
 #   intro: fitness_false_positive_rate(false_positives, total_negative…
-#   desc: 源码 L461-L466
+#   desc: 源码 L462-L467
 #   inputs: false_positives total_negatives
 #   outputs: float
 # - id: A6
 #   name_zh: ⑥ fitness_mtti_seconds
 #   name_en: fitness_mtti_seconds
 #   intro: fitness_mtti_seconds(detection_timestamps, anomaly_timestam…
-#   desc: 源码 L469-L480
+#   desc: 源码 L470-L481
 #   inputs: detection_timestamps anomaly_timestamps
 #   outputs: float
 # - id: A7
 #   name_zh: ⑦ fitness_owner_override_rate
 #   name_en: fitness_owner_override_rate
 #   intro: fitness_owner_override_rate(overrides, total_owner_notifica…
-#   desc: 源码 L483-L487
+#   desc: 源码 L484-L488
 #   inputs: overrides total_owner_notifications
 #   outputs: float
 #   （注：A7 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）

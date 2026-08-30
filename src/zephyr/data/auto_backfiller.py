@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-DAT-AUTO-BACKFILLER | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 AutoBackfiller — 事件触发式自动回填器（MOD-DAT-AUTO-BACKFILLER）
 
 B10-01815（AUD-DRAFT-001-DIGEST P1 波 W-P1-09，§29.2-7）：输入触发事件
@@ -52,7 +49,7 @@ data_source_fix），按日期分片规划回填，经注入 executor 逐分片�
 #   name_zh: ① AutoBackfiller
 #   name_en: AutoBackfiller
 #   intro: 事件触发式自动回填器（判定核心纯内存，执行体/外发全注入）。
-#   desc: 事件触发式自动回填器（判定核心纯内存，执行体/外发全注入）。；公共方法（定义序）: plan, run；源码 L160-L297
+#   desc: 事件触发式自动回填器（判定核心纯内存，执行体/外发全注入）。；公共方法（定义序）: plan, run；源码 L158-L295
 #   inputs: config executor trading_days_provider sample_validator lineage_sink r…
 #   outputs: 返回值
 #   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）

@@ -16,9 +16,6 @@
 # [TTL] permanent
 
 """
-
-
-
 Error Budget 状态机——monthly budget + burn_rate + exhaust_policy。
 
 # [ALGO_FLOW]
@@ -31,8 +28,8 @@ Error Budget 状态机——monthly budget + burn_rate + exhaust_policy。
 # - id: A1
 #   name_zh: ① ErrorBudgetManager
 #   name_en: ErrorBudgetManager
-#   intro: class ErrorBudgetManager 源码 L63-L103
-#   desc: 公共方法（定义序）: budgets, init_budget, record_consumption, remaining, is_exhausted；源码 L63-L103
+#   intro: class ErrorBudgetManager 源码 L61-L101
+#   desc: 公共方法（定义序）: budgets, init_budget, record_consumption, remaining, is_exhausted；源码 L61-L101
 #   inputs: 无参数
 #   outputs: 返回值
 #   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）

@@ -24,9 +24,6 @@
 # O1: EodReconcileResult(positions_matched/cash_diff/expired_order_ids/t1_aligned/matched)——调用方留痕+告警路由
 # [/ALGO_FLOW]
 """
-
-
-
 D_EX_CORE — 盘后全量对账（40 号 §6.1 gap 10 Phase 2，PositionReconciler 扩展）。
 
 40 号 §6.1 gap 10：券商对账单 vs 系统持仓 vs 资金三方核对、T+1 可用更新、
@@ -68,7 +65,7 @@ production）承载，本件不重复实现流水级匹配——本件是执行�
 #   name_zh: ① EodReconciler
 #   name_en: EodReconciler
 #   intro: 盘后全量对账器（40 号 §6.1 gap 10 Phase 2）。
-#   desc: 盘后全量对账器（40 号 §6.1 gap 10 Phase 2）。 Args: position_reconciler: 持仓双源对账器（系统账 vs 券商账，注入即生效）。…；公共方法（定义序）: run_eod；…
+#   desc: 盘后全量对账器（40 号 §6.1 gap 10 Phase 2）。 Args: position_reconciler: 持仓双源对账器（系统账 vs 券商账，注入即生效）。…；公共方法（定义序）: run_eod…
 #   inputs: position_reconciler order_manager position_tracker cash_tolerance clo…
 #   outputs: 返回值
 #   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）

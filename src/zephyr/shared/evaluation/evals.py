@@ -42,7 +42,7 @@
 #   name_zh: ③ EvalRunner
 #   name_en: EvalRunner
 #   intro: class EvalRunner 源码 L149-L220
-#   desc: 公共方法（定义序）: add_case, add_cases, run_all, run_single, set_baseline, check_regression, simple_evaluate；源码 L149-…
+#   desc: 公共方法（定义序）: add_case, add_cases, run_all, run_single, set_baseline, check_regression, simple_evaluate…
 #   inputs: rubric
 #   outputs: 返回值
 #   （注：A3 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）

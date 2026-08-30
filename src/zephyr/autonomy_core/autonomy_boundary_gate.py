@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-AU-001 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 AutonomyBoundaryGate — 运行时写操作三分类判定门（MOD-AU-001）.
 
 设计真源：15号文（15_autonomy_boundary_risk.md）§3.1 / §4.1-S0.2：
@@ -75,14 +72,14 @@ S1.2 内联漂移挂接（15号文 §4.2，默认启用，drift_check_enabled=Fa
 #   name_zh: ③ get_default_gate
 #   name_en: get_default_gate
 #   intro: 获取默认 gate 单例（默认注册表 + 仓根 .
-#   desc: 获取默认 gate 单例（默认注册表 + 仓根 .runtime/ 留痕）.；源码 L626-L631
+#   desc: 获取默认 gate 单例（默认注册表 + 仓根 .runtime/ 留痕）.；源码 L624-L629
 #   inputs: 无参数
 #   outputs: AutonomyBoundaryGate
 # - id: A4
 #   name_zh: ④ check_write_permission
 #   name_en: check_write_permission
 #   intro: 模块级便捷入口：默认 gate 的写操作三分类判定.
-#   desc: 模块级便捷入口：默认 gate 的写操作三分类判定.；源码 L634-L640
+#   desc: 模块级便捷入口：默认 gate 的写操作三分类判定.；源码 L632-L638
 #   inputs: action_id target_path_or_resource session_context
 #   outputs: GateVerdict
 #   （注：A4 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）

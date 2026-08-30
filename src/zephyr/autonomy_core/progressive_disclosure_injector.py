@@ -16,9 +16,6 @@
 # [TTL] permanent
 
 """
-
-
-
 progressive_disclosure_injector.py — 渐进式披露 (B7, DD81, TASK-015 beta w)
 
 # [ALGO_FLOW]
@@ -32,7 +29,7 @@ progressive_disclosure_injector.py — 渐进式披露 (B7, DD81, TASK-015 beta 
 #   name_zh: ① ProgressiveDisclosureInjector
 #   name_en: ProgressiveDisclosureInjector
 #   intro: 摘要先注->agent 请求展开完整 KE (DD81).
-#   desc: 摘要先注->agent 请求展开完整 KE (DD81).；公共方法（定义序）: inject_summary, expand；源码 L61-L68
+#   desc: 摘要先注->agent 请求展开完整 KE (DD81).；公共方法（定义序）: inject_summary, expand；源码 L59-L66
 #   inputs: 无参数
 #   outputs: 返回值
 #   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）

@@ -75,7 +75,7 @@ Version: 0.1.0
 # - id: A3
 #   name_zh: ③ paginate_cursor
 #   name_en: paginate_cursor
-#   intro: paginate_cursor(items, total, pagination, next_cursor) 源码 L…
+#   intro: paginate_cursor(items, total, pagination, next_cursor)…
 #   desc: 源码 L227-L243
 #   inputs: items total pagination next_cursor
 #   outputs: CursorPage[T]

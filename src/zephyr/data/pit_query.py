@@ -15,8 +15,6 @@
 # [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
 财报 Point-In-Time (PIT) 查询能力（#ARCH-CH-021 P0-5）。
 
 背景：c3 财务报表使用 ReplacingMergeTree 覆盖式更新，存在前视偏差风险——
@@ -59,63 +57,63 @@ SSoT: docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 #   name_zh: ① fmt_query_time
 #   name_en: fmt_query_time
 #   intro: 将查询时点格式化为 'YYYY-MM-DD' 字符串（toDate() 入参）。
-#   desc: 将查询时点格式化为 'YYYY-MM-DD' 字符串（toDate() 入参）。Stage 4 公共化。；源码 L233-L235
+#   desc: 将查询时点格式化为 'YYYY-MM-DD' 字符串（toDate() 入参）。Stage 4 公共化。；源码 L232-L234
 #   inputs: query_time
 #   outputs: str
 # - id: A2
 #   name_zh: ② escape_symbol
 #   name_en: escape_symbol
 #   intro: 转义标的代码中的单引号，防 SQL 注入。
-#   desc: 转义标的代码中的单引号，防 SQL 注入。Stage 4 公共化。；源码 L245-L247
+#   desc: 转义标的代码中的单引号，防 SQL 注入。Stage 4 公共化。；源码 L244-L246
 #   inputs: symbol
 #   outputs: str
 # - id: A3
 #   name_zh: ③ format_symbols
 #   name_en: format_symbols
 #   intro: 将标的列表格式化为 SQL IN 子句内容。
-#   desc: 将标的列表格式化为 SQL IN 子句内容。Stage 4 公共化。；源码 L255-L257
+#   desc: 将标的列表格式化为 SQL IN 子句内容。Stage 4 公共化。；源码 L254-L256
 #   inputs: symbols
 #   outputs: str
 # - id: A4
 #   name_zh: ④ embargo_clause
 #   name_en: embargo_clause
 #   intro: 构建 announce_date 截止回退子句。
-#   desc: 构建 announce_date 截止回退子句。Stage 4 公共化。；源码 L268-L270
+#   desc: 构建 announce_date 截止回退子句。Stage 4 公共化。；源码 L267-L269
 #   inputs: embargo_days
 #   outputs: str
 # - id: A5
 #   name_zh: ⑤ limit_by_clause
 #   name_en: limit_by_clause
 #   intro: 构建 LIMIT 1 BY 子句。
-#   desc: 构建 LIMIT 1 BY 子句。Stage 4 公共化。；源码 L280-L282
+#   desc: 构建 LIMIT 1 BY 子句。Stage 4 公共化。；源码 L279-L281
 #   inputs: period_col
 #   outputs: str
 # - id: A6
 #   name_zh: ⑥ resolve_table
 #   name_en: resolve_table
 #   intro: 解析逻辑表名为全限定表名。
-#   desc: 解析逻辑表名为全限定表名。Stage 4 公共化。；源码 L296-L298
+#   desc: 解析逻辑表名为全限定表名。Stage 4 公共化。；源码 L295-L297
 #   inputs: table
 #   outputs: tuple[str, str | None]
 # - id: A7
 #   name_zh: ⑦ tsv_to_records
 #   name_en: tsv_to_records
 #   intro: 将 ch_reader 返回的 TSV 字符串解析为记录列表。
-#   desc: 将 ch_reader 返回的 TSV 字符串解析为记录列表。 Args: tsv: TSV 格式字符串（每行一条记录，制表符分隔） columns: 列名列表；None 时用整…；源码 L325-L347
+#   desc: 将 ch_reader 返回的 TSV 字符串解析为记录列表。 Args: tsv: TSV 格式字符串（每行一条记录，制表符分隔） columns: 列名列表；None 时用整…；源码 L324-L346
 #   inputs: tsv columns
 #   outputs: list[dict]
 # - id: A8
 #   name_zh: ⑧ tsv_to_dataframe
 #   name_en: tsv_to_dataframe
 #   intro: 将 TSV 字符串转为 pandas DataFrame（供 pit_manager 消费）。
-#   desc: 将 TSV 字符串转为 pandas DataFrame（供 pit_manager 消费）。 pandas 为惰性导入——避免数据层硬依赖 pandas（仅 backtest…；源码 L350-L360
+#   desc: 将 TSV 字符串转为 pandas DataFrame（供 pit_manager 消费）。 pandas 为惰性导入——避免数据层硬依赖 pandas（仅 backtest…；源码 L349-L359
 #   inputs: tsv columns
 #   outputs: 返回值
 # - id: A9
 #   name_zh: ⑨ FinancialPITQuery
 #   name_en: FinancialPITQuery
 #   intro: 财报 Point-In-Time 查询器（ P0-5）。
-#   desc: 财报 Point-In-Time 查询器（ P0-5）。 落实 PIT 三公理（对齐 backtest.core.pit_manager.PITManager）： 1. 版本对齐…；公共方法（定义序）: as_of,…
+#   desc: 财报 Point-In-Time 查询器（ P0-5）。 落实 PIT 三公理（对齐 backtest.core.pit_manager.PITManager）： 1. 版本对齐…；公共方法（定义序）: as_of…
 #   inputs: config calendar
 #   outputs: 返回值
 #   （注：A9 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）

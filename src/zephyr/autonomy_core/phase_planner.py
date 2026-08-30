@@ -16,10 +16,6 @@
 # [TTL] permanent
 
 """
-
-
-
-
 MOD-INF-019: Agent Spec — Phase Planner
 Blueprint: docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md
 Author: factory-agent
@@ -47,15 +43,15 @@ Version: 0.1.0
 # - id: A1
 #   name_zh: ① Phase
 #   name_en: Phase
-#   intro: class Phase 源码 L91-L117
-#   desc: 公共方法（定义序）: to_dict, can_start；源码 L91-L117
+#   intro: class Phase 源码 L88-L114
+#   desc: 公共方法（定义序）: to_dict, can_start；源码 L88-L114
 #   inputs: name seq description depends_on status
 #   outputs: 返回值
 # - id: A2
 #   name_zh: ② PhasePlanner
 #   name_en: PhasePlanner
-#   intro: class PhasePlanner 源码 L120-L206
-#   desc: 公共方法（定义序）: get_phase, set_status, get_ready_phases, all_phases, phase_summary, current_projection；源码 L120-L206
+#   intro: class PhasePlanner 源码 L117-L203
+#   desc: 公共方法（定义序）: get_phase, set_status, get_ready_phases, all_phases, phase_summary, current_projection；源码 L117-L203
 #   inputs: 无参数
 #   outputs: 返回值
 #   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）

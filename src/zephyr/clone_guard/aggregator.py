@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-CLONE_GUARD | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 FindingAggregator — 多引擎结果聚合器（Phase B）。
 
 将多个引擎（Echo-Guard、reDUP、ast-grep）的检测结果合并为统一的、去重的 finding 列表。

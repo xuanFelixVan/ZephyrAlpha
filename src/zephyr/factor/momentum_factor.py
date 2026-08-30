@@ -23,9 +23,6 @@
 # ---
 
 """
-
-
-
 D_FACTOR — Momentum Factor
 
 20 日动量因子。计算过去 20 个交易日的价格变化率。
@@ -44,8 +41,8 @@ CTR 契约：
 # - id: A1
 #   name_zh: ① Momentum20d
 #   name_en: Momentum20d
-#   intro: class Momentum20d 源码 L71-L115
-#   desc: 公共方法（定义序）: compute, incremental_compute, validate；源码 L71-L115
+#   intro: class Momentum20d 源码 L69-L113
+#   desc: 公共方法（定义序）: compute, incremental_compute, validate；源码 L69-L113
 #   inputs: 无参数
 #   outputs: 返回值
 # 层: 输出

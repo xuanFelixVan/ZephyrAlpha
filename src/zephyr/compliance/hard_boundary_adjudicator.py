@@ -15,9 +15,6 @@
 # [TTL] permanent
 
 """
-
-
-
 硬边界功能裁定 + 上线门禁（43_compliance_discipline §6，BM-BUY-12）。
 
 功能二元裁定（能建/禁建）清单 + 新功能上线门禁流程。
@@ -50,7 +47,7 @@ Version: 1.0.0
 #   name_zh: ① FeatureGate
 #   name_en: FeatureGate
 #   intro: 新功能上线门禁。
-#   desc: 新功能上线门禁。 - 未登记 → PENDING 视同 BLOCK（裁定未决 → 暂缓上线，安全优先，§6.3） - FORBIDDEN → BLOCK 并提示重评条件 - 登记…；公共方法（定义序）: check,…
+#   desc: 新功能上线门禁。 - 未登记 → PENDING 视同 BLOCK（裁定未决 → 暂缓上线，安全优先，§6.3） - FORBIDDEN → BLOCK 并提示重评条件 - 登记…；公共方法（定义序）: check…
 #   inputs: registry_path logger
 #   outputs: 返回值
 #   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）

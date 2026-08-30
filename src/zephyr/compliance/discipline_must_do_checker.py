@@ -15,9 +15,6 @@
 # [TTL] permanent
 
 """
-
-
-
 四项必做清单完成度检测（43_compliance_discipline §3，BM-BUY-08-A）。
 
 交易日 4 个关键时点（盘前/盘中/盘后/晚间）自动检测四项必做清单完成度，

@@ -15,9 +15,6 @@
 # [TTL] task_bound
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 """
-
-
-
 QMT 实时 Tick 订阅服务——subscribe_quote 实时推送，写入 ClickHouse tick_data。
 
 独立常驻进程，不走 scheduler cron。QMT callback 线程把 tick dict 放入
@@ -45,28 +42,28 @@ queue.Queue，后台 flush 线程批量出队转14字段 tuple，WalWriter 先�
 #   name_zh: ① infer_market_type
 #   name_en: infer_market_type
 #   intro: 从 QMT stock_code 推导 market_type。
-#   desc: 从 QMT stock_code 推导 market_type。 Args: stock_code: QMT 格式，如 "000001.SZ"、"600000.SH"、"1599…；源码 L161-L192
+#   desc: 从 QMT stock_code 推导 market_type。 Args: stock_code: QMT 格式，如 "000001.SZ"、"600000.SH"、"1599…；源码 L159-L190
 #   inputs: stock_code
 #   outputs: str
 # - id: A2
 #   name_zh: ② tick_to_row
 #   name_en: tick_to_row
 #   intro: 将 xtdata tick dict 转换为 tick_data 表的15字段 tuple。
-#   desc: 将 xtdata tick dict 转换为 tick_data 表的15字段 tuple。 P0-1 双时间戳：timestamp=上游市场时间(event_time)，rec…；源码 L221-L282
+#   desc: 将 xtdata tick dict 转换为 tick_data 表的15字段 tuple。 P0-1 双时间戳：timestamp=上游市场时间(event_time)，rec…；源码 L219-L280
 #   inputs: stock_code tick data_source
 #   outputs: tuple | None
 # - id: A3
 #   name_zh: ③ TickSubscriber
 #   name_en: TickSubscriber
 #   intro: QMT 实时 Tick 订阅器——常驻订阅全市场 tick，写入 ClickHouse。
-#   desc: QMT 实时 Tick 订阅器——常驻订阅全市场 tick，写入 ClickHouse。 线程模型（P0-1 主动 WAL 架构）： - QMT callback 线程：_on_…；公共方法（定义序）: start,…
+#   desc: QMT 实时 Tick 订阅器——常驻订阅全市场 tick，写入 ClickHouse。 线程模型（P0-1 主动 WAL 架构）： - QMT callback 线程：_on_…；公共方法（定义序）: start…
 #   inputs: symbols batch_rows batch_seconds heartbeat backup_provider tick_cache…
 #   outputs: 返回值
 # - id: A4
 #   name_zh: ④ main
 #   name_en: main
 #   intro: 常驻进程入口——启动 TickSubscriber 并阻塞直到 Ctrl+C。
-#   desc: 常驻进程入口——启动 TickSubscriber 并阻塞直到 Ctrl+C。；源码 L1290-L1337
+#   desc: 常驻进程入口——启动 TickSubscriber 并阻塞直到 Ctrl+C。；源码 L1288-L1335
 #   inputs: 无参数
 #   outputs: int
 # 层: 输出

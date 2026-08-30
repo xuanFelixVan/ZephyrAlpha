@@ -22,8 +22,6 @@
 # O1: 行 tuple 列表 / 写入行数 int
 # [/ALGO_FLOW]
 """
-
-
 特征仓库写入管道（15_data_feature_layer_spec §3.4 要点④存储层）。
 
 **状态：管道代码就位、不执行**——DDL apply 属 Owner 窗口（表不存在时执行本
@@ -62,14 +60,14 @@
 #   name_zh: ① build_feature_value_rows
 #   name_en: build_feature_value_rows
 #   intro: 长表特征值 → INSERT 行 tuple 列表（列序对齐 INSERT_COLUMNS）。
-#   desc: 长表特征值 → INSERT 行 tuple 列表（列序对齐 INSERT_COLUMNS）。 Args: values: 长表 DataFrame，必需列 trade_date…；源码 L135-L173
+#   desc: 长表特征值 → INSERT 行 tuple 列表（列序对齐 INSERT_COLUMNS）。 Args: values: 长表 DataFrame，必需列 trade_date…；源码 L134-L172
 #   inputs: values factor_version data_source
 #   outputs: list[tuple]
 # - id: A2
 #   name_zh: ② write_feature_values
 #   name_en: write_feature_values
 #   intro: 特征值写入 c1_market.factor_feature_value（分块 INSERT）。
-#   desc: 特征值写入 c1_market.factor_feature_value（分块 INSERT）。 **不执行声明**：本函数仅供特征仓库管道调用；DDL 未 apply（Owne…；源码 L176-L212
+#   desc: 特征值写入 c1_market.factor_feature_value（分块 INSERT）。 **不执行声明**：本函数仅供特征仓库管道调用；DDL 未 apply（Owne…；源码 L175-L211
 #   inputs: values client factor_version data_source chunk_size
 #   outputs: int
 # 层: 输出

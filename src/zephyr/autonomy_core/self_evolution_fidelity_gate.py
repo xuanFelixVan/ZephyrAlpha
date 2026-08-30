@@ -16,10 +16,6 @@
 # [TTL] permanent
 
 """
-
-
-
-
 MOD-INF-019: Agent Spec — Self Evolution Fidelity Gate
 Blueprint: docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md
 Author: factory-agent
@@ -44,8 +40,8 @@ EchoTrap 自进化保真度门控 —— RAGEN 保真度验证引擎
 # - id: A1
 #   name_zh: ① SemanticSignature
 #   name_en: SemanticSignature
-#   intro: class SemanticSignature 源码 L81-L103
-#   desc: 公共方法（定义序）: diff；源码 L81-L103
+#   intro: class SemanticSignature 源码 L78-L100
+#   desc: 公共方法（定义序）: diff；源码 L78-L100
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A2

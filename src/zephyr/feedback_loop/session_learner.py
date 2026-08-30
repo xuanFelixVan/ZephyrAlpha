@@ -16,9 +16,6 @@
 # [TTL] permanent
 
 """
-
-
-
 session_learner.py — 在线学习 (DD114, TASK-020)
 
 # [ALGO_FLOW]
@@ -32,7 +29,7 @@ session_learner.py — 在线学习 (DD114, TASK-020)
 #   name_zh: ① SessionLearner
 #   name_en: SessionLearner
 #   intro: Per-session Reinforcement Learning: citation + outcome (DD1…
-#   desc: Per-session Reinforcement Learning: citation + outcome (DD114).；公共方法（定义序）: record, get_weight；源码 L62-L75
+#   desc: Per-session Reinforcement Learning: citation + outcome (DD114).；公共方法（定义序）: record, get_weight；源码 L60-L73
 #   inputs: 无参数
 #   outputs: 返回值
 #   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）

@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-AU-002 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 KillSwitchOrchestrator — Kill Switch 两级编排器（MOD-AU-002）.
 
 设计真源：15号文（15_autonomy_boundary_risk.md）§3.4 / §4.1-S0.3：
@@ -63,7 +60,7 @@ scope 语法：
 #   name_zh: ① SwitchAdapter
 #   name_en: SwitchAdapter
 #   intro: 域级/系统级开关适配器协议（鸭子类型；
-#   desc: 域级/系统级开关适配器协议（鸭子类型；编排器只依赖本协议）.；公共方法（定义序）: trip, reset, is_tripped；源码 L129-L139
+#   desc: 域级/系统级开关适配器协议（鸭子类型；编排器只依赖本协议）.；公共方法（定义序）: trip, reset, is_tripped；源码 L127-L137
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A2

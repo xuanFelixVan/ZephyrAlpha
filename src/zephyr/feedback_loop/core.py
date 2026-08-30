@@ -16,10 +16,6 @@
 # [TTL] permanent
 
 """
-
-
-
-
 FeedbackLoop core — 反馈闭环核心类。
 
 从 src/zephyr/trading/feedback_loop.py 迁入 src/zephyr/feedback_loop/ 包内，解决包/文件同名覆盖问题。

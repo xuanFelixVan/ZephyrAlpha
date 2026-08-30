@@ -16,10 +16,6 @@
 # [TTL] permanent
 
 """
-
-
-
-
 audit-trail.integrity — MOD-INF-020 · 密码学完整性验证器
 ===========================================================
 蓝图 §5 · 哈希链验证 + HMAC验证 + Agent签名验证 + Merkle树聚合 (§2.2)
@@ -48,14 +44,14 @@ audit-trail.integrity — MOD-INF-020 · 密码学完整性验证器
 #   name_zh: ① MerkleAggregator
 #   name_en: MerkleAggregator
 #   intro: Merkle 树构建器——蓝图 §2.2 cryptographic_integrity.merkle_aggrega…
-#   desc: Merkle 树构建器——蓝图 §2.2 cryptographic_integrity.merkle_aggregation。 将一批审计事件的 entry_hash 作为叶子…；公共方法（定义序）: build,…
+#   desc: Merkle 树构建器——蓝图 §2.2 cryptographic_integrity.merkle_aggregation。 将一批审计事件的 entry_hash 作为叶子…；公共方法（定义序）: build…
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A2
 #   name_zh: ② IntegrityVerifier
 #   name_en: IntegrityVerifier
-#   intro: class IntegrityVerifier 源码 L143-L371
-#   desc: 公共方法（定义序）: event_log_path, hmac_key, verify_chain, verify_single；源码 L143-L371
+#   intro: class IntegrityVerifier 源码 L140-L368
+#   desc: 公共方法（定义序）: event_log_path, hmac_key, verify_chain, verify_single；源码 L140-L368
 #   inputs: event_log_path hmac_key
 #   outputs: 返回值
 # 层: 输出

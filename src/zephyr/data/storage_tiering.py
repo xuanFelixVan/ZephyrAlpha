@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 冷热分层 TTL 自动迁移 + 分区 + UFL 事实层 + 双副本校验 + 恢复演练（CAND-DAT-006 / B1-00584）。
 
 min_build_spec 对齐（深挖裁定=做 P0，复用现有 CH/Redis/backup 不重建）：
@@ -54,7 +51,7 @@ tick_redis_cache 现有能力，不重建存储栈。
 #   name_zh: ① partition_key
 #   name_en: partition_key
 #   intro: 返回 Hive 风格分区键：日线 year=YYYY，分钟 year=YYYY/month=MM。
-#   desc: 返回 Hive 风格分区键：日线 year=YYYY，分钟 year=YYYY/month=MM。 Raises: ValueError: 未知频率（仅支持 daily/minu…；源码 L157-L167
+#   desc: 返回 Hive 风格分区键：日线 year=YYYY，分钟 year=YYYY/month=MM。 Raises: ValueError: 未知频率（仅支持 daily/minu…；源码 L155-L165
 #   inputs: freq day
 #   outputs: str
 # - id: A2
@@ -68,28 +65,28 @@ tick_redis_cache 现有能力，不重建存储栈。
 #   name_zh: ③ UFLFactLayer
 #   name_en: UFLFactLayer
 #   intro: 追加式事实层：只增不改，重复同值幂等，异值/改/删一律拒绝。
-#   desc: 追加式事实层：只增不改，重复同值幂等，异值/改/删一律拒绝。；公共方法（定义序）: count, append, get, update, delete；源码 L336-L365
+#   desc: 追加式事实层：只增不改，重复同值幂等，异值/改/删一律拒绝。；公共方法（定义序）: count, append, get, update, delete；源码 L334-L363
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A4
 #   name_zh: ④ ReplicaConsistencyReport
 #   name_en: ReplicaConsistencyReport
 #   intro: 双副本一致性报告。
-#   desc: 双副本一致性报告。；公共方法（定义序）: consistent；源码 L374-L383
+#   desc: 双副本一致性报告。；公共方法（定义序）: consistent；源码 L372-L381
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A5
 #   name_zh: ⑤ check_replica_consistency
 #   name_en: check_replica_consistency
 #   intro: 比对主副本（D盘）与副副本（E盘）：文件集合 + sha256 逐一核对。
-#   desc: 比对主副本（D盘）与副副本（E盘）：文件集合 + sha256 逐一核对。；源码 L398-L409
+#   desc: 比对主副本（D盘）与副副本（E盘）：文件集合 + sha256 逐一核对。；源码 L396-L407
 #   inputs: primary_root replica_root
 #   outputs: ReplicaConsistencyReport
 # - id: A6
 #   name_zh: ⑥ main
 #   name_en: main
 #   intro: 入口——待实现。
-#   desc: 入口——待实现。；源码 L447-L448
+#   desc: 入口——待实现。；源码 L445-L446
 #   inputs: 无参数
 #   outputs: 返回值
 #   （注：A6 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）

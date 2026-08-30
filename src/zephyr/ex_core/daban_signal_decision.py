@@ -22,9 +22,6 @@
 # O1: {pass, score, reason} / 决策类标签（BOARD/CONTINUE/INVERSE_BOARD/REFLUSH_DIVE/WATCH/REJECT/WAIT）
 # [/ALGO_FLOW]
 """
-
-
-
 打板信号前置门控 + 7 类交易动作决策（24_daban_strategy_detail §3.14#8 + §3.13#3 施工）。
 
 缺失#8 pre_validate_daban_signal（首批实盘前必做）：§3.1 连板梯队识别
@@ -63,14 +60,14 @@ PHASE_THRESHOLDS 取值说明（spec 伪代码引用未定义，按 §3.2 阶段
 #   name_zh: ① pre_validate_daban_signal
 #   name_en: pre_validate_daban_signal
 #   intro: 打板信号前置质量评估（v1.9.3 补，梯队质量→yes/no门控），在 §3.2 情绪周期定位器之前调用。
-#   desc: 打板信号前置质量评估（v1.9.3 补，梯队质量→yes/no门控），在 §3.2 情绪周期定位器之前调用。 理论背书：arXiv:2607.27063 羊群 agent-bas…；源码 L111-L147
+#   desc: 打板信号前置质量评估（v1.9.3 补，梯队质量→yes/no门控），在 §3.2 情绪周期定位器之前调用。 理论背书：arXiv:2607.27063 羊群 agent-bas…；源码 L109-L145
 #   inputs: echelon_health echelon_height sector_resonance follow_count
 #   outputs: dict
 # - id: A2
 #   name_zh: ② classify_decision_v192
 #   name_en: classify_decision_v192
 #   intro: 双引擎融合 7 类决策（v1.9.2 补第7类 REFLUSH_DIVE + 情绪周期门控切换）。
-#   desc: 双引擎融合 7 类决策（v1.9.2 补第7类 REFLUSH_DIVE + 情绪周期门控切换）。 §3.5 INVERSE_BOARD 是"地天反包"非"反核"，§3.12 反…；源码 L150-L174
+#   desc: 双引擎融合 7 类决策（v1.9.2 补第7类 REFLUSH_DIVE + 情绪周期门控切换）。 §3.5 INVERSE_BOARD 是"地天反包"非"反核"，§3.12 反…；源码 L148-L172
 #   inputs: emotion_score tech_score phase is_limit_down_rebound
 #   outputs: str
 # 层: 输出

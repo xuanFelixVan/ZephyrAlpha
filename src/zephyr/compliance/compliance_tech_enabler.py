@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-CMP-003 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 Compliance Tech Enabler — 合规技术使能器 (MOD-CMP-003)
 
 把声明式合规规则定义（配置/注册表载荷，Mapping 序列）物化为 CTR-P1-012
@@ -44,14 +41,14 @@ ComplianceRule 生效规则集，供 ComplianceEngine（MOD-L10-001 OCP 扩展�
 #   name_zh: ① materialize_compliance_rules
 #   name_en: materialize_compliance_rules
 #   intro: 声明式规则定义 → ComplianceRule 生效集（纯函数）。
-#   desc: 声明式规则定义 → ComplianceRule 生效集（纯函数）。 拒绝路径（Fail-Closed，全部留痕不静默）： - 非 Mapping 条目 / 必填字段缺失 / 空…；源码 L166-L214
+#   desc: 声明式规则定义 → ComplianceRule 生效集（纯函数）。 拒绝路径（Fail-Closed，全部留痕不静默）： - 非 Mapping 条目 / 必填字段缺失 / 空…；源码 L164-L212
 #   inputs: definitions now
 #   outputs: RuleEnablementResult
 # - id: A2
 #   name_zh: ② ComplianceTechEnabler
 #   name_en: ComplianceTechEnabler
 #   intro: 合规技术使能器（薄封装：定义源持有 + 活跃规则装载 + 最近结果留痕）。
-#   desc: 合规技术使能器（薄封装：定义源持有 + 活跃规则装载 + 最近结果留痕）。；公共方法（定义序）: load_active_rules, last_result；源码 L221-L254
+#   desc: 合规技术使能器（薄封装：定义源持有 + 活跃规则装载 + 最近结果留痕）。；公共方法（定义序）: load_active_rules, last_result；源码 L219-L252
 #   inputs: definition_source
 #   outputs: 返回值
 #   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）

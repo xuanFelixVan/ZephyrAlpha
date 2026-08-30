@@ -46,7 +46,7 @@ DependencyGraph：项目级依赖图 + 环路检测（DFS）+ 优先级联动。
 # - id: A2
 #   name_zh: ② build_dependency_graph
 #   name_en: build_dependency_graph
-#   intro: build_dependency_graph(scan_entries, project_root) 源码 L166-…
+#   intro: build_dependency_graph(scan_entries, project_root)…
 #   desc: 源码 L166-L201
 #   inputs: scan_entries project_root
 #   outputs: DependencyGraph

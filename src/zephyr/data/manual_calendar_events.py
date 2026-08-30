@@ -30,9 +30,6 @@
 #   name_en: (list[dict], list[str])
 #   intro: 合法行可直接映射 calendar_event INSERT_COLUMNS；错误带 CSV 行号供台账修正
 """
-
-
-
 manual 日历事件 CSV 录入校验（17号 §6.3，2026-08-20 AI-NIGHT-001 施工）。
 
 裁定真源：17号 §6.3（v1.0.0 定稿）——fomc_meeting / major_meeting / stamp_duty_change
@@ -51,7 +48,7 @@ config/manual_calendar_events_schema.yaml；一次性 IMPORT 执行不在本批�
 #   name_zh: ① validate_manual_events_csv
 #   name_en: validate_manual_events_csv
 #   intro: 校验 manual 日历事件 CSV，返回 (合法行, 错误清单)。
-#   desc: 校验 manual 日历事件 CSV，返回 (合法行, 错误清单)。 Args: path: CSV 文件路径（utf-8-sig 容忍 BOM；# 开头注释行与空行跳过）。 R…；源码 L85-L152
+#   desc: 校验 manual 日历事件 CSV，返回 (合法行, 错误清单)。 Args: path: CSV 文件路径（utf-8-sig 容忍 BOM；# 开头注释行与空行跳过）。 R…；源码 L83-L150
 #   inputs: path
 #   outputs: tuple[list[dict[str, str]], list[str]]
 # 层: 输出

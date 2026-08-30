@@ -23,9 +23,6 @@
 # O1: DriftVerdict（level/blocked/auto_guard/熵值/证据）；O2: 16号文统一事件 schema jsonl（audit + P0 alerts）；O3: challenge-<id>.json 工单
 # [/ALGO_FLOW]
 """
-
-
-
 AgenticDriftGuard — Agentic Drift 防护实时档（MOD-AU-003，15号文 §4.2 S1.1/S1.2）.
 
 设计真源：15号文（15_autonomy_boundary_risk.md）§3.2 / §4.2 + RBAC 蓝图决策 D-018-21：
@@ -70,70 +67,70 @@ AgenticDriftGuard — Agentic Drift 防护实时档（MOD-AU-003，15号文 §4.
 #   name_zh: ① DriftCheckConfig
 #   name_en: DriftCheckConfig
 #   intro: S1.2 内联检查参数（RBAC 蓝图决策 D-018-21 口径；参数>7 收 dataclass 纪律）。
-#   desc: S1.2 内联检查参数（RBAC 蓝图决策 D-018-21 口径；参数>7 收 dataclass 纪律）。；公共方法（定义序）: validate；源码 L211-L231
+#   desc: S1.2 内联检查参数（RBAC 蓝图决策 D-018-21 口径；参数>7 收 dataclass 纪律）。；公共方法（定义序）: validate；源码 L209-L229
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A2
 #   name_zh: ② shannon_entropy
 #   name_en: shannon_entropy
 #   intro: Shannon 熵（log2）。
-#   desc: Shannon 熵（log2）。空序列/全零 → 0.0。；源码 L261-L272
+#   desc: Shannon 熵（log2）。空序列/全零 → 0.0。；源码 L259-L270
 #   inputs: counts
 #   outputs: float
 # - id: A3
 #   name_zh: ③ check_operation_chain
 #   name_en: check_operation_chain
 #   intro: S1.2 操作链内联漂移检查（纯函数核，无 IO，性能预算 ≈0.25ms 量级）。
-#   desc: S1.2 操作链内联漂移检查（纯函数核，无 IO，性能预算 ≈0.25ms 量级）。 取最近 window_size 步：类型熵>阈值且类型偏离率>drift_tolerance…；源码 L291-L359
+#   desc: S1.2 操作链内联漂移检查（纯函数核，无 IO，性能预算 ≈0.25ms 量级）。 取最近 window_size 步：类型熵>阈值且类型偏离率>drift_tolerance…；源码 L289-L357
 #   inputs: ops config
 #   outputs: DriftVerdict
 # - id: A4
 #   name_zh: ④ evaluate_dual_dimension
 #   name_en: evaluate_dual_dimension
 #   intro: 双维度阈值 Hard-Gate（置信度 × 意图偏差度，15号文 §3.2）。
-#   desc: 双维度阈值 Hard-Gate（置信度 × 意图偏差度，15号文 §3.2）。 低置信（<confidence_floor）× 高意图偏差（>drift_tolerance）双坏…；源码 L362-L399
+#   desc: 双维度阈值 Hard-Gate（置信度 × 意图偏差度，15号文 §3.2）。 低置信（<confidence_floor）× 高意图偏差（>drift_tolerance）双坏…；源码 L360-L397
 #   inputs: confidence intent_deviation config
 #   outputs: DriftVerdict
 # - id: A5
 #   name_zh: ⑤ build_behavior_baseline
 #   name_en: build_behavior_baseline
 #   intro: S1.1：从历史会话统计行为基线（操作频率 + 触碰模块集合；委托 BM-RC-04-F 实现）。
-#   desc: S1.1：从历史会话统计行为基线（操作频率 + 触碰模块集合；委托 BM-RC-04-F 实现）。；源码 L405-L411
+#   desc: S1.1：从历史会话统计行为基线（操作频率 + 触碰模块集合；委托 BM-RC-04-F 实现）。；源码 L403-L409
 #   inputs: sessions min_sessions
 #   outputs: BehaviorBaseline
 # - id: A6
 #   name_zh: ⑥ check_session_against_baseline
 #   name_en: check_session_against_baseline
 #   intro: S1.1：单会话异常检出（z-score 偏离 + 首次触碰基线外模块；空列表=正常）。
-#   desc: S1.1：单会话异常检出（z-score 偏离 + 首次触碰基线外模块；空列表=正常）。 告警通道待 55 号定型承接，当前 interim=logger.warning + 异…；源码 L414-L431
+#   desc: S1.1：单会话异常检出（z-score 偏离 + 首次触碰基线外模块；空列表=正常）。 告警通道待 55 号定型承接，当前 interim=logger.warning + 异…；源码 L412-L429
 #   inputs: session baseline z_threshold
 #   outputs: list[BehaviorAnomaly]
 # - id: A7
 #   name_zh: ⑦ ChallengeTicket
 #   name_en: ChallengeTicket
 #   intro: Agent Challenge 工单（Q2 裁定：统一落盘载体与降级形态，人兜底不可省）。
-#   desc: Agent Challenge 工单（Q2 裁定：统一落盘载体与降级形态，人兜底不可省）。；公共方法（定义序）: to_dict；源码 L438-L460
+#   desc: Agent Challenge 工单（Q2 裁定：统一落盘载体与降级形态，人兜底不可省）。；公共方法（定义序）: to_dict；源码 L436-L458
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A8
 #   name_zh: ⑧ build_challenge_ticket
 #   name_en: build_challenge_ticket
 #   intro: 检测器判疑 → 生成 challenge 工单（degraded=True 即降级直进人审队列）。
-#   desc: 检测器判疑 → 生成 challenge 工单（degraded=True 即降级直进人审队列）。；源码 L463-L490
+#   desc: 检测器判疑 → 生成 challenge 工单（degraded=True 即降级直进人审队列）。；源码 L461-L488
 #   inputs: verdict original_intent_restatement action_chain_alignment degraded
 #   outputs: ChallengeTicket
 # - id: A9
 #   name_zh: ⑨ write_challenge_ticket
 #   name_en: write_challenge_ticket
 #   intro: 工单落盘接口位：写 challenge-<ticket_id>.json，返回文件名（交叉会话复审由外部编排消费）。
-#   desc: 工单落盘接口位：写 challenge-<ticket_id>.json，返回文件名（交叉会话复审由外部编排消费）。；源码 L493-L499
+#   desc: 工单落盘接口位：写 challenge-<ticket_id>.json，返回文件名（交叉会话复审由外部编排消费）。；源码 L491-L497
 #   inputs: ticket tickets_dir
 #   outputs: str
 # - id: A10
 #   name_zh: ⑩ AgenticDriftGuard
 #   name_en: AgenticDriftGuard
 #   intro: S1.2 编排壳：纯函数核 + 审计/P0 告警落盘（挂 S0.2 gate 链路的内联点）。
-#   desc: S1.2 编排壳：纯函数核 + 审计/P0 告警落盘（挂 S0.2 gate 链路的内联点）。 用法:: guard = AgenticDriftGuard() verdict…；公共方法（定义序）: config,…
+#   desc: S1.2 编排壳：纯函数核 + 审计/P0 告警落盘（挂 S0.2 gate 链路的内联点）。 用法:: guard = AgenticDriftGuard() verdict…；公共方法（定义序）: config…
 #   inputs: runtime_dir config
 #   outputs: 返回值
 #   （注：A10 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）

@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-DAT-FIN-PARSER | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 FinancialParser — 财报结构化解析器（MOD-DAT-FIN-PARSER）
 
 B13-04263（AUD-DRAFT-001-DIGEST P1 波 W-P1-09，D-DATA-80，§17.1）：
@@ -50,7 +47,7 @@ B1-00619 dig 已裁定重复并入本模块；B13-04280（Filing NLP，公告文
 #   name_zh: ① FinancialParser
 #   name_en: FinancialParser
 #   intro: 财报解析管道（判定核心纯内存，解析器全注入式）。
-#   desc: 财报解析管道（判定核心纯内存，解析器全注入式）。；公共方法（定义序）: parse_report；源码 L141-L266
+#   desc: 财报解析管道（判定核心纯内存，解析器全注入式）。；公共方法（定义序）: parse_report；源码 L139-L264
 #   inputs: pdf_extractor xbrl_parser llm_fallback
 #   outputs: 返回值
 #   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）

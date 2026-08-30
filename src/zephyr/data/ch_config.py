@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-GOV-ch_config | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 ClickHouse 连接配置单真源加载器（裁定 #ARCH-CH-017 / #ARCH-CH-019）。
 
 背景：
@@ -47,35 +44,35 @@ ClickHouse 连接配置单真源加载器（裁定 #ARCH-CH-017 / #ARCH-CH-019�
 #   name_zh: ① ensure_ch_env_loaded
 #   name_en: ensure_ch_env_loaded
 #   intro: 将 config/.env.clickhouse 加载到 os.environ（幂等）。
-#   desc: 将 config/.env.clickhouse 加载到 os.environ（幂等）。 优先级：已有 os.environ 不覆盖（允许环境变量显式 override）。 文件…；源码 L137-L170
+#   desc: 将 config/.env.clickhouse 加载到 os.environ（幂等）。 优先级：已有 os.environ 不覆盖（允许环境变量显式 override）。 文件…；源码 L135-L168
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A2
 #   name_zh: ② load_ch_config
 #   name_en: load_ch_config
 #   intro: 返回 CH 连接配置字典。
-#   desc: 返回 CH 连接配置字典。 优先级：os.environ > config/.env.clickhouse > 抛 CHConfigError。 禁止任何默认 IP 值（裁定 ）…；源码 L173-L200
+#   desc: 返回 CH 连接配置字典。 优先级：os.environ > config/.env.clickhouse > 抛 CHConfigError。 禁止任何默认 IP 值（裁定 ）…；源码 L171-L198
 #   inputs: 无参数
 #   outputs: dict[str, str]
 # - id: A3
 #   name_zh: ③ get_ch_env_path
 #   name_en: get_ch_env_path
 #   intro: 返回 CH 配置文件路径（供测试/诊断使用）。
-#   desc: 返回 CH 配置文件路径（供测试/诊断使用）。；源码 L203-L205
+#   desc: 返回 CH 配置文件路径（供测试/诊断使用）。；源码 L201-L203
 #   inputs: 无参数
 #   outputs: Path
 # - id: A4
 #   name_zh: ④ load_ch_reader_config
 #   name_en: load_ch_reader_config
 #   intro: 返回 CH 只读账号配置（audit 9.4 RBAC 治本 ）。
-#   desc: 返回 CH 只读账号配置（audit 9.4 RBAC 治本 ）。 优先使用 CLICKHOUSE_READER_USER/PASSWORD，未配置时回退到 CLICKHOUSE…；源码 L208-L221
+#   desc: 返回 CH 只读账号配置（audit 9.4 RBAC 治本 ）。 优先使用 CLICKHOUSE_READER_USER/PASSWORD，未配置时回退到 CLICKHOUSE…；源码 L206-L219
 #   inputs: 无参数
 #   outputs: dict[str, str]
 # - id: A5
 #   name_zh: ⑤ load_ch_writer_config
 #   name_en: load_ch_writer_config
 #   intro: 返回 CH 写入账号配置（audit 9.4 RBAC 治本 ）。
-#   desc: 返回 CH 写入账号配置（audit 9.4 RBAC 治本 ）。 优先使用 CLICKHOUSE_WRITER_USER/PASSWORD，未配置时回退到 CLICKHOUSE…；源码 L224-L236
+#   desc: 返回 CH 写入账号配置（audit 9.4 RBAC 治本 ）。 优先使用 CLICKHOUSE_WRITER_USER/PASSWORD，未配置时回退到 CLICKHOUSE…；源码 L222-L234
 #   inputs: 无参数
 #   outputs: dict[str, str]
 #   （注：A5 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）

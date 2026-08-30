@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-INF-019 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 VibeCodingQualityGate — 代码质量门禁（stub, tests 待实装后补全实现）
 
 # [ALGO_FLOW]
@@ -30,8 +27,8 @@ VibeCodingQualityGate — 代码质量门禁（stub, tests 待实装后补全实
 # - id: A1
 #   name_zh: ① VibeCodingQualityGate
 #   name_en: VibeCodingQualityGate
-#   intro: class VibeCodingQualityGate 源码 L53-L74
-#   desc: 公共方法（定义序）: validate；源码 L53-L74
+#   intro: class VibeCodingQualityGate 源码 L51-L72
+#   desc: 公共方法（定义序）: validate；源码 L51-L72
 #   inputs: 无参数
 #   outputs: 返回值
 # 层: 输出

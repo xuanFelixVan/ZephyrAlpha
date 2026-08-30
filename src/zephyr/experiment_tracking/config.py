@@ -16,9 +16,6 @@
 # [TTL] permanent
 # [ARCH-REF] #ARCH-REGIME-DEADZONE-001 #ARCH-OBS-EXP-TRACK-001
 """
-
-
-
 L_INFRA_TELEMETRY — 实验跟踪配置（fallback 目录 / 全局开关）。
 
 从环境变量读取覆盖，ExperimentTrackingConfig 为不可变 dataclass。
@@ -44,7 +41,7 @@ Version: 0.2.1（fallback_dir 绝对路径锚定治本）
 #   name_zh: ① load_config
 #   name_en: load_config
 #   intro: 从环境变量加载配置（覆盖默认值）。
-#   desc: 从环境变量加载配置（覆盖默认值）。；源码 L85-L88
+#   desc: 从环境变量加载配置（覆盖默认值）。；源码 L83-L86
 #   inputs: 无参数
 #   outputs: ExperimentTrackingConfig
 #   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）

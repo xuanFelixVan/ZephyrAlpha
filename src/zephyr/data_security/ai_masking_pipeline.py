@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-DATSEC-001 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 AiMaskingPipeline — AI 分级脱敏管道（MOD-DATSEC-001）。
 
 B13-04183（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATSEC-001，A3数据架构）：
@@ -46,7 +43,7 @@ MOD-DATSEC-003 共用策略表 schema 语义：Mapping 键查表、未注册 Fai
 #   name_zh: ① AiMaskingPipeline
 #   name_en: AiMaskingPipeline
 #   intro: L1-L4 分级脱敏管道（策略表驱动 + 审计留痕）。
-#   desc: L1-L4 分级脱敏管道（策略表驱动 + 审计留痕）。；公共方法（定义序）: level_of, mask_for_llm；源码 L138-L250
+#   desc: L1-L4 分级脱敏管道（策略表驱动 + 审计留痕）。；公共方法（定义序）: level_of, mask_for_llm；源码 L136-L248
 #   inputs: policies clock audit_sink
 #   outputs: 返回值
 #   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）

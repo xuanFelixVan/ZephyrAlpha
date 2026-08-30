@@ -48,9 +48,6 @@
 #   name_en: get_latest_results
 #   intro: 供 scheduler 健康门查询各源 healthy/test_fail；日志落盘供人工巡检
 """
-
-
-
 数据源健康检查模块（每日调度器启动时执行）。
 
 功能：
@@ -72,21 +69,21 @@
 #   name_zh: ① run_source_health_check
 #   name_en: run_source_health_check
 #   intro: 执行全量数据源健康检查（供 scheduler.start() 调用）。
-#   desc: 执行全量数据源健康检查（供 scheduler.start() 调用）。 Returns: {source_name: result_dict} 最新健康状态。；源码 L564-L626
+#   desc: 执行全量数据源健康检查（供 scheduler.start() 调用）。 Returns: {source_name: result_dict} 最新健康状态。；源码 L562-L624
 #   inputs: 无参数
 #   outputs: dict[str, dict]
 # - id: A2
 #   name_zh: ② get_source_health
 #   name_en: get_source_health
 #   intro: 查询单个数据源的最新健康状态（供 scheduler 调度决策用）。
-#   desc: 查询单个数据源的最新健康状态（供 scheduler 调度决策用）。 Returns: 最新健康状态 dict，或 None（未检查过）。；源码 L681-L688
+#   desc: 查询单个数据源的最新健康状态（供 scheduler 调度决策用）。 Returns: 最新健康状态 dict，或 None（未检查过）。；源码 L679-L686
 #   inputs: source
 #   outputs: dict | None
 # - id: A3
 #   name_zh: ③ get_all_source_health
 #   name_en: get_all_source_health
 #   intro: 查询所有数据源的最新健康状态。
-#   desc: 查询所有数据源的最新健康状态。；源码 L691-L694
+#   desc: 查询所有数据源的最新健康状态。；源码 L689-L692
 #   inputs: 无参数
 #   outputs: dict[str, dict]
 # 层: 输出

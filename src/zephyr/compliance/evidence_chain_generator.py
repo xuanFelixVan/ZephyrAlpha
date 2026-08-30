@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-CMP-013 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 EvidenceChainGenerator — 合规证据链生成器（MOD-CMP-013）。
 
 B1-00312（AUD-DRAFT-001-DIGEST P2 波 P2-W10，CAND-CMP-003，C2）：委托/成交/

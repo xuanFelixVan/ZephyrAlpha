@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-GOV-quality_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 Re-export wrapper: QualityReport 真源在 zephyr.gov_enforcement.rule_enforcement.quality_gate
 
 治本修复: 测试通过 zephyr.data.quality_gate 导入 QualityReport，但真源在

@@ -47,7 +47,7 @@
 # - id: A2
 #   name_zh: ② check_vendor_lockin
 #   name_en: check_vendor_lockin
-#   intro: check_vendor_lockin(last_update, months_threshold) 源码 L119-…
+#   intro: check_vendor_lockin(last_update, months_threshold)…
 #   desc: 源码 L119-L129
 #   inputs: last_update months_threshold
 #   outputs: VendorRisk

@@ -23,9 +23,6 @@
 # O1: list[ManipulationVerdict](命中一律 HARD_BLOCK, 证据由 detector 落 compliance_log)
 # [/ALGO_FLOW]
 """
-
-
-
 D_COMPLIANCE — 市场操纵盘中实时检测流驱动适配（43 号 §10 边界项施工）。
 
 43 号 §10 施工记录边界："Spoofing/Layering/WashTrade 需订单/成交历史，由盘中

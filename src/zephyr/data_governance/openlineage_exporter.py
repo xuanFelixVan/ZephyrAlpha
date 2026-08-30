@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-DATA_GOV-011 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 openlineage_exporter — OpenLineage 事件导出器（MOD-DATA_GOV-011）。
 
 B10-02320（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATGOV-008，A1 M8-NEW-01）：
@@ -53,28 +50,28 @@ lineage_tracker 事件模型对齐 OpenLineage 规范——**RunEvent** dataclas
 #   name_zh: ① validate_event
 #   name_en: validate_event
 #   intro: 必填字段闭合校验：eventType 词表 + run/job 标识非空。
-#   desc: 必填字段闭合校验：eventType 词表 + run/job 标识非空。；源码 L161-L173
+#   desc: 必填字段闭合校验：eventType 词表 + run/job 标识非空。；源码 L159-L171
 #   inputs: event
 #   outputs: 返回值
 # - id: A2
 #   name_zh: ② event_to_jsonl
 #   name_en: event_to_jsonl
 #   intro: RunEvent → 单行 JSONL（sort_keys 确定性序列化）。
-#   desc: RunEvent → 单行 JSONL（sort_keys 确定性序列化）。；源码 L176-L188
+#   desc: RunEvent → 单行 JSONL（sort_keys 确定性序列化）。；源码 L174-L186
 #   inputs: event
 #   outputs: str
 # - id: A3
 #   name_zh: ③ edge_to_event
 #   name_en: edge_to_event
 #   intro: 内部血缘边 (source,target,transformation) → OpenLineage RunEvent。
-#   desc: 内部血缘边 (source,target,transformation) → OpenLineage RunEvent。 job.name 取 transformation（空则…；源码 L191-L222
+#   desc: 内部血缘边 (source,target,transformation) → OpenLineage RunEvent。 job.name 取 transformation（空则…；源码 L189-L220
 #   inputs: edge run_id job_namespace event_type event_time facets
 #   outputs: RunEvent
 # - id: A4
 #   name_zh: ④ OpenLineageExporter
 #   name_en: OpenLineageExporter
 #   intro: OpenLineage JSONL 导出器（追加写注入 root，或注入 line_sink）。
-#   desc: OpenLineage JSONL 导出器（追加写注入 root，或注入 line_sink）。；公共方法（定义序）: export, export_edges；源码 L225-L281
+#   desc: OpenLineage JSONL 导出器（追加写注入 root，或注入 line_sink）。；公共方法（定义序）: export, export_edges；源码 L223-L279
 #   inputs: root clock line_sink file_name
 #   outputs: 返回值
 #   （注：A4 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）

@@ -52,14 +52,14 @@ This module is the canonical location. Import from here.
 # - id: A2
 #   name_zh: ② auto_deprecate_skill
 #   name_en: auto_deprecate_skill
-#   intro: auto_deprecate_skill(lifecycle, skill_id, freshness_score,…
+#   intro: auto_deprecate_skill(lifecycle, skill_id, freshness_score…
 #   desc: 源码 L138-L173
 #   inputs: lifecycle skill_id freshness_score reason
 #   outputs: dict[str, Any]
 # - id: A3
 #   name_zh: ③ should_load_onboarding
 #   name_en: should_load_onboarding
-#   intro: should_load_onboarding(loader, session_id, max_rounds) 源码 L…
+#   intro: should_load_onboarding(loader, session_id, max_rounds)…
 #   desc: 源码 L176-L178
 #   inputs: loader session_id max_rounds
 #   outputs: bool

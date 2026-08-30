@@ -21,9 +21,6 @@
 # O1: 违规描述列表（空=通过）
 # [/ALGO_FLOW]
 """
-
-
-
 capability 语义注册表 + API 白名单 AST gate（17 号 §5.3 施工项 2 + §5.4 施工项 3 合并收缩 MVP）。
 
 病根（17 号 §5.1）：provider 声明的 capability 名携带市场/品种语义（hk_/industry_），
@@ -59,14 +56,14 @@ Version: 0.1.0
 #   name_zh: ① check_capability_api_whitelist_content
 #   name_en: check_capability_api_whitelist_content
 #   intro: 校验 provider 文件内容的 capability-API 语义一致性（17 号 §5.8 项 3）。
-#   desc: 校验 provider 文件内容的 capability-API 语义一致性（17 号 §5.8 项 3）。 对已登记 capability：AST 提取 ``_fetch_<c…；源码 L228-L253
+#   desc: 校验 provider 文件内容的 capability-API 语义一致性（17 号 §5.8 项 3）。 对已登记 capability：AST 提取 ``_fetch_<c…；源码 L226-L251
 #   inputs: content registry
 #   outputs: list[str]
 # - id: A2
 #   name_zh: ② check_capability_api_whitelist
 #   name_en: check_capability_api_whitelist
 #   intro: 校验 provider 文件的 capability-API 语义一致性（文件读取后委托 content 版）。
-#   desc: 校验 provider 文件的 capability-API 语义一致性（文件读取后委托 content 版）。；源码 L256-L265
+#   desc: 校验 provider 文件的 capability-API 语义一致性（文件读取后委托 content 版）。；源码 L254-L263
 #   inputs: file_path registry
 #   outputs: list[str]
 #   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）

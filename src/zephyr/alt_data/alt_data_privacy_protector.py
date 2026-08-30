@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-ALT-012 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 AltDataPrivacyProtector — 另类数据隐私保护器（MOD-ALT-012）。
 
 B14-04665（AUD-DRAFT-001-DIGEST P2 波 P2-W04，CAND-TESTA-021，A9
@@ -49,7 +46,7 @@ D-ALT-DATA-17）：另类数据 **PII 识别**（手机号/身份证/姓名默�
 #   name_zh: ① AltDataPrivacyProtector
 #   name_en: AltDataPrivacyProtector
 #   intro: 另类数据隐私保护器（PII 识别 + 脱敏管道 + 最小化留存 + 访问审计）。
-#   desc: 另类数据隐私保护器（PII 识别 + 脱敏管道 + 最小化留存 + 访问审计）。；公共方法（定义序）: detect_pii, sanitize_text, sanitize_record, register_ttl,…
+#   desc: 另类数据隐私保护器（PII 识别 + 脱敏管道 + 最小化留存 + 访问审计）。；公共方法（定义序）: detect_pii, sanitize_text, sanitize_record, register_ttl…
 #   inputs: extra_patterns clock audit_sink
 #   outputs: 返回值
 #   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）

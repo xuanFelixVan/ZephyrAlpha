@@ -79,7 +79,7 @@ SSoT: docs/03_modules/_domain_position/position_adjudication_center/blueprint.md
 #   name_zh: ② PositionAdjudicationCenter
 #   name_en: PositionAdjudicationCenter
 #   intro: 仓位管理唯一裁决中心（四层编排 + 唯一令牌 + 旁路阻断）。
-#   desc: 仓位管理唯一裁决中心（四层编排 + 唯一令牌 + 旁路阻断）。 四层 callable 注入（装配批接既有件）；本中心只编排不判定。；公共方法（定义序）: adjudicate, verify_bypass；源码 L2…
+#   desc: 仓位管理唯一裁决中心（四层编排 + 唯一令牌 + 旁路阻断）。 四层 callable 注入（装配批接既有件）；本中心只编排不判定。；公共方法（定义序）: adjudicate, verify_bypass…
 #   inputs: portfolio_layer strategy_layer symbol_layer dynamic_layer
 #   outputs: 返回值
 #   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）

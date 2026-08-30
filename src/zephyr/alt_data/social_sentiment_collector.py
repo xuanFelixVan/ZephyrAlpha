@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-ALT-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 SocialSentimentCollector — 社媒情绪采集器（MOD-ALT-001）
 
 B10-01341（AUD-DRAFT-001-DIGEST P1 波 W-P1-15，A1 §2.1）：帖子级社媒文本

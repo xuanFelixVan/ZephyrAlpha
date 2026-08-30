@@ -16,10 +16,6 @@
 # [TTL] permanent
 
 """
-
-
-
-
 audit-trail.compliance_map — MOD-INF-020 · 合规框架映射
 ========================================================
 蓝图 D-020-25 · GDPR/HIPAA/EU AI Act/NIST 映射表
@@ -39,8 +35,8 @@ audit-trail.compliance_map — MOD-INF-020 · 合规框架映射
 # - id: A1
 #   name_zh: ① ComplianceMapper
 #   name_en: ComplianceMapper
-#   intro: class ComplianceMapper 源码 L305-L341
-#   desc: 公共方法（定义序）: map_event, get_requirements, get_frameworks_for_event；源码 L305-L341
+#   intro: class ComplianceMapper 源码 L302-L338
+#   desc: 公共方法（定义序）: map_event, get_requirements, get_frameworks_for_event；源码 L302-L338
 #   inputs: custom_mappings
 #   outputs: 返回值
 #   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）

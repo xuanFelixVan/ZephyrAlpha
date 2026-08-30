@@ -76,7 +76,7 @@ anomaly_detection: 总行数减少/批量清洗/回溯修改 -> P0 CRITICAL从Gi
 # - id: A4
 #   name_zh: ④ generate_audit_log
 #   name_en: generate_audit_log
-#   intro: generate_audit_log(scan_id, db_path, project_root) 源码 L270-…
+#   intro: generate_audit_log(scan_id, db_path, project_root)…
 #   desc: 源码 L270-L391
 #   inputs: scan_id db_path project_root
 #   outputs: AuditRecord

@@ -22,9 +22,6 @@
 # O1: {action: MONITOR/ALERT/REDUCE_50, reason} / {level: OK/REDUCE/STOP, type?, reason}
 # [/ALGO_FLOW]
 """
-
-
-
 打板监控族（24_daban_strategy_detail §3.14#9 + §3.13#6 施工）。
 
 缺失#9 HoldingPeriodMicrostructureMonitor（首批实盘前必做）：T 日封板后→
@@ -57,14 +54,14 @@ spec 转写偏差登记（两处伪代码死锁/缺失补全，语义不变）�
 #   name_zh: ① HoldingPeriodMicrostructureMonitor
 #   name_en: HoldingPeriodMicrostructureMonitor
 #   intro: 持仓期间微结构监控（v1.9.3 补，封板后→收盘持续监控+渐进降仓）。
-#   desc: 持仓期间微结构监控（v1.9.3 补，封板后→收盘持续监控+渐进降仓）。；公共方法（定义序）: monitor；源码 L100-L126
+#   desc: 持仓期间微结构监控（v1.9.3 补，封板后→收盘持续监控+渐进降仓）。；公共方法（定义序）: monitor；源码 L98-L124
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A2
 #   name_zh: ② SignalDecayMonitor
 #   name_en: SignalDecayMonitor
 #   intro: 打板信号失效监控（v1.9.2 补 CUSUM+PSI，v1.9.3 升级 two-type+方差压缩）。
-#   desc: 打板信号失效监控（v1.9.2 补 CUSUM+PSI，v1.9.3 升级 two-type+方差压缩）。分级响应：OK→REDUCE→STOP。；公共方法（定义序）: update；源码 L130-L185
+#   desc: 打板信号失效监控（v1.9.2 补 CUSUM+PSI，v1.9.3 升级 two-type+方差压缩）。分级响应：OK→REDUCE→STOP。；公共方法（定义序）: update；源码 L128-L183
 #   inputs: 无参数
 #   outputs: 返回值
 # 层: 输出

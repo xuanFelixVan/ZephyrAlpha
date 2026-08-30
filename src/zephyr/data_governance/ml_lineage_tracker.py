@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-DATA_GOV-013 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 ml_lineage_tracker — AI-ML 管线血缘追踪器（MOD-DATA_GOV-013）。
 
 B10-02324（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATGOV-010，A1 M8-NEW-05）：
@@ -44,7 +41,7 @@ ML 血缘——串接 **训练数据集版本 -> 特征版本 -> 模型版本 ->
 #   name_zh: ① MlLineageTracker
 #   name_en: MlLineageTracker
 #   intro: ML 管线血缘追踪器（词表闭合登记 + 全链反查 + 预测溯源）。
-#   desc: ML 管线血缘追踪器（词表闭合登记 + 全链反查 + 预测溯源）。；公共方法（定义序）: register_node, register_edge, register_event, node_kind, edges,…
+#   desc: ML 管线血缘追踪器（词表闭合登记 + 全链反查 + 预测溯源）。；公共方法（定义序）: register_node, register_edge, register_event, node_kind, edges…
 #   inputs: clock event_adapter
 #   outputs: 返回值
 #   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）

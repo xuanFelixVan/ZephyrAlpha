@@ -16,9 +16,6 @@
 # [TTL] permanent
 # [ARCH-REF] #ARCH-REGIME-DEADZONE-001 #ARCH-OBS-EXP-TRACK-001
 """
-
-
-
 L_INFRA_TELEMETRY — 实验跟踪数据模型（RunSummary / RunDetail）。
 
 统一本地 JSON 源的查询模型（MLflow 已退役），Panel/AI 只消费统一模型。

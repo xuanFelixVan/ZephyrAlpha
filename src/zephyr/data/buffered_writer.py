@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-GOV-buffered_writer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 批量聚合写入器（MOD-L00-004 §18.3 裁定 #ARCH-CH-003）。
 
 在 Provider 和 ch_writer 之间插入缓冲层，攒批后一次性写入 ClickHouse。

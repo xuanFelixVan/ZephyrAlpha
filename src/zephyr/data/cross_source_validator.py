@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-GOV-cross_validator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 多源交叉校验器——比较 QMT 主源与 TDX 备源 tick 数据一致性（P1-4）。
 
 升级 integrity_checker 从行数阈值校验到内容级多源比对：
@@ -49,7 +46,7 @@
 #   name_zh: ① ValidationReport
 #   name_en: ValidationReport
 #   intro: 交叉校验报告。
-#   desc: 交叉校验报告。；公共方法（定义序）: is_healthy, summary；源码 L118-L141
+#   desc: 交叉校验报告。；公共方法（定义序）: is_healthy, summary；源码 L116-L139
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A2

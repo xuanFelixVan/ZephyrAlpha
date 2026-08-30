@@ -15,8 +15,6 @@
 # [A_module] module_id=MOD-DATENG-003 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
 QualitySlaBreachPredictor — 质量 SLA 违约预测器（MOD-DATENG-003）。
 
 B14-04723（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATENG-006，A9运维架
@@ -52,7 +50,7 @@ alert_sink 回调，本件不接告警路由。
 #   name_zh: ① QualitySlaBreachPredictor
 #   name_en: QualitySlaBreachPredictor
 #   intro: 质量 SLO 违约预测件（注册表 + 趋势外推 + burn-rate 分级 + 告警）。
-#   desc: 质量 SLO 违约预测件（注册表 + 趋势外推 + burn-rate 分级 + 告警）。；公共方法（定义序）: register_slo, forecast；源码 L156-L288
+#   desc: 质量 SLO 违约预测件（注册表 + 趋势外推 + burn-rate 分级 + 告警）。；公共方法（定义序）: register_slo, forecast；源码 L155-L287
 #   inputs: clock alert_sink elevated_threshold critical_threshold
 #   outputs: 返回值
 #   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）

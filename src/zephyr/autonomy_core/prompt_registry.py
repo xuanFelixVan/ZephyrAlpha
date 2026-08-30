@@ -17,10 +17,6 @@
 
 # AI-generated: YAML-driven prompt template registry with version management and token budget
 """
-
-
-
-
 PromptRegistry: YAML-driven Prompt 模板注册表
 =============================================
 Task ID  : T-2-28 (B12)

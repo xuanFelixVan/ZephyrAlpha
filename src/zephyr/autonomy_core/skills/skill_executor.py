@@ -96,7 +96,7 @@
 #   name_zh: ⑩ SkillExecutor
 #   name_en: SkillExecutor
 #   intro: Skill 执行引擎——八项跨模块集成编排
-#   desc: Skill 执行引擎——八项跨模块集成编排；公共方法（定义序）: write_audit, core_writer, infer_permission, execute, get_audit_trail；源码 L328…
+#   desc: Skill 执行引擎——八项跨模块集成编排；公共方法（定义序）: write_audit, core_writer, infer_permission, execute, get_audit_trail…
 #   inputs: loader
 #   outputs: 返回值
 # 层: 输出

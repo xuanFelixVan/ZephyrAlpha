@@ -16,9 +16,6 @@
 # [TTL] permanent
 
 """
-
-
-
 MOD-DAT-foreign_coverage — 外盘 12 标的数据覆盖核查器（GAP-F-23 / GAP-F-D3）。
 
 外盘页 12 迷你卡标的：道指/纳指/标普/恒生/日经/KOSPI/A50/美元指数/离岸人民币/
@@ -64,14 +61,14 @@ FOREIGN_WATCHLIST 探针已挂接实绩表——本核查器 missing 口径随�
 #   name_zh: ① check_foreign_coverage
 #   name_en: check_foreign_coverage
 #   intro: 外盘 12 标的覆盖核查（只读；query_fn 注入位，测试全 mock）。
-#   desc: 外盘 12 标的覆盖核查（只读；query_fn 注入位，测试全 mock）。 Args: query_fn: SQL→TSV 查询函数（None=ch_reader 只读默认）…；源码 L339-L426
+#   desc: 外盘 12 标的覆盖核查（只读；query_fn 注入位，测试全 mock）。 Args: query_fn: SQL→TSV 查询函数（None=ch_reader 只读默认）…；源码 L337-L424
 #   inputs: query_fn check_date stale_calendar_days watchlist
 #   outputs: ForeignCoverageReport
 # - id: A2
 #   name_zh: ② gap_collector_slots
 #   name_en: gap_collector_slots
 #   intro: 缺口标的采集配置位：missing 标的 → FOREIGN_COLLECTOR_SLOTS 草案子集。
-#   desc: 缺口标的采集配置位：missing 标的 → FOREIGN_COLLECTOR_SLOTS 草案子集。；源码 L429-L439
+#   desc: 缺口标的采集配置位：missing 标的 → FOREIGN_COLLECTOR_SLOTS 草案子集。；源码 L427-L437
 #   inputs: report
 #   outputs: dict[str, dict[str, str]]
 #   （注：A2 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）

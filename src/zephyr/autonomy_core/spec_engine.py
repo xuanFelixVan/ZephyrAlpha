@@ -16,10 +16,6 @@
 # [TTL] permanent
 
 """
-
-
-
-
 MOD-INF-019: Agent Spec — SpecEngine 蓝图->Skill 升级引擎
 ============================================================
 Blueprint: docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md
@@ -39,8 +35,8 @@ SpecEngine 是 agent-spec 的统一入口，负责将静态蓝图转化为可执
 # - id: A1
 #   name_zh: ① UpgradeResult
 #   name_en: UpgradeResult
-#   intro: class UpgradeResult 源码 L105-L131
-#   desc: 公共方法（定义序）: to_dict；源码 L105-L131
+#   intro: class UpgradeResult 源码 L102-L128
+#   desc: 公共方法（定义序）: to_dict；源码 L102-L128
 #   inputs: blueprint_path
 #   outputs: 返回值
 # - id: A2

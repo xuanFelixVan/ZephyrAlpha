@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-GOV-ch_writer | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 r"""
-
-
-
 ClickHouse 写入器（MOD-L00-004 §3.2 数据流第6步 + §7.3 幂等性）。
 
 二级传输架构（Hyper-V 迁移，2026-07-16 修订）：
@@ -67,70 +64,70 @@ ClickHouse 写入器（MOD-L00-004 §3.2 数据流第6步 + §7.3 幂等性）�
 #   name_zh: ① WriteOutcome
 #   name_en: WriteOutcome
 #   intro: 写入结果；禁止把本地持久化伪装成 ClickHouse 已提交。
-#   desc: 写入结果；禁止把本地持久化伪装成 ClickHouse 已提交。；公共方法（定义序）: is_ch_committed；源码 L240-L248
+#   desc: 写入结果；禁止把本地持久化伪装成 ClickHouse 已提交。；公共方法（定义序）: is_ch_committed；源码 L238-L246
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A2
 #   name_zh: ② get_client
 #   name_en: get_client
 #   intro: 获取 clickhouse-driver TCP 客户端单例（懒初始化）。
-#   desc: 获取 clickhouse-driver TCP 客户端单例（懒初始化）。 clickhouse-driver 使用 ClickHouse 原生 TCP 协议（9000 端口）。…；源码 L266-L320
+#   desc: 获取 clickhouse-driver TCP 客户端单例（懒初始化）。 clickhouse-driver 使用 ClickHouse 原生 TCP 协议（9000 端口）。…；源码 L264-L318
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A3
 #   name_zh: ③ get_http_host
 #   name_en: get_http_host
 #   intro: 获取可用的 ClickHouse HTTP 主机。
-#   desc: 获取可用的 ClickHouse HTTP 主机。 策略（Hyper-V 迁移，2026-07-16）： - 直连配置的 CLICKHOUSE_HOST（默认 172.24.30…；源码 L335-L380
+#   desc: 获取可用的 ClickHouse HTTP 主机。 策略（Hyper-V 迁移，2026-07-16）： - 直连配置的 CLICKHOUSE_HOST（默认 172.24.30…；源码 L333-L378
 #   inputs: 无参数
 #   outputs: str
 # - id: A4
 #   name_zh: ④ http_insert
 #   name_en: http_insert
 #   intro: 通过 ClickHouse HTTP API（8123端口）执行 INSERT。
-#   desc: 通过 ClickHouse HTTP API（8123端口）执行 INSERT。 HTTP API 作为 TCP 失败时的降级通道： - 端点从 config/.env.clic…；源码 L434-L471
+#   desc: 通过 ClickHouse HTTP API（8123端口）执行 INSERT。 HTTP API 作为 TCP 失败时的降级通道： - 端点从 config/.env.clic…；源码 L432-L469
 #   inputs: sql tsv_bytes timeout
 #   outputs: bool
 # - id: A5
 #   name_zh: ⑤ query
 #   name_en: query
 #   intro: 执行 CH 查询，返回 TSV 格式字符串。
-#   desc: 执行 CH 查询，返回 TSV 格式字符串。 二级传输（Hyper-V 迁移，2026-07-16）： - clickhouse-driver TCP → HTTP API（二级…；源码 L483-L540
+#   desc: 执行 CH 查询，返回 TSV 格式字符串。 二级传输（Hyper-V 迁移，2026-07-16）： - clickhouse-driver TCP → HTTP API（二级…；源码 L481-L538
 #   inputs: sql timeout
 #   outputs: str
 # - id: A6
 #   name_zh: ⑥ ensure_database
 #   name_en: ensure_database
 #   intro: 确保数据库存在（#256③ 路线B：writer 无 CREATE DATABASE 权限的容错通道）。
-#   desc: 确保数据库存在（#256③ 路线B：writer 无 CREATE DATABASE 权限的容错通道）。 语义： - 库已存在（system.databases 可查，write…；源码 L543-L572
+#   desc: 确保数据库存在（#256③ 路线B：writer 无 CREATE DATABASE 权限的容错通道）。 语义： - 库已存在（system.databases 可查，write…；源码 L541-L570
 #   inputs: name timeout
 #   outputs: bool
 # - id: A7
 #   name_zh: ⑦ tsv_escape
 #   name_en: tsv_escape
 #   intro: 转义字段值用于 TSV。
-#   desc: 转义字段值用于 TSV。 - None / NaN -> ``\N`` - 字符串去掉换行制表符（替换为空格） - 反斜杠转义 Returns: TSV 安全的字符串。；源码 L575-L595
+#   desc: 转义字段值用于 TSV。 - None / NaN -> ``\N`` - 字符串去掉换行制表符（替换为空格） - 反斜杠转义 Returns: TSV 安全的字符串。；源码 L573-L593
 #   inputs: v
 #   outputs: str
 # - id: A8
 #   name_zh: ⑧ get_insert_columns
 #   name_en: get_insert_columns
 #   intro: 查询表的可插入列清单（用于 INSERT 时显式指定列）。
-#   desc: 查询表的可插入列清单（用于 INSERT 时显式指定列）。 DESCRIBE TABLE 输出字段: name, type, default_type, default_expr…；源码 L612-L650
+#   desc: 查询表的可插入列清单（用于 INSERT 时显式指定列）。 DESCRIBE TABLE 输出字段: name, type, default_type, default_expr…；源码 L610-L648
 #   inputs: table
 #   outputs: str
 # - id: A9
 #   name_zh: ⑨ get_table_columns_set
 #   name_en: get_table_columns_set
 #   intro: 查询表的全部列名集合（含 DEFAULT/MATERIALIZED/ALIAS 列）。
-#   desc: 查询表的全部列名集合（含 DEFAULT/MATERIALIZED/ALIAS 列）。 用于 write_result 列过滤：只插入表中存在的列。 线程安全：double-ch…；源码 L663-L691
+#   desc: 查询表的全部列名集合（含 DEFAULT/MATERIALIZED/ALIAS 列）。 用于 write_result 列过滤：只插入表中存在的列。 线程安全：double-ch…；源码 L661-L689
 #   inputs: table
 #   outputs: set[str]
 # - id: A10
 #   name_zh: ⑩ get_insertable_columns_set
 #   name_en: get_insertable_columns_set
 #   intro: 查询表的可插入列名集合（排除 MATERIALIZED/ALIAS，保留 DEFAULT 和普通列）。
-#   desc: 查询表的可插入列名集合（排除 MATERIALIZED/ALIAS，保留 DEFAULT 和普通列）。 用于 write_result / buffered_writer / w…；源码 L703-L746
+#   desc: 查询表的可插入列名集合（排除 MATERIALIZED/ALIAS，保留 DEFAULT 和普通列）。 用于 write_result / buffered_writer / w…；源码 L701-L744
 #   inputs: table
 #   outputs: set[str]
 #   （注：A10 之后另有 9 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）

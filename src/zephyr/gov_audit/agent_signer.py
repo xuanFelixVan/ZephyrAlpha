@@ -16,10 +16,6 @@
 # [TTL] permanent
 
 """
-
-
-
-
 audit-trail.agent_signer — MOD-INF-020 · Agent Ed25519 签名器
 ===============================================================
 蓝图 §7 · 每条审计记录的不可否认性约束
@@ -40,8 +36,8 @@ audit-trail.agent_signer — MOD-INF-020 · Agent Ed25519 签名器
 # - id: A1
 #   name_zh: ① AgentSigner
 #   name_en: AgentSigner
-#   intro: class AgentSigner 源码 L70-L106
-#   desc: 公共方法（定义序）: generate_key_pair, sign, verify；源码 L70-L106
+#   intro: class AgentSigner 源码 L67-L103
+#   desc: 公共方法（定义序）: generate_key_pair, sign, verify；源码 L67-L103
 #   inputs: 无参数
 #   outputs: 返回值
 # 层: 输出

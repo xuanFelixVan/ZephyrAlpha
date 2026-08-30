@@ -37,7 +37,7 @@ Data contracts and Protocol interfaces for A2A coordination:
 #   name_zh: ① DispatchedTask
 #   name_en: DispatchedTask
 #   intro: Dispatched task with status tracking and result collection.
-#   desc: Dispatched task with status tracking and result collection.；公共方法（定义序）: assign, start, complete, fail；源码 L125-…
+#   desc: Dispatched task with status tracking and result collection.；公共方法（定义序）: assign, start, complete, fail…
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A2

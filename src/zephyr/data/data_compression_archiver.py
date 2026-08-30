@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-DATA-064 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 DataCompressionArchiver — 行情数据压缩与归档编排器（MOD-DATA-064）。
 
 B1-00106（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DAT-018，C2 D-DATA-08）：

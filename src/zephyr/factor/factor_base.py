@@ -22,10 +22,6 @@
 # created: "2026-05-04"
 # ---
 """
-
-
-
-
 ZephyrAlpha — D_FACTOR Alpha Factor Layer
 OCP Extension Point: FactorBase + FactorRegistry
 
@@ -61,7 +57,7 @@ OCP Extension Point: FactorBase + FactorRegistry
 #   name_zh: ③ autodiscover_factors
 #   name_en: autodiscover_factors
 #   intro: 扫描 factor/ 目录，自动 import 所有因子模块。
-#   desc: 扫描 factor/ 目录，自动 import 所有因子模块。 每个模块只要包含 @FactorRegistry.register 装饰的类， import 时就会自动触发注册，…；源码 L270-L309
+#   desc: 扫描 factor/ 目录，自动 import 所有因子模块。 每个模块只要包含 @FactorRegistry.register 装饰的类， import 时就会自动触发注册…；源码 L267-L306
 #   inputs: package_path
 #   outputs: 返回值
 #   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）

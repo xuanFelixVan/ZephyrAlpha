@@ -30,9 +30,6 @@
 #   name_en: [{database, table, parts}]
 #   intro: 供告警链路（ALERT-CH-001）/CLI 巡检消费；空列表=健康
 """
-
-
-
 CH data parts 爆炸监控（64号 Q8，P1，2026-08-20 AI-NIGHT-001 施工）。
 
 裁定真源：64号 §16.2 Q8——system.parts 单表 active parts > 100 告警，
@@ -63,28 +60,28 @@ CH data parts 爆炸监控（64号 Q8，P1，2026-08-20 AI-NIGHT-001 施工）�
 #   name_zh: ① parse_parts_tsv
 #   name_en: parse_parts_tsv
 #   intro: 解析 system.parts 查询 TSV 为 (database, table, parts) 列表（坏行容错跳过…
-#   desc: 解析 system.parts 查询 TSV 为 (database, table, parts) 列表（坏行容错跳过）。；源码 L154-L165
+#   desc: 解析 system.parts 查询 TSV 为 (database, table, parts) 列表（坏行容错跳过）。；源码 L152-L163
 #   inputs: tsv
 #   outputs: list[tuple[str, str, int]]
 # - id: A2
 #   name_zh: ② check_parts_threshold
 #   name_en: check_parts_threshold
 #   intro: 探测单表 active parts 超阈值违规清单。
-#   desc: 探测单表 active parts 超阈值违规清单。 Args: threshold: parts 告警阈值（默认 100，64号 Q8 裁定）。 query_fn: 查询函数注…；源码 L168-L194
+#   desc: 探测单表 active parts 超阈值违规清单。 Args: threshold: parts 告警阈值（默认 100，64号 Q8 裁定）。 query_fn: 查询函数注…；源码 L166-L192
 #   inputs: threshold query_fn timeout
 #   outputs: list[dict]
 # - id: A3
 #   name_zh: ③ check_and_alert
 #   name_en: check_and_alert
 #   intro: 探测 parts 超阈值并经既有 Alerter 通道产出告警（64号 §16.2 Q8「alerter 通知」落地）。
-#   desc: 探测 parts 超阈值并经既有 Alerter 通道产出告警（64号 §16.2 Q8「alerter 通知」落地）。 关键路径接线：scheduler._run_schedu…；源码 L197-L240
+#   desc: 探测 parts 超阈值并经既有 Alerter 通道产出告警（64号 §16.2 Q8「alerter 通知」落地）。 关键路径接线：scheduler._run_schedu…；源码 L195-L238
 #   inputs: alerter threshold query_fn timeout
 #   outputs: list[dict]
 # - id: A4
 #   name_zh: ④ main
 #   name_en: main
 #   intro: CLI 巡检入口：打印违规表，存在违规返回退出码 1（供巡检/看板脚本消费）。
-#   desc: CLI 巡检入口：打印违规表，存在违规返回退出码 1（供巡检/看板脚本消费）。；源码 L243-L252
+#   desc: CLI 巡检入口：打印违规表，存在违规返回退出码 1（供巡检/看板脚本消费）。；源码 L241-L250
 #   inputs: 无参数
 #   outputs: int
 # 层: 输出

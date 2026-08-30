@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-DATSEC-002 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 DataAccessAuditor — 数据访问审计器（MOD-DATSEC-002）。
 
 B13-04294（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATSEC-002，A3数据架构）：

@@ -14,9 +14,6 @@
 # [TESTS] tests/zephyr/data/test_sector_kline_downloader.py
 # [TTL] task_bound
 """
-
-
-
 880xxx 板块指数K线下载器——盘后从 tqcenter 下载日K/分钟K写入 ClickHouse。
 
 支持周期：1d（日K立即可用）/ 1m / 5m（需通达信客户端先下载扩展市场分钟线）。
@@ -51,14 +48,14 @@
 #   name_zh: ① download_period
 #   name_en: download_period
 #   intro: 下载指定周期的K线数据。
-#   desc: 下载指定周期的K线数据。；源码 L267-L292
+#   desc: 下载指定周期的K线数据。；源码 L265-L290
 #   inputs: tq sector_codes period count
 #   outputs: int
 # - id: A2
 #   name_zh: ② main
 #   name_en: main
 #   intro: 盘后K线下载入口。
-#   desc: 盘后K线下载入口。；源码 L295-L319
+#   desc: 盘后K线下载入口。；源码 L293-L317
 #   inputs: 无参数
 #   outputs: int
 # 层: 输出

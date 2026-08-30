@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-EX-024 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 Pre-Execution Checker — 执行前检查器 (MOD-EX-024)
 
 下单前统一四级硬检查（编排层，对接 MOD-RK-25 快照 + MOD-RK-24 否决引擎 + 既有风控件）：
@@ -42,14 +39,14 @@ Pre-Execution Checker — 执行前检查器 (MOD-EX-024)
 #   name_zh: ① is_ashare_trading_window
 #   name_en: is_ashare_trading_window
 #   intro: A 股交易时段判定（L-003：非交易时段订单为废单，执行层内置校验）。
-#   desc: A 股交易时段判定（L-003：非交易时段订单为废单，执行层内置校验）。 naive datetime 按 Asia/Shanghai 口径解释；aware datetime 先…；源码 L112-L134
+#   desc: A 股交易时段判定（L-003：非交易时段订单为废单，执行层内置校验）。 naive datetime 按 Asia/Shanghai 口径解释；aware datetime 先…；源码 L110-L132
 #   inputs: now
 #   outputs: bool
 # - id: A2
 #   name_zh: ② PreExecutionChecker
 #   name_en: PreExecutionChecker
 #   intro: 执行前检查器（四级闸门编排，全部 Fail-Closed）。
-#   desc: 执行前检查器（四级闸门编排，全部 Fail-Closed）。；公共方法（定义序）: check；源码 L179-L310
+#   desc: 执行前检查器（四级闸门编排，全部 Fail-Closed）。；公共方法（定义序）: check；源码 L177-L308
 #   inputs: snapshot_builder kill_switch_probe session_window_probe veto_engine m…
 #   outputs: 返回值
 #   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）

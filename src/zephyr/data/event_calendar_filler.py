@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-DATA-068 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 EventCalendarFiller — event_calendar 前瞻填充器（CAND-DAT-021，Q2-B 正解）。
 
 背景
@@ -67,49 +64,49 @@ PIT 纪律：只登记填充时点已公告（披露计划/解禁表）或规则
 #   name_zh: ① macro_rule_events
 #   name_en: macro_rule_events
 #   intro: 宏观固定日程规则事件（LPR/MLF/PMI/CPI，trading_calendar 同族先例）。
-#   desc: 宏观固定日程规则事件（LPR/MLF/PMI/CPI，trading_calendar 同族先例）。 - LPR：每月 20 日，非交易日顺延（rule_derived）； -…；源码 L237-L303
+#   desc: 宏观固定日程规则事件（LPR/MLF/PMI/CPI，trading_calendar 同族先例）。 - LPR：每月 20 日，非交易日顺延（rule_derived）； -…；源码 L235-L301
 #   inputs: start end calendar
 #   outputs: list[EventCalendarEntry]
 # - id: A2
 #   name_zh: ② entries_from_disclosure_rows
 #   name_en: entries_from_disclosure_rows
 #   intro: 财报披露计划行 → 日历条目（行=(symbol, report_period, scheduled_date, ac…
-#   desc: 财报披露计划行 → 日历条目（行=(symbol, report_period, scheduled_date, actual_date)）。 actual_date 落在窗口→…；源码 L313-L355
+#   desc: 财报披露计划行 → 日历条目（行=(symbol, report_period, scheduled_date, actual_date)）。 actual_date 落在窗口→…；源码 L311-L353
 #   inputs: rows start end
 #   outputs: list[EventCalendarEntry]
 # - id: A3
 #   name_zh: ③ entries_from_unlock_rows
 #   name_en: entries_from_unlock_rows
 #   intro: 限售解禁行 → 日历条目（行=(symbol, unlock_date, shares, ratio, amount)…
-#   desc: 限售解禁行 → 日历条目（行=(symbol, unlock_date, shares, ratio, amount)）。 交易所披露表口径→scheduled（数量/比例入 d…；源码 L358-L381
+#   desc: 限售解禁行 → 日历条目（行=(symbol, unlock_date, shares, ratio, amount)）。 交易所披露表口径→scheduled（数量/比例入 d…；源码 L356-L379
 #   inputs: rows start end
 #   outputs: list[EventCalendarEntry]
 # - id: A4
 #   name_zh: ④ load_disclosure_entries
 #   name_en: load_disclosure_entries
 #   intro: 从 disclosure_plan 表装配财报披露条目（注入式读取，fail-open）。
-#   desc: 从 disclosure_plan 表装配财报披露条目（注入式读取，fail-open）。；源码 L384-L397
+#   desc: 从 disclosure_plan 表装配财报披露条目（注入式读取，fail-open）。；源码 L382-L395
 #   inputs: query_fn start end
 #   outputs: list[EventCalendarEntry]
 # - id: A5
 #   name_zh: ⑤ load_unlock_entries
 #   name_en: load_unlock_entries
 #   intro: 从 share_unlock 表装配解禁条目（注入式读取，fail-open）。
-#   desc: 从 share_unlock 表装配解禁条目（注入式读取，fail-open）。；源码 L400-L413
+#   desc: 从 share_unlock 表装配解禁条目（注入式读取，fail-open）。；源码 L398-L411
 #   inputs: query_fn start end
 #   outputs: list[EventCalendarEntry]
 # - id: A6
 #   name_zh: ⑥ dedupe_entries
 #   name_en: dedupe_entries
 #   intro: 幂等去重：同 (event_date, event_type, symbol_scope) 重复填充只保留首条。
-#   desc: 幂等去重：同 (event_date, event_type, symbol_scope) 重复填充只保留首条。；源码 L416-L427
+#   desc: 幂等去重：同 (event_date, event_type, symbol_scope) 重复填充只保留首条。；源码 L414-L425
 #   inputs: entries
 #   outputs: list[EventCalendarEntry]
 # - id: A7
 #   name_zh: ⑦ fill_event_calendar
 #   name_en: fill_event_calendar
 #   intro: 生成未来 N 日（默认 60）可预见事件日历（幂等）。
-#   desc: 生成未来 N 日（默认 60）可预见事件日历（幂等）。 Parameters ---------- as_of : 填充基准日（None=今天）。PIT 锚点——只登记基准日时点…；源码 L430-L464
+#   desc: 生成未来 N 日（默认 60）可预见事件日历（幂等）。 Parameters ---------- as_of : 填充基准日（None=今天）。PIT 锚点——只登记基准日时点…；源码 L428-L462
 #   inputs: as_of horizon_days query_fn calendar extra_entries
 #   outputs: list[EventCalendarEntry]
 #   （注：A7 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）

@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-CMP-012 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 ComplianceRuleEngine — §10.8.1.2 合规引擎 (MOD-CMP-012)
 
 CAND-CMP-002（B5-07849）：DSL 规则解析器 + 规则版本管理器（不可变历史 +
@@ -58,14 +55,14 @@ op ∈ ``>, >=, <, <=, ==, !=, in``。解析期校验（InvalidComplianceRuleErr
 #   name_zh: ① RuleDslParser
 #   name_en: RuleDslParser
 #   intro: DSL 规则解析器（解析期校验，Fail-Closed 拒绝坏规则）。
-#   desc: DSL 规则解析器（解析期校验，Fail-Closed 拒绝坏规则）。；公共方法（定义序）: parse；源码 L204-L269
+#   desc: DSL 规则解析器（解析期校验，Fail-Closed 拒绝坏规则）。；公共方法（定义序）: parse；源码 L202-L267
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A2
 #   name_zh: ② RuleVersionManager
 #   name_en: RuleVersionManager
 #   intro: 规则版本管理器：不可变历史 + 当前活跃指针。
-#   desc: 规则版本管理器：不可变历史 + 当前活跃指针。；公共方法（定义序）: register, activate, deactivate, active, history, active_rules；源码 L272-L306
+#   desc: 规则版本管理器：不可变历史 + 当前活跃指针。；公共方法（定义序）: register, activate, deactivate, active, history, active_rules；源码 L270-L304
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A3
@@ -79,7 +76,7 @@ op ∈ ``>, >=, <, <=, ==, !=, in``。解析期校验（InvalidComplianceRuleErr
 #   name_zh: ④ trading_compliance_rule_pack
 #   name_en: trading_compliance_rule_pack
 #   intro: 收编现有检测散件阈值语义为 DSL 规则包（MOD-CMP-007 §7.2 MVP 初始值）。
-#   desc: 收编现有检测散件阈值语义为 DSL 规则包（MOD-CMP-007 §7.2 MVP 初始值）。 仅表达阈值语义为 DSL 规则；散件检测逻辑本体不迁移不复制（收编渐进， 全量迁…；源码 L418-L439
+#   desc: 收编现有检测散件阈值语义为 DSL 规则包（MOD-CMP-007 §7.2 MVP 初始值）。 仅表达阈值语义为 DSL 规则；散件检测逻辑本体不迁移不复制（收编渐进， 全量迁…；源码 L416-L437
 #   inputs: 无参数
 #   outputs: tuple[dict[str, Any], ...]
 #   （注：A4 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）

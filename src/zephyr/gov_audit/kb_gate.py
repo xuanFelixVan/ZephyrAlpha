@@ -16,10 +16,6 @@
 # [TTL] permanent
 
 """
-
-
-
-
 audit-trail.kb_gate — MOD-INF-020 · KB 审计门控
 =================================================
 蓝图 D-020-28 · KB 投毒检测 + 写入来源验证
@@ -44,8 +40,8 @@ audit-trail.kb_gate — MOD-INF-020 · KB 审计门控
 # - id: A1
 #   name_zh: ① KBAuditGate
 #   name_en: KBAuditGate
-#   intro: class KBAuditGate 源码 L103-L196
-#   desc: 公共方法（定义序）: check_write, scan_for_poisoning；源码 L103-L196
+#   intro: class KBAuditGate 源码 L100-L193
+#   desc: 公共方法（定义序）: check_write, scan_for_poisoning；源码 L100-L193
 #   inputs: min_trust_score max_writes_per_hour
 #   outputs: 返回值
 #   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）

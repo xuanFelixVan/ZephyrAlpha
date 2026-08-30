@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-DATENG-002 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 ColdDataArchiveManager — 冷数据归档管理器（MOD-DATENG-002）。
 
 B13-04331（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATENG-005，A3数据架构）：
@@ -54,7 +51,7 @@ hash/archived_at）、保留期清理裁决（保留期注册表 + 清理执行�
 #   name_zh: ① ColdDataArchiveManager
 #   name_en: ColdDataArchiveManager
 #   intro: 冷数据归档编排件（计划 + 索引 + 清理裁决 + 只读检索 + 周期计划）。
-#   desc: 冷数据归档编排件（计划 + 索引 + 清理裁决 + 只读检索 + 周期计划）。；公共方法（定义序）: plan_archive, run_archive, register_retention, plan_purge,…
+#   desc: 冷数据归档编排件（计划 + 索引 + 清理裁决 + 只读检索 + 周期计划）。；公共方法（定义序）: plan_archive, run_archive, register_retention, plan_purge…
 #   inputs: index_conn clock archiver purge_executor alert_sink
 #   outputs: 返回值
 #   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）

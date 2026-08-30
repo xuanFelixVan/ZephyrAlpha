@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-EXEC_SIM | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 zephyr.execution_simulation — 执行仿真域包门面（D_EXEC_SIM）。
 
 P2-W08 首件施工：MOD-EXSIM-001 almgren_chriss_impact_model（Almgren-Chriss
@@ -29,13 +26,13 @@ P2-W08 首件施工：MOD-EXSIM-001 almgren_chriss_impact_model（Almgren-Chriss
 # - id: I1
 #   name: 包内子模块公共符号
 #   fields: import 再导出符号: annotations
-#   code: __init__.py import L53
+#   code: __init__.py import L51
 # 层: 算法
 # - id: A1
 #   name_zh: ① 包公共面再导出
 #   name_en: __init__ re-export
 #   intro: 再导出 AlmgrenChrissError, AlmgrenChrissImpactModel, ImpactParams, ImpactQuote, Im…
-#   desc: __init__ import L53；__all__ 8 项（AST 事实）
+#   desc: __init__ import L51；__all__ 8 项（AST 事实）
 #   inputs: I1
 #   outputs: __all__ 公共符号表
 # 层: 输出

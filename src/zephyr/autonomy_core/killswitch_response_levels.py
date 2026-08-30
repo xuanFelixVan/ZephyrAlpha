@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-AU-004 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 KillSwitchResponseLayer — KILLSWITCH 三级响应策略层（MOD-AU-004）.
 
 设计真源：16号文（16_ai_security_ops.md）§3.4/§3.13/§4.4 P2-3 + 15号文 §3.4/§4.1 S0.3：
@@ -62,7 +59,7 @@ KillSwitchResponseLayer — KILLSWITCH 三级响应策略层（MOD-AU-004）.
 #   name_zh: ① render_killswitch_md
 #   name_en: render_killswitch_md
 #   intro: 渲染 KILLSWITCH.
-#   desc: 渲染 KILLSWITCH.md 全文（16号文 §3.13 开放标准 8 要素对标+三级定义+复位不变量）.；源码 L162-L164
+#   desc: 渲染 KILLSWITCH.md 全文（16号文 §3.13 开放标准 8 要素对标+三级定义+复位不变量）.；源码 L160-L162
 #   inputs: 无参数
 #   outputs: str
 # - id: A2

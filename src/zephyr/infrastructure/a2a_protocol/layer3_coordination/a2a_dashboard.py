@@ -45,7 +45,7 @@ A2A 监控仪表盘 — Agent 集群运行状态可视化面板
 #   name_zh: ② A2ADashboard
 #   name_en: A2ADashboard
 #   intro: class A2ADashboard 源码 L117-L150
-#   desc: 公共方法（定义序）: update_agent, update_conflicts, update_anomalies, update_security, update_bridge, snapshot；源码 L117…
+#   desc: 公共方法（定义序）: update_agent, update_conflicts, update_anomalies, update_security, update_bridge, snapshot…
 #   inputs: 无参数
 #   outputs: 返回值
 # 层: 输出

@@ -30,9 +30,6 @@
 #   name_en: 落盘路径或 None（失败）
 #   intro: 为 64号 Q11 调度动态化/Q17 自动熔断供数据基础（替代 c0_meta.fetch_perf 仅测速抽样的盲区）
 """
-
-
-
 fetch_perf 被动记录通道（64号 Q16，P2，2026-08-20 AI-NIGHT-001 施工）。
 
 裁定真源：64号 §16.2 Q16——scheduler 每次任务结束写一条运行时 fetch_perf，
@@ -55,7 +52,7 @@ fetch_perf 被动记录通道（64号 Q16，P2，2026-08-20 AI-NIGHT-001 施工�
 #   name_zh: ① record_fetch_perf
 #   name_en: record_fetch_perf
 #   intro: 追加一条 fetch_perf 记录到当日 JSONL 文件。
-#   desc: 追加一条 fetch_perf 记录到当日 JSONL 文件。 Args: record: 记录字段（task_id/source/capability/table/status…；源码 L91-L115
+#   desc: 追加一条 fetch_perf 记录到当日 JSONL 文件。 Args: record: 记录字段（task_id/source/capability/table/status…；源码 L89-L113
 #   inputs: record base_dir
 #   outputs: Path | None
 # 层: 输出

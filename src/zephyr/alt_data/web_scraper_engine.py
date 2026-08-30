@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-ALT-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 WebScraperEngine — 网页爬取引擎（MOD-ALT-002）
 
 B10-02195（AUD-DRAFT-001-DIGEST P1 波 W-P1-15，D-ALT-DATA-03 §30.2.4）：

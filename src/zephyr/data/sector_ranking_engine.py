@@ -14,9 +14,6 @@
 # [TESTS] tests/zephyr/data/test_sector_ranking_engine.py
 # [TTL] task_bound
 """
-
-
-
 880xxx 板块动态排名引擎——5因子复合排名调整99只推送池。
 
 5因子复合排名（权重之和=1.0）：
@@ -48,21 +45,21 @@
 #   name_zh: ① compute_ranking
 #   name_en: compute_ranking
 #   intro: 计算5因子复合排名。
-#   desc: 计算5因子复合排名。 Args: rows: ClickHouse 快照行列表。 Returns: [(sector_code, score), ...] 按分数降序排列。；源码 L220-L252
+#   desc: 计算5因子复合排名。 Args: rows: ClickHouse 快照行列表。 Returns: [(sector_code, score), ...] 按分数降序排列。；源码 L218-L250
 #   inputs: rows
 #   outputs: list[tuple[str, float]]
 # - id: A2
 #   name_zh: ② get_push_pool
 #   name_en: get_push_pool
 #   intro: 获取推送池（动态排名 Top N 或默认回退）。
-#   desc: 获取推送池（动态排名 Top N 或默认回退）。 Args: top_n: 推送池上限（默认99）。 Returns: 推送池 sector_code 列表（9只mkt_inde…；源码 L255-L287
+#   desc: 获取推送池（动态排名 Top N 或默认回退）。 Args: top_n: 推送池上限（默认99）。 Returns: 推送池 sector_code 列表（9只mkt_inde…；源码 L253-L285
 #   inputs: top_n
 #   outputs: list[str]
 # - id: A3
 #   name_zh: ③ main
 #   name_en: main
 #   intro: 盘前重算推送池入口。
-#   desc: 盘前重算推送池入口。；源码 L304-L331
+#   desc: 盘前重算推送池入口。；源码 L302-L329
 #   inputs: 无参数
 #   outputs: int
 # 层: 输出

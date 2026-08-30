@@ -14,9 +14,6 @@
 # [TESTS] tests/zephyr/data/test_kline_resampler.py
 # [TTL] task_bound
 """
-
-
-
 880xxx 板块K线合成器——从 1m/5m 合成 15m/30m/60m 写入 ClickHouse。
 
 tqcenter 仅支持 1d/1m/5m 三周期，15m/30m/60m 需从分钟线合成。
@@ -47,7 +44,7 @@ tqcenter 仅支持 1d/1m/5m 三周期，15m/30m/60m 需从分钟线合成。
 #   name_zh: ① main
 #   name_en: main
 #   intro: K线合成器主入口。
-#   desc: K线合成器主入口。；源码 L211-L248
+#   desc: K线合成器主入口。；源码 L209-L246
 #   inputs: 无参数
 #   outputs: int
 # 层: 输出

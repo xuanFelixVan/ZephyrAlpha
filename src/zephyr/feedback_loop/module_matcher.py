@@ -15,8 +15,6 @@
 # [A_module] module_id=MOD-FBL-002 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
 ModuleMatcher — 模块匹配器（MOD-FBL-002）。
 
 B12-03549（AUD-DRAFT-001-DIGEST P2 波 P2-W14，CAND-FBL-004，B12）：
@@ -48,7 +46,7 @@ PARTIAL(0.5~0.85) / NO_MATCH(<0.5) 三档判定输出（阈值边界恰等归低
 #   name_zh: ① ModuleMatcher
 #   name_en: ModuleMatcher
 #   intro: 模块匹配器（capability_tags 注册表 + embedding 余弦 + 三档判定）。
-#   desc: 模块匹配器（capability_tags 注册表 + embedding 余弦 + 三档判定）。；公共方法（定义序）: register_module, match；源码 L141-L273
+#   desc: 模块匹配器（capability_tags 注册表 + embedding 余弦 + 三档判定）。；公共方法（定义序）: register_module, match；源码 L140-L272
 #   inputs: embedder exact_threshold partial_threshold
 #   outputs: 返回值
 #   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）

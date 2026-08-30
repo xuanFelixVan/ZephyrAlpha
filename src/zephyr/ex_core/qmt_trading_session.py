@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-L06-001-QMTFB | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 QMT Trading Session——QMT 文件桥交易会话（一键装配）
 
 职责:

@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-DAT-MTF-FUSION | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 MultiTimeframeFusion — 多时间尺度数据融合（MOD-DAT-MTF-FUSION）
 
 B13-04249（AUD-DRAFT-001-DIGEST P1 波 W-P1-09，D-DATA-25，§17.1）：
@@ -41,7 +38,7 @@ B13-04249（AUD-DRAFT-001-DIGEST P1 波 W-P1-09，D-DATA-25，§17.1）：
 #   name_zh: ① MultiTimeframeFusion
 #   name_en: MultiTimeframeFusion
 #   intro: 多周期数据融合器（纯 pandas 内存计算，零 IO）。
-#   desc: 多周期数据融合器（纯 pandas 内存计算，零 IO）。；公共方法（定义序）: resample；源码 L126-L276
+#   desc: 多周期数据融合器（纯 pandas 内存计算，零 IO）。；公共方法（定义序）: resample；源码 L124-L274
 #   inputs: config
 #   outputs: 返回值
 #   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）

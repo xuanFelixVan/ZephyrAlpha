@@ -71,7 +71,7 @@
 # - id: A6
 #   name_zh: ⑥ create_batch_orchestrator
 #   name_en: create_batch_orchestrator
-#   intro: create_batch_orchestrator(repo, batch_id, worker_id) 源码 L16…
+#   intro: create_batch_orchestrator(repo, batch_id, worker_id)…
 #   desc: 源码 L166-L169
 #   inputs: repo batch_id worker_id
 #   outputs: BatchOrchestratorProtocol

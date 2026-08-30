@@ -14,9 +14,6 @@
 # [TESTS] tests/zephyr/data/test_cleaning_anomaly_engine.py
 # [TTL] permanent
 """
-
-
-
 ZephyrAlpha — D_DATA_ENG 数据清洗与异常引擎（CAND-DATENG-001 / B1-00606）。
 
 min_build_spec（AUD-DRAFT-001-DIGEST P0）：
@@ -53,14 +50,14 @@ min_build_spec（AUD-DRAFT-001-DIGEST P0）：
 #   name_zh: ① default_alert_sink
 #   name_en: default_alert_sink
 #   intro: 惰性装配 zephyr.data.alerter 告警路由（复用 B13-04267 链路）。
-#   desc: 惰性装配 zephyr.data.alerter 告警路由（复用 B13-04267 链路）。 Returns: sink(level, title, message)：leve…；源码 L157-L170
+#   desc: 惰性装配 zephyr.data.alerter 告警路由（复用 B13-04267 链路）。 Returns: sink(level, title, message)：leve…；源码 L155-L168
 #   inputs: 无参数
 #   outputs: Callable[[str, str, str], None]
 # - id: A2
 #   name_zh: ② CleaningAnomalyEngine
 #   name_en: CleaningAnomalyEngine
 #   intro: 清洗规则库 + 自动修复策略引擎。
-#   desc: 清洗规则库 + 自动修复策略引擎。；公共方法（定义序）: detect, repair；源码 L173-L454
+#   desc: 清洗规则库 + 自动修复策略引擎。；公共方法（定义序）: detect, repair；源码 L171-L452
 #   inputs: price_jump_pct price_jump_z volume_spike_mult volume_z alert_sink
 #   outputs: 返回值
 #   （注：A2 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）

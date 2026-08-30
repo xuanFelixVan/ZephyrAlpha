@@ -17,10 +17,6 @@
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 
 """
-
-
-
-
 EventStore — Event Sourcing 事件追加与回放（DW-0002）
 =====================================================
 append-only 事件存储，支持：
@@ -45,7 +41,7 @@ append-only 事件存储，支持：
 #   name_zh: ① EventStore
 #   name_en: EventStore
 #   intro: Event Sourcing 事件存储——append-only 写入 + 时间顺序回放 + 完整性校验。
-#   desc: Event Sourcing 事件存储——append-only 写入 + 时间顺序回放 + 完整性校验。 参数 ---- db_path SQLite 数据库路径；默认 DB_…；公共方法（定义序）: close,…
+#   desc: Event Sourcing 事件存储——append-only 写入 + 时间顺序回放 + 完整性校验。 参数 ---- db_path SQLite 数据库路径；默认 DB_…；公共方法（定义序）: close…
 #   inputs: db_path auto_init
 #   outputs: 返回值
 #   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）

@@ -32,7 +32,7 @@ IntentBinder — 意图绑定与漂移检测.
 #   name_zh: ① IntentBinder
 #   name_en: IntentBinder
 #   intro: 意图绑定器 — 管理声明意图与漂移检测.
-#   desc: 意图绑定器 — 管理声明意图与漂移检测.；公共方法（定义序）: declare, verify, close, get_active_intent, record_actual, check_drift；源码 L79-…
+#   desc: 意图绑定器 — 管理声明意图与漂移检测.；公共方法（定义序）: declare, verify, close, get_active_intent, record_actual, check_drift…
 #   inputs: 无参数
 #   outputs: 返回值
 #   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）

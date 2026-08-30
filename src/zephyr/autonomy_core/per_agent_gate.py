@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-AU-006 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 PerAgentGate — 单 Agent 门控层 (MOD-AU-006)
 
 CAND-AUTONOMYCORE-005（B11-02462）：规则集（允许动作 / 禁止动作 / 限额 / 时段）
@@ -46,21 +43,21 @@ MOD-SEC-EVENTBUS 为持久化委托，本模块不 import）。
 #   name_zh: ① TimeWindow
 #   name_en: TimeWindow
 #   intro: 日内分钟窗 [start_min, end_min)（0<=start<end<=1440）。
-#   desc: 日内分钟窗 [start_min, end_min)（0<=start<end<=1440）。；公共方法（定义序）: contains；源码 L111-L124
+#   desc: 日内分钟窗 [start_min, end_min)（0<=start<end<=1440）。；公共方法（定义序）: contains；源码 L109-L122
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A2
 #   name_zh: ② AgentGateVerdict
 #   name_en: AgentGateVerdict
 #   intro: 单次门控判定结果（不可变）。
-#   desc: 单次门控判定结果（不可变）。；公共方法（定义序）: allowed, to_security_event；源码 L161-L188
+#   desc: 单次门控判定结果（不可变）。；公共方法（定义序）: allowed, to_security_event；源码 L159-L186
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A3
 #   name_zh: ③ PerAgentGate
 #   name_en: PerAgentGate
 #   intro: 单 Agent 门控层（纯内存规则匹配核心）。
-#   desc: 单 Agent 门控层（纯内存规则匹配核心）。 Args: rulesets: 初始规则集集合。 event_sink: DENY 安全事件回调；异常不阻断 DENY 判定。；公共方法（定义序）: register,…
+#   desc: 单 Agent 门控层（纯内存规则匹配核心）。 Args: rulesets: 初始规则集集合。 event_sink: DENY 安全事件回调；异常不阻断 DENY 判定。；公共方法（定义序）: register…
 #   inputs: rulesets event_sink
 #   outputs: 返回值
 #   （注：A3 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）

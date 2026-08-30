@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-ALT-003 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 FilingNlpEngine — 监管文件 NLP 引擎（MOD-ALT-003）
 
 B10-02196（AUD-DRAFT-001-DIGEST P1 波 W-P1-15，D-ALT-DATA-04 §30.2.4）：A 股

@@ -16,10 +16,6 @@
 # [TTL] permanent
 
 """
-
-
-
-
 audit-trail.feedback_self_audit — MOD-INF-020 · 反馈自审计
 ============================================================
 蓝图 D-020-26 · 自强化反馈环检测 + 循环依赖检测
@@ -40,8 +36,8 @@ audit-trail.feedback_self_audit — MOD-INF-020 · 反馈自审计
 # - id: A1
 #   name_zh: ① FeedbackSelfAuditor
 #   name_en: FeedbackSelfAuditor
-#   intro: class FeedbackSelfAuditor 源码 L159-L271
-#   desc: 公共方法（定义序）: amplification_threshold, detect_self_reinforcement, check_circular；源码 L159-L271
+#   intro: class FeedbackSelfAuditor 源码 L156-L268
+#   desc: 公共方法（定义序）: amplification_threshold, detect_self_reinforcement, check_circular；源码 L156-L268
 #   inputs: amplification_threshold
 #   outputs: 返回值
 #   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）

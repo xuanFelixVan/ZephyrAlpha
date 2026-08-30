@@ -79,7 +79,7 @@ Pipeline Routing Plugin System — K8s Scheduling Framework 对标
 #   name_zh: ⑤ PriorityScorer
 #   name_en: PriorityScorer
 #   intro: 打分：任务优先级越高 -> 高分节点获得的加成越多。
-#   desc: 打分：任务优先级越高 -> 高分节点获得的加成越多。 P0 AUDIT -> M3(opus级审计) 得高分；P2 MODEL_BUILD -> M2(标准) 得高分。；公共方法（定义序）: apply；源码 L294…
+#   desc: 打分：任务优先级越高 -> 高分节点获得的加成越多。 P0 AUDIT -> M3(opus级审计) 得高分；P2 MODEL_BUILD -> M2(标准) 得高分。；公共方法（定义序）: apply…
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A6

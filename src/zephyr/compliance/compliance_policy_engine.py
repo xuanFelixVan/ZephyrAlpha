@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-CMP-015 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 CompliancePolicyEngine — 合规策略即代码引擎（MOD-CMP-015）。
 
 B14-04651（AUD-DRAFT-001-DIGEST P2 波 P2-W10，CAND-CMP-006，A9 D-COMPLIANCE-16）：
@@ -52,7 +49,7 @@ B14-04651（AUD-DRAFT-001-DIGEST P2 波 P2-W10，CAND-CMP-006，A9 D-COMPLIANCE-
 #   name_zh: ① evaluate_condition
 #   name_en: evaluate_condition
 #   intro: 条件求值：or 分段 → and 分段 → 单子句（纯函数，确定性）。
-#   desc: 条件求值：or 分段 → and 分段 → 单子句（纯函数，确定性）。；源码 L246-L253
+#   desc: 条件求值：or 分段 → and 分段 → 单子句（纯函数，确定性）。；源码 L244-L251
 #   inputs: condition context
 #   outputs: bool
 # - id: A2

@@ -47,7 +47,7 @@ D-SIGNAL-101）：公共参数/市场状态/特征缓存三命名空间（词表
 #   name_zh: ① SharedKernelSync
 #   name_en: SharedKernelSync
 #   intro: 策略共享内核同步器（单一真源注册表+版本广播+一致性校验）。
-#   desc: 策略共享内核同步器（单一真源注册表+版本广播+一致性校验）。；公共方法（定义序）: write, read, version_of, keys, snapshot_versions, check_drift；源码 L1…
+#   desc: 策略共享内核同步器（单一真源注册表+版本广播+一致性校验）。；公共方法（定义序）: write, read, version_of, keys, snapshot_versions, check_drift…
 #   inputs: bus clock alert_sink
 #   outputs: 返回值
 #   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）

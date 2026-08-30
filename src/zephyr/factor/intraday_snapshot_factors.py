@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-L02-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 盘中横截面因子——基于最新 tick 快照计算（无历史序列依赖）。
 
 真源：
@@ -50,14 +47,14 @@
 #   name_zh: ① IntradayClose
 #   name_en: IntradayClose
 #   intro: 盘中最新成交价（横截面）。
-#   desc: 盘中最新成交价（横截面）。；公共方法（定义序）: compute；源码 L88-L101
+#   desc: 盘中最新成交价（横截面）。；公共方法（定义序）: compute；源码 L86-L99
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A2
 #   name_zh: ② IntradayVwap
 #   name_en: IntradayVwap
 #   intro: 盘中累计成交均价（amount/volume 横截面）。
-#   desc: 盘中累计成交均价（amount/volume 横截面）。；公共方法（定义序）: compute；源码 L105-L128
+#   desc: 盘中累计成交均价（amount/volume 横截面）。；公共方法（定义序）: compute；源码 L103-L126
 #   inputs: 无参数
 #   outputs: 返回值
 # 层: 输出

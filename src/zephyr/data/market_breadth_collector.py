@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-DATA-062 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 MOD-DATA-062 — 全市场分钟级宽度快照采集纯函数（92号清单 §8.2，44号备忘 §2 M1-④ 行 + §6 数据源表）。
 
 取数通道实证（2026-08-22 代码实证，真源=miniqmt_provider 既有实现）：
@@ -67,21 +64,21 @@ fail-open 纪律：
 #   name_zh: ① aggregate_market_ticks
 #   name_en: aggregate_market_ticks
 #   intro: 全市场 tick 字典 → 单分钟宽度聚合（纯函数，无 I/O）。
-#   desc: 全市场 tick 字典 → 单分钟宽度聚合（纯函数，无 I/O）。 Args: ticks: xtdata.get_full_tick 返回的 {stock_code: tick…；源码 L208-L290
+#   desc: 全市场 tick 字典 → 单分钟宽度聚合（纯函数，无 I/O）。 Args: ticks: xtdata.get_full_tick 返回的 {stock_code: tick…；源码 L206-L288
 #   inputs: ticks st_codes trade_date
 #   outputs: BreadthAggregate
 # - id: A2
 #   name_zh: ② build_insert_row
 #   name_en: build_insert_row
 #   intro: 聚合结果 → market_breadth_snapshot INSERT 行（列序=schemas INSERT_C…
-#   desc: 聚合结果 → market_breadth_snapshot INSERT 行（列序=schemas INSERT_COLUMNS 真源）。 Args: agg: aggrega…；源码 L293-L327
+#   desc: 聚合结果 → market_breadth_snapshot INSERT 行（列序=schemas INSERT_COLUMNS 真源）。 Args: agg: aggrega…；源码 L291-L325
 #   inputs: agg trade_date ts data_source degraded
 #   outputs: tuple
 # - id: A3
 #   name_zh: ③ load_current_st_codes
 #   name_en: load_current_st_codes
 #   intro: 加载当前有效 ST/*ST 裸码集合（fail-open：异常→(空集, False)+log，由调用方置 degra…
-#   desc: 加载当前有效 ST/*ST 裸码集合（fail-open：异常→(空集, False)+log，由调用方置 degraded=1）。 Args: query_fn: CH 查询函…；源码 L330-L364
+#   desc: 加载当前有效 ST/*ST 裸码集合（fail-open：异常→(空集, False)+log，由调用方置 degraded=1）。 Args: query_fn: CH 查询函…；源码 L328-L362
 #   inputs: query_fn as_of
 #   outputs: tuple[set[str], bool]
 #   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）

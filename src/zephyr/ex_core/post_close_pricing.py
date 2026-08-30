@@ -22,9 +22,6 @@
 # O1: PostCloseOrderSpec -> 调用方(申报通道装配层)
 # [/ALGO_FLOW]
 """
-
-
-
 D_EX_CORE — 盘后固定价格交易通道（40 号 §6.1 gap 16，函数级 MVP）。
 
 40 号 §2.12：尾盘清退时可选择将未成交订单转入盘后固定价格交易
@@ -60,28 +57,28 @@ ETF 套利）显式调用。
 #   name_zh: ① is_in_post_close_window
 #   name_en: is_in_post_close_window
 #   intro: 盘后固定价格窗口判定（15:05 ≤ t ≤ 15:30，含端点）。
-#   desc: 盘后固定价格窗口判定（15:05 ≤ t ≤ 15:30，含端点）。；源码 L149-L151
+#   desc: 盘后固定价格窗口判定（15:05 ≤ t ≤ 15:30，含端点）。；源码 L147-L149
 #   inputs: at_time
 #   outputs: bool
 # - id: A2
 #   name_zh: ② is_post_close_eligible
 #   name_en: is_post_close_eligible
 #   intro: 标的是否适用盘后固定价格交易（沪深 A 股+ETF；北交所暂未开通）。
-#   desc: 标的是否适用盘后固定价格交易（沪深 A 股+ETF；北交所暂未开通）。 北交所代码前缀：4xxxxx / 8xxxxx / 920xxx。；源码 L154-L161
+#   desc: 标的是否适用盘后固定价格交易（沪深 A 股+ETF；北交所暂未开通）。 北交所代码前缀：4xxxxx / 8xxxxx / 920xxx。；源码 L152-L159
 #   inputs: symbol
 #   outputs: bool
 # - id: A3
 #   name_zh: ③ validate_post_close_price
 #   name_en: validate_post_close_price
 #   intro: 价格规则校验：买入限价≥收盘价、卖出限价≤收盘价（违规拒绝）。
-#   desc: 价格规则校验：买入限价≥收盘价、卖出限价≤收盘价（违规拒绝）。；源码 L164-L185
+#   desc: 价格规则校验：买入限价≥收盘价、卖出限价≤收盘价（违规拒绝）。；源码 L162-L183
 #   inputs: side limit_price close_price
 #   outputs: 返回值
 # - id: A4
 #   name_zh: ④ convert_to_post_close_order
 #   name_en: convert_to_post_close_order
 #   intro: 未成交订单 → 盘后固定价格申报规格（40 号 §2.12 可选通道）。
-#   desc: 未成交订单 → 盘后固定价格申报规格（40 号 §2.12 可选通道）。 Args: order: 尾盘清退的未成交委托单。 close_price: 当日收盘价（盘后定价撮合基…；源码 L188-L238
+#   desc: 未成交订单 → 盘后固定价格申报规格（40 号 §2.12 可选通道）。 Args: order: 尾盘清退的未成交委托单。 close_price: 当日收盘价（盘后定价撮合基…；源码 L186-L236
 #   inputs: order close_price at_time
 #   outputs: PostCloseOrderSpec
 #   （注：A4 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）

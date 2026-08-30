@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-CMP-017 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 RegulatoryChangeTracker — 监管变更追踪器（MOD-CMP-017）。
 
 B14-04671（AUD-DRAFT-001-DIGEST P2 波 P2-W10，CAND-CMP-008，A9 M36-S05）：

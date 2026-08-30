@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-GOV_BACKFILL_CHECKER | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 L10 周末补下载检测器——检测过去N天缺失数据并精准补下载。
 
 设计理念（裁定 #ARCH-BACKFILL-001）：
@@ -57,56 +54,56 @@ L10 周末补下载检测器——检测过去N天缺失数据并精准补下载
 #   name_zh: ① get_trade_dates
 #   name_en: get_trade_dates
 #   intro: 获取过去N天的交易日列表（默认 A 股日历，可注入其他市场日历）。
-#   desc: 获取过去N天的交易日列表（默认 A 股日历，可注入其他市场日历）。 优先从 trade_calendar 表查 is_open=1；fallback 到 kline_daily…；源码 L235-L272
+#   desc: 获取过去N天的交易日列表（默认 A 股日历，可注入其他市场日历）。 优先从 trade_calendar 表查 is_open=1；fallback 到 kline_daily…；源码 L233-L270
 #   inputs: days calendar
 #   outputs: list[datetime.date]
 # - id: A2
 #   name_zh: ② detect_missing_dates
 #   name_en: detect_missing_dates
 #   intro: 检测指定表在哪些日期的数据行数低于阈值。
-#   desc: 检测指定表在哪些日期的数据行数低于阈值。 Args: table: 全表名含 db 前缀（如 c1_market.tick_data，来自品类注册表） dates: 待检测的日期…；源码 L278-L306
+#   desc: 检测指定表在哪些日期的数据行数低于阈值。 Args: table: 全表名含 db 前缀（如 c1_market.tick_data，来自品类注册表） dates: 待检测的日期…；源码 L276-L304
 #   inputs: table dates threshold
 #   outputs: list[datetime.date]
 # - id: A3
 #   name_zh: ③ detect_missing_dates_generic
 #   name_en: detect_missing_dates_generic
 #   intro: 通用缺失检测（支持任意日期列名）。
-#   desc: 通用缺失检测（支持任意日期列名）。 Args: table: 表名（如 kline_daily） date_col: 日期列名（如 trade_date） dates: 待检测的…；源码 L473-L503
+#   desc: 通用缺失检测（支持任意日期列名）。 Args: table: 表名（如 kline_daily） date_col: 日期列名（如 trade_date） dates: 待检测的…；源码 L471-L501
 #   inputs: table date_col dates threshold
 #   outputs: list[datetime.date]
 # - id: A4
 #   name_zh: ④ backfill_tick_data
 #   name_en: backfill_tick_data
 #   intro: 补下载指定日期的 tick 数据。
-#   desc: 补下载指定日期的 tick 数据。 通过 QMT xtdata 下载 + ch_writer 写入 ClickHouse。 每天分 09:30-10:00 和 10:00-15:…；源码 L612-L654
+#   desc: 补下载指定日期的 tick 数据。 通过 QMT xtdata 下载 + ch_writer 写入 ClickHouse。 每天分 09:30-10:00 和 10:00-15:…；源码 L610-L652
 #   inputs: dates
 #   outputs: int
 # - id: A5
 #   name_zh: ⑤ backfill_kline_index
 #   name_en: backfill_kline_index
 #   intro: 补下载 kline_index 指定缺失日期（显式窗口，绕开 last_key）。
-#   desc: 补下载 kline_index 指定缺失日期（显式窗口，绕开 last_key）。 与 scheduler.run_task 增量重跑的本质区别：run_task 窗口下限 =…；源码 L796-L857
+#   desc: 补下载 kline_index 指定缺失日期（显式窗口，绕开 last_key）。 与 scheduler.run_task 增量重跑的本质区别：run_task 窗口下限 =…；源码 L794-L855
 #   inputs: missing_dates symbols
 #   outputs: int
 # - id: A6
 #   name_zh: ⑥ run_known_gap_backfill
 #   name_en: run_known_gap_backfill
 #   intro: 检测并补下载已知数据缺口（audit 2.7/3.8 治本， ）。
-#   desc: 检测并补下载已知数据缺口（audit 2.7/3.8 治本， ）。 与 run_weekend_backfill（7天窗口）互补： - run_weekend_backfill:…；源码 L1133-L1220
+#   desc: 检测并补下载已知数据缺口（audit 2.7/3.8 治本， ）。 与 run_weekend_backfill（7天窗口）互补： - run_weekend_backfill:…；源码 L1131-L1218
 #   inputs: scheduler calendar
 #   outputs: dict
 # - id: A7
 #   name_zh: ⑦ run_weekend_backfill
 #   name_en: run_weekend_backfill
 #   intro: L10 周末补下载主入口（全表覆盖）。
-#   desc: L10 周末补下载主入口（全表覆盖）。 流程： 1. 获取过去N天的交易日列表 2. 动态发现所有表（从 tasks.yaml 自动读取，新增表自动纳入） 3. 逐表检测缺失日期…；源码 L1223-L1303
+#   desc: L10 周末补下载主入口（全表覆盖）。 流程： 1. 获取过去N天的交易日列表 2. 动态发现所有表（从 tasks.yaml 自动读取，新增表自动纳入） 3. 逐表检测缺失日期…；源码 L1221-L1301
 #   inputs: scheduler days skip_known_gaps calendar
 #   outputs: dict
 # - id: A8
 #   name_zh: ⑧ run_daily_backfill
 #   name_en: run_daily_backfill
 #   intro: L10.5 每日盘后补下载主入口（检测当日缺口并补下载）。
-#   desc: L10.5 每日盘后补下载主入口（检测当日缺口并补下载）。 治本场景（2026-07-30， ）： - 7-29 QMT 客户端 15:31 断连 → intraday_real…；源码 L1306-L1339
+#   desc: L10.5 每日盘后补下载主入口（检测当日缺口并补下载）。 治本场景（2026-07-30， ）： - 7-29 QMT 客户端 15:31 断连 → intraday_real…；源码 L1304-L1337
 #   inputs: scheduler
 #   outputs: dict
 # 层: 输出

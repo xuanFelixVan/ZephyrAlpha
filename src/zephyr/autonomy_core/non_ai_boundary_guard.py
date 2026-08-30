@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-AU-012 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 NonAIBoundaryGuard — Non-AI 边界守卫 (MOD-AU-012)
 
 B10-02362 / D-AUTONOMY-33（AUD-DRAFT-001-DIGEST P1 波 W-P1-12，§30.5.2）：

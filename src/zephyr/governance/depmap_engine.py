@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-GOV-051 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 DepmapEngine — DepMap 依赖扫描引擎（MOD-GOV-051）。
 
 B13-04303（AUD-DRAFT-001-DIGEST P2 波 P2-W12，CAND-WORKTREE-002，A3

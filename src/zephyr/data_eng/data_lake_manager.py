@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-DATENG-006 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 DataLakeManager — 数据湖三层管理器（MOD-DATENG-006）。
 
 B5-07240（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATENG-009，B5）：热层

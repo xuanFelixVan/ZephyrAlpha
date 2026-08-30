@@ -16,9 +16,6 @@
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: 监督循环为"有界 while not stop_event + close_at 收盘截止 + sleeper 轮询"（start_paper_session.py 保活同口径，PERM-TRIGGER 门禁批准的过渡形态结构），非 while True 永久轮询
 """
-
-
-
 LiveStrategyAdapter — 模拟盘策略常驻服务适配器（57 号文 GAP-2 常驻服务化）。
 
 真源

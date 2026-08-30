@@ -14,9 +14,6 @@
 # [TESTS] tests/zephyr/data/test_news_taxonomy.py
 # [TTL] permanent
 """
-
-
-
 news_taxonomy — 新闻语料四分分类法唯一真源（CAND-DAT-024）。
 
 四类（按源确定，无需模型）：
@@ -41,7 +38,7 @@ Version: 0.1.0
 #   name_zh: ① category_of
 #   name_en: category_of
 #   intro: 源标识 → category（未识别兜底 news；空串按 news 处理）。
-#   desc: 源标识 → category（未识别兜底 news；空串按 news 处理）。；源码 L81-L90
+#   desc: 源标识 → category（未识别兜底 news；空串按 news 处理）。；源码 L79-L88
 #   inputs: source
 #   outputs: str
 # 层: 输出

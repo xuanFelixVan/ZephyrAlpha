@@ -16,10 +16,6 @@
 # [TTL] permanent
 
 """
-
-
-
-
 MOD-INF-019: Agent Spec — IDE Watcher
 Blueprint: docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md
 Author: factory-agent
@@ -36,7 +32,7 @@ Version: 0.1.0
 #   name_zh: ① IDEWatcher
 #   name_en: IDEWatcher
 #   intro: IDE 热重载监视器——Skill 文件变更自动刷新 AGENTS.
-#   desc: IDE 热重载监视器——Skill 文件变更自动刷新 AGENTS.md；公共方法（定义序）: callbacks, last_mtimes, scan, on_change；源码 L60-L108
+#   desc: IDE 热重载监视器——Skill 文件变更自动刷新 AGENTS.md；公共方法（定义序）: callbacks, last_mtimes, scan, on_change；源码 L57-L105
 #   inputs: skills_dir
 #   outputs: 返回值
 # 层: 输出

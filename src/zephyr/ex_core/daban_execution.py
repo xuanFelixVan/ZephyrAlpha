@@ -24,9 +24,6 @@
 # O1: 执行计划 list[dict] / 时点决策 dict / 容量测算 dict
 # [/ALGO_FLOW]
 """
-
-
-
 打板执行族（24_daban_strategy_detail §3.13 缺失#4 + §3.14 缺失#11/#12 施工，Phase 3）。
 
 缺失#4 DabanExecutionAlgorithm（分笔建仓，容量管理执行层）：v1.9.3 升级
@@ -69,14 +66,14 @@ spec 转写登记（语义锁定不偏移）：
 #   name_zh: ② DabanTimingDecision
 #   name_en: DabanTimingDecision
 #   intro: 打板时点决策（v1.9.3 补，追板 vs 埋伏权衡）。
-#   desc: 打板时点决策（v1.9.3 补，追板 vs 埋伏权衡）。；公共方法（定义序）: decide_timing；源码 L172-L210
+#   desc: 打板时点决策（v1.9.3 补，追板 vs 埋伏权衡）。；公共方法（定义序）: decide_timing；源码 L170-L208
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A3
 #   name_zh: ③ DynamicCapacityCalculator
 #   name_en: DynamicCapacityCalculator
 #   intro: 打板容量动态测算（v1.9.3 补，实时流动性→可下仓量）。
-#   desc: 打板容量动态测算（v1.9.3 补，实时流动性→可下仓量）。与 §3.4 13 约束链（静态阈值）互补。；公共方法（定义序）: calculate；源码 L214-L247
+#   desc: 打板容量动态测算（v1.9.3 补，实时流动性→可下仓量）。与 §3.4 13 约束链（静态阈值）互补。；公共方法（定义序）: calculate；源码 L212-L245
 #   inputs: 无参数
 #   outputs: 返回值
 # 层: 输出

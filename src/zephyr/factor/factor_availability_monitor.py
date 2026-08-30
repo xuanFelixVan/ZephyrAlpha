@@ -14,9 +14,6 @@
 # [TESTS] tests/factor/test_factor_availability_monitor.py
 # [TTL] permanent
 """
-
-
-
 ZephyrAlpha — D_FACTOR 因子可用性监控器（CAND-FAC-006 canonical / B13-04305，合并 B2-05116 定义）。
 
 合并定义裁定（AUD-DRAFT-001-DIGEST P0 合并对）：
@@ -47,14 +44,14 @@ min_build_spec（合并版）：
 #   name_zh: ① default_alert_sink
 #   name_en: default_alert_sink
 #   intro: 惰性装配 shared.alerts.alert_manager 告警路由（数据告警路由复用）。
-#   desc: 惰性装配 shared.alerts.alert_manager 告警路由（数据告警路由复用）。 Returns: sink(severity, title, message)：…；源码 L123-L146
+#   desc: 惰性装配 shared.alerts.alert_manager 告警路由（数据告警路由复用）。 Returns: sink(severity, title, message)：…；源码 L121-L144
 #   inputs: 无参数
 #   outputs: Callable[[str, str, str], None]
 # - id: A2
 #   name_zh: ② FactorAvailabilityMonitor
 #   name_en: FactorAvailabilityMonitor
 #   intro: 因子覆盖率 + 缺失比例监控，三级阈值门控。
-#   desc: 因子覆盖率 + 缺失比例监控，三级阈值门控。；公共方法（定义序）: compute_daily, signal_weight, annotate_signal；源码 L149-L286
+#   desc: 因子覆盖率 + 缺失比例监控，三级阈值门控。；公共方法（定义序）: compute_daily, signal_weight, annotate_signal；源码 L147-L284
 #   inputs: registry alert_sink
 #   outputs: 返回值
 #   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）

@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 feedback_policy.py — Audit-findings → policy recommendation bridge.
 
 Two parallel APIs coexist in this module:
@@ -45,15 +42,15 @@ existing audit-orchestrator integrations.
 # - id: A1
 #   name_zh: ① PolicyDecision
 #   name_en: PolicyDecision
-#   intro: class PolicyDecision 源码 L140-L156
-#   desc: 公共方法（定义序）: to_dict；源码 L140-L156
+#   intro: class PolicyDecision 源码 L138-L154
+#   desc: 公共方法（定义序）: to_dict；源码 L138-L154
 #   inputs: action confidence detail
 #   outputs: 返回值
 # - id: A2
 #   name_zh: ② FeedbackPolicy
 #   name_en: FeedbackPolicy
-#   intro: class FeedbackPolicy 源码 L159-L241
-#   desc: 公共方法（定义序）: evaluate, apply_high_confidence, is_available；源码 L159-L241
+#   intro: class FeedbackPolicy 源码 L157-L239
+#   desc: 公共方法（定义序）: evaluate, apply_high_confidence, is_available；源码 L157-L239
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A3
@@ -74,7 +71,7 @@ existing audit-orchestrator integrations.
 #   name_zh: ⑤ feedback_to_policy
 #   name_en: feedback_to_policy
 #   intro: Functional entry point — aggregate feedback and return reco…
-#   desc: Functional entry point — aggregate feedback and return recommendations. Args: feedback: l…；源码 L453-L472
+#   desc: Functional entry point — aggregate feedback and return recommendations. Args: feedback: l…；源码 L451-L470
 #   inputs: feedback policies
 #   outputs: list[PolicyRecommendation]
 #   （注：A5 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）

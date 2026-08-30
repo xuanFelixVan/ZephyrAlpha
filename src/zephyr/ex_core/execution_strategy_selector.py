@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-EX-062 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 Execution Strategy Selector — 执行策略选择器 (MOD-EX-062)
 
 按订单特征选择执行算法（40_execution_broker §决策② 分档表的
@@ -44,7 +41,7 @@ Fail-Closed：ADV 非正 / 数量非正一律拒判（无量能真源不做拍�
 #   name_zh: ① select_execution_strategy
 #   name_en: select_execution_strategy
 #   intro: 按订单特征选执行策略（纯函数：同输入必同输出，可独立单测）。
-#   desc: 按订单特征选执行策略（纯函数：同输入必同输出，可独立单测）。 Raises: StrategySelectionError: ADV/数量非正（Fail-Closed），或订单…；源码 L140-L196
+#   desc: 按订单特征选执行策略（纯函数：同输入必同输出，可独立单测）。 Raises: StrategySelectionError: ADV/数量非正（Fail-Closed），或订单…；源码 L138-L194
 #   inputs: features
 #   outputs: StrategySelection
 #   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）

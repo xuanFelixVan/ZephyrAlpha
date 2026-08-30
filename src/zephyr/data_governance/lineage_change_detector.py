@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-DATA_GOV-010 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 lineage_change_detector — 血缘变更检测器（MOD-DATA_GOV-010）。
 
 B10-02319（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATGOV-007，A1 M8-S07；

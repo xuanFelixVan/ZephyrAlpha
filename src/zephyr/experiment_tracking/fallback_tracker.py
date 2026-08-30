@@ -16,9 +16,6 @@
 # [TTL] permanent
 # [ARCH-REF] #ARCH-REGIME-DEADZONE-001 #ARCH-OBS-EXP-TRACK-001
 """
-
-
-
 L_INFRA_TELEMETRY — JSON 实验跟踪器（单一后端实现）。
 
 与 ExperimentTracker 同接口，数据写本地 JSON 文件，供 query.py 扫描查询。

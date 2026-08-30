@@ -68,7 +68,7 @@ Phase 3 退役移除——相关字段已从蓝图 frontmatter 与 blueprint_reg
 # - id: A2
 #   name_zh: ② check_triple_alignment
 #   name_en: check_triple_alignment
-#   intro: check_triple_alignment(specific_module, warn_only) 源码 L498-…
+#   intro: check_triple_alignment(specific_module, warn_only)…
 #   desc: 源码 L498-L542
 #   inputs: specific_module warn_only
 #   outputs: TripleAlignmentResult

@@ -23,9 +23,6 @@
 # ---
 
 """
-
-
-
 D_FACTOR — Value Factor
 
 估值因子。使用简易 PE proxy（价格/年化盈利估算）。
@@ -44,8 +41,8 @@ CTR 契约：
 # - id: A1
 #   name_zh: ① ValueFactor
 #   name_en: ValueFactor
-#   intro: class ValueFactor 源码 L71-L101
-#   desc: 公共方法（定义序）: compute, validate；源码 L71-L101
+#   intro: class ValueFactor 源码 L69-L99
+#   desc: 公共方法（定义序）: compute, validate；源码 L69-L99
 #   inputs: 无参数
 #   outputs: 返回值
 # 层: 输出

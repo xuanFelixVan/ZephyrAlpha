@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-GOV-integrity_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 数据完整性巡检器——每天盘后检测全表当日数据是否达标。
 
 设计理念（数据韧性三层机制 §3）：
@@ -41,7 +38,7 @@
 #   name_zh: ① run_daily_check
 #   name_en: run_daily_check
 #   intro: 每天盘后数据完整性巡检主入口。
-#   desc: 每天盘后数据完整性巡检主入口。 动态发现 tasks.yaml 中所有表，逐表检查当天数据行数是否达标。 不达标的表通过 alerter 告警，结果记录到 progress_st…；源码 L219-L330
+#   desc: 每天盘后数据完整性巡检主入口。 动态发现 tasks.yaml 中所有表，逐表检查当天数据行数是否达标。 不达标的表通过 alerter 告警，结果记录到 progress_st…；源码 L217-L328
 #   inputs: scheduler
 #   outputs: dict
 # 层: 输出

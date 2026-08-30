@@ -16,10 +16,6 @@
 # [TTL] permanent
 
 """
-
-
-
-
 Feedback Loop Decision Engine
 ================================
 
@@ -46,15 +42,15 @@ FLE 单向依赖原则（ 不直接 import Orchestrator，
 # - id: A1
 #   name_zh: ① DecisionEngine
 #   name_en: DecisionEngine
-#   intro: class DecisionEngine 源码 L137-L221
-#   desc: 公共方法（定义序）: adapter, pending, evaluate_anomaly, flush_pending, pending_count；源码 L137-L221
+#   intro: class DecisionEngine 源码 L134-L218
+#   desc: 公共方法（定义序）: adapter, pending, evaluate_anomaly, flush_pending, pending_count；源码 L134-L218
 #   inputs: adapter
 #   outputs: 返回值
 # - id: A2
 #   name_zh: ② reflect_on_blueprint
 #   name_en: reflect_on_blueprint
-#   intro: reflect_on_blueprint(payload) 源码 L224-L249
-#   desc: 源码 L224-L249
+#   intro: reflect_on_blueprint(payload) 源码 L221-L246
+#   desc: 源码 L221-L246
 #   inputs: payload
 #   outputs: dict[str, Any]
 #   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）

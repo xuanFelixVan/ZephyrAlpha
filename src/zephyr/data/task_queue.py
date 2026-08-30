@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-GOV-task_queue | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 任务依赖图 + 优先级队列（MOD-L00-004 §6.3 任务依赖图 + §6.4 并发控制）。
 
 管理任务间的 DAG 依赖关系，决定哪些任务可以执行：

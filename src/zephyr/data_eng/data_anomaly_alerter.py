@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-DATENG-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 DataAnomalyAlerter — 数据异常告警器（MOD-DATENG-001）。
 
 B13-04267（AUD-DRAFT-001-DIGEST P1 波 W-P1-24，CAND-DATENG-004，A3数据架构
@@ -53,35 +50,35 @@ integrity_checker "告警通过alerter" 同口径）。
 #   name_zh: ① detect_price_jumps
 #   name_en: detect_price_jumps
 #   intro: 价格跳变检测：对数收益相对滚动窗口的 z-score，|z|≥阈值 → 信号。
-#   desc: 价格跳变检测：对数收益相对滚动窗口的 z-score，|z|≥阈值 → 信号。；源码 L226-L258
+#   desc: 价格跳变检测：对数收益相对滚动窗口的 z-score，|z|≥阈值 → 信号。；源码 L224-L256
 #   inputs: closes symbol z_threshold window
 #   outputs: list[AnomalySignal]
 # - id: A2
 #   name_zh: ② detect_missing_rate
 #   name_en: detect_missing_rate
 #   intro: 缺失率检测：缺失率=1−actual/expected ≥ warn → 信号。
-#   desc: 缺失率检测：缺失率=1−actual/expected ≥ warn → 信号。；源码 L261-L285
+#   desc: 缺失率检测：缺失率=1−actual/expected ≥ warn → 信号。；源码 L259-L283
 #   inputs: expected actual symbol warn
 #   outputs: list[AnomalySignal]
 # - id: A3
 #   name_zh: ③ detect_volume_price_divergence
 #   name_en: detect_volume_price_divergence
 #   intro: 量价背离检测：滚动窗口收盘价与成交量相关系数 < 阈值 → 信号。
-#   desc: 量价背离检测：滚动窗口收盘价与成交量相关系数 < 阈值 → 信号。；源码 L288-L317
+#   desc: 量价背离检测：滚动窗口收盘价与成交量相关系数 < 阈值 → 信号。；源码 L286-L315
 #   inputs: closes volumes symbol window corr_threshold
 #   outputs: list[AnomalySignal]
 # - id: A4
 #   name_zh: ④ detect_cross_source_deviation
 #   name_en: detect_cross_source_deviation
 #   intro: 跨源偏差检测：双通道同标的价偏差 |Δ|/ref×10⁴ bps 最大值超容差 → 信号。
-#   desc: 跨源偏差检测：双通道同标的价偏差 |Δ|/ref×10⁴ bps 最大值超容差 → 信号。；源码 L320-L347
+#   desc: 跨源偏差检测：双通道同标的价偏差 |Δ|/ref×10⁴ bps 最大值超容差 → 信号。；源码 L318-L345
 #   inputs: primary secondary symbol tolerance_bps
 #   outputs: list[AnomalySignal]
 # - id: A5
 #   name_zh: ⑤ DataAnomalyAlerter
 #   name_en: DataAnomalyAlerter
 #   intro: 数据异常告警器（MOD-DATENG-001）。
-#   desc: 数据异常告警器（MOD-DATENG-001）。 用法： alerter = DataAnomalyAlerter(alert_sink=my_sink, merge_windo…；公共方法（定义序）: grade,…
+#   desc: 数据异常告警器（MOD-DATENG-001）。 用法： alerter = DataAnomalyAlerter(alert_sink=my_sink, merge_windo…；公共方法（定义序）: grade…
 #   inputs: alert_sink merge_window_sec maintenance_windows
 #   outputs: 返回值
 #   （注：A5 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）

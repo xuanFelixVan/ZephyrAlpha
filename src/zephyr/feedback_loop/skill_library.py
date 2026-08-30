@@ -15,8 +15,6 @@
 # [A_module] module_id=MOD-FBL-003 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
 SkillLibrary — Voyager 式技能库（MOD-FBL-003）。
 
 B12-03612（AUD-DRAFT-001-DIGEST P2 波 P2-W14，CAND-FBL-005，B12）：技能条目

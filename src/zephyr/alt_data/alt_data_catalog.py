@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-ALT-008 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 AltDataCatalog — 另类数据目录（MOD-ALT-008）。
 
 B5-07089（AUD-DRAFT-001-DIGEST P2 波 P2-W04，CAND-TESTA-024，B5 D-ALT-DATA-09，

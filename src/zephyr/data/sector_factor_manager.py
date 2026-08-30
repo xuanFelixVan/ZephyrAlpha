@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 板块因子数据管理器（CAND-DAT-011 / B1-00598，86 板块因子数据管理器）。
 
 深挖裁定=做(P1)：880板块K线下载/快照/排名/盘中聚合已建（sector_kline_downloader
@@ -45,7 +42,7 @@
 #   name_zh: ① SectorFactorManager
 #   name_en: SectorFactorManager
 #   intro: 板块因子数据管理器——完整性校验/成分挂接/轮动因子/质量评分。
-#   desc: 板块因子数据管理器——完整性校验/成分挂接/轮动因子/质量评分。；公共方法（定义序）: check_coverage, attach_constituent_map, compute_rotation_factors,…
+#   desc: 板块因子数据管理器——完整性校验/成分挂接/轮动因子/质量评分。；公共方法（定义序）: check_coverage, attach_constituent_map, compute_rotation_factors…
 #   inputs: 无参数
 #   outputs: 返回值
 #   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）

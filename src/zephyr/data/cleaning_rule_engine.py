@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 数据清洗规则引擎（CAND-DAT-007 / B10-01347）。
 
 min_build_spec 对齐（深挖裁定=做 P0）：
@@ -70,7 +67,7 @@ min_build_spec 对齐（深挖裁定=做 P0）：
 #   name_zh: ③ parse_rules
 #   name_en: parse_rules
 #   intro: 解析 DSL（dict 列表）为 CleaningRule 列表。
-#   desc: 解析 DSL（dict 列表）为 CleaningRule 列表。 Raises: CleaningRuleError: op 非法 / 必填字段缺失 / action 非法；源码 L300-L342
+#   desc: 解析 DSL（dict 列表）为 CleaningRule 列表。 Raises: CleaningRuleError: op 非法 / 必填字段缺失 / action 非法；源码 L298-L340
 #   inputs: specs
 #   outputs: list[CleaningRule]
 # - id: A4
@@ -84,14 +81,14 @@ min_build_spec 对齐（深挖裁定=做 P0）：
 #   name_zh: ⑤ run_quality_gate
 #   name_en: run_quality_gate
 #   intro: 对批量记录执行清洗规则门控，输出拦截报告。
-#   desc: 对批量记录执行清洗规则门控，输出拦截报告。 对齐 gov_enforcement.rule_enforcement.quality_gate.apply_quality_gate…；源码 L463-L496
+#   desc: 对批量记录执行清洗规则门控，输出拦截报告。 对齐 gov_enforcement.rule_enforcement.quality_gate.apply_quality_gate…；源码 L461-L494
 #   inputs: engine table rows
 #   outputs: tuple[list[dict[str, Any]], dict[str, A…
 # - id: A6
 #   name_zh: ⑥ main
 #   name_en: main
 #   intro: 入口——待实现。
-#   desc: 入口——待实现。；源码 L499-L500
+#   desc: 入口——待实现。；源码 L497-L498
 #   inputs: 无参数
 #   outputs: 返回值
 #   （注：A6 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）

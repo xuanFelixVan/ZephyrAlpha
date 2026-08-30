@@ -66,7 +66,7 @@ scalability: 10->100->500->1500模块渐进路线
 # - id: A3
 #   name_zh: ③ guard_loop
 #   name_en: guard_loop
-#   intro: guard_loop(check_interval_sec, directory, on_degraded) 源码 L…
+#   intro: guard_loop(check_interval_sec, directory, on_degraded)…
 #   desc: 源码 L322-L378
 #   inputs: check_interval_sec directory on_degraded
 #   outputs: 返回值

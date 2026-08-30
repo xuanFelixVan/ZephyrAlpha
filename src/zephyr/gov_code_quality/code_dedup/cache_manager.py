@@ -36,7 +36,7 @@ Stage 0: 函数缓存管理器 — 增量扫描的加速核心.
 #   name_zh: ① CacheManager
 #   name_en: CacheManager
 #   intro: 函数缓存管理器.
-#   desc: 函数缓存管理器.；公共方法（定义序）: load, save, incremental_update, full_rebuild, get_by_id, get_by_signature, cache；源码 L104-…
+#   desc: 函数缓存管理器.；公共方法（定义序）: load, save, incremental_update, full_rebuild, get_by_id, get_by_signature, cache…
 #   inputs: cache_path
 #   outputs: 返回值
 #   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）

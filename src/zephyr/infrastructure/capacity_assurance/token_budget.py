@@ -41,7 +41,7 @@ token_budget.py — Token 估算工具 SSoT
 #   name_zh: ① TokenBudgetManager
 #   name_en: TokenBudgetManager
 #   intro: class TokenBudgetManager 源码 L98-L150
-#   desc: 公共方法（定义序）: level, cap, consumed, remaining, degraded, set_level, consume, can_consume, reset, to_dict；源码 L98-…
+#   desc: 公共方法（定义序）: level, cap, consumed, remaining, degraded, set_level, consume, can_consume, reset, to_dict…
 #   inputs: session_id
 #   outputs: 返回值
 # - id: A2

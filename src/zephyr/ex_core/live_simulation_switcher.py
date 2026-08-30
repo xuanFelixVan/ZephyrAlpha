@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-EX-035 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 Live/Simulation Switcher — 实盘/模拟切换开关 (MOD-EX-035)
 
 D-EX-CORE-35（2026-08-23 门禁修正版）：A 股/QMT 实盘与模拟盘一键切换 +

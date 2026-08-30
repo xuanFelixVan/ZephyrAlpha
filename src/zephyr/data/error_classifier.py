@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-GOV-error_classifier | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 数据源错误分类器——根据错误字符串判断可恢复性。
 
 设计理念（数据韧性三层机制 §2）：
@@ -46,21 +43,21 @@ Usage::
 #   name_zh: ① classify_error
 #   name_en: classify_error
 #   intro: 分类错误类型。
-#   desc: 分类错误类型。 Args: error: 错误字符串（FetchResult.error）。 Returns: "unrecoverable" | "recoverable" |…；源码 L146-L161
+#   desc: 分类错误类型。 Args: error: 错误字符串（FetchResult.error）。 Returns: "unrecoverable" | "recoverable" |…；源码 L144-L159
 #   inputs: error
 #   outputs: str
 # - id: A2
 #   name_zh: ② is_unrecoverable
 #   name_en: is_unrecoverable
 #   intro: 是否不可恢复错误（应立即 fallback）。
-#   desc: 是否不可恢复错误（应立即 fallback）。；源码 L164-L166
+#   desc: 是否不可恢复错误（应立即 fallback）。；源码 L162-L164
 #   inputs: error
 #   outputs: bool
 # - id: A3
 #   name_zh: ③ is_recoverable
 #   name_en: is_recoverable
 #   intro: 是否可恢复错误（应重试）。
-#   desc: 是否可恢复错误（应重试）。；源码 L169-L171
+#   desc: 是否可恢复错误（应重试）。；源码 L167-L169
 #   inputs: error
 #   outputs: bool
 # 层: 输出

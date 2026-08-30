@@ -16,10 +16,6 @@
 # [TTL] permanent
 
 """
-
-
-
-
 audit-trail.privacy — MOD-INF-020 · PII 检测与脱敏
 ====================================================
 蓝图 D-020-11 · PII 模式检测 + 路径哈希 + 脱敏策略
@@ -43,15 +39,15 @@ PII 模式
 # - id: A1
 #   name_zh: ① PrivacyGuard
 #   name_en: PrivacyGuard
-#   intro: class PrivacyGuard 源码 L122-L211
-#   desc: 公共方法（定义序）: default_policy, patterns, detect_pii, redact, hash_path；源码 L122-L211
+#   intro: class PrivacyGuard 源码 L119-L208
+#   desc: 公共方法（定义序）: default_policy, patterns, detect_pii, redact, hash_path；源码 L119-L208
 #   inputs: custom_patterns default_policy
 #   outputs: 返回值
 # - id: A2
 #   name_zh: ② hash_path
 #   name_en: hash_path
-#   intro: hash_path(path) 源码 L214-L216
-#   desc: 源码 L214-L216
+#   intro: hash_path(path) 源码 L211-L213
+#   desc: 源码 L211-L213
 #   inputs: path
 #   outputs: str
 #   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）

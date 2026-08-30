@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-GOV-052 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 GovPolicyManager — 治理策略管理器（MOD-GOV-052）。
 
 B9-10877（AUD-DRAFT-001-DIGEST P2 波 P2-W12，CAND-WORKTREE-003，B9

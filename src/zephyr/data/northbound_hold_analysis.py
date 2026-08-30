@@ -23,9 +23,6 @@
 # O1: 变化明细 DataFrame / top_add+top_reduce dict / 净流入 float
 # [/ALGO_FLOW]
 """
-
-
-
 北向季度持仓快照分析层（19 号 memo §6.3/§6.5 MVP，数据断档后的准北向估算）。
 
 港交所 2024-08-19 停发日频北向后，季度持仓快照是唯一的北向持仓真源
@@ -68,21 +65,21 @@ memo 审定的 MVP 两项（单公式 Δ持股数量 × 当季 VWAP，pandas 数
 #   name_zh: ① compute_quarter_position_changes
 #   name_en: compute_quarter_position_changes
 #   intro: 两季度间个股主动增减仓金额（Δ持股 × 当季 VWAP）。
-#   desc: 两季度间个股主动增减仓金额（Δ持股 × 当季 VWAP）。 Args: snapshot: 持仓快照（列 trade_date/ts_code/hold_share）。 prev…；源码 L125-L169
+#   desc: 两季度间个股主动增减仓金额（Δ持股 × 当季 VWAP）。 Args: snapshot: 持仓快照（列 trade_date/ts_code/hold_share）。 prev…；源码 L123-L167
 #   inputs: snapshot prev_date curr_date vwap
 #   outputs: pd.DataFrame
 # - id: A2
 #   name_zh: ② top_position_changes
 #   name_en: top_position_changes
 #   intro: top 加仓/减仓排名（§6.3 流量信号；零变动标的不入榜）。
-#   desc: top 加仓/减仓排名（§6.3 流量信号；零变动标的不入榜）。 Args: changes: compute_quarter_position_changes 输出。 top_…；源码 L172-L185
+#   desc: top 加仓/减仓排名（§6.3 流量信号；零变动标的不入榜）。 Args: changes: compute_quarter_position_changes 输出。 top_…；源码 L170-L183
 #   inputs: changes top_n
 #   outputs: dict[str, pd.DataFrame]
 # - id: A3
 #   name_zh: ③ estimate_quarterly_net_inflow
 #   name_en: estimate_quarterly_net_inflow
 #   intro: 季度净流入估算（§6.5）：Σ Δ持股 × 当季 VWAP。
-#   desc: 季度净流入估算（§6.5）：Σ Δ持股 × 当季 VWAP。 季度颗粒度的"准北向净流入"——可与国信季度估算（如 2026Q2 ~2193 亿） 交叉验证误差范围。缺 VWAP…；源码 L188-L200
+#   desc: 季度净流入估算（§6.5）：Σ Δ持股 × 当季 VWAP。 季度颗粒度的"准北向净流入"——可与国信季度估算（如 2026Q2 ~2193 亿） 交叉验证误差范围。缺 VWAP…；源码 L186-L198
 #   inputs: snapshot prev_date curr_date vwap
 #   outputs: float
 # 层: 输出

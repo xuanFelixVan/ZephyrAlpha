@@ -51,7 +51,7 @@ tushare 新闻权限开通后的接入面——API 调用全注入（不真发�
 #   name_zh: ① TushareNewsConnector
 #   name_en: TushareNewsConnector
 #   intro: tushare 新闻源接入器（注入API + 去重指纹 + 回补校验 + 质量门控）。
-#   desc: tushare 新闻源接入器（注入API + 去重指纹 + 回补校验 + 质量门控）。；公共方法（定义序）: fingerprint, fetch_latest, backfill, seen_count；源码 L13…
+#   desc: tushare 新闻源接入器（注入API + 去重指纹 + 回补校验 + 质量门控）。；公共方法（定义序）: fingerprint, fetch_latest, backfill, seen_count…
 #   inputs: api clock gate dedup_window_seconds source
 #   outputs: 返回值
 #   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）

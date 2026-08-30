@@ -41,7 +41,7 @@ RI-12 AutoDiagnostics — 自动诊断引擎
 #   name_zh: ② AutoDiagnostics
 #   name_en: AutoDiagnostics
 #   intro: 自动诊断引擎
-#   desc: 自动诊断引擎 基于规则模式的异常诊断，支持： - 多维度症状匹配 - 置信度评估 - 根因推断 - 修复建议生成；公共方法（定义序）: diagnosis_count, rules, diagnose；源码 L141-…
+#   desc: 自动诊断引擎 基于规则模式的异常诊断，支持： - 多维度症状匹配 - 置信度评估 - 根因推断 - 修复建议生成；公共方法（定义序）: diagnosis_count, rules, diagnose…
 #   inputs: config_path
 #   outputs: 返回值
 #   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）

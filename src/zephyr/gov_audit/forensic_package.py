@@ -16,11 +16,6 @@
 # [TTL] permanent
 
 """
-
-
-
-
-
 Forensic Package — v0.8.0 取证就绪: escalation event bundle+hash chain+timestamp。
 
 # [ALGO_FLOW]
@@ -33,8 +28,8 @@ Forensic Package — v0.8.0 取证就绪: escalation event bundle+hash chain+tim
 # - id: A1
 #   name_zh: ① ForensicPackage
 #   name_en: ForensicPackage
-#   intro: class ForensicPackage 源码 L60-L103
-#   desc: 公共方法（定义序）: chain, events, bundle, verify_chain；源码 L60-L103
+#   intro: class ForensicPackage 源码 L56-L99
+#   desc: 公共方法（定义序）: chain, events, bundle, verify_chain；源码 L56-L99
 #   inputs: 无参数
 #   outputs: 返回值
 # 层: 输出

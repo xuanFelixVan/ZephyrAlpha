@@ -16,10 +16,6 @@
 # [TTL] permanent
 
 """
-
-
-
-
 depgraph Schema DDL + 版本化迁移框架
 ========================================
 依据：数据库合并方案（9库->3库），depgraph 作为依赖图专用数据库（PostgreSQL）
@@ -109,70 +105,70 @@ P2 迁移后路径真源（2026-06-27 治本）
 #   name_zh: ① init_db
 #   name_en: init_db
 #   intro: 验证 depgraph (PostgreSQL) schema 健康性（幂等）。
-#   desc: 验证 depgraph (PostgreSQL) schema 健康性（幂等）。 P2迁移后：PG schema 由 scripts/governance/migrate_sql…；源码 L1498-L1537
+#   desc: 验证 depgraph (PostgreSQL) schema 健康性（幂等）。 P2迁移后：PG schema 由 scripts/governance/migrate_sql…；源码 L1495-L1534
 #   inputs: db_path echo
 #   outputs: 返回值
 # - id: A2
 #   name_zh: ② release_depgraph_pg_connection
 #   name_en: release_depgraph_pg_connection
 #   intro: 归还 get_depgraph_pg_connection() 获取的连接（§5.64.1 配套接口）。
-#   desc: 归还 get_depgraph_pg_connection() 获取的连接（§5.64.1 配套接口）。 池化连接：回滚悬挂事务 + 归一化 autocommit + RESET…；源码 L1636-L1676
+#   desc: 归还 get_depgraph_pg_connection() 获取的连接（§5.64.1 配套接口）。 池化连接：回滚悬挂事务 + 归一化 autocommit + RESET…；源码 L1633-L1673
 #   inputs: conn
 #   outputs: 返回值
 # - id: A3
 #   name_zh: ③ get_depgraph_pg_connection
 #   name_en: get_depgraph_pg_connection
 #   intro: 返回 depgraph (PostgreSQL) 连接。
-#   desc: 返回 depgraph (PostgreSQL) 连接。 所有 depgraph 连接必须经此入口（统一 PG 配置，防止散点连接绕过连接池配置）。 角色分级访问控制 - 默认…；源码 L1695-L1761
+#   desc: 返回 depgraph (PostgreSQL) 连接。 所有 depgraph 连接必须经此入口（统一 PG 配置，防止散点连接绕过连接池配置）。 角色分级访问控制 - 默认…；源码 L1692-L1758
 #   inputs: db_path superuser read_only autocommit replica pooled check_same_thre…
 #   outputs: psycopg2.extensions.connection
 # - id: A4
 #   name_zh: ④ table_names
 #   name_en: table_names
 #   intro: 返回 depgraph (PostgreSQL) 中所有 public schema 表名。
-#   desc: 返回 depgraph (PostgreSQL) 中所有 public schema 表名。；源码 L1804-L1817
+#   desc: 返回 depgraph (PostgreSQL) 中所有 public schema 表名。；源码 L1801-L1814
 #   inputs: db_path
 #   outputs: list[str]
 # - id: A5
 #   name_zh: ⑤ schema_version
 #   name_en: schema_version
 #   intro: 返回当前 depgraph (PostgreSQL) 的 schema 版本。
-#   desc: 返回当前 depgraph (PostgreSQL) 的 schema 版本。；源码 L1820-L1826
+#   desc: 返回当前 depgraph (PostgreSQL) 的 schema 版本。；源码 L1817-L1823
 #   inputs: db_path
 #   outputs: int
 # - id: A6
 #   name_zh: ⑥ apply_pg_schema
 #   name_en: apply_pg_schema
 #   intro: 从 02_create_pg_schema.sql 执行 DDL（幂等，CREATE IF NOT EXISTS）。
-#   desc: 从 02_create_pg_schema.sql 执行 DDL（幂等，CREATE IF NOT EXISTS）。 5.18.12 治本（2026-07-02）：恢复 PG s…；源码 L1836-L1866
+#   desc: 从 02_create_pg_schema.sql 执行 DDL（幂等，CREATE IF NOT EXISTS）。 5.18.12 治本（2026-07-02）：恢复 PG s…；源码 L1833-L1863
 #   inputs: version description
 #   outputs: 返回值
 # - id: A7
 #   name_zh: ⑦ backup_before_migration
 #   name_en: backup_before_migration
 #   intro: 在应用破坏性 migration 前备份 PG depgraph（pg_dump）。
-#   desc: 在应用破坏性 migration 前备份 PG depgraph（pg_dump）。 5.18.13 治本（2026-07-02）：为 PG migration 提供 downg…；源码 L1874-L1909
+#   desc: 在应用破坏性 migration 前备份 PG depgraph（pg_dump）。 5.18.13 治本（2026-07-02）：为 PG migration 提供 downg…；源码 L1871-L1906
 #   inputs: backup_path
 #   outputs: Path
 # - id: A8
 #   name_zh: ⑧ restore_from_backup
 #   name_en: restore_from_backup
 #   intro: 从 pg_dump 备份恢复 PG depgraph（downgrade 执行入口）。
-#   desc: 从 pg_dump 备份恢复 PG depgraph（downgrade 执行入口）。 :param backup_path: 备份文件路径（.dump 格式，由 backup_…；源码 L1912-L1941
+#   desc: 从 pg_dump 备份恢复 PG depgraph（downgrade 执行入口）。 :param backup_path: 备份文件路径（.dump 格式，由 backup_…；源码 L1909-L1938
 #   inputs: backup_path
 #   outputs: 返回值
 # - id: A9
 #   name_zh: ⑨ build_pg_dsn
 #   name_en: build_pg_dsn
 #   intro: 公共接口：build_pg_dsn（Stage 4 公共化，委托到 _build_pg_dsn）。
-#   desc: 公共接口：build_pg_dsn（Stage 4 公共化，委托到 _build_pg_dsn）。；源码 L1968-L1970
+#   desc: 公共接口：build_pg_dsn（Stage 4 公共化，委托到 _build_pg_dsn）。；源码 L1965-L1967
 #   inputs: config superuser read_only
 #   outputs: dict[str, Any]
 # - id: A10
 #   name_zh: ⑩ get_current_version
 #   name_en: get_current_version
 #   intro: 公共接口：get_current_version（Stage 4 公共化）。
-#   desc: 公共接口：get_current_version（Stage 4 公共化）。；源码 L1974-L1976
+#   desc: 公共接口：get_current_version（Stage 4 公共化）。；源码 L1971-L1973
 #   inputs: conn
 #   outputs: int
 #   （注：A10 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）

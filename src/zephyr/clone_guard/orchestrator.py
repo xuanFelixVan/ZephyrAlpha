@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-CLONE_GUARD | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 CloneGuard 统一编排器——Phase B（多引擎并发 + 结果聚合）。
 
 统一调度入口，对 CAPABILITY-OVERLAP 门禁暴露 check() 方法。
@@ -62,7 +59,7 @@ Usage::
 #   name_zh: ① CloneGuardOrchestrator
 #   name_en: CloneGuardOrchestrator
 #   intro: CloneGuard 统一编排器。
-#   desc: CloneGuard 统一编排器。 Phase A: 仅调度 Echo-Guard Phase B: + ast-grep + reDUP 并发 + FindingAggrega…；公共方法（定义序）: check,…
+#   desc: CloneGuard 统一编排器。 Phase A: 仅调度 Echo-Guard Phase B: + ast-grep + reDUP 并发 + FindingAggrega…；公共方法（定义序）: check…
 #   inputs: repo_root config
 #   outputs: 返回值
 #   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）

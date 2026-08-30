@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-DATENG-004 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 StreamProcessingEngine — 轻量单机流处理引擎（MOD-DATENG-004）。
 
 B5-07234（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATENG-007，B5）：事件时

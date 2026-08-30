@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 FLE DB契约适配器 — 通过规范zephyr.governance.sqlite_schema连接写入fle_metrics
 
 CT-FLE-DB-001: FLE采集的指标 -> Database持久化落地。
@@ -46,14 +43,14 @@ DDL与sqlite_schema.py的_DDL_FLE_METRICS保持一致（SSoT）。
 #   name_zh: ① record_via_db_contract
 #   name_en: record_via_db_contract
 #   intro: record_via_db_contract(metric_type, metric_name, metric_val…
-#   desc: 源码 L132-L163
+#   desc: 源码 L130-L161
 #   inputs: metric_type metric_name metric_value tags session_id task_id cost_usd…
 #   outputs: int
 # - id: A2
 #   name_zh: ② bulk_record_via_db_contract
 #   name_en: bulk_record_via_db_contract
-#   intro: bulk_record_via_db_contract(records, db_path) 源码 L166-L211
-#   desc: 源码 L166-L211
+#   intro: bulk_record_via_db_contract(records, db_path) 源码 L164-L209
+#   desc: 源码 L164-L209
 #   inputs: records db_path
 #   outputs: int
 # 层: 输出

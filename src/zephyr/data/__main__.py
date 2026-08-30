@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-GOV-main | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 python -m zephyr.data — 数据源集成器 CLI 入口。
 
 re-export cli.main，等价于 `integrator` 命令。
@@ -33,7 +30,7 @@ re-export cli.main，等价于 `integrator` 命令。
 #   name_zh: ① 模块占位（无公共定义）
 #   name_en: placeholder
 #   intro: __main__.py 无顶层公共函数/类/再导出（AST 事实）
-#   desc: 源码 L1-L56；包结构占位或纯内部模块
+#   desc: 源码 L1-L54；包结构占位或纯内部模块
 #   inputs: I1
 #   outputs: 无（占位）
 # 层: 输出

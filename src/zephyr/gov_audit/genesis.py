@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=frozen | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 audit-trail.genesis — MOD-INF-020 · 创世块管理
 
 提供创世块 (GenesisBlock) 的创建、持久化、验证能力，以及见证签名
@@ -42,7 +39,7 @@ audit-trail.genesis — MOD-INF-020 · 创世块管理
 #   name_zh: ① GenesisManager
 #   name_en: GenesisManager
 #   intro: 创世块管理器——负责创建、持久化与验证创世块。
-#   desc: 创世块管理器——负责创建、持久化与验证创世块。；公共方法（定义序）: system_id, data_dir, genesis_path, create_genesis, verify_genesis；源码 L150-…
+#   desc: 创世块管理器——负责创建、持久化与验证创世块。；公共方法（定义序）: system_id, data_dir, genesis_path, create_genesis, verify_genesis…
 #   inputs: data_dir system_id creator
 #   outputs: 返回值
 #   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）

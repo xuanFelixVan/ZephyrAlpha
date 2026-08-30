@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-ALT-010 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 PolicyExpectationAnalyzer — A股政策预期分析器（MOD-ALT-010）。
 
 B5-07096（AUD-DRAFT-001-DIGEST P2 波 P2-W04，CAND-TESTA-026，B5 D-ALT-DATA-16，

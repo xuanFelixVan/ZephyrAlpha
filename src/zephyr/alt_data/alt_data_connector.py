@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-ALT-007 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 AltDataConnector — 另类数据统一接入器（MOD-ALT-007）。
 
 B5-07081（AUD-DRAFT-001-DIGEST P2 波 P2-W04，CAND-TESTA-022，B5 D-ALT-DATA-01）：
@@ -55,7 +52,7 @@ B5-07081（AUD-DRAFT-001-DIGEST P2 波 P2-W04，CAND-TESTA-022，B5 D-ALT-DATA-0
 #   name_zh: ① AltDataConnector
 #   name_en: AltDataConnector
 #   intro: 另类数据统一接入器（注册表 + 格式适配 + 增量游标 + 密钥保管 + 健康登记）。
-#   desc: 另类数据统一接入器（注册表 + 格式适配 + 增量游标 + 密钥保管 + 健康登记）。；公共方法（定义序）: register, set_adapter, list_connectors, store_api_key,…
+#   desc: 另类数据统一接入器（注册表 + 格式适配 + 增量游标 + 密钥保管 + 健康登记）。；公共方法（定义序）: register, set_adapter, list_connectors, store_api_key…
 #   inputs: clock fetcher cipher_encrypt cipher_decrypt health_sink
 #   outputs: 返回值
 #   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）

@@ -83,7 +83,7 @@ Risk mitigation — R1~R16 全量风险缓解实现（对标蓝图 §14 风险�
 #   name_zh: ⑦ KillSwitchSafeguard
 #   name_en: KillSwitchSafeguard
 #   intro: R6: Kill Switch 误触发保护——脉冲过滤 + 多条件非AND.
-#   desc: R6: Kill Switch 误触发保护——脉冲过滤 + 多条件非AND.；公共方法（定义序）: register_condition, should_trigger, manual_override；源码 L306…
+#   desc: R6: Kill Switch 误触发保护——脉冲过滤 + 多条件非AND.；公共方法（定义序）: register_condition, should_trigger, manual_override…
 #   inputs: sustain_duration
 #   outputs: 返回值
 # - id: A8

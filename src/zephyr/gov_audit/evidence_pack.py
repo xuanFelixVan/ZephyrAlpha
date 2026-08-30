@@ -16,10 +16,6 @@
 # [TTL] permanent
 
 """
-
-
-
-
 audit-trail.evidence_pack — MOD-INF-020 · 证据包导出器
 =======================================================
 蓝图 D-020-24 · 审计证据导出 (JSON / PDF / FCA 格式)
@@ -44,8 +40,8 @@ audit-trail.evidence_pack — MOD-INF-020 · 证据包导出器
 # - id: A1
 #   name_zh: ① EvidencePackExporter
 #   name_en: EvidencePackExporter
-#   intro: class EvidencePackExporter 源码 L109-L244
-#   desc: 公共方法（定义序）: data_dir, output_dir, export_json, export_fca；源码 L109-L244
+#   intro: class EvidencePackExporter 源码 L106-L241
+#   desc: 公共方法（定义序）: data_dir, output_dir, export_json, export_fca；源码 L106-L241
 #   inputs: data_dir output_dir
 #   outputs: 返回值
 #   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）

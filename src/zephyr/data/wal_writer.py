@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-GOV-wal_writer | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 主动 WAL 写入器（P0-1 Phase A）。
 
 数据先落本地 WAL 段文件，再由后台 drain 线程异步排空到 ClickHouse。

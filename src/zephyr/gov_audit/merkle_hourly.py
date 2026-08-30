@@ -16,10 +16,6 @@
 # [TTL] permanent
 
 """
-
-
-
-
 audit-trail.merkle_hourly — MOD-INF-020 · 每小时 Merkle 聚合
 ==============================================================
 蓝图 D-020-04 · 每小时生成 Merkle Root + 独立 .merkle 文件
@@ -41,8 +37,8 @@ audit-trail.merkle_hourly — MOD-INF-020 · 每小时 Merkle 聚合
 # - id: A1
 #   name_zh: ① HourlyMerkleAggregator
 #   name_en: HourlyMerkleAggregator
-#   intro: class HourlyMerkleAggregator 源码 L114-L232
-#   desc: 公共方法（定义序）: aggregate, get_roots, verify_root；源码 L114-L232
+#   intro: class HourlyMerkleAggregator 源码 L111-L229
+#   desc: 公共方法（定义序）: aggregate, get_roots, verify_root；源码 L111-L229
 #   inputs: data_dir
 #   outputs: 返回值
 # - id: A2

@@ -15,9 +15,6 @@
 # [TTL] permanent
 
 """
-
-
-
 合规日志 JSONL 落库（43_compliance_discipline §3.2/§7.6）。
 
 MVP 载体裁定：合规检测结果落 ``data/compliance_log/compliance_log.jsonl``

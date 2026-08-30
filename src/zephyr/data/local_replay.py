@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-GOV-local_replay | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 本地落盘兜底 + 自动回灌（裁定 #ARCH-CH-013 Phase 1）。
 
 当 ClickHouse 二级降级链（TCP→HTTP）全部失败时（VM/CH 不可达），
@@ -61,35 +58,35 @@ scheduler 启动时 + 每 30 分钟检查并回灌积压文件到 CH。
 #   name_zh: ① save_fallback
 #   name_en: save_fallback
 #   intro: 将 TSV 数据落盘到本地文件（TCP+HTTP 均失败时的第三级降级）。
-#   desc: 将 TSV 数据落盘到本地文件（TCP+HTTP 均失败时的第三级降级）。 原子写入：先写 .tmp 文件，再 rename 为 .tsv，避免半写文件。 追加 manifest…；源码 L158-L208
+#   desc: 将 TSV 数据落盘到本地文件（TCP+HTTP 均失败时的第三级降级）。 原子写入：先写 .tmp 文件，再 rename 为 .tsv，避免半写文件。 追加 manifest…；源码 L156-L206
 #   inputs: table cols_clause tsv_bytes
 #   outputs: bool
 # - id: A2
 #   name_zh: ② has_backlog
 #   name_en: has_backlog
 #   intro: 是否有积压的待回灌文件。
-#   desc: 是否有积压的待回灌文件。；源码 L211-L218
+#   desc: 是否有积压的待回灌文件。；源码 L209-L216
 #   inputs: 无参数
 #   outputs: bool
 # - id: A3
 #   name_zh: ③ get_backlog_summary
 #   name_en: get_backlog_summary
 #   intro: 获取积压摘要：{table: pending_rows}。
-#   desc: 获取积压摘要：{table: pending_rows}。；源码 L221-L237
+#   desc: 获取积压摘要：{table: pending_rows}。；源码 L219-L235
 #   inputs: 无参数
 #   outputs: dict[str, int]
 # - id: A4
 #   name_zh: ④ read_manifest
 #   name_en: read_manifest
 #   intro: 读取 manifest 全部条目（公共接口，R5: 消除测试私有访问）。
-#   desc: 读取 manifest 全部条目（公共接口，R5: 消除测试私有访问）。；源码 L257-L259
+#   desc: 读取 manifest 全部条目（公共接口，R5: 消除测试私有访问）。；源码 L255-L257
 #   inputs: 无参数
 #   outputs: list[dict]
 # - id: A5
 #   name_zh: ⑤ replay_batch
 #   name_en: replay_batch
 #   intro: 回灌积压文件到 ClickHouse。
-#   desc: 回灌积压文件到 ClickHouse。 读取 manifest，逐文件调用 ch_writer.write_tsv 回灌。 成功的文件删除 + 从 manifest 移除；失败的…；源码 L332-L420
+#   desc: 回灌积压文件到 ClickHouse。 读取 manifest，逐文件调用 ch_writer.write_tsv 回灌。 成功的文件删除 + 从 manifest 移除；失败的…；源码 L330-L418
 #   inputs: max_files
 #   outputs: dict[str, int]
 # 层: 输出

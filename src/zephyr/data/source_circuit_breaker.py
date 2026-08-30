@@ -30,9 +30,6 @@
 #   name_en: allow_request bool + on_trip 回调
 #   intro: scheduler._validate_provider_and_policy 在手动 pause 检查后调用；OPEN 冷却期内拒绝（任务跳过该源）
 """
-
-
-
 per-source 自动熔断器（64号 Q17，P1，2026-08-20 AI-NIGHT-001 施工）。
 
 裁定真源：64号 §16.2 Q17——scheduler 层对连续失败 N 次的数据源熔断 M 分钟，
@@ -65,7 +62,7 @@ per-source 自动熔断器（64号 Q17，P1，2026-08-20 AI-NIGHT-001 施工）�
 #   name_zh: ① SourceCircuitBreaker
 #   name_en: SourceCircuitBreaker
 #   intro: 单数据源熔断器（线程安全，时钟可注入便于测试）。
-#   desc: 单数据源熔断器（线程安全，时钟可注入便于测试）。；公共方法（定义序）: state, allow_request, record_success, record_failure；源码 L119-L216
+#   desc: 单数据源熔断器（线程安全，时钟可注入便于测试）。；公共方法（定义序）: state, allow_request, record_success, record_failure；源码 L117-L214
 #   inputs: source failure_threshold cooldown_seconds window_size error_rate_thre…
 #   outputs: 返回值
 # - id: A2

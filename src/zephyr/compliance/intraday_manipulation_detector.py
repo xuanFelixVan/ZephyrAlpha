@@ -23,9 +23,6 @@
 # O1: ManipulationBatchReport(首命中去重后 hits) + compliance_log 双类事件(MANIPULATION_VERDICT 逐命中/MANIPULATION_BATCH_SCAN 批汇总)
 # [/ALGO_FLOW]
 """
-
-
-
 D_COMPLIANCE — 盘中操纵检测三规则离线批处理口径 MVP（43 号 §7.3，BM-BUY-15 补强残余）。
 
 43 号结案残余："对敲/拉抬/洗售（Spoofing/Layering/WashTrade）盘中实时检测未做

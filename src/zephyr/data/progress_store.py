@@ -16,9 +16,6 @@
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: "APScheduler"仅出现在L29注释中(解释check_same_thread=False因APScheduler线程池共用),本文件无任何调度逻辑,是纯SQLite进度存储
 """
-
-
-
 统一进度存储（MOD-L00-004 §7）。
 
 取代 13 个 per-script JSON 文件（tmp/_ds_progress/fill_*.json），提供：
@@ -54,7 +51,7 @@
 #   name_zh: ② get_store
 #   name_en: get_store
 #   intro: 获取模块级单例 ProgressStore。
-#   desc: 获取模块级单例 ProgressStore。 首次调用创建实例，后续调用返回同一实例。 测试时传 db_path 用临时库；生产用默认路径。；源码 L420-L431
+#   desc: 获取模块级单例 ProgressStore。 首次调用创建实例，后续调用返回同一实例。 测试时传 db_path 用临时库；生产用默认路径。；源码 L418-L429
 #   inputs: db_path
 #   outputs: ProgressStore
 # 层: 输出

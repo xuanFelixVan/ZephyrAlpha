@@ -16,9 +16,6 @@
 # [TTL] permanent
 # [ARCH-REF] #ARCH-REGIME-DEADZONE-001 #ARCH-OBS-EXP-TRACK-001
 """
-
-
-
 L_INFRA_TELEMETRY — 实验跟踪器主类（单一 JSON FallbackBackend，MLflow 已退役）。
 
 Zephyr 语义 → 存储映射:
@@ -75,14 +72,14 @@ Version: 0.2.0（MLflow 退役，单一 JSON 后端）
 #   name_zh: ③ get_tracker
 #   name_en: get_tracker
 #   intro: 获取全局 tracker 单例（首次调用按 config 初始化）。
-#   desc: 获取全局 tracker 单例（首次调用按 config 初始化）。；源码 L257-L262
+#   desc: 获取全局 tracker 单例（首次调用按 config 初始化）。；源码 L255-L260
 #   inputs: 无参数
 #   outputs: ExperimentTracker
 # - id: A4
 #   name_zh: ④ reset_tracker
 #   name_en: reset_tracker
 #   intro: 重置单例（测试用：改环境变量后重新初始化）。
-#   desc: 重置单例（测试用：改环境变量后重新初始化）。；源码 L265-L268
+#   desc: 重置单例（测试用：改环境变量后重新初始化）。；源码 L263-L266
 #   inputs: 无参数
 #   outputs: 返回值
 # 层: 输出

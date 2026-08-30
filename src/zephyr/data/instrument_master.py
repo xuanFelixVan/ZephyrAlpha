@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-L00-IM | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 D_DATA — 轻量 Instrument Master（90 号 Phase2 项，#18 资产覆盖轻量 IM）
 
 裁定真源：90_methodology_open_questions.md §18（v2.0.0）：
@@ -43,7 +40,7 @@ D_DATA — 轻量 Instrument Master（90 号 Phase2 项，#18 资产覆盖轻量
 #   name_zh: ① normalize_instrument_row
 #   name_en: normalize_instrument_row
 #   intro: 规范化一行 IM 记录（盘前同步写入前校验+默认值派生）。
-#   desc: 规范化一行 IM 记录（盘前同步写入前校验+默认值派生）。 Args: raw: 原始标的信息 dict（数据源字段已映射为 IM 字段名） Returns: 规范化后的 dic…；源码 L125-L151
+#   desc: 规范化一行 IM 记录（盘前同步写入前校验+默认值派生）。 Args: raw: 原始标的信息 dict（数据源字段已映射为 IM 字段名） Returns: 规范化后的 dic…；源码 L123-L149
 #   inputs: raw
 #   outputs: dict
 # 层: 输出

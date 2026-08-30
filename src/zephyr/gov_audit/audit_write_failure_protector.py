@@ -16,11 +16,6 @@
 # [TTL] permanent
 
 """
-
-
-
-
-
 Audit Write Failure Protector — v0.13.0 审计写入失败保护器。
 
 委托 zephyr.gov_audit.writer.AuditWriter 内置的写入失败保护机制。
@@ -37,7 +32,7 @@ AuditWriter.write() 内部已实现连续5次失败后自动进入 readonly 模�
 #   name_zh: ① AuditWriteProtector
 #   name_en: AuditWriteProtector
 #   intro: 审计写入失败保护器——委托 AuditWriter 内置保护。
-#   desc: 审计写入失败保护器——委托 AuditWriter 内置保护。；公共方法（定义序）: record_failure, can_write, reset；源码 L64-L100
+#   desc: 审计写入失败保护器——委托 AuditWriter 内置保护。；公共方法（定义序）: record_failure, can_write, reset；源码 L60-L96
 #   inputs: writer
 #   outputs: 返回值
 # 层: 输出

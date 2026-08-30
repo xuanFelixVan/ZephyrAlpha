@@ -46,7 +46,7 @@ L6 Observability Layer — security event logging, alerting, and reporting.
 #   name_zh: ③ ReportGenerator
 #   name_en: ReportGenerator
 #   intro: Generates security reports.
-#   desc: Generates security reports.；公共方法（定义序）: record_event, generate_daily_report, generate_weekly_report, generate,…
+#   desc: Generates security reports.；公共方法（定义序）: record_event, generate_daily_report, generate_weekly_report, generate…
 #   inputs: config
 #   outputs: 返回值
 # - id: A4

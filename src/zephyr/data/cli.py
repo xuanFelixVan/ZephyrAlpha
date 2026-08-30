@@ -16,8 +16,6 @@
 # [TTL] permanent
 # noqa: m02-manual  M02豁免: CLI启动的常驻scheduler入口(python -m zephyr.data.cli start),由CLI触发启动,启动后自动运行;非reconciler无需事件触发
 """
-
-
 数据源集成器 CLI（MOD-L00-004 §8.4）。
 
 7 个子命令（蓝图 §8.4）+ speed-test（§8.5）：
@@ -49,14 +47,14 @@
 #   name_zh: ① get_subcommands
 #   name_en: get_subcommands
 #   intro: 返回 parser 注册的子命令集合（封装 argparse 私有访问，R5: 消除测试私有访问）。
-#   desc: 返回 parser 注册的子命令集合（封装 argparse 私有访问，R5: 消除测试私有访问）。 Args: parser: _build_parser() 返回的 Argu…；源码 L418-L430
+#   desc: 返回 parser 注册的子命令集合（封装 argparse 私有访问，R5: 消除测试私有访问）。 Args: parser: _build_parser() 返回的 Argu…；源码 L417-L429
 #   inputs: parser
 #   outputs: set[str]
 # - id: A2
 #   name_zh: ② main
 #   name_en: main
 #   intro: CLI 主入口。
-#   desc: CLI 主入口。 Args: argv: 命令行参数（None 表示从 sys.argv 读取） Returns: 退出码（0=成功，非零=失败）；源码 L433-L474
+#   desc: CLI 主入口。 Args: argv: 命令行参数（None 表示从 sys.argv 读取） Returns: 退出码（0=成功，非零=失败）；源码 L432-L473
 #   inputs: argv
 #   outputs: int
 # 层: 输出

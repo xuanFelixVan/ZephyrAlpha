@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-DATA_GOV-009 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 market_data_aggregates — MarketData/Instrument 轻量聚合根与生命周期（MOD-DATA_GOV-009）。
 
 B1-00648（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATGOV-006，C2 130~136）：
@@ -60,7 +57,7 @@ frozen dataclass + 聚合根**版本不变量**）+ 仓储接口协议（get/sav
 #   name_zh: ② Instrument
 #   name_en: Instrument
 #   intro: Instrument 聚合根：标的主档 + 版本不变量。
-#   desc: Instrument 聚合根：标的主档 + 版本不变量。；公共方法（定义序）: instrument_id, symbol, exchange, version, update_profile；源码 L255-L296
+#   desc: Instrument 聚合根：标的主档 + 版本不变量。；公共方法（定义序）: instrument_id, symbol, exchange, version, update_profile；源码 L253-L294
 #   inputs: instrument_id symbol exchange version
 #   outputs: 返回值
 # - id: A3
@@ -74,21 +71,21 @@ frozen dataclass + 聚合根**版本不变量**）+ 仓储接口协议（get/sav
 #   name_zh: ④ InMemoryMarketDataRepository
 #   name_en: InMemoryMarketDataRepository
 #   intro: 内存参考实现（运行时装配批可替换为 ch_reader/pit_query 注入实现）。
-#   desc: 内存参考实现（运行时装配批可替换为 ch_reader/pit_query 注入实现）。；公共方法（定义序）: get, save, snapshot；源码 L321-L350
+#   desc: 内存参考实现（运行时装配批可替换为 ch_reader/pit_query 注入实现）。；公共方法（定义序）: get, save, snapshot；源码 L319-L348
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A5
 #   name_zh: ⑤ RetentionPolicyRegistry
 #   name_en: RetentionPolicyRegistry
 #   intro: 保留策略协调表（domain 唯一登记）。
-#   desc: 保留策略协调表（domain 唯一登记）。；公共方法（定义序）: register, get, list_all；源码 L368-L397
+#   desc: 保留策略协调表（domain 唯一登记）。；公共方法（定义序）: register, get, list_all；源码 L366-L395
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A6
 #   name_zh: ⑥ RecoveryDrillLog
 #   name_en: RecoveryDrillLog
 #   intro: 恢复演练记录簿（与 RetentionPolicyRegistry 联动判定演练逾期）。
-#   desc: 恢复演练记录簿（与 RetentionPolicyRegistry 联动判定演练逾期）。；公共方法（定义序）: record, drills_for, last_drill, overdue_domains；源码 L4…
+#   desc: 恢复演练记录簿（与 RetentionPolicyRegistry 联动判定演练逾期）。；公共方法（定义序）: record, drills_for, last_drill, overdue_domains…
 #   inputs: registry clock
 #   outputs: 返回值
 #   （注：A6 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）

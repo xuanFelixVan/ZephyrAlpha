@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-ALT-011 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 AltSourceHealthManager — 另类数据源健康度管理器（MOD-ALT-011）。
 
 B14-04617（AUD-DRAFT-001-DIGEST P2 波 P2-W04，CAND-TESTA-019，A9
@@ -53,7 +50,7 @@ D-ALT-DATA-31）：另类数据源健康度——成功率/新鲜度/延迟**滑
 #   name_zh: ① AltSourceHealthManager
 #   name_en: AltSourceHealthManager
 #   intro: 另类数据源健康度管理器（滑动窗口评分 + 降级阶梯 + 半开恢复）。
-#   desc: 另类数据源健康度管理器（滑动窗口评分 + 降级阶梯 + 半开恢复）。；公共方法（定义序）: record_sample, evaluate, probe, state_of, health_of, score_of,…
+#   desc: 另类数据源健康度管理器（滑动窗口评分 + 降级阶梯 + 半开恢复）。；公共方法（定义序）: record_sample, evaluate, probe, state_of, health_of, score_of…
 #   inputs: source_ids weights window_size downweight_threshold failover_threshol…
 #   outputs: 返回值
 #   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）

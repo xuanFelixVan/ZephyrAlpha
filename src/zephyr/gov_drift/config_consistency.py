@@ -73,7 +73,7 @@ YAML为SSoT，auto_fix生成config_sync.yaml
 # - id: A4
 #   name_zh: ④ detect_conflicts
 #   name_en: detect_conflicts
-#   intro: detect_conflicts(yaml_source, env_source, code_source) 源码 L…
+#   intro: detect_conflicts(yaml_source, env_source, code_source)…
 #   desc: 源码 L255-L313
 #   inputs: yaml_source env_source code_source
 #   outputs: ConfigAuditReport

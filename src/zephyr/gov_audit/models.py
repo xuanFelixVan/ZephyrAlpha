@@ -41,7 +41,7 @@
 #   name_zh: ② IntegrityReport
 #   name_en: IntegrityReport
 #   intro: 完整性报告——治本（ G2）：frozen dataclass。
-#   desc: 完整性报告——治本（ G2）：frozen dataclass。 对齐 test_audit_models.py / test_audit_core.py / test_quer…；公共方法（定义序）: valid,…
+#   desc: 完整性报告——治本（ G2）：frozen dataclass。 对齐 test_audit_models.py / test_audit_core.py / test_quer…；公共方法（定义序）: valid…
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A3

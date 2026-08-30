@@ -23,9 +23,6 @@
 # O1: {action, qty_ratio, reason}（action∈STOP_LOSS/SELL_ALL/SELL_HALF/HOLD）
 # [/ALGO_FLOW]
 """
-
-
-
 打板次日出场决策族（24_daban_strategy_detail §3.13 缺失#1/#7 施工）。
 
 缺失#1 NextDayExitDecision（首批实盘前必做）：T+1 闭环断裂修复——
@@ -58,14 +55,14 @@ T 日打板买入后 T+1 日开盘竞价的完整出场决策（硬退出三件�
 #   name_zh: ① NextDayExitDecision
 #   name_en: NextDayExitDecision
 #   intro: 次日出场完整决策（v1.9.2 补，整合 forecast_next_day_premium + 20号三档退出）。
-#   desc: 次日出场完整决策（v1.9.2 补，整合 forecast_next_day_premium + 20号三档退出）。；公共方法（定义序）: decide, classify_position_status；源码 L97…
+#   desc: 次日出场完整决策（v1.9.2 补，整合 forecast_next_day_premium + 20号三档退出）。；公共方法（定义序）: decide, classify_position_status…
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A2
 #   name_zh: ② reflush_next_day_exit_decision
 #   name_en: reflush_next_day_exit_decision
 #   intro: 反核二次出场决策（v1.9.2 补，Phase 5 候选）——§3.12 反核后次日不同走势的分别出场决策。
-#   desc: 反核二次出场决策（v1.9.2 补，Phase 5 候选）——§3.12 反核后次日不同走势的分别出场决策。；源码 L164-L180
+#   desc: 反核二次出场决策（v1.9.2 补，Phase 5 候选）——§3.12 反核后次日不同走势的分别出场决策。；源码 L162-L178
 #   inputs: position auction_data holding_days
 #   outputs: dict
 # 层: 输出

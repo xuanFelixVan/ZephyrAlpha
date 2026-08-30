@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-ALT-014 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 GeopoliticalRiskAnalyzer — 地缘政治风险分析器（MOD-ALT-014）。
 
 B5-07092（AUD-DRAFT-001-DIGEST P2 波 P2-W04，CAND-TESTA-025，B5
@@ -53,7 +50,7 @@ D-ALT-DATA-12）：地缘风险分析——**事件采集**（免费新闻/RSS �
 #   name_zh: ① GeopoliticalRiskAnalyzer
 #   name_en: GeopoliticalRiskAnalyzer
 #   intro: 地缘风险分析器（采集注入 + 传导矩阵评分 + 制裁筛查 + 总线发布）。
-#   desc: 地缘风险分析器（采集注入 + 传导矩阵评分 + 制裁筛查 + 总线发布）。；公共方法（定义序）: assess, run, history；源码 L144-L264
+#   desc: 地缘风险分析器（采集注入 + 传导矩阵评分 + 制裁筛查 + 总线发布）。；公共方法（定义序）: assess, run, history；源码 L142-L262
 #   inputs: event_source transmission_matrix sanction_list publish_threshold high…
 #   outputs: 返回值
 #   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）

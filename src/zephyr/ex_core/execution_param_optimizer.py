@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-EX-064 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 ExecutionParamOptimizer — 执行运营自优化器（MOD-EX-064）。
 
 B1-00218（AUD-DRAFT-001-DIGEST P2 波 P2-W08，CAND-EX-010，C2 C-026）：执行运

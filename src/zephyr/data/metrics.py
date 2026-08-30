@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-GOV-metrics | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 可观测性指标采集（MOD-L00-004 §11）。
 
 不依赖 prometheus_client 库，直接按 Prometheus 文本格式写入 data/metrics.prom。
@@ -58,14 +55,14 @@
 #   name_zh: ② get_metrics
 #   name_en: get_metrics
 #   intro: 获取全局 IntegratorMetrics 单例。
-#   desc: 获取全局 IntegratorMetrics 单例。；源码 L283-L290
+#   desc: 获取全局 IntegratorMetrics 单例。；源码 L281-L288
 #   inputs: output_file
 #   outputs: IntegratorMetrics
 # - id: A3
 #   name_zh: ③ reset_metrics
 #   name_en: reset_metrics
 #   intro: 重置全局单例（测试用）。
-#   desc: 重置全局单例（测试用）。；源码 L293-L297
+#   desc: 重置全局单例（测试用）。；源码 L291-L295
 #   inputs: 无参数
 #   outputs: 返回值
 # 层: 输出

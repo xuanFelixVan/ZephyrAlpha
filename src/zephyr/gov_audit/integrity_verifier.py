@@ -16,11 +16,6 @@
 # [TTL] permanent
 
 """
-
-
-
-
-
 Integrity Verifier — v0.8.0 代码完整性验证器: hash校验+diff detection+rollback。
 
 # [ALGO_FLOW]
@@ -33,8 +28,8 @@ Integrity Verifier — v0.8.0 代码完整性验证器: hash校验+diff detectio
 # - id: A1
 #   name_zh: ① IntegrityVerifier
 #   name_en: IntegrityVerifier
-#   intro: class IntegrityVerifier 源码 L57-L86
-#   desc: 公共方法（定义序）: hashes, register_hash, verify, diff_files；源码 L57-L86
+#   intro: class IntegrityVerifier 源码 L53-L82
+#   desc: 公共方法（定义序）: hashes, register_hash, verify, diff_files；源码 L53-L82
 #   inputs: 无参数
 #   outputs: 返回值
 # 层: 输出

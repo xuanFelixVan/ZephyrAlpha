@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 FLE->Orc 告警分派器 — dispatch() 生产者
 
 CT-FLE-ORC-001: FLE 检测异常 -> dispatch AlertEvent -> Orc 创建修复任务。
@@ -32,29 +29,29 @@ CT-FLE-ORC-001: FLE 检测异常 -> dispatch AlertEvent -> Orc 创建修复任�
 # - id: A1
 #   name_zh: ① DispatchResult
 #   name_en: DispatchResult
-#   intro: class DispatchResult 源码 L140-L148
-#   desc: 公共方法（定义序）: success；源码 L140-L148
+#   intro: class DispatchResult 源码 L138-L146
+#   desc: 公共方法（定义序）: success；源码 L138-L146
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A2
 #   name_zh: ② AlertDispatcher
 #   name_en: AlertDispatcher
-#   intro: class AlertDispatcher 源码 L151-L182
-#   desc: 公共方法（定义序）: dispatch；源码 L151-L182
+#   intro: class AlertDispatcher 源码 L149-L180
+#   desc: 公共方法（定义序）: dispatch；源码 L149-L180
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A3
 #   name_zh: ③ dispatch
 #   name_en: dispatch
-#   intro: dispatch(event) 源码 L210-L211
-#   desc: 源码 L210-L211
+#   intro: dispatch(event) 源码 L208-L209
+#   desc: 源码 L208-L209
 #   inputs: event
 #   outputs: DispatchResult
 # - id: A4
 #   name_zh: ④ route_alert
 #   name_en: route_alert
 #   intro: Route an AlertEvent to appropriate channels based on severi…
-#   desc: Route an AlertEvent to appropriate channels based on severity. Thin wrapper around ``zeph…；源码 L214-L230
+#   desc: Route an AlertEvent to appropriate channels based on severity. Thin wrapper around ``zeph…；源码 L212-L228
 #   inputs: event
 #   outputs: dict
 #   （注：A4 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）

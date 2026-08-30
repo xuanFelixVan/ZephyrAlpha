@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-DATA_GOV-012 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 column_lineage_tracker — 列级血缘追踪器（MOD-DATA_GOV-012）。
 
 B10-02321（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATGOV-009，A1 M8-NEW-02）：
@@ -40,7 +37,7 @@ B10-02321（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATGOV-009，A1 M8-NEW-02�
 #   name_zh: ① ColumnRef
 #   name_en: ColumnRef
 #   intro: 列引用（table.column 二元闭合，frozen）。
-#   desc: 列引用（table.column 二元闭合，frozen）。；公共方法（定义序）: parse；源码 L91-L108
+#   desc: 列引用（table.column 二元闭合，frozen）。；公共方法（定义序）: parse；源码 L89-L106
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A2

@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-GOV-table_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 表名/品类注册表消费层（裁定 #ARCH-CH-024 Phase 2）。
 
 背景：
@@ -62,21 +59,21 @@ Phase 5 长期方向（不实施，登记为后续）：
 #   name_zh: ① TableRegistry
 #   name_en: TableRegistry
 #   intro: 表名/品类注册表消费层。
-#   desc: 表名/品类注册表消费层。 启动时加载 business_data_categories.yaml，构建： _by_category: category_id -> "{datab…；公共方法（定义序）: table,…
+#   desc: 表名/品类注册表消费层。 启动时加载 business_data_categories.yaml，构建： _by_category: category_id -> "{datab…；公共方法（定义序）: table…
 #   inputs: categories
 #   outputs: 返回值
 # - id: A2
 #   name_zh: ② get_registry
 #   name_en: get_registry
 #   intro: 返回 TableRegistry 单例（幂等加载，线程安全）。
-#   desc: 返回 TableRegistry 单例（幂等加载，线程安全）。；源码 L240-L249
+#   desc: 返回 TableRegistry 单例（幂等加载，线程安全）。；源码 L238-L247
 #   inputs: 无参数
 #   outputs: TableRegistry
 # - id: A3
 #   name_zh: ③ reset_registry_singleton
 #   name_en: reset_registry_singleton
 #   intro: 重置单例（仅供测试使用，确保测试间隔离）。
-#   desc: 重置单例（仅供测试使用，确保测试间隔离）。；源码 L252-L256
+#   desc: 重置单例（仅供测试使用，确保测试间隔离）。；源码 L250-L254
 #   inputs: 无参数
 #   outputs: 返回值
 # 层: 输出

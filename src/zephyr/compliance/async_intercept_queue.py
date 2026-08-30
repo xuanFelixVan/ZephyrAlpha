@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-L10-001 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 Async Intercept Queue — 合规异步拦截队列 (MOD-L10-001, GAP-L10-001)
 
 蓝图 §17 容量升级缺口 GAP-L10-001：SecurityGateway 同步拦截延迟 → 异步拦截队列 + 缓存
@@ -48,7 +45,7 @@ Fail-Closed：网关执行异常 → 生成 BLOCK 裁决并留 error 痕迹（�
 #   name_zh: ① AsyncInterceptQueue
 #   name_en: AsyncInterceptQueue
 #   intro: 合规异步拦截队列（有界 + 缓存 + 线程安全）。
-#   desc: 合规异步拦截队列（有界 + 缓存 + 线程安全）。 Args: gateway: 既有安全网关实现（SecurityGateway OCP 扩展点）。 max_queue_siz…；公共方法（定义序）: submit,…
+#   desc: 合规异步拦截队列（有界 + 缓存 + 线程安全）。 Args: gateway: 既有安全网关实现（SecurityGateway OCP 扩展点）。 max_queue_siz…；公共方法（定义序）: submit…
 #   inputs: gateway max_queue_size cache_size
 #   outputs: 返回值
 #   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）

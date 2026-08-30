@@ -25,9 +25,6 @@
 # O1: ChangeVerdict / SampleReconcileResult / FactorWindowState(快照可持久化)
 # [/ALGO_FLOW]
 """
-
-
-
 D_DATA_ENG — Incremental Update Engine（91 增量更新协调引擎，§1 子模块清单）。
 
 增量更新**协调层**（不重写同步逻辑）。与既有件边界：
@@ -60,14 +57,14 @@ D_DATA_ENG — Incremental Update Engine（91 增量更新协调引擎，§1 子
 #   name_zh: ① detect_change
 #   name_en: detect_change
 #   intro: 统一变更检测：三通道任一前进/变化即判变更（确定性，Fail-Closed）。
-#   desc: 统一变更检测：三通道任一前进/变化即判变更（确定性，Fail-Closed）。 reasons 取值：FIRST_OBSERVATION / WATERMARK_ADVANCED…；源码 L149-L170
+#   desc: 统一变更检测：三通道任一前进/变化即判变更（确定性，Fail-Closed）。 reasons 取值：FIRST_OBSERVATION / WATERMARK_ADVANCED…；源码 L147-L168
 #   inputs: previous current
 #   outputs: ChangeVerdict
 # - id: A2
 #   name_zh: ② SamplingReconciler
 #   name_en: SamplingReconciler
 #   intro: 增量结果抽样全量对账器（偏差告警不静默；sink 异常不阻断）。
-#   desc: 增量结果抽样全量对账器（偏差告警不静默；sink 异常不阻断）。 alert_sink：注入式告警出口（装配批接 alerter）；缺失仅记 WARNING 日志。；公共方法（定义序）: reconcile；源码 L1…
+#   desc: 增量结果抽样全量对账器（偏差告警不静默；sink 异常不阻断）。 alert_sink：注入式告警出口（装配批接 alerter）；缺失仅记 WARNING 日志。；公共方法（定义序）: reconcile…
 #   inputs: tolerance_ratio alert_sink
 #   outputs: 返回值
 # - id: A3

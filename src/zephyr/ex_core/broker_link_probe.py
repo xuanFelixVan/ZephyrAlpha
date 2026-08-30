@@ -23,9 +23,6 @@
 # O1: ConnectionProbeResult + LinkHealthSnapshot(55 号 §3.2 健康总览消费)
 # [/ALGO_FLOW]
 """
-
-
-
 D_EX_CORE — miniQMT 下单链路探针（55 号 §3.2 缺口，随 40 号 P0 清单施工）。
 
 55 号 §3.2："miniQMT 下单链路专门探针（连接状态/下单延迟/回报延迟）——

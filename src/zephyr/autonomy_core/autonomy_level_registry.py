@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-AU-005 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 AutonomyLevelRegistry — Agent 自治边界四级自治模型 (MOD-AU-005)
 
 CAND-AUTONOMYCORE-004（B11-02454）：四级自治注册表。
@@ -53,7 +50,7 @@ CAND-AUTONOMYCORE-004（B11-02454）：四级自治注册表。
 #   name_zh: ① AutonomyCheckVerdict
 #   name_en: AutonomyCheckVerdict
 #   intro: 单次动作判定结果（不可变）。
-#   desc: 单次动作判定结果（不可变）。；公共方法（定义序）: allowed, audit_record；源码 L153-L185
+#   desc: 单次动作判定结果（不可变）。；公共方法（定义序）: allowed, audit_record；源码 L151-L183
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A2

@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-CMP-004 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 Compliance Continuous Ops — 合规持续运营 (MOD-CMP-004)
 
 合规域的持续运营巡检（非一次性门禁）：每次运行产出结构化合规健康报告。
@@ -52,14 +49,14 @@ Compliance Continuous Ops — 合规持续运营 (MOD-CMP-004)
 #   name_zh: ① evaluate_continuous_ops
 #   name_en: evaluate_continuous_ops
 #   intro: 合规持续运营评估（纯函数：同输入必同输出，可单测）。
-#   desc: 合规持续运营评估（纯函数：同输入必同输出，可单测）。；源码 L159-L240
+#   desc: 合规持续运营评估（纯函数：同输入必同输出，可单测）。；源码 L157-L238
 #   inputs: ops_input config run_id
 #   outputs: ComplianceOpsReport
 # - id: A2
 #   name_zh: ② ComplianceContinuousOps
 #   name_en: ComplianceContinuousOps
 #   intro: 合规持续运营编排器（单次有界 run_once；探针失败 fail-closed 转 CRITICAL）。
-#   desc: 合规持续运营编排器（单次有界 run_once；探针失败 fail-closed 转 CRITICAL）。；公共方法（定义序）: run_once；源码 L243-L311
+#   desc: 合规持续运营编排器（单次有界 run_once；探针失败 fail-closed 转 CRITICAL）。；公共方法（定义序）: run_once；源码 L241-L309
 #   inputs: retention_probe rule_update_probe queue_pending_probe config
 #   outputs: 返回值
 #   （注：A2 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）

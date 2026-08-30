@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-CMP-016 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 ComplianceDriftDetector — 合规漂移检测器（MOD-CMP-016）。
 
 B14-04656（AUD-DRAFT-001-DIGEST P2 波 P2-W10，CAND-CMP-007，A9 M66-NEW-03；

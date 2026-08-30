@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-DAT-REF-DATA | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 ReferenceDataManager — 参考数据管理器（MOD-DAT-REF-DATA）
 
 B13-04240（AUD-DRAFT-001-DIGEST P1 波 W-P1-09，D-DATA-08，§17.1）：

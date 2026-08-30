@@ -21,9 +21,6 @@
 # O1: ExecutionReport(CTR-P1-007) -> D_REPORTING(TCA/归因消费)
 # [/ALGO_FLOW]
 """
-
-
-
 D_EX_CORE — CTR-P1-007 ExecutionReport 产出逻辑（GAP-L06-003 P0）。
 
 execution_core blueprint GAP-L06-003（P0：无 ExecutionReport → D_REPORTING 需要
@@ -55,7 +52,7 @@ SELL 负差为不利。
 #   name_zh: ① build_execution_report
 #   name_en: build_execution_report
 #   intro: 组装 CTR-P1-007 ExecutionReport（GAP-L06-003 产出逻辑）。
-#   desc: 组装 CTR-P1-007 ExecutionReport（GAP-L06-003 产出逻辑）。 Args: order: 委托单（side/limit_price/quanti…；源码 L104-L162
+#   desc: 组装 CTR-P1-007 ExecutionReport（GAP-L06-003 产出逻辑）。 Args: order: 委托单（side/limit_price/quanti…；源码 L102-L160
 #   inputs: order run_record
 #   outputs: ExecutionReport
 #   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）

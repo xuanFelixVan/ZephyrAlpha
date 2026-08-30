@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-DATA-066 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 SourceSlaTracker — 数据源可用性 SLA 追踪器（MOD-DATA-066）。
 
 B13-04332（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DAT-020，A3数据架构）：

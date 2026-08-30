@@ -38,10 +38,6 @@
 # A4 --> A5
 # A5 --> O1
 """
-
-
-
-
 Premarket Checker — 盘前检查器 (MOD-EX-063, D-TRADING-05 MVP)
 
 机构 OMS 与 vnpy RiskManager 标配的开盘前就绪闸。与 MOD-EX-024
@@ -74,14 +70,14 @@ Version: 0.1.0
 #   name_zh: ② register_checker
 #   name_en: register_checker
 #   intro: 注册/注销盘前检查器实例（运行时装配批注入生产探针）。
-#   desc: 注册/注销盘前检查器实例（运行时装配批注入生产探针）。；源码 L284-L288
+#   desc: 注册/注销盘前检查器实例（运行时装配批注入生产探针）。；源码 L281-L285
 #   inputs: checker
 #   outputs: 返回值
 # - id: A3
 #   name_zh: ③ subscribe_eventbus
 #   name_en: subscribe_eventbus
 #   intro: 订阅 premarket.check.requested（幂等；boot_hooks 统一调用）。
-#   desc: 订阅 premarket.check.requested（幂等；boot_hooks 统一调用）。；源码 L291-L328
+#   desc: 订阅 premarket.check.requested（幂等；boot_hooks 统一调用）。；源码 L288-L325
 #   inputs: 无参数
 #   outputs: 返回值
 #   （注：A3 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）

@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 数据服务接口层——统一数据服务门面（CAND-DAT-008 / B13-04033）。
 
 min_build_spec 对齐（深挖裁定=做 P0，B1-00645 门户重复裁定亦归并本入口）：
@@ -62,7 +59,7 @@ min_build_spec 对齐（深挖裁定=做 P0，B1-00645 门户重复裁定亦归�
 #   name_zh: ② main
 #   name_en: main
 #   intro: 入口——待实现。
-#   desc: 入口——待实现。；源码 L307-L308
+#   desc: 入口——待实现。；源码 L305-L306
 #   inputs: 无参数
 #   outputs: 返回值
 #   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）

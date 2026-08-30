@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-H1_REDIS_HOT | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 tick → Redis tick:{symbol}:latest 双写器（D-DATA → H1 集成适配器）。
 
 真源：
@@ -55,7 +52,7 @@ tick → Redis tick:{symbol}:latest 双写器（D-DATA → H1 集成适配器）
 #   name_zh: ① tick_to_cache_dict
 #   name_en: tick_to_cache_dict
 #   intro: QMT tick dict → Redis tick:{symbol}:latest Hash fields。
-#   desc: QMT tick dict → Redis tick:{symbol}:latest Hash fields。 输出字段（H1 蓝图 §3.3：price/volume/bid1…；源码 L119-L163
+#   desc: QMT tick dict → Redis tick:{symbol}:latest Hash fields。 输出字段（H1 蓝图 §3.3：price/volume/bid1…；源码 L117-L161
 #   inputs: tick
 #   outputs: dict[str, float | int] | None
 # - id: A2

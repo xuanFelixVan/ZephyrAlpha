@@ -15,9 +15,6 @@
 # [TTL] permanent
 
 """
-
-
-
 四项严禁自动化检测 + Kill Switch 轻量版（43_compliance_discipline §4，BM-BUY-08-B）。
 
 订单提交前检测四类严禁交易行为——踏空追高 / 被套补仓 / 盈利骄傲 / 亏损报复。

@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-CMP-014 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 InfoAsymmetryManipulationDetector — 信息不对称期与操纵检测器（MOD-CMP-014）。
 
 B10-01426（AUD-DRAFT-001-DIGEST P2 波 P2-W10，CAND-CMP-005，A1 模块54）：

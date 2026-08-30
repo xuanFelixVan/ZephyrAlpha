@@ -23,9 +23,6 @@
 # O1: is_frozen/frozen_symbols(阻断判定, C-002 既有闸抛转 ComplianceGateBlockError) + release_freeze(人工复解释放, MANIPULATION_FREEZE_RELEASE 留痕)
 # [/ALGO_FLOW]
 """
-
-
-
 D_COMPLIANCE — 盘中操纵 4 类检测实时流驱动接线层（43 号 §7.2/§7.3，A8 批）。
 
 43 号 §10 边界："Spoofing/Layering/WashTrade 需订单/成交历史，由盘中实时流以

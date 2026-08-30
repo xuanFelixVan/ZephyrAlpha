@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-L02-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 C-009 因子与信号生产管线（CAND-FAC-009 / B1-00144）。
 
 双模管线编排：盘前全量批算（分块调度）+ 盘中增量（事件驱动 mode），因子值落

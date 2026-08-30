@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-ALT-013 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 AltDataSignalExtractor — 另类数据信号提取网关（MOD-ALT-013）。
 
 B5-07085（AUD-DRAFT-001-DIGEST P2 波 P2-W04，CAND-TESTA-023，B5

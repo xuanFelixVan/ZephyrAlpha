@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-FBL-004 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 MetaHarnessOptimizer — Meta-Harness 元优化器（MOD-FBL-004）。
 
 B12-03617（AUD-DRAFT-001-DIGEST P2 波 P2-W14，CAND-FBL-006，B12）：学习系统

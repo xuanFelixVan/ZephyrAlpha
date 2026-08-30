@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 数据源 Provider 抽象基类（MOD-L00-004 §4）。
 
 定义所有数据源封装的统一接口：

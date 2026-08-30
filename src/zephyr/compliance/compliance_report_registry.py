@@ -15,9 +15,6 @@
 # [TTL] permanent
 
 """
-
-
-
 程序化交易报告 6 项义务登记 + 报送门禁（43_compliance_discipline §7.4）。
 
 铁律：**先报告后交易**——报告未完成确认前，C-002 执行域拒绝发送任何订单
@@ -46,14 +43,14 @@ Version: 1.0.0
 #   name_zh: ① ComplianceReportRegistry
 #   name_en: ComplianceReportRegistry
 #   intro: 报告登记表（只读加载 + 门禁校验）。
-#   desc: 报告登记表（只读加载 + 门禁校验）。；公共方法（定义序）: load_items, order_min_dwell_us；源码 L130-L165
+#   desc: 报告登记表（只读加载 + 门禁校验）。；公共方法（定义序）: load_items, order_min_dwell_us；源码 L128-L163
 #   inputs: registry_path
 #   outputs: 返回值
 # - id: A2
 #   name_zh: ② ReportGate
 #   name_en: ReportGate
 #   intro: 报送门禁：任一必报项 broker_ack 缺失 → BLOCK（C-002 拒单）。
-#   desc: 报送门禁：任一必报项 broker_ack 缺失 → BLOCK（C-002 拒单）。；公共方法（定义序）: check；源码 L168-L216
+#   desc: 报送门禁：任一必报项 broker_ack 缺失 → BLOCK（C-002 拒单）。；公共方法（定义序）: check；源码 L166-L214
 #   inputs: registry logger
 #   outputs: 返回值
 #   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）

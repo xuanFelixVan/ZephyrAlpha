@@ -16,10 +16,6 @@
 # [TTL] permanent
 
 """
-
-
-
-
 MOD-INF-019: Agent Spec — All Skill Modules
 Blueprint: docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 Author: factory-agent
@@ -36,7 +32,7 @@ Version: 0.1.0
 #   name_zh: ① AllSkillModules
 #   name_en: AllSkillModules
 #   intro: 全量 Skill 模块索引——从蓝图全部代码块落地
-#   desc: 全量 Skill 模块索引——从蓝图全部代码块落地；公共方法（定义序）: all_modules, count；源码 L55-L124
+#   desc: 全量 Skill 模块索引——从蓝图全部代码块落地；公共方法（定义序）: all_modules, count；源码 L52-L121
 #   inputs: 无参数
 #   outputs: 返回值
 # 层: 输出

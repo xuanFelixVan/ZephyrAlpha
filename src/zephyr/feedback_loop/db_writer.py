@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 FLE 持久化写入器 — 写 metrics/alerts/dispatch_log 到 SQLite
 
 CT-FLE-DB-001: Feedback Loop 采集的指标和告警 -> Database 持久化落地。
@@ -45,28 +42,28 @@ CT-FLE-DB-001: Feedback Loop 采集的指标和告警 -> Database 持久化落�
 #   name_zh: ① FLEWriter
 #   name_en: FLEWriter
 #   intro: FLE 数据库写入器。
-#   desc: FLE 数据库写入器。；公共方法（定义序）: write_metrics, write_alert, write_dispatch_log, update_alert_status；源码 L115-L251
+#   desc: FLE 数据库写入器。；公共方法（定义序）: write_metrics, write_alert, write_dispatch_log, update_alert_status；源码 L113-L249
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A2
 #   name_zh: ② write_metrics_batch
 #   name_en: write_metrics_batch
 #   intro: 便捷函数：批量写入指标。
-#   desc: 便捷函数：批量写入指标。；源码 L254-L256
+#   desc: 便捷函数：批量写入指标。；源码 L252-L254
 #   inputs: batch
 #   outputs: int
 # - id: A3
 #   name_zh: ③ write_alert
 #   name_en: write_alert
 #   intro: 便捷函数：写入告警。
-#   desc: 便捷函数：写入告警。；源码 L259-L261
+#   desc: 便捷函数：写入告警。；源码 L257-L259
 #   inputs: event
 #   outputs: str | None
 # - id: A4
 #   name_zh: ④ write_dispatch_log
 #   name_en: write_dispatch_log
 #   intro: 便捷函数：写入分派日志。
-#   desc: 便捷函数：写入分派日志。；源码 L264-L272
+#   desc: 便捷函数：写入分派日志。；源码 L262-L270
 #   inputs: event_id target_system result task_id error_message
 #   outputs: int | None
 # 层: 输出

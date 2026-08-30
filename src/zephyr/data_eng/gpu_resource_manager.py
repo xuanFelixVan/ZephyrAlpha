@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-DATENG-005 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 GpuResourceManager — GPU 资源管理器（MOD-DATENG-005）。
 
 B5-07239（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATENG-008，B5 R-100）：

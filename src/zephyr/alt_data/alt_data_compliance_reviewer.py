@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-ALT-015 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 AltDataComplianceReviewer — 另类数据合规审查器（MOD-ALT-015）。
 
 B13-04283（AUD-DRAFT-001-DIGEST P2 波 P2-W04，CAND-TESTA-016，A3

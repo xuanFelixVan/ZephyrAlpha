@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-L02-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 C-027 因子工厂（CAND-FAC-008 / B1-00143）。
 
 9 阶段全生命周期工厂：候选立项(candidate) → 假设(hypothesis) → 生成(generation)

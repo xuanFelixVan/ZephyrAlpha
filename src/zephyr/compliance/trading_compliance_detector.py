@@ -15,9 +15,6 @@
 # [TTL] permanent
 
 """
-
-
-
 交易合规检测（43_compliance_discipline §7，BM-BUY-15 补强）。
 
 区别于 BM-BUY-08-B（行为纪律，管"人"），本环节管"法"——监管规则符合性。

@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-EXSIM-001 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 AlmgrenChrissImpactModel — Almgren-Chriss 冲击成本模型（MOD-EXSIM-001）。
 
 B3-06286（AUD-DRAFT-001-DIGEST P2 波 P2-W08，CAND-EXSIM-001，B3 R-118）：

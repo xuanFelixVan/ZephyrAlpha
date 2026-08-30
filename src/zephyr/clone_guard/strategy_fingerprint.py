@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-CLONE_GUARD-SFP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 D_GOV_CODE_QUALITY — 退役策略指纹库（90 号 Phase2 项，#20 工程细节 B-010）
 
 裁定真源：90_methodology_open_questions.md §20（v2.0.0）：
@@ -33,18 +30,18 @@ D_GOV_CODE_QUALITY — 退役策略指纹库（90 号 Phase2 项，#20 工程细
 # 层: 输入
 # - id: I1
 #   name: a 参数
-#   fields: 参数 a，类型注解 np.ndarray | list[float] | tuple[float,…
+#   fields: 参数 a，类型注解 np.ndarray | list[float] | tuple[float…
 #   code: strategy_fingerprint.py 顶层公共函数形参（AST 提取）
 # - id: I2
 #   name: b 参数
-#   fields: 参数 b，类型注解 np.ndarray | list[float] | tuple[float,…
+#   fields: 参数 b，类型注解 np.ndarray | list[float] | tuple[float…
 #   code: strategy_fingerprint.py 顶层公共函数形参（AST 提取）
 # 层: 算法
 # - id: A1
 #   name_zh: ① dtw_distance
 #   name_en: dtw_distance
 #   intro: DTW（Dynamic Time Warping）距离——PnL 形态比对（Tier3）。
-#   desc: DTW（Dynamic Time Warping）距离——PnL 形态比对（Tier3）。 经典 O(n×m) DP：局部代价=绝对差，路径=min(上/左/左上) 累积。 允许…；源码 L88-L114
+#   desc: DTW（Dynamic Time Warping）距离——PnL 形态比对（Tier3）。 经典 O(n×m) DP：局部代价=绝对差，路径=min(上/左/左上) 累积。 允许…；源码 L86-L112
 #   inputs: a b
 #   outputs: float
 # - id: A2

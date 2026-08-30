@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-GOV-053 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 AuditTraceGraphBuilder — 审计追踪依赖构建器（MOD-GOV-053）。
 
 B14-04667（AUD-DRAFT-001-DIGEST P2 波 P2-W12，CAND-GOVAUDIT-004，A9

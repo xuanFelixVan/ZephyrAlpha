@@ -24,9 +24,6 @@
 # O1: RejectionActionResult(outcome/broker_order_id/frozen_strategy_id)——调用方留痕
 # [/ALGO_FLOW]
 """
-
-
-
 D_EX_CORE — 拒单分类动作执行器（40 号 §6.1 gap 4 闭合，AI-NIGHT-001 包P）。
 
 40 号 §2.7 层3：分类映射 + classify_rejection + _handle_rejection 日志已实现，

@@ -16,9 +16,6 @@
 # [TTL] permanent
 
 """
-
-
-
 agent-spec MOD-INF-019 CLI — 蓝图->Skill 升级引擎入口.
 
 用法
@@ -38,56 +35,56 @@ agent-spec MOD-INF-019 CLI — 蓝图->Skill 升级引擎入口.
 #   name_zh: ① cmd_list
 #   name_en: cmd_list
 #   intro: 列出所有已注册 Skill.
-#   desc: 列出所有已注册 Skill.；源码 L135-L155
+#   desc: 列出所有已注册 Skill.；源码 L133-L153
 #   inputs: 无参数
 #   outputs: int
 # - id: A2
 #   name_zh: ② cmd_status
 #   name_en: cmd_status
 #   intro: 显示模块健康状态.
-#   desc: 显示模块健康状态.；源码 L158-L194
+#   desc: 显示模块健康状态.；源码 L156-L192
 #   inputs: 无参数
 #   outputs: int
 # - id: A3
 #   name_zh: ③ main
 #   name_en: main
-#   intro: main() 源码 L197-L209
-#   desc: 源码 L197-L209
+#   intro: main() 源码 L195-L207
+#   desc: 源码 L195-L207
 #   inputs: 无参数
 #   outputs: int
 # - id: A4
 #   name_zh: ④ cmd_self_test
 #   name_en: cmd_self_test
 #   intro: 公共接口：cmd_self_test（Stage 4 公共化）。
-#   desc: 公共接口：cmd_self_test（Stage 4 公共化）。；源码 L237-L239
+#   desc: 公共接口：cmd_self_test（Stage 4 公共化）。；源码 L235-L237
 #   inputs: args
 #   outputs: 返回值
 # - id: A5
 #   name_zh: ⑤ cmd_scan
 #   name_en: cmd_scan
 #   intro: 公共接口：cmd_scan（Stage 4 公共化）。
-#   desc: 公共接口：cmd_scan（Stage 4 公共化）。；源码 L243-L245
+#   desc: 公共接口：cmd_scan（Stage 4 公共化）。；源码 L241-L243
 #   inputs: args
 #   outputs: 返回值
 # - id: A6
 #   name_zh: ⑥ cmd_budget
 #   name_en: cmd_budget
 #   intro: 公共接口：cmd_budget（Stage 4 公共化）。
-#   desc: 公共接口：cmd_budget（Stage 4 公共化）。；源码 L249-L251
+#   desc: 公共接口：cmd_budget（Stage 4 公共化）。；源码 L247-L249
 #   inputs: args
 #   outputs: 返回值
 # - id: A7
 #   name_zh: ⑦ registry_path
 #   name_en: registry_path
 #   intro: 公共接口：registry_path（Stage 4 公共化）。
-#   desc: 公共接口：registry_path（Stage 4 公共化）。；源码 L255-L257
+#   desc: 公共接口：registry_path（Stage 4 公共化）。；源码 L253-L255
 #   inputs: 无参数
 #   outputs: Path
 # - id: A8
 #   name_zh: ⑧ load_registry
 #   name_en: load_registry
 #   intro: 公共接口：load_registry（Stage 4 公共化）。
-#   desc: 公共接口：load_registry（Stage 4 公共化）。；源码 L261-L263
+#   desc: 公共接口：load_registry（Stage 4 公共化）。；源码 L259-L261
 #   inputs: 无参数
 #   outputs: dict
 # 层: 输出

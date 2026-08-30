@@ -52,7 +52,7 @@ Script System -> Orchestrator: Finding -> TaskCard 转换管道
 # - id: A2
 #   name_zh: ② report_finding
 #   name_en: report_finding
-#   intro: report_finding(finding, db_path, namespace, dry_run) 源码 L17…
+#   intro: report_finding(finding, db_path, namespace, dry_run)…
 #   desc: 源码 L177-L184
 #   inputs: finding db_path namespace dry_run
 #   outputs: BridgeResult

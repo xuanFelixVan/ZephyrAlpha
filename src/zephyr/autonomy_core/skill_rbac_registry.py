@@ -16,9 +16,6 @@
 # [TTL] permanent
 
 """
-
-
-
 G-CT-003: Agent Spec -> RBAC capability check.
 
 Bidirectional bridge:
@@ -36,7 +33,7 @@ Bidirectional bridge:
 #   name_zh: ① SpecRegistry
 #   name_en: SpecRegistry
 #   intro: Agent Spec registry — interfaces with real skill-registry.
-#   desc: Agent Spec registry — interfaces with real skill-registry.yaml.；公共方法（定义序）: entries, register, get, list_all,…
+#   desc: Agent Spec registry — interfaces with real skill-registry.yaml.；公共方法（定义序）: entries, register, get, list_all…
 #   inputs: registry_path
 #   outputs: 返回值
 #   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）

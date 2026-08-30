@@ -23,8 +23,6 @@
 # O1: WriteReceipt(写入回执) / list[dict](7列行)
 # [/ALGO_FLOW]
 """
-
-
 离线存储 Offline Store（CAND-FAC-015 / B13-04144，feast 式 Parquet/DuckDB 离线仓）。
 
 特征仓批量分析面：Parquet 离线三目录（daily/intraday/snapshots）+ 7 列 Schema
@@ -72,14 +70,14 @@ trade_date 以 VARCHAR 存储——ISO 日期字典序=时序，hive 目录仅�
 #   name_zh: ① validate_rows
 #   name_en: validate_rows
 #   intro: 7 列 Schema fail-closed 校验。
-#   desc: 7 列 Schema fail-closed 校验。 Raises: ValueError: 缺列/非法 quality_flag/非法 trade_date/非法 comput…；源码 L205-L248
+#   desc: 7 列 Schema fail-closed 校验。 Raises: ValueError: 缺列/非法 quality_flag/非法 trade_date/非法 comput…；源码 L204-L247
 #   inputs: rows
 #   outputs: list[FactorValueRow]
 # - id: A2
 #   name_zh: ② partition_path
 #   name_en: partition_path
 #   intro: 分区相对路径：daily/intraday→trade_date=YYYY-MM-DD；snapshots→year=…
-#   desc: 分区相对路径：daily/intraday→trade_date=YYYY-MM-DD；snapshots→year=YYYY/month=MM。 Raises: ValueEr…；源码 L251-L262
+#   desc: 分区相对路径：daily/intraday→trade_date=YYYY-MM-DD；snapshots→year=YYYY/month=MM。 Raises: ValueEr…；源码 L250-L261
 #   inputs: layer trade_date
 #   outputs: str
 # - id: A3

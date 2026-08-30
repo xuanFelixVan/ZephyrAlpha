@@ -15,8 +15,6 @@
 # [A_module] module_id=MOD-DT-001 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
 MarketTwinSimulator — 数字孪生市场仿真（MOD-DT-001，Phase1 规则 ABM 纯 CPU）。
 
 B10-01864（AUD-DRAFT-001-DIGEST P2 波 P2-W08，CAND-DIGITALT-001，A1 §29.23）：

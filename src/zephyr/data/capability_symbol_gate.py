@@ -22,8 +22,6 @@
 # O1: 违规描述列表（空=通过；语法错误 fail-open 空）
 # [/ALGO_FLOW]
 """
-
-
 Provider 声明-实现符号一致性双向 AST gate（17 号 §5.5 施工项 4，§5.8 定稿最优先）。
 
 针对缺陷：internal_compute 曾出现「fetch 路由调用方法、方法却不存在」的 AttributeError
@@ -60,14 +58,14 @@ Version: 0.2.0（按真实 provider 路由形态校准反向豁免规则，消�
 #   name_zh: ① check_declaration_impl_consistency_content
 #   name_en: check_declaration_impl_consistency_content
 #   intro: 校验 provider 文件内容（字符串）的声明-实现符号一致性（17 号 §5.8 项 4）。
-#   desc: 校验 provider 文件内容（字符串）的声明-实现符号一致性（17 号 §5.8 项 4）。 Returns: 违规描述列表（空=一致；语法错误 fail-open 返回空）…；源码 L242-L296
+#   desc: 校验 provider 文件内容（字符串）的声明-实现符号一致性（17 号 §5.8 项 4）。 Returns: 违规描述列表（空=一致；语法错误 fail-open 返回空）…；源码 L241-L295
 #   inputs: content
 #   outputs: list[str]
 # - id: A2
 #   name_zh: ② check_declaration_impl_consistency
 #   name_en: check_declaration_impl_consistency
 #   intro: 校验 provider 文件的声明-实现符号一致性（文件读取后委托 content 版，真源唯一）。
-#   desc: 校验 provider 文件的声明-实现符号一致性（文件读取后委托 content 版，真源唯一）。；源码 L299-L305
+#   desc: 校验 provider 文件的声明-实现符号一致性（文件读取后委托 content 版，真源唯一）。；源码 L298-L304
 #   inputs: file_path
 #   outputs: list[str]
 # 层: 输出

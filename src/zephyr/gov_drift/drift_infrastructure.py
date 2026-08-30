@@ -60,7 +60,7 @@ Drift Detector 基础设施 — drift_infrastructure.py
 # - id: A3
 #   name_zh: ③ declare_maintenance_window
 #   name_en: declare_maintenance_window
-#   intro: declare_maintenance_window(hours, triggered_by_auto) 源码 L19…
+#   intro: declare_maintenance_window(hours, triggered_by_auto)…
 #   desc: 源码 L195-L204
 #   inputs: hours triggered_by_auto
 #   outputs: MaintenanceWindow
@@ -88,7 +88,7 @@ Drift Detector 基础设施 — drift_infrastructure.py
 # - id: A7
 #   name_zh: ⑦ check_budget_for_gate
 #   name_en: check_budget_for_gate
-#   intro: check_budget_for_gate(module_id, tier, break_glass) 源码 L245…
+#   intro: check_budget_for_gate(module_id, tier, break_glass)…
 #   desc: 源码 L245-L261
 #   inputs: module_id tier break_glass
 #   outputs: dict[str, object]

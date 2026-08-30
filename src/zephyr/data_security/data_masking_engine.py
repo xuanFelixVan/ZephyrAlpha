@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-DATSEC-003 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 DataMaskingEngine — 数据脱敏引擎（MOD-DATSEC-003）。
 
 B13-04295（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATSEC-003，A3数据架构）：
@@ -46,7 +43,7 @@ B13-04295（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATSEC-003，A3数据架�
 #   name_zh: ① DataMaskingEngine
 #   name_en: DataMaskingEngine
 #   intro: 脱敏引擎（FPE + 角色动态脱敏 + 拉普拉斯差分隐私噪声）。
-#   desc: 脱敏引擎（FPE + 角色动态脱敏 + 拉普拉斯差分隐私噪声）。；公共方法（定义序）: fpe_encrypt, fpe_decrypt, register_policy, policy_of, mask_field,…
+#   desc: 脱敏引擎（FPE + 角色动态脱敏 + 拉普拉斯差分隐私噪声）。；公共方法（定义序）: fpe_encrypt, fpe_decrypt, register_policy, policy_of, mask_field…
 #   inputs: key cipher rng
 #   outputs: 返回值
 #   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）

@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-AU-003 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 EmbeddingRouterAdapter — S1.3 语义复核嵌入设施桥接 + 批量档手动 CLI（15号文 §4.2 S1.3）.
 
 设计真源：15号文 §3.2 / §4.2-S1.3：
@@ -61,7 +58,7 @@ sessions JSON 格式：[{"session_ref", "original_intent", "action_summary"}, ..
 #   name_zh: ② main
 #   name_en: main
 #   intro: S1.3 批量档手动 CLI 入口。
-#   desc: S1.3 批量档手动 CLI 入口。返回码：0 成功；2 输入/配置非法；3 盘中时段拒绝执行. Args: argv: CLI 参数（None → sys.argv）。 at:…；源码 L185-L244
+#   desc: S1.3 批量档手动 CLI 入口。返回码：0 成功；2 输入/配置非法；3 盘中时段拒绝执行. Args: argv: CLI 参数（None → sys.argv）。 at:…；源码 L183-L242
 #   inputs: argv at provider
 #   outputs: int
 # 层: 输出

@@ -39,7 +39,7 @@ Design:
 #   name_zh: ① LazyModuleRegistry
 #   name_en: LazyModuleRegistry
 #   intro: class LazyModuleRegistry 源码 L84-L188
-#   desc: 公共方法（定义序）: register, load, is_loaded, is_registered, get, load_core_modules, unload, list_entries, stats；源码 L…
+#   desc: 公共方法（定义序）: register, load, is_loaded, is_registered, get, load_core_modules, unload, list_entries, stats…
 #   inputs: core_modules
 #   outputs: 返回值
 #   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）

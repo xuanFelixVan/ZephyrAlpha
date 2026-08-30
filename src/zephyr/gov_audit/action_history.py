@@ -16,9 +16,6 @@
 # [TTL] permanent
 
 """
-
-
-
 ActionHistory — 操作历史持久化审计 + 去重 + 循环检测
 =====================================================
 蓝图 §2.5 · 环形缓冲区(50条) + 5级去重规则 + action_ttl=300s
@@ -45,15 +42,15 @@ ActionHistory — 操作历史持久化审计 + 去重 + 循环检测
 # - id: A1
 #   name_zh: ① ActionSignature
 #   name_en: ActionSignature
-#   intro: class ActionSignature 源码 L94-L105
-#   desc: 公共方法（定义序）: fingerprint；源码 L94-L105
+#   intro: class ActionSignature 源码 L92-L103
+#   desc: 公共方法（定义序）: fingerprint；源码 L92-L103
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A2
 #   name_zh: ② ActionHistory
 #   name_en: ActionHistory
-#   intro: class ActionHistory 源码 L135-L276
-#   desc: 公共方法（定义序）: record, get_loop_events, get_recent_actions, clear, size, summary；源码 L135-L276
+#   intro: class ActionHistory 源码 L133-L274
+#   desc: 公共方法（定义序）: record, get_loop_events, get_recent_actions, clear, size, summary；源码 L133-L274
 #   inputs: buffer_size ttl
 #   outputs: 返回值
 #   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）

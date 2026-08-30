@@ -54,9 +54,6 @@
 #   name_en: CH rows + progress_store
 #   intro: ClickHouse 目标表行写入；SQLite task_progress.last_key 游标 + task_runs 运行记录；subscribe() 事件回调（config_changed/shutdown/task_completed）
 """
-
-
-
 数据源调度编排层（MOD-L00-004 §6）。
 
 APScheduler 常驻进程，按 cron 时段触发任务批次，管理 DAG 依赖，
@@ -91,7 +88,7 @@ APScheduler 常驻进程，按 cron 时段触发任务批次，管理 DAG 依赖
 #   name_zh: ① acquire_single_instance_lock
 #   name_en: acquire_single_instance_lock
 #   intro: 获取调度器进程级单实例锁（OS 级文件锁）。
-#   desc: 获取调度器进程级单实例锁（OS 级文件锁）。 根因（D1 遗留，2026-08-24 实证）：看门狗 start_scheduler.ps1 的 PID 文件锁存在 check-…；源码 L175-L218
+#   desc: 获取调度器进程级单实例锁（OS 级文件锁）。 根因（D1 遗留，2026-08-24 实证）：看门狗 start_scheduler.ps1 的 PID 文件锁存在 check-…；源码 L173-L216
 #   inputs: lock_path
 #   outputs: 返回值
 # - id: A2
@@ -105,14 +102,14 @@ APScheduler 常驻进程，按 cron 时段触发任务批次，管理 DAG 依赖
 #   name_zh: ③ start_monitor
 #   name_en: start_monitor
 #   intro: 启动监控 HTTP server（后台守护线程）。
-#   desc: 启动监控 HTTP server（后台守护线程）。 Args: scheduler: 调度器实例 port: 监听端口，默认 9100（Prometheus 标准端口段） 容错：…；源码 L2180-L2202
+#   desc: 启动监控 HTTP server（后台守护线程）。 Args: scheduler: 调度器实例 port: 监听端口，默认 9100（Prometheus 标准端口段） 容错：…；源码 L2178-L2200
 #   inputs: scheduler port
 #   outputs: 返回值
 # - id: A4
 #   name_zh: ④ main
 #   name_en: main
 #   intro: 调度器入口：启动常驻进程。
-#   desc: 调度器入口：启动常驻进程。 用法： python -m zephyr.data.scheduler；源码 L2222-L2279
+#   desc: 调度器入口：启动常驻进程。 用法： python -m zephyr.data.scheduler；源码 L2220-L2277
 #   inputs: 无参数
 #   outputs: 返回值
 # 层: 输出

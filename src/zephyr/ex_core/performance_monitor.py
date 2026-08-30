@@ -16,9 +16,6 @@
 # [TTL] permanent
 
 """
-
-
-
 执行核心性能监控器（MOD-EX-036）——单机轻量实现。
 
 记录执行链路关键操作的延迟/数值样本（下单延迟/成交回报延迟/风控门耗时等），
@@ -40,7 +37,7 @@
 #   name_zh: ① PerformanceMonitor
 #   name_en: PerformanceMonitor
 #   intro: 执行核心性能监控器（单机轻量）。
-#   desc: 执行核心性能监控器（单机轻量）。；公共方法（定义序）: record, metrics, stats, set_threshold, check_alerts, snapshot；源码 L103-L195
+#   desc: 执行核心性能监控器（单机轻量）。；公共方法（定义序）: record, metrics, stats, set_threshold, check_alerts, snapshot；源码 L101-L193
 #   inputs: window_size alerter
 #   outputs: 返回值
 #   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）

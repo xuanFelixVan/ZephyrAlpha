@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-GOV-alerter | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8 可观测性）。
 
 告警触发条件（蓝图 §6.5）：
@@ -50,7 +47,7 @@
 #   name_zh: ① Alerter
 #   name_en: Alerter
 #   intro: 告警管理器。
-#   desc: 告警管理器。 用法： alerter = Alerter() alerter.notify("kline_daily_incremental", "连接超时", level=LE…；公共方法（定义序）: notify,…
+#   desc: 告警管理器。 用法： alerter = Alerter() alerter.notify("kline_daily_incremental", "连接超时", level=LE…；公共方法（定义序）: notify…
 #   inputs: failures_dir
 #   outputs: 返回值
 # 层: 输出

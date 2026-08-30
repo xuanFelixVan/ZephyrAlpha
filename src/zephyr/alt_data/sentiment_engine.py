@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-ALT-004 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 SentimentEngine — 统一情绪引擎（MOD-ALT-004）
 
 B1-00112（AUD-DRAFT-001-DIGEST P1 波 W-P1-14，D-ALT-02）：聚合价量情绪（复用
@@ -48,7 +45,7 @@ detector（MOD-SIG-099）=极端情绪**反转事件检测**。本模块为跨**
 #   name_zh: ① SentimentEngine
 #   name_en: SentimentEngine
 #   intro: 统一情绪引擎（跨类别聚合 + 历史分位状态判定核心）。
-#   desc: 统一情绪引擎（跨类别聚合 + 历史分位状态判定核心）。 Args: config: SentimentEngineConfig（None=默认） history_provider…；公共方法（定义序）: config,…
+#   desc: 统一情绪引擎（跨类别聚合 + 历史分位状态判定核心）。 Args: config: SentimentEngineConfig（None=默认） history_provider…；公共方法（定义序）: config…
 #   inputs: config history_provider
 #   outputs: 返回值
 #   （注：A1 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）

@@ -16,9 +16,6 @@
 # [TTL] permanent
 
 """
-
-
-
 MetricsCollector: append-only metrics recording.
 
 Records 5 metric types into a SQLite metrics table for CLI reporting
@@ -44,8 +41,8 @@ Depends: sqlite_schema.py (T-1-04), task_repo.py (T-1-04)
 # - id: A2
 #   name_zh: ② EMABaseline
 #   name_en: EMABaseline
-#   intro: class EMABaseline 源码 L322-L332
-#   desc: 公共方法（定义序）: update；源码 L322-L332
+#   intro: class EMABaseline 源码 L320-L330
+#   desc: 公共方法（定义序）: update；源码 L320-L330
 #   inputs: alpha initial_value
 #   outputs: 返回值
 #   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）

@@ -15,9 +15,6 @@
 # [TTL] task_bound
 # noqa: m02-manual  M02豁免: 采集器常驻服务,manual启动,非reconciler无需事件触发
 """
-
-
-
 880xxx 板块实时快照采集器（tqcenter → ClickHouse sector_snapshot 表）。
 
 架构（方案C混合模式）：
@@ -56,21 +53,21 @@
 #   name_zh: ① classify_market_type
 #   name_en: classify_market_type
 #   intro: 880001-880009=mkt_index，8801XX+=sector。
-#   desc: 880001-880009=mkt_index，8801XX+=sector。；源码 L249-L254
+#   desc: 880001-880009=mkt_index，8801XX+=sector。；源码 L247-L252
 #   inputs: code
 #   outputs: str
 # - id: A2
 #   name_zh: ② parse_snapshot
 #   name_en: parse_snapshot
 #   intro: 把 tqcenter 快照 dict 解析为 sector_snapshot 表的行 tuple。
-#   desc: 把 tqcenter 快照 dict 解析为 sector_snapshot 表的行 tuple。 Args: snap: tqcenter get_market_snapsho…；源码 L257-L311
+#   desc: 把 tqcenter 快照 dict 解析为 sector_snapshot 表的行 tuple。 Args: snap: tqcenter get_market_snapsho…；源码 L255-L309
 #   inputs: snap sector_code market_type data_source now_bj
 #   outputs: tuple | None
 # - id: A3
 #   name_zh: ③ main
 #   name_en: main
 #   intro: 采集器主入口。
-#   desc: 采集器主入口。；源码 L510-L556
+#   desc: 采集器主入口。；源码 L508-L554
 #   inputs: 无参数
 #   outputs: int
 # 层: 输出

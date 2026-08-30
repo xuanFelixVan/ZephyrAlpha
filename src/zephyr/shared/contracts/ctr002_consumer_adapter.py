@@ -44,7 +44,7 @@ Schema版本协商（major不兼容即拒）+字段缺失/新增容忍策略+契
 #   name_zh: ① SchemaSource
 #   name_en: SchemaSource
 #   intro: CTR-002 契约 Schema 真源（手工推导，与 cross_layer_contracts.yaml 对齐）。
-#   desc: CTR-002 契约 Schema 真源（手工推导，与 cross_layer_contracts.yaml 对齐）。；公共方法（定义序）: default_for, optional_default_map；源码 L…
+#   desc: CTR-002 契约 Schema 真源（手工推导，与 cross_layer_contracts.yaml 对齐）。；公共方法（定义序）: default_for, optional_default_map…
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A2

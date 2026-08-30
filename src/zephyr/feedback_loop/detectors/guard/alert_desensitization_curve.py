@@ -38,7 +38,7 @@ auto-escalate to alternate channel or increase severity.
 #   name_zh: ① AlertDesensitizationCurve
 #   name_en: AlertDesensitizationCurve
 #   intro: class AlertDesensitizationCurve 源码 L63-L96
-#   desc: 公共方法（定义序）: record_exposure, get_desensitization, get_response_rate, needs_escalation, is_desensitized；源码 L63-…
+#   desc: 公共方法（定义序）: record_exposure, get_desensitization, get_response_rate, needs_escalation, is_desensitized…
 #   inputs: 无参数
 #   outputs: 返回值
 # 层: 输出

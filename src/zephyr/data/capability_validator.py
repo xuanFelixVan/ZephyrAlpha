@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-GOV-capability_validator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 Provider Capability 行为契约校验器（裁定 #ARCH-CH-022）。
 
 在 scheduler 启动时校验 tasks.yaml 的 task 声明与 provider.meta.capability_contracts
@@ -64,49 +61,49 @@ Provider Capability 行为契约校验器（裁定 #ARCH-CH-022）。
 #   name_zh: ① validate_task_capability_contracts
 #   name_en: validate_task_capability_contracts
 #   intro: 校验 tasks.yaml 的 task 声明与 provider 行为契约一致性。
-#   desc: 校验 tasks.yaml 的 task 声明与 provider 行为契约一致性。 Args: tasks: tasks.yaml 加载的任务列表 metas: {source…；源码 L271-L302
+#   desc: 校验 tasks.yaml 的 task 声明与 provider 行为契约一致性。 Args: tasks: tasks.yaml 加载的任务列表 metas: {source…；源码 L269-L300
 #   inputs: tasks metas
 #   outputs: list[Violation]
 # - id: A2
 #   name_zh: ② has_blocking_violations
 #   name_en: has_blocking_violations
 #   intro: 判断是否存在 ERROR 级违规（阻断启动）。
-#   desc: 判断是否存在 ERROR 级违规（阻断启动）。；源码 L305-L307
+#   desc: 判断是否存在 ERROR 级违规（阻断启动）。；源码 L303-L305
 #   inputs: violations
 #   outputs: bool
 # - id: A3
 #   name_zh: ③ format_violations
 #   name_en: format_violations
 #   intro: 格式化违规列表为日志字符串。
-#   desc: 格式化违规列表为日志字符串。；源码 L310-L317
+#   desc: 格式化违规列表为日志字符串。；源码 L308-L315
 #   inputs: violations
 #   outputs: str
 # - id: A4
 #   name_zh: ④ extract_route_capabilities
 #   name_en: extract_route_capabilities
 #   intro: AST 解析 provider 文件，提取所有路由能力集。
-#   desc: AST 解析 provider 文件，提取所有路由能力集。 文件不存在/解析失败返回 None（fail-open）。 内容解析逻辑委托给 ``_route_caps_from_…；源码 L404-L424
+#   desc: AST 解析 provider 文件，提取所有路由能力集。 文件不存在/解析失败返回 None（fail-open）。 内容解析逻辑委托给 ``_route_caps_from_…；源码 L402-L422
 #   inputs: file_path
 #   outputs: set[str] | None
 # - id: A5
 #   name_zh: ⑤ extract_meta_capabilities
 #   name_en: extract_meta_capabilities
 #   intro: AST 解析 provider 文件，提取 IngestProviderMeta(capabilities=[...]…
-#   desc: AST 解析 provider 文件，提取 IngestProviderMeta(capabilities=[...]) 的 capability_id 集合。 文件不存在/解析…；源码 L474-L494
+#   desc: AST 解析 provider 文件，提取 IngestProviderMeta(capabilities=[...]) 的 capability_id 集合。 文件不存在/解析…；源码 L472-L492
 #   inputs: file_path
 #   outputs: set[str] | None
 # - id: A6
 #   name_zh: ⑥ check_route_meta_consistency_content
 #   name_en: check_route_meta_consistency_content
 #   intro: 校验 provider 文件内容（字符串）的路由-meta 一致性（裁定 Phase 4.4）。
-#   desc: 校验 provider 文件内容（字符串）的路由-meta 一致性（裁定 Phase 4.4）。 Phase 4.4 commit gate 的入口：gate 从 staged…；源码 L497-L526
+#   desc: 校验 provider 文件内容（字符串）的路由-meta 一致性（裁定 Phase 4.4）。 Phase 4.4 commit gate 的入口：gate 从 staged…；源码 L495-L524
 #   inputs: content
 #   outputs: list[str]
 # - id: A7
 #   name_zh: ⑦ check_route_meta_consistency
 #   name_en: check_route_meta_consistency
 #   intro: 校验 provider 文件的路由能力集 vs meta.capabilities 一致性（裁定 ）。
-#   desc: 校验 provider 文件的路由能力集 vs meta.capabilities 一致性（裁定 ）。 治本本次 8 条 ERROR 根因：fetch 路由支持某 capabil…；源码 L529-L547
+#   desc: 校验 provider 文件的路由能力集 vs meta.capabilities 一致性（裁定 ）。 治本本次 8 条 ERROR 根因：fetch 路由支持某 capabil…；源码 L527-L545
 #   inputs: file_path
 #   outputs: list[str]
 #   （注：A7 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）

@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-L02-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 92 87-Alpha：WorldQuant 101 精选 87 公式库（CAND-FAC-010 / B1-00847，GATE-92-01）。
 
 范围裁定：
@@ -52,7 +49,7 @@ register_hook 委托（FactorRegistry/feature_store 接线留装配批）。
 #   name_zh: ① ops
 #   name_en: ops
 #   intro: WorldQuant 101 时序/截面算子集（全部 rolling/shift 实现，天然 PIT）。
-#   desc: WorldQuant 101 时序/截面算子集（全部 rolling/shift 实现，天然 PIT）。；公共方法（定义序）: rank, delay, delta, ts_sum, ts_mean, ts_min,…
+#   desc: WorldQuant 101 时序/截面算子集（全部 rolling/shift 实现，天然 PIT）。；公共方法（定义序）: rank, delay, delta, ts_sum, ts_mean, ts_min…
 #   inputs: 无参数
 #   outputs: 返回值
 # - id: A2

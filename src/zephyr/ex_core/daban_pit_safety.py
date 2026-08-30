@@ -24,9 +24,6 @@
 # O1: 龙虎榜行列表 / run_backtest 汇总 dict(trades/total/by_decision)
 # [/ALGO_FLOW]
 """
-
-
-
 打板 PIT 安全族（24_daban_strategy_detail §3.13#5 + §3.14#10 施工）。
 
 缺失#5 get_dragon_tiger_pit（首批实盘前必须修复）：龙虎榜 T 日盘后 17:00
@@ -63,7 +60,7 @@ source_loaders 显式注入（DB 落库接线属数据层工程，未注入加�
 #   name_zh: ① get_dragon_tiger_pit
 #   name_en: get_dragon_tiger_pit
 #   intro: 龙虎榜PIT安全查询（v1.9.2 补，as_of_date 边界断言）。
-#   desc: 龙虎榜PIT安全查询（v1.9.2 补，as_of_date 边界断言）。 龙虎榜盘后17:00公布，T日盘中决策若用T日龙虎榜=未来函数=回测虚高+实盘失效， 只能用T-1日及…；源码 L109-L125
+#   desc: 龙虎榜PIT安全查询（v1.9.2 补，as_of_date 边界断言）。 龙虎榜盘后17:00公布，T日盘中决策若用T日龙虎榜=未来函数=回测虚高+实盘失效， 只能用T-1日及…；源码 L107-L123
 #   inputs: symbol as_of_date db_session
 #   outputs: list[dict]
 # - id: A2

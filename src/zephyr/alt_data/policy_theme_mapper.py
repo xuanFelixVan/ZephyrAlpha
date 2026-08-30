@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-ALT-005 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 PolicyThemeMapper — 政策主题映射器（MOD-ALT-005）
 
 B1-00123（AUD-DRAFT-001-DIGEST P1 波 W-P1-14，D-ALT-19）：政策主题库（货币/

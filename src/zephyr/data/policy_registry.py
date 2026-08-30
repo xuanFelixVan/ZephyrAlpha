@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-GOV-policy_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 per-source 调用策略注册表（MOD-L00-004 §5）。
 
 每个数据源有自己的限流/重试/反爬/登录刷新策略，集中管理、yaml 热更新。
@@ -54,7 +51,7 @@ per-source 调用策略注册表（MOD-L00-004 §5）。
 #   name_zh: ③ get_registry
 #   name_en: get_registry
 #   intro: 获取全局 PolicyRegistry 单例。
-#   desc: 获取全局 PolicyRegistry 单例。首次调用时尝试加载 config/policies.yaml。；源码 L308-L319
+#   desc: 获取全局 PolicyRegistry 单例。首次调用时尝试加载 config/policies.yaml。；源码 L306-L317
 #   inputs: 无参数
 #   outputs: PolicyRegistry
 # 层: 输出

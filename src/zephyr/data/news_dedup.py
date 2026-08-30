@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-GOV-news_dedup | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 新闻数据去重模块（MOD-L00-004 §4.3）。
 
 基于标题 MD5 哈希对新闻数据进行查重去重。
@@ -53,21 +50,21 @@
 #   name_zh: ① existing_news_ids
 #   name_en: existing_news_ids
 #   intro: 写前预检：库内满足 where 条件的已存在 news_id 集合（CAND-DAT-025）。
-#   desc: 写前预检：库内满足 where 条件的已存在 news_id 集合（CAND-DAT-025）。 供批量回填脚本在写入侧过滤多版本冗余行（ReplacingMergeTree 按…；源码 L171-L191
+#   desc: 写前预检：库内满足 where 条件的已存在 news_id 集合（CAND-DAT-025）。 供批量回填脚本在写入侧过滤多版本冗余行（ReplacingMergeTree 按…；源码 L169-L189
 #   inputs: where
 #   outputs: set[str]
 # - id: A2
 #   name_zh: ② build_news_row
 #   name_en: build_news_row
 #   intro: 构造 news_data 表标准行，对齐 ClickHouse schema。
-#   desc: 构造 news_data 表标准行，对齐 ClickHouse schema。 自动计算 news_id（MD5 of source+title+publish_time）， 解…；源码 L194-L247
+#   desc: 构造 news_data 表标准行，对齐 ClickHouse schema。 自动计算 news_id（MD5 of source+title+publish_time）， 解…；源码 L192-L245
 #   inputs: pub_date title link summary source data_source region language
 #   outputs: tuple
 # - id: A3
 #   name_zh: ③ dedup_news_result
 #   name_en: dedup_news_result
 #   intro: 对 FetchResult 中的新闻数据去重。
-#   desc: 对 FetchResult 中的新闻数据去重。 基于 title 的 MD5 哈希，过滤掉已存在于 ClickHouse 中的重复新闻。 同时过滤同一批次内的重复新闻。 Args…；源码 L277-L327
+#   desc: 对 FetchResult 中的新闻数据去重。 基于 title 的 MD5 哈希，过滤掉已存在于 ClickHouse 中的重复新闻。 同时过滤同一批次内的重复新闻。 Args…；源码 L275-L325
 #   inputs: result
 #   outputs: FetchResult
 # 层: 输出

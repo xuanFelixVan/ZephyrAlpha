@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-DATA-063 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-
-
-
 MOD-DATA-063 — M1-④ 盘中情绪实时调度回路（92号清单 §8.2，44号备忘 §2 M1-④ 行）。
 
 单拍链路（run_once 一次执行）：
@@ -74,14 +71,14 @@ fail-open 纪律：单次失败留痕（errors/nodes）不炸调度；全链路�
 #   name_zh: ① rows_to_time_series
 #   name_en: rows_to_time_series
 #   intro: 快照行序列 → MarketSentimentInput.time_series 契约装配（纯函数，无 I/O）。
-#   desc: 快照行序列 → MarketSentimentInput.time_series 契约装配（纯函数，无 I/O）。 Args: rows: list[dict]，键=_BREAD…；源码 L246-L286
+#   desc: 快照行序列 → MarketSentimentInput.time_series 契约装配（纯函数，无 I/O）。 Args: rows: list[dict]，键=_BREAD…；源码 L244-L284
 #   inputs: rows
 #   outputs: tuple[BreadthTimeSeries, str] | None
 # - id: A2
 #   name_zh: ② run_once
 #   name_en: run_once
 #   intro: M1-④ 盘中情绪回路单拍执行（有界形态——常驻节拍交 APScheduler/P0-5 盘中族，本函数不含循环）。
-#   desc: M1-④ 盘中情绪回路单拍执行（有界形态——常驻节拍交 APScheduler/P0-5 盘中族，本函数不含循环）。 Args: ch_client: clickhouse-dr…；源码 L386-L530
+#   desc: M1-④ 盘中情绪回路单拍执行（有界形态——常驻节拍交 APScheduler/P0-5 盘中族，本函数不含循环）。 Args: ch_client: clickhouse-dr…；源码 L384-L528
 #   inputs: ch_client db_path previous_board analyzer sector_window_minutes
 #   outputs: IntradayLoopResult
 #   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）

@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-AU-013 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 AiOpsAutonomyCard — C-008 AI 自治运维能力卡片 (MOD-AU-013)
 
 B14-04565（AUD-DRAFT-001-DIGEST P1 波 W-P1-12，A9 §3.5 / A1§12.2 迁移）：
@@ -63,7 +60,7 @@ B-016（禁AI自动清理未归档交易日志审计）动作 → 必 ESCALATE_H
 #   name_zh: ① AiOpsAutonomyCard
 #   name_en: AiOpsAutonomyCard
 #   intro: C-008 AI 自治运维能力卡片（判定纯函数 + 信号回调委托）。
-#   desc: C-008 AI 自治运维能力卡片（判定纯函数 + 信号回调委托）。 Args: grade: 卡当前自治分级（默认 A_L2；禁区硬编码不受其抬升影响）。 repair_sin…；公共方法（定义序）: grade,…
+#   desc: C-008 AI 自治运维能力卡片（判定纯函数 + 信号回调委托）。 Args: grade: 卡当前自治分级（默认 A_L2；禁区硬编码不受其抬升影响）。 repair_sin…；公共方法（定义序）: grade…
 #   inputs: grade repair_sink rollback_trigger audit_sink
 #   outputs: 返回值
 #   （注：A1 之后另有 10 个公共定义未列入（含 10 个数据契约/异常/枚举声明类），见源码）

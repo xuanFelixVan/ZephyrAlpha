@@ -35,7 +35,7 @@ DEPRECATED: 此文件已废弃。
 # - id: A1
 #   name_zh: ① validate_upgrade_from_shared
 #   name_en: validate_upgrade_from_shared
-#   intro: validate_upgrade_from_shared(version_from, version_to) 源码 L…
+#   intro: validate_upgrade_from_shared(version_from, version_to)…
 #   desc: 源码 L72-L74
 #   inputs: version_from version_to
 #   outputs: _SharedUpgradePlan

@@ -15,9 +15,6 @@
 # [A_module] module_id=MOD-DATA_GOV-014 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """
-
-
-
 asset_auto_discovery — 数据资产自动发现器（MOD-DATA_GOV-014）。
 
 B10-02326（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATGOV-011，A1 M8-NEW-07）：
@@ -49,7 +46,7 @@ diff 只更新变更**）。
 #   name_zh: ① AssetAutoDiscovery
 #   name_en: AssetAutoDiscovery
 #   intro: 资产自动发现器（scanner 注册 + 卡片生成 + 指纹 diff 增量推送）。
-#   desc: 资产自动发现器（scanner 注册 + 卡片生成 + 指纹 diff 增量推送）。；公共方法（定义序）: register_scanner, fingerprint_of, run；源码 L143-L248
+#   desc: 资产自动发现器（scanner 注册 + 卡片生成 + 指纹 diff 增量推送）。；公共方法（定义序）: register_scanner, fingerprint_of, run；源码 L141-L246
 #   inputs: clock registry_sink default_quality_score
 #   outputs: 返回值
 #   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）

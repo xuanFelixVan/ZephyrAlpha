@@ -20,9 +20,6 @@
 # O1: {trigger, action, qty_ratio?, reason?}（熔断=INSTANT_SELL 全仓 / 未触发=MONITOR）
 # [/ALGO_FLOW]
 """
-
-
-
 打板专用瞬时风控（24_daban_strategy_detail §3.13 缺失#2 施工，首批实盘前必做）。
 
 三触发器→瞬时熔断卖出。与 §3.6 Kill Switch 并列但优先级更高——
@@ -43,7 +40,7 @@ Kill Switch 是账户级日度熔断，本类是 sleeve 级盘中瞬时熔断。
 #   name_zh: ① DabanInstantCircuitBreaker
 #   name_en: DabanInstantCircuitBreaker
 #   intro: 打板专用瞬时风控（v1.9.2 补，三触发器→瞬时熔断卖出）。
-#   desc: 打板专用瞬时风控（v1.9.2 补，三触发器→瞬时熔断卖出）。；公共方法（定义序）: check_instant_break；源码 L71-L105
+#   desc: 打板专用瞬时风控（v1.9.2 补，三触发器→瞬时熔断卖出）。；公共方法（定义序）: check_instant_break；源码 L69-L103
 #   inputs: 无参数
 #   outputs: 返回值
 # 层: 输出
