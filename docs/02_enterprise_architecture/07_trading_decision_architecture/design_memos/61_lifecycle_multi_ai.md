@@ -31,6 +31,9 @@ scope: 07_trading_decision_architecture
 > 原"退役工作流/归档/行为基线未施工"已大面积过时：governance/lifecycle_governance/ 下 strategy_retirement_evaluator.py+retirement_workflow.py（退役 5 步工作流）+strategy_archive.py（归档四件套）+ai_behavior_baseline.py（BM-RC-04-F）全部 production；pf_core/core/msprt_champion_challenger.py（MOD-PF-008 统计内核，design 态）在库。
 > **仍真实未完工**：Drift Observatory 四层编排零命中（设计内延期）；mSPRT 晋升编排层/消费方未建（内核在库）；BM-MT-02-A/B 灰度+影子部署未施工。
 
+> ## 结案报告回填（2026-08-30 载体重裁定闭环，ARCH-298）
+> **mSPRT 晋升编排层载体重裁定已正式闭环（ARCH-298）**：MLflow 退役后载体归宿 = 因子生命周期状态机 MOD-L02-013（注册表状态机等价物），替代原 §3.3 纪律 1/2/7/9 与 §3.9 的 MLflow alias（@champion/@challenger/@archived）。语义不变——mSPRT 序贯晋升判定逻辑不受载体切换影响，仅物理执行层由 alias 换为 FSM 状态转换。三件套已在库 production：统计内核 msprt_champion_challenger.py（MOD-PF-008）+ 晋升编排层 msprt_promotion_channel.py + 因子消费方 factor_promotion_wiring.py（2026-08-24 ARCH-210 落地，因子侧以 MOD-L02-013 为等价载体、仅终局裁决产 FSM 副作用）。**上条 2026-08-28 回填中"mSPRT 晋升编排层/消费方未建"自此作废**。残余阻塞：ExecutionReport delta 产出逻辑（CTR-P1-007）未施工，delta 当前为合成/外部源——54号文 BM-REC-02-B 绩效归因待其解锁。仍真实未完工收敛为：Drift Observatory 四层编排（设计内延期）+ BM-MT-02-A/B 灰度影子部署 + CTR-P1-007 delta 产出。
+
 # 策略生命周期与多 AI 协作
 > 本备忘记录策略从孵化到退役的完整生命周期规范，以及多 AI 协作的分工与交接纪律。
 > 性质：永久态设计记录，可随项目演进而修订，不是不可推翻的裁定。

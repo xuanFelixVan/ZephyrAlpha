@@ -21099,3 +21099,103 @@ entries:
   - '17号文 §3.6（触发式排期）'
   created: '2026-08-29'
   last_updated: '2026-08-29'
+- issue_id: ARCH-287
+  title: GP1 分类器验收口径裁定（原代号 GP1-EVAL-CALIBER-001）——人判语义合理性口径甲 + 双指标 + 任务输入补全路径
+  severity: P1
+  adjudication: 验收口径=口径甲（人判语义合理性，回归 13号文 人评一致率 原文）；废弃注册表真值口径（策展意图不在文本孤本内，测量工具错误）。双指标：主=原样接受率（85% 门槛不降格），辅=可辩护率。当前成绩如实登记未过线（R3 严格 58%，标准复判 46%）。达标路径=PS-VOC-TAX-001 知识分类边界标准（22 类边界+裁决规则+主观术语锚定，Owner 口述+全网搜证）+分类器 prompt 注入；防过拟合铁律=教学集禁当考试集，复测新抽样。Owner 2026-08-30 逐题确认（含词不达意豁免条款 R6）。
+  fix_phase: 已落地（2026-08-30：边界标准词表+分类器注入+#39/#45 注册表修正）；全量 309 条复测已跑完（deepseek-v4-flash，拦截率 78.3%→0.3%）
+  status: decided
+  related_adjudication: GP1-EVAL-CALIBER-001（docs/_working/reports/2026-08-29-gp1-eval50-review.md §六 裁定书）
+  created: '2026-08-30'
+  last_updated: '2026-08-30'
+# --- 2026-08-30 远期愿景/过度工程正式裁定不建设批（D1~D10，依据 2026-08-30 未施工内容优先级评估） ---
+- issue_id: ARCH-288
+  title: D1 裁定不建设——11号文 技能库自动生成（AutoSkill / Voyager 式自进化）
+  severity: P3低
+  adjudication: 单 GPU（21.6GB 显存）无法支撑 Voyager 式技能自进化的探索-试错-固化循环；技能库现由人工策展+知识分类器覆盖，无自动生成需求。判定为过度工程。
+  fix_phase: 无需施工（裁定不建设）
+  status: deprecated
+  created: '2026-08-30'
+  last_updated: '2026-08-30'
+- issue_id: ARCH-289
+  title: D2 裁定不建设——12号文 L2/L3 反思（N=5 累积触发 Reflexion）
+  severity: P3低
+  adjudication: Reflexion 式反思依赖大量真实任务历史作素材，当前任务历史零积累，无反思语料；单 GPU 也无法承载多 Agent 反思的并行推理开销。触发条件（N=5 累积）在当前规模下永不满足。判定为过度工程。
+  fix_phase: 无需施工（裁定不建设）
+  status: deprecated
+  created: '2026-08-30'
+  last_updated: '2026-08-30'
+- issue_id: ARCH-290
+  title: D3 裁定不建设——13号文 Phase 2 受控生成器（GP2 内容）
+  severity: P3低
+  adjudication: Phase 2 受控生成器属 GP2 范畴，但 GP1（Phase 1 知识分类器）尚未验收，前置链未闭环；按触发式排期纪律不提前施工 GP2 内容。
+  fix_phase: 无需施工（裁定不建设，待 GP1 验收后重新立项评估）
+  status: deprecated
+  created: '2026-08-30'
+  last_updated: '2026-08-30'
+- issue_id: ARCH-291
+  title: D4 裁定不建设——13号文 Phase 3 ICL 案例库（远期 P4）
+  severity: P3低
+  adjudication: ICL 案例库属远期 P4 愿景，依赖 Phase 1/2 全部落地且积累足够高质量案例；当前 Phase 1 未验收，案例积累为零。判定为远期愿景，暂不建设。
+  fix_phase: 无需施工（裁定不建设）
+  status: deprecated
+  created: '2026-08-30'
+  last_updated: '2026-08-30'
+- issue_id: ARCH-292
+  title: D5 裁定不建设——16号文 KILLSWITCH 三级响应统一编排
+  severity: P3低
+  adjudication: 现有两级 KILLSWITCH（软停/硬停）已覆盖当前单机单账户场景的全部风险处置需求；三级统一编排增加的复杂度无对应收益。判定为过度工程。
+  fix_phase: 无需施工（裁定不建设）
+  status: deprecated
+  created: '2026-08-30'
+  last_updated: '2026-08-30'
+- issue_id: ARCH-293
+  title: D6 裁定不建设——91号文 量子 QNN（量子神经网络密度预测）
+  severity: P3低
+  adjudication: 91号文已裁定量子 QNN 为过度工程（无量子硬件、无对应 alpha 证据）；本条为正式登记关闭，防止后续 AI 会话重复立项。
+  fix_phase: 无需施工（裁定不建设，已裁定确认）
+  status: deprecated
+  created: '2026-08-30'
+  last_updated: '2026-08-30'
+- issue_id: ARCH-294
+  title: D7 裁定不建设——90/91号文 conformal 五变体栈（等 90号 P-2 拍板）
+  severity: P3低
+  adjudication: conformal 预测五变体栈（含密度预测）属方法论开放问题，依赖 90号文 P-2 裁定结论；在 P-2 拍板前不具备施工前提，且单 GPU 约束下五变体并行训练不现实。判定为暂不建设。
+  fix_phase: 无需施工（裁定不建设，待 90号 P-2 裁定后重评）
+  status: deprecated
+  related_adjudication: '90_methodology_open_questions P-2'
+  created: '2026-08-30'
+  last_updated: '2026-08-30'
+- issue_id: ARCH-295
+  title: D8 裁定不建设——94/95号文 币圈 CAND-003/004/008/009/010（外部条件未就绪）
+  severity: P3低
+  adjudication: 币圈量化扩展候选集 CAND-003/004/008/009/010 依赖外部条件（币圈数据管道、交易所接入、资金划转链路）未就绪；按等外部条件纪律不主动施工。
+  fix_phase: 无需施工（裁定不建设，外部条件触发再立项）
+  status: deprecated
+  created: '2026-08-30'
+  last_updated: '2026-08-30'
+- issue_id: ARCH-296
+  title: D9 裁定不建设——04号文 容量升级 12 项 GAP（触发条件 T1/T2/T3 未到）
+  severity: P3低
+  adjudication: 04号文容量升级 12 项 GAP 的施工触发条件（T1/T2/T3 性能/容量阈值）经实证未达到；当前容量满足需求，提前升级为过度工程。
+  fix_phase: 无需施工（裁定不建设，触发条件达成后重新立项）
+  status: deprecated
+  created: '2026-08-30'
+  last_updated: '2026-08-30'
+- issue_id: ARCH-297
+  title: D10 裁定不建设——27号文 第二批次策略（需首批 3 个月 track record）
+  severity: P3低
+  adjudication: 27号文第二批次策略扩展依赖首批策略 3 个月实盘 track record 作为扩容依据；当前首批策略尚未形成有效样本，扩批无数据支撑。判定为暂不建设，待 track record 满足后重新立项。
+  fix_phase: 无需施工（裁定不建设，track record 触发再立项）
+  status: deprecated
+  created: '2026-08-30'
+  last_updated: '2026-08-30'
+- issue_id: ARCH-298
+  title: A1 正式裁定——61号文 mSPRT 晋升编排层载体重裁定（MLflow 退役后载体归宿）
+  severity: P1
+  adjudication: '正式裁定：mSPRT Champion-Challenger 晋升/回滚/归档的落地载体 = 因子生命周期状态机 MOD-L02-013（注册表状态机等价物），替代已退役的 MLflow alias（@champion/@challenger/@archived，51号文 2026-08-16 裁定完全卸载）。语义不变：61号文 §3.3 纪律 1 的 mSPRT 序贯晋升判定逻辑不受载体切换影响，仅物理执行层由 MLflow alias 换为 FSM 状态转换。三件套已在库 production：统计内核 pf_core/core/msprt_champion_challenger.py（MOD-PF-008）+ 晋升编排层 governance/lifecycle_governance/msprt_promotion_channel.py + 消费方 governance/lifecycle_governance/factor_promotion_wiring.py（2026-08-24 ARCH-210 落地）。残余阻塞：ExecutionReport delta 产出逻辑（CTR-P1-007）未施工，delta 当前为合成/外部源——54号文 BM-REC-02-B 绩效归因待其解锁。'
+  fix_phase: 已落地（载体裁定 2026-08-30 正式登记；三件套 2026-08-24 ARCH-210 已施工）；61号文结案报告同步回写
+  status: resolved
+  related_adjudication: '#ARCH-210'
+  created: '2026-08-30'
+  last_updated: '2026-08-30'

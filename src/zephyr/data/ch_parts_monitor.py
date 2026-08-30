@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] CH 查询异常→log.warning+返回 []；TSV 解析容错（坏行跳过）；注册表缺失/畸形→AlertThresholdConfigError(ZA-SH-0052)
+# [ERROR_CONTRACT] CH 查询异常→log.warning+返回 []；TSV 解析容错（坏行跳过）；注册表缺失/畸形→AlertThresholdConfigError(ZA-SH-0052)；告警发送异常→log.warning 吞掉不阻断
 # [TESTS] tests/zephyr/data/test_ch_parts_monitor.py
 # [A_module] module_id=MOD-L00-004-PM | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -44,6 +44,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Final
 
+from zephyr.data.alerter import LEVEL_CRITICAL, Alerter
 from zephyr.shared.alerts.threshold_loader import load_alert_thresholds
 
 log = logging.getLogger(__name__)
@@ -117,6 +118,52 @@ def check_parts_threshold(
         {"database": db, "table": tbl, "parts": parts} for db, tbl, parts in parse_parts_tsv(tsv) if parts > threshold
     ]
     violations.sort(key=lambda v: v["parts"], reverse=True)
+    return violations
+
+
+def check_and_alert(
+    alerter: Alerter,
+    threshold: int = DEFAULT_PARTS_THRESHOLD,
+    *,
+    query_fn: Callable[[str, int], str] | None = None,
+    timeout: int = 15,
+) -> list[dict]:
+    """探测 parts 超阈值并经既有 Alerter 通道产出告警（64号 §16.2 Q8「alerter 通知」落地）。
+
+    关键路径接线：scheduler._run_schedule_dag 时段写库收尾调用——INSERT 是 parts
+    的产生点，时段批次完成是最近的有效探测点。告警行为对齐 ALERT-CH-001
+    （severity=critical）：有违规 → Alerter.notify(LEVEL_CRITICAL)，触达飞书
+    webhook + SMTP 邮件 + 失败汇总落盘（Alerter 内置 300s 冷却防刷屏，通道未配置
+    静默跳过）；无违规或查询失败（宁漏报）→ 不告警。
+
+    Args:
+        alerter: 既有告警器（scheduler 复用实例，不另造通道）。
+        threshold: parts 告警阈值（默认 100，64号 Q8 裁定）。
+        query_fn: 查询函数注入点（测试用）；None 走 ch_reader。
+        timeout: CH 查询超时秒数。
+
+    Returns:
+        违规清单（同 check_parts_threshold；空列表=健康或查询失败，未告警）。
+    """
+    violations = check_parts_threshold(threshold, query_fn=query_fn, timeout=timeout)
+    if not violations:
+        return violations
+    top = violations[0]
+    try:
+        alerter.notify(
+            task_id="ch_data_parts_explosion",
+            error=(
+                f"{len(violations)} 张表 active data parts 超阈值 {threshold}"
+                f"（最高 {top['database']}.{top['table']}={top['parts']}），"
+                "防 parts 爆炸致 CH merge 满载崩溃（2026-07-09 事故教训），"
+                "请检查写入攒批（BufferedWriter）与表引擎配置"
+            ),
+            level=LEVEL_CRITICAL,
+            source="clickhouse",
+            extra={"threshold": threshold, "violations": violations},
+        )
+    except Exception as e:  # noqa: BLE001 — 告警发送异常吞掉，不影响调度主流程
+        log.warning("parts 告警发送异常: %s", e)
     return violations
 
 

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] zephyr.data.scheduler
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] zephyr.data.provider_base; zephyr.data.policy_registry; zephyr.data.progress_store; zephyr.data.ch_writer; zephyr.data.ch_reader; zephyr.data.task_queue; zephyr.data.alerter; zephyr.data.implementations.{miniqmt,akshare,tushare}_provider; zephyr.data.trading_calendar; zephyr.data.calendar; zephyr.data.local_replay; apscheduler(pip); exchange_calendars(pip)
+# [DEPENDENCIES] zephyr.data.provider_base; zephyr.data.policy_registry; zephyr.data.progress_store; zephyr.data.ch_writer; zephyr.data.ch_reader; zephyr.data.task_queue; zephyr.data.alerter; zephyr.data.ch_parts_monitor; zephyr.data.implementations.{miniqmt,akshare,tushare}_provider; zephyr.data.trading_calendar; zephyr.data.calendar; zephyr.data.local_replay; apscheduler(pip); exchange_calendars(pip)
 # [CONSUMERS] CLI(zephyr.data.cli 阶段3+); main()入口
 # [STARTUP] manual
 # [MATURITY] production
@@ -85,6 +85,7 @@ from typing import Any, Callable
 from zephyr.data import local_replay
 from zephyr.data.alerter import LEVEL_CRITICAL, LEVEL_ERROR, Alerter
 from zephyr.data.buffered_writer import BufferedWriter
+from zephyr.data.ch_parts_monitor import check_and_alert
 from zephyr.data.metrics import IntegratorMetrics, get_metrics
 from zephyr.data.policy_registry import PolicyRegistry, get_registry
 from zephyr.data.progress_store import ProgressStore, get_store
@@ -380,6 +381,12 @@ def _run_schedule_dag(
     # 检查失败率
     if results:
         scheduler._alerter.check_daily_failure_rate(len(results), failed_count)
+
+    # 时段写库收尾：CH data parts 超阈值告警（64号 §16.2 Q8，B5 施工接线）
+    try:
+        check_and_alert(alerter=scheduler._alerter)
+    except Exception:  # noqa: BLE001 — parts 告警失败不影响调度主流程
+        log.warning("CH parts 告警探测异常", exc_info=True)
 
     return results
 

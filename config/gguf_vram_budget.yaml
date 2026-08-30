@@ -1,0 +1,107 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-060 | 待统筹登记（10号文 implementation_plans/10_llm_infrastructure.md §4 Phase 2.3 + aiarch 清单 3.4）| §3.3
+# module_id: MOD-INF-060
+# stability: evolving
+# safety_level: M
+# ai_autonomy: human_gated
+# ttl: permanent
+# --- 治理锚定结束 ---
+# GGUF 模型显存预算表（10号文 §3.3 时段配额表为真源，human_gated）
+# ============================================================================
+# 口径：
+#   - 硬上限 hard_cap_gb=21.6（RTX 3090 24GB × 90%，10号文 §2.3 约束表）。
+#   - 时段配额 period_quotas 照抄 10号文 §3.3「显存管理的时段维度」表
+#     （推理侧显存列；盘前/盘中 8-10GB 取上限 10.0，午休/盘后/夜间取 4.0）。
+#   - 风控 NN 常驻 2GB 已含在盘中 8-10GB 口径内（§3.3 注），本表不重复扣减。
+#   - 本地 LLM 推理显存配额服从本表；gpu_consensus_scheduler 负责时段切换执行，
+#     local_llm_pool（MOD-INT-LOCAL-LLM-POOL）经
+#     gguf_model_manager.to_pool_budgets() 消费本表（单真源，禁止另造口径）。
+#   - vram_gb 估算口径：2026-08-30 ModelDiscovery（Ollama /api/tags）实证
+#     size_bytes × 1.1（权重 + KV cache 常驻开销估计），复跑实测后回填校准。
+#   - 新模型引入纪律：ollama pull 前必须先在本表登记并通过
+#     GgufModelManager.check_load() 判定；未登记模型加载一律阻断（fail-closed）。
+module_id: MOD-INF-060
+version: "1.0.0"
+created: "2026-08-30"
+
+hard_cap_gb: 21.6
+
+# 时段配额（Asia/Shanghai；窗口照抄 10号文 §3.3 时段表）
+period_quotas:
+  premarket: # 盘前 08:30-09:00 推理模型加载
+    window: ["08:30", "09:00"]
+    inference_quota_gb: 10.0
+    note: "推理模型加载窗口；禁止训练"
+  intraday: # 盘中 09:15-15:00 推理优先（HC-01 交易时段保护，训练 0GB）
+    window: ["09:15", "15:00"]
+    inference_quota_gb: 10.0
+    note: "8-10GB 含 Whisper+LLM-7B+风控NN 常驻 2GB"
+  midday: # 午休 11:30-13:00 LLM 最小集 + 轻量训练
+    window: ["11:30", "13:00"]
+    inference_quota_gb: 4.0
+  postmarket: # 盘后 15:00-15:30 推理→训练切换
+    window: ["15:00", "15:30"]
+    inference_quota_gb: 4.0
+    note: "切换中，推理侧向 0 收敛"
+  night: # 夜间 15:30-08:30 训练优先，LLM 最小集
+    window: ["15:30", "08:30"]
+    inference_quota_gb: 4.0
+    note: "跨日窗口；LLM 最小集与训练互斥时分共享"
+
+# Ollama 已拉模型登记（2026-08-30 /api/tags 实证 9 个）
+models:
+  - name: "qwen3:8b"
+    role: primary
+    quant: "Q4_K_M"
+    parameter_size: "8.2B"
+    vram_gb: 5.4
+    kind: llm
+  - name: "deepseek-r1:8b"
+    role: backup
+    quant: "Q4_K_M"
+    parameter_size: "8.2B"
+    vram_gb: 5.4
+    kind: llm
+  - name: "qwen3:14b"
+    role: backup
+    quant: "Q4_K_M"
+    parameter_size: "14.8B"
+    vram_gb: 9.2
+    kind: llm
+  - name: "deepseek-r1:14b"
+    role: backup
+    quant: "Q4_K_M"
+    parameter_size: "14.8B"
+    vram_gb: 9.2
+    kind: llm
+  - name: "qwen2.5-coder:14b"
+    role: backup
+    quant: "Q4_K_M"
+    parameter_size: "14.8B"
+    vram_gb: 9.2
+    kind: llm
+  - name: "qwen3-coder:30b"
+    role: backup
+    quant: "Q4_K_M"
+    parameter_size: "30.5B"
+    vram_gb: 19.0
+    kind: llm
+    note: "低于 21.6GB 硬上限但超全部时段配额——仅允许夜间窗口人工批准后加载"
+  - name: "BGE-M3:latest"
+    role: embedding
+    quant: "F16"
+    parameter_size: "566.70M"
+    vram_gb: 1.2
+    kind: embedding
+  - name: "Qwen3-Embedding:latest"
+    role: embedding
+    quant: "Q4_K_M"
+    parameter_size: "7.6B"
+    vram_gb: 4.8
+    kind: embedding
+  - name: "qllama/bge-small-en-v1.5:latest"
+    role: embedding
+    quant: "Q8_0"
+    parameter_size: "33.21M"
+    vram_gb: 0.1
+    kind: embedding
