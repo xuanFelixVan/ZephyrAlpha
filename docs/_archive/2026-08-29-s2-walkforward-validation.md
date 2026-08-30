@@ -1,6 +1,10 @@
 ---
-ttl: task_bound
+title: S2 校准专项 walk-forward 验证报告（AI-WAVE4-001 / S2-D）
+date: 2026-08-29
+ttl: permanent
 ---
+
+> **归档注记（2026-08-30）**：已闭环——Owner 裁定选项 1 已执行落产（commit c5c23036），B4 全量重跑 PASS 且 EVT-2024-RECOVERY design_match 翻 true（phase2_a1b4_20260830_074431.json），completes_when 两项达成。commit 2a16988d。
 
 > **文档元信息**（_working 临时区豁免规范，EXEMPT-ZONE-FM）：doc_type=report · owner=ZephyrAlpha-Owner · language=zh · status=active · version=1.0.0 · date=2026-08-29 · topic=regime_s2_walkforward_validation · scope=07_trading_decision_architecture · completes_when=Owner 裁定终选组合接线方案、B4 三事件 design_match 验收后归档。
 

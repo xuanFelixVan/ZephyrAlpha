@@ -6,7 +6,7 @@ ttl: task_bound
 
 # S2 校准专项收尾批次报告（roadmap A1 残余，2026-08-30）
 
-> **上游**：[S2 walk-forward 验证报告 2026-08-29](2026-08-29-s2-walkforward-validation.md)（Owner 选项 1 裁定落产，commit c5c23036）；14 号 v0.5.3 / 13 号 v0.4.2。
+> **上游**：[S2 walk-forward 验证报告 2026-08-29](../_archive/2026-08-29-s2-walkforward-validation.md)（Owner 选项 1 裁定落产，commit c5c23036；2026-08-30 已归档）；14 号 v0.5.3 / 13 号 v0.4.2。
 > **执行范围**：① B4 全量重跑（A1+B4+A2+B1）② design_match 裁定（Owner 授权 AI 自裁定通道）③ known_data_gaps.yaml 补登 ④ 14/13 号文档回写 ⑤ 2015/2020 valuation 勘探。
 > **实证环境**：ClickHouse 172.24.30.100（c1_market）；`python scripts/tests/run_phase2_validation.py`（真实数据，enable_overlay=True / enable_full_risk=True）；临时探针 .runtime/（用完即删）。
 

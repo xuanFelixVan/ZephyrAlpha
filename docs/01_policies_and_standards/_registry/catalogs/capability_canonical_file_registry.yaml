@@ -10693,7 +10693,7 @@ creation_tokens:
   token: auto-test-sector-momentum-20260828
   created_by: AI-WAVE2B-001（补登：代码随 AI-NIGHT-001 commit fff6ea6bfc 已入库，token 缺失本批补登）
   capability: sector_momentum
-- file: docs/_working/reports/2026-08-28-backfill-evaluation.md
+- file: docs/_archive/2026-08-28-backfill-evaluation.md
   token: auto-backfill-evaluation-20260828
   created_by: AI-WAVE0-001
   capability: backfill_evaluation
@@ -10777,11 +10777,11 @@ creation_tokens:
   token: auto-test-governance-docs-init-20260829
   created_by: AI-WAVE4-001（tests 包初始化补登）
   capability: governance_docs_tests
-- file: docs/_working/reports/2026-08-28-s2-calibration-investigation.md
+- file: docs/_archive/2026-08-28-s2-calibration-investigation.md
   token: auto-s2-calibration-investigation-20260829
   created_by: AI-S2-INVESTIGATE-001（S2 三事件 design_match 失败调查与治本方案）
   capability: regime_s2_calibration
-- file: docs/_working/reports/2026-08-29-s2-valuation-pipeline-report.md
+- file: docs/_archive/2026-08-29-s2-valuation-pipeline-report.md
   token: auto-s2-valuation-pipeline-report-20260829
   created_by: AI-WAVE4-001（路A 管道施工报告）
   capability: regime_s2_calibration
@@ -10829,7 +10829,7 @@ creation_tokens:
   token: auto-test-factor-promotion-wiring-20260829
   created_by: AI-WAVE4-001
   capability: lifecycle_governance_orchestration
-- file: docs/_working/reports/2026-08-29-s2-walkforward-validation.md
+- file: docs/_archive/2026-08-29-s2-walkforward-validation.md
   token: auto-s2-walkforward-validation-20260829
   created_by: AI-WAVE4-001（S2 校准专项 walk-forward 验证报告，DSR N=17）
   capability: regime_s2_calibration

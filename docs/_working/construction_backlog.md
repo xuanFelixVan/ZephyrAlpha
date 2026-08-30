@@ -8,38 +8,38 @@ ttl: task_bound
 > 口径来源：57 号文日循环 SOP 彩排结论 + 注册表实测（universe 6/benchmark 8/cost_model 5 已 active；strategy 146 条/factor 140 条全 draft）
 > 本文件为施工顺序总账，完成一项勾一项；Owner 窗口项已显式标注。
 
-> **结案审查（2026-08-28 复核）**：未结案（A 阶段部分已落地，复选框未勾销）
+> **结案审查（2026-08-30 复核）**：阶段 A 已全量勾销闭环（2026-08-30 长城批实证）
 > - 已实证：BTRUN/DVERIFY 首批实测报告在 `.runtime/construction_20260823/reports/`（momentum_20d IC=-0.0399 首份实测范式；factor IC 回填）；B 阶段 Owner 窗口项已转 `docs/_archive/2026-08-23-construction-order-master.md` 挂起登记（2026-08-28 归档）。
-> - 注意：下列复选框均未勾，与实际进度脱节；勾销前须逐项 grep/查库实证。
+> - 2026-08-30 长城批：A1~A5 逐项 grep/查库实证后勾销（证据随各条目行尾注记，commit 2a16988d）；B 阶段 Owner 窗口项维持未勾不动；C 阶段另案执行不受影响。
 
 ---
 
 ## 阶段 A：纯历史回测启动（不依赖 QMT，无 Owner 窗口阻塞）
 
 ### A1. 行情数据追平（前置：无）
-- [ ] kline_daily 采集追平至最新交易日（现滞后至 2026-08-19）
-- [ ] stk_limit 同步追平
-- [ ] 追平后跑 `scripts/ch/_data_inventory.py` 实证 min/max(trade_date) 新鲜度
+- [x] kline_daily 采集追平至最新交易日（现滞后至 2026-08-19） — ✅ 已核销（2026-08-30 实证：CH 实证 kline_daily/kline_index/stk_limit 三表 max(trade_date)=2026-08-28）
+- [x] stk_limit 同步追平 — ✅ 已核销（2026-08-30 实证：stk_limit max=2026-08-28，随三表同批 CH 实证）
+- [x] 追平后跑 `scripts/ch/_data_inventory.py` 实证 min/max(trade_date) 新鲜度 — ✅ 已核销（2026-08-30 实证：CH 直查三表 min/max 新鲜度达标）
 - 验收：数据最新交易日 = 最近一个真实交易日
 
 ### A2. 北交所退市股 K线补缺（前置：A1）
-- [ ] 北交所退市标的清单盘点
-- [ ] 历史 K线回填入库
+- [x] 北交所退市标的清单盘点 — ✅ 已核销（2026-08-30 实证：北交所退市 5 只全有行情）
+- [x] 历史 K线回填入库 — ✅ 已核销（2026-08-30 实证：5 只退市股行情在库，check_survivorship_bias 门禁在位可过）
 - 验收：check_survivorship_bias 门禁可过；不补则回测有幸存者偏差
 
 ### A3. 历史指数成分股回填（前置：A1）
-- [ ] CSI300 / CSI800 等基准历史成分回填
+- [x] CSI300 / CSI800 等基准历史成分回填 — ✅ 已核销（2026-08-30 实证：index_constituent SCD-2 表在位，本批已补采 8 月末快照，五指数推进至 08-28，000300 版本链干净）
 - 验收：universe PIT 可重建"当时股票池"，回测 universe_id 指向真历史成分
 
-### A4. 首批被测策略激活（前置：无，可与 A1-A3 并行）
-- [ ] 从 strategy_registry 146 条 draft 中选定首批 3-5 条
-- [ ] 逐条 draft → active，显式绑定 universe_id + benchmark_id + cost_model_id 三件套
-- [ ] 对应 factor_registry 条目补齐 IC 性能字段（跑实测回填）
+### A4. 首批被测策略激活（前置：无，可与 A1-A3 并行） ✅ 已核销（首批已激活，2026-08-30）
+- [x] 从 strategy_registry 146 条 draft 中选定首批 3-5 条 — ✅ 已核销（2026-08-30 实证：首批 4 条 candidate→active——STR-VREV-017/018/019、STR-MULTIFACTOR-069）
+- [x] 逐条 draft → active，显式绑定 universe_id + benchmark_id + cost_model_id 三件套 — ✅ 已核销（2026-08-30 实证：4 条 active 三件套绑定齐全）
+- [x] 对应 factor_registry 条目补齐 IC 性能字段（跑实测回填） — ✅ 已核销（2026-08-30 实证：因子 IC code-anchored 4/4 回填，NL 143 条锚定裁定登记，见 .runtime/factor_ic_backfill/20260830_report.md）
 - 验收：每条 active 策略三件套引用完整，C1 runner 可直接点名
 
 ### A5. 第一份回测报告（前置：A1-A4 全齐）
-- [ ] C1 向量化回测全量跑批（彩排已实证 trades=17 落盘链路通）
-- [ ] sink 落盘 + 结果归档
+- [x] C1 向量化回测全量跑批（彩排已实证 trades=17 落盘链路通） — ✅ 已核销（2026-08-30 实证：BTRUN_report.md 首份回测报告 bt-790d8a95，净值/夏普/回撤/超额 vs benchmark 四指标齐全）
+- [x] sink 落盘 + 结果归档 — ✅ 已核销（2026-08-30 实证：bt-790d8a95 落盘 data/backtest_artifacts/，报告在 .runtime/construction_20260823/reports/BTRUN_report.md）
 - 验收：产出成立以来第一份真回测报告（净值/夏普/回撤/超额 vs benchmark）
 
 ---

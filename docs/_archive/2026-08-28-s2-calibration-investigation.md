@@ -1,12 +1,16 @@
 ---
-ttl: task_bound
+title: S2 三事件 design_match 翻 true 失败调查与治本方案（校准专项第一步）
+date: 2026-08-28
+ttl: permanent
 ---
+
+> **归档注记（2026-08-30）**：已闭环——治本方案（capitulation 三层修复 + 路 A 指数估值管道 + three_yang 指数适配）经 Owner 裁定施工落产（commit c5c23036），B4 验收完成（EVT-2024 design_match 翻 true，2015/2020 维持 false 补边界注记）。commit 2a16988d。
 
 > **文档元信息**（_working 临时区豁免规范，EXEMPT-ZONE-FM）：doc_type=report · owner=ZephyrAlpha-Owner · language=zh · status=active · version=1.0.0 · date=2026-08-28 · topic=regime_s2_calibration_investigation · scope=07_trading_decision_architecture · completes_when=治本方案经 Owner 裁定并施工、S2 三事件 design_match 翻 true 验收后归档（归档不删除，保留审计链）。
 
 # S2 三事件 design_match 翻 true 失败调查与治本方案（校准专项第一步）
 
-> **出处**：[14_regime_s2_diagnosis](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/14_regime_s2_diagnosis.md) §4.5 walk-forward 校准路径 + B4 S2 重验注记（AI-WAVE1-001，2026-08-28，0/3 实证）；[13_regime_phase3_engineering_plan](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md) §3.5 P1-E9。
+> **出处**：[14_regime_s2_diagnosis](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/14_regime_s2_diagnosis.md) §4.5 walk-forward 校准路径 + B4 S2 重验注记（AI-WAVE1-001，2026-08-28，0/3 实证）；[13_regime_phase3_engineering_plan](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md) §3.5 P1-E9。
 > **性质**：纯调查 + 方案设计文档，**不改任何生产代码**。调查人：session AI-S2-INVESTIGATE-001。方案待 Owner 裁定后再施工。
 > **方法学红线**：本文全部参数候选族为**预注册草案**（14 号 §4.5 ②）；严禁简单降阈值凑分；严禁用三事件调参——候选筛选须在独立样本 walk-forward 上完成。
 

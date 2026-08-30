@@ -1,12 +1,16 @@
 ---
-ttl: task_bound
+title: 历史回测结果向 experiment_tracking 回灌评估
+date: 2026-08-28
+ttl: permanent
 ---
+
+> **归档注记（2026-08-30）**：已闭环——结论"按需回灌（当前不回灌）"经复核成立，唯一候选源（c1_repro 1 批）知识已由 md 报告承载、无批量历史待回灌，roadmap A20 项勾销。commit 2a16988d。
 
 > **文档元信息**（_working 临时区豁免规范，EXEMPT-ZONE-FM）：doc_type=report · owner=ZephyrAlpha-Owner · language=zh · status=active · version=1.0.0 · date=2026-08-28 · topic=backfill_evaluation · scope=07_trading_decision_architecture · completes_when=回灌决策执行完毕或 Owner 裁定归档（归档不删除，保留审计链）。
 
 # 历史回测结果向 experiment_tracking 回灌评估
 
-> **出处**：[50_backtest_observability_workplan.md](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/50_backtest_observability_workplan.md) §3⑤「历史结果回灌（待评估）」+ 结案报告回填（2026-08-28 代码实证复核）登记的小型遗留；[剩余施工路线图](../2026-08-28-remaining-construction-roadmap.md) A20 项。
+> **出处**：[50_backtest_observability_workplan.md](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/50_backtest_observability_workplan.md) §3⑤「历史结果回灌（待评估）」+ 结案报告回填（2026-08-28 代码实证复核）登记的小型遗留；[剩余施工路线图](../_working/2026-08-28-remaining-construction-roadmap.md) A20 项。
 > **性质**：纯评估文档（裁定建议），不改代码。评估人：session AI-WAVE0-001。
 
 ## 一、历史回测结果现存何处（2026-08-28 实证）
