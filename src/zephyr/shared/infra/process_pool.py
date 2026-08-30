@@ -452,6 +452,13 @@ def is_pid_alive(pid: int) -> bool:
     TypeError 中断）。Win32 GetLastError 区分"进程不存在"
     (ERROR_INVALID_PARAMETER 87) vs "权限不足"(ERROR_ACCESS_DENIED 5，
     如 PID 4 System)-> 算存活。
+
+    Windows 句柄残留治本（2026-08-31 实证）：进程终止后若仍有打开句柄
+    （父进程/调试器持有），内核进程对象不销毁，OpenProcess 仍成功——
+    单看 handle 非空会把已死进程误判为"存活"（僵尸 session 永不收割，
+    实测 kill 后 is_pid_alive 恒 True）。修法：handle 打开后必须再查
+    GetExitCodeProcess，退出码 != STILL_ACTIVE(259) 即已终止。
+    已知边角（MSDN 公认）：真实以 259 退出的进程会误判存活——可接受。
     """
     if not isinstance(pid, int) or pid <= 0:
         return False
@@ -463,8 +470,14 @@ def is_pid_alive(pid: int) -> bool:
             PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
             handle = kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
             if handle:
-                kernel32.CloseHandle(handle)
-                return True
+                try:
+                    STILL_ACTIVE = 259
+                    exit_code = ctypes.c_ulong(0)
+                    if kernel32.GetExitCodeProcess(handle, ctypes.byref(exit_code)):
+                        return exit_code.value == STILL_ACTIVE
+                    return True  # 查询失败保守判存活（不误清理）
+                finally:
+                    kernel32.CloseHandle(handle)
             err = kernel32.GetLastError()
             return err == 5  # ERROR_ACCESS_DENIED
         else:
