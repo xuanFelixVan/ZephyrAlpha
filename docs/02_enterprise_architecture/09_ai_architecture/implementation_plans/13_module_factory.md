@@ -20,6 +20,13 @@ scope: 09_ai_architecture
 > **最终成果**：知识→模块映射手动链路验证通过（Phase 0→1 的手动形态）。
 > **未做+原因**：自动分类器、映射引擎、受控生成通道、自动化采集——Phase 1+ 属 GP1+（正常分期）。
 
+> ## 结案补记（2026-08-31，GP1 知识分类器验收，#ARCH-301）
+> **实际开发**：知识分类器（MOD-FACTORY-001）+ LLM 网关（MOD-INF-051）施工完毕并翻转 production；全量 309 条评估（deepseek-v4-flash，网关拦截率治本 78.3%→0.3%）+ 40 条分层抽样人评（20 match + 20 mismatch）。
+> **验收结论（口径甲=人判语义合理性，#ARCH-287）**：40/40 语义可接受（24 reasonable + 16 注册表真值滞后 + **0 分类器错误**）→ 原样接受率 100% ≥ 85% 门槛，GP1 验收通过，双模块 testing→production。
+> **机器口径最终数**（真值修正后重算 v2，零 LLM 成本，`.runtime/aidrafts/eval_full/report_ds_full_v2.json`）：严格一致率（kind+类值双一致）overall 34.3%、主判据未见集 32.0%；类值一致率（不看 kind 路由）38.2%/未见集 36.3%；可辩护率 99.4%；错误 1 条（LLM 空输出）。严格口径远低于 85% 门槛的三层根因：①注册表真值滞后 16 条（人评裁定已修，43ee9b91）②"other 类"kind 路由结构伪差 12 条——分类器判 other_kind（other_subtype=类值）而注册表将同类值置 factor_class/strategy_class 字段，类值一致但 kind 永不等③其余未复核 mismatch 按 20 条抽样 0 分类器错误外推，多为双方可辩护。定位：机器严格口径=回归监控基线（防退化），验收口径=人判语义合理性。
+> **过拟合检查**：教学集 46.0% vs 未见集 32.0%（差 14pp）——存在但可解释（边界标准取材自教学集），未见集为主判据不变。
+> **遗留闭环**：STR-MULTIFACTOR-031 跨库迁移已裁定执行（#ARCH-305：迁 FCT-MOM-030，原条目 deprecated 留指针）。
+
 > 本文定位：模块工厂（Module Factory）的施工——知识采集→分类→映射→代码生成→验证→入库的完整流水线。
 > 与其他文件的分工：结构设计见 [00_index.md](00_index.md)，落地性分析见 [01_external_benchmark_analysis.md](01_external_benchmark_analysis.md) §5。
 > 本文只写 why（决策推理）与 how（施工步骤）；实现细节（代码级）由 blueprint/代码维护。入库 schema 的真源在交易决策侧 [62_business_registry_construction.md](../../07_trading_decision_architecture/design_memos/62_business_registry_construction.md)，本文只引用不复制。

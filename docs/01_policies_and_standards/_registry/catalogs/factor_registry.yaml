@@ -11877,6 +11877,47 @@ factors:
   entry_role: "factor"
   note: "IC 为负——20 日动量窗口内呈反转特征，与 BTRUN 结论一致；decay 曲线显示反转效应在 lag10~13 最强"
 
+- factor_id: "FCT-MOM-030"
+  name: "4 分钟涨速资金异动"
+  name_zh: "4 分钟涨速资金异动"
+  aliases: ["4分钟涨速持续排名"]
+  factor_class: "momentum"
+  relabel_note: "ARCH-305 跨库迁移 2026-08-31（AI 架构师代判，Owner 授权）：原 STR-MULTIFACTOR-031，GP1 人评（relabel_proposal=factor/momentum）+分类器独立预测（factor/momentum, confidence=0.75）双重佐证"
+  formula: "4 分钟涨速持续排名：个股层面\"4 分钟涨速持续排名前 10\"为最早买入信号口径；大盘下跌时用\"4 分钟涨速\"榜观察资金流入哪个板块（宏观择时辅助）；盘中需配\"4 分钟涨速榜\"和\"板块资金快速流入/出\"预警。"
+  params: {}
+  inputs: []
+  outputs: []
+  alpha_source: "单一可计算信号（服务打分/预警），非完整买卖决策链——无退出/仓位规则，属因子非策略（PS-VOC-TAX-001 边界）。"
+  frequency: "intraday"
+  lookback_period: 1
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-001"
+  neutralization: "none"
+  pit_policy: "price_only"
+  module_id: "MOD-FACTOR"
+  doc_ref: "29_factor_strategy_extraction.md §F8.46"
+  code_path: ""
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-08-15"
+  updated_at: "2026-08-31"
+  owner: "MOD-GOVERNANCE"
+  ic: null
+  ir: null
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: null
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+  entry_role: "factor"
+  note: "迁移自 strategy_registry STR-MULTIFACTOR-031（原条目已 deprecated 留指针）；盘中分钟级信号，回测需分钟线数据支撑"
+
 - factor_id: "FCT-QUAL-002"
   name: "Value Factor (code-anchored)"
   name_zh: "价值因子（代码锚，价均偏离口径）"

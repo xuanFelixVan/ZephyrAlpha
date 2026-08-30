@@ -21220,7 +21220,7 @@ entries:
   title: 裁定——06号文 生产端 dispatch 硬门（TaskGate）采用影子模式先行启用
   severity: P2
   adjudication: '裁定（Owner 2026-08-31 授权代判）：生产端 dispatch 门不按"直接硬门全开"也不"继续默认关闭"，采用专业机构金丝雀发布实践——先影子模式（shadow/observe-only：记录 would-block 决策但不真阻断）运行观察，确认 passport 覆盖率与误拦率后再晋升硬门。理由：硬门直开的风险是 passport 缺失/过期时误拦合法 dispatch（当前 7 份签名护照+quick_profiles 覆盖有限）；但永久关闭则考试调度器+TaskGate 形同虚设。影子模式零风险获得真实拦截画像，是第一性原理下的最优路径。'
-  fix_phase: 施工中（影子模式启用，观察期后晋升硬门）
+  fix_phase: 观察期结论（2026-08-31 复核）：影子日志零记录——根因非"无误拦"而是"无流量"：全仓唯一消费者是测试，task_gate 硬门钩子（task_gate=True 且未设 ZEPHYR_TASK_GATE_SHADOW）已建成但无生产 dispatch 链接线，TaskGate.can_dispatch 无生产调用方。裁定维持：门保持"已建成未接线"状态——晋升硬门的前提=06号文 dispatch 链生产消费端落地，接线时按本裁定走影子先行（task_gate=True + ZEPHYR_TASK_GATE_SHADOW=1）收集画像后翻硬门；不主动接线生产消费者（生产端激活权属 Owner）。
   status: decided
   created: '2026-08-31'
   last_updated: '2026-08-31'
@@ -21238,5 +21238,22 @@ entries:
   adjudication: '裁定（Owner 2026-08-31 授权代判）：GATE-WORKTREE-DRIFT-WATCHDOG 对"未登记写入方"的处置分级——当全项目恰好 1 个活跃注册会话时，漂移写入归属无歧义，自动 claim 到该会话 + 审计留痕，替代直接回退；多活跃会话（归属有歧义）时维持现状隔离+人工。理由（第一性原理）：看门狗目的是抓"无主的漂移"，单会话时归属确定，回退是误伤（2026-08-31 实证：本会话 registry/61号文编辑被回退一次）；把安全路径设为默认（pave the road）比靠 AI 自觉先 claim 更符合 100% AI 开发的工程现实。多会话歧义场景不放松（防互踩）。'
   fix_phase: 施工中（看门狗 auto-claim 改造）
   status: decided
+  created: '2026-08-31'
+  last_updated: '2026-08-31'
+- issue_id: '#ARCH-305'
+  title: 裁定——STR-MULTIFACTOR-031 跨库迁移至 factor_registry（FCT-MOM-030）
+  severity: P2
+  adjudication: '裁定（Owner 2026-08-31 授权代判，ARCH-301 follow-up 遗留项闭环）：STR-MULTIFACTOR-031"4 分钟涨速资金异动"跨库迁移至 factor_registry（新条目 FCT-MOM-030，factor_class=momentum），strategy_registry 原条目 status→deprecated 并留迁移指针。理由（第一性原理）：①条目本质=单一可计算信号（4 分钟涨速持续排名），无完整买卖决策链（exit_logic/position_sizing/risk_rules 全空），GP1 人评裁定（relabel_proposal=factor/momentum）与分类器独立预测（factor/momentum，confidence=0.75）双重佐证；②注册表条目归属应由语义本质决定而非"先入的库"——strategy_class 取值域不含 factor 类，滞留 strategy 库只能委曲 multifactor（永久误标）；③零下游引用（全仓 grep 仅自身条目），迁移零破坏面。教训留痕：29号文人工抽取时"信号"与"策略"边界未执行 PS-VOC-TAX-001 标准，属测量工具滞后的同类（ARCH-287）。'
+  fix_phase: 已落地（2026-08-31：FCT-MOM-030 入库 + STR-MULTIFACTOR-031 deprecated）
+  status: resolved
+  related_adjudication: '#ARCH-301'
+  created: '2026-08-31'
+  last_updated: '2026-08-31'
+- issue_id: '#ARCH-306'
+  title: 治本——is_pid_alive Windows 句柄残留误判（死进程恒判存活）
+  severity: P1
+  adjudication: '实证（2026-08-31 长城任务清场）：强杀 3 个卡死 7 小时的治理进程（2 个 reconcile worker 在 GATE-RUNTIME-CLEANUP 空转烧 1600s+ CPU、1 个 git_commit 主线程死锁 7h 仅 8s CPU）后，session_registry 中条目仍判"活跃"——OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION) 对已终止但被持有句柄的进程对象仍返回非空（内核对象随句柄存续），旧实现单看 handle 非空即判存活 → 僵尸 session 永不收割 → 自动认领（#ARCH-304）被多会话假象阻塞、claim 被死 session 扣押。修法（process_pool.py is_pid_alive，全仓唯一真源）：handle 打开后加查 GetExitCodeProcess，退出码 != STILL_ACTIVE(259) 即判死；已知边角=真实以 259 退出的进程误判存活（MSDN 公认，可接受）。影响面：_GlobalCommitLock 僵尸锁检测 / ide_health_service daemon 清理 / ProcessLock stale 清理全部受益。配套观察：algoflow-gw session 被自身 heartbeat daemon 线程续命 7 小时（主线程死锁但 daemon 存活→PID+TTL 双判据全过）——heartbeat 保活死锁 session 的活性反转缺口已在 #ARCH-HEARTBEAT-002 以 last_activity 锚点治本，本次实证其有效性边界（git_commit 内嵌 daemon 的 last_activity 随 claim 刷新）。'
+  fix_phase: 已落地（2026-08-31：GetExitCodeProcess 判据 + 56 项关联测试全绿）
+  status: resolved
   created: '2026-08-31'
   last_updated: '2026-08-31'
