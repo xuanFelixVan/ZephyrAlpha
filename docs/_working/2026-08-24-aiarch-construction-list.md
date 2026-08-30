@@ -10,7 +10,8 @@ ttl: task_bound
 
 > **结案审查（2026-08-30 复核）**：P1/P2 全量核销完毕（2026-08-30 长城批）
 > - 已实证落地（2026-08-30 核销）：1.1 `agentic_drift_guard.py`+`drift_semantic_reviewer.py`；1.2 `security/ops/incident_pipeline.py`+`data/fix_patterns/`；1.3 预算硬门 pre_flight_check+LLMDeg 降级注入；1.4 `intelligence/model_routing/`；1.5 `exam_trigger_scheduler.py`；1.6 inject_by_keyword+doc_compressor 三档；1.7 `lsg_security_gate.yml`+LSGPerformanceGuard+check_lsg_security；2.1~2.9 逐项核销（证据随条目行尾注记，含 2.4 已由 W1 批落地 autonomy_core/module_factory、2.8 缺陷 08-22 已修）；3.9 derived_graphs 6 篇。commit 2a16988d。
-> - 仍有效：W3~W5 Owner 窗口/裁定项（W1 已随 B-007 全战役闭环；~~W2~~ commit_queue flag 已翻开 ✅ 2026-08-22 Owner 裁定，281b7f469）+ P3 其余项；施工前须先 grep 实证当前状态再派单（防重造）。
+> - **B 组裁定落地批（2026-08-30 追加，commit 09e1aaef）**：W2 核销（flag 实证 08-22 已翻开 281b7f469，三处 stale 文本修复+G5 死信 135 条归档+单写者复检）；P2-1 观测架子落成（register_pattern_mining_task.ps1+pattern_mining_metrics.py，两周观测期自动跑）；2.8 SLA 连跑实测 PASS（20 次 P99=9.29s<10s，报告 .runtime/boot_sla_probe_report.jsonl）；3.9 长期生成器裁定不建（depgraph ai_layer 标签覆盖不足，触发条件已钉死）。
+> - 仍有效：W3 DeepSeek 充值 + aiarch 三件遗留中 P2-1 的两周观测窗口（自然时间，到点自动出报告）；施工前须先 grep 实证当前状态再派单（防重造）。
 
 ---
 

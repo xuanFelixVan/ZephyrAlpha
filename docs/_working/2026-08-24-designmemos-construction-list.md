@@ -12,7 +12,8 @@ ttl: task_bound
 
 > **结案审查（2026-08-30 复核）**：22 项已核销（2026-08-30 长城批实证，#1~#16/#18~#22/#27，证据随条目行尾注记）
 > - 已实证落地（已核销）：#1 RUN-05 断网断电演练节已入册（00_index v2.12.0 注记）；#2 S2 五子项 `s2_breadth_thrust_score`/`s2_valuation_score_fundamental`/`_capitulation_daily` 已落码 overlay_features.py + 测试；#3 IC 回填 code-anchored 4/4 + NL 143 条锚定裁定登记（.runtime/factor_ic_backfill/20260830_report.md）；#6 FCT 12 条入册 + 外盘 7/8 落库 kline_global（USDCNH 全源失效登记跳过）；其余随条目注记。commit 2a16988d。
-> - 仍有效：#17 数据期挂账 / #23/#24/#26 远期 / #25 PNG 退役维持待 Owner 确认 / #28 Owner 窗口四项；施工前须 grep 实证再派单。
+> - **B 组裁定落地批（2026-08-30 追加，commit 09e1aaef）**：#7 拆记（模块落码 ✅ + 调度挂接 ⏳ 归 Owner 窗口）；#17 里程碑更新（similar_day 生产读取器+walk-forward 评估器已落码 16 用例绿，PIT 成本核算 DeepSeek ¥15.11/Qwen ¥1.97，60 日快照进度 ~5/60 预计 11 月中下旬达标）；B14 装配器+B15 评估器骨架落码（22 用例绿）；#25 PNG 退役建议=确认删除（Panel C1 已上线零消费方）待 Owner 一句话。
+> - 仍有效：#17 数据期挂账（读取器/评估器已就绪，纯等日历）/ #23/#24/#26 远期 / #25 PNG 退役待 Owner 确认 / #28 Owner 窗口四项；施工前须 grep 实证再派单。
 
 ---
 

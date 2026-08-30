@@ -13,6 +13,8 @@ ttl: task_bound
 > **关联**：[92_phase2_business_construction_order.md](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/92_phase2_business_construction_order.md)（阶段二清单，已结案）、[18_gp0_construction_order.md](../02_enterprise_architecture/09_ai_architecture/implementation_plans/18_gp0_construction_order.md)（GP0 清单，已结案）——本文档是两者的继任派单。
 > **Owner 两项裁定（2026-08-28）**：①tracker 56 条引用不复制（防双真源）；②09 域 GP1+ 单列分期区不排当前波次（等 GP0 终审 M0 后单独开 GP1 排期批）。
 > **防误删**：本文档建成即入 git 追踪（事故 #49 教训：_working 未追踪文件曾被 reconciler 误删不可恢复）。
+>
+> **B 组裁定落地批（2026-08-30，commit 09e1aaef/f432625c/376d2c09）**：A 类 22/22 全闭环；B 类改判三项——B1 转 A（管线骨架已落码 strategy_correlation_pipeline.py，21 用例）、B13 拆分（B13a CAPE/IV/两融三维评分器已落码 institutional_regime_scorer.py MOD-REGIME-015 53 用例；B13b credit_spread/COT/PageRank 维持无源阻塞）、B15 挂链 B1；B16 勘探结论=GO（数据已在仓，报告 2026-08-30-b16-feed-exploration.md）；B5/B6 启用 checklist+B20 裁定书草稿已出；C 类 10 项全维持（C8 加 B1 联动注记）。残余=纯 Owner 动作（A6 计划任务启用/A9 双实现收敛/A5 漏斗归并/B10/B11 拍板）与外部条件项。
 
 ## 一、施工必要性裁定总表
 
