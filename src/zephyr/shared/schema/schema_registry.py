@@ -15,6 +15,45 @@
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: schema_registry.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SchemaRegistry
+#   name_en: SchemaRegistry
+#   intro: 集中式 Schema 编目——查询版本、兼容性检查。
+#   desc: 集中式 Schema 编目——查询版本、兼容性检查。 对标 Confluent Schema Registry 的 REST API（GET /schemas/{name}/ve…；公共方法（定义序）: registe…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② get_schema_registry
+#   name_en: get_schema_registry
+#   intro: get_schema_registry() 源码 L239-L245
+#   desc: 源码 L239-L245
+#   inputs: 无参数
+#   outputs: SchemaRegistry
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: SchemaRegistry
+#   name_en: SchemaRegistry
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
+
 from __future__ import annotations
 
 import threading

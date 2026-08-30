@@ -1,7 +1,35 @@
 # [A_module] module_id=MOD-EXE-execution_contracts_execution | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [TTL] permanent
-"""Backward-compat shim — canonical location is zephyr.trading.trading_contracts.execution."""
+"""
+Backward-compat shim — canonical location is zephyr.trading.trading_contracts.execution.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 包内子模块公共符号
+#   fields: import 再导出符号: importlib
+#   code: __init__.py import L34
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包公共面再导出
+#   name_en: __init__ re-export
+#   intro: 再导出 capital_allocation_result, execution_report, fill, model_serving_request, o…
+#   desc: __init__ import L34；__all__ 5 项（AST 事实）
+#   inputs: I1
+#   outputs: __all__ 公共符号表
+# 层: 输出
+# - id: O1
+#   name_zh: 公共 API 面（5 符号）
+#   name_en: __all__
+#   intro: capital_allocation_result, execution_report, fill, model_serving_request, order
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 import importlib
 

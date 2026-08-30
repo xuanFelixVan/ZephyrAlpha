@@ -15,10 +15,46 @@
 # [A_module] module_id=MOD-SHARED-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""A2A Registry and Agent Card contracts — discovery and identity interfaces.
+"""
+A2A Registry and Agent Card contracts — discovery and identity interfaces.
 
 Defines AgentCard (Pydantic data model), AgentCapability enum,
 and Protocol interfaces for A2ARegistry and IdentityVerifier.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: a2a_registry.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① A2ARegistryProtocol
+#   name_en: A2ARegistryProtocol
+#   intro: Protocol interface for Agent Card registries.
+#   desc: Protocol interface for Agent Card registries. Any class that provides register, discover,…；公共方法（定义序）: registe…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② IdentityVerifierProtocol
+#   name_en: IdentityVerifierProtocol
+#   intro: Protocol interface for A2A identity verification.
+#   desc: Protocol interface for A2A identity verification. Any class that provides sign, verify, a…；公共方法（定义序）: sign, v…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: A2ARegistryProtocol, IdentityVerifierProtocol
+#   downstream: zephyr.shared.protocols.a2a; zephyr.infrastructure.a2a_protocol
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

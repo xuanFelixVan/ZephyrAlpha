@@ -41,6 +41,125 @@ AI 施工约定：
 
 SSoT: MOD-INF-016 §2.11 shared-secrets
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: registry 参数
+#   fields: 参数 registry，类型注解 SecretRotation | None
+#   code: secrets.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: name 参数
+#   fields: 参数 name，类型注解 str
+#   code: secrets.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: value 参数
+#   fields: 参数 value，类型注解 str
+#   code: secrets.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: key 参数
+#   fields: 参数 key，类型注解 str
+#   code: secrets.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① configure_secret_rotation
+#   name_en: configure_secret_rotation
+#   intro: 注入 SecretRotation registry（§5.17.14 修复）。
+#   desc: 注入 SecretRotation registry（§5.17.14 修复）。 注入后，所有 get_secret* 读取密钥时会前置检查 needs_rotation， 过期…；源码 L215-L227
+#   inputs: registry
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② sanitize_secret
+#   name_en: sanitize_secret
+#   intro: 安全脱敏——仅暴露长度，绝不暴露原始值。
+#   desc: 安全脱敏——仅暴露长度，绝不暴露原始值。 Args: name: Secret 名称（用于日志上下文）。 value: Secret 原始值。 Returns: 脱敏字符串——例…；源码 L266-L277
+#   inputs: name value
+#   outputs: str
+# - id: A3
+#   name_zh: ③ SecretProvider
+#   name_en: SecretProvider
+#   intro: Secret 读取接口——async + 无依赖。
+#   desc: Secret 读取接口——async + 无依赖。 任何 secrets backend（env / vault / AWS Parameter Store / K8s Secr…；公共方法（定义序）: get_sec…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ EnvSecretProvider
+#   name_en: EnvSecretProvider
+#   intro: 从 os.environ 读取 secrets——默认实现。
+#   desc: 从 os.environ 读取 secrets——默认实现。 Usage:: provider = EnvSecretProvider() key = await provide…；公共方法（定义序）: get_sec…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ DotEnvSecretProvider
+#   name_en: DotEnvSecretProvider
+#   intro: 从 .env 文件读取 secrets——本地开发用。
+#   desc: 从 .env 文件读取 secrets——本地开发用。 优先级：环境变量（最高） > .env 文件 > default Usage:: provider = DotEnvSec…；公共方法（定义序）: get_sec…
+#   inputs: env_file
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ get_secret
+#   name_en: get_secret
+#   intro: 同步读取 secret（从 os.environ）。
+#   desc: 同步读取 secret（从 os.environ）。 .env 文件已由 zephyr 包导入时自动加载到 os.environ， 因此同步代码直接调用本函数即可。 Args:…；源码 L437-L459
+#   inputs: key
+#   outputs: str
+# - id: A7
+#   name_zh: ⑦ get_secret_or_default
+#   name_en: get_secret_or_default
+#   intro: 同步读取 secret，缺失时返回默认值（不抛异常）。
+#   desc: 同步读取 secret，缺失时返回默认值（不抛异常）。 Args: key: 环境变量名。 default: 默认值。 Returns: Secret 值或默认值。；源码 L462-L473
+#   inputs: key default
+#   outputs: str
+# - id: A8
+#   name_zh: ⑧ get_required_secret
+#   name_en: get_required_secret
+#   intro: 同步读取必需的 secret，缺失或空即 fail-fast。
+#   desc: 同步读取必需的 secret，缺失或空即 fail-fast。 语义化便捷函数——用于脚本启动时校验必需的 API key。 与 get_secret 的区别：空字符串同样视为缺…；源码 L476-L499
+#   inputs: key
+#   outputs: str
+# - id: A9
+#   name_zh: ⑨ get_secret_from_file
+#   name_en: get_secret_from_file
+#   intro: 同步从指定 .env 文件读取 secret（不依赖 os.environ 默认加载）。
+#   desc: 同步从指定 .env 文件读取 secret（不依赖 os.environ 默认加载）。 用于读取非默认位置的密钥文件（如 config/.env.postgres）。 优先级：…；源码 L508-L542
+#   inputs: key env_file
+#   outputs: str
+# - id: A10
+#   name_zh: ⑩ get_secret_from_file_or_default
+#   name_en: get_secret_from_file_or_default
+#   intro: 同步从指定文件读取 secret，缺失返回默认值（不抛异常）。
+#   desc: 同步从指定文件读取 secret，缺失返回默认值（不抛异常）。；源码 L545-L550
+#   inputs: key env_file default
+#   outputs: str
+#   （注：A10 之后另有 3 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: intelligence.model_profiling.deepseek_v4_chat, intelligence.model_profiling.cap…
+# - id: O2
+#   name_zh: bytes
+#   name_en: bytes
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: intelligence.model_profiling.deepseek_v4_chat, intelligence.model_profiling.cap…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> A10
+# A10 --> O1
 """
 
 from __future__ import annotations
@@ -90,10 +209,10 @@ if TYPE_CHECKING:
     # 故 dep_import_cycles 视图仍会显示 secrets ↔ secret_rotation 循环——属合法循环。
     from zephyr.feedback_loop.security.secret_rotation import SecretRotation
 
-_rotation_registry: "SecretRotation | None" = None
+_rotation_registry: SecretRotation | None = None
 
 
-def configure_secret_rotation(registry: "SecretRotation | None") -> None:
+def configure_secret_rotation(registry: SecretRotation | None) -> None:
     """注入 SecretRotation registry（§5.17.14 修复）。
 
     注入后，所有 get_secret* 读取密钥时会前置检查 needs_rotation，

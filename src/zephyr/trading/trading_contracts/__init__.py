@@ -11,10 +11,37 @@
 # [TESTS]
 # [TTL] permanent
 
-"""zephyr.trading.trading_contracts — trading-domain data contracts.
+"""
+zephyr.trading.trading_contracts — trading-domain data contracts.
 
 Moved from shared/contracts/ to eliminate cross-package violations.
 Infrastructure contracts (core/, backpressure/) remain in shared/contracts/.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 包内子模块公共符号
+#   fields: import 再导出符号: FactorMonitorReport, FactorSignal, MacroFactorSignal, NormalizedMarke…
+#   code: __init__.py import L47
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包公共面再导出
+#   name_en: __init__ re-export
+#   intro: 再导出 ETF, FX, AssetClass, Bond, CapitalAllocationResult, Country, Crypto, Crypto…
+#   desc: __init__ import L47；__all__ 43 项（AST 事实）
+#   inputs: I1
+#   outputs: __all__ 公共符号表
+# 层: 输出
+# - id: O1
+#   name_zh: 公共 API 面（43 符号）
+#   name_en: __all__
+#   intro: ETF, FX, AssetClass, Bond, CapitalAllocationResult, Country, Crypto, CryptoCont…
+#   downstream: signal; risk; pf_core; ex_core; reporting; compliance; ml_train
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from zephyr.shared.contracts.factor_monitor_report import FactorMonitorReport

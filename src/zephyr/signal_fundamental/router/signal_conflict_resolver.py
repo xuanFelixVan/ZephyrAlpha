@@ -20,7 +20,8 @@
 # A2: 规则链裁定——R1 风险否决(风险类高置信→REJECT) → R2 置信度差(≥margin 高者胜) → R3 时效(新者胜) → R4 来源优先级 → R5 平局 DEFER
 # O1: list[ConflictResolution]（symbol/action/winner/losers/rule_applied 留痕）
 # [/ALGO_FLOW]
-"""信号冲突消解器（MOD-SIG-010）。
+"""
+信号冲突消解器（MOD-SIG-010）。
 
 多个信号互相矛盾（一个说买一个说卖）时裁定听谁的，避免信号打架系统无所适从。
 A 股不能做空（宪章 §2 约束三）：方向空间 = LONG（买入/持有）vs EXIT（卖出/回避），
@@ -33,6 +34,38 @@ A 股不能做空（宪章 §2 约束三）：方向空间 = LONG（买入/持�
   R3 时效——平局取最新到达方（created_seq 大者）；
   R4 来源优先级——按 source_priority 表（未登记来源=0）；
   R5 仍平局 → DEFER（挂起不动作，等下一信号或人工）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: signals 参数
+#   fields: 参数 signals，类型注解 list[ConflictSignal]
+#   code: signal_conflict_resolver.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: signal_conflict_resolver.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① resolve_conflicts
+#   name_en: resolve_conflicts
+#   intro: 冲突消解主入口：按 symbol 分组逐组走规则链。
+#   desc: 冲突消解主入口：按 symbol 分组逐组走规则链。confidence 非法 → ValueError。；源码 L203-L217
+#   inputs: signals config
+#   outputs: list[ConflictResolution]
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[ConflictResolution]
+#   name_en: list[ConflictResolution]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: (待 sleeve 编排层 / StrategyBook 接线)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -110,15 +143,33 @@ def _resolve_group(group: list[ConflictSignal], cfg: ConflictResolverConfig) -> 
     ids = tuple(s.signal_id for s in group)
     if not exits:
         winner = _best(longs, lambda s: s.confidence)
-        return ConflictResolution(symbol, ResolutionAction.ADOPT, "no_conflict", winner.signal_id, tuple(i for i in ids if i != winner.signal_id))
+        return ConflictResolution(
+            symbol,
+            ResolutionAction.ADOPT,
+            "no_conflict",
+            winner.signal_id,
+            tuple(i for i in ids if i != winner.signal_id),
+        )
     if not longs:
         winner = _best(exits, lambda s: s.confidence)
-        return ConflictResolution(symbol, ResolutionAction.REJECT, "no_conflict", winner.signal_id, tuple(i for i in ids if i != winner.signal_id))
+        return ConflictResolution(
+            symbol,
+            ResolutionAction.REJECT,
+            "no_conflict",
+            winner.signal_id,
+            tuple(i for i in ids if i != winner.signal_id),
+        )
     # R1 风险否决：任一 RISK 类高置信 → REJECT（赢家=该风险信号）
     risk_signals = [s for s in group if s.kind == "RISK" and s.confidence >= cfg.veto_confidence]
     if risk_signals:
         winner = _best(risk_signals, lambda s: s.confidence)
-        return ConflictResolution(symbol, ResolutionAction.REJECT, "R1_risk_veto", winner.signal_id, tuple(i for i in ids if i != winner.signal_id))
+        return ConflictResolution(
+            symbol,
+            ResolutionAction.REJECT,
+            "R1_risk_veto",
+            winner.signal_id,
+            tuple(i for i in ids if i != winner.signal_id),
+        )
     best_long = _best(longs, lambda s: s.confidence)
     best_exit = _best(exits, lambda s: s.confidence)
     # R2 置信度差
@@ -126,19 +177,25 @@ def _resolve_group(group: list[ConflictSignal], cfg: ConflictResolverConfig) -> 
     if abs(diff) >= cfg.margin:
         winner = best_long if diff > 0 else best_exit
         action = ResolutionAction.ADOPT if diff > 0 else ResolutionAction.REJECT
-        return ConflictResolution(symbol, action, "R2_confidence", winner.signal_id, tuple(i for i in ids if i != winner.signal_id))
+        return ConflictResolution(
+            symbol, action, "R2_confidence", winner.signal_id, tuple(i for i in ids if i != winner.signal_id)
+        )
     # R3 时效（最新到达方）
     if best_long.created_seq != best_exit.created_seq:
         winner = best_long if best_long.created_seq > best_exit.created_seq else best_exit
         action = ResolutionAction.ADOPT if winner is best_long else ResolutionAction.REJECT
-        return ConflictResolution(symbol, action, "R3_recency", winner.signal_id, tuple(i for i in ids if i != winner.signal_id))
+        return ConflictResolution(
+            symbol, action, "R3_recency", winner.signal_id, tuple(i for i in ids if i != winner.signal_id)
+        )
     # R4 来源优先级
     pl = cfg.source_priority.get(best_long.source, 0)
     pe = cfg.source_priority.get(best_exit.source, 0)
     if pl != pe:
         winner = best_long if pl > pe else best_exit
         action = ResolutionAction.ADOPT if winner is best_long else ResolutionAction.REJECT
-        return ConflictResolution(symbol, action, "R4_source", winner.signal_id, tuple(i for i in ids if i != winner.signal_id))
+        return ConflictResolution(
+            symbol, action, "R4_source", winner.signal_id, tuple(i for i in ids if i != winner.signal_id)
+        )
     # R5 平局挂起
     return ConflictResolution(symbol, ResolutionAction.DEFER, "R5_defer", "", ids)
 

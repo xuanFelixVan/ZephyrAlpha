@@ -38,6 +38,69 @@ AI 施工约定：
 
 SSoT: MOD-INF-016 §2.17 shared-pagination
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: items 参数
+#   fields: 参数 items，类型注解 list[T]
+#   code: pagination.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: total 参数
+#   fields: 参数 total，类型注解 int
+#   code: pagination.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: pagination 参数
+#   fields: 参数 pagination，类型注解 OffsetPagination
+#   code: pagination.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: next_cursor 参数
+#   fields: 参数 next_cursor（无注解）
+#   code: pagination.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① Page
+#   name_en: Page
+#   intro: 基于 offset/limit 的分页响应。
+#   desc: 基于 offset/limit 的分页响应。 Usage:: data = list[T](...) total = len(all_items) page = paginate…；公共方法（定义序）: total_p…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② paginate
+#   name_en: paginate
+#   intro: paginate(items, total, pagination) 源码 L214-L224
+#   desc: 源码 L214-L224
+#   inputs: items total pagination
+#   outputs: Page[T]
+# - id: A3
+#   name_zh: ③ paginate_cursor
+#   name_en: paginate_cursor
+#   intro: paginate_cursor(items, total, pagination, next_cursor) 源码 L…
+#   desc: 源码 L227-L243
+#   inputs: items total pagination next_cursor
+#   outputs: CursorPage[T]
+#   （注：A3 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: Page[T]
+#   name_en: Page[T]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: CursorPage[T]
+#   name_en: CursorPage[T]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

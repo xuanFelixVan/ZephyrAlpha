@@ -35,6 +35,59 @@ Phase 5 新增（盲点 B4）——解决 schemas.py Task 模型变更后
 
 SSoT: MOD-INF-016 §2.12 shared-migration
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: data 参数
+#   fields: 参数 data，类型注解 dict[str, Any]
+#   code: migration.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: to_version 参数
+#   fields: 参数 to_version，类型注解 str | None
+#   code: migration.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① latest_schema_version
+#   name_en: latest_schema_version
+#   intro: 返回当前最新 Schema 版本。
+#   desc: 返回当前最新 Schema 版本。 每次新增字段且实现了升级迁移后，MUST 更新此返回值。；源码 L162-L167
+#   inputs: 无参数
+#   outputs: str
+# - id: A2
+#   name_zh: ② migrate_task
+#   name_en: migrate_task
+#   intro: 将一个 Task dict 从当前版本迁移到目标版本。
+#   desc: 将一个 Task dict 从当前版本迁移到目标版本。 Args: data: Task 数据的 dict 表示 to_version: 目标版本号。None = 自动迁移到最新…；源码 L190-L237
+#   inputs: data to_version
+#   outputs: dict[str, Any]
+# - id: A3
+#   name_zh: ③ downgrade_task
+#   name_en: downgrade_task
+#   intro: 将 Task dict 从当前版本降级到旧版本。
+#   desc: 将 Task dict 从当前版本降级到旧版本。 用于回滚场景。路径自动反向查找。 Args: data: Task dict to_version: 目标旧版本号 Return…；源码 L240-L252
+#   inputs: data to_version
+#   outputs: dict[str, Any]
+#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: dict[str, Any]
+#   name_en: dict[str, Any]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

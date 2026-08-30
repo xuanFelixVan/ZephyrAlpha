@@ -15,12 +15,94 @@
 # [A_module] module_id=MOD-INF-002 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""shared/contracts/factories.py — 跨层数据契约工厂方法
+"""
+shared/contracts/factories.py — 跨层数据契约工厂方法
 
 Phase D-3: 提供跨层数据转换的工厂方法，统一处理 float->Decimal 边界转换。
 
 SSoT: cross_layer_contracts.yaml v3.0
 Status: HAND-MAINTAINED — codegen disabled (Phase D)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: as_of_date 参数
+#   fields: 参数 as_of_date，类型注解 datetime | None
+#   code: factories.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: idempotency_key 参数
+#   fields: 参数 idempotency_key，类型注解 str
+#   code: factories.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: max_single_position 参数
+#   fields: 参数 max_single_position，类型注解 float
+#   code: factories.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: min_single_position 参数
+#   fields: 参数 min_single_position，类型注解 float
+#   code: factories.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_risk_limits
+#   name_en: make_risk_limits
+#   intro: 创建 RiskLimits 实例——与 CTR-003（float VaR 上限）对齐。
+#   desc: 创建 RiskLimits 实例——与 CTR-003（float VaR 上限）对齐。 5.150.10 治本：本函数为 backward-compat 薄委托——业务逻辑 c…；源码 L136-L167
+#   inputs: as_of_date idempotency_key max_single_position min_single_position ma…
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② make_risk_dashboard_snapshot
+#   name_en: make_risk_dashboard_snapshot
+#   intro: 创建 RiskDashboardSnapshot——用于 D_RISK->D_FRONTEND 监控面板推送。
+#   desc: 创建 RiskDashboardSnapshot——用于 D_RISK->D_FRONTEND 监控面板推送。 5.150.11 治本：本函数为 backward-compat…；源码 L175-L204
+#   inputs: portfolio_id portfolio_var_1d max_drawdown_current gross_leverage top…
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ make_risk_metrics_report
+#   name_en: make_risk_metrics_report
+#   intro: 创建 RiskMetricsReport——用于 D_RISK->D_PORTFOLIO_CORE/D_REPORTI…
+#   desc: 创建 RiskMetricsReport——用于 D_RISK->D_PORTFOLIO_CORE/D_REPORTING/D_FRONTEND/D_COMPLIANCE 风险指…；源码 L212-L257
+#   inputs: portfolio_id var_1d_95 var_1d_99 cvar_1d_95 cvar_1d_99 max_drawdown c…
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ make_factor_signal
+#   name_en: make_factor_signal
+#   intro: 创建 FactorSignal 实例——因子信号标准化入口。
+#   desc: 创建 FactorSignal 实例——因子信号标准化入口。；源码 L265-L287
+#   inputs: factor_id symbol raw_value normalized_value rank_pct confidence as_of…
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ make_synthesized_signal
+#   name_en: make_synthesized_signal
+#   intro: 创建 SynthesizedSignal 实例——D_SIGNAL 合成信号标准化入口。
+#   desc: 创建 SynthesizedSignal 实例——D_SIGNAL 合成信号标准化入口。；源码 L295-L325
+#   inputs: signal_id symbol signal_value signal_direction confidence contributin…
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ make_order
+#   name_en: make_order
+#   intro: 创建 Order 实例——D_PORTFOLIO_CORE 委托指令标准化入口。
+#   desc: 创建 Order 实例——D_PORTFOLIO_CORE 委托指令标准化入口。；源码 L333-L356
+#   inputs: order_id symbol side order_type quantity strategy_id limit_price idem…
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: make_risk_limits, make_risk_dashboard_snapshot, make_risk_metrics_report, make_…
+#   downstream: N/A (all consumers verified as phantom — stale references removed)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
 """
 
 from __future__ import annotations

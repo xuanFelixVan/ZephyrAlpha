@@ -35,6 +35,100 @@ AI 频繁写错字段名/漏必填字段/搞错枚举值的问题。
 
 SSoT: MOD-INF-016 §2.11 shared-testing
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: task_id 参数
+#   fields: 参数 task_id（无注解）
+#   code: testing.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: namespace 参数
+#   fields: 参数 namespace（无注解）
+#   code: testing.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: seq 参数
+#   fields: 参数 seq（无注解）
+#   code: testing.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: title 参数
+#   fields: 参数 title（无注解）
+#   code: testing.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_valid_task
+#   name_en: make_valid_task
+#   intro: 构造一个 valid-by-construction 的 Task 实例。
+#   desc: 构造一个 valid-by-construction 的 Task 实例。 必填字段 (task_id/namespace/seq/title/phase/execution_m…；源码 L189-L235
+#   inputs: task_id namespace seq title phase execution_model safety_level create…
+#   outputs: Task
+# - id: A2
+#   name_zh: ② make_p0_task
+#   name_en: make_p0_task
+#   intro: 构造 P0 + H 安全等级的紧急任务。
+#   desc: 构造 P0 + H 安全等级的紧急任务。；源码 L238-L245
+#   inputs: 无参数
+#   outputs: Task
+# - id: A3
+#   name_zh: ③ make_completed_task
+#   name_en: make_completed_task
+#   intro: 构造 COMPLETED 状态的任务（completed_at 自动填当前时间）。
+#   desc: 构造 COMPLETED 状态的任务（completed_at 自动填当前时间）。；源码 L248-L256
+#   inputs: 无参数
+#   outputs: Task
+# - id: A4
+#   name_zh: ④ make_valid_audit_report
+#   name_en: make_valid_audit_report
+#   intro: 构造 valid-by-construction 的 AuditReport 实例。
+#   desc: 构造 valid-by-construction 的 AuditReport 实例。 findings 默认生成一条 P2 的示例 AuditFinding。；源码 L270-L298
+#   inputs: report_id scanner scan_target findings
+#   outputs: AuditReport
+# - id: A5
+#   name_zh: ⑤ make_valid_knowledge_entry
+#   name_en: make_valid_knowledge_entry
+#   intro: 构造 valid-by-construction 的 KnowledgeEntry 实例。
+#   desc: 构造 valid-by-construction 的 KnowledgeEntry 实例。；源码 L312-L330
+#   inputs: ke_id title category
+#   outputs: KnowledgeEntry
+# - id: A6
+#   name_zh: ⑥ make_valid_failure_pattern
+#   name_en: make_valid_failure_pattern
+#   intro: 构造 valid-by-construction 的 FailurePattern 实例。
+#   desc: 构造 valid-by-construction 的 FailurePattern 实例。；源码 L344-L365
+#   inputs: pattern_id failure_type title description reproduction_steps
+#   outputs: FailurePattern
+# - id: A7
+#   name_zh: ⑦ make_valid_handoff_package
+#   name_en: make_valid_handoff_package
+#   intro: 构造 valid-by-construction 的 HandoffPackage 实例。
+#   desc: 构造 valid-by-construction 的 HandoffPackage 实例。；源码 L368-L404
+#   inputs: session_id context_summary
+#   outputs: HandoffPackage
+# 层: 输出
+# - id: O1
+#   name_zh: Task
+#   name_en: Task
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: AuditReport
+#   name_en: AuditReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> O1
 """
 
 from __future__ import annotations

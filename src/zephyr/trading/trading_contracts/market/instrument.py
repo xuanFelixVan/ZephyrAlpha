@@ -14,6 +14,42 @@
 # [TESTS]
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: exchange 参数
+#   fields: 参数 exchange，类型注解 Exchange
+#   code: instrument.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: symbol 参数
+#   fields: 参数 symbol，类型注解 str
+#   code: instrument.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① make_stock_identifier
+#   name_en: make_stock_identifier
+#   intro: make_stock_identifier(exchange, symbol) 源码 L294-L295
+#   desc: 源码 L294-L295
+#   inputs: exchange symbol
+#   outputs: str
+#   （注：A1 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: data ; factor ; pf_core ; ex_core ; l10-compliance
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
+"""
+
 from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal

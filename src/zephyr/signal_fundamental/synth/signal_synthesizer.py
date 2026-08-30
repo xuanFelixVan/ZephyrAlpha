@@ -22,7 +22,8 @@
 # created: "2026-05-05"
 # ---
 
-"""D_SIGNAL — Signal Synthesizer
+"""
+D_SIGNAL — Signal Synthesizer
 
 信号合成引擎。将 D_FACTOR 产出的多因子信号 (FactorSignal) 聚合为统一的合成交易信号。
 
@@ -38,6 +39,32 @@ CTR 契约：
   生产者 — CTR-ERR-003 (SignalDegradationWarning) -> D_RISK, D_PORTFOLIO_CORE
 
 依赖方向：D_FACTOR -> D_SIGNAL -> D_RISK/D_PORTFOLIO_CORE
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: signal_synthesizer.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SignalSynthesizerBase
+#   name_en: SignalSynthesizerBase
+#   intro: 信号合成器抽象基类（OCP 扩展点）
+#   desc: 信号合成器抽象基类（OCP 扩展点） 实现者要求： - synthesize(): 接收多条 FactorSignal，产出单条 SynthesizedSignal - 加权策略…；公共方法（定义序）: get_syn…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SignalSynthesizerBase
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

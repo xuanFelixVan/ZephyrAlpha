@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-002 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""MLExperimentPipeline D_ML_TRAIN->实验跨层集成管道
+"""
+MLExperimentPipeline D_ML_TRAIN->实验跨层集成管道
 ============================================
 Domain   : _ml-experiment-domain (ML-EXPERIMENT-DOMAIN-001)
 Contracts: ME-CT-001~006
@@ -38,6 +39,33 @@ ME-CT-003: 实验指标标准化契约
 ME-CT-004: 统计验证门禁
 ME-CT-005: 模型提升审批链
 ME-CT-006: 跨层审计追踪
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: ml_experiment_pipeline.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① MLExperimentPipeline
+#   name_en: MLExperimentPipeline
+#   intro: D_ML_TRAIN->实验 ML Experiment 跨层集成管道。
+#   desc: D_ML_TRAIN->实验 ML Experiment 跨层集成管道。 将 D_ML_TRAIN ML平台层的模型推理结果输入 实验 实验管线， 执行实验设计、统计验证和胜出模…；公共方法（定义序）: experim…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: MLExperimentPipeline
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -344,8 +372,8 @@ class MLExperimentPipeline:
         if not self._models:
             try:
                 _trainer_mod = importlib.import_module("zephyr.ml_train.trainer_base")
-                MTB = getattr(_trainer_mod, "ModelTrainerBase")
-                _ModelMetadata = getattr(_trainer_mod, "ModelMetadata")
+                MTB = _trainer_mod.ModelTrainerBase
+                _ModelMetadata = _trainer_mod.ModelMetadata
                 registry = getattr(MTB, "_registry", {})
                 discovered = [
                     _ModelMetadata(
@@ -414,7 +442,7 @@ class MLExperimentPipeline:
             return matched[0]
         try:
             _inf_mod = importlib.import_module("zephyr.ml_train.inference_base")
-            IEB = getattr(_inf_mod, "InferenceEngineBase")
+            IEB = _inf_mod.InferenceEngineBase
             registry = getattr(IEB, "_registry", {})
             for name, cls in registry.items():
                 if model_id.lower() in name.lower():

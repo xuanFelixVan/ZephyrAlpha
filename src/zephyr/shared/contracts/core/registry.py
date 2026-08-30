@@ -48,6 +48,49 @@ CTR-VER-001: ContractRegistry / 契约版本注册与查询服务
         raise ContractViolationError(...)
 
 SSoT: cross_layer_contracts.yaml -> CTR-VER-001
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: repo_root 参数
+#   fields: 参数 repo_root，类型注解 Path | None
+#   code: registry.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ContractRegistry
+#   name_en: ContractRegistry
+#   intro: 运行时契约注册表。
+#   desc: 运行时契约注册表。 属性 ---- contracts : Dict[str, ContractMeta] 已注册的契约元数据 consumers : Dict[str, Lis…；公共方法（定义序）: contrac…
+#   inputs: repo_root
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② get_registry
+#   name_en: get_registry
+#   intro: get_registry(repo_root) 源码 L421-L428
+#   desc: 源码 L421-L428
+#   inputs: repo_root
+#   outputs: ContractRegistry
+# - id: A3
+#   name_zh: ③ reset_registry
+#   name_en: reset_registry
+#   intro: reset_registry() 源码 L431-L433
+#   desc: 源码 L431-L433
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A3 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ContractRegistry
+#   name_en: ContractRegistry
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: N/A (all consumers verified as phantom — stale references removed)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

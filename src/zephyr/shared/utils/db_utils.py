@@ -29,6 +29,32 @@ db_utils.py — SQLite 连接公共 API
   - init_db 真源为 zephyr.governance.persistence.sqlite_schema（schema DDL 所在）
   - 本文件是公共 API 层，供 gates/orchestrator/kb 等上层模块使用
   - 禁止在本文件中重复定义 DB_PATH / get_db_connection / _PRAGMAS / _apply_pragmas
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: db_path 参数
+#   fields: 参数 db_path（无注解）
+#   code: db_utils.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ensure_schema
+#   name_en: ensure_schema
+#   intro: 确保数据库 schema 已初始化（委托给 sqlite_schema.init_db）。
+#   desc: 确保数据库 schema 已初始化（委托给 sqlite_schema.init_db）。；源码 L76-L78
+#   inputs: db_path
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: ensure_schema
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

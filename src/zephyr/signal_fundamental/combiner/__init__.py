@@ -10,9 +10,36 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] permanent
-"""D_SIGNAL Signal Combiner
+"""
+D_SIGNAL Signal Combiner
 
 信号合成组合器。聚合信号生成、策略、合成为统一入口。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 包内子模块公共符号
+#   fields: import 再导出符号: annotations, SynthesizedSignal, SignalAggregatorBase, CapitalAllocati…
+#   code: __init__.py import L45
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包公共面再导出
+#   name_en: __init__ re-export
+#   intro: 再导出 CapitalAllocationResult, CapitalAllocatorBase, DegradationMonitorBase, Sign…
+#   desc: __init__ import L45；__all__ 9 项（AST 事实）
+#   inputs: I1
+#   outputs: __all__ 公共符号表
+# 层: 输出
+# - id: O1
+#   name_zh: 公共 API 面（9 符号）
+#   name_en: __all__
+#   intro: CapitalAllocationResult, CapitalAllocatorBase, DegradationMonitorBase, SignalAg…
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

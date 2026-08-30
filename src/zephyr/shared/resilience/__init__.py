@@ -13,6 +13,32 @@ resilience/__init__.py — 韧性工具包入口（Phase 2 新增）
 
 SSoT: MOD-INF-016 §2.6 shared-resilience
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 包内子模块公共符号
+#   fields: import 再导出符号: CircuitBreaker, CircuitOpenError, CircuitState, FallbackChain, fallba…
+#   code: __init__.py import L44
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包公共面再导出
+#   name_en: __init__ re-export
+#   intro: 再导出 CircuitBreaker, CircuitOpenError, CircuitState, FallbackChain, RetryConfig,…
+#   desc: __init__ import L44；__all__ 10 项（AST 事实）
+#   inputs: I1
+#   outputs: __all__ 公共符号表
+# 层: 输出
+# - id: O1
+#   name_zh: 公共 API 面（10 符号）
+#   name_en: __all__
+#   intro: CircuitBreaker, CircuitOpenError, CircuitState, FallbackChain, RetryConfig, Ret…
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from zephyr.shared.resilience.circuit_breaker import (

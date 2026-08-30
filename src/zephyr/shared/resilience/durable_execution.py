@@ -14,6 +14,58 @@
 # [TESTS] tests/test_durable_execution.py
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: workflow_id 参数
+#   fields: 参数 workflow_id（无注解）
+#   code: durable_execution.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: snapshot_dir 参数
+#   fields: 参数 snapshot_dir（无注解）
+#   code: durable_execution.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① Activity
+#   name_en: Activity
+#   intro: class Activity 源码 L107-L112
+#   desc: 公共方法（定义序）: execute, checkpoint_data, resume；源码 L107-L112
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② SimpleActivity
+#   name_en: SimpleActivity
+#   intro: class SimpleActivity 源码 L116-L127
+#   desc: 公共方法（定义序）: execute, checkpoint_data, resume；源码 L116-L127
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ WorkflowManager
+#   name_en: WorkflowManager
+#   intro: class WorkflowManager 源码 L130-L277
+#   desc: 公共方法（定义序）: activities, completed_activities, pending_activities, progress, add_activity, add_activities, run,…
+#   inputs: workflow_id snapshot_dir
+#   outputs: 返回值
+#   （注：A3 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: Activity, SimpleActivity, WorkflowManager
+#   downstream: tests
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
+"""
+
 import json
 import os
 import uuid

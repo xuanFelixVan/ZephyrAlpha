@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-SHARED-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""A2A Coordination — shared interface definitions for multi-agent coordination.
+"""
+A2A Coordination — shared interface definitions for multi-agent coordination.
 
 Data contracts and Protocol interfaces for A2A coordination:
   - AgentRole: arbitration priority enum
@@ -24,6 +25,49 @@ Data contracts and Protocol interfaces for A2A coordination:
   - DispatchedTask: dispatched task data contract
   - ResultMerge: result merge data contract
   - TaskDispatchProtocol: interface for task dispatch
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: a2a_coordination.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① DispatchedTask
+#   name_en: DispatchedTask
+#   intro: Dispatched task with status tracking and result collection.
+#   desc: Dispatched task with status tracking and result collection.；公共方法（定义序）: assign, start, complete, fail；源码 L125-…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② ResultMerge
+#   name_en: ResultMerge
+#   intro: Result merge with configurable strategy.
+#   desc: Result merge with configurable strategy.；公共方法（定义序）: merge；源码 L162-L226
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ TaskDispatchProtocol
+#   name_en: TaskDispatchProtocol
+#   intro: Protocol interface for task dispatch to agents.
+#   desc: Protocol interface for task dispatch to agents.；公共方法（定义序）: register_agent, unregister_agent, assign；源码 L230-L…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A3 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: DispatchedTask, ResultMerge, TaskDispatchProtocol
+#   downstream: zephyr.shared.protocols.a2a; zephyr.infrastructure.a2a_protocol
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

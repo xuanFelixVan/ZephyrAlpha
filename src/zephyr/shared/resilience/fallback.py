@@ -35,6 +35,41 @@ AI 施工约定：
 
 SSoT: MOD-INF-016 §2.6 shared-resilience
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: chain_name 参数
+#   fields: 参数 chain_name（无注解）
+#   code: fallback.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FallbackChain
+#   name_en: FallbackChain
+#   intro: 降级策略链。
+#   desc: 降级策略链。 Usage:: chain = FallbackChain("llm_call", [ FallbackStep("gpt4o", call_gpt4o, "主模型…；公共方法（定义序）: chain_n…
+#   inputs: chain_name steps
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② fallback
+#   name_en: fallback
+#   intro: 装饰器形式降级链——简洁 API。
+#   desc: 装饰器形式降级链——简洁 API。 Example:: @fallback(call_primary_api, call_backup_api, call_default) de…；源码 L207-L236
+#   inputs: chain_name
+#   outputs: Callable[P, R]
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: Callable[P, R]
+#   name_en: Callable[P, R]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: N/A (all consumers verified as phantom — stale references removed)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

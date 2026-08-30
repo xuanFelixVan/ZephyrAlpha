@@ -39,6 +39,72 @@ AI 施工约定：
 
 SSoT: MOD-INF-016 §2.10 shared-logging
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: name 参数
+#   fields: 参数 name，类型注解 str
+#   code: logging.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: session_id 参数
+#   fields: 参数 session_id（无注解）
+#   code: logging.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: module_id 参数
+#   fields: 参数 module_id（无注解）
+#   code: logging.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: trace_id 参数
+#   fields: 参数 trace_id，类型注解 str | None
+#   code: logging.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ZephyrLogger
+#   name_en: ZephyrLogger
+#   intro: ZephyrAlpha 结构化日志器。
+#   desc: ZephyrAlpha 结构化日志器。 每次日志调用自动注入 trace_id / session_id / module_id 到 log record， 由 formatte…；公共方法（定义序）: name, d…
+#   inputs: name json_output
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② get_logger
+#   name_en: get_logger
+#   intro: 获取或创建 ZephyrLogger 实例。
+#   desc: 获取或创建 ZephyrLogger 实例。 首次调用时，自动将 session_id / module_id 注入 contextvars， 后续该模块内所有日志调用自动携带上…；源码 L337-L365
+#   inputs: name session_id module_id
+#   outputs: ZephyrLogger
+# - id: A3
+#   name_zh: ③ trace_context
+#   name_en: trace_context
+#   intro: trace_id 传播上下文管理器。
+#   desc: trace_id 传播上下文管理器。 在 with 块内，所有日志调用自动携带指定的 trace_id / session_id / module_id / request_id…；源码 L369-L405
+#   inputs: trace_id session_id module_id request_id
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ configure_root_logger
+#   name_en: configure_root_logger
+#   intro: 配置根日志器——全局生效的 handler 和 format。
+#   desc: 配置根日志器——全局生效的 handler 和 format。 应在应用入口（如 main.py / cli.py）调用一次。 Args: level: 日志级别（DEBUG/I…；源码 L415-L448
+#   inputs: level json_file human_console
+#   outputs: 返回值
+#   （注：A4 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ZephyrLogger
+#   name_en: ZephyrLogger
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

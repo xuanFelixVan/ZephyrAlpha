@@ -38,6 +38,85 @@ AI 施工约定：
 
 SSoT: MOD-INF-016 §2.10 shared-diff
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: original 参数
+#   fields: 参数 original，类型注解 str
+#   code: diff_utils.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: modified 参数
+#   fields: 参数 modified，类型注解 str
+#   code: diff_utils.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: from_file 参数
+#   fields: 参数 from_file（无注解）
+#   code: diff_utils.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: to_file 参数
+#   fields: 参数 to_file（无注解）
+#   code: diff_utils.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① compute_diff
+#   name_en: compute_diff
+#   intro: 计算两个字符串的统一 diff。
+#   desc: 计算两个字符串的统一 diff。 Args: original: 原始内容。 modified: 修改后内容。 from_file: diff header 中原始文件名。 to…；源码 L148-L181
+#   inputs: original modified from_file to_file context_lines
+#   outputs: str
+# - id: A2
+#   name_zh: ② compute_file_diff
+#   name_en: compute_file_diff
+#   intro: 计算两个文件的统一 diff。
+#   desc: 计算两个文件的统一 diff。 Args: original_path: 原始文件路径。 modified_path: 修改后文件路径。 context_lines: 上下文行数…；源码 L184-L209
+#   inputs: original_path modified_path context_lines
+#   outputs: str
+# - id: A3
+#   name_zh: ③ apply_patch
+#   name_en: apply_patch
+#   intro: 应用 unified diff 格式的 patch 到原始内容。
+#   desc: 应用 unified diff 格式的 patch 到原始内容。 Args: original: 原始文本内容。 patch_text: unified diff 格式的 pat…；源码 L228-L301
+#   inputs: original patch_text strict
+#   outputs: str
+# - id: A4
+#   name_zh: ④ try_apply_patch
+#   name_en: try_apply_patch
+#   intro: 尝试应用 patch，返回 (成功标志, 结果或原始内容)。
+#   desc: 尝试应用 patch，返回 (成功标志, 结果或原始内容)。 Args: original: 原始文本。 patch_text: patch 文本。 Returns: (True…；源码 L304-L320
+#   inputs: original patch_text
+#   outputs: tuple[bool, str]
+# - id: A5
+#   name_zh: ⑤ similarity_ratio
+#   name_en: similarity_ratio
+#   intro: 计算两个字符串的相似度比率（0.0 ~ 1.0）。
+#   desc: 计算两个字符串的相似度比率（0.0 ~ 1.0）。 Args: a: 字符串 A。 b: 字符串 B。 Returns: 相似度比率，1.0 表示完全相同。；源码 L323-L333
+#   inputs: a b
+#   outputs: float
+#   （注：A5 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: tuple[bool, str]
+#   name_en: tuple[bool, str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations

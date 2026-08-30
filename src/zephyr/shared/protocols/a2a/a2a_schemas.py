@@ -15,10 +15,83 @@
 # [A_module] module_id=MOD-SHARED-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""A2A data structure contracts — Message, Task, and StateMachine schemas.
+"""
+A2A data structure contracts — Message, Task, and StateMachine schemas.
 
 Pydantic models and enums that define the wire format for A2A communication.
 These are data contracts shared between all domains.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: task_id 参数
+#   fields: 参数 task_id（无注解）
+#   code: a2a_schemas.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: source_agent 参数
+#   fields: 参数 source_agent（无注解）
+#   code: a2a_schemas.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① A2AStateMachine
+#   name_en: A2AStateMachine
+#   intro: class A2AStateMachine 源码 L168-L185
+#   desc: 公共方法（定义序）: transition；源码 L168-L185
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② ContextPackage
+#   name_en: ContextPackage
+#   intro: class ContextPackage 源码 L188-L215
+#   desc: 公共方法（定义序）: add_blueprint, add_decision, set_session_state, to_dict；源码 L188-L215
+#   inputs: task_id source_agent
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ HandoffRecord
+#   name_en: HandoffRecord
+#   intro: class HandoffRecord 源码 L218-L235
+#   desc: 公共方法（定义序）: to_dict；源码 L218-L235
+#   inputs: from_agent to_agent task_id reason
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ HandoffManagerProtocol
+#   name_en: HandoffManagerProtocol
+#   intro: class HandoffManagerProtocol 源码 L239-L242
+#   desc: 公共方法（定义序）: handoff, acknowledge；源码 L239-L242
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ MessageRouterProtocol
+#   name_en: MessageRouterProtocol
+#   intro: class MessageRouterProtocol 源码 L246-L249
+#   desc: 公共方法（定义序）: register_handler, route；源码 L246-L249
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ PushNotifierProtocol
+#   name_en: PushNotifierProtocol
+#   intro: class PushNotifierProtocol 源码 L253-L258
+#   desc: 公共方法（定义序）: subscribe, unsubscribe, notify；源码 L253-L258
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A6 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（11 定义）
+#   name_en: public defs
+#   intro: A2AStateMachine, ContextPackage, HandoffRecord, HandoffManagerProtocol, Message…
+#   downstream: zephyr.shared.protocols.a2a; zephyr.infrastructure.a2a_protocol
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
 """
 
 from __future__ import annotations

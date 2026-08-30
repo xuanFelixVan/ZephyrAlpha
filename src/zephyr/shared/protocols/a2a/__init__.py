@@ -11,11 +11,38 @@
 # [TESTS] tests/test_shared_protocols.py
 # [TTL] permanent
 
-"""A2A Protocol — shared interface definitions.
+"""
+A2A Protocol — shared interface definitions.
 
 Canonical location for Agent-to-Agent protocol interfaces and data contracts.
 Both D-ORCH (orchestration) and D-INFRA (infrastructure) depend on this module
 for type-level agreements, breaking the direct D-ORCH -> D-INFRA dependency.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 包内子模块公共符号
+#   fields: import 再导出符号: AgentRole, ArbitrationRole, DispatchedTask, MergeStrategy, ResultMerg…
+#   code: __init__.py import L48
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包公共面再导出
+#   name_en: __init__ re-export
+#   intro: 再导出 A2ACommunication, A2ACommunicationProtocol, A2AGovernanceRecord, A2AMessage…
+#   desc: __init__ import L48；__all__ 36 项（AST 事实）
+#   inputs: I1
+#   outputs: __all__ 公共符号表
+# 层: 输出
+# - id: O1
+#   name_zh: 公共 API 面（36 符号）
+#   name_en: __all__
+#   intro: A2ACommunication, A2ACommunicationProtocol, A2AGovernanceRecord, A2AMessage, A2…
+#   downstream: zephyr.integration.agent_communication; zephyr.infrastructure.a2a_protocol; zep…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from zephyr.shared.protocols.a2a.a2a_coordination import (

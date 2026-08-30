@@ -40,6 +40,40 @@ D_SIGNAL — Signal Generation Layer
     zephyr.signal_quality.degradation_monitor_base，D_SIGQC 域；本模块 re-export 向后兼容）
 
 依赖方向：D_FACTOR -> D_SIGNAL -> D_RISK/D_PORTFOLIO_CORE
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: aggregator_base.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SignalAggregatorBase
+#   name_en: SignalAggregatorBase
+#   intro: 信号聚合器抽象基类（OCP 扩展点 D_SIGNAL-AGG）
+#   desc: 信号聚合器抽象基类（OCP 扩展点 D_SIGNAL-AGG） 契约对齐：CTR-002（FactorSignal 入站）-> CTR-P1-015（SynthesizedSig…；公共方法（定义序）: aggrega…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② CapitalAllocatorBase
+#   name_en: CapitalAllocatorBase
+#   intro: 资本配置器抽象基类（OCP 扩展点 D_SIGNAL-ALC）
+#   desc: 资本配置器抽象基类（OCP 扩展点 D_SIGNAL-ALC） 契约对齐：CTR-P1-003（CapitalAllocationResult 出站）-> D_PORTFOLIO…；公共方法（定义序）: allocat…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: SignalAggregatorBase, CapitalAllocatorBase
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

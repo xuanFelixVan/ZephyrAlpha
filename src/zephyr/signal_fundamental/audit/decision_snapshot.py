@@ -14,7 +14,8 @@
 # [TESTS] tests/signal_fundamental/audit/test_decision_snapshot.py
 # [A_module] module_id=MOD-SIG-DSNAP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_FUNDAMENTAL_SIGNAL — 结构化决策快照（90 号 §22.5 C-030 溯源链最小实现）
+"""
+D_FUNDAMENTAL_SIGNAL — 结构化决策快照（90 号 §22.5 C-030 溯源链最小实现）
 
 裁定真源：90_methodology_open_questions.md §22.5（BM-SEL-26，Phase 2 候选，
 溯源链先于协作接口建设）：
@@ -26,6 +27,40 @@
 
 注意：本模块为 90 号 Phase2 交付物，MATURITY=testing；决策链路埋点（信号/组合/
 执行各层调用点）接线挂起待 Owner（宪章 B-007 纪律）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: log_path 参数
+#   fields: 参数 log_path（无注解）
+#   code: decision_snapshot.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DecisionSnapshot
+#   name_en: DecisionSnapshot
+#   intro: 决策快照（C-030 溯源链最小单元，不可变）。
+#   desc: 决策快照（C-030 溯源链最小单元，不可变）。 Attributes: decision_id: 决策唯一标识（溯源链锚点） timestamp: 决策时间 strategy_…；公共方法（定义序）: degrade…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② DecisionSnapshotRecorder
+#   name_en: DecisionSnapshotRecorder
+#   intro: 决策快照记录器——内存索引 + 可选 JSONL 追加持久化（append-only）。
+#   desc: 决策快照记录器——内存索引 + 可选 JSONL 追加持久化（append-only）。 Args: log_path: JSONL 日志路径；None=纯内存模式（测试/进程内…；公共方法（定义序）: record,…
+#   inputs: log_path
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: DecisionSnapshot, DecisionSnapshotRecorder
+#   downstream: Owner 周复盘溯源（C-031 置信度分层触发人工复核时呈现证据）；决策链路埋点接线待排期
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -98,7 +133,7 @@ class DecisionSnapshot:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "DecisionSnapshot":
+    def from_dict(cls, data: dict) -> DecisionSnapshot:
         return cls(
             decision_id=data["decision_id"],
             timestamp=datetime.fromisoformat(data["timestamp"]),

@@ -15,10 +15,38 @@
 # [A_module] module_id=MOD-SHARED-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Core A2A Protocol interface and governance data contracts.
+"""
+Core A2A Protocol interface and governance data contracts.
 
 Defines the A2ACommunicationProtocol (typing.Protocol) for agent-to-agent
 communication and the associated Pydantic data models for governance records.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: a2a_protocol.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① A2ACommunicationProtocol
+#   name_en: A2ACommunicationProtocol
+#   intro: Protocol interface for A2A communication handlers.
+#   desc: Protocol interface for A2A communication handlers. Any class that implements send_message…；公共方法（定义序）: send_me…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: A2ACommunicationProtocol
+#   downstream: zephyr.shared.protocols.a2a; zephyr.infrastructure.a2a_protocol
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

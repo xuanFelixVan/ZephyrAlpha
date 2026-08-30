@@ -15,6 +15,39 @@
 # [A_module] module_id=MOD-INF-035 | layer=infrastructure | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: max_workers 参数
+#   fields: 参数 max_workers（无注解）
+#   code: async_runtime.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: loop_timeout 参数
+#   fields: 参数 loop_timeout（无注解）
+#   code: async_runtime.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AsyncRuntime
+#   name_en: AsyncRuntime
+#   intro: 事件循环引导 + run_in_executor 桥接。
+#   desc: 事件循环引导 + run_in_executor 桥接。 职责： 1. 启动/停止 asyncio 事件循环（优雅关闭） 2. run_in_executor 桥接——让同步代码…；公共方法（定义序）: loop, i…
+#   inputs: max_workers loop_timeout
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: AsyncRuntime
+#   downstream: R1-2 AsyncEventBus；R1-3 PipelineOrchestrator；R1-4 Conductor；__main__.py（未来迁移）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
+"""
+
 from __future__ import annotations
 
 from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界

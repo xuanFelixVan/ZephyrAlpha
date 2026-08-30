@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-002 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""BaseEvent — 跨层事件基类
+"""
+BaseEvent — 跨层事件基类
 
 INV-007 要求所有跨层事件必须携带幂等 Key。
 本基类提供统一的 idempotency_key 生成与校验能力。
@@ -28,6 +29,53 @@ INV-007 要求所有跨层事件必须携带幂等 Key。
 
   event_key = generate_idempotency_key()
   assert len(event_key) == 36  # UUID v4
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: key 参数
+#   fields: 参数 key，类型注解 str
+#   code: base_event.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① generate_idempotency_key
+#   name_en: generate_idempotency_key
+#   intro: generate_idempotency_key() 源码 L87-L88
+#   desc: 源码 L87-L88
+#   inputs: 无参数
+#   outputs: str
+# - id: A2
+#   name_zh: ② validate_idempotency_key
+#   name_en: validate_idempotency_key
+#   intro: validate_idempotency_key(key) 源码 L91-L100
+#   desc: 源码 L91-L100
+#   inputs: key
+#   outputs: tuple[bool, str | None]
+# - id: A3
+#   name_zh: ③ BaseEvent
+#   name_en: BaseEvent
+#   intro: class BaseEvent 源码 L103-L122
+#   desc: 公共方法（定义序）: is_replay；源码 L103-L122
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: N/A (all consumers verified as phantom — stale references removed)
+# - id: O2
+#   name_zh: tuple[bool, str | None]
+#   name_en: tuple[bool, str | None]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: N/A (all consumers verified as phantom — stale references removed)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

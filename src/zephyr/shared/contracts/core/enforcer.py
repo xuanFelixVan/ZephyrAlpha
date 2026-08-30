@@ -49,6 +49,64 @@ CTR-ERR-006: ContractEnforcer / 运行时契约强制执行
         ...
 
 SSoT: cross_layer_contracts.yaml -> CTR-ERR-006
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: contract_type 参数
+#   fields: 参数 contract_type，类型注解 type[Any]
+#   code: enforcer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: mode 参数
+#   fields: 参数 mode，类型注解 EnforcementMode
+#   code: enforcer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: trace_required 参数
+#   fields: 参数 trace_required，类型注解 bool
+#   code: enforcer.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: param_name 参数
+#   fields: 参数 param_name，类型注解 str | None
+#   code: enforcer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① enforce_output
+#   name_en: enforce_output
+#   intro: 装饰器——校验函数返回值是否符合指定契约类型。
+#   desc: 装饰器——校验函数返回值是否符合指定契约类型。 参数 ---- contract_type : type 契约类型：frozen dataclass，或 Pydantic v2…；源码 L189-L239
+#   inputs: contract_type mode trace_required
+#   outputs: Callable[[F], F]
+# - id: A2
+#   name_zh: ② enforce_input
+#   name_en: enforce_input
+#   intro: 装饰器——校验函数入参是否符合指定契约类型。
+#   desc: 装饰器——校验函数入参是否符合指定契约类型。 参数 ---- contract_type : type 契约类型：dataclass 或 Pydantic BaseModel 子…；源码 L242-L320
+#   inputs: contract_type param_name mode trace_required
+#   outputs: Callable[[F], F]
+# - id: A3
+#   name_zh: ③ enforce
+#   name_en: enforce
+#   intro: 组合装饰器——同时校验入参和返回值。
+#   desc: 组合装饰器——同时校验入参和返回值。 等效于 @enforce_input + @enforce_output 的组合。 enforce_input 在外层，确保入参校验先于返回…；源码 L323-L340
+#   inputs: contract_type input_param mode trace_required
+#   outputs: Callable[[F], F]
+#   （注：A3 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: Callable[[F], F]
+#   name_en: Callable[[F], F]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: N/A (all consumers verified as phantom — stale references removed)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

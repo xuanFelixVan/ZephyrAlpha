@@ -20,6 +20,32 @@ registry — 运行时 DI 容器
 =========================
 D-DATA 在初始化时注册实现，D-INFRA 通过 get() 获取。
 消除 D-INFRA->D-DATA 的 import 依赖。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: registry.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ServiceRegistry
+#   name_en: ServiceRegistry
+#   intro: 进程级单例服务注册表。
+#   desc: 进程级单例服务注册表。 D-DATA 调用 register() 注册工厂函数； D-INFRA 调用 get() 获取实现实例。 线程安全（RLock 保护）。；公共方法（定义序）: register, get, i…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: ServiceRegistry
+#   downstream: zephyr.infrastructure.mcp_servers
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

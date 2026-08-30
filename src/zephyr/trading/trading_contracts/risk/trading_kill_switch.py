@@ -20,6 +20,84 @@
 #   as GovernanceKillSwitch alias from shared.
 #   Migrated from governance/ to rollback/ on 2026-05-14.
 #
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: level 参数
+#   fields: 参数 level，类型注解 KillSwitchLevel
+#   code: trading_kill_switch.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: condition 参数
+#   fields: 参数 condition，类型注解 str
+#   code: trading_kill_switch.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: evaluator 参数
+#   fields: 参数 evaluator，类型注解 Callable[[str], bool]
+#   code: trading_kill_switch.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① get_switch
+#   name_en: get_switch
+#   intro: get_switch(level) 源码 L177-L178
+#   desc: 源码 L177-L178
+#   inputs: level
+#   outputs: KillSwitch | None
+# - id: A2
+#   name_zh: ② trigger
+#   name_en: trigger
+#   intro: trigger(level) 源码 L181-L186
+#   desc: 源码 L181-L186
+#   inputs: level
+#   outputs: bool
+# - id: A3
+#   name_zh: ③ reset
+#   name_en: reset
+#   intro: reset(level) 源码 L189-L194
+#   desc: 源码 L189-L194
+#   inputs: level
+#   outputs: bool
+# - id: A4
+#   name_zh: ④ active_switches
+#   name_en: active_switches
+#   intro: active_switches() 源码 L197-L198
+#   desc: 源码 L197-L198
+#   inputs: 无参数
+#   outputs: list[KillSwitch]
+# - id: A5
+#   name_zh: ⑤ evaluate
+#   name_en: evaluate
+#   intro: evaluate(condition, evaluator) 源码 L201-L214
+#   desc: 源码 L201-L214
+#   inputs: condition evaluator
+#   outputs: list[KillSwitch]
+#   （注：A5 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: KillSwitch | None
+#   name_en: KillSwitch | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-INF-022 ; MOD-INF-020
+# - id: O2
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-INF-022 ; MOD-INF-020
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
+"""
+
 from __future__ import annotations
 
 import logging

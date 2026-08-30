@@ -40,6 +40,111 @@ AI 施工约定：
 
 SSoT: MOD-INF-016 §2.18 shared-time-utils
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: iso_string 参数
+#   fields: 参数 iso_string，类型注解 str
+#   code: time_utils.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: dt 参数
+#   fields: 参数 dt，类型注解 datetime
+#   code: time_utils.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: frozen_at 参数
+#   fields: 参数 frozen_at，类型注解 datetime | str
+#   code: time_utils.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① register_sqlite_datetime_str_adapter
+#   name_en: register_sqlite_datetime_str_adapter
+#   intro: 注册 datetime/date→sqlite3 str 适配器（Python 3.12 default adapte…
+#   desc: 注册 datetime/date→sqlite3 str 适配器（Python 3.12 default adapter deprecated 治本）。 Python 3.12…；源码 L174-L189
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② now_utc
+#   name_en: now_utc
+#   intro: 返回当前 UTC 时间——如果 freeze_time 激活则返回冻结时间。
+#   desc: 返回当前 UTC 时间——如果 freeze_time 激活则返回冻结时间。 Usage:: ts = now_utc() assert ts.tzinfo == UTC；源码 L199-L209
+#   inputs: 无参数
+#   outputs: datetime
+# - id: A3
+#   name_zh: ③ now_utc_str
+#   name_en: now_utc_str
+#   intro: 返回当前 UTC 时间的 str 格式（空格分隔，与 sqlite3 存储格式一致）。
+#   desc: 返回当前 UTC 时间的 str 格式（空格分隔，与 sqlite3 存储格式一致）。 用于 SQL cutoff 查询等需要显式 str 时间戳的场景。``now_utc()`…；源码 L212-L223
+#   inputs: 无参数
+#   outputs: str
+# - id: A4
+#   name_zh: ④ parse_iso
+#   name_en: parse_iso
+#   intro: 解析 ISO 8601 时间字符串为 UTC datetime。
+#   desc: 解析 ISO 8601 时间字符串为 UTC datetime。 Args: iso_string: ISO 8601 格式字符串（如 "2026-05-05T12:00:00Z…；源码 L229-L244
+#   inputs: iso_string
+#   outputs: datetime
+# - id: A5
+#   name_zh: ⑤ format_iso
+#   name_en: format_iso
+#   intro: 将 datetime 格式化为 ISO 8601 UTC 字符串。
+#   desc: 将 datetime 格式化为 ISO 8601 UTC 字符串。 Args: dt: datetime 对象（可带或不带 tzinfo）。 Returns: ISO 8601…；源码 L247-L259
+#   inputs: dt
+#   outputs: str
+# - id: A6
+#   name_zh: ⑥ now_iso
+#   name_en: now_iso
+#   intro: 返回当前 UTC 时间的 ISO 8601 格式化字符串。
+#   desc: 返回当前 UTC 时间的 ISO 8601 格式化字符串。 向后兼容旧版 time_utils.py——被 db.task_repo 等消费者使用。 Usage:: ts = n…；源码 L262-L272
+#   inputs: 无参数
+#   outputs: str
+# - id: A7
+#   name_zh: ⑦ freeze_time
+#   name_en: freeze_time
+#   intro: 冻结时间——用于测试。
+#   desc: 冻结时间——用于测试。Context manager 进入时冻结，退出时恢复。 对标 Python freezegun 库的核心功能。 Usage:: with freeze_t…；源码 L276-L303
+#   inputs: frozen_at
+#   outputs: Generator[None, None, None]
+# - id: A8
+#   name_zh: ⑧ seconds_since
+#   name_en: seconds_since
+#   intro: 计算从 dt 到 now_utc() 经过的秒数。
+#   desc: 计算从 dt 到 now_utc() 经过的秒数。；源码 L306-L308
+#   inputs: dt
+#   outputs: float
+# - id: A9
+#   name_zh: ⑨ seconds_until
+#   name_en: seconds_until
+#   intro: 计算从 now_utc() 到 dt 剩余秒数——负值表示已过期。
+#   desc: 计算从 now_utc() 到 dt 剩余秒数——负值表示已过期。；源码 L311-L313
+#   inputs: dt
+#   outputs: float
+# 层: 输出
+# - id: O1
+#   name_zh: datetime
+#   name_en: datetime
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> O1
 """
 
 import sqlite3

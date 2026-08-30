@@ -39,6 +39,95 @@ AI 施工约定：
 
 SSoT: MOD-INF-016 §2.15 shared-context
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: ctx 参数
+#   fields: 参数 ctx，类型注解 RequestContext
+#   code: context.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: request_id 参数
+#   fields: 参数 request_id，类型注解 str
+#   code: context.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: token 参数
+#   fields: 参数 token，类型注解 contextvars.Token
+#   code: context.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RequestContext
+#   name_en: RequestContext
+#   intro: 不可变的请求上下文——跨模块调用时的元数据载体。
+#   desc: 不可变的请求上下文——跨模块调用时的元数据载体。 Usage:: ctx = RequestContext( tenant_id="tenant-001", session_id…；公共方法（定义序）: replace…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② current_context
+#   name_en: current_context
+#   intro: 获取当前请求上下文——跨 async 调用链自动传播。
+#   desc: 获取当前请求上下文——跨 async 调用链自动传播。 Returns: 当前 RequestContext 或 None（如果未设置）。；源码 L213-L219
+#   inputs: 无参数
+#   outputs: RequestContext | None
+# - id: A3
+#   name_zh: ③ set_context
+#   name_en: set_context
+#   intro: 设置当前请求上下文——返回用于恢复的 Token。
+#   desc: 设置当前请求上下文——返回用于恢复的 Token。 Usage:: ctx = RequestContext(tenant_id="tenant-001") token = se…；源码 L222-L240
+#   inputs: ctx
+#   outputs: contextvars.Token
+# - id: A4
+#   name_zh: ④ get_request_id
+#   name_en: get_request_id
+#   intro: 获取当前 request_id——如果未设置则自动生成（用于日志）。
+#   desc: 获取当前 request_id——如果未设置则自动生成（用于日志）。；源码 L243-L248
+#   inputs: 无参数
+#   outputs: str
+# - id: A5
+#   name_zh: ⑤ set_request_id
+#   name_en: set_request_id
+#   intro: 设置当前 request_id——返回 Token（5.80.1 治本：不再丢弃，防 request_id 跨请求泄漏…
+#   desc: 设置当前 request_id——返回 Token（5.80.1 治本：不再丢弃，防 request_id 跨请求泄漏）。 旧实现丢弃 Token，context 无法恢复，re…；源码 L251-L266
+#   inputs: request_id
+#   outputs: contextvars.Token
+# - id: A6
+#   name_zh: ⑥ reset_context
+#   name_en: reset_context
+#   intro: 恢复 Token 对应的先前上下文（5.80.1——与 set_context/set_request_id 配对使用…
+#   desc: 恢复 Token 对应的先前上下文（5.80.1——与 set_context/set_request_id 配对使用）。；源码 L269-L271
+#   inputs: token
+#   outputs: 返回值
+# - id: A7
+#   name_zh: ⑦ use_context
+#   name_en: use_context
+#   intro: 上下文管理器：块内设置 RequestContext，退出时自动 reset（5.80.1 栈式恢复，嵌套安全）。
+#   desc: 上下文管理器：块内设置 RequestContext，退出时自动 reset（5.80.1 栈式恢复，嵌套安全）。 Usage:: with use_context(Reques…；源码 L275-L288
+#   inputs: ctx
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: RequestContext | None
+#   name_en: RequestContext | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: contextvars.Token
+#   name_en: contextvars.Token
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> O1
 """
 
 from __future__ import annotations

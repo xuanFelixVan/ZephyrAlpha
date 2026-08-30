@@ -14,7 +14,35 @@
 # [TESTS]
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""SandboxExecutor — re-homed to eliminate shared->infrastructure circular import."""
+"""
+SandboxExecutor — re-homed to eliminate shared->infrastructure circular import.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: base_dir 参数
+#   fields: 参数 base_dir（无注解）
+#   code: sandbox_executor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SandboxExecutor
+#   name_en: SandboxExecutor
+#   intro: Execute fix actions in an isolated sandbox directory.
+#   desc: Execute fix actions in an isolated sandbox directory.；公共方法（定义序）: execute；源码 L59-L79
+#   inputs: base_dir
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SandboxExecutor
+#   downstream: N/A (all consumers verified as phantom — stale references removed)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 import logging
 

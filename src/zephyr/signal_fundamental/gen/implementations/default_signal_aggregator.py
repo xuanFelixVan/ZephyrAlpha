@@ -22,7 +22,8 @@
 # created: "2026-05-05"
 # ---
 
-"""D_SIGNAL — Default Signal Aggregator
+"""
+D_SIGNAL — Default Signal Aggregator
 
 信号聚合器具体实现。多因子信号（FactorSignal）-> 合成信号（SynthesizedSignal）。
 
@@ -31,6 +32,43 @@ CTR 契约：
   生产者 — CTR-P1-015 (SynthesizedSignal) -> D_RISK, D_PORTFOLIO_CORE
 
 SSoT: cross_layer_contracts.yaml -> CTR-002 + CTR-P1-015
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: aggregation_method 参数
+#   fields: 参数 aggregation_method（无注解）
+#   code: default_signal_aggregator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: min_factors_required 参数
+#   fields: 参数 min_factors_required（无注解）
+#   code: default_signal_aggregator.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: min_confidence 参数
+#   fields: 参数 min_confidence（无注解）
+#   code: default_signal_aggregator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DefaultSignalAggregator
+#   name_en: DefaultSignalAggregator
+#   intro: 默认信号聚合器——等权聚合 + 信号强度缩放
+#   desc: 默认信号聚合器——等权聚合 + 信号强度缩放；公共方法（定义序）: aggregate, aggregate_portfolio；源码 L134-L309
+#   inputs: aggregation_method min_factors_required min_confidence
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: DefaultSignalAggregator
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -207,9 +245,7 @@ class DefaultSignalAggregator(SignalAggregatorBase):
                 direction=sig.signal_direction,
                 signal_value=sig.signal_value,
                 confidence=sig.confidence,
-                trigger_conditions=tuple(
-                    f"{fid}:w={w:.4f}" for fid, w in sorted(sig.contributing_factors.items())
-                ),
+                trigger_conditions=tuple(f"{fid}:w={w:.4f}" for fid, w in sorted(sig.contributing_factors.items())),
                 idempotency_key=sig.idempotency_key,
             )
             for symbol, sig, score in included

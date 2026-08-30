@@ -19,6 +19,32 @@
 verify_paths.py — 代码路径索引验证 (TASK-012)
 ==============================================
 验证 §12 和 §14 中的所有文件路径与实际磁盘一致。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: verify_paths.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① verify_all
+#   name_en: verify_all
+#   intro: verify_all() 源码 L96-L136
+#   desc: 源码 L96-L136
+#   inputs: 无参数
+#   outputs: dict[str, Any]
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, Any]
+#   name_en: dict[str, Any]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 import json

@@ -46,6 +46,67 @@ ZephyrAlpha — shared/contracts/timestamp.py
   - ISO 8601 时间格式标准
   - Python stdlib zoneinfo（PEP 615）
 ═══════════════════════════════════════════════════════════════════════
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: ts 参数
+#   fields: 参数 ts，类型注解 Timestamp | datetime | str | int | float
+#   code: timestamp.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: tz 参数
+#   fields: 参数 tz，类型注解 str
+#   code: timestamp.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: ns 参数
+#   fields: 参数 ns，类型注解 int
+#   code: timestamp.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① utcnow
+#   name_en: utcnow
+#   intro: 获取当前 UTC 时间（纳秒精度，tz-aware）。
+#   desc: 获取当前 UTC 时间（纳秒精度，tz-aware）。 **全公司唯一获取"当前时间"的方式**。 禁止使用 `now_utc()`（naive，无时区）或 `now_utc()…；源码 L163-L179
+#   inputs: 无参数
+#   outputs: Timestamp
+# - id: A2
+#   name_zh: ② ensure_utc
+#   name_en: ensure_utc
+#   intro: 将任意合法时间输入转为 UTC tz-aware Timestamp。
+#   desc: 将任意合法时间输入转为 UTC tz-aware Timestamp。 **所有外部时间戳（从 API、数据库、CSV、用户输入）进入系统时必须经本函数清洗**。 支持的输入：…；源码 L182-L245
+#   inputs: ts
+#   outputs: Timestamp
+# - id: A3
+#   name_zh: ③ to_local
+#   name_en: to_local
+#   intro: 将 UTC Timestamp 转为本地时区（仅用于展示，不用于存储）。
+#   desc: 将 UTC Timestamp 转为本地时区（仅用于展示，不用于存储）。 示例： >>> utc_ts = utcnow() >>> to_local(utc_ts, "Asia…；源码 L253-L264
+#   inputs: ts tz
+#   outputs: Timestamp
+# - id: A4
+#   name_zh: ④ from_unix_ns
+#   name_en: from_unix_ns
+#   intro: 从 Unix 纳秒时间戳构造（HFT / 高频行情常用）。
+#   desc: 从 Unix 纳秒时间戳构造（HFT / 高频行情常用）。 示例： >>> from_unix_ns(1713427200_000_000_000) Timestamp('202…；源码 L267-L275
+#   inputs: ns
+#   outputs: Timestamp
+#   （注：A4 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: Timestamp
+#   name_en: Timestamp
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: N/A (all consumers verified as phantom — stale references removed)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from datetime import datetime

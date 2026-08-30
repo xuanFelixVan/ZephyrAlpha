@@ -32,6 +32,56 @@ AI 施工约定：
 
 SSoT: MOD-INF-016 §2.6 shared-resilience
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config，类型注解 RetryConfig | None
+#   code: retry.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: max_attempts 参数
+#   fields: 参数 max_attempts（无注解）
+#   code: retry.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: base_delay_seconds 参数
+#   fields: 参数 base_delay_seconds（无注解）
+#   code: retry.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: max_delay_seconds 参数
+#   fields: 参数 max_delay_seconds（无注解）
+#   code: retry.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RetryConfig
+#   name_en: RetryConfig
+#   intro: class RetryConfig 源码 L118-L141
+#   desc: 公共方法（定义序）: delay_for_attempt, should_retry；源码 L118-L141
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② async_retry
+#   name_en: async_retry
+#   intro: 异步重试装饰器——指数退避 + jitter。
+#   desc: 异步重试装饰器——指数退避 + jitter。 Example:: @async_retry(max_attempts=3, retryable_exceptions=(aioh…；源码 L144-L211
+#   inputs: config max_attempts base_delay_seconds max_delay_seconds retryable_ex…
+#   outputs: Callable[[Callable[Concatenate[Any, P],…
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: Callable[[Callable[Concatenate[Any, P],…
+#   name_en: Callable[[Callable[Concatenate[Any, P],…
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

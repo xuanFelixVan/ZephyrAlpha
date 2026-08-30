@@ -59,6 +59,62 @@ pre-commit 钩子配置示例（`.pre-commit-config.yaml`）::
       language: system
       pass_filenames: false
       stages: [commit]
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: repo_root 参数
+#   fields: 参数 repo_root，类型注解 Path
+#   code: ssot_guard.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① GuardReport
+#   name_en: GuardReport
+#   intro: 完整验收报告。
+#   desc: 完整验收报告。；公共方法（定义序）: passed, add；源码 L218-L239
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② staged_files
+#   name_en: staged_files
+#   intro: 返回暂存区文件字典：{相对路径(forward-slash) -> git status 字符('A','M','D'…
+#   desc: 返回暂存区文件字典：{相对路径(forward-slash) -> git status 字符('A','M','D','R',...)}。 使用 --diff-filter=A…；源码 L260-L290
+#   inputs: repo_root
+#   outputs: dict[str, str]
+# - id: A3
+#   name_zh: ③ SsotGuard
+#   name_en: SsotGuard
+#   intro: SSoT 一致性守卫。
+#   desc: SSoT 一致性守卫。 参数 ---- repo_root : Path git 仓库根目录（默认自动探测）。 registry_rel : str 注册表文件相对仓库根目录的路…；公共方法（定义序）: run, is…
+#   inputs: repo_root registry_rel watched_prefixes
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ main
+#   name_en: main
+#   intro: Pre-commit hook 入口，返回 0（通过）或 1（阻断）。
+#   desc: Pre-commit hook 入口，返回 0（通过）或 1（阻断）。；源码 L595-L602
+#   inputs: 无参数
+#   outputs: int
+#   （注：A4 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, str]
+#   name_en: dict[str, str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

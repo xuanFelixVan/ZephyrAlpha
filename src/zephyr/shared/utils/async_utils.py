@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""async_utils.py — async/sync 边界桥接（5.12.8 修复）
+"""
+async_utils.py — async/sync 边界桥接（5.12.8 修复）
 
 痛点：asyncio.run() 在已有事件循环上下文中抛 RuntimeError：
   "asyncio.run() cannot be called from a running event loop"
@@ -31,6 +32,45 @@
 
 SSoT: 5.12.8 修复方向「统一async/sync边界」
 Version: 0.2.0（5.52.4：新增 run_coroutine_sync 统一入口别名）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: coro 参数
+#   fields: 参数 coro，类型注解 Awaitable[T]
+#   code: async_utils.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: timeout 参数
+#   fields: 参数 timeout（无注解）
+#   code: async_utils.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① run_sync
+#   name_en: run_sync
+#   intro: 从同步代码安全运行协程——不会因已有事件循环而抛 RuntimeError。
+#   desc: 从同步代码安全运行协程——不会因已有事件循环而抛 RuntimeError。 5.12.8 修复：替代散布 40+ 处的裸 asyncio.run() 调用。 行为： - 无运行…；源码 L88-L129
+#   inputs: coro timeout
+#   outputs: T
+# - id: A2
+#   name_zh: ② run_coroutine_sync
+#   name_en: run_coroutine_sync
+#   intro: 5.52.4 统一入口——从同步代码安全运行协程（run_sync 的 canonical 别名）。
+#   desc: 5.52.4 统一入口——从同步代码安全运行协程（run_sync 的 canonical 别名）。 处理两种情形： - 无运行中的事件循环 -> asyncio.run(cor…；源码 L137-L146
+#   inputs: coro timeout
+#   outputs: T
+# 层: 输出
+# - id: O1
+#   name_zh: T
+#   name_en: T
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

@@ -15,6 +15,37 @@
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: value 参数
+#   fields: 参数 value，类型注解 str | ExecutionModel
+#   code: execution_model.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① normalize_execution_model
+#   name_en: normalize_execution_model
+#   intro: normalize_execution_model(value) 源码 L67-L87
+#   desc: 源码 L67-L87
+#   inputs: value
+#   outputs: ExecutionModel
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ExecutionModel
+#   name_en: ExecutionModel
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: orchestrator ; mcp ; kb
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 from __future__ import annotations
 
 from enum import Enum

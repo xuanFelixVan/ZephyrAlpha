@@ -31,6 +31,46 @@ CBAC 能力检查器 (Capability-Based Access Control)
 3. deny 规则不可绕过（命中 deny 必须返回 CapabilityDenied）
 4. allow 规则支持 glob 多模式 OR 匹配
 5. ai_modifiable 能力调用带 provenance: True 标记
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: action 参数
+#   fields: 参数 action，类型注解 str
+#   code: capability.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: target_path 参数
+#   fields: 参数 target_path，类型注解 str
+#   code: capability.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CapabilityRegistry
+#   name_en: CapabilityRegistry
+#   intro: class CapabilityRegistry 源码 L120-L283
+#   desc: 公共方法（定义序）: reset, capabilities, check；源码 L120-L283
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② capability_check
+#   name_en: capability_check
+#   intro: capability_check(action, target_path) 源码 L286-L296
+#   desc: 源码 L286-L296
+#   inputs: action target_path
+#   outputs: tuple[bool, dict[str, Any]]
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: tuple[bool, dict[str, Any]]
+#   name_en: tuple[bool, dict[str, Any]]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

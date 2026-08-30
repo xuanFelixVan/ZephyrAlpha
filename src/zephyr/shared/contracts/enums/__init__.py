@@ -14,11 +14,38 @@
 # [TESTS] tests/contracts/test_order_enums.py
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""shared/contracts/enums — 跨切面交易枚举真源 (5.152 #1 修复)
+"""
+shared/contracts/enums — 跨切面交易枚举真源 (5.152 #1 修复)
 
 原位置: zephyr.trading.trading_contracts.execution.order (trading层)
 问题: shared/contracts/order.py (codegen) 反向 import trading 层枚举 → 违反分层
 修复: 枚举下沉到 shared 层，trading/governance 通过 re-export 引用
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 包内子模块公共符号
+#   fields: import 再导出符号: OrderSide, OrderStatus, OrderType
+#   code: __init__.py import L51
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包公共面再导出
+#   name_en: __init__ re-export
+#   intro: 再导出 OrderSide, OrderStatus, OrderType（共 3 符号）
+#   desc: __init__ import L51；__all__ 3 项（AST 事实）
+#   inputs: I1
+#   outputs: __all__ 公共符号表
+# 层: 输出
+# - id: O1
+#   name_zh: 公共 API 面（3 符号）
+#   name_en: __all__
+#   intro: OrderSide, OrderStatus, OrderType
+#   downstream: zephyr.shared.contracts.order; zephyr.trading.trading_contracts.execution.order
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from zephyr.shared.contracts.enums.order_enums import OrderSide, OrderStatus, OrderType
