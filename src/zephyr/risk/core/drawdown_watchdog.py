@@ -20,7 +20,8 @@
 # F1: poll_once(fail-closed 轮询失败判定 → detect_ghost_positions 一致性核对 → 裁决强平清单)
 # O1: WatchdogVerdict(status/ghosts/force_liquidate_symbols/halt_new_orders/reason)
 # [/ALGO_FLOW]
-"""D_RISK — L3 看门狗一致性裁决（35 号 memo §6.11 施工，§3.5.1 四层架构 L3 落地）。
+"""
+D_RISK — L3 看门狗一致性裁决（35 号 memo §6.11 施工，§3.5.1 四层架构 L3 落地）。
 
 痛点（§3.5.1 四层防御表 L3 行）：
   L1 代码层平仓链路 + L2 broker 端止损仍可能留下 Ghost Position（平仓指令
@@ -45,6 +46,43 @@
     §6.31 远期参考）；不读写任何持久化状态（无状态纯裁决）。
 
 SSoT: 35_drawdown_protocol_impl §3.5.1/§6.11
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: broker_holdings 参数
+#   fields: 参数 broker_holdings，类型注解 Mapping[str, Mapping[str, Any]] | None
+#   code: drawdown_watchdog.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: strategy_state 参数
+#   fields: 参数 strategy_state，类型注解 Mapping[str, str] | None
+#   code: drawdown_watchdog.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: kill_switch_state 参数
+#   fields: 参数 kill_switch_state，类型注解 str
+#   code: drawdown_watchdog.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① poll_once
+#   name_en: poll_once
+#   intro: L3 单轮一致性裁决（外部独立进程定时调用，§3.5.1 看门狗层）。
+#   desc: L3 单轮一致性裁决（外部独立进程定时调用，§3.5.1 看门狗层）。 Args: broker_holdings: 实盘真实持仓 {symbol: {"qty": ...}}；…；源码 L143-L209
+#   inputs: broker_holdings strategy_state kill_switch_state
+#   outputs: WatchdogVerdict
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: WatchdogVerdict
+#   name_en: WatchdogVerdict
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 独立看门狗进程(外部调度器驱动 poll_once) ; RiskOrchestrator(§6.5 接线位) ; stop_loss.execute_kil…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -125,9 +163,7 @@ def poll_once(
         InvalidWatchdogInputError: kill_switch_state 越界 / 持仓载荷非 Mapping
     """
     if kill_switch_state not in _VALID_KILL_SWITCH_STATES:
-        raise InvalidWatchdogInputError(
-            f"kill_switch_state 须为 OPEN/CLOSED, got {kill_switch_state!r}"
-        )
+        raise InvalidWatchdogInputError(f"kill_switch_state 须为 OPEN/CLOSED, got {kill_switch_state!r}")
 
     # ── fail-closed：轮询失败 → 锁新开仓 + 人工介入，但不盲强平 ──
     if broker_holdings is None:
@@ -145,9 +181,7 @@ def poll_once(
     # ── 一致性核对（Ghost 检测，复用 L1 已施工双类型检测 + §3.15 冷启动守卫）──
     if strategy_state is None:
         ghosts = [
-            (sym, dict(pos), "unknown_to_strategy")
-            for sym, pos in broker_holdings.items()
-            if pos.get("qty", 0) != 0
+            (sym, dict(pos), "unknown_to_strategy") for sym, pos in broker_holdings.items() if pos.get("qty", 0) != 0
         ]
     else:
         ghosts = detect_ghost_positions(dict(broker_holdings), dict(strategy_state), kill_switch_state)

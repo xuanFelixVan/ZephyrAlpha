@@ -14,7 +14,8 @@
 # [TESTS] tests/position/test_position_time_budget.py
 # [A_module] module_id=MOD-POS-015 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Position Time Budget — 持仓时间预算 (MOD-POS-015)
+"""
+Position Time Budget — 持仓时间预算 (MOD-POS-015)
 
 时间止损的仓位侧落点：每个持仓带最大持有时间预算（按策略/标的类别由
 调用方给定），按持有比例划分三态：
@@ -29,6 +30,43 @@
 
 纪律：纯函数、无 IO；entry_date/as_of 由调用方注入（可测试替换）。
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: positions 参数
+#   fields: 参数 positions，类型注解 Mapping[str, TimeBudgetPosition]
+#   code: position_time_budget.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: as_of 参数
+#   fields: 参数 as_of（无注解）
+#   code: position_time_budget.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: warn_ratio 参数
+#   fields: 参数 warn_ratio（无注解）
+#   code: position_time_budget.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① check_time_budgets
+#   name_en: check_time_budgets
+#   intro: 检查持仓时间预算（纯函数）。
+#   desc: 检查持仓时间预算（纯函数）。 Args: positions: {symbol: TimeBudgetPosition} as_of: 基准日（注入可测试替换） warn_rat…；源码 L159-L216
+#   inputs: positions as_of warn_ratio
+#   outputs: TimeBudgetReport
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: TimeBudgetReport
+#   name_en: TimeBudgetReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: D-SELL-DECISION(时间止损信号源) ; MOD-SELL-013(离场情景规划)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -148,21 +186,15 @@ def check_time_budgets(
     for sym in sorted(positions):
         pos = positions[sym]
         if pos.max_holding_days < 1:
-            raise InvalidTimeBudgetInputError(
-                f"标的 {sym} 时间预算非法（须 ≥1 天），got {pos.max_holding_days}"
-            )
+            raise InvalidTimeBudgetInputError(f"标的 {sym} 时间预算非法（须 ≥1 天），got {pos.max_holding_days}")
         held = (as_of - pos.entry_date).days
         if held < 0:
-            raise InvalidTimeBudgetInputError(
-                f"标的 {sym} 入场日 {pos.entry_date} 晚于基准日 {as_of}（数据异常）"
-            )
+            raise InvalidTimeBudgetInputError(f"标的 {sym} 入场日 {pos.entry_date} 晚于基准日 {as_of}（数据异常）")
         ratio = held / pos.max_holding_days
         if held > pos.max_holding_days:
             status = TimeBudgetStatus.EXPIRED
             expired.append(sym)
-            warnings.append(
-                f"标的 {sym} 持有 {held} 天超时间预算 {pos.max_holding_days} 天（时间止损候选）"
-            )
+            warnings.append(f"标的 {sym} 持有 {held} 天超时间预算 {pos.max_holding_days} 天（时间止损候选）")
         elif ratio >= warn_ratio:
             status = TimeBudgetStatus.APPROACHING
             approaching.append(sym)

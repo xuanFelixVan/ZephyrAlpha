@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-REFLEXION_AGENT | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""三角色骨架 —— 12号文 §3.2/§4.2 P0-2(Actor→Evaluator→SelfReflection)。
+"""
+三角色骨架 —— 12号文 §3.2/§4.2 P0-2(Actor→Evaluator→SelfReflection)。
 
 定位: 三角色是逻辑角色而非三个常驻进程(12号文 §3.2)——同一 LLM 会话内可分步
 扮演, 也可经模型路由把 Evaluator 分派给低成本模型。接口协议化(typing.Protocol,
@@ -32,6 +33,96 @@
 
 Why 分离而非单角色自问自答(12号文 §3.2): 生成与评估共用同一上下文会系统性高估
 自身产出; Evaluator 独立上下文+结构化量规是廉价的对抗性。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: task 参数
+#   fields: 参数 task，类型注解 TaskSpec
+#   code: roles.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: actor 参数
+#   fields: 参数 actor，类型注解 ActorProtocol
+#   code: roles.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: evaluator 参数
+#   fields: 参数 evaluator，类型注解 EvaluatorProtocol
+#   code: roles.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: reflector 参数
+#   fields: 参数 reflector，类型注解 SelfReflectionProtocol
+#   code: roles.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ActorProtocol
+#   name_en: ActorProtocol
+#   intro: Actor: 执行任务产出轨迹。
+#   desc: Actor: 执行任务产出轨迹。；公共方法（定义序）: run；源码 L195-L198
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② EvaluatorProtocol
+#   name_en: EvaluatorProtocol
+#   intro: Evaluator: 按量规评估轨迹产出评估报告。
+#   desc: Evaluator: 按量规评估轨迹产出评估报告。；公共方法（定义序）: evaluate；源码 L202-L205
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ SelfReflectionProtocol
+#   name_en: SelfReflectionProtocol
+#   intro: SelfReflection: 消费轨迹+评估报告产出反思记录。
+#   desc: SelfReflection: 消费轨迹+评估报告产出反思记录。；公共方法（定义序）: reflect；源码 L209-L216
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ SyntheticActor
+#   name_en: SyntheticActor
+#   intro: 合成 Actor: 规则化产出固定三步轨迹;
+#   desc: 合成 Actor: 规则化产出固定三步轨迹; params["inject_failure"]=类别关键词 可注入失败(如 "数据缺失" → 末步失败+error 文本), 用于…；公共方法（定义序）: run；源码…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ RubricEvaluator
+#   name_en: RubricEvaluator
+#   intro: 量规 Evaluator: 三维量规(完整性/逻辑性/契约符合)打分, 缺陷=失败步+错误文本。
+#   desc: 量规 Evaluator: 三维量规(完整性/逻辑性/契约符合)打分, 缺陷=失败步+错误文本。；公共方法（定义序）: evaluate；源码 L267-L297
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ L1SelfReflection
+#   name_en: L1SelfReflection
+#   intro: SelfReflection 角色: 委托 L1Reflector 产出反思记录(规则化归因 MVP)。
+#   desc: SelfReflection 角色: 委托 L1Reflector 产出反思记录(规则化归因 MVP)。；公共方法（定义序）: reflect；源码 L300-L311
+#   inputs: reflector
+#   outputs: 返回值
+# - id: A7
+#   name_zh: ⑦ run_three_role_flow
+#   name_en: run_three_role_flow
+#   intro: 三角色全流程: Actor 执行 → Evaluator 评估 → SelfReflection 反思。
+#   desc: 三角色全流程: Actor 执行 → Evaluator 评估 → SelfReflection 反思。 同一任务分角色跑通(12号文 §4.2 P0-2 验收口径); 返回三角…；源码 L314-L327
+#   inputs: task actor evaluator reflector
+#   outputs: tuple[Trajectory, EvaluationReport, Ref…
+#   （注：A7 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: tuple[Trajectory, EvaluationReport, Ref…
+#   name_en: tuple[Trajectory, EvaluationReport, Ref…
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.intelligence.reflexion.batch_runner
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> O1
 """
 
 from __future__ import annotations
@@ -87,16 +178,12 @@ class EvaluationReport:
         if not self.task_id.strip():
             raise ValueError("EvaluationReport.task_id 缺失或为空(字段不完整拒收)")
         if not isinstance(self.score, (int, float)) or not 0.0 <= float(self.score) <= 1.0:
-            raise ValueError(
-                f"EvaluationReport.score 须为 [0,1] 数值: {self.score!r}"
-            )
+            raise ValueError(f"EvaluationReport.score 须为 [0,1] 数值: {self.score!r}")
         if not self.dimensions:
             raise ValueError("EvaluationReport.dimensions 为空(字段不完整拒收)")
         for name, value in self.dimensions.items():
             if not isinstance(value, (int, float)) or not 0.0 <= float(value) <= 1.0:
-                raise ValueError(
-                    f"EvaluationReport.dimensions[{name!r}] 须为 [0,1] 数值: {value!r}"
-                )
+                raise ValueError(f"EvaluationReport.dimensions[{name!r}] 须为 [0,1] 数值: {value!r}")
         if not isinstance(self.defects, list):
             raise ValueError("EvaluationReport.defects 须为 list(字段不完整拒收)")
 
@@ -172,8 +259,7 @@ class SyntheticActor:
         return Trajectory(
             task_id=task.task_id,
             steps=steps,
-            final_output=f"「{task.description}」假设初稿: 盈利质量因子(应计利润率为代理)"
-            "与次季收益正相关, 待回测验证",
+            final_output=f"「{task.description}」假设初稿: 盈利质量因子(应计利润率为代理)与次季收益正相关, 待回测验证",
             succeeded=True,
         )
 

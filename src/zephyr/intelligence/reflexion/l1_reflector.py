@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-REFLEXION_AGENT | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""L1 单轨迹反思器 —— 12号文 §4.2 P0-3(执行层, 触发频率最高/成本最低)。
+"""
+L1 单轨迹反思器 —— 12号文 §4.2 P0-3(执行层, 触发频率最高/成本最低)。
 
 定位: 单次任务结束后对该次执行轨迹做结构化复盘——输入失败轨迹(+评估报告)
 → 归因分类 + 改进建议 → 产出 L1 反思记录(ReflectionRecord)。
@@ -32,6 +33,38 @@ GP0 手动形态 = 规则化归因 MVP: 归因走关键词词表匹配(config �
 
 不做什么: 不做 L2 同类任务归纳(N=5 累积, Phase 2); 不做 L3 跨任务(远期);
 不做反思触发裁决(归 Phase 1 ReflCtrl 频率闸门)。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: rules 参数
+#   fields: 参数 rules（无注解）
+#   code: l1_reflector.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: suggestion_templates 参数
+#   fields: 参数 suggestion_templates（无注解）
+#   code: l1_reflector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① L1Reflector
+#   name_en: L1Reflector
+#   intro: L1 单轨迹反思器(规则化归因 MVP, 不调 LLM)。
+#   desc: L1 单轨迹反思器(规则化归因 MVP, 不调 LLM)。；公共方法（定义序）: categories, classify, suggest, reflect；源码 L167-L261
+#   inputs: rules suggestion_templates
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: L1Reflector
+#   downstream: zephyr.intelligence.reflexion.roles; zephyr.intelligence.reflexion.batch_runner
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -59,22 +92,52 @@ CATEGORY_UNKNOWN: Final[str] = "未知"
 
 DEFAULT_ATTRIBUTION_RULES: Final[dict[str, tuple[str, ...]]] = {
     CATEGORY_DATA_ERROR: (
-        "数据缺失", "数据错误", "数据口径", "空值", "nan", "缺失值",
-        "未来函数", "前视", "lookahead", "脏数据",
+        "数据缺失",
+        "数据错误",
+        "数据口径",
+        "空值",
+        "nan",
+        "缺失值",
+        "未来函数",
+        "前视",
+        "lookahead",
+        "脏数据",
     ),
     CATEGORY_LOGIC_ERROR: (
-        "逻辑错误", "推导矛盾", "因果倒置", "假设不成立", "自相矛盾", "逻辑漏洞",
+        "逻辑错误",
+        "推导矛盾",
+        "因果倒置",
+        "假设不成立",
+        "自相矛盾",
+        "逻辑漏洞",
     ),
     CATEGORY_CONTRACT_VIOLATION: (
-        "契约违反", "契约", "schema", "字段缺失", "格式不符", "类型不符",
-        "contract", "接口不符",
+        "契约违反",
+        "契约",
+        "schema",
+        "字段缺失",
+        "格式不符",
+        "类型不符",
+        "contract",
+        "接口不符",
     ),
     CATEGORY_ENVIRONMENT_ERROR: (
-        "环境问题", "依赖缺失", "连接失败", "超时", "timeout", "network",
-        "importerror", "权限不足", "资源不足",
+        "环境问题",
+        "依赖缺失",
+        "连接失败",
+        "超时",
+        "timeout",
+        "network",
+        "importerror",
+        "权限不足",
+        "资源不足",
     ),
     CATEGORY_REQUIREMENT_MISUNDERSTANDING: (
-        "需求误解", "偏离题意", "答非所问", "理解偏差", "需求偏差",
+        "需求误解",
+        "偏离题意",
+        "答非所问",
+        "理解偏差",
+        "需求偏差",
     ),
 }
 
@@ -85,21 +148,11 @@ DEFAULT_SUGGESTION_TEMPLATES: Final[dict[str, tuple[str, ...]]] = {
         "复核 {evidence} 处输入数据源与字段口径, 补齐缺失值/剔除脏数据后重跑该步",
         "为 {evidence} 步增加数据契约前置校验(非空/取值域), 失败即中止而非带病续跑",
     ),
-    CATEGORY_LOGIC_ERROR: (
-        "拆解 {evidence} 处推理链, 逐环核对因果方向与前提假设, 修正矛盾环后重跑",
-    ),
-    CATEGORY_CONTRACT_VIOLATION: (
-        "对照输出契约逐字段核验 {evidence} 处产出(字段/类型/格式), 修齐后重跑该步",
-    ),
-    CATEGORY_ENVIRONMENT_ERROR: (
-        "修复 {evidence} 处环境问题(依赖/连接/资源)后原样重跑, 不改任务逻辑",
-    ),
-    CATEGORY_REQUIREMENT_MISUNDERSTANDING: (
-        "回读任务描述并对照 {evidence} 处产出核对题意, 明确验收口径后重做该步",
-    ),
-    CATEGORY_UNKNOWN: (
-        "人工复核 {evidence} 起全轨迹, 定位根因后将该失败模式补入归因词表",
-    ),
+    CATEGORY_LOGIC_ERROR: ("拆解 {evidence} 处推理链, 逐环核对因果方向与前提假设, 修正矛盾环后重跑",),
+    CATEGORY_CONTRACT_VIOLATION: ("对照输出契约逐字段核验 {evidence} 处产出(字段/类型/格式), 修齐后重跑该步",),
+    CATEGORY_ENVIRONMENT_ERROR: ("修复 {evidence} 处环境问题(依赖/连接/资源)后原样重跑, 不改任务逻辑",),
+    CATEGORY_REQUIREMENT_MISUNDERSTANDING: ("回读任务描述并对照 {evidence} 处产出核对题意, 明确验收口径后重做该步",),
+    CATEGORY_UNKNOWN: ("人工复核 {evidence} 起全轨迹, 定位根因后将该失败模式补入归因词表",),
 }
 
 
@@ -125,9 +178,7 @@ class L1Reflector:
         if not self._rules:
             raise ValueError("归因规则表为空(fail-closed): 至少配置一类归因关键词")
         self._templates = (
-            suggestion_templates
-            if suggestion_templates is not None
-            else dict(DEFAULT_SUGGESTION_TEMPLATES)
+            suggestion_templates if suggestion_templates is not None else dict(DEFAULT_SUGGESTION_TEMPLATES)
         )
 
     @property
@@ -170,9 +221,7 @@ class L1Reflector:
             # 无命中/非步文本命中 → 锚定末步(空轨迹锚定 step[-1] 占位)
             anchor_idx = len(steps) - 1 if steps else -1
         evidence_ref = f"step[{anchor_idx}]"
-        templates = self._templates.get(
-            attribution.category, self._templates[CATEGORY_UNKNOWN]
-        )
+        templates = self._templates.get(attribution.category, self._templates[CATEGORY_UNKNOWN])
         return [
             ImprovementSuggestion(
                 category=attribution.category,

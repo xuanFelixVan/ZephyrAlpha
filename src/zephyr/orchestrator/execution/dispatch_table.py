@@ -26,6 +26,104 @@ AI Agent 冷启动分派表（Dispatch Table）
 2. 返回关联的 Schema 模型
 3. 输出 Token 预算估计
 4. 新 AI session 冷启动时定位蓝图节段
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: ct_id 参数
+#   fields: 参数 ct_id，类型注解 str
+#   code: dispatch_table.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: system_key 参数
+#   fields: 参数 system_key，类型注解 str
+#   code: dispatch_table.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: token_budget 参数
+#   fields: 参数 token_budget，类型注解 int
+#   code: dispatch_table.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① lookup_ct
+#   name_en: lookup_ct
+#   intro: 根据 CT-* 编号查找使用该契约的所有系统名称。
+#   desc: 根据 CT-* 编号查找使用该契约的所有系统名称。；源码 L309-L315
+#   inputs: ct_id
+#   outputs: list[str]
+# - id: A2
+#   name_zh: ② get_dispatch
+#   name_en: get_dispatch
+#   intro: get_dispatch(system_key) 源码 L318-L319
+#   desc: 源码 L318-L319
+#   inputs: system_key
+#   outputs: SystemDispatch | None
+# - id: A3
+#   name_zh: ③ get_ct_contracts
+#   name_en: get_ct_contracts
+#   intro: get_ct_contracts(system_key) 源码 L322-L326
+#   desc: 源码 L322-L326
+#   inputs: system_key
+#   outputs: tuple[str, ...]
+# - id: A4
+#   name_zh: ④ get_schemas
+#   name_en: get_schemas
+#   intro: get_schemas(system_key) 源码 L329-L333
+#   desc: 源码 L329-L333
+#   inputs: system_key
+#   outputs: tuple[str, ...]
+# - id: A5
+#   name_zh: ⑤ get_token_budget
+#   name_en: get_token_budget
+#   intro: get_token_budget(system_key) 源码 L336-L340
+#   desc: 源码 L336-L340
+#   inputs: system_key
+#   outputs: int
+# - id: A6
+#   name_zh: ⑥ cold_start_reading
+#   name_en: cold_start_reading
+#   intro: cold_start_reading(system_key) 源码 L343-L353
+#   desc: 源码 L343-L353
+#   inputs: system_key
+#   outputs: dict[str, object]
+# - id: A7
+#   name_zh: ⑦ list_all_systems
+#   name_en: list_all_systems
+#   intro: list_all_systems() 源码 L356-L357
+#   desc: 源码 L356-L357
+#   inputs: 无参数
+#   outputs: list[str]
+# - id: A8
+#   name_zh: ⑧ get_reading_depth
+#   name_en: get_reading_depth
+#   intro: get_reading_depth(token_budget) 源码 L360-L366
+#   desc: 源码 L360-L366
+#   inputs: token_budget
+#   outputs: str
+#   （注：A8 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[str]
+#   name_en: list[str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: SystemDispatch | None
+#   name_en: SystemDispatch | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> O1
 """
 
 from __future__ import annotations

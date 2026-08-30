@@ -19,7 +19,8 @@
 # F2: _is_rebalance_worthwhile(Inaction Cost=drift×daily_alpha×expected_days vs Action Cost=0.4%×drift, break-even 8天, window_max=5<8安全垫)
 # O1: RebalanceDecision(trigger/action/inaction_cost/action_cost/worthwhile)
 # [/ALGO_FLOW]
-"""25号memo §3.7#6 换仓触发决策（RebalanceTrigger 含 Inaction Cost，MVP 即做）。
+"""
+25号memo §3.7#6 换仓触发决策（RebalanceTrigger 含 Inaction Cost，MVP 即做）。
 
 §3.4 裁定 convergence_window = 3-5 天，本模块形式化"何时在窗口内触发换仓"——
 过早换仓增成本，过晚换仓 alpha 流失。三触发器 + Inaction Cost 成本门控
@@ -32,6 +33,48 @@
   仅剩 1-2 天，等保底触发省交易成本。
 
 触发后调用 §3.5 七约束链重优化 + §3.7#2 约束仲裁。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: days_since_last 参数
+#   fields: 参数 days_since_last，类型注解 int
+#   code: multifactor_rebalance_trigger.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: weight_drift 参数
+#   fields: 参数 weight_drift，类型注解 float | None
+#   code: multifactor_rebalance_trigger.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: top30_rank_change 参数
+#   fields: 参数 top30_rank_change，类型注解 float | None
+#   code: multifactor_rebalance_trigger.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: params 参数
+#   fields: 参数 params，类型注解 RebalanceTriggerParams | None
+#   code: multifactor_rebalance_trigger.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① should_rebalance
+#   name_en: should_rebalance
+#   intro: 换仓触发决策——三触发器 + Inaction Cost 成本门控。
+#   desc: 换仓触发决策——三触发器 + Inaction Cost 成本门控。 Args: days_since_last: 距上次换仓交易日数 weight_drift: 组合权重漂移（…；源码 L144-L238
+#   inputs: days_since_last weight_drift top30_rank_change params
+#   outputs: RebalanceDecision
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: RebalanceDecision
+#   name_en: RebalanceDecision
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: multifactor_pit_backtest; multifactor_holding_drift_monitor(critical强制换仓)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

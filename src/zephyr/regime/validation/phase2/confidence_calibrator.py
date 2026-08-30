@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-REGIME_VAL-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #13_regime_phase3_engineering_plan §2.2 #12_regime_phase2_validation §2.4 B1
-"""两阶段概率校准器（13_regime_phase3_engineering_plan §2.2 P0-E2）。
+"""
+两阶段概率校准器（13_regime_phase3_engineering_plan §2.2 P0-E2）。
 
 Stage 1: Temperature Scaling（全局降温，治本）
     softmax(log_proba / T)，T 从 IS 数据最小化二元交叉熵学习。
@@ -41,6 +42,125 @@ PIT 防泄漏（§2.2.9）：
 
 依据: 13_regime_phase3_engineering_plan §2.2 / 12_regime_phase2_validation §2.4 B1
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: log_proba 参数
+#   fields: 参数 log_proba，类型注解 np.ndarray
+#   code: confidence_calibrator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: occurred 参数
+#   fields: 参数 occurred，类型注解 np.ndarray
+#   code: confidence_calibrator.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: prev_calibrator 参数
+#   fields: 参数 prev_calibrator，类型注解 TwoStageCalibrator | None
+#   code: confidence_calibrator.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: timestamps 参数
+#   fields: 参数 timestamps，类型注解 pd.DatetimeIndex | list[pd.Timestamp]
+#   code: confidence_calibrator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CalibrationResult
+#   name_en: CalibrationResult
+#   intro: 校准器 fit 结果（含降级信息）。
+#   desc: 校准器 fit 结果（含降级信息）。；公共方法（定义序）: to_dict；源码 L244-L262
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② Calibrator
+#   name_en: Calibrator
+#   intro: 可插拔校准器接口（§2.2.5 可升级架构）。
+#   desc: 可插拔校准器接口（§2.2.5 可升级架构）。 Stage 1 可插拔：TemperatureCalibrator（当前）/ SMARTCalibrator（未来 v2） Sta…；公共方法（定义序）: fit, tr…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ TemperatureCalibrator
+#   name_en: TemperatureCalibrator
+#   intro: Stage 1: Temperature Scaling（全局降温）。
+#   desc: Stage 1: Temperature Scaling（全局降温）。 softmax(log_proba / T)，T>1 降温（摊平分布，缓解过度自信）。 T 从 IS 数据…；公共方法（定义序）: fit, tr…
+#   inputs: T
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ IsotonicCalibrator
+#   name_en: IsotonicCalibrator
+#   intro: Stage 2: Isotonic Regression（局部修正）。
+#   desc: Stage 2: Isotonic Regression（局部修正）。 直接在原始 (confidence, occurred) 对上 fit IsotonicRegressio…；公共方法（定义序）: fit, tr…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ TwoStageCalibrator
+#   name_en: TwoStageCalibrator
+#   intro: 两阶段串联校准器（§2.2.4）。
+#   desc: 两阶段串联校准器（§2.2.4）。 Stage 1 (Temperature) → Stage 2 (Isotonic) → 校准 confidence。 Stage 2 可为…；公共方法（定义序）: fit, tra…
+#   inputs: stage1 stage2
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ fit_calibrator_with_fallback
+#   name_en: fit_calibrator_with_fallback
+#   intro: 四级降级 fit（§2.2.10）。
+#   desc: 四级降级 fit（§2.2.10）。 Level 1 (n≥50): 正常 fit Stage 1 + Stage 2 Level 2 (20≤n<50): 只 fit Stag…；源码 L621-L714
+#   inputs: log_proba occurred prev_calibrator
+#   outputs: tuple[TwoStageCalibrator, CalibrationRe…
+# - id: A7
+#   name_zh: ⑦ compute_occurred_pit
+#   name_en: compute_occurred_pit
+#   intro: PIT 安全的 occurred 标签计算（§2.2.9 防泄漏 #1 #2）。
+#   desc: PIT 安全的 occurred 标签计算（§2.2.9 防泄漏 #1 #2）。 流程： 1. dominant_state = argmax(log_proba)（HMM 预测…；源码 L720-L806
+#   inputs: log_proba timestamps close forward_days min_return_threshold
+#   outputs: tuple[np.ndarray, np.ndarray]
+# - id: A8
+#   name_zh: ⑧ trim_is_for_pit
+#   name_en: trim_is_for_pit
+#   intro: IS 数据尾部裁剪（§2.2.9 防泄漏 #1）。
+#   desc: IS 数据尾部裁剪（§2.2.9 防泄漏 #1）。 裁剪 train_end 前 forward_days * 1.5 天，确保所有 forward_return 完全在 IS…；源码 L809-L833
+#   inputs: features close train_start train_end forward_days
+#   outputs: tuple[pd.DataFrame, pd.Series]
+# - id: A9
+#   name_zh: ⑨ save_calibration
+#   name_en: save_calibration
+#   intro: 保存校准参数到 JSON（§2.2.8 E 持久化机制）。
+#   desc: 保存校准参数到 JSON（§2.2.8 E 持久化机制）。 Args: calibrator: 校准器实例。 result: 校准结果（含降级信息）。 quarter: 季度标识…；源码 L839-L866
+#   inputs: calibrator result quarter output_dir
+#   outputs: Path
+# - id: A10
+#   name_zh: ⑩ load_calibration
+#   name_en: load_calibration
+#   intro: 从 JSON 加载校准参数。
+#   desc: 从 JSON 加载校准参数。 Args: quarter: 季度标识。 input_dir: 输入目录。 Returns: 校准器实例，文件不存在返回 None。；源码 L869-L886
+#   inputs: quarter input_dir
+#   outputs: TwoStageCalibrator | None
+#   （注：A10 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: tuple[TwoStageCalibrator, CalibrationRe…
+#   name_en: tuple[TwoStageCalibrator, CalibrationRe…
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.regime.validation.phase2.phase2_runner; scripts.tests.run_phase2_validat…
+# - id: O2
+#   name_zh: tuple[np.ndarray, np.ndarray]
+#   name_en: tuple[np.ndarray, np.ndarray]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.regime.validation.phase2.phase2_runner; scripts.tests.run_phase2_validat…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> A10
+# A10 --> O1
 """
 
 from __future__ import annotations

@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-REGIME-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #10_regime_detector_spec §3 #MOD-REGIME-002
-"""市场级 regime 特征：实现波动率分位 / 跨资产相关性 / 涨跌家数比 / 量能异动（MOD-REGIME-002 §3 F1/F3/F4/F5）。
+"""
+市场级 regime 特征：实现波动率分位 / 跨资产相关性 / 涨跌家数比 / 量能异动（MOD-REGIME-002 §3 F1/F3/F4/F5）。
 
 与 trend_features（F2a Hurst / F2b Kalman，单标的趋势）互补，本模块为**市场级**特征，
 由 RegimeFeatureBuilder 在组合层面聚合计算，喂 HMM 9态观测矩阵 X 的 4 列。
@@ -27,6 +28,71 @@
 
 PIT 铁律（blueprint §6.1）：F1/F3/F5 用 t-1 及以前窗口；F4 用 t 日盘后快照。
 所有函数返回 pandas.Series（index=日期），由 RegimeFeatureBuilder 对齐拼装。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: close 参数
+#   fields: 参数 close，类型注解 pd.Series
+#   code: market_features.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: hv_window 参数
+#   fields: 参数 hv_window，类型注解 int
+#   code: market_features.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: pct_window 参数
+#   fields: 参数 pct_window，类型注解 int
+#   code: market_features.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: returns_df 参数
+#   fields: 参数 returns_df，类型注解 pd.DataFrame
+#   code: market_features.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① realized_vol_pct
+#   name_en: realized_vol_pct
+#   intro: 20日实现波动率（年化）在过去250日的滚动分位 ∈ [0, 1]。
+#   desc: 20日实现波动率（年化）在过去250日的滚动分位 ∈ [0, 1]。 算法： 1. 对数收益率 r = log(close / close.shift(1)) 2. 20日滚动标…；源码 L111-L138
+#   inputs: close hv_window pct_window
+#   outputs: pd.Series
+# - id: A2
+#   name_zh: ② cross_asset_corr
+#   name_en: cross_asset_corr
+#   intro: 多资产收益率两两相关系数均值（60日滚动）∈ [-1, 1]。
+#   desc: 多资产收益率两两相关系数均值（60日滚动）∈ [-1, 1]。 算法：对 returns_df 每两列计算 rolling 相关系数，再对全部 pair 取均值。 恐慌期跨资产相…；源码 L146-L174
+#   inputs: returns_df window
+#   outputs: pd.Series
+# - id: A3
+#   name_zh: ③ ad_ratio
+#   name_en: ad_ratio
+#   intro: 全市场涨跌家数比的对数 tanh 归一化 ∈ [-1, 1]。
+#   desc: 全市场涨跌家数比的对数 tanh 归一化 ∈ [-1, 1]。 算法： ratio = log((advance + 1) / (decline + 1)) ad_ratio =…；源码 L182-L205
+#   inputs: advance decline
+#   outputs: pd.Series
+# - id: A4
+#   name_zh: ④ volume_anomaly
+#   name_en: volume_anomaly
+#   intro: 成交量 z-score（20日滚动标准化）。
+#   desc: 成交量 z-score（20日滚动标准化）。 算法：z = (volume - rolling_mean) / rolling_std 高 z（>2）= 放量异动（突破/恐慌抛售…；源码 L213-L234
+#   inputs: volume window
+#   outputs: pd.Series
+# 层: 输出
+# - id: O1
+#   name_zh: pd.Series
+#   name_en: pd.Series
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-REGIME-002(RegimeFeatureBuilder消费F1 realized_vol_pct + F3 cross_asset_corr…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

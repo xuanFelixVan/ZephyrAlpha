@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-RK-08 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""
+r"""
 Risk Budget Allocator — 风险预算分配器 (MOD-RK-08)
 
 D-RISK §1.2 L2 Real-Time 盘中监控核心模块。基于风险贡献 (复用 RK-16) 实现风险预算分配:
@@ -32,9 +32,49 @@ D-RISK §1.2 L2 Real-Time 盘中监控核心模块。基于风险贡献 (复用 
 
 求解器: scipy.optimize.minimize (SLSQP), 目标 = Σ(pct_i - target_i)²。
 属 A 类基础设施 (凸优化 + 风险贡献, 数学逻辑明确), target_budgets 为 B 类策略输入。
-依据: D:\\临时工作区\\依赖图\\11-D-RISK-风控域.md §1.2 RK-08, §2 依赖(RK-16→RK-08)
+依据: D:\临时工作区\依赖图\11-D-RISK-风控域.md §1.2 RK-08, §2 依赖(RK-16→RK-08)
 SSoT: depgraph MOD-RK-08
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: risk_budget_allocator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: decomposer 参数
+#   fields: 参数 decomposer（无注解）
+#   code: risk_budget_allocator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① BudgetAllocationResult
+#   name_en: BudgetAllocationResult
+#   intro: 风险预算分配结果。
+#   desc: 风险预算分配结果。 Attributes: weights: 求解得到的权重向量 (N,), Σw=1, w∈[min,max] total_risk: 组合标准差 σ_p ri…；公共方法（定义序）: is_erc,…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② RiskBudgetAllocator
+#   name_en: RiskBudgetAllocator
+#   intro: 风险预算分配器——ERC + 自定义预算 + 约束处理 + 再平衡触发。
+#   desc: 风险预算分配器——ERC + 自定义预算 + 约束处理 + 再平衡触发。 用法 (等风险贡献): allocator = RiskBudgetAllocator() cov =…；公共方法（定义序）: config,…
+#   inputs: config decomposer
+#   outputs: 返回值
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: BudgetAllocationResult, RiskBudgetAllocator
+#   downstream: MOD-RK-03(Portfolio Risk Monitor,实时监控) ; MOD-PC-02(Portfolio Optimizer,预算约束)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

@@ -14,12 +14,55 @@
 # [TESTS] tests/agent_rbac/test_rbac_auto_lifecycle.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
-"""BootstrapSuperadmin — Superadmin 账户启动器.
+"""
+BootstrapSuperadmin — Superadmin 账户启动器.
 
 依据蓝图 MOD-INF-018 §bootstrap_superadmin:
 - 创建superadmin账户（唯一特权账户）
 - 初始化superadmin角色和权限
 - 幂等性: 重复调用不会重复创建账户
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: bootstrap_superadmin.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① BootstrapSuperadmin
+#   name_en: BootstrapSuperadmin
+#   intro: Superadmin 账户启动器.
+#   desc: Superadmin 账户启动器. 在RBAC系统启动时创建superadmin账户， 确保系统至少有一个特权账户可用于管理。 幂等性: 重复调用不会重复创建账户。；公共方法（定义序）: is_bootstrapped…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② BootstrapSuperadminBridge
+#   name_en: BootstrapSuperadminBridge
+#   intro: Superadmin 账户启动桥接器.
+#   desc: Superadmin 账户启动桥接器. 在RBAC系统启动时创建superadmin账户， 确保系统至少有一个特权账户可用于管理。 幂等性: 重复调用不会重复创建账户。 ARCH…；公共方法（定义序）: is_boot…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ get_bootstrap_superadmin_bridge
+#   name_en: get_bootstrap_superadmin_bridge
+#   intro: 获取BootstrapSuperadminBridge实例.
+#   desc: 获取BootstrapSuperadminBridge实例.；源码 L342-L344
+#   inputs: 无参数
+#   outputs: BootstrapSuperadminBridge
+# 层: 输出
+# - id: O1
+#   name_zh: BootstrapSuperadminBridge
+#   name_en: BootstrapSuperadminBridge
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: N/A (all consumers verified as phantom — stale references removed)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

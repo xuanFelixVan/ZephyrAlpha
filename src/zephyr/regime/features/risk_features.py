@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-REGIME-002 | layer=module | stability=evolving | safety=M | ai_modifiable=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #10_regime_detector_spec §5.3 #MOD-REGIME-002 #Phase2a
-"""RiskSignal 13 参数纯函数（MOD-REGIME-002 Phase 2a）。
+"""
+RiskSignal 13 参数纯函数（MOD-REGIME-002 Phase 2a）。
 
 把原始特征（HMM 6 特征 + 新算 MA/KDJ/HHI）映射成 [0.30, 1.00] 系数，供
 RiskSignalConstructor 组装 risk_signal_inputs 喂 RegimeDetector._compute_risk_signal。
@@ -42,6 +43,125 @@ RiskSignalConstructor 组装 risk_signal_inputs 喂 RegimeDetector._compute_risk
   #11 news_ghost         — stub opportunity=0.0（无 NLP）
   #12 chip_structure     — stub=1.0（Phase 2c 接 chip engine）
   #13 bad_news_flat      — stub opportunity=0.0（无 NLP）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: vol_pct 参数
+#   fields: 参数 vol_pct，类型注解 pd.Series
+#   code: risk_features.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: slope 参数
+#   fields: 参数 slope，类型注解 pd.Series
+#   code: risk_features.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: vol_z 参数
+#   fields: 参数 vol_z，类型注解 pd.Series
+#   code: risk_features.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: pct_change 参数
+#   fields: 参数 pct_change，类型注解 pd.Series
+#   code: risk_features.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① realized_vol_coef
+#   name_en: realized_vol_coef
+#   intro: #1: vol_pct 分位 × slope 方向交集 → 系数（复刻 Phase 1 危机地板）。
+#   desc: #1: vol_pct 分位 × slope 方向交集 → 系数（复刻 Phase 1 危机地板）。 映射（与 RegimeFeatureBuilder._build_featu…；源码 L192-L221
+#   inputs: vol_pct slope
+#   outputs: pd.Series
+# - id: A2
+#   name_zh: ② volume_anomaly_coef
+#   name_en: volume_anomaly_coef
+#   intro: #2: 量能异动 × 涨跌幅 → 系数（复用 F5 volume_anomaly z-score）。
+#   desc: #2: 量能异动 × 涨跌幅 → 系数（复用 F5 volume_anomaly z-score）。 映射（10_regime_detector_spec §5.3.3 维度2）…；源码 L229-L258
+#   inputs: vol_z pct_change
+#   outputs: pd.Series
+# - id: A3
+#   name_zh: ③ price_pattern_coef
+#   name_en: price_pattern_coef
+#   intro: #3: 破前低 → 系数（新算 rolling min）。
+#   desc: #3: 破前低 → 系数（新算 rolling min）。 ⚠️ C1 验证 2026-08-06 修正：原"空头排列(MA5<MA20<MA60)→0.85"在 A 股熊市 约…；源码 L266-L296
+#   inputs: close
+#   outputs: pd.Series
+# - id: A4
+#   name_zh: ④ space_position_coef
+#   name_en: space_position_coef
+#   intro: #5: 当前价相对 250 日高点位置 → 系数（新算）。
+#   desc: #5: 当前价相对 250 日高点位置 → 系数（新算）。 pos = close / rolling_max(close, 250)，衡量距高点的回撤深度。 ⚠️ C1 验证…；源码 L304-L332
+#   inputs: close window
+#   outputs: pd.Series
+# - id: A5
+#   name_zh: ⑤ cross_asset_corr_coef
+#   name_en: cross_asset_corr_coef
+#   intro: #6: 跨资产相关性均值 → 系数（复用 F3 cross_asset_corr）。
+#   desc: #6: 跨资产相关性均值 → 系数（复用 F3 cross_asset_corr）。 恐慌期"一切相关系数趋于1"，corr 飙升是 CRISIS 信号。 ⚠️ A 股结构性高相…；源码 L340-L370
+#   inputs: corr
+#   outputs: pd.Series
+# - id: A6
+#   name_zh: ⑥ ad_ratio_extreme_coef
+#   name_en: ad_ratio_extreme_coef
+#   intro: #7: 涨跌家数比 → 系数（复用 F4 ad_ratio ∈ [-1,1]）。
+#   desc: #7: 涨跌家数比 → 系数（复用 F4 ad_ratio ∈ [-1,1]）。 普跌（ad_ratio 接近 -1）= 广度崩塌，CRISIS 信号。 ⚠️ A 股普跌常见：a…；源码 L378-L411
+#   inputs: ad_ratio
+#   outputs: pd.Series
+# - id: A7
+#   name_zh: ⑦ siphon_coef
+#   name_en: siphon_coef
+#   intro: #8: 虹吸态 → 系数（板块集中度 HHI + 资金集中度）。
+#   desc: #8: 虹吸态 → 系数（板块集中度 HHI + 资金集中度）。 虹吸 = 资金极度集中少数板块/个股，其余失血阴跌（10_regime_detector_spec §5.3.3…；源码 L419-L450
+#   inputs: sector_hhi fund_concentration
+#   outputs: pd.Series
+# - id: A8
+#   name_zh: ⑧ kdj
+#   name_en: kdj
+#   intro: 计算 KDJ 指标（#9 顶背离检测用）。
+#   desc: 计算 KDJ 指标（#9 顶背离检测用）。 K = SMA(RSV, 3, 1)；D = SMA(K, 3, 1)；J = 3K - 2D。 RSV = (close - rol…；源码 L458-L479
+#   inputs: high low close n
+#   outputs: tuple[pd.Series, pd.Series, pd.Series]
+# - id: A9
+#   name_zh: ⑨ detect_top_divergence
+#   name_en: detect_top_divergence
+#   intro: 检测顶背离：价格创 window 日新高但指标未新高。
+#   desc: 检测顶背离：价格创 window 日新高但指标未新高。 顶背离 = 赶顶衰竭信号（10_regime_detector_spec §5.3.3 维度9）。 Parameters…；源码 L482-L502
+#   inputs: close indicator window
+#   outputs: pd.Series
+# - id: A10
+#   name_zh: ⑩ tech_divergence_coef
+#   name_en: tech_divergence_coef
+#   intro: #9: KDJ 顶背离 → 系数（多分时共振极端档）。
+#   desc: #9: KDJ 顶背离 → 系数（多分时共振极端档）。 映射（10_regime_detector_spec §4.11.4 多分时共振是 #9 极端档）： 日线背离 + 60m…；源码 L505-L542
+#   inputs: divergence divergence_60min divergence_30min
+#   outputs: pd.Series
+#   （注：A10 之后另有 1 个公共定义未列入（含 0 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: pd.Series
+#   name_en: pd.Series
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-REGIME-002(RiskSignalConstructor消费13参数系数映射→risk_signal_inputs)
+# - id: O2
+#   name_zh: tuple[pd.Series, pd.Series, pd.Series]
+#   name_en: tuple[pd.Series, pd.Series, pd.Series]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-REGIME-002(RiskSignalConstructor消费13参数系数映射→risk_signal_inputs)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> A10
+# A10 --> O1
 """
 
 from __future__ import annotations

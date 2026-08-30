@@ -22,7 +22,8 @@
 # created: "2026-08-21"
 # ---
 
-"""D_PORTFOLIO_CORE — 打板 sleeve 组装策略（CAND-SIG-012 晋升，P0-4① 施工）
+"""
+D_PORTFOLIO_CORE — 打板 sleeve 组装策略（CAND-SIG-012 晋升，P0-4① 施工）
 
 组装 signal_ashare 四引擎（全部 production，直接 import 调用不重复造轮子）：
   - ShortTermStockSelector（BM-SEL-22，MOD-SIG-023）——资格门：降级/推荐"回避"→剔除
@@ -37,6 +38,47 @@
 urgency=immediate（盘中立即，21 号 L255-259 映射表：T 日盘中买入，T+1 卖出）。
 
 SSoT: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/21_stock_selection_engine.md §3.5/§3.6
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: selector 参数
+#   fields: 参数 selector（无注解）
+#   code: daban_sleeve_strategy.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: youzi_engine 参数
+#   fields: 参数 youzi_engine（无注解）
+#   code: daban_sleeve_strategy.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: quant_engine 参数
+#   fields: 参数 quant_engine（无注解）
+#   code: daban_sleeve_strategy.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: fusion_engine 参数
+#   fields: 参数 fusion_engine（无注解）
+#   code: daban_sleeve_strategy.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DabanSleeveStrategy
+#   name_en: DabanSleeveStrategy
+#   intro: 打板 sleeve 组装策略——双引擎融合评分 × 6 类决策优先级取 Top-N。
+#   desc: 打板 sleeve 组装策略——双引擎融合评分 × 6 类决策优先级取 Top-N。 signals 负载约定（dict[str, dict]，键=标的代码）： { "60051…；公共方法（定义序）: generat…
+#   inputs: selector youzi_engine quant_engine fusion_engine
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: DabanSleeveStrategy
+#   downstream: zephyr.pf_core.strategies（lazy re-export）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

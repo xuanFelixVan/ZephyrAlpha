@@ -14,7 +14,8 @@
 # [TESTS] tests/market_data/test_normalized_market_data_producer.py
 # [A_module] module_id=MOD-MKT_DATA | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""NormalizedMarketData 生产者——D_MKT_DATA→D_FACTOR 数据供给。
+"""
+NormalizedMarketData 生产者——D_MKT_DATA→D_FACTOR 数据供给。
 
 从 ClickHouse c1_market.kline_daily 加载日K行情，转为 CTR-001 NormalizedMarketData
 （frozen dataclass, Decimal 字段），供 D_FACTOR 的 ctr001_consumer 消费。
@@ -42,6 +43,108 @@ symbol 双向转换（裁定#ARCH-SYMBOL-NORMALIZE-001, 2026-07-25）：
   quality_flag → quality_score（1→1.0 通过；0→0.5 异常）
   volume=0     → is_suspended=True（停牌日无成交）
   data_source  → data_source
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: symbols 参数
+#   fields: 参数 symbols，类型注解 Sequence[str]
+#   code: producer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: start 参数
+#   fields: 参数 start，类型注解 str
+#   code: producer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: end 参数
+#   fields: 参数 end，类型注解 str
+#   code: producer.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: value 参数
+#   fields: 参数 value（无注解）
+#   code: producer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① load_kline
+#   name_en: load_kline
+#   intro: 从 ClickHouse 加载日K行情，转为 NormalizedMarketData 列表。
+#   desc: 从 ClickHouse 加载日K行情，转为 NormalizedMarketData 列表。 symbol 格式双向转换（ 入参 symbols 接受契约格式（600519.S…；源码 L371-L406
+#   inputs: symbols start end
+#   outputs: list[NormalizedMarketData]
+# - id: A2
+#   name_zh: ② produce
+#   name_en: produce
+#   intro: 生产 NormalizedMarketData（load_kline 的语义别名，对齐 CP-03 门禁命名）。
+#   desc: 生产 NormalizedMarketData（load_kline 的语义别名，对齐 CP-03 门禁命名）。 CP-03 门禁要求 D_MKT_DATA 产出 Normali…；源码 L409-L423
+#   inputs: symbols start end
+#   outputs: list[NormalizedMarketData]
+# - id: A3
+#   name_zh: ③ to_int
+#   name_en: to_int
+#   intro: 公共接口：to_int（Stage 4 公共化）。
+#   desc: 公共接口：to_int（Stage 4 公共化）。 2026-08-17 AI-04 审计治本：补回 default=1 默认值（与私有实现 _to_int 对齐）， 原包装丢失…；源码 L427-L433
+#   inputs: value default
+#   outputs: int
+# - id: A4
+#   name_zh: ④ to_decimal
+#   name_en: to_decimal
+#   intro: 公共接口：to_decimal（Stage 4 公共化）。
+#   desc: 公共接口：to_decimal（Stage 4 公共化）。；源码 L437-L439
+#   inputs: value
+#   outputs: Decimal | None
+# - id: A5
+#   name_zh: ⑤ strip_symbol_suffix
+#   name_en: strip_symbol_suffix
+#   intro: 公共接口：strip_symbol_suffix（Stage 4 公共化）。
+#   desc: 公共接口：strip_symbol_suffix（Stage 4 公共化）。；源码 L443-L445
+#   inputs: symbol
+#   outputs: str
+# - id: A6
+#   name_zh: ⑥ row_to_record
+#   name_en: row_to_record
+#   intro: 公共接口：row_to_record（Stage 4 公共化）。
+#   desc: 公共接口：row_to_record（Stage 4 公共化）。；源码 L449-L451
+#   inputs: row
+#   outputs: NormalizedMarketData | None
+# - id: A7
+#   name_zh: ⑦ normalize_symbol
+#   name_en: normalize_symbol
+#   intro: 公共接口：normalize_symbol（Stage 4 公共化）。
+#   desc: 公共接口：normalize_symbol（Stage 4 公共化）。；源码 L455-L457
+#   inputs: symbol
+#   outputs: str
+# - id: A8
+#   name_zh: ⑧ format_symbols
+#   name_en: format_symbols
+#   intro: 公共接口：format_symbols（Stage 4 公共化）。
+#   desc: 公共接口：format_symbols（Stage 4 公共化）。；源码 L461-L463
+#   inputs: symbols
+#   outputs: str
+# 层: 输出
+# - id: O1
+#   name_zh: list[NormalizedMarketData]
+#   name_en: list[NormalizedMarketData]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.factor.core.ctr001_consumer.converter
+# - id: O2
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.factor.core.ctr001_consumer.converter
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> O1
 """
 
 from __future__ import annotations

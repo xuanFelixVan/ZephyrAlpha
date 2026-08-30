@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-PA-004 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""
+r"""
 Strategy Correlation Gate — 策略相关性门禁 (MOD-PA-004)
 
 G12 相关性门禁: 策略两两之间检查相关性/因子重叠/股票池重叠/行业集中度/尾部相关,
@@ -31,9 +31,49 @@ G12 相关性门禁: 策略两两之间检查相关性/因子重叠/股票池重
 
 属A类基础设施(阈值判定+多维度门禁, 逻辑明确), 阈值为C类可调参数。
 相关性矩阵/因子重叠的*计算*属数据层职责, 本模块只消费已计算好的指标做门禁判定。
-依据: D:\\临时工作区\\依赖图\\06-D-PF-ALLOC-组合分配域.md §1 PA-04, §7.1, §7.2
+依据: D:\临时工作区\依赖图\06-D-PF-ALLOC-组合分配域.md §1 PA-04, §7.1, §7.2
 SSoT: depgraph MOD-PA-004
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: strategy_correlation_gate.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: strategy_correlation_gate.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CorrelationGateResult
+#   name_en: CorrelationGateResult
+#   intro: 门禁整体裁决结果。
+#   desc: 门禁整体裁决结果。；公共方法（定义序）: passed, rejected；源码 L225-L241
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② StrategyCorrelationGate
+#   name_en: StrategyCorrelationGate
+#   intro: 策略相关性门禁——多维度阈值判定+整体裁决聚合。
+#   desc: 策略相关性门禁——多维度阈值判定+整体裁决聚合。 用法: gate = StrategyCorrelationGate() pairs = [StrategyPairMetric…；公共方法（定义序）: config,…
+#   inputs: config clock
+#   outputs: 返回值
+#   （注：A2 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（8 定义）
+#   name_en: public defs
+#   intro: CorrelationGateResult, StrategyCorrelationGate
+#   downstream: MOD-PA-003(资金分配) ; MOD-PA-005(策略生命周期) ; D-PF-CORE
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

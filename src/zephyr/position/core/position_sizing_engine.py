@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-POS-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""
+r"""
 Position Sizing Engine — 仓位决策引擎 (MOD-POS-001)
 
 D-POSITION 域核心裁决器: 消费四轨输入+目标权重+策略分配+密度预测分布参数,
@@ -32,9 +32,41 @@ D-POSITION 域核心裁决器: 消费四轨输入+目标权重+策略分配+密�
 
 不包含 (阶段2): 四轨融合(轨道2/3/4) / 分布感知(C10) / 跨策略合并(POS-005)
 
-依据: D:\\临时工作区\\依赖图\\07-D-POSITION-仓位管理域.md §1.1 POS-01, §7.1/§7.2/§8
+依据: D:\临时工作区\依赖图\07-D-POSITION-仓位管理域.md §1.1 POS-01, §7.1/§7.2/§8
 SSoT: depgraph MOD-POS-001
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: position_sizing_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: position_sizing_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① PositionSizingEngine
+#   name_en: PositionSizingEngine
+#   intro: 仓位决策引擎——预筛+Kelly+13约束+降级模式。
+#   desc: 仓位决策引擎——预筛+Kelly+13约束+降级模式。 用法: engine = PositionSizingEngine() plan = engine.size(Positi…；公共方法（定义序）: config,…
+#   inputs: config clock
+#   outputs: 返回值
+#   （注：A1 之后另有 10 个公共定义未列入（含 10 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（11 定义）
+#   name_en: public defs
+#   intro: PositionSizingEngine
+#   downstream: D-EX-CORE(执行PositionSizingPlan CTR-POS-001); D-PF-CORE(消费E-POS-01 PositionSized)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

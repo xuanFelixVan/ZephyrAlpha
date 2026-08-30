@@ -21,7 +21,8 @@
 # A1: _avg_correlation(20日窗策略PnL两两Pearson均值, 除零/样本不足守卫)
 # O1: DrawdownDiagnosis / AttributionResult(systemic_pct+per_strategy+root_cause+response_routing) 或 None
 # [/ALGO_FLOW]
-"""D_RISK — 回撤类型诊断 + 归因自动化（35 号 memo §6.7/§6.13 施工，§3.12/§3.16 落地）。
+"""
+D_RISK — 回撤类型诊断 + 归因自动化（35 号 memo §6.7/§6.13 施工，§3.12/§3.16 落地）。
 
 痛点：回撤触发后不区分"方差亏损簇"（统计性）vs "AI 执行偏差"（行为性）、
 "系统性"（高相关全局）vs "策略特定"（低相关单策略），仅靠人工判读矩阵。
@@ -44,6 +45,69 @@
        _REGIME_ALIGNED 后缀，否则 _REGIME_MISALIGNED（异常告警信号）。
 
 SSoT: 35_drawdown_protocol_impl §3.12/§3.16 + §6.7/§6.13
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: signals_follow_rules 参数
+#   fields: 参数 signals_follow_rules（无注解）
+#   code: drawdown_attribution.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: avg_loss_r 参数
+#   fields: 参数 avg_loss_r（无注解）
+#   code: drawdown_attribution.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: position_sizing_consistent 参数
+#   fields: 参数 position_sizing_consistent（无注解）
+#   code: drawdown_attribution.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: trade_frequency_in_plan 参数
+#   fields: 参数 trade_frequency_in_plan（无注解）
+#   code: drawdown_attribution.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AttributionResult
+#   name_en: AttributionResult
+#   intro: 归因结果（§3.16 AttributionResult）。
+#   desc: 归因结果（§3.16 AttributionResult）。 Attributes: systemic_pct: 系统性占比（1.0=全系统性 / 0.0=全策略特定 / 中间=…；公共方法（定义序）: to_dict…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② diagnose_drawdown_type
+#   name_en: diagnose_drawdown_type
+#   intro: 回撤类型诊断（§3.12 五问矩阵）：任一行为性违例 → BEHAVIOURAL。
+#   desc: 回撤类型诊断（§3.12 五问矩阵）：任一行为性违例 → BEHAVIOURAL。 Args: signals_follow_rules: 信号是否严格按策略规则生成（False…；源码 L217-L269
+#   inputs: signals_follow_rules avg_loss_r position_sizing_consistent trade_freq…
+#   outputs: DrawdownDiagnosis
+# - id: A3
+#   name_zh: ③ drawdown_attribution_flow
+#   name_en: drawdown_attribution_flow
+#   intro: 回撤归因端到端流程（§3.16）：前馈 VaR 恶化 → 门控 → 相关性 → 因子 → regime。
+#   desc: 回撤归因端到端流程（§3.16）：前馈 VaR 恶化 → 门控 → 相关性 → 因子 → regime。 Args: drawdown_pct: 当前组合回撤（负号或绝对值均可，…；源码 L300-L431
+#   inputs: drawdown_pct strategy_pnls entry_var current_var strategy_pnls_histor…
+#   outputs: AttributionResult | None
+#   （注：A3 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: DrawdownDiagnosis
+#   name_en: DrawdownDiagnosis
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: RiskOrchestrator(§6.5 接线位); drawdown_session_persistence(归因持久化载荷)
+# - id: O2
+#   name_zh: AttributionResult | None
+#   name_en: AttributionResult | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: RiskOrchestrator(§6.5 接线位); drawdown_session_persistence(归因持久化载荷)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations
@@ -226,7 +290,7 @@ def _avg_correlation(strategy_pnls_history: Mapping[str, Sequence[float]], windo
             var_b = sum((x - mean_b) ** 2 for x in b)
             if var_a <= 0 or var_b <= 0:
                 continue  # 方差为 0（常数序列）→ 该对无相关定义，跳过
-            cov = sum((x - mean_a) * (y - mean_b) for x, y in zip(a, b))
+            cov = sum((x - mean_a) * (y - mean_b) for x, y in zip(a, b, strict=False))
             corrs.append(cov / math.sqrt(var_a * var_b))
     if not corrs:
         return 0.0

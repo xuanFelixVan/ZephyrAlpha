@@ -14,7 +14,8 @@
 # [TESTS] tests/ml_train/test_sample_weights.py
 # [A_module] module_id=MOD-L11-SW | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_ML_TRAIN — 半衰期样本权重（90 号 Phase2 项，#9 数据分层修订采纳）
+"""
+D_ML_TRAIN — 半衰期样本权重（90 号 Phase2 项，#9 数据分层修订采纳）
 
 裁定真源：90_methodology_open_questions.md §9（v2.0.0）：
   ② 权重参数化改半衰期：sample_weight = 0.5 ** (days_ago / (HL*252))，
@@ -28,6 +29,47 @@
 
 注意：本模块为 90 号 Phase2 交付物，MATURITY=testing；训练数据加载层接线挂起
 待 Owner（宪章 B-007 纪律）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: dates 参数
+#   fields: 参数 dates，类型注解 Sequence[date]
+#   code: sample_weights.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: reference_date 参数
+#   fields: 参数 reference_date，类型注解 date
+#   code: sample_weights.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: half_life_years 参数
+#   fields: 参数 half_life_years（无注解）
+#   code: sample_weights.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: break_periods 参数
+#   fields: 参数 break_periods（无注解）
+#   code: sample_weights.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① compute_sample_weights
+#   name_en: compute_sample_weights
+#   intro: 计算训练样本半衰期权重。
+#   desc: 计算训练样本半衰期权重。 Args: dates: 样本日期序列 reference_date: 参照日（通常为训练截止日） half_life_years: 半衰期（年，默认…；源码 L107-L150
+#   inputs: dates reference_date half_life_years break_periods break_downweight
+#   outputs: np.ndarray
+# 层: 输出
+# - id: O1
+#   name_zh: np.ndarray
+#   name_en: np.ndarray
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 训练数据加载层（15 号/G01 接线待排期，本批仅交付模块本体）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

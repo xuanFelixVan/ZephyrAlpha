@@ -35,7 +35,6 @@
 # I1 --> A3
 # A3 --> O1
 """
-
 Crowding Response Engine — C-045 拥挤度响应引擎 (MOD-RK-32, MVP)
 
 MOD-RK-13 CrowdingMonitor（跨参与者拥挤度**度量**）的深度增强**响应**层：
@@ -49,6 +48,48 @@ strategy_fingerprint.dtw_distance）补拥挤判定维度；拥挤超阈自动�
 
 SSoT: docs/03_modules/_domain_risk/crowding_response_engine/blueprint.md
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: crowding_score 参数
+#   fields: 参数 crowding_score，类型注解 float
+#   code: crowding_response_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: fingerprints 参数
+#   fields: 参数 fingerprints（无注解）
+#   code: crowding_response_engine.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: drawdown_pct 参数
+#   fields: 参数 drawdown_pct（无注解）
+#   code: crowding_response_engine.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: drawdown_slope 参数
+#   fields: 参数 drawdown_slope（无注解）
+#   code: crowding_response_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① assess_crowding_response
+#   name_en: assess_crowding_response
+#   intro: 拥挤响应主入口：拥挤判定 → 降杠杆/降仓/漏斗降权 + 悖论防护。
+#   desc: 拥挤响应主入口：拥挤判定 → 降杠杆/降仓/漏斗降权 + 悖论防护。 Args: crowding_score: MOD-RK-13 CrowdingMonitor 产出（∈[0…；源码 L199-L271
+#   inputs: crowding_score fingerprints drawdown_pct drawdown_slope config
+#   outputs: CrowdingResponseAction
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: CrowdingResponseAction
+#   name_en: CrowdingResponseAction
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 筛选漏斗第六层降权(weight_penalty, 设计契约); MOD-RK-30(熔断式退出联动, 设计契约)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -19,7 +19,8 @@
 # F2: build_multifactor_risk_limits(C1-C7策略参数→CTR-003 RiskLimits注入, max_single_position=0.02/max_sector_concentration=0.05)
 # O1: ArbitrationResult(status/action/target_universe_size/gross_leverage_cap)
 # [/ALGO_FLOW]
-"""25号memo §3.7#2 七约束链冲突仲裁（ConstraintArbitration）+ C1-C7↔CTR-003 对齐。
+"""
+25号memo §3.7#2 七约束链冲突仲裁（ConstraintArbitration）+ C1-C7↔CTR-003 对齐。
 
 §3.5 的 7 约束链缺硬/软分级与冲突仲裁——本模块在组合优化器求解后增加
 arbitrate() 后处理层，避免 cvxpy 返回不可行解或静默放宽。
@@ -34,6 +35,69 @@ C1-C7 策略级约束链 ↔ MOD-PF-006 对齐（memo §6 待裁定项，CTR-003
   把可映射项注入 CTR-003 RiskLimits（C1→max_single_position=0.02，
   C2→max_sector_concentration=0.05）；C3/C4/C5/C6/C7 为策略侧运行时检查项，
   不在 CTR-003 schema 内，由策略层（本模块违规检测/RebalanceTrigger）消费。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: violations 参数
+#   fields: 参数 violations，类型注解 list[ConstraintViolation]
+#   code: multifactor_constraint_arbitration.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: universe_size 参数
+#   fields: 参数 universe_size，类型注解 int
+#   code: multifactor_constraint_arbitration.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: as_of_date 参数
+#   fields: 参数 as_of_date，类型注解 datetime
+#   code: multifactor_constraint_arbitration.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: idempotency_key 参数
+#   fields: 参数 idempotency_key，类型注解 str
+#   code: multifactor_constraint_arbitration.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ConstraintViolation
+#   name_en: ConstraintViolation
+#   intro: 单条约束违规记录。
+#   desc: 单条约束违规记录。 Attributes: constraint_id: "C1".."C7" magnitude: 违反幅度（如超出上限的绝对值） detail: 人类可读说明；公共方法（定义序）: is_hard；…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② arbitrate
+#   name_en: arbitrate
+#   intro: 7 约束链冲突仲裁——优化器求解后处理层。
+#   desc: 7 约束链冲突仲裁——优化器求解后处理层。 决策逻辑（25号memo §3.7#2）： ① 无违反 → FEASIBLE / ACCEPT ② 仅软约束违反 → SOFT_VIO…；源码 L206-L244
+#   inputs: violations universe_size
+#   outputs: ArbitrationResult
+# - id: A3
+#   name_zh: ③ build_multifactor_risk_limits
+#   name_en: build_multifactor_risk_limits
+#   intro: C1-C7 策略级约束 → CTR-003 RiskLimits 注入（多因子 sleeve 上线前对齐）。
+#   desc: C1-C7 策略级约束 → CTR-003 RiskLimits 注入（多因子 sleeve 上线前对齐）。 可映射项：C1 单票≤2% → max_single_positio…；源码 L247-L265
+#   inputs: as_of_date idempotency_key
+#   outputs: RiskLimits
+#   （注：A3 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ArbitrationResult
+#   name_en: ArbitrationResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: multifactor_pit_backtest; PortfolioOptimizer 后处理层
+# - id: O2
+#   name_zh: RiskLimits
+#   name_en: RiskLimits
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: multifactor_pit_backtest; PortfolioOptimizer 后处理层
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

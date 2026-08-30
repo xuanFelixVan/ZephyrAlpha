@@ -15,7 +15,35 @@
 # [A_module] module_id=MOD-INF-039 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""死代码/孤儿文件/僵尸引用三扫描（CT-LEAN）——三款扫描器+自动化清理建议。"""
+"""
+死代码/孤儿文件/僵尸引用三扫描（CT-LEAN）——三款扫描器+自动化清理建议。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: lean_scanner.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① LeanScanner
+#   name_en: LeanScanner
+#   intro: class LeanScanner 源码 L49-L60
+#   desc: 公共方法（定义序）: scan_dead_code, scan_orphan_files, scan_zombie_references, suggest_cleanup；源码 L49-L60
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: LeanScanner
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 
 class LeanScanner:

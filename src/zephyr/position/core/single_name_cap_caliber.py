@@ -19,7 +19,8 @@
 # A2: check_production_consistency（映射表 vs 三模块生产默认值漂移检测）
 # O1: 问题列表 list[str]（空=通过；冗余裁剪为 WARNING 级登记项，非阻断）
 # [/ALGO_FLOW]
-"""单票上限三层口径映射 + 校验（31号 §2.4.1 / §5，32号 §6 同名行）。
+"""
+单票上限三层口径映射 + 校验（31号 §2.4.1 / §5，32号 §6 同名行）。
 
 分层关系（31号 §2.4.1 ⚠️ 澄清）：
   - MOD-POS-001 策略层裁决默认 5%（default_single_position_cap，可被 symbol_overrides 覆盖）
@@ -31,6 +32,40 @@
 本模块只做口径映射与校验（不硬改生产默认），供统一施工前的漂移检测与冗余登记。
 
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: caps 参数
+#   fields: 参数 caps，类型注解 dict[str, float] | None
+#   code: single_name_cap_caliber.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① validate_tier_calibers
+#   name_en: validate_tier_calibers
+#   intro: 校验单票三层口径配置（不改动生产默认，只返回问题列表）。
+#   desc: 校验单票三层口径配置（不改动生产默认，只返回问题列表）。 校验规则（31号 §2.4.1）： 1. 三层齐全（MOD-POS-001/021/010 各一条） 2. 各层值 ∈…；源码 L96-L132
+#   inputs: caps
+#   outputs: list[str]
+# - id: A2
+#   name_zh: ② check_production_consistency
+#   name_en: check_production_consistency
+#   intro: 映射表 vs 三模块生产默认值的漂移检测（只读，不改生产）。
+#   desc: 映射表 vs 三模块生产默认值的漂移检测（只读，不改生产）。 Returns: 漂移问题列表（空=映射表与生产默认一致）；源码 L135-L151
+#   inputs: 无参数
+#   outputs: list[str]
+# 层: 输出
+# - id: O1
+#   name_zh: list[str]
+#   name_en: list[str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 治理审计/配置校验调用方（G04 首批策略产出后统一口径时的核查工具）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

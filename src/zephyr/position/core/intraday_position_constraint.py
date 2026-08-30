@@ -14,7 +14,8 @@
 # [TESTS] tests/position/test_intraday_position_constraint.py
 # [A_module] module_id=MOD-POS-018 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Intraday Position Constraint — 盘中仓位约束 (MOD-POS-018，T+1 配套)
+"""
+Intraday Position Constraint — 盘中仓位约束 (MOD-POS-018，T+1 配套)
 
 盘中实时校验交易意图是否满足仓位约束（宪章 §2 约束四 T+1 交割内生）：
 
@@ -31,6 +32,33 @@ Fail-Closed：任何一条违规 → allowed=False + 结构化 violations 留痕
 
 纪律：纯函数、无 IO；所有仓位/意图由调用方注入。
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: intent 参数
+#   fields: 参数 intent，类型注解 IntradayConstraintInput
+#   code: intraday_position_constraint.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① check_intraday_constraints
+#   name_en: check_intraday_constraints
+#   intro: 盘中仓位约束校验（纯函数，Fail-Closed）。
+#   desc: 盘中仓位约束校验（纯函数，Fail-Closed）。 Args: intent: IntradayConstraintInput（昨仓/今买/今卖/拟买卖/上限） Returns…；源码 L164-L253
+#   inputs: intent
+#   outputs: IntradayConstraintResult
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: IntradayConstraintResult
+#   name_en: IntradayConstraintResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: D-EX-CORE(执行前盘中校验) ; MOD-SELL-018(做T协调器) ; D_RISK
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -130,9 +158,7 @@ class IntradayConstraintResult:
 def _validate_weights(name: str, weights: Mapping[str, float], *, allow_zero_only: bool = False) -> None:
     for sym, w in weights.items():
         if not math.isfinite(w) or w < 0.0:
-            raise InvalidIntradayConstraintInputError(
-                f"{name} 标的 {sym} 权重非法（须为有限非负值），got {w}"
-            )
+            raise InvalidIntradayConstraintInputError(f"{name} 标的 {sym} 权重非法（须为有限非负值），got {w}")
 
 
 def check_intraday_constraints(
@@ -164,9 +190,7 @@ def check_intraday_constraints(
         )
 
     # ① T+1 可卖口径（昨仓 − 今日已卖）
-    sellable = t1_sellable_weights(
-        dict(intent.last_session_weights), dict(intent.today_sold_weights)
-    )
+    sellable = t1_sellable_weights(dict(intent.last_session_weights), dict(intent.today_sold_weights))
 
     violations: list[ConstraintViolation] = []
 

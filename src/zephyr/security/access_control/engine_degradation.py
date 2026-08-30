@@ -14,12 +14,48 @@
 # [TESTS] tests/agent_rbac/test_rbac_auto_lifecycle.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
-"""EngineDegradation — 引擎降级管理.
+"""
+EngineDegradation — 引擎降级管理.
 
 依据蓝图 MOD-INF-018 §engine_degradation:
 - 管理引擎降级级别
 - 在资源不足或故障时降级运行
 - 支持升级和恢复
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: engine_degradation.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① EngineDegradationManager
+#   name_en: EngineDegradationManager
+#   intro: 引擎降级管理器 — 管理系统降级状态.
+#   desc: 引擎降级管理器 — 管理系统降级状态. 在资源不足或故障时降级运行，支持升级和恢复。；公共方法（定义序）: state, current_level, current_reason, is_blocked, is_de…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② get_engine_degradation_manager
+#   name_en: get_engine_degradation_manager
+#   intro: 获取EngineDegradationManager单例.
+#   desc: 获取EngineDegradationManager单例.；源码 L372-L377
+#   inputs: 无参数
+#   outputs: EngineDegradationManager
+#   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: EngineDegradationManager
+#   name_en: EngineDegradationManager
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: N/A (all consumers verified as phantom — stale references removed)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

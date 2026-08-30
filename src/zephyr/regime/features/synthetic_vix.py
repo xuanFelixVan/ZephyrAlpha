@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-REGIME-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #10_regime_detector_spec §4.9 #MOD-REGIME-002 #Phase2c
-"""合成 VIX（CBOE 简化版，50ETF+300ETF 双标的均值）（MOD-REGIME-002 Phase 2c）。
+"""
+合成 VIX（CBOE 简化版，50ETF+300ETF 双标的均值）（MOD-REGIME-002 Phase 2c）。
 
 利用 50ETF(510050)+300ETF(510300) 期权隐含波动率曲面，按 CBOE VIX 简化公式
 计算中国版恐慌指数，替代 MVP 的 vol_pct（实现波动率分位）代理。
@@ -37,6 +38,63 @@ CBOE VIX 简化公式：
 
 依据: 10_regime_detector_spec v1.3.1 §4.9 / Phase 2c 计划 §任务4
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: option_iv_df 参数
+#   fields: 参数 option_iv_df，类型注解 pd.DataFrame | None
+#   code: synthetic_vix.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: vix 参数
+#   fields: 参数 vix，类型注解 pd.Series
+#   code: synthetic_vix.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: window 参数
+#   fields: 参数 window，类型注解 int
+#   code: synthetic_vix.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: close 参数
+#   fields: 参数 close，类型注解 pd.Series
+#   code: synthetic_vix.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① compute_synthetic_vix
+#   name_en: compute_synthetic_vix
+#   intro: 合成 VIX → VIX 绝对值序列（百分数）。
+#   desc: 合成 VIX → VIX 绝对值序列（百分数）。 Parameters ---------- option_iv_df : MultiIndex(trade_date, unde…；源码 L135-L174
+#   inputs: option_iv_df
+#   outputs: pd.Series
+# - id: A2
+#   name_zh: ② vix_pct_from_vix
+#   name_en: vix_pct_from_vix
+#   intro: VIX 历史分位 → [0,1]（与 vol_pct 接口一致，可无缝替换）。
+#   desc: VIX 历史分位 → [0,1]（与 vol_pct 接口一致，可无缝替换）。 vix_pct = vix.rolling(window).rank(pct=True) 数据缺失…；源码 L177-L194
+#   inputs: vix window
+#   outputs: pd.Series
+# - id: A3
+#   name_zh: ③ synthetic_vix_pct
+#   name_en: synthetic_vix_pct
+#   intro: 后备合成 VIX 历史分位（downside semi-deviation percentile）∈ [0, 1]。
+#   desc: 后备合成 VIX 历史分位（downside semi-deviation percentile）∈ [0, 1]。 期权 IV 曲面缺失时的 P0 后备路径：用**下行半偏差*…；源码 L197-L234
+#   inputs: close hv_window pct_window
+#   outputs: pd.Series
+# 层: 输出
+# - id: O1
+#   name_zh: pd.Series
+#   name_en: pd.Series
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-REGIME-002(OverlaySignalsConstructor消费vix_pct→S1 vix_panic/S2 vix)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

@@ -20,7 +20,8 @@
 # F2: ConsecutiveLossTracker.update(有状态: 逐日推进, pnl<0计数+1否则重置, 同日幂等)
 # O1: ConsecutiveLossAlert(triggered+consecutive_loss_days+cap_multiplier+reason)
 # [/ALGO_FLOW]
-"""D_RISK — 连续亏损降仓触发器（35 号 memo §6.2 施工，§3.5 触发条件表第 3 行）。
+"""
+D_RISK — 连续亏损降仓触发器（35 号 memo §6.2 施工，§3.5 触发条件表第 3 行）。
 
 痛点：§2.5.5 Kill Switch 表"连续 5 天亏损 → 降仓至 50%"代码无独立实现
 （§6.2 P1）。连亏是"时间维度"风险信号——单日幅度都不大但持续阴亏，
@@ -35,6 +36,46 @@
 
 边界：pnl == 0 非亏损日（重置计数）；NaN 输入拒绝（fail-closed）。
 SSoT: 35_drawdown_protocol_impl §3.5 触发条件表 + §6.2
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: daily_pnls 参数
+#   fields: 参数 daily_pnls，类型注解 Sequence[float]
+#   code: drawdown_consecutive_loss.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: config 参数
+#   fields: 参数 config，类型注解 ConsecutiveLossConfig | None
+#   code: drawdown_consecutive_loss.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① check_consecutive_loss
+#   name_en: check_consecutive_loss
+#   intro: 连续亏损检测（纯函数）：序列末尾连续 pnl<0 天数 ≥ 阈值 → 降仓。
+#   desc: 连续亏损检测（纯函数）：序列末尾连续 pnl<0 天数 ≥ 阈值 → 降仓。 Args: daily_pnls: 日 PnL 序列（旧→新；负=亏损；0=非亏损重置连亏） con…；源码 L149-L189
+#   inputs: daily_pnls config
+#   outputs: ConsecutiveLossAlert
+# - id: A2
+#   name_zh: ② ConsecutiveLossTracker
+#   name_en: ConsecutiveLossTracker
+#   intro: 连续亏损有状态追踪器（盘前日更版）。
+#   desc: 连续亏损有状态追踪器（盘前日更版）。 用法: tracker = ConsecutiveLossTracker() alert = tracker.update(trade_da…；公共方法（定义序）: consecu…
+#   inputs: config
+#   outputs: 返回值
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ConsecutiveLossAlert
+#   name_en: ConsecutiveLossAlert
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: RiskOrchestrator(§6.5 接线位); position_sizing_engine(cap_multiplier消费)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

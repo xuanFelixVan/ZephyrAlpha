@@ -15,7 +15,92 @@
 # [A_module] module_id=MOD-INF-039 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Fault type registry and preset templates for chaos engineering."""
+"""
+Fault type registry and preset templates for chaos engineering.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: fault_types.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① FaultHandler
+#   name_en: FaultHandler
+#   intro: class FaultHandler 源码 L135-L140
+#   desc: 公共方法（定义序）: inject, recover；源码 L135-L140
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② FaultTypeRegistry
+#   name_en: FaultTypeRegistry
+#   intro: class FaultTypeRegistry 源码 L143-L162
+#   desc: 公共方法（定义序）: register, get, list_types；源码 L143-L162
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ LatencyFault
+#   name_en: LatencyFault
+#   intro: class LatencyFault 源码 L165-L176
+#   desc: 公共方法（定义序）: inject, recover；源码 L165-L176
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ ExceptionFault
+#   name_en: ExceptionFault
+#   intro: class ExceptionFault 源码 L179-L193
+#   desc: 公共方法（定义序）: inject, recover；源码 L179-L193
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ ResourceExhaustionFault
+#   name_en: ResourceExhaustionFault
+#   intro: class ResourceExhaustionFault 源码 L196-L210
+#   desc: 公共方法（定义序）: inject, recover；源码 L196-L210
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ NetworkPartitionFault
+#   name_en: NetworkPartitionFault
+#   intro: class NetworkPartitionFault 源码 L213-L227
+#   desc: 公共方法（定义序）: inject, recover；源码 L213-L227
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A7
+#   name_zh: ⑦ DataCorruptionFault
+#   name_en: DataCorruptionFault
+#   intro: class DataCorruptionFault 源码 L230-L244
+#   desc: 公共方法（定义序）: inject, recover；源码 L230-L244
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A8
+#   name_zh: ⑧ get_default_registry
+#   name_en: get_default_registry
+#   intro: get_default_registry() 源码 L251-L264
+#   desc: 源码 L251-L264
+#   inputs: 无参数
+#   outputs: FaultTypeRegistry
+#   （注：A8 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: FaultTypeRegistry
+#   name_en: FaultTypeRegistry
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.orchestrator.chaos_engine;zephyr.orchestrator.chaos_hooks
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> O1
+"""
 
 from __future__ import annotations
 

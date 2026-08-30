@@ -14,12 +14,48 @@
 # [TESTS] tests/agent_rbac/test_rbac_auto_lifecycle.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
-"""ImmutableCore — 不可变核心验证器.
+"""
+ImmutableCore — 不可变核心验证器.
 
 依据蓝图 MOD-INF-018 §immutable_core:
 - 验证系统不可变核心的完整性
 - 确保关键配置和规则未被篡改
 - 幂等性: 重复调用返回相同结果
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: immutable_core.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ImmutableCore
+#   name_en: ImmutableCore
+#   intro: 不可变核心验证器.
+#   desc: 不可变核心验证器. 验证系统不可变核心的完整性，确保关键配置和规则未被篡改。；公共方法（定义序）: is_protected_path, is_always_blocked, always_blocked, verif…
+#   inputs: project_root
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② get_immutable_core
+#   name_en: get_immutable_core
+#   intro: 获取ImmutableCore单例.
+#   desc: 获取ImmutableCore单例.；源码 L276-L281
+#   inputs: 无参数
+#   outputs: ImmutableCore
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ImmutableCore
+#   name_en: ImmutableCore
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: N/A (all consumers verified as phantom — stale references removed)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

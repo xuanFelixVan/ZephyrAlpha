@@ -14,7 +14,8 @@
 # [TESTS] tests/pf_core/test_rebalance_cost_analyzer.py
 # [A_module] module_id=MOD-PF-014 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""RebalanceCostAnalyzer — 再平衡成本分析器（MOD-PF-014）。
+"""
+RebalanceCostAnalyzer — 再平衡成本分析器（MOD-PF-014）。
 
 B10-02079（AUD-DRAFT-001-DIGEST P2 波 P2-W09，CAND-PF004-007，A1 PC-10）：
 调仓成本**四拆解**（Decimal-only）——
@@ -31,6 +32,48 @@ B10-02079（AUD-DRAFT-001-DIGEST P2 波 P2-W09，CAND-PF004-007，A1 PC-10）：
 
 查重分工（蓝图 §0）：rebalance_engine=调仓决策与执行（事前/事中）；本件
 =**事后成本归因分析器**（四拆解+占比排序+异常告警），不做调仓决策。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: tax_table 参数
+#   fields: 参数 tax_table（无注解）
+#   code: rebalance_cost_analyzer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: alert_threshold_bps 参数
+#   fields: 参数 alert_threshold_bps（无注解）
+#   code: rebalance_cost_analyzer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: alert_sink 参数
+#   fields: 参数 alert_sink（无注解）
+#   code: rebalance_cost_analyzer.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: rebalance_cost_analyzer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RebalanceCostAnalyzer
+#   name_en: RebalanceCostAnalyzer
+#   intro: 再平衡成本四拆解分析器（纯内存确定性，税率表/告警/时钟注入）。
+#   desc: 再平衡成本四拆解分析器（纯内存确定性，税率表/告警/时钟注入）。；公共方法（定义序）: analyze；源码 L174-L282
+#   inputs: tax_table alert_threshold_bps alert_sink clock
+#   outputs: 返回值
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: RebalanceCostAnalyzer
+#   downstream: 运行时装配批（rebalance_engine 调仓复盘 / 成本归因报表装配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -78,9 +121,9 @@ class TradeSide(str, Enum):
 class CostCategory(str, Enum):
     """成本四类（词表闭合）。"""
 
-    EXPLICIT = "explicit"        # 显性：佣金/印花税
-    IMPLICIT = "implicit"        # 隐性：冲击/价差
-    TAX = "tax"                  # 税收：股息税/资本利得
+    EXPLICIT = "explicit"  # 显性：佣金/印花税
+    IMPLICIT = "implicit"  # 隐性：冲击/价差
+    TAX = "tax"  # 税收：股息税/资本利得
     OPPORTUNITY = "opportunity"  # 机会成本：偏离基准收益
 
 

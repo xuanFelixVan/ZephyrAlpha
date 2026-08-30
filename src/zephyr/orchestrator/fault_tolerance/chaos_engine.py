@@ -16,7 +16,36 @@
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: threading.Timer用于一次性超时/延迟执行，非周期时间触发
 
-"""Chaos 故障注入引擎（CT-CHAOS-001）——4注入点×月度执行。"""
+"""
+Chaos 故障注入引擎（CT-CHAOS-001）——4注入点×月度执行。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: chaos_engine.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ChaosEngine
+#   name_en: ChaosEngine
+#   intro: class ChaosEngine 源码 L168-L480
+#   desc: 公共方法（定义序）: injection_state, last_result, get_injection_points, inject, recover, verify, cleanup, fault_inject…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（8 定义）
+#   name_en: public defs
+#   intro: ChaosEngine
+#   downstream: red-blue-validator.injection_engine; game_day_runner; zephyr.orchestrator.chaos…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 from __future__ import annotations
 

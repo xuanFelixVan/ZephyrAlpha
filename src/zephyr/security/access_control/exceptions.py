@@ -14,7 +14,8 @@
 # [TESTS] tests/agent_rbac/test_exceptions_agent_rbac.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""AgentRbac 异常类型.
+"""
+AgentRbac 异常类型.
 
 依据蓝图 MOD-INF-018 §3:
 - AgentRbacError: 基类
@@ -23,6 +24,32 @@
 - OverrideTokenExpiredError: 覆盖令牌过期
 - KillSwitchTrippedError: 紧急开关触发
 - DegradationBlockedError: 降级阻断
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: exceptions.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包公共面再导出
+#   name_en: __init__ re-export
+#   intro: 再导出 AgentRbacError, ColdStartLockedError, DegradationBlockedError, KillSwitchTr…
+#   desc: __init__ import L0；__all__ 6 项（AST 事实）
+#   inputs: I1
+#   outputs: __all__ 公共符号表
+# 层: 输出
+# - id: O1
+#   name_zh: 数据契约声明（6 类）
+#   name_en: data classes
+#   intro: AgentRbacError, PermissionDeniedError, ColdStartLockedError, OverrideTokenExpir…
+#   downstream: tests/agent_rbac/test_exceptions_agent_rbac.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

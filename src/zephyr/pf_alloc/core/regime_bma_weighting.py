@@ -14,7 +14,8 @@
 # [TESTS] tests/pf_alloc/test_regime_bma_weighting.py
 # [A_module] module_id=MOD-PA-015 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""RegimeBmaWeighting — 体制条件 BMA 信号权重（MOD-PA-015）。
+"""
+RegimeBmaWeighting — 体制条件 BMA 信号权重（MOD-PA-015）。
 
 B11-02963（AUD-DRAFT-001-DIGEST P2 波 P2-W09，CAND-PFALLOC-010，A7）：
 regime 条件 BMA（贝叶斯模型平均思想轻量版）权重——
@@ -28,6 +29,48 @@ regime 条件 BMA（贝叶斯模型平均思想轻量版）权重——
 
 查重分工（蓝图 §0）：signal_synthesis_combiner=信号合成投票器（消费权重做
 合成），本件=**权重生产侧**（按体制估计并平滑输出权重），不做信号合成。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: window 参数
+#   fields: 参数 window（无注解）
+#   code: regime_bma_weighting.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: half_life 参数
+#   fields: 参数 half_life（无注解）
+#   code: regime_bma_weighting.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: min_samples 参数
+#   fields: 参数 min_samples（无注解）
+#   code: regime_bma_weighting.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: metric 参数
+#   fields: 参数 metric（无注解）
+#   code: regime_bma_weighting.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RegimeBmaWeighting
+#   name_en: RegimeBmaWeighting
+#   intro: 体制条件 BMA 信号权重估计器（纯内存确定性，审计/时钟注入）。
+#   desc: 体制条件 BMA 信号权重估计器（纯内存确定性，审计/时钟注入）。；公共方法（定义序）: update, current_regime, current_weights；源码 L160-L282
+#   inputs: window half_life min_samples metric audit_sink clock
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: RegimeBmaWeighting
+#   downstream: 运行时装配批（signal_synthesis_combiner 权重源 / 体制切换审计落库）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -62,7 +105,7 @@ class PrecisionMetric(str, Enum):
     """历史预测精度估计口径。"""
 
     HIT_RATE = "hit_rate"  # 命中率：sign(forecast)==sign(realized) 占比
-    IC = "ic"              # 信息系数：forecast 与 realized 的 Pearson 相关（负值截断 0）
+    IC = "ic"  # 信息系数：forecast 与 realized 的 Pearson 相关（负值截断 0）
 
 
 @dataclass(frozen=True)
@@ -153,7 +196,7 @@ class RegimeBmaWeighting:
         precisions: dict[str, float] = {}
         for signal_id in sorted(observations):
             series = observations[signal_id]
-            tail = series[-self._window:] if len(series) > self._window else list(series)
+            tail = series[-self._window :] if len(series) > self._window else list(series)
             precisions[signal_id] = fn(tail)
         total = sum(precisions.values())
         n = len(precisions)
@@ -170,9 +213,7 @@ class RegimeBmaWeighting:
 
     # ── 估计 ─────────────────────────────────────────────────────────────
 
-    def update(
-        self, *, regime: str, observations: Mapping[str, Sequence[SignalOutcome]]
-    ) -> dict[str, float]:
+    def update(self, *, regime: str, observations: Mapping[str, Sequence[SignalOutcome]]) -> dict[str, float]:
         """按体制更新权重：精度估计→后验归一→切换半衰期平滑→审计留痕。"""
         if not isinstance(regime, str) or not regime:
             raise RegimeBmaError("regime 为空")
@@ -182,9 +223,7 @@ class RegimeBmaWeighting:
             if not signal_id:
                 raise RegimeBmaError("signal_id 为空")
             if len(series) < self._min_samples:
-                raise RegimeBmaError(
-                    f"样本不足: {signal_id!r} 仅 {len(series)} 条 < min_samples={self._min_samples}"
-                )
+                raise RegimeBmaError(f"样本不足: {signal_id!r} 仅 {len(series)} 条 < min_samples={self._min_samples}")
             for o in series:
                 if not isinstance(o, SignalOutcome):
                     raise RegimeBmaError(f"观测须为 SignalOutcome: {o!r}")
@@ -207,8 +246,7 @@ class RegimeBmaWeighting:
             new_share = 1.0 - 0.5 ** (self._updates_in_regime / self._half_life)
             ids = sorted(set(raw) | set(self._prev_weights))
             blended = {
-                sid: new_share * raw.get(sid, 0.0) + (1.0 - new_share) * self._prev_weights.get(sid, 0.0)
-                for sid in ids
+                sid: new_share * raw.get(sid, 0.0) + (1.0 - new_share) * self._prev_weights.get(sid, 0.0) for sid in ids
             }
             total = sum(blended.values())
             if total <= 0:
@@ -216,15 +254,17 @@ class RegimeBmaWeighting:
             else:
                 effective = {sid: blended[sid] / total for sid in ids}
         self._weights = effective
-        self._audit(WeightAuditEvent(
-            regime=regime,
-            switched=switched,
-            updates_in_regime=self._updates_in_regime,
-            new_share=new_share,
-            raw_posteriors=dict(raw),
-            effective_weights=dict(effective),
-            raised_at=self._clock(),
-        ))
+        self._audit(
+            WeightAuditEvent(
+                regime=regime,
+                switched=switched,
+                updates_in_regime=self._updates_in_regime,
+                new_share=new_share,
+                raw_posteriors=dict(raw),
+                effective_weights=dict(effective),
+                raised_at=self._clock(),
+            )
+        )
         _log.info("体制BMA权重更新: regime=%s t=%d new_share=%.4f", regime, self._updates_in_regime, new_share)
         return dict(effective)
 

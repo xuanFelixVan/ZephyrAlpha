@@ -20,7 +20,8 @@
 # A1: permutation_importance_windows(逐窗口逐特征扰动→均值重要性/占比/top-2 稳定性聚合)
 # O1: A4PermutationReport(mean_importance/share/top2_stability/negligible_features/passed)
 # [/ALGO_FLOW]
-"""D_REGIME — A4 特征重要性 Permutation 主轨（11 号 memo §4.1 A4）。
+"""
+D_REGIME — A4 特征重要性 Permutation 主轨（11 号 memo §4.1 A4）。
 
 按 §4.1 A4 裁定：Permutation Importance 为主轨（SHAP 审计轨不做）——
 在各 walk-forward 季度窗口内对特征列做窗口内排列（严格防 look-ahead，
@@ -33,6 +34,48 @@
 
 依据: 11_regime_backtest_validation_plan §4.1 A4 / §0.6.6 升级路径 3
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: score_fn 参数
+#   fields: 参数 score_fn，类型注解 Callable[[np.ndarray], float]
+#   code: a4_feature_importance.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: X 参数
+#   fields: 参数 X，类型注解 np.ndarray
+#   code: a4_feature_importance.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: windows 参数
+#   fields: 参数 windows，类型注解 Sequence[tuple[int, int]] | None
+#   code: a4_feature_importance.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: n_repeats 参数
+#   fields: 参数 n_repeats，类型注解 int
+#   code: a4_feature_importance.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① permutation_importance_windows
+#   name_en: permutation_importance_windows
+#   intro: A4 主入口：窗口内 permutation 重要性 + top-2 排名稳定性。
+#   desc: A4 主入口：窗口内 permutation 重要性 + top-2 排名稳定性。 Args: score_fn: 评分函数，输入 (Tw, F) 窗口矩阵，返回 float（越…；源码 L118-L209
+#   inputs: score_fn X windows n_repeats seed feature_names stability_threshold n…
+#   outputs: A4PermutationReport
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: A4PermutationReport
+#   name_en: A4PermutationReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 人工审查; 11_regime_backtest_validation_plan A4 特征重要性(BM-BT-05-B)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

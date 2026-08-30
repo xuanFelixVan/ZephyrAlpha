@@ -10,7 +10,8 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] permanent
-"""D_RESEARCH Research & Innovation
+"""
+D_RESEARCH Research & Innovation
 =====================================
 
 域量化架构 · D_RESEARCH 研究创新层
@@ -37,6 +38,32 @@ SSoT: cross_layer_contracts.yaml v3.0
 --------
 LPC 双轨架构 C 轨（业务脊柱 · 带 l<NN>_ 前缀）
 架构决策： 目录双轨治理
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 包内子模块公共符号
+#   fields: import 再导出符号: annotations, BacktestEngineBase, BacktestResult, FactorDiscovery
+#   code: __init__.py import L69
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包公共面再导出
+#   name_en: __init__ re-export
+#   intro: 再导出 BacktestEngineBase, BacktestResult, FactorDiscovery（共 3 符号）
+#   desc: __init__ import L69；__all__ 3 项（AST 事实）
+#   inputs: I1
+#   outputs: __all__ 公共符号表
+# 层: 输出
+# - id: O1
+#   name_zh: 公共 API 面（3 符号）
+#   name_en: __all__
+#   intro: BacktestEngineBase, BacktestResult, FactorDiscovery
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

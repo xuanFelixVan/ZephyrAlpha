@@ -1,3 +1,33 @@
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: disk_guard.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① DiskGuard
+#   name_en: DiskGuard
+#   intro: class DiskGuard 源码 L55-L63
+#   desc: 公共方法（定义序）: check, should_enter_readonly；源码 L55-L63
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: DiskGuard
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 from typing import Final
 
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md

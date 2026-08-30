@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-L05-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""D_PORTFOLIO_CORE — StrategyRunner 策略运行器（胶水层）
+"""
+D_PORTFOLIO_CORE — StrategyRunner 策略运行器（胶水层）
 
 把 因子计算 → 多因子合成 → 策略产权重 → 回测引擎权重面板 四段串成一条流水线。
 本类是 orchestrator，不实现策略/撮合/风控逻辑——复用 D_FACTOR/D_BACKTEST 既有资产。
@@ -39,6 +40,33 @@
     回测与实盘共用 MatchingLogic（回测=实盘一致性已具备）。
 
 SSoT: docs/03_modules/_domain_portfolio_core/blueprint.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: strategy_runner.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① StrategyRunner
+#   name_en: StrategyRunner
+#   intro: 策略运行器——因子→合成→策略→回测 的胶水层。
+#   desc: 策略运行器——因子→合成→策略→回测 的胶水层。 无可变状态，每次 run 产出独立 BacktestResult。复用： - load_history / compute_fa…；公共方法（定义序）: run_bac…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: StrategyRunner
+#   downstream: tests/pf_core/test_strategy_runner_mvp.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

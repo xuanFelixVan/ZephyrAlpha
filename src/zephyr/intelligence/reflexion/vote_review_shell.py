@@ -14,7 +14,8 @@
 # [TESTS] tests/intelligence/test_vote_review_shell.py
 # [A_module] module_id=MOD-VOTE_REVIEW_SHELL | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""投票评审壳（12号文 §3.6/§4.3 P1-2）——可选模式设施，人手动触发.
+"""
+投票评审壳（12号文 §3.6/§4.3 P1-2）——可选模式设施，人手动触发.
 
 定位: 高价值评审场景（如因子入库终审）人多开 3-5 个 AI 会话并行产出候选后,
 由人手动调用本壳完成计票裁决: 候选文件收集 → 调既有 A2AVoting 引擎(MOD-INF-025,
@@ -41,6 +42,61 @@ docstring 后的非空物理行数(含 import/类与函数声明行), 实测值�
 不做什么: 不含调度器/定时器/钩子/导入副作用(人手动 CLI 为唯一触发路径); 不做
 辩论制评审(Phase 2 P2-2); 不呼叫任何 LLM(会话产出由人搬运落盘); 不自动应用
 胜出候选(产出仅供人终审).
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: candidates_dir 参数
+#   fields: 参数 candidates_dir，类型注解 Path
+#   code: vote_review_shell.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: output_path 参数
+#   fields: 参数 output_path，类型注解 Path
+#   code: vote_review_shell.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: quorum 参数
+#   fields: 参数 quorum（无注解）
+#   code: vote_review_shell.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: engine 参数
+#   fields: 参数 engine（无注解）
+#   code: vote_review_shell.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① run_review
+#   name_en: run_review
+#   intro: 候选收集→A2AVoting 逐候选计票→最优落盘 selected/→裁决报告 JSON（人手动调用）.
+#   desc: 候选收集→A2AVoting 逐候选计票→最优落盘 selected/→裁决报告 JSON（人手动调用）.；源码 L174-L228
+#   inputs: candidates_dir output_path quorum engine
+#   outputs: dict
+# - id: A2
+#   name_zh: ② main
+#   name_en: main
+#   intro: 人手动 CLI 入口（唯一触发路径；
+#   desc: 人手动 CLI 入口（唯一触发路径；无调度器/定时器/导入副作用）.；源码 L231-L247
+#   inputs: argv
+#   outputs: int
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: dict
+#   name_en: dict
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 人手动触发 CLI(python -m zephyr.intelligence.reflexion.vote_review_shell)
+# - id: O2
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 人手动触发 CLI(python -m zephyr.intelligence.reflexion.vote_review_shell)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -84,8 +140,13 @@ def _load_inbox(candidates_dir: Path) -> tuple[dict[str, Path], list[SessionBall
     for path in sorted(votes_dir.glob("*.json")):
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
-            ballots.append(SessionBallot(str(data["agent_id"]), float(data.get("weight", 1.0)),
-                                         {str(k): str(v) for k, v in data["votes"].items()}))
+            ballots.append(
+                SessionBallot(
+                    str(data["agent_id"]),
+                    float(data.get("weight", 1.0)),
+                    {str(k): str(v) for k, v in data["votes"].items()},
+                )
+            )
         except (OSError, json.JSONDecodeError, KeyError, TypeError, ValueError) as exc:
             raise VoteReviewError(f"选票文件非法: {path} ({exc})") from exc
     return candidates, ballots
@@ -110,7 +171,9 @@ def _pick_winner(results: list[dict]) -> dict | None:
     return max(passed, key=lambda r: (r["approve_weight"] - r["reject_weight"], r["approve_weight"]), default=None)
 
 
-def run_review(candidates_dir: Path, output_path: Path, *, quorum: float = 0.5, engine: A2AVoting | None = None) -> dict:
+def run_review(
+    candidates_dir: Path, output_path: Path, *, quorum: float = 0.5, engine: A2AVoting | None = None
+) -> dict:
     """候选收集→A2AVoting 逐候选计票→最优落盘 selected/→裁决报告 JSON（人手动调用）."""
     candidates_dir, output_path = Path(candidates_dir), Path(output_path)
     candidates, ballots = _load_inbox(candidates_dir)
@@ -122,9 +185,19 @@ def run_review(candidates_dir: Path, output_path: Path, *, quorum: float = 0.5, 
         for cid, path in candidates.items():
             _cast_all(engine, cid, ballots, warnings)
             r = engine.tally(cid, len(ballots))
-            results.append({"candidate_id": cid, "file": str(path), "passed": r.passed, "quorum_met": r.quorum_met,
-                            "approve_weight": r.approve_weight, "reject_weight": r.reject_weight,
-                            "abstain_weight": r.abstain_weight, "total_weight": r.total_weight, "votes": r.votes})
+            results.append(
+                {
+                    "candidate_id": cid,
+                    "file": str(path),
+                    "passed": r.passed,
+                    "quorum_met": r.quorum_met,
+                    "approve_weight": r.approve_weight,
+                    "reject_weight": r.reject_weight,
+                    "abstain_weight": r.abstain_weight,
+                    "total_weight": r.total_weight,
+                    "votes": r.votes,
+                }
+            )
     except VoteReviewError:
         raise
     except Exception as exc:  # 引擎异常降级: 已计票明细+错误落盘交人, 不抛出
@@ -138,11 +211,18 @@ def run_review(candidates_dir: Path, output_path: Path, *, quorum: float = 0.5, 
         selected = output_path.parent / "selected" / Path(winner["file"]).name
         selected.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(winner["file"], selected)
-    report = {"verdict": verdict, "generated_at": now_utc_str(), "quorum": quorum,
-              "participant_count": len(ballots), "candidates": results,
-              "winner": winner["candidate_id"] if winner else None,
-              "selected_file": str(selected) if selected else None,
-              "warnings": warnings, "error": error, "human_gate_required": True}
+    report = {
+        "verdict": verdict,
+        "generated_at": now_utc_str(),
+        "quorum": quorum,
+        "participant_count": len(ballots),
+        "candidates": results,
+        "winner": winner["candidate_id"] if winner else None,
+        "selected_file": str(selected) if selected else None,
+        "warnings": warnings,
+        "error": error,
+        "human_gate_required": True,
+    }
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     return report
@@ -159,8 +239,11 @@ def main(argv: list[str] | None = None) -> int:
         report = run_review(args.candidates_dir, args.output, quorum=args.quorum)
     except VoteReviewError as exc:
         parser.error(str(exc))
-    print(json.dumps({"verdict": report["verdict"], "winner": report["winner"],
-                      "report": str(args.output)}, ensure_ascii=False))
+    print(
+        json.dumps(
+            {"verdict": report["verdict"], "winner": report["winner"], "report": str(args.output)}, ensure_ascii=False
+        )
+    )
     return 0
 
 

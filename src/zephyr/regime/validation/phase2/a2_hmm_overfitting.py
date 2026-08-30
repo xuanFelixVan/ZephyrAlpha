@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-REGIME_VAL-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #12_regime_phase2_validation §2.3 #12_regime_phase2_validation §4.1 A2
-"""A2 HMM 过拟合验证器（12_regime_phase2_validation §2.3）。
+"""
+A2 HMM 过拟合验证器（12_regime_phase2_validation §2.3）。
 
 方案 A：IS/OOS 交叉解码一致率。
   1. IS 数据（如 2010-2018）fit → HMM_is；OOS 数据（如 2019-2026）fit → HMM_oos
@@ -32,6 +33,41 @@
 
 依据: 12_regime_phase2_validation §2.3 / 12_regime_phase2_validation §4.1 A2
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: hmm_params 参数
+#   fields: 参数 hmm_params（无注解）
+#   code: a2_hmm_overfitting.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① A2Report
+#   name_en: A2Report
+#   intro: A2 过拟合验证报告。
+#   desc: A2 过拟合验证报告。；公共方法（定义序）: to_dict；源码 L114-L140
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② A2HmmOverfitting
+#   name_en: A2HmmOverfitting
+#   intro: A2 HMM 过拟合验证器（IS/OOS 交叉解码一致率）。
+#   desc: A2 HMM 过拟合验证器（IS/OOS 交叉解码一致率）。 Usage（real 模式）:: builder = RegimeFeatureBuilder(...) featu…；公共方法（定义序）: validat…
+#   inputs: hmm_params
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: A2Report, A2HmmOverfitting
+#   downstream: zephyr.regime.validation.phase2.phase2_runner; scripts.tests.run_phase2_validat…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

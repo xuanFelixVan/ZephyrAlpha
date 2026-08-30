@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-INF-039 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""BatchOrchestrator — 多 Worker 批量任务协调器（MOD-INF-016）
+"""
+BatchOrchestrator — 多 Worker 批量任务协调器（MOD-INF-016）
 
 SQLite 原子 claim（UPDATE ... RETURNING）+ DAG 依赖感知 + 超时回收。
 
@@ -48,6 +49,55 @@ Usage（每个 TRAE AI 对话侧）::
 
     print(bo.progress())    # -> {'READY': 0, 'IN_PROGRESS': 0,
                             #    'COMPLETED': 943, 'FAILED': 2, 'TOTAL': 945}
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: repo 参数
+#   fields: 参数 repo（无注解）
+#   code: batch_orchestrator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: batch_id 参数
+#   fields: 参数 batch_id（无注解）
+#   code: batch_orchestrator.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: worker_id 参数
+#   fields: 参数 worker_id（无注解）
+#   code: batch_orchestrator.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: stale_timeout_minutes 参数
+#   fields: 参数 stale_timeout_minutes（无注解）
+#   code: batch_orchestrator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① BatchProgress
+#   name_en: BatchProgress
+#   intro: class BatchProgress 源码 L115-L135
+#   desc: 公共方法（定义序）: pct_done；源码 L115-L135
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② BatchOrchestrator
+#   name_en: BatchOrchestrator
+#   intro: 多 Worker 批量任务协调器。
+#   desc: 多 Worker 批量任务协调器。 每个 AI session 创建一个实例，共享同一个 SQLite 数据库。；公共方法（定义序）: stale_timeout, claim_next, mark_done, mar…
+#   inputs: repo batch_id worker_id stale_timeout_minutes
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: BatchProgress, BatchOrchestrator
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

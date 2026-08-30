@@ -14,7 +14,8 @@
 # [TESTS] tests/market_data/connectors/test_connector_base.py
 # [A_module] module_id=MOD-MKT-003 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_MKT_DATA — Connector Base (行情数据连接器基类)
+"""
+D_MKT_DATA — Connector Base (行情数据连接器基类)
 
 扩展 MarketDataVendor, 增加连接生命周期管理和实时行情订阅。
 子类(具体厂商连接器)实现 _do_connect/_do_disconnect/fetch_daily_kline/health_check。
@@ -23,6 +24,33 @@
 
 设计真源: depgraph MOD-MKT-003
 蓝图: docs/03_modules/_domain_mkt_data/connectors/blueprint.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: base.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① MarketDataConnector
+#   name_en: MarketDataConnector
+#   intro: 行情数据连接器抽象基类——扩展 MarketDataVendor。
+#   desc: 行情数据连接器抽象基类——扩展 MarketDataVendor。 在 vendor_base 的数据获取接口之上增加: - 连接生命周期: connect/disconnect…；公共方法（定义序）: connect…
+#   inputs: config
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: MarketDataConnector
+#   downstream: zephyr.market_data.connectors.manager; D_EX_SOR
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

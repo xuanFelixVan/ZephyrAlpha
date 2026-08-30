@@ -14,7 +14,8 @@
 # [TESTS]
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Approver authorization verifier — 校验审批人是否有权执行请求的动作。
+"""
+Approver authorization verifier — 校验审批人是否有权执行请求的动作。
 
 治本（2026-07-18）：原模块为 stub（verify_approver raise NotImplementedError），
 现根据 tests/governance/security/test_governance_approver_check.py 及
@@ -31,6 +32,37 @@ tests/governance/security/test_adversarial_contract_attacks.py 的契约定义�
 
 返回值：dict[str, Any]，含 "approved" (bool)、"approver_id" (str)、
        "action" (str)、"reason" (str)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: approver_id 参数
+#   fields: 参数 approver_id，类型注解 str
+#   code: approver_check.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: requested_action 参数
+#   fields: 参数 requested_action，类型注解 str
+#   code: approver_check.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① verify_approver
+#   name_en: verify_approver
+#   intro: 验证 approver 是否有权审批 requested_action。
+#   desc: 验证 approver 是否有权审批 requested_action。 支持位置参数和关键字参数两种调用形式： verify_approver("admin", "deploy…；源码 L93-L138
+#   inputs: approver_id requested_action
+#   outputs: dict[str, Any]
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, Any]
+#   name_en: dict[str, Any]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests.governance.test_adversarial_contract_attacks ; tests.governance.test_gct_…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from typing import Any, Final

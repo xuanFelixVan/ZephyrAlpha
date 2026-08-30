@@ -20,7 +20,8 @@
 # A1: compute_improvement_cv(mean/std/CV 正式统计 → CV<0.5 判定)
 # O1: E1CVReport(n_windows/mean/std/cv/passed)
 # [/ALGO_FLOW]
-"""D_REGIME — E1 Walk-Forward 稳定性正式统计（11 号 memo §0.5.7 E1）。
+"""
+D_REGIME — E1 Walk-Forward 稳定性正式统计（11 号 memo §0.5.7 E1）。
 
 纯统计函数：消费既有 walk-forward 回测产物（各季度窗口的 MaxDD 改善序列，
 production 参数 train_years=5 / refit QE / 46 季度边界，见 memo §4.5 E1），
@@ -28,6 +29,56 @@ production 参数 train_years=5 / refit QE / 46 季度边界，见 memo §4.5 E1
 
 依据: 11_regime_backtest_validation_plan §4.5 E1 / §5
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: pairs 参数
+#   fields: 参数 pairs，类型注解 Sequence[tuple[float, float]]
+#   code: e1_walkforward_cv.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: improvements 参数
+#   fields: 参数 improvements，类型注解 Sequence[float]
+#   code: e1_walkforward_cv.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: cv_threshold 参数
+#   fields: 参数 cv_threshold，类型注解 float
+#   code: e1_walkforward_cv.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① improvements_from_pairs
+#   name_en: improvements_from_pairs
+#   intro: (dd_baseline, dd_experiment) 窗口对 → MaxDD 改善序列 |dd_base|−|dd…
+#   desc: (dd_baseline, dd_experiment) 窗口对 → MaxDD 改善序列 |dd_base|−|dd_exp|。 统一正/负值两种 MaxDD 存储约定（c1_…；源码 L120-L125
+#   inputs: pairs
+#   outputs: list[float]
+# - id: A2
+#   name_zh: ② compute_improvement_cv
+#   name_en: compute_improvement_cv
+#   intro: E1 主入口：各窗口 MaxDD 改善的变异系数正式统计。
+#   desc: E1 主入口：各窗口 MaxDD 改善的变异系数正式统计。 Args: improvements: 各 walk-forward 窗口的 MaxDD 改善（≥2 窗口）。 cv_…；源码 L128-L172
+#   inputs: improvements cv_threshold
+#   outputs: E1CVReport
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[float]
+#   name_en: list[float]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 人工审查; 11_regime_backtest_validation_plan Phase 4 E1
+# - id: O2
+#   name_zh: E1CVReport
+#   name_en: E1CVReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 人工审查; 11_regime_backtest_validation_plan Phase 4 E1
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

@@ -14,7 +14,8 @@
 # [TESTS] tests/intelligence/test_reflctrl_gate.py
 # [A_module] module_id=MOD-REFLEXION_AGENT | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""ReflCtrl 反思频率闸门（12号文 §3.4/§4.3 P1-1）.
+"""
+ReflCtrl 反思频率闸门（12号文 §3.4/§4.3 P1-1）.
 
 定位：反思触发的前置门卫——想反思必须报上哪条显式规则让你来的，防无闸门反思
 循环把 token 烧光。§3.4 显式规则集全量落地（默认值即源设计参数）：
@@ -32,6 +33,38 @@
 可审计：每次裁决（放行/拒绝）写 reflctrl_decisions.jsonl；token 消耗仅放行计，
 写 reflctrl_token_stats.jsonl，total_estimated_tokens() 可汇总。
 规则可配置：ReflCtrlConfig 注入覆盖全部阈值。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: reflctrl_gate.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: stats_root 参数
+#   fields: 参数 stats_root（无注解）
+#   code: reflctrl_gate.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ReflCtrlGate
+#   name_en: ReflCtrlGate
+#   intro: ReflCtrl 频率闸门：显式规则集裁决 + 全量留痕 + token 统计.
+#   desc: ReflCtrl 频率闸门：显式规则集裁决 + 全量留痕 + token 统计.；公共方法（定义序）: config, decide, total_estimated_tokens；源码 L171-L329
+#   inputs: config stats_root
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: ReflCtrlGate
+#   downstream: tests/intelligence/test_reflctrl_gate.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -117,10 +150,7 @@ class ReflectionRequest:
 
     def __post_init__(self) -> None:
         if self.layer not in VALID_LAYERS:
-            raise ValueError(
-                f"ReflectionRequest.layer 非法取值拒收: {self.layer!r}"
-                f"（合法={sorted(VALID_LAYERS)}）"
-            )
+            raise ValueError(f"ReflectionRequest.layer 非法取值拒收: {self.layer!r}（合法={sorted(VALID_LAYERS)}）")
         if self.requested_level not in VALID_LEVELS:
             raise ValueError(
                 f"ReflectionRequest.requested_level 非法取值拒收: {self.requested_level!r}"
@@ -147,11 +177,7 @@ class ReflCtrlGate:
         stats_root: str | Path | None = None,
     ) -> None:
         self._config = config or ReflCtrlConfig()
-        self._stats_root = (
-            Path(stats_root)
-            if stats_root
-            else MAIN_REPO_ROOT / "data" / "brain" / "reflctrl"
-        )
+        self._stats_root = Path(stats_root) if stats_root else MAIN_REPO_ROOT / "data" / "brain" / "reflctrl"
 
     @property
     def config(self) -> ReflCtrlConfig:
@@ -216,10 +242,7 @@ class ReflCtrlGate:
         if request.risk_param_deviation_pct > cfg.risk_param_deviation_force_pct:
             matched.append(RULE_AGENT_R_RISK_PARAM)
             grant("L1")
-        if (
-            request.regime_transition_prob_pct > cfg.regime_transition_force_pct
-            and not request.regime_triggered
-        ):
+        if request.regime_transition_prob_pct > cfg.regime_transition_force_pct and not request.regime_triggered:
             matched.append(RULE_AGENT_R_REGIME)
             grant("L1")
         # HITL 低置信触发
@@ -241,10 +264,7 @@ class ReflCtrlGate:
             matched.append(RULE_LAYER_STRATEGIC_ALWAYS)
             grant("L1")
         # L2 累积触发（同类任务累积 N 次）
-        if (
-            request.requested_level == "L2"
-            and request.similar_task_count >= cfg.l2_accumulated_n
-        ):
+        if request.requested_level == "L2" and request.similar_task_count >= cfg.l2_accumulated_n:
             matched.append(RULE_L2_ACCUMULATED)
             grant("L2")
         # 决策矩阵：严重偏差 L1+L2（叠加在偏差强制规则上）

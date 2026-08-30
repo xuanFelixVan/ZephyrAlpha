@@ -15,7 +15,35 @@
 # [A_module] module_id=MOD-INF-039 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""金丝雀发布管理器（CT-CANARY）——权重分流+指标对比+自动回滚。"""
+"""
+金丝雀发布管理器（CT-CANARY）——权重分流+指标对比+自动回滚。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: canary_manager.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① CanaryManager
+#   name_en: CanaryManager
+#   intro: class CanaryManager 源码 L49-L71
+#   desc: 公共方法（定义序）: canary_weight, set_weight, should_rollback, promote；源码 L49-L71
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: CanaryManager
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 
 class CanaryManager:

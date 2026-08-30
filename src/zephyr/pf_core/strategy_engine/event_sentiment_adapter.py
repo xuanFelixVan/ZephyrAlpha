@@ -22,7 +22,8 @@
 # created: "2026-08-25"
 # ---
 
-"""D_PORTFOLIO_CORE — 事件策略情绪分 runner 契约适配层（BTRUN §3.1 契约缺口接线）。
+"""
+D_PORTFOLIO_CORE — 事件策略情绪分 runner 契约适配层（BTRUN §3.1 契约缺口接线）。
 
 背景：C1 runner（StrategyRunner）信号契约=合成后标量 ``{symbol: float}``，而
 eventdriven-sleeve 要求富负载 ``{symbol: {"event": ...}}``（BTRUN_report §3.1 实证
@@ -42,6 +43,93 @@ DefaultBacktestEngine.run 之前调用 ``build_event_weight_panel`` 产面板。
     day0_reaction=0.0（分钟级反应负载不喂）
 
 SSoT: BTRUN_report §3.1/§3.3 + D4SENT_report 消费契约 + 26号备忘 §2.5/§2.7
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: trade_date 参数
+#   fields: 参数 trade_date，类型注解 datetime.date | pd.Timestamp
+#   code: event_sentiment_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: rows 参数
+#   fields: 参数 rows，类型注解 Sequence[SentimentRow]
+#   code: event_sentiment_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: event_class 参数
+#   fields: 参数 event_class（无注解）
+#   code: event_sentiment_adapter.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: dates 参数
+#   fields: 参数 dates，类型注解 Sequence[pd.Timestamp]
+#   code: event_sentiment_adapter.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SentimentWindowSource
+#   name_en: SentimentWindowSource
+#   intro: 情绪窗口数据源协议（生产=ClickHouseSentimentWindowSource，测试=fake 注入）。
+#   desc: 情绪窗口数据源协议（生产=ClickHouseSentimentWindowSource，测试=fake 注入）。；公共方法（定义序）: fetch；源码 L175-L178
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② signal_window_date
+#   name_en: signal_window_date
+#   intro: 交易日 T → 其消费的夜间窗 window_date=T-1（自然日，nightly_window 既有口径）。
+#   desc: 交易日 T → 其消费的夜间窗 window_date=T-1（自然日，nightly_window 既有口径）。 PIT 铁律：窗口 [T-1 18:00, T 08:00)…；源码 L181-L193
+#   inputs: trade_date
+#   outputs: datetime.date
+# - id: A3
+#   name_zh: ③ sentiment_to_event_payload
+#   name_en: sentiment_to_event_payload
+#   intro: 情绪行 → eventdriven-sleeve 富负载契约 ``{plain_symbol: {"event": {…
+#   desc: 情绪行 → eventdriven-sleeve 富负载契约 ``{plain_symbol: {"event": {...}}}``。 event 负载键与 EventReco…；源码 L201-L225
+#   inputs: rows event_class
+#   outputs: dict[str, dict[str, Any]]
+# - id: A4
+#   name_zh: ④ ClickHouseSentimentWindowSource
+#   name_en: ClickHouseSentimentWindowSource
+#   intro: SentimentWindowSource 默认实现——c1_market.news_sentiment_window…
+#   desc: SentimentWindowSource 默认实现——c1_market.news_sentiment_window 薄查询。 lazy import ch_reader：纯函…；公共方法（定义序）: fetch,…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ build_event_weight_panel
+#   name_en: build_event_weight_panel
+#   intro: 逐交易日组装事件情绪权重面板（对齐 StrategyRunner._build_weight_panel 输出契约）。
+#   desc: 逐交易日组装事件情绪权重面板（对齐 StrategyRunner._build_weight_panel 输出契约）。 每交易日 T：source.fetch(window_da…；源码 L294-L375
+#   inputs: dates universe source strategy top_n max_single exclude event_class
+#   outputs: pd.DataFrame
+# - id: A6
+#   name_zh: ⑥ EventSentimentAdapter
+#   name_en: EventSentimentAdapter
+#   intro: 事件策略情绪分适配层门面（runner 契约接线位）。
+#   desc: 事件策略情绪分适配层门面（runner 契约接线位）。 持有 source/strategy/参数，一次装配多次产出权重面板；等价于 build_event_weight_pan…；公共方法（定义序）: build_w…
+#   inputs: source strategy top_n max_single event_class
+#   outputs: 返回值
+#   （注：A6 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: datetime.date
+#   name_en: datetime.date
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 事件策略回测跑批（.runtime 施工件）；zephyr.pf_core.strategy_engine（lazy re-export）
+# - id: O2
+#   name_zh: dict[str, dict[str, Any]]
+#   name_en: dict[str, dict[str, Any]]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 事件策略回测跑批（.runtime 施工件）；zephyr.pf_core.strategy_engine（lazy re-export）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
 """
 
 from __future__ import annotations

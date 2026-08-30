@@ -1,3 +1,33 @@
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: path_index.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① PathIndex
+#   name_en: PathIndex
+#   intro: class PathIndex 源码 L55-L60
+#   desc: 公共方法（定义序）: lookup, register；源码 L55-L60
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: PathIndex
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 from typing import Final
 
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md

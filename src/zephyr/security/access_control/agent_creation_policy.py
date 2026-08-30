@@ -14,7 +14,8 @@
 # [TESTS] tests/agent/test_agent_creation_policy.py; tests/agent_rbac/test_enhanced_security.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""AgentCreationPolicy — Agent 创建策略.
+"""
+AgentCreationPolicy — Agent 创建策略.
 
 依据蓝图 MOD-INF-018 §3:
 - 子 agent 的能力数量 <= 父 agent 的能力数量（能力衰减，截断至前3项）
@@ -22,6 +23,33 @@
 - 防止通过创建子 agent 实现权限提升（spawn storm 检测）
 
 治本(2026-07-18): 重写以匹配 tests/agent/test_agent_creation_policy.py 契约.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: agent_creation_policy.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① AgentCreationPolicy
+#   name_en: AgentCreationPolicy
+#   intro: Agent 创建策略 — 能力衰减 + spawn storm 检测控制器.
+#   desc: Agent 创建策略 — 能力衰减 + spawn storm 检测控制器.；公共方法（定义序）: child_counts, record_spawn, get_child_maturity, get_child_c…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: AgentCreationPolicy
+#   downstream: tests/agent_rbac/test_redteam_adversarial.py; tests/agent/test_agent_creation_p…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

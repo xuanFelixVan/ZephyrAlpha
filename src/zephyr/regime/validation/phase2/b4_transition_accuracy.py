@@ -14,7 +14,8 @@
 # [TESTS] tests/regime/phase2/test_b4_transition_accuracy.py
 # [TTL] permanent
 # [ARCH-REF] #12_regime_phase2_validation §2.2 #12_regime_phase2_validation §4.2 B4
-"""B4 转换触发准确性验证器（12_regime_phase2_validation §2.2，Phase 2 第一批 MVP）.
+"""
+B4 转换触发准确性验证器（12_regime_phase2_validation §2.2，Phase 2 第一批 MVP）.
 
 验证问题: HMM 8 转换（T1-T6/S1/S2）触发时点与历史事件吻合吗？
 
@@ -30,6 +31,49 @@
 
 依据: 12_regime_phase2_validation §2.2
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: b4_transition_accuracy.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① B4EventMatch
+#   name_en: B4EventMatch
+#   intro: 单事件匹配结果。
+#   desc: 单事件匹配结果。；公共方法（定义序）: label；源码 L147-L166
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② B4Report
+#   name_en: B4Report
+#   intro: B4 验证报告。
+#   desc: B4 验证报告。；公共方法（定义序）: hit_rate, to_dict；源码 L170-L207
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ B4TransitionAccuracy
+#   name_en: B4TransitionAccuracy
+#   intro: B4 转换触发准确性验证器。
+#   desc: B4 转换触发准确性验证器。 Usage: b4 = B4TransitionAccuracy() events = b4.load_events() # 从默认 YAML #…；公共方法（定义序）: load_eve…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A3 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: B4EventMatch, B4Report, B4TransitionAccuracy
+#   downstream: scripts.tests.run_phase2_validation; phase2_runner; BM-BT-05
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

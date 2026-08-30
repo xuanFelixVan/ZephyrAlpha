@@ -14,7 +14,8 @@
 # [TESTS] tests/position/test_cross_strategy_position_merger.py
 # [A_module] module_id=MOD-POS-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Cross Strategy Position Merger — 跨策略仓位合并器 (MOD-POS-005)
+"""
+Cross Strategy Position Merger — 跨策略仓位合并器 (MOD-POS-005)
 
 宪章 §3 约束二（统一框架派）的仓位层落点：一个策略包含多个子策略，各
 子策略产出自己的目标权重簿（strategy book），本模块把它们按资金占比
@@ -31,6 +32,38 @@
 
 纪律：纯函数、无 IO；权重簿与资金占比由调用方注入。
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: books 参数
+#   fields: 参数 books，类型注解 Mapping[str, Mapping[str, float]]
+#   code: cross_strategy_position_merger.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: allocations 参数
+#   fields: 参数 allocations，类型注解 Mapping[str, float] | None
+#   code: cross_strategy_position_merger.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① merge_strategy_books
+#   name_en: merge_strategy_books
+#   intro: 合并多个子策略目标权重簿为组合级净权重（纯函数）。
+#   desc: 合并多个子策略目标权重簿为组合级净权重（纯函数）。 Args: books: {strategy_id: {symbol: 目标权重}}（各簿相对自身账本归一） allocati…；源码 L117-L190
+#   inputs: books allocations
+#   outputs: MergedPositionBook
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: MergedPositionBook
+#   name_en: MergedPositionBook
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: D-PORTFOLIO(组合权重层) ; MOD-POS rebalance_engine
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

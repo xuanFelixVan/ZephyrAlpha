@@ -14,9 +14,62 @@
 # [TESTS] scripts/connect/orc_ce.py --trigger
 # [A_module] module_id=MOD-INF-039 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Orc->CE 上下文桥接 — request_context() 生产者
+"""
+Orc->CE 上下文桥接 — request_context() 生产者
 
 CT-ORC-CE-001: 任务启动时向 Context Engine 请求构建执行上下文。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: task 参数
+#   fields: 参数 task，类型注解 object
+#   code: context_bridge.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: task_type 参数
+#   fields: 参数 task_type（无注解）
+#   code: context_bridge.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: session_id 参数
+#   fields: 参数 session_id（无注解）
+#   code: context_bridge.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ContextResponse
+#   name_en: ContextResponse
+#   intro: class ContextResponse 源码 L89-L114
+#   desc: 公共方法（定义序）: to_dict；源码 L89-L114
+#   inputs: task_id blocks total_tokens status build_stages error
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② ContextBridge
+#   name_en: ContextBridge
+#   intro: class ContextBridge 源码 L117-L161
+#   desc: 公共方法（定义序）: request_context；源码 L117-L161
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ request_context
+#   name_en: request_context
+#   intro: request_context(task, task_type, session_id) 源码 L190-L191
+#   desc: 源码 L190-L191
+#   inputs: task task_type session_id
+#   outputs: ContextResponse
+# 层: 输出
+# - id: O1
+#   name_zh: ContextResponse
+#   name_en: ContextResponse
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.orchestrator.agent_orchestrator; zephyr.orchestrator.work_orchestrator
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

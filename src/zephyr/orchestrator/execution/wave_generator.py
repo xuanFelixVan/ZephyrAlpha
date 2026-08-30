@@ -30,6 +30,33 @@ Wave 定义
 ---------
 同一 Wave 内的任务无互相依赖，可并行执行。
 Wave 编号从 0 开始，Wave 0 = 无前置依赖的任务。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: db_path 参数
+#   fields: 参数 db_path（无注解）
+#   code: wave_generator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① WaveGenerator
+#   name_en: WaveGenerator
+#   intro: 根据 Task 依赖图生成执行 Wave。
+#   desc: 根据 Task 依赖图生成执行 Wave。 拓扑排序算法：Kahn's algorithm，O(V+E)。；公共方法（定义序）: generate_waves, get_next_wave, wave_status；源…
+#   inputs: db_path
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: WaveGenerator
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

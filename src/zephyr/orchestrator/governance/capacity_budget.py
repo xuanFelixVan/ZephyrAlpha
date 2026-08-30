@@ -25,6 +25,33 @@
 1. max_concurrent_tasks: 硬上限，超限任务自动 QUEUED
 2. WIP Limit: 每系统独立线程池容量预算
 3. 任务完成 -> 从 QUEUED 队首出队
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: max_concurrent_tasks 参数
+#   fields: 参数 max_concurrent_tasks（无注解）
+#   code: capacity_budget.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CapacityBudgetController
+#   name_en: CapacityBudgetController
+#   intro: class CapacityBudgetController 源码 L113-L199
+#   desc: 公共方法（定义序）: budget, state, max_concurrent, can_accept, try_accept, release, get_queue_position, get_pool_quota…
+#   inputs: max_concurrent_tasks
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: CapacityBudgetController
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

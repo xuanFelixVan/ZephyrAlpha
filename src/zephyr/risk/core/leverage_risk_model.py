@@ -24,7 +24,8 @@
 # A1: assess_leverage_position(聚合快照+四级风险分级SAFE/WARNING/CRITICAL/LIQUIDATED)
 # O1: LeverageRiskSnapshot
 # [/ALGO_FLOW]
-"""D_RISK — 杠杆风控模型（CAND-CRYPTO-008，94 号 memo §4.4 杠杆与资金费率）。
+"""
+D_RISK — 杠杆风控模型（CAND-CRYPTO-008，94 号 memo §4.4 杠杆与资金费率）。
 
 Phase 2 永续合约交易的仓位与风控扩展：现货风控体系不覆盖杠杆维度，
 杠杆持仓无爆仓价/维持保证金模型 = 实盘必爆（registry problem_it_solves）。
@@ -47,6 +48,93 @@ Phase 2 永续合约交易的仓位与风控扩展：现货风控体系不覆盖
 时间口径：资金费率按结算期数（8h/期）计，无墙钟依赖。
 SSoT: candidate_module_registry CAND-CRYPTO-008 + 94 号 §4.4
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: position_notional 参数
+#   fields: 参数 position_notional，类型注解 float
+#   code: leverage_risk_model.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: tiers 参数
+#   fields: 参数 tiers，类型注解 Sequence[MaintenanceMarginTier]
+#   code: leverage_risk_model.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: entry_price 参数
+#   fields: 参数 entry_price，类型注解 float
+#   code: leverage_risk_model.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: leverage 参数
+#   fields: 参数 leverage，类型注解 float
+#   code: leverage_risk_model.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① get_maintenance_margin_rate
+#   name_en: get_maintenance_margin_rate
+#   intro: 按交易所阶梯规则取维持保证金率：名义价值落档，返回该档 mmr。
+#   desc: 按交易所阶梯规则取维持保证金率：名义价值落档，返回该档 mmr。 Args: position_notional: 持仓名义价值（>0） tiers: 阶梯配置（默认 DEFAU…；源码 L263-L296
+#   inputs: position_notional tiers
+#   outputs: float
+# - id: A2
+#   name_zh: ② calculate_liquidation_price
+#   name_en: calculate_liquidation_price
+#   intro: 爆仓价（逐仓口径，不计手续费）。
+#   desc: 爆仓价（逐仓口径，不计手续费）。 多头: liq = entry * (1 - 1/leverage + mmr) 空头: liq = entry * (1 + 1/levera…；源码 L299-L313
+#   inputs: entry_price leverage maintenance_margin_rate side
+#   outputs: float
+# - id: A3
+#   name_zh: ③ calculate_funding_cost
+#   name_en: calculate_funding_cost
+#   intro: 资金费率持仓成本 = notional * funding_rate * holding_periods。
+#   desc: 资金费率持仓成本 = notional * funding_rate * holding_periods。 正费率：多头付（成本为正）、空头收（成本为负=净收入）；负费率反之。…；源码 L316-L338
+#   inputs: position_notional funding_rate holding_periods side
+#   outputs: float
+# - id: A4
+#   name_zh: ④ calculate_margin_ratio
+#   name_en: calculate_margin_ratio
+#   intro: margin ratio = 维持保证金 / 保证金余额（>=1 触发爆仓）。
+#   desc: margin ratio = 维持保证金 / 保证金余额（>=1 触发爆仓）。 维持保证金 = position_notional * maintenance_margin_ra…；源码 L341-L364
+#   inputs: margin_balance position_notional maintenance_margin_rate
+#   outputs: float
+# - id: A5
+#   name_zh: ⑤ calculate_distance_to_liquidation
+#   name_en: calculate_distance_to_liquidation
+#   intro: 标记价到爆仓价的相对距离（以标记价为基准，正值=安全）。
+#   desc: 标记价到爆仓价的相对距离（以标记价为基准，正值=安全）。 多头: (mark - liq) / mark；空头: (liq - mark) / mark。 负值表示标记价已越过爆…；源码 L367-L389
+#   inputs: mark_price liquidation_price side
+#   outputs: float
+# - id: A6
+#   name_zh: ⑥ assess_leverage_position
+#   name_en: assess_leverage_position
+#   intro: 聚合评估杠杆持仓：爆仓价/维持保证金率/资金费率成本/风险指标快照。
+#   desc: 聚合评估杠杆持仓：爆仓价/维持保证金率/资金费率成本/风险指标快照。 风险分级（margin_ratio = 维持保证金/保证金余额）： >= 1.0 → LIQUIDATED（…；源码 L392-L449
+#   inputs: side entry_price mark_price leverage position_notional margin_balance…
+#   outputs: LeverageRiskSnapshot
+#   （注：A6 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 风控否决链(晋升后接线,C-047裁决链)
+# - id: O2
+#   name_zh: LeverageRiskSnapshot
+#   name_en: LeverageRiskSnapshot
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 风控否决链(晋升后接线,C-047裁决链)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
 """
 
 from __future__ import annotations
@@ -325,9 +413,7 @@ def assess_leverage_position(
     liq = calculate_liquidation_price(entry_price, leverage, mmr, side)
     margin_ratio = calculate_margin_ratio(margin_balance, position_notional, mmr)
     distance = calculate_distance_to_liquidation(mark_price, liq, side)
-    funding_cost = calculate_funding_cost(
-        position_notional, funding_rate, holding_periods, side
-    )
+    funding_cost = calculate_funding_cost(position_notional, funding_rate, holding_periods, side)
 
     if margin_ratio >= 1.0:
         risk_level = "LIQUIDATED"

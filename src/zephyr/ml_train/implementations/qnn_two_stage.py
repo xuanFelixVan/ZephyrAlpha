@@ -59,7 +59,8 @@
 # A3 --> A4
 # A4 --> O1
 
-"""A2 分位数神经网络两阶段架构 (MOD-ML-010, B10-01408 ★当前即做)。
+"""
+A2 分位数神经网络两阶段架构 (MOD-ML-010, B10-01408 ★当前即做)。
 
 Stage1 跨标的共性分位数网络 (市场共性剥离、跨标的复用) +
 Stage2 市场缩放头 (per-symbol 仿射缩放, 体制切换时几分钟级快速重训)。
@@ -74,6 +75,33 @@ Stage2 市场缩放头 (per-symbol 仿射缩放, 体制切换时几分钟级快�
 依据: construction_backlog_dig.tsv B10-01408 + CAND-MLT-014
 SSoT: docs/03_modules/_domain_machine_learning_train/qnn_two_stage/blueprint.md
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: qnn_two_stage.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① TwoStageQnn
+#   name_en: TwoStageQnn
+#   intro: 两阶段分位数神经网络训练器 (UBS Quant Hub 2025)。
+#   desc: 两阶段分位数神经网络训练器 (UBS Quant Hub 2025)。 Stage1: 共性基座分位数网络 (跨标的复用)。 Stage2: per-symbol 仿射缩放头 (…；公共方法（定义序）: train,…
+#   inputs: config
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: TwoStageQnn
+#   downstream: MOD-ML-DENSITY(密度头消费) ; D_REGIME(体制标签Stage2扩展)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -147,9 +175,7 @@ class TwoStageQnn(ModelTrainerBase):
 
         x, y, symbol_ids = self._unpack_features(features, target)
         if len(x) < self.config.min_train_samples:
-            raise TwoStageQnnError(
-                f"样本不足: n={len(x)} < min={self.config.min_train_samples}"
-            )
+            raise TwoStageQnnError(f"样本不足: n={len(x)} < min={self.config.min_train_samples}")
 
         self._feature_names = [str(n) for n in features.get("feature_names", [])]
 
@@ -313,9 +339,7 @@ class TwoStageQnn(ModelTrainerBase):
         b = y_mean - a * x_mean
         return a, b
 
-    def _unpack_features(
-        self, features: dict[str, Any], target: object
-    ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    def _unpack_features(self, features: dict[str, Any], target: object) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         if "X" not in features:
             raise TwoStageQnnError("features['X'] 缺失")
         if "symbol_ids" not in features:

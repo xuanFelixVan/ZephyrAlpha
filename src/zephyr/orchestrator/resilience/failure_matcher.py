@@ -28,6 +28,41 @@ Usage:
     from zephyr.orchestrator.resilience.failure_matcher import FailurePatternMatcher
     matcher = FailurePatternMatcher()
     matcher.activate()
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: failure_matcher.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FailurePatternMatcher
+#   name_en: FailurePatternMatcher
+#   intro: 失败模式匹配器——分析 FAILED 事件并生成诊断报告。
+#   desc: 失败模式匹配器——分析 FAILED 事件并生成诊断报告。；公共方法（定义序）: active, activate, deactivate, analyze, diagnoses, clear_diagnoses；源码…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② FailureMatcher
+#   name_en: FailureMatcher
+#   intro: 错误文本分类器——按预定义模式将错误归类到 ``FailureCategory``。
+#   desc: 错误文本分类器——按预定义模式将错误归类到 ``FailureCategory``。 Public API: - ``match(error)``: 分类一段错误文本，返回 ``…；公共方法（定义序）: match,…
+#   inputs: config
+#   outputs: 返回值
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: FailurePatternMatcher, FailureMatcher
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

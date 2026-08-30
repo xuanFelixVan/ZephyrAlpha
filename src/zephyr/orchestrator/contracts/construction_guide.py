@@ -25,6 +25,33 @@
 1. Phase A->D 每个 CT-* 的 mock 实现策略（stub/partial/full）
 2. 禁止未完成 Phase 0 context check 进入后续 Phase
 3. Mock 模式：开发环境使用 cheap_fast 模型、低 token 预算、跳过飞书通知
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: mode 参数
+#   fields: 参数 mode（无注解）
+#   code: construction_guide.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ConstructionGuide
+#   name_en: ConstructionGuide
+#   intro: class ConstructionGuide 源码 L139-L154
+#   desc: 公共方法（定义序）: config, get_mock_strategy, require_phase0_context_check, is_dev_mode；源码 L139-L154
+#   inputs: mode
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: ConstructionGuide
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

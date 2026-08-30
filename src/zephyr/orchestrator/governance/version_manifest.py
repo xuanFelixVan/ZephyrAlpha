@@ -1,3 +1,33 @@
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: version_manifest.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① VersionManifest
+#   name_en: VersionManifest
+#   intro: class VersionManifest 源码 L69-L77
+#   desc: 公共方法（定义序）: get_version, get_path, list_systems；源码 L69-L77
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: VersionManifest
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 from typing import Final
 
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md

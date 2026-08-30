@@ -14,7 +14,8 @@
 # [TESTS] tests/position/test_correlation_regime_monitor.py
 # [A_module] module_id=MOD-POS-012 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Correlation Regime Monitor — 相关性 regime 监控 (MOD-POS-012)
+"""
+Correlation Regime Monitor — 相关性 regime 监控 (MOD-POS-012)
 
 宪章 §1.3 能力⑤自适应风控的"相关性监控"落点：监控组合持仓标的间的平均
 成对相关，划分三档 regime：
@@ -29,6 +30,43 @@
 
 纪律：纯函数、无 IO；数据校验委托 MOD-POS-011（Fail-Closed 透传）。
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: returns 参数
+#   fields: 参数 returns，类型注解 Mapping[str, Sequence[float]]
+#   code: correlation_regime_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: low_threshold 参数
+#   fields: 参数 low_threshold（无注解）
+#   code: correlation_regime_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: high_threshold 参数
+#   fields: 参数 high_threshold（无注解）
+#   code: correlation_regime_monitor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① assess_correlation_regime
+#   name_en: assess_correlation_regime
+#   intro: 评估组合相关性 regime（纯函数）。
+#   desc: 评估组合相关性 regime（纯函数）。 Args: returns: {symbol: 收益率序列}（前置条件同 MOD-POS-011） low_threshold: LOW…；源码 L144-L217
+#   inputs: returns low_threshold high_threshold
+#   outputs: CorrelationRegimeReport
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: CorrelationRegimeReport
+#   name_en: CorrelationRegimeReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-POS-013(风险预算分配器) ; D_RISK(自适应风控⑤相关性监控)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -96,9 +134,7 @@ class CorrelationRegimeReport:
 def _validate_thresholds(low_threshold: float, high_threshold: float) -> None:
     for name, v in (("low_threshold", low_threshold), ("high_threshold", high_threshold)):
         if not math.isfinite(v) or v < 0.0 or v > 1.0:
-            raise InvalidCorrelationRegimeInputError(
-                f"{name} 非法（须为 [0,1] 有限值），got {v}"
-            )
+            raise InvalidCorrelationRegimeInputError(f"{name} 非法（须为 [0,1] 有限值），got {v}")
     if low_threshold >= high_threshold:
         raise InvalidCorrelationRegimeInputError(
             f"low_threshold 须严格小于 high_threshold，got {low_threshold} >= {high_threshold}"

@@ -14,7 +14,8 @@
 # [TESTS] tests/risk/core/test_risk_data_pipeline.py
 # [A_module] module_id=MOD-RK-25 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Risk Data Pipeline — 风控数据底座 (MOD-RK-25)
+"""
+Risk Data Pipeline — 风控数据底座 (MOD-RK-25)
 
 汇总行情 / 持仓 / 成交 / 限额为统一风控快照 (RiskSnapshot)，供下游消费：
   - MOD-RK-22 AgentRiskMonitor（agent 风险监控）
@@ -31,6 +32,73 @@
 Fail-Closed 语义：
   - 持仓快照不可得 → 抛 RiskDataPipelineError（无持仓真源不出快照，防止空仓错觉）
   - 行情/限额/成交部分缺失 → degraded=True + data_warnings 留痕，缺价持仓不静默补零
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: snapshot_input 参数
+#   fields: 参数 snapshot_input，类型注解 RiskSnapshotInput
+#   code: risk_data_pipeline.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① PositionProvider
+#   name_en: PositionProvider
+#   intro: 持仓真源协议（生产接线: ex_core PositionTracker / OMS）。
+#   desc: 持仓真源协议（生产接线: ex_core PositionTracker / OMS）。；公共方法（定义序）: get_position_snapshot；源码 L148-L153
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② MarketDataProvider
+#   name_en: MarketDataProvider
+#   intro: 行情真源协议（生产接线: D_DATA 数据层查询接口）。
+#   desc: 行情真源协议（生产接线: D_DATA 数据层查询接口）。；公共方法（定义序）: get_latest_quotes；源码 L156-L161
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ FillProvider
+#   name_en: FillProvider
+#   intro: 成交真源协议（生产接线: ex_core 成交回报/审计日志）。
+#   desc: 成交真源协议（生产接线: ex_core 成交回报/审计日志）。；公共方法（定义序）: get_fills_since；源码 L164-L169
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ RiskLimitsProvider
+#   name_en: RiskLimitsProvider
+#   intro: 限额真源协议（生产接线: D_RISK 限额计算引擎）。
+#   desc: 限额真源协议（生产接线: D_RISK 限额计算引擎）。；公共方法（定义序）: get_current_limits；源码 L172-L177
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ assemble_risk_snapshot
+#   name_en: assemble_risk_snapshot
+#   intro: 装配统一风控快照（纯函数：同输入必同输出，可独立单测）。
+#   desc: 装配统一风控快照（纯函数：同输入必同输出，可独立单测）。 不变量： - nav = cash + Σ(可得市价的持仓市值)；nav <= 0 → RiskDataPipeline…；源码 L268-L374
+#   inputs: snapshot_input
+#   outputs: RiskSnapshot
+# - id: A6
+#   name_zh: ⑥ RiskDataPipeline
+#   name_en: RiskDataPipeline
+#   intro: 风控数据管道：从注入的数据真源拉取并装配 RiskSnapshot。
+#   desc: 风控数据管道：从注入的数据真源拉取并装配 RiskSnapshot。；公共方法（定义序）: build_snapshot；源码 L382-L455
+#   inputs: position_provider market_data_provider fill_provider limits_provider
+#   outputs: 返回值
+#   （注：A6 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: RiskSnapshot
+#   name_en: RiskSnapshot
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-RK-22(Agent Risk Monitor) ; MOD-RK-24(Risk Veto Engine) ; MOD-EX-024(Pre-Ex…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> O1
 """
 
 from __future__ import annotations
@@ -88,9 +156,7 @@ class PositionProvider(Protocol):
 class MarketDataProvider(Protocol):
     """行情真源协议（生产接线: D_DATA 数据层查询接口）。"""
 
-    def get_latest_quotes(
-        self, symbols: Sequence[str]
-    ) -> Mapping[str, NormalizedMarketData]:
+    def get_latest_quotes(self, symbols: Sequence[str]) -> Mapping[str, NormalizedMarketData]:
         """返回指定标的的最新行情（CTR-001），缺失标的可不出现在结果中。"""
         ...
 
@@ -180,9 +246,7 @@ class RiskSnapshotInput:
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-def _summarize_fills(
-    fills: Iterable[Fill], *, window_start: datetime, window_end: datetime
-) -> FillsWindowSummary:
+def _summarize_fills(fills: Iterable[Fill], *, window_start: datetime, window_end: datetime) -> FillsWindowSummary:
     fill_list = list(fills)
     total_notional = Decimal("0")
     total_commission = Decimal("0")
@@ -230,9 +294,7 @@ def assemble_risk_snapshot(snapshot_input: RiskSnapshotInput) -> RiskSnapshot:
             continue
         quote = quotes.get(symbol)
         sellable = (
-            snapshot_input.sellable_quantities.get(symbol)
-            if snapshot_input.sellable_quantities is not None
-            else None
+            snapshot_input.sellable_quantities.get(symbol) if snapshot_input.sellable_quantities is not None else None
         )
         if quote is None:
             missing.append(symbol)
@@ -277,9 +339,7 @@ def assemble_risk_snapshot(snapshot_input: RiskSnapshotInput) -> RiskSnapshot:
     # 权重二次派生（nav 确定后回填，保持视图 frozen 语义：重建替换）
     finalized_views: list[PositionRiskView] = []
     for view in views:
-        weight = (
-            float(view.market_value / nav) if view.market_value is not None else None
-        )
+        weight = float(view.market_value / nav) if view.market_value is not None else None
         finalized_views.append(
             PositionRiskView(
                 symbol=view.symbol,
@@ -294,9 +354,7 @@ def assemble_risk_snapshot(snapshot_input: RiskSnapshotInput) -> RiskSnapshot:
 
     as_of = snapshot_input.as_of
     window_start = as_of.replace(hour=0, minute=0, second=0, microsecond=0)
-    degraded = bool(missing) or snapshot_input.limits is None or bool(
-        snapshot_input.initial_warnings
-    )
+    degraded = bool(missing) or snapshot_input.limits is None or bool(snapshot_input.initial_warnings)
 
     return RiskSnapshot(
         snapshot_id=snapshot_input.snapshot_id or f"rs-{uuid.uuid4().hex[:12]}",
@@ -307,9 +365,7 @@ def assemble_risk_snapshot(snapshot_input: RiskSnapshotInput) -> RiskSnapshot:
         total_market_value=total_market_value,
         gross_leverage=float(total_market_value / nav),
         positions=tuple(finalized_views),
-        fills_summary=_summarize_fills(
-            snapshot_input.fills, window_start=window_start, window_end=as_of
-        ),
+        fills_summary=_summarize_fills(snapshot_input.fills, window_start=window_start, window_end=as_of),
         limits=snapshot_input.limits,
         missing_price_symbols=tuple(missing),
         suspended_held_symbols=tuple(suspended_held),
@@ -361,9 +417,7 @@ class RiskDataPipeline:
                 details={"provider_error": str(exc)},
             ) from exc
 
-        held_symbols = [
-            s for s, q in sorted(position_snapshot.holdings.items()) if q > 0
-        ]
+        held_symbols = [s for s, q in sorted(position_snapshot.holdings.items()) if q > 0]
         quotes: Mapping[str, NormalizedMarketData]
         try:
             quotes = self._market_data_provider.get_latest_quotes(held_symbols)

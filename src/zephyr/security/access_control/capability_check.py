@@ -14,7 +14,8 @@
 # [TESTS]
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Agent capability scope verification — 拒绝受限能力声明、空能力声明及能力数量超限。
+"""
+Agent capability scope verification — 拒绝受限能力声明、空能力声明及能力数量超限。
 
 治本（2026-07-18）：原模块为 stub（verify_capability_scope raise NotImplementedError），
 现根据 tests/capability/test_capability_check.py 及
@@ -32,6 +33,32 @@ tests/governance/security/test_adversarial_contract_attacks.py 的契约定义�
 返回值：dict[str, Any]
   - approved=True 时含 "agent_id" (str) 和 "capabilities" (list[str])
   - approved=False 时含 "reason" (str)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: cap 参数
+#   fields: 参数 cap，类型注解 'AgentCapability'
+#   code: capability_check.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① verify_capability_scope
+#   name_en: verify_capability_scope
+#   intro: 验证 agent 声明的 capability 集合是否在合法范围内。
+#   desc: 验证 agent 声明的 capability 集合是否在合法范围内。 Args: cap: AgentCapability 实例，含 agent_id (str) 和 capa…；源码 L84-L128
+#   inputs: cap
+#   outputs: dict[str, Any]
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, Any]
+#   name_en: dict[str, Any]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests.governance.test_adversarial_contract_attacks ; tests.governance.test_gct_…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from typing import TYPE_CHECKING, Any, Final

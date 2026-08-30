@@ -14,7 +14,8 @@
 # [TESTS] tests/regime/phase2/test_phase2_runner.py
 # [TTL] permanent
 # [ARCH-REF] #12_regime_phase2_validation §4 #12_regime_phase2_validation §6
-"""Phase 2 模型质量验证编排器（12_regime_phase2_validation §4）.
+"""
+Phase 2 模型质量验证编排器（12_regime_phase2_validation §4）.
 
 复用 C1 真实模式管线（取数+特征+walk-forward refit），但自行执行 detect 以收集
 A1/B4 所需中间产物（_last_transitions / Viterbi 状态序列）。
@@ -26,6 +27,41 @@ A1/B4 所需中间产物（_last_transitions / Viterbi 状态序列）。
 
 依据: 12_regime_phase2_validation §4
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: hmm_params 参数
+#   fields: 参数 hmm_params（无注解）
+#   code: phase2_runner.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① Phase2Report
+#   name_en: Phase2Report
+#   intro: Phase 2 综合报告。
+#   desc: Phase 2 综合报告。；公共方法（定义序）: to_dict；源码 L125-L145
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② Phase2Runner
+#   name_en: Phase2Runner
+#   intro: Phase 2 编排器：串 A1 → B4 → A2 → B1 → 综合报告.
+#   desc: Phase 2 编排器：串 A1 → B4 → A2 → B1 → 综合报告. Usage（real 模式，复用 C1 真实模式 builder 配置）: builder = R…；公共方法（定义序）: run；源码…
+#   inputs: hmm_params
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: Phase2Report, Phase2Runner
+#   downstream: scripts.tests.run_phase2_validation; BM-BT-05
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

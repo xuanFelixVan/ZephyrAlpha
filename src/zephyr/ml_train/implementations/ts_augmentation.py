@@ -14,7 +14,8 @@
 # [TESTS] tests/ml_train/implementations/test_ts_augmentation.py
 # [A_module] module_id=MOD-ML-015 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""TsAugmentor — 金融时序数据增强库（MOD-ML-015）。
+"""
+TsAugmentor — 金融时序数据增强库（MOD-ML-015）。
 
 B1-00639（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-MLT-019，C2 95；canonical
 承接 MLT-023/026 归并）：**轻量五法**——时间扭曲（ε∈[-0.3,0.3]）/ 幅度
@@ -27,6 +28,38 @@ GAN/VAE 不建（蓝图 §0 明确排除）。
 查重分工（蓝图 §0）：scenario_generator=情景路径生成（本件=训练样本轻量
 增强，不生成宏观情景）；training_dataset_manager=样本集管理（本件仅产
 增强样本与混入裁决）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: rng 参数
+#   fields: 参数 rng（无注解）
+#   code: ts_augmentation.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: ks_tester 参数
+#   fields: 参数 ks_tester（无注解）
+#   code: ts_augmentation.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① TsAugmentor
+#   name_en: TsAugmentor
+#   intro: 金融时序轻量增强器（五法 + KS 质量门 + 混入硬约束）。
+#   desc: 金融时序轻量增强器（五法 + KS 质量门 + 混入硬约束）。；公共方法（定义序）: time_warp, amplitude_scale, slice_mix, jitter, permutation, mix_ba…
+#   inputs: rng ks_tester
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: TsAugmentor
+#   downstream: 运行时装配批（训练集增强混入统一注入点装配）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -50,9 +83,15 @@ __all__: Final = [
 ]
 
 #: 增强方法词表（闭合）
-AUGMENT_METHODS: Final[frozenset[str]] = frozenset({
-    "time_warp", "amplitude_scale", "slice_mix", "jitter", "permutation",
-})
+AUGMENT_METHODS: Final[frozenset[str]] = frozenset(
+    {
+        "time_warp",
+        "amplitude_scale",
+        "slice_mix",
+        "jitter",
+        "permutation",
+    }
+)
 #: 增强样本训练权重（硬约束 0.5）
 SYNTHETIC_TRAIN_WEIGHT: Final[float] = 0.5
 #: 增强样本混入比例上限（硬约束 ≤30%）
@@ -168,9 +207,7 @@ class TsAugmentor:
         if len(a) != len(b):
             raise TsAugmentError(f"长度不齐: len(a)={len(a)} != len(b)={len(b)}")
         if cut_index not in set(int(p) for p in switch_points):
-            raise TsAugmentError(
-                f"拼接点 {cut_index} 非市场状态切换点（合法: {sorted(set(switch_points))}）"
-            )
+            raise TsAugmentError(f"拼接点 {cut_index} 非市场状态切换点（合法: {sorted(set(switch_points))}）")
         if not 0 < cut_index < len(a):
             raise TsAugmentError(f"拼接点越界: {cut_index}（须 ∈(0,{len(a)})）")
         out = np.concatenate([a[:cut_index], b[cut_index:]])
@@ -191,9 +228,7 @@ class TsAugmentor:
         """Permutation：等长分段乱序（随机源注入）。"""
         arr = self._as_array(series)
         if not 2 <= n_segments <= len(arr):
-            raise TsAugmentError(
-                f"n_segments 越界: {n_segments}（须 ∈[2,{len(arr)}]）"
-            )
+            raise TsAugmentError(f"n_segments 越界: {n_segments}（须 ∈[2,{len(arr)}]）")
         segments = [seg for seg in np.array_split(arr, n_segments)]
         order = list(range(n_segments))
         self._rng.shuffle(order)
@@ -217,13 +252,9 @@ class TsAugmentor:
             if not sample.synthetic:
                 raise TsAugmentError("增强样本须 synthetic=True 标注")
             if sample.train_weight != SYNTHETIC_TRAIN_WEIGHT:
-                raise TsAugmentError(
-                    f"增强样本训练权重须为 {SYNTHETIC_TRAIN_WEIGHT}，实得 {sample.train_weight}"
-                )
+                raise TsAugmentError(f"增强样本训练权重须为 {SYNTHETIC_TRAIN_WEIGHT}，实得 {sample.train_weight}")
         ratio = n_aug / total
         if ratio > MAX_MIX_RATIO:
-            raise TsAugmentError(
-                f"混入比例超限: {ratio:.4f} > {MAX_MIX_RATIO}（{n_aug}/{total}，硬约束）"
-            )
+            raise TsAugmentError(f"混入比例超限: {ratio:.4f} > {MAX_MIX_RATIO}（{n_aug}/{total}，硬约束）")
         _log.info("混入批: orig=%d aug=%d ratio=%.4f", n_orig, n_aug, ratio)
         return list(originals) + list(augmented)

@@ -20,7 +20,8 @@
 # F2: check_liquidation_timeout(elapsed>30s且残余非空→LiquidationTimeoutAlert人工介入; 否则None)
 # O1: CancelRatePrecheck(rate+warning+blocked+remaining_budget) / LiquidationTimeoutAlert|None
 # [/ALGO_FLOW]
-"""D_RISK — Kill Switch 全清执行守卫（35 号 memo §6.14 施工，§3.5.1 A 股 2026 新规适配）。
+"""
+D_RISK — Kill Switch 全清执行守卫（35 号 memo §6.14 施工，§3.5.1 A 股 2026 新规适配）。
 
 痛点（§6.14 P0）：15 笔/秒分片平仓已施工（v1.39.0），剩余两项未落——
 ① 撤单率预检：Kill Switch 触发后大量撤单可能撞单日撤单率 15% 新规红线；
@@ -38,6 +39,61 @@ buffer；30 秒未全清即告警人工介入"）：
 
 时间口径：单调节拍秒（time.monotonic 对），测试可注入，无墙钟依赖。
 SSoT: 35_drawdown_protocol_impl §3.5.1 + §6.14
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: cancelled_count 参数
+#   fields: 参数 cancelled_count，类型注解 int
+#   code: drawdown_liquidation_guard.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: total_order_count 参数
+#   fields: 参数 total_order_count，类型注解 int
+#   code: drawdown_liquidation_guard.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: warn_threshold 参数
+#   fields: 参数 warn_threshold（无注解）
+#   code: drawdown_liquidation_guard.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: hard_limit 参数
+#   fields: 参数 hard_limit（无注解）
+#   code: drawdown_liquidation_guard.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① check_cancel_rate
+#   name_en: check_cancel_rate
+#   intro: 撤单率预检（撤挂单前调用）：超 12% 预警留 3% buffer，超 15% 禁止续撤。
+#   desc: 撤单率预检（撤挂单前调用）：超 12% 预警留 3% buffer，超 15% 禁止续撤。 Args: cancelled_count: 当日已撤单笔数（≥0） total_or…；源码 L168-L221
+#   inputs: cancelled_count total_order_count warn_threshold hard_limit
+#   outputs: CancelRatePrecheck
+# - id: A2
+#   name_zh: ② check_liquidation_timeout
+#   name_en: check_liquidation_timeout
+#   intro: 全清超时告警（全清轮询守卫）：残余非空且超时 → 告警人工介入。
+#   desc: 全清超时告警（全清轮询守卫）：残余非空且超时 → 告警人工介入。 Args: started_monotonic: 全清开始节拍（time.monotonic 秒） now_mo…；源码 L224-L269
+#   inputs: started_monotonic now_monotonic remaining_positions timeout_seconds
+#   outputs: LiquidationTimeoutAlert | None
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: CancelRatePrecheck
+#   name_en: CancelRatePrecheck
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: stop_loss.execute_kill_switch_liquidation调用方(撤单前预检/全清轮询超时); RiskOrchestrator(§6…
+# - id: O2
+#   name_zh: LiquidationTimeoutAlert | None
+#   name_en: LiquidationTimeoutAlert | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: stop_loss.execute_kill_switch_liquidation调用方(撤单前预检/全清轮询超时); RiskOrchestrator(§6…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

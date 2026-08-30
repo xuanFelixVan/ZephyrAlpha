@@ -15,13 +15,49 @@
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
-"""KillSwitch — 熔断器.
+"""
+KillSwitch — 熔断器.
 
 依据蓝图 MOD-INF-018 §kill_switch:
 - 系统级熔断器，在严重故障时触发
 - 默认状态为 NORMAL
 - 触发后进入 TRIPPED 状态，需要手动重置
 - 支持单Agent阻断和全局熔断
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: kill_switch.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① KillSwitch
+#   name_en: KillSwitch
+#   intro: 熔断器 — 系统级安全制动.
+#   desc: 熔断器 — 系统级安全制动. 在检测到严重故障时触发，阻止系统继续运行。 支持单Agent阻断和全局熔断两级机制。；公共方法（定义序）: status, state, trigger_count, triggers,…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② get_kill_switch
+#   name_en: get_kill_switch
+#   intro: 获取KillSwitch单例.
+#   desc: 获取KillSwitch单例.；源码 L349-L354
+#   inputs: 无参数
+#   outputs: KillSwitch
+#   （注：A2 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: KillSwitch
+#   name_en: KillSwitch
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests/agent_rbac/test_kill_switch_agent_rbac.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

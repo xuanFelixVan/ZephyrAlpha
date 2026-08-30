@@ -14,12 +14,40 @@
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py; tests/agent_rbac/test_forensic_a.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""NonRepudiation — 不可抵赖性审计签名.
+"""
+NonRepudiation — 不可抵赖性审计签名.
 
 依据蓝图 MOD-INF-018 §3:
 - 对 agent 操作进行 HMAC 签名，确保审计日志不可抵赖
 - sign() 生成带 hmac_hash 的 AuditEntry
 - verify() 校验签名完整性
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: secret 参数
+#   fields: 参数 secret（无注解）
+#   code: non_repudiation.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① NonRepudiation
+#   name_en: NonRepudiation
+#   intro: 不可抵赖性签名器.
+#   desc: 不可抵赖性签名器.；公共方法（定义序）: sign, verify；源码 L87-L137
+#   inputs: secret
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: NonRepudiation
+#   downstream: tests/agent_rbac/test_redteam_adversarial.py; tests/agent_rbac/test_forensic_a.…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -63,7 +91,7 @@ class NonRepudiation:
         self._secret = secret or "zephyr-non-repudiation-default-secret"
 
     def _build_payload(self, operation: str, agent_id: str, timestamp: float, data: str) -> bytes:
-        return f"{operation}|{agent_id}|{timestamp:.6f}|{data}".encode("utf-8")
+        return f"{operation}|{agent_id}|{timestamp:.6f}|{data}".encode()
 
     def sign(self, operation: str, agent_id: str, data: str = "") -> AuditEntry:
         """签名操作，返回带 hmac_hash 的 AuditEntry."""

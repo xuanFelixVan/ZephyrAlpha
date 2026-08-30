@@ -18,7 +18,8 @@
 # F1: check_bankruptcy_floor(floor=initial×0.85; nav<floor→Breach(含breach_pct=距底线深度); 否则None)
 # O1: BankruptcyFloorBreach(floor+breach_pct+reason)或None → Kill Switch 第5类触发源(§3.5表新增行)
 # [/ALGO_FLOW]
-"""D_RISK — Static 模式破产底线 Kill Switch 触发源（35 号 memo §6.15 施工，§4.10 部分采纳）。
+"""
+D_RISK — Static 模式破产底线 Kill Switch 触发源（35 号 memo §6.15 施工，§4.10 部分采纳）。
 
 痛点（§6.15 P1）：trailing 25% Kill Switch 锚定 peak NAV——大幅盈利后
 底线仍远高于初始本金（如本金 100w 盈利到 300w，trailing 底线 225w，
@@ -35,6 +36,43 @@ Kill Switch 触发源（§3.5 触发条件表新增"组合净值 < 初始本金 
     只判定不发单（对齐 stop_loss 单向交接）。
 
 SSoT: 35_drawdown_protocol_impl §4.10（部分采纳）+ §6.15
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: current_nav 参数
+#   fields: 参数 current_nav，类型注解 float
+#   code: drawdown_bankruptcy_floor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: initial_capital 参数
+#   fields: 参数 initial_capital，类型注解 float
+#   code: drawdown_bankruptcy_floor.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: config 参数
+#   fields: 参数 config，类型注解 BankruptcyFloorConfig | None
+#   code: drawdown_bankruptcy_floor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① check_bankruptcy_floor
+#   name_en: check_bankruptcy_floor
+#   intro: Static 破产底线检测：nav < 初始本金 × 0.85 → 击穿（Kill Switch 触发源）。
+#   desc: Static 破产底线检测：nav < 初始本金 × 0.85 → 击穿（Kill Switch 触发源）。 Args: current_nav: 当前组合净值（须 >= 0；N…；源码 L137-L178
+#   inputs: current_nav initial_capital config
+#   outputs: BankruptcyFloorBreach | None
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: BankruptcyFloorBreach | None
+#   name_en: BankruptcyFloorBreach | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: RiskOrchestrator(§6.5 接线位); §3.5 Kill Switch 触发条件表第5类触发源(取最严OR)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

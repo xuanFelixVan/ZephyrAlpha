@@ -19,7 +19,8 @@
 # A1: evaluate_crps(模型均值 CRPS vs climatology CRPS → skill=1−model/clim → model<clim 判定)
 # O1: B2CRPSReport(crps_model/crps_climatology/skill/passed)
 # [/ALGO_FLOW]
-"""D_REGIME — B2 CRPS 概率预测技能（11 号 memo §4.2 B2）。
+"""
+D_REGIME — B2 CRPS 概率预测技能（11 号 memo §4.2 B2）。
 
 纯分析函数：消费既有逐日状态概率分布（7 维：4 HMM 基态 + 3 overlay）与
 事后实际主导态，计算离散 CRPS（Cumulative Ranked Probability Score 的
@@ -28,6 +29,61 @@ CRPS_model < CRPS_climatology → 概率分布比「永远预测平均频率」�
 
 依据: 11_regime_backtest_validation_plan §4.2 B2 / §5
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: probs 参数
+#   fields: 参数 probs，类型注解 Sequence[float]
+#   code: b2_crps.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: outcome 参数
+#   fields: 参数 outcome，类型注解 int
+#   code: b2_crps.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: prob_matrix 参数
+#   fields: 参数 prob_matrix，类型注解 np.ndarray
+#   code: b2_crps.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: outcomes 参数
+#   fields: 参数 outcomes，类型注解 Sequence[int]
+#   code: b2_crps.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① crps_categorical
+#   name_en: crps_categorical
+#   intro: 单点离散 CRPS：Σ_k (CDF_k − 1{outcome ≤ k})²。
+#   desc: 单点离散 CRPS：Σ_k (CDF_k − 1{outcome ≤ k})²。 Args: probs: (K,) 状态概率分布（非负、和≈1）。 outcome: 实际状态索…；源码 L126-L147
+#   inputs: probs outcome
+#   outputs: float
+# - id: A2
+#   name_zh: ② evaluate_crps
+#   name_en: evaluate_crps
+#   intro: B2 主入口：模型 CRPS vs climatology 基准。
+#   desc: B2 主入口：模型 CRPS vs climatology 基准。 Args: prob_matrix: (T, K) 逐日状态概率分布。 outcomes: (T,) 事后实际…；源码 L150-L193
+#   inputs: prob_matrix outcomes
+#   outputs: B2CRPSReport
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 人工审查; 11_regime_backtest_validation_plan B2 概率预测技能(BM-BT-03-E)
+# - id: O2
+#   name_zh: B2CRPSReport
+#   name_en: B2CRPSReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 人工审查; 11_regime_backtest_validation_plan B2 概率预测技能(BM-BT-03-E)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

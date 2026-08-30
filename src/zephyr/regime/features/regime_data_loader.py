@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-REGIME-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #10_regime_detector_spec §5.3 #MOD-REGIME-002 #Phase2c
-"""Phase 2c 新数据源加载层（MOD-REGIME-002 Phase 2c）。
+"""
+Phase 2c 新数据源加载层（MOD-REGIME-002 Phase 2c）。
 
 为 4 个 T3 stub 维度（money_effect/mainline/leader/one_day_mainline）、#8 siphon、
 合成 VIX、多分时共振提供 ClickHouse 数据加载。经 RegimeFeatureBuilder 透传 + 缓存，
@@ -39,6 +40,63 @@
 
 依据: 10_regime_detector_spec v1.3.1 §5.3 / Phase 2c 计划 §核心架构
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: tsv 参数
+#   fields: 参数 tsv，类型注解 str
+#   code: regime_data_loader.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: ncols 参数
+#   fields: 参数 ncols，类型注解 int
+#   code: regime_data_loader.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: v 参数
+#   fields: 参数 v，类型注解 Any
+#   code: regime_data_loader.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① parse_tsv
+#   name_en: parse_tsv
+#   intro: 把 ch_reader.query 返回的 TSV 字符串解析成行列表。
+#   desc: 把 ch_reader.query 返回的 TSV 字符串解析成行列表。 公共工具函数——regime 包内 ``regime_feature_builder`` 等模块统一 i…；源码 L196-L214
+#   inputs: tsv ncols
+#   outputs: list[list[str]]
+# - id: A2
+#   name_zh: ② safe_float
+#   name_en: safe_float
+#   intro: NaN/None 安全转 float（NaN→0.0，避免阈值比较误判）。
+#   desc: NaN/None 安全转 float（NaN→0.0，避免阈值比较误判）。 公共工具函数——regime 包内 ``regime_feature_builder`` 等模块统一…；源码 L217-L229
+#   inputs: v
+#   outputs: float
+# - id: A3
+#   name_zh: ③ RegimeDataLoader
+#   name_en: RegimeDataLoader
+#   intro: Phase 2c 新数据源加载层。
+#   desc: Phase 2c 新数据源加载层。 Usage（由 RegimeFeatureBuilder 注入，透传给构造器）:: loader = RegimeDataLoader( da…；公共方法（定义序）: load_mo…
+#   inputs: data_load_start backtest_end registry
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: list[list[str]]
+#   name_en: list[list[str]]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-REGIME-002(RegimeFeatureBuilder透传→risk/overlay构造器消费)
+# - id: O2
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-REGIME-002(RegimeFeatureBuilder透传→risk/overlay构造器消费)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

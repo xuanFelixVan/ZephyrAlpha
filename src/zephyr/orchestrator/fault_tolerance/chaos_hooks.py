@@ -15,7 +15,49 @@
 # [A_module] module_id=MOD-INF-039 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""ChaosHook — integrates ChaosEngine with the orchestrator execution loop."""
+"""
+ChaosHook — integrates ChaosEngine with the orchestrator execution loop.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: engine 参数
+#   fields: 参数 engine（无注解）
+#   code: chaos_hooks.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: registry 参数
+#   fields: 参数 registry（无注解）
+#   code: chaos_hooks.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ChaosHookPolicy
+#   name_en: ChaosHookPolicy
+#   intro: class ChaosHookPolicy 源码 L91-L106
+#   desc: 公共方法（定义序）: add_step_fault；源码 L91-L106
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② ChaosHook
+#   name_en: ChaosHook
+#   intro: class ChaosHook 源码 L116-L198
+#   desc: 公共方法（定义序）: configure, pre_step_hook, post_step_hook, get_engine；源码 L116-L198
+#   inputs: engine registry
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: ChaosHookPolicy, ChaosHook
+#   downstream: zephyr.orchestrator.core.agent_orchestrator
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
 
 from __future__ import annotations
 

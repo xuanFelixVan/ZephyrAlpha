@@ -21,7 +21,8 @@
 # F2: lppl_blowoff_score（多窗口拟合 → 五维评分映射：m/ω 经验区间 +20/+20，tc 中位≤20 日 +25，有效窗口占比>50% +15，tc 标准差<20 日 +10）
 # O1: LPPLResult（score 0-90 + m/ω/tc 中位 + valid_window_ratio + degraded）
 # [/ALGO_FLOW]
-"""LPPL 赶顶检测（10_regime_detector_spec §4.8.1，T4 疯狂期）。
+"""
+LPPL 赶顶检测（10_regime_detector_spec §4.8.1，T4 疯狂期）。
 
 LPPL（Log-Periodic Power Law，Johansen & Sornette 学术源头，国金宏观 2026-06-14
 实证 KOSPI/SOX）检测泡沫的超指数加速 + 对数周期震荡结构：
@@ -47,6 +48,48 @@ np.linalg.lstsq 直接解；网格搜索 (tc, m, ω) 取 SSE 最小。网格边�
 RSI 极端/MACD 背离/斜率加速等，§4.8.2）；接入 T4 评分链需经配置评审。
 
 依据: 10_regime_detector_spec §4.8.1
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: close 参数
+#   fields: 参数 close，类型注解 pd.Series
+#   code: lppl_detector.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: windows 参数
+#   fields: 参数 windows，类型注解 tuple[int, ...]
+#   code: lppl_detector.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: m_range 参数
+#   fields: 参数 m_range，类型注解 tuple[float, float]
+#   code: lppl_detector.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: omega_range 参数
+#   fields: 参数 omega_range，类型注解 tuple[float, float]
+#   code: lppl_detector.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① lppl_blowoff_score
+#   name_en: lppl_blowoff_score
+#   intro: LPPL 赶顶检测评分（10 号 §4.8.1 五维映射）。
+#   desc: LPPL 赶顶检测评分（10 号 §4.8.1 五维映射）。 Args: close: 价格序列（index=日期；取末段各窗口拟合，须全为正价格）。 windows: 拟合窗口…；源码 L169-L232
+#   inputs: close windows m_range omega_range tc_max_ahead tc_proximity_days tc_s…
+#   outputs: LPPLResult
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: LPPLResult
+#   name_en: LPPLResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: T4 疯狂期赶顶评估（独立函数，未接入 TRANSITION_CONFIG；T4 已有多维信号兜底）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-ML-DENSITY | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""D_ML_TRAIN — GAP-F-34 密度预测主路线 MVP（ML-DENSITY-001 轻量密度头）。
+"""
+D_ML_TRAIN — GAP-F-34 密度预测主路线 MVP（ML-DENSITY-001 轻量密度头）。
 
 91 号主路线候选一：轻量密度头。lightgbm 不在项目依赖（2026-08-23 核查 pip show
 lightgbm 无结果、pyproject 无声明），按派单降级为 sklearn
@@ -26,6 +27,33 @@ lightgbm 无结果、pyproject 无声明），按派单降级为 sklearn
 注册表）→ ``predict_quantiles`` 分位数序列接口供 GAP-F-01 情景概率分布消费。
 
 红线：全部产物 testing 封顶，任何参数/模型禁止生效实盘（B-009）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: density_quantile_trainer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DensityQuantileTrainer
+#   name_en: DensityQuantileTrainer
+#   intro: 轻量密度头训练器（GAP-F-34 MVP）。
+#   desc: 轻量密度头训练器（GAP-F-34 MVP）。 继承 ``ModelTrainerBase``（OCP 扩展点 D_ML_TRAIN-TRN）： - ``train()``: 每…；公共方法（定义序）: train,…
+#   inputs: config
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: DensityQuantileTrainer
+#   downstream: GAP-F-01 情景概率分布模型（W2 矩阵概率输入）；MOD-ML-001 training_pipeline
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -88,9 +116,7 @@ def _pinball_loss(y: np.ndarray, pred: np.ndarray, quantile: float) -> float:
     return float(np.mean(np.maximum(quantile * diff, (quantile - 1.0) * diff)))
 
 
-def _focused_sample_weights(
-    y: np.ndarray, var_quantile: float, left_tail_weight: float
-) -> np.ndarray:
+def _focused_sample_weights(y: np.ndarray, var_quantile: float, left_tail_weight: float) -> np.ndarray:
     """A1 聚焦贝叶斯损失左尾权重：w(r)=left_tail_weight (r<VaR)，否则 1.0。
 
     Duke/Monash 2024：对 VaR_5% 以左样本加倍权重，直接改善尾部校准。
@@ -146,9 +172,7 @@ class DensityQuantileTrainer(ModelTrainerBase):
         if len(x) != len(y):
             raise DensityTrainError(f"特征/目标长度不齐: X={len(x)} y={len(y)}")
         if len(x) < self.config.min_train_samples:
-            raise DensityTrainError(
-                f"样本不足: n={len(x)} < min_train_samples={self.config.min_train_samples}"
-            )
+            raise DensityTrainError(f"样本不足: n={len(x)} < min_train_samples={self.config.min_train_samples}")
 
         self._feature_names = [str(n) for n in features.get("feature_names", [])]
         sample_w = (

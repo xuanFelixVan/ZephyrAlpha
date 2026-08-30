@@ -23,7 +23,8 @@
 # F3: s2_flush_flag(N日新低+收盘回前日区间+下影>50%+量>2x均量 四合取 → 0/1)
 # O1: 滞回状态 Series{0,1} / EVR 评分 Series[0,100] / flush flag Series{0,1}
 # [/ALGO_FLOW]
-"""S2 演进方向小型组（14_regime_s2_diagnosis §4.6 #3/#5/#6，P2+ 函数级落地）。
+"""
+S2 演进方向小型组（14_regime_s2_diagnosis §4.6 #3/#5/#6，P2+ 函数级落地）。
 
 三个 2026 研究发现的更优算法，纯 OHLCV 可算、无需新数据管道：
 
@@ -48,6 +49,63 @@
 TRANSITION_CONFIG 评审（防过拟合铁律：禁止为跑分而加维度）。
 
 依据: 14_regime_s2_diagnosis v0.5.2 §4.6
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: signal 参数
+#   fields: 参数 signal，类型注解 pd.Series
+#   code: evolution_signals.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: enter 参数
+#   fields: 参数 enter，类型注解 float
+#   code: evolution_signals.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: exit 参数
+#   fields: 参数 exit，类型注解 float
+#   code: evolution_signals.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: open 参数
+#   fields: 参数 open，类型注解 pd.Series
+#   code: evolution_signals.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① hysteresis_edge_trigger
+#   name_en: hysteresis_edge_trigger
+#   intro: 滞回边沿触发器（14 号 §4.6 #3，arXiv:2606.19386）→ 状态 Series {0.0, 1.0…
+#   desc: 滞回边沿触发器（14 号 §4.6 #3，arXiv:2606.19386）→ 状态 Series {0.0, 1.0}。 双阈值状态机：signal >= enter 进入（置…；源码 L125-L156
+#   inputs: signal enter exit
+#   outputs: pd.Series
+# - id: A2
+#   name_zh: ② s2_evr_score
+#   name_en: s2_evr_score
+#   intro: S2 EVR 量价背离评分 → 0-100（14 号 §4.6 #5，四分量取 max）。
+#   desc: S2 EVR 量价背离评分 → 0-100（14 号 §4.6 #5，四分量取 max）。 分量（分值为信号强度，对齐 S2 维度 0-100 口径）： - **EVR 核心（6…；源码 L159-L223
+#   inputs: open high low close volume vol_window vol_mult body_pct
+#   outputs: pd.Series
+# - id: A3
+#   name_zh: ③ s2_flush_flag
+#   name_en: s2_flush_flag
+#   intro: S2 flush 桥接信号 → {0.0, 1.0}（14 号 §4.6 #6，TradingSim 2026-05）。
+#   desc: S2 flush 桥接信号 → {0.0, 1.0}（14 号 §4.6 #6，TradingSim 2026-05）。 flush = capitulation 末端最终暴跌（…；源码 L226-L253
+#   inputs: open high low close volume window vol_window vol_mult
+#   outputs: pd.Series
+# 层: 输出
+# - id: O1
+#   name_zh: pd.Series
+#   name_en: pd.Series
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 演进方向评估（未接入生产调用链，见模块 docstring 范围声明）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

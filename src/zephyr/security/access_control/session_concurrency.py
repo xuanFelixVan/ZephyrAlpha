@@ -14,7 +14,8 @@
 # [TESTS] tests/test_session_concurrency.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Session 级并发协调模块（P2-SES 落地）。
+"""
+Session 级并发协调模块（P2-SES 落地）。
 
 从 Stub 落地为真实的 session 级协调：
 1. SessionRegistry：注册活跃 session（PID + session_id + start_time + 持有文件锁）
@@ -28,6 +29,86 @@
 - 不替代 lock_files.py（文件级锁），而是在其上增加 session 级注册
 - 不替代 F23 AgentOrchestrator（任务级），而是补齐 session 级空缺
 - 存储用 JSON 文件（非 SQLite，避免并发写锁）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: path 参数
+#   fields: 参数 path，类型注解 str
+#   code: session_concurrency.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: last_read_mtime 参数
+#   fields: 参数 last_read_mtime，类型注解 float
+#   code: session_concurrency.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ZephyrLock
+#   name_en: ZephyrLock
+#   intro: class ZephyrLock 源码 L166-L181
+#   desc: 公共方法（定义序）: acquire, release, is_active；源码 L166-L181
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② ConcurrencyManager
+#   name_en: ConcurrencyManager
+#   intro: class ConcurrencyManager 源码 L185-L208
+#   desc: 公共方法（定义序）: check_conflict, pre_allocate, resolve_conflict；源码 L185-L208
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ detect_mtime_conflict
+#   name_en: detect_mtime_conflict
+#   intro: detect_mtime_conflict(path, last_read_mtime) 源码 L211-L216
+#   desc: 源码 L211-L216
+#   inputs: path last_read_mtime
+#   outputs: bool
+# - id: A4
+#   name_zh: ④ SessionInfo
+#   name_en: SessionInfo
+#   intro: 活跃 session 注册信息。
+#   desc: 活跃 session 注册信息。；公共方法（定义序）: to_dict, from_dict；源码 L264-L309
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A5
+#   name_zh: ⑤ SessionRegistry
+#   name_en: SessionRegistry
+#   intro: Session 级注册表（P2-SES）。
+#   desc: Session 级注册表（P2-SES）。 存储在 .runtime/session_registry.json（原子写入：tmp + os.replace）。 TTL=3600…；公共方法（定义序）: save, l…
+#   inputs: project_root
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ SessionHandoff
+#   name_en: SessionHandoff
+#   intro: Session 结束时写 handoff package（P2-SES）。
+#   desc: Session 结束时写 handoff package（P2-SES）。 对标 drift_detector/blueprint.md §6.14 Cross-Session…；公共方法（定义序）: write_ha…
+#   inputs: project_root
+#   outputs: 返回值
+# - id: A7
+#   name_zh: ⑦ SessionConflictDetector
+#   name_en: SessionConflictDetector
+#   intro: 检测多 session 操作同一文件（P2-SES）。
+#   desc: 检测多 session 操作同一文件（P2-SES）。 基于 SessionRegistry + ConcurrencyManager 检测跨 session 文件冲突。 检测到…；公共方法（定义序）: check_f…
+#   inputs: registry
+#   outputs: 返回值
+#   （注：A7 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway ; zephyr.gov_enforcement.…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> O1
 """
 
 from __future__ import annotations
@@ -213,7 +294,7 @@ class SessionInfo:
         }
 
     @classmethod
-    def from_dict(cls, d: dict) -> "SessionInfo":
+    def from_dict(cls, d: dict) -> SessionInfo:
         return cls(
             session_id=d.get("session_id", ""),
             pid=d.get("pid", 0),

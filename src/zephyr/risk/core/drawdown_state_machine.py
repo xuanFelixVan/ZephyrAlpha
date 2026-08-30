@@ -24,7 +24,8 @@
 # A2: 持久化(每次转换/日推进后原子写快照; load_or_none启动恢复, None=冷启动默认NORMAL)
 # O1: StateTransition(from/to/reason/trade_date)或None + position_cap/recovery_factor/defensive_only查询面
 # [/ALGO_FLOW]
-"""D_RISK — 回撤持久化状态机（35 号 memo §6.6 施工，§3.11 状态机 + §3.20 hysteresis 落地）。
+"""
+D_RISK — 回撤持久化状态机（35 号 memo §6.6 施工，§3.11 状态机 + §3.20 hysteresis 落地）。
 
 痛点（§3.11 代码差距）：
   1. DrawdownController 无状态持久化——级别每次重算，无"上一态"记忆，重启即丢。
@@ -49,6 +50,48 @@
 计时约定：调用方每交易日盘前/盘后各至多调用一次 evaluate(trade_date=...)；
 trade_date 前进才计一个交易日（同日重复调用幂等，不重复计日/不重复入史）。
 SSoT: 35_drawdown_protocol_impl §3.11/§3.14/§3.20/§6.6
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: state_store 参数
+#   fields: 参数 state_store（无注解）
+#   code: drawdown_state_machine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: drawdown_state_machine.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: state_namespace 参数
+#   fields: 参数 state_namespace（无注解）
+#   code: drawdown_state_machine.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: reset_namespace 参数
+#   fields: 参数 reset_namespace（无注解）
+#   code: drawdown_state_machine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DrawdownStateMachine
+#   name_en: DrawdownStateMachine
+#   intro: 回撤持久化状态机——§3.11 转换守卫 + §3.20 hysteresis + §3.14 复位守卫。
+#   desc: 回撤持久化状态机——§3.11 转换守卫 + §3.20 hysteresis + §3.14 复位守卫。 用法: sm = DrawdownStateMachine(store…；公共方法（定义序）: current…
+#   inputs: state_store config state_namespace reset_namespace
+#   outputs: 返回值
+#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（8 定义）
+#   name_en: public defs
+#   intro: DrawdownStateMachine
+#   downstream: zephyr.risk.core.drawdown_session_persistence; RiskOrchestrator(§6.5 接线位)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

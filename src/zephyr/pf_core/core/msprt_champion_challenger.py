@@ -15,9 +15,7 @@
 # [A_module] module_id=MOD-PF-008 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-r"""
-
-
+"""
 mSPRT Champion-Challenger — 序贯晋升统计组件 (MOD-PF-008)
 
 61 号 design memo §3.3 纪律 1 施工（BM-MT-02 Champion-Challenger 晋升通道统计内核）。
@@ -49,6 +47,56 @@ ExecutionReport 契约（BM-REC-02-B）建成前 delta 为合成/外部计算源
 依据: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/61_lifecycle_multi_ai.md §3.3
 SSoT: depgraph MOD-PF-008
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: alpha 参数
+#   fields: 参数 alpha（无注解）
+#   code: msprt_champion_challenger.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: tau 参数
+#   fields: 参数 tau（无注解）
+#   code: msprt_champion_challenger.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: historical_effects 参数
+#   fields: 参数 historical_effects（无注解）
+#   code: msprt_champion_challenger.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: window_size 参数
+#   fields: 参数 window_size（无注解）
+#   code: msprt_champion_challenger.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ChampionChallengerDeltaExtractor
+#   name_en: ChampionChallengerDeltaExtractor
+#   intro: delta 提取契约接口——ExecutionReport 对接位（BM-REC-02-B 阻塞，不实现）。
+#   desc: delta 提取契约接口——ExecutionReport 对接位（BM-REC-02-B 阻塞，不实现）。 未来由 champion/challenger 配对的 Execut…；公共方法（定义序）: extract…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② MSPRTChampionChallenger
+#   name_en: MSPRTChampionChallenger
+#   intro: mSPRT Champion-Challenger 序贯晋升（Johari et al. 2022 高斯 mixtur…
+#   desc: mSPRT Champion-Challenger 序贯晋升（Johari et al. 2022 高斯 mixture 闭式解）。 alpha: Type I 错误率上限（SR…；公共方法（定义序）: calibra…
+#   inputs: alpha tau historical_effects window_size
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: ChampionChallengerDeltaExtractor, MSPRTChampionChallenger
+#   downstream: 晋升编排层(未建,BM-MT-02 通道统计内核)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

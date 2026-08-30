@@ -15,11 +15,38 @@
 # [A_module] module_id=MOD-ML-CLS2 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""D_ML_TRAIN — GAP-F-35 席位形态分类器骨架（ML-CLS-002）。
+"""
+D_ML_TRAIN — GAP-F-35 席位形态分类器骨架（ML-CLS-002）。
 
 model_registry 既有候选条目 ML-CLS-002（席位上榜组合→次日溢价概率，
 LightGBM/规则混合架构；前提：JOB-076 龙虎榜管道 + 3 个月数据积累）。
 本模块只落训练管线骨架 + 数据接口位，train() 恒抛 ZA-MLT-0003 禁真训练。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: seat_pattern_classifier.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SeatPatternClassifierSkeleton
+#   name_en: SeatPatternClassifierSkeleton
+#   intro: 席位形态分类器骨架（禁真训练）。
+#   desc: 席位形态分类器骨架（禁真训练）。 数据接口：``features["X"]`` 为 dict[str, array-like]，键必须覆盖 ``SEAT_FEATURES``；`…；公共方法（定义序）: check_f…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SeatPatternClassifierSkeleton
+#   downstream: MOD-ML-001 training_pipeline（编排位预留）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

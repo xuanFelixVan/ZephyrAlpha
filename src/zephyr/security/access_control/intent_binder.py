@@ -14,11 +14,39 @@
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""IntentBinder — 意图绑定与漂移检测.
+"""
+IntentBinder — 意图绑定与漂移检测.
 
 依据蓝图 MOD-INF-018 §3:
 - 声明 agent 对文件的任务意图与预期操作集
 - 检测实际操作是否偏离声明意图（IBAC 横切面）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: intent_binder.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① IntentBinder
+#   name_en: IntentBinder
+#   intro: 意图绑定器 — 管理声明意图与漂移检测.
+#   desc: 意图绑定器 — 管理声明意图与漂移检测.；公共方法（定义序）: declare, verify, close, get_active_intent, record_actual, check_drift；源码 L79-…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: IntentBinder
+#   downstream: tests/agent_rbac/test_redteam_adversarial.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

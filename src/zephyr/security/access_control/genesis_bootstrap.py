@@ -15,12 +15,56 @@
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
-"""GenesisBootstrap — RBAC系统启动引导器.
+"""
+GenesisBootstrap — RBAC系统启动引导器.
 
 依据蓝图 MOD-INF-018 §genesis:
 - 5阶段启动序列: COLD_START_LOCK -> IMMUTABLE_CORE -> KILL_SWITCH -> ENGINE_DEGRADATION -> BOOTSTRAP_SUPERADMIN
 - 单例模式，确保全局唯一启动入口
 - 幂等性: 重复调用不会重复启动
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: genesis_bootstrap.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① GenesisState
+#   name_en: GenesisState
+#   intro: RBAC启动状态.
+#   desc: RBAC启动状态.；公共方法（定义序）: bootstrapped, is_ready, progress；源码 L107-L136
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② GenesisBootstrap
+#   name_en: GenesisBootstrap
+#   intro: RBAC系统启动引导器 — 单例.
+#   desc: RBAC系统启动引导器 — 单例. 5阶段启动序列: 1. COLD_START_LOCK — 冷启动锁检查 2. IMMUTABLE_CORE — 不可变核心验证 3. KIL…；公共方法（定义序）: state,…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ get_genesis_bootstrap
+#   name_en: get_genesis_bootstrap
+#   intro: 获取GenesisBootstrap单例.
+#   desc: 获取GenesisBootstrap单例.；源码 L346-L348
+#   inputs: 无参数
+#   outputs: GenesisBootstrap
+#   （注：A3 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: GenesisBootstrap
+#   name_en: GenesisBootstrap
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: N/A (all consumers verified as phantom — stale references removed)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

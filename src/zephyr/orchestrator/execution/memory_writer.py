@@ -14,7 +14,49 @@
 # [TESTS] scripts/connect/orc_vms.py --trigger
 # [A_module] module_id=MOD-INF-039 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Orc->VMS 记忆写入器"""
+"""
+Orc->VMS 记忆写入器
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: task 参数
+#   fields: 参数 task，类型注解 object
+#   code: memory_writer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: result 参数
+#   fields: 参数 result，类型注解 dict[str, Any] | None
+#   code: memory_writer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① MemoryWriter
+#   name_en: MemoryWriter
+#   intro: class MemoryWriter 源码 L78-L98
+#   desc: 公共方法（定义序）: archive_to_vms；源码 L78-L98
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② archive_to_vms
+#   name_en: archive_to_vms
+#   intro: archive_to_vms(task, result) 源码 L101-L102
+#   desc: 源码 L101-L102
+#   inputs: task result
+#   outputs: ArchiveResult
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ArchiveResult
+#   name_en: ArchiveResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.orchestrator.work_orchestrator
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
 
 import logging
 from dataclasses import dataclass

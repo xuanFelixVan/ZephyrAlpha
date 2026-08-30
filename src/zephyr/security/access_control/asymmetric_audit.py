@@ -14,12 +14,39 @@
 # [TESTS]
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""AsymmetricAudit - quorum-based approval for high-risk operations.
+"""
+AsymmetricAudit - quorum-based approval for high-risk operations.
 
 治本(2026-07-19): 实现 require_quorum/approve 以匹配 tests/agent_rbac/test_forensic_a.py 契约.
 - require_quorum(operation, required_approvers): 登记操作所需 quorum
 - approve(operation, approver): 累计不同 approver, 达到 quorum 时 approved=True
 - duplicate approver 被拒绝(approved=False)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: asymmetric_audit.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① AsymmetricAudit
+#   name_en: AsymmetricAudit
+#   intro: class AsymmetricAudit 源码 L57-L82
+#   desc: 公共方法（定义序）: require_quorum, approve；源码 L57-L82
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: AsymmetricAudit
+#   downstream: tests.agent_rbac.test_forensic_a
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -21,7 +21,8 @@
 # A2: 相对变化 |均值−基线均值|/|基线均值| <30% 判定(§4.4 D 类稳健门槛)
 # O1: D1GridReport(基线均值 + 逐网格点统计 + max_rel_change + passed)
 # [/ALGO_FLOW]
-"""D_REGIME — D1 ConfidenceSignal 四档阈值 ±20% 敏感性网格（11 号 memo §0.5.7 D1）。
+"""
+D_REGIME — D1 ConfidenceSignal 四档阈值 ±20% 敏感性网格（11 号 memo §0.5.7 D1）。
 
 纯分析函数：不重跑回测，只把既有 walk-forward 产物（逐日 max(P) 序列）在
 扰动后的四档映射下重放，统计置信序列均值与各档占比的变化，按 §4.4 D 类门槛
@@ -33,6 +34,61 @@
 
 依据: 11_regime_backtest_validation_plan §0.5.7 D1 / §4.4
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: max_p 参数
+#   fields: 参数 max_p，类型注解 float
+#   code: d1_confidence_grid.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: bands 参数
+#   fields: 参数 bands，类型注解 tuple[tuple[float, float], ...]
+#   code: d1_confidence_grid.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: max_p_values 参数
+#   fields: 参数 max_p_values，类型注解 Sequence[float]
+#   code: d1_confidence_grid.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: pct 参数
+#   fields: 参数 pct，类型注解 float
+#   code: d1_confidence_grid.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① apply_confidence_bands
+#   name_en: apply_confidence_bands
+#   intro: 单点 max(P) → base_confidence（从高到低取首个 max(P)≥下界 的档）。
+#   desc: 单点 max(P) → base_confidence（从高到低取首个 max(P)≥下界 的档）。；源码 L149-L154
+#   inputs: max_p bands
+#   outputs: float
+# - id: A2
+#   name_zh: ② run_d1_threshold_grid
+#   name_en: run_d1_threshold_grid
+#   intro: D1 主入口：四档下界 ±20% 全网格敏感性。
+#   desc: D1 主入口：四档下界 ±20% 全网格敏感性。 三档非零下界各取 {×(1−pct), ×1, ×(1+pct)} 共 27 组合；扰动后档界非严格 降序或越出 (0,1] 的…；源码 L167-L252
+#   inputs: max_p_values bands pct tolerance
+#   outputs: D1GridReport
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 人工审查; 11_regime_backtest_validation_plan Phase 3 D1
+# - id: O2
+#   name_zh: D1GridReport
+#   name_en: D1GridReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 人工审查; 11_regime_backtest_validation_plan Phase 3 D1
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

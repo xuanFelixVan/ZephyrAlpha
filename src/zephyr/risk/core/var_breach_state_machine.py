@@ -23,7 +23,6 @@
 # O1: VarBreachState + position_cap_multiplier(×1.0/×0.8/×0.9) → drawdown_controller.evaluate 乘性折扣
 # [/ALGO_FLOW]
 """
-
 VaR Breach State Machine — VaR breach 恢复/复位状态机 (36号 §3.15)
 
 与 35号 DrawdownStateMachine 正交: 回撤状态机是账户级净值回撤驱动(已发生事实),
@@ -48,6 +47,54 @@ consecutive_days_below_recovery, last_transition); §3.18 盘后 save(), §3.19 
 
 SSoT: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/36_var_es_monitoring.md §3.15
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: var_breach_state_machine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: snapshot 参数
+#   fields: 参数 snapshot（无注解）
+#   code: var_breach_state_machine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① VarBreachConfig
+#   name_en: VarBreachConfig
+#   intro: VaR breach 状态机配置 (C 类可调参数, §3.15 参数表)。
+#   desc: VaR breach 状态机配置 (C 类可调参数, §3.15 参数表)。 Attributes: breach_threshold: 进入 BREACHED 的 VaR 阈值…；公共方法（定义序）: recover…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② VarBreachStateSnapshot
+#   name_en: VarBreachStateSnapshot
+#   intro: VaR breach 状态跨重启快照 (§3.15 D3)。
+#   desc: VaR breach 状态跨重启快照 (§3.15 D3)。 Attributes: state: 当前状态 breach_date: 最近进入 BREACHED 的日期 (IS…；公共方法（定义序）: to_dict…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ VarBreachStateMachine
+#   name_en: VarBreachStateMachine
+#   intro: VaR breach 恢复/复位状态机 (36号 §3.15)。
+#   desc: VaR breach 恢复/复位状态机 (36号 §3.15)。 用法:: machine = VarBreachStateMachine() # 冷启动 NORMAL mach…；公共方法（定义序）: config,…
+#   inputs: config snapshot
+#   outputs: 返回值
+#   （注：A3 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: VarBreachConfig, VarBreachStateSnapshot, VarBreachStateMachine
+#   downstream: MOD-POS-008(DrawdownController.evaluate var_breach_state 乘性折扣); RiskLayerOrches…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations
@@ -162,7 +209,7 @@ class VarBreachStateSnapshot:
         }
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "VarBreachStateSnapshot":
+    def from_dict(cls, data: dict[str, Any]) -> VarBreachStateSnapshot:
         """从持久化字典恢复; 语义畸形 → StateCorruptError (消费方 fail-closed)。"""
         try:
             state = VarBreachState(str(data["state"]))
@@ -311,7 +358,7 @@ class VarBreachStateMachine:
         store: Any,
         config: VarBreachConfig | None = None,
         namespace: str = VAR_BREACH_STATE_NAMESPACE,
-    ) -> "VarBreachStateMachine":
+    ) -> VarBreachStateMachine:
         """盘前加载 (§3.19 阶段 1)。
 
         无快照 → 冷启动默认 NORMAL (§3.15: 不假设上次在 BREACHED);

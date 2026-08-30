@@ -14,7 +14,8 @@
 # [TESTS] tests/position/test_covariance_estimator.py
 # [A_module] module_id=MOD-POS-011 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Covariance Estimator — Ledoit-Wolf 收缩协方差估计器 (MOD-POS-011)
+"""
+Covariance Estimator — Ledoit-Wolf 收缩协方差估计器 (MOD-POS-011)
 
 风险预算/相关性监控的公共估计底座。小样本（T 有限、N 标的）下样本协方差
 病态，Ledoit-Wolf 收缩是标准做法：以等方差对角阵 μI 为收缩目标，按数据
@@ -32,6 +33,41 @@
 依据: Ledoit & Wolf (2004) "A well-conditioned estimator for
 large-dimensional covariance matrices"
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: returns 参数
+#   fields: 参数 returns，类型注解 Mapping[str, Sequence[float]]
+#   code: covariance_estimator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CovarianceEstimate
+#   name_en: CovarianceEstimate
+#   intro: 协方差估计结果（frozen 不可变）。
+#   desc: 协方差估计结果（frozen 不可变）。 Attributes: symbols: 标的代码（字典序排序，与 matrix 行列对齐） matrix: N×N 收缩后协方差矩阵（…；公共方法（定义序）: to_nest…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② estimate_covariance
+#   name_en: estimate_covariance
+#   intro: Ledoit-Wolf 收缩协方差估计（纯函数）。
+#   desc: Ledoit-Wolf 收缩协方差估计（纯函数）。 Args: returns: {symbol: 收益率序列}，要求 N≥2 个标的、各序列等长 T≥2、 全部为有限值、无零方…；源码 L123-L202
+#   inputs: returns
+#   outputs: CovarianceEstimate
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: CovarianceEstimate
+#   name_en: CovarianceEstimate
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-POS-013(风险预算分配器) ; MOD-POS-012(相关性regime监控) ; D_RISK
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -81,10 +117,7 @@ class CovarianceEstimate:
 
     def to_nested_dict(self) -> dict[str, dict[str, float]]:
         """转为 {symbol: {symbol: cov}} 嵌套字典口径（供 JSON 序列化/审计留痕）。"""
-        return {
-            s1: {s2: self.matrix[i][j] for j, s2 in enumerate(self.symbols)}
-            for i, s1 in enumerate(self.symbols)
-        }
+        return {s1: {s2: self.matrix[i][j] for j, s2 in enumerate(self.symbols)} for i, s1 in enumerate(self.symbols)}
 
 
 def estimate_covariance(
@@ -105,21 +138,15 @@ def estimate_covariance(
     if not returns:
         raise InvalidCovarianceInputError("收益率输入为空（须 N≥2 个标的）")
     if len(returns) < 2:
-        raise InvalidCovarianceInputError(
-            f"标的数不足（须 N≥2 才有协方差结构），got {len(returns)}"
-        )
+        raise InvalidCovarianceInputError(f"标的数不足（须 N≥2 才有协方差结构），got {len(returns)}")
 
     symbols = tuple(sorted(returns))
     lengths = {len(returns[s]) for s in symbols}
     if len(lengths) != 1:
-        raise InvalidCovarianceInputError(
-            f"收益率序列长度不齐（须等长），lengths={sorted(lengths)}"
-        )
+        raise InvalidCovarianceInputError(f"收益率序列长度不齐（须等长），lengths={sorted(lengths)}")
     n_obs = lengths.pop()
     if n_obs < _MIN_OBSERVATIONS:
-        raise InvalidCovarianceInputError(
-            f"样本量不足（须 T≥{_MIN_OBSERVATIONS}），got {n_obs}"
-        )
+        raise InvalidCovarianceInputError(f"样本量不足（须 T≥{_MIN_OBSERVATIONS}），got {n_obs}")
 
     x = np.array([[float(v) for v in returns[s]] for s in symbols], dtype=float).T  # T×N
     if not np.isfinite(x).all():

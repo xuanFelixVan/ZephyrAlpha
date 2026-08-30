@@ -19,7 +19,8 @@
 # A1: t1_sellable_weights（可卖_i = max(0, 昨仓_i − 今卖_i)；今买不在输入域——T+1 冻结）
 # O1: {symbol: 可卖权重}（供 FirmRiskAggregator §2.3 净额截断 current_holdings 口径）
 # [/ALGO_FLOW]
-"""T+1 可卖持仓口径工具（31号 遗留 #30 / 32号 §6 T+1 口径行）。
+"""
+T+1 可卖持仓口径工具（31号 遗留 #30 / 32号 §6 T+1 口径行）。
 
 A 股 T+1 结算：当日买入的标的当日不可卖。FirmRiskAggregator §2.3 冲突净额截断
 `max(0, net + current_holdings)` 假设 current_holdings 全部可卖——若快照含今日
@@ -28,6 +29,37 @@ current_holdings 应为 **T+1 口径可卖权重（昨持仓 − 今日已卖）
 （持仓对账/position_reconciler）按此口径供数。本模块是该口径的函数级工具。
 
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: last_session_weights 参数
+#   fields: 参数 last_session_weights，类型注解 dict[str, float]
+#   code: t1_sellable.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: today_sold_weights 参数
+#   fields: 参数 today_sold_weights，类型注解 dict[str, float] | None
+#   code: t1_sellable.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① t1_sellable_weights
+#   name_en: t1_sellable_weights
+#   intro: 计算 T+1 口径可卖权重（昨持仓 − 今日已卖，负值兜底 0）。
+#   desc: 计算 T+1 口径可卖权重（昨持仓 − 今日已卖，负值兜底 0）。 口径声明（32号 §6）： - 输入必须是 **T-1 收盘持仓** 权重（昨仓），不含今日买入部分—— 今日…；源码 L70-L101
+#   inputs: last_session_weights today_sold_weights
+#   outputs: dict[str, float]
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, float]
+#   name_en: dict[str, float]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 持仓对账/供数方（position_reconciler 等）→ FirmRiskAggregator.current_holdings 供数口径
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -19,7 +19,8 @@
 # A1: analyze_confidence_distribution(分位数统计 + 四档桶占比 + 死档检测 + 判定)
 # O1: B3ConfidenceReport(均值/分位数/桶占比/dead_buckets/passed)
 # [/ALGO_FLOW]
-"""D_REGIME — B3 置信度合理性分析（11 号 memo §4.2 B3）。
+"""
+D_REGIME — B3 置信度合理性分析（11 号 memo §4.2 B3）。
 
 纯分析函数：消费既有 walk-forward 全区间逐日 max(P)（最高态概率）产物，
 统计分布（均值/中位数/P10-P90）与四档桶占比，按 §4.2 B3 判定：
@@ -33,6 +34,48 @@
 
 依据: 11_regime_backtest_validation_plan §4.2 B3 / §0.5.7
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: max_p_values 参数
+#   fields: 参数 max_p_values，类型注解 Sequence[float]
+#   code: b3_confidence_distribution.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: edges 参数
+#   fields: 参数 edges，类型注解 tuple[float, float, float]
+#   code: b3_confidence_distribution.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: low_share_max 参数
+#   fields: 参数 low_share_max，类型注解 float
+#   code: b3_confidence_distribution.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: high_share_max 参数
+#   fields: 参数 high_share_max，类型注解 float
+#   code: b3_confidence_distribution.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① analyze_confidence_distribution
+#   name_en: analyze_confidence_distribution
+#   intro: B3 主入口：max(P) 分布合理性分析。
+#   desc: B3 主入口：max(P) 分布合理性分析。 Args: max_p_values: 逐日 max(P) 序列（值域 [0,1]，非空）。 edges: 四档边界（严格升序，(0…；源码 L126-L180
+#   inputs: max_p_values edges low_share_max high_share_max
+#   outputs: B3ConfidenceReport
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: B3ConfidenceReport
+#   name_en: B3ConfidenceReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 人工审查; 11_regime_backtest_validation_plan B3 置信度合理性(BM-BT-03-E)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

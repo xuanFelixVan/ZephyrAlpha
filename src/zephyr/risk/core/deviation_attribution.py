@@ -21,7 +21,8 @@
 # F4: H-D 残差——total - (H-A+H-B+H-C)(未解释: 市场环境/噪声/口径差)
 # O1: 四因子分解 dict + 加性不变量 PASS/FAIL + dominant_factor + 各因子占总偏差份额
 # [/ALGO_FLOW]
-"""D_RISK — 实盘 vs 回测偏离归因分解 H-A~D 四因子（55 号 §6 暂缓项施工）。
+"""
+D_RISK — 实盘 vs 回测偏离归因分解 H-A~D 四因子（55 号 §6 暂缓项施工）。
 
 55 号 §6："偏离度量两口径之外加归因分解（H-A~D 四因子）——battle_map 明示为
 设计态，先总值报警器够用；重评条件=偏离告警首次真实触发后按需补"。本模块为
@@ -40,6 +41,48 @@ MOD-RK-23（strategy_deviation_monitor）总值报警器的**分解伴随件**�
   - H-A/H-B 由调用方预计算传入（数据获取涉成交/持仓域，本模块纯计算不越界）；
   - H-C 在本模块内计算（权重差×标的收益是唯一可在本域闭环的实算因子）；
   - |残差| 占比高 = 四因子解释力不足的信号（调用方复盘口径，本模块不判定）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: total_deviation 参数
+#   fields: 参数 total_deviation，类型注解 float
+#   code: deviation_attribution.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: execution_cost_drag 参数
+#   fields: 参数 execution_cost_drag，类型注解 float
+#   code: deviation_attribution.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: timing_lag 参数
+#   fields: 参数 timing_lag，类型注解 float
+#   code: deviation_attribution.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: position_weight_pairs 参数
+#   fields: 参数 position_weight_pairs，类型注解 Sequence[tuple[float, float]]
+#   code: deviation_attribution.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① decompose_deviation
+#   name_en: decompose_deviation
+#   intro: 实盘 vs 回测总偏差的 H-A~D 四因子加性分解。
+#   desc: 实盘 vs 回测总偏差的 H-A~D 四因子加性分解。 Args: total_deviation: 总偏差（累计收益口径，cum_live - cum_backtest，带符号…；源码 L118-L174
+#   inputs: total_deviation execution_cost_drag timing_lag position_weight_pairs
+#   outputs: dict
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: dict
+#   name_en: dict
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-RPT-009(周复盘"偏离与告警事件"段); MOD-RK-23(偏离告警触发后按需分解, 55号§6重评条件)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

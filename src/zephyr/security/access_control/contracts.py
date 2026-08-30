@@ -14,7 +14,8 @@
 # [TESTS] tests/governance/security/test_governance_contracts.py; tests/governance/security/test_gct_001_rbac_to_audit.py; tests/governance/security/test_adversarial_contract_attacks.py; tests/governance/security/test_p0_u1_contract_smoke.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""G-CT-001 RBAC->Audit 桥接契约 - RBACAuditBridge.
+"""
+G-CT-001 RBAC->Audit 桥接契约 - RBACAuditBridge.
 
 治本（G-CT-001）：原为空桩。现实现 RBACAuditBridge.check_and_log，将 RBAC 权限决策
 写入审计链（通过 zephyr.gov_audit.contracts.AuditWriter）。
@@ -27,6 +28,32 @@
     - 未 mock 场景下，``AuditWriter`` 是 ABC（``TypeError``）或全局 writer 未初始化
       （``ContractViolationError``）。此时回退到 plain dict，保证 ``check_and_log``
       永不抛异常——桥接层不应因审计写入失败而阻塞 RBAC 决策。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: contracts.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① RBACAuditBridge
+#   name_en: RBACAuditBridge
+#   intro: G-CT-001 桥接器：RBAC 权限决策 -> 审计链写入。
+#   desc: G-CT-001 桥接器：RBAC 权限决策 -> 审计链写入。 权限白名单：read/write/execute -> granted=True； destroy/admin_…；公共方法（定义序）: check_p…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: RBACAuditBridge
+#   downstream: tests.governance.test_adversarial_contract_attacks ; tests.governance.test_gct_…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

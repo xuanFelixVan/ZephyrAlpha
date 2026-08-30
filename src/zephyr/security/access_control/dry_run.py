@@ -14,11 +14,39 @@
 # [TESTS] tests/agent_rbac/test_dry_run_agent_rbac.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""DryRun — 权限模拟与影响分析.
+"""
+DryRun — 权限模拟与影响分析.
 
 依据蓝图 MOD-INF-018 §3:
 - 模拟权限检查结果（不实际执行）
 - 分析变更对多个 agent 的影响
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: dry_run.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① DryRunSimulator
+#   name_en: DryRunSimulator
+#   intro: 权限模拟器 — 模拟权限检查而不实际执行.
+#   desc: 权限模拟器 — 模拟权限检查而不实际执行.；公共方法（定义序）: set_guard, simulate, impact_analysis；源码 L92-L186
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: DryRunSimulator
+#   downstream: tests/agent_rbac/test_dry_run_agent_rbac.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

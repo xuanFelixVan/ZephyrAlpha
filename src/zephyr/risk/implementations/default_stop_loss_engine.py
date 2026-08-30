@@ -22,7 +22,8 @@
 # created: "2026-05-05"
 # ---
 
-"""D_RISK — Default Stop-Loss Engine
+"""
+D_RISK — Default Stop-Loss Engine
 
 止损策略引擎具体实现。支持四种止损模式（多头-only：A 股通道禁做空
 ——43_compliance_discipline §6 硬边界 FORBIDDEN，position_qty<=0 fail-closed
@@ -33,6 +34,33 @@ CTR 契约：
   - 生产者：CTR-ERR-004 (RiskLimitViolationError) -> D_PORTFOLIO_CORE, D_EXECUTION_CORE
 
 SSoT: cross_layer_contracts.yaml -> CTR-ERR-004 + CTR-006
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: rules 参数
+#   fields: 参数 rules（无注解）
+#   code: default_stop_loss_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DefaultStopLossEngine
+#   name_en: DefaultStopLossEngine
+#   intro: 默认止损策略引擎——支持固定比例/移动/时间/波动率四种止损
+#   desc: 默认止损策略引擎——支持固定比例/移动/时间/波动率四种止损；公共方法（定义序）: evaluate, get_stop_price；源码 L96-L198
+#   inputs: rules
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: DefaultStopLossEngine
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

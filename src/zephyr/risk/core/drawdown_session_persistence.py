@@ -22,7 +22,8 @@
 # A1: 低层存取原语对(save/load peak_nav·entry_var·attribution·strategy_state + append/trim nav_history + mark/load persistable)
 # O1: PremarketResult(status READY/REFUSED+状态机+基线) / PostmarketResult(status PERSISTED/SKIPPED+peak对)
 # [/ALGO_FLOW]
-"""D_RISK — 盘前初始化 + 盘后持久化配对编排（35 号 memo §3.15/§3.18/§6.12 施工）。
+"""
+D_RISK — 盘前初始化 + 盘后持久化配对编排（35 号 memo §3.15/§3.18/§6.12 施工）。
 
 痛点（§3.15/§3.18 代码差距）：无 state_store 持久化配对——peak NAV/状态机态/
 recovery_step/nav_history/entry_var 重启即丢失；盘前"加载"无源可载；
@@ -41,6 +42,125 @@ recovery_step/nav_history/entry_var 重启即丢失；盘前"加载"无源可载
     审计失败 → 标 AUDIT_FAILED_SKIP 直接返回（宁可丢状态不可存错误状态）。
 
 SSoT: 35_drawdown_protocol_impl §3.15/§3.18 + §6.12（P0 配对施工项）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: store 参数
+#   fields: 参数 store，类型注解 JsonStateStore
+#   code: drawdown_session_persistence.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: peak_nav 参数
+#   fields: 参数 peak_nav，类型注解 float
+#   code: drawdown_session_persistence.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: trade_date 参数
+#   fields: 参数 trade_date，类型注解 date
+#   code: drawdown_session_persistence.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: nav 参数
+#   fields: 参数 nav，类型注解 float
+#   code: drawdown_session_persistence.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① save_peak_nav
+#   name_en: save_peak_nav
+#   intro: 保存 peak NAV（调用方须以 max(old, closing) 保证单调非减）。
+#   desc: 保存 peak NAV（调用方须以 max(old, closing) 保证单调非减）。；源码 L293-L297
+#   inputs: store peak_nav
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② load_peak_nav
+#   name_en: load_peak_nav
+#   intro: 加载 peak NAV。
+#   desc: 加载 peak NAV。None=无记录（fresh boot）。；源码 L300-L305
+#   inputs: store
+#   outputs: float | None
+# - id: A3
+#   name_zh: ③ append_nav_history
+#   name_en: append_nav_history
+#   intro: 追加当日净值并 trim 滚动窗口（同日重复调用=更新当日，幂等）。
+#   desc: 追加当日净值并 trim 滚动窗口（同日重复调用=更新当日，幂等）。 Returns: trim 后的窗口长度。；源码 L308-L331
+#   inputs: store trade_date nav window
+#   outputs: int
+# - id: A4
+#   name_zh: ④ load_nav_history
+#   name_en: load_nav_history
+#   intro: 加载 nav_history（旧→新）。
+#   desc: 加载 nav_history（旧→新）。空 tuple=无记录。；源码 L334-L336
+#   inputs: store
+#   outputs: tuple[float, ...]
+# - id: A5
+#   name_zh: ⑤ save_entry_var
+#   name_en: save_entry_var
+#   intro: 保存当日盘前 VaR_95 快照（§3.18 阶段 4b，供次日 §3.15 加载 + §3.16 归因）。
+#   desc: 保存当日盘前 VaR_95 快照（§3.18 阶段 4b，供次日 §3.15 加载 + §3.16 归因）。；源码 L339-L343
+#   inputs: store trade_date var_95
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ load_entry_var
+#   name_en: load_entry_var
+#   intro: 加载最近一次 entry_var。
+#   desc: 加载最近一次 entry_var。None=首次/未持久化（§3.15 正常降级跳过）。；源码 L346-L351
+#   inputs: store
+#   outputs: float | None
+# - id: A7
+#   name_zh: ⑦ save_attribution_result
+#   name_en: save_attribution_result
+#   intro: 保存归因结果（§3.18 阶段 4c，供次日盘前加载参考）。
+#   desc: 保存归因结果（§3.18 阶段 4c，供次日盘前加载参考）。；源码 L354-L359
+#   inputs: store trade_date attribution
+#   outputs: 返回值
+# - id: A8
+#   name_zh: ⑧ load_attribution_result
+#   name_en: load_attribution_result
+#   intro: 加载最近一次归因结果。
+#   desc: 加载最近一次归因结果。None=正常降级。；源码 L362-L368
+#   inputs: store
+#   outputs: dict[str, Any] | None
+# - id: A9
+#   name_zh: ⑨ save_strategy_state
+#   name_en: save_strategy_state
+#   intro: 保存策略目标持仓快照（§3.18 阶段 4d，次日 Ghost 检测基准）。
+#   desc: 保存策略目标持仓快照（§3.18 阶段 4d，次日 Ghost 检测基准）。；源码 L371-L376
+#   inputs: store trade_date holdings
+#   outputs: 返回值
+# - id: A10
+#   name_zh: ⑩ load_strategy_state
+#   name_en: load_strategy_state
+#   intro: 加载策略持仓快照。
+#   desc: 加载策略持仓快照。None=冷启动/首次（§3.15 冷启动守卫数据源）。；源码 L379-L385
+#   inputs: store
+#   outputs: dict[str, Any] | None
+#   （注：A10 之后另有 7 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: float | None
+#   name_en: float | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: RiskOrchestrator(§6.5 接线位); 盘前启动序列/盘后日终批
+# - id: O2
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: RiskOrchestrator(§6.5 接线位); 盘前启动序列/盘后日终批
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> A10
+# A10 --> O1
 """
 
 from __future__ import annotations

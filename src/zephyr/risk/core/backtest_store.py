@@ -23,7 +23,6 @@
 # O1: 持久化记录 → §3.19 盘前初始化 / §3.9 回测历史 clean P&L / 35号 §3.16 回撤归因
 # [/ALGO_FLOW]
 """
-
 Backtest Store — VaR 回测/基线/双轨 P&L/entry_var 持久化门面 (36号 §3.4/§3.13/§3.18)
 
 JsonStateStore 单记录原语 → 业务命名空间方法的薄门面 (只编排不重造)。
@@ -42,6 +41,33 @@ dict; 存在但损坏 → StateCorruptError 上抛 (消费方 fail-closed, 本�
 
 SSoT: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/36_var_es_monitoring.md §3.4/§3.13/§3.18
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: store 参数
+#   fields: 参数 store（无注解）
+#   code: backtest_store.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① VarBacktestStore
+#   name_en: VarBacktestStore
+#   intro: VaR 域持久化门面 (36号 §3.4/§3.13/§3.18)。
+#   desc: VaR 域持久化门面 (36号 §3.4/§3.13/§3.18)。 Args: store: JsonStateStore 或同接口对象 (save(namespace, di…；公共方法（定义序）: save_ba…
+#   inputs: store
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: VarBacktestStore
+#   downstream: daily_auditor(日终持久化); RiskLayerOrchestrator(盘前加载); 35号 §3.15/§3.16(entry_var 配对…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

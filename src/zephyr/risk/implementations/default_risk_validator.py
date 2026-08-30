@@ -22,7 +22,8 @@
 # created: "2026-05-05"
 # ---
 
-"""D_RISK — Default Risk Validator
+"""
+D_RISK — Default Risk Validator
 
 风险校验器具体实现。Pre-trade 订单校验 + 全组合风控状态校验。
 
@@ -32,6 +33,76 @@ CTR 契约：
   生产者 — CTR-ERR-004 (RiskLimitViolationError) -> D_PORTFOLIO_CORE, D_EXECUTION_CORE
 
 SSoT: cross_layer_contracts.yaml -> CTR-ERR-004 + CTR-003
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: store 参数
+#   fields: 参数 store，类型注解 JsonStateStore
+#   code: default_risk_validator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: event_id 参数
+#   fields: 参数 event_id（无注解）
+#   code: default_risk_validator.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: reason 参数
+#   fields: 参数 reason（无注解）
+#   code: default_risk_validator.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: scope 参数
+#   fields: 参数 scope（无注解）
+#   code: default_risk_validator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① load_kill_switch_record
+#   name_en: load_kill_switch_record
+#   intro: 读取 Kill Switch 持久化状态记录（三分语义委托给 JsonStateStore.load）。
+#   desc: 读取 Kill Switch 持久化状态记录（三分语义委托给 JsonStateStore.load）。 Returns: None: 无记录（fresh boot，从未触发）。…；源码 L143-L153
+#   inputs: store
+#   outputs: dict | None
+# - id: A2
+#   name_zh: ② persist_trigger_record
+#   name_en: persist_trigger_record
+#   intro: 持久化熔断触发记录（含触发时间+reason+event_id，Qwen P0-3①）。
+#   desc: 持久化熔断触发记录（含触发时间+reason+event_id，Qwen P0-3①）。；源码 L156-L174
+#   inputs: store event_id reason scope source
+#   outputs: dict
+# - id: A3
+#   name_zh: ③ persist_reset_record
+#   name_en: persist_reset_record
+#   intro: 持久化熔断解除记录。
+#   desc: 持久化熔断解除记录。；源码 L177-L193
+#   inputs: store confirmed_by override_reason source
+#   outputs: dict
+# - id: A4
+#   name_zh: ④ DefaultRiskValidator
+#   name_en: DefaultRiskValidator
+#   intro: 默认风险校验器——Pre-trade + Portfolio 校验
+#   desc: 默认风险校验器——Pre-trade + Portfolio 校验；公共方法（定义序）: validate_order, validate_portfolio, trigger_kill_switch, reset_k…
+#   inputs: kill_switch_active state_store
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: dict | None
+#   name_en: dict | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: dict
+#   name_en: dict
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

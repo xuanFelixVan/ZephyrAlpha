@@ -14,7 +14,8 @@
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""ColdStartLock — 冷启动锁.
+"""
+ColdStartLock — 冷启动锁.
 
 依据蓝图 MOD-INF-018 §3:
 - 系统启动时处于锁定状态
@@ -26,6 +27,40 @@ Stage 4 重构 (2026-07-28):
 - 新增 owner_bypass() / status_dict() / verified_at / config_loaded
 - 私有属性公共化: checks_passed / immutable_core / config_loaded
 - get_cold_start_lock() 改为单例模式
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: immutable_core 参数
+#   fields: 参数 immutable_core（无注解）
+#   code: cold_start_lock.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ColdStartLock
+#   name_en: ColdStartLock
+#   intro: 冷启动锁 — 启动自检门控.
+#   desc: 冷启动锁 — 启动自检门控. 初始状态为锁定，需依次通过: 1. load_config — 加载配置（需含有效 version 字段） 2. verify_integrity…；公共方法（定义序）: is_locke…
+#   inputs: immutable_core
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② get_cold_start_lock
+#   name_en: get_cold_start_lock
+#   intro: 获取 ColdStartLock 单例.
+#   desc: 获取 ColdStartLock 单例.；源码 L241-L246
+#   inputs: 无参数
+#   outputs: ColdStartLock
+# 层: 输出
+# - id: O1
+#   name_zh: ColdStartLock
+#   name_en: ColdStartLock
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: tests/agent_rbac/test_redteam_adversarial.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

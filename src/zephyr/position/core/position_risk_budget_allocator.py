@@ -14,7 +14,8 @@
 # [TESTS] tests/position/test_position_risk_budget_allocator.py
 # [A_module] module_id=MOD-POS-013 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Position Risk Budget Allocator — 风险预算分配器 (MOD-POS-013)
+"""
+Position Risk Budget Allocator — 风险预算分配器 (MOD-POS-013)
 
 按风险预算分配组合权重：使各标的的**相对风险贡献**（relative risk
 contribution, RRC）与预算成正比。预算缺省为等权 → 即经典 ERC（等风险
@@ -33,6 +34,48 @@ MOD-POS-011 的协方差估计，不关心标的是怎么选出来的（what）�
 
 纪律：纯函数、无 IO；CovarianceEstimate 由调用方注入（禁自造数据管道）。
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: covariance 参数
+#   fields: 参数 covariance，类型注解 CovarianceEstimate
+#   code: position_risk_budget_allocator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: budget 参数
+#   fields: 参数 budget，类型注解 Mapping[str, float] | None
+#   code: position_risk_budget_allocator.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: max_weight 参数
+#   fields: 参数 max_weight（无注解）
+#   code: position_risk_budget_allocator.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: tol 参数
+#   fields: 参数 tol（无注解）
+#   code: position_risk_budget_allocator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① allocate_risk_budget
+#   name_en: allocate_risk_budget
+#   intro: 按风险预算分配权重（纯函数）。
+#   desc: 按风险预算分配权重（纯函数）。 Args: covariance: MOD-POS-011 的协方差估计（标的集=候选池） budget: {symbol: 预算}，缺省=等预算…；源码 L174-L254
+#   inputs: covariance budget max_weight tol max_iter
+#   outputs: RiskBudgetAllocation
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: RiskBudgetAllocation
+#   name_en: RiskBudgetAllocation
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: D-PORTFOLIO(组合权重层) ; MOD-POS-012(相关性regime可作为预算调节输入)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -124,10 +167,7 @@ def _project_weights(
         free_idx = [i for i, x in enumerate(w) if x <= max_weight]
         free_sum = sum(w[i] for i in free_idx)
         remainder = 1.0 - capped
-        w = [
-            max_weight if x > max_weight else (x / free_sum * remainder if free_sum > 0 else 0.0)
-            for x in w
-        ]
+        w = [max_weight if x > max_weight else (x / free_sum * remainder if free_sum > 0 else 0.0) for x in w]
     return w
 
 
@@ -161,9 +201,7 @@ def allocate_risk_budget(
     if not math.isfinite(max_weight) or max_weight <= 0.0 or max_weight > 1.0:
         raise InvalidRiskBudgetInputError(f"max_weight 非法（须 ∈(0,1]），got {max_weight}")
     if max_weight * n < 1.0 - 1e-12:
-        raise InvalidRiskBudgetInputError(
-            f"max_weight 不可行：N·max_weight={n * max_weight} < 1（N={n}）"
-        )
+        raise InvalidRiskBudgetInputError(f"max_weight 不可行：N·max_weight={n * max_weight} < 1（N={n}）")
     if tol <= 0.0 or not math.isfinite(tol):
         raise InvalidRiskBudgetInputError(f"tol 非法（须为正有限值），got {tol}")
     if max_iter < 1:

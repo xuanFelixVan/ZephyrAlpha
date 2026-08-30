@@ -14,7 +14,8 @@
 # [TESTS] tests/position/test_position_behavior_classifier.py
 # [A_module] module_id=MOD-POS-019 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Position Behavior Classifier — 持仓行为分类器 (MOD-POS-019)
+"""
+Position Behavior Classifier — 持仓行为分类器 (MOD-POS-019)
 
 对持仓做行为金融学维度的规则分类，供卖出域行为纠偏与风控预警参考：
 
@@ -31,6 +32,33 @@ NEUTRAL 优先级裁定。分类只标记不执行（与卖出/选股零耦合�
 
 纪律：纯函数、无 IO；特征由调用方注入。
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: features 参数
+#   fields: 参数 features，类型注解 Mapping[str, PositionFeatures]
+#   code: position_behavior_classifier.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① classify_positions
+#   name_en: classify_positions
+#   intro: 持仓行为分类（纯函数）。
+#   desc: 持仓行为分类（纯函数）。 Args: features: {symbol: PositionFeatures} Returns: ClassificationReport Rai…；源码 L165-L194
+#   inputs: features
+#   outputs: ClassificationReport
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ClassificationReport
+#   name_en: ClassificationReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: D-SELL-DECISION(行为纠偏参考) ; D_RISK(行为风险预警)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -114,9 +142,7 @@ def _validate_features(sym: str, f: PositionFeatures) -> None:
     if f.days_held < 0:
         raise InvalidPositionFeatureError(f"标的 {sym} 持有天数为负，got {f.days_held}")
     if not math.isfinite(f.drawdown_from_peak) or not (0.0 <= f.drawdown_from_peak <= 1.0):
-        raise InvalidPositionFeatureError(
-            f"标的 {sym} 高点回撤越界（须 ∈[0,1]），got {f.drawdown_from_peak}"
-        )
+        raise InvalidPositionFeatureError(f"标的 {sym} 高点回撤越界（须 ∈[0,1]），got {f.drawdown_from_peak}")
 
 
 def _classify_one(f: PositionFeatures) -> BehaviorClass:
@@ -161,12 +187,8 @@ def classify_positions(
         labels[sym] = cls
         counts[cls] += 1
         if cls is BehaviorClass.LOSS_HOLDING:
-            warnings.append(
-                f"标的 {sym} 疑似处置效应（亏 {f.pnl_pct:.1%} 持有 {f.days_held} 天），建议复盘卖出纪律"
-            )
+            warnings.append(f"标的 {sym} 疑似处置效应（亏 {f.pnl_pct:.1%} 持有 {f.days_held} 天），建议复盘卖出纪律")
         elif cls is BehaviorClass.STALE:
-            warnings.append(
-                f"标的 {sym} 呆滞（{f.days_held} 天盈亏 {f.pnl_pct:.1%}），占用资金有机会成本"
-            )
+            warnings.append(f"标的 {sym} 呆滞（{f.days_held} 天盈亏 {f.pnl_pct:.1%}），占用资金有机会成本")
 
     return ClassificationReport(labels=labels, counts=counts, warnings=tuple(warnings))

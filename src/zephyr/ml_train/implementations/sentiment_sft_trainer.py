@@ -16,7 +16,8 @@
 # [TTL] permanent
 # [ARCH-REF] #ARCH-NLP-PIPELINE-001 Phase 4
 
-"""MOD-L11-001 SentimentSFTTrainer — Qwen2.5-7B-Instruct LoRA SFT（P1-E3 Phase 4）。
+"""
+MOD-L11-001 SentimentSFTTrainer — Qwen2.5-7B-Instruct LoRA SFT（P1-E3 Phase 4）。
 
 对 Qwen2.5-7B-Instruct 做 QLoRA 4bit 微调，学习 A 股新闻情感分类（positive/negative/neutral），
 输出对齐 ``nlp_inference`` 的 JSON 格式 ``{"sentiment": ..., "score": ...}``。
@@ -35,6 +36,69 @@
 依据: 13_regime_phase3_engineering_plan.md §3.1.9
 SSoT: #ARCH-NLP-PIPELINE-001
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: title 参数
+#   fields: 参数 title，类型注解 str
+#   code: sentiment_sft_trainer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: content 参数
+#   fields: 参数 content，类型注解 str
+#   code: sentiment_sft_trainer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: sentiment 参数
+#   fields: 参数 sentiment，类型注解 str
+#   code: sentiment_sft_trainer.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: score 参数
+#   fields: 参数 score，类型注解 float
+#   code: sentiment_sft_trainer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① build_sft_messages
+#   name_en: build_sft_messages
+#   intro: 构造单条 SFT 训练样本（messages 格式，对齐 Qwen chat_template）。
+#   desc: 构造单条 SFT 训练样本（messages 格式，对齐 Qwen chat_template）。 Parameters ---------- title / content :…；源码 L202-L221
+#   inputs: title content sentiment score
+#   outputs: list[dict[str, str]]
+# - id: A2
+#   name_zh: ② build_sft_dataset
+#   name_en: build_sft_dataset
+#   intro: 从样本列表构造 ``datasets.Dataset``（messages 格式）。
+#   desc: 从样本列表构造 ``datasets.Dataset``（messages 格式）。 Parameters ---------- samples : 每条含 ``title``…；源码 L224-L250
+#   inputs: samples max_content_chars
+#   outputs: Any
+# - id: A3
+#   name_zh: ③ SentimentSFTTrainer
+#   name_en: SentimentSFTTrainer
+#   intro: Qwen2.5-7B-Instruct LoRA SFT 训练器（P1-E3 Phase 4）。
+#   desc: Qwen2.5-7B-Instruct LoRA SFT 训练器（P1-E3 Phase 4）。 继承 ``ModelTrainerBase``（OCP 扩展点 D_ML_TRA…；公共方法（定义序）: train,…
+#   inputs: config
+#   outputs: 返回值
+#   （注：A3 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[dict[str, str]]
+#   name_en: list[dict[str, str]]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: scripts/ml/run_sft_train.py; P1-E3 NLP 管道 Phase 4
+# - id: O2
+#   name_zh: Any
+#   name_en: Any
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: scripts/ml/run_sft_train.py; P1-E3 NLP 管道 Phase 4
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations
@@ -157,7 +221,7 @@ def build_sft_messages(title: str, content: str, sentiment: str, score: float) -
     ]
 
 
-def build_sft_dataset(samples: list[dict[str, Any]], *, max_content_chars: int = 300) -> "Any":
+def build_sft_dataset(samples: list[dict[str, Any]], *, max_content_chars: int = 300) -> Any:
     """从样本列表构造 ``datasets.Dataset``（messages 格式）。
 
     Parameters

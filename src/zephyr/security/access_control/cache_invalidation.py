@@ -14,11 +14,39 @@
 # [TESTS] tests/agent_rbac/test_enhanced_security.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""CacheInvalidation — 缓存失效事件管理.
+"""
+CacheInvalidation — 缓存失效事件管理.
 
 依据蓝图 MOD-INF-018 §3:
 - 推送权限规则变更失效事件
 - 处理失效事件以更新缓存
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: cache_invalidation.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① CacheInvalidation
+#   name_en: CacheInvalidation
+#   intro: 缓存失效管理器 — 推送与处理失效事件.
+#   desc: 缓存失效管理器 — 推送与处理失效事件.；公共方法（定义序）: push_invalidation, process；源码 L74-L111
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: CacheInvalidation
+#   downstream: tests/agent_rbac/test_enhanced_security.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

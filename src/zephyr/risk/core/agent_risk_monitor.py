@@ -14,7 +14,8 @@
 # [TESTS] tests/risk/core/test_agent_risk_monitor.py
 # [A_module] module_id=MOD-RK-22 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Agent Risk Monitor — agent 交易行为风险监控器 (MOD-RK-22)
+"""
+Agent Risk Monitor — agent 交易行为风险监控器 (MOD-RK-22)
 
 监控 AI 交易 agent 的活动窗口风险，消费 MOD-RK-25 统一风控快照 (RiskSnapshot)：
   - order_burst      : 窗口下单数超阈值（约束三：miniQMT 10笔/秒硬上限的前置哨兵）
@@ -26,6 +27,56 @@
 
 判定核心为纯函数 evaluate_agent_risk（同输入必同输出，可单测）；
 AgentRiskMonitor 为薄封装（配置持有 + 最近一次报告留痕）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: activity 参数
+#   fields: 参数 activity，类型注解 AgentActivityWindow
+#   code: agent_risk_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: snapshot 参数
+#   fields: 参数 snapshot，类型注解 RiskSnapshot
+#   code: agent_risk_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: thresholds 参数
+#   fields: 参数 thresholds，类型注解 AgentRiskThresholds
+#   code: agent_risk_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: evaluated_at 参数
+#   fields: 参数 evaluated_at（无注解）
+#   code: agent_risk_monitor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① evaluate_agent_risk
+#   name_en: evaluate_agent_risk
+#   intro: 评估 agent 交易活动风险（纯函数）。
+#   desc: 评估 agent 交易活动风险（纯函数）。 等级由触发指标唯一决定：任一 CRITICAL → CRITICAL；否则任一 WARNING → WARNING。 比率类指标仅在…；源码 L200-L314
+#   inputs: activity snapshot thresholds evaluated_at
+#   outputs: AgentRiskReport
+# - id: A2
+#   name_zh: ② AgentRiskMonitor
+#   name_en: AgentRiskMonitor
+#   intro: agent 风险监控器（薄封装：阈值持有 + 最近报告留痕）。
+#   desc: agent 风险监控器（薄封装：阈值持有 + 最近报告留痕）。；公共方法（定义序）: assess, last_report；源码 L317-L345
+#   inputs: thresholds
+#   outputs: 返回值
+#   （注：A2 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: AgentRiskReport
+#   name_en: AgentRiskReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-RK-24(Risk Veto Engine,监控等级输入) ; MOD-L04-001(DefaultRiskManagerOrchestrator)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -141,8 +192,7 @@ def _validate_activity(activity: AgentActivityWindow) -> None:
         )
     if activity.window_end < activity.window_start:
         raise InvalidAgentActivityError(
-            "活动窗口时间倒置: "
-            f"start={activity.window_start.isoformat()} > end={activity.window_end.isoformat()}",
+            f"活动窗口时间倒置: start={activity.window_start.isoformat()} > end={activity.window_end.isoformat()}",
             details={},
         )
 
@@ -168,10 +218,7 @@ def evaluate_agent_risk(
             AgentRiskIndicator(
                 indicator_id="order_burst",
                 severity="CRITICAL",
-                message=(
-                    f"窗口下单数超限: {activity.orders_submitted} > "
-                    f"{thresholds.max_orders_per_window}"
-                ),
+                message=(f"窗口下单数超限: {activity.orders_submitted} > {thresholds.max_orders_per_window}"),
                 actual=float(activity.orders_submitted),
                 limit=float(thresholds.max_orders_per_window),
             )
@@ -181,11 +228,7 @@ def evaluate_agent_risk(
     if activity.orders_submitted >= thresholds.min_decisions_for_rates:
         reject_rate = activity.orders_rejected / activity.orders_submitted
         if reject_rate > thresholds.max_reject_rate:
-            severity = (
-                "CRITICAL"
-                if reject_rate > thresholds.max_reject_rate * 2
-                else "WARNING"
-            )
+            severity = "CRITICAL" if reject_rate > thresholds.max_reject_rate * 2 else "WARNING"
             indicators.append(
                 AgentRiskIndicator(
                     indicator_id="reject_rate",
@@ -208,10 +251,7 @@ def evaluate_agent_risk(
             )
 
     # ④ 置信度下限（None=无置信度真源，跳过不臆造）
-    if (
-        activity.avg_confidence is not None
-        and activity.avg_confidence < thresholds.min_confidence
-    ):
+    if activity.avg_confidence is not None and activity.avg_confidence < thresholds.min_confidence:
         indicators.append(
             AgentRiskIndicator(
                 indicator_id="low_confidence",
@@ -247,10 +287,7 @@ def evaluate_agent_risk(
                     AgentRiskIndicator(
                         indicator_id="limit_proximity",
                         severity="WARNING",
-                        message=(
-                            f"持仓逼近单仓硬限: {view.symbol} weight={view.weight:.4f} "
-                            f"warn_line={warn_line:.4f}"
-                        ),
+                        message=(f"持仓逼近单仓硬限: {view.symbol} weight={view.weight:.4f} warn_line={warn_line:.4f}"),
                         actual=view.weight,
                         limit=max_single,
                     )
@@ -291,9 +328,7 @@ class AgentRiskMonitor:
         *,
         evaluated_at: datetime | None = None,
     ) -> AgentRiskReport:
-        report = evaluate_agent_risk(
-            activity, snapshot, self._thresholds, evaluated_at=evaluated_at
-        )
+        report = evaluate_agent_risk(activity, snapshot, self._thresholds, evaluated_at=evaluated_at)
         if report.level is not AgentRiskLevel.NORMAL:
             _logger.warning(
                 "AGENT_RISK_%s action=%s indicators=%s snapshot=%s",

@@ -20,7 +20,8 @@
 # A1: compute_path_coverage(覆盖率统计 + 未覆盖路径 top 榜 + ≥80% 判定)
 # O1: A3CoverageReport(total/covered/coverage/passed/top_uncovered)
 # [/ALGO_FLOW]
-"""D_REGIME — A3 状态转移路径覆盖正式统计（11 号 memo §0.5.7 A3 / §4.1 A3）。
+"""
+D_REGIME — A3 状态转移路径覆盖正式统计（11 号 memo §0.5.7 A3 / §4.1 A3）。
 
 纯统计函数：消费既有 Viterbi 解码状态序列（全历史或窗口段），统计实际
 状态转移中落在 spec §4 定义路径集内的比例，按「spec 定义的转移路径覆盖
@@ -31,6 +32,48 @@
 
 依据: 11_regime_backtest_validation_plan §4.1 A3 / §5
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: state_seq 参数
+#   fields: 参数 state_seq，类型注解 Sequence[Hashable]
+#   code: a3_transition_coverage.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: allowed_paths 参数
+#   fields: 参数 allowed_paths，类型注解 Iterable[tuple[Hashable, Hashable]]
+#   code: a3_transition_coverage.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: coverage_threshold 参数
+#   fields: 参数 coverage_threshold，类型注解 float
+#   code: a3_transition_coverage.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: exclude_self 参数
+#   fields: 参数 exclude_self，类型注解 bool
+#   code: a3_transition_coverage.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① compute_path_coverage
+#   name_en: compute_path_coverage
+#   intro: A3 主入口：实际转移的 spec 路径覆盖率统计。
+#   desc: A3 主入口：实际转移的 spec 路径覆盖率统计。 Args: state_seq: Viterbi 解码状态序列（任意可哈希标签，如 r1-r4/r10-r12）。 allo…；源码 L123-L196
+#   inputs: state_seq allowed_paths coverage_threshold exclude_self top_n
+#   outputs: A3CoverageReport
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: A3CoverageReport
+#   name_en: A3CoverageReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 人工审查; 11_regime_backtest_validation_plan A3 状态转移合理性
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

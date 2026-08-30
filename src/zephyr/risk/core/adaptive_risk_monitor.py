@@ -33,7 +33,6 @@
 # A2 --> A3
 # A3 --> O1
 """
-
 Adaptive Risk Monitor — 流动性+相关性体制监控层 (MOD-RK-29, C-004 ②监控层 MVP)
 
 C-004 自适应风控三层体系（预判+监控+熔断）的监控层能力底座：盘中聚合流动性风险
@@ -46,6 +45,43 @@ C-045 拥挤度（MOD-RK-13/MOD-RK-32）正交——本模块管流动性+相关
 
 SSoT: docs/03_modules/_domain_risk/adaptive_risk_monitor/blueprint.md
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: liquidity 参数
+#   fields: 参数 liquidity，类型注解 Sequence[LiquidityWatchInput]
+#   code: adaptive_risk_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: correlation_returns 参数
+#   fields: 参数 correlation_returns（无注解）
+#   code: adaptive_risk_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: adaptive_risk_monitor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① assess_risk_watch
+#   name_en: assess_risk_watch
+#   intro: 监控层主入口：流动性分级 + 相关性体制 → 仪表盘快照 + 告警数据。
+#   desc: 监控层主入口：流动性分级 + 相关性体制 → 仪表盘快照 + 告警数据。 Args: liquidity: 标的级流动性指标序列（非空） correlation_returns:…；源码 L195-L283
+#   inputs: liquidity correlation_returns config
+#   outputs: RiskWatchSnapshot
+#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: RiskWatchSnapshot
+#   name_en: RiskWatchSnapshot
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-RK-30(Adaptive Risk Coordinator, C-004 三层联动盘中监控); CTR-P1-008 风险仪表盘(设计契约); M…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -14,7 +14,8 @@
 # [TESTS] tests/risk/core/test_risk_veto_engine.py
 # [A_module] module_id=MOD-RK-24 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Risk Veto Engine — 风险否决引擎 (MOD-RK-24)
+"""
+Risk Veto Engine — 风险否决引擎 (MOD-RK-24)
 
 硬规则 veto 清单 + 优先级 + 否决理由结构化输出。消费 MOD-RK-25 统一风控快照
 (RiskSnapshot)，对单笔委托意图 (OrderRiskRequest) 做下单前硬否决判定。
@@ -30,6 +31,77 @@
 
 规则异常统一转 RULE_ERROR 否决（Fail-Closed：§6 可用性 vs 安全性→安全性优先）。
 扩展点：RiskVetoEngine(rules=[...]) 注入自定义 VetoRule（OCP）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: request 参数
+#   fields: 参数 request，类型注解 OrderRiskRequest
+#   code: risk_veto_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: snapshot 参数
+#   fields: 参数 snapshot，类型注解 RiskSnapshot
+#   code: risk_veto_engine.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: rules 参数
+#   fields: 参数 rules，类型注解 tuple[VetoRule, ...] | None
+#   code: risk_veto_engine.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: evaluated_at 参数
+#   fields: 参数 evaluated_at（无注解）
+#   code: risk_veto_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① VetoRule
+#   name_en: VetoRule
+#   intro: 否决规则协议（OCP 扩展点）。
+#   desc: 否决规则协议（OCP 扩展点）。 priority 数值越小越先评估（数据完整性 < 交易约束 < 限额）。 check 返回 None=通过，返回 VetoVerdict=否决。；公共方法（定义序）: check；源…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② build_default_veto_rules
+#   name_en: build_default_veto_rules
+#   intro: 内置硬规则清单（priority 升序）。
+#   desc: 内置硬规则清单（priority 升序）。；源码 L389-L399
+#   inputs: 无参数
+#   outputs: tuple[VetoRule, ...]
+# - id: A3
+#   name_zh: ③ evaluate_vetoes
+#   name_en: evaluate_vetoes
+#   intro: 评估委托请求是否被风险否决（纯函数：同输入必同输出）。
+#   desc: 评估委托请求是否被风险否决（纯函数：同输入必同输出）。 全量评估所有规则（不短路），vetoes 按 priority 升序输出； 任一规则抛异常 → 转 RULE_ERROR…；源码 L420-L460
+#   inputs: request snapshot rules evaluated_at
+#   outputs: VetoDecision
+# - id: A4
+#   name_zh: ④ RiskVetoEngine
+#   name_en: RiskVetoEngine
+#   intro: 风险否决引擎（薄封装：规则集持有 + evaluate 入口 + 否决留痕日志）。
+#   desc: 风险否决引擎（薄封装：规则集持有 + evaluate 入口 + 否决留痕日志）。；公共方法（定义序）: rules, evaluate；源码 L463-L492
+#   inputs: rules
+#   outputs: 返回值
+#   （注：A4 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: tuple[VetoRule, ...]
+#   name_en: tuple[VetoRule, ...]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-EX-024(Pre-Execution Checker) ; MOD-L06-001(Execution Core 下单前硬拦)
+# - id: O2
+#   name_zh: VetoDecision
+#   name_en: VetoDecision
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-EX-024(Pre-Execution Checker) ; MOD-L06-001(Execution Core 下单前硬拦)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations
@@ -115,10 +187,7 @@ class VetoRule(Protocol):
     rule_id: str
     priority: int
 
-    def check(
-        self, request: OrderRiskRequest, snapshot: RiskSnapshot
-    ) -> VetoVerdict | None:
-        ...
+    def check(self, request: OrderRiskRequest, snapshot: RiskSnapshot) -> VetoVerdict | None: ...
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -139,9 +208,7 @@ class _MissingPriceRule:
     rule_id: str = "hard_missing_price"
     priority: int = _PRIORITY_MISSING_PRICE
 
-    def check(
-        self, request: OrderRiskRequest, snapshot: RiskSnapshot
-    ) -> VetoVerdict | None:
+    def check(self, request: OrderRiskRequest, snapshot: RiskSnapshot) -> VetoVerdict | None:
         if request.symbol in snapshot.missing_price_symbols:
             return VetoVerdict(
                 rule_id=self.rule_id,
@@ -158,9 +225,7 @@ class _LimitsUnavailableRule:
     rule_id: str = "hard_limits_unavailable"
     priority: int = _PRIORITY_LIMITS_UNAVAILABLE
 
-    def check(
-        self, request: OrderRiskRequest, snapshot: RiskSnapshot
-    ) -> VetoVerdict | None:
+    def check(self, request: OrderRiskRequest, snapshot: RiskSnapshot) -> VetoVerdict | None:
         if snapshot.limits is None and request.side is OrderSide.BUY:
             return VetoVerdict(
                 rule_id=self.rule_id,
@@ -177,9 +242,7 @@ class _SuspendedSymbolRule:
     rule_id: str = "hard_suspended_symbol"
     priority: int = _PRIORITY_SUSPENDED
 
-    def check(
-        self, request: OrderRiskRequest, snapshot: RiskSnapshot
-    ) -> VetoVerdict | None:
+    def check(self, request: OrderRiskRequest, snapshot: RiskSnapshot) -> VetoVerdict | None:
         if request.symbol in snapshot.suspended_held_symbols:
             return VetoVerdict(
                 rule_id=self.rule_id,
@@ -196,9 +259,7 @@ class _SellExceedsPositionRule:
     rule_id: str = "hard_sell_exceeds_position"
     priority: int = _PRIORITY_SELL_EXCEEDS
 
-    def check(
-        self, request: OrderRiskRequest, snapshot: RiskSnapshot
-    ) -> VetoVerdict | None:
+    def check(self, request: OrderRiskRequest, snapshot: RiskSnapshot) -> VetoVerdict | None:
         if request.side is not OrderSide.SELL:
             return None
         held = Decimal("0")
@@ -211,10 +272,7 @@ class _SellExceedsPositionRule:
                 rule_id=self.rule_id,
                 priority=self.priority,
                 reason_code="SELL_EXCEEDS_POSITION",
-                message=(
-                    f"卖出超持仓: {request.symbol} sell={request.quantity} > held={held}"
-                    "（纯多头体系无裸卖空）"
-                ),
+                message=(f"卖出超持仓: {request.symbol} sell={request.quantity} > held={held}（纯多头体系无裸卖空）"),
                 details=(
                     ("symbol", request.symbol),
                     ("quantity", str(request.quantity)),
@@ -229,9 +287,7 @@ class _T1SellableRule:
     rule_id: str = "hard_t1_sellable"
     priority: int = _PRIORITY_T1_SELLABLE
 
-    def check(
-        self, request: OrderRiskRequest, snapshot: RiskSnapshot
-    ) -> VetoVerdict | None:
+    def check(self, request: OrderRiskRequest, snapshot: RiskSnapshot) -> VetoVerdict | None:
         if request.side is not OrderSide.SELL:
             return None
         for view in snapshot.positions:
@@ -274,18 +330,14 @@ class _SinglePositionLimitRule:
     rule_id: str = "hard_single_position_limit"
     priority: int = _PRIORITY_SINGLE_POSITION
 
-    def check(
-        self, request: OrderRiskRequest, snapshot: RiskSnapshot
-    ) -> VetoVerdict | None:
+    def check(self, request: OrderRiskRequest, snapshot: RiskSnapshot) -> VetoVerdict | None:
         if request.side is not OrderSide.BUY or snapshot.limits is None:
             return None
         order_value = _order_value(request, snapshot)
         if order_value is None:
             return None
         limits = snapshot.limits
-        effective = limits.symbol_overrides.get(
-            request.symbol, limits.max_single_position
-        )
+        effective = limits.symbol_overrides.get(request.symbol, limits.max_single_position)
         current_mv = Decimal("0")
         for view in snapshot.positions:
             if view.symbol == request.symbol and view.market_value is not None:
@@ -297,10 +349,7 @@ class _SinglePositionLimitRule:
                 rule_id=self.rule_id,
                 priority=self.priority,
                 reason_code="SINGLE_POSITION_LIMIT",
-                message=(
-                    f"买入后单仓权重超限: {request.symbol} post_weight={post_weight:.4f} "
-                    f"> limit={effective:.4f}"
-                ),
+                message=(f"买入后单仓权重超限: {request.symbol} post_weight={post_weight:.4f} > limit={effective:.4f}"),
                 details=(
                     ("symbol", request.symbol),
                     ("post_weight", f"{post_weight:.6f}"),
@@ -315,9 +364,7 @@ class _GrossLeverageLimitRule:
     rule_id: str = "hard_gross_leverage_limit"
     priority: int = _PRIORITY_GROSS_LEVERAGE
 
-    def check(
-        self, request: OrderRiskRequest, snapshot: RiskSnapshot
-    ) -> VetoVerdict | None:
+    def check(self, request: OrderRiskRequest, snapshot: RiskSnapshot) -> VetoVerdict | None:
         if request.side is not OrderSide.BUY or snapshot.limits is None:
             return None
         order_value = _order_value(request, snapshot)
@@ -330,10 +377,7 @@ class _GrossLeverageLimitRule:
                 rule_id=self.rule_id,
                 priority=self.priority,
                 reason_code="GROSS_LEVERAGE_LIMIT",
-                message=(
-                    f"买入后总杠杆超限: post_leverage={post_leverage:.4f} "
-                    f"> limit={max_leverage:.4f}"
-                ),
+                message=(f"买入后总杠杆超限: post_leverage={post_leverage:.4f} > limit={max_leverage:.4f}"),
                 details=(
                     ("post_leverage", f"{post_leverage:.6f}"),
                     ("limit", f"{max_leverage:.6f}"),
@@ -394,9 +438,7 @@ def evaluate_vetoes(
         try:
             verdict = rule.check(request, snapshot)
         except Exception as exc:  # noqa: BLE001 — Fail-Closed 规则异常即否决
-            _logger.error(
-                "VETO_RULE_ERROR fail-closed rule=%s error=%s", rule.rule_id, exc
-            )
+            _logger.error("VETO_RULE_ERROR fail-closed rule=%s error=%s", rule.rule_id, exc)
             verdict = VetoVerdict(
                 rule_id=rule.rule_id,
                 priority=rule.priority,
@@ -438,9 +480,7 @@ class RiskVetoEngine:
         *,
         evaluated_at: datetime | None = None,
     ) -> VetoDecision:
-        decision = evaluate_vetoes(
-            request, snapshot, self._rules, evaluated_at=evaluated_at
-        )
+        decision = evaluate_vetoes(request, snapshot, self._rules, evaluated_at=evaluated_at)
         if not decision.approved:
             _logger.warning(
                 "RISK_VETO request=%s symbol=%s side=%s reasons=%s",

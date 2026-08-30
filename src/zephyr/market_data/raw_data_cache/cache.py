@@ -14,7 +14,8 @@
 # [TESTS] tests/market_data/raw_data_cache/test_raw_data_cache.py
 # [A_module] module_id=MOD-MKT-006 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_MKT_DATA — Raw Data Cache 实现 (原始数据缓存)
+"""
+D_MKT_DATA — Raw Data Cache 实现 (原始数据缓存)
 
 LRU + TTL 双重淘汰的内存缓存, 存储行情标准化前的原始数据。
 线程安全, 含内容哈希校验。
@@ -23,6 +24,49 @@ LRU + TTL 双重淘汰的内存缓存, 存储行情标准化前的原始数据�
 
 设计真源: depgraph MOD-MKT-006
 蓝图: docs/03_modules/_domain_mkt_data/raw_data_cache/blueprint.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: cache.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① CacheEntry
+#   name_en: CacheEntry
+#   intro: 缓存条目——不可变。
+#   desc: 缓存条目——不可变。 Attributes: key: 缓存键(symbol + date) source_vendor: 数据来源 vendor_id raw_payload:…；公共方法（定义序）: is_expi…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② CacheStats
+#   name_en: CacheStats
+#   intro: 缓存统计——不可变快照。
+#   desc: 缓存统计——不可变快照。 Attributes: total_entries: 当前条目数 total_size_bytes: 当前总字节数 hit_count: 命中次数 mi…；公共方法（定义序）: hit_rat…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ RawDataCache
+#   name_en: RawDataCache
+#   intro: 原始数据缓存——LRU + TTL 双重淘汰的内存缓存。
+#   desc: 原始数据缓存——LRU + TTL 双重淘汰的内存缓存。 存储行情标准化前的原始数据, 支持重放/恢复/审计。 线程安全: 所有读写操作加 threading.Lock 保护。…；公共方法（定义序）: put, get…
+#   inputs: config
+#   outputs: 返回值
+#   （注：A3 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（7 定义）
+#   name_en: public defs
+#   intro: CacheEntry, CacheStats, RawDataCache
+#   downstream: zephyr.market_data.normalized_market_data_producer
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

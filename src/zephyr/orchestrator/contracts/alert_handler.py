@@ -14,9 +14,44 @@
 # [TESTS] scripts/connect/fle_orc.py --trigger
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Orc 告警接收器 — handle_alert() 消费者
+"""
+Orc 告警接收器 — handle_alert() 消费者
 
 CT-FLE-ORC-001: 接收 FLE 分派的 AlertEvent, 创建修复任务或阻断关联。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: event 参数
+#   fields: 参数 event，类型注解 object
+#   code: alert_handler.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AlertHandler
+#   name_en: AlertHandler
+#   intro: class AlertHandler 源码 L75-L105
+#   desc: 公共方法（定义序）: handle_alert；源码 L75-L105
+#   inputs: task_repo
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② handle_alert
+#   name_en: handle_alert
+#   intro: handle_alert(event) 源码 L220-L221
+#   desc: 源码 L220-L221
+#   inputs: event
+#   outputs: object | None
+# 层: 输出
+# - id: O1
+#   name_zh: object | None
+#   name_en: object | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.feedback_loop.alert_dispatcher; zephyr.trading.work_orchestrator
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

@@ -11,7 +11,8 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] permanent
-"""D_PORTFOLIO_CORE — Portfolio Construction Strategies
+"""
+D_PORTFOLIO_CORE — Portfolio Construction Strategies
 
 策略引擎包：策略运行器 + 具体策略实现。
 
@@ -25,6 +26,32 @@
     * IntradaySurgeFallStrategy : 30秒冲高回落做T（动量反转）
     * VWAPReversionStrategy     : VWAP 回归做T（均值回归）
     * OrderBookImbalanceStrategy: 盘口失衡反转做T（订单流反转）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 包内子模块公共符号
+#   fields: import 再导出符号: DefaultEquityStrategy, RebalanceMode, EventSentimentAdapter, Strategy…
+#   code: __init__.py import L57
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包公共面再导出
+#   name_en: __init__ re-export
+#   intro: 再导出 DefaultEquityStrategy, EventSentimentAdapter, RebalanceMode, StrategyRunner…
+#   desc: __init__ import L57；__all__ 5 项（AST 事实）
+#   inputs: I1
+#   outputs: __all__ 公共符号表
+# 层: 输出
+# - id: O1
+#   name_zh: 公共 API 面（5 符号）
+#   name_en: __all__
+#   intro: DefaultEquityStrategy, EventSentimentAdapter, RebalanceMode, StrategyRunner, St…
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from zephyr.pf_core.default_equity_strategy import (

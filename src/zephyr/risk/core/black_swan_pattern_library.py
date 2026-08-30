@@ -29,7 +29,6 @@
 # A1 --> A2
 # A2 --> O1
 """
-
 Black Swan Pattern Library — C-038 黑天鹅模式库 (MOD-RK-31, MVP)
 
 7 种黑天鹅模式（BS-001~BS-007）的事前特征模板库：当前市场 7 维体征与模板做加权
@@ -43,6 +42,51 @@ drawdown_controller.BlackSwanMode（import 复用）；drawdown_controller 管�
 
 SSoT: docs/03_modules/_domain_risk/black_swan_pattern_library/blueprint.md
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: features 参数
+#   fields: 参数 features，类型注解 MarketFeatures
+#   code: black_swan_pattern_library.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: black_swan_pattern_library.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① get_pattern_templates
+#   name_en: get_pattern_templates
+#   intro: 返回 7 模式模板库（只读映射）。
+#   desc: 返回 7 模式模板库（只读映射）。；源码 L249-L251
+#   inputs: 无参数
+#   outputs: Mapping[BlackSwanMode, BlackSwanPattern]
+# - id: A2
+#   name_zh: ② screen_black_swan
+#   name_en: screen_black_swan
+#   intro: 黑天鹅模式事前筛查主入口。
+#   desc: 黑天鹅模式事前筛查主入口。 Args: features: 当前市场 7 维体征 config: 配置（None → 各模板自身阈值） Returns: BlackSwanScr…；源码 L300-L336
+#   inputs: features config
+#   outputs: BlackSwanScreenResult
+#   （注：A2 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: Mapping[BlackSwanMode, BlackSwanPattern]
+#   name_en: Mapping[BlackSwanMode, BlackSwanPattern]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-RK-30(Adaptive Risk Coordinator, black_swan_escalated 升级触发); 审计链(匹配记录持久化由调用…
+# - id: O2
+#   name_zh: BlackSwanScreenResult
+#   name_en: BlackSwanScreenResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-RK-30(Adaptive Risk Coordinator, black_swan_escalated 升级触发); 审计链(匹配记录持久化由调用…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -99,7 +143,15 @@ class MarketFeatures:
     cross_market_drop: float
 
     def __post_init__(self) -> None:
-        for f in ("volatility_ratio", "drawdown_pct", "avg_correlation", "liquidity_shrink", "gap_pct", "limit_down_ratio", "cross_market_drop"):
+        for f in (
+            "volatility_ratio",
+            "drawdown_pct",
+            "avg_correlation",
+            "liquidity_shrink",
+            "gap_pct",
+            "limit_down_ratio",
+            "cross_market_drop",
+        ):
             v = getattr(self, f)
             if not math.isfinite(v) or v < 0.0:
                 raise InvalidMarketFeaturesError(f"{f} 必须为非负有限值: {v}")
@@ -130,45 +182,65 @@ class BlackSwanPattern:
         if not 0.0 < self.threshold <= 1.0:
             raise InvalidBlackSwanConfigError(f"{self.mode.value} 阈值必须 ∈ (0,1]: {self.threshold}")
         if not 0.0 <= self.suggested_position_scale <= 1.0:
-            raise InvalidBlackSwanConfigError(f"{self.mode.value} 降仓建议必须 ∈ [0,1]: {self.suggested_position_scale}")
+            raise InvalidBlackSwanConfigError(
+                f"{self.mode.value} 降仓建议必须 ∈ [0,1]: {self.suggested_position_scale}"
+            )
 
 
-def _p(mode: BlackSwanMode, name: str, refs: dict[str, float], scale: float, threshold: float = 0.8) -> BlackSwanPattern:
+def _p(
+    mode: BlackSwanMode, name: str, refs: dict[str, float], scale: float, threshold: float = 0.8
+) -> BlackSwanPattern:
     """模板构造（等权基准；参考水平即危险量级，评分按 f/ref 截断归一）。"""
     weights = {k: 1.0 for k in refs}
-    return BlackSwanPattern(mode=mode, name=name, weights=weights, references=refs, threshold=threshold, suggested_position_scale=scale)
+    return BlackSwanPattern(
+        mode=mode, name=name, weights=weights, references=refs, threshold=threshold, suggested_position_scale=scale
+    )
 
 
 #: 7 模式模板库（代码 SSoT；参考水平=危险量级经验基线，C 类可经模板替换调参）
 _PATTERN_TEMPLATES: Final = MappingProxyType(
     {
         BlackSwanMode.BS001_LIQUIDITY: _p(
-            BlackSwanMode.BS001_LIQUIDITY, "流动性枯竭",
-            {"liquidity_shrink": 0.7, "limit_down_ratio": 0.2, "volatility_ratio": 2.0}, 0.5,
+            BlackSwanMode.BS001_LIQUIDITY,
+            "流动性枯竭",
+            {"liquidity_shrink": 0.7, "limit_down_ratio": 0.2, "volatility_ratio": 2.0},
+            0.5,
         ),
         BlackSwanMode.BS002_CORRELATION: _p(
-            BlackSwanMode.BS002_CORRELATION, "相关性崩塌",
-            {"avg_correlation": 0.8, "volatility_ratio": 2.0}, 0.5,
+            BlackSwanMode.BS002_CORRELATION,
+            "相关性崩塌",
+            {"avg_correlation": 0.8, "volatility_ratio": 2.0},
+            0.5,
         ),
         BlackSwanMode.BS003_VOLATILITY: _p(
-            BlackSwanMode.BS003_VOLATILITY, "波动爆表",
-            {"volatility_ratio": 3.0, "drawdown_pct": 0.10, "gap_pct": 0.03}, 0.5,
+            BlackSwanMode.BS003_VOLATILITY,
+            "波动爆表",
+            {"volatility_ratio": 3.0, "drawdown_pct": 0.10, "gap_pct": 0.03},
+            0.5,
         ),
         BlackSwanMode.BS004_MARGIN: _p(
-            BlackSwanMode.BS004_MARGIN, "杠杆追缴",
-            {"drawdown_pct": 0.15, "volatility_ratio": 2.5, "liquidity_shrink": 0.5}, 0.5,
+            BlackSwanMode.BS004_MARGIN,
+            "杠杆追缴",
+            {"drawdown_pct": 0.15, "volatility_ratio": 2.5, "liquidity_shrink": 0.5},
+            0.5,
         ),
         BlackSwanMode.BS005_CONTAGION: _p(
-            BlackSwanMode.BS005_CONTAGION, "跨市场传导",
-            {"cross_market_drop": 0.05, "gap_pct": 0.02, "avg_correlation": 0.6}, 0.7,
+            BlackSwanMode.BS005_CONTAGION,
+            "跨市场传导",
+            {"cross_market_drop": 0.05, "gap_pct": 0.02, "avg_correlation": 0.6},
+            0.7,
         ),
         BlackSwanMode.BS006_POLICY: _p(
-            BlackSwanMode.BS006_POLICY, "政策事件",
-            {"gap_pct": 0.03, "volatility_ratio": 2.5, "limit_down_ratio": 0.15}, 0.7,
+            BlackSwanMode.BS006_POLICY,
+            "政策事件",
+            {"gap_pct": 0.03, "volatility_ratio": 2.5, "limit_down_ratio": 0.15},
+            0.7,
         ),
         BlackSwanMode.BS007_SYSTEMIC: _p(
-            BlackSwanMode.BS007_SYSTEMIC, "系统性风险",
-            {"drawdown_pct": 0.25, "volatility_ratio": 4.0, "avg_correlation": 0.9, "liquidity_shrink": 0.8}, 0.0,
+            BlackSwanMode.BS007_SYSTEMIC,
+            "系统性风险",
+            {"drawdown_pct": 0.25, "volatility_ratio": 4.0, "avg_correlation": 0.9, "liquidity_shrink": 0.8},
+            0.0,
         ),
     }
 )

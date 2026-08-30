@@ -22,7 +22,8 @@
 # created: "2026-05-05"
 # ---
 
-"""D_RISK — Default Risk Manager Orchestrator
+"""
+D_RISK — Default Risk Manager Orchestrator
 
 风险总管具体实现。编排事前/事后风控检查、日终盈亏校验、综合风控报告。
 
@@ -40,6 +41,47 @@ CTR 契约：
   生产者 — CTR-P1-008 (RiskDashboardSnapshot) -> D_FRONTEND
 
 SSoT: cross_layer_contracts.yaml -> CTR-003 + CTR-ERR-004 + CTR-P1-008
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: portfolio_id 参数
+#   fields: 参数 portfolio_id（无注解）
+#   code: default_risk_manager_orchestrator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: limits_calculator 参数
+#   fields: 参数 limits_calculator（无注解）
+#   code: default_risk_manager_orchestrator.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: validator 参数
+#   fields: 参数 validator（无注解）
+#   code: default_risk_manager_orchestrator.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: position_checker 参数
+#   fields: 参数 position_checker（无注解）
+#   code: default_risk_manager_orchestrator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① DefaultRiskManagerOrchestrator
+#   name_en: DefaultRiskManagerOrchestrator
+#   intro: 默认风险总管——编排全套风控检查
+#   desc: 默认风险总管——编排全套风控检查；公共方法（定义序）: last_alerts, pre_trade_check, post_trade_check, daily_pnl_check, check_liquidity,…
+#   inputs: portfolio_id limits_calculator validator position_checker stop_loss_e…
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: DefaultRiskManagerOrchestrator
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

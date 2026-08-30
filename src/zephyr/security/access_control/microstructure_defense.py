@@ -14,10 +14,37 @@
 # [TESTS] tests/governance/governance_e2e/test_gov_microstructure_defense.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""微结构防御——对抗做市/交易微结构攻击的策略与保真度因子。
+"""
+微结构防御——对抗做市/交易微结构攻击的策略与保真度因子。
 
 依据 MOD-INF-018 蓝图定义 5 类微结构攻击威胁及对应反制措施，
 并提供基于成交概率/滑点/盘口深度/部分成交的保真度综合评分。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: microstructure_defense.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包公共面再导出
+#   name_en: __init__ re-export
+#   intro: 再导出 DEFAULT_FIDELITY, DEFENSE_STRATEGIES, DefenseStrategy, DefenseType, Fidelit…
+#   desc: __init__ import L0；__all__ 5 项（AST 事实）
+#   inputs: I1
+#   outputs: __all__ 公共符号表
+# 层: 输出
+# - id: O1
+#   name_zh: 数据契约声明（3 类）
+#   name_en: data classes
+#   intro: DefenseType, DefenseStrategy, FidelityFactor
+#   downstream: N/A (all consumers verified as phantom — stale references removed)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

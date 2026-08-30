@@ -14,12 +14,39 @@
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""MonotonicClock — 单调时钟.
+"""
+MonotonicClock — 单调时钟.
 
 依据蓝图 MOD-INF-018 §3:
 - 提供单调递增的时间戳
 - 防止系统时钟回拨导致的安全问题（如 token 重放）
 - 基于 time.monotonic() + 内部计数器双保险
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: monotonic_clock.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① MonotonicClock
+#   name_en: MonotonicClock
+#   intro: 单调时钟.
+#   desc: 单调时钟. 保证 now() 返回值非递减——即使系统时钟回拨也不影响。；公共方法（定义序）: now, verify；源码 L58-L104
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: MonotonicClock
+#   downstream: tests/agent_rbac/test_redteam_adversarial.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

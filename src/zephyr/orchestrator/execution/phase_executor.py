@@ -27,6 +27,33 @@ Phase 定义：
 - Phase B: 治理补齐（Anti-Patterns + 集成测试 + 门禁）
 - Phase C: 运行保障（CDC + DLQ + 动态调参 + 健康探针 + CBAC）
 - Phase D: 1人+AI维护（冷启动分派 + SLO + Bulkhead + Watchdog + Backup + 场景走查）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: phase_executor.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① PhaseExecutor
+#   name_en: PhaseExecutor
+#   intro: class PhaseExecutor 源码 L121-L185
+#   desc: 公共方法（定义序）: progress, current_phase, run_context_check, can_start_phase, start_phase, complete_phase, get_phas…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: PhaseExecutor
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -14,7 +14,8 @@
 # [TESTS] tests/security/access_control/test_key_hierarchy.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""三层密钥层级管理（B12-03842 / CAND-SEC-004）。
+"""
+三层密钥层级管理（B12-03842 / CAND-SEC-004）。
 
 层级：主密钥（系统密钥环/环境变量 ZEPHYR_MASTER_KEY，hex）→ KEK（HKDF 按用途派生）
 → DEK（按域派发，KEK 包裹存储）+ 90 天轮换 + 密钥使用审计落哈希链 + 启动完整性自检。
@@ -29,6 +30,48 @@
 - 审计：dispatch/rotate/self_check 事件注入 audit_sink（生产接 AiAuditLogger 哈希链），
   事件仅含 key_id/域/时间，零密钥材料。
 - 裁剪（单人单机）：不落地 Shamir 分片与后量子迁移（裁定：机构级可选，min_build_spec 明确裁剪）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: master_key 参数
+#   fields: 参数 master_key（无注解）
+#   code: key_hierarchy.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: registry_path 参数
+#   fields: 参数 registry_path（无注解）
+#   code: key_hierarchy.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: rotation_days 参数
+#   fields: 参数 rotation_days（无注解）
+#   code: key_hierarchy.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: audit_sink 参数
+#   fields: 参数 audit_sink（无注解）
+#   code: key_hierarchy.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① KeyHierarchy
+#   name_en: KeyHierarchy
+#   intro: 三层密钥层级：主密钥→KEK→DEK 按域派发 + 90 天轮换 + 审计 + 启动自检。
+#   desc: 三层密钥层级：主密钥→KEK→DEK 按域派发 + 90 天轮换 + 审计 + 启动自检。；公共方法（定义序）: derive_kek, dispatch_dek, export_state, seal, open,…
+#   inputs: master_key registry_path rotation_days audit_sink clock
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: KeyHierarchy
+#   downstream: N/A (all consumers verified as phantom — stale references removed)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -316,9 +359,7 @@ class KeyHierarchy:
                     unhealthy.append(domain)
             except Exception:  # noqa: BLE001 — 自检永不抛出
                 unhealthy.append(domain)
-        results.append(
-            KeyHierarchyCheck("dispatched_deks_healthy", not unhealthy, ",".join(unhealthy))
-        )
+        results.append(KeyHierarchyCheck("dispatched_deks_healthy", not unhealthy, ",".join(unhealthy)))
 
         self._audit(
             "key.self_check",

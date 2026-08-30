@@ -33,7 +33,6 @@
 # A2 --> A3
 # A3 --> O1
 """
-
 Adaptive Risk Forecast — 前瞻 VaR 共形预判层 (MOD-RK-28, C-004 ①预判层 MVP)
 
 C-004 自适应风控三层体系（预判+监控+熔断）的预判层能力底座：
@@ -47,6 +46,48 @@ C-004 自适应风控三层体系（预判+监控+熔断）的预判层能力底
 
 SSoT: docs/03_modules/_domain_risk/adaptive_risk_forecast/blueprint.md
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: returns 参数
+#   fields: 参数 returns，类型注解 Iterable[float]
+#   code: adaptive_risk_forecast.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: conditions 参数
+#   fields: 参数 conditions（无注解）
+#   code: adaptive_risk_forecast.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: condition 参数
+#   fields: 参数 condition（无注解）
+#   code: adaptive_risk_forecast.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: calibration_predictions 参数
+#   fields: 参数 calibration_predictions（无注解）
+#   code: adaptive_risk_forecast.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① forecast_forward_var
+#   name_en: forecast_forward_var
+#   intro: 盘前前瞻 VaR/CVaR + 共形 VaR 预判主入口。
+#   desc: 盘前前瞻 VaR/CVaR + 共形 VaR 预判主入口。 Args: returns: 历史收益序列（trailing 使用，无未来函数） conditions: 与 retu…；源码 L171-L246
+#   inputs: returns conditions condition calibration_predictions calibration_actu…
+#   outputs: ForwardVarForecast
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ForwardVarForecast
+#   name_en: ForwardVarForecast
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-RK-30(Adaptive Risk Coordinator, C-004 三层联动盘前预判); MOD-RK-05D(var_intraday_r…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -189,9 +230,7 @@ def forecast_forward_var(
     sit_out = conformal_var >= cfg.sit_out_var_pct
 
     if sit_out:
-        _logger.warning(
-            "前瞻VaR预判 sit_out: conformal_var=%.4f >= 阈值 %.4f", conformal_var, cfg.sit_out_var_pct
-        )
+        _logger.warning("前瞻VaR预判 sit_out: conformal_var=%.4f >= 阈值 %.4f", conformal_var, cfg.sit_out_var_pct)
 
     return ForwardVarForecast(
         var_pct=var_pct,

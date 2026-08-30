@@ -1,6 +1,37 @@
 # NOTE(2026-08-25 P1W21): scaffold 注册器斜杠非法 import 变种复发（同 #ARCH-228 族），
 # 按可逆模式归一为点号合法 import（包门面再导出约定不变）。
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 包内子模块公共符号
+#   fields: import 再导出符号: ModelVersionRegistry
+#   code: __init__.py import L33
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包公共面再导出
+#   name_en: __init__ re-export
+#   intro: 再导出 ModelVersionRegistry（共 1 符号）
+#   desc: __init__ import L33；__all__ 0 项（AST 事实）
+#   inputs: I1
+#   outputs: __all__ 公共符号表
+# 层: 输出
+# - id: O1
+#   name_zh: 公共 API 面（1 符号）
+#   name_en: __all__
+#   intro: ModelVersionRegistry
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 from zephyr.ml_train.core.model_version_registry import ModelVersionRegistry
+
 # [TTL] permanent
 # ml_train/core
 

@@ -61,7 +61,8 @@
 # A3 --> O1
 # A4 --> O1
 
-"""Core-Satellite Allocator — 核心-卫星仓位管理模型 (MOD-POS-025)。
+"""
+Core-Satellite Allocator — 核心-卫星仓位管理模型 (MOD-POS-025)。
 
 CFA Institute 推荐组合结构：核心仓 Kelly 长期持有（不做T不换仓），卫星仓≤总仓位
 30% 用于做T/换仓增强。
@@ -82,6 +83,33 @@ TSV 裁定 (B10-01465, CAND-POS-005, A1交易决策架构 §8模块24)：
 依据: construction_backlog_dig.tsv B10-01465 + CAND-POS-005
 SSoT: docs/03_modules/_domain_position/core_satellite_allocator/blueprint.md
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: core_satellite_allocator.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① CoreSatelliteAllocator
+#   name_en: CoreSatelliteAllocator
+#   intro: 核心-卫星仓位管理——结构分配+做T信号+换仓触发。
+#   desc: 核心-卫星仓位管理——结构分配+做T信号+换仓触发。 用法: allocator = CoreSatelliteAllocator() candidates = [Candida…；公共方法（定义序）: allocat…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（9 定义）
+#   name_en: public defs
+#   intro: CoreSatelliteAllocator
+#   downstream: MOD-POS-001(精裁) ; MOD-POS-024(裁决) ; MOD-SELL-018(做T执行)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -268,7 +296,9 @@ class CoreSatelliteAllocator:
         """
         cfg = config or CoreSatelliteConfig()
         if not candidates:
-            return CoreSatellitePlan(legs=(), satellite_weight=0.0, t_signals=(), swap_triggers=(), notes=("empty_candidates",))
+            return CoreSatellitePlan(
+                legs=(), satellite_weight=0.0, t_signals=(), swap_triggers=(), notes=("empty_candidates",)
+            )
 
         # 按 kelly_fraction 降序排序
         sorted_cands = sorted(candidates, key=lambda c: (-c.kelly_fraction, -c.rs_pct, c.symbol))
@@ -287,35 +317,41 @@ class CoreSatelliteAllocator:
 
             if core_acc + weight <= core_budget:
                 # 核心仓
-                legs.append(AllocationLeg(
-                    symbol=cand.symbol,
-                    sleeve=Sleeve.CORE,
-                    target_weight=weight,
-                    stop_atr_k=cfg.core_atr_k,
-                    truncated=False,
-                ))
+                legs.append(
+                    AllocationLeg(
+                        symbol=cand.symbol,
+                        sleeve=Sleeve.CORE,
+                        target_weight=weight,
+                        stop_atr_k=cfg.core_atr_k,
+                        truncated=False,
+                    )
+                )
                 core_acc += weight
             elif satellite_acc + weight <= cfg.satellite_cap:
                 # 卫星仓
-                legs.append(AllocationLeg(
-                    symbol=cand.symbol,
-                    sleeve=Sleeve.SATELLITE,
-                    target_weight=weight,
-                    stop_atr_k=cfg.satellite_atr_k,
-                    truncated=False,
-                ))
+                legs.append(
+                    AllocationLeg(
+                        symbol=cand.symbol,
+                        sleeve=Sleeve.SATELLITE,
+                        target_weight=weight,
+                        stop_atr_k=cfg.satellite_atr_k,
+                        truncated=False,
+                    )
+                )
                 satellite_acc += weight
             elif satellite_acc < cfg.satellite_cap:
                 # 卫星硬帽截断
                 remaining = cfg.satellite_cap - satellite_acc
                 if remaining > 0:
-                    legs.append(AllocationLeg(
-                        symbol=cand.symbol,
-                        sleeve=Sleeve.SATELLITE,
-                        target_weight=remaining,
-                        stop_atr_k=cfg.satellite_atr_k,
-                        truncated=True,
-                    ))
+                    legs.append(
+                        AllocationLeg(
+                            symbol=cand.symbol,
+                            sleeve=Sleeve.SATELLITE,
+                            target_weight=remaining,
+                            stop_atr_k=cfg.satellite_atr_k,
+                            truncated=True,
+                        )
+                    )
                     satellite_acc += remaining
                     notes.append(f"satellite_cap_truncated:{cand.symbol}")
             else:
@@ -356,19 +392,23 @@ class CoreSatelliteAllocator:
                 continue
             deviation = (cand.price - cand.vwap) / cand.atr
             if deviation > cfg.t_band_atr:
-                signals.append(TTradeSignal(
-                    symbol=leg.symbol,
-                    action="SELL_PART",
-                    deviation_atr=deviation,
-                    reason=f"price>{cfg.t_band_atr}ATR above VWAP ({deviation:.2f})",
-                ))
+                signals.append(
+                    TTradeSignal(
+                        symbol=leg.symbol,
+                        action="SELL_PART",
+                        deviation_atr=deviation,
+                        reason=f"price>{cfg.t_band_atr}ATR above VWAP ({deviation:.2f})",
+                    )
+                )
             elif deviation < -cfg.t_band_atr:
-                signals.append(TTradeSignal(
-                    symbol=leg.symbol,
-                    action="BUY_BACK",
-                    deviation_atr=deviation,
-                    reason=f"price<{cfg.t_band_atr}ATR below VWAP ({deviation:.2f})",
-                ))
+                signals.append(
+                    TTradeSignal(
+                        symbol=leg.symbol,
+                        action="BUY_BACK",
+                        deviation_atr=deviation,
+                        reason=f"price<{cfg.t_band_atr}ATR below VWAP ({deviation:.2f})",
+                    )
+                )
         return tuple(signals)
 
     def rs_swap_check(
@@ -400,9 +440,11 @@ class CoreSatelliteAllocator:
             if cand.rs_pct < cfg.rs_keep_pct and challengers:
                 best = challengers[0]
                 if best.rs_pct > cand.rs_pct:
-                    triggers.append(SwapTrigger(
-                        out_symbol=leg.symbol,
-                        in_symbol=best.symbol,
-                        reason=f"satellite rs_pct={cand.rs_pct:.2f} < keep={cfg.rs_keep_pct:.2f}, challenger rs_pct={best.rs_pct:.2f}",
-                    ))
+                    triggers.append(
+                        SwapTrigger(
+                            out_symbol=leg.symbol,
+                            in_symbol=best.symbol,
+                            reason=f"satellite rs_pct={cand.rs_pct:.2f} < keep={cfg.rs_keep_pct:.2f}, challenger rs_pct={best.rs_pct:.2f}",
+                        )
+                    )
         return tuple(triggers)

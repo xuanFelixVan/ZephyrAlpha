@@ -15,7 +15,35 @@
 # [A_module] module_id=MOD-INF-039 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""系统移交恢复（CT-TRANSFER）——系统Owner变更+配置迁移+密钥轮转+健康验证。"""
+"""
+系统移交恢复（CT-TRANSFER）——系统Owner变更+配置迁移+密钥轮转+健康验证。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: system_transfer.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SystemTransferManager
+#   name_en: SystemTransferManager
+#   intro: class SystemTransferManager 源码 L49-L54
+#   desc: 公共方法（定义序）: transfer, verify_health_after_transfer；源码 L49-L54
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SystemTransferManager
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
 
 
 class SystemTransferManager:

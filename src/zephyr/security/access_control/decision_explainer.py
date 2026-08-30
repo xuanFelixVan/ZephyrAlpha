@@ -14,11 +14,46 @@
 # [TESTS] tests/decision/test_decision_explainer_root.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""DecisionExplainer — 拒绝决策的结构化解释器.
+"""
+DecisionExplainer — 拒绝决策的结构化解释器.
 
 依据蓝图 MOD-INF-018:
 - Explanation: 拒绝原因的结构化载体（blocked_layer/rule_id/reason/correction_suggestion/causal_chain）
 - DecisionExplainer: 生成结构化拒绝解释，包含自动建议生成
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: decision_explainer.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① Explanation
+#   name_en: Explanation
+#   intro: 拒绝解释 — 结构化载体.
+#   desc: 拒绝解释 — 结构化载体. Attributes: blocked_layer: 阻塞层（L0/L1/L2/L3/L5/N/A 等） rule_id: 触发的规则 ID reas…；公共方法（定义序）: to_dict…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② DecisionExplainer
+#   name_en: DecisionExplainer
+#   intro: 拒绝决策解释器 — 生成结构化拒绝解释.
+#   desc: 拒绝决策解释器 — 生成结构化拒绝解释.；公共方法（定义序）: structured_rejection, explain_auto_guard；源码 L107-L166
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: Explanation, DecisionExplainer
+#   downstream: tests.agent_rbac.test_decision_explainer_agent_rbac
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

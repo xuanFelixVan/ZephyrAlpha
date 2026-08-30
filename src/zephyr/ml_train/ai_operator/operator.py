@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-ML-002 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
 
-"""D_ML_TRAIN — MOD-ML-002 AI 操作员。
+"""
+D_ML_TRAIN — MOD-ML-002 AI 操作员。
 
 模型上线/下线/巡检三操作封装：
 
@@ -25,6 +26,33 @@
   生效实盘（B-009）。
 - ``inspect``：健康巡检（免令牌），产指标快照并留痕。
 - 全操作（含被拒绝的令牌尝试）按序留痕，``audit_log()`` 返回副本防篡改。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: operator.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① AIOperator
+#   name_en: AIOperator
+#   intro: AI 操作员（MOD-ML-002）。
+#   desc: AI 操作员（MOD-ML-002）。；公共方法（定义序）: request_online, request_offline, inspect, audit_log；源码 L107-L186
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: AIOperator
+#   downstream: MOD-ML-001 training_pipeline（运行记录巡检）；MOD-ML-004 gray_release_shadow_deployer（影子…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

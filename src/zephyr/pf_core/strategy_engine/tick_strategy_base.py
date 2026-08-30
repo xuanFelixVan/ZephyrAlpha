@@ -14,7 +14,8 @@
 # [TESTS] tests/pf_core/test_tick_strategy.py
 # [A_module] module_id=MOD-L05-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_PORTFOLIO_CORE — TickStrategyBase + TickStrategyRegistry（路径 B：tick 级策略/做T）
+"""
+D_PORTFOLIO_CORE — TickStrategyBase + TickStrategyRegistry（路径 B：tick 级策略/做T）
 
 与 StrategyBase（日频截面，signals=dict[str,float]）正交。本基类的策略每个 tick
 被 EDE 调用一次，接收 TickEvent（含 5 档盘口 TickSnapshot），返回 {symbol: target_weight}。
@@ -28,6 +29,49 @@ EDE callback 契约：Callable[[TickEvent], dict[str, float]]，与本基类 on_
 故 StrategyRunner.run_tick_strategy_backtest 可直接传 strategy.on_tick 给 EDE.run_tick。
 
 SSoT: docs/03_modules/_domain_backtest/blueprint.md §16.7（EDE 做T场景）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: package_path 参数
+#   fields: 参数 package_path，类型注解 str
+#   code: tick_strategy_base.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① TRulesConfig
+#   name_en: TRulesConfig
+#   intro: 做T 四规则配置（90 号 Phase2 项，#21 做T方法论 v2.0.0 裁定补齐）。
+#   desc: 做T 四规则配置（90 号 Phase2 项，#21 做T方法论 v2.0.0 裁定补齐）。 裁定真源：90_methodology_open_questions.md §21（…；公共方法（定义序）: t_posit…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② TickStrategyBase
+#   name_en: TickStrategyBase
+#   intro: Tick 级策略抽象基类（做T专用）。
+#   desc: Tick 级策略抽象基类（做T专用）。 子类 MUST: - 实现 on_tick() - 定义 _meta: TickStrategyMeta - 通过 @TickStrate…；公共方法（定义序）: on_tick…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ autodiscover_tick_strategies
+#   name_en: autodiscover_tick_strategies
+#   intro: 自动发现并注册 tick 策略（扫描 package_path 下的 .py 模块）。
+#   desc: 自动发现并注册 tick 策略（扫描 package_path 下的 .py 模块）。；源码 L229-L248
+#   inputs: package_path
+#   outputs: int
+#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations
@@ -131,10 +175,10 @@ class TickStrategyBase(abc.ABC):
       - on_fill 回调可用于成交后状态更新
     """
 
-    _registry: ClassVar[dict[str, type["TickStrategyBase"]]] = {}
+    _registry: ClassVar[dict[str, type[TickStrategyBase]]] = {}
 
     @abc.abstractmethod
-    def on_tick(self, event: "TickEvent") -> dict[str, float]:
+    def on_tick(self, event: TickEvent) -> dict[str, float]:
         """每个 tick 调用，返回目标权重 dict。
 
         Args:
@@ -154,7 +198,7 @@ class TickStrategyBase(abc.ABC):
         return getattr(cls, "_meta", None)
 
     @classmethod
-    def register(cls, strategy_class: type["TickStrategyBase"]) -> type["TickStrategyBase"]:
+    def register(cls, strategy_class: type[TickStrategyBase]) -> type[TickStrategyBase]:
         m = strategy_class.meta
         if callable(m):
             m = m()
@@ -166,11 +210,11 @@ class TickStrategyBase(abc.ABC):
         return strategy_class
 
     @classmethod
-    def get(cls, strategy_id: str) -> type["TickStrategyBase"] | None:
+    def get(cls, strategy_id: str) -> type[TickStrategyBase] | None:
         return cls._registry.get(strategy_id)
 
     @classmethod
-    def list_all(cls) -> dict[str, type["TickStrategyBase"]]:
+    def list_all(cls) -> dict[str, type[TickStrategyBase]]:
         return dict(cls._registry)
 
     @classmethod

@@ -21,7 +21,8 @@
 # F2: reconcile_broker_side_stops(计划 vs broker 实际: 按 symbol 匹配, qty 覆盖+stop_price 容差内=受保护; 未保护/错配→coverage_ok=False)
 # O1: list[ProtectiveStopIntent](开仓时同步挂单侧) + BrokerSideStopReport(coverage_ok/unprotected/mismatched/intents)
 # [/ALGO_FLOW]
-"""D_RISK — L2 平台层 broker 端硬止损（35 号 memo §6.11 施工，§3.5.1 四层架构 L2 落地）。
+"""
+D_RISK — L2 平台层 broker 端硬止损（35 号 memo §6.11 施工，§3.5.1 四层架构 L2 落地）。
 
 痛点（§3.5.1 四层防御表 L2 行）：
   L1 代码层 Kill Switch 平仓链路依赖策略进程存活；策略崩溃/连接中断时，
@@ -41,6 +42,56 @@
     下单通道属执行域（40_execution_broker），消费方 RiskOrchestrator §6.5。
 
 SSoT: 35_drawdown_protocol_impl §3.5.1/§6.11
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: positions 参数
+#   fields: 参数 positions，类型注解 Mapping[str, Mapping[str, Any]]
+#   code: drawdown_broker_side_stop.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: broker_stop_orders 参数
+#   fields: 参数 broker_stop_orders，类型注解 Sequence[Mapping[str, Any]] | None
+#   code: drawdown_broker_side_stop.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: drawdown_broker_side_stop.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① build_protective_stop_plan
+#   name_en: build_protective_stop_plan
+#   intro: 开仓时同步挂 broker 端止损——逐在持仓位产出保护性止损意图（§3.5.1 L2 触发点）。
+#   desc: 开仓时同步挂 broker 端止损——逐在持仓位产出保护性止损意图（§3.5.1 L2 触发点）。 Args: positions: {symbol: {"qty": int,…；源码 L176-L219
+#   inputs: positions
+#   outputs: list[ProtectiveStopIntent]
+# - id: A2
+#   name_zh: ② reconcile_broker_side_stops
+#   name_en: reconcile_broker_side_stops
+#   intro: L2 对账：计划在持仓位 vs broker 端已确认保护性止损单（每层捕获上层遗漏）。
+#   desc: L2 对账：计划在持仓位 vs broker 端已确认保护性止损单（每层捕获上层遗漏）。 匹配规则（按 symbol）：broker 存在该标的止损单 且 止损单 qty >=…；源码 L241-L297
+#   inputs: positions broker_stop_orders config
+#   outputs: BrokerSideStopReport
+#   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: list[ProtectiveStopIntent]
+#   name_en: list[ProtectiveStopIntent]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 开仓执行链(开仓时同步挂 broker 端 stop) ; RiskOrchestrator(§6.5 接线位) ; drawdown_watchdog(L3…
+# - id: O2
+#   name_zh: BrokerSideStopReport
+#   name_en: BrokerSideStopReport
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 开仓执行链(开仓时同步挂 broker 端 stop) ; RiskOrchestrator(§6.5 接线位) ; drawdown_watchdog(L3…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -85,9 +136,7 @@ class BrokerSideStopConfig:
 
     def __post_init__(self) -> None:
         if not 0 <= self.price_tolerance_ratio < 1:
-            raise InvalidBrokerSideStopInputError(
-                f"price_tolerance_ratio 须在 [0,1), got {self.price_tolerance_ratio}"
-            )
+            raise InvalidBrokerSideStopInputError(f"price_tolerance_ratio 须在 [0,1), got {self.price_tolerance_ratio}")
 
 
 @dataclass(frozen=True)
@@ -165,9 +214,7 @@ def build_protective_stop_plan(
                 raise InvalidBrokerSideStopInputError(
                     f"{symbol} 保护性卖出止损 stop_price({stop_price}) 须低于参考价({reference_price})——方向倒挂即失去保护语义"
                 )
-        intents.append(
-            ProtectiveStopIntent(symbol=str(symbol), qty=int(qty), stop_price=float(stop_price))
-        )
+        intents.append(ProtectiveStopIntent(symbol=str(symbol), qty=int(qty), stop_price=float(stop_price)))
     _logger.info("BROKER_SIDE_STOP_PLAN intents=%d", len(intents))
     return intents
 
@@ -184,9 +231,7 @@ def _index_stop_orders(
         o_qty = order.get("qty", 0)
         o_price = order.get("stop_price", 0)
         if sym is None or o_qty <= 0 or o_price <= 0:
-            raise InvalidBrokerSideStopInputError(
-                f"止损单字段非法: symbol={sym!r} qty={o_qty} stop_price={o_price}"
-            )
+            raise InvalidBrokerSideStopInputError(f"止损单字段非法: symbol={sym!r} qty={o_qty} stop_price={o_price}")
         prev = orders.get(str(sym))
         if prev is None or o_qty > prev.get("qty", 0):
             orders[str(sym)] = order
@@ -226,9 +271,7 @@ def reconcile_broker_side_stops(
             unprotected.append(intent.symbol)
             continue
         if order["qty"] < intent.qty:
-            mismatched.append(
-                (intent.symbol, f"止损单数量 {order['qty']} < 持仓 {intent.qty}（保护不足）")
-            )
+            mismatched.append((intent.symbol, f"止损单数量 {order['qty']} < 持仓 {intent.qty}（保护不足）"))
             continue
         tolerance = cfg.price_tolerance_ratio * intent.stop_price
         if abs(float(order["stop_price"]) - intent.stop_price) > tolerance:

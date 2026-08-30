@@ -25,7 +25,6 @@
 # O2: IntradayVarResult(var_95/cvar_95/breach_state/significant_change) → 35号 §3.13 重新 evaluate 覆盖盘前 response
 # [/ALGO_FLOW]
 """
-
 Intraday VaR Recalc — 盘中 VaR/ES 重算触发与执行 (36号 §3.12)
 
 7 条触发条件 (任一满足即重算):
@@ -53,6 +52,48 @@ Intraday VaR Recalc — 盘中 VaR/ES 重算触发与执行 (36号 §3.12)
 
 SSoT: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/36_var_es_monitoring.md §3.12
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: var_calculator 参数
+#   fields: 参数 var_calculator（无注解）
+#   code: var_intraday_recalc.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: tail_risk_monitor 参数
+#   fields: 参数 tail_risk_monitor（无注解）
+#   code: var_intraday_recalc.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: breach_machine 参数
+#   fields: 参数 breach_machine（无注解）
+#   code: var_intraday_recalc.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: var_intraday_recalc.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① IntradayVarRecalcController
+#   name_en: IntradayVarRecalcController
+#   intro: 盘中 VaR/ES 重算控制器 (36号 §3.12)。
+#   desc: 盘中 VaR/ES 重算控制器 (36号 §3.12)。 用法:: ctl = IntradayVarRecalcController(var_calculator, tail_…；公共方法（定义序）: recalc_…
+#   inputs: var_calculator tail_risk_monitor breach_machine config clock
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: IntradayVarRecalcController
+#   downstream: 35号 §3.13 intraday_risk_loop(盘中循环检测触发后调用,设计契约); RiskLayerOrchestrator(编排注入)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

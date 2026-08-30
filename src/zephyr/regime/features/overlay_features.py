@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-REGIME-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #10_regime_detector_spec §4 #D-SIGNAL-68 #Phase2b
-"""overlay_signals 8 转换评分纯函数（MOD-REGIME-002 Phase 2b）。
+"""
+overlay_signals 8 转换评分纯函数（MOD-REGIME-002 Phase 2b）。
 
 把 HMM 6 特征 + 代理 OHLCV 映射成 8 转换（T1-T6/S1/S2）的各维度评分（0-100）或
 标志（0/1），供 OverlaySignalsConstructor 组装 overlay_signals 喂 RegimeDetector._run_overlay。
@@ -39,6 +40,120 @@
 
 依据: 10_regime_detector_spec v1.3.1 §4 / Phase 2 计划 §Phase2b
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: vol_pct 参数
+#   fields: 参数 vol_pct，类型注解 pd.Series
+#   code: overlay_features.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: vix_pct 参数
+#   fields: 参数 vix_pct，类型注解 pd.Series | None
+#   code: overlay_features.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: corr 参数
+#   fields: 参数 corr，类型注解 pd.Series
+#   code: overlay_features.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: vol_z 参数
+#   fields: 参数 vol_z，类型注解 pd.Series
+#   code: overlay_features.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① s1_vix_panic_score
+#   name_en: s1_vix_panic_score
+#   intro: S1 vix_panic: VIX 恐慌代理 → 0-100。
+#   desc: S1 vix_panic: VIX 恐慌代理 → 0-100。 Phase 2c：vix_pct（合成 VIX 历史分位）非空时优先用，回退 vol_pct （实现波动率分位）。…；源码 L214-L244
+#   inputs: vol_pct vix_pct
+#   outputs: pd.Series
+# - id: A2
+#   name_zh: ② s1_correlation_score
+#   name_en: s1_correlation_score
+#   intro: S1 correlation: cross_asset_corr → 0-100（恐慌期相关性→1）。
+#   desc: S1 correlation: cross_asset_corr → 0-100（恐慌期相关性→1）。 P1 校准（12_regime_phase2_validation §9）…；源码 L247-L271
+#   inputs: corr
+#   outputs: pd.Series
+# - id: A3
+#   name_zh: ③ s1_liquidity_score
+#   name_en: s1_liquidity_score
+#   intro: S1 liquidity: volume_anomaly z-score → 0-100（流动性压力代理）。
+#   desc: S1 liquidity: volume_anomaly z-score → 0-100（流动性压力代理）。 危机期成交量飙升（恐慌抛售）或枯竭（无人接盘）= 流动性压力。 用…；源码 L274-L291
+#   inputs: vol_z
+#   outputs: pd.Series
+# - id: A4
+#   name_zh: ④ s1_flash_recover_flag
+#   name_en: s1_flash_recover_flag
+#   intro: S1 flash_recover: 闪崩恢复标志（0/1）。
+#   desc: S1 flash_recover: 闪崩恢复标志（0/1）。 前一日 vol_pct>0.90（危机）+ 当日 pct_change>3%（暴力反弹）= 闪崩恢复。 用于 S1…；源码 L294-L304
+#   inputs: pct_change vol_pct
+#   outputs: pd.Series
+# - id: A5
+#   name_zh: ⑤ s2_capitulation_score
+#   name_en: s2_capitulation_score
+#   intro: S2 capitulation: 近 N 日 capitulation 的衰减加权和（过程信号，防粘滞）。
+#   desc: S2 capitulation: 近 N 日 capitulation 的衰减加权和（过程信号，防粘滞）。 P1-E9a（14_regime_s2_diagnosis §4.1）…；源码 L333-L433
+#   inputs: vol_z pct_change volume high low open close put_call_ratio
+#   outputs: pd.Series
+# - id: A6
+#   name_zh: ⑥ s2_vix_score
+#   name_en: s2_vix_score
+#   intro: S2 vix: VIX 见顶回落 → 0-100（从高位下降）。
+#   desc: S2 vix: VIX 见顶回落 → 0-100（从高位下降）。 Phase 2c：vix_pct（合成 VIX 历史分位）非空时优先用，回退 vol_pct。 VIX>35 后…；源码 L545-L573
+#   inputs: vol_pct vix_pct
+#   outputs: pd.Series
+# - id: A7
+#   name_zh: ⑦ s2_wyckoff_score
+#   name_en: s2_wyckoff_score
+#   intro: S2 wyckoff: Wyckoff 吸筹评分 → 0-100（Phase 2c 完整版优先，回退 MVP）。
+#   desc: S2 wyckoff: Wyckoff 吸筹评分 → 0-100（Phase 2c 完整版优先，回退 MVP）。 Phase 2c 完整版：提供 high/low/volume/…；源码 L576-L607
+#   inputs: close high low volume pct_change vol_z window
+#   outputs: pd.Series
+# - id: A8
+#   name_zh: ⑧ s2_valuation_score
+#   name_en: s2_valuation_score
+#   intro: S2 valuation 路 B: 价格回撤代理估值 → 0-100（MVP 改良版）。
+#   desc: S2 valuation 路 B: 价格回撤代理估值 → 0-100（MVP 改良版）。 P1-E9b（14_regime_s2_diagnosis §4.2 路 B）：pos…；源码 L610-L634
+#   inputs: close window
+#   outputs: pd.Series
+# - id: A9
+#   name_zh: ⑨ s2_valuation_score_fundamental
+#   name_en: s2_valuation_score_fundamental
+#   intro: S2 valuation 路 A: 基本面估值评分 → 0-100（P1-E9b，对齐 §4.12.5）。
+#   desc: S2 valuation 路 A: 基本面估值评分 → 0-100（P1-E9b，对齐 §4.12.5）。 关键（雪球 2026 席勒 PE 报告）：危机期 PE_TTM 因盈利…；源码 L637-L687
+#   inputs: cape_percentile pb_percentile broken_net_ratio erp_percentile erp_abs…
+#   outputs: pd.Series
+# - id: A10
+#   name_zh: ⑩ s2_fund_score
+#   name_en: s2_fund_score
+#   intro: S2 fund: 资金承接 → 0-100。
+#   desc: S2 fund: 资金承接 → 0-100。 升级路径（14_regime_s2_diagnosis §4.0 fund 警告/§6 开放问题 10，跨 P1-E4）： 注入 m…；源码 L690-L763
+#   inputs: volume window margin_balance xl_order_inflow pct_window w_margin w_xl…
+#   outputs: pd.Series
+#   （注：A10 之后另有 23 个公共定义未列入（含 0 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: pd.Series
+#   name_en: pd.Series
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-REGIME-002(OverlaySignalsConstructor消费8转换评分→overlay_signals)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> A10
+# A10 --> O1
 """
 
 from __future__ import annotations

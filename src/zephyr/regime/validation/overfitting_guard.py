@@ -23,7 +23,8 @@
 # F4: walk_forward_efficiency/assess_wfe（WFE=OOS/IS，≥0.6 pass / 0.5-0.6 marginal / <0.5 red_flag）
 # O1: 事件研究 DataFrame / verify bool / MinTRL 年数 / WFE 裁决 dict
 # [/ALGO_FLOW]
-"""防过拟合方法论栈 MVP（14_regime_s2_diagnosis §4.5，N=3 小样本专用）。
+"""
+防过拟合方法论栈 MVP（14_regime_s2_diagnosis §4.5，N=3 小样本专用）。
 
 核心挑战：S2 仅 3 个历史事件，传统 PBO/CSCV 需 N≥10-12 样本才统计有效
 （archimedes #819 2026-06），不可用。本模块落地 6 层栈中的 4 层函数级 MVP
@@ -43,6 +44,84 @@
      - CPCV: zephyr.backtest.core.cpcv.generate_cpcv_splits（N=10,k=2→45 组合）
 
 依据: 14_regime_s2_diagnosis v0.5.2 §4.5
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: score 参数
+#   fields: 参数 score，类型注解 pd.Series
+#   code: overfitting_guard.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: event_dates 参数
+#   fields: 参数 event_dates（无注解）
+#   code: overfitting_guard.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: pre_window 参数
+#   fields: 参数 pre_window，类型注解 int
+#   code: overfitting_guard.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: post_window 参数
+#   fields: 参数 post_window，类型注解 int
+#   code: overfitting_guard.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① event_study
+#   name_en: event_study
+#   intro: 事件研究：事件日 t=0，±窗口评分极值 vs 全历史基线分位。
+#   desc: 事件研究：事件日 t=0，±窗口评分极值 vs 全历史基线分位。 以事件日为锚，计算 [t-pre_window, t+post_window] 窗口内 score 的最大值/均…；源码 L152-L215
+#   inputs: score event_dates pre_window post_window min_baseline
+#   outputs: pd.DataFrame
+# - id: A2
+#   name_zh: ② PreRegistrationRegistry
+#   name_en: PreRegistrationRegistry
+#   intro: 预注册登记（JSON 文件级参数 hash 锁定）。
+#   desc: 预注册登记（JSON 文件级参数 hash 锁定）。 语义（Neyt 2026-03 "The Second Law"）：看事件数据**之前**先锁定全部阈值/参数； regis…；公共方法（定义序）: registe…
+#   inputs: path
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ min_track_record_length
+#   name_en: min_track_record_length
+#   intro: MinTRL（年）：给定 Sharpe 与置信度，统计可信所需的最短跟踪记录。
+#   desc: MinTRL（年）：给定 Sharpe 与置信度，统计可信所需的最短跟踪记录。 公式：MinTRL = 1 + [1 − γ3·SR_a + (γ4−1)/4·SR_a²]·(Z…；源码 L270-L301
+#   inputs: returns sharpe skew kurtosis alpha periods_per_year
+#   outputs: float
+# - id: A4
+#   name_zh: ④ walk_forward_efficiency
+#   name_en: walk_forward_efficiency
+#   intro: WFE = OOS Sharpe / IS Sharpe。
+#   desc: WFE = OOS Sharpe / IS Sharpe。is_sharpe<=0 → NaN（用 assess_wfe 得裁决）。；源码 L309-L313
+#   inputs: oos_sharpe is_sharpe
+#   outputs: float
+# - id: A5
+#   name_zh: ⑤ assess_wfe
+#   name_en: assess_wfe
+#   intro: WFE 裁决（digitalninjasystems 2026-07）：≥0.6 pass / <0.5 red_fl…
+#   desc: WFE 裁决（digitalninjasystems 2026-07）：≥0.6 pass / <0.5 red_flag / 其间 marginal。 Returns: {"w…；源码 L316-L336
+#   inputs: oos_sharpe is_sharpe pass_threshold red_flag_threshold
+#   outputs: dict
+# 层: 输出
+# - id: O1
+#   name_zh: pd.DataFrame
+#   name_en: pd.DataFrame
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: P1-E9 验证闭环 / 策略验收流程
+# - id: O2
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: P1-E9 验证闭环 / 策略验收流程
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations

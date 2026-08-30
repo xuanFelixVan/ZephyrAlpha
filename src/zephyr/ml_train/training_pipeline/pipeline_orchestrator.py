@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-ML-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""D_ML_TRAIN — MOD-ML-001 训练管线编排器。
+"""
+D_ML_TRAIN — MOD-ML-001 训练管线编排器。
 
 四段顺序编排：load（数据就位校验）→ train（训练器训练）→ evaluate（评估，
 无评估集回退训练指标）→ register（产出 model_registry 晋升片段草稿，恒
@@ -23,6 +24,33 @@ candidate，由治理流程串行合并，本编排器禁直改注册表）。
 
 红线：全部产物 testing 封顶，禁止生效实盘（B-009）；训练器由调用方注入
 （策略×训练解耦，宪章 §3 约束四同构）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: pipeline_orchestrator.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① TrainingPipelineOrchestrator
+#   name_en: TrainingPipelineOrchestrator
+#   intro: 训练管线编排器（MOD-ML-001）。
+#   desc: 训练管线编排器（MOD-ML-001）。 用法:: result = TrainingPipelineOrchestrator().run(request) assert res…；公共方法（定义序）: run；源码…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: TrainingPipelineOrchestrator
+#   downstream: GAP-F-34/35 训练任务编排；MOD-ML-002 ai_operator（巡检消费运行记录）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -105,9 +133,7 @@ class TrainingPipelineOrchestrator:
 
         # ── 段 2: train ──
         try:
-            train_metrics = request.trainer.train(
-                request.train_features, request.train_target, request.idempotency_key
-            )
+            train_metrics = request.trainer.train(request.train_features, request.train_target, request.idempotency_key)
         except Exception as exc:  # noqa: BLE001 — 训练器错误吸收进结果（留痕不炸编排）
             return self._failed(request, done, "train", str(exc))
         done.append("train")
@@ -156,9 +182,7 @@ class TrainingPipelineOrchestrator:
             return "train_target 缺失"
         return ""
 
-    def _build_registry_draft(
-        self, request: TrainingPipelineRequest, eval_metrics: dict[str, float]
-    ) -> dict[str, Any]:
+    def _build_registry_draft(self, request: TrainingPipelineRequest, eval_metrics: dict[str, float]) -> dict[str, Any]:
         trainer = request.trainer
         if hasattr(trainer, "build_registry_entry"):
             return trainer.build_registry_entry(metrics=eval_metrics)  # type: ignore[no-any-return]

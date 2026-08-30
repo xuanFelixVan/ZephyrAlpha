@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-REGIME-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #10_regime_detector_spec §4.12 #MOD-REGIME-002 #Phase2c
-"""Wyckoff 吸筹 FSM 6 阶段识别 + 评分（MOD-REGIME-002 Phase 2c）。
+"""
+Wyckoff 吸筹 FSM 6 阶段识别 + 评分（MOD-REGIME-002 Phase 2c）。
 
 把 OHLCV + 量能 z-score 映射成 Wyckoff 吸筹理论的 6 阶段事件 + 累加评分（0-100），
 供 OverlaySignalsConstructor 组装 s2_wyckoff_score 维度喂 RegimeDetector S2 confirm。
@@ -36,6 +37,60 @@ Wyckoff 吸筹理论（10_regime_detector_spec §4.12.2）：
 
 依据: 10_regime_detector_spec v1.3.1 §4.12.2 / Phase 2c 计划 §任务3
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: close 参数
+#   fields: 参数 close，类型注解 pd.Series
+#   code: wyckoff_engine.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: high 参数
+#   fields: 参数 high，类型注解 pd.Series
+#   code: wyckoff_engine.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: low 参数
+#   fields: 参数 low，类型注解 pd.Series
+#   code: wyckoff_engine.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: volume 参数
+#   fields: 参数 volume，类型注解 pd.Series
+#   code: wyckoff_engine.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① detect_wyckoff_events
+#   name_en: detect_wyckoff_events
+#   intro: 识别 Wyckoff 6 阶段事件点，返回 DataFrame[ps,sc,ar,st,spring,test]（0/…
+#   desc: 识别 Wyckoff 6 阶段事件点，返回 DataFrame[ps,sc,ar,st,spring,test]（0/1 flag）。 所有事件标记用 rolling + shi…；源码 L115-L193
+#   inputs: close high low volume pct_change vol_z window
+#   outputs: pd.DataFrame
+# - id: A2
+#   name_zh: ② wyckoff_score
+#   name_en: wyckoff_score
+#   intro: Wyckoff 吸筹评分 → 0-100（累加已出现阶段分数，cap 100）。
+#   desc: Wyckoff 吸筹评分 → 0-100（累加已出现阶段分数，cap 100）。 每个阶段一旦出现，后续日期都算"已发生"（cummax 传播），加权累加。 映射（对齐 S2 c…；源码 L196-L230
+#   inputs: close high low volume pct_change vol_z window
+#   outputs: pd.Series
+# 层: 输出
+# - id: O1
+#   name_zh: pd.DataFrame
+#   name_en: pd.DataFrame
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-REGIME-002(OverlaySignalsConstructor消费s2_wyckoff_score→S2 confirm)
+# - id: O2
+#   name_zh: pd.Series
+#   name_en: pd.Series
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-REGIME-002(OverlaySignalsConstructor消费s2_wyckoff_score→S2 confirm)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

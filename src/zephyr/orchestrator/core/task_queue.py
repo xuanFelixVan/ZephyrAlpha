@@ -34,6 +34,54 @@ Usage:
     queue.start()
     # ...
     queue.stop()
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: repo 参数
+#   fields: 参数 repo，类型注解 TaskRepositoryProtocol
+#   code: task_queue.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: orchestrator 参数
+#   fields: 参数 orchestrator，类型注解 PipelineDispatcher | None
+#   code: task_queue.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① PipelineDispatcher
+#   name_en: PipelineDispatcher
+#   intro: AUDIT-08 H6: 打破 pipeline↔orchestrator 循环依赖的协议接口。
+#   desc: AUDIT-08 H6: 打破 pipeline↔orchestrator 循环依赖的协议接口。 任何实现了 ``dispatch(task_card)`` 方法的对象均可注入…；公共方法（定义序）: dispatch…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② ActiveTaskQueue
+#   name_en: ActiveTaskQueue
+#   intro: 后台任务队列——从 READY 池拉取任务并自动分发。
+#   desc: 后台任务队列——从 READY 池拉取任务并自动分发。 内部使用 threading.Event 管理启停。 可注册 EventHook 回调实现 push 式调度（减少轮询延迟…；公共方法（定义序）: start,…
+#   inputs: repo orchestrator poll_interval max_per_cycle
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ get_queue
+#   name_en: get_queue
+#   intro: get_queue(repo, orchestrator) 源码 L228-L237
+#   desc: 源码 L228-L237
+#   inputs: repo orchestrator
+#   outputs: ActiveTaskQueue
+#   （注：A3 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ActiveTaskQueue
+#   name_en: ActiveTaskQueue
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

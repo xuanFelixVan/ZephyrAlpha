@@ -20,7 +20,8 @@
 # F2: remaining_rest_days(current_date,trading_days)→max(0, 5-已完成休息交易日数)
 # O1: bool休息中 / int剩余休息天数 (消费方: 复位链前置校验+盘前启动闸门)
 # [/ALGO_FLOW]
-"""D_RISK — Level 4 强制休息 5 天自动计时器（35 号 memo §6.1 施工，§3.4 落地）。
+"""
+D_RISK — Level 4 强制休息 5 天自动计时器（35 号 memo §6.1 施工，§3.4 落地）。
 
 痛点（§3.4 恢复机制表"强制休息"行）：§2.5.2 要求 Level 4 触发后强制休息
 5 个交易日，代码只有 requires_manual_reset（人工复位），无自动 5 天计时器——
@@ -38,6 +39,33 @@
 日历注入约定：trading_days 为有序交易日列表（含触发日与查询日可不在表中——
 按"严格大于触发日且 ≤ 查询日的交易日数"计休息进度，日历缺日按列表实际计）。
 SSoT: 35_drawdown_protocol_impl §3.4 + §6.1
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: drawdown_forced_rest.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① ForcedRestTimer
+#   name_en: ForcedRestTimer
+#   intro: Level 4 强制休息计时器。
+#   desc: Level 4 强制休息计时器。 用法: timer = ForcedRestTimer() timer.trigger(trade_date=d0) # Level 4 触发…；公共方法（定义序）: trigger_…
+#   inputs: config
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: ForcedRestTimer
+#   downstream: RiskOrchestrator(§6.5 接线位); Kill Switch 复位链(§3.14 人工复位前置校验)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

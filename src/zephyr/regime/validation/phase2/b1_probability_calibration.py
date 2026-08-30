@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-REGIME_VAL-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #12_regime_phase2_validation §2.4 #12_regime_phase2_validation §4.1 B1
-"""B1 概率校准度验证器（12_regime_phase2_validation §2.4）。
+"""
+B1 概率校准度验证器（12_regime_phase2_validation §2.4）。
 
 方案 A：后续收益实现代理标签。
   1. 全历史 detect 收集 (timestamp, confidence, dominant_regime)
@@ -37,6 +38,41 @@
 
 依据: 12_regime_phase2_validation §2.4 / 12_regime_phase2_validation §4.1 B1
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: b1_probability_calibration.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① B1Report
+#   name_en: B1Report
+#   intro: B1 概率校准度报告。
+#   desc: B1 概率校准度报告。；公共方法（定义序）: to_dict；源码 L131-L166
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② B1ProbabilityCalibration
+#   name_en: B1ProbabilityCalibration
+#   intro: B1 概率校准度验证器（后续收益实现代理标签）。
+#   desc: B1 概率校准度验证器（后续收益实现代理标签）。 Usage（real 模式）:: b1 = B1ProbabilityCalibration() report = b1.val…；公共方法（定义序）: validat…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: B1Report, B1ProbabilityCalibration
+#   downstream: zephyr.regime.validation.phase2.phase2_runner; scripts.tests.run_phase2_validat…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

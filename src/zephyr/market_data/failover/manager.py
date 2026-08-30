@@ -14,7 +14,8 @@
 # [TESTS] tests/market_data/failover/test_failover_manager.py
 # [A_module] module_id=MOD-MKT-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_MKT_DATA — Failover Manager (故障切换管理器)
+"""
+D_MKT_DATA — Failover Manager (故障切换管理器)
 
 主备切换管理: 主数据源健康检查失败时切换到备用源, 主源恢复后可选切回。
 基于 VendorRegistry 查找可用 vendor, 按 FailoverPolicy 策略选择备用源。
@@ -23,6 +24,38 @@
 
 设计真源: depgraph MOD-MKT-004
 蓝图: docs/03_modules/_domain_mkt_data/failover/blueprint.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: registry 参数
+#   fields: 参数 registry（无注解）
+#   code: manager.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FailoverManager
+#   name_en: FailoverManager
+#   intro: 故障切换管理器——主备切换 + 自动恢复。
+#   desc: 故障切换管理器——主备切换 + 自动恢复。 基于 VendorRegistry 管理多 vendor 的主备切换: - 主源 health_check 失败 → 切到下一个可用备…；公共方法（定义序）: get_act…
+#   inputs: registry config
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: FailoverManager
+#   downstream: D_EX_SOR
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

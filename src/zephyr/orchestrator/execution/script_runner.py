@@ -14,9 +14,68 @@
 # [TESTS] scripts/connect/orc_script.py --trigger
 # [A_module] module_id=MOD-INF-039 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Orc->Script 脚本执行器 — run_audit() 生产者
+"""
+Orc->Script 脚本执行器 — run_audit() 生产者
 
 CT-ORC-SCRIPT-001: Orchestrator 接到审计任务后批量执行审计脚本, 按 RULE-SEVEN 并行。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: task_id 参数
+#   fields: 参数 task_id，类型注解 str
+#   code: script_runner.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: scripts 参数
+#   fields: 参数 scripts，类型注解 list[str]
+#   code: script_runner.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: max_workers 参数
+#   fields: 参数 max_workers，类型注解 int
+#   code: script_runner.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: timeout_per_script 参数
+#   fields: 参数 timeout_per_script，类型注解 int
+#   code: script_runner.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RunResult
+#   name_en: RunResult
+#   intro: class RunResult 源码 L112-L134
+#   desc: 公共方法（定义序）: to_dict；源码 L112-L134
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② ScriptRunner
+#   name_en: ScriptRunner
+#   intro: class ScriptRunner 源码 L137-L258
+#   desc: 公共方法（定义序）: run_audit；源码 L137-L258
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ run_audit
+#   name_en: run_audit
+#   intro: run_audit(task_id, scripts, max_workers, timeout_per_script…
+#   desc: 源码 L261-L267
+#   inputs: task_id scripts max_workers timeout_per_script
+#   outputs: RunResult
+#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: RunResult
+#   name_en: RunResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.orchestrator.agent_orchestrator; AutoRuntime Core
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

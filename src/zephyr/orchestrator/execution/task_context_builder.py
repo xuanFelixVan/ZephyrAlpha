@@ -14,9 +14,59 @@
 # [TESTS] scripts/connect/orc_ce.py --trigger
 # [A_module] module_id=MOD-INF-039 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""CE 任务上下文构建器 — build_from_task() 消费者
+"""
+CE 任务上下文构建器 — build_from_task() 消费者
 
 CT-ORC-CE-001: 接收 Orc 的上下文请求, 四阶段构建可注入的执行上下文。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: task_id 参数
+#   fields: 参数 task_id（无注解）
+#   code: task_context_builder.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: blocks 参数
+#   fields: 参数 blocks（无注解）
+#   code: task_context_builder.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: total_tokens 参数
+#   fields: 参数 total_tokens（无注解）
+#   code: task_context_builder.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: status 参数
+#   fields: 参数 status（无注解）
+#   code: task_context_builder.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① TaskContextResponse
+#   name_en: TaskContextResponse
+#   intro: class TaskContextResponse 源码 L88-L113
+#   desc: 公共方法（定义序）: to_dict；源码 L88-L113
+#   inputs: task_id blocks total_tokens status build_stages error
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② TaskContextBuilder
+#   name_en: TaskContextBuilder
+#   intro: class TaskContextBuilder 源码 L116-L185
+#   desc: 公共方法（定义序）: build_from_task；源码 L116-L185
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: TaskContextResponse, TaskContextBuilder
+#   downstream: zephyr.orchestrator.context_bridge
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

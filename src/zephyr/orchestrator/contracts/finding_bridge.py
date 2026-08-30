@@ -22,6 +22,68 @@ Script System -> Orchestrator: Finding -> TaskCard 转换管道
 
 数据流：
     script_system.Finding -> AuditFinding -> FindingTaskBridge -> TaskRepository -> TaskCard
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: finding 参数
+#   fields: 参数 finding，类型注解 object
+#   code: finding_bridge.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: db_path 参数
+#   fields: 参数 db_path，类型注解 str | Path
+#   code: finding_bridge.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: namespace 参数
+#   fields: 参数 namespace，类型注解 TaskNamespace | None
+#   code: finding_bridge.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: dry_run 参数
+#   fields: 参数 dry_run，类型注解 bool
+#   code: finding_bridge.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① finding_to_audit_finding
+#   name_en: finding_to_audit_finding
+#   intro: finding_to_audit_finding(finding) 源码 L145-L174
+#   desc: 源码 L145-L174
+#   inputs: finding
+#   outputs: AuditFinding
+# - id: A2
+#   name_zh: ② report_finding
+#   name_en: report_finding
+#   intro: report_finding(finding, db_path, namespace, dry_run) 源码 L17…
+#   desc: 源码 L177-L184
+#   inputs: finding db_path namespace dry_run
+#   outputs: BridgeResult
+# - id: A3
+#   name_zh: ③ report_findings
+#   name_en: report_findings
+#   intro: report_findings(findings, db_path, namespace, dry_run, min_…
+#   desc: 源码 L187-L220
+#   inputs: findings db_path namespace dry_run min_severity
+#   outputs: BridgeResult
+# 层: 输出
+# - id: O1
+#   name_zh: AuditFinding
+#   name_en: AuditFinding
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: BridgeResult
+#   name_en: BridgeResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

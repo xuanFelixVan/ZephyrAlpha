@@ -14,7 +14,8 @@
 # [TESTS]
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""A2A 通信对验证——校验两个 agent 之间是否允许通信。
+"""
+A2A 通信对验证——校验两个 agent 之间是否允许通信。
 
 治本（2026-07-18）：原模块为 stub（verify_a2a_pair raise NotImplementedError），
 现根据 tests/a2a/test_a2a_check.py 及 tests/governance/security/test_governance_a2a_check.py
@@ -28,6 +29,37 @@
   5. 其余 → not approved, reason="pair_not_allowed"
 
 返回值：dict[str, Any]，含 "approved" (bool)、"from" (str)、"to" (str)、可选 "reason" (str)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: from_agent 参数
+#   fields: 参数 from_agent，类型注解 str
+#   code: a2a_check.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: to_agent 参数
+#   fields: 参数 to_agent，类型注解 str
+#   code: a2a_check.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① verify_a2a_pair
+#   name_en: verify_a2a_pair
+#   intro: 验证两个 agent 之间是否允许 A2A 通信。
+#   desc: 验证两个 agent 之间是否允许 A2A 通信。 Args: from_agent: 发起方 agent ID/角色。 to_agent: 接收方 agent ID/角色。 R…；源码 L79-L117
+#   inputs: from_agent to_agent
+#   outputs: dict[str, Any]
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, Any]
+#   name_en: dict[str, Any]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: scripts.a2a_full_verification ; tests.governance.test_adversarial_contract_atta…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from typing import Any, Final

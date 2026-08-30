@@ -49,6 +49,125 @@ experimental 起始集（5 种 trigger_type）
 - **零跨模块硬依赖**：处理器路径以字符串配置，运行时 ``importlib.import_module`` 解析
 - **失败即跳过**：所有失败路径返回 ``RouterDispatchResult(success=False, skipped=True)``
 - **可注入测试**：``handlers`` 参数允许直接注入 callable 字典，绕过 YAML/import
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: path 参数
+#   fields: 参数 path，类型注解 Path | None
+#   code: trigger_router.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: config_path 参数
+#   fields: 参数 config_path（无注解）
+#   code: trigger_router.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: handlers 参数
+#   fields: 参数 handlers（无注解）
+#   code: trigger_router.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: audit_logger 参数
+#   fields: 参数 audit_logger（无注解）
+#   code: trigger_router.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AuditLoggerProtocol
+#   name_en: AuditLoggerProtocol
+#   intro: 触发路由审计日志 duck-typed 接口（5.145.11 修复：Any->Protocol）。
+#   desc: 触发路由审计日志 duck-typed 接口（5.145.11 修复：Any->Protocol）。 真源实现：``zephyr.security.llm_defense.llm…；公共方法（定义序）: log_rul…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② load_router_config
+#   name_en: load_router_config
+#   intro: 从 ``config/trigger_router.yaml`` 加载触发器规格字典。
+#   desc: 从 ``config/trigger_router.yaml`` 加载触发器规格字典。 Parameters ---------- path : Path | None YAML…；源码 L312-L359
+#   inputs: path
+#   outputs: dict[str, TriggerHandlerSpec]
+# - id: A3
+#   name_zh: ③ TriggerRouter
+#   name_en: TriggerRouter
+#   intro: 触发路由器：根据 trigger_type 分派到处理器函数。
+#   desc: 触发路由器：根据 trigger_type 分派到处理器函数。 Parameters ---------- config_path : Path | None 路由表 YAML…；公共方法（定义序）: injected…
+#   inputs: config_path handlers audit_logger session_id model auto_load
+#   outputs: 返回值
+# - id: A4
+#   name_zh: ④ get_trigger_router
+#   name_en: get_trigger_router
+#   intro: 返回 TriggerRouter 模块级单例（线程安全）。
+#   desc: 返回 TriggerRouter 模块级单例（线程安全）。 生产入口：``router = get_trigger_router()``，构造时一次性加载 YAML。 测试入口：…；源码 L733-L755
+#   inputs: config_path handlers audit_logger session_id reset
+#   outputs: TriggerRouter
+# - id: A5
+#   name_zh: ⑤ reset_trigger_router
+#   name_en: reset_trigger_router
+#   intro: 清空模块级单例（仅测试使用）。
+#   desc: 清空模块级单例（仅测试使用）。；源码 L758-L762
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A6
+#   name_zh: ⑥ handle_onboarding_stub
+#   name_en: handle_onboarding_stub
+#   intro: ``onboarding`` — 新会话上下文注入。
+#   desc: ``onboarding`` — 新会话上下文注入。；源码 L781-L783
+#   inputs: payload
+#   outputs: dict[str, Any]
+# - id: A7
+#   name_zh: ⑦ handle_drift_detected
+#   name_en: handle_drift_detected
+#   intro: ``drift_detected`` — 触发 DriftDetector 恢复流程。
+#   desc: ``drift_detected`` — 触发 DriftDetector 恢复流程。 调用 zephyr.gov_enforcement.rule_enforcement.dr…；源码 L786-L803
+#   inputs: payload
+#   outputs: dict[str, Any]
+# - id: A8
+#   name_zh: ⑧ handle_cleanup_stub
+#   name_en: handle_cleanup_stub
+#   intro: ``cleanup_due`` — 周期性清理孤儿快照和过期审计日志。
+#   desc: ``cleanup_due`` — 周期性清理孤儿快照和过期审计日志。 调用 scripts/governance/archive_drafts_zone 执行归档。 对标 MO…；源码 L806-L830
+#   inputs: payload
+#   outputs: dict[str, Any]
+# - id: A9
+#   name_zh: ⑨ handle_blueprint_stub
+#   name_en: handle_blueprint_stub
+#   intro: ``blueprint_published`` — 新蓝图发布后触发反思循环与 KE 索引。
+#   desc: ``blueprint_published`` — 新蓝图发布后触发反思循环与 KE 索引。 调用 zephyr.feedback_loop.decision_engine 触发…；源码 L833-L850
+#   inputs: payload
+#   outputs: dict[str, Any]
+# - id: A10
+#   name_zh: ⑩ handle_blueprint_lookup_stub
+#   name_en: handle_blueprint_lookup_stub
+#   intro: ``blueprint_lookup`` — 根据文件路径/任务关键字匹配蓝图路由。
+#   desc: ``blueprint_lookup`` — 根据文件路径/任务关键字匹配蓝图路由。 此 handler 读取 ``config/blueprint_routing.yaml``…；源码 L853-L916
+#   inputs: payload
+#   outputs: dict[str, Any]
+#   （注：A10 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, TriggerHandlerSpec]
+#   name_en: dict[str, TriggerHandlerSpec]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: TriggerRouter
+#   name_en: TriggerRouter
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> A10
+# A10 --> O1
 """
 
 from __future__ import annotations

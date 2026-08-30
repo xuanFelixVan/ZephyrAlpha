@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-RK-047 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 
-"""LiquidityCrisisScenarios — 流动性危机情景族（MOD-RK-047，CAND-RSK-022）。
+"""
+LiquidityCrisisScenarios — 流动性危机情景族（MOD-RK-047，CAND-RSK-022）。
 
 压测情景库扩展：在 MOD-RK-12 StressTestEngine 的情景组织方式（StressScenario
 契约 + run_hypothetical 消费）上扩展流动性危机场景族——三维情景 × 出场滑点
@@ -38,6 +39,80 @@
 
 SSoT: depgraph MOD-RK-047 | CAND-RSK-022
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: positions 参数
+#   fields: 参数 positions，类型注解 list[CrisisPosition] | tuple[CrisisPosi…
+#   code: liquidity_crisis_scenarios.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: liquidity_crisis_scenarios.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: leverage_ratio 参数
+#   fields: 参数 leverage_ratio（无注解）
+#   code: liquidity_crisis_scenarios.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① build_market_dryup_scenario
+#   name_en: build_market_dryup_scenario
+#   intro: 情景族① 市场流动性枯竭：价差全面放大 + ADV 压力折扣 → 均匀下挫。
+#   desc: 情景族① 市场流动性枯竭：价差全面放大 + ADV 压力折扣 → 均匀下挫。 shock_i = -(MOD-RK-10 spread 阈值 × 危机倍数)（默认 -0.005×…；源码 L358-L378
+#   inputs: positions config
+#   outputs: LiquidityCrisisScenarioResult
+# - id: A2
+#   name_zh: ② build_position_frozen_scenario
+#   name_en: build_position_frozen_scenario
+#   intro: 情景族② 持仓流动性封死：跌停/停牌卖出通道冻结 → 连续跌停冲击。
+#   desc: 情景族② 持仓流动性封死：跌停/停牌卖出通道冻结 → 连续跌停冲击。 跌停持仓 shock = frozen_daily_shock × frozen_days（下限 -0.95…；源码 L381-L409
+#   inputs: positions config
+#   outputs: LiquidityCrisisScenarioResult
+# - id: A3
+#   name_zh: ③ build_funding_break_scenario
+#   name_en: build_funding_break_scenario
+#   intro: 情景族③ 融资流动性断裂：强平连锁 → 强平折价 × 杠杆放大冲击。
+#   desc: 情景族③ 融资流动性断裂：强平连锁 → 强平折价 × 杠杆放大冲击。 shock_i = -(margin_forced_discount × leverage_ratio)（下…；源码 L412-L435
+#   inputs: positions leverage_ratio config
+#   outputs: LiquidityCrisisScenarioResult
+# - id: A4
+#   name_zh: ④ build_bank_run_scenario
+#   name_en: build_bank_run_scenario
+#   intro: 全员出逃极端情形（bank-run）：ADV 跌至地板比，三族冲击取最劣合成。
+#   desc: 全员出逃极端情形（bank-run）：ADV 跌至地板比，三族冲击取最劣合成。 shock_i = min(三族各自冲击)（封死持仓取封死冲击，其余取枯竭+断裂叠加， 下限 -0…；源码 L438-L469
+#   inputs: positions leverage_ratio config
+#   outputs: LiquidityCrisisScenarioResult
+# - id: A5
+#   name_zh: ⑤ run_liquidity_crisis_family
+#   name_en: run_liquidity_crisis_family
+#   intro: 流动性危机情景族单遍编排：三维情景 + 全员出逃极端情形（共 4 件）。
+#   desc: 流动性危机情景族单遍编排：三维情景 + 全员出逃极端情形（共 4 件）。 返回顺序固定：(MARKET_DRYUP, POSITION_FROZEN, FUNDING_BREAK…；源码 L472-L489
+#   inputs: positions leverage_ratio config
+#   outputs: tuple[LiquidityCrisisScenarioResult, ..…
+#   （注：A5 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: LiquidityCrisisScenarioResult
+#   name_en: LiquidityCrisisScenarioResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-RK-12(StressTestEngine,run_hypothetical情景消费); 运行时装配批(流动性危机压测编排)
+# - id: O2
+#   name_zh: tuple[LiquidityCrisisScenarioResult, ..…
+#   name_en: tuple[LiquidityCrisisScenarioResult, ..…
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-RK-12(StressTestEngine,run_hypothetical情景消费); 运行时装配批(流动性危机压测编排)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations
@@ -109,25 +184,19 @@ class LiquidityCrisisScenarioConfig:
 
     def __post_init__(self) -> None:
         if self.crisis_spread_multiplier <= 1.0:
-            raise InvalidLiquidityScenarioError(
-                f"crisis_spread_multiplier 须 >1: {self.crisis_spread_multiplier}"
-            )
+            raise InvalidLiquidityScenarioError(f"crisis_spread_multiplier 须 >1: {self.crisis_spread_multiplier}")
         if not 0.0 < self.dryup_adv_discount <= 1.0:
             raise InvalidLiquidityScenarioError(f"dryup_adv_discount 须 ∈ (0,1]: {self.dryup_adv_discount}")
         if not 0.0 < self.run_adv_floor_ratio < 1.0:
             raise InvalidLiquidityScenarioError(f"run_adv_floor_ratio 须 ∈ (0,1): {self.run_adv_floor_ratio}")
         if not 0.0 < self.margin_forced_discount < 1.0:
-            raise InvalidLiquidityScenarioError(
-                f"margin_forced_discount 须 ∈ (0,1): {self.margin_forced_discount}"
-            )
+            raise InvalidLiquidityScenarioError(f"margin_forced_discount 须 ∈ (0,1): {self.margin_forced_discount}")
         if not -1.0 < self.frozen_daily_shock < 0.0:
             raise InvalidLiquidityScenarioError(f"frozen_daily_shock 须 ∈ (-1,0): {self.frozen_daily_shock}")
         if self.frozen_days < 1:
             raise InvalidLiquidityScenarioError(f"frozen_days 须 ≥1: {self.frozen_days}")
         if not 0.0 < self.slippage_participation <= 1.0:
-            raise InvalidLiquidityScenarioError(
-                f"slippage_participation 须 ∈ (0,1]: {self.slippage_participation}"
-            )
+            raise InvalidLiquidityScenarioError(f"slippage_participation 须 ∈ (0,1]: {self.slippage_participation}")
 
 
 @dataclass(frozen=True)
@@ -257,8 +326,7 @@ def _make_result(
 ) -> LiquidityCrisisScenarioResult:
     """组装情景结果（StressScenario + 滑点评估 + 组合滑点金额）。"""
     slippage = tuple(
-        _estimate_slippage(p, adv_value=(adv_override or {}).get(p.symbol, p.adv_value), cfg=cfg)
-        for p in positions
+        _estimate_slippage(p, adv_value=(adv_override or {}).get(p.symbol, p.adv_value), cfg=cfg) for p in positions
     )
     slip_value = {s.symbol: s.slippage_pct for s in slippage}
     total_slippage_value = sum(p.position_value * slip_value[p.symbol] for p in positions)

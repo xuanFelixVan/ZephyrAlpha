@@ -16,7 +16,6 @@
 # [TTL] permanent
 
 """
-
 D_RISK — Strategy Deviation Monitor (MOD-RK-23)
 
 策略偏离监控器——实盘 vs 回测净值偏离度持续度量（55 号 G26 §3.4 决策落地）。
@@ -45,6 +44,38 @@ Sharpe 单口径且为无编排的被动函数；PLV 规约覆盖上线后短期
   读 nav_curve_experiment.csv artifact → 日收益序列；失败降级 None 不抛（监控不阻断主链路）。
 
 SSoT: depgraph MOD-RK-23 | blueprint.md §3 核心规则 | 55 号 §3.4
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: registry_path 参数
+#   fields: 参数 registry_path（无注解）
+#   code: strategy_deviation_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: min_samples 参数
+#   fields: 参数 min_samples（无注解）
+#   code: strategy_deviation_monitor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① StrategyDeviationMonitor
+#   name_en: StrategyDeviationMonitor
+#   intro: 策略偏离监控器（实盘 vs 回测，日频事后度量，55 号 §3.4）。
+#   desc: 策略偏离监控器（实盘 vs 回测，日频事后度量，55 号 §3.4）。 用法：每日收盘后由调用方对每个上线策略调 evaluate()； 级别变化经 on_deviation_a…；公共方法（定义序）: thresho…
+#   inputs: registry_path min_samples
+#   outputs: 返回值
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（6 定义）
+#   name_en: public defs
+#   intro: StrategyDeviationMonitor
+#   downstream: MOD-RPT-009(ReviewOrchestrator,周复盘偏离段); 调用方(日终偏离评估)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -139,7 +170,7 @@ def _load_deviation_thresholds(registry_path: Path | None = None) -> dict[str, f
             "阈值注册表加载失败",
             details=details,
         ) from exc
-    if not (0 < out["warn"] and out["warn"] < out["retire"]):
+    if not (out["warn"] > 0 and out["warn"] < out["retire"]):
         raise DeviationConfigError(f"偏离阈值须满足 0 < warn < retire: {out['warn']}, {out['retire']}")
     return out
 

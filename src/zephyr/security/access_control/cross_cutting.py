@@ -14,11 +14,39 @@
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""CrossCutting — 横切面权限组件.
+"""
+CrossCutting — 横切面权限组件.
 
 依据蓝图 MOD-INF-018 §3:
 - PermissionTopology: 权限拓扑图与循环检测
 - 横切面组件占位（AutoMaintenance/ForensicAssurance/HookType/PermissionHookRegistry）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: cross_cutting.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① PermissionTopology
+#   name_en: PermissionTopology
+#   intro: 权限拓扑图.
+#   desc: 权限拓扑图. 维护权限节点邻接表，检测循环依赖。；公共方法（定义序）: add_node, add_edge, detect_cycles；源码 L79-L139
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: PermissionTopology
+#   downstream: tests/agent_rbac/test_redteam_adversarial.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

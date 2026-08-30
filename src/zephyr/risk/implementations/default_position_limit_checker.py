@@ -22,7 +22,8 @@
 # created: "2026-05-05"
 # ---
 
-"""D_RISK — Default Position Limit Checker
+"""
+D_RISK — Default Position Limit Checker
 
 仓位限额检查器具体实现。对齐 CTR-003 (RiskLimits)，输出 CTR-ERR-004 (RiskLimitViolationError)。
 
@@ -32,6 +33,32 @@
   - check_gross_leverage: 总杠杆检查（max_gross_leverage）
 
 SSoT: cross_layer_contracts.yaml -> CTR-003 + CTR-ERR-004
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: default_position_limit_checker.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① DefaultPositionLimitChecker
+#   name_en: DefaultPositionLimitChecker
+#   intro: 默认仓位限额检查器——单仓/行业/杠杆三项检查
+#   desc: 默认仓位限额检查器——单仓/行业/杠杆三项检查；公共方法（定义序）: check_single_position, check_sector_concentration, check_gross_leverage；源码…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: DefaultPositionLimitChecker
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

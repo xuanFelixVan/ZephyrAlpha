@@ -22,7 +22,8 @@
 # created: "2026-08-21"
 # ---
 
-"""D_PORTFOLIO_CORE — 多因子 sleeve 组装策略（CAND-SIG-012 晋升，P0-4① 施工）
+"""
+D_PORTFOLIO_CORE — 多因子 sleeve 组装策略（CAND-SIG-012 晋升，P0-4① 施工）
 
 组装 factor 域 production 组件（直接 import 调用不重复造轮子）：
   - multifactor_synthesis（MOD-L02-011）：synthesize_equal_weight / synthesize_ic_weighted
@@ -36,6 +37,32 @@
 urgency=gradual（逐步建仓，21 号 L255-259 映射表：T+1 起 3-5 天逐步建仓）。
 
 SSoT: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/21_stock_selection_engine.md §3.5/§3.6
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: multifactor_sleeve_strategy.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① MultifactorSleeveStrategy
+#   name_en: MultifactorSleeveStrategy
+#   intro: 多因子 sleeve 组装策略——横截面多因子合成打分取 Top-N 等权。
+#   desc: 多因子 sleeve 组装策略——横截面多因子合成打分取 Top-N 等权。 signals 负载约定（dict[str, dict[str, float]]，键=标的代码）：…；公共方法（定义序）: generate…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: MultifactorSleeveStrategy
+#   downstream: zephyr.pf_core.strategies（lazy re-export）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -123,7 +150,9 @@ class MultifactorSleeveStrategy(StrategyBase):
         max_single = float(cons.get("max_single", 0.10))
 
         # 透视 {symbol: {factor_id: value}} → {factor_id: pd.Series(symbol→value)}（仅 universe 内标的）
-        factor_ids: list[str] = sorted({fid for per_sym in signals.values() if isinstance(per_sym, dict) for fid in per_sym})
+        factor_ids: list[str] = sorted(
+            {fid for per_sym in signals.values() if isinstance(per_sym, dict) for fid in per_sym}
+        )
         factor_values: dict[str, Any] = {}
         for fid in factor_ids:
             series = pd.Series(

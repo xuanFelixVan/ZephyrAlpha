@@ -14,7 +14,8 @@
 # [TESTS] tests/risk/core/test_survival_line_monitor.py
 # [A_module] module_id=MOD-RK-KPI | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_RISK — 生存线监控（90 号 Phase2 项，#16 系统级成功指标修订采纳）
+"""
+D_RISK — 生存线监控（90 号 Phase2 项，#16 系统级成功指标修订采纳）
 
 裁定真源：90_methodology_open_questions.md §16（v2.0.0）：
   ① 生存线（风控属性，上线即锁死）：滚动 12 个月超额>0 且 MaxDD<15% 且 Sharpe≥0.8
@@ -26,6 +27,38 @@
 
 注意：本模块为 90 号 Phase2 交付物，MATURITY=testing；告警发射/复盘编排接线
 挂起待 Owner（宪章 B-007 纪律）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: metrics 参数
+#   fields: 参数 metrics，类型注解 SurvivalInput
+#   code: survival_line_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: config 参数
+#   fields: 参数 config，类型注解 SurvivalLineConfig | None
+#   code: survival_line_monitor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① evaluate_survival_line
+#   name_en: evaluate_survival_line
+#   intro: 评估生存线/失败指标。
+#   desc: 评估生存线/失败指标。 判定顺序：失败指标优先（更严重），其次生存线。；源码 L127-L163
+#   inputs: metrics config
+#   outputs: SurvivalLineResult
+#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: SurvivalLineResult
+#   name_en: SurvivalLineResult
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 55 号 KPI 监控/复盘编排（接线待排期，本批仅交付模块本体）；告警通道复用 alert_rules.yaml（ALERT-KPI-001/002）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -14,7 +14,8 @@
 # [TESTS] tests/ml_serve/test_model_drift_monitor.py
 # [A_module] module_id=MOD-MLS-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""ModelDriftMonitor — 推理域 MS-03 模型漂移监控（MOD-MLS-001）。
+"""
+ModelDriftMonitor — 推理域 MS-03 模型漂移监控（MOD-MLS-001）。
 
 B4-06990（AUD-DRAFT-001-DIGEST P1 波 W-P1-25，CAND-MLS-001，D-ML-SERVE
 §0/§1 MS-03）：serving 模型**四维漂移检测**（PSI 输入特征 / JS 散度输出
@@ -27,6 +28,59 @@ approval_ts/activated_at）与 INV-011 影子门禁已由 MOD-ML-012（D_ML_TRAI
 检测全仓无生产者，独立缺口。与 MOD-FBL-001 分工：FBL=因子/标签分布三路
 事前预警（语义响应）；本件=serving 模型四维（model_id 键）→ E-OP-02 域
 事件。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: reference 参数
+#   fields: 参数 reference，类型注解 Sequence[float]
+#   code: model_drift_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: current 参数
+#   fields: 参数 current，类型注解 Sequence[float]
+#   code: model_drift_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: buckets 参数
+#   fields: 参数 buckets，类型注解 int
+#   code: model_drift_monitor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① psi
+#   name_en: psi
+#   intro: 总体稳定性指数 Σ(a%−e%)·ln(a%/e%)（输入特征漂移）。
+#   desc: 总体稳定性指数 Σ(a%−e%)·ln(a%/e%)（输入特征漂移）。；源码 L212-L217
+#   inputs: reference current buckets
+#   outputs: float
+# - id: A2
+#   name_zh: ② js_divergence
+#   name_en: js_divergence
+#   intro: JS 散度 0.5·KL(p‖m)+0.5·KL(q‖m)，m=0.5(p+q)（输出分布漂移，nats）。
+#   desc: JS 散度 0.5·KL(p‖m)+0.5·KL(q‖m)，m=0.5(p+q)（输出分布漂移，nats）。；源码 L220-L226
+#   inputs: reference current buckets
+#   outputs: float
+# - id: A3
+#   name_zh: ③ ModelDriftMonitor
+#   name_en: ModelDriftMonitor
+#   intro: 推理域 MS-03 模型漂移监控（四维检测 + E-OP-02 事件生产）。
+#   desc: 推理域 MS-03 模型漂移监控（四维检测 + E-OP-02 事件生产）。；公共方法（定义序）: evaluate；源码 L238-L318
+#   inputs: thresholds clock event_sink
+#   outputs: 返回值
+#   （注：A3 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 运行时装配批（MS-02 推理样本供给 / E-OP-02 事件总线 sink 绑定 D-OPS·MT-05·F09 消费方 / 阈值 config 加载）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations
@@ -107,9 +161,7 @@ class DriftThresholds:
             if warn <= 0 or crit <= 0:
                 raise ModelDriftError(f"{name} 阈值须为正")
             if warn >= crit:
-                raise ModelDriftError(
-                    f"{name} 阈值须满足 warn < critical（{warn} !< {crit}）"
-                )
+                raise ModelDriftError(f"{name} 阈值须满足 warn < critical（{warn} !< {crit}）")
 
 
 @dataclass(frozen=True)

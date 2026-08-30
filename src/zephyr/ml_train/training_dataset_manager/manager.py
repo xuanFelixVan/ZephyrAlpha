@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-ML-003 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""D_ML_TRAIN — MOD-ML-003 训练数据集管理器。
+"""
+D_ML_TRAIN — MOD-ML-003 训练数据集管理器。
 
 数据集版本化 / 快照 / 血缘登记三能力：
 
@@ -25,6 +26,33 @@
 
 默认内存态存储（测试/合成小数据场景）；DB 持久化经构造器 ``store`` 注入位预留，
 本类自身不触 DB/网络。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: store 参数
+#   fields: 参数 store（无注解）
+#   code: manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① TrainingDatasetManager
+#   name_en: TrainingDatasetManager
+#   intro: 训练数据集管理器（MOD-ML-003）。
+#   desc: 训练数据集管理器（MOD-ML-003）。 Parameters ---------- store : 持久化存储注入位（None=内存态）。需实现 ``save(dataset…；公共方法（定义序）: registe…
+#   inputs: store
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: TrainingDatasetManager
+#   downstream: MOD-ML-001 training_pipeline（load 段数据集版本锚定）；MOD-ML-009 learning_effect_feedback…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

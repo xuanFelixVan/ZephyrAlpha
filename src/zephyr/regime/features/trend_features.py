@@ -14,11 +14,74 @@
 # [TESTS] tests/regime/test_trend_features.py
 # [A_module] module_id=MOD-REGIME-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""趋势特征：Hurst DFA 指数 + Kalman 自适应斜率（MOD-REGIME-002 §3 F2a/F2b）。
+"""
+趋势特征：Hurst DFA 指数 + Kalman 自适应斜率（MOD-REGIME-002 §3 F2a/F2b）。
 
 2026-08-06 修正：替换"250日均线斜率"（依赖量纲/图表比例 = 伪精确）。
 - F2a hurst_dfa: DFA法Hurst指数，衡量趋势持久性（>0.5趋势 / <0.5均值回归 / ≈0.5随机游走）
 - F2b kalman_slope: Kalman滤波自适应斜率，归一化[-1,1]，不依赖固定窗口
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: prices 参数
+#   fields: 参数 prices，类型注解 np.ndarray
+#   code: trend_features.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: window 参数
+#   fields: 参数 window，类型注解 int | None
+#   code: trend_features.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: h_early 参数
+#   fields: 参数 h_early，类型注解 float
+#   code: trend_features.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: h_late 参数
+#   fields: 参数 h_late，类型注解 float
+#   code: trend_features.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① hurst_dfa
+#   name_en: hurst_dfa
+#   intro: DFA (Detrended Fluctuation Analysis) 法计算 Hurst 指数。
+#   desc: DFA (Detrended Fluctuation Analysis) 法计算 Hurst 指数。 算法步骤： 1. 对数收益率 r = diff(log(prices)) 2…；源码 L99-L166
+#   inputs: prices window
+#   outputs: float
+# - id: A2
+#   name_zh: ② kalman_slope
+#   name_en: kalman_slope
+#   intro: Kalman 滤波估计趋势斜率，归一化至 [-1, 1]。
+#   desc: Kalman 滤波估计趋势斜率，归一化至 [-1, 1]。 状态空间模型： 状态: s(t) = s(t-1) + w(t) （潜在趋势斜率，随机游走） 观测: y(t) = s…；源码 L195-L249
+#   inputs: prices
+#   outputs: float
+# - id: A3
+#   name_zh: ③ detect_hurst_decay
+#   name_en: detect_hurst_decay
+#   intro: 检测 Hurst 指数衰退（趋势衰竭信号）。
+#   desc: 检测 Hurst 指数衰退（趋势衰竭信号）。 蓝图 §5.1.10：Hurst 从趋势态（>0.65）衰退到随机态（<0.50）= 趋势衰竭。 判定逻辑（双重条件，比绝对阈值更稳…；源码 L257-L275
+#   inputs: h_early h_late
+#   outputs: bool
+# 层: 输出
+# - id: O1
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-REGIME-002(RegimeFeatureBuilder消费F2a hurst_dfa + F2b kalman_slope)
+# - id: O2
+#   name_zh: bool
+#   name_en: bool
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: MOD-REGIME-002(RegimeFeatureBuilder消费F2a hurst_dfa + F2b kalman_slope)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

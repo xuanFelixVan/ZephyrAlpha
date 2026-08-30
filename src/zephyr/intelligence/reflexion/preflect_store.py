@@ -14,7 +14,8 @@
 # [TESTS] tests/intelligence/test_preflect_store.py
 # [A_module] module_id=MOD-REFLEXION_AGENT | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""PreFlect 失败模式库（12号文 §3.3/§4.3 P1-3）.
+"""
+PreFlect 失败模式库（12号文 §3.3/§4.3 P1-3）.
 
 定位：一本「死法大全」——每条失败模式条目写清楚失败长什么样（pattern）、什么
 情况下会再犯（trigger_conditions）、怎么躲开（avoidance_advice）、是哪次反思
@@ -32,6 +33,41 @@
 
 检索：规则化关键词重叠打分（trigger_conditions 子串命中计数，与 L1 归因同路线，
 不引嵌入模型）。落盘：root/preflect_patterns.json 原子写，可读回（严格校验）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: root 参数
+#   fields: 参数 root（无注解）
+#   code: preflect_store.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① FailurePatternEntry
+#   name_en: FailurePatternEntry
+#   intro: 失败模式条目（§3.
+#   desc: 失败模式条目（§3.3 四要素冻结：模式/触发条件/规避建议/来源反思 ID）.；公共方法（定义序）: to_dict, from_dict；源码 L103-L194
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② PreFlectStore
+#   name_en: PreFlectStore
+#   intro: 失败模式库：落盘 root/preflect_patterns.
+#   desc: 失败模式库：落盘 root/preflect_patterns.json，可读回.；公共方法（定义序）: path, add, ingest_reflection, get, edit, retrieve, build…
+#   inputs: root
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: FailurePatternEntry, PreFlectStore
+#   downstream: tests/intelligence/test_preflect_store.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -54,9 +90,7 @@ SOURCE_L2: Final[str] = "l2_reflection"  # L2 失败反思记录自动沉淀
 SOURCE_MANUAL_SEED: Final[str] = "manual_seed"  # 人工种子集（Q6 待裁定，仅作可选值）
 SOURCE_MANUAL_EDIT: Final[str] = "manual_edit"  # 人工编辑留痕
 
-VALID_SOURCES: Final[frozenset[str]] = frozenset(
-    {SOURCE_L2, SOURCE_MANUAL_SEED, SOURCE_MANUAL_EDIT}
-)
+VALID_SOURCES: Final[frozenset[str]] = frozenset({SOURCE_L2, SOURCE_MANUAL_SEED, SOURCE_MANUAL_EDIT})
 
 _STORE_FILE: Final[str] = "preflect_patterns.json"
 
@@ -99,38 +133,28 @@ class FailurePatternEntry:
         if not self.updated_at:
             object.__setattr__(self, "updated_at", self.created_at)
         if not isinstance(self.pattern_id, str) or not self.pattern_id.strip():
-            raise PreFlectSchemaError(
-                f"FailurePatternEntry.pattern_id 缺失或为空（严格校验拒收）: {self.pattern_id!r}"
-            )
+            raise PreFlectSchemaError(f"FailurePatternEntry.pattern_id 缺失或为空（严格校验拒收）: {self.pattern_id!r}")
         if not isinstance(self.pattern, str) or not self.pattern.strip():
-            raise PreFlectSchemaError(
-                f"FailurePatternEntry.pattern 缺失或为空（严格校验拒收）: {self.pattern!r}"
-            )
+            raise PreFlectSchemaError(f"FailurePatternEntry.pattern 缺失或为空（严格校验拒收）: {self.pattern!r}")
         if not isinstance(self.avoidance_advice, str) or not self.avoidance_advice.strip():
             raise PreFlectSchemaError(
-                "FailurePatternEntry.avoidance_advice 缺失或为空（严格校验拒收）: "
-                f"{self.avoidance_advice!r}"
+                f"FailurePatternEntry.avoidance_advice 缺失或为空（严格校验拒收）: {self.avoidance_advice!r}"
             )
         conditions = tuple(self.trigger_conditions)
-        if not conditions or any(
-            not isinstance(c, str) or not c.strip() for c in conditions
-        ):
+        if not conditions or any(not isinstance(c, str) or not c.strip() for c in conditions):
             raise PreFlectSchemaError(
-                "FailurePatternEntry.trigger_conditions 缺失或含空项（严格校验拒收）: "
-                f"{self.trigger_conditions!r}"
+                f"FailurePatternEntry.trigger_conditions 缺失或含空项（严格校验拒收）: {self.trigger_conditions!r}"
             )
         object.__setattr__(self, "trigger_conditions", conditions)
         reflection_ids = tuple(self.source_reflection_ids)
         object.__setattr__(self, "source_reflection_ids", reflection_ids)
         if self.source not in VALID_SOURCES:
             raise PreFlectSchemaError(
-                f"FailurePatternEntry.source 非法取值拒收: {self.source!r}"
-                f"（合法={sorted(VALID_SOURCES)}）"
+                f"FailurePatternEntry.source 非法取值拒收: {self.source!r}（合法={sorted(VALID_SOURCES)}）"
             )
         if self.source == SOURCE_L2 and not reflection_ids:
             raise PreFlectSchemaError(
-                "FailurePatternEntry.source_reflection_ids 缺失：L2 入库必须带来源反思 ID"
-                "（manual_seed 方可豁免）"
+                "FailurePatternEntry.source_reflection_ids 缺失：L2 入库必须带来源反思 ID（manual_seed 方可豁免）"
             )
 
     def to_dict(self) -> dict[str, Any]:
@@ -174,11 +198,7 @@ class PreFlectStore:
     """失败模式库：落盘 root/preflect_patterns.json，可读回."""
 
     def __init__(self, root: str | Path | None = None) -> None:
-        self._root = (
-            Path(root)
-            if root
-            else MAIN_REPO_ROOT / "data" / "brain" / "preflect"
-        )
+        self._root = Path(root) if root else MAIN_REPO_ROOT / "data" / "brain" / "preflect"
         self._root.mkdir(parents=True, exist_ok=True)
         self._entries: dict[str, FailurePatternEntry] = {}
         self._load()
@@ -192,9 +212,7 @@ class PreFlectStore:
     def add(self, entry: FailurePatternEntry) -> FailurePatternEntry:
         """人工种子集/外部构造条目直接入库；重复 pattern_id 拒收."""
         if entry.pattern_id in self._entries:
-            raise PreFlectSchemaError(
-                f"FailurePatternEntry.pattern_id 重复拒收: {entry.pattern_id!r}"
-            )
+            raise PreFlectSchemaError(f"FailurePatternEntry.pattern_id 重复拒收: {entry.pattern_id!r}")
         self._entries[entry.pattern_id] = entry
         self._persist()
         return entry
@@ -202,16 +220,12 @@ class PreFlectStore:
     def ingest_reflection(self, record: ReflectionRecord) -> FailurePatternEntry:
         """消费 L2 失败反思记录自动生成条目落盘；成功记录拒收."""
         if record.outcome != "failure":
-            raise PreFlectSchemaError(
-                f"仅失败反思记录可入库: outcome={record.outcome!r}（拒收）"
-            )
+            raise PreFlectSchemaError(f"仅失败反思记录可入库: outcome={record.outcome!r}（拒收）")
         entry = FailurePatternEntry(
             pattern_id=f"fp-{record.reflection_id}",
             pattern=record.failure_category,
             trigger_conditions=(record.failure_category,),
-            avoidance_advice="；".join(
-                s.suggestion for s in record.improvement_suggestions
-            ),
+            avoidance_advice="；".join(s.suggestion for s in record.improvement_suggestions),
             source_reflection_ids=(record.reflection_id,),
             source=SOURCE_L2,
         )
@@ -241,14 +255,8 @@ class PreFlectStore:
         edited = replace(
             entry,
             pattern=entry.pattern if pattern is None else pattern,
-            avoidance_advice=(
-                entry.avoidance_advice if avoidance_advice is None else avoidance_advice
-            ),
-            trigger_conditions=(
-                entry.trigger_conditions
-                if trigger_conditions is None
-                else tuple(trigger_conditions)
-            ),
+            avoidance_advice=(entry.avoidance_advice if avoidance_advice is None else avoidance_advice),
+            trigger_conditions=(entry.trigger_conditions if trigger_conditions is None else tuple(trigger_conditions)),
             enabled=entry.enabled if enabled is None else bool(enabled),
             source=SOURCE_MANUAL_EDIT,
             updated_at=now_utc_str(),
@@ -294,10 +302,7 @@ class PreFlectStore:
             raise PreFlectSchemaError(f"{self.path} 非法 JSON（fail-closed）: {exc}") from exc
         if not isinstance(raw, dict):
             raise PreFlectSchemaError(f"{self.path} 顶层须为 dict（fail-closed）: {type(raw)!r}")
-        self._entries = {
-            pattern_id: FailurePatternEntry.from_dict(data)
-            for pattern_id, data in raw.items()
-        }
+        self._entries = {pattern_id: FailurePatternEntry.from_dict(data) for pattern_id, data in raw.items()}
 
     def _persist(self) -> None:
         payload = {pid: entry.to_dict() for pid, entry in sorted(self._entries.items())}

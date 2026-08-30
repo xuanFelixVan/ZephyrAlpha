@@ -24,6 +24,60 @@ mcp.BlueprintSearchServer._find_relevant_blueprint 共用。
 
 SSoT: config/blueprint_routing.yaml routes
 KBG:  路由）+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: route 参数
+#   fields: 参数 route，类型注解 dict[str, Any]
+#   code: blueprint_scorer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: path_patterns 参数
+#   fields: 参数 path_patterns，类型注解 list[str] | None
+#   code: blueprint_scorer.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: task_keywords 参数
+#   fields: 参数 task_keywords，类型注解 list[str] | None
+#   code: blueprint_scorer.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: task_text 参数
+#   fields: 参数 task_text，类型注解 str
+#   code: blueprint_scorer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① score_blueprint_route
+#   name_en: score_blueprint_route
+#   intro: 对单条 route 计算匹配分数。
+#   desc: 对单条 route 计算匹配分数。 两级匹配： 1. path_patterns（高权重）：glob 匹配文件路径 -> +10/命中 2. task_keywords（中权重）…；源码 L89-L140
+#   inputs: route path_patterns task_keywords task_text
+#   outputs: int
+# - id: A2
+#   name_zh: ② score_and_rank_routes
+#   name_en: score_and_rank_routes
+#   intro: 对所有 routes 打分并排序。
+#   desc: 对所有 routes 打分并排序。 参数 ---- routes : 路由条目列表 path_patterns, task_keywords, task_text : 匹配输入…；源码 L143-L176
+#   inputs: routes path_patterns task_keywords task_text skip_disabled
+#   outputs: list[tuple[int, int, dict[str, Any]]]
+# 层: 输出
+# - id: O1
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.orchestrator.trigger_router; zephyr.shared.utils.blueprint_scorer (re-ex…
+# - id: O2
+#   name_zh: list[tuple[int, int, dict[str, Any]]]
+#   name_en: list[tuple[int, int, dict[str, Any]]]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.orchestrator.trigger_router; zephyr.shared.utils.blueprint_scorer (re-ex…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

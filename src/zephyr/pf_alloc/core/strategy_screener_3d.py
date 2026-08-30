@@ -14,7 +14,8 @@
 # [TESTS] tests/pf_alloc/test_strategy_screener_3d.py
 # [A_module] module_id=MOD-PA-014 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-"""StrategyScreener3D — 策略筛选三维评估器（MOD-PA-014）。
+"""
+StrategyScreener3D — 策略筛选三维评估器（MOD-PA-014）。
 
 B10-02090（AUD-DRAFT-001-DIGEST P2 波 P2-W09，CAND-PFALLOC-009，A1 PA-02）：
 策略入库**三维评分**——
@@ -30,6 +31,48 @@ B10-02090（AUD-DRAFT-001-DIGEST P2 波 P2-W09，CAND-PFALLOC-009，A1 PA-02）�
 查重分工（蓝图 §0）：strategy_retirement_evaluator=在库策略退役评估（出库
 侧）；strategy_correlation_gate=组合相关性二元门禁（是否允许共线）。本件
 =**入库前三维评分**（准入打分与档位建议），不做退役、不做二元门禁。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: weights 参数
+#   fields: 参数 weights（无注解）
+#   code: strategy_screener_3d.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: accept_threshold 参数
+#   fields: 参数 accept_threshold（无注解）
+#   code: strategy_screener_3d.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: watchlist_threshold 参数
+#   fields: 参数 watchlist_threshold（无注解）
+#   code: strategy_screener_3d.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: clock 参数
+#   fields: 参数 clock（无注解）
+#   code: strategy_screener_3d.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① StrategyScreener3D
+#   name_en: StrategyScreener3D
+#   intro: 策略入库三维评估器（纯内存确定性，时钟注入）。
+#   desc: 策略入库三维评估器（纯内存确定性，时钟注入）。；公共方法（定义序）: evaluate；源码 L166-L322
+#   inputs: weights accept_threshold watchlist_threshold clock
+#   outputs: 返回值
+#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（5 定义）
+#   name_en: public defs
+#   intro: StrategyScreener3D
+#   downstream: 运行时装配批（策略入库评审流水线装配 / 组合分配域策略准入闸）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -83,9 +126,9 @@ class StrategyScreenerError(Exception):
 class ScreenerVerdict(str, Enum):
     """入库建议阈值档。"""
 
-    ACCEPT = "accept"          # 入库
-    WATCHLIST = "watchlist"    # 观察
-    REJECT = "reject"          # 淘汰
+    ACCEPT = "accept"  # 入库
+    WATCHLIST = "watchlist"  # 观察
+    REJECT = "reject"  # 淘汰
 
 
 @dataclass(frozen=True)
@@ -133,9 +176,7 @@ class StrategyScreener3D:
     ) -> None:
         raw = dict(weights) if weights is not None else dict(_DEFAULT_WEIGHTS)
         if set(raw) != set(_DIMENSIONS):
-            raise StrategyScreenerError(
-                f"权重维度词表闭合校验失败: 须恰为 {sorted(_DIMENSIONS)}，实收 {sorted(raw)}"
-            )
+            raise StrategyScreenerError(f"权重维度词表闭合校验失败: 须恰为 {sorted(_DIMENSIONS)}，实收 {sorted(raw)}")
         for dim, w in raw.items():
             _require_finite(f"权重[{dim}]", w)
             if w < 0:
@@ -147,8 +188,7 @@ class StrategyScreener3D:
         _require_finite("watchlist_threshold", watchlist_threshold)
         if not (0.0 <= watchlist_threshold <= accept_threshold <= 1.0):
             raise StrategyScreenerError(
-                f"阈值档非法（须 0≤watchlist≤accept≤1）: "
-                f"watchlist={watchlist_threshold!r}, accept={accept_threshold!r}"
+                f"阈值档非法（须 0≤watchlist≤accept≤1）: watchlist={watchlist_threshold!r}, accept={accept_threshold!r}"
             )
         self._weights = raw
         self._accept_threshold = accept_threshold
@@ -178,9 +218,7 @@ class StrategyScreener3D:
         return _clamp01(1.0 - sensitivity), sensitivity
 
     @staticmethod
-    def _lookup_corr(
-        correlation_matrix: Mapping[str, Mapping[str, float]], a: str, b: str
-    ) -> float:
+    def _lookup_corr(correlation_matrix: Mapping[str, Mapping[str, float]], a: str, b: str) -> float:
         row = correlation_matrix.get(a)
         if row is not None and b in row:
             return row[b]
@@ -249,15 +287,18 @@ class StrategyScreener3D:
 
         scores = {
             DIM_RETURN_CLARITY: DimensionScore(
-                DIM_RETURN_CLARITY, rc,
+                DIM_RETURN_CLARITY,
+                rc,
                 f"sharpe={sharpe}, max_drawdown={max_drawdown}, calmar={calmar}",
             ),
             DIM_PARAM_STABILITY: DimensionScore(
-                DIM_PARAM_STABILITY, ps,
+                DIM_PARAM_STABILITY,
+                ps,
                 f"邻域数={len(neighbors)}, 平均相对偏离={sensitivity:.6f}",
             ),
             DIM_COMPLEMENTARITY: DimensionScore(
-                DIM_COMPLEMENTARITY, cp,
+                DIM_COMPLEMENTARITY,
+                cp,
                 f"现有策略数={len(incumbent_ids)}",
             ),
         }
@@ -277,7 +318,5 @@ class StrategyScreener3D:
             watchlist_threshold=self._watchlist_threshold,
             evaluated_at=self._clock(),
         )
-        _log.info(
-            "策略三维筛选: %s weighted=%.4f verdict=%s", strategy_id, weighted, verdict.value
-        )
+        _log.info("策略三维筛选: %s weighted=%.4f verdict=%s", strategy_id, weighted, verdict.value)
         return report

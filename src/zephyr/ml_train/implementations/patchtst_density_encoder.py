@@ -50,7 +50,8 @@
 # A2 --> A3
 # A3 --> O1
 
-"""PatchTST 密度前置特征编码器 (MOD-ML-011, B10-01831 §29.7)。
+"""
+PatchTST 密度前置特征编码器 (MOD-ML-011, B10-01831 §29.7)。
 
 Transformer 时序架构密度预测增强：PatchTST 单家族落地，作 QNN Stage1
 前置特征提取器（Phase2 路线）。
@@ -68,6 +69,33 @@ torch 仅在可选 ml-train extra → numpy MVP (patchify+通道独立+SVD+注�
 依据: construction_backlog_dig.tsv B10-01831 + CAND-MLT-015
 SSoT: docs/03_modules/_domain_machine_learning_train/patchtst_density_encoder/blueprint.md
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: config 参数
+#   fields: 参数 config（无注解）
+#   code: patchtst_density_encoder.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① PatchtstDensityEncoder
+#   name_en: PatchtstDensityEncoder
+#   intro: PatchTST 密度前置特征编码器。
+#   desc: PatchTST 密度前置特征编码器。 输入 (n, lookback, n_channels) 时序 → 输出密度预测前置特征。；公共方法（定义序）: fit, transform；源码 L154-L256
+#   inputs: config
+#   outputs: 返回值
+#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: PatchtstDensityEncoder
+#   downstream: MOD-ML-DENSITY(密度头消费) ; MOD-ML-010(QNN Stage1前置特征)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -179,9 +207,7 @@ class PatchtstDensityEncoder:
         arr = self._validate_input(x)
         n, lookback, n_channels = arr.shape
         if self._n_channels is not None and n_channels != self._n_channels:
-            raise PatchtstEncoderError(
-                f"n_channels 不匹配: 拟合={self._n_channels} 实得={n_channels}"
-            )
+            raise PatchtstEncoderError(f"n_channels 不匹配: 拟合={self._n_channels} 实得={n_channels}")
 
         patches = self._patchify(arr)  # (n, C, P, patch_len)
         n_patches = patches.shape[2]
@@ -213,9 +239,7 @@ class PatchtstDensityEncoder:
         if arr.ndim != 3:
             raise PatchtstEncoderError(f"输入需三维 (n, L, C), 实得 ndim={arr.ndim}")
         if arr.shape[1] < self.config.patch_len:
-            raise PatchtstEncoderError(
-                f"lookback={arr.shape[1]} < patch_len={self.config.patch_len}"
-            )
+            raise PatchtstEncoderError(f"lookback={arr.shape[1]} < patch_len={self.config.patch_len}")
         return arr
 
     def _patchify(self, x: np.ndarray) -> np.ndarray:
@@ -228,5 +252,5 @@ class PatchtstDensityEncoder:
         patches = np.zeros((n, n_channels, n_patches, pl))
         for p in range(n_patches):
             start = p * stride
-            patches[:, :, p, :] = x[:, start:start + pl, :].transpose(0, 2, 1)
+            patches[:, :, p, :] = x[:, start : start + pl, :].transpose(0, 2, 1)
         return patches

@@ -14,13 +14,41 @@
 # [TESTS] tests/agent_rbac/test_observability_agent_rbac.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""ObservabilityReporter — 指标上报与异常检测.
+"""
+ObservabilityReporter — 指标上报与异常检测.
 
 依据蓝图 MOD-INF-018 §observability:
 - 记录权限决策指标
 - 检测操作密度异常
 - 检测非工作时间破坏性操作
 - 检测成熟度越级
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: observability.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ObservabilityReporter
+#   name_en: ObservabilityReporter
+#   intro: 指标上报器与异常检测器.
+#   desc: 指标上报器与异常检测器.；公共方法（定义序）: noise_count, record_decision, record_noise, signal_noise_ratio, check_signal_noise_al…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: ObservabilityReporter
+#   downstream: tests/agent_rbac/test_observability_agent_rbac.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
