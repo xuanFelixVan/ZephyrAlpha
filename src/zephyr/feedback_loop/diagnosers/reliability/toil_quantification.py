@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Toil Quantification — v0.37.0 R457
+"""
+Toil Quantification — v0.37.0 R457
 
 Blindspot: Repetitive manual operational tasks accumulate;
 no measurement of toil prevents automation prioritization.
@@ -26,6 +27,33 @@ burnout risk without visibility (Google SRE concept).
 Mitigation: Classify FLE actions by automation level. Track manual-intervention
 events. Compute toil ratio = manual_actions / total_actions. Escalate when
 toil ratio exceeds 20% for any 7-day window.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: toil_quantification.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ToilQuantification
+#   name_en: ToilQuantification
+#   intro: class ToilQuantification 源码 L73-L115
+#   desc: 公共方法（定义序）: record_action, is_toil_excessive, get_top_toil_sources；源码 L73-L115
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: ToilQuantification
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

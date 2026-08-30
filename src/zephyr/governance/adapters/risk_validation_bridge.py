@@ -22,13 +22,49 @@
 # created: "2026-05-23"
 # ---
 
-"""D_EXECUTION_CORE — Risk Validation Bridge (DW-239)
+"""
+D_EXECUTION_CORE — Risk Validation Bridge (DW-239)
 
 Cross-layer bridge that decouples D_EXECUTION_CORE (trade execution) from D_RISK (risk management)
 contract namespace. ExecutionEngine depends on this bridge instead of importing
 RiskValidatorProtocol from trading-contracts.risk directly.
 
 Pattern: Adapter — wraps the Protocol-based risk validator behind a local interface.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: risk_validator 参数
+#   fields: 参数 risk_validator（无注解）
+#   code: risk_validation_bridge.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① RiskValidationPort
+#   name_en: RiskValidationPort
+#   intro: class RiskValidationPort 源码 L90-L105
+#   desc: 公共方法（定义序）: validate_order, validate_portfolio；源码 L90-L105
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② RiskValidationBridge
+#   name_en: RiskValidationBridge
+#   intro: Adapter bridging trading-contracts.
+#   desc: Adapter bridging trading-contracts.risk.RiskValidatorProtocol to D_EXECUTION_CORE's local…；公共方法（定义序）: validat…
+#   inputs: risk_validator
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: RiskValidationPort, RiskValidationBridge
+#   downstream: zephyr.ex_core.execution_engine
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

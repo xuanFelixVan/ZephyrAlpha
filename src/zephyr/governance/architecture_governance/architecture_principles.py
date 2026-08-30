@@ -15,6 +15,63 @@
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: kb_ref 参数
+#   fields: 参数 kb_ref，类型注解 str
+#   code: architecture_principles.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: violations 参数
+#   fields: 参数 violations，类型注解 list[str]
+#   code: architecture_principles.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① princpled_check
+#   name_en: princpled_check
+#   intro: 装饰器：为函数标记适用的架构原则。
+#   desc: 装饰器：为函数标记适用的架构原则。；源码 L138-L150
+#   inputs: 无参数
+#   outputs: Callable[[F], F]
+# - id: A2
+#   name_zh: ② get_principle_by_kb_ref
+#   name_en: get_principle_by_kb_ref
+#   intro: get_principle_by_kb_ref(kb_ref) 源码 L153-L157
+#   desc: 源码 L153-L157
+#   inputs: kb_ref
+#   outputs: ArchPrinciple | None
+# - id: A3
+#   name_zh: ③ validate_against_principles
+#   name_en: validate_against_principles
+#   intro: 若 violations 非空，则违反某原则，记录并返回 False。
+#   desc: 若 violations 非空，则违反某原则，记录并返回 False。；源码 L160-L169
+#   inputs: violations
+#   outputs: bool
+#   （注：A3 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: Callable[[F], F]
+#   name_en: Callable[[F], F]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: ArchPrinciple | None
+#   name_en: ArchPrinciple | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
+"""
+
 from __future__ import annotations
 
 from collections.abc import Callable

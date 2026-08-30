@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 Blueprint Bloat Monitor — v0.11.0 蓝图膨胀监控器。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: blueprint_bloat_monitor.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① BlueprintBloatMonitor
+#   name_en: BlueprintBloatMonitor
+#   intro: class BlueprintBloatMonitor 源码 L51-L64
+#   desc: 公共方法（定义序）: check_bloat, should_refactor；源码 L51-L64
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: BlueprintBloatMonitor
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

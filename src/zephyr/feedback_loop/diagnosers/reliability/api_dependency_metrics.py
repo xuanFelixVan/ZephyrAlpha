@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""API Dependency Metrics — v0.17.0+ R237-R242
+"""
+API Dependency Metrics — v0.17.0+ R237-R242
 
 6 维依赖指标：
   - dep_count: 总受监控依赖数
@@ -23,6 +24,40 @@
   - license_copyleft: copyleft许可计数
   - sunset_overdue: 已过sunset日期的API数
   - contract_slos: API合约SLO违规追踪
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: api_dependency_metrics.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① DependencyStatusRecord
+#   name_en: DependencyStatusRecord
+#   intro: class DependencyStatusRecord 源码 L70-L85
+#   desc: 公共方法（定义序）: risk_level；源码 L70-L85
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② APIDependencyMetrics
+#   name_en: APIDependencyMetrics
+#   intro: class APIDependencyMetrics 源码 L89-L107
+#   desc: 公共方法（定义序）: register, scan, snapshot；源码 L89-L107
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: DependencyStatusRecord, APIDependencyMetrics
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

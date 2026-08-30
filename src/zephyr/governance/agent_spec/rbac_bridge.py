@@ -15,10 +15,46 @@
 # [A_module] module_id=MOD-INF-024 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""[BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget-enforcer/blueprint.md | §12
+"""
+[BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget-enforcer/blueprint.md | §12
 
 G-CT-007 契约：Budget -> RBAC 配额限制.
 G-CT-005 契约：Escalation -> RBAC 权限升级 + Pipeline 前置 RBAC 检查.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: rbac_bridge.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① BudgetRBACBridge
+#   name_en: BudgetRBACBridge
+#   intro: 预算消耗->RBAC权限降级.
+#   desc: 预算消耗->RBAC权限降级.；公共方法（定义序）: evaluate_budget, check_budget；源码 L87-L105
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② EscalationRBACBridge
+#   name_en: EscalationRBACBridge
+#   intro: 升级事件->RBAC权限提升 + Pipeline 前置 RBAC 检查.
+#   desc: 升级事件->RBAC权限提升 + Pipeline 前置 RBAC 检查.；公共方法（定义序）: guard, request_escalation, pre_execute_check；源码 L118-L191
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: BudgetRBACBridge, EscalationRBACBridge
+#   downstream: zephyr.infrastructure.budget_enforcement
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

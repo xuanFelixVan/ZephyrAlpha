@@ -18,6 +18,33 @@
 """
 R518: GuardInteractionTopologyMapper
 Guard交互有向图+环路检测 — A->B->C->A 循环
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: guard_interaction_topology_mapper.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① GuardInteractionTopologyMapper
+#   name_en: GuardInteractionTopologyMapper
+#   intro: class GuardInteractionTopologyMapper 源码 L62-L133
+#   desc: 公共方法（定义序）: record_interaction, detect_cycles, get_interaction_density, get_most_interactive_guards；源码 L62-L133
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: GuardInteractionTopologyMapper
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from collections import deque

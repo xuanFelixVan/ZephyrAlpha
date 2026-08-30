@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 Context Switch Governor — v0.11.0 Owner上下文切换预算管理器。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: context_switch_governor.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ContextSwitchGovernor
+#   name_en: ContextSwitchGovernor
+#   intro: class ContextSwitchGovernor 源码 L51-L82
+#   desc: 公共方法（定义序）: daily_switches, max_switches_per_owner, can_switch, record_switch；源码 L51-L82
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: ContextSwitchGovernor
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

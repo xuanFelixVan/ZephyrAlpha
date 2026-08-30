@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Metric Cardinality Guard — v0.40.0 R495
+"""
+Metric Cardinality Guard — v0.40.0 R495
 
 Blindspot: High-cardinality metric dimensions (per-symbol, per-user, per-venue,
 per-session) cause label combination explosion. Each unique label set creates
@@ -27,6 +28,33 @@ degrades; FLE cannot read recent data to detect anomalies; silent data loss.
 Mitigation: Track unique label value combinations per metric name. Alert when
 cardinality exceeds threshold or growth rate is exponential. Auto-suggest
 label pruning. Flag metrics approaching Prometheus-style cardinality limits.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: metric_cardinality_guard.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① MetricCardinalityGuard
+#   name_en: MetricCardinalityGuard
+#   intro: class MetricCardinalityGuard 源码 L75-L198
+#   desc: 公共方法（定义序）: compute_growth_rate, classify_cardinality, record_labels, get_top_cardinality_metrics, suggest_lab…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: MetricCardinalityGuard
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

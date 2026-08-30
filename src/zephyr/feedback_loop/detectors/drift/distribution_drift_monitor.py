@@ -14,7 +14,8 @@
 # [TESTS] tests/drift/test_distribution_drift_monitor.py
 # [A_module] module_id=MOD-FBL-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""DistributionDriftMonitor — 三路分布漂移监控器（MOD-FBL-001）。
+"""
+DistributionDriftMonitor — 三路分布漂移监控器（MOD-FBL-001）。
 
 B10-01824（AUD-DRAFT-001-DIGEST P1 波 W-P1-24，CAND-FBLDETEC-001，A1交易决策
 架构 §29.5）：特征漂移（feature）+ 概念漂移（concept）+ 标签漂移（label）
@@ -25,6 +26,67 @@ B10-01824（AUD-DRAFT-001-DIGEST P1 波 W-P1-24，CAND-FBLDETEC-001，A1交易�
 特征 / 预测输出 / 标签的分布样本），C-007=事后因子 IC 绩效衰减监控；本件
 接口只接受分布样本，不消费 IC/绩效时间序列；响应只产语义信号，降级/重训
 执行归运行时装配批。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: reference 参数
+#   fields: 参数 reference，类型注解 np.ndarray | list[float]
+#   code: distribution_drift_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: current 参数
+#   fields: 参数 current，类型注解 np.ndarray | list[float]
+#   code: distribution_drift_monitor.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: buckets 参数
+#   fields: 参数 buckets，类型注解 int
+#   code: distribution_drift_monitor.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① psi
+#   name_en: psi
+#   intro: 总体稳定性指数 PSI = Σ(a%−e%)·ln(a%/e%)（reference 分位分箱）。
+#   desc: 总体稳定性指数 PSI = Σ(a%−e%)·ln(a%/e%)（reference 分位分箱）。；源码 L218-L227
+#   inputs: reference current buckets
+#   outputs: float
+# - id: A2
+#   name_zh: ② kl_divergence
+#   name_en: kl_divergence
+#   intro: KL 散度 D_KL(current‖reference)（同分箱直方图，nats）。
+#   desc: KL 散度 D_KL(current‖reference)（同分箱直方图，nats）。；源码 L230-L239
+#   inputs: reference current buckets
+#   outputs: float
+# - id: A3
+#   name_zh: ③ mdd
+#   name_en: mdd
+#   intro: 均值差异距离 MDD = |μ_cur − μ_ref| / σ_ref（线性核 MMD² 标准化口径；
+#   desc: 均值差异距离 MDD = |μ_cur − μ_ref| / σ_ref（线性核 MMD² 标准化口径； σ_ref=0 时退化为原量纲绝对差）。；源码 L242-L256
+#   inputs: reference current
+#   outputs: float
+# - id: A4
+#   name_zh: ④ DistributionDriftMonitor
+#   name_en: DistributionDriftMonitor
+#   intro: 三路分布漂移监控器（MOD-FBL-001）。
+#   desc: 三路分布漂移监控器（MOD-FBL-001）。 用法： mon = DistributionDriftMonitor() rep = mon.check_feature(ref_…；公共方法（定义序）: check,…
+#   inputs: thresholds response_matrix buckets
+#   outputs: 返回值
+#   （注：A4 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 运行时装配批（D_FACTOR 特征降级执行 / D_ML_TRAIN 重训触发 / MOD-DATENG-001 告警路由汇入）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations
@@ -105,9 +167,7 @@ class ChannelThresholds:
             if warn <= 0 or crit <= 0:
                 raise DistributionDriftError(f"{name} 阈值须为正")
             if warn >= crit:
-                raise DistributionDriftError(
-                    f"{name} 阈值须满足 warn < critical（{warn} !< {crit}）"
-                )
+                raise DistributionDriftError(f"{name} 阈值须满足 warn < critical（{warn} !< {crit}）")
 
 
 @dataclass(frozen=True)
@@ -138,9 +198,7 @@ def _as_samples(values: np.ndarray | list[float], name: str) -> np.ndarray:
     return arr
 
 
-def _bucket_shares(
-    reference: np.ndarray, current: np.ndarray, buckets: int
-) -> tuple[np.ndarray, np.ndarray]:
+def _bucket_shares(reference: np.ndarray, current: np.ndarray, buckets: int) -> tuple[np.ndarray, np.ndarray]:
     """按 reference 分位数分箱，返回两样本的箱占比（裁剪 eps，和归一）。"""
     if buckets < 2:
         raise DistributionDriftError("buckets 须 ≥ 2")
@@ -261,23 +319,13 @@ class DistributionDriftMonitor:
             "mdd": mdd(reference, current),
         }
         severity = DriftSeverity.NONE
-        if (
-            values["psi"] >= th.psi_critical
-            or values["kl"] >= th.kl_critical
-            or values["mdd"] >= th.mdd_critical
-        ):
+        if values["psi"] >= th.psi_critical or values["kl"] >= th.kl_critical or values["mdd"] >= th.mdd_critical:
             severity = DriftSeverity.CRITICAL
-        elif (
-            values["psi"] >= th.psi_warn
-            or values["kl"] >= th.kl_warn
-            or values["mdd"] >= th.mdd_warn
-        ):
+        elif values["psi"] >= th.psi_warn or values["kl"] >= th.kl_warn or values["mdd"] >= th.mdd_warn:
             severity = DriftSeverity.WARN
         detected = severity != DriftSeverity.NONE
         response = (
-            self._response_matrix.get((channel, severity), DriftResponse.NONE)
-            if detected
-            else DriftResponse.NONE
+            self._response_matrix.get((channel, severity), DriftResponse.NONE) if detected else DriftResponse.NONE
         )
         detail = (
             f"{channel.value}: psi={values['psi']:.4f}(warn={th.psi_warn},crit={th.psi_critical}) "
@@ -294,20 +342,14 @@ class DistributionDriftMonitor:
             detail=detail,
         )
 
-    def check_feature(
-        self, reference: np.ndarray | list[float], current: np.ndarray | list[float]
-    ) -> DriftReport:
+    def check_feature(self, reference: np.ndarray | list[float], current: np.ndarray | list[float]) -> DriftReport:
         """特征漂移（模型输入分布，事前预警）。"""
         return self.check(DriftChannel.FEATURE, reference, current)
 
-    def check_concept(
-        self, reference: np.ndarray | list[float], current: np.ndarray | list[float]
-    ) -> DriftReport:
+    def check_concept(self, reference: np.ndarray | list[float], current: np.ndarray | list[float]) -> DriftReport:
         """概念漂移（预测输出分布，事前预警）。"""
         return self.check(DriftChannel.CONCEPT, reference, current)
 
-    def check_label(
-        self, reference: np.ndarray | list[float], current: np.ndarray | list[float]
-    ) -> DriftReport:
+    def check_label(self, reference: np.ndarray | list[float], current: np.ndarray | list[float]) -> DriftReport:
         """标签漂移（标签分布，事前预警）。"""
         return self.check(DriftChannel.LABEL, reference, current)

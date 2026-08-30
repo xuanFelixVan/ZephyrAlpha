@@ -15,12 +15,39 @@
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""E2E Integration Test Pipeline — TASK-MOD-FEEDBACK_LOOP-0028 (Phase43-87)
+"""
+E2E Integration Test Pipeline — TASK-MOD-FEEDBACK_LOOP-0028 (Phase43-87)
 
 验证 MOD-FEEDBACK_LOOP 全生命周期集成:
   1. 67层安全门L1-L67全量联动
   2. 16项集成目标逐一验证
   3. 三相流水线(MetricsCollect->AnomalyDetect->Diagnose->Action->Verify)端到端
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: integration_test_pipeline.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① IntegrationTestPipeline
+#   name_en: IntegrationTestPipeline
+#   intro: class IntegrationTestPipeline 源码 L67-L159
+#   desc: 公共方法（定义序）: test_full_e2e, test_integration_targets, test_67_gates_full；源码 L67-L159
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: IntegrationTestPipeline
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

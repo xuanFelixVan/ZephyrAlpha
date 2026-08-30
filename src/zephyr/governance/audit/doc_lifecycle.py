@@ -44,7 +44,8 @@
 #   fields: watched/revived/archived/pruned 计数 + details
 # 边: I1-->A1; I2-->A2; A1-->A2; A2-->O1; A2-->O2
 # [/ALGO_FLOW]
-"""doc_lifecycle.py — 文档生命周期状态机（#ARCH-RECONCILER-AUTO-DELETE-GOV-001 治本核心）
+"""
+doc_lifecycle.py — 文档生命周期状态机（#ARCH-RECONCILER-AUTO-DELETE-GOV-001 治本核心）
 
 替代旧 GATE-WORKING-DOCS 的"幽灵引用即归档"一枪毙命机制。
 
@@ -62,6 +63,101 @@
    回健康态，零人工环节。
 4. 归档≠删除：move 进 30 天回收站（ops_guard.guard_recycle），git 侧不再
    auto-commit 删除（I-GOV-2 合规）；回收站到期才物理删除。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: ref 参数
+#   fields: 参数 ref，类型注解 str
+#   code: doc_lifecycle.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: content 参数
+#   fields: 参数 content，类型注解 str
+#   code: doc_lifecycle.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: source 参数
+#   fields: 参数 source，类型注解 Path
+#   code: doc_lifecycle.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: project_root 参数
+#   fields: 参数 project_root，类型注解 Path
+#   code: doc_lifecycle.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① classify_path
+#   name_en: classify_path
+#   intro: 路径分级：短命（ephemeral）断裂不计分；长命（durable）断裂才计分。
+#   desc: 路径分级：短命（ephemeral）断裂不计分；长命（durable）断裂才计分。；源码 L229-L237
+#   inputs: ref
+#   outputs: str
+# - id: A2
+#   name_zh: ② extract_refs
+#   name_en: extract_refs
+#   intro: 提取文档引用的项目内路径（去重保序）。
+#   desc: 提取文档引用的项目内路径（去重保序）。；源码 L240-L254
+#   inputs: content
+#   outputs: list[str]
+# - id: A3
+#   name_zh: ③ is_ghost
+#   name_en: is_ghost
+#   intro: 双重路径解析判定失效引用（先相对文档目录，再相对项目根）。
+#   desc: 双重路径解析判定失效引用（先相对文档目录，再相对项目根）。；源码 L257-L267
+#   inputs: ref source project_root
+#   outputs: bool
+# - id: A4
+#   name_zh: ④ read_ttl
+#   name_en: read_ttl
+#   intro: 读取 frontmatter ttl；无 frontmatter/无 ttl 字段 → 'undeclared'。
+#   desc: 读取 frontmatter ttl；无 frontmatter/无 ttl 字段 → 'undeclared'。；源码 L277-L286
+#   inputs: path
+#   outputs: str
+# - id: A5
+#   name_zh: ⑤ load_watchlist
+#   name_en: load_watchlist
+#   intro: 读取观察清单；不存在/损坏 → 空表（fail-open 重建）。
+#   desc: 读取观察清单；不存在/损坏 → 空表（fail-open 重建）。；源码 L306-L315
+#   inputs: repo_root
+#   outputs: dict[str, WatchEntry]
+# - id: A6
+#   name_zh: ⑥ save_watchlist
+#   name_en: save_watchlist
+#   intro: 原子写观察清单（tmp+replace）。
+#   desc: 原子写观察清单（tmp+replace）。；源码 L318-L329
+#   inputs: repo_root entries
+#   outputs: 返回值
+# - id: A7
+#   name_zh: ⑦ evaluate_lifecycle
+#   name_en: evaluate_lifecycle
+#   intro: 状态机主入口（每个 post-commit 周期调用一次）。
+#   desc: 状态机主入口（每个 post-commit 周期调用一次）。 转移规则： - 不在清单 + ttl≠permanent +（durable 幽灵引用>0 或 零活跃>30 天）→…；源码 L361-L450
+#   inputs: repo_root now
+#   outputs: LifecycleReport
+#   （注：A7 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.governance.audit.reconciliation_registry（GATE-WORKING-DOCS reconciler）
+# - id: O2
+#   name_zh: list[str]
+#   name_en: list[str]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.governance.audit.reconciliation_registry（GATE-WORKING-DOCS reconciler）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> O1
 """
 
 from __future__ import annotations

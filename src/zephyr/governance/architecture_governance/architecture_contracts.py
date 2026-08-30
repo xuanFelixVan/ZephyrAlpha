@@ -15,6 +15,45 @@
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: architecture_contracts.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① CircuitBreaker
+#   name_en: CircuitBreaker
+#   intro: class CircuitBreaker 源码 L102-L141
+#   desc: 公共方法（定义序）: failure_count, state, record_failure, record_success, attempt_reset；源码 L102-L141
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② generate_client_order_id
+#   name_en: generate_client_order_id
+#   intro: generate_client_order_id() 源码 L144-L145
+#   desc: 源码 L144-L145
+#   inputs: 无参数
+#   outputs: str
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: str
+#   name_en: str
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
+
 from __future__ import annotations
 
 import uuid

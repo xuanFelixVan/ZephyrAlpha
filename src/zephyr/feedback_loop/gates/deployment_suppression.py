@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Deployment Suppression — v0.37.0 R464
+"""
+Deployment Suppression — v0.37.0 R464
 
 Blindspot: New deployments proceed while FLE detects active instability;
 fresh code injected into already-degrading system compounds damage.
@@ -25,6 +26,33 @@ Risk: R464 — Deployment during active incident amplifies blast radius.
 Mitigation: FLE-instability gate before deployment pipeline. If FLE
 reports DEGRADED or higher state -> block deployment. Auto-release
 when system returns to NOMINAL for sustain_window seconds.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: deployment_suppression.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① DeploymentSuppression
+#   name_en: DeploymentSuppression
+#   intro: class DeploymentSuppression 源码 L72-L106
+#   desc: 公共方法（定义序）: update_from_fle_state, is_deploy_allowed, remaining_block；源码 L72-L106
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: DeploymentSuppression
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

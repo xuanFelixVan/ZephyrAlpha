@@ -15,10 +15,37 @@
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Diagnosis KPI — v0.9.0 R116
+"""
+Diagnosis KPI — v0.9.0 R116
 
 Blindspot: No metrics on how often diagnoses lead to effective repairs.
 Risk: R116 — Broken diagnosis pipeline invisible — repair feedback loop severed.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: diagnosis_kpi.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① DiagnosisKPI
+#   name_en: DiagnosisKPI
+#   intro: class DiagnosisKPI 源码 L55-L61
+#   desc: 公共方法（定义序）: effectiveness_rate；源码 L55-L61
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: DiagnosisKPI
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from dataclasses import dataclass

@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 Construction Verifier — 施工验证器: 任务卡完成度+蓝图一致性检查。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: construction_verifier.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ConstructionVerifier
+#   name_en: ConstructionVerifier
+#   intro: class ConstructionVerifier 源码 L51-L67
+#   desc: 公共方法（定义序）: verify_card, blueprint_consistency；源码 L51-L67
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: ConstructionVerifier
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

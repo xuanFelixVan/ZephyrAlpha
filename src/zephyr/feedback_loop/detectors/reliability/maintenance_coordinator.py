@@ -15,10 +15,37 @@
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Maintenance Coordinator — v0.12.0 R168
+"""
+Maintenance Coordinator — v0.12.0 R168
 
 Blindspot: Multiple maintenance windows conflict; no coordination.
 Risk: R168 — Overlapping maintenance windows cause false anomaly spikes.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: maintenance_coordinator.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① MaintenanceCoordinator
+#   name_en: MaintenanceCoordinator
+#   intro: class MaintenanceCoordinator 源码 L55-L59
+#   desc: 公共方法（定义序）: schedule；源码 L55-L59
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: MaintenanceCoordinator
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from dataclasses import dataclass, field

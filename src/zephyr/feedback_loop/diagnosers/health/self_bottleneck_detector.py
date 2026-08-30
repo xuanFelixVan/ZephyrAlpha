@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Self-Bottleneck Detector — v0.38.0 R479
+"""
+Self-Bottleneck Detector — v0.38.0 R479
 
 Blindspot: FLE pipeline stages (collect->detect->diagnose->act->verify) have
 unknown performance characteristics. One slow stage creates backpressure
@@ -29,6 +30,33 @@ Mitigation: Per-stage latency tracking with percentile histograms. Detect
 queue depth buildup at each pipeline stage. Identify slowest stage and
 trigger auto-scaling or degradation. Alert when end-to-end latency exceeds
 real-time requirements.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: self_bottleneck_detector.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SelfBottleneckDetector
+#   name_en: SelfBottleneckDetector
+#   intro: class SelfBottleneckDetector 源码 L78-L172
+#   desc: 公共方法（定义序）: record_stage_latency, record_e2e_latency, set_queue_depth, detect_bottleneck, overall_throughput_h…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: SelfBottleneckDetector
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""FLE Dogfood Monitor — v0.38.0 R480
+"""
+FLE Dogfood Monitor — v0.38.0 R480
 
 Blindspot: "Who watches the watchmen?" — FLE monitors everything except itself.
 FLE self-SLOs, self-diagnosis, and self-healing are assumed but never verified.
@@ -27,6 +28,33 @@ warning. The monitoring system itself is the single point of failure.
 Mitigation: Dogfood the FLE: apply the same collect->detect->diagnose->act->verify
 pipeline to FLE's own metrics. Track FLE-specific SLOs. Auto-diagnose FLE
 degradation. Three redundant health signals cross-validated.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: fle_dogfood_monitor.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① FLEDogfoodMonitor
+#   name_en: FLEDogfoodMonitor
+#   intro: class FLEDogfoodMonitor 源码 L75-L170
+#   desc: 公共方法（定义序）: record_self_metric, self_check, get_self_slo_compliance, get_self_metric_summary；源码 L75-L170
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: FLEDogfoodMonitor
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

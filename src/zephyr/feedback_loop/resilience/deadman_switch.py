@@ -15,12 +15,40 @@
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Deadman Switch — v0.15.0 R212
+"""
+Deadman Switch — v0.15.0 R212
 
 Blindspot: FLE runs autonomously with no external kill-switch; runaway unstoppable.
 Risk: R212 — Malicious skill takes over; FLE keeps running; no external forced shutdown.
 
 Mitigation: 60s heartbeat; 3 consecutive misses -> automatic self-lock + external alert.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: deadman_switch.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① DeadmanSwitch
+#   name_en: DeadmanSwitch
+#   intro: class DeadmanSwitch 源码 L68-L95
+#   desc: 公共方法（定义序）: heartbeat, check, is_locked；源码 L68-L95
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: DeadmanSwitch
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -35,6 +35,84 @@ post_sync_validator — post_sync_standard 命令校验逻辑的唯一真源（S
 
 历史根因：D-SIGNAL 改名 20 卡死锁事故——建卡 AI 臆造 apply_depgraph.py --diagnose，
 argparse 从未注册该 flag，导致所有卡无法 transition(COMPLETED)。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: cmd 参数
+#   fields: 参数 cmd，类型注解 str
+#   code: post_sync_validator.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: repo_root 参数
+#   fields: 参数 repo_root，类型注解 Path
+#   code: post_sync_validator.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: cmds 参数
+#   fields: 参数 cmds，类型注解 list[str]
+#   code: post_sync_validator.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: text 参数
+#   fields: 参数 text，类型注解 str
+#   code: post_sync_validator.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① validate_post_sync_command
+#   name_en: validate_post_sync_command
+#   intro: 校验单条 post_sync_standard 命令（含 && / || / 换行 链式拆分）。
+#   desc: 校验单条 post_sync_standard 命令（含 && / || / 换行 链式拆分）。 返回 None 表示通过；返回字符串表示失败原因（取第一条子命令失败）。 这是…；源码 L137-L151
+#   inputs: cmd repo_root
+#   outputs: str | None
+# - id: A2
+#   name_zh: ② validate_post_sync_commands
+#   name_en: validate_post_sync_commands
+#   intro: 校验一组 post_sync_standard 命令。
+#   desc: 校验一组 post_sync_standard 命令。 返回 [(cmd, reason | None), ...]，与输入一一对应。 reason 为 None 表示该命令通过…；源码 L154-L160
+#   inputs: cmds repo_root
+#   outputs: list[tuple[str, str | None]]
+# - id: A3
+#   name_zh: ③ validate_post_sync_specific
+#   name_en: validate_post_sync_specific
+#   intro: 校验单条 post_sync_specific 命令。
+#   desc: 校验单条 post_sync_specific 命令。 post_sync_specific 与 post_sync_standard 同型同语义（均 list[str] 命令，…；源码 L163-L172
+#   inputs: cmd repo_root
+#   outputs: str | None
+# - id: A4
+#   name_zh: ④ validate_post_sync_specifics
+#   name_en: validate_post_sync_specifics
+#   intro: 校验一组 post_sync_specific 命令（与 validate_post_sync_commands 对称…
+#   desc: 校验一组 post_sync_specific 命令（与 validate_post_sync_commands 对称）。；源码 L175-L177
+#   inputs: cmds repo_root
+#   outputs: list[tuple[str, str | None]]
+# - id: A5
+#   name_zh: ⑤ validate_rollback_instructions
+#   name_en: validate_rollback_instructions
+#   intro: 校验 rollback_instructions 字段（str，异构：描述性步骤 + 命令混合）。
+#   desc: 校验 rollback_instructions 字段（str，异构：描述性步骤 + 命令混合）。 轻量语义校验（不套命令级校验，避免误杀描述性内容）： 1. 非空且 strip…；源码 L186-L211
+#   inputs: text repo_root
+#   outputs: str | None
+# 层: 输出
+# - id: O1
+#   name_zh: str | None
+#   name_en: str | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.governance.persistence.task_repo (L1 预防); scripts.governance.audit_post_…
+# - id: O2
+#   name_zh: list[tuple[str, str | None]]
+#   name_en: list[tuple[str, str | None]]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.governance.persistence.task_repo (L1 预防); scripts.governance.audit_post_…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations

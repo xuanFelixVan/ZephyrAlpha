@@ -15,6 +15,129 @@
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # ARCH-031: migrated from governance/governance/data_quality.py to root (canonical per [MODULE] annotation)
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: dim 参数
+#   fields: 参数 dim，类型注解 DQDimension
+#   code: data_quality.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: value 参数
+#   fields: 参数 value，类型注解 float
+#   code: data_quality.py 顶层公共函数形参（AST 提取）
+# - id: I3
+#   name: df 参数
+#   fields: 参数 df，类型注解 pd.DataFrame
+#   code: data_quality.py 顶层公共函数形参（AST 提取）
+# - id: I4
+#   name: columns 参数
+#   fields: 参数 columns，类型注解 list[str] | None
+#   code: data_quality.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① get_dq_spec
+#   name_en: get_dq_spec
+#   intro: get_dq_spec(dim) 源码 L236-L237
+#   desc: 源码 L236-L237
+#   inputs: dim
+#   outputs: DQSpec | None
+# - id: A2
+#   name_zh: ② score_dq
+#   name_en: score_dq
+#   intro: score_dq(dim, value) 源码 L240-L248
+#   desc: 源码 L240-L248
+#   inputs: dim value
+#   outputs: float
+# - id: A3
+#   name_zh: ③ check_completeness
+#   name_en: check_completeness
+#   intro: 完整性 = 非缺失单元占比 ∈[0,1]（metric=missing_pct 的补数，越大越健康）。
+#   desc: 完整性 = 非缺失单元占比 ∈[0,1]（metric=missing_pct 的补数，越大越健康）。 空表返回 0.0（无数据=零完整）。columns 缺省查全列。；源码 L268-L278
+#   inputs: df columns
+#   outputs: float
+# - id: A4
+#   name_zh: ④ check_accuracy
+#   name_en: check_accuracy
+#   intro: 准确性 = 与参考源相对偏差 ≤ tolerance 的数值单元占比 ∈[0,1]（越大越健康）。
+#   desc: 准确性 = 与参考源相对偏差 ≤ tolerance 的数值单元占比 ∈[0,1]（越大越健康）。 metric=deviation_sigma 的 MVP 口径：偏差达标率。无…；源码 L281-L307
+#   inputs: df reference tolerance
+#   outputs: float
+# - id: A5
+#   name_zh: ⑤ check_anomaly
+#   name_en: check_anomaly
+#   intro: 异常检测 = |zscore|>z_threshold 的单元占比 ∈[0,1]（离群率，越小越健康）。
+#   desc: 异常检测 = |zscore|>z_threshold 的单元占比 ∈[0,1]（离群率，越小越健康）。 z 按列计算（ddof=0）；常数列（std=0）无离群；NaN 不计入…；源码 L310-L340
+#   inputs: df columns z_threshold
+#   outputs: float
+# - id: A6
+#   name_zh: ⑥ check_consistency
+#   name_en: check_consistency
+#   intro: 一致性 ∈[0,1]（越大越健康，metric=recon_diff 的补数）。
+#   desc: 一致性 ∈[0,1]（越大越健康，metric=recon_diff 的补数）。 两模式： - 给 reference：跨源对账一致率（相对偏差 ≤ tolerance 的单元占…；源码 L343-L378
+#   inputs: df reference tolerance
+#   outputs: float
+# - id: A7
+#   name_zh: ⑦ check_freshness
+#   name_en: check_freshness
+#   intro: 新鲜度 = 数据年龄秒数（now − max(last_updated)，越小越健康，metric=age_secon…
+#   desc: 新鲜度 = 数据年龄秒数（now − max(last_updated)，越小越健康，metric=age_seconds）。 last_updated 接受标量 Timesta…；源码 L381-L400
+#   inputs: last_updated now
+#   outputs: float
+# - id: A8
+#   name_zh: ⑧ check_timeliness
+#   name_en: check_timeliness
+#   intro: 时效性 = SLA 内处理完成占比 ∈[0,1]（越大越健康）。
+#   desc: 时效性 = SLA 内处理完成占比 ∈[0,1]（越大越健康）。 metric=latency_ms 的方向约定（lower_is_better=False）要求"越大越健康"，…；源码 L403-L418
+#   inputs: event_time processed_time sla_ms
+#   outputs: float
+# - id: A9
+#   name_zh: ⑨ check_uniqueness
+#   name_en: check_uniqueness
+#   intro: 唯一性 = 1 − 重复行占比 ∈[0,1]（越大越健康，metric=duplicate_rate 的补数）。
+#   desc: 唯一性 = 1 − 重复行占比 ∈[0,1]（越大越健康，metric=duplicate_rate 的补数）。 duplicated(keep="first") 口径：首次出现…；源码 L421-L428
+#   inputs: df subset
+#   outputs: float
+# - id: A10
+#   name_zh: ⑩ check_validity
+#   name_en: check_validity
+#   intro: 有效性 = 1 − 范围违例行占比 ∈[0,1]（越大越健康，metric=schema_violation_rate…
+#   desc: 有效性 = 1 − 范围违例行占比 ∈[0,1]（越大越健康，metric=schema_violation_rate 的补数）。 rules: {列名: (下界, 上界)} 闭…；源码 L431-L453
+#   inputs: df rules
+#   outputs: float
+#   （注：A10 之后另有 3 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: DQSpec | None
+#   name_en: DQSpec | None
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: float
+#   name_en: float
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> A6
+# A6 --> A7
+# A7 --> A8
+# A8 --> A9
+# A9 --> A10
+# A10 --> O1
+"""
+
 from enum import Enum
 from typing import Callable, Final
 

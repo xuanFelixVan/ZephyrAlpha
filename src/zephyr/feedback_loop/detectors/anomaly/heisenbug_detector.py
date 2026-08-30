@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Heisenbug Detector — v0.38.0 R470
+"""
+Heisenbug Detector — v0.38.0 R470
 
 Blindspot: Bugs that change behavior or disappear when observed; observation act
 alters system state (timing, logging overhead, debugger attachment).
@@ -27,6 +28,33 @@ Mitigation: Shadow monitoring with randomized sampling. Track observation-sensit
 metrics via passive collection (no active probing). Compare anomaly rates between
 actively-monitored and passively-monitored windows. If anomaly rate drops >50% during
 active monitoring -> flag as potential Heisenbug.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: heisenbug_detector.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① HeisenbugDetector
+#   name_en: HeisenbugDetector
+#   intro: class HeisenbugDetector 源码 L73-L128
+#   desc: 公共方法（定义序）: record, detect_heisenbug, reset_observation_window；源码 L73-L128
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: HeisenbugDetector
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

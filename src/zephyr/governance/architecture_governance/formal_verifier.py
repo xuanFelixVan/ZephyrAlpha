@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 Formal Verifier — v0.6.0 形式验证器: 升级规则形式化验证->一致性+完备性检测。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: formal_verifier.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① FormalVerifier
+#   name_en: FormalVerifier
+#   intro: class FormalVerifier 源码 L51-L71
+#   desc: 公共方法（定义序）: verify_rule_completeness, verify_rule_consistency；源码 L51-L71
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: FormalVerifier
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

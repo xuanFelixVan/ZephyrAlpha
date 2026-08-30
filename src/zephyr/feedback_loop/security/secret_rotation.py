@@ -15,12 +15,55 @@
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Secret Rotation — v0.14.0 R189
+"""
+Secret Rotation — v0.14.0 R189
 
 Blindspot: API keys/secrets never rotated; leaked credentials valid indefinitely.
 Risk: R189 — Compromised secret grants permanent access; no automated rotation.
 
 Mitigation: Secret lifecycle management with automated rotation scheduling.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: interval_days 参数
+#   fields: 参数 interval_days，类型注解 int
+#   code: secret_rotation.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SecretEntry
+#   name_en: SecretEntry
+#   intro: class SecretEntry 源码 L77-L90
+#   desc: 公共方法（定义序）: days_since_rotation, needs_rotation；源码 L77-L90
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② SecretRotation
+#   name_en: SecretRotation
+#   intro: class SecretRotation 源码 L94-L117
+#   desc: 公共方法（定义序）: register, rotate, pending_rotations；源码 L94-L117
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A3
+#   name_zh: ③ auto_configure
+#   name_en: auto_configure
+#   intro: 自动扫描 os.environ 中的密钥变量，注册到 SecretRotation 并注入 SecretProvide…
+#   desc: 自动扫描 os.environ 中的密钥变量，注册到 SecretRotation 并注入 SecretProvider。 扫描规则：变量名（大写）包含 SECRET_INDIC…；源码 L131-L159
+#   inputs: interval_days
+#   outputs: int
+# 层: 输出
+# - id: O1
+#   name_zh: int
+#   name_en: int
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.__init__._deferred_bootstrap (auto_configure)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

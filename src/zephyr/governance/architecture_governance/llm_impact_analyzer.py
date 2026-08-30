@@ -28,6 +28,38 @@ commit diff -> LLM API -> 语义级风险评估:
 （后者依据 MOD-TASK_SYSTEM 是 task impact analyzer，本文件是 commit impact analyzer）。
 类名撞车是历史遗留问题，不在 ARCH-039 P1 范围内。
 module_id 已重新分配为 MOD-GOV_llm_impact_analyzer 避免撞车。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 参数
+#   fields: 参数 project_root（无注解）
+#   code: llm_impact_analyzer.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: use_llm 参数
+#   fields: 参数 use_llm（无注解）
+#   code: llm_impact_analyzer.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① LLMImpactAnalyzer
+#   name_en: LLMImpactAnalyzer
+#   intro: class LLMImpactAnalyzer 源码 L151-L242
+#   desc: 公共方法（定义序）: analyze, batch_analyze；源码 L151-L242
+#   inputs: project_root use_llm
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: LLMImpactAnalyzer
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

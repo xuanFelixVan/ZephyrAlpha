@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Data Volume Growth Monitor — v0.39.0 R492
+"""
+Data Volume Growth Monitor — v0.39.0 R492
 
 Blindspot: Metric storage, logs, checkpoints, and event timelines grow
 monotonically. FLE writes data but never checks if storage is approaching
@@ -28,6 +29,33 @@ manual intervention from the 1-person team that's already overwhelmed.
 Mitigation: Track data volume growth rates per storage sink. Project time-to-full
 using linear/exponential growth models. Alert when TTF (time-to-full) drops
 below threshold. Auto-trigger retention policy tightening or compaction.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: data_volume_growth_monitor.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① DataVolumeGrowthMonitor
+#   name_en: DataVolumeGrowthMonitor
+#   intro: class DataVolumeGrowthMonitor 源码 L75-L196
+#   desc: 公共方法（定义序）: register_sink, record_volume, get_all_projections, overall_storage_health；源码 L75-L196
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: DataVolumeGrowthMonitor
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

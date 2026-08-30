@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Timezone Semantic Reasoner — v0.37.0 R456
+"""
+Timezone Semantic Reasoner — v0.37.0 R456
 
 Blindspot: FLE operates on UTC timestamps only; misinterprets
 market hours, settlement deadlines, and regulatory cutoffs across timezones.
@@ -26,6 +27,33 @@ or premature shutdown of monitoring.
 Mitigation: Multi-timezone calendar reasoning. Map UTC to exchange local times.
 Track DST transitions, holiday calendars per venue. Prevent FLE from suppressing
 monitoring during active market hours.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: timezone_semantic_reasoner.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① TimezoneSemanticReasoner
+#   name_en: TimezoneSemanticReasoner
+#   intro: class TimezoneSemanticReasoner 源码 L75-L112
+#   desc: 公共方法（定义序）: is_market_active, any_market_active, active_venues, next_transition；源码 L75-L112
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: TimezoneSemanticReasoner
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

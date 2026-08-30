@@ -16,8 +16,33 @@
 # [TTL] permanent
 
 """
-
 Command Chain Length Gate — v0.13.0 命令体积Deny退化防御器。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: command_chain_length_gate.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① CommandChainGate
+#   name_en: CommandChainGate
+#   intro: class CommandChainGate 源码 L51-L61
+#   desc: 公共方法（定义序）: evaluate；源码 L51-L61
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: CommandChainGate
+#   downstream: zephyr.infrastructure.escalation
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

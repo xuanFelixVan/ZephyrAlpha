@@ -22,7 +22,8 @@
 # created: "2026-05-05"
 # ---
 
-"""D_DATA — Akshare Data Provider
+"""
+D_DATA — Akshare Data Provider
 
 Akshare 数据源适配器。实现 QuoteProviderBase (OCP 扩展点)，接入 Akshare 金融数据库。
 
@@ -42,6 +43,32 @@ CTR 契约：
   - 离线环境直接用同步调用即可
 
 SSoT: cross_layer_contracts.yaml -> CTR-001
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: cache_dir 参数
+#   fields: 参数 cache_dir（无注解）
+#   code: akshare_quote_provider.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① AkshareQuoteProvider
+#   name_en: AkshareQuoteProvider
+#   intro: Akshare 数据源——A 股历史数据接入
+#   desc: Akshare 数据源——A 股历史数据接入；公共方法（定义序）: akshare, ak, fetch_historical, subscribe_realtime, get_stock_list, get_inde…
+#   inputs: cache_dir
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: AkshareQuoteProvider
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

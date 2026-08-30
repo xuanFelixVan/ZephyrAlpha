@@ -15,10 +15,37 @@
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Concept Drift Detector — v0.5.0 R42
+"""
+Concept Drift Detector — v0.5.0 R42
 
 Blindspot: Statistical properties of metrics drift over time; static thresholds break.
 Risk: R42 — EMA baseline drifts; normal behavior flagged as anomaly.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: concept_drift.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ConceptDrift
+#   name_en: ConceptDrift
+#   intro: class ConceptDrift 源码 L55-L59
+#   desc: 公共方法（定义序）: check；源码 L55-L59
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: ConceptDrift
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from dataclasses import dataclass

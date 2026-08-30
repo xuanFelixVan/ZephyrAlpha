@@ -15,6 +15,55 @@
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: source_name 参数
+#   fields: 参数 source_name，类型注解 str
+#   code: data_source_reliability.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: dimension_scores 参数
+#   fields: 参数 dimension_scores，类型注解 dict[ReliabilityDimension, float]
+#   code: data_source_reliability.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① score_source
+#   name_en: score_source
+#   intro: score_source(source_name, dimension_scores) 源码 L118-L121
+#   desc: 源码 L118-L121
+#   inputs: source_name dimension_scores
+#   outputs: ReliabilityScore
+# - id: A2
+#   name_zh: ② compare_sources
+#   name_en: compare_sources
+#   intro: compare_sources() 源码 L124-L125
+#   desc: 源码 L124-L125
+#   inputs: 无参数
+#   outputs: list[tuple[str, float]]
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: ReliabilityScore
+#   name_en: ReliabilityScore
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# - id: O2
+#   name_zh: list[tuple[str, float]]
+#   name_en: list[tuple[str, float]]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
+"""
+
 from __future__ import annotations
 
 from enum import Enum

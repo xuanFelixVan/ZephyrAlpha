@@ -36,6 +36,41 @@ AI 施工约定：
   - 任务完成后 MUST 调用 release() 释放配额
 
 SSoT: MOD-INF-024 §12 盲点 B28
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: context_budget.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ContextBudget
+#   name_en: ContextBudget
+#   intro: 上下文预算管理器——配额分配、追踪、截断。
+#   desc: 上下文预算管理器——配额分配、追踪、截断。 Usage:: budget = ContextBudget(total_budget=16000) alloc_id = budge…；公共方法（定义序）: allocat…
+#   inputs: 无参数
+#   outputs: 返回值
+# - id: A2
+#   name_zh: ② QuotaTracker
+#   name_en: QuotaTracker
+#   intro: 配额使用追踪器——按租户/会话维度追踪 budget 消耗。
+#   desc: 配额使用追踪器——按租户/会话维度追踪 budget 消耗。 与 ContextBudget 配合使用：ContextBudget 管理即时预算， QuotaTracker 管理…；公共方法（定义序）: consume…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（4 定义）
+#   name_en: public defs
+#   intro: ContextBudget, QuotaTracker
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

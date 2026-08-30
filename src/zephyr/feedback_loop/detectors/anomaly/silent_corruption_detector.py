@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Silent Corruption Detector — v0.40.0 R499
+"""
+Silent Corruption Detector — v0.40.0 R499
 
 Blindspot: Stored metrics, baselines, and checkpoints can suffer silent data
 corruption — bit flips in RAM/disk, cosmic rays, faulty storage controllers,
@@ -28,6 +29,33 @@ FLE acts on data that is silently wrong, producing cascading bad decisions.
 Mitigation: Attach SHA256 checksum to every persisted data block. Validate
 checksum on every read. Track corruption events per storage sink. When
 corruption rate exceeds threshold -> alert and quarantine the sink.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: silent_corruption_detector.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SilentCorruptionDetector
+#   name_en: SilentCorruptionDetector
+#   intro: class SilentCorruptionDetector 源码 L77-L170
+#   desc: 公共方法（定义序）: seal, validate, is_sink_quarantined, get_sink_health_summary, get_total_corruptions, overall_data_…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: SilentCorruptionDetector
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""E2E Integration Health Monitor — v0.39.0 R489
+"""
+E2E Integration Health Monitor — v0.39.0 R489
 
 Blindspot: FLE monitors individual components but not their integration. Component
 A and Component B both report GREEN, but A->B communication is silently broken.
@@ -27,6 +28,33 @@ user experience is broken. Integration failures hide between component boundarie
 Mitigation: Monitor cross-component integration points as first-class health
 signals. Define integration contracts (latency SLA, error rate, throughput).
 Detect when integration health diverges from component health.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: e2e_integration_health.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① E2EIntegrationHealth
+#   name_en: E2EIntegrationHealth
+#   intro: class E2EIntegrationHealth 源码 L75-L213
+#   desc: 公共方法（定义序）: register_integration, record_call, check_integration_health, check_all_integrations, get_degradati…
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: E2EIntegrationHealth
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

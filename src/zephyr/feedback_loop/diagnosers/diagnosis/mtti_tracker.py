@@ -15,12 +15,40 @@
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""MTTI Tracker — v0.16.0 R221
+"""
+MTTI Tracker — v0.16.0 R221
 
 Blindspot: No measurement of Mean-Time-To-Identify; FLE speed at finding anomalies invisible.
 Risk: R221 — FLE slow to identify critical anomalies; no SLA tracking for detection speed.
 
 Mitigation: MTTI tracking with adaptive threshold based on historical detection latency.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: mtti_tracker.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① MTTITracker
+#   name_en: MTTITracker
+#   intro: class MTTITracker 源码 L70-L89
+#   desc: 公共方法（定义序）: record, current_mtti, sla_breach_rate；源码 L70-L89
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: MTTITracker
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

@@ -26,6 +26,38 @@ SnapshotManager — Event Sourcing 快照管理（DW-0005）
 - get_replay_start(task_id): 返回 (snapshot_state, events_after_snapshot) 高效回放
 
 使用 task_snapshots 表（v18 创建，v19 新增 last_event_timestamp 列）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: db_path 参数
+#   fields: 参数 db_path（无注解）
+#   code: snapshot_manager.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: auto_init 参数
+#   fields: 参数 auto_init（无注解）
+#   code: snapshot_manager.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① SnapshotManager
+#   name_en: SnapshotManager
+#   intro: Event Sourcing 快照管理器。
+#   desc: Event Sourcing 快照管理器。 参数 ---- db_path SQLite 数据库路径；默认 DB_PATH。 auto_init 为 True 时在构造时调用 S…；公共方法（定义序）: close,…
+#   inputs: db_path auto_init
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: SnapshotManager
+#   downstream: zephyr.governance.observability_governance.projection_engine; zephyr.gov_audit.…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

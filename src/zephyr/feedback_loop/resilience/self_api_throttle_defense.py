@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Self API Throttle Defense — v0.39.0 R491
+"""
+Self API Throttle Defense — v0.39.0 R491
 
 Blindspot: FLE's own diagnosis/repair actions can overwhelm the very systems
 they monitor. A burst of automated actions generates a burst of metrics, which
@@ -28,6 +29,33 @@ Positive feedback loop destroys system availability.
 Mitigation: Token bucket rate limiter for FLE's own outbound actions. Per-target
 concurrency cap. Global action budget with burst allowance. When budget exhausted
 -> queue or drop non-critical actions. Alert when throttling activates.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: self_api_throttle_defense.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SelfAPIThrottleDefense
+#   name_en: SelfAPIThrottleDefense
+#   intro: class SelfAPIThrottleDefense 源码 L75-L190
+#   desc: 公共方法（定义序）: request_action, drain_queue, get_throttle_status, reset_counters；源码 L75-L190
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: SelfAPIThrottleDefense
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

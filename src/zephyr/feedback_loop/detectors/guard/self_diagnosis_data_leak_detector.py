@@ -18,6 +18,32 @@
 """
 R530: SelfDiagnosisDataLeakDetector
 自诊断报告敏感数据泄漏扫描 — API Key/PII/内部路径 防护
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: self_diagnosis_data_leak_detector.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① SelfDiagnosisDataLeakDetector
+#   name_en: SelfDiagnosisDataLeakDetector
+#   intro: class SelfDiagnosisDataLeakDetector 源码 L54-L110
+#   desc: 公共方法（定义序）: scan, sanitize；源码 L54-L110
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: SelfDiagnosisDataLeakDetector
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 import re

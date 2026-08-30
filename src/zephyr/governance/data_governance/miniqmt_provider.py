@@ -14,7 +14,8 @@
 # [TESTS]
 # [A_module] module_id=MOD-L00-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""MiniQMT 实盘行情 Provider（Tick + 5档盘口）
+"""
+MiniQMT 实盘行情 Provider（Tick + 5档盘口）
 
 职责:
   - 对接国金证券 MiniQMT 终端的 xtdata API，提供 Tick 级行情（含5档盘口）
@@ -38,6 +39,38 @@
   - D_FRONTEND tick_replay.py: 秒级做T盘口回放 (fetch_historical interval="tick")
 
 SSoT: docs/03_modules/_domain_data/blueprint.md §16.7.1 MiniQMT Provider 详细规格
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: path 参数
+#   fields: 参数 path（无注解）
+#   code: miniqmt_provider.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: session_id 参数
+#   fields: 参数 session_id（无注解）
+#   code: miniqmt_provider.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① MiniQmtQuoteProvider
+#   name_en: MiniQmtQuoteProvider
+#   intro: MiniQMT 实盘行情 Provider——对接 xtdata，提供 Tick + 5档盘口
+#   desc: MiniQMT 实盘行情 Provider——对接 xtdata，提供 Tick + 5档盘口 对接国金证券 MiniQMT 终端（Level-1 五档盘口），支持: - 历史…；公共方法（定义序）: fetch_hi…
+#   inputs: path session_id
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: MiniQmtQuoteProvider
+#   downstream: zephyr.backtest.core.data_handler; zephyr.backtest.core.tick_replay; zephyr.ex_…
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

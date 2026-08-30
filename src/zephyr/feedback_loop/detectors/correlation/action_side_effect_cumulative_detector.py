@@ -18,6 +18,32 @@
 """
 R526: ActionSideEffectCumulativeDetector
 动作微副作用累积漂移检测 — 多次循环后微小副作用累积
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: action_side_effect_cumulative_detector.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ActionSideEffectCumulativeDetector
+#   name_en: ActionSideEffectCumulativeDetector
+#   intro: class ActionSideEffectCumulativeDetector 源码 L53-L100
+#   desc: 公共方法（定义序）: set_baseline, record_side_effect, detect_cumulative_drift, get_total_cumulative_effects；源码 L53-L100
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: ActionSideEffectCumulativeDetector
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from dataclasses import dataclass, field

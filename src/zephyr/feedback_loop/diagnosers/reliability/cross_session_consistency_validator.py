@@ -18,6 +18,32 @@
 """
 R510: CrossSessionConsistencyValidator
 跨session阈值跳变+配置哈希链 — 昨天校准的阈值今天不能突变
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: cross_session_consistency_validator.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① CrossSessionConsistencyValidator
+#   name_en: CrossSessionConsistencyValidator
+#   intro: class CrossSessionConsistencyValidator 源码 L55-L123
+#   desc: 公共方法（定义序）: record_config, detect_jumps, verify_hash_chain；源码 L55-L123
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: CrossSessionConsistencyValidator
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 import hashlib

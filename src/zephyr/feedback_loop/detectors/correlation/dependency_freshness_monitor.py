@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Dependency Freshness Monitor — v0.38.0 R474
+"""
+Dependency Freshness Monitor — v0.38.0 R474
 
 Blindspot: Package dependencies age silently — security vulnerabilities accumulate,
 deprecated APIs approach end-of-life, major version gaps widen. In 1-person+AI
@@ -27,6 +28,33 @@ transient dependency; CVE unpatched for months because no one noticed.
 Mitigation: Track dependency age, major version lag, and known CVE exposure.
 Alert when any dependency exceeds freshness threshold. Integrate with CVE
 scanner for vulnerability cross-referencing.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: dependency_freshness_monitor.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① DependencyFreshnessMonitor
+#   name_en: DependencyFreshnessMonitor
+#   intro: class DependencyFreshnessMonitor 源码 L75-L156
+#   desc: 公共方法（定义序）: register, check_freshness, get_stalest, overall_health_score；源码 L75-L156
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: DependencyFreshnessMonitor
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

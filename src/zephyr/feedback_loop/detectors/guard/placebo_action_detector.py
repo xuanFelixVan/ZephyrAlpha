@@ -19,6 +19,32 @@
 R508: PlaceboActionDetector
 伪有效动作统计检验 — Mann-Whitney U test 区分因果 vs 随机
 对标: Causal Inference (Pearl) — distinguish real effect from regression to mean
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: placebo_action_detector.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① PlaceboActionDetector
+#   name_en: PlaceboActionDetector
+#   intro: class PlaceboActionDetector 源码 L55-L135
+#   desc: 公共方法（定义序）: mann_whitney_u, record_action_outcome, record_control_outcome, detect_placebo_actions, get_placebo…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: PlaceboActionDetector
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 import math

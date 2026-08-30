@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Graceful Degradation Planner — v0.40.0 R496
+"""
+Graceful Degradation Planner — v0.40.0 R496
 
 Blindspot: When FLE is overloaded or resource-constrained, it has no pre-planned
 degradation strategy. It either runs everything (causing more overload) or crashes
@@ -31,6 +32,33 @@ Mitigation: Four-tier degradation model:
   P2: NICE_TO_HAVE — pause entirely (forensic archiving, evolution/training)
   P3: COSMETIC — drop (detailed reporting, historical replay)
 Auto-degrade on resource pressure, auto-restore when pressure subsides.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: graceful_degradation_planner.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① GracefulDegradationPlanner
+#   name_en: GracefulDegradationPlanner
+#   intro: class GracefulDegradationPlanner 源码 L86-L201
+#   desc: 公共方法（定义序）: register_service, evaluate_degradation, get_service_status, force_degradation；源码 L86-L201
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（3 定义）
+#   name_en: public defs
+#   intro: GracefulDegradationPlanner
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

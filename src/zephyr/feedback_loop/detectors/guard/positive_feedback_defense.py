@@ -15,10 +15,37 @@
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Positive Feedback Defense — v0.4.0 R28
+"""
+Positive Feedback Defense — v0.4.0 R28
 
 Blindspot: FLE repair triggers metric improvement that triggers new FLE cycle; infinite loop.
 Risk: R28 — Positive feedback loop between FLE action and metric causes runaway repairs.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: positive_feedback_defense.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① PositiveFeedbackDefense
+#   name_en: PositiveFeedbackDefense
+#   intro: class PositiveFeedbackDefense 源码 L55-L62
+#   desc: 公共方法（定义序）: detect_loop；源码 L55-L62
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: PositiveFeedbackDefense
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from dataclasses import dataclass, field

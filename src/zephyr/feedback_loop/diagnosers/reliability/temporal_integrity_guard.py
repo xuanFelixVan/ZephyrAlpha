@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Temporal Integrity Guard — v0.38.0 R478
+"""
+Temporal Integrity Guard — v0.38.0 R478
 
 Blindspot: Time-series baselines corrupted by clock anomalies — NTP drift
 between machines, daylight saving time transitions, leap seconds, clock
@@ -29,6 +30,33 @@ monotonic clock divergence causes phantom trend detection.
 Mitigation: Validate timestamp monotonicity. Detect DST transitions and
 treat as known events. Track NTP offset. Flag when wall-clock jumps
 backward (negative time delta). Maintain separate monotonic baseline.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: temporal_integrity_guard.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① TemporalIntegrityGuard
+#   name_en: TemporalIntegrityGuard
+#   intro: class TemporalIntegrityGuard 源码 L79-L157
+#   desc: 公共方法（定义序）: validate_timestamp, is_dst_boundary, get_temporal_health, reset_history；源码 L79-L157
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: TemporalIntegrityGuard
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

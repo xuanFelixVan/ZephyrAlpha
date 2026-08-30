@@ -33,6 +33,32 @@ ComplianceRule（CTR-P1-012）SSoT：``zephyr.shared.contracts.compliance_rule``
   CTR-P1-009  PerformanceAttributionReport ← D_REPORTING（消费者——绩效归因报告）
 
 SSoT: cross_layer_contracts.yaml v3.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: compliance_manager.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① ComplianceManagerBase
+#   name_en: ComplianceManagerBase
+#   intro: 合规规则管理器抽象基类（OCP 扩展点）
+#   desc: 合规规则管理器抽象基类（OCP 扩展点） 职责： - 管理合规规则生命周期（注册/激活/废弃） - 评估策略/订单是否满足监管与内部合规要求 - 产出 ComplianceRul…；公共方法（定义序）: registe…
+#   inputs: 无参数
+#   outputs: 返回值
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（1 定义）
+#   name_en: public defs
+#   intro: ComplianceManagerBase
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

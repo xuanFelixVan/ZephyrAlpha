@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Nonstationary Effectiveness — v0.37.0 R455
+"""
+Nonstationary Effectiveness — v0.37.0 R455
 
 Blindspot: FLE actions modeled under stationarity assumptions;
 effectiveness collapses when data distribution shifts (e.g. post-breach, flash crash).
@@ -25,6 +26,33 @@ Risk: R455 — FLE continues applying ineffective actions after regime change.
 Mitigation: Rolling-window effectiveness scoring. Compare recent action outcomes
 against historical baseline. If rolling effectiveness drops >30% from baseline,
 trigger diagnostic reset + model recalibration request.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: nonstationary_effectiveness.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① NonstationaryEffectiveness
+#   name_en: NonstationaryEffectiveness
+#   intro: class NonstationaryEffectiveness 源码 L71-L106
+#   desc: 公共方法（定义序）: record_outcome, needs_recalibration；源码 L71-L106
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: NonstationaryEffectiveness
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

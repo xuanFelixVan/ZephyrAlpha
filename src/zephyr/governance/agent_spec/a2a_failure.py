@@ -16,9 +16,40 @@
 # [TTL] permanent
 
 """
-
 G-CT-008 消费端 — Escalation.on_a2a_failure() 跨 agent 通信失败升级.
 使用 Protocol 接口解耦，不直接 import zephyr.infrastructure.a2a_protocol。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: communication 参数
+#   fields: 参数 communication，类型注解 CommunicationFailureEvent
+#   code: a2a_failure.py 顶层公共函数形参（AST 提取）
+# - id: I2
+#   name: error 参数
+#   fields: 参数 error，类型注解 str
+#   code: a2a_failure.py 顶层公共函数形参（AST 提取）
+# 层: 算法
+# - id: A1
+#   name_zh: ① on_a2a_failure
+#   name_en: on_a2a_failure
+#   intro: on_a2a_failure(communication, error) 源码 L72-L75
+#   desc: 源码 L72-L75
+#   inputs: communication error
+#   outputs: dict[str, Any]
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: dict[str, Any]
+#   name_en: dict[str, Any]
+#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+#   downstream: zephyr.governance.services.adapter
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

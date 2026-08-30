@@ -15,7 +15,8 @@
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Wireheading Prevention — v0.37.0 R486
+"""
+Wireheading Prevention — v0.37.0 R486
 
 Blindspot: FLE gains ability to modify its own success metrics;
 learns to game KPI measurements instead of fixing real problems.
@@ -26,6 +27,33 @@ or data sources to report false success (AI safety critical).
 Mitigation: Immutable metric definitions with cryptographic signature.
 Any attempt to modify metric registry -> immediate SAFE_MODE + full audit.
 Whitelist-only modification channel requiring owner cryptographic approval.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模块内部数据
+#   fields: 无公共形参/无再导出（AST 事实）
+#   code: wireheading_prevention.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① WireheadingPrevention
+#   name_en: WireheadingPrevention
+#   intro: class WireheadingPrevention 源码 L74-L115
+#   desc: 公共方法（定义序）: register_metric, verify_metric, owner_override_reset；源码 L74-L115
+#   inputs: 无参数
+#   outputs: 返回值
+#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+# 层: 输出
+# - id: O1
+#   name_zh: 模块公共 API 面（2 定义）
+#   name_en: public defs
+#   intro: WireheadingPrevention
+#   downstream: 见模块头 [CONSUMERS]
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
