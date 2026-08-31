@@ -1,0 +1,31 @@
+# --- 治理锚定 ---
+# doc_type: register | 功能验收单（冻结"什么样子算对"）
+# ttl: permanent
+# 修订权限：Owner 专有（AI 可提议不可自改已冻结条项）
+# --- 治理锚定结束 ---
+
+feature_id: F-STOCKQ-COSTLINE
+feature_name: 持仓成本线
+frozen_at: 2026-08-31
+frozen_by: ZephyrAlpha-Owner
+revision: 1
+revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
+
+# check 取值：目检（截图人工/AI 视觉对） | 机断（DOM 断言，Playwright 落地后自动跑；过渡期人工/控制台手动验，不免验）
+items:
+  - { id: 1, text: "黄色虚线横跨主图，线色=琥珀/黄", check: 目检 }
+  - { id: 2, text: "y 轴与线端均无价签、无文字", check: 目检 }
+  - { id: 3, text: "¥ 开关独立控制显隐，不影响其他 overlay 组（marks/trades/draw）", check: 目检 }
+  - { id: 4, text: "悬停显示琥珀色提示框（成本/数量）", check: 目检 }
+  - { id: 5, text: "overlay 已注册（chart 上存在 cost 组 plainLine overlay）", check: 机断 }
+  - { id: 6, text: "¥ 按钮存在于工具栏且图标渲染非空", check: 机断 }
+
+execution:
+  trigger: "任何涉及本功能的 UI 改动 commit 前"
+  flow: "起本地服务 → 截图 → 逐条对 → 全绿才走 GitCommitGateway"
+  baseline_screenshot: "acceptance/screenshots/F-STOCKQ-COSTLINE-baseline.png"
+
+关联:
+  handbook: [FEH-KLC-001, FEH-KLC-003]
+  frontend_map: F-STOCKQ-COSTLINE
+  code_ref: "src/zephyr/frontend/dashboard/web/core/app1.js#L6229"
