@@ -5929,21 +5929,7 @@ function sqInit(){
       return r;
     }
   });
-  /* 注册纯横线覆盖物（无任何文字/价签部件——彻底根除 priceLine 蓝色标签 bug） */
-  klinecharts.registerOverlay({
-    name:'plainLine',
-    totalStep:1,
-    needDefaultPointFigure:false,
-    needDefaultXAxisFigure:false,
-    needDefaultYAxisFigure:false,
-    createPointFigures:function(o){
-      var c=o.coordinates;
-      if(!c||!c.length) return [];
-      var x=c[0].x,y=c[0].y;
-      return [{type:'line',attrs:{coordinates:[{x:0,y:y},{x:9999,y:y}]},
-        styles:{color:o.styles?o.styles.line.color:'#F0B90B',style:o.styles?o.styles.line.style:'dashed',size:o.styles?o.styles.line.size:1.2}}];
-    }
-  });
+  /* plainLine 纯横线模板已迁入功能模块 features/cost-line.js（模块契约 pilot；手册 FEH-KLC-001：内置 priceLine 价签删不掉才自注册） */
   /* 注册自定义矩形覆盖物（KLineChart v10 无内置 rect） */
   klinecharts.registerOverlay({
     name:'rect',
@@ -5986,6 +5972,8 @@ function sqInit(){
       separator:{color:'#1A1C1E'}
     }
   });
+  /* 功能模块挂载（模块契约 pilot）：成本线模块 init（plainLine 模板注册随模块迁入 features/cost-line.js） */
+  if(window.ZK && ZK.features && ZK.features['cost-line']){ ZK.features['cost-line'].init(klpChart); }
   klpChart.setDataLoader({
     getBars:function(params){   /* v10 数据契约：init 返回全量；forward/backward 返回空（演示口径无更多数据，否则库会无限向前加载卡死主线程——浏览器实证） */
       if(params&&params.type==='init'){ params.callback(klpBars()); }
@@ -6156,7 +6144,7 @@ function klpRefreshMarks(){
     if(!d.length) return;
     if(klpMarks.bs) klpRenderBS(d);
     if(klpMarks.trade) klpRenderTrades(d);
-    if(klpMarks.cost) klpRenderCostLine(d);   /* 黄色成本线独立开关（¥） */
+    if(klpMarks.cost && window.ZK && ZK.features['cost-line']) ZK.features['cost-line'].render(d);   /* 黄色成本线独立开关（¥）——已模块化（features/cost-line.js） */
     /* 筹码峰独立模块显隐（collapsed 切换影响中栏宽度，需 resize） */
     var chipWrap=document.getElementById('klp-chip');
     if(chipWrap){
@@ -6208,32 +6196,7 @@ function klpRenderTrades(d){
     });
   });
 }
-/* 成本线（v4.7 二合一，Owner 裁定）：只留黄色=筹码峰平均成本线，左侧常驻蓝色价签隐藏，悬停弹出 成本/数量 提示框（截图配色：暗底琥珀字）；原白色持仓成本线及 ¥ 开关已删 */
-function klpCostQty(){ var r=lcg(+sqCur*5+29); return Math.round((10000+r()*90000)/100)*100; }   /* 演示持仓数量 */
-function klpCostTipShow(){
-  var tip=document.getElementById('klp-cost-tip');
-  if(!tip){ tip=document.createElement('div'); tip.id='klp-cost-tip'; tip.className='klp-cost-tip'; document.body.appendChild(tip); }
-  var d=klpChart.getDataList();
-  tip.innerHTML='成本: '+klpChipCalc(d,d.length-1).avgCost.toFixed(2)+'&ensp;数量: '+klpCostQty();   /* 与黄色线同口径（筹码峰平均成本） */
-  tip.style.display='block';
-  if(!window.__klpCostTipBound){
-    window.__klpCostTipBound=1;
-    document.addEventListener('mousemove',function(e){
-      var t=document.getElementById('klp-cost-tip');
-      if(t&&t.style.display==='block'){ t.style.left=(e.clientX+12)+'px'; t.style.top=(e.clientY-32)+'px'; }
-    });
-  }
-}
-function klpCostTipHide(){ var tip=document.getElementById('klp-cost-tip'); if(tip) tip.style.display='none'; }
-/* 黄色成本线（独立 groupId 'cost'，¥ 开关控制；plainLine 纯横线模板无文字/价签部件；悬停显示成本/数量） */
-function klpRenderCostLine(d){
-  var c=klpChipCalc(d,d.length-1);
-  klpChart.createOverlay({name:'plainLine',groupId:'cost',lock:true,
-    points:[{value:c.avgCost}],
-    styles:{line:{color:'#F0B90B',style:'dashed',size:1.2}},
-    onMouseEnter:function(){ klpCostTipShow(); return true; },
-    onMouseLeave:function(){ klpCostTipHide(); return true; }});
-}
+/* 成本线已迁入功能模块 features/cost-line.js（模块契约 pilot，验收单 ACC-F-STOCKQ-COSTLINE）；¥ 开关状态仍由 klpMarks.cost 持有，渲染触发见 klpRefreshMarks */
 /* 筹码峰：独立模块刷新（canvas 分布图+信息面板；主图黄线已拆到 klpRenderCostLine，由 ¥ 独立开关） */
 function klpRenderChip(d){
   klpChipRender(d.length-1);

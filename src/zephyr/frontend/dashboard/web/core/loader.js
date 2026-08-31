@@ -22,6 +22,10 @@
   }).then(function(){
     return loadJs('core/app1.js');
   }).then(function(){
+    return loadJs('core/event_bus.js');   /* 薄事件总线+功能模块注册表（模块契约基建，四件套之三） */
+  }).then(function(){
+    return loadJs('features/cost-line.js');   /* 成本线功能模块（模块契约 pilot，验收单 ACC-F-STOCKQ-COSTLINE） */
+  }).then(function(){
     return loadJs('core/app2.js');
   }).then(function(){
     return loadJs('core/app3.js');

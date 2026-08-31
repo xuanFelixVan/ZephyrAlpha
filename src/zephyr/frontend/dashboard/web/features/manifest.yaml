@@ -1,0 +1,18 @@
+# 前端功能模块注册表（模块契约真源；兼作 frontend_map 前端侧清单生成源之一）
+# 契约：每模块一个独立文件 features/<id>.js；init(chart,ctx)/render(d)/destroy()；样式自注入；模块间只经 ZK.bus 通信
+# 纪律：新功能一律模块制；禁止隐式跨模块摸对方 DOM/状态（depends 显式声明）
+version: "1.0.0"
+updated: 2026-08-31
+modules:
+  - id: cost-line
+    name: 持仓成本线
+    file: features/cost-line.js
+    page: stockq
+    init: "init(chart, ctx)"
+    destroy: "destroy()"
+    depends: [klinecharts, klpChipCalc, lcg, sqCur]   # app1.js 全局依赖（显式声明）
+    toggle: "¥ 开关（标注开关行，klpTglMark('cost')）"
+    styles: self-injected                            # .klp-cost-tip 随模块注入，不写全局 main.css
+    acceptance: ACC-F-STOCKQ-COSTLINE                # 挂验收单
+    handbook: [FEH-KLC-001, FEH-KLC-003]             # 挂手册条目
+    status: active
