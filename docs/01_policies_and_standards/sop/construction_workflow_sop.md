@@ -716,12 +716,12 @@ python scripts/session_worktree.py cleanup <sid>
 | 1 | Step 0 Session 冷启动完成（守护进程 running=true） | ☐ |
 | 2 | Step 1 文档审查 PASS（AI_review 12 节全 PASS） | ☐ |
 | 3 | Step 2 depgraph planned 节点已登记 + 模块准入 PASS | ☐ |
-| 4 | Step 3 五图对齐通过（align_all.py exit 0） | ☐ |
+| 4 | Step 3 六图对齐通过（align_all.py exit 0 + frontend_map 对齐规则，详见 alignment_checklist.md） | ☐ |
 | 5 | Step 4 代码落码 + 文件头 15 字段齐全 + 事件驱动启动 | ☐ |
 | 6 | Step 5 循环验收连续 2 轮 0 错误 | ☐ |
 | 7 | Step 6 长清单审查 12 节全 PASS | ☐ |
 | 8 | Step 7 设计备忘+00_index 同步更新 + 跨蓝图消费方已同步 | ☐ |
-| 9 | Step 8 全景图 status=production + 五图对齐 + diagnose exit 0 | ☐ |
+| 9 | Step 8 全景图 status=production + 六图对齐 + diagnose exit 0 + 注册表对齐（详见 alignment_checklist.md §4） | ☐ |
 | 10 | Step 9 文件完整性确认（无回退/无清理/无丢失） | ☐ |
 | 11 | Step 10 GitCommitGateway 落地（commit hash 已生成） | ☐ |
 | 12 | Step 11+12 临时文件清理 + worktree 合并完成（或暂保留逃生通道） | ☐ |
@@ -763,6 +763,7 @@ python scripts/session_worktree.py cleanup <sid>
 | 2026-08-13 | 1.2.0 | Step 6 补遗留项登记机制 | AI-STD-001 审查实践发现：审查遗留项（如文件被占用无法同步）不登记=必忘项。Step 6 新增"遗留项登记"铁律（MUST 登记到 construction_progress_tracker.md §七）；Step 7 前置条件从"审查无遗留"改为"审查遗留项已登记"（不要求零遗留，但要求已登记） |
 | 2026-08-13 | 1.3.0 | 附录 A 升级：新增 A.13 五图对齐验证 + A.14 代码质量专项 | 用户提出审查清单老化。对比 trae_081 的 54 维度发现附录 A 12 节未覆盖五图对齐验证和代码质量具体检查点。新增 A.13（五图对齐 7 项，引用 trae_080）+ A.14（代码质量 10 项，从 54 维度选取最关键的 10 个）。附录 A 从 12 节升级到 14 节 |
 | 2026-08-13 | 1.4.0 | **搬迁**：从 design_memos/02_construction_workflow_sop.md 迁至 docs/01_policies_and_standards/sop/construction_workflow_sop.md | 用户裁定：design_memos 是施工图纸临时区（施工完毕后清理），SOP 是永久规则，生命周期不匹配。迁入规则管理区新建 sop/ 专区；doc_type architecture_view→policy（rule_form: procedural + verifiability: manual，01 目录契约合规）；去编号改名；全部相对链接按新基址重写 |
+| 2026-08-31 | 1.5.0 | **对齐体系升级**：Step 0 必看文件清单新增 alignment_checklist.md；Step 3 从"五图对齐"升级为"六图对齐"（新增 frontend_map 前端全景图，待建）；Step 4/8 检查清单同步升级；新增注册表对齐要求 | 项目对齐体系片段化，缺前端全景图和注册表统一对齐规则；新 AI 进项目不知道要对齐什么。配合《全项目对齐清单》（alignment_checklist.md）落地三层对齐体系（六图+40+注册表+代码文档） |
 
 ## 附录 A：长清单审查全文（用户提供的 12 节审查清单）
 

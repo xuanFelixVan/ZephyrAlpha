@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-08-31T04:14:44Z'
+generated_at: '2026-08-31T14:05:03Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 223
+total_files: 225
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -1775,12 +1775,42 @@ files:
   tier: ''
   aliases: []
   section_count: 0
+- path: docs/01_policies_and_standards/sop/alignment_checklist.md
+  module_id: ''
+  title: 全项目对齐清单——六图+注册表+代码文档三层对齐规则
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: checklist
+  scope: global
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/sop/construction_workflow_sop.md
   module_id: ''
   title: 07 域施工流程标准作业规程（SOP）——端到端 15 步施工闭环
   doc_type: policy
   status: active
   version: 1.4.0
+  rule_form: procedural
+  scope: global
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/document_review_and_optimization_sop.md
+  module_id: ''
+  title: 文档审查与优化流程标准作业规程（SOP）——七轮循环工作法
+  doc_type: policy
+  status: active
+  version: 1.0.0
   rule_form: procedural
   scope: global
   stability: ''
@@ -1808,21 +1838,6 @@ files:
 - path: docs/01_policies_and_standards/sop/worktree_cleanup_sop.md
   module_id: ''
   title: Worktree 清理 SOP——四证齐全方可删除（死亡证明/无未合并工作/统筹批准/可恢复证明）
-  doc_type: policy
-  status: active
-  version: 1.0.0
-  rule_form: procedural
-  scope: global
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/sop/document_review_and_optimization_sop.md
-  module_id: ''
-  title: 文档审查与优化流程标准作业规程（SOP）——七轮循环工作法
   doc_type: policy
   status: active
   version: 1.0.0

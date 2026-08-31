@@ -163,7 +163,7 @@ backend_ref: chip_distribution      # 挂空/悬空 = "前端有后端没有"缺
   - 对账异常 = `has_frontend=no 但 no_frontend_reason 空`
 - 现有《前端有→后端没有缺口总账》83 项 + 反向账 40 项 = 字段回填的**种子数据**，回填完成后两账改派生视图，停止手工维护（已裁定）。
 
-### 4.4 前端侧清单 schema（三级）
+### 4.4 前端侧清单 schema（三级，15 字段完整版）
 ```yaml
 pages:
   - id: P-STOCKQ
@@ -176,6 +176,7 @@ pages:
         features:
           - id: F-STOCKQ-COSTLINE
             name: 持仓成本线
+            # ===== 基础 10 字段 =====
             code_ref: features/cost-line.js        # 或 app1.js#L5934（未模块化前，锚点已核实）
             backend_ref: [chip_distribution]       # 模块锚点（示例，建map时须核实回填；缺口期留空即自动上榜）
             data_flow: df_chip_avg_cost            # dataflowgraph 节点锚点（示例，建map时须核实回填）
@@ -183,6 +184,12 @@ pages:
             status: 已建                            # 已建/在建/未建/勿动/已退役
             acceptance: ACC-F-STOCKQ-COSTLINE
             do_not_touch: "plainLine 模板勿换回内置 priceLine（FEH-KLC-001）"
+            # ===== 深度审查新增 5 字段 =====
+            data_source: "chip_distribution.avg_cost"  # 具体数据源：表名.字段名 / API 路径 / 生成器函数——不写清楚 AI 就要翻代码猜
+            update_frequency: "分钟级"               # 实时推送/秒级/分钟级/日级——决定前端刷新策略，防给日频数据写秒级轮询
+            user_action: "¥开关点击控显隐；悬停查看成本/数量；无拖拽无右键"  # 用户能干什么（不只是显示什么）——前端功能清单的核心
+            fallback_behavior: "数据缺失→隐藏成本线+¥开关置灰；后端挂→显示'加载失败'提示"  # 后端挂了/数据缺失时前端显示什么——成本线图标消失事故就是没提前定义这个
+            screenshot_ref: "docs/03_modules/_domain_frontend/acceptance/screenshots/F-STOCKQ-COSTLINE-baseline.png"  # 验收基准截图路径，配合验收单做视觉回归
 ```
 
 ### 4.5 六图对齐规则
@@ -232,6 +239,7 @@ pages:
 |---|---|---|---|
 | v0.1.0→v0.2.0 | 按新文档审查 SOP 七轮循环 | 4 自审点成立；frontend_model.yaml 漂移新发现；缺更新触发/验收单权限/模块废弃三机制；前沿方向获 2026 行业验证；无过度工程项；缺修订记录节 | 全部修入 v0.2.0 |
 | v0.2.0→v0.3.0 | Owner 六项裁定+第一性原理重推 | 命名机器可读性优先；分类法按成因不按历史；存储双态同依赖全景图；缺口总账升级统一对账；model stub 删除重做 | 全部修入 v0.3.0（§六裁定记录） |
+| v0.3.0→v0.4.0 | 字段深度审查+对齐体系升级 | 现有 10 字段缺 5 个实战必踩坑字段（数据源具体性/更新频率/用户操作/降级行为/视觉基准）；对齐范围需从六图扩到注册表层 | §4.4 补 5 字段（共 15 字段）；§4.5 升级为三层对齐体系并引用《全项目对齐清单》 |
 
 **修订记录**
 
