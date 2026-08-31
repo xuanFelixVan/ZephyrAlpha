@@ -5,7 +5,7 @@ title: 交易决策架构主题全集（总索引）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.15.0"
+version: "2.15.1"
 date: 2026-08-31
 topic: trading_decision_index
 scope: 07_trading_decision_architecture
@@ -26,6 +26,7 @@ scope: 07_trading_decision_architecture
 > ⚠️ **2026-08-11 git 灾难影响标注**（v2.9.0 取证确认 + v2.9.1 重建联动更新）：15/16×2/28/33/52/55/60 号曾被本索引标记为 active 高版本，但 git 历史证明高版本内容**从未提交**（未提交内容被 `git clean -fd`/`git reset --hard` 清除）——其中 **7 篇已于 2026-08-12 04:32 重建**（commit 6a4f5392：33/55/52/15/16catalog/16build_plan→active v1.0.0、27号→draft v0.2.0，依 production 代码回建）；**28号已于 2026-08-12 从 commit a3750b90d1 恢复 v1.2.0（commit 16f119bd）；60号经核查 HEAD 已是 active v1.0.0 完整版（129行，8da7513309 提交，原"骨架"标注过时）**；另 34号 测试套件（55 用例）丢失待重建。详见 §9 开放问题 #D1/#D2。本表"状态"列对齐 2026-08-12 工作树实际 frontmatter（当前有 22 路并发审查 session 正在更新各文档，版本可能再次漂移，下轮审查时重新核对）。
 > 注：`AI_review_instructions.md`（22 路并发 AI 审查回填指令集，active v2.1.0）为审查操作手册，非设计备忘，不入本目录编号——**2026-08-31 已归档至 [../../../_archive/AI_review_instructions.md](../../../_archive/AI_review_instructions.md)（deprecated，Owner 裁定归档不删保留审计链）**。
 > 注：`construction_progress_tracker.md`（施工进度总跟踪表）+ `handoff_construction_coordinator.md`（统筹交接包）为施工统筹协调文件，非设计备忘，不入本目录编号（2026-08-14 自 docs/_working 迁入，防 reconciler 误删——事故 #49）。
+> 注（2026-08-31 终审批补登）：本目录另有 3 个非编号**在途**文件，各有显式触发条件，条件达成前不施工——① `2026-08-28-industry-graph-frontend.md`（产业链/供应链图谱前端三视图；数据底座已完工：16 脚本+ig_* 七表；触发条件=并入新仪表盘统一施工，v1.1.0 Owner 裁定）；② `observability_contract_todo.md`（统一打点契约；MVP 三件已施工，扩展项=其余模块接入/trace_id/Grafana；触发条件=§五 时机表，首个模块进生产时顺手定义）；③ `pre_expiry_full_backlog_roadmap.md`（到期前全量积压排期真源；P0 已结案，P1 残留 #221 stk_limit 重算口径/#225 index_weight 积分门槛/#253 DeepSeek 充值三项待 Owner；completes_when=P1 全闭环且会员窗口 2026-09-03 结束后归档）。
 
 | 文件 | 内容一句话 | 状态 |
 |---|---|---|
@@ -50,7 +51,7 @@ scope: 07_trading_decision_architecture
 | [24_daban_strategy_detail.md](24_daban_strategy_detail.md) | G08 打板策略细节 | active v1.10.6 |
 | [25_multifactor_strategy_detail.md](25_multifactor_strategy_detail.md) | G09 多因子策略细节 | active v1.13.5 |
 | [26_event_driven_strategy_detail.md](26_event_driven_strategy_detail.md) | G10 事件驱动策略细节 | active v1.9.8 |
-| [27_second_batch_strategies.md](27_second_batch_strategies.md) | G11 第二批次策略（价值反转/动量趋势，暂缓） | draft v0.2.1（暂缓说明已补） |
+| [27_second_batch_strategies.md](27_second_batch_strategies.md) | G11 第二批次策略（价值反转/动量趋势，AQR 式骨架；主动暂缓非缺口） | draft v0.2.1（重启三条件：首批 3 策略实盘 ≥3 个月 track record + WeeklyRiskDeep 复盘 ≥12 期 + 因子衰减基线建立，齐备后重启） |
 | [28_sentiment_cycle_trading.md](28_sentiment_cycle_trading.md) | G21 情绪周期×交易决策（五阶段+定位器+regime分工+策略部署+隐形驱动验证） | active v1.2.4 |
 | [29_factor_strategy_extraction.md](../../../_archive/29_factor_strategy_extraction.md) | 潘潘直播课程因子与策略提炼知识库（546 条：F1-F8 因子+S9-S16 策略，二十一轮审查收敛，factor/strategy/risk_limit 三注册表 doc_ref 真源） | **已归档** v1.3.3（2026-08-30 终审批） |
 | [30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md) | 多策略并发架构总纲（Model A：独立账本+firm聚合） | active v2.6.1 |
@@ -85,7 +86,7 @@ scope: 07_trading_decision_architecture
 | [67_merge_conflict_resolution_sop.md](../../../01_policies_and_standards/sop/merge_conflict_resolution_sop.md) | Merge 冲突处理 SOP——冲突三分法（叠加型合并/迭代型取新/互斥型升级裁定）+标准 7 步流程+5 红线，全项目冲突处理唯一真源 **→ 2026-08-13 迁至 docs/01_policies_and_standards/sop/merge_conflict_resolution_sop.md** | active v1.0.1（已迁出本目录） |
 | [68_code_algorithm_review_pipeline.md](68_code_algorithm_review_pipeline.md) | 代码与算法多模型审查流水线（跨切治理层；施工后审查线——5+5 路并发：施工 5 对话+审查修复 5 对话复用 audit 20 域每路 4 域，Kimi-K3/GLM-5.3/Qwen3.8-Max 多模型轮流交叉审查已 merge 模块代码/算法/运行情况，全自动化零打扰自主治本修复，冲突防护五机制，统一统筹调度；执行蓝本 docs/audit_prompts_20_ai.md；模型池已定 Kimi-K3/GLM-5.3/Qwen3.8-Max（Trae CN 切换）+轮换矩阵+调度卡一键复制指令模板库） | active v1.2.1 |
 | [90_methodology_open_questions.md](90_methodology_open_questions.md) | 方法论遗留提案（P0/P1 施工优先级表+远期开放问题） | active v2.0.3 |
-| [91_density_prediction.md](91_density_prediction.md) | 密度预测与 QNN 远期愿景（待讨论） | draft v0.1.4 |
+| [91_density_prediction.md](91_density_prediction.md) | 密度预测与 QNN 远期愿景（共形预测五变体栈/Survival AFT 止盈止损时间预测/QNN 量子神经网络） | draft v0.1.4（触发条件：密度预测体系立项=90 号 P-2 Owner 裁定 conformal 收敛范围；Survival 需密度预测模型验证通过；QNN 已裁定过度工程不施工） |
 | [92_phase2_business_construction_order.md](../../../_archive/92_phase2_business_construction_order.md) | 阶段二业务层施工顺序清单（44 号升级+2026-08 架构审查升级项全量按依赖/冲突面排序成波次，并发施工派单真源；ClickHouse 数据实证分支裁定） | **已归档** v1.0.0（2026-08-22 Owner 指令落盘→2026-08-30 归档） |
 | [94_crypto_quant_expansion.md](94_crypto_quant_expansion.md) | 数字货币量化扩展设计（30 域复用矩阵三类划分+五横切改造点[含 §4.5 市场归属标注三道闸]+CAND-CRYPTO 族 10 条+施工波次 W0-W4+§7 外部实战参考；**Q1-Q6 已 Owner 拍板**；W0 市场日历抽象已施工 commit 69e5dc9f） | active v1.3.1 |
 
@@ -886,3 +887,4 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 2026-08-26 | 2.14.3 | **94 号 v1.3.0 版本同步（市场归属标注体系）**——§0 目录+§7.3 两处：94 号 active v1.2.0→v1.3.0（§4 四→五横切改造点，新增 §4.5 market scope 三道闸——物理闸市场后缀包/数据闸八表 market 字段/治理闸 depgraph 标签+CAND 族前缀+门禁按标的市场加载；"默认共用零标注只分市场构件贴标签"；依赖全景矩阵不变、§3 复用矩阵=市场分片标注文档真源防双真源）；candidate_module_registry.yaml 联动（007 tech_notes 补 market 字段口径） | Owner 三问驱动（AI 能否分清 A股/币圈/共用、会不会搞混、依赖全景是否贴标签）：同名不同市场构件错配事故（A股规则校验币订单）须在设计层防死 |
 | 2026-08-26 | 2.14.4 | **94 号 v1.3.1 版本同步（W0 市场日历抽象施工完成）**——§0 目录+§7.3 两处：94 号 active v1.3.0→v1.3.1（W0 已施工 commit 69e5dc9f [GW:AI-CAL-001]——src/zephyr/data/calendar/ 包落地：MarketCalendar 接口+A股收编+币7×24 含 4h+工厂；scheduler/fusion/pit_query 注入式改造；回测时间轴零改造声明；新测试 26 例+受影响面 130 例零回归；盘点报告+架构评审落盘；CAND-CRYPTO-001 晋升中） | W0 派单闭环（94号 §6 波次第一步）：A股零行为变化硬门槛达成（默认 None≡现状逐字节一致） |
 | 2026-08-31 | 2.15.0 | **终审批全量状态刷新**——① §0 目录 16 篇已归档文件链接改指 `../../../_archive/` 并标注"已归档（2026-08-30 终审批）"（11/12/16build_plan/17/18/19/20/23/29/44/50/51/52/57/60/62 号），56/92 号此前已标；标题篇数口径改"56 篇登记：36 篇在册+18 篇已归档+2 篇迁出"；② §0 注记：AI_review_instructions.md 已归档（deprecated，Owner 裁定归档不删）；③ §3 L4 行+L447 G24 状态行：5 态 FSM "待落地"滞后标注核销（实证已落码 AI-DGR-001，MOD-GOV-045 production，#ARCH-QUANT-003 闭环）；④ L19 关联行 11 号链接改指归档路径。背景：长城任务终审批全量审查 48 篇 design_memos+23 篇 09_ai_architecture 文档后执行 | 终审批驱动：归档批（2026-08-30 greatwall_20260830）后索引链接断链修复+滞后状态标注核销，索引与归档实况对齐 |
+| 2026-08-31 | 2.15.1 | **C 类在途 5 文档触发条件补登**——① §0 目录 27 号行状态列补重启三条件（首批 3 策略实盘 ≥3 个月+WeeklyRiskDeep ≥12 期+因子衰减基线）；② 91 号行补触发条件（立项=90 号 P-2 Owner 裁定 conformal 收敛范围/Survival 需模型验证通过/QNN 裁定不施工）；③ §0 新增注记登记 3 个非编号在途文件及触发条件（industry-graph-frontend=并入新仪表盘/observability_contract_todo=§五时机表/pre_expiry_full_backlog_roadmap=#221/#225/#253+2026-09-03 窗口） | Owner 指令驱动：在途文档内容+施工条件入索引，防"遗忘的在途" |
