@@ -19,7 +19,7 @@ scope: 09_ai_architecture
 > **未做+原因**：dead/ 积压 40+ 死信项未清理（运维观察项）；CLI drain 自举 stub landing 注记（生产排空只走 gateway 改道）。
 
 > ## 结案补记（2026-08-31，死信清理闭环）
-> **dead/ 积压死信已清零**：实测 31 条（非 40+，部分已被历史清理），全量分诊后核销——死因分布 PROTECTED-PATHS 21 / COMMIT_SCOPE 3 / SESSION-REQUIRED 2 / CLAIM_REQUIRED 2 / LOCK_TIMEOUT 2 / 基底冲突 1，**全部为门禁合法拦截记录而非系统故障丢单**；对应改动均已由属主会话后续成功提交落地（git log 实证：GOVTEST-003 三批 6ee5d0802a/86b37c6c38/8e97b6d1a6 及 08-31 各会话重试），核销零工作丢失。分诊审计留痕 `.runtime/commit_queue/dead_triage_20260831.jsonl`（31 条 qid+死因+处置结论），原死信文件已删除。**结论修正**：dead/ 积压本质是「门禁拦截副产物堆积」，反映 08-30 多会话高峰期 PROTECTED-PATHS 门禁被频繁触发（script_manifest.yaml 等受保护路径混入批次），非队列机制缺陷；后续观察项=若拦截率持续偏高应优化门禁提示引导会话先拆出受保护文件再入队。残余未做项仅剩 CLI drain 自举 stub landing 注记（生产排空走 gateway 改道，无实际影响）。
+> **dead/ 积压死信已清零**：实测 31 条（非 40+，部分已被历史清理），全量分诊后核销——死因分布 PROTECTED-PATHS 21 / COMMIT_SCOPE 3 / SESSION-REQUIRED 2 / CLAIM_REQUIRED 2 / LOCK_TIMEOUT 2 / 基底冲突 1，**全部为门禁合法拦截记录而非系统故障丢单**；对应改动均已由属主会话后续成功提交落地（git log 实证：GOVTEST-003 三批 6ee5d0802a/86b37c6c38/8e97b6d1a6 及 08-31 各会话重试），核销零工作丢失。分诊审计留痕 `.runtime/commit_queue/dead_triage_20260831.jsonl`（31 条 qid+死因+处置结论），原死信文件已删除。**口径区分留痕**：66 号文 Q3 裁定"dead/ 永不**自动**清理"（无 TTL 机制）与本次人工分诊核销不冲突——本次属 08 号文挂账的"运维观察项"人工处置，且核销前置条件=逐条验证对应改动已由属主会话落地（无 requeue 需求）；requeue 场景的"原死信项只标注不删除"（66 号 §6.4 双向追溯）不受影响。**结论修正**：dead/ 积压本质是「门禁拦截副产物堆积」，反映 08-30 多会话高峰期 PROTECTED-PATHS 门禁被频繁触发（script_manifest.yaml 等受保护路径混入批次），非队列机制缺陷；后续观察项=若拦截率持续偏高应优化门禁提示引导会话先拆出受保护文件再入队。残余未做项仅剩 CLI drain 自举 stub landing 注记（生产排空走 gateway 改道，无实际影响）。
 
 > 本文定位：61/65/66 号备忘的多 AI 并发治理方案施工落地——会话隔离、git 安全、提交队列串行化。
 > 与其他文件的分工：结构设计见 [00_index.md](00_index.md)，设计备忘见 `design_memos/61/65/66`。

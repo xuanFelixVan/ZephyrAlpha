@@ -1,22 +1,17 @@
 ---
 ttl: permanent
-doc_type: architecture_view
-title: intelligence_governance 包整合施工图
-owner: ZephyrAlpha-Owner
-language: zh
-status: active
-version: "0.2.2"
-date: 2026-08-18
-topic: intelligence_governance_consolidation
-scope: 09_ai_architecture
 ---
+
+> **归档注记（2026-08-31）**：自 09_ai_architecture/implementation_plans/ 归档（终审批 gp1closure_20260831——GP1 两项全部闭环且无 GP1 遗留项（2026-08-30 状态修正已自证），残余仅远期 Q4 退役裁定属开放裁定非施工项，审计链保留，原位索引已同步标注）。
+>
+> **文档元信息**（_working 临时区豁免规范：EXEMPT-ZONE-FM）：doc_type=architecture_view · title=intelligence_governance 包整合施工图 · owner=ZephyrAlpha-Owner · language=zh · status=active · version=0.2.3 · date=2026-08-30 · topic=intelligence_governance_consolidation · scope=09_ai_architecture
 
 # intelligence_governance 包整合施工图
 
-> ## 结案报告（2026-08-28 全量审查批，代码实证）
+> ## 结案报告（2026-08-28 全量审查批，代码实证；2026-08-30 状态修正）
 > **实际开发**：intelligence_governance 包整合定稿（Phase 0=文档定稿，零代码改动性质，active v0.2.2）；src/zephyr/governance/intelligence_governance/ 24 个功能模块实证在位（delegation_engine/model_router/agent_debate/self_benchmark 等与文内清单逐名一致）。
-> **最终成果**：包文件级细节真源+GP1 入口修复施工图确立。
-> **未做+原因**：__init__.py 入口腐烂未修（仅 1 行 future import，16 个不存在名字+漏列 5 个实存模块问题依旧）——既定 GP1 项，待 Q1 裁定；文件头 [TESTS]/[CONSUMERS] 漂移同留 GP1。
+> **最终成果**：包文件级细节真源+GP1 入口修复施工图确立；GP1 两项均已闭环——①`__init__.py` 入口腐烂已修复（2026-08-18，AI-ADJ-001，commit 8efacc2c70：PEP 562 惰性外观，`__all__` 42 个真实符号，契约测试 tests/governance/test_intelligence_governance_facade.py，见 §3.1/§6 Q1）；②文件头 [TESTS]/[CONSUMERS] 漂移已纠偏（2026-08-30：delegation_manager/mvep_orchestrator/provider_failover 三文件 [TESTS] 改为实测存在的测试路径、[CONSUMERS] 按全仓 import 扫描置空、[MODIFY-GUARD] 连字符路径统一为实测存在的下划线版；Q3 已核实，见 §6）。
+> **未做+原因**：无 GP1 遗留项；远期 Q4（退役裁定）/Q5（迁移裁定，已按 D4 关闭）见 §6。
 
 > 本文定位：`src/zephyr/governance/intelligence_governance/` 24 个功能模块的整合方案——统一入口、职责边界、与 AI 层的关系。
 > 与其他文件的分工：结构设计见 [00_index.md](00_index.md)，资产登记（链接级）见 [02_design_asset_inventory.md](02_design_asset_inventory.md) §1「智能治理包」行——本文档是该包的文件级细节真源，不复制 02 号文的登记表。
@@ -250,7 +245,7 @@ scope: 09_ai_architecture
 |---|------|------|------|
 | Q1 | intelligence_governance 包是否需要统一入口？ | **已裁定+已施工 2026-08-18** | §3.1：需要，形式 = 修复现有 `__init__.py` 而非新建 facade——已按裁定施工为 PEP 562 惰性外观（`__all__` 42 个真实符号，剔除 6 幻影名与双义 DebateRound），契约测试 `tests/governance/test_intelligence_governance_facade.py` 4 项，28 个消费方测试文件 570 测试全绿（AI-ADJ-001，commit 8efacc2c70）。与 [02_design_asset_inventory.md](02_design_asset_inventory.md) 开放问题 Q1 同源，02 号文状态同步属 AI-FILL-02 职责。 |
 | Q2 | 与 D_ORCHESTRATOR 的关系？ | **已裁定 2026-08-18（按裁定 2 关闭）** | 03 号文 §3.3 D5 已裁定采纳倾向①：D_ORCHESTRATOR 维持域名不改，语义澄清为「任务/阶段的确定性流转 + Agent 生命周期基础设施（回滚/容错/健康/质量门/契约）」，明确「生命周期基础设施 ≠ Agent 自治编排」（61 号备忘 §2.3/§4.1/§5.1 冻结编排路线，§5.2 第三阶段重评口子保留）。本文 §3.3 边界假设（本包=治理决策原语，4 个疑似编排模块定性为门/路由/协议原语）与裁定同向，按裁定收口。 |
-| Q3 | 文件头 `[TESTS]`/`[CONSUMERS]`/`[BLUEPRINT]` 漂移是否影响 S4 reconciler/提交门禁？ | 待核实 | §2.1 实测三类漂移；若门禁消费这些声明，Phase 1 纠偏需同步门禁预期——需用户确认门禁输入源。 |
+| Q3 | 文件头 `[TESTS]`/`[CONSUMERS]`/`[BLUEPRINT]` 漂移是否影响 S4 reconciler/提交门禁？ | **已核实（2026-08-30）：影响有限——无硬阻断，纠偏已施工** | 实证依据：①S4 reconciler（`reconciliation_registry.py` GATE-MODULE-ID-RECOMMEND，post-commit）只读文件头前 500 字符检测/注入 `[BLUEPRINT]`，不读 `[TESTS]`/`[CONSUMERS]`；②pre-commit `consumers_accuracy_gate.py`（CONSUMERS-ACCURACY，priority=116，warn-only）读 staged src/**.py 的 `[CONSUMERS]`，但 commit-time 只检 orphan/phantom（stale 留给 baseline-scan 脚本），且漂移声明 `zephyr.infrastructure.escalation` 经逐级缩短命中实存包 `zephyr.infrastructure`，连 phantom 警告亦不触发；③`tests_coverage_gate.py`（META-TESTS-COVERAGE，priority=99，硬阻断）读 `[TESTS]` 但 trigger 限 `src/zephyr/gov_enforcement/commit_gates/*.py`，本包文件不在扫描范围；④post-commit GATE-CONSUMERS-ACCURACY-BASELINE 全扫 `[CONSUMERS]` 仅 warn。结论：漂移污染 AI 协作者判断与 warn 级基线报告，但对这 3 个文件不构成提交阻断；2026-08-30 已完成纠偏（`[TESTS]` 改为实测路径 tests/infrastructure/test_delegation_manager.py、tests/governance/orchestrator/test_mvep_orchestrator.py、tests/governance/resilience/test_provider_failover.py；`[CONSUMERS]` 三文件均置空——全仓 import 扫描无实测消费方；`[MODIFY-GUARD]` 连字符路径统一为实测存在的 `_domain_autonomy_perm/escalation_protocol`），无需同步门禁预期。 |
 | Q4 | 14 个无静态消费方模块是否存在运行时间接消费？可否退役任何模块？ | 待实测 | 需逐个追冷启动/升级协议调用链（如 self_test 挂冷启动 STEP 4.8）；裁定前一律保留（§3.2）。 |
 | Q5 | memory_provider / provider_base（数据域特征）与 model_router / model_provider_data（画像域特征）是否迁移出本包？ | **已裁定 2026-08-18（按裁定 2 的 D4 关闭）** | 03 号文 §3.3 D4 已裁定采纳倾向①：intelligence_governance 整包维持 D_GOVERNANCE 归属+横切标签，不迁域不新建子域——包级不动则文件级迁出亦不执行，本期登记口径关闭（§3.4 登记事实保留）。 |
 | Q6 | 治理 Agent 调用本包的接口形态（直接 import vs 经 governance services 适配层）？ | **已核对（2026-08-18 二次核对：降级路径可用）** | 核对结论（§4.4）：14 号文治理 Agent = 薄入口直接组装本包，与本文 §3.1 及现有 12 消费方惯例一致，无接口缺口。2026-08-18 更新：包级 `__all__` 已修复（AI-ADJ-001，commit 8efacc2c70），14 号文 S0.2 降级路径"组装包级 `__all__`"现已成为可用面；此前"治理入口若先施工须用子模块路径导入"的临时口径作废（子模块路径导入仍是合法惯例，但不再是唯一选择）。14 号文 Q6 与本问同源，已同步更新。 |
@@ -266,6 +261,7 @@ scope: 09_ai_architecture
 | 2026-08-17 | 0.2.0 | 骨架填充完成：§2 实测盘点 24 模块职责/消费方矩阵（修正"~20 文件"为实测 24 模块 3,223 行；发现 `__init__.py` 无 import、文件头三类声明漂移）；§3 四项决策（入口修复而非 facade、文档级七组分组零物理改动、D_ORCHESTRATOR 边界假设、错位文件只登记）；§4 Phase 0→2 + 远期；§5 七项不做；§6 开放问题扩至 Q1-Q6 | AI-FILL-05 填充：将"约 20 文件无统一入口"的模糊表述落实为可复验的实测现状与可施工方案；03/14 号文未填充，接口假设降级入开放问题；当日晚 Gateway 提交被 TTL-METADATA 门禁硬阻断（doc_type=implementation_plan 非法，见 Q7），按规则暂存待裁定 |
 | 2026-08-18 | 0.2.1 | 一致性回填（依赖文档已填充，纯口径/状态更新，无设计变更）：①§2.3 只读纪律更新——03 号文 v0.2.1、14 号文 v0.3.0 均已填充，接口假设核对完成；②§4.1/§4.4 Phase 2 文档级核对落盘——接口形态一致（薄入口直接组装本包）、新增"治理 Agent→本包"调用矩阵、新发现 14 号文 S0.2 降级路径"组装包级 __all__"依赖本文 Phase 1（当前 __all__ 腐烂不可用）；③§6 状态更新——Q2（03 号文 D5 分析倾向同向，待 Owner 裁定）、Q5（03 号文 D4 倾向①降低迁移可能性）、Q6（已核对）、Q7（本文档 doc_type=architecture_view 合规，已于 2026-08-17 补提交 a65a8b8a 收口；目录级 doc_type 统一裁定移交 14 号文 Q7）；实测复核：25 个 .py、`__init__.py` 零 import、包外 12 消费文件、02 号文 Q1 同源、引用文档路径全部存在；④红蓝对抗复测修正 §2.4-E 一处漂移——governance 子目录 29→30（新增 1 个兄弟子目录，本包边界不变） | AI-FILL-05 第 5 轮一致性审查：03/14 号文填充完成后回核接口假设，消除"v0.1.0 空骨架"过期口径；红蓝对抗验证全部通过（import 扫描 17 行命中复核 12 消费文件清单与 §2.4-B 完全一致；3,223 行总数复测一致） |
 | 2026-08-18 | 0.2.2 | Owner 裁定回填+施工事实登记：①§3.1/Q1 标「已裁定+已施工 2026-08-18」——`__init__.py` 已修复为 PEP 562 惰性外观（`__all__` 42 个真实符号，剔除 6 幻影名与双义 DebateRound），契约测试 `tests/governance/test_intelligence_governance_facade.py` 4 项，28 个消费方测试文件 570 测试全绿（AI-ADJ-001，commit 8efacc2c70），形式=修复为惰性外观非新建 facade，与裁定一致；②Q2 按裁定 2 关闭——03 号文 D5 裁定：D_ORCHESTRATOR=任务/阶段确定性流转+Agent 生命周期基础设施，≠Agent 自治编排；③Q5 按裁定 2 的 D4 关闭——整包维持 D_GOVERNANCE+横切标签，不迁域不新建子域，文件级迁出不执行；④Q6/§4.4 降级路径口径更新——包级 `__all__` 已修复可用，"须用子模块路径导入"临时口径作废（子模块路径导入仍是合法惯例但不再是唯一选择） | 裁定 1（包入口已修复）+ 裁定 2（D4/D5 域边界）；AI-ADJ-004 回填 |
+| 2026-08-30 | 0.2.3 | GP1 收尾回写（纯文档+头注释纠偏，零业务代码改动）：①头部结案报告消除与 §3.1/§6 Q1 的自相矛盾——`__init__.py` 入口腐烂已于 2026-08-18 修复（AI-ADJ-001），"待 Q1 裁定"stale 表述作废；②§4.3 Phase 1 第 2 条文件头纠偏施工——delegation_manager/mvep_orchestrator/provider_failover 三文件 `[TESTS]` 改实测路径（tests/infrastructure/test_delegation_manager.py、tests/governance/orchestrator/test_mvep_orchestrator.py、tests/governance/resilience/test_provider_failover.py），`[CONSUMERS]` 按全仓 import 扫描置空（原声明 zephyr.governance.services.adapter/zephyr.orchestrator/zephyr.infrastructure.escalation 均非实测消费方），`[MODIFY-GUARD]` 连字符路径统一为实测存在的 `_domain_autonomy_perm/escalation_protocol`；③Q3 核实关闭——S4 reconciler 只读写 `[BLUEPRINT]`，CONSUMERS-ACCURACY gate warn-only 且 commit-time 不检 stale，META-TESTS-COVERAGE 不覆盖本包目录，漂移无硬阻断影响；④动态终验 tests/governance/test_intelligence_governance_facade.py 4 项全绿 | C2 收尾项：代码早已施工（2026-08-18），本轮回写文档/登记对齐实态 |
 
 ---
 

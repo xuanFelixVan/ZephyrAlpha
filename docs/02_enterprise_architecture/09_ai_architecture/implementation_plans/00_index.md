@@ -5,8 +5,8 @@ title: AI 架构设计——结构总案
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.7.5"
-date: 2026-08-22
+version: "0.8.0"
+date: 2026-08-31
 topic: ai_architecture_design
 scope: 09_ai_architecture
 ---
@@ -14,7 +14,7 @@ scope: 09_ai_architecture
 # AI 架构设计（AI Architecture Design）
 
 > ## 结案报告（2026-08-28 全量审查批，代码实证）——元文档不适用结案
-> 本文档为总索引+施工顺序/解锁点（U1~U8）唯一真源，permanent 元文档，不适用结案。当前状态：AI-FILL-01~17 填充全部完成；GP0 代码施工全量完成（E0-1~E0-8 全绿、M0 Owner 终审通过，2026-08-22）；§5 状态标注回写待随批（小滞后）；derived_graphs/ 目录待建（远期项）。
+> 本文档为总索引+施工顺序/解锁点（U1~U8）唯一真源，permanent 元文档，不适用结案。当前状态：AI-FILL-01~17 填充全部完成；GP0 代码施工全量完成（E0-1~E0-8 全绿、M0 Owner 终审通过，2026-08-22）；§5 状态标注已随终审批回写（2026-08-31）；derived_graphs/ 目录已建成（2026-08-30 六图全量生成）。
 
 > **本文定位**：AI 层整体结构设计与施工约束——回答"AI 系统长什么样、怎么建、边界在哪"。
 >
@@ -240,8 +240,8 @@ scope: 09_ai_architecture
 │   └── 16_ai_security_ops.md                ← AI 安全(LLM guardrails/串谋/涌现/幻觉/记忆投毒/MCP Triple Gate/KILLSWITCH) + 自治运维(Detect→Diagnose→Remediate→Learn/TNR/成熟度/知识库/保命轨) [轨道D] U6 · draft v0.3.1 已填充
 │
 ├── 5x 元设计（5 文档）
-│   ├── 03_domain_boundary_definition.md     ← 域边界 [轨道A] P0 · draft v0.2.1 已填充
-│   ├── 05_intelligence_governance_consolidation.md ← intelligence_governance 整合 [轨道B] U1 · active v0.2.1 已填充
+│   ├── 03_domain_boundary_definition.md     ← 域边界 [轨道A] P0 · draft v0.2.1 已填充（✅已归档 2026-08-30 终审批）
+│   ├── 05_intelligence_governance_consolidation.md ← intelligence_governance 整合 [轨道B] U1 · active v0.2.3（✅已归档 2026-08-31 终审批）
 │   ├── 06_model_profiling_pipeline.md       ← 模型画像→考试→护照 [轨道B] U2 · draft v0.3.0 已填充
 │   ├── 07_context_engine_build.md           ← Context Engine [轨道B] U2 · draft v0.3.0 已填充
 │   └── 08_multi_ai_concurrency_governance.md ← 多 AI 并发治理 [轨道A] P0 · draft v0.2.2 已填充
@@ -304,20 +304,20 @@ scope: 09_ai_architecture
 
 ```
 09_ai_architecture/
-├── derived_graphs/                              ← AI 链接关系派生图（待建：目录未施工，由派生图生成器生成）
-│   ├── 01_ai_layer_dependency_topology.md      ← AI 层模块依赖拓扑（跨 D_AUTONOMY_CORE / D_ORCHESTRATOR / D_INTELLIGENCE 等）（待建）
-│   ├── 02_runtime_orchestration_layers.md      ← 三层运行时编排图（L1 Trae / L2 Local Ollama / L3 API）（待建）
-│   ├── 03_model_lifecycle_flow.md              ← 模型全生命周期（画像→考试→护照→路由→推理→退役）（待建）
-│   ├── 04_context_memory_flow.md               ← 上下文与记忆数据流（Context Engine → 压缩 → 注入 → 记忆检索）（待建）
-│   ├── 05_multi_ai_collaboration.md            ← 多 AI 协作时序图（单 AI 多会话 + 人调度 + 落盘交接）（待建）
-│   └── 06_llm_security_stack.md               ← LLM 安全栈 L0-L8 纵深防御图（待建）
+├── derived_graphs/                              ← AI 链接关系派生图（✅已建成：2026-08-30 六图全量生成）
+│   ├── 01_ai_layer_dependency_topology.md      ← AI 层模块依赖拓扑（跨 D_AUTONOMY_CORE / D_ORCHESTRATOR / D_INTELLIGENCE 等）（已建成）
+│   ├── 02_runtime_orchestration_layers.md      ← 三层运行时编排图（L1 Trae / L2 Local Ollama / L3 API）（已建成）
+│   ├── 03_model_lifecycle_flow.md              ← 模型全生命周期（画像→考试→护照→路由→推理→退役）（已建成）
+│   ├── 04_context_memory_flow.md               ← 上下文与记忆数据流（Context Engine → 压缩 → 注入 → 记忆检索）（已建成）
+│   ├── 05_multi_ai_collaboration.md            ← 多 AI 协作时序图（单 AI 多会话 + 人调度 + 落盘交接）（已建成）
+│   └── 06_llm_security_stack.md               ← LLM 安全栈 L0-L8 纵深防御图（已建成）
 └── implementation_plans/          ← AI 层施工图（所有手写文档，对标 design_memos/ 结构）
     ├── 00_index.md                            ← 本文件（结构设计+施工约束）[轨道F]
     ├── 01_external_benchmark_analysis.md      ← 信息库：外部对标分析 + 场内设计资产对照 + 模块工厂落地性 [轨道E·随时]
     ├── 02_design_asset_inventory.md           ← 盘点：设计资产 + AI 员工体系 + 已有域 + 运行态设施 [轨道E·随时]
     ├── 03_domain_boundary_definition.md       ← AI 层域边界定义（depgraph 域划分方案）[轨道A·P0]
     ├── 04_autoruntime_core_build.md           ← AutoRuntime Core 施工图（五层同心圆落地）[轨道A·U1]
-    ├── 05_intelligence_governance_consolidation.md ← intelligence_governance 包整合施工图 [轨道B·U1]
+    ├── 05_intelligence_governance_consolidation.md ← intelligence_governance 包整合施工图 [轨道B·U1]（✅已归档 2026-08-31 终审批→[../../../_archive/05_intelligence_governance_consolidation.md]，GP1 两项全闭环无遗留）
     ├── 06_model_profiling_pipeline.md         ← 模型画像→考试→护照流水线施工图 [轨道B·U2]
     ├── 07_context_engine_build.md             ← Context Engine 施工图（剩余未实现部分）[轨道B·U2]
     ├── 08_multi_ai_concurrency_governance.md  ← 多 AI 并发治理施工图（61/65/66 号备忘落地）[轨道A·P0]
@@ -345,7 +345,7 @@ scope: 09_ai_architecture
 
 ### 6.2 与交易决策侧联动（只读不改，等对方就绪）
 - [ ] 确认派生图生成器是否支持跨域 AI 层视图
-- [ ] 生成 derived_graphs/ 派生图并补充各文件的源真源标注（目录待建，见 §5.2）
+- [x] 生成 derived_graphs/ 派生图并补充各文件的源真源标注（✅已建成 2026-08-30 六图全量生成，目录见 §5.2）
 - [x] U8 前置已就绪（62 号注册表 P0 三件套 + P1 factor/strategy registry 均 active，13 号文 §2.4/§4.1 实测）——模块工厂 Phase 0→1 **已裁定批准转入 GP1 排期批第一波（2026-08-29，#ARCH-285**，13 号文 Q1 关闭）
 - [x] U7 前置已就绪（G04 策略定义 active，14 号文 §4 S1.3 口径）——业务 Agent 细化随 GP1 排期批推进（2026-08-29，#ARCH-285；14 号文 Q1/Q2 已被事实关闭——四入口 GP0 波4 已建成）
 
@@ -385,6 +385,7 @@ scope: 09_ai_architecture
 | 2026-08-18 | 0.7.3 | 最终状态回写（18 篇 frontmatter 全量实测）：§5.1 版本标注回写——05 active v0.2.1 / 06 v0.3.0 / 15 v0.2.2 / 16 v0.3.0（本批 4 篇版本变化），并同步实测发现的其他过期标注（01 v0.6.0 / 02 v0.5.1 / 03 v0.2.1 / 04 v0.2.2 / 07 v0.3.0 / 08 v0.2.2 / 09 v0.3.0 / 10 v0.3.0 / 11 v0.3.0 / 12 v0.3.0 / 13 v0.3.0 / 14 v0.3.0；17 v0.2.0 不变）；§5.1 口径注记日期更新为 2026-08-18；§7 Q7 闭环（04 号文 v0.2.2 §3.6 自治层不变量与契约已落盘，§5.1 补索引引用） | AI-FILL-00-R3 最终收口轮：填充批全部完成后的总索引状态回写 |
 | 2026-08-18 | 0.7.4 | Owner 裁定回填（裁定 6/7/8/9/11 落点本文）：①裁定 6——§3.2 Kill Switch 行口径改为「AI 自动=决策点内联拦截（同进程同步检查，实测微秒级，15 号文 §2.3 实测口径）/ 人工一键<100ms / 定时熔断 / 外部信号」，§1 架构图同步改写（内联拦截实测微秒级/人工<100ms/定时熔断/外部信号）；§7 Q5 关闭（内联拦截语义成立，实测写回 15 号文 §2.3）；②裁定 7——§7 Q6 关闭（交叉会话复审为主+challenge 工单落盘/降级+人兜底，细化见 15 号文 §4.3）；③裁定 8——§3.2「有界自治 5 级」补齐「（L4 保留不启用）」消除 5 级 vs 4 档计数差；④裁定 9——§3.3「举报人机制」标注（远期 P4）；⑤裁定 11——§3.3 KILLSWITCH 行「暂降 IM 模式」补括注（仅人工介入：读/查询放行，写操作一律人审）；§5.1 本文/15/16 号文版本标注同步（v0.7.4/v0.2.3/v0.3.1） | Owner 2026-08-18 裁定批（AI-ADJ-003 回填；15/16 号文同批复位） |
 | 2026-08-22 | 0.7.5 | 阶段三 GP0 施工后待办回写：§6.3 第一项「按 17 号分阶段路线启动 Phase 0 代码施工」勾销（2026-08-22 阶段三批：GP0 全量施工完成，E0-1~E0-7 全绿、E0-8 待 Owner 裁定，实证回写见 17 号文 §4.2；18 号清单派单）；第二项「回写 §5 状态标注」保持待办并加注记（待 Owner 终审 M0 后随批）；§5.1 复测无与 GP0 落地硬性矛盾的标注（各文档均为「已填充」口径、无「未启动」项），本轮不改动 | 阶段三 GP0 施工批实证回写（§6.3 待办状态同步） |
+| 2026-08-31 | 0.8.0 | 终审批状态刷新：①§5.2 目录树 derived_graphs/ 六图「待建」→「已建成」（2026-08-30 全量生成实证）+05 号文标注已归档；②§5.1 5x 元设计区 03/05 号文标注已归档（03 于 2026-08-30 批、05 于 2026-08-31 终审批）；③§6.2 派生图待办勾销；④§1 头部结案报告行状态更新（§5 状态标注回写完成、derived_graphs 已建成） | 长城任务终审批（gp1closure_20260831）：归档批后索引断链修复+陈旧「待建」标注核销 |
 
 ---
 

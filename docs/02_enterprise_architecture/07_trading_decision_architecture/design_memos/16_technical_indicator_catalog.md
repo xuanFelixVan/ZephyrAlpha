@@ -146,11 +146,11 @@ why 栈映射：多周期共振是 A 股技术分析的主流用法；指标全�
 
 ## 7. 开放问题
 
-1. **调度未闭环（P0）**：tasks.yaml 无 technical_indicator_incremental / technical_indicator_full_refresh 条目，scheduler.py 无 source=="internal" 分支——Provider 与 9 周期计算已就绪但无任务挂接（同影响 hk_trade_calendar_refresh 等 internal 任务）。需补调度路由后回算才能跑。
-2. **REG-IND-001 YAML 注册表未施工**：62 号登记为 P1-A 待施工，内容从本文 §6 迁入（第 5 类 reversal 非 structure）；施工后本文降级为 why 层、注册表为条目真源。
+1. **调度未闭环（P0）** → **已闭环（2026-08-31 终审批实证核销）**：tasks.yaml 已挂 technical_indicator_incremental（L1877）/ technical_indicator_full_refresh（L1892）两条目，scheduler.py L1227 `source=="internal"` 分支已落地（64 号 Q18 施工批，2026-08-28）。Provider→调度→回算链路全通。
+2. **REG-IND-001 YAML 注册表未施工** → **已闭环（2026-08-31 终审批实证核销）**：`docs/01_policies_and_standards/_registry/catalogs/technical_indicator_registry.yaml` 已在位（registry_id=REG-IND-001，条目真源），本文按原裁定降级为 why 层。
 3. **命名陷阱**：tasks.yaml 的 `stock_indicator_full_refresh` 实为 AKShare 估值指标写 stock_indicator 表，与本表无关——后续调度挂接时防止误挂。
 4. **公式简化项**：rsi/macd_divergence 为简化趋势对比（非峰谷检测），精度需求出现时再升级。
-5. **00_index 同步（越界登记）**：00_index 标本文"active v1.0.0（8大类指标规范）"——版本巧合一致但分类口径以本文 5 大类为准（代码真源），00_index 描述需同步（详见 33 号 §7 新发现 7 的统一登记）。
+5. **00_index 同步（越界登记）** → **已闭环（2026-08-31 终审批实证核销）**：00_index 现行描述已为"5大类指标规范"，分类口径一致，无需再同步。
 
 ## 8. 修订记录
 

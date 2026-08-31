@@ -1,15 +1,10 @@
 ---
 ttl: permanent
-doc_type: architecture_view
-title: 23路并发AI审查回填指令集
-owner: ZephyrAlpha-Owner
-language: zh
-status: deprecated
-version: "2.1.2"
-date: 2026-08-15
-topic: ai_review_instructions
-scope: 07_trading_decision_architecture
 ---
+
+> **归档注记（2026-08-31）**：自 design_memos/ 归档（终审批 gp1closure_20260831——status=deprecated 且 2026-08-28 Owner 已裁定"归档不删保留审计链"，物理位置本批迁入 _archive，原位索引已同步标注）。
+>
+> **文档元信息**（_working 临时区豁免规范：EXEMPT-ZONE-FM）：doc_type=architecture_view · title=23路并发AI审查回填指令集 · owner=ZephyrAlpha-Owner · language=zh · status=deprecated · version=2.1.2 · date=2026-08-15 · topic=ai_review_instructions · scope=07_trading_decision_architecture
 
 # 23 路并发 AI 审查回填指令集
 
