@@ -5,7 +5,8 @@
   function loadJs(src){
     return new Promise(function(res, rej){
       var s = document.createElement('script');
-      s.src = src; s.onload = res; s.onerror = function(){ rej(new Error('load fail: '+src)); };
+      s.src = src+(src.indexOf('?')<0?'?':'&')+'v='+Date.now();   /* 迭代期破缓存（Owner 实测"改了看不到"事故根治，同 pages no-cache） */
+      s.onload = res; s.onerror = function(){ rej(new Error('load fail: '+src)); };
       document.body.appendChild(s);
     });
   }
@@ -16,6 +17,8 @@
     });
   })).then(function(frags){
     main.innerHTML = frags.join('\n');
+  }).then(function(){
+    return loadJs('klinecharts.min.js');   /* KLineChart v10 — 个股行情页 K 线引擎（替代自研 canvas） */
   }).then(function(){
     return loadJs('core/app1.js');
   }).then(function(){
@@ -28,6 +31,14 @@
     return loadJs('core/backtest.js');
   }).then(function(){
     return loadJs('core/home.js');   /* 首页三件套（结论墙/布局引擎/AI 对话框）——最后加载，依赖全部页面片段已在 DOM */
+  }).then(function(){
+    return loadJs('vendor/dockview/dockview.min.js');   /* Dockview 库先行（dockpilot 依赖） */
+  }).then(function(){
+    return loadJs('core/dockpilot.js');   /* 停靠布局引擎（Owner 四裁：全景总览首站推广，依赖全部页面片段已在 DOM） */
+  }).then(function(){
+    /* hash 路由（Owner 2026-08-30：#stockq 等深链直达）——必须在全部片段+app1.js 加载后执行，确保 go() 可用且页面在 DOM */
+    var h=location.hash.replace('#','');
+    if(h&&document.getElementById('p-'+h)&&typeof go==='function'){ go(h); }
   }).catch(function(e){
     main.innerHTML = '<div style="padding:40px;color:#CA3F64">页面片段加载失败：'+e.message+'（需通过 http 服务访问，file:// 不支持 fetch）</div>';
     console.error(e);
