@@ -393,8 +393,8 @@ query_hints:
   answer: 读cross_cutting/runtime_planes.yaml
 - question: 系统能力成熟度？
   answer: 读cross_cutting/capability_heatmap.yaml（74域×10能力域矩阵）
-- question: 前端有哪些模块？
-  answer: 读frontend/frontend_model.yaml
+- question: 前端有哪些页面/功能点？
+  answer: 读frontend/frontend_map.yaml（第六全景图）
 - question: 治理/审计脚本有哪些？
   answer: 读scripts/scripts_model.yaml
 - question: 跨域公共契约？

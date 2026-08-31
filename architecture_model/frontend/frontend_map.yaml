@@ -1,0 +1,185 @@
+# --- 治理锚定 ---
+# blueprint: CFG-FRONTEND-MAP | architecture_model/frontend/frontend_map.yaml (self-contained) | §
+# module_id: CFG-FRONTEND-MAP
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# v1.0.0 (2026-08-31): 前端全景图（第六全景图）骨架——先录 stockq/overview 两页。
+#   前身 frontend_model.yaml（G0 假状态 stub）已按 Owner 裁定 6 删除重做，职责由本文件吸收
+#   （模块注册=统一对账字段；技术栈=下方 tech_stack 节）。
+#   对齐规则见 docs/01_policies_and_standards/sop/alignment_checklist.md §3；
+#   字段 schema（15 字段）见四件套草案 §4.4；
+#   缺口纪律：backend_ref 留空 = "前端有后端没有"缺口，自动上榜（缺口视图派生器 4c 建成后生效）。
+
+module_id: CFG-FRONTEND-MAP
+version: "1.0.0"
+doc_type: register
+ttl: permanent
+description: "前端全景图（第六全景图）——页面→模块→功能点三级索引 + 前后端统一对账。前五图管'后端有什么、怎么连、为什么'，本图管'用户看见什么、点哪触发什么、数据从哪来'。"
+
+# 技术栈（吸收 frontend_model.yaml 的技术栈 SSoT 职责——现状实录，非规划）
+tech_stack:
+  chart_engine: "KLineChart v10.0.3（vendor 本地库，无 CDN 依赖）"
+  layout_engine: "Dockview（vendor 本地库）+ dockpilot.js（自研布局管理）"
+  framework: "原生 JS（无框架无构建步骤）；页面片段 fetch 注入 + hash 路由"
+  cache_busting: "Date.now() 版本参数（loader.js + index.html，勿移除——手册 FEH-LOAD-001）"
+  module_contract: "web/features/<id>.js 单文件功能模块 + ZK.bus 事件总线 + manifest.yaml 注册表"
+
+pages:
+  - id: P-STOCKQ
+    name: 个股行情页
+    route: "#stockq"
+    file: pages/stockq.html
+    modules:
+      - id: M-KLINE-MAIN
+        name: K线主图
+        features:
+          - id: F-STOCKQ-COSTLINE
+            name: 持仓成本线
+            code_ref: features/cost-line.js
+            backend_ref: []                # 缺口：待挂筹码峰模块（建账时核实回填）
+            data_flow: ""                  # 待核实回填
+            interaction: "¥开关控显隐；悬停出成本/数量"
+            status: 已建
+            acceptance: ACC-F-STOCKQ-COSTLINE
+            do_not_touch: "plainLine 模板勿换回内置 priceLine（手册 FEH-KLC-001）"
+            data_source: "klpChipCalc（演示口径，筹码峰平均成本）"   # 待接真源
+            update_frequency: "随数据刷新"
+            user_action: "¥开关点击控显隐；悬停查看成本/数量"
+            fallback_behavior: "模块未加载则不画线（调用方有 ZK 存在性守卫）"
+            screenshot_ref: "docs/03_modules/_domain_frontend/acceptance/screenshots/F-STOCKQ-COSTLINE-baseline.png"
+          - id: F-STOCKQ-MARKS
+            name: 量化买卖点标注
+            code_ref: core/app1.js（klpRenderBS）
+            backend_ref: []
+            interaction: "⇅开关控显隐；灰框▲买▼卖气泡"
+            status: 已建
+            do_not_touch: "overlay groupId=marks，与 trades/cost/draw 组隔离（手册 FEH-PC-001）"
+          - id: F-STOCKQ-TRADES
+            name: 真实成交买卖点
+            code_ref: core/app1.js（klpRenderTrades）
+            backend_ref: []
+            interaction: "◍开关控显隐；红B绿S气泡"
+            status: 已建
+            do_not_touch: "overlay groupId=trades"
+          - id: F-STOCKQ-DRAW
+            name: 画线工具
+            code_ref: core/app1.js（klp-drawbar 绑定段）
+            backend_ref: []
+            interaction: "左栏竖排工具件（趋势线/矩形/斐波那契等）+磁吸/锁定/显隐"
+            status: 已建
+            do_not_touch: "overlay groupId=draw；rect 模板为自注册（KLC v10 无内置）"
+          - id: F-STOCKQ-INDICATORS
+            name: 指标系统
+            code_ref: core/app1.js（klpToggleInd 等）
+            backend_ref: []
+            interaction: "主图 MA/BOLL/SAR 叠加+副图 VOL/MACD/KDJ；图上标签行眼睛/齿轮/×操作；⚙设置弹窗"
+            status: 已建
+      - id: M-EVTROW
+        name: 事件行
+        features:
+          - id: F-STOCKQ-EVTROW
+            name: 事件图标行
+            code_ref: pages/stockq.html#L49（klp-evtrow）+ core/app1.js klpTimelineRender
+            backend_ref: []
+            interaction: "⚑开关整行收展（收掉高度归零 K 线变大）；图标点击查看事件详情"
+            status: 已建
+            do_not_touch: "事件行独立于时间轴（手册 FEH-KLC-004）；时间轴常显不受影响"
+      - id: M-TIMELINE
+        name: 时间轴
+        features:
+          - id: F-STOCKQ-TIMELINE
+            name: 自定义时间轴
+            code_ref: pages/stockq.html（klp-timeline）+ core/app1.js klpTimelineRender
+            backend_ref: []
+            interaction: "周期自适应刻度（分钟级显时分/日级显日期）；底部拖拽柄调高度"
+            status: 已建
+            do_not_touch: "KLineChart 内置 xAxis 已 show:false，此为唯一时间轴"
+      - id: M-CHIP
+        name: 筹码峰模块
+        features:
+          - id: F-STOCKQ-CHIP
+            name: 筹码峰分布
+            code_ref: core/app1.js（klpRenderChip/klpChipRender）
+            backend_ref: []
+            interaction: "▤开关控显隐；canvas 分布图+信息面板；随十字光标重算"
+            status: 已建
+      - id: M-WATCHLIST
+        name: 自选列表
+        features:
+          - id: F-STOCKQ-WATCHLIST
+            name: 自选列表
+            code_ref: pages/stockq.html 左栏
+            backend_ref: []
+            interaction: "搜索加入自选；✕删除；可隐藏"
+            status: 已建
+      - id: M-INFO
+        name: 资料面板
+        features:
+          - id: F-STOCKQ-INFO
+            name: 右栏资料面板
+            code_ref: pages/stockq.html 右栏
+            backend_ref: []
+            interaction: "可隐藏；五档挂单/关键数据/个股股性"
+            status: 已建
+
+  - id: P-OVERVIEW
+    name: 全景总览
+    route: "#overview"
+    file: pages/overview.html
+    modules:
+      - id: M-DOCK
+        name: Dockview 布局引擎
+        features:
+          - id: F-OVW-LAYOUT
+            name: 布局管理
+            code_ref: core/dockpilot.js
+            backend_ref: []
+            interaction: "锁定/编辑切换；还原默认；另存布局；读取保存（localStorage 多布局）"
+            status: 已建
+            do_not_touch: "还原默认带 resetting 标志防 onDidLayoutChange 回写覆盖"
+          - id: F-OVW-ICONBAR
+            name: 竖排图标栏
+            code_ref: core/dockpilot.js（dv-dockbar）
+            backend_ref: []
+            interaction: "右下角竖排悬浮；折叠小三角（localStorage 持久化）；hover 中文提示"
+            status: 已建
+            do_not_touch: "position:fixed right:4px bottom:36px 避开 ticker-bar"
+      - id: M-POS-A
+        name: A股持仓模块
+        features:
+          - id: F-OVW-POS-A
+            name: A股持仓
+            code_ref: pages/overview.html（pos-a 面板）
+            backend_ref: []
+            interaction: "独立面板（自 pos 拆分）"
+            status: 已建
+      - id: M-POS-C
+        name: 币圈持仓模块
+        features:
+          - id: F-OVW-POS-C
+            name: 币圈持仓
+            code_ref: pages/overview.html（pos-c 面板）
+            backend_ref: []
+            interaction: "独立面板（合约 USDT 本位，自 pos 拆分）"
+            status: 已建
+      - id: M-INDEX-CARDS
+        name: 指数卡片副盘
+        features:
+          - id: F-OVW-INDEX-CARDS
+            name: 指数卡片
+            code_ref: pages/overview.html
+            backend_ref: []
+            interaction: "名称/涨跌幅/点位/成交额/状态徽章"
+            status: 已建
+      - id: M-TICKER
+        name: 底部行情条
+        features:
+          - id: F-OVW-TICKER
+            name: ticker-bar
+            code_ref: pages/overview.html 底部
+            backend_ref: []
+            interaction: "指数滚动行情"
+            status: 已建
