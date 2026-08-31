@@ -59,6 +59,16 @@ scope: frontend
 - **代码锚点**：DOM `src/zephyr/frontend/dashboard/web/pages/stockq.html#L49`；渲染 `app1.js#L6326`（klpTimelineRender）；开关逻辑 `app1.js#L6147`（klpRefreshMarks）
 - **来源**：commit 1f368b2db1（事件行独立布局）+ 51915c64a8（收展） · 2026-08-31
 
+### FEH-KLC-005｜功能模块 init 时机竞态（模块 chart 永远 null）
+
+- **触发词**：模块 chart 为空 / 模块没 init / 成本线不出来 / 加载竞态 / ZK undefined
+- **想做什么**：功能模块（features/<id>.js）拿到 chart 实例正常渲染
+- **内置能否**：❌ 无自动机制
+- **坑**：宿主 sqInit 里挂载模块的代码在加载链中间执行，模块文件可能还没加载（`window.ZK` 未定义）→ init 守卫 `if(window.ZK && ...)` 静默跳过 → chart 永远 null；且 sqInit 幂等（重进页面只 resize），**不会补挂**——一次错过=整个会话失效
+- **正确做法**：模块 render 内懒绑定自愈——`_ensure()`：chart 空则自取全局 `klpChart` 补 init；测试侧导航前先 `wait_for_function` 等加载链走完（实证：冒烟网首跑 chart_ready=false 抓获）
+- **代码锚点**：`src/zephyr/frontend/dashboard/web/features/cost-line.js`（_ensure）
+- **来源**：冒烟网首跑实证 · 2026-08-31
+
 ---
 
 ## 修订记录
@@ -66,3 +76,4 @@ scope: frontend
 | 日期 | 版本 | 改动 | 为什么改 |
 |---|---|---|---|
 | 2026-08-31 | 1.0.0 | 建册，首批 4 条（KLC-001~004） | 四件套施工第 1 步；收录 KLineChart 集成期实证坑 |
+| 2026-08-31 | 1.1.0 | +KLC-005 模块 init 时机竞态 | 冒烟网首跑抓获真实潜伏 bug（懒绑定自愈修复） |

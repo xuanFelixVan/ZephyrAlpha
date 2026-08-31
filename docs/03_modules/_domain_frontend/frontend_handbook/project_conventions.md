@@ -58,6 +58,16 @@ scope: frontend
 - **代码锚点**：验收单目录 `docs/03_modules/_domain_frontend/acceptance/`（待建）
 - **来源**：四件套草案 v0.4 §二 · 2026-08-31
 
+### FEH-PC-005｜Playwright 冒烟测试三实证坑
+
+- **触发词**：冒烟测试 / Playwright / wait_for_selector 超时 / 测试导航不生效 / 改动被回拨
+- **想做什么**：用 Playwright 给仪表盘写结构断言测试
+- **内置能否**：✅（playwright 1.62+chromium 已装；chromium 下载走镜像 `PLAYWRIGHT_DOWNLOAD_HOST=https://cdn.npmmirror.com/binaries/playwright`，官方源国内会卡死零字节）
+- **坑**：①`wait_for_selector` 默认等"可见"，但页面 section 默认隐藏（导航才显示）——必须用 `state="attached"`；②测试里改 `location.hash` 不触发页面初始化（应用无 hashchange 监听）——必须调全局 `go('<page>')`；③Edit 工具改完文件可能被 IDE 脏缓冲区回拨（实证：test_dashboard_smoke.py 第一处改动被静默回退）——改后必须进程外核实（Select-String/git diff）
+- **正确做法**：见坑①②③；冒烟网真源 `tests/frontend/test_dashboard_smoke.py`（自起 http.server，无需外部服务）
+- **代码锚点**：`tests/frontend/test_dashboard_smoke.py`
+- **来源**：冒烟网建设实证（3 次失败→3 修复→4/4 绿） · 2026-08-31
+
 ---
 
 ## 修订记录
@@ -65,3 +75,4 @@ scope: frontend
 | 日期 | 版本 | 改动 | 为什么改 |
 |---|---|---|---|
 | 2026-08-31 | 1.0.0 | 建册，首批 4 条（PC-001~004） | 四件套施工第 1 步；项目自有约定是弱模型最易踩的坑 |
+| 2026-08-31 | 1.1.0 | +PC-005 Playwright 冒烟测试三实证坑 | 冒烟网建设 3 失败→3 修复实证 |

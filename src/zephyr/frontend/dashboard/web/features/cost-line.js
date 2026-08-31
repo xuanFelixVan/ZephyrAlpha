@@ -51,8 +51,13 @@
     id: 'cost-line',
     chart: null,
     init: function(chart, ctx){ this.chart = chart; registerTemplate(); injectStyles(); },
+    _ensure: function(){
+      /* 懒绑定自愈：宿主 sqInit 的挂载可能早于本模块加载（加载链竞态），首次 render 时若 chart 空则自取全局 klpChart 补 init（手册 FEH-KLC-005） */
+      if(!this.chart && typeof klpChart !== 'undefined' && klpChart){ this.init(klpChart); }
+      return !!this.chart;
+    },
     render: function(d){
-      if(!this.chart) return;
+      if(!this._ensure()) return;
       var c = klpChipCalc(d, d.length-1);
       var self = this;
       this.chart.createOverlay({name:'plainLine', groupId:'cost', lock:true,
