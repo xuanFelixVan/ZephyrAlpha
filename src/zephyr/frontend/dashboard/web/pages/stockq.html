@@ -1,43 +1,117 @@
 <section class="page" id="p-stockq">
     <h2 class="page-title">个股行情</h2>
-    <div class="page-sub">研究组 · OKX 式 K 线工作台（滚轮缩放/指标增删/筹码峰/事件时间线+报错）+ 同花顺式左列表右资料（四.A；真源 I-2，演示数据如实标注）</div>
-    <div class="sq-wrap">
-      <!-- 左：个股列表（自选/持仓） -->
-      <div class="sq-col">
-        <div class="sq-list-tabs">
-          <span class="tab on" id="sq-tab-fav" onclick="sqListTab('fav')">自选</span>
-          <span class="tab" id="sq-tab-hold" onclick="sqListTab('hold')">持仓</span>
-        </div>
-        <input class="sq-srch" id="sq-srch" placeholder="搜索名称/代码" oninput="sqRenderList()">
-        <div class="sq-stock-list" id="sq-list"></div>
-        <div class="note" style="margin-top:8px">自选清单 localStorage 记忆；持仓=汇总持仓 3 账户同源；演示池 3 只全量资料（其余 K线可画、资料区负反馈）</div>
-      </div>
-      <!-- 中：K 线工作台 -->
-      <div class="sq-col">
-        <div class="sq-head" id="sq-head"></div>
-        <div class="sq-mainbox">
-          <!-- v4 canvas 分层：主层=数据图形（K线/指标/网格/VOL）+顶层=十字光标（60fps 独立重绘）+DOM 覆盖层=tooltip/事件轴/画线面板 -->
-          <div class="sq-canvas-stack" id="sq-canvas-stack" style="position:relative;width:100%;height:430px">
-            <canvas id="sq-main-canvas" style="position:absolute;left:0;top:0;width:100%;height:100%;display:block"></canvas>
-            <canvas id="sq-cross-canvas" style="position:absolute;left:0;top:0;width:100%;height:100%;display:block;pointer-events:none"></canvas>
-            <div id="sq-dom-overlay" style="position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none"></div>
+    <div class="page-sub">研究组 · KLineChart 专业 K 线工作台（滚轮缩放/拖拽平移/画线工具/指标增删）+ 同花顺式左列表右资料（模块化布局，左右栏可隐藏）</div>
+
+    <!-- 模块化布局容器：左栏列表 / 画线竖排 / 中栏 / 右栏 -->
+    <div class="klp-wrap">
+
+      <!-- 左栏：个股列表（可隐藏） -->
+      <div class="klp-left" id="klp-left">
+        <div class="klp-listbox">
+          <div class="sq-list-tabs">
+            <span class="tab on" id="sq-tab-fav" onclick="sqListTab('fav')">自选</span>
+            <span class="tab" id="sq-tab-hold" onclick="sqListTab('hold')">持仓</span>
           </div>
+          <input class="sq-srch" id="sq-srch" placeholder="搜索名称/代码加入自选" oninput="sqRenderList()">
+          <div class="sq-stock-list" id="sq-list"></div>
         </div>
-        <div id="sq-panes"></div>
-        <div class="sq-addpane"><span class="sel" id="sq-add-sel" style="font-size:11px;cursor:pointer" onclick="sqAddPaneTgl(event)">＋ 添加指标 ▾</span>
-          <span class="acct-menu" id="sq-add-menu" style="position:absolute">
-            <span class="acct-mi" onclick="sqAddPane('vol',event)">成交量 VOL</span>
-            <span class="acct-mi" onclick="sqAddPane('macd',event)">MACD(12,26,9)</span>
-            <span class="acct-mi" onclick="sqAddPane('kdj',event)">KDJ(9,3,3)</span>
-          </span>
-        </div>
-        <div class="sq-evt-strip" id="sq-evt-strip"></div>
       </div>
-      <!-- 右：个股资料面板 -->
-      <div class="sq-col" id="sq-info" style="overflow-y:auto"></div>
+
+      <!-- 画线工具竖排（欧易式细竖条，可整条隐藏） -->
+      <div class="klp-drawcol" id="klp-drawcol">
+        <div class="klp-drawbar" id="klp-drawbar">
+          <div class="klp-draw-item on" data-draw="crosshair" title="十字光标（默认）">+</div>
+          <div class="klp-draw-item" data-draw="segment" title="趋势线：点两点拉一条线">╱</div>
+          <div class="klp-draw-item" data-draw="horizontalStraightLine" title="水平线：点一下定价位">─</div>
+          <div class="klp-draw-item" data-draw="verticalStraightLine" title="垂直线：点一下定日期">│</div>
+          <div class="klp-draw-item" data-draw="rayLine" title="射线：起点延伸">↗</div>
+          <div class="klp-draw-item" data-draw="rect" title="矩形区间：点两角画框">□</div>
+          <div class="klp-draw-item" data-draw="parallelStraightLine" title="平行线：三点定通道">∥</div>
+          <div class="klp-draw-item" data-draw="priceChannelLine" title="价格通道：三点定回归通道">⋔</div>
+          <div class="klp-draw-item" data-draw="fibonacciLine" title="斐波那契回撤：两点出黄金分割位">φ</div>
+          <div class="klp-draw-item" data-draw="priceLine" title="价格线：水平线+价位标签">⊣</div>
+          <div class="klp-draw-item" data-draw="text" title="文字标注：点一下落点输入文字">T</div>
+          <div class="klp-draw-sep"></div>
+          <div class="klp-draw-item" id="klp-magnet" title="磁吸：落点自动吸附到 K 线开收高低价（点击切换）">∪</div>
+          <div class="klp-draw-item" id="klp-lock" title="锁定画线：全部画线禁止拖动（点击切换）">⚿</div>
+          <div class="klp-draw-item on" id="klp-visible" title="显示/隐藏全部画线">◉</div>
+          <div class="klp-draw-item" data-draw="removeAll" title="清除全部画线">⌫</div>
+        </div>
+        <div class="klp-draw-hide" title="隐藏画图工具" onclick="klpToggleDrawCol()">‹</div>
+      </div>
+      <div class="klp-tgl klp-tgl-d" title="显示画图工具" onclick="klpToggleDrawCol()">›</div>
+
+      <!-- 中栏：K 线主图（可全屏） -->
+      <div class="klp-center">
+        <div class="klp-head" id="sq-head"></div>
+        <div class="klp-chartbox" id="klp-chart"></div>
+        <!-- 事件行（MACD 与时间轴之间：圆形图标带数字，紧挨时间轴上方但不在轨道上） -->
+        <div class="klp-evtrow" id="klp-evtrow"></div>
+        <!-- 时间轴模块（周期自适应刻度 + 底部拖拽柄调高；事件图标已拆到上方独立行） -->
+        <div class="klp-timeline" id="klp-timeline">
+          <div class="klp-tl-track" id="klp-tl-track"></div>
+          <div class="klp-tl-grip" id="klp-tl-grip" title="拖拽调整时间轴高度"></div>
+        </div>
+        <div class="klp-indbar" id="klp-indbar">
+          <span class="klp-ind-tgl" onclick="klpToggleInd('MA')">MA</span>
+          <span class="klp-ind-tgl" onclick="klpToggleInd('BOLL')">BOLL</span>
+          <span class="klp-ind-tgl" onclick="klpToggleInd('VOL')">VOL</span>
+          <span class="klp-ind-tgl" onclick="klpToggleInd('MACD')">MACD</span>
+          <span class="klp-ind-tgl" onclick="klpToggleInd('KDJ')">KDJ</span>
+          <span class="klp-ind-tgl" onclick="klpToggleInd('RSI')">RSI</span>
+          <span class="klp-ind-tgl" onclick="klpToggleInd('DMI')">DMI</span>
+          <span class="klp-ind-tgl" onclick="klpToggleInd('OBV')">OBV</span>
+          <span class="klp-ind-tgl" onclick="klpToggleInd('WR')">WR</span>
+          <span class="klp-ind-tgl" onclick="klpToggleInd('CCI')">CCI</span>
+          <span class="klp-ind-tgl" onclick="klpToggleInd('BIAS')">BIAS</span>
+          <span class="klp-ind-tgl" onclick="klpToggleInd('DMA')">DMA</span>
+          <span class="klp-ind-tgl" onclick="klpToggleInd('TRIX')">TRIX</span>
+          <span class="klp-ind-tgl" onclick="klpToggleInd('BRAR')">BRAR</span>
+          <span class="klp-ind-tgl" onclick="klpToggleInd('EMV')">EMV</span>
+          <span class="klp-ind-tgl" onclick="klpToggleInd('ROC')">ROC</span>
+          <span class="klp-ind-tgl" onclick="klpToggleInd('MTM')">MTM</span>
+          <span class="klp-ind-tgl" onclick="klpToggleInd('PSY')">PSY</span>
+          <span class="klp-ind-tgl" onclick="klpToggleInd('AO')">AO</span>
+          <span class="klp-ind-tgl" onclick="klpToggleInd('SAR')">SAR</span>
+          <span class="klp-ind-tgl klp-ind-setup" title="指标设置：参数/线型/颜色编辑" onclick="klpIndPop()">⚙ 设置</span>
+        </div>
+      </div>
+
+      <!-- 筹码峰独立模块（K 线与右栏之间：分布图+信息面板，随光标日期重算） -->
+      <div class="klp-chip" id="klp-chip">
+        <div class="klp-chip-chart"><canvas id="klp-chip-canvas"></canvas><span class="klp-chip-poc" id="klp-chip-poc" title="成本价格"></span></div>
+        <div class="klp-chip-info" id="klp-chip-info"></div>
+      </div>
+
+      <!-- 右栏：资料面板（可隐藏） -->
+      <div class="klp-right" id="klp-right">
+        <div class="klp-right-inner" id="sq-info"></div>
+      </div>
+
+      <!-- 栏位显隐控制按钮（贴左栏右缘/右栏左缘，靠下不挡内容） -->
+      <div class="klp-tgl klp-tgl-l" id="klp-tgl-l" onclick="klpTogglePanel('left')" title="隐藏列表">◀</div>
+      <div class="klp-tgl klp-tgl-r" id="klp-tgl-r" onclick="klpTogglePanel('right')" title="隐藏资料">▶</div>
     </div>
+
     <div class="sq-evtpop" id="sq-evtpop"></div>
+    <!-- 指标设置弹窗（欧易式：主图/副图 tab + 参数编辑 + 重置确认） -->
+    <div class="klp-indpop" id="klp-indpop" style="display:none">
+      <div class="ip-head">指标设置 <span class="ip-x" onclick="klpIndPopClose()">✕</span></div>
+      <div class="ip-tabs">
+        <span class="tab on" id="ip-tab-main" onclick="klpIndTab('main')">主图指标</span>
+        <span class="tab" id="ip-tab-sub" onclick="klpIndTab('sub')">副图指标</span>
+      </div>
+      <div class="ip-body">
+        <div class="ip-list" id="ip-list"></div>
+        <div class="ip-detail" id="ip-detail"></div>
+      </div>
+      <div class="ip-foot"><span class="ip-reset" onclick="klpIndReset()">重置</span><span class="ip-ok" onclick="klpIndPopClose()">确认</span></div>
+    </div>
+    <!-- 周期选择弹层（欧易式：全量矩阵+编辑主栏显示+数字键快切） -->
+    <div class="klp-tfpop" id="klp-tfpop" style="display:none">
+      <div class="tp-head"><span>选择时间周期</span><span class="tp-edit" id="klp-tf-edit" onclick="klpTfEditMode(event)">✎ 编辑主栏</span></div>
+      <div class="tp-grid" id="klp-tf-grid"></div>
+      <div class="tp-hint">键盘数字 1~9 快速切换主栏周期（9=最右侧）；编辑模式勾选主栏要显示的周期</div>
+    </div>
     <div class="sq-toast" id="sq-toast"></div>
   </section>
-
-  
