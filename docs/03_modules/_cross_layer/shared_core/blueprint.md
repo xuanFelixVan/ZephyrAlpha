@@ -4,7 +4,7 @@ submodule_path: src/zephyr/shared
 title: "Shared+Core 蓝图"
 doc_type: blueprint
 status: Active
-version: "0.19.19"
+version: "0.19.21"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -133,7 +133,7 @@ build_status: generated
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-016` 的 348 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-016` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -389,7 +389,7 @@ build_status: generated
 | `src/zephyr/shared/blueprint_tools/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/shared/blueprint_tools/blueprint_scorer.py` | ✅ 已实现 | |
 | `src/zephyr/shared/compensation/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/shared/context/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/context/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/backpressure/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/backpressure/_types.py` | ✅ 已实现 | |
@@ -408,11 +408,11 @@ build_status: generated
 | `src/zephyr/shared/contracts/errors/signal_degradation_warning.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/escalation/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/execution/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/shared/contracts/execution/capital_allocation_result.py` | ⚠️ 骨架 | |
-| `src/zephyr/shared/contracts/execution/execution_report.py` | ⚠️ 骨架 | |
-| `src/zephyr/shared/contracts/execution/fill.py` | ⚠️ 骨架 | |
-| `src/zephyr/shared/contracts/execution/model_serving_request.py` | ⚠️ 骨架 | |
-| `src/zephyr/shared/contracts/execution/order.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/contracts/execution/capital_allocation_result.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/execution/execution_report.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/execution/fill.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/execution/model_serving_request.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/execution/order.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/experiment/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/experiment/experiment_result.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/external/__init__.py` | ⚠️ 骨架 | |
@@ -423,16 +423,16 @@ build_status: generated
 | `src/zephyr/shared/contracts/identity/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/llm_gateway_protocol.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/market/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/shared/contracts/market/instrument.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/contracts/market/instrument.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/model_serving_request.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/orchestration_protocol.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/portfolio/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/shared/contracts/portfolio/position.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/contracts/portfolio/position.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/protocols.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/risk/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/shared/contracts/risk/compliance_rule.py` | ⚠️ 骨架 | |
-| `src/zephyr/shared/contracts/risk/risk_limits.py` | ⚠️ 骨架 | |
-| `src/zephyr/shared/contracts/risk/risk_validator_protocol.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/contracts/risk/compliance_rule.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/risk/risk_limits.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/risk/risk_validator_protocol.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/risk_dashboard_snapshot.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/risk_metrics.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/security/__init__.py` | ⚠️ 骨架 | |
@@ -443,7 +443,7 @@ build_status: generated
 | `src/zephyr/shared/contracts/trace_context.py` | ✅ 已实现 | |
 | `src/zephyr/shared/dependency/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/draft/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/shared/evaluation/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/evaluation/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/shared/events/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/shared/events/dlq.py` | ✅ 已实现 | |
 | `src/zephyr/shared/events/dlq_bridge.py` | ✅ 已实现 | |

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/security/llm_defense/llm_security
 title: "LLM Security Gateway 蓝图 — L0-L8 九层纵深防御 + fail-closed 原则"
 doc_type: blueprint
 status: Active
-version: "2.0.8"
+version: "2.0.9"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -415,7 +415,7 @@ LSG 是 ZephyrAlpha 中**所有 LLM 调用的安全闸门**。任何 AI agent �
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-LLM_SECURITY` 的 81 个 file 节点 | production | `extract_depgraph.py --modules MOD-LLM_SECURITY` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -5843,8 +5843,8 @@ Encoding Defense Layers — LSG + LLM 协作
 | `src/zephyr/security/llm_defense/llm_security/dashboard/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/dashboard/app.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/layers/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/security/llm_defense/llm_security/layers/l6_data_flow.py` | ⚠️ 骨架 | |
-| `src/zephyr/security/llm_defense/llm_security/layers/l8_compliance.py` | ⚠️ 骨架 | |
+| `src/zephyr/security/llm_defense/llm_security/layers/l6_data_flow.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/layers/l8_compliance.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/patterns/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/payloads/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/sandbox/__init__.py` | ⚠️ 骨架 | |

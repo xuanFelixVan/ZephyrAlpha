@@ -5,7 +5,7 @@ title: "Agent RBAC 蓝图 — 七层纵深防御·六横切面运行时权限"
 doc_type: blueprint
 status: Active
 activation_phase: requires_100ai
-version: "1.1.8"
+version: "1.1.9"
 layer: L0_infrastructure
 domain: infra_ops
 owner: ZephyrAlpha-Owner
@@ -7126,14 +7126,14 @@ class PermissionHooks:
 | `src/zephyr/security/access_control/cascading_failure_isolator.py` | ⚠️ 骨架 | |
 | `src/zephyr/security/access_control/compliance_matrix.py` | ⚠️ 骨架 | |
 | `src/zephyr/security/access_control/defense_depth.py` | ⚠️ 骨架 | |
-| `src/zephyr/security/access_control/detectors/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/security/access_control/detectors/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/environment_manager.py` | ⚠️ 骨架 | |
 | `src/zephyr/security/access_control/guards/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/guards/anti_pattern_guard.py` | ⚠️ 骨架 | |
 | `src/zephyr/security/access_control/permission_mode_manager.py` | ⚠️ 骨架 | |
 | `src/zephyr/security/access_control/phase_executor.py` | ⚠️ 骨架 | |
 | `src/zephyr/security/access_control/secrets_lifecycle.py` | ⚠️ 骨架 | |
-| `src/zephyr/security/access_control/verifiers/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/security/access_control/verifiers/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/verifiers/bootstrap_verifier.py` | ⚠️ 骨架 | |
 | `src/zephyr/security/access_control/verifiers/continuous_verifier.py` | ⚠️ 骨架 | |
 | `src/zephyr/security/access_control/verifiers/micro_verifier.py` | ⚠️ 骨架 | |

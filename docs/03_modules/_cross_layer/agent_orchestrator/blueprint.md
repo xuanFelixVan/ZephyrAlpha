@@ -5,7 +5,7 @@ title: "Agent Orchestrator 蓝图 — Agent 全生命周期编排引擎"
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "1.0.6"
+version: "1.0.7"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -52,7 +52,7 @@ build_status: production
 
 本蓝图描述 Agent Orchestrator——ZephyrAlpha Vibe Coding 2.0 五大核心服务中的"任务引擎"。它接管 Agent 任务全生命周期——任务入队、Agent 拉取、沙箱执行、幻觉检测、指标上报、收尾归档。当前规模 55 顶层模块 + 14 子包模块，覆盖 state/ resilience/ core/ 三个子域。上游依赖 AutoRuntime Core（大脑调度 WorkDAG），下游消费 Pipeline 执行结果。
 
-> module_id: MOD-INF-039 | version: 1.0.6 | status: active | layer: cross_layer
+> module_id: MOD-INF-039 | version: 1.0.7 | status: active | layer: cross_layer
 > actual_disk_path: src/zephyr/orchestrator/ | generation: 1 | construction_progress: completed
 > parent_module: MOD-INF-035（AutoRuntime Core）——从 MOD-INF-035 蓝图拆分独立
 >
@@ -616,8 +616,8 @@ class DetectionResult(BaseModel):
 | `src/zephyr/orchestrator/governance/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/orchestrator/lifecycle/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/orchestrator/quality/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/orchestrator/quality/ke_quality.py` | ⚠️ 骨架 | |
-| `src/zephyr/orchestrator/quality/knowledge_freshness.py` | ⚠️ 骨架 | |
+| `src/zephyr/orchestrator/quality/ke_quality.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/quality/knowledge_freshness.py` | ✅ 已实现 | |
 | `src/zephyr/orchestrator/resilience/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/trading/auto_dispatcher.py` | ✅ 已实现 | |
 
