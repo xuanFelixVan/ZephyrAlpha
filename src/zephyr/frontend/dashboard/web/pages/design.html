@@ -1,5 +1,5 @@
 <section class="page" id="p-design">
-    <h2 class="page-title">设计规范 <span class="badge b-na">§DS v2.0</span></h2>
+    <h2 class="page-title">设计规范 <span class="badge b-na">§DS v2.1</span></h2>
     <div class="page-sub">系统组 · 全仪表盘唯一设计标准——所有元素的颜色/字体/大小/间距/用法以此页为准（新元素先查此页，合规审查以此为尺）——规范=实物：色板吃 CSS 变量、组件真实渲染，样式演进自动同步零漂移。<b>v2.0 = 色系 v7（2026-08-30 Owner 四步选型拍板）</b>：风格=SharpLink 半透明叠层语法 · 密度=L4 交易终端 · 宽度=W4 窄卡多列 · 排版=同类合并 · 页头字号=L1 档（4K 可读性实测）；K 线/图表内部视觉仍归 DS-5 v4（canvas 分层）不变</div>
 
     <!-- DS-1 色彩系统 -->
@@ -204,12 +204,12 @@
       <div class="note"><b>蓝图 v4（2026-08-29，canvas 分层架构规范——QMT tick 级接入前提，TradingView/OKX 工业界验证方案）</b>：渲染底座从 SVG 换 <b>canvas 分层混合架构</b>（lightweight-charts 精确架构：主层 canvas 数据图形 + 顶层 canvas 十字光标 + DOM 覆盖层富 UI）。<b>分层依据</b>=失效频率分治：数据层（K线/指标/网格）数据变才重绘，光标层随鼠标 60fps 整层重绘不碰主层，DOM 层（tooltip/弹窗/画线属性面板/事件轴图标）保留免费交互能力。<b>为什么不做全 canvas</b>：canvas 文字不可选/不可复制/无障碍为零/命中检测手写=重写半个浏览器/富文本排版造轮子/HiDPI 发虚/局部更新粒度差——图内标签（轴刻度/价签）canvas fillText，图外富 UI 留 DOM。<b>视觉规格全部沿用 v3</b>（OKX 实测色值/网格/MA 色序/现价签/筹码峰/双轴/缩放交互不变），只换渲染底座；SVG 版为降级 fallback（无 canvas 环境/打印导出）。任何页面图表与蓝图不一致=不合规。</div>
       <table>
         <tr><th>元素</th><th>规格</th><th>用在哪</th></tr>
-        <tr><td><b>渲染底座（v4）</b></td><td><b>canvas 分层混合架构</b>：主层 canvas=K线/指标线/网格/VOL/MACD 柱（数据变才重绘）· 顶层 canvas=十字光标（60fps 独立重绘）· DOM 覆盖层=tooltip 读数卡/事件轴图标/弹层/画线属性面板；HiDPI 必须 devicePixelRatio 对齐（fancy-canvas 式封装）；SVG 版=降级 fallback（无 canvas 环境/打印导出）</td><td>全部坐标图</td></tr>
+        <tr><td><b>渲染底座（v8 实证修正）</b></td><td><b>KLineChart v10.0.3 库</b>（vendor 本地，零 CDN 依赖）——个股行情页 2026-08-31 实际落地选型；v4 自研 canvas 分层架构为设计方向记录，实际施工用库（库内已实现同等分层隔离）。初始化契约：init→setSymbol→setPeriod→setDataLoader，数据 init 全量/forward/backward 必返空数组（手册 FEH-KLC-002）；SVG 版=降级 fallback（无 canvas 环境/打印导出）</td><td>全部坐标图</td></tr>
         <tr><td>涨蜡烛</td><td>#CA3F64 平涂<b>无晕光</b>（色系 v5：欧易 canvas 实测低饱和+无 glow，2026-08-27）</td><td>全部 K 线（主图/迷你）</td></tr>
         <tr><td>跌蜡烛</td><td>#25A750 平涂<b>无晕光</b>（同上）</td><td>同上</td></tr>
         <tr><td>蜡烛几何（v3）</td><td>体宽：间隙≈<b>7:2</b>（体占节距 78%，OKX 实测节距 6 CSS px/体芯 5 device px）；影线 1px 与实体同色；影线边缘 50% 抗锯齿（勿误判为空心蜡烛）</td><td>全部 K 线</td></tr>
         <tr><td>MA 线族（v3 色序纠正）</td><td>默认 3 线照抄 OKX 实测：<b>MA5 #FFA726 橙 · MA10 #EC407A 品红 · MA20 #27C6DA 青</b>，宽 1.3（v2 把 MA10/MA20 色序标反，v3 根治）；MA60 #3D8BFF 蓝=可选叠加（OKX 默认无），不默认渲染</td><td>主图均线族（锁色锁序）</td></tr>
-        <tr><td>成本线</td><td>#F0B90B 虚线 dash 6 4 + 标签"成本 xx.xx"</td><td>主力成本/均价线</td></tr>
+        <tr><td>成本线（v8 实证修正）</td><td>#F0B90B 琥珀虚线（plainLine 纯横线模板，<b>无价签无文字</b>——内置 priceLine 蓝底价签删不掉，手册 FEH-KLC-001）+ 悬停琥珀提示框（成本/数量）；¥ 开关独立控显隐；取值须在 K 线价格域内（FEH-KLC-003）；验收单 ACC-F-STOCKQ-COSTLINE；模块=features/cost-line.js（拆件试点 DS-11）</td><td>主力成本/均价线</td></tr>
         <tr><td>现价线（v3）</td><td>随涨跌色<b>点线 2px 点+3px 间隔，alpha .5</b>（OKX 实测 RGBA 201,62,100,128；v2 dash 3 3 实段废止），横贯全图</td><td>最新价横线</td></tr>
         <tr><td>支撑/压力</td><td>支撑 #25A750 虚线 / 压力 #CA3F64 虚线（dash 4 3）</td><td>技术分析主图</td></tr>
         <tr><td>买卖点</td><td>▲买 #CA3F64（K 线下方）· ▼卖 #25A750（K 线上方）12px</td><td>信号标注</td></tr>
@@ -226,7 +226,7 @@
         <tr><td><b>双轴（v3）</b></td><td>右轴=价格 <b>#C6C6C6 12px OKXSans</b>（OKX 实测，v2 #A0A6AD 10px 偏暗偏小已纠），刻度 5~7 档等距·轴区底同图表 #000 无分隔线；左轴=涨跌幅%（窗口首收为 0 红正绿负 10px）=<b>A股扩展</b>（OKX 无左轴，Owner v2 拍板保留）；技术分析页主图 v3 补齐双轴（此前无轴=实现缺漏）</td><td>K 线工作台主图/分时</td></tr>
         <tr><td><b>当前价色签（v3）</b></td><td>色底矩形块（涨红跌绿）+<b>黑字</b> 10~12px（v2 白字与 OKX 相反，根治）+签下灰色倒计时小字（K 线剩余时间 mm:ss）+24h 高/低点标记（灰字+↑/→小箭头）</td><td>主图/分时</td></tr>
         <tr><td><b>高低点标注（v2）</b></td><td>窗口极值点右引 "值 →" 10px #A0A6AD+小圆点</td><td>主图/分时</td></tr>
-        <tr><td><b>日期轴事件图标（v4）</b></td><td><b>DOM 覆盖层</b>（非 canvas）：轴下 18×16 圆角底（--panel2+--border 描边）+emoji 10px+蓝 badge 计数——保留 DOM 免费交互（点击/弹层/无障碍）；<b>新闻双日期规则</b>：披露日 📰+兑现日 📅 同弹层；末日后续未来空槽给未来事件</td><td>K 线工作台日期轴</td></tr>
+        <tr><td><b>事件行（v8 实证修正）</b></td><td><b>独立事件行模块</b>（klp-evtrow，DOM 层）：高 24px 紧贴时间轴上方（间距 3px），⚑开关整行收展（收掉高度归零 K 线变大，时间轴常显不受影响）；图标=白色线条新闻 SVG+灰色 11px 小数字（贴紧），点击弹层显示事件详情；时间轴=自定义 klp-timeline 为唯一时间轴（内置 xAxis 已 show:false 隐藏）；新闻双日期规则：披露日 📰+兑现日 📅 同弹层；末日后续未来空槽给未来事件（手册 FEH-KLC-004）</td><td>K 线工作台（MACD 副图与时间轴之间）</td></tr>
         <tr><td><b>OKX 式事件弹层（v4）</b></td><td><b>DOM 覆盖层</b>：.sq-evpop2：--panel2 底+#2E2E2E 边+下拉阴影族，日期标题+事件列表（名称/公布/预期/前值）+披露/兑现 tag，点外关闭</td><td>事件轴点击</td></tr>
         <tr><td><b>量均线（v3 转可选）</b></td><td>OKX 实测 VOL 窗格无量均线——v3 默认<b>关闭</b>（照抄 OKX）；MA5 白/MA10 琥珀量均线移入叠加层可选开关，不默认渲染</td><td>VOL 副图</td></tr>
         <tr><td><b>分时模式（v2）</b></td><td>白线价 #EDEFF2 1.5+黄均价 #F0B90B 1.2+面积微渐变 12%+昨收参考虚线+时间轴 5 刻度</td><td>个股行情"分时"tab</td></tr>
@@ -318,6 +318,20 @@
         <tr><td><b>C 暂缓</b></td><td>全自由拖拽缩放网格（边/角拖拽+等比缩放+相邻模块自动重排+内容等比缩放）——gridstack 级工程量，与单文件原型定位不符，记入正式前端阶段（框架迁移时一并实现）</td><td>暂缓（Owner 2026-08-27 许可：工程量大则免）</td></tr>
       </table>
       <div class="note">重叠防护：A 案拖拽仅纵向、grid 行自动撑开重排；⛶ 全屏为 fixed overlay 层，不产生布局重叠 bug</div>
+    </div>
+
+    <!-- DS-11 模块拆件标准 -->
+    <div class="card" style="margin-bottom:14px">
+      <h3>DS-11 模块拆件标准 <span class="dim">v8 新增（2026-08-31）——K 线工作台模块化实证转正（成本线 pilot 验收单六条全绿）</span></h3>
+      <table>
+        <tr><th>判据</th><th>内容</th><th>实证</th></tr>
+        <tr><td><b>拆（满足任一即拆）</b></td><td>①会被反复改的功能（返工次数=最强信号）②有独立开关/显隐 ③有独立视觉样式（样式随模块自注入）④跨页面可复用</td><td>成本线：改七次+¥ 独立开关+琥珀提示框样式 → 拆</td></tr>
+        <tr><td><b>不拆</b></td><td>①一次性初始化逻辑 ②与宿主强耦合无独立边界 ③纯页面布局结构（HTML 骨架）</td><td>sqInit 初始化链留在 app1.js</td></tr>
+        <tr><td><b>契约四要素</b></td><td>①单文件 <b>web/features/&lt;id&gt;.js</b>（模板注册/渲染/样式/销毁全包）②接口 <b>init(chart,ctx) / render(d) / destroy()</b> ③<b>features/manifest.yaml</b> 登记（depends 显式声明+验收单+手册条目互挂）④模块间只经 <b>ZK.bus</b> 事件总线通信，禁跨模块改对方 DOM/状态</td><td>features/cost-line.js + features/manifest.yaml（registry 首条）</td></tr>
+        <tr><td><b>迁移纪律</b></td><td>不重写大文件——新功能一律模块制；最爱改的先抽样板；样板跑通后逐步迁，宿主文件只减不增</td><td>app1.js 成本线段 −40 行（commit bbcc95a9）</td></tr>
+        <tr><td><b>质量门</b></td><td>UI 改动 commit 前必须过验收单：起本地服务 → 截图 → 逐条对 → 全绿才提交；机断条款过渡期人工/控制台手动验（不免验）</td><td>ACC-F-STOCKQ-COSTLINE 六条全绿（Owner 截图目检）</td></tr>
+      </table>
+      <div class="note">配套基建（四件套）：<b>frontend_handbook</b> 技术手册（坑怎么避，docs/03_modules/_domain_frontend/frontend_handbook/）/ <b>acceptance</b> 验收单（什么样子算对）/ <b>frontend_map</b> 前端全景图（功能在哪，architecture_model/frontend/frontend_map.yaml）/ <b>alignment_checklist</b> 全项目对齐清单（和什么对齐）。视觉与拆件冲突时：视觉归 DS-1~DS-10，拆件归本节。</div>
     </div>
   </section>
 

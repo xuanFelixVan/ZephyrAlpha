@@ -597,4 +597,22 @@
       </div>
     </div>
 
+    <!-- ══════════ 十、模块拆件契约试点（2026-08-31 · 成本线 pilot 验收六条全绿） ══════════ -->
+    <hr class="rule"><div class="sec-title" style="font-size:13px;color:var(--text);letter-spacing:.02em;margin:4px 0 10px;font-weight:600">十、模块拆件契约试点 <span style="color:var(--faint);font-weight:400;font-size:11px">Module Contract · features/&lt;id&gt;.js 单文件功能模块——什么该拆/怎么拆/拆的依据（拆件标准归 DS-11）</span></div>
+
+    <div class="spec" style="max-width:1280px;margin-left:auto;margin-right:auto;margin-bottom:14px">
+      <div style="display:flex;gap:8px;align-items:baseline;margin-bottom:6px;flex-wrap:wrap"><span style="font-size:10px;color:var(--faint);font-weight:600">51</span><b style="font-size:12.5px">功能模块契约（散件化）</b><span class="chip flat">代码组织隔离</span><span style="font-size:10.5px;color:var(--dim)">非运行时隔离——K 线单 canvas 实例共享 chart；微前端框架=过度工程不引入</span><span style="margin-left:auto;font-size:10.5px;color:var(--faint)">core/event_bus.js · features/manifest.yaml</span></div>
+      <div class="card" style="padding:10px">
+        <table>
+          <tr><th>契约项</th><th>规格</th></tr>
+          <tr><td>单文件模块</td><td>web/features/&lt;id&gt;.js——模板注册/渲染/样式自注入/销毁全包；宿主大文件只留一行调用</td></tr>
+          <tr><td>接口</td><td>init(chart,ctx) / render(d) / destroy()；注册经 ZK.registerFeature</td></tr>
+          <tr><td>通信</td><td>模块间只经 ZK.bus 事件总线；禁跨模块改对方 DOM/状态</td></tr>
+          <tr><td>登记</td><td>features/manifest.yaml——depends 显式声明+验收单+手册条目互挂（兼作 frontend_map 生成源）</td></tr>
+          <tr><td>废弃</td><td>manifest 标 deprecated+留一版本周期后删除；全景图同步"已退役"（编号不回收）</td></tr>
+        </table>
+        <div class="note" style="margin-top:8px">样板=个股行情页成本线（features/cost-line.js）：¥ 开关/琥珀虚线/悬停提示全包，验收单 ACC-F-STOCKQ-COSTLINE 六条全绿（2026-08-31 Owner 截图目检）。改成本线颜色/样式/行为 → 只动这一个文件。</div>
+      </div>
+    </div>
+
   </section>
