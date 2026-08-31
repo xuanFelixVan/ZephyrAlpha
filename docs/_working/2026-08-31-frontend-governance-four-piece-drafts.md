@@ -2,7 +2,7 @@
 ttl: task_bound
 ---
 
-> **文档元信息**（_working 临时区豁免规范，EXEMPT-ZONE-FM）：doc_type=design_draft · owner=ZephyrAlpha-Owner · status=draft_pending_review · version=0.3.0 · date=2026-08-31 · topic=frontend_governance_four_piece。
+> **文档元信息**（_working 临时区豁免规范，EXEMPT-ZONE-FM）：doc_type=design_draft · owner=ZephyrAlpha-Owner · status=active_executing · version=0.5.0 · date=2026-08-31 · topic=frontend_governance_four_piece。
 >
 > **文档性质**：**草案（六项裁定已于 2026-08-31 全部落定，见 §六）**。转正后按性质分流——前端技术手册/模块契约/验收单模板 → `docs/03_modules/_domain_frontend/`；前端全景图定位书 → `docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/`（与另五张全景图定位书同区）。
 >
@@ -242,6 +242,26 @@ pages:
 | v0.3.0→v0.4.0 | 字段深度审查+对齐体系升级 | 现有 10 字段缺 5 个实战必踩坑字段（数据源具体性/更新频率/用户操作/降级行为/视觉基准）；对齐范围需从六图扩到注册表层 | §4.4 补 5 字段（共 15 字段）；§4.5 升级为三层对齐体系并引用《全项目对齐清单》 |
 | v0.4.0→v0.4.1 | 4b 施工实证 | 挂载点裁定修正：module_id_registry 实为文档规则模块表（human_gated），真挂载点=depgraph nodes；迁移走编号 SQL 文件制（12_add_frontend_coverage_fields.sql），写入走 apply_depgraph --batch 两阶段门禁；psql 控制台中文显示乱码≠存储乱码（Python 读回验证为准） | 施工中发现原假定错误，实证修正 |
 
+## 八、执行顺序总裁定（Owner 2026-08-31，K 线页+模块化经验推广全仪表盘）
+
+> 背景：Owner 原计划=把 K 线页+模块化成果反向写入设计规范 → 制定拆件/视觉规范 → 按规范翻新全仪表盘 → 接入后端系统；施工中暴露了 AI 记忆/返工/踩坑问题，故先建四件套。本节裁定两条线的汇合顺序。
+
+**裁定顺序**：
+```
+0. 找回 modlib 模块样板页（实证：pages/modlib.html 在盘，但 loader.js PAGES 清单漏挂——从未注入 DOM）
+1. 反向写入标准：K 线页+模块化实证结论 → design.html 设计规范 + modlib 模块样板页
+   （拆件逻辑：什么该拆/怎么拆/拆的依据；视觉统一规范）
+2. 建 Playwright 冒烟安全网（结构断言型：页面/模块/按钮存在性，非像素级——视觉翻新不误伤）
+3. 全仪表盘翻新（按标准逐页：拆模块+视觉统一+登记 frontend_map+写验收单——边翻新边喂四件套，一遍过）
+4. 并行派单（另一会话）：83+40 缺口回填 + 4c 缺口视图派生器
+```
+
+**裁定依据（第一性）**：
+- 标准先于翻新：无标准翻新=每页重演成本线七返工
+- 冒烟网插在翻新前：翻新=全项目回归风险最高期，"功能改没了"必须当场报警
+- 4c/回填不挡翻新主线：派生器要有数据才跑得起来，等翻新把 map 喂饱；回填是纯数据活可并行
+- 翻新即喂养：每页施工=登记 map+验收单+抽模块，翻新完四件套同步长满
+
 **修订记录**
 
 | 日期 | 版本 | 改动 | 为什么改 |
@@ -249,3 +269,6 @@ pages:
 | 2026-08-31 | 0.1.0 | 初稿四件套 schema | Owner 指令出草案 |
 | 2026-08-31 | 0.2.0 | 七轮审查修订 | 按新 SOP 狗食审查（dogfooding，用自己定的流程审自己） |
 | 2026-08-31 | 0.3.0 | 六项裁定落地：命名/九类分类/混合制存储/编号/统一对账字段/model 删除重做；§六转裁定记录；施工顺序扩为六步 | Owner 裁定收口，草案可转施工 |
+| 2026-08-31 | 0.4.0 | frontend_map 15 字段+三层对齐体系 | 字段深度审查+对齐范围扩展 |
+| 2026-08-31 | 0.4.1 | 4b 挂载点实证修正（depgraph nodes） | 施工中发现原假定错误 |
+| 2026-08-31 | 0.5.0 | §八 执行顺序总裁定：标准→冒烟网→全仪表盘翻新→并行派单；modlib 漏挂发现 | Owner 确认顺序，转入全线施工 |
