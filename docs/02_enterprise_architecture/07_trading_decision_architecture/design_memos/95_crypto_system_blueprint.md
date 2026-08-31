@@ -5,9 +5,9 @@ title: 数字货币交易系统建设总览（一级→二级→三级结构）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "0.3.0"
+version: "0.3.1"
 date: 2026-08-28
-last_updated: 2026-08-28
+last_updated: 2026-08-31
 topic: crypto_system_blueprint
 scope: 07_trading_decision_architecture
 ---
@@ -350,6 +350,7 @@ scope: 07_trading_decision_architecture
 | 2026-08-28 | 0.1.0 | 初稿落盘：一级 8 层 + 二级 24 模块 + 三级任务清单，基于 94 号 v1.4.0 + 当前代码实证 | Owner 指令梳理币圈完整建设地图，按结构分层 |
 | 2026-08-28 | 0.2.0 | **循环审查 R1 升级**：①状态对齐（三件套/risk_limit 实例改 🔒 candidate 与注册表一致）②引用补全（#261 链接/94号 §9 Q1/§7.6 引用）③缺失补充（币圈档案/条件选币/班次运营细化）④决策冲突修正（开放问题 #2 网格策略标注已否定）⑤施工顺序编号修正（Phase 1-4 连续编号） | AI_review_instructions 循环审查协议第一轮：问题 8 项全修复 |
 | 2026-08-28 | 0.3.0 | **Phase 1 完工同步**：①CAND-CRYPTO-007/010 翻 promoted（三件套+sentiment_panel）②risk_limit 三实例翻 promoted（RLM-CRYPTO-001/002/003）③FCT-CRYPTO 因子×3 登记（BTC/ETH 趋势+BTC 波动率）④#261 日历扩展消费点注入（event_score/intraday_main/backfill_checker）⑤施工顺序 Phase 1 全部标记完成 | Phase 1 全部 5 项任务闭环，文档状态与注册表/代码对齐 |
+| 2026-08-31 | 0.3.1 | **交易所主备对调同步**：§1.1 币安现货 K 线行+§2.3 币安 Broker 行+施工顺序 #8 注记改为"OKX 主+币安备（待开发）"；§11 开放问题 #1 关闭（已裁定，94号 v1.5.0 修订留痕） | Owner 裁定（2026-08-31）：OKX 已全链落地、币安未施工，主备顺序与施工实况对齐 |
 
 ---
 

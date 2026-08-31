@@ -16,7 +16,8 @@ tier: tier_1_governance
 status: active
 version: 1.1.3
 created: '2026-07-31'
-last_updated: '2026-08-26'
+last_updated: '2026-08-31'
+# 2026-08-31: 94号 Q1 裁定修订（Owner）——交易所主备对调：OKX（主，已全链落地）+ 币安（备，待开发）；CAND-CRYPTO-002/005 条目 description/prerequisites/trigger_signals/tech_notes/acquisition_source 联动同步
 # 2026-08-16: +CAND-AUTONOMYCORE-002（FHS 引擎，双轮审查深挖④裁定，AI-RFIX-001）
 # 2026-08-26: +8 条 CAND-CRYPTO 族（数字货币量化战线启动批，Owner 2026-08-26 裁定启动，设计真源 94_crypto_quant_expansion.md §5；P0×4/P1×3/P2×1，W0 地基=001 市场日历抽象；族内查重 2026-08-26 全量检索零命中）
 # 2026-08-26: +CAND-CRYPTO-009（跨境网络双活传输层，外部材料审查批，Owner 裁定，94号 v0.2.0 §7.2 设计真源——低学历勇闯量化系列：第三篇网络坑 7 图+回测中篇 25 页；CAND-CRYPTO-002 联动补录制端 6 要点引用）【本行曾因并发覆写丢失，2026-08-26 补回】
@@ -19521,7 +19522,7 @@ entries:
   review_frequency: yearly
   last_review_outcome: "promoted（2026-08-28）：W3 施工闭环——okx_broker.py OKX V5 私有 REST API 对接（HMAC-SHA256 签名+幂等+回执确认+CryptoRulePack 注入），15 测试两轮全绿+1591 受影响面零回归"
   acquisition_method: opensource
-  acquisition_source: "币安官方 agent skills/MCP（首选评估，2026-08-26 R1）；ccxt（备选兼容层）；Kraken Rust CLI（次选参照）；OKX V5 原生 REST API（2026-08-28 施工落地）"
+  acquisition_source: "OKX V5 原生 REST API（主所，2026-08-28 施工落地）；币安官方 agent skills/MCP（备用所待开发首选评估，2026-08-26 R1）；ccxt（备选兼容层）；Kraken Rust CLI（次选参照）"
 
   # ----------------------------------------------------------
   # CAND-CRYPTO-006: 交易规则参数化（W2——规则集可插拔）

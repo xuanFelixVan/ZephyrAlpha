@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-MKT-DATA | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-OKX 交易所行情 Provider（CAND-CRYPTO-002，94号 Q1 裁定：OKX 备/数据互备源）。
+OKX 交易所行情 Provider（CAND-CRYPTO-002，94号 Q1 裁定 2026-08-31 修订：OKX 主+币安备[待开发]）。
 
 公开 REST 端点拉取 BTC/ETH 现货 K 线数据，接入现有 WAL→CH 落库管道。
 - 近期 3 个月：GET /api/v5/market/candles

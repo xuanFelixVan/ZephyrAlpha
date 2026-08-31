@@ -14,7 +14,7 @@
 # [TESTS] tests/ex_core/adapters/test_okx_broker.py
 # [A_module] module_id=MOD-L06-001 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""OKX 数字货币执行适配器（CAND-CRYPTO-005，94号 Q1 裁定：OKX 备/数据互备源）。
+"""OKX 数字货币执行适配器（CAND-CRYPTO-005，94号 Q1 裁定 2026-08-31 修订：OKX 主+币安备[待开发]）。
 
 对接 OKX V5 私有 REST API，提供 BTC/ETH 现货实盘交易能力。
 实现 BrokerInterface（OCP-003 扩展点）。

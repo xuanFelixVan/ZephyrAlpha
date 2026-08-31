@@ -5,9 +5,9 @@ title: 数字货币量化扩展设计
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.4.0"
+version: "1.5.0"
 date: 2026-08-28
-last_updated: 2026-08-28
+last_updated: 2026-08-31
 topic: crypto_quant_expansion
 scope: 07_trading_decision_architecture
 ---
@@ -306,3 +306,4 @@ Phase 2  CAND-CRYPTO-003/004/008        ← 永续合约 + 链上增强
 | 2026-08-28 | 1.3.3 | **W2 交易规则参数化施工完成**（CAND-CRYPTO-006 + #262 PreExecutionChecker 注入式改造，[GW:AI-CAL-001]）：src/zephyr/ex_core/rules/ 包落地（TradingRulePack 接口 + AshareRulePack 委托 board_lot/price_cage 真源 + CryptoRulePack 骨架 + get_trading_rule_pack 工厂）+PreExecutionChecker market_calendar 注入（默认 ASHareCalendar 零行为变化）；37 测试两轮全绿+1576 受影响面零回归；depgraph 设计态 node_id=10865682；A股零行为变化硬门槛达成（A股规则包=真源委托收编） | W2 波次：币可"交易"前置（规则包可插拔）；ex_core 空窗合并施工 #262 |
 | 2026-08-28 | 1.3.4 | **W3 执行适配器施工完成**（CAND-CRYPTO-005，[GW:AI-CAL-001]）：src/zephyr/ex_core/adapters/okx_broker.py OKX V5 私有 REST API 对接（HMAC-SHA256 签名+幂等 INV-007+回执确认隔 1.5 秒查委托 3 次重试疑似丢单+CryptoRulePack 注入 step_size/tick_size 校验）；15 测试两轮全绿+1591 受影响面零回归；密钥走 secret_registry 体系（OKX_API_KEY/OKX_SECRET_KEY/OKX_PASSPHRASE 已登记） | W3 波次：币可"交易"（纸面→模拟→实盘小资金走 53 号 5 态 FSM）；OKX API 密钥已配置（secret_registry 登记） |
 | 2026-08-28 | 1.4.0 | **Phase 2 五候选代码落盘（candidate 门禁态，trigger 条件满足后晋升）**：CAND-CRYPTO-003 OKX 永续合约数据（okx_swap_provider.py 资金费率/OI/基差/标记价格，33 测试，trigger=spot_track_record>=3_months）；CAND-CRYPTO-004 链上数据骨架（onchain_provider.py Glassnode/CryptoQuant 免费端点+付费 key 注入预留，27 测试，trigger=paid_api_key_configured）；CAND-CRYPTO-008 杠杆风控模型（leverage_risk_model.py 爆仓价/维持保证金阶梯/资金费率成本，44 测试，trigger=CAND-CRYPTO-003 promoted）；CAND-CRYPTO-009 跨境双活骨架（cross_border_dual.py Cloudflare Tunnel 配置生成+热切换状态机三感知切备/60s 时间驱动切回，23 测试，trigger=cloudflare_account_configured）；CAND-CRYPTO-010 宏观情绪面板（sentiment_panel_provider.py 恐惧贪婪指数实采+BTC 占比实采+ETF/USDT 溢价骨架，24 测试，trigger=CAND-CRYPTO-007 promoted） | PR 会员到期前抢工：全部代码落盘+测试+登记，depgraph 保持 planned 设计态，trigger 条件满足后晋升 production；五模块 commit f90b609410/594dfe9fbd/12345a31f9/f55e41931d/e021682ae1 |
+| 2026-08-31 | 1.5.0 | **§9 Q1 裁定修订：交易所主备对调**——OKX（主）+ 币安（备，待开发），原"币安主+OKX 备"作废留痕；联动：95 号 §1.1/§2.3 模块状态表+开放问题 #1 关闭、CAND-CRYPTO-002/005 注册表条目、.env.example/secret_registry 注释、okx_provider/okx_broker 文件头、前端 overview 账户表 | Owner 裁定（2026-08-31）：OKX 已全链落地（W1 行情+W3 执行+密钥配置），币安未施工——主备顺序与施工实况对齐 |
