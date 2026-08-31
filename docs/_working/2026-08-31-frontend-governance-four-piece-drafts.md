@@ -2,15 +2,15 @@
 ttl: task_bound
 ---
 
-> **文档元信息**（_working 临时区豁免规范，EXEMPT-ZONE-FM）：doc_type=design_draft · owner=ZephyrAlpha-Owner · status=draft_pending_review · version=0.2.0 · date=2026-08-31 · topic=frontend_governance_four_piece。
+> **文档元信息**（_working 临时区豁免规范，EXEMPT-ZONE-FM）：doc_type=design_draft · owner=ZephyrAlpha-Owner · status=draft_pending_review · version=0.3.0 · date=2026-08-31 · topic=frontend_governance_four_piece。
 >
-> **文档性质**：**草案（待 Owner 审）**。Owner 裁定转正后按性质分流——前端技术手册/模块契约/验收单模板 → `docs/03_modules/_domain_frontend/`；前端全景图定位书 → `docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/`（与另五张全景图定位书同区）。
+> **文档性质**：**草案（六项裁定已于 2026-08-31 全部落定，见 §六）**。转正后按性质分流——前端技术手册/模块契约/验收单模板 → `docs/03_modules/_domain_frontend/`；前端全景图定位书 → `docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/`（与另五张全景图定位书同区）。
 >
 > **背景**：前端（含实盘交易/量化回测/未来 AI 反馈）工作量不亚于后端，AI 会话间出现"前脚做完后脚忘、同一功能反复返工、踩过的坑重复踩"三类实证事故（成本线七返工、图标消失无人发现、priceLine 三小时试错）。本草案定义四件治理件：**技术手册（怎么做）+ 全景图（在哪）+ 模块契约（边界）+ 验收单/冒烟测试（做对没有）**，目标=让弱模型也能"查表代替猜路径、查坑代替试错、对单代替发挥、测试兜底"。
 >
-> **v0.2.0 说明**：按新《文档审查与优化 SOP》（document_review_and_optimization_sop.md）对 v0.1.0 执行了七轮循环审查，本轮=第 1~7 轮全量过一遍，发现已修订入正文，审查日志见 §七。
+> **版本沿革**：v0.1.0 初稿 → v0.2.0 按新《文档审查与优化 SOP》七轮审查修订 → v0.3.0 Owner 六项裁定落地（命名改 frontend_handbook／手册九类分类法／第六图混合制形态／统一对账字段设计／frontend_model.yaml 删除重做）。
 
-# 前端治理四件套草案（讨论稿 v0.2）
+# 前端治理四件套草案（v0.3，六项已裁定）
 
 ## 〇、四件套关系一句话
 
@@ -19,29 +19,35 @@ ttl: task_bound
 | 前端技术手册 | 怎么做（事实/坑/做法） | 施工手册 | 自建（ADR 工具不合项目，ADR 已全删） |
 | 功能验收单 | 什么样子算对（冻结标准） | 质检单 | 单自建 YAML；执行引擎搬 Playwright（Python 版） |
 | 前端模块契约 | 边界（散件化、单文件功能） | 零件标准 | 自建薄契约（微前端框架=过度工程，只借 VS Code 插件 manifest 思想） |
-| 前端全景图 frontend_map | 在哪（页面→功能→代码→后端） | 地图 | 自建（第六全景图，接入既有 panorama_alignment_gate 对齐门禁） |
+| 前端全景图 frontend_map | 在哪（页面→功能→代码→后端）+ 前后端对账 | 地图+自动对账机 | 自建（混合制：git YAML 真源 + 数据库派生副本，同依赖全景图模式） |
 
 ---
 
-## 一、前端技术手册（fe_handbook）草案
+## 一、前端技术手册（frontend_handbook）草案
 
 ### 1.1 定位与边界
-- 记"**怎么做**"的**事实库**：内置能不能做、坑是什么、正确做法、代码锚点。
+- 记"**怎么做**"的**事实库**：内置能不能做、坑是什么、正确做法、代码锚点。**第一读者是 AI（含未来弱模型）**，命名与行文以机器零歧义为先。
 - **不是决策记录**：与裁定（ruling_registry，可推翻、superseded_by 链）/设计备忘录（可修订设计）严格分家。手册条目是事实，不存在"推翻"，只有"补充/修正"，**直接改原文**。
 - 与 KB 决策记录的关系：手册只收前端施工事实；凡涉及"为什么这么选"的决策归属裁定体系，手册条目可附裁定号引用但不复制内容。
 
-### 1.2 形态
-- 目录：`docs/03_modules/_domain_frontend/fe_handbook/`，**按库分文件**（防单文件臃肿——实证依据：AI_review_instructions 单文件 142KB 已超 Read 工具 128KB 上限，单文件路线在条目增多后会撞同一堵墙）：
-  - `klinecharts.md`（K 线图库）、`dockview.md`（布局引擎库）、`native_browser.md`（浏览器原生：缓存/事件/CSS）、`project_conventions.md`（项目自有约定：破缓存、overlay 分组、图标栏等）
-- 每文件内条目用固定小标题结构，**编号永久稳定不回收**（同裁定号纪律）。
-- **编号库代码对照表**（条目号第三段，新增库时扩表不改动号）：
+### 1.2 形态与分类法（已裁定：九类预留、按需建文件）
+- 目录：`docs/03_modules/_domain_frontend/frontend_handbook/`。
+- **分类法一次定死，文件按需创建**：类别按"坑的技术成因"分（不按踩坑历史分——历史只反映做过什么，不反映会踩什么）；哪个领域踩了第一个坑就建哪个文件，**编号段永久预留不回收**。
+- **分类对照表**（编号第三段）：
 
-  | 代码 | 指代 | 对应文件 |
-  |---|---|---|
-  | KLC | KLineChart（K 线图库） | klinecharts.md |
-  | DV | Dockview（布局引擎库） | dockview.md |
-  | NB | 浏览器原生（缓存/事件/CSS） | native_browser.md |
-  | PC | 项目自有约定 | project_conventions.md |
+  | 代码 | 类 | 文件 | 管什么 |
+  |---|---|---|---|
+  | KLC | KLineChart 图表库 | klinecharts.md | K 线/overlay/指标/画线 |
+  | DV | Dockview 布局引擎 | dockview.md | 面板/布局/拖拽/锁定 |
+  | DAT | 数据层 | data_api.md | 接口对接、数据格式、轮询推送 |
+  | STA | 状态与存储 | state_storage.md | localStorage、布局持久化、页面状态 |
+  | CSS | 样式系统 | styling.md | CSS 变量、主题、图标、间距 |
+  | NB | 浏览器原生 | browser_native.md | 缓存、事件、DPR/canvas、控制台 |
+  | LOAD | 加载与依赖 | loading_vendor.md | loader、破缓存、vendor 库管理 |
+  | PC | 项目约定 | project_conventions.md | commit、验收、截图目检纪律 |
+  | PG | 页面级 | page_\<页面名\>.md | 页面特有复杂逻辑（如 stockq 画线系统），按需生 |
+
+- 参照系说明：量化社区无公开知识分类法可抄（前端大多买现成组件，不是主战场）；本分类参照大厂工程手册/设计系统文档的"按技术域分层"实践，并结合项目实证。
 
 ### 1.3 条目 schema（每条条目字段）
 ```
@@ -87,7 +93,7 @@ items:
 
 ### 2.3 执行纪律
 - 任何 UI 改动 commit 前：起本地服务 → 截图 → 逐条对验收单 → 全绿才走 GitCommitGateway。
-- 新功能上线 = 代码 + 验收单 + （涉前端时）frontend_map 条目，三件套同 commit。
+- 新功能上线 = 代码 + 验收单 + frontend_map 条目，三件套同 commit。
 - **过渡态说明**：Playwright 冒烟（施工第 5 步）落地前，"机断"条款由人工/AI 在浏览器控制台手动执行等价断言；落地后转自动跑。过渡期"机断"不免验，只是手动验。
 
 ---
@@ -99,7 +105,7 @@ items:
 - 每个功能=一个独立文件 `web/features/<id>.js`，共享大文件（app1.js）只留一行注册。
 
 ### 3.2 契约 schema（manifest 条目）
-- 注册表：`web/features/manifest.yaml`（兼作 frontend_map 数据源之一）
+- 注册表：`web/features/manifest.yaml`（兼作 frontend_map 前端侧清单的生成源之一）
 ```yaml
 - id: cost-line
   name: 持仓成本线
@@ -124,17 +130,40 @@ items:
 
 ---
 
-## 四、前端全景图（frontend_map，第六全景图）草案
+## 四、前端全景图（frontend_map，第六全景图）草案（已裁定：混合制 + 统一对账）
 
-### 4.1 定位
+### 4.1 定位与第一性原理
 - **索引层真源图**，与作战地图（battle_map）同定位：不 invent 新东西，所有锚点指向已存在的代码/接口/另五图节点。
-- 前五图管"后端有什么、怎么连、为什么"；第六图管"**用户看见什么、点哪触发什么、数据从哪来**"。
-- 与既有《前端有→后端没有缺口总账》关系：缺口总账是"缺口篇"，frontend_map 是全量正式版；map 建成后总账改为从 map 派生（状态=未建/缺后端的子集视图），两账不再手工双写。
-- **与既有 frontend_model.yaml 的关系**（v0.2 第 1 轮盘点新发现）：`architecture_model/frontend/frontend_model.yaml` 已存在，是"前端模块清单+技术栈选型"的 SSoT stub（自标 G0 未激活，与"前端已实际建成"的现实脱节，本身需修正）。分工建议：**frontend_model.yaml 管模块注册（模块 ID/状态/技术栈），frontend_map 管页面→功能点索引**，两者同区并存、互链不重复。
+- 前五图管"后端有什么、怎么连、为什么"；第六图管"**用户看见什么、点哪触发什么、数据从哪来**"+ **前后端自动对账**。
+- **第一性原理**（Owner 2026-08-31 定调）：缺口问题（前端有后端没有/后端有前端没有）的本质=**两侧各自手工记账、靠人对账**。根治=三条：
+  1. **事实只有三种**：前端有什么（页面/功能）、后端有什么（模块）、谁连着谁（引用关系）；
+  2. **每种事实只登记一次**：模块在模块注册体系登记，前端功能在前端清单登记，连接关系写成两边的字段；
+  3. **账本是派生物不是手工事实**：两本缺口总账 = 机器查询自动生成，**停止手工维护**。
 
-### 4.2 层级与 schema
-- 存储：YAML 真源 `architecture_model/frontend/frontend_map.yaml`（与 frontend_model.yaml 同区；机器可读=弱模型防幻觉第一闸），派生人类视图 md。
-- 三级：页面 page → 模块 module → 功能点 feature。
+### 4.2 混合制形态（已裁定）
+- **前端侧清单**：`architecture_model/frontend/frontend_map.yaml`（页面→模块→功能点三级），**尽量从 manifest.yaml + 页面扫描半自动生成**；手工只维护生成器够不着的部分（交互描述、do_not_touch、状态理由）。
+- **模块侧字段**：在既有模块注册体系（module_id_registry / blueprint 注册）上**加字段**，不另建 3000 模块新表（见 §4.3）。
+- **派生副本**：governance.db 存同步副本供 SQL 联查（3000 模块级对账）——与依赖全景图同款双态（git YAML 真源 + DB 派生），门禁读文件、联查读库。
+- **派生人类视图**：md 视图 + 两本缺口视图全部自动生成。
+
+### 4.3 统一对账字段设计（核心新增）
+```yaml
+# 模块侧（每个后端模块注册条目加三字段）
+has_frontend: yes | no | planned
+no_frontend_reason: 纯计算引擎 | 数据管道 | 治理内部件 | 基础设施   # has_frontend=no 时必填（"事出有因"）
+frontend_ref: F-STOCKQ-COSTLINE    # has_frontend=yes 时指向具体前端功能点，可多个
+
+# 前端侧（frontend_map 每个功能点条目）
+backend_ref: chip_distribution      # 挂空/悬空 = "前端有后端没有"缺口，自动上榜
+```
+- **为什么没有前端的模块是合法的**：前端的本质是"给人看、给人点的界面"；纯计算引擎/数据管道/治理脚本/内部库是机器调机器，没有人机交互面——**没有前端是正确设计不是缺陷**。所以字段不是"必须都有前端"，而是"**必须都有声明**"。
+- **两本缺口总账变成两条自动查询**：
+  - 前端有后端没有 = `frontend_ref 有值 但 backend_ref 空/悬空`
+  - 后端有前端没有 = `has_frontend=yes/planned 但 frontend_ref 空`
+  - 对账异常 = `has_frontend=no 但 no_frontend_reason 空`
+- 现有《前端有→后端没有缺口总账》83 项 + 反向账 40 项 = 字段回填的**种子数据**，回填完成后两账改派生视图，停止手工维护（已裁定）。
+
+### 4.4 前端侧清单 schema（三级）
 ```yaml
 pages:
   - id: P-STOCKQ
@@ -148,64 +177,66 @@ pages:
           - id: F-STOCKQ-COSTLINE
             name: 持仓成本线
             code_ref: features/cost-line.js        # 或 app1.js#L5934（未模块化前，锚点已核实）
-            backend_ref: [chip_distribution]       # blueprint 模块锚点（示例，建map时须核实回填）
+            backend_ref: [chip_distribution]       # 模块锚点（示例，建map时须核实回填；缺口期留空即自动上榜）
             data_flow: df_chip_avg_cost            # dataflowgraph 节点锚点（示例，建map时须核实回填）
-            api: /api/chips/avg_cost               # 后端接口（示例，建map时须核实回填；缺口期填 GAP-F-xx）
             interaction: "¥开关控显隐；悬停出成本/数量"
             status: 已建                            # 已建/在建/未建/勿动/已退役
             acceptance: ACC-F-STOCKQ-COSTLINE
             do_not_touch: "plainLine 模板勿换回内置 priceLine（FEH-KLC-001）"
 ```
 
-### 4.3 六图对齐规则
+### 4.5 六图对齐规则
 - **三向锚定**：feature.backend_ref ↔ blueprint 模块 ↔ depgraph 节点，由既有 `panorama_alignment_gate`（commit 门禁）扩一个 frontend 维度巡检。
-- **候选池不对齐**：CAND 是未建的点子，无实体可对齐；**对齐发生在转正那一刻**——CAND 转正 commit 若涉前端，必须同 commit 登记 frontend_map 条目，否则门禁拦截（"自动对齐"=门禁强制，不靠自觉）。
+- **候选池不对齐**：CAND 是未建的点子，无实体可对齐；**对齐发生在转正那一刻**——CAND 转正 commit 若涉前端，必须同 commit 登记 frontend_map 条目+模块侧字段，否则门禁拦截。
 - **勿动项字段**（do_not_touch）：防"前脚说完后脚忘"的关键设计，会话接手时读本字段即知雷区。
-- **更新触发**：新页面/新功能/改交互/改接口四件事发生时同 commit 更新 map；既有对齐门禁报漂移时修正。
+- **更新触发**：新页面/新功能/改交互/改接口四件事发生时同 commit 更新；对齐门禁报漂移时修正。
+- **新模块注册门禁**：注册新模块必填 has_frontend（+理由/引用），否则门禁拦截。
 
-### 4.4 前沿演进方向（2026-08-31 搜索登记，第 4 轮产物）
-- 2026 行业主流形态=**组件注册表 + 机器可读单一真源**（shadcn 风格 registry endpoint、design system contracts 设计系统契约、MCP 工具供 AI 查询）——本草案 frontend_map + manifest.yaml 方向与主流吻合，且"机器可读契约防 AI 生成幻觉组件"正是弱模型防漂移的同思路。
+### 4.6 既有 frontend_model.yaml 处置（已裁定：删除重做）
+- 该文件自标"G0 前端未物理建立"，与"前端已建成运营"现实脱节，且多处引用已丢失的 frontend_principles.md——**内容为空壳、状态为假、引用悬空，无保留价值**。
+- 处置：建 frontend_map 同 commit **删除旧 stub**，其"前端模块注册+技术栈 SSoT"职责由新体系吸收（模块注册=统一对账字段；技术栈选型=frontend_map 头部 tech_stack 节），历史可从 git 查。
+
+### 4.7 前沿演进方向（2026-08-31 搜索登记，七轮审查第 4 轮产物）
+- 2026 行业主流形态=**组件注册表 + 机器可读单一真源**（shadcn 风格 registry endpoint、design system contracts 设计系统契约、MCP 工具供 AI 查询）——本方案"注册表+字段+派生查询"与主流吻合，且"机器可读契约防 AI 生成幻觉组件"正是弱模型防漂移的同思路。
 - 设计令牌（design tokens）：行业主流=W3C 格式 + Style Dictionary 转换管线——对单人项目过重，维持 CSS variables 单文件即够，不引入。
 - 视觉回归：行业主流=Chromatic（商业）——咱们 Playwright 截图+验收单是平替，够用。
 
 ---
 
-## 五、施工顺序（已定，五步走）
+## 五、施工顺序（已裁定，六步走）
 
 | 序 | 步 | 产出 | 理由 |
 |---|---|---|---|
-| 1 | 技术手册骨架+首批条目 | fe_handbook/ 四文件；首批收录本轮实证坑：plainLine 价签、points 只传 {value}、K 线价格域取值、破缓存机制、事件行收展、init 顺序契约（init→setSymbol→setPeriod→setDataLoader，forward/backward 返回空数组） | 零基建成本，下次开发立刻见效 |
+| 1 | 技术手册骨架+首批条目 | frontend_handbook/（按需建首批文件：klinecharts/browser_native/loading_vendor/project_conventions）；首批收录本轮实证坑：plainLine 价签、points 只传 {value}、K 线价格域取值、破缓存机制、事件行收展、init 顺序契约（init→setSymbol→setPeriod→setDataLoader，forward/backward 返回空数组） | 零基建成本，下次开发立刻见效 |
 | 2 | 验收单模板+样板单 | acceptance/ 目录 + ACC-F-STOCKQ-COSTLINE 样板 + 截图目检纪律写入手册 | 冻结标准，止住返工 |
 | 3 | 模块契约+成本线试点 | 薄事件总线（≤50 行）+ manifest.yaml + features/cost-line.js 抽离 | 用最爱改的功能验证契约 |
-| 4 | frontend_map 骨架 | YAML schema + 先录 stockq/overview 两页 + 接入对齐门禁 | 把前三件元数据汇成真源 |
+| 4a | frontend_map 骨架 | frontend_map.yaml（先录 stockq/overview 两页）+ 删除旧 frontend_model.yaml（同 commit）+ 接入对齐门禁 | 前端侧清单先立 |
+| 4b | 模块侧字段回填 | 模块注册体系加 has_frontend 三字段；用两本缺口总账 83+40 项作种子回填 | 对账机通电 |
+| 4c | 缺口视图派生器 | 生成器：从 map+模块字段自动出两本缺口视图；原总账停手工维护 | 手工记账终结 |
 | 5 | Playwright 冒烟测试 | 机断条项自动跑（pip 生态，与项目 Python 栈契合） | 图标消失类回归当场拦截 |
 
-## 六、待 Owner 裁定项（附 AI 推荐意见，Owner 点头即定）
+## 六、裁定记录（2026-08-31 全部落定）
 
-> 按项目铁律（不擅自定决策），AI 只给推荐，裁定权属 Owner。
+| # | 裁定项 | 结论 | 第一性原理依据 |
+|---|---|---|---|
+| 1 | 手册命名 | **frontend_handbook**（弃 fe 缩写） | 第一读者是 AI（含弱模型），零歧义优先于打字长度（Owner 提出，AI 附议） |
+| 2 | 手册分类 | **九类预留、按需建文件**（§1.2 表） | 按坑的技术成因分类，不按踩坑历史分类；编号段永预留 |
+| 3 | map 存储 | **混合制**：git YAML 真源（architecture_model/frontend/frontend_map.yaml）+ governance.db 派生副本 | 真源要审计链/diff/门禁可读→git；3000 模块联查→DB；同依赖全景图双态模式 |
+| 4 | 编号规则 | **F-\<页面\>-\<名\>** | 与 BM-/GAP-/CAND- 同风格，引用可机读解析 |
+| 5 | 缺口总账 | **停止手工维护，改自动派生视图**（升级为统一对账字段设计，§4.3） | 账本=事实的派生物，事实只登记一次（Owner 主推） |
+| 6 | frontend_model.yaml | **删除重做**（建 map 同 commit 删旧 stub，职责由新体系吸收） | 空壳+假状态+悬空引用，无沉没成本，不留"事实地雷"（Owner 裁定） |
 
-1. 手册命名 `fe_handbook`——**推荐采用**（短、机读友好，与 ruling_registry 风格一致）。
-2. 手册分文件粒度——**推荐按库四文件**（实证：AI_review_instructions 单文件 142KB 已超 Read 上限，单文件路线条目多了必撞墙）。
-3. frontend_map 真源路径——**推荐 `architecture_model/frontend/frontend_map.yaml`**（v0.2 修正：与既有 frontend_model.yaml 同区并存，不再放 architecture_model/ 根）。
-4. 功能点编号规则 F-<页面>-<名>——**推荐采用**（与 BM-/GAP-/CAND- 编号风格一致）。
-5. 缺口总账两册去留——**推荐改派生视图**（单一真源防双写漂移；总账曾被误删的教训指向真源集中+git 追踪）。
-6. **（v0.2 新增）frontend_model.yaml 漂移处理**：该 stub 自标"G0 前端未建立"，与"前端已建成运营"现实脱节，且多处引用 grep 不到的 frontend_principles.md——**推荐**：建 map 时同 commit 修正其状态（G0→实际档位），并核对其引用的 principles 文件去向；frontend_map 与其并存分工（§4.1）。
+## 七、审查与修订日志
 
-## 七、七轮审查日志（v0.1.0→v0.2.0，按 document_review_and_optimization_sop 执行）
-
-| 轮 | 发现 | 处置 |
-|---|---|---|
-| 1 基础设施盘点 | ✅ 锚点核验通过（app1.js:5934 plainLine 注册、panorama_alignment_gate.py 存在、_domain_frontend/ 在位）；⚠️ 新发现 architecture_model/frontend/frontend_model.yaml G0 stub 与现实脱节 | 修正草案路径建议+新增裁定项 6 |
-| 2 内容审查 | 自审 4 点成立（示例锚点未标注/机断过渡空窗/事件总线隐含工作量/库代码表缺失） | §1.2/§2.3/§3.3/§4.2 已修订 |
-| 3 缺失环节 | 缺更新触发机制（手册/map）、缺验收单修订权限、缺模块废弃流程 | §1.4/§2.1/§2.3/§3.2/§4.3 已补 |
-| 4 前沿搜索 | 2026 行业主流=注册表+机器可读契约，方向吻合 | §4.4 登记 |
-| 5 过度工程 | 四件套全过 system_charter §2 硬边界（单人/单机/零外部交付）；Style Dictionary/Chromatic 判定过重不引入 | 无修订，结论留痕 §4.4 |
-| 6 一致性 | 草案§四与 frontend_model.yaml 职责重叠 | §4.1 补分工声明 |
-| 7 形式规范 | v0.1 缺修订记录节 | 本节即修订记录 |
+| 版本 | 触发 | 发现 | 处置 |
+|---|---|---|---|
+| v0.1.0→v0.2.0 | 按新文档审查 SOP 七轮循环 | 4 自审点成立；frontend_model.yaml 漂移新发现；缺更新触发/验收单权限/模块废弃三机制；前沿方向获 2026 行业验证；无过度工程项；缺修订记录节 | 全部修入 v0.2.0 |
+| v0.2.0→v0.3.0 | Owner 六项裁定+第一性原理重推 | 命名机器可读性优先；分类法按成因不按历史；存储双态同依赖全景图；缺口总账升级统一对账；model stub 删除重做 | 全部修入 v0.3.0（§六裁定记录） |
 
 **修订记录**
 
 | 日期 | 版本 | 改动 | 为什么改 |
 |---|---|---|---|
 | 2026-08-31 | 0.1.0 | 初稿四件套 schema | Owner 指令出草案 |
-| 2026-08-31 | 0.2.0 | 七轮审查修订：4 自审点+盘点新发现（frontend_model.yaml）+3 缺失机制+前沿登记+形式补全 | 按新 SOP 狗食审查（dogfooding，用自己定的流程审自己） |
+| 2026-08-31 | 0.2.0 | 七轮审查修订 | 按新 SOP 狗食审查（dogfooding，用自己定的流程审自己） |
+| 2026-08-31 | 0.3.0 | 六项裁定落地：命名/九类分类/混合制存储/编号/统一对账字段/model 删除重做；§六转裁定记录；施工顺序扩为六步 | Owner 裁定收口，草案可转施工 |
