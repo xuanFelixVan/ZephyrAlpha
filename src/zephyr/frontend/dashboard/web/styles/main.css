@@ -238,12 +238,13 @@
   .klp-tfpop .tp-cell .ck{position:absolute;left:5px;top:2px;font-size:9px;font-style:normal;color:var(--accent)}
   .klp-tfpop .tp-hint{margin-top:10px;font-size:10px;color:var(--faint);line-height:1.6}
   .klp-tf-more{color:var(--faint)}
-  /* 时间轴模块（K 线与指标栏之间：日期刻度+事件圆形图标，底部拖拽柄调高） */
-  .klp-timeline{position:relative;flex:none;height:30px;margin-top:6px;background:var(--input);border-radius:6px}
+  /* 时间轴模块（K 线与指标栏之间：日期刻度，底部拖拽柄调高；margin 仅 1px——事件行紧贴上方） */
+  .klp-timeline{position:relative;flex:none;height:30px;margin-top:1px;background:var(--input);border-radius:6px}
   .klp-tl-track{position:absolute;inset:0;overflow:hidden;border-radius:6px}
   .klp-tl-date{position:absolute;top:50%;transform:translate(-50%,-50%);font-size:9.5px;color:var(--faint);white-space:nowrap}
-  /* 事件行（MACD 与时间轴之间：圆形图标带数字，紧挨时间轴上方但不在轨道上） */
-  .klp-evtrow{position:relative;flex:none;height:34px;margin-top:2px}
+  /* 事件行（MACD 与时间轴之间：独立模块，压扁 24px 紧贴时间轴；⚑ 开关整行收展，收掉后高度归零让 K 线变大） */
+  .klp-evtrow{position:relative;flex:none;height:24px;margin-top:2px;overflow:hidden;transition:height .2s,margin .2s,opacity .2s}
+  .klp-evtrow.collapsed{height:0;margin-top:0;opacity:0;pointer-events:none}
   .klp-tl-evt{position:absolute;top:50%;transform:translate(-50%,-50%);display:inline-flex;align-items:center;cursor:pointer;color:#EDEFF2;line-height:1}
   .klp-tl-evt:hover{color:var(--accent)}
   .klp-tl-evt svg{display:block}

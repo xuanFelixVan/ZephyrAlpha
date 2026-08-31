@@ -5929,6 +5929,21 @@ function sqInit(){
       return r;
     }
   });
+  /* 注册纯横线覆盖物（无任何文字/价签部件——彻底根除 priceLine 蓝色标签 bug） */
+  klinecharts.registerOverlay({
+    name:'plainLine',
+    totalStep:1,
+    needDefaultPointFigure:false,
+    needDefaultXAxisFigure:false,
+    needDefaultYAxisFigure:false,
+    createPointFigures:function(o){
+      var c=o.coordinates;
+      if(!c||!c.length) return [];
+      var x=c[0].x,y=c[0].y;
+      return [{type:'line',attrs:{coordinates:[{x:0,y:y},{x:9999,y:y}]},
+        styles:{color:o.styles?o.styles.line.color:'#F0B90B',style:o.styles?o.styles.line.style:'dashed',size:o.styles?o.styles.line.size:1.2}}];
+    }
+  });
   /* 注册自定义矩形覆盖物（KLineChart v10 无内置 rect） */
   klinecharts.registerOverlay({
     name:'rect',
@@ -6078,7 +6093,8 @@ function sqRenderHead(){
     +'<span class="klp-mark-tgl'+(klpMarks.bs?' on':'')+'" title="量化买卖点：±3 根摆动高低点信号标注（▲买 ▼卖，灰色弱提示）" onclick="klpTglMark(\'bs\',this)">⇅</span>'
     +'<span class="klp-mark-tgl'+(klpMarks.trade?' on':'')+'" title="真实成交买卖点：实盘/回测成交标记（红框 B=买入 绿框 S=卖出）" onclick="klpTglMark(\'trade\',this)">◍</span>'
     +'<span class="klp-mark-tgl'+(klpMarks.chip?' on':'')+'" title="筹码峰：48 桶成本分布+POC 成本线+获利比例，随光标重算" onclick="klpTglMark(\'chip\',this)">▤</span>'
-    +'<span class="klp-mark-tgl'+(klpMarks.evt?' on':'')+'" title="事件时间线：财报/解禁/宏观事件图标，点击查看详情" onclick="klpTglMark(\'evt\',this)">⚑</span>'
+    +'<span class="klp-mark-tgl'+(klpMarks.evt?' on':'')+'" title="事件时间线：财报/解禁/宏观事件图标（整行收展），点击查看详情" onclick="klpTglMark(\'evt\',this)">⚑</span>'
+    +'<span class="klp-mark-tgl'+(klpMarks.cost?' on':'')+'" title="成本线：筹码峰平均成本横线（黄色虚线，悬停显示成本/数量）" onclick="klpTglMark(\'cost\',this)">¥</span>'
     +'</span>'
     +'<span class="sq-togs"><span class="sq-fb" onclick="fbReport(\'chart\',\'K线工作台（'+p.nm+'）\',this)">⚑报错</span></span>';
   document.getElementById('sq-head').innerHTML=h;
@@ -6122,7 +6138,7 @@ function klpToggleDrawCol(){
   if(klpChart) setTimeout(function(){ klpChart.resize(); },220);
 }
 /* ==================== v4.4 主图标注层（量化买卖点/真实成交/筹码峰+成本线/事件图标——overlay 分组实现，与画线 draw 组隔离互不干扰） ==================== */
-var klpMarks={bs:true,trade:true,chip:true,evt:true,cost:false};   /* 标注开关状态（cost 废弃：白色持仓成本线已并入黄色筹码峰平均成本线，悬停显示成本/数量——Owner 裁定只留黄线） */
+var klpMarks={bs:true,trade:true,chip:true,evt:true,cost:true};   /* 标注开关状态（cost=黄色成本线独立开关，与筹码峰分布模块分开控制） */
 function klpTglMark(k,btn){
   klpMarks[k]=!klpMarks[k];
   if(btn) btn.classList.toggle('on',klpMarks[k]);
@@ -6133,12 +6149,14 @@ function klpRefreshMarks(){
   klpChart.removeOverlay({groupId:'marks'});
   klpChart.removeOverlay({groupId:'trades'});
   klpChart.removeOverlay({groupId:'chip'});
+  klpChart.removeOverlay({groupId:'cost'});
   setTimeout(function(){   /* 等 setSymbol/setPeriod 触发的 dataLoader 回调落数 */
     if(!klpChart) return;
     var d=klpChart.getDataList?klpChart.getDataList():[];
     if(!d.length) return;
     if(klpMarks.bs) klpRenderBS(d);
     if(klpMarks.trade) klpRenderTrades(d);
+    if(klpMarks.cost) klpRenderCostLine(d);   /* 黄色成本线独立开关（¥） */
     /* 筹码峰独立模块显隐（collapsed 切换影响中栏宽度，需 resize） */
     var chipWrap=document.getElementById('klp-chip');
     if(chipWrap){
@@ -6147,7 +6165,14 @@ function klpRefreshMarks(){
       if(wasCollapsed===klpMarks.chip) setTimeout(function(){ if(klpChart) klpChart.resize(); },220);
     }
     if(klpMarks.chip) klpRenderChip(d);
-    klpTimelineRender();   /* 事件图标只在时间轴显示（K 线上不再铺，v4.6） */
+    /* ⚑ 事件开关=事件行整行模块收展（高度收掉让 K 线变大；时间轴不受影响常显） */
+    var evtRow=document.getElementById('klp-evtrow');
+    if(evtRow){
+      var evWasCollapsed=evtRow.classList.contains('collapsed');
+      evtRow.classList.toggle('collapsed',!klpMarks.evt);
+      if(evWasCollapsed===klpMarks.evt) setTimeout(function(){ if(klpChart) klpChart.resize(); },220);
+    }
+    klpTimelineRender();   /* 事件图标只在事件行显示（K 线上不再铺，v4.6） */
   },0);
 }
 /* 量化买卖点：±3 摆动高低点（旧版 sqBS 同口径），深灰底气泡框弱提示（与真实成交红绿强提示区分） */
@@ -6200,17 +6225,18 @@ function klpCostTipShow(){
   }
 }
 function klpCostTipHide(){ var tip=document.getElementById('klp-cost-tip'); if(tip) tip.style.display='none'; }
-/* 筹码峰：主图成本线（priceLine 琥珀虚线=平均成本）+ 独立模块刷新（canvas 分布图+信息面板） */
-function klpRenderChip(d){
-  var upto=d.length-1;
-  var c=klpChipCalc(d,upto);
-  klpChart.createOverlay({name:'priceLine',groupId:'chip',lock:true,
-    points:[{value:c.avgCost}],   /* 同成本线：priceLine 只传 value，传 timestamp 锚定异常线体不渲染 */
-    needDefaultYAxisFigure:false,   /* 左侧常驻价签（蓝色 113.85）隐藏——悬停才显示成本/数量（Owner 裁定） */
-    styles:{line:{color:'#F0B90B',style:'dashed',size:1.2},text:{color:'rgba(0,0,0,0)',backgroundColor:'rgba(0,0,0,0)',borderColor:'rgba(0,0,0,0)',size:0,paddingLeft:0,paddingRight:0,paddingTop:0,paddingBottom:0}},   /* text 全透明——priceLine 线端常驻价签（库默认蓝底 113.85）v10 不认 show:false，透明化彻底隐藏（Owner 要求删除；悬停才显示） */
+/* 黄色成本线（独立 groupId 'cost'，¥ 开关控制；plainLine 纯横线模板无文字/价签部件；悬停显示成本/数量） */
+function klpRenderCostLine(d){
+  var c=klpChipCalc(d,d.length-1);
+  klpChart.createOverlay({name:'plainLine',groupId:'cost',lock:true,
+    points:[{value:c.avgCost}],
+    styles:{line:{color:'#F0B90B',style:'dashed',size:1.2}},
     onMouseEnter:function(){ klpCostTipShow(); return true; },
     onMouseLeave:function(){ klpCostTipHide(); return true; }});
-  klpChipRender(upto);
+}
+/* 筹码峰：独立模块刷新（canvas 分布图+信息面板；主图黄线已拆到 klpRenderCostLine，由 ¥ 独立开关） */
+function klpRenderChip(d){
+  klpChipRender(d.length-1);
 }
 /* 筹码分布计算（48 桶；百分位区间/集中度/重合度/POC/平均成本——演示口径） */
 function klpChipCalc(d,upto){

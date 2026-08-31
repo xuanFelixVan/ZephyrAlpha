@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>KLineChart 黑底演示 — ZephyrAlpha</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#000; color:#EDEFF2; font-family:"Segoe UI",Roboto,"Helvetica Neue","PingFang SC","Microsoft YaHei",sans-serif; overflow:hidden; }
+  #app { display:flex; width:100vw; height:100vh; }
+  .toolbar { width:48px; background:#0D0D0D; border-right:1px solid #1A1C1E; display:flex; flex-direction:column; align-items:center; padding-top:8px; gap:4px; }
+  .toolbar .tb-item { width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:6px; cursor:pointer; color:#A0A6AD; font-size:16px; position:relative; }
+  .toolbar .tb-item:hover, .toolbar .tb-item.on { background:#1A1C1E; color:#EDEFF2; }
+  .toolbar .tb-sep { width:24px; height:1px; background:#1A1C1E; margin:4px 0; }
+  .toolbar .tb-sub { position:absolute; left:44px; top:0; background:#121212; border:1px solid #2E2E2E; border-radius:6px; padding:4px 0; min-width:140px; display:none; z-index:100; }
+  .toolbar .tb-item:hover .tb-sub { display:block; }
+  .toolbar .tb-sub .tb-sub-item { padding:6px 12px; font-size:12px; color:#A0A6AD; cursor:pointer; white-space:nowrap; }
+  .toolbar .tb-sub .tb-sub-item:hover { background:#1A1C1E; color:#EDEFF2; }
+  .main { flex:1; display:flex; flex-direction:column; position:relative; }
+  .main-header { height:36px; display:flex; align-items:center; padding:0 12px; gap:12px; border-bottom:1px solid #1A1C1E; font-size:12px; }
+  .main-header .sym { font-weight:600; font-size:14px; }
+  .main-header .px { color:#CA3F64; font-weight:600; }
+  .main-header .pc { color:#CA3F64; }
+  .main-header .tf { display:flex; gap:2px; }
+  .main-header .tf span { padding:2px 8px; border-radius:4px; cursor:pointer; color:#A0A6AD; }
+  .main-header .tf span.on { background:#1A1C1E; color:#EDEFF2; }
+  .main-header .acts { margin-left:auto; display:flex; gap:8px; }
+  .main-header .acts span { padding:2px 8px; border:1px solid #2E2E2E; border-radius:4px; cursor:pointer; color:#A0A6AD; font-size:11px; }
+  .main-header .acts span:hover { border-color:#3D8BFF; color:#EDEFF2; }
+  #chart { flex:1; min-height:0; }
+  .panel { width:280px; background:#0D0D0D; border-left:1px solid #1A1C1E; display:flex; flex-direction:column; }
+  .panel-sec { border-bottom:1px solid #1A1C1E; padding:10px 12px; }
+  .panel-sec h4 { font-size:11px; color:#59626D; font-weight:500; letter-spacing:.1em; margin-bottom:8px; }
+  .panel-sec .kv { display:flex; justify-content:space-between; font-size:12px; padding:3px 0; }
+  .panel-sec .kv .k { color:#A0A6AD; }
+  .panel-sec .kv .v { color:#EDEFF2; font-variant-numeric:tabular-nums; }
+  .panel-sec .kv .v.up { color:#CA3F64; }
+  .panel-sec .kv .v.down { color:#25A750; }
+  .statusbar { height:28px; background:#0D0D0D; border-top:1px solid #1A1C1E; display:flex; align-items:center; padding:0 12px; font-size:11px; color:#59626D; gap:16px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="toolbar">
+    <div class="tb-item on" title="十字光标">+
+      <div class="tb-sub">
+        <div class="tb-sub-item">十字光标</div>
+        <div class="tb-sub-item">光标</div>
+      </div>
+    </div>
+    <div class="tb-sep"></div>
+    <div class="tb-item" title="趋势线">&#47;
+      <div class="tb-sub">
+        <div class="tb-sub-item">线段 Alt+T</div>
+        <div class="tb-sub-item">箭头</div>
+        <div class="tb-sub-item">射线</div>
+        <div class="tb-sub-item">直线</div>
+        <div class="tb-sub-item">水平线段</div>
+        <div class="tb-sub-item">水平射线 Alt+J</div>
+        <div class="tb-sub-item">水平直线 Alt+H</div>
+        <div class="tb-sub-item">垂直直线 Alt+V</div>
+      </div>
+    </div>
+    <div class="tb-item" title="通道">&#8741;
+      <div class="tb-sub">
+        <div class="tb-sub-item">价格通道线</div>
+        <div class="tb-sub-item">平行直线</div>
+        <div class="tb-sub-item">平行射线</div>
+      </div>
+    </div>
+    <div class="tb-item" title="斐波那契">&#9792;
+      <div class="tb-sub">
+        <div class="tb-sub-item">斐波那契回撤 Ctrl+Alt+F</div>
+        <div class="tb-sub-item">斐波那契扩展</div>
+        <div class="tb-sub-item">斐波那契扇形</div>
+        <div class="tb-sub-item">斐波那契时区</div>
+        <div class="tb-sub-item">斐波那契通道</div>
+        <div class="tb-sub-item">斐波那契楔形</div>
+        <div class="tb-sub-item">斐波那契圆</div>
+        <div class="tb-sub-item">斐波那契螺旋</div>
+        <div class="tb-sub-item">斐波那契速度阻力弧</div>
+      </div>
+    </div>
+    <div class="tb-item" title="江恩">&#9737;
+      <div class="tb-sub">
+        <div class="tb-sub-item">江恩扇</div>
+        <div class="tb-sub-item">江恩箱</div>
+        <div class="tb-sub-item">江恩正方形</div>
+        <div class="tb-sub-item">江恩角度线</div>
+      </div>
+    </div>
+    <div class="tb-item" title="形态">&#9680;
+      <div class="tb-sub">
+        <div class="tb-sub-item">XABCD 形态</div>
+        <div class="tb-sub-item">ABCD 形态</div>
+        <div class="tb-sub-item">三角形形态</div>
+        <div class="tb-sub-item">三驱动形态</div>
+        <div class="tb-sub-item">头肩形态</div>
+        <div class="tb-sub-item">艾略特波浪</div>
+        <div class="tb-sub-item">周期线</div>
+        <div class="tb-sub-item">时间周期</div>
+        <div class="tb-sub-item">正弦波</div>
+      </div>
+    </div>
+    <div class="tb-sep"></div>
+    <div class="tb-item" title="几何图形">&#9635;
+      <div class="tb-sub">
+        <div class="tb-sub-item">矩形</div>
+        <div class="tb-sub-item">椭圆</div>
+        <div class="tb-sub-item">三角形</div>
+        <div class="tb-sub-item">多边形</div>
+        <div class="tb-sub-item">路径</div>
+        <div class="tb-sub-item">画笔</div>
+        <div class="tb-sub-item">荧光笔</div>
+      </div>
+    </div>
+    <div class="tb-item" title="标注">&#9998;
+      <div class="tb-sub">
+        <div class="tb-sub-item">文本</div>
+        <div class="tb-sub-item">标注框</div>
+        <div class="tb-sub-item">价格标签</div>
+        <div class="tb-sub-item">价格注释</div>
+        <div class="tb-sub-item">箭头标记</div>
+        <div class="tb-sub-item">图标</div>
+        <div class="tb-sub-item">竖线</div>
+      </div>
+    </div>
+    <div class="tb-item" title="预测测量">&#8987;
+      <div class="tb-sub">
+        <div class="tb-sub-item">多头仓位</div>
+        <div class="tb-sub-item">空头仓位</div>
+        <div class="tb-sub-item">预测</div>
+        <div class="tb-sub-item">日期范围</div>
+        <div class="tb-sub-item">价格范围</div>
+        <div class="tb-sub-item">日期价格范围</div>
+      </div>
+    </div>
+    <div class="tb-sep"></div>
+    <div class="tb-item" title="清除全部">&#128465;</div>
+  </div>
+
+  <div class="main">
+    <div class="main-header">
+      <span class="sym">贵州茅台</span>
+      <span style="color:#59626D">600519.SH</span>
+      <span class="px">1,712.50</span>
+      <span class="pc">+0.86%</span>
+      <div class="tf">
+        <span>分时</span><span>1分</span><span>5分</span><span>15分</span><span>30分</span><span>60分</span><span class="on">日</span><span>周</span><span>月</span>
+      </div>
+      <div class="acts">
+        <span onclick="addMA()">+MA</span>
+        <span onclick="addBOLL()">+BOLL</span>
+        <span onclick="addVOL()">+VOL</span>
+        <span onclick="addMACD()">+MACD</span>
+        <span onclick="addKDJ()">+KDJ</span>
+        <span onclick="addRSI()">+RSI</span>
+        <span onclick="clearAll()">清除</span>
+      </div>
+    </div>
+    <div id="chart"></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-sec">
+      <h4>五档挂单</h4>
+      <div class="kv"><span class="k">卖5</span><span class="v">1,720.00 <span style="color:#59626D">12</span></span></div>
+      <div class="kv"><span class="k">卖4</span><span class="v">1,718.50 <span style="color:#59626D">8</span></span></div>
+      <div class="kv"><span class="k">卖3</span><span class="v">1,716.00 <span style="color:#59626D">21</span></span></div>
+      <div class="kv"><span class="k">卖2</span><span class="v">1,714.50 <span style="color:#59626D">15</span></span></div>
+      <div class="kv"><span class="k">卖1</span><span class="v">1,713.00 <span style="color:#59626D">33</span></span></div>
+      <div style="height:1px;background:#2E2E2E;margin:4px 0"></div>
+      <div class="kv"><span class="k">买1</span><span class="v">1,712.00 <span style="color:#59626D">42</span></span></div>
+      <div class="kv"><span class="k">买2</span><span class="v">1,711.50 <span style="color:#59626D">26</span></span></div>
+      <div class="kv"><span class="k">买3</span><span class="v">1,710.00 <span style="color:#59626D">51</span></span></div>
+      <div class="kv"><span class="k">买4</span><span class="v">1,708.50 <span style="color:#59626D">18</span></span></div>
+      <div class="kv"><span class="k">买5</span><span class="v">1,706.00 <span style="color:#59626D">29</span></span></div>
+    </div>
+    <div class="panel-sec">
+      <h4>关键数据</h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px 12px">
+        <div class="kv"><span class="k">最高</span><span class="v">1,725.00</span></div>
+        <div class="kv"><span class="k">最低</span><span class="v">1,698.00</span></div>
+        <div class="kv"><span class="k">开盘</span><span class="v">1,701.00</span></div>
+        <div class="kv"><span class="k">昨收</span><span class="v">1,698.00</span></div>
+        <div class="kv"><span class="k">量比</span><span class="v">0.86</span></div>
+        <div class="kv"><span class="k">成交量</span><span class="v">2.41万手</span></div>
+        <div class="kv"><span class="k">成交额</span><span class="v">41.2亿</span></div>
+        <div class="kv"><span class="k">振幅</span><span class="v">1.59%</span></div>
+        <div class="kv"><span class="k">换手</span><span class="v">0.19%</span></div>
+        <div class="kv"><span class="k">涨停</span><span class="v up">1,867.80</span></div>
+        <div class="kv"><span class="k">跌停</span><span class="v down">1,528.20</span></div>
+        <div class="kv"><span class="k">市盈TTM</span><span class="v">21.8</span></div>
+      </div>
+    </div>
+    <div class="panel-sec">
+      <h4>股性数据</h4>
+      <div class="kv"><span class="k">涨停成功(近1年)</span><span class="v">1次</span></div>
+      <div class="kv"><span class="k">涨停被砸</span><span class="v">0次</span></div>
+      <div class="kv"><span class="k">封板成功率</span><span class="v">100%（1/1）</span></div>
+      <div class="kv"><span class="k">次日高开概率</span><span class="v">62%</span></div>
+      <div class="kv"><span class="k">次日平均涨幅</span><span class="v up">+1.4%</span></div>
+    </div>
+    <div class="panel-sec">
+      <h4>财务解读</h4>
+      <div class="kv"><span class="k">ROE(TTM)</span><span class="v">26.4%</span></div>
+      <div class="kv"><span class="k">毛利率</span><span class="v">91.8%</span></div>
+      <div class="kv"><span class="k">净利率</span><span class="v">52.1%</span></div>
+      <div class="kv"><span class="k">营收(一季)</span><span class="v">514.4亿 +10.7%</span></div>
+      <div class="kv"><span class="k">净利(一季)</span><span class="v">268.5亿 +11.6%</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="statusbar">
+  <span>当前委托(0)</span>
+  <span>历史委托</span>
+  <span>当前仓位(0)</span>
+  <span>历史仓位</span>
+  <span>资产</span>
+  <span>策略</span>
+</div>
+
+<script src="klinecharts.min.js"></script>
+<script>
+/* 生成模拟 K 线数据 */
+function genCandles(seed,n){
+  var data=[],price=100+(seed%50);
+  function rnd(){ seed=(seed*16807)%2147483647; return seed/2147483647; }
+  var dt=new Date(2025,0,1);
+  for(var i=0;i<n;i++){
+    var o=price, c=o+(rnd()-0.48)*o*0.03;
+    var h=Math.max(o,c)+rnd()*o*0.008, l=Math.min(o,c)-rnd()*o*0.008;
+    var v=Math.floor(rnd()*10000)+5000;
+    data.push({timestamp:dt.getTime(),open:+o.toFixed(2),high:+h.toFixed(2),low:+l.toFixed(2),close:+c.toFixed(2),volume:v});
+    price=c;
+    dt.setDate(dt.getDate()+1);
+  }
+  return data;
+}
+
+/* 初始化图表 — KLineChart v10 API */
+var chart = klinecharts.init('chart', {
+  styles: {
+    grid: {
+      horizontal: { color:'#171717', size:1 },
+      vertical: { color:'#171717', size:1 }
+    },
+    candle: {
+      bar: {
+        upColor:'#CA3F64', downColor:'#25A750',
+        upBorderColor:'#CA3F64', downBorderColor:'#25A750',
+        upWickColor:'#CA3F64', downWickColor:'#25A750'
+      },
+      priceMark: {
+        high: { color:'#A0A6AD', textSize:10 },
+        low: { color:'#A0A6AD', textSize:10 },
+        last: {
+          lineColor:'#CA3F64',
+          textBackgroundColor:'#CA3F64',
+          textColor:'#000000'
+        }
+      }
+    },
+    indicator: {
+      ohlc: { upColor:'#CA3F64', downColor:'#25A750' },
+      bars: [{ style:'fill', upColor:'#CA3F64', downColor:'#25A750' }],
+      lines: [
+        { color:'#FFA726', size:1.3 },
+        { color:'#EC407A', size:1.3 },
+        { color:'#27C6DA', size:1.3 },
+        { color:'#3D8BFF', size:1.3 },
+        { color:'#AB47BC', size:1.3 }
+      ],
+      circle: { upColor:'#CA3F64', downColor:'#25A750' },
+      lastValueMark: { text: { color:'#A0A6AD', size:10 } }
+    },
+    xAxis: {
+      axisLine: { color:'#2E2E2E' },
+      tickText: { color:'#59626D', size:10 },
+      tickLine: { color:'#2E2E2E' }
+    },
+    yAxis: {
+      axisLine: { color:'#2E2E2E' },
+      tickText: { color:'#C6C6C6', size:12 },
+      tickLine: { color:'#2E2E2E' }
+    },
+    crosshair: {
+      horizontal: { line: { color:'#EDEFF2', style:'dash' }, text: { backgroundColor:'#1A1C1E', color:'#EDEFF2' } },
+      vertical: { line: { color:'#EDEFF2', style:'dash' }, text: { backgroundColor:'#1A1C1E', color:'#EDEFF2' } }
+    },
+    separator: { color:'#1A1C1E' }
+  }
+});
+
+/* v10 必须按顺序：setSymbol → setPeriod → setDataLoader */
+chart.setSymbol({ ticker: '600519.SH', pricePrecision: 2, volumePrecision: 0 });
+chart.setPeriod({ span: 1, type: 'day' });
+chart.setDataLoader({
+  getBars: ({ callback }) => {
+    callback(genCandles(42, 300));
+  }
+});
+
+/* 添加指标 */
+function addMA() { chart.createIndicator({name:'MA',calcParams:[5,10,20]}, true, {id:'candle_pane'}); }
+function addBOLL() { chart.createIndicator({name:'BOLL'}, true, {id:'candle_pane'}); }
+function addVOL() { chart.createIndicator({name:'VOL'}, false, {height:80}); }
+function addMACD() { chart.createIndicator({name:'MACD'}, false, {height:100}); }
+function addKDJ() { chart.createIndicator({name:'KDJ'}, false, {height:100}); }
+function addRSI() { chart.createIndicator({name:'RSI'}, false, {height:80}); }
+function clearAll() {
+  chart.removeIndicator({ paneId: 'candle_pane' });
+  var panes = chart.getDrawPanes ? chart.getDrawPanes() : [];
+  for (var i = panes.length - 1; i > 0; i--) {
+    chart.removeIndicator({ paneId: panes[i].getId() });
+  }
+}
+
+/* 默认添加 MA + VOL + MACD */
+addMA();
+addVOL();
+addMACD();
+</script>
+</body>
+</html>
