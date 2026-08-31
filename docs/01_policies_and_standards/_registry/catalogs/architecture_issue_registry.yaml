@@ -21257,3 +21257,29 @@ entries:
   status: resolved
   created: '2026-08-31'
   last_updated: '2026-08-31'
+- issue_id: '#ARCH-307'
+  title: WriteAudit MemoryError 修复 + O2 逃生通道升级阻断落地（#ARCH-264 裁定执行收口）
+  severity: P1
+  category: 治理流程
+  adjudication: >-
+    2026-08-31 AI-DRIFT-001 续作（Owner 指令处置两新发现+O2）。①MemoryError：write_audit_daemon
+    _sha256_file 分块读无大小上限，08-31 RDCW 回调线程遇大文件炸死（事件静默丢失）——修：
+    _HASH_MAX_BYTES=64MB 上限（超限跳过 hash 记录照落）+读期异常容错从 OSError 扩全异常
+    （fail-open 取证语义）；19/19 测全绿。②exact_attribution=false 核查：SACL 4663 精确层
+    按设计为 P2 可选手动/计划任务随跑（当前未挂计划任务=未启用，守护记录恒 false 属设计一致，
+    非回归；启用路径=注册计划任务跑 collect_write_audit_4663.py，水位线增量幂等）。
+    ③O2 升级阻断：网关 commit 入口 allow_overlap=True 时先查滚动窗（24h 内热文件 overlap
+    ≥5 次 → COMMIT_FAILED 阻断，判定先于 gate/stage/commit 副作用；审计文件缺失 fail-open
+    不卡工作流）。阈值校准基于计量积累实证：2026-08-26~31 近 24h 热文件 overlap 仅 3 条、
+    单 session 最多 2 条，阈值 5 不误伤。TDD：新测先行 RED→GREEN（_check_hot_overlap_escalation
+    四分支：阻断/他会话不受影响/窗外旧记录不计/文件缺失 fail-open），gateway 73 测+
+    write_audit 19 测全绿。
+  impact:
+    - 'src/zephyr/gov_enforcement/rule_bridge/write_audit_daemon.py（_HASH_MAX_BYTES+全异常容错）'
+    - 'src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（_check_hot_overlap_escalation+commit 入口挂接）'
+    - 'tests/governance/rule_bridge/test_write_audit_daemon.py（TestHashResilience 2 例）'
+    - 'tests/git/test_git_commit_gateway.py（test_hot_overlap_escalation_threshold）'
+  fix_phase: '已落地（2026-08-31，AI-DRIFT-001）；SACL 精确层启用与否由 Owner 按需挂计划任务（非缺陷）'
+  status: resolved
+  created: '2026-08-31'
+  last_updated: '2026-08-31'

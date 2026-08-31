@@ -2161,9 +2161,7 @@ class TestRunGitPipeRedirect:
         """256KB stderr 完整读回 + 非零 returncode 契约不变。"""
         gw = self._gw(tmp_path)
         size = 256 * 1024
-        r = gw.run_git(
-            [sys.executable, "-c", f"import sys; sys.stderr.write('E' * {size}); sys.exit(3)"]
-        )
+        r = gw.run_git([sys.executable, "-c", f"import sys; sys.stderr.write('E' * {size}); sys.exit(3)"])
         assert r.returncode == 3, f"returncode 契约破坏: {r.returncode}"
         assert len(r.stderr) == size, f"stderr 截断: {len(r.stderr)} != {size}"
         assert set(r.stderr) == {"E"}
@@ -2275,3 +2273,49 @@ def test_allow_overlap_usage_audit(tmp_path: Path) -> None:
     assert rec["files"] == 2
     assert rec["hot_files"] == [hot]
     assert rec["ts"]
+
+
+def test_hot_overlap_escalation_threshold(tmp_path: Path) -> None:
+    """O2 升级阻断（#ARCH-264）：滚动 24h 内热文件 allow_overlap ≥5 次 → 第 6 次起阻断。
+
+    数据实证校准（2026-08-26~31）：近 24h 热文件 overlap 事件仅 3 条、单 session 最多 2 条，
+    阈值 5 不误伤正常工作；只有"逃生通道变主路径"才触发。
+    """
+    import json
+    from datetime import datetime, timedelta, timezone
+
+    from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import _check_hot_overlap_escalation
+
+    audit_dir = tmp_path / ".runtime" / "gate_audit"
+    audit_dir.mkdir(parents=True)
+    usage = audit_dir / "allow_overlap_usage.jsonl"
+    now = datetime.now(timezone.utc)
+    hot = "docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml"
+    # 近 24h 内 5 次热文件 overlap
+    rows = [
+        {"ts": (now - timedelta(hours=1)).isoformat(), "session": "sess-x", "files": 1, "hot_files": [hot]}
+        for _ in range(5)
+    ]
+    usage.write_text("\n".join(json.dumps(r) for r in rows) + "\n", encoding="utf-8")
+
+    blocked, reason = _check_hot_overlap_escalation(tmp_path, "sess-x")
+    assert blocked, "5 次热文件 overlap 后第 6 次必须阻断"
+    assert "allow_overlap" in reason or "overlap" in reason
+
+    # 其他会话不受影响（阻断按 session 计数）
+    blocked_other, _ = _check_hot_overlap_escalation(tmp_path, "sess-other")
+    assert not blocked_other
+
+    # 24h 窗外不计（旧记录不背锅）
+    old_rows = [
+        {"ts": (now - timedelta(days=2)).isoformat(), "session": "sess-y", "files": 1, "hot_files": [hot]}
+        for _ in range(9)
+    ]
+    usage.write_text("\n".join(json.dumps(r) for r in old_rows) + "\n", encoding="utf-8")
+    blocked_old, _ = _check_hot_overlap_escalation(tmp_path, "sess-y")
+    assert not blocked_old
+
+    # 审计文件缺失/损坏 → fail-open 不阻断（治理降级不卡工作流）
+    usage.unlink()
+    blocked_no_file, _ = _check_hot_overlap_escalation(tmp_path, "sess-x")
+    assert not blocked_no_file

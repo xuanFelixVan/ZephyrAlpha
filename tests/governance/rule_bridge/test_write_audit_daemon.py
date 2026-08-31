@@ -48,7 +48,9 @@ def root(tmp_path: Path) -> Path:
 @pytest.fixture()
 def handler(root: Path, monkeypatch: pytest.MonkeyPatch) -> wad.WriteAuditHandler:
     """隔离宿主进程/注册表的 handler（快照与归因确定性）。"""
-    monkeypatch.setattr(wad, "_snapshot_processes", lambda: [{"pid": 4242, "name": "python.exe", "cmdline": "python x"}])
+    monkeypatch.setattr(
+        wad, "_snapshot_processes", lambda: [{"pid": 4242, "name": "python.exe", "cmdline": "python x"}]
+    )
     return wad.WriteAuditHandler(root)
 
 
@@ -107,7 +109,11 @@ class TestEventRecording:
 
     def test_write_event_five_elements(self, handler: wad.WriteAuditHandler, root: Path, monkeypatch) -> None:
         """写事件：五要素（ts/path/op/前后hash/归因）齐备。"""
-        monkeypatch.setattr(wad, "_load_session_map", lambda _r: {4242: {"session_id": "sess-w", "stale": False, "heartbeat_age_s": 1.0}})
+        monkeypatch.setattr(
+            wad,
+            "_load_session_map",
+            lambda _r: {4242: {"session_id": "sess-w", "stale": False, "heartbeat_age_s": 1.0}},
+        )
         target = root / "docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml"
         target.write_text("v: 2", encoding="utf-8")
         rec = handler.record("write", target)
@@ -135,6 +141,51 @@ class TestEventRecording:
         rec = handler.record("rename", src, dest_path=dst)
         assert rec["op"] == "rename" and rec["dest_path"] == "AGENTS.bak.md"
         assert "AGENTS.bak.md" in handler._hash_cache
+
+
+class TestHashResilience:
+    """#ARCH-306（2026-08-31）：_sha256_file 大文件/异常容错（08-31 MemoryError 实证裂缝）。"""
+
+    def test_oversized_file_returns_none_not_crash(self, root: Path) -> None:
+        """超过大小上限的文件：跳过 hash 返回 None，不抛异常（防 RDCW 回调线程炸死）。"""
+        big = root / "big.bin"
+        big.write_bytes(b"x" * 1024)  # 实际内容不重要，monkeypatch 压上限
+        monkeypatch_limit = 512  # 压上限模拟"大文件"判定路径
+        import zephyr.gov_enforcement.rule_bridge.write_audit_daemon as _wad
+
+        orig = _wad._HASH_MAX_BYTES
+        _wad._HASH_MAX_BYTES = monkeypatch_limit
+        try:
+            oversized = root / "oversized.bin"
+            oversized.write_bytes(b"y" * (monkeypatch_limit + 1))
+            assert _wad._sha256_file(oversized) is None
+            # 上限内文件照常 hash
+            small = root / "small.bin"
+            small.write_bytes(b"z" * 100)
+            assert _wad._sha256_file(small) is not None
+        finally:
+            _wad._HASH_MAX_BYTES = orig
+
+    def test_read_error_returns_none(self, root: Path) -> None:
+        """读取期非 OSError 异常（如 MemoryError）→ None 不炸（fail-open 取证语义）。"""
+        import zephyr.gov_enforcement.rule_bridge.write_audit_daemon as _wad
+
+        p = root / "AGENTS.md"
+        orig_open = _wad.open if hasattr(_wad, "open") else open
+
+        def _boom(*_a, **_kw):
+            raise MemoryError("simulated")
+
+        _wad_open_backup = _wad.__dict__.get("open")
+        _wad.open = _boom  # type: ignore[attr-defined]
+        try:
+            assert _wad._sha256_file(p) is None
+        finally:
+            if _wad_open_backup is not None:
+                _wad.open = _wad_open_backup  # type: ignore[attr-defined]
+            else:
+                del _wad.open  # type: ignore[attr-defined]
+        _ = orig_open
 
 
 class TestRecentEventsFor:

@@ -397,6 +397,63 @@ def _log_allow_overlap_usage(project_root: object, session_id: str, files: list[
         logger.debug("allow_overlap usage audit write failed (non-blocking)", exc_info=True)
 
 
+# O2 裁定（#ARCH-264）：热文件 allow_overlap 滚动窗升级阻断阈值。
+# 数据实证校准（2026-08-26~31 计量积累）：近 24h 热文件 overlap 事件仅 3 条、
+# 单 session 最多 2 条——阈值 5 不误伤正常工作，只有"逃生通道变主路径"才触发。
+_HOT_OVERLAP_WINDOW_SECONDS = 86400  # 24h 滚动窗
+_HOT_OVERLAP_BLOCK_THRESHOLD = 5  # 窗内 ≥5 次热文件 overlap → 后续阻断
+
+
+def _check_hot_overlap_escalation(project_root: object, session_id: str) -> tuple[bool, str]:
+    """滚动窗热文件 allow_overlap 升级判定（#ARCH-264 O2）。
+
+    Returns:
+        (blocked, reason)：session 在近 24h 内热文件 allow_overlap ≥阈值 → True+原因。
+        审计文件缺失/损坏/格式异常 → fail-open 不阻断（治理降级不卡工作流）。
+    """
+    try:
+        from datetime import datetime, timedelta, timezone  # noqa: PLC0415
+
+        usage = Path(str(project_root)) / ".runtime" / "gate_audit" / "allow_overlap_usage.jsonl"
+        if not usage.is_file():
+            return False, ""
+        cutoff = datetime.now(timezone.utc) - timedelta(seconds=_HOT_OVERLAP_WINDOW_SECONDS)
+        count = 0
+        for line in usage.read_text(encoding="utf-8").splitlines():
+            if not line.strip():
+                continue
+            try:
+                rec = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if rec.get("session") != session_id:
+                continue
+            if not rec.get("hot_files"):
+                continue
+            ts_raw = rec.get("ts") or rec.get("timestamp")
+            try:
+                ts = (
+                    datetime.fromisoformat(str(ts_raw).replace("Z", "+00:00"))
+                    if isinstance(ts_raw, str)
+                    else datetime.fromtimestamp(float(ts_raw), tz=timezone.utc)
+                )
+            except (ValueError, TypeError, OSError):
+                continue
+            if ts >= cutoff:
+                count += 1
+        if count >= _HOT_OVERLAP_BLOCK_THRESHOLD:
+            return True, (
+                f"session={session_id} 近 24h 热文件 allow_overlap 已 {count} 次（≥{_HOT_OVERLAP_BLOCK_THRESHOLD}）"
+                f"——逃生通道常态化即主路径（TRAE-079 fail 条件）。请改走正道：热文件写前读新"
+                f"（safe_write_text CAS 或 lock_files，trae_085）；确属文件锁不可用的 last-resort 场景，"
+                f"向 Owner 报备后人工放行。"
+            )
+        return False, ""
+    except Exception:  # noqa: BLE001 — 判定失败 fail-open 不阻断
+        logger.debug("hot overlap escalation check failed (fail-open)", exc_info=True)
+        return False, ""
+
+
 # P2-2b 治本（#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）：
 # git 命令 timeout 分级——原硬编码 120s 对所有 git 命令共用，导致快速读命令
 # （rev-parse/show/status）与慢速写命令（commit/merge）共用上限。改为按命令类型
@@ -1670,6 +1727,12 @@ class GitCommitGateway:
         if merge_finalize:
             full_message += f"\n[GW:{session_id}:merge]"
         if allow_overlap:
+            # O2 升级阻断（#ARCH-264）：滚动 24h 内热文件 allow_overlap ≥阈值 → 阻断，
+            # 防"逃生通道常态化变主路径"（TRAE-079 fail 条件的可执行化）。判定先于一切
+            # 副作用（gate/stage/commit 未开始），fail-open 语义不卡治理降级场景。
+            blocked, reason = _check_hot_overlap_escalation(self.project_root, session_id)
+            if blocked:
+                return CommitResult(status=CommitStatus.COMMIT_FAILED, message=reason)
             full_message += f"\n[GW:{session_id}:overlap]"
             # TRAE-079 铁律5：allow_overlap 降级为 last-resort（仅文件锁不可用时），落审计
             logger.warning(

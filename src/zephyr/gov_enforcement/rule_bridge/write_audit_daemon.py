@@ -188,6 +188,11 @@ _INTERESTING_PROCS: Final = frozenset(
 
 _HEARTBEAT_STALE_SECONDS: Final = 300  # session_registry 心跳超此值视为不活跃（仅标注不剔除）
 
+# #ARCH-306（2026-08-31）：hash 单文件大小上限——08-31 daemon 回调线程 MemoryError 实证
+# （RDCW 回调线程炸死后该目录事件静默丢失）。超限跳过 hash（记录照落，hash 字段 None），
+# 取证语义="文件太大没算 hash"优于"监视线程死亡"。
+_HASH_MAX_BYTES: Final = 64 * 1024 * 1024  # 64MB
+
 
 # ---------------------------------------------------------------------------
 # 基础助手
@@ -195,14 +200,20 @@ _HEARTBEAT_STALE_SECONDS: Final = 300  # session_registry 心跳超此值视为�
 
 
 def _sha256_file(path: Path) -> str | None:
-    """文件内容 sha256（前 16  hex）；不存在/不可读返回 None。"""
+    """文件内容 sha256（前 16 hex）；不存在/不可读/超上限/读期异常返回 None。
+
+    #ARCH-306：读期异常容错从 OSError 扩到全异常（MemoryError 实证）——
+    取证记录不因单文件 hash 失败而中断（fail-open 语义）。
+    """
     try:
+        if path.stat().st_size > _HASH_MAX_BYTES:
+            return None
         h = hashlib.sha256()
         with open(path, "rb") as fh:
             for chunk in iter(lambda: fh.read(65536), b""):
                 h.update(chunk)
         return h.hexdigest()[:16]
-    except OSError:
+    except Exception:  # noqa: BLE001 — 取证 fail-open：OSError/MemoryError 等一律 None
         return None
 
 
