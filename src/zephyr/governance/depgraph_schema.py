@@ -477,6 +477,10 @@ CREATE TABLE IF NOT EXISTS nodes_metadata (
     acquisition_method       TEXT    -- 获取方式（枚举真源·CHECK 约束）：self_build/opensource/borrow/deprecate
         CHECK (acquisition_method IS NULL OR acquisition_method IN ('self_build', 'opensource', 'borrow', 'deprecate')),
     acquisition_source       TEXT    -- 获取来源：开源链接/借鉴组件名/空
+    -- 前端覆盖三字段（migration 12）：重建保护字段——UPSERT 保存/恢复经此表
+    ,has_frontend            TEXT NOT NULL DEFAULT 'no'
+    ,no_frontend_reason      TEXT NOT NULL DEFAULT ''
+    ,frontend_ref            TEXT NOT NULL DEFAULT ''
 )
 """
 

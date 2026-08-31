@@ -3707,7 +3707,11 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
                     trust_zone               = COALESCE(NULLIF(EXCLUDED.trust_zone, ''), nodes_metadata.trust_zone),
                     deployment_lifecycle     = COALESCE(NULLIF(EXCLUDED.deployment_lifecycle, ''), nodes_metadata.deployment_lifecycle),
                     architecture_layer       = COALESCE(NULLIF(EXCLUDED.architecture_layer, ''), nodes_metadata.architecture_layer),
-                    last_updated             = EXCLUDED.last_updated
+                    last_updated             = EXCLUDED.last_updated,
+                    -- 前端覆盖三字段（migration 12）：has_frontend 的"空"哨兵是 'no' 不是 ''，需 CASE 防重建默认值回灌覆盖
+                    has_frontend            = CASE WHEN EXCLUDED.has_frontend = 'no' AND nodes_metadata.has_frontend <> 'no' THEN nodes_metadata.has_frontend ELSE EXCLUDED.has_frontend END,
+                    no_frontend_reason      = COALESCE(NULLIF(EXCLUDED.no_frontend_reason, ''), nodes_metadata.no_frontend_reason),
+                    frontend_ref            = COALESCE(NULLIF(EXCLUDED.frontend_ref, ''), nodes_metadata.frontend_ref)
                 """,
                 (_now_iso,),
             )
@@ -4224,7 +4228,11 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
                     tags                     = COALESCE(NULLIF(nodes.tags, ''), nm.tags, nodes.tags),
                     trust_zone               = COALESCE(NULLIF(nodes.trust_zone, ''), nm.trust_zone, nodes.trust_zone),
                     deployment_lifecycle     = COALESCE(NULLIF(nodes.deployment_lifecycle, ''), nm.deployment_lifecycle, nodes.deployment_lifecycle),
-                    architecture_layer       = COALESCE(NULLIF(nodes.architecture_layer, ''), nm.architecture_layer, nodes.architecture_layer)
+                    architecture_layer       = COALESCE(NULLIF(nodes.architecture_layer, ''), nm.architecture_layer, nodes.architecture_layer),
+                    -- 前端覆盖三字段（migration 12）：重建后 nodes 默认 'no'/''，须从 metadata 恢复（'no' 是 has_frontend 的空哨兵）
+                    has_frontend            = CASE WHEN nodes.has_frontend = 'no' AND nm.has_frontend <> 'no' THEN nm.has_frontend ELSE nodes.has_frontend END,
+                    no_frontend_reason      = COALESCE(NULLIF(nodes.no_frontend_reason, ''), nm.no_frontend_reason, nodes.no_frontend_reason),
+                    frontend_ref            = COALESCE(NULLIF(nodes.frontend_ref, ''), nm.frontend_ref, nodes.frontend_ref)
                 FROM nodes_metadata nm
                 WHERE nodes.path = nm.path
             """)

@@ -18,3 +18,11 @@ ALTER TABLE nodes ADD COLUMN IF NOT EXISTS no_frontend_reason TEXT NOT NULL DEFA
 ALTER TABLE nodes ADD COLUMN IF NOT EXISTS frontend_ref TEXT NOT NULL DEFAULT '';
 
 CREATE INDEX IF NOT EXISTS idx_nodes_has_frontend ON nodes(has_frontend);
+
+-- ============================================================
+-- 2. nodes_metadata 保护字段同步（裁定#209 Stage 2 机制：重建前 UPSERT 保存/重建后恢复）
+--    不加这三列 = 每次 generate_project_depgraph 重建运营态时三字段被重置（夜战实证丢值）
+-- ============================================================
+ALTER TABLE nodes_metadata ADD COLUMN IF NOT EXISTS has_frontend TEXT NOT NULL DEFAULT 'no';
+ALTER TABLE nodes_metadata ADD COLUMN IF NOT EXISTS no_frontend_reason TEXT NOT NULL DEFAULT '';
+ALTER TABLE nodes_metadata ADD COLUMN IF NOT EXISTS frontend_ref TEXT NOT NULL DEFAULT '';

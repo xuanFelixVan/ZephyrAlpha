@@ -195,7 +195,7 @@ pages:
             update_frequency: "分钟级"               # 实时推送/秒级/分钟级/日级——决定前端刷新策略，防给日频数据写秒级轮询
             user_action: "¥开关点击控显隐；悬停查看成本/数量；无拖拽无右键"  # 用户能干什么（不只是显示什么）——前端功能清单的核心
             fallback_behavior: "数据缺失→隐藏成本线+¥开关置灰；后端挂→显示'加载失败'提示"  # 后端挂了/数据缺失时前端显示什么——成本线图标消失事故就是没提前定义这个
-            screenshot_ref: "docs/03_modules/_domain_frontend/acceptance/screenshots/F-STOCKQ-COSTLINE-baseline.png"  # 验收基准截图路径，配合验收单做视觉回归
+            screenshot_ref: "src/zephyr/frontend/acceptance/baselines/F-STOCKQ-COSTLINE-baseline.png"  # 验收基准截图路径（png 合法家=src/zephyr/frontend/ 树，DCR-005 实证）
 ```
 
 ### 4.5 六图对齐规则
@@ -300,15 +300,18 @@ web/
 
 ### 9.5 夜战计划（Owner 睡后自主执行，自裁定协议在案）
 ```
-P0 补交全量建账 commit（42 页 318 功能点）
-P1 结构设计定稿（本节）+ TRAE-086 立项 + 入口挂接
-P2 数据通道基建：后端 HTTP API 服务（挂 dashboard_feeds 9 条+行情源）+ services/api.js
-P3 stockq 打样全闭环：K线/筹码峰/成本线接真数据 → 验收单 → 冒烟网全绿
-P4 逐页拆分战役：按 DS-11/TRAE-086 能拆全拆 → manifest 登记 → 每页过冒烟网才提交
-P5 scanner 升级（manifest 优先）重建 frontend_map（code_ref 指向拆后真实位置）
-P6 4c 派生全量缺口活账 + DS 视觉合规扫描（只读报告）
-P7 收口：晨报 + 全部网关提交
+P0 补交全量建账 commit（42 页 318 功能点）                     ✅ f77997f2
+P1 结构设计定稿（本节）+ TRAE-086 立项 + 入口挂接             ✅ 64fdf802
+P2 数据通道基建：api_server.py（FastAPI 只读 :8890）+ services/api.js  ✅ 53bdb4b6
+P3 stockq 打样全闭环：K线真源接通（300 根真实 bar，末收 1297.4 与 CH 一致） ✅ 53bdb4b6
+    （Playwright 自验截图 baseline 入库：src/zephyr/frontend/acceptance/baselines/）
+P4 逐页拆分战役                                                ⏸ 转多会话战役（理由见下）
+P5 scanner 升级（manifest 优先 merge）                         ⏸ 触发=拆分战役产出新 manifest 条目后
+P6 4c 派生全量缺口活账 + DS 视觉合规扫描                        ✅ A=317/B=1/C=0/D=0 + 违规 11 文件 79 色（报告 docs/_working/2026-09-01-ds-compliance-scan.md）
+P7 收口：晨报 + 全部网关提交                                    ✅ 本 commit
 ```
+**P4 转多会话的裁定（自裁定留痕）**：42 页全拆分是跨会话战役而非一夜活——每页需"拆件+验收单+冒烟+Owner 视觉抽验"闭环，仓促全拆=质量风险大于收益。今夜已交付其全部前置（契约/判据/工具链/冒烟网/合规扫描派单），下个会话从"重仓页优先"（warroom/live/position）开始按页推进即可，交接锚点=本草案+TRAE-086+frontend_handbook。
+**夜战实证新坑（已入册）**：Edit 改动被 IDE 脏缓冲区静默回拨两次（test_dashboard_smoke.py / construction_workflow_sop.md）——改后必须进程外核实（Select-String/git diff），已入 FEH-PC-005 ③。
 **自裁定协议**：客观专业架构师+第一性原理+长远战略+100% AI 开发现实+专业机构/量化社区实践→分析过程+裁定结果（commit message 留痕）；无法裁定→登记本节+跳过；堵塞且无法跳过→停止。
 **红线**：不碰 P-INDEX、不碰实盘写通道、不接需审批数据源、每页改动必过冒烟网+验收单才提交。
 
@@ -323,3 +326,4 @@ P7 收口：晨报 + 全部网关提交
 | 2026-08-31 | 0.4.1 | 4b 挂载点实证修正（depgraph nodes） | 施工中发现原假定错误 |
 | 2026-08-31 | 0.5.0 | §八 执行顺序总裁定：标准→冒烟网→全仪表盘翻新→并行派单；modlib 漏挂发现 | Owner 确认顺序，转入全线施工 |
 | 2026-08-31 | 0.6.0 | §九 拆分先行总裁定+夜战计划；§4.3 backend_ref 类型化（module/registry/table/api/none）；§9.2 七类文件夹结构+§9.3 命名规则；§9.4 TRAE-086 拆件铁律立项 | Owner 三点修正：引用类型扩展/先拆件再填图/结构先行 |
+| 2026-09-01 | 0.6.1 | 夜战收口：P0-P3/P6/P7 完成（建账/规则/数据通道/stockq 真源打样/缺口活账/DS 扫描）；**重大实证拦截**：depgraph 重建会重置新增字段（夜战丢值实证）→ nodes_metadata 保护字段链补齐三字段（migration 12 扩展+生成器 UPSERT/恢复双写）+端到端重建验证存活；P4 拆分战役转多会话（裁定留痕 §9.5） | 夜战收口 |

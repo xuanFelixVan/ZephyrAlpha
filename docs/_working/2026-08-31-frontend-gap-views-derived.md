@@ -4,7 +4,7 @@ ttl: task_bound
 
 > **派生物声明**：本文件由 `scripts/governance/d5_architecture/generators/generate_frontend_gap_views.py` 自动生成，**禁止手工修改**（手改会被下次派生覆盖）。真源=frontend_map.yaml + depgraph nodes 前端覆盖三字段。取代对象：两本手工缺口总账（2026-08-22 正向/反向账）——过渡期双跑对照，Owner 裁定后总账停手工维护。
 
-# 前端缺口视图（派生活账） · 2026-09-01 00:36 中国标准时间
+# 前端缺口视图（派生活账） · 2026-09-01 01:57 中国标准时间
 
 ## A. 前端有 → 后端没有（318 项：frontend_map 功能点 backend_ref 空）
 
@@ -345,6 +345,6 @@ ttl: task_bound
 
 ## 统计
 
-- frontend_map 功能点总数: 318
+- frontend_map 功能点总数: 319
 - depgraph 已声明前端覆盖模块数: 20
 - A/B/C/D 四类缺口: 318 / 1 / 0 / 0
