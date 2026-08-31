@@ -53,6 +53,9 @@ import re
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Final, Literal, Protocol, runtime_checkable
 
+if TYPE_CHECKING:
+    from pathlib import Path  # 注解专用；运行期走函数内局部导入（本文件 _resolve_llm 惰性模式既定范式）
+
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 if TYPE_CHECKING:

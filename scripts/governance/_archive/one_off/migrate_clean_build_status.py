@@ -23,6 +23,8 @@ from _shared.constants import (
     get_depgraph_pg_connection,  # noqa: E402
 )
 
+DB_DISPLAY_NAME = "depgraph (PostgreSQL)"  # P2 迁移后显示名（历史 SQLite 时代遗留常量补登）
+
 VALID_BUILD_STATUS = {"planned", "generated", "testing", "stable", "deprecated"}  # noqa: gate-vocab  build_status 枚举，非 module_lifecycle_status
 VALID_DESIGN_MATURITY = {"design", "production", "prototype"}  # noqa: gate-vocab  design_maturity 业务子集（排除 legacy）
 NODES_WHITELIST = {"module", "script", "test", "config"}  # noqa: gate-vocab  nodes 白名单业务子集

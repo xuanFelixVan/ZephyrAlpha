@@ -2759,7 +2759,7 @@ class PipelineOrchestrator:
                 engine = BudgetEngine()
             result = engine.pre_flight_check(
                 operation_id=f"pipeline-{task_card.task_id}",
-                estimated_tokens=_DEFAULT_TOKEN_BUDGET // 10,
+                estimated_tokens=self._DEFAULT_TOKEN_BUDGET // 10,
                 estimated_cost=0.01,
             )
             from zephyr.governance.ops_governance.budget_models import GateDecision

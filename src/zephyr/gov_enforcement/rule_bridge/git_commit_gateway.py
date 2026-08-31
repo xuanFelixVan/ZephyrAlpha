@@ -43,6 +43,12 @@ import time
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from zephyr.security.access_control.session_concurrency import SessionRegistry
 
 from zephyr.gov_enforcement.rule_bridge.batched_auto_committer import BatchedAutoCommitter  # ARCH-GIT-CALL-BUDGET P2.3
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import CommitGateRegistry

@@ -24,8 +24,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 
 class TestStage00_ImportChain:
     def test_l01_import(self):
-        assert code_dedup_engine.__version__ == "0.15.0"
-        assert code_dedup_engine.__module_id__ == "MOD-INF-017"
+        assert code_dedup_engine.__version__ == "0.15.0"  # noqa: F821 — builtins 注入（tests/conftest.py L128-141 既定范式）
+        assert code_dedup_engine.__module_id__ == "MOD-INF-017"  # noqa: F821 — builtins 注入（同上）
 
     def test_root_proxy_import(self):
         from zephyr.governance import __module_id__ as m

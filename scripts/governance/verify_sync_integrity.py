@@ -47,17 +47,17 @@ import os
 import sys
 from pathlib import Path
 
-try:
-    import yaml
-except ImportError:
-    print("[ERROR] PyYAML 未安装，请运行: pip install pyyaml")
-    sys.exit(EXIT_FINDINGS)
-
 _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT, get_depgraph_pg_connection  # noqa: E402
+
+try:
+    import yaml
+except ImportError:
+    print("[ERROR] PyYAML 未安装，请运行: pip install pyyaml")
+    sys.exit(EXIT_FINDINGS)
 
 RULES_DIR = str(REPO_ROOT / "docs" / "01_policies_and_standards")
 YAML_PATH = os.path.join(RULES_DIR, "_registry", "catalogs", "functional_domain_registry.yaml")

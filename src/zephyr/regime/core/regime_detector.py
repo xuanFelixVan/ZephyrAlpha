@@ -232,7 +232,10 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    import numpy as np  # 注解专用；运行期 numpy 走方法内局部导入（hmmlearn 可选依赖惰性范式）
 
 try:  # 治理基类缺失时降级为 Exception，保证模块可独立 import
     from zephyr.shared.foundation.errors import ZephyrBaseError

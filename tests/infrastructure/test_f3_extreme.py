@@ -28,6 +28,10 @@ import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from zephyr.governance.persistence.task_repo import TaskRepository
 
 import pytest
 

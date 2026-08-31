@@ -49,7 +49,11 @@ from __future__ import annotations
 
 import importlib
 from datetime import datetime
-from typing import Any, Final, Literal
+from typing import TYPE_CHECKING, Any, Final, Literal
+
+if TYPE_CHECKING:
+    # 注解静态解析专用；运行期走模块级 __getattr__ 懒加载（task_types 为 TaskStatus SSoT，见下方 _TASK_TYPES_NAMES）
+    from zephyr.gov_enforcement.rule_enforcement.task_types import TaskStatus
 
 from pydantic import BaseModel, ConfigDict, Field
 

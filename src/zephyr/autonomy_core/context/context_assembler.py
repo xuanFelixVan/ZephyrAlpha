@@ -43,6 +43,7 @@ import hashlib
 import logging
 from datetime import UTC, datetime
 from pathlib import Path
+from collections.abc import Callable
 from typing import TYPE_CHECKING, Any, Final
 
 from pydantic import BaseModel, Field

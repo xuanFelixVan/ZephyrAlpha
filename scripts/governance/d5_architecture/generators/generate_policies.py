@@ -44,12 +44,6 @@ warn_only: false
 import sys
 from pathlib import Path
 
-try:
-    import yaml
-except ImportError:
-    print("[ERROR] PyYAML 未安装")
-    sys.exit(EXIT_FINDINGS)
-
 # 从 _shared.constants 导入 REPO_ROOT（SSoT，禁止重新定义）
 _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
@@ -59,6 +53,12 @@ from _shared.constants import (
     EXIT_FINDINGS,
     REPO_ROOT,  # noqa: E402
 )
+
+try:
+    import yaml
+except ImportError:
+    print("[ERROR] PyYAML 未安装")
+    sys.exit(EXIT_FINDINGS)
 
 SOURCE_YAML = REPO_ROOT / "architecture_model" / "data" / "data_sources_registry.yaml"
 OUTPUT_YAML = REPO_ROOT / "src" / "zephyr" / "data" / "config" / "policies.yaml"

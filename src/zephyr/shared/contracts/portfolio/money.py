@@ -17,7 +17,11 @@
 
 from __future__ import annotations
 
-from typing import Self
+from typing import TYPE_CHECKING, Self
+
+if TYPE_CHECKING:
+    # 注解静态解析专用；运行期走模块级 __getattr__ 懒加载（L0 shared -> L3 trading 向上依赖既定范式，见下方注释）
+    from zephyr.trading.trading_contracts.market.instrument import CurrencyCode
 
 """
 ZephyrAlpha — shared/contracts/money.py

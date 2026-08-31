@@ -61,12 +61,6 @@ import sys
 from datetime import UTC
 from pathlib import Path
 
-try:
-    import yaml
-except ImportError:
-    print("[ERROR] PyYAML 未安装，请运行: pip install pyyaml")
-    sys.exit(EXIT_FINDINGS)
-
 # _shared.constants 统一路径引用（裁定#206 / Bug H 修复——禁止硬编码绝对路径）
 _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
@@ -75,6 +69,12 @@ if _GOV_DIR not in sys.path:
 # P2 PG 迁移：删除 lock_files 文件锁（PG 用 MVCC）；导入 PG 连接入口
 import psycopg2  # noqa: E402
 from _shared.constants import EXIT_FINDINGS, REPO_ROOT, get_depgraph_pg_connection  # noqa: E402
+
+try:
+    import yaml
+except ImportError:
+    print("[ERROR] PyYAML 未安装，请运行: pip install pyyaml")
+    sys.exit(EXIT_FINDINGS)
 
 # 治本（2026-06-27）：删除 DB_PATH = str(DEPGRAPH_DB_PATH)（路径污染源）。
 # P2 迁移后 depgraph 已迁至 PostgreSQL，连接入口 get_depgraph_pg_connection()，无文件路径概念。

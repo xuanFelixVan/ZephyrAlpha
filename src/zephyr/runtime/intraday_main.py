@@ -129,7 +129,7 @@ import logging
 import signal as sig_module
 import sys
 import time
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Final
 
 # 治本（2026-08-03 实地演练发现 FactorRegistry 为空）：
 # intraday_main 启动时未导入任何因子模块，IntradayFactorLoop._build_dag 读

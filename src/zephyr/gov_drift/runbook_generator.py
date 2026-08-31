@@ -29,6 +29,8 @@ Drift Runbook Generator — 漂移演练手册自动生成。
 
 from __future__ import annotations
 
+import os
+
 import yaml
 
 from .drift_models import DriftEvent

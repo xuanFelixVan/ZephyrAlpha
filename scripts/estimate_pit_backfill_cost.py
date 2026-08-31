@@ -77,7 +77,7 @@ PRICING: Final[dict[str, dict[str, float]]] = {
 
 
 @dataclass(frozen=True)
-class PitBackfillPitBackfillCostEstimate:
+class PitBackfillCostEstimate:
     """单通道单模式成本估算结果。"""
 
     channel: str
@@ -128,7 +128,7 @@ def _estimate(channel: str, mode: str, days: int, *, use_peak: bool) -> PitBackf
     )
 
 
-def _print_row(est: PitBackfillPitBackfillCostEstimate) -> None:
+def _print_row(est: PitBackfillCostEstimate) -> None:
     print(
         f"| {est.channel} | {est.mode} | {est.days} | "
         f"{est.input_tokens_mid:,} / {est.output_tokens_mid:,} | "

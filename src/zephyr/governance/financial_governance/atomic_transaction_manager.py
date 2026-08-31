@@ -185,6 +185,7 @@ from pathlib import Path
 from threading import RLock
 from typing import Any, Final, Literal, cast
 
+from zephyr.security.llm_defense.llm_security.input_sanitizer import InputSanitizer
 from zephyr.shared.io.paths import REPO_ROOT
 from zephyr.shared.utils.time_utils import now_iso  # 5.161 修复: 收敛 _now_iso 私有副本到真源
 
