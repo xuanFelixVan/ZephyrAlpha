@@ -3,6 +3,7 @@
 > **硬规则入口**: [`.trae/rules/project_rules.md`](file:///d:/ZephyrAlpha/.trae/rules/project_rules.md)（IDE 自动注入，全读完再开工）
 > **施工指导**: [`.trae/rules/onboarding_detail.md`](file:///d:/ZephyrAlpha/.trae/rules/onboarding_detail.md)（详细规则/冷启动序列/方法论索引）
 > **内部 Agent 系统**: [`data/capability_cards/`](file:///d:/ZephyrAlpha/data/capability_cards/)（22 个 skill_*.yaml，L0/L1/L2/L3 渐进披露，非 IDE AI 使用）
+> **新 AI 必读三件套**（2026-08-31 新增）：①[全项目对齐清单](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/sop/alignment_checklist.md)（六图+40+注册表+代码文档三层对齐规则）②[施工流程 SOP](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/sop/construction_workflow_sop.md)（端到端 15 步施工闭环）③前端手册（如涉及前端，待建）——**不知道要对齐什么=施工必有漏项**
 
 ## RULE-ENV：第零件事（环境对齐，2026-07-22 治本，#ARCH-ENV-PATH-001）
 
