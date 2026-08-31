@@ -31,7 +31,23 @@ pages:
       update_frequency: 随数据刷新
       user_action: ¥开关点击控显隐；悬停查看成本/数量
       fallback_behavior: 模块未加载则不画线（调用方有 ZK 存在性守卫）
-      screenshot_ref: docs/03_modules/_domain_frontend/acceptance/screenshots/F-STOCKQ-COSTLINE-baseline.png
+      screenshot_ref: src/zephyr/frontend/acceptance/baselines/F-STOCKQ-COSTLINE-baseline.png
+    - id: F-STOCKQ-KLINE-DATA
+      name: K线真源数据接通
+      code_ref: services/api.js + core/app1.js（dataLoader getBars init 分支）
+      backend_ref:
+      - table:CH.c1_market.kline_daily
+      - api:/api/kline
+      data_flow: ClickHouse c1_market.kline_daily → api_server(8890) → services/api.js → KLineChart
+      interaction: 切票/切周期自动取真源；API 挂时回退演示数据并标'○ 演示'（诚实纪律）
+      status: 已建
+      acceptance: ACC-F-STOCKQ-KLINE-DATA
+      do_not_touch: forward/backward 必须返回空数组（FEH-KLC-002）
+      data_source: ClickHouse c1_market.kline_daily（kline_1min~monthly 族按周期映射）
+      update_frequency: 日级（分钟族已备表）
+      user_action: 切票/切周期即取数
+      fallback_behavior: API 异常→回退演示数据+头部角标显'○ 演示'
+      screenshot_ref: src/zephyr/frontend/acceptance/baselines/F-STOCKQ-KLINE-REALDATA.png
     - id: F-STOCKQ-MARKS
       name: 量化买卖点标注
       code_ref: core/app1.js（klpRenderBS）

@@ -251,6 +251,8 @@
   .klp-tl-evt i{font-style:normal;font-size:11px;color:var(--dim);margin-left:1px;font-variant-numeric:tabular-nums}   /* 数字缩小贴紧图标（相邻事件图标重叠时减少遮挡） */
   /* 持仓成本线悬停提示框（截图配色：暗底+琥珀边框文字） */
   /* .klp-cost-tip 已随成本线模块自注入（features/cost-line.js 模块契约 pilot），勿在此重复定义 */
+  .klp-datamode{font-size:10.5px;color:var(--dim);margin:0 4px;user-select:none;cursor:default}   /* 数据源角标：演示=灰（诚实纪律 DS-8） */
+  .klp-datamode.real{color:var(--down)}   /* 真源=绿 */
   .klp-tl-grip{position:absolute;left:0;right:0;bottom:-4px;height:8px;cursor:ns-resize;z-index:5}
   /* 时间轴事件弹层（截图口径：日期大标题+事件卡片列表+底部显示设置） */
   .sq-evtpop .tl-date{font-size:16px;font-weight:700;color:var(--text);margin-bottom:10px}
