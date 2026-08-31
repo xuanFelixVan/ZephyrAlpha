@@ -122,6 +122,8 @@ python scripts/ide_health_service.py --start
 # - docs/03_modules/_system_master/blueprint.md §0（子系统任务域定位）
 # - .trae/rules/project_rules.md（L0 硬规则，FIRST-READ 6 步）
 # - 本 SOP（construction_workflow_sop.md）
+# - alignment_checklist.md（全项目对齐清单——六图+注册表+代码文档三层对齐规则，新 AI 必知）
+# - 涉前端施工加读：docs/03_modules/_domain_frontend/frontend_handbook/（避坑事实库）+ trae_086_frontend_module_construction.yaml（拆件铁律）
 
 # 3. Session Continuity 恢复
 python scripts/lock_files.py status

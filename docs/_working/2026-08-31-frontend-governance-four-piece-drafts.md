@@ -153,8 +153,14 @@ has_frontend: yes | no | planned
 no_frontend_reason: 纯计算引擎 | 数据管道 | 治理内部件 | 基础设施   # has_frontend=no 时必填（"事出有因"）
 frontend_ref: F-STOCKQ-COSTLINE    # has_frontend=yes 时指向具体前端功能点，可多个（逗号分隔）
 
-# 前端侧（frontend_map 每个功能点条目）
-backend_ref: chip_distribution      # 挂空/悬空 = "前端有后端没有"缺口，自动上榜
+# 前端侧（frontend_map 每个功能点条目）——v0.6 升级为类型化引用（Owner 裁定：前端功能不一定对应模块，可能是库实体/表/接口）
+backend_ref:
+  - "module:MOD-REGIME-005"              # depgraph 模块节点
+  - "registry:strategy_registry#STR-XXX" # 库实体（策略库/因子库/注册表条目）
+  - "table:CH.kline_daily"               # 数据表
+  - "api:/api/xxx"                       # HTTP 接口
+  # 或 none: 纯前端逻辑（也须声明——"事出有因"同样适用于"为什么没有后端"）
+# 空列表 backend_ref: [] = "前端有后端没有"缺口，自动上榜
 ```
 - **为什么没有前端的模块是合法的**：前端的本质是"给人看、给人点的界面"；纯计算引擎/数据管道/治理脚本/内部库是机器调机器，没有人机交互面——**没有前端是正确设计不是缺陷**。所以字段不是"必须都有前端"，而是"**必须都有声明**"。
 - **两本缺口总账变成两条自动查询**：
@@ -262,6 +268,50 @@ pages:
 - 4c/回填不挡翻新主线：派生器要有数据才跑得起来，等翻新把 map 喂饱；回填是纯数据活可并行
 - 翻新即喂养：每页施工=登记 map+验收单+抽模块，翻新完四件套同步长满
 
+## 九、拆分先行总裁定 + 夜战计划（Owner 2026-08-31 深夜裁定，v0.6）
+
+> 触发：Owner 三点修正——①backend_ref 不止对模块（策略库/因子库/表/接口都可能）②顺序修正：先全站拆件再填 map（没拆件就填图，code_ref 全指大文件，拆完要二次返工改图）③拆件前提是文件夹结构+命名规则先定死。
+
+### 9.1 顺序修正（第一性）
+
+**拆分 → 填图 → 接数/视觉**。map 由 scanner 从 manifest.yaml+页面半自动生成，拆件完成后再重建=code_ref 永远指向拆后真实位置，零手工对账。
+
+### 9.2 文件夹结构（七类，一眼见名）
+
+```
+web/
+  core/       启动器/路由/事件总线/布局引擎（收口 ≤10 文件，只减不增）
+  pages/      页面片段（44，上限内）
+  features/   功能模块（有数据有行为）——按页面建子目录 features/<page>/<name>.js
+  services/   数据服务层（按域分文件 services/<domain>.js，导出 fetch<对象>）
+  widgets/    纯 UI 展示件（无数据无业务行为）
+  styles/     main.css（变量族）
+  vendor/     第三方库
+```
+
+### 9.3 命名规则
+- 功能模块 id=`<页面>-<名>`（kebab-case，如 stockq-cost-line）；文件 `features/<page>/<name>.js`
+- 验收单 `ACC-F-<页面>-<名>.yaml`；全景图功能点 `F-<页面>-<名>`
+- 数据服务 `services/<域>.js`；纯 UI 件 `widgets/<名>.js`
+- 建子目录时机：features/<page>/ 在该页模块 ≥3 个时必须建；目录文件数 >60 评估拆分、>120 必须拆（SOP 附录 A.4 容量铁律）
+
+### 9.4 拆件铁律成文（TRAE-086）
+《前端功能模块施工铁律》已立项为 `docs/01_policies_and_standards/rules/trae_086_frontend_module_construction.yaml`（拆件判据/不拆判据/命名/目录归属/四件套闭环/可见性保障），已登记 rule_catalog_registry，入口挂接 AGENTS.md 必读三件套③+施工 SOP Step 0+对齐清单 §8。**禁区：pages/index.html（A股-技术分析页，Owner 自行重新设计，任何人不碰）**。
+
+### 9.5 夜战计划（Owner 睡后自主执行，自裁定协议在案）
+```
+P0 补交全量建账 commit（42 页 318 功能点）
+P1 结构设计定稿（本节）+ TRAE-086 立项 + 入口挂接
+P2 数据通道基建：后端 HTTP API 服务（挂 dashboard_feeds 9 条+行情源）+ services/api.js
+P3 stockq 打样全闭环：K线/筹码峰/成本线接真数据 → 验收单 → 冒烟网全绿
+P4 逐页拆分战役：按 DS-11/TRAE-086 能拆全拆 → manifest 登记 → 每页过冒烟网才提交
+P5 scanner 升级（manifest 优先）重建 frontend_map（code_ref 指向拆后真实位置）
+P6 4c 派生全量缺口活账 + DS 视觉合规扫描（只读报告）
+P7 收口：晨报 + 全部网关提交
+```
+**自裁定协议**：客观专业架构师+第一性原理+长远战略+100% AI 开发现实+专业机构/量化社区实践→分析过程+裁定结果（commit message 留痕）；无法裁定→登记本节+跳过；堵塞且无法跳过→停止。
+**红线**：不碰 P-INDEX、不碰实盘写通道、不接需审批数据源、每页改动必过冒烟网+验收单才提交。
+
 **修订记录**
 
 | 日期 | 版本 | 改动 | 为什么改 |
@@ -272,3 +322,4 @@ pages:
 | 2026-08-31 | 0.4.0 | frontend_map 15 字段+三层对齐体系 | 字段深度审查+对齐范围扩展 |
 | 2026-08-31 | 0.4.1 | 4b 挂载点实证修正（depgraph nodes） | 施工中发现原假定错误 |
 | 2026-08-31 | 0.5.0 | §八 执行顺序总裁定：标准→冒烟网→全仪表盘翻新→并行派单；modlib 漏挂发现 | Owner 确认顺序，转入全线施工 |
+| 2026-08-31 | 0.6.0 | §九 拆分先行总裁定+夜战计划；§4.3 backend_ref 类型化（module/registry/table/api/none）；§9.2 七类文件夹结构+§9.3 命名规则；§9.4 TRAE-086 拆件铁律立项 | Owner 三点修正：引用类型扩展/先拆件再填图/结构先行 |

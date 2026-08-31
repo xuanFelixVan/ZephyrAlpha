@@ -4,7 +4,7 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-08-31T14:08:36Z'
+generated_at: '2026-08-31T16:18:11Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 225
@@ -1760,6 +1760,25 @@ files:
   tier: ''
   aliases: []
   section_count: 1
+- path: docs/01_policies_and_standards/rules/trae_086_frontend_module_construction.yaml
+  module_id: TRAE-086
+  title: 前端功能模块施工铁律（拆件判据+命名+目录归属+四件套闭环）
+  doc_type: ''
+  status: ''
+  version: 1.0.0
+  rule_form: ''
+  scope: frontend_construction
+  stability: evolving
+  layer: L1_foundation
+  superseded_by: ''
+  severity: critical
+  tier: ''
+  aliases:
+  - RULE-FRONTEND-FEATURE
+  - 前端拆件铁律
+  - 模块契约
+  - DS-11
+  section_count: 5
 - path: docs/01_policies_and_standards/sop/2026-08-22-emergency-runbook.md
   module_id: ''
   title: 保命轨 D-L1~D-L3 人工 Runbook

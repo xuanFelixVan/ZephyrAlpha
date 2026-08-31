@@ -1,0 +1,92 @@
+rule_id: TRAE-086
+title: 前端功能模块施工铁律（拆件判据+命名+目录归属+四件套闭环）
+version: '1.0.0'
+layer: L1_foundation
+module_id: TRAE-086
+depends_on:
+- TRAE-080
+- TRAE-001
+tags:
+- TRAE
+- frontend
+- module_contract
+- features
+- L1_foundation
+- 拆件
+- 前端治理
+ttl: permanent
+stability: evolving
+safety_level: H
+ai_autonomy: immutable_core
+aliases:
+- RULE-FRONTEND-FEATURE
+- 前端拆件铁律
+- 模块契约
+- DS-11
+severity: critical
+scope: frontend_construction
+domain: TRAE
+triggers:
+- operation: file_create
+- operation: file_write
+- operation: pre_construction
+- operation: frontend_feature_add
+sections:
+  split_judgment:
+    section_type: constraint
+    title: 拆件判据——什么时候必须独立成插件（满足任一即拆）
+    original_rules:
+    - DS-11
+    conditions:
+    - type: constraint
+      check: 新前端功能满足任一——①会被反复改（返工≥2次=最强信号）②有独立开关/显隐 ③有独立视觉样式（样式随模块自注入）④跨页面可复用 ⑤有独立数据源/接口
+      pass: 独立为 features/<page>/<name>.js 功能模块
+      fail: 塞进 app1.js 等宿主大文件 → 改一处读六千行 → 返工与回归温床（成本线七返工实证）
+    - type: constraint
+      check: 反向不拆判据——①一次性初始化逻辑 ②与宿主强耦合无独立边界 ③纯页面布局结构（HTML 骨架）④纯工具函数（进 core/）
+      pass: 留在宿主/页面片段/core
+      fail: 为拆而拆 → 散件过度碎片化 → 跳转成本反超集成成本
+  naming:
+    section_type: constraint
+    title: 命名规则——ID 与文件名一眼定位
+    conditions:
+    - type: constraint
+      check: 功能模块 id=<页面>-<名>（kebab-case）；文件 features/<page>/<name>.js；验收单 ACC-F-<页面>-<名>.yaml；全景图功能点 F-<页面>-<名>；数据服务 services/<域>.js 导出 fetch<对象>；纯 UI 件 widgets/<名>.js
+      pass: 从 ID 直接推出文件路径，从路径反推 ID
+      fail: 命名无规则 → AI 无法定位 → 文件幻觉/重复造轮子
+  folder_assignment:
+    section_type: constraint
+    title: 目录归属与建目录时机
+    conditions:
+    - type: constraint
+      check: '七类目录边界: core/=启动器·路由·事件总线·布局引擎（收口≤10 个只减不增）; pages/=页面片段; features/=业务功能模块（按页面建子目录）; services/=数据服务层（按域分文件）; widgets/=纯 UI 展示件; styles/=样式; vendor/=第三方库'
+      pass: 新代码先判类型再落位，不跨类乱放
+      fail: 类型错放 → core/ 膨胀、pages/ 塞逻辑、散件失目录
+    - type: constraint
+      check: 新建子目录时机——features/<page>/ 在该页模块 ≥3 个时必须建；任何目录文件数 >60 评估拆分、>120 必须拆（SOP 附录 A.4 容量铁律）
+      pass: 目录规模可控
+      fail: 单目录超限堆积 → 检索与心智负担失控
+  closure_alignment:
+    section_type: procedure
+    title: 施工后四件套闭环（缺一不可，同 commit）
+    conditions:
+    - type: trigger
+      check: 任何前端功能模块新建/修改完成时
+      pass: ①features/manifest.yaml 登记（depends 显式声明）②frontend_map.yaml 功能点条目（backend_ref 类型化：module:/registry:/table:/api:/none:）③验收单 ACC-*.yaml ④踩坑入手册 frontend_handbook（试了两次以上才解决的坑必入册）
+      fail: 缺任一件 → 地图漂移、验收无标准、坑重复踩 → 四件套形同虚设
+    - type: constraint
+      check: UI 改动 commit 前必过验收单（起服务→截图→逐条对→全绿）+ 冒烟网 pytest tests/frontend/test_dashboard_smoke.py 全绿
+      pass: 功能消失类回归当场拦截
+      fail: 不看效果就提交 → "图标消失"事故族复发
+  visibility:
+    section_type: constraint
+    title: 可见性保障——新 AI 施工前端必见此规
+    conditions:
+    - type: mandatory
+      check: 本规则登记于 rule_catalog_registry.yaml + 经 AGENTS.md「新 AI 必读三件套」③ + construction_workflow_sop Step 0 必看清单 + alignment_checklist.md §8 三处入口挂接
+      pass: 新 AI 冷启动即知前端拆件铁律
+      fail: 规则写了没人看到 = 没写
+notes: |
+  来源：2026-08-31 四件套战役（K 线页+模块化实证）——成本线七返工/图标消失/app1.js 六千行大杂烩三大事故族治本。
+  实证锚点：features/cost-line.js（拆件试点，验收六条全绿）+ FEH-KLC-005（init 竞态）+ FEH-LOAD-002（同文件串行编辑）。
+  禁区：pages/index.html（A股-技术分析页，Owner 自行重新设计，任何人不碰）。
