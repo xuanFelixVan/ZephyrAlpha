@@ -1,185 +1,2616 @@
-# --- 治理锚定 ---
-# blueprint: CFG-FRONTEND-MAP | architecture_model/frontend/frontend_map.yaml (self-contained) | §
-# module_id: CFG-FRONTEND-MAP
-# stability: evolving
-# safety_level: L
-# ai_autonomy: ai_modifiable
-# ttl: permanent
-# --- 治理锚定结束 ---
-# v1.0.0 (2026-08-31): 前端全景图（第六全景图）骨架——先录 stockq/overview 两页。
-#   前身 frontend_model.yaml（G0 假状态 stub）已按 Owner 裁定 6 删除重做，职责由本文件吸收
-#   （模块注册=统一对账字段；技术栈=下方 tech_stack 节）。
-#   对齐规则见 docs/01_policies_and_standards/sop/alignment_checklist.md §3；
-#   字段 schema（15 字段）见四件套草案 §4.4；
-#   缺口纪律：backend_ref 留空 = "前端有后端没有"缺口，自动上榜（缺口视图派生器 4c 建成后生效）。
-
 module_id: CFG-FRONTEND-MAP
-version: "1.0.0"
+version: 1.0.0
 doc_type: register
 ttl: permanent
-description: "前端全景图（第六全景图）——页面→模块→功能点三级索引 + 前后端统一对账。前五图管'后端有什么、怎么连、为什么'，本图管'用户看见什么、点哪触发什么、数据从哪来'。"
-
-# 技术栈（吸收 frontend_model.yaml 的技术栈 SSoT 职责——现状实录，非规划）
+description: 前端全景图（第六全景图）——页面→模块→功能点三级索引 + 前后端统一对账。前五图管'后端有什么、怎么连、为什么'，本图管'用户看见什么、点哪触发什么、数据从哪来'。
 tech_stack:
-  chart_engine: "KLineChart v10.0.3（vendor 本地库，无 CDN 依赖）"
-  layout_engine: "Dockview（vendor 本地库）+ dockpilot.js（自研布局管理）"
-  framework: "原生 JS（无框架无构建步骤）；页面片段 fetch 注入 + hash 路由"
-  cache_busting: "Date.now() 版本参数（loader.js + index.html，勿移除——手册 FEH-LOAD-001）"
-  module_contract: "web/features/<id>.js 单文件功能模块 + ZK.bus 事件总线 + manifest.yaml 注册表"
-
+  chart_engine: KLineChart v10.0.3（vendor 本地库，无 CDN 依赖）
+  layout_engine: Dockview（vendor 本地库）+ dockpilot.js（自研布局管理）
+  framework: 原生 JS（无框架无构建步骤）；页面片段 fetch 注入 + hash 路由
+  cache_busting: Date.now() 版本参数（loader.js + index.html，勿移除——手册 FEH-LOAD-001）
+  module_contract: web/features/<id>.js 单文件功能模块 + ZK.bus 事件总线 + manifest.yaml 注册表
 pages:
-  - id: P-STOCKQ
-    name: 个股行情页
-    route: "#stockq"
-    file: pages/stockq.html
-    modules:
-      - id: M-KLINE-MAIN
-        name: K线主图
-        features:
-          - id: F-STOCKQ-COSTLINE
-            name: 持仓成本线
-            code_ref: features/cost-line.js
-            backend_ref: []                # 缺口：待挂筹码峰模块（建账时核实回填）
-            data_flow: ""                  # 待核实回填
-            interaction: "¥开关控显隐；悬停出成本/数量"
-            status: 已建
-            acceptance: ACC-F-STOCKQ-COSTLINE
-            do_not_touch: "plainLine 模板勿换回内置 priceLine（手册 FEH-KLC-001）"
-            data_source: "klpChipCalc（演示口径，筹码峰平均成本）"   # 待接真源
-            update_frequency: "随数据刷新"
-            user_action: "¥开关点击控显隐；悬停查看成本/数量"
-            fallback_behavior: "模块未加载则不画线（调用方有 ZK 存在性守卫）"
-            screenshot_ref: "docs/03_modules/_domain_frontend/acceptance/screenshots/F-STOCKQ-COSTLINE-baseline.png"
-          - id: F-STOCKQ-MARKS
-            name: 量化买卖点标注
-            code_ref: core/app1.js（klpRenderBS）
-            backend_ref: []
-            interaction: "⇅开关控显隐；灰框▲买▼卖气泡"
-            status: 已建
-            do_not_touch: "overlay groupId=marks，与 trades/cost/draw 组隔离（手册 FEH-PC-001）"
-          - id: F-STOCKQ-TRADES
-            name: 真实成交买卖点
-            code_ref: core/app1.js（klpRenderTrades）
-            backend_ref: []
-            interaction: "◍开关控显隐；红B绿S气泡"
-            status: 已建
-            do_not_touch: "overlay groupId=trades"
-          - id: F-STOCKQ-DRAW
-            name: 画线工具
-            code_ref: core/app1.js（klp-drawbar 绑定段）
-            backend_ref: []
-            interaction: "左栏竖排工具件（趋势线/矩形/斐波那契等）+磁吸/锁定/显隐"
-            status: 已建
-            do_not_touch: "overlay groupId=draw；rect 模板为自注册（KLC v10 无内置）"
-          - id: F-STOCKQ-INDICATORS
-            name: 指标系统
-            code_ref: core/app1.js（klpToggleInd 等）
-            backend_ref: []
-            interaction: "主图 MA/BOLL/SAR 叠加+副图 VOL/MACD/KDJ；图上标签行眼睛/齿轮/×操作；⚙设置弹窗"
-            status: 已建
-      - id: M-EVTROW
-        name: 事件行
-        features:
-          - id: F-STOCKQ-EVTROW
-            name: 事件图标行
-            code_ref: pages/stockq.html#L49（klp-evtrow）+ core/app1.js klpTimelineRender
-            backend_ref: []
-            interaction: "⚑开关整行收展（收掉高度归零 K 线变大）；图标点击查看事件详情"
-            status: 已建
-            do_not_touch: "事件行独立于时间轴（手册 FEH-KLC-004）；时间轴常显不受影响"
-      - id: M-TIMELINE
-        name: 时间轴
-        features:
-          - id: F-STOCKQ-TIMELINE
-            name: 自定义时间轴
-            code_ref: pages/stockq.html（klp-timeline）+ core/app1.js klpTimelineRender
-            backend_ref: []
-            interaction: "周期自适应刻度（分钟级显时分/日级显日期）；底部拖拽柄调高度"
-            status: 已建
-            do_not_touch: "KLineChart 内置 xAxis 已 show:false，此为唯一时间轴"
-      - id: M-CHIP
-        name: 筹码峰模块
-        features:
-          - id: F-STOCKQ-CHIP
-            name: 筹码峰分布
-            code_ref: core/app1.js（klpRenderChip/klpChipRender）
-            backend_ref: []
-            interaction: "▤开关控显隐；canvas 分布图+信息面板；随十字光标重算"
-            status: 已建
-      - id: M-WATCHLIST
-        name: 自选列表
-        features:
-          - id: F-STOCKQ-WATCHLIST
-            name: 自选列表
-            code_ref: pages/stockq.html 左栏
-            backend_ref: []
-            interaction: "搜索加入自选；✕删除；可隐藏"
-            status: 已建
-      - id: M-INFO
-        name: 资料面板
-        features:
-          - id: F-STOCKQ-INFO
-            name: 右栏资料面板
-            code_ref: pages/stockq.html 右栏
-            backend_ref: []
-            interaction: "可隐藏；五档挂单/关键数据/个股股性"
-            status: 已建
-
-  - id: P-OVERVIEW
-    name: 全景总览
-    route: "#overview"
-    file: pages/overview.html
-    modules:
-      - id: M-DOCK
-        name: Dockview 布局引擎
-        features:
-          - id: F-OVW-LAYOUT
-            name: 布局管理
-            code_ref: core/dockpilot.js
-            backend_ref: []
-            interaction: "锁定/编辑切换；还原默认；另存布局；读取保存（localStorage 多布局）"
-            status: 已建
-            do_not_touch: "还原默认带 resetting 标志防 onDidLayoutChange 回写覆盖"
-          - id: F-OVW-ICONBAR
-            name: 竖排图标栏
-            code_ref: core/dockpilot.js（dv-dockbar）
-            backend_ref: []
-            interaction: "右下角竖排悬浮；折叠小三角（localStorage 持久化）；hover 中文提示"
-            status: 已建
-            do_not_touch: "position:fixed right:4px bottom:36px 避开 ticker-bar"
-      - id: M-POS-A
-        name: A股持仓模块
-        features:
-          - id: F-OVW-POS-A
-            name: A股持仓
-            code_ref: pages/overview.html（pos-a 面板）
-            backend_ref: []
-            interaction: "独立面板（自 pos 拆分）"
-            status: 已建
-      - id: M-POS-C
-        name: 币圈持仓模块
-        features:
-          - id: F-OVW-POS-C
-            name: 币圈持仓
-            code_ref: pages/overview.html（pos-c 面板）
-            backend_ref: []
-            interaction: "独立面板（合约 USDT 本位，自 pos 拆分）"
-            status: 已建
-      - id: M-INDEX-CARDS
-        name: 指数卡片副盘
-        features:
-          - id: F-OVW-INDEX-CARDS
-            name: 指数卡片
-            code_ref: pages/overview.html
-            backend_ref: []
-            interaction: "名称/涨跌幅/点位/成交额/状态徽章"
-            status: 已建
-      - id: M-TICKER
-        name: 底部行情条
-        features:
-          - id: F-OVW-TICKER
-            name: ticker-bar
-            code_ref: pages/overview.html 底部
-            backend_ref: []
-            interaction: "指数滚动行情"
-            status: 已建
+- id: P-STOCKQ
+  name: 个股行情页
+  route: '#stockq'
+  file: pages/stockq.html
+  modules:
+  - id: M-KLINE-MAIN
+    name: K线主图
+    features:
+    - id: F-STOCKQ-COSTLINE
+      name: 持仓成本线
+      code_ref: features/cost-line.js
+      backend_ref: []
+      data_flow: ''
+      interaction: ¥开关控显隐；悬停出成本/数量
+      status: 已建
+      acceptance: ACC-F-STOCKQ-COSTLINE
+      do_not_touch: plainLine 模板勿换回内置 priceLine（手册 FEH-KLC-001）
+      data_source: klpChipCalc（演示口径，筹码峰平均成本）
+      update_frequency: 随数据刷新
+      user_action: ¥开关点击控显隐；悬停查看成本/数量
+      fallback_behavior: 模块未加载则不画线（调用方有 ZK 存在性守卫）
+      screenshot_ref: docs/03_modules/_domain_frontend/acceptance/screenshots/F-STOCKQ-COSTLINE-baseline.png
+    - id: F-STOCKQ-MARKS
+      name: 量化买卖点标注
+      code_ref: core/app1.js（klpRenderBS）
+      backend_ref: []
+      interaction: ⇅开关控显隐；灰框▲买▼卖气泡
+      status: 已建
+      do_not_touch: overlay groupId=marks，与 trades/cost/draw 组隔离（手册 FEH-PC-001）
+    - id: F-STOCKQ-TRADES
+      name: 真实成交买卖点
+      code_ref: core/app1.js（klpRenderTrades）
+      backend_ref: []
+      interaction: ◍开关控显隐；红B绿S气泡
+      status: 已建
+      do_not_touch: overlay groupId=trades
+    - id: F-STOCKQ-DRAW
+      name: 画线工具
+      code_ref: core/app1.js（klp-drawbar 绑定段）
+      backend_ref: []
+      interaction: 左栏竖排工具件（趋势线/矩形/斐波那契等）+磁吸/锁定/显隐
+      status: 已建
+      do_not_touch: overlay groupId=draw；rect 模板为自注册（KLC v10 无内置）
+    - id: F-STOCKQ-INDICATORS
+      name: 指标系统
+      code_ref: core/app1.js（klpToggleInd 等）
+      backend_ref: []
+      interaction: 主图 MA/BOLL/SAR 叠加+副图 VOL/MACD/KDJ；图上标签行眼睛/齿轮/×操作；⚙设置弹窗
+      status: 已建
+  - id: M-EVTROW
+    name: 事件行
+    features:
+    - id: F-STOCKQ-EVTROW
+      name: 事件图标行
+      code_ref: pages/stockq.html#L49（klp-evtrow）+ core/app1.js klpTimelineRender
+      backend_ref: []
+      interaction: ⚑开关整行收展（收掉高度归零 K 线变大）；图标点击查看事件详情
+      status: 已建
+      do_not_touch: 事件行独立于时间轴（手册 FEH-KLC-004）；时间轴常显不受影响
+  - id: M-TIMELINE
+    name: 时间轴
+    features:
+    - id: F-STOCKQ-TIMELINE
+      name: 自定义时间轴
+      code_ref: pages/stockq.html（klp-timeline）+ core/app1.js klpTimelineRender
+      backend_ref: []
+      interaction: 周期自适应刻度（分钟级显时分/日级显日期）；底部拖拽柄调高度
+      status: 已建
+      do_not_touch: KLineChart 内置 xAxis 已 show:false，此为唯一时间轴
+  - id: M-CHIP
+    name: 筹码峰模块
+    features:
+    - id: F-STOCKQ-CHIP
+      name: 筹码峰分布
+      code_ref: core/app1.js（klpRenderChip/klpChipRender）
+      backend_ref: []
+      interaction: ▤开关控显隐；canvas 分布图+信息面板；随十字光标重算
+      status: 已建
+  - id: M-WATCHLIST
+    name: 自选列表
+    features:
+    - id: F-STOCKQ-WATCHLIST
+      name: 自选列表
+      code_ref: pages/stockq.html 左栏
+      backend_ref: []
+      interaction: 搜索加入自选；✕删除；可隐藏
+      status: 已建
+  - id: M-INFO
+    name: 资料面板
+    features:
+    - id: F-STOCKQ-INFO
+      name: 右栏资料面板
+      code_ref: pages/stockq.html 右栏
+      backend_ref: []
+      interaction: 可隐藏；五档挂单/关键数据/个股股性
+      status: 已建
+- id: P-OVERVIEW
+  name: 全景总览
+  route: '#overview'
+  file: pages/overview.html
+  modules:
+  - id: M-DOCK
+    name: Dockview 布局引擎
+    features:
+    - id: F-OVW-LAYOUT
+      name: 布局管理
+      code_ref: core/dockpilot.js
+      backend_ref: []
+      interaction: 锁定/编辑切换；还原默认；另存布局；读取保存（localStorage 多布局）
+      status: 已建
+      do_not_touch: 还原默认带 resetting 标志防 onDidLayoutChange 回写覆盖
+    - id: F-OVW-ICONBAR
+      name: 竖排图标栏
+      code_ref: core/dockpilot.js（dv-dockbar）
+      backend_ref: []
+      interaction: 右下角竖排悬浮；折叠小三角（localStorage 持久化）；hover 中文提示
+      status: 已建
+      do_not_touch: position:fixed right:4px bottom:36px 避开 ticker-bar
+  - id: M-POS-A
+    name: A股持仓模块
+    features:
+    - id: F-OVW-POS-A
+      name: A股持仓
+      code_ref: pages/overview.html（pos-a 面板）
+      backend_ref: []
+      interaction: 独立面板（自 pos 拆分）
+      status: 已建
+  - id: M-POS-C
+    name: 币圈持仓模块
+    features:
+    - id: F-OVW-POS-C
+      name: 币圈持仓
+      code_ref: pages/overview.html（pos-c 面板）
+      backend_ref: []
+      interaction: 独立面板（合约 USDT 本位，自 pos 拆分）
+      status: 已建
+  - id: M-INDEX-CARDS
+    name: 指数卡片副盘
+    features:
+    - id: F-OVW-INDEX-CARDS
+      name: 指数卡片
+      code_ref: pages/overview.html
+      backend_ref: []
+      interaction: 名称/涨跌幅/点位/成交额/状态徽章
+      status: 已建
+  - id: M-TICKER
+    name: 底部行情条
+    features:
+    - id: F-OVW-TICKER
+      name: ticker-bar
+      code_ref: pages/overview.html 底部
+      backend_ref: []
+      interaction: 指数滚动行情
+      status: 已建
+- id: P-AICHAT
+  name: AI 对话
+  route: '#aichat'
+  file: pages/aichat.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-AICHAT-AUTO-01
+      name: 对话
+      code_ref: pages/aichat.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-AICHAT-AUTO-02
+      name: 能干什么
+      code_ref: pages/aichat.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-AICHAT-AUTO-03
+      name: 不能干什么
+      code_ref: pages/aichat.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-AITASK
+  name: AI 任务队列
+  route: '#aitask'
+  file: pages/aitask.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-AITASK-AUTO-01
+      name: 任务流水
+      code_ref: pages/aitask.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-AITASK-AUTO-02
+      name: ReAct 研究助手
+      code_ref: pages/aitask.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-AITASK-AUTO-03
+      name: 情景记忆
+      code_ref: pages/aitask.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-AITASK-AUTO-04
+      name: GPU 共识调度
+      code_ref: pages/aitask.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-BACKTEST
+  name: 回测结果
+  route: '#backtest'
+  file: pages/backtest.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-BACKTEST-AUTO-01
+      name: 绩效指标明细 Performance Metrics Detail
+      code_ref: pages/backtest.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-BACKTEST-AUTO-02
+      name: 持仓明细 Position Details
+      code_ref: pages/backtest.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-BACKTEST-AUTO-03
+      name: 月度收益率热力图 Monthly Returns
+      code_ref: pages/backtest.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-BACKTEST-AUTO-04
+      name: 当日资金 Daily Capital (2019-01-02)
+      code_ref: pages/backtest.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-BACKTEST-AUTO-05
+      name: 当日持仓 Daily Positions (2019-01-02)
+      code_ref: pages/backtest.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-BACKTEST-AUTO-06
+      name: 当日委托 Daily Orders (2019-01-02)
+      code_ref: pages/backtest.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-BACKTEST-AUTO-07
+      name: 交易明细 Trade Details
+      code_ref: pages/backtest.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-BACKTEST-AUTO-08
+      name: 新建回测
+      code_ref: pages/backtest.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-CALENDAR
+  name: 事件日历
+  route: '#calendar'
+  file: pages/calendar.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-CALENDAR-AUTO-01
+      name: 2026 年 8 月
+      code_ref: pages/calendar.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-CALENDAR-AUTO-02
+      name: 当日清单 ·
+      code_ref: pages/calendar.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-CALENDAR-AUTO-03
+      name: 数据源与纪律
+      code_ref: pages/calendar.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-CHAINMAP
+  name: 产业地图
+  route: '#chainmap'
+  file: pages/chainmap.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-CHAINMAP-AUTO-01
+      name: 产业链浏览
+      code_ref: pages/chainmap.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-CHAINMAP-AUTO-02
+      name: 个股落位查询
+      code_ref: pages/chainmap.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-CHAINMAP-AUTO-03
+      name: 供应链指标
+      code_ref: pages/chainmap.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-CHAINMAP-AUTO-04
+      name: 说明与边界
+      code_ref: pages/chainmap.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-CHAINMAP-AUTO-05
+      name: 规划内容（待与 Owner 对齐后细化）
+      code_ref: pages/chainmap.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-CHAINMAP-AUTO-06
+      name: 与现有页面的边界
+      code_ref: pages/chainmap.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-CRYPTOBT
+  name: 币圈回测
+  route: '#cryptobt'
+  file: pages/cryptobt.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-CRYPTOBT-AUTO-01
+      name: 净值曲线（演示）
+      code_ref: pages/cryptobt.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-CRYPTOINFO
+  name: 币圈档案
+  route: '#cryptoinfo'
+  file: pages/cryptoinfo.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-CRYPTOINFO-AUTO-01
+      name: 链上数据（待接入占位）
+      code_ref: pages/cryptoinfo.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-CRYPTOMARKET
+  name: 币圈盘面
+  route: '#cryptomarket'
+  file: pages/cryptomarket.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-CRYPTOMARKET-AUTO-01
+      name: 永续合约行情
+      code_ref: pages/cryptomarket.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-CRYPTOMARKET-AUTO-02
+      name: 资金费率热力（8h）
+      code_ref: pages/cryptomarket.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-CRYPTOMARKET-AUTO-03
+      name: BTC 持仓量 OI（24h）
+      code_ref: pages/cryptomarket.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-CRYPTOMARKET-AUTO-04
+      name: 爆仓地图（24h 待清算密集区）
+      code_ref: pages/cryptomarket.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-CRYPTOMARKET-AUTO-05
+      name: 多空比 + 标记/指数价差
+      code_ref: pages/cryptomarket.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-CRYPTOPOS
+  name: 币圈持仓与风控
+  route: '#cryptopos'
+  file: pages/cryptopos.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-CRYPTOPOS-AUTO-01
+      name: 合约仓位
+      code_ref: pages/cryptopos.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-CRYPTOPOS-AUTO-02
+      name: 强平预警带
+      code_ref: pages/cryptopos.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-CRYPTOPOS-AUTO-03
+      name: 资金费累计 + 风控规则
+      code_ref: pages/cryptopos.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-CRYPTOSTRAT
+  name: 币圈策略
+  route: '#cryptostrat'
+  file: pages/cryptostrat.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-CRYPTOSTRAT-AUTO-01
+      name: 网格交易
+      code_ref: pages/cryptostrat.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-CRYPTOSTRAT-AUTO-02
+      name: 资金费套利
+      code_ref: pages/cryptostrat.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-CRYPTOSTRAT-AUTO-03
+      name: 趋势跟踪
+      code_ref: pages/cryptostrat.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-CRYPTOSTRAT-AUTO-04
+      name: 与 A 股策略的关系
+      code_ref: pages/cryptostrat.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-DATAINFO
+  name: 数据总览
+  route: '#datainfo'
+  file: pages/datainfo.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-DATAINFO-AUTO-01
+      name: 八表资产地图
+      code_ref: pages/datainfo.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DATAINFO-AUTO-02
+      name: 规划深页
+      code_ref: pages/datainfo.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-DATASRC
+  name: 数据源监管
+  route: '#datasrc'
+  file: pages/datasrc.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-DATASRC-AUTO-01
+      name: 源清单
+      code_ref: pages/datasrc.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DATASRC-AUTO-02
+      name: SLA burn-rate
+      code_ref: pages/datasrc.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DATASRC-AUTO-03
+      name: 主备切换+告警流水
+      code_ref: pages/datasrc.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-DESIGN
+  name: 设计规范
+  route: '#design'
+  file: pages/design.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-DESIGN-AUTO-01
+      name: 底色族（5+4）——结构色，不可用于文字/数据；v7（2026-08-30）：一级卡片底=半透明叠层 --card7（S
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-02
+      name: 文字灰阶（3+1）——全部文字只许这几级；v7 新增 --label=卡标题/表头/分区标专用标签灰（宽字距语法见 DS
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-03
+      name: 功能色（6+3）——色系 v6 极简功能主义延续：图表坐标系外一律灰阶，彩色只给功能；v7 新增提亮族与信息蓝（Shar
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-04
+      name: 透明度族（颜色收敛规则——所有"底色强调"一律透明化，禁实色块）
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-05
+      name: OKX 清单照抄记录（2026-08-27，markets/favorite 页 getComputedStyle 全量
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-06
+      name: 刻意超越包（OKX 没有的 4 处微细节——"高级感=纹理不是颜色"）
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-07
+      name: 色彩秩序 v6 极简功能主义（2026-08-28 Owner 裁定：除必要颜色能不用就不用——K线涨跌红绿/进度条蓝/
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-08
+      name: 禁色清单（已废止，合规审查见即改）
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-09
+      name: 4.1 卡片（信息容器唯一形态）
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-10
+      name: 4.2 KPI 指标卡（核心数字=锚点）
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-11
+      name: 4.3 badge 六族（语义映射唯一表）
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-12
+      name: 4.4 alert-row 族（v6 去框化：err/warn/info + .bad=err 别名，Owner 202
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-13
+      name: 4.5 表格
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-14
+      name: 4.6 tab / 按钮 / 输入
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-15
+      name: 4.7 顶栏导航与下拉
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-16
+      name: 4.8 ⓘ 注解悬浮组件（版面简洁化核心）
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-17
+      name: 4.9 ticker 横条 / toast / 状态灯
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-18
+      name: 4.10 chip 胶囊族（v7 新增，SharpLink 徽章语法）
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-19
+      name: 4.11 合并模块族（v7 新增·终版样板实证——同类低密度卡片合一，消灭卡内留白）
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-20
+      name: 4.12 决策卡 dc-card（R18 划重点例外件——全站唯一大字彩色强调）
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-21
+      name: K 线视图 5 档尺寸标准（2026-08-27 Owner 方向：多档标准+全主图滚轮缩放）
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-22
+      name: 进度条标准（.pbar 族——马上多功能上线，统一此规格）
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-23
+      name: K 线规范图（标准蓝图——真实引擎渲染+元素标注；验收对照用）
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-24
+      name: 合规审查记录
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-25
+      name: DS-1 色彩系统
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-26
+      name: DS-2 字体系统
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-27
+      name: DS-3 间距与圆角
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-28
+      name: DS-4 组件规范
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-29
+      name: DS-5 K 线与图表专项
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-30
+      name: DS-6 语义色宪章
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-31
+      name: DS-7 图标与装饰规则
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-32
+      name: DS-8 负反馈与待接入规范
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-33
+      name: DS-9 组件→页面适用索引
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-34
+      name: DS-10 模块缩放规范
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-DESIGN-AUTO-35
+      name: DS-11 模块拆件标准
+      code_ref: pages/design.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-EXPERIMENT
+  name: 实验历史
+  route: '#experiment'
+  file: pages/experiment.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-EXPERIMENT-AUTO-01
+      name: Runs
+      code_ref: pages/experiment.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-EXPERIMENT-AUTO-02
+      name: c1_mock_20260819_sector · 详情
+      code_ref: pages/experiment.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-FACTOR
+  name: 因子档案
+  route: '#factor'
+  file: pages/factor.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-FACTOR-AUTO-01
+      name: 因子看板
+      code_ref: pages/factor.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-FACTOR-AUTO-02
+      name: 反转因子 · 分组净值
+      code_ref: pages/factor.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-FACTOR-AUTO-03
+      name: IC 滚动稳定 + 衰减
+      code_ref: pages/factor.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-FITNESS
+  name: 适应评估 Fitness Functions
+  route: '#fitness'
+  file: pages/fitness.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-FITNESS-AUTO-01
+      name: 近 30 次趋势
+      code_ref: pages/fitness.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-GOVANA
+  name: 治理分析
+  route: '#govana'
+  file: pages/govana.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-GOVANA-AUTO-01
+      name: 状态
+      code_ref: pages/govana.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-HOME
+  name: 首页
+  route: '#home'
+  file: pages/home.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features: []
+- id: P-INDEX
+  name: index
+  route: '#index'
+  file: pages/index.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-INDEX-AUTO-01
+      name: 阶段状态标注
+      code_ref: pages/index.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-LIVE
+  name: 大盘分析
+  route: '#live'
+  file: pages/live.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-LIVE-AUTO-01
+      name: 逐笔回报时序
+      code_ref: pages/live.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-LIVE-AUTO-02
+      name: 市场 Regime
+      code_ref: pages/live.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-LIVE-AUTO-03
+      name: 情绪温度
+      code_ref: pages/live.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-LIVE-AUTO-04
+      name: 接力情绪周期
+      code_ref: pages/live.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-LIVE-AUTO-05
+      name: 极端预警
+      code_ref: pages/live.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-LIVE-AUTO-06
+      name: 决策链
+      code_ref: pages/live.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-LIVE-AUTO-07
+      name: 风控实时
+      code_ref: pages/live.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-LIVE-AUTO-08
+      name: 今日交易计划
+      code_ref: pages/live.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-LIVE-AUTO-09
+      name: 当日委托 / 成交
+      code_ref: pages/live.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-LIVE-AUTO-10
+      name: 系统运行日志
+      code_ref: pages/live.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-LIVE-AUTO-11
+      name: 下单
+      code_ref: pages/live.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-LIVE-AUTO-12
+      name: 上证指数 i主版面 · 分钟级
+      code_ref: pages/live.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-LIVE-AUTO-13
+      name: 副指数 · 深证 / 创业板 / 科创
+      code_ref: pages/live.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-LIVE-AUTO-14
+      name: 市场统计
+      code_ref: pages/live.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-LIVE-AUTO-15
+      name: 风格分化 i
+      code_ref: pages/live.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-LIVE-AUTO-16
+      name: 涨跌分档分布 i
+      code_ref: pages/live.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-LIVE-AUTO-17
+      name: 涨停强度 · 今昨对比 i
+      code_ref: pages/live.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-LIVE-AUTO-18
+      name: 成交额 · 分时累计 i
+      code_ref: pages/live.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-LIVE-AUTO-19
+      name: 大盘状态 · 因子构成面板 i
+      code_ref: pages/live.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-MACRO
+  name: 宏观分析
+  route: '#macro'
+  file: pages/macro.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-MACRO-AUTO-01
+      name: 规划内容（待与 Owner 对齐后细化）
+      code_ref: pages/macro.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MACRO-AUTO-02
+      name: 与现有页面的边界
+      code_ref: pages/macro.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MACRO-AUTO-03
+      name: 天气数据（40 城市）
+      code_ref: pages/macro.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-MODELS
+  name: 模型页
+  route: '#models'
+  file: pages/models.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-MODELS-AUTO-01
+      name: 模型注册表
+      code_ref: pages/models.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODELS-AUTO-02
+      name: 训练态质量
+      code_ref: pages/models.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODELS-AUTO-03
+      name: 服务态四维漂移+影子部署
+      code_ref: pages/models.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODELS-AUTO-04
+      name: 学习效果回喂
+      code_ref: pages/models.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODELS-AUTO-05
+      name: 决策解释+人工干预留痕
+      code_ref: pages/models.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODELS-AUTO-06
+      name: 压缩验证三阶段
+      code_ref: pages/models.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODELS-AUTO-07
+      name: 因子×模型双向利用度
+      code_ref: pages/models.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODELS-AUTO-08
+      name: 本页结论怎么来的 · 证据链
+      code_ref: pages/models.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-MODLEDGER
+  name: 模块总账
+  route: '#modledger'
+  file: pages/modledger.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-MODLEDGER-AUTO-01
+      name: 全模块清单
+      code_ref: pages/modledger.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLEDGER-AUTO-02
+      name: 口径与数据源说明
+      code_ref: pages/modledger.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-MODLIB
+  name: 组件库
+  route: '#modlib'
+  file: pages/modlib.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-MODLIB-AUTO-01
+      name: 一、容器类 信息的外壳
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-02
+      name: 二、表格类 列数定族：≤5 列窄表 / ≥7 列宽表
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-03
+      name: 三、图表类 统一铁律：数据驱动 fluid 重绘（page:show/resize），禁 viewBox-none 拉伸
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-04
+      name: 四、交互控件 小件族：全部耐宽、不参与拉宽
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-05
+      name: 五、信息流 时间线/新闻/日志/辩论/矩阵
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-06
+      name: 六、专用模块 各自有明确宽度姿态
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-07
+      name: 七、网格画廊 auto-fill 结论卡阵——一句一行，依据收 ⓘ
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-08
+      name: 八、补件 盘点缺口补样
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-09
+      name: 九、停靠布局试点 Docking Layout · 同花顺式手感验证区——拖标题栏到任意模块四向分裂；拖分隔缝调宽高（联
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-10
+      name: 十、模块拆件契约试点 Module Contract · features/&lt;id&gt;.js 单文件功能模块—
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-11
+      name: 卡片标题 i演示数据
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-12
+      name: 地缘政治风险 待接入
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-13
+      name: 副指数 · 深证 / 创业板 / 科创
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-14
+      name: 涨停强度 · 今昨对比
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-15
+      name: 持仓明细（宽表节选）
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-16
+      name: 任务清单 · 动态表
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-17
+      name: 策略定义
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-18
+      name: 阶段盈亏
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-19
+      name: 个股行情 · K线工作台 i日K分时
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-20
+      name: 上证指数
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-21
+      name: 迷你走势
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-22
+      name: 权益分时 vs 回测包络 i
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-23
+      name: 涨跌分档分布
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-24
+      name: 营收 / 归母净利 · 8 季
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-25
+      name: 风险预算
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-26
+      name: 长任务进度
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-27
+      name: 月度收益热力 · 2026
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-28
+      name: 事件日历 · 本周
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-29
+      name: 情绪温度
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-30
+      name: 相对强度光谱 · 行业
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-31
+      name: 市场相位带 · 近一年
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-32
+      name: 明日 8 态推演
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-33
+      name: 模块布局 i
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-34
+      name: 逐笔回报时序
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-35
+      name: 新闻清单 · 两天滚动窗
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-36
+      name: 系统运行日志
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-37
+      name: 多方 · 交易员 i
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-38
+      name: 空方 · 风控官 i
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-39
+      name: 实时情景矩阵 i
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-40
+      name: AI 助手 本地 qwen3:8b
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-41
+      name: 下单 human_gated
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-42
+      name: 决策链 · 漏斗
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-43
+      name: 73 域骨架 · 数据流
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-MODLIB-AUTO-44
+      name: 架构全景 · 嵌入 8765 未启动
+      code_ref: pages/modlib.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-NEWS
+  name: 新闻舆情
+  route: '#news'
+  file: pages/news.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-NEWS-AUTO-01
+      name: 新闻清单
+      code_ref: pages/news.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-NEWS-AUTO-02
+      name: 预期差分析
+      code_ref: pages/news.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-NEWS-AUTO-03
+      name: 可预测性分布
+      code_ref: pages/news.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-NEWS-AUTO-04
+      name: 情绪聚合分析
+      code_ref: pages/news.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-NEWS-AUTO-05
+      name: 公告流
+      code_ref: pages/news.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-NEWS-AUTO-06
+      name: 当日新闻清单
+      code_ref: pages/news.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-NEWS-AUTO-07
+      name: 情绪分析
+      code_ref: pages/news.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-NEWS-AUTO-08
+      name: 今日热点
+      code_ref: pages/news.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-NEWS-AUTO-09
+      name: 公司公告
+      code_ref: pages/news.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-OVERSEAS
+  name: 外盘速览
+  route: '#overseas'
+  file: pages/overseas.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-OVERSEAS-AUTO-01
+      name: 整体分析
+      code_ref: pages/overseas.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-OVERSEAS-AUTO-02
+      name: 美债利率深区
+      code_ref: pages/overseas.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-PANO
+  name: 架构全景
+  route: '#pano'
+  file: pages/pano.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-PANO-AUTO-01
+      name: 功能域
+      code_ref: pages/pano.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-PANO-AUTO-02
+      name: 嵌入查看
+      code_ref: pages/pano.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-POLICY
+  name: 政策资金
+  route: '#policy'
+  file: pages/policy.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-POLICY-AUTO-01
+      name: 板块维度（季度净变动，推导）
+      code_ref: pages/policy.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-POLICY-AUTO-02
+      name: 个股维度（2026Q2 十大股东推导）
+      code_ref: pages/policy.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-POLICY-AUTO-03
+      name: 政策流
+      code_ref: pages/policy.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-POLICY-AUTO-04
+      name: 国家队持仓变动（社保/汇金）
+      code_ref: pages/policy.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-POLICY-AUTO-05
+      name: 宽基 ETF 份额异动
+      code_ref: pages/policy.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-POLICY-AUTO-06
+      name: 地缘政治 / 战争风险
+      code_ref: pages/policy.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-POSITION
+  name: 持仓监控
+  route: '#position'
+  file: pages/position.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-POSITION-AUTO-01
+      name: 个股贡献（正前 3 / 负前 2）
+      code_ref: pages/position.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-POSITION-AUTO-02
+      name: 按板块汇总
+      code_ref: pages/position.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-POSITION-AUTO-03
+      name: 按因子汇总
+      code_ref: pages/position.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-POSITION-AUTO-04
+      name: 合并持仓（3 账户）
+      code_ref: pages/position.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-POSITION-AUTO-05
+      name: 盈亏日历
+      code_ref: pages/position.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-POSITION-AUTO-06
+      name: 资金流动
+      code_ref: pages/position.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-POSITION-AUTO-07
+      name: 阶段盈亏
+      code_ref: pages/position.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-POSITION-AUTO-08
+      name: 收益分析
+      code_ref: pages/position.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-POSITION-AUTO-09
+      name: 持仓明细
+      code_ref: pages/position.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-POSITION-AUTO-10
+      name: 持仓盈亏归因
+      code_ref: pages/position.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-POSITION-AUTO-11
+      name: 相关性净额
+      code_ref: pages/position.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-POSITION-AUTO-12
+      name: 组合政策容忍带
+      code_ref: pages/position.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-POSITION-AUTO-13
+      name: 风险告警条
+      code_ref: pages/position.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-PROJMAP
+  name: 项目地图
+  route: '#projmap'
+  file: pages/projmap.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-PROJMAP-AUTO-01
+      name: 真源与现状
+      code_ref: pages/projmap.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-PROJMAP-AUTO-02
+      name: 73 域骨架预览
+      code_ref: pages/projmap.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-PROJMAP-AUTO-03
+      name: 当前可用替代
+      code_ref: pages/projmap.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-RATING
+  name: 研评级
+  route: '#rating'
+  file: pages/rating.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-RATING-AUTO-01
+      name: 评级变动流
+      code_ref: pages/rating.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-RATING-AUTO-02
+      name: 金股池
+      code_ref: pages/rating.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-RATING-AUTO-03
+      name: AI 深研
+      code_ref: pages/rating.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-REGLIB
+  name: 注册表库
+  route: '#reglib'
+  file: pages/reglib.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features: []
+- id: P-REVIEW
+  name: 盘后复盘
+  route: '#review'
+  file: pages/review.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-REVIEW-AUTO-01
+      name: 交易统计（实盘） 口径随上方周期切换 · trades/journal 聚合，多口径聚合管线落地后转真（I-2）
+      code_ref: pages/review.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-REVIEW-AUTO-02
+      name: 打板复盘 复盘统计语境（晋级率/收益统计，回答"今天打板生态能不能赚钱"）；盘中实时梯队结构 → 「板块全景」；数据：l
+      code_ref: pages/review.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-REVIEW-AUTO-03
+      name: Brinson 拆解
+      code_ref: pages/review.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-REVIEW-AUTO-04
+      name: 因子暴露拆解
+      code_ref: pages/review.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-REVIEW-AUTO-05
+      name: 今日执行回看
+      code_ref: pages/review.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-REVIEW-AUTO-06
+      name: PnL 对账 + 归因
+      code_ref: pages/review.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-REVIEW-AUTO-07
+      name: 按情景胜率
+      code_ref: pages/review.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-REVIEW-AUTO-08
+      name: 按板块胜率
+      code_ref: pages/review.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-REVIEW-AUTO-09
+      name: 连板梯队晋级明细
+      code_ref: pages/review.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-REVIEW-AUTO-10
+      name: 打板收益统计
+      code_ref: pages/review.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-REVIEW-AUTO-11
+      name: 因子级归因
+      code_ref: pages/review.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-REVIEW-AUTO-12
+      name: 压力测试盘后验证
+      code_ref: pages/review.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-REVIEW-AUTO-13
+      name: 预案回看
+      code_ref: pages/review.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-REVIEW-AUTO-14
+      name: 因子健康
+      code_ref: pages/review.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-REVIEW-AUTO-15
+      name: 龙虎榜 · 席位"谁在买"
+      code_ref: pages/review.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-REVIEW-AUTO-16
+      name: 隔夜外盘
+      code_ref: pages/review.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-REVIEW-AUTO-17
+      name: 明日预案
+      code_ref: pages/review.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-REVIEW-AUTO-18
+      name: 📜 今日战报
+      code_ref: pages/review.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-SCREENER
+  name: 条件选股
+  route: '#screener'
+  file: pages/screener.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-SCREENER-AUTO-01
+      name: ① 选股宇宙
+      code_ref: pages/screener.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SCREENER-AUTO-02
+      name: ② 添加条件
+      code_ref: pages/screener.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SCREENER-AUTO-03
+      name: ③ 条件列表 OR ▾
+      code_ref: pages/screener.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SCREENER-AUTO-04
+      name: 条件面板
+      code_ref: pages/screener.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SCREENER-AUTO-05
+      name: 选股结果
+      code_ref: pages/screener.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-SECTOR
+  name: 板块全景
+  route: '#sector'
+  file: pages/sector.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-SECTOR-AUTO-01
+      name: 成分股全表
+      code_ref: pages/sector.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SECTOR-AUTO-02
+      name: 板块资金流历史
+      code_ref: pages/sector.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SECTOR-AUTO-03
+      name: 板块舆情
+      code_ref: pages/sector.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SECTOR-AUTO-04
+      name: 相对强度光谱地图 当前：领涨视角
+      code_ref: pages/sector.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SECTOR-AUTO-05
+      name: 抗跌榜
+      code_ref: pages/sector.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SECTOR-AUTO-06
+      name: 领涨榜
+      code_ref: pages/sector.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SECTOR-AUTO-07
+      name: 证据链 · 怎么算出"资金去了哪"
+      code_ref: pages/sector.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SECTOR-AUTO-08
+      name: 主线候选 Top10
+      code_ref: pages/sector.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SECTOR-AUTO-09
+      name: 产业链联动日报
+      code_ref: pages/sector.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SECTOR-AUTO-10
+      name: 主线候选 Top 10
+      code_ref: pages/sector.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SECTOR-AUTO-11
+      name: 板块梯队明细
+      code_ref: pages/sector.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SECTOR-AUTO-12
+      name: 板块档案下钻
+      code_ref: pages/sector.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SECTOR-AUTO-13
+      name: 大盘分时贡献度拆解
+      code_ref: pages/sector.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SECTOR-AUTO-14
+      name: 分钟级逆势上涨
+      code_ref: pages/sector.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SECTOR-AUTO-15
+      name: 下跌段资金流入
+      code_ref: pages/sector.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SECTOR-AUTO-16
+      name: 率先反弹
+      code_ref: pages/sector.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SECTOR-AUTO-17
+      name: 最抗跌
+      code_ref: pages/sector.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SECTOR-AUTO-18
+      name: 盘后板块总结
+      code_ref: pages/sector.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-SENTIMENT
+  name: 市场情绪
+  route: '#sentiment'
+  file: pages/sentiment.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-SENTIMENT-AUTO-01
+      name: 涨停强度 · 今 vs 昨
+      code_ref: pages/sentiment.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SENTIMENT-AUTO-02
+      name: 涨停质量三维
+      code_ref: pages/sentiment.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SENTIMENT-AUTO-03
+      name: 连板天梯
+      code_ref: pages/sentiment.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SENTIMENT-AUTO-04
+      name: 市场宽度
+      code_ref: pages/sentiment.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SENTIMENT-AUTO-05
+      name: 两融情绪
+      code_ref: pages/sentiment.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SENTIMENT-AUTO-06
+      name: 情绪是怎么算出来的 · 构成因子
+      code_ref: pages/sentiment.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SENTIMENT-AUTO-07
+      name: 情绪运行阶段
+      code_ref: pages/sentiment.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SENTIMENT-AUTO-08
+      name: 涨跌停全景
+      code_ref: pages/sentiment.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SENTIMENT-AUTO-09
+      name: 情绪温度 · 近 20 日时序
+      code_ref: pages/sentiment.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SENTIMENT-AUTO-10
+      name: 市场宽度 · 近 20 日时序
+      code_ref: pages/sentiment.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SENTIMENT-AUTO-11
+      name: 盘中异动流
+      code_ref: pages/sentiment.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-STOCK
+  name: 个股档案
+  route: '#stock'
+  file: pages/stock.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-STOCK-AUTO-01
+      name: 档案头
+      code_ref: pages/stock.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-STOCK-AUTO-02
+      name: 行情边界
+      code_ref: pages/stock.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-STOCK-AUTO-03
+      name: 前十大股东
+      code_ref: pages/stock.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-STOCK-AUTO-04
+      name: 董监高
+      code_ref: pages/stock.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-STOCK-AUTO-05
+      name: 财务概况
+      code_ref: pages/stock.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-STOCK-AUTO-06
+      name: 筹码与股东户数
+      code_ref: pages/stock.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-STOCK-AUTO-07
+      name: 主营构成 + 同行比较
+      code_ref: pages/stock.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-STOCK-AUTO-08
+      name: 资金流向
+      code_ref: pages/stock.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-STOCK-AUTO-09
+      name: 近期公告
+      code_ref: pages/stock.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-STOCK-AUTO-10
+      name: 研报评级
+      code_ref: pages/stock.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-STOCK-AUTO-11
+      name: 关联跳转
+      code_ref: pages/stock.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-STRATEGY
+  name: 策略档案
+  route: '#strategy'
+  file: pages/strategy.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-STRATEGY-AUTO-01
+      name: 策略看板
+      code_ref: pages/strategy.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-STRATEGY-AUTO-02
+      name: 当前框架状态
+      code_ref: pages/strategy.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-STRATEGY-AUTO-03
+      name: regime 适用性核对
+      code_ref: pages/strategy.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-STRATEGY-AUTO-04
+      name: 主线龙头回踩
+      code_ref: pages/strategy.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-SYSSTATUS
+  name: 系统状态
+  route: '#sysstatus'
+  file: pages/sysstatus.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-SYSSTATUS-AUTO-01
+      name: 10 层数据分布
+      code_ref: pages/sysstatus.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SYSSTATUS-AUTO-02
+      name: 已知问题
+      code_ref: pages/sysstatus.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SYSSTATUS-AUTO-03
+      name: 调度时段
+      code_ref: pages/sysstatus.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SYSSTATUS-AUTO-04
+      name: 券商连接
+      code_ref: pages/sysstatus.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SYSSTATUS-AUTO-05
+      name: 熔断开关（Kill Switch）
+      code_ref: pages/sysstatus.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SYSSTATUS-AUTO-06
+      name: QMT 文件桥健康
+      code_ref: pages/sysstatus.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SYSSTATUS-AUTO-07
+      name: 备份健康 Backup Health
+      code_ref: pages/sysstatus.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SYSSTATUS-AUTO-08
+      name: 性能监控
+      code_ref: pages/sysstatus.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-SYSSTATUS-AUTO-09
+      name: 资源水位
+      code_ref: pages/sysstatus.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-T0
+  name: 做T分析
+  route: '#t0'
+  file: pages/t0.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-T0-AUTO-01
+      name: 近 20 日命中率趋势
+      code_ref: pages/t0.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-T0-AUTO-02
+      name: 分桶校准
+      code_ref: pages/t0.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-T0-AUTO-03
+      name: 今日做T信号回验
+      code_ref: pages/t0.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-TASK
+  name: 任务进度
+  route: '#task'
+  file: pages/task.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-TASK-AUTO-01
+      name: 各阶段进度（现有内容保留）
+      code_ref: pages/task.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-TASK-AUTO-02
+      name: 最近完成
+      code_ref: pages/task.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-TASK-AUTO-03
+      name: 失败任务
+      code_ref: pages/task.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-TASK-AUTO-04
+      name: 全量任务清单
+      code_ref: pages/task.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-TASK-AUTO-05
+      name: 长任务进度
+      code_ref: pages/task.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+- id: P-WARROOM
+  name: 作战指挥
+  route: '#warroom'
+  file: pages/warroom.html
+  modules:
+  - id: M-MAIN
+    name: 页面主体
+    features:
+    - id: P-WARROOM-AUTO-01
+      name: 校准度 · 概率分桶 vs 实际命中率
+      code_ref: pages/warroom.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-WARROOM-AUTO-02
+      name: W2 明日情景矩阵 3×3
+      code_ref: pages/warroom.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-WARROOM-AUTO-03
+      name: 实时情景跟踪
+      code_ref: pages/warroom.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-WARROOM-AUTO-04
+      name: 明日推演
+      code_ref: pages/warroom.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-WARROOM-AUTO-05
+      name: 四指数状态
+      code_ref: pages/warroom.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-WARROOM-AUTO-06
+      name: W2b 持仓股明日边界
+      code_ref: pages/warroom.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-WARROOM-AUTO-07
+      name: W3 开盘观察哨
+      code_ref: pages/warroom.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-WARROOM-AUTO-08
+      name: 打板实时监控
+      code_ref: pages/warroom.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-WARROOM-AUTO-09
+      name: W0 昨日预案验证
+      code_ref: pages/warroom.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-WARROOM-AUTO-10
+      name: W4 多空辩论台
+      code_ref: pages/warroom.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-WARROOM-AUTO-11
+      name: 多头研究员
+      code_ref: pages/warroom.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-WARROOM-AUTO-12
+      name: 空头研究员
+      code_ref: pages/warroom.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-WARROOM-AUTO-13
+      name: 交易员综合
+      code_ref: pages/warroom.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-WARROOM-AUTO-14
+      name: 风控官
+      code_ref: pages/warroom.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-WARROOM-AUTO-15
+      name: W5 风险预算表
+      code_ref: pages/warroom.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-WARROOM-AUTO-16
+      name: 预算分配
+      code_ref: pages/warroom.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-WARROOM-AUTO-17
+      name: ⚔ 纪律铁律
+      code_ref: pages/warroom.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
+    - id: P-WARROOM-AUTO-18
+      name: 系统审计日志
+      code_ref: pages/warroom.html
+      backend_ref: []
+      interaction: ''
+      status: 已建
+      auto_scanned: true
