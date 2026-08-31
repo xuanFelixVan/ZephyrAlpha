@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-GOVERNANCE | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """
 
 

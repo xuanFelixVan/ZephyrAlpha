@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-NLP_DUALTAG-001 | (auto-injected by S4 reconciler; 裁定#214 归一化: hyphen→underscore) | §
+# [TTL] permanent
 # [MODULE] tests.nlp.test_sentiment_aggregator
 # [DOMAIN] D_DATA
 # [TTL] permanent

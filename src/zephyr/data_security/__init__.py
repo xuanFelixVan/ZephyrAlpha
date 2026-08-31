@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-DATA_SEC | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # NOTE(P2W02): 并行会话 scaffold 时 eager import 可能先于类落地致包门面断链；
 # 按 data_eng/__init__.py 在案可逆模式改守卫式导入（目标类落地即自愈）。
 """

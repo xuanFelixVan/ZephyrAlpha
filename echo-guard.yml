@@ -131,3 +131,216 @@ acknowledged:
     verdict: dismissed
     stable_key: "scripts\\ml\\build_eval_set.py:_load_done||scripts\\ml\\run_sentiment_batch.py:load_done_ids"
     note: "2026-08-29：跨会话 WIP 撞车（两脚本续跑去重小函数 60% extract）——脚本间雷同小函数不合并不抽象；dismissed 为解跨会话阻塞，owner 会话若合并请同步移除本条"
+  # 2026-08-31 ai-19596（随 AI-CRYPTO-001 hub 先例）：get_default_gate 单例懒加载模板族 10 对 hub
+  # （global _x; if _x is None: _x=X(); return _x 三语句模板在 Type-2 口径下 100% 撞车，
+  #  与 echo-guard.yml L5-15 记录的"琐碎单行访问器族"同型——剥 docstring 后 2-3 语句逃逸平凡过滤器）。
+  #  各 get_* 语义各殊（registry/tracker/slo/writer/telemetry/bus/metrics/lock/degradation/core），
+  #  硬合并=过度抽象（三相似行优于早抽象）；存量雷同非真重复，dismissed 登记解 S4 头注入批量提交阻塞
+  - id: "src\\zephyr\\autonomy_core\\autonomy_boundary_gate.py:get_default_gate:00000000||src\\zephyr\\data\\wal_codec\\codec_registry.py:get_registry:00000000"
+    verdict: dismissed
+    stable_key: "src\\zephyr\\autonomy_core\\autonomy_boundary_gate.py:get_default_gate||src\\zephyr\\data\\wal_codec\\codec_registry.py:get_registry"
+    note: "2026-08-31 ai-19596：单例懒加载模板撞车（get_default_gate vs get_registry），非真重复"
+  - id: "src\\zephyr\\autonomy_core\\autonomy_boundary_gate.py:get_default_gate:00000000||src\\zephyr\\experiment_tracking\\experiment_tracker.py:get_tracker:00000000"
+    verdict: dismissed
+    stable_key: "src\\zephyr\\autonomy_core\\autonomy_boundary_gate.py:get_default_gate||src\\zephyr\\experiment_tracking\\experiment_tracker.py:get_tracker"
+    note: "2026-08-31 ai-19596：单例懒加载模板撞车（get_default_gate vs get_tracker），非真重复"
+  - id: "src\\zephyr\\autonomy_core\\autonomy_boundary_gate.py:get_default_gate:00000000||src\\zephyr\\feedback_loop\\slo_manager.py:get_slo_manager:00000000"
+    verdict: dismissed
+    stable_key: "src\\zephyr\\autonomy_core\\autonomy_boundary_gate.py:get_default_gate||src\\zephyr\\feedback_loop\\slo_manager.py:get_slo_manager"
+    note: "2026-08-31 ai-19596：单例懒加载模板撞车（get_default_gate vs get_slo_manager），非真重复"
+  - id: "src\\zephyr\\autonomy_core\\autonomy_boundary_gate.py:get_default_gate:00000000||src\\zephyr\\gov_audit\\bridges\\audit_contracts.py:_get_writer:00000000"
+    verdict: dismissed
+    stable_key: "src\\zephyr\\autonomy_core\\autonomy_boundary_gate.py:get_default_gate||src\\zephyr\\gov_audit\\bridges\\audit_contracts.py:_get_writer"
+    note: "2026-08-31 ai-19596：单例懒加载模板撞车（get_default_gate vs _get_writer），非真重复"
+  - id: "src\\zephyr\\autonomy_core\\autonomy_boundary_gate.py:get_default_gate:00000000||src\\zephyr\\infrastructure\\asset_inventory\\telemetry.py:get_telemetry:00000000"
+    verdict: dismissed
+    stable_key: "src\\zephyr\\autonomy_core\\autonomy_boundary_gate.py:get_default_gate||src\\zephyr\\infrastructure\\asset_inventory\\telemetry.py:get_telemetry"
+    note: "2026-08-31 ai-19596：单例懒加载模板撞车（get_default_gate vs get_telemetry），非真重复"
+  - id: "src\\zephyr\\autonomy_core\\autonomy_boundary_gate.py:get_default_gate:00000000||src\\zephyr\\infrastructure\\capacity_assurance\\contracts\\contract_bus.py:get_contract_bus_loader:00000000"
+    verdict: dismissed
+    stable_key: "src\\zephyr\\autonomy_core\\autonomy_boundary_gate.py:get_default_gate||src\\zephyr\\infrastructure\\capacity_assurance\\contracts\\contract_bus.py:get_contract_bus_loader"
+    note: "2026-08-31 ai-19596：单例懒加载模板撞车（get_default_gate vs get_contract_bus_loader），非真重复"
+  - id: "src\\zephyr\\autonomy_core\\autonomy_boundary_gate.py:get_default_gate:00000000||src\\zephyr\\infrastructure\\system_telemetry\\contract_metrics.py:get_contract_metrics:00000000"
+    verdict: dismissed
+    stable_key: "src\\zephyr\\autonomy_core\\autonomy_boundary_gate.py:get_default_gate||src\\zephyr\\infrastructure\\system_telemetry\\contract_metrics.py:get_contract_metrics"
+    note: "2026-08-31 ai-19596：单例懒加载模板撞车（get_default_gate vs get_contract_metrics），非真重复"
+  - id: "src\\zephyr\\autonomy_core\\autonomy_boundary_gate.py:get_default_gate:00000000||src\\zephyr\\security\\access_control\\cold_start_lock.py:get_cold_start_lock:00000000"
+    verdict: dismissed
+    stable_key: "src\\zephyr\\autonomy_core\\autonomy_boundary_gate.py:get_default_gate||src\\zephyr\\security\\access_control\\cold_start_lock.py:get_cold_start_lock"
+    note: "2026-08-31 ai-19596：单例懒加载模板撞车（get_default_gate vs get_cold_start_lock），非真重复"
+  - id: "src\\zephyr\\autonomy_core\\autonomy_boundary_gate.py:get_default_gate:00000000||src\\zephyr\\security\\access_control\\engine_degradation.py:get_engine_degradation_manager:00000000"
+    verdict: dismissed
+    stable_key: "src\\zephyr\\autonomy_core\\autonomy_boundary_gate.py:get_default_gate||src\\zephyr\\security\\access_control\\engine_degradation.py:get_engine_degradation_manager"
+    note: "2026-08-31 ai-19596：单例懒加载模板撞车（get_default_gate vs get_engine_degradation_manager），非真重复"
+  - id: "src\\zephyr\\autonomy_core\\autonomy_boundary_gate.py:get_default_gate:00000000||src\\zephyr\\security\\access_control\\immutable_core.py:get_immutable_core:00000000"
+    verdict: dismissed
+    stable_key: "src\\zephyr\\autonomy_core\\autonomy_boundary_gate.py:get_default_gate||src\\zephyr\\security\\access_control\\immutable_core.py:get_immutable_core"
+    note: "2026-08-31 ai-19596：单例懒加载模板撞车（get_default_gate vs get_immutable_core），非真重复"
+  - id: "src\zephyr\autonomy_core\skills\skill_cross_model.py:fallback_chain:00000000||src\zephyr\autonomy_core\skills\skill_feedback.py:history:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\skills\skill_cross_model.py:fallback_chain||src\zephyr\autonomy_core\skills\skill_feedback.py:history"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（fallback_chain vs history），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\skills\skill_cross_model.py:fallback_chain:00000000||src\zephyr\autonomy_core\skills\skill_sandbox.py:allowed_tools:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\skills\skill_cross_model.py:fallback_chain||src\zephyr\autonomy_core\skills\skill_sandbox.py:allowed_tools"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（fallback_chain vs allowed_tools），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\skills\skill_cross_model.py:fallback_chain:00000000||src\zephyr\data\provider_base.py:capability_contracts:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\skills\skill_cross_model.py:fallback_chain||src\zephyr\data\provider_base.py:capability_contracts"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（fallback_chain vs capability_contracts），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\skills\skill_cross_model.py:fallback_chain:00000000||src\zephyr\data\tick_subscriber.py:subscribed_symbols:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\skills\skill_cross_model.py:fallback_chain||src\zephyr\data\tick_subscriber.py:subscribed_symbols"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（fallback_chain vs subscribed_symbols），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\skills\skill_cross_model.py:fallback_chain:00000000||src\zephyr\feedback_loop\decision_engine.py:pending:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\skills\skill_cross_model.py:fallback_chain||src\zephyr\feedback_loop\decision_engine.py:pending"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（fallback_chain vs pending），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\skills\skill_cross_model.py:fallback_chain:00000000||src\zephyr\gov_audit\feedback_policy.py:recommendations:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\skills\skill_cross_model.py:fallback_chain||src\zephyr\gov_audit\feedback_policy.py:recommendations"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（fallback_chain vs recommendations），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\skills\skill_cross_model.py:fallback_chain:00000000||src\zephyr\gov_audit\forensic_package.py:chain:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\skills\skill_cross_model.py:fallback_chain||src\zephyr\gov_audit\forensic_package.py:chain"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（fallback_chain vs chain），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\skills\skill_cross_model.py:fallback_chain:00000000||src\zephyr\gov_audit\forensic_package.py:events:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\skills\skill_cross_model.py:fallback_chain||src\zephyr\gov_audit\forensic_package.py:events"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（fallback_chain vs events），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\skills\skill_cross_model.py:fallback_chain:00000000||src\zephyr\gov_audit\merkle_audit.py:leaves:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\skills\skill_cross_model.py:fallback_chain||src\zephyr\gov_audit\merkle_audit.py:leaves"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（fallback_chain vs leaves），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\skills\skill_cross_model.py:fallback_chain:00000000||src\zephyr\gov_audit\resource_aware_pool.py:gpu_futures:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\skills\skill_cross_model.py:fallback_chain||src\zephyr\gov_audit\resource_aware_pool.py:gpu_futures"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（fallback_chain vs gpu_futures），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\skills\skill_cross_model.py:fallback_chain:00000000||src\zephyr\gov_audit\resource_aware_pool.py:cpu_futures:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\skills\skill_cross_model.py:fallback_chain||src\zephyr\gov_audit\resource_aware_pool.py:cpu_futures"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（fallback_chain vs cpu_futures），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\skills\skill_cross_model.py:fallback_chain:00000000||src\zephyr\gov_audit\retention.py:approved_deletions:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\skills\skill_cross_model.py:fallback_chain||src\zephyr\gov_audit\retention.py:approved_deletions"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（fallback_chain vs approved_deletions），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\skills\skill_cross_model.py:fallback_chain:00000000||src\zephyr\gov_code_quality\code_dedup\canary_register.py:canaries:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\skills\skill_cross_model.py:fallback_chain||src\zephyr\gov_code_quality\code_dedup\canary_register.py:canaries"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（fallback_chain vs canaries），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\skills\skill_cross_model.py:fallback_chain:00000000||src\zephyr\governance\intelligence_governance\mvep_orchestrator.py:implemented:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\skills\skill_cross_model.py:fallback_chain||src\zephyr\governance\intelligence_governance\mvep_orchestrator.py:implemented"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（fallback_chain vs implemented），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\agent_observability.py:traces:00000000||src\zephyr\autonomy_core\context\context_budget_tracker.py:sessions:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\agent_observability.py:traces||src\zephyr\autonomy_core\context\context_budget_tracker.py:sessions"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（traces vs sessions），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\agent_observability.py:traces:00000000||src\zephyr\autonomy_core\context\context_budget_tracker.py:session_limit:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\agent_observability.py:traces||src\zephyr\autonomy_core\context\context_budget_tracker.py:session_limit"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（traces vs session_limit），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\agent_observability.py:traces:00000000||src\zephyr\autonomy_core\context\context_outcome_tracker.py:links:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\agent_observability.py:traces||src\zephyr\autonomy_core\context\context_outcome_tracker.py:links"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（traces vs links），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\agent_observability.py:traces:00000000||src\zephyr\autonomy_core\context\fallback_staleness_gate.py:file:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\agent_observability.py:traces||src\zephyr\autonomy_core\context\fallback_staleness_gate.py:file"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（traces vs file），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\agent_observability.py:traces:00000000||src\zephyr\autonomy_core\ide_watcher.py:last_mtimes:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\agent_observability.py:traces||src\zephyr\autonomy_core\ide_watcher.py:last_mtimes"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（traces vs last_mtimes），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\agent_observability.py:traces:00000000||src\zephyr\autonomy_core\integration\pipeline_bridge.py:loader:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\agent_observability.py:traces||src\zephyr\autonomy_core\integration\pipeline_bridge.py:loader"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（traces vs loader），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\agent_observability.py:traces:00000000||src\zephyr\autonomy_core\integration\pipeline_bridge.py:injector:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\agent_observability.py:traces||src\zephyr\autonomy_core\integration\pipeline_bridge.py:injector"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（traces vs injector），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\agent_observability.py:traces:00000000||src\zephyr\autonomy_core\integration\pipeline_bridge.py:router:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\agent_observability.py:traces||src\zephyr\autonomy_core\integration\pipeline_bridge.py:router"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（traces vs router），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\agent_observability.py:traces:00000000||src\zephyr\autonomy_core\integration\pipeline_bridge.py:stage_map:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\agent_observability.py:traces||src\zephyr\autonomy_core\integration\pipeline_bridge.py:stage_map"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（traces vs stage_map），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\agent_observability.py:traces:00000000||src\zephyr\autonomy_core\skill_rbac_registry.py:entries:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\agent_observability.py:traces||src\zephyr\autonomy_core\skill_rbac_registry.py:entries"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（traces vs entries），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\agent_observability.py:traces:00000000||src\zephyr\autonomy_core\skills\skill_cache_provider.py:max:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\agent_observability.py:traces||src\zephyr\autonomy_core\skills\skill_cache_provider.py:max"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（traces vs max），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\agent_observability.py:traces:00000000||src\zephyr\autonomy_core\skills\skill_cache_provider.py:backend_name:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\agent_observability.py:traces||src\zephyr\autonomy_core\skills\skill_cache_provider.py:backend_name"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（traces vs backend_name），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\agent_observability.py:traces:00000000||src\zephyr\autonomy_core\skills\skill_canary.py:canary:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\agent_observability.py:traces||src\zephyr\autonomy_core\skills\skill_canary.py:canary"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（traces vs canary），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\agent_observability.py:traces:00000000||src\zephyr\governance\intelligence_governance\mvep_orchestrator.py:implemented:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\agent_observability.py:traces||src\zephyr\governance\intelligence_governance\mvep_orchestrator.py:implemented"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（traces vs implemented），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\context\context_outcome_tracker.py:links:00000000||src\zephyr\autonomy_core\ide_watcher.py:last_mtimes:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\context\context_outcome_tracker.py:links||src\zephyr\autonomy_core\ide_watcher.py:last_mtimes"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（links vs last_mtimes），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\context\context_outcome_tracker.py:links:00000000||src\zephyr\autonomy_core\skill_rbac_registry.py:entries:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\context\context_outcome_tracker.py:links||src\zephyr\autonomy_core\skill_rbac_registry.py:entries"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（links vs entries），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\context\context_outcome_tracker.py:links:00000000||src\zephyr\autonomy_core\skills\skill_cognitive_preservation.py:memory:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\context\context_outcome_tracker.py:links||src\zephyr\autonomy_core\skills\skill_cognitive_preservation.py:memory"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（links vs memory），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\context\context_outcome_tracker.py:links:00000000||src\zephyr\autonomy_core\skills\skill_cross_model.py:adapter_registry:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\context\context_outcome_tracker.py:links||src\zephyr\autonomy_core\skills\skill_cross_model.py:adapter_registry"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（links vs adapter_registry），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\context\context_outcome_tracker.py:links:00000000||src\zephyr\autonomy_core\skills\skill_feedback.py:consecutive_failures:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\context\context_outcome_tracker.py:links||src\zephyr\autonomy_core\skills\skill_feedback.py:consecutive_failures"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（links vs consecutive_failures），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\context\context_outcome_tracker.py:links:00000000||src\zephyr\autonomy_core\skills\skill_resilience.py:get_failure_count:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\context\context_outcome_tracker.py:links||src\zephyr\autonomy_core\skills\skill_resilience.py:get_failure_count"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（links vs get_failure_count），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\context\context_outcome_tracker.py:links:00000000||src\zephyr\autonomy_core\skills\skill_resilience.py:get_last_failure_time:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\context\context_outcome_tracker.py:links||src\zephyr\autonomy_core\skills\skill_resilience.py:get_last_failure_time"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（links vs get_last_failure_time），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\context\context_outcome_tracker.py:links:00000000||src\zephyr\autonomy_core\skills\skill_resilience.py:get_circuit_open:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\context\context_outcome_tracker.py:links||src\zephyr\autonomy_core\skills\skill_resilience.py:get_circuit_open"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（links vs get_circuit_open），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\context\context_outcome_tracker.py:links:00000000||src\zephyr\autonomy_core\skills\skill_resilience.py:get_circuit_open_until:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\context\context_outcome_tracker.py:links||src\zephyr\autonomy_core\skills\skill_resilience.py:get_circuit_open_until"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（links vs get_circuit_open_until），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\context\context_outcome_tracker.py:links:00000000||src\zephyr\ex_core\execution_engine.py:broker_scores:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\context\context_outcome_tracker.py:links||src\zephyr\ex_core\execution_engine.py:broker_scores"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（links vs broker_scores），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\context\context_outcome_tracker.py:links:00000000||src\zephyr\factor\governance\factor_pool_manager.py:entries:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\context\context_outcome_tracker.py:links||src\zephyr\factor\governance\factor_pool_manager.py:entries"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（links vs entries），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\context\context_outcome_tracker.py:links:00000000||src\zephyr\feedback_loop\error_budget.py:budgets:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\context\context_outcome_tracker.py:links||src\zephyr\feedback_loop\error_budget.py:budgets"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（links vs budgets），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\context\context_outcome_tracker.py:links:00000000||src\zephyr\feedback_loop\scheduler_safety.py:fle_gate_cache:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\context\context_outcome_tracker.py:links||src\zephyr\feedback_loop\scheduler_safety.py:fle_gate_cache"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（links vs fle_gate_cache），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\zephyr\autonomy_core\context\context_outcome_tracker.py:links:00000000||src\zephyr\governance\intelligence_governance\provider_failover.py:healthy:00000000"
+    verdict: dismissed
+    stable_key: "src\zephyr\autonomy_core\context\context_outcome_tracker.py:links||src\zephyr\governance\intelligence_governance\provider_failover.py:healthy"
+    note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（links vs healthy），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"

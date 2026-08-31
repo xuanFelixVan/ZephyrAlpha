@@ -5,8 +5,8 @@ title: Context Engine 施工图
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.3.0"
-date: 2026-08-17
+version: "0.3.1"
+date: 2026-08-30
 topic: context_engine_build
 scope: 09_ai_architecture
 ---
@@ -16,7 +16,7 @@ scope: 09_ai_architecture
 > ## 结案报告（2026-08-28 全量审查批，代码实证）
 > **实际开发**：对齐收口完成——context_engine 蓝图 v1.2.6（2026-08-22 起持续演进）；tests/context/ 46 测试文件+tests/ce/ 7 测试文件实证；CE depgraph 边缺口 7 项已闭环 5 项（syncer 过滤器治本 generated/testing/stable 三态+蓝图依赖表对齐 depgraph 26 实测出边）。
 > **最终成果**：GP0 收口目标达成（956 测试绿运行口径留痕）。
-> **未做+原因**：inject 段生产空段（context_injector.py 返回空 InjectedContext）/llm_summary 压缩档/InProcessContextEngine 未落地——均属 GP1+；boot_hooks 接线归 Q2 Owner 项。
+> **未做+原因**：llm_summary 压缩档/InProcessContextEngine 未落地——均属 GP1+；boot_hooks 接线归 Q2 Owner 项。**inject 段空段已闭环（2026-08-30）**：context_injector.py 已接线 UnifiedMemoryAPI（经 VMSSearchProtocol 适配器，三检索模式统一走检索通道，降级不炸），Q6 已关闭（见 §6）；组合根 context_pipeline.py 滞后注释已同步修正。
 
 > 本文定位：Context Engine（上下文引擎）剩余未实现部分的施工计划。
 > 与其他文件的分工：结构设计见 [00_index.md](00_index.md)，盘点见 [02_design_asset_inventory.md](02_design_asset_inventory.md)。
@@ -48,11 +48,11 @@ Context Engine（MOD-CONTEXT_ENGINE）的代码落位在 `src/zephyr/autonomy_co
 | build | `context_assembler.py`（632 行）：manifest 文件采集→拼接；另有 `build_context()` 从 VMS 四 Collection（ke_entries/vibe_rules/blueprints/failure_patterns）检索原始上下文 | production，含 VMS 不可用降级（embedded_defaults）与同 session 5 分钟缓存 |
 | compress | `context_assembler._compress_context()` 内联触发 `DocCompressor`（`src/zephyr/shared/io/doc_compressor.py`）；`context_evictor.py` 提供条目级三维逐出 | production，但仅规则式压缩单档落地（见 §3.3） |
 | validate | `ContextAssembler.validate()`（G3 门禁：文件存在可读 + token ≤ 预算 + file_count > 0）；`integrity_check.py` 注入后完整性 | production |
-| inject | `context_injector.py`（485 行）：`inject_by_task_id/module_id/keyword` 三种模式 API 完整，但**生产返回空 InjectedContext**（源码注释："Production retrieval is handled out-of-band by the context pipeline"） | API 就绪、数据源未接线 |
+| inject | `context_injector.py`（485 行）：`inject_by_task_id/module_id/keyword` 三种模式 API 完整；**已接线 UnifiedMemoryAPI（2026-08-30）**——经 VMSSearchProtocol 适配器注入检索客户端（`_UnifiedMemorySearchAdapter`），缺省时懒加载 `get_unified_memory_api()` 生产单例，构造/检索失败降级为空结果（不炸）；provenance 输出 `unified_memory:{topic}:{chunk_id}` | production（2026-08-30 接线闭环，Q6 关闭） |
 | 组合根 | `context_pipeline.py`：`run_context_four_stage()` 显式编排上述四段，`run_context_four_stage_or_raise()` 硬门禁版本 | production |
 | 自动化 | `context_pipeline_auto.py`：EventBus 订阅（TASK_STARTED/COMPLETED/FAILED）+ KillSwitch 熔断 + 超时自动关闭 | production，但代码内实测无 src 内消费方（头部 [CONSUMERS] 声称 zephyr.trading.boot_hooks——实测该文件存在但并未 import 本模块，属 [CONSUMERS] 漂移） |
 
-关键事实：四段流水线中 **build/compress/validate 三段已生产可用**，**inject 是唯一的生产空段**；接口规范 `context_engine_interface.md` §4.1 定义的 `InProcessContextEngine`（三源汇聚 async 版，落位 `src/zephyr/orchestration/context_management/in_process.py`）**未落地**（该目录实测不存在）。
+关键事实：四段流水线 **build/compress/validate/inject 四段均已生产可用**——inject 空段已于 2026-08-30 接线 UnifiedMemoryAPI 闭环（Q6 关闭）；接口规范 `context_engine_interface.md` §4.1 定义的 `InProcessContextEngine`（三源汇聚 async 版，落位 `src/zephyr/orchestration/context_management/in_process.py`）**未落地**（该目录实测不存在）。
 
 ### 2.2 核心问题
 
@@ -60,7 +60,7 @@ Context Engine（MOD-CONTEXT_ENGINE）的代码落位在 `src/zephyr/autonomy_co
 |---|---|---|
 | Token 预算管控 | `DEFAULT_CONTEXT_TOKEN_BUDGET = 8000`（`src/zephyr/infrastructure/capacity_assurance/token_budget.py`，含 L1=500/L2=1500/L3=8000 三级配额 + 7200 降级阈值）；`context_budget_tracker.py` 三级阈值告警；`context_budget.py` 四种截断策略（newest_first/oldest_first/summary_first/relevance_first） | 预算机制完整，缺生产环境超限行为验证 |
 | 上下文压缩 | `DocCompressor`（规则式：保留 Markdown 标题/frontmatter/不可变块）已接入 Assembler | 接口规范 §4.1 设计的 llm_summary（本地 Qwen 分 slot 摘要）/rule_based/truncate 三档策略仅落地规则式一档 |
-| 记忆检索 | `build_context()` 经 `vector_bridge.py`（VMSSearchProtocol，5s 超时，VMS 不可用降级）；`memory_bank.py` 提供 6 个结构化 .md 跨 session 持久上下文；D_INTELLIGENCE 域 `unified_memory_api.py` 提供 recall/write/search | inject 段未接 UnifiedMemoryAPI；检索结果无质量评分 |
+| 记忆检索 | `build_context()` 经 `vector_bridge.py`（VMSSearchProtocol，5s 超时，VMS 不可用降级）；`memory_bank.py` 提供 6 个结构化 .md 跨 session 持久上下文；D_INTELLIGENCE 域 `unified_memory_api.py` 提供 recall/write/search | ~~inject 段未接 UnifiedMemoryAPI~~（已接线 2026-08-30，Q6 关闭）；检索结果无质量评分 |
 | 一致性 | 组合根已消除"Assembler ≠ 四段"的审计歧义 | 蓝图漂移（22 vs 39 文件、§1.1 索引仅 1 行、build_status=planned vs 代码 production）误导新 session |
 
 > **边界注记（记忆 vs 知识域）**：源 21-D-KNOWLEDGE §0/§6——D-AUTONOMY-05 管"怎么记住"（存储机制/检索机制/记忆生命周期），D-KNOWLEDGE 管"记住什么"（知识结构/知识关系/知识质量），两者正交；类比：海马体（记忆存取）vs 新皮层（知识表征）。落到 CE 语境：本文管"上下文怎么进 prompt"，记忆存取机制的分层候选见 §3.5，知识结构本体归 D-KNOWLEDGE。
@@ -81,7 +81,7 @@ Context Engine（MOD-CONTEXT_ENGINE）的代码落位在 `src/zephyr/autonomy_co
 | 类别 | 文件（行数） | 内容简述 |
 |---|---|---|
 | 流水线核心 | context_assembler.py（632） | 装配/压缩/G3 校验/影子副本 + build_context VMS 检索 |
-| 流水线核心 | context_injector.py（485） | inject 三模式 API（生产返回空） |
+| 流水线核心 | context_injector.py（485） | inject 三模式 API——已接线 UnifiedMemoryAPI（2026-08-30，VMSSearchProtocol 适配器 + 懒加载生产单例 + 降级不炸） |
 | 流水线核心 | context_budget.py（385） | 预算配额 + 四种截断策略 |
 | 流水线核心 | context_budget_tracker.py（338） | Token 预算追踪 + 三级阈值告警 |
 | 流水线核心 | context_rot_model.py（266） | Context Rot 注意力衰减数学模型 |
@@ -256,7 +256,7 @@ Context Engine（MOD-CONTEXT_ENGINE）的代码落位在 `src/zephyr/autonomy_co
 
 | # | 步骤 | 优先级 |
 |---|---|---|
-| P1-1 | inject 接线：将 `ContextInjector` 数据源接至 `UnifiedMemoryAPI`（D_INTELLIGENCE，经 VMSSearchProtocol 协议注入，不跨域硬编码）；`inject_by_keyword()` 返回非空 InjectedContext（含 sources + provenances）。前置裁定：§6 Q6 | P1 |
+| P1-1 | inject 接线：将 `ContextInjector` 数据源接至 `UnifiedMemoryAPI`（D_INTELLIGENCE，经 VMSSearchProtocol 协议注入，不跨域硬编码）；`inject_by_keyword()` 返回非空 InjectedContext（含 sources + provenances）。**已施工 2026-08-30**：`ContextInjector._build_default_search_client()` 懒加载 `get_unified_memory_api()` + `_UnifiedMemorySearchAdapter` 适配器（生产单例，VMSSearchProtocol 签名对齐）；provenance 输出 `unified_memory:{topic}:{chunk_id}`；契约测试 `tests/context/test_context_injector_memory_wiring.py` 全绿 + `test_context_injector_real_backend_integration.py` 已写（VMS 可用时命中，不可用时 skipif）。前置裁定：§6 Q6 **已关闭** | **已施工 2026-08-30** |
 | P1-2 | 压缩三档：llm_summary（本地 Qwen INT4 分 slot 摘要）→ rule_based（现状）→ truncate 降级链；摘要结果须经 integrity_check 校验后方可替换原文（约束六交叉验证） | P2 |
 | P1-3 | 接口规范 §4.1 sync/async 偏差裁定：维持 sync 主用 + 按需 async wrapper，或升级 async——决策记录回填本文 §3 | P2 |
 
@@ -308,7 +308,7 @@ Context Engine（MOD-CONTEXT_ENGINE）的代码落位在 `src/zephyr/autonomy_co
 | Q3 | CE 与 10 LLM 基础设施的上下文传递契约？ | 已证伪（2026-08-17 接口复审），契约归属待 Owner 裁定 | 10 号文 v0.2.2 已填充，全文实测无 `final_context`/`ContextFourStageResult`/`run_context_four_stage` 承接——原接口假设不成立。CE 产出（final_context）目前无下游契约承接方，与 Q4 同为 18 篇中唯一"接口无人认领"区。归属候选：07 自定义 / 10 门面承接 / 14 消费链定义。 |
 | Q4 | CE 与 14 执行层业务 Agent 的消费接口？ | 已证伪（2026-08-17 接口复审），契约归属待 Owner 裁定 | 14 号文 v0.2.0 已填充，全文实测无 `TaskCard.context_assembly_manifest` 触发链、无 `run_context_four_stage()`/`final_context` 消费链——原接口假设（CT-ORC-CE-001 消费方）不成立。同 Q3：归属候选 07 自定义 / 10 门面承接 / 14 消费链定义。 |
 | Q5 | 24 个辅助文件是否物理删除？ | 待裁定 | Phase 0 建议仅标记 deprecated_candidate 不删除。若 Owner 确认 playground/CLI 类永不再用，可物理删除以减维护面。 |
-| Q6 | inject 空占位的修复优先级？ | 待裁定 | inject_by_* 生产返回空（实测源码注释确认）。修复需接 UnifiedMemoryAPI。若 14 号业务 Agent 仅消费 manifest 组装结果，inject 可继续为空——优先级取决于 14 号填充结论。 |
+| Q6 | inject 空占位的修复优先级？ | **已裁定+已施工 2026-08-30（关闭）** | 裁定结论：inject 段**必须接线**——它是四段流水线的一环，组合根 `context_pipeline.py` 已提供 `inject_mode` 显式触发接口，不能长期空转。施工内容：①`ContextInjector._build_default_search_client()` 懒加载 `get_unified_memory_api()` + `_UnifiedMemorySearchAdapter` 签名对齐；②三检索模式（keyword/task_id/module_id）统一走 `_inject_via_search` 检索-装配路径，不再返回空占位；③降级策略：构造失败/检索异常/无命中时返回空 `InjectedContext`（不炸），保证生产鲁棒；④provenance 输出 `unified_memory:{topic}:{chunk_id}`，满足 07 号文验收标准。验证：`tests/context/test_context_injector_memory_wiring.py` 全绿（fake client）；`tests/context/test_context_injector_real_backend_integration.py` 走真实生产路径，VMS 可用时命中、不可用时 skipif（不假绿）。组合根 `context_pipeline.py` 滞后注释（L36-38/L103）已同步修正。 |
 | Q8 | doc_type 词表不合规阻断 Gateway 提交？ | 已闭环（2026-08-17） | frontmatter `doc_type` 已迁移为受控词表内 `architecture_view`，v0.2.2 已经 Gateway 提交（commit e9087fa902）。原"暂存待提交"表述作废。 |
 | Q7 | 蓝图漂移同步责任与机制？ | 待裁定 | MOD-CONTEXT_ENGINE 蓝图 v1.1.3 实测漂移：22 vs 39 文件、§1.1 索引仅列 `__init__.py`、build_status=planned vs 代码全 production、[CONSUMERS] 声称的 zephyr.trading.boot_hooks 实测存在但未 import 本模块。蓝图不在本文修改权限内——需裁定由谁同步、是否改为 depgraph 单向派生。 |
 | Q9 | §3.5 四层记忆候选是否突破 §5"不做跨会话长期记忆"边界？ | 待裁定 | §3.5 登记的四层记忆中情景/语义/程序三层为跨会话持久层，与 §5 第 2 条既有边界冲突。选项：A. 维持 §5，§3.5 降级为远期参考（P4 登记）；B. 将记忆层纳入施工范围——需同时裁定域归属（CE 管道 / D-AUTONOMY-CORE / D-KNOWLEDGE 分层承接）与硬件门禁（LP-002：RAG 向量检索暂缓，FTS5+Redis MVP 替代）。裁定前 §5 第 2 条维持有效。 |
@@ -324,6 +324,7 @@ Context Engine（MOD-CONTEXT_ENGINE）的代码落位在 `src/zephyr/autonomy_co
 | 2026-08-17 | 0.2.2 | 新增 Q8：Gateway 提交被 TTL-METADATA 门禁阻断（doc_type=implementation_plan 不在受控词表 9 值内），文件暂存待 Owner 裁定词表后提交；去除文件 BOM 以通过 frontmatter 解析 | AI-FILL-07 git 提交闭环执行结果：门禁 hard block，按规则 7 降级为暂存+标注 |
 | 2026-08-17 | 0.2.1 | 红蓝对抗修正：文件行数统一更正为总行数口径（(Get-Content).Count）；boot_hooks.py 存在性误判更正（文件存在但未 import CE，属 [CONSUMERS] 漂移）；context_governance 文件数 13→14（含 __init__.py）；修复 system_charter.md 相对链接层级 | AI-FILL-07 第 5/6/7 轮审查发现的事实性偏差 |
 | 2026-08-17 | 0.3.0 | §3.5 新增 Agent 记忆四层候选登记（工作/情景/语义/程序 + 巩固≥3次固化 + 去重>0.95 + 五阶段流水线 + 记忆安全约束 + Databricks 2026 无策展警示 + LP-002 硬件门禁 FTS5 降级）；§2.2 补记忆 vs 知识域边界注记（21-D-KNOWLEDGE §0/§6）；接口复审回填：Q2 部分成立（04 §3.5 精确化 + boot_hooks 未接线漂移登记）、Q3/Q4 证伪（10/14 无 CE 产出承接）、Q8 闭环、新增 Q9（记忆候选 vs §5 边界）；§1/§4 Phase 2/§5-2/§5-9 同步实测口径 | AI-FILL-07-R2 回填：草稿源（Agent架构 §7.1~7.5 / 21-D-KNOWLEDGE §10 第5条·A7 段 / 12-D-ML-TRAIN §A7）+ 04/10/14 接口复审实测 |
+| 2026-08-30 | 0.3.1 | GP1 收尾回写（纯文档+注释修正，零业务代码改动）：①§2.1/§2.2/§2.4/结案报告 消除"inject 生产空段"stale 表述——`context_injector.py` 已于 2026-08-30 接线 UnifiedMemoryAPI（VMSSearchProtocol 适配器 + 懒加载生产单例 + 降级不炸，provenance=`unified_memory:{topic}:{chunk_id}`）；②§4 Phase 1 P1-1 标已施工；③§6 Q6 由"待裁定"改"已裁定+已施工 2026-08-30（关闭）"；④组合根 `context_pipeline.py` 滞后注释（L36-38/L103）修正与 injector 实态一致；⑤新增真实后端集成验证 `tests/context/test_context_injector_real_backend_integration.py`（非 fake client，VMS 可用时命中、不可用时 skipif 不假绿）；`tests/context/test_context_injector_memory_wiring.py` 回归全绿 | C4 收尾项：代码已接线（2026-08-30），本轮回写文档/注释对齐实态 + 补真实后端集成验证 |
 
 ---
 

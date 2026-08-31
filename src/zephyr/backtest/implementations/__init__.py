@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-BT-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [TTL] permanent
 """
 [A_module] module_id=MOD-BT-001_implementations | layer=domain | stability=evolving | safety=L | ai_autonomy=ai_modifiable

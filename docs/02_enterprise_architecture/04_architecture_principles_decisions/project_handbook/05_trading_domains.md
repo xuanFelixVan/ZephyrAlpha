@@ -65,18 +65,18 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 
 | 域 ID | 域名 | 层 | 节点数 |
 |-------|------|----|-------|
-| `D_GOVERNANCE` | 生命周期管理 | L2_domain | 762 |
+| `D_GOVERNANCE` | 生命周期管理 | L2_domain | 763 |
 | `D_GOV_SCRIPTS` | 脚本治理 | L2_domain | 544 |
 | `D_AUTONOMY_CORE` | 自治核心 | L1_foundation | 507 |
 | `D_AUDITTEST` | 审计测试套件 | L2_domain | 506 |
 | `D_INFRA_RUNTIME` | 运行时集成 | L0_infrastructure | 467 |
 | `D_DATA` | 数据接入层 | L1_foundation | 399 |
 | `D_SHARED` | 共享服务 | L0_infrastructure | 393 |
-| `D_GOV_AUDIT` | 审计追踪 | L2_domain | 390 |
+| `D_GOV_AUDIT` | 审计追踪 | L2_domain | 389 |
 | `D_GOV_CODE_QUALITY` | 代码质量治理 | L1_foundation | 243 |
-| `D_FEEDBACK_LOOP` | 反馈循环引擎 | L1_foundation | 238 |
+| `D_FEEDBACK_LOOP` | 反馈循环引擎 | L1_foundation | 242 |
 | `D_SECURITY` | 对抗验证 | L1_foundation | 237 |
-| `D_GOV_ENFORCEMENT` | 规则执行 | L2_domain | 194 |
+| `D_GOV_ENFORCEMENT` | 规则执行 | L2_domain | 195 |
 | `D_TRADING` | 交易运营 | L2_domain | 176 |
 | `D_ASHARE_SIGNAL` | A股特色信号 | L2_domain | 161 |
 | `D_INTELLIGENCE` | 上下文管理 | L2_domain | 159 |
@@ -93,9 +93,9 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 | `D_SECURITY_LLM` | LLM防御 | L1_foundation | 79 |
 | `D_GOV_DRIFT` | 漂移检测 | L2_domain | 77 |
 | `D_FBL_DIAGNOSERS` | 反馈诊断器 | L1_foundation | 76 |
-| `D_FBL_VERIFICATION` | 反馈验证 | L1_foundation | 71 |
 | `D_FRONTEND` | 前端 | L2_domain | 71 |
 | `D_INFRASTRUCTURE` | 跨层契约基础设施 | L0_infrastructure | 71 |
+| `D_FBL_VERIFICATION` | 反馈验证 | L1_foundation | 67 |
 | `D_FBL_DETECTORS` | 反馈检测器 | L1_foundation | 66 |
 | `D_REGIME` | 市场状态 | L2_domain | 64 |
 | `D_REPORTING` | 报告 | L1_foundation | 58 |

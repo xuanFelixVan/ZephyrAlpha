@@ -35,7 +35,9 @@ context_pipeline — Context Engine **四段流水线组合根**
 - **validate**：``ContextAssembler.validate``（G3）。
 - **inject**（可选）：``ContextInjector`` —— KB 检索，与 manifest 拼装结果用分隔符合并。
 
-inject 省略时仍可完成前三段闭环；inject 返回空上下文（检索由 UnifiedMemoryAPI 独立处理）。
+inject 省略时仍可完成前三段闭环；inject 已接线 UnifiedMemoryAPI（经 VMSSearchProtocol
+适配器，2026-08-30），检索命中时返回非空 InjectedContext（含 sources + provenances），
+无可用数据源/检索异常时降级为空结果（不炸）。
 """
 
 from __future__ import annotations
@@ -100,7 +102,8 @@ def run_context_four_stage(
     manifest
         ``TaskCard.context_assembly_manifest`` 形态。
     inject_mode / inject_query
-        ``inject_mode != "none"`` 时需 ``inject_query`` 非空（KB refactor 后 inject 返回空上下文）。
+        ``inject_mode != "none"`` 时需 ``inject_query`` 非空（inject 经 UnifiedMemoryAPI
+        检索，命中时合并 KB 上下文；未命中/检索异常时降级为空，仅在 final_context 保留 manifest 段）。
     include_architecture_context
         为 True 时尝试加载 ``architecture-context.json`` 并前置到 ``final_context``。
     architecture_context_path
