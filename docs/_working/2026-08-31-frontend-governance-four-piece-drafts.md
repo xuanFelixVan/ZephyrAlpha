@@ -142,16 +142,16 @@ items:
 
 ### 4.2 混合制形态（已裁定）
 - **前端侧清单**：`architecture_model/frontend/frontend_map.yaml`（页面→模块→功能点三级），**尽量从 manifest.yaml + 页面扫描半自动生成**；手工只维护生成器够不着的部分（交互描述、do_not_touch、状态理由）。
-- **模块侧字段**：在既有模块注册体系（module_id_registry / blueprint 注册）上**加字段**，不另建 3000 模块新表（见 §4.3）。
+- **模块侧字段**：长在 **depgraph nodes 表**本体（migration 12 已落地；module_id_registry 是文档规则模块表且 human_gated，不是挂载点——4b 施工实证修正），不另建 3000 模块新表（见 §4.3）。
 - **派生副本**：governance.db 存同步副本供 SQL 联查（3000 模块级对账）——与依赖全景图同款双态（git YAML 真源 + DB 派生），门禁读文件、联查读库。
 - **派生人类视图**：md 视图 + 两本缺口视图全部自动生成。
 
-### 4.3 统一对账字段设计（核心新增）
+### 4.3 统一对账字段设计（核心新增，已落地 depgraph nodes——migration 12）
 ```yaml
-# 模块侧（每个后端模块注册条目加三字段）
+# 模块侧（depgraph nodes 表三字段，apply_depgraph --batch 写入，两阶段 dry-run+ZEPHYR_DEPGRAPH_BATCH_APPLY=1 门禁）
 has_frontend: yes | no | planned
 no_frontend_reason: 纯计算引擎 | 数据管道 | 治理内部件 | 基础设施   # has_frontend=no 时必填（"事出有因"）
-frontend_ref: F-STOCKQ-COSTLINE    # has_frontend=yes 时指向具体前端功能点，可多个
+frontend_ref: F-STOCKQ-COSTLINE    # has_frontend=yes 时指向具体前端功能点，可多个（逗号分隔）
 
 # 前端侧（frontend_map 每个功能点条目）
 backend_ref: chip_distribution      # 挂空/悬空 = "前端有后端没有"缺口，自动上榜
@@ -240,6 +240,7 @@ pages:
 | v0.1.0→v0.2.0 | 按新文档审查 SOP 七轮循环 | 4 自审点成立；frontend_model.yaml 漂移新发现；缺更新触发/验收单权限/模块废弃三机制；前沿方向获 2026 行业验证；无过度工程项；缺修订记录节 | 全部修入 v0.2.0 |
 | v0.2.0→v0.3.0 | Owner 六项裁定+第一性原理重推 | 命名机器可读性优先；分类法按成因不按历史；存储双态同依赖全景图；缺口总账升级统一对账；model stub 删除重做 | 全部修入 v0.3.0（§六裁定记录） |
 | v0.3.0→v0.4.0 | 字段深度审查+对齐体系升级 | 现有 10 字段缺 5 个实战必踩坑字段（数据源具体性/更新频率/用户操作/降级行为/视觉基准）；对齐范围需从六图扩到注册表层 | §4.4 补 5 字段（共 15 字段）；§4.5 升级为三层对齐体系并引用《全项目对齐清单》 |
+| v0.4.0→v0.4.1 | 4b 施工实证 | 挂载点裁定修正：module_id_registry 实为文档规则模块表（human_gated），真挂载点=depgraph nodes；迁移走编号 SQL 文件制（12_add_frontend_coverage_fields.sql），写入走 apply_depgraph --batch 两阶段门禁；psql 控制台中文显示乱码≠存储乱码（Python 读回验证为准） | 施工中发现原假定错误，实证修正 |
 
 **修订记录**
 

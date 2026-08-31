@@ -258,7 +258,11 @@ CREATE TABLE IF NOT EXISTS nodes (
     blueprint_path          TEXT,
     entry_point             BOOLEAN DEFAULT FALSE,
     public_api              TEXT,
-    content_hash            TEXT  -- 裁定#209 Stage 3：文件内容哈希，增量模式跳过未变更文件
+    content_hash            TEXT,  -- 裁定#209 Stage 3：文件内容哈希，增量模式跳过未变更文件
+    has_frontend            TEXT NOT NULL DEFAULT 'no'
+        CHECK (has_frontend IN ('yes', 'no', 'planned')),  -- 六图对齐·前端覆盖声明（migration 12）
+    no_frontend_reason      TEXT NOT NULL DEFAULT '',       -- has_frontend=no 时必填（"事出有因"）
+    frontend_ref            TEXT NOT NULL DEFAULT ''        -- 指向前端功能点 F-XXX（frontend_map.yaml）
     -- 注意：blueprint_id 双轨制+历史兼容检查（MOD-*/D-*/SH-*/PLACEHOLDER*）由触发器实现，
     -- 而非 CHECK 约束。原因：SQLite 历史数据存在不符合双轨制+历史兼容的 blueprint_id
     -- （如 GOV-FSTR-001），CHECK 约束会阻止迁移。触发器只对新 INSERT/UPDATE 生效，
