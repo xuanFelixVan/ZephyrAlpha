@@ -502,7 +502,7 @@ directories:
 
     status: active
 
-    note: "2026-08-13 用户裁定设立；首批迁入 construction_workflow_sop.md（原 design_memos/02）+ merge_conflict_resolution_sop.md（原 design_memos/67）"
+    note: "2026-08-13 用户裁定设立；首批迁入 construction_workflow_sop.md（原 design_memos/02）+ merge_conflict_resolution_sop.md（原 design_memos/67）；2026-08-31 新增 document_review_and_optimization_sop.md（自 _archive/AI_review_instructions.md 提炼七轮循环工作法，Owner 指令建立）"
 
 
   - path: "docs/01_policies_and_standards/rules/"

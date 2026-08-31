@@ -1820,6 +1820,21 @@ files:
   tier: ''
   aliases: []
   section_count: 0
+- path: docs/01_policies_and_standards/sop/document_review_and_optimization_sop.md
+  module_id: ''
+  title: 文档审查与优化流程标准作业规程（SOP）——七轮循环工作法
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: global
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/templates/blueprint_construction_template.md
   module_id: GOV-028
   title: Blueprint Construction Template
