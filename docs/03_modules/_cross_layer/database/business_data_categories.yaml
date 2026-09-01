@@ -1394,6 +1394,24 @@
   data_source: [internal]
   blueprint: "src/zephyr/shared/contracts/execution_report.py"
 
+# --- 2026-09-01 Owner 会话批准（#BT-PIPELINE-001 阶段三：信号管道治本）---
+
+- category_id: market_signal_history
+  name: "信号历史窄表（两管道：strategy_weight=BTRUN权重面板 / factor_synth=日频多因子合成；预留名 signal_history 沿 execution_report 先例落 c1_market；DEC-INV-002 仅展示/审计消费不直连 order）"
+  engine: clickhouse
+  database: c1_market
+  table: market_signal_history
+  schema_file: schemas/categories/market_signal_history.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "DEC-INV-002 信号不直连下单；CTR-INJ-003 direction 必须带 confidence 阈值；DLG-001 meta 必须携带血缘（run_id/因子版本）"
+  calc_mode: preload
+  frequency: 日频
+  data_source: [internal]
+  blueprint: "docs/03_modules/_domain_signal/blueprint.md"
+
 - category_id: market_sector_fund_flow
   name: "板块级资金流快照（THS即时源，行业+概念，亿元当日累计；分钟粒度=轮询差分）"
   engine: clickhouse

@@ -632,6 +632,100 @@ def backtest_run_status(task_id: str = Query(..., min_length=3)) -> dict[str, An
     return {"ok": True, **st}
 
 
+# ── 信号两接口（#BT-PIPELINE-001 阶段三）：market_signal_history 两管道 ──
+# 管道 A source='strategy_weight'（BTRUN 权重面板）/ 管道 B source='factor_synth'（日频因子截面）。
+_VALID_SOURCES = ("factor_synth", "strategy_weight")
+
+
+@app.get("/api/signals")
+def signals(
+    symbols: str = Query("", description="逗号分隔纯数字代码，空=仅返回 sources 概要"),
+    sources: str = Query("factor_synth,strategy_weight"),
+) -> dict[str, Any]:
+    """个股最新信号（持仓页信号列/stockq 量化块）：每 (symbol, source, signal_id) 取最新一行。"""
+    src_list = [s.strip() for s in sources.split(",") if s.strip() in _VALID_SOURCES]
+    if not src_list:
+        return {"ok": False, "error": "bad sources", "data": []}
+    try:
+        conds = ["source IN (" + ",".join("'" + s + "'" for s in src_list) + ")"]
+        syms = []
+        for s in symbols.split(","):
+            t = s.strip().split(".")[0]
+            if t.isalnum():
+                syms.append(t)
+        if syms:
+            conds.append("symbol IN (" + ",".join("'" + t + "'" for t in syms) + ")")
+        rows = _ch_exec(
+            "SELECT trade_date, symbol, source, signal_id, direction, score, confidence, "
+            "rank_in_universe, meta FROM c1_market.market_signal_history FINAL "
+            "WHERE " + " AND ".join(conds) + " "
+            "ORDER BY trade_date DESC, computed_at DESC "
+            "LIMIT 1 BY symbol, source, signal_id"
+        )
+        data = []
+        for r in rows:
+            try:
+                meta = json.loads(r[8]) if r[8] else {}
+            except Exception:  # noqa: BLE001 — meta 脏数据不炸接口
+                meta = {}
+            data.append(
+                {
+                    "trade_date": r[0].isoformat() if hasattr(r[0], "isoformat") else str(r[0]),
+                    "symbol": r[1],
+                    "source": r[2],
+                    "signal_id": r[3],
+                    "direction": r[4],
+                    "score": float(r[5]),
+                    "confidence": float(r[6] or 0.0),
+                    "rank": int(r[7] or 0),
+                    "meta": meta,
+                }
+            )
+        return {"ok": True, "count": len(data), "data": data}
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)[:200], "data": []}
+
+
+@app.get("/api/signals-overview")
+def signals_overview() -> dict[str, Any]:
+    """信号总览（warroom 聚合）：每 (source, signal_id) 最新交易日的方向分布 + 强弱两端。"""
+    try:
+        rows = _ch_exec(
+            "SELECT source, signal_id, direction, count(), max(trade_date), "
+            "argMax(score, score) FROM "
+            "(SELECT * FROM c1_market.market_signal_history FINAL "
+            " ORDER BY trade_date DESC, computed_at DESC LIMIT 1 BY symbol, source, signal_id) "
+            "GROUP BY source, signal_id, direction ORDER BY source, signal_id"
+        )
+        summary: dict[tuple, dict] = {}
+        for src, sid, direction, cnt, max_d, _ in rows:
+            key = (src, sid)
+            item = summary.setdefault(
+                key, {"source": src, "signal_id": sid, "trade_date": max_d.isoformat(), "buy": 0, "sell": 0, "hold": 0, "neutral": 0}
+            )
+            item[direction] = int(cnt)
+        # 强弱两端（factor_synth 最新截面 top/bottom 5）
+        top_bottom: dict[str, dict] = {}
+        for src, sid in list(summary.keys()):
+            tb = _ch_exec(
+                "SELECT symbol, score, direction, rank_in_universe FROM c1_market.market_signal_history FINAL "
+                "WHERE source = '" + src + "' AND signal_id = '" + sid + "' "
+                "AND trade_date = '" + summary[(src, sid)]["trade_date"] + "' "
+                "ORDER BY score DESC LIMIT 5"
+            )
+            bottom = _ch_exec(
+                "SELECT symbol, score, direction, rank_in_universe FROM c1_market.market_signal_history FINAL "
+                "WHERE source = '" + src + "' AND signal_id = '" + sid + "' "
+                "AND trade_date = '" + summary[(src, sid)]["trade_date"] + "' "
+                "ORDER BY score ASC LIMIT 5"
+            )
+            fmt = lambda r: {"symbol": r[0], "score": float(r[1]), "direction": r[2], "rank": int(r[3] or 0)}  # noqa: E731
+            top_bottom[f"{src}:{sid}"] = {"top5": [fmt(r) for r in tb], "bottom5": [fmt(r) for r in bottom]}
+        return {"ok": True, "data": list(summary.values()), "extremes": top_bottom}
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)[:200], "data": []}
+
+
 def main() -> None:
     import uvicorn
 

@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-CD-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [BTRUN] BTRUN 标准回测 CLI —— 时序明细强制落盘治本（#BT-PIPELINE-001）
 # [MODULE] scripts.run_backtest
 # [DOMAIN] D_BACKTEST
@@ -88,6 +90,71 @@ def _collect_timeseries(runner, data, signals, config, engine) -> dict:
     }
 
 
+def _sink_strategy_signals(signals, strategy_id: str, run_id: str, factor_ids) -> dict:
+    """管道 A（#BT-PIPELINE-001 阶段三）：最新权重面板 → market_signal_history。
+
+    source='strategy_weight'（策略视角：系统想不想持有）。direction 裁决：
+    walk-back 找最近一次调仓前的权重行 w_prev——w_prev=0→w_now>0 为 buy；
+    w_prev>0→w_now=0 为 sell；持续持有为 hold（加减仓明细在 meta）。
+    失败不炸回测主链路（artifacts 是主产物，信号表为次级），返回 warn 供摘要。
+    """
+    try:
+        import pandas as pd  # noqa: F401 — signals 已是 DataFrame，此 import 仅为契约自证
+
+        if signals is None or signals.empty:
+            return {"written": 0, "warn": "weight panel empty"}
+        from zephyr.signal_ashare.signal_history_writer import write_signals
+
+        w_now = signals.iloc[-1]
+        w_prev = None
+        for i in range(len(signals) - 2, -1, -1):
+            if not signals.iloc[i].equals(w_now):
+                w_prev = signals.iloc[i]
+                break
+        trade_date = str(signals.index[-1])[:10]
+        max_w = float(w_now.max()) if len(w_now) else 0.0
+        ranked = w_now[w_now > 0].sort_values(ascending=False)
+        rows = []
+        for rank_i, (sym, w) in enumerate(ranked.items(), start=1):
+            prev_w = float(w_prev.get(sym, 0.0)) if w_prev is not None else float(w)
+            direction = "buy" if prev_w <= 0 else "hold"
+            rows.append(
+                {
+                    "trade_date": trade_date,
+                    "symbol": str(sym),
+                    "source": "strategy_weight",
+                    "signal_id": strategy_id,
+                    "direction": direction,
+                    "score": float(w),
+                    "confidence": (float(w) / max_w) if max_w > 0 else 0.0,
+                    "rank_in_universe": rank_i,
+                    "meta": {"run_id": run_id, "weight": float(w), "prev_weight": prev_w,
+                             "factors": list(factor_ids), "as_of": trade_date},
+                }
+            )
+        if w_prev is not None:  # 最近一次调仓中被清零的 → sell
+            for sym, pw in w_prev.items():
+                if float(pw) > 0 and float(w_now.get(sym, 0.0)) <= 0:
+                    rows.append(
+                        {
+                            "trade_date": trade_date,
+                            "symbol": str(sym),
+                            "source": "strategy_weight",
+                            "signal_id": strategy_id,
+                            "direction": "sell",
+                            "score": 0.0,
+                            "confidence": (float(pw) / max_w) if max_w > 0 else 0.5,
+                            "rank_in_universe": 0,
+                            "meta": {"run_id": run_id, "weight": 0.0, "prev_weight": float(pw),
+                                     "factors": list(factor_ids), "as_of": trade_date},
+                        }
+                    )
+        n = write_signals(rows, data_source="btrun")
+        return {"written": n, "warn": None if n else "signal rows empty"}
+    except Exception as exc:  # noqa: BLE001 — 信号落表失败不炸回测
+        return {"written": 0, "warn": f"signal sink failed: {exc}"}
+
+
 def run_one(
     strategy_id: str,
     symbols: list[str],
@@ -154,6 +221,8 @@ def run_one(
     artifact = build_artifact_from_data(sink)
     run_id = save_artifact(artifact)
 
+    sig = _sink_strategy_signals(signals, strategy_id, run_id, list(factor_ids))
+
     n_eq = len(ts.get("equity_curve") or [])
     n_tr = len(ts.get("trade_log") or [])
     warn = None
@@ -161,12 +230,15 @@ def run_one(
         warn = "equity_curve empty"
     elif n_tr == 0 and result.trades_count and result.trades_count > 0:
         warn = "trades_count>0 but trade_log empty"
+    if sig.get("warn"):
+        warn = (warn + "; " if warn else "") + sig["warn"]
     return {
         "ok": True,
         "run_id": run_id,
         "strategy_id": strategy_id,
         "equity_points": n_eq,
         "trades": n_tr,
+        "signals_written": sig.get("written", 0),
         "metrics": sink.to_metrics_dict(),
         "warn": warn,
     }
@@ -256,7 +328,8 @@ def main(argv: list[str] | None = None) -> int:
     m = summary["metrics"]
     print(
         f"OK run_id={summary['run_id']} equity_points={summary['equity_points']} "
-        f"trades={summary['trades']} total_return={m['total_return']:.4f} "
+        f"trades={summary['trades']} signals={summary.get('signals_written', 0)} "
+        f"total_return={m['total_return']:.4f} "
         f"sharpe={m['sharpe_ratio']:.2f} max_dd={m['max_drawdown']:.4f}"
     )
     if summary.get("warn"):
