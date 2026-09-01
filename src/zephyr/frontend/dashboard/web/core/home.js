@@ -152,8 +152,40 @@ function ovxMap(open){
   if(ov) ov.classList.toggle('open', !!open);
 }
 
+/* ── ⑥ ovxVideo 首页主视觉视频管理（Owner 2026-09-01）──
+ * 居中循环播放（画面+声音）；资源纪律：页面隐藏≠视频暂停（DOM section display:none 不停解码），
+ * 故挂 page:show 广播——离开首页即 pause()（彻底停解码+静音），回到首页 play() 续播。
+ * 无手势自动播放策略：Chromium 默认禁带声 autoplay；Electron 壳已开 no-user-gesture-required，
+ * 普通浏览器兜底=先静音播（muted 不受策略限制），首次点击页面任意处恢复声音。 */
+var ovxVideo = (function(){
+  var v = null, wantSound = true;
+  function el(){ return document.getElementById('home-hero-video'); }
+  function tryPlay(){
+    v = el(); if(!v) return;
+    var p = v.play();
+    if(p && p.catch) p.catch(function(){
+      /* 自动播放被策略拦截 → 静音重试（保画面循环），等用户首次交互后补声音 */
+      v.muted = true;
+      v.play().catch(function(){});
+    });
+  }
+  document.addEventListener('page:show', function(e){
+    v = el(); if(!v) return;
+    if(e.detail === 'home'){ tryPlay(); }
+    else if(!v.paused){ v.pause(); }   /* 离开首页：停解码零后台占用 */
+  });
+  /* 浏览器兜底：首次任意点击恢复声音（Electron 壳不受限，走不到这里） */
+  document.addEventListener('click', function once(){
+    document.removeEventListener('click', once);
+    v = el();
+    if(v && v.muted && wantSound){ v.muted = false; }
+  });
+  return { play: tryPlay };
+})();
+
 /* ── 初始化（loader 在全部片段注入+app1~4/backtest 后调用） ── */
 (function(){
   vdWall();
   modLayout();
+  ovxVideo.play();   /* 首页=默认落地页，加载即播（home 是 active 初始页不走 page:show） */
 })();
