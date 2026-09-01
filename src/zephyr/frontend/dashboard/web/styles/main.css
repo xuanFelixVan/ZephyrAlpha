@@ -957,3 +957,14 @@ tr:hover td{background:rgba(243,243,243,.025)}
 .pos-head .ph .l{color:var(--dim);font-size:11px}
 .pos-head .ph .v{font-weight:700;font-size:14px;font-variant-numeric:tabular-nums}
 table.pos-table td, table.pos-table th{white-space:nowrap;font-variant-numeric:tabular-nums}
+
+/* ── 首页纯视频主视觉（Owner 2026-09-01：去标题/说明/快捷入口，背景=视频底色纯黑无缝，视频居中） ── */
+#p-home.home-pure-video{background:#000}   /* 页面底=视频四角实测 #000000 */
+#p-home.home-pure-video .home-hero-fullscreen{
+  min-height:calc(100vh - 120px);          /* 抵消 .main 上下 padding，视觉满屏 */
+  display:flex;align-items:center;justify-content:center;
+  background:#000
+}
+#p-home.home-pure-video .home-hero-fullscreen video{
+  box-shadow:0 0 0 0 transparent;border-radius:8px
+}

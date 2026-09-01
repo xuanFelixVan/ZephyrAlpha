@@ -1,19 +1,10 @@
-<section class="page active" id="p-home">
-    <h2 class="page-title">首页 <span class="badge b-na">待建设</span></h2>
-    <div class="page-sub">默认落地页（Owner 2026-08-30 裁定：一级导航新增「首页」，打开即见）· 内容规划中——当前可用：顶栏「全景总览」=今日决策+资金总览+持仓明细+决策简报</div>
-
-    <!-- 首页主视觉视频（Owner 2026-09-01）：居中循环播放（画面+声音）；切页自动暂停不占后台资源（core/home.js ovxVideo 管理） -->
-    <div class="card home-hero" style="min-height:340px;display:flex;align-items:center;justify-content:center;padding:14px">
+<section class="page active home-pure-video" id="p-home">
+    <!-- 首页主视觉（Owner 2026-09-01 裁定：纯视频页）——居中循环播放（画面+声音），页面背景=视频底色纯黑无缝；
+         切页自动暂停零后台占用（core/home.js ovxVideo 管理） -->
+    <div class="home-hero-fullscreen" id="home-hero-wrap">
       <video id="home-hero-video" src="assets/media/video/pinterest-loop.mp4"
              autoplay loop playsinline
-             style="max-width:100%;max-height:62vh;border-radius:8px;display:block"
+             style="max-width:100%;max-height:calc(100vh - 100px);border-radius:8px;display:block"
              title="首页主视觉（循环播放，切页自动暂停）"></video>
-    </div>
-    <div class="note" style="text-align:center">主视觉循环播放中——切到其他页面自动暂停（零后台占用），回到首页自动续播</div>
-
-    <div class="card" style="min-height:160px;display:flex;align-items:center;justify-content:center">
-      <div style="text-align:center;color:var(--dim)">
-        <div style="font-size:12px;line-height:2">快捷入口：<span class="todo-link" onclick="go('overview')">全景总览 →</span>　<span class="todo-link" onclick="go('warroom')">作战指挥 →</span>　<span class="todo-link" onclick="go('projmap')">项目地图 →</span></div>
-      </div>
     </div>
   </section>
