@@ -7,7 +7,7 @@ title: 前端组件拆分与数据接通 SOP（stockq 页实证）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.0"
+version: "1.1.0"
 date: 2026-09-01
 topic: frontend_component_split_sop
 scope: frontend
@@ -23,9 +23,10 @@ related_modules:
 
 # 前端组件拆分与数据接通 SOP（stockq 页实证）
 
-> **来源**：2026-09-01 stockq 页 sq-stock-header / sq-search-box 拆分实证。
+> **来源**：2026-09-01 stockq 页 sq-stock-header / sq-search-box 拆分实证；v1.1.0 增量合并当日全量实证（QMT 文件桥真源 / 事件行 / Electron 桌面壳 / 首页纯视频 / 浏览器缓存排查法）。
 > **核心原则**：单一功能 = 单一组件 = 积木（TRAE-086）。
 > **目标**：拆件 → 登记 → 接数据 → 验收 → 提交，四件套闭环。
+> **v1.1.0 变更**：①"改了不显示"排查流程（版本戳 ZK_BUILD）②QMT 文件桥数据源变体（GBK/列序/四态灯）③媒体素材纪律（派生图/视频）④Electron 壳段落扩写（主题切换/首页纯视频）⑤组件状态表更新。
 
 ---
 
@@ -47,6 +48,7 @@ related_modules:
 | 10 | `docs/03_modules/_domain_frontend/acceptance/ACC-F-STOCKQ-COSTLINE.yaml` | 验收单模板（9 条格式） | 新验收单照这个写 |
 | 11 | `docs/03_modules/_domain_frontend/frontend_handbook/project_conventions.md` | FEH-PC-008 拆件铁律 + 历史踩坑 | 避免重复踩坑 |
 | 12 | `tests/frontend/test_dashboard_smoke.py` | 冒烟测试结构断言 | 知道怎么验证 |
+| 13 | `tools/desktop/main.js` | Electron 壳入口（autoplay 策略 / 8890 自动拉起 / app:// 协议） | 桌面化后"改了不显示"类问题先分浏览器还是壳 |
 
 **读完标志**：能回答"新组件文件放哪、ID 怎么命、验收单怎么写、loader 怎么挂、测试怎么跑"。
 
@@ -199,11 +201,13 @@ def <name>(symbol: str = Query(..., min_length=1)) -> dict[str, Any]:
 | 数据源 | 组件示例 | API 接口 | 备注 |
 |---|---|---|---|
 | CH 表 | sq-stock-header / sq-key-data | `/api/stock-header` | 查 stock_basic/daily_valuation 等 |
-| QMT 接口 | sq-position-list / sq-order-book | 需 QMT 桥接服务 | 实盘数据，延后开发 |
+| **QMT 文件桥** | sq-position-list / sq-order-book | `/api/position` / `/api/order-book` | **2026-09-18 后唯一实盘通道**（miniQMT 关停）：`E:\qmt_bridge\Stock\PositionStatics.csv` 持仓（row[7]=代码 row[9]=当前拥有 row[15]=可用 row[18]=最新价）+ `Account.csv` 资金 + `quote.csv` 五/十档报价，均 **GBK 编码**，QMT 终端自动导出（委托/成交 1s、资金/持仓 10s），需启用"文本导出共享读写模式" |
 | localStorage | sq-fav-list | 无（纯前端） | 自选列表本地存储 |
 | 纯前端 | sq-draw-tools / sq-timeline | 无 | 画线工具/时间轴 |
 | 后端接口 | sq-financial-read / sq-news | `/api/finance` / `/api/news` | 财务/新闻数据 |
 | 聚合状态 | sq-data-source-badge | 无（读各组件状态） | 轮询 ZK.features 各组件 mode |
+
+**QMT 文件桥组件的显示口径裁定（Owner 2026-09-01）**：持仓列表价格旁百分比=股票**当天涨跌幅**（与自选列表同口径，走 kline_daily），**不是**持仓盈亏比例——QMT 导出"盈亏比例"列因送转/负成本严重失真（实测 -94.29%/-102.65%），盈亏只放悬停提示。
 
 ### Step 4：前端数据服务
 
@@ -311,6 +315,9 @@ services:
 | symbol 重复 | 查询返回多行相同数据 | SQL 加 `DISTINCT` |
 | 中文乱码 | PowerShell 显示 æ¢¦å¤©å®¶å± | 用 Python `json.loads` 验证真实数据 |
 | 门禁阻断 | CLAIM_REQUIRED / MULTI_DOMAIN | 加对应逃生通道标记 |
+| **浏览器缓存（改了不显示）** | 代码已改已提交，页面死活不变 | **版本戳排查法**：①看页头品牌行有无 `b<ZK_BUILD>`（loader.js 顶部 `window.ZK_BUILD`，每次改动+1）②无戳=浏览器在跑旧 JS → 开无痕窗口验证 ③无痕正常=缓存问题，用 Electron 壳（app:// 直读零 HTTP 缓存）根治 ④2026-09-01 实证：⚑12 不显示=浏览器残留 2.5h 前旧代码；事件行"无数据"也是一次性拉取失败后永久回退演示——新组件拉取必须带 **15s 自动重试直至真源** |
+| **QMT 文件桥编码/列序** | 读 CSV 乱码或字段错位 | 一律 `encoding='gbk'`；持仓列序硬编码 row[7]=代码/row[9]=当前拥有/row[15]=可用/row[18]=最新价；文件 mtime >1h=延迟（黄灯），禁止当断线 |
+| **桌面图标缓存** | 换了 ico 桌面快捷方式不更新 | Windows 图标缓存按路径索引——把 ico 复制到 `%LOCALAPPDATA%\ZephyrAlpha-app.ico` 新路径并重建快捷方式即绕过 |
 
 ---
 
@@ -334,7 +341,7 @@ services:
 | # | 组件 | 文件 | 数据源 | 状态 |
 |---|---|---|---|---|
 | 1 | sq-fav-list | features/stockq/sq-fav-list.js | localStorage + 价格推送 | ✅ 已通 |
-| 2 | sq-position-list | features/stockq/sq-position-list.js | QMT 文件桥 | ✅ 已通（E:\qmt_bridge\Stock 真源） |
+| 2 | sq-position-list | features/stockq/sq-position-list.js | QMT 文件桥 | ✅ 已通（E:\qmt_bridge\Stock 真源 v3：百分比=当天涨跌幅同自选口径，盈亏挪悬停，30s 轮询） |
 | 3 | sq-search-box | features/stockq/sq-search-box.js | /api/stock-search | ✅ 已通 |
 | 4 | sq-kline-main | features/stockq/sq-kline-main.js | CH.kline_* | ⏳ 待建 |
 | 5 | sq-kline-volume | features/stockq/sq-kline-volume.js | CH.kline_* | ⏳ 待建 |
@@ -342,16 +349,16 @@ services:
 | 7 | sq-kline-kdj | features/stockq/sq-kline-kdj.js | CH.kline_* | ⏳ 待建 |
 | 8 | sq-draw-tools | features/stockq/sq-draw-tools.js | 无（纯前端） | ⏳ 待建 |
 | 9 | sq-marks-bs | features/stockq/sq-marks-bs.js | 后端信号接口 | ⏳ 待建 |
-| 10 | sq-marks-trade | features/stockq/sq-marks-trade.js | QMT 成交接口 | ⏳ 待建（QMT 延后） |
+| 10 | sq-marks-trade | features/stockq/sq-marks-trade.js | QMT 成交接口 | ⏳ 待建（文件桥 Deal.csv 就绪后接入） |
 | 11 | sq-marks-chip | features/stockq/sq-marks-chip.js | CH.chip_distribution | ⏳ 待建 |
 | 12 | sq-cost-line | features/cost-line.js | chip-peak.avgCost | ✅ 已通 |
-| 13 | sq-event-row | features/stockq/sq-event-row.js | CH.calendar_event | ✅ 已通（宏观日历真源，个股财报/解禁待接入） |
+| 13 | sq-event-row | features/stockq/sq-event-row.js | CH.calendar_event | ✅ 已通（宏观日历真源+未来事件簇+15s重试；calendar_event 已扩 pub_value/exp_value/prev_value 三列，未公布显示"未公布"） |
 | 14 | sq-timeline | features/stockq/sq-timeline.js | 无（纯前端） | ⏳ 待建 |
 | 15 | sq-chip-peak | features/stockq/sq-chip-peak.js | CH.chip_distribution | ⏳ 待建 |
 | 16 | sq-stock-header | features/stockq/sq-stock-header.js | /api/stock-header | ✅ 已通 |
 | 17 | sq-sector-tags | features/stockq/sq-sector-tags.js | stock_basic.sector | ✅ 已通 |
 | 18 | sq-company-intro | features/stockq/sq-company-intro.js | stock_basic.intro | ⏳ 待建 |
-| 19 | sq-order-book | features/stockq/sq-order-book.js | QMT 文件桥 quote.csv | ✅ 已通（订阅标的真源五档） |
+| 19 | sq-order-book | features/stockq/sq-order-book.js | QMT 文件桥 quote.csv | ✅ 已通（订阅标的真源；后端动态解析 bid1~bid10/ask1~ask10，前端自适应档位数，文件桥出 10 档即显示 10 档） |
 | 20 | sq-key-data | features/stockq/sq-key-data.js | CH.daily_valuation | ✅ 已通 |
 | 21 | sq-financial-read | features/stockq/sq-financial-read.js | CH.finance | ⏳ 待建 |
 | 22 | sq-related-news | features/stockq/sq-related-news.js | CH.news | ⏳ 待建 |
@@ -401,15 +408,19 @@ services:
 - `src/zephyr/frontend/dashboard/web/services/api.js` — 数据服务通道
 
 **桌面壳（Electron，2026-09-01 Owner 裁定前端桌面化）**：
-- `tools/desktop/` — Electron 壳：生产模式 app:// 自定义协议直读 web/（零 HTTP 缓存）+ 自动拉起/复用 8890 API（关壳干净退出）；开发模式 `npm run dev` 指向 8891
+- `tools/desktop/` — Electron 壳：生产模式 app:// 自定义协议直读 web/（**零 HTTP 缓存，根治"改了不显示"**）+ 自动拉起/复用 8890 API（关壳干净退出）；开发模式 `npm run dev` 指向 8891
 - 启动：`cd tools/desktop && npm start`（首次需 `npm install`；node_modules 不入库；src/zephyr 为 Python 包根禁 .json 故壳居 tools/）
-- 桌面快捷方式：`ZephyrAlpha.lnk`（目标=electron.exe 参数 .，工作目录=tools/desktop，图标=assets/media/img/brand/zephyralpha-icon.ico）——PS1 建快捷方式脚本必须纯 ASCII（PS5.1 GBK 误读中文）
+- 桌面快捷方式：`ZephyrAlpha.lnk`（目标=electron.exe 参数 .，工作目录=tools/desktop，图标=`%LOCALAPPDATA%\ZephyrAlpha-app.ico` 防系统图标缓存）——PS1 建快捷方式脚本必须纯 ASCII（PS5.1 GBK 误读中文注释）
+- 窗口规范：标题栏黑底 `#0A0D14` 与页面顶栏融合，保留原生最小化/最大化/关闭按钮
+- 视频自动播放：壳内已加 `autoplay-policy=no-user-gesture-required` 开关（首页主视觉带声循环）；**浏览器 8891 访问仍受 Chromium 策略限制**，前端兜底=先静音播、首次点击恢复声音（core/home.js ovxVideo）
+- 主题切换：顶栏 ◐ 按钮已占位（深色=当前），**浅色主题待接入**——需整套浅色 token + K线/hardcoded rgba 适配，未施工
+- 首页纯视频页（Owner 2026-09-01 裁定）：pages/home.html 只保留居中视频，`home-pure-video` 类背景纯黑 #000 与视频底色无缝；**资源纪律**——DOM display:none 不停解码，必须挂 `page:show` 广播：离开首页 pause() 零后台占用，回首页 play() 续播
 
 **前端媒体素材目录（web/assets/media/，2026-09-01 设立）**：
-- `assets/media/img/brand/` — 品牌视觉（logo/应用图标：zephyralpha-icon.webp 原图 + .ico 多尺寸派生，ico 由 webp 经 Pillow 生成）
+- `assets/media/img/brand/` — 品牌视觉（logo/应用图标：zephyralpha-icon.webp 原图 + .ico 多尺寸派生；图标必须**透明底**、保留太极原色）
 - `assets/media/img/pages/` — 页面插图（按页面/功能命名，如 stockq-intro.png）
-- `assets/media/video/` — 视频素材
-- 纪律：素材只进 media/ 子目录（与既有 assets/ 根下字体分区）；派生图（ico/缩略图）与原图同目录成对存放
+- `assets/media/video/` — 视频素材（如首页主视觉 pinterest-loop.mp4；入库前确认体积与时长，原片不依赖项目外路径）
+- 纪律：素材只进 media/ 子目录（与既有 assets/ 根下字体分区）；**派生图（ico/缩略图）与原图同目录成对存放**，ico 由 webp/png 经 Pillow 生成；入库后 Downloads 等外部原件可删
 
 **模板与范例**：
 - `docs/03_modules/_domain_frontend/acceptance/ACC-F-STOCKQ-COSTLINE.yaml` — 验收单模板

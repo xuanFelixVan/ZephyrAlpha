@@ -114,6 +114,42 @@ scope: frontend
 
 ---
 
+# FEH-PC-009｜"改了不显示"版本戳排查法（浏览器缓存）
+- 触发词：改了不显示 / 页面没更新 / 还是旧样式 / ⚑12 不见
+- 想做什么：代码已改已提交，页面死活不变时定位是代码 bug 还是缓存
+- 内置能否：无内置，项目自约定（loader.js 顶部 window.ZK_BUILD）
+- 坑：①浏览器 HTTP 缓存可残留数小时前的旧 JS，F5 强刷有时也不彻底（2026-09-01 实证：⚑12 不显示=浏览器跑 2.5h 前旧代码，代码本身没问题）②组件一次性拉取失败会永久回退演示数据，与缓存症状相似但根因不同——事件行"无数据"实为 API 重启瞬间拉取失败后无重试
+- 正确做法：①看页头品牌行有无 `b<ZK_BUILD>` 版本戳（每次前端改动 ZK_BUILD+1）②无戳=浏览器跑旧代码 → 开无痕窗口验证 ③无痕正常=缓存问题，根治=Electron 壳（app:// 直读 web/ 零 HTTP 缓存）④无痕也异常=真 bug，查组件有无拉取重试（新组件拉数据必须 15s 自动重试直至真源）
+- 代码锚点：core/loader.js 顶部 window.ZK_BUILD + 品牌行戳注入；features/stockq/sq-event-row.js 15s 重试
+- 关联：FEH-PC-010（Electron 壳根治）· SOP §四常见坑
+- 来源：2026-09-01 事件行排障实证
+
+---
+
+# FEH-PC-010｜Electron 桌面壳与媒体素材纪律
+- 触发词：桌面版 / Electron / 桌面快捷方式 / 图标不更新 / 视频自动播放 / 素材放哪
+- 想做什么：前端封装为本地桌面应用、管理图片视频素材
+- 内置能否：无内置，项目自约定（2026-09-01 Owner 裁定前端桌面化）
+- 坑：①Windows 桌面图标缓存按路径索引——换 ico 文件不重建快捷方式永不更新（解法：ico 复制到 %LOCALAPPDATA%\ZephyrAlpha-app.ico 新路径+重建快捷方式）②PS5.1 下无 BOM UTF-8 的 PS1 脚本中文注释被 GBK 误读吞行（脚本注释一律英文）③Chromium 禁无手势有声 autoplay——Electron 壳加 autoplay-policy=no-user-gesture-required，浏览器端必须静音兜底+首次点击恢复声音④页面 display:none 不停视频解码——切页必须显式 pause()（挂 page:show 广播），否则后台持续占用资源
+- 正确做法：壳居 tools/desktop/（src/zephyr 为 Python 包根禁 .json）；生产模式 app:// 协议直读 web/ 零 HTTP 缓存；标题栏黑底 #0A0D14；素材统一进 web/assets/media/{img/brand,img/pages,video}/，派生图（ico）与原图同目录成对存放，入库后外部原件可删
+- 代码锚点：tools/desktop/main.js · core/home.js ovxVideo · pages/home.html home-pure-video
+- 关联：FEH-PC-009 · SOP §七桌面壳/媒体素材段落
+- 来源：2026-09-01 桌面化+首页纯视频实证
+
+---
+
+# FEH-PC-011｜QMT 文件桥真源组件三律（编码/列序/口径）
+- 触发词：QMT 文件桥 / PositionStatics.csv / 持仓乱码 / 盈亏比例失真 / 十档
+- 想做什么：组件接 QMT 文件桥（E:\qmt_bridge）实盘数据
+- 内置能否：无内置，项目自约定（miniQMT 2026-09-18 关停后唯一实盘通道）
+- 坑：①CSV 一律 GBK 编码，utf-8 读必乱码②持仓列序硬编码 row[7]=代码/row[9]=当前拥有/row[15]=可用/row[18]=最新价，错位即错数③QMT 导出"盈亏比例"列因送转/负成本严重失真（实测 -94.29%/-102.65%），直接展示=误导 Owner
+- 正确做法：①encoding='gbk'②列序按硬编码常量，不猜表头③显示口径裁定（Owner 2026-09-01）：持仓列表价格旁百分比=股票**当天涨跌幅**（与自选列表同口径，走 kline_daily /api/quote），真实盈亏只放悬停提示④文件 mtime >1h=延迟（黄灯）不是断线——非交易时段终端不导出新文件属正常⑤quote.csv 档位数动态解析（bid1~bid10），前端自适应显示
+- 代码锚点：api_server.py /api/position · /api/order-book（_QMT_BRIDGE_STOCK_DIR）；features/stockq/sq-position-list.js v3
+- 关联：FEH-PC-006 四态灯 · SOP §三数据源变体
+- 来源：2026-09-01 持仓列表口径修正+十档自适应实证
+
+---
+
 ## 修订记录
 
 | 日期 | 版本 | 改动 | 为什么改 |
@@ -123,3 +159,4 @@ scope: frontend
 | 2026-09-01 | 1.2.0 | +PC-006 数据源状态灯四态约定（DS-12） | Owner 四态裁定（绿/黄/红/灰）成文 |
 | 2026-09-01 | 1.3.0 | +PC-007 depgraph 新增字段四步铁律 | 夜战实证：重建器静默重置新字段（20 模块值全丢）→ 根治后重建验证存活 |
 | 2026-09-01 | 1.4.0 | +PC-008 组件拆分铁律（数据源边界+单一功能） | Owner 2026-09-01 裁定：数据源不同必拆；功能语义不同必拆 |
+| 2026-09-01 | 1.5.0 | +PC-009 版本戳排查法 / +PC-010 Electron 壳与素材纪律 / +PC-011 QMT 文件桥三律 | 当日三连实证：⚑12 缓存排障、桌面化落地、持仓口径修正 |

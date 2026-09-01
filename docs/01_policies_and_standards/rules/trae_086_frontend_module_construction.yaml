@@ -1,6 +1,6 @@
 rule_id: TRAE-086
 title: 前端功能模块施工铁律（拆件判据+命名+目录归属+四件套闭环）
-version: '1.0.0'
+version: '1.1.0'
 layer: L1_foundation
 module_id: TRAE-086
 depends_on:
@@ -72,6 +72,10 @@ sections:
       check: '七类目录边界: core/=启动器·路由·事件总线·布局引擎（收口≤10 个只减不增）; pages/=页面片段; features/=业务功能模块（按页面建子目录）; services/=数据服务层（按域分文件）; widgets/=纯 UI 展示件; styles/=样式; vendor/=第三方库'
       pass: 新代码先判类型再落位，不跨类乱放
       fail: 类型错放 → core/ 膨胀、pages/ 塞逻辑、散件失目录
+    - type: constraint
+      check: '媒体素材专区（2026-09-01 设立）: assets/media/img/brand/=品牌视觉（logo/图标，透明底+太极原色）; assets/media/img/pages/=页面插图; assets/media/video/=视频素材；派生图（ico/缩略图）与原图同目录成对存放；素材只进 media/ 子目录，入库后外部原件（如下载目录）可删'
+      pass: 素材集中可检索，网页引用一律项目内相对路径，不依赖项目外文件
+      fail: 素材散落 → 引用项目外路径（换机即裂图/裂视频）、图标缓存事故
     - type: constraint
       check: 新建子目录时机——features/<page>/ 在该页模块 ≥3 个时必须建；任何目录文件数 >60 评估拆分、>120 必须拆（SOP 附录 A.4 容量铁律）
       pass: 目录规模可控

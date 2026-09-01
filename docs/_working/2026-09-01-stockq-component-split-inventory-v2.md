@@ -7,6 +7,8 @@ ttl: task_bound
 
 # 个股行情页（stockq）组件拆分清单 v2 —— 积木级粒度
 
+> **施工进度快照（2026-09-01 晚更新）**：✅ 已通 9 个——sq-stock-header / sq-search-box / sq-key-data / sq-sector-tags / sq-fav-list / sq-event-row（含未来事件簇+15s重试）/ sq-order-book（文件桥真源·十档自适应）/ sq-position-list（文件桥真源 v3·当天涨跌幅口径）/ sq-cost-line（居 features/ 根待迁 stockq/）。⏳ 待建 17 个 features + 6 widgets + 8 services。**下两件**：sq-company-intro → sq-data-source-badge。日历事件表已扩 pub_value/exp_value/prev_value 三列。miniQMT 2026-09-18 关停，实盘一律走 QMT 文件桥（GBK）。
+
 ## 拆分哲学（ Owner 2026-09-01 裁定）
 
 **单一功能 = 单一组件**。判断标准：
