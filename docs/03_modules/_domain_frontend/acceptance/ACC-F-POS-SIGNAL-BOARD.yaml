@@ -1,0 +1,41 @@
+id: ACC-F-POS-SIGNAL-BOARD
+page: position
+title: 量化信号看板（持仓页模型反馈：QMT 真持仓 × market_signal_history 双管道）
+date: 2026-09-01
+status: passed
+data_source: /api/position（QMT 文件桥）× /api/signals（CH.market_signal_history：factor_synth + strategy_weight）
+verifiability: machine+manual
+
+items:
+  - id: 1
+    desc: 卡片渲染于持仓页汇总视图（合并持仓表之后），表头含因子信号/策略信号双列
+    check: 打开 #position 页，pos-signal-body 出现表头与真实持仓行
+    result: pass
+  - id: 2
+    desc: 持仓行=QMT 文件桥真实数据（非演示 ACCOUNT_D）
+    check: 行数与 /api/position count 一致；含 600079/603216 等真实持仓
+    result: pass
+  - id: 3
+    desc: 因子信号列显示 direction 徽章 + score + 截面排名（#rank/universe）
+    check: 000001 行显示 hold +0.27 #111/302 一类真实值；宇宙外标的显示"未覆盖"
+    result: pass
+  - id: 4
+    desc: 策略信号列显示 direction + 权重% + signal_id；未选入显示"未选入"
+    check: 601318 显示 buy 10.0% topn-momentum；600519 显示"未选入"
+    result: pass
+  - id: 5
+    desc: 四态灯：绿=双源新鲜 / 黄=单源过期（显示天数） / 红=API 断线（无演示兜底，断线明示） / 灰=未启动
+    check: 正常=绿"真源·factor X天前"；停 8890 → 红
+    result: pass
+  - id: 6
+    desc: 60s 轮询刷新；行点击跳 stockq 并选中该股
+    check: setInterval 存在；onclick 链 go('stockq')+sqSel
+    result: pass
+  - id: 7
+    desc: DEC-INV-002 红线：组件只读信号不触发任何下单路径（卡片 note 明示）
+    check: 代码零 order/下单调用
+    result: pass
+  - id: 8
+    desc: 版本戳 b20260901-8 + node --check 零错 + 冒烟测试回归
+    check: 页头 b20260901-8；pytest tests/frontend/test_dashboard_smoke.py 全绿
+    result: pass

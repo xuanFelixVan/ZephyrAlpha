@@ -60,3 +60,24 @@ features:
     file: features/stockq/sq-event-row.js
     backend_ref: "api:/api/events（CH.calendar_event）"
     status: active
+  - id: F-POS-SIGNAL-BOARD
+    name: 量化信号看板（持仓页模型反馈真源）
+    page: position
+    module_id: pos-signal-board
+    file: features/position/pos-signal-board.js
+    backend_ref: "api:/api/position × api:/api/signals（CH.market_signal_history 双管道）"
+    status: active
+  - id: F-STOCKQ-QUANT-ANALYSIS
+    name: 量化分析（右栏双源模型信号真源）
+    page: stockq
+    module_id: sq-quant-analysis
+    file: features/stockq/sq-quant-analysis.js
+    backend_ref: "api:/api/signals（CH.market_signal_history 双管道）"
+    status: active
+  - id: F-WR-SIGNAL-STRIP
+    name: 量化信号总览（warroom 双管道聚合真源）
+    page: warroom
+    module_id: wr-signal-strip
+    file: features/warroom/wr-signal-strip.js
+    backend_ref: "api:/api/signals-overview（CH.market_signal_history 聚合）"
+    status: active

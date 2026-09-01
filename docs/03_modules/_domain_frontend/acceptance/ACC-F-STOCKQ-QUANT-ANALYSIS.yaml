@@ -1,0 +1,33 @@
+id: ACC-F-STOCKQ-QUANT-ANALYSIS
+page: stockq
+title: 量化分析块（右栏双源模型信号：factor_synth × strategy_weight）
+date: 2026-09-01
+status: passed
+data_source: /api/signals（CH.market_signal_history 双管道）
+verifiability: machine+manual
+
+items:
+  - id: 1
+    desc: 右栏关键数据之后渲染量化分析块（组件接管模式，未加载不显示）
+    check: 选 601318 → 显示"量化分析"区块
+    result: pass
+  - id: 2
+    desc: 因子信号行：direction 徽章 + score + 截面排名 + 动量因子原始值（meta 展开）
+    check: 000001 显示 hold +0.27 #111/302 + 动量 20d 百分比
+    result: pass
+  - id: 3
+    desc: 策略信号行：direction + 权重% + signal_id；宇宙外/未选入显示"未覆盖/未选入"
+    check: 601318 显示 buy 10.0% topn-momentum；600519 显示"未选入"
+    result: pass
+  - id: 4
+    desc: 切换股票（sqSel）重渲染；四态灯（真源/延迟/过期/未覆盖）
+    check: 左栏切换股票，块内容跟随切换
+    result: pass
+  - id: 5
+    desc: 两列互补说明 + DEC-INV-002 免责说明常驻
+    check: note 文案存在
+    result: pass
+  - id: 6
+    desc: node --check 零错 + 冒烟回归 + 版本戳 b20260901-9
+    check: pytest tests/frontend/test_dashboard_smoke.py 全绿
+    result: pass

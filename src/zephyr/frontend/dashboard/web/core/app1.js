@@ -6669,16 +6669,19 @@ function sqRenderInfo(){
   var hasTags=!!(window.ZK && ZK.features && ZK.features['sq-sector-tags']);
   var hasKv=!!(window.ZK && ZK.features && ZK.features['sq-key-data']);
   var hasOb=!!(window.ZK && ZK.features && ZK.features['sq-order-book']);
+  var hasQa=!!(window.ZK && ZK.features && ZK.features['sq-quant-analysis']);
   if(!d){
     if(!p) p={nm:sqCur,code:sqCur,px:'--',pc:'--',dir:0};
     box.innerHTML='<div class="sq-qh"><span class="nm">'+p.nm+'</span><span class="px '+(p.dir>=0?'up':'down')+'">'+p.px+'</span><span class="chg '+(p.dir>=0?'up':'down')+'">'+p.pc+'</span></div>'
       +'<div class="sq-tags" id="sq-sector-tags">'+(hasTags?'':'<span class="badge b-na">行业待接入</span>')+'</div>'
       +'<div id="sq-order-book"></div>'
       +'<div id="sq-key-data">'+(hasKv?'':'<div class="sq-sec"><span>关键数据</span></div><div class="sq-intro">关键数据待接入（真源 /api/stock-header）</div>')+'</div>'
-      +'<div class="sq-intro">「'+p.nm+'」股性/财务/新闻量化/合理估价演示数据未内置（关键数据/行业标签/五档已接真源），K 线工作台可正常使用——其余资料待接入 I-2。</div>';
+      +(hasQa?'<div id="sq-quant-analysis"></div>':'')
+      +'<div class="sq-intro">「'+p.nm+'」股性/财务/新闻量化/合理估价演示数据未内置（关键数据/行业标签/五档/量化分析已接真源），K 线工作台可正常使用——其余资料待接入 I-2。</div>';
     if(hasTags) ZK.features['sq-sector-tags'].render();
     if(hasOb) ZK.features['sq-order-book'].render();
     if(hasKv) ZK.features['sq-key-data'].render();
+    if(hasQa) ZK.features['sq-quant-analysis'].render();
     return;
   }
   var inFav=sqFav.indexOf(sqCur)>=0;
@@ -6706,6 +6709,8 @@ function sqRenderInfo(){
     d.kv.forEach(function(kv){ h+='<span class="k">'+kv[0]+'</span><span class="v" style="grid-column:span 2">'+kv[1]+'</span>'; });
     h+='</div>';
   }
+  /* 量化分析：sq-quant-analysis 组件接管（真源 market_signal_history 双管道），未加载不显示 */
+  if(hasQa){ h+='<div id="sq-quant-analysis"></div>'; }
   /* 个股股性 */
   h+='<div class="sq-sec"><span>个股股性 · 涨停基因（近一年）</span><span class="sq-fb" onclick="fbReport(\'guxing\',\'股性统计（'+p.nm+'）\',this)">⚑报错</span></div><div class="sq-fin">';
   d.guxing.forEach(function(kv){ h+='<span class="k">'+kv[0]+'</span><span class="v">'+kv[1]+'</span>'; });
@@ -6728,10 +6733,11 @@ function sqRenderInfo(){
     +'<span class="k">上行空间</span><span class="v" style="color:var(--up)">'+d.val.up+'</span></div>'
     +'<div class="note">'+d.val.note+'；估值模型演示口径，真源 I-2</div>';
   box.innerHTML=h;
-  /* 组件接管渲染：行业标签+五档+关键数据（容器已注入，异步取真源，失败回退上方演示标记） */
+  /* 组件接管渲染：行业标签+五档+关键数据+量化分析（容器已注入，异步取真源，失败回退上方演示标记） */
   if(hasTags) ZK.features['sq-sector-tags'].render();
   if(hasOb) ZK.features['sq-order-book'].render();
   if(hasKv) ZK.features['sq-key-data'].render();
+  if(hasQa) ZK.features['sq-quant-analysis'].render();
 }
 function sqFavTgl(sym,btn){
   var i=sqFav.indexOf(sym);

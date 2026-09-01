@@ -124,14 +124,14 @@ datasets:
   entity_type: dataset
   scope: production
   contract_ref: CTR-P1-015
-  physical_type: src/zephyr/shared/contracts/synthesized_signal.py::SynthesizedSignal
+  physical_type: src/zephyr/shared/contracts/synthesized_signal.py::SynthesizedSignal（内存契约） + c1_market.market_signal_history（持久化真源，#BT-PIPELINE-001 2026-09-01 起：factor_synth/strategy_weight 双管道落表）
   produced_by_job: JOB-005
   consumed_by_jobs:
   - JOB-006
   - JOB-007
   domain_id: D_SIGLEGACY
   pit_policy: strict
-  format_summary: 合成交易信号（多因子加权/截面排名/置信度），CTR-P1-015 SynthesizedSignal
+  format_summary: 合成交易信号（多因子加权/截面排名/置信度），CTR-P1-015 SynthesizedSignal；持久化=market_signal_history 窄表（source/signal_id/direction/score/confidence/meta 血缘）
   valid_since: '2020-01-01'
   module_id: ''
 - dataset_id: DS-006

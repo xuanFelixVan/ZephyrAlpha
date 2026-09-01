@@ -57,6 +57,12 @@ ZK.api = (function(){
     },
     fetchBacktestRunStatus: function(taskId){   /* 轮询回测任务状态 */
       return fetchJson('/api/backtest-run?task_id='+encodeURIComponent(taskId));
+    },
+    fetchSignals: function(symbols){   /* 个股最新信号（pos-signal-board：factor_synth+strategy_weight 双源） */
+      return fetchJson('/api/signals?symbols='+encodeURIComponent(symbols.join(',')), 8000);
+    },
+    fetchSignalsOverview: function(){   /* 信号总览聚合（warroom） */
+      return fetchJson('/api/signals-overview');
     }
   };
 })();

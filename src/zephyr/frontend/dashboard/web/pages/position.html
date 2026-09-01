@@ -73,6 +73,20 @@
         </table>
         <div class="note">主要持仓节选 8 只；当日盈亏列合计 +5,100 与汇总条对账闭合</div>
       </div>
+
+      <!-- C2. 量化信号看板（#BT-PIPELINE-001 阶段四：真源 QMT 持仓 × market_signal_history 双管道） -->
+      <div class="card" style="margin-bottom:14px">
+        <h3>量化信号看板 <span class="badge b-pass">真源</span>
+          <span class="pos-sig-status" title="点击查看状态灯口径">
+            <span class="st"><span class="dot pos-sig-dot-na" id="pos-signal-light"></span><span id="pos-signal-label" style="cursor:help" title="数据源状态灯（DS-12）口径">未启动</span></span>
+            <span class="dim" style="font-size:11px">因子信号=截面排名（股票强不强）｜策略信号=BTRUN 权重（系统想不想持有）——两列都看才完整</span>
+          </span>
+        </h3>
+        <table>
+          <tbody id="pos-signal-body"></tbody>
+        </table>
+        <div class="note" title="状态灯口径">本卡全部真实数据无演示兜底：持仓=QMT 文件桥（E:\qmt_bridge\Stock），信号=c1_market.market_signal_history（管道A strategy_weight / 管道B factor_synth）；信号过期或断线时四态灯明示。DEC-INV-002：信号仅供决策参考，不直接触发下单</div>
+      </div>
       <!-- D. 盈亏日历（投资账本核心件；金额/收益率双口径） -->
       <div class="card" style="margin-bottom:14px">
         <h3>盈亏日历 <span class="badge b-na">演示数据</span> <span class="dim">日盈亏色块（红盈绿亏）；收益率口径=当日盈亏额/期初资产 172.0 万（3 账户汇总）</span></h3>

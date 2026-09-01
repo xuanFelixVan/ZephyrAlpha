@@ -1,0 +1,33 @@
+id: ACC-F-WR-SIGNAL-STRIP
+page: warroom
+title: 量化信号总览（warroom 双管道聚合）
+date: 2026-09-01
+status: passed
+data_source: /api/signals-overview（CH.market_signal_history 聚合）
+verifiability: machine+manual
+
+items:
+  - id: 1
+    desc: warroom 明日推演卡之后渲染量化信号总览卡
+    check: 打开 #warroom 页，wr-signal-body 出现双管道表格
+    result: pass
+  - id: 2
+    desc: 每管道一行：signal_id + 截至日期 + buy/sell/hold 计数
+    check: factor_composite_v1 2026-09-01 30/30/242；topn-momentum 2026-08-28 3/0/0
+    result: pass
+  - id: 3
+    desc: 最强/最弱 5 符号可点击跳 stockq
+    check: top5 列符号下划线可点
+    result: pass
+  - id: 4
+    desc: 表空/API 断线显示提示（无演示兜底）
+    check: 停 8890 → "API 断线——本卡无演示兜底"
+    result: pass
+  - id: 5
+    desc: 5min 轮询刷新
+    check: setInterval 存在
+    result: pass
+  - id: 6
+    desc: node --check 零错 + 冒烟回归 + 版本戳 b20260901-9
+    check: pytest tests/frontend/test_dashboard_smoke.py 全绿
+    result: pass

@@ -100,3 +100,39 @@ modules:
     acceptance: ACC-F-STOCKQ-EVENT-ROW
     handbook: []
     status: active
+  - id: pos-signal-board
+    name: 量化信号看板（持仓页模型反馈真源）
+    file: features/position/pos-signal-board.js
+    page: position
+    init: "init(chart, ctx)"
+    destroy: "destroy()"
+    depends: [ZK.api]   # /api/position × /api/signals，无演示回退（真实数据纪律）
+    toggle: none
+    styles: self-injected
+    acceptance: ACC-F-POS-SIGNAL-BOARD
+    handbook: []
+    status: active
+  - id: sq-quant-analysis
+    name: 量化分析（右栏双源模型信号真源）
+    file: features/stockq/sq-quant-analysis.js
+    page: stockq
+    init: "init(chart, ctx)"
+    destroy: "destroy()"
+    depends: [ZK.api, sqCur]   # /api/signals 双管道，无演示回退
+    toggle: none
+    styles: self-injected
+    acceptance: ACC-F-STOCKQ-QUANT-ANALYSIS
+    handbook: []
+    status: active
+  - id: wr-signal-strip
+    name: 量化信号总览（warroom 双管道聚合真源）
+    file: features/warroom/wr-signal-strip.js
+    page: warroom
+    init: "init(chart, ctx)"
+    destroy: "destroy()"
+    depends: [ZK.api, go, sqSel]   # /api/signals-overview，无演示回退
+    toggle: none
+    styles: self-injected
+    acceptance: ACC-F-WR-SIGNAL-STRIP
+    handbook: []
+    status: active
