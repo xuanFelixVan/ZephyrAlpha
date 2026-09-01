@@ -40,8 +40,9 @@ function btArea(g,vals,x,cw,y0,yf,col,op){
   pts+=' '+(x(vals.length-1)+cw/2).toFixed(1)+','+y0.toFixed(1)+' '+(x(0)+cw/2).toFixed(1)+','+y0.toFixed(1);
   el('polygon',{points:pts,fill:col,opacity:op},g);
 }
-function btCharts(){
-  var B=btGen();
+function btCharts(B){
+  /* B: {n,dates,sEq,bEq,ex,sDD,bDD,sRet,bRet}——真源由 btLoadDetail 组装，演示由 btGen 兜底 */
+  if(!B){ B=btGen(); btSetMode('断线'); }
   /* 收益图：策略蓝 / 基准紫 / 超额橙点线 */
   (function(){
     var svg=document.getElementById('bt-eq'); if(!svg)return; svg.innerHTML='';
@@ -104,6 +105,164 @@ function btCharts(){
   })();
 }
 btCharts();
+/* ==================== 真源模式（#BT-PIPELINE-001）：artifacts 列表 + 详情渲染 + 页面发起回测 ==================== */
+/* 数据源：/api/backtest-list + /api/backtest-detail + POST /api/backtest-run（BTRUN 强制时序落盘产物）。
+ * 演示纪律：真源不可达→四态灯红（断线），btGen 演示数据兜底并明示；未启动→灰。 */
+var BT_STATE={mode:'未启动',run:null,taskId:null,timer:null};
+function btApi(){return (window.ZK&&ZK.api)?ZK.api:null;}
+function btSetMode(m,extra){
+  BT_STATE.mode=m;
+  var badge=document.getElementById('bt-src-badge');
+  if(badge){badge.className='badge '+(m==='真源'?'b-pass':(m==='延迟'?'b-warn':(m==='断线'?'b-fail':'b-na')));
+    badge.textContent='● '+m+(extra?'·'+extra:'');}
+}
+function btPct(v){return (v>=0?'+':'')+(v*100).toFixed(2)+'%';}
+/* 详情 artifact → btCharts 数据形状（净值→累计收益率%；回撤→负%；日收益由净值差分；无基准时基准线隐藏=0） */
+function btFromArtifact(d){
+  var eq=d.equity_curve||[],dd=d.drawdown_curve||[];
+  if(!eq.length)return null;
+  var cap0=eq[0].equity||1;
+  var dates=[],sEq=[],sDD=[],sRet=[],bEq=[],bDD=[],bRet=[],ex=[];
+  var benchMap={};
+  (d.benchmark_curve||[]).forEach(function(p){benchMap[p.timestamp]=p.value;});
+  var hasBench=(d.benchmark_curve||[]).length>0,b0=hasBench?d.benchmark_curve[0].value:1;
+  var prev=null;
+  for(var i=0;i<eq.length;i++){
+    dates.push(eq[i].timestamp);
+    var cum=(eq[i].equity/cap0-1)*100; sEq.push(cum);
+    var bv=hasBench?(benchMap[eq[i].timestamp]!=null?(benchMap[eq[i].timestamp]/b0-1)*100:null):0;
+    bEq.push(bv==null?0:bv);
+    ex.push(cum-(bv==null?0:bv));
+    var ddp=(dd[i]&&dd[i].drawdown!=null)?-dd[i].drawdown*100:0;
+    sDD.push(ddp); bDD.push(hasBench?0:0);
+    var r=prev==null?0:(eq[i].equity/prev-1)*100; sRet.push(r); bRet.push(0); prev=eq[i].equity;
+  }
+  return {n:dates.length,dates:dates,sEq:sEq,bEq:bEq,ex:ex,sDD:sDD,bDD:bDD,sRet:sRet,bRet:bRet};
+}
+function btFillKpi(m){
+  var k=document.getElementById('bt-kpi'); if(!k||!m)return;
+  var vs=k.querySelectorAll('.v');
+  if(vs.length>=6){
+    vs[0].textContent=btPct(m.total_return||0); vs[0].className='v '+(m.total_return>=0?'up':'down');
+    vs[1].textContent=btPct(m.annual_return||0); vs[1].className='v '+(m.annual_return>=0?'up':'down');
+    vs[2].textContent=btPct(-(m.max_drawdown||0)); vs[2].className='v down';
+    vs[3].textContent=(m.sharpe_ratio!=null?m.sharpe_ratio.toFixed(2):'--');
+    vs[4].textContent=(m.win_rate!=null?(m.win_rate*100).toFixed(2)+'%':'--');
+    vs[5].textContent=(m.trades_count!=null?m.trades_count+' 笔':'--');
+  }
+  var sh=document.querySelector('#p-backtest .strategy-head .name');
+  if(sh)sh.textContent='📊 '+(m.strategy_id||'')+' · '+BT_STATE.run;
+  var sub=document.querySelector('#p-backtest .strategy-head .sub');
+  if(sub)sub.textContent='回测绩效分析 Backtest Performance Analysis | 真源 '+BT_STATE.run+'（'+(m.start_date||'').slice(0,10)+' ~ '+(m.end_date||'').slice(0,10)+'）';
+  var ps=document.querySelectorAll('#p-backtest .param-strip span b');
+  if(ps.length>=5){
+    ps[0].textContent=(m.start_date||'').slice(0,10)+' ~ '+(m.end_date||'').slice(0,10);
+    ps[4].textContent=(m.trades_count!=null?m.trades_count:'--');
+  }
+}
+function btLoadDetail(runId){
+  var api=btApi(); if(!api){btSetMode('断线');return;}
+  BT_STATE.run=runId;
+  api.fetchBacktestDetail(runId).then(function(r){
+    if(!r||!r.ok||!r.data){btSetMode('断线');return;}
+    var B=btFromArtifact(r.data);
+    if(!B){btSetMode('断线','产物无时序');btCharts();return;}
+    btCharts(B);
+    btFillKpi(r.data.metrics||{});
+    btFillTradeLog(r.data.trade_log||[]);
+    btSetMode('真源',runId);
+  }).catch(function(){btCharts();btSetMode('断线');});
+}
+/* Tab5 交易明细表填真源 trade_log */
+function btFillTradeLog(log){
+  var tab=document.querySelector('#bt-signal table');
+  if(!tab||!log.length)return;
+  var h='<tr><th>时间 Time</th><th>代码 Symbol</th><th>方向 Side</th><th>价格 Price</th><th>数量 Qty</th><th>金额 Amount</th><th>手续费 Fee</th></tr>';
+  log.slice(-200).reverse().forEach(function(t){
+    var amt=(t.price*t.quantity).toFixed(0);
+    h+='<tr><td>'+t.timestamp+'</td><td>'+t.symbol+'</td><td class="'+(t.side==='buy'?'up':'down')+'">'+t.side+'</td><td>'+t.price.toFixed(3)+'</td><td>'+t.quantity+'</td><td>¥'+amt+'</td><td>'+t.commission.toFixed(2)+'</td></tr>';
+  });
+  tab.innerHTML=h;
+}
+/* 产物选择条（插在策略头下方）：列出 artifacts，点选即切详情 */
+function btRenderRunList(list){
+  var strip=document.getElementById('bt-run-strip');
+  if(!strip)return;
+  if(!list.length){strip.innerHTML='<span class="dim" style="font-size:12px">无回测产物（data/backtest_artifacts/ 空）——点上方「发起回测」跑第一个</span>';return;}
+  var h='';
+  list.forEach(function(it){
+    var ret=it.total_return!=null?(it.total_return*100).toFixed(1)+'%':'--';
+    var cls=it.run_id===BT_STATE.run?'rsec-item on':'rsec-item';
+    h+='<span class="'+cls+'" onclick="btLoadDetail(\''+it.run_id+'\')" title="'+it.created_at+' 等值点'+(it.equity_points||0)+'">'
+      +it.run_id.replace('bt-','')+' · '+(it.strategy_id||'')+' · <b class="'+(it.total_return>=0?'up':'down')+'">'+ret+'</b></span>';
+  });
+  strip.innerHTML=h;
+}
+function btBoot(){
+  var api=btApi(); if(!api){btSetMode('未启动');return;}
+  api.fetchBacktestList().then(function(r){
+    if(!r||!r.ok){btSetMode('未启动');return;}
+    btRenderRunList(r.data||[]);
+    /* 默认选最新有明细的产物 */
+    var first=(r.data||[]).filter(function(x){return x.has_detail;})[0]||((r.data||[])[0]);
+    if(first)btLoadDetail(first.run_id); else btSetMode('真源','无产物');
+  }).catch(function(){btSetMode('未启动');});
+}
+/* btrRun 转真：POST /api/backtest-run → 轮询状态 → 完成后刷新列表+载入新产物 */
+var btrBusy=false;
+function btrRun(){
+  if(btrBusy)return; btrBusy=true;
+  var btn=document.getElementById('btr-btn');
+  var wrap=document.getElementById('btr-prog-wrap');
+  var fill=document.getElementById('btr-prog-fill');
+  var st=document.getElementById('btr-status');
+  if(!btn||!wrap||!fill||!st){btrBusy=false;return;}
+  var api=btApi(); if(!api){btrBusy=false;return;}
+  var body={strategy_id:'topn-momentum',symbols:['600519.SH','000858.SZ','601318.SH','600036.SH','000001.SZ'],start:'2026-01-01',end:'2026-08-31',top_n:3};
+  btn.classList.remove('primary');
+  btn.textContent='提交中… Submitting';
+  fill.style.transition='none'; fill.style.width='0%';
+  wrap.style.display='block';
+  st.textContent='POST /api/backtest-run（BTRUN 引擎后台执行，单任务串行）…';
+  api.postBacktestRun(body).then(function(r){
+    if(!r||!r.ok||!r.task_id){throw new Error(r&&r.error||'submit failed');}
+    BT_STATE.taskId=r.task_id;
+    btn.textContent='运行中… Running';
+    fill.style.transition=''; fill.style.width='60%';
+    st.textContent='回测运行中（引擎：因子计算→合成→权重面板→逐日撮合→落盘）…';
+    var poll=function(){
+      api.fetchBacktestRunStatus(BT_STATE.taskId).then(function(s){
+        if(s&&s.status==='done'){
+          fill.style.width='100%';
+          btn.textContent='✅ 完成'; setTimeout(function(){btn.classList.add('primary');btn.textContent='▶ 发起回测';},3000);
+          st.innerHTML='✅ 完成——产物 <b>'+s.run_id+'</b>（净值 '+s.equity_points+' 点 / 成交 '+s.trades+' 笔），已自动载入下方';
+          btrBusy=false;
+          api.fetchBacktestList().then(function(r2){if(r2&&r2.ok){btRenderRunList(r2.data||[]);}});
+          if(s.run_id)btLoadDetail(s.run_id);
+          var k=document.getElementById('bt-kpi'); if(k&&k.scrollIntoView)k.scrollIntoView({behavior:'smooth',block:'start'});
+        }else if(s&&s.status==='failed'){
+          btn.classList.add('primary'); btn.textContent='▶ 发起回测';
+          st.textContent='❌ 失败：'+(s.error||'unknown')+'（可重试）';
+          fill.style.width='100%';
+          btrBusy=false;
+        }else{
+          st.textContent='回测运行中（'+(s&&s.status||'running')+'）…每 3s 轮询';
+          BT_STATE.timer=setTimeout(poll,3000);
+        }
+      }).catch(function(){
+        btn.classList.add('primary'); btn.textContent='▶ 发起回测';
+        st.textContent='❌ 轮询失败（API 断线）——可重试';
+        btrBusy=false;
+      });
+    };
+    BT_STATE.timer=setTimeout(poll,2000);
+  }).catch(function(e){
+    btn.classList.add('primary'); btn.textContent='▶ 发起回测';
+    st.textContent='❌ 发起失败：'+(e&&e.message||e);
+    btrBusy=false;
+  });
+}
+btBoot();
 /* ---- 交互实测修复：回测每日明细日期下钻（btDailyXxx，3 演示日） ---- */
 var BT_DAILY={
  '2019-01-02':{
@@ -144,30 +303,3 @@ function btDailySet(dt,e){
 }
 document.addEventListener('click',function(e){var s=document.getElementById('bt-date-sel');var m=document.getElementById('bt-date-menu');if(s&&m&&!s.contains(e.target))m.classList.remove('open');});
 btDailyRender('2019-01-02');
-var btrBusy=false;
-function btrRun(){
-  if(btrBusy)return; btrBusy=true;
-  var btn=document.getElementById('btr-btn');
-  var wrap=document.getElementById('btr-prog-wrap');
-  var fill=document.getElementById('btr-prog-fill');
-  var st=document.getElementById('btr-status');
-  if(!btn||!wrap||!fill||!st){btrBusy=false;return;}
-  btn.classList.remove('primary');
-  btn.textContent='排队中… Queued';
-  fill.style.transition='none'; fill.style.width='0%';
-  wrap.style.display='block';
-  st.textContent='排队中…（演示：前端配置面板+状态轮询 mock，后端执行通道待接入）';
-  setTimeout(function(){
-    btn.textContent='运行中 42% Running';
-    st.textContent='运行中 42%（演示进度动画，非真实回测）';
-    fill.style.transition=''; fill.style.width='42%';
-    setTimeout(function(){ fill.style.width='100%'; },80);
-  },1500);
-  setTimeout(function(){
-    btn.textContent='✅ 完成（演示）';
-    st.innerHTML='✅ 完成（演示）——真实发起通道待接入（I-2），下方结果为既有 <b>demo-perf-001</b> 演示数据';
-    var k=document.getElementById('bt-kpi');
-    if(k&&k.scrollIntoView) k.scrollIntoView({behavior:'smooth',block:'start'});
-    btrBusy=false;
-  },4500);
-}

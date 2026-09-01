@@ -1,0 +1,45 @@
+id: ACC-F-BT-PIPELINE-001
+page: backtest
+title: 回测页真源化（BTRUN 产物列表/绩效三图/交易明细/页面发起回测）
+date: 2026-09-01
+status: passed
+data_source: /api/backtest-list + /api/backtest-detail + POST /api/backtest-run（BTRUN 强制时序落盘产物）
+verifiability: machine+manual
+
+items:
+  - id: 1
+    desc: 产物选择条渲染 artifacts 列表（点选切换详情，选中态高亮）
+    check: 打开 #backtest 页，bt-run-strip 出现 ≥9 个产物条目
+    result: pass
+  - id: 2
+    desc: KPI 六卡切真源（累计收益/年化/最大回撤/夏普/胜率/笔数=metrics 字段）
+    check: 选 bt-16f6ac43 → 累计收益显示 -9.51%、回撤 -17.67%、73 笔
+    result: pass
+  - id: 3
+    desc: 绩效三图（收益/回撤/日收益）由 equity_curve+drawdown_curve 渲染（非 btGen 演示）
+    check: 图 x 轴日期=2026-01-05~2026-08-28（非演示 2019-2020）
+    result: pass
+  - id: 4
+    desc: Tab5 交易明细表填真源 trade_log（倒序 200 条封顶）
+    check: 选含 73 笔产物 → 表出现真实 buy/sell 行
+    result: pass
+  - id: 5
+    desc: 四态灯：真源=绿（含 run_id）；断线=红（API 停）；未启动=灰（fetch 失败）
+    check: 停 8890 → 灯红 + btGen 演示兜底
+    result: pass
+  - id: 6
+    desc: 页面发起回测全链路：POST → running 轮询 → done → 新产物自动载入+列表刷新
+    check: 点「发起回测」→ 数秒后状态行显示产物 run_id + 净值点数
+    result: pass（API 端实测 task done→bt-5d132ab9 81 点/18 笔）
+  - id: 7
+    desc: 版本戳 b20260901-7 出现于页头品牌行（缓存排查锚点）
+    check: 页头显示 b20260901-7
+    result: pass
+  - id: 8
+    desc: 冒烟测试回归
+    check: pytest tests/frontend/test_dashboard_smoke.py 4 passed
+    result: pass
+  - id: 9
+    desc: node --check 语法
+    check: backtest.js / api.js 零错误
+    result: pass

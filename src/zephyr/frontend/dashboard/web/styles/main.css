@@ -443,6 +443,10 @@
   .strategy-head{background:var(--panel);border:0.67px solid var(--border);border-radius:6px;padding:12px 16px;margin-bottom:10px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
   .strategy-head .name{font-size:16px;font-weight:700}
   .strategy-head .sub{font-size:12px;color:var(--dim)}
+  /* 回测产物选择条（#BT-PIPELINE-001 真源） */
+  .rsec-item{background:var(--input);border:1px solid var(--border);border-radius:5px;padding:4px 10px;font-size:11px;cursor:pointer;color:var(--dim);font-variant-numeric:tabular-nums}
+  .rsec-item:hover{background:#262728}
+  .rsec-item.on{background:rgba(255,255,255,.06);color:var(--text);border-color:var(--text)}
   .run-list{border:0.67px solid var(--border);border-radius:6px;overflow:hidden}
   .run-item{padding:8px 12px;font-size:12px;cursor:pointer;border-bottom:1px solid #23282F;color:var(--dim);background:var(--input)}
   .run-item:hover{background:#262728}

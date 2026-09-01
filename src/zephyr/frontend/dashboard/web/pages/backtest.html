@@ -1,10 +1,10 @@
 <section class="page" id="p-backtest">
-    <h2 class="page-title">回测结果</h2>
-    <div class="page-sub">研究组 · 现有 v3.2.0 掘金风格组件 1:1 视觉复刻（功能不变；demo-perf-001 演示数据）</div>
+    <h2 class="page-title">回测结果 <span class="badge b-na" id="bt-src-badge">● 未启动</span></h2>
+    <div class="page-sub">研究组 · BTRUN 真源（data/backtest_artifacts/ 产物，时序强制落盘 #BT-PIPELINE-001）</div>
 
-    <!-- I-6c 新建回测配置条（对标聚宽算法页回测配置；发起通道待接入 I-2） -->
+    <!-- I-6c 新建回测配置条（已转真：POST /api/backtest-run → BTRUN 引擎后台执行） -->
     <div class="card" id="btr-card" style="margin-bottom:14px">
-      <h3>新建回测 <span class="dim">New Backtest</span> <span class="badge b-na">演示结构</span> <span class="dim">发起通道待接入（后端执行，前端配置面板+状态轮询，I-2 转真）</span></h3>
+      <h3>新建回测 <span class="dim">New Backtest</span> <span class="badge b-pass">真源</span> <span class="dim">topn-momentum · 5标的池 · 2026-01-01~2026-08-31 · Top3 · 100万（参数面板 I-2 扩展）</span></h3>
       <div class="btr-form">
         <div class="btr-fld">
           <label>策略 Strategy</label>
@@ -39,7 +39,13 @@
 
     <div class="strategy-head">
       <span class="name">📊 行业轮动替换fundamental</span>
-      <span class="sub">回测绩效分析 Backtest Performance Analysis | demo-perf-001</span>
+      <span class="sub">回测绩效分析 Backtest Performance Analysis | 加载中…</span>
+    </div>
+
+    <!-- 产物选择条（真源：/api/backtest-list，点选切换详情） -->
+    <div class="card" id="bt-run-strip-card" style="margin:10px 0;padding:8px 12px">
+      <div style="font-size:12px;color:var(--faint);margin-bottom:6px">历史回测产物 Runs（点选载入）</div>
+      <div id="bt-run-strip" style="display:flex;flex-wrap:wrap;gap:8px"></div>
     </div>
 
     <div class="tabs" style="background:var(--card7);border:1px solid var(--hair);border-radius:6px;padding:6px 8px">

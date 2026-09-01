@@ -1,6 +1,6 @@
 /* R22 拆分版加载器：fetch 41 页面片段注入 main → 顺序加载 core/app1~4.js → backtest.js（保持原单文件执行时序；backtest.js 依赖 app1 全局工具故最后）
  * 版本戳 ZK_BUILD：loader.js 经 ?v=Date.now() 破缓存加载，必为最新——页头品牌行若缺"b<版本>"即浏览器在跑旧代码（"改了看不到"类问题一键定位，2026-09-01 实证：⚑12 不显示=浏览器残留 2.5h 前旧 JS） */
-window.ZK_BUILD='20260901-6';
+window.ZK_BUILD='20260901-7';
 (function(){try{var el=document.querySelector('.tb-brand small');if(el&&(' '+el.textContent+' ').indexOf('b'+window.ZK_BUILD)<0)el.textContent+=' · b'+window.ZK_BUILD;}catch(e){}})();
 (function(){
   var PAGES = ["home", "overview", "warroom", "live", "sector", "sentiment", "news", "policy", "overseas", "t0", "review", "index", "position", "backtest", "experiment", "task", "fitness", "govana", "modledger", "sysstatus", "pano", "projmap", "macro", "chainmap", "strategy", "factor", "stock", "screener", "calendar", "reglib", "datainfo", "stockq", "cryptomarket", "cryptopos", "cryptostrat", "cryptobt", "cryptoinfo", "design", "modlib", "rating", "datasrc", "models", "aichat", "aitask"];

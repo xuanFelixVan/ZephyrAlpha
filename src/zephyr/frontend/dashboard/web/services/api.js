@@ -5,12 +5,15 @@
 window.ZK = window.ZK || {};
 ZK.api = (function(){
   var BASE = 'http://127.0.0.1:8890';
-  function fetchJson(path, timeoutMs){
-    timeoutMs = timeoutMs || 5000;
+  function fetchJson(path, timeoutMs, opts){
+    /* opts（可选）: {method:'POST', headers:{...}, body:'...'}——GET 缺省；POST 超时放宽由调用方传 timeoutMs */
+    timeoutMs = timeoutMs || (opts && opts.method === 'POST' ? 15000 : 5000);
     return new Promise(function(res, rej){
       var ctrl = new AbortController();
       var t = setTimeout(function(){ ctrl.abort(); }, timeoutMs);
-      fetch(BASE + path, {signal: ctrl.signal}).then(function(r){
+      var init = {signal: ctrl.signal};
+      if(opts && opts.method){ init.method = opts.method; init.headers = opts.headers; init.body = opts.body; }
+      fetch(BASE + path, init).then(function(r){
         clearTimeout(t);
         if(!r.ok) throw new Error('http '+r.status);
         return r.json();
@@ -42,6 +45,18 @@ ZK.api = (function(){
     },
     fetchEvents: function(){   /* 宏观事件日历（sq-event-row） */
       return fetchJson('/api/events');
+    },
+    fetchBacktestList: function(){   /* 回测产物列表（backtest 页真源） */
+      return fetchJson('/api/backtest-list');
+    },
+    fetchBacktestDetail: function(runId){   /* 回测产物详情（绩效三图/明细） */
+      return fetchJson('/api/backtest-detail?run_id='+encodeURIComponent(runId), 10000);
+    },
+    postBacktestRun: function(body){   /* 页面发起回测（POST，BTRUN 引擎后台执行） */
+      return fetchJson('/api/backtest-run', 15000, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+    },
+    fetchBacktestRunStatus: function(taskId){   /* 轮询回测任务状态 */
+      return fetchJson('/api/backtest-run?task_id='+encodeURIComponent(taskId));
     }
   };
 })();
