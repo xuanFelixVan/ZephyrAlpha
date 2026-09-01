@@ -261,6 +261,16 @@ def quote(symbols: str = Query(..., min_length=1)) -> dict[str, Any]:
             "ORDER BY trade_date DESC LIMIT 2 BY symbol",
             {"syms": tuple(syms)},
         )
+        # 股票表查不到的补查 ETF 表（ETF 不在 kline_daily，2026-09-01 实测）
+        found = {r[0] for r in rows}
+        missing = [s for s in syms if s not in found]
+        if missing:
+            rows = list(rows) + list(_ch_exec(
+                "SELECT symbol, trade_date, close FROM kline_etf_daily "
+                "WHERE symbol IN %(syms)s AND close > 0 "
+                "ORDER BY trade_date DESC LIMIT 2 BY symbol",
+                {"syms": tuple(missing)},
+            ))
         by_sym: dict[str, list[tuple[Any, float]]] = {}
         for r in rows:
             by_sym.setdefault(r[0], []).append((r[1], float(r[2])))
@@ -270,6 +280,15 @@ def quote(symbols: str = Query(..., min_length=1)) -> dict[str, Any]:
             {"syms": tuple(syms)},
         )
         names = {r[0]: str(r[1]) for r in name_rows}
+        # ETF 名称补查（etf_list.etf_code 为 sh510300/sz159915 格式，剥前缀匹配）
+        no_name = [s for s in syms if s not in names]
+        if no_name:
+            for r in _ch_exec(
+                "SELECT substring(etf_code, 3) AS code, argMax(etf_name, list_date) "
+                "FROM etf_list WHERE code IN %(syms)s GROUP BY code",
+                {"syms": tuple(no_name)},
+            ):
+                names[r[0]] = str(r[1])
         data = []
         for s in syms:
             bars = by_sym.get(s)

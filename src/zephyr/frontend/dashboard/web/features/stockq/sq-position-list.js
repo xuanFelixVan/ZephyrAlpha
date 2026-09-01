@@ -1,11 +1,13 @@
-/* 功能模块：持仓列表（sq-position-list）——QMT 文件桥真源版（v2）
+/* 功能模块：持仓列表（sq-position-list）——QMT 文件桥真源版（v3）
  * 契约：init(chart,ctx)/render(d)/destroy()；样式自注入；经 ZK.registerFeature 注册
  * 数据源：/api/position（E:\qmt_bridge\Stock\PositionStatics.csv + Account.csv，QMT 自动导出 GBK）
- * 背景：miniQMT 通道 2026-09-18 券商关停，实盘数据一律走文件桥（Owner 2026-09-01 裁定）
+ *        + /api/quote（kline_daily 最新日线，与自选列表同口径）
+ * 显示口径（Owner 2026-09-01 裁定）：价格旁百分比=股票当天涨跌幅（走势），非持仓盈亏比例
+ *   ——QMT 导出"盈亏比例"列因送转/负成本严重失真（如 -94.29%/-102.65%），挪至悬停提示
  * 四态灯：绿=真源（导出文件 1h 内） / 黄=延迟（>1h，显示截至时间） / 红=断线（回退演示 SQ_HOLD） / 灰=未启动（DS-12）
  * 轮询：30s 刷新（仅持仓 tab 且无搜索词时）
  * 交互：点击行切换股票（sqSel，非池内股票先入池带真名）
- * 验收单：ACC-F-STOCKQ-POSITION-LIST（rev 2）
+ * 验收单：ACC-F-STOCKQ-POSITION-LIST（rev 3）
  */
 (function(){
   var POLL_MS = 30000;
@@ -54,6 +56,7 @@
     _mode: '未启动',
     _mtime: null,
     _account: null,
+    _quotes: {},   /* symbol → {price, pct_change_str, direction}（kline_daily 当天涨跌，与自选列表同口径） */
 
     init: function(chart, ctx){
       this.chart = chart;
@@ -82,13 +85,18 @@
         + acctHtml + '</div>';
     },
 
-    /* 真源行：名称+代码 / 现价·盈亏% */
+    /* 真源行：名称+代码+数量 / 当天现价·当天涨跌幅（Owner 裁定：走势口径，非持仓盈亏）
+     * 持仓经济数据（数量/可用/成本/市值/盈亏）全在悬停 title */
     _rowReal: function(p){
-      var up = p.pnl >= 0;
-      var cls = up ? 'up' : 'down';
-      var px = p.price > 0 ? p.price.toFixed(2) : '--';
-      var pc = p.pnl_pct || '--';
-      return '<div class="sq-si sq-pos-row' + (p.symbol === sqCur ? ' on' : '') + '" onclick="sqSelFromPos(\'' + p.symbol + '\',\'' + p.name + '\',\'' + p.code + '\')" title="数量 ' + p.qty + '（可用 ' + p.available + '）· 成本 ' + (p.cost_price > 0 ? p.cost_price.toFixed(3) : '--') + ' · 市值 ' + fmtWan(p.market_value) + '">'
+      var q = this._quotes[p.symbol];
+      var px = q ? q.price.toFixed(2) : (p.price > 0 ? p.price.toFixed(2) : '--');
+      var pc = q ? q.pct_change_str : '--';
+      var cls = q ? (q.direction === 'up' ? 'up' : 'down') : '';
+      var tip = '当天涨跌：' + pc + '（kline_daily）&#10;'
+        + '数量 ' + p.qty + ' 股（可用 ' + p.available + '）&#10;'
+        + '成本 ' + (p.cost_price > 0 ? p.cost_price.toFixed(3) : '--') + ' · 市值 ' + fmtWan(p.market_value) + '&#10;'
+        + '持仓盈亏 ' + (p.pnl >= 0 ? '+' : '') + fmtWan(Math.abs(p.pnl)) + '（' + (p.pnl_pct || '--') + '，QMT 口径：送转/负成本会失真）';
+      return '<div class="sq-si sq-pos-row' + (p.symbol === sqCur ? ' on' : '') + '" onclick="sqSelFromPos(\'' + p.symbol + '\',\'' + p.name + '\',\'' + p.code + '\')" title="' + tip + '">'
         + '<span><span class="nm">' + p.name + '</span> <span class="cd">' + p.code + '</span><br><span class="qty">' + p.qty + ' 股</span></span>'
         + '<span class="rt"><span class="px ' + cls + '">' + px + '</span><br><span class="pc ' + cls + '">' + pc + '</span></span>'
         + '</div>';
@@ -131,12 +139,13 @@
           self._mtime = r.file_mtime || null;
           self._account = r.account || null;
           self._last = r;
+          self._fetchQuotes();   /* 持仓到手后拉当天涨跌（kline_daily），回来再渲染 */
         } else {
           self._mode = '断线';   /* 桥文件缺失/解析异常 → 回退演示，诚实标注 */
           self._account = null;
           self._last = null;
+          if(self._visible()) self.render(null);
         }
-        if(self._visible()) self.render(self._last);
       }).catch(function(){
         self._mode = '断线';
         self._account = null;
@@ -144,9 +153,30 @@
       });
     },
 
+    /* 当天涨跌批量拉取（/api/quote，与自选列表同口径）；失败保持 '--' 不阻塞持仓渲染 */
+    _fetchQuotes: function(){
+      var self = this;
+      var syms = (this._last && this._last.data || []).map(function(p){ return p.symbol; });
+      if(!syms.length || !(window.ZK && ZK.api && ZK.api.fetchQuote)){
+        if(self._visible()) self.render(self._last);
+        return;
+      }
+      ZK.api.fetchQuote(syms).then(function(r){
+        self._quotes = {};
+        if(r && r.ok && r.data){
+          r.data.forEach(function(q){ self._quotes[q.symbol] = q; });
+        }
+        if(self._visible()) self.render(self._last);
+      }).catch(function(){
+        self._quotes = {};
+        if(self._visible()) self.render(self._last);
+      });
+    },
+
     destroy: function(){
       clearInterval(this._timer);
       this._account = null;
+      this._quotes = {};
     }
   };
 
