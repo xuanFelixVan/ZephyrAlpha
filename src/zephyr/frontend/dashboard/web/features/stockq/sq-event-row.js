@@ -20,6 +20,7 @@
     id: 'sq-event-row',
     chart: null,
     _mkt: [],   /* 真源事件（含历史+未来） */
+    _retryT: null,
 
     init: function(chart, ctx){
       this.chart = chart;
@@ -44,8 +45,12 @@
     fetch: function(){
       if(!(window.ZK && ZK.api && ZK.api.fetchEvents)) return;
       var self = this;
+      clearTimeout(this._retryT);
       ZK.api.fetchEvents().then(function(r){
-        if(!(r && r.ok && r.data)) return;   /* 失败保持 null → 宿主回退演示 */
+        if(!(r && r.ok && r.data)){
+          self._scheduleRetry();   /* 失败重试（自愈）：一次性拉取撞上 API 重启会永久回退演示——2026-09-01 实证 */
+          return;
+        }
         self._mkt = r.data.map(function(e){
           return {
             dt: e.date.slice(5),          /* '2026-09-21' → '09-21'（klpFindBar 口径） */
@@ -64,12 +69,24 @@
         if(typeof klpTimelineRender === 'function' && document.getElementById('klp-evtrow')){
           klpTimelineRender();
         }
-      }).catch(function(){ /* 静默：宿主回退演示 SQ_EVENTS */ });
+      }).catch(function(){
+        self._scheduleRetry();
+      });
+    },
+
+    /* 失败自愈：15s 后重试，直到取到真源（拉取是页面级一次性资源，不涉及高频） */
+    _scheduleRetry: function(){
+      var self = this;
+      clearTimeout(this._retryT);
+      this._retryT = setTimeout(function(){ self.fetch(); }, 15000);
     },
 
     render: function(d){ /* 数据组件：render 由 fetch 驱动，无独立 DOM */ },
 
-    destroy: function(){ this._mkt = []; }
+    destroy: function(){
+      clearTimeout(this._retryT);
+      this._mkt = [];
+    }
   };
 
   ZK.registerFeature(mod);
