@@ -187,15 +187,15 @@ def stock_search(q: str = Query(..., min_length=1), limit: int = Query(20, ge=1,
     if not q:
         return {"ok": True, "data": []}
     try:
-        # 代码精确/前缀匹配优先，名称包含次之
+        # 代码精确/前缀匹配优先，名称包含次之（stock_basic 无 market 列，symbol 可能重复取 DISTINCT）
         rows = _ch().execute(
-            "SELECT symbol, name, market FROM stock_basic "
+            "SELECT DISTINCT symbol, name FROM stock_basic "
             "WHERE symbol LIKE %(q)s OR name LIKE %(qn)s LIMIT %(l)s",
             {"q": q + "%", "qn": "%" + q + "%", "l": limit},
         )
         return {
             "ok": True,
-            "data": [{"symbol": r[0], "name": r[1], "market": r[2]} for r in rows],
+            "data": [{"symbol": r[0], "name": r[1]} for r in rows],
         }
     except Exception as exc:
         return {"ok": False, "error": str(exc)[:200], "data": []}

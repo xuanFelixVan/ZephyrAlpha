@@ -30,7 +30,6 @@
       var inFav = (typeof sqFav !== 'undefined' && sqFav.indexOf(r.symbol) >= 0);
       h += '<div class="sq-search-item" onclick="sqSelFromSearch(\'' + r.symbol + '\')">'
         + '<span><span class="nm">' + r.name + '</span><span class="cd">' + r.symbol + '</span></span>'
-        + '<span class="mkt">' + (r.market || '') + '</span>'
         + (inFav
           ? '<span class="fav" onclick="event.stopPropagation();sqFavRm(\'' + r.symbol + '\')" title="移出自选">✕</span>'
           : '<span class="fav" onclick="event.stopPropagation();sqFavAdd(\'' + r.symbol + '\')" title="加入自选">＋</span>')
