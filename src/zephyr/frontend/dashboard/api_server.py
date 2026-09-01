@@ -133,6 +133,51 @@ def kline(
     return {"ok": True, "symbol": sym, "period": period, "count": len(bars), "bars": bars}
 
 
+@app.get("/api/stock-header")
+def stock_header(symbol: str = Query(..., min_length=1)) -> dict[str, Any]:
+    """股票标题数据（sq-stock-header 组件）：名称+代码+价格+涨跌幅+昨收。
+    数据源：stock_basic（名称）+ daily_valuation（最新价格）。
+    """
+    sym = symbol.split(".")[0].strip()
+    if not sym.isalnum():
+        return {"ok": False, "error": "bad symbol", "data": {}}
+    try:
+        # 1. 名称：stock_basic
+        name_rows = _ch().execute(
+            "SELECT symbol, name FROM stock_basic WHERE symbol=%(s)s LIMIT 1", {"s": sym}
+        )
+        name = name_rows[0][1] if name_rows else sym
+
+        # 2. 最新价格：daily_valuation 最新一行
+        price_rows = _ch().execute(
+            "SELECT close, preclose, pct_change, volume, amount FROM daily_valuation "
+            "WHERE symbol=%(s)s ORDER BY trade_date DESC LIMIT 1",
+            {"s": sym},
+        )
+        if not price_rows:
+            return {"ok": False, "error": "no price data", "data": {}}
+        close, preclose, pct_change, volume, amount = price_rows[0]
+        pct = float(pct_change)
+        direction = "up" if pct >= 0 else "down"
+        return {
+            "ok": True,
+            "symbol": sym,
+            "data": {
+                "name": str(name),
+                "code": sym,
+                "price": float(close),
+                "preclose": float(preclose),
+                "pct_change": pct,
+                "pct_change_str": f"{'+' if pct >= 0 else ''}{pct:.2f}%",
+                "direction": direction,
+                "volume": int(volume),
+                "amount": float(amount),
+            },
+        }
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)[:200], "data": {}}
+
+
 def main() -> None:
     import uvicorn
 

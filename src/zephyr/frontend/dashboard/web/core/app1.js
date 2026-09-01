@@ -5911,7 +5911,9 @@ function klpBars(){   /* genCandles → KLineChart 格式（种子=股票+周期
   return d.map(function(k,i){ return {timestamp:end-(d.length-1-i)*step,open:+k.o.toFixed(2),high:+k.h.toFixed(2),low:+k.l.toFixed(2),close:+k.c.toFixed(2),volume:Math.round(k.v)}; });
 }
 function sqInit(){
-  sqRenderList(); sqRenderHead(); sqRenderInfo();
+  sqRenderList();
+  if(window.ZK && ZK.features && ZK.features['sq-stock-header']){ ZK.features['sq-stock-header'].init(); }
+  sqRenderHead(); sqRenderInfo();
   var el=document.getElementById('klp-chart');
   if(!el) return;
   if(klpChart){ klpChart.resize(); return; }   /* 幂等：go() 每次 show 都调 sqInit，重进页面只 resize */
@@ -6090,6 +6092,13 @@ function sqTfSet(tf,elm){
   klpRefreshMarks();   /* 标注层随后重算 */
 }
 function sqRenderHead(){
+  /* v2：股票标题已拆为功能模块 sq-stock-header（features/stockq/sq-stock-header.js）
+     回退：若模块未加载则保留原内联渲染（兼容旧加载链） */
+  if(window.ZK && ZK.features && ZK.features['sq-stock-header']){
+    ZK.features['sq-stock-header']._symbol = sqCur;
+    ZK.features['sq-stock-header'].render();
+    return;
+  }
   var p=sqPoolFind(sqCur),d=STOCKQ_D[sqCur];
   var h='<span class="nm">'+(d?d.nm:p.nm)+'</span><span class="cd">'+p.code+(d?'':'（资料待接入）')+'</span>'
     +'<span class="px '+(p.dir>=0?'up':'down')+'">'+p.px+'</span><span class="chg '+(p.dir>=0?'up':'down')+'">'+p.pc+'</span>'

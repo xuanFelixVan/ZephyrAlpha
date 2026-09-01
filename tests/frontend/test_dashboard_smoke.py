@@ -89,7 +89,7 @@ def test_all_pages_present(page):
 
 
 def test_stockq_structure(page):
-    """K 线页结构断言（验收单 ACC-F-STOCKQ-COSTLINE 机断条款 + 事件行/时间轴）。"""
+    """K 线页结构断言（验收单 ACC-F-STOCKQ-COSTLINE 机断条款 + 事件行/时间轴 + sq-stock-header）。"""
     page.wait_for_function("!!(window.ZK && ZK.features && ZK.features['cost-line'])", timeout=20000)  # 等 JS 加载链走完再导航（防竞态）
     page.evaluate("go('stockq')")  # 走应用内导航函数（改 hash 不触发 sqInit）
     page.wait_for_timeout(3000)  # sqInit + 数据落盘 + 标注开关行渲染
@@ -100,6 +100,9 @@ def test_stockq_structure(page):
         cost_toggle: !!document.querySelector('.klp-mark-tgl[onclick*="cost"]'),
         cost_module: !!(window.ZK && ZK.features && ZK.features['cost-line']),
         chart_ready: !!(window.ZK && ZK.features['cost-line'] && ZK.features['cost-line'].chart),
+        stock_header_module: !!(window.ZK && ZK.features && ZK.features['sq-stock-header']),
+        stock_header_rendered: !!document.querySelector('#sq-head .sq-stock-header'),
+        stock_header_dm: !!document.querySelector('#sq-head .klp-datamode'),
     })"""
     )
     fails = [k for k, v in checks.items() if not v]

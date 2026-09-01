@@ -16,3 +16,15 @@ modules:
     acceptance: ACC-F-STOCKQ-COSTLINE                # 挂验收单
     handbook: [FEH-KLC-001, FEH-KLC-003]             # 挂手册条目
     status: active
+  - id: sq-stock-header
+    name: 股票标题
+    file: features/stockq/sq-stock-header.js
+    page: stockq
+    init: "init(chart, ctx)"
+    destroy: "destroy()"
+    depends: [ZK.api, sqPoolFind, sqCur, klpDataMode, klpTfVis, sqTf, klpMarks]
+    toggle: none
+    styles: self-injected
+    acceptance: ACC-F-STOCKQ-STOCK-HEADER
+    handbook: []
+    status: active

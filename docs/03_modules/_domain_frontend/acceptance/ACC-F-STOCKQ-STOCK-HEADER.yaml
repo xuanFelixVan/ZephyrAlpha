@@ -1,0 +1,33 @@
+# --- 治理锚定 ---
+# doc_type: register | 功能验收单（冻结"什么样子算对"）
+# ttl: permanent
+# 修订权限：Owner 专有（AI 可提议不可自改已冻结条项）
+# --- 治理锚定结束 ---
+
+feature_id: F-STOCKQ-STOCK-HEADER
+feature_name: 股票标题
+frozen_at: 2026-09-01
+frozen_by: ZephyrAlpha-Owner
+revision: 1
+revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
+
+items:
+  - { id: 1, text: "股票名称渲染，字号 16px 加粗，颜色 var(--text)", check: 目检 }
+  - { id: 2, text: "股票代码渲染，字号 11px，颜色 var(--faint)", check: 目检 }
+  - { id: 3, text: "当前价格渲染，字号 20px，颜色随涨跌（红涨绿跌）", check: 目检 }
+  - { id: 4, text: "涨跌幅渲染，含 ▲/▼ 徽章，颜色随涨跌", check: 目检 }
+  - { id: 5, text: "四态数据状态灯（DS-12）：绿=真源 / 黄=延迟 / 红=断线·演示 / 灰=未启动", check: 目检 }
+  - { id: 6, text: "API 成功时状态灯切绿，名称/代码/价格/涨跌幅取自 /api/stock-header", check: 机断 }
+  - { id: 7, text: "API 失败时回退 sqPoolFind 演示数据，状态灯保持红/灰", check: 机断 }
+  - { id: 8, text: "切换股票（sqSel）后标题自动刷新", check: 目检 }
+  - { id: 9, text: "样式自注入（style#sq-stock-header-styles），不污染全局 main.css", check: 机断 }
+
+execution:
+  trigger: "任何涉及本功能的 UI 改动 commit 前"
+  flow: "起本地服务 → 截图 → 逐条对 → 全绿才走 GitCommitGateway"
+  baseline_screenshot: "acceptance/screenshots/F-STOCKQ-STOCK-HEADER-baseline.png"
+
+关联:
+  handbook: []
+  frontend_map: F-STOCKQ-STOCK-HEADER
+  code_ref: "src/zephyr/frontend/dashboard/web/features/stockq/sq-stock-header.js"

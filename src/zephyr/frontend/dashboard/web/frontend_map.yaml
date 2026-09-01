@@ -1,0 +1,20 @@
+# 前端全景图（frontend_map）——页面·模块·功能点→代码路径·数据源·状态
+# 契约：每功能点一行，backend_ref 类型化（module:/registry:/table:/api:/none:）
+# 生成源：features/manifest.yaml + 手工维护
+version: "1.0.0"
+updated: 2026-09-01
+features:
+  - id: F-STOCKQ-COSTLINE
+    name: 持仓成本线
+    page: stockq
+    module_id: cost-line
+    file: features/cost-line.js
+    backend_ref: "table:CH.chip_distribution"
+    status: active
+  - id: F-STOCKQ-STOCK-HEADER
+    name: 股票标题
+    page: stockq
+    module_id: sq-stock-header
+    file: features/stockq/sq-stock-header.js
+    backend_ref: "api:/api/stock-header"
+    status: active

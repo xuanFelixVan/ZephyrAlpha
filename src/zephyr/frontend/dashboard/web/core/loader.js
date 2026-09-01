@@ -28,6 +28,8 @@
   }).then(function(){
     return loadJs('features/cost-line.js');   /* 成本线功能模块（模块契约 pilot，验收单 ACC-F-STOCKQ-COSTLINE） */
   }).then(function(){
+    return loadJs('features/stockq/sq-stock-header.js');   /* 股票标题功能模块（模块契约，验收单 ACC-F-STOCKQ-STOCK-HEADER） */
+  }).then(function(){
     return loadJs('core/app2.js');
   }).then(function(){
     return loadJs('core/app3.js');

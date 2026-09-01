@@ -24,6 +24,9 @@ ZK.api = (function(){
       var p = KLP_PERIOD_API[tf];
       if(!p) return Promise.reject(new Error('period unsupported: '+tf));
       return fetchJson('/api/kline?symbol='+encodeURIComponent(symbol)+'&period='+p+'&limit=300');
+    },
+    fetchStockHeader: function(symbol){
+      return fetchJson('/api/stock-header?symbol='+encodeURIComponent(symbol));
     }
   };
 })();
