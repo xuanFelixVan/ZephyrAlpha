@@ -76,3 +76,27 @@ modules:
     acceptance: ACC-F-STOCKQ-POSITION-LIST
     handbook: []
     status: active
+  - id: sq-order-book
+    name: 五档挂单（QMT 文件桥真源）
+    file: features/stockq/sq-order-book.js
+    page: stockq
+    init: "init(chart, ctx)"
+    destroy: "destroy()"
+    depends: [ZK.api, sqCur, STOCKQ_D]   # STOCKQ_D.l2=三演示标的断线回退
+    toggle: none
+    styles: self-injected
+    acceptance: ACC-F-STOCKQ-ORDER-BOOK
+    handbook: []
+    status: active
+  - id: sq-event-row
+    name: 事件时间行（calendar_event 宏观真源）
+    file: features/stockq/sq-event-row.js
+    page: stockq
+    init: "init(chart, ctx)"
+    destroy: "destroy()"
+    depends: [ZK.api, klpTimelineRender, klpTlEvtPop, klpMarks]   # 渲染宿主=时间轴，数据组件
+    toggle: "⚑ 开关（klpTglMark('evt')，宿主时间轴联动）"
+    styles: none
+    acceptance: ACC-F-STOCKQ-EVENT-ROW
+    handbook: []
+    status: active

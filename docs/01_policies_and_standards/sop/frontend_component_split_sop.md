@@ -345,13 +345,13 @@ services:
 | 10 | sq-marks-trade | features/stockq/sq-marks-trade.js | QMT 成交接口 | ⏳ 待建（QMT 延后） |
 | 11 | sq-marks-chip | features/stockq/sq-marks-chip.js | CH.chip_distribution | ⏳ 待建 |
 | 12 | sq-cost-line | features/cost-line.js | chip-peak.avgCost | ✅ 已通 |
-| 13 | sq-event-row | features/stockq/sq-event-row.js | CH.calendar_event | ⏳ 待建 |
+| 13 | sq-event-row | features/stockq/sq-event-row.js | CH.calendar_event | ✅ 已通（宏观日历真源，个股财报/解禁待接入） |
 | 14 | sq-timeline | features/stockq/sq-timeline.js | 无（纯前端） | ⏳ 待建 |
 | 15 | sq-chip-peak | features/stockq/sq-chip-peak.js | CH.chip_distribution | ⏳ 待建 |
 | 16 | sq-stock-header | features/stockq/sq-stock-header.js | /api/stock-header | ✅ 已通 |
 | 17 | sq-sector-tags | features/stockq/sq-sector-tags.js | stock_basic.sector | ✅ 已通 |
 | 18 | sq-company-intro | features/stockq/sq-company-intro.js | stock_basic.intro | ⏳ 待建 |
-| 19 | sq-order-book | features/stockq/sq-order-book.js | QMT l2_tick | ⏳ 待建（QMT 延后） |
+| 19 | sq-order-book | features/stockq/sq-order-book.js | QMT 文件桥 quote.csv | ✅ 已通（订阅标的真源五档） |
 | 20 | sq-key-data | features/stockq/sq-key-data.js | CH.daily_valuation | ✅ 已通 |
 | 21 | sq-financial-read | features/stockq/sq-financial-read.js | CH.finance | ⏳ 待建 |
 | 22 | sq-related-news | features/stockq/sq-related-news.js | CH.news | ⏳ 待建 |

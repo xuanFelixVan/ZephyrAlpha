@@ -372,6 +372,70 @@ def position() -> dict[str, Any]:
         return {"ok": False, "error": str(exc)[:200], "data": []}
 
 
+@app.get("/api/events")
+def events(days_back: int = Query(180, ge=0, le=3650), days_fwd: int = Query(365, ge=0, le=3650)) -> dict[str, Any]:
+    """宏观事件日历（sq-event-row 组件）：CH.calendar_event（期权到期/LPR/交割日/月末等，非个股事件）。
+    窗口：今天-days_back ~ 今天+days_fwd。个股财报/解禁暂无真源（待接入）。
+    """
+    try:
+        rows = _ch_exec(
+            "SELECT event_date, event_type, description FROM calendar_event "
+            "WHERE event_date >= today() - %(b)s AND event_date <= today() + %(f)s "
+            "ORDER BY event_date",
+            {"b": days_back, "f": days_fwd},
+        )
+        data = [
+            {"date": r[0].isoformat(), "type": str(r[1]), "description": str(r[2])}
+            for r in rows
+        ]
+        return {"ok": True, "count": len(data), "data": data}
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)[:200], "data": []}
+
+
+@app.get("/api/orderbook")
+def orderbook(symbol: str = Query(..., min_length=1)) -> dict[str, Any]:
+    """五档盘口（sq-order-book 组件）：E:\\qmt_bridge\\quote.csv（QMT 终端订阅标的快照导出）。
+    背景：miniQMT 2026-09-18 关停，盘口走文件桥（Owner 2026-09-01 裁定）。
+    注意：quote.csv 只含 QMT 内订阅的标的；未订阅标的返回 ok:false（前端标'未订阅'）。
+    """
+    sym = symbol.split(".")[0].strip()
+    if not sym.isalnum():
+        return {"ok": False, "error": "bad symbol", "data": {}}
+    quote_file = _QMT_BRIDGE_STOCK_DIR.parent / "quote.csv"
+    try:
+        if not quote_file.exists():
+            return {"ok": False, "error": "quote.csv missing", "data": {}}
+        with open(quote_file, newline="", encoding="utf-8", errors="replace") as f:
+            rows = list(csv.DictReader(f))
+        for row in rows:
+            if row.get("symbol", "").split(".")[0].strip() == sym:
+                def _n(k: str) -> float:
+                    try:
+                        return float(row.get(k, "") or 0)
+                    except ValueError:
+                        return 0.0
+                return {
+                    "ok": True,
+                    "data": {
+                        "symbol": sym,
+                        "price": _n("lastPrice"),
+                        "open": _n("open"),
+                        "high": _n("high"),
+                        "low": _n("low"),
+                        "preclose": _n("lastClose"),
+                        "volume": _n("volume"),
+                        "amount": _n("amount"),
+                        "bids": [[_n(f"bid{i}"), _n(f"bidVol{i}")] for i in range(1, 6)],
+                        "asks": [[_n(f"ask{i}"), _n(f"askVol{i}")] for i in range(1, 6)],
+                        "timetag": row.get("timetag", ""),
+                    },
+                }
+        return {"ok": False, "error": "not in quote.csv（QMT 未订阅该标的）", "data": {}}
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)[:200], "data": {}}
+
+
 @app.get("/api/stock-search")
 def stock_search(q: str = Query(..., min_length=1), limit: int = Query(20, ge=1, le=100)) -> dict[str, Any]:
     """股票搜索（sq-search-box 组件）：按代码/名称模糊匹配。

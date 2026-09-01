@@ -6336,10 +6336,12 @@ function klpTimelineRender(){
     var txt=isMin?(String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0')):(String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0'));
     h+='<span class="klp-tl-date" style="left:'+x.x+'px">'+txt+'</span>';
   }
-  /* 事件圆形图标+数字：独立行（MACD 与时间轴之间，紧挨时间轴上方但不在轨道上；同日聚合；随 evt 标注开关） */
+  /* 事件圆形图标+数字：独立行（MACD 与时间轴之间，紧挨时间轴上方但不在轨道上；同日聚合；随 evt 标注开关）
+     数据源 v2：sq-event-row 组件（CH.calendar_event 宏观真源）优先，未加载/断线回退演示 SQ_EVENTS */
   var evMap={};
   if(klpMarks.evt){
-    SQ_EVENTS.forEach(function(ev,idx){
+    var EVS=(window.ZK && ZK.features && ZK.features['sq-event-row'] && ZK.features['sq-event-row'].getEvents())||SQ_EVENTS;
+    EVS.forEach(function(ev,idx){
       var bi=klpFindBar(d,ev.dt);
       if(bi<0||bi<from||bi>to) return;
       if(!evMap[bi]) evMap[bi]=[];
@@ -6364,9 +6366,12 @@ function klpTlEvtPop(bi,e){
   var d=klpChart.getDataList();
   var t=new Date(d[+bi].timestamp);
   var ds=t.getFullYear()+'/'+String(t.getMonth()+1).padStart(2,'0')+'/'+String(t.getDate()).padStart(2,'0');
-  var h='<div class="tl-date">'+ds+'</div>';
+  /* 数据源 v2：与 klpTimelineRender 同源（sq-event-row 真源优先，回退演示 SQ_EVENTS） */
+  var EVS=(window.ZK && ZK.features && ZK.features['sq-event-row'] && ZK.features['sq-event-row'].getEvents())||SQ_EVENTS;
+  var isLive=!!(window.ZK && ZK.features && ZK.features['sq-event-row'] && ZK.features['sq-event-row'].isLive());
+  var h='<div class="tl-date">'+ds+(isLive?' <span style="font-size:10px;color:#25A750">● calendar_event 真源</span>':' <span style="font-size:10px;color:#CA3F64">● 断线·演示</span>')+'</div>';
   idxs.forEach(function(idx){
-    var ev=SQ_EVENTS[idx];
+    var ev=EVS[idx];
     h+='<div class="tl-ev"><div class="tt">'+ev.ic+' '+ev.tt+'</div><div class="tm">2026/'+ev.dt+'</div>'
       +'<div class="kv"><span>公布</span><b>'+ev.pub+'</b></div>'
       +'<div class="kv"><span>预期</span><b>'+ev.exp+'</b></div>'
@@ -6624,16 +6629,19 @@ function sqEvtPopClose(e){
 }
 function sqRenderInfo(){
   var box=document.getElementById('sq-info'),d=STOCKQ_D[sqCur],p=sqPoolFind(sqCur);
-  /* 组件接管判定（features/stockq/）：行业标签→sq-sector-tags、关键数据→sq-key-data */
+  /* 组件接管判定（features/stockq/）：行业标签→sq-sector-tags、关键数据→sq-key-data、五档→sq-order-book */
   var hasTags=!!(window.ZK && ZK.features && ZK.features['sq-sector-tags']);
   var hasKv=!!(window.ZK && ZK.features && ZK.features['sq-key-data']);
+  var hasOb=!!(window.ZK && ZK.features && ZK.features['sq-order-book']);
   if(!d){
     if(!p) p={nm:sqCur,code:sqCur,px:'--',pc:'--',dir:0};
     box.innerHTML='<div class="sq-qh"><span class="nm">'+p.nm+'</span><span class="px '+(p.dir>=0?'up':'down')+'">'+p.px+'</span><span class="chg '+(p.dir>=0?'up':'down')+'">'+p.pc+'</span></div>'
       +'<div class="sq-tags" id="sq-sector-tags">'+(hasTags?'':'<span class="badge b-na">行业待接入</span>')+'</div>'
+      +'<div id="sq-order-book"></div>'
       +'<div id="sq-key-data">'+(hasKv?'':'<div class="sq-sec"><span>关键数据</span></div><div class="sq-intro">关键数据待接入（真源 /api/stock-header）</div>')+'</div>'
-      +'<div class="sq-intro">「'+p.nm+'」五档/股性/财务/新闻量化/合理估价演示数据未内置（关键数据与行业标签已接真源），K 线工作台可正常使用——其余资料待接入 I-2。</div>';
+      +'<div class="sq-intro">「'+p.nm+'」股性/财务/新闻量化/合理估价演示数据未内置（关键数据/行业标签/五档已接真源），K 线工作台可正常使用——其余资料待接入 I-2。</div>';
     if(hasTags) ZK.features['sq-sector-tags'].render();
+    if(hasOb) ZK.features['sq-order-book'].render();
     if(hasKv) ZK.features['sq-key-data'].render();
     return;
   }
@@ -6645,13 +6653,16 @@ function sqRenderInfo(){
     /* 行业标签：sq-sector-tags 组件接管（真源 stock_basic.industry/board），未加载回退演示 tags */
     +(hasTags?'<div class="sq-tags" id="sq-sector-tags"></div>':'<div class="sq-tags">'+d.tags.map(function(t){return '<span class="badge b-na">'+t+'</span>';}).join('')+'</div>')
     +'<div class="sq-intro">'+d.intro+'</div>';
-  /* 五档 */
-  h+='<div class="sq-sec"><span>五档挂单 <span class="dim" style="font-weight:400">miniQMT 五档快照口径（演示）</span></span></div><div class="sq-l2">';
-  var vmax=0; d.l2.forEach(function(l){vmax=Math.max(vmax,l[1]);});
-  var i;
-  for(i=4;i>=0;i--){ h+='<div class="lr"><span style="color:var(--down)">卖'+(i+1)+'</span><span class="lbar"><i style="width:'+(d.l2[i][1]/vmax*100).toFixed(0)+'%;background:#25A750;opacity:.35"></i></span><span class="lp" style="color:var(--down)">'+d.l2[i][0].toFixed(2)+'</span><span class="lv">'+d.l2[i][1]+'</span></div>'; }
-  for(i=5;i<10;i++){ h+='<div class="lr"><span style="color:var(--up)">买'+(i-4)+'</span><span class="lbar"><i style="width:'+(d.l2[i][1]/vmax*100).toFixed(0)+'%;background:#CA3F64;opacity:.35"></i></span><span class="lp" style="color:var(--up)">'+d.l2[i][0].toFixed(2)+'</span><span class="lv">'+d.l2[i][1]+'</span></div>'; }
-  h+='</div>';
+  /* 五档：sq-order-book 组件接管（真源文件桥 quote.csv），未加载回退演示 l2 */
+  if(hasOb){ h+='<div id="sq-order-book"></div>'; }
+  else{
+    h+='<div class="sq-sec"><span>五档挂单 <span class="dim" style="font-weight:400">miniQMT 五档快照口径（演示）</span></span></div><div class="sq-l2">';
+    var vmax=0; d.l2.forEach(function(l){vmax=Math.max(vmax,l[1]);});
+    var i;
+    for(i=4;i>=0;i--){ h+='<div class="lr"><span style="color:var(--down)">卖'+(i+1)+'</span><span class="lbar"><i style="width:'+(d.l2[i][1]/vmax*100).toFixed(0)+'%;background:#25A750;opacity:.35"></i></span><span class="lp" style="color:var(--down)">'+d.l2[i][0].toFixed(2)+'</span><span class="lv">'+d.l2[i][1]+'</span></div>'; }
+    for(i=5;i<10;i++){ h+='<div class="lr"><span style="color:var(--up)">买'+(i-4)+'</span><span class="lbar"><i style="width:'+(d.l2[i][1]/vmax*100).toFixed(0)+'%;background:#CA3F64;opacity:.35"></i></span><span class="lp" style="color:var(--up)">'+d.l2[i][0].toFixed(2)+'</span><span class="lv">'+d.l2[i][1]+'</span></div>'; }
+    h+='</div>';
+  }
   /* 关键数据：sq-key-data 组件接管（真源 kline_daily+daily_valuation），未加载回退演示 kv */
   if(hasKv){ h+='<div id="sq-key-data"></div>'; }
   else{
@@ -6681,8 +6692,9 @@ function sqRenderInfo(){
     +'<span class="k">上行空间</span><span class="v" style="color:var(--up)">'+d.val.up+'</span></div>'
     +'<div class="note">'+d.val.note+'；估值模型演示口径，真源 I-2</div>';
   box.innerHTML=h;
-  /* 组件接管渲染：行业标签+关键数据（容器已注入，异步取真源，失败回退上方演示标记） */
+  /* 组件接管渲染：行业标签+五档+关键数据（容器已注入，异步取真源，失败回退上方演示标记） */
   if(hasTags) ZK.features['sq-sector-tags'].render();
+  if(hasOb) ZK.features['sq-order-book'].render();
   if(hasKv) ZK.features['sq-key-data'].render();
 }
 function sqFavTgl(sym,btn){

@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-FE-003 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # -*- coding: utf-8 -*-
 """仪表盘前端冒烟安全网（结构断言型，非像素级——视觉翻新不误伤，功能消失当场报警）。
 
@@ -112,6 +114,11 @@ def test_stockq_structure(page):
         fav_list_status: !!document.querySelector('#sq-list .sq-list-status'),
         fav_list_rows: !!document.querySelector('#sq-list .sq-si'),
         position_list_module: !!(window.ZK && ZK.features && ZK.features['sq-position-list']),
+        order_book_module: !!(window.ZK && ZK.features && ZK.features['sq-order-book']),
+        order_book_rendered: !!(document.querySelector('#sq-order-book .sq-l2') || document.querySelector('#sq-order-book .sq-intro')),
+        order_book_mode: !!document.querySelector('#sq-order-book .sq-ob-mode'),
+        event_row_module: !!(window.ZK && ZK.features && ZK.features['sq-event-row']),
+        event_row_live: !!(window.ZK && ZK.features && ZK.features['sq-event-row'] && ZK.features['sq-event-row'].getEvents()),
     })"""
     )
     fails = [k for k, v in checks.items() if not v]

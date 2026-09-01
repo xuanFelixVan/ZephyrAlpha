@@ -36,6 +36,12 @@
     return loadJs('features/stockq/sq-key-data.js');   /* 关键数据表功能模块（模块契约，验收单 ACC-F-STOCKQ-KEY-DATA） */
   })
   .then(function(){
+    return loadJs('features/stockq/sq-order-book.js');   /* 五档挂单功能模块·文件桥真源（模块契约，验收单 ACC-F-STOCKQ-ORDER-BOOK） */
+  })
+  .then(function(){
+    return loadJs('features/stockq/sq-event-row.js');   /* 事件时间行功能模块·calendar_event 真源（模块契约，验收单 ACC-F-STOCKQ-EVENT-ROW） */
+  })
+  .then(function(){
     return loadJs('features/stockq/sq-sector-tags.js');   /* 行业标签功能模块（模块契约，验收单 ACC-F-STOCKQ-SECTOR-TAGS） */
   })
   .then(function(){
