@@ -29,6 +29,29 @@ related_modules:
 
 ---
 
+## 〇、开工前必读（AI 冷启动文件清单）
+
+新会话 AI 执行拆件任务前，**必须按顺序读完以下文件**：
+
+| 序 | 文件 | 读什么 | 为什么读 |
+|---|---|---|---|
+| 1 | `AGENTS.md` | 「新 AI 必读三件套」+ RULE-WORKTREE + 提交规范 | 项目总纲，知道规矩再动手 |
+| 2 | `docs/01_policies_and_standards/rules/trae_086_frontend_module_construction.yaml` | 拆件判据 + 命名规则 + 目录归属 + 四件套闭环 | **本 SOP 的上位规则**，拆件铁律真源 |
+| 3 | `docs/01_policies_and_standards/sop/construction_workflow_sop.md` | Step 0 必看清单 + 施工流程 15 步 | 知道自己在哪一步 |
+| 4 | `src/zephyr/frontend/dashboard/web/frontend_map.yaml` | 现有功能点清单（page → module_id → file → backend_ref） | 避免重复造轮子，看已有组件 |
+| 5 | `src/zephyr/frontend/dashboard/web/features/manifest.yaml` | 模块注册表（id/name/file/page/depends/acceptance） | 新组件必须登记 |
+| 6 | `src/zephyr/frontend/dashboard/web/core/loader.js` | 加载链顺序（app1→event_bus→api→features→app2） | 新组件挂接到正确位置 |
+| 7 | `src/zephyr/frontend/dashboard/web/core/event_bus.js` | ZK.registerFeature 机制 | 组件怎么注册 |
+| 8 | `src/zephyr/frontend/dashboard/web/services/api.js` | 现有 fetch 方法 | 新数据接口怎么加 |
+| 9 | `src/zephyr/frontend/dashboard/web/pages/<page>.html` | 页面骨架占位符 id | 组件往哪渲染 |
+| 10 | `docs/03_modules/_domain_frontend/acceptance/ACC-F-STOCKQ-COSTLINE.yaml` | 验收单模板（9 条格式） | 新验收单照这个写 |
+| 11 | `docs/03_modules/_domain_frontend/frontend_handbook/project_conventions.md` | FEH-PC-008 拆件铁律 + 历史踩坑 | 避免重复踩坑 |
+| 12 | `tests/frontend/test_dashboard_smoke.py` | 冒烟测试结构断言 | 知道怎么验证 |
+
+**读完标志**：能回答"新组件文件放哪、ID 怎么命、验收单怎么写、loader 怎么挂、测试怎么跑"。
+
+---
+
 ## 一、拆分判据（什么时候必须拆）
 
 满足**任一**即拆：
@@ -69,6 +92,8 @@ related_modules:
 - 在 `docs/_working/` 建拆分清单（task_bound，不入持久记忆）
 - 列出所有组件：名称/文件/功能语义/数据源/交互行为/验收单
 - 按优先级排序（数据就绪度 + 用户痛点）
+
+**参考**：`docs/_working/2026-09-01-stockq-component-split-inventory-v2.md`（stockq 页拆分清单模板）
 
 ### Step 2：创建组件文件
 
@@ -225,6 +250,8 @@ function sqRender<Name>(){
 
 **顺序**：app1.js → event_bus.js → api.js → **features/** → app2.js
 
+**参考**：`src/zephyr/frontend/dashboard/web/core/loader.js`（现有加载链）
+
 ### Step 7：四件套登记
 
 | 文件 | 路径 | 内容 |
@@ -267,6 +294,11 @@ services:
 - `--allow-non-worktree`：非 worktree 提交
 - `--allow-multi-domain`：跨域提交（前端+测试）
 - `[no-lookup:continuation]`：CAPABILITY-LOOKUP-REQUIRED 逃生
+
+**参考**：
+- 冒烟测试：`tests/frontend/test_dashboard_smoke.py`
+- 提交网关：`scripts/git_commit.py`
+- 施工流程 SOP：`docs/01_policies_and_standards/sop/construction_workflow_sop.md`
 
 ---
 
@@ -354,10 +386,25 @@ services:
 
 ---
 
-## 七、参考文件
+## 七、参考文件（完整引用链）
 
-- 规则真源：`docs/01_policies_and_standards/rules/trae_086_frontend_module_construction.yaml`
-- 拆分清单（临时）：`docs/_working/2026-09-01-stockq-component-split-inventory-v2.md`
-- 模块注册表：`src/zephyr/frontend/dashboard/web/features/manifest.yaml`
-- 前端全景图：`src/zephyr/frontend/dashboard/web/frontend_map.yaml`
-- 冒烟测试：`tests/frontend/test_dashboard_smoke.py`
+**规则真源**：
+- `AGENTS.md` — 项目总纲（新 AI 必读三件套 + RULE-WORKTREE + 提交规范）
+- `docs/01_policies_and_standards/rules/trae_086_frontend_module_construction.yaml` — 拆件铁律（数据源边界/单一功能/命名/目录归属/四件套闭环）
+- `docs/01_policies_and_standards/sop/construction_workflow_sop.md` — 施工流程 15 步（Step 0 必看清单）
+
+**前端真源**：
+- `src/zephyr/frontend/dashboard/web/frontend_map.yaml` — 前端全景图（page → module → file → backend_ref）
+- `src/zephyr/frontend/dashboard/web/features/manifest.yaml` — 模块注册表（depends 显式声明）
+- `src/zephyr/frontend/dashboard/web/core/loader.js` — 加载链（app1→event_bus→api→features→app2）
+- `src/zephyr/frontend/dashboard/web/core/event_bus.js` — ZK.registerFeature 机制
+- `src/zephyr/frontend/dashboard/web/services/api.js` — 数据服务通道
+
+**模板与范例**：
+- `docs/03_modules/_domain_frontend/acceptance/ACC-F-STOCKQ-COSTLINE.yaml` — 验收单模板
+- `docs/03_modules/_domain_frontend/frontend_handbook/project_conventions.md` — 手册（FEH-PC-008 拆件铁律 + 历史踩坑）
+- `docs/_working/2026-09-01-stockq-component-split-inventory-v2.md` — 拆分清单模板（task_bound）
+
+**测试与提交**：
+- `tests/frontend/test_dashboard_smoke.py` — 冒烟测试
+- `scripts/git_commit.py` — GitCommitGateway 提交入口
