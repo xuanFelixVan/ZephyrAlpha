@@ -8,18 +8,21 @@ feature_id: F-STOCKQ-ORDER-BOOK
 feature_name: 五档挂单（QMT 文件桥真源）
 frozen_at: 2026-09-01
 frozen_by: ZephyrAlpha-Owner
-revision: 1
+revision: 2
 revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
+revision_log:
+  - "rev 1（2026-09-01）：文件桥 quote.csv 真源接通（五档）"
+  - "rev 2（2026-09-01）：Owner 指令——档位自适应（动态解析 bid1~10/ask1~10，导出脚本加列即变十档，标题随档位显示'五档挂单/十档挂单'）"
 
 # check 取值：目检（截图人工/AI 视觉对） | 机断（DOM 断言，Playwright 落地后自动跑；过渡期人工/控制台手动验，不免验）
 items:
-  - { id: 1, text: "右栏'五档挂单'区块：卖5→卖1、买1→买5 十行，价格+量+量条（绿卖红买，量条按档位最大量归一）", check: 目检 }
-  - { id: 2, text: "QMT 订阅标的（如 510300）显示文件桥真源五档（E:\qmt_bridge\quote.csv），右上角绿灯+快照时间", check: 目检 }
-  - { id: 3, text: "快照非当日→黄灯'延迟·截至 MM-DD'；非订阅标的→灰灯'未订阅'+占位说明；断线→红灯'断线·演示'回退三演示标的 l2", check: 目检 }
+  - { id: 1, text: "右栏盘口区块：卖N→卖1、买1→买N，价格+量+量条（绿卖红买，量条按档位最大量归一）；档位数随导出列自适应（5 或 10），标题相应显示'五档挂单/十档挂单'", check: 目检 }
+  - { id: 2, text: "QMT 订阅标的（如 510300）显示文件桥真源盘口（E:\qmt_bridge\quote.csv），右上角绿灯+快照时间", check: 目检 }
+  - { id: 3, text: "快照非当日→黄灯'延迟·截至 MM-DD HH:MM'；非订阅标的→灰灯'未订阅'+占位说明；断线→红灯'断线·演示'回退三演示标的 l2", check: 目检 }
   - { id: 4, text: "四态灯悬停有释义（含 miniQMT 2026-09-18 关停、盘口走文件桥背景）", check: 目检 }
   - { id: 5, text: "组件已注册：ZK.features['sq-order-book'] 存在", check: 机断 }
   - { id: 6, text: "容器已渲染：#sq-order-book 存在且含 .sq-ob-mode 状态灯与 .sq-l2 或 .sq-intro（占位）", check: 机断 }
-  - { id: 7, text: "/api/orderbook 对订阅标的返回 bids/asks 各 5 档+timetag；非订阅返回 ok:false 'not in quote.csv'", check: 机断 }
+  - { id: 7, text: "/api/orderbook 动态解析 bid/ask 1~10 档（quote.csv 导出 bid6~10 列后自动十档）；非订阅返回 ok:false", check: 机断 }
 
 execution:
   trigger: "任何涉及本功能的 UI/接口改动 commit 前"

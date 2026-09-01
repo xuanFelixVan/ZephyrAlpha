@@ -376,16 +376,27 @@ def position() -> dict[str, Any]:
 def events(days_back: int = Query(180, ge=0, le=3650), days_fwd: int = Query(365, ge=0, le=3650)) -> dict[str, Any]:
     """宏观事件日历（sq-event-row 组件）：CH.calendar_event（期权到期/LPR/交割日/月末等，非个股事件）。
     窗口：今天-days_back ~ 今天+days_fwd。个股财报/解禁暂无真源（待接入）。
+    值字段（pub_value/exp_value/prev_value）2026-09-01 扩表新增，未回填=NULL（前端显'未公布'）。
     """
     try:
         rows = _ch_exec(
-            "SELECT event_date, event_type, description FROM calendar_event "
+            "SELECT event_date, event_type, description, pub_value, exp_value, prev_value "
+            "FROM calendar_event "
             "WHERE event_date >= today() - %(b)s AND event_date <= today() + %(f)s "
             "ORDER BY event_date",
             {"b": days_back, "f": days_fwd},
         )
+        today = date.today()
         data = [
-            {"date": r[0].isoformat(), "type": str(r[1]), "description": str(r[2])}
+            {
+                "date": r[0].isoformat(),
+                "type": str(r[1]),
+                "description": str(r[2]),
+                "pub_value": r[3],
+                "exp_value": r[4],
+                "prev_value": r[5],
+                "is_future": r[0] > today,
+            }
             for r in rows
         ]
         return {"ok": True, "count": len(data), "data": data}
@@ -395,8 +406,9 @@ def events(days_back: int = Query(180, ge=0, le=3650), days_fwd: int = Query(365
 
 @app.get("/api/orderbook")
 def orderbook(symbol: str = Query(..., min_length=1)) -> dict[str, Any]:
-    """五档盘口（sq-order-book 组件）：E:\\qmt_bridge\\quote.csv（QMT 终端订阅标的快照导出）。
-    背景：miniQMT 2026-09-18 关停，盘口走文件桥（Owner 2026-09-01 裁定）。
+    """盘口挂单（sq-order-book 组件）：E:\\qmt_bridge\\quote.csv（QMT 终端订阅标的快照导出）。
+    背景：miniQMT 2026-09-18 券商关停，盘口走文件桥（Owner 2026-09-01 裁定）。
+    档位自适应：动态解析 bid1~bid10/ask1~ask10（导出脚本加列即变十档，2026-09-01 Owner 要求）。
     注意：quote.csv 只含 QMT 内订阅的标的；未订阅标的返回 ok:false（前端标'未订阅'）。
     """
     sym = symbol.split(".")[0].strip()
@@ -415,6 +427,19 @@ def orderbook(symbol: str = Query(..., min_length=1)) -> dict[str, Any]:
                         return float(row.get(k, "") or 0)
                     except ValueError:
                         return 0.0
+
+                def _levels(side: str) -> list[list[float]]:
+                    out: list[list[float]] = []
+                    for i in range(1, 11):   # 最多十档，有多少列取多少
+                        p = row.get(f"{side}{i}", "")
+                        if p is None or p == "":
+                            break
+                        pf = float(p)
+                        if pf <= 0:
+                            break
+                        out.append([pf, _n(f"{side}Vol{i}")])
+                    return out
+
                 return {
                     "ok": True,
                     "data": {
@@ -426,8 +451,8 @@ def orderbook(symbol: str = Query(..., min_length=1)) -> dict[str, Any]:
                         "preclose": _n("lastClose"),
                         "volume": _n("volume"),
                         "amount": _n("amount"),
-                        "bids": [[_n(f"bid{i}"), _n(f"bidVol{i}")] for i in range(1, 6)],
-                        "asks": [[_n(f"ask{i}"), _n(f"askVol{i}")] for i in range(1, 6)],
+                        "bids": _levels("bid"),
+                        "asks": _levels("ask"),
                         "timetag": row.get("timetag", ""),
                     },
                 }

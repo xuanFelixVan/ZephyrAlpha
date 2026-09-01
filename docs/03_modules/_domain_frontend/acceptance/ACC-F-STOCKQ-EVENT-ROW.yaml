@@ -8,17 +8,21 @@ feature_id: F-STOCKQ-EVENT-ROW
 feature_name: 事件时间行（calendar_event 宏观真源）
 frozen_at: 2026-09-01
 frozen_by: ZephyrAlpha-Owner
-revision: 1
+revision: 2
 revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
+revision_log:
+  - "rev 1（2026-09-01）：calendar_event 宏观真源接通（62 条）"
+  - "rev 2（2026-09-01）：Owner 指令——①扩表加 pub/exp/prev 三列（未回填=前端'未公布'，不伪造数值）②未来事件（K 线末日之后）右端'⚑ N'簇+弹窗清单"
 
 # check 取值：目检（截图人工/AI 视觉对） | 机断（DOM 断言，Playwright 落地后自动跑；过渡期人工/控制台手动验，不免验）
 items:
   - { id: 1, text: "K 线下方事件行：宏观事件日期对齐 K 线柱显示圆形新闻图标+数字（同日聚合），⚑ 开关控整行收展", check: 目检 }
-  - { id: 2, text: "点击图标弹详情：日期+事件描述（calendar_event 真源：LPR/期权到期/交割日/月末/港股通休市），标题栏标'● calendar_event 真源'或'● 断线·演示'", check: 目检 }
-  - { id: 3, text: "事件类型→图标映射（📊LPR 📅期权/交割 🏁月末/季末/年末 🔒港股通休市），弹窗显示公布/预期/前值占位（宏观日历无该数据=—）", check: 目检 }
-  - { id: 4, text: "诚实口径：个股财报/解禁暂无真源（待接入），弹窗仅展示宏观日历；断线回退演示 SQ_EVENTS 且标'断线·演示'", check: 目检 }
-  - { id: 5, text: "组件已注册：ZK.features['sq-event-row'] 存在且 getEvents() 返回真源数组（含 dt/tt/ic/type）", check: 机断 }
-  - { id: 6, text: "/api/events 返回 ok:true + data[]（date/type/description，窗口 today-180d~today+365d）", check: 机断 }
+  - { id: 2, text: "点击图标弹详情：日期+事件描述（calendar_event 真源），公布/预期/前值显示真实值，未回填显示'未公布'（不伪造）", check: 目检 }
+  - { id: 3, text: "未来事件：事件行右端'⚑ N'簇（K 线末日之后无柱可锚），点击弹未来清单（日期+描述+值状态）", check: 目检 }
+  - { id: 4, text: "事件类型→图标映射（📊LPR 📅期权/交割 🏁月末/季末/年末 🔒港股通休市）", check: 目检 }
+  - { id: 5, text: "诚实口径：个股财报/解禁暂无真源（待接入）；断线回退演示 SQ_EVENTS 且标'断线·演示'", check: 目检 }
+  - { id: 6, text: "组件已注册：ZK.features['sq-event-row'] 存在且 getEvents()/getUpcoming() 返回真源数组", check: 机断 }
+  - { id: 7, text: "/api/events 返回 date/type/description/pub_value/exp_value/prev_value/is_future；calendar_event 表含三个 Nullable 值列", check: 机断 }
 
 execution:
   trigger: "任何涉及本功能的 UI/接口改动 commit 前"

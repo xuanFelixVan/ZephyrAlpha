@@ -44,18 +44,20 @@
       injectStyles();
     },
 
-    /* 通用五档 HTML（bids/asks 均为 [[价,量]×5]，演示 l2 格式 [价,量] 同构） */
+    /* 通用盘口 HTML（档位自适应：bids/asks 为 [[价,量]×N]，N=5 五档 / N=10 十档，导出列决定） */
     _bookHtml: function(asks, bids, mode, timetag){
+      var n = Math.min(asks.length, bids.length);
+      if(!n) return '';
       var vmax = 0;
       asks.concat(bids).forEach(function(l){ vmax = Math.max(vmax, l[1]); });
-      var h = '<div class="sq-sec"><span>五档挂单</span>'
+      var h = '<div class="sq-sec"><span>' + (n >= 10 ? '十档挂单' : '五档挂单') + '</span>'
         + '<span class="sq-ob-mode dm-' + mode + '" title="' + MODE_TITLE + '">' + modeLabel(mode, timetag) + '</span></div>'
         + '<div class="sq-l2">';
       var i;
-      for(i = 4; i >= 0; i--){
+      for(i = n - 1; i >= 0; i--){
         h += '<div class="lr"><span style="color:var(--down)">卖' + (i + 1) + '</span><span class="lbar"><i style="width:' + (vmax ? (asks[i][1] / vmax * 100).toFixed(0) : 0) + '%;background:#25A750;opacity:.35"></i></span><span class="lp" style="color:var(--down)">' + Number(asks[i][0]).toFixed(2) + '</span><span class="lv">' + asks[i][1] + '</span></div>';
       }
-      for(i = 0; i < 5; i++){
+      for(i = 0; i < n; i++){
         h += '<div class="lr"><span style="color:var(--up)">买' + (i + 1) + '</span><span class="lbar"><i style="width:' + (vmax ? (bids[i][1] / vmax * 100).toFixed(0) : 0) + '%;background:#CA3F64;opacity:.35"></i></span><span class="lp" style="color:var(--up)">' + Number(bids[i][0]).toFixed(2) + '</span><span class="lv">' + bids[i][1] + '</span></div>';
       }
       return h + '</div>';
