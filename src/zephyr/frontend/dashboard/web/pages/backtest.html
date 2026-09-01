@@ -2,29 +2,47 @@
     <h2 class="page-title">回测结果 <span class="badge b-na" id="bt-src-badge">● 未启动</span></h2>
     <div class="page-sub">研究组 · BTRUN 真源（data/backtest_artifacts/ 产物，时序强制落盘 #BT-PIPELINE-001）</div>
 
-    <!-- I-6c 新建回测配置条（已转真：POST /api/backtest-run → BTRUN 引擎后台执行） -->
+    <!-- I-6c 新建回测配置条（真源：POST /api/backtest-run → BTRUN 引擎后台执行；参数全可选） -->
     <div class="card" id="btr-card" style="margin-bottom:14px">
-      <h3>新建回测 <span class="dim">New Backtest</span> <span class="badge b-pass">真源</span> <span class="dim">topn-momentum · 5标的池 · 2026-01-01~2026-08-31 · Top3 · 100万（参数面板 I-2 扩展）</span></h3>
+      <h3>新建回测 <span class="dim">New Backtest</span> <span class="badge b-pass">真源</span> <span class="dim">标的池=茅台/五粮液/平安/招行/平安银行 5 只（自选池接入待 I-2）</span></h3>
       <div class="btr-form">
         <div class="btr-fld">
           <label>策略 Strategy</label>
-          <span class="sel">主线龙头回踩 ▾</span>
-          <div class="btr-opts">行业轮动 / 打板策略 / 低估值防御 / 做T增强</div>
+          <span class="sel" id="btr-strategy-sel" style="position:relative;cursor:pointer" onclick="btrDropTgl(event)"><span id="btr-strategy-t">topn-momentum</span> ▾
+            <span class="acct-menu" id="btr-strategy-menu">
+              <span class="acct-mi on" data-v="topn-momentum" onclick="btrPick('strategy','topn-momentum',event)">topn-momentum（动量TopN）</span>
+            </span>
+          </span>
+          <div class="btr-opts">default-equity 返回 list[Order] 违反权重面板契约、multifactor/eventdriven 需情绪管道——均暂缓开放（契约对齐后开）</div>
         </div>
         <div class="btr-fld">
           <label>时间段 Period</label>
-          <span class="sel" style="min-width:210px">2024-01-01 ~ 2026-08-20 ▾</span>
-          <div class="btr-opts">近1年 / 近3年 / 近5年 / 自定义</div>
+          <span class="sel" id="btr-period-sel" style="position:relative;cursor:pointer" onclick="btrDropTgl(event)"><span id="btr-period-t">近6个月</span> ▾
+            <span class="acct-menu" id="btr-period-menu">
+              <span class="acct-mi" data-v="m3" onclick="btrPick('period','m3',event)">近3个月</span>
+              <span class="acct-mi on" data-v="m6" onclick="btrPick('period','m6',event)">近6个月</span>
+              <span class="acct-mi" data-v="y1" onclick="btrPick('period','y1',event)">近1年</span>
+              <span class="acct-mi" data-v="y2" onclick="btrPick('period','y2',event)">近2年</span>
+            </span>
+          </span>
+          <div class="btr-opts" id="btr-period-note">起止日期随所选区间自动计算</div>
         </div>
         <div class="btr-fld">
           <label>初始金额 Initial Capital</label>
-          <span class="sel" style="min-width:100px">100 万 ▾</span>
-          <div class="btr-opts">50 / 100 / 500 / 1000 万</div>
+          <span class="sel" id="btr-capital-sel" style="position:relative;cursor:pointer" onclick="btrDropTgl(event)"><span id="btr-capital-t">100 万</span> ▾
+            <span class="acct-menu" id="btr-capital-menu">
+              <span class="acct-mi" data-v="500000" onclick="btrPick('capital','500000',event)">50 万</span>
+              <span class="acct-mi on" data-v="1000000" onclick="btrPick('capital','1000000',event)">100 万</span>
+              <span class="acct-mi" data-v="5000000" onclick="btrPick('capital','5000000',event)">500 万</span>
+              <span class="acct-mi" data-v="10000000" onclick="btrPick('capital','10000000',event)">1000 万</span>
+            </span>
+          </span>
+          <div class="btr-opts">费率按引擎配置（佣金+滑点）</div>
         </div>
         <div class="btr-fld">
           <label>频率 Frequency</label>
-          <span class="sel" style="min-width:90px">日频 ▾</span>
-          <div class="btr-opts">日频 / 分钟频 可选 · <span class="btr-tick-off">tick</span> <span class="badge b-na">企业版权限</span></div>
+          <span class="sel" style="min-width:90px">日频</span>
+          <div class="btr-opts">分钟/tick 频待引擎接入（run_tick_backtest 管道 I-2）</div>
         </div>
         <div class="btr-fld">
           <span class="btn primary" id="btr-btn" onclick="btrRun()">▶ 发起回测</span>

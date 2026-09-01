@@ -104,12 +104,15 @@ function btCharts(B){
     }});
   })();
 }
-btCharts();
 /* ==================== 真源模式（#BT-PIPELINE-001）：artifacts 列表 + 详情渲染 + 页面发起回测 ==================== */
 /* 数据源：/api/backtest-list + /api/backtest-detail + POST /api/backtest-run（BTRUN 强制时序落盘产物）。
- * 演示纪律：真源不可达→四态灯红（断线），btGen 演示数据兜底并明示；未启动→灰。 */
+ * 演示纪律：真源不可达→四态灯红（断线），btGen 演示数据兜底并明示；未启动→灰。
+ * 顺序铁律：BT_STATE 必须在下方 btCharts() 调用之前赋值——btCharts 内部 btSetMode 写
+ * BT_STATE.mode，var 提升不等于赋值（2026-09-01 实证：顺序颠倒→TypeError→顶层中断→
+ * 发起回测炸 "Cannot set properties of undefined (setting 'taskId')"）。 */
 var BT_STATE={mode:'未启动',run:null,taskId:null,timer:null};
 function btApi(){return (window.ZK&&ZK.api)?ZK.api:null;}
+btCharts();
 function btSetMode(m,extra){
   BT_STATE.mode=m;
   var badge=document.getElementById('bt-src-badge');
@@ -208,7 +211,41 @@ function btBoot(){
     if(first)btLoadDetail(first.run_id); else btSetMode('真源','无产物');
   }).catch(function(){btSetMode('未启动');});
 }
-/* btrRun 转真：POST /api/backtest-run → 轮询状态 → 完成后刷新列表+载入新产物 */
+/* btrRun 转真：POST /api/backtest-run → 轮询状态 → 完成后刷新列表+载入新产物
+ * 参数源=配置条下拉（btrPick 维护 BT_STATE.cfg）；标的池固定 5 只（自选池接入待 I-2）。 */
+var BTR_CFG={strategy:'topn-momentum',period:'m6',capital:1000000};
+function btrDropTgl(e){
+  e.stopPropagation();
+  var m=e.currentTarget.querySelector('.acct-menu');
+  if(m)m.classList.toggle('open');
+}
+document.addEventListener('click',function(e){
+  document.querySelectorAll('#btr-card .acct-menu.open').forEach(function(m){
+    if(!m.parentNode.contains(e.target))m.classList.remove('open');
+  });
+});
+function btrPick(kind,v,e){
+  if(e&&e.stopPropagation)e.stopPropagation();
+  var label=e?e.target.textContent.split('（')[0].trim():v;
+  if(kind==='strategy'){BTR_CFG.strategy=v;document.getElementById('btr-strategy-t').textContent=v;}
+  if(kind==='period'){BTR_CFG.period=v;document.getElementById('btr-period-t').textContent=label;}
+  if(kind==='capital'){BTR_CFG.capital=parseInt(v,10);document.getElementById('btr-capital-t').textContent=label;}
+  var sel=e?e.target.parentNode:null;
+  if(sel&&sel.parentNode){sel.parentNode.querySelectorAll('.acct-mi').forEach(function(mi){mi.classList.remove('on');});sel.classList.add('on');}
+  var m=e?e.target.closest('.acct-menu'):null;if(m)m.classList.remove('open');
+  if(kind==='period'){
+    var span=btrPeriodSpan(v);
+    var note=document.getElementById('btr-period-note');
+    if(note)note.textContent=span.start+' ~ '+span.end;
+  }
+}
+function btrPeriodSpan(key){
+  var end=new Date();
+  var months={m3:3,m6:6,y1:12,y2:24}[key]||6;
+  var start=new Date(end.getFullYear(),end.getMonth()-months,end.getDate());
+  function f(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+  return {start:f(start),end:f(end)};
+}
 var btrBusy=false;
 function btrRun(){
   if(btrBusy)return; btrBusy=true;
@@ -218,12 +255,13 @@ function btrRun(){
   var st=document.getElementById('btr-status');
   if(!btn||!wrap||!fill||!st){btrBusy=false;return;}
   var api=btApi(); if(!api){btrBusy=false;return;}
-  var body={strategy_id:'topn-momentum',symbols:['600519.SH','000858.SZ','601318.SH','600036.SH','000001.SZ'],start:'2026-01-01',end:'2026-08-31',top_n:3};
+  var span=btrPeriodSpan(BTR_CFG.period);
+  var body={strategy_id:BTR_CFG.strategy,symbols:['600519.SH','000858.SZ','601318.SH','600036.SH','000001.SZ'],start:span.start,end:span.end,top_n:3,initial_capital:BTR_CFG.capital};
   btn.classList.remove('primary');
   btn.textContent='提交中… Submitting';
   fill.style.transition='none'; fill.style.width='0%';
   wrap.style.display='block';
-  st.textContent='POST /api/backtest-run（BTRUN 引擎后台执行，单任务串行）…';
+  st.textContent='POST /api/backtest-run（'+BTR_CFG.strategy+' · '+span.start+' ~ '+span.end+' · '+(BTR_CFG.capital/10000)+'万，BTRUN 后台串行）…';
   api.postBacktestRun(body).then(function(r){
     if(!r||!r.ok||!r.task_id){throw new Error(r&&r.error||'submit failed');}
     BT_STATE.taskId=r.task_id;
