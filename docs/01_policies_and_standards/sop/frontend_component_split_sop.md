@@ -403,6 +403,13 @@ services:
 **桌面壳（Electron，2026-09-01 Owner 裁定前端桌面化）**：
 - `tools/desktop/` — Electron 壳：生产模式 app:// 自定义协议直读 web/（零 HTTP 缓存）+ 自动拉起/复用 8890 API（关壳干净退出）；开发模式 `npm run dev` 指向 8891
 - 启动：`cd tools/desktop && npm start`（首次需 `npm install`；node_modules 不入库；src/zephyr 为 Python 包根禁 .json 故壳居 tools/）
+- 桌面快捷方式：`ZephyrAlpha.lnk`（目标=electron.exe 参数 .，工作目录=tools/desktop，图标=assets/media/img/brand/zephyralpha-icon.ico）——PS1 建快捷方式脚本必须纯 ASCII（PS5.1 GBK 误读中文）
+
+**前端媒体素材目录（web/assets/media/，2026-09-01 设立）**：
+- `assets/media/img/brand/` — 品牌视觉（logo/应用图标：zephyralpha-icon.webp 原图 + .ico 多尺寸派生，ico 由 webp 经 Pillow 生成）
+- `assets/media/img/pages/` — 页面插图（按页面/功能命名，如 stockq-intro.png）
+- `assets/media/video/` — 视频素材
+- 纪律：素材只进 media/ 子目录（与既有 assets/ 根下字体分区）；派生图（ico/缩略图）与原图同目录成对存放
 
 **模板与范例**：
 - `docs/03_modules/_domain_frontend/acceptance/ACC-F-STOCKQ-COSTLINE.yaml` — 验收单模板

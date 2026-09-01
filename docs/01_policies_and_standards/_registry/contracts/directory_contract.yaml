@@ -260,6 +260,10 @@ directory_extensions:
       # Python 渲染层（dashboard/components 等）原有 .py 不受影响。DCR-008 对本规则跳过（无 purpose 字段）
       - subdir: "frontend/"
         extensions: [".html", ".css", ".js", ".mjs", ".map", ".woff", ".woff2", ".ttf", ".svg", ".png", ".ico", ".webmanifest"]
+      # 前端媒体素材区（Owner 2026-09-01 设立 web/assets/media/）：图片原图允许 .webp（现代压缩格式，
+      # 品牌图标 zephyralpha-icon.webp 首例；派生 ico/png 由既有 frontend/ 规则覆盖）
+      - subdir: "frontend/dashboard/web/assets/media/"
+        extensions: [".webp", ".mp4", ".webm"]
 
   - path: "scripts/"
     allowed: [".py", ".sh", ".ps1", ".vbs", ".yaml", ".json", ".md"]
