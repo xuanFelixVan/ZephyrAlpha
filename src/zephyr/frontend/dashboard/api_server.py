@@ -491,6 +491,30 @@ def stock_search(q: str = Query(..., min_length=1), limit: int = Query(20, ge=1,
 _BT_ARTIFACTS_DIR = _REPO / "data" / "backtest_artifacts"
 
 
+@app.get("/api/strategies")
+def strategies() -> dict[str, Any]:
+    """策略库列表（backtest 页策略多选下拉）：StrategyRegistry 动态真源。"""
+    try:
+        sys.path.insert(0, str(_REPO / "src"))
+        from zephyr.pf_core.strategy_engine.strategy_runner import StrategyRunner
+
+        StrategyRunner._ensure_strategy("topn-momentum")  # 触发 autodiscover（幂等）
+        from zephyr.governance.strategies.strategy_base import StrategyRegistry
+
+        reg = StrategyRegistry.list_all() if hasattr(StrategyRegistry, "list_all") else {}
+        data = []
+        for sid, cls in (reg or {}).items():
+            data.append({
+                "id": sid,
+                "name": getattr(getattr(cls, "meta", None), "name", None) or sid,
+                "available": True,
+            })
+        data.sort(key=lambda x: x["id"])
+        return {"ok": True, "count": len(data), "data": data}
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)[:200], "data": []}
+
+
 @app.get("/api/backtest-list")
 def backtest_list(strategy_id: str = Query("", description="可选策略过滤")) -> dict[str, Any]:
     """回测产物列表（backtest 页）：扫 artifacts 目录，created_at 降序。"""
@@ -568,28 +592,45 @@ _BT_RUN_LOCK = threading.Lock()
 
 
 def _bt_run_task(task_id: str, params: dict[str, Any]) -> None:
-    """后台回测线程体：跑 run_one → 更新状态（成功附 run_id，失败附 error）。"""
+    """后台回测线程体：跑 run_one（多策略循环）→ 更新状态（成功附 run_id 列表）。"""
     try:
         sys.path.insert(0, str(_REPO / "scripts"))
-        from run_backtest import run_one  # noqa: E402 — scripts/ 非包，直接 import
+        from run_backtest import run_one
 
-        summary = run_one(
-            strategy_id=params["strategy_id"],
-            symbols=params["symbols"],
-            start=params["start"],
-            end=params["end"],
-            factor_ids=params.get("factor_ids", ["momentum_20d"]),
-            rebalance_freq=params.get("rebalance_freq", "W-FRI"),
-            top_n=int(params.get("top_n", 10)),
-            max_single=float(params.get("max_single", 0.10)),
-            initial_capital=float(params.get("initial_capital", 1_000_000.0)),
-            pit_shift=int(params.get("pit_shift", 1)),
-        )
+        strategies = params["strategies"] or [params["strategy_id"]]
+        summaries = []
+        for sid in strategies:
+            summaries.append(
+                run_one(
+                    strategy_id=sid,
+                    symbols=params["symbols"],
+                    start=params["start"],
+                    end=params["end"],
+                    factor_ids=params.get("factor_ids", ["momentum_20d"]),
+                    rebalance_freq=params.get("rebalance_freq", "W-FRI"),
+                    top_n=int(params.get("top_n", 10)),
+                    max_single=float(params.get("max_single", 0.10)),
+                    initial_capital=float(params.get("initial_capital", 1_000_000.0)),
+                    pit_shift=int(params.get("pit_shift", 1)),
+                    mode=params.get("mode", "vectorized"),
+                )
+            )
+        ok_all = all(s.get("ok") for s in summaries)
         with _BT_RUN_LOCK:
-            if summary.get("ok"):
-                _BT_RUN_STATE[task_id] = {"status": "done", **summary}
+            if ok_all:
+                _BT_RUN_STATE[task_id] = {
+                    "status": "done",
+                    "results": summaries,
+                    "run_id": summaries[-1]["run_id"] if summaries else None,
+                    "run_ids": [s["run_id"] for s in summaries if s.get("run_id")],
+                    "mode": params.get("mode", "vectorized"),
+                    "equity_points": summaries[-1].get("equity_points", 0) if summaries else 0,
+                    "trades": sum(s.get("trades", 0) for s in summaries),
+                    "metrics": summaries[-1].get("metrics", {}) if summaries else {},
+                }
             else:
-                _BT_RUN_STATE[task_id] = {"status": "failed", "error": summary.get("error", "unknown")}
+                errs = "; ".join(s.get("error", "?") for s in summaries if not s.get("ok"))
+                _BT_RUN_STATE[task_id] = {"status": "failed", "error": errs[:300]}
     except Exception as exc:  # noqa: BLE001
         with _BT_RUN_LOCK:
             _BT_RUN_STATE[task_id] = {"status": "failed", "error": str(exc)[:300]}
@@ -599,27 +640,35 @@ def _bt_run_task(task_id: str, params: dict[str, Any]) -> None:
 def backtest_run(body: dict[str, Any]) -> dict[str, Any]:
     """发起回测（backtest 页「新建回测」）：入队后台执行，返回 task_id。
 
-    body: {strategy_id, symbols: [..], start, end, factor_ids?, top_n?, ...}
-    同一时刻只跑一个（max_workers=1）；重复发起排队。
+    body: {strategies: [..]（多选，兼容旧 strategy_id 单值）, symbols: [..], start, end,
+           mode?: vectorized|tick, factor_ids?, top_n?, initial_capital?...}
+    多策略循环串行跑（max_workers=1 队列天然排队）；mode=tick 走 EDE 完全仿真
+    （ChTickProvider 逐 tick 回放 + 5 档盘口撮合）。
     """
-    strategy_id = str(body.get("strategy_id", "topn-momentum")).strip()
+    strategies = [str(s).strip() for s in body.get("strategies", []) if str(s).strip()]
+    if not strategies and body.get("strategy_id"):
+        strategies = [str(body["strategy_id"]).strip()]
     symbols = [str(s).strip() for s in body.get("symbols", []) if str(s).strip()]
     start = str(body.get("start", "")).strip()
     end = str(body.get("end", "")).strip()
-    if not symbols or not start or not end:
-        return {"ok": False, "error": "symbols/start/end required", "task_id": None}
+    mode = str(body.get("mode", "vectorized")).strip()
+    if mode not in ("vectorized", "tick"):
+        mode = "vectorized"
+    if not strategies or not symbols or not start or not end:
+        return {"ok": False, "error": "strategies/symbols/start/end required", "task_id": None}
     task_id = f"btrun-{int(time.time())}-{len(_BT_RUN_STATE) % 10000}"
     with _BT_RUN_LOCK:
-        _BT_RUN_STATE[task_id] = {"status": "running", "params": {"strategy_id": strategy_id, "symbols": symbols, "start": start, "end": end}}
+        _BT_RUN_STATE[task_id] = {"status": "running", "params": {"strategies": strategies, "symbols": symbols, "start": start, "end": end, "mode": mode}}
     _BT_RUN_POOL.submit(_bt_run_task, task_id, {
-        "strategy_id": strategy_id, "symbols": symbols, "start": start, "end": end,
+        "strategies": strategies, "strategy_id": strategies[0], "symbols": symbols, "start": start, "end": end,
+        "mode": mode,
         "factor_ids": body.get("factor_ids", ["momentum_20d"]),
         "rebalance_freq": body.get("rebalance_freq", "W-FRI"),
         "top_n": body.get("top_n", 10), "max_single": body.get("max_single", 0.10),
         "initial_capital": body.get("initial_capital", 1_000_000.0),
         "pit_shift": body.get("pit_shift", 1),
     })
-    return {"ok": True, "task_id": task_id, "status": "running"}
+    return {"ok": True, "task_id": task_id, "status": "running", "strategies": strategies, "mode": mode}
 
 
 @app.get("/api/backtest-run")

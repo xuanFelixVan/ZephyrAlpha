@@ -172,6 +172,7 @@ class StrategyRunner:
         config: StrategyRunnerConfig,
         provider: object,
         tick_config: object | None = None,
+        weight_panel_data: tuple | None = None,
     ) -> BacktestResult:
         """Tick 级事件驱动回测（路径 A：日频信号 × tick 5档盘口撮合）。
 
@@ -191,9 +192,13 @@ class StrategyRunner:
             config: 策略运行器配置
             provider: 实现 fetch_historical(symbol, start, end, interval="tick") 的
                 provider（如 MiniQmtQuoteProvider——注意是小写 qmt 那个，非 data.implementations
-                的大写 QMT 版本，后者接口是 fetch(payload,policy) 不兼容 EDE 契约）
+                的大写 QMT 版本，后者接口是 fetch(payload,policy) 不兼容 EDE 契约；
+                CH 替身=ChTickProvider，c1_market.tick_data 真源 83 亿行）
             tick_config: TickReplayConfig（可选，默认 max_speed 全天回放；可设
                 time_window=("09:30","15:00") 仅回放连续竞价段）
+            weight_panel_data: (data, weight_panel) 二元组（可选，BTRUN 预热前扩面板
+                注入——2026-09-01 修：短窗口 momentum 预热不足权重全零致 EDE 零成交；
+                None 时本方法按 start~end 自建面板，行为不变）
 
         Returns:
             BacktestResult（与 run_backtest 同构，CTR-P1-016 11 必填字段）
@@ -209,7 +214,10 @@ class StrategyRunner:
             EventDrivenEngineError,
         )
 
-        data, weight_panel = self.build_weight_panel(symbols, start, end, config)
+        if weight_panel_data is not None:
+            data, weight_panel = weight_panel_data
+        else:
+            data, weight_panel = self.build_weight_panel(symbols, start, end, config)
         if weight_panel.empty or data.empty:
             _logger.warning("run_tick_backtest: 数据/信号面板为空，无法回测")
             return self._empty_result(config)
@@ -227,6 +235,7 @@ class StrategyRunner:
 
         bt_config = config.backtest_config or BacktestConfig(initial_capital=Decimal(str(config.initial_capital)))
         engine = EventDrivenEngine(config=bt_config)
+        self._last_tick_engine = engine   # BTRUN 时序落盘用（engine.last_portfolio）
         start_dt = _dt.strptime(start, "%Y-%m-%d")
         end_dt = _dt.strptime(end, "%Y-%m-%d")
         try:
@@ -349,7 +358,10 @@ class StrategyRunner:
         for ts in weight_panel.index:
             row = weight_panel.loc[ts]
             weights = {str(sym): float(w) for sym, w in row.items() if w != 0}
-            d = ts.date() if hasattr(ts, "date") else ts
+            # 类型归一（2026-09-01 修）：panel 索引可能为 str（load_history TSV 直读），
+            # 而 event.timestamp.date() 是 date——不归一则 dict key 永不匹配，
+            # callback 恒返回空 → EDE 零成交（#BT-PIPELINE-001 tick 模式实证）。
+            d = pd.Timestamp(ts).date()
             daily_weights[d] = weights
 
         fired: set = set()

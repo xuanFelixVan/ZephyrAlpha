@@ -166,9 +166,13 @@ def run_one(
     max_single: float = 0.10,
     initial_capital: float = 1_000_000.0,
     pit_shift: int = 1,
+    mode: str = "vectorized",
 ) -> dict:
-    """单次回测全链路：跑引擎 → 收时序 → sink → 落盘。返回产物摘要 dict。
+    """单次回测全链路：跑引擎 → 收时序 → sink → 落盘 → 信号落表。返回产物摘要 dict。
 
+    mode='vectorized'：向量化日频（DefaultBacktestEngine）——快速因子筛选。
+    mode='tick'：事件驱动完全仿真（EventDrivenEngine + ChTickProvider 逐tick回放
+    + 5档盘口撮合，tick_data 真源 83亿行）——策略精确验证（机构「tick 回放」同构）。
     被 api_server.py /api/backtest-run 复用（页面发起回测走同一入口）。
     """
     from zephyr.backtest.implementations.vectorized_engine import DefaultBacktestEngine
@@ -186,7 +190,16 @@ def run_one(
         pit_shift=pit_shift,
     )
     runner = StrategyRunner()
-    data, signals = runner.build_weight_panel(symbols, start, end, config)
+    if mode == "tick":
+        # 预热前扩（2026-09-01 实证修）：momentum_20d 需 ≥20 交易日预热，短窗口权重面板
+        # 全零 → callback 恒空 → EDE 零成交。面板计算前扩 90 自然日（信号有值），
+        # tick 回放仍用原窗口（provider 只回放 start~end）。
+        from datetime import datetime as _d, timedelta as _td
+
+        warm_start = (_d.strptime(start, "%Y-%m-%d") - _td(days=90)).strftime("%Y-%m-%d")
+        data, signals = runner.build_weight_panel(symbols, warm_start, end, config)
+    else:
+        data, signals = runner.build_weight_panel(symbols, start, end, config)
     if signals.empty or data.empty:
         return {"ok": False, "error": "data/signal panel empty (CH no rows or factor empty)"}
 
@@ -205,12 +218,32 @@ def run_one(
         bt_config_cls = getattr(importlib.import_module(mod), "BacktestConfig", None)
         if bt_config_cls is not None:
             break
-    engine = DefaultBacktestEngine(
-        config=bt_config_cls(initial_capital=Decimal(str(initial_capital))) if bt_config_cls else None
-    )
-    result = engine.run(data=data, signals=signals, strategy_name=strategy_id)
 
-    ts = _collect_timeseries(runner, data, signals, config, engine)
+    if mode == "tick":
+        # ── 事件驱动完全仿真：ChTickProvider（c1_market.tick_data 真源）逐 tick 回放 ──
+        from zephyr.governance.data_governance.ch_tick_provider import ChTickProvider
+
+        engine_result = runner.run_tick_backtest(
+            symbols=symbols,
+            start=start,
+            end=end,
+            config=config,
+            provider=ChTickProvider(),
+            weight_panel_data=(data, signals),   # 前扩面板注入（内部不再用原窗口重建）
+        )
+        if getattr(engine_result, "idempotency_key", "bt-empty") == "bt-empty":
+            return {"ok": False, "error": "tick engine returned empty result (provider 无数据?)"}
+        result = engine_result
+        # EDE 时序落盘：runner._last_tick_engine.last_portfolio（EDE 版 _collect_timeseries）
+        ede_engine = getattr(runner, "_last_tick_engine", None)
+        ts = _collect_timeseries(runner, data, signals, config, ede_engine)
+    else:
+        engine = DefaultBacktestEngine(
+            config=bt_config_cls(initial_capital=Decimal(str(initial_capital))) if bt_config_cls else None
+        )
+        result = engine.run(data=data, signals=signals, strategy_name=strategy_id)
+        ts = _collect_timeseries(runner, data, signals, config, engine)
+
     sink = sink_backtest_result(
         result,
         equity_curve=ts.get("equity_curve"),
@@ -236,6 +269,7 @@ def run_one(
         "ok": True,
         "run_id": run_id,
         "strategy_id": strategy_id,
+        "mode": mode,
         "equity_points": n_eq,
         "trades": n_tr,
         "signals_written": sig.get("written", 0),
@@ -298,6 +332,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--max-single", type=float, default=0.10)
     p.add_argument("--capital", type=float, default=1_000_000.0)
     p.add_argument("--pit-shift", type=int, default=1)
+    p.add_argument("--mode", default="vectorized", choices=["vectorized", "tick"], help="vectorized=日频向量化 / tick=事件驱动完全仿真（逐tick回放+5档撮合）")
     p.add_argument("--list-strategies", action="store_true")
     p.add_argument("--self-check", action="store_true")
     args = p.parse_args(argv)
@@ -321,6 +356,7 @@ def main(argv: list[str] | None = None) -> int:
         max_single=args.max_single,
         initial_capital=args.capital,
         pit_shift=args.pit_shift,
+        mode=args.mode,
     )
     if not summary.get("ok"):
         print(f"FAILED: {summary.get('error')}", file=sys.stderr)

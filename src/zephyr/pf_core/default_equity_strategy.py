@@ -140,8 +140,8 @@ class DefaultEquityStrategy(StrategyBase):
         universe: list[str] | None = None,
         signals: dict[str, float] | None = None,
         constraints: dict[str, Any] | None = None,
-    ) -> list[Order]:
-        """生成目标权重对应的订单列表（实现 StrategyBase 抽象方法，OCP-002 契约对齐）
+    ) -> dict[str, float]:
+        """生成目标权重面板（实现 StrategyBase 抽象方法，权重面板契约）
 
         Args:
             universe: 标的列表，若提供则覆盖 __init__ 设置
@@ -149,7 +149,10 @@ class DefaultEquityStrategy(StrategyBase):
             constraints: 风险约束，若提供则更新内部约束
 
         Returns:
-            list[Order] 目标权重对应的订单列表
+            dict[str, float] 目标权重 {symbol: weight}——StrategyRunner._rebalance_one_day
+            消费契约（2026-09-01 修复：此前误返回 list[Order]，违反权重面板契约致
+            'list' object has no attribute 'items'，#BT-PIPELINE-001 实证捕获；
+            订单生成走 generate_orders）
         """
         if universe is not None:
             self._universe = universe
@@ -159,8 +162,8 @@ class DefaultEquityStrategy(StrategyBase):
             self._risk_limits.update(constraints)
 
         if not self._universe:
-            _logger.warning("Universe is empty, no orders generated")
-            return []
+            _logger.warning("Universe is empty, no weights generated")
+            return {}
 
         if self._mode is RebalanceMode.EQUAL_WEIGHT:
             weights = self._equal_weight_alloc()
@@ -169,13 +172,18 @@ class DefaultEquityStrategy(StrategyBase):
         else:
             weights = self._equal_weight_alloc()
 
-        orders = self._weights_to_orders(weights)
-        _logger.info("Generated %d orders for strategy=%s mode=%s", len(orders), self.meta.strategy_id, self._mode)
-        return orders
+        _logger.info("Generated %d weights for strategy=%s mode=%s", len(weights), self.meta.strategy_id, self._mode)
+        return weights
 
     def generate_orders(self) -> list[Order]:
-        """根据目标权重生成订单列表（便捷方法，调用 generate_target_weights）"""
-        return self.generate_target_weights()
+        """根据目标权重生成订单列表（便捷方法，含订单转换）"""
+        if self._mode is RebalanceMode.EQUAL_WEIGHT:
+            weights = self._equal_weight_alloc()
+        elif self._mode is RebalanceMode.SIGNAL_WEIGHT:
+            weights = self._signal_weight_alloc()
+        else:
+            weights = self._equal_weight_alloc()
+        return self._weights_to_orders(weights)
 
     def update_signals(self, signals: dict[str, float]) -> None:
         """更新信号得分（供 D_SIGNAL 输入的 SynthesizedSignal）"""

@@ -180,6 +180,7 @@ class EventDrivenEngine(BacktestEngineBase):
             slippage_bps=config.slippage_bps,
         )
         self._results: list[BacktestResult] = []
+        self._last_portfolio = None   # run_tick 后填充（BTRUN 时序落盘用）
 
     def run(
         self,
@@ -357,6 +358,10 @@ class EventDrivenEngine(BacktestEngineBase):
         )
 
         self._results.append(result)
+        # 最近一次 run_tick 的 Portfolio 引用（含 nav_series/trades_log）——
+        # BTRUN 时序落盘用（与 DefaultBacktestEngine.last_portfolio 同构，
+        # #BT-PIPELINE-001 tick 模式净值曲线来源）
+        self._last_portfolio = portfolio
         _logger.info(
             "Event-driven backtest completed: result_id=%s sharpe=%.2f return=%.2f%% trades=%d ticks=%d",
             result_id,
@@ -379,6 +384,15 @@ class EventDrivenEngine(BacktestEngineBase):
     def results(self) -> list[BacktestResult]:
         """历史回测结果列表"""
         return list(self._results)
+
+    @property
+    def last_portfolio(self):
+        """最近一次 run_tick() 的 Portfolio 引用（含 nav_series/trades_log）。
+
+        供 BTRUN 时序落盘取净值曲线/交易日志（与 DefaultBacktestEngine.last_portfolio
+        同构，#BT-PIPELINE-001 tick 模式）。
+        """
+        return self._last_portfolio
 
     # ========== 过拟合检测/决策门控接入（W3 治本：消除三模块零调用方）==========
 

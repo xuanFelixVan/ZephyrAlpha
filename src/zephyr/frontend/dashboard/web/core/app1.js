@@ -2,6 +2,7 @@ function go(id, el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('p-'+id).classList.add('active');
+  try{ history.replaceState(null,'','#'+id); }catch(e){}   /* 路由写 hash（replaceState 不产生历史堆栈）——刷新后停留当前页（Owner 2026-09-01 报障"刷新回首页"修复） */
   if(el)el.classList.add('active');   /* el 可空守卫：go(id) 单参调用合法（高亮由 GRP_OF 兜底）——子代理复验建议 */
   var GRP_OF={overview:'overview',warroom:'ashare',live:'ashare',sector:'ashare',sentiment:'ashare',news:'ashare',policy:'ashare',overseas:'ashare',t0:'ashare',review:'ashare',position:'ashare',strategy:'ashare',factor:'ashare',backtest:'ashare',experiment:'ashare',screener:'ashare',index:'ashare',stockq:'ashare',stock:'ashare',macro:'ashare',chainmap:'ashare',calendar:'ashare',cryptomarket:'crypto',cryptopos:'crypto',cryptostrat:'crypto',cryptobt:'crypto',cryptoinfo:'crypto',datainfo:'data',reglib:'data',datasrc:'data',rating:'ashare',aichat:'ai',aitask:'ai',models:'sys',task:'sys',fitness:'sys',govana:'sys',modledger:'sys',sysstatus:'sys',pano:'sys',design:'sys'};   /* IA 市场轴（2026-08-27）：页→组归属唯一表，跨页跳转元素无 data-grp 时兜底；08-29 增 ai 组（aichat/aitask，R5 第六组） */
   var grp=(el&&el.getAttribute('data-grp'))||GRP_OF[id]||'';   /* F3 顶栏：一级分组高亮同步 */
@@ -10,6 +11,17 @@ function go(id, el){
   if(typeof initFn==='function') initFn();
   document.dispatchEvent(new CustomEvent('page:show',{detail:id}));   /* v7：切页广播——隐藏页 clientWidth=0 时图表退化坐标系，页面激活后需重绘（app2.js 大盘/板块图表组监听本事件） */
 }
+/* hash 路由恢复（Owner 2026-09-01 报障"刷新回首页"治本）：加载完成后读 location.hash 回到离开前的页面；
+ * 顶栏 ↻/F5 刷新与 Electron webContents.reload() 都保留 URL 含 hash。 */
+(function(){
+  function restore(){
+    var id=(location.hash||'').replace('#','');
+    if(id && document.getElementById('p-'+id) && !document.getElementById('p-'+id).classList.contains('active')) go(id);
+  }
+  window.addEventListener('hashchange', restore);
+  if(document.readyState!=='loading') setTimeout(restore,0);
+  else document.addEventListener('DOMContentLoaded', function(){ setTimeout(restore,0); });
+})();
 /* 规划页灰化占位负反馈（IA 市场轴 2026-08-27 Owner 裁定）：点击不出页面，toast 说明，不造假 */
 function navDis(e,name){ e.stopPropagation(); gToast('「'+name+'」规划中——币版 I-2 真源就绪后接入，结构占位不造假页面'); }
 function gToast(t){

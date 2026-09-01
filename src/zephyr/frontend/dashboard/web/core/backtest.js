@@ -202,6 +202,8 @@ function btRenderRunList(list){
   strip.innerHTML=h;
 }
 function btBoot(){
+  btLoadStrategies();
+  btrSyncDateInputs();
   var api=btApi(); if(!api){btSetMode('未启动');return;}
   api.fetchBacktestList().then(function(r){
     if(!r||!r.ok){btSetMode('未启动');return;}
@@ -212,8 +214,33 @@ function btBoot(){
   }).catch(function(){btSetMode('未启动');});
 }
 /* btrRun 转真：POST /api/backtest-run → 轮询状态 → 完成后刷新列表+载入新产物
- * 参数源=配置条下拉（btrPick 维护 BT_STATE.cfg）；标的池固定 5 只（自选池接入待 I-2）。 */
-var BTR_CFG={strategy:'topn-momentum',period:'m6',capital:1000000};
+ * 参数源=配置条（BTR_CFG）：策略多选（/api/strategies 动态拉取）、时间段（快速下拉
+ * 或自定义 date input）、初始资金、撮合模式（vectorized/tick 完全仿真）。 */
+var BTR_CFG={strategies:['topn-momentum'],period:'m6',customStart:null,customEnd:null,capital:1000000,mode:'vectorized'};
+/* 策略库动态拉取（StrategyRegistry 真源），重建多选菜单 */
+function btLoadStrategies(){
+  var api=btApi(); if(!api) return;
+  api.fetchJson('/api/strategies').then(function(r){
+    if(!r||!r.ok||!r.data||!r.data.length) return;
+    var menu=document.getElementById('btr-strategy-menu'); if(!menu) return;
+    var have={};
+    r.data.forEach(function(s){ have[s.id]=true; });
+    /* 菜单=动态策略 ∪ 既有选中（API 缺失时保留），default-equity 契约已修可放 */
+    var ids=[]; r.data.forEach(function(s){ if(ids.indexOf(s.id)<0)ids.push(s.id); });
+    BTR_CFG.strategies.forEach(function(sid){ if(!have[sid]&&ids.indexOf(sid)<0)ids.push(sid); });
+    var h='';
+    ids.forEach(function(sid){
+      var on=BTR_CFG.strategies.indexOf(sid)>=0;
+      h+='<span class="acct-mi'+(on?' on':'')+'" data-v="'+sid+'" onclick="btrPick(\'strategy\',\''+sid+'\',event)">'+(on?'✓ ':'')+sid+'</span>';
+    });
+    menu.innerHTML=h;
+    btStrategyLabel();
+  }).catch(function(){});
+}
+function btStrategyLabel(){
+  var t=document.getElementById('btr-strategy-t'); if(!t)return;
+  t.textContent=BTR_CFG.strategies.length===1?BTR_CFG.strategies[0]:(BTR_CFG.strategies.length+' 个策略');
+}
 function btrDropTgl(e){
   e.stopPropagation();
   var m=e.currentTarget.querySelector('.acct-menu');
@@ -226,20 +253,51 @@ document.addEventListener('click',function(e){
 });
 function btrPick(kind,v,e){
   if(e&&e.stopPropagation)e.stopPropagation();
-  var label=e?e.target.textContent.split('（')[0].trim():v;
-  if(kind==='strategy'){BTR_CFG.strategy=v;document.getElementById('btr-strategy-t').textContent=v;}
-  if(kind==='period'){BTR_CFG.period=v;document.getElementById('btr-period-t').textContent=label;}
+  var label=e?e.target.textContent.replace(/^✓ /,'').split('（')[0].trim():v;
+  if(kind==='strategy'){
+    /* 多选 toggle：点选/取消，至少保留 1 个 */
+    var i=BTR_CFG.strategies.indexOf(v);
+    if(i>=0){ if(BTR_CFG.strategies.length>1)BTR_CFG.strategies.splice(i,1); }
+    else BTR_CFG.strategies.push(v);
+    var mi=e?e.target:null;
+    if(mi){ mi.classList.toggle('on',BTR_CFG.strategies.indexOf(v)>=0); mi.textContent=(BTR_CFG.strategies.indexOf(v)>=0?'✓ ':'')+mi.textContent.replace(/^✓ /,''); }
+    btStrategyLabel();
+    var m=e?e.target.closest('.acct-menu'):null; if(m)m.classList.remove('open');
+    return;
+  }
+  if(kind==='period'){BTR_CFG.period=v;BTR_CFG.customStart=null;BTR_CFG.customEnd=null;document.getElementById('btr-period-t').textContent=label;}
   if(kind==='capital'){BTR_CFG.capital=parseInt(v,10);document.getElementById('btr-capital-t').textContent=label;}
+  if(kind==='mode'){
+    BTR_CFG.mode=v;
+    document.getElementById('btr-mode-t').textContent=(v==='tick'?'Tick 完全仿真':'日频向量化');
+    var note=document.getElementById('btr-mode-note');
+    if(note)note.textContent=v==='tick'
+      ?'Tick 完全仿真：c1_market.tick_data 逐tick回放（3秒粒度）+5档盘口撮合——机构「事件驱动仿真」同构；tick 数据自 2026-08 起覆盖'
+      :'日频向量化（快速筛选）；Tick 模式=专业平台「tick 回放」选项；分钟级引擎待接入';
+  }
   var sel=e?e.target.parentNode:null;
   if(sel&&sel.parentNode){sel.parentNode.querySelectorAll('.acct-mi').forEach(function(mi){mi.classList.remove('on');});sel.classList.add('on');}
   var m=e?e.target.closest('.acct-menu'):null;if(m)m.classList.remove('open');
-  if(kind==='period'){
-    var span=btrPeriodSpan(v);
-    var note=document.getElementById('btr-period-note');
-    if(note)note.textContent=span.start+' ~ '+span.end;
+  if(kind==='period'){ btrSyncDateInputs(); }
+}
+function btrCustomDate(){
+  var s=document.getElementById('btr-date-start'),en=document.getElementById('btr-date-end');
+  if(!s||!en)return;
+  if(s.value&&en.value&&s.value<=en.value){
+    BTR_CFG.customStart=s.value;BTR_CFG.customEnd=en.value;
+    BTR_CFG.period='custom';
+    document.getElementById('btr-period-t').textContent=s.value.slice(5)+' ~ '+en.value.slice(5);
   }
 }
+function btrSyncDateInputs(){
+  var span=btrPeriodSpan(BTR_CFG.period);
+  var s=document.getElementById('btr-date-start'),en=document.getElementById('btr-date-end');
+  if(s)s.value=span.start; if(en)en.value=span.end;
+}
 function btrPeriodSpan(key){
+  if(key==='custom'&&BTR_CFG.customStart&&BTR_CFG.customEnd){
+    return {start:BTR_CFG.customStart,end:BTR_CFG.customEnd};
+  }
   var end=new Date();
   var months={m3:3,m6:6,y1:12,y2:24}[key]||6;
   var start=new Date(end.getFullYear(),end.getMonth()-months,end.getDate());
@@ -256,12 +314,13 @@ function btrRun(){
   if(!btn||!wrap||!fill||!st){btrBusy=false;return;}
   var api=btApi(); if(!api){btrBusy=false;return;}
   var span=btrPeriodSpan(BTR_CFG.period);
-  var body={strategy_id:BTR_CFG.strategy,symbols:['600519.SH','000858.SZ','601318.SH','600036.SH','000001.SZ'],start:span.start,end:span.end,top_n:3,initial_capital:BTR_CFG.capital};
+  var modeName=BTR_CFG.mode==='tick'?'Tick 完全仿真':'日频向量化';
+  var body={strategies:BTR_CFG.strategies.slice(),symbols:['600519.SH','000858.SZ','601318.SH','600036.SH','000001.SZ'],start:span.start,end:span.end,top_n:3,initial_capital:BTR_CFG.capital,mode:BTR_CFG.mode};
   btn.classList.remove('primary');
   btn.textContent='提交中… Submitting';
   fill.style.transition='none'; fill.style.width='0%';
   wrap.style.display='block';
-  st.textContent='POST /api/backtest-run（'+BTR_CFG.strategy+' · '+span.start+' ~ '+span.end+' · '+(BTR_CFG.capital/10000)+'万，BTRUN 后台串行）…';
+  st.textContent='POST /api/backtest-run（'+BTR_CFG.strategies.join('+')+' · '+span.start+' ~ '+span.end+' · '+(BTR_CFG.capital/10000)+'万 · '+modeName+'，后台串行）…';
   api.postBacktestRun(body).then(function(r){
     if(!r||!r.ok||!r.task_id){throw new Error(r&&r.error||'submit failed');}
     BT_STATE.taskId=r.task_id;
@@ -273,10 +332,12 @@ function btrRun(){
         if(s&&s.status==='done'){
           fill.style.width='100%';
           btn.textContent='✅ 完成'; setTimeout(function(){btn.classList.add('primary');btn.textContent='▶ 发起回测';},3000);
-          st.innerHTML='✅ 完成——产物 <b>'+s.run_id+'</b>（净值 '+s.equity_points+' 点 / 成交 '+s.trades+' 笔），已自动载入下方';
+          var runs=(s.run_ids&&s.run_ids.length)?s.run_ids:(s.run_id?[s.run_id]:[]);
+          var runsTxt=runs.map(function(rid){return '<b>'+rid+'</b>';}).join('、');
+          st.innerHTML='✅ 完成——产物 '+runsTxt+'（'+(s.mode==='tick'?'Tick 完全仿真':'向量化')+'，净值 '+s.equity_points+' 点 / 成交 '+s.trades+' 笔），已自动载入';
           btrBusy=false;
           api.fetchBacktestList().then(function(r2){if(r2&&r2.ok){btRenderRunList(r2.data||[]);}});
-          if(s.run_id)btLoadDetail(s.run_id);
+          if(runs.length)btLoadDetail(runs[0]);
           var k=document.getElementById('bt-kpi'); if(k&&k.scrollIntoView)k.scrollIntoView({behavior:'smooth',block:'start'});
         }else if(s&&s.status==='failed'){
           btn.classList.add('primary'); btn.textContent='▶ 发起回测';

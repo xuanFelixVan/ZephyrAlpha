@@ -2,18 +2,18 @@
     <h2 class="page-title">回测结果 <span class="badge b-na" id="bt-src-badge">● 未启动</span></h2>
     <div class="page-sub">研究组 · BTRUN 真源（data/backtest_artifacts/ 产物，时序强制落盘 #BT-PIPELINE-001）</div>
 
-    <!-- I-6c 新建回测配置条（真源：POST /api/backtest-run → BTRUN 引擎后台执行；参数全可选） -->
+    <!-- I-6c 新建回测配置条（真源：POST /api/backtest-run → BTRUN 引擎后台执行；策略多选/自定义日期/双模式） -->
     <div class="card" id="btr-card" style="margin-bottom:14px">
       <h3>新建回测 <span class="dim">New Backtest</span> <span class="badge b-pass">真源</span> <span class="dim">标的池=茅台/五粮液/平安/招行/平安银行 5 只（自选池接入待 I-2）</span></h3>
       <div class="btr-form">
-        <div class="btr-fld">
-          <label>策略 Strategy</label>
+        <div class="btr-fld" style="min-width:200px">
+          <label>策略 Strategy（多选）</label>
           <span class="sel" id="btr-strategy-sel" style="position:relative;cursor:pointer" onclick="btrDropTgl(event)"><span id="btr-strategy-t">topn-momentum</span> ▾
             <span class="acct-menu" id="btr-strategy-menu">
-              <span class="acct-mi on" data-v="topn-momentum" onclick="btrPick('strategy','topn-momentum',event)">topn-momentum（动量TopN）</span>
+              <span class="acct-mi on" data-v="topn-momentum" onclick="btrPick('strategy','topn-momentum',event)">✓ topn-momentum（动量TopN）</span>
             </span>
           </span>
-          <div class="btr-opts">default-equity 返回 list[Order] 违反权重面板契约、multifactor/eventdriven 需情绪管道——均暂缓开放（契约对齐后开）</div>
+          <div class="btr-opts">列表=StrategyRegistry 注册真源（/api/strategies 动态拉取）；多选批量串行跑</div>
         </div>
         <div class="btr-fld">
           <label>时间段 Period</label>
@@ -25,7 +25,12 @@
               <span class="acct-mi" data-v="y2" onclick="btrPick('period','y2',event)">近2年</span>
             </span>
           </span>
-          <div class="btr-opts" id="btr-period-note">起止日期随所选区间自动计算</div>
+          <div class="btr-opts" style="display:flex;align-items:center;gap:4px">
+            <input type="date" id="btr-date-start" style="background:var(--input);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;padding:3px 6px" onchange="btrCustomDate()">
+            <span class="dim">~</span>
+            <input type="date" id="btr-date-end" style="background:var(--input);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;padding:3px 6px" onchange="btrCustomDate()">
+            <span class="dim" style="font-size:10px">自定义=直接改日期</span>
+          </div>
         </div>
         <div class="btr-fld">
           <label>初始金额 Initial Capital</label>
@@ -40,9 +45,14 @@
           <div class="btr-opts">费率按引擎配置（佣金+滑点）</div>
         </div>
         <div class="btr-fld">
-          <label>频率 Frequency</label>
-          <span class="sel" style="min-width:90px">日频</span>
-          <div class="btr-opts">分钟/tick 频待引擎接入（run_tick_backtest 管道 I-2）</div>
+          <label>撮合模式 Mode</label>
+          <span class="sel" id="btr-mode-sel" style="position:relative;cursor:pointer" onclick="btrDropTgl(event)"><span id="btr-mode-t">日频向量化</span> ▾
+            <span class="acct-menu" id="btr-mode-menu">
+              <span class="acct-mi on" data-v="vectorized" onclick="btrPick('mode','vectorized',event)">日频向量化（快速筛选）</span>
+              <span class="acct-mi" data-v="tick" onclick="btrPick('mode','tick',event)">Tick 完全仿真（逐tick回放+5档撮合）</span>
+            </span>
+          </span>
+          <div class="btr-opts" id="btr-mode-note">机构对照：Tick 模式=专业平台「tick 回放/事件驱动仿真」（聚宽掘金同款选项）；分钟级引擎待接入</div>
         </div>
         <div class="btr-fld">
           <span class="btn primary" id="btr-btn" onclick="btrRun()">▶ 发起回测</span>
@@ -52,7 +62,7 @@
         <div class="bar"><i id="btr-prog-fill" style="width:0%"></i></div>
         <div class="note" id="btr-status"></div>
       </div>
-      <div class="note">成本口径 Cost Basis：成本 = 佣金 + 印花税 + 滑点 + 市场冲击 + 做T额外成本（charter §3 约束一：费率按实际账户配置，不硬编码）</div>
+      <div class="note">成本口径 Cost Basis：成本 = 佣金 + 印花税 + 滑点 + 市场冲击 + 做T额外成本（charter §3 约束一：费率按实际账户配置，不硬编码）。Tick 模式数据=c1_market.tick_data（3秒粒度，当前一档盘口，2-5 档容量 0）</div>
     </div>
 
     <div class="strategy-head">
