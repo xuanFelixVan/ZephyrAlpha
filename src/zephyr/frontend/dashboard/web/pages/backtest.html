@@ -66,6 +66,13 @@
       <div class="note">成本口径 Cost Basis：成本 = 佣金 + 印花税 + 滑点 + 市场冲击 + 做T额外成本（charter §3 约束一：费率按实际账户配置，不硬编码）。Tick 模式数据=c1_market.tick_data（3秒粒度，当前一档盘口，2-5 档容量 0）</div>
     </div>
 
+    <!-- 策略档案卡（Owner 2026-09-01 裁定：策略档案并入回测页——选哪个策略显示哪个档案；说明=注册表口径，绩效=该策略最新回测产物真源） -->
+    <div class="card" id="bt-profile-card" style="margin-bottom:14px">
+      <h3>策略档案 <span class="dim">Strategy Profile</span> <span class="badge b-pass">真源</span> <span class="dim">选中策略联动——档案说明+最新回测实绩（原策略档案页内容并入）</span></h3>
+      <div id="bt-profile-body"><div class="dim" style="padding:8px 0">加载中…</div></div>
+      <div class="note">上线纪律（宪章 §4.2 B-007）：回测通过 → QMT 模拟盘 → 实盘小资金 → 实盘部署，每阶段人工审批；禁过拟合参数生效实盘</div>
+    </div>
+
     <div class="strategy-head">
       <span class="name">📊 行业轮动替换fundamental</span>
       <span class="sub">回测绩效分析 Backtest Performance Analysis | 加载中…</span>

@@ -251,6 +251,75 @@ function btLoadStrategies(){
 function btStrategyLabel(){
   var t=document.getElementById('btr-strategy-t'); if(!t)return;
   t.textContent=BTR_CFG.strategies.length===1?BTR_CFG.strategies[0]:(BTR_CFG.strategies.length+' 个策略');
+  btRenderProfile();   /* 选中变化 → 档案联动（Owner 2026-09-01：选哪个策略显示哪个档案） */
+}
+/* ── 策略档案（Owner 2026-09-01 裁定：原策略档案页并入回测页）──
+ * 说明=注册表口径内置档案表；绩效=该策略最新回测产物真源（backtest-list 过滤）。 */
+var BT_PROFILE={
+  'topn-momentum':{name:'动量 TopN 轮动',desc:'每调仓日按 20 日动量因子截面排名，取前 N 只等权持有——吃趋势延续段，不择时不逃顶。',
+    signal:'momentum_20d 因子（kline_daily 真源）→ 多因子合成 equal_weight → TopN 截面选股',
+    env:'趋势市/震荡偏强（动量延续）；反转市失效',risk:'动量崩溃（高位股集体补跌）时段回撤放大；N 集中度高时单票风险',
+    exit:'跌出排名即轮出（调仓日自动）；信号表 direction=sell 供参考'},
+  'default-equity':{name:'默认权益（等权）',desc:'宇宙内标的等权持有基准策略——对照用（其他策略跑赢它才有 alpha）。',
+    signal:'无信号（等权分配）',env:'任何环境（基准口径）',risk:'无自适应——退潮期满仓承受回撤',
+    exit:'不主动离场（基准）'},
+  'multifactor-sleeve':{name:'多因子袖策略',desc:'IC 加权多因子合成选股袖策略。',
+    signal:'因子面板 → multifactor_synthesis（ic_weighted）→ 截面选股',
+    env:'因子有效性稳定期',risk:'IC 权重未注入时默认参数零成交（依赖 ic_ir_calc 产物）',
+    exit:'因子衰减信号触发降权'},
+  'eventdriven-sleeve':{name:'事件驱动袖策略',desc:'新闻/事件情绪窗口驱动的选股袖策略。',
+    signal:'c1_market.news_sentiment_window 情绪分 → 事件信号 → 选股',
+    env:'事件密集期（财报/政策窗口）',risk:'情绪数据管道未接时零成交；事件真空期信号稀疏',
+    exit:'情绪退潮信号'},
+  'daban-sleeve':{name:'打板袖策略',desc:'涨停板情绪周期（发酵→高潮）打板策略。',
+    signal:'打板信号族（daban_board_event 等 BFE-36 五件）',
+    env:'情绪发酵~高潮期',risk:'退潮期打板=面；打板信号源未接线时零成交',
+    exit:'高潮见顶信号即停'},
+  'intraday-surge-fall':{name:'30秒冲高回落做T',desc:'Tick 级 30 秒冲高回落形态捕捉，日内做T。仅 Tick 模式可跑。',
+    signal:'tick 逐笔价格路径形态识别',env:'高波动日内（冲高回落频繁）',risk:'低波动日无效信号；tick 级成本敏感',
+    exit:'日内平仓（做T 口径）'},
+  'orderbook-imbalance':{name:'盘口失衡反转做T',desc:'Tick 级盘口失衡（买卖档不平衡）反转信号做T。仅 Tick 模式可跑。',
+    signal:'tick 五档盘口失衡度',env:'盘口博弈活跃时段',risk:'一档盘口数据下深度不足（2-5 档容量 0）；噪声信号',
+    exit:'日内平仓'},
+  'vwap-reversion':{name:'VWAP 回归做T',desc:'价格偏离当日 VWAP 的均值回归做T。仅 Tick 模式可跑。',
+    signal:'price vs 日内 VWAP 偏离度',env:'震荡市（均值回归有效）',risk:'趋势日单边行情偏离持续扩大（逆势接刀）',
+    exit:'日内平仓'}
+};
+function btRenderProfile(){
+  var box=document.getElementById('bt-profile-body');
+  if(!box)return;
+  var sid=BTR_CFG.strategies[0];
+  var p=BT_PROFILE[sid];
+  if(!p){box.innerHTML='<div class="dim">「'+sid+'」档案待补（策略注册表登记后补全说明）</div>';return;}
+  var api=btApi();
+  var perfHtml='<span class="dim">暂无回测产物——点上方「发起回测」跑一次即有实绩</span>';
+  if(api){
+    api.fetchBacktestList().then(function(r){
+      if(r&&r.ok){
+        var mine=(r.data||[]).filter(function(x){return x.strategy_id===sid;});
+        if(mine.length){
+          var b=mine[0];   /* created_at 降序=最新 */
+          var pct=function(v){return v!=null?((v>=0?'+':'')+(v*100).toFixed(2)+'%'):'--';};
+          perfHtml='最新回测 <b>'+b.run_id+'</b>（'+(b.created_at||'').slice(0,10)+'）：'
+            +'收益 <b class="'+(b.total_return>=0?'up':'down')+'">'+pct(b.total_return)+'</b>'
+            +' · 夏普 <b>'+(b.sharpe_ratio!=null?b.sharpe_ratio.toFixed(2):'--')+'</b>'
+            +' · 回撤 <b class="down">'+pct(-(b.max_drawdown||0))+'</b>'
+            +' · 成交 <b>'+b.trades_count+'</b> 笔 · <span class="dim">该策略共 '+mine.length+' 次回测（产物条点选切换）</span>';
+        }
+      }
+      fill(perfHtml);
+    }).catch(function(){fill(perfHtml);});
+  } else { fill(perfHtml); }
+  function fill(ph){
+    box.innerHTML='<table>'
+      +'<tr><th style="width:88px">策略说明</th><td>'+p.desc+'</td></tr>'
+      +'<tr><th>信号源</th><td>'+p.signal+'</td></tr>'
+      +'<tr><th>最新实绩</th><td>'+ph+'</td></tr>'
+      +'<tr><th>适用环境</th><td>'+p.env+'</td></tr>'
+      +'<tr><th>风险提示</th><td class="down">'+p.risk+'</td></tr>'
+      +'<tr><th>离场说明</th><td>'+p.exit+'</td></tr>'
+      +'</table>';
+  }
 }
 function btrDropTgl(e){
   e.stopPropagation();
