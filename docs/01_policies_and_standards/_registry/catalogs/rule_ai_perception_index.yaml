@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: 规则AI感知索引（trae 规则→operations/gate_ids 映射）
 status: active
-generated_at: '2026-08-31T14:08:43Z'
+generated_at: '2026-09-01T17:12:45Z'
 generated_by: scripts/governance/generators/generate_rule_ai_perception_index.py
 maintenance: auto
 source: docs/01_policies_and_standards/rules/trae_*.yaml
-total_rules: 85
+total_rules: 86
 rules:
 - rule_id: TRAE-001
   title: 文件操作安全协议
@@ -2268,3 +2268,33 @@ rules:
   aliases: []
   paired_gate_id: null
   rule_file: docs/01_policies_and_standards/rules/trae_085_stale_base_overwrite.yaml
+- rule_id: TRAE-086
+  title: 前端功能模块施工铁律（拆件判据+命名+目录归属+四件套闭环）
+  module_id: TRAE-086
+  scope: frontend_construction
+  domain: TRAE
+  severity: critical
+  stability: evolving
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - file_create
+  - file_write
+  - pre_construction
+  - frontend_feature_add
+  gate_ids: []
+  tags:
+  - TRAE
+  - frontend
+  - module_contract
+  - features
+  - L1_foundation
+  - 拆件
+  - 前端治理
+  aliases:
+  - RULE-FRONTEND-FEATURE
+  - 前端拆件铁律
+  - 模块契约
+  - DS-11
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_086_frontend_module_construction.yaml

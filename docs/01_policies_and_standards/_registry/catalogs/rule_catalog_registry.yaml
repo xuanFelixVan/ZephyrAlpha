@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-08-31T16:18:11Z'
+generated_at: '2026-09-01T17:12:39Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 225
+total_files: 227
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -1765,7 +1765,7 @@ files:
   title: 前端功能模块施工铁律（拆件判据+命名+目录归属+四件套闭环）
   doc_type: ''
   status: ''
-  version: 1.0.0
+  version: 1.1.0
   rule_form: ''
   scope: frontend_construction
   stability: evolving
@@ -1832,6 +1832,21 @@ files:
   version: 1.0.0
   rule_form: procedural
   scope: global
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/frontend_component_split_sop.md
+  module_id: ''
+  title: 前端组件拆分与数据接通 SOP（stockq 页实证）
+  doc_type: policy
+  status: active
+  version: 1.1.0
+  rule_form: procedural
+  scope: frontend
   stability: ''
   layer: ''
   superseded_by: ''

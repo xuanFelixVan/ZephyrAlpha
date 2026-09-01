@@ -4,7 +4,7 @@ submodule_path: src/zephyr/frontend
 title: "Human Machine Interface Core 蓝图 — 人机交互层"
 doc_type: blueprint
 status: Active
-version: "3.4.7"
+version: "3.4.8"
 layer: L3_application
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -68,7 +68,7 @@ build_status: generated
 > C轨业务层已解除占位禁令[ARCH-045 P0]。AI 可自主施工。
 > 当前 construction_progress = partially_implemented，可继续业务代码实现。
 
-> module_id: MOD-L08-001 | version: 3.4.7 | status: active | domain: frontend
+> module_id: MOD-L08-001 | version: 3.4.8 | status: active | domain: frontend
 > actual_disk_path: src/zephyr/frontend/ | generation: 2 | construction_progress: partially_implemented
 > v2.2.0新增: 5个交易/回测组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel), 对接D_BACKTEST/D_EX_CORE/D_DATA, 支持joinquant/Qbot风格仪表盘+实盘交易面板
 > v3.0.0(#ARCH-047): Streamlit→Panel+HoloViz+Plotly+plotly_resampler+Lightweight Charts; 新增ChartFactory(callback仅编排); 5组件已迁移
@@ -169,7 +169,7 @@ build_status: generated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L08-001` 的 46 个 file 节点 | production | `extract_depgraph.py --modules MOD-L08-001` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L08-001` 的 47 个 file 节点 | production | `extract_depgraph.py --modules MOD-L08-001` |
 | 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -181,7 +181,7 @@ build_status: generated
 | module_id | MOD-L08-001 | MOD-L08-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 46 文件 | 15 文件（§0.1） | ❌ |
+| file_count | 47 文件 | 15 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1387,6 +1387,7 @@ def render_trade_panel(data: TradePanelData) -> None:
 | `src/zephyr/frontend/api/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/frontend/core/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/frontend/dashboard/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/frontend/dashboard/api_server.py` | ✅ 已实现 | |
 | `src/zephyr/frontend/dashboard/components/backtest_performance.py` | ✅ 已实现 | |
 | `src/zephyr/frontend/dashboard/components/chart_factory.py` | ✅ 已实现 | |
 | `src/zephyr/frontend/dashboard/components/industry_graph.py` | ✅ 已实现 | |

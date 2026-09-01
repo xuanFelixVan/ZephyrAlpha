@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-D_GOV_SCRIPTS | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """前端缺口视图派生器（四件套 4c）——两本缺口总账的机器派生替代。
 
 真源：architecture_model/frontend/frontend_map.yaml（前端侧清单）+ depgraph nodes 前端覆盖三字段（模块侧）。

@@ -154,6 +154,16 @@ _DO_NOT_USE_old_tree/
 临时工作区/
 模块候选池/
 
+# ── _working 素材与快照（2026-09-02 裁定：素材不入库，只保留设计文档） ──
+docs/_working/*.mp4
+docs/_working/*.woff2
+docs/_working/*.jpg
+docs/_working/*.png
+docs/_working/*.html
+docs/_working/低学历勇闯量化/
+docs/_working/同花顺截图/
+docs/_working/投资账本截图/
+
 # Migration artifact directories
 _backup_
 _migration_conflict_backup/
@@ -329,6 +339,10 @@ data/governance/watchdog_state.json
 data/night_shift_queue.jsonl
 # 零样本推理预测缓存（eval_sentiment.py 派生断点续作产物；评估集 news_sentiment_200.jsonl 保留跟踪）
 data/eval/zero_shot_predictions.jsonl
+# 其他零样本预测变体（thinkon/thinkoff/v1/v2，同性质派生缓存）
+data/eval/zero_shot_predictions_thinkon.jsonl
+data/eval/zero_shot_predictions_v1_thinkoff.jsonl
+data/eval/zero_shot_predictions_v2_8b.jsonl
 # 对抗日志（唯一读写方 _archive/prototype/adversarial_log.py 已归档，防手动运行再入库）
 data/adversarial_log.jsonl
 # CircadianScheduler 运行时状态（进程内定时调度属 banned 模式，机制已退役）
@@ -539,3 +553,23 @@ data/telemetry/dev/metrics.jsonl
 data/telemetry/blueprint_reads.jsonl
 data/notifications/
 data/sla/
+
+# ── 2026-09-02 裁定：运行时/调试产物收口 ──
+# 回测产物（run_backtest.py 产出，可重跑再生产物）
+data/backtest_artifacts/
+# 崩溃转储（runtime diagnostics）
+data/diagnostics/
+# 模型 profiling 运行时数据
+data/model_profiles/
+# 研究评级运行时数据
+data/research_rating/
+# 情绪批量处理运行时数据
+data/sentiment_batch/
+# 冷启动导入模式（一次性分析产物）
+data/fix_patterns/
+# 临时调试脚本（AI 会话一次性）
+data/_tmp_*.py
+# scripts 下运行时数据目录（非代码）
+scripts/data/
+# 测试上下文真实后端集成（需要 live 环境，非 CI 测试）
+tests/context/

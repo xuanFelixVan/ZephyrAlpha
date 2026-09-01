@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-CD-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [BTSIG] 日频因子信号计算器（管道 B）——market_signal_history 落表 [no-pairing:轻量CLI暂无配对门禁]
 # [MODULE] scripts.compute_signals
 # [DOMAIN] D_SIGNAL

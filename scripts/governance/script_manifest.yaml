@@ -1,13 +1,13 @@
-# 自动生成于 2026-08-31T14:07:59Z
+# 自动生成于 2026-09-01T17:10:39Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-31T14:07:59Z'
+generated_at: '2026-09-01T17:10:39Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 413
+total_scripts: 415
 with_manifest: 408
-missing_manifest: 5
+missing_manifest: 7
 categories:
   governance:_sync: 4
   governance:_tasks: 3
@@ -19,7 +19,7 @@ categories:
   governance:d2_links: 2
   governance:d3_metadata: 26
   governance:d4_paths: 4
-  governance:d5_architecture: 114
+  governance:d5_architecture: 116
   governance:d6_security: 15
   governance:d7_code: 41
   governance:d8_doc_sync: 14
@@ -2206,6 +2206,16 @@ scripts:
   tags:
   - Critical
   - Disruptive
+- name: d5_architecture/generators/generate_frontend_gap_views.py
+  owner: governance:d5_architecture
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/generators/generate_integration_topology.py
   owner: governance:d5_architecture
   dimensions:
@@ -2279,6 +2289,16 @@ scripts:
   tags:
   - Critical
   - Disruptive
+- name: d5_architecture/generators/scan_frontend_pages.py
+  owner: governance:d5_architecture
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/generators/zoomable_html.py
   owner: governance:d5_architecture
   dimensions:

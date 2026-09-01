@@ -3,8 +3,8 @@
 #
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
-generated_at: '2026-08-31'
-total_scripts: 748
+generated_at: '2026-09-02'
+total_scripts: 753
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -58,6 +58,14 @@ scripts:
   path: commit_queue.py
   description: '----'
   domain: commit_queue.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: compute_signals.py
+  path: compute_signals.py
+  description: 日频因子信号计算器（管道 B，#BT-PIPELINE-001 阶段三）。
+  domain: compute_signals.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -194,6 +202,14 @@ scripts:
   path: rollback.py
   description: Rollback System CLI — MOD-INF-021 v0.10.0 Git-native+SQLite Checkpoint 操作入口。
   domain: rollback
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: run_backtest.py
+  path: run_backtest.py
+  description: BTRUN 标准回测 CLI（2026-09-01 设立，治本"产物曲线为空"问题）
+  domain: test
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -642,6 +658,14 @@ scripts:
   path: ch/apply_rbac.py
   description: RBAC-as-Code 模式：
   domain: rbac
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ch/apply_signal_history_ddl.py
+  path: ch/apply_signal_history_ddl.py
+  description: DDL 真源：schemas/categories/market_signal_history.py（DDL-as-Code）。
+  domain: ch
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -2550,6 +2574,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/d5_architecture/generators/generate_frontend_gap_views.py
+  path: governance/d5_architecture/generators/generate_frontend_gap_views.py
+  description: 真源：architecture_model/frontend/frontend_map.yaml（前端侧清单）+ depgraph nodes 前端覆盖三字段（模块侧）。
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/d5_architecture/generators/generate_integration_topology.py
   path: governance/d5_architecture/generators/generate_integration_topology.py
   description: '[BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4'
@@ -2593,6 +2625,14 @@ scripts:
 - name: governance/d5_architecture/generators/generate_policies.py
   path: governance/d5_architecture/generators/generate_policies.py
   description: 真源：architecture_model/data/data_sources_registry.yaml
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d5_architecture/generators/scan_frontend_pages.py
+  path: governance/d5_architecture/generators/scan_frontend_pages.py
+  description: 职责：把"前端有什么"从人肉盘点变成机器普查。每个页面抽取：
   domain: governance
   execution_plane: warm-path
   status: registered
