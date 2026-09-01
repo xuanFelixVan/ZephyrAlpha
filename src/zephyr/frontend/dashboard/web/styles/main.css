@@ -70,8 +70,9 @@
   .tb-srch{position:relative;display:flex;align-items:center}
   .tb-srch input{background:var(--input);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:12px;padding:5px 10px;width:200px;outline:none}
   .tb-srch input:focus{border-color:var(--faint)}   /* v6 */
-  .tb-lang{color:var(--dim);font-size:12px;cursor:pointer;padding:5px 8px;border-radius:5px;position:relative;white-space:nowrap;user-select:none}
-  .tb-lang:hover{background:var(--panel2);color:var(--text)}
+  .tb-lang,.tb-theme{color:var(--dim);font-size:12px;cursor:pointer;padding:5px 8px;border-radius:5px;position:relative;white-space:nowrap;user-select:none}
+  .tb-lang:hover,.tb-theme:hover{background:var(--panel2);color:var(--text)}
+  .tb-theme{font-size:14px;line-height:1}   /* ◐ 图标件：纯图标+悬停提示（Owner 偏好），比语言条更紧凑 */
   .tb-lang-drop{position:absolute;top:32px;right:0;background:#fff;color:#111;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.45);min-width:180px;display:none;padding:5px;z-index:970}
   .tb-lang-drop.open{display:block}
   .tb-ld{padding:6px 9px;font-size:12px;border-radius:4px;display:flex;justify-content:space-between;align-items:center}

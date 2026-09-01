@@ -112,6 +112,10 @@
     </nav>
     <div class="tb-right">
       <span class="tb-srch"><input id="srch-inp" type="text" placeholder="🔍 搜索页面/功能/指标/库" autocomplete="off" title="全局搜索 S1 先行版：静态索引跳转；AI 问答待接入（后端 CAND）"><span class="srch-drop" id="srch-drop"></span></span>
+      <span class="tb-theme" id="tb-theme" onclick="tbThemeTgl(event)" title="主题外观：深色 / 浅色切换">◐<span class="tb-lang-drop tb-theme-drop" id="tb-theme-drop">
+          <span class="tb-ld cur">深色 <span class="tag">当前</span></span>
+          <span class="tb-ld dis" onclick="event.stopPropagation()">浅色 <span class="tag">待接入</span></span>
+        </span></span>
       <span class="tb-lang" id="tb-lang" onclick="tbLangTgl(event)">简体中文 / CNY ▾
         <span class="tb-lang-drop" id="tb-lang-drop">
           <span class="tb-ld cur">简体中文 / CNY <span class="tag">当前</span></span>

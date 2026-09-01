@@ -53,6 +53,15 @@ document.addEventListener('click',function(e){
   var l=document.getElementById('tb-lang'),d=document.getElementById('tb-lang-drop');
   if(l&&d&&d.classList.contains('open')&&!l.contains(e.target)) d.classList.remove('open');
 });
+/* ---- 主题外观占位（tbThemeTgl：深色=当前，浅色待接入——全站色系 v7 为暗色单主题，浅色需整套令牌派生，暂占位） ---- */
+function tbThemeTgl(e){
+  e.stopPropagation();
+  var d=document.getElementById('tb-theme-drop'); if(d) d.classList.toggle('open');
+}
+document.addEventListener('click',function(e){
+  var t=document.getElementById('tb-theme'),d=document.getElementById('tb-theme-drop');
+  if(t&&d&&d.classList.contains('open')&&!t.contains(e.target)) d.classList.remove('open');
+});
 /* ==================== 作战室：3×3 情景矩阵方案展开（演示数据；字段契约对齐 MOD-PLAN-005 ScenarioPlan / MOD-PLAN-001 TomorrowBoundary / MOD-SIG-061/062） ==================== */
 var WR={
  '00':{t:'高开 >+2% + 高走',act:'进攻',bc:'b-buy',logic:'强势确认：高开且 30 分钟站稳 VWAP，主线延续 → 按进攻档加仓（仓位 ×1.2 缩放）',
