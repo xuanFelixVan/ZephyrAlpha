@@ -396,9 +396,13 @@ services:
 **前端真源**：
 - `src/zephyr/frontend/dashboard/web/frontend_map.yaml` — 前端全景图（page → module → file → backend_ref）
 - `src/zephyr/frontend/dashboard/web/features/manifest.yaml` — 模块注册表（depends 显式声明）
-- `src/zephyr/frontend/dashboard/web/core/loader.js` — 加载链（app1→event_bus→api→features→app2）
+- `src/zephyr/frontend/dashboard/web/core/loader.js` — 加载链（app1→event_bus→api→features→app2）；含版本戳 ZK_BUILD（页头品牌行 b<版本>，无戳=浏览器跑旧代码）
 - `src/zephyr/frontend/dashboard/web/core/event_bus.js` — ZK.registerFeature 机制
 - `src/zephyr/frontend/dashboard/web/services/api.js` — 数据服务通道
+
+**桌面壳（Electron，2026-09-01 Owner 裁定前端桌面化）**：
+- `tools/desktop/` — Electron 壳：生产模式 app:// 自定义协议直读 web/（零 HTTP 缓存）+ 自动拉起/复用 8890 API（关壳干净退出）；开发模式 `npm run dev` 指向 8891
+- 启动：`cd tools/desktop && npm start`（首次需 `npm install`；node_modules 不入库；src/zephyr 为 Python 包根禁 .json 故壳居 tools/）
 
 **模板与范例**：
 - `docs/03_modules/_domain_frontend/acceptance/ACC-F-STOCKQ-COSTLINE.yaml` — 验收单模板

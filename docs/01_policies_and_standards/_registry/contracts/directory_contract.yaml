@@ -353,11 +353,11 @@ directory_extensions:
     note: "会话日志区——audit_report 的合法目录（doc_type_vocabulary.yaml 已声明）。.yaml/.yml 为日志数据，.md 为审计报告，.json 为历史格式（个别文件）"
 
   - path: "tools/"
-    allowed: [".py", ".sh", ".ps1", ".yaml", ".json"]
+    allowed: [".py", ".sh", ".ps1", ".yaml", ".json", ".js"]
     forbidden: [".bak", ".baseline", ".md"]
     zone: neutral
     allowed_doc_types: []
-    note: "工具脚本区——与 scripts/ 同级语义，放一次性工具/生成器脚本"
+    note: "工具脚本区——与 scripts/ 同级语义，放一次性工具/生成器脚本；.js 为 Electron 桌面壳（tools/desktop/，2026-09-01 Owner 前端桌面化裁定）"
 
   - path: "src/config/"
     allowed: [".yaml", ".json"]

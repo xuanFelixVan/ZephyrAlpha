@@ -39,6 +39,10 @@ wheels/
 pip-log.txt
 pip-delete-this-directory.txt
 
+# Electron 桌面壳（tools/desktop/）——依赖与锁文件不入库（版本由 package.json 声明）
+node_modules/
+tools/desktop/package-lock.json
+
 # Unit test / coverage reports
 htmlcov/
 .tox/
