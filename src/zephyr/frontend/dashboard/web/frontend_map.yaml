@@ -18,3 +18,31 @@ features:
     file: features/stockq/sq-stock-header.js
     backend_ref: "api:/api/stock-header"
     status: active
+  - id: F-STOCKQ-KEY-DATA
+    name: 关键数据表
+    page: stockq
+    module_id: sq-key-data
+    file: features/stockq/sq-key-data.js
+    backend_ref: "api:/api/stock-header（kline_daily 价格 + daily_valuation 估值）"
+    status: active
+  - id: F-STOCKQ-SECTOR-TAGS
+    name: 行业归属标签
+    page: stockq
+    module_id: sq-sector-tags
+    file: features/stockq/sq-sector-tags.js
+    backend_ref: "api:/api/stock-header（stock_basic.industry/board）"
+    status: active
+  - id: F-STOCKQ-FAV-LIST
+    name: 自选列表
+    page: stockq
+    module_id: sq-fav-list
+    file: features/stockq/sq-fav-list.js
+    backend_ref: "api:/api/quote（kline_daily 批量报价）"
+    status: active
+  - id: F-STOCKQ-POSITION-LIST
+    name: 持仓列表（空壳占位）
+    page: stockq
+    module_id: sq-position-list
+    file: features/stockq/sq-position-list.js
+    backend_ref: "none:（QMT 持仓接口延后，当前演示数据 SQ_HOLD）"
+    status: active

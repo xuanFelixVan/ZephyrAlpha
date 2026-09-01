@@ -1,0 +1,33 @@
+# --- 治理锚定 ---
+# doc_type: register | 功能验收单（冻结"什么样子算对"）
+# ttl: permanent
+# 修订权限：Owner 专有（AI 可提议不可自改已冻结条项）
+# --- 治理锚定结束 ---
+
+feature_id: F-STOCKQ-KEY-DATA
+feature_name: 关键数据表
+frozen_at: 2026-09-01
+frozen_by: ZephyrAlpha-Owner
+revision: 1
+revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
+
+# check 取值：目检（截图人工/AI 视觉对） | 机断（DOM 断言，Playwright 落地后自动跑；过渡期人工/控制台手动验，不免验）
+items:
+  - { id: 1, text: "右栏'关键数据'区块存在：最高/最低/开盘/昨收/量比/换手/市盈TTM/市净MRQ/成交量/成交额/振幅 11 行键值对", check: 目检 }
+  - { id: 2, text: "真源连通时数值来自 kline_daily（如 603216 昨收≈20.59 而非演示 1,698.00），任意股票均有值（不限于 3 只演示标的）", check: 目检 }
+  - { id: 3, text: "换手行显示 '--（待接入）'（daily_valuation.turnover 全 0 暂无真源，禁止伪造 0.00%）", check: 目检 }
+  - { id: 4, text: "区块右上角四态灯：绿=真源 / 黄=延迟（>5 日） / 红=断线·演示 / 灰=未启动（DS-12），悬停有释义", check: 目检 }
+  - { id: 5, text: "API 断连时回退演示 kv（STOCKQ_D 三标的）或'待接入'占位，且状态灯标'断线·演示'（演示诚实纪律）", check: 目检 }
+  - { id: 6, text: "组件已注册：ZK.features['sq-key-data'] 存在", check: 机断 }
+  - { id: 7, text: "容器已渲染：#sq-key-data 内存在 .sq-kv-grid 或 .sq-intro（占位）", check: 机断 }
+  - { id: 8, text: "/api/stock-header 返回 volume_ratio/pe_ttm/pb_mrq/industry/board/trade_date 扩展字段", check: 机断 }
+
+execution:
+  trigger: "任何涉及本功能的 UI/接口改动 commit 前"
+  flow: "起本地服务 → 截图 → 逐条对 → 全绿才走 GitCommitGateway"
+  baseline_screenshot: "acceptance/screenshots/F-STOCKQ-KEY-DATA-baseline.png"
+
+关联:
+  handbook: []
+  frontend_map: F-STOCKQ-KEY-DATA
+  code_ref: "src/zephyr/frontend/dashboard/web/features/stockq/sq-key-data.js"

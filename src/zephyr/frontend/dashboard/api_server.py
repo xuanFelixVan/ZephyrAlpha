@@ -25,6 +25,7 @@
 from __future__ import annotations
 
 import sys
+import threading
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any
@@ -51,6 +52,7 @@ _PERIOD_TABLE: dict[str, str] = {
 
 _client: Client | None = None
 _col_cache: dict[str, dict[str, str]] = {}
+_ch_lock = threading.Lock()   # clickhouse_driver 单连接非线程安全：FastAPI 线程池并发请求必须串行化
 
 
 def _ch() -> Client:
@@ -67,11 +69,17 @@ def _ch() -> Client:
     return _client
 
 
+def _ch_exec(sql: str, params: dict | None = None) -> list:
+    """带锁执行（2026-09-01 实证：stockq 多组件并发取数触发 Simultaneous queries on single connection）。"""
+    with _ch_lock:
+        return _ch().execute(sql, params or {})
+
+
 def _time_col(table: str) -> str:
     """首Date/DateTime 列为时间列（日线族=trade_date，分钟族=datetime 类）。"""
     if table in _col_cache:
         return _col_cache[table]["time_col"]
-    cols = _ch().execute(f"DESCRIBE TABLE {table}")
+    cols = _ch_exec(f"DESCRIBE TABLE {table}")
     time_col = ""
     for row in cols:
         name, typ = row[0], row[1]
@@ -111,7 +119,7 @@ def kline(
         return {"ok": False, "error": "bad symbol", "bars": []}
     try:
         tc = _time_col(table)
-        rows = _ch().execute(
+        rows = _ch_exec(
             f"SELECT {tc}, open, high, low, close, volume, amount FROM {table} "  # noqa: S608（table 来自白名单 _PERIOD_TABLE，tc 来自 DESCRIBE）
             "WHERE symbol=%(s)s ORDER BY " + tc + " DESC LIMIT %(n)s",
             {"s": sym, "n": limit},
@@ -135,47 +143,129 @@ def kline(
 
 @app.get("/api/stock-header")
 def stock_header(symbol: str = Query(..., min_length=1)) -> dict[str, Any]:
-    """股票标题数据（sq-stock-header 组件）：名称+代码+价格+涨跌幅+昨收。
-    数据源：stock_basic（名称）+ daily_valuation（最新价格）。
+    """股票标题+关键数据（sq-stock-header / sq-key-data / sq-sector-tags 组件共用）。
+    价格源：kline_daily 最新 6 根（daily_valuation 价格列全 0 不可用，2026-09-01 实测）；
+    估值源：daily_valuation（仅 pe_ttm/pb_mrq 有效，换手 turnover 全 0 暂无真源→None）；
+    资料源：stock_basic（名称/行业/板块，argMax 取 valid_from 最新）。
     """
     sym = symbol.split(".")[0].strip()
     if not sym.isalnum():
         return {"ok": False, "error": "bad symbol", "data": {}}
     try:
-        # 1. 名称：stock_basic
-        name_rows = _ch().execute(
-            "SELECT symbol, name FROM stock_basic WHERE symbol=%(s)s LIMIT 1", {"s": sym}
+        # 1. 名称+行业+板块：stock_basic
+        info_rows = _ch_exec(
+            "SELECT argMax(name, valid_from), argMax(industry, valid_from), argMax(board, valid_from) "
+            "FROM stock_basic WHERE symbol=%(s)s",
+            {"s": sym},
         )
-        name = name_rows[0][1] if name_rows else sym
+        name = str(info_rows[0][0]) if info_rows and info_rows[0][0] else sym
+        industry = str(info_rows[0][1]) if info_rows and info_rows[0][1] else ""
+        board = str(info_rows[0][2]) if info_rows and info_rows[0][2] else ""
 
-        # 2. 最新价格：daily_valuation 最新一行
-        price_rows = _ch().execute(
-            "SELECT close, preclose, pct_change, volume, amount FROM daily_valuation "
-            "WHERE symbol=%(s)s ORDER BY trade_date DESC LIMIT 1",
+        # 2. 价格：kline_daily 最新 6 根（第 2 根 close 作昨收；量比=当日量/前 5 日均量）
+        price_rows = _ch_exec(
+            "SELECT trade_date, open, high, low, close, volume, amount FROM kline_daily "
+            "WHERE symbol=%(s)s AND close > 0 ORDER BY trade_date DESC LIMIT 6",
             {"s": sym},
         )
         if not price_rows:
             return {"ok": False, "error": "no price data", "data": {}}
-        close, preclose, pct_change, volume, amount = price_rows[0]
-        pct = float(pct_change)
+        td, o, h, l, close, vol, amt = price_rows[0]
+        preclose = float(price_rows[1][4]) if len(price_rows) > 1 else 0.0
+        prev5 = [float(r[5]) for r in price_rows[1:6]]
+        vol_ratio = float(vol) / (sum(prev5) / len(prev5)) if prev5 and sum(prev5) > 0 else None
+        pct = (float(close) - preclose) / preclose * 100 if preclose > 0 else 0.0
         direction = "up" if pct >= 0 else "down"
+
+        # 3. 估值：daily_valuation（pe_ttm/pb_mrq；换手无真源）
+        val_rows = _ch_exec(
+            "SELECT pe_ttm, pb_mrq FROM daily_valuation "
+            "WHERE symbol=%(s)s AND pe_ttm > 0 ORDER BY trade_date DESC LIMIT 1",
+            {"s": sym},
+        )
+        pe_ttm = float(val_rows[0][0]) if val_rows else None
+        pb_mrq = float(val_rows[0][1]) if val_rows else None
+
         return {
             "ok": True,
             "symbol": sym,
             "data": {
-                "name": str(name),
+                "name": name,
                 "code": sym,
                 "price": float(close),
-                "preclose": float(preclose),
+                "open": float(o),
+                "high": float(h),
+                "low": float(l),
+                "preclose": preclose,
                 "pct_change": pct,
                 "pct_change_str": f"{'+' if pct >= 0 else ''}{pct:.2f}%",
                 "direction": direction,
-                "volume": int(volume),
-                "amount": float(amount),
+                "volume": int(vol),
+                "amount": float(amt),
+                "volume_ratio": vol_ratio,
+                "turnover": None,  # daily_valuation.turnover 全 0，暂无真源（待接入）
+                "pe_ttm": pe_ttm,
+                "pb_mrq": pb_mrq,
+                "industry": industry,
+                "board": board,
+                "trade_date": td.isoformat(),
             },
         }
     except Exception as exc:
         return {"ok": False, "error": str(exc)[:200], "data": {}}
+
+
+@app.get("/api/quote")
+def quote(symbols: str = Query(..., min_length=1)) -> dict[str, Any]:
+    """批量最新报价（sq-fav-list 组件）：多标的最新价+涨跌幅+名称。
+    价格源：kline_daily（每标的最新两根，前根 close 作昨收，LIMIT n BY symbol）。
+    """
+    syms: list[str] = []
+    for s in symbols.split(","):
+        t = s.split(".")[0].strip()
+        if t.isalnum() and t not in syms:
+            syms.append(t)
+    syms = syms[:50]
+    if not syms:
+        return {"ok": False, "error": "bad symbols", "data": []}
+    try:
+        rows = _ch_exec(
+            "SELECT symbol, trade_date, close FROM kline_daily "
+            "WHERE symbol IN %(syms)s AND close > 0 "
+            "ORDER BY trade_date DESC LIMIT 2 BY symbol",
+            {"syms": tuple(syms)},
+        )
+        by_sym: dict[str, list[tuple[Any, float]]] = {}
+        for r in rows:
+            by_sym.setdefault(r[0], []).append((r[1], float(r[2])))
+        name_rows = _ch_exec(
+            "SELECT symbol, argMax(name, valid_from) FROM stock_basic "
+            "WHERE symbol IN %(syms)s GROUP BY symbol",
+            {"syms": tuple(syms)},
+        )
+        names = {r[0]: str(r[1]) for r in name_rows}
+        data = []
+        for s in syms:
+            bars = by_sym.get(s)
+            if not bars:
+                continue
+            close_px = bars[0][1]
+            preclose = bars[1][1] if len(bars) > 1 else 0.0
+            pct = (close_px - preclose) / preclose * 100 if preclose > 0 else 0.0
+            data.append(
+                {
+                    "symbol": s,
+                    "name": names.get(s, s),
+                    "price": close_px,
+                    "pct_change": round(pct, 2),
+                    "pct_change_str": f"{'+' if pct >= 0 else ''}{pct:.2f}%",
+                    "direction": "up" if pct >= 0 else "down",
+                    "trade_date": bars[0][0].isoformat(),
+                }
+            )
+        return {"ok": True, "count": len(data), "data": data}
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)[:200], "data": []}
 
 
 @app.get("/api/stock-search")
@@ -188,7 +278,7 @@ def stock_search(q: str = Query(..., min_length=1), limit: int = Query(20, ge=1,
         return {"ok": True, "data": []}
     try:
         # 代码精确/前缀匹配优先，名称包含次之（stock_basic 无 market 列，symbol 可能重复取 DISTINCT）
-        rows = _ch().execute(
+        rows = _ch_exec(
             "SELECT DISTINCT symbol, name FROM stock_basic "
             "WHERE symbol LIKE %(q)s OR name LIKE %(qn)s LIMIT %(l)s",
             {"q": q + "%", "qn": "%" + q + "%", "l": limit},

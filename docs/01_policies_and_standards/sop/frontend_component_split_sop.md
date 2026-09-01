@@ -333,8 +333,8 @@ services:
 
 | # | 组件 | 文件 | 数据源 | 状态 |
 |---|---|---|---|---|
-| 1 | sq-fav-list | features/stockq/sq-fav-list.js | localStorage + 价格推送 | ⏳ 待建 |
-| 2 | sq-position-list | features/stockq/sq-position-list.js | QMT 持仓接口 | ⏳ 待建（QMT 延后） |
+| 1 | sq-fav-list | features/stockq/sq-fav-list.js | localStorage + 价格推送 | ✅ 已通 |
+| 2 | sq-position-list | features/stockq/sq-position-list.js | QMT 持仓接口 | ✅ 空壳已建（QMT 延后） |
 | 3 | sq-search-box | features/stockq/sq-search-box.js | /api/stock-search | ✅ 已通 |
 | 4 | sq-kline-main | features/stockq/sq-kline-main.js | CH.kline_* | ⏳ 待建 |
 | 5 | sq-kline-volume | features/stockq/sq-kline-volume.js | CH.kline_* | ⏳ 待建 |
@@ -349,10 +349,10 @@ services:
 | 14 | sq-timeline | features/stockq/sq-timeline.js | 无（纯前端） | ⏳ 待建 |
 | 15 | sq-chip-peak | features/stockq/sq-chip-peak.js | CH.chip_distribution | ⏳ 待建 |
 | 16 | sq-stock-header | features/stockq/sq-stock-header.js | /api/stock-header | ✅ 已通 |
-| 17 | sq-sector-tags | features/stockq/sq-sector-tags.js | stock_basic.sector | ⏳ 待建 |
+| 17 | sq-sector-tags | features/stockq/sq-sector-tags.js | stock_basic.sector | ✅ 已通 |
 | 18 | sq-company-intro | features/stockq/sq-company-intro.js | stock_basic.intro | ⏳ 待建 |
 | 19 | sq-order-book | features/stockq/sq-order-book.js | QMT l2_tick | ⏳ 待建（QMT 延后） |
-| 20 | sq-key-data | features/stockq/sq-key-data.js | CH.daily_valuation | ⏳ 待建 |
+| 20 | sq-key-data | features/stockq/sq-key-data.js | CH.daily_valuation | ✅ 已通 |
 | 21 | sq-financial-read | features/stockq/sq-financial-read.js | CH.finance | ⏳ 待建 |
 | 22 | sq-related-news | features/stockq/sq-related-news.js | CH.news | ⏳ 待建 |
 | 23 | sq-quant-analysis | features/stockq/sq-quant-analysis.js | 后端量化接口 | ⏳ 待建 |

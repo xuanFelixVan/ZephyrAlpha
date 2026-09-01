@@ -1,0 +1,34 @@
+# --- 治理锚定 ---
+# doc_type: register | 功能验收单（冻结"什么样子算对"）
+# ttl: permanent
+# 修订权限：Owner 专有（AI 可提议不可自改已冻结条项）
+# --- 治理锚定结束 ---
+
+feature_id: F-STOCKQ-FAV-LIST
+feature_name: 自选列表
+frozen_at: 2026-09-01
+frozen_by: ZephyrAlpha-Owner
+revision: 1
+revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
+
+# check 取值：目检（截图人工/AI 视觉对） | 机断（DOM 断言，Playwright 落地后自动跑；过渡期人工/控制台手动验，不免验）
+items:
+  - { id: 1, text: "左栏自选 tab 列表来自 localStorage（zk-sq-fav），每行显示 名称+代码+价格+涨跌幅", check: 目检 }
+  - { id: 2, text: "真源连通时价格来自 /api/quote 批量接口（kline_daily 最新日线，如 603216=20.59），演示池外股票也有真名真价", check: 目检 }
+  - { id: 3, text: "列表顶部右侧有四态状态灯（绿=真源 / 黄=延迟>5日 / 红=断线·演示 / 灰=未启动，DS-12），悬停有释义", check: 目检 }
+  - { id: 4, text: "点击行切换股票（sqSel），✕ 移出自选并即时刷新，✕ 事件不冒泡触发行点击", check: 目检 }
+  - { id: 5, text: "报价 30s 自动轮询（仅自选 tab 且无搜索词时），切到持仓 tab/搜索态不轮询不渲染", check: 目检 }
+  - { id: 6, text: "API 断连时回退演示池价格，状态灯标'断线·演示'（演示诚实纪律）", check: 目检 }
+  - { id: 7, text: "清空搜索词后列表恢复自选/持仓渲染（sq-search-box 交还 sqRenderList）", check: 目检 }
+  - { id: 8, text: "组件已注册：ZK.features['sq-fav-list'] 存在", check: 机断 }
+  - { id: 9, text: "容器已渲染：#sq-list 内存在 .sq-list-status 状态行与 .sq-si 行", check: 机断 }
+
+execution:
+  trigger: "任何涉及本功能的 UI/接口改动 commit 前"
+  flow: "起本地服务 → 截图 → 逐条对 → 全绿才走 GitCommitGateway"
+  baseline_screenshot: "acceptance/screenshots/F-STOCKQ-FAV-LIST-baseline.png"
+
+关联:
+  handbook: []
+  frontend_map: F-STOCKQ-FAV-LIST
+  code_ref: "src/zephyr/frontend/dashboard/web/features/stockq/sq-fav-list.js"

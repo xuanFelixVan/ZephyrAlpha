@@ -30,6 +30,9 @@ ZK.api = (function(){
     },
     fetchStockSearch: function(q){
       return fetchJson('/api/stock-search?q='+encodeURIComponent(q));
+    },
+    fetchQuote: function(symbols){   /* 批量最新报价（sq-fav-list）：symbols=字符串数组 */
+      return fetchJson('/api/quote?symbols='+encodeURIComponent(symbols.join(',')));
     }
   };
 })();

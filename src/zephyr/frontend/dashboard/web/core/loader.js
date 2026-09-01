@@ -31,6 +31,18 @@
     return loadJs('features/stockq/sq-stock-header.js');   /* 股票标题功能模块（模块契约，验收单 ACC-F-STOCKQ-STOCK-HEADER） */
   }).then(function(){
     return loadJs('features/stockq/sq-search-box.js');   /* 股票搜索框功能模块（模块契约，验收单 ACC-F-STOCKQ-SEARCH-BOX） */
+  })
+  .then(function(){
+    return loadJs('features/stockq/sq-key-data.js');   /* 关键数据表功能模块（模块契约，验收单 ACC-F-STOCKQ-KEY-DATA） */
+  })
+  .then(function(){
+    return loadJs('features/stockq/sq-sector-tags.js');   /* 行业标签功能模块（模块契约，验收单 ACC-F-STOCKQ-SECTOR-TAGS） */
+  })
+  .then(function(){
+    return loadJs('features/stockq/sq-fav-list.js');   /* 自选列表功能模块（模块契约，验收单 ACC-F-STOCKQ-FAV-LIST） */
+  })
+  .then(function(){
+    return loadJs('features/stockq/sq-position-list.js');   /* 持仓列表功能模块·空壳占位（模块契约，验收单 ACC-F-STOCKQ-POSITION-LIST） */
   }).then(function(){
     return loadJs('core/app2.js');
   }).then(function(){

@@ -103,6 +103,15 @@ def test_stockq_structure(page):
         stock_header_module: !!(window.ZK && ZK.features && ZK.features['sq-stock-header']),
         stock_header_rendered: !!document.querySelector('#sq-head .sq-stock-header'),
         stock_header_dm: !!document.querySelector('#sq-head .klp-datamode'),
+        key_data_module: !!(window.ZK && ZK.features && ZK.features['sq-key-data']),
+        key_data_rendered: !!(document.querySelector('#sq-key-data .sq-kv-grid') || document.querySelector('#sq-key-data .sq-intro')),
+        key_data_mode: !!document.querySelector('#sq-key-data .sq-kd-mode'),
+        sector_tags_module: !!(window.ZK && ZK.features && ZK.features['sq-sector-tags']),
+        sector_tags_rendered: !!(document.querySelector('#sq-sector-tags .badge')),
+        fav_list_module: !!(window.ZK && ZK.features && ZK.features['sq-fav-list']),
+        fav_list_status: !!document.querySelector('#sq-list .sq-list-status'),
+        fav_list_rows: !!document.querySelector('#sq-list .sq-si'),
+        position_list_module: !!(window.ZK && ZK.features && ZK.features['sq-position-list']),
     })"""
     )
     fails = [k for k, v in checks.items() if not v]

@@ -5913,6 +5913,10 @@ function klpBars(){   /* genCandles → KLineChart 格式（种子=股票+周期
 function sqInit(){
   sqRenderList();
   if(window.ZK && ZK.features && ZK.features['sq-stock-header']){ ZK.features['sq-stock-header'].init(); }
+  if(window.ZK && ZK.features && ZK.features['sq-key-data']){ ZK.features['sq-key-data'].init(); }
+  if(window.ZK && ZK.features && ZK.features['sq-sector-tags']){ ZK.features['sq-sector-tags'].init(); }
+  if(window.ZK && ZK.features && ZK.features['sq-fav-list']){ ZK.features['sq-fav-list'].init(); }
+  if(window.ZK && ZK.features && ZK.features['sq-position-list']){ ZK.features['sq-position-list'].init(); }
   sqRenderHead(); sqRenderInfo();
   var el=document.getElementById('klp-chart');
   if(!el) return;
@@ -6538,12 +6542,16 @@ function sqListTab(m){
   sqRenderList();
 }
 function sqRenderList(){
-  /* v2：搜索模式由 sq-search-box 组件接管（features/stockq/sq-search-box.js）
-     无搜索词时保持原逻辑渲染自选/持仓列表 */
+  /* v3：搜索模式由 sq-search-box 组件接管；自选/持仓列表分别由 sq-fav-list / sq-position-list 组件接管
+     （features/stockq/），组件未加载时回退本函数老代码路径（兼容旧加载链） */
   var q=((document.getElementById('sq-srch')||{}).value||'').trim();
   if(q && window.ZK && ZK.features && ZK.features['sq-search-box']){
     /* 有搜索词且组件已加载：组件已接管 input 事件，无需重复渲染 */
     return;
+  }
+  if(!q && window.ZK && ZK.features){
+    if(sqListMode==='fav' && ZK.features['sq-fav-list']){ ZK.features['sq-fav-list'].render(); return; }
+    if(sqListMode==='hold' && ZK.features['sq-position-list']){ ZK.features['sq-position-list'].render(); return; }
   }
   var items=sqListMode==='fav'?sqFav:SQ_HOLD,h='';
   items.forEach(function(sym){
@@ -6616,9 +6624,17 @@ function sqEvtPopClose(e){
 }
 function sqRenderInfo(){
   var box=document.getElementById('sq-info'),d=STOCKQ_D[sqCur],p=sqPoolFind(sqCur);
+  /* 组件接管判定（features/stockq/）：行业标签→sq-sector-tags、关键数据→sq-key-data */
+  var hasTags=!!(window.ZK && ZK.features && ZK.features['sq-sector-tags']);
+  var hasKv=!!(window.ZK && ZK.features && ZK.features['sq-key-data']);
   if(!d){
+    if(!p) p={nm:sqCur,code:sqCur,px:'--',pc:'--',dir:0};
     box.innerHTML='<div class="sq-qh"><span class="nm">'+p.nm+'</span><span class="px '+(p.dir>=0?'up':'down')+'">'+p.px+'</span><span class="chg '+(p.dir>=0?'up':'down')+'">'+p.pc+'</span></div>'
-      +'<div class="sq-intro">「'+p.nm+'」资料演示数据未内置（全量资料仅 3 只演示标的：600519/300750/688981），K 线工作台可正常使用——五档/关键数据/股性/财务/新闻量化/合理估价全量待接入 I-2。</div>';
+      +'<div class="sq-tags" id="sq-sector-tags">'+(hasTags?'':'<span class="badge b-na">行业待接入</span>')+'</div>'
+      +'<div id="sq-key-data">'+(hasKv?'':'<div class="sq-sec"><span>关键数据</span></div><div class="sq-intro">关键数据待接入（真源 /api/stock-header）</div>')+'</div>'
+      +'<div class="sq-intro">「'+p.nm+'」五档/股性/财务/新闻量化/合理估价演示数据未内置（关键数据与行业标签已接真源），K 线工作台可正常使用——其余资料待接入 I-2。</div>';
+    if(hasTags) ZK.features['sq-sector-tags'].render();
+    if(hasKv) ZK.features['sq-key-data'].render();
     return;
   }
   var inFav=sqFav.indexOf(sqCur)>=0;
@@ -6626,7 +6642,8 @@ function sqRenderInfo(){
     +'<span class="badge b-na">闭市</span>'
     +'<span class="sq-fb" style="margin-left:auto" onclick="event.stopPropagation();sqFavTgl(\''+sqCur+'\',this)">'+(inFav?'★ 删自选':'☆ 加自选')+'</span></div>'
     +'<div class="sq-qh"><span class="px '+(p.dir>=0?'up':'down')+'">'+p.px+'</span><span class="chg '+(p.dir>=0?'up':'down')+'">'+p.pc+'</span></div>'
-    +'<div class="sq-tags">'+d.tags.map(function(t){return '<span class="badge b-na">'+t+'</span>';}).join('')+'</div>'
+    /* 行业标签：sq-sector-tags 组件接管（真源 stock_basic.industry/board），未加载回退演示 tags */
+    +(hasTags?'<div class="sq-tags" id="sq-sector-tags"></div>':'<div class="sq-tags">'+d.tags.map(function(t){return '<span class="badge b-na">'+t+'</span>';}).join('')+'</div>')
     +'<div class="sq-intro">'+d.intro+'</div>';
   /* 五档 */
   h+='<div class="sq-sec"><span>五档挂单 <span class="dim" style="font-weight:400">miniQMT 五档快照口径（演示）</span></span></div><div class="sq-l2">';
@@ -6635,10 +6652,13 @@ function sqRenderInfo(){
   for(i=4;i>=0;i--){ h+='<div class="lr"><span style="color:var(--down)">卖'+(i+1)+'</span><span class="lbar"><i style="width:'+(d.l2[i][1]/vmax*100).toFixed(0)+'%;background:#25A750;opacity:.35"></i></span><span class="lp" style="color:var(--down)">'+d.l2[i][0].toFixed(2)+'</span><span class="lv">'+d.l2[i][1]+'</span></div>'; }
   for(i=5;i<10;i++){ h+='<div class="lr"><span style="color:var(--up)">买'+(i-4)+'</span><span class="lbar"><i style="width:'+(d.l2[i][1]/vmax*100).toFixed(0)+'%;background:#CA3F64;opacity:.35"></i></span><span class="lp" style="color:var(--up)">'+d.l2[i][0].toFixed(2)+'</span><span class="lv">'+d.l2[i][1]+'</span></div>'; }
   h+='</div>';
-  /* 关键数据 */
-  h+='<div class="sq-sec"><span>关键数据</span></div><div class="sq-kv-grid">';
-  d.kv.forEach(function(kv){ h+='<span class="k">'+kv[0]+'</span><span class="v" style="grid-column:span 2">'+kv[1]+'</span>'; });
-  h+='</div>';
+  /* 关键数据：sq-key-data 组件接管（真源 kline_daily+daily_valuation），未加载回退演示 kv */
+  if(hasKv){ h+='<div id="sq-key-data"></div>'; }
+  else{
+    h+='<div class="sq-sec"><span>关键数据</span></div><div class="sq-kv-grid">';
+    d.kv.forEach(function(kv){ h+='<span class="k">'+kv[0]+'</span><span class="v" style="grid-column:span 2">'+kv[1]+'</span>'; });
+    h+='</div>';
+  }
   /* 个股股性 */
   h+='<div class="sq-sec"><span>个股股性 · 涨停基因（近一年）</span><span class="sq-fb" onclick="fbReport(\'guxing\',\'股性统计（'+p.nm+'）\',this)">⚑报错</span></div><div class="sq-fin">';
   d.guxing.forEach(function(kv){ h+='<span class="k">'+kv[0]+'</span><span class="v">'+kv[1]+'</span>'; });
@@ -6661,6 +6681,9 @@ function sqRenderInfo(){
     +'<span class="k">上行空间</span><span class="v" style="color:var(--up)">'+d.val.up+'</span></div>'
     +'<div class="note">'+d.val.note+'；估值模型演示口径，真源 I-2</div>';
   box.innerHTML=h;
+  /* 组件接管渲染：行业标签+关键数据（容器已注入，异步取真源，失败回退上方演示标记） */
+  if(hasTags) ZK.features['sq-sector-tags'].render();
+  if(hasKv) ZK.features['sq-key-data'].render();
 }
 function sqFavTgl(sym,btn){
   var i=sqFav.indexOf(sym);

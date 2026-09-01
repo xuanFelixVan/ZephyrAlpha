@@ -28,3 +28,51 @@ modules:
     acceptance: ACC-F-STOCKQ-STOCK-HEADER
     handbook: []
     status: active
+  - id: sq-key-data
+    name: 关键数据表
+    file: features/stockq/sq-key-data.js
+    page: stockq
+    init: "init(chart, ctx)"
+    destroy: "destroy()"
+    depends: [ZK.api, sqCur, STOCKQ_D]   # STOCKQ_D=演示回退（仅 3 只演示标的）
+    toggle: none
+    styles: self-injected
+    acceptance: ACC-F-STOCKQ-KEY-DATA
+    handbook: []
+    status: active
+  - id: sq-sector-tags
+    name: 行业归属标签
+    file: features/stockq/sq-sector-tags.js
+    page: stockq
+    init: "init(chart, ctx)"
+    destroy: "destroy()"
+    depends: [ZK.api, sqCur, STOCKQ_D, go]
+    toggle: none
+    styles: self-injected
+    acceptance: ACC-F-STOCKQ-SECTOR-TAGS
+    handbook: []
+    status: active
+  - id: sq-fav-list
+    name: 自选列表
+    file: features/stockq/sq-fav-list.js
+    page: stockq
+    init: "init(chart, ctx)"
+    destroy: "destroy()"
+    depends: [ZK.api, sqFav, sqListMode, sqCur, sqSel, sqFavRm, sqPoolFind]
+    toggle: none
+    styles: self-injected
+    acceptance: ACC-F-STOCKQ-FAV-LIST
+    handbook: []
+    status: active
+  - id: sq-position-list
+    name: 持仓列表（空壳占位，QMT 延后）
+    file: features/stockq/sq-position-list.js
+    page: stockq
+    init: "init(chart, ctx)"
+    destroy: "destroy()"
+    depends: [SQ_HOLD, sqListMode, sqCur, sqSel, sqPoolFind]
+    toggle: none
+    styles: self-injected
+    acceptance: ACC-F-STOCKQ-POSITION-LIST
+    handbook: []
+    status: active

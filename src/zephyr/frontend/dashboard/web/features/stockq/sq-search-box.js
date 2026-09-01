@@ -93,7 +93,12 @@
     _search: function(query){
       var listBox = document.getElementById('sq-list');
       if(!listBox) return;
-      if(!query){ listBox.innerHTML = ''; return; }
+      /* 清空搜索词：交还 sqRenderList（其委托 sq-fav-list / sq-position-list 组件恢复列表） */
+      if(!query){
+        if(typeof sqRenderList === 'function'){ sqRenderList(); }
+        else { listBox.innerHTML = ''; }
+        return;
+      }
 
       if(window.ZK && ZK.api && ZK.api.fetchStockSearch){
         ZK.api.fetchStockSearch(query).then(function(r){

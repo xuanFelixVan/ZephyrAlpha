@@ -1,0 +1,32 @@
+# --- 治理锚定 ---
+# doc_type: register | 功能验收单（冻结"什么样子算对"）
+# ttl: permanent
+# 修订权限：Owner 专有（AI 可提议不可自改已冻结条项）
+# --- 治理锚定结束 ---
+
+feature_id: F-STOCKQ-SECTOR-TAGS
+feature_name: 行业归属标签
+frozen_at: 2026-09-01
+frozen_by: ZephyrAlpha-Owner
+revision: 1
+revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
+
+# check 取值：目检（截图人工/AI 视觉对） | 机断（DOM 断言，Playwright 落地后自动跑；过渡期人工/控制台手动验，不免验）
+items:
+  - { id: 1, text: "右栏标题/价格下方有一行行业标签（如 603216='木材加工和木、竹、藤、棕、草制品业'+'沪主板'，真源 stock_basic）", check: 目检 }
+  - { id: 2, text: "标签点击跳转板块全景页（go('sector')），悬停 title 提示'查看板块全景'", check: 目检 }
+  - { id: 3, text: "标签行尾部有四态迷你状态点（绿=真源 / 黄=延迟 / 红=断线·演示 / 灰=未启动，DS-12），悬停有释义", check: 目检 }
+  - { id: 4, text: "API 断连时回退演示 tags（STOCKQ_D 三标的）或'行业待接入'占位，状态点标红", check: 目检 }
+  - { id: 5, text: "无行业数据的股票显示'行业未分类'标签（不空白不报错）", check: 目检 }
+  - { id: 6, text: "组件已注册：ZK.features['sq-sector-tags'] 存在", check: 机断 }
+  - { id: 7, text: "容器已渲染：#sq-sector-tags 存在且含 .badge 标签", check: 机断 }
+
+execution:
+  trigger: "任何涉及本功能的 UI/接口改动 commit 前"
+  flow: "起本地服务 → 截图 → 逐条对 → 全绿才走 GitCommitGateway"
+  baseline_screenshot: "acceptance/screenshots/F-STOCKQ-SECTOR-TAGS-baseline.png"
+
+关联:
+  handbook: []
+  frontend_map: F-STOCKQ-SECTOR-TAGS
+  code_ref: "src/zephyr/frontend/dashboard/web/features/stockq/sq-sector-tags.js"
