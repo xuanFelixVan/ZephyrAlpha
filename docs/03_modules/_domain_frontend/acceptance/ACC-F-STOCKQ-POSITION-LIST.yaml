@@ -5,23 +5,28 @@
 # --- 治理锚定结束 ---
 
 feature_id: F-STOCKQ-POSITION-LIST
-feature_name: 持仓列表（空壳占位）
+feature_name: 持仓列表（QMT 文件桥真源）
 frozen_at: 2026-09-01
 frozen_by: ZephyrAlpha-Owner
-revision: 1
+revision: 2
 revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
+revision_log:
+  - "rev 1（2026-09-01）：空壳占位版（QMT 延后），灰灯'QMT 待接入·演示'，第 5 条预留接入后升版"
+  - "rev 2（2026-09-01）：Owner 指令升版——真实持仓同步 + miniQMT 2026-09-18 关停改文件桥（E:\qmt_bridge\Stock）"
 
 # check 取值：目检（截图人工/AI 视觉对） | 机断（DOM 断言，Playwright 落地后自动跑；过渡期人工/控制台手动验，不免验）
 items:
-  - { id: 1, text: "左栏持仓 tab 列表渲染 SQ_HOLD 演示数据（6 只，与汇总持仓 3 账户同源）", check: 目检 }
-  - { id: 2, text: "列表顶部有灰灯'QMT 待接入·演示'标注（演示诚实纪律，DS-12 灰=未启动）", check: 目检 }
-  - { id: 3, text: "点击行切换股票（sqSel）；无 ✕ 移除按钮（持仓不自删）", check: 目检 }
-  - { id: 4, text: "搜索词激活时不渲染（搜索态由 sq-search-box 接管）", check: 目检 }
-  - { id: 5, text: "QMT 接口接入后：灰灯升级为四态实态+真实持仓行，本验收单须升版", check: 目检 }
-  - { id: 6, text: "组件已注册：ZK.features['sq-position-list'] 存在", check: 机断 }
+  - { id: 1, text: "左栏持仓 tab 显示文件桥真实持仓（E:\qmt_bridge\Stock\PositionStatics.csv：600079 ST人福/159915/603216/159903/159865/159531 等），非演示 SQ_HOLD 六票", check: 目检 }
+  - { id: 2, text: "每行显示 名称+代码+数量（股）+现价+盈亏%，盈亏红涨绿跌着色；悬停 title 显示数量/可用/成本/市值", check: 目检 }
+  - { id: 3, text: "状态栏右侧显示账户摘要（总资产/可用，文件桥 Account.csv）", check: 目检 }
+  - { id: 4, text: "四态灯：绿=真源（导出文件 1h 内） / 黄=延迟（>1h 且显示'截至 MM-DD'） / 红=断线·演示（回退 SQ_HOLD） / 灰=未启动（DS-12）", check: 目检 }
+  - { id: 5, text: "点击行切换 K 线（非池内股票先入池带真名真码），30s 自动轮询（仅持仓 tab 且无搜索词）", check: 目检 }
+  - { id: 6, text: "零持仓行（如 888880 标准券 qty=0）不展示", check: 目检 }
+  - { id: 7, text: "组件已注册：ZK.features['sq-position-list'] 存在", check: 机断 }
+  - { id: 8, text: "/api/position 返回 ok:true + count + file_mtime + file_age_seconds + account + data[]（symbol/name/qty/pnl/pnl_pct/price）", check: 机断 }
 
 execution:
-  trigger: "任何涉及本功能的 UI 改动 commit 前"
+  trigger: "任何涉及本功能的 UI/接口改动 commit 前"
   flow: "起本地服务 → 截图 → 逐条对 → 全绿才走 GitCommitGateway"
   baseline_screenshot: "acceptance/screenshots/F-STOCKQ-POSITION-LIST-baseline.png"
 

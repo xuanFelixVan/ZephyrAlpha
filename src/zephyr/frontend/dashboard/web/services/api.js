@@ -33,6 +33,9 @@ ZK.api = (function(){
     },
     fetchQuote: function(symbols){   /* 批量最新报价（sq-fav-list）：symbols=字符串数组 */
       return fetchJson('/api/quote?symbols='+encodeURIComponent(symbols.join(',')));
+    },
+    fetchPosition: function(){   /* QMT 文件桥真实持仓（sq-position-list） */
+      return fetchJson('/api/position');
     }
   };
 })();

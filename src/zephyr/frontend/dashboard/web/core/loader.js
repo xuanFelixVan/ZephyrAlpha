@@ -42,7 +42,7 @@
     return loadJs('features/stockq/sq-fav-list.js');   /* 自选列表功能模块（模块契约，验收单 ACC-F-STOCKQ-FAV-LIST） */
   })
   .then(function(){
-    return loadJs('features/stockq/sq-position-list.js');   /* 持仓列表功能模块·空壳占位（模块契约，验收单 ACC-F-STOCKQ-POSITION-LIST） */
+    return loadJs('features/stockq/sq-position-list.js');   /* 持仓列表功能模块·QMT 文件桥真源（模块契约，验收单 ACC-F-STOCKQ-POSITION-LIST） */
   }).then(function(){
     return loadJs('core/app2.js');
   }).then(function(){

@@ -26,6 +26,8 @@ from __future__ import annotations
 
 import sys
 import threading
+import time
+import csv
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any
@@ -73,6 +75,30 @@ def _ch_exec(sql: str, params: dict | None = None) -> list:
     """带锁执行（2026-09-01 实证：stockq 多组件并发取数触发 Simultaneous queries on single connection）。"""
     with _ch_lock:
         return _ch().execute(sql, params or {})
+
+
+# QMT 文件桥（实盘）：miniQMT 通道 2026-09-18 券商关停，实盘数据一律走文件桥（Owner 2026-09-01 裁定）
+_QMT_BRIDGE_STOCK_DIR = Path(r"E:\qmt_bridge\Stock")
+
+
+def _read_gbk_csv(path: Path) -> list[list[str]]:
+    """QMT 导出 CSV 为 GBK 编码（与 ex_core.qmt_file_bridge_broker._read_gbk_csv 同口径）。"""
+    with open(path, newline="", encoding="gbk", errors="replace") as f:
+        return list(csv.reader(f))
+
+
+def _safe_float(s: str) -> float:
+    try:
+        return float(str(s).strip())
+    except (ValueError, TypeError):
+        return 0.0
+
+
+def _safe_int(s: str) -> int:
+    try:
+        return int(float(str(s).strip()))
+    except (ValueError, TypeError):
+        return 0
 
 
 def _time_col(table: str) -> str:
@@ -264,6 +290,65 @@ def quote(symbols: str = Query(..., min_length=1)) -> dict[str, Any]:
                 }
             )
         return {"ok": True, "count": len(data), "data": data}
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)[:200], "data": []}
+
+
+@app.get("/api/position")
+def position() -> dict[str, Any]:
+    """QMT 文件桥真实持仓（sq-position-list 组件）。
+    数据源：E:\\qmt_bridge\\Stock\\PositionStatics.csv + Account.csv（QMT 终端自动导出，GBK，10s 间隔）。
+    背景：miniQMT 通道 2026-09-18 券商关停，实盘数据一律走文件桥（Owner 2026-09-01 裁定）。
+    列序与 ex_core CounterStateMirror._sync_positions 同源核对（row[7]=代码 row[9]=拥有 row[15]=可用）。
+    """
+    pos_file = _QMT_BRIDGE_STOCK_DIR / "PositionStatics.csv"
+    try:
+        if not pos_file.exists():
+            return {"ok": False, "error": "bridge position file missing", "data": []}
+        data: list[dict[str, Any]] = []
+        for row in _read_gbk_csv(pos_file):
+            if len(row) < 19 or row[7].strip() == "证券代码":
+                continue
+            qty = _safe_int(row[9])
+            available = _safe_int(row[15])
+            if qty <= 0 and available <= 0:
+                continue  # 零持仓行（如标准券占位）不展示
+            data.append(
+                {
+                    "symbol": row[7].strip(),
+                    "code": row[7].strip() + "." + row[5].strip(),
+                    "name": row[8].strip(),
+                    "qty": qty,
+                    "available": available,
+                    "cost_price": _safe_float(row[11]),
+                    "market_value": _safe_float(row[13]),
+                    "pnl": _safe_float(row[12]),
+                    "pnl_pct": row[17].strip(),
+                    "price": _safe_float(row[18]),
+                }
+            )
+        # 账户摘要（Account.csv 单行）
+        account: dict[str, Any] = {}
+        acct_file = _QMT_BRIDGE_STOCK_DIR / "Account.csv"
+        if acct_file.exists():
+            for row in _read_gbk_csv(acct_file):
+                if len(row) < 11 or row[6].strip() == "总资产":
+                    continue
+                account = {
+                    "total": _safe_float(row[6]),
+                    "available": _safe_float(row[7]),
+                    "market_value": _safe_float(row[10]),
+                }
+                break
+        mtime = pos_file.stat().st_mtime
+        return {
+            "ok": True,
+            "count": len(data),
+            "file_mtime": datetime.fromtimestamp(mtime).isoformat(timespec="seconds"),
+            "file_age_seconds": int(time.time() - mtime),
+            "account": account,
+            "data": data,
+        }
     except Exception as exc:
         return {"ok": False, "error": str(exc)[:200], "data": []}
 

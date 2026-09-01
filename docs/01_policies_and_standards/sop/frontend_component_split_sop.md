@@ -334,7 +334,7 @@ services:
 | # | 组件 | 文件 | 数据源 | 状态 |
 |---|---|---|---|---|
 | 1 | sq-fav-list | features/stockq/sq-fav-list.js | localStorage + 价格推送 | ✅ 已通 |
-| 2 | sq-position-list | features/stockq/sq-position-list.js | QMT 持仓接口 | ✅ 空壳已建（QMT 延后） |
+| 2 | sq-position-list | features/stockq/sq-position-list.js | QMT 文件桥 | ✅ 已通（E:\qmt_bridge\Stock 真源） |
 | 3 | sq-search-box | features/stockq/sq-search-box.js | /api/stock-search | ✅ 已通 |
 | 4 | sq-kline-main | features/stockq/sq-kline-main.js | CH.kline_* | ⏳ 待建 |
 | 5 | sq-kline-volume | features/stockq/sq-kline-volume.js | CH.kline_* | ⏳ 待建 |
