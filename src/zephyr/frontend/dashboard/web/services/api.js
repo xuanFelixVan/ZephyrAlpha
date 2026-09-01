@@ -47,8 +47,8 @@ ZK.api = (function(){
     fetchEvents: function(){   /* 宏观事件日历（sq-event-row） */
       return fetchJson('/api/events');
     },
-    fetchBacktestList: function(){   /* 回测产物列表（backtest 页真源） */
-      return fetchJson('/api/backtest-list');
+    fetchBacktestList: function(){   /* 回测产物列表（backtest 页真源；34+ 产物逐个读 JSON，冷盘 5s 不够） */
+      return fetchJson('/api/backtest-list', 15000);
     },
     fetchBacktestDetail: function(runId){   /* 回测产物详情（绩效三图/明细） */
       return fetchJson('/api/backtest-detail?run_id='+encodeURIComponent(runId), 10000);

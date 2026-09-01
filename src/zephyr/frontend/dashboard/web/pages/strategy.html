@@ -1,6 +1,6 @@
 <section class="page" id="p-strategy">
-    <h2 class="page-title">策略档案 <span class="badge b-na">演示数据</span></h2>
-    <div class="page-sub">研究组 · 每个策略一份档案：说明+绩效+回测曲线+适用环境/风险提示/离场说明——策略是资产，不是黑箱（小红书 QuantAlchemist 参考 A1/A2；当前为架构示意，策略注册表 strategy_registry 接入后填真）</div>
+    <h2 class="page-title">框架状态 <span class="badge b-na">演示数据</span></h2>
+    <div class="page-sub">运营组 · 统一框架实时状态：当前 regime + 子策略权重 + 切换历史 + 适用性核对——regime 错=权重错（宪章 §3 约束二/三）；策略研究档案（说明+回测实绩）已并入「研究 → 回测结果」页（Owner 2026-09-01 裁定）</div>
 
     <!-- I-6c 当前框架状态卡（统一框架派：1 框架 × N 子策略 × regime 权重切换） -->
     <div class="card" id="fw-card" style="margin-bottom:14px">
@@ -37,37 +37,6 @@
       </table>
       <div class="note">预警规则：适用环境不含当前 regime 且权重≥20% 标「超配·关注」；低估值防御 25% 属防御性底仓（压舱石口径），偏强环境超配但非失效——regime 转弱触发权重自动上调（human_gated 审批）；适用环境字段=strategy_registry 注册口径，regime 实时值=框架状态卡同源</div>
     </div>
-
-    <!-- A2 策略看板宫格 -->
-    <div class="sec-title" style="margin-top:0">策略看板 <span class="dim">统一框架下子策略，按市场状态切换权重（宪章 §3 约束二）</span></div>
-    <div class="row c3" style="margin-bottom:6px">
-      <div class="card factor-card active" onclick="stratSel(0,this)"><div style="font-weight:600">主线龙头回踩</div><div class="kv-mini" style="margin-top:6px">收益 <b class="up">+18.4%</b> · 夏普 <b>2.16</b><br>回撤 <b class="down">-4.2%</b> · 持仓 3 票</div><span class="badge b-pass" style="margin-top:6px">启用 · 进攻型</span></div>
-      <div class="card factor-card" onclick="stratSel(1,this)"><div style="font-weight:600">黄金坑低吸</div><div class="kv-mini" style="margin-top:6px">收益 <b class="up">+12.1%</b> · 夏普 <b>1.83</b><br>回撤 <b class="down">-3.1%</b> · 持仓 1 票</div><span class="badge b-pass" style="margin-top:6px">启用 · 反弹型</span></div>
-      <div class="card factor-card" onclick="stratSel(2,this)"><div style="font-weight:600">宽基压舱石</div><div class="kv-mini" style="margin-top:6px">收益 <b class="up">+6.8%</b> · 夏普 <b>1.42</b><br>回撤 <b class="down">-1.8%</b> · 持仓 2 只ETF</div><span class="badge b-na" style="margin-top:6px">防御型 · 退潮顶上</span></div>
-    </div>
-
-    <!-- A1 单策略详情卡 -->
-    <div class="card" id="strat-detail">
-      <h3 id="sd-name">主线龙头回踩 <span class="dim">策略档案详情</span></h3>
-      <div class="row c2">
-        <div>
-          <table>
-            <tr><th style="width:88px">策略说明</th><td id="sd-desc">主线板块确立后，买龙头回踩 VWAP/box_lower 不破——吃主升浪延续段，不追首板</td></tr>
-            <tr><th>信号源</th><td>MOD-SIG-061 主线候选 × MOD-SIG-062 龙头识别 × MOD-PLAN-001 边界</td></tr>
-            <tr><th>绩效</th><td>近 90 日收益 <b class="up">+18.4%</b> · 年化 52% · 夏普 2.16 · 胜率 58% · 盈亏比 2.4:1</td></tr>
-            <tr><th>适用环境</th><td>情绪发酵~扩散期、主线清晰（涨停家数≥5）、regime 震荡偏强/趋势多</td></tr>
-            <tr><th>风险提示</th><td class="down">退潮期失效（主线跌停蔓延）；高潮期追高易吃面；单票集中需 8% 硬顶约束</td></tr>
-            <tr><th>离场说明</th><td>失效条件触发（板块涨停<5 家/龙头炸板不回封）即作废；must_exit 价格止损兜底</td></tr>
-          </table>
-        </div>
-        <div>
-          <div class="chart-title" style="margin-bottom:4px">回测净值曲线 <span class="dim">近 120 日（视觉示意）</span></div>
-          <svg viewBox="0 0 400 160" preserveAspectRatio="none" style="width:100%;height:160px;background:#000000;border-radius:6px" id="sd-curve"></svg>
-          <div class="note" style="margin-top:4px">回测含全部成本（佣金+印花税+滑点+冲击，宪章 §3 约束一）；与「研究 → 回测结果」页联动看完整绩效</div>
-        </div>
-      </div>
-    </div>
-    <div class="note">策略上线纪律（宪章 §4.2 B-007/B-009）：回测通过 → QMT 模拟盘 → 实盘小资金 → 实盘部署，每阶段人工审批；禁过拟合参数生效实盘</div>
   </section>
 
   

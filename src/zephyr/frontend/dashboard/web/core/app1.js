@@ -3267,14 +3267,7 @@ function renderMC(meta){
   el.innerHTML=h;
 }
 /* goIdx 已随 I-5c 指数合并退役（原 4 导航项撤销，页内切换走 techSwitch） */
-/* A2 策略看板选择 + A1 详情曲线 */
-function stratSel(i,el){
-  document.querySelectorAll('#p-strategy .factor-card').forEach(function(c){c.classList.remove('active');});
-  el.classList.add('active');
-  var nm=el.querySelector('div').textContent;
-  document.getElementById('sd-name').textContent=nm;
-  drawLine('sd-curve',genCandles(1000+i*7).map(function(k){return k.c;}),'var(--accent)',400,160);
-}
+/* stratSel/sd-curve 已随 Owner 2026-09-01 裁定退役：策略看板宫格+档案详情并入回测页（backtest.js btRenderStratGrid/btRenderProfile 真源版） */
 /* A7 因子选择 + A8 详情图 */
 function factorSel(name,el){
   document.getElementById('fc-name').childNodes[0].textContent=name+' · 分组净值 ';
@@ -3592,8 +3585,7 @@ function renderStressCard(){
 }
 renderCorrNetting(); renderPositionStates(); renderT1Card(); renderRiskExtraRows(); renderW5Calendar(); renderStressCard();
 renderOverseas(); renderT0(); renderSectorContrib(); usycRender();
-/* A1/A8 默认曲线初始化（须待 N_BARS/genCandles 就绪后执行） */
-drawLine('sd-curve',genCandles(1000).map(function(k){return k.c;}),'var(--accent)',400,160);
+/* A1/A8 默认曲线初始化（须待 N_BARS/genCandles 就绪后执行；sd-curve 已随策略档案并入回测页退役） */
 drawLine('fc-nav',genCandles(2000).map(function(k){return k.c;}),'var(--up)',400,170);
 drawLine('fc-ic',genCandles(3000).map(function(k){return k.c;}),'var(--accent)',400,110);
 
@@ -4791,7 +4783,7 @@ var SRCH_IDX=[
  {ty:'页面',t:'持仓监控',p:'position',k:'持仓 账号 盈亏日历 收益分析 阶段盈亏 容忍带 相关性'},
  {ty:'页面',t:'回测结果',p:'backtest',k:'回测 绩效 净值 回撤 交易统计 信号'},
  {ty:'页面',t:'实验历史',p:'experiment',k:'实验 runs 门控 对比 元数据'},
- {ty:'页面',t:'策略档案',p:'strategy',k:'策略 看板 框架状态 权重 regime'},
+ {ty:'页面',t:'框架状态',p:'strategy',k:'框架状态 regime 权重 切换历史 适用性核对'},
  {ty:'页面',t:'因子档案',p:'factor',k:'因子 IC IR 分组 衰减 聚类'},
  {ty:'页面',t:'个股档案',p:'stock',k:'个股 F9 股东 财务 筹码 主营 同行'},
  {ty:'页面',t:'条件选股',p:'screener',k:'选股 筛选 条件 方案 宇宙'},

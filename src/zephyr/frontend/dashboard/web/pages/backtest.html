@@ -66,6 +66,10 @@
       <div class="note">成本口径 Cost Basis：成本 = 佣金 + 印花税 + 滑点 + 市场冲击 + 做T额外成本（charter §3 约束一：费率按实际账户配置，不硬编码）。Tick 模式数据=c1_market.tick_data（3秒粒度，当前一档盘口，2-5 档容量 0）</div>
     </div>
 
+    <!-- 策略看板宫格（Owner 2026-09-01：原策略档案页宫格并入+转真源——注册表 8 策略，点选联动档案/下拉/发起回测；原演示三卡为虚构策略已弃） -->
+    <div class="sec-title" style="margin-top:0">策略看板 <span class="dim">注册表全量（/api/strategies 真源）· 指标=各策略最新回测实绩 · 点击选中联动下方档案</span></div>
+    <div class="row c3" id="bt-strat-grid" style="margin-bottom:6px"></div>
+
     <!-- 策略档案卡（Owner 2026-09-01 裁定：策略档案并入回测页——选哪个策略显示哪个档案；说明=注册表口径，绩效=该策略最新回测产物真源） -->
     <div class="card" id="bt-profile-card" style="margin-bottom:14px">
       <h3>策略档案 <span class="dim">Strategy Profile</span> <span class="badge b-pass">真源</span> <span class="dim">选中策略联动——档案说明+最新回测实绩（原策略档案页内容并入）</span></h3>

@@ -506,12 +506,17 @@ _BT_STRATEGY_NOTES = {
 
 @app.get("/api/strategies")
 def strategies() -> dict[str, Any]:
-    """策略库列表（backtest 页策略多选下拉）：StrategyRegistry + TickStrategyRegistry 真源。"""
+    """策略库列表（backtest 页策略多选下拉）：StrategyRegistry + TickStrategyRegistry 真源。
+
+    首次调用触发策略链 autodiscover import（~8s）——进程启动时后台线程预热，
+    首请求即热（2026-09-01 AbortError 实证：冷启 5s 超时）。
+    """
     try:
         sys.path.insert(0, str(_REPO / "src"))
         from zephyr.governance.strategies.strategy_base import StrategyRegistry, autodiscover_strategies
 
-        autodiscover_strategies("zephyr.pf_core")   # 幂等（含 strategies/ 子包）
+        if not StrategyRegistry.list_all():
+            autodiscover_strategies("zephyr.pf_core")   # 幂等（含 strategies/ 子包）；预热后此行为空操作
         data = []
         for sid in sorted(StrategyRegistry.list_all().keys() or []):
             data.append({"id": sid, "name": sid, "note": _BT_STRATEGY_NOTES.get(sid, ""), "tick_only": False})
@@ -624,6 +629,20 @@ from concurrent.futures import ThreadPoolExecutor  # noqa: E402
 _BT_RUN_POOL = ThreadPoolExecutor(max_workers=1, thread_name_prefix="bt-run")   # 串行防 CH 连接竞争
 _BT_RUN_STATE: dict[str, dict[str, Any]] = {}
 _BT_RUN_LOCK = threading.Lock()
+
+
+def _warm_strategy_registry() -> None:
+    """启动预热：import 策略链（autodiscover）——/api/strategies 首请求即热（~8s 冷启治本）。"""
+    try:
+        sys.path.insert(0, str(_REPO / "src"))
+        from zephyr.governance.strategies.strategy_base import autodiscover_strategies
+
+        autodiscover_strategies("zephyr.pf_core")
+    except Exception:  # noqa: BLE001 — 预热失败不炸服务，首请求再试
+        pass
+
+
+threading.Thread(target=_warm_strategy_registry, daemon=True, name="bt-strategy-warm").start()
 
 
 def _bt_run_task(task_id: str, params: dict[str, Any]) -> None:

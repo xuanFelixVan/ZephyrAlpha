@@ -210,6 +210,7 @@ function btRenderRunList(list){
 }
 function btBoot(){
   btLoadStrategies();
+  btLoadStratGrid();
   btrSyncDateInputs();
   var api=btApi(); if(!api){btSetMode('未启动');return;}
   api.fetchBacktestList().then(function(r){
@@ -228,7 +229,7 @@ var BTR_CFG={strategies:['topn-momentum'],period:'m6',customStart:null,customEnd
 var BT_STRATEGY_META={};   /* id → {note, tick_only}（/api/strategies 缓存） */
 function btLoadStrategies(){
   var api=btApi(); if(!api) return;
-  api.fetchJson('/api/strategies').then(function(r){
+  api.fetchJson('/api/strategies',20000).then(function(r){   /* 20s：首次调用触发策略链 autodiscover import（~8s），5s 默认必超时 */
     if(!r||!r.ok||!r.data||!r.data.length) return;
     var menu=document.getElementById('btr-strategy-menu'); if(!menu) return;
     BT_STRATEGY_META={};
@@ -252,6 +253,65 @@ function btStrategyLabel(){
   var t=document.getElementById('btr-strategy-t'); if(!t)return;
   t.textContent=BTR_CFG.strategies.length===1?BTR_CFG.strategies[0]:(BTR_CFG.strategies.length+' 个策略');
   btRenderProfile();   /* 选中变化 → 档案联动（Owner 2026-09-01：选哪个策略显示哪个档案） */
+}
+/* ── 策略看板宫格（Owner 2026-09-01：原策略档案页宫格并入+转真源）──
+ * 数据=/api/strategies（注册表）× /api/backtest-list（各策略最新实绩）；点选=选中该策略
+ * （联动档案卡+下拉+发起回测默认策略）。原策略页演示三卡（虚构名）已弃。 */
+var BT_GRID_DATA=[];   /* [{id,note,tick_only,perf:{ret,sharpe,dd,runs,run_id,mode}}] */
+function btRenderStratGrid(){
+  var grid=document.getElementById('bt-strat-grid');
+  if(!grid||!BT_GRID_DATA.length)return;
+  var h='';
+  BT_GRID_DATA.forEach(function(s){
+    var on=BTR_CFG.strategies.indexOf(s.id)>=0;
+    var p=s.perf;
+    var perfHtml=p
+      ? '收益 <b class="'+(p.ret>=0?'up':'down')+'">'+(p.ret>=0?'+':'')+(p.ret*100).toFixed(1)+'%</b> · 夏普 <b>'+(p.sharpe!=null?p.sharpe.toFixed(2):'--')+'</b><br>回撤 <b class="down">-'+(p.dd*100).toFixed(1)+'%</b> · 回测 <b>'+p.runs+'</b> 次'
+      : '<span class="dim">暂无回测产物</span>';
+    var badge=s.tick_only?'<span class="badge b-warn" style="margin-top:6px">Tick 专用</span>'
+      :(p?'<span class="badge b-pass" style="margin-top:6px">有实绩</span>':'<span class="badge b-na" style="margin-top:6px">未回测</span>');
+    h+='<div class="card factor-card'+(on?' active':'')+'" onclick="btGridSel(\''+s.id+'\')" title="'+(s.note||'')+'">'
+      +'<div style="font-weight:600">'+s.id+'</div>'
+      +'<div class="kv-mini" style="margin-top:6px">'+perfHtml+'</div>'+badge+'</div>';
+  });
+  grid.innerHTML=h;
+}
+function btGridSel(sid){
+  /* 宫格点选：选中策略（唯一）——联动档案/下拉标签/发起回测 */
+  BTR_CFG.strategies=[sid];
+  var t=document.getElementById('btr-strategy-t');
+  if(t)t.textContent=sid;
+  document.querySelectorAll('#btr-strategy-menu .acct-mi').forEach(function(mi){
+    var on=mi.getAttribute('data-v')===sid;
+    mi.classList.toggle('on',on);
+    var noteEl=mi.querySelector('.dim');
+    var noteTxt=noteEl?noteEl.textContent:'';
+    mi.textContent=(on?'✓ ':'')+sid+(noteTxt?' ':'');
+    if(noteTxt){var ne=document.createElement('span');ne.className='dim';ne.style.cssText='font-weight:400;font-size:10px';ne.textContent=noteTxt;mi.appendChild(ne);}
+  });
+  btRenderStratGrid();
+  btRenderProfile();
+}
+function btLoadStratGrid(){
+  var api=btApi(); if(!api)return;
+  api.fetchJson('/api/strategies',20000).then(function(sr){   /* 20s：首次调用触发策略链 autodiscover import（~8s），5s 默认必超时（2026-09-01 AbortError 实证） */
+    if(!sr||!sr.ok||!sr.data)return;
+    return api.fetchBacktestList().then(function(br){
+      var bySid={};
+      (br&&br.data||[]).forEach(function(x){
+        if(!bySid[x.strategy_id])bySid[x.strategy_id]=x;   /* created_at 降序，首个=最新 */
+      });
+      BT_GRID_DATA=sr.data.map(function(s){
+        var latest=bySid[s.id];
+        var runs=(br&&br.data||[]).filter(function(x){return x.strategy_id===s.id;}).length;
+        return {
+          id:s.id,note:s.note,tick_only:!!s.tick_only,
+          perf:latest?{ret:latest.total_return,sharpe:latest.sharpe_ratio,dd:latest.max_drawdown,runs:runs,run_id:latest.run_id}:null
+        };
+      });
+      btRenderStratGrid();
+    });
+  }).catch(function(){});
 }
 /* ── 策略档案（Owner 2026-09-01 裁定：原策略档案页并入回测页）──
  * 说明=注册表口径内置档案表；绩效=该策略最新回测产物真源（backtest-list 过滤）。 */
@@ -435,6 +495,8 @@ function btrRun(){
           st.innerHTML='✅ 完成——产物 '+runsTxt+'（'+(s.mode==='tick'?'Tick 完全仿真':'向量化')+'，净值 '+s.equity_points+' 点 / 成交 '+s.trades+' 笔），已自动载入';
           btrBusy=false;
           api.fetchBacktestList().then(function(r2){if(r2&&r2.ok){btRenderRunList(r2.data||[]);}});
+          btLoadStratGrid();   /* 宫格实绩刷新 */
+          btRenderProfile();   /* 档案实绩刷新 */
           if(runs.length)btLoadDetail(runs[0]);
           var k=document.getElementById('bt-kpi'); if(k&&k.scrollIntoView)k.scrollIntoView({behavior:'smooth',block:'start'});
         }else if(s&&s.status==='failed'){
