@@ -178,6 +178,29 @@ def stock_header(symbol: str = Query(..., min_length=1)) -> dict[str, Any]:
         return {"ok": False, "error": str(exc)[:200], "data": {}}
 
 
+@app.get("/api/stock-search")
+def stock_search(q: str = Query(..., min_length=1), limit: int = Query(20, ge=1, le=100)) -> dict[str, Any]:
+    """股票搜索（sq-search-box 组件）：按代码/名称模糊匹配。
+    数据源：stock_basic 表。
+    """
+    q = q.strip()
+    if not q:
+        return {"ok": True, "data": []}
+    try:
+        # 代码精确/前缀匹配优先，名称包含次之
+        rows = _ch().execute(
+            "SELECT symbol, name, market FROM stock_basic "
+            "WHERE symbol LIKE %(q)s OR name LIKE %(qn)s LIMIT %(l)s",
+            {"q": q + "%", "qn": "%" + q + "%", "l": limit},
+        )
+        return {
+            "ok": True,
+            "data": [{"symbol": r[0], "name": r[1], "market": r[2]} for r in rows],
+        }
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)[:200], "data": []}
+
+
 def main() -> None:
     import uvicorn
 

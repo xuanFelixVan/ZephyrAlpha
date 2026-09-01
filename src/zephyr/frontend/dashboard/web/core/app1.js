@@ -6538,7 +6538,13 @@ function sqListTab(m){
   sqRenderList();
 }
 function sqRenderList(){
+  /* v2：搜索模式由 sq-search-box 组件接管（features/stockq/sq-search-box.js）
+     无搜索词时保持原逻辑渲染自选/持仓列表 */
   var q=((document.getElementById('sq-srch')||{}).value||'').trim();
+  if(q && window.ZK && ZK.features && ZK.features['sq-search-box']){
+    /* 有搜索词且组件已加载：组件已接管 input 事件，无需重复渲染 */
+    return;
+  }
   var items=sqListMode==='fav'?sqFav:SQ_HOLD,h='';
   items.forEach(function(sym){
     var p=sqPoolFind(sym); if(!p)return;
@@ -6558,6 +6564,14 @@ function sqRenderList(){
     });
   }
   document.getElementById('sq-list').innerHTML=h||'<div class="sq-intro">清单为空或无匹配</div>';
+}
+
+/* 搜索组件桥接：从搜索结果选中股票（不在池内时先临时加入池） */
+function sqSelFromSearch(sym){
+  if(typeof sqPoolFind==='function' && !sqPoolFind(sym)){
+    SQ_POOL.push({sym:sym, nm:sym, code:sym, px:'--', pc:'--', dir:0});
+  }
+  if(typeof sqSel==='function') sqSel(sym);
 }
 function sqFavAdd(sym){
   if(sqFav.indexOf(sym)<0) sqFav.push(sym);

@@ -27,6 +27,9 @@ ZK.api = (function(){
     },
     fetchStockHeader: function(symbol){
       return fetchJson('/api/stock-header?symbol='+encodeURIComponent(symbol));
+    },
+    fetchStockSearch: function(q){
+      return fetchJson('/api/stock-search?q='+encodeURIComponent(q));
     }
   };
 })();

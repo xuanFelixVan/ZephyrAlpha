@@ -119,4 +119,6 @@
   };
 
   ZK.registerFeature(mod);
+  /* 加载链竞态兜底：若 sqInit 已执行（sqRenderHead 走了老代码路径），注册后主动触发渲染 */
+  if(typeof sqCur !== 'undefined' && typeof sqPoolFind === 'function'){ mod.render(); }
 })();
