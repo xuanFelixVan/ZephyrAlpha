@@ -28,6 +28,7 @@ import sys
 import threading
 import time
 import csv
+import json
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any
@@ -43,8 +44,8 @@ from clickhouse_driver import Client  # noqa: E402
 
 from zephyr.data.ch_config import load_ch_config  # noqa: E402
 
-app = FastAPI(title="ZephyrAlpha Dashboard API (read-only)")
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["GET"], allow_headers=["*"])
+app = FastAPI(title="ZephyrAlpha Dashboard API (read-only + backtest-run)")
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["GET", "POST"], allow_headers=["*"])
 
 _PERIOD_TABLE: dict[str, str] = {
     "1m": "kline_1min", "5m": "kline_5min", "15m": "kline_15min",
@@ -482,6 +483,153 @@ def stock_search(q: str = Query(..., min_length=1), limit: int = Query(20, ge=1,
         }
     except Exception as exc:
         return {"ok": False, "error": str(exc)[:200], "data": []}
+
+
+# ── 回测三接口（#BT-PIPELINE-001）：list / detail / run ──────────────────────
+# 数据源：data/backtest_artifacts/*.json（BTRUN CLI 强制时序落盘产物）。
+# run 走 scripts/run_backtest.py run_one（与 CLI 同一入口，页面/命令行行为一致）。
+_BT_ARTIFACTS_DIR = _REPO / "data" / "backtest_artifacts"
+
+
+@app.get("/api/backtest-list")
+def backtest_list(strategy_id: str = Query("", description="可选策略过滤")) -> dict[str, Any]:
+    """回测产物列表（backtest 页）：扫 artifacts 目录，created_at 降序。"""
+    try:
+        if not _BT_ARTIFACTS_DIR.exists():
+            return {"ok": True, "count": 0, "data": []}
+        out: list[dict[str, Any]] = []
+        for f in _BT_ARTIFACTS_DIR.glob("bt-*.json"):
+            try:
+                with open(f, encoding="utf-8") as fh:
+                    d = json.load(fh)
+                m = d.get("metrics", {})
+                if strategy_id and d.get("strategy_id") != strategy_id:
+                    continue
+                out.append(
+                    {
+                        "run_id": d.get("run_id", f.stem),
+                        "strategy_id": d.get("strategy_id", ""),
+                        "created_at": d.get("created_at", ""),
+                        "total_return": m.get("total_return"),
+                        "annual_return": m.get("annual_return"),
+                        "sharpe_ratio": m.get("sharpe_ratio"),
+                        "max_drawdown": m.get("max_drawdown"),
+                        "win_rate": m.get("win_rate"),
+                        "trades_count": m.get("trades_count"),
+                        "overfitting_flag": m.get("overfitting_flag", False),
+                        "equity_points": len(d.get("equity_curve") or []),
+                        "has_detail": bool(d.get("equity_curve") or d.get("trade_log")),
+                    }
+                )
+            except Exception:  # noqa: BLE001 — 单件损坏不拖垮整列表
+                continue
+        out.sort(key=lambda x: x.get("created_at") or "", reverse=True)
+        return {"ok": True, "count": len(out), "data": out}
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)[:200], "data": []}
+
+
+@app.get("/api/backtest-detail")
+def backtest_detail(run_id: str = Query(..., min_length=3)) -> dict[str, Any]:
+    """回测产物详情（backtest 页绩效三图/明细下钻）：按 run_id 读全量 artifact。"""
+    rid = run_id.strip()
+    if not rid.startswith("bt-") or not rid[3:].replace("-", "").isalnum():
+        return {"ok": False, "error": "bad run_id", "data": {}}
+    f = _BT_ARTIFACTS_DIR / f"{rid}.json"
+    try:
+        if not f.exists():
+            return {"ok": False, "error": "run_id not found", "data": {}}
+        with open(f, encoding="utf-8") as fh:
+            d = json.load(fh)
+        return {
+            "ok": True,
+            "data": {
+                "run_id": d.get("run_id"),
+                "strategy_id": d.get("strategy_id"),
+                "created_at": d.get("created_at"),
+                "metrics": d.get("metrics", {}),
+                "equity_curve": d.get("equity_curve") or [],
+                "drawdown_curve": d.get("drawdown_curve") or [],
+                "trade_log": d.get("trade_log") or [],
+                "benchmark_curve": d.get("benchmark_curve") or [],
+            },
+        }
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)[:200], "data": {}}
+
+
+# 页面发起回测（#4 全链路）：ThreadPoolExecutor 后台跑（RULE-SEVEN 禁 asyncio 并行），
+# 状态存内存 {task_id: {...}}；前端轮询 /api/backtest-run?task_id= 查进度。
+from concurrent.futures import ThreadPoolExecutor  # noqa: E402
+
+_BT_RUN_POOL = ThreadPoolExecutor(max_workers=1, thread_name_prefix="bt-run")   # 串行防 CH 连接竞争
+_BT_RUN_STATE: dict[str, dict[str, Any]] = {}
+_BT_RUN_LOCK = threading.Lock()
+
+
+def _bt_run_task(task_id: str, params: dict[str, Any]) -> None:
+    """后台回测线程体：跑 run_one → 更新状态（成功附 run_id，失败附 error）。"""
+    try:
+        sys.path.insert(0, str(_REPO / "scripts"))
+        from run_backtest import run_one  # noqa: E402 — scripts/ 非包，直接 import
+
+        summary = run_one(
+            strategy_id=params["strategy_id"],
+            symbols=params["symbols"],
+            start=params["start"],
+            end=params["end"],
+            factor_ids=params.get("factor_ids", ["momentum_20d"]),
+            rebalance_freq=params.get("rebalance_freq", "W-FRI"),
+            top_n=int(params.get("top_n", 10)),
+            max_single=float(params.get("max_single", 0.10)),
+            initial_capital=float(params.get("initial_capital", 1_000_000.0)),
+            pit_shift=int(params.get("pit_shift", 1)),
+        )
+        with _BT_RUN_LOCK:
+            if summary.get("ok"):
+                _BT_RUN_STATE[task_id] = {"status": "done", **summary}
+            else:
+                _BT_RUN_STATE[task_id] = {"status": "failed", "error": summary.get("error", "unknown")}
+    except Exception as exc:  # noqa: BLE001
+        with _BT_RUN_LOCK:
+            _BT_RUN_STATE[task_id] = {"status": "failed", "error": str(exc)[:300]}
+
+
+@app.post("/api/backtest-run")
+def backtest_run(body: dict[str, Any]) -> dict[str, Any]:
+    """发起回测（backtest 页「新建回测」）：入队后台执行，返回 task_id。
+
+    body: {strategy_id, symbols: [..], start, end, factor_ids?, top_n?, ...}
+    同一时刻只跑一个（max_workers=1）；重复发起排队。
+    """
+    strategy_id = str(body.get("strategy_id", "topn-momentum")).strip()
+    symbols = [str(s).strip() for s in body.get("symbols", []) if str(s).strip()]
+    start = str(body.get("start", "")).strip()
+    end = str(body.get("end", "")).strip()
+    if not symbols or not start or not end:
+        return {"ok": False, "error": "symbols/start/end required", "task_id": None}
+    task_id = f"btrun-{int(time.time())}-{len(_BT_RUN_STATE) % 10000}"
+    with _BT_RUN_LOCK:
+        _BT_RUN_STATE[task_id] = {"status": "running", "params": {"strategy_id": strategy_id, "symbols": symbols, "start": start, "end": end}}
+    _BT_RUN_POOL.submit(_bt_run_task, task_id, {
+        "strategy_id": strategy_id, "symbols": symbols, "start": start, "end": end,
+        "factor_ids": body.get("factor_ids", ["momentum_20d"]),
+        "rebalance_freq": body.get("rebalance_freq", "W-FRI"),
+        "top_n": body.get("top_n", 10), "max_single": body.get("max_single", 0.10),
+        "initial_capital": body.get("initial_capital", 1_000_000.0),
+        "pit_shift": body.get("pit_shift", 1),
+    })
+    return {"ok": True, "task_id": task_id, "status": "running"}
+
+
+@app.get("/api/backtest-run")
+def backtest_run_status(task_id: str = Query(..., min_length=3)) -> dict[str, Any]:
+    """轮询回测任务状态：running / done / failed（done 附 run_id 可跳详情）。"""
+    with _BT_RUN_LOCK:
+        st = _BT_RUN_STATE.get(task_id.strip())
+    if st is None:
+        return {"ok": False, "error": "task not found", "status": "unknown"}
+    return {"ok": True, **st}
 
 
 def main() -> None:
