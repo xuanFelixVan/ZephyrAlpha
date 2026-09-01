@@ -337,9 +337,11 @@
       <h3>DS-11 模块拆件标准 <span class="dim">v8 新增（2026-08-31）——K 线工作台模块化实证转正（成本线 pilot 验收单六条全绿）</span></h3>
       <table>
         <tr><th>判据</th><th>内容</th><th>实证</th></tr>
-        <tr><td><b>拆（满足任一即拆）</b></td><td>①会被反复改的功能（返工次数=最强信号）②有独立开关/显隐 ③有独立视觉样式（样式随模块自注入）④跨页面可复用</td><td>成本线：改七次+¥ 独立开关+琥珀提示框样式 → 拆</td></tr>
+        <tr><td><b>拆（数据源边界）</b></td><td>两个功能块数据源不同 = 必须拆成两个组件。即使视觉相邻、同页面，数据源不同 = 独立组件（Owner 2026-09-01 裁定）</td><td>自选列表（localStorage）vs 持仓列表（QMT）必须拆</td></tr>
+        <tr><td><b>拆（单一功能）</b></td><td>一个视觉区块 + 一种交互行为 + 一个功能语义 = 一个组件。即使数据源相同，功能不同也必须拆（Owner 2026-09-01 裁定）</td><td>右栏"股票标题"和"关键数据表"同读 daily_valuation，功能不同 = 独立组件</td></tr>
+        <tr><td><b>拆（经典五信号）</b></td><td>①会被反复改的功能（返工次数=最强信号）②有独立开关/显隐 ③有独立视觉样式（样式随模块自注入）④跨页面可复用 ⑤有独立数据源/接口</td><td>成本线：改七次+¥ 独立开关+琥珀提示框样式 → 拆</td></tr>
         <tr><td><b>不拆</b></td><td>①一次性初始化逻辑 ②与宿主强耦合无独立边界 ③纯页面布局结构（HTML 骨架）</td><td>sqInit 初始化链留在 app1.js</td></tr>
-        <tr><td><b>契约四要素</b></td><td>①单文件 <b>web/features/&lt;id&gt;.js</b>（模板注册/渲染/样式/销毁全包）②接口 <b>init(chart,ctx) / render(d) / destroy()</b> ③<b>features/manifest.yaml</b> 登记（depends 显式声明+验收单+手册条目互挂）④模块间只经 <b>ZK.bus</b> 事件总线通信，禁跨模块改对方 DOM/状态</td><td>features/cost-line.js + features/manifest.yaml（registry 首条）</td></tr>
+        <tr><td><b>契约四要素</b></td><td>①单文件 <b>web/features/&lt;page&gt;/&lt;id&gt;.js</b>（模板注册/渲染/样式/销毁全包）②接口 <b>init(chart,ctx) / render(d) / destroy()</b> ③<b>features/manifest.yaml</b> 登记（depends 显式声明+验收单+手册条目互挂）④模块间只经 <b>ZK.bus</b> 事件总线通信，禁跨模块改对方 DOM/状态</td><td>features/cost-line.js + features/manifest.yaml（registry 首条）</td></tr>
         <tr><td><b>迁移纪律</b></td><td>不重写大文件——新功能一律模块制；最爱改的先抽样板；样板跑通后逐步迁，宿主文件只减不增</td><td>app1.js 成本线段 −40 行（commit bbcc95a9）</td></tr>
         <tr><td><b>质量门</b></td><td>UI 改动 commit 前必须过验收单：起本地服务 → 截图 → 逐条对 → 全绿才提交；机断条款过渡期人工/控制台手动验（不免验）</td><td>ACC-F-STOCKQ-COSTLINE 六条全绿（Owner 截图目检）</td></tr>
       </table>
