@@ -49,9 +49,16 @@ related_modules:
 |---|---|---|
 | 功能模块 ID | `sq-<name>` | `sq-stock-header` |
 | 文件路径 | `features/<page>/sq-<name>.js` | `features/stockq/sq-stock-header.js` |
+| 纯 UI 件 | `widgets/w-<name>.js` | `widgets/w-price-tag.js` |
+| 数据服务 | `services/svc-<domain>.js` | `services/svc-market.js` |
 | 验收单 | `ACC-F-<PAGE>-<NAME>.yaml` | `ACC-F-STOCKQ-STOCK-HEADER.yaml` |
 | 全景图功能点 | `F-<PAGE>-<NAME>` | `F-STOCKQ-STOCK-HEADER` |
 | API 接口 | `/api/<name>` | `/api/stock-header` |
+
+**三类组件区别**：
+- **features/**：有数据有交互，页面专属（如 sq-stock-header）
+- **widgets/**：无数据无行为，仅渲染样式，全站复用（如 w-price-tag）
+- **services/**：数据通道，按域分文件（如 svc-market 管 K线/报价）
 
 ---
 
@@ -92,6 +99,53 @@ related_modules:
 
 **关键坑**：**加载链竞态**——宿主 `sqInit()` 在 app1.js 中执行时，组件可能还没加载。必须加竞态兜底：注册后检查宿主变量是否已存在，存在则主动 `render()`。
 
+**组件类型变体**：
+
+| 类型 | 特点 | 示例 |
+|---|---|---|
+| 标准组件 | init/render/destroy 三契约 | sq-stock-header |
+| 图表组件 | 需接收 chart 实例 | sq-kline-main（init(chart) 拿 KLineChart 实例） |
+| 纯展示组件 | 无 chart，只操作 DOM | sq-search-box |
+| 交互组件 | 需绑定事件（点击/拖拽/键盘） | sq-draw-tools |
+| 聚合组件 | 聚合其他组件状态 | sq-data-source-badge（轮询各组件 mode） |
+
+**图表组件模板**（需 chart 实例）：
+
+```javascript
+var mod = {
+  id: 'sq-kline-main',
+  chart: null,
+  init: function(chart, ctx){
+    this.chart = chart;  /* 接收宿主传入的 KLineChart 实例 */
+    /* 注册指标/覆盖物/事件监听 */
+  },
+  render: function(d){ /* 用 chart.setData(d) 渲染 */ },
+  destroy: function(){ if(this.chart) this.chart.dispose(); }
+};
+```
+
+**纯 UI 件（widgets/）模板**：
+
+```javascript
+/* 纯 UI 件：无数据无行为，仅渲染样式 */
+(function(){
+  function injectStyles(){ /* 注入 CSS */ }
+  window.WPriceTag = { render: function(el, price, direction){ /* 渲染价格标签 */ } };
+  injectStyles();
+})();
+```
+
+**数据服务（services/）模板**：
+
+```javascript
+/* 数据服务：按域分文件，导出 fetch 方法 */
+window.ZK = window.ZK || {};
+ZK.svcMarket = {
+  fetchKline: function(symbol, period){ /* ... */ },
+  fetchQuote: function(symbol){ /* ... */ }
+};
+```
+
 ### Step 3：API 接口（如需新数据）
 
 **路径**：`src/zephyr/frontend/dashboard/api_server.py`
@@ -114,6 +168,17 @@ def <name>(symbol: str = Query(..., min_length=1)) -> dict[str, Any]:
 ```
 
 **坑**：ClickHouse 表结构必须先 `DESCRIBE TABLE` 确认列名，不要假设。
+
+**数据源类型变体**：
+
+| 数据源 | 组件示例 | API 接口 | 备注 |
+|---|---|---|---|
+| CH 表 | sq-stock-header / sq-key-data | `/api/stock-header` | 查 stock_basic/daily_valuation 等 |
+| QMT 接口 | sq-position-list / sq-order-book | 需 QMT 桥接服务 | 实盘数据，延后开发 |
+| localStorage | sq-fav-list | 无（纯前端） | 自选列表本地存储 |
+| 纯前端 | sq-draw-tools / sq-timeline | 无 | 画线工具/时间轴 |
+| 后端接口 | sq-financial-read / sq-news | `/api/finance` / `/api/news` | 财务/新闻数据 |
+| 聚合状态 | sq-data-source-badge | 无（读各组件状态） | 轮询 ZK.features 各组件 mode |
 
 ### Step 4：前端数据服务
 
@@ -169,6 +234,28 @@ function sqRender<Name>(){
 | 验收单 | `docs/03_modules/_domain_frontend/acceptance/ACC-F-<PAGE>-<NAME>.yaml` | 9 条验收项（目检+机断） |
 | 手册 | `frontend_handbook/project_conventions.md` | 踩坑记录（试了两次以上才解决的必入册） |
 
+**widgets/ 登记**：widgets 是全局复用件，不进 frontend_map（无 page 归属），但需在 `widgets/manifest.yaml` 登记：
+
+```yaml
+widgets:
+  - id: w-price-tag
+    name: 价格标签
+    file: widgets/w-price-tag.js
+    scope: global
+    usage: "所有显示价格的地方"
+```
+
+**services/ 登记**：services 是数据通道，在 `services/manifest.yaml` 登记域和方法：
+
+```yaml
+services:
+  - id: svc-market
+    name: 行情数据服务
+    file: services/svc-market.js
+    domain: market
+    methods: [fetchKline, fetchQuote]
+```
+
 ### Step 8：冒烟测试 + 提交
 
 **测试**：`python -m pytest tests/frontend/test_dashboard_smoke.py -x -q`
@@ -208,17 +295,62 @@ function sqRender<Name>(){
 
 ---
 
-## 六、已完成组件清单（stockq 页）
+## 六、stockq 页组件全清单（26 features + 6 widgets + 8 services）
 
-| 组件 | 文件 | 状态 | 验收单 |
+### features/stockq/（26 个）
+
+| # | 组件 | 文件 | 数据源 | 状态 |
+|---|---|---|---|---|
+| 1 | sq-fav-list | features/stockq/sq-fav-list.js | localStorage + 价格推送 | ⏳ 待建 |
+| 2 | sq-position-list | features/stockq/sq-position-list.js | QMT 持仓接口 | ⏳ 待建（QMT 延后） |
+| 3 | sq-search-box | features/stockq/sq-search-box.js | /api/stock-search | ✅ 已通 |
+| 4 | sq-kline-main | features/stockq/sq-kline-main.js | CH.kline_* | ⏳ 待建 |
+| 5 | sq-kline-volume | features/stockq/sq-kline-volume.js | CH.kline_* | ⏳ 待建 |
+| 6 | sq-kline-macd | features/stockq/sq-kline-macd.js | CH.kline_* | ⏳ 待建 |
+| 7 | sq-kline-kdj | features/stockq/sq-kline-kdj.js | CH.kline_* | ⏳ 待建 |
+| 8 | sq-draw-tools | features/stockq/sq-draw-tools.js | 无（纯前端） | ⏳ 待建 |
+| 9 | sq-marks-bs | features/stockq/sq-marks-bs.js | 后端信号接口 | ⏳ 待建 |
+| 10 | sq-marks-trade | features/stockq/sq-marks-trade.js | QMT 成交接口 | ⏳ 待建（QMT 延后） |
+| 11 | sq-marks-chip | features/stockq/sq-marks-chip.js | CH.chip_distribution | ⏳ 待建 |
+| 12 | sq-cost-line | features/cost-line.js | chip-peak.avgCost | ✅ 已通 |
+| 13 | sq-event-row | features/stockq/sq-event-row.js | CH.calendar_event | ⏳ 待建 |
+| 14 | sq-timeline | features/stockq/sq-timeline.js | 无（纯前端） | ⏳ 待建 |
+| 15 | sq-chip-peak | features/stockq/sq-chip-peak.js | CH.chip_distribution | ⏳ 待建 |
+| 16 | sq-stock-header | features/stockq/sq-stock-header.js | /api/stock-header | ✅ 已通 |
+| 17 | sq-sector-tags | features/stockq/sq-sector-tags.js | stock_basic.sector | ⏳ 待建 |
+| 18 | sq-company-intro | features/stockq/sq-company-intro.js | stock_basic.intro | ⏳ 待建 |
+| 19 | sq-order-book | features/stockq/sq-order-book.js | QMT l2_tick | ⏳ 待建（QMT 延后） |
+| 20 | sq-key-data | features/stockq/sq-key-data.js | CH.daily_valuation | ⏳ 待建 |
+| 21 | sq-financial-read | features/stockq/sq-financial-read.js | CH.finance | ⏳ 待建 |
+| 22 | sq-related-news | features/stockq/sq-related-news.js | CH.news | ⏳ 待建 |
+| 23 | sq-quant-analysis | features/stockq/sq-quant-analysis.js | 后端量化接口 | ⏳ 待建 |
+| 24 | sq-fair-value | features/stockq/sq-fair-value.js | 后端估值接口 | ⏳ 待建 |
+| 25 | sq-limit-up-gene | features/stockq/sq-limit-up-gene.js | CH.limit_up_pool | ⏳ 待建 |
+| 26 | sq-data-source-badge | features/stockq/sq-data-source-badge.js | 各组件状态聚合 | ⏳ 待建 |
+
+### widgets/（6 个，全站复用）
+
+| # | 组件 | 文件 | 用途 |
 |---|---|---|---|
-| sq-stock-header | features/stockq/sq-stock-header.js | ✅ 已通 | ACC-F-STOCKQ-STOCK-HEADER |
-| sq-search-box | features/stockq/sq-search-box.js | ✅ 已通 | ACC-F-STOCKQ-SEARCH-BOX |
-| sq-cost-line | features/cost-line.js | ✅ 已通 | ACC-F-STOCKQ-COSTLINE |
-| sq-key-data | features/stockq/sq-key-data.js | ⏳ 待建 | - |
-| sq-fav-list | features/stockq/sq-fav-list.js | ⏳ 待建 | - |
-| sq-order-book | features/stockq/sq-order-book.js | ⏳ 待建 | - |
-| ... | ... | ... | ... |
+| 1 | w-price-tag | widgets/w-price-tag.js | 价格标签（红涨绿跌） |
+| 2 | w-pct-badge | widgets/w-pct-badge.js | 涨跌幅徽章 |
+| 3 | w-data-table | widgets/w-data-table.js | 键值对数据表格 |
+| 4 | w-mini-chart | widgets/w-mini-chart.js | 迷你走势图 |
+| 5 | w-icon-toggle | widgets/w-icon-toggle.js | 图标开关（¥/⇅/◍/▤/⚑） |
+| 6 | w-status-light | widgets/w-status-light.js | 状态灯（DS-12 四态） |
+
+### services/（8 个，按域分）
+
+| # | 服务 | 文件 | 职责 |
+|---|---|---|---|
+| 1 | svc-market | services/svc-market.js | K线/分时/报价/五档 |
+| 2 | svc-stock-info | services/svc-stock-info.js | 公司资料/财务/关键数据 |
+| 3 | svc-events | services/svc-events.js | 日历事件/财报/解禁 |
+| 4 | svc-chip | services/svc-chip.js | 筹码分布/成本/获利比例 |
+| 5 | svc-fav | services/svc-fav.js | 自选增删改/排序 |
+| 6 | svc-position | services/svc-position.js | 持仓查询/盈亏计算 |
+| 7 | svc-news | services/svc-news.js | 新闻列表/详情 |
+| 8 | svc-quant | services/svc-quant.js | 量化信号/因子/模型 |
 
 ---
 
