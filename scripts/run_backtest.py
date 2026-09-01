@@ -44,6 +44,14 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
 
+def _ts_key(ts) -> str:
+    """时间戳键：日级→YYYY-MM-DD；分钟级→YYYY-MM-DD HH:MM（mode=minute nav 索引）。"""
+    s = str(ts)
+    if len(s) >= 16 and s[10] == " " and not (s[11:16] == "00:00"):
+        return s[:16]   # 分钟 bar（开盘时段非 00:00）
+    return s[:10]       # 日级（或恰好 00:00 的边界值归日级显示）
+
+
 def _collect_timeseries(runner, data, signals, config, engine) -> dict:
     """从引擎 last_portfolio 收集四条时序（sink 契约格式）。
 
@@ -53,6 +61,7 @@ def _collect_timeseries(runner, data, signals, config, engine) -> dict:
     - benchmark_curve: 基准未接（引擎层无基准数据通道），留 None 由前端显示"无基准"
 
     side 映射：Portfolio 记 BUY/SELL（大写），sink 契约 buy/sell（小写）。
+    timestamp 键：日级 [:10] / 分钟级 [:16]（_ts_key）。
     """
     portfolio = getattr(engine, "last_portfolio", None)
     if portfolio is None:
@@ -63,8 +72,8 @@ def _collect_timeseries(runner, data, signals, config, engine) -> dict:
     if nav is not None and len(nav) > 0:
         peak = None
         for ts, v in nav.items():
-            ts_str = str(ts)[:10]
-            if ts_str in ("NaT", "None", "nan", ""):
+            ts_str = _ts_key(ts)
+            if ts_str[:10] in ("NaT", "None", "nan", "") or ts_str.startswith("NaT"):
                 continue  # nav_series 首日索引可能为 NaT（日期解析失败），过滤防脏数据落盘
             equity_curve.append({"timestamp": ts_str, "equity": float(v)})
             peak = float(v) if peak is None else max(peak, float(v))
@@ -74,7 +83,7 @@ def _collect_timeseries(runner, data, signals, config, engine) -> dict:
     for t in portfolio.trades_log:
         trade_log.append(
             {
-                "timestamp": str(t.get("date", ""))[:10],
+                "timestamp": _ts_key(t.get("date", "")),
                 "symbol": str(t.get("symbol", "")),
                 "side": str(t.get("side", "")).lower(),
                 "price": float(t.get("price", 0.0)),
@@ -155,6 +164,49 @@ def _sink_strategy_signals(signals, strategy_id: str, run_id: str, factor_ids) -
         return {"written": 0, "warn": f"signal sink failed: {exc}"}
 
 
+def _load_minute_history(symbols: list[str], start: str, end: str):
+    """kline_1min → MultiIndex(symbol, date=分钟timestamp) OHLCV（mode=minute 数据层）。
+
+    数据源：c1_market.kline_1min（14.5 亿行，2021-09 起，trade_time 带时区）。
+    返回与 load_history 同构形状（引擎消费契约），时区剥离保墙钟时间（与日频
+    naive Timestamp 对齐，reindex/ffill 不炸）。
+    """
+    import pandas as pd
+    from zephyr.data import ch_writer
+
+    client = ch_writer.get_client()
+    if client is None:
+        raise RuntimeError("ClickHouse 不可达（get_client 返回 None）")
+    syms = [s.split(".")[0] for s in symbols]
+    rows = client.execute(
+        "SELECT symbol, trade_time, open, high, low, close, volume, amount "
+        "FROM c1_market.kline_1min "
+        "WHERE symbol IN %(syms)s AND trade_date >= %(start)s AND trade_date <= %(end)s "
+        "ORDER BY trade_time",
+        {"syms": syms, "start": start, "end": end},
+    )
+    if not rows:
+        return pd.DataFrame()
+    df = pd.DataFrame(rows, columns=["symbol", "trade_time", "open", "high", "low", "close", "volume", "amount"])
+    for c in ("open", "high", "low", "close", "volume", "amount"):
+        df[c] = df[c].astype(float)
+    df["trade_time"] = pd.to_datetime(df["trade_time"]).dt.tz_localize(None)   # 剥时区保墙钟
+    df = df.drop_duplicates(subset=["symbol", "trade_time"], keep="last")
+    return df.set_index(["symbol", "trade_time"]).sort_index()
+
+
+def _minute_signal_panel(daily_signals, minute_index):
+    """日频权重面板 → 分钟时间戳 ffill（信号=日频，价格路径=分钟）。
+
+    union(日频索引, 分钟索引) 后 ffill 再取分钟切片——调仓日权重从当日首个
+    分钟 bar 生效，非调仓日沿用（与日频引擎 ffill 语义一致）。
+    """
+    import pandas as pd
+
+    combined = daily_signals.reindex(daily_signals.index.union(minute_index)).ffill()
+    return combined.loc[minute_index].fillna(0.0)
+
+
 def run_one(
     strategy_id: str,
     symbols: list[str],
@@ -198,16 +250,37 @@ def run_one(
 
         warm_start = (_d.strptime(start, "%Y-%m-%d") - _td(days=90)).strftime("%Y-%m-%d")
         data, signals = runner.build_weight_panel(symbols, warm_start, end, config)
+    elif mode == "minute":
+        # 分钟级：日频信号（前扩预热）× 分钟价格路径（kline_1min 原窗口）。
+        # 与向量化日频互补：用当日真实分钟 bar 撮合而非收盘价；比 tick 轻。
+        # 已知近似（诚实标注）：T+1 锁/涨跌停检查按"前一根 bar"口径（分钟级引擎
+        # 逐 bar 迭代），非日频的昨收口径——日内约束近似弱化。
+        from datetime import datetime as _d, timedelta as _td
+
+        warm_start = (_d.strptime(start, "%Y-%m-%d") - _td(days=90)).strftime("%Y-%m-%d")
+        _, daily_signals = runner.build_weight_panel(symbols, warm_start, end, config)
+        data = _load_minute_history(symbols, start, end)
+        if data.empty:
+            return {"ok": False, "error": "kline_1min no rows in window"}
+        minute_index = data.index.get_level_values("trade_time").unique().sort_values()
+        signals = _minute_signal_panel(daily_signals, minute_index)
+        if signals.empty:
+            return {"ok": False, "error": "minute signal panel empty (daily factor warmup?)"}
     else:
         data, signals = runner.build_weight_panel(symbols, start, end, config)
     if signals.empty or data.empty:
         return {"ok": False, "error": "data/signal panel empty (CH no rows or factor empty)"}
 
-    # 归一化 date level（与 StrategyRunner.run_backtest 同款适配）
+    # 归一化 date level（引擎 _get_sorted_dates 期望 level 名 "date"）：
+    # 日频=trade_date → date；分钟级=trade_time → date
     import pandas as pd
 
-    if isinstance(data.index, pd.MultiIndex) and "trade_date" in (data.index.names or []):
-        data.index = data.index.rename({"trade_date": "date"})
+    if isinstance(data.index, pd.MultiIndex):
+        names = data.index.names or []
+        if "trade_date" in names:
+            data.index = data.index.rename({"trade_date": "date"})
+        elif "trade_time" in names:
+            data.index = data.index.rename({"trade_time": "date"})
 
     from decimal import Decimal
 
@@ -332,7 +405,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--max-single", type=float, default=0.10)
     p.add_argument("--capital", type=float, default=1_000_000.0)
     p.add_argument("--pit-shift", type=int, default=1)
-    p.add_argument("--mode", default="vectorized", choices=["vectorized", "tick"], help="vectorized=日频向量化 / tick=事件驱动完全仿真（逐tick回放+5档撮合）")
+    p.add_argument("--mode", default="vectorized", choices=["vectorized", "minute", "tick"], help="vectorized=日频向量化 / minute=分钟级（kline_1min 价格路径）/ tick=事件驱动完全仿真（逐tick回放+5档撮合）")
     p.add_argument("--list-strategies", action="store_true")
     p.add_argument("--self-check", action="store_true")
     args = p.parse_args(argv)

@@ -553,9 +553,25 @@ def backtest_list(strategy_id: str = Query("", description="可选策略过滤")
         return {"ok": False, "error": str(exc)[:200], "data": []}
 
 
+def _thin_points(points: list[dict], max_points: int) -> list[dict]:
+    """时序点等距抽稀（展示层）。存储层（JSON 产物）全量不动——审计可回放；
+    tick 模式 127 万点全量渲染必卡死，抽稀到 max_points 视觉无差。"""
+    if len(points) <= max_points:
+        return points
+    step = len(points) / max_points
+    return [points[int(i * step)] for i in range(max_points)]
+
+
 @app.get("/api/backtest-detail")
-def backtest_detail(run_id: str = Query(..., min_length=3)) -> dict[str, Any]:
-    """回测产物详情（backtest 页绩效三图/明细下钻）：按 run_id 读全量 artifact。"""
+def backtest_detail(
+    run_id: str = Query(..., min_length=3),
+    max_points: int = Query(5000, ge=200, le=50000, description="净值/回撤曲线抽稀上限（tick 产物百万点）"),
+) -> dict[str, Any]:
+    """回测产物详情（backtest 页绩效三图/明细下钻）：按 run_id 读全量 artifact。
+
+    equity/drawdown 曲线等距抽稀到 max_points（首末点保留采样内含）；trade_log
+    倒序 cap 500（产物文件全量，审计不受影响）。
+    """
     rid = run_id.strip()
     if not rid.startswith("bt-") or not rid[3:].replace("-", "").isalnum():
         return {"ok": False, "error": "bad run_id", "data": {}}
@@ -565,6 +581,9 @@ def backtest_detail(run_id: str = Query(..., min_length=3)) -> dict[str, Any]:
             return {"ok": False, "error": "run_id not found", "data": {}}
         with open(f, encoding="utf-8") as fh:
             d = json.load(fh)
+        eq_full = d.get("equity_curve") or []
+        dd_full = d.get("drawdown_curve") or []
+        tl_full = d.get("trade_log") or []
         return {
             "ok": True,
             "data": {
@@ -572,10 +591,11 @@ def backtest_detail(run_id: str = Query(..., min_length=3)) -> dict[str, Any]:
                 "strategy_id": d.get("strategy_id"),
                 "created_at": d.get("created_at"),
                 "metrics": d.get("metrics", {}),
-                "equity_curve": d.get("equity_curve") or [],
-                "drawdown_curve": d.get("drawdown_curve") or [],
-                "trade_log": d.get("trade_log") or [],
+                "equity_curve": _thin_points(eq_full, max_points),
+                "drawdown_curve": _thin_points(dd_full, max_points),
+                "trade_log": tl_full[-500:][::-1],   # 倒序（最新在前）cap 500
                 "benchmark_curve": d.get("benchmark_curve") or [],
+                "total_points": {"equity": len(eq_full), "trades": len(tl_full)},   # 全量规模（抽稀明示）
             },
         }
     except Exception as exc:
@@ -652,7 +672,7 @@ def backtest_run(body: dict[str, Any]) -> dict[str, Any]:
     start = str(body.get("start", "")).strip()
     end = str(body.get("end", "")).strip()
     mode = str(body.get("mode", "vectorized")).strip()
-    if mode not in ("vectorized", "tick"):
+    if mode not in ("vectorized", "minute", "tick"):
         mode = "vectorized"
     if not strategies or not symbols or not start or not end:
         return {"ok": False, "error": "strategies/symbols/start/end required", "task_id": None}

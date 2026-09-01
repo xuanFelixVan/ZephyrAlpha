@@ -49,10 +49,11 @@
           <span class="sel" id="btr-mode-sel" style="position:relative;cursor:pointer" onclick="btrDropTgl(event)"><span id="btr-mode-t">日频向量化</span> ▾
             <span class="acct-menu" id="btr-mode-menu">
               <span class="acct-mi on" data-v="vectorized" onclick="btrPick('mode','vectorized',event)">日频向量化（快速筛选）</span>
+              <span class="acct-mi" data-v="minute" onclick="btrPick('mode','minute',event)">分钟级（kline_1min 价格路径）</span>
               <span class="acct-mi" data-v="tick" onclick="btrPick('mode','tick',event)">Tick 完全仿真（逐tick回放+5档撮合）</span>
             </span>
           </span>
-          <div class="btr-opts" id="btr-mode-note">机构对照：Tick 模式=专业平台「tick 回放/事件驱动仿真」（聚宽掘金同款选项）；分钟级引擎待接入</div>
+          <div class="btr-opts" id="btr-mode-note">三档保真度递进；机构对照：Tick=「事件驱动仿真」、分钟=「bar 回放」</div>
         </div>
         <div class="btr-fld">
           <span class="btn primary" id="btr-btn" onclick="btrRun()">▶ 发起回测</span>

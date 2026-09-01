@@ -173,15 +173,22 @@ function btLoadDetail(runId){
     btCharts(B);
     btFillKpi(r.data.metrics||{});
     btFillTradeLog(r.data.trade_log||[]);
+    /* 抽稀明示：tick/minute 产物展示抽稀（存储全量） */
+    var tp=r.data.total_points;
+    var sub=document.querySelector('#p-backtest .strategy-head .sub');
+    if(sub&&tp&&tp.equity&&tp.equity>B.n){
+      sub.textContent+=' · 展示抽稀 '+B.n+'/'+tp.equity+' 点（产物文件全量）';
+    }
     btSetMode('真源',runId);
   }).catch(function(){btCharts();btSetMode('断线');});
 }
-/* Tab5 交易明细表填真源 trade_log */
+/* Tab5 交易明细表填真源 trade_log（API 已倒序最新在前，前端 cap 200） */
 function btFillTradeLog(log){
   var tab=document.querySelector('#bt-signal table');
-  if(!tab||!log.length)return;
+  if(!tab)return;
+  if(!log.length)return;
   var h='<tr><th>时间 Time</th><th>代码 Symbol</th><th>方向 Side</th><th>价格 Price</th><th>数量 Qty</th><th>金额 Amount</th><th>手续费 Fee</th></tr>';
-  log.slice(-200).reverse().forEach(function(t){
+  log.slice(0,200).forEach(function(t){
     var amt=(t.price*t.quantity).toFixed(0);
     h+='<tr><td>'+t.timestamp+'</td><td>'+t.symbol+'</td><td class="'+(t.side==='buy'?'up':'down')+'">'+t.side+'</td><td>'+t.price.toFixed(3)+'</td><td>'+t.quantity+'</td><td>¥'+amt+'</td><td>'+t.commission.toFixed(2)+'</td></tr>';
   });
@@ -269,11 +276,14 @@ function btrPick(kind,v,e){
   if(kind==='capital'){BTR_CFG.capital=parseInt(v,10);document.getElementById('btr-capital-t').textContent=label;}
   if(kind==='mode'){
     BTR_CFG.mode=v;
-    document.getElementById('btr-mode-t').textContent=(v==='tick'?'Tick 完全仿真':'日频向量化');
+    var modeNames={vectorized:'日频向量化',minute:'分钟级',tick:'Tick 完全仿真'};
+    document.getElementById('btr-mode-t').textContent=modeNames[v]||v;
     var note=document.getElementById('btr-mode-note');
     if(note)note.textContent=v==='tick'
-      ?'Tick 完全仿真：c1_market.tick_data 逐tick回放（3秒粒度）+5档盘口撮合——机构「事件驱动仿真」同构；tick 数据自 2026-08 起覆盖'
-      :'日频向量化（快速筛选）；Tick 模式=专业平台「tick 回放」选项；分钟级引擎待接入';
+      ?'Tick 完全仿真：c1_market.tick_data 逐tick回放（3秒粒度）+5档盘口撮合——数据量大（6个月×5票≈百万tick，跑数分钟属正常），完成后自动载入'
+      :(v==='minute'
+        ?'分钟级：日频信号 × kline_1min 分钟价格路径逐 bar 撮合——比日频保真（用当日真实分钟价），比 tick 快'
+        :'日频向量化（快速筛选）；三档保真度：日频 < 分钟 < tick');
   }
   var sel=e?e.target.parentNode:null;
   if(sel&&sel.parentNode){sel.parentNode.querySelectorAll('.acct-mi').forEach(function(mi){mi.classList.remove('on');});sel.classList.add('on');}
@@ -314,13 +324,16 @@ function btrRun(){
   if(!btn||!wrap||!fill||!st){btrBusy=false;return;}
   var api=btApi(); if(!api){btrBusy=false;return;}
   var span=btrPeriodSpan(BTR_CFG.period);
-  var modeName=BTR_CFG.mode==='tick'?'Tick 完全仿真':'日频向量化';
+  var modeNames={vectorized:'日频向量化',minute:'分钟级',tick:'Tick 完全仿真'};
+  var modeName=modeNames[BTR_CFG.mode]||BTR_CFG.mode;
   var body={strategies:BTR_CFG.strategies.slice(),symbols:['600519.SH','000858.SZ','601318.SH','600036.SH','000001.SZ'],start:span.start,end:span.end,top_n:3,initial_capital:BTR_CFG.capital,mode:BTR_CFG.mode};
   btn.classList.remove('primary');
   btn.textContent='提交中… Submitting';
   fill.style.transition='none'; fill.style.width='0%';
   wrap.style.display='block';
-  st.textContent='POST /api/backtest-run（'+BTR_CFG.strategies.join('+')+' · '+span.start+' ~ '+span.end+' · '+(BTR_CFG.capital/10000)+'万 · '+modeName+'，后台串行）…';
+  var slow=(BTR_CFG.mode==='tick')?'（tick 数据量大，跑数分钟属正常，勿重复点击）':(BTR_CFG.mode==='minute'?'（分钟数据中等，约几十秒）':'');
+  st.textContent='POST /api/backtest-run（'+BTR_CFG.strategies.join('+')+' · '+span.start+' ~ '+span.end+' · '+(BTR_CFG.capital/10000)+'万 · '+modeName+'，后台串行）…'+slow;
+  var t0=Date.now();
   api.postBacktestRun(body).then(function(r){
     if(!r||!r.ok||!r.task_id){throw new Error(r&&r.error||'submit failed');}
     BT_STATE.taskId=r.task_id;
@@ -345,7 +358,9 @@ function btrRun(){
           fill.style.width='100%';
           btrBusy=false;
         }else{
-          st.textContent='回测运行中（'+(s&&s.status||'running')+'）…每 3s 轮询';
+          var el=Math.round((Date.now()-t0)/1000);
+          st.textContent='回测运行中…已 '+el+'s（'+modeName+'，每 3s 轮询'+(BTR_CFG.mode==='tick'?'；tick 海量数据属正常':'')+'）';
+          fill.style.width=(50+Math.min(40,el/6))+'%';   /* 缓慢爬升（时间驱动伪进度）：60% 后每 6s +1%，到 90% 封顶——完成/失败立即 100% */
           BT_STATE.timer=setTimeout(poll,3000);
         }
       }).catch(function(){
