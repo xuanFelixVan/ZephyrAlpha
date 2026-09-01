@@ -73,6 +73,8 @@
   .tb-lang,.tb-theme{color:var(--dim);font-size:12px;cursor:pointer;padding:5px 8px;border-radius:5px;position:relative;white-space:nowrap;user-select:none}
   .tb-lang:hover,.tb-theme:hover{background:var(--panel2);color:var(--text)}
   .tb-theme{font-size:14px;line-height:1}   /* ◐ 图标件：纯图标+悬停提示（Owner 偏好），比语言条更紧凑 */
+  .tb-refresh{color:var(--dim);font-size:14px;line-height:1;cursor:pointer;padding:5px 8px;border-radius:5px;user-select:none}   /* ↻ 刷新件：同 ◐ 图标风格（Owner 2026-09-01 要求，桌面端改版后免重开加载新代码） */
+  .tb-refresh:hover{background:var(--panel2);color:var(--text)}
   .tb-lang-drop{position:absolute;top:32px;right:0;background:#fff;color:#111;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.45);min-width:180px;display:none;padding:5px;z-index:970}
   .tb-lang-drop.open{display:block}
   .tb-ld{padding:6px 9px;font-size:12px;border-radius:4px;display:flex;justify-content:space-between;align-items:center}
