@@ -491,25 +491,40 @@ def stock_search(q: str = Query(..., min_length=1), limit: int = Query(20, ge=1,
 _BT_ARTIFACTS_DIR = _REPO / "data" / "backtest_artifacts"
 
 
+# 策略可用性实测标注（2026-09-01 CLI 验证：哪些默认参数下有成交）
+_BT_STRATEGY_NOTES = {
+    "topn-momentum": "动量TopN（默认参数实测有成交）",
+    "default-equity": "默认权益（等权，实测有成交）",
+    "multifactor-sleeve": "多因子袖策略（依赖 IC 权重注入，默认参数零成交）",
+    "eventdriven-sleeve": "事件驱动袖策略（依赖情绪事件数据，默认参数零成交）",
+    "daban-sleeve": "打板袖策略（依赖打板信号源，默认参数零成交）",
+    "intraday-surge-fall": "30秒冲高回落做T（仅 Tick 模式）",
+    "orderbook-imbalance": "盘口失衡反转做T（仅 Tick 模式）",
+    "vwap-reversion": "VWAP回归做T（仅 Tick 模式）",
+}
+
+
 @app.get("/api/strategies")
 def strategies() -> dict[str, Any]:
-    """策略库列表（backtest 页策略多选下拉）：StrategyRegistry 动态真源。"""
+    """策略库列表（backtest 页策略多选下拉）：StrategyRegistry + TickStrategyRegistry 真源。"""
     try:
         sys.path.insert(0, str(_REPO / "src"))
-        from zephyr.pf_core.strategy_engine.strategy_runner import StrategyRunner
+        from zephyr.governance.strategies.strategy_base import StrategyRegistry, autodiscover_strategies
 
-        StrategyRunner._ensure_strategy("topn-momentum")  # 触发 autodiscover（幂等）
-        from zephyr.governance.strategies.strategy_base import StrategyRegistry
-
-        reg = StrategyRegistry.list_all() if hasattr(StrategyRegistry, "list_all") else {}
+        autodiscover_strategies("zephyr.pf_core")   # 幂等（含 strategies/ 子包）
         data = []
-        for sid, cls in (reg or {}).items():
-            data.append({
-                "id": sid,
-                "name": getattr(getattr(cls, "meta", None), "name", None) or sid,
-                "available": True,
-            })
-        data.sort(key=lambda x: x["id"])
+        for sid in sorted(StrategyRegistry.list_all().keys() or []):
+            data.append({"id": sid, "name": sid, "note": _BT_STRATEGY_NOTES.get(sid, ""), "tick_only": False})
+        # tick 策略族（TickStrategyBase 注册表，仅 tick 模式可跑）
+        try:
+            from zephyr.pf_core.strategy_engine.tick_strategy_base import TickStrategyBase, autodiscover_tick_strategies
+
+            autodiscover_tick_strategies("zephyr.pf_core")
+            tick_reg = getattr(TickStrategyBase, "_registry", {}) or {}
+            for sid in sorted(tick_reg.keys()):
+                data.append({"id": sid, "name": sid, "note": _BT_STRATEGY_NOTES.get(sid, "tick 策略"), "tick_only": True})
+        except Exception:  # noqa: BLE001 — tick 注册表不可用时仅返回日频
+            pass
         return {"ok": True, "count": len(data), "data": data}
     except Exception as exc:
         return {"ok": False, "error": str(exc)[:200], "data": []}

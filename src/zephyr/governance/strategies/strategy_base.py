@@ -181,19 +181,32 @@ class StrategyRegistry:
 def autodiscover_strategies(
     package_path: str = "zephyr.pf_core",
 ) -> int:
+    """自动发现并注册策略模块。
+
+    扫描范围（2026-09-01 修）：包顶层 *.py + 一层子包（如 pf_core/strategies/）。
+    此前只扫顶层——strategies/ 子目录里的 multifactor-sleeve / eventdriven-sleeve
+    永远不被发现，回测页策略库只剩 2 个（#BT-PIPELINE-001 Owner 实测反馈）。
+    """
     found = 0
     try:
         pkg = importlib.import_module(package_path)
         pkg_dir = Path(pkg.__file__).parent if pkg.__file__ else None
         if pkg_dir and pkg_dir.exists():
-            for fp in sorted(pkg_dir.glob("*.py")):
+            files = sorted(pkg_dir.glob("*.py"))
+            # 一层子包（strategies/ 等，含 __init__.py 的目录）也扫其 *.py
+            for sub in sorted(p for p in pkg_dir.iterdir() if p.is_dir() and (p / "__init__.py").exists()):
+                if sub.name.startswith("_"):
+                    continue
+                files.extend(sorted(sub.glob("*.py")))
+            for fp in files:
                 if fp.stem.startswith("_") or fp.stem == "__init__":
                     continue
+                mod_name = f"{package_path}.{fp.parent.relative_to(pkg_dir).as_posix().replace('/', '.')}.{fp.stem}" if fp.parent != pkg_dir else f"{package_path}.{fp.stem}"
                 try:
-                    importlib.import_module(f"{package_path}.{fp.stem}")
+                    importlib.import_module(mod_name)
                     found += 1
                 except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
-                    _logger.warning("Failed to auto-discover strategy %s: %s", fp.stem, exc, exc_info=True)
+                    _logger.warning("Failed to auto-discover strategy %s: %s", mod_name, exc, exc_info=True)
     except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.warning("Strategy autodiscover skipped: %s", exc, exc_info=True)
     return found

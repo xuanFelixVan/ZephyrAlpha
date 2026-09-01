@@ -23,6 +23,7 @@ ZK.api = (function(){
   /* 页面中文周期 → API 周期（未支持的周期=reject，调用方回退演示） */
   var KLP_PERIOD_API = {'1分':'1m','5分':'5m','15分':'15m','30分':'30m','60分':'60m','日':'1d','周':'1w','月':'1M'};
   return {
+    fetchJson: fetchJson,   /* 通用通道（GET/POST opts）——组件临时接口（如 /api/strategies）用 */
     fetchKline: function(symbol, tf){
       var p = KLP_PERIOD_API[tf];
       if(!p) return Promise.reject(new Error('period unsupported: '+tf));

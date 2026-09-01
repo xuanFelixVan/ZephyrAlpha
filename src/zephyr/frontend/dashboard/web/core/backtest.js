@@ -224,21 +224,25 @@ function btBoot(){
  * 参数源=配置条（BTR_CFG）：策略多选（/api/strategies 动态拉取）、时间段（快速下拉
  * 或自定义 date input）、初始资金、撮合模式（vectorized/tick 完全仿真）。 */
 var BTR_CFG={strategies:['topn-momentum'],period:'m6',customStart:null,customEnd:null,capital:1000000,mode:'vectorized'};
-/* 策略库动态拉取（StrategyRegistry 真源），重建多选菜单 */
+/* 策略库动态拉取（StrategyRegistry+TickStrategyRegistry 真源），重建多选菜单 */
+var BT_STRATEGY_META={};   /* id → {note, tick_only}（/api/strategies 缓存） */
 function btLoadStrategies(){
   var api=btApi(); if(!api) return;
   api.fetchJson('/api/strategies').then(function(r){
     if(!r||!r.ok||!r.data||!r.data.length) return;
     var menu=document.getElementById('btr-strategy-menu'); if(!menu) return;
+    BT_STRATEGY_META={};
+    r.data.forEach(function(s){ BT_STRATEGY_META[s.id]={note:s.note||'',tick_only:!!s.tick_only}; });
     var have={};
     r.data.forEach(function(s){ have[s.id]=true; });
-    /* 菜单=动态策略 ∪ 既有选中（API 缺失时保留），default-equity 契约已修可放 */
     var ids=[]; r.data.forEach(function(s){ if(ids.indexOf(s.id)<0)ids.push(s.id); });
     BTR_CFG.strategies.forEach(function(sid){ if(!have[sid]&&ids.indexOf(sid)<0)ids.push(sid); });
     var h='';
     ids.forEach(function(sid){
       var on=BTR_CFG.strategies.indexOf(sid)>=0;
-      h+='<span class="acct-mi'+(on?' on':'')+'" data-v="'+sid+'" onclick="btrPick(\'strategy\',\''+sid+'\',event)">'+(on?'✓ ':'')+sid+'</span>';
+      var meta=BT_STRATEGY_META[sid]||{};
+      var note=meta.note?(' <span class="dim" style="font-weight:400;font-size:10px">'+meta.note+'</span>'):'';
+      h+='<span class="acct-mi'+(on?' on':'')+'" data-v="'+sid+'" onclick="btrPick(\'strategy\',\''+sid+'\',event)">'+(on?'✓ ':'')+sid+note+'</span>';
     });
     menu.innerHTML=h;
     btStrategyLabel();
@@ -262,15 +266,27 @@ function btrPick(kind,v,e){
   if(e&&e.stopPropagation)e.stopPropagation();
   var label=e?e.target.textContent.replace(/^✓ /,'').split('（')[0].trim():v;
   if(kind==='strategy'){
-    /* 多选 toggle：点选/取消，至少保留 1 个 */
+    /* 多选 toggle：点选/取消，至少保留 1 个；菜单保持展开继续多选（点外部才关闭） */
     var i=BTR_CFG.strategies.indexOf(v);
     if(i>=0){ if(BTR_CFG.strategies.length>1)BTR_CFG.strategies.splice(i,1); }
     else BTR_CFG.strategies.push(v);
-    var mi=e?e.target:null;
-    if(mi){ mi.classList.toggle('on',BTR_CFG.strategies.indexOf(v)>=0); mi.textContent=(BTR_CFG.strategies.indexOf(v)>=0?'✓ ':'')+mi.textContent.replace(/^✓ /,''); }
+    var mi=e?e.target.closest('.acct-mi'):null;
+    if(mi){
+      var nowOn=BTR_CFG.strategies.indexOf(v)>=0;
+      mi.classList.toggle('on',nowOn);
+      /* 重写文本保 note 子元素 */
+      var noteEl=mi.querySelector('.dim');
+      var noteTxt=noteEl?noteEl.textContent:'';
+      mi.textContent=(nowOn?'✓ ':'')+v+(noteTxt?' ':'');
+      if(noteTxt){var ne2=document.createElement('span');ne2.className='dim';ne2.style.cssText='font-weight:400;font-size:10px';ne2.textContent=noteTxt;mi.appendChild(ne2);}
+    }
+    /* tick_only 策略自动切 Tick 模式（做T策略只在 tick 引擎可跑） */
+    var meta=BT_STRATEGY_META[v]||{};
+    if(BTR_CFG.strategies.indexOf(v)>=0&&meta.tick_only&&BTR_CFG.mode!=='tick'){
+      btrPick('mode','tick',null);
+    }
     btStrategyLabel();
-    var m=e?e.target.closest('.acct-menu'):null; if(m)m.classList.remove('open');
-    return;
+    return;   /* 不关闭菜单——继续多选 */
   }
   if(kind==='period'){BTR_CFG.period=v;BTR_CFG.customStart=null;BTR_CFG.customEnd=null;document.getElementById('btr-period-t').textContent=label;}
   if(kind==='capital'){BTR_CFG.capital=parseInt(v,10);document.getElementById('btr-capital-t').textContent=label;}
