@@ -5895,7 +5895,7 @@ function sqPoolFind(sym){ for(var i=0;i<SQ_POOL.length;i++) if(SQ_POOL[i].sym===
 var sqDraw={mode:null,items:[],pend:null};   /* v4.3 KLineChart overlay 接管后废弃，保留空对象防误引用 */
 /* ---------- KLineChart 引擎状态（v4.3：自研 canvas 全退役；滚轮缩放/拖拽平移/十字光标/画线/指标均由库内建） ---------- */
 var klpChart=null;
-var klpDataMode='演示';   /* 数据源模式：真源（dashboard-api 8890）/ 演示（API 挂时回退）——演示诚实纪律 */
+var klpDataMode='未启动';   /* 数据源状态灯（DS-12 四态）：真源=绿 / 延迟=黄 / 断线=红（回退演示） / 未启动=灰 */
 var klpIndMap={};   /* 指标名 → 窗格 ID（KLineChart v10 分配，用于 removeIndicator 定位） */
 var klpPeriodMap={'分时':{span:1,type:'minute'},'1分':{span:1,type:'minute'},'3分':{span:3,type:'minute'},'5分':{span:5,type:'minute'},'15分':{span:15,type:'minute'},'30分':{span:30,type:'minute'},'60分':{span:60,type:'minute'},'120分':{span:120,type:'minute'},'2小时':{span:2,type:'hour'},'4小时':{span:4,type:'hour'},'6小时':{span:6,type:'hour'},'12小时':{span:12,type:'hour'},'日':{span:1,type:'day'},'2日':{span:2,type:'day'},'3日':{span:3,type:'day'},'5日':{span:5,type:'day'},'周':{span:1,type:'week'},'2周':{span:2,type:'week'},'月':{span:1,type:'month'},'3月':{span:3,type:'month'}};
 var KLP_ALL_TFS=['分时','1分','3分','5分','15分','30分','60分','120分','2小时','4小时','6小时','12小时','日','2日','3日','5日','周','2周','月','3月'];   /* 全量周期矩阵（弹层） */
@@ -5978,15 +5978,21 @@ function sqInit(){
   klpChart.setDataLoader({
     getBars:function(params){   /* v10 数据契约：init 返回全量；forward/backward 返回空（演示口径无更多数据，否则库会无限向前加载卡死主线程——浏览器实证） */
       if(params&&params.type==='init'){
-        /* 真源优先（dashboard-api 8890 → ClickHouse kline 表）；失败/不支持周期回退演示并标"演示"（演示诚实纪律 DS-8） */
+        /* 数据源状态灯（DS-12 四态）：真源绿（数据新鲜）/ 延迟黄（取到但过期）/ 断线红（回退演示）/ 未启动灰 */
         var done=false;
+        var freshnessMs={'minute':30*60000,'hour':6*3600000,'day':5*86400000,'week':10*86400000,'month':40*86400000};   /* day=5 天：覆盖周五→周一自然间隔，超=真延迟 */
+        var modeOf=function(bars){
+          var tp=(klpPeriodMap[sqTf]||{}).type||'day';
+          var last=bars&&bars.length?bars[bars.length-1].timestamp:0;
+          return (Date.now()-last <= (freshnessMs[tp]||freshnessMs.day)) ? '真源' : '延迟';
+        };
         var finish=function(bars,mode){ if(done) return; done=true; klpDataMode=mode; sqRenderHead(); params.callback(bars); };
         if(window.ZK && ZK.api){
           ZK.api.fetchKline(sqCur,sqTf).then(function(r){
-            if(r && r.ok && r.bars && r.bars.length){ finish(r.bars,'真源'); } else { finish(klpBars(),'演示'); }
-          }).catch(function(){ finish(klpBars(),'演示'); });
-          setTimeout(function(){ finish(klpBars(),'演示'); },6000);   /* 兜底防悬挂 */
-        } else { finish(klpBars(),'演示'); }
+            if(r && r.ok && r.bars && r.bars.length){ finish(r.bars, modeOf(r.bars)); } else { finish(klpBars(),'断线'); }
+          }).catch(function(){ finish(klpBars(),'断线'); });
+          setTimeout(function(){ finish(klpBars(),'断线'); },6000);   /* 兜底防悬挂 */
+        } else { finish(klpBars(),'未启动'); }
       }
       else{ params.callback([]); }
     }
@@ -6087,7 +6093,7 @@ function sqRenderHead(){
   var p=sqPoolFind(sqCur),d=STOCKQ_D[sqCur];
   var h='<span class="nm">'+(d?d.nm:p.nm)+'</span><span class="cd">'+p.code+(d?'':'（资料待接入）')+'</span>'
     +'<span class="px '+(p.dir>=0?'up':'down')+'">'+p.px+'</span><span class="chg '+(p.dir>=0?'up':'down')+'">'+p.pc+'</span>'
-    +'<span class="klp-datamode '+(klpDataMode==='真源'?'real':'')+'" title="数据源：真源=ClickHouse kline 表（dashboard-api:8890）；演示=本地合成（API 未启动时回退）">'+(klpDataMode==='真源'?'● 真源':'○ 演示')+'</span>'
+    +'<span class="klp-datamode dm-'+klpDataMode+'" title="数据源状态灯（DS-12）：绿=真源正常 / 黄=数据延迟（取到但过期） / 红=断线（回退演示数据） / 灰=服务未启动">'+(klpDataMode==='真源'?'● 真源':klpDataMode==='延迟'?'● 延迟':klpDataMode==='断线'?'● 断线·演示':'○ 未启动')+'</span>'
     +'<span class="sq-tfs">'+klpTfVis.map(function(t){return '<span class="tab'+(t===sqTf?' on':'')+'" onclick="sqTfSet(\''+t+'\',this)">'+t+'</span>';}).join('')+'<span class="tab klp-tf-more" title="更多周期（含自定义主栏显示/快捷键 1~9）" onclick="klpTfPop(event)">▾</span></span>'
     +'<span class="klp-marks">'
     +'<span class="klp-mark-tgl'+(klpMarks.bs?' on':'')+'" title="量化买卖点：±3 根摆动高低点信号标注（▲买 ▼卖，灰色弱提示）" onclick="klpTglMark(\'bs\',this)">⇅</span>'

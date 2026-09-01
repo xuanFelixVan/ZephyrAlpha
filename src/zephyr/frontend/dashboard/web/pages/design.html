@@ -320,6 +320,18 @@
       <div class="note">重叠防护：A 案拖拽仅纵向、grid 行自动撑开重排；⛶ 全屏为 fixed overlay 层，不产生布局重叠 bug</div>
     </div>
 
+    <!-- DS-12 数据源状态灯（Owner 2026-09-01 裁定四态） -->
+    <div class="card">
+      <h3>DS-12 数据源状态灯 <span class="dim">v8 新增（2026-09-01）——每个数据功能标题行必挂；四态：绿=真源正常 / 黄=延迟（取到但过期） / 红=断线（回退演示） / 灰=未启动</span></h3>
+      <table class="ds-table"><thead><tr><th>状态</th><th>颜色</th><th>语义</th><th>判定</th></tr></thead><tbody>
+        <tr><td>● 真源</td><td style="color:var(--down)">绿</td><td>数据正常传输</td><td>取数成功且最新数据在新鲜窗口内（窗口随 update_frequency：日级 4 天 / 分钟级 30 分钟）</td></tr>
+        <tr><td>● 延迟</td><td style="color:var(--orange)">黄</td><td>取到但过期</td><td>取数成功但最新数据超出新鲜窗口——<b>交易场景最危险的静默状态：看起来正常其实是旧数据</b></td></tr>
+        <tr><td>● 断线·演示</td><td style="color:var(--up)">红</td><td>取数失败已回退</td><td>API 异常/超时，前端回退演示数据（诚实纪律：红色明示不可信）</td></tr>
+        <tr><td>○ 未启动</td><td style="color:var(--dim)">灰</td><td>服务从未响应</td><td>数据服务层未加载/从未发起取数</td></tr>
+      </tbody></table>
+      <div class="ds-note"><b>为什么四态不二元</b>：二元（绿/红）必然二选一误判——"数据旧但接口通"归绿=静默放行旧数据（交易大忌），归红=狼来了（真断线时脱敏）。四态把"延迟"这个最危险状态单独显色；灰留给"从未启动"区别于断线。<b>位置</b>：每个数据功能的标题行右侧（10.5px 不抢戏）。<b>落地</b>：TRAE-086 模块契约的 fallback_behavior 须给四态对应行为；验收单必含"状态灯四态"条款。<b>实证</b>：个股行情页标题行（stockq）。</div>
+    </div>
+
     <!-- DS-11 模块拆件标准 -->
     <div class="card" style="margin-bottom:14px">
       <h3>DS-11 模块拆件标准 <span class="dim">v8 新增（2026-08-31）——K 线工作台模块化实证转正（成本线 pilot 验收单六条全绿）</span></h3>

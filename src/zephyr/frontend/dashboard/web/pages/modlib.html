@@ -615,4 +615,19 @@
       </div>
     </div>
 
-  </section>
+    <!-- ═══ 十一、数据源状态灯（DS-12）═══ -->
+    <div class="sec-title">十一、数据源状态灯 <span class="dim">DS-12 · 每个数据功能标题行必挂四态灯（绿真源/黄延迟/红断线/灰未启动）</span></div>
+
+    <div class="mod">
+      <div class="mod-hd"><span class="no">52</span> <span class="name">数据源状态灯</span><span class="tag">四态</span><span class="dim">位置=数据功能标题行右侧 · 10.5px 不抢戏 · 交易场景"延迟"是最危险静默态故单独显色</span><span class="src">core/app1.js · klpDataMode · DS-12</span></div>
+      <div class="card">
+        <table class="ds-table" style="width:100%"><thead><tr><th>状态</th><th>色</th><th>示例</th><th>判定</th></tr></thead><tbody>
+          <tr><td>真源正常</td><td>绿</td><td style="color:var(--down)">● 真源</td><td>取数成功且数据在新鲜窗口内</td></tr>
+          <tr><td>数据延迟</td><td>黄</td><td style="color:var(--orange)">● 延迟</td><td>取数成功但数据过期（看起来正常其实是旧数据——交易最危险静默态）</td></tr>
+          <tr><td>断线回退</td><td>红</td><td style="color:var(--up)">● 断线·演示</td><td>API 异常/超时，已回退演示数据（诚实纪律：红色明示不可信）</td></tr>
+          <tr><td>服务未启动</td><td>灰</td><td style="color:var(--dim)">○ 未启动</td><td>数据服务层从未响应</td></tr>
+        </tbody></table>
+      </div>
+      <div class="note">🔷 实证：个股行情页标题行（stockq 四态灯已上线）。落地契约：TRAE-086 fallback_behavior 字段须给四态对应行为；验收单必含状态灯条款。</div>
+    </div>
+</section>
