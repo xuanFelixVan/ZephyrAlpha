@@ -70,6 +70,23 @@ scope: frontend
 
 ---
 
+# FEH-PC-007｜depgraph 新增字段四步铁律（防重建丢值）
+- 触发词：depgraph 加字段 / migration / nodes_metadata / 重建器 / generate_project_depgraph / PRODUCTION_PROTECTED_FIELDS
+- 想做什么：给 depgraph 的 nodes 表新增业务字段（如前端覆盖三字段 has_frontend/no_frontend_reason/frontend_ref）
+- 内置能否：无内置保护，必须人工走四步
+- 坑：**generate_project_depgraph 重建运营态时会整表 DELETE+INSERT，新字段不在保护字段清单里 = 全部重置为默认值**。夜战实证：20 个模块的前端覆盖数据一次重建后全丢，回填工作白费
+- 正确做法（四步缺一不可）：
+  1. **nodes 表加列**：`ALTER TABLE nodes ADD COLUMN IF NOT EXISTS xxx`（migration SQL 脚本，如 `12_add_frontend_coverage_fields.sql`）
+  2. **nodes_metadata 保险柜表同步加列**：同脚本里给 metadata 表也加同一列——metadata 是重建前的"保险柜"，存盘时把值暂存于此
+  3. **重建器"重建前存档"（UPSERT）登记新列**：在 `generate_project_depgraph.py` 的 Stage 2 UPSERT 语句里，把新列加进 INSERT 字段清单和 ON CONFLICT DO UPDATE SET 清单——否则存档时漏存新列
+  4. **重建器"重建后恢复"（UPDATE）登记新列**：在同一文件的 Stage 2 UPDATE 语句里，把新列加进恢复清单——COALESCE(NULLIF(nodes.xxx, ''), nm.xxx, nodes.xxx)。**注意空哨兵**：如果字段默认值是非空字符串（如 has_frontend 默认 'no'），不能直接用 COALESCE，必须用 `CASE WHEN nodes.xxx = 'no' AND nm.xxx <> 'no' THEN nm.xxx ELSE nodes.xxx END`，否则重建默认值会回灌覆盖真值
+- 验证：四步做完后，必须完整跑一次 `generate_project_depgraph.py`，然后查 `SELECT count(*) FROM nodes WHERE xxx != 默认值` 确认值存活
+- 代码锚点：migration `12_add_frontend_coverage_fields.sql` · `generate_project_depgraph.py` Stage 2 UPSERT (~3680) / UPDATE (~4210)
+- 关联：depgraph_schema.py `_DDL_NODES_METADATA`
+- 来源：2026-09-01 夜战实证（20 模块值重建丢值 → 四步根治 → 端到端重建验证存活）
+
+---
+
 # FEH-PC-006｜数据源状态灯四态约定（DS-12）
 - 触发词：状态灯 / 真源角标 / 数据断线 / klpDataMode / ● 真源
 - 想做什么：给数据功能标题行加数据源状态指示
@@ -89,3 +106,4 @@ scope: frontend
 | 2026-08-31 | 1.0.0 | 建册，首批 4 条（PC-001~004） | 四件套施工第 1 步；项目自有约定是弱模型最易踩的坑 |
 | 2026-08-31 | 1.1.0 | +PC-005 Playwright 冒烟测试三实证坑 | 冒烟网建设 3 失败→3 修复实证 |
 | 2026-09-01 | 1.2.0 | +PC-006 数据源状态灯四态约定（DS-12） | Owner 四态裁定（绿/黄/红/灰）成文 |
+| 2026-09-01 | 1.3.0 | +PC-007 depgraph 新增字段四步铁律 | 夜战实证：重建器静默重置新字段（20 模块值全丢）→ 根治后重建验证存活 |
