@@ -61,14 +61,17 @@ SERVICE_CATALOG: list[dict[str, Any]] = [
     # ── 数据域（关=丢数据，需二次确认）──
     {"id": "scheduler", "group": "data", "tier": "confirm", "name": "数据调度器",
      "desc": "8 个数据源的下载总管：每天自动下 K 线/财务/新闻/板块进数据库（61 个任务）",
-     "detect": {"type": "heartbeat", "file": "scheduler.heartbeat"},
+     "detect": {"type": "heartbeat", "file": "scheduler.heartbeat", "task": "ZephyrAlpha_DataScheduler"},
      "start": ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "scripts/start_scheduler.ps1"],
-     "stop": {"how": "heartbeat"}},
+     "stop": {"how": "heartbeat", "task": "ZephyrAlpha_DataScheduler",
+              "kill_patterns": [r"start_scheduler\.ps1", r"zephyr\.data\.scheduler"]}},
     {"id": "tick_sub", "group": "data", "tier": "confirm", "name": "Tick 订阅器",
      "desc": "盘中每 3 秒抓一笔实时行情存库——模拟盘和做T 策略的口粮，盘中关掉会漏数据",
-     "detect": {"type": "heartbeat", "file": "tick_subscriber.heartbeat", "biz": "tick_subscriber_biz.heartbeat"},
+     "detect": {"type": "heartbeat", "file": "tick_subscriber.heartbeat", "biz": "tick_subscriber_biz.heartbeat",
+                "task": "ZephyrAlpha_TickSubscriber"},
      "start": ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "scripts/start_tick_subscriber.ps1"],
-     "stop": {"how": "heartbeat"}},
+     "stop": {"how": "heartbeat", "task": "ZephyrAlpha_TickSubscriber",
+              "kill_patterns": [r"start_tick_subscriber\.ps1", r"zephyr\.data\.tick_subscriber"]}},
     {"id": "sector_collector", "group": "data", "tier": "confirm", "name": "板块快照采集器",
      "desc": "盘中每分钟存一张板块涨跌快照进库（板块排名/轮动分析的数据底料）",
      "detect": {"type": "proc", "pattern": r"sector_snapshot_collector"},
@@ -194,6 +197,26 @@ def _port_listener_pid(port: int) -> int | None:
     return None
 
 
+def _find_all_pids(rx: re.Pattern) -> list[int]:
+    """cmdline/name 匹配 rx 的全部进程 pid（排自身）——特征全杀用。"""
+    out: list[int] = []
+    try:
+        import psutil
+        me = os.getpid()
+        for p in psutil.process_iter(["pid", "name", "cmdline"]):
+            try:
+                if p.info["pid"] == me:
+                    continue
+                hay = (p.info["name"] or "") + " " + " ".join(p.info["cmdline"] or [])
+                if rx.search(hay):
+                    out.append(p.info["pid"])
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                continue
+    except ImportError:
+        pass
+    return out
+
+
 def _find_proc(pattern: str, name_only: bool = False) -> Any:
     import psutil
     rx = re.compile(pattern, re.IGNORECASE)
@@ -265,6 +288,18 @@ def _do_stop(item: dict[str, Any]) -> str:
             return f"killed listener pid={pid}"
         return "no listener"
     if how == "heartbeat":
+        # Owner 实证链：任务 RestartCount=3/间隔 1min → 直接 kill=任务"失败" → 逐分钟拉活×3（Parallel 并存）
+        # → /end 也拦不住（kill 仍算失败）。治本=stop 先 /disable（禁用态不触发失败重启），start 时 /enable 恢复。
+        task = item["stop"].get("task")
+        ended = ""
+        if task:
+            try:
+                subprocess.run(["schtasks", "/end", "/tn", task], capture_output=True, text=True, timeout=5)
+                subprocess.run(["schtasks", "/change", "/tn", task, "/disable"],
+                               capture_output=True, text=True, timeout=5)
+                ended = "task ended+disabled; "
+            except Exception:  # noqa: BLE001 — /end 失败仍走补刀
+                ended = "task end failed; "
         hb = _read_heartbeat(item["detect"]["file"])
         killed = []
         if hb:
@@ -272,9 +307,18 @@ def _do_stop(item: dict[str, Any]) -> str:
                 if pid and _proc_stats(pid)["alive"]:
                     _kill_tree(pid)
                     killed.append(str(pid))
+        # 特征全杀：Parallel 政策下多 guard 实例并存（本机实证 3 个 tick 进程），
+        # heartbeat 只记录最后写者——必须按 cmdline 特征把所有 guard/child 一网打尽
+        for pat in item["stop"].get("kill_patterns", []):
+            for pid in _find_all_pids(re.compile(pat, re.IGNORECASE)):
+                try:
+                    _kill_tree(pid)
+                    killed.append(str(pid))
+                except Exception:  # noqa: BLE001 — 单个杀失败不阻断其余
+                    continue
         if not killed:
-            return "no alive pid in heartbeat"
-        return "killed pids=" + ",".join(killed)
+            return ended + "no alive pid in heartbeat"
+        return ended + "killed pids=" + ",".join(killed)
     if how == "proc":
         p = _find_proc(item["detect"]["pattern"], item["detect"].get("name_only", False))
         if p:
@@ -288,6 +332,15 @@ def _do_start(item: dict[str, Any]) -> str:
     cmd = item.get("start")
     if not cmd:
         return "no start command"
+    # heartbeat 型：stop 时任务被 /disable 了，start 前 /enable 恢复开机自启语义
+    task = (item.get("stop") or {}).get("task")
+    if task:
+        try:
+            subprocess.run(["schtasks", "/change", "/tn", task, "/enable"],
+                           capture_output=True, text=True, timeout=5)
+            _SCHTASKS_CACHE.pop(task, None)   # 清缓存，状态页立即反映 Ready（否则 60s 内仍显 Disabled 灰）
+        except Exception:  # noqa: BLE001 — enable 失败不阻断手动拉起
+            pass
     log = (_TMP / f"svc_{item['id']}.log").open("ab")
     exe = cmd[0]
     if exe == "python":   # 用 api_server 同一解释器，防 PATH 漂移
@@ -529,10 +582,24 @@ def get_services_status() -> dict[str, Any]:
                 st["beat_age"] = round(age)
                 child = _proc_stats(hb.get("child_pid"))
                 st.update(pid=hb.get("child_pid"), cpu=child["cpu"], mem=child["mem"])
-                if age < 120 and child["alive"]:
+                # 任务禁用态（Owner 主动停止后）优先：灰灯"已停止"——不误报"重启中/延迟"
+                ti = _task_info(det["task"]) if det.get("task") else None
+                if ti and ti.get("status") == "Disabled":
+                    st["light"] = "gray"; st["detail"] = "已停止（任务禁用，点启动即恢复）"
+                elif age < 120 and child["alive"]:
                     st["light"] = "green"; st["detail"] = f"心跳 {round(age)}s 前"
+                elif age < 120:
+                    # 心跳新鲜但 child 不在 = 正在被拉起/刚被停止的瞬态（Owner 实证"延迟 29s"实为重启竞态）
+                    st["light"] = "yellow"
+                    st["detail"] = f"心跳 {round(age)}s 前 · 进程重启中"
                 elif age < 600:
-                    st["light"] = "yellow"; st["detail"] = f"心跳延迟 {round(age)}s"
+                    # stale 但 guard 活着 = guard 在重试循环（典型：等 QMT 就绪）——黄灯不吓人
+                    g = _proc_stats(hb.get("guard_pid"))
+                    if g["alive"]:
+                        st["light"] = "yellow"
+                        st["detail"] = f"guard 在岗 · 等待就绪（心跳停 {round(age/60)} 分）"
+                    else:
+                        st["light"] = "red"; st["detail"] = f"心跳停 {round(age/60)} 分钟"
                 else:
                     st["light"] = "red"; st["detail"] = f"心跳停 {round(age/60)} 分钟"
             else:
