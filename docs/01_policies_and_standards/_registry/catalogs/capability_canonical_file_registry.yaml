@@ -4893,6 +4893,10 @@ capabilities:
   - DabanTimingDecision
   - DynamicCapacityCalculator
 creation_tokens:
+- file: docs/01_policies_and_standards/_registry/catalogs/gate_tracked_write_allowlist.yaml
+  token: gatemech004-tracked-write-allowlist-20260902
+  created_by: freeze-gw
+  capability: gate_tracked_drift_readonly
 - file: src/zephyr/ex_core/eod_reconciliation.py
   token: auto-eod-reconciliation-20260830
   created_by: traesid-20260829-1308

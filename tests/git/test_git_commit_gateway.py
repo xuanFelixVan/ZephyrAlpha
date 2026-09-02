@@ -1693,6 +1693,100 @@ class TestGateTrackedDriftWatch:
 
 
 # ---------------------------------------------------------------------------
+# CAND-GATEMECH-004：TRACKED-DRIFT-READONLY 归因升硬（2026-09-02 冻结窗口）
+# ---------------------------------------------------------------------------
+class TestTrackedDriftReadonlyHardening:
+    """gate 窗口未归因 tracked 写入 → 硬阻断；白名单归因 → warn-only；逃生通道留痕。
+
+    白名单真源=docs/01_policies_and_standards/_registry/catalogs/gate_tracked_write_allowlist.yaml
+    （tmp 仓内按相对路径重建）；allowlist 缺失 → fail-open 降级 warn-only
+    （TestGateTrackedDriftWatch 旧用例语义由该降级路径覆盖保留）。
+    """
+
+    class _WritingRegistry:
+        """模拟 gate 运行期向 tracked 文件写入。"""
+
+        def __init__(self, target: str = "tracked_audit.jsonl") -> None:
+            self._target = target
+
+        def check_all(self, gateway, files, **kwargs):  # noqa: ARG002
+            target = Path(str(gateway.project_root)) / self._target
+            with open(target, "a", encoding="utf-8") as f:
+                f.write('{"gate_ran": true}\n')
+            return []
+
+    _ALLOWLIST_REL = "docs/01_policies_and_standards/_registry/catalogs/gate_tracked_write_allowlist.yaml"
+
+    def _prepare(self, tmp_path: Path, allowlist_body: str | None) -> GitCommitGateway:
+        _init_git_repo(tmp_path)
+        _write_file(tmp_path, "tracked_audit.jsonl", "")
+        env = {
+            **os.environ,
+            "GIT_AUTHOR_NAME": "T",
+            "GIT_AUTHOR_EMAIL": "t@t.com",
+            "GIT_COMMITTER_NAME": "T",
+            "GIT_COMMITTER_EMAIL": "t@t.com",
+        }
+        subprocess.run(["git", "add", "tracked_audit.jsonl"], cwd=str(tmp_path), capture_output=True, env=env)
+        subprocess.run(["git", "commit", "-m", "track", "--no-verify"], cwd=str(tmp_path), capture_output=True, env=env)
+        if allowlist_body is not None:
+            _write_file(tmp_path, self._ALLOWLIST_REL, allowlist_body)
+        return GitCommitGateway(project_root=tmp_path)
+
+    def _records(self, tmp_path: Path) -> list[dict]:
+        import json as _json
+
+        audit = tmp_path / ".runtime" / "audit" / "hook_tracked_drift.jsonl"
+        if not audit.exists():
+            return []
+        return [_json.loads(line) for line in audit.read_text(encoding="utf-8").splitlines() if line.strip()]
+
+    def test_unattributed_write_hard_blocks(self, tmp_path: Path) -> None:
+        """白名单存在但未覆盖写入文件 → TRACKED-DRIFT-READONLY 硬阻断结果注入。"""
+        gw = self._prepare(tmp_path, "entries:\n- path: scripts/governance/script_manifest.yaml\n  class: B\n")
+        gw._gate_registry = self._WritingRegistry()
+        results = gw._check_gates_with_drift_watch([], "sess-hard")
+        hard = [r for r in results if r.gate_id == "TRACKED-DRIFT-READONLY"]
+        assert hard and not hard[0].passed, "未归因写入未触发硬阻断"
+        assert "tracked_audit.jsonl" in hard[0].detail
+        rec = self._records(tmp_path)
+        assert rec and rec[-1].get("unattributed_files") == ["tracked_audit.jsonl"]
+
+    def test_attributed_write_warns_only(self, tmp_path: Path) -> None:
+        """白名单精确路径命中 → 维持 warn+审计，不追加阻断结果。"""
+        gw = self._prepare(tmp_path, "entries:\n- path: tracked_audit.jsonl\n  class: C\n")
+        gw._gate_registry = self._WritingRegistry()
+        results = gw._check_gates_with_drift_watch([], "sess-attr")
+        assert not [r for r in results if not r.passed], "已归因写入不应阻断"
+        rec = self._records(tmp_path)
+        assert rec and rec[-1].get("unattributed_files") in (None, [], False)
+
+    def test_pattern_entry_attributed(self, tmp_path: Path) -> None:
+        """白名单 fnmatch 模式命中 → warn-only。"""
+        gw = self._prepare(tmp_path, "entries:\n- pattern: 'tracked_*.jsonl'\n  class: B\n")
+        gw._gate_registry = self._WritingRegistry()
+        results = gw._check_gates_with_drift_watch([], "sess-pat")
+        assert not [r for r in results if not r.passed]
+
+    def test_escape_valve_allows_with_audit(self, tmp_path: Path) -> None:
+        """--allow-tracked-drift 逃生通道：未归因写入放行 + allowed=True 留痕。"""
+        gw = self._prepare(tmp_path, "entries: []\n")
+        gw._gate_registry = self._WritingRegistry()
+        results = gw._check_gates_with_drift_watch([], "sess-esc", allow_tracked_drift=True)
+        assert not [r for r in results if not r.passed], "逃生通道应放行"
+        rec = self._records(tmp_path)
+        assert rec and rec[-1].get("allowed") is True
+
+    def test_missing_allowlist_fails_open(self, tmp_path: Path) -> None:
+        """allowlist 文件缺失 → fail-open warn-only（基础设施故障不卡死提交链）。"""
+        gw = self._prepare(tmp_path, None)
+        gw._gate_registry = self._WritingRegistry()
+        results = gw._check_gates_with_drift_watch([], "sess-noallow")
+        assert not [r for r in results if not r.passed]
+        assert self._records(tmp_path), "降级路径仍须审计落盘"
+
+
+# ---------------------------------------------------------------------------
 # AI-R1-003 红队治本：MERGE_HEAD 检测 worktree 盲区
 # ---------------------------------------------------------------------------
 class TestMergeInProgressWorktreeAware:

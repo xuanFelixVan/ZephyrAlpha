@@ -552,6 +552,16 @@ def main() -> int:
         "2026-08-13 用户裁定：AI 可默认使用（留痕审计，对称 --allow-overlap 治理）。",
     )
     parser.add_argument(
+        "--allow-tracked-drift",
+        action="store_true",
+        default=False,
+        help="TRACKED-DRIFT-READONLY 逃生通道（CAND-GATEMECH-004 升硬，2026-09-02）——"
+        "gate 链执行窗口内 tracked 区发生未归因写入（不在 gate_tracked_write_allowlist.yaml "
+        "白名单）被硬阻断时放行。commit message 追加 [GW:<sid>:tracked-drift] 标记供审计追踪。"
+        "前置：已读漂移文件清单并确认写入方合法（合法场景：白名单登记滞后的新型派生写）；"
+        "确认后应补登记白名单，禁止常态化使用。",
+    )
+    parser.add_argument(
         "--merge-finalize",
         action="store_true",
         default=False,
@@ -682,6 +692,7 @@ def main() -> int:
                 allow_derived_deletion=args.allow_derived_deletion,
                 allow_non_worktree=args.allow_non_worktree,
                 allow_multi_domain=args.allow_multi_domain,
+                allow_tracked_drift=args.allow_tracked_drift,
                 merge_finalize=args.merge_finalize,
             )
         finally:

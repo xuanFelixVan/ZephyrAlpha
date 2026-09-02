@@ -383,11 +383,12 @@ repos:
       # 真源声明：Session 20260502-005 根因审计产出
       # 检测范围：项目根目录（）一级目录下的所有 .py 文件
       # 检测内容：任何出现在根目录的 .py 文件视为违规（.py只能放在 scripts/governance/ / src/zephyr/ / tests/）
-      # 模式：--fix 自动删除孤儿文件
+      # 模式：检测即红（2026-09-02 CAND-GATEMECH-004 gate 链只读化——摘除 --fix 自删除：
+      #       hook 运行期删 tracked 文件=files-modified 伪报族/指纹漂移源头之一；
+      #       孤儿文件由施工会话显式删除并随其任务 commit，删除权不留在 hook 内）
       - id: gate-17-orphan-py
         name: "GATE-17: 孤儿.py文件检测（§9 根目录零.py）"
         entry: python scripts/governance/d1_structure/detect_orphan_py.py
-        args: ["--fix"]
         language: system
         pass_filenames: false
         always_run: false

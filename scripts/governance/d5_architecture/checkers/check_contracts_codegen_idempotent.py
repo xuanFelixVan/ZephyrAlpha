@@ -68,6 +68,8 @@ def _ruff_fix_content(content: str, filename: str) -> str:
             input=content,
             capture_output=True,
             text=True,
+            encoding="utf-8",  # 治本 2026-09-02：契约含中文 docstring，缺省走 locale(GBK)
+            errors="replace",  # 管道致 ruff 收到非 UTF-8 → rc=2 → format 腿 fail-open 静默跳过
             timeout=30,
             cwd=str(REPO_ROOT),
         )
@@ -79,6 +81,8 @@ def _ruff_fix_content(content: str, filename: str) -> str:
             input=proc.stdout,
             capture_output=True,
             text=True,
+            encoding="utf-8",  # 同上：中文内容 GBK 编码致 ruff rc=2，format 腿被静默跳过
+            errors="replace",  #      （disk=format 强制双空行 vs expected 单空行 → 34 文件假非幂等）
             timeout=30,
             cwd=str(REPO_ROOT),
         )

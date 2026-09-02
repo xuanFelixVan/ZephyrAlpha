@@ -1643,11 +1643,14 @@ class GitCommitGateway:
         allow_derived_deletion: bool = False,
         allow_non_worktree: bool = False,
         allow_multi_domain: bool = False,
+        allow_tracked_drift: bool = False,
         merge_finalize: bool = False,
     ) -> CommitResult:
         """串行化 commit 入口。allow_overlap 逃生通道放行被其他 session 持有的文件，追加 [GW:<sid>:overlap] 标记。
         allow_derived_deletion 逃生通道放行受保护派生文件删除（#ARCH-BP-REGISTRY-DELETION-001 P1）。
         allow_non_worktree 逃生通道放行 WORKTREE-REQUIRED gate（#ARCH-WORKTREE-GATE-001 治本）。
+        allow_tracked_drift 逃生通道放行 TRACKED-DRIFT-READONLY 未归因写入阻断
+        （CAND-GATEMECH-004，追加 [GW:<sid>:tracked-drift] 标记留痕）。
         merge_finalize=True 显式完成在途 merge（B2 治本①）：MERGE_HEAD 存在时普通 commit
         一律拒绝（防截胡张冠李戴），仅本标志放行全量 commit 并追加 [GW:<sid>:merge] 留痕。"""
         if not files:
@@ -1744,6 +1747,8 @@ class GitCommitGateway:
             _log_allow_overlap_usage(self.project_root, session_id, existing)
         if allow_multi_domain:
             full_message += f"\n[GW:{session_id}:multi-domain]"
+        if allow_tracked_drift:
+            full_message += f"\n[GW:{session_id}:tracked-drift]"
 
         # TRAE-079 铁律1：[gate → stage → commit] 整体在 _GlobalCommitLock 临界区内，消除 TOCTOU
         # 病根：gate 检查在锁外时，另一 session 可在 gate 通过后、commit 前修改文件（搭便车/FOREIGN_CHANGE）
@@ -1768,6 +1773,7 @@ class GitCommitGateway:
                     allow_derived_deletion=allow_derived_deletion,
                     allow_non_worktree=allow_non_worktree,
                     allow_multi_domain=allow_multi_domain,
+                    allow_tracked_drift=allow_tracked_drift,
                     skip_gates=_gate_skip,
                 )
                 blocked = self._check_gate_results(gate_results)
@@ -1800,6 +1806,7 @@ class GitCommitGateway:
                 allow_derived_deletion=allow_derived_deletion,
                 allow_non_worktree=allow_non_worktree,
                 allow_multi_domain=allow_multi_domain,
+                allow_tracked_drift=allow_tracked_drift,
                 skip_gates=_gate_skip,
             )
             blocked = self._check_gate_results(gate_results)
@@ -1935,10 +1942,19 @@ class GitCommitGateway:
     def _tracked_area_fingerprint(self) -> str:
         """tracked 区内容指纹（#ARCH-PRECOMMIT-STASH-ADAPT-001 T4-2）。
 
-        拼接 `git diff-files`（unstaged tracked 修改，含 worktree blob hash）与
-        `git diff-index --cached HEAD`（staged tracked 修改，含 index blob hash）
-        的原始输出取 sha256——任何 gate 运行期对 tracked 文件的写/暂存都会改变
-        指纹。git 不可达降级空串（指纹相等→不报警，松约束不阻断主流）。
+        语义保持不变（sha256(diff-files + diff-index 原始输出)），实现迁移到
+        _tracked_area_snapshot()[0]（CAND-GATEMECH-004：文件级归因需要路径映射）。
+        """
+        return self._tracked_area_snapshot()[0]
+
+    def _tracked_area_snapshot(self) -> tuple[str, dict[str, str]]:
+        """tracked 区快照 = (内容指纹, {路径: 变更键})（T4-2 + CAND-GATEMECH-004 升硬）。
+
+        指纹拼接 `git diff-files`（unstaged tracked 修改）与 `git diff-index --cached HEAD`
+        （staged tracked 修改）原始输出取 sha256——任何 gate 运行期对 tracked 文件的
+        写/暂存都会改变指纹。路径映射解析同一输出的 `\t` 路径列，窗口前后比对得
+        文件级变化清单，供 TRACKED-DRIFT-READONLY 归因（白名单真源=
+        gate_tracked_write_allowlist.yaml）。git 不可达降级 ("", {})（不报警不阻断）。
         """
         from zephyr.shared.infra.process_pool import run_subprocess_hidden  # noqa: PLC0415
 
@@ -1958,18 +1974,85 @@ class GitCommitGateway:
             import hashlib  # noqa: PLC0415
 
             blob = f"{unstaged.returncode}:{unstaged.stdout}|{staged.returncode}:{staged.stdout}"
-            return hashlib.sha256(blob.encode("utf-8", errors="replace")).hexdigest()
-        except Exception:  # noqa: BLE001 — 降级空指纹（不报警不阻断）
-            return ""
+            fingerprint = hashlib.sha256(blob.encode("utf-8", errors="replace")).hexdigest()
+            changes: dict[str, str] = {}
+            for out in (unstaged.stdout, staged.stdout):
+                for line in (out or "").splitlines():
+                    if not line.startswith(":") or "\t" not in line:
+                        continue
+                    meta, path = line.split("\t", 1)
+                    parts = meta.split()
+                    key = f"{parts[2]}:{parts[3]}:{parts[-1]}" if len(parts) >= 4 else meta
+                    changes[path.strip().strip('"')] = key
+            return fingerprint, changes
+        except Exception:  # noqa: BLE001 — 降级空快照（不报警不阻断）
+            return "", {}
 
-    def _audit_gate_tracked_drift(self, session_id: str) -> None:
-        """gate 运行期 tracked 区漂移=违规：落审计 + stderr 醒目报警（不阻断 commit）。
+    _TRACKED_WRITE_ALLOWLIST_REL = "docs/01_policies_and_standards/_registry/catalogs/gate_tracked_write_allowlist.yaml"
+
+    def _load_tracked_write_allowlist(self) -> tuple[set[str], list[str]] | None:
+        """加载运行期 tracked 写入归因白名单（SSoT=catalog YAML，mtime 缓存）。
+
+        返回 (精确路径集, fnmatch 模式表)；缺失/解析失败 → None（fail-open 降级
+        warn-only——基础设施故障不卡死 commit 工作流，对齐 WORKTREE-REQUIRED 等
+        gate 的 fail-open 设计）。
+        """
+        try:
+            path = Path(str(self.project_root)) / self._TRACKED_WRITE_ALLOWLIST_REL
+            mtime = path.stat().st_mtime
+            cache = getattr(self, "_tracked_write_allowlist_cache", None)
+            if cache is not None and cache[0] == mtime:
+                return cache[1], cache[2]
+            import yaml  # noqa: PLC0415
+
+            data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+            exact: set[str] = set()
+            patterns: list[str] = []
+            for entry in data.get("entries", []) or []:
+                p = entry.get("path")
+                g = entry.get("pattern")
+                if p:
+                    exact.add(str(p).replace("\\", "/"))
+                if g:
+                    patterns.append(str(g).replace("\\", "/"))
+            self._tracked_write_allowlist_cache = (mtime, exact, patterns)
+            return exact, patterns
+        except Exception:  # noqa: BLE001 — fail-open 降级
+            logger.warning("TRACKED-DRIFT-READONLY: allowlist 加载失败，降级 warn-only", exc_info=True)
+            return None
+
+    def _attribute_tracked_writes(self, changed: list[str]) -> list[str] | None:
+        """文件级归因：返回未登记（白名单外）的变化文件清单；allowlist 不可用 → None。"""
+        loaded = self._load_tracked_write_allowlist()
+        if loaded is None:
+            return None
+        exact, patterns = loaded
+        import fnmatch  # noqa: PLC0415
+
+        def _attributed(f: str) -> bool:
+            return f in exact or any(fnmatch.fnmatch(f, pat) for pat in patterns)
+
+        return [f for f in changed if not _attributed(f)]
+
+    def _audit_gate_tracked_drift(
+        self,
+        session_id: str,
+        changed_files: list[str] | None = None,
+        unattributed_files: list[str] | None = None,
+        allowed: bool = False,
+    ) -> None:
+        """gate 运行期 tracked 区漂移=违规：落审计 + stderr 醒目报警。
 
         裁定原文（#ARCH-PRECOMMIT-STASH-ADAPT-001）：hook 运行期产生的任何
         tracked 区写入一律视为违规并报警，而非静默 stash 掩盖（#55 病根：
         flags.py 门禁运行期向 tracked feature_flags.jsonl 追加审计行→pre-commit
         框架 "files were modified by this hook" 结构性误报）。
         审计落 .runtime/audit/（gitignored——T4-1 铁律：审计写永不回 tracked 区）。
+
+        CAND-GATEMECH-004 升硬（2026-09-02 冻结窗口）：带文件级归因——
+        changed_files=窗口期全部变化文件；unattributed_files=白名单外文件
+        （None=allowlist 不可用降级）；allowed=True 表示经 --allow-tracked-drift
+        逃生通道放行（留痕，对标 allow_overlap 治理）。
         """
         msg = (
             "GATE-TRACKED-DRIFT VIOLATION: pre-commit gate 运行期 tracked 区发生写入"
@@ -1989,6 +2072,9 @@ class GitCommitGateway:
                 "session_id": session_id,
                 "violation": "gate_runtime_tracked_drift",
                 "context": "pre_commit_gates",
+                "changed_files": (changed_files or [])[:50],
+                "unattributed_files": (unattributed_files or None) and unattributed_files[:50],
+                "allowed": allowed,
             }
             with open(audit_dir / "hook_tracked_drift.jsonl", "a", encoding="utf-8") as f:
                 f.write(json.dumps(record, ensure_ascii=False) + "\n")
@@ -1996,16 +2082,52 @@ class GitCommitGateway:
             pass  # 审计落盘失败不阻断（warn 已发）
 
     def _check_gates_with_drift_watch(self, existing, session_id, skip_gates=frozenset(), **kwargs):
-        """gate 链执行 + tracked 区漂移监视（T4-2）：运行前后指纹比对，漂移即违规报警。
+        """gate 链执行 + tracked 区漂移监视（T4-2）：运行前后指纹比对。
+
+        CAND-GATEMECH-004 升硬（2026-09-02 冻结窗口，裁定=组合路线①）：
+        指纹 diff → 文件级归因（_attribute_tracked_writes，白名单真源=
+        gate_tracked_write_allowlist.yaml）——变化文件全部命中白名单（B 类派生
+        波次/C 类已登记遥测）→ 维持 warn+审计；存在未归因文件 → 追加
+        GateResult(TRACKED-DRIFT-READONLY, passed=False) 硬阻断 commit。
+        逃生通道：kwargs allow_tracked_drift=True（CLI --allow-tracked-drift，
+        追加 [GW:<sid>:tracked-drift] 留痕）。allowlist 加载失败降级 warn-only。
 
         skip_gates: 透传 CommitGateRegistry.check_all（worktree 隔离跳过集合，
         单一真源=session_worktree._WORKTREE_SKIP_GATES，tracker #92）。
         """
-        before = self._tracked_area_fingerprint()
+        allow_tracked_drift = bool(kwargs.get("allow_tracked_drift", False))
+        before_fp, before_map = self._tracked_area_snapshot()
         results = self._gate_registry.check_all(self, existing, session_id=session_id, skip_gates=skip_gates, **kwargs)
-        after = self._tracked_area_fingerprint()
-        if before and after and before != after:
-            self._audit_gate_tracked_drift(session_id)
+        after_fp, after_map = self._tracked_area_snapshot()
+        if before_fp and after_fp and before_fp != after_fp:
+            changed = sorted(p for p in set(before_map) | set(after_map) if before_map.get(p) != after_map.get(p))
+            unattributed = self._attribute_tracked_writes(changed)
+            self._audit_gate_tracked_drift(session_id, changed, unattributed, allowed=allow_tracked_drift)
+            if unattributed:
+                if allow_tracked_drift:
+                    logger.warning(
+                        "TRACKED-DRIFT-READONLY: %d 个未归因 tracked 写入经逃生通道放行 (session=%s): %s",
+                        len(unattributed),
+                        session_id,
+                        unattributed[:10],
+                    )
+                else:
+                    from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (  # noqa: PLC0415
+                        GateResult,
+                    )
+
+                    results.append(
+                        GateResult(
+                            gate_id="TRACKED-DRIFT-READONLY",
+                            passed=False,
+                            detail=(
+                                "gate 链执行窗口内 tracked 区发生未归因写入（CAND-GATEMECH-004 禁写即红）："
+                                f"{unattributed[:10]}。治本：写入方登记 "
+                                "gate_tracked_write_allowlist.yaml（或迁 .runtime/退库）；"
+                                "逃生通道：--allow-tracked-drift（留痕审计）"
+                            ),
+                        )
+                    )
         return results
 
     def _commit_locked(

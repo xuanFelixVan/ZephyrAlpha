@@ -1,0 +1,77 @@
+ttl: permanent
+doc_type: register
+title: GATE-TRACKED-DRIFT 运行期 tracked 写入归因白名单（唯一真源 SSoT）
+status: active
+created: '2026-09-02'
+last_updated: '2026-09-02'
+owner: freeze-gw（CAND-GATEMECH-004 冻结窗口专项）
+policy: >-
+  gate 链执行窗口（GitCommitGateway._check_gates_with_drift_watch 指纹前后比对）内
+  tracked 区发生变化的文件集合须逐文件归因：全部命中本表 → 维持 warn + 审计
+  （.runtime/audit/hook_tracked_drift.jsonl）；存在未登记文件 → TRACKED-DRIFT-READONLY
+  硬阻断 commit（逃生通道 --allow-tracked-drift，留痕审计）。
+  任何新增"运行期写 tracked 文件"的写入方 MUST 先登记本表（含 class/writer/note），
+  否则全网关提交链被硬阻断——此即"禁写即红"的登记强制语义。
+class_legend:
+  A: gate 链内写入（目标=清零；gate-17 --fix 已摘除 2026-09-02）
+  B: 派生缓存再生（post-commit reconciler 波次；窗口纪律残余=CAND-GATEMECH-008）
+  C: 运行时遥测写 tracked 数据文件（存量债，迁移残余=CAND-GATEMECH-009）
+entries:
+  # ── B 类：派生缓存再生（生成器/reconciler 为唯一写入方）──
+- path: scripts/governance/script_manifest.yaml
+  class: B
+  writer: make_manifest_reconciler / generate_script_manifest.py
+  note: 全量脚本 manifest 派生缓存，generated_by 字段自证
+- path: docs/03_modules/path_ownership_map.yaml
+  class: B
+  writer: make_path_ownership_reconciler
+  note: 路径归属派生缓存
+- path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
+  class: B
+  writer: generate_rule_catalog.py（maintenance: auto）
+  note: 规则目录派生缓存
+- path: docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml
+  class: B
+  writer: 规则感知索引生成器（maintenance: auto）
+  note: 派生缓存
+- path: docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml
+  class: B
+  writer: registry_master_index 生成器（派生漂移缓存，ROOR 为人工真源）
+  note: 派生缓存
+- path: data/asset_index/unified-asset-index.yaml
+  class: B
+  writer: 资产盘点主管线（RegistryManager）
+  note: 资产索引派生缓存
+- path: docs/02_enterprise_architecture/04_architecture_principles_decisions/README.md
+  class: B
+  writer: 项目快照 AUTO 段生成器
+  note: AUTO-BEGIN/END 段派生统计
+- pattern: docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/*.md
+  class: B
+  writer: project_handbook AUTO 段生成器
+  note: 手册 AUTO 段派生统计
+- pattern: docs/03_modules/**/*.md
+  class: B
+  writer: sync_panorama_module.py / make_blueprint_frontmatter_reconciler 等五图派生链
+  note: 模块文档 AUTO/frontmatter 派生段（真源=depgraph PG；手写叙事段在 gate 窗口外由施工会话提交）
+  # ── C 类：运行时遥测写 tracked（存量债，待 CAND-GATEMECH-009 迁移）──
+- path: data/cache/decision_audit_chain.ndjson
+  class: C
+  writer: 决策审计链运行时追加
+  note: 2026-09-02 漂移快照实证 ×4
+- path: data/compliance_log/compliance_log.jsonl
+  class: C
+  writer: src/zephyr/compliance/compliance_log.py
+  note: 2026-09-02 漂移快照实证 ×3
+- path: data/metrics/kill_switch_probes.jsonl
+  class: C
+  writer: src/zephyr/infrastructure/kill_switch_sim.py（METRICS_DIR）
+  note: 2026-09-02 漂移快照实证 ×2
+- path: data/databases/governance_metadata/red_blue_report.json
+  class: C
+  writer: 红蓝对抗报告生成（governance_metadata）
+  note: 2026-09-02 漂移快照实证 ×2
+- path: data/budget/shutdown_snapshot.json
+  class: C
+  writer: src/zephyr/governance/ops_governance/budget_engine.py
+  note: 预算关停快照运行时写

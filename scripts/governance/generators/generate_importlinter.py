@@ -47,7 +47,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT  # noqa: E402
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT  # noqa: E402
 from _shared.encoding import ensure_utf8_stdout  # noqa: E402
 from _shared.file_utils import atomic_write_safe  # noqa: E402
 
@@ -174,7 +174,11 @@ def main() -> None:
 
     # 重写：替换 forbidden_modules 块，保留其余内容原样
     new_content = _FORBIDDEN_BLOCK_RE.sub(expected_block, content, count=1)
-    atomic_write_safe(IMPORTLINTER_PATH, new_content)
+    if not atomic_write_safe(IMPORTLINTER_PATH, new_content):
+        # 治本 2026-09-02（冻结窗口实证）：atomic_write_safe 失败返 False 被忽略，
+        # 误报 REGENERATED——gate-21 复跑仍红。写入失败必须显式报错退出。
+        print("ERROR: .importlinter 写入失败（atomic_write_safe 返回 False，疑似瞬态锁竞争，重试即可）")
+        sys.exit(EXIT_ERROR)
     print(f"REGENERATED: .importlinter forbidden_modules 已更新（{len(pkgs)} 个包）")
     sys.exit(EXIT_PASS)
 
