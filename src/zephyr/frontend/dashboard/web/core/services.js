@@ -44,6 +44,7 @@ function svcRenderMaster() {
     + '<span style="font-size:12px"><span class="dot r"></span>断线 <b>' + st.counts.red + '</b></span>'
     + '<span style="font-size:12px"><span class="dot w"></span>未启动 <b>' + st.counts.gray + '</b></span>'
     + '<span class="btn primary" style="margin-left:auto" onclick="svcBootAll()">⚡ 一键拉起标准套装</span>'
+    + '<span class="btn" style="color:var(--up)" onclick="svcShutdownAll()">⏻ 一键全部关闭</span>'
     + '</div>';
   if (st.host && st.host.mem_total_gb) {
     h += '<div style="display:flex;gap:18px;flex-wrap:wrap;margin-top:10px;font-size:11px;color:var(--dim)">'
@@ -133,6 +134,28 @@ function svcCtl(id, action, _unused) {
     }
     alert('操作被拒：' + (r && r.error || '?'));
   }).catch(function (e) { alert('请求失败：' + e); });
+}
+
+/* ── 一键全部关闭：停掉所有「有开关」的运行中服务（free+confirm；guard/external/self 天生无开关不受影响）──
+ * 与一键拉起对称（Owner 2026-09-02 裁定补上）；强确认列出全部将关服务+代价警示。api_server（self）不在关闭范围。 */
+function svcShutdownAll() {
+  if (!SVC_ST) return;
+  var targets = SVC_ST.services.filter(function (s) {
+    return (s.tier === 'free' || s.tier === 'confirm') && s.light !== 'gray' && s.id !== 'api_server';
+  });
+  if (!targets.length) { alert('有开关的服务全部已停止，无需关闭'); return; }
+  var names = targets.map(function (s) { return s.name; }).join('、');
+  var inDay = targets.some(function (s) { return s.id === 'tick_sub' || s.id === 'scheduler'; });
+  var msg = '关闭以下服务（守护域/外部程序不受影响）：\n' + names
+    + (inDay ? '\n\n⚠ 盘中执行会漏行情数据、断模拟盘口粮！' : '');
+  if (!window.confirm(msg)) return;
+  var chain = Promise.resolve();
+  targets.forEach(function (s) {
+    chain = chain.then(function () {
+      return ZK.api.postServicesControl(s.id, 'stop', true).catch(function () { });
+    });
+  });
+  chain.then(function () { setTimeout(svcLoad, 1500); });
 }
 
 /* ── 一键拉起标准套装：灰灯的可控项批量拉起（幂等，活着的跳过）；confirm 级合并一次确认 ── */

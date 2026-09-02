@@ -154,6 +154,9 @@ SERVICE_CATALOG: list[dict[str, Any]] = [
     {"id": "ai_wrapper_inject", "group": "guard", "tier": "guard", "name": "AI 通道防护注入",
      "desc": "每分钟给新 AI 进程打 git 安全补丁（防 AI 误操作 git）——它停了 AI 通道防护裸奔",
      "detect": {"type": "task", "task": "ZephyrAlpha-AI-Wrapper-Inject"}},
+    {"id": "trading_watchdog", "group": "guard", "tier": "guard", "name": "交易看门狗",
+     "desc": "盯交易主进程崩了自动拉起——92 号裁定 D3 备而未启（上实盘无人值守时你再来开）",
+     "detect": {"type": "task", "task": "ZephyrAlpha_TradingWatchdog"}},
 ]
 
 _GROUP_META = {
@@ -450,6 +453,23 @@ def _env_tcp_alive(env_file: str, host_key: str, port_key: str) -> tuple[bool, s
         return False, str(e)[:80]
 
 
+def _ch_space() -> str:
+    """CH 库内空间实况（system.disks）——Owner 口径：任务 Ready≠磁盘真况，库里的数才是数。"""
+    try:
+        sys.path.insert(0, str(_REPO / "src"))
+        from zephyr.data import ch_reader
+
+        rows = ch_reader.query(
+            "SELECT name, round(total_space/1e9,1), round(free_space/1e9,1) "
+            "FROM system.disks WHERE name='default'")
+        parts = rows.strip().split("\t")
+        if len(parts) >= 3:
+            return f"库内余 {parts[2]} GB / 总 {parts[1]} GB"
+    except Exception:  # noqa: BLE001 — 空间查询失败不影响探活灯
+        pass
+    return ""
+
+
 def _gpu_stats() -> dict[str, Any] | None:
     """GPU 水位（nvidia-smi，多卡聚合 util 取最大、显存求和）——无卡/无驱动返回 None（前端隐藏该杆）。"""
     hit = _GPU_CACHE.get("stats")
@@ -565,6 +585,9 @@ def get_services_status() -> dict[str, Any]:
             alive, msg = _ch_alive()
             if alive:
                 st["light"] = "green"; st["detail"] = msg
+                space = _ch_space()
+                if space:
+                    st["detail"] = msg + " · " + space
             else:
                 st["light"] = "red"; st["detail"] = "数据库断连：" + msg
         # 缺省灯语义：external 灰=未启动（等 Owner，正常）；可控制灰=未启动；guard 灰=异常（该活着）
