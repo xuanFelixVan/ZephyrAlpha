@@ -167,9 +167,7 @@ class TraceWaterfallView:
             if not isinstance(span, Span):
                 raise TraceViewError(f"span 类型错误: {span!r}")
             if span.trace_id != trace_id:
-                raise TraceViewError(
-                    f"span.trace_id 不符: {span.trace_id!r}（检索 {trace_id!r}）"
-                )
+                raise TraceViewError(f"span.trace_id 不符: {span.trace_id!r}（检索 {trace_id!r}）")
             if not span.span_id:
                 raise TraceViewError("span_id 为空")
             if span.span_id in by_id:
@@ -204,10 +202,7 @@ class TraceWaterfallView:
         depths = {sid: _depth(span, frozenset()) for sid, span in by_id.items()}
 
         trace_start = min(span.start_ts for span in spans)
-        trace_end = max(
-            span.start_ts + datetime.timedelta(milliseconds=span.duration_ms)
-            for span in spans
-        )
+        trace_end = max(span.start_ts + datetime.timedelta(milliseconds=span.duration_ms) for span in spans)
         total_ms = (trace_end - trace_start).total_seconds() * 1000.0
 
         children: dict[str | None, list[Span]] = {}
@@ -219,24 +214,25 @@ class TraceWaterfallView:
         rows: list[WaterfallRow] = []
 
         def _emit(span: Span) -> None:
-            rows.append(WaterfallRow(
-                span_id=span.span_id,
-                parent_span_id=span.parent_span_id,
-                name=span.name,
-                view=span.view,
-                depth=depths[span.span_id],
-                start_offset_ms=(span.start_ts - trace_start).total_seconds() * 1000.0,
-                duration_ms=float(span.duration_ms),
-                slow=span.duration_ms >= self._thresholds[span.view],
-            ))
+            rows.append(
+                WaterfallRow(
+                    span_id=span.span_id,
+                    parent_span_id=span.parent_span_id,
+                    name=span.name,
+                    view=span.view,
+                    depth=depths[span.span_id],
+                    start_offset_ms=(span.start_ts - trace_start).total_seconds() * 1000.0,
+                    duration_ms=float(span.duration_ms),
+                    slow=span.duration_ms >= self._thresholds[span.view],
+                )
+            )
             for child in children.get(span.span_id, []):
                 _emit(child)
 
         for root in children.get(None, []):
             _emit(root)
 
-        _log.debug("瀑布布局: trace=%s spans=%d slow=%d",
-                   trace_id, len(rows), sum(1 for r in rows if r.slow))
+        _log.debug("瀑布布局: trace=%s spans=%d slow=%d", trace_id, len(rows), sum(1 for r in rows if r.slow))
         return WaterfallPayload(
             trace_id=trace_id,
             rows=tuple(rows),

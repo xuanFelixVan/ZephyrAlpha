@@ -45,9 +45,7 @@ __all__: Final = [
 ]
 
 #: 隔离规则 schema 必填键（配置化校验真源）
-_RULE_REQUIRED_KEYS: Final[frozenset[str]] = frozenset(
-    {"system", "interaction", "protocol", "isolation"}
-)
+_RULE_REQUIRED_KEYS: Final[frozenset[str]] = frozenset({"system", "interaction", "protocol", "isolation"})
 
 
 class IntegrationMatrixError(Exception):
@@ -107,9 +105,7 @@ class IntegrationMatrixRegistry:
     def _entry(self, system: str, interaction: str) -> Integration:
         entry = self._entries.get((system, interaction))
         if entry is None:
-            raise IntegrationMatrixError(
-                f"未知交互: ({system!r}, {interaction!r})（未注册）"
-            )
+            raise IntegrationMatrixError(f"未知交互: ({system!r}, {interaction!r})（未注册）")
         return entry
 
     def _require_system(self, system: str) -> None:
@@ -179,15 +175,11 @@ class IntegrationMatrixRegistry:
         try:
             ProtocolKind(rule["protocol"])
         except ValueError as exc:
-            raise IntegrationMatrixError(
-                f"非法协议取值: {rule['protocol']!r}"
-            ) from exc
+            raise IntegrationMatrixError(f"非法协议取值: {rule['protocol']!r}") from exc
         try:
             IsolationPolicy(rule["isolation"])
         except ValueError as exc:
-            raise IntegrationMatrixError(
-                f"非法隔离策略取值: {rule['isolation']!r}"
-            ) from exc
+            raise IntegrationMatrixError(f"非法隔离策略取值: {rule['isolation']!r}") from exc
 
     # ── 故障降级链（策略声明） ──────────────────────────────────────────────
 
@@ -228,13 +220,13 @@ class IntegrationMatrixRegistry:
     def interactions_of(self, system: str) -> tuple[Integration, ...]:
         """系统全部交互（按交互名确定性排序）。"""
         self._require_system(system)
-        return tuple(sorted(
-            (e for e in self._entries.values() if e.system == system),
-            key=lambda e: e.interaction,
-        ))
+        return tuple(
+            sorted(
+                (e for e in self._entries.values() if e.system == system),
+                key=lambda e: e.interaction,
+            )
+        )
 
     def matrix(self) -> tuple[Integration, ...]:
         """全矩阵视图（按 (system, interaction) 确定性排序）。"""
-        return tuple(sorted(
-            self._entries.values(), key=lambda e: (e.system, e.interaction)
-        ))
+        return tuple(sorted(self._entries.values(), key=lambda e: (e.system, e.interaction)))

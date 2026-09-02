@@ -73,9 +73,7 @@ def _require_non_empty(field: str, value: str) -> str:
 
 def _require_positive(field: str, value: float) -> float:
     if not isinstance(value, (int, float)) or isinstance(value, bool) or value <= 0:
-        raise InvalidNotificationError(
-            f"{field} 必须为正数", details={"field": field, "value": repr(value)}
-        )
+        raise InvalidNotificationError(f"{field} 必须为正数", details={"field": field, "value": repr(value)})
     return float(value)
 
 
@@ -242,9 +240,7 @@ class WeChatNotificationSender:
             },
         }
         try:
-            outcome = self._http_post(
-                self._config.webhook_url.strip(), payload, float(self._config.timeout_s)
-            )
+            outcome = self._http_post(self._config.webhook_url.strip(), payload, float(self._config.timeout_s))
         except Exception as exc:  # noqa: BLE001 — 传输异常内化为显式失败（sender 协议）
             _logger.error("WECHAT_SEND_ERROR error=%s", exc)
             return False

@@ -167,8 +167,7 @@ def enforce_input(text: str, *, source: str, enabled: bool = True) -> None:
     _record_decision(gw, direction="input", source=source, result=result)
     if result.decision in (SecurityDecision.BLOCK, SecurityDecision.DENY):
         raise LSGBlockedError(
-            f"LSG 输入判决 {result.decision.value}，拒绝发起 LLM 调用 "
-            f"(blocked_by={result.blocked_by}, source={source})"
+            f"LSG 输入判决 {result.decision.value}，拒绝发起 LLM 调用 (blocked_by={result.blocked_by}, source={source})"
         )
 
 
@@ -194,6 +193,5 @@ def enforce_output(text: str, *, source: str, enabled: bool = True) -> None:
     _record_decision(gw, direction="output", source=source, result=result)
     if result.decision in (SecurityDecision.BLOCK, SecurityDecision.DENY):
         raise LSGBlockedError(
-            f"LSG 输出判决 {result.decision.value}，拒绝返回该响应 "
-            f"(blocked_by={result.blocked_by}, source={source})"
+            f"LSG 输出判决 {result.decision.value}，拒绝返回该响应 (blocked_by={result.blocked_by}, source={source})"
         )

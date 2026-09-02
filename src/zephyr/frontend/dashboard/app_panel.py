@@ -484,7 +484,9 @@ def create_dashboard(
 
             _order_manager = OrderManager()
             _assembly = QmtFileBridgeAssembly(
-                _order_manager, enable_real=False, enable_sim=True,
+                _order_manager,
+                enable_real=False,
+                enable_sim=True,
             )
             _assembly.assemble()
             _assembly.connect_all()

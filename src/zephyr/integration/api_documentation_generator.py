@@ -43,14 +43,10 @@ __all__: Final = [
 ]
 
 #: HTTP 方法词表（闭合）
-_HTTP_METHODS: Final[frozenset[str]] = frozenset(
-    {"GET", "POST", "PUT", "DELETE", "PATCH"}
-)
+_HTTP_METHODS: Final[frozenset[str]] = frozenset({"GET", "POST", "PUT", "DELETE", "PATCH"})
 
 #: JSON Schema 字段类型词表（闭合）
-_FIELD_TYPES: Final[frozenset[str]] = frozenset(
-    {"string", "integer", "number", "boolean", "object", "array"}
-)
+_FIELD_TYPES: Final[frozenset[str]] = frozenset({"string", "integer", "number", "boolean", "object", "array"})
 
 _OPENAPI_VERSION: Final = "3.0.3"
 
@@ -179,11 +175,7 @@ class ApiDocumentationGenerator:
                 "responses": {
                     "200": {
                         "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": self._schema_of(route.response_fields)
-                            }
-                        },
+                        "content": {"application/json": {"schema": self._schema_of(route.response_fields)}},
                     }
                 },
             }
@@ -194,11 +186,7 @@ class ApiDocumentationGenerator:
             if route.request_fields:
                 operation["requestBody"] = {
                     "required": True,
-                    "content": {
-                        "application/json": {
-                            "schema": self._schema_of(route.request_fields)
-                        }
-                    },
+                    "content": {"application/json": {"schema": self._schema_of(route.request_fields)}},
                 }
             paths.setdefault(route.path, {})[route.method.lower()] = operation
         return {
@@ -275,10 +263,9 @@ class ApiDocumentationGenerator:
         baseline_ops = self._operations_of(baseline)
         added = tuple(sorted(k for k in current_ops if k not in baseline_ops))
         removed = tuple(sorted(k for k in baseline_ops if k not in current_ops))
-        changed = tuple(sorted(
-            k for k in current_ops.keys() & baseline_ops.keys()
-            if current_ops[k] != baseline_ops[k]
-        ))
+        changed = tuple(
+            sorted(k for k in current_ops.keys() & baseline_ops.keys() if current_ops[k] != baseline_ops[k])
+        )
         union = len(current_ops.keys() | baseline_ops.keys())
         ratio = (len(added) + len(removed) + len(changed)) / max(union, 1)
         exceeded = ratio > self._drift_threshold
@@ -294,7 +281,11 @@ class ApiDocumentationGenerator:
         if exceeded:
             _log.warning(
                 "契约漂移超阈值: ratio=%.3f > %.3f (added=%d removed=%d changed=%d)",
-                ratio, self._drift_threshold, len(added), len(removed), len(changed),
+                ratio,
+                self._drift_threshold,
+                len(added),
+                len(removed),
+                len(changed),
             )
             if self._alert_sink is not None:
                 try:

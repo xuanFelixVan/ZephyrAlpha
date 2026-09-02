@@ -128,7 +128,9 @@ class LocalOrderQueue:
             self._items.append(OrderQueueItem(order=order, scheduled_time=scheduled))
         _logger.info(
             "入队 %s broker=%s scheduled=+%.1fs",
-            order.order_id, self._broker_id, scheduled - time.monotonic(),
+            order.order_id,
+            self._broker_id,
+            scheduled - time.monotonic(),
         )
 
     def enqueue_batch(self, orders: list[Order], interval_seconds: float | None = None) -> None:
@@ -140,12 +142,12 @@ class LocalOrderQueue:
         with self._lock:
             base = time.monotonic()
             for i, order in enumerate(orders):
-                self._items.append(
-                    OrderQueueItem(order=order, scheduled_time=base + i * interval)
-                )
+                self._items.append(OrderQueueItem(order=order, scheduled_time=base + i * interval))
         _logger.info(
             "批量入队 %d 笔 broker=%s interval=%.1fs",
-            len(orders), self._broker_id, interval,
+            len(orders),
+            self._broker_id,
+            interval,
         )
 
     def start(self) -> None:
@@ -231,10 +233,7 @@ class LocalOrderQueue:
         """发送所有到期的队列项"""
         now = time.monotonic()
         with self._lock:
-            due = [
-                i for i in self._items
-                if i.status == OrderQueueItemStatus.PENDING and i.scheduled_time <= now
-            ]
+            due = [i for i in self._items if i.status == OrderQueueItemStatus.PENDING and i.scheduled_time <= now]
         for item in due:
             self._send(item)
 
@@ -246,14 +245,20 @@ class LocalOrderQueue:
             item.status = OrderQueueItemStatus.SENT
             _logger.info(
                 "队列发送 %s broker=%s attempt=%d",
-                item.order.order_id, self._broker_id, item.attempts,
+                item.order.order_id,
+                self._broker_id,
+                item.attempts,
             )
         except Exception as e:
             item.last_error = str(e)
             item.scheduled_time = time.monotonic() + self.RETRY_DELAY
             _logger.warning(
                 "队列发送失败 %s broker=%s attempt=%d，%.0f 秒后重试: %r",
-                item.order.order_id, self._broker_id, item.attempts, self.RETRY_DELAY, e,
+                item.order.order_id,
+                self._broker_id,
+                item.attempts,
+                self.RETRY_DELAY,
+                e,
             )
 
 

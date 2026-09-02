@@ -22,6 +22,7 @@
 返回：{"ok": true, "bars": [{timestamp(ms), open, high, low, close, volume, amount}]}
 异常一律 ok:false——前端据此回退演示数据（演示诚实纪律：前端标"演示"角标）。
 """
+
 from __future__ import annotations
 
 import sys
@@ -48,14 +49,19 @@ app = FastAPI(title="ZephyrAlpha Dashboard API (read-only + backtest-run)")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["GET", "POST"], allow_headers=["*"])
 
 _PERIOD_TABLE: dict[str, str] = {
-    "1m": "kline_1min", "5m": "kline_5min", "15m": "kline_15min",
-    "30m": "kline_30min", "60m": "kline_60min",
-    "1d": "kline_daily", "1w": "kline_weekly", "1M": "kline_monthly",
+    "1m": "kline_1min",
+    "5m": "kline_5min",
+    "15m": "kline_15min",
+    "30m": "kline_30min",
+    "60m": "kline_60min",
+    "1d": "kline_daily",
+    "1w": "kline_weekly",
+    "1M": "kline_monthly",
 }
 
 _client: Client | None = None
 _col_cache: dict[str, dict[str, str]] = {}
-_ch_lock = threading.Lock()   # clickhouse_driver 单连接非线程安全：FastAPI 线程池并发请求必须串行化
+_ch_lock = threading.Lock()  # clickhouse_driver 单连接非线程安全：FastAPI 线程池并发请求必须串行化
 
 
 def _ch() -> Client:
@@ -266,18 +272,19 @@ def quote(symbols: str = Query(..., min_length=1)) -> dict[str, Any]:
         found = {r[0] for r in rows}
         missing = [s for s in syms if s not in found]
         if missing:
-            rows = list(rows) + list(_ch_exec(
-                "SELECT symbol, trade_date, close FROM kline_etf_daily "
-                "WHERE symbol IN %(syms)s AND close > 0 "
-                "ORDER BY trade_date DESC LIMIT 2 BY symbol",
-                {"syms": tuple(missing)},
-            ))
+            rows = list(rows) + list(
+                _ch_exec(
+                    "SELECT symbol, trade_date, close FROM kline_etf_daily "
+                    "WHERE symbol IN %(syms)s AND close > 0 "
+                    "ORDER BY trade_date DESC LIMIT 2 BY symbol",
+                    {"syms": tuple(missing)},
+                )
+            )
         by_sym: dict[str, list[tuple[Any, float]]] = {}
         for r in rows:
             by_sym.setdefault(r[0], []).append((r[1], float(r[2])))
         name_rows = _ch_exec(
-            "SELECT symbol, argMax(name, valid_from) FROM stock_basic "
-            "WHERE symbol IN %(syms)s GROUP BY symbol",
+            "SELECT symbol, argMax(name, valid_from) FROM stock_basic WHERE symbol IN %(syms)s GROUP BY symbol",
             {"syms": tuple(syms)},
         )
         names = {r[0]: str(r[1]) for r in name_rows}
@@ -423,6 +430,7 @@ def orderbook(symbol: str = Query(..., min_length=1)) -> dict[str, Any]:
             rows = list(csv.DictReader(f))
         for row in rows:
             if row.get("symbol", "").split(".")[0].strip() == sym:
+
                 def _n(k: str) -> float:
                     try:
                         return float(row.get(k, "") or 0)
@@ -431,7 +439,7 @@ def orderbook(symbol: str = Query(..., min_length=1)) -> dict[str, Any]:
 
                 def _levels(side: str) -> list[list[float]]:
                     out: list[list[float]] = []
-                    for i in range(1, 11):   # 最多十档，有多少列取多少
+                    for i in range(1, 11):  # 最多十档，有多少列取多少
                         p = row.get(f"{side}{i}", "")
                         if p is None or p == "":
                             break
@@ -473,8 +481,7 @@ def stock_search(q: str = Query(..., min_length=1), limit: int = Query(20, ge=1,
     try:
         # 代码精确/前缀匹配优先，名称包含次之（stock_basic 无 market 列，symbol 可能重复取 DISTINCT）
         rows = _ch_exec(
-            "SELECT DISTINCT symbol, name FROM stock_basic "
-            "WHERE symbol LIKE %(q)s OR name LIKE %(qn)s LIMIT %(l)s",
+            "SELECT DISTINCT symbol, name FROM stock_basic WHERE symbol LIKE %(q)s OR name LIKE %(qn)s LIMIT %(l)s",
             {"q": q + "%", "qn": "%" + q + "%", "l": limit},
         )
         return {
@@ -516,7 +523,7 @@ def strategies() -> dict[str, Any]:
         from zephyr.governance.strategies.strategy_base import StrategyRegistry, autodiscover_strategies
 
         if not StrategyRegistry.list_all():
-            autodiscover_strategies("zephyr.pf_core")   # 幂等（含 strategies/ 子包）；预热后此行为空操作
+            autodiscover_strategies("zephyr.pf_core")  # 幂等（含 strategies/ 子包）；预热后此行为空操作
         data = []
         for sid in sorted(StrategyRegistry.list_all().keys() or []):
             data.append({"id": sid, "name": sid, "note": _BT_STRATEGY_NOTES.get(sid, ""), "tick_only": False})
@@ -527,7 +534,9 @@ def strategies() -> dict[str, Any]:
             autodiscover_tick_strategies("zephyr.pf_core")
             tick_reg = getattr(TickStrategyBase, "_registry", {}) or {}
             for sid in sorted(tick_reg.keys()):
-                data.append({"id": sid, "name": sid, "note": _BT_STRATEGY_NOTES.get(sid, "tick 策略"), "tick_only": True})
+                data.append(
+                    {"id": sid, "name": sid, "note": _BT_STRATEGY_NOTES.get(sid, "tick 策略"), "tick_only": True}
+                )
         except Exception:  # noqa: BLE001 — tick 注册表不可用时仅返回日频
             pass
         return {"ok": True, "count": len(data), "data": data}
@@ -613,9 +622,9 @@ def backtest_detail(
                 "metrics": d.get("metrics", {}),
                 "equity_curve": _thin_points(eq_full, max_points),
                 "drawdown_curve": _thin_points(dd_full, max_points),
-                "trade_log": tl_full[-500:][::-1],   # 倒序（最新在前）cap 500
+                "trade_log": tl_full[-500:][::-1],  # 倒序（最新在前）cap 500
                 "benchmark_curve": d.get("benchmark_curve") or [],
-                "total_points": {"equity": len(eq_full), "trades": len(tl_full)},   # 全量规模（抽稀明示）
+                "total_points": {"equity": len(eq_full), "trades": len(tl_full)},  # 全量规模（抽稀明示）
             },
         }
     except Exception as exc:
@@ -626,7 +635,7 @@ def backtest_detail(
 # 状态存内存 {task_id: {...}}；前端轮询 /api/backtest-run?task_id= 查进度。
 from concurrent.futures import ThreadPoolExecutor  # noqa: E402
 
-_BT_RUN_POOL = ThreadPoolExecutor(max_workers=1, thread_name_prefix="bt-run")   # 串行防 CH 连接竞争
+_BT_RUN_POOL = ThreadPoolExecutor(max_workers=1, thread_name_prefix="bt-run")  # 串行防 CH 连接竞争
 _BT_RUN_STATE: dict[str, dict[str, Any]] = {}
 _BT_RUN_LOCK = threading.Lock()
 
@@ -712,16 +721,28 @@ def backtest_run(body: dict[str, Any]) -> dict[str, Any]:
         return {"ok": False, "error": "strategies/symbols/start/end required", "task_id": None}
     task_id = f"btrun-{int(time.time())}-{len(_BT_RUN_STATE) % 10000}"
     with _BT_RUN_LOCK:
-        _BT_RUN_STATE[task_id] = {"status": "running", "params": {"strategies": strategies, "symbols": symbols, "start": start, "end": end, "mode": mode}}
-    _BT_RUN_POOL.submit(_bt_run_task, task_id, {
-        "strategies": strategies, "strategy_id": strategies[0], "symbols": symbols, "start": start, "end": end,
-        "mode": mode,
-        "factor_ids": body.get("factor_ids", ["momentum_20d"]),
-        "rebalance_freq": body.get("rebalance_freq", "W-FRI"),
-        "top_n": body.get("top_n", 10), "max_single": body.get("max_single", 0.10),
-        "initial_capital": body.get("initial_capital", 1_000_000.0),
-        "pit_shift": body.get("pit_shift", 1),
-    })
+        _BT_RUN_STATE[task_id] = {
+            "status": "running",
+            "params": {"strategies": strategies, "symbols": symbols, "start": start, "end": end, "mode": mode},
+        }
+    _BT_RUN_POOL.submit(
+        _bt_run_task,
+        task_id,
+        {
+            "strategies": strategies,
+            "strategy_id": strategies[0],
+            "symbols": symbols,
+            "start": start,
+            "end": end,
+            "mode": mode,
+            "factor_ids": body.get("factor_ids", ["momentum_20d"]),
+            "rebalance_freq": body.get("rebalance_freq", "W-FRI"),
+            "top_n": body.get("top_n", 10),
+            "max_single": body.get("max_single", 0.10),
+            "initial_capital": body.get("initial_capital", 1_000_000.0),
+            "pit_shift": body.get("pit_shift", 1),
+        },
+    )
     return {"ok": True, "task_id": task_id, "status": "running", "strategies": strategies, "mode": mode}
 
 
@@ -804,7 +825,16 @@ def signals_overview() -> dict[str, Any]:
         for src, sid, direction, cnt, max_d, _ in rows:
             key = (src, sid)
             item = summary.setdefault(
-                key, {"source": src, "signal_id": sid, "trade_date": max_d.isoformat(), "buy": 0, "sell": 0, "hold": 0, "neutral": 0}
+                key,
+                {
+                    "source": src,
+                    "signal_id": sid,
+                    "trade_date": max_d.isoformat(),
+                    "buy": 0,
+                    "sell": 0,
+                    "hold": 0,
+                    "neutral": 0,
+                },
             )
             item[direction] = int(cnt)
         # 强弱两端（factor_synth 最新截面 top/bottom 5）

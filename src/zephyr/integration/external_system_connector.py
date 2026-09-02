@@ -236,18 +236,14 @@ class ExternalSystemConnector:
                 entry.sec_bucket = sec
                 entry.sec_used = 0.0
             if entry.sec_used + n > quota.rate_per_sec:
-                raise QuotaExceeded(
-                    f"{connector_id} 每秒配额超限: {entry.sec_used}+{n} > {quota.rate_per_sec}"
-                )
+                raise QuotaExceeded(f"{connector_id} 每秒配额超限: {entry.sec_used}+{n} > {quota.rate_per_sec}")
         if quota.daily_cap is not None:
             day = now.date().isoformat()
             if day != entry.day_bucket:
                 entry.day_bucket = day
                 entry.day_used = 0
             if entry.day_used + n > quota.daily_cap:
-                raise QuotaExceeded(
-                    f"{connector_id} 日累计配额超限: {entry.day_used}+{n} > {quota.daily_cap}"
-                )
+                raise QuotaExceeded(f"{connector_id} 日累计配额超限: {entry.day_used}+{n} > {quota.daily_cap}")
         entry.sec_used += n
         entry.day_used += n
 
@@ -286,8 +282,7 @@ class ExternalSystemConnector:
         out = [
             e.profile
             for e in self._entries.values()
-            if (kind is None or e.profile.capability.kind is kind)
-            and self.is_callable(e.profile.connector_id)
+            if (kind is None or e.profile.capability.kind is kind) and self.is_callable(e.profile.connector_id)
         ]
         out.sort(key=lambda p: p.connector_id)
         return out

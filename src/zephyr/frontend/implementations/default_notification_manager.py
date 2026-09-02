@@ -87,9 +87,7 @@ class DefaultNotificationManager(NotificationManagerBase):
                 details={"channel": name},
             )
         if not callable(sender):
-            raise InvalidNotificationError(
-                f"渠道 sender 不可调用: {name}", details={"channel": name}
-            )
+            raise InvalidNotificationError(f"渠道 sender 不可调用: {name}", details={"channel": name})
         self._channels[name] = sender
 
     def channels(self) -> list[str]:
@@ -113,9 +111,7 @@ class DefaultNotificationManager(NotificationManagerBase):
             try:
                 outcome = sender(notification)
             except Exception as exc:  # noqa: BLE001 — 单渠道故障不影响其余渠道
-                _logger.error(
-                    "NOTIFICATION_SEND_ERROR channel=%s error=%s", name, exc
-                )
+                _logger.error("NOTIFICATION_SEND_ERROR channel=%s error=%s", name, exc)
                 all_ok = False
                 continue
             if outcome is False:

@@ -419,13 +419,9 @@ def query_position_state_snapshot(
                 "can_buy": fsm.can_buy(),
                 "can_rebuild": fsm.can_rebuild(),
                 "is_observing": fsm.is_observing,
-                "observing_reason": (
-                    ctx.observing_reason.value if ctx.observing_reason is not None else None
-                ),
+                "observing_reason": (ctx.observing_reason.value if ctx.observing_reason is not None else None),
                 "is_in_cooldown": fsm.is_in_cooldown,
-                "cooldown_until": (
-                    ctx.cooldown_until.isoformat() if ctx.cooldown_until is not None else None
-                ),
+                "cooldown_until": (ctx.cooldown_until.isoformat() if ctx.cooldown_until is not None else None),
                 "graduation_weight": ctx.graduation_weight,
             }
         )
@@ -473,8 +469,7 @@ def query_drawdown_throttle(request: DrawdownThrottleRequest) -> dict[str, Any]:
         var_cvar=VarCvarMetrics(var_95=request.var_95, cvar_95=request.cvar_95),
         black_swan=BlackSwanSignal(),
         strategy_pnls=[
-            StrategyPnl(strategy_id=sid, drawdown_pct=dd)
-            for sid, dd in (request.strategy_drawdowns or {}).items()
+            StrategyPnl(strategy_id=sid, drawdown_pct=dd) for sid, dd in (request.strategy_drawdowns or {}).items()
         ]
         or None,
         var_breach_state=request.var_breach_state,
@@ -545,9 +540,7 @@ def query_calendar_position_constraints(
                 "action": c.action.value,
                 "cap_adjustment": c.cap_adjustment,
                 "description": c.description,
-                "affected_symbols": (
-                    "ALL" if c.affected_symbols is None else sorted(c.affected_symbols)
-                ),
+                "affected_symbols": ("ALL" if c.affected_symbols is None else sorted(c.affected_symbols)),
             }
             for c in alert.active_constraints
         ],
@@ -586,9 +579,8 @@ def query_liquidity_status(
         for m in results
     ]
     illiquid = sorted(r["symbol"] for r in rows if r["is_illiquid"])
-    conclusion = (
-        f"监控 {len(rows)} 票：{len(illiquid)} 票流动性恶化"
-        + (f"（{'、'.join(illiquid)}）" if illiquid else "，全票正常")
+    conclusion = f"监控 {len(rows)} 票：{len(illiquid)} 票流动性恶化" + (
+        f"（{'、'.join(illiquid)}）" if illiquid else "，全票正常"
     )
     return {
         "rows": rows,

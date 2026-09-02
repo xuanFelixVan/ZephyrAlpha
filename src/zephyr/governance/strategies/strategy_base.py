@@ -201,7 +201,11 @@ def autodiscover_strategies(
             for fp in files:
                 if fp.stem.startswith("_") or fp.stem == "__init__":
                     continue
-                mod_name = f"{package_path}.{fp.parent.relative_to(pkg_dir).as_posix().replace('/', '.')}.{fp.stem}" if fp.parent != pkg_dir else f"{package_path}.{fp.stem}"
+                mod_name = (
+                    f"{package_path}.{fp.parent.relative_to(pkg_dir).as_posix().replace('/', '.')}.{fp.stem}"
+                    if fp.parent != pkg_dir
+                    else f"{package_path}.{fp.stem}"
+                )
                 try:
                     importlib.import_module(mod_name)
                     found += 1

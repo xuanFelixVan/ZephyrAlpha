@@ -792,9 +792,7 @@ def launch_reconcile_async(
     # 刚写的 pending status，TOCTOU 缝隙物理闭合。锁获取失败/超时降级无锁继续
     # （fail-open，post-commit best-effort 不阻断 commit，与旧行为同平面）。
     with _acquire_launch_lock(root):
-        return _launch_worker_locked(
-            root, commit_sha, session_id, committed_files, commit_message, started_at
-        )
+        return _launch_worker_locked(root, commit_sha, session_id, committed_files, commit_message, started_at)
 
 
 def _launch_worker_locked(

@@ -144,8 +144,7 @@ def make_errcode_consistency_gate() -> GateSpec:
         hints = _next_free_hints(mod, project_root, sorted(set(bad_codes)))
         detail = (
             "GATE-ERRCODE-CONSISTENCY 阻断: error_code 注册表↔代码真源对账失败 "
-            f"（{len(failures)} 断言红，#ARCH-ERRCODE-001；治本=先登记/改号再提交）:\n"
-            + "\n".join(failures[:6])
+            f"（{len(failures)} 断言红，#ARCH-ERRCODE-001；治本=先登记/改号再提交）:\n" + "\n".join(failures[:6])
         )
         if hints:
             detail += f"\n{hints}（取号以扫描真源+注册表并集 max+1 为准）"

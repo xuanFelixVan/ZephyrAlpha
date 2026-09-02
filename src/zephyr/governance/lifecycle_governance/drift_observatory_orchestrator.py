@@ -416,7 +416,9 @@ class DriftObservatoryOrchestrator:
         if l2.residual_bias is not None and self._ports.bias_corrector is not None:
             self._ports.bias_corrector(l2.residual_bias)  # BC-ACI 纠偏（宽度+中心双重保护）
 
-    def _apply_response(self, strategy_id: str, response: DriftResponse) -> tuple[tuple[str, ...], tuple[str, ...], bool]:
+    def _apply_response(
+        self, strategy_id: str, response: DriftResponse
+    ) -> tuple[tuple[str, ...], tuple[str, ...], bool]:
         """水位棘轮执行：升级才触发执行端口；同/低水位幂等零副作用（返回 idempotent=True）。"""
         applied = self._applied.get(strategy_id)
         if applied is not None and _RESPONSE_RANK[response] <= _RESPONSE_RANK[applied]:

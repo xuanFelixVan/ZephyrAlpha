@@ -666,9 +666,7 @@ class MiniQmtBroker(BrokerInterface):
                 raise MiniQmtBrokerError("未连接，请先调用 connect()", error_code=-1)
 
             try:
-                xt_trades = self._call_xttrader_with_reconnect(
-                    lambda: self._xttrader.query_stock_trades(self._account)
-                )
+                xt_trades = self._call_xttrader_with_reconnect(lambda: self._xttrader.query_stock_trades(self._account))
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 raise MiniQmtBrokerError(f"xttrader 查询成交异常: {e}", error_code=-1) from e
 

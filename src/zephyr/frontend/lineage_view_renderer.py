@@ -177,8 +177,7 @@ class LineageViewRenderer:
             raise LineageViewError(f"非法 hops: {hops!r}（须为正整数）")
         upstream = self._n_hop(entity_id, self._pred, hops)
         downstream = self._n_hop(entity_id, self._succ, hops)
-        _log.debug("血缘闭包: %s hops=%d upstream=%d downstream=%d",
-                   entity_id, hops, len(upstream), len(downstream))
+        _log.debug("血缘闭包: %s hops=%d upstream=%d downstream=%d", entity_id, hops, len(upstream), len(downstream))
         return NeighborhoodPayload(
             selected=entity_id,
             hops=hops,
@@ -204,11 +203,7 @@ class LineageViewRenderer:
             impacted |= self._n_hop(entity_id, self._succ, hops=len(self._entities))
         impacted -= changed
         return {
-            eid: (
-                COLOR_CHANGED if eid in changed
-                else COLOR_IMPACTED if eid in impacted
-                else COLOR_NORMAL
-            )
+            eid: (COLOR_CHANGED if eid in changed else COLOR_IMPACTED if eid in impacted else COLOR_NORMAL)
             for eid in sorted(self._entities)
         }
 
@@ -220,9 +215,7 @@ class LineageViewRenderer:
         return tuple(
             LayerData(
                 layer=layer_idx,
-                entities=tuple(sorted(
-                    eid for eid, li in self._layers.items() if li == layer_idx
-                )),
+                entities=tuple(sorted(eid for eid, li in self._layers.items() if li == layer_idx)),
             )
             for layer_idx in range(layer_count)
         )

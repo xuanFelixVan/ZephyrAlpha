@@ -182,6 +182,7 @@ def llmdeg_from_budget_level(level: BudgetLevel) -> int:
     """BudgetLevel -> LLMDeg-0~4 映射（10号文 §3.6：L0→0 正常 … L4/L5/L6→4 熔断，封顶 4）。"""
     return max(LLMDEG_MIN, min(int(level.value), LLMDEG_MAX))
 
+
 # ── 峰谷计价（Asia/Shanghai；DeepSeek 官网 2026-08-17 调价口径，2026-08-22 校准登记 tracker #254）──
 _BEIJING_TZ: Final = ZoneInfo("Asia/Shanghai")
 # 高峰时段=[9:00,12:00)∪[14:00,18:00)，其余为空闲（谷时）；空闲价=高峰半价
@@ -237,9 +238,7 @@ CREATE TABLE IF NOT EXISTS llm_call_log (
     created_at TEXT NOT NULL        -- 落库时点 UTC ISO8601
 )
 """
-_DDL_IDX_TS: Final = (
-    "CREATE INDEX IF NOT EXISTS idx_llm_call_log_ts ON llm_call_log (ts)"
-)
+_DDL_IDX_TS: Final = "CREATE INDEX IF NOT EXISTS idx_llm_call_log_ts ON llm_call_log (ts)"
 
 # ── SQL 常量（NO-BARE-SQL 门禁；append-only 仅 INSERT，参数化防注入）──
 _SQL_INSERT: Final = (
@@ -279,10 +278,7 @@ def is_valley_period(ts: datetime) -> bool:
     if ts.tzinfo is None:
         return False
     hour = ts.astimezone(_BEIJING_TZ).hour
-    in_peak = (
-        _PEAK_AM_START_HOUR <= hour < _PEAK_AM_END_HOUR
-        or _PEAK_PM_START_HOUR <= hour < _PEAK_PM_END_HOUR
-    )
+    in_peak = _PEAK_AM_START_HOUR <= hour < _PEAK_AM_END_HOUR or _PEAK_PM_START_HOUR <= hour < _PEAK_PM_END_HOUR
     return not in_peak
 
 
@@ -715,9 +711,9 @@ class LLMRuntimeGateway:
                 cost_yuan=0.0,
                 latency_ms=int((time.monotonic() - entry_start) * 1000),
                 status="blocked",
-                error=(
-                    f"llmdeg-{self._last_llmdeg} 生效：显式 API 通道 {channel} 已熔断，仅本地通道可用"
-                )[:_ERR_MAX_LEN],
+                error=(f"llmdeg-{self._last_llmdeg} 生效：显式 API 通道 {channel} 已熔断，仅本地通道可用")[
+                    :_ERR_MAX_LEN
+                ],
             )
             self._record(task_type, result, ts=entry_ts)
             return result
@@ -907,9 +903,7 @@ def reconcile_daily_calls(
         status = row["status"]
         provider = row["provider"]
         by_status[status] = by_status.get(status, 0) + 1
-        bucket = by_provider.setdefault(
-            provider, {"calls": 0, "tokens_in": 0, "tokens_out": 0, "cost_yuan": 0.0}
-        )
+        bucket = by_provider.setdefault(provider, {"calls": 0, "tokens_in": 0, "tokens_out": 0, "cost_yuan": 0.0})
         bucket["calls"] += 1
         bucket["tokens_in"] += row["tokens_in"]
         bucket["tokens_out"] += row["tokens_out"]
@@ -922,9 +916,7 @@ def reconcile_daily_calls(
                 row_ts = datetime.fromisoformat(row["ts"])
             except ValueError:
                 continue  # 坏行不重算（登记值仍计入 total_cost，delta 显形）
-            recomputed_cost += compute_cost_yuan(
-                provider, row["model"], row["tokens_in"], row["tokens_out"], row_ts
-            )
+            recomputed_cost += compute_cost_yuan(provider, row["model"], row["tokens_in"], row["tokens_out"], row_ts)
 
     total_cost = round(total_cost, 6)
     recomputed_cost = round(recomputed_cost, 6)
@@ -939,8 +931,6 @@ def reconcile_daily_calls(
         "recomputed_cost_yuan": recomputed_cost,
         "cost_delta_yuan": round(total_cost - recomputed_cost, 6),
         "expected_cost_yuan": expected_cost_yuan,
-        "over_expected": (
-            None if expected_cost_yuan is None else total_cost > expected_cost_yuan
-        ),
+        "over_expected": (None if expected_cost_yuan is None else total_cost > expected_cost_yuan),
     }
     return result

@@ -213,8 +213,7 @@ class GraphViewRenderer:
         """层内排序：初序 node_id → barycenter 下扫降交叉（node_id 兜底确定性）。"""
         layer_count = max(self._layers.values()) + 1
         ordered = [
-            sorted(nid for nid, li in self._layers.items() if li == layer_idx)
-            for layer_idx in range(layer_count)
+            sorted(nid for nid, li in self._layers.items() if li == layer_idx) for layer_idx in range(layer_count)
         ]
         pos = {nid: float(idx) for members in ordered for idx, nid in enumerate(members)}
         for _ in range(_BARYCENTER_PASSES):
@@ -242,16 +241,18 @@ class GraphViewRenderer:
         for layer_idx, members in enumerate(ordered):
             for order, nid in enumerate(members):
                 node = self._nodes[nid]
-                layout_nodes.append(LayoutNode(
-                    node_id=nid,
-                    label=node.label,
-                    status=node.status,
-                    color=_STATUS_COLORS[node.status],
-                    layer=layer_idx,
-                    order=order,
-                    x=order * self._x_spacing,
-                    y=layer_idx * self._y_spacing,
-                ))
+                layout_nodes.append(
+                    LayoutNode(
+                        node_id=nid,
+                        label=node.label,
+                        status=node.status,
+                        color=_STATUS_COLORS[node.status],
+                        layer=layer_idx,
+                        order=order,
+                        x=order * self._x_spacing,
+                        y=layer_idx * self._y_spacing,
+                    )
+                )
         return GraphLayout(
             nodes=tuple(layout_nodes),
             edges=tuple(LayoutEdge(source=s, target=t) for s, t in self._edges),
@@ -283,11 +284,6 @@ class GraphViewRenderer:
             if not frontier:
                 break
         sub_nodes = tuple(self._nodes[nid] for nid in sorted(visited))
-        sub_edges = tuple(
-            LayoutEdge(source=s, target=t)
-            for s, t in self._edges
-            if s in visited and t in visited
-        )
-        _log.debug("钻取子图: center=%s hops=%d nodes=%d edges=%d",
-                   node_id, hops, len(sub_nodes), len(sub_edges))
+        sub_edges = tuple(LayoutEdge(source=s, target=t) for s, t in self._edges if s in visited and t in visited)
+        _log.debug("钻取子图: center=%s hops=%d nodes=%d edges=%d", node_id, hops, len(sub_nodes), len(sub_edges))
         return DrilldownPayload(center=node_id, hops=hops, nodes=sub_nodes, edges=sub_edges)

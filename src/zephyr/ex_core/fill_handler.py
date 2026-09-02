@@ -493,9 +493,7 @@ class FillHandler:
                 except (json.JSONDecodeError, KeyError, ValueError) as exc:
                     # 坏行（crash 残行/schema 不兼容）跳过——与 AppendOnlyDedupSet
                     # 末行残缺丢弃同风格：宁可少读不阻断回放
-                    logger.warning(
-                        "Fill JSONL 坏行跳过: path=%s line=%d err=%s", path, lineno, exc
-                    )
+                    logger.warning("Fill JSONL 坏行跳过: path=%s line=%d err=%s", path, lineno, exc)
         return fills
 
     # ── 查询 ──────────────────────────────────────────────────────────────

@@ -124,4 +124,5 @@ def __getattr__(name):
         return mod
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
+
 __all__.append("PremarketChecker")

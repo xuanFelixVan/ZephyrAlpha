@@ -105,9 +105,7 @@ class FusionWeights:
     def __post_init__(self) -> None:
         total = self.qualitative_weight + self.quantitative_weight
         if abs(total - 1.0) > 1e-6:
-            raise FundamentalAnalysisError(
-                f"权重和须=1，实际={total}"
-            )
+            raise FundamentalAnalysisError(f"权重和须=1，实际={total}")
 
 
 def _parse_agent_output(agent: str, raw: str) -> AgentVerdict:
@@ -121,14 +119,10 @@ def _parse_agent_output(agent: str, raw: str) -> AgentVerdict:
             raise FundamentalAnalysisError(f"{agent} 输出缺字段 {key}")
     direction = data["direction"]
     if direction not in _DIRECTIONS:
-        raise FundamentalAnalysisError(
-            f"{agent} direction 非法: {direction}"
-        )
+        raise FundamentalAnalysisError(f"{agent} direction 非法: {direction}")
     confidence = float(data["confidence"])
     if not (0.0 <= confidence <= 1.0):
-        raise FundamentalAnalysisError(
-            f"{agent} confidence 越界: {confidence}"
-        )
+        raise FundamentalAnalysisError(f"{agent} confidence 越界: {confidence}")
     return AgentVerdict(
         agent=agent,
         direction=direction,
@@ -186,12 +180,8 @@ class LlmFundamentalAnalysis:
                 verdicts.append(_parse_agent_output(role, raw))
         if len(verdicts) < 2:
             raise FundamentalAnalysisError(f"有效 Agent 裁决不足 2 个: {len(verdicts)}")
-        direction, confidence, fused = _fuse(
-            tuple(verdicts), bundle.quantitative_score, self._weights
-        )
-        fusion_points_used = tuple(
-            ch for ch in bundle.fusion_channels if ch in _FUSION_CHANNELS
-        )
+        direction, confidence, fused = _fuse(tuple(verdicts), bundle.quantitative_score, self._weights)
+        fusion_points_used = tuple(ch for ch in bundle.fusion_channels if ch in _FUSION_CHANNELS)
         audit: dict[str, Any] = {
             "symbol": bundle.symbol,
             "mode": mode,

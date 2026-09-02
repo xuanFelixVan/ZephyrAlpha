@@ -74,20 +74,17 @@ class IndustryGraphData:
 
 
 def fetch_industry_graph() -> IndustryGraphData:
-    data = IndustryGraphData(rag_ready=(_CORPUS_DIR / "chunks.sqlite").is_file()
-                             and (_CORPUS_DIR / "embeddings.npy").is_file())
+    data = IndustryGraphData(
+        rag_ready=(_CORPUS_DIR / "chunks.sqlite").is_file() and (_CORPUS_DIR / "embeddings.npy").is_file()
+    )
     try:
         from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 
         conn = get_depgraph_pg_connection(read_only=True, autocommit=True)
         with conn.cursor() as cur:
-            cur.execute(
-                "SELECT doc_type, count(*) FROM ig_document WHERE is_canonical AND NOT excluded GROUP BY 1"
-            )
+            cur.execute("SELECT doc_type, count(*) FROM ig_document WHERE is_canonical AND NOT excluded GROUP BY 1")
             data.overview.by_type = dict(cur.fetchall())
-            cur.execute(
-                "SELECT parse_status, count(*) FROM ig_document WHERE is_canonical AND NOT excluded GROUP BY 1"
-            )
+            cur.execute("SELECT parse_status, count(*) FROM ig_document WHERE is_canonical AND NOT excluded GROUP BY 1")
             data.overview.by_status = dict(cur.fetchall())
             data.overview.total_docs = sum(data.overview.by_type.values())
             cur.execute(
@@ -99,8 +96,15 @@ def fetch_industry_graph() -> IndustryGraphData:
                 """
             )
             data.docs = [
-                {"doc_id": r[0], "title": r[1], "doc_type": r[2], "year": r[3],
-                 "org": r[4], "status": r[5], "text_path": r[6]}
+                {
+                    "doc_id": r[0],
+                    "title": r[1],
+                    "doc_type": r[2],
+                    "year": r[3],
+                    "org": r[4],
+                    "status": r[5],
+                    "text_path": r[6],
+                }
                 for r in cur.fetchall()
             ]
         conn.close()
@@ -185,8 +189,16 @@ class RagRetriever:
                 (int(idx) + 1,),
             ).fetchone()
             if row:
-                out.append({"score": float(scores[idx]), "chunk_id": row[0],
-                            "title": row[1], "doc_type": row[2], "year": row[3], "text": row[4]})
+                out.append(
+                    {
+                        "score": float(scores[idx]),
+                        "chunk_id": row[0],
+                        "title": row[1],
+                        "doc_type": row[2],
+                        "year": row[3],
+                        "text": row[4],
+                    }
+                )
         db.close()
         return out
 
@@ -208,20 +220,30 @@ def render_industry_graph(data: IndustryGraphData) -> dict[str, Any]:
         ("图谱", f"{data.overview.by_type.get('atlas_image', 0)}"),
         ("已提取文本", f"{data.overview.by_status.get('extracted', 0) + data.overview.by_status.get('ocr_done', 0)}"),
     ]
-    kpi_row = pn.Row(*[
-        pn.pane.Markdown(
-            f"**{k}**\n\n## {v}",
-            styles={"padding": "8px", "border": "1px solid #444", "border-radius": "4px",
-                    "text-align": "center", "min-width": "130px"},
-        )
-        for k, v in kpis
-    ])
+    kpi_row = pn.Row(
+        *[
+            pn.pane.Markdown(
+                f"**{k}**\n\n## {v}",
+                styles={
+                    "padding": "8px",
+                    "border": "1px solid #444",
+                    "border-radius": "4px",
+                    "text-align": "center",
+                    "min-width": "130px",
+                },
+            )
+            for k, v in kpis
+        ]
+    )
 
     # ---- 左栏：文档浏览器 ----
     import pandas as pd
 
-    docs_df = pd.DataFrame(data.docs)[["doc_id", "title", "doc_type", "year", "org", "status"]] if data.docs \
+    docs_df = (
+        pd.DataFrame(data.docs)[["doc_id", "title", "doc_type", "year", "org", "status"]]
+        if data.docs
         else pd.DataFrame(columns=["doc_id", "title", "doc_type", "year", "org", "status"])
+    )
     # 二分定位卡死: 先静态表（Tabulator 嫌疑未排除），稳定后再加回交互
     doc_table = pn.pane.DataFrame(docs_df.head(200), height=480, sizing_mode="stretch_width")
 
@@ -279,8 +301,7 @@ def render_industry_graph(data: IndustryGraphData) -> dict[str, Any]:
         for i, h in enumerate(hits, 1):
             snippet = h["text"][:280].replace("\n", " ")
             parts.append(
-                f"**[{i}] {h['title']}**（{h['doc_type']} · {h['year']} · score={h['score']:.3f}）  \n"
-                f"> {snippet} …"
+                f"**[{i}] {h['title']}**（{h['doc_type']} · {h['year']} · score={h['score']:.3f}）  \n> {snippet} …"
             )
         answers.object = "\n\n".join(parts)
 
@@ -303,8 +324,13 @@ def render_industry_graph(data: IndustryGraphData) -> dict[str, Any]:
         pn.layout.Divider(),
         pn.Row(
             pn.Column(pn.pane.Markdown("**文档浏览器**（前 200 条）"), doc_table, sizing_mode="stretch_width"),
-            pn.Column(pn.pane.Markdown("**RAG 语料问答**"), rag_status,
-                      pn.Row(q_input, q_btn), answers, sizing_mode="stretch_width"),
+            pn.Column(
+                pn.pane.Markdown("**RAG 语料问答**"),
+                rag_status,
+                pn.Row(q_input, q_btn),
+                answers,
+                sizing_mode="stretch_width",
+            ),
             sizing_mode="stretch_width",
         ),
         pn.Row(doc_id_input, pv_btn),

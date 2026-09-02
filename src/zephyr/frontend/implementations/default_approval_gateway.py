@@ -163,9 +163,7 @@ class DefaultApprovalGateway(ApprovalGatewayBase):
         with self._lock:
             now = self._clock()
             expired_ids = [
-                rid
-                for rid, req in self._pending.items()
-                if req.expires_at is not None and req.expires_at < now
+                rid for rid, req in self._pending.items() if req.expires_at is not None and req.expires_at < now
             ]
             for rid in expired_ids:
                 del self._pending[rid]

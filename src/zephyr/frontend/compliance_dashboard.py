@@ -76,11 +76,13 @@ class AnomalySeverity(str, Enum):
     HIGH = "high"
 
 
-_ANOMALY_RANK.update({
-    AnomalySeverity.HIGH: 0,
-    AnomalySeverity.MEDIUM: 1,
-    AnomalySeverity.LOW: 2,
-})
+_ANOMALY_RANK.update(
+    {
+        AnomalySeverity.HIGH: 0,
+        AnomalySeverity.MEDIUM: 1,
+        AnomalySeverity.LOW: 2,
+    }
+)
 
 
 class RemediationStatus(str, Enum):
@@ -275,10 +277,12 @@ class ComplianceDashboard:
                 raise ComplianceDashboardError(f"异常严重级非法: {record.severity!r}")
             if not isinstance(record.open, bool):
                 raise ComplianceDashboardError(f"open 字段类型非法: {record.open!r}")
-        open_items = tuple(sorted(
-            (r for r in records if r.open),
-            key=lambda r: (_ANOMALY_RANK[r.severity], r.anomaly_id),
-        ))
+        open_items = tuple(
+            sorted(
+                (r for r in records if r.open),
+                key=lambda r: (_ANOMALY_RANK[r.severity], r.anomaly_id),
+            )
+        )
         by_severity = {sev: 0 for sev in AnomalySeverity}
         for record in open_items:
             by_severity[record.severity] += 1
@@ -322,9 +326,7 @@ class ComplianceDashboard:
         by_status = {status: 0 for status in RemediationStatus}
         for record in records:
             by_status[record.status] += 1
-        overdue_ids = tuple(sorted(
-            r.task_id for r in records if r.status is RemediationStatus.OVERDUE
-        ))
+        overdue_ids = tuple(sorted(r.task_id for r in records if r.status is RemediationStatus.OVERDUE))
         return RemediationCard(total=len(records), by_status=by_status, overdue_ids=overdue_ids)
 
     def snapshot(self) -> DashboardSnapshot:

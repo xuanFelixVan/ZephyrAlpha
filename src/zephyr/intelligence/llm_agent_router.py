@@ -238,7 +238,7 @@ class LlmAgentRouter:
         labels = ("classify", "select", "cost")
         for dur, budget, label in zip(stages, self._config.latency_budgets_ms, labels):
             if dur * 1000 > budget:
-                latency_violations.append(f"{label} 超预算 {dur*1000:.2f}ms>{budget}ms")
+                latency_violations.append(f"{label} 超预算 {dur * 1000:.2f}ms>{budget}ms")
         decision = AgentRouteDecision(
             task_type=request.task_type,
             selected_model=selected,

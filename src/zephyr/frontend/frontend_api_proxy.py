@@ -242,6 +242,4 @@ class FrontendApiProxy:
             "request_id": request.request_id,
             "principal": principal,
         }
-        return ProxyResponse(
-            status_code=response.status_code, ok=ok, upstream=upstream, payload=payload
-        )
+        return ProxyResponse(status_code=response.status_code, ok=ok, upstream=upstream, payload=payload)

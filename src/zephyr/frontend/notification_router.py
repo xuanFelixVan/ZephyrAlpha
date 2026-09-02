@@ -73,11 +73,13 @@ class Severity(str, Enum):
     CRITICAL = "critical"
 
 
-_SEVERITY_RANK.update({
-    Severity.INFO: 0,
-    Severity.WARNING: 1,
-    Severity.CRITICAL: 2,
-})
+_SEVERITY_RANK.update(
+    {
+        Severity.INFO: 0,
+        Severity.WARNING: 1,
+        Severity.CRITICAL: 2,
+    }
+)
 
 
 class NotificationChannel(str, Enum):
@@ -180,9 +182,7 @@ class NotificationRouter:
             if not isinstance(binding, ChannelBinding):
                 raise NotificationRouterError(f"通道绑定类型非法: {binding!r}")
             if binding.channel is not channel:
-                raise NotificationRouterError(
-                    f"通道绑定不一致: key={channel!r} binding={binding.channel!r}"
-                )
+                raise NotificationRouterError(f"通道绑定不一致: key={channel!r} binding={binding.channel!r}")
             self._validate_secret_ref(binding.secret_ref)
             if not callable(binding.sender):
                 raise NotificationRouterError(f"通道 {channel.value} 发送器不可调用")
@@ -201,12 +201,8 @@ class NotificationRouter:
                     raise NotificationRouterError(f"静默窗分钟非法: {minute!r}（须 0..1439）")
         if not isinstance(ack_timeout, datetime.timedelta) or ack_timeout <= datetime.timedelta(0):
             raise NotificationRouterError("ack_timeout 非法（须为正 timedelta）")
-        self._route: dict[Severity, tuple[NotificationChannel, ...]] = {
-            s: tuple(cs) for s, cs in route_table.items()
-        }
-        self._esc: dict[Severity, tuple[NotificationChannel, ...]] = {
-            s: tuple(cs) for s, cs in esc.items()
-        }
+        self._route: dict[Severity, tuple[NotificationChannel, ...]] = {s: tuple(cs) for s, cs in route_table.items()}
+        self._esc: dict[Severity, tuple[NotificationChannel, ...]] = {s: tuple(cs) for s, cs in esc.items()}
         self._bindings = dict(bindings)
         self._silent = tuple(silent_windows)
         self._clock = clock or datetime.datetime.now
@@ -225,9 +221,7 @@ class NotificationRouter:
         if not isinstance(secret_ref, str) or not secret_ref:
             raise NotificationRouterError("secret_ref 为空")
         if not secret_ref.startswith(_SECRET_SCHEME) or len(secret_ref) <= len(_SECRET_SCHEME):
-            raise NotificationRouterError(
-                f"secret_ref 非法: {secret_ref!r}（密钥仅 {_SECRET_SCHEME} 引用，不落地）"
-            )
+            raise NotificationRouterError(f"secret_ref 非法: {secret_ref!r}（密钥仅 {_SECRET_SCHEME} 引用，不落地）")
         if "http" in secret_ref.lower():
             raise NotificationRouterError(f"secret_ref 疑似明文 URL: {secret_ref!r}（禁止落地）")
 
@@ -310,10 +304,7 @@ class NotificationRouter:
             _log.info("通知静默抑制: %s (%s)", notification_id, notification.title)
             return RouteDecision(notification_id, notification.severity, (), True, ())
         channels = self._route[notification.severity]
-        deliveries = tuple(
-            self._deliver(notification_id, notification, ch, now, escalated=False)
-            for ch in channels
-        )
+        deliveries = tuple(self._deliver(notification_id, notification, ch, now, escalated=False) for ch in channels)
         self._pending[notification_id] = (notification, now + self._ack_timeout, False)
         return RouteDecision(notification_id, notification.severity, channels, False, deliveries)
 
@@ -342,13 +333,8 @@ class NotificationRouter:
             if not channels:
                 _log.warning("通知 %s 超时未 ack 且无升级通道，标记已升级不再重试", notification_id)
                 continue
-            deliveries = tuple(
-                self._deliver(notification_id, notification, ch, now, escalated=True)
-                for ch in channels
-            )
-            records.append(EscalationRecord(
-                notification_id, notification.severity, channels, deliveries, now
-            ))
+            deliveries = tuple(self._deliver(notification_id, notification, ch, now, escalated=True) for ch in channels)
+            records.append(EscalationRecord(notification_id, notification.severity, channels, deliveries, now))
         return tuple(records)
 
     # ── 查询 ─────────────────────────────────────────────────────────────

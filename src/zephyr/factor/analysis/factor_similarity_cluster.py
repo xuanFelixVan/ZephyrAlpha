@@ -114,9 +114,7 @@ class FactorClusterResult:
         return asdict(self)
 
 
-def _validate_series(
-    ic_series: Mapping[str, Sequence[float]], min_len: int
-) -> tuple[tuple[str, ...], np.ndarray]:
+def _validate_series(ic_series: Mapping[str, Sequence[float]], min_len: int) -> tuple[tuple[str, ...], np.ndarray]:
     ids = tuple(str(k) for k in ic_series.keys())
     if len(ids) < 2:
         raise ValueError(f"因子数不足（须 ≥2）: {len(ids)}")

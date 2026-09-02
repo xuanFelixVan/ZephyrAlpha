@@ -329,7 +329,9 @@ class LocalModelScheduler:
 
         if isinstance(text, list):
             # 09号文 §4.2 P0-1: LSG 输入闸门——批量文本合并扫描，BLOCK/DENY 转入 failed 不发起嵌入
-            enforce_input("\n".join(str(t) for t in text), source="LocalModelScheduler.embedding", enabled=self._lsg_enabled)
+            enforce_input(
+                "\n".join(str(t) for t in text), source="LocalModelScheduler.embedding", enabled=self._lsg_enabled
+            )
             self._embedding_router.embed_batch(text, collection)
             return {"dim": self._embedding_router.bge_m3_dim, "count": len(text)}
         # 09号文 §4.2 P0-1: LSG 输入闸门

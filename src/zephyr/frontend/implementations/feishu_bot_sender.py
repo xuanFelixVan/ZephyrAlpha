@@ -141,9 +141,7 @@ class FeishuBotSender:
         if not isinstance(webhook_ref, str) or not webhook_ref:
             raise FeishuBotError("webhook_ref 为空")
         if not webhook_ref.startswith(_SECRET_SCHEME) or len(webhook_ref) <= len(_SECRET_SCHEME):
-            raise FeishuBotError(
-                f"webhook_ref 非法: {webhook_ref!r}（密钥仅 {_SECRET_SCHEME} 引用，不落地）"
-            )
+            raise FeishuBotError(f"webhook_ref 非法: {webhook_ref!r}（密钥仅 {_SECRET_SCHEME} 引用，不落地）")
         if "http" in webhook_ref.lower():
             raise FeishuBotError(f"webhook_ref 疑似明文 URL: {webhook_ref!r}（禁止落地）")
         if not callable(client):
@@ -161,9 +159,7 @@ class FeishuBotSender:
         self._counter += 1
         try:
             response = self._client(self._webhook_ref, payload)
-            ok = isinstance(response, Mapping) and (
-                response.get("code") == 0 or response.get("StatusCode") == 0
-            )
+            ok = isinstance(response, Mapping) and (response.get("code") == 0 or response.get("StatusCode") == 0)
             detail = "sent" if ok else "rejected_by_webhook"
         except Exception:  # noqa: BLE001 — 发送 best-effort，client 异常不阻断
             _log.exception("飞书 webhook client 异常: %s", target_id)
@@ -195,11 +191,7 @@ class FeishuBotSender:
         if len(template.fields) > _MAX_FIELDS:
             raise FeishuBotError(f"审批字段超限: {len(template.fields)} > {_MAX_FIELDS}")
         for pair in template.fields:
-            if (
-                not isinstance(pair, tuple)
-                or len(pair) != 2
-                or not all(isinstance(v, str) and v for v in pair)
-            ):
+            if not isinstance(pair, tuple) or len(pair) != 2 or not all(isinstance(v, str) and v for v in pair):
                 raise FeishuBotError(f"审批字段非法: {pair!r}（须二元非空字符串组）")
         if len(template.buttons) > _MAX_BUTTONS:
             raise FeishuBotError(f"审批按钮超限: {len(template.buttons)} > {_MAX_BUTTONS}")
@@ -229,26 +221,28 @@ class FeishuBotSender:
             }
         ]
         if template.buttons:
-            elements.append({
-                "tag": "action",
-                "actions": [
-                    {
-                        "tag": "button",
-                        "text": {"tag": "plain_text", "content": button.label},
-                        "type": {
-                            ApprovalAction.APPROVE: "primary",
-                            ApprovalAction.REJECT: "danger",
-                            ApprovalAction.VIEW: "default",
-                        }[button.action],
-                        "value": {
-                            "approval_id": template.approval_id,
-                            "action": button.action.value,
-                            "extra": button.value,
-                        },
-                    }
-                    for button in template.buttons
-                ],
-            })
+            elements.append(
+                {
+                    "tag": "action",
+                    "actions": [
+                        {
+                            "tag": "button",
+                            "text": {"tag": "plain_text", "content": button.label},
+                            "type": {
+                                ApprovalAction.APPROVE: "primary",
+                                ApprovalAction.REJECT: "danger",
+                                ApprovalAction.VIEW: "default",
+                            }[button.action],
+                            "value": {
+                                "approval_id": template.approval_id,
+                                "action": button.action.value,
+                                "extra": button.value,
+                            },
+                        }
+                        for button in template.buttons
+                    ],
+                }
+            )
         payload: dict[str, Any] = {
             "msg_type": "interactive",
             "card": {

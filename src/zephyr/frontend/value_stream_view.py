@@ -170,9 +170,7 @@ class ValueStreamView:
 
     def stage_pairs(self) -> tuple[tuple[StreamStage, StreamStage], ...]:
         """段级依赖对（去重排序，泳道间连线数据）。"""
-        pairs = {
-            (self._stages[s], self._stages[t]) for s, t in self._edges
-        }
+        pairs = {(self._stages[s], self._stages[t]) for s, t in self._edges}
         return tuple(sorted(pairs, key=lambda p: (_STAGE_RANK[p[0]], _STAGE_RANK[p[1]])))
 
     # ── 高亮 ─────────────────────────────────────────────────────────────
@@ -182,6 +180,5 @@ class ValueStreamView:
         self.stage_of(module_id)  # 未知模块 Fail-Closed
         upstream = self._closure(module_id, self._pred)
         downstream = self._closure(module_id, self._succ)
-        _log.debug("价值流高亮: %s upstream=%d downstream=%d",
-                   module_id, len(upstream), len(downstream))
+        _log.debug("价值流高亮: %s upstream=%d downstream=%d", module_id, len(upstream), len(downstream))
         return HighlightPayload(selected=module_id, upstream=upstream, downstream=downstream)

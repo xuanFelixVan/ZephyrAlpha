@@ -118,10 +118,10 @@ class CounterStateMirror:
 
     def __init__(self, stock_dir: Path):
         self._stock_dir = stock_dir
-        self._orders: dict[str, dict] = {}       # remark -> {sysid, status, symbol, price, qty, filled_qty, side}
-        self._positions: dict[str, dict] = {}    # bare_symbol -> {qty, available_qty, frozen_qty, cost, market_value}
-        self._account: dict[str, Decimal] = {}   # {total, available, frozen, market_value}
-        self._deals: list[dict] = []             # 当日成交（最新 100 条）
+        self._orders: dict[str, dict] = {}  # remark -> {sysid, status, symbol, price, qty, filled_qty, side}
+        self._positions: dict[str, dict] = {}  # bare_symbol -> {qty, available_qty, frozen_qty, cost, market_value}
+        self._account: dict[str, Decimal] = {}  # {total, available, frozen, market_value}
+        self._deals: list[dict] = []  # 当日成交（最新 100 条）
         self._processed_fill_ids: set[str] = set()
 
     # ── 查询接口 ──
@@ -148,10 +148,7 @@ class CounterStateMirror:
 
     def pending_count(self, symbol: str, side: str) -> int:
         bare = symbol.split(".")[0]
-        return sum(
-            1 for o in self._orders.values()
-            if o["symbol"].split(".")[0] == bare and o["side"] == side
-        )
+        return sum(1 for o in self._orders.values() if o["symbol"].split(".")[0] == bare and o["side"] == side)
 
     # ── 同步入口 ──
 
@@ -193,7 +190,9 @@ class CounterStateMirror:
                     cached.broker_order_id = sysid
                 mapped = _COUNTER_STATUS_MAP.get(status_str)
                 if mapped is not None and cached.status not in (
-                    OrderStatus.FILLED, OrderStatus.CANCELLED, OrderStatus.REJECTED,
+                    OrderStatus.FILLED,
+                    OrderStatus.CANCELLED,
+                    OrderStatus.REJECTED,
                 ):
                     cached.status = mapped
                     cached.updated_at = now_utc()
@@ -275,15 +274,17 @@ class CounterStateMirror:
             side = "buy" if row[23].strip() == "买入" else "sell"
             fee = _to_decimal(row[21])
 
-            self._deals.append({
-                "deal_id": deal_id,
-                "remark": remark,
-                "symbol": symbol,
-                "side": side,
-                "qty": qty,
-                "price": price,
-                "time": f"{row[19].strip()} {row[20].strip()}",
-            })
+            self._deals.append(
+                {
+                    "deal_id": deal_id,
+                    "remark": remark,
+                    "symbol": symbol,
+                    "side": side,
+                    "qty": qty,
+                    "price": price,
+                    "time": f"{row[19].strip()} {row[20].strip()}",
+                }
+            )
             if len(self._deals) > 100:
                 self._deals = self._deals[-100:]
 
@@ -293,11 +294,7 @@ class CounterStateMirror:
             if cached is not None:
                 cached.filled_quantity += Decimal(qty)
                 cached.avg_fill_price = price
-                cached.status = (
-                    OrderStatus.FILLED
-                    if cached.filled_quantity >= cached.quantity
-                    else OrderStatus.PARTIAL
-                )
+                cached.status = OrderStatus.FILLED if cached.filled_quantity >= cached.quantity else OrderStatus.PARTIAL
                 cached.updated_at = now_utc()
 
             fill = Fill(
@@ -406,9 +403,7 @@ class QmtFileBridgeBroker(BrokerInterface):
 
                 # 确保指令文件存在（写表头）
                 if not self._orders_file.exists():
-                    self._orders_file.write_text(
-                        "order_id,action,symbol,side,qty,pricetype,price\n", encoding="ascii"
-                    )
+                    self._orders_file.write_text("order_id,action,symbol,side,qty,pricetype,price\n", encoding="ascii")
 
                 # 确保回执文件存在
                 if not self._ack_file.exists():
@@ -433,7 +428,8 @@ class QmtFileBridgeBroker(BrokerInterface):
 
                 _logger.info(
                     "QmtFileBridgeBroker connected env=%s dir=%s",
-                    self._env, self._bridge_dir,
+                    self._env,
+                    self._bridge_dir,
                 )
                 return True
             except OSError as e:
@@ -460,9 +456,7 @@ class QmtFileBridgeBroker(BrokerInterface):
         rule = get_board_lot_rule(order.symbol)
         qty = int(order.quantity)
         if order.side == OrderSide.BUY and qty < rule.min_unit:
-            raise QmtFileBridgeError(
-                f"数量不合法: 买入 {qty} 股低于最小申报单位 {rule.min_unit}（{order.symbol}）"
-            )
+            raise QmtFileBridgeError(f"数量不合法: 买入 {qty} 股低于最小申报单位 {rule.min_unit}（{order.symbol}）")
 
         # 价格笼子（降级无盘口：UNKNOWN 原价通过，超限夹边）
         pricetype = "limit"
@@ -474,7 +468,10 @@ class QmtFileBridgeBroker(BrokerInterface):
             if cage.status == CageStatus.CLAMPED:
                 _logger.warning(
                     "价格笼子夹边 %s %s: %s -> %s",
-                    order.symbol, order.side.value, order.limit_price, cage.clamped_price,
+                    order.symbol,
+                    order.side.value,
+                    order.limit_price,
+                    cage.clamped_price,
                 )
             price = float(cage.clamped_price)
 
@@ -560,7 +557,8 @@ class QmtFileBridgeBroker(BrokerInterface):
         self._fill_callbacks.append(callback)
         _logger.debug(
             "成交回调已注册 env=%s callbacks=%d",
-            self._env, len(self._fill_callbacks),
+            self._env,
+            len(self._fill_callbacks),
         )
 
     # ── 柜台全量镜像查询接口（委托 CounterStateMirror）──
@@ -597,10 +595,7 @@ class QmtFileBridgeBroker(BrokerInterface):
 
     def _append_instruction(self, inst: FileBridgeInstruction) -> None:
         """追加指令行（原子语义：整行一次写入）"""
-        line = (
-            f"{inst.order_id},{inst.action},{inst.symbol},{inst.side},"
-            f"{inst.qty},{inst.pricetype},{inst.price}\n"
-        )
+        line = f"{inst.order_id},{inst.action},{inst.symbol},{inst.side},{inst.qty},{inst.pricetype},{inst.price}\n"
         with self._lock:
             with open(self._orders_file, "a", encoding="ascii", newline="") as f:
                 f.write(line)
@@ -662,7 +657,9 @@ def _scan_instruction_states(orders_file: Path, order_cache: dict[str, Order]) -
         if cached is None:
             continue
         if mark == "#FAIL" and cached.status not in (
-            OrderStatus.FILLED, OrderStatus.CANCELLED, OrderStatus.REJECTED,
+            OrderStatus.FILLED,
+            OrderStatus.CANCELLED,
+            OrderStatus.REJECTED,
         ):
             cached.status = OrderStatus.REJECTED
             cached.updated_at = now_utc()
@@ -688,11 +685,13 @@ def _read_new_acks(ack_file: Path, offset: int) -> tuple[list[FileBridgeAck], in
         parts = line.split(",", 2)
         if len(parts) < 2:
             continue
-        acks.append(FileBridgeAck(
-            order_id=parts[0],
-            status=parts[1],
-            detail=parts[2] if len(parts) > 2 else "",
-        ))
+        acks.append(
+            FileBridgeAck(
+                order_id=parts[0],
+                status=parts[1],
+                detail=parts[2] if len(parts) > 2 else "",
+            )
+        )
     return acks, new_offset
 
 
@@ -703,7 +702,9 @@ def _apply_acks(acks: list[FileBridgeAck], order_cache: dict[str, Order]) -> Non
         if cached is None:
             continue
         if ack.status == "FAIL" and cached.status not in (
-            OrderStatus.FILLED, OrderStatus.CANCELLED, OrderStatus.REJECTED,
+            OrderStatus.FILLED,
+            OrderStatus.CANCELLED,
+            OrderStatus.REJECTED,
         ):
             cached.status = OrderStatus.REJECTED
             cached.updated_at = now_utc()
@@ -725,9 +726,7 @@ def check_broker_health(broker: QmtFileBridgeBroker) -> dict:
         "level": "down",
         "env": broker._env,
         "connected": broker._connected,
-        "sync_thread_alive": bool(
-            broker._sync_thread and broker._sync_thread.is_alive()
-        ),
+        "sync_thread_alive": bool(broker._sync_thread and broker._sync_thread.is_alive()),
     }
     if not broker._connected:
         result["detail"] = "未连接（connect() 未调用或失败）"

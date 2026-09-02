@@ -161,9 +161,7 @@ class AiServiceRouteMatrix:
         if profile.latency_p50_ms < 0 or profile.latency_p99_ms < 0:
             raise AiRouteError("画像延迟为负")
         if profile.latency_p99_ms < profile.latency_p50_ms:
-            raise AiRouteError(
-                f"画像 P99({profile.latency_p99_ms}) < P50({profile.latency_p50_ms})"
-            )
+            raise AiRouteError(f"画像 P99({profile.latency_p99_ms}) < P50({profile.latency_p50_ms})")
         svc = AiService(
             service_id=service_id,
             service_class=service_class,
@@ -219,13 +217,9 @@ class AiServiceRouteMatrix:
                     self._mark_degrade(route, chain[0], sid, tuple(failed))
                 return decision
             failed.append(sid)
-        raise AiRouteError(
-            f"路由 {route!r} 全链不可用: {chain!r}（Fail-Closed 拒绝选路）"
-        )
+        raise AiRouteError(f"路由 {route!r} 全链不可用: {chain!r}（Fail-Closed 拒绝选路）")
 
-    def _mark_degrade(
-        self, route: str, preferred: str, selected: str, failed: tuple[str, ...]
-    ) -> None:
+    def _mark_degrade(self, route: str, preferred: str, selected: str, failed: tuple[str, ...]) -> None:
         event = DegradeEvent(
             route=route,
             preferred_id=preferred,
@@ -235,7 +229,10 @@ class AiServiceRouteMatrix:
         )
         _log.warning(
             "AI 服务降级: 路由 %s 首选 %s 不可用 -> %s（失败: %s）",
-            route, preferred, selected, failed,
+            route,
+            preferred,
+            selected,
+            failed,
         )
         if self._degrade_sink is not None:
             try:
@@ -249,10 +246,7 @@ class AiServiceRouteMatrix:
         """服务视图（可按类别过滤；按 service_id 确定性排序）。"""
         if service_class is not None and not isinstance(service_class, ServiceClass):
             raise AiRouteError(f"非法服务类别: {service_class!r}")
-        out = [
-            s for s in self._services.values()
-            if service_class is None or s.service_class is service_class
-        ]
+        out = [s for s in self._services.values() if service_class is None or s.service_class is service_class]
         return tuple(sorted(out, key=lambda s: s.service_id))
 
     def cheapest(self, service_class: ServiceClass) -> AiService:

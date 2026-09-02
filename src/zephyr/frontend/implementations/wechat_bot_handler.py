@@ -73,13 +73,15 @@ class Command(str, Enum):
     CANCEL = "cancel"
 
 
-_KEYWORDS.update({
-    "盯盘": Command.WATCH,
-    "查询": Command.QUERY,
-    "下单": Command.ORDER,
-    "确认": Command.CONFIRM,
-    "取消": Command.CANCEL,
-})
+_KEYWORDS.update(
+    {
+        "盯盘": Command.WATCH,
+        "查询": Command.QUERY,
+        "下单": Command.ORDER,
+        "确认": Command.CONFIRM,
+        "取消": Command.CANCEL,
+    }
+)
 
 
 class OrderSide(str, Enum):
@@ -89,10 +91,12 @@ class OrderSide(str, Enum):
     SELL = "sell"
 
 
-_SIDES.update({
-    "买入": OrderSide.BUY,
-    "卖出": OrderSide.SELL,
-})
+_SIDES.update(
+    {
+        "买入": OrderSide.BUY,
+        "卖出": OrderSide.SELL,
+    }
+)
 
 
 class ReplyKind(str, Enum):

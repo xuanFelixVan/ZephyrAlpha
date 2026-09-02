@@ -624,9 +624,7 @@ def _compute_siphon(
     return result, notes
 
 
-def _compute_ranking_scores(
-    snapshot_rows: list[tuple], d: date
-) -> tuple[dict[str, float] | None, str | None]:
+def _compute_ranking_scores(snapshot_rows: list[tuple], d: date) -> tuple[dict[str, float] | None, str | None]:
     """5 因子复合排名（sector_ranking_engine.compute_ranking 复用）。
 
     快照最新日期须 = 报告日（历史回跑时快照维度降级）。
@@ -637,8 +635,7 @@ def _compute_ranking_scores(
     snap_dates = {_as_date(row[7]) for row in snapshot_rows}
     if snap_dates != {d}:
         return None, (
-            f"板块快照最新日期 {sorted(snap_dates)[-1].isoformat()} ≠ 报告日 {d.isoformat()}"
-            "（历史回跑快照维度降级）"
+            f"板块快照最新日期 {sorted(snap_dates)[-1].isoformat()} ≠ 报告日 {d.isoformat()}（历史回跑快照维度降级）"
         )
     ranking = compute_ranking([tuple(row[:7]) for row in snapshot_rows])
     return dict(ranking), None
@@ -691,9 +688,7 @@ def build_sector_report(
     # ── 板块 K 线窗（880xxx 直取 + 880001 基准） ──
     sector_start = d - timedelta(days=cfg.sector_lookback_calendar_days)
     try:
-        sector_rows = client.execute(
-            SQL_SECTOR_KLINE_WINDOW, {"trade_date": d, "start_date": sector_start}
-        )
+        sector_rows = client.execute(SQL_SECTOR_KLINE_WINDOW, {"trade_date": d, "start_date": sector_start})
     except Exception as e:  # noqa: BLE001 — 880 腿缺失，宇宙收敛为 881 合成
         sector_rows = []
         notes.append(f"kline_sector_880 查询异常，880xxx 板块腿缺失: {e!r}")
@@ -730,9 +725,7 @@ def build_sector_report(
     # ── 个股 K 线窗（881 合成 + 触价收封并集腿 + 梯队日历共用） ──
     stock_start = d - timedelta(days=cfg.stock_lookback_calendar_days)
     try:
-        stock_rows = client.execute(
-            SQL_STOCK_KLINE_WINDOW, {"trade_date": d, "start_date": stock_start}
-        )
+        stock_rows = client.execute(SQL_STOCK_KLINE_WINDOW, {"trade_date": d, "start_date": stock_start})
     except Exception as e:  # noqa: BLE001 — 个股 K 线缺失，881 合成/并集腿降级
         stock_rows = []
         notes.append(f"kline_daily 查询异常，881xxx 合成/stk_limit 并集腿降级: {e!r}")
@@ -740,9 +733,7 @@ def build_sector_report(
     # 881xxx 行业板合成（880xxx 成分在册但 K 线缺失不合成——官方指数缺口，防代理冒充）
     kline_missing_880 = [c for c in constituents if c not in by_sector and c.startswith("880")]
     if kline_missing_880:
-        notes.append(
-            f"880xxx 板块成分在册但 K 线缺失 {len(kline_missing_880)} 只，不按成分合成（官方指数缺口）"
-        )
+        notes.append(f"880xxx 板块成分在册但 K 线缺失 {len(kline_missing_880)} 只，不按成分合成（官方指数缺口）")
     synth_codes = [c for c in constituents if c not in by_sector and not c.startswith("880")]
     if synth_codes:
         if stock_rows:
@@ -751,9 +742,7 @@ def build_sector_report(
             notes.append("kline_daily 窗内无数据，881xxx 行业板块合成降级")
 
     if not by_sector:
-        return _degraded_report(
-            date_str, f"{date_str} 板块全集为空（kline_sector_880 与 881xxx 合成均无数据）"
-        )
+        return _degraded_report(date_str, f"{date_str} 板块全集为空（kline_sector_880 与 881xxx 合成均无数据）")
 
     all_dates = sorted({dd for series in by_sector.values() for dd, _, _ in series})
     if d not in set(all_dates):
@@ -779,9 +768,7 @@ def build_sector_report(
         notes.append(f"money_flow 当日查询异常，资金流维度降级: {e!r}")
 
     # ── 涨停梯队（stk_limit/limit_up_down 双源聚合） ──
-    close_today = {
-        str(r[0]): float(r[2] or 0.0) for r in stock_rows if _as_date(r[1]) == d
-    }
+    close_today = {str(r[0]): float(r[2] or 0.0) for r in stock_rows if _as_date(r[1]) == d}
     limit_rows: list[tuple] | None = None
     stk_rows: list[tuple] | None = None
     try:
@@ -802,10 +789,7 @@ def build_sector_report(
         notes.append("涨跌停双源（limit_up_down/stk_limit）查询均异常，梯队维度降级")
     else:
         # 交易日历 = 个股 K 线窗日期 ∪ 涨停窗日期（连板高度 trailing 判定基准）
-        calendar = sorted(
-            {_as_date(r[1]) for r in stock_rows}
-            | {_as_date(r[1]) for r in (limit_rows or [])}
-        )
+        calendar = sorted({_as_date(r[1]) for r in stock_rows} | {_as_date(r[1]) for r in (limit_rows or [])})
         ladder = _build_limit_ladder(
             limit_rows or [], stk_rows or [], close_today, calendar, constituents, names, d, cfg
         )
@@ -871,11 +855,7 @@ def build_sector_report(
     ordered = sorted(today_ret.items(), key=lambda kv: (-kv[1], kv[0]))[: cfg.top_n]
     for rank, (code, ret) in enumerate(ordered, 1):
         stocks = constituents.get(code, [])
-        flows = (
-            _sector_flow_yi(code, flow_map, constituents, cfg.yi_unit)
-            if flow_map is not None
-            else (None,) * 5
-        )
+        flows = _sector_flow_yi(code, flow_map, constituents, cfg.yi_unit) if flow_map is not None else (None,) * 5
         lad = ladder_by_sector.get(code)
         limit_up_count: int | None = None
         ratio: float | None = None
@@ -983,9 +963,7 @@ def write_report(report: SectorReport, out_dir: str | Path | None = None) -> Pat
     base = Path(out_dir) if out_dir is not None else _DEFAULT_REPORT_DIR
     base.mkdir(parents=True, exist_ok=True)
     path = base / f"sector_report_{report.date.replace('-', '')}.json"
-    path.write_text(
-        json.dumps(report_to_dict(report), ensure_ascii=False, indent=2), encoding="utf-8"
-    )
+    path.write_text(json.dumps(report_to_dict(report), ensure_ascii=False, indent=2), encoding="utf-8")
     return path
 
 
@@ -1011,8 +989,7 @@ def _render_summary(report: SectorReport, out_path: Path | None) -> str:
             lu = f"{e.limit_up_count}家({e.breadth_label})" if e.limit_up_count is not None else "—"
             st = f"{e.strength_status}({e.strength_score:.0f})" if e.strength_score is not None else "—"
             lines.append(
-                f"  {e.rank:2d}. {e.sector_code} {e.sector_name}  {pct}"
-                f"  主力净流入 {flow}  涨停 {lu}  强度 {st}"
+                f"  {e.rank:2d}. {e.sector_code} {e.sector_name}  {pct}  主力净流入 {flow}  涨停 {lu}  强度 {st}"
             )
     else:
         lines.append("  （无榜单）")

@@ -395,7 +395,11 @@ class OkxBroker(BrokerInterface):
 
             _logger.info(
                 "OKX 下单成功: %s %s %s @ %s -> %s",
-                order.side, order.symbol, order.quantity, order.limit_price, broker_order_id,
+                order.side,
+                order.symbol,
+                order.quantity,
+                order.limit_price,
+                broker_order_id,
             )
             return broker_order_id
 

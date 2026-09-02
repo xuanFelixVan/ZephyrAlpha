@@ -45,9 +45,7 @@ __all__: Final = [
 ]
 
 #: HTTP 方法词表（闭合）
-_HTTP_METHODS: Final[frozenset[str]] = frozenset(
-    {"GET", "POST", "PUT", "DELETE", "PATCH"}
-)
+_HTTP_METHODS: Final[frozenset[str]] = frozenset({"GET", "POST", "PUT", "DELETE", "PATCH"})
 
 #: 缺省敏感字段词表（小写匹配，递归脱敏）
 _DEFAULT_SENSITIVE_FIELDS: Final[frozenset[str]] = frozenset(
@@ -174,9 +172,7 @@ class ApiGateway:
             return self._reject(request, 404, "route_not_found")
 
         # 限流（注入；未注入不限流）
-        if self._limiter is not None and not self._safe_bool(
-            self._limiter, request.client_id, request.path
-        ):
+        if self._limiter is not None and not self._safe_bool(self._limiter, request.client_id, request.path):
             return self._reject(request, 429, "rate_limited")
 
         # 熔断（注入；未注入不熔断）
@@ -188,17 +184,13 @@ class ApiGateway:
             if self._authenticator is None:
                 # token 认证强制注入：受保护路由无认证器 Fail-Closed
                 return self._reject(request, 503, "authenticator_missing")
-            if not request.token or not self._safe_bool(
-                self._authenticator, request.token, request
-            ):
+            if not request.token or not self._safe_bool(self._authenticator, request.token, request):
                 return self._reject(request, 401, "unauthorized")
 
         try:
             body = handler(request.payload or {})
             if not isinstance(body, Mapping):
-                raise ApiGatewayError(
-                    f"handler 返回非 Mapping: {type(body).__name__}"
-                )
+                raise ApiGatewayError(f"handler 返回非 Mapping: {type(body).__name__}")
         except ApiGatewayError:
             raise  # 结构性违约向外抛（Fail-Closed）
         except Exception:  # noqa: BLE001 — 内部异常不泄漏细节
@@ -222,9 +214,7 @@ class ApiGateway:
         masked, hits = self._mask_node(payload, ())
         return masked, tuple(sorted(hits))
 
-    def _mask_node(
-        self, node: object, path: tuple[str, ...]
-    ) -> tuple[object, set[str]]:
+    def _mask_node(self, node: object, path: tuple[str, ...]) -> tuple[object, set[str]]:
         hits: set[str] = set()
         if isinstance(node, Mapping):
             out: dict = {}

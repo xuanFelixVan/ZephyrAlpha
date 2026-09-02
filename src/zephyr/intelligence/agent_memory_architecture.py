@@ -206,8 +206,7 @@ class AgentMemoryArchitecture:
                 last_accessed_at=now,
             )
         self._ledger[layer] = [
-            updated[-1] if h.item_id == updated[-1].item_id else h
-            for h in self._ledger.get(layer, [])
+            updated[-1] if h.item_id == updated[-1].item_id else h for h in self._ledger.get(layer, [])
         ]
         return updated
 
@@ -228,10 +227,7 @@ class AgentMemoryArchitecture:
         policy = self.policy_of(layer)
         now = _now()
         ledger_layer = self._ledger.get(layer, [])
-        expired = [
-            item for item in ledger_layer
-            if now - item.created_at > policy.ttl_seconds
-        ]
+        expired = [item for item in ledger_layer if now - item.created_at > policy.ttl_seconds]
         evicted = [item.item_id for item in expired]
         reasons = [f"TTL 过期({policy.ttl_seconds}s)"] * len(expired)
         remaining = [item for item in ledger_layer if item not in expired]

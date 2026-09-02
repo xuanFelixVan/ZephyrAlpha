@@ -51,10 +51,10 @@ _LEVEL_VISUAL: Final[dict[str, tuple[str, str, str]]] = {
 class ComponentHealth:
     """单组件健康视图"""
 
-    name: str            # broker_sim / queue_qmt_sim / quote_real ...
-    type: str            # broker / order_queue / quote_provider
-    level: str           # ok / degraded / down
-    detail: str = ""     # 排障提示（空=正常）
+    name: str  # broker_sim / queue_qmt_sim / quote_real ...
+    type: str  # broker / order_queue / quote_provider
+    level: str  # ok / degraded / down
+    detail: str = ""  # 排障提示（空=正常）
     metrics: dict = field(default_factory=dict)  # 关键指标透传
 
 
@@ -62,10 +62,10 @@ class ComponentHealth:
 class QmtBridgeHealthData:
     """面板数据（fetch 输出）"""
 
-    assembled: bool                    # assembly 是否注入
-    overall_level: str                 # 聚合等级
+    assembled: bool  # assembly 是否注入
+    overall_level: str  # 聚合等级
     components: list[ComponentHealth] = field(default_factory=list)
-    checked_at: str = ""               # 检查时刻（展示用）
+    checked_at: str = ""  # 检查时刻（展示用）
 
 
 def _component_metrics(comp_type: str, raw: dict) -> dict:
@@ -99,7 +99,9 @@ def fetch_qmt_bridge_health(assembly: object) -> QmtBridgeHealthData:
     """
     checked_at = now_utc().astimezone().strftime("%H:%M:%S")
     empty = QmtBridgeHealthData(
-        assembled=False, overall_level="down", checked_at=checked_at,
+        assembled=False,
+        overall_level="down",
+        checked_at=checked_at,
     )
     if assembly is None:
         return empty
@@ -115,13 +117,15 @@ def fetch_qmt_bridge_health(assembly: object) -> QmtBridgeHealthData:
     components: list[ComponentHealth] = []
     for name, comp in (raw.get("components") or {}).items():
         comp_type = comp.get("type", "")
-        components.append(ComponentHealth(
-            name=name,
-            type=comp_type,
-            level=comp.get("level", "down"),
-            detail=comp.get("detail", ""),
-            metrics=_component_metrics(comp_type, comp),
-        ))
+        components.append(
+            ComponentHealth(
+                name=name,
+                type=comp_type,
+                level=comp.get("level", "down"),
+                detail=comp.get("detail", ""),
+                metrics=_component_metrics(comp_type, comp),
+            )
+        )
 
     return QmtBridgeHealthData(
         assembled=True,
@@ -177,18 +181,18 @@ def render_qmt_bridge_health(data: QmtBridgeHealthData) -> dict[str, Any]:
     layout_items: list[Any] = [pn.pane.Markdown("## QMT 文件桥健康监控")]
 
     if not data.assembled:
-        layout_items.append(
-            pn.pane.Alert("QMT 文件桥未装配（qmt_assembly 未注入）", alert_type="info")
-        )
+        layout_items.append(pn.pane.Alert("QMT 文件桥未装配（qmt_assembly 未注入）", alert_type="info"))
         layout = pn.Column(*layout_items, sizing_mode="stretch_width")
         payload["_layout"] = layout
         return payload
 
     # 总状态横幅
-    layout_items.append(pn.pane.Alert(
-        f"{icon} 文件桥整体: {level_text}（{data.overall_level}） — 检查于 {data.checked_at}",
-        alert_type=alert_type,
-    ))
+    layout_items.append(
+        pn.pane.Alert(
+            f"{icon} 文件桥整体: {level_text}（{data.overall_level}） — 检查于 {data.checked_at}",
+            alert_type=alert_type,
+        )
+    )
 
     # 组件卡片
     cards: list[Any] = []
@@ -200,11 +204,13 @@ def render_qmt_bridge_health(data: QmtBridgeHealthData) -> dict[str, Any]:
         metrics_text = _format_metrics(comp.metrics)
         if metrics_text:
             body_parts.append(metrics_text)
-        cards.append(pn.Card(
-            pn.pane.Markdown("\n\n".join(body_parts)),
-            title=f"{c_icon} {comp.name}",
-            sizing_mode="stretch_width",
-        ))
+        cards.append(
+            pn.Card(
+                pn.pane.Markdown("\n\n".join(body_parts)),
+                title=f"{c_icon} {comp.name}",
+                sizing_mode="stretch_width",
+            )
+        )
     if cards:
         layout_items.append(pn.GridBox(*cards, ncols=2, sizing_mode="stretch_width"))
 

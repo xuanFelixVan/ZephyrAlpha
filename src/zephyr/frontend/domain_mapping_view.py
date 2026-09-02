@@ -151,18 +151,14 @@ class DomainMappingView:
         rows = tuple(sorted({biz for biz, _ in counts}))
         cols = tuple(sorted({db for _, db in counts}))
         cells = tuple(
-            MatrixCell(business_domain=biz, db_domain=db, count=counts[(biz, db)])
-            for biz, db in sorted(counts)
+            MatrixCell(business_domain=biz, db_domain=db, count=counts[(biz, db)]) for biz, db in sorted(counts)
         )
         return MappingMatrix(rows=rows, cols=cols, cells=cells)
 
     def sankey_edges(self) -> tuple[SankeyFlow, ...]:
         """桑基流量边（源→目标权重=矩阵单元格计数，同一聚合口径）。"""
         counts = self._cell_counts()
-        return tuple(
-            SankeyFlow(source=biz, target=db, weight=counts[(biz, db)])
-            for biz, db in sorted(counts)
-        )
+        return tuple(SankeyFlow(source=biz, target=db, weight=counts[(biz, db)]) for biz, db in sorted(counts))
 
     def orphans(self) -> tuple[str, ...]:
         """未映射孤儿清单（快照内无映射登记的实体，排序确定性）。"""

@@ -205,8 +205,7 @@ def rolling_relative_quantile(
     quantile = float(daily_pct.median())
     passed = quantile >= track.min_quantile
     detail = (
-        f"相对分位 {quantile:.2f}（{'守' if passed else '破'}前 "
-        f"{track.min_quantile:.0%} 轨道，{len(aligned)} 日截面）"
+        f"相对分位 {quantile:.2f}（{'守' if passed else '破'}前 {track.min_quantile:.0%} 轨道，{len(aligned)} 日截面）"
     )
     return RelativeTrackResult(factor_id, quantile, passed, len(aligned), detail)
 

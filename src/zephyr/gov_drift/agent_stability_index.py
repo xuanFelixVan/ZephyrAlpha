@@ -261,8 +261,7 @@ class AgentStabilityIndex:
             asi=report.asi,
             consecutive_low=report.consecutive_low,
             reason=(
-                f"ASI={report.asi:.4f} < 阈值 {self._threshold} 连续 "
-                f"{report.consecutive_low} 窗（Agent 行为漂移）"
+                f"ASI={report.asi:.4f} < 阈值 {self._threshold} 连续 {report.consecutive_low} 窗（Agent 行为漂移）"
             ),
             raised_at=self._clock(),
         )

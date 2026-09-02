@@ -445,13 +445,9 @@ def fetch_sit_out_list(
             build_sit_out_list,
         )
 
-        events = [
-            ev if isinstance(ev, CalendarEvent) else CalendarEvent(**ev)
-            for ev in (sources.get("events") or ())
-        ]
+        events = [ev if isinstance(ev, CalendarEvent) else CalendarEvent(**ev) for ev in (sources.get("events") or ())]
         stopped = [
-            s if isinstance(s, StoppedSymbol) else StoppedSymbol(**s)
-            for s in (sources.get("stopped_symbols") or ())
+            s if isinstance(s, StoppedSymbol) else StoppedSymbol(**s) for s in (sources.get("stopped_symbols") or ())
         ]
         sit = build_sit_out_list(
             trade_date,
@@ -625,9 +621,7 @@ def fetch_warroom(
     sit_out, err = fetch_sit_out_list(v_date, sit_out_sources)
     if err:
         errors.append(err)
-    netting, err = fetch_correlation_netting(
-        positions, correlation_pairs, threshold=netting_threshold, as_of=v_date
-    )
+    netting, err = fetch_correlation_netting(positions, correlation_pairs, threshold=netting_threshold, as_of=v_date)
     if err:
         errors.append(err)
     debate, err = fetch_warroom_debate(v_date, db_path)
@@ -690,11 +684,13 @@ def _render_plan_section(data: WarroomData) -> Any:
     items: list[Any] = []
     plan = data.plan
     if plan is None:
-        items.append(pn.pane.Alert(
-            f"今日（{data.trade_date}）预案未生成——prediction_log 无 scenario_plan 行"
-            "（盘前管线 MOD-PLAN-018 未跑或落库失败），本区待数据",
-            alert_type="warning",
-        ))
+        items.append(
+            pn.pane.Alert(
+                f"今日（{data.trade_date}）预案未生成——prediction_log 无 scenario_plan 行"
+                "（盘前管线 MOD-PLAN-018 未跑或落库失败），本区待数据",
+                alert_type="warning",
+            )
+        )
         return pn.Card(*items, title="① 前日预案（上一交易日生成 · 今日执行）", sizing_mode="stretch_width")
 
     final_scenario = plan.get("final_scenario")
@@ -749,23 +745,27 @@ def _render_plan_section(data: WarroomData) -> Any:
             verdicts.append("⚠️ D2 量缩（<1.0×）→ 降信半档")
         if av.get("direction_consistent") is False:
             verdicts.append("⚠️ D1 与 gap_adj 方向背离 → 降信半档")
-        items.append(_md(
-            "**竞价三细节（9:25）**："
-            f"D1 虚拟开盘价偏离 {d1} · D2 匹配量放大 {d2} · D3 撤单比 {d3} · "
-            f"昨日涨停竞价溢价 {premium}（status={av.get('status', '?')}）"
-            + ("　" + "　".join(verdicts) if verdicts else "")
-        ))
+        items.append(
+            _md(
+                "**竞价三细节（9:25）**："
+                f"D1 虚拟开盘价偏离 {d1} · D2 匹配量放大 {d2} · D3 撤单比 {d3} · "
+                f"昨日涨停竞价溢价 {premium}（status={av.get('status', '?')}）"
+                + ("　" + "　".join(verdicts) if verdicts else "")
+            )
+        )
     else:
         items.append(_md("**竞价三细节**：未执行（盘前跑批无竞价段）"))
 
     reasons = plan.get("reasons") or []
     if reasons:
-        items.append(pn.Card(
-            _md("\n".join("- " + r for r in reasons)),
-            title="决策理由链（留痕）",
-            collapsed=True,
-            sizing_mode="stretch_width",
-        ))
+        items.append(
+            pn.Card(
+                _md("\n".join("- " + r for r in reasons)),
+                title="决策理由链（留痕）",
+                collapsed=True,
+                sizing_mode="stretch_width",
+            )
+        )
     return pn.Card(*items, title="① 前日预案（上一交易日生成 · 今日执行）", sizing_mode="stretch_width")
 
 
@@ -795,7 +795,9 @@ def _render_intraday_section(data: WarroomData) -> Any:
             f"开盘 {_pct(outcome.get('open_pct'), 2)}，30 分钟走势 {_pct(outcome.get('trend_pct'), 2)}"
             f"（{outcome.get('trend_source', '?')}）→ {_scenario_zh(outcome.get('actual_scenario'))}"
         )
-    pending_cell = "待接入（开盘 15 分钟 4 型：直驱/试探驱动/拒绝反转 Open Rejection Reverse/震荡——C24 时序分段状态机未施工）"
+    pending_cell = (
+        "待接入（开盘 15 分钟 4 型：直驱/试探驱动/拒绝反转 Open Rejection Reverse/震荡——C24 时序分段状态机未施工）"
+    )
     rows = [
         "| 时段 | 判定 | 数据源 |",
         "|---|---|---|",
@@ -820,8 +822,7 @@ def _render_intraday_section(data: WarroomData) -> Any:
             )
         elif not outcome:
             lines.append(
-                f"信度缩放={plan.get('confidence_scale', '—')}；"
-                "盘中滚动修正待 C24 时序分段状态机接入（待接入）"
+                f"信度缩放={plan.get('confidence_scale', '—')}；盘中滚动修正待 C24 时序分段状态机接入（待接入）"
             )
         pb = data.playbook
         if pb:
@@ -846,34 +847,43 @@ def _render_inertia_section(data: WarroomData) -> Any:
     items: list[Any] = []
     inertia = data.inertia
     if inertia is None:
-        items.append(pn.pane.Alert(
-            "次日 8 态预测不可用（指数 K 线缺失/历史不足/数据通道异常）——本区待数据",
-            alert_type="warning",
-        ))
+        items.append(
+            pn.pane.Alert(
+                "次日 8 态预测不可用（指数 K 线缺失/历史不足/数据通道异常）——本区待数据",
+                alert_type="warning",
+            )
+        )
         return pn.Card(*items, title="③ 今日 → 明日惯性推演", sizing_mode="stretch_width")
 
     direction = inertia["direction"]
     direction_zh = {"up": "偏多惯性", "down": "偏空惯性", "flat": "震荡无方向"}[direction]
-    items.append(_md(
-        f"**明日惯性判定：{direction_zh}**　"
-        f"上行 {_pct_plain(inertia['bucket_up'])} · 下行 {_pct_plain(inertia['bucket_down'])} · "
-        f"震荡 {_pct_plain(inertia['bucket_flat'])}"
-    ))
-    items.append(_md(
-        f"**依据**：今日盘面态={inertia['current_state_zh']}；"
-        f"次日众数态={inertia['top_state_zh']}（{_pct_plain(inertia['top_probability'])}）；"
-        f"置信度={inertia['confidence']:.2f}（转移样本 {inertia['n_transitions']}）　"
-        f"**8 态分布**：" + " · ".join(
-            f"{_STATE8_ZH.get(s, s)} {_pct_plain(p)}" for s, p in inertia["probs"].items()
+    items.append(
+        _md(
+            f"**明日惯性判定：{direction_zh}**　"
+            f"上行 {_pct_plain(inertia['bucket_up'])} · 下行 {_pct_plain(inertia['bucket_down'])} · "
+            f"震荡 {_pct_plain(inertia['bucket_flat'])}"
         )
-    ))
+    )
+    items.append(
+        _md(
+            f"**依据**：今日盘面态={inertia['current_state_zh']}；"
+            f"次日众数态={inertia['top_state_zh']}（{_pct_plain(inertia['top_probability'])}）；"
+            f"置信度={inertia['confidence']:.2f}（转移样本 {inertia['n_transitions']}）　"
+            f"**8 态分布**："
+            + " · ".join(f"{_STATE8_ZH.get(s, s)} {_pct_plain(p)}" for s, p in inertia["probs"].items())
+        )
+    )
     alert_type, hint = _DIRECTION_HINT[direction]
     items.append(pn.pane.Alert(f"今日操作联动：{hint}", alert_type=alert_type))
-    items.append(_md(
-        "> 只出概率分布不出点位（90号 §7 BM-SEL-04 铁律）；T+1 隔夜风险——"
-        "今天买入明天才能卖，\"明天会怎样\"决定\"今天能不能买\""
-    ))
-    return pn.Card(*items, title="③ 今日 → 明日惯性推演（服务\"明日下跌概率大则今日延迟建仓\"类决策）", sizing_mode="stretch_width")
+    items.append(
+        _md(
+            "> 只出概率分布不出点位（90号 §7 BM-SEL-04 铁律）；T+1 隔夜风险——"
+            '今天买入明天才能卖，"明天会怎样"决定"今天能不能买"'
+        )
+    )
+    return pn.Card(
+        *items, title='③ 今日 → 明日惯性推演（服务"明日下跌概率大则今日延迟建仓"类决策）', sizing_mode="stretch_width"
+    )
 
 
 def _render_index_panel_section(data: WarroomData) -> Any:
@@ -881,11 +891,15 @@ def _render_index_panel_section(data: WarroomData) -> Any:
     items: list[Any] = []
     panel = data.index_panel
     if panel is None:
-        items.append(pn.pane.Alert(
-            "四指数 regime 面板不可用（K 线数据/拟合通道异常）——待接入（IDX-02）",
-            alert_type="warning",
-        ))
-        return pn.Card(*items, title="④ 四指数状态卡（IDX-02 · 1 引擎×4 代理 regime 面板）", sizing_mode="stretch_width")
+        items.append(
+            pn.pane.Alert(
+                "四指数 regime 面板不可用（K 线数据/拟合通道异常）——待接入（IDX-02）",
+                alert_type="warning",
+            )
+        )
+        return pn.Card(
+            *items, title="④ 四指数状态卡（IDX-02 · 1 引擎×4 代理 regime 面板）", sizing_mode="stretch_width"
+        )
 
     if panel.get("degraded"):
         items.append(pn.pane.Alert("面板级降级：全部指数卡缺数据/降级", alert_type="warning"))
@@ -901,8 +915,7 @@ def _render_index_panel_section(data: WarroomData) -> Any:
             rank = card.get("rank")
             lines = [
                 f"**Regime**：{_REGIME_ZH.get(dominant, dominant)}（置信 {_pct_plain(card.get('confidence'))}）",
-                f"**强弱位次**：{f'第 {rank}' if rank else '—'}　"
-                f"**近20日收益**：{_pct(card.get('recent_return'), 2)}",
+                f"**强弱位次**：{f'第 {rank}' if rank else '—'}　**近20日收益**：{_pct(card.get('recent_return'), 2)}",
                 "**概率 Top2**：" + " · ".join(f"{_REGIME_ZH.get(s, s)} {_pct_plain(p)}" for s, p in top2),
             ]
             if card.get("hmm_degraded"):
@@ -914,10 +927,12 @@ def _render_index_panel_section(data: WarroomData) -> Any:
 
     for alert in panel.get("divergence_alerts") or []:
         items.append(pn.pane.Alert(f"⚠️ 背离警示：{alert.get('detail', '')}", alert_type="warning"))
-    items.append(_md(
-        f"> 数据截至 {panel.get('trade_date', '—')}；只输出 regime 概率分布与强弱排序，"
-        "不出点位/方向预测（90号 §7 铁律）；强弱排序=近 20 日已实现收益/波动调整"
-    ))
+    items.append(
+        _md(
+            f"> 数据截至 {panel.get('trade_date', '—')}；只输出 regime 概率分布与强弱排序，"
+            "不出点位/方向预测（90号 §7 铁律）；强弱排序=近 20 日已实现收益/波动调整"
+        )
+    )
     return pn.Card(*items, title="④ 四指数状态卡（IDX-02 · 1 引擎×4 代理 regime 面板）", sizing_mode="stretch_width")
 
 
@@ -945,18 +960,20 @@ def _build_scenario_grid(data: WarroomData) -> list[dict[str, Any]]:
                 action_zh = pb["action_zh"] if pb else None
             except Exception as exc:  # noqa: BLE001 — fail-open：模板检索异常不影响格结构
                 log.warning("矩阵格 playbook 检索异常 fail-open（%s）: %s", key, exc)
-            cells.append({
-                "scenario": key,
-                "row": row,
-                "row_zh": _GRID_ROW_ZH[row],
-                "col": col,
-                "col_zh": _GRID_COL_ZH[col],
-                "name_zh": name_zh,
-                "logic": logic,
-                "prob": float(prob) if isinstance(prob, (int, float)) else None,
-                "action_zh": action_zh,
-                "is_focus": key == focus,
-            })
+            cells.append(
+                {
+                    "scenario": key,
+                    "row": row,
+                    "row_zh": _GRID_ROW_ZH[row],
+                    "col": col,
+                    "col_zh": _GRID_COL_ZH[col],
+                    "name_zh": name_zh,
+                    "logic": logic,
+                    "prob": float(prob) if isinstance(prob, (int, float)) else None,
+                    "action_zh": action_zh,
+                    "is_focus": key == focus,
+                }
+            )
     return cells
 
 
@@ -965,12 +982,18 @@ def _render_scenario_matrix_section(cells: list[dict[str, Any]]) -> Any:
     has_prob = any(c["prob"] is not None for c in cells)
     cards: list[Any] = []
     for c in cells:
-        prob_text = f"**概率**：{_pct_plain(c['prob'])}" if c["prob"] is not None else "**概率**：待接入（缺口⑥ BM-SEL-04 暂缓）"
-        body = "\n\n".join([
-            prob_text,
-            f"**动作**：{c['action_zh'] or '—'}",
-            c["logic"],
-        ])
+        prob_text = (
+            f"**概率**：{_pct_plain(c['prob'])}"
+            if c["prob"] is not None
+            else "**概率**：待接入（缺口⑥ BM-SEL-04 暂缓）"
+        )
+        body = "\n\n".join(
+            [
+                prob_text,
+                f"**动作**：{c['action_zh'] or '—'}",
+                c["logic"],
+            ]
+        )
         title = ("⭐ " if c["is_focus"] else "") + f"{c['row_zh']}×{c['col_zh']} {c['name_zh']}"
         cards.append(pn.Card(_md(body), title=title, sizing_mode="stretch_width"))
     intro = (
@@ -992,16 +1015,20 @@ def _render_boundaries_section(data: WarroomData) -> Any:
     items: list[Any] = []
     boundaries = data.boundaries
     if boundaries is None:
-        items.append(pn.pane.Alert(
-            "批量边界查询通道异常（fail-open 降级）——本区待数据",
-            alert_type="warning",
-        ))
+        items.append(
+            pn.pane.Alert(
+                "批量边界查询通道异常（fail-open 降级）——本区待数据",
+                alert_type="warning",
+            )
+        )
     elif not boundaries:
-        items.append(pn.pane.Alert(
-            f"今日（{data.trade_date}）无 tomorrow_boundary 落库行——盘后批量管线"
-            "（MOD-PLAN-012）未跑或候选清单为空，本区待数据；未算股一律视为「待计算」禁凭感觉操作",
-            alert_type="warning",
-        ))
+        items.append(
+            pn.pane.Alert(
+                f"今日（{data.trade_date}）无 tomorrow_boundary 落库行——盘后批量管线"
+                "（MOD-PLAN-012）未跑或候选清单为空，本区待数据；未算股一律视为「待计算」禁凭感觉操作",
+                alert_type="warning",
+            )
+        )
     else:
         rows = [
             "| 标的 | 箱体（下沿~上沿） | 加仓上限 | 禁加仓价 | 必出价 | 突破验证 |",
@@ -1015,10 +1042,12 @@ def _render_boundaries_section(data: WarroomData) -> Any:
                 f"{'放量站稳10分钟' if b.get('breakout_confirm') else '—'} |"
             )
         items.append(_md("\n".join(rows)))
-        items.append(_md(
-            f"> 共 {len(boundaries)} 票（MOD-PLAN-012 盘后批量，生效日="
-            f"{boundaries[0].get('target_date', '—')}）；失效条件（逻辑破坏点）优先于价格触发"
-        ))
+        items.append(
+            _md(
+                f"> 共 {len(boundaries)} 票（MOD-PLAN-012 盘后批量，生效日="
+                f"{boundaries[0].get('target_date', '—')}）；失效条件（逻辑破坏点）优先于价格触发"
+            )
+        )
     return pn.Card(*items, title="⑥ W2b 候选股/持仓股明日边界（批量栏杆）", sizing_mode="stretch_width")
 
 
@@ -1028,31 +1057,38 @@ def _render_risk_envelope_section(data: WarroomData) -> Any:
 
     netting = data.netting
     if netting is None:
-        items.append(pn.pane.Alert(
-            "相关性净额：持仓/相关性对上游未装配——待接入（GAP-F-04 查询函数已就绪，"
-            "防「五个仓位实则一个赌注」）",
-            alert_type="warning",
-        ))
-    else:
-        items.append(_md(
-            f"**相关性净额**：持仓 {netting.get('gross_position_count')} 笔 → "
-            f"净风险单位 **{netting.get('net_risk_units')}** 个"
-            f"（合并 {netting.get('netting_reduction')} 笔，|ρ|≥{netting.get('threshold')}）"
-        ))
-        for cl in netting.get("clusters") or []:
-            items.append(pn.pane.Alert(
-                f"高相关簇合并计 1 笔风险：{' + '.join(cl.get('members') or [])}"
-                f"（max ρ={cl.get('max_pair_rho')}，合计权重 {_pct_plain(cl.get('combined_weight'))}）",
+        items.append(
+            pn.pane.Alert(
+                "相关性净额：持仓/相关性对上游未装配——待接入（GAP-F-04 查询函数已就绪，防「五个仓位实则一个赌注」）",
                 alert_type="warning",
-            ))
+            )
+        )
+    else:
+        items.append(
+            _md(
+                f"**相关性净额**：持仓 {netting.get('gross_position_count')} 笔 → "
+                f"净风险单位 **{netting.get('net_risk_units')}** 个"
+                f"（合并 {netting.get('netting_reduction')} 笔，|ρ|≥{netting.get('threshold')}）"
+            )
+        )
+        for cl in netting.get("clusters") or []:
+            items.append(
+                pn.pane.Alert(
+                    f"高相关簇合并计 1 笔风险：{' + '.join(cl.get('members') or [])}"
+                    f"（max ρ={cl.get('max_pair_rho')}，合计权重 {_pct_plain(cl.get('combined_weight'))}）",
+                    alert_type="warning",
+                )
+            )
 
     sit_out = data.sit_out
     if sit_out is None:
-        items.append(pn.pane.Alert(
-            "禁做清单：三源（事件日历/止损状态/作战池）未装配——待接入"
-            "（MOD-PLAN-014 生成器已就绪；违反清单=预案外操作，W0 归因记执行不一致）",
-            alert_type="warning",
-        ))
+        items.append(
+            pn.pane.Alert(
+                "禁做清单：三源（事件日历/止损状态/作战池）未装配——待接入"
+                "（MOD-PLAN-014 生成器已就绪；违反清单=预案外操作，W0 归因记执行不一致）",
+                alert_type="warning",
+            )
+        )
     else:
         entries = sit_out.get("entries") or []
         if not entries:
@@ -1064,10 +1100,12 @@ def _render_risk_envelope_section(data: WarroomData) -> Any:
                 f"（{e.get('scope')}{('/' + e['target']) if e.get('target') else ''}）：{e.get('reason')}"
                 for e in entries
             ]
-            items.append(pn.pane.Alert(
-                f"⛔ 今日禁做清单 {len(entries)} 条（违反=预案外操作，W0 归因记执行不一致）",
-                alert_type="danger",
-            ))
+            items.append(
+                pn.pane.Alert(
+                    f"⛔ 今日禁做清单 {len(entries)} 条（违反=预案外操作，W0 归因记执行不一致）",
+                    alert_type="danger",
+                )
+            )
             items.append(_md("\n".join(lines)))
         for note in sit_out.get("notes") or []:
             items.append(_md(f"> {note}"))
@@ -1095,11 +1133,13 @@ def _render_debate_section(data: WarroomData) -> Any:
     items: list[Any] = []
     bull_body = d.get("bull") or "_多头陈词缺失（落库行未含 bull 段）_"
     bear_body = d.get("bear") or "_空头陈词缺失（落库行未含 bear 段）_"
-    items.append(pn.Row(
-        pn.Card(_md(bull_body), title="多头研究员", sizing_mode="stretch_width"),
-        pn.Card(_md(bear_body), title="空头研究员", sizing_mode="stretch_width"),
-        sizing_mode="stretch_width",
-    ))
+    items.append(
+        pn.Row(
+            pn.Card(_md(bull_body), title="多头研究员", sizing_mode="stretch_width"),
+            pn.Card(_md(bear_body), title="空头研究员", sizing_mode="stretch_width"),
+            sizing_mode="stretch_width",
+        )
+    )
     analysis = d.get("analysis")
     if analysis:
         scenarios = analysis.get("scenarios") or {}
@@ -1121,21 +1161,25 @@ def _render_debate_section(data: WarroomData) -> Any:
         if note:
             lines.append(f"> 置信声明：{note}")
         items.append(pn.Card(_md("\n".join(lines)), title="综合席裁决（三情景）", sizing_mode="stretch_width"))
-    items.append(_md(
-        "> 交易员综合 / 风控 veto 位：**待接入**——MOD-PLAN-013 四角色链已落码（testing），"
-        "接日循环跑批后呈现（D3>0.6 进攻方案自动否决红色标注）。　"
-        f"`model={d.get('model_version')}` `prompt={d.get('prompt_version')}`"
-    ))
+    items.append(
+        _md(
+            "> 交易员综合 / 风控 veto 位：**待接入**——MOD-PLAN-013 四角色链已落码（testing），"
+            "接日循环跑批后呈现（D3>0.6 进攻方案自动否决红色标注）。　"
+            f"`model={d.get('model_version')}` `prompt={d.get('prompt_version')}`"
+        )
+    )
     return pn.Card(*items, title="⑧ W4 多空辩论台（预案质量门）", sizing_mode="stretch_width")
 
 
 def _render_backlog_section() -> Any:
     """区⑨ 折叠占位（W0/W6 历史预案库，随样本积累后接入）。"""
-    body = "\n".join([
-        "- **W0/W6 历史预案库 + Brier 校准度**——随 prediction_log 样本积累（MOD-PLAN-018 日循环跑批）后接入",
-        "- 缺口⑧ 辩论台 P3 已落展示层（本页区⑧）：消费 llm_daily_analysis v2 辩论行；MOD-PLAN-013 四角色链接线待日循环",
-        "- P2 已落：缺口⑥ 9 格矩阵展示层（格概率待 BM-SEL-04 解除暂缓）/缺口⑦ 批量边界回查/缺口⑨ 相关性净额/缺口⑩ 禁做清单",
-    ])
+    body = "\n".join(
+        [
+            "- **W0/W6 历史预案库 + Brier 校准度**——随 prediction_log 样本积累（MOD-PLAN-018 日循环跑批）后接入",
+            "- 缺口⑧ 辩论台 P3 已落展示层（本页区⑧）：消费 llm_daily_analysis v2 辩论行；MOD-PLAN-013 四角色链接线待日循环",
+            "- P2 已落：缺口⑥ 9 格矩阵展示层（格概率待 BM-SEL-04 解除暂缓）/缺口⑦ 批量边界回查/缺口⑨ 相关性净额/缺口⑩ 禁做清单",
+        ]
+    )
     return pn.Card(
         _md(body),
         title="⑨ 折叠占位区（W0/W6 历史预案库，随样本积累后接入）",
@@ -1181,10 +1225,12 @@ def render_warroom(data: WarroomData) -> dict[str, Any]:
         ),
     ]
     if data.errors:
-        items.append(pn.pane.Alert(
-            "部分数据通道异常（fail-open 降级，不阻断页面）：" + "；".join(data.errors),
-            alert_type="warning",
-        ))
+        items.append(
+            pn.pane.Alert(
+                "部分数据通道异常（fail-open 降级，不阻断页面）：" + "；".join(data.errors),
+                alert_type="warning",
+            )
+        )
     items.append(_render_plan_section(data))
     items.append(_render_intraday_section(data))
     items.append(_render_inertia_section(data))

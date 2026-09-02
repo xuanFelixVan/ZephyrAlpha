@@ -97,7 +97,7 @@ class ChTickProvider:
         """
         if interval != "tick":
             raise ChTickProviderError(f"仅支持 interval='tick'，收到: {interval}")
-        sym = str(symbol).split(".")[0]   # tick_data.symbol=纯数字（与 kline_daily 同口径）
+        sym = str(symbol).split(".")[0]  # tick_data.symbol=纯数字（与 kline_daily 同口径）
         start_d = start.strftime("%Y-%m-%d")
         end_d = end.strftime("%Y-%m-%d")
         client = self._client()
@@ -114,7 +114,22 @@ class ChTickProvider:
                 {"sym": sym, "start": cur.strftime("%Y-%m-%d"), "end": seg_end.strftime("%Y-%m-%d")},
             )
             if rows:
-                frames.append(pd.DataFrame(rows, columns=["timestamp", "symbol", "price", "volume", "amount", "bid_price", "ask_price", "bid_volume", "ask_volume"]))
+                frames.append(
+                    pd.DataFrame(
+                        rows,
+                        columns=[
+                            "timestamp",
+                            "symbol",
+                            "price",
+                            "volume",
+                            "amount",
+                            "bid_price",
+                            "ask_price",
+                            "bid_volume",
+                            "ask_volume",
+                        ],
+                    )
+                )
             cur = seg_end + timedelta(days=1)
 
         if not frames:
@@ -125,7 +140,7 @@ class ChTickProvider:
         # ── EDE TickSnapshot 18+symbol 字段适配（缺失字段填 0，见模块头字段说明） ──
         out = pd.DataFrame()
         out["timestamp"] = df["timestamp"]
-        out["symbol"] = symbol   # EDE 分发键=带后缀代码（与 event.symbol 同口径）
+        out["symbol"] = symbol  # EDE 分发键=带后缀代码（与 event.symbol 同口径）
         out["last_price"] = df["price"].astype(float)
         out["open"] = 0.0
         out["high"] = 0.0

@@ -45,6 +45,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import yaml
+
 # NOTE(P1W07-20260825): scaffold 注册器斜杠路径 bug（#ARCH-232 同型）已按可逆模式修复为点分路径
 from zephyr.factor.analysis.bma_signal_weighter import BmaSignalWeighter
 
@@ -57,5 +58,6 @@ def load_analysis_config() -> dict:
     """加载 analysis 模块策略参数配置。"""
     with open(_CONFIG_PATH, encoding="utf-8") as f:
         return yaml.safe_load(f) or {}
+
 
 __all__.append("BmaSignalWeighter")

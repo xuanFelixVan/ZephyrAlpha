@@ -57,9 +57,7 @@ from zephyr.shared.io.paths import REPO_ROOT
 logger = logging.getLogger(__name__)
 
 DEFAULT_CONTRACT_PATH: Final[Path] = Path(__file__).resolve().parent / "tool_contracts.yaml"
-DEFAULT_STATE_PATH: Final[Path] = (
-    REPO_ROOT / ".runtime" / "mcp_client_discovery" / "drift_state.json"
-)
+DEFAULT_STATE_PATH: Final[Path] = REPO_ROOT / ".runtime" / "mcp_client_discovery" / "drift_state.json"
 
 # 漂移指标名（步骤 2.2，tag server_id 随指标走）
 METRIC_DRIFT_DETECTED: Final[str] = "mcp.contract_drift.detected"
@@ -176,11 +174,7 @@ class ToolContractIndex:
         if not isinstance(section, dict):
             return {}
         tools = section.get("tools") or []
-        return {
-            str(tool["name"]): tool
-            for tool in tools
-            if isinstance(tool, dict) and tool.get("name")
-        }
+        return {str(tool["name"]): tool for tool in tools if isinstance(tool, dict) and tool.get("name")}
 
 
 # ── MCP-Scan 指令性语言剥离（保守模式集；declarative 安全说明不碰） ──
@@ -232,19 +226,13 @@ def validate_connection_config(config: ServerConnectionConfig) -> None:
     """传输层校验（§3.2.2）：仅 localhost HTTP+SSE，其余一律 fail-closed 拒收."""
     transport = str(config.transport or "").strip().lower()
     if transport != _ALLOWED_TRANSPORT:
-        raise TransportRejectedError(
-            f"MCP 传输类型被拒（仅允许 localhost HTTP+SSE，STDIO 禁用）: {transport!r}"
-        )
+        raise TransportRejectedError(f"MCP 传输类型被拒（仅允许 localhost HTTP+SSE，STDIO 禁用）: {transport!r}")
     parsed = urlparse(str(config.url or ""))
     if parsed.scheme not in ("http", "https"):
-        raise TransportRejectedError(
-            f"MCP server URL 协议被拒（仅 http/https）: {config.url!r}"
-        )
+        raise TransportRejectedError(f"MCP server URL 协议被拒（仅 http/https）: {config.url!r}")
     host = (parsed.hostname or "").strip().lower()
     if host not in _LOCALHOST_HOSTS:
-        raise TransportRejectedError(
-            f"MCP server URL 主机被拒（仅 localhost）: {config.url!r}"
-        )
+        raise TransportRejectedError(f"MCP server URL 主机被拒（仅 localhost）: {config.url!r}")
 
 
 class _MetricsFacadeSink:
@@ -288,20 +276,14 @@ class ClientDiscovery:
         try:
             data = yaml.safe_load(self._contract_path.read_text(encoding="utf-8"))
         except (OSError, yaml.YAMLError) as exc:
-            raise ToolContractError(
-                f"MCP 工具契约文件不可读: {self._contract_path}（{exc!r}）"
-            ) from exc
+            raise ToolContractError(f"MCP 工具契约文件不可读: {self._contract_path}（{exc!r}）") from exc
         if not isinstance(data, dict):
-            raise ToolContractError(
-                f"MCP 工具契约顶层须为 dict: {self._contract_path}（{type(data)!r}）"
-            )
+            raise ToolContractError(f"MCP 工具契约顶层须为 dict: {self._contract_path}（{type(data)!r}）")
         return data
 
     # ── 发现即校验 + diff ──────────────────────────────────────
 
-    def discover(
-        self, config: ServerConnectionConfig, transport: MCPTransport
-    ) -> DiscoveryReport:
+    def discover(self, config: ServerConnectionConfig, transport: MCPTransport) -> DiscoveryReport:
         """连接发现 → MCP-Scan 注册 → 契约 diff → 遥测 emit（fail-closed 未知默认拒）."""
         validate_connection_config(config)
         contract_tools = self.contract_index.tools_for(config.server_id)
@@ -338,9 +320,7 @@ class ClientDiscovery:
                 verdicts[name] = ToolVerdict.ALLOWED
                 safety_levels[name] = str(hit.get("safety_level", ""))
         discovered_set = set(discovered)
-        unknown = tuple(
-            sorted(name for name, verdict in verdicts.items() if verdict is ToolVerdict.DENIED_UNKNOWN)
-        )
+        unknown = tuple(sorted(name for name, verdict in verdicts.items() if verdict is ToolVerdict.DENIED_UNKNOWN))
         missing = tuple(sorted(name for name in contract_tools if name not in discovered_set))
         report = DiscoveryReport(
             server_id=config.server_id,
@@ -420,9 +400,7 @@ class ClientDiscovery:
     def _save_state(self, state: dict[str, Any]) -> None:
         try:
             self._state_path.parent.mkdir(parents=True, exist_ok=True)
-            tmp_path = self._state_path.with_suffix(
-                self._state_path.suffix + f".{os.getpid()}.tmp"
-            )
+            tmp_path = self._state_path.with_suffix(self._state_path.suffix + f".{os.getpid()}.tmp")
             tmp_path.write_text(
                 json.dumps(state, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
                 encoding="utf-8",

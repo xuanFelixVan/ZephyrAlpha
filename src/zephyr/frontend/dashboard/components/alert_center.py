@@ -52,9 +52,7 @@ __all__: Final = [
 ]
 
 VALID_SEVERITIES: Final[frozenset[str]] = frozenset({"AL-P1", "AL-P2", "AL-P3", "AL-P4"})
-VALID_STATUSES: Final[frozenset[str]] = frozenset(
-    {"active", "acknowledged", "resolved", "silenced"}
-)
+VALID_STATUSES: Final[frozenset[str]] = frozenset({"active", "acknowledged", "resolved", "silenced"})
 _SEVERITY_ORDER: Final[tuple[str, ...]] = ("AL-P1", "AL-P2", "AL-P3", "AL-P4")
 
 
@@ -145,11 +143,7 @@ def fetch_alert_center(
         for r in recs
         if r.status == "resolved" and r.resolved_at is not None
     ]
-    mttr = (
-        sum(resolved_durations) / len(resolved_durations)
-        if resolved_durations
-        else None
-    )
+    mttr = sum(resolved_durations) / len(resolved_durations) if resolved_durations else None
     # ③ 日均告警（覆盖天数 = now − 最早 created，<1 天按 1 天）
     if recs:
         earliest = min(r.created_at for r in recs)
@@ -182,9 +176,7 @@ def fetch_alert_center(
         by_space[r.source] = by_space.get(r.source, 0) + 1
         rc = r.root_cause or "未标注"
         by_root_cause[rc] = by_root_cause.get(rc, 0) + 1
-    by_root_cause = dict(
-        sorted(by_root_cause.items(), key=lambda kv: (-kv[1], kv[0]))[:top_n_root_cause]
-    )
+    by_root_cause = dict(sorted(by_root_cause.items(), key=lambda kv: (-kv[1], kv[0]))[:top_n_root_cause])
     views: dict[str, object] = {
         "by_time": dict(sorted(by_time.items())),
         "by_space": dict(sorted(by_space.items(), key=lambda kv: (-kv[1], kv[0]))),
