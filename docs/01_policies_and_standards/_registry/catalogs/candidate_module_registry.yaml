@@ -20201,3 +20201,57 @@ entries:
   source_draft: ''
   original_id: RR-RATING-001
   source_section: ''
+
+# --- CAND-GOVTEST-004: 存量遗留红 24 测试文件 + 4 慢性挂死测试专项（冻结窗口实证非 format 诱发） ---
+- id: CAND-GOVTEST-004
+  name: 存量遗留红测试 24 文件 + 慢性挂死 4 文件专项清偿
+  aliases:
+  - 遗留红专项
+  - 慢性挂死测试族
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 测试健康度
+  problem: >-
+    2026-09-02 冻结窗口两轮全量回归实证（3211 测试文件分批×2）：24 个存量红测试文件
+    与 format 无关的存量债——代表族：test_business_g04（assert 67==70 硬编码对账漂移）、
+    test_index_constituent_scd2 ×4、test_naming_e2e ×10、test_create_guard 批上下文赛跑族、
+    boot_hooks/f3_auto_integration 服务器引导族；另有 4 个慢性挂死测试（超时基线实证）。
+    遗留红稀释回归信号（真回归易被淹没），慢性挂死拖长全量回归时长。
+  proposal: >-
+    分族诊断：①硬编码断言族逐一核对真源后修断言或修代码（先判真伪）；
+    ②赛跑族改确定性等待（对标 conftest.py numpy 预加载先例）；③服务器引导族
+    固化端口/fixture 隔离；④挂死族加超时断+拆分。每族先出真伪判定表再动手。
+  status: candidate
+  priority: P2
+  source: '2026-09-02 冻结窗口双专项结案报告 §三（GOVTEST-002 两轮回归实证台账）'
+  created: '2026-09-02'
+  last_updated: '2026-09-02'
+
+# --- CAND-GOVTEST-005: 测试身份泄漏入主仓历史（"initial [GW:sess-initial]" 事件） ---
+- id: CAND-GOVTEST-005
+  name: 测试上下文 commit 泄漏主仓——tests 身份穿透隔离边界实证堵源
+  aliases:
+  - 测试泄漏 commit
+  - sess-initial 事件
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 测试隔离
+  problem: >-
+    2026-09-02 11:44 实证：commit ee40160919（message="initial [GW:sess-initial]"）进入
+    主仓主线，内容=4 个派生文件（path_ownership_map 16240 行 churn 等）。身份文本唯一
+    出处=tests/governance/test_post_commit_guard_no_verify_threshold.py
+    _make_initial_commit（fixture tmp_path 隔离在册）。同一 queue 项
+    q-20260902-freeze-gw-0001 已于 11:18 以正确 message 落账（c284589d），
+    26 分钟后同内容被测试身份二次落账——测试执行期（冻结窗口全量回归时段）测试
+    上下文穿透隔离边界触达真实仓库。若此类泄漏携带破坏性内容（reset/删除），后果不可控。
+  proposal: >-
+    排查方向：①全量回归时段该测试的执行日志（tmp_path 是否真隔离/cwd 是否漂移/
+    git init 是否失败回退父仓）；②commit_queue/serializer 在测试并发下的 payload 污染
+    （message 默认值从何处读入）；③治本建议：网关侧拒收可疑测试身份（session_id 匹配
+    sess-initial/sess-test-* 模式 + 非 claim 注册 → 硬阻断），或测试侧 commit 前缀强制
+    命名空间隔离。先复现再修。
+  status: candidate
+  priority: P1
+  source: '2026-09-02 冻结窗口结案报告 §4⑥ + 本会话取证（ee40160919/c284589d 双commit 对账）'
+  created: '2026-09-02'
+  last_updated: '2026-09-02'
