@@ -148,7 +148,10 @@ class TestFillFromBacktest:
 
     def test_fill_mapping_coerced(self) -> None:
         runner = lambda v, r, s: {
-            "position_pct": 0.7, "direction": "short", "hold_days": 2, "stop_k": 3.0,
+            "position_pct": 0.7,
+            "direction": "short",
+            "hold_days": 2,
+            "stop_k": 3.0,
             "extra_ignored": 1,
         }
         m = _matrix(runner=runner)

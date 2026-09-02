@@ -10,6 +10,7 @@
 落地前减仓/已落地清仓/尚早 watch、黑天鹅不适用、非法输入 fail-closed、frozen/JSON 契约。
 全程内存合成数据，无 DB。
 """
+
 from __future__ import annotations
 
 import dataclasses
@@ -42,33 +43,53 @@ class TestPredictability:
 class TestOverdraftDimensions:
     def test_price_overdraft(self):
         det = _det()
-        ctx = NewsEventContext(event_type="policy", days_to_landing=5,
-                               price_gain_ratio=1.30, time_advance_days=20,
-                               capital_inflow_ratio=0.80, sentiment_peak_ratio=0.90)
+        ctx = NewsEventContext(
+            event_type="policy",
+            days_to_landing=5,
+            price_gain_ratio=1.30,
+            time_advance_days=20,
+            capital_inflow_ratio=0.80,
+            sentiment_peak_ratio=0.90,
+        )
         a = det.assess(ctx)
         assert a.price_overdraft > 1.0
 
     def test_time_overdraft_capped(self):
         det = _det()
-        ctx = NewsEventContext(event_type="policy", days_to_landing=5,
-                               price_gain_ratio=1.00, time_advance_days=40,
-                               capital_inflow_ratio=0.80, sentiment_peak_ratio=0.90)
+        ctx = NewsEventContext(
+            event_type="policy",
+            days_to_landing=5,
+            price_gain_ratio=1.00,
+            time_advance_days=40,
+            capital_inflow_ratio=0.80,
+            sentiment_peak_ratio=0.90,
+        )
         a = det.assess(ctx)
         assert a.time_overdraft == pytest.approx(1.0, abs=1e-9)
 
     def test_composite_severe(self):
         det = _det()
-        ctx = NewsEventContext(event_type="policy", days_to_landing=2,
-                               price_gain_ratio=2.00, time_advance_days=30,
-                               capital_inflow_ratio=1.50, sentiment_peak_ratio=1.00)
+        ctx = NewsEventContext(
+            event_type="policy",
+            days_to_landing=2,
+            price_gain_ratio=2.00,
+            time_advance_days=30,
+            capital_inflow_ratio=1.50,
+            sentiment_peak_ratio=1.00,
+        )
         a = det.assess(ctx)
         assert a.level == OverdraftLevel.SEVERE
 
     def test_composite_none(self):
         det = _det()
-        ctx = NewsEventContext(event_type="policy", days_to_landing=20,
-                               price_gain_ratio=1.00, time_advance_days=10,
-                               capital_inflow_ratio=0.30, sentiment_peak_ratio=0.50)
+        ctx = NewsEventContext(
+            event_type="policy",
+            days_to_landing=20,
+            price_gain_ratio=1.00,
+            time_advance_days=10,
+            capital_inflow_ratio=0.30,
+            sentiment_peak_ratio=0.50,
+        )
         a = det.assess(ctx)
         assert a.level == OverdraftLevel.NONE
 
@@ -90,41 +111,66 @@ class TestTimelinePhase:
 class TestAction:
     def test_reduce_before_landing(self):
         det = _det()
-        ctx = NewsEventContext(event_type="policy", days_to_landing=2,
-                               price_gain_ratio=2.00, time_advance_days=30,
-                               capital_inflow_ratio=1.50, sentiment_peak_ratio=1.00)
+        ctx = NewsEventContext(
+            event_type="policy",
+            days_to_landing=2,
+            price_gain_ratio=2.00,
+            time_advance_days=30,
+            capital_inflow_ratio=1.50,
+            sentiment_peak_ratio=1.00,
+        )
         a = det.assess(ctx)
         assert a.action == "reduce"
 
     def test_clear_after_landing(self):
         det = _det()
-        ctx = NewsEventContext(event_type="policy", days_to_landing=-1,
-                               price_gain_ratio=2.00, time_advance_days=30,
-                               capital_inflow_ratio=1.50, sentiment_peak_ratio=1.00)
+        ctx = NewsEventContext(
+            event_type="policy",
+            days_to_landing=-1,
+            price_gain_ratio=2.00,
+            time_advance_days=30,
+            capital_inflow_ratio=1.50,
+            sentiment_peak_ratio=1.00,
+        )
         a = det.assess(ctx)
         assert a.action == "clear"
 
     def test_watch_early(self):
         det = _det()
-        ctx = NewsEventContext(event_type="policy", days_to_landing=15,
-                               price_gain_ratio=2.00, time_advance_days=30,
-                               capital_inflow_ratio=1.50, sentiment_peak_ratio=1.00)
+        ctx = NewsEventContext(
+            event_type="policy",
+            days_to_landing=15,
+            price_gain_ratio=2.00,
+            time_advance_days=30,
+            capital_inflow_ratio=1.50,
+            sentiment_peak_ratio=1.00,
+        )
         a = det.assess(ctx)
         assert a.action == "watch"
 
     def test_none_action(self):
         det = _det()
-        ctx = NewsEventContext(event_type="policy", days_to_landing=2,
-                               price_gain_ratio=1.00, time_advance_days=10,
-                               capital_inflow_ratio=0.30, sentiment_peak_ratio=0.50)
+        ctx = NewsEventContext(
+            event_type="policy",
+            days_to_landing=2,
+            price_gain_ratio=1.00,
+            time_advance_days=10,
+            capital_inflow_ratio=0.30,
+            sentiment_peak_ratio=0.50,
+        )
         a = det.assess(ctx)
         assert a.action == "none"
 
     def test_black_swan_not_applicable(self):
         det = _det()
-        ctx = NewsEventContext(event_type="black_swan", days_to_landing=2,
-                               price_gain_ratio=1.30, time_advance_days=25,
-                               capital_inflow_ratio=1.20, sentiment_peak_ratio=0.95)
+        ctx = NewsEventContext(
+            event_type="black_swan",
+            days_to_landing=2,
+            price_gain_ratio=1.30,
+            time_advance_days=25,
+            capital_inflow_ratio=1.20,
+            sentiment_peak_ratio=0.95,
+        )
         a = det.assess(ctx)
         assert a.applicable is False
         assert a.action == "not_applicable"
@@ -133,31 +179,26 @@ class TestAction:
 class TestFailClosed:
     def test_zero_price_mean_raises(self):
         with pytest.raises(ValueError):
-            NewsEventContext(event_type="policy", days_to_landing=5,
-                             price_gain_ratio=1.30, historical_mean_price=0.0)
+            NewsEventContext(event_type="policy", days_to_landing=5, price_gain_ratio=1.30, historical_mean_price=0.0)
 
     def test_negative_sentiment_peak_raises(self):
         with pytest.raises(ValueError):
-            NewsEventContext(event_type="policy", days_to_landing=5,
-                             sentiment_peak_ratio=-0.1)
+            NewsEventContext(event_type="policy", days_to_landing=5, sentiment_peak_ratio=-0.1)
 
 
 class TestFrozenAndJson:
     def test_frozen(self):
-        ctx = NewsEventContext(event_type="policy", days_to_landing=5,
-                               price_gain_ratio=1.0)
+        ctx = NewsEventContext(event_type="policy", days_to_landing=5, price_gain_ratio=1.0)
         with pytest.raises(dataclasses.FrozenInstanceError):
             ctx.price_gain_ratio = 2.0
 
     def test_json(self):
-        ctx = NewsEventContext(event_type="policy", days_to_landing=5,
-                               price_gain_ratio=1.0)
+        ctx = NewsEventContext(event_type="policy", days_to_landing=5, price_gain_ratio=1.0)
         assert json.dumps(dataclasses.asdict(ctx))
 
 
 # helpers
 def _phase(days_to_landing: int):
     det = _det()
-    ctx = NewsEventContext(event_type="policy", days_to_landing=days_to_landing,
-                           price_gain_ratio=1.0)
+    ctx = NewsEventContext(event_type="policy", days_to_landing=days_to_landing, price_gain_ratio=1.0)
     return det.assess(ctx).phase

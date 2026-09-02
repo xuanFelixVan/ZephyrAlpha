@@ -57,6 +57,7 @@ def _ols(xs, ys) -> RegressionResult:
 def _stub(r2: float = 0.5, slope: float = 1.0, intercept: float = 0.0):
     def _run(xs, ys):
         return RegressionResult(slope=slope, intercept=intercept, r_squared=r2)
+
     return _run
 
 
@@ -96,9 +97,7 @@ class TestLinkValidation:
 
     def test_regressor_missing_fail_closed(self):
         with pytest.raises(SupplyChainMomentumError):
-            SupplyChainMomentumModel(
-                links=[SupplyChainLink("U", "X", 0.5)], regressor=None
-            )
+            SupplyChainMomentumModel(links=[SupplyChainLink("U", "X", 0.5)], regressor=None)
 
 
 class TestConfig:
@@ -159,8 +158,7 @@ class TestScreenLinks:
         r2_by_len = {8: 0.10, 7: 0.50, 6: 0.30, 5: 0.20, 4: 0.05}
 
         def _reg(xs, ys):
-            return RegressionResult(slope=1.0, intercept=0.0,
-                                    r_squared=r2_by_len[len(xs)])
+            return RegressionResult(slope=1.0, intercept=0.0, r_squared=r2_by_len[len(xs)])
 
         m = _model(reg=_reg)
         links = m.screen_links("X", {"UP1": _U, "X": _F_LEAD1})
@@ -178,6 +176,7 @@ class TestScreenLinks:
     def test_regressor_exception_wrapped(self):
         def _boom(xs, ys):
             raise RuntimeError("boom")
+
         m = _model(reg=_boom)
         with pytest.raises(SupplyChainMomentumError):
             m.screen_links("X", {"UP1": _U, "X": _F_LEAD1})

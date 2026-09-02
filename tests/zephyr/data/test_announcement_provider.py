@@ -119,9 +119,7 @@ class TestCninfoFetch:
         res = _collect(_provider(), _payload())[0]
         rec = dict(zip(res.columns, res.rows[0]))
         assert rec["publish_time"] == _EXPECTED_PUB
-        assert rec["source_url"] == (
-            "http://static.cninfo.com.cn/finalpage/2026-08-25/123456.PDF"
-        )
+        assert rec["source_url"] == ("http://static.cninfo.com.cn/finalpage/2026-08-25/123456.PDF")
 
     def test_default_table_is_fund_news(self):
         res = _collect(_provider(), _payload())[0]

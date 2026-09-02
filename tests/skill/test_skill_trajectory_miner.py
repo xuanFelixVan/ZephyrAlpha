@@ -109,9 +109,7 @@ class TestEmptyInputDegradation:
                 },
             ],
         }
-        (store / "hypotheses.json").write_text(
-            json.dumps(payload, ensure_ascii=False), encoding="utf-8"
-        )
+        (store / "hypotheses.json").write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
         miner = SkillTrajectoryMiner(output_dir=tmp_path / "drafts")
         records = miner.load_supported_hypotheses(store_dir=store)
         assert [r.record_id for r in records] == ["HYP-0001"]
@@ -165,17 +163,13 @@ class TestMining:
 class TestRetiredFingerprintGate:
     def test_similar_reregistration_rejected(self, tmp_path):
         fp_path = tmp_path / "retired_fingerprints.json"
-        miner = SkillTrajectoryMiner(
-            output_dir=tmp_path / "drafts1", fingerprint_store_path=fp_path
-        )
+        miner = SkillTrajectoryMiner(output_dir=tmp_path / "drafts1", fingerprint_store_path=fp_path)
         first = miner.mine([MOMENTUM_A, MOMENTUM_B])
         assert len(first["drafts"]) == 1
         # 退役该草稿（指纹入库归档）
         miner.retire_draft(first["drafts"][0]["draft_id"], reason="连续30天未调用")
 
-        miner2 = SkillTrajectoryMiner(
-            output_dir=tmp_path / "drafts2", fingerprint_store_path=fp_path
-        )
+        miner2 = SkillTrajectoryMiner(output_dir=tmp_path / "drafts2", fingerprint_store_path=fp_path)
         second = miner2.mine([MOMENTUM_A, MOMENTUM_B])
         assert second["drafts"] == []
         assert len(second["rejected"]) == 1
@@ -185,15 +179,11 @@ class TestRetiredFingerprintGate:
 
     def test_dissimilar_fingerprint_allows_draft(self, tmp_path):
         fp_path = tmp_path / "retired_fingerprints.json"
-        miner = SkillTrajectoryMiner(
-            output_dir=tmp_path / "drafts1", fingerprint_store_path=fp_path
-        )
+        miner = SkillTrajectoryMiner(output_dir=tmp_path / "drafts1", fingerprint_store_path=fp_path)
         first = miner.mine([MOMENTUM_A, MOMENTUM_B])
         miner.retire_draft(first["drafts"][0]["draft_id"], reason="性能衰退")
 
-        miner2 = SkillTrajectoryMiner(
-            output_dir=tmp_path / "drafts2", fingerprint_store_path=fp_path
-        )
+        miner2 = SkillTrajectoryMiner(output_dir=tmp_path / "drafts2", fingerprint_store_path=fp_path)
         second = miner2.mine([VOL_A])
         assert len(second["drafts"]) == 1
         assert second["rejected"] == []
@@ -202,9 +192,7 @@ class TestRetiredFingerprintGate:
         fp_path = tmp_path / "retired_fingerprints.json"
         fp_path.write_text("{ not valid json", encoding="utf-8")
         with pytest.raises(SkillTrajectoryMinerError) as exc_info:
-            SkillTrajectoryMiner(
-                output_dir=tmp_path / "drafts", fingerprint_store_path=fp_path
-            )
+            SkillTrajectoryMiner(output_dir=tmp_path / "drafts", fingerprint_store_path=fp_path)
         assert exc_info.value.error_code == "ZA-AC-0008"
 
 

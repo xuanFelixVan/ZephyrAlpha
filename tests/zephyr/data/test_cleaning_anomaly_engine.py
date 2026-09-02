@@ -146,9 +146,7 @@ class TestRepair:
 
     def test_alert_route_invoked_on_drop(self) -> None:
         calls: list[tuple[str, str, str]] = []
-        eng = CleaningAnomalyEngine(
-            alert_sink=lambda level, title, msg: calls.append((level, title, msg))
-        )
+        eng = CleaningAnomalyEngine(alert_sink=lambda level, title, msg: calls.append((level, title, msg)))
         df = _bars([10.0, 10.1, 10.2, 10.1, 10.0, 10.1, 10.2, 10.1, 10.0, 10.1])
         for i in range(2, 7):  # 连续5根缺失 → 剔除
             df.loc[df.index[i], "close"] = None

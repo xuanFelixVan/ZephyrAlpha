@@ -55,9 +55,7 @@ def _density(degraded: bool = False) -> DensityForecast:
 
 
 def _factory() -> SignalFactory:
-    return SignalFactory(
-        SignalFactoryConfig(min_quality_score=0.4, max_crowding_score=0.8)
-    )
+    return SignalFactory(SignalFactoryConfig(min_quality_score=0.4, max_crowding_score=0.8))
 
 
 def _draft(signal_id: str = "SIG-1") -> SignalDraft:

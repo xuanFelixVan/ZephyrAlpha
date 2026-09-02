@@ -115,9 +115,7 @@ class TestScoreSector:
         inflows = (-50.0,) * 20
         ladder = (0,) * 20  # 零涨停 → 梯队腿降级
         idx = (0.005,) * 20
-        score = _engine().score_sector(
-            _sector(returns=returns, inflows=inflows, ladder=ladder), idx
-        )
+        score = _engine().score_sector(_sector(returns=returns, inflows=inflows, ladder=ladder), idx)
         assert score.mps == pytest.approx(0.0)
         assert score.mps_persistent is False
         assert score.fund_score == pytest.approx(0.0)
@@ -142,18 +140,14 @@ class TestScoreSector:
         returns[14] = -0.03
         returns[15] = 0.015
         returns[16] = 0.02  # 累计 -0.03+0.015+0.02=+0.005 ≥0 → 2 日收复
-        score = _engine().score_sector(
-            _sector(returns=tuple(returns)), (0.008,) * 20
-        )
+        score = _engine().score_sector(_sector(returns=tuple(returns)), (0.008,) * 20)
         assert score.recovery_days == 2
         assert score.recovery_score == pytest.approx(0.8)
 
     def test_recovery_unresolved(self) -> None:
         # 末日分歧 -3%，无后续收复窗口 → 未收复 → 0.1
         returns = [0.01] * 19 + [-0.03]
-        score = _engine().score_sector(
-            _sector(returns=tuple(returns)), (0.008,) * 20
-        )
+        score = _engine().score_sector(_sector(returns=tuple(returns)), (0.008,) * 20)
         assert score.recovery_days is None
         assert score.recovery_score == pytest.approx(0.1)
 
@@ -167,9 +161,7 @@ class TestScoreSector:
 
     def test_input_length_mismatch_raises(self) -> None:
         with pytest.raises(ValueError):
-            _engine().score_sector(
-                _sector(returns=(0.01,) * 19), (0.008,) * 20
-            )
+            _engine().score_sector(_sector(returns=(0.01,) * 19), (0.008,) * 20)
 
     def test_short_window_raises(self) -> None:
         with pytest.raises(ValueError):
@@ -182,9 +174,7 @@ class TestScoreSector:
 
     def test_negative_ladder_raises(self) -> None:
         with pytest.raises(ValueError):
-            _engine().score_sector(
-                _sector(ladder=(3,) * 19 + (-1,)), (0.008,) * 20
-            )
+            _engine().score_sector(_sector(ladder=(3,) * 19 + (-1,)), (0.008,) * 20)
 
 
 class TestMarketBreadth:

@@ -72,7 +72,10 @@ def _coarse(truncated: bool = False) -> CoarseScreenResult:
 
 def _fine() -> FineScoreResult:
     return FineScoreResult(
-        top=tuple(ScoredEntry(symbol=f"6000{i:02d}.SH", raw_score=80.0 - i, z_score=1.0 - i * 0.1, rank=i + 1) for i in range(4)),
+        top=tuple(
+            ScoredEntry(symbol=f"6000{i:02d}.SH", raw_score=80.0 - i, z_score=1.0 - i * 0.1, rank=i + 1)
+            for i in range(4)
+        ),
     )
 
 

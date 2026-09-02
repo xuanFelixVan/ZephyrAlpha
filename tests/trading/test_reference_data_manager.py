@@ -150,10 +150,12 @@ class TestEodRefresh:
 
     def test_decimal_roundtrip(self, conn) -> None:
         mgr = _manager(conn)
-        mgr.eod_refresh(records=[
-            _record(up="10.00", down="10.00"),
-            _record(code="688981", name="中芯国际", industry="半导体", up="20.05", down="20.05"),
-        ])
+        mgr.eod_refresh(
+            records=[
+                _record(up="10.00", down="10.00"),
+                _record(code="688981", name="中芯国际", industry="半导体", up="20.05", down="20.05"),
+            ]
+        )
         rec = mgr.get("688981")
         assert rec.limit_up_pct == Decimal("20.05")  # TEXT 保真存取
         assert mgr.get("600000").limit_down_pct == Decimal("10.00")
@@ -229,20 +231,24 @@ class TestQueryApi:
 
     def test_all_codes_sorted(self, conn) -> None:
         mgr = _manager(conn)
-        mgr.eod_refresh(records=[
-            _record(code="688981", name="中芯国际", industry="半导体"),
-            _record(),
-            _record(code="000001", name="平安银行"),
-        ])
+        mgr.eod_refresh(
+            records=[
+                _record(code="688981", name="中芯国际", industry="半导体"),
+                _record(),
+                _record(code="000001", name="平安银行"),
+            ]
+        )
         assert mgr.all_codes() == ("000001", "600000", "688981")  # 确定性排序
 
     def test_list_by_industry(self, conn) -> None:
         mgr = _manager(conn)
-        mgr.eod_refresh(records=[
-            _record(code="600519", name="贵州茅台", industry="白酒"),
-            _record(code="000001", name="平安银行"),
-            _record(code="601398", name="工商银行"),
-        ])
+        mgr.eod_refresh(
+            records=[
+                _record(code="600519", name="贵州茅台", industry="白酒"),
+                _record(code="000001", name="平安银行"),
+                _record(code="601398", name="工商银行"),
+            ]
+        )
         banks = mgr.list_by_industry("银行")
         assert [r.code for r in banks] == ["000001", "601398"]  # 按代码排序
         assert mgr.list_by_industry("军工") == ()

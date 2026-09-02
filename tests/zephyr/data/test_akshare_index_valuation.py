@@ -76,13 +76,15 @@ class TestIndexValuationDailyFetch:
 
     def test_normal_mapping(self, monkeypatch):
         """正常行：中证官网历史K线 → PE_TTM/股息率映射。"""
-        df = pd.DataFrame({
-            "日期": [D(2026, 8, 27), D(2026, 8, 28)],
-            "指数代码": ["000300", "000300"],
-            "收盘": [4630.28, 4609.18],
-            "滚动市盈率": [14.44, 14.42],
-            "股息率1": [2.52, 2.52],
-        })
+        df = pd.DataFrame(
+            {
+                "日期": [D(2026, 8, 27), D(2026, 8, 28)],
+                "指数代码": ["000300", "000300"],
+                "收盘": [4630.28, 4609.18],
+                "滚动市盈率": [14.44, 14.42],
+                "股息率1": [2.52, 2.52],
+            }
+        )
         _mock_ak(monkeypatch, stock_zh_index_hist_csindex=df)
         provider = AkshareIngestProvider()
         results = _call_fetch(
@@ -104,13 +106,15 @@ class TestIndexValuationDailyFetch:
 
     def test_full_refresh_start_2010(self, monkeypatch):
         """全量回填模式：incremental=False → start=2010-01-01。"""
-        df = pd.DataFrame({
-            "日期": [D(2010, 1, 4), D(2010, 1, 5)],
-            "指数代码": ["000300", "000300"],
-            "收盘": [3535.23, 3564.04],
-            "滚动市盈率": [None, 15.0],
-            "股息率1": [None, 2.0],
-        })
+        df = pd.DataFrame(
+            {
+                "日期": [D(2010, 1, 4), D(2010, 1, 5)],
+                "指数代码": ["000300", "000300"],
+                "收盘": [3535.23, 3564.04],
+                "滚动市盈率": [None, 15.0],
+                "股息率1": [None, 2.0],
+            }
+        )
         mock_ak = _mock_ak(monkeypatch, stock_zh_index_hist_csindex=df)
         provider = AkshareIngestProvider()
         results = _call_fetch(
@@ -153,13 +157,15 @@ class TestIndexValuationDailyFetch:
 
     def test_default_symbols(self, monkeypatch):
         """symbols=None → 默认核心指数（000300/000905/399006）。"""
-        df = pd.DataFrame({
-            "日期": [D(2026, 8, 28)],
-            "指数代码": ["000300"],
-            "收盘": [4609.18],
-            "滚动市盈率": [14.42],
-            "股息率1": [2.52],
-        })
+        df = pd.DataFrame(
+            {
+                "日期": [D(2026, 8, 28)],
+                "指数代码": ["000300"],
+                "收盘": [4609.18],
+                "滚动市盈率": [14.42],
+                "股息率1": [2.52],
+            }
+        )
         mock_ak = _mock_ak(monkeypatch, stock_zh_index_hist_csindex=df)
         provider = AkshareIngestProvider()
         results = _call_fetch(

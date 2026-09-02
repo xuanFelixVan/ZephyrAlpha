@@ -189,7 +189,8 @@ class TestEvaluate:
             gate = _gate()
             _fill(gate)
             gate.register_check(
-                ProtectionLayer.ML, "adv",
+                ProtectionLayer.ML,
+                "adv",
                 lambda ctx: CheckOutcome(passed=ctx["adv"] >= 0.5, metrics={"adv": ctx["adv"]}),
             )
             return gate
@@ -210,7 +211,8 @@ class TestSemanticCheckers:
         gate = _gate()
         # 因子层：IC 衰减 + 多重检验校正（BHY FDR 后显著数）
         gate.register_check(
-            ProtectionLayer.FACTOR, "ic-decay",
+            ProtectionLayer.FACTOR,
+            "ic-decay",
             lambda ctx: CheckOutcome(
                 passed=ctx["ic_tail"] >= ctx["ic_head"] * 0.5,
                 metrics={"ic_head": ctx["ic_head"], "ic_tail": ctx["ic_tail"]},
@@ -218,40 +220,52 @@ class TestSemanticCheckers:
             ),
         )
         gate.register_check(
-            ProtectionLayer.FACTOR, "multi-test",
+            ProtectionLayer.FACTOR,
+            "multi-test",
             lambda ctx: CheckOutcome(passed=ctx["fdr_significant"] > 0),
         )
         # 策略层：deflated SR + PBO
         gate.register_check(
-            ProtectionLayer.STRATEGY, "deflated-sr",
+            ProtectionLayer.STRATEGY,
+            "deflated-sr",
             lambda ctx: CheckOutcome(passed=ctx["dsr"] >= 0.95, metrics={"dsr": ctx["dsr"]}),
         )
         gate.register_check(
-            ProtectionLayer.STRATEGY, "pbo",
+            ProtectionLayer.STRATEGY,
+            "pbo",
             lambda ctx: CheckOutcome(passed=ctx["pbo"] < 0.5, metrics={"pbo": ctx["pbo"]}),
         )
         # 信号层：walkforward 折叠一致性（OOS Sharpe 符号一致率）
         gate.register_check(
-            ProtectionLayer.SIGNAL, "wf-consistency",
+            ProtectionLayer.SIGNAL,
+            "wf-consistency",
             lambda ctx: CheckOutcome(
                 passed=sum(1 for s in ctx["fold_sharpes"] if s > 0) / len(ctx["fold_sharpes"]) >= 0.8,
             ),
         )
         # ML 层：OOS 退化 + 对抗稳健
         gate.register_check(
-            ProtectionLayer.ML, "oos-degradation",
+            ProtectionLayer.ML,
+            "oos-degradation",
             lambda ctx: CheckOutcome(passed=ctx["oos_auc"] >= ctx["is_auc"] * 0.7),
         )
         gate.register_check(
-            ProtectionLayer.ML, "adversarial",
+            ProtectionLayer.ML,
+            "adversarial",
             lambda ctx: CheckOutcome(passed=ctx["adv_robust"] >= 0.6),
         )
         return gate
 
     _GOOD = {
-        "ic_head": 0.08, "ic_tail": 0.05, "fdr_significant": 3,
-        "dsr": 0.97, "pbo": 0.2, "fold_sharpes": [1.2, 0.9, 1.5, 0.8, -0.1],
-        "is_auc": 0.80, "oos_auc": 0.72, "adv_robust": 0.75,
+        "ic_head": 0.08,
+        "ic_tail": 0.05,
+        "fdr_significant": 3,
+        "dsr": 0.97,
+        "pbo": 0.2,
+        "fold_sharpes": [1.2, 0.9, 1.5, 0.8, -0.1],
+        "is_auc": 0.80,
+        "oos_auc": 0.72,
+        "adv_robust": 0.75,
     }
 
     def test_semantic_all_pass(self) -> None:

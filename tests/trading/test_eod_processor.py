@@ -91,9 +91,7 @@ class TestPriceSnapshot:
         def probe(symbol: str) -> Decimal:
             raise RuntimeError("quote down")
 
-        report = run_eod_processor(
-            "2026-08-25", positions=[_pos()], cash=Decimal("0"), price_probe=probe, clock=_clock
-        )
+        report = run_eod_processor("2026-08-25", positions=[_pos()], cash=Decimal("0"), price_probe=probe, clock=_clock)
         assert report.snapshot_status == "ERROR"
         assert report.market_value == Decimal("0")
         assert report.nav == Decimal("0")
@@ -110,9 +108,7 @@ class TestPriceSnapshot:
         assert report.unpriced_symbols == ("600519.SH",)
 
     def test_probe_unwired_error(self) -> None:
-        report = run_eod_processor(
-            "2026-08-25", positions=[_pos()], cash=Decimal("1"), price_probe=None, clock=_clock
-        )
+        report = run_eod_processor("2026-08-25", positions=[_pos()], cash=Decimal("1"), price_probe=None, clock=_clock)
         assert report.snapshot_status == "ERROR"
         assert report.unpriced_symbols == ("600519.SH",)
 

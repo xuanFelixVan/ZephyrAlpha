@@ -76,8 +76,8 @@ def test_normal_label() -> None:
 
 
 def test_shrink_labels() -> None:
-    s1 = _series("880001", BASE + [60.0])   # -40% 温和缩量
-    s2 = _series("880002", BASE + [30.0])   # -70% 显著缩量
+    s1 = _series("880001", BASE + [60.0])  # -40% 温和缩量
+    s2 = _series("880002", BASE + [30.0])  # -70% 显著缩量
     rep = detect_volume_anomaly({"880001": s1, "880002": s2}, trade_date="2026-08-21", config=_cfg())
     labels = {i.sector_code: i.label for i in rep.items}
     assert labels["880001"] == LABEL_MILD_SHRINK
@@ -167,15 +167,13 @@ def test_json_serializable() -> None:
 class _FakeClient:
     def execute(self, sql, params=None):
         assert "kline_sector_880" in sql
-        return [
-            ("880001.SH", "半导体", f"2026-08-{d:02d}", 100.0) for d in range(1, 21)
-        ] + [("880001.SH", "半导体", "2026-08-21", 250.0)]
+        return [("880001.SH", "半导体", f"2026-08-{d:02d}", 100.0) for d in range(1, 21)] + [
+            ("880001.SH", "半导体", "2026-08-21", 250.0)
+        ]
 
 
 def test_run_main_entry() -> None:
-    rep = run_sector_volume_anomaly(
-        trade_date="2026-08-21", ch_client=_FakeClient(), config=_cfg()
-    )
+    rep = run_sector_volume_anomaly(trade_date="2026-08-21", ch_client=_FakeClient(), config=_cfg())
     assert rep.degraded is False
     assert rep.items[0].label == LABEL_SPIKE
 

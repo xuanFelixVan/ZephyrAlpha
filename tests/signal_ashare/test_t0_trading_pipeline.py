@@ -52,11 +52,7 @@ def _ts(day_minute: int) -> str:
 def _bars(closes: list[float], volume: float = 10000.0) -> list[MinuteBar]:
     bars = []
     for i, c in enumerate(closes):
-        bars.append(
-            MinuteBar(
-                ts=_ts(i), open=c, high=c * 1.001, low=c * 0.999, close=c, volume=volume
-            )
-        )
+        bars.append(MinuteBar(ts=_ts(i), open=c, high=c * 1.001, low=c * 0.999, close=c, volume=volume))
     return bars
 
 
@@ -109,11 +105,7 @@ class _Executor:
 
     def net_volume(self) -> int:
         """已成交腿的净量（未成交意图不计）。"""
-        return sum(
-            (i.volume if i.side == "BUY" else -i.volume)
-            for i, f in zip(self.intents, self._filled)
-            if f
-        )
+        return sum((i.volume if i.side == "BUY" else -i.volume) for i, f in zip(self.intents, self._filled) if f)
 
 
 def _cfg(**kw) -> T0PipelineConfig:

@@ -97,10 +97,13 @@ def _run(engine: ThreeWayReconEngine, **over):
         recon_date=_DAY,
         trades=over.get("trades", [_trade()]),
         positions=over.get("positions", [_position()]),
-        cash_flows=over.get("cash_flows", [
-            _cash("C-1", FeeType.COMMISSION, "5.00"),
-            _cash("C-2", FeeType.STAMP_TAX, "10.00"),
-        ]),
+        cash_flows=over.get(
+            "cash_flows",
+            [
+                _cash("C-1", FeeType.COMMISSION, "5.00"),
+                _cash("C-2", FeeType.STAMP_TAX, "10.00"),
+            ],
+        ),
     )
 
 
@@ -116,18 +119,25 @@ class TestReconcileMatched:
         assert report.matched_count == 1
         assert report.anomalies == ()
         assert report.totals == {
-            "trades": 1, "positions": 1, "cash_flows": 2, "matched": 1, "anomalies": 0,
+            "trades": 1,
+            "positions": 1,
+            "cash_flows": 2,
+            "matched": 1,
+            "anomalies": 0,
         }
         assert report.recon_date == _DAY
         assert report.created_at == _T0
 
     def test_interest_flow_not_matched_only_counted(self) -> None:
         # 利息为账户级费用（trade_ref=None）：仅计数，不参与逐笔匹配
-        report = _run(_engine(), cash_flows=[
-            _cash("C-1", FeeType.COMMISSION, "5.00"),
-            _cash("C-2", FeeType.STAMP_TAX, "10.00"),
-            _cash("C-3", FeeType.INTEREST, "2.35", trade_ref=None),
-        ])
+        report = _run(
+            _engine(),
+            cash_flows=[
+                _cash("C-1", FeeType.COMMISSION, "5.00"),
+                _cash("C-2", FeeType.STAMP_TAX, "10.00"),
+                _cash("C-3", FeeType.INTEREST, "2.35", trade_ref=None),
+            ],
+        )
         assert report.matched is True
         assert report.totals["cash_flows"] == 3
 
@@ -189,11 +199,14 @@ class TestAnomalyClasses:
         assert a.expected is None
 
     def test_missing_cash_ref(self) -> None:
-        report = _run(_engine(), cash_flows=[
-            _cash("C-1", FeeType.COMMISSION, "5.00"),
-            _cash("C-2", FeeType.STAMP_TAX, "10.00"),
-            _cash("C-9", FeeType.COMMISSION, "1.00", trade_ref="T-9"),
-        ])
+        report = _run(
+            _engine(),
+            cash_flows=[
+                _cash("C-1", FeeType.COMMISSION, "5.00"),
+                _cash("C-2", FeeType.STAMP_TAX, "10.00"),
+                _cash("C-9", FeeType.COMMISSION, "1.00", trade_ref="T-9"),
+            ],
+        )
         assert len(report.anomalies) == 1
         assert report.anomalies[0].anomaly_class is AnomalyClass.MISSING
         assert "未知交易" in report.anomalies[0].detail
@@ -205,9 +218,11 @@ class TestAnomalyClasses:
         assert "标的错位" in report.anomalies[0].detail
 
     def test_multiple_classes_sequential_ids(self) -> None:
-        report = _run(_engine(),
-                      positions=[_position(qty="900")],
-                      cash_flows=[_cash("C-9", FeeType.COMMISSION, "1.00", trade_ref="T-9")])
+        report = _run(
+            _engine(),
+            positions=[_position(qty="900")],
+            cash_flows=[_cash("C-9", FeeType.COMMISSION, "1.00", trade_ref="T-9")],
+        )
         classes = [a.anomaly_class for a in report.anomalies]
         assert classes == [AnomalyClass.QUANTITY, AnomalyClass.FEE, AnomalyClass.MISSING]
         ids = [a.anomaly_id for a in report.anomalies]
@@ -230,8 +245,7 @@ class TestDeterminismAndAlert:
 
     def test_alert_sink_called_on_anomaly(self) -> None:
         alerts: list = []
-        report = _run(_engine(alert_sink=lambda r: alerts.append(r)),
-                      positions=[_position(qty="900")])
+        report = _run(_engine(alert_sink=lambda r: alerts.append(r)), positions=[_position(qty="900")])
         assert alerts == [report]
         # 全匹配时不触发告警
         alerts2: list = []

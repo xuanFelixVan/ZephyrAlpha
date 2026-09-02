@@ -40,15 +40,13 @@ _T0 = datetime.datetime(2026, 8, 25, 9, 30, 0)
 
 
 def _samples(n: int = 6) -> list[GapSample]:
-    return [
-        GapSample(foreign_return=0.01 * i, opening_gap=0.008 * i)
-        for i in range(1, n + 1)
-    ]
+    return [GapSample(foreign_return=0.01 * i, opening_gap=0.008 * i) for i in range(1, n + 1)]
 
 
 def _reg(slope: float = 0.8, intercept: float = 0.0, r2: float = 0.7):
     def _run(xs, ys):
         return RegressionResult(slope=slope, intercept=intercept, r_squared=r2)
+
     return _run
 
 
@@ -110,6 +108,7 @@ class TestRegressorFailClosed:
     def test_regressor_exception_wrapped(self):
         def _boom(xs, ys):
             raise RuntimeError("boom")
+
         m = _model(reg=_boom)
         with pytest.raises(OvernightConductionError):
             m.evaluate(_samples(), IntradaySegments((0.01,)))
@@ -186,17 +185,18 @@ class TestEventTable:
         m = _model()
         r = m.evaluate(_samples(), IntradaySegments((0.01,)), self._events())
         assert len(r.event_stats) == 8
-        swan = [s for s in r.event_stats
-                if s.event_type is OvernightEventType.BLACK_SWAN
-                and s.expectation is EventExpectation.UNEXPECTED][0]
+        swan = [
+            s
+            for s in r.event_stats
+            if s.event_type is OvernightEventType.BLACK_SWAN and s.expectation is EventExpectation.UNEXPECTED
+        ][0]
         assert swan.max_impact_hours == pytest.approx(24.0)
 
 
 class TestScore:
     def test_high_score_high_level(self):
         m = _model(reg=_reg(slope=2.5, r2=0.95))
-        events = [OvernightEvent(
-            OvernightEventType.BLACK_SWAN, EventExpectation.UNEXPECTED, 24.0)]
+        events = [OvernightEvent(OvernightEventType.BLACK_SWAN, EventExpectation.UNEXPECTED, 24.0)]
         r = m.evaluate(_samples(), IntradaySegments((0.05, 0.01)), events)
         assert r.score >= 60.0
         assert r.level is ImpactLevel.HIGH

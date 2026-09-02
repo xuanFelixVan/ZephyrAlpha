@@ -11,6 +11,7 @@ C-021 否决门（含降级直通）、容量截断排序（~30）、无投票�
 frozen/JSON 契约。
 全程内存合成数据，无 DB。
 """
+
 from __future__ import annotations
 
 import dataclasses
@@ -78,8 +79,7 @@ class TestEvaluateSymbol:
 
     def test_weighted_majority(self):
         fn = _fn()
-        votes = [_v("value", -1), _v("momentum", 1), _v("event", 1),
-                 _v("c034_inference", 1), _v("c036_synergy", 1)]
+        votes = [_v("value", -1), _v("momentum", 1), _v("event", 1), _v("c034_inference", 1), _v("c036_synergy", 1)]
         r = fn.evaluate_symbol("000001", votes)
         # -0.30 + 0.25 + 0.20 + 0.10 + 0.10 = +0.35 > 0
         assert r.approved is True

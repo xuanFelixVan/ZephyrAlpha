@@ -51,12 +51,14 @@ def _launcher(alerts: list | None = None, **cfg_kw) -> SectorCrowdingLauncher:
     )
 
 
-def _assess(launcher: SectorCrowdingLauncher, t: float, m: float, c: float,
-            decay: float = 0.0) -> CrowdingAssessment:
+def _assess(launcher: SectorCrowdingLauncher, t: float, m: float, c: float, decay: float = 0.0) -> CrowdingAssessment:
     return launcher.assess_crowding(
-        turnover_history=_HIST, turnover_current=t,
-        margin_history=_HIST, margin_current=m,
-        correlation_history=_HIST, correlation_current=c,
+        turnover_history=_HIST,
+        turnover_current=t,
+        margin_history=_HIST,
+        margin_current=m,
+        correlation_history=_HIST,
+        correlation_current=c,
         momentum_decay=decay,
     )
 
@@ -139,6 +141,7 @@ class TestOverheatWarning:
     def test_alert_sink_exception_swallowed(self):
         def _boom(w):
             raise RuntimeError("boom")
+
         launcher = SectorCrowdingLauncher(clock=lambda: _T0, alert_sink=_boom)
         r = _assess(launcher, 0.95, 0.96, 0.97, decay=0.40)
         assert r.warning is not None  # 告警失败不阻断
@@ -207,8 +210,7 @@ class TestDeterminism:
         seq = [(True, 100.0), (True, 100.0), (True, -1.0), (True, 100.0)]
         sm1, sm2 = LaunchStateMachine(confirm_days=3), LaunchStateMachine(confirm_days=3)
         for rs, flow in seq:
-            assert sm1.step(rs_breakout=rs, capital_flow=flow) == \
-                sm2.step(rs_breakout=rs, capital_flow=flow)
+            assert sm1.step(rs_breakout=rs, capital_flow=flow) == sm2.step(rs_breakout=rs, capital_flow=flow)
 
     def test_assessment_frozen(self):
         r = _assess(_launcher(), 0.5, 0.5, 0.5)

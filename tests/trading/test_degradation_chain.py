@@ -120,7 +120,10 @@ class TestStateMachineSyntheticTransitions:
             sm.transition(_classify(ResourceSnapshot(memory_percent=50.0, cpu_percent=99.0, process_count=20)))
         assert sm.current is PressureLevel.EMERGENCY
 
-        lv_path = [degradation_lv(lv) for lv in (PressureLevel.NORMAL, PressureLevel.WARNING, PressureLevel.CRITICAL, PressureLevel.EMERGENCY)]
+        lv_path = [
+            degradation_lv(lv)
+            for lv in (PressureLevel.NORMAL, PressureLevel.WARNING, PressureLevel.CRITICAL, PressureLevel.EMERGENCY)
+        ]
         assert lv_path == ["Lv0", "Lv1", "Lv2", "Lv3"]
 
     def test_single_spike_does_not_escalate(self):

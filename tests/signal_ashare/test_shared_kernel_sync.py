@@ -259,8 +259,9 @@ def test_determinism_same_ops_same_result() -> None:
             ReaderStamp(namespace=NS.MARKET_STATE, key="b", version=1),
         ]
         drifts = sk.check_drift("r", stamps)
-        return (sk.version_of(NS.COMMON_PARAMS, "a"), tuple(
-            (d.namespace.value, d.key, d.reader_version, d.current_version) for d in drifts
-        ))
+        return (
+            sk.version_of(NS.COMMON_PARAMS, "a"),
+            tuple((d.namespace.value, d.key, d.reader_version, d.current_version) for d in drifts),
+        )
 
     assert run() == run()

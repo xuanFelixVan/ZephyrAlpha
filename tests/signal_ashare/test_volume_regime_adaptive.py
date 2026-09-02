@@ -190,7 +190,7 @@ class TestAdapt:
         dec = _adapter().adapt(MarketRegime.TREND, 200.0, 100.0, history)  # 放量+极端分位
         assert dec.signal.state is VolumeState.SPIKE
         assert dec.guarded is True
-        assert dec.params.position_pct == pytest.approx(0.8)      # 原格值保留
+        assert dec.params.position_pct == pytest.approx(0.8)  # 原格值保留
         assert dec.effective_params.position_pct == pytest.approx(0.4)  # 护栏减半
         assert dec.effective_params.direction == dec.params.direction
 

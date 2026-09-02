@@ -213,7 +213,9 @@ class TestPreliminaryGates:
 
 class TestFineScoring:
     def _make(self, n: int) -> list[_Rec]:
-        return [_Rec(f"S{i:03d}", value=0.0, momentum=float(i), quality=0.0, sentiment=0.0, mf_score=0.0) for i in range(n)]
+        return [
+            _Rec(f"S{i:03d}", value=0.0, momentum=float(i), quality=0.0, sentiment=0.0, mf_score=0.0) for i in range(n)
+        ]
 
     def test_composite_formula_default_weights(self):
         rec = _Rec("X", value=100.0, momentum=0.0, quality=0.0, sentiment=0.0, mf_score=0.0)
@@ -247,17 +249,24 @@ class TestFineScoring:
         assert top[0].raw_score == pytest.approx(20.0)
 
     def test_zscore_order_and_topn(self):
-        top = run_fine_scoring(self._make(10), symbol_of=_sym, hooks=_score_hooks(), weights=FineScoreWeights(), top_n=3)
+        top = run_fine_scoring(
+            self._make(10), symbol_of=_sym, hooks=_score_hooks(), weights=FineScoreWeights(), top_n=3
+        )
         assert [t.symbol for t in top] == ["S009", "S008", "S007"]
         assert top[0].rank == 1 and top[0].z_score > top[1].z_score > 0.0
 
     def test_all_same_score_z_zero(self):
-        top = run_fine_scoring([_Rec("A"), _Rec("B"), _Rec("C")], symbol_of=_sym, hooks=_score_hooks(), weights=FineScoreWeights(), top_n=2)
+        top = run_fine_scoring(
+            [_Rec("A"), _Rec("B"), _Rec("C")], symbol_of=_sym, hooks=_score_hooks(), weights=FineScoreWeights(), top_n=2
+        )
         assert all(t.z_score == 0.0 for t in top) and len(top) == 2
 
     def test_empty_and_nonpositive_topn(self):
         assert run_fine_scoring([], symbol_of=_sym, hooks=_score_hooks(), weights=FineScoreWeights(), top_n=5) == ()
-        assert run_fine_scoring([_Rec("A")], symbol_of=_sym, hooks=_score_hooks(), weights=FineScoreWeights(), top_n=0) == ()
+        assert (
+            run_fine_scoring([_Rec("A")], symbol_of=_sym, hooks=_score_hooks(), weights=FineScoreWeights(), top_n=0)
+            == ()
+        )
 
     def test_tie_break_stable_keeps_input_order_symbol_breaks_by_name(self):
         recs = [_Rec("B"), _Rec("A")]  # 完全同分
@@ -273,7 +282,12 @@ class TestFineScoring:
     def test_tie_break_unknown_raises(self):
         with pytest.raises(ValueError):
             run_fine_scoring(
-                [_Rec("A")], symbol_of=_sym, hooks=_score_hooks(), weights=FineScoreWeights(), top_n=1, tie_break="bogus"
+                [_Rec("A")],
+                symbol_of=_sym,
+                hooks=_score_hooks(),
+                weights=FineScoreWeights(),
+                top_n=1,
+                tie_break="bogus",
             )
 
 
@@ -295,8 +309,12 @@ class TestFunnelChain:
         chain = run_funnel_chain(
             recs,
             symbol_of=_sym,
-            run_graded=lambda rs: run_graded_exclusion(rs, symbol_of=_sym, hooks=_graded_hooks(), thresholds=thresholds1),
-            run_screen=lambda rs: run_preliminary_gates(rs, symbol_of=_sym, hooks=_gate_hooks(), thresholds=thresholds2),
+            run_graded=lambda rs: run_graded_exclusion(
+                rs, symbol_of=_sym, hooks=_graded_hooks(), thresholds=thresholds1
+            ),
+            run_screen=lambda rs: run_preliminary_gates(
+                rs, symbol_of=_sym, hooks=_gate_hooks(), thresholds=thresholds2
+            ),
             run_score=lambda rs: run_fine_scoring(rs, symbol_of=_sym, hooks=_score_hooks(), weights=weights, top_n=50),
         )
         assert isinstance(chain, FunnelChainResult)

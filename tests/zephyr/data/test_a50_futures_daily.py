@@ -57,9 +57,36 @@ def _hist_df() -> pd.DataFrame:
     """构造 futures_foreign_hist 形态 DataFrame（列名=2026-08-29 实证口径）。"""
     return pd.DataFrame(
         [
-            {"date": pd.Timestamp("2026-07-31"), "open": 14700.0, "high": 14750.0, "low": 14680.0, "close": 14720.0, "volume": 280000, "position": 780000, "s": 0},
-            {"date": pd.Timestamp("2026-08-28"), "open": 14729.0, "high": 14795.0, "low": 14648.0, "close": 14706.0, "volume": 295132, "position": 781522, "s": 0},
-            {"date": pd.Timestamp("2026-08-29"), "open": 14706.0, "high": 14738.0, "low": 14657.0, "close": 14662.0, "volume": 52121, "position": 781522, "s": 0},
+            {
+                "date": pd.Timestamp("2026-07-31"),
+                "open": 14700.0,
+                "high": 14750.0,
+                "low": 14680.0,
+                "close": 14720.0,
+                "volume": 280000,
+                "position": 780000,
+                "s": 0,
+            },
+            {
+                "date": pd.Timestamp("2026-08-28"),
+                "open": 14729.0,
+                "high": 14795.0,
+                "low": 14648.0,
+                "close": 14706.0,
+                "volume": 295132,
+                "position": 781522,
+                "s": 0,
+            },
+            {
+                "date": pd.Timestamp("2026-08-29"),
+                "open": 14706.0,
+                "high": 14738.0,
+                "low": 14657.0,
+                "close": 14662.0,
+                "volume": 52121,
+                "position": 781522,
+                "s": 0,
+            },
         ]
     )
 

@@ -161,7 +161,7 @@ class TestDdci:
         cfg_off = _plain(target_coverage=0.9, step0=0.05, ddci_gain=0.0)
         eng_on, eng_off = _engine(cfg_on), _engine(cfg_off)
         for _ in range(5):
-            eng_on.update(0.0, 10.0)   # 恒 miss → 欠覆盖
+            eng_on.update(0.0, 10.0)  # 恒 miss → 欠覆盖
             eng_off.update(0.0, 10.0)
         assert eng_on.current_margin > eng_off.current_margin  # DDCI 额外外扩
         rep = eng_on.coverage_report()
@@ -173,7 +173,7 @@ class TestDdci:
         cfg_off = _plain(target_coverage=0.5, step0=0.05, ddci_gain=0.0)
         eng_on, eng_off = _engine(cfg_on), _engine(cfg_off)
         for _ in range(4):
-            eng_on.update(0.0, 0.0)    # 恒 covered → 超覆盖（过宽）
+            eng_on.update(0.0, 0.0)  # 恒 covered → 超覆盖（过宽）
             eng_off.update(0.0, 0.0)
         rep = eng_on.coverage_report()
         assert rep.ddci_narrow_count == 4
@@ -188,7 +188,7 @@ class TestDdci:
             eng.update(0.0, 10.0)  # miss 段 → 欠覆盖外扩
             peak = max(peak, eng.current_margin)
         for _ in range(20):
-            eng.update(0.0, 0.0)   # covered 段 → 覆盖率爬升过目标后内收
+            eng.update(0.0, 0.0)  # covered 段 → 覆盖率爬升过目标后内收
         rep = eng.coverage_report()
         assert rep.ddci_widen_count > 0
         assert rep.ddci_narrow_count > 0
@@ -278,8 +278,8 @@ class TestCoverageReport:
     def test_report_counts(self) -> None:
         eng = _engine(_plain(target_coverage=0.8, step0=0.001))
         eng.update(0.0, -0.5)  # miss（margin 0）
-        eng.update(0.0, 0.3)   # miss（margin 0.0008）
-        eng.update(0.0, 0.0)   # covered（margin 0.0012）
+        eng.update(0.0, 0.3)  # miss（margin 0.0008）
+        eng.update(0.0, 0.0)  # covered（margin 0.0012）
         rep = eng.coverage_report()
         assert rep.n == 3
         assert rep.n_covered == 1

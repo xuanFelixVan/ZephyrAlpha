@@ -54,15 +54,9 @@ def _span(
 def _build_chain(store: TraceContextStore, trace_id: str = "t-1") -> None:
     """data 行情批次 → factor 因子批次 → signal 信号 → order 订单。"""
     store.record_span(_span(trace_id, "s-data", TraceLayer.DATA, "mkt-batch-001"))
-    store.record_span(
-        _span(trace_id, "s-factor", TraceLayer.FACTOR, "factor-batch-007", "s-data")
-    )
-    store.record_span(
-        _span(trace_id, "s-signal", TraceLayer.SIGNAL, "sig-9001", "s-factor")
-    )
-    store.record_span(
-        _span(trace_id, "s-order", TraceLayer.ORDER, "ord-3001", "s-signal")
-    )
+    store.record_span(_span(trace_id, "s-factor", TraceLayer.FACTOR, "factor-batch-007", "s-data"))
+    store.record_span(_span(trace_id, "s-signal", TraceLayer.SIGNAL, "sig-9001", "s-factor"))
+    store.record_span(_span(trace_id, "s-order", TraceLayer.ORDER, "ord-3001", "s-signal"))
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -167,9 +161,7 @@ class TestSignalOrigin:
 class TestLineageSync:
     def test_sync_registers_edges(self) -> None:
         edges: list[tuple[str, str, str]] = []
-        store = TraceContextStore(
-            lineage_sink=lambda s, t, tr: edges.append((s, t, tr))
-        )
+        store = TraceContextStore(lineage_sink=lambda s, t, tr: edges.append((s, t, tr)))
         _build_chain(store)
         n = store.sync_to_lineage("t-1")
         assert n == 3  # data→factor、factor→signal、signal→order

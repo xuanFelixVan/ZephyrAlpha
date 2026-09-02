@@ -90,7 +90,11 @@ class TestEvaluateFailClosed:
 class TestActionThresholds:
     def test_action_set_closed(self):
         assert set(GATE_ACTIONS) == {
-            "new_position", "add_position", "bottom_fishing", "t_plus", "t_minus",
+            "new_position",
+            "add_position",
+            "bottom_fishing",
+            "t_plus",
+            "t_minus",
         }
 
     def test_new_position_threshold(self):
@@ -142,9 +146,7 @@ class TestDynamicOffsets:
     def test_offsets_stacking(self):
         """熊+5% 缩量+10% → 0.65→0.80。"""
         g = _gate()
-        d = g.evaluate(
-            "new_position", 0.78, GateContext(bear=True, volume_shrink=True)
-        )
+        d = g.evaluate("new_position", 0.78, GateContext(bear=True, volume_shrink=True))
         assert d.passed is False
         assert d.adjusted_threshold == pytest.approx(0.80)
         assert set(d.applied_offsets) == {"bear", "volume_shrink"}
@@ -153,8 +155,12 @@ class TestDynamicOffsets:
         """全利空叠加超过 cap=0.95 钳制。"""
         g = _gate()
         ctx = GateContext(
-            bear=True, volume_shrink=True, pre_news=True,
-            black_swan=True, turn_day=True, sentiment_high=True,
+            bear=True,
+            volume_shrink=True,
+            pre_news=True,
+            black_swan=True,
+            turn_day=True,
+            sentiment_high=True,
         )
         d = g.evaluate("new_position", 0.99, ctx)
         assert d.adjusted_threshold == pytest.approx(0.95)

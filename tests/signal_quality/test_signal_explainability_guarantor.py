@@ -171,9 +171,7 @@ class TestMissingElements:
         def _bad_sink(_violation) -> None:
             raise RuntimeError("告警通道故障")
 
-        g = SignalExplainabilityGuarantor(
-            audit_sink=lambda r: None, alert_sink=_bad_sink, clock=lambda: _T0
-        )
+        g = SignalExplainabilityGuarantor(audit_sink=lambda r: None, alert_sink=_bad_sink, clock=lambda: _T0)
         chain = ReasonChain(trigger_factors=(), rule_hits=("R1",), confidence_basis="依据")
         with pytest.raises(ExplainabilityGuarantorError):  # 阻断语义不受告警异常影响
             _enforce(g, reason_chain=chain)

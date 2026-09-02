@@ -162,9 +162,7 @@ class TestCompare:
         def _bad_sink(_deviation) -> None:
             raise RuntimeError("告警通道故障")
 
-        b = SignalQualityBenchmark(
-            benchmark_series=(0.0,), clock=lambda: _T0, alert_sink=_bad_sink
-        )
+        b = SignalQualityBenchmark(benchmark_series=(0.0,), clock=lambda: _T0, alert_sink=_bad_sink)
         b.record(_snap(ic=0.10, at=_T0))
         b.record(_snap(ic=0.30, at=_T1))
         cmp = b.compare("alpha-1")  # 告警失败不阻断

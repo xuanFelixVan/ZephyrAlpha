@@ -293,9 +293,7 @@ class TestCli:
 
     def test_fail_snapshot_exit_1(self, tmp_path, capsys):
         snapshot_file = tmp_path / "snap.json"
-        snapshot_file.write_text(
-            json.dumps({"components": [{"name": "engine", "status": "down"}]}), encoding="utf-8"
-        )
+        snapshot_file.write_text(json.dumps({"components": [{"name": "engine", "status": "down"}]}), encoding="utf-8")
         assert main(["--shift", "8", "--input", str(snapshot_file)]) == 1
         out = json.loads(capsys.readouterr().out)
         assert out["overall"] == "FAIL"

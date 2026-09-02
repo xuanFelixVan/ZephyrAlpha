@@ -70,7 +70,7 @@ def _days(n: int) -> list[date]:
 def _sector_rows(closes: dict[str, list[float]], amounts: dict[str, list[float]], n: int) -> list[tuple]:
     """合成板块 K 线行（含 880001 市场指数腿，closes/amounts 按代码给等长序列）。"""
     rows: list[tuple] = []
-    for code in ([MKT] + SECTORS):
+    for code in [MKT] + SECTORS:
         c_series = closes[code]
         a_series = amounts[code]
         for i, d in enumerate(_days(n)):
@@ -555,8 +555,7 @@ class TestRsRadar:
 
 class TestDegradation:
     def test_client_unavailable(self):
-        result = compute_sector_divergence("2026-08-07", ch_client=None,
-                                           config=SectorDivergenceConfig(labels_path="x"))
+        result = compute_sector_divergence("2026-08-07", ch_client=None, config=SectorDivergenceConfig(labels_path="x"))
         # ch_writer 默认客户端在测试环境可能可用也可能不可用；仅当不可用时 degraded
         assert isinstance(result.degraded, bool)
 
@@ -575,9 +574,7 @@ class TestDegradation:
 
     def test_sector_query_exception_degraded(self):
         cfg = SectorDivergenceConfig(labels_path="nonexistent.yaml")
-        result = compute_sector_divergence(
-            "2026-08-07", ch_client=_FakeCH(exc_on="kline_sector_880"), config=cfg
-        )
+        result = compute_sector_divergence("2026-08-07", ch_client=_FakeCH(exc_on="kline_sector_880"), config=cfg)
         assert result.degraded is True
         assert any("查询异常" in note for note in result.notes)
 

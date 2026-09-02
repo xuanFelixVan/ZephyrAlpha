@@ -35,9 +35,7 @@ from zephyr.signal_ashare.wyckoff_secondary_test import (  # noqa: E402
 _T0 = datetime.datetime(2026, 8, 25, 9, 30, 0)
 
 
-def _k(
-    open: float, high: float, low: float, close: float, volume: float
-) -> KBar:
+def _k(open: float, high: float, low: float, close: float, volume: float) -> KBar:
     return KBar(ts=_T0, open=open, high=high, low=low, close=close, volume=volume)
 
 
@@ -223,9 +221,7 @@ class TestProbabilityTable:
 
     def test_prob_table_counts_with_short_horizon(self):
         """horizon=2 时精确命中：382 样本 1（未延续），618 样本 2（1 延续）。"""
-        model = WyckoffSecondaryTest(
-            config=WyckoffStConfig(prob_horizon=2), clock=lambda: _T0
-        )
+        model = WyckoffSecondaryTest(config=WyckoffStConfig(prob_horizon=2), clock=lambda: _T0)
         r = model.analyze(_mkup())
         t = r.prob_table
         assert t.samples_382 == 1

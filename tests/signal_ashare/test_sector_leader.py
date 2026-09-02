@@ -230,9 +230,7 @@ class TestConsecLimit:
     def test_stk_limit_missing_degrades(self):
         """stk_limit 全缺 → 连板维度降级：全宇宙 0 连板+各板块无龙头注解+notes 留痕。"""
         klines, _, cons = _universe()
-        board = identify_sector_leaders(
-            trade_date=D_END, ch_client=_FakeCH(klines, [], cons)
-        )
+        board = identify_sector_leaders(trade_date=D_END, ch_client=_FakeCH(klines, [], cons))
         assert board.degraded is False
         assert any("stk_limit" in n for n in board.notes)
         assert all(g.leader is None for g in board.sectors)
@@ -252,18 +250,14 @@ class TestDegradation:
 
     def test_constituent_empty_degraded(self):
         klines, limits, _ = _universe()
-        board = identify_sector_leaders(
-            trade_date=D_END, ch_client=_FakeCH(klines, limits, [])
-        )
+        board = identify_sector_leaders(trade_date=D_END, ch_client=_FakeCH(klines, limits, []))
         assert board.degraded is True
 
     def test_sector_filter(self):
         """单板块过滤：仅返回该板块分组，SQL 走参数化 sector 过滤。"""
         client_rows = _universe()
         client = _FakeCH(*client_rows)
-        board = identify_sector_leaders(
-            trade_date=D_END, sector="881001.SH", ch_client=client
-        )
+        board = identify_sector_leaders(trade_date=D_END, sector="881001.SH", ch_client=client)
         assert board.degraded is False
         assert [g.sector_code for g in board.sectors] == ["881001.SH"]
         const_call = next(c for c in client.calls if "sector_constituent" in c[0])
@@ -273,9 +267,7 @@ class TestDegradation:
         """成分表预合并重复行（无 FINAL 通道）→ 同股在同板块清单只出现一次。"""
         klines, limits, cons = _universe()
         cons_dup = cons + [("881001.SH", "000002.SZ")]  # 模拟 ReplacingMergeTree 预合并重复
-        board = identify_sector_leaders(
-            trade_date=D_END, ch_client=_FakeCH(klines, limits, cons_dup)
-        )
+        board = identify_sector_leaders(trade_date=D_END, ch_client=_FakeCH(klines, limits, cons_dup))
         g = _group(board, "881001.SH")
         assert [b.symbol for b in g.backbones] == ["000002.SZ"]  # 不重复
 

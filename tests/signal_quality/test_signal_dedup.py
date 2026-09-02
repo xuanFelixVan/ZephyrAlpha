@@ -221,12 +221,8 @@ class TestAudit:
         d1, d2 = _dedup(), _dedup()
         r1 = [d1.ingest(s) for s in seq]
         r2 = [d2.ingest(s) for s in seq]
-        assert [(x.action, x.representative_id) for x in r1] == [
-            (x.action, x.representative_id) for x in r2
-        ]
-        assert [s.signal_id for s in d1.kept_signals()] == [
-            s.signal_id for s in d2.kept_signals()
-        ]
+        assert [(x.action, x.representative_id) for x in r1] == [(x.action, x.representative_id) for x in r2]
+        assert [s.signal_id for s in d1.kept_signals()] == [s.signal_id for s in d2.kept_signals()]
 
 
 # ──────────────────────────────────────────────────────────────────────────────

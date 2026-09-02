@@ -230,7 +230,14 @@ def test_sectors_from_candidates_adapter() -> None:
     cand = MainlineCandidatesResult(
         date=TRADE_DATE,
         candidates=[
-            MainlineCandidate(sector_code="880001.SH", sector_name="半导体", score=4, q3_percentile=0.9, rrg_quadrant="LEADING", reasons=[]),
+            MainlineCandidate(
+                sector_code="880001.SH",
+                sector_name="半导体",
+                score=4,
+                q3_percentile=0.9,
+                rrg_quadrant="LEADING",
+                reasons=[],
+            ),
         ],
     )
     sectors = sectors_from_candidates(cand)

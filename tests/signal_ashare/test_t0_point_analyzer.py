@@ -55,8 +55,12 @@ def _bar(i: int, close: float, volume: float = 100.0, high: float | None = None,
     hh = 9 * 60 + 31 + i
     ts = f"2026-08-21 {hh // 60:02d}:{hh % 60:02d}"
     return MinuteBar(
-        ts=ts, open=close, high=high if high is not None else close * 1.001,
-        low=low if low is not None else close * 0.999, close=close, volume=volume,
+        ts=ts,
+        open=close,
+        high=high if high is not None else close * 1.001,
+        low=low if low is not None else close * 0.999,
+        close=close,
+        volume=volume,
     )
 
 
@@ -120,9 +124,7 @@ def test_cooldown_dedup_keeps_highest_confidence():
     signals = generate_t0_signals(bars, CTX, cfg)
     sell = [s for s in signals if s.direction == T_SELL]
     # 冷却窗 15 > 冲高段长度 → 同方向仅保留 1 条最高置信度
-    assert len(sell) <= 1 or all(
-        abs(int(a.ts[-2:]) - int(b.ts[-2:])) >= 15 for a, b in zip(sell, sell[1:])
-    )
+    assert len(sell) <= 1 or all(abs(int(a.ts[-2:]) - int(b.ts[-2:])) >= 15 for a, b in zip(sell, sell[1:]))
 
 
 def test_sig024_adapter_leg_fires():
@@ -147,8 +149,16 @@ def test_bad_lookback_fail_closed():
 
 
 def _signal(ts: str, direction: str, pattern: str = PATTERN_PULLBACK_VWAP, price: float = 100.0) -> T0Signal:
-    return T0Signal(ts=ts, symbol="510300.SH", direction=direction, pattern=pattern,
-                    price=price, confidence=70.0, logic="t", source="t_specialized")
+    return T0Signal(
+        ts=ts,
+        symbol="510300.SH",
+        direction=direction,
+        pattern=pattern,
+        price=price,
+        confidence=70.0,
+        logic="t",
+        source="t_specialized",
+    )
 
 
 def _verify_bars() -> list[MinuteBar]:

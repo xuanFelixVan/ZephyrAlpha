@@ -50,9 +50,9 @@ def _mk(ohlc: list[float], spread: float = 0.05):
 def _double_top():
     # 上涨→顶11→回落10.4→再顶11.01→回落
     closes = (
-        [10.0 + 0.1 * i for i in range(10)]          # 升至 10.9
-        + [11.0, 10.7, 10.5, 10.4, 10.5, 10.7]        # 顶1 + 谷
-        + [10.9, 11.01, 10.8, 10.6, 10.4, 10.3]       # 顶2 + 回落
+        [10.0 + 0.1 * i for i in range(10)]  # 升至 10.9
+        + [11.0, 10.7, 10.5, 10.4, 10.5, 10.7]  # 顶1 + 谷
+        + [10.9, 11.01, 10.8, 10.6, 10.4, 10.3]  # 顶2 + 回落
     )
     return _mk(closes)
 
@@ -121,7 +121,9 @@ class TestContract:
 class TestClassicLeg:
     def test_double_top(self) -> None:
         h, l, c = _double_top()
-        rep = UnifiedPatternEngine(_cfg(enable_chanlun=False, enable_sr=False, enable_dtw=False)).recognize("600000.SH", h, l, c)
+        rep = UnifiedPatternEngine(_cfg(enable_chanlun=False, enable_sr=False, enable_dtw=False)).recognize(
+            "600000.SH", h, l, c
+        )
         tops = [e for e in rep.events if e.name == "双顶"]
         assert tops, f"未识别双顶: {[e.name for e in rep.events]}"
         assert tops[0].pattern_class is PatternClass.REVERSAL
@@ -130,14 +132,18 @@ class TestClassicLeg:
 
     def test_double_bottom(self) -> None:
         h, l, c = _double_bottom()
-        rep = UnifiedPatternEngine(_cfg(enable_chanlun=False, enable_sr=False, enable_dtw=False)).recognize("600000.SH", h, l, c)
+        rep = UnifiedPatternEngine(_cfg(enable_chanlun=False, enable_sr=False, enable_dtw=False)).recognize(
+            "600000.SH", h, l, c
+        )
         bots = [e for e in rep.events if e.name == "双底"]
         assert bots
         assert bots[0].direction is PatternDirection.UP
 
     def test_consolidation_breakout(self) -> None:
         h, l, c = _consolidation_breakout()
-        rep = UnifiedPatternEngine(_cfg(enable_chanlun=False, enable_sr=False, enable_dtw=False)).recognize("600000.SH", h, l, c)
+        rep = UnifiedPatternEngine(_cfg(enable_chanlun=False, enable_sr=False, enable_dtw=False)).recognize(
+            "600000.SH", h, l, c
+        )
         brk = [e for e in rep.events if e.name == "平台突破"]
         assert brk
         assert brk[0].pattern_class is PatternClass.CONTINUATION
@@ -147,13 +153,17 @@ class TestClassicLeg:
 class TestIncorporatedLegs:
     def test_sr_leg_support_event(self) -> None:
         h, l, c = _swing_support()
-        rep = UnifiedPatternEngine(_cfg(enable_chanlun=False, enable_classic=False, enable_dtw=False)).recognize("600000.SH", h, l, c)
+        rep = UnifiedPatternEngine(_cfg(enable_chanlun=False, enable_classic=False, enable_dtw=False)).recognize(
+            "600000.SH", h, l, c
+        )
         sr = [e for e in rep.events if e.pattern_class is PatternClass.SR]
         assert sr, f"未产出支撑阻力事件: {[e.name for e in rep.events]}"
 
     def test_chanlun_leg_bi_event(self) -> None:
         h, l, c = _zigzag()
-        rep = UnifiedPatternEngine(_cfg(enable_sr=False, enable_classic=False, enable_dtw=False)).recognize("600000.SH", h, l, c)
+        rep = UnifiedPatternEngine(_cfg(enable_sr=False, enable_classic=False, enable_dtw=False)).recognize(
+            "600000.SH", h, l, c
+        )
         cll = [e for e in rep.events if e.pattern_class is PatternClass.CHANLUN]
         assert cll, f"未产出缠论事件: {[e.name for e in rep.events]}"
 

@@ -185,7 +185,10 @@ class TestBackfillKlineIndexTable:
 
         assert rows == 476
         mock_bf.assert_called_once()
-        call_dates, call_symbols = mock_bf.call_args[0][0], mock_bf.call_args[1].get("symbols", mock_bf.call_args[0][1] if len(mock_bf.call_args[0]) > 1 else None)
+        call_dates, call_symbols = (
+            mock_bf.call_args[0][0],
+            mock_bf.call_args[1].get("symbols", mock_bf.call_args[0][1] if len(mock_bf.call_args[0]) > 1 else None),
+        )
         assert call_dates == [datetime.date(2026, 8, 24)]
         assert sorted(set(call_symbols)) == ["000905"]
         assert all_missing[0]["table"] == _TBL
@@ -236,7 +239,11 @@ class TestWeekendBackfillKlineIndexRouting:
             patch.object(bc, "_backfill_kline_index_table", return_value=100) as mock_ded,
             patch.object(bc, "_backfill_generic_table") as mock_generic,
             patch.object(bc, "_record_backfill_progress"),
-            patch.object(bc, "run_known_gap_backfill", return_value={"checked": 0, "still_missing": 0, "backfilled_rows": 0, "details": []}),
+            patch.object(
+                bc,
+                "run_known_gap_backfill",
+                return_value={"checked": 0, "still_missing": 0, "backfilled_rows": 0, "details": []},
+            ),
         ):
             result = bc.run_weekend_backfill(scheduler, days=1)
 

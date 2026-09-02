@@ -11,6 +11,7 @@
 异 pattern 案例剔除、frozen/JSON 契约。
 全程内存合成数据，无 DB。
 """
+
 from __future__ import annotations
 
 import dataclasses

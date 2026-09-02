@@ -146,18 +146,14 @@ class TestRegression:
     def test_no_degradation(self) -> None:
         alerts: list[QualityAlert] = []
         drive = _drive(alerts)
-        report = drive.compare_performance(
-            {"sharpe": 2.1, "win_rate": 0.6}, self._BASE, threshold=0.1
-        )
+        report = drive.compare_performance({"sharpe": 2.1, "win_rate": 0.6}, self._BASE, threshold=0.1)
         assert report.degraded == ()
         assert alerts == []
 
     def test_degradation_alerted(self) -> None:
         alerts: list[QualityAlert] = []
         drive = _drive(alerts)
-        report = drive.compare_performance(
-            {"sharpe": 1.5, "win_rate": 0.6}, self._BASE, threshold=0.1
-        )
+        report = drive.compare_performance({"sharpe": 1.5, "win_rate": 0.6}, self._BASE, threshold=0.1)
         assert report.degraded == ("sharpe",)  # 退化 (2.0-1.5)/2.0=0.25 > 0.1
         assert len(alerts) == 1
         assert alerts[0].kind == "performance_regression"
@@ -166,9 +162,7 @@ class TestRegression:
     def test_boundary_not_alerted(self) -> None:
         alerts: list[QualityAlert] = []
         drive = _drive(alerts)
-        report = drive.compare_performance(
-            {"sharpe": 1.8, "win_rate": 0.6}, self._BASE, threshold=0.1
-        )
+        report = drive.compare_performance({"sharpe": 1.8, "win_rate": 0.6}, self._BASE, threshold=0.1)
         assert report.degraded == ()  # 恰等于阈值不告警（须 > 阈值）
         assert alerts == []
 
@@ -181,9 +175,7 @@ class TestRegression:
         with pytest.raises(QualitySelfdriveError):
             _drive().compare_performance({}, {}, threshold=0.1)  # 空基线
         with pytest.raises(QualitySelfdriveError):
-            _drive().compare_performance(
-                {"sharpe": 2.0, "win_rate": 0.6}, self._BASE, threshold=-0.1
-            )
+            _drive().compare_performance({"sharpe": 2.0, "win_rate": 0.6}, self._BASE, threshold=-0.1)
 
     def test_zero_baseline_edge(self) -> None:
         drive = _drive()
@@ -231,9 +223,7 @@ class TestAccuracy:
         alerts: list[QualityAlert] = []
         drive = _drive(alerts, rng=self._rng())
         # 校验器仅认 "r0"/"r1" 合格；抽样必含不合格记录
-        report = drive.sample_accuracy(
-            self._RECORDS, 4, lambda r: r in {"r0", "r1"}, min_accuracy=0.9
-        )
+        report = drive.sample_accuracy(self._RECORDS, 4, lambda r: r in {"r0", "r1"}, min_accuracy=0.9)
         assert report.meets_standard is False
         assert len(alerts) == 1
         assert alerts[0].kind == "accuracy_below_standard"
@@ -241,9 +231,7 @@ class TestAccuracy:
     def test_boundary_meets_standard(self) -> None:
         alerts: list[QualityAlert] = []
         drive = _drive(alerts, rng=self._rng())
-        report = drive.sample_accuracy(
-            self._RECORDS, 2, lambda r: True, min_accuracy=1.0
-        )
+        report = drive.sample_accuracy(self._RECORDS, 2, lambda r: True, min_accuracy=1.0)
         assert report.meets_standard is True  # 恰等于下限不告警
         assert alerts == []
 

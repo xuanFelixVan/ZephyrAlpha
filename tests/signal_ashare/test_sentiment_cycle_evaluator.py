@@ -75,8 +75,8 @@ def test_evaluate_from_records_per_phase_recall():
     ]
     report = evaluate_from_records(records)
     assert report.n_samples == 4
-    assert report.per_phase_recall["主升"] == 1.0   # 2/2
-    assert report.per_phase_recall["疯狂"] == 0.5   # 1/2
+    assert report.per_phase_recall["主升"] == 1.0  # 2/2
+    assert report.per_phase_recall["疯狂"] == 0.5  # 1/2
 
 
 def test_evaluate_from_records_confusion_matrix():

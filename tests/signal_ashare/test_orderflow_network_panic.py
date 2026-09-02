@@ -60,8 +60,7 @@ class TestDetectDrawdownEvents:
 
     def test_no_overlap(self) -> None:
         """事件区间不重叠：第一次 trough 后跳至其后。"""
-        prices = [100.0, 100.0, 100.0, 100.0, 100.0, 60.0,
-                  90.0, 90.0, 90.0, 90.0, 90.0, 55.0]
+        prices = [100.0, 100.0, 100.0, 100.0, 100.0, 60.0, 90.0, 90.0, 90.0, 90.0, 90.0, 55.0]
         evs = _model().detect_drawdown_events("A", prices, window=6)
         assert len(evs) == 2
 
@@ -150,19 +149,28 @@ class TestPanicConductionLag:
 
         with pytest.raises(OrderflowPanicError):
             _model(granger=tester).panic_conduction_lag(
-                [0.01] * 8, [0.01] * 8, max_lag=3,
+                [0.01] * 8,
+                [0.01] * 8,
+                max_lag=3,
             )
         with pytest.raises(OrderflowPanicError):
             _model(granger=tester).panic_conduction_lag(
-                [0.01] * 8, [0.01] * 8, max_lag=2, alpha=1.0,
+                [0.01] * 8,
+                [0.01] * 8,
+                max_lag=2,
+                alpha=1.0,
             )
         with pytest.raises(OrderflowPanicError):
             _model(granger=tester).panic_conduction_lag(
-                [0.01] * 4, [0.01] * 4, max_lag=2,
+                [0.01] * 4,
+                [0.01] * 4,
+                max_lag=2,
             )
         with pytest.raises(OrderflowPanicError):
             _model(granger=tester).panic_conduction_lag(
-                [0.01] * 8, [0.01] * 4, max_lag=2,
+                [0.01] * 8,
+                [0.01] * 4,
+                max_lag=2,
             )
 
     def test_tester_failure_raises(self) -> None:
@@ -171,11 +179,15 @@ class TestPanicConductionLag:
 
         with pytest.raises(OrderflowPanicError):
             _model(granger=bad_tester).panic_conduction_lag(
-                [0.01] * 8, [0.01] * 8, max_lag=1,
+                [0.01] * 8,
+                [0.01] * 8,
+                max_lag=1,
             )
         with pytest.raises(OrderflowPanicError):
             _model(granger=lambda s, t, l: float("nan")).panic_conduction_lag(
-                [0.01] * 8, [0.01] * 8, max_lag=1,
+                [0.01] * 8,
+                [0.01] * 8,
+                max_lag=1,
             )
 
 
@@ -194,7 +206,10 @@ class TestDiffusionPaths:
             [1, 0, 0, 0],
         ]
         paths = _model().diffusion_paths(
-            ["A", "B", "C", "D"], {"A": 0.4}, adj, decay=0.5,
+            ["A", "B", "C", "D"],
+            {"A": 0.4},
+            adj,
+            decay=0.5,
         )
         assert len(paths) == 3
         for p in paths:
@@ -210,7 +225,10 @@ class TestDiffusionPaths:
             [0, 1, 0],
         ]
         paths = _model().diffusion_paths(
-            ["A", "B", "C"], {"A": 0.4}, adj, decay=0.5,
+            ["A", "B", "C"],
+            {"A": 0.4},
+            adj,
+            decay=0.5,
         )
         p_map = {(p.source, p.target): p for p in paths}
         assert p_map[("A", "B")].hops == 1
@@ -225,15 +243,16 @@ class TestDiffusionPaths:
             [0, 1, 0],
         ]
         paths = _model().diffusion_paths(
-            ["A", "B", "C"], {"A": 0.4, "B": 0.3}, adj, decay=0.5,
+            ["A", "B", "C"],
+            {"A": 0.4, "B": 0.3},
+            adj,
+            decay=0.5,
         )
         assert len(paths) == 4
         hops = sorted(p.hops for p in paths)
         assert hops == [1, 1, 1, 2]
         # 同跳按 source/target 确定性排序
-        assert [(p.hops, p.source, p.target) for p in paths] == sorted(
-            (p.hops, p.source, p.target) for p in paths
-        )
+        assert [(p.hops, p.source, p.target) for p in paths] == sorted((p.hops, p.source, p.target) for p in paths)
 
     def test_diffusion_invalid_inputs_raises(self) -> None:
         with pytest.raises(OrderflowPanicError):
@@ -242,7 +261,10 @@ class TestDiffusionPaths:
             _model().diffusion_paths([], {"A": 0.4}, [[0]], decay=0.5)  # 空节点
         with pytest.raises(OrderflowPanicError):
             _model().diffusion_paths(
-                ["A", "B"], {"C": 0.4}, [[0, 1], [1, 0]], decay=0.5,
+                ["A", "B"],
+                {"C": 0.4},
+                [[0, 1], [1, 0]],
+                decay=0.5,
             )  # 源不在节点全集
         with pytest.raises(OrderflowPanicError):
             _model().diffusion_paths(["A", "B"], {"A": 0.4}, [[0, 1], [1, 0]], decay=1.2)
@@ -250,7 +272,10 @@ class TestDiffusionPaths:
             _model().diffusion_paths(["A", "B"], {"A": -0.4}, [[0, 1], [1, 0]], decay=0.5)
         with pytest.raises(OrderflowPanicError):
             _model().diffusion_paths(
-                ["A", "B"], {"A": float("nan")}, [[0, 1], [1, 0]], decay=0.5,
+                ["A", "B"],
+                {"A": float("nan")},
+                [[0, 1], [1, 0]],
+                decay=0.5,
             )
 
 
@@ -272,7 +297,9 @@ class TestAssess:
         returns = {chr(65 + i): _make_returns(10) for i in range(3)}
         adj = [[0, 1, 0], [1, 0, 1], [0, 1, 0]]
         out = _model(granger=_default_granger).assess(
-            node_returns=returns, adjacency=adj, window=4,
+            node_returns=returns,
+            adjacency=adj,
+            window=4,
         )
         assert len(out.events) == 0
         assert out.is_panic is False
@@ -287,7 +314,9 @@ class TestAssess:
         }
         adj = [[0, 1, 0], [1, 0, 0], [0, 0, 0]]
         out = _model(granger=_default_granger).assess(
-            node_returns=returns, adjacency=adj, window=3,
+            node_returns=returns,
+            adjacency=adj,
+            window=3,
         )
         assert len(out.events) > 0
         assert out.is_clustered is False
@@ -301,7 +330,9 @@ class TestAssess:
         }
         adj = [[0, 1, 0], [1, 0, 0], [0, 0, 0]]
         out = _model(granger=_default_granger).assess(
-            node_returns=returns, adjacency=adj, window=3,
+            node_returns=returns,
+            adjacency=adj,
+            window=3,
         )
         assert len(out.events) > 0
         assert out.is_clustered is True
@@ -314,14 +345,18 @@ class TestAssess:
         }
         adj = [[0, 1], [1, 0]]
         out = _model(granger=_default_granger).assess(
-            node_returns=returns, adjacency=adj, window=3,
+            node_returns=returns,
+            adjacency=adj,
+            window=3,
         )
         assert len(out.conduction_links) > 0
 
     def test_empty_node_returns_raises(self) -> None:
         with pytest.raises(OrderflowPanicError):
             _model(granger=_default_granger).assess(
-                node_returns={}, adjacency=[[0]], window=3,
+                node_returns={},
+                adjacency=[[0]],
+                window=3,
             )
 
     def test_mismatched_series_lengths_raises(self) -> None:
@@ -344,7 +379,9 @@ class TestAssess:
             [0, 1, 0],
         ]
         out = _model(granger=_default_granger).assess(
-            node_returns=returns, adjacency=adj, window=3,
+            node_returns=returns,
+            adjacency=adj,
+            window=3,
         )
         assert len(out.diffusion_paths) > 0
         assert isinstance(out.diffusion_paths[0], DiffusionPath)

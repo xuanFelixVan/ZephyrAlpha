@@ -125,9 +125,7 @@ class TestDiscrepancyTickets:
         seen: list[DiscrepancyTicket] = []
         book = _book(sink=seen.append)
         _register(book)
-        record = book.mark_discrepant(
-            "SET-1", TS, drifts=(("D1", "PRICE_MISMATCH"), ("D2", "COMMISSION_MISMATCH"))
-        )
+        record = book.mark_discrepant("SET-1", TS, drifts=(("D1", "PRICE_MISMATCH"), ("D2", "COMMISSION_MISMATCH")))
         # 费用参考类不升级工单——仅 PRICE_QTY 一档出票
         assert len(record.tickets) == 1
         ticket = record.tickets[0]

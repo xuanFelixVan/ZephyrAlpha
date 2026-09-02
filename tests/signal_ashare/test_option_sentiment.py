@@ -20,7 +20,9 @@ UNDERLYING = "510300.SH"
 class _FakeCH:
     """鸭子类型 ch_client：按 SQL 特征路由返回合成行（不触库）。"""
 
-    def __init__(self, iv_rows=None, volume_rows=None, map_rows=None, greeks_rows=None, expiry_hits=None, latest=None, exc=None):
+    def __init__(
+        self, iv_rows=None, volume_rows=None, map_rows=None, greeks_rows=None, expiry_hits=None, latest=None, exc=None
+    ):
         self._iv = iv_rows or []
         self._vol = volume_rows or []
         self._map = map_rows or []

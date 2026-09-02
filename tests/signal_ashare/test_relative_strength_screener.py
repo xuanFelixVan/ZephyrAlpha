@@ -162,14 +162,17 @@ class TestFailClosed:
     def test_empty_and_unequal_and_nonpositive(self) -> None:
         d = _screener()
         with pytest.raises(ValueError):
-            d.score("X", pd.Series([], dtype=float), pd.Series([], dtype=float),
-                    pd.Series([], dtype=float), _flat_benchmark())
+            d.score(
+                "X",
+                pd.Series([], dtype=float),
+                pd.Series([], dtype=float),
+                pd.Series([], dtype=float),
+                _flat_benchmark(),
+            )
         with pytest.raises(ValueError):
-            d.score("X", pd.Series([1.0, 2.0]), pd.Series([1.0]),
-                    pd.Series([1.0, 1.0]), pd.Series([1.0, 1.0]))
+            d.score("X", pd.Series([1.0, 2.0]), pd.Series([1.0]), pd.Series([1.0, 1.0]), pd.Series([1.0, 1.0]))
         with pytest.raises(ValueError):
-            d.score("X", pd.Series([0.0] * 30), pd.Series([1.0] * 30),
-                    pd.Series([1.0] * 30), pd.Series([1.0] * 30))
+            d.score("X", pd.Series([0.0] * 30), pd.Series([1.0] * 30), pd.Series([1.0] * 30), pd.Series([1.0] * 30))
 
     def test_config_validation(self) -> None:
         with pytest.raises(ValueError):
