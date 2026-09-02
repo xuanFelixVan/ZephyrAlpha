@@ -211,9 +211,7 @@ class RiskSignalSequencer:
 
     def __init__(self, audit_sink: Callable[[ArbitrationRecord], None] | None = None) -> None:
         if audit_sink is not None and not callable(audit_sink):
-            raise InvalidSequencerConfigError(
-                f"audit_sink 必须为 callable 或 None: {type(audit_sink).__name__}"
-            )
+            raise InvalidSequencerConfigError(f"audit_sink 必须为 callable 或 None: {type(audit_sink).__name__}")
         self._audit_sink = audit_sink
         self._risk_seen: dict[str, ArbitrationAction] = {}  # event_id → 处置（幂等）
         self._risk_events: dict[str, RiskEvent] = {}

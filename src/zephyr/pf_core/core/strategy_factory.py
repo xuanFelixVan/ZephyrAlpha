@@ -141,9 +141,7 @@ _CHAIN: Final[tuple[StrategyStage, ...]] = (
 _GATED_STAGES: Final[frozenset[StrategyStage]] = frozenset(
     {StrategyStage.GATE_REVIEW, StrategyStage.PHACKING_REVIEW, StrategyStage.HUMAN_ADJUDICATION}
 )
-_TERMINAL: Final[frozenset[StrategyStage]] = frozenset(
-    {StrategyStage.REJECTED, StrategyStage.RETIREMENT}
-)
+_TERMINAL: Final[frozenset[StrategyStage]] = frozenset({StrategyStage.REJECTED, StrategyStage.RETIREMENT})
 
 
 @dataclass(frozen=True)
@@ -235,9 +233,7 @@ class StrategyFactory:
         self._records[sid] = rec
         return rec
 
-    def register_discovery_hook(
-        self, channel: DiscoveryChannel, hook: Callable[[str], StrategyRecord]
-    ) -> None:
+    def register_discovery_hook(self, channel: DiscoveryChannel, hook: Callable[[str], StrategyRecord]) -> None:
         """注册通道发现钩子（GP/SR/LLM/FactorMAD 生成器注入位）。"""
         if not isinstance(channel, DiscoveryChannel):
             raise StrategyFactoryError(f"channel 必须为 DiscoveryChannel: {channel!r}")
@@ -275,13 +271,9 @@ class StrategyFactory:
         except ValueError:
             raise StrategyFactoryError(f"未知阶段: {to_stage!r}") from None
         if to_idx != cur_idx + 1:
-            raise StrategyFactoryError(
-                f"非法阶段迁移: {rec.stage.value}→{to_stage.value}（仅顺序单步）"
-            )
+            raise StrategyFactoryError(f"非法阶段迁移: {rec.stage.value}→{to_stage.value}（仅顺序单步）")
         if rec.stage in _GATED_STAGES:
-            raise StrategyFactoryError(
-                f"{rec.stage.value} 为闸门阶段，须经对应 submit_*/human_adjudicate 推进"
-            )
+            raise StrategyFactoryError(f"{rec.stage.value} 为闸门阶段，须经对应 submit_*/human_adjudicate 推进")
         return self._move(rec, to_stage, note)
 
     def submit_gate_verdict(self, strategy_id: str, passed: bool, detail: str = "") -> StrategyRecord:
@@ -303,14 +295,10 @@ class StrategyFactory:
         rec = replace(rec, dsr=dsr, pbo=pbo)
         self._records[rec.strategy_id] = rec
         if dsr <= 0 or pbo > self._pbo_max:
-            return self._move(
-                rec, StrategyStage.REJECTED, f"p-hacking 不达标: dsr={dsr:.4f}, pbo={pbo:.4f}"
-            )
+            return self._move(rec, StrategyStage.REJECTED, f"p-hacking 不达标: dsr={dsr:.4f}, pbo={pbo:.4f}")
         return self._move(rec, StrategyStage.HUMAN_ADJUDICATION, f"p-hacking 通过: dsr={dsr:.4f}, pbo={pbo:.4f}")
 
-    def human_adjudicate(
-        self, strategy_id: str, approved: bool, approved_by: str, note: str = ""
-    ) -> StrategyRecord:
+    def human_adjudicate(self, strategy_id: str, approved: bool, approved_by: str, note: str = "") -> StrategyRecord:
         """人工裁决（approved_by 必填——严禁全自动上线）。"""
         rec = self.get(strategy_id)
         self._require_stage(rec, StrategyStage.HUMAN_ADJUDICATION)
@@ -362,9 +350,7 @@ class StrategyFactory:
     @staticmethod
     def _require_stage(rec: StrategyRecord, stage: StrategyStage) -> None:
         if rec.stage is not stage:
-            raise StrategyFactoryError(
-                f"当前阶段 {rec.stage.value} 不支持该操作（要求 {stage.value}）"
-            )
+            raise StrategyFactoryError(f"当前阶段 {rec.stage.value} 不支持该操作（要求 {stage.value}）")
 
     def _move(self, rec: StrategyRecord, to: StrategyStage, note: str) -> StrategyRecord:
         rec = replace(

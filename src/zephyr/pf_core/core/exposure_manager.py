@@ -209,9 +209,7 @@ class ExposureManager:
     ) -> ActiveExposureReport:
         """计算主动敞口 + 偏离告警 + 轮动信号。"""
         if (benchmark_weights is None) == (benchmark_industry_weights is None):
-            raise ExposureManagerError(
-                "benchmark_weights 与 benchmark_industry_weights 必须二选一注入"
-            )
+            raise ExposureManagerError("benchmark_weights 与 benchmark_industry_weights 必须二选一注入")
         weights = self._normalize(positions)
         if not industry_map:
             raise ExposureManagerError("industry_map 不能为空（申万31行业分类真源）")
@@ -220,16 +218,14 @@ class ExposureManager:
         port_ind = self._industry_weights(weights, industry_map, uncovered)
         if benchmark_industry_weights is not None:
             bench_ind = {
-                k: _require_finite(f"benchmark_industry_weights[{k}]", v)
-                for k, v in benchmark_industry_weights.items()
+                k: _require_finite(f"benchmark_industry_weights[{k}]", v) for k, v in benchmark_industry_weights.items()
             }
         else:
             bw = self._normalize(benchmark_weights or {}, name="benchmark_weights")
             bench_ind = self._industry_weights(bw, industry_map, uncovered)
 
         industry_active = {
-            ind: port_ind.get(ind, 0.0) - bench_ind.get(ind, 0.0)
-            for ind in sorted(set(port_ind) | set(bench_ind))
+            ind: port_ind.get(ind, 0.0) - bench_ind.get(ind, 0.0) for ind in sorted(set(port_ind) | set(bench_ind))
         }
 
         style_active: dict[str, float] = {}
@@ -302,10 +298,9 @@ class ExposureManager:
     ) -> tuple[ExposureDeviation, ...]:
         cfg = self._config
         out: list[ExposureDeviation] = []
-        for name, active, warn, breach, dim in (
-            [(k, v, cfg.industry_warn, cfg.industry_breach, "industry") for k, v in industry_active.items()]
-            + [(k, v, cfg.style_warn, cfg.style_breach, "style") for k, v in style_active.items()]
-        ):
+        for name, active, warn, breach, dim in [
+            (k, v, cfg.industry_warn, cfg.industry_breach, "industry") for k, v in industry_active.items()
+        ] + [(k, v, cfg.style_warn, cfg.style_breach, "style") for k, v in style_active.items()]:
             a = abs(active)
             if a > breach:
                 out.append(ExposureDeviation(dim, name, active, breach, DeviationSeverity.BREACH))
@@ -324,10 +319,7 @@ class ExposureManager:
         cfg = self._config
         if not industry_momentum:
             raise ExposureManagerError("industry_momentum 注入即非空")
-        mom = {
-            ind: _require_finite(f"industry_momentum[{ind}]", v)
-            for ind, v in industry_momentum.items()
-        }
+        mom = {ind: _require_finite(f"industry_momentum[{ind}]", v) for ind, v in industry_momentum.items()}
         ranked = sorted(mom, key=lambda i: (-mom[i], i))
         rank_of = {ind: i + 1 for i, ind in enumerate(ranked)}
         out: list[IndustryRotationAdvice] = []

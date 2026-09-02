@@ -1849,7 +1849,13 @@ def run_llm_analysis(
             sort_keys=True,
         )
         row_id, logged = _persist(
-            STATUS_INVALID, output_json, "; ".join(parse_errors), tokens_in, tokens_out, cost_yuan, latency_ms,
+            STATUS_INVALID,
+            output_json,
+            "; ".join(parse_errors),
+            tokens_in,
+            tokens_out,
+            cost_yuan,
+            latency_ms,
             actual_model=persist_model,
         )
         return LlmRunResult(

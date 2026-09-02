@@ -238,9 +238,7 @@ class ModelVersionRegistry:
         rec = self._transition(model_id, version, ModelVersionStage.VALIDATED)
         rec = replace(rec, validation_metrics=vm, validated_at=self._clock())
         self._models[model_id][version] = rec
-        self._emit(
-            ModelValidatedEvent(model_id=model_id, version=version, metrics=vm, occurred_at=rec.validated_at)
-        )
+        self._emit(ModelValidatedEvent(model_id=model_id, version=version, metrics=vm, occurred_at=rec.validated_at))
         return rec
 
     def record_shadow_verified(self, model_id: str, version: str, shadow_proof: str) -> ModelVersionRecord:
@@ -256,9 +254,7 @@ class ModelVersionRegistry:
         approved_by = _require_text("approved_by（严禁全自动上线）", approved_by)
         active = self.active_version(model_id)
         if active is not None and active.version != version:
-            raise ModelVersionRegistryError(
-                f"模型 {model_id!r} 已有激活版本 {active.version!r}（须先 deprecate）"
-            )
+            raise ModelVersionRegistryError(f"模型 {model_id!r} 已有激活版本 {active.version!r}（须先 deprecate）")
         rec = self._transition(model_id, version, ModelVersionStage.ACTIVATED)
         rec = replace(rec, approved_by=approved_by, activated_at=self._clock())
         self._models[model_id][version] = rec
@@ -289,14 +285,10 @@ class ModelVersionRegistry:
 
     # ── 内部 ──
 
-    def _transition(
-        self, model_id: str, version: str, to: ModelVersionStage
-    ) -> ModelVersionRecord:
+    def _transition(self, model_id: str, version: str, to: ModelVersionStage) -> ModelVersionRecord:
         rec = self.get(model_id, version)
         if to not in _ALLOWED[rec.stage]:
-            raise ModelVersionRegistryError(
-                f"非法阶段迁移: {model_id}@{version} {rec.stage.value}→{to.value}"
-            )
+            raise ModelVersionRegistryError(f"非法阶段迁移: {model_id}@{version} {rec.stage.value}→{to.value}")
         return replace(rec, stage=to)
 
     def _emit(self, event: object) -> None:

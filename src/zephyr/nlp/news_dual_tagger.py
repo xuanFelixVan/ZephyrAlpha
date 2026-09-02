@@ -204,9 +204,7 @@ def match_calendar_rules(
 ) -> list[EventKeywordRule]:
     """日历关键词命中：文本命中规则任一关键词且规则有提前披露纪律 → 命中。"""
     effective = rules if rules is not None else _DEFAULT_CALENDAR_RULES
-    return [
-        r for r in effective if r.advance_notice and any(k in text for k in r.keywords)
-    ]
+    return [r for r in effective if r.advance_notice and any(k in text for k in r.keywords)]
 
 
 def classify_predictability(calendar_hit: bool, capital_hit: bool) -> str:
@@ -275,17 +273,13 @@ def tag_news_dual(
         text = news.title + news.content
         # 标签①：日历 + 资金痕迹
         cal_hits = match_calendar_rules(text, rules)
-        cap_symbols = [
-            s for s in news.symbols if abs(traces.get(s, 0.0)) >= cfg.capital_inflow_threshold
-        ]
+        cap_symbols = [s for s in news.symbols if abs(traces.get(s, 0.0)) >= cfg.capital_inflow_threshold]
         pred_label = classify_predictability(bool(cal_hits), bool(cap_symbols))
         reasons: list[str] = []
         if cal_hits:
             reasons.append(f"日历命中：{'/'.join(r.name_zh for r in cal_hits)}")
         if cap_symbols:
-            reasons.append(
-                f"资金痕迹：{'/'.join(cap_symbols)} 净流入超阈值{cfg.capital_inflow_threshold:.0f}万"
-            )
+            reasons.append(f"资金痕迹：{'/'.join(cap_symbols)} 净流入超阈值{cfg.capital_inflow_threshold:.0f}万")
         if not reasons:
             reasons.append("无日历命中且无资金痕迹")
 

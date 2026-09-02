@@ -98,9 +98,7 @@ class AuctionSnapshot:
             if v < 0:
                 raise ValueError(f"{name} 须≥0: {v}")
         if self.canceled_volume > self.placed_volume:
-            raise ValueError(
-                f"撤单量({self.canceled_volume}) 不得大于申报量({self.placed_volume})"
-            )
+            raise ValueError(f"撤单量({self.canceled_volume}) 不得大于申报量({self.placed_volume})")
 
 
 @dataclass(frozen=True, slots=True)
@@ -167,9 +165,7 @@ def _minutes(ts: str) -> int:
     return int(hhmm[:2]) * 60 + int(hhmm[3:5])
 
 
-def _extract_features(
-    snaps: Sequence[AuctionSnapshot], notes: list[str]
-) -> AuctionFeatures:
+def _extract_features(snaps: Sequence[AuctionSnapshot], notes: list[str]) -> AuctionFeatures:
     first, last = snaps[0], snaps[-1]
     price_drift_pct = (last.indicative_price - first.indicative_price) / first.indicative_price * 100.0
     span_min = max(_minutes(last.ts) - _minutes(first.ts), 1)
@@ -195,17 +191,13 @@ def _extract_features(
         late_volume_ratio = 1.0 if not early else 0.0
 
     if len(early) >= 2:
-        early_drift_pct = (
-            (early[-1].indicative_price - first.indicative_price) / first.indicative_price * 100.0
-        )
+        early_drift_pct = (early[-1].indicative_price - first.indicative_price) / first.indicative_price * 100.0
     else:
         early_drift_pct = 0.0
 
     if early:
         early_peak_seal = max(s.buy1_volume for s in early)
-        seal_late_drop_pct = (
-            (early_peak_seal - last.buy1_volume) / early_peak_seal if early_peak_seal > 0 else 0.0
-        )
+        seal_late_drop_pct = (early_peak_seal - last.buy1_volume) / early_peak_seal if early_peak_seal > 0 else 0.0
     else:
         seal_late_drop_pct = 0.0
 

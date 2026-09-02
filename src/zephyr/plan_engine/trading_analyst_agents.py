@@ -189,10 +189,7 @@ def _council_risk(
     cfg: AnalystCouncilConfig,
 ) -> RiskVerdict:
     """风控侧合成：risk_defender 高置信看空否决 ∪ D3 撤单比硬规则兜底。"""
-    if (
-        risk_opinion.stance == STANCE_BEARISH
-        and float(risk_opinion.conviction) >= cfg.risk_veto_conviction
-    ):
+    if risk_opinion.stance == STANCE_BEARISH and float(risk_opinion.conviction) >= cfg.risk_veto_conviction:
         return RiskVerdict(
             verdict=VERDICT_VETO,
             reasons=[

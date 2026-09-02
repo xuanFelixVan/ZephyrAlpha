@@ -323,7 +323,10 @@ class BatchBoundaryRunner:
         except Exception as exc:  # noqa: BLE001 — 单符号失败不炸批量，留痕分桶
             log.warning("边界计算失败留痕（symbol=%s）: %s: %s", symbol, type(exc).__name__, exc)
             return BoundaryItemResult(
-                symbol=symbol, status="error", boundary=None, error=f"{type(exc).__name__}: {exc}",
+                symbol=symbol,
+                status="error",
+                boundary=None,
+                error=f"{type(exc).__name__}: {exc}",
             )
 
     def _persist(self, target_date: str, trade_date: str, items: list[BoundaryItemResult]) -> tuple[list[int], int]:
@@ -469,5 +472,7 @@ def run_batch_boundaries(
         BatchBoundaryResult（JSON 可序列化，落库经 prediction_log 既有表）。
     """
     return BatchBoundaryRunner(ch_client=ch_client, db_path=db_path, config=config).run(
-        trade_date, symbols, target_date=target_date,
+        trade_date,
+        symbols,
+        target_date=target_date,
     )

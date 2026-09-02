@@ -474,11 +474,7 @@ class BoundaryRevisionEngine:
         missing = [k for k, v in legs.items() if v is None]
         if missing:
             skipped.append(f"{key}:升档腿缺失 {missing}")
-        elif (
-            score > cfg.sentiment_upgrade_threshold
-            and vol_ratio >= cfg.volume_confirm_ratio
-            and rs > 0
-        ):
+        elif score > cfg.sentiment_upgrade_threshold and vol_ratio >= cfg.volume_confirm_ratio and rs > 0:
             active.append(key)
             reasons.append(
                 f"综合情绪分 {score:.1f}>{cfg.sentiment_upgrade_threshold:.0f} 且 ŷ_full/20日均量="

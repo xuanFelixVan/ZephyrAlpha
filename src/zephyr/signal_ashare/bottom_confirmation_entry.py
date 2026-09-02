@@ -123,7 +123,17 @@ class BottomConfirmationConfig:
         if self.rebound_vol_ratio <= 1.0:
             msg = f"rebound_vol_ratio 须>1，实得 {self.rebound_vol_ratio}"
             raise ValueError(msg)
-        for name in ("rsi_period", "boll_window", "shrink_lookback", "shrink_base_window", "rebound_base_window", "flow_window", "spring_lookback", "atr_period", "bottom_lookback"):
+        for name in (
+            "rsi_period",
+            "boll_window",
+            "shrink_lookback",
+            "shrink_base_window",
+            "rebound_base_window",
+            "flow_window",
+            "spring_lookback",
+            "atr_period",
+            "bottom_lookback",
+        ):
             if getattr(self, name) < 2:
                 msg = f"{name} 须≥2，实得 {getattr(self, name)}"
                 raise ValueError(msg)
@@ -263,10 +273,7 @@ class BottomConfirmationEntry:
             raise ValueError(msg)
         n = len(closes)
         if not (len(opens) == len(highs) == len(lows) == n == len(volumes)):
-            msg = (
-                f"OHLCV 不等长: o={len(opens)}/h={len(highs)}/l={len(lows)}"
-                f"/c={n}/v={len(volumes)}"
-            )
+            msg = f"OHLCV 不等长: o={len(opens)}/h={len(highs)}/l={len(lows)}/c={n}/v={len(volumes)}"
             raise ValueError(msg)
         if n < self._config.min_history:
             msg = f"历史 {n}<min_history={self._config.min_history}"
@@ -315,8 +322,15 @@ class BottomConfirmationEntry:
     ) -> BottomConfirmationReport:
         cfg = self._config
         self._validate(
-            symbol, opens, highs, lows, closes, volumes,
-            smart_money_flows, sentiment_scores, wyckoff_springs,
+            symbol,
+            opens,
+            highs,
+            lows,
+            closes,
+            volumes,
+            smart_money_flows,
+            sentiment_scores,
+            wyckoff_springs,
         )
         notes: list[str] = []
         dims: list[DimReading] = []
@@ -328,105 +342,132 @@ class BottomConfirmationEntry:
         lower = statistics.fmean(window) - cfg.boll_k * band_sd
         boll_touch = band_sd > 0.0 and closes[-1] <= lower
         price_hit = rsi < cfg.rsi_oversold or boll_touch
-        dims.append(DimReading(
-            name="price_oversold",
-            hit=price_hit,
-            weight=self._weight("price_oversold"),
-            present=True,
-            detail=f"RSI{cfg.rsi_period}={rsi:.2f}（门<{cfg.rsi_oversold}），布林下轨={lower:.4f}，收={closes[-1]:.4f}",
-        ))
+        dims.append(
+            DimReading(
+                name="price_oversold",
+                hit=price_hit,
+                weight=self._weight("price_oversold"),
+                present=True,
+                detail=f"RSI{cfg.rsi_period}={rsi:.2f}（门<{cfg.rsi_oversold}），布林下轨={lower:.4f}，收={closes[-1]:.4f}",
+            )
+        )
 
         # 2) 量能萎缩+放量反弹
         recent_avg = statistics.fmean(volumes[-(cfg.shrink_lookback + 1) : -1])
-        base_avg = statistics.fmean(volumes[-(cfg.shrink_lookback + cfg.shrink_base_window + 1) : -(cfg.shrink_lookback + 1)])
+        base_avg = statistics.fmean(
+            volumes[-(cfg.shrink_lookback + cfg.shrink_base_window + 1) : -(cfg.shrink_lookback + 1)]
+        )
         shrink = recent_avg < cfg.shrink_ratio * base_avg
         rebound_base = statistics.fmean(volumes[-(cfg.rebound_base_window + 1) : -1])
         rebound = volumes[-1] >= cfg.rebound_vol_ratio * rebound_base and closes[-1] > opens[-1]
-        dims.append(DimReading(
-            name="volume_rebound",
-            hit=shrink and rebound,
-            weight=self._weight("volume_rebound"),
-            present=True,
-            detail=f"萎缩={shrink}（近均{recent_avg:.1f} vs 基准{base_avg:.1f}），反弹={rebound}（今量{volumes[-1]:.1f} vs {cfg.rebound_vol_ratio}×{rebound_base:.1f}）",
-        ))
+        dims.append(
+            DimReading(
+                name="volume_rebound",
+                hit=shrink and rebound,
+                weight=self._weight("volume_rebound"),
+                present=True,
+                detail=f"萎缩={shrink}（近均{recent_avg:.1f} vs 基准{base_avg:.1f}），反弹={rebound}（今量{volumes[-1]:.1f} vs {cfg.rebound_vol_ratio}×{rebound_base:.1f}）",
+            )
+        )
 
         # 3) Smart Money 资金流
         if smart_money_flows is None:
-            dims.append(DimReading(
-                name="smart_money_flow", hit=False, weight=self._weight("smart_money_flow"),
-                present=False, detail="资金流序列缺失降级",
-            ))
+            dims.append(
+                DimReading(
+                    name="smart_money_flow",
+                    hit=False,
+                    weight=self._weight("smart_money_flow"),
+                    present=False,
+                    detail="资金流序列缺失降级",
+                )
+            )
             notes.append("smart_money_flows 缺失，smart_money_flow 维降级")
         else:
             window_sum = sum(smart_money_flows[-cfg.flow_window :])
             counter_trend = smart_money_flows[-1] > 0.0 and closes[-1] < opens[-1]
-            dims.append(DimReading(
-                name="smart_money_flow",
-                hit=window_sum > 0.0 or counter_trend,
-                weight=self._weight("smart_money_flow"),
-                present=True,
-                detail=f"近{cfg.flow_window}根净流入和={window_sum:.4f}，逆势={counter_trend}",
-            ))
+            dims.append(
+                DimReading(
+                    name="smart_money_flow",
+                    hit=window_sum > 0.0 or counter_trend,
+                    weight=self._weight("smart_money_flow"),
+                    present=True,
+                    detail=f"近{cfg.flow_window}根净流入和={window_sum:.4f}，逆势={counter_trend}",
+                )
+            )
 
         # 4) 情绪分位
         if sentiment_scores is None:
-            dims.append(DimReading(
-                name="sentiment_extreme", hit=False, weight=self._weight("sentiment_extreme"),
-                present=False, detail="情绪序列缺失降级",
-            ))
+            dims.append(
+                DimReading(
+                    name="sentiment_extreme",
+                    hit=False,
+                    weight=self._weight("sentiment_extreme"),
+                    present=False,
+                    detail="情绪序列缺失降级",
+                )
+            )
             notes.append("sentiment_scores 缺失，sentiment_extreme 维降级")
         else:
             sent_sd = statistics.pstdev(sentiment_scores)
             if sent_sd == 0.0:
                 # 恒定窗无分布信息，不伪造极端（MOD-SIG-101 零方差纪律同构）
-                dims.append(DimReading(
-                    name="sentiment_extreme", hit=False,
-                    weight=self._weight("sentiment_extreme"),
-                    present=True, detail="情绪窗零方差无信息不判极端",
-                ))
+                dims.append(
+                    DimReading(
+                        name="sentiment_extreme",
+                        hit=False,
+                        weight=self._weight("sentiment_extreme"),
+                        present=True,
+                        detail="情绪窗零方差无信息不判极端",
+                    )
+                )
             else:
                 threshold = _percentile(sentiment_scores, cfg.sentiment_percentile)
-                dims.append(DimReading(
-                    name="sentiment_extreme",
-                    hit=sentiment_scores[-1] <= threshold,
-                    weight=self._weight("sentiment_extreme"),
-                    present=True,
-                    detail=f"情绪={sentiment_scores[-1]:.4f} ≤ {cfg.sentiment_percentile:.0%}分位={threshold:.4f}",
-                ))
+                dims.append(
+                    DimReading(
+                        name="sentiment_extreme",
+                        hit=sentiment_scores[-1] <= threshold,
+                        weight=self._weight("sentiment_extreme"),
+                        present=True,
+                        detail=f"情绪={sentiment_scores[-1]:.4f} ≤ {cfg.sentiment_percentile:.0%}分位={threshold:.4f}",
+                    )
+                )
 
         # 5) Wyckoff Spring
         if wyckoff_springs is None:
-            dims.append(DimReading(
-                name="wyckoff_spring", hit=False, weight=self._weight("wyckoff_spring"),
-                present=False, detail="Spring 标记缺失降级",
-            ))
+            dims.append(
+                DimReading(
+                    name="wyckoff_spring",
+                    hit=False,
+                    weight=self._weight("wyckoff_spring"),
+                    present=False,
+                    detail="Spring 标记缺失降级",
+                )
+            )
             notes.append("wyckoff_springs 缺失，wyckoff_spring 维降级")
         else:
             spring_hit = any(wyckoff_springs[-cfg.spring_lookback :])
-            dims.append(DimReading(
-                name="wyckoff_spring",
-                hit=spring_hit,
-                weight=self._weight("wyckoff_spring"),
-                present=True,
-                detail=f"近{cfg.spring_lookback}根 Spring={spring_hit}",
-            ))
+            dims.append(
+                DimReading(
+                    name="wyckoff_spring",
+                    hit=spring_hit,
+                    weight=self._weight("wyckoff_spring"),
+                    present=True,
+                    detail=f"近{cfg.spring_lookback}根 Spring={spring_hit}",
+                )
+            )
 
         # ── 确认 / 入场 / 止损 ────────────────────────────────────
         confirmed_count = sum(1 for d in dims if d.hit)
         bottom_confirmed = confirmed_count >= cfg.min_confirmations
         present = [d for d in dims if d.present]
         w_sum = sum(d.weight for d in present)
-        confidence = (
-            sum(d.weight for d in present if d.hit) / w_sum if w_sum > 0.0 else 0.0
-        )
+        confidence = sum(d.weight for d in present if d.hit) / w_sum if w_sum > 0.0 else 0.0
         prev_day_high = highs[-2]
         entry_triggered = bottom_confirmed and closes[-1] > prev_day_high
         atr = _wilder_atr(highs, lows, closes, cfg.atr_period)
         bottom_low = min(lows[-cfg.bottom_lookback :])
         entry_price = closes[-1] if entry_triggered else None
-        stop_price = (
-            bottom_low - cfg.atr_stop_mult * atr if entry_triggered else None
-        )
+        stop_price = bottom_low - cfg.atr_stop_mult * atr if entry_triggered else None
         return BottomConfirmationReport(
             symbol=symbol,
             confirmed_count=confirmed_count,

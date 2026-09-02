@@ -495,9 +495,7 @@ class CalendarPositionConstraint:
             )
         return constraints
 
-    def _check_holiday_effect(
-        self, d: date, holiday_dates: set[date] | None
-    ) -> list[CalendarConstraint]:
+    def _check_holiday_effect(self, d: date, holiday_dates: set[date] | None) -> list[CalendarConstraint]:
         """节假日持币规划: 节前2天+节后1天 仓位下调+现金储备抬升。"""
         if not holiday_dates:
             return []

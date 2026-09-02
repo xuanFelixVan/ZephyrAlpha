@@ -232,9 +232,13 @@ def attribute_execution_deviation(
         else:
             avg_price = 0.0
         category, slippage, note = _classify(
-            planned, filled_qty, avg_price,
-            [r.status for r in records], [r.reason for r in records],
-            veto_map.get(planned.symbol), cfg,
+            planned,
+            filled_qty,
+            avg_price,
+            [r.status for r in records],
+            [r.reason for r in records],
+            veto_map.get(planned.symbol),
+            cfg,
         )
         fill_ratio = round(filled_qty / planned.quantity, 4) if planned.quantity > 0 else 0.0
         executed_value += filled_qty * avg_price

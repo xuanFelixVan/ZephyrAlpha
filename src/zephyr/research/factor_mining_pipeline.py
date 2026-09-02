@@ -164,7 +164,9 @@ def build_factor_registry_draft(hypothesis: FactorHypothesis, report: Validation
     }
 
 
-def _extract_hypotheses(paper: PaperRef, text: str, llm_gateway: HypothesisLlmGateway, cfg: MiningConfig, notes: list[str]) -> list[FactorHypothesis]:
+def _extract_hypotheses(
+    paper: PaperRef, text: str, llm_gateway: HypothesisLlmGateway, cfg: MiningConfig, notes: list[str]
+) -> list[FactorHypothesis]:
     prompt = _LLM_PROMPT_TEMPLATE.format(max_hyp=cfg.max_hypotheses_per_paper, text=text)
     raw = llm_gateway(prompt)
     try:
@@ -177,7 +179,11 @@ def _extract_hypotheses(paper: PaperRef, text: str, llm_gateway: HypothesisLlmGa
         return []
     out: list[FactorHypothesis] = []
     for item in items[: cfg.max_hypotheses_per_paper]:
-        if not isinstance(item, dict) or not str(item.get("name", "")).strip() or not str(item.get("formula", "")).strip():
+        if (
+            not isinstance(item, dict)
+            or not str(item.get("name", "")).strip()
+            or not str(item.get("formula", "")).strip()
+        ):
             notes.append(f"论文 {paper.paper_id} 假说缺字段（name/formula 必填，剔除）: {str(item)[:80]}")
             continue
         out.append(
@@ -216,7 +222,12 @@ def run_factor_mining(
     cfg = config or MiningConfig()
     if not isinstance(query, str) or not query.strip():
         raise ValueError(f"query 非法（须非空字符串）: {query!r}")
-    for name, dep in (("searcher", searcher), ("pdf_parser", pdf_parser), ("llm_gateway", llm_gateway), ("validator", validator)):
+    for name, dep in (
+        ("searcher", searcher),
+        ("pdf_parser", pdf_parser),
+        ("llm_gateway", llm_gateway),
+        ("validator", validator),
+    ):
         if dep is None:
             raise ValueError(f"{name} 注入件缺失（流水线缺件不跑）")
 

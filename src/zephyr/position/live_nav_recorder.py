@@ -223,7 +223,9 @@ def build_nav_curve(points: Sequence[NavPoint]) -> NavCurve:
     bench_pts = [p for p in pts if p.benchmark_ratio is not None]
     if len(bench_pts) >= 2 and bench_pts[0].benchmark_ratio and bench_pts[0].benchmark_ratio > 0:
         bench_ret = (bench_pts[-1].benchmark_ratio / bench_pts[0].benchmark_ratio - 1.0) * 100.0  # type: ignore[operator]
-        nav_ret_span = (bench_pts[-1].nav_ratio / bench_pts[0].nav_ratio - 1.0) * 100.0 if bench_pts[0].nav_ratio > 0 else 0.0
+        nav_ret_span = (
+            (bench_pts[-1].nav_ratio / bench_pts[0].nav_ratio - 1.0) * 100.0 if bench_pts[0].nav_ratio > 0 else 0.0
+        )
         excess = round(nav_ret_span - bench_ret, 4)
     notes: list[str] = []
     if excess is None:

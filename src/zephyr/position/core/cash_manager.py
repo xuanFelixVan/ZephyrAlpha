@@ -552,9 +552,7 @@ class FundTransferLedger:
             InvalidCashFlowError: 非 DEPOSIT/WITHDRAWAL 或金额非正
         """
         if transfer.flow_type not in (CashFlowType.DEPOSIT, CashFlowType.WITHDRAWAL):
-            raise InvalidCashFlowError(
-                f"ledger only accepts DEPOSIT/WITHDRAWAL, got {transfer.flow_type}"
-            )
+            raise InvalidCashFlowError(f"ledger only accepts DEPOSIT/WITHDRAWAL, got {transfer.flow_type}")
         if transfer.amount <= 0:
             raise InvalidCashFlowError(f"transfer amount must be positive, got {transfer.amount}")
         self._entries.append(transfer)

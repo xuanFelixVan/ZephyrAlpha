@@ -139,7 +139,9 @@ class EmergencyStopConfirmation:
         self._roster: Final = roster
         self._anchor = VenraDoubleLockAnchor()
         self._seq = itertools.count(1)
-        self._meta: dict[str, tuple[EmergencyActionType, str, str, str]] = {}  # request_id → (action_type, operator, reason, payload_hash)
+        self._meta: dict[
+            str, tuple[EmergencyActionType, str, str, str]
+        ] = {}  # request_id → (action_type, operator, reason, payload_hash)
 
     # ── 提案 ─────────────────────────────────────────────────────────
 
@@ -205,18 +207,20 @@ class EmergencyStopConfirmation:
             action_type, operator, reason, payload_hash = self._meta.get(
                 rec.change_id, (EmergencyActionType.EMERGENCY_STOP, "", "", "")
             )
-            trail.append({
-                "seq": rec.seq,
-                "request_id": rec.change_id,
-                "action_type": action_type.value,
-                "operator": operator,
-                "reason": reason,
-                "payload_hash": payload_hash,
-                "lockers": rec.lockers,
-                "decision": rec.decision,
-                "prev_hash": rec.prev_hash,
-                "record_hash": rec.record_hash,
-            })
+            trail.append(
+                {
+                    "seq": rec.seq,
+                    "request_id": rec.change_id,
+                    "action_type": action_type.value,
+                    "operator": operator,
+                    "reason": reason,
+                    "payload_hash": payload_hash,
+                    "lockers": rec.lockers,
+                    "decision": rec.decision,
+                    "prev_hash": rec.prev_hash,
+                    "record_hash": rec.record_hash,
+                }
+            )
         return trail
 
     def verify_audit_trail(self) -> bool:

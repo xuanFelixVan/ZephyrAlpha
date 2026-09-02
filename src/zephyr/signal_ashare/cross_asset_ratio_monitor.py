@@ -112,9 +112,7 @@ RATIO_DEFS: Final[dict[str, RatioDef]] = {
 }
 
 #: 必需资产全集（四比价并集）
-_REQUIRED_ASSETS: Final = frozenset(
-    a for d in RATIO_DEFS.values() for a in (d.numerator, d.denominator)
-)
+_REQUIRED_ASSETS: Final = frozenset(a for d in RATIO_DEFS.values() for a in (d.numerator, d.denominator))
 
 _BANDS: Final = ((2.0, "极高"), (1.0, "偏高"))  # |z| 阈值（对称，负侧 极低/偏低）
 

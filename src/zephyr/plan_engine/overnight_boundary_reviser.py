@@ -584,10 +584,14 @@ class OvernightBoundaryReviser:
             reasons.append(f"BS-005 外围冲击触发 → {'+1' if base_shift > 0 else '-1'} 档（硬触发）")
         elif abs(gap_adj) >= full_threshold:
             base_shift = 1.0 if gap_adj > 0 else -1.0
-            reasons.append(f"|gap_adj|={abs(gap_adj):.2%} ≥ {full_threshold:.1%} → {'+1' if base_shift > 0 else '-1'} 档")
+            reasons.append(
+                f"|gap_adj|={abs(gap_adj):.2%} ≥ {full_threshold:.1%} → {'+1' if base_shift > 0 else '-1'} 档"
+            )
         elif abs(gap_adj) >= cfg.gap_threshold_half:
             base_shift = 0.5 if gap_adj > 0 else -0.5
-            reasons.append(f"{cfg.gap_threshold_half:.1%} ≤ |gap_adj|={abs(gap_adj):.2%} < {full_threshold:.1%} → {'+0.5' if base_shift > 0 else '-0.5'} 档（加仓上限±20%）")
+            reasons.append(
+                f"{cfg.gap_threshold_half:.1%} ≤ |gap_adj|={abs(gap_adj):.2%} < {full_threshold:.1%} → {'+0.5' if base_shift > 0 else '-0.5'} 档（加仓上限±20%）"
+            )
         else:
             base_shift = 0.0
             reasons.append(f"|gap_adj|={abs(gap_adj):.2%} < {cfg.gap_threshold_half:.1%} → 不变档")
@@ -614,7 +618,9 @@ class OvernightBoundaryReviser:
         if event_flags["futures_delivery_week"]:
             reasons.append(f"股指期货交割周 → basis_weight_scale={basis_weight_scale}（贴水收敛失真降权）")
         if a50_weight is not None:
-            reasons.append(f"A50 交割日（规则自算 {event_flags['a50_delivery_rule_date']}）→ a50_channel_weight={a50_weight}")
+            reasons.append(
+                f"A50 交割日（规则自算 {event_flags['a50_delivery_rule_date']}）→ a50_channel_weight={a50_weight}"
+            )
 
         return OvernightRevision(
             date=iso,

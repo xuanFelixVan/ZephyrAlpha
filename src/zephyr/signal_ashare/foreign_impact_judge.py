@@ -124,16 +124,17 @@ TARGET_RULES: Final[tuple[ForeignImpactRule, ...]] = (
     ForeignImpactRule("nikkei", "日经225", CHANNEL_SENTIMENT, _DIR_UP_POSITIVE, 0.5),
     ForeignImpactRule("kospi", "KOSPI", CHANNEL_SENTIMENT, _DIR_UP_POSITIVE, 0.5),
     ForeignImpactRule("a50", "富时A50", CHANNEL_SENTIMENT, _DIR_UP_POSITIVE, 1.2),
-    ForeignImpactRule("dxy", "美元指数", CHANNEL_CAPITAL, _DIR_UP_NEGATIVE, 0.8,
-                      note="强美元→新兴市场资金流出压力"),
-    ForeignImpactRule("usdcnh", "离岸人民币", CHANNEL_CAPITAL, _DIR_UP_NEGATIVE, 1.0,
-                      note="人民币贬值→北向资金/风险偏好承压"),
-    ForeignImpactRule("wti", "WTI原油", CHANNEL_COST, _DIR_UP_NEGATIVE, 0.6,
-                      note="输入成本/通胀压力（油气产业链反向受益留痕）"),
-    ForeignImpactRule("gold", "黄金", CHANNEL_HEDGE, _DIR_NEUTRAL_WATCH, 0.4,
-                      note="避险情绪观察（黄金股反向受益留痕）"),
-    ForeignImpactRule("ust10y", "美债10Y", CHANNEL_RATE, _DIR_UP_NEGATIVE, 0.8,
-                      note="收益率升→成长估值压制"),
+    ForeignImpactRule("dxy", "美元指数", CHANNEL_CAPITAL, _DIR_UP_NEGATIVE, 0.8, note="强美元→新兴市场资金流出压力"),
+    ForeignImpactRule(
+        "usdcnh", "离岸人民币", CHANNEL_CAPITAL, _DIR_UP_NEGATIVE, 1.0, note="人民币贬值→北向资金/风险偏好承压"
+    ),
+    ForeignImpactRule(
+        "wti", "WTI原油", CHANNEL_COST, _DIR_UP_NEGATIVE, 0.6, note="输入成本/通胀压力（油气产业链反向受益留痕）"
+    ),
+    ForeignImpactRule(
+        "gold", "黄金", CHANNEL_HEDGE, _DIR_NEUTRAL_WATCH, 0.4, note="避险情绪观察（黄金股反向受益留痕）"
+    ),
+    ForeignImpactRule("ust10y", "美债10Y", CHANNEL_RATE, _DIR_UP_NEGATIVE, 0.8, note="收益率升→成长估值压制"),
 )
 
 
@@ -194,9 +195,7 @@ def available_keys_from_coverage(report: Any) -> set[str]:
         参评 target_key 集合。
     """
     return {
-        str(item.key)
-        for item in getattr(report, "items", [])
-        if getattr(item, "status", "") in ("covered", "stale")
+        str(item.key) for item in getattr(report, "items", []) if getattr(item, "status", "") in ("covered", "stale")
     }
 
 
@@ -303,15 +302,24 @@ def judge_foreign_impact(
             note = (note + "；" if note else "") + ("避险升温" if chg > 0 else "避险降温")
         verdicts.append(
             ForeignImpactVerdict(
-                key=key, name_zh=rule.name_zh, chg_pct=round(chg, 4),
-                label=label, channel=rule.channel, strength=strength,
-                weight=rule.weight, contribution=round(contribution, 6), note=note,
+                key=key,
+                name_zh=rule.name_zh,
+                chg_pct=round(chg, 4),
+                label=label,
+                channel=rule.channel,
+                strength=strength,
+                weight=rule.weight,
+                contribution=round(contribution, 6),
+                note=note,
             )
         )
     if not verdicts:
         return ForeignImpactJudgement(
-            direction="中性", impact="弱影响", summary="中性·弱影响",
-            degraded=True, notes=notes + ["无有效参评标的，整体降级"],
+            direction="中性",
+            impact="弱影响",
+            summary="中性·弱影响",
+            degraded=True,
+            notes=notes + ["无有效参评标的，整体降级"],
         )
 
     channel_scores: dict[str, float] = {}

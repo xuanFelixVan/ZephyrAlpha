@@ -135,9 +135,7 @@ class LocalLlmPoolConfig:
 
     def __post_init__(self) -> None:
         if self.unhealthy_threshold <= 0:
-            raise InvalidLocalModelSpecError(
-                f"unhealthy_threshold 必须为正: {self.unhealthy_threshold}"
-            )
+            raise InvalidLocalModelSpecError(f"unhealthy_threshold 必须为正: {self.unhealthy_threshold}")
 
 
 class LocalLlmPool:
@@ -174,20 +172,14 @@ class LocalLlmPool:
         if model not in self._registry:
             raise LocalModelNotRegisteredError(f"模型未注册: {model}")
         spec = self._registry[model]
-        budget = (
-            self._config.budgets.intraday_gb
-            if period == "intraday"
-            else self._config.budgets.postmarket_gb
-        )
+        budget = self._config.budgets.intraday_gb if period == "intraday" else self._config.budgets.postmarket_gb
         used = self._current_vram_gb()
         if used + spec.vram_gb > budget:
             return LoadDecision(
                 model=model,
                 loaded=False,
                 degrade_to_api=True,
-                reasons=(
-                    f"显存超限 used={used:.2f}GB + {spec.vram_gb}GB > budget={budget}GB",
-                ),
+                reasons=(f"显存超限 used={used:.2f}GB + {spec.vram_gb}GB > budget={budget}GB",),
             )
         if self._executor is not None:
             try:
@@ -230,10 +222,7 @@ class LocalLlmPool:
         else:
             h["failure_count"] += 1
             h["consecutive_failures"] += 1
-        h["ema_latency_ms"] = (
-            self._ema_alpha * latency_ms
-            + (1 - self._ema_alpha) * h["ema_latency_ms"]
-        )
+        h["ema_latency_ms"] = self._ema_alpha * latency_ms + (1 - self._ema_alpha) * h["ema_latency_ms"]
         if self._profile_sink is not None:
             try:
                 self._profile_sink(
@@ -250,9 +239,9 @@ class LocalLlmPool:
 
     def select_model(self, preferred_role: str | None = None) -> LocalModelSelection:
         candidates = [
-            name for name in self._loaded
-            if self._is_healthy(name)
-            and (preferred_role is None or self._registry[name].role == preferred_role)
+            name
+            for name in self._loaded
+            if self._is_healthy(name) and (preferred_role is None or self._registry[name].role == preferred_role)
         ]
         if not candidates:
             # 尝试 fallback：忽略角色，只看已载 healthy

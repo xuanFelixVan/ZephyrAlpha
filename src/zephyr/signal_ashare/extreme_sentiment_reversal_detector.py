@@ -124,9 +124,7 @@ class SentimentReversalConfig:
     rsi_ice_threshold: float = 30.0
     double_ice_max_lag_days: int = 2
     repair_prob_threshold: float = 0.70
-    repair_prob_by_lag: dict[int, float] = field(
-        default_factory=lambda: {0: 0.72, 1: 0.74, 2: 0.71}
-    )
+    repair_prob_by_lag: dict[int, float] = field(default_factory=lambda: {0: 0.72, 1: 0.74, 2: 0.71})
     capitulation_threshold: float = 70.0
     volume_avg_window: int = 20
     shakeout_recovery_ratio: float = 0.5
@@ -166,10 +164,7 @@ class SentimentReversalConfig:
             msg = f"volume_avg_window 须≥5，实得 {self.volume_avg_window}"
             raise ValueError(msg)
         if not (0.0 < self.true_breakdown_ratio < self.shakeout_recovery_ratio < 1.0):
-            msg = (
-                f"收回比率须 0<true<shakeout<1，实得 "
-                f"{self.true_breakdown_ratio}/{self.shakeout_recovery_ratio}"
-            )
+            msg = f"收回比率须 0<true<shakeout<1，实得 {self.true_breakdown_ratio}/{self.shakeout_recovery_ratio}"
             raise ValueError(msg)
 
 
@@ -247,9 +242,7 @@ class ExtremeSentimentReversalDetector:
         return self._config
 
     # ── 双冰点确认 ────────────────────────────────────────────────
-    def detect_double_ice(
-        self, sentiment_scores: Sequence[float], index_closes: Sequence[float]
-    ) -> DoubleIceStatus:
+    def detect_double_ice(self, sentiment_scores: Sequence[float], index_closes: Sequence[float]) -> DoubleIceStatus:
         cfg = self._config
         scores = [float(v) for v in sentiment_scores]
         closes = [float(v) for v in index_closes]
@@ -298,9 +291,7 @@ class ExtremeSentimentReversalDetector:
         )
 
     # ── Capitulation 打分卡 ───────────────────────────────────────
-    def capitulation_score(
-        self, day_drop: float, volume_ratio: float, advance_ratio: float
-    ) -> CapitulationScorecard:
+    def capitulation_score(self, day_drop: float, volume_ratio: float, advance_ratio: float) -> CapitulationScorecard:
         if not all(math.isfinite(v) for v in (day_drop, volume_ratio, advance_ratio)):
             msg = "输入含非有限值（NaN/inf）"
             raise ValueError(msg)
@@ -402,9 +393,7 @@ class ExtremeSentimentReversalDetector:
             notes.append("未注入 support_level，破位裁定腿降级")
 
         reversal = bool(
-            ice.confirmed
-            and card.is_capitulation
-            and (verdict is None or verdict.kind != "true_breakdown")
+            ice.confirmed and card.is_capitulation and (verdict is None or verdict.kind != "true_breakdown")
         )
         confidence = (card.total / 100.0) * ice.repair_probability if reversal else 0.0
         return ExtremeReversalReport(

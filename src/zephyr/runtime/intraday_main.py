@@ -151,6 +151,7 @@ def is_trading_day(day: datetime.date | None = None) -> bool:
     """A 股交易日判定（向后兼容接口，测试 mock 目标）。"""
     return _DEFAULT_CALENDAR.is_trading_day(day)
 
+
 if TYPE_CHECKING:
     import redis
 

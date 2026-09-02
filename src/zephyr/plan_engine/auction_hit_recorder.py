@@ -393,9 +393,7 @@ def record_auction_hit(
     hit = None if matched is None else (actual == matched)
 
     direction_void = bool(
-        auction is not None
-        and auction.fake_ratio is not None
-        and auction.fake_ratio > cfg.fake_ratio_void
+        auction is not None and auction.fake_ratio is not None and auction.fake_ratio > cfg.fake_ratio_void
     )
     annotations: list[str] = [f"盘中命中格={actual}（{PHASE_INTRADAY} 判定）"]
     if direction_void:

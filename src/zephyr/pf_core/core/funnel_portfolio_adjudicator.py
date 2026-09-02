@@ -317,9 +317,7 @@ class FunnelPortfolioAdjudicator:
             return cand.score * (1.0 - cfg.crowding_derate * cand.crowding_score)
         return cand.score
 
-    def _corr_of(
-        self, a: str, b: str, correlations: Mapping[tuple[str, str], float]
-    ) -> float | None:
+    def _corr_of(self, a: str, b: str, correlations: Mapping[tuple[str, str], float]) -> float | None:
         if a == b:
             return 1.0
         v = correlations.get((a, b))
@@ -431,9 +429,7 @@ class FunnelPortfolioAdjudicator:
                     ),
                 )
                 picks.remove(drop)
-                rejected.append(
-                    FunnelRejection(drop[1].symbol, f"style_limit:{viol_factor}(>{cfg.style_limit})")
-                )
+                rejected.append(FunnelRejection(drop[1].symbol, f"style_limit:{viol_factor}(>{cfg.style_limit})"))
                 continue
             vol = self._portfolio_vol(picks, weights, correlations)
             mdd = sum(weights[c.symbol] * c.max_drawdown for _, c in picks)

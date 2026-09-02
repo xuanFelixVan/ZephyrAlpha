@@ -133,7 +133,9 @@ def _bare(code: str) -> str:
     return c
 
 
-def _regime_leg(panel: Any | None, code: str) -> tuple[str | None, float | None, dict[str, float] | None, int | None, str | None]:
+def _regime_leg(
+    panel: Any | None, code: str
+) -> tuple[str | None, float | None, dict[str, float] | None, int | None, str | None]:
     """regime 卡裸码匹配 → (dominant, confidence, probs, rank, note)。"""
     if panel is None:
         return None, None, None, None, "regime 面板未注入，regime 腿降级"
@@ -151,7 +153,9 @@ def _regime_leg(panel: Any | None, code: str) -> tuple[str | None, float | None,
     return None, None, None, None, "regime 面板无该指数卡，regime 腿降级"
 
 
-def _forecast_leg(bars: Sequence[Any] | None, cfg: IndexBriefConfig) -> tuple[str | None, float | None, float | None, dict[str, float] | None, str | None]:
+def _forecast_leg(
+    bars: Sequence[Any] | None, cfg: IndexBriefConfig
+) -> tuple[str | None, float | None, float | None, dict[str, float] | None, str | None]:
     """8 态预判（MOD-SIG-037 参数化）→ (top_state, top_prob, confidence, probs, note)。"""
     if not bars:
         return None, None, None, None, "日 K 序列未供给，预判腿降级"

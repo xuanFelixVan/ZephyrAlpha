@@ -157,9 +157,7 @@ class AtrStopConfig:
         if len(self.profit_target_fractions) != 3 or any(
             f <= 0 or not math.isfinite(f) for f in self.profit_target_fractions
         ):
-            raise InvalidAtrStopInputError(
-                f"profit_target_fractions 须为 3 段正数: {self.profit_target_fractions}"
-            )
+            raise InvalidAtrStopInputError(f"profit_target_fractions 须为 3 段正数: {self.profit_target_fractions}")
 
 
 @dataclass(frozen=True)
@@ -294,9 +292,7 @@ class AtrStopEngine:
         if not math.isfinite(new_stop):
             raise InvalidAtrStopInputError(f"new_trailing_stop 必须为有限值: {new_trailing_stop}")
         if new_stop < plan.current_trailing_stop:
-            raise InvalidAtrStopInputError(
-                f"追踪止损只上移不下移: {new_stop} < {plan.current_trailing_stop}"
-            )
+            raise InvalidAtrStopInputError(f"追踪止损只上移不下移: {new_stop} < {plan.current_trailing_stop}")
         return AtrStopPlan(
             entry_price=plan.entry_price,
             atr14=plan.atr14,
@@ -336,9 +332,7 @@ class AtrStopEngine:
         lo, hi = self._validate_bounds(k_bounds)
         if n_points < 2:
             raise InvalidAtrStopInputError(f"n_points 必须 ≥2: {n_points}")
-        evaluations = tuple(
-            (k, self._eval_objective(objective, k)) for k in np.linspace(lo, hi, n_points).tolist()
-        )
+        evaluations = tuple((k, self._eval_objective(objective, k)) for k in np.linspace(lo, hi, n_points).tolist())
         best_k, best_value = max(evaluations, key=lambda kv: kv[1])
         return GridSearchResult(best_k=best_k, best_value=best_value, evaluations=evaluations)
 

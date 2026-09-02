@@ -189,23 +189,17 @@ class ManipulationAvoidanceDetector:
     ) -> None:
         self._wash_ref = _non_negative("wash_ref", wash_ref) or self._reject_zero("wash_ref")
         self._tail_ref = _non_negative("tail_ref", tail_ref) or self._reject_zero("tail_ref")
-        self._turnover_ref = _non_negative("turnover_ref", turnover_ref) or self._reject_zero(
-            "turnover_ref"
-        )
+        self._turnover_ref = _non_negative("turnover_ref", turnover_ref) or self._reject_zero("turnover_ref")
         watch = _finite("watch_threshold", watch_threshold)
         avoid = _finite("avoid_threshold", avoid_threshold)
         if not 0.0 < watch < avoid <= 1.0:
-            raise InvalidManipulationInputError(
-                f"阈值须满足 0<watch<avoid≤1: watch={watch}, avoid={avoid}"
-            )
+            raise InvalidManipulationInputError(f"阈值须满足 0<watch<avoid≤1: watch={watch}, avoid={avoid}")
         self._watch_threshold = watch
         self._avoid_threshold = avoid
 
         raw = dict.fromkeys(_FEATURE_KEYS, 1.0) if weights is None else dict(weights)
         if set(raw) != set(_FEATURE_KEYS):
-            raise InvalidManipulationInputError(
-                f"weights 键必须恰为五类 {sorted(_FEATURE_KEYS)}: {sorted(raw)}"
-            )
+            raise InvalidManipulationInputError(f"weights 键必须恰为五类 {sorted(_FEATURE_KEYS)}: {sorted(raw)}")
         parsed: dict[str, float] = {}
         for key, value in raw.items():
             w = _finite(f"weights[{key}]", value)
@@ -233,9 +227,7 @@ class ManipulationAvoidanceDetector:
         if not symbol:
             raise InvalidManipulationInputError("symbol 不能为空")
         if not isinstance(features, ManipulationFeatures):
-            raise InvalidManipulationInputError(
-                f"features 类型非法: {type(features).__name__}"
-            )
+            raise InvalidManipulationInputError(f"features 类型非法: {type(features).__name__}")
         sub = self._sub_scores(features)
         total_w = sum(self._weights.values())
         score = sum(self._weights[k] * sub[k] for k in _FEATURE_KEYS) / total_w
@@ -255,9 +247,7 @@ class ManipulationAvoidanceDetector:
             self._audit_sink(verdict)
         return verdict
 
-    def assess_batch(
-        self, batch: Mapping[str, ManipulationFeatures]
-    ) -> AvoidanceReport:
+    def assess_batch(self, batch: Mapping[str, ManipulationFeatures]) -> AvoidanceReport:
         """批量判定 → 回避名单（AVOID 降序）+ 观察名单（WATCH 降序）。"""
         if not batch:
             raise InvalidManipulationInputError("batch 不能为空")

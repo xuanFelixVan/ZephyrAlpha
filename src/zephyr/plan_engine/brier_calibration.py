@@ -235,9 +235,7 @@ def brier_score_multiclass(distributions: Iterable[tuple[Sequence[float], int]])
             raise ValueError(f"概率分布和≠1（±{_PROB_SUM_TOLERANCE}）: {sum(vals)!r}")
         if outcome_idx < 0 or outcome_idx >= len(vals):
             raise ValueError(f"outcome 索引越界（分布维数 {len(vals)}）: {outcome_idx!r}")
-        total += sum(
-            (p - (1.0 if k == outcome_idx else 0.0)) ** 2 for k, p in enumerate(vals)
-        )
+        total += sum((p - (1.0 if k == outcome_idx else 0.0)) ** 2 for k, p in enumerate(vals))
     return total / len(items)
 
 
@@ -319,9 +317,7 @@ def expected_calibration_error(
     bins = calibration_bins(norm, n_bins=n_bins)
     total = len(norm)
     return sum(
-        (b.count / total) * abs(b.calibration_gap)
-        for b in bins
-        if b.count > 0 and b.calibration_gap is not None
+        (b.count / total) * abs(b.calibration_gap) for b in bins if b.count > 0 and b.calibration_gap is not None
     )
 
 
@@ -446,7 +442,10 @@ def compute_calibration(
     end = as_of if as_of is not None else date.today()
     window_start = (end - timedelta(days=v_window - 1)).isoformat()
     pairs, skipped = load_confidence_pairs(
-        v_module, window_days=v_window, db_path=db_path, as_of=end,
+        v_module,
+        window_days=v_window,
+        db_path=db_path,
+        as_of=end,
     )
     return CalibrationReport(
         module=v_module,

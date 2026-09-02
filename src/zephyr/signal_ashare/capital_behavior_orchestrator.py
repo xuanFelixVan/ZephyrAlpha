@@ -134,9 +134,7 @@ class CapitalBehaviorConfig:
 
     def __post_init__(self) -> None:
         if not -1.0 <= self.short_threshold < self.long_threshold <= 1.0:
-            raise ValueError(
-                f"阈值非法: short={self.short_threshold} long={self.long_threshold}"
-            )
+            raise ValueError(f"阈值非法: short={self.short_threshold} long={self.long_threshold}")
         if not 0.0 < self.calibration_alpha <= 1.0:
             raise ValueError(f"calibration_alpha 须∈(0,1]: {self.calibration_alpha}")
 
@@ -234,16 +232,8 @@ class CapitalBehaviorOrchestrator:
             bias = self._bias[o.capital_class]
             adj = o.net_inflow * o.confidence * (1.0 + bias)
             signed_sum += adj
-            cls_dir = (
-                ForceDirection.LONG
-                if adj > 0
-                else ForceDirection.SHORT
-                if adj < 0
-                else ForceDirection.NEUTRAL
-            )
-            cls_strength = (
-                abs(o.net_inflow) * o.confidence / total_weight if total_weight > 0 else 0.0
-            )
+            cls_dir = ForceDirection.LONG if adj > 0 else ForceDirection.SHORT if adj < 0 else ForceDirection.NEUTRAL
+            cls_strength = abs(o.net_inflow) * o.confidence / total_weight if total_weight > 0 else 0.0
             profiles.append(
                 CapitalProfile(
                     capital_class=o.capital_class,

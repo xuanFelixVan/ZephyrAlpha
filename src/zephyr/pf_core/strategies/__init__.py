@@ -54,7 +54,10 @@ _LAZY = {
     # 禁止在本文件实体 import 三个类（历史双份拷贝致重复注册 raise 教训）。
     "DabanSleeveStrategy": ("zephyr.pf_core.strategies.daban_sleeve_strategy", "DabanSleeveStrategy"),
     "MultifactorSleeveStrategy": ("zephyr.pf_core.strategies.multifactor_sleeve_strategy", "MultifactorSleeveStrategy"),
-    "EventDrivenSleeveStrategy": ("zephyr.pf_core.strategies.event_driven_sleeve_strategy", "EventDrivenSleeveStrategy"),
+    "EventDrivenSleeveStrategy": (
+        "zephyr.pf_core.strategies.event_driven_sleeve_strategy",
+        "EventDrivenSleeveStrategy",
+    ),
 }
 
 # ORPHAN-MODULE 可发现性（2026-08-21）：TYPE_CHECKING 静态引用——仅类型检查期生效，

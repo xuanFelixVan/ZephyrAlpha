@@ -97,9 +97,7 @@ CALENDAR_FALLBACK_TABLE: Final = "c1_market.trade_calendar"  # 注册表不可�
 # SQL 模板常量（NO-BARE-SQL gate 豁免：_SQL_* 前缀，与 scenario_plan_recorder 同约定）
 # 次交易日：is_open=1 且严格大于数据日的最近一个开市日（LIMIT 1 防全表扫）
 _SQL_NEXT_TRADING_DAY: Final = (
-    "SELECT cal_date FROM {table} "
-    "WHERE is_open = 1 AND cal_date > '{trade_date}' "
-    "ORDER BY cal_date LIMIT 1"
+    "SELECT cal_date FROM {table} WHERE is_open = 1 AND cal_date > '{trade_date}' ORDER BY cal_date LIMIT 1"
 )
 
 
@@ -199,7 +197,12 @@ class DailyWarroomPipeline:
 
             return get_registry().table(self._config.calendar_category)
         except Exception as exc:  # noqa: BLE001 — fail-open：表名解析失败不阻塞主流程
-            log.warning("日历表名解析失败 %s，降级 %s: %s", self._config.calendar_category, self._config.calendar_fallback_table, exc)
+            log.warning(
+                "日历表名解析失败 %s，降级 %s: %s",
+                self._config.calendar_category,
+                self._config.calendar_fallback_table,
+                exc,
+            )
             trace["channels"]["calendar_table"] = f"fallback:{type(exc).__name__}"
             return self._config.calendar_fallback_table
 
@@ -379,5 +382,8 @@ def run_daily_warroom_pipeline(
         DailyWarroomPipelineResult（JSON 可序列化；幂等复用 prediction_log 键）。
     """
     return DailyWarroomPipeline(ch_client=ch_client, db_path=db_path, config=config).run(
-        data_date, phase=phase, asof_ts=asof_ts, **compute_kwargs,
+        data_date,
+        phase=phase,
+        asof_ts=asof_ts,
+        **compute_kwargs,
     )

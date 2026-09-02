@@ -330,7 +330,9 @@ class ScenarioPlanner:
 
         price_note = f"禁加仓价位 {no_add}" if no_add is not None else "禁加仓价位待 boundary 注入"
         reduce_note = (
-            f"回落破减仓触发 {reduce_trigger} → 执行减仓" if reduce_trigger is not None else "减仓触发价待 boundary 注入"
+            f"回落破减仓触发 {reduce_trigger} → 执行减仓"
+            if reduce_trigger is not None
+            else "减仓触发价待 boundary 注入"
         )
         exit_note = f"冲上沿必出止盈 {must_exit}（纪律）" if must_exit is not None else "必出止盈价待 boundary 注入"
 
@@ -414,9 +416,7 @@ class ScenarioPlanner:
             }
         return snap
 
-    def _compute_deviation(
-        self, snap: dict[str, dict[str, Any]]
-    ) -> tuple[float | None, float, int]:
+    def _compute_deviation(self, snap: dict[str, dict[str, Any]]) -> tuple[float | None, float, int]:
         """D1 虚拟开盘价偏离：成交额加权 (9:25 匹配价-昨收)/昨收。
 
         返回 (deviation, today_total_vol, n_symbols)；无有效样本→(None, 0.0, 0)。
@@ -477,7 +477,9 @@ class ScenarioPlanner:
         table = self._table("market_auction_book", "c1_market.auction_book")
         deadline = f"{trade_date} {self._config.cancel_deadline}:00"
         tsv = self._query(
-            _SQL_AUCTION_BOOK_SERIES.format(table=table, deadline=deadline, book_vol=_BOOK_VOL_EXPR, trade_date=trade_date),
+            _SQL_AUCTION_BOOK_SERIES.format(
+                table=table, deadline=deadline, book_vol=_BOOK_VOL_EXPR, trade_date=trade_date
+            ),
             "auction_book_series",
             trace,
         )
@@ -591,9 +593,7 @@ class ScenarioPlanner:
         if deviation is not None and gap_adj is not None and abs(gap_adj) >= cfg.gap_significant:
             consistent = deviation * gap_adj > 0
             if not consistent:
-                reasons.append(
-                    f"D1 方向背离：deviation={deviation:+.2%} vs gap_adj={gap_adj:+.2%} → 降信半个修正幅度"
-                )
+                reasons.append(f"D1 方向背离：deviation={deviation:+.2%} vs gap_adj={gap_adj:+.2%} → 降信半个修正幅度")
         elif gap_adj is None:
             reasons.append("gap_adj 缺失（外盘通道无数据），方向一致性不验证")
 
@@ -765,6 +765,4 @@ def compute_scenario_plan(
         ScenarioPlan：纯 frozen dataclass，JSON 可序列化（供 prediction_log 落库）。
         竞价仅作验证信号不作下单通道（40号决策⑧）。
     """
-    return ScenarioPlanner(ch_client=ch_client, config=config).compute(
-        trade_date, revision=revision, boundary=boundary
-    )
+    return ScenarioPlanner(ch_client=ch_client, config=config).compute(trade_date, revision=revision, boundary=boundary)

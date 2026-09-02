@@ -154,9 +154,7 @@ class SystemicRiskAlertConfig:
                 f"单日亏阈值须满足 red<orange<0: {self.daily_loss_red}/{self.daily_loss_orange}"
             )
         if not (self.consecutive_loss_daily < 0):
-            raise InvalidSystemicAlertInputError(
-                f"连续亏损日阈必须为负: {self.consecutive_loss_daily}"
-            )
+            raise InvalidSystemicAlertInputError(f"连续亏损日阈必须为负: {self.consecutive_loss_daily}")
         for name, v in (
             ("yellow_new_position_scale", self.yellow_new_position_scale),
             ("orange_reduce_pct", self.orange_reduce_pct),
@@ -253,18 +251,24 @@ class SystemicRiskAlertStateMachine:
         if var95 >= cfg.var_red_min:
             hits.append((RiskLevel.RED, f"VaR95 {var95:.2%} ≥ 红档阈 {cfg.var_red_min:.2%}"))
         elif var95 >= cfg.var_orange_min:
-            hits.append((RiskLevel.ORANGE, f"VaR95 {var95:.2%} ∈ 橙档 [{cfg.var_orange_min:.2%},{cfg.var_red_min:.2%})"))
+            hits.append(
+                (RiskLevel.ORANGE, f"VaR95 {var95:.2%} ∈ 橙档 [{cfg.var_orange_min:.2%},{cfg.var_red_min:.2%})")
+            )
         elif var95 >= cfg.var_yellow_min:
-            hits.append((RiskLevel.YELLOW, f"VaR95 {var95:.2%} ∈ 黄档 [{cfg.var_yellow_min:.2%},{cfg.var_orange_min:.2%})"))
+            hits.append(
+                (RiskLevel.YELLOW, f"VaR95 {var95:.2%} ∈ 黄档 [{cfg.var_yellow_min:.2%},{cfg.var_orange_min:.2%})")
+            )
         if daily <= cfg.daily_loss_red:
             hits.append((RiskLevel.RED, f"单日亏 {daily:.2%} ≤ 红档阈 {cfg.daily_loss_red:.2%}"))
         elif daily <= cfg.daily_loss_orange:
             hits.append((RiskLevel.ORANGE, f"单日亏 {daily:.2%} ≤ 橙档阈 {cfg.daily_loss_orange:.2%}"))
         if daily <= cfg.consecutive_loss_daily and prev <= cfg.consecutive_loss_daily:
-            hits.append((
-                RiskLevel.YELLOW,
-                f"连续 2 日亏（当日 {daily:.2%} / 前日 {prev:.2%} 均 ≤ {cfg.consecutive_loss_daily:.2%}）",
-            ))
+            hits.append(
+                (
+                    RiskLevel.YELLOW,
+                    f"连续 2 日亏（当日 {daily:.2%} / 前日 {prev:.2%} 均 ≤ {cfg.consecutive_loss_daily:.2%}）",
+                )
+            )
 
         # ② 取最严
         if hits:

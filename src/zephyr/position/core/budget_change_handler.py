@@ -499,7 +499,9 @@ class BudgetChangeHandler:
             else f"累计趋势 {state.cumulative_budget_change:.1%} ≥ {self.cumulative_trend_threshold:.0%} 阈值（日间趋势强制触发）"
         )
 
-        return self._finalize(self._trigger_three_tier_escalation(state, old_budget, new_budget, strategy_type, trigger_reason))
+        return self._finalize(
+            self._trigger_three_tier_escalation(state, old_budget, new_budget, strategy_type, trigger_reason)
+        )
 
     def check_convergence(
         self,
@@ -680,8 +682,7 @@ class BudgetChangeHandler:
                     details={"type": type(allocation).__name__},
                 )
         if not isinstance(effective, dict) or not all(
-            isinstance(k, str) and isinstance(v, (int, float)) and not isinstance(v, bool)
-            for k, v in effective.items()
+            isinstance(k, str) and isinstance(v, (int, float)) and not isinstance(v, bool) for k, v in effective.items()
         ):
             raise BudgetChangeError(
                 "sync_from_allocator: effective_budgets 必须是 {str: 数值} 映射",

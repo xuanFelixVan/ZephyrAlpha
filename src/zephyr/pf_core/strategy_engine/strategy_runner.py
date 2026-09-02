@@ -235,7 +235,7 @@ class StrategyRunner:
 
         bt_config = config.backtest_config or BacktestConfig(initial_capital=Decimal(str(config.initial_capital)))
         engine = EventDrivenEngine(config=bt_config)
-        self._last_tick_engine = engine   # BTRUN 时序落盘用（engine.last_portfolio）
+        self._last_tick_engine = engine  # BTRUN 时序落盘用（engine.last_portfolio）
         start_dt = _dt.strptime(start, "%Y-%m-%d")
         end_dt = _dt.strptime(end, "%Y-%m-%d")
         try:

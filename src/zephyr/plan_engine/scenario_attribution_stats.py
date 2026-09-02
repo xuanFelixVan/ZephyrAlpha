@@ -335,7 +335,10 @@ def compute_scenario_attribution(
     end = as_of if as_of is not None else date.today()
     window_start = (end - timedelta(days=v_window - 1)).isoformat()
     records, skipped = load_attribution_records(
-        v_module, window_days=v_window, db_path=db_path, as_of=end,
+        v_module,
+        window_days=v_window,
+        db_path=db_path,
+        as_of=end,
     )
     return compute_attribution(
         records,

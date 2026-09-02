@@ -290,7 +290,9 @@ def build_sit_out_list(
                 scope="portfolio",
                 target=None,
                 action="NO_TRADE",
-                reason=f"池外不碰：作战池 {n} 票之外不新开仓（注意力也是风险预算）" if n else "池外不碰日：作战池空，全面禁新开仓",
+                reason=f"池外不碰：作战池 {n} 票之外不新开仓（注意力也是风险预算）"
+                if n
+                else "池外不碰日：作战池空，全面禁新开仓",
                 source="war_pool",
             )
         )

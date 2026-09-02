@@ -266,9 +266,7 @@ class PostEntryInstantValidator:
         low_v = _positive_finite("session_low", session_low)
         atr = _positive_finite("atr14", atr14)
         if low_v > current:
-            raise InvalidPostEntryInputError(
-                f"session_low 不能高于 current_price: {low_v} > {current}"
-            )
+            raise InvalidPostEntryInputError(f"session_low 不能高于 current_price: {low_v} > {current}")
         rebound = current - low_v
         rebound_line = self._config.rebound_atr_frac * atr
         metrics = {"vwap": vwap_v, "session_low": low_v, "rebound": rebound, "atr14": atr}
@@ -293,8 +291,7 @@ class PostEntryInstantValidator:
         if adverse > adverse_line:
             return (
                 CorrectionAction.EXIT_ALL,
-                f"30min反向{adverse:.3f}>{self._config.adverse_atr_mult}×ATR"
-                f"({adverse_line:.3f})→全部止损",
+                f"30min反向{adverse:.3f}>{self._config.adverse_atr_mult}×ATR({adverse_line:.3f})→全部止损",
                 metrics,
             )
         return CorrectionAction.PASS, "30min验证通过（反向幅度未越 2ATR 线）", metrics

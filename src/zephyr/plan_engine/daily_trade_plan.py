@@ -282,9 +282,7 @@ def _build_buy_item(
         return None, f"{candidate.symbol} 箱体下沿非正（{buy_price}），跳过拟买"
     quantity = _floor_lot(cap * float(config.total_capital) / buy_price, config.lot_size)
     if quantity <= 0:
-        return None, (
-            f"{candidate.symbol} 上限 {cap:.1%}×资金折算不足一手（{config.lot_size} 股），跳过拟买"
-        )
+        return None, (f"{candidate.symbol} 上限 {cap:.1%}×资金折算不足一手（{config.lot_size} 股），跳过拟买")
     role_label = candidate.role.strip() or DEFAULT_ROLE_LABEL
     logic = (
         f"{role_label}·{stance}档：箱体 {b.box_lower:.2f}~{b.box_upper:.2f}，"
@@ -323,9 +321,7 @@ def _build_sell_items(
             direction="SELL",
             quantity=shares,
             reference_price=round(holding.reference_price, 4),
-            logic=(
-                f"止盈纪律：冲必出价 {b.must_exit_price:.2f} 全出 {shares} 股（箱体上沿，MOD-PLAN-001 纪律）"
-            ),
+            logic=(f"止盈纪律：冲必出价 {b.must_exit_price:.2f} 全出 {shares} 股（箱体上沿，MOD-PLAN-001 纪律）"),
             trigger_price=round(b.must_exit_price, 4),
             cap_weight=0.0,
         )
@@ -340,17 +336,14 @@ def _build_sell_items(
                 quantity=reduce_qty,
                 reference_price=round(holding.reference_price, 4),
                 logic=(
-                    f"风控减仓：回落破箱体下沿 {b.box_lower:.2f} 减仓 "
-                    f"{holding.reduce_fraction:.0%}（{reduce_qty} 股）"
+                    f"风控减仓：回落破箱体下沿 {b.box_lower:.2f} 减仓 {holding.reduce_fraction:.0%}（{reduce_qty} 股）"
                 ),
                 trigger_price=round(b.box_lower, 4),
                 cap_weight=0.0,
             )
         )
     else:
-        notes.append(
-            f"{holding.symbol} 减仓 {holding.reduce_fraction:.0%} 折算不足一手，减仓条目跳过（止盈条目保留）"
-        )
+        notes.append(f"{holding.symbol} 减仓 {holding.reduce_fraction:.0%} 折算不足一手，减仓条目跳过（止盈条目保留）")
     return items, notes
 
 

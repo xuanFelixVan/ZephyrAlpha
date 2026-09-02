@@ -889,6 +889,8 @@ class ScenarioProbabilityModel:
                 db_path=self._db_path,
             )
         except Exception as exc:  # noqa: BLE001 — fail-open：落库失败不阻塞预测主流程
-            log.warning("scenario_probability 落库失败 fail-open（date=%s）: %s: %s", fc.trade_date, type(exc).__name__, exc)
+            log.warning(
+                "scenario_probability 落库失败 fail-open（date=%s）: %s: %s", fc.trade_date, type(exc).__name__, exc
+            )
             row_id = -1
         return fc, row_id

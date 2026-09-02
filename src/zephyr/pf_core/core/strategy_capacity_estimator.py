@@ -203,13 +203,17 @@ class StrategyCapacityEstimator:
             raise CapacityEstimationError(f"current_aum 必须 ≥0: {current_aum}")
 
         cfg = self._config
-        p_max = cfg.participation_max if participation_max is None else _require_finite(
-            "participation_max", participation_max
+        p_max = (
+            cfg.participation_max
+            if participation_max is None
+            else _require_finite("participation_max", participation_max)
         )
         if not 0.0 < p_max <= 1.0:
             raise CapacityEstimationError(f"participation_max 必须 ∈(0,1]: {p_max}")
-        tolerance = cfg.impact_tolerance_bps if impact_tolerance_bps is None else _require_finite(
-            "impact_tolerance_bps", impact_tolerance_bps
+        tolerance = (
+            cfg.impact_tolerance_bps
+            if impact_tolerance_bps is None
+            else _require_finite("impact_tolerance_bps", impact_tolerance_bps)
         )
         if tolerance <= 0:
             raise CapacityEstimationError(f"impact_tolerance_bps 必须为正: {tolerance}")
@@ -217,9 +221,7 @@ class StrategyCapacityEstimator:
         # ① 有效参与率（平方根冲击：impact=coef×√p ≤ tolerance → p ≤ (tolerance/coef)²）
         p_impact = (tolerance / cfg.impact_coef_bps) ** 2
         effective = min(p_max, p_impact)
-        binding = (
-            BindingConstraint.PARTICIPATION if p_max <= p_impact else BindingConstraint.IMPACT_TOLERANCE
-        )
+        binding = BindingConstraint.PARTICIPATION if p_max <= p_impact else BindingConstraint.IMPACT_TOLERANCE
 
         # ② 容量与利用率
         capacity = adv_total * effective / turnover

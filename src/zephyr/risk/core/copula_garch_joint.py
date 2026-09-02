@@ -153,13 +153,12 @@ class CopulaGarchConfig:
         if self.min_history < 10:
             raise CopulaGarchJointError(f"min_history 必须 ≥10: {self.min_history}")
         if not (0.0 < self.dcc_a < 1.0 and 0.0 < self.dcc_b < 1.0) or self.dcc_a + self.dcc_b >= 1.0:
-            raise CopulaGarchJointError(
-                f"DCC 参数须满足 a>0,b>0,a+b<1: a={self.dcc_a} b={self.dcc_b}"
-            )
-        if not (0.0 < self.garch_alpha < 1.0 and 0.0 < self.garch_beta < 1.0) or self.garch_alpha + self.garch_beta >= 1.0:
-            raise CopulaGarchJointError(
-                f"GARCH 参数须满足 α>0,β>0,α+β<1: α={self.garch_alpha} β={self.garch_beta}"
-            )
+            raise CopulaGarchJointError(f"DCC 参数须满足 a>0,b>0,a+b<1: a={self.dcc_a} b={self.dcc_b}")
+        if (
+            not (0.0 < self.garch_alpha < 1.0 and 0.0 < self.garch_beta < 1.0)
+            or self.garch_alpha + self.garch_beta >= 1.0
+        ):
+            raise CopulaGarchJointError(f"GARCH 参数须满足 α>0,β>0,α+β<1: α={self.garch_alpha} β={self.garch_beta}")
         if not (0.0 < self.tail_quantile < 0.5):
             raise CopulaGarchJointError(f"tail_quantile 须 ∈(0,0.5): {self.tail_quantile}")
         if not self.confidence_levels or any(not (0.0 < c < 1.0) for c in self.confidence_levels):

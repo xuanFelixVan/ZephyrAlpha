@@ -461,7 +461,9 @@ def _compute_product(
             notes.append(f"持仓同步激增{surge_pct:.1%} → 真对冲确认")
         elif confirm is False:
             signal_weight = cfg.unconfirmed_discount
-            notes.append(f"持仓平稳(激增率{surge_pct:.1%}≤{cfg.position_confirm_pct:.0%}) → 信号打折×{cfg.unconfirmed_discount}（或为期指单边投机）")
+            notes.append(
+                f"持仓平稳(激增率{surge_pct:.1%}≤{cfg.position_confirm_pct:.0%}) → 信号打折×{cfg.unconfirmed_discount}（或为期指单边投机）"
+            )
         else:
             notes.append("持仓数据不可用，告警不打折(fail-open)")
 
@@ -529,7 +531,9 @@ def compute_futures_basis(
     )
     if event_rows:
         delivery_week = True
-        notes.append(f"{week_start.isoformat()}~{week_end.isoformat()} 为股指期货交割周，贴水自然收敛失真剔除 → 信号降权×{cfg.delivery_week_weight}")
+        notes.append(
+            f"{week_start.isoformat()}~{week_end.isoformat()} 为股指期货交割周，贴水自然收敛失真剔除 → 信号降权×{cfg.delivery_week_weight}"
+        )
     applied_weight = cfg.delivery_week_weight if delivery_week else 1.0
 
     per_symbol: dict[str, FuturesBasisSymbol] = {}
@@ -542,8 +546,12 @@ def compute_futures_basis(
         notes.append("全部品种两腿皆无（期货+现货数据缺口）")
         logger.warning("期指基差监测降级: %s", notes[-1])
         return FuturesBasisSnapshot(
-            ts=ts_str, trade_date=d.isoformat(), delivery_week=delivery_week,
-            applied_weight=applied_weight, degraded=True, notes=notes,
+            ts=ts_str,
+            trade_date=d.isoformat(),
+            delivery_week=delivery_week,
+            applied_weight=applied_weight,
+            degraded=True,
+            notes=notes,
         )
 
     return FuturesBasisSnapshot(

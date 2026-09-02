@@ -177,10 +177,7 @@ def _minute_returns(series: list[tuple[str, float]]) -> dict[str, float]:
 
 
 def _degraded_board(date_str: str, symbol: str, note: str) -> CounterTrendBoard:
-    cards = [
-        CounterTrendCard(card=k, title=v, degraded=True, note=note)
-        for k, v in _CARD_TITLES.items()
-    ]
+    cards = [CounterTrendCard(card=k, title=v, degraded=True, note=note) for k, v in _CARD_TITLES.items()]
     return CounterTrendBoard(date=date_str, index_symbol=symbol, cards=cards, degraded=True, notes=[note])
 
 
@@ -231,14 +228,17 @@ def build_counter_trend_board(
         if cum > 0:
             rally_items.append(
                 CounterTrendCardItem(
-                    sector_code=s, sector_name=names.get(s, ""),
-                    metric_value=round(cum, 4), metric_label="段内累计收益%",
+                    sector_code=s,
+                    sector_name=names.get(s, ""),
+                    metric_value=round(cum, 4),
+                    metric_label="段内累计收益%",
                     covered_minutes=len(rets),
                 )
             )
     rally_items.sort(key=lambda i: (-i.metric_value, i.sector_code))
     card1 = CounterTrendCard(
-        card="counter_rally", title=_CARD_TITLES["counter_rally"],
+        card="counter_rally",
+        title=_CARD_TITLES["counter_rally"],
         items=rally_items[: cfg.top_n],
         degraded=not rally_items,
         note="" if rally_items else "段内无正收益板块",
@@ -247,22 +247,27 @@ def build_counter_trend_board(
     # ---- 卡2 下跌段资金流入（注入位）----
     if fund_flow is None:
         card2 = CounterTrendCard(
-            card="fund_inflow", title=_CARD_TITLES["fund_inflow"],
-            degraded=True, note="资金流数据未供给（注入位 None），本卡降级",
+            card="fund_inflow",
+            title=_CARD_TITLES["fund_inflow"],
+            degraded=True,
+            note="资金流数据未供给（注入位 None），本卡降级",
         )
         notes.append("资金腿未供给，下跌段资金流入卡降级")
     else:
         flow_items = [
             CounterTrendCardItem(
-                sector_code=s, sector_name=names.get(s, ""),
-                metric_value=round(float(v), 2), metric_label="段内净流入",
+                sector_code=s,
+                sector_name=names.get(s, ""),
+                metric_value=round(float(v), 2),
+                metric_label="段内净流入",
             )
             for s, v in fund_flow.items()
             if float(v) > 0
         ]
         flow_items.sort(key=lambda i: (-i.metric_value, i.sector_code))
         card2 = CounterTrendCard(
-            card="fund_inflow", title=_CARD_TITLES["fund_inflow"],
+            card="fund_inflow",
+            title=_CARD_TITLES["fund_inflow"],
             items=flow_items[: cfg.top_n],
             degraded=not flow_items,
             note="" if flow_items else "段内无正净流入板块",
@@ -272,8 +277,10 @@ def build_counter_trend_board(
     rebound_items: list[CounterTrendCardItem] = []
     if trough_idx >= len(index_series) - 1:
         card3 = CounterTrendCard(
-            card="first_rebound", title=_CARD_TITLES["first_rebound"],
-            degraded=True, note="谷底为最新分钟，无反弹观察窗，本卡降级",
+            card="first_rebound",
+            title=_CARD_TITLES["first_rebound"],
+            degraded=True,
+            note="谷底为最新分钟，无反弹观察窗，本卡降级",
         )
     else:
         win_end = min(trough_idx + cfg.rebound_window_minutes, len(index_series) - 1)
@@ -297,13 +304,16 @@ def build_counter_trend_board(
             if elapsed is not None:
                 rebound_items.append(
                     CounterTrendCardItem(
-                        sector_code=s, sector_name=names.get(s, ""),
-                        metric_value=float(elapsed), metric_label="谷后过阈分钟数",
+                        sector_code=s,
+                        sector_name=names.get(s, ""),
+                        metric_value=float(elapsed),
+                        metric_label="谷后过阈分钟数",
                     )
                 )
         rebound_items.sort(key=lambda i: (i.metric_value, i.sector_code))
         card3 = CounterTrendCard(
-            card="first_rebound", title=_CARD_TITLES["first_rebound"],
+            card="first_rebound",
+            title=_CARD_TITLES["first_rebound"],
             items=rebound_items[: cfg.top_n],
             degraded=not rebound_items,
             note="" if rebound_items else "观察窗内无板块反弹过阈",
@@ -323,14 +333,17 @@ def build_counter_trend_board(
         dd = (min(seg_closes) / base - 1.0) * 100.0
         resilient_items.append(
             CounterTrendCardItem(
-                sector_code=s, sector_name=names.get(s, ""),
-                metric_value=round(dd, 4), metric_label="段内最大回撤%",
+                sector_code=s,
+                sector_name=names.get(s, ""),
+                metric_value=round(dd, 4),
+                metric_label="段内最大回撤%",
                 covered_minutes=len(seg_closes),
             )
         )
     resilient_items.sort(key=lambda i: (-i.metric_value, i.sector_code))
     card4 = CounterTrendCard(
-        card="most_resilient", title=_CARD_TITLES["most_resilient"],
+        card="most_resilient",
+        title=_CARD_TITLES["most_resilient"],
         items=resilient_items[: cfg.top_n],
         degraded=not resilient_items,
         note="" if resilient_items else "段内无覆盖板块",
@@ -448,8 +461,12 @@ def run_counter_trend_board(
     if not notes:
         return board
     return CounterTrendBoard(
-        date=board.date, index_symbol=board.index_symbol,
-        down_start_ts=board.down_start_ts, down_end_ts=board.down_end_ts,
-        index_down_pct=board.index_down_pct, cards=board.cards,
-        degraded=board.degraded, notes=notes + board.notes,
+        date=board.date,
+        index_symbol=board.index_symbol,
+        down_start_ts=board.down_start_ts,
+        down_end_ts=board.down_end_ts,
+        index_down_pct=board.index_down_pct,
+        cards=board.cards,
+        degraded=board.degraded,
+        notes=notes + board.notes,
     )

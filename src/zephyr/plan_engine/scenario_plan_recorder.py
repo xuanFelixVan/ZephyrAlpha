@@ -382,7 +382,9 @@ class ScenarioPlanRecorder:
         table = self._table("market_kline_index", "c1_market.kline_index")
         tsv = self._query(
             _SQL_INDEX_TWO_DAY.format(
-                table=table, symbol=self._config.index_symbol, trade_date=trade_date,
+                table=table,
+                symbol=self._config.index_symbol,
+                trade_date=trade_date,
             ),
             "kline_index",
         )
@@ -432,7 +434,9 @@ class ScenarioPlanRecorder:
         table_idx = self._table("market_kline_index", "c1_market.kline_index")
         tsv_idx = self._query(
             _SQL_INDEX_TWO_DAY.format(
-                table=table_idx, symbol=cfg.index_symbol, trade_date=trade_date,
+                table=table_idx,
+                symbol=cfg.index_symbol,
+                trade_date=trade_date,
             ),
             "kline_index_proxy",
         )
@@ -645,7 +649,8 @@ def writeback_scenario_outcome(
         ScenarioOutcomeVerdict（任何数据/通道异常降级为对应 status，不外抛）。
     """
     return ScenarioPlanRecorder(ch_client=ch_client, db_path=db_path, config=config).writeback_outcome(
-        trade_date, asof_ts=asof_ts,
+        trade_date,
+        asof_ts=asof_ts,
     )
 
 
