@@ -144,9 +144,7 @@ class TestMapStateDistribution:
         assert grid["FLAT_OPEN_WASH"] == pytest.approx(1.0)
 
     def test_mixture_weighted(self) -> None:
-        grid = map_state_distribution(
-            {NextDayState.GAP_DOWN_DOWN: 0.5, NextDayState.FLAT_UP: 0.5}
-        )
+        grid = map_state_distribution({NextDayState.GAP_DOWN_DOWN: 0.5, NextDayState.FLAT_UP: 0.5})
         assert grid["LOW_OPEN_REAL_DOWN"] == pytest.approx(0.5)
         assert grid["FLAT_OPEN_REAL_UP"] == pytest.approx(0.5)
 
@@ -171,8 +169,7 @@ class TestStateConditionalDistribution:
     def test_next_day_forecast_passthrough(self) -> None:
         forecast = NextDayForecast(
             current_state=NextDayState.FLAT_UP,
-            probabilities={s: 0.0 for s in NextDayState}
-            | {NextDayState.FLAT_UP: 0.7, NextDayState.FLAT_DOWN: 0.3},
+            probabilities={s: 0.0 for s in NextDayState} | {NextDayState.FLAT_UP: 0.7, NextDayState.FLAT_DOWN: 0.3},
             top_state=NextDayState.FLAT_UP,
             top_probability=0.7,
             confidence=0.8,

@@ -154,9 +154,7 @@ class TestAvoidanceReport:
             {
                 "CALM": _features(),
                 "MID": _features(volume_spike_ratio=10.0, chip_concentration=1.0),  # 0.4 WATCH
-                "BAD": _features(
-                    volume_spike_ratio=5.0, tail_move_ratio=0.5, price_volume_corr=-1.0
-                ),  # 0.6 AVOID
+                "BAD": _features(volume_spike_ratio=5.0, tail_move_ratio=0.5, price_volume_corr=-1.0),  # 0.6 AVOID
             }
         )
         assert isinstance(report, AvoidanceReport)
@@ -172,9 +170,7 @@ class TestAvoidanceReport:
             {
                 "CALM": _features(),
                 "MID": _features(volume_spike_ratio=10.0, chip_concentration=1.0),
-                "BAD": _features(
-                    volume_spike_ratio=5.0, tail_move_ratio=0.5, price_volume_corr=-1.0
-                ),
+                "BAD": _features(volume_spike_ratio=5.0, tail_move_ratio=0.5, price_volume_corr=-1.0),
             }
         )
         assert {v.symbol for v in seen} == {"MID", "BAD"}

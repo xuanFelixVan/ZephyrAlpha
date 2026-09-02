@@ -43,7 +43,7 @@ from zephyr.reporting.miniqmt_order_link_probe import (
     probe_order_link,
 )
 
-_FIXED_NOW = dt.datetime(2026, 8,24, 15, 0, tzinfo=dt.timezone.utc)
+_FIXED_NOW = dt.datetime(2026, 8, 24, 15, 0, tzinfo=dt.timezone.utc)
 
 
 def _clock() -> dt.datetime:

@@ -78,9 +78,7 @@ class TestMerge:
 
     def test_allocations_below_one_leaves_cash(self) -> None:
         """占比和 0.8 → 组合总净敞口 0.8（余 0.2 现金）。"""
-        result = merge_strategy_books(
-            {"S1": {"A": 1.0}}, allocations={"S1": 0.8}
-        )
+        result = merge_strategy_books({"S1": {"A": 1.0}}, allocations={"S1": 0.8})
         assert result.weights["A"] == pytest.approx(0.8)
         assert result.cash_fraction == pytest.approx(0.2)
 

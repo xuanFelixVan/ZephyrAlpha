@@ -92,10 +92,7 @@ class TestMaintenanceMarginRate:
 
     def test_rate_monotonic_with_notional(self):
         """档位随名义价值单调不降（交易所规则）。"""
-        rates = [
-            get_maintenance_margin_rate(n)
-            for n in (10_000.0, 100_000.0, 500_000.0, 5_000_000.0, 50_000_000.0)
-        ]
+        rates = [get_maintenance_margin_rate(n) for n in (10_000.0, 100_000.0, 500_000.0, 5_000_000.0, 50_000_000.0)]
         assert rates == sorted(rates)
 
     def test_custom_tiers(self):

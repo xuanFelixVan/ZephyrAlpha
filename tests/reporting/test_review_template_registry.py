@@ -68,20 +68,33 @@ def _v2_registry() -> ReviewTemplateRegistry:
             "templates": {
                 TEMPLATE_WAR_REPORT: {
                     "versions": {
-                        "v1": {"body": "# 每日战报 {trade_date}\n\n## 1. 市场回顾\n{market_overview}\n\n## 2. 板块亮点\n{sector_highlights}\n\n## 3. 预案执行\n{plan_outcomes}\n\n## 4. 风险事件\n{risk_events}\n\n## 5. AI 结语\n{summary}\n"},
-                        "v2": {"body": "# 战报V2 {trade_date}\n市场：{market_overview}\n板块：{sector_highlights}\n预案：{plan_outcomes}\n风险：{risk_events}\n结语：{summary}", "status": "active"},
+                        "v1": {
+                            "body": "# 每日战报 {trade_date}\n\n## 1. 市场回顾\n{market_overview}\n\n## 2. 板块亮点\n{sector_highlights}\n\n## 3. 预案执行\n{plan_outcomes}\n\n## 4. 风险事件\n{risk_events}\n\n## 5. AI 结语\n{summary}\n"
+                        },
+                        "v2": {
+                            "body": "# 战报V2 {trade_date}\n市场：{market_overview}\n板块：{sector_highlights}\n预案：{plan_outcomes}\n风险：{risk_events}\n结语：{summary}",
+                            "status": "active",
+                        },
                     }
                 },
                 TEMPLATE_PROMPT_SUMMARY: {
                     "versions": {
-                        "v1": {"body": "P1 {trade_date} {market_overview} {sector_highlights} {plan_outcomes} {risk_events} {max_chars}"},
-                        "v2": {"body": "P2-自定义 {trade_date} {market_overview} {sector_highlights} {plan_outcomes} {risk_events} {max_chars}"},
+                        "v1": {
+                            "body": "P1 {trade_date} {market_overview} {sector_highlights} {plan_outcomes} {risk_events} {max_chars}"
+                        },
+                        "v2": {
+                            "body": "P2-自定义 {trade_date} {market_overview} {sector_highlights} {plan_outcomes} {risk_events} {max_chars}"
+                        },
                     }
                 },
                 TEMPLATE_FALLBACK_SUMMARY: {
                     "versions": {
-                        "v1": {"body": "F1 {trade_date} {market_overview} {sector_highlights} {plan_outcomes} {risk_events}"},
-                        "v2": {"body": "F2-兜底 {trade_date} {market_overview} {sector_highlights} {plan_outcomes} {risk_events}"},
+                        "v1": {
+                            "body": "F1 {trade_date} {market_overview} {sector_highlights} {plan_outcomes} {risk_events}"
+                        },
+                        "v2": {
+                            "body": "F2-兜底 {trade_date} {market_overview} {sector_highlights} {plan_outcomes} {risk_events}"
+                        },
                     }
                 },
             },
@@ -104,7 +117,14 @@ class TestEmbeddedDefault:
     def test_war_body_has_six_sections(self) -> None:
         reg = ReviewTemplateRegistry.embedded_default()
         body = reg.get(TEMPLATE_WAR_REPORT).body
-        for marker in ("{trade_date}", "{market_overview}", "{sector_highlights}", "{plan_outcomes}", "{risk_events}", "{summary}"):
+        for marker in (
+            "{trade_date}",
+            "{market_overview}",
+            "{sector_highlights}",
+            "{plan_outcomes}",
+            "{risk_events}",
+            "{summary}",
+        ):
             assert marker in body
 
     def test_get_default_equals_v1(self) -> None:
@@ -274,8 +294,12 @@ class TestAiReviewSummaryIntegration:
                 "templates": {
                     TEMPLATE_FALLBACK_SUMMARY: {
                         "versions": {
-                            "v1": {"body": "F1 {trade_date} {market_overview} {sector_highlights} {plan_outcomes} {risk_events}"},
-                            "v2": {"body": "F2-兜底 {trade_date} {market_overview} {sector_highlights} {plan_outcomes} {risk_events}"},
+                            "v1": {
+                                "body": "F1 {trade_date} {market_overview} {sector_highlights} {plan_outcomes} {risk_events}"
+                            },
+                            "v2": {
+                                "body": "F2-兜底 {trade_date} {market_overview} {sector_highlights} {plan_outcomes} {risk_events}"
+                            },
                         }
                     },
                 },
@@ -292,8 +316,12 @@ class TestAiReviewSummaryIntegration:
                 "templates": {
                     TEMPLATE_PROMPT_SUMMARY: {
                         "versions": {
-                            "v1": {"body": "P1 {trade_date} {market_overview} {sector_highlights} {plan_outcomes} {risk_events} {max_chars}"},
-                            "v2": {"body": "P2-自定义 {trade_date} {market_overview} {sector_highlights} {plan_outcomes} {risk_events} {max_chars}"},
+                            "v1": {
+                                "body": "P1 {trade_date} {market_overview} {sector_highlights} {plan_outcomes} {risk_events} {max_chars}"
+                            },
+                            "v2": {
+                                "body": "P2-自定义 {trade_date} {market_overview} {sector_highlights} {plan_outcomes} {risk_events} {max_chars}"
+                            },
                         }
                     },
                 },

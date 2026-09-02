@@ -74,9 +74,7 @@ class TestCheckpoint5Min:
 
     def test_missing_volume_ratio_rejected(self, validator):
         with pytest.raises(InvalidPostEntryInputError):
-            validator.validate(
-                "S1", entry_price=10.0, checkpoint=PostEntryCheckpoint.MIN_5, current_price=9.8
-            )
+            validator.validate("S1", entry_price=10.0, checkpoint=PostEntryCheckpoint.MIN_5, current_price=9.8)
 
 
 class TestCheckpoint15Min:
@@ -151,9 +149,7 @@ class TestCheckpoint30Min:
 
     def test_missing_atr_rejected(self, validator):
         with pytest.raises(InvalidPostEntryInputError):
-            validator.validate(
-                "S1", entry_price=10.0, checkpoint=PostEntryCheckpoint.MIN_30, current_price=9.0
-            )
+            validator.validate("S1", entry_price=10.0, checkpoint=PostEntryCheckpoint.MIN_30, current_price=9.0)
 
 
 class TestAuditAndImmutability:

@@ -61,11 +61,15 @@ def _seed_pairs(db: Path, module: str, hits: list[bool], start_days_ago: int | N
     for i, hit in enumerate(hits):
         d = _iso(base - i)
         log_prediction(
-            trade_date=d, module=module, prediction_type="boundary_revision",
-            payload={"seq": i}, db_path=db,
+            trade_date=d,
+            module=module,
+            prediction_type="boundary_revision",
+            payload={"seq": i},
+            db_path=db,
         )
         record_outcome(
-            trade_date=d, module=module,
+            trade_date=d,
+            module=module,
             outcome_payload={
                 "hit": hit,
                 "revision_direction": "up",
@@ -120,7 +124,9 @@ class TestHitRateStats:
 
     def test_no_outcomes_hit_rate_none(self, tmp_db: Path) -> None:
         """只有预测无真值回写：样本 0，hit_rate=None，趋势 insufficient_data。"""
-        log_prediction(trade_date=_iso(1), module=MODULE, prediction_type="boundary_revision", payload={"seq": 0}, db_path=tmp_db)
+        log_prediction(
+            trade_date=_iso(1), module=MODULE, prediction_type="boundary_revision", payload={"seq": 0}, db_path=tmp_db
+        )
         st = compute_hit_rate_stats(MODULE, db_path=tmp_db)
         assert st.sample_size == 0
         assert st.hit_rate is None
@@ -149,8 +155,11 @@ class TestHitRateStats:
         """缺 hit:bool 的 outcome 行（非 record_outcome 写入）计 invalid 不计样本。"""
         _seed_pairs(tmp_db, MODULE, [True] * 5)
         log_prediction(
-            trade_date=_iso(2), module=MODULE, prediction_type="outcome",
-            payload={"note": "缺 hit 字段"}, db_path=tmp_db,
+            trade_date=_iso(2),
+            module=MODULE,
+            prediction_type="outcome",
+            payload={"note": "缺 hit 字段"},
+            db_path=tmp_db,
         )
         st = compute_hit_rate_stats(MODULE, db_path=tmp_db)
         assert st.sample_size == 5
@@ -160,8 +169,11 @@ class TestHitRateStats:
         """calibration_trigger 族不计入 prediction_count（防自引用计数）。"""
         _seed_pairs(tmp_db, MODULE, [True] * 5)
         log_prediction(
-            trade_date=_iso(1), module=MODULE, prediction_type="calibration_trigger",
-            payload={"reason": "below_threshold"}, db_path=tmp_db,
+            trade_date=_iso(1),
+            module=MODULE,
+            prediction_type="calibration_trigger",
+            payload={"reason": "below_threshold"},
+            db_path=tmp_db,
         )
         st = compute_hit_rate_stats(MODULE, db_path=tmp_db)
         assert st.prediction_count == 5
@@ -215,8 +227,10 @@ class TestRecordOutcome:
     def test_write_outcome_row(self, tmp_db: Path) -> None:
         """outcome 族落库可查（prediction_type='outcome'，payload 原样）。"""
         rid = record_outcome(
-            trade_date=_iso(1), module=MODULE,
-            outcome_payload={"hit": True, "actual_direction": "up"}, db_path=tmp_db,
+            trade_date=_iso(1),
+            module=MODULE,
+            outcome_payload={"hit": True, "actual_direction": "up"},
+            db_path=tmp_db,
         )
         assert rid >= 1
         rows = query_predictions(module=MODULE, prediction_type="outcome", db_path=tmp_db)
@@ -311,8 +325,10 @@ class TestThreshold:
         v_default = evaluate_calibration_trigger(MODULE, db_path=tmp_db, runtime_dir=tmp_path_dir(tmp_db))
         assert v_default.triggered is True
         v_custom = evaluate_calibration_trigger(
-            MODULE, config=CalibrationConfig(hit_rate_threshold=0.50),
-            db_path=tmp_db, runtime_dir=tmp_path_dir(tmp_db),
+            MODULE,
+            config=CalibrationConfig(hit_rate_threshold=0.50),
+            db_path=tmp_db,
+            runtime_dir=tmp_path_dir(tmp_db),
         )
         assert v_custom.triggered is False
         assert v_custom.reason == "hold"
@@ -335,7 +351,10 @@ class TestFailOpen:
         """注入 stats+落盘库无表：判定仍 triggered=True，persistence_error 留痕不外抛。"""
         st = _stats(MODULE, sample_size=30, hit_rate=0.40)
         v = evaluate_calibration_trigger(
-            MODULE, stats=st, db_path=tmp_path / "no_table.db", runtime_dir=tmp_path / "rt",
+            MODULE,
+            stats=st,
+            db_path=tmp_path / "no_table.db",
+            runtime_dir=tmp_path / "rt",
         )
         assert v.triggered is True
         assert v.reason == "below_threshold"

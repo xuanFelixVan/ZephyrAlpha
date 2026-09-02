@@ -50,8 +50,10 @@ class _StepClock:
 
 def _make_handler(step: WorkflowStepId, fail: bool):
     if fail:
+
         def _handler(_ctx) -> str:
             raise RuntimeError(f"{step.value} boom")
+
         return _handler
     return lambda _ctx, _s=step: f"{_s.value} ok"
 

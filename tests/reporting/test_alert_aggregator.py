@@ -97,8 +97,12 @@ def test_from_risk_unknown_level_fail_closed():
 
 def test_from_data_quality_record():
     record = {
-        "task_id": "kline_daily_incremental", "error": "连接超时", "level": "ERROR",
-        "source": "akshare", "timestamp": "2026-08-21T09:00:00", "extra": {"rows": 0},
+        "task_id": "kline_daily_incremental",
+        "error": "连接超时",
+        "level": "ERROR",
+        "source": "akshare",
+        "timestamp": "2026-08-21T09:00:00",
+        "extra": {"rows": 0},
     }
     alert = alert_from_data_quality(record)
     assert alert.severity == SEVERITY_ERROR
@@ -139,7 +143,9 @@ def test_alert_id_deterministic():
 def _batch() -> list[UnifiedAlert]:
     return [
         alert_from_backtest("run-1", "success", "完成", "2026-08-21 15:30:00"),
-        alert_from_data_quality({"task_id": "k", "error": "e", "level": "CRITICAL", "timestamp": "2026-08-21 09:00:00"}),
+        alert_from_data_quality(
+            {"task_id": "k", "error": "e", "level": "CRITICAL", "timestamp": "2026-08-21 09:00:00"}
+        ),
         alert_from_risk(_RiskAlert(_RiskLevel.ORANGE, "veto", "否决", "2026-08-21 10:00:00")),
     ]
 

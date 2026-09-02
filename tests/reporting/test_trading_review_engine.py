@@ -97,10 +97,12 @@ class TestInit:
 
 class TestDailyReview:
     def test_clean_day_no_findings(self) -> None:
-        engine = _engine([
-            _metric(ReviewPattern.CANCEL_RATE, value=0.10),
-            _metric(ReviewPattern.ORDER_RATE, value=100.0),
-        ])
+        engine = _engine(
+            [
+                _metric(ReviewPattern.CANCEL_RATE, value=0.10),
+                _metric(ReviewPattern.ORDER_RATE, value=100.0),
+            ]
+        )
         report = engine.run_daily_review(_D0)
         assert report.findings == ()
         assert report.version == 1
@@ -136,12 +138,14 @@ class TestDailyReview:
         assert "拉抬打压" in report.findings[0].suggestion
 
     def test_all_four_patterns_sorted_by_pattern_rank(self) -> None:
-        engine = _engine([
-            _metric(ReviewPattern.PUMP_DUMP, value=0.09),
-            _metric(ReviewPattern.SELF_TRADE, value=3.0),
-            _metric(ReviewPattern.ORDER_RATE, value=800.0),
-            _metric(ReviewPattern.CANCEL_RATE, value=0.60),
-        ])
+        engine = _engine(
+            [
+                _metric(ReviewPattern.PUMP_DUMP, value=0.09),
+                _metric(ReviewPattern.SELF_TRADE, value=3.0),
+                _metric(ReviewPattern.ORDER_RATE, value=800.0),
+                _metric(ReviewPattern.CANCEL_RATE, value=0.60),
+            ]
+        )
         report = engine.run_daily_review(_D0)
         assert [f.pattern for f in report.findings] == [
             ReviewPattern.CANCEL_RATE,
@@ -156,10 +160,12 @@ class TestDailyReview:
         assert report.findings == ()
 
     def test_findings_sorted_by_symbol_within_pattern(self) -> None:
-        engine = _engine([
-            _metric(ReviewPattern.CANCEL_RATE, symbol="600519.SH", value=0.50),
-            _metric(ReviewPattern.CANCEL_RATE, symbol="000001.SZ", value=0.55),
-        ])
+        engine = _engine(
+            [
+                _metric(ReviewPattern.CANCEL_RATE, symbol="600519.SH", value=0.50),
+                _metric(ReviewPattern.CANCEL_RATE, symbol="000001.SZ", value=0.55),
+            ]
+        )
         report = engine.run_daily_review(_D0)
         assert [f.symbol for f in report.findings] == ["000001.SZ", "600519.SH"]
 

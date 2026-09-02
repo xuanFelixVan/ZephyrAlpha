@@ -62,7 +62,9 @@ def _ctx(**over) -> DebateContext:
 
 
 def _bull() -> RoleArgument:
-    return RoleArgument(role="BULL_RESEARCHER", points=("主线资金持续流入", "龙头三板打开空间", "竞价放量确认"), confidence=0.7)
+    return RoleArgument(
+        role="BULL_RESEARCHER", points=("主线资金持续流入", "龙头三板打开空间", "竞价放量确认"), confidence=0.7
+    )
 
 
 def _bear() -> RoleArgument:

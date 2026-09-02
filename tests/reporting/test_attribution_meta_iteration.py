@@ -51,9 +51,7 @@ _WINDOW = 3  # 测试小窗（内核满窗最小样本门直通，窗口越小�
 
 
 def _engine() -> AttributionMetaIterationEngine:
-    return AttributionMetaIterationEngine(
-        channel_manager=PromotionChannelManager(window_size=_WINDOW)
-    )
+    return AttributionMetaIterationEngine(channel_manager=PromotionChannelManager(window_size=_WINDOW))
 
 
 def _window(

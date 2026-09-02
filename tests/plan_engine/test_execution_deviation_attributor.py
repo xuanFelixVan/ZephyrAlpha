@@ -46,29 +46,49 @@ from zephyr.plan_engine.execution_deviation_attributor import (
 
 def _plan(buys: list[TradePlanItem], sells: list[TradePlanItem]) -> DailyTradePlan:
     return DailyTradePlan(
-        date="2026-08-21", stance="NORMAL", position_scale=1.0,
-        buy_list=tuple(buys), sell_list=tuple(sells), notes=(),
+        date="2026-08-21",
+        stance="NORMAL",
+        position_scale=1.0,
+        buy_list=tuple(buys),
+        sell_list=tuple(sells),
+        notes=(),
     )
 
 
 def _buy(symbol: str, qty: int, price: float) -> TradePlanItem:
     return TradePlanItem(
-        symbol=symbol, direction="BUY", quantity=qty,
-        reference_price=price, logic="t", trigger_price=None, cap_weight=0.05,
+        symbol=symbol,
+        direction="BUY",
+        quantity=qty,
+        reference_price=price,
+        logic="t",
+        trigger_price=None,
+        cap_weight=0.05,
     )
 
 
 def _sell(symbol: str, qty: int, price: float) -> TradePlanItem:
     return TradePlanItem(
-        symbol=symbol, direction="SELL", quantity=qty,
-        reference_price=price, logic="t", trigger_price=price * 1.05, cap_weight=0.0,
+        symbol=symbol,
+        direction="SELL",
+        quantity=qty,
+        reference_price=price,
+        logic="t",
+        trigger_price=price * 1.05,
+        cap_weight=0.0,
     )
 
 
-def _fill(symbol: str, direction: str, qty: int, price: float, status: str = "filled", reason: str = "") -> ExecutionRecord:
+def _fill(
+    symbol: str, direction: str, qty: int, price: float, status: str = "filled", reason: str = ""
+) -> ExecutionRecord:
     return ExecutionRecord(
-        symbol=symbol, direction=direction, filled_quantity=qty,
-        avg_price=price, status=status, reason=reason,
+        symbol=symbol,
+        direction=direction,
+        filled_quantity=qty,
+        avg_price=price,
+        status=status,
+        reason=reason,
     )
 
 
@@ -88,9 +108,7 @@ PLAN = _plan(
 
 
 def test_on_plan_when_full_fill_small_slippage() -> None:
-    out = attribute_execution_deviation(
-        PLAN, [_fill("600001.SH", "BUY", 1000, 10.02)], config=_cfg()
-    )
+    out = attribute_execution_deviation(PLAN, [_fill("600001.SH", "BUY", 1000, 10.02)], config=_cfg())
     item = next(i for i in out.items if i.symbol == "600001.SH")
     assert item.category == CATEGORY_ON_PLAN
     assert item.slippage_pct == pytest.approx(0.2, abs=1e-3)
@@ -98,7 +116,9 @@ def test_on_plan_when_full_fill_small_slippage() -> None:
 
 def test_slippage_buy_adverse() -> None:
     out = attribute_execution_deviation(
-        PLAN, [_fill("600001.SH", "BUY", 1000, 10.30)], config=_cfg()  # +3% 买贵
+        PLAN,
+        [_fill("600001.SH", "BUY", 1000, 10.30)],
+        config=_cfg(),  # +3% 买贵
     )
     item = next(i for i in out.items if i.symbol == "600001.SH")
     assert item.category == CATEGORY_SLIPPAGE
@@ -107,7 +127,9 @@ def test_slippage_buy_adverse() -> None:
 
 def test_slippage_sell_adverse_direction() -> None:
     out = attribute_execution_deviation(
-        PLAN, [_fill("000001.SZ", "SELL", 600, 24.25)], config=_cfg()  # 卖低 3%
+        PLAN,
+        [_fill("000001.SZ", "SELL", 600, 24.25)],
+        config=_cfg(),  # 卖低 3%
     )
     item = next(i for i in out.items if i.symbol == "000001.SZ")
     assert item.category == CATEGORY_SLIPPAGE
@@ -116,7 +138,9 @@ def test_slippage_sell_adverse_direction() -> None:
 
 def test_sell_favorable_price_is_on_plan() -> None:
     out = attribute_execution_deviation(
-        PLAN, [_fill("000001.SZ", "SELL", 600, 25.30)], config=_cfg()  # 卖高=有利
+        PLAN,
+        [_fill("000001.SZ", "SELL", 600, 25.30)],
+        config=_cfg(),  # 卖高=有利
     )
     item = next(i for i in out.items if i.symbol == "000001.SZ")
     assert item.category == CATEGORY_ON_PLAN
@@ -124,9 +148,7 @@ def test_sell_favorable_price_is_on_plan() -> None:
 
 
 def test_liquidity_partial_fill() -> None:
-    out = attribute_execution_deviation(
-        PLAN, [_fill("600002.SH", "BUY", 200, 20.05, status="partial")], config=_cfg()
-    )
+    out = attribute_execution_deviation(PLAN, [_fill("600002.SH", "BUY", 200, 20.05, status="partial")], config=_cfg())
     item = next(i for i in out.items if i.symbol == "600002.SH")
     assert item.category == CATEGORY_LIQUIDITY
     assert item.filled_quantity == 200
@@ -207,7 +229,5 @@ def test_invalid_execution_fail_closed() -> None:
 
 
 def test_json_serializable() -> None:
-    out = attribute_execution_deviation(
-        PLAN, [_fill("600001.SH", "BUY", 1000, 10.0)], config=_cfg()
-    )
+    out = attribute_execution_deviation(PLAN, [_fill("600001.SH", "BUY", 1000, 10.0)], config=_cfg())
     json.dumps(asdict(out), ensure_ascii=False)

@@ -79,15 +79,11 @@ class TestBuildGraph:
         with pytest.raises(RiskContagionError):
             _modeler(edges=[bad])
         with pytest.raises(RiskContagionError):
-            _modeler().add_edge(
-                ContagionEdge("bank_a", "bank_b", Decimal("0"), EdgeKind.CORRELATION)
-            )
+            _modeler().add_edge(ContagionEdge("bank_a", "bank_b", Decimal("0"), EdgeKind.CORRELATION))
 
     def test_self_loop_rejected(self) -> None:
         with pytest.raises(RiskContagionError):
-            _modeler().add_edge(
-                ContagionEdge("bank_a", "bank_a", Decimal("0.5"), EdgeKind.CORRELATION)
-            )
+            _modeler().add_edge(ContagionEdge("bank_a", "bank_a", Decimal("0.5"), EdgeKind.CORRELATION))
 
     def test_neighbors_sorted_deterministic(self) -> None:
         m = RiskContagionModeler(
@@ -157,10 +153,12 @@ class TestPropagation:
         assert report.impact_of("broker_c") == Decimal("-0.5")
 
     def test_multi_shock_accumulates(self) -> None:
-        report = _modeler().simulate([
-            ShockEvent("bank_a", Decimal("-1")),
-            ShockEvent("bank_a", Decimal("-0.5")),
-        ])
+        report = _modeler().simulate(
+            [
+                ShockEvent("bank_a", Decimal("-1")),
+                ShockEvent("bank_a", Decimal("-0.5")),
+            ]
+        )
         assert report.impact_of("bank_a") == Decimal("-1.5")
 
     def test_scores_normalized_exposure(self) -> None:
@@ -176,9 +174,7 @@ class TestPropagation:
 
     def test_score_sink_receives_report(self) -> None:
         seen: list[ContagionReport] = []
-        report = _modeler(score_sink=seen.append).simulate(
-            [ShockEvent("bank_a", Decimal("-1"))]
-        )
+        report = _modeler(score_sink=seen.append).simulate([ShockEvent("bank_a", Decimal("-1"))])
         assert seen == [report]  # 评分入风控参考输出
 
     def test_score_sink_failure_not_blocking(self) -> None:

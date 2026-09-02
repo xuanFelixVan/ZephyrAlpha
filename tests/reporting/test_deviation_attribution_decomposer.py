@@ -173,9 +173,7 @@ class TestDegradation:
 
     def test_unmeasured_with_bias_raises(self) -> None:
         with pytest.raises(InvalidDeviationAttributionError):
-            decompose_deviation_attribution(
-                -0.05, [FactorBias(factor=FACTOR_H_A, bias=-0.01, measured=False)]
-            )
+            decompose_deviation_attribution(-0.05, [FactorBias(factor=FACTOR_H_A, bias=-0.01, measured=False)])
 
     def test_unmeasured_with_dimensions_raises(self) -> None:
         with pytest.raises(InvalidDeviationAttributionError):

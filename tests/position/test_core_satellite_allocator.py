@@ -31,7 +31,9 @@ from zephyr.position.core.core_satellite_allocator import (
 )
 
 
-def _cand(symbol: str, kelly: float = 0.5, rs_pct: float = 0.5, price: float = 10.0, vwap: float = 10.0, atr: float = 0.2) -> CandidateAsset:
+def _cand(
+    symbol: str, kelly: float = 0.5, rs_pct: float = 0.5, price: float = 10.0, vwap: float = 10.0, atr: float = 0.2
+) -> CandidateAsset:
     return CandidateAsset(symbol, kelly, rs_pct, price, vwap, atr)
 
 

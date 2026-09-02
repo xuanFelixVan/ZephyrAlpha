@@ -123,9 +123,7 @@ class TestInputValidation:
     def test_rejects_zero_total_weight(self):
         model = CopulaGarchJointModel()
         with pytest.raises(CopulaGarchJointError):
-            model.fit_portfolio_risk(
-                _iid_returns(), {"AAA": 0.0, "BBB": 0.0, "CCC": 0.0}
-            )
+            model.fit_portfolio_risk(_iid_returns(), {"AAA": 0.0, "BBB": 0.0, "CCC": 0.0})
 
     def test_rejects_non_positive_portfolio_value(self):
         model = CopulaGarchJointModel()
@@ -204,12 +202,8 @@ class TestTailDependenceDetection:
 class TestReproducibilityAndInjection:
     def test_fixed_seed_reproducible(self):
         cfg = CopulaGarchConfig(n_simulations=3000)
-        r1 = CopulaGarchJointModel(cfg).fit_portfolio_risk(
-            _iid_returns(), {"AAA": 0.4, "BBB": 0.3, "CCC": 0.3}
-        )
-        r2 = CopulaGarchJointModel(cfg).fit_portfolio_risk(
-            _iid_returns(), {"AAA": 0.4, "BBB": 0.3, "CCC": 0.3}
-        )
+        r1 = CopulaGarchJointModel(cfg).fit_portfolio_risk(_iid_returns(), {"AAA": 0.4, "BBB": 0.3, "CCC": 0.3})
+        r2 = CopulaGarchJointModel(cfg).fit_portfolio_risk(_iid_returns(), {"AAA": 0.4, "BBB": 0.3, "CCC": 0.3})
         assert r1.joint_var == r2.joint_var
         assert r1.joint_es == r2.joint_es
 

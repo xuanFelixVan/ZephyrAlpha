@@ -38,7 +38,9 @@ from zephyr.signal_ashare.next_day_8state_forecast import DailyBar
 
 
 class _FakeRegimeCard:
-    def __init__(self, code: str, dominant: str = "r3", conf: float = 0.62, rank: int | None = 1, degraded: bool = False):
+    def __init__(
+        self, code: str, dominant: str = "r3", conf: float = 0.62, rank: int | None = 1, degraded: bool = False
+    ):
         self.code = code
         self.dominant_regime = dominant
         self.confidence = conf
@@ -80,8 +82,12 @@ def test_four_index_universe() -> None:
 def test_brief_full_legs() -> None:
     panel = _FakePanel([_FakeRegimeCard("000001"), _FakeRegimeCard("399006", rank=2)])
     out = build_index_market_brief(
-        trade_date="2026-08-21", panel=panel, index_bars=ALL_BARS,
-        sentiment_label="偏暖", sentiment_score=62.5, config=IndexBriefConfig(),
+        trade_date="2026-08-21",
+        panel=panel,
+        index_bars=ALL_BARS,
+        sentiment_label="偏暖",
+        sentiment_score=62.5,
+        config=IndexBriefConfig(),
     )
     assert out.degraded is False
     assert len(out.cards) == 4
@@ -102,15 +108,14 @@ def test_brief_full_legs() -> None:
 
 def test_brief_strength_ranking_passthrough() -> None:
     panel = _FakePanel([_FakeRegimeCard("000001")])
-    out = build_index_market_brief(
-        trade_date="2026-08-21", panel=panel, index_bars=ALL_BARS, config=IndexBriefConfig()
-    )
+    out = build_index_market_brief(trade_date="2026-08-21", panel=panel, index_bars=ALL_BARS, config=IndexBriefConfig())
     assert out.strength_ranking == ("000001", "399006")
 
 
 def test_forecast_leg_insufficient_history_degraded() -> None:
     out = build_index_market_brief(
-        trade_date="2026-08-21", panel=None,
+        trade_date="2026-08-21",
+        panel=None,
         index_bars={"000001": _bars(n=10)},  # 状态序列长 9 < 30
         config=IndexBriefConfig(),
     )
@@ -122,18 +127,14 @@ def test_forecast_leg_insufficient_history_degraded() -> None:
 
 
 def test_panel_none_regime_leg_notes() -> None:
-    out = build_index_market_brief(
-        trade_date="2026-08-21", panel=None, index_bars=ALL_BARS, config=IndexBriefConfig()
-    )
+    out = build_index_market_brief(trade_date="2026-08-21", panel=None, index_bars=ALL_BARS, config=IndexBriefConfig())
     assert all(c.regime_dominant is None for c in out.cards)
     assert all(c.forecast_top_state for c in out.cards)  # 预判腿独立
     assert out.degraded is False
 
 
 def test_all_missing_degraded() -> None:
-    out = build_index_market_brief(
-        trade_date="2026-08-21", panel=None, index_bars=None, config=IndexBriefConfig()
-    )
+    out = build_index_market_brief(trade_date="2026-08-21", panel=None, index_bars=None, config=IndexBriefConfig())
     assert out.degraded is True
 
 
@@ -144,8 +145,12 @@ def test_invalid_trade_date_fail_closed() -> None:
 
 def test_sentiment_shared_across_cards() -> None:
     out = build_index_market_brief(
-        trade_date="2026-08-21", panel=None, index_bars=ALL_BARS,
-        sentiment_label="偏暖", sentiment_score=62.5, config=IndexBriefConfig(),
+        trade_date="2026-08-21",
+        panel=None,
+        index_bars=ALL_BARS,
+        sentiment_label="偏暖",
+        sentiment_score=62.5,
+        config=IndexBriefConfig(),
     )
     assert {c.sentiment_label for c in out.cards} == {"偏暖"}
     assert out.market_sentiment_score == pytest.approx(62.5)
@@ -154,7 +159,11 @@ def test_sentiment_shared_across_cards() -> None:
 def test_json_serializable() -> None:
     panel = _FakePanel([_FakeRegimeCard("000001")])
     out = build_index_market_brief(
-        trade_date="2026-08-21", panel=panel, index_bars=ALL_BARS,
-        sentiment_label="偏暖", sentiment_score=62.5, config=IndexBriefConfig(),
+        trade_date="2026-08-21",
+        panel=panel,
+        index_bars=ALL_BARS,
+        sentiment_label="偏暖",
+        sentiment_score=62.5,
+        config=IndexBriefConfig(),
     )
     json.dumps(asdict(out), ensure_ascii=False)

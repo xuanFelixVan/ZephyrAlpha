@@ -66,9 +66,7 @@ class TestTimeBudget:
 
     def test_custom_warn_ratio(self) -> None:
         """warn_ratio=0.5 → 持有 6/10 天（0.6）即 APPROACHING。"""
-        r = check_time_budgets(
-            {"A": _pos("2026-08-01", 10)}, as_of=date(2026, 8, 7), warn_ratio=0.5
-        )
+        r = check_time_budgets({"A": _pos("2026-08-01", 10)}, as_of=date(2026, 8, 7), warn_ratio=0.5)
         assert r.positions["A"].status is TimeBudgetStatus.APPROACHING
 
     def test_multiple_positions_mixed(self) -> None:

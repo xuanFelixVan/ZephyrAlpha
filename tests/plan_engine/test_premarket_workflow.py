@@ -165,17 +165,13 @@ class TestTracker:
 
     def test_state_sink_callback_and_fault_tolerance(self) -> None:
         seen: list[dict] = []
-        t = PremarketWorkflowTracker(
-            trading_date="2026-08-26", stages=default_stages(), state_sink=seen.append
-        )
+        t = PremarketWorkflowTracker(trading_date="2026-08-26", stages=default_stages(), state_sink=seen.append)
         t.mark_running("data_sync")
         assert seen and seen[-1]["trading_date"] == "2026-08-26"
 
         def _boom(_snap: dict) -> None:
             raise RuntimeError("store down")
 
-        t2 = PremarketWorkflowTracker(
-            trading_date="2026-08-26", stages=default_stages(), state_sink=_boom
-        )
+        t2 = PremarketWorkflowTracker(trading_date="2026-08-26", stages=default_stages(), state_sink=_boom)
         t2.mark_running("data_sync")  # sink 异常不阻断
         assert t2.progress()["by_stage"]["data_sync"] == StageStatus.RUNNING.value

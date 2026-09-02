@@ -33,12 +33,8 @@ from zephyr.reporting.strategy_explainability_reporter import (  # noqa: E402
 _T0 = datetime.datetime(2026, 8, 25, 16, 0, 0)
 
 _FEATURES = {"momentum": 1.2, "value": -0.8, "liquidity": 0.5}
-_SHAP_RES = ExplanationResult(
-    importances={"momentum": 0.50, "value": -0.30, "liquidity": 0.20}, coverage=0.9
-)
-_LIME_RES = ExplanationResult(
-    importances={"momentum": 0.40, "value": -0.35, "liquidity": 0.25}, coverage=0.7
-)
+_SHAP_RES = ExplanationResult(importances={"momentum": 0.50, "value": -0.30, "liquidity": 0.20}, coverage=0.9)
+_LIME_RES = ExplanationResult(importances={"momentum": 0.40, "value": -0.35, "liquidity": 0.25}, coverage=0.7)
 _RULE = {"momentum": 0.6, "value": -0.4}
 
 
@@ -167,16 +163,12 @@ class TestGate:
         assert report.gate is GateDecision.PASS
 
     def test_gate_downweight_mid_coverage(self) -> None:
-        reporter = _reporter(
-            shap=ExplanationResult(importances={"f": 0.5}, coverage=0.6), lime=None
-        )
+        reporter = _reporter(shap=ExplanationResult(importances={"f": 0.5}, coverage=0.6), lime=None)
         report = reporter.build_report("strat-1", _FEATURES)
         assert report.gate is GateDecision.DOWNWEIGHT
 
     def test_gate_block_low_coverage(self) -> None:
-        reporter = _reporter(
-            shap=ExplanationResult(importances={"f": 0.5}, coverage=0.3), lime=None
-        )
+        reporter = _reporter(shap=ExplanationResult(importances={"f": 0.5}, coverage=0.3), lime=None)
         report = reporter.build_report("strat-1", _FEATURES)
         assert report.gate is GateDecision.BLOCK
 

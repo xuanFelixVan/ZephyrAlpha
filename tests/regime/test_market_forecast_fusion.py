@@ -90,9 +90,7 @@ class TestExternalForecastValidation:
 
     def test_zero_sum_fail_closed(self):
         with pytest.raises(InvalidExternalForecastError):
-            ExternalForecast(
-                source_id="a", probabilities={s: 0.0 for s in _STATES}, confidence=0.5
-            )
+            ExternalForecast(source_id="a", probabilities={s: 0.0 for s in _STATES}, confidence=0.5)
 
     def test_confidence_out_of_range_fail_closed(self):
         with pytest.raises(InvalidExternalForecastError):
@@ -104,9 +102,7 @@ class TestExternalForecastValidation:
 
     def test_internal_source_id_reserved(self):
         with pytest.raises(InvalidExternalForecastError):
-            ExternalForecast(
-                source_id=INTERNAL_SOURCE_ID, probabilities=_uniform(), confidence=0.5
-            )
+            ExternalForecast(source_id=INTERNAL_SOURCE_ID, probabilities=_uniform(), confidence=0.5)
 
 
 class TestRollingAccuracyTracker:
@@ -147,9 +143,7 @@ class TestRollingAccuracyTracker:
 class TestFuse:
     def test_fused_distribution_normalized(self):
         fusion = MarketForecastFusion()
-        fused = fusion.fuse(
-            _internal("FLAT_UP"), [ExternalForecast("a", _peaked("VIOLENT", 0.6), 0.7)]
-        )
+        fused = fusion.fuse(_internal("FLAT_UP"), [ExternalForecast("a", _peaked("VIOLENT", 0.6), 0.7)])
         assert sum(fused.probabilities.values()) == pytest.approx(1.0)
         assert set(fused.probabilities) == set(_STATES)
 

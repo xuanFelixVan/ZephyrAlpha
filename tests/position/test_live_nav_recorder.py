@@ -59,7 +59,8 @@ class _FakeBroker:
 def test_record_nav_basic_ratio() -> None:
     p = record_daily_nav(
         AssetSnapshot(cash=500_000.0, market_value=500_000.0),
-        trade_date="2026-08-21", base_nav=1_000_000.0,
+        trade_date="2026-08-21",
+        base_nav=1_000_000.0,
     )
     assert p.total_asset == pytest.approx(1_000_000.0)
     assert p.nav_ratio == pytest.approx(1.0)
@@ -68,7 +69,8 @@ def test_record_nav_basic_ratio() -> None:
 def test_record_nav_first_point_base_none() -> None:
     p = record_daily_nav(
         AssetSnapshot(cash=600_000.0, market_value=500_000.0),
-        trade_date="2026-08-20", base_nav=None,
+        trade_date="2026-08-20",
+        base_nav=None,
     )
     assert p.nav_ratio == pytest.approx(1.0)
     assert p.total_asset == pytest.approx(1_100_000.0)
@@ -77,8 +79,10 @@ def test_record_nav_first_point_base_none() -> None:
 def test_record_nav_with_benchmark() -> None:
     p = record_daily_nav(
         AssetSnapshot(cash=500_000.0, market_value=600_000.0),
-        trade_date="2026-08-21", base_nav=1_000_000.0,
-        benchmark_close=4100.0, benchmark_base=4000.0,
+        trade_date="2026-08-21",
+        base_nav=1_000_000.0,
+        benchmark_close=4100.0,
+        benchmark_base=4000.0,
     )
     assert p.nav_ratio == pytest.approx(1.1)
     assert p.benchmark_ratio == pytest.approx(1.025)
@@ -114,8 +118,24 @@ def test_simulated_source_broker_error_raises_valueerror() -> None:
 def _points() -> list[NavPoint]:
     return [
         NavPoint(trade_date="2026-08-19", total_asset=1_000_000.0, cash=5e5, market_value=5e5, nav_ratio=1.0),
-        NavPoint(trade_date="2026-08-20", total_asset=1_050_000.0, cash=5e5, market_value=5.5e5, nav_ratio=1.05, benchmark_close=4040.0, benchmark_ratio=1.01),
-        NavPoint(trade_date="2026-08-21", total_asset=1_020_000.0, cash=5e5, market_value=5.2e5, nav_ratio=1.02, benchmark_close=4080.0, benchmark_ratio=1.02),
+        NavPoint(
+            trade_date="2026-08-20",
+            total_asset=1_050_000.0,
+            cash=5e5,
+            market_value=5.5e5,
+            nav_ratio=1.05,
+            benchmark_close=4040.0,
+            benchmark_ratio=1.01,
+        ),
+        NavPoint(
+            trade_date="2026-08-21",
+            total_asset=1_020_000.0,
+            cash=5e5,
+            market_value=5.2e5,
+            nav_ratio=1.02,
+            benchmark_close=4080.0,
+            benchmark_ratio=1.02,
+        ),
     ]
 
 

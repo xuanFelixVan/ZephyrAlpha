@@ -240,9 +240,7 @@ class TestNormalMarket:
 
 def _run_v2(d: dict[str, np.ndarray], **kw) -> pd.Series:
     s = {k: pd.Series(v, dtype=float) for k, v in d.items()}
-    return s2_three_yang_flag(
-        s["open"], s["high"], s["low"], s["close"], s["volume"], grading="v2_index", **kw
-    )
+    return s2_three_yang_flag(s["open"], s["high"], s["low"], s["close"], s["volume"], grading="v2_index", **kw)
 
 
 def _mild_decline_base(n: int = _N) -> dict[str, np.ndarray]:
@@ -250,9 +248,7 @@ def _mild_decline_base(n: int = _N) -> dict[str, np.ndarray]:
 
     rolling(60).max 在第 69 日=3000 → drawdown≈-17%（<-15% v2 满足 / >-30% legacy 卡死）。
     """
-    close = np.concatenate(
-        [np.full(31, 3000.0), np.linspace(3000.0, 2400.0, 37)[1:], np.full(3, 2400.0)]
-    )
+    close = np.concatenate([np.full(31, 3000.0), np.linspace(3000.0, 2400.0, 37)[1:], np.full(3, 2400.0)])
     assert len(close) == n
     return {
         "open": close * 1.001,

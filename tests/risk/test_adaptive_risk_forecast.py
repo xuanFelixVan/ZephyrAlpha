@@ -101,12 +101,20 @@ def test_high_vol_bucket_has_larger_var() -> None:
     cal_p = [0.0] * 60
     cal_a = rng.normal(0.0, 0.01, 60).tolist()
     fc_high = forecast_forward_var(
-        returns, conditions=conditions, condition="HIGH",
-        calibration_predictions=cal_p, calibration_actuals=cal_a, config=cfg,
+        returns,
+        conditions=conditions,
+        condition="HIGH",
+        calibration_predictions=cal_p,
+        calibration_actuals=cal_a,
+        config=cfg,
     )
     fc_low = forecast_forward_var(
-        returns, conditions=conditions, condition="LOW",
-        calibration_predictions=cal_p, calibration_actuals=cal_a, config=cfg,
+        returns,
+        conditions=conditions,
+        condition="LOW",
+        calibration_predictions=cal_p,
+        calibration_actuals=cal_a,
+        config=cfg,
     )
     assert fc_high.degraded is False
     assert fc_high.var_pct > fc_low.var_pct

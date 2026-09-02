@@ -417,7 +417,13 @@ class TestClusterCountAgg:
         vol_z.iloc[60] = 1.5  # z>1∧pct<-1.5% → daily=50（过滤器全过：实体60/下影58%/量3×）
         pct = s["close"].pct_change().fillna(0.0)
         out = s2_capitulation_score(
-            vol_z, pct, s["volume"], s["high"], s["low"], s["open"], s["close"],
+            vol_z,
+            pct,
+            s["volume"],
+            s["high"],
+            s["low"],
+            s["open"],
+            s["close"],
             agg_mode="cluster_count",
         )
         assert out.iloc[60] == 0.0
@@ -584,20 +590,26 @@ class TestPrecrisisZMode:
         """簇内暴跌日：legacy zscore（外部 z=0.5 失真）→ 0；A2 内部重算 z>3 → 90。"""
         d = self._precrisis_scene()
         # legacy 对照：外部 vol_z=0.5（危机簇内 20 日滚窗失真后的典型低 z）→ 基础分 0
-        legacy = _run(d, vol_z_val=0.5, wick_mode="close_pos", vol_filter_mode="calm_window",
-                      agg_mode="decayed_max")
+        legacy = _run(d, vol_z_val=0.5, wick_mode="close_pos", vol_filter_mode="calm_window", agg_mode="decayed_max")
         assert legacy.iloc[280] == 0.0
         # A2：忽略外部 vol_z，用平静窗重算 z（≈7>3）∧ pct=-8% → 90
-        out = _run(d, vol_z_val=0.5, base_mode="precrisis_z", wick_mode="close_pos",
-                   vol_filter_mode="calm_window", agg_mode="decayed_max")
+        out = _run(
+            d,
+            vol_z_val=0.5,
+            base_mode="precrisis_z",
+            wick_mode="close_pos",
+            vol_filter_mode="calm_window",
+            agg_mode="decayed_max",
+        )
         assert out.iloc[280] == pytest.approx(90.0, rel=1e-9)
 
     def test_calm_window_vol_filter_blocks_quiet_day(self):
         """calm_window 过滤器：平静期内量未超平静窗均量 1.5× → 不产生信号。"""
         d = self._precrisis_scene()
         # 平静期普通日（如第 100 日）：pct=0 → 基础分 0；且量 1e8 < 1.5×平静窗均量 → 过滤亦不满足
-        out = _run(d, base_mode="precrisis_z", wick_mode="close_pos",
-                   vol_filter_mode="calm_window", agg_mode="decayed_max")
+        out = _run(
+            d, base_mode="precrisis_z", wick_mode="close_pos", vol_filter_mode="calm_window", agg_mode="decayed_max"
+        )
         assert out.iloc[100] == 0.0
         # 暴跌日（280）之前全序列无信号（280 之后为 decayed_max 正常衰减尾巴，属预期）
         assert (out.iloc[:280].fillna(0.0) == 0.0).all()
@@ -605,8 +617,9 @@ class TestPrecrisisZMode:
     def test_legacy_mult_filter_fails_in_cluster(self):
         """对照：簇内 legacy vol_filter_mode="mult"（2×20 日均量≈6e8）卡死 3.3e8 暴跌日。"""
         d = self._precrisis_scene()
-        out = _run(d, base_mode="precrisis_z", wick_mode="close_pos",
-                   vol_filter_mode="mult", agg_mode="decayed_max")  # mult=legacy 2.0×
+        out = _run(
+            d, base_mode="precrisis_z", wick_mode="close_pos", vol_filter_mode="mult", agg_mode="decayed_max"
+        )  # mult=legacy 2.0×
         assert out.iloc[280] == 0.0
 
 

@@ -110,9 +110,7 @@ class TestFullPipeline:
         assert res.stage_notes["drafted"] == 0
 
     def test_hypothesis_cap_per_paper(self) -> None:
-        many = json.dumps(
-            [{"name": f"H{i}", "formula": f"f{i}", "rationale": "r"} for i in range(10)]
-        )
+        many = json.dumps([{"name": f"H{i}", "formula": f"f{i}", "rationale": "r"} for i in range(10)])
         res = _run(llm_gateway=lambda text: many, config=MiningConfig(max_hypotheses_per_paper=2))
         assert len(res.hypotheses) == 4  # 2 篇 × 封顶 2
 

@@ -346,18 +346,18 @@ class TestRegimeStateMapping:
     def test_extreme_bubble(self):
         s = _scorer()
         result = s.score(
-            cape_percentile=0.96,      # CAPE 极端高 → 95
-            iv_synthetic_vix=18.0,     # IV 低 → 20
-            margin_balance_ratio=0.028, # 杠杆极端 → 90
+            cape_percentile=0.96,  # CAPE 极端高 → 95
+            iv_synthetic_vix=18.0,  # IV 低 → 20
+            margin_balance_ratio=0.028,  # 杠杆极端 → 90
         )
         assert result.regime_state == RegimeState.EXTREME_BUBBLE
 
     def test_bubble(self):
         s = _scorer()
         result = s.score(
-            cape_percentile=0.85,      # CAPE 高 → 75
-            iv_synthetic_vix=22.0,     # IV 正常 → 40
-            margin_balance_ratio=0.022, # 杠杆高 → 70
+            cape_percentile=0.85,  # CAPE 高 → 75
+            iv_synthetic_vix=22.0,  # IV 正常 → 40
+            margin_balance_ratio=0.022,  # 杠杆高 → 70
         )
         assert result.regime_state == RegimeState.BUBBLE
 
@@ -374,7 +374,7 @@ class TestRegimeStateMapping:
         s = _scorer()
         result = s.score(
             cape_percentile=0.50,
-            iv_synthetic_vix=42.0,     # IV 极端 → 95
+            iv_synthetic_vix=42.0,  # IV 极端 → 95
             margin_balance_ratio=0.015,
         )
         assert result.regime_state == RegimeState.PANIC
@@ -382,9 +382,9 @@ class TestRegimeStateMapping:
     def test_extreme_panic(self):
         s = _scorer()
         result = s.score(
-            cape_percentile=0.08,       # CAPE 大底 → 10
-            iv_synthetic_vix=45.0,      # IV 极端 → 95
-            margin_drop_from_peak=0.28, # 去杠杆极端 → 85
+            cape_percentile=0.08,  # CAPE 大底 → 10
+            iv_synthetic_vix=45.0,  # IV 极端 → 95
+            margin_drop_from_peak=0.28,  # 去杠杆极端 → 85
         )
         assert result.regime_state == RegimeState.EXTREME_PANIC
 

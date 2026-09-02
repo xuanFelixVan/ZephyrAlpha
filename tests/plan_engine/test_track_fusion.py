@@ -142,9 +142,7 @@ class TestAutoFusion:
 
 class TestAIDiscovered:
     def test_ai_discovered_forces_l6(self) -> None:
-        d = MultiTrackFusion().fuse(
-            [_sig(TrackId.AUTO_1, TrackDirection.LONG, 0.2, ai=True)]
-        )
+        d = MultiTrackFusion().fuse([_sig(TrackId.AUTO_1, TrackDirection.LONG, 0.2, ai=True)])
         assert d.needs_l6_review is True
 
     def test_human_tracks_no_l6_when_aligned(self) -> None:

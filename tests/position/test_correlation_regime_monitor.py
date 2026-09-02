@@ -85,9 +85,7 @@ class TestAssessCorrelationRegime:
 
     def test_custom_thresholds_respected(self) -> None:
         """自定义阈值生效（high 压低 → 同数据升级 HIGH）。"""
-        report = assess_correlation_regime(
-            _mid_correlation_returns(), low_threshold=0.01, high_threshold=0.05
-        )
+        report = assess_correlation_regime(_mid_correlation_returns(), low_threshold=0.01, high_threshold=0.05)
         assert report.regime is CorrelationRegime.HIGH
 
     def test_correlation_matrix_properties(self) -> None:
@@ -99,9 +97,7 @@ class TestAssessCorrelationRegime:
             assert report.correlation_matrix[i][i] == pytest.approx(1.0)
             for j in range(n):
                 assert -1.0 <= report.correlation_matrix[i][j] <= 1.0
-                assert report.correlation_matrix[i][j] == pytest.approx(
-                    report.correlation_matrix[j][i]
-                )
+                assert report.correlation_matrix[i][j] == pytest.approx(report.correlation_matrix[j][i])
 
     def test_max_pair_reported(self) -> None:
         """max_pair 记录最高相关标的对。"""

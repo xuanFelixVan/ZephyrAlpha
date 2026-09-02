@@ -56,17 +56,13 @@ class TestT1Frozen:
 
     def test_today_bought_not_sellable(self) -> None:
         """当日买入部分不可卖：昨仓 0.10+今买 0.05，卖 0.12 → 违规。"""
-        r = check_intraday_constraints(
-            _input(today_bought_weights={"A": 0.05}, intended_sells={"A": 0.12})
-        )
+        r = check_intraday_constraints(_input(today_bought_weights={"A": 0.05}, intended_sells={"A": 0.12}))
         assert r.allowed is False
         assert any(v.code is ViolationCode.T1_FROZEN for v in r.violations)
 
     def test_today_sold_deducts_sellable(self) -> None:
         """今日已卖 0.06 → 可卖仅剩 0.04，再卖 0.05 → 违规。"""
-        r = check_intraday_constraints(
-            _input(today_sold_weights={"A": 0.06}, intended_sells={"A": 0.05})
-        )
+        r = check_intraday_constraints(_input(today_sold_weights={"A": 0.06}, intended_sells={"A": 0.05}))
         assert r.allowed is False
 
     def test_sell_symbol_not_held_rejected(self) -> None:
@@ -96,9 +92,7 @@ class TestCaps:
 
     def test_post_trade_weights_projected(self) -> None:
         """post_trade_weights 投影=昨仓+今买+拟买−今卖−拟卖。"""
-        r = check_intraday_constraints(
-            _input(intended_buys={"C": 0.03}, intended_sells={"B": 0.05})
-        )
+        r = check_intraday_constraints(_input(intended_buys={"C": 0.03}, intended_sells={"B": 0.05}))
         assert r.post_trade_weights["A"] == pytest.approx(0.10)
         assert r.post_trade_weights["B"] == pytest.approx(0.0)
         assert r.post_trade_weights["C"] == pytest.approx(0.03)
@@ -126,12 +120,8 @@ class TestInvalidInput:
 
     def test_single_cap_above_total_cap(self) -> None:
         with pytest.raises(InvalidIntradayConstraintInputError):
-            check_intraday_constraints(
-                _input(max_single_weight=0.95, max_total_weight=0.90)
-            )
+            check_intraday_constraints(_input(max_single_weight=0.95, max_total_weight=0.90))
 
     def test_non_finite_weights(self) -> None:
         with pytest.raises(InvalidIntradayConstraintInputError):
-            check_intraday_constraints(
-                _input(last_session_weights={"A": float("nan")})
-            )
+            check_intraday_constraints(_input(last_session_weights={"A": float("nan")}))

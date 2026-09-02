@@ -64,9 +64,7 @@ class TestLLMPath:
         assert "上证涨 0.8%" in seen["prompt"]
 
     def test_long_output_clamped(self) -> None:
-        res = generate_review_summary(
-            _ctx(), llm_gateway=lambda p: "长" * 500, config=SummaryConfig(max_chars=50)
-        )
+        res = generate_review_summary(_ctx(), llm_gateway=lambda p: "长" * 500, config=SummaryConfig(max_chars=50))
         assert len(res.summary_text) == 50
         assert res.source == "llm"
 

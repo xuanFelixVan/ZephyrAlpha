@@ -221,9 +221,7 @@ class TestProxyConfig:
         with pytest.raises(IndexRegimePanelError):
             compute_index_regime_panel(
                 config=_test_config(
-                    proxies=tuple(
-                        IndexProxyConfig(code=c, name=n, enabled=False) for c, n in INDEX_PROXIES.items()
-                    )
+                    proxies=tuple(IndexProxyConfig(code=c, name=n, enabled=False) for c, n in INDEX_PROXIES.items())
                 )
             )
         with pytest.raises(IndexRegimePanelError):
@@ -434,9 +432,7 @@ class TestOutputContract:
 
     def test_disabled_proxy_no_card(self):
         """代理 enabled=False → 不出卡（配置级剔除，非 degraded）。"""
-        proxies = tuple(
-            IndexProxyConfig(code=c, name=n, enabled=(c != "000688")) for c, n in INDEX_PROXIES.items()
-        )
+        proxies = tuple(IndexProxyConfig(code=c, name=n, enabled=(c != "000688")) for c, n in INDEX_PROXIES.items())
         panel = compute_index_regime_panel(
             trade_date=_DATES[-1].strftime("%Y-%m-%d"),
             ch_client=_client_from_tsv(_make_tsv()),

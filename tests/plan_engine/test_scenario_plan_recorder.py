@@ -153,9 +153,7 @@ class TestDetermineActualScenario:
         assert determine_actual_scenario(0.0, 0.0011) == "FLAT_OPEN_REAL_UP"
 
     def test_custom_thresholds(self) -> None:
-        assert (
-            determine_actual_scenario(0.015, 0.01, open_threshold=0.01) == "HIGH_OPEN_REAL_UP"
-        )
+        assert determine_actual_scenario(0.015, 0.01, open_threshold=0.01) == "HIGH_OPEN_REAL_UP"
 
     def test_invalid_input_fail_closed(self) -> None:
         with pytest.raises(ValueError):
@@ -212,7 +210,9 @@ class TestRecordPlan:
     def test_compute_and_record_composition(self, tmp_db: Path) -> None:
         ch = _make_ch()  # 全空 → scenario_planner 内部降级不炸
         plan, row_id = compute_and_record_scenario_plan(
-            TRADE_DATE, ch_client=ch, db_path=tmp_db,
+            TRADE_DATE,
+            ch_client=ch,
+            db_path=tmp_db,
         )
         assert isinstance(plan, ScenarioPlan)
         assert row_id > 0
@@ -250,8 +250,10 @@ class TestWritebackOutcome:
         assert verdict.open_pct == pytest.approx(100.0 / 3800.0, rel=1e-6)
 
         rows = query_predictions(
-            trade_date=TRADE_DATE, module=MODULE_LOG_NAME,
-            prediction_type="outcome", db_path=tmp_db,
+            trade_date=TRADE_DATE,
+            module=MODULE_LOG_NAME,
+            prediction_type="outcome",
+            db_path=tmp_db,
         )
         assert len(rows) == 1
         payload = json.loads(rows[0]["payload_json"])
@@ -294,12 +296,17 @@ class TestWritebackOutcome:
             etf_tsv="",
         )
         verdict = writeback_scenario_outcome(
-            TRADE_DATE, ch_client=ch, db_path=tmp_db, config=cfg,
+            TRADE_DATE,
+            ch_client=ch,
+            db_path=tmp_db,
+            config=cfg,
         )
         assert verdict.status == "skipped:no_trend_data"
         rows = query_predictions(
-            trade_date=TRADE_DATE, module=MODULE_LOG_NAME,
-            prediction_type="outcome", db_path=tmp_db,
+            trade_date=TRADE_DATE,
+            module=MODULE_LOG_NAME,
+            prediction_type="outcome",
+            db_path=tmp_db,
         )
         assert rows == []
 
@@ -327,8 +334,10 @@ class TestWritebackOutcome:
         v2 = writeback_scenario_outcome(TRADE_DATE, ch_client=ch, db_path=tmp_db)
         assert v1.outcome_row_id == v2.outcome_row_id
         rows = query_predictions(
-            trade_date=TRADE_DATE, module=MODULE_LOG_NAME,
-            prediction_type="outcome", db_path=tmp_db,
+            trade_date=TRADE_DATE,
+            module=MODULE_LOG_NAME,
+            prediction_type="outcome",
+            db_path=tmp_db,
         )
         assert len(rows) == 1
 

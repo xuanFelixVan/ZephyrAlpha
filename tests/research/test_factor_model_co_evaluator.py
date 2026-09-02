@@ -29,11 +29,11 @@ from zephyr.research.factor_model_co_evaluator import (  # noqa: E402
 #: 贡献表 (factor, model) -> 贡献度
 _CONTRIB = {
     ("f_dead", "m1"): 0.01,
-    ("f_dead", "m2"): 0.01,   # mean 0.01 < 0.05 → eliminate
+    ("f_dead", "m2"): 0.01,  # mean 0.01 < 0.05 → eliminate
     ("f_mid", "m1"): 0.10,
-    ("f_mid", "m2"): 0.10,    # mean 0.10 中贡献
+    ("f_mid", "m2"): 0.10,  # mean 0.10 中贡献
     ("f_star", "m1"): 0.80,
-    ("f_star", "m2"): 0.80,   # mean 0.80 高贡献 → keep
+    ("f_star", "m2"): 0.80,  # mean 0.80 高贡献 → keep
 }
 
 #: 利用度表 (model, factor) -> 利用度
@@ -41,9 +41,9 @@ _UTIL = {
     ("m1", "f_dead"): 0.10,
     ("m2", "f_dead"): 0.10,
     ("m1", "f_mid"): 0.90,
-    ("m2", "f_mid"): 0.90,    # mean 0.90 ≥ 0.5 → iterate（中贡献高利用）
+    ("m2", "f_mid"): 0.90,  # mean 0.90 ≥ 0.5 → iterate（中贡献高利用）
     ("m1", "f_star"): 0.60,
-    ("m2", "f_star"): 0.40,   # mean 0.50
+    ("m2", "f_star"): 0.40,  # mean 0.50
 }
 
 

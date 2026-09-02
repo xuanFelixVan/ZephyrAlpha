@@ -110,9 +110,9 @@ class TestGenerate:
     def test_generate_count_and_vocab(self) -> None:
         d = _discoverer()
         exprs = d.generate_expressions()
-        expected = len(ROLLING_OPS) * len(BASE_SERIES) * len(DEFAULT_WINDOWS) + len(
-            ARITH_OPS
-        ) * len(BASE_SERIES) * (len(BASE_SERIES) - 1)
+        expected = len(ROLLING_OPS) * len(BASE_SERIES) * len(DEFAULT_WINDOWS) + len(ARITH_OPS) * len(BASE_SERIES) * (
+            len(BASE_SERIES) - 1
+        )
         assert len(exprs) == expected
         assert len(set(exprs)) == expected  # 无重复
 

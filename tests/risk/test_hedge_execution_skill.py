@@ -94,7 +94,9 @@ class TestInit:
 
     def test_mismatched_spec_key_raises(self) -> None:
         bad = HedgeInstrumentSpec(
-            index_code="OTHER", future_symbol="X", etf_symbol="Y",
+            index_code="OTHER",
+            future_symbol="X",
+            etf_symbol="Y",
             contract_multiplier=Decimal("300"),
         )
         with pytest.raises(HedgeExecutionError):
@@ -102,7 +104,9 @@ class TestInit:
 
     def test_non_positive_multiplier_raises(self) -> None:
         bad = HedgeInstrumentSpec(
-            index_code="CSI300", future_symbol="IF", etf_symbol="510300",
+            index_code="CSI300",
+            future_symbol="IF",
+            etf_symbol="510300",
             contract_multiplier=Decimal("0"),
         )
         with pytest.raises(HedgeExecutionError):
@@ -133,9 +137,7 @@ class TestPlan:
             _skill().plan(_request(index_code="CSI500", exposure=Decimal("1000000")))
 
     def test_etf_leg_mapping(self) -> None:
-        plan = _skill().plan(
-            _request(instrument_type=HedgeInstrumentType.ETF, exposure=Decimal("120000"))
-        )
+        plan = _skill().plan(_request(instrument_type=HedgeInstrumentType.ETF, exposure=Decimal("120000")))
         leg = plan.legs[0]
         # ETF 乘数 1，价格 4 → 目标名义 60000 → 15000 份
         assert leg.symbol == "510300"
@@ -200,18 +202,14 @@ class TestDoubleConfirmation:
 
     def test_risk_confirmer_missing_blocks(self) -> None:
         sent: list[HedgeLeg] = []
-        record = _skill(
-            risk_confirmer=None, executor=lambda leg: sent.append(leg) or True
-        ).execute(_request())
+        record = _skill(risk_confirmer=None, executor=lambda leg: sent.append(leg) or True).execute(_request())
         assert record.status is HedgeStatus.BLOCKED
         assert "风控确认未注入" in record.reason
         assert sent == []  # 缺一不执行
 
     def test_human_confirmer_missing_blocks(self) -> None:
         sent: list[HedgeLeg] = []
-        record = _skill(
-            human_confirmer=None, executor=lambda leg: sent.append(leg) or True
-        ).execute(_request())
+        record = _skill(human_confirmer=None, executor=lambda leg: sent.append(leg) or True).execute(_request())
         assert record.status is HedgeStatus.BLOCKED
         assert "人工确认未注入" in record.reason
         assert sent == []

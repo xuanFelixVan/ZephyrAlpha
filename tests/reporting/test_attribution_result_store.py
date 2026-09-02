@@ -134,18 +134,14 @@ class TestStoreAndQueryRoundtrip:
         assert row["schema_version"] == "1.0"
 
     def test_multi_day_period_format(self, tmp_db: Path) -> None:
-        store_attribution_report(
-            _report(key="k-range", start="2026-08-01", end="2026-08-07"), db_path=tmp_db
-        )
+        store_attribution_report(_report(key="k-range", start="2026-08-01", end="2026-08-07"), db_path=tmp_db)
         row = query_attribution_results(db_path=tmp_db)[0]
         assert row["period"] == "2026-08-01~2026-08-07"
 
     def test_idempotent_same_key_keeps_first(self, tmp_db: Path) -> None:
         rid1 = store_attribution_report(_report(), layer="firm", db_path=tmp_db)
         # 同幂等键、不同内容重跑 → 跳过保首条返回同 id
-        rid2 = store_attribution_report(
-            _report(alloc=9.9), layer="firm", db_path=tmp_db
-        )
+        rid2 = store_attribution_report(_report(alloc=9.9), layer="firm", db_path=tmp_db)
         assert rid2 == rid1
         rows = query_attribution_results(db_path=tmp_db)
         assert len(rows) == 1
@@ -153,9 +149,7 @@ class TestStoreAndQueryRoundtrip:
 
     def test_query_filters_and_order(self, tmp_db: Path) -> None:
         store_attribution_report(_report(key="f1"), layer="firm", db_path=tmp_db)
-        store_attribution_report(
-            _report(portfolio_id="S1", key="s1"), layer="strategy", db_path=tmp_db
-        )
+        store_attribution_report(_report(portfolio_id="S1", key="s1"), layer="strategy", db_path=tmp_db)
         store_attribution_report(
             _report(portfolio_id="S2", key="s2", start="2026-08-22", end="2026-08-22"),
             layer="strategy",
@@ -214,9 +208,7 @@ class TestTwoLayerPersist:
             db_path=tmp_db,
         )
         assert result.invariant_status == "FAIL"
-        firm_row = next(
-            r for r in query_attribution_results(db_path=tmp_db) if r["layer"] == "firm"
-        )
+        firm_row = next(r for r in query_attribution_results(db_path=tmp_db) if r["layer"] == "firm")
         assert firm_row["invariant_status"] == "FAIL"
 
     def test_key_mismatch_rejected(self, tmp_db: Path) -> None:

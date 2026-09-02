@@ -196,9 +196,7 @@ class TestNaNDiscipline:
         victim = panel["symbol"].iloc[0]
         panel.loc[(panel["trade_date"] == gap_day) & (panel["symbol"] == victim), "close"] = np.nan
 
-        out = compute_cross_sectional_features(
-            panel, dispersion_method="std", dispersion_smooth_window=1
-        )
+        out = compute_cross_sectional_features(panel, dispersion_method="std", dispersion_smooth_window=1)
         # 缺口日 + 次日（pct_change 需前收）截面只剩 29 只 → NaN；若被填补则为非 NaN
         assert pd.isna(out["cross_dispersion"].loc[gap_day])
         assert pd.isna(out["cross_dispersion"].loc[dates[61]])
@@ -285,9 +283,7 @@ class TestBuilderSwitch:
             lambda d: dates[min(np.searchsorted(dates, d), len(dates) - 1)]
         )  # 对齐到 builder 日期轴
         off = _make_builder(dates, enable_cross_sectional=False).build_features()
-        on = _make_builder(
-            dates, enable_cross_sectional=True, cross_sectional_panel=panel
-        ).build_features()
+        on = _make_builder(dates, enable_cross_sectional=True, cross_sectional_panel=panel).build_features()
         assert list(on.columns) == FEATURE_NAMES + CROSS_SECTIONAL_FEATURE_NAMES
         pd.testing.assert_frame_equal(on[FEATURE_NAMES], off[FEATURE_NAMES])
 

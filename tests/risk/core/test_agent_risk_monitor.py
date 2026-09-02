@@ -171,26 +171,20 @@ class TestLevelMapping:
         assert report.level == AgentRiskLevel.WARNING
 
     def test_degraded_snapshot_warning(self):
-        report = evaluate_agent_risk(
-            _activity(), _snapshot(degraded=True), AgentRiskThresholds()
-        )
+        report = evaluate_agent_risk(_activity(), _snapshot(degraded=True), AgentRiskThresholds())
         ids = [i.indicator_id for i in report.indicators]
         assert "snapshot_degraded" in ids
         assert report.level == AgentRiskLevel.WARNING
 
     def test_limit_proximity_warning(self):
         # weight 0.09 vs limit 0.10 → 90% > warning_ratio 0.8
-        report = evaluate_agent_risk(
-            _activity(), _snapshot(top_weight=0.09), AgentRiskThresholds()
-        )
+        report = evaluate_agent_risk(_activity(), _snapshot(top_weight=0.09), AgentRiskThresholds())
         ids = [i.indicator_id for i in report.indicators]
         assert "limit_proximity" in ids
 
     def test_no_proximity_when_limits_missing(self):
         # degraded 快照（limits=None）不应误报 limit_proximity
-        report = evaluate_agent_risk(
-            _activity(), _snapshot(degraded=True), AgentRiskThresholds()
-        )
+        report = evaluate_agent_risk(_activity(), _snapshot(degraded=True), AgentRiskThresholds())
         ids = [i.indicator_id for i in report.indicators]
         assert "limit_proximity" not in ids
 
@@ -226,9 +220,7 @@ class TestSampleFloor:
 class TestInputValidation:
     def test_negative_counts_raise(self):
         with pytest.raises(InvalidAgentActivityError):
-            evaluate_agent_risk(
-                _activity(orders_submitted=-1), _snapshot(), AgentRiskThresholds()
-            )
+            evaluate_agent_risk(_activity(orders_submitted=-1), _snapshot(), AgentRiskThresholds())
 
     def test_rejected_exceeds_submitted_raises(self):
         with pytest.raises(InvalidAgentActivityError):
@@ -240,9 +232,7 @@ class TestInputValidation:
 
     def test_confidence_out_of_range_raises(self):
         with pytest.raises(InvalidAgentActivityError):
-            evaluate_agent_risk(
-                _activity(avg_confidence=1.5), _snapshot(), AgentRiskThresholds()
-            )
+            evaluate_agent_risk(_activity(avg_confidence=1.5), _snapshot(), AgentRiskThresholds())
 
     def test_window_inverted_raises(self):
         with pytest.raises(InvalidAgentActivityError):

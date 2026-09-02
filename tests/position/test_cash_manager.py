@@ -205,8 +205,7 @@ def test_plan_reverse_repo_normal_day():
 
 def test_plan_reverse_repo_holiday_prefers_one_day_with_extra_interest():
     mgr = CashManager(initial_cash=INIT)
-    plan = mgr.plan_reverse_repo(T0, annualized_rate=0.02, max_ratio=0.5,
-                                 in_holiday_mode=True, holiday_extra_days=6)
+    plan = mgr.plan_reverse_repo(T0, annualized_rate=0.02, max_ratio=0.5, in_holiday_mode=True, holiday_extra_days=6)
     assert plan is not None
     # 节假日: 1天期计息 1+6=7 天 > 7天期计息7天(同息取短) → 选1天期
     assert plan.term_days == 1

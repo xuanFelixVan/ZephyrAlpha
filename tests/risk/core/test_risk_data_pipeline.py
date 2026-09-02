@@ -82,9 +82,7 @@ def _positions(
         cash=Decimal(cash),
         holdings={s: Decimal(q) for s, q in holdings.items()},
         market_values={s: Decimal(v) for s, v in mv.items()},
-        total_market_value=Decimal(sum(Decimal(v) for v in mv.values()))
-        if mv
-        else Decimal("0"),
+        total_market_value=Decimal(sum(Decimal(v) for v in mv.values())) if mv else Decimal("0"),
     )
 
 

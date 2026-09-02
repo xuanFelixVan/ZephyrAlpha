@@ -102,12 +102,20 @@ class TestIdempotency:
     def test_first_write_preserved_on_conflict(self, tmp_db: Path) -> None:
         """同显式 hash 不同 payload 重复写：首条 payload_json 不覆写（审计语义）。"""
         rid1 = log_prediction(
-            trade_date=DATE_A, module="m1", prediction_type="t1",
-            payload={"v": 1}, input_hash="h-x", db_path=tmp_db,
+            trade_date=DATE_A,
+            module="m1",
+            prediction_type="t1",
+            payload={"v": 1},
+            input_hash="h-x",
+            db_path=tmp_db,
         )
         rid2 = log_prediction(
-            trade_date=DATE_A, module="m1", prediction_type="t1",
-            payload={"v": 999}, input_hash="h-x", db_path=tmp_db,
+            trade_date=DATE_A,
+            module="m1",
+            prediction_type="t1",
+            payload={"v": 999},
+            input_hash="h-x",
+            db_path=tmp_db,
         )
         assert rid1 == rid2
         rows = query_predictions(db_path=tmp_db)
@@ -118,11 +126,11 @@ class TestIdempotency:
         """input_hash 缺省=canonical payload SHA-256；同 payload 幂等，异 payload 新行。"""
         payload = {"b": 2, "a": 1}
         rid1 = log_prediction(trade_date=DATE_A, module="m1", prediction_type="t1", payload=payload, db_path=tmp_db)
-        rid2 = log_prediction(trade_date=DATE_A, module="m1", prediction_type="t1", payload=dict(payload), db_path=tmp_db)
+        rid2 = log_prediction(
+            trade_date=DATE_A, module="m1", prediction_type="t1", payload=dict(payload), db_path=tmp_db
+        )
         assert rid1 == rid2  # 同内容（key 序无关，canonical sort_keys）→ 幂等
-        expected = hashlib.sha256(
-            json.dumps(payload, ensure_ascii=False, sort_keys=True).encode("utf-8")
-        ).hexdigest()
+        expected = hashlib.sha256(json.dumps(payload, ensure_ascii=False, sort_keys=True).encode("utf-8")).hexdigest()
         rows = query_predictions(db_path=tmp_db)
         assert rows[0]["input_hash"] == expected
 
@@ -166,11 +174,15 @@ class TestInputValidation:
 
     def test_reject_bad_asof_ts(self, tmp_db: Path) -> None:
         with pytest.raises(ValueError, match="asof_ts"):
-            log_prediction(trade_date=DATE_A, module="m1", prediction_type="t1", payload={}, asof_ts="not-a-ts", db_path=tmp_db)
+            log_prediction(
+                trade_date=DATE_A, module="m1", prediction_type="t1", payload={}, asof_ts="not-a-ts", db_path=tmp_db
+            )
 
     def test_reject_non_str_optional_field(self, tmp_db: Path) -> None:
         with pytest.raises(ValueError, match="model_version"):
-            log_prediction(trade_date=DATE_A, module="m1", prediction_type="t1", payload={}, model_version=123, db_path=tmp_db)
+            log_prediction(
+                trade_date=DATE_A, module="m1", prediction_type="t1", payload={}, model_version=123, db_path=tmp_db
+            )
 
     def test_reject_bad_limit(self, tmp_db: Path) -> None:
         for bad in (0, -1, True, "10"):
@@ -216,8 +228,11 @@ class TestJsonSerialization:
     def test_chinese_and_sort_keys(self, tmp_db: Path) -> None:
         """中文 ensure_ascii=False 原样落库；canonical sort_keys 稳定序。"""
         log_prediction(
-            trade_date=DATE_A, module="m1", prediction_type="t1",
-            payload={"板块": "半导体", "alpha": 1}, db_path=tmp_db,
+            trade_date=DATE_A,
+            module="m1",
+            prediction_type="t1",
+            payload={"板块": "半导体", "alpha": 1},
+            db_path=tmp_db,
         )
         raw = query_predictions(db_path=tmp_db)[0]["payload_json"]
         assert "半导体" in raw
@@ -230,10 +245,18 @@ class TestJsonSerialization:
 class TestQueryFilters:
     @pytest.fixture
     def seeded_db(self, tmp_db: Path) -> Path:
-        log_prediction(trade_date=DATE_A, module="m1", prediction_type="sentiment_score", payload={"s": 50}, db_path=tmp_db)
-        log_prediction(trade_date=DATE_A, module="m2", prediction_type="scenario_plan", payload={"p": 1}, db_path=tmp_db)
-        log_prediction(trade_date=DATE_B, module="m1", prediction_type="sentiment_score", payload={"s": 60}, db_path=tmp_db)
-        log_prediction(trade_date=DATE_B, module="m1", prediction_type="boundary_revision", payload={"b": 1}, db_path=tmp_db)
+        log_prediction(
+            trade_date=DATE_A, module="m1", prediction_type="sentiment_score", payload={"s": 50}, db_path=tmp_db
+        )
+        log_prediction(
+            trade_date=DATE_A, module="m2", prediction_type="scenario_plan", payload={"p": 1}, db_path=tmp_db
+        )
+        log_prediction(
+            trade_date=DATE_B, module="m1", prediction_type="sentiment_score", payload={"s": 60}, db_path=tmp_db
+        )
+        log_prediction(
+            trade_date=DATE_B, module="m1", prediction_type="boundary_revision", payload={"b": 1}, db_path=tmp_db
+        )
         return tmp_db
 
     def test_filter_by_trade_date(self, seeded_db: Path) -> None:

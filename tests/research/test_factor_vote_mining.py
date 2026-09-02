@@ -40,6 +40,7 @@ def _oos(expr: str) -> bool:
 
 def _agent(aid: str, proposals, yes_for=frozenset()) -> VoteAgent:
     """proposals: list[str] 或 {round: list[str]}；yes_for: 该 Agent 赞成的表达式集。"""
+
     def propose(topic: str, r: int):
         if isinstance(proposals, dict):
             return proposals.get(r, [])

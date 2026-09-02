@@ -105,9 +105,7 @@ class TestReconcileBrokerSideStops:
 
     def test_qty_insufficient_mismatch(self):
         """止损单数量不足 → 错配（保护不足）。"""
-        r = reconcile_broker_side_stops(
-            {"A": _pos(qty=1000)}, [{"symbol": "A", "qty": 500, "stop_price": 9.5}]
-        )
+        r = reconcile_broker_side_stops({"A": _pos(qty=1000)}, [{"symbol": "A", "qty": 500, "stop_price": 9.5}])
         assert r.coverage_ok is False
         assert r.unprotected == ()
         assert len(r.mismatched) == 1 and "保护不足" in r.mismatched[0][1]
@@ -120,9 +118,7 @@ class TestReconcileBrokerSideStops:
         assert r.coverage_ok is True
 
     def test_price_beyond_tolerance_mismatch(self):
-        r = reconcile_broker_side_stops(
-            {"A": _pos(stop_price=9.5)}, [{"symbol": "A", "qty": 1000, "stop_price": 9.4}]
-        )
+        r = reconcile_broker_side_stops({"A": _pos(stop_price=9.5)}, [{"symbol": "A", "qty": 1000, "stop_price": 9.4}])
         assert r.coverage_ok is False
         assert "超容差" in r.mismatched[0][1]
 

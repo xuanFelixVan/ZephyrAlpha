@@ -50,9 +50,7 @@ def _ok(layer: str, weight: float) -> LayerVerdict:
 
 
 def _deny(layer: str, violation: str) -> LayerVerdict:
-    return LayerVerdict(
-        layer=layer, allowed=False, adjusted_weight=0.0, violations=(violation,), reason="deny"
-    )
+    return LayerVerdict(layer=layer, allowed=False, adjusted_weight=0.0, violations=(violation,), reason="deny")
 
 
 def _center_all_ok() -> PositionAdjudicationCenter:
@@ -100,7 +98,10 @@ class TestAdjudicate:
         assert plan.allowed is True
         assert plan.final_weight == pytest.approx(0.08)  # 最保守收敛=min
         assert [v.layer for v in plan.layer_verdicts] == [
-            "portfolio", "strategy", "symbol", "dynamic",
+            "portfolio",
+            "strategy",
+            "symbol",
+            "dynamic",
         ]
 
     def test_any_layer_deny_rejects(self) -> None:

@@ -211,8 +211,11 @@ class TestLoadAttributionRecords:
     def test_non_outcome_rows_not_mixed(self, tmp_db: Path) -> None:
         _seed_outcome(tmp_db, _iso(AS_OF), hit=True)
         log_prediction(
-            trade_date=_iso(AS_OF), module=MODULE, prediction_type="scenario_plan",
-            payload={"final_scenario": "HIGH_OPEN_REAL_UP"}, db_path=tmp_db,
+            trade_date=_iso(AS_OF),
+            module=MODULE,
+            prediction_type="scenario_plan",
+            payload={"final_scenario": "HIGH_OPEN_REAL_UP"},
+            db_path=tmp_db,
         )
         records, skipped = load_attribution_records(MODULE, db_path=tmp_db, as_of=AS_OF)
         assert len(records) == 1

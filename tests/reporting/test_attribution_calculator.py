@@ -76,9 +76,7 @@ class TestSinglePeriodBrinson:
 
     def test_disjoint_sectors_union(self):
         # 组合独有/基准独有板块按权重 0 补位（memo：sectors = 两侧并集）
-        r = calc_single_period_brinson(
-            {"科技": 1.0}, {"银行": 1.0}, {"科技": 0.05}, {"银行": 0.01}, 0.01
-        )
+        r = calc_single_period_brinson({"科技": 1.0}, {"银行": 1.0}, {"科技": 0.05}, {"银行": 0.01}, 0.01)
         # alloc = (1-0)*0 + (0-1)*0.01 = -0.01；sel = 0*... + 1*(0-0.01) = -0.01
         # inter = (1-0)*(0.05-0) + (0-1)*(0-0.01) = 0.05+0.01=0.06；active = 0.05-0.01=0.04
         assert r["single_period_active_return"] == pytest.approx(0.04, abs=1e-12)
@@ -119,24 +117,17 @@ class TestCarinoLinkPeriods:
 
     def test_zero_active_degenerates(self):
         # R_p≡R_b → G=0、A→1、k_t→1/(1+R_p) 洛必达退化路径
-        effects = [
-            {"allocation_effect": 0.0, "selection_effect": 0.0, "interaction_effect": 0.0}
-            for _ in range(3)
-        ]
+        effects = [{"allocation_effect": 0.0, "selection_effect": 0.0, "interaction_effect": 0.0} for _ in range(3)]
         r = carino_link_periods(effects, [0.01, 0.02, -0.01], [0.01, 0.02, -0.01])
         assert r["geometric_active_return"] == pytest.approx(0.0, abs=1e-15)
         assert r["residual_quality"] == "PASS"
 
     def test_single_period(self):
-        effects = [
-            {"allocation_effect": 0.001, "selection_effect": 0.002, "interaction_effect": 0.0}
-        ]
+        effects = [{"allocation_effect": 0.001, "selection_effect": 0.002, "interaction_effect": 0.0}]
         r = carino_link_periods(effects, [0.013], [0.010])
         assert abs(r["carino_residual"]) < 1e-9
         assert (
-            r["linked_allocation_effect"]
-            + r["linked_selection_effect"]
-            + r["linked_interaction_effect"]
+            r["linked_allocation_effect"] + r["linked_selection_effect"] + r["linked_interaction_effect"]
         ) == pytest.approx(r["geometric_active_return"], abs=1e-9)
 
     def test_length_mismatch_rejected(self):
@@ -178,15 +169,13 @@ class TestT1SettlementSplit:
     def test_split_identity_and_warning(self):
         set_sector_map({"000001": "科技"})
         new_pos = {"000001": {"weight": 0.25, "day_return": 0.12}}
-        r = calc_brinson_with_t1_settlement(
-            self._PW, self._BW, self._PR, self._BR, 0.01, new_positions_today=new_pos
-        )
+        r = calc_brinson_with_t1_settlement(self._PW, self._BW, self._PR, self._BR, 0.01, new_positions_today=new_pos)
         # λ=0.25/0.5=0.5；unrealized = 0.5 * 0.5 * (0.12-0.02) = 0.025
         assert r["unrealized_selection_effect"] == pytest.approx(0.025, abs=1e-12)
         # 拆分恒等：realized + unrealized == selection 总
-        assert (
-            r["realized_selection_effect"] + r["unrealized_selection_effect"]
-        ) == pytest.approx(r["selection_effect_total"], abs=1e-12)
+        assert (r["realized_selection_effect"] + r["unrealized_selection_effect"]) == pytest.approx(
+            r["selection_effect_total"], abs=1e-12
+        )
         assert r["t1_locked_weight"] == pytest.approx(0.25, abs=1e-12)
         # 0.025/0.04 = 62.5% > 50% → 警示
         assert r["t1_warning"] is True
@@ -229,9 +218,7 @@ class TestBuildLinkedAttributionReport:
         assert rep.factor_contributions == {}  # 因子维度暂缓（54号 §3.4）
         assert rep.transaction_cost_drag == 0.001
         # total_return = 几何超额收益 − 成本拖拽（对齐 pf_core 守恒口径）
-        assert rep.total_return == pytest.approx(
-            out.geometric_active_return - 0.001, abs=1e-12
-        )
+        assert rep.total_return == pytest.approx(out.geometric_active_return - 0.001, abs=1e-12)
         # 链接三效应 = 报告三效应，且求和 == 几何超额收益
         assert rep.allocation_effect + rep.selection_effect + rep.interaction_effect == pytest.approx(
             out.geometric_active_return, abs=1e-9
