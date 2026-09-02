@@ -5452,7 +5452,18 @@ class AkshareIngestProvider(IngestProviderBase):
 
     @staticmethod
     def _parse_convertible_bond_row(r) -> tuple:
-        """解析单行可转债数据。"""
+        """解析单行可转债数据。
+
+        schema 非Nullable Date/Float64 列（DDL-as-Code 真源），空值沿用项目哨兵约定：
+        空日期=1970-01-01（同 etf_list/news 口径），空数值=0.0。
+
+        列名对齐 akshare bond_zh_cov 2026-09 实测结构（2026-09-03 修复：
+        旧列名"上市日期/票面利率/发行期限"等已不存在，曾致全行 NaN →
+        Code 38 整批写入失败；现映射：申购日期→start_date、上市时间→list_date、
+        转股价→latest_convert_price、发行规模→issue_amount、信用评级→issue/latest_credit；
+        摘牌/转股区间/票面利率等新结构已不含 → 哨兵占位，待更全数据源替换）。
+        """
+        credit = str(r.get("信用评级", "") or "")
         return (
             str(r.get("债券代码", "") or ""),
             str(r.get("债券简称", "") or ""),
@@ -5460,30 +5471,30 @@ class AkshareIngestProvider(IngestProviderBase):
             str(r.get("转股代码", "") or ""),
             str(r.get("正股代码", "") or "").zfill(6),
             str(r.get("正股简称", "") or ""),
-            safe_float(r.get("发行期限")),
-            safe_float(r.get("面值")),
-            safe_float(r.get("发行价格")),
-            safe_float(r.get("发行规模")),
-            safe_float(r.get("债券余额")),
-            AkshareIngestProvider._norm_date_str(r.get("起始日期")),
-            AkshareIngestProvider._norm_date_str(r.get("截止日期")),
-            str(r.get("利率类型", "") or ""),
-            safe_float(r.get("票面利率")),
-            safe_float(r.get("补偿利率")),
-            int(safe_float(r.get("付息频率")) or 0),
-            AkshareIngestProvider._norm_date_str(r.get("上市日期")),
-            AkshareIngestProvider._norm_date_str(r.get("摘牌日期")),
-            str(r.get("上市地点", "") or ""),
-            AkshareIngestProvider._norm_date_str(r.get("转股起始日")),
-            AkshareIngestProvider._norm_date_str(r.get("转股截止日")),
-            AkshareIngestProvider._norm_date_str(r.get("停止转股日")),
-            safe_float(r.get("初始转股价")),
-            safe_float(r.get("最新转股价")),
-            str(r.get("利率说明", "") or ""),
-            safe_float(r.get("赎回价格")),
-            str(r.get("发行信用评级", "") or ""),
-            str(r.get("最新信用评级", "") or ""),
-            str(r.get("最新评级机构", "") or ""),
+            0.0,   # issue_term 新结构无发行期限
+            0.0,   # par_value 新结构无面值
+            0.0,   # issue_price 新结构无发行价格
+            safe_float(r.get("发行规模")) or 0.0,
+            0.0,   # bond_balance 新结构无债券余额
+            AkshareIngestProvider._norm_date_str(r.get("申购日期")) or "1970-01-01",
+            "1970-01-01",  # end_date 新结构无截止日期
+            "",    # rate_type 新结构无利率类型
+            0.0,   # coupon_rate 新结构无票面利率
+            0.0,   # comp_rate 新结构无补偿利率
+            0,     # pay_count 新结构无付息频率
+            AkshareIngestProvider._norm_date_str(r.get("上市时间")) or "1970-01-01",
+            "1970-01-01",  # delist_date 未摘牌/新结构无
+            "",    # list_place 新结构无上市地点
+            "1970-01-01",  # convert_start 新结构无转股起始日
+            "1970-01-01",  # convert_end 新结构无转股截止日
+            "1970-01-01",  # stop_convert 新结构无停止转股日
+            0.0,   # initial_convert_price 新结构无
+            safe_float(r.get("转股价")) or 0.0,
+            "",    # rate_desc 新结构无利率说明
+            0.0,   # redeem_price 新结构无赎回价格
+            credit,
+            credit,
+            "",    # latest_agency 新结构无评级机构
         )
 
     # ---- 27. ETF列表（etf_list） ----
@@ -8534,6 +8545,13 @@ class AkshareIngestProvider(IngestProviderBase):
             # symbols=null → 默认核心指数（S2 消费方：沪深300/中证500/创业板指）
             symbols = list(_INDEX_VALUATION_DEFAULT_SYMBOLS)
 
+        # 聚合模式（2026-09-03 修复）：原逐符号 yield error 结果会把任务整体标失败
+        # （scheduler 任一 FetchResult.error 即判失败走 fallback，部分成功也不落库），
+        # 399006（深交所指数，中证官网无此品种，接口恒空）单符号毒死 000300/000905
+        # 全部批次——8/31~9/2 三天全零行实证。改为：逐符号留痕告警、聚合行一次
+        # yield；仅当全部符号失败/空才报 error（宁缺毋错，部分成功照常入库）。
+        all_rows: list[tuple] = []
+        failed_syms: list[str] = []
         for sym in symbols:
             try:
                 df = self._call_with_policy(
@@ -8544,32 +8562,23 @@ class AkshareIngestProvider(IngestProviderBase):
                     end_date=ak_end,
                 )
             except Exception as e:  # noqa: BLE001 — 单标的失败留痕，不阻塞其余标的
+                failed_syms.append(sym)
                 self._log.warning(f"stock_zh_index_hist_csindex({sym}) 失败: {e}")
-                yield FetchResult(
-                    table=table,
-                    columns=columns,
-                    rows=[],
-                    last_key=last_key,
-                    elapsed_sec=time.monotonic() - t0,
-                    error=f"index_valuation_daily 采集失败 symbol={sym}: {e}",
-                )
                 continue
             if df is None or len(df) == 0:
-                yield FetchResult(
-                    table=table,
-                    columns=columns,
-                    rows=[],
-                    last_key=last_key,
-                    elapsed_sec=time.monotonic() - t0,
-                    error=f"index_valuation_daily 空数据 symbol={sym} [{start_str}~{end_str}]",
+                failed_syms.append(sym)
+                self._log.warning(
+                    "stock_zh_index_hist_csindex(%s) 空数据 [%s~%s]（品种不在中证官网口径，属预期）",
+                    sym,
+                    start_str,
+                    end_str,
                 )
                 continue
-            rows: list[tuple] = []
             for _, row in df.iterrows():
                 d = self._norm_date_str(row.get("日期"))
                 if not d or d < start_str or d > end_str:
                     continue
-                rows.append(
+                all_rows.append(
                     (
                         d,
                         sym,
@@ -8587,14 +8596,24 @@ class AkshareIngestProvider(IngestProviderBase):
                         "akshare_csindex",
                     )
                 )
+        if failed_syms and not all_rows:
             yield FetchResult(
                 table=table,
                 columns=columns,
-                rows=rows,
+                rows=[],
                 last_key=last_key,
                 elapsed_sec=time.monotonic() - t0,
-                rows_fetched=len(rows),
+                error=f"index_valuation_daily 全部符号失败 {failed_syms} [{start_str}~{end_str}]",
             )
+            return
+        yield FetchResult(
+            table=table,
+            columns=columns,
+            rows=all_rows,
+            last_key=last_key,
+            elapsed_sec=time.monotonic() - t0,
+            rows_fetched=len(all_rows),
+        )
 
     # ---- A22：富时A50期货日频历史（a50_futures_daily，44号备忘 §9.6 通道1）----
 
