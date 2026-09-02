@@ -102,6 +102,9 @@ SERVICE_CATALOG: list[dict[str, Any]] = [
     {"id": "cold_archive", "group": "infra", "tier": "external", "name": "E 盘冷存储",
      "desc": "老分区数据搬进 parquet 的冷备仓（E:\\zephyr_cold_archive，111 亿行的老窝的后悔药）——库炸了靠它重演历史",
      "detect": {"type": "cold_archive", "dir": "E:\\zephyr_cold_archive", "manifest": "archive_manifest.jsonl"}},
+    {"id": "code_backup", "group": "infra", "tier": "external", "name": "F 盘代码备份仓",
+     "desc": "每日六阶段备份的落盘终点（F:\\code_backup）——任务 Ready 不等于产物在位，这里看真东西",
+     "detect": {"type": "daily_fresh", "dir": "F:\\code_backup"}},
     {"id": "rsshub", "group": "infra", "tier": "external", "name": "RSSHub 新闻源",
      "desc": "新闻/舆情抓取的输送管道（pm2 托管）——情绪分析和新闻页的口粮，开机自启",
      "detect": {"type": "port", "port": 1200}},
@@ -124,6 +127,9 @@ SERVICE_CATALOG: list[dict[str, Any]] = [
     {"id": "qmt_bridge", "group": "trading", "tier": "external", "name": "QMT 文件桥",
      "desc": "QMT 自动导出的实盘数据通道（持仓/委托/成交 CSV，10 秒一茬）——QMT 开着它就活着",
      "detect": {"type": "file_fresh", "dir": "E:\\qmt_bridge"}},
+    {"id": "qmt_bridge_sim", "group": "trading", "tier": "external", "name": "模拟盘文件桥",
+     "desc": "模拟盘 QMT 的数据桥（E:\\qmt_bridge_sim）——模拟盘会话开着它就活着，收盘后停属正常",
+     "detect": {"type": "file_fresh", "dir": "E:\\qmt_bridge_sim"}},
     {"id": "write_audit_daemon", "group": "guard", "tier": "guard", "name": "写审计守护",
      "desc": "给每次文件改动记台账的书记员（防「改了没人知道」）——保命进程不许关",
      "detect": {"type": "proc", "pattern": r"write_audit_daemon"}},
@@ -398,6 +404,36 @@ def _cold_archive(dirpath: str, manifest_name: str) -> tuple[str, str]:
     return result["light"], result["detail"]
 
 
+def _daily_fresh(dirpath: str) -> tuple[str, str]:
+    """日频备份产物目录探测 → (light, detail)。<36h 绿（每日 06:00 允许一天）/ <8d 黄 / 更久红。"""
+    try:
+        if not Path(dirpath).exists():
+            return "red", "备份产物目录不存在（灾备事故）"
+        latest = 0.0
+        n = 0
+        for root, _dirs, files in os.walk(dirpath):   # os.walk 默认跳过无权限子目录（F 盘 ACL 文件实证），不整体炸
+            for f in files:
+                try:
+                    m = (Path(root) / f).stat().st_mtime
+                    n += 1
+                    if m > latest:
+                        latest = m
+                except OSError:
+                    continue
+        if not n:
+            return "red", "备份产物目录为空（灾备事故）"
+        age_h = (time.time() - latest) / 3600
+        when = datetime.fromtimestamp(latest).strftime("%m-%d %H:%M")
+        detail = f"{n} 个文件 · 最新 {when}（{round(age_h)} 小时前）"
+        if age_h < 36:
+            return "green", detail
+        if age_h < 8 * 24:
+            return "yellow", detail + "——超 1 天没备份了"
+        return "red", detail + "——超 1 周没备份（灾备事故）"
+    except Exception as e:  # noqa: BLE001 — 不可达=事故
+        return "red", "备份仓不可达：" + str(e)[:60]
+
+
 def _env_tcp_alive(env_file: str, host_key: str, port_key: str) -> tuple[bool, str]:
     """通用 .env 真源 TCP 探活（#ARCH-CH-017 同源精神：读配置禁硬编码 IP）。"""
     try:
@@ -521,6 +557,10 @@ def get_services_status() -> dict[str, Any]:
             light, msg = _cold_archive(det["dir"], det["manifest"])
             st["light"] = light
             st["detail"] = msg
+        elif det["type"] == "daily_fresh":
+            light, msg = _daily_fresh(det["dir"])
+            st["light"] = light
+            st["detail"] = msg
         elif det["type"] == "ch":
             alive, msg = _ch_alive()
             if alive:
@@ -548,6 +588,15 @@ def get_services_status() -> dict[str, Any]:
         du = psutil.disk_usage("D:\\")
         host["disk"] = round(du.percent, 1)
         host["disk_free_gb"] = round(du.free / 1073741824, 1)
+        disks = []
+        for label, root in (("C", "C:\\"), ("D", "D:\\"), ("E", "E:\\"), ("F", "F:\\")):
+            try:
+                d2 = psutil.disk_usage(root)
+                disks.append({"label": label + " 盘", "pct": round(d2.percent, 1),
+                              "free_gb": round(d2.free / 1073741824, 1)})
+            except Exception:  # noqa: BLE001 — 盘不在则跳过
+                continue
+        host["disks"] = disks
         gpu = _gpu_stats()
         if gpu:
             host["gpu"] = gpu

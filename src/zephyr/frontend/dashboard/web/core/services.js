@@ -48,8 +48,10 @@ function svcRenderMaster() {
   if (st.host && st.host.mem_total_gb) {
     h += '<div style="display:flex;gap:18px;flex-wrap:wrap;margin-top:10px;font-size:11px;color:var(--dim)">'
       + svcWater('本机 CPU', st.host.cpu, '%')
-      + svcWater('本机内存', st.host.mem, '%', st.host.mem_used_gb + ' / ' + st.host.mem_total_gb + ' GB')
-      + svcWater('D 盘磁盘', st.host.disk, '%', '余 ' + st.host.disk_free_gb + ' GB');
+      + svcWater('本机内存', st.host.mem, '%', st.host.mem_used_gb + ' / ' + st.host.mem_total_gb + ' GB');
+    (st.host.disks || []).forEach(function (d) {
+      h += svcWater(d.label, d.pct, '%', '余 ' + d.free_gb + ' GB');
+    });
     if (st.host.gpu) {   /* GPU 杆（RTX 3090 实测可用；无卡/无驱动自动隐藏） */
       var g = st.host.gpu;
       h += svcWater('GPU × ' + g.gpus, g.util, '%', '显存 ' + g.mem_used_gb + ' / ' + g.mem_total_gb + ' GB', g.mem_pct);
