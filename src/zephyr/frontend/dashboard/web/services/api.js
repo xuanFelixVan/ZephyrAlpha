@@ -64,6 +64,12 @@ ZK.api = (function(){
     },
     fetchSignalsOverview: function(){   /* 信号总览聚合（warroom） */
       return fetchJson('/api/signals-overview');
+    },
+    fetchServicesStatus: function(){   /* 服务总闸状态（16 启动项四态灯+CPU/内存+心跳） */
+      return fetchJson('/api/services-status', 8000);
+    },
+    postServicesControl: function(id, action, confirm){   /* 服务启停（分级闸门在服务端，confirm=二次确认） */
+      return fetchJson('/api/services-control', 10000, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id:id, action:action, confirm:!!confirm})});
     }
   };
 })();

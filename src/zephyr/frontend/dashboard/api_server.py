@@ -859,6 +859,37 @@ def signals_overview() -> dict[str, Any]:
         return {"ok": False, "error": str(exc)[:200], "data": []}
 
 
+# ── 服务总闸（Owner 2026-09-02 裁定：桌面 Dashboard 承担启动编排）─────────────
+# 真源=services_registry.SERVICE_CATALOG（16 启动项）；psutil 采集 CPU/内存；
+# 分级开关（free/confirm/guard/external/self）+ 操作审计落盘 tmp/services_control_log.jsonl
+
+
+@app.get("/api/services-status")
+def services_status() -> dict[str, Any]:
+    """服务总闸状态：16 启动项四态灯（DS-12）+ CPU/内存 + 心跳年龄 + 整机水位。"""
+    from zephyr.frontend.dashboard.services_registry import get_control_log, get_services_status
+
+    st = get_services_status()
+    st["control_log"] = get_control_log()
+    return st
+
+
+@app.post("/api/services-control")
+def services_control(body: dict[str, Any]) -> dict[str, Any]:
+    """服务启停控制：body={id, action: start|stop, confirm?: bool}。
+
+    分级闸门：confirm 级未带 confirm=true 返回 need_confirm（前端弹确认框）；
+    guard/external/self 级一律拒绝（保命进程/外部程序/宿主不许在此操作）。
+    """
+    from zephyr.frontend.dashboard.services_registry import control_service
+
+    sid = str(body.get("id", "")).strip()
+    action = str(body.get("action", "")).strip()
+    if action not in ("start", "stop"):
+        return {"ok": False, "error": "action must be start|stop"}
+    return control_service(sid, action, confirm=bool(body.get("confirm")))
+
+
 def main() -> None:
     import uvicorn
 

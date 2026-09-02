@@ -1,0 +1,13 @@
+<section class="page" id="p-services">
+    <h2 class="page-title">服务总闸 <span class="badge b-pass">真源</span></h2>
+    <div class="page-sub">系统组 · 全部启动项一页看全：大白话功能+四态灯+CPU/内存+启停开关——总电箱（四态灯 DS-12：🟢正常 🟡延迟 🔴断线 ⚪未启动 · 10s 自动刷新 · psutil 实测）</div>
+
+    <!-- 总闸区：系统大灯+计数+整机水位+一键拉起+操作日志（JS 渲染） -->
+    <div id="svc-master"></div>
+
+    <!-- 分组列表：服务域/数据域/交易域/基础设施/守护域（JS 渲染） -->
+    <div id="svc-groups"></div>
+
+    <div class="note">操作纪律：🔴 先看 detail 列再动手；「需二次确认」级关闭有代价（弹确认框，盘中关 Tick 订阅会漏行情）；守护域=保命进程禁止在此关闭；外部程序（QMT/通达信/数据库）只能看不能碰；每次启停落审计 tmp/services_control_log.jsonl。总闸=拉起型（一键拉起标准套装），不设一键全停——拉电闸的活不做进面板</div>
+  </section>
+
