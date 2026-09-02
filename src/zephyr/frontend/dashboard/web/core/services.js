@@ -11,11 +11,18 @@ function svcDotTxt(l) { return { green: '正常', yellow: '延迟', red: '断线
 function svcLoad() {
   if (!ZK.api) return;
   ZK.api.fetchServicesStatus().then(function (st) {
-    if (!st || !st.ok) return;
+    if (!st || !st.ok) throw new Error(st && st.error || 'bad payload');
     SVC_ST = st;
     svcRenderMaster();
     svcRenderGroups();
-  }).catch(function () { /* API 断线保持上帧，下轮再试 */ });
+  }).catch(function (e) {
+    /* 失败必显示（Owner 2026-09-02 实证：静默 catch=空白页，"什么都没有"无法自查）——保留上帧列表但总闸区标红提示 */
+    var m = document.getElementById('svc-master');
+    if (m && (!SVC_ST || !m.innerHTML)) {
+      m.innerHTML = '<div class="card" style="border-left:3px solid var(--up)"><b style="color:var(--up)">⚠ API 拉取失败（' + (e && e.message || e)
+        + '）</b><div class="dim" style="font-size:11px;margin-top:4px">面板 API（127.0.0.1:8890）未运行或请求超时——先确认 api_server 存活，10 秒后自动重试</div></div>';
+    }
+  });
 }
 function svcBoot() {
   svcLoad();
@@ -42,8 +49,12 @@ function svcRenderMaster() {
     h += '<div style="display:flex;gap:18px;flex-wrap:wrap;margin-top:10px;font-size:11px;color:var(--dim)">'
       + svcWater('本机 CPU', st.host.cpu, '%')
       + svcWater('本机内存', st.host.mem, '%', st.host.mem_used_gb + ' / ' + st.host.mem_total_gb + ' GB')
-      + svcWater('D 盘磁盘', st.host.disk, '%', '余 ' + st.host.disk_free_gb + ' GB')
-      + '</div>';
+      + svcWater('D 盘磁盘', st.host.disk, '%', '余 ' + st.host.disk_free_gb + ' GB');
+    if (st.host.gpu) {   /* GPU 杆（RTX 3090 实测可用；无卡/无驱动自动隐藏） */
+      var g = st.host.gpu;
+      h += svcWater('GPU × ' + g.gpus, g.util, '%', '显存 ' + g.mem_used_gb + ' / ' + g.mem_total_gb + ' GB', g.mem_pct);
+    }
+    h += '</div>';
   }
   var log = st.control_log || [];
   if (log.length) {
@@ -56,11 +67,12 @@ function svcRenderMaster() {
   }
   m.innerHTML = h + '</div>';
 }
-function svcWater(label, pct, unit, sub) {
+function svcWater(label, pct, unit, sub, barPct) {
+  var p = barPct != null ? barPct : pct;   /* GPU：杆画显存占用，数字显示算力利用率 */
   var warn = pct >= 90 ? ' style="color:var(--up)"' : (pct >= 75 ? ' style="color:var(--yellow)"' : '');
   return '<div style="min-width:180px;flex:1"><div style="display:flex;justify-content:space-between">'
     + '<span>' + label + (sub ? ' <span style="font-size:10px">(' + sub + ')</span>' : '') + '</span><b' + warn + '>' + pct + unit + '</b></div>'
-    + '<div class="bar" style="margin-top:3px"><i style="width:' + Math.min(100, pct) + '%"></i></div></div>';
+    + '<div class="bar" style="margin-top:3px"><i style="width:' + Math.min(100, p) + '%"></i></div></div>';
 }
 
 /* ── 分组列表：每行=四态灯+名称大白话+级别徽标+CPU/内存+detail+开关 ── */

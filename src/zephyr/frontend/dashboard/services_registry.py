@@ -113,6 +113,7 @@ _TIER_LABEL = {"free": "可自由开关", "confirm": "需二次确认", "guard":
                "external": "外部程序·只读", "self": "本页宿主"}
 
 _SCHTASKS_CACHE: dict[str, tuple[float, str]] = {}   # task_name → (ts, status)
+_GPU_CACHE: dict[str, tuple[float, Any]] = {}        # gpu 查询缓存（nvidia-smi 子进程 ~150ms，15s 复用）
 
 
 # ── 探测原语 ──────────────────────────────────────────────────────────────
@@ -270,6 +271,35 @@ def _ch_alive() -> tuple[bool, str]:
         return False, str(e)[:80]
 
 
+def _gpu_stats() -> dict[str, Any] | None:
+    """GPU 水位（nvidia-smi，多卡聚合 util 取最大、显存求和）——无卡/无驱动返回 None（前端隐藏该杆）。"""
+    hit = _GPU_CACHE.get("stats")
+    if hit and time.time() - hit[0] < 15:
+        return hit[1]
+    stats: dict[str, Any] | None = None
+    try:
+        r = subprocess.run(
+            ["nvidia-smi", "--query-gpu=utilization.gpu,memory.used,memory.total",
+             "--format=csv,noheader,nounits"],
+            capture_output=True, text=True, timeout=4)
+        if r.returncode == 0 and r.stdout.strip():
+            utils, used, total = [], 0.0, 0.0
+            for line in r.stdout.strip().splitlines():
+                parts = [p.strip() for p in line.split(",")]
+                if len(parts) == 3:
+                    utils.append(float(parts[0]))
+                    used += float(parts[1])
+                    total += float(parts[2])
+            if total > 0:
+                stats = {"util": round(max(utils), 1), "mem_used_gb": round(used / 1024, 1),
+                         "mem_total_gb": round(total / 1024, 1),
+                         "mem_pct": round(used / total * 100, 1), "gpus": len(utils)}
+    except Exception:  # noqa: BLE001 — 无 nvidia-smi/超时=无 GPU 杆
+        stats = None
+    _GPU_CACHE["stats"] = (time.time(), stats)
+    return stats
+
+
 def get_services_status() -> dict[str, Any]:
     """全量状态（GET /api/services-status 真源）。light: green/yellow/red/gray（DS-12）。"""
     try:
@@ -349,6 +379,9 @@ def get_services_status() -> dict[str, Any]:
         du = psutil.disk_usage("D:\\")
         host["disk"] = round(du.percent, 1)
         host["disk_free_gb"] = round(du.free / 1073741824, 1)
+        gpu = _gpu_stats()
+        if gpu:
+            host["gpu"] = gpu
     except Exception:  # noqa: BLE001
         pass
 
