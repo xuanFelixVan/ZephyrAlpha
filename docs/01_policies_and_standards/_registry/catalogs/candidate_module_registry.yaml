@@ -7004,13 +7004,14 @@ entries:
     两路裁定：①gate 只读化——gate 链执行期禁写 tracked 区（违反即红，现有 watchdog
     告警升硬）；②派生写统一迁 post-commit 波次（gate 链内零写入）。
     涉全部门禁执行路径，需影响面评估后专项施工。
-  status: candidate
+  status: promoted
+  promoted_to: 'git_commit_gateway.py TRACKED-DRIFT-READONLY 归因升硬 + gate_tracked_write_allowlist.yaml 真源 + gate-17 摘 --fix（2026-09-02 冻结窗口 freeze-gw，commit 6dc5ea84，5 新测）'
   priority: P3
   source: '循环审计 R3 终轮移交清单 4④（2026-08-19 AI-00 建议登记，统筹承接）'
   created: '2026-08-19'
-  last_updated: '2026-08-19'
-  last_reviewed_at: '2026-08-30'
-  review_note: '2026-08-30 候选核销批（greatwall_20260830）复核=维持 candidate：涉全部门禁执行路径的结构改造，需影响面评估后专项施工；本批已落地受害面缓解件（GATEMECH-001/003/005/007），本项为同根治本专项，不在本批范围。'
+  last_updated: '2026-09-02'
+  last_reviewed_at: '2026-09-02'
+  last_review_outcome: '2026-09-02 冻结窗口（freeze-gw 会话）组合路线落地：①带白名单归因的只读化升硬（指纹 diff → 文件级归因 → 未归因硬阻断；纯升硬会误伤 reconcile 派生波次，今日实测批间撞窗）；A 类清零（gate-17 --fix 摘除，唯一 hook 内 tracked 删除器）；连带治本 codegen 检查器 stdin GBK 管道 bug + importlinter 生成器静默吞写失败。残余拆分登记：B 类窗口纪律=CAND-GATEMECH-008，C 类遥测迁移=CAND-GATEMECH-009。结案报告 docs/_working/reports/2026-09-02-freeze-window-completion-report.md。'
 # --- CAND-GATEMECH-005: 网关批次收尾仪式（批量批自动联动 C2 freeze+INTEGRITY 重钉） ---
 - id: CAND-GATEMECH-005
   name: 网关批次收尾仪式——ruff/codegen 批量批自动联动 C2 freeze + INTEGRITY 重钉
@@ -7089,6 +7090,67 @@ entries:
   source: '2026-08-19 Owner 裁定 P1-2③（#ARCH-130 施工令）'
   created: '2026-08-19'
   last_updated: '2026-08-19'
+
+# --- CAND-GATEMECH-008: reconciler 派生写窗口纪律（与 gate/测试采样窗口互斥） ---
+- id: CAND-GATEMECH-008
+  name: reconciler 派生写窗口纪律——B 类派生波次与 gate 指纹窗口/测试采样互斥
+  aliases:
+  - 派生写窗口纪律
+  - reconcile 写入互斥
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 门禁执行框架
+  problem: >-
+    CAND-GATEMECH-004 拆分残余（2026-09-02 冻结窗口实证）：B 类派生写已迁
+    post-commit 波次，但波次无窗口纪律——2026-09-02 冻结窗口实测批 N 的
+    reconcile 波次与批 N+1 的 gate 指纹窗口重叠（hook_tracked_drift 328 条 +
+    freeze-gw 会话亲证），且 reconcile worker 挂死频发（pid 20636 运行 3547s 超阈、
+    pid 45476 卡 GATE-RUNTIME-CLEANUP 心跳停滞），派生缓存入库依赖下一波次
+    反复追赶（本窗手工补账 6+5 批）。
+  proposal: >-
+    方向：①reconcile worker 写 tracked 前取"写窗口锁"（与 gateway gate 段互斥，
+    对标 _GlobalCommitLock 的读者-写者化）；或 ②派生写全部纳入 commit-queue
+    serializer 单写者时序；附带 reconcile worker 挂死治理（GATE-RUNTIME-CLEANUP
+    慢/挂死因排查 + 卡死 worker 自动收割后的波次补跑机制）。
+    落地前由 gate_tracked_write_allowlist.yaml 白名单归因兜底（warn 不阻断）。
+  status: candidate
+  priority: P3
+  source: 'CAND-GATEMECH-004 冻结窗口拆分残余（2026-09-02 freeze-gw 登记）'
+  created: '2026-09-02'
+  last_updated: '2026-09-02'
+  last_reviewed_at: '2026-09-02'
+  review_note: '2026-09-02 登记：004 主路线（归因升硬）已落地，本项为 B 类窗口纪律残余；白名单过渡期内不阻断提交链。'
+
+# --- CAND-GATEMECH-009: 运行时遥测 tracked 数据文件退库/迁 .runtime ---
+- id: CAND-GATEMECH-009
+  name: C 类运行时遥测 tracked 数据文件退库或迁 .runtime（法外写入清零）
+  aliases:
+  - 运行时遥测退库
+  - tracked 数据文件清退
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 运行时数据治理
+  problem: >-
+    CAND-GATEMECH-004 拆分残余（2026-09-02 漂移快照实证）：运行服务/测试期
+    append tracked 数据文件——data/cache/decision_audit_chain.ndjson（×4）、
+    data/compliance_log/compliance_log.jsonl（×3，compliance_log.py）、
+    data/metrics/kill_switch_probes.jsonl（×2，kill_switch_sim.py）、
+    data/databases/governance_metadata/red_blue_report.json（×2）、
+    data/budget/shutdown_snapshot.json（budget_engine.py）——违反 T4-1 铁律
+    （审计写永不回 tracked 区）的存量面；撞 gate 窗口即触发漂移事件。
+  proposal: >-
+    逐文件裁定：①写路径迁 .runtime/（改 METRICS_DIR 等常量 + 读方兼容层）；
+    或 ②退库（git rm --cached + .gitignore 登记，评估历史消费者）。
+    迁移一件即从 gate_tracked_write_allowlist.yaml 摘除一件——白名单条目数
+    即本残余的燃尽指标。.gitignore 裸词模式锚定（meta/ 等 6 模式致 ruff 扫描
+    盲区，52 tracked .py 漏网实证）同属本族，.gitignore 属受保护路径须 Owner 审批。
+  status: candidate
+  priority: P3
+  source: 'CAND-GATEMECH-004 冻结窗口拆分残余（2026-09-02 freeze-gw 登记）'
+  created: '2026-09-02'
+  last_updated: '2026-09-02'
+  last_reviewed_at: '2026-09-02'
+  review_note: '2026-09-02 登记：迁移需逐文件评估读方兼容，未在本窗施工；白名单 C 类条目即待办清单。'
 
 # ============================================================
 # AI-NIGHT-001 阶段3 未来工程-大型登记批（2026-08-20，tracker #223 承接）
