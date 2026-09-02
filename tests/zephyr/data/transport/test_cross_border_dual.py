@@ -69,18 +69,14 @@ class TestCloudflaredConfig:
         assert "service: https://127.0.0.1:8443" in yml
 
     def test_render_fallback_404_and_warp_default_off(self) -> None:
-        spec = CloudflareTunnelSpec(
-            tunnel_id="t", credentials_file="c", hostname="h", service="s"
-        )
+        spec = CloudflareTunnelSpec(tunnel_id="t", credentials_file="c", hostname="h", service="s")
         yml = render_cloudflared_config(spec)
         # ingress 兜底规则（cloudflared 强制要求最后一条为兜底）
         assert yml.rstrip().endswith("- service: http_status:404")
         assert "enabled: false" in yml
 
     def test_render_warp_on(self) -> None:
-        spec = CloudflareTunnelSpec(
-            tunnel_id="t", credentials_file="c", hostname="h", service="s", warp_routing=True
-        )
+        spec = CloudflareTunnelSpec(tunnel_id="t", credentials_file="c", hostname="h", service="s", warp_routing=True)
         assert "enabled: true" in render_cloudflared_config(spec)
 
 
@@ -118,28 +114,13 @@ class TestSwitchToBackup:
     def test_backlog_threshold_boundary(self) -> None:
         dual, _, _ = _make()
         # 积压=阈值（24）不触发——需严格大于
-        assert (
-            dual.record_bucket(
-                BucketStats(connection_failed=True, throughput_bps=100_000.0, backlog=24)
-            )
-            is None
-        )
-        assert (
-            dual.record_bucket(
-                BucketStats(connection_failed=True, throughput_bps=100_000.0, backlog=25)
-            )
-            is not None
-        )
+        assert dual.record_bucket(BucketStats(connection_failed=True, throughput_bps=100_000.0, backlog=24)) is None
+        assert dual.record_bucket(BucketStats(connection_failed=True, throughput_bps=100_000.0, backlog=25)) is not None
 
     def test_throughput_boundary(self) -> None:
         dual, _, _ = _make()
         # 吞吐=基线×0.5 不判定下降（严格小于）
-        assert (
-            dual.record_bucket(
-                BucketStats(connection_failed=True, throughput_bps=500_000.0, backlog=30)
-            )
-            is None
-        )
+        assert dual.record_bucket(BucketStats(connection_failed=True, throughput_bps=500_000.0, backlog=30)) is None
 
     def test_no_double_switch_on_backup(self) -> None:
         dual, _, _ = _make()
@@ -202,9 +183,7 @@ class TestProbeSwitchBack:
         def bad_probe() -> bool:
             raise ConnectionError("primary unreachable")
 
-        dual = CrossBorderDualTransport(
-            DualPathConfig(baseline_throughput_bps=_BASELINE), probe=bad_probe, clock=clock
-        )
+        dual = CrossBorderDualTransport(DualPathConfig(baseline_throughput_bps=_BASELINE), probe=bad_probe, clock=clock)
         dual.record_bucket(_trigger_stats())
         clock.advance(60.0)
         assert dual.maybe_probe_primary() is None

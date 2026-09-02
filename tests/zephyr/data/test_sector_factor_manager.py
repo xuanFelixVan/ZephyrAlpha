@@ -44,10 +44,7 @@ _DAYS = [date(2026, 8, 17) + timedelta(days=i) for i in range(7)]  # 7 个交易
 
 def _bars(code: str, closes: list[str], days: list[date] | None = None) -> list[SectorDailyBar]:
     ds = days or _DAYS
-    return [
-        SectorDailyBar(sector_code=code, trade_date=d, close=Decimal(c))
-        for d, c in zip(ds, closes)
-    ]
+    return [SectorDailyBar(sector_code=code, trade_date=d, close=Decimal(c)) for d, c in zip(ds, closes)]
 
 
 def _manager() -> SectorFactorManager:
@@ -87,9 +84,7 @@ class TestCoverageCheck:
 class TestConstituentMapping:
     def test_mapping_attached(self):
         provider = {"880301": ["600000.SH", "600001.SH"], "880302": ["000001.SZ"]}
-        result = _manager().attach_constituent_map(
-            ["880301", "880302"], provider.get
-        )
+        result = _manager().attach_constituent_map(["880301", "880302"], provider.get)
         assert result.mapping["880301"] == ("600000.SH", "600001.SH")
         assert result.unmapped == ()
 
@@ -111,7 +106,7 @@ class TestConstituentMapping:
 class TestRotationFactors:
     def _sector_set(self):
         strong = _bars("880301", ["10", "11", "12", "13", "14", "15", "16"])  # 持续走强
-        weak = _bars("880302", ["16", "15", "14", "13", "12", "11", "10"])   # 持续走弱
+        weak = _bars("880302", ["16", "15", "14", "13", "12", "11", "10"])  # 持续走弱
         bench = _bars("880001", ["10", "10", "10", "10", "10", "10", "10"])  # 基准横盘
         return strong + weak, bench
 
@@ -178,9 +173,7 @@ class TestQualityScore:
     def test_perfect_score(self):
         bars = _bars("880301", ["10"] * 7)
         infos = _manager().check_coverage(bars, _DAYS)
-        score = _manager().score_data_quality(
-            infos[0], latest_date=_DAYS[-1], as_of=_DAYS[-1], fund_flow_present=True
-        )
+        score = _manager().score_data_quality(infos[0], latest_date=_DAYS[-1], as_of=_DAYS[-1], fund_flow_present=True)
         assert score.score == 1.0
         assert score.issues == ()
 
@@ -199,17 +192,13 @@ class TestQualityScore:
     def test_missing_fund_flow_penalized(self):
         bars = _bars("880301", ["10"] * 7)
         infos = _manager().check_coverage(bars, _DAYS)
-        score = _manager().score_data_quality(
-            infos[0], latest_date=_DAYS[-1], as_of=_DAYS[-1], fund_flow_present=False
-        )
+        score = _manager().score_data_quality(infos[0], latest_date=_DAYS[-1], as_of=_DAYS[-1], fund_flow_present=False)
         assert score.score < 1.0
         assert any("资金流" in i for i in score.issues)
 
     def test_low_coverage_penalized(self):
         bars = _bars("880301", ["10"], days=[_DAYS[0]])
         infos = _manager().check_coverage(bars, _DAYS)
-        score = _manager().score_data_quality(
-            infos[0], latest_date=_DAYS[0], as_of=_DAYS[-1], fund_flow_present=True
-        )
+        score = _manager().score_data_quality(infos[0], latest_date=_DAYS[0], as_of=_DAYS[-1], fund_flow_present=True)
         assert score.score <= 0.5
         assert any("覆盖" in i for i in score.issues)

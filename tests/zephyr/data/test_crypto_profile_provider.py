@@ -205,9 +205,7 @@ class TestCryptoProfileProviderLifecycle:
 
     def test_connect_without_cmc_key(self):
         p = CryptoProfileProvider()
-        with patch(
-            "zephyr.data.implementations.crypto_profile_provider.get_service_secret", return_value=""
-        ):
+        with patch("zephyr.data.implementations.crypto_profile_provider.get_service_secret", return_value=""):
             p.connect()
             assert p._connected is True
             assert p._cmc_api_key == ""

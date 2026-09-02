@@ -290,10 +290,8 @@ class TestLimitLadder:
         # 重造个股行：A2/C2 今日收盘=涨停价（并集路径），A3 收盘低于涨停价（不计）
         base = _base_fixture(n)
         data["stock_rows"] = _stock_rows(
-            {sym: [r[4] for r in base["stock_rows"] if r[0] == sym] for sym in
-             {r[0] for r in base["stock_rows"]}},
-            {sym: [r[3] for r in base["stock_rows"] if r[0] == sym] for sym in
-             {r[0] for r in base["stock_rows"]}},
+            {sym: [r[4] for r in base["stock_rows"] if r[0] == sym] for sym in {r[0] for r in base["stock_rows"]}},
+            {sym: [r[3] for r in base["stock_rows"] if r[0] == sym] for sym in {r[0] for r in base["stock_rows"]}},
             n,
             stock_close_today={"STK_A2.SH": 10.0, "STK_A3.SH": 9.5, "STK_C2.SH": 10.0},
         )
@@ -361,9 +359,19 @@ class TestRotationStateAndMainline:
         closes["880507.SH"] = _closes_const(n, -0.003)
         closes["880508.SH"] = _closes_const(n, -0.004)
         amounts = {code: [10.0] * n for code in [MKT] + SECTORS880}
-        stock_pct = {sym: [0.0] * n for sym in
-                     ("STK_A1.SH", "STK_A2.SH", "STK_A3.SH", "STK_B1.SH", "STK_B2.SH",
-                      "STK_C1.SH", "STK_C2.SH", "STK_D1.SH")}
+        stock_pct = {
+            sym: [0.0] * n
+            for sym in (
+                "STK_A1.SH",
+                "STK_A2.SH",
+                "STK_A3.SH",
+                "STK_B1.SH",
+                "STK_B2.SH",
+                "STK_C1.SH",
+                "STK_C2.SH",
+                "STK_D1.SH",
+            )
+        }
         stock_amt = {sym: [5.0] * n for sym in stock_pct}
         return {
             "sector_rows": _sector_rows(closes, amounts, n),
@@ -399,9 +407,7 @@ class TestDegradation:
     def test_money_flow_exception_degrades_flow_and_siphon(self):
         """money_flow 查询异常 → 资金流/虹吸两维度 unavailable，榜单/梯队照常。"""
         n = N
-        report = build_sector_report(
-            _days(n)[-1], ch_client=_FakeCH(exc_on="money_flow", **self._base(n))
-        )
+        report = build_sector_report(_days(n)[-1], ch_client=_FakeCH(exc_on="money_flow", **self._base(n)))
         assert report.degraded is False
         assert report.availability["money_flow"] == "unavailable"
         assert report.availability["siphon"] == "unavailable"

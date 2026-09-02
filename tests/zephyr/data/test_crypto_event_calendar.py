@@ -178,12 +178,17 @@ class TestHalvingEvents:
 
     def test_halving_date_range_filter(self):
         p = _make_provider()
-        results = list(p.fetch(_make_payload(
-            "crypto_halving",
-            symbols=None,
-            start=datetime.date(2024, 1, 1),
-            end=datetime.date(2024, 12, 31),
-        ), None))
+        results = list(
+            p.fetch(
+                _make_payload(
+                    "crypto_halving",
+                    symbols=None,
+                    start=datetime.date(2024, 1, 1),
+                    end=datetime.date(2024, 12, 31),
+                ),
+                None,
+            )
+        )
         dates = [row[0] for row in results[0].rows]
         assert "2024-04-20" in dates  # BTC 2024 减半
         assert all(d.startswith("2024-") for d in dates)
@@ -201,12 +206,17 @@ class TestHalvingEvents:
 
     def test_halving_empty_range(self):
         p = _make_provider()
-        results = list(p.fetch(_make_payload(
-            "crypto_halving",
-            symbols=None,
-            start=datetime.date(2100, 1, 1),
-            end=datetime.date(2100, 12, 31),
-        ), None))
+        results = list(
+            p.fetch(
+                _make_payload(
+                    "crypto_halving",
+                    symbols=None,
+                    start=datetime.date(2100, 1, 1),
+                    end=datetime.date(2100, 12, 31),
+                ),
+                None,
+            )
+        )
         assert results[0].rows == []
         assert results[0].last_key == ""
         assert results[0].error is None
@@ -223,12 +233,17 @@ class TestTokenUnlockEvents:
 
     def test_unlock_row_format(self):
         p = _make_provider()
-        results = list(p.fetch(_make_payload(
-            "crypto_token_unlock",
-            symbols=["ARB"],
-            start=datetime.date(2024, 3, 1),
-            end=datetime.date(2024, 3, 31),
-        ), None))
+        results = list(
+            p.fetch(
+                _make_payload(
+                    "crypto_token_unlock",
+                    symbols=["ARB"],
+                    start=datetime.date(2024, 3, 1),
+                    end=datetime.date(2024, 3, 31),
+                ),
+                None,
+            )
+        )
         r = results[0]
         assert r.error is None
         assert len(r.rows) == 1
@@ -238,12 +253,17 @@ class TestTokenUnlockEvents:
     def test_unlock_oneshot_and_monthly_merged(self):
         """一次性 cliff + 月度规则解锁合并输出且按日期排序。"""
         p = _make_provider()
-        results = list(p.fetch(_make_payload(
-            "crypto_token_unlock",
-            symbols=["APT"],
-            start=datetime.date(2024, 11, 1),
-            end=datetime.date(2024, 12, 31),
-        ), None))
+        results = list(
+            p.fetch(
+                _make_payload(
+                    "crypto_token_unlock",
+                    symbols=["APT"],
+                    start=datetime.date(2024, 11, 1),
+                    end=datetime.date(2024, 12, 31),
+                ),
+                None,
+            )
+        )
         rows = results[0].rows
         dates = [row[0] for row in rows]
         assert "2024-11-12" in dates  # 一次性 cliff
@@ -255,12 +275,17 @@ class TestTokenUnlockEvents:
     def test_unlock_monthly_expansion_count(self):
         """月度规则在区间内按月展开（SUI 每月 1 日）。"""
         p = _make_provider()
-        results = list(p.fetch(_make_payload(
-            "crypto_token_unlock",
-            symbols=["SUI"],
-            start=datetime.date(2026, 1, 1),
-            end=datetime.date(2026, 6, 30),
-        ), None))
+        results = list(
+            p.fetch(
+                _make_payload(
+                    "crypto_token_unlock",
+                    symbols=["SUI"],
+                    start=datetime.date(2026, 1, 1),
+                    end=datetime.date(2026, 6, 30),
+                ),
+                None,
+            )
+        )
         dates = [row[0] for row in results[0].rows]
         assert "2026-01-01" in dates
         assert "2026-06-01" in dates
@@ -269,35 +294,50 @@ class TestTokenUnlockEvents:
     def test_unlock_month_end_clamp(self):
         """月末钳制：OP=30 在 2 月落到当月最后一天（2026 非闰年=02-28）。"""
         p = _make_provider()
-        results = list(p.fetch(_make_payload(
-            "crypto_token_unlock",
-            symbols=["OP"],
-            start=datetime.date(2026, 2, 1),
-            end=datetime.date(2026, 2, 28),
-        ), None))
+        results = list(
+            p.fetch(
+                _make_payload(
+                    "crypto_token_unlock",
+                    symbols=["OP"],
+                    start=datetime.date(2026, 2, 1),
+                    end=datetime.date(2026, 2, 28),
+                ),
+                None,
+            )
+        )
         dates = [row[0] for row in results[0].rows]
         assert dates == ["2026-02-28"]
 
     def test_unlock_leap_year_month_end_clamp(self):
         """闰年 2 月：OP=30 钳制到 02-29。"""
         p = _make_provider()
-        results = list(p.fetch(_make_payload(
-            "crypto_token_unlock",
-            symbols=["OP"],
-            start=datetime.date(2028, 2, 1),
-            end=datetime.date(2028, 2, 29),
-        ), None))
+        results = list(
+            p.fetch(
+                _make_payload(
+                    "crypto_token_unlock",
+                    symbols=["OP"],
+                    start=datetime.date(2028, 2, 1),
+                    end=datetime.date(2028, 2, 29),
+                ),
+                None,
+            )
+        )
         dates = [row[0] for row in results[0].rows]
         assert dates == ["2028-02-29"]
 
     def test_unlock_symbols_filter(self):
         p = _make_provider()
-        results = list(p.fetch(_make_payload(
-            "crypto_token_unlock",
-            symbols=["WLD"],
-            start=datetime.date(2026, 1, 1),
-            end=datetime.date(2026, 3, 31),
-        ), None))
+        results = list(
+            p.fetch(
+                _make_payload(
+                    "crypto_token_unlock",
+                    symbols=["WLD"],
+                    start=datetime.date(2026, 1, 1),
+                    end=datetime.date(2026, 3, 31),
+                ),
+                None,
+            )
+        )
         symbols_in_rows = {row[2] for row in results[0].rows}
         assert symbols_in_rows == {"WLD"}
 
@@ -314,7 +354,9 @@ class TestTokenUnlockEvents:
         assert len(rows) <= 40
         today = datetime.date.today()
         assert all(
-            (today - datetime.timedelta(days=366)).isoformat() <= row[0] <= (today + datetime.timedelta(days=731)).isoformat()
+            (today - datetime.timedelta(days=366)).isoformat()
+            <= row[0]
+            <= (today + datetime.timedelta(days=731)).isoformat()
             for row in rows
         )
 
@@ -327,12 +369,17 @@ class TestTokenUnlockEvents:
 
     def test_unlock_last_key(self):
         p = _make_provider()
-        results = list(p.fetch(_make_payload(
-            "crypto_token_unlock",
-            symbols=["ARB"],
-            start=datetime.date(2024, 3, 1),
-            end=datetime.date(2024, 3, 31),
-        ), None))
+        results = list(
+            p.fetch(
+                _make_payload(
+                    "crypto_token_unlock",
+                    symbols=["ARB"],
+                    start=datetime.date(2024, 3, 1),
+                    end=datetime.date(2024, 3, 31),
+                ),
+                None,
+            )
+        )
         assert results[0].last_key == "2024-03-16"
 
 
@@ -341,12 +388,17 @@ class TestMacroEvents:
 
     def test_macro_row_format(self):
         p = _make_provider()
-        results = list(p.fetch(_make_payload(
-            "crypto_macro_event",
-            symbols=None,
-            start=datetime.date(2026, 1, 1),
-            end=datetime.date(2026, 1, 31),
-        ), None))
+        results = list(
+            p.fetch(
+                _make_payload(
+                    "crypto_macro_event",
+                    symbols=None,
+                    start=datetime.date(2026, 1, 1),
+                    end=datetime.date(2026, 1, 31),
+                ),
+                None,
+            )
+        )
         r = results[0]
         assert r.error is None
         # 2026-01: CPI 01-13 + FOMC 01-28
@@ -358,12 +410,17 @@ class TestMacroEvents:
 
     def test_macro_event_types_and_sources(self):
         p = _make_provider()
-        results = list(p.fetch(_make_payload(
-            "crypto_macro_event",
-            symbols=None,
-            start=datetime.date(2026, 1, 1),
-            end=datetime.date(2026, 12, 31),
-        ), None))
+        results = list(
+            p.fetch(
+                _make_payload(
+                    "crypto_macro_event",
+                    symbols=None,
+                    start=datetime.date(2026, 1, 1),
+                    end=datetime.date(2026, 12, 31),
+                ),
+                None,
+            )
+        )
         rows = results[0].rows
         fomc_rows = [row for row in rows if row[1] == "macro_fomc"]
         cpi_rows = [row for row in rows if row[1] == "macro_cpi"]
@@ -397,12 +454,17 @@ class TestMacroEvents:
 
     def test_macro_date_range_filter(self):
         p = _make_provider()
-        results = list(p.fetch(_make_payload(
-            "crypto_macro_event",
-            symbols=None,
-            start=datetime.date(2026, 6, 1),
-            end=datetime.date(2026, 6, 30),
-        ), None))
+        results = list(
+            p.fetch(
+                _make_payload(
+                    "crypto_macro_event",
+                    symbols=None,
+                    start=datetime.date(2026, 6, 1),
+                    end=datetime.date(2026, 6, 30),
+                ),
+                None,
+            )
+        )
         dates = [row[0] for row in results[0].rows]
         assert "2026-06-10" in dates  # CPI
         assert "2026-06-17" in dates  # FOMC

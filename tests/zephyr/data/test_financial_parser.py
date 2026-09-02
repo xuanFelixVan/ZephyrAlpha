@@ -151,9 +151,7 @@ def test_numeric_cleaning_thousands_and_paren_negative():
 
 def test_numeric_cleaning_unit_multiplier():
     fp = FinancialParser()
-    out = fp.parse_report(
-        _report(xbrl_facts={"营业收入": "12万元", "归母净利润": "3亿元", "总资产": "800"})
-    )
+    out = fp.parse_report(_report(xbrl_facts={"营业收入": "12万元", "归母净利润": "3亿元", "总资产": "800"}))
     assert out.metrics["revenue"] == pytest.approx(12e4)
     assert out.metrics["net_profit"] == pytest.approx(3e8)
     assert out.metrics["total_assets"] == pytest.approx(800.0)

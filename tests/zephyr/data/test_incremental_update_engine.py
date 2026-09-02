@@ -37,7 +37,13 @@ from zephyr.data_eng.incremental_update_engine import (
 
 class TestChangeDetection:
     def test_first_observation_unknown(self):
-        signal = ChangeSignal(source_id="kline_daily", watermark="2026-08-25", updated_at_max="2026-08-25T15:00:00", row_count=100, row_hash="h1")
+        signal = ChangeSignal(
+            source_id="kline_daily",
+            watermark="2026-08-25",
+            updated_at_max="2026-08-25T15:00:00",
+            row_count=100,
+            row_hash="h1",
+        )
         verdict = detect_change(None, signal)
         assert verdict.changed is True
         assert "FIRST_OBSERVATION" in verdict.reasons

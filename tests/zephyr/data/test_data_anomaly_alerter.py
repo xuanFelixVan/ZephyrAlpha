@@ -106,25 +106,19 @@ class TestDetectVolumePriceDivergence:
 
     def test_length_mismatch_fail_closed(self) -> None:
         with pytest.raises(DataAnomalyAlerterError):
-            detect_volume_price_divergence(
-                np.linspace(10.0, 12.0, 30), np.ones(20), symbol="X"
-            )
+            detect_volume_price_divergence(np.linspace(10.0, 12.0, 30), np.ones(20), symbol="X")
 
 
 class TestDetectCrossSourceDeviation:
     def test_within_tolerance_no_signal(self) -> None:
         primary = np.array([10.0, 10.1, 10.2])
         secondary = np.array([10.001, 10.099, 10.198])
-        assert detect_cross_source_deviation(
-            primary, secondary, symbol="X", tolerance_bps=30.0
-        ) == []
+        assert detect_cross_source_deviation(primary, secondary, symbol="X", tolerance_bps=30.0) == []
 
     def test_beyond_tolerance_triggers(self) -> None:
         primary = np.array([10.0, 10.1, 10.2])
         secondary = np.array([10.0, 10.1, 10.26])  # 末日偏差约 58.8bps
-        signals = detect_cross_source_deviation(
-            primary, secondary, symbol="X", tolerance_bps=30.0
-        )
+        signals = detect_cross_source_deviation(primary, secondary, symbol="X", tolerance_bps=30.0)
         assert len(signals) == 1
         sig = signals[0]
         assert sig.kind == AnomalyKind.CROSS_SOURCE_DEVIATION
@@ -133,9 +127,7 @@ class TestDetectCrossSourceDeviation:
 
     def test_length_mismatch_fail_closed(self) -> None:
         with pytest.raises(DataAnomalyAlerterError):
-            detect_cross_source_deviation(
-                np.ones(3), np.ones(4), symbol="X", tolerance_bps=30.0
-            )
+            detect_cross_source_deviation(np.ones(3), np.ones(4), symbol="X", tolerance_bps=30.0)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -143,10 +135,14 @@ class TestDetectCrossSourceDeviation:
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-def _signal(kind: AnomalyKind = AnomalyKind.PRICE_JUMP, value: float = 4.5,
-            threshold: float = 4.0, symbol: str = "600519.SH") -> AnomalySignal:
+def _signal(
+    kind: AnomalyKind = AnomalyKind.PRICE_JUMP, value: float = 4.5, threshold: float = 4.0, symbol: str = "600519.SH"
+) -> AnomalySignal:
     return AnomalySignal(
-        kind=kind, symbol=symbol, metric_value=value, threshold=threshold,
+        kind=kind,
+        symbol=symbol,
+        metric_value=value,
+        threshold=threshold,
         detail="t",
     )
 
@@ -155,10 +151,14 @@ class TestGrading:
     def test_grade_mapping_by_ratio(self) -> None:
         alerter = DataAnomalyAlerter(alert_sink=lambda *a, **k: True)
         cases = [
-            (1.0, AlertGrade.P4), (1.5, AlertGrade.P4),
-            (2.0, AlertGrade.P3), (4.9, AlertGrade.P3),
-            (5.0, AlertGrade.P2), (9.9, AlertGrade.P2),
-            (10.0, AlertGrade.P1), (50.0, AlertGrade.P1),
+            (1.0, AlertGrade.P4),
+            (1.5, AlertGrade.P4),
+            (2.0, AlertGrade.P3),
+            (4.9, AlertGrade.P3),
+            (5.0, AlertGrade.P2),
+            (9.9, AlertGrade.P2),
+            (10.0, AlertGrade.P1),
+            (50.0, AlertGrade.P1),
         ]
         for ratio, expected in cases:
             sig = _signal(value=ratio * 4.0, threshold=4.0)
@@ -225,10 +225,13 @@ class TestRoutingAndGateEvents:
 
         alerter = DataAnomalyAlerter(alert_sink=sink)
         base = dict(kind=AnomalyKind.MISSING_RATE, symbol="X", detail="t")
-        alerter.evaluate([
-            AnomalySignal(metric_value=0.50, threshold=0.05, **base),   # ratio 10 → P1→CRITICAL
-            AnomalySignal(metric_value=0.30, threshold=0.05, **base),   # ratio 6 → P2→ERROR
-        ], now_utc=_NOW)
+        alerter.evaluate(
+            [
+                AnomalySignal(metric_value=0.50, threshold=0.05, **base),  # ratio 10 → P1→CRITICAL
+                AnomalySignal(metric_value=0.30, threshold=0.05, **base),  # ratio 6 → P2→ERROR
+            ],
+            now_utc=_NOW,
+        )
         # 注：两条 dedup_key 相同（同 source/kind/symbol）→ 第二条被合并
         assert seen == ["CRITICAL"]
 
@@ -260,9 +263,13 @@ class TestDetectAndEvaluate:
         volumes = np.full(60, 1_000_000.0)
         alerter = DataAnomalyAlerter(alert_sink=lambda *a, **k: True)
         alerts, events = alerter.detect_and_evaluate(
-            closes=closes, volumes=volumes,
-            expected=100, actual=80,
-            symbol="600519.SH", source="tdx", now_utc=_NOW,
+            closes=closes,
+            volumes=volumes,
+            expected=100,
+            actual=80,
+            symbol="600519.SH",
+            source="tdx",
+            now_utc=_NOW,
         )
         kinds = {a.signal.kind for a in alerts}
         assert AnomalyKind.PRICE_JUMP in kinds
@@ -275,9 +282,13 @@ class TestDetectAndEvaluate:
         volumes = np.full(60, 1_000_000.0)
         alerter = DataAnomalyAlerter(alert_sink=lambda *a, **k: True)
         alerts, events = alerter.detect_and_evaluate(
-            closes=closes, volumes=volumes,
-            expected=100, actual=100,
-            symbol="X", source="s", now_utc=_NOW,
+            closes=closes,
+            volumes=volumes,
+            expected=100,
+            actual=100,
+            symbol="X",
+            source="s",
+            now_utc=_NOW,
         )
         assert alerts == []
         assert events == []

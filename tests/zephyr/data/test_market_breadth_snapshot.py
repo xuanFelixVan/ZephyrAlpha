@@ -310,9 +310,10 @@ class TestRegistration:
 
         tables = dict(apply_mod._ALL_DDL)
         assert "c1_market.market_breadth_snapshot" in tables
-        assert "CREATE TABLE IF NOT EXISTS c1_market.market_breadth_snapshot" in tables[
-            "c1_market.market_breadth_snapshot"
-        ]
+        assert (
+            "CREATE TABLE IF NOT EXISTS c1_market.market_breadth_snapshot"
+            in tables["c1_market.market_breadth_snapshot"]
+        )
         assert apply_mod._EXPECTED_ENGINES["market_breadth_snapshot"] == "ReplacingMergeTree"
 
     def test_ddl_columns_match_schema(self):

@@ -212,7 +212,9 @@ class TestRealWorldFixtures:
 
 _NOW = "2026-08-28 14:00:00"
 _MAIN_CMD = r'"D:\AI\Trae CN\Trae CN.exe"'
-_RENDERER_CMD = r'"D:\AI\Trae CN\Trae CN.exe" --type=renderer --user-data-dir="C:\...\Trae CN" --vscode-window-config=vscode:abc'
+_RENDERER_CMD = (
+    r'"D:\AI\Trae CN\Trae CN.exe" --type=renderer --user-data-dir="C:\...\Trae CN" --vscode-window-config=vscode:abc'
+)
 _EXTWORKER_CMD = r'"D:\AI\Trae CN\Trae CN.exe" "d:\AI\...\serverWorkerMain" --node-ipc --clientProcessId=27916'
 
 # 典型活 IDE 拓扑：main(100) <- renderer(200)、utility(300)、ext worker(400 <- 300)

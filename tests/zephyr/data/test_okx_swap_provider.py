@@ -42,14 +42,16 @@ def _mock_funding_history_response(count: int = 3) -> MagicMock:
     data = []
     for i in range(count):
         ts = base_ts - i * 28800000  # 每 8 小时一条，倒序
-        data.append({
-            "instType": "SWAP",
-            "instId": "BTC-USDT-SWAP",
-            "fundingRate": f"{0.0001 + i * 0.00001}",
-            "realizedRate": f"{0.0001 + i * 0.00001}",
-            "fundingTime": str(ts),
-            "method": "current_period",
-        })
+        data.append(
+            {
+                "instType": "SWAP",
+                "instId": "BTC-USDT-SWAP",
+                "fundingRate": f"{0.0001 + i * 0.00001}",
+                "realizedRate": f"{0.0001 + i * 0.00001}",
+                "fundingTime": str(ts),
+                "method": "current_period",
+            }
+        )
     resp = MagicMock()
     resp.json.return_value = {"code": "0", "msg": "", "data": data}
     return resp
@@ -61,14 +63,16 @@ def _mock_funding_rate_response() -> MagicMock:
     resp.json.return_value = {
         "code": "0",
         "msg": "",
-        "data": [{
-            "instType": "SWAP",
-            "instId": "BTC-USDT-SWAP",
-            "fundingRate": "0.0001",
-            "nextFundingRate": "0.00012",
-            "fundingTime": "1693526400000",
-            "nextFundingTime": "1693555200000",
-        }],
+        "data": [
+            {
+                "instType": "SWAP",
+                "instId": "BTC-USDT-SWAP",
+                "fundingRate": "0.0001",
+                "nextFundingRate": "0.00012",
+                "fundingTime": "1693526400000",
+                "nextFundingTime": "1693555200000",
+            }
+        ],
     }
     return resp
 
@@ -79,14 +83,16 @@ def _mock_open_interest_response() -> MagicMock:
     resp.json.return_value = {
         "code": "0",
         "msg": "",
-        "data": [{
-            "instType": "SWAP",
-            "instId": "BTC-USDT-SWAP",
-            "oi": "10000",
-            "oiCcy": "10000",
-            "oiUsd": "400000000",
-            "ts": "1693526400000",
-        }],
+        "data": [
+            {
+                "instType": "SWAP",
+                "instId": "BTC-USDT-SWAP",
+                "oi": "10000",
+                "oiCcy": "10000",
+                "oiUsd": "400000000",
+                "ts": "1693526400000",
+            }
+        ],
     }
     return resp
 
@@ -97,12 +103,14 @@ def _mock_mark_price_response() -> MagicMock:
     resp.json.return_value = {
         "code": "0",
         "msg": "",
-        "data": [{
-            "instType": "SWAP",
-            "instId": "BTC-USDT-SWAP",
-            "markPx": "40050.5",
-            "ts": "1693526400000",
-        }],
+        "data": [
+            {
+                "instType": "SWAP",
+                "instId": "BTC-USDT-SWAP",
+                "markPx": "40050.5",
+                "ts": "1693526400000",
+            }
+        ],
     }
     return resp
 
@@ -113,16 +121,18 @@ def _mock_index_tickers_response() -> MagicMock:
     resp.json.return_value = {
         "code": "0",
         "msg": "",
-        "data": [{
-            "instId": "BTC-USDT",
-            "idxPx": "40000.0",
-            "high24h": "40100",
-            "low24h": "39900",
-            "open24h": "40000",
-            "sodUtc0": "40010",
-            "sodUtc8": "40020",
-            "ts": "1693526400000",
-        }],
+        "data": [
+            {
+                "instId": "BTC-USDT",
+                "idxPx": "40000.0",
+                "high24h": "40100",
+                "low24h": "39900",
+                "open24h": "40000",
+                "sodUtc0": "40010",
+                "sodUtc8": "40020",
+                "ts": "1693526400000",
+            }
+        ],
     }
     return resp
 
@@ -264,7 +274,9 @@ class TestOkxSwapProviderFundingRate:
 
     def test_fetch_funding_rate_basic(self):
         p = _make_provider()
-        with patch.object(p, "_call_with_policy", side_effect=[_mock_funding_history_response(3), _mock_empty_response()]):
+        with patch.object(
+            p, "_call_with_policy", side_effect=[_mock_funding_history_response(3), _mock_empty_response()]
+        ):
             results = list(p.fetch(_payload("funding_rate_history"), None))
             assert len(results) == 1
             r = results[0]
@@ -276,7 +288,9 @@ class TestOkxSwapProviderFundingRate:
 
     def test_fetch_funding_rate_row_format(self):
         p = _make_provider()
-        with patch.object(p, "_call_with_policy", side_effect=[_mock_funding_history_response(1), _mock_empty_response()]):
+        with patch.object(
+            p, "_call_with_policy", side_effect=[_mock_funding_history_response(1), _mock_empty_response()]
+        ):
             results = list(p.fetch(_payload("funding_rate_history"), None))
             row = results[0].rows[0]
             assert len(row) == len(_FUNDING_RATE_COLUMNS)

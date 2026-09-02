@@ -38,11 +38,13 @@ def _mock_fng_response(count: int = 3) -> MagicMock:
     classifications = ["Extreme Fear", "Fear", "Neutral"]
     for i in range(count):
         ts = base_ts - i * 86400  # 每天一条，倒序
-        data.append({
-            "value": str(20 + i * 10),
-            "value_classification": classifications[i % len(classifications)],
-            "timestamp": str(ts),
-        })
+        data.append(
+            {
+                "value": str(20 + i * 10),
+                "value_classification": classifications[i % len(classifications)],
+                "timestamp": str(ts),
+            }
+        )
     resp = MagicMock()
     resp.json.return_value = {"data": data, "metadata": {"error": None}}
     return resp
@@ -109,7 +111,9 @@ class TestSentimentPanelProviderLifecycle:
 
     def test_connect_with_cmc_key(self):
         p = SentimentPanelProvider()
-        with patch("zephyr.data.implementations.sentiment_panel_provider.get_secret_or_default", return_value="test_key"):
+        with patch(
+            "zephyr.data.implementations.sentiment_panel_provider.get_secret_or_default", return_value="test_key"
+        ):
             p.connect()
             assert p._connected is True
 
@@ -226,10 +230,13 @@ class TestBtcDominance:
 
     def test_fetch_btc_dominance_success(self):
         p = self._make_provider()
-        with patch(
-            "zephyr.data.implementations.sentiment_panel_provider.get_secret_or_default",
-            return_value="test_cmc_key",
-        ), patch.object(p, "_call_with_policy", return_value=_mock_cmc_global_response()):
+        with (
+            patch(
+                "zephyr.data.implementations.sentiment_panel_provider.get_secret_or_default",
+                return_value="test_cmc_key",
+            ),
+            patch.object(p, "_call_with_policy", return_value=_mock_cmc_global_response()),
+        ):
             results = list(p.fetch(_make_payload("crypto_btc_dominance"), None))
             assert len(results) == 1
             r = results[0]
@@ -257,20 +264,26 @@ class TestBtcDominance:
         error_resp.json.return_value = {
             "status": {"error_code": 401, "error_message": "Invalid API key"},
         }
-        with patch(
-            "zephyr.data.implementations.sentiment_panel_provider.get_secret_or_default",
-            return_value="bad_key",
-        ), patch.object(p, "_call_with_policy", return_value=error_resp):
+        with (
+            patch(
+                "zephyr.data.implementations.sentiment_panel_provider.get_secret_or_default",
+                return_value="bad_key",
+            ),
+            patch.object(p, "_call_with_policy", return_value=error_resp),
+        ):
             results = list(p.fetch(_make_payload("crypto_btc_dominance"), None))
             assert len(results) == 1
             assert "CMC API 错误" in results[0].error
 
     def test_fetch_btc_dominance_network_error(self):
         p = self._make_provider()
-        with patch(
-            "zephyr.data.implementations.sentiment_panel_provider.get_secret_or_default",
-            return_value="test_cmc_key",
-        ), patch.object(p, "_call_with_policy", side_effect=Exception("timeout")):
+        with (
+            patch(
+                "zephyr.data.implementations.sentiment_panel_provider.get_secret_or_default",
+                return_value="test_cmc_key",
+            ),
+            patch.object(p, "_call_with_policy", side_effect=Exception("timeout")),
+        ):
             results = list(p.fetch(_make_payload("crypto_btc_dominance"), None))
             assert len(results) == 1
             assert "CMC API 请求失败" in results[0].error

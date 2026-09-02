@@ -85,10 +85,46 @@ def _em_spot_df() -> pd.DataFrame:
     """构造 futures_global_spot_em 形态 DataFrame（列名=akshare futures_hf_em.py 实证）。"""
     return pd.DataFrame(
         [
-            {"代码": "ES00Y", "名称": "小型标普500当月连续", "最新价": 7690.86, "今开": 7669.0, "最高": 7714.0, "最低": 7661.25, "昨结": 7662.5, "持仓量": 0},
-            {"代码": "NQ00Y", "名称": "小型纳指当月连续", "最新价": 29358.83, "今开": 29327.0, "最高": 29539.0, "最低": 29220.0, "昨结": 29300.5, "持仓量": 0},
-            {"代码": "CN00Y", "名称": "A50期指当月连续", "最新价": 14826.0, "今开": 14843.0, "最高": 14849.0, "最低": 14808.0, "昨结": 14843.0, "持仓量": 800082},
-            {"代码": "CL00Y", "名称": "WTI原油当月连续", "最新价": 86.64, "今开": 86.0, "最高": 87.0, "最低": 85.5, "昨结": 86.1, "持仓量": 100},
+            {
+                "代码": "ES00Y",
+                "名称": "小型标普500当月连续",
+                "最新价": 7690.86,
+                "今开": 7669.0,
+                "最高": 7714.0,
+                "最低": 7661.25,
+                "昨结": 7662.5,
+                "持仓量": 0,
+            },
+            {
+                "代码": "NQ00Y",
+                "名称": "小型纳指当月连续",
+                "最新价": 29358.83,
+                "今开": 29327.0,
+                "最高": 29539.0,
+                "最低": 29220.0,
+                "昨结": 29300.5,
+                "持仓量": 0,
+            },
+            {
+                "代码": "CN00Y",
+                "名称": "A50期指当月连续",
+                "最新价": 14826.0,
+                "今开": 14843.0,
+                "最高": 14849.0,
+                "最低": 14808.0,
+                "昨结": 14843.0,
+                "持仓量": 800082,
+            },
+            {
+                "代码": "CL00Y",
+                "名称": "WTI原油当月连续",
+                "最新价": 86.64,
+                "今开": 86.0,
+                "最高": 87.0,
+                "最低": 85.5,
+                "昨结": 86.1,
+                "持仓量": 100,
+            },
         ]
     )
 
@@ -128,7 +164,9 @@ class TestSinaHfParse:
 
 class TestUsFuturesIntradayFetch:
     def test_main_source_rows(self, provider, monkeypatch):
-        monkeypatch.setattr(provider, "_request_sina_hf_quotes", lambda symbols: parse_sina_hf_futures_quotes(_SINA_PAYLOAD))
+        monkeypatch.setattr(
+            provider, "_request_sina_hf_quotes", lambda symbols: parse_sina_hf_futures_quotes(_SINA_PAYLOAD)
+        )
         results = list(provider._fetch_us_futures_intraday(_payload(), _policy()))
         assert len(results) == 1
         res = results[0]

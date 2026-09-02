@@ -516,9 +516,7 @@ class TestFundFlowForSegment:
         assert all(_CODE_880_RE.match(k) for k in res.fund_flow)
 
     def test_unmapped_name_traced_not_crash(self):
-        res = rekey_segment_fund_flow(
-            [_snap("幽灵板块", "09:36", 1.0)], "2026-08-25 09:32", "2026-08-25 09:36"
-        )
+        res = rekey_segment_fund_flow([_snap("幽灵板块", "09:36", 1.0)], "2026-08-25 09:32", "2026-08-25 09:36")
         assert res.fund_flow == {}
         assert res.unmapped_sectors == ("幽灵板块",)
 

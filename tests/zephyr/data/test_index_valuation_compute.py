@@ -101,11 +101,13 @@ class TestIndexValuationComputeProvider:
         close = np.linspace(3000, 4000, n)
         pe = np.full(n, 15.0)
         # df 需含 trade_date 列（与 _compute_one_symbol 构造的 DataFrame 一致）
-        df = pd.DataFrame({
-            "trade_date": dates,
-            "close": close,
-            "pe_ttm": pe,
-        })
+        df = pd.DataFrame(
+            {
+                "trade_date": dates,
+                "close": close,
+                "pe_ttm": pe,
+            }
+        )
 
         # CPI 月度序列：月增 0.2%（年化 ~2.4%）
         cpi_dates = pd.date_range(start="2020-01-01", periods=48, freq="MS")
@@ -165,16 +167,20 @@ class TestIndexValuationComputeProvider:
         provider.connect()
 
         # mock PE 数据（TSV）
-        pe_tsv = _mock_ch_reader_tsv({
-            "trade_date": ["2020-01-02", "2020-01-03"],
-            "pe_ttm": ["15.0", "15.5"],
-            "dividend_yield": ["2.5", "2.5"],
-        })
+        pe_tsv = _mock_ch_reader_tsv(
+            {
+                "trade_date": ["2020-01-02", "2020-01-03"],
+                "pe_ttm": ["15.0", "15.5"],
+                "dividend_yield": ["2.5", "2.5"],
+            }
+        )
         # mock close 数据
-        close_tsv = _mock_ch_reader_tsv({
-            "trade_date": ["2020-01-02", "2020-01-03"],
-            "close": ["3000.0", "3050.0"],
-        })
+        close_tsv = _mock_ch_reader_tsv(
+            {
+                "trade_date": ["2020-01-02", "2020-01-03"],
+                "close": ["3000.0", "3050.0"],
+            }
+        )
         # mock CPI（空 → 降级名义 CAPE）
         # mock 10Y（空 → ERP NaN）
 

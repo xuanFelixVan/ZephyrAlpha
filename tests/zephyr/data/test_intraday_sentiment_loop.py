@@ -120,7 +120,19 @@ class TestRowsToTimeSeries:
         rows = [
             dict(
                 zip(
-                    ("ts", "advancing", "declining", "flat", "limit_up", "limit_down", "sealed", "attempted", "total_count", "total_amount", "trade_date"),
+                    (
+                        "ts",
+                        "advancing",
+                        "declining",
+                        "flat",
+                        "limit_up",
+                        "limit_down",
+                        "sealed",
+                        "attempted",
+                        "total_count",
+                        "total_amount",
+                        "trade_date",
+                    ),
                     r,
                     strict=True,
                 )
@@ -143,8 +155,26 @@ class TestRowsToTimeSeries:
 
     def test_missing_ts_skipped(self):
         rows = [
-            {"ts": None, "advancing": 1, "declining": 0, "limit_up": 0, "sealed": 0, "attempted": 0, "total_count": 10, "trade_date": "2026-08-21"},
-            {"ts": "2026-08-21 09:31:00", "advancing": 2, "declining": 1, "limit_up": 0, "sealed": 0, "attempted": 0, "total_count": 10, "trade_date": "2026-08-21"},
+            {
+                "ts": None,
+                "advancing": 1,
+                "declining": 0,
+                "limit_up": 0,
+                "sealed": 0,
+                "attempted": 0,
+                "total_count": 10,
+                "trade_date": "2026-08-21",
+            },
+            {
+                "ts": "2026-08-21 09:31:00",
+                "advancing": 2,
+                "declining": 1,
+                "limit_up": 0,
+                "sealed": 0,
+                "attempted": 0,
+                "total_count": 10,
+                "trade_date": "2026-08-21",
+            },
         ]
         assembled = rows_to_time_series(rows)
         assert assembled is not None and len(assembled[0].snapshots) == 1

@@ -39,17 +39,19 @@ def _mock_candles_response(count: int = 3) -> MagicMock:
     data = []
     for i in range(count):
         ts = base_ts - i * 86400000  # 每天一根，倒序
-        data.append([
-            str(ts),
-            f"{40000.0 + i * 100}",
-            f"{40100.0 + i * 100}",
-            f"{39900.0 + i * 100}",
-            f"{40050.0 + i * 100}",
-            f"{10.5 + i}",
-            f"{420000.0 + i * 1000}",
-            f"{420000.0 + i * 1000}",
-            "1",
-        ])
+        data.append(
+            [
+                str(ts),
+                f"{40000.0 + i * 100}",
+                f"{40100.0 + i * 100}",
+                f"{39900.0 + i * 100}",
+                f"{40050.0 + i * 100}",
+                f"{10.5 + i}",
+                f"{420000.0 + i * 1000}",
+                f"{420000.0 + i * 1000}",
+                "1",
+            ]
+        )
     resp = MagicMock()
     resp.json.return_value = {"code": "0", "msg": "", "data": data}
     return resp

@@ -61,8 +61,14 @@ def _kline(d: str, sym: str, o: float, h: float, l: float, c: float) -> dict:
 
 def _lp(d: str, sym: str, up: float, down: float = 9.0, src: str = "ch_stk_limit") -> LimitPriceRow:
     return LimitPriceRow(
-        trade_date=d, symbol=sym, pre_close=None, limit_up=up, limit_down=down,
-        board=board_of(sym), st_flag=None, data_source=src,
+        trade_date=d,
+        symbol=sym,
+        pre_close=None,
+        limit_up=up,
+        limit_down=down,
+        board=board_of(sym),
+        st_flag=None,
+        data_source=src,
     )
 
 
@@ -171,10 +177,10 @@ class TestDeriveDailyEvents:
     def test_consec_chain(self):
         rows = [
             _kline("2026-08-18", "600000", 9.0, 9.0, 9.0, 9.0),
-            _kline("2026-08-19", "600000", 9.5, 9.9, 9.4, 9.9),      # 封住 1 板
+            _kline("2026-08-19", "600000", 9.5, 9.9, 9.4, 9.9),  # 封住 1 板
             _kline("2026-08-20", "600000", 10.2, 10.89, 10.1, 10.5),  # 触板未封 → 链断
-            _kline("2026-08-21", "600000", 10.6, 11.0, 10.5, 11.0),   # 封住 1 板（重新计）
-            _kline("2026-08-24", "600000", 11.5, 12.1, 11.4, 12.1),   # 封住 2 板
+            _kline("2026-08-21", "600000", 10.6, 11.0, 10.5, 11.0),  # 封住 1 板（重新计）
+            _kline("2026-08-24", "600000", 11.5, 12.1, 11.4, 12.1),  # 封住 2 板
         ]
         lps = {
             ("2026-08-19", "600000"): _lp("2026-08-19", "600000", 9.90),
@@ -213,11 +219,25 @@ class TestDeriveDailyEvents:
 
 def _event(d: str, sym: str, up: float, sealed: int = 1) -> DabanBoardEvent:
     return DabanBoardEvent(
-        trade_date=d, symbol=sym, board=board_of(sym), st_flag=0, pre_close=9.68,
-        limit_up_price=up, open=10.0, high=up, low=9.9, close=up if sealed else 10.0,
-        touched=1, close_sealed=sealed, is_one_word=0, first_touch_time=None,
-        open_board_count=None, seal_bid_volume=None, seal_amount_proxy=None,
-        consec_limit=1, limit_src="ch_stk_limit",
+        trade_date=d,
+        symbol=sym,
+        board=board_of(sym),
+        st_flag=0,
+        pre_close=9.68,
+        limit_up_price=up,
+        open=10.0,
+        high=up,
+        low=9.9,
+        close=up if sealed else 10.0,
+        touched=1,
+        close_sealed=sealed,
+        is_one_word=0,
+        first_touch_time=None,
+        open_board_count=None,
+        seal_bid_volume=None,
+        seal_amount_proxy=None,
+        consec_limit=1,
+        limit_src="ch_stk_limit",
     )
 
 
@@ -266,10 +286,15 @@ class TestEnrichIntraday:
 
     def test_datetime_trade_time_accepted(self):
         ev = [_event("2026-08-21", "600000", 10.65)]
-        bars = [{
-            "trade_date": "2026-08-21", "symbol": "600000",
-            "trade_time": datetime.datetime(2026, 8, 21, 9, 45, 30), "high": 10.65, "low": 10.65,
-        }]
+        bars = [
+            {
+                "trade_date": "2026-08-21",
+                "symbol": "600000",
+                "trade_time": datetime.datetime(2026, 8, 21, 9, 45, 30),
+                "high": 10.65,
+                "low": 10.65,
+            }
+        ]
         (e,) = enrich_intraday(ev, bars)
         assert e.first_touch_time == "09:45:30"
 
@@ -328,8 +353,12 @@ class TestFetchStkLimitTushare:
 
         pro = MagicMock()
         pro.stk_limit.return_value = pd.DataFrame(
-            {"trade_date": ["20260821", "20260821"], "ts_code": ["600000.SH", "000001.SZ"],
-             "up_limit": [10.65, 11.0], "down_limit": [8.71, 9.0]}
+            {
+                "trade_date": ["20260821", "20260821"],
+                "ts_code": ["600000.SH", "000001.SZ"],
+                "up_limit": [10.65, 11.0],
+                "down_limit": [8.71, 9.0],
+            }
         )
         rows = fetch_stk_limit_tushare("2026-08-21", pro=pro)
         assert len(rows) == 2
@@ -365,8 +394,15 @@ def _fake_ch(kline_rows, stk_limit_rows, min_rows=None, tick_rows=None, st_rows=
     def side_effect(sql, params=None):
         if "c1_market.kline_daily" in sql:
             return [
-                (r["trade_date"], r["symbol"], r["open"], r["high"], r["low"], r["close"],
-                 r.get("ingest_ts", "2026-08-21 18:00:00"))
+                (
+                    r["trade_date"],
+                    r["symbol"],
+                    r["open"],
+                    r["high"],
+                    r["low"],
+                    r["close"],
+                    r.get("ingest_ts", "2026-08-21 18:00:00"),
+                )
                 for r in kline_rows
             ]
         if "c1_market.stk_limit" in sql:
@@ -377,13 +413,15 @@ def _fake_ch(kline_rows, stk_limit_rows, min_rows=None, tick_rows=None, st_rows=
             d = sql.split("toDate('")[1].split("')")[0]
             return [
                 (r["trade_date"], r["symbol"], r["trade_time"], r["high"], r["low"])
-                for r in min_rows if r["trade_date"] == d
+                for r in min_rows
+                if r["trade_date"] == d
             ]
         if "c1_market.tick_data" in sql:
             d = sql.split("toDate('")[1].split("')")[0]
             return [
                 (r["symbol"], r["timestamp"], r["bid_price"], r["bid_volume"])
-                for r in tick_rows if r["trade_date"] == d
+                for r in tick_rows
+                if r["trade_date"] == d
             ]
         raise AssertionError(f"unexpected SQL: {sql}")
 
@@ -410,8 +448,13 @@ class TestCollectDerivedEvents:
             {"trade_date": ["20260820"], "ts_code": ["600000.SH"], "up_limit": [10.65], "down_limit": [8.71]}
         )
         ev = collect_derived_events(
-            "2026-08-20", "2026-08-21", ch_client=ch, pro=pro, intraday=False,
-            seal_ticks=False, sleep=lambda s: None,
+            "2026-08-20",
+            "2026-08-21",
+            ch_client=ch,
+            pro=pro,
+            intraday=False,
+            seal_ticks=False,
+            sleep=lambda s: None,
         )
         assert len(ev) == 2
         e0, e1 = ev
@@ -431,7 +474,10 @@ class TestCollectDerivedEvents:
         ticks = [_tick("2026-08-21", "600000", "15:00:00", 10.65, 8000)]
         ch = _fake_ch(kline, self._stk_rows(), min_rows=mins, tick_rows=ticks)
         ev = collect_derived_events(
-            "2026-08-21", "2026-08-21", ch_client=ch, pro=MagicMock(),
+            "2026-08-21",
+            "2026-08-21",
+            ch_client=ch,
+            pro=MagicMock(),
             sleep=lambda s: None,
         )
         (e,) = ev
@@ -442,11 +488,18 @@ class TestCollectDerivedEvents:
 
     def test_ticks_gated_by_ticks_from(self):
         kline = [_kline("2026-06-01", "600000", 10.0, 10.65, 10.0, 10.65)]
-        ch = _fake_ch(kline, [("2026-06-01", "600000", 9.68, 10.65, 8.71, 0)],
-                      tick_rows=[_tick("2026-06-01", "600000", "15:00:00", 10.65, 8000)])
+        ch = _fake_ch(
+            kline,
+            [("2026-06-01", "600000", 9.68, 10.65, 8.71, 0)],
+            tick_rows=[_tick("2026-06-01", "600000", "15:00:00", 10.65, 8000)],
+        )
         ev = collect_derived_events(
-            "2026-06-01", "2026-06-01", ch_client=ch, pro=MagicMock(),
-            sleep=lambda s: None, ticks_from=D(2026, 7, 1),
+            "2026-06-01",
+            "2026-06-01",
+            ch_client=ch,
+            pro=MagicMock(),
+            sleep=lambda s: None,
+            ticks_from=D(2026, 7, 1),
         )
         (e,) = ev
         assert e.seal_bid_volume is None  # 06-01 < ticks_from → 不查 tick
@@ -459,16 +512,30 @@ class TestCollectDerivedEvents:
         stk = [("2026-08-21", "600000", 9.68, 10.65, 8.71, 0), ("2026-08-21", "000001", 10.0, 11.0, 9.0, 0)]
         ch = _fake_ch(kline, stk)
         ev = collect_derived_events(
-            "2026-08-21", "2026-08-21", ch_client=ch, pro=MagicMock(),
-            symbols={"000001"}, intraday=False, seal_ticks=False, sleep=lambda s: None,
+            "2026-08-21",
+            "2026-08-21",
+            ch_client=ch,
+            pro=MagicMock(),
+            symbols={"000001"},
+            intraday=False,
+            seal_ticks=False,
+            sleep=lambda s: None,
         )
         assert [(e.symbol) for e in ev] == ["000001"]
         # 空窗口（无 kline 行）
         ch2 = _fake_ch([], [])
-        assert collect_derived_events(
-            "2026-08-21", "2026-08-21", ch_client=ch2, pro=MagicMock(),
-            intraday=False, seal_ticks=False, sleep=lambda s: None,
-        ) == []
+        assert (
+            collect_derived_events(
+                "2026-08-21",
+                "2026-08-21",
+                ch_client=ch2,
+                pro=MagicMock(),
+                intraday=False,
+                seal_ticks=False,
+                sleep=lambda s: None,
+            )
+            == []
+        )
 
     def test_bad_date_range_fail_closed(self):
         with pytest.raises(ValueError):
@@ -484,8 +551,13 @@ class TestCollectDerivedEvents:
         dup_new["ingest_ts"] = "2026-08-23 19:06:15"
         ch = _fake_ch([dup_old, dup_new], self._stk_rows())
         ev = collect_derived_events(
-            "2026-08-21", "2026-08-21", ch_client=ch, pro=MagicMock(),
-            intraday=False, seal_ticks=False, sleep=lambda s: None,
+            "2026-08-21",
+            "2026-08-21",
+            ch_client=ch,
+            pro=MagicMock(),
+            intraday=False,
+            seal_ticks=False,
+            sleep=lambda s: None,
         )
         assert len(ev) == 1
         assert ev[0].close == pytest.approx(10.65)

@@ -114,9 +114,9 @@ class TestFixedRuleEvaluation:
     def test_clean_rows_returns_only_unblocked(self):
         engine = _engine()
         rows = [
-            {"close": 50, "ret": 0.01},   # clean
+            {"close": 50, "ret": 0.01},  # clean
             {"close": 500, "ret": 0.01},  # flagged
-            {"close": 50, "ret": 0.5},    # blocked
+            {"close": 50, "ret": 0.5},  # blocked
         ]
         clean = engine.clean_rows(rows)
         assert len(clean) == 2  # flagged 保留、blocked 剔除
@@ -126,9 +126,7 @@ class TestFixedRuleEvaluation:
 
 
 def _rq() -> RollingQuantileThreshold:
-    return RollingQuantileThreshold(
-        quantile=0.5, window=4, guard_lower=5.0, guard_upper=50.0, seed=[10.0, 20.0]
-    )
+    return RollingQuantileThreshold(quantile=0.5, window=4, guard_lower=5.0, guard_upper=50.0, seed=[10.0, 20.0])
 
 
 class TestRollingQuantileThreshold:

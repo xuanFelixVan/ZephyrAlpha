@@ -104,7 +104,9 @@ def _factor_signal(symbol: str = "000001.SZ", valid: bool = True) -> FactorSigna
 
 class TestRealtimeQuery:
     def test_hit_within_sla(self):
-        svc = DataService(redis_client=_FakeRedis({"tick:000001.SZ:latest": {"price": "12.5"}}), clock=_FakeClock(0.001))
+        svc = DataService(
+            redis_client=_FakeRedis({"tick:000001.SZ:latest": {"price": "12.5"}}), clock=_FakeClock(0.001)
+        )
         result = svc.get_realtime("000001.SZ")
         assert result.ok is True
         assert result.value == {"price": "12.5"}
@@ -112,7 +114,9 @@ class TestRealtimeQuery:
         assert result.latency_ms < SLA_TARGETS["realtime"]
 
     def test_sla_violation_when_slow(self):
-        svc = DataService(redis_client=_FakeRedis({"tick:000001.SZ:latest": {"price": "12.5"}}), clock=_FakeClock(0.010))
+        svc = DataService(
+            redis_client=_FakeRedis({"tick:000001.SZ:latest": {"price": "12.5"}}), clock=_FakeClock(0.010)
+        )
         result = svc.get_realtime("000001.SZ")
         assert result.ok is True
         assert result.sla_met is False  # 10ms > 5ms SLA
@@ -138,9 +142,7 @@ class TestPITQuery:
     def test_as_of_delegates_and_parses(self):
         pit = _FakePIT(_TSV)
         svc = DataService(pit=pit, clock=_FakeClock())
-        records = svc.query_pit(
-            "balance_sheet", "000001.SZ", date(2026, 8, 25), columns=",".join(_COLS)
-        )
+        records = svc.query_pit("balance_sheet", "000001.SZ", date(2026, 8, 25), columns=",".join(_COLS))
         assert pit.calls[0][0] == "balance_sheet"
         assert len(records) == 2
         # 双时态字段齐备：业务时点 report_period + 认知时点 announce_date

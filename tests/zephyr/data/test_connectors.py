@@ -18,10 +18,7 @@ from zephyr.data.connectors import (
 def csv_dir(tmp_path):
     """夹具目录：两个数据集 CSV。"""
     (tmp_path / "kline_daily.csv").write_text(
-        "trade_date,symbol,close\n"
-        "2026-08-20,600519,1700.0\n"
-        "2026-08-21,600519,1710.0\n"
-        "2026-08-21,000001,11.5\n",
+        "trade_date,symbol,close\n2026-08-20,600519,1700.0\n2026-08-21,600519,1710.0\n2026-08-21,000001,11.5\n",
         encoding="utf-8",
     )
     (tmp_path / "sector.csv").write_text("name,score\nA,1\n", encoding="utf-8")

@@ -124,9 +124,7 @@ class TestInflowTop:
 
     def test_zero_delta_excluded(self):
         """窗口零成交增量板块不入资金榜（min_amount_delta 默认 0 严格大于）。"""
-        snaps = _series("880301.SH", [500.0, 500.0, 500.0]) + _series(
-            "880302.SH", [100.0, 150.0, 200.0]
-        )
+        snaps = _series("880301.SH", [500.0, 500.0, 500.0]) + _series("880302.SH", [100.0, 150.0, 200.0])
         board = aggregate_sector_intraday(snaps)
         assert [r.sector_code for r in board.inflow_top] == ["880302.SH"]
         assert not any("单快照" in n for n in board.notes)  # 3 快照/板块，不触发单快照注解

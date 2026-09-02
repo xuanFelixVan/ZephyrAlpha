@@ -50,9 +50,7 @@ class TestExistingNewsIds:
     """existing_news_ids 写前预检助手。"""
 
     def test_parses_tsv_into_set(self, monkeypatch):
-        monkeypatch.setattr(
-            news_dedup.ch_reader, "query", lambda sql: "id_a\nid_b\nid_a\n"
-        )
+        monkeypatch.setattr(news_dedup.ch_reader, "query", lambda sql: "id_a\nid_b\nid_a\n")
         assert news_dedup.existing_news_ids("source='x'") == {"id_a", "id_b"}
 
     def test_empty_result_returns_empty_set(self, monkeypatch):
@@ -68,9 +66,7 @@ class TestExistingNewsIds:
 
     def test_where_clause_passed_through(self, monkeypatch):
         captured = {}
-        monkeypatch.setattr(
-            news_dedup.ch_reader, "query", lambda sql: captured.setdefault("sql", sql) or ""
-        )
+        monkeypatch.setattr(news_dedup.ch_reader, "query", lambda sql: captured.setdefault("sql", sql) or "")
         news_dedup.existing_news_ids("source='akshare_research_report'")
         assert "source='akshare_research_report'" in captured["sql"]
         assert "DISTINCT news_id" in captured["sql"]
@@ -79,9 +75,7 @@ class TestExistingNewsIds:
 class TestBuildNewsRowTzAware:
     def test_tz_aware_input_shifts_publish_time_and_id(self):
         row_old_semantics = hashlib.md5("srcT2025-06-15 00:00:00".encode()).hexdigest()
-        row = news_dedup.build_news_row(
-            "2025-06-15T00:00:00+00:00", "T", "", "s", "src", "ds"
-        )
+        row = news_dedup.build_news_row("2025-06-15T00:00:00+00:00", "T", "", "s", "src", "ds")
         # 修正后 publish_time = 北京 08:00；news_id 随之为新值（行为变更固化）
         assert row[1] == "2025-06-15 08:00:00"
         assert row[0] == hashlib.md5("srcT2025-06-15 08:00:00".encode()).hexdigest()

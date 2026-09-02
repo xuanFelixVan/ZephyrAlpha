@@ -141,15 +141,11 @@ class TestParseThsFundFlowRows:
 
     def test_all_numeric_blank_skipped(self):
         """流入/流出/净额全空 → 无效行跳过。"""
-        entries = parse_ths_fund_flow_rows(
-            [_industry_row(流入资金=None, 流出资金=None, 净额=None)], "industry", TS
-        )
+        entries = parse_ths_fund_flow_rows([_industry_row(流入资金=None, 流出资金=None, 净额=None)], "industry", TS)
         assert entries == []
 
     def test_dirty_numeric_gives_none_not_crash(self):
-        entries = parse_ths_fund_flow_rows(
-            [_industry_row(行业指数="--", **{"行业-涨跌幅": "abc"})], "industry", TS
-        )
+        entries = parse_ths_fund_flow_rows([_industry_row(行业指数="--", **{"行业-涨跌幅": "abc"})], "industry", TS)
         e = entries[0]
         assert e.sector_index is None
         assert e.pct_change is None

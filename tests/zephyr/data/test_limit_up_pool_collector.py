@@ -137,9 +137,7 @@ class TestParseZtPoolRows:
 
     def test_dirty_time_gives_none_derivations(self):
         """脏时间（非法/超界）→ 时间字段 None，sealed_seconds None，不炸。"""
-        entries = parse_zt_pool_rows(
-            [_row(首次封板时间="abc", 最后封板时间=999999)], TD
-        )
+        entries = parse_zt_pool_rows([_row(首次封板时间="abc", 最后封板时间=999999)], TD)
         e = entries[0]
         assert e.first_seal_time is None
         assert e.last_seal_time is None

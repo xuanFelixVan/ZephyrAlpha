@@ -773,14 +773,22 @@ class TestMiniQMTBatch2Capabilities:
         monkeypatch.setattr(MiniQmtIngestProvider, "_fetch_simple_kline", fake_simple_kline)
         payload = FetchPayload(
             table="c1_market.kline_futures",
-            symbols=["IF00.IF", "IC2407.CFFEX", "IM0", "IH2409.CFFEX", "000001.SZ", "600000.SH", "RB2407.SHF", "I2407.DCE"],
+            symbols=[
+                "IF00.IF",
+                "IC2407.CFFEX",
+                "IM0",
+                "IH2409.CFFEX",
+                "000001.SZ",
+                "600000.SH",
+                "RB2407.SHF",
+                "I2407.DCE",
+            ],
             start=datetime.date(2024, 1, 1),
             end=datetime.date(2024, 1, 10),
             extra={"capability": "kline_futures"},
         )
         list(p.fetch_kline_futures_qmt(payload, SourcePolicy()))
         assert captured == [["IF00.IF", "IC2407.CFFEX", "IM0", "IH2409.CFFEX"]]
-
 
     def test_hk_kline_route(self, monkeypatch):
         """fetch(capability=hk_kline) 路由到 _fetch_hk_kline。"""
@@ -1609,7 +1617,15 @@ class TestAKShareData015CapabilitiesContinued:
         assert results[0].error is None
         # 2026-08-30：闭旧批/开新批统一 7 列（开新批 valid_to=None）——
         # BufferedWriter 列子句由首个 FetchResult 固定，混宽批次合并 flush 会 Code 27
-        assert results[0].columns == ["trade_date", "index_code", "symbol", "weight", "action", "data_source", "valid_to"]
+        assert results[0].columns == [
+            "trade_date",
+            "index_code",
+            "symbol",
+            "weight",
+            "action",
+            "data_source",
+            "valid_to",
+        ]
         assert results[0].rows == [
             ("2026-08-14", "000300.SH", "600000.SH", 0, "", "akshare_csindex", None),
             ("2026-08-14", "000300.SH", "000001.SZ", 0, "", "akshare_csindex", None),
@@ -2207,4 +2223,3 @@ class TestAkshareKlineDailyBj:
         p = AkshareIngestProvider()
         codes = p._load_bj_listed_symbols(mock_ak, SourcePolicy())
         assert codes == ["920001", "920002"]
-

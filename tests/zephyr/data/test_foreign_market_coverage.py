@@ -62,8 +62,18 @@ def test_watchlist_twelve_targets():
     assert len(FOREIGN_WATCHLIST) == 12
     keys = [t.key for t in FOREIGN_WATCHLIST]
     assert keys == [
-        "dow_jones", "nasdaq", "sp500", "hsi", "nikkei", "kospi",
-        "a50", "dxy", "usdcnh", "wti", "gold", "ust10y",
+        "dow_jones",
+        "nasdaq",
+        "sp500",
+        "hsi",
+        "nikkei",
+        "kospi",
+        "a50",
+        "dxy",
+        "usdcnh",
+        "wti",
+        "gold",
+        "ust10y",
     ]
 
 
@@ -110,8 +120,14 @@ def test_gap_collector_slots_subset():
     report = check_foreign_coverage(query_fn=_fake_query, check_date=TD)
     slots = gap_collector_slots(report)
     assert set(slots) == {
-        "hsi_index", "nikkei_index", "kospi_index", "dxy_forex",
-        "usdcnh_forex", "wti_commodity", "gold_commodity", "ust10y_bond",
+        "hsi_index",
+        "nikkei_index",
+        "kospi_index",
+        "dxy_forex",
+        "usdcnh_forex",
+        "wti_commodity",
+        "gold_commodity",
+        "ust10y_bond",
     }
     assert "provider_hint" in slots["ust10y_bond"]
 
@@ -124,8 +140,11 @@ def test_collector_slots_cover_all_missing_slot_keys():
 
 def test_symbol_whitelist_injection_guard():
     target = ForeignTarget(
-        "evil", "注入", "index",
-        (TableProbeSpec("c1_market.us_index", ("DJI' OR 1=1 --",)),), "",
+        "evil",
+        "注入",
+        "index",
+        (TableProbeSpec("c1_market.us_index", ("DJI' OR 1=1 --",)),),
+        "",
     )
     with pytest.raises(ValueError):
         check_foreign_coverage(query_fn=_fake_query, check_date=TD, watchlist=(target,))
