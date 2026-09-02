@@ -190,7 +190,7 @@ def _bare(code: str) -> str:
         c = c.split(".")[0]
     for pre in ("sh", "sz", "bj"):
         if c.lower().startswith(pre):
-            c = c[len(pre):]
+            c = c[len(pre) :]
             break
     return c
 
@@ -205,7 +205,9 @@ def _validate_date_str(value: object, field_name: str) -> str:
     return value
 
 
-def _pool_stats(pool: str, stocks: list[PoolStock], today_pct: Mapping[str, float], notes: list[str]) -> tuple[PoolPerformance, list[StockFollowDetail]]:
+def _pool_stats(
+    pool: str, stocks: list[PoolStock], today_pct: Mapping[str, float], notes: list[str]
+) -> tuple[PoolPerformance, list[StockFollowDetail]]:
     vals: list[float] = []
     details: list[StockFollowDetail] = []
     for s in stocks:
@@ -353,7 +355,9 @@ def run_limit_up_followthrough(
         if not _allow_no_client:
             raise ValueError("ch_client 不可得（须注入或默认客户端可用）")
         return LimitUpFollowthroughReport(
-            date=date_str, prev_date=prev_str, degraded=True,
+            date=date_str,
+            prev_date=prev_str,
+            degraded=True,
             notes=["CH 客户端不可得，涨停今表现统计整体降级"],
         )
 
@@ -388,14 +392,26 @@ def run_limit_up_followthrough(
         notes.append(f"market_breadth_snapshot 查询异常，宽度腿降级: {e!r}")
 
     rep = compute_followthrough_stats(
-        date_str, prev_str, sealed_pool, broken_pool, today_pct,
-        attempted, sealed_n, cfg,
+        date_str,
+        prev_str,
+        sealed_pool,
+        broken_pool,
+        today_pct,
+        attempted,
+        sealed_n,
+        cfg,
     )
     return LimitUpFollowthroughReport(
-        date=rep.date, prev_date=rep.prev_date,
-        sealed=rep.sealed, broken=rep.broken,
-        market_attempted=rep.market_attempted, market_sealed=rep.market_sealed,
-        market_broken_rate=rep.market_broken_rate, excess_avg_pct=rep.excess_avg_pct,
-        top_gainers=rep.top_gainers, top_losers=rep.top_losers,
-        degraded=rep.degraded, notes=notes + rep.notes,
+        date=rep.date,
+        prev_date=rep.prev_date,
+        sealed=rep.sealed,
+        broken=rep.broken,
+        market_attempted=rep.market_attempted,
+        market_sealed=rep.market_sealed,
+        market_broken_rate=rep.market_broken_rate,
+        excess_avg_pct=rep.excess_avg_pct,
+        top_gainers=rep.top_gainers,
+        top_losers=rep.top_losers,
+        degraded=rep.degraded,
+        notes=notes + rep.notes,
     )

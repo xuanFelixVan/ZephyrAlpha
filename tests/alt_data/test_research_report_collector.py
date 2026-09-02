@@ -75,10 +75,12 @@ def _collector(batch=(), **kw) -> ResearchReportCollector:
 
 class TestCollect:
     def test_collect_ok(self) -> None:
-        col = _collector([
-            _report("r2", publish_date=_D0 + datetime.timedelta(days=1)),
-            _report("r1", publish_date=_D0),
-        ])
+        col = _collector(
+            [
+                _report("r2", publish_date=_D0 + datetime.timedelta(days=1)),
+                _report("r1", publish_date=_D0),
+            ]
+        )
         assert col.collect() == 2
         reports = col.reports()
         assert [c.report.report_id for c in reports] == ["r1", "r2"]  # 确定性排序
@@ -203,11 +205,13 @@ class TestRatingDiff:
 
     def test_event_ordering_deterministic(self) -> None:
         # 乱序投喂：d3 卖出 / d1 中性 / d2 买入 → 事件按 (date, id) 序检出
-        col = _collector([
-            _report("r3", rating="卖出", publish_date=_D0 + datetime.timedelta(days=2)),
-            _report("r1", rating="中性", publish_date=_D0),
-            _report("r2", rating="买入", publish_date=_D0 + datetime.timedelta(days=1)),
-        ])
+        col = _collector(
+            [
+                _report("r3", rating="卖出", publish_date=_D0 + datetime.timedelta(days=2)),
+                _report("r1", rating="中性", publish_date=_D0),
+                _report("r2", rating="买入", publish_date=_D0 + datetime.timedelta(days=1)),
+            ]
+        )
         col.collect()
         transitions = [(e.previous_rating, e.current_rating) for e in col.events()]
         assert transitions == [("中性", "买入"), ("买入", "卖出")]
@@ -237,11 +241,13 @@ class TestRatingDiff:
 
 class TestQuery:
     def test_reports_symbol_filter_sorted(self) -> None:
-        col = _collector([
-            _report("r2", raw_symbol="贵州茅台", publish_date=_D0 + datetime.timedelta(days=1)),
-            _report("r1", publish_date=_D0),
-            _report("r3", raw_symbol="贵州茅台", publish_date=_D0),
-        ])
+        col = _collector(
+            [
+                _report("r2", raw_symbol="贵州茅台", publish_date=_D0 + datetime.timedelta(days=1)),
+                _report("r1", publish_date=_D0),
+                _report("r3", raw_symbol="贵州茅台", publish_date=_D0),
+            ]
+        )
         col.collect()
         maotai = col.reports(symbol="600519")
         assert [c.report.report_id for c in maotai] == ["r3", "r2"]
@@ -256,6 +262,9 @@ class TestQuery:
         col = _collector()
         col._fetch_api = lambda: [_report("r1", publish_date=_D0)]
         col.collect()
-        col._fetch_api = lambda: [_report("r1"), _report("r2", rating="增持", publish_date=_D0 + datetime.timedelta(days=1))]
+        col._fetch_api = lambda: [
+            _report("r1"),
+            _report("r2", rating="增持", publish_date=_D0 + datetime.timedelta(days=1)),
+        ]
         assert col.collect() == 1  # r1 跨批幂等
         assert len(col.events()) == 1  # 变动事件不重复出

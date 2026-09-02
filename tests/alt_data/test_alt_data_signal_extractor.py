@@ -208,9 +208,7 @@ class TestOrthogonalize:
     def test_orthogonalize_ok(self) -> None:
         ext = _extractor(regressor=_regressor_demean)
         fid = _registered(ext)
-        residuals = ext.orthogonalize(
-            fid, [1.0, 2.0, 3.0], {"industry": [0.0, 1.0, 0.0], "mktcap": [10.0, 20.0, 30.0]}
-        )
+        residuals = ext.orthogonalize(fid, [1.0, 2.0, 3.0], {"industry": [0.0, 1.0, 0.0], "mktcap": [10.0, 20.0, 30.0]})
         assert residuals == pytest.approx((-1.0, 0.0, 1.0))
 
     def test_regressor_not_injected_fail_closed(self) -> None:

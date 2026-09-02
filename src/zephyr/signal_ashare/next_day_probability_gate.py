@@ -108,26 +108,32 @@ class ProbabilityGateConfig:
 
     def __post_init__(self) -> None:
         for name in (
-            "new_position_threshold", "add_position_threshold",
-            "bottom_fishing_threshold", "t_plus_threshold", "t_minus_threshold",
+            "new_position_threshold",
+            "add_position_threshold",
+            "bottom_fishing_threshold",
+            "t_plus_threshold",
+            "t_minus_threshold",
         ):
             v = getattr(self, name)
             if not 0.0 < v < 1.0:
                 msg = f"{name} 须∈(0,1)，实得 {v}"
                 raise ValueError(msg)
         for name in (
-            "bull_offset", "bear_offset", "volume_surge_offset",
-            "volume_shrink_offset", "pre_news_offset", "black_swan_offset",
-            "turn_day_offset", "sentiment_high_offset",
+            "bull_offset",
+            "bear_offset",
+            "volume_surge_offset",
+            "volume_shrink_offset",
+            "pre_news_offset",
+            "black_swan_offset",
+            "turn_day_offset",
+            "sentiment_high_offset",
         ):
             v = getattr(self, name)
             if not -1.0 < v < 1.0:
                 msg = f"{name} 须∈(−1,1)，实得 {v}"
                 raise ValueError(msg)
         if not 0.0 < self.threshold_floor < self.threshold_cap < 1.0:
-            msg = (
-                f"钳制区间须 0<floor<cap<1：floor={self.threshold_floor} cap={self.threshold_cap}"
-            )
+            msg = f"钳制区间须 0<floor<cap<1：floor={self.threshold_floor} cap={self.threshold_cap}"
             raise ValueError(msg)
 
     def base_threshold(self, action: str) -> float:
@@ -245,9 +251,7 @@ class NextDayProbabilityGate:
         return total, applied
 
     # ── 主入口 ───────────────────────────────────────────────────
-    def evaluate(
-        self, action: str, p_up: float, context: GateContext | None = None
-    ) -> GateDecision:
+    def evaluate(self, action: str, p_up: float, context: GateContext | None = None) -> GateDecision:
         if action not in GATE_ACTIONS:
             msg = f"未知动作（封闭集外）: {action!r}"
             raise ValueError(msg)

@@ -80,8 +80,14 @@ def gateway(registry):
     return A2aCheckGateway(registry=registry)
 
 
-def _request(priv: str, *, request_id: str = "req-1", capability: str = "read",
-             from_agent: str = "agent-orchestrator", to_agent: str = "agent-worker") -> A2AGateRequest:
+def _request(
+    priv: str,
+    *,
+    request_id: str = "req-1",
+    capability: str = "read",
+    from_agent: str = "agent-orchestrator",
+    to_agent: str = "agent-worker",
+) -> A2AGateRequest:
     req = A2AGateRequest(
         from_agent=from_agent,
         to_agent=to_agent,
@@ -198,7 +204,9 @@ def test_asi06_insecure_channel_pair_not_allowed_denied(registry, keys):
     registry.register(_card("agent-researcher", public_key=pub, capabilities=("read",)))
     registry.register(_card("agent-executor", public_key=pub, capabilities=("read",)))
     gateway = A2aCheckGateway(registry=registry)
-    verdict = gateway.check(_request(priv, request_id="req-asi06", from_agent="agent-researcher", to_agent="agent-executor"))
+    verdict = gateway.check(
+        _request(priv, request_id="req-asi06", from_agent="agent-researcher", to_agent="agent-executor")
+    )
     assert verdict.decision is GateDecision.DENY
     assert verdict.reason == "pair_not_allowed"
 
@@ -247,7 +255,9 @@ def test_asi10_data_exfiltration_cross_zone_read_gated(registry, keys):
 
 def test_missing_signature_denied(gateway):
     """身份校验缺签名 → DENY（missing_signature）。"""
-    req = A2AGateRequest(from_agent="agent-orchestrator", to_agent="agent-worker", capability="read", request_id="req-nosig")
+    req = A2AGateRequest(
+        from_agent="agent-orchestrator", to_agent="agent-worker", capability="read", request_id="req-nosig"
+    )
     verdict = gateway.check(req)
     assert verdict.decision is GateDecision.DENY
     assert verdict.reason == "missing_signature"

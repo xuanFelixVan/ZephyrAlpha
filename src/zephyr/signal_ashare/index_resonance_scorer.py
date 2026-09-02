@@ -197,7 +197,7 @@ def _macd_dif_dea(closes: list[float]) -> tuple[float | None, float | None]:
         return None, None
     ema12 = _ema(closes, 12)
     ema26 = _ema(closes, 26)
-    dif = [a - b for a, b in zip(ema12[-len(ema26):], ema26)]
+    dif = [a - b for a, b in zip(ema12[-len(ema26) :], ema26)]
     dea = _ema(dif, 9)
     if not dea:
         return None, None
@@ -250,8 +250,13 @@ def _rsi_wilder(closes: list[float], n: int = 14) -> float | None:
 def _resolve_weights(cfg: ResonanceConfig) -> tuple[dict[str, float], str]:
     """权重解析：默认静态；weight_overrides 白名单覆盖（非法键 ValueError fail-closed）。"""
     weights = {
-        "macd": cfg.w_macd, "kdj": cfg.w_kdj, "rsi": cfg.w_rsi, "volume": cfg.w_volume,
-        "ma": cfg.w_ma, "boll": cfg.w_boll, "trend": cfg.w_trend,
+        "macd": cfg.w_macd,
+        "kdj": cfg.w_kdj,
+        "rsi": cfg.w_rsi,
+        "volume": cfg.w_volume,
+        "ma": cfg.w_ma,
+        "boll": cfg.w_boll,
+        "trend": cfg.w_trend,
     }
     if cfg.weight_overrides is None:
         return weights, "static"
@@ -275,11 +280,17 @@ def compute_resonance(bars: list[DailyBar], config: ResonanceConfig | None = Non
     cfg = config or ResonanceConfig()
     if not (0.0 < cfg.buy_threshold <= 1.0) or not (-1.0 <= cfg.sell_threshold < 0.0):
         raise ValueError(f"非法信号阈值: buy={cfg.buy_threshold} sell={cfg.sell_threshold}")
-    symbol_date = (bars[-1].date, ) if bars else ("",)
+    symbol_date = (bars[-1].date,) if bars else ("",)
     if len(bars) < cfg.min_bars:
         return IndexResonanceResult(
-            symbol="", date=symbol_date[0], signal=SIGNAL_NEUTRAL, confidence=None,
-            resonance_count=0, resonance_total=7, score=None, degraded=True,
+            symbol="",
+            date=symbol_date[0],
+            signal=SIGNAL_NEUTRAL,
+            confidence=None,
+            resonance_count=0,
+            resonance_total=7,
+            score=None,
+            degraded=True,
             notes=[f"日K样本不足（{len(bars)}<{cfg.min_bars}），不出伪信号"],
         )
 
@@ -287,8 +298,15 @@ def compute_resonance(bars: list[DailyBar], config: ResonanceConfig | None = Non
     wsum = sum(weights.values())
     if wsum <= 0:
         return IndexResonanceResult(
-            symbol="", date=bars[-1].date, signal=SIGNAL_NEUTRAL, confidence=None,
-            resonance_count=0, resonance_total=7, score=None, weight_mode=weight_mode, degraded=True,
+            symbol="",
+            date=bars[-1].date,
+            signal=SIGNAL_NEUTRAL,
+            confidence=None,
+            resonance_count=0,
+            resonance_total=7,
+            score=None,
+            weight_mode=weight_mode,
+            degraded=True,
             notes=["权重和为 0（weight_overrides 全零），不出伪信号"],
         )
 
@@ -302,13 +320,23 @@ def compute_resonance(bars: list[DailyBar], config: ResonanceConfig | None = Non
     # F1 MACD
     dif, dea = _macd_dif_dea(closes)
     v = 0 if dif is None else (1 if dif > dea else -1)
-    votes.append(FamilyVote("macd", _FAMILY_NAME_ZH["macd"], v, weights["macd"],
-                          f"DIF={dif:.3f} vs DEA={dea:.3f}" if dif is not None else "样本不足"))
+    votes.append(
+        FamilyVote(
+            "macd",
+            _FAMILY_NAME_ZH["macd"],
+            v,
+            weights["macd"],
+            f"DIF={dif:.3f} vs DEA={dea:.3f}" if dif is not None else "样本不足",
+        )
+    )
     # F2 KDJ
     k, d = _kdj(closes, highs, lows)
     v = 0 if k is None else (1 if k > d else -1)
-    votes.append(FamilyVote("kdj", _FAMILY_NAME_ZH["kdj"], v, weights["kdj"],
-                          f"K={k:.1f} vs D={d:.1f}" if k is not None else "样本不足"))
+    votes.append(
+        FamilyVote(
+            "kdj", _FAMILY_NAME_ZH["kdj"], v, weights["kdj"], f"K={k:.1f} vs D={d:.1f}" if k is not None else "样本不足"
+        )
+    )
     # F3 RSI
     rsi = _rsi_wilder(closes)
     if rsi is None:
@@ -319,8 +347,15 @@ def compute_resonance(bars: list[DailyBar], config: ResonanceConfig | None = Non
         v = -1
     else:
         v = 0
-    votes.append(FamilyVote("rsi", _FAMILY_NAME_ZH["rsi"], v, weights["rsi"],
-                          f"RSI={rsi:.1f}（多阈{cfg.rsi_bull}/空阈{cfg.rsi_bear}）" if rsi is not None else "样本不足"))
+    votes.append(
+        FamilyVote(
+            "rsi",
+            _FAMILY_NAME_ZH["rsi"],
+            v,
+            weights["rsi"],
+            f"RSI={rsi:.1f}（多阈{cfg.rsi_bull}/空阈{cfg.rsi_bear}）" if rsi is not None else "样本不足",
+        )
+    )
     # F4 量能
     vol_s = _sma(volumes, cfg.vol_short)
     vol_l = _sma(volumes, cfg.vol_long)
@@ -353,13 +388,27 @@ def compute_resonance(bars: list[DailyBar], config: ResonanceConfig | None = Non
     votes.append(FamilyVote("ma", _FAMILY_NAME_ZH["ma"], v, weights["ma"], reason))
     # F6 BOLL（中轨=MA20）
     v = 0 if ma_now is None else (1 if close > ma_now else -1)
-    votes.append(FamilyVote("boll", _FAMILY_NAME_ZH["boll"], v, weights["boll"],
-                            f"收{close:.2f} vs 中轨{ma_now:.2f}" if ma_now is not None else "样本不足"))
+    votes.append(
+        FamilyVote(
+            "boll",
+            _FAMILY_NAME_ZH["boll"],
+            v,
+            weights["boll"],
+            f"收{close:.2f} vs 中轨{ma_now:.2f}" if ma_now is not None else "样本不足",
+        )
+    )
     # F7 趋势
     ref = closes[-1 - cfg.trend_lookback]
     v = 1 if close > ref else -1
-    votes.append(FamilyVote("trend", _FAMILY_NAME_ZH["trend"], v, weights["trend"],
-                            f"收{close:.2f} vs {cfg.trend_lookback}日前{ref:.2f}"))
+    votes.append(
+        FamilyVote(
+            "trend",
+            _FAMILY_NAME_ZH["trend"],
+            v,
+            weights["trend"],
+            f"收{close:.2f} vs {cfg.trend_lookback}日前{ref:.2f}",
+        )
+    )
 
     score = sum(fv.vote * fv.weight for fv in votes) / wsum
     if score >= cfg.buy_threshold:
@@ -378,9 +427,15 @@ def compute_resonance(bars: list[DailyBar], config: ResonanceConfig | None = Non
         aligned_w = sum(fv.weight for fv in aligned) / wsum
         confidence = min(95.0, 50.0 + aligned_w * 45.0)
     return IndexResonanceResult(
-        symbol="", date=bars[-1].date, signal=signal, confidence=round(confidence, 1),
-        resonance_count=resonance_count, resonance_total=7, score=round(score, 4),
-        family_votes=votes, weight_mode=weight_mode,
+        symbol="",
+        date=bars[-1].date,
+        signal=signal,
+        confidence=round(confidence, 1),
+        resonance_count=resonance_count,
+        resonance_total=7,
+        score=round(score, 4),
+        family_votes=votes,
+        weight_mode=weight_mode,
     )
 
 
@@ -431,8 +486,14 @@ def score_index_resonance(
         client = ch_client if ch_client is not None else _default_client()
         if client is None:
             return IndexResonanceResult(
-                symbol=symbol, date="", signal=SIGNAL_NEUTRAL, confidence=None,
-                resonance_count=0, resonance_total=7, score=None, degraded=True,
+                symbol=symbol,
+                date="",
+                signal=SIGNAL_NEUTRAL,
+                confidence=None,
+                resonance_count=0,
+                resonance_total=7,
+                score=None,
+                degraded=True,
                 notes=["CH 客户端不可得，共振评分整体降级"],
             )
         params: dict[str, Any] = {"symbol": symbol, "limit": max(cfg.min_bars * 2, 120)}
@@ -444,19 +505,38 @@ def score_index_resonance(
             rows = client.execute(SQL_INDEX_DAILY, params)
         except Exception as e:  # noqa: BLE001 — 数据层异常降级
             return IndexResonanceResult(
-                symbol=symbol, date="", signal=SIGNAL_NEUTRAL, confidence=None,
-                resonance_count=0, resonance_total=7, score=None, degraded=True,
+                symbol=symbol,
+                date="",
+                signal=SIGNAL_NEUTRAL,
+                confidence=None,
+                resonance_count=0,
+                resonance_total=7,
+                score=None,
+                degraded=True,
                 notes=[f"kline_index 查询异常: {e!r}"],
             )
         bars = [
-            DailyBar(date=str(r[0]), open=float(r[1]), high=float(r[2]), low=float(r[3]),
-                     close=float(r[4]), volume=float(r[5]))
+            DailyBar(
+                date=str(r[0]),
+                open=float(r[1]),
+                high=float(r[2]),
+                low=float(r[3]),
+                close=float(r[4]),
+                volume=float(r[5]),
+            )
             for r in reversed(rows)  # DESC → 升序
         ]
     result = compute_resonance(bars, cfg)
     return IndexResonanceResult(
-        symbol=symbol, date=result.date, signal=result.signal, confidence=result.confidence,
-        resonance_count=result.resonance_count, resonance_total=result.resonance_total,
-        score=result.score, family_votes=result.family_votes, weight_mode=result.weight_mode,
-        degraded=result.degraded, notes=result.notes,
+        symbol=symbol,
+        date=result.date,
+        signal=result.signal,
+        confidence=result.confidence,
+        resonance_count=result.resonance_count,
+        resonance_total=result.resonance_total,
+        score=result.score,
+        family_votes=result.family_votes,
+        weight_mode=result.weight_mode,
+        degraded=result.degraded,
+        notes=result.notes,
     )

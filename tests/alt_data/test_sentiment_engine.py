@@ -82,9 +82,7 @@ class TestComposite:
         assert r.components_present == 2
 
     def test_zero_weights_fallback_equal(self):
-        eng = SentimentEngine(
-            SentimentEngineConfig(weight_price_volume=0.0, weight_social=0.0, weight_news=0.5)
-        )
+        eng = SentimentEngine(SentimentEngineConfig(weight_price_volume=0.0, weight_social=0.0, weight_news=0.5))
         r = eng.evaluate_one(_row(price_volume_score=1.0, social_score=None, news_score=None))
         # 在场路仅价量（其权重 0 → w_sum=0）→ 等权兜底=自身
         assert r.composite == pytest.approx(1.0)
@@ -173,9 +171,7 @@ class TestFailClosed:
         with pytest.raises(InvalidSentimentInputError):
             SentimentInput(trade_date="2026-08-25", symbol="600000", price_volume_score=0.5)  # type: ignore[arg-type]
         with pytest.raises(InvalidSentimentInputError):
-            SentimentInput(
-                trade_date=datetime.datetime(2026, 8, 25, 9, 30), symbol="600000", price_volume_score=0.5
-            )
+            SentimentInput(trade_date=datetime.datetime(2026, 8, 25, 9, 30), symbol="600000", price_volume_score=0.5)
 
     def test_evaluate_one_wrong_type(self, engine):
         with pytest.raises(InvalidSentimentInputError):

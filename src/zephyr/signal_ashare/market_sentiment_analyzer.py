@@ -808,12 +808,7 @@ class MarketSentimentAnalyzer:
         while i >= w and not math.isnan(lu_net[i]) and lu_net[i] > 0:
             run += 1
             i -= 1
-        repairing = (
-            run >= cfg.accel_repair_persist_min
-            and i >= w
-            and not math.isnan(lu_net[i])
-            and lu_net[i] < 0
-        )
+        repairing = run >= cfg.accel_repair_persist_min and i >= w and not math.isnan(lu_net[i]) and lu_net[i] < 0
         # 拐点·恶化中：breadth_vel_5m<0 且指数涨幅>0
         deteriorating = vel_now is not None and vel_now < 0 and index_change_pct > 0
 
@@ -938,11 +933,7 @@ class MarketSentimentAnalyzer:
             predicted_full_volume=y_hat,
             volume_ratio=ratio,
             shrink_warning=ratio < cfg.volume_shrink_threshold,
-            volume_confirm=(
-                ratio > cfg.volume_confirm_threshold
-                and breadth_vel_5m is not None
-                and breadth_vel_5m > 0
-            ),
+            volume_confirm=(ratio > cfg.volume_confirm_threshold and breadth_vel_5m is not None and breadth_vel_5m > 0),
         )
 
     # ------------------------------------------------------------------
@@ -969,9 +960,7 @@ class MarketSentimentAnalyzer:
         return DrawdownRiskResult(
             drawdown_count=count,
             max_drawdown_pct=max_dd,
-            chase_buried_warning=(
-                count >= cfg.drawdown_count_warn and max_dd > cfg.drawdown_max_pct_warn
-            ),
+            chase_buried_warning=(count >= cfg.drawdown_count_warn and max_dd > cfg.drawdown_max_pct_warn),
         )
 
     # ------------------------------------------------------------------
@@ -986,8 +975,7 @@ class MarketSentimentAnalyzer:
             return None
         cfg = self._config
         broken = [
-            s for s in stocks
-            if s.yesterday_high >= s.yesterday_limit_up and s.yesterday_close < s.yesterday_limit_up
+            s for s in stocks if s.yesterday_high >= s.yesterday_limit_up and s.yesterday_close < s.yesterday_limit_up
         ]
         if not broken:
             return BrokenBoardResult(

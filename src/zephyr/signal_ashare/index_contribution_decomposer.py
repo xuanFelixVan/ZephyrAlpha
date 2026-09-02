@@ -342,7 +342,9 @@ def decompose_intraday_contribution(
     client = ch_client if ch_client is not None else (_default_client() if need_client else None)
     if need_client and client is None:
         return IndexContributionResult(
-            date=date_str, index_symbol=cfg.index_symbol, degraded=True,
+            date=date_str,
+            index_symbol=cfg.index_symbol,
+            degraded=True,
             notes=["CH 客户端不可得，贡献度拆解整体降级"],
         )
 
@@ -356,9 +358,7 @@ def decompose_intraday_contribution(
             notes.append(f"index_quote 查询异常，指数腿降级: {e!r}")
     if sector_series is None:
         try:
-            rows = client.execute(
-                SQL_SECTOR_MINUTE, {"trade_date": current, "period": cfg.sector_period}
-            )
+            rows = client.execute(SQL_SECTOR_MINUTE, {"trade_date": current, "period": cfg.sector_period})
             by_sector: dict[str, list[tuple[str, float]]] = {}
             for r in rows:
                 by_sector.setdefault(str(r[1]), []).append((str(r[0])[:16], float(r[2])))

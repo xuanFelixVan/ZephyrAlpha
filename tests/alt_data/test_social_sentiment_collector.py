@@ -123,8 +123,8 @@ class TestAggregation:
 
     def test_engagement_weighted_mean(self):
         posts = [
-            _post("P-1", likes=9, comments=0, reads=0),   # w=10
-            _post("P-2", likes=0, comments=0, reads=0),   # w=1
+            _post("P-1", likes=9, comments=0, reads=0),  # w=10
+            _post("P-2", likes=0, comments=0, reads=0),  # w=1
         ]
         scores = iter([1.0, -1.0])
         c = _collector(posts, scorer=lambda t: next(scores))

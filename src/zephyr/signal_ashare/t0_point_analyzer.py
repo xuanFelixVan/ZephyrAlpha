@@ -261,8 +261,12 @@ def _detect_t_specialized(bars: list[MinuteBar], vwap: list[float], cfg: T0Analy
             confidence = min(100.0, 60.0 + (cfg.pullback_max_pct - dev_pct) * 10.0)
             signals.append(
                 T0Signal(
-                    ts=b.ts, symbol="", direction=T_BUY, pattern=PATTERN_PULLBACK_VWAP,
-                    price=b.close, confidence=round(confidence, 2),
+                    ts=b.ts,
+                    symbol="",
+                    direction=T_BUY,
+                    pattern=PATTERN_PULLBACK_VWAP,
+                    price=b.close,
+                    confidence=round(confidence, 2),
                     logic=f"回踩均价不破+缩量止跌（偏离{dev_pct:.2f}%，量比{b.volume / avg_vol:.2f}）",
                     source="t_specialized",
                 )
@@ -273,8 +277,12 @@ def _detect_t_specialized(bars: list[MinuteBar], vwap: list[float], cfg: T0Analy
             confidence = min(100.0, 55.0 + dev_pct * 10.0)
             signals.append(
                 T0Signal(
-                    ts=b.ts, symbol="", direction=T_SELL, pattern=PATTERN_DEVIATION_REVERT,
-                    price=b.close, confidence=round(confidence, 2),
+                    ts=b.ts,
+                    symbol="",
+                    direction=T_SELL,
+                    pattern=PATTERN_DEVIATION_REVERT,
+                    price=b.close,
+                    confidence=round(confidence, 2),
                     logic=f"冲高远离均价{dev_pct:.2f}%，回归预期",
                     source="t_specialized",
                 )
@@ -283,8 +291,12 @@ def _detect_t_specialized(bars: list[MinuteBar], vwap: list[float], cfg: T0Analy
             confidence = min(100.0, 55.0 + abs(dev_pct) * 10.0)
             signals.append(
                 T0Signal(
-                    ts=b.ts, symbol="", direction=T_BUY, pattern=PATTERN_DEVIATION_REVERT,
-                    price=b.close, confidence=round(confidence, 2),
+                    ts=b.ts,
+                    symbol="",
+                    direction=T_BUY,
+                    pattern=PATTERN_DEVIATION_REVERT,
+                    price=b.close,
+                    confidence=round(confidence, 2),
                     logic=f"深跌偏离均价{dev_pct:.2f}%，回归低吸",
                     source="t_specialized",
                 )
@@ -297,8 +309,12 @@ def _detect_t_specialized(bars: list[MinuteBar], vwap: list[float], cfg: T0Analy
                 confidence = min(100.0, 60.0 + (1.0 - b.volume / prev_vol) * 40.0)
                 signals.append(
                     T0Signal(
-                        ts=b.ts, symbol="", direction=T_SELL, pattern=PATTERN_VOLUME_DIVERGENCE,
-                        price=b.close, confidence=round(confidence, 2),
+                        ts=b.ts,
+                        symbol="",
+                        direction=T_SELL,
+                        pattern=PATTERN_VOLUME_DIVERGENCE,
+                        price=b.close,
+                        confidence=round(confidence, 2),
                         logic=f"价创日内新高量缩（量仅为前高{b.volume / prev_vol:.0%}），量价背离",
                         source="t_specialized",
                     )
@@ -308,16 +324,16 @@ def _detect_t_specialized(bars: list[MinuteBar], vwap: list[float], cfg: T0Analy
             running_high_idx = i
         if b.low < bars[running_low_idx].low and i - running_low_idx >= 2:
             prev_vol = bars[running_low_idx].volume
-            if (
-                cfg.enable_divergence_buy
-                and prev_vol > 0
-                and b.volume < cfg.div_vol_ratio * prev_vol
-            ):
+            if cfg.enable_divergence_buy and prev_vol > 0 and b.volume < cfg.div_vol_ratio * prev_vol:
                 confidence = min(100.0, 60.0 + (1.0 - b.volume / prev_vol) * 40.0)
                 signals.append(
                     T0Signal(
-                        ts=b.ts, symbol="", direction=T_BUY, pattern=PATTERN_VOLUME_DIVERGENCE,
-                        price=b.close, confidence=round(confidence, 2),
+                        ts=b.ts,
+                        symbol="",
+                        direction=T_BUY,
+                        pattern=PATTERN_VOLUME_DIVERGENCE,
+                        price=b.close,
+                        confidence=round(confidence, 2),
                         logic=f"价创日内新低量缩（量仅为前低{b.volume / prev_vol:.0%}），底背离",
                         source="t_specialized",
                     )
@@ -347,9 +363,7 @@ def _detect_sig024(bars: list[MinuteBar], vwap: list[float], ctx: T0Context, cfg
             volume_ratio=volume_ratio,
             ma_price=vw,
             pullback_volume_ratio=volume_ratio,
-            price_change_pct=(
-                (b.close / ctx.prev_close - 1.0) * 100.0 if ctx.prev_close > 0 else 0.0
-            ),
+            price_change_pct=((b.close / ctx.prev_close - 1.0) * 100.0 if ctx.prev_close > 0 else 0.0),
             capital_net_inflow=ctx.capital_net_inflow,
             prev_intraday_high=prev_high,
             intraday_volume_ratio=volume_ratio,
@@ -359,16 +373,28 @@ def _detect_sig024(bars: list[MinuteBar], vwap: list[float], ctx: T0Context, cfg
             if sig.confidence >= cfg.sig024_min_confidence:
                 signals.append(
                     T0Signal(
-                        ts=b.ts, symbol=ctx.symbol, direction=T_BUY, pattern=sig.point_type,
-                        price=b.close, confidence=sig.confidence, logic=sig.reason, source="sig024",
+                        ts=b.ts,
+                        symbol=ctx.symbol,
+                        direction=T_BUY,
+                        pattern=sig.point_type,
+                        price=b.close,
+                        confidence=sig.confidence,
+                        logic=sig.reason,
+                        source="sig024",
                     )
                 )
         for sig in analyzer.detect_sell_points(input_data):
             if sig.confidence >= cfg.sig024_min_confidence:
                 signals.append(
                     T0Signal(
-                        ts=b.ts, symbol=ctx.symbol, direction=T_SELL, pattern=sig.point_type,
-                        price=b.close, confidence=sig.confidence, logic=sig.reason, source="sig024",
+                        ts=b.ts,
+                        symbol=ctx.symbol,
+                        direction=T_SELL,
+                        pattern=sig.point_type,
+                        price=b.close,
+                        confidence=sig.confidence,
+                        logic=sig.reason,
+                        source="sig024",
                     )
                 )
     return signals
@@ -383,7 +409,7 @@ def _cooldown_dedup(signals: list[T0Signal], bar_index: dict[str, int], cooldown
     for direction, group in by_direction.items():
         group.sort(key=lambda s: bar_index.get(s.ts, 0))
         cluster: list[T0Signal] = []
-        last_idx = -10**9
+        last_idx = -(10**9)
         for s in group:
             idx = bar_index.get(s.ts, 0)
             if idx - last_idx >= cooldown_bars and cluster:
@@ -413,8 +439,14 @@ def generate_t0_signals(
     for s in _detect_t_specialized(bars, vwap, cfg):
         raw.append(
             T0Signal(
-                ts=s.ts, symbol=context.symbol, direction=s.direction, pattern=s.pattern,
-                price=s.price, confidence=s.confidence, logic=s.logic, source=s.source,
+                ts=s.ts,
+                symbol=context.symbol,
+                direction=s.direction,
+                pattern=s.pattern,
+                price=s.price,
+                confidence=s.confidence,
+                logic=s.logic,
+                source=s.source,
             )
         )
     if cfg.use_sig024:
@@ -489,8 +521,13 @@ def verify_t0_signals(
             valid = len(group) - insuf
             stats.append(
                 T0HitRateStat(
-                    pattern=pattern, window_bars=w, total=len(group),
-                    hit=hit, half_hit=half, miss=miss, insufficient=insuf,
+                    pattern=pattern,
+                    window_bars=w,
+                    total=len(group),
+                    hit=hit,
+                    half_hit=half,
+                    miss=miss,
+                    insufficient=insuf,
                     hit_rate=round(hit / valid, 4) if valid > 0 else None,
                 )
             )
@@ -503,5 +540,7 @@ def verify_t0_signals(
     return T0VerifyReport(
         symbol=symbol or (signals[0].symbol if signals else ""),
         date=date_str or (bars[0].ts[:10] if bars else ""),
-        hits=hits, stats=stats, notes=notes,
+        hits=hits,
+        stats=stats,
+        notes=notes,
     )

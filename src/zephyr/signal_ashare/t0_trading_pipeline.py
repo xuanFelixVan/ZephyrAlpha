@@ -100,13 +100,9 @@ class T0PipelineConfig:
         if self.base_position <= 0:
             raise ValueError(f"base_position 须>0: {self.base_position}")
         if self.trade_volume <= 0 or self.trade_volume > self.base_position:
-            raise ValueError(
-                f"trade_volume 须∈(0,base_position]: {self.trade_volume}/{self.base_position}"
-            )
+            raise ValueError(f"trade_volume 须∈(0,base_position]: {self.trade_volume}/{self.base_position}")
         if self.lot_size <= 0 or self.trade_volume % self.lot_size != 0:
-            raise ValueError(
-                f"trade_volume({self.trade_volume}) 须按 lot_size({self.lot_size}) 手数对齐"
-            )
+            raise ValueError(f"trade_volume({self.trade_volume}) 须按 lot_size({self.lot_size}) 手数对齐")
         if self.max_rounds < 1:
             raise ValueError(f"max_rounds 须≥1: {self.max_rounds}")
         if self.min_spread_pct <= 0:
@@ -227,9 +223,7 @@ class T0TradingPipeline:
         cfg = self._cfg
         symbol = context.symbol
         signals = [
-            s
-            for s in generate_t0_signals(bars, context, analyzer_config)
-            if s.confidence >= cfg.signal_confidence_min
+            s for s in generate_t0_signals(bars, context, analyzer_config) if s.confidence >= cfg.signal_confidence_min
         ]
 
         rounds: list[T0RoundResult] = []
@@ -269,9 +263,7 @@ class T0TradingPipeline:
                 else (sig.price - open_round.open_price) / open_round.open_price * 100.0
             )
             if spread < cfg.min_spread_pct:
-                notes.append(
-                    f"配对信号@{sig.ts} 价差 {spread:.3f}%<{cfg.min_spread_pct}%，跳过继续等"
-                )
+                notes.append(f"配对信号@{sig.ts} 价差 {spread:.3f}%<{cfg.min_spread_pct}%，跳过继续等")
                 continue
 
             close_side = "BUY" if open_round.side == "SELL" else "SELL"
@@ -390,7 +382,11 @@ class T0TradingPipeline:
 
         logger.info(
             "做T复盘: %s 完成=%d 价差=%.3f%% 中止=%s 升级=%s",
-            symbol, completed, realized, aborted, escalation,
+            symbol,
+            completed,
+            realized,
+            aborted,
+            escalation,
         )
         return T0DayReport(
             symbol=symbol,

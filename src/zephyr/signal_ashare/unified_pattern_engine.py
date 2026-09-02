@@ -221,9 +221,7 @@ def _dtw_distance(a: Sequence[float], b: Sequence[float]) -> float:
     return prev[m] / (n + m)
 
 
-def _swing_points(
-    series: Sequence[float], k: int, find_max: bool
-) -> list[tuple[int, float]]:
+def _swing_points(series: Sequence[float], k: int, find_max: bool) -> list[tuple[int, float]]:
     """满窗摆动极值点 (idx, price)。"""
     out: list[tuple[int, float]] = []
     n = len(series)
@@ -351,14 +349,10 @@ class UnifiedPatternEngine:
         return events
 
     # ── 缠论腿（收编 MOD-SIG-072）────────────────────────
-    def _chanlun_leg(
-        self, highs: Sequence[float], lows: Sequence[float], notes: list[str]
-    ) -> list[PatternEvent]:
+    def _chanlun_leg(self, highs: Sequence[float], lows: Sequence[float], notes: list[str]) -> list[PatternEvent]:
         events: list[PatternEvent] = []
         try:
-            st = analyze_chanlun(
-                highs, lows, config=ChanlunConfig(min_bi_bars=self._cfg.chanlun_min_bi_bars)
-            )
+            st = analyze_chanlun(highs, lows, config=ChanlunConfig(min_bi_bars=self._cfg.chanlun_min_bi_bars))
         except ValueError as exc:
             notes.append(f"缠论腿降级: {exc}")
             return events
@@ -404,10 +398,7 @@ class UnifiedPatternEngine:
         notes: list[str],
     ) -> list[PatternEvent]:
         events: list[PatternEvent] = []
-        bars = [
-            SRBar(date=f"bar{i}", high=h, low=l, close=c)
-            for i, (h, l, c) in enumerate(zip(highs, lows, closes))
-        ]
+        bars = [SRBar(date=f"bar{i}", high=h, low=l, close=c) for i, (h, l, c) in enumerate(zip(highs, lows, closes))]
         try:
             sr = analyze_trend_sr(bars, TrendSRConfig())
         except ValueError as exc:

@@ -100,9 +100,7 @@ class TestHeatDecay:
         assert rep.themes[0].heat == pytest.approx(0.5)
 
     def test_heat_sums_multiple_items(self, mapper):
-        rep = mapper.map_theme(
-            [_item("N1", "央行降准", days_ago=0), _item("N2", "MLF 续作", days_ago=20)], AS_OF
-        )
+        rep = mapper.map_theme([_item("N1", "央行降准", days_ago=0), _item("N2", "MLF 续作", days_ago=20)], AS_OF)
         assert rep.themes[0].theme_id == "货币政策"
         assert rep.themes[0].heat == pytest.approx(1.5)
         assert rep.themes[0].news_count == 2

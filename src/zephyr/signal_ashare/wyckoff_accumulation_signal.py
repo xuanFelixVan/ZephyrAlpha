@@ -97,10 +97,7 @@ class WyckoffAccumulationConfig:
             msg = f"granger_pvalue 须∈(0,1)，实得 {self.granger_pvalue}"
             raise ValueError(msg)
         if self.granger_min_obs < 4 * self.granger_max_lag + 10:
-            msg = (
-                f"granger_min_obs 须≥4×lag+10={4 * self.granger_max_lag + 10}，"
-                f"实得 {self.granger_min_obs}"
-            )
+            msg = f"granger_min_obs 须≥4×lag+10={4 * self.granger_max_lag + 10}，实得 {self.granger_min_obs}"
             raise ValueError(msg)
 
 
@@ -188,10 +185,7 @@ def _ibeta(a: float, b: float, x: float) -> float:
         return 0.0
     if x >= 1.0:
         return 1.0
-    bt = math.exp(
-        math.lgamma(a + b) - math.lgamma(a) - math.lgamma(b)
-        + a * math.log(x) + b * math.log(1.0 - x)
-    )
+    bt = math.exp(math.lgamma(a + b) - math.lgamma(a) - math.lgamma(b) + a * math.log(x) + b * math.log(1.0 - x))
     if x < (a + 1.0) / (a + b + 2.0):
         return bt * _betacf(a, b, x) / a
     return 1.0 - bt * _betacf(b, a, 1.0 - x) / b
@@ -216,9 +210,7 @@ class WyckoffAccumulationSignal:
         return self._config
 
     # ── Granger 因果（x→y：滞后 OLS F 检验）──────────────────────────
-    def granger_causality(
-        self, x: pd.Series, y: pd.Series, max_lag: int | None = None
-    ) -> GrangerResult:
+    def granger_causality(self, x: pd.Series, y: pd.Series, max_lag: int | None = None) -> GrangerResult:
         """检验 x 是否 Granger 引起 y（受限=自身滞后 vs 非受限=自身+x 滞后）。"""
         lag = self._config.granger_max_lag if max_lag is None else int(max_lag)
         if lag < 1:

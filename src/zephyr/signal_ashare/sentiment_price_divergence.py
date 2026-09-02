@@ -131,9 +131,7 @@ class SentimentPriceDivergence:
         if len(sentiment) < min_len:
             msg = f"历史 {len(sentiment)}<z_window+delta_lag={min_len}"
             raise ValueError(msg)
-        if not all(math.isfinite(v) for v in sentiment) or not all(
-            math.isfinite(v) for v in prices
-        ):
+        if not all(math.isfinite(v) for v in sentiment) or not all(math.isfinite(v) for v in prices):
             msg = "输入含非有限值（NaN/inf）"
             raise ValueError(msg)
         if any(p <= 0.0 for p in prices):
@@ -183,18 +181,14 @@ class SentimentPriceDivergence:
         )
 
     # ── 最新读数 ──────────────────────────────────────────────────
-    def compute(
-        self, sentiment_scores: Sequence[float], prices: Sequence[float]
-    ) -> DivergenceReading:
+    def compute(self, sentiment_scores: Sequence[float], prices: Sequence[float]) -> DivergenceReading:
         sentiment = [float(v) for v in sentiment_scores]
         price_list = [float(v) for v in prices]
         self._validate(sentiment, price_list)
         return self._reading_at(sentiment, price_list, len(sentiment) - 1)
 
     # ── 背离事件表（逐根前视）──────────────────────────────────────
-    def scan(
-        self, sentiment_scores: Sequence[float], prices: Sequence[float]
-    ) -> list[DivergenceReading]:
+    def scan(self, sentiment_scores: Sequence[float], prices: Sequence[float]) -> list[DivergenceReading]:
         sentiment = [float(v) for v in sentiment_scores]
         price_list = [float(v) for v in prices]
         self._validate(sentiment, price_list)

@@ -295,7 +295,11 @@ def _daily_atm_iv(iv_rows: list[_IvRow]) -> dict[date, float]:
         strikes = sorted({r.strike for r in month_rows})
         if not strikes:
             continue
-        mid = strikes[len(strikes) // 2] if len(strikes) % 2 == 1 else (strikes[len(strikes) // 2 - 1] + strikes[len(strikes) // 2]) / 2
+        mid = (
+            strikes[len(strikes) // 2]
+            if len(strikes) % 2 == 1
+            else (strikes[len(strikes) // 2 - 1] + strikes[len(strikes) // 2]) / 2
+        )
         atm_ivs: list[float] = []
         for otype in ("call", "put"):
             legs = [r for r in month_rows if r.option_type == otype]
@@ -359,9 +363,7 @@ def _compute_pcr(
         return None, None, ["当日认购成交量为 0，PCR 除零降级"]
     pcr = today["put"] / today["call"]
 
-    history = sorted(
-        (d, b["put"] / b["call"]) for d, b in by_day.items() if d <= current_date and b["call"] > 0
-    )
+    history = sorted((d, b["put"] / b["call"]) for d, b in by_day.items() if d <= current_date and b["call"] > 0)
     if len(history) < cfg.pcr_min_periods:
         notes.append(f"PCR 分位窗 {len(history)} 日 < {cfg.pcr_min_periods} 日守卫，pcr_percentile 降级")
         return pcr, None, notes
@@ -423,9 +425,7 @@ def _compute_skew(
     if skew_norm is None:
         return None, None, ["当日 25Δ 选约失败（greeks×iv_surface 映射缺口或平值 IV 缺失），Skew 降级"]
 
-    history = sorted(
-        (d, v) for d, day_rows in by_day.items() if (v := _daily_skew_norm(d, day_rows)) is not None
-    )
+    history = sorted((d, v) for d, day_rows in by_day.items() if (v := _daily_skew_norm(d, day_rows)) is not None)
     if len(history) < cfg.skew_min_periods:
         notes.append(f"Skew 分位窗 {len(history)} 日 < {cfg.skew_min_periods} 日守卫，skew_extreme 降级")
         return skew_norm, None, notes
@@ -530,7 +530,9 @@ def compute_option_sentiment(
         cnt = client.execute(SQL_EXPIRY_EVENT, {"trade_date": d})
         if cnt and int(cnt[0][0]) > 0:
             m1_scale = cfg.expiry_threshold_scale
-            scale_notes.append(f"期权到期日（index_option_expiry）当日 → M1 信号阈值 ×{cfg.expiry_threshold_scale}（防伽马挤压假情绪）")
+            scale_notes.append(
+                f"期权到期日（index_option_expiry）当日 → M1 信号阈值 ×{cfg.expiry_threshold_scale}（防伽马挤压假情绪）"
+            )
     except Exception as e:  # noqa: BLE001 — 事件日历缺失静默跳过，fail-open 留痕
         scale_notes.append(f"calendar_event 查询异常（fail-open scale=1.0）: {e!r}")
 
@@ -572,11 +574,7 @@ def compute_option_sentiment(
         notes.append(f"option_greeks 查询异常，Skew 降级: {e!r}")
 
     # 背离警示：PCR 低分位（散户乐观）× Skew 极端（机构买保护）= 多空分歧最大（44号原文形态）
-    divergence = (
-        pcr_pct is not None
-        and pcr_pct < cfg.pcr_low_percentile
-        and skew_extreme is True
-    )
+    divergence = pcr_pct is not None and pcr_pct < cfg.pcr_low_percentile and skew_extreme is True
     if divergence:
         notes.append("PCR 低分位×Skew 极端背离：多空分歧最大警示（散户乐观 vs 机构尾部保护）")
 

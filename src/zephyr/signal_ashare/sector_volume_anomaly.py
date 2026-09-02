@@ -189,7 +189,7 @@ def detect_volume_anomaly(
             notes.append(f"{code} 当日成交额缺失，跳过")
             continue
         amount_today = float(today_pts[-1])
-        hist = [float(a) for d, a in past if d < trade_date][-cfg.ma_window:]
+        hist = [float(a) for d, a in past if d < trade_date][-cfg.ma_window :]
         if len(hist) < cfg.min_history:
             notes.append(f"{code} 历史不足（{len(hist)}<{cfg.min_history}），跳过")
             continue
@@ -275,9 +275,7 @@ def run_sector_volume_anomaly(
     date_str = current.isoformat()
     client = ch_client if ch_client is not None else _default_client()
     if client is None:
-        return VolumeAnomalyReport(
-            date=date_str, degraded=True, notes=["CH 客户端不可得，量能异动检测整体降级"]
-        )
+        return VolumeAnomalyReport(date=date_str, degraded=True, notes=["CH 客户端不可得，量能异动检测整体降级"])
     start = current - timedelta(days=max(cfg.ma_window * 2, cfg.min_history * 2))
     try:
         rows = client.execute(
@@ -285,9 +283,7 @@ def run_sector_volume_anomaly(
             {"period": cfg.sector_period, "start": start, "end": current},
         )
     except Exception as e:  # noqa: BLE001 — 查询腿降级
-        return VolumeAnomalyReport(
-            date=date_str, degraded=True, notes=[f"kline_sector_880 查询异常，整体降级: {e!r}"]
-        )
+        return VolumeAnomalyReport(date=date_str, degraded=True, notes=[f"kline_sector_880 查询异常，整体降级: {e!r}"])
     series: dict[str, list[tuple[str, float]]] = {}
     names: dict[str, str] = {}
     for r in rows:

@@ -458,9 +458,7 @@ class TestL0SupplyChainVerify:
         bad.write_bytes(b"tampered")
         self._write_cfg(
             tmp_path,
-            "models:\n"
-            f'  "{good.as_posix()}": "{good_sha}"\n'
-            f'  "{bad.as_posix()}": "{"0" * 64}"\n',
+            f'models:\n  "{good.as_posix()}": "{good_sha}"\n  "{bad.as_posix()}": "{"0" * 64}"\n',
         )
         core = self.make_core(tmp_path)
         report = BootReport()

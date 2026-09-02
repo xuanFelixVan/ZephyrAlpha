@@ -319,9 +319,7 @@ def score_sector_mainline(
             + (f"，市场{factors.rotation_state}降档" if factors.rotation_state in _MARKET_RISK_STATES else "")
             + "）"
         )
-        echelon = score_echelon_completeness(
-            factors.leader_consec >= 1, factors.n_backbones, factors.n_followers, cfg
-        )
+        echelon = score_echelon_completeness(factors.leader_consec >= 1, factors.n_backbones, factors.n_followers, cfg)
         reasons.append(
             f"梯队=龙头{'有' if factors.leader_consec >= 1 else '无'}/中军{factors.n_backbones}/"
             f"跟风{factors.n_followers}（子分{echelon:.2f}）"
@@ -420,9 +418,7 @@ def _fund_inflow_series(
         stocks = constituents.get(code)
         if not stocks:
             continue
-        out[code] = [
-            sum(flow_by_symbol_day.get((d, s), 0.0) for s in stocks) for d in days
-        ]
+        out[code] = [sum(flow_by_symbol_day.get((d, s), 0.0) for s in stocks) for d in days]
     if not out:
         return out, ["资金窗内候选板块无成分/资金流数据，资金维降级"]
     return out, []
@@ -532,9 +528,7 @@ def compute_mainline_probability(
     )
     items = items[: cfg.top_k]
     if items:
-        annotations.append(
-            f"主线概率 Top{len(items)} 已出分（四因子启发式合成，静态权重 MVP，非校准概率）"
-        )
+        annotations.append(f"主线概率 Top{len(items)} 已出分（四因子启发式合成，静态权重 MVP，非校准概率）")
     return MainlineProbabilityResult(
         date=date_str,
         items=items,

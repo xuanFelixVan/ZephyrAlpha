@@ -291,7 +291,7 @@ def select_war_pool(
                     catalysts=[f"{c.catalyst_type}:{c.source}:{c.name}".rstrip(":") for c in cats],
                     pool_score=pool_score,
                     reasons=[
-                        f"主线板块={sector_name}（概率{ pct if pct is not None else '缺维中性' }）",
+                        f"主线板块={sector_name}（概率{pct if pct is not None else '缺维中性'}）",
                         f"结构={re_.role}（评分{re_.score:.1f}，连板{re_.consec_limit}）",
                         f"催化剂×{len(cats)}（强度{cat_strength:.2f}）",
                     ],

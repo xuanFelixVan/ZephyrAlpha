@@ -35,7 +35,9 @@ import pytest
 from zephyr.autonomy_core.agents import ticket_queue
 from zephyr.autonomy_core.agents.ticket_queue import TicketQueue
 
-DESIGN_MEMO = "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/20_first_batch_strategies.md"
+DESIGN_MEMO = (
+    "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/20_first_batch_strategies.md"
+)
 DEPGRAPH_PATH = "src/zephyr/pf_core/strategies/"
 
 
@@ -78,8 +80,13 @@ class TestEnqueue:
 
     def test_enqueue_payload_defaults_to_non_envelope_fields(self, tmp_path):
         queue = TicketQueue(runtime_dir=tmp_path)
-        ticket = {"ticket_id": "tq-raw", "role": "algorithm", "kind": "experiment",
-                  "experiment_type": "model_evaluation", "run_id": "r-1"}
+        ticket = {
+            "ticket_id": "tq-raw",
+            "role": "algorithm",
+            "kind": "experiment",
+            "experiment_type": "model_evaluation",
+            "run_id": "r-1",
+        }
         queue.enqueue(ticket)
         landed = _read(tmp_path / "agent_runs" / "_queue" / "pending" / "tq-raw.json")
         assert landed["payload"] == {"experiment_type": "model_evaluation", "run_id": "r-1"}
@@ -177,8 +184,9 @@ class TestDoneDead:
         queue.claim("sess-owner")
         with pytest.raises(PermissionError, match="owner"):
             queue.done("tq-001", "sess-intruder")
-        path = queue.done("tq-001", "sess-owner", status="completed",
-                          summary={"run_dir": ".runtime/agent_runs/business/x"})
+        path = queue.done(
+            "tq-001", "sess-owner", status="completed", summary={"run_dir": ".runtime/agent_runs/business/x"}
+        )
         landed = _read(path)
         assert landed["state"] == "done"
         assert landed["result_status"] == "completed"
@@ -275,11 +283,9 @@ class TestListAndCli:
 
     def test_cli_enqueue_list_claim_done(self, tmp_path, capsys):
         ticket_file = tmp_path / "ticket.json"
-        ticket_file.write_text(json.dumps(_ticket("tq-cli"), ensure_ascii=False),
-                               encoding="utf-8")
+        ticket_file.write_text(json.dumps(_ticket("tq-cli"), ensure_ascii=False), encoding="utf-8")
         rt = str(tmp_path / "rt")
-        assert ticket_queue.main(["enqueue", "--ticket", str(ticket_file),
-                                  "--runtime-dir", rt]) == 0
+        assert ticket_queue.main(["enqueue", "--ticket", str(ticket_file), "--runtime-dir", rt]) == 0
         out = json.loads(capsys.readouterr().out)
         assert out["enqueued"] == "tq-cli" and out["state"] == "pending"
 
@@ -287,14 +293,26 @@ class TestListAndCli:
         listed = json.loads(capsys.readouterr().out)
         assert [t["ticket_id"] for t in listed] == ["tq-cli"]
 
-        assert ticket_queue.main(["claim", "--session-id", "sess-cli",
-                                  "--runtime-dir", rt]) == 0
+        assert ticket_queue.main(["claim", "--session-id", "sess-cli", "--runtime-dir", rt]) == 0
         claimed = json.loads(capsys.readouterr().out)
         assert claimed["claimed"]["owner"] == "sess-cli"
 
-        assert ticket_queue.main(["done", "--ticket-id", "tq-cli", "--session-id",
-                                  "sess-cli", "--status", "completed",
-                                  "--runtime-dir", rt]) == 0
+        assert (
+            ticket_queue.main(
+                [
+                    "done",
+                    "--ticket-id",
+                    "tq-cli",
+                    "--session-id",
+                    "sess-cli",
+                    "--status",
+                    "completed",
+                    "--runtime-dir",
+                    rt,
+                ]
+            )
+            == 0
+        )
         done = json.loads(capsys.readouterr().out)
         assert done["done"] == "tq-cli"
         final = _read(tmp_path / "rt" / "agent_runs" / "_queue" / "done" / "tq-cli.json")
@@ -305,7 +323,6 @@ class TestListAndCli:
         queue.enqueue(_ticket("tq-cli-rec"))
         queue.claim("ghost-session")
         capsys.readouterr()
-        assert ticket_queue.main(["recover", "--alive-sessions", "other-session",
-                                  "--runtime-dir", str(tmp_path)]) == 0
+        assert ticket_queue.main(["recover", "--alive-sessions", "other-session", "--runtime-dir", str(tmp_path)]) == 0
         out = json.loads(capsys.readouterr().out)
         assert out["requeued"] == ["tq-cli-rec"]

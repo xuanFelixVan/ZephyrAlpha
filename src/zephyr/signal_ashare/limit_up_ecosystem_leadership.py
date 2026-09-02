@@ -115,10 +115,7 @@ def _ibeta(a: float, b: float, x: float) -> float:
         return 0.0
     if x >= 1.0:
         return 1.0
-    bt = math.exp(
-        math.lgamma(a + b) - math.lgamma(a) - math.lgamma(b)
-        + a * math.log(x) + b * math.log(1.0 - x)
-    )
+    bt = math.exp(math.lgamma(a + b) - math.lgamma(a) - math.lgamma(b) + a * math.log(x) + b * math.log(1.0 - x))
     if x < (a + 1.0) / (a + b + 2.0):
         return bt * _betacf(a, b, x) / a
     return 1.0 - bt * _betacf(b, a, 1.0 - x) / b
@@ -217,10 +214,7 @@ class LadderEcosystemConfig:
             msg = f"granger_max_lag 须≥1，实得 {self.granger_max_lag}"
             raise ValueError(msg)
         if self.granger_min_samples < 4 * self.granger_max_lag + 10:
-            msg = (
-                f"granger_min_samples 须≥4×lag+10={4 * self.granger_max_lag + 10}，"
-                f"实得 {self.granger_min_samples}"
-            )
+            msg = f"granger_min_samples 须≥4×lag+10={4 * self.granger_max_lag + 10}，实得 {self.granger_min_samples}"
             raise ValueError(msg)
 
 
@@ -357,9 +351,7 @@ class LimitUpEcosystemLeadership:
                 base = [s for s in prev_stocks if s.consec_limit == h]
                 if not base:
                     continue
-                promoted = sum(
-                    1 for s in base if curr_height_by_symbol.get(s.symbol) == h + 1
-                )
+                promoted = sum(1 for s in base if curr_height_by_symbol.get(s.symbol) == h + 1)
                 rate = promoted / len(base)
                 promotion_rates[h] = rate
                 if len(base) >= cfg.promotion_min_base and rate < cfg.promotion_warn_threshold:
@@ -426,10 +418,7 @@ class LimitUpEcosystemLeadership:
         ylags = [y[lag - k : n - k] for k in range(1, lag + 1)]
         xlags = [x[lag - k : n - k] for k in range(1, lag + 1)]
         design_r = [[1.0] + [ylags[k][i] for k in range(lag)] for i in range(t)]
-        design_u = [
-            [1.0] + [ylags[k][i] for k in range(lag)] + [xlags[k][i] for k in range(lag)]
-            for i in range(t)
-        ]
+        design_u = [[1.0] + [ylags[k][i] for k in range(lag)] + [xlags[k][i] for k in range(lag)] for i in range(t)]
         try:
             _, rss_r = _ols_solve(design_r, yv)
             beta_u, rss_u = _ols_solve(design_u, yv)

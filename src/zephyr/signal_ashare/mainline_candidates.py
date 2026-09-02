@@ -237,10 +237,14 @@ def select_mainline_candidates(
     """
     cfg = config or MainlineCandidatesConfig()
     if lead_streak is not None and lead_streak < cfg.no_mainline_streak:
-        return [], True, [
-            f"无主线混沌：当前领涨板块连续领涨{lead_streak}日<{cfg.no_mainline_streak}日"
-            "（22号一日游约束，混沌/下跌中继，不强行出榜）"
-        ]
+        return (
+            [],
+            True,
+            [
+                f"无主线混沌：当前领涨板块连续领涨{lead_streak}日<{cfg.no_mainline_streak}日"
+                "（22号一日游约束，混沌/下跌中继，不强行出榜）"
+            ],
+        )
 
     universe = set(sector_streaks) | set(q3_percentiles) | set(rrg_quadrants)
     candidates: list[MainlineCandidate] = []
@@ -287,7 +291,9 @@ def select_mainline_candidates(
             )
         )
 
-    candidates.sort(key=lambda c: (-c.score, -(c.q3_percentile if c.q3_percentile is not None else -1.0), c.sector_code))
+    candidates.sort(
+        key=lambda c: (-c.score, -(c.q3_percentile if c.q3_percentile is not None else -1.0), c.sector_code)
+    )
     candidates = candidates[: cfg.top_k]
     if not candidates:
         return [], False, [f"无任何板块满足主线候选门槛（score≥{cfg.min_score}）：主线混沌/观察期"]
@@ -420,9 +426,7 @@ def _lead_streaks(leaders: dict[date, str], sorted_dates: list[date]) -> dict[da
     return streaks
 
 
-def _rotation_speeds(
-    amounts: dict[str, dict[date, float]], sorted_dates: list[date]
-) -> dict[date, float]:
+def _rotation_speeds(amounts: dict[str, dict[date, float]], sorted_dates: list[date]) -> dict[date, float]:
     """逐日轮动速度 = 0.5 × Σ|今日成交额占比 − 昨日占比|（22号 §3.1⑨ fast_rotation 口径）。"""
     speeds: dict[date, float] = {}
     prev_shares: dict[str, float] | None = None
@@ -482,9 +486,7 @@ def _disp_signal(
     return 1 if amount_today > mean_amt * 1.2 and ret_today < ret_prev * 0.5 else 0
 
 
-def _fallback_bench(
-    by_sector: dict[str, list[tuple[date, float, float]]]
-) -> list[tuple[date, float]]:
+def _fallback_bench(by_sector: dict[str, list[tuple[date, float, float]]]) -> list[tuple[date, float]]:
     """基准缺失回退：全板块收盘价逐日均值（22号 spec §3.1④ 口径，与 ranking_engine 同源）。"""
     per_date: dict[date, list[float]] = {}
     for series in by_sector.values():
@@ -493,9 +495,7 @@ def _fallback_bench(
     return sorted(((dd, sum(v) / len(v)) for dd, v in per_date.items()), key=lambda x: x[0])
 
 
-def _q3_percentiles(
-    by_sector: dict[str, list[tuple[date, float, float]]]
-) -> dict[str, float]:
+def _q3_percentiles(by_sector: dict[str, list[tuple[date, float, float]]]) -> dict[str, float]:
     """q3 截面分位：3 日累计涨跌幅 → percentile_ranks（序列 <4 日的板块不出键）。"""
     rets: dict[str, float] = {}
     for code, series in by_sector.items():
@@ -591,9 +591,7 @@ def compute_mainline_candidates(
     # ── 板块 K 线窗（880xxx 直取 + 880001 基准） ──
     sector_start = d - timedelta(days=cfg.sector_lookback_calendar_days)
     try:
-        sector_rows = client.execute(
-            SQL_SECTOR_KLINE_WINDOW, {"trade_date": d, "start_date": sector_start}
-        )
+        sector_rows = client.execute(SQL_SECTOR_KLINE_WINDOW, {"trade_date": d, "start_date": sector_start})
     except Exception as e:  # noqa: BLE001 — 数据层异常一律降级不炸
         return _degraded_result(date_str, f"kline_sector_880 查询异常: {e!r}")
     by_sector, bench_series = _sector_880_series(sector_rows, d, cfg.market_index_code)
@@ -631,16 +629,12 @@ def compute_mainline_candidates(
     # 不按成分合成（防代理指数冒充官方指数），notes 留痕。
     kline_missing_880 = [c for c in constituents if c not in by_sector and c.startswith("880")]
     if kline_missing_880:
-        notes.append(
-            f"880xxx 板块成分在册但 K 线缺失 {len(kline_missing_880)} 只，不按成分合成（官方指数缺口）"
-        )
+        notes.append(f"880xxx 板块成分在册但 K 线缺失 {len(kline_missing_880)} 只，不按成分合成（官方指数缺口）")
     synth_codes = [c for c in constituents if c not in by_sector and not c.startswith("880")]
     if synth_codes:
         stock_start = d - timedelta(days=cfg.stock_lookback_calendar_days)
         try:
-            stock_rows = client.execute(
-                SQL_STOCK_KLINE_WINDOW, {"trade_date": d, "start_date": stock_start}
-            )
+            stock_rows = client.execute(SQL_STOCK_KLINE_WINDOW, {"trade_date": d, "start_date": stock_start})
         except Exception as e:  # noqa: BLE001 — 个股 K 线缺失，881 维度独立降级
             stock_rows = []
             notes.append(f"kline_daily 查询异常，881xxx 行业板块合成降级: {e!r}")
@@ -650,9 +644,7 @@ def compute_mainline_candidates(
             notes.append("kline_daily 窗内无数据，881xxx 行业板块合成降级")
 
     if not by_sector:
-        return _degraded_result(
-            date_str, f"{date_str} 板块全集为空（kline_sector_880 与 881xxx 合成均无数据）"
-        )
+        return _degraded_result(date_str, f"{date_str} 板块全集为空（kline_sector_880 与 881xxx 合成均无数据）")
 
     all_dates = sorted({dd for series in by_sector.values() for dd, _, _ in series})
     if d not in set(all_dates):

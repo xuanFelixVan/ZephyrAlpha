@@ -108,8 +108,7 @@ class TestRegister:
     def test_blank_source_id_raises(self) -> None:
         r = _reviewer()
         with pytest.raises(AltComplianceError):
-            r.register(" ", collection_method="a", tos_terms="b",
-                       license_scope="c", privacy_impact="d")
+            r.register(" ", collection_method="a", tos_terms="b", license_scope="c", privacy_impact="d")
 
     def test_duplicate_register_raises(self) -> None:
         r = _reviewer()
@@ -225,9 +224,7 @@ class TestLists:
 
     def test_expired_dropped_from_whitelist(self) -> None:
         now = [_T0]  # 可推进时钟
-        r = AltDataComplianceReviewer(
-            checklist=_CHECKLIST, review_interval_days=90, clock=lambda: now[0]
-        )
+        r = AltDataComplianceReviewer(checklist=_CHECKLIST, review_interval_days=90, clock=lambda: now[0])
         _register(r, "src-1")
         r.review("src-1", results=_pass_results())
         now[0] = _T0 + datetime.timedelta(days=91)  # 推进时钟至过期
@@ -237,9 +234,7 @@ class TestLists:
 
     def test_not_expired_stays_whitelist(self) -> None:
         now = [_T0]
-        r = AltDataComplianceReviewer(
-            checklist=_CHECKLIST, review_interval_days=90, clock=lambda: now[0]
-        )
+        r = AltDataComplianceReviewer(checklist=_CHECKLIST, review_interval_days=90, clock=lambda: now[0])
         _register(r, "src-1")
         r.review("src-1", results=_pass_results())
         now[0] = _T0 + datetime.timedelta(days=30)

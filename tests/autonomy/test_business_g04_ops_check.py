@@ -33,23 +33,48 @@ from zephyr.autonomy_core.agents import business_agent_entry
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
 _FIXTURE_STRATEGIES = [
-    {"strategy_id": "STR-DABAN-901", "strategy_class": "daban", "status": "candidate",
-     "lifecycle_status": "candidate", "algorithm_status": "pending_backtest",
-     "evidence": "", "code_path": ""},
-    {"strategy_id": "STR-DABAN-902", "strategy_class": "daban", "status": "active",
-     "lifecycle_status": "live", "algorithm_status": "quantized",
-     "evidence": "exp-123", "code_path": "src/zephyr/pf_core/strategies/daban_sleeve_strategy.py"},
-    {"strategy_id": "STR-MULTIFACTOR-901", "strategy_class": "multifactor",
-     "status": "candidate", "lifecycle_status": "candidate",
-     "algorithm_status": "pending_backtest", "evidence": "", "code_path": ""},
+    {
+        "strategy_id": "STR-DABAN-901",
+        "strategy_class": "daban",
+        "status": "candidate",
+        "lifecycle_status": "candidate",
+        "algorithm_status": "pending_backtest",
+        "evidence": "",
+        "code_path": "",
+    },
+    {
+        "strategy_id": "STR-DABAN-902",
+        "strategy_class": "daban",
+        "status": "active",
+        "lifecycle_status": "live",
+        "algorithm_status": "quantized",
+        "evidence": "exp-123",
+        "code_path": "src/zephyr/pf_core/strategies/daban_sleeve_strategy.py",
+    },
+    {
+        "strategy_id": "STR-MULTIFACTOR-901",
+        "strategy_class": "multifactor",
+        "status": "candidate",
+        "lifecycle_status": "candidate",
+        "algorithm_status": "pending_backtest",
+        "evidence": "",
+        "code_path": "",
+    },
 ]
 _FIXTURE_FACTORS = [
-    {"factor_id": "FCT-A", "belongs_to_strategies": ["STR-DABAN-901"],
-     "evidence": "", "algorithm_status": "pending_backtest"},
-    {"factor_id": "FCT-B", "belongs_to_strategies": ["STR-DABAN-902"],
-     "evidence": "exp-9", "algorithm_status": "quantized"},
-    {"factor_id": "FCT-C", "belongs_to_strategies": [],
-     "evidence": "exp-1", "algorithm_status": "quantized"},
+    {
+        "factor_id": "FCT-A",
+        "belongs_to_strategies": ["STR-DABAN-901"],
+        "evidence": "",
+        "algorithm_status": "pending_backtest",
+    },
+    {
+        "factor_id": "FCT-B",
+        "belongs_to_strategies": ["STR-DABAN-902"],
+        "evidence": "exp-9",
+        "algorithm_status": "quantized",
+    },
+    {"factor_id": "FCT-C", "belongs_to_strategies": [], "evidence": "exp-1", "algorithm_status": "quantized"},
 ]
 
 
@@ -62,7 +87,9 @@ class TestG04RealRegistry:
 
     def test_three_strategies_registry_and_components(self, tmp_path):
         report = business_agent_entry.run_g04_strategy_ops_check(
-            {"ticket_id": "g04-real-001"}, runtime_dir=tmp_path, repo_root=REPO_ROOT,
+            {"ticket_id": "g04-real-001"},
+            runtime_dir=tmp_path,
+            repo_root=REPO_ROOT,
         )
         assert report["kind"] == "g04_strategy_ops_check"
         assert report["advice_only"] is True
@@ -91,9 +118,7 @@ class TestG04RealRegistry:
         assert report["gap_count"] == len(report["gaps"])
         assert all(isinstance(gap, str) for gap in report["gaps"])
 
-        landed = json.loads(
-            (_latest_run_dir(tmp_path) / "g04_strategy_ops_check.json").read_text(encoding="utf-8")
-        )
+        landed = json.loads((_latest_run_dir(tmp_path) / "g04_strategy_ops_check.json").read_text(encoding="utf-8"))
         assert landed["ai_autonomy"] == "human_gated"
         assert landed["triggered_by"] == "human_manual"
         assert landed["kind"] == "g04_strategy_ops_check"
@@ -108,8 +133,10 @@ class TestG04FixtureCatalogs:
         empty_root = tmp_path / "empty_repo"  # 无任何 src 文件 → 组件全缺位
         empty_root.mkdir()
         report = business_agent_entry.run_g04_strategy_ops_check(
-            {"ticket_id": "g04-fixture-001"}, runtime_dir=tmp_path / "rt",
-            repo_root=empty_root, catalogs=catalogs,
+            {"ticket_id": "g04-fixture-001"},
+            runtime_dir=tmp_path / "rt",
+            repo_root=empty_root,
+            catalogs=catalogs,
         )
         assert report["status"] == "completed"
         daban = report["strategies"]["daban"]
@@ -134,16 +161,15 @@ class TestG04FixtureCatalogs:
         empty_root = tmp_path / "empty_repo"
         empty_root.mkdir()
         report = business_agent_entry.run_g04_strategy_ops_check(
-            {"ticket_id": "g04-missing-001"}, runtime_dir=tmp_path / "rt",
+            {"ticket_id": "g04-missing-001"},
+            runtime_dir=tmp_path / "rt",
             repo_root=empty_root,
         )
         assert report["status"] == "evidence_missing"
         for strategy in report["strategies"].values():
             assert strategy["registry"]["status"] == "evidence_missing"
         assert any("注册表不可读" in gap for gap in report["gaps"])
-        run_record = json.loads(
-            (_latest_run_dir(tmp_path / "rt") / "run.json").read_text(encoding="utf-8")
-        )
+        run_record = json.loads((_latest_run_dir(tmp_path / "rt") / "run.json").read_text(encoding="utf-8"))
         assert run_record["status"] == "evidence_missing"
 
 
@@ -152,12 +178,11 @@ class TestG04CliDispatch:
 
     def test_cli_dispatches_g04_kind(self, tmp_path, capsys):
         ticket_file = tmp_path / "ticket.json"
-        ticket_file.write_text(json.dumps(
-            {"ticket_id": "g04-cli-001", "kind": "g04_strategy_ops_check"},
-            ensure_ascii=False), encoding="utf-8")
-        assert business_agent_entry.main(
-            ["--ticket", str(ticket_file), "--runtime-dir", str(tmp_path / "rt")]
-        ) == 0
+        ticket_file.write_text(
+            json.dumps({"ticket_id": "g04-cli-001", "kind": "g04_strategy_ops_check"}, ensure_ascii=False),
+            encoding="utf-8",
+        )
+        assert business_agent_entry.main(["--ticket", str(ticket_file), "--runtime-dir", str(tmp_path / "rt")]) == 0
         out = json.loads(capsys.readouterr().out)
         assert out["kind"] == "g04_strategy_ops_check"
         assert out["advice_only"] is True

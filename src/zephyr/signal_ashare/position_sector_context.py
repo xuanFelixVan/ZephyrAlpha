@@ -208,9 +208,7 @@ def query_position_sector_context(
         ValueError: positions=None 或 trade_date 格式非法（调用方契约违例）。
     """
     if positions is None:
-        raise ValueError(
-            "positions 必须显式供给（ClickHouse 无持仓表真源，CTR-P1-008 券商通道未接）"
-        )
+        raise ValueError("positions 必须显式供给（ClickHouse 无持仓表真源，CTR-P1-008 券商通道未接）")
 
     notes: list[str] = []
     annotations: list[str] = []
@@ -225,9 +223,7 @@ def query_position_sector_context(
         try:
             latest = client.execute(SQL_LATEST_SECTOR_DATE, {})
         except Exception as e:  # noqa: BLE001 — 数据层异常一律降级不炸
-            return PositionSectorContextResult(
-                date="unknown", degraded=True, notes=[f"最新板块数据日查询异常: {e!r}"]
-            )
+            return PositionSectorContextResult(date="unknown", degraded=True, notes=[f"最新板块数据日查询异常: {e!r}"])
         if not latest or latest[0][0] is None:
             return PositionSectorContextResult(
                 date="unknown", degraded=True, notes=["kline_sector_880 无任何日 K 数据"]
@@ -255,16 +251,12 @@ def query_position_sector_context(
 
     # ── 板块归属反查（成分 SCD-2，degraded 主链） ──
     if client is None:
-        return PositionSectorContextResult(
-            date=date_str, degraded=True, notes=["ch_client 不可用，板块归属反查降级"]
-        )
+        return PositionSectorContextResult(date=date_str, degraded=True, notes=["ch_client 不可用，板块归属反查降级"])
     try:
         rows = client.execute(SQL_SECTOR_CONSTITUENTS, {"trade_date": d})
     except Exception as e:  # noqa: BLE001 — 主数据异常 → degraded 空结果不炸
         logger.warning("sector_constituent 查询异常，持仓板块语境降级: %r", e)
-        return PositionSectorContextResult(
-            date=date_str, degraded=True, notes=[f"sector_constituent 查询异常: {e!r}"]
-        )
+        return PositionSectorContextResult(date=date_str, degraded=True, notes=[f"sector_constituent 查询异常: {e!r}"])
     held = {sym for sym, _ in holdings}
     symbol_sectors: dict[str, list[str]] = {sym: [] for sym in held}
     for row in rows:

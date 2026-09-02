@@ -94,11 +94,13 @@ class TestConfig:
 
 class TestCollectStatements:
     def test_collect_ok_dedup_sorted(self) -> None:
-        az = _analyzer(statement_source=lambda: [
-            _statement("st2", published_at=_T1),
-            _statement("st1"),
-            _statement("st1"),  # 批内重复
-        ])
+        az = _analyzer(
+            statement_source=lambda: [
+                _statement("st2", published_at=_T1),
+                _statement("st1"),
+                _statement("st1"),  # 批内重复
+            ]
+        )
         assert az.collect_statements() == 2
         assert az.collect_statements() == 0  # 跨批幂等
         assert [s.statement_id for s in az.statements()] == ["st1", "st2"]  # 时序升序
@@ -138,11 +140,13 @@ class TestCollectStatements:
 
 class TestScan:
     def _filled(self) -> PolicyExpectationAnalyzer:
-        az = _analyzer(statement_source=lambda: [
-            _statement("st_b", content="适度宽松，研究降准工具"),
-            _statement("st_a", content="对地产窗口指导并要求审慎放贷，降准空间仍存"),
-            _statement("st_c", content="常态化监管座谈会"),
-        ])
+        az = _analyzer(
+            statement_source=lambda: [
+                _statement("st_b", content="适度宽松，研究降准工具"),
+                _statement("st_a", content="对地产窗口指导并要求审慎放贷，降准空间仍存"),
+                _statement("st_c", content="常态化监管座谈会"),
+            ]
+        )
         az.collect_statements()
         return az
 
@@ -286,7 +290,8 @@ class TestHolding:
         )
         assert down is not None and down.change_ratio == pytest.approx(-0.1071, abs=1e-4)
         assert [c.change_ratio for c in az.holding_changes()] == [
-            pytest.approx(0.12), pytest.approx(-0.1071, abs=1e-4),
+            pytest.approx(0.12),
+            pytest.approx(-0.1071, abs=1e-4),
         ]
 
     def test_threshold_boundary_exact_hit(self) -> None:

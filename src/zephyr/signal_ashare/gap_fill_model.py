@@ -133,9 +133,7 @@ class GapFillConfig:
     small_max: float = 0.6
     medium_max: float = 1.2
     fill_probability: dict[str, float] = field(default_factory=_default_fill_probability)
-    partial_fill_distribution: dict[str, dict[float, float]] = field(
-        default_factory=_default_partial_fill_distribution
-    )
+    partial_fill_distribution: dict[str, dict[float, float]] = field(default_factory=_default_partial_fill_distribution)
     mae_fraction: dict[str, float] = field(default_factory=_default_mae_fraction)
     expected_fill_bars: dict[str, int] = field(default_factory=_default_expected_fill_bars)
 

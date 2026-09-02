@@ -95,13 +95,9 @@ class TestConfig:
 
     def test_matrix_blank_keys_raise(self) -> None:
         with pytest.raises(GeopoliticalRiskError):
-            GeopoliticalRiskAnalyzer(
-                event_source=lambda: [], transmission_matrix={" ": {"oil": 0.5}}
-            )
+            GeopoliticalRiskAnalyzer(event_source=lambda: [], transmission_matrix={" ": {"oil": 0.5}})
         with pytest.raises(GeopoliticalRiskError):
-            GeopoliticalRiskAnalyzer(
-                event_source=lambda: [], transmission_matrix={"IR": {"": 0.5}}
-            )
+            GeopoliticalRiskAnalyzer(event_source=lambda: [], transmission_matrix={"IR": {"": 0.5}})
 
     def test_thresholds_unordered_raises(self) -> None:
         with pytest.raises(GeopoliticalRiskError):
@@ -167,9 +163,9 @@ class TestScoring:
 
     def test_risk_level_bands(self) -> None:
         az = _analyzer()
-        high = az.assess(_event(event_id="h", severity=1.0, commodities=("crude_oil",)))   # 0.9
-        mid = az.assess(_event(event_id="m", severity=0.5, commodities=("crude_oil",)))   # 0.45
-        low = az.assess(_event(event_id="l", severity=0.2, commodities=("gold",)))        # 0.08
+        high = az.assess(_event(event_id="h", severity=1.0, commodities=("crude_oil",)))  # 0.9
+        mid = az.assess(_event(event_id="m", severity=0.5, commodities=("crude_oil",)))  # 0.45
+        low = az.assess(_event(event_id="l", severity=0.2, commodities=("gold",)))  # 0.08
         assert high.risk_level is RiskLevel.HIGH
         assert mid.risk_level is RiskLevel.MEDIUM
         assert low.risk_level is RiskLevel.LOW
@@ -247,9 +243,7 @@ class TestRun:
         def boom():
             raise RuntimeError("rss down")
 
-        az = GeopoliticalRiskAnalyzer(
-            event_source=boom, transmission_matrix=_MATRIX, clock=lambda: _T0
-        )
+        az = GeopoliticalRiskAnalyzer(event_source=boom, transmission_matrix=_MATRIX, clock=lambda: _T0)
         with pytest.raises(GeopoliticalRiskError):
             az.run()
 
@@ -269,14 +263,28 @@ class TestRun:
     def test_history_sorted(self) -> None:
         t1 = _T0 - datetime.timedelta(hours=1)
         az = _analyzer()
-        az.assess(GeoEvent(
-            event_id="b", country="IR", headline="h", severity=0.5,
-            commodities=(), entities=(), occurred_at=_T0,
-        ))
-        az.assess(GeoEvent(
-            event_id="a", country="RU", headline="h", severity=0.5,
-            commodities=(), entities=(), occurred_at=t1,
-        ))
+        az.assess(
+            GeoEvent(
+                event_id="b",
+                country="IR",
+                headline="h",
+                severity=0.5,
+                commodities=(),
+                entities=(),
+                occurred_at=_T0,
+            )
+        )
+        az.assess(
+            GeoEvent(
+                event_id="a",
+                country="RU",
+                headline="h",
+                severity=0.5,
+                commodities=(),
+                entities=(),
+                occurred_at=t1,
+            )
+        )
         assert [r.event_id for r in az.history()] == ["a", "b"]
 
     def test_determinism_same_input_same_output(self) -> None:

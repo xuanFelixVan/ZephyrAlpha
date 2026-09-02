@@ -91,9 +91,7 @@ class TestDetectPii:
         assert any(f.pii_type == "person_name" for f in findings)
 
     def test_detect_extra_pattern(self) -> None:
-        p = _protector(extra=(PiiPattern(
-            pii_type="email", pattern=r"[\w.]+@[\w.]+", mask="[EMAIL]"
-        ),))
+        p = _protector(extra=(PiiPattern(pii_type="email", pattern=r"[\w.]+@[\w.]+", mask="[EMAIL]"),))
         findings = p.detect_pii("邮箱 a.b@example.com 失效")
         assert any(f.pii_type == "email" for f in findings)
 

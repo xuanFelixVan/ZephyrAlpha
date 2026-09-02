@@ -98,12 +98,7 @@ class RelativeStrengthConfig:
         if abs(sum(self.interval_weights) - 1.0) > _WEIGHT_TOLERANCE:
             msg = f"interval_weights 和须=1，实得 {sum(self.interval_weights)}"
             raise ValueError(msg)
-        total = (
-            self.weight_interval_rs
-            + self.weight_structural
-            + self.weight_proximity
-            + self.weight_breakout
-        )
+        total = self.weight_interval_rs + self.weight_structural + self.weight_proximity + self.weight_breakout
         if abs(total - 1.0) > _WEIGHT_TOLERANCE:
             msg = f"四维合成权重和须=1，实得 {total}"
             raise ValueError(msg)
@@ -173,13 +168,9 @@ class RelativeStrengthScreener:
             msg = "close 为空序列"
             raise ValueError(msg)
         if not (len(c) == len(h) == len(v) == len(b)):
-            msg = (
-                f"close/high/volume/benchmark 不等长: "
-                f"{len(c)}/{len(h)}/{len(v)}/{len(b)}"
-            )
+            msg = f"close/high/volume/benchmark 不等长: {len(c)}/{len(h)}/{len(v)}/{len(b)}"
             raise ValueError(msg)
-        if not (np.isfinite(c).all() and np.isfinite(h).all()
-                and np.isfinite(v).all() and np.isfinite(b).all()):
+        if not (np.isfinite(c).all() and np.isfinite(h).all() and np.isfinite(v).all() and np.isfinite(b).all()):
             msg = "输入含非有限值（NaN/inf）"
             raise ValueError(msg)
         if (c <= 0).any() or (h <= 0).any() or (b <= 0).any():
@@ -219,9 +210,7 @@ class RelativeStrengthScreener:
         proximity = float(c[-1] / high_52w)
         near_high = proximity >= cfg.near_high_threshold
         span = 1.0 - cfg.proximity_floor
-        proximity_score = float(
-            np.clip((proximity - cfg.proximity_floor) / span, 0.0, 1.0) * 100.0
-        )
+        proximity_score = float(np.clip((proximity - cfg.proximity_floor) / span, 0.0, 1.0) * 100.0)
 
         # ── 放量突破确认 ───────────────────────────────────────────
         if n >= 2:
@@ -265,7 +254,6 @@ class RelativeStrengthScreener:
     ) -> list[RelativeStrengthScore]:
         """批量评分并按合成分降序（精筛选配接入位）。"""
         scored = [
-            self.score(symbol, close, high, volume, benchmark_close)
-            for symbol, (close, high, volume) in bars.items()
+            self.score(symbol, close, high, volume, benchmark_close) for symbol, (close, high, volume) in bars.items()
         ]
         return sorted(scored, key=lambda s: s.composite_score, reverse=True)

@@ -308,9 +308,7 @@ def build_funnel_report(
         raise ValueError(f"universe_count 非法（须非负）: {universe_count}")
 
     stage_list = list(stages)
-    chain: list[int] = ([universe_count] if universe_count is not None else []) + [
-        s.out_count for s in stage_list
-    ]
+    chain: list[int] = ([universe_count] if universe_count is not None else []) + [s.out_count for s in stage_list]
     notes: list[str] = []
     for prev, cur in zip(chain, chain[1:], strict=False):
         if cur > prev:
@@ -324,7 +322,9 @@ def build_funnel_report(
 
     ann = list(annotations)
     if stage_list:
-        ann.append(f"筛选漏斗 {len(stage_list)} 层全链计数已出（{chain[0] if chain else 0}→…→{chain[-1] if chain else 0}）")
+        ann.append(
+            f"筛选漏斗 {len(stage_list)} 层全链计数已出（{chain[0] if chain else 0}→…→{chain[-1] if chain else 0}）"
+        )
 
     return ScreeningFunnelReport(
         trade_date=v_date,

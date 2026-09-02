@@ -98,13 +98,32 @@ REASON_NONE: Final[str] = "无明确原因"
 
 #: 政策关键词（MVP 经验口径，可 config 覆盖）
 _DEFAULT_POLICY_KEYWORDS: Final[tuple[str, ...]] = (
-    "政策", "国务院", "发改委", "工信部", "财政部", "央行", "证监会",
-    "补贴", "规划", "试点", "降准", "降息", "稳增长", "扶持",
+    "政策",
+    "国务院",
+    "发改委",
+    "工信部",
+    "财政部",
+    "央行",
+    "证监会",
+    "补贴",
+    "规划",
+    "试点",
+    "降准",
+    "降息",
+    "稳增长",
+    "扶持",
 )
 
 #: 业绩关键词（MVP 经验口径）
 _DEFAULT_EARNINGS_KEYWORDS: Final[tuple[str, ...]] = (
-    "业绩预告", "预增", "扭亏", "业绩快报", "净利润增长", "订单", "中标", "签合同",
+    "业绩预告",
+    "预增",
+    "扭亏",
+    "业绩快报",
+    "净利润增长",
+    "订单",
+    "中标",
+    "签合同",
 )
 
 #: 题材关键词（板块拉升题材线索；与 MOD-SIG-066 词典同源语义、本模块自维护小集）
@@ -252,15 +271,17 @@ def locate_cycle_phase(
         m.day_ret_pct >= cfg.climax_min_ret_pct and m.limit_up_count >= cfg.climax_ret_min_limit_ups
     ):
         phase = PHASE_CLIMAX
-        evidence.append(f"涨停 {m.limit_up_count}≥{cfg.climax_min_limit_ups} 或涨幅≥{cfg.climax_min_ret_pct}%且涨停≥{cfg.climax_ret_min_limit_ups} → 高潮")
+        evidence.append(
+            f"涨停 {m.limit_up_count}≥{cfg.climax_min_limit_ups} 或涨幅≥{cfg.climax_min_ret_pct}%且涨停≥{cfg.climax_ret_min_limit_ups} → 高潮"
+        )
     elif m.limit_up_count >= cfg.ferment_min_limit_ups or (
         m.day_ret_pct >= cfg.ferment_min_ret_pct and m.amount_deviation_pct >= cfg.ferment_min_dev_pct
     ):
         phase = PHASE_FERMENT
-        evidence.append(f"涨停 {m.limit_up_count}≥{cfg.ferment_min_limit_ups} 或涨幅≥{cfg.ferment_min_ret_pct}%且量偏≥{cfg.ferment_min_dev_pct}% → 发酵")
-    elif m.day_ret_pct <= cfg.retreat_max_ret_pct and (
-        prev in (PHASE_CLIMAX, PHASE_FERMENT) or m.limit_up_count == 0
-    ):
+        evidence.append(
+            f"涨停 {m.limit_up_count}≥{cfg.ferment_min_limit_ups} 或涨幅≥{cfg.ferment_min_ret_pct}%且量偏≥{cfg.ferment_min_dev_pct}% → 发酵"
+        )
+    elif m.day_ret_pct <= cfg.retreat_max_ret_pct and (prev in (PHASE_CLIMAX, PHASE_FERMENT) or m.limit_up_count == 0):
         phase = PHASE_RETREAT
         evidence.append(
             f"涨幅 {m.day_ret_pct:.2f}%≤{cfg.retreat_max_ret_pct}% 且（前态={prev or '无'}∈高潮/发酵 或 涨停=0）→ 退潮"
@@ -348,10 +369,13 @@ def aggregate_rally_reasons(
     reasons: list[RallyReason] = []
     window_notes: list[str] = []
     if policy_ids:
-        reasons.append(RallyReason(
-            reason=REASON_POLICY, evidence_count=len(policy_ids),
-            sample_news_ids=policy_ids[: cfg.max_samples_per_reason],
-        ))
+        reasons.append(
+            RallyReason(
+                reason=REASON_POLICY,
+                evidence_count=len(policy_ids),
+                sample_news_ids=policy_ids[: cfg.max_samples_per_reason],
+            )
+        )
     # 业绩腿：新闻命中 + 注入证据（超窗守卫）
     earnings_count = len(earnings_ids)
     earnings_note = ""
@@ -371,22 +395,31 @@ def aggregate_rally_reasons(
             earnings_count += 1
             earnings_note = earnings.summary
     if earnings_count > 0:
-        reasons.append(RallyReason(
-            reason=REASON_EARNINGS, evidence_count=earnings_count,
-            sample_news_ids=earnings_ids[: cfg.max_samples_per_reason],
-            note=earnings_note,
-        ))
+        reasons.append(
+            RallyReason(
+                reason=REASON_EARNINGS,
+                evidence_count=earnings_count,
+                sample_news_ids=earnings_ids[: cfg.max_samples_per_reason],
+                note=earnings_note,
+            )
+        )
     if theme_ids:
-        reasons.append(RallyReason(
-            reason=REASON_THEME, evidence_count=len(theme_ids),
-            sample_news_ids=theme_ids[: cfg.max_samples_per_reason],
-            note="命中题材: " + "/".join(sorted(theme_hits)),
-        ))
+        reasons.append(
+            RallyReason(
+                reason=REASON_THEME,
+                evidence_count=len(theme_ids),
+                sample_news_ids=theme_ids[: cfg.max_samples_per_reason],
+                note="命中题材: " + "/".join(sorted(theme_hits)),
+            )
+        )
     if not reasons and metrics.amount_deviation_pct >= cfg.fund_flow_min_dev_pct:
-        reasons.append(RallyReason(
-            reason=REASON_FUND_FLOW, evidence_count=0,
-            note=f"无新闻命中但量偏 {metrics.amount_deviation_pct:.1f}%≥{cfg.fund_flow_min_dev_pct}%（候选口径，无直接证据）",
-        ))
+        reasons.append(
+            RallyReason(
+                reason=REASON_FUND_FLOW,
+                evidence_count=0,
+                note=f"无新闻命中但量偏 {metrics.amount_deviation_pct:.1f}%≥{cfg.fund_flow_min_dev_pct}%（候选口径，无直接证据）",
+            )
+        )
     if not reasons:
         reasons.append(RallyReason(reason=REASON_NONE, note="无新闻/业绩/资金证据，不硬编原因"))
     reasons.sort(key=lambda r: (-r.evidence_count, r.reason))

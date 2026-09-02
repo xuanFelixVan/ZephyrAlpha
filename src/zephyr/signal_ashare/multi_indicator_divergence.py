@@ -111,12 +111,8 @@ class DivergenceConfig:
     macd_slow: int = 26
     macd_signal: int = 9
     lookback: int = 5
-    reversal_probability_table: dict[int, float] = field(
-        default_factory=_default_reversal_table
-    )
-    cascade_probability_table: dict[int, float] = field(
-        default_factory=_default_cascade_table
-    )
+    reversal_probability_table: dict[int, float] = field(default_factory=_default_reversal_table)
+    cascade_probability_table: dict[int, float] = field(default_factory=_default_cascade_table)
 
     def __post_init__(self) -> None:
         if self.rsi_period < 1:
@@ -269,14 +265,12 @@ class MultiIndicatorDivergenceDetector:
         peaks = [
             i
             for i in range(max(lb, first_valid), n - lb)
-            if price[i] == price[i - lb : i + lb + 1].max()
-            and int(np.argmax(price[i - lb : i + lb + 1])) == lb
+            if price[i] == price[i - lb : i + lb + 1].max() and int(np.argmax(price[i - lb : i + lb + 1])) == lb
         ]
         troughs = [
             i
             for i in range(max(lb, first_valid), n - lb)
-            if price[i] == price[i - lb : i + lb + 1].min()
-            and int(np.argmin(price[i - lb : i + lb + 1])) == lb
+            if price[i] == price[i - lb : i + lb + 1].min() and int(np.argmin(price[i - lb : i + lb + 1])) == lb
         ]
         ind_std = float(np.std(ind[first_valid:])) + _EPS
 
@@ -321,9 +315,7 @@ class MultiIndicatorDivergenceDetector:
         table = self._config.reversal_probability_table
         return table[min(count, max(table))]
 
-    def cascade_probability(
-        self, directions_by_tf: dict[str, str | None], *, direction: str
-    ) -> CascadeResult:
+    def cascade_probability(self, directions_by_tf: dict[str, str | None], *, direction: str) -> CascadeResult:
         """多级别级联：各周期方向与给定方向对齐计数→级联概率。"""
         if direction not in _DIRECTIONS:
             msg = f"非法方向 {direction!r}（封闭集 {_DIRECTIONS}）"

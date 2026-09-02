@@ -30,20 +30,13 @@ from zephyr.autonomy_core.autonomy_boundary_gate import (
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 REGISTRY_PATH = (
-    REPO_ROOT
-    / "docs"
-    / "01_policies_and_standards"
-    / "_registry"
-    / "catalogs"
-    / "ai_autonomy_authority_registry.yaml"
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "ai_autonomy_authority_registry.yaml"
 )
 
 
 @pytest.fixture
 def gate(tmp_path):
-    instance = AutonomyBoundaryGate(
-        registry_path=REGISTRY_PATH, runtime_dir=tmp_path, repo_root=REPO_ROOT
-    )
+    instance = AutonomyBoundaryGate(registry_path=REGISTRY_PATH, runtime_dir=tmp_path, repo_root=REPO_ROOT)
     yield instance
     instance.close()
 
@@ -51,11 +44,7 @@ def gate(tmp_path):
 def _read_jsonl(path: Path) -> list[dict]:
     if not path.exists():
         return []
-    return [
-        json.loads(line)
-        for line in path.read_text(encoding="utf-8").splitlines()
-        if line.strip()
-    ]
+    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
 class TestThreeClassDecision:
@@ -85,18 +74,10 @@ class TestThreeClassDecision:
 
     def test_component_level_entries(self, gate):
         """组件级路径登记（config/scripts）同样命中三分类."""
+        assert gate.check_write_permission("act-4", "config/capabilities.yaml").decision is GateDecision.BLOCK
+        assert gate.check_write_permission("act-5", "config/drift_thresholds.yaml").decision is GateDecision.ESCALATE
         assert (
-            gate.check_write_permission("act-4", "config/capabilities.yaml").decision
-            is GateDecision.BLOCK
-        )
-        assert (
-            gate.check_write_permission("act-5", "config/drift_thresholds.yaml").decision
-            is GateDecision.ESCALATE
-        )
-        assert (
-            gate.check_write_permission(
-                "act-6", "scripts/governance/validate_truth_source_cascade.py"
-            ).decision
+            gate.check_write_permission("act-6", "scripts/governance/validate_truth_source_cascade.py").decision
             is GateDecision.ALLOW
         )
 
@@ -133,9 +114,7 @@ class TestFailClosed:
     def test_registry_malformed_fail_closed(self, tmp_path):
         bad_yaml = tmp_path / "bad.yaml"
         bad_yaml.write_text("- this is a list not a mapping\n", encoding="utf-8")
-        broken = AutonomyBoundaryGate(
-            registry_path=bad_yaml, runtime_dir=tmp_path, repo_root=REPO_ROOT
-        )
+        broken = AutonomyBoundaryGate(registry_path=bad_yaml, runtime_dir=tmp_path, repo_root=REPO_ROOT)
         try:
             verdict = broken.check_write_permission("act-10", "src/zephyr/factor/alpha.py")
             assert verdict.allowed is False
@@ -145,9 +124,7 @@ class TestFailClosed:
             broken.close()
 
     def test_unregistered_target_denied(self, gate):
-        verdict = gate.check_write_permission(
-            "act-11", "src/zephyr/totally_unknown_domain_xyz/foo.py"
-        )
+        verdict = gate.check_write_permission("act-11", "src/zephyr/totally_unknown_domain_xyz/foo.py")
         assert verdict.allowed is False
         assert verdict.decision is GateDecision.ESCALATE
         assert verdict.layer is AutonomyLayer.UNREGISTERED
@@ -155,9 +132,7 @@ class TestFailClosed:
 
     def test_gate_never_raises_on_internal_error(self, gate, monkeypatch):
         """ERROR_CONTRACT：判定链路内部异常也降级为 fail-closed 判定而非抛出."""
-        monkeypatch.setattr(
-            gate, "_normalize_target", lambda *_: (_ for _ in ()).throw(RuntimeError("boom"))
-        )
+        monkeypatch.setattr(gate, "_normalize_target", lambda *_: (_ for _ in ()).throw(RuntimeError("boom")))
         verdict = gate.check_write_permission("act-12", "src/zephyr/factor/alpha.py")
         assert verdict.allowed is False
         assert verdict.fail_closed is True
@@ -168,9 +143,7 @@ class TestTrace:
     """留痕断言：审计 jsonl / 人审工单 / immutable 告警."""
 
     def test_allow_writes_audit_record(self, gate, tmp_path):
-        verdict = gate.check_write_permission(
-            "act-13", "src/zephyr/factor/alpha.py", {"session_id": "sess-A"}
-        )
+        verdict = gate.check_write_permission("act-13", "src/zephyr/factor/alpha.py", {"session_id": "sess-A"})
         records = _read_jsonl(tmp_path / "audit" / "autonomy_boundary_gate.jsonl")
         assert len(records) == 1
         record = records[0]

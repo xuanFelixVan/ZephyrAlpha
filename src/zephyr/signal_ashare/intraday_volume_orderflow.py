@@ -219,9 +219,7 @@ class IntradayVolumeOrderflowAnalyzer:
         delta = np.sign(bars["close"] - bars["open"]) * bars["volume"]
         return delta.cumsum()
 
-    def cvd_divergences(
-        self, bars: pd.DataFrame, lookback: int | None = None
-    ) -> list[CvdDivergence]:
+    def cvd_divergences(self, bars: pd.DataFrame, lookback: int | None = None) -> list[CvdDivergence]:
         """峰谷对位背离：价新高 CVD 不配合→bearish；价新低 CVD 抬升→bullish。
 
         magnitude = |价格腿| + |CVD 逆向腿|（CVD 腿归一化到窗口量能），恒>0。

@@ -176,19 +176,23 @@ class TestSync:
 
     def test_sync_resume_uses_cursor(self) -> None:
         seen: list = []
-        hub = _registered_hub(fetcher=_scripted_fetcher(
-            [([{"id": "n1"}], "cur-2"), ([{"id": "n2"}], "cur-3")],
-            seen_cursors=seen,
-        ))
+        hub = _registered_hub(
+            fetcher=_scripted_fetcher(
+                [([{"id": "n1"}], "cur-2"), ([{"id": "n2"}], "cur-3")],
+                seen_cursors=seen,
+            )
+        )
         hub.sync("akshare_news")
         hub.sync("akshare_news")
         assert seen == [None, "cur-2"]  # 首抓游标 None，续抓用上一游标
         assert [r.external_id for r in hub.records("akshare_news")] == ["n1", "n2"]
 
     def test_sync_dedup_idempotent(self) -> None:
-        hub = _registered_hub(fetcher=_scripted_fetcher(
-            [([{"id": "n1"}], "cur-2"), ([{"id": "n1"}, {"id": "n2"}], "cur-3")],
-        ))
+        hub = _registered_hub(
+            fetcher=_scripted_fetcher(
+                [([{"id": "n1"}], "cur-2"), ([{"id": "n1"}, {"id": "n2"}], "cur-3")],
+            )
+        )
         assert hub.sync("akshare_news") == 1
         assert hub.sync("akshare_news") == 1  # n1 重传去重，仅 n2 新落
         assert [r.external_id for r in hub.records("akshare_news")] == ["n1", "n2"]
@@ -273,12 +277,19 @@ class TestCheckpoint:
 
     def test_restore_resume(self) -> None:
         seen: list = []
-        hub = _registered_hub(fetcher=_scripted_fetcher(
-            [([{"id": "n9"}], "cur-10")], seen_cursors=seen,
-        ))
-        hub.restore_checkpoint(SyncCheckpoint(
-            connector_id="akshare_news", cursor="cur-7", exported_at=_T0,
-        ))
+        hub = _registered_hub(
+            fetcher=_scripted_fetcher(
+                [([{"id": "n9"}], "cur-10")],
+                seen_cursors=seen,
+            )
+        )
+        hub.restore_checkpoint(
+            SyncCheckpoint(
+                connector_id="akshare_news",
+                cursor="cur-7",
+                exported_at=_T0,
+            )
+        )
         hub.sync("akshare_news")
         assert seen == ["cur-7"]  # 断点续传自恢复游标起抓
 

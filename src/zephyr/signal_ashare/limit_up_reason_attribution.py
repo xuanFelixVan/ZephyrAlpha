@@ -266,9 +266,7 @@ def build_sector_themes(
             sector_names[sector_code] = sector_name
 
     # 新闻 → 主题（一次扫描复用）
-    news_themes: dict[str, list[str]] = {
-        n.news_id: match_themes(n.title + n.content, keywords) for n in news_items
-    }
+    news_themes: dict[str, list[str]] = {n.news_id: match_themes(n.title + n.content, keywords) for n in news_items}
 
     out: dict[str, SectorThemeItem] = {}
     for sector_code, members in sector_stocks.items():
@@ -308,9 +306,7 @@ def attribute_stocks(
 ) -> tuple[list[LimitUpReasonItem], dict[str, SectorThemeItem], dict[str, int]]:
     """三级归因主核（纯函数）：直命中→个股新闻催化；板块双条件→板块联动；否则无明确归因。"""
     cfg = config or AttributionConfig()
-    direct_hits: dict[str, list[NewsItemInput]] = {
-        s.symbol: match_stock_news(s, news_items, cfg) for s in stocks
-    }
+    direct_hits: dict[str, list[NewsItemInput]] = {s.symbol: match_stock_news(s, news_items, cfg) for s in stocks}
     sector_themes = build_sector_themes(stocks, news_items, sector_map, direct_hits, cfg)
 
     items: list[LimitUpReasonItem] = []
@@ -467,9 +463,7 @@ def attribute_limit_up_reasons(
     need_client = stocks is None or news_items is None or sector_map is None
     client = ch_client if ch_client is not None else (_default_client() if need_client else None)
     if need_client and client is None:
-        return LimitUpAttributionResult(
-            date=date_str, degraded=True, notes=["CH 客户端不可得，涨停归因整体降级"]
-        )
+        return LimitUpAttributionResult(date=date_str, degraded=True, notes=["CH 客户端不可得，涨停归因整体降级"])
 
     if stocks is None:
         try:

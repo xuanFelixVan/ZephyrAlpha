@@ -117,10 +117,7 @@ class MomentumPersistenceConfig:
             msg = f"divergence_threshold 须∈(-1,0)，实得 {self.divergence_threshold}"
             raise ValueError(msg)
         if not (0.0 < self.breadth_speculative < self.breadth_mainline < 1.0):
-            msg = (
-                f"广度阈值须 0<speculative<mainline<1，实得 "
-                f"{self.breadth_speculative}/{self.breadth_mainline}"
-            )
+            msg = f"广度阈值须 0<speculative<mainline<1，实得 {self.breadth_speculative}/{self.breadth_mainline}"
             raise ValueError(msg)
         weights = self.weights()
         for name, w in weights.items():
@@ -214,9 +211,7 @@ class SectorMomentumPersistence:
             raise ValueError(msg)
 
     # ── 单板块五维持续分 ───────────────────────────────────────────
-    def score_sector(
-        self, sector: SectorMomentumInput, index_returns: Sequence[float]
-    ) -> SectorPersistenceScore:
+    def score_sector(self, sector: SectorMomentumInput, index_returns: Sequence[float]) -> SectorPersistenceScore:
         cfg = self._config
         self._validate_sector(sector, index_returns)
         notes: list[str] = []

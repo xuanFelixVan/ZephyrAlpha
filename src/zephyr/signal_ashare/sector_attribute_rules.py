@@ -229,22 +229,31 @@ def resolve_sector_attribute(
         for r in rules:
             if r.code and r.code == code:
                 return SectorAttributeVerdict(
-                    sector_code=code, sector_name=name,
-                    attribute=r.attribute, label=ATTRIBUTE_LABELS[r.attribute],
-                    rule_key=r.key, match_via="code",
+                    sector_code=code,
+                    sector_name=name,
+                    attribute=r.attribute,
+                    label=ATTRIBUTE_LABELS[r.attribute],
+                    rule_key=r.key,
+                    match_via="code",
                 )
     if name:
         for r in rules:
             if any(kw in name for kw in r.keywords):
                 return SectorAttributeVerdict(
-                    sector_code=code, sector_name=name,
-                    attribute=r.attribute, label=ATTRIBUTE_LABELS[r.attribute],
-                    rule_key=r.key, match_via="keyword",
+                    sector_code=code,
+                    sector_name=name,
+                    attribute=r.attribute,
+                    label=ATTRIBUTE_LABELS[r.attribute],
+                    rule_key=r.key,
+                    match_via="keyword",
                 )
     return SectorAttributeVerdict(
-        sector_code=code, sector_name=name,
-        attribute=ATTR_UNLABELED, label=ATTRIBUTE_LABELS[ATTR_UNLABELED],
-        rule_key="", match_via="none",
+        sector_code=code,
+        sector_name=name,
+        attribute=ATTR_UNLABELED,
+        label=ATTRIBUTE_LABELS[ATTR_UNLABELED],
+        rule_key="",
+        match_via="none",
     )
 
 

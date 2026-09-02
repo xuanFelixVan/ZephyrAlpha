@@ -154,7 +154,9 @@ class TestScoring:
     def test_custom_weights_applied(self) -> None:
         mgr = _manager(weights={"success": 1.0, "freshness": 0.0, "latency": 0.0})
         _fill_good(mgr, n=3)
-        mgr.record_sample("rss_news", success=False, latency_seconds=9.9, data_ts=_T0 - datetime.timedelta(seconds=3500))
+        mgr.record_sample(
+            "rss_news", success=False, latency_seconds=9.9, data_ts=_T0 - datetime.timedelta(seconds=3500)
+        )
         report = mgr.health_of("rss_news")
         assert report.score == pytest.approx(0.75)  # 仅成功率分量
 
@@ -250,7 +252,7 @@ class TestProbe:
         mgr = self._downweighted()
         mgr.probe("rss_news", success=True)
         mgr.probe("rss_news", success=False)  # 回退 DOWNWEIGHTED
-        mgr.probe("rss_news", success=True)   # 重新入 HALF_OPEN，计数清零
+        mgr.probe("rss_news", success=True)  # 重新入 HALF_OPEN，计数清零
         assert mgr.state_of("rss_news") is HealthState.HALF_OPEN
         state = mgr.probe("rss_news", success=True)
         assert state is HealthState.NORMAL
@@ -311,9 +313,7 @@ class TestQuery:
         def bad_sink(_a: HealthAlert) -> None:
             raise RuntimeError("boom")
 
-        mgr = AltSourceHealthManager(
-            source_ids=_SOURCES, clock=lambda: _T0, alert_sink=bad_sink
-        )
+        mgr = AltSourceHealthManager(source_ids=_SOURCES, clock=lambda: _T0, alert_sink=bad_sink)
         _fill_bad(mgr)
         report = mgr.evaluate("rss_news")  # 告警异常不阻断降级
         assert report.state is HealthState.DOWNWEIGHTED

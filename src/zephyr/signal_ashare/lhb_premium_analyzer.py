@@ -246,7 +246,9 @@ def _load_registry(path: str) -> dict[str, dict]:
     return table
 
 
-def _resolve_identity(seat_name: str, provider_type: str, registry: dict[str, dict], cfg: LhbPremiumConfig) -> _SeatIdentity:
+def _resolve_identity(
+    seat_name: str, provider_type: str, registry: dict[str, dict], cfg: LhbPremiumConfig
+) -> _SeatIdentity:
     """席位身份识别：registry 精确名/别名 → provider 粗分类回退。"""
     hit = registry.get(seat_name.strip().lower())
     if hit is None:
@@ -404,7 +406,11 @@ def compute_lhb_premium(
             continue
         ratio = net_buy / turnover
         buyers = [r for r in seats if r.buy_rank is not None]
-        strong = [r for r in buyers if identities[r.seat_name].seat_type == "institution" or identities[r.seat_name].is_top_youzi]
+        strong = [
+            r
+            for r in buyers
+            if identities[r.seat_name].seat_type == "institution" or identities[r.seat_name].is_top_youzi
+        ]
 
         tags: list[str] = []
         reasons: list[str] = []
@@ -413,9 +419,7 @@ def compute_lhb_premium(
         # 规则① 高开候选：净买率>5% 且 机构+一线游资 ≥2 席
         if ratio > cfg.net_buy_ratio_threshold and len(strong) >= cfg.min_strong_buyer_seats:
             tags.append("high_open_candidate")
-            reasons.append(
-                f"净买率{ratio:.1%}>5%且机构/一线游资{len(strong)}席≥2 → 次日高开概率升"
-            )
+            reasons.append(f"净买率{ratio:.1%}>5%且机构/一线游资{len(strong)}席≥2 → 次日高开概率升")
             high_open.append(sym)
             candidate_buyers[sym] = buyers
 

@@ -173,12 +173,9 @@ __all__: Final = [
     "load_sector_attribute_labels",
 ]
 
-_LABELS_PATH: Final = (
-    Path(__file__).resolve().parents[3] / "config" / "sector_attribute_labels.yaml"
-)
+_LABELS_PATH: Final = Path(__file__).resolve().parents[3] / "config" / "sector_attribute_labels.yaml"
 _SEAT_REGISTRY_PATH: Final = (
-    Path(__file__).resolve().parents[3]
-    / "docs/01_policies_and_standards/_registry/catalogs/seat_registry.yaml"
+    Path(__file__).resolve().parents[3] / "docs/01_policies_and_standards/_registry/catalogs/seat_registry.yaml"
 )
 
 #: 市场统计指数代码（剔除出板块全集；880001 作市场收益代理）
@@ -637,9 +634,7 @@ def _compute_velocity(
         return velocities, None, None, notes
     window = [v for dd, v in velocities.items() if dd <= today][-cfg.velocity_percentile_window :]
     if len(window) < cfg.velocity_min_periods:
-        notes.append(
-            f"速度计分位窗 {len(window)} 日 < {cfg.velocity_min_periods} 日守卫，velocity_percentile 降级"
-        )
+        notes.append(f"速度计分位窗 {len(window)} 日 < {cfg.velocity_min_periods} 日守卫，velocity_percentile 降级")
         return velocities, v_today, None, notes
     if len(set(window)) == 1:
         notes.append("速度计分位窗内零变异（序列恒定），分位无意义降级")
@@ -796,12 +791,7 @@ def _lhb_fight_map(
         has_top_seller = any(str(r[1]).strip().lower() in top_youzi for r in sellers)
         turnover = sum(float(r[2] or 0.0) + float(r[3] or 0.0) for r in rows)
         net = sum(float(r[4] or 0.0) for r in rows)
-        out[sym] = (
-            has_top_buyer
-            and has_top_seller
-            and turnover > 0
-            and abs(net) < cfg.lhb_fight_net_ratio * turnover
-        )
+        out[sym] = has_top_buyer and has_top_seller and turnover > 0 and abs(net) < cfg.lhb_fight_net_ratio * turnover
     return out
 
 
@@ -860,17 +850,11 @@ def _compute_stock_divergence(
             if mean_t > 0:
                 surge = turnover / mean_t
         lu = limit_up_today.get(sym)
-        broken = bool(
-            lu is not None
-            and high >= lu - cfg.limit_price_tol
-            and close < lu - cfg.limit_price_tol
-        )
+        broken = bool(lu is not None and high >= lu - cfg.limit_price_tol and close < lu - cfg.limit_price_tol)
         entries[sym] = (surge, shadow, broken, fight.get(sym, False))
 
     if len(entries) < cfg.watchlist_min_universe:
-        return [], [
-            f"个股可评分宇宙 {len(entries)} < {cfg.watchlist_min_universe} 守卫，分歧度清单降级"
-        ]
+        return [], [f"个股可评分宇宙 {len(entries)} < {cfg.watchlist_min_universe} 守卫，分歧度清单降级"]
 
     # 换手突增截面 z-score（缺项按 0 计入合成但不出注解）
     surges = [v[0] for v in entries.values() if v[0] is not None]
@@ -985,7 +969,12 @@ def _compute_rs_radar(
             annotations.append(
                 f"避险抱团：进攻族−防御族 rs_z={rs_z:.2f}<−1σ 而指数红（{market_ret_today:+.2%}）——指数失真嫌疑，情绪差"
             )
-        elif rs_z > 1.0 and adv_ratio_today is not None and adv_ratio_prev is not None and adv_ratio_today > adv_ratio_prev:
+        elif (
+            rs_z > 1.0
+            and adv_ratio_today is not None
+            and adv_ratio_prev is not None
+            and adv_ratio_today > adv_ratio_prev
+        ):
             annotations.append(
                 f"真情绪好：进攻族领涨 rs_z={rs_z:.2f}>+1σ 且上涨家数占比改善（{adv_ratio_prev:.0%}→{adv_ratio_today:.0%}）"
             )
@@ -1056,10 +1045,7 @@ def _current_state_summary(
         return f"当前状态={state.value}；滚动窗内无该状态历史前向观测样本"
     freq = f"{stat.freq_down_3d:.0%}" if stat.freq_down_3d is not None else "无 3 日观测"
     suffix = "" if stat.sufficient else "（样本不足 insufficient）"
-    return (
-        f"当前状态={state.value}；该状态历史后续 3 日下跌>2% 频率={freq}"
-        f"（样本 N={stat.n_samples}）{suffix}"
-    )
+    return f"当前状态={state.value}；该状态历史后续 3 日下跌>2% 频率={freq}（样本 N={stat.n_samples}）{suffix}"
 
 
 def _degraded_result(date_str: str, note: str) -> SectorDivergenceResult:
@@ -1111,9 +1097,7 @@ def compute_sector_divergence(
     # 主数据：板块日 K 历史窗（5 状态/速度计/标定器/市场收益代理共用）
     sector_start = d - timedelta(days=cfg.sector_lookback_calendar_days)
     try:
-        sector_rows = client.execute(
-            SQL_SECTOR_KLINE_WINDOW, {"trade_date": d, "start_date": sector_start}
-        )
+        sector_rows = client.execute(SQL_SECTOR_KLINE_WINDOW, {"trade_date": d, "start_date": sector_start})
     except Exception as e:  # noqa: BLE001 — 数据层异常一律降级不炸
         return _degraded_result(date_str, f"kline_sector_880 查询异常: {e!r}")
     if not sector_rows:
@@ -1146,11 +1130,7 @@ def compute_sector_divergence(
     one_day = overlap is not None and overlap < cfg.top3_overlap_threshold
     if one_day:
         annotations.append(f"一日游生态：Top3 次日重合率 {overlap:.0%}<20%")
-    no_mainline = (
-        lead_streak is not None
-        and lead_streak < cfg.lead_streak_no_mainline
-        and fan_market
-    )
+    no_mainline = lead_streak is not None and lead_streak < cfg.lead_streak_no_mainline and fan_market
     if no_mainline:
         annotations.append("无主线混沌：连续领涨<2 日且轮动速度>75 分位（混沌/下跌中继注解）")
 
@@ -1179,9 +1159,7 @@ def compute_sector_divergence(
         annotations.append("极端分化+无主线混沌共振（虹吸 z>1.5σ 且 电风扇>75 分位，M2 降档评估）")
 
     # ── 市场收益代理（880001）与涨跌广度 ──
-    market_rows = [
-        (_as_date(r[1]), float(r[2] or 0.0)) for r in sector_rows if str(r[0]) == cfg.market_index_code
-    ]
+    market_rows = [(_as_date(r[1]), float(r[2] or 0.0)) for r in sector_rows if str(r[0]) == cfg.market_index_code]
     market_series = sorted(set(market_rows), key=lambda x: x[0])
     market_ret_today: float | None = None
     if len(market_series) >= 2 and market_series[-1][0] == d and market_series[-2][1] > 0:
@@ -1190,12 +1168,8 @@ def compute_sector_divergence(
     adv_today: float | None = None
     adv_prev: float | None = None
     try:
-        breadth_rows = client.execute(
-            SQL_BREADTH_WINDOW, {"trade_date": d, "start_date": d - timedelta(days=10)}
-        )
-        breadth = {
-            _as_date(r[0]): (int(r[1]) / int(r[2]) if int(r[2]) > 0 else None) for r in breadth_rows
-        }
+        breadth_rows = client.execute(SQL_BREADTH_WINDOW, {"trade_date": d, "start_date": d - timedelta(days=10)})
+        breadth = {_as_date(r[0]): (int(r[1]) / int(r[2]) if int(r[2]) > 0 else None) for r in breadth_rows}
         bdays = sorted(b for b in breadth if b <= d)
         if bdays:
             adv_today = breadth[bdays[-1]] if bdays[-1] == d else None
@@ -1231,9 +1205,7 @@ def compute_sector_divergence(
         watchlist, w_notes = _compute_stock_divergence(stock_rows, limit_rows, lhb_rows, top_youzi, d, cfg)
         notes.extend(w_notes)
         if watchlist:
-            annotations.append(
-                f"个股分歧例外清单 {len(watchlist)} 只（截面>80 分位，禁新开仓注解；只出清单不出方向）"
-            )
+            annotations.append(f"个股分歧例外清单 {len(watchlist)} 只（截面>80 分位，禁新开仓注解；只出清单不出方向）")
 
     # ── f) M1-②c 族相对强度雷达（独立降级） ──
     rs_ratio: float | None = None

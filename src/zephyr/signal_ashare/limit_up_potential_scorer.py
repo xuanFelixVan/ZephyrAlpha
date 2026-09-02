@@ -128,12 +128,7 @@ class LimitUpPotentialConfig:
         if self.ic_chunks < 2:
             msg = f"ic_chunks 须≥2，实得 {self.ic_chunks}"
             raise ValueError(msg)
-        if not (
-            self.grade_a_threshold
-            >= self.grade_b_threshold
-            >= self.grade_c_threshold
-            >= 0.0
-        ):
+        if not (self.grade_a_threshold >= self.grade_b_threshold >= self.grade_c_threshold >= 0.0):
             msg = (
                 "分档门槛须单调不增且≥0："
                 f"A={self.grade_a_threshold}/B={self.grade_b_threshold}/C={self.grade_c_threshold}"
@@ -321,9 +316,7 @@ class LimitUpPotentialScorer:
         )
 
     # ── 主入口 ───────────────────────────────────────────────────
-    def evaluate(
-        self, symbol: str, factors: Sequence[FactorEvidence]
-    ) -> LimitUpPotentialReport:
+    def evaluate(self, symbol: str, factors: Sequence[FactorEvidence]) -> LimitUpPotentialReport:
         if not symbol:
             msg = "symbol 不能为空"
             raise ValueError(msg)

@@ -43,9 +43,7 @@ D0 = datetime.date(2026, 8, 25)
 
 
 def _row(symbol: str, concept: str, days_ago: int = 0) -> ConceptConstituentRow:
-    return ConceptConstituentRow(
-        symbol=symbol, concept=concept, effective_date=D0 - datetime.timedelta(days=days_ago)
-    )
+    return ConceptConstituentRow(symbol=symbol, concept=concept, effective_date=D0 - datetime.timedelta(days=days_ago))
 
 
 @pytest.fixture

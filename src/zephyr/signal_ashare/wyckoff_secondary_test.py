@@ -113,9 +113,7 @@ class WyckoffStConfig:
         if isinstance(self.pivot_order, bool) or self.pivot_order < 1:
             raise WyckoffStError(f"pivot_order 必须 ≥1: {self.pivot_order!r}")
         if isinstance(self.min_bars, bool) or self.min_bars < 2 * self.pivot_order + 3:
-            raise WyckoffStError(
-                f"min_bars 必须 ≥ 2*pivot_order+3: {self.min_bars!r}"
-            )
+            raise WyckoffStError(f"min_bars 必须 ≥ 2*pivot_order+3: {self.min_bars!r}")
         if not math.isfinite(self.st_volume_threshold) or self.st_volume_threshold <= 0:
             raise WyckoffStError(f"st_volume_threshold 必须为正有限: {self.st_volume_threshold!r}")
         if not math.isfinite(self.fib_tolerance) or not (0 < self.fib_tolerance <= 0.25):
@@ -184,9 +182,7 @@ class WyckoffSecondaryTest:
 
     # ── 内部：摆点检测 ────────────────────────────────────────────────────
 
-    def _pivots(
-        self, bars: Sequence[KBar]
-    ) -> tuple[list[tuple[int, float]], list[tuple[int, float]]]:
+    def _pivots(self, bars: Sequence[KBar]) -> tuple[list[tuple[int, float]], list[tuple[int, float]]]:
         """严格大于/小于两侧 order 根的摆点（确定性顺序）。"""
         order = self._config.pivot_order
         highs: list[tuple[int, float]] = []
@@ -208,9 +204,7 @@ class WyckoffSecondaryTest:
     # ── 内部：结构判定 ────────────────────────────────────────────────────
 
     @staticmethod
-    def _structure(
-        highs: list[tuple[int, float]], lows: list[tuple[int, float]]
-    ) -> StructurePhase:
+    def _structure(highs: list[tuple[int, float]], lows: list[tuple[int, float]]) -> StructurePhase:
         if len(highs) < 2 or len(lows) < 2:
             return StructurePhase.RANGE
         hh = highs[-1][1] > highs[-2][1]
@@ -231,9 +225,7 @@ class WyckoffSecondaryTest:
     ) -> RetracementProbTable:
         tol = self._config.fib_tolerance
         horizon = self._config.prob_horizon
-        pivots = sorted(
-            [(i, p, "H") for i, p in highs] + [(i, p, "L") for i, p in lows]
-        )
+        pivots = sorted([(i, p, "H") for i, p in highs] + [(i, p, "L") for i, p in lows])
         s382 = c382 = s618 = c618 = 0
         n = len(bars)
         for a, b in zip(pivots, pivots[1:]):
@@ -266,8 +258,10 @@ class WyckoffSecondaryTest:
                     s618 += 1
                     c618 += int(cont)
         return RetracementProbTable(
-            samples_382=s382, continuations_382=c382,
-            samples_618=s618, continuations_618=c618,
+            samples_382=s382,
+            continuations_382=c382,
+            samples_618=s618,
+            continuations_618=c618,
         )
 
     # ── 主入口 ────────────────────────────────────────────────────────────
@@ -281,9 +275,7 @@ class WyckoffSecondaryTest:
             if not isinstance(b, KBar):
                 raise WyckoffStError(f"非 KBar 元素: {type(b)!r}")
         if len(bars) < self._config.min_bars:
-            raise WyckoffStError(
-                f"k线样本不足: {len(bars)} < min_bars={self._config.min_bars}"
-            )
+            raise WyckoffStError(f"k线样本不足: {len(bars)} < min_bars={self._config.min_bars}")
 
         highs, lows = self._pivots(bars)
         phase = self._structure(highs, lows)
@@ -309,16 +301,16 @@ class WyckoffSecondaryTest:
             if prior_lows:
                 lo_idx, lo_p = prior_lows[-1]
                 leg = (lo_p, hi_p)
-                impulse = tuple(bars[lo_idx:hi_idx + 1])
-                pullback = tuple(bars[hi_idx + 1:])
+                impulse = tuple(bars[lo_idx : hi_idx + 1])
+                pullback = tuple(bars[hi_idx + 1 :])
         elif phase is StructurePhase.MARKDOWN:
             lo_idx, lo_p = lows[-1]
             prior_highs = [(i, p) for i, p in highs if i < lo_idx]
             if prior_highs:
                 hi_idx, hi_p = prior_highs[-1]
                 leg = (lo_p, hi_p)
-                impulse = tuple(bars[hi_idx:lo_idx + 1])
-                pullback = tuple(bars[lo_idx + 1:])
+                impulse = tuple(bars[hi_idx : lo_idx + 1])
+                pullback = tuple(bars[lo_idx + 1 :])
 
         if phase is not StructurePhase.RANGE and leg is None:
             phase = StructurePhase.RANGE
@@ -336,11 +328,7 @@ class WyckoffSecondaryTest:
                     volume_ratio = avg_pull / avg_imp
             if phase is StructurePhase.MARKUP:
                 retracement = (hi_p - close) / span
-                st_confirmed = (
-                    volume_ratio is not None
-                    and volume_ratio < thr
-                    and close >= lo_p
-                )
+                st_confirmed = volume_ratio is not None and volume_ratio < thr and close >= lo_p
                 if retracement > 1.0:
                     verdict = StVerdict.REVERSAL
                     reason = "跌破前波段低点，延续失败（反转）"
@@ -354,11 +342,7 @@ class WyckoffSecondaryTest:
                     reason = "回踩量能/深度未达判定阈值"
             else:  # MARKDOWN
                 retracement = (close - lo_p) / span
-                st_confirmed = (
-                    volume_ratio is not None
-                    and volume_ratio < thr
-                    and close <= hi_p
-                )
+                st_confirmed = volume_ratio is not None and volume_ratio < thr and close <= hi_p
                 if retracement > 1.0:
                     verdict = StVerdict.REVERSAL
                     reason = "反弹破前波段高点，下跌延续失败（反转）"
@@ -376,9 +360,8 @@ class WyckoffSecondaryTest:
                     p = table.prob_382 if table.samples_382 > 0 else 0.5
                 else:
                     p = table.prob_618 if table.samples_618 > 0 else 0.5
-                bullish = (
-                    (phase is StructurePhase.MARKUP and verdict is StVerdict.CONTINUATION)
-                    or (phase is StructurePhase.MARKDOWN and verdict is StVerdict.REVERSAL)
+                bullish = (phase is StructurePhase.MARKUP and verdict is StVerdict.CONTINUATION) or (
+                    phase is StructurePhase.MARKDOWN and verdict is StVerdict.REVERSAL
                 )
                 score = p if bullish else -p
 
@@ -395,6 +378,9 @@ class WyckoffSecondaryTest:
         )
         _log.debug(
             "Wyckoff ST: phase=%s verdict=%s r=%s vr=%s",
-            phase.value, verdict.value, retracement, volume_ratio,
+            phase.value,
+            verdict.value,
+            retracement,
+            volume_ratio,
         )
         return report

@@ -361,9 +361,7 @@ def _build_metrics(
         if len(days) >= 2 and day_map[days[-2]][0] > 0:
             pct_change = round((today_close / day_map[days[-2]][0] - 1.0) * 100.0, 4)
         ret_5d = today_close / day_map[days[-6]][0] - 1.0 if len(days) >= 6 and day_map[days[-6]][0] > 0 else None
-        ret_20d = (
-            today_close / day_map[days[-21]][0] - 1.0 if len(days) >= 21 and day_map[days[-21]][0] > 0 else None
-        )
+        ret_20d = today_close / day_map[days[-21]][0] - 1.0 if len(days) >= 21 and day_map[days[-21]][0] > 0 else None
         metrics[sym] = _StockMetrics(
             symbol=sym,
             consec_limit=consec,
@@ -376,9 +374,7 @@ def _build_metrics(
     return metrics, n_skipped
 
 
-def _score_universe(
-    metrics: dict[str, _StockMetrics], cfg: SectorLeaderConfig
-) -> dict[str, float]:
+def _score_universe(metrics: dict[str, _StockMetrics], cfg: SectorLeaderConfig) -> dict[str, float]:
     """板块内三维分位合成 0-100 评分（中秩 ties；缺维度按可用权重重归一）。"""
     symbols = sorted(metrics)
     if not symbols:
@@ -395,9 +391,9 @@ def _score_universe(
         consec_rank = _midrank(consecs, float(m.consec_limit))
         # 情绪维：连板高度主+当日涨幅辅；涨幅不可得（窗口首日）→ 仅用连板分位
         if m.pct_change is not None and pcts:
-            emotion = cfg.emotion_consec_share * consec_rank + (
-                1.0 - cfg.emotion_consec_share
-            ) * _midrank(pcts, m.pct_change)
+            emotion = cfg.emotion_consec_share * consec_rank + (1.0 - cfg.emotion_consec_share) * _midrank(
+                pcts, m.pct_change
+            )
         else:
             emotion = consec_rank
         status = _midrank(amounts, m.amount)
@@ -465,18 +461,13 @@ def _assign_sector_roles(
         )
     else:
         max_consec = ordered[0].consec_limit if ordered else 0
-        annotation = (
-            f"无龙头板块：最高连板 {max_consec} 板 <{cfg.leader_min_consec} 辨识度门槛，不强行封龙"
-        )
+        annotation = f"无龙头板块：最高连板 {max_consec} 板 <{cfg.leader_min_consec} 辨识度门槛，不强行封龙"
 
     backbones: list[StockRoleEntry] = []
     followers: list[StockRoleEntry] = []
     neutrals: list[StockRoleEntry] = []
     n_neutral_total = 0
-    amount_rank = {
-        m.symbol: i + 1
-        for i, m in enumerate(sorted(members, key=lambda x: (-x.amount, x.symbol)))
-    }
+    amount_rank = {m.symbol: i + 1 for i, m in enumerate(sorted(members, key=lambda x: (-x.amount, x.symbol)))}
 
     for m in ordered:
         if leader_entry is not None and m.symbol == leader_entry.symbol:
@@ -526,9 +517,7 @@ def _assign_sector_roles(
             continue
         n_neutral_total += 1
         if len(neutrals) < cfg.max_neutral_list:
-            neutrals.append(
-                _entry(m, ROLE_NEUTRAL, cfg.weight_neutral, ["无龙头/中军/跟风特征（×0）"])
-            )
+            neutrals.append(_entry(m, ROLE_NEUTRAL, cfg.weight_neutral, ["无龙头/中军/跟风特征（×0）"]))
 
     return SectorRoleGroup(
         sector_code=sector_code,
@@ -613,9 +602,7 @@ def identify_sector_leaders(
     # ── 个股日 K 窗（主数据） ──
     start = d - timedelta(days=cfg.lookback_calendar_days)
     try:
-        kline_rows = client.execute(
-            SQL_STOCK_KLINE_WINDOW, {"trade_date": d, "start_date": start}
-        )
+        kline_rows = client.execute(SQL_STOCK_KLINE_WINDOW, {"trade_date": d, "start_date": start})
     except Exception as e:  # noqa: BLE001 — 数据层异常一律降级不炸
         return _degraded_board(date_str, f"kline_daily 查询异常: {e!r}")
     if not kline_rows:

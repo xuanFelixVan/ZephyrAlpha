@@ -37,12 +37,7 @@ from zephyr.autonomy_core.autonomy_boundary_gate import (
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 REGISTRY_PATH = (
-    REPO_ROOT
-    / "docs"
-    / "01_policies_and_standards"
-    / "_registry"
-    / "catalogs"
-    / "ai_autonomy_authority_registry.yaml"
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "ai_autonomy_authority_registry.yaml"
 )
 
 # read→write→delete 类型漂移链（同顶层段 src/，路径熵=0 隔离路径维度）：
@@ -72,19 +67,13 @@ PATH_DRIFT_STEPS: list[tuple[str, str]] = [
 
 
 def _gate(runtime_dir: Path, **kwargs) -> AutonomyBoundaryGate:
-    return AutonomyBoundaryGate(
-        registry_path=REGISTRY_PATH, runtime_dir=runtime_dir, repo_root=REPO_ROOT, **kwargs
-    )
+    return AutonomyBoundaryGate(registry_path=REGISTRY_PATH, runtime_dir=runtime_dir, repo_root=REPO_ROOT, **kwargs)
 
 
-def _run_chain(
-    gate: AutonomyBoundaryGate, session_id: str, steps: list[tuple[str, str]]
-) -> list[GateVerdict]:
+def _run_chain(gate: AutonomyBoundaryGate, session_id: str, steps: list[tuple[str, str]]) -> list[GateVerdict]:
     """按 (op_type, target) 链推进 gate 判定（op_type 经 session_context 上报工具层）。"""
     return [
-        gate.check_write_permission(
-            f"{session_id}-{i}", target, {"session_id": session_id, "op_type": op_type}
-        )
+        gate.check_write_permission(f"{session_id}-{i}", target, {"session_id": session_id, "op_type": op_type})
         for i, (op_type, target) in enumerate(steps)
     ]
 
@@ -92,11 +81,7 @@ def _run_chain(
 def _read_jsonl(path: Path) -> list[dict]:
     if not path.exists():
         return []
-    return [
-        json.loads(line)
-        for line in path.read_text(encoding="utf-8").splitlines()
-        if line.strip()
-    ]
+    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
 class TestTypeDriftWarning:
@@ -201,9 +186,7 @@ class TestNormalChainNoFalsePositive:
         assert all(v.drift_level == "ok" for v in verdicts)
         records = _read_jsonl(tmp_path / "audit" / "autonomy_boundary_gate.jsonl")
         assert len(records) == 10
-        assert all(
-            r["threat_category"] == "none" and r["severity"] == "info" for r in records
-        )
+        assert all(r["threat_category"] == "none" and r["severity"] == "info" for r in records)
         assert not (tmp_path / "audit" / "agentic_drift_guard_alerts.jsonl").exists()
 
 
@@ -215,12 +198,8 @@ class TestSessionWindowIsolation:
         try:
             # s1 类型漂移链推进到 WARNING；s2 交错正常写
             for i, (op_type, target) in enumerate(TYPE_DRIFT_STEPS):
-                gate.check_write_permission(
-                    f"s1-{i}", target, {"session_id": "s1", "op_type": op_type}
-                )
-                v_s2 = gate.check_write_permission(
-                    f"s2-{i}", f"src/zephyr/factor/solo_{i}.py", {"session_id": "s2"}
-                )
+                gate.check_write_permission(f"s1-{i}", target, {"session_id": "s1", "op_type": op_type})
+                v_s2 = gate.check_write_permission(f"s2-{i}", f"src/zephyr/factor/solo_{i}.py", {"session_id": "s2"})
                 assert v_s2.decision is GateDecision.ALLOW
                 assert v_s2.auto_guard is False
                 assert v_s2.drift_level == "ok"
@@ -262,9 +241,7 @@ class TestDriftHookSwitch:
         gate = _gate(tmp_path)
         try:
             for i in range(6):
-                verdict = gate.check_write_permission(
-                    f"nosess-{i}", "src/zephyr/factor/x.py"
-                )
+                verdict = gate.check_write_permission(f"nosess-{i}", "src/zephyr/factor/x.py")
                 assert verdict.decision is GateDecision.ALLOW
                 assert verdict.drift_level == ""
         finally:
@@ -283,15 +260,11 @@ class TestInlinePerformance:
 
         def _measure(g: AutonomyBoundaryGate) -> list[float]:
             for i in range(100):  # 预热：文件句柄/滑窗/注册表缓存
-                g.check_write_permission(
-                    f"warm-{i}", "src/zephyr/factor/perf.py", {"session_id": "perf"}
-                )
+                g.check_write_permission(f"warm-{i}", "src/zephyr/factor/perf.py", {"session_id": "perf"})
             samples: list[float] = []
             for i in range(n):
                 t0 = time.perf_counter()
-                g.check_write_permission(
-                    f"meas-{i}", "src/zephyr/factor/perf.py", {"session_id": "perf"}
-                )
+                g.check_write_permission(f"meas-{i}", "src/zephyr/factor/perf.py", {"session_id": "perf"})
                 samples.append(time.perf_counter() - t0)
             samples.sort()
             return samples
