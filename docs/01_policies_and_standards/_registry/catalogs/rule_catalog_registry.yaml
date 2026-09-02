@@ -4,7 +4,7 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-09-02T14:27:20Z'
+generated_at: '2026-09-02T20:50:15Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 227
@@ -1847,6 +1847,21 @@ files:
   version: 1.1.0
   rule_form: procedural
   scope: frontend
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/industry_chain_data_audit_sop.md
+  module_id: ''
+  title: 产业链供应链全景图数据审计与更新SOP——夜班自主执行版
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: global
   stability: ''
   layer: ''
   superseded_by: ''
