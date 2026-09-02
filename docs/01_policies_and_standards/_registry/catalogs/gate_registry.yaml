@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-08-21T18:58:26Z'
+generated_at: '2026-09-02T09:16:50Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 152
+total_gates: 154
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -282,6 +282,15 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+- gate_id: GATE-TEST-SYMBOL
+  name: 'GATE-TEST-SYMBOL: 孤儿测试符号检测（CAND-GATEMECH-007）'
+  entry: python scripts/governance/check_test_symbol_validity.py --ci
+  description: 检测测试文件 import 引用真源不存在的符号（超前孤儿测试），增量守门不拦存量，全量审计走手动
+  files_trigger: ^tests/.*\.py$
+  always_run: false
+  category: unknown
+  status: active
+  source: pre-commit
 - gate_id: GATE-ERRCODE
   name: 'GATE-ERRCODE: error_code 注册表↔代码双向对账（#ARCH-ERRCODE-001）'
   entry: python -m pytest tests/governance/test_error_code_consistency.py -q --tb=line
@@ -547,294 +556,273 @@ gates:
   status: active
   source: pre-commit
 - gate_id: ARCH-REFERENCE
-  name: 'ARCH-REFERENCE: #ARCH-NNN / #ARCH-DOMAIN-NNN 悬空引用自动检测门禁（ARCH-REFERENCE）（CommitGate,
-    priority=75）'
+  name: 'ARCH-REFERENCE: ARCH-REFERENCE（CommitGate, priority=75）'
   entry: in-process (GitCommitGateway)
-  description: '#ARCH-NNN / #ARCH-DOMAIN-NNN 悬空引用自动检测门禁（ARCH-REFERENCE）'
+  description: ARCH-REFERENCE
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: ASYNCIO-RUN-IN-CONTEXT
-  name: 'ASYNCIO-RUN-IN-CONTEXT: 异步上下文误用硬阻断门禁（ASYNCIO-RUN-IN-CONTEXT）（CommitGate,
-    priority=122）'
+  name: 'ASYNCIO-RUN-IN-CONTEXT: ASYNCIO-RUN-IN-CONTEXT（CommitGate, priority=122）'
   entry: in-process (GitCommitGateway)
-  description: 异步上下文误用硬阻断门禁（ASYNCIO-RUN-IN-CONTEXT）
+  description: ASYNCIO-RUN-IN-CONTEXT
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: NO-BARE-GETENV
-  name: 'NO-BARE-GETENV: 裸 os.getenv 读密钥阻断门禁（NO-BARE-GETENV，§5.17.10 治本）（CommitGate,
-    priority=81）'
+  name: 'NO-BARE-GETENV: NO-BARE-GETENV（CommitGate, priority=81）'
   entry: in-process (GitCommitGateway)
-  description: 裸 os.getenv 读密钥阻断门禁（NO-BARE-GETENV，§5.17.10 治本）
+  description: NO-BARE-GETENV
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: NO-BARE-SQL
-  name: 'NO-BARE-SQL: 裸SQL字面量阻断门禁（NO-BARE-SQL，§5.160.2 防复发）（CommitGate, priority=94）'
+  name: 'NO-BARE-SQL: NO-BARE-SQL（CommitGate, priority=94）'
   entry: in-process (GitCommitGateway)
-  description: 裸SQL字面量阻断门禁（NO-BARE-SQL，§5.160.2 防复发）
+  description: NO-BARE-SQL
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: BARE-SUBPROCESS
-  name: 'BARE-SUBPROCESS: 裸 subprocess 调用硬阻断门禁（BARE-SUBPROCESS）（CommitGate, priority=108）'
+  name: 'BARE-SUBPROCESS: BARE-SUBPROCESS（CommitGate, priority=108）'
   entry: in-process (GitCommitGateway)
-  description: 裸 subprocess 调用硬阻断门禁（BARE-SUBPROCESS）
+  description: BARE-SUBPROCESS
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: BLUEPRINT-AMODULE-CONSISTENCY
-  name: 'BLUEPRINT-AMODULE-CONSISTENCY: [A_module] 头部 module_id 格式一致性门禁（CommitGate,
+  name: 'BLUEPRINT-AMODULE-CONSISTENCY: BLUEPRINT-AMODULE-CONSISTENCY（CommitGate,
     priority=79）'
   entry: in-process (GitCommitGateway)
-  description: '[A_module] 头部 module_id 格式一致性门禁'
+  description: BLUEPRINT-AMODULE-CONSISTENCY
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: BLUEPRINT-AMODULE-CROSS-CHECK
-  name: 'BLUEPRINT-AMODULE-CROSS-CHECK: [BLUEPRINT] vs [A_module] 交叉校验门禁（CommitGate,
+  name: 'BLUEPRINT-AMODULE-CROSS-CHECK: BLUEPRINT-AMODULE-CROSS-CHECK（CommitGate,
     priority=119）'
   entry: in-process (GitCommitGateway)
-  description: '[BLUEPRINT] vs [A_module] 交叉校验门禁'
+  description: BLUEPRINT-AMODULE-CROSS-CHECK
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: BLUEPRINT-FORMAT
-  name: 'BLUEPRINT-FORMAT: [BLUEPRINT] 头部 module_id 格式阻断门禁（BLUEPRINT-FORMAT，裁定#214
-    Phase 0 防蔓延）（CommitGate, priority=77）'
+  name: 'BLUEPRINT-FORMAT: BLUEPRINT-FORMAT（CommitGate, priority=77）'
   entry: in-process (GitCommitGateway)
-  description: '[BLUEPRINT] 头部 module_id 格式阻断门禁（BLUEPRINT-FORMAT，裁定#214 Phase 0 防蔓延）'
+  description: BLUEPRINT-FORMAT
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: BLUEPRINT-NODE-ID-HARDCODE
-  name: 'BLUEPRINT-NODE-ID-HARDCODE: blueprint.md node_id/edge_id 硬编码阻断门禁（CommitGate,
-    priority=57）'
+  name: 'BLUEPRINT-NODE-ID-HARDCODE: BLUEPRINT-NODE-ID-HARDCODE（CommitGate, priority=57）'
   entry: in-process (GitCommitGateway)
-  description: blueprint.md node_id/edge_id 硬编码阻断门禁
+  description: BLUEPRINT-NODE-ID-HARDCODE
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: CAP-CONSISTENCY
-  name: 'CAP-CONSISTENCY: Provider 路由-meta 一致性门禁（CAP-CONSISTENCY，裁定 #ARCH-CH-022 Phase
-    4.4）（CommitGate, priority=101）'
+  name: 'CAP-CONSISTENCY: CAP-CONSISTENCY（CommitGate, priority=101）'
   entry: in-process (GitCommitGateway)
-  description: 'Provider 路由-meta 一致性门禁（CAP-CONSISTENCY，裁定 #ARCH-CH-022 Phase 4.4）'
+  description: CAP-CONSISTENCY
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: CAPABILITY-LOOKUP-REQUIRED
-  name: 'CAPABILITY-LOOKUP-REQUIRED: Capability Lookup 强制门禁（CAPABILITY-LOOKUP-REQUIRED，#ARCH-GOV-CONVERGENCE-META
-    Phase 3.4a, #ARCH-066）（CommitGate, priority=31）'
+  name: 'CAPABILITY-LOOKUP-REQUIRED: CAPABILITY-LOOKUP-REQUIRED（CommitGate, priority=31）'
   entry: in-process (GitCommitGateway)
-  description: 'Capability Lookup 强制门禁（CAPABILITY-LOOKUP-REQUIRED，#ARCH-GOV-CONVERGENCE-META
-    Phase 3.4a, #ARCH-066）'
+  description: CAPABILITY-LOOKUP-REQUIRED
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: CAPABILITY-OVERLAP
-  name: 'CAPABILITY-OVERLAP: 新建 .py 文件 CapabilityLookup 提示门禁 + CloneGuard 语义克隆检测（CommitGate,
-    priority=200）'
+  name: 'CAPABILITY-OVERLAP: CAPABILITY-OVERLAP（CommitGate, priority=200）'
   entry: in-process (GitCommitGateway)
-  description: 新建 .py 文件 CapabilityLookup 提示门禁 + CloneGuard 语义克隆检测
+  description: CAPABILITY-OVERLAP
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: CH-BATCH-SIZE
-  name: 'CH-BATCH-SIZE: CH 批量写入防回退门禁（CH-BATCH-SIZE，§18.4 防复发）（CommitGate, priority=36）'
+  name: 'CH-BATCH-SIZE: CH-BATCH-SIZE（CommitGate, priority=36）'
   entry: in-process (GitCommitGateway)
-  description: CH 批量写入防回退门禁（CH-BATCH-SIZE，§18.4 防复发）
+  description: CH-BATCH-SIZE
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: CH-FINAL-GATE
-  name: 'CH-FINAL-GATE: ch_writer.query() 直接调用阻断门禁（CH-FINAL-GATE，裁定 #ARCH-CH-007 B5）（CommitGate,
-    priority=37）'
+  name: 'CH-FINAL-GATE: CH-FINAL-GATE（CommitGate, priority=37）'
   entry: in-process (GitCommitGateway)
-  description: 'ch_writer.query() 直接调用阻断门禁（CH-FINAL-GATE，裁定 #ARCH-CH-007 B5）'
+  description: CH-FINAL-GATE
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: CH-VERSION-COL
-  name: 'CH-VERSION-COL: CH version 列语义误用阻断门禁（CH-VERSION-COL，裁定 #ARCH-CH-009）（CommitGate,
-    priority=38）'
+  name: 'CH-VERSION-COL: CH-VERSION-COL（CommitGate, priority=38）'
   entry: in-process (GitCommitGateway)
-  description: 'CH version 列语义误用阻断门禁（CH-VERSION-COL，裁定 #ARCH-CH-009）'
+  description: CH-VERSION-COL
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: CLAIM-REQUIRED
-  name: 'CLAIM-REQUIRED: claim_files 前置检查门禁（CLAIM-REQUIRED，2026-06-30 治本）（CommitGate,
-    priority=40）'
+  name: 'CLAIM-REQUIRED: CLAIM-REQUIRED（CommitGate, priority=40）'
   entry: in-process (GitCommitGateway)
-  description: claim_files 前置检查门禁（CLAIM-REQUIRED，2026-06-30 治本）
+  description: CLAIM-REQUIRED
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: COMMIT-SCOPE
-  name: 'COMMIT-SCOPE: 提交边界域一致性门禁（COMMIT-SCOPE）（CommitGate, priority=50）'
+  name: 'COMMIT-SCOPE: COMMIT-SCOPE（CommitGate, priority=50）'
   entry: in-process (GitCommitGateway)
-  description: 提交边界域一致性门禁（COMMIT-SCOPE）
+  description: COMMIT-SCOPE
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: CONSUMERS-ACCURACY
-  name: 'CONSUMERS-ACCURACY: CONSUMERS 字段准确性 warn-only 门禁（CONSUMERS-ACCURACY）（CommitGate,
-    priority=116）'
+  name: 'CONSUMERS-ACCURACY: CONSUMERS-ACCURACY（CommitGate, priority=116）'
   entry: in-process (GitCommitGateway)
-  description: CONSUMERS 字段准确性 warn-only 门禁（CONSUMERS-ACCURACY）
+  description: CONSUMERS-ACCURACY
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: CREATE-GUARD
-  name: 'CREATE-GUARD: 新建 .py / 非 rules/ .yaml 文件 creation_token 阻断门禁（CREATE-GUARD，2026-06-30
-    治本）（CommitGate, priority=60）'
+  name: 'CREATE-GUARD: CREATE-GUARD（CommitGate, priority=60）'
   entry: in-process (GitCommitGateway)
-  description: 新建 .py / 非 rules/ .yaml 文件 creation_token 阻断门禁（CREATE-GUARD，2026-06-30
-    治本）
+  description: CREATE-GUARD
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: DANGLING-REFERENCE
-  name: 'DANGLING-REFERENCE: AGENTS.md §X.Y 悬空引用自动检测门禁（DANGLING-REFERENCE）（CommitGate,
-    priority=70）'
+  name: 'DANGLING-REFERENCE: DANGLING-REFERENCE（CommitGate, priority=70）'
   entry: in-process (GitCommitGateway)
-  description: AGENTS.md §X.Y 悬空引用自动检测门禁（DANGLING-REFERENCE）
+  description: DANGLING-REFERENCE
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: DATA-TASK-COMPLETENESS
-  name: 'DATA-TASK-COMPLETENESS: 数据任务完整性门禁（warn 级，提醒型）（CommitGate, priority=41）'
+  name: 'DATA-TASK-COMPLETENESS: DATA-TASK-COMPLETENESS（CommitGate, priority=41）'
   entry: in-process (GitCommitGateway)
-  description: 数据任务完整性门禁（warn 级，提醒型）
+  description: DATA-TASK-COMPLETENESS
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: DATETIME-NOW-FORBIDDEN
-  name: 'DATETIME-NOW-FORBIDDEN: 时间戳约定硬阻断门禁（DATETIME-NOW-FORBIDDEN）（CommitGate, priority=34）'
+  name: 'DATETIME-NOW-FORBIDDEN: DATETIME-NOW-FORBIDDEN（CommitGate, priority=34）'
   entry: in-process (GitCommitGateway)
-  description: 时间戳约定硬阻断门禁（DATETIME-NOW-FORBIDDEN）
+  description: DATETIME-NOW-FORBIDDEN
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: DEPGRAPH-FRESHNESS
-  name: 'DEPGRAPH-FRESHNESS: depgraph 新鲜度门禁（dual-threshold，#ARCH-DEPGRAPH-RECONCILER-FAILSILENT
-    Phase 3.1）（CommitGate, priority=67）'
+  name: 'DEPGRAPH-FRESHNESS: DEPGRAPH-FRESHNESS（CommitGate, priority=67）'
   entry: in-process (GitCommitGateway)
-  description: depgraph 新鲜度门禁（dual-threshold，#ARCH-DEPGRAPH-RECONCILER-FAILSILENT
-    Phase 3.1）
+  description: DEPGRAPH-FRESHNESS
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: DEPGRAPH-PRE-REGISTRATION
-  name: 'DEPGRAPH-PRE-REGISTRATION: depgraph planned→production 流转强制门禁（DEPGRAPH-PRE-REGISTRATION）（CommitGate,
-    priority=58）'
+  name: 'DEPGRAPH-PRE-REGISTRATION: DEPGRAPH-PRE-REGISTRATION（CommitGate, priority=58）'
   entry: in-process (GitCommitGateway)
-  description: depgraph planned→production 流转强制门禁（DEPGRAPH-PRE-REGISTRATION）
+  description: DEPGRAPH-PRE-REGISTRATION
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: DEPGRAPH-WRITE-PATH
-  name: 'DEPGRAPH-WRITE-PATH: depgraph 写入路径白名单门禁（DEPGRAPH-WRITE-PATH）（CommitGate,
-    priority=100）'
+  name: 'DEPGRAPH-WRITE-PATH: DEPGRAPH-WRITE-PATH（CommitGate, priority=100）'
   entry: in-process (GitCommitGateway)
-  description: depgraph 写入路径白名单门禁（DEPGRAPH-WRITE-PATH）
+  description: DEPGRAPH-WRITE-PATH
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: DERIVATION-ANNOTATION
-  name: 'DERIVATION-ANNOTATION: 派生关系声明真实性校验门禁（DERIVATION-ANNOTATION）（CommitGate, priority=65）'
+  name: 'DERIVATION-ANNOTATION: DERIVATION-ANNOTATION（CommitGate, priority=65）'
   entry: in-process (GitCommitGateway)
-  description: 派生关系声明真实性校验门禁（DERIVATION-ANNOTATION）
+  description: DERIVATION-ANNOTATION
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: DERIVED-FILE-DELETION-PROTECTION
-  name: 'DERIVED-FILE-DELETION-PROTECTION: 派生文件删除保护门禁（DERIVED-FILE-DELETION-PROTECTION）（CommitGate,
+  name: 'DERIVED-FILE-DELETION-PROTECTION: DERIVED-FILE-DELETION-PROTECTION（CommitGate,
     priority=46）'
   entry: in-process (GitCommitGateway)
-  description: 派生文件删除保护门禁（DERIVED-FILE-DELETION-PROTECTION）
+  description: DERIVED-FILE-DELETION-PROTECTION
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: DIRECTORY-CONTRACT
-  name: 'DIRECTORY-CONTRACT: DCR-001~007 等效校验门禁（治本：弥补 --no-verify 绕过 pre-commit 的缺口）（CommitGate,
-    priority=30）'
+  name: 'DIRECTORY-CONTRACT: DIRECTORY-CONTRACT（CommitGate, priority=30）'
   entry: in-process (GitCommitGateway)
-  description: DCR-001~007 等效校验门禁（治本：弥补 --no-verify 绕过 pre-commit 的缺口）
+  description: DIRECTORY-CONTRACT
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: DOC-REF-BROKEN
-  name: 'DOC-REF-BROKEN: 文档相对路径断裂引用阻断门禁（DOC-REF-BROKEN）（CommitGate, priority=91）'
+  name: 'DOC-REF-BROKEN: DOC-REF-BROKEN（CommitGate, priority=91）'
   entry: in-process (GitCommitGateway)
-  description: 文档相对路径断裂引用阻断门禁（DOC-REF-BROKEN）
+  description: DOC-REF-BROKEN
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: GATE-DOMAIN-FK
-  name: 'GATE-DOMAIN-FK: [DOMAIN] 头部域注册表 FK 校验门禁（GATE-DOMAIN-FK）（CommitGate, priority=78）'
+  name: 'GATE-DOMAIN-FK: GATE-DOMAIN-FK（CommitGate, priority=78）'
   entry: in-process (GitCommitGateway)
-  description: '[DOMAIN] 头部域注册表 FK 校验门禁（GATE-DOMAIN-FK）'
+  description: GATE-DOMAIN-FK
   files_trigger: ''
   always_run: false
   category: commit_gate
@@ -851,19 +839,18 @@ gates:
   status: active
   source: commit-gate
 - gate_id: EMPTY-HANDLER
-  name: 'EMPTY-HANDLER: 空事件 handler 函数阻断门禁（EMPTY-HANDLER）（CommitGate, priority=84）'
+  name: 'EMPTY-HANDLER: EMPTY-HANDLER（CommitGate, priority=84）'
   entry: in-process (GitCommitGateway)
-  description: 空事件 handler 函数阻断门禁（EMPTY-HANDLER）
+  description: EMPTY-HANDLER
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: ENCODING-SAFETY
-  name: 'ENCODING-SAFETY: 编码安全校验门禁（治本：弥补 --no-verify 绕过 pre-commit GATE-ENCODING 的缺口）（CommitGate,
-    priority=42）'
+  name: 'ENCODING-SAFETY: ENCODING-SAFETY（CommitGate, priority=42）'
   entry: in-process (GitCommitGateway)
-  description: 编码安全校验门禁（治本：弥补 --no-verify 绕过 pre-commit GATE-ENCODING 的缺口）
+  description: ENCODING-SAFETY
   files_trigger: ''
   always_run: false
   category: commit_gate
@@ -880,50 +867,45 @@ gates:
   status: active
   source: commit-gate
 - gate_id: EXEMPT-ZONE-FM
-  name: 'EXEMPT-ZONE-FM: 豁免区 frontmatter 门禁（Phase 3 reconciler->gate 收敛）（CommitGate,
-    priority=87）'
+  name: 'EXEMPT-ZONE-FM: EXEMPT-ZONE-FM（CommitGate, priority=87）'
   entry: in-process (GitCommitGateway)
-  description: 豁免区 frontmatter 门禁（Phase 3 reconciler->gate 收敛）
+  description: EXEMPT-ZONE-FM
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: FILE-COPY
-  name: 'FILE-COPY: 新增 .py 文件复制检测阻断门禁（FILE-COPY，2026-07-03 Phase 1 sub-task 3）（CommitGate,
-    priority=85）'
+  name: 'FILE-COPY: FILE-COPY（CommitGate, priority=85）'
   entry: in-process (GitCommitGateway)
-  description: 新增 .py 文件复制检测阻断门禁（FILE-COPY，2026-07-03 Phase 1 sub-task 3）
+  description: FILE-COPY
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: FILE-PLACEMENT-TTL
-  name: 'FILE-PLACEMENT-TTL: 文件放置与 TTL 一致性门禁（治本 #ARCH-049：防止临时文件乱放根目录）（CommitGate,
-    priority=33）'
+  name: 'FILE-PLACEMENT-TTL: FILE-PLACEMENT-TTL（CommitGate, priority=33）'
   entry: in-process (GitCommitGateway)
-  description: '文件放置与 TTL 一致性门禁（治本 #ARCH-049：防止临时文件乱放根目录）'
+  description: FILE-PLACEMENT-TTL
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: FOLDER-CAPACITY-HARD-LIMIT
-  name: 'FOLDER-CAPACITY-HARD-LIMIT: 文件夹容量硬上限门禁（FOLDER-CAPACITY-HARD-LIMIT）（CommitGate,
-    priority=112）'
+  name: 'FOLDER-CAPACITY-HARD-LIMIT: FOLDER-CAPACITY-HARD-LIMIT（CommitGate, priority=112）'
   entry: in-process (GitCommitGateway)
-  description: 文件夹容量硬上限门禁（FOLDER-CAPACITY-HARD-LIMIT）
+  description: FOLDER-CAPACITY-HARD-LIMIT
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: FOREIGN-CHANGE-DETECTION
-  name: 'FOREIGN-CHANGE-DETECTION: 外来变更检测门禁（FOREIGN-CHANGE-DETECTION，ARCH-054 治本）（CommitGate,
-    priority=45）'
+  name: 'FOREIGN-CHANGE-DETECTION: FOREIGN-CHANGE-DETECTION（CommitGate, priority=45）'
   entry: in-process (GitCommitGateway)
-  description: 外来变更检测门禁（FOREIGN-CHANGE-DETECTION，ARCH-054 治本）
+  description: FOREIGN-CHANGE-DETECTION
   files_trigger: ''
   always_run: false
   category: commit_gate
@@ -941,307 +923,298 @@ gates:
   status: active
   source: commit-gate
 - gate_id: FUNCTION-DUP
-  name: 'FUNCTION-DUP: 重复函数实现阻断门禁（FUNCTION-DUP）（CommitGate, priority=90）'
+  name: 'FUNCTION-DUP: FUNCTION-DUP（CommitGate, priority=90）'
   entry: in-process (GitCommitGateway)
-  description: 重复函数实现阻断门禁（FUNCTION-DUP）
+  description: FUNCTION-DUP
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: GIT-CALL-BUDGET
-  name: 'GIT-CALL-BUDGET: Git 调用预算 warn-only 门禁（GIT-CALL-BUDGET，§ARCH-GIT-CALL-BUDGET
-    P2.2）（CommitGate, priority=105）'
+  name: 'GIT-CALL-BUDGET: GIT-CALL-BUDGET（CommitGate, priority=105）'
   entry: in-process (GitCommitGateway)
-  description: Git 调用预算 warn-only 门禁（GIT-CALL-BUDGET，§ARCH-GIT-CALL-BUDGET P2.2）
+  description: GIT-CALL-BUDGET
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: NO-GOD-CLASS
-  name: 'NO-GOD-CLASS: God Class 阻断门禁（NO-GOD-CLASS，§5.150 防复发）（CommitGate, priority=93）'
+  name: 'NO-GOD-CLASS: NO-GOD-CLASS（CommitGate, priority=93）'
   entry: in-process (GitCommitGateway)
-  description: God Class 阻断门禁（NO-GOD-CLASS，§5.150 防复发）
+  description: NO-GOD-CLASS
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: NO-HARDCODED-URL
-  name: 'NO-HARDCODED-URL: 硬编码 localhost URL 阻断门禁（NO-HARDCODED-URL，§5.160.9 防复发）（CommitGate,
-    priority=98）'
+  name: 'NO-HARDCODED-URL: NO-HARDCODED-URL（CommitGate, priority=98）'
   entry: in-process (GitCommitGateway)
-  description: 硬编码 localhost URL 阻断门禁（NO-HARDCODED-URL，§5.160.9 防复发）
+  description: NO-HARDCODED-URL
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: HELD-OVERLAP
-  name: 'HELD-OVERLAP: 搭便车防护门禁（HELD-OVERLAP，2026-06-30 治本）（CommitGate, priority=50）'
+  name: 'HELD-OVERLAP: HELD-OVERLAP（CommitGate, priority=50）'
   entry: in-process (GitCommitGateway)
-  description: 搭便车防护门禁（HELD-OVERLAP，2026-06-30 治本）
+  description: HELD-OVERLAP
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: NO-HIGH-COMPLEXITY
-  name: 'NO-HIGH-COMPLEXITY: 高循环复杂度阻断门禁（NO-HIGH-COMPLEXITY，§5.158 防复发）（CommitGate,
-    priority=92）'
+  name: 'NO-HIGH-COMPLEXITY: NO-HIGH-COMPLEXITY（CommitGate, priority=92）'
   entry: in-process (GitCommitGateway)
-  description: 高循环复杂度阻断门禁（NO-HIGH-COMPLEXITY，§5.158 防复发）
+  description: NO-HIGH-COMPLEXITY
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: HOT-FILE-BASE-FRESHNESS
+  name: 'HOT-FILE-BASE-FRESHNESS: HOT-FILE-BASE-FRESHNESS（CommitGate, priority=47）'
+  entry: in-process (GitCommitGateway)
+  description: HOT-FILE-BASE-FRESHNESS
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: ID-UNIQUENESS
-  name: 'ID-UNIQUENESS: pre-commit hook ID 唯一性门禁（Phase 3 reconciler->gate 收敛）（CommitGate,
-    priority=86）'
+  name: 'ID-UNIQUENESS: ID-UNIQUENESS（CommitGate, priority=86）'
   entry: in-process (GitCommitGateway)
-  description: pre-commit hook ID 唯一性门禁（Phase 3 reconciler->gate 收敛）
+  description: ID-UNIQUENESS
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: NO-UPWARD-IMPORT
-  name: 'NO-UPWARD-IMPORT: shared 层向上依赖阻断门禁（NO-UPWARD-IMPORT，§5.152 防复发）（CommitGate,
-    priority=97）'
+  name: 'NO-UPWARD-IMPORT: NO-UPWARD-IMPORT（CommitGate, priority=97）'
   entry: in-process (GitCommitGateway)
-  description: shared 层向上依赖阻断门禁（NO-UPWARD-IMPORT，§5.152 防复发）
+  description: NO-UPWARD-IMPORT
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: IMPORT-INTEGRITY
-  name: 'IMPORT-INTEGRITY: IMPORT-INTEGRITY 门禁（悬空 import 硬阻断）（CommitGate, priority=107）'
+  name: 'IMPORT-INTEGRITY: IMPORT-INTEGRITY（CommitGate, priority=107）'
   entry: in-process (GitCommitGateway)
-  description: IMPORT-INTEGRITY 门禁（悬空 import 硬阻断）
+  description: IMPORT-INTEGRITY
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: ISSUE-RESOLVED-INTEGRITY
-  name: 'ISSUE-RESOLVED-INTEGRITY: ISSUE-RESOLVED-INTEGRITY warn-only 门禁（CommitGate,
-    priority=130）'
+  name: 'ISSUE-RESOLVED-INTEGRITY: ISSUE-RESOLVED-INTEGRITY（CommitGate, priority=130）'
   entry: in-process (GitCommitGateway)
-  description: ISSUE-RESOLVED-INTEGRITY warn-only 门禁
+  description: ISSUE-RESOLVED-INTEGRITY
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: NO-LONG-PARAM-LIST
-  name: 'NO-LONG-PARAM-LIST: 长参数列表阻断门禁（NO-LONG-PARAM-LIST，§5.150 防复发）（CommitGate,
-    priority=95）'
+  name: 'NO-LONG-PARAM-LIST: NO-LONG-PARAM-LIST（CommitGate, priority=95）'
   entry: in-process (GitCommitGateway)
-  description: 长参数列表阻断门禁（NO-LONG-PARAM-LIST，§5.150 防复发）
+  description: NO-LONG-PARAM-LIST
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: MANUAL-ONLY-PERMANENT
-  name: 'MANUAL-ONLY-PERMANENT: 永久系统脚本 manual 触发无事件订阅阻断门禁（MANUAL-ONLY-PERMANENT，#ARCH-GOV-CONVERGENCE-META
-    Phase 3.6 补齐 rc4 enforceability）（CommitGate, priority=82）'
+  name: 'MANUAL-ONLY-PERMANENT: MANUAL-ONLY-PERMANENT（CommitGate, priority=82）'
   entry: in-process (GitCommitGateway)
-  description: 永久系统脚本 manual 触发无事件订阅阻断门禁（MANUAL-ONLY-PERMANENT，#ARCH-GOV-CONVERGENCE-META
-    Phase 3.6 补齐 rc4 enforceability）
+  description: MANUAL-ONLY-PERMANENT
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: MCP-VERSION-FIELD
-  name: 'MCP-VERSION-FIELD: MCP version 字段缺失硬阻断门禁（MCP-VERSION-FIELD）（CommitGate, priority=126）'
+  name: 'MCP-VERSION-FIELD: MCP-VERSION-FIELD（CommitGate, priority=126）'
   entry: in-process (GitCommitGateway)
-  description: MCP version 字段缺失硬阻断门禁（MCP-VERSION-FIELD）
+  description: MCP-VERSION-FIELD
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: MODULE-ID-CONSISTENCY
-  name: 'MODULE-ID-CONSISTENCY: module_id 三声明轨道一致性 + count 派生 + 跨文件唯一性门禁（Phase 3 reconciler->gate
-    收敛）（CommitGate, priority=88）'
+  name: 'MODULE-ID-CONSISTENCY: MODULE-ID-CONSISTENCY（CommitGate, priority=88）'
   entry: in-process (GitCommitGateway)
-  description: module_id 三声明轨道一致性 + count 派生 + 跨文件唯一性门禁（Phase 3 reconciler->gate 收敛）
+  description: MODULE-ID-CONSISTENCY
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: MSG-EXPOSURE
-  name: 'MSG-EXPOSURE: 错误消息暴露敏感信息阻断门禁（MSG-EXPOSURE）（CommitGate, priority=83）'
+  name: 'MSG-EXPOSURE: MSG-EXPOSURE（CommitGate, priority=83）'
   entry: in-process (GitCommitGateway)
-  description: 错误消息暴露敏感信息阻断门禁（MSG-EXPOSURE）
+  description: MSG-EXPOSURE
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: MSG-STYLE
-  name: 'MSG-STYLE: 错误消息标点/箭头风格阻断门禁（MSG-STYLE）（CommitGate, priority=96）'
+  name: 'MSG-STYLE: MSG-STYLE（CommitGate, priority=96）'
   entry: in-process (GitCommitGateway)
-  description: 错误消息标点/箭头风格阻断门禁（MSG-STYLE）
+  description: MSG-STYLE
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: MUTABLE-CONST-WITHOUT-FINAL
-  name: 'MUTABLE-CONST-WITHOUT-FINAL: 可变常量缺 Final 标注硬阻断门禁（MUTABLE-CONST-WITHOUT-FINAL）（CommitGate,
-    priority=123）'
+  name: 'MUTABLE-CONST-WITHOUT-FINAL: MUTABLE-CONST-WITHOUT-FINAL（CommitGate, priority=123）'
   entry: in-process (GitCommitGateway)
-  description: 可变常量缺 Final 标注硬阻断门禁（MUTABLE-CONST-WITHOUT-FINAL）
+  description: MUTABLE-CONST-WITHOUT-FINAL
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: NEW-FILE-DEPGRAPH-ENFORCEMENT
-  name: 'NEW-FILE-DEPGRAPH-ENFORCEMENT: 新建 .py 文件 depgraph 未登记硬阻断门禁（NEW-FILE-DEPGRAPH-ENFORCEMENT）（CommitGate,
+  name: 'NEW-FILE-DEPGRAPH-ENFORCEMENT: NEW-FILE-DEPGRAPH-ENFORCEMENT（CommitGate,
     priority=58）'
   entry: in-process (GitCommitGateway)
-  description: 新建 .py 文件 depgraph 未登记硬阻断门禁（NEW-FILE-DEPGRAPH-ENFORCEMENT）
+  description: NEW-FILE-DEPGRAPH-ENFORCEMENT
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: NO-IMPORT-SIDE-EFFECT
-  name: 'NO-IMPORT-SIDE-EFFECT: 模块导入零副作用门禁（NO-IMPORT-SIDE-EFFECT，S4-C 2026-07-17）（CommitGate,
-    priority=103）'
+  name: 'NO-IMPORT-SIDE-EFFECT: NO-IMPORT-SIDE-EFFECT（CommitGate, priority=103）'
   entry: in-process (GitCommitGateway)
-  description: 模块导入零副作用门禁（NO-IMPORT-SIDE-EFFECT，S4-C 2026-07-17）
+  description: NO-IMPORT-SIDE-EFFECT
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: NOQA-VALIDATION
-  name: 'NOQA-VALIDATION: 自定义 noqa 标记合规性门禁（NOQA-VALIDATION，ARCH-NOQA-GOV-001 治本）（CommitGate,
-    priority=71）'
+  name: 'NOQA-VALIDATION: NOQA-VALIDATION（CommitGate, priority=71）'
   entry: in-process (GitCommitGateway)
-  description: 自定义 noqa 标记合规性门禁（NOQA-VALIDATION，ARCH-NOQA-GOV-001 治本）
+  description: NOQA-VALIDATION
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: OPEN-WITHOUT-WITH
-  name: 'OPEN-WITHOUT-WITH: open() 未在 with 内硬阻断门禁（OPEN-WITHOUT-WITH）（CommitGate, priority=124）'
+  name: 'OPEN-WITHOUT-WITH: OPEN-WITHOUT-WITH（CommitGate, priority=124）'
   entry: in-process (GitCommitGateway)
-  description: open() 未在 with 内硬阻断门禁（OPEN-WITHOUT-WITH）
+  description: OPEN-WITHOUT-WITH
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: ORPHAN-MODULE
-  name: 'ORPHAN-MODULE: 孤儿模块（无 import 引用）阻断门禁（ORPHAN-MODULE）（CommitGate, priority=89）'
+  name: 'ORPHAN-MODULE: ORPHAN-MODULE（CommitGate, priority=89）'
   entry: in-process (GitCommitGateway)
-  description: 孤儿模块（无 import 引用）阻断门禁（ORPHAN-MODULE）
+  description: ORPHAN-MODULE
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: GATE-PANORAMA-ALIGNMENT
-  name: 'GATE-PANORAMA-ALIGNMENT: 三图模块对齐门禁（五图模块对齐 Step 4，ARCH-056 升级）（CommitGate,
-    priority=830）'
+  name: 'GATE-PANORAMA-ALIGNMENT: GATE-PANORAMA-ALIGNMENT（CommitGate, priority=830）'
   entry: in-process (GitCommitGateway)
-  description: 三图模块对齐门禁（五图模块对齐 Step 4，ARCH-056 升级）
+  description: GATE-PANORAMA-ALIGNMENT
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: PERM-TRIGGER
-  name: 'PERM-TRIGGER: 永久系统脚本时间触发模式无事件订阅阻断门禁（PERM-TRIGGER）（CommitGate, priority=82）'
+  name: 'PERM-TRIGGER: PERM-TRIGGER（CommitGate, priority=82）'
   entry: in-process (GitCommitGateway)
-  description: 永久系统脚本时间触发模式无事件订阅阻断门禁（PERM-TRIGGER）
+  description: PERM-TRIGGER
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: GATE-PRECOMMIT-OFFLINE
-  name: 'GATE-PRECOMMIT-OFFLINE: pre-commit 配置离线可运行检测门禁（GATE-PRECOMMIT-OFFLINE）（CommitGate,
-    priority=111）'
+  name: 'GATE-PRECOMMIT-OFFLINE: GATE-PRECOMMIT-OFFLINE（CommitGate, priority=111）'
   entry: in-process (GitCommitGateway)
-  description: pre-commit 配置离线可运行检测门禁（GATE-PRECOMMIT-OFFLINE）
+  description: GATE-PRECOMMIT-OFFLINE
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: PROTECTED-PATHS
-  name: 'PROTECTED-PATHS: 受保护路径写入检测门禁（PROTECTED-PATHS，#ARCH-MODEL-LIFECYCLE-001 P1
-    治本）（CommitGate, priority=28）'
+  name: 'PROTECTED-PATHS: PROTECTED-PATHS（CommitGate, priority=28）'
   entry: in-process (GitCommitGateway)
-  description: 受保护路径写入检测门禁（PROTECTED-PATHS，#ARCH-MODEL-LIFECYCLE-001 P1 治本）
+  description: PROTECTED-PATHS
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: PURE-ASSERTION
-  name: 'PURE-ASSERTION: 纯陈述原则阻断门禁（PURE-ASSERTION，GOV-DOC-016 治本）（CommitGate, priority=69）'
+  name: 'PURE-ASSERTION: PURE-ASSERTION（CommitGate, priority=69）'
   entry: in-process (GitCommitGateway)
-  description: 纯陈述原则阻断门禁（PURE-ASSERTION，GOV-DOC-016 治本）
+  description: PURE-ASSERTION
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: PURE-SHIM
-  name: 'PURE-SHIM: 纯 re-export shim 阻断门禁（PURE-SHIM，P6 治本 2026-07-09）（CommitGate,
-    priority=68）'
+  name: 'PURE-SHIM: PURE-SHIM（CommitGate, priority=68）'
   entry: in-process (GitCommitGateway)
-  description: 纯 re-export shim 阻断门禁（PURE-SHIM，P6 治本 2026-07-09）
+  description: PURE-SHIM
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: R5-DIGIT-SUFFIX
-  name: 'R5-DIGIT-SUFFIX: R5 数字后缀目录禁止门禁（治本：弥补 --no-verify 绕过 pre-commit 的缺口）（CommitGate,
-    priority=35）'
+  name: 'R5-DIGIT-SUFFIX: R5-DIGIT-SUFFIX（CommitGate, priority=35）'
   entry: in-process (GitCommitGateway)
-  description: R5 数字后缀目录禁止门禁（治本：弥补 --no-verify 绕过 pre-commit 的缺口）
+  description: R5-DIGIT-SUFFIX
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: RECONCILER-FILE-OPS
-  name: 'RECONCILER-FILE-OPS: 治理代理裸删除原语静态扫描门禁（RECONCILER-FILE-OPS）（CommitGate, priority=117）'
+  name: 'RECONCILER-FILE-OPS: RECONCILER-FILE-OPS（CommitGate, priority=117）'
   entry: in-process (GitCommitGateway)
-  description: 治理代理裸删除原语静态扫描门禁（RECONCILER-FILE-OPS）
+  description: RECONCILER-FILE-OPS
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: RECONCILER-HEALTH
-  name: 'RECONCILER-HEALTH: reconciler 健康度门禁（#ARCH-DATAQUALITY-V1.7）（CommitGate, priority=64）'
+  name: 'RECONCILER-HEALTH: RECONCILER-HEALTH（CommitGate, priority=64）'
   entry: in-process (GitCommitGateway)
-  description: reconciler 健康度门禁（#ARCH-DATAQUALITY-V1.7）
+  description: RECONCILER-HEALTH
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: REGISTRY-CODE-ANCHOR
-  name: 'REGISTRY-CODE-ANCHOR: 业务注册表代码锚点门禁（REGISTRY-CODE-ANCHOR）（CommitGate, priority=129）'
+  name: 'REGISTRY-CODE-ANCHOR: REGISTRY-CODE-ANCHOR（CommitGate, priority=129）'
   entry: in-process (GitCommitGateway)
-  description: 业务注册表代码锚点门禁（REGISTRY-CODE-ANCHOR）
+  description: REGISTRY-CODE-ANCHOR
   files_trigger: ''
   always_run: false
   category: commit_gate
@@ -1257,10 +1230,9 @@ gates:
   status: active
   source: commit-gate
 - gate_id: RENAME-DEPGRAPH-SYNC
-  name: 'RENAME-DEPGRAPH-SYNC: 文件重命名后 depgraph 未同步阻断门禁（RENAME-DEPGRAPH-SYNC）（CommitGate,
-    priority=39）'
+  name: 'RENAME-DEPGRAPH-SYNC: RENAME-DEPGRAPH-SYNC（CommitGate, priority=39）'
   entry: in-process (GitCommitGateway)
-  description: 文件重命名后 depgraph 未同步阻断门禁（RENAME-DEPGRAPH-SYNC）
+  description: RENAME-DEPGRAPH-SYNC
   files_trigger: ''
   always_run: false
   category: commit_gate
@@ -1276,222 +1248,207 @@ gates:
   status: active
   source: commit-gate
 - gate_id: RULE-FOUR-WAY-ALIGN
-  name: 'RULE-FOUR-WAY-ALIGN: 规则四方对齐门禁（RULE-FOUR-WAY-ALIGN）（CommitGate, priority=76）'
+  name: 'RULE-FOUR-WAY-ALIGN: RULE-FOUR-WAY-ALIGN（CommitGate, priority=76）'
   entry: in-process (GitCommitGateway)
-  description: 规则四方对齐门禁（RULE-FOUR-WAY-ALIGN）
+  description: RULE-FOUR-WAY-ALIGN
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: RULING-COMMIT-VERIFIED
-  name: 'RULING-COMMIT-VERIFIED: 文档"已完成"声明 commit hash 真实性硬验证门禁（RULING-COMMIT-VERIFIED）（CommitGate,
-    priority=109）'
+  name: 'RULING-COMMIT-VERIFIED: RULING-COMMIT-VERIFIED（CommitGate, priority=109）'
   entry: in-process (GitCommitGateway)
-  description: 文档"已完成"声明 commit hash 真实性硬验证门禁（RULING-COMMIT-VERIFIED）
+  description: RULING-COMMIT-VERIFIED
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: RULING-REFERENCE
-  name: 'RULING-REFERENCE: 裁定#NNN 悬空引用自动检测门禁（RULING-REFERENCE）（CommitGate, priority=74）'
+  name: 'RULING-REFERENCE: RULING-REFERENCE（CommitGate, priority=74）'
   entry: in-process (GitCommitGateway)
-  description: 裁定#NNN 悬空引用自动检测门禁（RULING-REFERENCE）
+  description: RULING-REFERENCE
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: SCHEMA-FILE-EXISTS
-  name: 'SCHEMA-FILE-EXISTS: SCHEMA-FILE-EXISTS block 门禁（CommitGate, priority=121）'
+  name: 'SCHEMA-FILE-EXISTS: SCHEMA-FILE-EXISTS（CommitGate, priority=121）'
   entry: in-process (GitCommitGateway)
-  description: SCHEMA-FILE-EXISTS block 门禁
+  description: SCHEMA-FILE-EXISTS
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: SCRIPTS-IMPORT-INTEGRITY
-  name: 'SCRIPTS-IMPORT-INTEGRITY: _shared.constants 符号导入完整性门禁（CommitGate, priority=104）'
+  name: 'SCRIPTS-IMPORT-INTEGRITY: SCRIPTS-IMPORT-INTEGRITY（CommitGate, priority=104）'
   entry: in-process (GitCommitGateway)
-  description: _shared.constants 符号导入完整性门禁
+  description: SCRIPTS-IMPORT-INTEGRITY
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: NO-SECRET-HARDCODE
-  name: 'NO-SECRET-HARDCODE: 密钥值硬编码阻断门禁（NO-SECRET-HARDCODE，#ARCH-SECRETS-GOV-001 Phase
-    3）（CommitGate, priority=128）'
+  name: 'NO-SECRET-HARDCODE: NO-SECRET-HARDCODE（CommitGate, priority=128）'
   entry: in-process (GitCommitGateway)
-  description: 密钥值硬编码阻断门禁（NO-SECRET-HARDCODE，#ARCH-SECRETS-GOV-001 Phase 3）
+  description: NO-SECRET-HARDCODE
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: SECRET-REGISTRY-CONSISTENCY
-  name: 'SECRET-REGISTRY-CONSISTENCY: .env.example 与 secret_registry.yaml 一致性门禁（CommitGate,
-    priority=127）'
+  name: 'SECRET-REGISTRY-CONSISTENCY: SECRET-REGISTRY-CONSISTENCY（CommitGate, priority=127）'
   entry: in-process (GitCommitGateway)
-  description: .env.example 与 secret_registry.yaml 一致性门禁
+  description: SECRET-REGISTRY-CONSISTENCY
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: SESSION-REQUIRED
-  name: 'SESSION-REQUIRED: session 注册强制门禁（SESSION-REQUIRED，2026-07-01 治本 FP-ISO.4B
-    件1改）（CommitGate, priority=31）'
+  name: 'SESSION-REQUIRED: SESSION-REQUIRED（CommitGate, priority=31）'
   entry: in-process (GitCommitGateway)
-  description: session 注册强制门禁（SESSION-REQUIRED，2026-07-01 治本 FP-ISO.4B 件1改）
+  description: SESSION-REQUIRED
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: SNAPSHOT-DRIFT
-  name: 'SNAPSHOT-DRIFT: 运行时违规快照漂移阻断门禁（SNAPSHOT-DRIFT，#ARCH-GOV-CONVERGENCE-META Phase
-    3.6 补齐 rc1 enforceability）（CommitGate, priority=40）'
+  name: 'SNAPSHOT-DRIFT: SNAPSHOT-DRIFT（CommitGate, priority=40）'
   entry: in-process (GitCommitGateway)
-  description: 运行时违规快照漂移阻断门禁（SNAPSHOT-DRIFT，#ARCH-GOV-CONVERGENCE-META Phase 3.6 补齐
-    rc1 enforceability）
+  description: SNAPSHOT-DRIFT
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: SSOT-REDEFINITION
-  name: 'SSOT-REDEFINITION: SSoT 符号重复定义硬阻断门禁（CommitGate, priority=65）'
+  name: 'SSOT-REDEFINITION: SSOT-REDEFINITION（CommitGate, priority=65）'
   entry: in-process (GitCommitGateway)
-  description: SSoT 符号重复定义硬阻断门禁
+  description: SSOT-REDEFINITION
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: STASH-ACCUMULATION
-  name: 'STASH-ACCUMULATION: stash 堆积阈值检测门禁（STASH-ACCUMULATION）（CommitGate, priority=118）'
+  name: 'STASH-ACCUMULATION: STASH-ACCUMULATION（CommitGate, priority=118）'
   entry: in-process (GitCommitGateway)
-  description: stash 堆积阈值检测门禁（STASH-ACCUMULATION）
+  description: STASH-ACCUMULATION
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: TABLE-NAME-REGISTRY
-  name: 'TABLE-NAME-REGISTRY: TABLE-NAME-REGISTRY block 门禁（CommitGate, priority=120）'
+  name: 'TABLE-NAME-REGISTRY: TABLE-NAME-REGISTRY（CommitGate, priority=120）'
   entry: in-process (GitCommitGateway)
-  description: TABLE-NAME-REGISTRY block 门禁
+  description: TABLE-NAME-REGISTRY
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: TEST-RESIDUE-SSOT
-  name: 'TEST-RESIDUE-SSOT: 测试残留前缀硬编码阻断门禁（TEST-RESIDUE-SSOT）（CommitGate, priority=56）'
+  name: 'TEST-RESIDUE-SSOT: TEST-RESIDUE-SSOT（CommitGate, priority=56）'
   entry: in-process (GitCommitGateway)
-  description: 测试残留前缀硬编码阻断门禁（TEST-RESIDUE-SSOT）
+  description: TEST-RESIDUE-SSOT
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: TEST-SOURCE-CONSISTENCY
-  name: 'TEST-SOURCE-CONSISTENCY: 测试-源码符号一致性门禁（TEST-SOURCE-CONSISTENCY，§5.178 防复发）（CommitGate,
-    priority=102）'
+  name: 'TEST-SOURCE-CONSISTENCY: TEST-SOURCE-CONSISTENCY（CommitGate, priority=102）'
   entry: in-process (GitCommitGateway)
-  description: 测试-源码符号一致性门禁（TEST-SOURCE-CONSISTENCY，§5.178 防复发）
+  description: TEST-SOURCE-CONSISTENCY
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: META-TESTS-COVERAGE
-  name: 'META-TESTS-COVERAGE: Gate 测试覆盖率校验 meta-gate（META-TESTS-COVERAGE，#ARCH-057）（CommitGate,
-    priority=99）'
+  name: 'META-TESTS-COVERAGE: META-TESTS-COVERAGE（CommitGate, priority=99）'
   entry: in-process (GitCommitGateway)
-  description: Gate 测试覆盖率校验 meta-gate（META-TESTS-COVERAGE，#ARCH-057）
+  description: META-TESTS-COVERAGE
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: TRANSLATION-COVERAGE
-  name: 'TRANSLATION-COVERAGE: 新建 .py 文件大白话简介覆盖率门禁（TRANSLATION-COVERAGE）（CommitGate,
-    priority=59）'
+  name: 'TRANSLATION-COVERAGE: TRANSLATION-COVERAGE（CommitGate, priority=59）'
   entry: in-process (GitCommitGateway)
-  description: 新建 .py 文件大白话简介覆盖率门禁（TRANSLATION-COVERAGE）
+  description: TRANSLATION-COVERAGE
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: TTL-METADATA
-  name: 'TTL-METADATA: ttl 字段校验门禁（治本：弥补 --no-verify 绕过 pre-commit GATE-15 的缺口）（CommitGate,
-    priority=32）'
+  name: 'TTL-METADATA: TTL-METADATA（CommitGate, priority=32）'
   entry: in-process (GitCommitGateway)
-  description: ttl 字段校验门禁（治本：弥补 --no-verify 绕过 pre-commit GATE-15 的缺口）
+  description: TTL-METADATA
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: UNDEFINED-NAME
-  name: 'UNDEFINED-NAME: UNDEFINED-NAME 门禁（F821 未定义符号硬阻断）（CommitGate, priority=106）'
+  name: 'UNDEFINED-NAME: UNDEFINED-NAME（CommitGate, priority=106）'
   entry: in-process (GitCommitGateway)
-  description: UNDEFINED-NAME 门禁（F821 未定义符号硬阻断）
+  description: UNDEFINED-NAME
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: UNSAFE-DICT-SPREAD
-  name: 'UNSAFE-DICT-SPREAD: ``**data`` 直接展开模式 warn 级门禁（CommitGate, priority=66）'
+  name: 'UNSAFE-DICT-SPREAD: UNSAFE-DICT-SPREAD（CommitGate, priority=66）'
   entry: in-process (GitCommitGateway)
-  description: '``**data`` 直接展开模式 warn 级门禁'
+  description: UNSAFE-DICT-SPREAD
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: VOCAB-CHAIN
-  name: 'VOCAB-CHAIN: SSoT 引用硬编码阻断门禁（VOCAB-CHAIN，#ARCH-GOV-CONVERGENCE-META Phase
-    3.6 补齐 rc2 enforceability）（CommitGate, priority=80）'
+  name: 'VOCAB-CHAIN: VOCAB-CHAIN（CommitGate, priority=80）'
   entry: in-process (GitCommitGateway)
-  description: SSoT 引用硬编码阻断门禁（VOCAB-CHAIN，#ARCH-GOV-CONVERGENCE-META Phase 3.6 补齐
-    rc2 enforceability）
+  description: VOCAB-CHAIN
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: VOCAB-HARDCODE
-  name: 'VOCAB-HARDCODE: 新增 .py 文件词表硬编码阻断门禁（VOCAB-HARDCODE，2026-07-03 Phase 1）（CommitGate,
-    priority=80）'
+  name: 'VOCAB-HARDCODE: VOCAB-HARDCODE（CommitGate, priority=80）'
   entry: in-process (GitCommitGateway)
-  description: 新增 .py 文件词表硬编码阻断门禁（VOCAB-HARDCODE，2026-07-03 Phase 1）
+  description: VOCAB-HARDCODE
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: WORKTREE-REQUIRED
-  name: 'WORKTREE-REQUIRED: worktree 隔离强制门禁（WORKTREE-REQUIRED，#ARCH-WORKTREE-GATE-001
-    治本 2026-08-04）（CommitGate, priority=44）'
+  name: 'WORKTREE-REQUIRED: WORKTREE-REQUIRED（CommitGate, priority=44）'
   entry: in-process (GitCommitGateway)
-  description: worktree 隔离强制门禁（WORKTREE-REQUIRED，#ARCH-WORKTREE-GATE-001 治本 2026-08-04）
+  description: WORKTREE-REQUIRED
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
 - gate_id: ZEPHYR-ENV-DIRECT-ACCESS
-  name: 'ZEPHYR-ENV-DIRECT-ACCESS: ZEPHYR_ENV 直访硬阻断门禁（ZEPHYR-ENV-DIRECT-ACCESS）（CommitGate,
-    priority=125）'
+  name: 'ZEPHYR-ENV-DIRECT-ACCESS: ZEPHYR-ENV-DIRECT-ACCESS（CommitGate, priority=125）'
   entry: in-process (GitCommitGateway)
-  description: ZEPHYR_ENV 直访硬阻断门禁（ZEPHYR-ENV-DIRECT-ACCESS）
+  description: ZEPHYR-ENV-DIRECT-ACCESS
   files_trigger: ''
   always_run: false
   category: commit_gate

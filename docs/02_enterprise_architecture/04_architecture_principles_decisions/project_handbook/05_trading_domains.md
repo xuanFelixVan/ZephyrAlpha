@@ -67,8 +67,8 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 |-------|------|----|-------|
 | `D_GOVERNANCE` | 生命周期管理 | L2_domain | 764 |
 | `D_GOV_SCRIPTS` | 脚本治理 | L2_domain | 544 |
+| `D_AUTONOMY_CORE` | 自治核心 | L1_foundation | 510 |
 | `D_AUDITTEST` | 审计测试套件 | L2_domain | 507 |
-| `D_AUTONOMY_CORE` | 自治核心 | L1_foundation | 507 |
 | `D_INFRA_RUNTIME` | 运行时集成 | L0_infrastructure | 467 |
 | `D_DATA` | 数据接入层 | L1_foundation | 399 |
 | `D_SHARED` | 共享服务 | L0_infrastructure | 393 |
