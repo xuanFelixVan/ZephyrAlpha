@@ -7471,8 +7471,30 @@ def make_runtime_cleanup_reconciler(gateway: object) -> ReconcilerSpec:
         # 不计入 errors；errors 只报真异常，避免恒定 warn 噪音淹没真告警。
         locked_skipped = 0
 
-        for dirpath, _dirnames, filenames in os.walk(runtime_dir):
+        # 2026-09-02 挂死治本（pid 45476 实证）：os.walk 剪枝。commit_queue/worktree
+        # 是队列全仓副本、tmp/_wt_*/ 是隔离 worktree 副本——两者由各自生命周期管理，
+        # 遍历=N 份全仓副本百万级 stat（数小时挂死/心跳停滞），且 TTL 删除会腐蚀
+        # worktree 完整性（>7 天旧文件被静默删）。
+        _PRUNE_DIR_NAMES = frozenset({"commit_queue", "__pycache__"})
+
+        # 单批删除上限（同实证）：.runtime/tmp 曾积压 15 万过期文件，逐文件 guard_remove
+        # （每文件 保护区判定+声明校验+审计落盘）= 单次 reconcile 数小时阻塞、心跳停滞、
+        # 占住 claim 堵死 INTEGRITY 重钉链。上限后每 commit 收敛一批，渐进清零。
+        _MAX_DELETES_PER_RUN = 2000
+
+        capped = False
+
+        for dirpath, dirnames, filenames in os.walk(runtime_dir):
+
+            dirnames[:] = [d for d in dirnames if d not in _PRUNE_DIR_NAMES and not d.startswith("_wt_")]
+
             for filename in filenames:
+
+                if deleted >= _MAX_DELETES_PER_RUN:
+
+                    capped = True
+
+                    break
                 filepath = os.path.join(dirpath, filename)
 
                 try:
@@ -7499,6 +7521,10 @@ def make_runtime_cleanup_reconciler(gateway: object) -> ReconcilerSpec:
 
                 except OSError:
                     errors += 1
+
+            if capped:
+
+                break
 
         # 治本 #ARCH-XDIST-WORKER-CRASH-001 + #ARCH-TEST-RESIDUE-CLEANUP-001:
 
@@ -7547,7 +7573,8 @@ def make_runtime_cleanup_reconciler(gateway: object) -> ReconcilerSpec:
 
         return ReconcileResult(
             action="clean" if errors == 0 else "warn",
-            detail=f".runtime/ TTL cleanup: deleted={deleted}, errors={errors}, locked_skipped={locked_skipped}",
+            detail=f".runtime/ TTL cleanup: deleted={deleted}, errors={errors}, locked_skipped={locked_skipped}"
+            + (f", capped_at={_MAX_DELETES_PER_RUN}（残余留待后续 commit 收敛）" if capped else ""),
         )
 
     return ReconcilerSpec(

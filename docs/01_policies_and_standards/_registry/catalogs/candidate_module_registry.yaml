@@ -7119,7 +7119,7 @@ entries:
   created: '2026-09-02'
   last_updated: '2026-09-02'
   last_reviewed_at: '2026-09-02'
-  review_note: '2026-09-02 登记：004 主路线（归因升硬）已落地，本项为 B 类窗口纪律残余；白名单过渡期内不阻断提交链。'
+  review_note: '2026-09-02 登记：004 主路线（归因升硬）已落地，本项为 B 类窗口纪律残余；白名单过渡期内不阻断提交链。2026-09-02 进展：GATE-RUNTIME-CLEANUP 挂死根因已治本（同日 freeze-followup 批）——os.walk 无剪枝遍历 commit_queue 全仓副本+tmp 15 万过期文件逐文件 guard_remove 审计落盘；修复=walk 剪枝（commit_queue/_wt_/__pycache__）+单批删除上限 2000 渐进收敛，+2 回归测试；残余=worker 级超时/心跳硬治理与窗口纪律。'
 
 # --- CAND-GATEMECH-009: 运行时遥测 tracked 数据文件退库/迁 .runtime ---
 - id: CAND-GATEMECH-009

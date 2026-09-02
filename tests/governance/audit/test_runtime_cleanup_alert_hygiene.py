@@ -77,3 +77,30 @@ class TestLockedSkipCleanSemantics:
         assert result.action == "clean"
         assert "deleted=1" in result.detail
         assert "errors=0" in result.detail
+
+
+class TestPruneAndCap:
+    """2026-09-02 挂死治本回归（pid 45476 实证）。"""
+
+    def test_worktree_dirs_pruned(self, tmp_path: Path):
+        """commit_queue/ 与 tmp/_wt_*/ 目录被剪枝——内部过期文件不被 TTL 删除（防腐蚀队列/隔离 worktree）。"""
+        protected1 = _make_stale_file(tmp_path / ".runtime" / "commit_queue" / "worktree", "stale_in_queue.py")
+        protected2 = _make_stale_file(tmp_path / ".runtime" / "tmp" / "_wt_demo", "stale_in_wt.py")
+        _make_stale_file(tmp_path / ".runtime" / "handoffs", "old.md")
+        spec = make_runtime_cleanup_reconciler(_make_gateway(tmp_path))
+        result = spec.reconcile([], "sess-prune")
+        assert "deleted=1" in result.detail
+        assert protected1.exists(), "commit_queue/ 内文件不应被 TTL 清理"
+        assert protected2.exists(), "tmp/_wt_*/ 内文件不应被 TTL 清理"
+
+    def test_delete_cap_converges(self, tmp_path: Path):
+        """单批删除上限 2000——大批量积压分批收敛，单次 reconcile 有界（防数小时阻塞）。"""
+        d = tmp_path / ".runtime" / "handoffs"
+        for i in range(2005):
+            _make_stale_file(d, f"stale_{i}.md")
+        spec = make_runtime_cleanup_reconciler(_make_gateway(tmp_path))
+        result = spec.reconcile([], "sess-cap")
+        assert "deleted=2000" in result.detail
+        assert "capped_at=2000" in result.detail
+        remaining = len(list(d.glob("stale_*.md")))
+        assert remaining == 5
