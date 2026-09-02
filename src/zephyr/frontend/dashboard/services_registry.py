@@ -99,6 +99,36 @@ SERVICE_CATALOG: list[dict[str, Any]] = [
     {"id": "reaper", "group": "guard", "tier": "guard", "name": "进程收割者",
      "desc": "开机清道夫：清理项目残留的 python 僵尸进程和幽灵窗口（登录后跑一次就退出）",
      "detect": {"type": "task", "task": "ZephyrAlpha_ProcessReaper"}},
+    # ── 二期补充（Owner 2026-09-02「全面盘点补全」）：盘中运行时/文件桥/定时任务族 ──
+    {"id": "intraday_main", "group": "trading", "tier": "confirm", "name": "盘中运行时",
+     "desc": "tick→Redis→因子→端到端盘中编排（AGENTS 348）——交易日盘中核心，依赖 QMT 先就绪",
+     "detect": {"type": "proc", "pattern": r"intraday_main"},
+     "start": ["python", "-m", "zephyr.runtime.intraday_main"],
+     "stop": {"how": "proc"}},
+    {"id": "qmt_bridge", "group": "trading", "tier": "external", "name": "QMT 文件桥",
+     "desc": "QMT 自动导出的实盘数据通道（持仓/委托/成交 CSV，10 秒一茬）——QMT 开着它就活着",
+     "detect": {"type": "file_fresh", "dir": "E:\\qmt_bridge"}},
+    {"id": "write_audit_daemon", "group": "guard", "tier": "guard", "name": "写审计守护",
+     "desc": "给每次文件改动记台账的书记员（防「改了没人知道」）——保命进程不许关",
+     "detect": {"type": "proc", "pattern": r"write_audit_daemon"}},
+    {"id": "post_settlement", "group": "guard", "tier": "guard", "name": "盘后结算",
+     "desc": "每天 15:30 自动结算+对账+审计写账（交易日才干活）——计划任务只读监控",
+     "detect": {"type": "task", "task": "ZephyrAlpha_PostSettlement"}},
+    {"id": "daily_backup", "group": "guard", "tier": "guard", "name": "每日灾备",
+     "desc": "每天 06:00 六阶段备份保底（库+配置+代码打包）——备份断了必须有人知道",
+     "detect": {"type": "task", "task": "ZephyrAlpha-DailyBackup"}},
+    {"id": "weekly_vm_backup", "group": "guard", "tier": "guard", "name": "每周 VM 备份",
+     "desc": "每周五 06:00 虚拟机整体快照（ClickHouse 老窝的后悔药）",
+     "detect": {"type": "task", "task": "ZephyrAlpha-WeeklyVMBackup"}},
+    {"id": "ch_optimize_weekly", "group": "guard", "tier": "guard", "name": "CH 周维护",
+     "desc": "每周六 03:30 ClickHouse 合并优化（表碎片整理，保查询速度）",
+     "detect": {"type": "task", "task": "ZephyrAlpha-CH-OptimizeMerge-Weekly"}},
+    {"id": "ttl_rejudge", "group": "guard", "tier": "guard", "name": "TTL 日重判",
+     "desc": "每天 18:05 数据生命周期重判（过期数据自动降级/清理的裁判）",
+     "detect": {"type": "task", "task": "ZephyrAlpha_TTLRejudgeDaily"}},
+    {"id": "trae_cache", "group": "guard", "tier": "guard", "name": "Trae 缓存清理",
+     "desc": "开机清 Trae 编辑器缓存（防缓存膨胀吃满 C 盘）",
+     "detect": {"type": "task", "task": "ZephyrAlpha_TraeCacheCleanup"}},
 ]
 
 _GROUP_META = {
@@ -165,22 +195,6 @@ def _read_heartbeat(fname: str) -> dict[str, Any] | None:
                 "child_pid": int(parts[2]) if len(parts) > 2 and parts[2].isdigit() else None}
     except Exception:  # noqa: BLE001 — 半行/损坏按无心跳
         return None
-
-
-def _task_status(task: str) -> str | None:
-    """schtasks 状态（Ready/Running/Disabled…）——60s 缓存防拖慢轮询。"""
-    now = time.time()
-    hit = _SCHTASKS_CACHE.get(task)
-    if hit and now - hit[0] < 60:
-        return hit[1]
-    try:
-        r = subprocess.run(["schtasks", "/query", "/tn", task, "/fo", "CSV", "/nh"],
-                           capture_output=True, text=True, timeout=5)
-        status = r.stdout.split(",")[-1].strip().strip('"') if r.returncode == 0 else None
-    except Exception:  # noqa: BLE001
-        status = None
-    _SCHTASKS_CACHE[task] = (now, status or "")
-    return status
 
 
 # ── 状态采集 ──────────────────────────────────────────────────────────────
@@ -271,6 +285,51 @@ def _ch_alive() -> tuple[bool, str]:
         return False, str(e)[:80]
 
 
+def _task_info(task: str) -> dict[str, str] | None:
+    """schtasks 信息（Ready/Running/Disabled + 下次触发）——60s 缓存防拖慢轮询。
+    CSV /nh 实测 3 列：TaskName,NextRunTime,Status（无 /v 无 HostName；重复注册的任务
+    会输出多行——deadman 实证两行，取首行）。"""
+    now = time.time()
+    hit = _SCHTASKS_CACHE.get(task)
+    if hit and now - hit[0] < 60:
+        return hit[1] or None
+    info: dict[str, str] | None = None
+    try:
+        r = subprocess.run(["schtasks", "/query", "/tn", task, "/fo", "CSV", "/nh"],
+                           capture_output=True, text=True, timeout=5)
+        first = r.stdout.strip().splitlines()[0] if r.returncode == 0 and r.stdout.strip() else ""
+        parts = [p.strip().strip('"') for p in first.split(",")]
+        if len(parts) >= 3:
+            info = {"next_run": parts[1], "status": parts[2]}
+    except Exception:  # noqa: BLE001
+        info = None
+    _SCHTASKS_CACHE[task] = (now, info or {})
+    return info
+
+
+def _file_fresh(dirpath: str) -> tuple[str, str]:
+    """目录最新文件 mtime 新鲜度（QMT 文件桥用）→ (light, detail)。"""
+    try:
+        latest = 0.0
+        n = 0
+        for p in Path(dirpath).rglob("*"):
+            if p.is_file():
+                n += 1
+                m = p.stat().st_mtime
+                if m > latest:
+                    latest = m
+        if not n:
+            return "gray", "桥目录为空（等 QMT 开启导出）"
+        age = time.time() - latest
+        if age < 300:
+            return "green", f"桥活着：{n} 个文件，最新 {round(age)}s 前"
+        if age < 1800:
+            return "yellow", f"桥延迟：最新一茬 {round(age/60)} 分钟前"
+        return "gray", f"桥停摆：最新一茬 {round(age/3600)} 小时前（QMT 没开？）"
+    except Exception as e:  # noqa: BLE001 — 目录不可达
+        return "gray", "桥目录不可达：" + str(e)[:60]
+
+
 def _gpu_stats() -> dict[str, Any] | None:
     """GPU 水位（nvidia-smi，多卡聚合 util 取最大、显存求和）——无卡/无驱动返回 None（前端隐藏该杆）。"""
     hit = _GPU_CACHE.get("stats")
@@ -346,12 +405,25 @@ def get_services_status() -> dict[str, Any]:
             else:
                 st["detail"] = "进程不在"
         elif det["type"] == "task":
-            status = _task_status(det["task"])
-            if status:
-                st["light"] = "red" if status == "Disabled" else "green"
-                st["detail"] = f"计划任务 {status}"
+            info = _task_info(det["task"])
+            if info:
+                status = info["status"]
+                if status == "Disabled":
+                    st["light"] = "red"
+                    st["detail"] = f"计划任务已停用（启用=Owner 窗口）"
+                elif status in ("Ready", "Running"):
+                    st["light"] = "green"
+                    nxt = info["next_run"]
+                    st["detail"] = f"{status}" + (f" · 下次 {nxt}" if nxt and nxt != "N/A" else "")
+                else:
+                    st["light"] = "yellow"
+                    st["detail"] = f"计划任务 {status}"
             else:
                 st["light"] = "yellow"; st["detail"] = "计划任务查询失败"
+        elif det["type"] == "file_fresh":
+            light, msg = _file_fresh(det["dir"])
+            st["light"] = light
+            st["detail"] = msg
         elif det["type"] == "ch":
             alive, msg = _ch_alive()
             if alive:
