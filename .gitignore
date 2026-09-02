@@ -440,13 +440,15 @@ data/databases/backups/
 data/brain/quick_profiles/*
 
 # ClickHouse system artifacts (metadata dumps, access control, configs leaked to workdir)
-access/
-metadata/
-# meta/ — CH metadata snapshots（locks/ 等），原仅靠根白名单 /* 兜底，显式对齐同组（AI-AUDIT03）
-meta/
-preprocessed_configs/
-status
-uuid
+# 2026-09-02 锚定根级（GOVTEST-002 结案连带发现）：裸词 meta/ 等会误伤任意深度同名目录
+# （实证：scripts/governance/meta/ 52 个 tracked .py 被 ruff 根扫描盲区），CH 工件只泄落在根，故全部锚定 /
+/access/
+/metadata/
+# /meta/ — CH metadata snapshots（locks/ 等），原仅靠根白名单 /* 兜底，显式对齐同组（AI-AUDIT03）
+/meta/
+/preprocessed_configs/
+/status
+/uuid
 
 # Architecture health dashboard snapshots (timestamped, regenerable; latest.json is tracked)
 data/architecture_health/dashboard_*.json

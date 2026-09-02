@@ -77,7 +77,17 @@ def find_orphan_py_files() -> list[Path]:
     根目录级 Python 约定文件（__init__.py/conftest.py/setup.py/sitecustomize.py）豁免。
     """
     findings: list[Path] = []
-    skip_dirs = {".git", "__pycache__", "node_modules", ".trae", ".runtime", "models", "tmp", ".pytest_tmp"}
+    skip_dirs = {
+        ".git",
+        "__pycache__",
+        "node_modules",
+        ".trae",
+        ".runtime",
+        "models",
+        "tmp",
+        ".pytest_tmp",
+        "agent_inbox",
+    }  # agent_inbox=会话草稿投箱豁免区（2026-09-02 Owner 裁定：草稿 .py 在箱合法，晋升时才迁入合法目录）
     try:
         for root, dirs, files in os.walk(REPO_ROOT):
             dirs[:] = [d for d in dirs if d not in skip_dirs]
