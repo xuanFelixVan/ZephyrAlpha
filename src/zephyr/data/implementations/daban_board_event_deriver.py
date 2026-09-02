@@ -376,8 +376,10 @@ def derive_daily_events(
                     sealed = 1 if c >= up - LIMIT_EPS else 0
                     one_word = 1 if l >= up - LIMIT_EPS else 0
                     consec = consec + 1 if sealed else 0
-                    st = lp.st_flag if lp.st_flag is not None else (
-                        1 if (board in ("sh_main", "sz_main") and prev_close and up / prev_close <= 1.07) else 0
+                    st = (
+                        lp.st_flag
+                        if lp.st_flag is not None
+                        else (1 if (board in ("sh_main", "sz_main") and prev_close and up / prev_close <= 1.07) else 0)
                     )
                     out.append(
                         DabanBoardEvent(
@@ -424,9 +426,7 @@ def enrich_intraday(
     idx: dict[tuple[str, str], list[tuple[str, float | None, float | None]]] = {}
     for r in minute_rows:
         key = (_iso(r.get("trade_date")), str(r.get("symbol") or ""))
-        idx.setdefault(key, []).append(
-            (_hhmmss(r.get("trade_time")) or "", _f(r.get("high")), _f(r.get("low")))
-        )
+        idx.setdefault(key, []).append((_hhmmss(r.get("trade_time")) or "", _f(r.get("high")), _f(r.get("low"))))
     for bars in idx.values():
         bars.sort(key=lambda b: b[0])
     out: list[DabanBoardEvent] = []
@@ -488,9 +488,7 @@ def enrich_seal_ticks(
             out.append(e)
             continue
         _, bp, bv = hit
-        out.append(
-            replace(e, seal_bid_volume=bv, seal_amount_proxy=round(bv * 100 * bp, 2))
-        )
+        out.append(replace(e, seal_bid_volume=bv, seal_amount_proxy=round(bv * 100 * bp, 2)))
     return out
 
 
@@ -720,10 +718,7 @@ def collect_derived_events(
                 prev[sym] = c
 
     # 3) 日频推导 → 窗口过滤
-    events = [
-        e for e in derive_daily_events(kline_rows, lp_map)
-        if d0.isoformat() <= e.trade_date <= d1.isoformat()
-    ]
+    events = [e for e in derive_daily_events(kline_rows, lp_map) if d0.isoformat() <= e.trade_date <= d1.isoformat()]
     if not events:
         return []
 
@@ -755,7 +750,9 @@ def collect_derived_events(
                 "SELECT symbol, timestamp, bid_price, bid_volume FROM c1_market.tick_data "
                 f"WHERE trade_date = toDate('{ds}') AND market_type = 'stock' AND symbol IN ({syms})"
             ):
-                tick_rows.append({"trade_date": ds, "symbol": str(s), "timestamp": t, "bid_price": bp, "bid_volume": bv})
+                tick_rows.append(
+                    {"trade_date": ds, "symbol": str(s), "timestamp": t, "bid_price": bp, "bid_volume": bv}
+                )
         events = enrich_seal_ticks(events, tick_rows)
 
     return events

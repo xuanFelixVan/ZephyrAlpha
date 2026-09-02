@@ -9,6 +9,7 @@
   - 对账异常       = has_frontend='no' 但 no_frontend_reason 空（"事出有因"必填）
 输出：docs/_working/2026-08-31-frontend-gap-views-derived.md（派生物，禁手改； ttl=task_bound）
 """
+
 from __future__ import annotations
 
 import sys

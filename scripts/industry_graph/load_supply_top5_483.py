@@ -83,8 +83,7 @@ def load_edges(conn) -> None:
         to_name = "" if to else name
         weight = float(r[11]) if pd.notna(r[11]) else None
         amount = float(r[10]) if pd.notna(r[10]) else None
-        row = (frm, to or "", dt.year, weight, "sales_pct", EDGE_SOURCE,
-               None, to_name or None, amount, rank)
+        row = (frm, to or "", dt.year, weight, "sales_pct", EDGE_SOURCE, None, to_name or None, amount, rank)
         key = (frm, to or "", dt.year)
         score = (1 if rpt == 1 else 0, -rank)  # 合并报表优先，其次排名靠前
         if key not in best or score > best[key][0]:
@@ -121,8 +120,9 @@ def load_metric(conn) -> None:
             continue
         if not sym or pd.isna(r[8]):
             continue
-        rows.append((sym, year, "customer_stability", float(r[8]),
-                     float(r[7]) if pd.notna(r[7]) else None, METRIC_SOURCE))
+        rows.append(
+            (sym, year, "customer_stability", float(r[8]), float(r[7]) if pd.notna(r[7]) else None, METRIC_SOURCE)
+        )
 
     with conn.cursor() as cur:
         execute_values(

@@ -48,9 +48,7 @@ from zephyr.shared.io.paths import REPO_ROOT
 RUNTIME_DIR: Final[Path] = _ZEPHYR_REPO_ROOT / ".runtime"
 REPORT_PATH: Final[Path] = RUNTIME_DIR / "boot_sla_probe_report.jsonl"
 
-BOOT_SLA_PATTERN: Final[re.Pattern[str]] = re.compile(
-    r"\[BOOT_SLA\]\s+boot_ms=(\d+)\s+sla_ms=(\d+)\s+status=(\w+)"
-)
+BOOT_SLA_PATTERN: Final[re.Pattern[str]] = re.compile(r"\[BOOT_SLA\]\s+boot_ms=(\d+)\s+sla_ms=(\d+)\s+status=(\w+)")
 SLA_TARGET_MS: Final[float] = 10_000.0
 DEFAULT_ITERATIONS: Final[int] = 20
 
@@ -215,7 +213,7 @@ def _run_probe(iterations: int) -> BootSLAProbeReport:
     boot_ms_list: list[float] = []
 
     print(f"[PROBE] 开始 {iterations} 次 boot 连跑...")
-    print(f"[PROBE] SLA 目标: P99 < {SLA_TARGET_MS:.0f}ms ({SLA_TARGET_MS/1000:.0f}s)")
+    print(f"[PROBE] SLA 目标: P99 < {SLA_TARGET_MS:.0f}ms ({SLA_TARGET_MS / 1000:.0f}s)")
     print()
 
     for i in range(1, iterations + 1):
@@ -314,14 +312,14 @@ def _print_summary(report: BootSLAProbeReport) -> None:
     print(f"成功次数:     {report.successful_runs}")
     print(f"失败次数:     {report.failed_runs}")
     print()
-    print(f"P50:          {report.p50_ms:.0f}ms ({report.p50_ms/1000:.2f}s)")
-    print(f"P95:          {report.p95_ms:.0f}ms ({report.p95_ms/1000:.2f}s)")
-    print(f"P99:          {report.p99_ms:.0f}ms ({report.p99_ms/1000:.2f}s)")
-    print(f"Mean:         {report.mean_ms:.0f}ms ({report.mean_ms/1000:.2f}s)")
-    print(f"Min:          {report.min_ms:.0f}ms ({report.min_ms/1000:.2f}s)")
-    print(f"Max:          {report.max_ms:.0f}ms ({report.max_ms/1000:.2f}s)")
+    print(f"P50:          {report.p50_ms:.0f}ms ({report.p50_ms / 1000:.2f}s)")
+    print(f"P95:          {report.p95_ms:.0f}ms ({report.p95_ms / 1000:.2f}s)")
+    print(f"P99:          {report.p99_ms:.0f}ms ({report.p99_ms / 1000:.2f}s)")
+    print(f"Mean:         {report.mean_ms:.0f}ms ({report.mean_ms / 1000:.2f}s)")
+    print(f"Min:          {report.min_ms:.0f}ms ({report.min_ms / 1000:.2f}s)")
+    print(f"Max:          {report.max_ms:.0f}ms ({report.max_ms / 1000:.2f}s)")
     print()
-    print(f"SLA 目标:     P99 < {report.sla_target_ms:.0f}ms ({report.sla_target_ms/1000:.0f}s)")
+    print(f"SLA 目标:     P99 < {report.sla_target_ms:.0f}ms ({report.sla_target_ms / 1000:.0f}s)")
     status = "PASS" if report.sla_met else "FAIL"
     print(f"SLA 判定:     {status}")
     print("=" * 60)

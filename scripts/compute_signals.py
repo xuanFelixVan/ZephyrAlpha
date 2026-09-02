@@ -45,7 +45,7 @@ sys.path.insert(0, str(REPO_ROOT / "src"))
 sys.path.insert(0, str(REPO_ROOT))
 
 SIGNAL_ID = "factor_composite_v1"
-TOP_PCT = 0.10   # 前/后 10% 分档（CTR-INJ-003 阈值显式化）
+TOP_PCT = 0.10  # 前/后 10% 分档（CTR-INJ-003 阈值显式化）
 _QMT_BRIDGE_POS = Path(r"E:\qmt_bridge\Stock\PositionStatics.csv")
 
 
@@ -143,8 +143,15 @@ def run_once(end: str | None, extra: list[str], dry_run: bool = False) -> dict:
         return {"ok": False, "error": "universe empty"}
     trade_date, rows = compute_cross_section(universe, end)
     if dry_run:
-        return {"ok": True, "trade_date": trade_date, "rows": len(rows), "written": 0,
-                "universe": counts, "dry_run": True, "preview": rows[:5]}
+        return {
+            "ok": True,
+            "trade_date": trade_date,
+            "rows": len(rows),
+            "written": 0,
+            "universe": counts,
+            "dry_run": True,
+            "preview": rows[:5],
+        }
     from zephyr.signal_ashare.signal_history_writer import write_signals
 
     written = write_signals(rows, data_source="compute_signals")

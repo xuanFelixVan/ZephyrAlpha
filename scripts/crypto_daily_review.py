@@ -249,7 +249,9 @@ def summarize_positions(records: list[dict]) -> dict:
         qty = _dec(r.get("qty"))
         action_sign = _ACTION_SIGN.get(str(r.get("action", "")).lower(), 0)
         side_sign = _SIDE_SIGN.get(str(r.get("side", "")).lower(), 1)
-        entry = per_symbol.setdefault(symbol, {"events": 0, "opened": Decimal(0), "closed": Decimal(0), "net": Decimal(0)})
+        entry = per_symbol.setdefault(
+            symbol, {"events": 0, "opened": Decimal(0), "closed": Decimal(0), "net": Decimal(0)}
+        )
         entry["events"] = int(entry["events"]) + 1
         if action_sign > 0:
             entry["opened"] = entry["opened"] + qty  # type: ignore[operator]
@@ -278,7 +280,10 @@ def summarize_fills(records: list[dict]) -> dict:
             sell_count += 1
         total_notional += notional
         total_fees += fee
-        entry = per_symbol.setdefault(symbol, {"count": 0, "buy_qty": Decimal(0), "sell_qty": Decimal(0), "notional": Decimal(0), "fees": Decimal(0)})
+        entry = per_symbol.setdefault(
+            symbol,
+            {"count": 0, "buy_qty": Decimal(0), "sell_qty": Decimal(0), "notional": Decimal(0), "fees": Decimal(0)},
+        )
         entry["count"] = int(entry["count"]) + 1
         if side == "buy":
             entry["buy_qty"] = entry["buy_qty"] + qty  # type: ignore[operator]
@@ -305,7 +310,15 @@ def summarize_funding(records: list[dict]) -> dict:
         payment = _dec(r.get("payment"))
         entry = per_symbol.setdefault(
             symbol,
-            {"count": 0, "rate_sum": Decimal(0), "latest_rate": Decimal(0), "min": rate, "max": rate, "payment_sum": Decimal(0), "_latest_ts": None},
+            {
+                "count": 0,
+                "rate_sum": Decimal(0),
+                "latest_rate": Decimal(0),
+                "min": rate,
+                "max": rate,
+                "payment_sum": Decimal(0),
+                "_latest_ts": None,
+            },
         )
         entry["count"] += 1
         entry["rate_sum"] += rate
@@ -356,7 +369,12 @@ def summarize_system(records: list[dict]) -> dict:
     else:
         overall = "unknown"
     latest = [
-        {"ts": r["_ts"].isoformat(), "component": str(r.get("component", "?")), "status": str(r.get("status", "?")), "message": str(r.get("message", ""))}
+        {
+            "ts": r["_ts"].isoformat(),
+            "component": str(r.get("component", "?")),
+            "status": str(r.get("status", "?")),
+            "message": str(r.get("message", "")),
+        }
         for r in records[-5:]
     ]
     return {"total_events": len(records), "counts": counts, "overall": overall, "latest": latest}
@@ -398,7 +416,9 @@ def _render_fills_section(records: list[dict] | None) -> list[str]:
             "| --- | ---: | ---: | ---: | ---: | ---: |",
         ]
         for symbol, e in sorted(s["per_symbol"].items()):
-            lines.append(f"| {symbol} | {e['count']} | {_fmt(e['buy_qty'])} | {_fmt(e['sell_qty'])} | {_fmt(e['notional'])} | {_fmt(e['fees'])} |")
+            lines.append(
+                f"| {symbol} | {e['count']} | {_fmt(e['buy_qty'])} | {_fmt(e['sell_qty'])} | {_fmt(e['notional'])} | {_fmt(e['fees'])} |"
+            )
     else:
         lines.append("本班无成交。")
     return lines
@@ -468,7 +488,11 @@ def render_markdown(
 ) -> str:
     """渲染班次复盘 Markdown（sections 值 None=该品类数据未接线走降级标注）。"""
     generated_at = generated_at or datetime.now(timezone.utc)
-    end_label = f"次日 {window_end.strftime('%H:%M')}" if window_end.date() > window_start.date() else window_end.strftime("%H:%M")
+    end_label = (
+        f"次日 {window_end.strftime('%H:%M')}"
+        if window_end.date() > window_start.date()
+        else window_end.strftime("%H:%M")
+    )
     lines = [
         f"# UTC 日切复盘报告 — {review_date} 班次 {shift:02d}:00 UTC",
         "",
@@ -530,7 +554,9 @@ def build_review(
         records, file_found = load_category_records(data_root, category, review_date)
         if not file_found:
             sections[category] = None
-            notes.append(f"{category} 数据缺失（{data_root / category} 无当日/次日 JSONL）——该节未接线，不构成'零发生'口径")
+            notes.append(
+                f"{category} 数据缺失（{data_root / category} 无当日/次日 JSONL）——该节未接线，不构成'零发生'口径"
+            )
         else:
             sections[category] = filter_window(records, start, end)
     markdown = render_markdown(review_date, shift, start, end, sections, notes, generated_at=generated_at)

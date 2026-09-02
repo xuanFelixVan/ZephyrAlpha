@@ -84,6 +84,7 @@ _GENERATE_CONTRACTS: Final = "scripts/governance/d5_architecture/generators/gene
 _CONTRACT_FREEZE: Final = "scripts/governance/d5_architecture/checkers/check_contract_code_drift.py"
 _INTEGRITY_REGISTER: Final = "scripts/governance/meta/validate_rules_integrity.py"
 
+
 def _step_timeout() -> int:
     """单步超时（秒），从 thresholds.yaml gateway_ritual.step_timeout_seconds 读取。"""
     from _shared.thresholds import get as _get_threshold

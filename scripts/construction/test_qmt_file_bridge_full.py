@@ -113,9 +113,7 @@ class QmtFileBridgeTester:
                 limit_price=Decimal("4.00"),  # 远价不成交
                 broker_id=self.broker_id,
             )
-            broker_order_id = self.session.order_manager.submit_order(
-                order.order_id, broker_id=self.broker_id
-            )
+            broker_order_id = self.session.order_manager.submit_order(order.order_id, broker_id=self.broker_id)
             ok = broker_order_id == order.order_id
             self.log_result("1.下单", ok, f"order_id={order.order_id}")
             return ok
@@ -158,8 +156,9 @@ class QmtFileBridgeTester:
             snapshot = self.session.get_positions()
             ok = snapshot is not None and snapshot.cash >= 0
             self.log_result(
-                "3.持仓查看", ok,
-                f"cash={snapshot.cash if snapshot else 'N/A'} holdings={len(snapshot.holdings) if snapshot else 0}"
+                "3.持仓查看",
+                ok,
+                f"cash={snapshot.cash if snapshot else 'N/A'} holdings={len(snapshot.holdings) if snapshot else 0}",
             )
             return ok
         except Exception as e:

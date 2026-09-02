@@ -73,7 +73,4 @@ ORDER_BY: Final = "(trade_date)"
 
 # 列清单（用于 INSERT 时显式指定，排除 DEFAULT 列由 CH 自动填充）
 # 与 live_nav_recorder.NavPoint 七字段同序（data_source 可选显式写入）
-INSERT_COLUMNS: Final = (
-    "(trade_date, total_asset, cash, market_value, nav_ratio, "
-    "benchmark_close, benchmark_ratio)"
-)
+INSERT_COLUMNS: Final = "(trade_date, total_asset, cash, market_value, nav_ratio, benchmark_close, benchmark_ratio)"

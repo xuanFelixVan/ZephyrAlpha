@@ -56,9 +56,7 @@ ensure_utf8_stdout()
 from _shared.constants import EXIT_ERROR, EXIT_PASS, REPO_ROOT
 from _shared.yaml_utils import load_yaml
 
-REGISTRY_PATH = (
-    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "registry_of_logs.yaml"
-)
+REGISTRY_PATH = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "registry_of_logs.yaml"
 
 # ── 扫描口径常量（SSoT 镜像=registry_of_logs.yaml scan_scope，改动需双向同步）──
 SCAN_ROOTS: tuple[str, ...] = ("src", "scripts")

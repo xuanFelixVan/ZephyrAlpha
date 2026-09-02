@@ -640,7 +640,9 @@ class SerializerLease:
                 try:
                     os.write(
                         fd,
-                        json.dumps({"pid": os.getpid(), "acquired_at": time.time()}, ensure_ascii=False).encode("utf-8"),
+                        json.dumps({"pid": os.getpid(), "acquired_at": time.time()}, ensure_ascii=False).encode(
+                            "utf-8"
+                        ),
                     )
                 finally:
                     os.close(fd)
@@ -679,9 +681,7 @@ class SerializerLease:
                 expired = time.monotonic() >= deadline
                 if not expired:
                     threading.Event().wait(self._poll_interval)
-        raise LeaseUnavailable(
-            f"Serializer lease 被活体持有（timeout {self._timeout}s）: {self._lease_file}"
-        ) from None
+        raise LeaseUnavailable(f"Serializer lease 被活体持有（timeout {self._timeout}s）: {self._lease_file}") from None
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
         if self._acquired:
@@ -934,8 +934,7 @@ def drain_queue(
                     result = LandingResult(
                         ok=False,
                         reason=(
-                            f"cascade_stale: 基底重校验不适用 {mismatched}"
-                            f"（stale_by={item['meta'].get('stale_by')}）"
+                            f"cascade_stale: 基底重校验不适用 {mismatched}（stale_by={item['meta'].get('stale_by')}）"
                         ),
                     )
             if result is None:
@@ -1025,7 +1024,11 @@ def _notify_task_board_requeued(old_item: dict, new_qid: str) -> None:
         if rc == 0:
             logger.info("[requeue] task_board 死信标签标注 requeued: task=%s qid=%s", task_id, old_item.get("qid"))
         else:
-            logger.info("[requeue] task_board 标注跳过: task=%s rc=%s（任务不存在/已完成/metadata 损坏/无死信标签）", task_id, rc)
+            logger.info(
+                "[requeue] task_board 标注跳过: task=%s rc=%s（任务不存在/已完成/metadata 损坏/无死信标签）",
+                task_id,
+                rc,
+            )
     except Exception as exc:  # noqa: BLE001 — 联动失败不阻断重入队主流程
         logger.warning("[requeue] task_board 联动失败（忽略，重入队已完成）: %s", exc)
 
@@ -1318,7 +1321,9 @@ def _cmd_requeue(args: argparse.Namespace) -> int:
     if not args.no_bootstrap:
         drain_result = try_bootstrap_drain(args.queue_root)  # 重入队自举排空（66 号 §8）
         if not drain_result.get("skipped"):
-            print(f"DRAIN: done={drain_result['done']} dead={drain_result['dead']} recovered={drain_result['recovered']}")
+            print(
+                f"DRAIN: done={drain_result['done']} dead={drain_result['dead']} recovered={drain_result['recovered']}"
+            )
         else:
             print("DRAIN: skipped（另一 Serializer 持 lease，等下次自举）")
     return 0
@@ -1347,7 +1352,9 @@ def main(argv: list[str] | None = None) -> int:
         prog="commit_queue.py",
         description="提交队列串行化 MVP（66 号 §6 协议）：enqueue/status/drain",
     )
-    parser.add_argument("--queue-root", default=None, help=f"队列根（默认 {_QUEUE_DIR_DEFAULT}；环境变量 {QUEUE_ENV_VAR} 可覆盖）")
+    parser.add_argument(
+        "--queue-root", default=None, help=f"队列根（默认 {_QUEUE_DIR_DEFAULT}；环境变量 {QUEUE_ENV_VAR} 可覆盖）"
+    )
     sub = parser.add_subparsers(dest="command", required=True)
 
     p_enq = sub.add_parser("enqueue", help="快照入队即返回（入袋即完成）")
@@ -1357,7 +1364,11 @@ def main(argv: list[str] | None = None) -> int:
     p_enq.add_argument("--message-file", default=None, help="commit message 文件（UTF-8，中文推荐）")
     p_enq.add_argument("--worktree-root", default=None, help="工作区根（默认 cwd）")
     p_enq.add_argument("--base-head", default=None, help="入队时目标分支 HEAD（A 段显式传入，B 段自动取）")
-    p_enq.add_argument("--depends-on", default=None, help="依赖的前置 qid 逗号分隔（P1 起 drain 级联标记生效：前置项落盘后本项标 stale 重校验基底，66 号 §6.4）")
+    p_enq.add_argument(
+        "--depends-on",
+        default=None,
+        help="依赖的前置 qid 逗号分隔（P1 起 drain 级联标记生效：前置项落盘后本项标 stale 重校验基底，66 号 §6.4）",
+    )
     p_enq.add_argument("--no-bootstrap", action="store_true", help="入队后不尝试自举排空")
     p_enq.set_defaults(func=_cmd_enqueue)
 
@@ -1368,7 +1379,12 @@ def main(argv: list[str] | None = None) -> int:
 
     p_dr = sub.add_parser("drain", help="显式排空（拿不到 lease 则跳过 exit 0）")
     p_dr.add_argument("--max-items", type=int, default=None, help="本轮最多处理项数")
-    p_dr.add_argument("--done-ttl-days", type=float, default=_DONE_TTL_DAYS_DEFAULT, help=f"done/ TTL 天数（默认 {_DONE_TTL_DAYS_DEFAULT:.0f}；dead/ 永不清理）")
+    p_dr.add_argument(
+        "--done-ttl-days",
+        type=float,
+        default=_DONE_TTL_DAYS_DEFAULT,
+        help=f"done/ TTL 天数（默认 {_DONE_TTL_DAYS_DEFAULT:.0f}；dead/ 永不清理）",
+    )
     p_dr.set_defaults(func=_cmd_drain)
 
     p_rq = sub.add_parser("requeue", help="死信取回重入队（66 号 §6.4：基于当前工作区重建快照，新 qid 排 FIFO 队尾）")

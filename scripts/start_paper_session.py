@@ -152,7 +152,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="常驻服务模式：assemble_session 包 StrategySlot 交 LiveStrategyAdapter 监督"
         "（异常隔离+退避重启熔断+biz 心跳 tmp/live_strategy_biz.heartbeat），run(close_at) 有界收场",
     )
-    parser.add_argument("--universe", default="", help="标的池，逗号分隔（如 600000.SH,000001.SZ）；--strategy 模式必填")
+    parser.add_argument(
+        "--universe", default="", help="标的池，逗号分隔（如 600000.SH,000001.SZ）；--strategy 模式必填"
+    )
     parser.add_argument("--interval", type=int, default=300, help="--strategy 模式自动调仓间隔秒（默认 300）")
     parser.add_argument("--close-time", default="15:05", help="保活截止时点 HH:MM（默认 15:05 北京时区）")
     parser.add_argument("--poll", type=int, default=30, help="保活轮询秒（默认 30）")
@@ -221,10 +223,16 @@ def check_qmt_process() -> bool | None:
 
 def print_prestart_checks(qmt_alive: bool | None) -> None:
     """打印启动前检查项（57 号文 §1 三命令口径；关键两项=C1+C3）。"""
-    c1 = {True: "PASS（XtMiniQmt 进程在）", False: "FAIL（未检出——57 号文口径：当日模拟盘应 SKIP 并 tracker 登记 C 类）", None: "SKIP（非 Windows 或探测失败，由 connect 探活兜底）"}[qmt_alive]
+    c1 = {
+        True: "PASS（XtMiniQmt 进程在）",
+        False: "FAIL（未检出——57 号文口径：当日模拟盘应 SKIP 并 tracker 登记 C 类）",
+        None: "SKIP（非 Windows 或探测失败，由 connect 探活兜底）",
+    }[qmt_alive]
     print("=== 启动前检查项（57 号文 §1 三命令口径）===")
     print(f"[C1] QMT 进程: {c1}")
-    print("[C2] 调度器状态（人工确认）: python -m zephyr.data status —— kline_daily_incremental/stk_limit_premarket 最近运行 SUCCESS")
+    print(
+        "[C2] 调度器状态（人工确认）: python -m zephyr.data status —— kline_daily_incremental/stk_limit_premarket 最近运行 SUCCESS"
+    )
     print("[C3] 数据源健康（人工确认）: 十源检查 miniqmt 必须 connect_ok——本脚本 broker.connect() 即该项探活")
 
 
@@ -401,7 +409,9 @@ def main(
     # ── 启动前检查项（57 号文 §1 三命令口径）──
     print_prestart_checks(qmt_probe())
     if args.strategy:
-        print(f"[WARN] --strategy={args.strategy} 使用 mock 信号（LiveStrategyAdapter 未施工，57 号文 GAP-2 登记）——仅模拟盘彩排用途")
+        print(
+            f"[WARN] --strategy={args.strategy} 使用 mock 信号（LiveStrategyAdapter 未施工，57 号文 GAP-2 登记）——仅模拟盘彩排用途"
+        )
 
     # ── 构造 broker 并连接 ──
     try:
@@ -418,7 +428,9 @@ def main(
         try:
             snapshot = broker.get_positions()
             print("[DRY-RUN] 连接探活 OK（未打任何单）")
-            print(f"[DRY-RUN] cash={snapshot.cash} total_market_value={snapshot.total_market_value} holdings={dict(snapshot.holdings) if snapshot.holdings else '(空)'}")
+            print(
+                f"[DRY-RUN] cash={snapshot.cash} total_market_value={snapshot.total_market_value} holdings={dict(snapshot.holdings) if snapshot.holdings else '(空)'}"
+            )
             return 0
         except Exception as exc:  # noqa: BLE001
             print(f"[ERROR] dry-run 探活失败（{type(exc).__name__}: {exc}）")

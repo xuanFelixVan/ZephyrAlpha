@@ -11,6 +11,7 @@
 用法：python scripts/governance/d5_architecture/generators/scan_frontend_pages.py [--apply]
   默认 dry-run 只打印统计；--apply 才写 frontend_map.yaml。
 """
+
 from __future__ import annotations
 
 import argparse
@@ -72,7 +73,7 @@ def scan_page(path: Path) -> dict:
 
     feat_entries = [
         {
-            "id": f"{pid}-AUTO-{i+1:02d}",
+            "id": f"{pid}-AUTO-{i + 1:02d}",
             "name": name,
             "code_ref": f"pages/{path.name}",
             "backend_ref": [],

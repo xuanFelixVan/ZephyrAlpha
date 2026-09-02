@@ -4071,9 +4071,7 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
             _batch_sp = f"sp_node_batch_{_sp_counter}"
             try:
                 cursor.execute(f"SAVEPOINT {_batch_sp}")
-                psycopg2.extras.execute_values(
-                    cursor, _INSERT_NODES_BATCH_SQL, _rows_chunk, page_size=_NODE_BATCH_SIZE
-                )
+                psycopg2.extras.execute_values(cursor, _INSERT_NODES_BATCH_SQL, _rows_chunk, page_size=_NODE_BATCH_SIZE)
                 cursor.execute(f"RELEASE SAVEPOINT {_batch_sp}")
                 node_count += len(_rows_chunk)
                 # P0-1 schema fix: 记录生成器node_id→path映射
@@ -4086,10 +4084,7 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
                 except Exception:  # noqa: BLE001 — SAVEPOINT 本身失败（极端情况），rollback 整个事务并重建
                     conn.rollback()
                     cursor = conn.cursor()
-                print(
-                    f"[DEPGRAPH-DB] WARN: 批量INSERT失败，降级逐节点重试 "
-                    f"({len(_rows_chunk)} 节点): {batch_err}"
-                )
+                print(f"[DEPGRAPH-DB] WARN: 批量INSERT失败，降级逐节点重试 ({len(_rows_chunk)} 节点): {batch_err}")
                 for (_gen_id, bp_id, _path, _dom), _row in zip(_meta_chunk, _rows_chunk):  # noqa: B905 — 两列表构造时等长
                     _sp_counter += 1
                     _sp_name = f"sp_node_{_sp_counter}"

@@ -415,9 +415,7 @@ def _reconcile(committed_files: list[str], session_id: str) -> Any:
         lineno, agents_value = agents["rows"][key]
         truth = entry_counts[reg_id]
         if agents_value != truth:
-            findings.append(
-                f"AGENTS.md L{lineno} 写 {agents_value}，实测 {truth}（真源={_ROOR_REL} {reg_id}），请更新"
-            )
+            findings.append(f"AGENTS.md L{lineno} 写 {agents_value}，实测 {truth}（真源={_ROOR_REL} {reg_id}），请更新")
 
     # 4.3 能力计数 "时点 N 条" vs capability 注册表条目数
     lineno, agents_cap = agents["capability"]

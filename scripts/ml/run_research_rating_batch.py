@@ -73,9 +73,7 @@ def iter_year_reports(year: int) -> list[dict]:
         return []
     rows = parse_tsv(tsv, ncols=5)
     return [
-        {"news_id": r[0], "publish_time": r[1], "title": r[2], "summary": r[3], "source": r[4]}
-        for r in rows
-        if r[2]
+        {"news_id": r[0], "publish_time": r[1], "title": r[2], "summary": r[3], "source": r[4]} for r in rows if r[2]
     ]
 
 

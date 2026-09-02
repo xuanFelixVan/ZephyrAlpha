@@ -14,6 +14,7 @@
   python scripts/governance/check_wiring_orphan.py --days 30   # 自定义超期阈值
   python scripts/governance/check_wiring_orphan.py --registry <path> --today YYYY-MM-DD
 """
+
 from __future__ import annotations
 
 import argparse
@@ -40,7 +41,16 @@ def _parse_registry(text: str) -> tuple[list[dict], str | None]:
     entries = re.split(r"^- candidate_id: ", text, flags=re.M)[1:]
     for e in entries:
         mod = {"candidate_id": e.split("\n", 1)[0].strip()}
-        for key in ("name", "path", "domain", "wiring_class", "wiring_status", "defer_reason", "wired_evidence", "registered_at"):
+        for key in (
+            "name",
+            "path",
+            "domain",
+            "wiring_class",
+            "wiring_status",
+            "defer_reason",
+            "wired_evidence",
+            "registered_at",
+        ):
             km = re.search(rf"^  {key}: (.+)$", e, re.M)
             if km:
                 mod[key] = km.group(1).strip().strip('"')

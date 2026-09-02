@@ -52,10 +52,30 @@ _PANORAMA_KW = ("全景图", "产业链图", "图谱", "图解")
 _EXCLUDE_KW = ("赠品", "数字游民", "淘宝店")
 # 券商/机构名识别（文件名中含"XX证券图谱"等）
 _ORG_KW = (
-    "天风证券", "国盛证券", "中信建投", "华鑫证券", "民生证券", "中航证券",
-    "安信证券", "中信证券", "华泰证券", "国泰君安", "招商证券", "广发证券",
-    "海通证券", "兴业证券", "东吴证券", "浙商证券", "华西证券", "国金证券",
-    "平安证券", "银河证券", "中金", "国信证券", "光大证券", "申万宏源",
+    "天风证券",
+    "国盛证券",
+    "中信建投",
+    "华鑫证券",
+    "民生证券",
+    "中航证券",
+    "安信证券",
+    "中信证券",
+    "华泰证券",
+    "国泰君安",
+    "招商证券",
+    "广发证券",
+    "海通证券",
+    "兴业证券",
+    "东吴证券",
+    "浙商证券",
+    "华西证券",
+    "国金证券",
+    "平安证券",
+    "银河证券",
+    "中金",
+    "国信证券",
+    "光大证券",
+    "申万宏源",
 )
 _YEAR_RE = re.compile(r"(20\d{2})\s*年?")
 
@@ -136,25 +156,27 @@ def scan(root: str) -> list[tuple]:
             file_hash = _md5(full)
             excluded, reason = _exclusion(rel)
             doc_id = "DOC-" + hashlib.md5(rel.encode("utf-8")).hexdigest()[:20]
-            rows.append((
-                doc_id,
-                rel,
-                root,  # source_root
-                bundle,
-                fn,
-                ext,
-                size,
-                mtime,
-                file_hash,
-                "DG-" + file_hash[:16] if file_hash else None,
-                True,  # is_canonical 入库后统一按组重算
-                _doc_type(ext, fn),
-                os.path.splitext(fn)[0],
-                _parse_year(fn),
-                _parse_org(fn),
-                excluded,
-                reason,
-            ))
+            rows.append(
+                (
+                    doc_id,
+                    rel,
+                    root,  # source_root
+                    bundle,
+                    fn,
+                    ext,
+                    size,
+                    mtime,
+                    file_hash,
+                    "DG-" + file_hash[:16] if file_hash else None,
+                    True,  # is_canonical 入库后统一按组重算
+                    _doc_type(ext, fn),
+                    os.path.splitext(fn)[0],
+                    _parse_year(fn),
+                    _parse_org(fn),
+                    excluded,
+                    reason,
+                )
+            )
             if len(rows) % 500 == 0:
                 print(f"[PROGRESS] 已扫描 {len(rows)} 个文件 ...")
     return rows

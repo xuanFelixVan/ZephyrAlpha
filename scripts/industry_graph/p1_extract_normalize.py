@@ -164,14 +164,13 @@ def main() -> int:
                 # 优先 7z/UnRAR（支持 RAR5），bsdtar 兜底（不支持 RAR5）
                 if unrar:
                     if unrar.lower().endswith("7z.exe"):
-                        subprocess.run([unrar, "x", str(src), f"-o{out_dir}", "-y"],
-                                       check=True, capture_output=True)
+                        subprocess.run([unrar, "x", str(src), f"-o{out_dir}", "-y"], check=True, capture_output=True)
                     else:
-                        subprocess.run([unrar, "x", "-y", str(src), str(out_dir) + os.sep],
-                                       check=True, capture_output=True)
+                        subprocess.run(
+                            [unrar, "x", "-y", str(src), str(out_dir) + os.sep], check=True, capture_output=True
+                        )
                 elif bsdtar:
-                    subprocess.run([bsdtar, "-xf", str(src), "-C", str(out_dir)],
-                                   check=True, capture_output=True)
+                    subprocess.run([bsdtar, "-xf", str(src), "-C", str(out_dir)], check=True, capture_output=True)
                 else:
                     print(f"[WARN] 跳过 rar（无解压器）: {rel}")
                     continue
@@ -196,14 +195,28 @@ def main() -> int:
                 dtype = "atlas_image"
             else:
                 dtype = "other"
-            prod_rows.append((
-                "DOC-" + hashlib.md5(("P1\\" + frel).encode("utf-8")).hexdigest()[:20],
-                frel, str(STAGING), doc_id, parent_bundle, p.name, ext,
-                p.stat().st_size,
-                datetime.fromtimestamp(p.stat().st_mtime, tz=timezone.utc),
-                fh, "DG-" + fh[:16] if fh else None, True, dtype,
-                p.stem, None, None, False, None,
-            ))
+            prod_rows.append(
+                (
+                    "DOC-" + hashlib.md5(("P1\\" + frel).encode("utf-8")).hexdigest()[:20],
+                    frel,
+                    str(STAGING),
+                    doc_id,
+                    parent_bundle,
+                    p.name,
+                    ext,
+                    p.stat().st_size,
+                    datetime.fromtimestamp(p.stat().st_mtime, tz=timezone.utc),
+                    fh,
+                    "DG-" + fh[:16] if fh else None,
+                    True,
+                    dtype,
+                    p.stem,
+                    None,
+                    None,
+                    False,
+                    None,
+                )
+            )
         done += 1
         if done % 50 == 0:
             print(f"[PROGRESS] 已处理 {done}/{len(packs)} 包（产物 {len(prod_rows)}，归一删图累计）")
@@ -261,8 +274,10 @@ def main() -> int:
     conn.commit()
     conn.close()
 
-    print(f"[P1] 完成：登记产物 {extracted} 个；其中与既有文件内容重复被折叠 {folded} 个；"
-          f"当前有效 PDF 文档（canonical）共 {eff_pdf} 份")
+    print(
+        f"[P1] 完成：登记产物 {extracted} 个；其中与既有文件内容重复被折叠 {folded} 个；"
+        f"当前有效 PDF 文档（canonical）共 {eff_pdf} 份"
+    )
     return 0
 
 

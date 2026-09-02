@@ -59,17 +59,38 @@ REBUILD_TABLE = "c3_fundamental.news_data_tz2"
 OLD_TABLE = "c3_fundamental.news_data_pre_tz2_20260828"
 
 # 16:00:00 指纹谓词（纯日期被按 UTC 解释存库的 8h 偏移特征；只依赖本行字段）
-_FINGERPRINT = (
-    "toHour(publish_time) = 16 AND toMinute(publish_time) = 0 AND toSecond(publish_time) = 0"
-)
+_FINGERPRINT = "toHour(publish_time) = 16 AND toMinute(publish_time) = 0 AND toSecond(publish_time) = 0"
 
 ALL_COLUMNS: list[str] = [
-    "news_id", "publish_time", "full_publish_time", "title", "content", "author",
-    "keyword", "summary", "source", "source_url", "news_source_id", "recommend_sign",
-    "is_accessory", "file_size", "related_symbol", "short_name", "security_type",
-    "category", "region", "language", "sentiment_score", "sentiment_label",
-    "related_symbols", "related_tags", "raw_data", "data_source", "crawl_time",
-    "quality_flag", "ingest_ts",
+    "news_id",
+    "publish_time",
+    "full_publish_time",
+    "title",
+    "content",
+    "author",
+    "keyword",
+    "summary",
+    "source",
+    "source_url",
+    "news_source_id",
+    "recommend_sign",
+    "is_accessory",
+    "file_size",
+    "related_symbol",
+    "short_name",
+    "security_type",
+    "category",
+    "region",
+    "language",
+    "sentiment_score",
+    "sentiment_label",
+    "related_symbols",
+    "related_tags",
+    "raw_data",
+    "data_source",
+    "crawl_time",
+    "quality_flag",
+    "ingest_ts",
 ]
 
 PROGRESS_FILE = ROOT / ".runtime" / "rebuild_news_data_tz2_done.txt"
@@ -129,10 +150,7 @@ def sql_verify_months() -> tuple[str, str]:
 
 
 def sql_rename_swap() -> str:
-    return (
-        f"RENAME TABLE {SRC_TABLE} TO {OLD_TABLE}, "
-        f"{REBUILD_TABLE} TO {SRC_TABLE}"
-    )
+    return f"RENAME TABLE {SRC_TABLE} TO {OLD_TABLE}, {REBUILD_TABLE} TO {SRC_TABLE}"
 
 
 def sql_delta_backfill(since_utc: str) -> str:
@@ -153,8 +171,10 @@ def get_client():
 
     cfg = load_ch_config()
     return clickhouse_driver.Client(
-        host=cfg["host"], port=cfg.get("port", 9000),
-        user=cfg.get("user", "default"), password=cfg.get("password", ""),
+        host=cfg["host"],
+        port=cfg.get("port", 9000),
+        user=cfg.get("user", "default"),
+        password=cfg.get("password", ""),
         send_receive_timeout=_MUTATION_TIMEOUT_S,
     )
 
@@ -188,10 +208,12 @@ def load_done_months() -> set[int]:
 
 def dry_run(client) -> None:
     fp = int(client.execute(f"SELECT count() FROM {SRC_TABLE} WHERE {_FINGERPRINT}")[0][0])
-    cross = int(client.execute(
-        f"SELECT count() FROM {SRC_TABLE} WHERE {_FINGERPRINT} "
-        "AND toMonth(publish_time + INTERVAL 8 HOUR) != toMonth(publish_time)"
-    )[0][0])
+    cross = int(
+        client.execute(
+            f"SELECT count() FROM {SRC_TABLE} WHERE {_FINGERPRINT} "
+            "AND toMonth(publish_time + INTERVAL 8 HOUR) != toMonth(publish_time)"
+        )[0][0]
+    )
     months = [r[0] for r in client.execute(sql_months())]
     log.info("指纹行 %d（其中跨月 %d）；月份数 %d（%s~%s）", fp, cross, len(months), months[0], months[-1])
 
@@ -209,9 +231,7 @@ def execute_rebuild(client) -> None:
             continue
         t0 = time.time()
         client.execute(sql_copy_partition(m))
-        n = int(client.execute(
-            f"SELECT count() FROM {REBUILD_TABLE} WHERE toYYYYMM(publish_time) = {m}"
-        )[0][0])
+        n = int(client.execute(f"SELECT count() FROM {REBUILD_TABLE} WHERE toYYYYMM(publish_time) = {m}")[0][0])
         PROGRESS_FILE.parent.mkdir(parents=True, exist_ok=True)
         with open(PROGRESS_FILE, "a", encoding="utf-8") as f:
             f.write(f"{m}\n")
@@ -222,16 +242,19 @@ def execute_rebuild(client) -> None:
     src_map = {int(r[0]): int(r[1]) for r in client.execute(src_sql)}
     dst_map = {int(r[0]): int(r[1]) for r in client.execute(dst_sql)}
     if src_map != dst_map:
-        diff = {m: (src_map.get(m), dst_map.get(m)) for m in set(src_map) | set(dst_map)
-                if src_map.get(m) != dst_map.get(m)}
+        diff = {
+            m: (src_map.get(m), dst_map.get(m)) for m in set(src_map) | set(dst_map) if src_map.get(m) != dst_map.get(m)
+        }
         raise RuntimeError(f"全表对账不符（不换名，可重跑）: {diff}")
     log.info("全表对账通过（%d 月，总 %d 行）", len(dst_map), sum(dst_map.values()))
 
     log.info("原子换名...")
     client.execute(sql_rename_swap())
-    delta = int(client.execute(
-        f"SELECT count() FROM {OLD_TABLE} WHERE ingest_ts > toDateTime64('{t_start_utc}', 3, 'UTC')"
-    )[0][0])
+    delta = int(
+        client.execute(f"SELECT count() FROM {OLD_TABLE} WHERE ingest_ts > toDateTime64('{t_start_utc}', 3, 'UTC')")[0][
+            0
+        ]
+    )
     if delta > 0:
         client.execute(sql_delta_backfill(t_start_utc))
         log.info("窗口期增量补捞 %d 行", delta)
@@ -246,8 +269,11 @@ def execute_rebuild(client) -> None:
     fp_left = int(client.execute(f"SELECT count() FROM {SRC_TABLE} WHERE {_FINGERPRINT}")[0][0])
     if fp_left != 0:
         raise RuntimeError(f"16:00 指纹残留 {fp_left} 行（应=0）")
-    log.info("终验通过：FINAL==键数==id 数；16:00 指纹=0（物理 %d 行含 %d 行跨 INSERT 同键重复，merge 后自然折叠）",
-             rows, rows - keys)
+    log.info(
+        "终验通过：FINAL==键数==id 数；16:00 指纹=0（物理 %d 行含 %d 行跨 INSERT 同键重复，merge 后自然折叠）",
+        rows,
+        rows - keys,
+    )
 
 
 def _parse_args() -> argparse.Namespace:

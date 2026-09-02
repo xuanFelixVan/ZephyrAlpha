@@ -85,8 +85,7 @@ def main() -> int:
         except OSError:
             continue
         for seq, chunk in enumerate(chunk_text(text)):
-            rows.append((f"{d['doc_id']}#{seq}", d["doc_id"], d["title"], d["doc_type"],
-                         d.get("year"), chunk))
+            rows.append((f"{d['doc_id']}#{seq}", d["doc_id"], d["title"], d["doc_type"], d.get("year"), chunk))
     print(f"[RAG] 分块 {len(rows)} 条")
 
     if SQLITE_OUT.exists():
@@ -107,13 +106,18 @@ def main() -> int:
     texts = [r[5] for r in rows]
     t0 = time.time()
     emb = model.encode(
-        texts, batch_size=64, show_progress_bar=True,
-        normalize_embeddings=True, convert_to_numpy=True,
+        texts,
+        batch_size=64,
+        show_progress_bar=True,
+        normalize_embeddings=True,
+        convert_to_numpy=True,
     ).astype(np.float32)
     np.save(EMB_OUT, emb)
     dt = time.time() - t0
-    print(f"[RAG] 完成: {emb.shape[0]} 条 × {emb.shape[1]} 维, 耗时 {dt / 60:.1f} 分钟 "
-          f"({emb.shape[0] / max(dt, 1):.0f} 条/s), 向量存 {EMB_OUT}")
+    print(
+        f"[RAG] 完成: {emb.shape[0]} 条 × {emb.shape[1]} 维, 耗时 {dt / 60:.1f} 分钟 "
+        f"({emb.shape[0] / max(dt, 1):.0f} 条/s), 向量存 {EMB_OUT}"
+    )
     return 0
 
 

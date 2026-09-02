@@ -104,11 +104,10 @@ PATH_MUST_HAVE_DIR = re.compile(r"[/\\]")
 # tracker #255⑤ 治本（2026-08-22）：过滤器 generated 单值→generated/testing/stable 三态——
 # 生命周期 planned→generated→testing→stable（--transition-build-status 推进），
 # 代码在盘节点含 generated/testing/stable 三态；旧单值过滤器对 stable 成熟模块结构性低报
-#（CE 实证：38 个 stable module 节点零派生，§1.1 仅 __init__.py 1 行）；planned（未施工）
+# （CE 实证：38 个 stable module 节点零派生，§1.1 仅 __init__.py 1 行）；planned（未施工）
 # 与 deprecated/dormant（退役/休眠）维持排除。
 _SQL_GET_GENERATED_NODES = (
-    "SELECT path, node_type FROM nodes WHERE blueprint_id = %s"
-    " AND build_status IN ('generated', 'testing', 'stable')"
+    "SELECT path, node_type FROM nodes WHERE blueprint_id = %s AND build_status IN ('generated', 'testing', 'stable')"
 )
 
 BLUEPRINT_MODULE_MAP: dict[str, dict] = {

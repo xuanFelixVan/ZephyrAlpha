@@ -63,12 +63,35 @@ _MISCORRECT_BATCH_TS = "2026-08-26 18:58:02.495"
 
 # news_data 全列清单（system.columns 实测 29 列）
 ALL_COLUMNS: list[str] = [
-    "news_id", "publish_time", "full_publish_time", "title", "content", "author",
-    "keyword", "summary", "source", "source_url", "news_source_id", "recommend_sign",
-    "is_accessory", "file_size", "related_symbol", "short_name", "security_type",
-    "category", "region", "language", "sentiment_score", "sentiment_label",
-    "related_symbols", "related_tags", "raw_data", "data_source", "crawl_time",
-    "quality_flag", "ingest_ts",
+    "news_id",
+    "publish_time",
+    "full_publish_time",
+    "title",
+    "content",
+    "author",
+    "keyword",
+    "summary",
+    "source",
+    "source_url",
+    "news_source_id",
+    "recommend_sign",
+    "is_accessory",
+    "file_size",
+    "related_symbol",
+    "short_name",
+    "security_type",
+    "category",
+    "region",
+    "language",
+    "sentiment_score",
+    "sentiment_label",
+    "related_symbols",
+    "related_tags",
+    "raw_data",
+    "data_source",
+    "crawl_time",
+    "quality_flag",
+    "ingest_ts",
 ]
 
 PROGRESS_FILE = ROOT / ".runtime" / "rebuild_news_data_done.txt"
@@ -132,18 +155,13 @@ def sql_verify_partition(month: int) -> tuple[str, str]:
         f"publish_time - INTERVAL 8 HOUR, publish_time) AS fixed_pt "
         f"FROM {SRC_TABLE} WHERE toYYYYMM(publish_time) = {month})"
     )
-    dst = (
-        f"SELECT count() FROM {REBUILD_TABLE} WHERE toYYYYMM(publish_time) = {month}"
-    )
+    dst = f"SELECT count() FROM {REBUILD_TABLE} WHERE toYYYYMM(publish_time) = {month}"
     return src, dst
 
 
 def sql_rename_swap() -> str:
     """原子双 RENAME（单语句多 rename = 原子交换）。"""
-    return (
-        f"RENAME TABLE {SRC_TABLE} TO {CORRUPT_TABLE}, "
-        f"{REBUILD_TABLE} TO {SRC_TABLE}"
-    )
+    return f"RENAME TABLE {SRC_TABLE} TO {CORRUPT_TABLE}, {REBUILD_TABLE} TO {SRC_TABLE}"
 
 
 def sql_delta_backfill(since_utc: str) -> str:
@@ -156,9 +174,7 @@ def sql_delta_backfill(since_utc: str) -> str:
 
 
 def sql_final_verify() -> str:
-    return (
-        f"SELECT count(), uniqExact(news_id), uniqExact((news_id, publish_time)) FROM {SRC_TABLE}"
-    )
+    return f"SELECT count(), uniqExact(news_id), uniqExact((news_id, publish_time)) FROM {SRC_TABLE}"
 
 
 def get_client():
@@ -167,8 +183,10 @@ def get_client():
 
     cfg = load_ch_config()
     return clickhouse_driver.Client(
-        host=cfg["host"], port=cfg.get("port", 9000),
-        user=cfg.get("user", "default"), password=cfg.get("password", ""),
+        host=cfg["host"],
+        port=cfg.get("port", 9000),
+        user=cfg.get("user", "default"),
+        password=cfg.get("password", ""),
         send_receive_timeout=_MUTATION_TIMEOUT_S,
     )
 
@@ -244,9 +262,11 @@ def execute_rebuild(client) -> None:
     # 原子换名 + 增量补捞 + 终验
     log.info("逐月对账全过，原子换名...")
     client.execute(sql_rename_swap())
-    delta = int(client.execute(
-        f"SELECT count() FROM {CORRUPT_TABLE} WHERE ingest_ts > toDateTime64('{t_start_utc}', 3, 'UTC')"
-    )[0][0])
+    delta = int(
+        client.execute(
+            f"SELECT count() FROM {CORRUPT_TABLE} WHERE ingest_ts > toDateTime64('{t_start_utc}', 3, 'UTC')"
+        )[0][0]
+    )
     if delta > 0:
         client.execute(sql_delta_backfill(t_start_utc))
         log.info("窗口期增量补捞 %d 行", delta)

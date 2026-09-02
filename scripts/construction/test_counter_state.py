@@ -15,6 +15,7 @@
 # [A_module] module_id=MOD-L06-001-QMTFB | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """测试柜台全量镜像（施工期验证脚本：文件桥上线验收后归档，需模拟终端导出路径已配置）"""
+
 import time
 from zephyr.ex_core.adapters.qmt_file_bridge_broker import QmtFileBridgeBroker
 

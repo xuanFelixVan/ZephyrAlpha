@@ -45,13 +45,13 @@ SOURCE_TAG = "p3a_auto"
 _TIER_RE = re.compile(r"(上游|中游|下游|设备|材料|辅材|零部件|原材料)")
 # 链名清洗（按序执行）：编号前缀、日期/页码前缀、后缀关键词截断、年份前缀、尾巴残留
 _PREFIX_RULES = [
-    re.compile(r"^\d{1,2}新增[-—–]?"),               # 02新增- / 04新增-
+    re.compile(r"^\d{1,2}新增[-—–]?"),  # 02新增- / 04新增-
     re.compile(r"^新增[-—–]?"),
     re.compile(r"^(20\d{2})?[-—–]?\d{1,4}[-—–]"),  # 2026182- / 38- / 2024-
-    re.compile(r"^(20\d{2})?年\d{1,3}页"),           # 2026年29页 / 年307页（页字必需，防误吃"年3月"）
-    re.compile(r"^(20\d{2})?年\d{0,2}月?[:：]?"),    # 2026年2月： / 年2月：
-    re.compile(r"^\d{1,2}月[:：]?"),                 # 月： 残留
-    re.compile(r"^\d{4,6}[-—–]?(?!年)"),             # 202437- / 202505-（保留"2024年"开头给年份规则）
+    re.compile(r"^(20\d{2})?年\d{1,3}页"),  # 2026年29页 / 年307页（页字必需，防误吃"年3月"）
+    re.compile(r"^(20\d{2})?年\d{0,2}月?[:：]?"),  # 2026年2月： / 年2月：
+    re.compile(r"^\d{1,2}月[:：]?"),  # 月： 残留
+    re.compile(r"^\d{4,6}[-—–]?(?!年)"),  # 202437- / 202505-（保留"2024年"开头给年份规则）
 ]
 _SUFFIX_CUT = re.compile(
     r"(产业链)?(全景图|产业链图|图谱|图解|全景|分析|研究|专题|梳理|详情|白皮书|蓝皮书|报告|洞察|指南|手册|图鉴|图集|行业深度|深度报告).*$",
@@ -165,8 +165,7 @@ def main() -> int:
                         key = (node_id, sym)
                         ent = node_companies.setdefault(
                             key,
-                            {"role": "mentioned", "evidence": (title or "")[:200],
-                             "source_doc": doc_id, "docs": set()},
+                            {"role": "mentioned", "evidence": (title or "")[:200], "source_doc": doc_id, "docs": set()},
                         )
                         ent["docs"].add(doc_id)
         # 结构边：按业界通用流向串联已出现环节
@@ -219,9 +218,10 @@ def main() -> int:
             VALUES %s
             ON CONFLICT (node_id, symbol) DO NOTHING
             """,
-            [(nid, sym, v["role"], 0.85 if len(v["docs"]) >= 2 else 0.6,
-              v["evidence"], v["source_doc"])
-             for (nid, sym), v in node_companies.items()],
+            [
+                (nid, sym, v["role"], 0.85 if len(v["docs"]) >= 2 else 0.6, v["evidence"], v["source_doc"])
+                for (nid, sym), v in node_companies.items()
+            ],
             page_size=1000,
         )
     conn.commit()

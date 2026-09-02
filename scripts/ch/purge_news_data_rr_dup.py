@@ -59,26 +59,44 @@ _MUTATION_TIMEOUT_S = 7200
 # news_data 全列清单（system.columns 实测 29 列）——修正重插必须全列显式，
 # 缺列会被 DEFAULT 覆盖造成字段级数据丢失
 FIX_INSERT_COLUMNS: list[str] = [
-    "news_id", "publish_time", "full_publish_time", "title", "content", "author",
-    "keyword", "summary", "source", "source_url", "news_source_id", "recommend_sign",
-    "is_accessory", "file_size", "related_symbol", "short_name", "security_type",
-    "category", "region", "language", "sentiment_score", "sentiment_label",
-    "related_symbols", "related_tags", "raw_data", "data_source", "crawl_time",
-    "quality_flag", "ingest_ts",
+    "news_id",
+    "publish_time",
+    "full_publish_time",
+    "title",
+    "content",
+    "author",
+    "keyword",
+    "summary",
+    "source",
+    "source_url",
+    "news_source_id",
+    "recommend_sign",
+    "is_accessory",
+    "file_size",
+    "related_symbol",
+    "short_name",
+    "security_type",
+    "category",
+    "region",
+    "language",
+    "sentiment_score",
+    "sentiment_label",
+    "related_symbols",
+    "related_tags",
+    "raw_data",
+    "data_source",
+    "crawl_time",
+    "quality_flag",
+    "ingest_ts",
 ]
 
-_SINGLE_ROW_IDS = (
-    f"SELECT news_id FROM {_TBL} WHERE category = 'research_report' "
-    "GROUP BY news_id HAVING count() = 1"
-)
+_SINGLE_ROW_IDS = f"SELECT news_id FROM {_TBL} WHERE category = 'research_report' GROUP BY news_id HAVING count() = 1"
 
 
 def sql_orphan_where() -> str:
     """老批单行谓词（待 +8h 修正重插的行）。"""
     return (
-        "category = 'research_report' "
-        f"AND ingest_ts < toDateTime('{CUTOFF}', 'UTC') "
-        f"AND news_id IN ({_SINGLE_ROW_IDS})"
+        f"category = 'research_report' AND ingest_ts < toDateTime('{CUTOFF}', 'UTC') AND news_id IN ({_SINGLE_ROW_IDS})"
     )
 
 
@@ -90,8 +108,7 @@ def sql_fix_orphan_insert() -> str:
             select_exprs.append("publish_time + INTERVAL 8 HOUR")
         elif col == "full_publish_time":
             select_exprs.append(
-                "if(toUnixTimestamp(full_publish_time) > 86400, "
-                "full_publish_time + INTERVAL 8 HOUR, full_publish_time)"
+                "if(toUnixTimestamp(full_publish_time) > 86400, full_publish_time + INTERVAL 8 HOUR, full_publish_time)"
             )
         elif col == "ingest_ts":
             select_exprs.append("now64(3)")
@@ -123,21 +140,27 @@ def sql_delete_old_rows() -> str:
 def sql_dry_counts() -> list[tuple[str, str]]:
     """对账四件套（dry-run/execute 前共用）。"""
     return [
-        ("dup_ids",
-         f"SELECT count() FROM (SELECT news_id FROM {_TBL} WHERE category = 'research_report' "
-         f"GROUP BY news_id HAVING count() > 1 "
-         f"AND countIf(ingest_ts >= toDateTime('{CUTOFF}', 'UTC')) >= 1)"),
-        ("delete_rows",
-         f"SELECT count() FROM {_TBL} WHERE category = 'research_report' "
-         f"AND ingest_ts < toDateTime('{CUTOFF}', 'UTC') "
-         f"AND news_id IN (SELECT news_id FROM {_TBL} WHERE category = 'research_report' "
-         f"GROUP BY news_id HAVING count() > 1 "
-         f"AND countIf(ingest_ts >= toDateTime('{CUTOFF}', 'UTC')) >= 1)"),
+        (
+            "dup_ids",
+            f"SELECT count() FROM (SELECT news_id FROM {_TBL} WHERE category = 'research_report' "
+            f"GROUP BY news_id HAVING count() > 1 "
+            f"AND countIf(ingest_ts >= toDateTime('{CUTOFF}', 'UTC')) >= 1)",
+        ),
+        (
+            "delete_rows",
+            f"SELECT count() FROM {_TBL} WHERE category = 'research_report' "
+            f"AND ingest_ts < toDateTime('{CUTOFF}', 'UTC') "
+            f"AND news_id IN (SELECT news_id FROM {_TBL} WHERE category = 'research_report' "
+            f"GROUP BY news_id HAVING count() > 1 "
+            f"AND countIf(ingest_ts >= toDateTime('{CUTOFF}', 'UTC')) >= 1)",
+        ),
         ("orphan_fix_rows", f"SELECT count() FROM {_TBL} WHERE {sql_orphan_where()}"),
-        ("stuck_old_only_ids",
-         f"SELECT count() FROM (SELECT news_id FROM {_TBL} WHERE category = 'research_report' "
-         f"GROUP BY news_id HAVING count() > 1 "
-         f"AND countIf(ingest_ts >= toDateTime('{CUTOFF}', 'UTC')) = 0)"),
+        (
+            "stuck_old_only_ids",
+            f"SELECT count() FROM (SELECT news_id FROM {_TBL} WHERE category = 'research_report' "
+            f"GROUP BY news_id HAVING count() > 1 "
+            f"AND countIf(ingest_ts >= toDateTime('{CUTOFF}', 'UTC')) = 0)",
+        ),
     ]
 
 
@@ -183,7 +206,8 @@ def get_client():
         host=get_secret_or_default("CLICKHOUSE_HOST", ""),
         port=int(get_secret_or_default("CLICKHOUSE_PORT", "9000")),
         user=get_secret_or_default("CLICKHOUSE_WRITER_USER") or get_secret_or_default("CLICKHOUSE_USER", "default"),
-        password=get_secret_or_default("CLICKHOUSE_WRITER_PASSWORD") or get_secret_or_default("CLICKHOUSE_PASSWORD", ""),
+        password=get_secret_or_default("CLICKHOUSE_WRITER_PASSWORD")
+        or get_secret_or_default("CLICKHOUSE_PASSWORD", ""),
         send_receive_timeout=_MUTATION_TIMEOUT_S,
     )
 
@@ -195,7 +219,10 @@ def report_counts(client) -> dict[str, int]:
         counts[name] = int(client.execute(sql)[0][0])
     log.info(
         "对账：双版本 id %d 个（待删老行 %d 行）；老批单行待修正 %d 行；全老批残留 id %d 个（不触碰）",
-        counts["dup_ids"], counts["delete_rows"], counts["orphan_fix_rows"], counts["stuck_old_only_ids"],
+        counts["dup_ids"],
+        counts["delete_rows"],
+        counts["orphan_fix_rows"],
+        counts["stuck_old_only_ids"],
     )
     return counts
 
@@ -204,9 +231,7 @@ def wait_mutations(client) -> None:
     """轮询 news_data mutation 完成。"""
     t0 = time.time()
     while True:
-        pending = client.execute(
-            "SELECT count() FROM system.mutations WHERE table = 'news_data' AND is_done = 0"
-        )[0][0]
+        pending = client.execute("SELECT count() FROM system.mutations WHERE table = 'news_data' AND is_done = 0")[0][0]
         if pending == 0:
             log.info("mutation 完成（%.0f 秒）", time.time() - t0)
             return
@@ -233,29 +258,31 @@ def execute_purge(client, counts: dict[str, int]) -> None:
         log.info("无老批单行待修正，跳过重插")
 
     # ② 删老留新（ALTER DELETE mutation，IN 集内联物化）
-    n_ids = int(client.execute(
-        f"SELECT count() FROM (SELECT news_id FROM {_TBL} WHERE category = 'research_report' "
-        f"GROUP BY news_id HAVING count() > 1 "
-        f"AND countIf(ingest_ts >= toDateTime('{CUTOFF}', 'UTC')) >= 1)"
-    )[0][0])
+    n_ids = int(
+        client.execute(
+            f"SELECT count() FROM (SELECT news_id FROM {_TBL} WHERE category = 'research_report' "
+            f"GROUP BY news_id HAVING count() > 1 "
+            f"AND countIf(ingest_ts >= toDateTime('{CUTOFF}', 'UTC')) >= 1)"
+        )[0][0]
+    )
     log.info("删除目标 id 集 %d 个，提交 ALTER DELETE mutation...", n_ids)
     if n_ids > 0:
         client.execute(sql_delete_old_rows())
         wait_mutations(client)
 
     # ③ 自验证：删除目标清零 + 行数/唯一 id 对账
-    stuck = int(client.execute(
-        f"SELECT count() FROM {_TBL} WHERE category = 'research_report' "
-        f"AND ingest_ts < toDateTime('{CUTOFF}', 'UTC') "
-        f"AND news_id IN (SELECT news_id FROM {_TBL} WHERE category = 'research_report' "
-        f"GROUP BY news_id HAVING count() > 1 "
-        f"AND countIf(ingest_ts >= toDateTime('{CUTOFF}', 'UTC')) >= 1)"
-    )[0][0])
+    stuck = int(
+        client.execute(
+            f"SELECT count() FROM {_TBL} WHERE category = 'research_report' "
+            f"AND ingest_ts < toDateTime('{CUTOFF}', 'UTC') "
+            f"AND news_id IN (SELECT news_id FROM {_TBL} WHERE category = 'research_report' "
+            f"GROUP BY news_id HAVING count() > 1 "
+            f"AND countIf(ingest_ts >= toDateTime('{CUTOFF}', 'UTC')) >= 1)"
+        )[0][0]
+    )
     if stuck != 0:
         raise RuntimeError(f"自验证失败：仍有 {stuck} 行待删老批行残留")
-    rows, uniq = client.execute(
-        f"SELECT count(), uniqExact(news_id) FROM {_TBL} WHERE category = 'research_report'"
-    )[0]
+    rows, uniq = client.execute(f"SELECT count(), uniqExact(news_id) FROM {_TBL} WHERE category = 'research_report'")[0]
     log.info("自验证通过：research_report %d 行 / %d 唯一 id（残留差=全老批多行 id，见对账）", rows, uniq)
 
 

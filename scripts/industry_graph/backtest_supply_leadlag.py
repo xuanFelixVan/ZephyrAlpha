@@ -165,8 +165,7 @@ def main() -> int:
         t20 = trail.loc[d]
         # 活跃边：year+1-05-01 <= d <= year+2-04-30
         act = edges[
-            (edges.year.map(lambda y: date(y + 1, 5, 1)) <= d)
-            & (edges.year.map(lambda y: date(y + 2, 4, 30)) >= d)
+            (edges.year.map(lambda y: date(y + 1, 5, 1)) <= d) & (edges.year.map(lambda y: date(y + 2, 4, 30)) >= d)
         ]
         for f, grp in act.groupby("from_symbol"):
             cust = grp.to_symbol.tolist()
@@ -177,8 +176,9 @@ def main() -> int:
                 continue
             wv = np.array(w)[mask.to_numpy()]
             sig = float(np.average(r[mask], weights=wv)) if wv.sum() > 0 else float(r[mask].mean())
-            records.append({"date": d, "symbol": f, "signal": sig,
-                            "fwd_ret": float(fwd[f]), "n_customers": int(mask.sum())})
+            records.append(
+                {"date": d, "symbol": f, "signal": sig, "fwd_ret": float(fwd[f]), "n_customers": int(mask.sum())}
+            )
 
     panel = pd.DataFrame(records)
     if panel.empty:
@@ -192,8 +192,10 @@ def main() -> int:
     scan_df = scan_df.sort_values("ts").reset_index(drop=True)
     detector = LookAheadBiasDetector()
     scan_res = detector.scan(
-        scan_df, feature_columns=["trail20_customer", "n_customers"],
-        label_column="fwd_ret", timestamp_column="ts",
+        scan_df,
+        feature_columns=["trail20_customer", "n_customers"],
+        label_column="fwd_ret",
+        timestamp_column="ts",
     )
     print(f"[BT] 前视自检: is_clean={scan_res.is_clean} issues={scan_res.total_issues}")
     for f_ in scan_res.issues[:5]:

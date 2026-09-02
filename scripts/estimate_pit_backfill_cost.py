@@ -160,7 +160,9 @@ def main(argv: list[str] | None = None) -> int:
     print("价表锚: 2026-08-22 校准（DeepSeek 官网 2026-08-17 峰谷分时 / 百炼 qwen-flash 2026-07-31）")
     print("=" * 100)
     print()
-    print("| 通道 | 模式 | 交易日 | 输入/输出 token（中位） | 单价 in/out（元/百万） | 单日成本（元） | 总成本（元） | 区间 min~max（元） |")
+    print(
+        "| 通道 | 模式 | 交易日 | 输入/输出 token（中位） | 单价 in/out（元/百万） | 单日成本（元） | 总成本（元） | 区间 min~max（元） |"
+    )
     print("|---|---|---|---|---|---|---|---|")
     for mode in modes:
         for channel in ("deepseek-v4-flash", "qwen-flash"):

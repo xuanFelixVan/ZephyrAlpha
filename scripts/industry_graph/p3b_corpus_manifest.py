@@ -62,14 +62,28 @@ def main() -> int:
                 continue
             chars = p.stat().st_size
             total_chars += chars
-            out.write(json.dumps({
-                "doc_id": doc_id, "title": title, "doc_type": dtype, "year": year,
-                "org": org, "bundle": bundle, "parse_status": status,
-                "text_path": str(p), "approx_chars": chars,
-            }, ensure_ascii=False) + "\n")
+            out.write(
+                json.dumps(
+                    {
+                        "doc_id": doc_id,
+                        "title": title,
+                        "doc_type": dtype,
+                        "year": year,
+                        "org": org,
+                        "bundle": bundle,
+                        "parse_status": status,
+                        "text_path": str(p),
+                        "approx_chars": chars,
+                    },
+                    ensure_ascii=False,
+                )
+                + "\n"
+            )
 
-    print(f"[T3] manifest 写入 {len(docs) - n_missing} 条；缺失文件 {n_missing}；"
-          f"语料总字符 {total_chars / 1e6:.1f}M；路径 {MANIFEST}")
+    print(
+        f"[T3] manifest 写入 {len(docs) - n_missing} 条；缺失文件 {n_missing}；"
+        f"语料总字符 {total_chars / 1e6:.1f}M；路径 {MANIFEST}"
+    )
     return 0
 
 

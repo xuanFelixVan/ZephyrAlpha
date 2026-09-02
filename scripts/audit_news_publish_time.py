@@ -266,9 +266,7 @@ def compute_hourly_snap_ratio(records: Sequence[NewsTimeRecord]) -> float:
 
 def count_epoch_missing(records: Sequence[NewsTimeRecord]) -> int:
     """publish_time 为纪元哨兵（发布时间缺失）的条数。"""
-    return sum(
-        1 for rec in records if rec.publish_time is not None and rec.publish_time.year < EPOCH_SENTINEL_YEAR
-    )
+    return sum(1 for rec in records if rec.publish_time is not None and rec.publish_time.year < EPOCH_SENTINEL_YEAR)
 
 
 def compute_multi_source_spread(tsv: str) -> MultiSourceSpread:
@@ -354,12 +352,7 @@ def assess_verdict(
         f"publish→crawl p95 延迟 {p95_lag_sec / 60.0:.1f}min（阈值 1h/24h）",
         f"整点吸附占比 {hourly_snap_ratio:.1%}（阈值 5%）",
     )
-    if (
-        fingerprint_ratio < 0.05
-        and negative_ratio < 0.01
-        and p95_lag_sec < 3600.0
-        and hourly_snap_ratio < 0.05
-    ):
+    if fingerprint_ratio < 0.05 and negative_ratio < 0.01 and p95_lag_sec < 3600.0 and hourly_snap_ratio < 0.05:
         return VERDICT_TRUSTED, reasons
     if fingerprint_ratio < 0.50 and negative_ratio < 0.05 and p95_lag_sec < 86400.0:
         return VERDICT_SUSPECT, reasons
@@ -475,9 +468,7 @@ def render_markdown(report: NewsTimeAuditReport) -> str:
             "（full_publish_time 回填）或按源时间戳回推；过渡期回测 MUST 以 crawl_time 保守口径对齐。"
         )
     elif report.verdict == VERDICT_SUSPECT:
-        lines.append(
-            "> 处置建议：部分记录口径可疑，回测使用时按源分层评估；优先排查 publish≈crawl 指纹高发源。"
-        )
+        lines.append("> 处置建议：部分记录口径可疑，回测使用时按源分层评估；优先排查 publish≈crawl 指纹高发源。")
     elif report.verdict == VERDICT_TRUSTED:
         lines.append("> publish_time 可作为回测事件时间戳使用（抽样口径内未见系统性伪造指纹）。")
     else:
@@ -519,7 +510,10 @@ def _build_argparser() -> argparse.ArgumentParser:
     p.add_argument("--days", type=int, default=DEFAULT_DAYS, help=f"审计窗口天数（默认 {DEFAULT_DAYS}）")
     p.add_argument("--sample", type=int, default=DEFAULT_SAMPLE, help=f"随机抽样条数（默认 {DEFAULT_SAMPLE}）")
     p.add_argument(
-        "--dup-groups", type=int, default=DEFAULT_DUP_GROUPS, help=f"多源比对最大同标题组数（默认 {DEFAULT_DUP_GROUPS}）"
+        "--dup-groups",
+        type=int,
+        default=DEFAULT_DUP_GROUPS,
+        help=f"多源比对最大同标题组数（默认 {DEFAULT_DUP_GROUPS}）",
     )
     p.add_argument("--out", default="", help="报告输出路径（默认 .runtime/ 下固定名）")
     return p

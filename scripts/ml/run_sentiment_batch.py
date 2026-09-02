@@ -202,8 +202,7 @@ def run_batch(
             write_lock = threading.Lock()
             with ThreadPoolExecutor(max_workers=workers) as pool:
                 future_to_news = {
-                    pool.submit(_infer_one, news, chat=chat, config=config, cache=cache): news
-                    for news in todo
+                    pool.submit(_infer_one, news, chat=chat, config=config, cache=cache): news for news in todo
                 }
                 for future in as_completed(future_to_news):
                     news = future_to_news[future]

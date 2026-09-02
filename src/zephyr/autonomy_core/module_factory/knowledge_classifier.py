@@ -84,30 +84,69 @@ CLASSIFIER_TASK_TYPE: Final[str] = "module_factory_classify"
 
 # ── 受控词表（62号文 S2/S3 裁定 + catalogs 落盘 registry 头部注释为真源，本模块为运行时镜像）──
 FACTOR_CLASSES: Final[tuple[str, ...]] = (
-    "value", "quality", "momentum", "volatility", "size",
-    "liquidity", "event", "intraday", "technical", "sentiment",
+    "value",
+    "quality",
+    "momentum",
+    "volatility",
+    "size",
+    "liquidity",
+    "event",
+    "intraday",
+    "technical",
+    "sentiment",
 )
 STRATEGY_CLASSES: Final[tuple[str, ...]] = (
-    "daban", "multifactor", "event_driven", "value_reversal",
-    "momentum_trend", "sector_rotation",
+    "daban",
+    "multifactor",
+    "event_driven",
+    "value_reversal",
+    "momentum_trend",
+    "sector_rotation",
 )
 OTHER_SUBTYPES: Final[tuple[str, ...]] = (
-    "risk_rule", "execution_algo", "data_asset",
-    "technical_indicator", "tool", "knowledge_only",
+    "risk_rule",
+    "execution_algo",
+    "data_asset",
+    "technical_indicator",
+    "tool",
+    "knowledge_only",
 )
 TIMEFRAMES: Final[tuple[str, ...]] = (
-    "1min", "5min", "15min", "30min", "60min", "120min",
-    "daily", "weekly", "monthly",
+    "1min",
+    "5min",
+    "15min",
+    "30min",
+    "60min",
+    "120min",
+    "daily",
+    "weekly",
+    "monthly",
 )
 REGIMES: Final[tuple[str, ...]] = (
-    "trend_up", "trend_down", "ranging", "panic", "euphoria", "high_vol", "low_vol",
+    "trend_up",
+    "trend_down",
+    "ranging",
+    "panic",
+    "euphoria",
+    "high_vol",
+    "low_vol",
 )
 DIRECTIONS: Final[tuple[str, ...]] = ("long", "short", "both", "neutral")
 ENTRY_ROLES: Final[tuple[str, ...]] = (
-    "trigger", "state", "filter", "ranking", "rule", "reference",
+    "trigger",
+    "state",
+    "filter",
+    "ranking",
+    "rule",
+    "reference",
 )
 APPLIES_TO: Final[tuple[str, ...]] = (
-    "stock", "etf", "index", "futures", "sector", "market",
+    "stock",
+    "etf",
+    "index",
+    "futures",
+    "sector",
+    "market",
 )
 
 # v2.0 标签词表运行时镜像（真源=factor_registry.yaml/strategy_registry.yaml 头部注释，
@@ -115,17 +154,79 @@ APPLIES_TO: Final[tuple[str, ...]] = (
 DEFAULT_TAG_VOCAB: Final[frozenset[str]] = frozenset(
     {
         # 两库共有
-        "k线", "事件", "仓位", "信号", "出货", "分时", "动量", "压力", "反转", "吸筹",
-        "周期", "因子", "均值回归", "均线", "基准", "宏观", "尾盘", "形态", "成交", "成本",
-        "打板", "执行", "持续", "指数", "支撑", "放量", "数据", "早盘", "止损", "波动",
-        "流动性", "盘口", "突破", "组合", "绩效", "缠论", "缩量", "缺口", "股票池", "背离",
-        "行业", "规则", "订单", "财报", "质量", "资金", "趋势", "量价", "量化", "震荡",
-        "风控", "龙头",
+        "k线",
+        "事件",
+        "仓位",
+        "信号",
+        "出货",
+        "分时",
+        "动量",
+        "压力",
+        "反转",
+        "吸筹",
+        "周期",
+        "因子",
+        "均值回归",
+        "均线",
+        "基准",
+        "宏观",
+        "尾盘",
+        "形态",
+        "成交",
+        "成本",
+        "打板",
+        "执行",
+        "持续",
+        "指数",
+        "支撑",
+        "放量",
+        "数据",
+        "早盘",
+        "止损",
+        "波动",
+        "流动性",
+        "盘口",
+        "突破",
+        "组合",
+        "绩效",
+        "缠论",
+        "缩量",
+        "缺口",
+        "股票池",
+        "背离",
+        "行业",
+        "规则",
+        "订单",
+        "财报",
+        "质量",
+        "资金",
+        "趋势",
+        "量价",
+        "量化",
+        "震荡",
+        "风控",
+        "龙头",
         # factor_registry 独有
-        "利率", "回撤", "威科夫", "情绪", "指标", "散户", "斐波那契", "期货", "杠杆",
-        "超买", "超跌", "隔夜", "集中度", "高频", "龙虎榜",
+        "利率",
+        "回撤",
+        "威科夫",
+        "情绪",
+        "指标",
+        "散户",
+        "斐波那契",
+        "期货",
+        "杠杆",
+        "超买",
+        "超跌",
+        "隔夜",
+        "集中度",
+        "高频",
+        "龙虎榜",
         # strategy_registry 独有
-        "估值", "多因子", "成长", "行情",
+        "估值",
+        "多因子",
+        "成长",
+        "行情",
     }
 )
 
@@ -198,47 +299,102 @@ class ClassificationPayload(BaseModel):
 
     quality: QualityScores
     target_kind: Literal["factor", "strategy", "other"]
-    factor_class: Literal[
-        "value", "quality", "momentum", "volatility", "size",
-        "liquidity", "event", "intraday", "technical", "sentiment",
-    ] | None = None
-    strategy_class: Literal[
-        "daban", "multifactor", "event_driven", "value_reversal",
-        "momentum_trend", "sector_rotation",
-    ] | None = None
-    other_subtype: Literal[
-        "risk_rule", "execution_algo", "data_asset",
-        "technical_indicator", "tool", "knowledge_only",
-    ] | None = None
-    primary_timeframe: Literal[
-        "1min", "5min", "15min", "30min", "60min", "120min",
-        "daily", "weekly", "monthly",
-    ] | None = None
+    factor_class: (
+        Literal[
+            "value",
+            "quality",
+            "momentum",
+            "volatility",
+            "size",
+            "liquidity",
+            "event",
+            "intraday",
+            "technical",
+            "sentiment",
+        ]
+        | None
+    ) = None
+    strategy_class: (
+        Literal[
+            "daban",
+            "multifactor",
+            "event_driven",
+            "value_reversal",
+            "momentum_trend",
+            "sector_rotation",
+        ]
+        | None
+    ) = None
+    other_subtype: (
+        Literal[
+            "risk_rule",
+            "execution_algo",
+            "data_asset",
+            "technical_indicator",
+            "tool",
+            "knowledge_only",
+        ]
+        | None
+    ) = None
+    primary_timeframe: (
+        Literal[
+            "1min",
+            "5min",
+            "15min",
+            "30min",
+            "60min",
+            "120min",
+            "daily",
+            "weekly",
+            "monthly",
+        ]
+        | None
+    ) = None
     applicable_timeframes: list[
         Literal[
-            "1min", "5min", "15min", "30min", "60min", "120min",
-            "daily", "weekly", "monthly",
+            "1min",
+            "5min",
+            "15min",
+            "30min",
+            "60min",
+            "120min",
+            "daily",
+            "weekly",
+            "monthly",
         ]
     ] = Field(default_factory=list)
     regime_valid: list[
         Literal[
-            "trend_up", "trend_down", "ranging", "panic",
-            "euphoria", "high_vol", "low_vol",
+            "trend_up",
+            "trend_down",
+            "ranging",
+            "panic",
+            "euphoria",
+            "high_vol",
+            "low_vol",
         ]
     ] = Field(default_factory=list)
     regime_invalid: list[
         Literal[
-            "trend_up", "trend_down", "ranging", "panic",
-            "euphoria", "high_vol", "low_vol",
+            "trend_up",
+            "trend_down",
+            "ranging",
+            "panic",
+            "euphoria",
+            "high_vol",
+            "low_vol",
         ]
     ] = Field(default_factory=list)
     direction: Literal["long", "short", "both", "neutral"] = "neutral"
     entry_role: Literal[
-        "trigger", "state", "filter", "ranking", "rule", "reference",
+        "trigger",
+        "state",
+        "filter",
+        "ranking",
+        "rule",
+        "reference",
     ] = "ranking"
-    applies_to: list[
-        Literal["stock", "etf", "index", "futures", "sector", "market"]
-    ] = Field(default_factory=list)
+    applies_to: list[Literal["stock", "etf", "index", "futures", "sector", "market"]] = Field(default_factory=list)
     tags: list[str] = Field(default_factory=list)
     confidence: float = Field(default=0.0, ge=0.0, le=1.0)
     rationale: str = ""
@@ -382,6 +538,7 @@ def _load_taxonomy_boundaries(path: Path) -> str:
     if rules:
         lines.append("裁决优先级：" + "；".join(str(r) for r in rules))
     return "\n".join(lines)
+
 
 _PROMPT_TEMPLATE: Final[str] = """对以下知识片段做分类与多维适用性标注。严格输出 JSON（不要任何额外文字）。
 
@@ -619,9 +776,7 @@ class KnowledgeClassifier:
                 raw_text=raw_text,
             )
         try:
-            payload = ClassificationPayload.model_validate(
-                _normalize_payload_keys(_extract_json(raw_text))
-            )
+            payload = ClassificationPayload.model_validate(_normalize_payload_keys(_extract_json(raw_text)))
         except Exception as exc:  # noqa: BLE001 — 解析/schema 失败 fail-closed（含词表外枚举）
             _log.warning("knowledge_classifier 输出校验失败: %s", exc)
             return ClassificationResult(

@@ -113,7 +113,9 @@ _SERIALIZER_BRANCH = "serializer/commit-queue"  # 专用 worktree 检出的分�
 _WORKTREE_DIR_NAME = "worktree"  # <queue_root>/worktree——任务口径专用目录（08 号文 §4.2 步骤 3）
 _MAX_CAS_RETRIES = 3  # dev CAS 冲突重试上限（66 号 §8：重放产生同内容 commit，CAS 保护不分叉）
 _GIT_TIMEOUT_SECONDS = 120  # 与 worktree_pool.run_git 同款
-_MAIN_WS_SYNC_AUDIT_NAME = "main_workspace_sync.jsonl"  # <queue_root>/ 下——主工作区收敛跳过/异常留痕（66 号 §9.7 受控放松 2026-08-23）
+_MAIN_WS_SYNC_AUDIT_NAME = (
+    "main_workspace_sync.jsonl"  # <queue_root>/ 下——主工作区收敛跳过/异常留痕（66 号 §9.7 受控放松 2026-08-23）
+)
 
 # 队列标记正则：[GW:{sid}:{qid}]——sid 字符集 [A-Za-z0-9._-]（入队校验保证无冒号/右括号）
 _QUEUE_MARKER_RE = re.compile(r"\[GW:[^\]:\s]+:q-[^\]\s]+\]")
@@ -179,9 +181,7 @@ def _run_git(repo_or_wt: Path, args: list[str], *, check: bool = True) -> subpro
                 # 绝无 PIPE 模式的 kill 后 EOF 等待
                 proc.kill()
                 proc.wait(timeout=10)
-                raise RuntimeError(
-                    f"git {' '.join(args)} -> timeout after {_GIT_TIMEOUT_SECONDS}s (killed)"
-                ) from None
+                raise RuntimeError(f"git {' '.join(args)} -> timeout after {_GIT_TIMEOUT_SECONDS}s (killed)") from None
         stdout = Path(out_path).read_bytes().decode("utf-8", errors="replace")
         stderr = Path(err_path).read_bytes().decode("utf-8", errors="replace")
     finally:
@@ -233,7 +233,9 @@ class WorktreeLanding:
         """__init__ implementation."""
         self.repo_root = Path(repo_root).resolve()
         self.queue_root = cq.resolve_queue_root(queue_root)
-        self.worktree_path = Path(worktree_path).resolve() if worktree_path else (self.queue_root / _WORKTREE_DIR_NAME).resolve()
+        self.worktree_path = (
+            Path(worktree_path).resolve() if worktree_path else (self.queue_root / _WORKTREE_DIR_NAME).resolve()
+        )
         self.target_branch = target_branch
         self.serializer_branch = serializer_branch
         self._registry = registry
@@ -312,15 +314,16 @@ class WorktreeLanding:
             safe_rmtree(wt, allowed_prefix=self.queue_root, ignore_errors=True)
             self._git_repo("worktree", "prune")
         wt.parent.mkdir(parents=True, exist_ok=True)
-        branch_exists = self._git_repo(
-            "rev-parse", "--verify", "--quiet", f"refs/heads/{self.serializer_branch}", check=False
-        ).returncode == 0
+        branch_exists = (
+            self._git_repo(
+                "rev-parse", "--verify", "--quiet", f"refs/heads/{self.serializer_branch}", check=False
+            ).returncode
+            == 0
+        )
         if branch_exists:
             self._git_repo("worktree", "add", str(wt), self.serializer_branch)
         else:
-            self._git_repo(
-                "worktree", "add", str(wt), "-b", self.serializer_branch, f"refs/heads/{self.target_branch}"
-            )
+            self._git_repo("worktree", "add", str(wt), "-b", self.serializer_branch, f"refs/heads/{self.target_branch}")
         logger.info("[landing] 专用 worktree 就位: %s (branch=%s)", wt, self.serializer_branch)
         return wt
 
@@ -340,9 +343,7 @@ class WorktreeLanding:
         """返回已落盘 commit sha（未落盘返回 None）——重放不双落的核心。"""
         landed = item.get("landed_id") or ""
         if landed:
-            r = self._git_repo(
-                "merge-base", "--is-ancestor", landed, f"refs/heads/{self.target_branch}", check=False
-            )
+            r = self._git_repo("merge-base", "--is-ancestor", landed, f"refs/heads/{self.target_branch}", check=False)
             if r.returncode == 0:
                 return landed  # done/ 记录 + is-ancestor 双证（66 号 §8 原文判定）
         marker = queue_marker(item.get("session_id", ""), item.get("qid", ""))
@@ -420,13 +421,9 @@ class WorktreeLanding:
         主工作区文件由 ``_converge_main_workspace`` 受限收敛（仅快进干净文件），
         脏文件陈旧由「会话 worktree 独立工作区 + 死信重新入队」机制覆盖。
         """
-        r = self._git_repo(
-            "update-ref", f"refs/heads/{self.target_branch}", new_sha, old_sha, check=False
-        )
+        r = self._git_repo("update-ref", f"refs/heads/{self.target_branch}", new_sha, old_sha, check=False)
         if r.returncode != 0:
-            raise CasConflict(
-                f"dev CAS 推进失败（期望 {old_sha[:12]}）: {(r.stderr or r.stdout).strip()[:300]}"
-            )
+            raise CasConflict(f"dev CAS 推进失败（期望 {old_sha[:12]}）: {(r.stderr or r.stdout).strip()[:300]}")
 
     # ------------------------------------------------------------------
     # 主工作区受限收敛（2026-08-23 裁定：66 号 §9.7 受控放松）
@@ -512,9 +509,7 @@ class WorktreeLanding:
             if not rel:
                 continue
             try:
-                action = self._converge_one(
-                    rel, old_sha, new_sha, entry.get("action") == "delete"
-                )
+                action = self._converge_one(rel, old_sha, new_sha, entry.get("action") == "delete")
             except Exception as exc:  # noqa: BLE001 — 收敛 fail-open（landing 已成功）
                 action = "error"
                 logger.warning("[landing] 主工作区收敛异常 qid=%s %s: %s", qid, rel, exc)
@@ -541,7 +536,9 @@ class WorktreeLanding:
                 logger.warning("[landing] 主工作区收敛审计写入失败（non-blocking）: %s", exc)
             logger.warning(
                 "[landing] qid=%s 主工作区收敛存在跳过项（留痕 %d 条）: %s",
-                qid, len(audit_records), counts,
+                qid,
+                len(audit_records),
+                counts,
             )
         else:
             logger.info("[landing] qid=%s 主工作区收敛完成: %s", qid, counts)
@@ -653,7 +650,9 @@ class WorktreeLanding:
                     )
                 logger.warning(
                     "[landing] qid=%s CAS 竞态（无同路径冲突），重同步重试 %d/%d",
-                    qid, attempt, self._max_cas_retries,
+                    qid,
+                    attempt,
+                    self._max_cas_retries,
                 )
                 continue
             logger.info("[landing] qid=%s 落盘完成 commit=%s", qid, result.commit_hash[:12])
@@ -746,8 +745,13 @@ def reroute_auto_commit_to_queue(gateway, session_id: str, files: list[str], mes
     )
     bootstrap_drain_with_landing(repo_root=gateway.project_root)
     qid = item["qid"]
-    logger.info("[reroute] _commit_auto 改道入队: qid=%s session=%s files=%d deletes=%d",
-                qid, session_id, len(payload), len(deletes))
+    logger.info(
+        "[reroute] _commit_auto 改道入队: qid=%s session=%s files=%d deletes=%d",
+        qid,
+        session_id,
+        len(payload),
+        len(deletes),
+    )
     return CommitResult(
         status=CommitStatus.OK,
         message=f"rerouted to commit queue: {qid}（快照入袋即完成，Serializer 异步落盘）",

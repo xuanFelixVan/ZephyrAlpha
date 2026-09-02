@@ -71,9 +71,7 @@ _log = logging.getLogger(__name__)
 
 MAPPER_TASK_TYPE: Final[str] = "module_factory_schema_plan"
 
-DEFAULT_CATALOGS_DIR: Final[Path] = (
-    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
-)
+DEFAULT_CATALOGS_DIR: Final[Path] = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
 _FACTOR_REGISTRY_FILE: Final[str] = "factor_registry.yaml"
 _STRATEGY_REGISTRY_FILE: Final[str] = "strategy_registry.yaml"
 
@@ -284,9 +282,7 @@ def load_registry_entries(catalogs_dir: Path | str | None = None) -> tuple[Regis
 
 
 # ── schema_plan LLM 生成 prompt（13号文 §3.3 ① 语义抽象）──
-_SCHEMA_PLAN_SYSTEM: Final = (
-    "你是量化因子/策略语义抽象器。你只输出一个 JSON 对象，不输出任何其他文字。"
-)
+_SCHEMA_PLAN_SYSTEM: Final = "你是量化因子/策略语义抽象器。你只输出一个 JSON 对象，不输出任何其他文字。"
 _SCHEMA_PLAN_PROMPT: Final = """把以下已分类知识抽象为 schema_plan 五字段语义计划（AlphaSchema 式，
 先语义后实现：同一语义可换实现公式，同一公式可回溯经济含义）。
 
@@ -369,8 +365,7 @@ class ModuleMapper:
         t = thresholds
         if not (0.0 < t.combination < t.variant < t.duplicate < 1.0):
             raise ModuleMapperError(
-                f"阈值须满足 0<combination<variant<duplicate<1: "
-                f"{t.combination}/{t.variant}/{t.duplicate}"
+                f"阈值须满足 0<combination<variant<duplicate<1: {t.combination}/{t.variant}/{t.duplicate}"
             )
         if t.embedding_weight <= 0 or t.fts_weight <= 0:
             raise ModuleMapperError("通道权重必须为正")
@@ -413,9 +408,7 @@ class ModuleMapper:
                 elif isinstance(item, Mapping):
                     registry = str(item.get("registry") or "").strip()
                     if not registry:
-                        registry = (
-                            "factor_registry" if item.get("factor_id") else "strategy_registry"
-                        )
+                        registry = "factor_registry" if item.get("factor_id") else "strategy_registry"
                     docs.append(_normalize_entry(item, registry))
                 else:
                     raise ModuleMapperError(f"语料条目类型不支持: {type(item).__name__}")
@@ -426,8 +419,7 @@ class ModuleMapper:
         if self._fts_conn is None:
             self._fts_conn = sqlite3.connect(":memory:")
         self._fts_conn.execute(
-            f"CREATE VIRTUAL TABLE IF NOT EXISTS {_FTS_TABLE} "
-            "USING fts5(entry_id UNINDEXED, content)"
+            f"CREATE VIRTUAL TABLE IF NOT EXISTS {_FTS_TABLE} USING fts5(entry_id UNINDEXED, content)"
         )
         self._fts_conn.execute(f"DELETE FROM {_FTS_TABLE}")
         self._fts_conn.executemany(
@@ -453,9 +445,7 @@ class ModuleMapper:
 
     # ── ① 语义抽象 ──
 
-    def _generate_schema_plan(
-        self, item: KnowledgeItem, classification: Any
-    ) -> dict[str, str]:
+    def _generate_schema_plan(self, item: KnowledgeItem, classification: Any) -> dict[str, str]:
         cls = classification.classification
         if cls.target_kind == "factor":
             kind_desc = f"factor/{cls.factor_class}"
@@ -497,8 +487,7 @@ class ModuleMapper:
             return {}
         query = " OR ".join(sorted(q_tokens))
         rows = self._fts_conn.execute(
-            f"SELECT entry_id FROM {_FTS_TABLE} "
-            f"WHERE {_FTS_TABLE} MATCH ? LIMIT ?",
+            f"SELECT entry_id FROM {_FTS_TABLE} WHERE {_FTS_TABLE} MATCH ? LIMIT ?",
             (query, _FTS_CANDIDATE_LIMIT),
         ).fetchall()
         matched = {str(r[0]) for r in rows}
@@ -521,8 +510,7 @@ class ModuleMapper:
         if embeddings is not None and self._embedder is not None:
             try:
                 query_vec = tuple(
-                    float(x)
-                    for x in self._embedder.embed(query_text[:_EMBED_TEXT_MAX_CHARS], _EMBEDDING_COLLECTION)
+                    float(x) for x in self._embedder.embed(query_text[:_EMBED_TEXT_MAX_CHARS], _EMBEDDING_COLLECTION)
                 )
             except Exception as exc:  # noqa: BLE001 — 查询期 embedding 失败降级
                 _log.warning("module_mapper 查询向量化失败，本次降级 FTS5-only: %s", exc)
@@ -693,9 +681,7 @@ class ModuleMapper:
         }
 
     @staticmethod
-    def _build_code_skeleton(
-        kind: str, components: tuple[MatchCandidate, ...]
-    ) -> dict[str, Any]:
+    def _build_code_skeleton(kind: str, components: tuple[MatchCandidate, ...]) -> dict[str, Any]:
         if kind == "strategy":
             return {
                 "form": "strategy_template",
@@ -723,8 +709,7 @@ class ModuleMapper:
             skeleton["form"] = "combination"
             skeleton["components"] = [c.entry_id for c in components]
             skeleton["note"] = (
-                "多条目组合：对应 62号文 combination_strategy 字段"
-                "（regime_detector + allocation_weights），人工组装"
+                "多条目组合：对应 62号文 combination_strategy 字段（regime_detector + allocation_weights），人工组装"
             )
         return skeleton
 
@@ -744,9 +729,7 @@ class ModuleMapper:
         schema_plan 缺省时经 LLM 生成；生成/校验失败 -> ModuleSpec(verdict="error")。
         """
         if classification is None or getattr(classification, "verdict", None) != "classified":
-            raise ModuleMapperError(
-                "仅接受 verdict=classified 的分类结果（REJECT/错误知识不进映射，13号文 §3.1）"
-            )
+            raise ModuleMapperError("仅接受 verdict=classified 的分类结果（REJECT/错误知识不进映射，13号文 §3.1）")
         cls = classification.classification
         if cls is None:
             raise ModuleMapperError("分类结果缺 classification 载荷（fail-closed）")
@@ -817,9 +800,7 @@ class ModuleMapper:
         # ③ 四选一裁决
         verdict, parent, components = self._decide(candidates)
 
-        target_registry = (
-            "factor_registry" if cls.target_kind == "factor" else "strategy_registry"
-        )
+        target_registry = "factor_registry" if cls.target_kind == "factor" else "strategy_registry"
         rationale_parts: list[str] = [
             f"裁决={verdict}（阈值 duplicate>={self._thresholds.duplicate} / "
             f"variant>={self._thresholds.variant} / combination>={self._thresholds.combination}"
@@ -827,8 +808,7 @@ class ModuleMapper:
         ]
         if candidates:
             top_desc = "; ".join(
-                f"{c.entry_id}({c.registry}, score={c.score}, retired={c.retired})"
-                for c in candidates[:3]
+                f"{c.entry_id}({c.registry}, score={c.score}, retired={c.retired})" for c in candidates[:3]
             )
             rationale_parts.append(f"top 候选: {top_desc}")
         else:
@@ -838,9 +818,7 @@ class ModuleMapper:
         if verdict == "reject_duplicate" and parent is not None:
             rationale_parts.append(f"重复于 {parent.entry_id}——拦截重复造轮子（13号文 §3.3）")
         if verdict == "combination":
-            rationale_parts.append(
-                f"组合成分: {', '.join(c.entry_id for c in components)}"
-            )
+            rationale_parts.append(f"组合成分: {', '.join(c.entry_id for c in components)}")
         graveyard = [c for c in candidates if c.retired]
         if graveyard:
             rationale_parts.append(

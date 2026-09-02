@@ -66,7 +66,9 @@ _HOT_PREFIXES: tuple[str, ...] = (
 )
 
 # 4663 Access Mask 位（写删语义判定）
-_ACCESS_WRITE_BITS = 0x0002 | 0x0004 | 0x0008 | 0x0010 | 0x0020 | 0x0100  # WriteData/AddFile/AppendData/AddSubdir/WriteEA/WriteAttributes
+_ACCESS_WRITE_BITS = (
+    0x0002 | 0x0004 | 0x0008 | 0x0010 | 0x0020 | 0x0100
+)  # WriteData/AddFile/AppendData/AddSubdir/WriteEA/WriteAttributes
 _ACCESS_DELETE_BITS = 0x10000 | 0x100000  # DELETE | WRITE_DAC 族粗判（Delete 单独位 0x10000）
 
 

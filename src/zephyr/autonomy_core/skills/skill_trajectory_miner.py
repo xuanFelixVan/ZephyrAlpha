@@ -351,15 +351,11 @@ def validate_skill_md(
     if "Discovery" in sections:
         tokens["discovery"] = estimate_tokens(sections["Discovery"])
         if tokens["discovery"] > discovery_budget:
-            issues.append(
-                f"Discovery 超 token 预算: {tokens['discovery']} > {discovery_budget}"
-            )
+            issues.append(f"Discovery 超 token 预算: {tokens['discovery']} > {discovery_budget}")
     if "Activation" in sections:
         tokens["activation"] = estimate_tokens(sections["Activation"])
         if tokens["activation"] > activation_budget:
-            issues.append(
-                f"Activation 超 token 预算: {tokens['activation']} > {activation_budget}"
-            )
+            issues.append(f"Activation 超 token 预算: {tokens['activation']} > {activation_budget}")
     return {"valid": not issues, "issues": issues, "tokens": tokens}
 
 
@@ -472,9 +468,7 @@ class SkillTrajectoryMiner:
         rejected: list[dict[str, Any]] = []
         for cluster in clusters:
             draft = self._induce_draft(cluster)
-            hit = self._fingerprint_store.find_similar(
-                draft["canonical_text"], self._similarity_threshold
-            )
+            hit = self._fingerprint_store.find_similar(draft["canonical_text"], self._similarity_threshold)
             if hit is not None:
                 entry, sim = hit
                 rejected.append(
@@ -518,9 +512,7 @@ class SkillTrajectoryMiner:
         manifest = self._load_manifest()
         for d in manifest.get("drafts", []):
             if d["draft_id"] == draft_id:
-                return self._fingerprint_store.add(
-                    name=d["name"], text=d["canonical_text"], reason=reason
-                )
+                return self._fingerprint_store.add(name=d["name"], text=d["canonical_text"], reason=reason)
         raise SkillTrajectoryMinerError(
             f"草稿不存在（无法退役）: {draft_id}",
             details={"draft_id": draft_id, "manifest": str(self._output_dir / "manifest.json")},
@@ -559,9 +551,7 @@ class SkillTrajectoryMiner:
         steps = list(dict.fromkeys(s for r in records for s in r.steps))  # 保序去重
         statements = [r.statement.strip() for r in records]
 
-        canonical_text = " ".join(
-            [" ".join(common_tags), " ".join(statements), " ".join(steps), regime]
-        )
+        canonical_text = " ".join([" ".join(common_tags), " ".join(statements), " ".join(steps), regime])
         fingerprint = _fingerprint_of(canonical_text)
         draft_id = f"SKILL-DRAFT-{fingerprint[:8].upper()}"
         name = self._draft_name(common_tags, fingerprint)
@@ -613,22 +603,22 @@ class SkillTrajectoryMiner:
             )
         )
         return f"""---
-skill_id: {draft['draft_id']}
-name: {draft['name']}
-description: {draft['description']}
+skill_id: {draft["draft_id"]}
+name: {draft["name"]}
+description: {draft["description"]}
 status: {DRAFT_STATUS}
 generated_by: skill_trajectory_miner
 generated_at: {_now_iso()}
 version: 0.1.0
 ---
 
-# {draft['name']}
+# {draft["name"]}
 
 > ⚠️ 未验证草稿——禁止生产加载。入库须过沙箱测试→回测验证门→人工门（11号文 §3.2/§4.4）。
 
 ## Discovery
 <!-- L1 检索级（~100-200 tokens）：name + description + triggers + outputs -->
-- description: {draft['description']}
+- description: {draft["description"]}
 - triggers: {triggers}
 - outputs:
 {outputs}
@@ -650,7 +640,7 @@ version: 0.1.0
 - _待人工门补全_
 
 ---
-_由 SkillTrajectoryMiner 归纳生成；来源记录：{', '.join(draft['source_records'])}_
+_由 SkillTrajectoryMiner 归纳生成；来源记录：{", ".join(draft["source_records"])}_
 """
 
     def _write_manifest(self, drafts: list[dict[str, Any]], rejected: list[dict[str, Any]]) -> None:

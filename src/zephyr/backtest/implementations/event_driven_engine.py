@@ -180,7 +180,7 @@ class EventDrivenEngine(BacktestEngineBase):
             slippage_bps=config.slippage_bps,
         )
         self._results: list[BacktestResult] = []
-        self._last_portfolio = None   # run_tick 后填充（BTRUN 时序落盘用）
+        self._last_portfolio = None  # run_tick 后填充（BTRUN 时序落盘用）
 
     def run(
         self,

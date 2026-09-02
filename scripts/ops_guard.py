@@ -1163,7 +1163,6 @@ def _enforce_pytest_never_delete_protected(op: str, rel: str, path_str: str, *, 
         return
 
 
-
 def _raise_or_observe(verdict: DeleteVerdict, cmd_repr: str, message: str) -> bool:
     """阻断统一出口（观测模式软化）。
 
@@ -1302,11 +1301,7 @@ def _inprocess_judge(op: str, path: object, *, recursive: bool) -> None:
             # 授权通过的保护区目标须如实标注——否则批5c 分级落盘把"授权删 src"
             # 当非敏感区跳过（8-23 型事件取证面缺口，test_graded_audit_sensitive 钉）
             # #ARCH-279 翻硬拦：删除授权唯一通道=FORCE 人工显式（GATEWAY 已退出删除域）。
-            reason=(
-                "授权通过（FORCE）"
-                if any(_is_under_prefix(rel, pp) for pp in PROTECTED_PREFIXES)
-                else "非保护区"
-            ),
+            reason=("授权通过（FORCE）" if any(_is_under_prefix(rel, pp) for pp in PROTECTED_PREFIXES) else "非保护区"),
             primitive=f"inprocess_{op}",
             targets=[rel],
             is_recursive=recursive,

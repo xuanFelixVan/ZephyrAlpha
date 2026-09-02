@@ -241,7 +241,14 @@ def main() -> None:
                     sys.exit(2)
                 total_rows += len(batch)
                 rate = idx / (time.time() - t0)
-                log.info("进度 %d/%d 只（%.1f 只/秒），本批写入 %d 行，累计 %d 行", idx, len(todo), rate, len(batch), total_rows)
+                log.info(
+                    "进度 %d/%d 只（%.1f 只/秒），本批写入 %d 行，累计 %d 行",
+                    idx,
+                    len(todo),
+                    rate,
+                    len(batch),
+                    total_rows,
+                )
                 batch = []
             time.sleep(args.sleep)
     log.info("完成：%d 只 → %d 行（耗时 %.0f 秒）", len(todo), total_rows, time.time() - t0)

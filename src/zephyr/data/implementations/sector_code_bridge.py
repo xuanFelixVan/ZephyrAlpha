@@ -305,15 +305,45 @@ _BOARD_INDEX: Final[dict[str, TdxIndustryBoard]] = {b.code: b for b in TDX_INDUS
 SECTOR_881_TO_880: Final[tuple[SectorCodeBridgeRow, ...]] = tuple(
     SectorCodeBridgeRow(code_881=c1, name_881=n1, code_880=c8, match_kind=k, note=note)
     for c1, n1, c8, k, note in (
-        ("881101", "种植业与林业", "880361", "semantic", "TDX 种植业/林业分列，主映射种植业（成分权重主导），林业腿 880363 未配"),
-        ("881102", "养殖业", "880360", "aggregate", "TDX 无畜牧单列板块，上卷农林牧渔聚合（水产腿 T030202 含于该聚合）"),
-        ("881103", "农产品加工", "880375", "aggregate", "粮油糖料加工就近食品（与 881134 同目标 SUM）；饲料腿 T030204 未单列"),
-        ("881105", "煤炭开采加工", "880301", "aggregate", "THS 含焦炭洗选，对齐 TDX T0101 全族聚合（880302 仅开采缺焦炭腿）"),
+        (
+            "881101",
+            "种植业与林业",
+            "880361",
+            "semantic",
+            "TDX 种植业/林业分列，主映射种植业（成分权重主导），林业腿 880363 未配",
+        ),
+        (
+            "881102",
+            "养殖业",
+            "880360",
+            "aggregate",
+            "TDX 无畜牧单列板块，上卷农林牧渔聚合（水产腿 T030202 含于该聚合）",
+        ),
+        (
+            "881103",
+            "农产品加工",
+            "880375",
+            "aggregate",
+            "粮油糖料加工就近食品（与 881134 同目标 SUM）；饲料腿 T030204 未单列",
+        ),
+        (
+            "881105",
+            "煤炭开采加工",
+            "880301",
+            "aggregate",
+            "THS 含焦炭洗选，对齐 TDX T0101 全族聚合（880302 仅开采缺焦炭腿）",
+        ),
         ("881107", "油气开采及服务", "880311", "semantic", "石油开采（油服腿随开采口径 T010301）"),
         ("881108", "化学原料", "880336", "semantic", "化工原料 T020401（与 881172 同目标 SUM）"),
         ("881109", "化学制品", "880335", "aggregate", "TDX 化学制品粒度粗，上卷 T0204 化工聚合"),
         ("881112", "钢铁", "880318", "exact", ""),
-        ("881114", "金属新材料", "880324", "aggregate", "TDX 无新材料板块，上卷 T0202 有色聚合（与 881168 同目标 SUM）"),
+        (
+            "881114",
+            "金属新材料",
+            "880324",
+            "aggregate",
+            "TDX 无新材料板块，上卷 T0202 有色聚合（与 881168 同目标 SUM）",
+        ),
         ("881115", "建筑材料", "880344", "semantic", "建材 T0206 聚合（水泥/玻璃/陶瓷/其他建材）"),
         ("881116", "建筑装饰", "880476", "aggregate", "THS 含房建/基建/专业工程，对齐 T1101 建筑聚合"),
         ("881117", "通用设备", "880437", "semantic", "通用机械 T0704"),
@@ -591,9 +621,7 @@ class SectorCodeBridge:
     """881xxx→880xxx 桥接适配器（映射可注入/CSV 可换，默认 SSoT 90 行）。"""
 
     def __init__(self, mapping: Iterable[SectorCodeBridgeRow] | None = None) -> None:
-        self._mapping: tuple[SectorCodeBridgeRow, ...] = (
-            tuple(mapping) if mapping is not None else SECTOR_881_TO_880
-        )
+        self._mapping: tuple[SectorCodeBridgeRow, ...] = tuple(mapping) if mapping is not None else SECTOR_881_TO_880
 
     @classmethod
     def from_csv(cls, path: str | Path) -> SectorCodeBridge:

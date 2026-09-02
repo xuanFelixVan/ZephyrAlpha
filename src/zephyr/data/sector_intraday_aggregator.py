@@ -202,9 +202,7 @@ class SectorIntradayBoard:
     n_sectors: int = 0  # 参与聚合的板块数（剔除市场统计指数后）
     inflow_top: list[SectorFlowRow] = field(default_factory=list)  # 资金榜（成交额增量代理口径）
     speed_top: list[SectorFlowRow] = field(default_factory=list)  # 涨速榜
-    breadth: SectorBreadth = field(
-        default_factory=lambda: SectorBreadth(0, 0, 0.0, 0, 0, 0, 0, 0)
-    )
+    breadth: SectorBreadth = field(default_factory=lambda: SectorBreadth(0, 0, 0.0, 0, 0, 0, 0, 0))
     new_open_boards: list[str] = field(default_factory=list)  # 新开板清单（新晋入榜，对照上一周期）
     rows: list[SectorFlowRow] = field(default_factory=list)  # 全量聚合行（下钻/再排名用）
     degraded: bool = False  # 输入为空/全部非法 → True（结果仅供观测不可用于决策）

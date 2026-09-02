@@ -48,8 +48,8 @@ def _ts_key(ts) -> str:
     """时间戳键：日级→YYYY-MM-DD；分钟级→YYYY-MM-DD HH:MM（mode=minute nav 索引）。"""
     s = str(ts)
     if len(s) >= 16 and s[10] == " " and not (s[11:16] == "00:00"):
-        return s[:16]   # 分钟 bar（开盘时段非 00:00）
-    return s[:10]       # 日级（或恰好 00:00 的边界值归日级显示）
+        return s[:16]  # 分钟 bar（开盘时段非 00:00）
+    return s[:10]  # 日级（或恰好 00:00 的边界值归日级显示）
 
 
 def _collect_timeseries(runner, data, signals, config, engine) -> dict:
@@ -137,8 +137,13 @@ def _sink_strategy_signals(signals, strategy_id: str, run_id: str, factor_ids) -
                     "score": float(w),
                     "confidence": (float(w) / max_w) if max_w > 0 else 0.0,
                     "rank_in_universe": rank_i,
-                    "meta": {"run_id": run_id, "weight": float(w), "prev_weight": prev_w,
-                             "factors": list(factor_ids), "as_of": trade_date},
+                    "meta": {
+                        "run_id": run_id,
+                        "weight": float(w),
+                        "prev_weight": prev_w,
+                        "factors": list(factor_ids),
+                        "as_of": trade_date,
+                    },
                 }
             )
         if w_prev is not None:  # 最近一次调仓中被清零的 → sell
@@ -154,8 +159,13 @@ def _sink_strategy_signals(signals, strategy_id: str, run_id: str, factor_ids) -
                             "score": 0.0,
                             "confidence": (float(pw) / max_w) if max_w > 0 else 0.5,
                             "rank_in_universe": 0,
-                            "meta": {"run_id": run_id, "weight": 0.0, "prev_weight": float(pw),
-                                     "factors": list(factor_ids), "as_of": trade_date},
+                            "meta": {
+                                "run_id": run_id,
+                                "weight": 0.0,
+                                "prev_weight": float(pw),
+                                "factors": list(factor_ids),
+                                "as_of": trade_date,
+                            },
                         }
                     )
         n = write_signals(rows, data_source="btrun")
@@ -190,7 +200,7 @@ def _load_minute_history(symbols: list[str], start: str, end: str):
     df = pd.DataFrame(rows, columns=["symbol", "trade_time", "open", "high", "low", "close", "volume", "amount"])
     for c in ("open", "high", "low", "close", "volume", "amount"):
         df[c] = df[c].astype(float)
-    df["trade_time"] = pd.to_datetime(df["trade_time"]).dt.tz_localize(None)   # 剥时区保墙钟
+    df["trade_time"] = pd.to_datetime(df["trade_time"]).dt.tz_localize(None)  # 剥时区保墙钟
     df = df.drop_duplicates(subset=["symbol", "trade_time"], keep="last")
     return df.set_index(["symbol", "trade_time"]).sort_index()
 
@@ -302,7 +312,7 @@ def run_one(
             end=end,
             config=config,
             provider=ChTickProvider(),
-            weight_panel_data=(data, signals),   # 前扩面板注入（内部不再用原窗口重建）
+            weight_panel_data=(data, signals),  # 前扩面板注入（内部不再用原窗口重建）
         )
         if getattr(engine_result, "idempotency_key", "bt-empty") == "bt-empty":
             return {"ok": False, "error": "tick engine returned empty result (provider 无数据?)"}
@@ -405,7 +415,12 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--max-single", type=float, default=0.10)
     p.add_argument("--capital", type=float, default=1_000_000.0)
     p.add_argument("--pit-shift", type=int, default=1)
-    p.add_argument("--mode", default="vectorized", choices=["vectorized", "minute", "tick"], help="vectorized=日频向量化 / minute=分钟级（kline_1min 价格路径）/ tick=事件驱动完全仿真（逐tick回放+5档撮合）")
+    p.add_argument(
+        "--mode",
+        default="vectorized",
+        choices=["vectorized", "minute", "tick"],
+        help="vectorized=日频向量化 / minute=分钟级（kline_1min 价格路径）/ tick=事件驱动完全仿真（逐tick回放+5档撮合）",
+    )
     p.add_argument("--list-strategies", action="store_true")
     p.add_argument("--self-check", action="store_true")
     args = p.parse_args(argv)

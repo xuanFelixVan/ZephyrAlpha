@@ -35,9 +35,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 from zephyr.data import ch_writer
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 
-OUT_CSV = os.path.join(
-    os.path.dirname(__file__), "..", "..", ".runtime", "industry_graph", "theme_linkage_daily.csv"
-)
+OUT_CSV = os.path.join(os.path.dirname(__file__), "..", "..", ".runtime", "industry_graph", "theme_linkage_daily.csv")
 _LOOKBACK_DAYS = 20
 _MAX_SYMS_PER_CHAIN = 30
 
@@ -78,9 +76,9 @@ def main() -> int:
     syms = sorted(maps.symbol.unique())
     print(f"[LINK] 链 {len(chains)} 条, 覆盖公司 {len(syms)} 家")
 
-    latest = ch_query_df(
-        "SELECT max(trade_date) FROM c1_market.kline_daily WHERE market_type='A_share'", ["d"]
-    )["d"].iloc[0]
+    latest = ch_query_df("SELECT max(trade_date) FROM c1_market.kline_daily WHERE market_type='A_share'", ["d"])[
+        "d"
+    ].iloc[0]
     print(f"[LINK] 最新交易日: {latest}")
 
     frames = []
@@ -100,7 +98,9 @@ def main() -> int:
     px["trade_date"] = pd.to_datetime(px["trade_date"])
     px["adj_close"] = px["adj_close"].astype(float)
     px["pct_change"] = px["pct_change"].astype(float)
-    print(f"[LINK] 价格数据 {px.shape[0]} 行, 覆盖 {px.symbol.nunique()} 股, 日期 {px.trade_date.min().date()}~{px.trade_date.max().date()}")
+    print(
+        f"[LINK] 价格数据 {px.shape[0]} 行, 覆盖 {px.symbol.nunique()} 股, 日期 {px.trade_date.min().date()}~{px.trade_date.max().date()}"
+    )
 
     # 最新日可能处于入库中途（覆盖不足），取覆盖>=80%峰值的最近完整交易日
     coverage = px.groupby("trade_date").symbol.nunique()
@@ -113,7 +113,7 @@ def main() -> int:
 
     rows = []
     for chain, grp in maps.groupby("chain"):
-        s = [x for x in grp.symbol.unique() if x in rets.columns][: _MAX_SYMS_PER_CHAIN]
+        s = [x for x in grp.symbol.unique() if x in rets.columns][:_MAX_SYMS_PER_CHAIN]
         if len(s) < 3:
             continue
         day = today.reindex(s).dropna()
@@ -127,17 +127,19 @@ def main() -> int:
         if day.empty:
             continue
         top_sym = day.idxmax()
-        rows.append({
-            "chain": chain,
-            "n_companies": len(s),
-            "up_ratio": float((day > 0).mean()),
-            "mean_pct": float(day.mean()),
-            "median_pct": float(day.median()),
-            "top_symbol": top_sym,
-            "top_pct": float(day.max()),
-            "corr20": corr,
-            "trade_date": str(full_date.date()),
-        })
+        rows.append(
+            {
+                "chain": chain,
+                "n_companies": len(s),
+                "up_ratio": float((day > 0).mean()),
+                "mean_pct": float(day.mean()),
+                "median_pct": float(day.median()),
+                "top_symbol": top_sym,
+                "top_pct": float(day.max()),
+                "corr20": corr,
+                "trade_date": str(full_date.date()),
+            }
+        )
     out = pd.DataFrame(rows)
     if out.empty:
         print("[ERROR] 无有效链统计（映射与行情无交集）")
@@ -148,7 +150,9 @@ def main() -> int:
 
     print(f"\n===== 联动 TOP10（{full_date.date()}）=====")
     for _, r in out.head(10).iterrows():
-        print(f"  {r.chain}: 涨占比 {r.up_ratio:.0%} 均涨 {r.mean_pct:+.2f}% 联动 {r.corr20:.2f} 领涨 {r.top_symbol} {r.top_pct:+.2f}%")
+        print(
+            f"  {r.chain}: 涨占比 {r.up_ratio:.0%} 均涨 {r.mean_pct:+.2f}% 联动 {r.corr20:.2f} 领涨 {r.top_symbol} {r.top_pct:+.2f}%"
+        )
     print(f"\n===== 联动 BOT5 =====")
     for _, r in out.tail(5).iterrows():
         print(f"  {r.chain}: 涨占比 {r.up_ratio:.0%} 均涨 {r.mean_pct:+.2f}% 联动 {r.corr20:.2f}")

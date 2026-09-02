@@ -174,20 +174,25 @@ DDL_STATEMENTS = [
 
 # 裁定#ARCH-DEPGRAPH_ACCESS_CONTROL: reader 只读 / writer 读写
 _ALL_TABLES = (
-    "ig_chain", "ig_node", "ig_edge", "ig_node_company",
-    "ig_document", "ig_company_edge", "ig_company_metric",
+    "ig_chain",
+    "ig_node",
+    "ig_edge",
+    "ig_node_company",
+    "ig_document",
+    "ig_company_edge",
+    "ig_company_metric",
 )
-GRANT_STATEMENTS = [
-    f"GRANT SELECT ON {t} TO depgraph_reader" for t in _ALL_TABLES
-] + [
-    f"GRANT SELECT, INSERT, UPDATE, DELETE ON {t} TO depgraph_writer" for t in _ALL_TABLES
-] + [
-    # BIGSERIAL 序列需 USAGE 才能插入
-    "GRANT USAGE, SELECT ON SEQUENCE ig_edge_edge_id_seq TO depgraph_writer",
-    "GRANT USAGE, SELECT ON SEQUENCE ig_node_company_id_seq TO depgraph_writer",
-    "GRANT USAGE, SELECT ON SEQUENCE ig_company_edge_edge_id_seq TO depgraph_writer",
-    "GRANT USAGE, SELECT ON SEQUENCE ig_company_metric_id_seq TO depgraph_writer",
-]
+GRANT_STATEMENTS = (
+    [f"GRANT SELECT ON {t} TO depgraph_reader" for t in _ALL_TABLES]
+    + [f"GRANT SELECT, INSERT, UPDATE, DELETE ON {t} TO depgraph_writer" for t in _ALL_TABLES]
+    + [
+        # BIGSERIAL 序列需 USAGE 才能插入
+        "GRANT USAGE, SELECT ON SEQUENCE ig_edge_edge_id_seq TO depgraph_writer",
+        "GRANT USAGE, SELECT ON SEQUENCE ig_node_company_id_seq TO depgraph_writer",
+        "GRANT USAGE, SELECT ON SEQUENCE ig_company_edge_edge_id_seq TO depgraph_writer",
+        "GRANT USAGE, SELECT ON SEQUENCE ig_company_metric_id_seq TO depgraph_writer",
+    ]
+)
 
 
 def main() -> int:

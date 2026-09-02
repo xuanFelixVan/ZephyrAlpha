@@ -84,7 +84,8 @@ def get_client():
         host=get_secret_or_default("CLICKHOUSE_HOST", ""),
         port=int(get_secret_or_default("CLICKHOUSE_PORT", "9000")),
         user=get_secret_or_default("CLICKHOUSE_WRITER_USER") or get_secret_or_default("CLICKHOUSE_USER", "default"),
-        password=get_secret_or_default("CLICKHOUSE_WRITER_PASSWORD") or get_secret_or_default("CLICKHOUSE_PASSWORD", ""),
+        password=get_secret_or_default("CLICKHOUSE_WRITER_PASSWORD")
+        or get_secret_or_default("CLICKHOUSE_PASSWORD", ""),
         send_receive_timeout=_MUTATION_TIMEOUT_S,
     )
 
@@ -100,9 +101,7 @@ def apply_rule(client, category: str, where: str) -> None:
     client.execute(f"ALTER TABLE {_TBL} UPDATE category = '{category}' WHERE {where}")
     t0 = time.time()
     while True:
-        pending = client.execute(
-            "SELECT count() FROM system.mutations WHERE table = 'news_data' AND is_done = 0"
-        )[0][0]
+        pending = client.execute("SELECT count() FROM system.mutations WHERE table = 'news_data' AND is_done = 0")[0][0]
         if pending == 0:
             log.info("%s 完成（%.0f 秒）", category, time.time() - t0)
             return
@@ -139,7 +138,9 @@ def main() -> None:
             sys.exit(2)
 
     log.info("=== 刷标后分布 ===")
-    for cat, n in client.execute(f"SELECT category, count() FROM {_TBL} WHERE {_REGION_LANG} GROUP BY category ORDER BY count() DESC"):
+    for cat, n in client.execute(
+        f"SELECT category, count() FROM {_TBL} WHERE {_REGION_LANG} GROUP BY category ORDER BY count() DESC"
+    ):
         log.info("%-15s %s", cat, f"{n:,}")
 
 

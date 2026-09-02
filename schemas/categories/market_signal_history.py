@@ -87,4 +87,6 @@ ORDER_BY = "(source, signal_id, symbol, trade_date)"
 
 # 列清单（INSERT 显式指定；computed_at DEFAULT now() 自动填充；
 # exchange/symbol_canonical MATERIALIZED 派生）
-INSERT_COLUMNS = "(trade_date, symbol, source, signal_id, direction, score, confidence, rank_in_universe, meta, data_source)"
+INSERT_COLUMNS = (
+    "(trade_date, symbol, source, signal_id, direction, score, confidence, rank_in_universe, meta, data_source)"
+)

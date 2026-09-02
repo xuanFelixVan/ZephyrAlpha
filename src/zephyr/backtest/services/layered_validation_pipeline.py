@@ -134,13 +134,10 @@ class LayeredValidationReport:
 
 def _validate_submission(submission: ValidationSubmission) -> None:
     if not isinstance(submission, ValidationSubmission):
-        raise LayeredValidationError(
-            f"submission 必须是 ValidationSubmission: {type(submission).__name__}"
-        )
+        raise LayeredValidationError(f"submission 必须是 ValidationSubmission: {type(submission).__name__}")
     if submission.subject_kind not in SUBJECT_LAYER_PLAN:
         raise LayeredValidationError(
-            f"未知 subject_kind: {submission.subject_kind!r}"
-            f"（封闭集 {sorted(SUBJECT_LAYER_PLAN)}）"
+            f"未知 subject_kind: {submission.subject_kind!r}（封闭集 {sorted(SUBJECT_LAYER_PLAN)}）"
         )
     if not isinstance(submission.subject_id, str) or not submission.subject_id.strip():
         raise LayeredValidationError(f"subject_id 不能为空: {submission.subject_id!r}")
@@ -190,13 +187,9 @@ def run_layered_validation(
             result = layer_runners[layer](submission, layer)
         except Exception as exc:  # runner 崩溃=本层失败（error），不 crash 编排面
             _log.exception("层 %s runner 异常（subject=%s）", layer, submission.subject_id)
-            result = LayerResult(
-                layer=layer, passed=False, detail=f"runner 异常: {exc}", status=_LAYER_STATUS_ERROR
-            )
+            result = LayerResult(layer=layer, passed=False, detail=f"runner 异常: {exc}", status=_LAYER_STATUS_ERROR)
         if not isinstance(result, LayerResult):
-            raise LayeredValidationError(
-                f"层 {layer} runner 返回契约非法（须 LayerResult）: {type(result).__name__}"
-            )
+            raise LayeredValidationError(f"层 {layer} runner 返回契约非法（须 LayerResult）: {type(result).__name__}")
         if result.status == _LAYER_STATUS_PASSED and not result.passed:
             result = replace(result, status=_LAYER_STATUS_FAILED)
         results.append(result)
@@ -215,9 +208,7 @@ def run_layered_validation(
     else:
         verdict = overfitting_gate(submission, tuple(results))
         if not isinstance(verdict, Mapping) or "is_overfitting" not in verdict:
-            raise LayeredValidationError(
-                f"过拟合门禁返回契约非法（须含 is_overfitting）: {type(verdict).__name__}"
-            )
+            raise LayeredValidationError(f"过拟合门禁返回契约非法（须含 is_overfitting）: {type(verdict).__name__}")
         gate_status = "evaluated"
         is_overfitting = bool(verdict["is_overfitting"])
         if is_overfitting:

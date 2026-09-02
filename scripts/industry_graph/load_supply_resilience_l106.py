@@ -77,8 +77,16 @@ def main() -> int:
         a = r[df.columns.get_loc(aux_col)] if aux_col else None
         if not sym or pd.isna(v):
             continue
-        rows.append((sym, year, "supply_chain_resilience", float(v),
-                     float(a) if a is not None and pd.notna(a) else None, SOURCE_TAG))
+        rows.append(
+            (
+                sym,
+                year,
+                "supply_chain_resilience",
+                float(v),
+                float(a) if a is not None and pd.notna(a) else None,
+                SOURCE_TAG,
+            )
+        )
 
     conn = get_depgraph_pg_connection(read_only=False, autocommit=False)
     try:
@@ -97,8 +105,7 @@ def main() -> int:
         conn.commit()
         with conn.cursor() as cur:
             cur.execute(
-                "SELECT count(*), count(DISTINCT symbol), min(year), max(year) "
-                "FROM ig_company_metric WHERE source=%s",
+                "SELECT count(*), count(DISTINCT symbol), min(year), max(year) FROM ig_company_metric WHERE source=%s",
                 (SOURCE_TAG,),
             )
             total, n_sym, y_min, y_max = cur.fetchone()

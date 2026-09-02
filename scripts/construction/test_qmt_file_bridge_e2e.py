@@ -53,8 +53,8 @@ def main() -> int:
     order_manager = OrderManager()
     assembly = QmtFileBridgeAssembly(
         order_manager,
-        enable_real=False,   # 实盘关闭，安全
-        enable_sim=True,     # 模拟开启
+        enable_real=False,  # 实盘关闭，安全
+        enable_sim=True,  # 模拟开启
         sync_interval=3.0,
     )
     assembly.assemble()
@@ -96,7 +96,9 @@ def main() -> int:
         if synced_order and synced_order.broker_order_id:
             _logger.info(
                 "柜台同步成功: order_id=%s broker_order_id=%s status=%s",
-                synced_order.order_id, synced_order.broker_order_id, synced_order.status
+                synced_order.order_id,
+                synced_order.broker_order_id,
+                synced_order.status,
             )
             break
         time.sleep(1)
@@ -113,7 +115,9 @@ def main() -> int:
         snapshot = broker.get_positions()
         _logger.info(
             "持仓快照: cash=%s holdings=%d 只 total_mv=%s",
-            snapshot.cash, len(snapshot.holdings), snapshot.total_market_value
+            snapshot.cash,
+            len(snapshot.holdings),
+            snapshot.total_market_value,
         )
 
     # Step 7: 撤单
