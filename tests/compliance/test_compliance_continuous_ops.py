@@ -59,9 +59,9 @@ def _input(**overrides) -> ComplianceOpsInput:
 class TestRetentionDefaults:
     def test_default_requirements_match_b016(self):
         mapping = {r.category: r.min_days for r in DEFAULT_RETENTION_REQUIREMENTS}
-        assert mapping["trade_log"] == 2555   # 交易日志 ≥7年
+        assert mapping["trade_log"] == 2555  # 交易日志 ≥7年
         assert mapping["decision_log"] == 1095  # 决策日志 ≥3年
-        assert mapping["system_log"] == 365   # 系统日志 ≥1年
+        assert mapping["system_log"] == 365  # 系统日志 ≥1年
 
 
 # ── 纯函数评估 ───────────────────────────────────────────────────────
@@ -106,7 +106,8 @@ class TestEvaluateContinuousOps:
 
     def test_no_rules_warning(self):
         report = evaluate_continuous_ops(
-            _input(rule_updates={}), ComplianceOpsConfig(),
+            _input(rule_updates={}),
+            ComplianceOpsConfig(),
         )
         absent = [f for f in report.findings if f.check_id == "rules_absent"]
         assert absent

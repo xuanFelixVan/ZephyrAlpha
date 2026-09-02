@@ -55,9 +55,7 @@ _HEADER = """\
 class TestCtrContractParse:
     def test_bidirectional_edges(self):
         edges = parse_ctr_contract(_CTR_002)
-        assert ("D_FACTOR", "CTR-002", "produces") in [
-            (e.source, e.target, e.transformation) for e in edges
-        ]
+        assert ("D_FACTOR", "CTR-002", "produces") in [(e.source, e.target, e.transformation) for e in edges]
         consumed = {(e.target, e.transformation) for e in edges if e.source == "CTR-002"}
         assert consumed == {
             ("D_ASHARE_SIGNAL", "consumed_by"),
@@ -82,9 +80,7 @@ class TestCtrContractParse:
 
     def test_target_domains_not_list_fail_closed(self):
         with pytest.raises(LineageParseError):
-            parse_ctr_contract(
-                {"id": "CTR-002", "source_domain": "D_FACTOR", "target_domains": "D_RISK"}
-            )
+            parse_ctr_contract({"id": "CTR-002", "source_domain": "D_FACTOR", "target_domains": "D_RISK"})
 
 
 class TestModuleHeaderParse:
@@ -123,9 +119,7 @@ class TestModuleHeaderParse:
         assert edges_of_annotations(ann) == []
 
     def test_mod_id_only_consumer_entry(self):
-        ann = parse_module_header(
-            "# [MODULE] zephyr.a.b\n# [CONSUMERS] MOD-REGIME-002\n"
-        )
+        ann = parse_module_header("# [MODULE] zephyr.a.b\n# [CONSUMERS] MOD-REGIME-002\n")
         assert ann.consumers == ("MOD-REGIME-002",)
 
 
@@ -152,9 +146,7 @@ class TestIngest:
     def test_batch_dedup_first_wins(self):
         tracker = LineageTracker()
         e1 = parse_ctr_contract(_CTR_002)
-        e2 = parse_ctr_contract(
-            {"id": "CTR-002", "source_domain": "D_FACTOR", "target_domains": ["D_RISK"]}
-        )
+        e2 = parse_ctr_contract({"id": "CTR-002", "source_domain": "D_FACTOR", "target_domains": ["D_RISK"]})
         report = ingest_into_tracker([*e1, *e2], tracker)
         # e2 的 (D_FACTOR→CTR-002) 与 (CTR-002→D_RISK) 与 e1 重复 → 批内去重
         assert report.skipped == 2
@@ -163,9 +155,7 @@ class TestIngest:
     def test_cycle_rejected_not_blocking(self):
         tracker = LineageTracker()
         tracker.add_edge("a", "b", "imports")
-        edges = parse_ctr_contract(
-            {"id": "x", "source_domain": "b", "target_domains": ["a", "c"]}
-        )
+        edges = parse_ctr_contract({"id": "x", "source_domain": "b", "target_domains": ["a", "c"]})
         # b→x 合法；x→a 会形成 a→b→x→a? 不——a→b→x + x→a 成环（a 是 x 上游？）
         # 实际：已有 a→b；加 b→x；加 x→a → a→b→x→a 环 → rejected
         report = ingest_into_tracker(edges, tracker)
@@ -182,9 +172,7 @@ class TestIngest:
 
     def test_report_sources_label(self):
         tracker = LineageTracker()
-        report = ingest_into_tracker(
-            parse_ctr_contract(_CTR_002), tracker, sources=("cross_layer_contracts.yaml",)
-        )
+        report = ingest_into_tracker(parse_ctr_contract(_CTR_002), tracker, sources=("cross_layer_contracts.yaml",))
         assert report.sources == ("cross_layer_contracts.yaml",)
 
 
@@ -198,6 +186,4 @@ class TestEndToEnd:
             "zephyr.data.ch_reader",
             "zephyr.data.table_registry",
         }
-        assert "intraday_buy_sell_point_analyzer" in tracker.get_downstream(
-            "zephyr.factor.core.momentum"
-        )
+        assert "intraday_buy_sell_point_analyzer" in tracker.get_downstream("zephyr.factor.core.momentum")

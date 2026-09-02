@@ -59,9 +59,7 @@ def _report(instrument: str = "600519.SH") -> FinancialReport:
 
 
 def _policy(domain: str = "market", drill_days: int = 30) -> RetentionPolicy:
-    return RetentionPolicy(
-        domain=domain, ttl_days=90, archive_target="parquet_cold", drill_interval_days=drill_days
-    )
+    return RetentionPolicy(domain=domain, ttl_days=90, archive_target="parquet_cold", drill_interval_days=drill_days)
 
 
 # ──────────────────────────────────────────────────────────────────────────────

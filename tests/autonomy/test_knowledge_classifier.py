@@ -52,11 +52,7 @@ class _FakeGateway:
         self.calls.append((task_type, prompt, kw))
         if isinstance(self._payload, Exception):
             raise self._payload
-        text = (
-            self._payload
-            if isinstance(self._payload, str)
-            else json.dumps(self._payload, ensure_ascii=False)
-        )
+        text = self._payload if isinstance(self._payload, str) else json.dumps(self._payload, ensure_ascii=False)
         return _FakeResponse(self._status, text)
 
 
@@ -176,9 +172,7 @@ class TestClassifyHappyPath:
 
 class TestQualityGate:
     def test_low_value_rejected(self) -> None:
-        payload = _factor_payload(
-            quality={"relevance": 0.1, "timeliness": 0.2, "information": 0.1, "reliability": 0.2}
-        )
+        payload = _factor_payload(quality={"relevance": 0.1, "timeliness": 0.2, "information": 0.1, "reliability": 0.2})
         result = KnowledgeClassifier(llm=_FakeGateway(payload)).classify(_item())
         assert result.verdict == "rejected"
         assert result.classification is None  # REJECT 不进分类
@@ -186,17 +180,13 @@ class TestQualityGate:
 
     def test_threshold_boundary_passes(self) -> None:
         # 综合分恰好等于阈值（0.3）不拦截（< threshold 才 REJECT）
-        payload = _factor_payload(
-            quality={"relevance": 0.3, "timeliness": 0.3, "information": 0.3, "reliability": 0.3}
-        )
+        payload = _factor_payload(quality={"relevance": 0.3, "timeliness": 0.3, "information": 0.3, "reliability": 0.3})
         result = KnowledgeClassifier(llm=_FakeGateway(payload)).classify(_item())
         assert result.verdict == "classified"
 
     def test_custom_threshold(self) -> None:
         gate = QualityGateConfig(threshold=0.9)
-        result = KnowledgeClassifier(
-            llm=_FakeGateway(_factor_payload()), quality_gate=gate
-        ).classify(_item())
+        result = KnowledgeClassifier(llm=_FakeGateway(_factor_payload()), quality_gate=gate).classify(_item())
         assert result.verdict == "rejected"  # 0.85 < 0.9
 
 
@@ -207,43 +197,31 @@ class TestQualityGate:
 
 class TestFailClosed:
     def test_out_of_vocab_factor_class_rejected(self) -> None:
-        result = KnowledgeClassifier(
-            llm=_FakeGateway(_factor_payload(factor_class="magic"))
-        ).classify(_item())
+        result = KnowledgeClassifier(llm=_FakeGateway(_factor_payload(factor_class="magic"))).classify(_item())
         assert result.verdict == "error"
         assert result.classification is None
         assert "schema_validation_failed" in result.error
 
     def test_out_of_vocab_enum_rejected(self) -> None:
-        result = KnowledgeClassifier(
-            llm=_FakeGateway(_factor_payload(direction="sideways"))
-        ).classify(_item())
+        result = KnowledgeClassifier(llm=_FakeGateway(_factor_payload(direction="sideways"))).classify(_item())
         assert result.verdict == "error"
         assert result.classification is None
 
     def test_cross_field_conflict_rejected(self) -> None:
         # factor 却带 strategy_class -> 交叉字段矛盾
-        result = KnowledgeClassifier(
-            llm=_FakeGateway(_factor_payload(strategy_class="daban"))
-        ).classify(_item())
+        result = KnowledgeClassifier(llm=_FakeGateway(_factor_payload(strategy_class="daban"))).classify(_item())
         assert result.verdict == "error"
 
     def test_factor_missing_class_rejected(self) -> None:
-        result = KnowledgeClassifier(
-            llm=_FakeGateway(_factor_payload(factor_class=None))
-        ).classify(_item())
+        result = KnowledgeClassifier(llm=_FakeGateway(_factor_payload(factor_class=None))).classify(_item())
         assert result.verdict == "error"
 
     def test_regime_overlap_rejected(self) -> None:
-        result = KnowledgeClassifier(
-            llm=_FakeGateway(_factor_payload(regime_invalid=["trend_up"]))
-        ).classify(_item())
+        result = KnowledgeClassifier(llm=_FakeGateway(_factor_payload(regime_invalid=["trend_up"]))).classify(_item())
         assert result.verdict == "error"
 
     def test_extra_key_rejected(self) -> None:
-        result = KnowledgeClassifier(
-            llm=_FakeGateway(_factor_payload(hallucinated_field="x"))
-        ).classify(_item())
+        result = KnowledgeClassifier(llm=_FakeGateway(_factor_payload(hallucinated_field="x"))).classify(_item())
         assert result.verdict == "error"
 
     def test_garbage_text_fail_closed(self) -> None:
@@ -295,9 +273,7 @@ class TestTagDiscipline:
 
     def test_custom_known_tags(self) -> None:
         payload = _factor_payload(tags=["动量", "私有词"])
-        clf = KnowledgeClassifier(
-            llm=_FakeGateway(payload), known_tags=frozenset({"私有词"})
-        )
+        clf = KnowledgeClassifier(llm=_FakeGateway(payload), known_tags=frozenset({"私有词"}))
         result = clf.classify(_item())
         assert result.classification.tags == ["私有词"]
         assert result.tags_pending_registration == ("动量",)

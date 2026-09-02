@@ -50,8 +50,12 @@ _T0 = datetime(2026, 8, 28, 10, 0, tzinfo=UTC)
 _SYM = "600000.SH"
 
 
-def _order(order_id: str, price: float, qty: float, *, placed_at: datetime = _T0, symbol: str = _SYM) -> ComplianceOrderRecord:
-    return ComplianceOrderRecord(order_id=order_id, symbol=symbol, side="BUY", price=price, qty=qty, placed_at=placed_at)
+def _order(
+    order_id: str, price: float, qty: float, *, placed_at: datetime = _T0, symbol: str = _SYM
+) -> ComplianceOrderRecord:
+    return ComplianceOrderRecord(
+        order_id=order_id, symbol=symbol, side="BUY", price=price, qty=qty, placed_at=placed_at
+    )
 
 
 def _fast_cancel_seq(idx: int, *, minutes: int = 5, qty: float = 3000):
@@ -60,8 +64,12 @@ def _fast_cancel_seq(idx: int, *, minutes: int = 5, qty: float = 3000):
     return _order(f"o{idx}", 10.0, qty, placed_at=placed), placed + timedelta(seconds=5)
 
 
-def _trade(qty: float = 100, *, buyer: str = "ACC1", seller: str = "ACC2", symbol: str = _SYM, at: datetime = _T0) -> ComplianceTradeRecord:
-    return ComplianceTradeRecord(symbol=symbol, price=10.0, qty=qty, traded_at=at, buyer_account=buyer, seller_account=seller)
+def _trade(
+    qty: float = 100, *, buyer: str = "ACC1", seller: str = "ACC2", symbol: str = _SYM, at: datetime = _T0
+) -> ComplianceTradeRecord:
+    return ComplianceTradeRecord(
+        symbol=symbol, price=10.0, qty=qty, traded_at=at, buyer_account=buyer, seller_account=seller
+    )
 
 
 @pytest.fixture()
@@ -92,7 +100,9 @@ def _spoofing_round(m: ManipulationRealtimeMonitor, n: int = 3, **kw):
 
 
 class TestSpoofingRealtime:
-    def test_three_fast_cancels_hit_and_freeze(self, monitor: ManipulationRealtimeMonitor, logger: ComplianceLogger) -> None:
+    def test_three_fast_cancels_hit_and_freeze(
+        self, monitor: ManipulationRealtimeMonitor, logger: ComplianceLogger
+    ) -> None:
         verdicts = _spoofing_round(monitor)
         assert any(v.mtype is ManipulationType.SPOOFING for v in verdicts)
         assert monitor.is_frozen(_SYM)
@@ -101,7 +111,11 @@ class TestSpoofingRealtime:
         events = logger.read_all()
         assert any(r.event_type == "MANIPULATION_VERDICT" and r.payload["mtype"] == "SPOOFING" for r in events)
         alerts = [r for r in events if r.event_type == "MANIPULATION_REALTIME_ALERT"]
-        assert len(alerts) == 1 and alerts[0].payload["frozen"] is True and alerts[0].source == "manipulation_realtime_monitor"
+        assert (
+            len(alerts) == 1
+            and alerts[0].payload["frozen"] is True
+            and alerts[0].source == "manipulation_realtime_monitor"
+        )
 
     def test_pattern_spread_beyond_window_no_hit(self, monitor: ManipulationRealtimeMonitor) -> None:
         verdicts = _spoofing_round(monitor, minutes=40)  # 任意 30min 窗内至多 1 次
@@ -110,7 +124,9 @@ class TestSpoofingRealtime:
     def test_small_orders_no_hit(self, monitor: ManipulationRealtimeMonitor) -> None:
         assert _spoofing_round(monitor, qty=100) == []
 
-    def test_provider_missing_degrades_skip(self, detector: TradingComplianceDetector, logger: ComplianceLogger) -> None:
+    def test_provider_missing_degrades_skip(
+        self, detector: TradingComplianceDetector, logger: ComplianceLogger
+    ) -> None:
         m = ManipulationRealtimeMonitor(detector, logger=logger)  # 无 provider
         assert _spoofing_round(m) == []
 
@@ -221,8 +237,14 @@ def _make_om(monitor: ManipulationRealtimeMonitor):
 
 
 def _submit(om: OrderManager, qty: int = 3000, symbol: str = _SYM) -> str:
-    order = om.create_order(symbol=symbol, strategy_id="a8", side=OrderSide.BUY, order_type=OrderType.LIMIT,
-                            quantity=Decimal(qty), limit_price=Decimal("10.0"))
+    order = om.create_order(
+        symbol=symbol,
+        strategy_id="a8",
+        side=OrderSide.BUY,
+        order_type=OrderType.LIMIT,
+        quantity=Decimal(qty),
+        limit_price=Decimal("10.0"),
+    )
     return om.submit_order(order.order_id, "test") and order.order_id
 
 
@@ -264,13 +286,24 @@ class TestOrderManagerWiring:
         assert broker.submit_order.call_count == 1
 
     def test_fill_callback_wash_trade_path(self, detector: TradingComplianceDetector, logger: ComplianceLogger) -> None:
-        m = ManipulationRealtimeMonitor(detector, logger=logger, own_account="ACC1",
-                                        counterparty_resolver=lambda f: "ACC1")
+        m = ManipulationRealtimeMonitor(
+            detector, logger=logger, own_account="ACC1", counterparty_resolver=lambda f: "ACC1"
+        )
         om, broker = _make_om(m)
         oid = _submit(om, qty=100)
         fill_cb = broker.register_fill_callback.call_args.args[0]  # 券商侧回报通道
-        fill_cb(Fill(fill_id="f1", fill_price=Decimal("10.0"), fill_timestamp=datetime.now(UTC),
-                     filled_quantity=Decimal(100), idempotency_key="k1", order_id=oid, strategy_id="a8", symbol=_SYM))
+        fill_cb(
+            Fill(
+                fill_id="f1",
+                fill_price=Decimal("10.0"),
+                fill_timestamp=datetime.now(UTC),
+                filled_quantity=Decimal(100),
+                idempotency_key="k1",
+                order_id=oid,
+                strategy_id="a8",
+                symbol=_SYM,
+            )
+        )
         assert m.is_frozen(_SYM)  # 对手方=本方 → 自成交命中
 
     def test_normal_fill_no_false_positive(self, detector: TradingComplianceDetector, logger: ComplianceLogger) -> None:
@@ -278,8 +311,17 @@ class TestOrderManagerWiring:
         om, broker = _make_om(m)
         oid = _submit(om, qty=100)
         broker.register_fill_callback.call_args.args[0](
-            Fill(fill_id="f2", fill_price=Decimal("10.0"), fill_timestamp=datetime.now(UTC),
-                 filled_quantity=Decimal(100), idempotency_key="k2", order_id=oid, strategy_id="a8", symbol=_SYM))
+            Fill(
+                fill_id="f2",
+                fill_price=Decimal("10.0"),
+                fill_timestamp=datetime.now(UTC),
+                filled_quantity=Decimal(100),
+                idempotency_key="k2",
+                order_id=oid,
+                strategy_id="a8",
+                symbol=_SYM,
+            )
+        )
         assert not m.is_frozen(_SYM)  # 对手方未知占位相异 → 不误判
 
 
@@ -303,8 +345,9 @@ def _tick_hash(price: str, volume: str) -> dict:
 
 class TestRedisTickMarketProvider:
     def test_minute_avg_volume(self) -> None:
-        provider = RedisTickMarketProvider(_FakeRedis(_tick_hash("10.5", "120000")),
-                                           clock=lambda: datetime(2026, 8, 28, 10, 30))
+        provider = RedisTickMarketProvider(
+            _FakeRedis(_tick_hash("10.5", "120000")), clock=lambda: datetime(2026, 8, 28, 10, 30)
+        )
         assert provider.minute_avg_volume(_SYM) == pytest.approx(2000.0)  # 120000/60min
 
     def test_symbol_normalization_bare_and_suffix(self) -> None:
@@ -323,7 +366,9 @@ class TestRedisTickMarketProvider:
     def test_non_trading_hours_zero(self) -> None:
         redis = _FakeRedis(_tick_hash("10.5", "120000"))
         assert RedisTickMarketProvider(redis, clock=lambda: datetime(2026, 8, 28, 9, 0)).minute_avg_volume(_SYM) == 0.0
-        assert RedisTickMarketProvider(redis, clock=lambda: datetime(2026, 8, 28, 12, 0)).minute_avg_volume(_SYM) == pytest.approx(1000.0)
+        assert RedisTickMarketProvider(redis, clock=lambda: datetime(2026, 8, 28, 12, 0)).minute_avg_volume(
+            _SYM
+        ) == pytest.approx(1000.0)
 
     def test_market_window_accumulates(self) -> None:
         redis = _FakeRedis(_tick_hash("10.0", "100000"))
@@ -355,8 +400,12 @@ class TestIntegrationSmoke:
         redis = _FakeRedis(_tick_hash("10.0", "120000"))
         mono = [1000.0]
         provider = RedisTickMarketProvider(redis, clock=lambda: datetime(2026, 8, 28, 10, 30), mono=lambda: mono[0])
-        m = ManipulationRealtimeMonitor(detector, minute_volume_provider=provider.minute_avg_volume,
-                                        market_window_provider=provider.market_window, logger=logger)
+        m = ManipulationRealtimeMonitor(
+            detector,
+            minute_volume_provider=provider.minute_avg_volume,
+            market_window_provider=provider.market_window,
+            logger=logger,
+        )
         om, broker = _make_om(m)
 
         # 流 1：600000.SH 挂撤 3 轮 → Spoofing 冻结 + C-002 拒发

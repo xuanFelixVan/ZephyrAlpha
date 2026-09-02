@@ -89,11 +89,7 @@ def orchestrator(tmp_path, switches):
 def _read_jsonl(path: Path) -> list[dict]:
     if not path.exists():
         return []
-    return [
-        json.loads(line)
-        for line in path.read_text(encoding="utf-8").splitlines()
-        if line.strip()
-    ]
+    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
 class TestAccidentSimulation:
@@ -121,9 +117,7 @@ class TestAccidentSimulation:
         assert orchestrator.is_tripped("domain", "alpha:skill-9") is True
         assert orchestrator.is_tripped("system") is False
 
-    def test_orchestrator_failure_leaves_switches_independent(
-        self, tmp_path, switches, orchestrator
-    ):
+    def test_orchestrator_failure_leaves_switches_independent(self, tmp_path, switches, orchestrator):
         """事故三·编排器故障：各开关独立可用（fail-open 分散态，编排器不持态）."""
         # (a) 状态分散在开关本体：另一编排器实例看到同一状态
         orchestrator.trip("domain", "alpha:x", "先拉一次")
@@ -298,9 +292,7 @@ class TestRealSwitchWiring:
         from zephyr.trading.trading_contracts.risk import trading_kill_switch
 
         SkillKillSwitch.clear_all()
-        orch = KillSwitchOrchestrator(
-            runtime_dir=tmp_path, system_switch=KillSwitch(), project_root=tmp_path
-        )
+        orch = KillSwitchOrchestrator(runtime_dir=tmp_path, system_switch=KillSwitch(), project_root=tmp_path)
         try:
             result = orch.trip("system", "global", "真实接线冒烟")
             assert result.success is True

@@ -357,9 +357,7 @@ class TestDeliberateFutureDateProbe:
                 continue
             # 逐 symbol 反查：合入值必须来自 announce_date <= dt 的版本
             for _, row in bar.dropna(subset=["eps_basic"]).iterrows():
-                visible = fund[
-                    (fund["symbol"] == row["symbol"]) & (fund["announce_date"] <= dt)
-                ]
+                visible = fund[(fund["symbol"] == row["symbol"]) & (fund["announce_date"] <= dt)]
                 assert row["eps_basic"] in set(visible["eps_basic"]), (
                     f"{dt} bar 合入了未来公告值 {row['eps_basic']}（{row['symbol']}）"
                 )

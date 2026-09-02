@@ -127,7 +127,9 @@ class TestEdgeConversion:
     def test_edge_to_event_uses_transformation_as_job(self) -> None:
         e = edge_to_event(
             ("market.kline", "factor.mom20", "compute"),
-            run_id="r1", job_namespace="ns", event_time=_T0,
+            run_id="r1",
+            job_namespace="ns",
+            event_time=_T0,
         )
         assert e.job_name == "compute"
         assert e.inputs == ("market.kline",)
@@ -172,7 +174,8 @@ class TestExporter:
         exp = _exporter(lines)
         out = exp.export_edges(
             [("market.kline", "factor.mom20", "compute"), ("factor.mom20", "signal.alpha", "generate")],
-            run_id="r1", job_namespace="zephyr.lineage",
+            run_id="r1",
+            job_namespace="zephyr.lineage",
         )
         assert len(out) == 2 and len(lines) == 2
         jobs = [json.loads(line)["job"]["name"] for line in lines]

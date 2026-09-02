@@ -44,7 +44,9 @@ def _mgr(
     return ColdDataArchiveManager(
         index_conn=sqlite3.connect(":memory:"),
         clock=clock,
-        archiver=archiver if archiver is not None else (lambda p: (f"/arch/{p.table}/{p.partition}.parquet", "h-" + p.partition)),
+        archiver=archiver
+        if archiver is not None
+        else (lambda p: (f"/arch/{p.table}/{p.partition}.parquet", "h-" + p.partition)),
         purge_executor=purge_executor,
         alert_sink=(lambda m: alerts.append(m)) if alerts is not None else None,
     )
@@ -64,9 +66,7 @@ def test_init_requires_index_conn():
 
 def test_init_creates_index_table():
     mgr = _mgr()
-    row = mgr._conn.execute(
-        "SELECT name FROM sqlite_master WHERE type='table' AND name='archive_index'"
-    ).fetchone()
+    row = mgr._conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='archive_index'").fetchone()
     assert row is not None
 
 

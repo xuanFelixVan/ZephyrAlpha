@@ -82,12 +82,16 @@ class TestMaterialize:
         ]
         result = materialize_compliance_rules(defs, now=_NOW)
         assert [r.rule_id for r in result.rules] == [
-            "R-crit", "R-high", "R-med", "R-low",
+            "R-crit",
+            "R-high",
+            "R-med",
+            "R-low",
         ]
 
     def test_unknown_enforcement_action_rejected(self):
         result = materialize_compliance_rules(
-            [_definition(enforcement_action="ignore")], now=_NOW,
+            [_definition(enforcement_action="ignore")],
+            now=_NOW,
         )
         assert result.rules == ()
         assert len(result.rejected) == 1
@@ -95,7 +99,8 @@ class TestMaterialize:
 
     def test_unknown_severity_rejected(self):
         result = materialize_compliance_rules(
-            [_definition(severity="fatal")], now=_NOW,
+            [_definition(severity="fatal")],
+            now=_NOW,
         )
         assert result.rules == ()
         assert "severity" in result.rejected[0].reason
@@ -109,7 +114,8 @@ class TestMaterialize:
 
     def test_duplicate_rule_id_rejected(self):
         result = materialize_compliance_rules(
-            [_definition(), _definition(version="2.0")], now=_NOW,
+            [_definition(), _definition(version="2.0")],
+            now=_NOW,
         )
         assert len(result.rules) == 1
         assert len(result.rejected) == 1
@@ -122,7 +128,8 @@ class TestMaterialize:
 
     def test_inactive_flag_preserved(self):
         result = materialize_compliance_rules(
-            [_definition(is_active=False)], now=_NOW,
+            [_definition(is_active=False)],
+            now=_NOW,
         )
         assert len(result.rules) == 1
         assert result.rules[0].is_active is False

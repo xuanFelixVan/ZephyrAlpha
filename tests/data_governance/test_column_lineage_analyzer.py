@@ -72,9 +72,7 @@ class TestExtractColumnLineage:
             with pytest.raises(ColumnLineageError):
                 extract_column_lineage("SELECT a FROM s", target_table="factor_out")
         else:
-            edges = extract_column_lineage(
-                "SELECT a AS x, b + c AS y FROM src", target_table="factor_out"
-            )
+            edges = extract_column_lineage("SELECT a AS x, b + c AS y FROM src", target_table="factor_out")
             pairs = {(e.source_column, e.target_column) for e in edges}
             assert ("a", "x") in pairs
             assert ("b", "y") in pairs and ("c", "y") in pairs

@@ -53,8 +53,7 @@ _REAL_VMS_ACTIVE = _real_vms_active(_REAL_API)
 
 pytestmark = pytest.mark.skipif(
     not _REAL_VMS_ACTIVE,
-    reason="VMS 后端不可用——get_unified_memory_api() 静默降级内存后端（inject 必为空），"
-    "跳过真实后端集成验证而非假绿",
+    reason="VMS 后端不可用——get_unified_memory_api() 静默降级内存后端（inject 必为空），跳过真实后端集成验证而非假绿",
 )
 
 
@@ -100,7 +99,5 @@ class TestRealBackendInjectIntegration:
         assert result.provenances, "provenances 不得为空"
         for p in result.provenances:
             assert p.startswith("unified_memory:"), f"provenance 前缀漂移: {p}"
-            topic, sep, chunk_id = p[len("unified_memory:"):].partition(":")
-            assert sep and topic and chunk_id, (
-                f"provenance 须可解析为 unified_memory:{{topic}}:{{chunk_id}}: {p}"
-            )
+            topic, sep, chunk_id = p[len("unified_memory:") :].partition(":")
+            assert sep and topic and chunk_id, f"provenance 须可解析为 unified_memory:{{topic}}:{{chunk_id}}: {p}"

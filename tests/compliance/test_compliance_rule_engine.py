@@ -27,8 +27,9 @@ from zephyr.compliance.compliance_rule_engine import (
 )
 
 
-def _rule(rule_id: str = "R-001", version: str = "v1", severity: str = "hard_block",
-          condition: dict | None = None) -> dict:
+def _rule(
+    rule_id: str = "R-001", version: str = "v1", severity: str = "hard_block", condition: dict | None = None
+) -> dict:
     return {
         "rule_id": rule_id,
         "version": version,
@@ -49,26 +50,38 @@ def test_parse_valid_rule() -> None:
 
 
 def test_parse_composite_condition() -> None:
-    rule = RuleDslParser.parse(_rule(condition={
-        "all": [
-            {"field": "price_dev", "op": ">", "value": 0.03},
-            {"any": [{"field": "share", "op": ">", "value": 0.3}, {"field": "spoof", "op": "==", "value": True}]},
-        ]
-    }))
+    rule = RuleDslParser.parse(
+        _rule(
+            condition={
+                "all": [
+                    {"field": "price_dev", "op": ">", "value": 0.03},
+                    {
+                        "any": [
+                            {"field": "share", "op": ">", "value": 0.3},
+                            {"field": "spoof", "op": "==", "value": True},
+                        ]
+                    },
+                ]
+            }
+        )
+    )
     assert "all" in rule.condition
 
 
-@pytest.mark.parametrize("bad", [
-    {},  # 缺字段
-    {"rule_id": "R", "version": "v1", "description": "d", "severity": "hard_block"},  # 缺 condition
-    _rule(severity="fatal"),  # 非法 severity
-    _rule(condition={"field": "q", "op": "~", "value": 1}),  # 非法 op
-    _rule(condition={"field": "", "op": ">", "value": 1}),  # 空 field
-    _rule(condition={"all": []}),  # 空复合
-    _rule(condition={"all": [{"field": "q"}]}),  # 原子缺 op/value
-    _rule(rule_id=""),  # 空 rule_id
-    _rule(version=""),  # 空 version
-])
+@pytest.mark.parametrize(
+    "bad",
+    [
+        {},  # 缺字段
+        {"rule_id": "R", "version": "v1", "description": "d", "severity": "hard_block"},  # 缺 condition
+        _rule(severity="fatal"),  # 非法 severity
+        _rule(condition={"field": "q", "op": "~", "value": 1}),  # 非法 op
+        _rule(condition={"field": "", "op": ">", "value": 1}),  # 空 field
+        _rule(condition={"all": []}),  # 空复合
+        _rule(condition={"all": [{"field": "q"}]}),  # 原子缺 op/value
+        _rule(rule_id=""),  # 空 rule_id
+        _rule(version=""),  # 空 version
+    ],
+)
 def test_parse_invalid_rejected(bad: dict) -> None:
     with pytest.raises(InvalidComplianceRuleError):
         RuleDslParser.parse(bad)
@@ -170,9 +183,16 @@ def test_evaluate_error_fail_closed_hard_block() -> None:
 
 
 def test_composite_condition_evaluation() -> None:
-    eng = _engine(_rule(condition={
-        "all": [{"field": "a", "op": ">=", "value": 1}, {"any": [{"field": "b", "op": "<", "value": 5}, {"field": "c", "op": "in", "value": [1, 2]}]}]
-    }))
+    eng = _engine(
+        _rule(
+            condition={
+                "all": [
+                    {"field": "a", "op": ">=", "value": 1},
+                    {"any": [{"field": "b", "op": "<", "value": 5}, {"field": "c", "op": "in", "value": [1, 2]}]},
+                ]
+            }
+        )
+    )
     assert eng.evaluate_pre_trade({"a": 1, "b": 4}).disposition is ComplianceDisposition.HARD_BLOCK
     assert eng.evaluate_pre_trade({"a": 1, "c": 2}).disposition is ComplianceDisposition.HARD_BLOCK
     assert eng.evaluate_pre_trade({"a": 1, "b": 9, "c": 3}).disposition is ComplianceDisposition.PASS
@@ -239,7 +259,9 @@ def test_trading_compliance_rule_pack_loadable() -> None:
     # 自成交零容忍（收编 WASH_TRADE）
     v = eng.evaluate_pre_trade({"buyer_account": "A1", "seller_account": "A1"})
     assert v.disposition is ComplianceDisposition.HARD_BLOCK
-    v2 = eng.evaluate_pre_trade({"buyer_account": "A1", "seller_account": "B2", "order_qty": 10, "minute_avg_volume": 1000})
+    v2 = eng.evaluate_pre_trade(
+        {"buyer_account": "A1", "seller_account": "B2", "order_qty": 10, "minute_avg_volume": 1000}
+    )
     assert v2.disposition is ComplianceDisposition.PASS
 
 

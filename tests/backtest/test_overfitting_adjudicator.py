@@ -156,9 +156,7 @@ class TestAdjudicateDsr:
     def test_oracle_cross_check_with_trials(self):
         # 独立预言机对拍: 用 statistics.NormalDist 重算全流程
         sr, n_obs, n_trials, skew, kurt_excess = 0.35, 252, 50, -0.2, 1.5
-        verdict = adjudicate_dsr(
-            sharpe=sr, num_trials=n_trials, num_obs=n_obs, skewness=skew, kurtosis=kurt_excess
-        )
+        verdict = adjudicate_dsr(sharpe=sr, num_trials=n_trials, num_obs=n_obs, skewness=skew, kurtosis=kurt_excess)
         kurt_pearson = kurt_excess + 3.0
         var_sr = (1.0 - skew * sr + (kurt_pearson - 1.0) / 4.0 * sr * sr) / (n_obs - 1)
         e_max_z = (1.0 - EULER_MASCHERONI) * _NORM.inv_cdf(1.0 - 1.0 / n_trials)
@@ -186,9 +184,7 @@ class TestAdjudicateDsr:
         assert verdict.is_significant is True
 
     def test_custom_threshold(self):
-        verdict = adjudicate_dsr(
-            sharpe=0.1, num_trials=1, num_obs=101, skewness=0.0, kurtosis=0.0, threshold=0.80
-        )
+        verdict = adjudicate_dsr(sharpe=0.1, num_trials=1, num_obs=101, skewness=0.0, kurtosis=0.0, threshold=0.80)
         assert verdict.threshold == pytest.approx(0.80)
         assert verdict.is_significant is True  # 0.84074 >= 0.80
 
@@ -232,9 +228,7 @@ def _cliff_engine(params: dict[str, float]) -> float:
 
 class TestPerturbationStability:
     def test_smooth_plateau_decay_semantics(self):
-        report = perturbation_stability(
-            {"window": 20.0, "thresh": 0.5}, _smooth_engine, pct=0.20, tolerance=0.30
-        )
+        report = perturbation_stability({"window": 20.0, "thresh": 0.5}, _smooth_engine, pct=0.20, tolerance=0.30)
         assert isinstance(report, PerturbationStabilityReport)
         assert report.base_performance == pytest.approx(2.0)
         assert report.pct == pytest.approx(0.20)
@@ -327,9 +321,7 @@ class TestGateHookAndAdjudicator:
         return {
             "walk_forward_folds": [(2.0, 1.8), (1.0, 0.9), (1.2, 1.1)],
             "dsr_kwargs": dict(sharpe=2.0, num_trials=1, num_obs=504, skewness=0.0, kurtosis=0.0),
-            "perturbation_kwargs": dict(
-                base_params={"window": 20.0, "thresh": 0.5}, backtest_fn=_smooth_engine
-            ),
+            "perturbation_kwargs": dict(base_params={"window": 20.0, "thresh": 0.5}, backtest_fn=_smooth_engine),
         }
 
     def test_hook_protocol_structural(self):
@@ -367,9 +359,7 @@ class TestGateHookAndAdjudicator:
 
     def test_perturbation_failure_reason(self):
         inputs = self._stable_inputs()
-        inputs["perturbation_kwargs"] = dict(
-            base_params={"window": 20.0, "thresh": 0.5}, backtest_fn=_cliff_engine
-        )
+        inputs["perturbation_kwargs"] = dict(base_params={"window": 20.0, "thresh": 0.5}, backtest_fn=_cliff_engine)
         report = OverfittingAdjudicator().adjudicate(**inputs)
         assert report.is_overfitting is True
         assert any("扰动" in r for r in report.reasons)

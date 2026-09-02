@@ -82,7 +82,10 @@ class TestRegisterNode:
 class TestRegisterEdge:
     def test_four_edge_kinds_closed(self) -> None:
         assert {k.value for k in MlEdgeKind} == {
-            "dataset_to_feature", "feature_to_model", "model_to_prediction", "dataset_to_model",
+            "dataset_to_feature",
+            "feature_to_model",
+            "model_to_prediction",
+            "dataset_to_model",
         }
 
     def test_register_edge_ok(self) -> None:

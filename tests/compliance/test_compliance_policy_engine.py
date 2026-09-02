@@ -35,10 +35,13 @@ _T0 = datetime.datetime(2026, 8, 25, 20, 0, 0)
 _V1 = {
     "version": "v1",
     "rules": [
-        {"rule_id": "r-cancel", "condition": "cancel_rate > 0.5",
-         "action": "alert", "severity": "warning"},
-        {"rule_id": "r-wash", "condition": "self_trade_ratio >= 0.3 and volume >= 1000",
-         "action": "block", "severity": "critical"},
+        {"rule_id": "r-cancel", "condition": "cancel_rate > 0.5", "action": "alert", "severity": "warning"},
+        {
+            "rule_id": "r-wash",
+            "condition": "self_trade_ratio >= 0.3 and volume >= 1000",
+            "action": "block",
+            "severity": "critical",
+        },
     ],
 }
 
@@ -58,8 +61,7 @@ rules:
 _V2 = {
     "version": "v2",
     "rules": [
-        {"rule_id": "r-cancel", "condition": "cancel_rate > 0.3",
-         "action": "block", "severity": "critical"},
+        {"rule_id": "r-cancel", "condition": "cancel_rate > 0.3", "action": "block", "severity": "critical"},
     ],
 }
 
@@ -106,31 +108,37 @@ class TestSchema:
 
     def test_action_out_of_vocab_raises(self) -> None:
         eng = _engine()
-        bad = {"version": "v", "rules": [
-            {"rule_id": "r", "condition": "x > 1", "action": "nuke", "severity": "info"}]}
+        bad = {"version": "v", "rules": [{"rule_id": "r", "condition": "x > 1", "action": "nuke", "severity": "info"}]}
         with pytest.raises(CompliancePolicyError):
             eng.submit_change("c1", bad)
 
     def test_severity_out_of_vocab_raises(self) -> None:
         eng = _engine()
-        bad = {"version": "v", "rules": [
-            {"rule_id": "r", "condition": "x > 1", "action": "alert", "severity": "fatal"}]}
+        bad = {
+            "version": "v",
+            "rules": [{"rule_id": "r", "condition": "x > 1", "action": "alert", "severity": "fatal"}],
+        }
         with pytest.raises(CompliancePolicyError):
             eng.submit_change("c1", bad)
 
     def test_condition_syntax_invalid_raises(self) -> None:
         eng = _engine()
-        bad = {"version": "v", "rules": [
-            {"rule_id": "r", "condition": "cancel_rate ~~ 0.5", "action": "alert", "severity": "info"}]}
+        bad = {
+            "version": "v",
+            "rules": [{"rule_id": "r", "condition": "cancel_rate ~~ 0.5", "action": "alert", "severity": "info"}],
+        }
         with pytest.raises(CompliancePolicyError):
             eng.submit_change("c1", bad)
 
     def test_duplicate_rule_id_raises(self) -> None:
         eng = _engine()
-        bad = {"version": "v", "rules": [
-            {"rule_id": "r", "condition": "x > 1", "action": "alert", "severity": "info"},
-            {"rule_id": "r", "condition": "x > 2", "action": "block", "severity": "critical"},
-        ]}
+        bad = {
+            "version": "v",
+            "rules": [
+                {"rule_id": "r", "condition": "x > 1", "action": "alert", "severity": "info"},
+                {"rule_id": "r", "condition": "x > 2", "action": "block", "severity": "critical"},
+            ],
+        }
         with pytest.raises(CompliancePolicyError):
             eng.submit_change("c1", bad)
 
@@ -220,8 +228,7 @@ class TestReplayAndHotReload:
 
     def test_replay_match_passes(self) -> None:
         seen: list[tuple[int, int]] = []
-        eng = _engine(replayer=lambda old, new: seen.append((len(old), len(new)))
-                      or ReplayReport(matched=True))
+        eng = _engine(replayer=lambda old, new: seen.append((len(old), len(new))) or ReplayReport(matched=True))
         eng.submit_change("c1", _V1)
         eng.approve_change("c1")
         assert seen == [(0, 2)]  # 旧版本空 → 新2条
@@ -269,9 +276,15 @@ class TestEvaluate:
 
     def test_in_operator(self) -> None:
         eng = _engine()
-        eng.submit_change("c1", {"version": "v", "rules": [
-            {"rule_id": "r-in", "condition": "exchange in ['SH', 'SZ']",
-             "action": "record", "severity": "info"}]})
+        eng.submit_change(
+            "c1",
+            {
+                "version": "v",
+                "rules": [
+                    {"rule_id": "r-in", "condition": "exchange in ['SH', 'SZ']", "action": "record", "severity": "info"}
+                ],
+            },
+        )
         eng.approve_change("c1")
         assert len(eng.evaluate({"exchange": "SH"})) == 1
         assert eng.evaluate({"exchange": "BJ"}) == []

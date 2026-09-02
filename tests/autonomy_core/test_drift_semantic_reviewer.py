@@ -103,9 +103,7 @@ def test_report_structure_and_persistence(tmp_path: Path) -> None:
     """周频跑批产出报告：结构完整 + 落盘 JSON 人审."""
     embedder = MockEmbedder()
     config = SemanticReviewConfig(frequency="weekly")
-    report, rel_path = run_batch(
-        [_aligned_session(), _drifted_session()], embedder, tmp_path, config=config
-    )
+    report, rel_path = run_batch([_aligned_session(), _drifted_session()], embedder, tmp_path, config=config)
     assert report.frequency == "weekly"
     assert report.report_id
     assert report.generated_at

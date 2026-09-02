@@ -33,9 +33,7 @@ def _record(decision_id: str = "D-1", origin=DecisionOrigin.AI, weight: float = 
 
 
 def _window(ai: int = 0, non_ai: int = 0, weight: float = 1.0) -> list[DecisionRecord]:
-    recs = [
-        _record(f"A{i}", DecisionOrigin.AI, weight) for i in range(ai)
-    ] + [
+    recs = [_record(f"A{i}", DecisionOrigin.AI, weight) for i in range(ai)] + [
         _record(f"N{i}", DecisionOrigin.NON_AI, weight) for i in range(non_ai)
     ]
     return recs

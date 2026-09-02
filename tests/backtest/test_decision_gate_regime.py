@@ -79,9 +79,7 @@ class TestPhase5NoInjection:
     def test_phase5_context_but_no_checker(self):
         """传了 phase5_context 但 config 中 checker 为 None -> 跳过不阻断"""
         gate = DecisionGate()
-        ctx = DecisionGateContext(
-            strategy_type="daban", current_regime="r1", oos_params={"window": 12}
-        )
+        ctx = DecisionGateContext(strategy_type="daban", current_regime="r1", oos_params={"window": 12})
         result = gate.evaluate(
             is_sharpe=1.0,
             params={"window": 10},
@@ -292,7 +290,6 @@ class TestPhase5ShrinkageDowngrade:
         assert exc_info.value.error_code == "ZA-BT-0039"
 
 
-
 class TestPhase5BothGates:
     """双闸同触发 + 正常通过"""
 
@@ -305,9 +302,7 @@ class TestPhase5BothGates:
         gate = DecisionGate(cfg)
         is_params = {"window": 10}
         oos_params = {"window": 5}  # 收缩 50% > 30%
-        ctx = DecisionGateContext(
-            strategy_type="daban", current_regime="r1", oos_params=oos_params
-        )
+        ctx = DecisionGateContext(strategy_type="daban", current_regime="r1", oos_params=oos_params)
         result = gate.evaluate(
             is_sharpe=1.0,
             params=is_params,
@@ -333,9 +328,7 @@ class TestPhase5BothGates:
         gate = DecisionGate(cfg)
         is_params = {"window": 10}
         oos_params = {"window": 10}  # 无收缩
-        ctx = DecisionGateContext(
-            strategy_type="daban", current_regime="r3", oos_params=oos_params
-        )
+        ctx = DecisionGateContext(strategy_type="daban", current_regime="r3", oos_params=oos_params)
         result = gate.evaluate(
             is_sharpe=1.0,
             params=is_params,
@@ -356,9 +349,7 @@ class TestPhase5BothGates:
             shrinkage_stability_checker=default_shrinkage_stability_checker,
         )
         gate = DecisionGate(cfg)
-        ctx = DecisionGateContext(
-            strategy_type="daban", current_regime="r1", oos_params={"window": 5}
-        )
+        ctx = DecisionGateContext(strategy_type="daban", current_regime="r1", oos_params={"window": 5})
         result = gate.evaluate(
             is_sharpe=1.0,
             params={"window": 10},
@@ -381,9 +372,7 @@ class TestPhase5CustomMatrix:
     def test_custom_matrix_override(self):
         custom_matrix = {"daban": frozenset({"r3"})}
         cfg = DecisionGateConfig(
-            regime_suitability_checker=lambda st, cr: default_regime_suitability_checker(
-                st, cr, matrix=custom_matrix
-            ),
+            regime_suitability_checker=lambda st, cr: default_regime_suitability_checker(st, cr, matrix=custom_matrix),
         )
         gate = DecisionGate(cfg)
         # 默认规则 daban 在 r1 降格,但自定义矩阵只降格 r3

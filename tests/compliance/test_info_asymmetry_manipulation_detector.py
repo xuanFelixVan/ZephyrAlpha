@@ -177,14 +177,15 @@ class TestManipulationScore:
 class TestScanAndAvoidList:
     def _seeded_detector(self) -> InfoAsymmetryManipulationDetector:
         d = _detector()
-        d.register_disclosure("600519", datetime.date(2026, 6, 1))   # 非空窗
-        d.register_disclosure("000001", datetime.date(2026, 1, 1))   # 空窗（>90天）
+        d.register_disclosure("600519", datetime.date(2026, 6, 1))  # 非空窗
+        d.register_disclosure("000001", datetime.date(2026, 1, 1))  # 空窗（>90天）
         return d
 
     def test_scan_suspected_adds_avoidance(self) -> None:
         d = self._seeded_detector()
         report = d.scan(
-            "600519", datetime.date(2026, 8, 25),
+            "600519",
+            datetime.date(2026, 8, 25),
             [0.01, -0.01, 0.01, -0.01, 0.005],
             _features(cancel_rate=0.9, deviation=0.08),
         )
@@ -197,7 +198,8 @@ class TestScanAndAvoidList:
     def test_scan_asymmetry_and_anomaly_reasons(self) -> None:
         d = self._seeded_detector()
         report = d.scan(
-            "000001", datetime.date(2026, 8, 25),
+            "000001",
+            datetime.date(2026, 8, 25),
             [0.01, -0.01, 0.01, -0.01, 0.05],
             _features(),
         )
@@ -211,7 +213,8 @@ class TestScanAndAvoidList:
     def test_scan_clean_no_avoidance(self) -> None:
         d = self._seeded_detector()
         report = d.scan(
-            "600519", datetime.date(2026, 8, 25),
+            "600519",
+            datetime.date(2026, 8, 25),
             [0.01, -0.01, 0.01, -0.01, 0.005],
             _features(),
         )
@@ -220,30 +223,29 @@ class TestScanAndAvoidList:
 
     def test_avoidance_keeps_higher_score(self) -> None:
         d = self._seeded_detector()
-        d.scan("600519", datetime.date(2026, 8, 25),
-               [0.01, -0.01, 0.01, -0.01, 0.005], _features(cancel_rate=0.9, deviation=0.08))
+        d.scan(
+            "600519",
+            datetime.date(2026, 8, 25),
+            [0.01, -0.01, 0.01, -0.01, 0.005],
+            _features(cancel_rate=0.9, deviation=0.08),
+        )
         first_score = d.avoid_list()[0].score
-        d.scan("600519", datetime.date(2026, 8, 25),
-               [0.01, -0.01, 0.01, -0.01, 0.005], _features(cancel_rate=0.65))
+        d.scan("600519", datetime.date(2026, 8, 25), [0.01, -0.01, 0.01, -0.01, 0.005], _features(cancel_rate=0.65))
         assert len(d.avoid_list()) == 1
         assert d.avoid_list()[0].score == first_score  # 低分不覆盖
 
     def test_avoid_list_sorted(self) -> None:
         d = self._seeded_detector()
         d.register_disclosure("000002", datetime.date(2026, 1, 1))
-        d.scan("000002", datetime.date(2026, 8, 25),
-               [0.01, -0.01, 0.01, -0.01, 0.005], _features())
-        d.scan("000001", datetime.date(2026, 8, 25),
-               [0.01, -0.01, 0.01, -0.01, 0.005], _features())
+        d.scan("000002", datetime.date(2026, 8, 25), [0.01, -0.01, 0.01, -0.01, 0.005], _features())
+        d.scan("000001", datetime.date(2026, 8, 25), [0.01, -0.01, 0.01, -0.01, 0.005], _features())
         assert d.avoid_symbols() == ("000001", "000002")
 
     def test_deterministic_same_input(self) -> None:
         d1 = self._seeded_detector()
         d2 = self._seeded_detector()
-        r1 = d1.scan("600519", datetime.date(2026, 8, 25),
-                     [0.01, -0.01, 0.01, -0.01, 0.05], _features(cancel_rate=0.8))
-        r2 = d2.scan("600519", datetime.date(2026, 8, 25),
-                     [0.01, -0.01, 0.01, -0.01, 0.05], _features(cancel_rate=0.8))
+        r1 = d1.scan("600519", datetime.date(2026, 8, 25), [0.01, -0.01, 0.01, -0.01, 0.05], _features(cancel_rate=0.8))
+        r2 = d2.scan("600519", datetime.date(2026, 8, 25), [0.01, -0.01, 0.01, -0.01, 0.05], _features(cancel_rate=0.8))
         assert r1 == r2
 
     def test_invalid_config_raises(self) -> None:

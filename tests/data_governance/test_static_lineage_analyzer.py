@@ -38,19 +38,19 @@ from zephyr.data_governance.core.static_lineage_analyzer import (
 
 _MOD = "zephyr.factor.compute_momentum"
 
-_PY_READ = '''\
+_PY_READ = """\
 import pandas as pd
 
 def load():
     return pd.read_parquet("data/kline_daily.parquet")
-'''
+"""
 
-_PY_WRITE = '''\
+_PY_WRITE = """\
 def save(df):
     df.to_parquet("data/factor_momentum.parquet")
-'''
+"""
 
-_PY_MIXED = '''\
+_PY_MIXED = """\
 import pandas as pd
 
 def pipeline(out_path):
@@ -60,7 +60,7 @@ def pipeline(out_path):
     a.to_parquet("data/out.parquet")
     unknown_call("data/x.parquet")
     return a
-'''
+"""
 
 
 class TestExtractPythonIOEdges:

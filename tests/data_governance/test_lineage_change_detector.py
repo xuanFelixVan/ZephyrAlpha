@@ -124,10 +124,12 @@ class TestDetect:
     def test_redirected_edge(self) -> None:
         det = _detector()
         _baseline(det)
-        report = det.detect([
-            ("market.kline", "factor.rsi14", "compute"),  # mom20 → rsi14 改向
-            _BASE_EDGES[1],
-        ])
+        report = det.detect(
+            [
+                ("market.kline", "factor.rsi14", "compute"),  # mom20 → rsi14 改向
+                _BASE_EDGES[1],
+            ]
+        )
         assert len(report.redirected) == 1
         r = report.redirected[0]
         assert r.source == "market.kline"

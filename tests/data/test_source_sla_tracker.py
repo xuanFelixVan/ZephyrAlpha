@@ -28,8 +28,8 @@ from zephyr.data.source_sla_tracker import (  # noqa: E402
     SourceSlaTracker,
 )
 
-_D1 = datetime.datetime(2026, 8, 24, 9, 30, 0)   # 周一（ISO 2026-W35）
-_D2 = datetime.datetime(2026, 8, 25, 9, 30, 0)   # 周二
+_D1 = datetime.datetime(2026, 8, 24, 9, 30, 0)  # 周一（ISO 2026-W35）
+_D2 = datetime.datetime(2026, 8, 25, 9, 30, 0)  # 周二
 
 
 def _tracker() -> SourceSlaTracker:
@@ -100,15 +100,15 @@ class TestIngest:
     def test_ingest_invalid_records_raise(self) -> None:
         tracker = _tracker()
         with pytest.raises(SourceSlaError):
-            tracker.ingest([_rec(latency=-1.0)])                     # 负延迟
+            tracker.ingest([_rec(latency=-1.0)])  # 负延迟
         with pytest.raises(SourceSlaError):
-            tracker.ingest([_rec(ok=False, reason=None)])            # 失败缺原因
+            tracker.ingest([_rec(ok=False, reason=None)])  # 失败缺原因
         with pytest.raises(SourceSlaError):
-            tracker.ingest([_rec(ok=True, reason="timeout")])        # 成功带原因
+            tracker.ingest([_rec(ok=True, reason="timeout")])  # 成功带原因
         with pytest.raises(SourceSlaError):
-            tracker.ingest([_rec(ts="2026-08-25")])                  # type: ignore[arg-type]  # 非法时间戳
+            tracker.ingest([_rec(ts="2026-08-25")])  # type: ignore[arg-type]  # 非法时间戳
         with pytest.raises(SourceSlaError):
-            tracker.ingest(["not-a-record"])                         # type: ignore[list-item]  # 非法类型
+            tracker.ingest(["not-a-record"])  # type: ignore[list-item]  # 非法类型
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -156,7 +156,7 @@ class TestAggregate:
         with pytest.raises(SourceSlaError):
             tracker.aggregate("ghost", _D2, _D2 + datetime.timedelta(days=1))
         with pytest.raises(SourceSlaError):
-            tracker.aggregate("tushare", _D2, _D2)                   # 空区间
+            tracker.aggregate("tushare", _D2, _D2)  # 空区间
         with pytest.raises(SourceSlaError):
             tracker.aggregate("tushare", _D1, _D1 + datetime.timedelta(hours=1))  # 空窗口
 
@@ -170,12 +170,14 @@ class TestReports:
     def _filled(self) -> SourceSlaTracker:
         tracker = _tracker()
         tracker.register_target("akshare", availability=0.50, p99_latency_ms=100.0)
-        tracker.ingest([
-            _rec(ts=_D2, latency=100.0),
-            _rec(ts=_D2, ok=False, latency=600.0, reason="timeout"),   # tushare 违约
-            _rec(source="akshare", ts=_D2, latency=50.0),              # akshare 达标
-            _rec(ts=_D1, latency=200.0),                               # 日报窗口外
-        ])
+        tracker.ingest(
+            [
+                _rec(ts=_D2, latency=100.0),
+                _rec(ts=_D2, ok=False, latency=600.0, reason="timeout"),  # tushare 违约
+                _rec(source="akshare", ts=_D2, latency=50.0),  # akshare 达标
+                _rec(ts=_D1, latency=200.0),  # 日报窗口外
+            ]
+        )
         return tracker
 
     def test_daily_report(self) -> None:
@@ -184,7 +186,7 @@ class TestReports:
         assert report["period"] == {"kind": "daily", "key": "2026-08-25"}
         assert set(report["sources"]) == {"akshare", "tushare"}
         tushare = report["sources"]["tushare"]
-        assert tushare["total"] == 2                    # _D1 记录不入日报
+        assert tushare["total"] == 2  # _D1 记录不入日报
         assert tushare["availability"] == pytest.approx(0.5)
         assert tushare["target_met"]["overall"] is False
         assert tushare["target_met"]["availability"] is False
@@ -207,7 +209,7 @@ class TestReports:
         with pytest.raises(SourceSlaError):
             tracker.report_daily("2026-08-25")  # type: ignore[arg-type]
         with pytest.raises(SourceSlaError):
-            tracker.report_weekly(2026, 99)     # ISO 周越界
+            tracker.report_weekly(2026, 99)  # ISO 周越界
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -220,10 +222,12 @@ class TestDashboard:
         tracker = _tracker()
         tracker.register_target("akshare", availability=0.99, p99_latency_ms=100.0)
         tracker.register_target("sina", availability=0.99, p99_latency_ms=100.0)
-        tracker.ingest([
-            _rec(source="tushare", latency=100.0),                              # ok
-            _rec(source="akshare", ok=False, latency=600.0, reason="timeout"),  # breach
-        ])
+        tracker.ingest(
+            [
+                _rec(source="tushare", latency=100.0),  # ok
+                _rec(source="akshare", ok=False, latency=600.0, reason="timeout"),  # breach
+            ]
+        )
         board = tracker.dashboard()
         assert list(board) == ["akshare", "sina", "tushare"]  # 确定性排序
         assert board["tushare"]["status"] == "ok"
@@ -240,11 +244,13 @@ class TestDeterminism:
     def test_same_inputs_same_outputs(self) -> None:
         def _run() -> tuple:
             tracker = _tracker()
-            tracker.ingest([
-                _rec(latency=10.0),
-                _rec(ok=False, latency=900.0, reason="timeout"),
-                _rec(ts=_D1, latency=20.0),
-            ])
+            tracker.ingest(
+                [
+                    _rec(latency=10.0),
+                    _rec(ok=False, latency=900.0, reason="timeout"),
+                    _rec(ts=_D1, latency=20.0),
+                ]
+            )
             agg = tracker.aggregate("tushare", _D1, _D1 + datetime.timedelta(days=2))
             daily = tracker.report_daily(datetime.date(2026, 8, 25))
             weekly = tracker.report_weekly(2026, 35)

@@ -125,9 +125,7 @@ class TestOverfittingGate:
         def gate(submission: ValidationSubmission, results: tuple[LayerResult, ...]) -> dict:
             return {"is_overfitting": True, "reasons": ["IS/OOS Sharpe 衰减>50%"]}
 
-        report = run_layered_validation(
-            _sub("strategy"), layer_runners={"V3": _ok_runner()}, overfitting_gate=gate
-        )
+        report = run_layered_validation(_sub("strategy"), layer_runners={"V3": _ok_runner()}, overfitting_gate=gate)
         assert report.passed is False
         assert report.gate_status == "evaluated"
         assert report.is_overfitting is True
@@ -137,9 +135,7 @@ class TestOverfittingGate:
         def gate(submission: ValidationSubmission, results: tuple[LayerResult, ...]) -> dict:
             return {"is_overfitting": False, "reasons": []}
 
-        report = run_layered_validation(
-            _sub("strategy"), layer_runners={"V3": _ok_runner()}, overfitting_gate=gate
-        )
+        report = run_layered_validation(_sub("strategy"), layer_runners={"V3": _ok_runner()}, overfitting_gate=gate)
         assert report.passed is True
         assert report.gate_status == "evaluated"
 
@@ -148,9 +144,7 @@ class TestOverfittingGate:
             return {"verdict": "ok"}  # 缺 is_overfitting
 
         with pytest.raises(LayeredValidationError):
-            run_layered_validation(
-                _sub("strategy"), layer_runners={"V3": _ok_runner()}, overfitting_gate=bad_gate
-            )
+            run_layered_validation(_sub("strategy"), layer_runners={"V3": _ok_runner()}, overfitting_gate=bad_gate)
 
     def test_gate_not_called_when_layer_failed(self) -> None:
         called: list[bool] = []

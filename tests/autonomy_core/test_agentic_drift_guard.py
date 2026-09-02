@@ -276,17 +276,22 @@ def test_guard_detected_writes_p0_alert(tmp_path: Path) -> None:
     chain = [
         ChainOperation("write", p)
         for p in (
-            "src/a.py", "src/b.py", "config/c.yaml", "config/d.yaml",
-            "scripts/e.py", "scripts/f.py", "docs/g.md", "docs/h.md",
-            "data/i.json", "data/j.json",
+            "src/a.py",
+            "src/b.py",
+            "config/c.yaml",
+            "config/d.yaml",
+            "scripts/e.py",
+            "scripts/f.py",
+            "docs/g.md",
+            "docs/h.md",
+            "data/i.json",
+            "data/j.json",
         )
     ]
     verdict = guard.inspect(chain)
     assert verdict.level is DriftLevel.DETECTED
     assert verdict.blocked
-    alerts = (tmp_path / "audit" / "agentic_drift_guard_alerts.jsonl").read_text(
-        encoding="utf-8"
-    ).strip().splitlines()
+    alerts = (tmp_path / "audit" / "agentic_drift_guard_alerts.jsonl").read_text(encoding="utf-8").strip().splitlines()
     assert len(alerts) == 1
     event = json.loads(alerts[0])
     assert event["severity"] == "critical"  # P0
@@ -300,9 +305,7 @@ def test_guard_warning_no_alert_but_audit_trace(tmp_path: Path) -> None:
     guard = AgenticDriftGuard(runtime_dir=tmp_path)
     chain = [
         ChainOperation(t, f"src/zephyr/autonomy_core/{i}.py")
-        for i, t in enumerate(
-            ["read", "read", "read", "read", "write", "write", "write", "delete", "delete", "delete"]
-        )
+        for i, t in enumerate(["read", "read", "read", "read", "write", "write", "write", "delete", "delete", "delete"])
     ]
     verdict = guard.inspect(chain)
     assert verdict.level is DriftLevel.WARNING

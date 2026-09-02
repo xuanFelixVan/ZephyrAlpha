@@ -143,10 +143,7 @@ class TestEvaluate:
     def test_hard_gate_takes_priority(self) -> None:
         agent = _agent()
         # 回撤超限即使 ic/sharpe 双达标也 REJECT
-        assert (
-            agent.evaluate(_hypothesis(), _metrics(ic=0.08, sharpe=2.0, max_drawdown=0.30))
-            is ResearchVerdict.REJECT
-        )
+        assert agent.evaluate(_hypothesis(), _metrics(ic=0.08, sharpe=2.0, max_drawdown=0.30)) is ResearchVerdict.REJECT
 
 
 # ── act 编排 ─────────────────────────────────────────────────────────────────

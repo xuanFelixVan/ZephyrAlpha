@@ -64,7 +64,9 @@ def _order(
     )
 
 
-def _fast_cancel(order_id: str, idx: int, *, minutes: int = 5, qty: float = 3000, symbol: str = "600000") -> ComplianceOrderRecord:
+def _fast_cancel(
+    order_id: str, idx: int, *, minutes: int = 5, qty: float = 3000, symbol: str = "600000"
+) -> ComplianceOrderRecord:
     """大额（>20%×10000=2000）挂单后 10s 内撤单记录。"""
     placed = _T0 + timedelta(minutes=idx * minutes)
     return _order(order_id, 10.0, qty, symbol=symbol, placed_at=placed, cancelled_at=placed + timedelta(seconds=5))
@@ -167,7 +169,9 @@ class TestLayeringBatch:
         assert all(h.verdict.mtype is not ManipulationType.LAYERING for h in report.hits)
 
     def test_two_levels_no_hit(self, batch_detector: IntradayManipulationDetector) -> None:
-        report = batch_detector.run_batch(ManipulationBatchInput(trade_date=_TD, orders=tuple(_gradient(levels=2, cancelled=2))))
+        report = batch_detector.run_batch(
+            ManipulationBatchInput(trade_date=_TD, orders=tuple(_gradient(levels=2, cancelled=2)))
+        )
         assert report.hits == ()
 
 
@@ -231,7 +235,9 @@ class TestBatchAggregation:
         report = batch_detector.run_batch(ManipulationBatchInput(trade_date=_TD, orders=shuffled))
         assert any(h.verdict.mtype is ManipulationType.SPOOFING for h in report.hits)
 
-    def test_batch_scan_summary_payload(self, batch_detector: IntradayManipulationDetector, logger: ComplianceLogger) -> None:
+    def test_batch_scan_summary_payload(
+        self, batch_detector: IntradayManipulationDetector, logger: ComplianceLogger
+    ) -> None:
         orders = [_fast_cancel(f"o{i}", i) for i in range(3)]
         batch_detector.run_batch(ManipulationBatchInput(trade_date=_TD, orders=tuple(orders)))
         scan_logs = [r for r in logger.read_all() if r.event_type == "MANIPULATION_BATCH_SCAN"]

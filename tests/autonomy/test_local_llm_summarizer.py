@@ -156,9 +156,7 @@ class TestSlotSummarization:
 
         assert result != ""
         slot_totals = {
-            int(m.group(1))
-            for _, prompt, _ in gateway.calls
-            if (m := re.search(r"slot \d+/(\d+)", prompt)) is not None
+            int(m.group(1)) for _, prompt, _ in gateway.calls if (m := re.search(r"slot \d+/(\d+)", prompt)) is not None
         }
         assert len(slot_totals) >= 2, "合并稿超 slot_chars 应触发第二轮压缩（新一轮 slot 总数不同）"
 

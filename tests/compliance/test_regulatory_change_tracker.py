@@ -49,8 +49,10 @@ def _notice(
     published_at: datetime.datetime = datetime.datetime(2026, 8, 20, 18, 0, 0),
 ) -> Announcement:
     return Announcement(
-        notice_id=notice_id, issuer=issuer,
-        title="关于修订减持规定的公告", body="……",
+        notice_id=notice_id,
+        issuer=issuer,
+        title="关于修订减持规定的公告",
+        body="……",
         published_at=published_at,
     )
 
@@ -65,7 +67,8 @@ def _tracker(
     return RegulatoryChangeTracker(
         clock=lambda: _T0,
         source=source if source is not None else (lambda: list(notices or [])),
-        extractor=extractor if extractor is not None
+        extractor=extractor
+        if extractor is not None
         else (lambda a: dict(_EXTRACTION_OK if extraction is None else extraction)),
         impact_table=_IMPACT if impact_table is None else impact_table,
     )
@@ -121,16 +124,14 @@ class TestCollect:
         assert [x.notice_id for x in tasks] == ["N-001", "N-002"]  # 按发布时间
 
     def test_unmapped_clause_empty_domains(self) -> None:
-        t = _tracker(notices=[_notice()],
-                     extraction={**_EXTRACTION_OK, "clauses": ["《未知条款》"]})
+        t = _tracker(notices=[_notice()], extraction={**_EXTRACTION_OK, "clauses": ["《未知条款》"]})
         (task,) = t.collect()
         assert task.affected_domains == ()
 
     def test_multi_clause_domain_union(self) -> None:
         t = _tracker(
             notices=[_notice()],
-            extraction={**_EXTRACTION_OK,
-                        "clauses": ["《减持规定》第5条", "《交易规则》第3.2条"]},
+            extraction={**_EXTRACTION_OK, "clauses": ["《减持规定》第5条", "《交易规则》第3.2条"]},
         )
         (task,) = t.collect()
         assert task.affected_domains == ("order", "position", "trading")  # 排序去重并集
@@ -158,32 +159,29 @@ class TestCollect:
 
 class TestExtractionValidation:
     def test_missing_key_raises(self) -> None:
-        t = _tracker(notices=[_notice()],
-                     extraction={"change_type": "amendment", "effective_date": datetime.date(2026, 9, 1)})
+        t = _tracker(
+            notices=[_notice()], extraction={"change_type": "amendment", "effective_date": datetime.date(2026, 9, 1)}
+        )
         with pytest.raises(RegulatoryTrackerError):
             t.collect()
 
     def test_change_type_out_of_vocab_raises(self) -> None:
-        t = _tracker(notices=[_notice()],
-                     extraction={**_EXTRACTION_OK, "change_type": "magic"})
+        t = _tracker(notices=[_notice()], extraction={**_EXTRACTION_OK, "change_type": "magic"})
         with pytest.raises(RegulatoryTrackerError):
             t.collect()
 
     def test_bad_effective_date_raises(self) -> None:
-        t = _tracker(notices=[_notice()],
-                     extraction={**_EXTRACTION_OK, "effective_date": "2026-09-01"})
+        t = _tracker(notices=[_notice()], extraction={**_EXTRACTION_OK, "effective_date": "2026-09-01"})
         with pytest.raises(RegulatoryTrackerError):
             t.collect()
 
     def test_clauses_non_sequence_raises(self) -> None:
-        t = _tracker(notices=[_notice()],
-                     extraction={**_EXTRACTION_OK, "clauses": "《减持规定》第5条"})
+        t = _tracker(notices=[_notice()], extraction={**_EXTRACTION_OK, "clauses": "《减持规定》第5条"})
         with pytest.raises(RegulatoryTrackerError):
             t.collect()
 
     def test_clause_empty_str_raises(self) -> None:
-        t = _tracker(notices=[_notice()],
-                     extraction={**_EXTRACTION_OK, "clauses": ["ok", ""]})
+        t = _tracker(notices=[_notice()], extraction={**_EXTRACTION_OK, "clauses": ["ok", ""]})
         with pytest.raises(RegulatoryTrackerError):
             t.collect()
 

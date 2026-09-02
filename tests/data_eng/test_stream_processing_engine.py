@@ -65,9 +65,7 @@ def test_register_rejects_bad_tumbling_params():
     with pytest.raises(StreamEngineError, match="size 非法"):
         eng.register_window(WindowSpec(name="a", kind=WindowKind.TUMBLING))
     with pytest.raises(StreamEngineError, match="不允许 gap"):
-        eng.register_window(
-            WindowSpec(name="b", kind=WindowKind.TUMBLING, size=5 * _MIN, gap=_MIN)
-        )
+        eng.register_window(WindowSpec(name="b", kind=WindowKind.TUMBLING, size=5 * _MIN, gap=_MIN))
 
 
 def test_register_rejects_bad_session_params():
@@ -75,9 +73,7 @@ def test_register_rejects_bad_session_params():
     with pytest.raises(StreamEngineError, match="gap 非法"):
         eng.register_window(WindowSpec(name="a", kind=WindowKind.SESSION))
     with pytest.raises(StreamEngineError, match="不允许 size"):
-        eng.register_window(
-            WindowSpec(name="b", kind=WindowKind.SESSION, gap=_MIN, size=5 * _MIN)
-        )
+        eng.register_window(WindowSpec(name="b", kind=WindowKind.SESSION, gap=_MIN, size=5 * _MIN))
 
 
 def test_init_rejects_bad_args():

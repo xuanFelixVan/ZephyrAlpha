@@ -358,9 +358,7 @@ class TestListAll:
 
         monkeypatch.setattr(cp_module, "PASSPORTS_DIR", tmp_path)
         CapabilityPassport(model_id="good-model").save()
-        (tmp_path / "legacy.json").write_text(
-            json.dumps({"overall_grade": "A"}), encoding="utf-8"
-        )
+        (tmp_path / "legacy.json").write_text(json.dumps({"overall_grade": "A"}), encoding="utf-8")
         assert CapabilityPassport.list_all() == ["good-model"]
 
     def test_list_all_missing_dir(self, tmp_path, monkeypatch):

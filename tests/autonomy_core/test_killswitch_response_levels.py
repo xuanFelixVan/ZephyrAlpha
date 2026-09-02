@@ -129,11 +129,7 @@ def layer(tmp_path, orchestrator, system_switch, downgrader):
 def _read_jsonl(path: Path) -> list[dict]:
     if not path.exists():
         return []
-    return [
-        json.loads(line)
-        for line in path.read_text(encoding="utf-8").splitlines()
-        if line.strip()
-    ]
+    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
 class TestLevel1Response:
@@ -150,9 +146,7 @@ class TestLevel1Response:
         assert result.success is True
         assert result.level == ResponseLevel.LEVEL_1.value
         # 技能熔断：两个技能均经编排器域级拉闸
-        assert tuple(
-            scope for scope, _ in switches["skills"].trip_calls
-        ) == ("skill-x", "skill-y")
+        assert tuple(scope for scope, _ in switches["skills"].trip_calls) == ("skill-x", "skill-y")
         # 自治降级：暂降 IM 模式（读/查询放行，写操作人审 = auto_guard）
         assert result.target_mode == TARGET_MODE_IM
         assert downgrader.calls == [("agent-1", TARGET_MODE_IM, "单 Agent 可疑调用链")]
@@ -177,12 +171,8 @@ class TestLevel1Response:
 class TestLevel2Response:
     """level_2 P0(critical) 探针：系统级单 Agent 阻断."""
 
-    def test_level2_blocks_single_agent_at_system_level(
-        self, layer, switches, system_switch, downgrader
-    ):
-        incident = ResponseIncident(
-            severity="P0", agent_id="agent-9", reason="越权写生产库", skill_ids=("skill-z",)
-        )
+    def test_level2_blocks_single_agent_at_system_level(self, layer, switches, system_switch, downgrader):
+        incident = ResponseIncident(severity="P0", agent_id="agent-9", reason="越权写生产库", skill_ids=("skill-z",))
         result = layer.respond(incident)
         assert result.success is True
         assert result.level == ResponseLevel.LEVEL_2.value
@@ -192,7 +182,7 @@ class TestLevel2Response:
         assert switches["system"].is_tripped("") is False
         assert switches["trading"].is_tripped("") is False
         # IM 模式基线叠加（术语统一 §3.13：level_2=IM 基线上叠加暂停涉事 Agent）
-        assert (result.target_mode == TARGET_MODE_IM)
+        assert result.target_mode == TARGET_MODE_IM
         assert downgrader.calls[0][1] == TARGET_MODE_IM
 
     def test_level2_severity_alias_critical(self, layer, system_switch):
@@ -206,9 +196,7 @@ class TestLevel3Response:
     """level_3 global_critical 探针：系统级全局熔断+交易级联动+收敛一致."""
 
     def test_level3_global_trip_with_trading_linkage(self, layer, switches):
-        incident = ResponseIncident(
-            severity="global_critical", agent_id="agent-1", reason="全局失控演练"
-        )
+        incident = ResponseIncident(severity="global_critical", agent_id="agent-1", reason="全局失控演练")
         result = layer.respond(incident)
         assert result.success is True
         assert result.level == ResponseLevel.LEVEL_3.value
@@ -222,9 +210,7 @@ class TestLevel3Response:
         report = layer.consistency_report()
         assert report["consistent"] is True
 
-    def test_level3_explicit_trading_linkage_when_propagation_skips(
-        self, tmp_path, system_switch, downgrader
-    ):
+    def test_level3_explicit_trading_linkage_when_propagation_skips(self, tmp_path, system_switch, downgrader):
         """交易开关为粒度型（不支持全域传播）时，策略层显式兜底拉交易级."""
         granular_trading = _SyntheticSwitch("trading", supports_global=False)
         orch = KillSwitchOrchestrator(runtime_dir=tmp_path, register_defaults=False)
@@ -236,9 +222,7 @@ class TestLevel3Response:
             system_switch=system_switch,
             downgrader=downgrader,
         )
-        incident = ResponseIncident(
-            severity="global_critical", agent_id="agent-1", reason="全局失控演练"
-        )
+        incident = ResponseIncident(severity="global_critical", agent_id="agent-1", reason="全局失控演练")
         result = layer.respond(incident)
         orch.close()
         assert result.success is True
@@ -251,9 +235,7 @@ class TestResetInvariant:
     """复位需 Owner 批准（15号文不变量）：三级 approver 为空全拒且状态零改变."""
 
     def test_level1_reset_requires_owner(self, layer, switches):
-        layer.respond(
-            ResponseIncident(severity="P1", agent_id="a", reason="r", skill_ids=("s1",))
-        )
+        layer.respond(ResponseIncident(severity="P1", agent_id="a", reason="r", skill_ids=("s1",)))
         result = layer.reset_response(ResponseLevel.LEVEL_1, approver="", skill_ids=("s1",))
         assert result.success is False
         assert "approver" in result.errors
@@ -366,8 +348,6 @@ class TestNeverRaise:
             runtime_dir=tmp_path,
             system_switch=_SyntheticSystemSwitch(),
         )
-        result = layer.respond(
-            ResponseIncident(severity="P1", agent_id="a", reason="r", skill_ids=("s",))
-        )
+        result = layer.respond(ResponseIncident(severity="P1", agent_id="a", reason="r", skill_ids=("s",)))
         assert result.success is False
         assert result.errors

@@ -29,8 +29,7 @@ _HEADER = "# 设计文档\n"
 # 3 行一段、空行分隔——规则压缩不截断短段落，压缩结果稳定 ≥ min_chars
 _LONG_BODY = "\n\n".join(
     "\n".join(
-        f"第{i}段第{j}行：本地 Qwen INT4 摘要模型的分 slot 压缩策略细节说明，含显存约束与延迟预算。"
-        for j in range(3)
+        f"第{i}段第{j}行：本地 Qwen INT4 摘要模型的分 slot 压缩策略细节说明，含显存约束与延迟预算。" for j in range(3)
     )
     for i in range(8)
 )
@@ -152,5 +151,7 @@ class TestBackwardCompat:
     def test_custom_policy_respected(self) -> None:
         policy = CompressionPolicy(min_chars=100, max_chars=500)
         compressor = DocCompressor(policy=policy)
-        outcome = compressor.compress_with_provenance(_FRONTMATTER + "正文" * 1000, strategy=CompressionStrategy.TRUNCATE)
+        outcome = compressor.compress_with_provenance(
+            _FRONTMATTER + "正文" * 1000, strategy=CompressionStrategy.TRUNCATE
+        )
         assert len(outcome.compressed_text) <= 500

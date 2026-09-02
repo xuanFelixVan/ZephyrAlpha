@@ -94,7 +94,7 @@ class TestSubmitProcessLoop:
         assert queue.get_result(ticket) is result
 
     def test_block_decision_passthrough(self):
-        queue = AsyncInterceptQueue(gateway=_StubGateway(risks=["leak"]));
+        queue = AsyncInterceptQueue(gateway=_StubGateway(risks=["leak"]))
         ticket = queue.submit("bad", source="agent-x")
         result = queue.process_next()
         assert result is not None
@@ -223,6 +223,8 @@ class TestBoundedLoops:
         for i in range(10):
             queue.submit(f"c-{i}", source="s")
         processed = queue.run_worker(
-            threading.Event(), poll_interval_s=0.01, max_iterations=4,
+            threading.Event(),
+            poll_interval_s=0.01,
+            max_iterations=4,
         )
         assert processed == 4

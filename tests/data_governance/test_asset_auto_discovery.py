@@ -34,8 +34,7 @@ _T0 = datetime.datetime(2026, 8, 25, 9, 30, 0)
 
 
 def _ch_tables() -> list[RawAssetInfo]:
-    return [RawAssetInfo("ch.market.kline", owner="data", update_frequency="1d",
-                         attributes={"rows": "1000"})]
+    return [RawAssetInfo("ch.market.kline", owner="data", update_frequency="1d", attributes={"rows": "1000"})]
 
 
 def _factors() -> list[RawAssetInfo]:
@@ -171,8 +170,9 @@ class TestFingerprintDiff:
         registered: list[AssetCard] = []
         d = AssetAutoDiscovery(clock=lambda: _T0, registry_sink=registered.append)
         state = {"rows": "1000"}
-        d.register_scanner(AssetType.CLICKHOUSE_TABLE, lambda: [
-            RawAssetInfo("ch.market.kline", attributes={"rows": state["rows"]})])
+        d.register_scanner(
+            AssetType.CLICKHOUSE_TABLE, lambda: [RawAssetInfo("ch.market.kline", attributes={"rows": state["rows"]})]
+        )
         d.run()
         registered.clear()
         state["rows"] = "2000"
@@ -202,8 +202,7 @@ class TestFingerprintDiff:
 
     def test_report_sorted_deterministic(self) -> None:
         d = AssetAutoDiscovery(clock=lambda: _T0)
-        d.register_scanner(AssetType.FACTOR, lambda: [
-            RawAssetInfo("z.f"), RawAssetInfo("a.f"), RawAssetInfo("m.f")])
+        d.register_scanner(AssetType.FACTOR, lambda: [RawAssetInfo("z.f"), RawAssetInfo("a.f"), RawAssetInfo("m.f")])
         report = d.run()
         assert report.added == ("a.f", "m.f", "z.f")
         assert [c.asset_id for c in report.cards] == ["a.f", "m.f", "z.f"]

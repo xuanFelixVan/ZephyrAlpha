@@ -73,11 +73,7 @@ FORBIDDEN_TOKENS = ("miniqmt", "miniQMT", "place_order", "OrderManager", "order_
 
 
 def _read_jsonl(path: Path) -> list[dict]:
-    return [
-        json.loads(line)
-        for line in path.read_text(encoding="utf-8").splitlines()
-        if line.strip()
-    ]
+    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
 def _module_source(filename: str) -> str:
@@ -108,9 +104,7 @@ class TestGovernanceEntry:
             ],
             "session_id": "sess-test",
         }
-        report = governance_agent_entry.run_gate_check_ticket(
-            ticket, runtime_dir=tmp_path, repo_root=REPO_ROOT
-        )
+        report = governance_agent_entry.run_gate_check_ticket(ticket, runtime_dir=tmp_path, repo_root=REPO_ROOT)
         assert report["overall"] == "blocked"
         assert report["decision_counts"] == {"allow": 1, "escalate": 1, "block": 1}
 
@@ -155,9 +149,7 @@ class TestBusinessEntry:
         assert report["advice_only"] is True
         assert "仅建议" in report["disclaimer"]
 
-        run_dir = next(
-            p for p in (tmp_path / "agent_runs" / "business").iterdir() if p.is_dir()
-        )
+        run_dir = next(p for p in (tmp_path / "agent_runs" / "business").iterdir() if p.is_dir())
         landed = json.loads((run_dir / "registration_status.json").read_text(encoding="utf-8"))
         assert landed["ai_autonomy"] == "human_gated"
 
@@ -210,9 +202,7 @@ class TestAlgorithmEntry:
             "tags": {"source": "w4_14_sample"},
             "artifacts": [],
         }
-        (run_dir / "run_meta.json").write_text(
-            json.dumps(meta, ensure_ascii=False), encoding="utf-8"
-        )
+        (run_dir / "run_meta.json").write_text(json.dumps(meta, ensure_ascii=False), encoding="utf-8")
 
     def _ticket(self) -> dict:
         return {
@@ -231,7 +221,9 @@ class TestAlgorithmEntry:
             runtime_dir=tmp_path / "rt",
             repo_root=REPO_ROOT,
             gpu_stats_provider=lambda: {
-                "available": True, "memory_used_gb": 6.0, "memory_total_gb": 24.0,
+                "available": True,
+                "memory_used_gb": 6.0,
+                "memory_total_gb": 24.0,
             },
             tracking_config=ExperimentTrackingConfig(fallback_dir=fallback),
         )
@@ -241,12 +233,8 @@ class TestAlgorithmEntry:
         assert report["evaluation"]["metrics"]["sharpe"] == 1.5
         assert report["evaluation"]["passed"] is True
 
-        run_dir = next(
-            p for p in (tmp_path / "rt" / "agent_runs" / "algorithm").iterdir() if p.is_dir()
-        )
-        registration = json.loads(
-            (run_dir / "experiment_registration.pending.json").read_text(encoding="utf-8")
-        )
+        run_dir = next(p for p in (tmp_path / "rt" / "agent_runs" / "algorithm").iterdir() if p.is_dir())
+        registration = json.loads((run_dir / "experiment_registration.pending.json").read_text(encoding="utf-8"))
         assert registration["status"] == "pending_registration"  # 本体交统筹，不落注册表
         assert (run_dir / "vram_guard.json").exists()
         assert (run_dir / "evaluation_report.json").exists()
@@ -257,15 +245,15 @@ class TestAlgorithmEntry:
             runtime_dir=tmp_path / "rt",
             repo_root=REPO_ROOT,
             gpu_stats_provider=lambda: {
-                "available": True, "memory_used_gb": 22.5, "memory_total_gb": 24.0,
+                "available": True,
+                "memory_used_gb": 22.5,
+                "memory_total_gb": 24.0,
             },
             tracking_config=ExperimentTrackingConfig(fallback_dir=tmp_path / "fb"),
         )
         assert report["status"] == "refused_vram"
         assert report["steps"] == ["registered", "refused_vram"]  # 未进入执行步
-        run_dir = next(
-            p for p in (tmp_path / "rt" / "agent_runs" / "algorithm").iterdir() if p.is_dir()
-        )
+        run_dir = next(p for p in (tmp_path / "rt" / "agent_runs" / "algorithm").iterdir() if p.is_dir())
         assert (run_dir / "experiment_registration.pending.json").exists()
         assert not (run_dir / "evaluation_report.json").exists()
 
@@ -275,7 +263,9 @@ class TestAlgorithmEntry:
             runtime_dir=tmp_path / "rt",
             repo_root=REPO_ROOT,
             gpu_stats_provider=lambda: {
-                "available": True, "memory_used_gb": 21.6, "memory_total_gb": 24.0,
+                "available": True,
+                "memory_used_gb": 21.6,
+                "memory_total_gb": 24.0,
             },
             tracking_config=ExperimentTrackingConfig(fallback_dir=tmp_path / "fb"),
         )
@@ -325,14 +315,8 @@ class TestSelfIterationEntry:
             assert suggestion["human_gated"] is True
             assert suggestion["advice_only"] is True
 
-        run_dir = next(
-            p
-            for p in (tmp_path / "agent_runs" / "self_iteration").iterdir()
-            if p.is_dir()
-        )
-        landed = json.loads(
-            (run_dir / "iteration_suggestion.json").read_text(encoding="utf-8")
-        )
+        run_dir = next(p for p in (tmp_path / "agent_runs" / "self_iteration").iterdir() if p.is_dir())
+        landed = json.loads((run_dir / "iteration_suggestion.json").read_text(encoding="utf-8"))
         assert landed["ai_autonomy"] == "human_gated"
 
     def test_evidence_whitelist_skips_outside_files(self, tmp_path):
@@ -350,9 +334,7 @@ class TestSelfIterationEntry:
     def test_no_code_self_modification_path(self):
         """S0.5 验收③：零执行/自改模块 import（AST 断言）."""
         for name in _imported_modules("self_iteration_agent_entry.py"):
-            assert not name.startswith(
-                FORBIDDEN_IMPORTS["self_iteration_agent_entry.py"]
-            ), name
+            assert not name.startswith(FORBIDDEN_IMPORTS["self_iteration_agent_entry.py"]), name
         source = _module_source("self_iteration_agent_entry.py")
         for token in FORBIDDEN_TOKENS:
             assert token not in source

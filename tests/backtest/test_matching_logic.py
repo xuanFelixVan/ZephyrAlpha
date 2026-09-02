@@ -300,9 +300,7 @@ class TestMatchLimitOrder:
     def test_limit_price_nonpositive_raises(self):
         logic = MatchingLogic()
         with pytest.raises(MatchingLogicError):
-            logic.match_limit_order(
-                _order("BUY", "100", order_type="LIMIT", limit_price="0"), _book()
-            )
+            logic.match_limit_order(_order("BUY", "100", order_type="LIMIT", limit_price="0"), _book())
 
     def test_buy_empty_ask_unfilled_not_error(self):
         """限价单盘口无卖价 → 不成交(非异常)。"""
@@ -316,9 +314,7 @@ class TestMatchLimitOrder:
             bid_vol=book.bid_vol,
             last_price=Decimal("10.00"),
         )
-        fill = logic.match_limit_order(
-            _order("BUY", "100", order_type="LIMIT", limit_price="10.05"), empty_ask
-        )
+        fill = logic.match_limit_order(_order("BUY", "100", order_type="LIMIT", limit_price="10.05"), empty_ask)
         assert fill.filled is False
 
     def test_order_type_mismatch_raises(self):

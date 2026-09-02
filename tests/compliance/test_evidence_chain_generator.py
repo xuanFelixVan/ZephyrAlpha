@@ -209,11 +209,14 @@ class TestFailClosed:
 class TestQueryExport:
     def _seeded(self) -> EvidenceChainGenerator:
         gen = _gen()
-        gen.register_collector("orders", lambda: [
-            _snap("ev-1", evidence_type="order", symbol="600519", taken_at=_T0),
-            _snap("ev-2", evidence_type="trade", symbol="600519", taken_at=_T1),
-            _snap("ev-3", evidence_type="decision", symbol="000001", taken_at=_T2),
-        ])
+        gen.register_collector(
+            "orders",
+            lambda: [
+                _snap("ev-1", evidence_type="order", symbol="600519", taken_at=_T0),
+                _snap("ev-2", evidence_type="trade", symbol="600519", taken_at=_T1),
+                _snap("ev-3", evidence_type="decision", symbol="000001", taken_at=_T2),
+            ],
+        )
         gen.collect()
         return gen
 

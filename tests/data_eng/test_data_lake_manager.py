@@ -55,9 +55,7 @@ def _mgr(
 
 
 def _ds(name: str, tier: LakeTier, age_days: int, **kw) -> DatasetState:
-    return DatasetState(
-        name=name, tier=tier, oldest_data_at=_T0 - age_days * _DAY, **kw
-    )
+    return DatasetState(name=name, tier=tier, oldest_data_at=_T0 - age_days * _DAY, **kw)
 
 
 # ── 注册 Fail-Closed ──────────────────────────────────────────────────────
@@ -86,9 +84,7 @@ def test_register_dataset_rejects_bad_state():
     with pytest.raises(DataLakeError, match="size_bytes"):
         mgr.register_dataset(_ds("d1", LakeTier.HOT, 1, size_bytes=-1))
     with pytest.raises(DataLakeError, match="晚于当前时刻"):
-        mgr.register_dataset(
-            DatasetState(name="d2", tier=LakeTier.HOT, oldest_data_at=_T0 + _DAY)
-        )
+        mgr.register_dataset(DatasetState(name="d2", tier=LakeTier.HOT, oldest_data_at=_T0 + _DAY))
     mgr.register_dataset(_ds("d1", LakeTier.HOT, 1))
     with pytest.raises(DataLakeError, match="重复注册"):
         mgr.register_dataset(_ds("d1", LakeTier.HOT, 2))

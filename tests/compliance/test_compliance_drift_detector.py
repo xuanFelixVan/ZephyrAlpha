@@ -151,10 +151,12 @@ class TestDiff:
 
     def test_diff_sorted_by_key(self) -> None:
         d = _seeded()
-        report = d.run_check({
-            "z-undeclared": 9,
-            "a-undeclared": 1,
-        })
+        report = d.run_check(
+            {
+                "z-undeclared": 9,
+                "a-undeclared": 1,
+            }
+        )
         assert [it.key for it in report.items] == [
             "a-undeclared",
             "code_path.detector",

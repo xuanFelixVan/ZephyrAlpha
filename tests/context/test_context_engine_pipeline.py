@@ -191,7 +191,12 @@ class TestAdjustStrategy:
         default = eng.slot_budgets()["lessons"]
         eng.adjust_strategy(
             "T-1",
-            {"suggested_action": "downweight_slot", "target_slot": "lessons", "adjustment_magnitude": 0.05, "ttl_minutes": 30},
+            {
+                "suggested_action": "downweight_slot",
+                "target_slot": "lessons",
+                "adjustment_magnitude": 0.05,
+                "ttl_minutes": 30,
+            },
         )
         assert eng.slot_budgets()["lessons"] != default
         state["now"] = t0 + timedelta(minutes=31)
@@ -200,4 +205,6 @@ class TestAdjustStrategy:
     def test_unknown_slot_rejected(self):
         eng = ContextEngine()
         with pytest.raises(ValueError):
-            eng.adjust_strategy("T-1", {"suggested_action": "downweight_slot", "target_slot": "nope", "adjustment_magnitude": 0.05})
+            eng.adjust_strategy(
+                "T-1", {"suggested_action": "downweight_slot", "target_slot": "nope", "adjustment_magnitude": 0.05}
+            )

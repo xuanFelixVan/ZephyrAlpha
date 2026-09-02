@@ -175,7 +175,7 @@ class TestSharpeSortino:
 
     def test_sharpe_zero_when_std_zero(self):
         """60 个精确 +100% 日收益(2 的幂净值): 波动率精确 0 → Sharpe 0.0（防除零）。"""
-        nav = pd.Series([2.0 ** i for i in range(MIN_SAMPLES_FOR_SHARPE + 1)])
+        nav = pd.Series([2.0**i for i in range(MIN_SAMPLES_FOR_SHARPE + 1)])
         m = calculate_metrics(nav)
         assert m["sharpe_ratio"] == 0.0
 
@@ -240,9 +240,7 @@ class TestCalculateIcIr:
         assert r["ic_std"] == pytest.approx(0.0, abs=1e-6)
         # 近完全相关 → t 统计量极大, 且与 ic_ir 保持 √252 年化关系
         assert r["t_stat"] > 1e6
-        assert r["ic_ir"] == pytest.approx(
-            r["t_stat"] * np.sqrt(TRADING_DAYS_PER_YEAR), rel=1e-9
-        )
+        assert r["ic_ir"] == pytest.approx(r["t_stat"] * np.sqrt(TRADING_DAYS_PER_YEAR), rel=1e-9)
 
     def test_negative_correlation(self):
         """反向因子: IC 为负。"""

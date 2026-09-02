@@ -70,7 +70,7 @@ class TestRegisterPartition:
         with pytest.raises(DataCompressionError):
             arch.register_partition("", month="2026-06", tier=StorageTier.WARM)
         with pytest.raises(DataCompressionError):
-            arch.register_partition("p", month="202606", tier=StorageTier.WARM)   # 非 YYYY-MM
+            arch.register_partition("p", month="202606", tier=StorageTier.WARM)  # 非 YYYY-MM
         with pytest.raises(DataCompressionError):
             arch.register_partition("p", month="2026-13", tier=StorageTier.WARM)  # 月份越界
         with pytest.raises(DataCompressionError):
@@ -103,7 +103,9 @@ class TestPlan:
         plan = arch.plan(_CUTOFF)
         assert plan.cutoff_month == "2026-08"
         assert plan.partitions == (
-            "bars_1m_2026_05", "bars_1m_2026_06", "bars_1m_2026_07",
+            "bars_1m_2026_05",
+            "bars_1m_2026_06",
+            "bars_1m_2026_07",
         )  # 确定性排序
 
     def test_plan_excludes_hot_cold_and_current_month(self) -> None:
@@ -187,7 +189,8 @@ class TestArchiveIndex:
         _warm(arch, "bars_1m_2026_05", "2026-05")
         arch.execute(arch.plan(_CUTOFF))
         assert [r.partition for r in arch.index()] == [
-            "bars_1m_2026_05", "bars_1m_2026_07",
+            "bars_1m_2026_05",
+            "bars_1m_2026_07",
         ]
 
     def test_sqlite_index_persisted(self) -> None:
@@ -195,12 +198,15 @@ class TestArchiveIndex:
         arch = _archiver(sqlite_conn=conn)
         _warm(arch, "bars_1m_2026_06", "2026-06", rows=7)
         arch.execute(arch.plan(_CUTOFF))
-        rows = conn.execute(
-            "SELECT partition, path, rows, archived_at FROM archive_index"
-        ).fetchall()
-        assert rows == [(
-            "bars_1m_2026_06", "/cold/bars_1m_2026_06.parquet", 7, _T0.isoformat(),
-        )]
+        rows = conn.execute("SELECT partition, path, rows, archived_at FROM archive_index").fetchall()
+        assert rows == [
+            (
+                "bars_1m_2026_06",
+                "/cold/bars_1m_2026_06.parquet",
+                7,
+                _T0.isoformat(),
+            )
+        ]
         # 索引以库为准
         assert arch.index()[0].rows == 7
 
@@ -231,9 +237,7 @@ class TestColdQuery:
             f"TO '{parquet.as_posix()}' (FORMAT PARQUET, COMPRESSION 'snappy')"
         )
         arch = _archiver(duckdb_conn=conn)
-        out = arch.cold_query(
-            f"SELECT close FROM read_parquet('{parquet.as_posix()}') ORDER BY ts_code"
-        )
+        out = arch.cold_query(f"SELECT close FROM read_parquet('{parquet.as_posix()}') ORDER BY ts_code")
         assert out == [(10.5,), (11.0,)]
 
 

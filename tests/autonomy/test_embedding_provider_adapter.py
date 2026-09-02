@@ -241,9 +241,7 @@ class TestBatchCli:
 
     def test_missing_field_returns_2(self, tmp_path) -> None:
         bad = tmp_path / "missing.json"
-        bad.write_text(
-            json.dumps([{"session_ref": "s", "original_intent": "x"}]), encoding="utf-8"
-        )
+        bad.write_text(json.dumps([{"session_ref": "s", "original_intent": "x"}]), encoding="utf-8")
         rc = main(
             ["--sessions", str(bad), "--report-dir", str(tmp_path / "r")],
             at=WORKDAY_OFFHOURS,

@@ -28,7 +28,7 @@ from zephyr.data.implementations.tushare_news_connector import (  # noqa: E402
     TushareNewsError,
 )
 
-_T0 = datetime.datetime(2026, 8, 25, 9, 30, 0)          # 窗对齐起点（窗宽 300s）
+_T0 = datetime.datetime(2026, 8, 25, 9, 30, 0)  # 窗对齐起点（窗宽 300s）
 _T1 = datetime.datetime(2026, 8, 25, 9, 35, 0)
 _T2 = datetime.datetime(2026, 8, 25, 9, 40, 0)
 _END = datetime.datetime(2026, 8, 25, 10, 0, 0)
@@ -91,11 +91,13 @@ class TestFingerprint:
 
 class TestFetch:
     def test_fetch_ok_sorted(self) -> None:
-        conn = _connector([
-            _raw("晚新闻", _T2, "n3"),
-            _raw("早新闻", _T0, "n1"),
-            _raw("中新闻", _T1, "n2"),
-        ])
+        conn = _connector(
+            [
+                _raw("晚新闻", _T2, "n3"),
+                _raw("早新闻", _T0, "n1"),
+                _raw("中新闻", _T1, "n2"),
+            ]
+        )
         report = conn.fetch_latest(_T0, _END)
         assert [i.title for i in report.accepted] == ["早新闻", "中新闻", "晚新闻"]
         assert report.dedup_dropped == 0
@@ -103,10 +105,12 @@ class TestFetch:
         assert all(i.source == "tushare" for i in report.accepted)
 
     def test_dedup_within_batch(self) -> None:
-        conn = _connector([
-            _raw("同一新闻", _T0, "n1"),
-            _raw(" 同一新闻 ", datetime.datetime(2026, 8, 25, 9, 32, 0), "n2"),  # 同窗同题
-        ])
+        conn = _connector(
+            [
+                _raw("同一新闻", _T0, "n1"),
+                _raw(" 同一新闻 ", datetime.datetime(2026, 8, 25, 9, 32, 0), "n2"),  # 同窗同题
+            ]
+        )
         report = conn.fetch_latest(_T0, _END)
         assert len(report.accepted) == 1
         assert report.dedup_dropped == 1
@@ -138,10 +142,16 @@ class TestFetch:
         assert conn2.fetch_latest(_T0, _END).accepted[0].news_id == news_id
 
     def test_iso_string_timestamp_parsed(self) -> None:
-        conn = _connector([{
-            "title": "字符串时间", "content": "",
-            "published_at": "2026-08-25T09:30:00", "news_id": "n1",
-        }])
+        conn = _connector(
+            [
+                {
+                    "title": "字符串时间",
+                    "content": "",
+                    "published_at": "2026-08-25T09:30:00",
+                    "news_id": "n1",
+                }
+            ]
+        )
         report = conn.fetch_latest(_T0, _END)
         assert report.accepted[0].published_at == _T0
 
@@ -150,7 +160,7 @@ class TestFetch:
         with pytest.raises(TushareNewsError):
             conn.fetch_latest(_END, _T0)  # start >= end
         with pytest.raises(TushareNewsError):
-            _connector([_raw("", _T0)]).fetch_latest(_T0, _END)          # 空标题
+            _connector([_raw("", _T0)]).fetch_latest(_T0, _END)  # 空标题
         with pytest.raises(TushareNewsError):
             _connector([_raw("越界", datetime.datetime(2026, 8, 26))]).fetch_latest(_T0, _END)
         with pytest.raises(TushareNewsError):
@@ -177,8 +187,7 @@ class TestFetch:
 
 class TestBackfill:
     def test_backfill_complete(self) -> None:
-        conn = _connector([_raw(f"新闻{i}", ts, f"n{i}")
-                           for i, ts in enumerate((_T0, _T1, _T2))])
+        conn = _connector([_raw(f"新闻{i}", ts, f"n{i}") for i, ts in enumerate((_T0, _T1, _T2))])
         report = conn.backfill(_T0, _T2 + datetime.timedelta(seconds=300))
         assert report.complete is True
         assert report.windows_expected == 3

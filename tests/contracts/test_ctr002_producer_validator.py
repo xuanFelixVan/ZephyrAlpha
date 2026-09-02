@@ -174,13 +174,9 @@ class TestValidateProducer:
     def test_aware_datetime_normalized_for_pit(self) -> None:
         now = datetime.datetime(2026, 8, 25, 12, 0, 0)
         v = Ctr002ProducerValidator(clock=lambda: now)
-        aware_future = datetime.datetime(
-            2026, 8, 25, 20, 0, 0, tzinfo=datetime.timezone(datetime.timedelta(hours=8))
-        )
+        aware_future = datetime.datetime(2026, 8, 25, 20, 0, 0, tzinfo=datetime.timezone(datetime.timedelta(hours=8)))
         assert v.validate(_signal(as_of_date=aware_future)).ok is False
-        aware_past = datetime.datetime(
-            2026, 8, 25, 10, 0, 0, tzinfo=datetime.timezone(datetime.timedelta(hours=8))
-        )
+        aware_past = datetime.datetime(2026, 8, 25, 10, 0, 0, tzinfo=datetime.timezone(datetime.timedelta(hours=8)))
         assert v.validate(_signal(as_of_date=aware_past)).ok is True
 
 

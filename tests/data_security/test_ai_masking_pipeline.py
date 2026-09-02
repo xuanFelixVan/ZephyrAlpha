@@ -60,9 +60,7 @@ class TestInit:
 
     def test_empty_purpose_key_raises(self) -> None:
         with pytest.raises(AiMaskingError):
-            AiMaskingPipeline(
-                policies={"": MaskingPolicy(level=MaskingLevel.L1)}, clock=lambda: _T0
-            )
+            AiMaskingPipeline(policies={"": MaskingPolicy(level=MaskingLevel.L1)}, clock=lambda: _T0)
 
     def test_invalid_policy_type_raises(self) -> None:
         with pytest.raises(AiMaskingError):
@@ -78,11 +76,7 @@ class TestInit:
     def test_large_below_medium_raises(self) -> None:
         with pytest.raises(AiMaskingError):
             AiMaskingPipeline(
-                policies={
-                    "x": MaskingPolicy(
-                        level=MaskingLevel.L3, large_amount=10.0, medium_amount=100.0
-                    )
-                },
+                policies={"x": MaskingPolicy(level=MaskingLevel.L3, large_amount=10.0, medium_amount=100.0)},
                 clock=lambda: _T0,
             )
 
@@ -221,6 +215,4 @@ class TestFailClosed:
 
     def test_determinism(self) -> None:
         text = "买入600519.SH 与000001.SZ 成交2500000元"
-        assert _pipe().mask_for_llm("strategy_note", text) == _pipe().mask_for_llm(
-            "strategy_note", text
-        )
+        assert _pipe().mask_for_llm("strategy_note", text) == _pipe().mask_for_llm("strategy_note", text)

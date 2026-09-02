@@ -74,11 +74,7 @@ class _FakeGateway:
         self.calls.append((task_type, prompt, kw))
         if isinstance(self._payload, Exception):
             raise self._payload
-        text = (
-            self._payload
-            if isinstance(self._payload, str)
-            else json.dumps(self._payload, ensure_ascii=False)
-        )
+        text = self._payload if isinstance(self._payload, str) else json.dumps(self._payload, ensure_ascii=False)
         return _FakeResponse(self._status, text)
 
 
@@ -217,10 +213,7 @@ class TestEntryContract:
 # 四选一裁决（FTS5-only 通道，embedding 缺失降级）
 # ──────────────────────────────────────────────────────────────────────────────
 
-_FULL_COVER_FORMULA = (
-    "动量反转双因子策略 二十日收益率突破均线 趋势市场环境 "
-    "流动性过滤低质 做多强势股 截面排序打分"
-)
+_FULL_COVER_FORMULA = "动量反转双因子策略 二十日收益率突破均线 趋势市场环境 流动性过滤低质 做多强势股 截面排序打分"
 
 
 class TestVerdicts:
@@ -243,9 +236,7 @@ class TestVerdicts:
             )
         ]
         thresholds = MapperThresholds(duplicate=0.97, variant=0.3, combination=0.1)
-        spec = _mapper(entries, thresholds=thresholds).map_knowledge(
-            _ITEM, _classification(), schema_plan=_PLAN
-        )
+        spec = _mapper(entries, thresholds=thresholds).map_knowledge(_ITEM, _classification(), schema_plan=_PLAN)
         assert spec.verdict == "variant_of"
         assert spec.candidates[0].entry_id == "FCT-MOM-002"
         assert 0.3 <= spec.candidates[0].score < 0.97
@@ -263,17 +254,11 @@ class TestVerdicts:
 
     def test_combination(self) -> None:
         entries = [
-            _factor_entry(
-                "FCT-MOM-003", "动量侧", "动量反转双因子策略 二十日收益率突破均线"
-            ),
+            _factor_entry("FCT-MOM-003", "动量侧", "动量反转双因子策略 二十日收益率突破均线"),
             _factor_entry("FCT-REV-003", "反转侧", "做多强势股 截面排序打分"),
         ]
-        thresholds = MapperThresholds(
-            duplicate=0.97, variant=0.9, combination=0.15, combination_min_components=2
-        )
-        spec = _mapper(entries, thresholds=thresholds).map_knowledge(
-            _ITEM, _classification(), schema_plan=_PLAN
-        )
+        thresholds = MapperThresholds(duplicate=0.97, variant=0.9, combination=0.15, combination_min_components=2)
+        spec = _mapper(entries, thresholds=thresholds).map_knowledge(_ITEM, _classification(), schema_plan=_PLAN)
         assert spec.verdict == "combination"
         assert set(spec.code_skeleton["components"]) == {"FCT-MOM-003", "FCT-REV-003"}
         assert "组合成分" in spec.rationale
@@ -292,9 +277,7 @@ class TestVerdicts:
 class TestRetrievalChannels:
     def test_dual_channel(self) -> None:
         entries = [_factor_entry("FCT-MOM-001", "动量反转双因子策略", _FULL_COVER_FORMULA)]
-        spec = _mapper(entries, embedder=_HashEmbedder()).map_knowledge(
-            _ITEM, _classification(), schema_plan=_PLAN
-        )
+        spec = _mapper(entries, embedder=_HashEmbedder()).map_knowledge(_ITEM, _classification(), schema_plan=_PLAN)
         assert spec.retrieval_channel == "dual"
         assert spec.degraded is False
         assert spec.degradation_reason is None
@@ -303,9 +286,7 @@ class TestRetrievalChannels:
 
     def test_embedding_missing_degrades_fts_only(self) -> None:
         entries = [_factor_entry("FCT-MOM-001", "动量反转双因子策略", _FULL_COVER_FORMULA)]
-        spec = _mapper(entries, embedder=None).map_knowledge(
-            _ITEM, _classification(), schema_plan=_PLAN
-        )
+        spec = _mapper(entries, embedder=None).map_knowledge(_ITEM, _classification(), schema_plan=_PLAN)
         assert spec.retrieval_channel == "fts_only"
         assert spec.degraded is True
         assert "未注入" in spec.degradation_reason
@@ -315,9 +296,7 @@ class TestRetrievalChannels:
 
     def test_embedding_exception_degrades_fts_only(self) -> None:
         entries = [_factor_entry("FCT-MOM-001", "动量反转双因子策略", _FULL_COVER_FORMULA)]
-        spec = _mapper(entries, embedder=_BoomEmbedder()).map_knowledge(
-            _ITEM, _classification(), schema_plan=_PLAN
-        )
+        spec = _mapper(entries, embedder=_BoomEmbedder()).map_knowledge(_ITEM, _classification(), schema_plan=_PLAN)
         assert spec.retrieval_channel == "fts_only"
         assert spec.degraded is True
         assert "异常" in spec.degradation_reason
@@ -331,11 +310,7 @@ class TestRetrievalChannels:
 
 class TestGovernance:
     def test_retired_graveyard_warning(self) -> None:
-        entries = [
-            _factor_entry(
-                "FCT-OLD-001", "已退役动量因子", _FULL_COVER_FORMULA, status="retired"
-            )
-        ]
+        entries = [_factor_entry("FCT-OLD-001", "已退役动量因子", _FULL_COVER_FORMULA, status="retired")]
         spec = _mapper(entries).map_knowledge(_ITEM, _classification(), schema_plan=_PLAN)
         assert spec.verdict == "reject_duplicate"
         assert spec.candidates[0].retired is True
@@ -397,17 +372,11 @@ class TestGovernance:
 class TestRegistryLoading:
     def test_load_from_tmp_yaml(self, tmp_path) -> None:
         (tmp_path / "factor_registry.yaml").write_text(
-            "factors:\n"
-            "- factor_id: FCT-T-001\n"
-            "  name: 测试因子\n"
-            "  status: candidate\n",
+            "factors:\n- factor_id: FCT-T-001\n  name: 测试因子\n  status: candidate\n",
             encoding="utf-8",
         )
         (tmp_path / "strategy_registry.yaml").write_text(
-            "strategies:\n"
-            "- strategy_id: STR-T-001\n"
-            "  name: 测试策略\n"
-            "  status: retired\n",
+            "strategies:\n- strategy_id: STR-T-001\n  name: 测试策略\n  status: retired\n",
             encoding="utf-8",
         )
         docs = load_registry_entries(tmp_path)

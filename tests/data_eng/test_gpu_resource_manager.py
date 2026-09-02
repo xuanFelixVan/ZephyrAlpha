@@ -84,10 +84,12 @@ def test_set_schedule_rejects_invalid_and_overlapping_rules():
     with pytest.raises(GpuResourceError, match="时段窗口非法"):
         mgr.set_schedule([TimeWindowRule(0, 1441, WorkloadKind.TRAINING)])
     with pytest.raises(GpuResourceError, match="重叠"):
-        mgr.set_schedule([
-            TimeWindowRule(570, 900, WorkloadKind.INFERENCE),
-            TimeWindowRule(800, 1000, WorkloadKind.TRAINING),
-        ])
+        mgr.set_schedule(
+            [
+                TimeWindowRule(570, 900, WorkloadKind.INFERENCE),
+                TimeWindowRule(800, 1000, WorkloadKind.TRAINING),
+            ]
+        )
 
 
 # ── acquire Fail-Closed ───────────────────────────────────────────────────
