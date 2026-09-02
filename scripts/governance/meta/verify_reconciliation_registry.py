@@ -159,9 +159,7 @@ def _check_002_register_idempotent(mod) -> CheckResult:
     reg.register(_mk("G1"))
     reg.register(_mk("G1"))
     if reg.spec_count != 1:
-        return CheckResult(
-            "FN-RR-002", False, f"register not idempotent: count={reg.spec_count} (expected 1)"
-        )
+        return CheckResult("FN-RR-002", False, f"register not idempotent: count={reg.spec_count} (expected 1)")
     return CheckResult("FN-RR-002", True, "register idempotent (same gate_id replaces)")
 
 
@@ -173,9 +171,7 @@ def _check_003_reconcile_returns_list(mod) -> CheckResult:
     reg = reg_cls()
     result = reg.reconcile_for([], "sess")
     if not isinstance(result, list):
-        return CheckResult(
-            "FN-RR-003", False, f"reconcile_for returns {type(result).__name__}, not list"
-        )
+        return CheckResult("FN-RR-003", False, f"reconcile_for returns {type(result).__name__}, not list")
     return CheckResult("FN-RR-003", True, f"reconcile_for returns list (len={len(result)})")
 
 
@@ -197,9 +193,7 @@ def _check_004_priority_order(mod) -> CheckResult:
             order.append(_gid)
             return mod.ReconcileResult(action="clean", detail=_gid)
 
-        reg.register(
-            spec_cls(gate_id=gid, trigger=lambda files: True, reconcile=_reconcile, priority=prio)
-        )
+        reg.register(spec_cls(gate_id=gid, trigger=lambda files: True, reconcile=_reconcile, priority=prio))
     reg.reconcile_for(["x.py"], "sess")
     if order != ["B", "A", "C"]:  # noqa: gate-vocab  测试断言：校验优先级排序输出 [B,A,C]（gate_id 测试夹具，非 governance_family 词表校验）
         return CheckResult("FN-RR-004", False, f"priority order wrong: {order} (expected B,A,C)")
@@ -232,9 +226,7 @@ def _check_005_exception_isolation(mod) -> CheckResult:
     warn_actions = [r for r in results if r.action == "warn"]
     if not warn_actions:
         return CheckResult("FN-RR-005", False, "exception not degraded to warn result")
-    return CheckResult(
-        "FN-RR-005", True, f"exception isolated, {len(results)} results, ran_after=True"
-    )
+    return CheckResult("FN-RR-005", True, f"exception isolated, {len(results)} results, ran_after=True")
 
 
 def _check_006_empty_registry(mod) -> CheckResult:
@@ -257,9 +249,7 @@ def _check_006_empty_registry(mod) -> CheckResult:
         )
         result2 = reg.reconcile_for(["x.py"], "sess")
         if result2 != []:
-            return CheckResult(
-                "FN-RR-006", False, f"no-trigger-match returned {result2!r}, not []"
-            )
+            return CheckResult("FN-RR-006", False, f"no-trigger-match returned {result2!r}, not []")
     return CheckResult("FN-RR-006", True, "empty/no-match → [] (no silent None)")
 
 
@@ -285,7 +275,8 @@ def _check_007_result_collection(mod) -> CheckResult:
     results = reg.reconcile_for(["x.py"], "sess")
     if len(results) != 2:
         return CheckResult(
-            "FN-RR-007", False,
+            "FN-RR-007",
+            False,
             f"collected {len(results)} results, expected 2 (append removed?)",
         )
     return CheckResult("FN-RR-007", True, f"collected all {len(results)} results")
@@ -309,9 +300,7 @@ def _check_008_default_priority(mod) -> CheckResult:
     except TypeError as e:
         return CheckResult("FN-RR-008", False, f"cannot construct spec without priority: {e}")
     if spec.priority != 100:
-        return CheckResult(
-            "FN-RR-008", False, f"default priority={spec.priority}, expected 100"
-        )
+        return CheckResult("FN-RR-008", False, f"default priority={spec.priority}, expected 100")
     return CheckResult("FN-RR-008", True, "default priority=100")
 
 
@@ -329,12 +318,8 @@ CHECKS = [
 
 def main() -> int:
     """Entry point: parse args, run 8 invariant checks, print findings, return exit code."""
-    parser = argparse.ArgumentParser(
-        description="ReconciliationRegistry 轻量结构 audit (P3-T1)"
-    )
-    parser.add_argument(
-        "--warn-only", action="store_true", help="非阻断模式（始终 exit 0，仅报告）"
-    )
+    parser = argparse.ArgumentParser(description="ReconciliationRegistry 轻量结构 audit (P3-T1)")
+    parser.add_argument("--warn-only", action="store_true", help="非阻断模式（始终 exit 0，仅报告）")
     args = parser.parse_args()
 
     mod, err = _load_ssot()

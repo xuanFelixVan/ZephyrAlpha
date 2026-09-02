@@ -94,8 +94,8 @@ MUTATIONS: list[Mutation] = [
     Mutation(
         "M01",
         "flag 提取 split[0]→[-1]（破坏 --flag=value 解析）",
-        "flags = [t.split(\"=\")[0] for t in parts if t.startswith(\"--\")]",
-        "flags = [t.split(\"=\")[-1] for t in parts if t.startswith(\"--\")]",
+        'flags = [t.split("=")[0] for t in parts if t.startswith("--")]',
+        'flags = [t.split("=")[-1] for t in parts if t.startswith("--")]',
     ),
     Mutation(
         "M02",
@@ -106,8 +106,8 @@ MUTATIONS: list[Mutation] = [
     Mutation(
         "M03",
         "脚本存在性 not p.exists()→p.exists()（反转：存在文件被拒）",
-        "    if not p.exists():\n        return f\"脚本不存在: {script_path}（解析为 {p}）\"",
-        "    if p.exists():\n        return f\"脚本不存在: {script_path}（解析为 {p}）\"",
+        '    if not p.exists():\n        return f"脚本不存在: {script_path}（解析为 {p}）"',
+        '    if p.exists():\n        return f"脚本不存在: {script_path}（解析为 {p}）"',
     ),
     Mutation(
         "M04",
@@ -119,7 +119,7 @@ MUTATIONS: list[Mutation] = [
         "M05",
         "超时分支 return None→return reason（误杀慢脚本）",
         "    except (subprocess.TimeoutExpired, Exception):\n        # --help 超时或异常无法校验，视为通过（不阻断）\n        return None",
-        "    except (subprocess.TimeoutExpired, Exception):\n        # --help 超时或异常无法校验，视为通过（不阻断）\n        return \"MUTATED: 超时视为失败\"",
+        '    except (subprocess.TimeoutExpired, Exception):\n        # --help 超时或异常无法校验，视为通过（不阻断）\n        return "MUTATED: 超时视为失败"',
     ),
     Mutation(
         "M06",
@@ -136,7 +136,7 @@ MUTATIONS: list[Mutation] = [
     Mutation(
         "M08",
         "链式拆分 re.split→[cmd]（不拆分 && / || / 换行）",
-        "    sub_cmds = re.split(r\"\\s*(?:&&|\\|\\||\\n)\\s*\", cmd.strip())",
+        '    sub_cmds = re.split(r"\\s*(?:&&|\\|\\||\\n)\\s*", cmd.strip())',
         "    sub_cmds = [cmd.strip()]  # MUTATED: 不拆分链式",
     ),
     Mutation(
@@ -172,7 +172,7 @@ MUTATIONS: list[Mutation] = [
     Mutation(
         "M14",
         "移除引号 strip（引号路径无法解析）",
-        "        parts = [t.strip(\"'\\\"\") for t in shlex.split(cmd, posix=False)]",
+        '        parts = [t.strip("\'\\"") for t in shlex.split(cmd, posix=False)]',
         "        parts = shlex.split(cmd, posix=False)  # MUTATED: 不 strip 引号",
     ),
     # === W3 孪生字段扩展（M15-M17，杀灭由 R28-R36 守门）===
@@ -247,8 +247,7 @@ def _run_oracle(mutated_path: Path) -> tuple[bool, str]:
     env[_SEAM_ENV] = str(mutated_path)
     try:
         result = subprocess.run(
-            [sys.executable, "-m", "pytest", str(_TEST_PATH), "-q",
-             "--no-header", "--tb=line"],
+            [sys.executable, "-m", "pytest", str(_TEST_PATH), "-q", "--no-header", "--tb=line"],
             capture_output=True,
             text=True,
             cwd=str(_REPO_ROOT),
@@ -345,9 +344,7 @@ def _finalize(report: RunReport, threshold: float) -> int:
 
 def main() -> None:
     """Entry point: parse args, run logic, return exit code."""
-    parser = argparse.ArgumentParser(
-        description="post_sync_validator 变异测试（独立 oracle，打破自指悖论）"
-    )
+    parser = argparse.ArgumentParser(description="post_sync_validator 变异测试（独立 oracle，打破自指悖论）")
     parser.add_argument(
         "--threshold",
         type=float,

@@ -94,7 +94,6 @@ _STATIC_MANIFEST: list[dict] = [
     # hash 1cf189a8→07023da9 撞上复跑采样瞬间必红，需 reconciler 自愈波次重注册才回绿）。
     # 与"派生产物禁入 git"同哲学：golden hash 保护聚焦手写规则文件；派生物的一致性由
     # GATE-21（validate_static_manifest_drift --check，生成器幂等校验）兜底，语义更精确。
-
     {
         "path": "scripts/governance/d5_architecture/checkers/check_precommit_id_uniqueness.py",
         "critical": True,

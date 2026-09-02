@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-D5_ARCH_TOOLS | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 #!/usr/bin/env python3
 """check_wiring_orphan.py — 装配超期门禁（Owner 裁定三 Layer3，#ARCH-278）。
 

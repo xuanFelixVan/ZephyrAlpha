@@ -61,10 +61,13 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
+
 _DB_PATH = _REPO_ROOT / "scripts" / "governance" / "meta" / "findings_timeseries.db"
 
 # SQL 集中化（§5.160.2 NO-BARE-SQL gate）
-SQL_INSERT_SCAN_RUN = "INSERT INTO scan_runs (run_id, started_at, completed_at, total_findings, exit_code) VALUES (?, ?, ?, ?, ?)"
+SQL_INSERT_SCAN_RUN = (
+    "INSERT INTO scan_runs (run_id, started_at, completed_at, total_findings, exit_code) VALUES (?, ?, ?, ?, ?)"
+)
 SQL_COUNT_SINCE = "SELECT COUNT(*) FROM findings WHERE timestamp >= ?"
 SQL_COUNT_RANGE = "SELECT COUNT(*) FROM findings WHERE timestamp >= ? AND timestamp < ?"
 
@@ -186,9 +189,7 @@ def trend(days: int = 30) -> dict:
 
         prev_cutoff = (datetime.now(UTC) - timedelta(days=days * 2)).isoformat()
         prev_cutoff_end = cutoff
-        prev_total = conn.execute(
-            SQL_COUNT_RANGE, (prev_cutoff, prev_cutoff_end)
-        ).fetchone()[0]
+        prev_total = conn.execute(SQL_COUNT_RANGE, (prev_cutoff, prev_cutoff_end)).fetchone()[0]
 
         if prev_total == 0:
             direction = "stable"

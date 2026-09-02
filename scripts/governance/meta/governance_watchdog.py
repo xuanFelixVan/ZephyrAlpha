@@ -20,6 +20,7 @@
 # noqa: m02-manual  M02豁免: 治理watchdog常驻服务(python scripts/governance/meta/governance_watchdog.py),CLI触发启动,启动后自动运行;非reconciler无需事件触发
 
 """Module docstring — see module-level docstring for details."""
+
 from __future__ import annotations
 
 

@@ -89,16 +89,28 @@ _PROTECTED_KEEP = 5
 # 排除原则：仅备份 DB 真源表，YAML 缓存表/视图/空表不备份（真源收敛原则）。
 _ARCHITECTURE_TABLES: list[str] = [
     # depgraph (11 表)
-    "nodes", "edges", "nodes_metadata", "edges_metadata",
-    "domains", "domain_dependencies", "domain_mapping",
-    "rule_bindings", "blueprint_links", "nodes_archive_module_lifecycle",
+    "nodes",
+    "edges",
+    "nodes_metadata",
+    "edges_metadata",
+    "domains",
+    "domain_dependencies",
+    "domain_mapping",
+    "rule_bindings",
+    "blueprint_links",
+    "nodes_archive_module_lifecycle",
     "domain_events",
     # battle_map (3 表)
-    "battle_map_steps", "battle_map_anchors", "battle_map_edges",
+    "battle_map_steps",
+    "battle_map_anchors",
+    "battle_map_edges",
     # decisiongraph (2 表，DB 真源；decision_layers/tracks 是 YAML 派生不备份)
-    "decision_nodes", "decision_edges",
+    "decision_nodes",
+    "decision_edges",
     # dataflowgraph (3 表，DB 真源；dataflow_runs 空表/metadata 派生不备份)
-    "dataflow_datasets", "dataflow_edges", "dataflow_jobs",
+    "dataflow_datasets",
+    "dataflow_edges",
+    "dataflow_jobs",
 ]
 
 # §5.160.2 SQL 集中化：预生成各表的 SELECT SQL（table 是 _ARCHITECTURE_TABLES 硬编码常量，无注入风险）
@@ -204,6 +216,7 @@ def _is_pid_alive(pid: int) -> bool:
         # Windows: OpenProcess 检测进程是否存在
         try:
             import ctypes
+
             PROCESS_QUERY_LIMITED_INFORMATION = 0x1000  # noqa: gate-vocab
             kernel32 = ctypes.windll.kernel32
             handle = kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
@@ -321,18 +334,14 @@ def backup_pg_architecture(max_backups: int = 10, throttle_seconds: int = 0) -> 
                 "[BACKUP-PG] SKIP: 另一进程正在备份架构库，跳过并发冗余快照",
                 file=sys.stderr,
             )
-            existing = sorted(
-                p for p in backup_dir.glob("architecture_*.json") if not _is_protected_backup(p.name)
-            )
+            existing = sorted(p for p in backup_dir.glob("architecture_*.json") if not _is_protected_backup(p.name))
             return str(existing[-1]) if existing else None
 
         # Obs2 治本节流：距上次备份不足 throttle_seconds 则跳过冗余快照。
         # DR 备份目的=灾难恢复（非版本控制），git commit 已提供变更追溯。
         # S3：排除受保护人工备份（architecture_pre_*/architecture_pinned_*），其不应抑制常规备份节流。
         if throttle_seconds > 0:
-            existing = sorted(
-                p for p in backup_dir.glob("architecture_*.json") if not _is_protected_backup(p.name)
-            )
+            existing = sorted(p for p in backup_dir.glob("architecture_*.json") if not _is_protected_backup(p.name))
             if existing:
                 try:
                     import time as _time

@@ -57,6 +57,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
+
 _SCRIPTS_DIR = _REPO_ROOT / "scripts" / "governance"
 _REQUIREMENTS_DIR = _SCRIPTS_DIR / "meta" / "requirements"
 

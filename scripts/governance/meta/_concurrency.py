@@ -16,6 +16,7 @@
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: while True+time.sleep是并发控制锁等待，非周期触发
 """Module docstring — see module-level docstring for details."""
+
 from __future__ import annotations
 
 """
@@ -79,6 +80,7 @@ import yaml
 # 需自行确保 src/ 在 sys.path 以便 import zephyr.shared.infra.process_pool
 from _shared.constants import REPO_ROOT
 from _shared.thresholds import get as _get_threshold  # noqa: E402  治本(ARCH-036 P3-A5): 锁超时读SSoT
+
 _SRC_ROOT = str(REPO_ROOT / "src")
 if _SRC_ROOT not in sys.path:
     sys.path.insert(0, _SRC_ROOT)
@@ -752,7 +754,9 @@ class DimensionLock:
     锁文件：meta/locks/dim_{D1}.lock (JSON: {pid, agent_id, dimension, acquired_at})
     """
 
-    _LOCK_TIMEOUT_S = _get_threshold("concurrency.lock.l1_dimension_timeout_seconds", 60)  # 治本(ARCH-036 P3-A5): 从SSoT读取(原硬编码10与SSoT 60漂移)
+    _LOCK_TIMEOUT_S = _get_threshold(
+        "concurrency.lock.l1_dimension_timeout_seconds", 60
+    )  # 治本(ARCH-036 P3-A5): 从SSoT读取(原硬编码10与SSoT 60漂移)
     _POLL_INTERVAL_S = 0.2
     _STALE_S = 60
 
@@ -829,7 +833,9 @@ class FileLock:
     锁文件：meta/locks/file_{hash}.lock
     """
 
-    _LOCK_TIMEOUT_S = _get_threshold("concurrency.lock.l2_file_timeout_seconds", 30)  # 治本(ARCH-036 P3-A5): 从SSoT读取(原硬编码5与SSoT 30漂移)
+    _LOCK_TIMEOUT_S = _get_threshold(
+        "concurrency.lock.l2_file_timeout_seconds", 30
+    )  # 治本(ARCH-036 P3-A5): 从SSoT读取(原硬编码5与SSoT 30漂移)
     _POLL_INTERVAL_S = 0.1
     _STALE_S = 30
 

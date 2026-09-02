@@ -64,6 +64,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
+
 _DB_PATH = _REPO_ROOT / "scripts" / "governance" / "meta" / "findings_timeseries.db"
 _ROT_LOG = _REPO_ROOT / "scripts" / "governance" / "meta" / "script_rot_findings.jsonl"
 

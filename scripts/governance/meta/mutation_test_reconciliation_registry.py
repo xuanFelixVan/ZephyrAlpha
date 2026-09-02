@@ -342,9 +342,7 @@ def _finalize(report: RunReport, threshold: float) -> int:
 
 def main() -> None:
     """Entry point: parse args, run logic, return exit code."""
-    parser = argparse.ArgumentParser(
-        description="ReconciliationRegistry 变异测试（独立 oracle，打破自指悖论）"
-    )
+    parser = argparse.ArgumentParser(description="ReconciliationRegistry 变异测试（独立 oracle，打破自指悖论）")
     parser.add_argument(
         "--threshold",
         type=float,

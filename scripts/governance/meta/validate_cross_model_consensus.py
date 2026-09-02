@@ -58,6 +58,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
+
 _CONSENSUS_LOG = _REPO_ROOT / "scripts" / "governance" / "meta" / "cross_model_consensus.jsonl"
 
 # 多模型角色定义——来自氛围编程社区最佳实践

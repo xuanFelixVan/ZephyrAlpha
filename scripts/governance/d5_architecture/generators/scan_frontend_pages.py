@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-D_GOV_SCRIPTS | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """前端页面扫描器（四件套 Phase 2）——pages/*.html → frontend_map.yaml 全量建账（半自动）。
 
 职责：把"前端有什么"从人肉盘点变成机器普查。每个页面抽取：

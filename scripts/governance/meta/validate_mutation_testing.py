@@ -129,8 +129,7 @@ def load_cases() -> list[dict]:
                         "verifier": c.get("verifier", ""),
                         "expected_finding_id": c.get("expected_finding_id") or c.get("case_id", ""),
                         "target_path": c.get("target_path") or c.get("input_file", ""),
-                        "defect": c.get("defect")
-                        or {"type": "file_create", "path": c.get("input_file", "")},
+                        "defect": c.get("defect") or {"type": "file_create", "path": c.get("input_file", "")},
                         "expected_detection": c.get("expected_detection", True),
                         "timeout_seconds": c.get("timeout_seconds", 30),
                         "severity": c.get("severity", "medium"),

@@ -65,6 +65,7 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
 from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
+
 _CASES_DIR = _REPO_ROOT / "scripts" / "governance" / "meta" / "false_negative_cases"
 _CASES_INDEX = _CASES_DIR / "cases_index.yaml"
 _RESULTS_LOG = _CASES_DIR / "results.jsonl"

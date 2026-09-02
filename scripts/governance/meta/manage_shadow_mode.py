@@ -76,7 +76,9 @@ def _load() -> dict:
 def _save(data: dict) -> None:
     """_save implementation."""
     _SHADOW_STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
-    atomic_write_safe(_SHADOW_STATE_PATH, yaml.dump(data, allow_unicode=True, default_flow_style=False, sort_keys=False))
+    atomic_write_safe(
+        _SHADOW_STATE_PATH, yaml.dump(data, allow_unicode=True, default_flow_style=False, sort_keys=False)
+    )
 
 
 def get_activation_phase(script_name: str) -> str:
