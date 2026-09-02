@@ -571,5 +571,3 @@ data/fix_patterns/
 data/_tmp_*.py
 # scripts 下运行时数据目录（非代码）
 scripts/data/
-# 测试上下文真实后端集成（需要 live 环境，非 CI 测试）
-tests/context/
