@@ -200,20 +200,24 @@ class TestFilterSignificant:
 
     def test_pass_and_fail(self) -> None:
         eng = _engine(effect_threshold=0.05, p_value_threshold=0.05)
-        sig = eng.filter_significant([
-            self._eff(0.10, 0.01),   # 通过
-            self._eff(0.03, 0.01),   # |效应|不足
-            self._eff(0.10, 0.20),   # p 不足
-        ])
+        sig = eng.filter_significant(
+            [
+                self._eff(0.10, 0.01),  # 通过
+                self._eff(0.03, 0.01),  # |效应|不足
+                self._eff(0.10, 0.20),  # p 不足
+            ]
+        )
         assert len(sig) == 1
         assert sig[0].effect == pytest.approx(0.10)
 
     def test_boundary_excluded(self) -> None:
         eng = _engine(effect_threshold=0.05, p_value_threshold=0.05)
-        sig = eng.filter_significant([
-            self._eff(0.05, 0.01),   # |效应|==阈值 → 排除（严格 >）
-            self._eff(0.10, 0.05),   # p==阈值 → 排除（严格 <）
-        ])
+        sig = eng.filter_significant(
+            [
+                self._eff(0.05, 0.01),  # |效应|==阈值 → 排除（严格 >）
+                self._eff(0.10, 0.05),  # p==阈值 → 排除（严格 <）
+            ]
+        )
         assert sig == ()
 
     def test_negative_effect_abs_pass(self) -> None:
@@ -283,10 +287,10 @@ class TestGraphCache:
         messy = [
             ("value", "return"),
             ("momentum", "return"),
-            ("value", "return"),      # 重复
-            ("size", "size"),          # 自环
-            ("", "return"),            # 空白
-            ("single",),               # 非法形态
+            ("value", "return"),  # 重复
+            ("size", "size"),  # 自环
+            ("", "return"),  # 空白
+            ("single",),  # 非法形态
         ]
         eng = _engine(discovery_runner=_discovery_runner(messy))
         snap = eng.precompute_causal_graph("fp-001", _VARS)
@@ -303,9 +307,9 @@ class TestGraphCache:
     def test_bad_inputs_raise(self) -> None:
         eng = _engine(discovery_runner=_discovery_runner())
         with pytest.raises(CausalMlError):
-            eng.precompute_causal_graph("", _VARS)          # 空指纹
+            eng.precompute_causal_graph("", _VARS)  # 空指纹
         with pytest.raises(CausalMlError):
-            eng.precompute_causal_graph("fp", [])           # 空变量集
+            eng.precompute_causal_graph("fp", [])  # 空变量集
         with pytest.raises(CausalMlError):
             eng.precompute_causal_graph("fp", ["momentum", " "])  # 空白变量
         with pytest.raises(CausalMlError):

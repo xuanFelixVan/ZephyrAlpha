@@ -30,7 +30,9 @@ def _biz_days(end: date, n: int) -> list[date]:
 class _FakeCH:
     """鸭子类型 ch_client：按 SQL 路由返回合成行（不触库）。"""
 
-    def __init__(self, spot_quote=None, fut_qmt=None, fut_daily=None, spot_daily=None, position=None, events=None, fail=()):
+    def __init__(
+        self, spot_quote=None, fut_qmt=None, fut_daily=None, spot_daily=None, position=None, events=None, fail=()
+    ):
         self._spot_quote = spot_quote or []
         self._fut_qmt = fut_qmt or []
         self._fut_daily = fut_daily or []

@@ -153,9 +153,7 @@ class TestThreeChannelProbes:
         engine = _StubEngine()
         alerter = _StubAlerter()
         pipe = _pipeline(tmp_path, engine=engine, alerter=alerter)
-        record = pipe.consume_event(
-            _event(threat_category="emergence", severity="high", detail=BEHAVIORAL_PROBE)
-        )
+        record = pipe.consume_event(_event(threat_category="emergence", severity="high", detail=BEHAVIORAL_PROBE))
         assert record.fault_class is FaultClass.BEHAVIORAL
         assert record.channel is ChannelDecision.BLOCK_ALERT
         assert engine.calls == [], "行为类探针 MUST NOT 触发自动修复（不变量）"
@@ -173,9 +171,7 @@ class TestBehavioralInvariant:
     def test_behavioral_threats_never_call_engine(self, tmp_path, threat_category):
         engine = _StubEngine()
         pipe = _pipeline(tmp_path, engine=engine)
-        record = pipe.consume_event(
-            _event(threat_category=threat_category, severity="high", detail=BEHAVIORAL_PROBE)
-        )
+        record = pipe.consume_event(_event(threat_category=threat_category, severity="high", detail=BEHAVIORAL_PROBE))
         assert record.fault_class is FaultClass.BEHAVIORAL
         assert record.channel is ChannelDecision.BLOCK_ALERT
         assert engine.calls == []
@@ -261,9 +257,7 @@ class TestFixPatternStore:
         with pytest.raises(FixPatternStoreError):
             FixPatternStore.validate_fixer_registry({"schema_version": "1.0"})
         with pytest.raises(FixPatternStoreError):
-            FixPatternStore.validate_fixer_registry(
-                {"schema_version": "1.0", "fixers": [{"fixer_id": "x"}]}
-            )
+            FixPatternStore.validate_fixer_registry({"schema_version": "1.0", "fixers": [{"fixer_id": "x"}]})
 
 
 class TestWhitelistApproval:
@@ -307,9 +301,7 @@ class TestWhitelistApproval:
 
     def test_unknown_approval_id_denied(self, tmp_path):
         pipe = _pipeline(tmp_path)
-        granted = pipe.whitelist.request_exemption(
-            path="x", reason="r", approval_id="APR-NOT-EXIST"
-        )
+        granted = pipe.whitelist.request_exemption(path="x", reason="r", approval_id="APR-NOT-EXIST")
         assert granted is False
 
 
@@ -340,13 +332,9 @@ class TestEmergenceIntervention:
     def test_sop_flow_ticket_review_close(self, tmp_path):
         pipe = _pipeline(tmp_path)
         ticket = pipe.consume_emergence_alert(self._alert_event())
-        reviewed = pipe.advance_intervention(
-            ticket.ticket_id, to_status=InterventionStatus.HUMAN_REVIEW, actor="owner"
-        )
+        reviewed = pipe.advance_intervention(ticket.ticket_id, to_status=InterventionStatus.HUMAN_REVIEW, actor="owner")
         assert reviewed.status is InterventionStatus.HUMAN_REVIEW
-        closed = pipe.advance_intervention(
-            ticket.ticket_id, to_status=InterventionStatus.CLOSED, actor="owner"
-        )
+        closed = pipe.advance_intervention(ticket.ticket_id, to_status=InterventionStatus.CLOSED, actor="owner")
         assert closed.status is InterventionStatus.CLOSED
         persisted = pipe.tickets.get(ticket.ticket_id)
         assert persisted is not None and persisted.status is InterventionStatus.CLOSED
@@ -471,9 +459,7 @@ class TestAuthorityRegistryGate:
     def test_unregistered_target_denied(self, tmp_path):
         gate = self._gate(tmp_path)
         gate.approve("APR-103", approver="owner", scope="s", reason="r")
-        granted = gate.request_exemption(
-            path="src/zephyr/not_registered/x.py", reason="r", approval_id="APR-103"
-        )
+        granted = gate.request_exemption(path="src/zephyr/not_registered/x.py", reason="r", approval_id="APR-103")
         assert granted is False, "豁免目标 MUST 在 GOV-AI-001 注册表在册"
         denied = [e for e in gate.entries() if e["kind"] == "exemption_denied"]
         assert len(denied) == 1
@@ -482,9 +468,7 @@ class TestAuthorityRegistryGate:
     def test_registry_unavailable_fail_closed(self, tmp_path):
         gate = self._gate(tmp_path, registry_path=tmp_path / "missing_registry.yaml")
         gate.approve("APR-104", approver="owner", scope="s", reason="r")
-        granted = gate.request_exemption(
-            path="config/drift_thresholds.yaml", reason="r", approval_id="APR-104"
-        )
+        granted = gate.request_exemption(path="config/drift_thresholds.yaml", reason="r", approval_id="APR-104")
         assert granted is False, "注册表不可读 MUST fail-closed 拒批"
         denied = [e for e in gate.entries() if e["kind"] == "exemption_denied"]
         assert len(denied) == 1
@@ -495,9 +479,7 @@ class TestAuthorityRegistryGate:
         bad.write_text("- this\n- is a list not a registry\n", encoding="utf-8")
         gate = self._gate(tmp_path, registry_path=bad)
         gate.approve("APR-105", approver="owner", scope="s", reason="r")
-        granted = gate.request_exemption(
-            path="config/drift_thresholds.yaml", reason="r", approval_id="APR-105"
-        )
+        granted = gate.request_exemption(path="config/drift_thresholds.yaml", reason="r", approval_id="APR-105")
         assert granted is False, "注册表解析结果非 mapping MUST fail-closed 拒批"
 
     def test_pipeline_config_overrides_registry_path(self, tmp_path):

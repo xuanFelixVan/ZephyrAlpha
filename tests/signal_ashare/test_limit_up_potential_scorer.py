@@ -135,9 +135,7 @@ class TestRankIC:
         assert ev.effective is True
 
     def test_monotone_negative_ic_near_minus_one(self):
-        report = _scorer().evaluate(
-            "600000", [_factor(samples=_samples_monotone(sign=-1.0))]
-        )
+        report = _scorer().evaluate("600000", [_factor(samples=_samples_monotone(sign=-1.0))])
         ev = report.evaluations[0]
         assert ev.ic == pytest.approx(-1.0, abs=1e-9)
         assert ev.effective is False
@@ -180,20 +178,13 @@ class TestWeighting:
         report = _scorer().evaluate("600000", [weak1, weak2])
         assert report.fallback_used is True
         assert report.sufficient is False
-        expected = (
-            EMPIRICAL_WEIGHTS["ladder_height"]
-            + EMPIRICAL_WEIGHTS["market_sentiment"]
-        )
+        expected = EMPIRICAL_WEIGHTS["ladder_height"] + EMPIRICAL_WEIGHTS["market_sentiment"]
         w = {e.name: e.weight for e in report.evaluations}
-        assert w["ladder_height"] == pytest.approx(
-            EMPIRICAL_WEIGHTS["ladder_height"] / expected
-        )
+        assert w["ladder_height"] == pytest.approx(EMPIRICAL_WEIGHTS["ladder_height"] / expected)
 
     def test_insufficient_samples_excluded(self):
         few = tuple((float(i), float(i)) for i in range(10))
-        report = _scorer(min_samples=30).evaluate(
-            "600000", [_factor(samples=few), _factor(name="seal_strength")]
-        )
+        report = _scorer(min_samples=30).evaluate("600000", [_factor(samples=few), _factor(name="seal_strength")])
         ev = {e.name: e for e in report.evaluations}
         assert ev["ladder_height"].effective is False
         assert any("样本不足" in n for n in ev["ladder_height"].notes)
@@ -202,10 +193,7 @@ class TestWeighting:
 
 class TestCompositeAndGrade:
     def test_all_perfect_scores_composite_100_grade_a(self):
-        factors = [
-            _factor(name=n, score=1.0)
-            for n in ("ladder_height", "seal_strength", "sector_momentum")
-        ]
+        factors = [_factor(name=n, score=1.0) for n in ("ladder_height", "seal_strength", "sector_momentum")]
         report = _scorer().evaluate("600000", factors)
         assert report.composite_score == pytest.approx(100.0)
         assert report.grade == "A"
@@ -217,9 +205,7 @@ class TestCompositeAndGrade:
         assert report.grade == "D"
 
     def test_grade_boundaries(self):
-        report = _scorer().evaluate(
-            "600000", [_factor(score=0.7)]
-        )
+        report = _scorer().evaluate("600000", [_factor(score=0.7)])
         assert report.composite_score == pytest.approx(70.0)
         assert report.grade == "A"
         report_b = _scorer().evaluate("600000", [_factor(score=0.5)])

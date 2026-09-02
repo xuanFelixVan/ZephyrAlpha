@@ -57,7 +57,12 @@ def _calm_prices(n: int = 260) -> dict[str, list[tuple[str, float]]]:
     silver = gold / 80.0
     oil = 80.0 + rng.standard_normal(n) * 1
     copper = 4.0 + rng.standard_normal(n) * 0.05
-    return {"gold": _series(d, gold), "silver": _series(d, silver), "oil": _series(d, oil), "copper": _series(d, copper)}
+    return {
+        "gold": _series(d, gold),
+        "silver": _series(d, silver),
+        "oil": _series(d, oil),
+        "copper": _series(d, copper),
+    }
 
 
 def _spike_prices(n: int = 260) -> dict[str, list[tuple[str, float]]]:

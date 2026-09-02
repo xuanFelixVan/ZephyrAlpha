@@ -53,7 +53,9 @@ def _write_jsonl(data_root: Path, category: str, day: str, records: list[dict]) 
             f.write(json.dumps(rec, ensure_ascii=False) + "\n")
 
 
-def _fill(ts: str, symbol: str = "BTC-USDT", side: str = "buy", price: str = "30000", qty: str = "0.1", fee: str = "0.6") -> dict:
+def _fill(
+    ts: str, symbol: str = "BTC-USDT", side: str = "buy", price: str = "30000", qty: str = "0.1", fee: str = "0.6"
+) -> dict:
     return {"ts": ts, "symbol": symbol, "side": side, "price": price, "qty": qty, "fee": fee, "trade_id": f"t-{ts}"}
 
 
@@ -147,10 +149,7 @@ class TestLoadAndFilter:
         dir_path = tmp_path / "fills"
         dir_path.mkdir(parents=True)
         (dir_path / "20260828.jsonl").write_text(
-            '{"ts": "2026-08-28T01:00:00+00:00", "symbol": "BTC-USDT"}\n'
-            "not-a-json\n"
-            '{"symbol": "no-ts"}\n'
-            "\n",
+            '{"ts": "2026-08-28T01:00:00+00:00", "symbol": "BTC-USDT"}\nnot-a-json\n{"symbol": "no-ts"}\n\n',
             encoding="utf-8",
         )
         records, found = cdr.load_category_records(tmp_path, "fills", _DATE)
@@ -311,13 +310,25 @@ class TestRenderMarkdown:
     def _render(self, sections, notes=None):
         start, end = cdr.shift_window(_DATE, 0)
         return cdr.render_markdown(
-            _DATE, 0, start, end, sections, notes or [],
+            _DATE,
+            0,
+            start,
+            end,
+            sections,
+            notes or [],
             generated_at=datetime(2026, 8, 28, 8, 5, tzinfo=_TZ),
         )
 
     def test_all_five_sections_present(self):
         md = self._render({c: [] for c in cdr.CATEGORIES})
-        for header in ("## 1. 持仓变化", "## 2. 成交记录", "## 3. 资金费率", "## 4. 信号验证", "## 5. 系统状态", "## 标注"):
+        for header in (
+            "## 1. 持仓变化",
+            "## 2. 成交记录",
+            "## 3. 资金费率",
+            "## 4. 信号验证",
+            "## 5. 系统状态",
+            "## 标注",
+        ):
             assert header in md
         assert f"# UTC 日切复盘报告 — {_DATE} 班次 00:00 UTC" in md
         assert "[2026-08-28T00:00:00+00:00, 2026-08-28T08:00:00+00:00)" in md
@@ -334,7 +345,12 @@ class TestRenderMarkdown:
     def test_shift_16_window_label_crosses_midnight(self):
         start, end = cdr.shift_window(_DATE, 16)
         md = cdr.render_markdown(
-            _DATE, 16, start, end, {c: [] for c in cdr.CATEGORIES}, [],
+            _DATE,
+            16,
+            start,
+            end,
+            {c: [] for c in cdr.CATEGORIES},
+            [],
             generated_at=datetime(2026, 8, 29, 0, 5, tzinfo=_TZ),
         )
         assert "班次：16:00–次日 00:00 UTC" in md

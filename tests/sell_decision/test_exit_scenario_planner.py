@@ -72,17 +72,13 @@ class TestRecommendation:
 class TestT1Constraint:
     def test_immediate_limited_by_sellable(self) -> None:
         """立即离场动作量=T+1 可卖权重（非全仓）。"""
-        plan = plan_exit_scenarios(
-            _inp(urgency=0.9, weight=0.10, sellable_weight=0.06)
-        )
+        plan = plan_exit_scenarios(_inp(urgency=0.9, weight=0.10, sellable_weight=0.06))
         immediate = next(s for s in plan.scenarios if s.scenario is ExitScenario.IMMEDIATE_EXIT)
         assert immediate.action_weight == pytest.approx(0.06)
 
     def test_t1_deferral_noted(self) -> None:
         """当日买入部分顺延提示（T+1 约束内生）。"""
-        plan = plan_exit_scenarios(
-            _inp(urgency=0.9, weight=0.10, sellable_weight=0.06)
-        )
+        plan = plan_exit_scenarios(_inp(urgency=0.9, weight=0.10, sellable_weight=0.06))
         assert any("T+1" in c for c in plan.constraints)
 
     def test_no_deferral_note_when_fully_sellable(self) -> None:

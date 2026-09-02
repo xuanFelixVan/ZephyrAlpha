@@ -10,6 +10,7 @@
 ≥3 同向共振高置信（含反向混杂）、缺源降级、非法输入 fail-closed、frozen/JSON 契约。
 全程内存合成数据，无 DB。
 """
+
 from __future__ import annotations
 
 import dataclasses
@@ -38,8 +39,7 @@ class TestSourcesRegistry:
         assert len(TIMING_SOURCES) == 6
 
     def test_expected_sources(self):
-        expected = {"sentiment_reversal", "regime_shift", "volatility_breakout",
-                    "calendar", "volume", "northbound"}
+        expected = {"sentiment_reversal", "regime_shift", "volatility_breakout", "calendar", "volume", "northbound"}
         assert set(TIMING_SOURCES) == expected
 
 
@@ -112,23 +112,20 @@ class TestCompositeAndDirection:
 class TestResonance:
     def test_three_same_direction_high_confidence(self):
         ov = _ov()
-        sigs = [_sig("sentiment_reversal", 1), _sig("regime_shift", 1),
-                _sig("volume", 1), _sig("northbound", -1)]
+        sigs = [_sig("sentiment_reversal", 1), _sig("regime_shift", 1), _sig("volume", 1), _sig("northbound", -1)]
         r = ov.overlay(sigs)
         assert r.resonance_count == 3
         assert r.high_confidence is True
 
     def test_mixed_no_high_confidence(self):
         ov = _ov()
-        sigs = [_sig("sentiment_reversal", 1), _sig("regime_shift", -1),
-                _sig("volume", 1), _sig("northbound", -1)]
+        sigs = [_sig("sentiment_reversal", 1), _sig("regime_shift", -1), _sig("volume", 1), _sig("northbound", -1)]
         r = ov.overlay(sigs)
         assert r.high_confidence is False
 
     def test_custom_resonance_threshold(self):
         ov = _ov(TimingOverlayConfig(resonance_threshold=4))
-        sigs = [_sig("sentiment_reversal", 1), _sig("regime_shift", 1),
-                _sig("volume", 1)]
+        sigs = [_sig("sentiment_reversal", 1), _sig("regime_shift", 1), _sig("volume", 1)]
         r = ov.overlay(sigs)
         assert r.high_confidence is False
 

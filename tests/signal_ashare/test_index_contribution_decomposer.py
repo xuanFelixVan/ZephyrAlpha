@@ -88,7 +88,8 @@ def test_resample_str_timestamp():
 def test_contribution_identity_holds():
     # 恒等式：Σ板块贡献 + 残差 = 指数分钟涨跌（逐分钟）
     result = decompose_index_contribution(
-        resample_quotes_to_minute(_quotes()), _sector_series(),
+        resample_quotes_to_minute(_quotes()),
+        _sector_series(),
         weights={"880201.SH": 0.6, "880301.SH": 0.4},
     )
     assert result.degraded is False
@@ -99,7 +100,8 @@ def test_contribution_identity_holds():
 
 def test_minute_contribution_values():
     result = decompose_index_contribution(
-        resample_quotes_to_minute(_quotes()), _sector_series(),
+        resample_quotes_to_minute(_quotes()),
+        _sector_series(),
         weights={"880201.SH": 0.6, "880301.SH": 0.4},
     )
     m1 = result.minutes[0]  # 09:32：指数 3003→3009 = +0.1998%；半导体 +1%，交通 -0.5025%
@@ -120,7 +122,9 @@ def test_missing_minute_zero_contribution():
     series = _sector_series()
     series["880201.SH"] = series["880201.SH"][:-1]  # 半导体缺 09:33
     result = decompose_index_contribution(
-        resample_quotes_to_minute(_quotes()), series, weights={"880201.SH": 1.0},
+        resample_quotes_to_minute(_quotes()),
+        series,
+        weights={"880201.SH": 1.0},
     )
     last = result.minutes[-1]
     assert "880201.SH" not in last.sector_contrib_pct  # 缺分钟无贡献项
@@ -130,7 +134,8 @@ def test_missing_minute_zero_contribution():
 
 def test_day_board_sorted_and_aggregated():
     result = decompose_index_contribution(
-        resample_quotes_to_minute(_quotes()), _sector_series(),
+        resample_quotes_to_minute(_quotes()),
+        _sector_series(),
         weights={"880201.SH": 0.6, "880301.SH": 0.4},
     )
     assert result.sector_board[0].sector_code == "880201.SH"  # 正贡献居首
@@ -141,7 +146,8 @@ def test_day_board_sorted_and_aggregated():
     # 全天：指数 3003→3009 +0.1998%；残差=总涨跌-Σ板块贡献
     assert result.total_index_move_pct == pytest.approx((3009.0 / 3003.0 - 1) * 100, abs=1e-3)
     assert result.residual_day_pct == pytest.approx(
-        result.total_index_move_pct - sum(b.day_contribution_pct for b in result.sector_board), abs=1e-4,
+        result.total_index_move_pct - sum(b.day_contribution_pct for b in result.sector_board),
+        abs=1e-4,
     )
 
 
@@ -153,7 +159,9 @@ def test_short_index_series_degraded():
 
 def test_zero_weight_sum_all_residual():
     result = decompose_index_contribution(
-        resample_quotes_to_minute(_quotes()), _sector_series(), weights={"880201.SH": 0.0, "880301.SH": 0.0},
+        resample_quotes_to_minute(_quotes()),
+        _sector_series(),
+        weights={"880201.SH": 0.0, "880301.SH": 0.0},
     )
     assert all(m.sector_contrib_pct == {} or all(v == 0 for v in m.sector_contrib_pct.values()) for m in result.minutes)
     assert any("权重和为 0" in n for n in result.notes)
@@ -177,9 +185,7 @@ def test_main_entry_injected():
 
 
 def test_main_entry_client_unavailable_degraded(monkeypatch):
-    monkeypatch.setattr(
-        "zephyr.signal_ashare.index_contribution_decomposer._default_client", lambda: None
-    )
+    monkeypatch.setattr("zephyr.signal_ashare.index_contribution_decomposer._default_client", lambda: None)
     result = decompose_intraday_contribution(TD)
     assert result.degraded is True
 
@@ -204,6 +210,8 @@ def test_main_entry_bad_date_fail_closed():
 
 def test_result_json_serializable():
     result = decompose_intraday_contribution(
-        TD, index_series=resample_quotes_to_minute(_quotes()), sector_series=_sector_series(),
+        TD,
+        index_series=resample_quotes_to_minute(_quotes()),
+        sector_series=_sector_series(),
     )
     json.dumps(asdict(result), ensure_ascii=False)

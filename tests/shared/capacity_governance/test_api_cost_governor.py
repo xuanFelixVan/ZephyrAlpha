@@ -66,11 +66,11 @@ class TestRegisterSource:
     def test_register_invalid_params_raise(self) -> None:
         gov = _gov()
         with pytest.raises(ApiCostGovernorError):
-            gov.register_source("", unit_cost=0.01, base_qps=10.0)   # 空 source_id
+            gov.register_source("", unit_cost=0.01, base_qps=10.0)  # 空 source_id
         with pytest.raises(ApiCostGovernorError):
             gov.register_source("s", unit_cost=-0.1, base_qps=10.0)  # 负单价
         with pytest.raises(ApiCostGovernorError):
-            gov.register_source("s", unit_cost=0.01, base_qps=0.0)   # 非正基准QPS
+            gov.register_source("s", unit_cost=0.01, base_qps=0.0)  # 非正基准QPS
 
     def test_register_same_params_idempotent(self) -> None:
         gov = _registered(_gov())
@@ -103,7 +103,7 @@ class TestRegisterBudget:
     def test_register_budget_invalid_args_raise(self) -> None:
         gov = _registered(_gov())
         with pytest.raises(ApiCostGovernorError):
-            gov.register_budget("tushare", BudgetPeriod.DAILY, 0.0)      # 非正限额
+            gov.register_budget("tushare", BudgetPeriod.DAILY, 0.0)  # 非正限额
         with pytest.raises(ApiCostGovernorError):
             gov.register_budget("tushare", "weekly", 10.0)  # type: ignore[arg-type]  # 词表外周期
 
@@ -132,9 +132,9 @@ class TestRecordCall:
     def test_record_invalid_args_raise(self) -> None:
         gov = _registered(_gov())
         with pytest.raises(ApiCostGovernorError):
-            gov.record_call("ghost")                       # 未注册源
+            gov.record_call("ghost")  # 未注册源
         with pytest.raises(ApiCostGovernorError):
-            gov.record_call("tushare", units=0)            # 非正计量单位
+            gov.record_call("tushare", units=0)  # 非正计量单位
 
     def test_period_costs_keyed_by_day_and_month(self) -> None:
         clock = _Clock()
@@ -149,7 +149,7 @@ class TestRecordCall:
         gov = _registered(_gov())
         gov.register_budget("tushare", BudgetPeriod.DAILY, 0.03)
         assert gov.record_call("tushare", units=3) is False  # 0.03 未超
-        assert gov.record_call("tushare", units=1) is True   # 0.04 超预算
+        assert gov.record_call("tushare", units=1) is True  # 0.04 超预算
         assert gov.is_degraded("tushare") is True
 
     def test_degraded_is_sticky_within_period(self) -> None:
@@ -157,7 +157,7 @@ class TestRecordCall:
         gov = _registered(_gov(clock))
         gov.register_budget("tushare", BudgetPeriod.MONTHLY, 0.02)
         gov.record_call("tushare", units=3)  # 0.03 超月预算
-        clock.advance(86400 * 3)             # 跨日不跨月
+        clock.advance(86400 * 3)  # 跨日不跨月
         assert gov.is_degraded("tushare") is True  # 月键未变，降级保持
 
     def test_period_key_rolls_on_new_day(self) -> None:
@@ -194,7 +194,7 @@ class TestTokenBucket:
         clock = _Clock()
         gov = _registered(_gov(clock))
         gov.try_acquire("tushare", tokens=10)  # 清空
-        clock.advance(0.5)                     # 10 qps × 0.5s = 5 令牌
+        clock.advance(0.5)  # 10 qps × 0.5s = 5 令牌
         assert gov.try_acquire("tushare", tokens=5) is True
 
     def test_rate_scales_with_remaining_budget(self) -> None:
@@ -210,7 +210,7 @@ class TestTokenBucket:
         gov = _registered(_gov(clock))
         gov.register_budget("tushare", BudgetPeriod.DAILY, 0.01)
         gov.try_acquire("tushare", tokens=10)  # 清空
-        gov.record_call("tushare", units=2)    # 0.02 超预算 → 降级
+        gov.record_call("tushare", units=2)  # 0.02 超预算 → 降级
         clock.advance(10.0)
         assert gov.try_acquire("tushare", tokens=1) is False  # 速率 0 不补充
         assert gov.bucket_view("tushare").effective_rate == pytest.approx(0.0)
@@ -218,9 +218,9 @@ class TestTokenBucket:
     def test_acquire_invalid_args_raise(self) -> None:
         gov = _registered(_gov())
         with pytest.raises(ApiCostGovernorError):
-            gov.try_acquire("ghost")                   # 未注册源
+            gov.try_acquire("ghost")  # 未注册源
         with pytest.raises(ApiCostGovernorError):
-            gov.try_acquire("tushare", tokens=0)       # 非正令牌数
+            gov.try_acquire("tushare", tokens=0)  # 非正令牌数
 
     def test_clock_rewind_raises(self) -> None:
         clock = _Clock()

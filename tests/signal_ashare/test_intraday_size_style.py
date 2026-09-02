@@ -128,9 +128,7 @@ class TestIntradayMomentum:
     def test_below_threshold_signal_zero(self) -> None:
         first = [0.01, -0.01, 0.01, -0.01, 0.01, -0.01]
         second = [0.005] * 6  # 零方差 → 相关降级 0.0
-        sig = _model().intraday_momentum_signal(
-            first, second, window=6, corr_threshold=0.5
-        )
+        sig = _model().intraday_momentum_signal(first, second, window=6, corr_threshold=0.5)
         assert sig.correlation == 0.0
         assert sig.signal == 0
 
@@ -144,9 +142,7 @@ class TestIntradayMomentum:
         with pytest.raises(IntradaySizeStyleError):
             _model().intraday_momentum_signal([0.01, 0.02], [0.01, 0.02], window=1)
         with pytest.raises(IntradaySizeStyleError):
-            _model().intraday_momentum_signal(
-                [0.01, 0.02], [0.01, 0.02], window=2, corr_threshold=0.0
-            )
+            _model().intraday_momentum_signal([0.01, 0.02], [0.01, 0.02], window=2, corr_threshold=0.0)
         with pytest.raises(IntradaySizeStyleError):
             _model().intraday_momentum_signal([0.01, 0.02], [0.01], window=2)
 
@@ -196,9 +192,7 @@ class TestIntradayAdx:
     def test_choppy_lower_than_uptrend(self) -> None:
         """震荡：±DM 交替 → ADX 显著低于单边。"""
         up_closes = [10.0 + i for i in range(8)]
-        up_adx = _model().intraday_adx(
-            [c + 0.5 for c in up_closes], [c - 0.5 for c in up_closes], up_closes, period=4
-        )
+        up_adx = _model().intraday_adx([c + 0.5 for c in up_closes], [c - 0.5 for c in up_closes], up_closes, period=4)
         chop_closes = [10.0, 11.0, 10.0, 11.0, 10.0, 11.0, 10.0, 11.0]
         chop_adx = _model().intraday_adx(
             [c + 0.3 for c in chop_closes],

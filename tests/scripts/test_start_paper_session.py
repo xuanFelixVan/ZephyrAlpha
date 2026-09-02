@@ -141,7 +141,16 @@ class TestAssembleSession:
 
     def test_strategy_mode_wiring(self):
         args = sps.parse_args(
-            ["--strategy", "topn-momentum", "--universe", "600000.SH,000001.SZ", "--interval", "60", "--max-single", "0.02"]
+            [
+                "--strategy",
+                "topn-momentum",
+                "--universe",
+                "600000.SH,000001.SZ",
+                "--interval",
+                "60",
+                "--max-single",
+                "0.02",
+            ]
         )
         session = sps.assemble_session(args, _MockBroker())
         assert session._config.universe == ["600000.SH", "000001.SZ"]

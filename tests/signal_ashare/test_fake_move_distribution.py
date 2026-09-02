@@ -107,29 +107,20 @@ class TestDimScores:
     def test_active_buy_score(self) -> None:
         assert self._score(replace(_CLEAN, active_buy_ratio=0.5), SignalDim.ACTIVE_BUY) == 0.0
         assert self._score(replace(_CLEAN, active_buy_ratio=0.0), SignalDim.ACTIVE_BUY) == 1.0
-        assert self._score(
-            replace(_CLEAN, active_buy_ratio=0.25), SignalDim.ACTIVE_BUY
-        ) == pytest.approx(0.5)
+        assert self._score(replace(_CLEAN, active_buy_ratio=0.25), SignalDim.ACTIVE_BUY) == pytest.approx(0.5)
 
     def test_big_order_inflow_score(self) -> None:
         assert self._score(_CLEAN, SignalDim.BIG_ORDER_INFLOW) == 0.0
-        assert self._score(
-            replace(_CLEAN, big_order_net_inflow=-5e7), SignalDim.BIG_ORDER_INFLOW
-        ) == pytest.approx(0.5)
+        assert self._score(replace(_CLEAN, big_order_net_inflow=-5e7), SignalDim.BIG_ORDER_INFLOW) == pytest.approx(0.5)
         assert (
-            self._score(replace(_CLEAN, big_order_net_inflow=-3e8), SignalDim.BIG_ORDER_INFLOW)
-            == 1.0  # 超额截断
+            self._score(replace(_CLEAN, big_order_net_inflow=-3e8), SignalDim.BIG_ORDER_INFLOW) == 1.0  # 超额截断
         )
 
     def test_volume_persistence_inverted(self) -> None:
-        assert self._score(
-            replace(_CLEAN, volume_persistence=0.8), SignalDim.VOLUME_PERSISTENCE
-        ) == pytest.approx(0.2)
+        assert self._score(replace(_CLEAN, volume_persistence=0.8), SignalDim.VOLUME_PERSISTENCE) == pytest.approx(0.2)
 
     def test_sector_follow_inverted(self) -> None:
-        assert self._score(
-            replace(_CLEAN, sector_follow_rate=0.3), SignalDim.SECTOR_FOLLOW
-        ) == pytest.approx(0.7)
+        assert self._score(replace(_CLEAN, sector_follow_rate=0.3), SignalDim.SECTOR_FOLLOW) == pytest.approx(0.7)
 
     def test_pump_window_static_table(self) -> None:
         tail = self._score(replace(_CLEAN, pump_window=PumpWindow.TAIL), SignalDim.PUMP_WINDOW)
@@ -139,15 +130,11 @@ class TestDimScores:
         assert tail > mid > morning  # 尾盘偷袭最可疑
 
     def test_bottom_chip_inverted(self) -> None:
-        assert self._score(
-            replace(_CLEAN, bottom_chip_ratio=0.9), SignalDim.BOTTOM_CHIP
-        ) == pytest.approx(0.1)
+        assert self._score(replace(_CLEAN, bottom_chip_ratio=0.9), SignalDim.BOTTOM_CHIP) == pytest.approx(0.1)
 
     def test_lhb_score(self) -> None:
         assert self._score(_CLEAN, SignalDim.LHB) == 0.0
-        assert self._score(
-            replace(_CLEAN, lhb_net_buy=-2.5e7), SignalDim.LHB
-        ) == pytest.approx(0.5)
+        assert self._score(replace(_CLEAN, lhb_net_buy=-2.5e7), SignalDim.LHB) == pytest.approx(0.5)
 
 
 # ──────────────────────────────────────────────────────────────────────────────

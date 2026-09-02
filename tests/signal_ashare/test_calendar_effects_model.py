@@ -73,41 +73,64 @@ class TestValidation:
     def test_invalid_month_raises(self) -> None:
         with pytest.raises(CalendarEffectsError):
             _model(_ttest_strong).monthly_effect(
-                years=[2023], returns=[0.01], months=[1], target_month=0,
+                years=[2023],
+                returns=[0.01],
+                months=[1],
+                target_month=0,
             )
         with pytest.raises(CalendarEffectsError):
             _model(_ttest_strong).monthly_effect(
-                years=[2023], returns=[0.01], months=[1], target_month=13,
+                years=[2023],
+                returns=[0.01],
+                months=[1],
+                target_month=13,
             )
 
     def test_invalid_weekday_raises(self) -> None:
         with pytest.raises(CalendarEffectsError):
             _model(_ttest_strong).weekly_effect(
-                years=[2023], returns=[0.01], weekdays=[0], target_weekday=-1,
+                years=[2023],
+                returns=[0.01],
+                weekdays=[0],
+                target_weekday=-1,
             )
         with pytest.raises(CalendarEffectsError):
             _model(_ttest_strong).weekly_effect(
-                years=[2023], returns=[0.01], weekdays=[0], target_weekday=7,
+                years=[2023],
+                returns=[0.01],
+                weekdays=[0],
+                target_weekday=7,
             )
 
     def test_series_mismatch_raises(self) -> None:
         with pytest.raises(CalendarEffectsError):
             _model(_ttest_strong).monthly_effect(
-                years=[2023], returns=[0.01, 0.02], months=[1], target_month=1,
+                years=[2023],
+                returns=[0.01, 0.02],
+                months=[1],
+                target_month=1,
             )
         with pytest.raises(CalendarEffectsError):
             _model(_ttest_strong).weekly_effect(
-                years=[2023, 2024], returns=[0.01], weekdays=[0, 1], target_weekday=0,
+                years=[2023, 2024],
+                returns=[0.01],
+                weekdays=[0, 1],
+                target_weekday=0,
             )
         with pytest.raises(CalendarEffectsError):
             _model(_ttest_strong).holiday_effect(
-                years=[2023, 2024], returns=[0.01], holiday_flags=[True],
+                years=[2023, 2024],
+                returns=[0.01],
+                holiday_flags=[True],
             )
 
     def test_non_finite_raises(self) -> None:
         with pytest.raises(CalendarEffectsError):
             _model(_ttest_strong).monthly_effect(
-                years=[2023], returns=[float("nan")], months=[1], target_month=1,
+                years=[2023],
+                returns=[float("nan")],
+                months=[1],
+                target_month=1,
             )
 
 
@@ -124,7 +147,10 @@ class TestMonthlyEffect:
         months = [m for m in range(1, 13) for _ in range(3)]
         returns = [0.05 if m == 1 else 0.005 for m in months]
         node = _model(_ttest_strong).monthly_effect(
-            years=years, returns=returns, months=months, target_month=1,
+            years=years,
+            returns=returns,
+            months=months,
+            target_month=1,
         )
         assert node is not None
         assert node.effect_type is CalendarEffectType.MONTHLY
@@ -137,7 +163,10 @@ class TestMonthlyEffect:
         months = [m for m in range(1, 13) for _ in range(3)]
         returns = [0.05 if m == 1 else 0.005 for m in months]
         node = _model(_ttest_weak).monthly_effect(
-            years=years, returns=returns, months=months, target_month=1,
+            years=years,
+            returns=returns,
+            months=months,
+            target_month=1,
         )
         assert node is not None
         assert node.is_significant is False
@@ -148,7 +177,10 @@ class TestMonthlyEffect:
         months = [m for m in range(2, 13) for _ in range(3)]
         returns = [0.01] * len(months)
         node = _model(_ttest_strong).monthly_effect(
-            years=years, returns=returns, months=months, target_month=1,
+            years=years,
+            returns=returns,
+            months=months,
+            target_month=1,
         )
         assert node is None
 
@@ -158,7 +190,10 @@ class TestMonthlyEffect:
         months = [m for m in range(1, 13) for _ in range(3)]
         returns = [0.05 if m == 1 else 0.005 for m in months]
         node = _model(_ttest_strong).monthly_effect(
-            years=years, returns=returns, months=months, target_month=1,
+            years=years,
+            returns=returns,
+            months=months,
+            target_month=1,
         )
         assert node is not None
         assert node.robust_years == 3
@@ -177,7 +212,10 @@ class TestWeeklyEffect:
         weekdays = [d for d in range(5) for _ in range(3)]
         returns = [0.03 if d == 0 else 0.005 for d in weekdays]
         node = _model(_ttest_strong).weekly_effect(
-            years=years, returns=returns, weekdays=weekdays, target_weekday=0,
+            years=years,
+            returns=returns,
+            weekdays=weekdays,
+            target_weekday=0,
         )
         assert node is not None
         assert node.effect_type is CalendarEffectType.WEEKLY
@@ -190,7 +228,10 @@ class TestWeeklyEffect:
         weekdays = [d for d in range(5) for _ in range(3)]
         returns = [0.005] * len(weekdays)
         node = _model(_ttest_weak).weekly_effect(
-            years=years, returns=returns, weekdays=weekdays, target_weekday=4,
+            years=years,
+            returns=returns,
+            weekdays=weekdays,
+            target_weekday=4,
         )
         assert node is not None
         assert node.is_significant is False
@@ -207,7 +248,9 @@ class TestHolidayEffect:
         flags = [True] * 3 + [False] * 27
         returns = [0.04] * 3 + [0.005] * 27
         node = _model(_ttest_strong).holiday_effect(
-            years=years, returns=returns, holiday_flags=flags,
+            years=years,
+            returns=returns,
+            holiday_flags=flags,
         )
         assert node is not None
         assert node.effect_type is CalendarEffectType.HOLIDAY
@@ -220,7 +263,9 @@ class TestHolidayEffect:
         flags = [False] * 30
         returns = [0.005] * 30
         node = _model(_ttest_strong).holiday_effect(
-            years=years, returns=returns, holiday_flags=flags,
+            years=years,
+            returns=returns,
+            holiday_flags=flags,
         )
         assert node is None
 
@@ -236,7 +281,9 @@ class TestSettlementEffect:
         flags = [False] * 27 + [True] * 3
         returns = [0.005] * 27 + [-0.03] * 3  # 交割日下跌效应
         node = _model(_ttest_strong).settlement_effect(
-            years=years, returns=returns, settlement_flags=flags,
+            years=years,
+            returns=returns,
+            settlement_flags=flags,
         )
         assert node is not None
         assert node.effect_type is CalendarEffectType.SETTLEMENT
@@ -254,8 +301,8 @@ class TestCalendarNodes:
     def test_all_types_covered(self) -> None:
         """四类效应同时检测，节点数量由数据决定。"""
         years = [2023, 2024, 2025] * 20
-        months = [m for m in range(1, 13) for _ in range(5)][:len(years)]
-        weekdays = [d for d in range(5) for _ in range(12)][:len(years)]
+        months = [m for m in range(1, 13) for _ in range(5)][: len(years)]
+        weekdays = [d for d in range(5) for _ in range(12)][: len(years)]
         holiday_flags = [False] * len(years)
         settlement_flags = [False] * len(years)
         returns = [0.01] * len(years)
@@ -291,11 +338,14 @@ class TestCalendarNodes:
     def test_data_driven_node_count(self) -> None:
         """节点数量由数据决定：传 3 类序列 vs 传 4 类序列节点数不同。"""
         years = [2023, 2024, 2025] * 20
-        months = [m for m in range(1, 13) for _ in range(5)][:len(years)]
-        weekdays = [d for d in range(5) for _ in range(12)][:len(years)]
+        months = [m for m in range(1, 13) for _ in range(5)][: len(years)]
+        weekdays = [d for d in range(5) for _ in range(12)][: len(years)]
         returns = [0.01] * len(years)
         out3 = _model(_ttest_weak).calendar_nodes(
-            years=years, returns=returns, months=months, weekdays=weekdays,
+            years=years,
+            returns=returns,
+            months=months,
+            weekdays=weekdays,
         )
         holiday_flags = [True] * 5 + [False] * (len(years) - 5)
         out4 = _model(_ttest_weak).calendar_nodes(

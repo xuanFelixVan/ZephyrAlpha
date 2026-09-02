@@ -196,7 +196,9 @@ class TestDimensions:
         assert dims2["wyckoff_spring"].hit is False
 
 
-def _confirmed_fixture() -> tuple[list[float], list[float], list[float], list[float], list[float], list[float], list[float], list[bool]]:
+def _confirmed_fixture() -> tuple[
+    list[float], list[float], list[float], list[float], list[float], list[float], list[float], list[bool]
+]:
     """三维命中（量能+资金流+情绪）+ 今日收盘>前日高的夹具。"""
     o, h, l, c, v = _flat_bars()
     for i in range(N - 31, N - 11):
@@ -217,8 +219,15 @@ class TestConfirmationAndEntry:
     def test_three_dims_confirmed_and_entry(self):
         o, h, l, c, v, flows, sentiment, springs = _confirmed_fixture()
         report = _engine().evaluate(
-            "600000", o, h, l, c, v,
-            smart_money_flows=flows, sentiment_scores=sentiment, wyckoff_springs=springs,
+            "600000",
+            o,
+            h,
+            l,
+            c,
+            v,
+            smart_money_flows=flows,
+            sentiment_scores=sentiment,
+            wyckoff_springs=springs,
         )
         assert report.confirmed_count == 3
         assert report.bottom_confirmed is True
@@ -229,8 +238,15 @@ class TestConfirmationAndEntry:
         o, h, l, c, v, flows, sentiment, springs = _confirmed_fixture()
         sentiment = [50.0] * N  # 情绪不极端 → 仅 2 维
         report = _engine().evaluate(
-            "600000", o, h, l, c, v,
-            smart_money_flows=flows, sentiment_scores=sentiment, wyckoff_springs=springs,
+            "600000",
+            o,
+            h,
+            l,
+            c,
+            v,
+            smart_money_flows=flows,
+            sentiment_scores=sentiment,
+            wyckoff_springs=springs,
         )
         assert report.confirmed_count == 2
         assert report.bottom_confirmed is False
@@ -242,8 +258,15 @@ class TestConfirmationAndEntry:
         c[N - 1] = 100.2  # 收盘≤前日高 100.5
         h[N - 1] = 100.4
         report = _engine().evaluate(
-            "600000", o, h, l, c, v,
-            smart_money_flows=flows, sentiment_scores=sentiment, wyckoff_springs=springs,
+            "600000",
+            o,
+            h,
+            l,
+            c,
+            v,
+            smart_money_flows=flows,
+            sentiment_scores=sentiment,
+            wyckoff_springs=springs,
         )
         assert report.bottom_confirmed is True
         assert report.entry_triggered is False
@@ -252,8 +275,15 @@ class TestConfirmationAndEntry:
     def test_stop_is_bottom_low_minus_atr(self):
         o, h, l, c, v, flows, sentiment, springs = _confirmed_fixture()
         report = _engine().evaluate(
-            "600000", o, h, l, c, v,
-            smart_money_flows=flows, sentiment_scores=sentiment, wyckoff_springs=springs,
+            "600000",
+            o,
+            h,
+            l,
+            c,
+            v,
+            smart_money_flows=flows,
+            sentiment_scores=sentiment,
+            wyckoff_springs=springs,
         )
         assert report.stop_price == pytest.approx(report.bottom_low - report.atr)
         assert report.atr > 0.0
@@ -263,8 +293,15 @@ class TestConfirmationAndEntry:
         o, h, l, c, v, flows, sentiment, springs = _confirmed_fixture()
         weights = {"volume_rebound": 2.0, "smart_money_flow": 1.0, "sentiment_extreme": 1.0}
         report = _engine(dim_weights=weights).evaluate(
-            "600000", o, h, l, c, v,
-            smart_money_flows=flows, sentiment_scores=sentiment, wyckoff_springs=springs,
+            "600000",
+            o,
+            h,
+            l,
+            c,
+            v,
+            smart_money_flows=flows,
+            sentiment_scores=sentiment,
+            wyckoff_springs=springs,
         )
         # 三维命中、两维缺失（价格/spring 权重默认 1）
         assert report.bottom_confirmed is True
@@ -277,8 +314,15 @@ class TestContract:
     def test_frozen_and_json_serializable(self):
         o, h, l, c, v, flows, sentiment, springs = _confirmed_fixture()
         report = _engine().evaluate(
-            "600000", o, h, l, c, v,
-            smart_money_flows=flows, sentiment_scores=sentiment, wyckoff_springs=springs,
+            "600000",
+            o,
+            h,
+            l,
+            c,
+            v,
+            smart_money_flows=flows,
+            sentiment_scores=sentiment,
+            wyckoff_springs=springs,
         )
         assert dataclasses.is_dataclass(report)
         with pytest.raises(dataclasses.FrozenInstanceError):

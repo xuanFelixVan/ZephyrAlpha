@@ -111,9 +111,7 @@ class TestSbomGeneration:
         assert doc["specVersion"] == "1.5"
         assert doc["metadata"]["timestamp"] == _T0.isoformat()
         assert doc["components"][0]["name"] == "copyleft-lib"
-        assert doc["components"][0]["licenses"] == [
-            {"license": {"name": "GPL-3.0-only"}}
-        ]
+        assert doc["components"][0]["licenses"] == [{"license": {"name": "GPL-3.0-only"}}]
 
 
 # ──────────────────────────────────────────────────────────────────────────────

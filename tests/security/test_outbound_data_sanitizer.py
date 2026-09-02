@@ -55,15 +55,11 @@ class TestInit:
 
     def test_illegal_category_raises(self) -> None:
         with pytest.raises(OutboundSanitizeError):
-            OutboundDataSanitizer(
-                field_whitelists={"positions": {"symbol"}}, clock=lambda: _T0
-            )
+            OutboundDataSanitizer(field_whitelists={"positions": {"symbol"}}, clock=lambda: _T0)
 
     def test_empty_field_set_raises(self) -> None:
         with pytest.raises(OutboundSanitizeError):
-            OutboundDataSanitizer(
-                field_whitelists={PayloadCategory.POSITIONS: set()}, clock=lambda: _T0
-            )
+            OutboundDataSanitizer(field_whitelists={PayloadCategory.POSITIONS: set()}, clock=lambda: _T0)
 
     def test_empty_field_name_raises(self) -> None:
         with pytest.raises(OutboundSanitizeError):
@@ -105,9 +101,7 @@ class TestWhitelistFilter:
         assert report.stripped_fields == ("secret_source",)
 
     def test_factors_category(self) -> None:
-        report = _sanitizer().sanitize(
-            PayloadCategory.FACTORS, {"factor_id": "f1", "formula": "close/ma20"}
-        )
+        report = _sanitizer().sanitize(PayloadCategory.FACTORS, {"factor_id": "f1", "formula": "close/ma20"})
         assert report.stripped_fields == ()
         assert report.kept_fields == ("factor_id", "formula")
 
@@ -136,17 +130,13 @@ class TestWhitelistFilter:
 
 class TestMasking:
     def test_phone_masked(self) -> None:
-        report = _sanitizer().sanitize(
-            PayloadCategory.POSITIONS, {"symbol": "联系电话13800001111"}
-        )
+        report = _sanitizer().sanitize(PayloadCategory.POSITIONS, {"symbol": "联系电话13800001111"})
         assert MASK_REPLACEMENT in report.sanitized["symbol"]
         assert "13800001111" not in report.sanitized["symbol"]
         assert report.masked_fields == ("symbol",)
 
     def test_credential_masked(self) -> None:
-        report = _sanitizer().sanitize(
-            PayloadCategory.STRATEGY, {"name": "cfg api_key=abcdef12345"}
-        )
+        report = _sanitizer().sanitize(PayloadCategory.STRATEGY, {"name": "cfg api_key=abcdef12345"})
         assert "abcdef12345" not in report.sanitized["name"]
         assert report.masked_fields == ("name",)
 
@@ -168,9 +158,7 @@ class TestMasking:
         assert report.masked_fields == ("params",)
 
     def test_no_mask_when_clean(self) -> None:
-        report = _sanitizer().sanitize(
-            PayloadCategory.POSITIONS, {"symbol": "600519", "quantity": 100}
-        )
+        report = _sanitizer().sanitize(PayloadCategory.POSITIONS, {"symbol": "600519", "quantity": 100})
         assert report.masked_fields == ()
         assert report.sanitized["quantity"] == 100
 

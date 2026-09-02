@@ -59,7 +59,9 @@ def _news() -> list[NewsItemInput]:
     return [
         NewsItemInput(news_id="n1", title="华芯科技发布新一代AI芯片", publish_time="2026-08-21 10:00:00"),
         NewsItemInput(news_id="n2", title="芯片产业再迎政策利好，晶圆厂扩产", publish_time="2026-08-21 11:00:00"),
-        NewsItemInput(news_id="n3", title="华芯科技获大基金增持", publish_time="2026-08-21 12:00:00", content="半导体板块走强"),
+        NewsItemInput(
+            news_id="n3", title="华芯科技获大基金增持", publish_time="2026-08-21 12:00:00", content="半导体板块走强"
+        ),
         NewsItemInput(news_id="n4", title="物流业整合传闻发酵", publish_time="2026-08-20 20:00:00"),
     ]
 
@@ -124,9 +126,9 @@ def test_match_themes_custom_dict():
 
 
 def test_build_sector_themes_two_legs():
-    themes = build_sector_themes(_stocks(), _news(), _sector_map(), {
-        s.symbol: match_stock_news(s, _news()) for s in _stocks()
-    })
+    themes = build_sector_themes(
+        _stocks(), _news(), _sector_map(), {s.symbol: match_stock_news(s, _news()) for s in _stocks()}
+    )
     semi = themes["880201.SH"]
     assert semi.limit_up_count == 2
     assert semi.sector_name == "半导体"
@@ -142,7 +144,9 @@ def test_build_sector_themes_leg2_sector_name_mention():
         NewsItemInput(news_id="n5", title="半导体板块午后异动拉升", publish_time="2026-08-21 13:00:00"),
     ]
     themes = build_sector_themes(
-        _stocks(), news, _sector_map(),
+        _stocks(),
+        news,
+        _sector_map(),
         {s.symbol: match_stock_news(s, news) for s in _stocks()},
     )
     semi = themes["880201.SH"]
@@ -152,8 +156,11 @@ def test_build_sector_themes_leg2_sector_name_mention():
 def test_build_sector_themes_theme_cap():
     cfg = AttributionConfig(max_themes_per_sector=1)
     themes = build_sector_themes(
-        _stocks(), _news(), _sector_map(),
-        {s.symbol: match_stock_news(s, _news()) for s in _stocks()}, cfg,
+        _stocks(),
+        _news(),
+        _sector_map(),
+        {s.symbol: match_stock_news(s, _news()) for s in _stocks()},
+        cfg,
     )
     assert len(themes["880201.SH"].themes) == 1
 
@@ -208,7 +215,10 @@ def test_attribute_empty_stocks():
 
 def test_main_entry_injected_full():
     result = attribute_limit_up_reasons(
-        TD, stocks=_stocks(), news_items=_news(), sector_map=_sector_map(),
+        TD,
+        stocks=_stocks(),
+        news_items=_news(),
+        sector_map=_sector_map(),
     )
     assert result.date == "2026-08-21"
     assert len(result.items) == 4
@@ -218,9 +228,7 @@ def test_main_entry_injected_full():
 
 
 def test_main_entry_client_unavailable_degraded(monkeypatch):
-    monkeypatch.setattr(
-        "zephyr.signal_ashare.limit_up_reason_attribution._default_client", lambda: None
-    )
+    monkeypatch.setattr("zephyr.signal_ashare.limit_up_reason_attribution._default_client", lambda: None)
     result = attribute_limit_up_reasons(TD)  # 未注入任何腿
     assert result.degraded is True
     assert result.items == []
@@ -250,6 +258,9 @@ def test_main_entry_bad_date_fail_closed():
 
 def test_result_json_serializable():
     result = attribute_limit_up_reasons(
-        TD, stocks=_stocks(), news_items=_news(), sector_map=_sector_map(),
+        TD,
+        stocks=_stocks(),
+        news_items=_news(),
+        sector_map=_sector_map(),
     )
     json.dumps(asdict(result), ensure_ascii=False)  # 不抛即过

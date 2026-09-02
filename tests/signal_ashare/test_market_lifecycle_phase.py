@@ -137,9 +137,7 @@ class TestMarketLifecyclePhaseSensorLoader:
             "8803": [100.0 + i for i in range(1, 3)] + [102.0 - (i - 2) for i in range(3, 31)],
         }
         sector_rows = "\n".join(
-            f"{code}\t2026-07-{i:02d}\t{closes[i - 1]:.4f}"
-            for code, closes in codes.items()
-            for i in range(1, 31)
+            f"{code}\t2026-07-{i:02d}\t{closes[i - 1]:.4f}" for code, closes in codes.items() for i in range(1, 31)
         )
         index_rows = "\n".join(f"2026-07-{i:02d}\t{120.0 - i}" for i in range(1, 31))
 
@@ -155,8 +153,6 @@ class TestMarketLifecyclePhaseSensorLoader:
         assert 0.0 <= snap.confidence <= 1.0
 
     def test_empty_sector_query_raises(self):
-        sensor = MarketLifecyclePhaseSensor(
-            registry=self._fake_registry(), query_fn=lambda sql, timeout=30: ""
-        )
+        sensor = MarketLifecyclePhaseSensor(registry=self._fake_registry(), query_fn=lambda sql, timeout=30: "")
         with pytest.raises(MarketLifecycleDataError):
             sensor.sense("000300", "2026-07-01", "2026-07-31")

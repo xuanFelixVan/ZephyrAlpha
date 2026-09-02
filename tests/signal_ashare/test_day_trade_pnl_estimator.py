@@ -56,9 +56,7 @@ def test_fee_model_negative_rate_rejected() -> None:
     with pytest.raises(DayTradePnlError):
         DayTradeFeeModel(commission_rate=-0.1, stamp_tax_rate=0.0, impact_rate=0.0)
     with pytest.raises(DayTradePnlError):
-        DayTradeFeeModel(
-            commission_rate=0.0, stamp_tax_rate=0.0, impact_rate=0.0, min_commission=-1.0
-        )
+        DayTradeFeeModel(commission_rate=0.0, stamp_tax_rate=0.0, impact_rate=0.0, min_commission=-1.0)
 
 
 def test_estimator_requires_fee_model() -> None:
@@ -96,9 +94,7 @@ def test_stamp_tax_only_on_sell_side() -> None:
 
 
 def test_min_commission_applied_per_side() -> None:
-    fees = DayTradeFeeModel(
-        commission_rate=0.00025, stamp_tax_rate=0.0005, impact_rate=0.0, min_commission=5.0
-    )
+    fees = DayTradeFeeModel(commission_rate=0.00025, stamp_tax_rate=0.0005, impact_rate=0.0, min_commission=5.0)
     est = DayTradePnlEstimator(fee_model=fees, clock=lambda: _T0)
     e = est.estimate(10.0, 10.2, 100)  # 单边佣金0.25 < 最低5
     assert e.commission == pytest.approx(10.0)

@@ -141,9 +141,7 @@ class TestDensity:
         assert sum(b.count for b in d.histogram) == d.n_samples == 4
 
     def test_quantiles_linear_interpolation(self) -> None:
-        engine = _engine(
-            config=EventCondDensityConfig(bin_count=2, min_samples=1, quantiles=(0.5,))
-        )
+        engine = _engine(config=EventCondDensityConfig(bin_count=2, min_samples=1, quantiles=(0.5,)))
         engine.add_samples(EventType.EARNINGS, [float(i) for i in range(1, 101)])
         d = engine.density(EventType.EARNINGS)
         assert d.quantiles[0.5] == pytest.approx(50.5)
@@ -224,10 +222,12 @@ class TestConfig:
 class TestAfterCloseBatch:
     def test_batch_ok(self) -> None:
         engine = _engine()
-        report = engine.run_after_close_batch({
-            "600000": (EventType.EARNINGS, (-0.05, -0.02, 0.0, 0.01, 0.03, 0.08)),
-            "000001": ("policy", (0.0, 0.01, 0.02, 0.03, 0.04, 0.05)),
-        })
+        report = engine.run_after_close_batch(
+            {
+                "600000": (EventType.EARNINGS, (-0.05, -0.02, 0.0, 0.01, 0.03, 0.08)),
+                "000001": ("policy", (0.0, 0.01, 0.02, 0.03, 0.04, 0.05)),
+            }
+        )
         assert report.n_symbols == 2
         assert report.generated_at == _T0  # 注入时钟
         assert set(report.densities) == {"600000", "000001"}
@@ -244,10 +244,7 @@ class TestAfterCloseBatch:
 
     def test_batch_exactly_100_ok(self) -> None:
         engine = _engine()
-        samples = {
-            f"{i:06d}": (EventType.POLICY, (0.01, 0.02, 0.03, 0.04, 0.05))
-            for i in range(100)
-        }
+        samples = {f"{i:06d}": (EventType.POLICY, (0.01, 0.02, 0.03, 0.04, 0.05)) for i in range(100)}
         report = engine.run_after_close_batch(samples)
         assert report.n_symbols == 100
 
@@ -267,10 +264,12 @@ class TestAfterCloseBatch:
 
     def test_batch_degraded_mark_for_thin_symbol(self) -> None:
         engine = _engine()  # min_samples=5
-        report = engine.run_after_close_batch({
-            "600000": (EventType.EARNINGS, (0.01, 0.02)),  # 2 < 5 → 回退批内池
-            "000001": (EventType.POLICY, (0.0, 0.01, 0.02, 0.03, 0.04, 0.05)),
-        })
+        report = engine.run_after_close_batch(
+            {
+                "600000": (EventType.EARNINGS, (0.01, 0.02)),  # 2 < 5 → 回退批内池
+                "000001": (EventType.POLICY, (0.0, 0.01, 0.02, 0.03, 0.04, 0.05)),
+            }
+        )
         thin = report.densities["600000"]
         assert thin.degraded is True
         assert thin.n_samples == 8  # 批内全池 2+6

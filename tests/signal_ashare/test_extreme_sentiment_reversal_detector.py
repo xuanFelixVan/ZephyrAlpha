@@ -134,9 +134,7 @@ class TestDoubleIce:
 
     def test_repair_prob_below_threshold_not_confirmed(self) -> None:
         cfg = SentimentReversalConfig(repair_prob_by_lag={0: 0.65, 1: 0.74, 2: 0.71})
-        st = ExtremeSentimentReversalDetector(cfg).detect_double_ice(
-            _sentiment_ice_now(), _closes_declining()
-        )
+        st = ExtremeSentimentReversalDetector(cfg).detect_double_ice(_sentiment_ice_now(), _closes_declining())
         assert st.paired is True
         assert st.confirmed is False
 
@@ -234,7 +232,11 @@ class TestDetect:
         prev_close = closes[-2]
         lows[-1] = prev_close * 0.90  # 破位 10%，收回 (0.969-0.90)/0.10≈0.69 → shakeout
         rep = _engine().detect(
-            _sentiment_ice_now(), closes, lows, volumes, advances,
+            _sentiment_ice_now(),
+            closes,
+            lows,
+            volumes,
+            advances,
             support_level=prev_close,
         )
         assert rep.double_ice.confirmed is True
@@ -250,7 +252,11 @@ class TestDetect:
         lows[-1] = prev_close * 0.90
         closes[-1] = prev_close * 0.908  # 收回 (0.908-0.90)/0.10=0.08 → 真破位
         rep = _engine().detect(
-            _sentiment_ice_now(), closes, lows, volumes, advances,
+            _sentiment_ice_now(),
+            closes,
+            lows,
+            volumes,
+            advances,
             support_level=prev_close,
         )
         assert rep.verdict is not None and rep.verdict.kind == "true_breakdown"
@@ -260,7 +266,11 @@ class TestDetect:
     def test_no_double_ice_no_reversal(self) -> None:
         closes, lows, volumes, advances = self._series(0.03)
         rep = _engine().detect(
-            _sentiment_normal(), closes, lows, volumes, advances,
+            _sentiment_normal(),
+            closes,
+            lows,
+            volumes,
+            advances,
         )
         assert rep.reversal_detected is False
         assert rep.verdict is None  # 未注入 support_level → 腿降级

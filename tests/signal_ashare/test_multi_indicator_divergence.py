@@ -46,14 +46,14 @@ def _detector(**kw) -> MultiIndicatorDivergenceDetector:
 
 def _two_peak_bearish_prices() -> list[float]:
     """强拉到 P1→回落→混合爬行出更高 P2（动量显著走弱）→尾部确认。"""
-    up = [100.0 + 0.5 * i for i in range(20)]            # →109.5 强拉（P1，RSI≈100）
-    down = [up[-1] - 0.5 * i for i in range(1, 11)]      # →104.5 回落
+    up = [100.0 + 0.5 * i for i in range(20)]  # →109.5 强拉（P1，RSI≈100）
+    down = [up[-1] - 0.5 * i for i in range(1, 11)]  # →104.5 回落
     creep: list[float] = []
     v = down[-1]
-    for i in range(24):                                   # 混合爬行 →112.1（P2 价更高）
+    for i in range(24):  # 混合爬行 →112.1（P2 价更高）
         v += 0.55 if i % 3 != 2 else -0.15
         creep.append(v)
-    tail = [creep[-1] - 0.4 * i for i in range(1, 6)]    # 尾部回落确认 P2
+    tail = [creep[-1] - 0.4 * i for i in range(1, 6)]  # 尾部回落确认 P2
     return up + down + creep + tail
 
 
@@ -87,11 +87,11 @@ class TestPeakTroughDivergence:
 
     def test_bullish_macd_divergence(self) -> None:
         d = _detector()
-        down1 = [100.0 - 0.5 * i for i in range(20)]     # →90.5 急跌（T1）
+        down1 = [100.0 - 0.5 * i for i in range(20)]  # →90.5 急跌（T1）
         upr = [down1[-1] + 0.4 * i for i in range(1, 11)]
         creep: list[float] = []
         v = upr[-1]
-        for i in range(24):                               # 混合阴跌 →86.9（T2 价更低）
+        for i in range(24):  # 混合阴跌 →86.9（T2 价更低）
             v += -0.55 if i % 3 != 2 else 0.15
             creep.append(v)
         tail = [creep[-1] + 0.4 * i for i in range(1, 6)]
@@ -128,7 +128,7 @@ class TestPeakTroughDivergence:
             v += 0.45 if i % 3 != 2 else -0.15
             creep.append(v)
         dip = [creep[-1] - 0.3 * i for i in range(1, 6)]
-        rally = [dip[-1] + 0.8 * i for i in range(1, 31)]   # 持续强势反超（RSI→99）→ 化解
+        rally = [dip[-1] + 0.8 * i for i in range(1, 31)]  # 持续强势反超（RSI→99）→ 化解
         close = pd.Series(up1 + down + creep + dip + rally)
         d = _detector()
         events = d.detect(close, d.rsi(close), indicator="rsi")
@@ -153,9 +153,7 @@ class TestProbabilityTables:
         )
         assert full.aligned_levels == 4
         assert full.probability >= 0.60
-        partial = d.cascade_probability(
-            {"5min": "bearish", "30min": "bullish", "daily": None}, direction="bearish"
-        )
+        partial = d.cascade_probability({"5min": "bearish", "30min": "bullish", "daily": None}, direction="bearish")
         assert partial.aligned_levels == 1
         assert partial.probability < full.probability
 

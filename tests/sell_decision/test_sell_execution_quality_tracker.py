@@ -87,9 +87,7 @@ class TestGrading:
 
     def test_custom_thresholds(self) -> None:
         """阈值可覆写。"""
-        report = evaluate_execution_quality(
-            [_fill(executed=9.98)], good_threshold_pct=0.001
-        )
+        report = evaluate_execution_quality([_fill(executed=9.98)], good_threshold_pct=0.001)
         assert report.grade is not ExecutionQualityGrade.GOOD
 
     def test_outlier_fills_listed(self) -> None:

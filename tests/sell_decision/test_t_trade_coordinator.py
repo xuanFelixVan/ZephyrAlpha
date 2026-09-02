@@ -95,9 +95,7 @@ class TestDirections:
 
     def test_positive_t_sell_also_capped(self) -> None:
         """正T的卖出腿同样只能用可卖底仓。"""
-        plan = plan_t_trade(
-            _inp(direction=TTradeDirection.POSITIVE_T, sellable_weight=0.02, planned_weight=0.05)
-        )
+        plan = plan_t_trade(_inp(direction=TTradeDirection.POSITIVE_T, sellable_weight=0.02, planned_weight=0.05))
         assert plan.sell_weight == pytest.approx(0.02)
 
 

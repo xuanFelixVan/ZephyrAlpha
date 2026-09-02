@@ -127,18 +127,14 @@ class TestSenseCrossMarketConduction:
     def test_total_impact_clipped(self):
         foreign = [0.01, -0.01, 0.0] * 40
         ashare = tuple(0.9 * f for f in foreign)
-        series = [
-            ForeignMarketSeries(symbol="SPX", returns=tuple(foreign), ashare_returns=ashare, latest_shock=0.10)
-        ]
+        series = [ForeignMarketSeries(symbol="SPX", returns=tuple(foreign), ashare_returns=ashare, latest_shock=0.10)]
         cfg = ConductionConfig(impact_clip=0.05)
         snap = sense_cross_market_conduction(series, cfg)
         assert snap.total_predicted_impact == pytest.approx(0.05)
 
     def test_all_insufficient_gives_empty_markets(self):
         series = [
-            ForeignMarketSeries(
-                symbol="SPX", returns=(0.01, -0.01), ashare_returns=(0.005, -0.005), latest_shock=0.01
-            )
+            ForeignMarketSeries(symbol="SPX", returns=(0.01, -0.01), ashare_returns=(0.005, -0.005), latest_shock=0.01)
         ]
         snap = sense_cross_market_conduction(series)
         assert snap.markets == ()
@@ -180,10 +176,10 @@ class TestCrossMarketConductionSensorLoader:
         dates += [f"2026-03-{i:02d}" for i in range(1, 32)]
         dates += [f"2026-04-{i:02d}" for i in range(1, 42)]
         assert len(dates) == 131
-        us_rows = "\n".join(
-            f"{dates[j]}\tSPX\t{spx_closes[j]:.6f}" for j in range(131)
-        ) + "\n" + "\n".join(
-            f"{dates[j]}\tIXIC\t{ixic_closes[j]:.6f}" for j in range(131)
+        us_rows = (
+            "\n".join(f"{dates[j]}\tSPX\t{spx_closes[j]:.6f}" for j in range(131))
+            + "\n"
+            + "\n".join(f"{dates[j]}\tIXIC\t{ixic_closes[j]:.6f}" for j in range(131))
         )
         a_rows = "\n".join(f"{dates[j]}\t{a_closes[j]:.6f}" for j in range(131))
 
@@ -205,8 +201,6 @@ class TestCrossMarketConductionSensorLoader:
         assert snap.total_predicted_impact == pytest.approx(0.012, abs=1e-3)
 
     def test_empty_query_raises(self):
-        sensor = CrossMarketConductionSensor(
-            registry=self._fake_registry(), query_fn=lambda sql, timeout=30: ""
-        )
+        sensor = CrossMarketConductionSensor(registry=self._fake_registry(), query_fn=lambda sql, timeout=30: "")
         with pytest.raises(CrossMarketConductionDataError):
             sensor.sense("000300", "2026-01-01", "2026-08-31")

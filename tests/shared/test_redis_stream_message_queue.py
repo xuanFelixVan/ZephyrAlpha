@@ -71,7 +71,7 @@ class _FakeStreamClient:
         for stream, _marker in streams.items():
             entries = self._streams.get(stream, [])
             pos = self._read_pos.get((stream, group), 0)
-            batch = entries[pos:pos + count]
+            batch = entries[pos : pos + count]
             self._read_pos[(stream, group)] = pos + len(batch)
             pel = self._pel.setdefault((stream, group), {})
             for message_id, fields in batch:
@@ -140,7 +140,7 @@ class TestBind:
     def test_bind_invalid_args_raise(self) -> None:
         q, _, _ = _queue()
         with pytest.raises(RedisStreamQueueError):
-            q.bind("", Channel.INPROC)                       # 空 topic
+            q.bind("", Channel.INPROC)  # 空 topic
         with pytest.raises(RedisStreamQueueError):
             q.bind("t", "kafka")  # type: ignore[arg-type]  # 词表外通道
 
@@ -319,9 +319,9 @@ class TestAckRetryDlq:
         q, _, _ = _queue(clock=clock, dlq=dlq, max_deliveries=2, pending_timeout_ms=1_000)
         q.bind("ticks", Channel.STREAM)
         q.publish("ticks", {"n": 1})
-        q.poll("ticks")              # deliveries=1
+        q.poll("ticks")  # deliveries=1
         clock.advance(2.0)
-        q.collect_redeliveries()     # deliveries=2（重投）
+        q.collect_redeliveries()  # deliveries=2（重投）
         clock.advance(2.0)
         report = q.collect_redeliveries()  # deliveries=3 > 2 → DLQ
         assert [m.message_id for m in report.dead_lettered] == ["1-0"]

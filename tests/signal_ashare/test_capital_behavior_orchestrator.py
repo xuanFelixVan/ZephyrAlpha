@@ -59,7 +59,9 @@ class TestObservationValidation:
     def test_seven_classes_closed_set(self) -> None:
         assert len(CapitalClass) == 7
 
-    @pytest.mark.parametrize("kw", [{"participation": 1.5}, {"participation": -0.1}, {"confidence": 2.0}, {"confidence": -0.1}])
+    @pytest.mark.parametrize(
+        "kw", [{"participation": 1.5}, {"participation": -0.1}, {"confidence": 2.0}, {"confidence": -0.1}]
+    )
     def test_invalid_observation_fail_closed(self, kw: dict) -> None:
         base = {"capital_class": CapitalClass.QUANT, "net_inflow": 100.0, "participation": 0.1, "confidence": 1.0}
         base.update(kw)

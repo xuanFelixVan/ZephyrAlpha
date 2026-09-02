@@ -80,13 +80,18 @@ class TestConfig:
 
     def test_rules_contain_invalid_type_raises(self) -> None:
         with pytest.raises(BankerPatternError):
-            _sim(rules=[PriceVolumeRule(
-                phase=BankerPhase.PULL,
-                min_price_change_pct=0,
-                max_price_change_pct=1,
-                min_volume_ratio=0,
-                max_volume_ratio=1,
-            ), "not-a-rule"])  # type: ignore[list-item]
+            _sim(
+                rules=[
+                    PriceVolumeRule(
+                        phase=BankerPhase.PULL,
+                        min_price_change_pct=0,
+                        max_price_change_pct=1,
+                        min_volume_ratio=0,
+                        max_volume_ratio=1,
+                    ),
+                    "not-a-rule",
+                ]
+            )  # type: ignore[list-item]
 
 
 # ──────────────────────────────────────────────────────────────────────────────

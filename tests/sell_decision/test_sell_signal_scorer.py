@@ -67,12 +67,12 @@ class TestScoring:
 
     def test_small_sample_shrinks_to_prior(self) -> None:
         """小样本（2/2 命中）准确率收缩后应低于大样本（18/20）。"""
-        small = score_signals(
-            [_sig()], accuracy_stats={SellSignalType.TECHNICAL: AccuracyStat(hits=2, total=2)}
-        )[0].score
-        large = score_signals(
-            [_sig()], accuracy_stats={SellSignalType.TECHNICAL: AccuracyStat(hits=18, total=20)}
-        )[0].score
+        small = score_signals([_sig()], accuracy_stats={SellSignalType.TECHNICAL: AccuracyStat(hits=2, total=2)})[
+            0
+        ].score
+        large = score_signals([_sig()], accuracy_stats={SellSignalType.TECHNICAL: AccuracyStat(hits=18, total=20)})[
+            0
+        ].score
         assert small < large
 
     def test_resonance_bonus_cross_timeframe(self) -> None:

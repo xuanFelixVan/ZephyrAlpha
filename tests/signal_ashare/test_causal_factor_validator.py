@@ -46,7 +46,9 @@ class TestValidateFactor:
 
     def test_insignificant_neutral(self):
         rng = np.random.default_rng(13)
-        rep = validate_factor("noise", rng.normal(size=101), rng.normal(size=101), config=CausalValidatorConfig(ic_floor=0.15))
+        rep = validate_factor(
+            "noise", rng.normal(size=101), rng.normal(size=101), config=CausalValidatorConfig(ic_floor=0.15)
+        )
         assert rep.verdict == CausalVerdict.INSIGNIFICANT
         assert rep.weight_multiplier == pytest.approx(1.0)
 

@@ -103,9 +103,7 @@ def _build_agents_text(
     for key, _reg_id, filename in _ROW_MAP:
         if key == "alert_threshold":
             continue
-        lines.append(
-            f"> - ✅ {key}：[`{filename}`](file:///d:/x/{filename})（{counts[key]} 条，测试夹具）"
-        )
+        lines.append(f"> - ✅ {key}：[`{filename}`](file:///d:/x/{filename})（{counts[key]} 条，测试夹具）")
     lines.append(">")
     if include_capability_anchor:
         lines.append(

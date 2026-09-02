@@ -366,7 +366,8 @@ class TestDegradation:
         # 追加一只有成分但无 K 线的 880 板（880599.SH）及其成分股 K 线
         client._constituent = list(client._constituent) + [("880599.SH", "伪概念", "STK_Z1.SH")]
         client._stock = list(client._stock) + [
-            ("STK_Z1.SH", d, 100.0, 5.0, 9.9) for d in _days(n)  # 日涨 9.9%，若被合成必上榜
+            ("STK_Z1.SH", d, 100.0, 5.0, 9.9)
+            for d in _days(n)  # 日涨 9.9%，若被合成必上榜
         ]
         result = compute_mainline_candidates(_days(n)[-1], ch_client=client)
         assert result.degraded is False

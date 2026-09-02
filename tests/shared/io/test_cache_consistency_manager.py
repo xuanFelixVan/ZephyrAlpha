@@ -56,9 +56,11 @@ def _manager(clock: _Clock | None = None, alerts: list | None = None) -> CacheCo
 
 def _ttl_entry(mgr: CacheConsistencyManager, key: str = "k1", ttl: float = 60.0) -> None:
     mgr.register_entry(
-        key, data_type="bar",
+        key,
+        data_type="bar",
         tiers=[CacheTier.L1_MEMORY, CacheTier.L2_REDIS],
-        strategy=InvalidationStrategy.TTL, ttl_seconds=ttl,
+        strategy=InvalidationStrategy.TTL,
+        ttl_seconds=ttl,
     )
 
 
@@ -76,35 +78,43 @@ class TestRegisterEntry:
     def test_register_invalid_args_raise(self) -> None:
         mgr = _manager()
         with pytest.raises(CacheConsistencyError):
-            mgr.register_entry("", data_type="bar", tiers=[CacheTier.L1_MEMORY],
-                               strategy=InvalidationStrategy.TTL, ttl_seconds=60)
+            mgr.register_entry(
+                "", data_type="bar", tiers=[CacheTier.L1_MEMORY], strategy=InvalidationStrategy.TTL, ttl_seconds=60
+            )
         with pytest.raises(CacheConsistencyError):
-            mgr.register_entry("k", data_type="", tiers=[CacheTier.L1_MEMORY],
-                               strategy=InvalidationStrategy.TTL, ttl_seconds=60)
+            mgr.register_entry(
+                "k", data_type="", tiers=[CacheTier.L1_MEMORY], strategy=InvalidationStrategy.TTL, ttl_seconds=60
+            )
         with pytest.raises(CacheConsistencyError):
-            mgr.register_entry("k", data_type="bar", tiers=[],
-                               strategy=InvalidationStrategy.TTL, ttl_seconds=60)
+            mgr.register_entry("k", data_type="bar", tiers=[], strategy=InvalidationStrategy.TTL, ttl_seconds=60)
         with pytest.raises(CacheConsistencyError):
-            mgr.register_entry("k", data_type="bar", tiers=["l4_gpu"],  # type: ignore[list-item]
-                               strategy=InvalidationStrategy.TTL, ttl_seconds=60)
+            mgr.register_entry(
+                "k",
+                data_type="bar",
+                tiers=["l4_gpu"],  # type: ignore[list-item]
+                strategy=InvalidationStrategy.TTL,
+                ttl_seconds=60,
+            )
         with pytest.raises(CacheConsistencyError):
-            mgr.register_entry("k", data_type="bar", tiers=[CacheTier.L1_MEMORY],
-                               strategy="forever")  # type: ignore[arg-type]
+            mgr.register_entry("k", data_type="bar", tiers=[CacheTier.L1_MEMORY], strategy="forever")  # type: ignore[arg-type]
 
     def test_ttl_strategy_requires_positive_ttl(self) -> None:
         mgr = _manager()
         with pytest.raises(CacheConsistencyError):
-            mgr.register_entry("k", data_type="bar", tiers=[CacheTier.L1_MEMORY],
-                               strategy=InvalidationStrategy.TTL)  # 缺 ttl
+            mgr.register_entry(
+                "k", data_type="bar", tiers=[CacheTier.L1_MEMORY], strategy=InvalidationStrategy.TTL
+            )  # 缺 ttl
         with pytest.raises(CacheConsistencyError):
-            mgr.register_entry("k", data_type="bar", tiers=[CacheTier.L1_MEMORY],
-                               strategy=InvalidationStrategy.TTL, ttl_seconds=0)
+            mgr.register_entry(
+                "k", data_type="bar", tiers=[CacheTier.L1_MEMORY], strategy=InvalidationStrategy.TTL, ttl_seconds=0
+            )
 
     def test_non_ttl_strategy_rejects_ttl(self) -> None:
         mgr = _manager()
         with pytest.raises(CacheConsistencyError):
-            mgr.register_entry("k", data_type="bar", tiers=[CacheTier.L1_MEMORY],
-                               strategy=InvalidationStrategy.EVENT, ttl_seconds=60)
+            mgr.register_entry(
+                "k", data_type="bar", tiers=[CacheTier.L1_MEMORY], strategy=InvalidationStrategy.EVENT, ttl_seconds=60
+            )
 
     def test_duplicate_register_raises(self) -> None:
         mgr = _manager()
@@ -170,9 +180,9 @@ class TestWrite:
         mgr.set_write_policy("bar", WritePolicy.WRITE_THROUGH)
         _ttl_entry(mgr)
         with pytest.raises(CacheConsistencyError):
-            mgr.write("ghost", 1, version=1)   # 未知键
+            mgr.write("ghost", 1, version=1)  # 未知键
         with pytest.raises(CacheConsistencyError):
-            mgr.write("k1", 1, version=-1)     # 负版本
+            mgr.write("k1", 1, version=-1)  # 负版本
 
     def test_write_without_policy_fail_closed(self) -> None:
         mgr = _manager()
@@ -212,8 +222,7 @@ class TestInvalidation:
     def test_event_invalidation(self) -> None:
         mgr = _manager()
         mgr.set_write_policy("bar", WritePolicy.WRITE_THROUGH)
-        mgr.register_entry("k1", data_type="bar", tiers=[CacheTier.L1_MEMORY],
-                           strategy=InvalidationStrategy.EVENT)
+        mgr.register_entry("k1", data_type="bar", tiers=[CacheTier.L1_MEMORY], strategy=InvalidationStrategy.EVENT)
         mgr.write("k1", 1, version=1)
         assert mgr.is_valid("k1") is True
         mgr.invalidate("k1")
@@ -233,8 +242,7 @@ class TestInvalidation:
     def test_version_strategy(self) -> None:
         mgr = _manager()
         mgr.set_write_policy("bar", WritePolicy.WRITE_THROUGH)
-        mgr.register_entry("k1", data_type="bar", tiers=[CacheTier.L3_DISK],
-                           strategy=InvalidationStrategy.VERSION)
+        mgr.register_entry("k1", data_type="bar", tiers=[CacheTier.L3_DISK], strategy=InvalidationStrategy.VERSION)
         mgr.write("k1", 1, version=7)
         assert mgr.is_valid("k1", source_version=7) is True
         assert mgr.is_valid("k1", source_version=8) is False
@@ -258,8 +266,7 @@ class TestPatrol:
     def _three_keys(self, mgr: CacheConsistencyManager) -> None:
         mgr.set_write_policy("bar", WritePolicy.WRITE_THROUGH)
         for key in ("a", "b", "c"):
-            mgr.register_entry(key, data_type="bar", tiers=[CacheTier.L1_MEMORY],
-                               strategy=InvalidationStrategy.VERSION)
+            mgr.register_entry(key, data_type="bar", tiers=[CacheTier.L1_MEMORY], strategy=InvalidationStrategy.VERSION)
 
     def test_consistent_patrol_empty(self) -> None:
         mgr = _manager()
@@ -317,10 +324,10 @@ class TestDeterminism:
             alerts: list[InconsistencyRecord] = []
             mgr = _manager(clock, alerts)
             mgr.set_write_policy("bar", WritePolicy.WRITE_BACK)
-            mgr.register_entry("k1", data_type="bar", tiers=[CacheTier.L1_MEMORY],
-                               strategy=InvalidationStrategy.TTL, ttl_seconds=30)
-            mgr.register_entry("k2", data_type="bar", tiers=[CacheTier.L2_REDIS],
-                               strategy=InvalidationStrategy.VERSION)
+            mgr.register_entry(
+                "k1", data_type="bar", tiers=[CacheTier.L1_MEMORY], strategy=InvalidationStrategy.TTL, ttl_seconds=30
+            )
+            mgr.register_entry("k2", data_type="bar", tiers=[CacheTier.L2_REDIS], strategy=InvalidationStrategy.VERSION)
             mgr.write("k1", "x", version=1)
             mgr.write("k2", "y", version=3)
             clock.advance(10.0)

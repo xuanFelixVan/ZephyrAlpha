@@ -77,9 +77,7 @@ class TestInit:
 
     def test_ddl_creates_three_tables(self, conn) -> None:
         _persister(conn)
-        rows = conn.execute(
-            "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"
-        ).fetchall()
+        rows = conn.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name").fetchall()
         assert [r[0] for r in rows] == [
             "risk_limit",
             "risk_policy",
@@ -159,8 +157,7 @@ class TestActivation:
         p.activate("risk-core", 1)
         p.activate("risk-core", 2)
         rows = conn.execute(
-            "SELECT COUNT(*) FROM risk_policy_version "
-            "WHERE policy_id='risk-core' AND is_active=1"
+            "SELECT COUNT(*) FROM risk_policy_version WHERE policy_id='risk-core' AND is_active=1"
         ).fetchone()
         assert rows[0] == 1  # 任意时刻仅一个激活版本
         assert p.active_policy("risk-core").version == 2

@@ -94,9 +94,14 @@ def test_stats_two_pools_basic() -> None:
 
 def test_market_broken_rate() -> None:
     rep = compute_followthrough_stats(
-        trade_date="2026-08-21", prev_trade_date="2026-08-20",
-        sealed_pool=SEALED, broken_pool=[], today_pct=TODAY,
-        breadth_attempted=40, breadth_sealed=30, config=_cfg(),
+        trade_date="2026-08-21",
+        prev_trade_date="2026-08-20",
+        sealed_pool=SEALED,
+        broken_pool=[],
+        today_pct=TODAY,
+        breadth_attempted=40,
+        breadth_sealed=30,
+        config=_cfg(),
     )
     # (40-30)/40 = 25%
     assert rep.market_broken_rate == pytest.approx(0.25)
@@ -106,9 +111,14 @@ def test_market_broken_rate() -> None:
 
 def test_market_broken_rate_zero_attempted_guard() -> None:
     rep = compute_followthrough_stats(
-        trade_date="2026-08-21", prev_trade_date="2026-08-20",
-        sealed_pool=SEALED, broken_pool=[], today_pct=TODAY,
-        breadth_attempted=0, breadth_sealed=0, config=_cfg(),
+        trade_date="2026-08-21",
+        prev_trade_date="2026-08-20",
+        sealed_pool=SEALED,
+        broken_pool=[],
+        today_pct=TODAY,
+        breadth_attempted=0,
+        breadth_sealed=0,
+        config=_cfg(),
     )
     assert rep.market_broken_rate is None
     assert any("曾涨停为 0" in n for n in rep.notes)
@@ -116,9 +126,14 @@ def test_market_broken_rate_zero_attempted_guard() -> None:
 
 def test_breadth_missing_degrades_leg_not_all() -> None:
     rep = compute_followthrough_stats(
-        trade_date="2026-08-21", prev_trade_date="2026-08-20",
-        sealed_pool=SEALED, broken_pool=BROKEN, today_pct=TODAY,
-        breadth_attempted=None, breadth_sealed=None, config=_cfg(),
+        trade_date="2026-08-21",
+        prev_trade_date="2026-08-20",
+        sealed_pool=SEALED,
+        broken_pool=BROKEN,
+        today_pct=TODAY,
+        breadth_attempted=None,
+        breadth_sealed=None,
+        config=_cfg(),
     )
     assert rep.market_broken_rate is None
     assert rep.sealed.count == 3  # 主池不受影响
@@ -127,9 +142,13 @@ def test_breadth_missing_degrades_leg_not_all() -> None:
 
 def test_excess_vs_index() -> None:
     rep = compute_followthrough_stats(
-        trade_date="2026-08-21", prev_trade_date="2026-08-20",
-        sealed_pool=SEALED, broken_pool=BROKEN, today_pct=TODAY,
-        breadth_attempted=40, breadth_sealed=30,
+        trade_date="2026-08-21",
+        prev_trade_date="2026-08-20",
+        sealed_pool=SEALED,
+        broken_pool=BROKEN,
+        today_pct=TODAY,
+        breadth_attempted=40,
+        breadth_sealed=30,
         config=_cfg(index_pct_change=1.0),
     )
     assert rep.excess_avg_pct == pytest.approx(rep.sealed.avg_pct - 1.0)
@@ -137,9 +156,14 @@ def test_excess_vs_index() -> None:
 
 def test_empty_sealed_pool_degraded() -> None:
     rep = compute_followthrough_stats(
-        trade_date="2026-08-21", prev_trade_date="2026-08-20",
-        sealed_pool=[], broken_pool=[], today_pct=TODAY,
-        breadth_attempted=40, breadth_sealed=30, config=_cfg(),
+        trade_date="2026-08-21",
+        prev_trade_date="2026-08-20",
+        sealed_pool=[],
+        broken_pool=[],
+        today_pct=TODAY,
+        breadth_attempted=40,
+        breadth_sealed=30,
+        config=_cfg(),
     )
     assert rep.degraded is True
     assert rep.sealed.count == 0
@@ -147,9 +171,14 @@ def test_empty_sealed_pool_degraded() -> None:
 
 def test_top_gainers_losers() -> None:
     rep = compute_followthrough_stats(
-        trade_date="2026-08-21", prev_trade_date="2026-08-20",
-        sealed_pool=SEALED, broken_pool=BROKEN, today_pct=TODAY,
-        breadth_attempted=40, breadth_sealed=30, config=_cfg(top_n=2),
+        trade_date="2026-08-21",
+        prev_trade_date="2026-08-20",
+        sealed_pool=SEALED,
+        broken_pool=BROKEN,
+        today_pct=TODAY,
+        breadth_attempted=40,
+        breadth_sealed=30,
+        config=_cfg(top_n=2),
     )
     assert [d.symbol for d in rep.top_gainers] == ["600001", "000001"]
     assert [d.symbol for d in rep.top_losers] == ["300001", "600002"]
@@ -160,9 +189,14 @@ def test_top_gainers_losers() -> None:
 def test_canonical_symbol_normalized_to_bare() -> None:
     sealed = [PoolStock(symbol="600001.SH", name="封板A", y_close=10.0)]
     rep = compute_followthrough_stats(
-        trade_date="2026-08-21", prev_trade_date="2026-08-20",
-        sealed_pool=sealed, broken_pool=[], today_pct={"600001": 5.0},
-        breadth_attempted=10, breadth_sealed=8, config=_cfg(),
+        trade_date="2026-08-21",
+        prev_trade_date="2026-08-20",
+        sealed_pool=sealed,
+        broken_pool=[],
+        today_pct={"600001": 5.0},
+        breadth_attempted=10,
+        breadth_sealed=8,
+        config=_cfg(),
     )
     assert rep.sealed.count == 1
     assert rep.sealed.avg_pct == pytest.approx(5.0)
@@ -171,23 +205,38 @@ def test_canonical_symbol_normalized_to_bare() -> None:
 def test_invalid_date_fail_closed() -> None:
     with pytest.raises(ValueError, match="trade_date"):
         compute_followthrough_stats(
-            trade_date="2026-13-01", prev_trade_date="2026-08-20",
-            sealed_pool=SEALED, broken_pool=[], today_pct=TODAY,
-            breadth_attempted=1, breadth_sealed=1, config=_cfg(),
+            trade_date="2026-13-01",
+            prev_trade_date="2026-08-20",
+            sealed_pool=SEALED,
+            broken_pool=[],
+            today_pct=TODAY,
+            breadth_attempted=1,
+            breadth_sealed=1,
+            config=_cfg(),
         )
     with pytest.raises(ValueError, match="prev_trade_date"):
         compute_followthrough_stats(
-            trade_date="2026-08-21", prev_trade_date="bad",
-            sealed_pool=SEALED, broken_pool=[], today_pct=TODAY,
-            breadth_attempted=1, breadth_sealed=1, config=_cfg(),
+            trade_date="2026-08-21",
+            prev_trade_date="bad",
+            sealed_pool=SEALED,
+            broken_pool=[],
+            today_pct=TODAY,
+            breadth_attempted=1,
+            breadth_sealed=1,
+            config=_cfg(),
         )
 
 
 def test_json_serializable() -> None:
     rep = compute_followthrough_stats(
-        trade_date="2026-08-21", prev_trade_date="2026-08-20",
-        sealed_pool=SEALED, broken_pool=BROKEN, today_pct=TODAY,
-        breadth_attempted=40, breadth_sealed=30, config=_cfg(),
+        trade_date="2026-08-21",
+        prev_trade_date="2026-08-20",
+        sealed_pool=SEALED,
+        broken_pool=BROKEN,
+        today_pct=TODAY,
+        breadth_attempted=40,
+        breadth_sealed=30,
+        config=_cfg(),
     )
     json.dumps(asdict(rep), ensure_ascii=False)
 
@@ -214,8 +263,10 @@ class _FakeClient:
 
 def test_run_main_entry_with_fake_client() -> None:
     rep = run_limit_up_followthrough(
-        trade_date="2026-08-21", prev_trade_date="2026-08-20",
-        ch_client=_FakeClient(), config=_cfg(),
+        trade_date="2026-08-21",
+        prev_trade_date="2026-08-20",
+        ch_client=_FakeClient(),
+        config=_cfg(),
     )
     assert rep.degraded is False
     assert rep.sealed.count == 2
@@ -231,8 +282,10 @@ def test_run_leg_failure_degrades_independently() -> None:
             return super().execute(sql, params)
 
     rep = run_limit_up_followthrough(
-        trade_date="2026-08-21", prev_trade_date="2026-08-20",
-        ch_client=_BadClient(), config=_cfg(),
+        trade_date="2026-08-21",
+        prev_trade_date="2026-08-20",
+        ch_client=_BadClient(),
+        config=_cfg(),
     )
     assert rep.market_broken_rate is None
     assert rep.sealed.count == 2
@@ -240,11 +293,12 @@ def test_run_leg_failure_degrades_independently() -> None:
 
 
 def test_run_no_client_degraded(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(
-        "zephyr.signal_ashare.limit_up_followthrough._default_client", lambda: None
-    )
+    monkeypatch.setattr("zephyr.signal_ashare.limit_up_followthrough._default_client", lambda: None)
     rep = run_limit_up_followthrough(
-        trade_date="2026-08-21", prev_trade_date="2026-08-20",
-        ch_client=None, config=_cfg(), _allow_no_client=True,
+        trade_date="2026-08-21",
+        prev_trade_date="2026-08-20",
+        ch_client=None,
+        config=_cfg(),
+        _allow_no_client=True,
     )
     assert rep.degraded is True

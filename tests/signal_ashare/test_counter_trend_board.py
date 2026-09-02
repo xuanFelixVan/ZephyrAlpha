@@ -85,7 +85,7 @@ def test_down_segment_identified() -> None:
     board = _board()
     assert board.degraded is False
     assert board.down_start_ts == f"{D} 09:32"  # 峰 102
-    assert board.down_end_ts == f"{D} 09:36"    # 谷 99
+    assert board.down_end_ts == f"{D} 09:36"  # 谷 99
     assert board.index_down_pct == pytest.approx((99.0 / 102.0 - 1.0) * 100.0, abs=1e-3)
 
 
@@ -101,8 +101,10 @@ def test_no_down_segment_all_cards_degraded() -> None:
 
 def test_too_few_minutes_degraded() -> None:
     board = build_counter_trend_board(
-        index_series=_mk_index([100.0, 101.0]), sector_series={"880001": SECT_A},
-        fund_flow=None, config=_cfg(),
+        index_series=_mk_index([100.0, 101.0]),
+        sector_series={"880001": SECT_A},
+        fund_flow=None,
+        config=_cfg(),
     )
     assert board.degraded is True
 
@@ -192,7 +194,9 @@ def test_top_n_caps_items() -> None:
 
 def test_sector_names_attached() -> None:
     board = build_counter_trend_board(
-        index_series=INDEX, sector_series={"880001": SECT_A}, fund_flow=None,
+        index_series=INDEX,
+        sector_series={"880001": SECT_A},
+        fund_flow=None,
         config=_cfg(sector_names={"880001": "半导体"}),
     )
     card = next(c for c in board.cards if c.card == "counter_rally")
@@ -211,8 +215,11 @@ def test_json_serializable() -> None:
 
 def test_run_with_injected_series() -> None:
     board = run_counter_trend_board(
-        trade_date=D, ch_client=None,
-        index_series=INDEX, sector_series={"880001": SECT_A}, config=_cfg(),
+        trade_date=D,
+        ch_client=None,
+        index_series=INDEX,
+        sector_series={"880001": SECT_A},
+        config=_cfg(),
     )
     assert board.date == D
     assert board.degraded is False
@@ -221,15 +228,16 @@ def test_run_with_injected_series() -> None:
 def test_run_invalid_date_fail_closed() -> None:
     with pytest.raises(ValueError, match="trade_date"):
         run_counter_trend_board(
-            trade_date="2026-13-01", ch_client=None,
-            index_series=INDEX, sector_series={}, config=_cfg(),
+            trade_date="2026-13-01",
+            ch_client=None,
+            index_series=INDEX,
+            sector_series={},
+            config=_cfg(),
         )
 
 
 def test_run_no_client_degraded(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(
-        "zephyr.signal_ashare.counter_trend_board._default_client", lambda: None
-    )
+    monkeypatch.setattr("zephyr.signal_ashare.counter_trend_board._default_client", lambda: None)
     board = run_counter_trend_board(trade_date=D, ch_client=None, config=_cfg())
     assert board.degraded is True
 
@@ -263,8 +271,11 @@ FUND_ROWS = [
 
 def test_run_fund_leg_auto_loaded() -> None:
     board = run_counter_trend_board(
-        trade_date=D, ch_client=_FakeFundClient(rows=FUND_ROWS),
-        index_series=INDEX, sector_series={"880001": SECT_A}, config=_cfg(),
+        trade_date=D,
+        ch_client=_FakeFundClient(rows=FUND_ROWS),
+        index_series=INDEX,
+        sector_series={"880001": SECT_A},
+        config=_cfg(),
     )
     card2 = next(c for c in board.cards if c.card == "fund_inflow")
     assert card2.degraded is False
@@ -275,8 +286,11 @@ def test_run_fund_leg_auto_loaded() -> None:
 
 def test_run_fund_leg_query_error_degrades_only_card2() -> None:
     board = run_counter_trend_board(
-        trade_date=D, ch_client=_FakeFundClient(exc=RuntimeError("boom")),
-        index_series=INDEX, sector_series={"880001": SECT_A}, config=_cfg(),
+        trade_date=D,
+        ch_client=_FakeFundClient(exc=RuntimeError("boom")),
+        index_series=INDEX,
+        sector_series={"880001": SECT_A},
+        config=_cfg(),
     )
     assert board.degraded is False
     card2 = next(c for c in board.cards if c.card == "fund_inflow")
@@ -288,8 +302,11 @@ def test_run_fund_leg_query_error_degrades_only_card2() -> None:
 
 def test_run_fund_leg_empty_table_card2_no_positive() -> None:
     board = run_counter_trend_board(
-        trade_date=D, ch_client=_FakeFundClient(rows=[]),
-        index_series=INDEX, sector_series={"880001": SECT_A}, config=_cfg(),
+        trade_date=D,
+        ch_client=_FakeFundClient(rows=[]),
+        index_series=INDEX,
+        sector_series={"880001": SECT_A},
+        config=_cfg(),
     )
     card2 = next(c for c in board.cards if c.card == "fund_inflow")
     assert card2.degraded is True
@@ -299,8 +316,11 @@ def test_run_fund_leg_empty_table_card2_no_positive() -> None:
 def test_run_fund_leg_no_client_keeps_degraded() -> None:
     """序列注入且无客户端 → 资金腿保持未供给降级（不触默认客户端）。"""
     board = run_counter_trend_board(
-        trade_date=D, ch_client=None,
-        index_series=INDEX, sector_series={"880001": SECT_A}, config=_cfg(),
+        trade_date=D,
+        ch_client=None,
+        index_series=INDEX,
+        sector_series={"880001": SECT_A},
+        config=_cfg(),
     )
     card2 = next(c for c in board.cards if c.card == "fund_inflow")
     assert card2.degraded is True
@@ -310,9 +330,12 @@ def test_run_fund_leg_no_client_keeps_degraded() -> None:
 def test_run_fund_leg_explicit_injection_bypasses_load() -> None:
     """显式注入 fund_flow → 不查库（注入位优先）。"""
     board = run_counter_trend_board(
-        trade_date=D, ch_client=_FakeFundClient(exc=RuntimeError("不应被调用")),
-        index_series=INDEX, sector_series={"880001": SECT_A},
-        fund_flow={"880001": 5.0}, config=_cfg(),
+        trade_date=D,
+        ch_client=_FakeFundClient(exc=RuntimeError("不应被调用")),
+        index_series=INDEX,
+        sector_series={"880001": SECT_A},
+        fund_flow={"880001": 5.0},
+        config=_cfg(),
     )
     card2 = next(c for c in board.cards if c.card == "fund_inflow")
     assert card2.degraded is False

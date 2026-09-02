@@ -80,38 +80,42 @@ class TestConfig:
 
     def test_missing_prior_raises(self) -> None:
         with pytest.raises(CrowdGameError):
-            _sim(priors={
-                PlayerType.NORTHBOUND: PlayerPrior(
-                    player_type=PlayerType.NORTHBOUND,
-                    weight=0.5,
-                    momentum_bias=0.0,
-                    sentiment_sensitivity=0.5,
-                )
-            })
+            _sim(
+                priors={
+                    PlayerType.NORTHBOUND: PlayerPrior(
+                        player_type=PlayerType.NORTHBOUND,
+                        weight=0.5,
+                        momentum_bias=0.0,
+                        sentiment_sensitivity=0.5,
+                    )
+                }
+            )
 
     def test_prior_wrong_type_raises(self) -> None:
         with pytest.raises(CrowdGameError):
-            _sim(priors={
-                PlayerType.NORTHBOUND: "not-a-prior",  # type: ignore[dict-item]
-                PlayerType.PUBLIC_FUND: PlayerPrior(
-                    player_type=PlayerType.PUBLIC_FUND,
-                    weight=0.5,
-                    momentum_bias=0.0,
-                    sentiment_sensitivity=0.5,
-                ),
-                PlayerType.HOT_MONEY: PlayerPrior(
-                    player_type=PlayerType.HOT_MONEY,
-                    weight=0.5,
-                    momentum_bias=0.0,
-                    sentiment_sensitivity=0.5,
-                ),
-                PlayerType.RETAIL: PlayerPrior(
-                    player_type=PlayerType.RETAIL,
-                    weight=0.5,
-                    momentum_bias=0.0,
-                    sentiment_sensitivity=0.5,
-                ),
-            })
+            _sim(
+                priors={
+                    PlayerType.NORTHBOUND: "not-a-prior",  # type: ignore[dict-item]
+                    PlayerType.PUBLIC_FUND: PlayerPrior(
+                        player_type=PlayerType.PUBLIC_FUND,
+                        weight=0.5,
+                        momentum_bias=0.0,
+                        sentiment_sensitivity=0.5,
+                    ),
+                    PlayerType.HOT_MONEY: PlayerPrior(
+                        player_type=PlayerType.HOT_MONEY,
+                        weight=0.5,
+                        momentum_bias=0.0,
+                        sentiment_sensitivity=0.5,
+                    ),
+                    PlayerType.RETAIL: PlayerPrior(
+                        player_type=PlayerType.RETAIL,
+                        weight=0.5,
+                        momentum_bias=0.0,
+                        sentiment_sensitivity=0.5,
+                    ),
+                }
+            )
 
 
 # ──────────────────────────────────────────────────────────────────────────────

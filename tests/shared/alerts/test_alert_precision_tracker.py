@@ -80,11 +80,7 @@ class TestAlertPrecisionTrackerPersistence:
         tracker.record_true_positive()
         tracker.record_false_positive()
         tracker.record_false_negative()
-        lines = [
-            json.loads(line)
-            for line in path.read_text(encoding="utf-8").splitlines()
-            if line.strip()
-        ]
+        lines = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
         assert [line["kind"] for line in lines] == [
             "true_positive",
             "true_positive",
@@ -111,9 +107,7 @@ class TestAlertPrecisionTrackerPersistence:
         metrics = third.compute()
         assert metrics.true_positives == 1
         assert metrics.false_positives == 1
-        lines = [
-            line for line in path.read_text(encoding="utf-8").splitlines() if line.strip()
-        ]
+        lines = [line for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
         assert len(lines) == 2, "落盘 MUST append-only（回放不回写/不压缩）"
 
     def test_precision_math_unchanged_with_persistence(self, tmp_path):

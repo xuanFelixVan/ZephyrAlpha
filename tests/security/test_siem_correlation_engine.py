@@ -148,8 +148,12 @@ class TestCorrelation:
 
     def test_session_grouping(self) -> None:
         rule = SigmaRule(
-            "sess-rule", "t", ("login_fail", "token_reuse"),
-            120.0, GroupBy.SESSION, Severity.P2,
+            "sess-rule",
+            "t",
+            ("login_fail", "token_reuse"),
+            120.0,
+            GroupBy.SESSION,
+            Severity.P2,
         )
         engine = _engine(rules=(rule,))
         engine.ingest(_event("login_fail", 0, session="s1"))
@@ -176,8 +180,12 @@ class TestRouting:
     def test_p2_p3_buffered_for_daily_summary(self) -> None:
         summary: list[CorrelationAlert] = []
         rule = SigmaRule(
-            "low-rule", "t", ("scan", "probe"),
-            60.0, GroupBy.SUBJECT, Severity.P2,
+            "low-rule",
+            "t",
+            ("scan", "probe"),
+            60.0,
+            GroupBy.SUBJECT,
+            Severity.P2,
         )
         immediate: list[CorrelationAlert] = []
         engine = _engine(immediate, summary, rules=(rule,))
@@ -195,8 +203,12 @@ class TestRouting:
 
     def test_flush_summary_clears_buffer(self) -> None:
         rule = SigmaRule(
-            "low-rule", "t", ("scan", "probe"),
-            60.0, GroupBy.SUBJECT, Severity.P3,
+            "low-rule",
+            "t",
+            ("scan", "probe"),
+            60.0,
+            GroupBy.SUBJECT,
+            Severity.P3,
         )
         engine = _engine(rules=(rule,))
         engine.ingest(_event("scan", 0))

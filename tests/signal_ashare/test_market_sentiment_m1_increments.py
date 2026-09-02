@@ -120,14 +120,7 @@ def legacy_overall(analyzer: MarketSentimentAnalyzer, inp: MarketSentimentInput)
     _, seal_s, _ = analyzer.analyze_seal_rate(inp.limit_data)
     _, breadth_s = analyzer.analyze_breadth(inp.breadth)
     _, risk_s = analyzer.warn_next_day_risk(inp.breadth, inp.index_performance)
-    raw = (
-        limit_s * 0.20
-        + profit_s * 0.20
-        + morale_s * 0.15
-        + seal_s * 0.15
-        + breadth_s * 0.15
-        + risk_s * 0.15
-    )
+    raw = limit_s * 0.20 + profit_s * 0.20 + morale_s * 0.15 + seal_s * 0.15 + breadth_s * 0.15 + risk_s * 0.15
     return max(0.0, min(100.0, raw))
 
 
@@ -327,9 +320,7 @@ class TestDistortionDetection:
     def test_guard_threshold_configurable(self):
         config = MarketSentimentConfig(guard_ratio_threshold=0.8)
         analyzer = MarketSentimentAnalyzer(config)
-        contrib = IndexContributionInput(
-            constituent_returns={code: 0.03 for code in config.guard_weights}
-        )
+        contrib = IndexContributionInput(constituent_returns={code: 0.03 for code in config.guard_weights})
         inp = make_input(advancing=1500, declining=3000, flat=500, index_contrib=contrib)
         result = analyzer.analyze(inp)
         # 0.735 < 0.8 自定义阈值 → 不触发
@@ -425,9 +416,9 @@ class TestDrawdownRisk:
 
     def test_non_qualifying_stocks_excluded(self, analyzer: MarketSentimentAnalyzer):
         stocks = (
-            StockIntradayGain(4.9, 1.0),   # 冲高不足 5%
+            StockIntradayGain(4.9, 1.0),  # 冲高不足 5%
             StockIntradayGain(10.0, 6.0),  # 回吐仅 40%
-            StockIntradayGain(10.0, -2.0), # 回吐 120% 且回撤 12 → 计入
+            StockIntradayGain(10.0, -2.0),  # 回吐 120% 且回撤 12 → 计入
         )
         result = analyzer.analyze(make_input(drawdown_stocks=stocks))
         assert result.drawdown_risk.drawdown_count == 1

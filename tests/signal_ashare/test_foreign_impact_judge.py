@@ -48,8 +48,18 @@ def _cfg(**kw) -> ForeignImpactConfig:
 
 
 ALL_KEYS = {
-    "dow_jones", "nasdaq", "sp500", "hsi", "nikkei", "kospi",
-    "a50", "dxy", "usdcnh", "wti", "gold", "ust10y",
+    "dow_jones",
+    "nasdaq",
+    "sp500",
+    "hsi",
+    "nikkei",
+    "kospi",
+    "a50",
+    "dxy",
+    "usdcnh",
+    "wti",
+    "gold",
+    "ust10y",
 }
 
 

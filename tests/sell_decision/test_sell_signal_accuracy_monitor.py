@@ -44,18 +44,14 @@ class TestAggregation:
 
     def test_overall_accuracy(self) -> None:
         """总体命中率=总命中/总样本。"""
-        records = _records(SellSignalType.TECHNICAL, 8, 10) + _records(
-            SellSignalType.FUNDAMENTAL, 4, 10
-        )
+        records = _records(SellSignalType.TECHNICAL, 8, 10) + _records(SellSignalType.FUNDAMENTAL, 4, 10)
         report = evaluate_accuracy(records)
         assert report.overall_hits == 12
         assert report.overall_total == 20
         assert report.overall_rate == pytest.approx(0.6)
 
     def test_multiple_types_tracked_independently(self) -> None:
-        records = _records(SellSignalType.TECHNICAL, 9, 10) + _records(
-            SellSignalType.TIME_STOP, 2, 10
-        )
+        records = _records(SellSignalType.TECHNICAL, 9, 10) + _records(SellSignalType.TIME_STOP, 2, 10)
         report = evaluate_accuracy(records)
         assert report.by_type[SellSignalType.TECHNICAL].hits == 9
         assert report.by_type[SellSignalType.TIME_STOP].hits == 2
@@ -106,9 +102,7 @@ class TestInvalidInput:
 
     def test_tolerance_out_of_range(self) -> None:
         with pytest.raises(InvalidAccuracyRecordError):
-            evaluate_accuracy(
-                [_rec(SellSignalType.TECHNICAL, True)], degradation_tolerance=-0.1
-            )
+            evaluate_accuracy([_rec(SellSignalType.TECHNICAL, True)], degradation_tolerance=-0.1)
 
     def test_min_samples_below_one(self) -> None:
         with pytest.raises(InvalidAccuracyRecordError):

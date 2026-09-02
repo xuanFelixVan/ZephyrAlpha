@@ -83,9 +83,7 @@ class TestEstimateTransitionMatrix:
         assert sum(row_a) == pytest.approx(1.0)
 
     def test_no_smoothing_exact_counts(self):
-        matrix = estimate_transition_matrix(
-            [S.FLAT_UP, S.FLAT_UP, S.FLAT_DOWN, S.FLAT_DOWN], laplace_alpha=0.0
-        )
+        matrix = estimate_transition_matrix([S.FLAT_UP, S.FLAT_UP, S.FLAT_DOWN, S.FLAT_DOWN], laplace_alpha=0.0)
         i_a, i_b = list(S).index(S.FLAT_UP), list(S).index(S.FLAT_DOWN)
         assert matrix[i_a][i_a] == pytest.approx(0.5)
         assert matrix[i_a][i_b] == pytest.approx(0.5)

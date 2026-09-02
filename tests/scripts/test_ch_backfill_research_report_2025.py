@@ -43,12 +43,14 @@ _R = {
 
 class TestFetch2025Rows:
     def test_filters_year_and_builds_category_rows(self):
-        df = _df([
-            _R,
-            {**_R, "日期": "2024-12-31"},
-            {**_R, "日期": "2026-01-01"},
-            {**_R, "报告名称": ""},
-        ])
+        df = _df(
+            [
+                _R,
+                {**_R, "日期": "2024-12-31"},
+                {**_R, "日期": "2026-01-01"},
+                {**_R, "报告名称": ""},
+            ]
+        )
         rows = bf.fetch_2025_rows("600519", df)
         assert len(rows) == 1
         row = rows[0]

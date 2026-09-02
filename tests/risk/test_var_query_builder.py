@@ -81,7 +81,7 @@ class TestBuild:
 
     def test_predicate_pushdown_inner_subquery(self) -> None:
         q = _build(start_date="2026-01-01", end_date="2026-08-01")
-        inner = q.sql[q.sql.index("FROM ("):]
+        inner = q.sql[q.sql.index("FROM (") :]
         # 过滤谓词下推至内层（贴扫描侧），外层仅投影+LIMIT
         assert "WHERE symbol IN (?, ?) AND frequency = ?" in inner
         assert "trade_date >= ?" in inner and "trade_date <= ?" in inner
@@ -149,14 +149,14 @@ class TestResultCache:
         q1 = b.build(symbols=["000001"], window_days=250, frequency=QueryFrequency.DAY)
         q2 = b.build(symbols=["000001"], window_days=500, frequency=QueryFrequency.DAY)
         q3 = b.build(
-            symbols=["000001"], window_days=250, frequency=QueryFrequency.DAY,
+            symbols=["000001"],
+            window_days=250,
+            frequency=QueryFrequency.DAY,
             holdings={"000001": Decimal("100")},
         )
         assert q1.cache_key != q2.cache_key  # 窗口入键
         assert q1.cache_key != q3.cache_key  # 持仓 hash 入键
-        q1_again = b.build(
-            symbols=["000001"], window_days=250, frequency=QueryFrequency.DAY
-        )
+        q1_again = b.build(symbols=["000001"], window_days=250, frequency=QueryFrequency.DAY)
         assert q1.cache_key == q1_again.cache_key  # 同输入同键（holdings=None→symbols）
 
     def test_fetch_hit_and_miss_stats(self) -> None:

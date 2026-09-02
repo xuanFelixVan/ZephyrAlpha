@@ -47,7 +47,11 @@ def _bars(closes: list[float], volume: float = 1000.0) -> list[DailyBar]:
     return [
         DailyBar(
             date=(D0 + timedelta(days=i)).isoformat(),
-            open=c * 0.999, high=c * 1.002, low=c * 0.998, close=c, volume=volume,
+            open=c * 0.999,
+            high=c * 1.002,
+            low=c * 0.998,
+            close=c,
+            volume=volume,
         )
         for i, c in enumerate(closes)
     ]
@@ -109,8 +113,9 @@ def test_resonance_count_matches_direction():
 def test_volume_family_expanding_up():
     bars = _uptrend()
     # 近 5 日放量 → 量能族 +1
-    bumped = [DailyBar(b.date, b.open, b.high, b.low, b.close, b.volume * (3 if i >= 75 else 1))
-              for i, b in enumerate(bars)]
+    bumped = [
+        DailyBar(b.date, b.open, b.high, b.low, b.close, b.volume * (3 if i >= 75 else 1)) for i, b in enumerate(bars)
+    ]
     result = compute_resonance(bumped)
     vol = next(f for f in result.family_votes if f.family == "volume")
     assert vol.vote == 1
@@ -143,9 +148,17 @@ def test_weight_overrides_bad_key_fail_closed():
 
 
 def test_zero_weight_sum_degraded():
-    cfg = ResonanceConfig(weight_overrides={
-        "macd": 0.0, "kdj": 0.0, "rsi": 0.0, "volume": 0.0, "ma": 0.0, "boll": 0.0, "trend": 0.0,
-    })
+    cfg = ResonanceConfig(
+        weight_overrides={
+            "macd": 0.0,
+            "kdj": 0.0,
+            "rsi": 0.0,
+            "volume": 0.0,
+            "ma": 0.0,
+            "boll": 0.0,
+            "trend": 0.0,
+        }
+    )
     result = compute_resonance(_uptrend(), cfg)
     assert result.degraded is True
 
@@ -172,9 +185,7 @@ class _FakeClient:
 
 def _rows_desc(bars: list[DailyBar]) -> list[tuple]:
     # kline_index 查询 ORDER BY trade_date DESC 返回形态
-    return [
-        (b.date, b.open, b.high, b.low, b.close, b.volume) for b in reversed(bars)
-    ]
+    return [(b.date, b.open, b.high, b.low, b.close, b.volume) for b in reversed(bars)]
 
 
 def test_main_entry_fake_client_desc_to_asc():

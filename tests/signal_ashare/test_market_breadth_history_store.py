@@ -47,18 +47,21 @@ def _mk_breadth_rows(trade_date: str, n: int = 30) -> str:
         hh = 9 + (30 + i) // 60
         mm = (30 + i) % 60
         ts = f"{trade_date} {hh:02d}:{mm:02d}:00"
-        rows.append((
-            trade_date, ts,
-            2000 + i * 10,   # advancing
-            1500 - i * 5,    # declining
-            300,             # flat
-            50 + i,          # limit_up
-            10,              # limit_down
-            45,              # sealed
-            60,              # attempted
-            5000,            # total_count
-            1e9 + i * 1e7,   # total_amount
-        ))
+        rows.append(
+            (
+                trade_date,
+                ts,
+                2000 + i * 10,  # advancing
+                1500 - i * 5,  # declining
+                300,  # flat
+                50 + i,  # limit_up
+                10,  # limit_down
+                45,  # sealed
+                60,  # attempted
+                5000,  # total_count
+                1e9 + i * 1e7,  # total_amount
+            )
+        )
     return _tsv(rows)
 
 
@@ -68,11 +71,7 @@ def _mk_index_rows(trade_date: str, close: float = 3200.0) -> str:
 
 def test_load_history_store_assembles_records():
     """正常数据：按日分组 → 重采样 → HistoryRecord 列表（含 index_price）。"""
-    breadth_tsv = (
-        _mk_breadth_rows("2026-08-20", 30)
-        + "\n"
-        + _mk_breadth_rows("2026-08-21", 30)
-    )
+    breadth_tsv = _mk_breadth_rows("2026-08-20", 30) + "\n" + _mk_breadth_rows("2026-08-21", 30)
     index_tsv = _mk_index_rows("2026-08-20", 3200.0) + "\n" + _mk_index_rows("2026-08-21", 3210.0)
 
     def _ch(sql: str) -> str:
@@ -106,8 +105,13 @@ def test_to_dataframe_matches_similar_day_contract():
     )
     df = rec.to_dataframe()
     assert list(df.columns) == [
-        "ts", "breadth_vel", "lu_net", "vol_extrap_ratio",
-        "yw_spread", "if_basis", "index_price",
+        "ts",
+        "breadth_vel",
+        "lu_net",
+        "vol_extrap_ratio",
+        "yw_spread",
+        "if_basis",
+        "index_price",
     ]
     assert len(df) == 30
     assert df["ts"].iloc[0] == pytest.approx(570.0)
@@ -116,6 +120,7 @@ def test_to_dataframe_matches_similar_day_contract():
 
 def test_fail_open_on_ch_exception():
     """CH 查询抛异常 → 空列表（fail-open）。"""
+
     def _ch(sql: str) -> str:
         raise RuntimeError("boom")
 
