@@ -95,10 +95,12 @@ class TestRegisterLayer:
 
 class TestSearch:
     def test_search_merges_by_doc_id_max_score(self) -> None:
-        orch = _orch({
-            MemoryLayer.FAISS: lambda q, n: [_hit("d1", MemoryLayer.FAISS, 0.8, "faiss-d1")],
-            MemoryLayer.FTS5: lambda q, n: [_hit("d1", MemoryLayer.FTS5, 0.9, "fts5-d1")],
-        })
+        orch = _orch(
+            {
+                MemoryLayer.FAISS: lambda q, n: [_hit("d1", MemoryLayer.FAISS, 0.8, "faiss-d1")],
+                MemoryLayer.FTS5: lambda q, n: [_hit("d1", MemoryLayer.FTS5, 0.9, "fts5-d1")],
+            }
+        )
         result = orch.search("动量因子")
         assert len(result.hits) == 1
         merged = result.hits[0]
@@ -111,17 +113,22 @@ class TestSearch:
         orch = _orch({MemoryLayer.FAISS: lambda q, n: [_hit("d1", MemoryLayer.FAISS, 1.0)]})
         result = orch.search("x")
         assert result.degraded_layers == (
-            MemoryLayer.FTS5, MemoryLayer.GRAPH, MemoryLayer.GIT, MemoryLayer.RAG,
+            MemoryLayer.FTS5,
+            MemoryLayer.GRAPH,
+            MemoryLayer.GIT,
+            MemoryLayer.RAG,
         )
 
     def test_search_layer_failure_degrades_not_blocks(self) -> None:
         def _boom(q: str, n: int) -> list[LayerHit]:
             raise RuntimeError("faiss 索引损坏")
 
-        orch = _orch({
-            MemoryLayer.FAISS: _boom,
-            MemoryLayer.GRAPH: lambda q, n: [_hit("g1", MemoryLayer.GRAPH, 0.7)],
-        })
+        orch = _orch(
+            {
+                MemoryLayer.FAISS: _boom,
+                MemoryLayer.GRAPH: lambda q, n: [_hit("g1", MemoryLayer.GRAPH, 0.7)],
+            }
+        )
         result = orch.search("供应链")
         assert [h.doc_id for h in result.hits] == ["g1"]  # 不阻断
         assert result.degraded_layers == (MemoryLayer.FAISS,) + tuple(
@@ -129,20 +136,24 @@ class TestSearch:
         )
 
     def test_search_deterministic_sort(self) -> None:
-        orch = _orch({
-            MemoryLayer.FAISS: lambda q, n: [
-                _hit("d2", MemoryLayer.FAISS, 0.5),
-                _hit("d1", MemoryLayer.FAISS, 0.5),  # 同分按 doc_id
-                _hit("d3", MemoryLayer.FAISS, 0.9),
-            ],
-        })
+        orch = _orch(
+            {
+                MemoryLayer.FAISS: lambda q, n: [
+                    _hit("d2", MemoryLayer.FAISS, 0.5),
+                    _hit("d1", MemoryLayer.FAISS, 0.5),  # 同分按 doc_id
+                    _hit("d3", MemoryLayer.FAISS, 0.9),
+                ],
+            }
+        )
         result = orch.search("x")
         assert [h.doc_id for h in result.hits] == ["d3", "d1", "d2"]
 
     def test_search_limit_truncates(self) -> None:
-        orch = _orch({
-            MemoryLayer.FTS5: lambda q, n: [_hit(f"d{i}", MemoryLayer.FTS5, float(i)) for i in range(5)],
-        })
+        orch = _orch(
+            {
+                MemoryLayer.FTS5: lambda q, n: [_hit(f"d{i}", MemoryLayer.FTS5, float(i)) for i in range(5)],
+            }
+        )
         result = orch.search("x", limit=2)
         assert [h.doc_id for h in result.hits] == ["d4", "d3"]
 

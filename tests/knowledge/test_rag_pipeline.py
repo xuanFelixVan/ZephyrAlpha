@@ -72,7 +72,9 @@ class TestIngest:
         assert chunks[0].end == 40
         assert chunks[-1].end == 100
         assert [c.chunk_id for c in chunks] == [
-            "doc-a#C0000", "doc-a#C0001", "doc-a#C0002",
+            "doc-a#C0000",
+            "doc-a#C0001",
+            "doc-a#C0002",
         ]
         assert all(c.doc_id == "doc-a" for c in chunks)
 

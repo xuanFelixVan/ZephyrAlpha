@@ -1,6 +1,7 @@
 # [TTL] permanent
 # [TESTS] src/zephyr/pf_core/core/funnel_portfolio_adjudicator.py (MOD-PF-010)
 """MOD-PF-010 funnel_portfolio_adjudicator 单元测试（B10-01505 筛选漏斗第六层）。"""
+
 from __future__ import annotations
 
 import pytest
@@ -14,11 +15,17 @@ from zephyr.pf_core.core.funnel_portfolio_adjudicator import (
 )
 
 
-def _cand(symbol, score, industry=None, market_cap=1e11, vol=0.02, maxdd=0.10,
-          style=None, crowding=0.0) -> FunnelCandidate:
+def _cand(
+    symbol, score, industry=None, market_cap=1e11, vol=0.02, maxdd=0.10, style=None, crowding=0.0
+) -> FunnelCandidate:
     return FunnelCandidate(
-        symbol=symbol, score=score, industry=industry or symbol, market_cap=market_cap,
-        volatility=vol, max_drawdown=maxdd, style_loadings=style or {},
+        symbol=symbol,
+        score=score,
+        industry=industry or symbol,
+        market_cap=market_cap,
+        volatility=vol,
+        max_drawdown=maxdd,
+        style_loadings=style or {},
         crowding_score=crowding,
     )
 

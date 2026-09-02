@@ -116,12 +116,14 @@ class TestFetch:
             tracker.fetch_topic("alpha")
 
     def test_fetch_ingests_new_papers_with_summary(self) -> None:
-        data = [_raw(
-            "Momentum Factor Timing",
-            doi="10.1000/XYZ123",
-            arxiv_id="2401.00001",
-            abstract="momentum abstract",
-        )]
+        data = [
+            _raw(
+                "Momentum Factor Timing",
+                doi="10.1000/XYZ123",
+                arxiv_id="2401.00001",
+                abstract="momentum abstract",
+            )
+        ]
         tracker = _tracker(
             fetcher=lambda sub: list(data),
             summarizer=lambda title, abstract: f"摘要:{title[:5]}",
@@ -249,7 +251,10 @@ class TestTrends:
         ]
         tracker = _tracker(
             fetcher=lambda sub: list(data),
-            trend_window=3, trend_recent=2, trend_min_count=1, trend_growth=1.0,
+            trend_window=3,
+            trend_recent=2,
+            trend_min_count=1,
+            trend_growth=1.0,
         )
         tracker.subscribe(_sub("alpha"))
         tracker.fetch_topic("alpha")

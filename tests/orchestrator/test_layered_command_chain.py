@@ -81,8 +81,8 @@ def _packet(
 class TestRegisterLink:
     def test_legal_links(self) -> None:
         chain = _chain()
-        chain.register_link("risk_manager", "signal_analyst")      # 战略→战术
-        chain.register_link("signal_analyst", "t0_trader")         # 战术→执行
+        chain.register_link("risk_manager", "signal_analyst")  # 战略→战术
+        chain.register_link("signal_analyst", "t0_trader")  # 战术→执行
         links = chain.chain_of("signal_analyst")
         assert links.parents == ("risk_manager",)
         assert links.children == ("t0_trader",)
@@ -181,50 +181,58 @@ class TestReport:
     def test_report_ok(self) -> None:
         chain = _chain()
         pkt = self._accepted(chain)
-        chain.report(ResultReport(
-            packet_id=pkt.packet_id,
-            child_agent="signal_analyst",
-            status=ReportStatus.COMPLETED,
-            metrics={"signals": 3},
-            reported_at=_T0,
-        ))
+        chain.report(
+            ResultReport(
+                packet_id=pkt.packet_id,
+                child_agent="signal_analyst",
+                status=ReportStatus.COMPLETED,
+                metrics={"signals": 3},
+                reported_at=_T0,
+            )
+        )
         assert chain.packet_status(pkt.packet_id) is PacketStatus.REPORTED
 
     def test_report_unknown_packet_raises(self) -> None:
         chain = _chain()
         with pytest.raises(CommandChainError):
-            chain.report(ResultReport(
-                packet_id="ghost",
-                child_agent="signal_analyst",
-                status=ReportStatus.COMPLETED,
-                metrics={},
-                reported_at=_T0,
-            ))
+            chain.report(
+                ResultReport(
+                    packet_id="ghost",
+                    child_agent="signal_analyst",
+                    status=ReportStatus.COMPLETED,
+                    metrics={},
+                    reported_at=_T0,
+                )
+            )
 
     def test_report_before_accept_raises(self) -> None:
         chain = _chain()
         chain.register_link("risk_manager", "signal_analyst")
         pkt = _packet()
         with pytest.raises(CommandChainError):
-            chain.report(ResultReport(
-                packet_id=pkt.packet_id,
-                child_agent="signal_analyst",
-                status=ReportStatus.COMPLETED,
-                metrics={},
-                reported_at=_T0,
-            ))
+            chain.report(
+                ResultReport(
+                    packet_id=pkt.packet_id,
+                    child_agent="signal_analyst",
+                    status=ReportStatus.COMPLETED,
+                    metrics={},
+                    reported_at=_T0,
+                )
+            )
 
     def test_report_child_mismatch_raises(self) -> None:
         chain = _chain()
         pkt = self._accepted(chain)
         with pytest.raises(CommandChainError):
-            chain.report(ResultReport(
-                packet_id=pkt.packet_id,
-                child_agent="timing_analyst",  # 非受托方
-                status=ReportStatus.COMPLETED,
-                metrics={},
-                reported_at=_T0,
-            ))
+            chain.report(
+                ResultReport(
+                    packet_id=pkt.packet_id,
+                    child_agent="timing_analyst",  # 非受托方
+                    status=ReportStatus.COMPLETED,
+                    metrics={},
+                    reported_at=_T0,
+                )
+            )
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -248,13 +256,15 @@ class TestQuery:
         chain.register_link("risk_manager", "signal_analyst")
         pkt = _packet()
         chain.delegate(pkt)
-        chain.report(ResultReport(
-            packet_id=pkt.packet_id,
-            child_agent="signal_analyst",
-            status=ReportStatus.COMPLETED,
-            metrics={},
-            reported_at=_T0,
-        ))
+        chain.report(
+            ResultReport(
+                packet_id=pkt.packet_id,
+                child_agent="signal_analyst",
+                status=ReportStatus.COMPLETED,
+                metrics={},
+                reported_at=_T0,
+            )
+        )
         assert chain.pending_packets("signal_analyst") == []
 
     def test_chain_of_full(self) -> None:

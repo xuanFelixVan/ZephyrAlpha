@@ -72,11 +72,13 @@ def tmp_db(tmp_path: Path) -> Path:
     return db
 
 
-FULL_KLINE = _kline_tsv([
-    ("600000.SH", 10.0, 4.0),
-    ("000001.SZ", 20.0, 2.0),
-    ("300750.SZ", 100.0, 0.0),  # 振幅 0 → 默认 3%
-])
+FULL_KLINE = _kline_tsv(
+    [
+        ("600000.SH", 10.0, 4.0),
+        ("000001.SZ", 20.0, 2.0),
+        ("300750.SZ", 100.0, 0.0),  # 振幅 0 → 默认 3%
+    ]
+)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -202,8 +204,10 @@ class TestPersistence:
         result = runner.run(TRADE_DATE, ["600000.SH"])
         assert result.target_date == TRADE_DATE
         rows = query_predictions(
-            trade_date=TRADE_DATE, module=BOUNDARY_MODULE_LOG_NAME,
-            prediction_type=BOUNDARY_PREDICTION_TYPE, db_path=tmp_db,
+            trade_date=TRADE_DATE,
+            module=BOUNDARY_MODULE_LOG_NAME,
+            prediction_type=BOUNDARY_PREDICTION_TYPE,
+            db_path=tmp_db,
         )
         assert len(rows) == 1
 
@@ -213,7 +217,9 @@ class TestPersistence:
         r2 = runner.run(TRADE_DATE, ["600000.SH"], target_date=TARGET_DATE)
         assert r1.persisted_row_ids == r2.persisted_row_ids
         rows = query_predictions(
-            module=BOUNDARY_MODULE_LOG_NAME, prediction_type=BOUNDARY_PREDICTION_TYPE, db_path=tmp_db,
+            module=BOUNDARY_MODULE_LOG_NAME,
+            prediction_type=BOUNDARY_PREDICTION_TYPE,
+            db_path=tmp_db,
         )
         assert len(rows) == 1
 
@@ -236,8 +242,11 @@ class TestPersistence:
 
     def test_module_entry(self, tmp_db: Path) -> None:
         result = run_batch_boundaries(
-            TRADE_DATE, ["600000.SH", "999999.SH"],
-            ch_client=_make_ch(FULL_KLINE), db_path=tmp_db, target_date=TARGET_DATE,
+            TRADE_DATE,
+            ["600000.SH", "999999.SH"],
+            ch_client=_make_ch(FULL_KLINE),
+            db_path=tmp_db,
+            target_date=TARGET_DATE,
         )
         assert isinstance(result, BatchBoundaryResult)
         assert result.ok_count == 1

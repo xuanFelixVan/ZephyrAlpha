@@ -1,6 +1,7 @@
 # [TTL] permanent
 # [TESTS] src/zephyr/ml_train/core/model_version_registry.py (MOD-ML-012)
 """MOD-ML-012 model_version_registry 单元测试（B4-06880 D-ML-TRAIN 训练域）。"""
+
 from __future__ import annotations
 
 from datetime import datetime, timezone

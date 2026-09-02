@@ -93,9 +93,9 @@ class TestContract:
 
     def test_register_bad_schema_raises(self) -> None:
         with pytest.raises(TaskOrchestrationError):
-            _skill().register_contract(SkillContract(
-                skill_name="s", input_schema="not-a-mapping", output_schema={}, registered_at=_T0
-            ))
+            _skill().register_contract(
+                SkillContract(skill_name="s", input_schema="not-a-mapping", output_schema={}, registered_at=_T0)
+            )
 
     def test_contract_of_unknown_raises(self) -> None:
         with pytest.raises(TaskOrchestrationError):
@@ -116,12 +116,15 @@ class TestContract:
 class TestDecompose:
     def test_waves_topological(self) -> None:
         skill = _skill()
-        plan = skill.decompose("plan-1", [
-            _node("c", depends_on=("a", "b")),
-            _node("a"),
-            _node("b", depends_on=("a",)),
-            _node("d"),
-        ])
+        plan = skill.decompose(
+            "plan-1",
+            [
+                _node("c", depends_on=("a", "b")),
+                _node("a"),
+                _node("b", depends_on=("a",)),
+                _node("d"),
+            ],
+        )
         assert plan.waves == (("a", "d"), ("b",), ("c",))  # 层内按 task_id 排序
 
     def test_decompose_empty_plan_id_raises(self) -> None:
@@ -148,11 +151,14 @@ class TestDecompose:
 
     def test_decompose_cycle_rejected(self) -> None:
         with pytest.raises(TaskOrchestrationError):
-            _skill().decompose("plan-1", [
-                _node("a", depends_on=("c",)),
-                _node("b", depends_on=("a",)),
-                _node("c", depends_on=("b",)),
-            ])
+            _skill().decompose(
+                "plan-1",
+                [
+                    _node("a", depends_on=("c",)),
+                    _node("b", depends_on=("a",)),
+                    _node("c", depends_on=("b",)),
+                ],
+            )
 
     def test_decompose_self_loop_rejected(self) -> None:
         with pytest.raises(TaskOrchestrationError):
@@ -203,11 +209,14 @@ class TestExecute:
     def test_execute_wave_order_deterministic(self) -> None:
         executed: list[str] = []
         skill = _skill(executed)
-        _confirmed_plan(skill, nodes=[
-            _node("c", depends_on=("a", "b")),
-            _node("a"),
-            _node("b", depends_on=("a",)),
-        ])
+        _confirmed_plan(
+            skill,
+            nodes=[
+                _node("c", depends_on=("a", "b")),
+                _node("a"),
+                _node("b", depends_on=("a",)),
+            ],
+        )
         report = skill.execute("plan-1")
         assert executed == ["a", "b", "c"]  # 波次+层内字典序
         assert report.succeeded is True
@@ -250,12 +259,15 @@ class TestExecute:
                 raise RuntimeError("b 故障")
 
         skill = _skill(executor=_fail_on_b)
-        _confirmed_plan(skill, nodes=[
-            _node("a"),
-            _node("b"),
-            _node("c", depends_on=("b",)),
-            _node("d", depends_on=("c",)),
-        ])
+        _confirmed_plan(
+            skill,
+            nodes=[
+                _node("a"),
+                _node("b"),
+                _node("c", depends_on=("b",)),
+                _node("d", depends_on=("c",)),
+            ],
+        )
         report = skill.execute("plan-1")
         assert report.status_of("a") is TaskStatus.SUCCEEDED
         assert report.status_of("b") is TaskStatus.DLQ

@@ -76,7 +76,8 @@ def _adapter(
     scores = _EXAM_SCORES if exam_scores is None else exam_scores
     if reviewer is None:
         reviewer = lambda task: (
-            dict(raw) if raw is not None
+            dict(raw)
+            if raw is not None
             else {"score": _RAW_OK["score"], "findings": [dict(f) for f in _RAW_OK["findings"]]}
         )
     return DeepReviewModelAdapter(
@@ -125,32 +126,42 @@ class TestProfileRegistration:
     def test_register_duplicate_raises(self) -> None:
         adapter = _adapter()
         with pytest.raises(DeepReviewAdapterError):
-            adapter.register_profile(DeepReviewProfile(
-                model_id="glm-5.1",
-                provider="zhipu",
-                review_types=frozenset(ReviewType),
-                context_window=131072,
-            ))
+            adapter.register_profile(
+                DeepReviewProfile(
+                    model_id="glm-5.1",
+                    provider="zhipu",
+                    review_types=frozenset(ReviewType),
+                    context_window=131072,
+                )
+            )
 
     def test_register_invalid_profile_raises(self) -> None:
         with pytest.raises(DeepReviewAdapterError):
             DeepReviewProfile(
-                model_id="glm-x", provider="zhipu",
-                review_types=frozenset(), context_window=1024,
+                model_id="glm-x",
+                provider="zhipu",
+                review_types=frozenset(),
+                context_window=1024,
             )
         with pytest.raises(DeepReviewAdapterError):
             DeepReviewProfile(
-                model_id="glm-x", provider="zhipu",
-                review_types=frozenset(ReviewType), context_window=0,
+                model_id="glm-x",
+                provider="zhipu",
+                review_types=frozenset(ReviewType),
+                context_window=0,
             )
 
     def test_registrar_hook_receives(self) -> None:
         registered: list[DeepReviewProfile] = []
         adapter = _adapter(registrar=lambda p: registered.append(p))
-        adapter.register_profile(DeepReviewProfile(
-            model_id="glm-5.1-mini", provider="zhipu",
-            review_types=frozenset({ReviewType.CODE_REVIEW}), context_window=32768,
-        ))
+        adapter.register_profile(
+            DeepReviewProfile(
+                model_id="glm-5.1-mini",
+                provider="zhipu",
+                review_types=frozenset({ReviewType.CODE_REVIEW}),
+                context_window=32768,
+            )
+        )
         assert [p.model_id for p in registered] == ["glm-5.1", "glm-5.1-mini"]
 
     def test_registrar_failure_raises(self) -> None:
@@ -213,7 +224,9 @@ class TestCalibrate:
             raise RuntimeError("考试服务不可用")
 
         adapter = DeepReviewModelAdapter(
-            reviewer=lambda task: dict(_RAW_OK), exam_runner=_boom, clock=lambda: _T0,
+            reviewer=lambda task: dict(_RAW_OK),
+            exam_runner=_boom,
+            clock=lambda: _T0,
         )
         with pytest.raises(DeepReviewAdapterError):
             adapter.calibrate("glm-5.1", _SAMPLES)
@@ -222,9 +235,7 @@ class TestCalibrate:
         with pytest.raises(DeepReviewAdapterError):
             _adapter(exam_scores={"s1": 0.9, "s2": 0.7, "s3": 0.4}).calibrate("glm-5.1", _SAMPLES)
         with pytest.raises(DeepReviewAdapterError):
-            _adapter(exam_scores={"s1": 0.9, "s2": 0.7, "s3": 0.4, "s4": 1.5}).calibrate(
-                "glm-5.1", _SAMPLES
-            )
+            _adapter(exam_scores={"s1": 0.9, "s2": 0.7, "s3": 0.4, "s4": 1.5}).calibrate("glm-5.1", _SAMPLES)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -261,10 +272,14 @@ class TestReview:
 
     def test_review_type_not_supported_raises(self) -> None:
         adapter = _calibrated()
-        adapter.register_profile(DeepReviewProfile(
-            model_id="glm-5.1-mini", provider="zhipu",
-            review_types=frozenset({ReviewType.CODE_REVIEW}), context_window=32768,
-        ))
+        adapter.register_profile(
+            DeepReviewProfile(
+                model_id="glm-5.1-mini",
+                provider="zhipu",
+                review_types=frozenset({ReviewType.CODE_REVIEW}),
+                context_window=32768,
+            )
+        )
         adapter.calibrate("glm-5.1-mini", _SAMPLES)
         with pytest.raises(DeepReviewAdapterError):
             adapter.review(_task(model_id="glm-5.1-mini", review_type=ReviewType.RISK_REVIEW))
@@ -284,7 +299,8 @@ class TestReview:
 
     def test_reviewer_not_injected_raises(self) -> None:
         adapter = DeepReviewModelAdapter(
-            exam_runner=lambda m, s: dict(_EXAM_SCORES), clock=lambda: _T0,
+            exam_runner=lambda m, s: dict(_EXAM_SCORES),
+            clock=lambda: _T0,
         )
         adapter.calibrate("glm-5.1", _SAMPLES)
         with pytest.raises(DeepReviewAdapterError):
@@ -299,15 +315,19 @@ class TestReview:
 
     def test_findings_invalid_raises(self) -> None:
         with pytest.raises(DeepReviewAdapterError):  # severity 越词表
-            _calibrated(raw={
-                "score": 0.9,
-                "findings": [{"finding_id": "f-1", "severity": "fatal", "description": "x"}],
-            }).review(_task())
+            _calibrated(
+                raw={
+                    "score": 0.9,
+                    "findings": [{"finding_id": "f-1", "severity": "fatal", "description": "x"}],
+                }
+            ).review(_task())
         with pytest.raises(DeepReviewAdapterError):  # description 缺失
-            _calibrated(raw={
-                "score": 0.9,
-                "findings": [{"finding_id": "f-1", "severity": "info"}],
-            }).review(_task())
+            _calibrated(
+                raw={
+                    "score": 0.9,
+                    "findings": [{"finding_id": "f-1", "severity": "info"}],
+                }
+            ).review(_task())
 
 
 # ──────────────────────────────────────────────────────────────────────────────

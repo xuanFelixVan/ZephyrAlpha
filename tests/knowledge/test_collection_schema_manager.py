@@ -74,9 +74,9 @@ class TestRegisterSchema:
     def test_register_sequential_versions(self) -> None:
         mgr = _mgr()
         mgr.register_schema(CollectionName.DECISIONS, 1, _V1_FIELDS)
-        mgr.register_schema(CollectionName.DECISIONS, 2, _V1_FIELDS + (
-            FieldDef(name="rationale", field_type=FieldType.STRING),
-        ))
+        mgr.register_schema(
+            CollectionName.DECISIONS, 2, _V1_FIELDS + (FieldDef(name="rationale", field_type=FieldType.STRING),)
+        )
         assert mgr.list_versions(CollectionName.DECISIONS) == (1, 2)
 
     def test_skip_version_raises(self) -> None:
@@ -109,24 +109,32 @@ class TestRegisterSchema:
     def test_duplicate_field_name_raises(self) -> None:
         mgr = _mgr()
         with pytest.raises(CollectionSchemaError):
-            mgr.register_schema(CollectionName.KNOWLEDGE, 1, (
-                FieldDef(name="a", field_type=FieldType.STRING),
-                FieldDef(name="a", field_type=FieldType.INTEGER),
-            ))
+            mgr.register_schema(
+                CollectionName.KNOWLEDGE,
+                1,
+                (
+                    FieldDef(name="a", field_type=FieldType.STRING),
+                    FieldDef(name="a", field_type=FieldType.INTEGER),
+                ),
+            )
 
     def test_invalid_field_type_raises(self) -> None:
         mgr = _mgr()
         with pytest.raises(CollectionSchemaError):
-            mgr.register_schema(CollectionName.KNOWLEDGE, 1, (
-                FieldDef(name="a", field_type="blob"),  # type: ignore[arg-type]
-            ))
+            mgr.register_schema(
+                CollectionName.KNOWLEDGE,
+                1,
+                (
+                    FieldDef(name="a", field_type="blob"),  # type: ignore[arg-type]
+                ),
+            )
 
     def test_get_schema_latest_and_pinned(self) -> None:
         mgr = _mgr()
         mgr.register_schema(CollectionName.BLUEPRINTS, 1, _V1_FIELDS)
-        mgr.register_schema(CollectionName.BLUEPRINTS, 2, _V1_FIELDS + (
-            FieldDef(name="owner", field_type=FieldType.STRING),
-        ))
+        mgr.register_schema(
+            CollectionName.BLUEPRINTS, 2, _V1_FIELDS + (FieldDef(name="owner", field_type=FieldType.STRING),)
+        )
         assert mgr.get_schema(CollectionName.BLUEPRINTS).version == 2
         assert mgr.get_schema(CollectionName.BLUEPRINTS, 1).version == 1
 
@@ -173,9 +181,9 @@ class TestBreakingChanges:
     def test_additive_change_not_breaking(self) -> None:
         mgr = _mgr()
         mgr.register_schema(CollectionName.KNOWLEDGE, 1, _V1_FIELDS)
-        schema = mgr.register_schema(CollectionName.KNOWLEDGE, 2, _V1_FIELDS + (
-            FieldDef(name="tags", field_type=FieldType.STRING_LIST),
-        ))
+        schema = mgr.register_schema(
+            CollectionName.KNOWLEDGE, 2, _V1_FIELDS + (FieldDef(name="tags", field_type=FieldType.STRING_LIST),)
+        )
         assert schema.version == 2  # 新增字段非破坏性，无需 force
 
     def test_detect_breaking_changes(self) -> None:
@@ -218,9 +226,9 @@ class TestMigration:
     def _ready(self, runner=None) -> CollectionSchemaManager:
         mgr = _mgr(runner)
         mgr.register_schema(CollectionName.KNOWLEDGE, 1, _V1_FIELDS)
-        mgr.register_schema(CollectionName.KNOWLEDGE, 2, _V1_FIELDS + (
-            FieldDef(name="chunk_no", field_type=FieldType.INTEGER),
-        ))
+        mgr.register_schema(
+            CollectionName.KNOWLEDGE, 2, _V1_FIELDS + (FieldDef(name="chunk_no", field_type=FieldType.INTEGER),)
+        )
         return mgr
 
     def test_register_migration_ok(self) -> None:

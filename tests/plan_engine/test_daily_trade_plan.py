@@ -85,7 +85,10 @@ class TestBuyList:
     def test_firm_cap_binding(self) -> None:
         # max_add 0.30×1.0=0.30 > firm 8% → cap=0.08；80000/9.5=8421 股→整手 8400
         plan = generate_daily_trade_plan(
-            TRADE_DATE, [_candidate()], [], config=DailyTradePlanConfig(total_capital=1_000_000.0),
+            TRADE_DATE,
+            [_candidate()],
+            [],
+            config=DailyTradePlanConfig(total_capital=1_000_000.0),
         )
         assert len(plan.buy_list) == 1
         item = plan.buy_list[0]
@@ -102,7 +105,9 @@ class TestBuyList:
     def test_scale_binding_below_firm_cap(self) -> None:
         # 保守档 ×0.5：0.30×0.5=0.15 > 0.08 仍 firm 截断；自定义 max_add 0.05×1.0=0.05 < 0.08 → cap=0.05
         plan = generate_daily_trade_plan(
-            TRADE_DATE, [_candidate(max_add=0.05)], [],
+            TRADE_DATE,
+            [_candidate(max_add=0.05)],
+            [],
             config=DailyTradePlanConfig(total_capital=1_000_000.0),
         )
         assert plan.buy_list[0].cap_weight == pytest.approx(0.05)
@@ -111,10 +116,18 @@ class TestBuyList:
 
     def test_conservative_scale_halves_quantity(self) -> None:
         plan_normal = generate_daily_trade_plan(
-            TRADE_DATE, [_candidate(max_add=0.10)], [], stance="NORMAL", position_scale=1.0,
+            TRADE_DATE,
+            [_candidate(max_add=0.10)],
+            [],
+            stance="NORMAL",
+            position_scale=1.0,
         )
         plan_cons = generate_daily_trade_plan(
-            TRADE_DATE, [_candidate(max_add=0.10)], [], stance="CONSERVATIVE", position_scale=0.5,
+            TRADE_DATE,
+            [_candidate(max_add=0.10)],
+            [],
+            stance="CONSERVATIVE",
+            position_scale=0.5,
         )
         assert plan_normal.buy_list[0].cap_weight == pytest.approx(0.08)  # firm 截断
         assert plan_cons.buy_list[0].cap_weight == pytest.approx(0.05)  # 0.10×0.5，低于 firm
@@ -123,7 +136,9 @@ class TestBuyList:
     def test_zero_quantity_skipped_with_note(self) -> None:
         # 高价小资金：cap 0.05×1000=50 元 < 一手 9500 元 → 跳过
         plan = generate_daily_trade_plan(
-            TRADE_DATE, [_candidate(max_add=0.05)], [],
+            TRADE_DATE,
+            [_candidate(max_add=0.05)],
+            [],
             config=DailyTradePlanConfig(total_capital=1_000.0),
         )
         assert plan.buy_list == ()
@@ -153,7 +168,10 @@ class TestSellList:
             reduce_fraction=0.5,
         )
         plan = generate_daily_trade_plan(
-            TRADE_DATE, [], [holding], config=DailyTradePlanConfig(total_capital=1_000_000.0),
+            TRADE_DATE,
+            [],
+            [holding],
+            config=DailyTradePlanConfig(total_capital=1_000_000.0),
         )
         assert len(plan.sell_list) == 2
         by_trigger = {item.trigger_price: item for item in plan.sell_list}
@@ -169,7 +187,10 @@ class TestSellList:
 
     def test_zero_position_skipped(self) -> None:
         holding = TradePlanHolding(
-            symbol="600000.SH", weight=0.0, boundary=_boundary(), reference_price=9.8,
+            symbol="600000.SH",
+            weight=0.0,
+            boundary=_boundary(),
+            reference_price=9.8,
         )
         plan = generate_daily_trade_plan(TRADE_DATE, [], [holding])
         assert plan.sell_list == ()
@@ -258,7 +279,9 @@ class TestResolveStance:
 class TestContract:
     def test_to_dict_jsonable(self) -> None:
         plan = generate_daily_trade_plan(
-            TRADE_DATE, [_candidate()], [
+            TRADE_DATE,
+            [_candidate()],
+            [
                 TradePlanHolding(symbol="000001.SZ", weight=0.05, boundary=_boundary("000001.SZ"), reference_price=9.8),
             ],
         )
@@ -285,7 +308,10 @@ class TestContract:
             DailyTradePlanConfig(firm_single_cap=1.5)
         with pytest.raises(ValueError):
             TradePlanHolding(
-                symbol="X", weight=1.5, boundary=_boundary("X"), reference_price=9.8,
+                symbol="X",
+                weight=1.5,
+                boundary=_boundary("X"),
+                reference_price=9.8,
             )
         with pytest.raises(ValueError):
             TradePlanCandidate(symbol="", boundary=_boundary())

@@ -215,18 +215,14 @@ def test_panel_top_n_and_weight_cap():
 def test_panel_empty_source_all_zero():
     d1 = pd.Timestamp("2026-08-18")
     source = _FakeSource({})
-    panel = build_event_weight_panel(
-        [d1], ["600519"], source=source, strategy=EventDrivenSleeveStrategy()
-    )
+    panel = build_event_weight_panel([d1], ["600519"], source=source, strategy=EventDrivenSleeveStrategy())
     assert float(panel.loc[d1].sum()) == 0.0
 
 
 def test_panel_columns_plain_symbols():
     d1 = pd.Timestamp("2026-08-18")
     source = _FakeSource({datetime.date(2026, 8, 17): [_row("600519.SH", 0.9)]})
-    panel = build_event_weight_panel(
-        [d1], ["600519"], source=source, strategy=EventDrivenSleeveStrategy()
-    )
+    panel = build_event_weight_panel([d1], ["600519"], source=source, strategy=EventDrivenSleeveStrategy())
     assert all("." not in c for c in panel.columns)
 
 
@@ -241,9 +237,7 @@ def test_pit_guard_t_minus_1_consumable():
     # T-1 窗口记录：可消费（口径边界——恰好等于 cutoff 放行）
     d1 = pd.Timestamp("2026-08-18")  # 周二 T
     source = _FakeSource({datetime.date(2026, 8, 17): [_row_dated("600519.SH", 0.9, datetime.date(2026, 8, 17))]})
-    panel = build_event_weight_panel(
-        [d1], ["600519"], source=source, strategy=EventDrivenSleeveStrategy()
-    )
+    panel = build_event_weight_panel([d1], ["600519"], source=source, strategy=EventDrivenSleeveStrategy())
     assert panel.loc[d1, "600519"] == pytest.approx(0.10)
 
 
@@ -251,9 +245,7 @@ def test_pit_guard_t_day_record_not_consumable():
     # T 日记录（window_date=T）：防未来函数硬剔除——当日面板全零（hold）
     d1 = pd.Timestamp("2026-08-18")
     source = _FakeSource({datetime.date(2026, 8, 17): [_row_dated("600519.SH", 0.9, datetime.date(2026, 8, 18))]})
-    panel = build_event_weight_panel(
-        [d1], ["600519"], source=source, strategy=EventDrivenSleeveStrategy()
-    )
+    panel = build_event_weight_panel([d1], ["600519"], source=source, strategy=EventDrivenSleeveStrategy())
     assert float(panel.loc[d1].sum()) == 0.0
 
 
@@ -268,9 +260,7 @@ def test_pit_guard_future_record_beyond_t_not_consumable():
             ]
         }
     )
-    panel = build_event_weight_panel(
-        [d1], ["600519", "000001"], source=source, strategy=EventDrivenSleeveStrategy()
-    )
+    panel = build_event_weight_panel([d1], ["600519", "000001"], source=source, strategy=EventDrivenSleeveStrategy())
     assert panel.loc[d1, "600519"] == pytest.approx(0.0)
     assert panel.loc[d1, "000001"] == pytest.approx(0.10)
 
@@ -286,9 +276,7 @@ def test_pit_guard_cross_weekend_t_minus_3_consumable():
             ]
         }
     )
-    panel = build_event_weight_panel(
-        [d1], ["600519", "000001"], source=source, strategy=EventDrivenSleeveStrategy()
-    )
+    panel = build_event_weight_panel([d1], ["600519", "000001"], source=source, strategy=EventDrivenSleeveStrategy())
     assert panel.loc[d1, "600519"] == pytest.approx(0.10)
     assert panel.loc[d1, "000001"] == pytest.approx(0.10)
 
@@ -306,9 +294,7 @@ def test_pit_guard_none_window_date_passthrough():
     # window_date=None（源未携带归属日）：放行兼容（fetch 点查询已按 T-1 取窗）
     d1 = pd.Timestamp("2026-08-18")
     source = _FakeSource({datetime.date(2026, 8, 17): [_row("600519.SH", 0.9)]})
-    panel = build_event_weight_panel(
-        [d1], ["600519"], source=source, strategy=EventDrivenSleeveStrategy()
-    )
+    panel = build_event_weight_panel([d1], ["600519"], source=source, strategy=EventDrivenSleeveStrategy())
     assert panel.loc[d1, "600519"] == pytest.approx(0.10)
 
 

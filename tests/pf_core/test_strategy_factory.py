@@ -1,6 +1,7 @@
 # [TTL] permanent
 # [TESTS] src/zephyr/pf_core/core/strategy_factory.py (MOD-PF-009)
 """MOD-PF-009 strategy_factory 单元测试（B1-00189 C-006 策略工厂）。"""
+
 from __future__ import annotations
 
 from datetime import datetime, timezone

@@ -116,9 +116,7 @@ class TestDimensionScores:
         assert dims[DIM_PARAM_STABILITY] == 1.0
 
     def test_param_stability_wild_neighbors_zero(self) -> None:
-        report = _eval(
-            _screener(), base_returns=[0.01, 0.01], neighbor_returns={"+5%": [0.03, 0.03]}
-        )
+        report = _eval(_screener(), base_returns=[0.01, 0.01], neighbor_returns={"+5%": [0.03, 0.03]})
         dims = {d.dimension: d.score for d in report.dimension_scores}
         assert dims[DIM_PARAM_STABILITY] == 0.0  # 相对偏离 2.0 → 截断 0
 
@@ -176,9 +174,13 @@ class TestVerdict:
     def test_reject_poor(self) -> None:
         report = _eval(
             _screener(),
-            sharpe=0.0, max_drawdown=0.5, calmar=0.0,
-            base_returns=[0.01, 0.01], neighbor_returns={"+5%": [0.03, 0.03]},
-            correlation_matrix={"strat-1": {"inc-1": 1.0}}, incumbent_ids=("inc-1",),
+            sharpe=0.0,
+            max_drawdown=0.5,
+            calmar=0.0,
+            base_returns=[0.01, 0.01],
+            neighbor_returns={"+5%": [0.03, 0.03]},
+            correlation_matrix={"strat-1": {"inc-1": 1.0}},
+            incumbent_ids=("inc-1",),
         )
         assert report.weighted_score == 0.0
         assert report.verdict is ScreenerVerdict.REJECT
@@ -186,18 +188,14 @@ class TestVerdict:
     def test_boundary_accept(self) -> None:
         # 权重全部压互补维：corr=0.3 → 加权分恰=0.7=accept → ACCEPT
         s = _screener(weights={DIM_RETURN_CLARITY: 0.0, DIM_PARAM_STABILITY: 0.0, DIM_COMPLEMENTARITY: 1.0})
-        report = _eval(
-            s, correlation_matrix={"strat-1": {"inc-1": 0.3}}, incumbent_ids=("inc-1",)
-        )
+        report = _eval(s, correlation_matrix={"strat-1": {"inc-1": 0.3}}, incumbent_ids=("inc-1",))
         assert report.weighted_score == 0.7
         assert report.verdict is ScreenerVerdict.ACCEPT
 
     def test_boundary_watchlist(self) -> None:
         # corr=0.6 → 加权分恰=0.4=watchlist → WATCHLIST
         s = _screener(weights={DIM_RETURN_CLARITY: 0.0, DIM_PARAM_STABILITY: 0.0, DIM_COMPLEMENTARITY: 1.0})
-        report = _eval(
-            s, correlation_matrix={"strat-1": {"inc-1": 0.6}}, incumbent_ids=("inc-1",)
-        )
+        report = _eval(s, correlation_matrix={"strat-1": {"inc-1": 0.6}}, incumbent_ids=("inc-1",))
         assert report.weighted_score == 0.4
         assert report.verdict is ScreenerVerdict.WATCHLIST
 
@@ -205,8 +203,12 @@ class TestVerdict:
         # rc=1, ps=0, cp=1 → 0.5×1+0.3×0+0.2×1=0.7
         s = _screener(weights={DIM_RETURN_CLARITY: 0.5, DIM_PARAM_STABILITY: 0.3, DIM_COMPLEMENTARITY: 0.2})
         report = _eval(
-            s, sharpe=3.0, max_drawdown=0.0, calmar=3.0,
-            base_returns=[0.01, 0.01], neighbor_returns={"+5%": [0.03, 0.03]},
+            s,
+            sharpe=3.0,
+            max_drawdown=0.0,
+            calmar=3.0,
+            base_returns=[0.01, 0.01],
+            neighbor_returns={"+5%": [0.03, 0.03]},
         )
         assert report.weighted_score == 0.7
 

@@ -145,9 +145,7 @@ def _make_gateway(tmp_path, clients, **kw):
 def _rows(db_path):
     conn = sqlite3.connect(str(db_path))
     try:
-        return conn.execute(
-            "SELECT task_type, model, provider, status, error FROM llm_call_log ORDER BY id"
-        ).fetchall()
+        return conn.execute("SELECT task_type, model, provider, status, error FROM llm_call_log ORDER BY id").fetchall()
     finally:
         conn.close()
 
@@ -247,18 +245,14 @@ class TestComplexityWithLLMDeg:
 
     def test_llmdeg1_complex_noncritical_goes_local_first(self, tmp_path):
         clients = _clients()
-        gw = _make_gateway(
-            tmp_path, clients, budget_engine=_FakeBudgetEngine(level=BudgetLevel.L1_WARNING)
-        )
+        gw = _make_gateway(tmp_path, clients, budget_engine=_FakeBudgetEngine(level=BudgetLevel.L1_WARNING))
         r = gw.infer("summary_extraction", "文本", complexity="complex")  # 非关键
         assert r.provider == "ollama"  # LLMDeg-1：非关键 API->本地降级（先于 tier 的 API 优先）
         assert clients["deepseek"].calls == 0
 
     def test_llmdeg4_complex_critical_local_only(self, tmp_path):
         clients = _clients()
-        gw = _make_gateway(
-            tmp_path, clients, budget_engine=_FakeBudgetEngine(level=BudgetLevel.L4_EMERGENCY)
-        )
+        gw = _make_gateway(tmp_path, clients, budget_engine=_FakeBudgetEngine(level=BudgetLevel.L4_EMERGENCY))
         r = gw.infer("reflection_l3", "深度反思", complexity="complex", critical=True)
         assert gw.last_llmdeg == 4
         assert r.provider == "ollama"  # LLMDeg-4：阻断一切 API，仅本地
@@ -267,9 +261,7 @@ class TestComplexityWithLLMDeg:
     def test_llmdeg4_explicit_api_pin_blocked_with_complexity(self, tmp_path):
         db = tmp_path / "test.db"
         clients = _clients()
-        gw = _make_gateway(
-            tmp_path, clients, budget_engine=_FakeBudgetEngine(level=BudgetLevel.L4_EMERGENCY)
-        )
+        gw = _make_gateway(tmp_path, clients, budget_engine=_FakeBudgetEngine(level=BudgetLevel.L4_EMERGENCY))
         r = gw.infer("reflection_l3", "深度反思", complexity="complex", channel="deepseek")
         assert r.status == "blocked" and "llmdeg-4" in r.error
         assert clients["deepseek"].calls == 0
@@ -277,9 +269,7 @@ class TestComplexityWithLLMDeg:
 
     def test_llmdeg0_complex_uses_api(self, tmp_path):
         clients = _clients()
-        gw = _make_gateway(
-            tmp_path, clients, budget_engine=_FakeBudgetEngine(level=BudgetLevel.L0_NORMAL)
-        )
+        gw = _make_gateway(tmp_path, clients, budget_engine=_FakeBudgetEngine(level=BudgetLevel.L0_NORMAL))
         r = gw.infer("reflection_l3", "深度反思", complexity="complex")
         assert r.provider == "deepseek"
 
@@ -289,9 +279,7 @@ class TestComplexityGatesIntact:
 
     def test_budget_deny_blocks_complexity_dispatch(self, tmp_path):
         clients = _clients()
-        engine = _FakeBudgetEngine(
-            decision=GateDecision.DENY, level=BudgetLevel.L5_HARD_STOP, reason="daily 120%"
-        )
+        engine = _FakeBudgetEngine(decision=GateDecision.DENY, level=BudgetLevel.L5_HARD_STOP, reason="daily 120%")
         gw = _make_gateway(tmp_path, clients, budget_engine=engine)
         r = gw.infer("tag_completion", "打标签", complexity="simple")
         assert r.status == "blocked" and "budget_denied" in r.error

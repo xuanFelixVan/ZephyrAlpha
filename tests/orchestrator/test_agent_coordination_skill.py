@@ -80,13 +80,9 @@ class TestCards:
 
     def test_invalid_card_raises(self) -> None:
         with pytest.raises(AgentCoordinationError):
-            AgentCoordinationSkill(
-                cards=(AgentCard(agent_id="", capabilities=("x",)),), clock=lambda: _T0
-            )
+            AgentCoordinationSkill(cards=(AgentCard(agent_id="", capabilities=("x",)),), clock=lambda: _T0)
         with pytest.raises(AgentCoordinationError):
-            AgentCoordinationSkill(
-                cards=(AgentCard(agent_id="a", capabilities=()),), clock=lambda: _T0
-            )
+            AgentCoordinationSkill(cards=(AgentCard(agent_id="a", capabilities=()),), clock=lambda: _T0)
 
     def test_register_card_late_and_duplicate(self) -> None:
         skill = _skill()
@@ -109,7 +105,7 @@ class TestAssign:
     def test_assign_priority_wins(self) -> None:
         out = _skill().assign(["signal", "execution"])
         assert [(a.requirement, a.agent_id) for a in out] == [
-            ("signal", "analyst"),   # analyst(5) > risk(3)
+            ("signal", "analyst"),  # analyst(5) > risk(3)
             ("execution", "trader"),
         ]
 
@@ -149,16 +145,16 @@ class TestAssign:
 
 class TestArbitrate:
     def test_priority_mode(self) -> None:
-        res = _skill().arbitrate(
-            "信号分歧", ["analyst", "risk"], ArbitrationMode.PRIORITY
-        )
+        res = _skill().arbitrate("信号分歧", ["analyst", "risk"], ArbitrationMode.PRIORITY)
         assert res.winner == "analyst"  # priority 5 > 3
         assert res.mode is ArbitrationMode.PRIORITY
         assert res.candidates == ("analyst", "risk")  # 确定性排序
 
     def test_voting_mode_count_wins(self) -> None:
         res = _skill().arbitrate(
-            "方向冲突", ["analyst", "trader"], ArbitrationMode.VOTING,
+            "方向冲突",
+            ["analyst", "trader"],
+            ArbitrationMode.VOTING,
             votes={"v1": "trader", "v2": "analyst", "v3": "trader"},
         )
         assert res.winner == "trader"
@@ -166,7 +162,9 @@ class TestArbitrate:
 
     def test_voting_tie_break_by_priority(self) -> None:
         res = _skill().arbitrate(
-            "平票", ["analyst", "trader"], ArbitrationMode.VOTING,
+            "平票",
+            ["analyst", "trader"],
+            ArbitrationMode.VOTING,
             votes={"v1": "analyst", "v2": "trader"},
         )
         assert res.winner == "trader"  # 平票 → priority 8 > 5
@@ -177,9 +175,7 @@ class TestArbitrate:
 
     def test_voting_non_candidate_raises(self) -> None:
         with pytest.raises(AgentCoordinationError):
-            _skill().arbitrate(
-                "t", ["analyst"], ArbitrationMode.VOTING, votes={"v1": "trader"}
-            )
+            _skill().arbitrate("t", ["analyst"], ArbitrationMode.VOTING, votes={"v1": "trader"})
 
     def test_arbitrate_invalid_input_raises(self) -> None:
         skill = _skill()

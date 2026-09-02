@@ -122,9 +122,14 @@ class TestPosteriors:
         assert w == {"sig_a": 0.75, "sig_b": 0.25}
 
     def test_uniform_fallback_on_zero_evidence(self) -> None:
-        w = _engine().update(regime="bull", observations={
-            "s1": [_MISS, _MISS], "s2": [_MISS, _MISS], "s3": [_MISS, _MISS],
-        })
+        w = _engine().update(
+            regime="bull",
+            observations={
+                "s1": [_MISS, _MISS],
+                "s2": [_MISS, _MISS],
+                "s3": [_MISS, _MISS],
+            },
+        )
         assert w == pytest.approx({"s1": 1 / 3, "s2": 1 / 3, "s3": 1 / 3})
         assert sum(w.values()) == pytest.approx(1.0)
 
@@ -140,18 +145,24 @@ class TestPosteriors:
 
     def test_ic_perfect_positive(self) -> None:
         e = _engine(metric=PrecisionMetric.IC)
-        w = e.update(regime="bull", observations={
-            "sig_a": [SignalOutcome(1, 1), SignalOutcome(2, 2), SignalOutcome(3, 3)],
-            "sig_b": [SignalOutcome(1, 3), SignalOutcome(2, 2), SignalOutcome(3, 1)],
-        })
+        w = e.update(
+            regime="bull",
+            observations={
+                "sig_a": [SignalOutcome(1, 1), SignalOutcome(2, 2), SignalOutcome(3, 3)],
+                "sig_b": [SignalOutcome(1, 3), SignalOutcome(2, 2), SignalOutcome(3, 1)],
+            },
+        )
         assert w == {"sig_a": 1.0, "sig_b": 0.0}  # 负IC截断0
 
     def test_ic_zero_variance_zero(self) -> None:
         e = _engine(metric=PrecisionMetric.IC)
-        w = e.update(regime="bull", observations={
-            "sig_a": [SignalOutcome(1, 1), SignalOutcome(1, 2)],
-            "sig_b": [SignalOutcome(1, 1), SignalOutcome(1, 2)],
-        })
+        w = e.update(
+            regime="bull",
+            observations={
+                "sig_a": [SignalOutcome(1, 1), SignalOutcome(1, 2)],
+                "sig_b": [SignalOutcome(1, 1), SignalOutcome(1, 2)],
+            },
+        )
         assert w == {"sig_a": 0.5, "sig_b": 0.5}  # 双零方差→全零证据→均匀
 
 
@@ -251,7 +262,11 @@ class TestDeterminism:
         assert _run() == _run()
 
     def test_weight_keys_sorted(self) -> None:
-        w = _engine().update(regime="bull", observations={
-            "z_sig": [_HIT, _HIT], "a_sig": [_MISS, _MISS],
-        })
+        w = _engine().update(
+            regime="bull",
+            observations={
+                "z_sig": [_HIT, _HIT],
+                "a_sig": [_MISS, _MISS],
+            },
+        )
         assert list(w) == ["a_sig", "z_sig"]

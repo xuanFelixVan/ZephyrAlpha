@@ -72,31 +72,87 @@ class TestPut:
 
     def test_six_types_schemas(self) -> None:
         store = _store()
-        store.put("a1", ArtifactType.RAW_KNOWLEDGE_PACKET, source="s", author="a",
-                  target_layer="L1", effect="e", payload={"content": "x"})
-        store.put("a2", ArtifactType.STRUCTURED_KNOWLEDGE_FRAGMENT, source="s", author="a",
-                  target_layer="L1", effect="e", payload={"fragment": "x"})
-        store.put("a3", ArtifactType.CLASSIFIED_KNOWLEDGE_PACKAGE, source="s", author="a",
-                  target_layer="L1", effect="e", payload={"category": "c", "fragments": []})
-        store.put("a4", ArtifactType.MODULE_MAPPING_RESULT, source="s", author="a",
-                  target_layer="L1", effect="e", payload={"mapping": {}})
-        store.put("a5", ArtifactType.NEW_MODULE, source="s", author="a",
-                  target_layer="L1", effect="e", payload={"module_id": "m", "blueprint": "b"})
-        store.put("a6", ArtifactType.TRIAL_RESULT, source="s", author="a",
-                  target_layer="L1", effect="e", payload={"metrics": {}})
+        store.put(
+            "a1",
+            ArtifactType.RAW_KNOWLEDGE_PACKET,
+            source="s",
+            author="a",
+            target_layer="L1",
+            effect="e",
+            payload={"content": "x"},
+        )
+        store.put(
+            "a2",
+            ArtifactType.STRUCTURED_KNOWLEDGE_FRAGMENT,
+            source="s",
+            author="a",
+            target_layer="L1",
+            effect="e",
+            payload={"fragment": "x"},
+        )
+        store.put(
+            "a3",
+            ArtifactType.CLASSIFIED_KNOWLEDGE_PACKAGE,
+            source="s",
+            author="a",
+            target_layer="L1",
+            effect="e",
+            payload={"category": "c", "fragments": []},
+        )
+        store.put(
+            "a4",
+            ArtifactType.MODULE_MAPPING_RESULT,
+            source="s",
+            author="a",
+            target_layer="L1",
+            effect="e",
+            payload={"mapping": {}},
+        )
+        store.put(
+            "a5",
+            ArtifactType.NEW_MODULE,
+            source="s",
+            author="a",
+            target_layer="L1",
+            effect="e",
+            payload={"module_id": "m", "blueprint": "b"},
+        )
+        store.put(
+            "a6",
+            ArtifactType.TRIAL_RESULT,
+            source="s",
+            author="a",
+            target_layer="L1",
+            effect="e",
+            payload={"metrics": {}},
+        )
         assert len(store.query()) == 6
 
     def test_bad_type_raises(self) -> None:
         store = _store()
         with pytest.raises(ArtifactStoreError):
-            store.put("a1", "GhostType", source="s", author="a",  # type: ignore[arg-type]
-                      target_layer="L1", effect="e", payload={"content": "x"})
+            store.put(
+                "a1",
+                "GhostType",
+                source="s",
+                author="a",  # type: ignore[arg-type]
+                target_layer="L1",
+                effect="e",
+                payload={"content": "x"},
+            )
 
     def test_schema_missing_key_raises(self) -> None:
         store = _store()
         with pytest.raises(ArtifactStoreError):
-            store.put("a1", ArtifactType.NEW_MODULE, source="s", author="a",
-                      target_layer="L1", effect="e", payload={"module_id": "m"})
+            store.put(
+                "a1",
+                ArtifactType.NEW_MODULE,
+                source="s",
+                author="a",
+                target_layer="L1",
+                effect="e",
+                payload={"module_id": "m"},
+            )
 
     def test_schema_extra_key_raises(self) -> None:
         store = _store()
@@ -170,11 +226,16 @@ class TestQuery:
     def _seed(self, store: KnowledgeArtifactStore, clock: _Clock) -> None:
         _put(store, "art-1")
         clock.now = _T1
-        _put(store, "art-2", source="human", author="agent-b",
-             effect="negative", target_layer="L3")
-        store.put("art-3", ArtifactType.TRIAL_RESULT, source="research_bot",
-                  author="agent-a", target_layer="L2", effect="neutral",
-                  payload={"metrics": {"ic": 0.05}})
+        _put(store, "art-2", source="human", author="agent-b", effect="negative", target_layer="L3")
+        store.put(
+            "art-3",
+            ArtifactType.TRIAL_RESULT,
+            source="research_bot",
+            author="agent-a",
+            target_layer="L2",
+            effect="neutral",
+            payload={"metrics": {"ic": 0.05}},
+        )
 
     def test_query_by_source(self) -> None:
         clock = _Clock()
@@ -241,7 +302,10 @@ class TestQuery:
         _put(store, "art-1")  # art-1 v2
         hits = store.query()
         assert [(a.artifact_id, a.version) for a in hits] == [
-            ("art-1", 1), ("art-1", 2), ("art-2", 1), ("art-3", 1),
+            ("art-1", 1),
+            ("art-1", 2),
+            ("art-2", 1),
+            ("art-3", 1),
         ]
 
 

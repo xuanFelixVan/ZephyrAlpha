@@ -35,9 +35,7 @@ def _make_dates(n: int, freq: str = "B") -> pd.DatetimeIndex:
     return pd.bdate_range(end="2026-08-30", periods=n, freq=freq)
 
 
-def _make_returns(
-    n: int, strategies: list[str], rho: float, seed: int = 42
-) -> pd.DataFrame:
+def _make_returns(n: int, strategies: list[str], rho: float, seed: int = 42) -> pd.DataFrame:
     """构造日收益率面板（均值0、方差0.0004≈年化10%波动率），给定两两相关 rho。
 
     先生成协方差矩阵 Σ，cholesky 分解→独立正态乘积→相关系数矩阵
@@ -107,7 +105,9 @@ class TestPipelineBasics:
     def test_high_correlation_passes(self) -> None:
         """高度相关(ρ=0.8) → 结论触发 REVIEW_REQUIRED。"""
         r = _make_returns(200, ["A", "B", "C"], rho=0.8)
-        rep = run_strategy_correlation_pipeline(r, params=StrategyCorrelationParams(run_bootstrap=False, run_drift=False))
+        rep = run_strategy_correlation_pipeline(
+            r, params=StrategyCorrelationParams(run_bootstrap=False, run_drift=False)
+        )
         assert rep.part5_conclusion.verdict == "REVIEW_REQUIRED"
         triggers = set(rep.part5_conclusion.triggers)
         assert "max_pairwise>0.6" in triggers
@@ -140,9 +140,7 @@ class TestStratifiedSection:
         labels = _make_phase_labels(n)
         rep = run_strategy_correlation_pipeline(
             r,
-            params=StrategyCorrelationParams(
-                phase_labels=labels, run_bootstrap=False, run_drift=False
-            ),
+            params=StrategyCorrelationParams(phase_labels=labels, run_bootstrap=False, run_drift=False),
         )
         p2 = rep.part2_stratified
         assert p2 is not None
@@ -162,9 +160,7 @@ class TestStratifiedSection:
         r = _make_returns(n, ["X", "Y"], rho=0.3)
         rep_label = run_strategy_correlation_pipeline(
             r,
-            params=StrategyCorrelationParams(
-                phase_labels=_make_phase_labels(n), run_bootstrap=False, run_drift=False
-            ),
+            params=StrategyCorrelationParams(phase_labels=_make_phase_labels(n), run_bootstrap=False, run_drift=False),
         )
         rep_gray = run_strategy_correlation_pipeline(
             r,
@@ -238,7 +234,9 @@ class TestBootstrapCI:
     def test_bootstrap_skipped_when_too_small(self) -> None:
         """样本 < BOOTSTRAP_MIN_OBS(8) → part3 降级为 None 不抛错。"""
         r = _make_returns(6, ["S1", "S2"], rho=0.1)
-        rep = run_strategy_correlation_pipeline(r, params=StrategyCorrelationParams(run_bootstrap=True, run_drift=False))
+        rep = run_strategy_correlation_pipeline(
+            r, params=StrategyCorrelationParams(run_bootstrap=True, run_drift=False)
+        )
         assert rep.part3_bootstrap_ci is None
 
 
@@ -247,7 +245,9 @@ class TestDriftMonitoring:
         """drift 开启、样本够 → drift_monitoring 逐对报告结构齐备。"""
         n = 200
         r = _make_returns(n, ["A", "B"], rho=0.3)
-        rep = run_strategy_correlation_pipeline(r, params=StrategyCorrelationParams(run_drift=True, run_bootstrap=False))
+        rep = run_strategy_correlation_pipeline(
+            r, params=StrategyCorrelationParams(run_drift=True, run_bootstrap=False)
+        )
         assert rep.drift_monitoring is not None
         assert len(rep.drift_monitoring) == 1
         assert ("A", "B") in rep.drift_monitoring
@@ -292,7 +292,9 @@ class TestDriftMonitoring:
     def test_drift_skipped_when_too_small(self) -> None:
         """样本不足窗口+2 → drift 降级为 None。"""
         r = _make_returns(30, ["A", "B"], rho=0.3)
-        rep = run_strategy_correlation_pipeline(r, params=StrategyCorrelationParams(run_drift=True, run_bootstrap=False))
+        rep = run_strategy_correlation_pipeline(
+            r, params=StrategyCorrelationParams(run_drift=True, run_bootstrap=False)
+        )
         assert rep.drift_monitoring is None
 
 
@@ -301,7 +303,9 @@ class TestConclusion:
         """α>0.5 + Neff>=3 → alpha_caveat 为 True（memo v1.4.1 自洽性）。"""
         # 极端高相关构造 cholesky + 短样本 → 噪声大，LW α 偏大
         r = _make_returns(150, ["A", "B", "C", "D"], rho=0.95)
-        rep = run_strategy_correlation_pipeline(r, params=StrategyCorrelationParams(run_bootstrap=False, run_drift=False))
+        rep = run_strategy_correlation_pipeline(
+            r, params=StrategyCorrelationParams(run_bootstrap=False, run_drift=False)
+        )
         c = rep.part5_conclusion
         assert c.verdict == "REVIEW_REQUIRED"
         if c.lw_alpha > 0.5:
@@ -310,7 +314,9 @@ class TestConclusion:
     def test_trigger_max_pairwise(self) -> None:
         """最大两两 >threshold 触发。"""
         r = _make_returns(100, ["A", "B", "C"], rho=0.7)
-        rep = run_strategy_correlation_pipeline(r, params=StrategyCorrelationParams(run_bootstrap=False, run_drift=False))
+        rep = run_strategy_correlation_pipeline(
+            r, params=StrategyCorrelationParams(run_bootstrap=False, run_drift=False)
+        )
         assert "max_pairwise>0.6" in rep.part5_conclusion.triggers
 
     def test_trigger_phase_pairs(self) -> None:
@@ -344,6 +350,7 @@ class TestOrthogonality:
         """非法维度 → ValueError。"""
         with pytest.raises(ValueError):
             from zephyr.pf_core.strategy_correlation_pipeline import _build_orthogonality
+
             _build_orthogonality({"A": "invalid"})
 
     def test_integration_dimension_map(self) -> None:

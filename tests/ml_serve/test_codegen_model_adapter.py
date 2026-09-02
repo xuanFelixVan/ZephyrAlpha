@@ -166,9 +166,7 @@ class TestNormalizeRequest:
         adapter = _adapter()
         adapter.register_profile(_custom_profile())  # 仅声明 code_generation
         with pytest.raises(CodegenAdapterError):
-            adapter.normalize_request(
-                _request(model_id="deepseek-v4-pro-mini", capability=CodegenCapability.REFACTOR)
-            )
+            adapter.normalize_request(_request(model_id="deepseek-v4-pro-mini", capability=CodegenCapability.REFACTOR))
 
     def test_max_tokens_over_window_raises(self) -> None:
         with pytest.raises(CodegenAdapterError):

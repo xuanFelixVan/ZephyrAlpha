@@ -56,7 +56,9 @@ def tmp_db(tmp_path: Path) -> Path:
     return db
 
 
-def _seed_outcome(db: Path, trade_date: str, *, hit: bool, prob: float | None = None, conf: float | None = None) -> None:
+def _seed_outcome(
+    db: Path, trade_date: str, *, hit: bool, prob: float | None = None, conf: float | None = None
+) -> None:
     payload: dict = {"hit": hit}
     if prob is not None:
         payload["probability"] = prob

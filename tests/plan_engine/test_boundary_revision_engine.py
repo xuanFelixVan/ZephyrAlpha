@@ -112,9 +112,7 @@ def _futures(vel: float = -0.001, sigma: float = 0.01, degraded: bool = False) -
         sensitivity="中小盘",
         degraded=False,
     )
-    return FuturesBasisSnapshot(
-        ts=f"{DATE} 14:00:00", trade_date=DATE, per_symbol={"IM": sym}, degraded=degraded
-    )
+    return FuturesBasisSnapshot(ts=f"{DATE} 14:00:00", trade_date=DATE, per_symbol={"IM": sym}, degraded=degraded)
 
 
 def _sector(

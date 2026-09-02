@@ -35,9 +35,7 @@ _T0 = datetime.datetime(2026, 8, 26, 9, 30, 0)
 
 
 def _cat(semantic=None) -> ResearchCatalog:
-    return ResearchCatalog(
-        conn=sqlite3.connect(":memory:"), clock=lambda: _T0, semantic_adapter=semantic
-    )
+    return ResearchCatalog(conn=sqlite3.connect(":memory:"), clock=lambda: _T0, semantic_adapter=semantic)
 
 
 def _meta(
@@ -49,8 +47,12 @@ def _meta(
     level: AccessLevel = AccessLevel.L1,
 ) -> AssetMeta:
     return AssetMeta(
-        asset_id=asset_id, asset_type=asset_type, title=title,
-        abstract=abstract or f"{title} 摘要", level=level, created_at=_T0,
+        asset_id=asset_id,
+        asset_type=asset_type,
+        title=title,
+        abstract=abstract or f"{title} 摘要",
+        level=level,
+        created_at=_T0,
     )
 
 

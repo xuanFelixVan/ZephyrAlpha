@@ -68,19 +68,28 @@ class TestInit:
         assert score.total == pytest.approx(0.8)
 
     def test_custom_weights_normalized(self) -> None:
-        assessor = _assessor(weights={
-            "accuracy": 3.0, "timeliness": 1.0,
-            "source_credibility": 0.0, "citation_frequency": 0.0,
-        })
+        assessor = _assessor(
+            weights={
+                "accuracy": 3.0,
+                "timeliness": 1.0,
+                "source_credibility": 0.0,
+                "citation_frequency": 0.0,
+            }
+        )
         score = _assess(assessor)  # (3*.9 + 1*1.0)/4
         assert score.total == pytest.approx((3 * 0.9 + 1.0) / 4)
 
     def test_unknown_dimension_raises(self) -> None:
         with pytest.raises(KnowledgeQualityError):
-            _assessor(weights={
-                "accuracy": 1.0, "timeliness": 1.0, "source_credibility": 1.0,
-                "citation_frequency": 1.0, "ghost": 1.0,
-            })
+            _assessor(
+                weights={
+                    "accuracy": 1.0,
+                    "timeliness": 1.0,
+                    "source_credibility": 1.0,
+                    "citation_frequency": 1.0,
+                    "ghost": 1.0,
+                }
+            )
 
     def test_missing_dimension_raises(self) -> None:
         with pytest.raises(KnowledgeQualityError):
@@ -88,17 +97,25 @@ class TestInit:
 
     def test_negative_weight_raises(self) -> None:
         with pytest.raises(KnowledgeQualityError):
-            _assessor(weights={
-                "accuracy": -1.0, "timeliness": 1.0,
-                "source_credibility": 1.0, "citation_frequency": 1.0,
-            })
+            _assessor(
+                weights={
+                    "accuracy": -1.0,
+                    "timeliness": 1.0,
+                    "source_credibility": 1.0,
+                    "citation_frequency": 1.0,
+                }
+            )
 
     def test_zero_total_weight_raises(self) -> None:
         with pytest.raises(KnowledgeQualityError):
-            _assessor(weights={
-                "accuracy": 0.0, "timeliness": 0.0,
-                "source_credibility": 0.0, "citation_frequency": 0.0,
-            })
+            _assessor(
+                weights={
+                    "accuracy": 0.0,
+                    "timeliness": 0.0,
+                    "source_credibility": 0.0,
+                    "citation_frequency": 0.0,
+                }
+            )
 
     def test_bad_threshold_raises(self) -> None:
         with pytest.raises(KnowledgeQualityError):

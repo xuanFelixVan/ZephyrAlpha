@@ -72,20 +72,14 @@ class TestInit:
 
     def test_non_callable_collector_raises(self) -> None:
         with pytest.raises(GlobalStateError):
-            GlobalStateAggregator(
-                collectors={StateDomain.POSITION: "not-callable"}, clock=lambda: _T0
-            )
+            GlobalStateAggregator(collectors={StateDomain.POSITION: "not-callable"}, clock=lambda: _T0)
 
     def test_partial_domains_ok(self) -> None:
-        agg = GlobalStateAggregator(
-            collectors={StateDomain.MARKET: lambda: {"index": 1}}, clock=lambda: _T0
-        )
+        agg = GlobalStateAggregator(collectors={StateDomain.MARKET: lambda: {"index": 1}}, clock=lambda: _T0)
         assert agg.registered_domains() == (StateDomain.MARKET,)
 
     def test_register_collector_late(self) -> None:
-        agg = GlobalStateAggregator(
-            collectors={StateDomain.MARKET: lambda: {}}, clock=lambda: _T0
-        )
+        agg = GlobalStateAggregator(collectors={StateDomain.MARKET: lambda: {}}, clock=lambda: _T0)
         agg.register_collector(StateDomain.RISK, lambda: {"var": 0.01})
         assert agg.registered_domains() == (StateDomain.RISK, StateDomain.MARKET)
 
@@ -171,9 +165,7 @@ class TestQuery:
             snap.reading_of("ghost_domain")
 
     def test_reading_of_unregistered_domain_raises(self) -> None:
-        agg = GlobalStateAggregator(
-            collectors={StateDomain.MARKET: lambda: {}}, clock=lambda: _T0
-        )
+        agg = GlobalStateAggregator(collectors={StateDomain.MARKET: lambda: {}}, clock=lambda: _T0)
         snap = agg.collect()
         with pytest.raises(GlobalStateError):
             snap.reading_of(StateDomain.RISK)

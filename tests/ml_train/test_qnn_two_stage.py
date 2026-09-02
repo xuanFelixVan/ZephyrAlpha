@@ -141,7 +141,9 @@ class TestInputValidation:
     def test_mismatched_lengths(self):
         qnn = TwoStageQnn()
         with pytest.raises(TwoStageQnnError, match="长度不齐"):
-            qnn.train({"X": np.array([[1.0]]), "symbol_ids": np.array(["A", "B"])}, np.array([1.0]), idempotency_key="t-10")
+            qnn.train(
+                {"X": np.array([[1.0]]), "symbol_ids": np.array(["A", "B"])}, np.array([1.0]), idempotency_key="t-10"
+            )
 
     def test_predict_before_train(self):
         qnn = TwoStageQnn()

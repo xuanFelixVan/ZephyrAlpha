@@ -56,10 +56,14 @@ def _monitor(
 def _flat(model_id: str = "m-1"):
     """全维无漂移输入。"""
     return dict(
-        feature_ref=_REF, feature_cur=_SAME,
-        output_ref=_REF, output_cur=_SAME,
-        perf_ref=1.0, perf_cur=1.0,
-        ic_ref=0.08, ic_cur=0.08,
+        feature_ref=_REF,
+        feature_cur=_SAME,
+        output_ref=_REF,
+        output_cur=_SAME,
+        perf_ref=1.0,
+        perf_cur=1.0,
+        ic_ref=0.08,
+        ic_cur=0.08,
     )
 
 
@@ -89,9 +93,7 @@ class TestMetrics:
     def test_js_bounded_symmetric(self) -> None:
         v = js_divergence(_REF, _SHIFTED)
         assert 0.0 < v <= np.log(2.0) + 1e-9
-        assert js_divergence(_REF, _SHIFTED) == pytest.approx(
-            js_divergence(_SHIFTED, _REF)
-        )
+        assert js_divergence(_REF, _SHIFTED) == pytest.approx(js_divergence(_SHIFTED, _REF))
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -170,13 +172,16 @@ class TestEvaluate:
         events: list = []
         mon = _monitor(events)
         kw = _flat()
-        kw["feature_cur"] = _SHIFTED       # PSI crit
-        kw["output_cur"] = _SHIFTED        # JS crit
-        kw["perf_cur"] = 0.5               # PERFORMANCE crit
-        kw["ic_cur"] = 0.01                # IC decay 0.875 crit
+        kw["feature_cur"] = _SHIFTED  # PSI crit
+        kw["output_cur"] = _SHIFTED  # JS crit
+        kw["perf_cur"] = 0.5  # PERFORMANCE crit
+        kw["ic_cur"] = 0.01  # IC decay 0.875 crit
         ev = mon.evaluate("m-1", **kw)
         assert [e.drift_type for e in ev.events] == [
-            DriftType.PSI, DriftType.PERFORMANCE, DriftType.JS, DriftType.IC,
+            DriftType.PSI,
+            DriftType.PERFORMANCE,
+            DriftType.JS,
+            DriftType.IC,
         ]
 
     def test_sink_exception_not_blocking(self) -> None:

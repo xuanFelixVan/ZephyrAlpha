@@ -90,9 +90,7 @@ class TestLSGSelfRegression:
             if entry.get("category") != "LLM01":
                 continue
             for variant in entry.get("variants", []):
-                variant = variant.replace("{base64_encoded_payload}", "aWdub3Jl").replace(
-                    "{malicious_command}", "id"
-                )
+                variant = variant.replace("{base64_encoded_payload}", "aWdub3Jl").replace("{malicious_command}", "id")
                 total += 1
                 if layer.sanitize_and_wrap(variant, SourceType.DIRECT).blocked:
                     blocked += 1

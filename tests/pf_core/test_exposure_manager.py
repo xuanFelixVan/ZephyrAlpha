@@ -1,6 +1,7 @@
 # [TTL] permanent
 # [TESTS] src/zephyr/pf_core/core/exposure_manager.py (MOD-PF-011)
 """MOD-PF-011 exposure_manager 单元测试（B3-05543 PC-07 敞口管理器）。"""
+
 from __future__ import annotations
 
 import pytest

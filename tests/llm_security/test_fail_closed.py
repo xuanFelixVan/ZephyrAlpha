@@ -283,4 +283,3 @@ class TestFailClosedDrill:
         assert guard.verify_model(str(probe), good).status == "verified"
         tampered = hashlib.sha256(b"tampered weights").hexdigest()
         assert guard.verify_model(str(probe), tampered).status == "mismatch", "篡改哈希必须被拒"
-

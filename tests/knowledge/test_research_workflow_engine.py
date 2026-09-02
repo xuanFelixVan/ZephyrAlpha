@@ -133,11 +133,16 @@ class TestRun:
     def test_linear_dag_executes_in_order(self) -> None:
         log: list[str] = []
         engine = _engine()
-        engine.register_template(_template("tpl", [
-            _node("n1", task=_task(log)),
-            _node("n2", deps=("n1",), task=_task(log)),
-            _node("n3", deps=("n2",), task=_task(log)),
-        ]))
+        engine.register_template(
+            _template(
+                "tpl",
+                [
+                    _node("n1", task=_task(log)),
+                    _node("n2", deps=("n1",), task=_task(log)),
+                    _node("n3", deps=("n2",), task=_task(log)),
+                ],
+            )
+        )
         result = engine.run("tpl")
         assert log == ["n1", "n2", "n3"]
         assert result.status is RunStatus.SUCCEEDED
@@ -152,10 +157,15 @@ class TestRun:
             return "done"
 
         engine = _engine()
-        engine.register_template(_template("tpl", [
-            _node("n1", task=_task(value=42)),
-            _node("n2", deps=("n1",), task=_downstream),
-        ]))
+        engine.register_template(
+            _template(
+                "tpl",
+                [
+                    _node("n1", task=_task(value=42)),
+                    _node("n2", deps=("n1",), task=_downstream),
+                ],
+            )
+        )
         result = engine.run("tpl", context={"tag": "exp-1"})
         assert result.status is RunStatus.SUCCEEDED
         assert seen["upstream"] == 42
@@ -163,11 +173,16 @@ class TestRun:
     def test_parallel_branches_deterministic_order(self) -> None:
         log: list[str] = []
         engine = _engine()
-        engine.register_template(_template("tpl", [
-            _node("root", task=_task(log)),
-            _node("b", deps=("root",), task=_task(log)),
-            _node("a", deps=("root",), task=_task(log)),
-        ]))
+        engine.register_template(
+            _template(
+                "tpl",
+                [
+                    _node("root", task=_task(log)),
+                    _node("b", deps=("root",), task=_task(log)),
+                    _node("a", deps=("root",), task=_task(log)),
+                ],
+            )
+        )
         engine.run("tpl")
         assert log == ["root", "a", "b"]  # Kahn ready 按 node_id 排序
 
@@ -193,11 +208,16 @@ class TestRun:
             raise RuntimeError("ic check failed")
 
         engine = _engine()
-        engine.register_template(_template("tpl", [
-            _node("n1"),
-            _node("n2", deps=("n1",), task=_boom),
-            _node("n3", deps=("n2",)),
-        ]))
+        engine.register_template(
+            _template(
+                "tpl",
+                [
+                    _node("n1"),
+                    _node("n2", deps=("n1",), task=_boom),
+                    _node("n3", deps=("n2",)),
+                ],
+            )
+        )
         result = engine.run("tpl")
         assert result.status is RunStatus.FAILED
         by_id = {r.node_id: r for r in result.node_results}
@@ -273,11 +293,16 @@ class TestGate:
     def test_gate_deny_blocks_node_and_skips_downstream(self) -> None:
         log: list[str] = []
         engine = _engine(gate=lambda run_id, node_id: False)
-        engine.register_template(_template("tpl", [
-            _node("n1", task=_task(log)),
-            _node("n2", deps=("n1",), gate=True, task=_task(log)),
-            _node("n3", deps=("n2",), task=_task(log)),
-        ]))
+        engine.register_template(
+            _template(
+                "tpl",
+                [
+                    _node("n1", task=_task(log)),
+                    _node("n2", deps=("n1",), gate=True, task=_task(log)),
+                    _node("n3", deps=("n2",), task=_task(log)),
+                ],
+            )
+        )
         result = engine.run("tpl")
         assert log == ["n1"]  # 被拒节点 task 未执行
         assert result.status is RunStatus.BLOCKED
@@ -321,10 +346,15 @@ class TestAudit:
     def test_audit_trail_ordered_events(self) -> None:
         sink: list = []
         engine = _engine(sink=sink)
-        engine.register_template(_template("tpl", [
-            _node("n1"),
-            _node("n2", deps=("n1",)),
-        ]))
+        engine.register_template(
+            _template(
+                "tpl",
+                [
+                    _node("n1"),
+                    _node("n2", deps=("n1",)),
+                ],
+            )
+        )
         engine.run("tpl", run_id="run-a1")
         events = [(e.event, e.node_id) for e in sink]
         assert events == [

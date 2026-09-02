@@ -1,6 +1,7 @@
 # [TTL] permanent
 # [TESTS] src/zephyr/pf_core/core/strategy_capacity_estimator.py (MOD-PF-012)
 """MOD-PF-012 strategy_capacity_estimator 单元测试（B3-05544 PC-08 策略容量估算器）。"""
+
 from __future__ import annotations
 
 import pytest
@@ -64,8 +65,7 @@ class TestCapacity:
         est = StrategyCapacityEstimator()
         rep_p = est.estimate(adv_values=ADV, daily_turnover=0.10, current_aum=2.2e8)
         assert ExpansionAdvice.EXPAND_UNIVERSE in rep_p.advice
-        rep_i = est.estimate(adv_values=ADV, daily_turnover=0.10,
-                             impact_tolerance_bps=2.0, current_aum=7e6)
+        rep_i = est.estimate(adv_values=ADV, daily_turnover=0.10, impact_tolerance_bps=2.0, current_aum=7e6)
         assert rep_i.binding is BindingConstraint.IMPACT_TOLERANCE
         assert ExpansionAdvice.REDUCE_TURNOVER in rep_i.advice
 

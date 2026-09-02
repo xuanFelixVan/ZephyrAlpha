@@ -40,9 +40,7 @@ BudgetLevel = budget_models.BudgetLevel
 GateDecision = budget_models.GateDecision
 GateResult = budget_models.GateResult
 ModelTier = budget_models.ModelTier
-TaskComplexity = pytest.importorskip(
-    "zephyr.governance.intelligence_governance.model_router"
-).TaskComplexity
+TaskComplexity = pytest.importorskip("zephyr.governance.intelligence_governance.model_router").TaskComplexity
 
 _BEIJING = ZoneInfo("Asia/Shanghai")
 
@@ -194,8 +192,15 @@ class TestChannelChain:
         payload = json.loads(json.dumps(r.to_dict(), ensure_ascii=False))
         assert payload["status"] == "ok"
         assert set(payload) == {
-            "text", "model_version", "provider", "tokens_in", "tokens_out",
-            "cost_yuan", "latency_ms", "status", "error",
+            "text",
+            "model_version",
+            "provider",
+            "tokens_in",
+            "tokens_out",
+            "cost_yuan",
+            "latency_ms",
+            "status",
+            "error",
         }
 
 
@@ -208,7 +213,11 @@ class TestCallLogPersistence:
         assert len(rows) == 1
         task_type, model, provider, _tin, _tout, _cost, status, error = rows[0]
         assert (task_type, model, provider, status, error) == (
-            "summary_extraction", "deepseek-v4-flash", "deepseek", "ok", None,
+            "summary_extraction",
+            "deepseek-v4-flash",
+            "deepseek",
+            "ok",
+            None,
         )
 
     def test_failure_cascade_logged_per_attempt(self, tmp_path):
@@ -244,17 +253,17 @@ class TestCostCalculation:
     @pytest.mark.parametrize(
         ("hour", "minute", "expected"),
         [
-            (0, 0, True),    # 凌晨谷时
-            (8, 59, True),   # 上午高峰前一刻仍谷时
-            (9, 0, False),   # 上午高峰起点（含）
+            (0, 0, True),  # 凌晨谷时
+            (8, 59, True),  # 上午高峰前一刻仍谷时
+            (9, 0, False),  # 上午高峰起点（含）
             (11, 59, False),  # 上午高峰内
-            (12, 0, True),   # 上午高峰终点（不含）-> 午间谷时
+            (12, 0, True),  # 上午高峰终点（不含）-> 午间谷时
             (13, 59, True),  # 午间 12:00-14:00 谷时
             (14, 0, False),  # 下午高峰起点（含）
             (17, 59, False),  # 下午高峰内
-            (18, 0, True),   # 下午高峰终点（不含）-> 晚间谷时
-            (20, 0, True),   # 晚间谷时
-            (23, 0, True),   # 深夜谷时
+            (18, 0, True),  # 下午高峰终点（不含）-> 晚间谷时
+            (20, 0, True),  # 晚间谷时
+            (23, 0, True),  # 深夜谷时
         ],
     )
     def test_valley_window_boundaries(self, hour, minute, expected):
@@ -264,14 +273,14 @@ class TestCostCalculation:
     @pytest.mark.parametrize(
         ("model", "peak_cost", "valley_cost"),
         [
-            ("deepseek-chat", 12.0, 6.0),       # 高峰 3.0/9.0，空闲 1.5/4.5
-            ("deepseek-v4-flash", 12.0, 6.0),   # 与 deepseek-chat 同一模型（别称）同价
-            ("deepseek-reasoner", 12.0, 6.0),   # 名称已弃用=v4-flash 同价
-            ("deepseek-v4-pro", 36.0, 18.0),    # 高峰 9.0/27.0，空闲 4.5/13.5
+            ("deepseek-chat", 12.0, 6.0),  # 高峰 3.0/9.0，空闲 1.5/4.5
+            ("deepseek-v4-flash", 12.0, 6.0),  # 与 deepseek-chat 同一模型（别称）同价
+            ("deepseek-reasoner", 12.0, 6.0),  # 名称已弃用=v4-flash 同价
+            ("deepseek-v4-pro", 36.0, 18.0),  # 高峰 9.0/27.0，空闲 4.5/13.5
         ],
     )
     def test_pricing_table_official_values(self, model, peak_cost, valley_cost):
-        peak_ts = datetime(2026, 8, 22, 10, 0, tzinfo=_BEIJING)    # 峰时
+        peak_ts = datetime(2026, 8, 22, 10, 0, tzinfo=_BEIJING)  # 峰时
         valley_ts = datetime(2026, 8, 22, 20, 0, tzinfo=_BEIJING)  # 谷时
         assert gw_mod.compute_cost_yuan("deepseek", model, 10**6, 10**6, peak_ts) == peak_cost
         assert gw_mod.compute_cost_yuan("deepseek", model, 10**6, 10**6, valley_ts) == valley_cost
@@ -372,9 +381,7 @@ class TestLSGGate:
         db = tmp_path / "test.db"
         ds = _FakeClient()
         gw = _make_gateway(tmp_path, {"deepseek": ds})
-        with patch.object(
-            gw_mod, "enforce_input", side_effect=LSGBlockedError("LSG 不可用，fail-closed 拒绝输入")
-        ):
+        with patch.object(gw_mod, "enforce_input", side_effect=LSGBlockedError("LSG 不可用，fail-closed 拒绝输入")):
             r = gw.infer("summary_extraction", "任意 prompt")
         assert r.status == "blocked"
         assert "fail-closed" in r.error

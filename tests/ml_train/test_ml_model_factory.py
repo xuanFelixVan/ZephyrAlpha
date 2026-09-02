@@ -45,9 +45,9 @@ def _factory(
     return MlModelFactory(
         clock=lambda: _T0,
         robustness_validator=(lambda n, v, m: robust_ok) if with_validator else None,
-        gray_orchestrator=(
-            (lambda r: gray_calls.append(r) or True) if gray_calls is not None else (lambda r: True)
-        ) if with_gray else None,
+        gray_orchestrator=((lambda r: gray_calls.append(r) or True) if gray_calls is not None else (lambda r: True))
+        if with_gray
+        else None,
         gpu_scheduler=scheduler,
     )
 
@@ -196,9 +196,7 @@ class TestProductionGates:
         def _boom(n, v, m):
             raise RuntimeError("validator 崩溃")
 
-        factory = MlModelFactory(
-            clock=lambda: _T0, robustness_validator=_boom, gray_orchestrator=lambda r: True
-        )
+        factory = MlModelFactory(clock=lambda: _T0, robustness_validator=_boom, gray_orchestrator=lambda r: True)
         _to_staging(factory)
         with pytest.raises(MlModelFactoryError):
             factory.promote_to_production("gbm_alpha", "1.0.0")

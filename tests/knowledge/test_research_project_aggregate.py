@@ -34,9 +34,7 @@ _T0 = datetime.datetime(2026, 8, 26, 9, 30, 0)
 
 
 def _agg(**linkage) -> ResearchProjectAggregate:
-    return ResearchProjectAggregate(
-        conn=sqlite3.connect(":memory:"), clock=lambda: _T0, **linkage
-    )
+    return ResearchProjectAggregate(conn=sqlite3.connect(":memory:"), clock=lambda: _T0, **linkage)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -145,7 +143,10 @@ class TestAttachChild:
         children = agg.children_of("proj-1")
         assert len(children) == 4
         assert [c.kind for c in children] == [
-            ChildKind.EVIDENCE, ChildKind.EXPERIMENT, ChildKind.FACTOR, ChildKind.HYPOTHESIS,
+            ChildKind.EVIDENCE,
+            ChildKind.EXPERIMENT,
+            ChildKind.FACTOR,
+            ChildKind.HYPOTHESIS,
         ]  # (kind, ref_id) 确定性排序
 
     def test_reattach_bumps_version(self) -> None:

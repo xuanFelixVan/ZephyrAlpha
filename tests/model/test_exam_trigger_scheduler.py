@@ -218,7 +218,10 @@ class TestLowAccuracyReviewSuggestion:
 
         sched = self._sched(tmp_path, threshold=2)
         gate = _FakeGate((False, "low_accuracy: low_precision_below_threshold"))
-        assert sched.check_and_record(gate, "qwen3:8b", "code_fix") == (False, "low_accuracy: low_precision_below_threshold")
+        assert sched.check_and_record(gate, "qwen3:8b", "code_fix") == (
+            False,
+            "low_accuracy: low_precision_below_threshold",
+        )
         ok, _ = sched.check_and_record(gate, "qwen3:8b", "code_fix")
         assert ok is False
         assert len(sched.suggestions) == 1

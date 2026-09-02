@@ -172,7 +172,10 @@ class TestPremarketPhase:
     def test_ok_and_persist(self, tmp_db: Path) -> None:
         ch = _make_ch(calendar_dates=[NEXT_DATE])
         result = run_daily_warroom_pipeline(
-            DATA_DATE, phase=PHASE_PREMARKET, ch_client=ch, db_path=tmp_db,
+            DATA_DATE,
+            phase=PHASE_PREMARKET,
+            ch_client=ch,
+            db_path=tmp_db,
         )
         assert result.premarket_status == "ok"
         assert result.target_date == NEXT_DATE
@@ -192,10 +195,16 @@ class TestPremarketPhase:
         """同日重跑幂等保首条：行数=1 且 row_id 相同（prediction_log UNIQUE 键）。"""
         ch = _make_ch(calendar_dates=[NEXT_DATE])
         r1 = run_daily_warroom_pipeline(
-            DATA_DATE, phase=PHASE_PREMARKET, ch_client=ch, db_path=tmp_db,
+            DATA_DATE,
+            phase=PHASE_PREMARKET,
+            ch_client=ch,
+            db_path=tmp_db,
         )
         r2 = run_daily_warroom_pipeline(
-            DATA_DATE, phase=PHASE_PREMARKET, ch_client=ch, db_path=tmp_db,
+            DATA_DATE,
+            phase=PHASE_PREMARKET,
+            ch_client=ch,
+            db_path=tmp_db,
         )
         assert r1.premarket_status == "ok" and r2.premarket_status == "ok"
         assert r1.premarket_row_id == r2.premarket_row_id
@@ -210,7 +219,10 @@ class TestPremarketPhase:
     def test_no_next_trading_day_skips(self, tmp_db: Path) -> None:
         ch = _make_ch(calendar_dates=[])
         result = run_daily_warroom_pipeline(
-            DATA_DATE, phase=PHASE_PREMARKET, ch_client=ch, db_path=tmp_db,
+            DATA_DATE,
+            phase=PHASE_PREMARKET,
+            ch_client=ch,
+            db_path=tmp_db,
         )
         assert result.premarket_status == "skipped:no_next_trading_day"
         assert result.target_date is None
@@ -225,14 +237,20 @@ class TestPremarketPhase:
     def test_calendar_channel_error_skips(self, tmp_db: Path) -> None:
         ch = _make_ch(raise_on="calendar")
         result = run_daily_warroom_pipeline(
-            DATA_DATE, phase=PHASE_PREMARKET, ch_client=ch, db_path=tmp_db,
+            DATA_DATE,
+            phase=PHASE_PREMARKET,
+            ch_client=ch,
+            db_path=tmp_db,
         )
         assert result.premarket_status == "skipped:no_next_trading_day"
 
     def test_premarket_phase_skips_postmarket(self, tmp_db: Path) -> None:
         ch = _make_ch(calendar_dates=[NEXT_DATE])
         result = run_daily_warroom_pipeline(
-            DATA_DATE, phase=PHASE_PREMARKET, ch_client=ch, db_path=tmp_db,
+            DATA_DATE,
+            phase=PHASE_PREMARKET,
+            ch_client=ch,
+            db_path=tmp_db,
         )
         assert result.postmarket_status == "skipped:phase"
         assert result.outcome_verdict is None
@@ -248,7 +266,10 @@ class TestPostmarketPhase:
         """造当日预测行（盘前段落库，供盘后段回写消费）。"""
         ch = _make_ch(calendar_dates=[trade_date])
         seeded = run_daily_warroom_pipeline(
-            "2026-08-20", phase=PHASE_PREMARKET, ch_client=ch, db_path=tmp_db,
+            "2026-08-20",
+            phase=PHASE_PREMARKET,
+            ch_client=ch,
+            db_path=tmp_db,
         )
         assert seeded.premarket_status == "ok"
 
@@ -256,7 +277,10 @@ class TestPostmarketPhase:
         self._seed_prediction(tmp_db)
         ch = _make_ch(index_tsv=_flat_index_tsv(), etf_tsv=_rising_etf_rows())
         result = run_daily_warroom_pipeline(
-            DATA_DATE, phase=PHASE_POSTMARKET, ch_client=ch, db_path=tmp_db,
+            DATA_DATE,
+            phase=PHASE_POSTMARKET,
+            ch_client=ch,
+            db_path=tmp_db,
         )
         assert result.postmarket_status == "ok"
         assert result.outcome_verdict is not None
@@ -277,7 +301,10 @@ class TestPostmarketPhase:
     def test_no_prediction_skips(self, tmp_db: Path) -> None:
         ch = _make_ch(index_tsv=_flat_index_tsv(), etf_tsv=_rising_etf_rows())
         result = run_daily_warroom_pipeline(
-            DATA_DATE, phase=PHASE_POSTMARKET, ch_client=ch, db_path=tmp_db,
+            DATA_DATE,
+            phase=PHASE_POSTMARKET,
+            ch_client=ch,
+            db_path=tmp_db,
         )
         assert result.postmarket_status == "skipped:no_prediction"
         assert result.outcome_verdict is not None
@@ -288,10 +315,16 @@ class TestPostmarketPhase:
         self._seed_prediction(tmp_db)
         ch = _make_ch(index_tsv=_flat_index_tsv(), etf_tsv=_rising_etf_rows())
         r1 = run_daily_warroom_pipeline(
-            DATA_DATE, phase=PHASE_POSTMARKET, ch_client=ch, db_path=tmp_db,
+            DATA_DATE,
+            phase=PHASE_POSTMARKET,
+            ch_client=ch,
+            db_path=tmp_db,
         )
         r2 = run_daily_warroom_pipeline(
-            DATA_DATE, phase=PHASE_POSTMARKET, ch_client=ch, db_path=tmp_db,
+            DATA_DATE,
+            phase=PHASE_POSTMARKET,
+            ch_client=ch,
+            db_path=tmp_db,
         )
         assert r1.postmarket_status == "ok" and r2.postmarket_status == "ok"
         assert (
@@ -310,7 +343,10 @@ class TestPostmarketPhase:
     def test_postmarket_phase_skips_premarket(self, tmp_db: Path) -> None:
         ch = _make_ch()
         result = run_daily_warroom_pipeline(
-            DATA_DATE, phase=PHASE_POSTMARKET, ch_client=ch, db_path=tmp_db,
+            DATA_DATE,
+            phase=PHASE_POSTMARKET,
+            ch_client=ch,
+            db_path=tmp_db,
         )
         assert result.premarket_status == "skipped:phase"
         assert result.target_date is None
@@ -326,7 +362,10 @@ class TestBothPhase:
         # 先造 data_date 当日预测行（供盘后段消费）
         seed_ch = _make_ch(calendar_dates=[DATA_DATE])
         run_daily_warroom_pipeline(
-            "2026-08-20", phase=PHASE_PREMARKET, ch_client=seed_ch, db_path=tmp_db,
+            "2026-08-20",
+            phase=PHASE_PREMARKET,
+            ch_client=seed_ch,
+            db_path=tmp_db,
         )
         ch = _make_ch(
             calendar_dates=[NEXT_DATE],
@@ -334,7 +373,10 @@ class TestBothPhase:
             etf_tsv=_rising_etf_rows(),
         )
         result = run_daily_warroom_pipeline(
-            DATA_DATE, phase=PHASE_BOTH, ch_client=ch, db_path=tmp_db,
+            DATA_DATE,
+            phase=PHASE_BOTH,
+            ch_client=ch,
+            db_path=tmp_db,
         )
         assert result.premarket_status == "ok"
         assert result.target_date == NEXT_DATE
@@ -347,7 +389,9 @@ class TestBothPhase:
             db_path=tmp_db,
         )
         outcomes = query_predictions(
-            module=MODULE_LOG_NAME, prediction_type="outcome", db_path=tmp_db,
+            module=MODULE_LOG_NAME,
+            prediction_type="outcome",
+            db_path=tmp_db,
         )
         assert {r["trade_date"] for r in plans} == {DATA_DATE, NEXT_DATE}
         assert len(outcomes) == 1
@@ -376,17 +420,26 @@ class TestValidation:
     def test_invalid_phase(self, tmp_db: Path) -> None:
         with pytest.raises(ValueError, match="phase"):
             run_daily_warroom_pipeline(
-                DATA_DATE, phase="midday", ch_client=_make_ch(), db_path=tmp_db,
+                DATA_DATE,
+                phase="midday",
+                ch_client=_make_ch(),
+                db_path=tmp_db,
             )
 
     def test_invalid_data_date(self, tmp_db: Path) -> None:
         with pytest.raises(ValueError, match="data_date"):
             run_daily_warroom_pipeline(
-                "2026-02-30", phase=PHASE_BOTH, ch_client=_make_ch(), db_path=tmp_db,
+                "2026-02-30",
+                phase=PHASE_BOTH,
+                ch_client=_make_ch(),
+                db_path=tmp_db,
             )
         with pytest.raises(ValueError, match="data_date"):
             run_daily_warroom_pipeline(
-                None, phase=PHASE_BOTH, ch_client=_make_ch(), db_path=tmp_db,  # type: ignore[arg-type]
+                None,
+                phase=PHASE_BOTH,
+                ch_client=_make_ch(),
+                db_path=tmp_db,  # type: ignore[arg-type]
             )
 
     def test_error_message_no_session_id(self, tmp_db: Path) -> None:
@@ -396,7 +449,9 @@ class TestValidation:
         ):
             try:
                 run_daily_warroom_pipeline(
-                    ch_client=_make_ch(), db_path=tmp_db, **bad_kwargs,
+                    ch_client=_make_ch(),
+                    db_path=tmp_db,
+                    **bad_kwargs,
                 )
             except ValueError as exc:
                 assert "session_id" not in str(exc)

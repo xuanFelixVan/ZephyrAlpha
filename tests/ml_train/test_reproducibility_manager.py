@@ -158,9 +158,7 @@ class TestVerifyRerun:
         _registered(mgr)
         report = mgr.verify_rerun("run-1", "run-1b", {**_RESULT, "sharpe": 1.5})
         assert report.matched is False
-        assert [(d.field, d.expected, d.actual) for d in report.diffs] == [
-            ("sharpe", 1.83, 1.5)
-        ]
+        assert [(d.field, d.expected, d.actual) for d in report.diffs] == [("sharpe", 1.83, 1.5)]
 
     def test_missing_and_extra_key_diffs_sorted(self) -> None:
         mgr = _mgr()
@@ -198,10 +196,15 @@ class TestVerifyRerun:
         mgr = _mgr(tracking_sink=lambda e: events.append(dict(e)))
         _registered(mgr)
         mgr.verify_rerun("run-1", "run-1b", dict(_RESULT))
-        assert events == [{
-            "event": "repro_verify", "run_id": "run-1",
-            "rerun_id": "run-1b", "matched": True, "diff_count": 0,
-        }]
+        assert events == [
+            {
+                "event": "repro_verify",
+                "run_id": "run-1",
+                "rerun_id": "run-1b",
+                "matched": True,
+                "diff_count": 0,
+            }
+        ]
         assert len(mgr.reports()) == 1
         assert mgr.list_runs() == ("run-1",)
 

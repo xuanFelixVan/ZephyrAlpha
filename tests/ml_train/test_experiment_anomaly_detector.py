@@ -36,7 +36,10 @@ _METRIC = "ic"
 
 
 def _points(values: list[float], experiment_id: str = _EXP, metric: str = _METRIC) -> list[ExperimentMetricPoint]:
-    return [ExperimentMetricPoint(experiment_id=experiment_id, metric_name=metric, value=v, ts=i) for i, v in enumerate(values)]
+    return [
+        ExperimentMetricPoint(experiment_id=experiment_id, metric_name=metric, value=v, ts=i)
+        for i, v in enumerate(values)
+    ]
 
 
 def _normal_series(n: int = 60) -> list[float]:

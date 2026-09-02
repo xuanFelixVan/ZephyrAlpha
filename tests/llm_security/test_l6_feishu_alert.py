@@ -64,9 +64,7 @@ class TestHighRiskProbeDelivery:
     def test_detail_merged_into_event(self, tmp_path: Any, monkeypatch: Any) -> None:
         _mock_webhook_ok(monkeypatch)
         alerter = _make_alerter(tmp_path)
-        delivered = alerter.send_high_risk_alert(
-            layer="l4_agent", rule="privilege_violation", detail={"tool": "shell"}
-        )
+        delivered = alerter.send_high_risk_alert(layer="l4_agent", rule="privilege_violation", detail={"tool": "shell"})
         assert delivered is True
 
 
@@ -140,9 +138,7 @@ class TestObservabilityChainWiring:
         )
         assert alerter.pending_count() == 0  # webhook 可达 → 已送达
 
-    def test_chain_degrades_to_local_persistence_when_webhook_down(
-        self, tmp_path: Any, monkeypatch: Any
-    ) -> None:
+    def test_chain_degrades_to_local_persistence_when_webhook_down(self, tmp_path: Any, monkeypatch: Any) -> None:
         """webhook 不可达 → 链路降级本地持久化，事件不丢。"""
         from zephyr.security.llm_defense.llm_security.layers.l6_observability import (
             AlertSeverity,
@@ -174,9 +170,7 @@ class TestObservabilityChainWiring:
         monkeypatch.setattr(FeishuAlertChannel, "_post_webhook", _forbidden)
         alerter = _make_alerter(tmp_path)
         layer = ObservabilityLayer(feishu_alerter=alerter)
-        layer.log_security_event(
-            event_type=SecurityEventType.SYSTEM, message="routine", severity=AlertSeverity.LOW
-        )
+        layer.log_security_event(event_type=SecurityEventType.SYSTEM, message="routine", severity=AlertSeverity.LOW)
         assert alerter.pending_count() == 0
 
     def test_alerter_exception_does_not_break_main_chain(self, tmp_path: Any) -> None:

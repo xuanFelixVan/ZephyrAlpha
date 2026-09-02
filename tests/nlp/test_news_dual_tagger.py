@@ -55,8 +55,13 @@ TD = date(2026, 8, 21)
 
 def _anchor(symbol: str = "000001.SZ") -> ConsensusAnchor:
     return ConsensusAnchor(
-        symbol=symbol, forecast_year="2026", forecast_eps=1.0, forecast_pe=20.0,
-        rating="买入", analyst_count=5, report_date="2026-08-15",
+        symbol=symbol,
+        forecast_year="2026",
+        forecast_eps=1.0,
+        forecast_pe=20.0,
+        rating="买入",
+        analyst_count=5,
+        report_date="2026-08-15",
     )
 
 
@@ -133,8 +138,12 @@ def test_gap_no_anchor_none_actual():
 def test_tag_dual_both_labels():
     news = [
         NewsTagInput(
-            news_id="n1", title="华芯科技业绩预告预增", publish_time="2026-08-21 10:00:00",
-            symbols=("000001.SZ",), actual_value=1.3, actual_symbol="000001.SZ",
+            news_id="n1",
+            title="华芯科技业绩预告预增",
+            publish_time="2026-08-21 10:00:00",
+            symbols=("000001.SZ",),
+            actual_value=1.3,
+            actual_symbol="000001.SZ",
         ),
         NewsTagInput(news_id="n2", title="午间突发传闻", publish_time="2026-08-21 12:00:00"),
     ]
@@ -167,7 +176,11 @@ def test_tag_capital_threshold_boundary():
 def test_tag_anchor_field_pe():
     news = [
         NewsTagInput(
-            news_id="n1", title="x", publish_time="t", symbols=("000001.SZ",), actual_value=25.0,
+            news_id="n1",
+            title="x",
+            publish_time="t",
+            symbols=("000001.SZ",),
+            actual_value=25.0,
         ),
     ]
     cfg = DualTagConfig(anchor_field="forecast_pe", gap_tolerance_pct=5.0)
@@ -223,6 +236,8 @@ def test_load_anchors_bad_date_fail_closed():
 def test_result_json_serializable():
     result = tag_news_dual(
         [NewsTagInput(news_id="n1", title="业绩预告预增", publish_time="t", symbols=("000001.SZ",), actual_value=1.3)],
-        capital_traces={"000001.SZ": 5000.0}, anchors={"000001.SZ": _anchor()}, trade_date=TD,
+        capital_traces={"000001.SZ": 5000.0},
+        anchors={"000001.SZ": _anchor()},
+        trade_date=TD,
     )
     json.dumps(asdict(result), ensure_ascii=False)

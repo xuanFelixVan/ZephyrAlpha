@@ -33,9 +33,7 @@ _T0 = datetime.datetime(2026, 8, 26, 9, 30, 0)
 
 
 def _graph(**kwargs) -> FinancialKnowledgeGraph:
-    return FinancialKnowledgeGraph(
-        conn=sqlite3.connect(":memory:"), clock=lambda: _T0, **kwargs
-    )
+    return FinancialKnowledgeGraph(conn=sqlite3.connect(":memory:"), clock=lambda: _T0, **kwargs)
 
 
 def _seed_chain(graph: FinancialKnowledgeGraph) -> None:
@@ -70,9 +68,7 @@ class TestInit:
 
     def test_duplicate_relation_vocab_raises(self) -> None:
         with pytest.raises(FinancialGraphError):
-            FinancialKnowledgeGraph(
-                conn=sqlite3.connect(":memory:"), relation_types=("x", "x")
-            )
+            FinancialKnowledgeGraph(conn=sqlite3.connect(":memory:"), relation_types=("x", "x"))
 
     def test_bad_max_edges_raises(self) -> None:
         with pytest.raises(FinancialGraphError):
@@ -162,7 +158,8 @@ class TestCrud:
         graph = _graph()
         _seed_chain(graph)
         assert [(e.dst, e.rel_type) for e in graph.neighbors("A")] == [
-            ("B", "supplies_to"), ("D", "tagged_with"),
+            ("B", "supplies_to"),
+            ("D", "tagged_with"),
         ]
 
 
@@ -282,19 +279,13 @@ class TestExtractionReview:
         graph = _graph()
         graph.add_entity("A", EntityType.COMPANY, "x")
         with pytest.raises(FinancialGraphError):
-            graph.submit_extraction(
-                edges=[{"src": "A", "dst": "ghost", "rel_type": "holds", "weight": 0.5}]
-            )
+            graph.submit_extraction(edges=[{"src": "A", "dst": "ghost", "rel_type": "holds", "weight": 0.5}])
 
     def test_fifo_order(self) -> None:
         graph = _graph()
         graph.add_entity("A", EntityType.COMPANY, "x")
-        s1 = graph.submit_extraction(
-            entities=[{"entity_id": "E1", "entity_type": "event", "name": "事件一"}]
-        )
-        s2 = graph.submit_extraction(
-            entities=[{"entity_id": "E2", "entity_type": "event", "name": "事件二"}]
-        )
+        s1 = graph.submit_extraction(entities=[{"entity_id": "E1", "entity_type": "event", "name": "事件一"}])
+        s2 = graph.submit_extraction(entities=[{"entity_id": "E2", "entity_type": "event", "name": "事件二"}])
         assert [s.submission_id for s in graph.pending_submissions()] == [s1, s2]
 
 

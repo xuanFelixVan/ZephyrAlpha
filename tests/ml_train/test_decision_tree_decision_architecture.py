@@ -193,8 +193,10 @@ class TestIntervention:
     def test_hook_exception_fail_closed(self) -> None:
         arch = _arch()
         arch.train(_ENTRIES)
+
         def _boom(f, s):
             raise RuntimeError("人工台掉线")
+
         arch.register_intervention_hook("root", _boom)
         with pytest.raises(DecisionTreeArchError):
             arch.predict({"momentum": 0.95, "vol": 0.2})

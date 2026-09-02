@@ -202,15 +202,15 @@ class TestRetention:
         clock = _Clock(_T0)
         ttl = datetime.timedelta(days=7)
         mgr = ResearchDataManager(clock=clock, retention_ttl=ttl)
-        mgr.commit_snapshot("ds1", _MANIFEST)                      # v0001 @T0
+        mgr.commit_snapshot("ds1", _MANIFEST)  # v0001 @T0
         clock.t = _T0 + datetime.timedelta(days=3)
-        mgr.commit_snapshot("ds1", {**_MANIFEST, "rows": 2})       # v0002 @T0+3d
+        mgr.commit_snapshot("ds1", {**_MANIFEST, "rows": 2})  # v0002 @T0+3d
         clock.t = _T0 + datetime.timedelta(days=10)
-        mgr.commit_snapshot("ds1", {**_MANIFEST, "rows": 3})       # v0003 @T0+10d（链头）
+        mgr.commit_snapshot("ds1", {**_MANIFEST, "rows": 3})  # v0003 @T0+10d（链头）
         decisions = mgr.apply_retention()
         assert [(d.version_id, d.keep) for d in decisions] == [
             ("ds1@v0001", False),  # 超期非链头
-            ("ds1@v0002", True),   # 保留期内
-            ("ds1@v0003", True),   # 链头恒保留
+            ("ds1@v0002", True),  # 保留期内
+            ("ds1@v0003", True),  # 链头恒保留
         ]
         assert decisions[0].reason.startswith("超过保留期")

@@ -174,25 +174,19 @@ class TestOptimalExecution:
             )
 
     def test_within_threshold_enabled(self) -> None:
-        result = _orch(self._exec_proposal("0.55", "0.95")).run_optimal_execution(
-            state=_STATE, ac_trajectory=self._AC
-        )
+        result = _orch(self._exec_proposal("0.55", "0.95")).run_optimal_execution(state=_STATE, ac_trajectory=self._AC)
         assert result.status is RlRunStatus.ENABLED
         assert result.fused is False
         assert result.effective_actions == {"step_0": Decimal("0.55"), "step_1": Decimal("0.95")}
 
     def test_deviation_fused_to_ac(self) -> None:
-        result = _orch(self._exec_proposal("0.2", "0.95")).run_optimal_execution(
-            state=_STATE, ac_trajectory=self._AC
-        )
+        result = _orch(self._exec_proposal("0.2", "0.95")).run_optimal_execution(state=_STATE, ac_trajectory=self._AC)
         assert result.status is RlRunStatus.FUSED_TO_AC
         assert result.fused is True
         assert result.effective_actions == {"step_0": Decimal("0.5"), "step_1": Decimal("1.0")}
 
     def test_clock_injected(self) -> None:
-        result = _orch(self._exec_proposal("0.5", "1.0")).run_optimal_execution(
-            state=_STATE, ac_trajectory=self._AC
-        )
+        result = _orch(self._exec_proposal("0.5", "1.0")).run_optimal_execution(state=_STATE, ac_trajectory=self._AC)
         assert result.run_at == _T0
 
 
@@ -228,24 +222,18 @@ class TestT0Trading:
 
     def test_checker_false_raises(self) -> None:
         with pytest.raises(RlPortfolioError):
-            _orch(self._t0_proposal(), t0_risk_checker=lambda p: False).run_t0(
-                state=_STATE, base_positions=self._BASE
-            )
+            _orch(self._t0_proposal(), t0_risk_checker=lambda p: False).run_t0(state=_STATE, base_positions=self._BASE)
 
     def test_checker_exception_raises(self) -> None:
         def _boom(_p) -> bool:
             raise RuntimeError("risk down")
 
         with pytest.raises(RlPortfolioError):
-            _orch(self._t0_proposal(), t0_risk_checker=_boom).run_t0(
-                state=_STATE, base_positions=self._BASE
-            )
+            _orch(self._t0_proposal(), t0_risk_checker=_boom).run_t0(state=_STATE, base_positions=self._BASE)
 
     def test_missing_inputs_raises(self) -> None:
         with pytest.raises(RlPortfolioError):  # 底仓为空
-            _orch(self._t0_proposal(), t0_risk_checker=lambda p: True).run_t0(
-                state=_STATE, base_positions={}
-            )
+            _orch(self._t0_proposal(), t0_risk_checker=lambda p: True).run_t0(state=_STATE, base_positions={})
         with pytest.raises(RlPortfolioError):  # 风控校验器未注入
             _orch(self._t0_proposal()).run_t0(state=_STATE, base_positions=self._BASE)
 

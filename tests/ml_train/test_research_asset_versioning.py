@@ -38,9 +38,7 @@ def _reg(**kw) -> ResearchAssetVersioning:
 
 
 def _factor(reg: ResearchAssetVersioning, version: str = "1.0.0", **kw):
-    return reg.register_version(
-        AssetKind.FACTOR, "mom20", version, dict(_METRICS), "proj-alpha", **kw
-    )
+    return reg.register_version(AssetKind.FACTOR, "mom20", version, dict(_METRICS), "proj-alpha", **kw)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -144,13 +142,15 @@ class TestIndex:
 
     def test_search_by_metric_range_and_order(self) -> None:
         reg = _reg()
-        _factor(reg, version="1.0.0")                                    # ic 0.083
+        _factor(reg, version="1.0.0")  # ic 0.083
         reg.register_version(AssetKind.FACTOR, "mom20", "1.1.0", {"ic": 0.12}, "p")
         reg.register_version(AssetKind.FACTOR, "rev5", "1.0.0", {"ic": 0.05}, "p")
         reg.register_version(AssetKind.FACTOR, "noic", "1.0.0", {"sharpe": 1.0}, "p")
         out = reg.search_by_metric("ic", min_value=0.05, max_value=0.12)
         assert [(r.asset_id, r.version) for r in out] == [
-            ("mom20", "1.1.0"), ("mom20", "1.0.0"), ("rev5", "1.0.0"),
+            ("mom20", "1.1.0"),
+            ("mom20", "1.0.0"),
+            ("rev5", "1.0.0"),
         ]  # 指标降序
 
     def test_search_by_metric_invalid_raise(self) -> None:

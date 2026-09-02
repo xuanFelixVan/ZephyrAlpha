@@ -54,8 +54,7 @@ def _accelerator(
 ) -> ModelCompressionAccelerator:
     return ModelCompressionAccelerator(
         phase_executors=(
-            executors if executors is not None
-            else {phase: (lambda job: dict(_CANDIDATE)) for phase in _PHASES}
+            executors if executors is not None else {phase: (lambda job: dict(_CANDIDATE)) for phase in _PHASES}
         ),
         numeric_error_validator=lambda job: numeric_error,
         double_lock_checker=lambda job: double_lock_ok,

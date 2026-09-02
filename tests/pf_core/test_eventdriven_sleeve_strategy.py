@@ -89,9 +89,7 @@ def test_weight_sum_invariant_leq_one_with_max_single_cap():
         "600002": _surprise_payload(1, sentiment=0.8),
         "600003": _surprise_payload(1, sentiment=0.7),
     }
-    weights = s.generate_target_weights(
-        ["600001", "600002", "600003"], signals, {"top_n": 10, "max_single": 0.2}
-    )
+    weights = s.generate_target_weights(["600001", "600002", "600003"], signals, {"top_n": 10, "max_single": 0.2})
     assert len(weights) == 3
     assert sum(weights.values()) <= 1.0 + 1e-9
     assert all(w <= 0.2 + 1e-9 for w in weights.values())
@@ -111,6 +109,7 @@ def test_negative_anomaly_excluded(monkeypatch):
 
 def test_anomaly_contract_violation_excluded(monkeypatch):
     """异动识别契约违反 → 剔除+告警（不整批抛异常）。"""
+
     def _raise(*a, **k):
         raise sleeve_mod.EventAnomalyError("非数值输入")
 
