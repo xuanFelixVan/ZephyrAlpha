@@ -67,6 +67,11 @@ SERVICE_CATALOG: list[dict[str, Any]] = [
      "detect": {"type": "heartbeat", "file": "tick_subscriber.heartbeat", "biz": "tick_subscriber_biz.heartbeat"},
      "start": ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "scripts/start_tick_subscriber.ps1"],
      "stop": {"how": "heartbeat"}},
+    {"id": "sector_collector", "group": "data", "tier": "confirm", "name": "板块快照采集器",
+     "desc": "盘中每分钟存一张板块涨跌快照进库（板块排名/轮动分析的数据底料）",
+     "detect": {"type": "proc", "pattern": r"sector_snapshot_collector"},
+     "start": ["python", "-m", "zephyr.data.sector_snapshot_collector"],
+     "stop": {"how": "proc"}},
     {"id": "ch_probe", "group": "data", "tier": "guard", "name": "CH 健康探针",
      "desc": "数据库哨兵：每 3 秒探一次 ClickHouse 死活，断连 6 秒就拉警报——保命进程不许关",
      "detect": {"type": "heartbeat", "file": "ch_health_probe.heartbeat"}},
@@ -86,6 +91,12 @@ SERVICE_CATALOG: list[dict[str, Any]] = [
     {"id": "clickhouse", "group": "infra", "tier": "external", "name": "ClickHouse 数据库",
      "desc": "111 亿行行情数据的老窝（Hyper-V 虚拟机里）——所有页面取数的地基，开机自启+180 秒延迟",
      "detect": {"type": "ch"}},
+    {"id": "redis", "group": "infra", "tier": "external", "name": "Redis 热缓存",
+     "desc": "盘中因子链的口粮仓（和 ClickHouse 同一台虚拟机）——挂了盘中自动降级带病运行，必须有人知道",
+     "detect": {"type": "env_tcp", "env": ".env.redis", "host_key": "REDIS_HOST", "port_key": "REDIS_PORT"}},
+    {"id": "postgres", "group": "infra", "tier": "external", "name": "PostgreSQL 治理库",
+     "desc": "项目地图/依赖图的老家（depgraph 唯一真源）——挂了整个 AI 治理链瞎眼",
+     "detect": {"type": "env_tcp", "env": ".env.postgres", "host_key": "POSTGRES_HOST", "port_key": "POSTGRES_PORT"}},
     {"id": "rsshub", "group": "infra", "tier": "external", "name": "RSSHub 新闻源",
      "desc": "新闻/舆情抓取的输送管道（pm2 托管）——情绪分析和新闻页的口粮，开机自启",
      "detect": {"type": "port", "port": 1200}},
@@ -129,6 +140,9 @@ SERVICE_CATALOG: list[dict[str, Any]] = [
     {"id": "trae_cache", "group": "guard", "tier": "guard", "name": "Trae 缓存清理",
      "desc": "开机清 Trae 编辑器缓存（防缓存膨胀吃满 C 盘）",
      "detect": {"type": "task", "task": "ZephyrAlpha_TraeCacheCleanup"}},
+    {"id": "ai_wrapper_inject", "group": "guard", "tier": "guard", "name": "AI 通道防护注入",
+     "desc": "每分钟给新 AI 进程打 git 安全补丁（防 AI 误操作 git）——它停了 AI 通道防护裸奔",
+     "detect": {"type": "task", "task": "ZephyrAlpha-AI-Wrapper-Inject"}},
 ]
 
 _GROUP_META = {
@@ -294,16 +308,22 @@ def _task_info(task: str) -> dict[str, str] | None:
     if hit and now - hit[0] < 60:
         return hit[1] or None
     info: dict[str, str] | None = None
+    reason = ""
     try:
         r = subprocess.run(["schtasks", "/query", "/tn", task, "/fo", "CSV", "/nh"],
                            capture_output=True, text=True, timeout=5)
-        first = r.stdout.strip().splitlines()[0] if r.returncode == 0 and r.stdout.strip() else ""
+        # 防御：无 console 的 Hidden 进程里实测 r.stdout 可能为 None（Owner 环境实证），必须 or ""
+        out = (r.stdout or "").strip()
+        first = out.splitlines()[0] if r.returncode == 0 and out else ""
         parts = [p.strip().strip('"') for p in first.split(",")]
         if len(parts) >= 3:
             info = {"next_run": parts[1], "status": parts[2]}
-    except Exception:  # noqa: BLE001
+        else:
+            reason = f"rc={r.returncode} out={(r.stdout or '')[:60]!r} err={(r.stderr or '')[:60]!r}"
+    except Exception as e:  # noqa: BLE001
         info = None
-    _SCHTASKS_CACHE[task] = (now, info or {})
+        reason = str(e)[:100]
+    _SCHTASKS_CACHE[task] = (now, info or {"error": reason})
     return info
 
 
@@ -328,6 +348,22 @@ def _file_fresh(dirpath: str) -> tuple[str, str]:
         return "gray", f"桥停摆：最新一茬 {round(age/3600)} 小时前（QMT 没开？）"
     except Exception as e:  # noqa: BLE001 — 目录不可达
         return "gray", "桥目录不可达：" + str(e)[:60]
+
+
+def _env_tcp_alive(env_file: str, host_key: str, port_key: str) -> tuple[bool, str]:
+    """通用 .env 真源 TCP 探活（#ARCH-CH-017 同源精神：读配置禁硬编码 IP）。"""
+    try:
+        cfg: dict[str, str] = {}
+        for line in (_REPO / "config" / env_file).read_text(encoding="utf-8-sig").splitlines():
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                k, v = line.split("=", 1)
+                cfg[k.strip()] = v.strip()
+        host, port = cfg[host_key], int(cfg[port_key])
+        with socket.create_connection((host, port), timeout=1.5):
+            return True, f"{host}:{port} 可达"
+    except Exception as e:  # noqa: BLE001 — 探活失败=断线
+        return False, str(e)[:80]
 
 
 def _gpu_stats() -> dict[str, Any] | None:
@@ -406,7 +442,10 @@ def get_services_status() -> dict[str, Any]:
                 st["detail"] = "进程不在"
         elif det["type"] == "task":
             info = _task_info(det["task"])
-            if info:
+            if info and info.get("error"):
+                st["light"] = "yellow"
+                st["detail"] = "计划任务查询失败：" + info["error"]
+            elif info:
                 status = info["status"]
                 if status == "Disabled":
                     st["light"] = "red"
@@ -424,6 +463,12 @@ def get_services_status() -> dict[str, Any]:
             light, msg = _file_fresh(det["dir"])
             st["light"] = light
             st["detail"] = msg
+        elif det["type"] == "env_tcp":
+            alive, msg = _env_tcp_alive(det["env"], det["host_key"], det["port_key"])
+            if alive:
+                st["light"] = "green"; st["detail"] = msg
+            else:
+                st["light"] = "red"; st["detail"] = "断连：" + msg
         elif det["type"] == "ch":
             alive, msg = _ch_alive()
             if alive:
