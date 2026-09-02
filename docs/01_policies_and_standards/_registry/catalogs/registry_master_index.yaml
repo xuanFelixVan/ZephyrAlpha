@@ -1,8 +1,8 @@
-# 自动生成于 2026-09-01T19:37:26Z
+# 自动生成于 2026-09-02T12:02:25Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-09-01T19:37:26Z'
+generated_at: '2026-09-02T12:02:25Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
 total_registries: 46
@@ -61,7 +61,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 619
+  entry_count: 621
   status: active
 - registry_id: PS-REG-021
   name: 能力→真源文件反查注册表
@@ -181,7 +181,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 152
+  entry_count: 154
   status: active
 - registry_id: CFG-governance-convergence-map
   name: governance_convergence_map
