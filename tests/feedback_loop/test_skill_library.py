@@ -81,7 +81,9 @@ class TestRegisterSkill:
         e2 = _register(lib, "均值")
         e3 = _register(lib, "突破")
         assert (e1.skill_id, e2.skill_id, e3.skill_id) == (
-            "skill-0001", "skill-0002", "skill-0003",
+            "skill-0001",
+            "skill-0002",
+            "skill-0003",
         )
 
     def test_kind_str_accepted_and_normalized(self) -> None:
@@ -106,11 +108,11 @@ class TestRegisterSkill:
     def test_metrics_invalid_rejected(self) -> None:
         lib = _library()
         bad_metrics = (
-            [("sharpe", 1.5)],          # 非映射
-            {"sharpe": "高"},           # 非数值
-            {"sharpe": float("nan")},   # 非有限
-            {"": 1.0},                  # 空指标名
-            {"sharpe": True},           # bool 非数值
+            [("sharpe", 1.5)],  # 非映射
+            {"sharpe": "高"},  # 非数值
+            {"sharpe": float("nan")},  # 非有限
+            {"": 1.0},  # 空指标名
+            {"sharpe": True},  # bool 非数值
         )
         for bad in bad_metrics:
             with pytest.raises(SkillLibraryError):
@@ -129,9 +131,9 @@ class TestEmbedderInjection:
 
     def test_embedder_bad_vector_rejected(self) -> None:
         bad_embedders = (
-            lambda t: (),                        # 空向量
-            lambda t: ("x", 1.0),                # 非数值分量
-            lambda t: (float("nan"), 1.0),       # 非有限分量
+            lambda t: (),  # 空向量
+            lambda t: ("x", 1.0),  # 非数值分量
+            lambda t: (float("nan"), 1.0),  # 非有限分量
         )
         for bad in bad_embedders:
             lib = SkillLibrary(embedder=bad, clock=lambda: _T0)
@@ -155,9 +157,9 @@ class TestRetrieve:
 
     def test_top_k_order_by_similarity(self) -> None:
         lib = _library()
-        _register(lib, "动量均值")          # (1,1,0)
-        _register(lib, "动量动量均值")      # (2,1,0)
-        _register(lib, "突破突破突破")      # (0,0,3)
+        _register(lib, "动量均值")  # (1,1,0)
+        _register(lib, "动量动量均值")  # (2,1,0)
+        _register(lib, "突破突破突破")  # (0,0,3)
         hits = lib.retrieve("动量动量", top_k=3)  # (2,0,0)
         assert [h.skill_id for h in hits] == ["skill-0002", "skill-0001", "skill-0003"]
 
@@ -230,9 +232,7 @@ class TestUpdateSkill:
     def test_update_metrics_only_keeps_embedding(self) -> None:
         lib = _library()
         entry = _register(lib, "动量")
-        updated = lib.update_skill(
-            entry.skill_id, success_metrics={"sharpe": 2.0, "win_rate": 0.6}
-        )
+        updated = lib.update_skill(entry.skill_id, success_metrics={"sharpe": 2.0, "win_rate": 0.6})
         assert updated.version == 2
         assert updated.embedding == entry.embedding  # 内容未变不重算
         assert updated.success_metrics == {"sharpe": 2.0, "win_rate": 0.6}
@@ -257,12 +257,8 @@ class TestRegisterReuse:
     def test_reuse_ok_and_count(self) -> None:
         lib = _library()
         entry = _register(lib)
-        r1 = lib.register_reuse(
-            entry.skill_id, task_description="新任务A", similarity=0.9
-        )
-        r2 = lib.register_reuse(
-            entry.skill_id, task_description="新任务B", similarity=0.7
-        )
+        r1 = lib.register_reuse(entry.skill_id, task_description="新任务A", similarity=0.9)
+        r2 = lib.register_reuse(entry.skill_id, task_description="新任务B", similarity=0.7)
         assert isinstance(r1, SkillReuseRecord)
         assert r1.record_id == "reuse-0001"
         assert r2.record_id == "reuse-0002"
@@ -277,9 +273,7 @@ class TestRegisterReuse:
             lib.register_reuse("skill-9999", task_description="任务", similarity=0.5)
         for bad in (1.1, -1.1, float("nan"), "0.9"):
             with pytest.raises(SkillLibraryError):
-                lib.register_reuse(
-                    entry.skill_id, task_description="任务", similarity=bad
-                )
+                lib.register_reuse(entry.skill_id, task_description="任务", similarity=bad)
         with pytest.raises(SkillLibraryError):
             lib.register_reuse(entry.skill_id, task_description="", similarity=0.5)
 
@@ -306,7 +300,9 @@ class TestQuery:
         _register(lib, "突破", kind=SkillKind.CODE_SNIPPET)
         all_entries = lib.list_skills()
         assert [e.skill_id for e in all_entries] == [
-            "skill-0001", "skill-0002", "skill-0003",
+            "skill-0001",
+            "skill-0002",
+            "skill-0003",
         ]
         code_only = lib.list_skills(kind=SkillKind.CODE_SNIPPET)
         assert [e.skill_id for e in code_only] == ["skill-0001", "skill-0003"]

@@ -53,8 +53,20 @@ def make_book(step: int) -> OrderBookSnapshot:
     bid1 = Decimal("9.99") + drift
     return OrderBookSnapshot(
         symbol="600000.SH",
-        ask_price=(ask1, ask1 + Decimal("0.01"), ask1 + Decimal("0.02"), ask1 + Decimal("0.03"), ask1 + Decimal("0.04")),
-        bid_price=(bid1, bid1 - Decimal("0.01"), bid1 - Decimal("0.02"), bid1 - Decimal("0.03"), bid1 - Decimal("0.04")),
+        ask_price=(
+            ask1,
+            ask1 + Decimal("0.01"),
+            ask1 + Decimal("0.02"),
+            ask1 + Decimal("0.03"),
+            ask1 + Decimal("0.04"),
+        ),
+        bid_price=(
+            bid1,
+            bid1 - Decimal("0.01"),
+            bid1 - Decimal("0.02"),
+            bid1 - Decimal("0.03"),
+            bid1 - Decimal("0.04"),
+        ),
         ask_vol=ASK_VOLS,
         bid_vol=BID_VOLS,
         last_price=Decimal("10.00") + drift,
@@ -333,10 +345,7 @@ def test_reset_deterministic_with_seed() -> None:
     assert state_a.step_index == 0
 
     rng = random.Random(7)
-    actions = [
-        RlExecAction(price_offset_idx=rng.randrange(5), quantity_ratio=rng.uniform(0.1, 1.0))
-        for _ in range(4)
-    ]
+    actions = [RlExecAction(price_offset_idx=rng.randrange(5), quantity_ratio=rng.uniform(0.1, 1.0)) for _ in range(4)]
     for action in actions:
         out_a = env_a.step(action)
         out_b = env_b.step(action)

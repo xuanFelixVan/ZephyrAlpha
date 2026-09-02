@@ -44,9 +44,7 @@ def _executor_ok(rows=None):
     def _exec(symbols, factor_ids, mode):
         calls.append((tuple(symbols), tuple(factor_ids), mode))
         return [
-            {"trade_date": "2026-08-25", "symbol": s, "factor_id": f, "value": 1.0}
-            for s in symbols
-            for f in factor_ids
+            {"trade_date": "2026-08-25", "symbol": s, "factor_id": f, "value": 1.0} for s in symbols for f in factor_ids
         ]
 
     _exec.calls = calls
@@ -79,9 +77,7 @@ class TestCapacityPlan:
         assert "因子" in plan.reason
 
     def test_custom_capacity_limits(self) -> None:
-        pipe = FactorProductionPipeline(
-            compute_executor=_executor_ok(), max_symbols=8000, max_factors=8
-        )
+        pipe = FactorProductionPipeline(compute_executor=_executor_ok(), max_symbols=8000, max_factors=8)
         plan = pipe.capacity_plan(_SYMBOLS_10, _FACTORS)
         assert plan.max_symbols == 8000
         assert plan.max_factors == 8
@@ -128,9 +124,7 @@ class TestPremarketFullBatch:
 
     def test_store_writer_rows_injected(self) -> None:
         stored: list[dict] = []
-        pipe = FactorProductionPipeline(
-            compute_executor=_executor_ok(), store_writer=stored.extend, chunk_size=100
-        )
+        pipe = FactorProductionPipeline(compute_executor=_executor_ok(), store_writer=stored.extend, chunk_size=100)
         pipe.run_premarket(_SYMBOLS_10[:2], _FACTORS)
         assert {r["symbol"] for r in stored} == set(_SYMBOLS_10[:2])
         assert {r["factor_id"] for r in stored} == set(_FACTORS)

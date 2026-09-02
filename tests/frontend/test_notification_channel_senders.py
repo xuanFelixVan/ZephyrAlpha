@@ -243,12 +243,17 @@ class TestRegisterChannelIntegration:
 
     def test_wechat_channel_explicit_failure_propagates(self) -> None:
         mgr = DefaultNotificationManager()
-        mgr.register_channel("wechat", WeChatNotificationSender(WeChatChannelConfig(webhook_url="https://example.com/hook")))
+        mgr.register_channel(
+            "wechat", WeChatNotificationSender(WeChatChannelConfig(webhook_url="https://example.com/hook"))
+        )
         # 未接线态 sender 显式失败 → send 返回 False（fail-visible）
         assert mgr.send(_notification(), channels=["wechat"]) is False
 
     def test_both_channels_mixed_outcome(self) -> None:
         mgr = DefaultNotificationManager()
         mgr.register_channel("email", EmailNotificationSender(_email_cfg(), lambda p: True))
-        mgr.register_channel("wechat", WeChatNotificationSender(WeChatChannelConfig(webhook_url="https://example.com/hook"), lambda u, p, t: True))
+        mgr.register_channel(
+            "wechat",
+            WeChatNotificationSender(WeChatChannelConfig(webhook_url="https://example.com/hook"), lambda u, p, t: True),
+        )
         assert mgr.send(_notification()) is True  # log+email+wechat 全成功

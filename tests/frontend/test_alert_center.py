@@ -55,11 +55,7 @@ def _rec(
         status=status,
         created_at=created,
         acknowledged_at=created + timedelta(minutes=5) if ack else None,
-        resolved_at=(
-            created + timedelta(seconds=resolved_after_sec)
-            if resolved_after_sec is not None
-            else None
-        ),
+        resolved_at=(created + timedelta(seconds=resolved_after_sec) if resolved_after_sec is not None else None),
         root_cause=root_cause,
         suppressed=suppressed,
         escalated=escalated,
@@ -172,8 +168,12 @@ class TestFailClosed:
         created = _NOW
         with pytest.raises(AlertCenterInputError):
             AlertCenterRecord(
-                alert_id="a1", title="t", severity="AL-P1", source="s",
-                status="resolved", created_at=created,
+                alert_id="a1",
+                title="t",
+                severity="AL-P1",
+                source="s",
+                status="resolved",
+                created_at=created,
                 acknowledged_at=None,
                 resolved_at=created - timedelta(seconds=1),
             )

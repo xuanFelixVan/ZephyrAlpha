@@ -64,9 +64,7 @@ class TestFpe:
         assert _engine().fpe_encrypt("abc123") == _engine().fpe_encrypt("abc123")
 
     def test_different_keys_differ(self) -> None:
-        assert _engine(key="k1").fpe_encrypt("abc123") != _engine(key="k2").fpe_encrypt(
-            "abc123"
-        )
+        assert _engine(key="k1").fpe_encrypt("abc123") != _engine(key="k2").fpe_encrypt("abc123")
 
     def test_empty_text_raises(self) -> None:
         engine = _engine()

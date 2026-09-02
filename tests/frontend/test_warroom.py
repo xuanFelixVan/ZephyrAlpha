@@ -419,21 +419,32 @@ class TestSitOutList:
         assert sit is None and err is None
 
     def test_three_sources_synthesized(self) -> None:
-        sit, err = fetch_sit_out_list(_DATE, sources={
-            "events": [
-                {  # blackout 市场级 → NO_TRADE 进清单
-                    "event_date": _DATE, "event_type": "EVT-FOMC", "scope": "market",
-                    "target": None, "severity": "blackout", "name": "美联储议息",
-                },
-                {  # caution 级不进清单仅计数
-                    "event_date": _DATE, "event_type": "EVT-DATA", "scope": "market",
-                    "target": None, "severity": "caution", "name": "CPI 发布",
-                },
-            ],
-            "stopped_symbols": [{"symbol": "600519", "stopped_at": _DATE, "reason": "破减仓触发价"}],
-            "limit_down_symbols": ["000001"],
-            "war_pool_symbols": ["600519"],
-        })
+        sit, err = fetch_sit_out_list(
+            _DATE,
+            sources={
+                "events": [
+                    {  # blackout 市场级 → NO_TRADE 进清单
+                        "event_date": _DATE,
+                        "event_type": "EVT-FOMC",
+                        "scope": "market",
+                        "target": None,
+                        "severity": "blackout",
+                        "name": "美联储议息",
+                    },
+                    {  # caution 级不进清单仅计数
+                        "event_date": _DATE,
+                        "event_type": "EVT-DATA",
+                        "scope": "market",
+                        "target": None,
+                        "severity": "caution",
+                        "name": "CPI 发布",
+                    },
+                ],
+                "stopped_symbols": [{"symbol": "600519", "stopped_at": _DATE, "reason": "破减仓触发价"}],
+                "limit_down_symbols": ["000001"],
+                "war_pool_symbols": ["600519"],
+            },
+        )
         assert err is None and sit is not None
         rules = {e["rule"] for e in sit["entries"]}
         assert rules == {"EVENT_BLACKOUT", "STOP_LOSS_NO_REVERSE", "LIMIT_DOWN_NO_DIP", "OUT_OF_POOL"}
@@ -544,8 +555,10 @@ class TestFetchWarroomAggregateP2:
         db = tmp_path / "governance.db"
         ensure_prediction_log_table(db)
         data = fetch_warroom(
-            trade_date=_DATE, db_path=db,
-            forecaster=_FakeForecaster(), panel_fn=lambda _d: _FakePanel(),
+            trade_date=_DATE,
+            db_path=db,
+            forecaster=_FakeForecaster(),
+            panel_fn=lambda _d: _FakePanel(),
         )
         assert data.boundaries == []  # 当日未跑批=待数据（非异常）
         assert data.sit_out is None and data.netting is None  # 未装配=待接入
@@ -555,8 +568,14 @@ class TestFetchWarroomAggregateP2:
         assert payload["has_sit_out"] is False and payload["has_netting"] is False
 
 
-def _seed_debate_row(db, *, prompt_version: str = "pm-v1.0.0+debate", status: str = "success",
-                     mode: str = "v2_debate", with_debate: bool = True) -> None:
+def _seed_debate_row(
+    db,
+    *,
+    prompt_version: str = "pm-v1.0.0+debate",
+    status: str = "success",
+    mode: str = "v2_debate",
+    with_debate: bool = True,
+) -> None:
     """种一行 llm_daily_analysis（MOD-PLAN-007 落库契约形状）。"""
     from zephyr.plan_engine.llm_premarket_analysis import ensure_llm_daily_analysis_table
     from zephyr.shared.io.sqlite_factory import get_db_connection
@@ -584,8 +603,20 @@ def _seed_debate_row(db, *, prompt_version: str = "pm-v1.0.0+debate", status: st
             "(trade_date, model_version, prompt_version, input_hash, output_json, status, "
             "error, tokens_in, tokens_out, cost_yuan, latency_ms, created_at) "
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            (_DATE, "qwen3:14b", prompt_version, "h1", json.dumps(output, ensure_ascii=False),
-             status, None, None, None, None, None, "2026-08-28T01:00:00+00:00"),
+            (
+                _DATE,
+                "qwen3:14b",
+                prompt_version,
+                "h1",
+                json.dumps(output, ensure_ascii=False),
+                status,
+                None,
+                None,
+                None,
+                None,
+                None,
+                "2026-08-28T01:00:00+00:00",
+            ),
         )
         conn.commit()
     finally:
@@ -633,8 +664,10 @@ class TestWarroomDebate:
         ensure_prediction_log_table(db)
         _seed_debate_row(db)
         data = fetch_warroom(
-            trade_date=_DATE, db_path=db,
-            forecaster=_FakeForecaster(), panel_fn=lambda _d: _FakePanel(),
+            trade_date=_DATE,
+            db_path=db,
+            forecaster=_FakeForecaster(),
+            panel_fn=lambda _d: _FakePanel(),
         )
         assert data.debate is not None and data.errors == []
         payload = render_warroom(data)

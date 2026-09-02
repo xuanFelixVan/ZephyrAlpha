@@ -81,12 +81,14 @@ class TestConfig:
 
 class TestRuleHitCard:
     def test_hit_rate(self) -> None:
-        dash = _dashboard(rule_checks=(
-            RuleCheckRecord("r1", True),
-            RuleCheckRecord("r2", True),
-            RuleCheckRecord("r3", False),
-            RuleCheckRecord("r4", True),
-        ))
+        dash = _dashboard(
+            rule_checks=(
+                RuleCheckRecord("r1", True),
+                RuleCheckRecord("r2", True),
+                RuleCheckRecord("r3", False),
+                RuleCheckRecord("r4", True),
+            )
+        )
         card = dash.rule_hit_card()
         assert card.total_checks == 4
         assert card.hits == 3
@@ -115,11 +117,13 @@ class TestRuleHitCard:
 
 class TestAnomalyCard:
     def test_counts_and_by_severity(self) -> None:
-        dash = _dashboard(anomalies=(
-            AnomalyRecord("a1", AnomalySeverity.HIGH, "越权下单", True),
-            AnomalyRecord("a2", AnomalySeverity.LOW, "备注缺失", True),
-            AnomalyRecord("a3", AnomalySeverity.HIGH, "重复报单", False),
-        ))
+        dash = _dashboard(
+            anomalies=(
+                AnomalyRecord("a1", AnomalySeverity.HIGH, "越权下单", True),
+                AnomalyRecord("a2", AnomalySeverity.LOW, "备注缺失", True),
+                AnomalyRecord("a3", AnomalySeverity.HIGH, "重复报单", False),
+            )
+        )
         card = dash.anomaly_card()
         assert card.total == 3
         assert card.open_count == 2
@@ -128,12 +132,14 @@ class TestAnomalyCard:
         assert card.by_severity[AnomalySeverity.LOW] == 1
 
     def test_open_items_sorted_high_first_then_id(self) -> None:
-        dash = _dashboard(anomalies=(
-            AnomalyRecord("a9", AnomalySeverity.LOW, "", True),
-            AnomalyRecord("a2", AnomalySeverity.HIGH, "", True),
-            AnomalyRecord("a1", AnomalySeverity.HIGH, "", True),
-            AnomalyRecord("a5", AnomalySeverity.MEDIUM, "", True),
-        ))
+        dash = _dashboard(
+            anomalies=(
+                AnomalyRecord("a9", AnomalySeverity.LOW, "", True),
+                AnomalyRecord("a2", AnomalySeverity.HIGH, "", True),
+                AnomalyRecord("a1", AnomalySeverity.HIGH, "", True),
+                AnomalyRecord("a5", AnomalySeverity.MEDIUM, "", True),
+            )
+        )
         ids = [r.anomaly_id for r in dash.anomaly_card().open_items]
         assert ids == ["a1", "a2", "a5", "a9"]
 
@@ -150,11 +156,13 @@ class TestAnomalyCard:
 
 class TestEvidenceCard:
     def test_completeness_and_incomplete_ids(self) -> None:
-        dash = _dashboard(evidences=(
-            EvidenceRecord("e2", False, ("signature",)),
-            EvidenceRecord("e1", True),
-            EvidenceRecord("e3", False),
-        ))
+        dash = _dashboard(
+            evidences=(
+                EvidenceRecord("e2", False, ("signature",)),
+                EvidenceRecord("e1", True),
+                EvidenceRecord("e3", False),
+            )
+        )
         card = dash.evidence_card()
         assert card.total == 3
         assert card.complete_count == 1
@@ -172,13 +180,15 @@ class TestEvidenceCard:
 
 class TestRemediationCard:
     def test_by_status_full_vocab(self) -> None:
-        dash = _dashboard(tasks=(
-            RemediationTask("t1", RemediationStatus.OPEN),
-            RemediationTask("t2", RemediationStatus.IN_PROGRESS),
-            RemediationTask("t3", RemediationStatus.OVERDUE),
-            RemediationTask("t4", RemediationStatus.DONE),
-            RemediationTask("t5", RemediationStatus.OVERDUE),
-        ))
+        dash = _dashboard(
+            tasks=(
+                RemediationTask("t1", RemediationStatus.OPEN),
+                RemediationTask("t2", RemediationStatus.IN_PROGRESS),
+                RemediationTask("t3", RemediationStatus.OVERDUE),
+                RemediationTask("t4", RemediationStatus.DONE),
+                RemediationTask("t5", RemediationStatus.OVERDUE),
+            )
+        )
         card = dash.remediation_card()
         assert card.total == 5
         assert card.by_status == {

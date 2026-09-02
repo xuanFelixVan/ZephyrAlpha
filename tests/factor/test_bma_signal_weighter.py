@@ -96,11 +96,13 @@ def test_regime_ic_nonpositive_gated_out() -> None:
 
 
 def test_weights_sum_to_one_and_monotone() -> None:
-    report = compute_bma_weights([
-        _ev("strong", ic=0.08, icir=1.2),
-        _ev("mid", ic=0.05, icir=0.8),
-        _ev("weak", ic=0.035, icir=0.6),
-    ])
+    report = compute_bma_weights(
+        [
+            _ev("strong", ic=0.08, icir=1.2),
+            _ev("mid", ic=0.05, icir=0.8),
+            _ev("weak", ic=0.035, icir=0.6),
+        ]
+    )
     assert sum(report.weights.values()) == pytest.approx(1.0)
     assert report.weights["strong"] > report.weights["mid"] > report.weights["weak"]
 
@@ -156,21 +158,25 @@ def test_all_gated_no_trade() -> None:
 
 def test_double_low_no_trade() -> None:
     # 四信号两两对冲（一致性≈0.5 低）且等权分散（无主导信号 低）→ NO_TRADE
-    report = compute_bma_weights([
-        _ev("l1", direction=1),
-        _ev("l2", direction=1),
-        _ev("s1", direction=-1),
-        _ev("s2", direction=-1),
-    ])
+    report = compute_bma_weights(
+        [
+            _ev("l1", direction=1),
+            _ev("l2", direction=1),
+            _ev("s1", direction=-1),
+            _ev("s2", direction=-1),
+        ]
+    )
     assert report.decision == "NO_TRADE"
 
 
 def test_high_agreement_dominant_trade() -> None:
-    report = compute_bma_weights([
-        _ev("a", ic=0.09, icir=1.2, direction=1),
-        _ev("b", ic=0.04, icir=0.6, direction=1),
-        _ev("c", ic=0.035, icir=0.55, direction=-1),
-    ])
+    report = compute_bma_weights(
+        [
+            _ev("a", ic=0.09, icir=1.2, direction=1),
+            _ev("b", ic=0.04, icir=0.6, direction=1),
+            _ev("c", ic=0.035, icir=0.55, direction=-1),
+        ]
+    )
     assert report.decision == "TRADE"
     assert report.direction == 1
     assert report.agreement > 0.6
@@ -178,14 +184,14 @@ def test_high_agreement_dominant_trade() -> None:
 
 
 def test_agreement_reflects_directional_weight_share() -> None:
-    report = compute_bma_weights([
-        _ev("a", ic=0.09, icir=1.2, direction=-1),
-        _ev("b", ic=0.04, icir=0.6, direction=1),
-    ])
-    assert report.direction == -1
-    assert report.agreement == pytest.approx(
-        report.weights["a"] / (report.weights["a"] + report.weights["b"])
+    report = compute_bma_weights(
+        [
+            _ev("a", ic=0.09, icir=1.2, direction=-1),
+            _ev("b", ic=0.04, icir=0.6, direction=1),
+        ]
     )
+    assert report.direction == -1
+    assert report.agreement == pytest.approx(report.weights["a"] / (report.weights["a"] + report.weights["b"]))
 
 
 # ---------------------------------------------------------------- 输入校验

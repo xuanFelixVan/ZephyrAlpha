@@ -79,9 +79,14 @@ class TestSubmit:
     def test_empty_action_rejected(self):
         gw = _gateway()
         with pytest.raises(InvalidApprovalRequestError):
-            gw.submit(_request().__class__(
-                request_id="req-x", action="", reason="r", requester="q",
-            ))
+            gw.submit(
+                _request().__class__(
+                    request_id="req-x",
+                    action="",
+                    reason="r",
+                    requester="q",
+                )
+            )
 
 
 class TestDecide:

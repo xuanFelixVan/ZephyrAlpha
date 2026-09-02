@@ -210,17 +210,13 @@ class TestAshareFeatures:
     def test_vwap_within_price_limits_accepted(self):
         report = _report()
         assert (
-            validate_execution_report(
-                report, price_limit_up=Decimal("11.00"), price_limit_down=Decimal("9.00")
-            )
+            validate_execution_report(report, price_limit_up=Decimal("11.00"), price_limit_down=Decimal("9.00"))
             is report
         )
 
     def test_inverted_price_limits_rejected(self):
         with pytest.raises(ExecutionReportContractError):
-            validate_execution_report(
-                _report(), price_limit_up=Decimal("9.00"), price_limit_down=Decimal("11.00")
-            )
+            validate_execution_report(_report(), price_limit_up=Decimal("9.00"), price_limit_down=Decimal("11.00"))
 
 
 class TestSerialization:

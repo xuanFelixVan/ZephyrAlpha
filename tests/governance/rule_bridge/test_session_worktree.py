@@ -804,7 +804,6 @@ def test_log_worktree_delete_done_phase_default_no_stack(tmp_path):
     assert "stack" not in e, "done 相位默认不应带调用栈"
 
 
-
 # ---------------------------------------------------------------------------
 # P3.5 测试：age-based force-clean + quarantine ref（ARCH-GIT-CALL-BUDGET P3.5，2026-07-20）
 # 验证 _quarantine_branch_ref / _sweep_quarantine_refs / force_clean 逻辑

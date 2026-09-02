@@ -51,13 +51,11 @@ def _agent(agent_id: str, cash: float = 0.0, position: int = 0, sentiment: float
 
 
 def _limit(oid: str, agent: str, side: OrderSide, price: float, qty: int) -> Order:
-    return Order(order_id=oid, agent_id=agent, side=side,
-                 order_type=OrderType.LIMIT, price=price, quantity=qty)
+    return Order(order_id=oid, agent_id=agent, side=side, order_type=OrderType.LIMIT, price=price, quantity=qty)
 
 
 def _market(oid: str, agent: str, side: OrderSide, qty: int) -> Order:
-    return Order(order_id=oid, agent_id=agent, side=side,
-                 order_type=OrderType.MARKET, price=None, quantity=qty)
+    return Order(order_id=oid, agent_id=agent, side=side, order_type=OrderType.MARKET, price=None, quantity=qty)
 
 
 def _prices_from_returns(rets: list[float], p0: float = 100.0) -> list[float]:
@@ -113,12 +111,28 @@ class TestConstructorGuard:
 class TestHardLabel:
     def test_payloads_simulated_false_raise(self) -> None:
         with pytest.raises(MarketTwinError):
-            Order(order_id="o", agent_id="a", side=OrderSide.BUY,
-                  order_type=OrderType.MARKET, price=None, quantity=1, simulated=False)
+            Order(
+                order_id="o",
+                agent_id="a",
+                side=OrderSide.BUY,
+                order_type=OrderType.MARKET,
+                price=None,
+                quantity=1,
+                simulated=False,
+            )
         with pytest.raises(MarketTwinError):
-            Trade(trade_id="t", buy_order_id="b", sell_order_id="s",
-                  buy_agent="x", sell_agent="y", price=1.0, quantity=1,
-                  mode=MatchMode.LIMIT, matched_at=_T0, simulated=False)
+            Trade(
+                trade_id="t",
+                buy_order_id="b",
+                sell_order_id="s",
+                buy_agent="x",
+                sell_agent="y",
+                price=1.0,
+                quantity=1,
+                mode=MatchMode.LIMIT,
+                matched_at=_T0,
+                simulated=False,
+            )
         with pytest.raises(MarketTwinError):
             AuditEvent(kind="k", detail={}, raised_at=_T0, simulated=False)
 
@@ -146,8 +160,16 @@ class TestSubmitOrder:
         with pytest.raises(MarketTwinError):
             sim.submit_order(_limit("o1", "a", OrderSide.BUY, 0.0, 1))  # 限价非正价
         with pytest.raises(MarketTwinError):
-            sim.submit_order(Order(order_id="o2", agent_id="a", side=OrderSide.BUY,
-                                   order_type=OrderType.MARKET, price=100.0, quantity=1))  # 市价带价
+            sim.submit_order(
+                Order(
+                    order_id="o2",
+                    agent_id="a",
+                    side=OrderSide.BUY,
+                    order_type=OrderType.MARKET,
+                    price=100.0,
+                    quantity=1,
+                )
+            )  # 市价带价
 
     def test_bad_quantity_raises(self) -> None:
         sim = _sim()
@@ -193,8 +215,8 @@ class TestLimitMatch:
     def test_price_time_priority(self) -> None:
         sim = self._book()
         sim.submit_order(_limit("s1", "seller", OrderSide.SELL, 100.0, 10))
-        sim.submit_order(_limit("b1", "buyer", OrderSide.BUY, 101.0, 4))   # 低价先挂
-        sim.submit_order(_limit("b2", "buyer", OrderSide.BUY, 102.0, 4))   # 高价后挂
+        sim.submit_order(_limit("b1", "buyer", OrderSide.BUY, 101.0, 4))  # 低价先挂
+        sim.submit_order(_limit("b2", "buyer", OrderSide.BUY, 102.0, 4))  # 高价后挂
         trades = sim.match(MatchMode.LIMIT)
         assert [t.buy_order_id for t in trades] == ["b2", "b1"]  # 价格优先
         assert all(t.price == 100.0 for t in trades)  # 被动方=先挂卖单
@@ -268,8 +290,8 @@ class TestSentiment:
         sim.register_agent(_agent("y", sentiment=0.0))
         sim.register_agent(_agent("z", sentiment=-1.0))
         out = sim.step_sentiment()
-        assert out["x"] == pytest.approx(0.5)   # 0.5·1.0 + 0.5·0.0
-        assert out["y"] == pytest.approx(0.0)   # 0.5·0.0 + 0.5·mean(1.0,-1.0)
+        assert out["x"] == pytest.approx(0.5)  # 0.5·1.0 + 0.5·0.0
+        assert out["y"] == pytest.approx(0.0)  # 0.5·0.0 + 0.5·mean(1.0,-1.0)
         assert out["z"] == pytest.approx(-1.0)  # 无邻接不变
 
     def test_contagion_unknown_neighbor_raises(self) -> None:
@@ -290,17 +312,29 @@ class TestRunRound:
         def intention(agent, desire, view, oid):
             diff = desire - agent.position
             if diff > 0:
-                return Order(order_id=oid, agent_id=agent.agent_id, side=OrderSide.BUY,
-                             order_type=OrderType.LIMIT, price=view.last_price * 1.05, quantity=diff)
+                return Order(
+                    order_id=oid,
+                    agent_id=agent.agent_id,
+                    side=OrderSide.BUY,
+                    order_type=OrderType.LIMIT,
+                    price=view.last_price * 1.05,
+                    quantity=diff,
+                )
             if diff < 0:
-                return Order(order_id=oid, agent_id=agent.agent_id, side=OrderSide.SELL,
-                             order_type=OrderType.LIMIT, price=view.last_price, quantity=-diff)
+                return Order(
+                    order_id=oid,
+                    agent_id=agent.agent_id,
+                    side=OrderSide.SELL,
+                    order_type=OrderType.LIMIT,
+                    price=view.last_price,
+                    quantity=-diff,
+                )
             return None
 
         return BDIRuleBook(
-            belief_fn=lambda agent, view: view.last_price,                       # 信念：公允价=最新价
+            belief_fn=lambda agent, view: view.last_price,  # 信念：公允价=最新价
             desire_fn=lambda agent, belief, view: 10 if agent.cash > 50000 else 0,  # 愿望：资金充裕→持仓10
-            intention_fn=intention,                                              # 意图：差额→限价单
+            intention_fn=intention,  # 意图：差额→限价单
         )
 
     def test_run_round_bdi_pipeline(self) -> None:
@@ -334,13 +368,14 @@ class TestRunRound:
 
 
 class TestStylizedFacts:
-    _RETS = [0.0] * 20 + [0.2, -0.2, 0.15, -0.15]          # 聚集 + 肥尾
+    _RETS = [0.0] * 20 + [0.2, -0.2, 0.15, -0.15]  # 聚集 + 肥尾
     _VOLS = [10.0] * 6 + [50.0] * 6 + [10.0] * 6 + [50.0] * 6  # 块状 → 量自相关
 
     def test_builtin_pass(self) -> None:
         sim = _sim()
         report = sim.verify_stylized_facts(
-            prices=_prices_from_returns(self._RETS), volumes=self._VOLS,
+            prices=_prices_from_returns(self._RETS),
+            volumes=self._VOLS,
         )
         assert report.volatility_clustering > 0.0
         assert report.excess_kurtosis > 0.0
@@ -361,8 +396,11 @@ class TestStylizedFacts:
         def verifier(series):
             seen.append(series)
             return StylizedFactReport(
-                volatility_clustering=0.5, excess_kurtosis=2.0,
-                volume_autocorr=0.6, passed=True, detail="injected",
+                volatility_clustering=0.5,
+                excess_kurtosis=2.0,
+                volume_autocorr=0.6,
+                passed=True,
+                detail="injected",
             )
 
         sim = _sim(stats_verifier=verifier)

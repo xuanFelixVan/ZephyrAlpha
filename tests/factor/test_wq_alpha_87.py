@@ -49,9 +49,7 @@ _SYMBOLS = [f"{i:06d}.SZ" for i in range(30)]
 def _panel(seed: int = 7) -> dict[str, pd.DataFrame]:
     rng = np.random.default_rng(seed)
     n, m = len(_DATES), len(_SYMBOLS)
-    close = pd.DataFrame(
-        10 + rng.normal(0, 0.4, (n, m)).cumsum(axis=0), index=_DATES, columns=_SYMBOLS
-    ).clip(lower=1.0)
+    close = pd.DataFrame(10 + rng.normal(0, 0.4, (n, m)).cumsum(axis=0), index=_DATES, columns=_SYMBOLS).clip(lower=1.0)
     open_ = close * (1 + rng.normal(0, 0.005, (n, m)))
     high = pd.DataFrame(np.maximum(open_.values, close.values), index=_DATES, columns=_SYMBOLS) * (
         1 + abs(rng.normal(0, 0.004, (n, m)))

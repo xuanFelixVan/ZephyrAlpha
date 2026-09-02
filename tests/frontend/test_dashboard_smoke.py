@@ -12,6 +12,7 @@
 运行：python -m pytest tests/frontend/test_dashboard_smoke.py -x -q
 自含：自起 http.server（临时端口），无需外部服务；需 playwright + chromium（python -m playwright install chromium）。
 """
+
 from __future__ import annotations
 
 import re
@@ -78,7 +79,9 @@ def page(base_url):
         browser = p.chromium.launch(headless=True)
         pg = browser.new_page()
         pg.goto(base_url + "/index.html")
-        pg.wait_for_selector("#p-stockq", state="attached", timeout=20000)  # 全部页面片段注入完成的标志（页面默认隐藏，只验存在性）
+        pg.wait_for_selector(
+            "#p-stockq", state="attached", timeout=20000
+        )  # 全部页面片段注入完成的标志（页面默认隐藏，只验存在性）
         yield pg
         browser.close()
 
@@ -92,7 +95,9 @@ def test_all_pages_present(page):
 
 def test_stockq_structure(page):
     """K 线页结构断言（验收单 ACC-F-STOCKQ-COSTLINE 机断条款 + 事件行/时间轴 + sq-stock-header）。"""
-    page.wait_for_function("!!(window.ZK && ZK.features && ZK.features['cost-line'])", timeout=20000)  # 等 JS 加载链走完再导航（防竞态）
+    page.wait_for_function(
+        "!!(window.ZK && ZK.features && ZK.features['cost-line'])", timeout=20000
+    )  # 等 JS 加载链走完再导航（防竞态）
     page.evaluate("go('stockq')")  # 走应用内导航函数（改 hash 不触发 sqInit）
     page.wait_for_timeout(3000)  # sqInit + 数据落盘 + 标注开关行渲染
     checks = page.evaluate(
@@ -142,7 +147,11 @@ def test_overview_structure(page):
 
 def test_spec_pages_sections(page):
     """设计规范 DS-11 / 模块样板拆件契约试点存在（标准文档消失类回归拦截）。"""
-    design_ok = page.evaluate("!!document.querySelector('#p-design') && document.querySelector('#p-design').textContent.includes('DS-11 模块拆件标准')")
-    modlib_ok = page.evaluate("!!document.querySelector('#p-modlib') && document.querySelector('#p-modlib').textContent.includes('模块拆件契约试点')")
+    design_ok = page.evaluate(
+        "!!document.querySelector('#p-design') && document.querySelector('#p-design').textContent.includes('DS-11 模块拆件标准')"
+    )
+    modlib_ok = page.evaluate(
+        "!!document.querySelector('#p-modlib') && document.querySelector('#p-modlib').textContent.includes('模块拆件契约试点')"
+    )
     assert design_ok, "design 页缺 DS-11 模块拆件标准"
     assert modlib_ok, "modlib 页缺 模块拆件契约试点 区"

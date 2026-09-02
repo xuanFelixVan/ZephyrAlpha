@@ -74,9 +74,7 @@ class TestClustering:
         assert res.n_clusters == 2
 
     def test_dbscan_same_grouping(self) -> None:
-        res = cluster_factors(
-            _series_pack(), config=ClusterConfig(method=METHOD_DBSCAN, similarity_threshold=0.5)
-        )
+        res = cluster_factors(_series_pack(), config=ClusterConfig(method=METHOD_DBSCAN, similarity_threshold=0.5))
         assert res.method == METHOD_DBSCAN
         assert res.labels["F_A"] == res.labels["F_B"]
         assert res.labels["F_C"] != res.labels["F_A"]

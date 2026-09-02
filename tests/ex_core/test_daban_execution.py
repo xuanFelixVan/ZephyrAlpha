@@ -174,7 +174,9 @@ class TestDynamicCapacityCalculator:
     def test_nav_binding(self):
         """深簿+充足封单/流通盘→NAV 约束 binding（C12 单票 5% NAV）。"""
         calc = DynamicCapacityCalculator()
-        out = calc.calculate(nav=1_000_000, seal_volume=1_000_000, float_shares=100_000_000, order_book=_deep_book(), price=10.0)
+        out = calc.calculate(
+            nav=1_000_000, seal_volume=1_000_000, float_shares=100_000_000, order_book=_deep_book(), price=10.0
+        )
         assert out["binding_constraint"] == "nav" and out["max_qty"] == 5000
         assert set(out["all_constraints"]) == {"sar", "seal", "float", "nav"}
 
@@ -182,30 +184,42 @@ class TestDynamicCapacityCalculator:
         """浅簿→SaR 反推容量 binding：int(0.015·100/((1+1)·0.001))=750。"""
         calc = DynamicCapacityCalculator()
         out = calc.calculate(
-            nav=1_000_000, seal_volume=1_000_000, float_shares=100_000_000, order_book={"bid_levels": [{"volume": 100}]}, price=10.0
+            nav=1_000_000,
+            seal_volume=1_000_000,
+            float_shares=100_000_000,
+            order_book={"bid_levels": [{"volume": 100}]},
+            price=10.0,
         )
         assert out["binding_constraint"] == "sar" and out["max_qty"] == 750
 
     def test_seal_binding(self):
         """封单量小→封单 10% 约束 binding。"""
         calc = DynamicCapacityCalculator()
-        out = calc.calculate(nav=1_000_000, seal_volume=1000, float_shares=100_000_000, order_book=_deep_book(), price=10.0)
+        out = calc.calculate(
+            nav=1_000_000, seal_volume=1000, float_shares=100_000_000, order_book=_deep_book(), price=10.0
+        )
         assert out["binding_constraint"] == "seal" and out["max_qty"] == 100
 
     def test_float_binding(self):
         """流通盘小→流通盘 2% 约束 binding。"""
         calc = DynamicCapacityCalculator()
-        out = calc.calculate(nav=1_000_000, seal_volume=1_000_000, float_shares=100_000, order_book=_deep_book(), price=10.0)
+        out = calc.calculate(
+            nav=1_000_000, seal_volume=1_000_000, float_shares=100_000, order_book=_deep_book(), price=10.0
+        )
         assert out["binding_constraint"] == "float" and out["max_qty"] == 2000
 
     def test_empty_order_book_zero_capacity(self):
         """异常：空订单簿→depth=0→sar 容量 0→可下 0 股（Fail-Closed）。"""
         calc = DynamicCapacityCalculator()
-        out = calc.calculate(nav=1_000_000, seal_volume=1_000_000, float_shares=100_000_000, order_book={"bid_levels": []}, price=10.0)
+        out = calc.calculate(
+            nav=1_000_000, seal_volume=1_000_000, float_shares=100_000_000, order_book={"bid_levels": []}, price=10.0
+        )
         assert out["max_qty"] == 0 and out["binding_constraint"] == "sar"
 
     def test_zero_price_fail_closed(self):
         """异常：price<=0→nav 容量 0→拒绝下仓（Fail-Closed 不抛异常）。"""
         calc = DynamicCapacityCalculator()
-        out = calc.calculate(nav=1_000_000, seal_volume=1_000_000, float_shares=100_000_000, order_book=_deep_book(), price=0.0)
+        out = calc.calculate(
+            nav=1_000_000, seal_volume=1_000_000, float_shares=100_000_000, order_book=_deep_book(), price=0.0
+        )
         assert out["max_qty"] == 0 and out["binding_constraint"] == "nav"

@@ -155,18 +155,14 @@ def test_intraday_buy_sell_points_buy_breakout() -> None:
 
 
 def test_intraday_buy_sell_points_no_signal() -> None:
-    out = query_intraday_buy_sell_points(
-        IntradayBuySellInput(symbol="600519.SH", current_price=1700.0)
-    )
+    out = query_intraday_buy_sell_points(IntradayBuySellInput(symbol="600519.SH", current_price=1700.0))
     assert out["buy_signals"] == []
     assert out["sell_signals"] == []
     assert out["recommendation"] in {"hold", "wait"}
 
 
 def test_intraday_buy_sell_points_degraded_on_bad_input() -> None:
-    out = query_intraday_buy_sell_points(
-        IntradayBuySellInput(symbol="", current_price=-1.0)
-    )
+    out = query_intraday_buy_sell_points(IntradayBuySellInput(symbol="", current_price=-1.0))
     assert out["is_degraded"] is True
     assert out["recommendation"] == "wait"
 
@@ -227,9 +223,7 @@ def test_stress_test_summary_three_scenarios() -> None:
     s2008 = out["scenarios"][0]
     assert s2008["portfolio_loss_pct"] == pytest.approx(-0.0768, abs=1e-6)
     assert s2008["is_severe"] is True
-    assert out["worst_scenario"]["portfolio_loss_pct"] == min(
-        s["portfolio_loss_pct"] for s in out["scenarios"]
-    )
+    assert out["worst_scenario"]["portfolio_loss_pct"] == min(s["portfolio_loss_pct"] for s in out["scenarios"])
     assert out["severe_count"] >= 1
     assert out["conclusion_zh"]
 

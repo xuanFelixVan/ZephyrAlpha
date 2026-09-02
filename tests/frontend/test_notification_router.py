@@ -102,7 +102,9 @@ def _notification(severity: Severity = Severity.WARNING, **kwargs) -> Notificati
 class TestConfig:
     def test_empty_route_table_raises(self) -> None:
         with pytest.raises(NotificationRouterError):
-            NotificationRouter(route_table={}, bindings={NotificationChannel.WECOM: _binding(NotificationChannel.WECOM, [])})
+            NotificationRouter(
+                route_table={}, bindings={NotificationChannel.WECOM: _binding(NotificationChannel.WECOM, [])}
+            )
 
     def test_route_channel_without_binding_raises(self) -> None:
         with pytest.raises(NotificationRouterError):
@@ -222,14 +224,10 @@ class TestSilent:
         assert len(sent) == 2
 
     def test_wraparound_window_boundary(self) -> None:
-        router_day, sent_day = _router(
-            clock=_Clock(datetime.datetime(2026, 8, 26, 12, 0, 0)), silent=self._NIGHT
-        )
+        router_day, sent_day = _router(clock=_Clock(datetime.datetime(2026, 8, 26, 12, 0, 0)), silent=self._NIGHT)
         assert router_day.notify(_notification(Severity.INFO)).suppressed is False
         assert len(sent_day) == 1
-        router_dawn, sent_dawn = _router(
-            clock=_Clock(datetime.datetime(2026, 8, 26, 5, 30, 0)), silent=self._NIGHT
-        )
+        router_dawn, sent_dawn = _router(clock=_Clock(datetime.datetime(2026, 8, 26, 5, 30, 0)), silent=self._NIGHT)
         assert router_dawn.notify(_notification(Severity.WARNING)).suppressed is True
         assert sent_dawn == []
 

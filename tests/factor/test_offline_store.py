@@ -156,11 +156,14 @@ def test_snapshots_month_partition(tmp_path) -> None:
 
 def test_read_filters_factor_and_date_range(tmp_path) -> None:
     store = OfflineStore(tmp_path)
-    store.write([
-        _row(trade_date="2026-08-22", factor_name="a"),
-        _row(trade_date="2026-08-24", factor_name="a"),
-        _row(trade_date="2026-08-25", factor_name="b"),
-    ], "daily")
+    store.write(
+        [
+            _row(trade_date="2026-08-22", factor_name="a"),
+            _row(trade_date="2026-08-24", factor_name="a"),
+            _row(trade_date="2026-08-25", factor_name="b"),
+        ],
+        "daily",
+    )
     conn = duckdb.connect(":memory:")
     out = store.read("daily", conn=conn, factor_names=["a"], start="2026-08-23", end="2026-08-25")
     assert len(out) == 1

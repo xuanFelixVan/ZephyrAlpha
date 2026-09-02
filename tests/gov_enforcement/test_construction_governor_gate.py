@@ -283,7 +283,9 @@ class TestDeterminism:
                 (_PRODUCT, ("a", "b", "c")),
             ):
                 verdict = gate.verify(_product(text=text, paths=paths))
-                out.append((verdict.decision, verdict.allowed_paths, verdict.truncated_paths, verdict.actual_fingerprint))
+                out.append(
+                    (verdict.decision, verdict.allowed_paths, verdict.truncated_paths, verdict.actual_fingerprint)
+                )
             return out
 
         assert run() == run()

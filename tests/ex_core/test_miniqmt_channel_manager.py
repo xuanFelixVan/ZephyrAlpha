@@ -123,9 +123,7 @@ class TestHeartbeat:
             ping_results=[ConnectionError("x")],
             connect_results=[True, False, False, False],  # 首连成功，重连全败
         )
-        mgr = MiniQmtChannelManager(
-            transport, max_heartbeat_failures=1, max_reconnect_attempts=3
-        )
+        mgr = MiniQmtChannelManager(transport, max_heartbeat_failures=1, max_reconnect_attempts=3)
         mgr.connect()
         assert mgr.heartbeat() is False
         assert mgr.state is ChannelState.DOWN

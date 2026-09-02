@@ -130,9 +130,7 @@ class TestVwap:
     def test_weighted_slices_conserve(self):
         # 量能曲线 2:1:1（日内分布注入）
         profile = (Decimal("2"), Decimal("1"), Decimal("1"))
-        plan = split_order(
-            _req(_MAIN, OrderSide.BUY, 1000, 3, profile=profile), algo=SplitAlgo.VWAP
-        )
+        plan = split_order(_req(_MAIN, OrderSide.BUY, 1000, 3, profile=profile), algo=SplitAlgo.VWAP)
         assert [s.quantity for s in plan.slices] == [Decimal(500), Decimal(300), Decimal(200)]
         assert sum(s.quantity for s in plan.slices) == Decimal(1000)
         assert plan.slices[0].weight == pytest.approx(0.5)
@@ -140,9 +138,7 @@ class TestVwap:
     def test_profile_ordering_preserved(self):
         # A股日内分布：开盘20/上午25/午盘10/尾盘45
         profile = tuple(Decimal(str(w)) for w in (20, 25, 10, 45))
-        plan = split_order(
-            _req(_MAIN, OrderSide.BUY, 10000, 4, profile=profile), algo=SplitAlgo.VWAP
-        )
+        plan = split_order(_req(_MAIN, OrderSide.BUY, 10000, 4, profile=profile), algo=SplitAlgo.VWAP)
         qtys = [s.quantity for s in plan.slices]
         assert qtys[3] > qtys[1] > qtys[0] > qtys[2]
         assert sum(qtys) == Decimal(10000)

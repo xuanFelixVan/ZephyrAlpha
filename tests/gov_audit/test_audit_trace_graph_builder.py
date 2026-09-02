@@ -87,7 +87,9 @@ class TestRegisterEdge:
         builder = AuditTraceGraphBuilder()
         _full_chain(builder)
         assert [(e.src_id, e.dst_id) for e in builder.edges()] == [
-            ("c1", "t1"), ("d1", "c1"), ("t1", "p1"),
+            ("c1", "t1"),
+            ("d1", "c1"),
+            ("t1", "p1"),
         ]
 
     def test_skip_segment_rejected(self) -> None:
@@ -145,7 +147,10 @@ class TestChainQuery:
         _full_chain(builder)
         for node_id in ("d1", "c1", "t1", "p1"):
             assert [n.node_id for n in builder.chain_of(node_id)] == [
-                "d1", "c1", "t1", "p1",
+                "d1",
+                "c1",
+                "t1",
+                "p1",
             ]
 
     def test_chain_of_unknown_raises(self) -> None:
@@ -163,7 +168,9 @@ class TestChainQuery:
         builder = AuditTraceGraphBuilder()
         _full_chain(builder)
         assert builder.reachable_segments("d1") == (
-            TraceSegment.CODE, TraceSegment.TEST, TraceSegment.DEPLOY,
+            TraceSegment.CODE,
+            TraceSegment.TEST,
+            TraceSegment.DEPLOY,
         )
         assert builder.reachable_segments("t1") == (TraceSegment.DEPLOY,)
         assert builder.reachable_segments("p1") == ()
@@ -177,7 +184,10 @@ class TestChainQuery:
         assert [n.node_id for n in builder.chain_of("c2")] == ["d1", "c2"]
         # c1 分支仍完整到 deploy
         assert [n.node_id for n in builder.chain_of("c1")] == [
-            "d1", "c1", "t1", "p1",
+            "d1",
+            "c1",
+            "t1",
+            "p1",
         ]
 
 
@@ -204,7 +214,9 @@ class TestGapReport:
         report = builder.gap_report()
         missing = [g for g in report.gaps if g.kind is GapKind.MISSING_SEGMENT]
         assert [g.segment for g in missing] == [
-            TraceSegment.CODE, TraceSegment.TEST, TraceSegment.DEPLOY,
+            TraceSegment.CODE,
+            TraceSegment.TEST,
+            TraceSegment.DEPLOY,
         ]
         broken = [g for g in report.gaps if g.kind is GapKind.BROKEN_LINK]
         assert len(broken) == 1  # d1 无 code 出边

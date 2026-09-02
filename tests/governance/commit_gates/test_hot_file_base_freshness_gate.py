@@ -338,9 +338,7 @@ class TestClaimHeadLifecycle:
         gw1 = _make_minimal_gateway(tmp_path)
         gw1.claim_snapshots_dir.mkdir(parents=True, exist_ok=True)
         legacy = {"session_id": "s-legacy", "snapshots": {"/abs/x.py": "diff"}}
-        (gw1.claim_snapshots_dir / "s-legacy.json").write_text(
-            json.dumps(legacy), encoding="utf-8"
-        )
+        (gw1.claim_snapshots_dir / "s-legacy.json").write_text(json.dumps(legacy), encoding="utf-8")
         gw2 = _make_minimal_gateway(tmp_path)
         gw2.load_claim_snapshots_from_disk()
         assert gw2.claim_snapshots["s-legacy"]["/abs/x.py"] == "diff"

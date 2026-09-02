@@ -269,9 +269,7 @@ def test_invalid_config_raises(kwargs: dict) -> None:
 def test_invalid_threshold_pair_raises() -> None:
     with pytest.raises(InvalidThresholdSplitConfigError):
         ThresholdSplitDetector(
-            config=ThresholdSplitConfig(
-                default_thresholds=ThresholdPair(quantity=0, amount=Decimal("100000"))
-            )
+            config=ThresholdSplitConfig(default_thresholds=ThresholdPair(quantity=0, amount=Decimal("100000")))
         )
 
 

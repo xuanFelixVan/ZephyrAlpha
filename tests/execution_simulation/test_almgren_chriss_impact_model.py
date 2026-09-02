@@ -115,9 +115,15 @@ class TestImpactAtoms:
         assert _model().permanent_impact(0.09) == pytest.approx(3e-4)
 
     def test_permanent_custom_exponent(self) -> None:
-        model = _model(params=ImpactParams(
-            eta=0.1, beta=1.0, gamma=0.05, sigma=0.02, permanent_exponent=1.0,
-        ))
+        model = _model(
+            params=ImpactParams(
+                eta=0.1,
+                beta=1.0,
+                gamma=0.05,
+                sigma=0.02,
+                permanent_exponent=1.0,
+            )
+        )
         assert model.permanent_impact(0.1) == pytest.approx(0.05 * 0.1 * 0.02)
 
 
@@ -138,11 +144,11 @@ class TestQuote:
     def test_quote_invalid_inputs(self) -> None:
         model = _model()
         with pytest.raises(AlmgrenChrissError):
-            model.quote(0, 1000)          # 订单量非正
+            model.quote(0, 1000)  # 订单量非正
         with pytest.raises(AlmgrenChrissError):
-            model.quote(100, 0)           # 市场量非正
+            model.quote(100, 0)  # 市场量非正
         with pytest.raises(AlmgrenChrissError):
-            model.quote(2000, 1000)       # 参与率 > 1
+            model.quote(2000, 1000)  # 参与率 > 1
 
     def test_quote_deterministic(self) -> None:
         assert _model().quote(100, 1000) == _model().quote(100, 1000)
@@ -159,8 +165,8 @@ class TestDecayCurve:
         traj = _model().decay_curve(200, 1000, 2, schedule=ScheduleType.UNIFORM)
         assert [p.fraction for p in traj.points] == [0.5, 0.5]
         assert all(p.participation == pytest.approx(0.2) for p in traj.points)
-        temp = 0.1 * 0.2 * 0.02                      # 4e-4
-        perm = 0.05 * math.sqrt(0.2) * 0.02          # 4.47213595e-4
+        temp = 0.1 * 0.2 * 0.02  # 4e-4
+        perm = 0.05 * math.sqrt(0.2) * 0.02  # 4.47213595e-4
         p0, p1 = traj.points
         assert p0.temporary == pytest.approx(temp)
         assert p0.residual_temporary == pytest.approx(temp)
@@ -192,10 +198,7 @@ class TestDecayCurve:
 
     def test_schedule_changes_total_cost(self) -> None:
         model = _model()
-        totals = {
-            s: model.decay_curve(300, 3000, 3, schedule=s).total_cost
-            for s in ScheduleType
-        }
+        totals = {s: model.decay_curve(300, 3000, 3, schedule=s).total_cost for s in ScheduleType}
         assert len(set(totals.values())) == 3  # 节奏影响成本（前重→高参与率早段）
 
     def test_curve_invalid_inputs(self) -> None:
@@ -203,11 +206,11 @@ class TestDecayCurve:
         with pytest.raises(AlmgrenChrissError):
             model.decay_curve(100, 1000, 2, schedule="uniform")  # 字符串非枚举
         with pytest.raises(AlmgrenChrissError):
-            model.decay_curve(100, 1000, 0)                      # slices 非正
+            model.decay_curve(100, 1000, 0)  # slices 非正
         with pytest.raises(AlmgrenChrissError):
-            model.decay_curve(2000, 1000, 2)                     # 参与率 > 1
+            model.decay_curve(2000, 1000, 2)  # 参与率 > 1
         with pytest.raises(AlmgrenChrissError):
-            model.decay_curve(0, 1000, 2)                        # 订单量非正
+            model.decay_curve(0, 1000, 2)  # 订单量非正
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -232,10 +235,13 @@ class TestEstimateParams:
 
     def test_estimate_custom_hyperparams(self) -> None:
         params = AlmgrenChrissImpactModel.estimate_params(
-            self._BARS, beta=2.0, gamma_ratio=0.3, reference_participation=0.2,
+            self._BARS,
+            beta=2.0,
+            gamma_ratio=0.3,
+            reference_participation=0.2,
         )
         sigma = 0.001 * math.sqrt(240)
-        assert params.eta == pytest.approx(0.001 / (0.2 ** 2.0 * sigma))
+        assert params.eta == pytest.approx(0.001 / (0.2**2.0 * sigma))
         assert params.gamma == pytest.approx(0.3 * params.eta)
 
     def test_estimate_invalid_inputs(self) -> None:

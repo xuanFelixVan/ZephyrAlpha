@@ -41,8 +41,7 @@ _HEADER = (
 )
 
 
-def _quote_line(symbol: str = "510300.SH", last: str = "4.123",
-                timetag: str = "20260826103001000") -> str:
+def _quote_line(symbol: str = "510300.SH", last: str = "4.123", timetag: str = "20260826103001000") -> str:
     return (
         f"{symbol},{last},4.100,4.150,4.090,4.080,12345678,50987654.32,"
         "4.122,4.121,4.120,4.119,4.118,"

@@ -66,27 +66,40 @@ def _clean_snapshot():
         total_market_value=Decimal("0"),
     )
     quote = NormalizedMarketData(
-        symbol="600519.SH", timestamp=_NOW,
-        open=Decimal("1700"), high=Decimal("1700"),
-        low=Decimal("1700"), close=Decimal("1700"),
-        volume=Decimal("1000"), data_source="stub", idempotency_key="q-1",
+        symbol="600519.SH",
+        timestamp=_NOW,
+        open=Decimal("1700"),
+        high=Decimal("1700"),
+        low=Decimal("1700"),
+        close=Decimal("1700"),
+        volume=Decimal("1000"),
+        data_source="stub",
+        idempotency_key="q-1",
     )
     limits = RiskLimits(
-        as_of_date=_NOW, idempotency_key="lim-1",
-        max_single_position=0.50, max_gross_leverage=1.0,
+        as_of_date=_NOW,
+        idempotency_key="lim-1",
+        max_single_position=0.50,
+        max_gross_leverage=1.0,
     )
     return assemble_risk_snapshot(
         RiskSnapshotInput(
-            position_snapshot=pos, quotes={"600519.SH": quote},
-            fills=(), limits=limits, as_of=_NOW,
+            position_snapshot=pos,
+            quotes={"600519.SH": quote},
+            fills=(),
+            limits=limits,
+            as_of=_NOW,
         )
     )
 
 
 def _request(quantity: str = "1", side: OrderSide = OrderSide.BUY) -> OrderRiskRequest:
     return OrderRiskRequest(
-        symbol="600519.SH", side=side, quantity=Decimal(quantity),
-        price=Decimal("1700"), strategy_id="st-1",
+        symbol="600519.SH",
+        side=side,
+        quantity=Decimal(quantity),
+        price=Decimal("1700"),
+        strategy_id="st-1",
     )
 
 
@@ -203,24 +216,38 @@ class TestSnapshotAndVeto:
     def test_veto_blocks_mapped(self):
         # 超限买入 → 否决引擎产出 SINGLE_POSITION_LIMIT
         pos = PositionSnapshot(
-            portfolio_id="pf-1", as_of_timestamp=_NOW, idempotency_key="pos-1",
-            cash=Decimal("10000"), holdings={"600519.SH": Decimal("100")},
-            market_values={}, total_market_value=Decimal("0"),
+            portfolio_id="pf-1",
+            as_of_timestamp=_NOW,
+            idempotency_key="pos-1",
+            cash=Decimal("10000"),
+            holdings={"600519.SH": Decimal("100")},
+            market_values={},
+            total_market_value=Decimal("0"),
         )
         quote = NormalizedMarketData(
-            symbol="600519.SH", timestamp=_NOW,
-            open=Decimal("1700"), high=Decimal("1700"),
-            low=Decimal("1700"), close=Decimal("1700"),
-            volume=Decimal("1000"), data_source="stub", idempotency_key="q-1",
+            symbol="600519.SH",
+            timestamp=_NOW,
+            open=Decimal("1700"),
+            high=Decimal("1700"),
+            low=Decimal("1700"),
+            close=Decimal("1700"),
+            volume=Decimal("1000"),
+            data_source="stub",
+            idempotency_key="q-1",
         )
         limits = RiskLimits(
-            as_of_date=_NOW, idempotency_key="lim-1",
-            max_single_position=0.10, max_gross_leverage=1.0,
+            as_of_date=_NOW,
+            idempotency_key="lim-1",
+            max_single_position=0.10,
+            max_gross_leverage=1.0,
         )
         snap = assemble_risk_snapshot(
             RiskSnapshotInput(
-                position_snapshot=pos, quotes={"600519.SH": quote},
-                fills=(), limits=limits, as_of=_NOW,
+                position_snapshot=pos,
+                quotes={"600519.SH": quote},
+                fills=(),
+                limits=limits,
+                as_of=_NOW,
             )
         )
         checker, _ = _checker(snapshot_builder=_StubSnapshotBuilder(snap))

@@ -56,11 +56,13 @@ def _handler(
     executed: list | None = None,
     with_executor: bool = True,
 ) -> WeChatBotHandler:
-    watch_provider = (lambda: {"上证": "3210.5", "持仓": "3"}) if watch is ... else (
-        (lambda: watch) if watch is not None else None
+    watch_provider = (
+        (lambda: {"上证": "3210.5", "持仓": "3"}) if watch is ... else ((lambda: watch) if watch is not None else None)
     )
-    query_provider = (lambda key: {"标的": key, "现价": "10.24"}) if query is ... else (
-        (lambda key: query) if query is not None else None
+    query_provider = (
+        (lambda key: {"标的": key, "现价": "10.24"})
+        if query is ...
+        else ((lambda key: query) if query is not None else None)
     )
     executor = None
     if with_executor:
@@ -78,9 +80,7 @@ def _handler(
 
 
 def _msg(content: str, user: str = "alice", msg_id: str = "m-1", msg_type: str = "text") -> CallbackMessage:
-    return CallbackMessage(
-        msg_id=msg_id, from_user=user, content=content, received_at=_T0, msg_type=msg_type
-    )
+    return CallbackMessage(msg_id=msg_id, from_user=user, content=content, received_at=_T0, msg_type=msg_type)
 
 
 # ──────────────────────────────────────────────────────────────────────────────

@@ -60,10 +60,10 @@ class TestInit:
 
     def test_invalid_thresholds_raise(self) -> None:
         for kw in (
-            {"exact_threshold": 0.5, "partial_threshold": 0.5},   # 恰等非法
+            {"exact_threshold": 0.5, "partial_threshold": 0.5},  # 恰等非法
             {"exact_threshold": 0.85, "partial_threshold": 0.9},  # 倒置
             {"exact_threshold": 0.85, "partial_threshold": 0.0},  # 下界
-            {"exact_threshold": 1.5, "partial_threshold": 0.5},   # 上界
+            {"exact_threshold": 1.5, "partial_threshold": 0.5},  # 上界
             {"exact_threshold": True, "partial_threshold": 0.5},  # 布尔
         ):
             with pytest.raises(ModuleMatcherError):
@@ -125,7 +125,9 @@ class TestMatch:
     def test_candidate_ordering(self) -> None:
         result = _std_matcher().match("alpha beta gamma")
         assert [c.module_id for c in result.candidates] == [
-            "mod_alpha", "mod_beta", "mod_gamma",
+            "mod_alpha",
+            "mod_beta",
+            "mod_gamma",
         ]  # 按 (-score, module_id) 确定性排序
 
     def test_empty_requirement_raises(self) -> None:
@@ -159,7 +161,7 @@ class TestMatch:
         m = _matcher(table)
         m.register_module("mod", ("x",))
         result = m.match("req x")
-        assert result.best.score == pytest.approx(2 ** -0.5)
+        assert result.best.score == pytest.approx(2**-0.5)
         assert result.tier is MatchTier.PARTIAL
 
     def test_low_score_no_match_keeps_candidate(self) -> None:

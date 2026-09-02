@@ -241,7 +241,10 @@ class TestDecideChange:
         calls: list[tuple[str, str]] = []
         mgr = _manager(registrar=lambda bid, anchor: calls.append((bid, anchor)), seed=(_boundary(),))
         mgr.propose_change(
-            _request(kind=ChangeKind.UPDATE, body=_boundary(text="禁止越层 import（收紧）", anchor="scripts/gov/check_layer_v2.py"))
+            _request(
+                kind=ChangeKind.UPDATE,
+                body=_boundary(text="禁止越层 import（收紧）", anchor="scripts/gov/check_layer_v2.py"),
+            )
         )
         mgr.decide_change(_approve("CHG-001"))
         assert mgr.get("HB-001").constraint_text == "禁止越层 import（收紧）"
@@ -329,9 +332,7 @@ class TestDeterminism:
             mgr.propose_change(_request(cid="CHG-001", body=_boundary()))
             mgr.propose_change(_request(cid="CHG-002", bid="HB-002", body=_boundary("HB-002")))
             mgr.decide_change(_approve("CHG-002"))
-            mgr.decide_change(
-                ApprovalDecision(change_id="CHG-001", approved=False, decided_by="reviewer")
-            )
+            mgr.decide_change(ApprovalDecision(change_id="CHG-001", approved=False, decided_by="reviewer"))
             return (
                 tuple(b.boundary_id for b in mgr.catalog()),
                 tuple((r.change_id, r.status) for r in mgr.history()),

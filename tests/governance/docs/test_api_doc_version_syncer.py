@@ -91,9 +91,7 @@ class TestInitAndScan:
         syncer = ApiDocVersionSyncer(api_scanner=lambda: ["not-a-signature"])
         with pytest.raises(ApiDocSyncError):
             syncer.scan_changes()
-        bad = ApiDocVersionSyncer(
-            api_scanner=lambda: [ApiSignature("risk_api", "", "sig")]
-        )
+        bad = ApiDocVersionSyncer(api_scanner=lambda: [ApiSignature("risk_api", "", "sig")])
         with pytest.raises(ApiDocSyncError):
             bad.scan_changes()
 
@@ -113,7 +111,8 @@ class TestDiff:
     def test_no_baseline_all_added(self) -> None:
         changes = _syncer().scan_changes()
         assert [(c.api_id, c.kind) for c in changes] == [
-            ("quote_api", ChangeKind.ADDED), ("risk_api", ChangeKind.ADDED),
+            ("quote_api", ChangeKind.ADDED),
+            ("risk_api", ChangeKind.ADDED),
         ]
 
     def test_no_change_empty(self) -> None:
@@ -164,7 +163,8 @@ class TestTradingHours:
             raise RuntimeError("calendar down")
 
         syncer = ApiDocVersionSyncer(
-            api_scanner=lambda: list(_V1.values()), trading_hours=_boom,
+            api_scanner=lambda: list(_V1.values()),
+            trading_hours=_boom,
         )
         with pytest.raises(ApiDocSyncError):
             syncer.sync()

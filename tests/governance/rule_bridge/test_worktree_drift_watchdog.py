@@ -300,7 +300,9 @@ def test_hot_only_scans_only_hot_files(git_repo: Path) -> None:
     _git(git_repo, "-c", "user.email=t@t", "-c", "user.name=t", "commit", "-q", "-m", "add plain")
     (git_repo / "plain.txt").write_text("b\n", encoding="utf-8")
     # design_memos 前缀热文件漂移
-    memo = git_repo / "docs" / "02_enterprise_architecture" / "07_trading_decision_architecture" / "design_memos" / "m.md"
+    memo = (
+        git_repo / "docs" / "02_enterprise_architecture" / "07_trading_decision_architecture" / "design_memos" / "m.md"
+    )
     memo.parent.mkdir(parents=True, exist_ok=True)
     memo.write_text("v1\n", encoding="utf-8")
     _git(git_repo, "add", ".")

@@ -196,9 +196,7 @@ class TestReceipts:
         def _boom(ref, payload):
             raise RuntimeError("network down")
 
-        bot = FeishuBotSender(
-            webhook_ref="secrets://feishu/bot-webhook", client=_boom, clock=lambda: _T0
-        )
+        bot = FeishuBotSender(webhook_ref="secrets://feishu/bot-webhook", client=_boom, clock=lambda: _T0)
         receipt = bot.send_alert(_alert())
         assert receipt.ok is False
         assert receipt.detail == "client_exception"

@@ -260,10 +260,12 @@ class TestAlerting:
         idx = _index(events)
         for i in range(4):  # 工具/路径交替 → 2 次低窗（asi=0.6）
             alt = i % 2 == 0
-            idx.record_interaction(_rec(
-                tools=("x", "y") if alt else ("scan", "rank"),
-                path=("u", "v") if alt else ("observe", "infer"),
-            ))
+            idx.record_interaction(
+                _rec(
+                    tools=("x", "y") if alt else ("scan", "rank"),
+                    path=("u", "v") if alt else ("observe", "infer"),
+                )
+            )
         _fill(idx, 1)  # 稳定交互滑入 → 混合窗分量 0.5 → asi=0.8 好窗重置
         assert idx.consecutive_low("signal_analyst") == 0
         assert events == []

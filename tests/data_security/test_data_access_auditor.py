@@ -164,9 +164,7 @@ class TestDetect:
     def test_bulk_export_detected(self) -> None:
         auditor = _auditor()
         _seed_baseline(auditor)  # 行均 105，阈值 10×105=1050
-        kinds = auditor.record(
-            _event(event_id="x2", action=AccessAction.EXPORT, row_count=5000)
-        )
+        kinds = auditor.record(_event(event_id="x2", action=AccessAction.EXPORT, row_count=5000))
         assert kinds == (AnomalyKind.BULK_EXPORT,)
 
     def test_off_hours_detected(self) -> None:
@@ -265,9 +263,7 @@ class TestQuery:
         auditor = _auditor(sensitive_tables={"positions": "high"})
         auditor.record(_event(event_id="s1", table_name="positions"))
         auditor.record(_event(event_id="s2", table_name="kline_daily"))
-        auditor.record(
-            _event(event_id="s3", subject="risk_b", table_name="positions")
-        )
+        auditor.record(_event(event_id="s3", subject="risk_b", table_name="positions"))
         assert [e.event_id for e in auditor.sensitive_events()] == ["s1", "s3"]
         assert [e.event_id for e in auditor.sensitive_events(subject="risk_b")] == ["s3"]
         assert auditor.sensitive_events(table_name="kline_daily") == []

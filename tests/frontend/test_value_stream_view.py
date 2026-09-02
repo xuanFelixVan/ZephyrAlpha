@@ -155,14 +155,20 @@ class TestHighlight:
         payload = _view().highlight("market_data")
         assert payload.upstream == ()
         assert payload.downstream == (
-            "alpha_signal", "momentum_factor", "portfolio", "t0_executor",
+            "alpha_signal",
+            "momentum_factor",
+            "portfolio",
+            "t0_executor",
         )
 
     def test_sink_module_closure(self) -> None:
         payload = _view().highlight("portfolio")
         assert payload.downstream == ()
         assert payload.upstream == (
-            "alpha_signal", "market_data", "momentum_factor", "t0_executor",
+            "alpha_signal",
+            "market_data",
+            "momentum_factor",
+            "t0_executor",
         )
 
     def test_unrelated_excluded(self) -> None:

@@ -51,7 +51,8 @@ def _proxy(
     return FrontendApiProxy(
         route_table=routes or {"/api/risk": "risk", "/api": "core"},
         token_validator=validator or (lambda token: {"tok-ok": "alice"}.get(token)),
-        upstreams=upstreams or {
+        upstreams=upstreams
+        or {
             "risk": lambda req: UpstreamResponse(200, {"domain": "risk"}),
             "core": lambda req: UpstreamResponse(200, {"domain": "core"}),
         },
@@ -202,10 +203,12 @@ class TestHandle:
         assert resp.payload["error"] == "upstream_error"
 
     def test_upstream_non_2xx_passthrough(self) -> None:
-        proxy = _proxy(upstreams={
-            "risk": lambda req: UpstreamResponse(422, {"msg": "参数非法"}),
-            "core": lambda req: UpstreamResponse(200, {}),
-        })
+        proxy = _proxy(
+            upstreams={
+                "risk": lambda req: UpstreamResponse(422, {"msg": "参数非法"}),
+                "core": lambda req: UpstreamResponse(200, {}),
+            }
+        )
         resp = proxy.handle(_request())
         assert resp.status_code == 422
         assert resp.ok is False

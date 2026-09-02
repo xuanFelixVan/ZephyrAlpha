@@ -843,9 +843,7 @@ class TestAtomicWriteDirtyTracking:
         adg._atomic_write(dep, conn=conn, only_node_ids={1})
         # 只有 node_id=1 被回写：UPDATE ... WHERE node_id=%s 参数末位为 1
         written_ids = [
-            c.args[1][-1]
-            for c in conn.execute.call_args_list
-            if len(c.args) >= 2 and "UPDATE nodes" in str(c.args[0])
+            c.args[1][-1] for c in conn.execute.call_args_list if len(c.args) >= 2 and "UPDATE nodes" in str(c.args[0])
         ]
         assert written_ids == [1], f"应仅回写 dirty 节点 1，实际回写集={written_ids}"
 
@@ -855,10 +853,6 @@ class TestAtomicWriteDirtyTracking:
         conn, cursor = self._spy_conn()
         adg._atomic_write(dep, conn=conn, only_node_ids=None)
         written_ids = [
-            c.args[1][-1]
-            for c in conn.execute.call_args_list
-            if len(c.args) >= 2 and "UPDATE nodes" in str(c.args[0])
+            c.args[1][-1] for c in conn.execute.call_args_list if len(c.args) >= 2 and "UPDATE nodes" in str(c.args[0])
         ]
-        assert sorted(written_ids) == [1, 2], (
-            f"独立模式 None 应全量回写（向后兼容），实际回写集={written_ids}"
-        )
+        assert sorted(written_ids) == [1, 2], f"独立模式 None 应全量回写（向后兼容），实际回写集={written_ids}"

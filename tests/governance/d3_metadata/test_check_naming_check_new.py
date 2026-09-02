@@ -65,15 +65,24 @@ def test_check_new_blocks_duplicate_in_scope(tmp_path):
     baseline = "docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml"
     blob = subprocess.run(
         ["git", "rev-parse", f"HEAD:{baseline}"],
-        capture_output=True, text=True, check=True, cwd=str(ROOT),
+        capture_output=True,
+        text=True,
+        check=True,
+        cwd=str(ROOT),
     ).stdout.strip()
     subprocess.run(
         ["git", "read-tree", "HEAD"],
-        capture_output=True, check=True, cwd=str(ROOT), env=env,
+        capture_output=True,
+        check=True,
+        cwd=str(ROOT),
+        env=env,
     )
     subprocess.run(
         ["git", "update-index", "--add", "--cacheinfo", f"100644,{blob},docs/trae_028_doc_structure_naming.yaml"],
-        capture_output=True, check=True, cwd=str(ROOT), env=env,
+        capture_output=True,
+        check=True,
+        cwd=str(ROOT),
+        env=env,
     )
 
     r = _run(["--check-new", "docs/trae_028_doc_structure_naming.yaml"], env=env)

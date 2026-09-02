@@ -77,9 +77,7 @@ class TestCurrentView:
             weight=0.2,
             sellable_quantity=Decimal("1000"),
         )
-        service = LivePortfolioService(
-            lambda: _snapshot(positions=(pos,), total_market_value=Decimal("10000"))
-        )
+        service = LivePortfolioService(lambda: _snapshot(positions=(pos,), total_market_value=Decimal("10000")))
         view = service.current_view()
         assert view.portfolio_id == "pf-live"
         assert view.nav == Decimal("60000")
@@ -133,9 +131,7 @@ class TestQueries:
             market_value=Decimal("10000"),
             weight=0.2,
         )
-        service = LivePortfolioService(
-            lambda: _snapshot(positions=(pos,), total_market_value=Decimal("10000"))
-        )
+        service = LivePortfolioService(lambda: _snapshot(positions=(pos,), total_market_value=Decimal("10000")))
         assert service.position_of("600000.SH").quantity == Decimal("1000")
         assert service.position_of("000001.SZ") is None  # 未持仓≠持仓为0
 

@@ -29,12 +29,7 @@ def _write_registry(tmp_path: Path, body: str) -> Path:
     return reg
 
 
-_HEADER = (
-    "# wiring_registry.yaml\n"
-    "version: '1.0.0'\n"
-    "generated_at: '2026-08-27'\n"
-    "modules:\n"
-)
+_HEADER = "# wiring_registry.yaml\nversion: '1.0.0'\ngenerated_at: '2026-08-27'\nmodules:\n"
 
 
 def _entry(cid: str, status: str, registered_at: str = "2026-08-27", cls: str = "eventbus_consumer") -> str:
@@ -94,7 +89,9 @@ class TestOrphanDetection:
         assert orphans == []
 
     def test_wired_and_exempt_never_orphan(self, tmp_path: Path) -> None:
-        body = _entry("CAND-X-013", "wired", "2020-01-01") + _entry("CAND-X-014", "exempt", "2020-01-01", cls="pure_library")
+        body = _entry("CAND-X-013", "wired", "2020-01-01") + _entry(
+            "CAND-X-014", "exempt", "2020-01-01", cls="pure_library"
+        )
         reg = _write_registry(tmp_path, _HEADER + body)
         _, orphans = check(reg, 90, "2026-08-27")
         assert orphans == []

@@ -110,9 +110,12 @@ class TestChannelsAndResponse:
         mon = DistributionDriftMonitor(
             thresholds={
                 DriftChannel.FEATURE: ChannelThresholds(
-                    psi_warn=0.01, psi_critical=999.0,
-                    kl_warn=0.01, kl_critical=999.0,
-                    mdd_warn=0.01, mdd_critical=999.0,
+                    psi_warn=0.01,
+                    psi_critical=999.0,
+                    kl_warn=0.01,
+                    kl_critical=999.0,
+                    mdd_warn=0.01,
+                    mdd_critical=999.0,
                 ),
             }
         )
@@ -126,9 +129,12 @@ class TestChannelsAndResponse:
         mon = DistributionDriftMonitor(
             thresholds={
                 DriftChannel.CONCEPT: ChannelThresholds(
-                    psi_warn=999.0, psi_critical=1000.0,
-                    kl_warn=999.0, kl_critical=1000.0,
-                    mdd_warn=999.0, mdd_critical=1000.0,
+                    psi_warn=999.0,
+                    psi_critical=1000.0,
+                    kl_warn=999.0,
+                    kl_critical=1000.0,
+                    mdd_warn=999.0,
+                    mdd_critical=1000.0,
                 ),
             }
         )

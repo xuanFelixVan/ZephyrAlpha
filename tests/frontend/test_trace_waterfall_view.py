@@ -63,12 +63,14 @@ def _view(
 
 def _tree_spans() -> dict[str, list[Span]]:
     # root(0→400) ├─ childA(50→650) │  └─ grandA(100→150) └─ childB(200→100)
-    return {"t-1": [
-        _span("root", duration_ms=400.0),
-        _span("childA", "root", start_offset_ms=50.0, duration_ms=600.0),
-        _span("grandA", "childA", start_offset_ms=100.0, duration_ms=50.0),
-        _span("childB", "root", start_offset_ms=200.0, duration_ms=100.0),
-    ]}
+    return {
+        "t-1": [
+            _span("root", duration_ms=400.0),
+            _span("childA", "root", start_offset_ms=50.0, duration_ms=600.0),
+            _span("grandA", "childA", start_offset_ms=100.0, duration_ms=50.0),
+            _span("childB", "root", start_offset_ms=200.0, duration_ms=100.0),
+        ]
+    }
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -96,8 +98,7 @@ class TestInit:
                 _view(sampling_rate=bad)
 
     def test_custom_threshold_ok(self) -> None:
-        view = _view(spans=_tree_spans(),
-                     slow_threshold_ms={TraceChainView.TRADE_MAIN: 500.0})
+        view = _view(spans=_tree_spans(), slow_threshold_ms={TraceChainView.TRADE_MAIN: 500.0})
         payload = view.waterfall("t-1")
         slow = {r.span_id for r in payload.rows if r.slow}
         assert slow == {"childA"}  # 600ms ≥ 500
@@ -180,26 +181,32 @@ class TestWaterfall:
         assert payload.slow_count == 1
 
     def test_slow_threshold_per_view(self) -> None:
-        spans = {"t-1": [
-            _span("gpu", view=TraceChainView.GPU_INFER, duration_ms=900.0),
-            _span("trade", view=TraceChainView.TRADE_MAIN, duration_ms=900.0),
-        ]}
+        spans = {
+            "t-1": [
+                _span("gpu", view=TraceChainView.GPU_INFER, duration_ms=900.0),
+                _span("trade", view=TraceChainView.TRADE_MAIN, duration_ms=900.0),
+            ]
+        }
         payload = _view(spans=spans).waterfall("t-1")
         slow = {r.span_id: r.slow for r in payload.rows}
-        assert slow["gpu"] is True    # 900 ≥ GPU 默认 800
+        assert slow["gpu"] is True  # 900 ≥ GPU 默认 800
         assert slow["trade"] is True  # 900 ≥ 交易 500
-        spans2 = {"t-1": [
-            _span("gpu", view=TraceChainView.GPU_INFER, duration_ms=600.0),
-        ]}
+        spans2 = {
+            "t-1": [
+                _span("gpu", view=TraceChainView.GPU_INFER, duration_ms=600.0),
+            ]
+        }
         payload2 = _view(spans=spans2).waterfall("t-1")
         assert payload2.rows[0].slow is False  # 600 < 800
 
     def test_siblings_ordered_by_start(self) -> None:
-        spans = {"t-1": [
-            _span("root", duration_ms=1000.0),
-            _span("b_late", "root", start_offset_ms=300.0),
-            _span("a_early", "root", start_offset_ms=100.0),
-        ]}
+        spans = {
+            "t-1": [
+                _span("root", duration_ms=1000.0),
+                _span("b_late", "root", start_offset_ms=300.0),
+                _span("a_early", "root", start_offset_ms=100.0),
+            ]
+        }
         payload = _view(spans=spans).waterfall("t-1")
         assert [r.span_id for r in payload.rows] == ["root", "a_early", "b_late"]
 

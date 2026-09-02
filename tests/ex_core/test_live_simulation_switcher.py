@@ -43,9 +43,7 @@ class TestSwitchToLive:
     def test_valid_token_switches_and_records(self):
         clock_values = iter([datetime(2026, 8, 23, 9, 30, tzinfo=UTC)])
         switcher = _make_switcher(clock=lambda: next(clock_values))
-        record = switcher.switch_to_live(
-            confirmation_token=_GOOD_TOKEN, reason="实盘小资金上线", operator="owner"
-        )
+        record = switcher.switch_to_live(confirmation_token=_GOOD_TOKEN, reason="实盘小资金上线", operator="owner")
         assert switcher.is_live is True
         assert record.from_mode is TradingMode.SIMULATION
         assert record.to_mode is TradingMode.LIVE

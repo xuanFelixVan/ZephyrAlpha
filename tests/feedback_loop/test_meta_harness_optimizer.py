@@ -33,12 +33,8 @@ from zephyr.feedback_loop.meta_harness_optimizer import (  # noqa: E402
 
 _T0 = datetime.datetime(2026, 8, 26, 9, 30, 0)
 
-_BASE = LearningConfig(
-    mutation_rate=0.1, match_threshold=0.5, review_policy=ReviewPolicy.STANDARD
-)
-_BETTER = LearningConfig(
-    mutation_rate=0.2, match_threshold=0.6, review_policy=ReviewPolicy.STRICT
-)
+_BASE = LearningConfig(mutation_rate=0.1, match_threshold=0.5, review_policy=ReviewPolicy.STANDARD)
+_BETTER = LearningConfig(mutation_rate=0.2, match_threshold=0.6, review_policy=ReviewPolicy.STRICT)
 
 
 def _score_by_mutation(config: LearningConfig) -> float:
@@ -46,9 +42,7 @@ def _score_by_mutation(config: LearningConfig) -> float:
     return config.mutation_rate * 100.0
 
 
-def _optimizer(
-    evaluator=_score_by_mutation, **kw
-) -> MetaHarnessOptimizer:
+def _optimizer(evaluator=_score_by_mutation, **kw) -> MetaHarnessOptimizer:
     kw.setdefault("initial_config", _BASE)
     kw.setdefault("clock", lambda: _T0)
     return MetaHarnessOptimizer(evaluator=evaluator, **kw)
@@ -105,9 +99,7 @@ class TestLearningConfig:
 class TestConstructor:
     def test_evaluator_not_injected_fail_closed(self) -> None:
         with pytest.raises(MetaHarnessError):
-            MetaHarnessOptimizer(
-                initial_config=_BASE, evaluator=None, clock=lambda: _T0
-            )
+            MetaHarnessOptimizer(initial_config=_BASE, evaluator=None, clock=lambda: _T0)
 
     def test_initial_config_not_learning_config_rejected(self) -> None:
         with pytest.raises(MetaHarnessError):
@@ -202,8 +194,7 @@ class TestABExperiment:
         def run() -> tuple:
             opt = _optimizer()
             r = opt.run_ab_experiment(_BASE, _BETTER)
-            return (r.winner, r.significant, r.score_a, r.score_b,
-                    opt.current_config.mutation_rate)
+            return (r.winner, r.significant, r.score_a, r.score_b, opt.current_config.mutation_rate)
 
         assert run() == run()
 

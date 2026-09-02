@@ -38,25 +38,41 @@ _NOW = datetime(2026, 8, 25, 12, 0, 0, tzinfo=timezone.utc)
 
 def _req(**kw) -> SorRequest:
     base = dict(
-        symbol="600519.SH", side="BUY", quantity=1000, price=1700.0,
-        split_algo="twap", slice_count=4, expected_slippage_bps=5.0,
+        symbol="600519.SH",
+        side="BUY",
+        quantity=1000,
+        price=1700.0,
+        split_algo="twap",
+        slice_count=4,
+        expected_slippage_bps=5.0,
     )
     base.update(kw)
     return SorRequest(**base)
 
 
-def _cand(broker_id: str, latency_ms: float = 10.0, fill_rate: float = 0.95,
-          cost_bps: float = 2.0, liquidity_score: float = 0.9) -> BrokerCandidate:
+def _cand(
+    broker_id: str,
+    latency_ms: float = 10.0,
+    fill_rate: float = 0.95,
+    cost_bps: float = 2.0,
+    liquidity_score: float = 0.9,
+) -> BrokerCandidate:
     return BrokerCandidate(
-        broker_id=broker_id, latency_ms=latency_ms, fill_rate=fill_rate,
-        cost_bps=cost_bps, liquidity_score=liquidity_score,
+        broker_id=broker_id,
+        latency_ms=latency_ms,
+        fill_rate=fill_rate,
+        cost_bps=cost_bps,
+        liquidity_score=liquidity_score,
     )
 
 
 def _fake_splitter(symbol, side, total_quantity, slice_count, algo, volume_profile):
     return {
-        "symbol": symbol, "side": side, "total": total_quantity,
-        "slices": slice_count, "algo": algo,
+        "symbol": symbol,
+        "side": side,
+        "total": total_quantity,
+        "slices": slice_count,
+        "algo": algo,
     }
 
 
@@ -93,16 +109,13 @@ class TestRouting:
         with pytest.raises(SorAgentError):
             agent.decide(_req(), [], now_utc=_NOW)
         with pytest.raises(SorAgentError):
-            agent.decide(_req(), [_cand("b", liquidity_score=0.0)],
-                         now_utc=_NOW)  # 全部低于 min_liquidity
+            agent.decide(_req(), [_cand("b", liquidity_score=0.0)], now_utc=_NOW)  # 全部低于 min_liquidity
 
     def test_invalid_weights_rejected(self) -> None:
         with pytest.raises(SorAgentError):
-            SorRouteWeights(w_latency=0.5, w_fill_rate=0.5, w_cost=0.5,
-                            w_liquidity=0.5)  # 和=2.0
+            SorRouteWeights(w_latency=0.5, w_fill_rate=0.5, w_cost=0.5, w_liquidity=0.5)  # 和=2.0
         with pytest.raises(SorAgentError):
-            SorRouteWeights(w_latency=-0.5, w_fill_rate=0.5, w_cost=0.5,
-                            w_liquidity=0.5)
+            SorRouteWeights(w_latency=-0.5, w_fill_rate=0.5, w_cost=0.5, w_liquidity=0.5)
 
     def test_invalid_request_fail_closed(self) -> None:
         agent = SorAgent(splitter_fn=_fake_splitter)
@@ -124,9 +137,7 @@ class TestSplitDelegation:
 
         agent = SorAgent(splitter_fn=spy_splitter)
         agent.decide(_req(split_algo="iceberg"), [_cand("b")], now_utc=_NOW)
-        agent.decide(_req(split_algo="volume_ratio",
-                          volume_profile=(1.0, 2.0, 3.0, 4.0)),
-                     [_cand("b")], now_utc=_NOW)
+        agent.decide(_req(split_algo="volume_ratio", volume_profile=(1.0, 2.0, 3.0, 4.0)), [_cand("b")], now_utc=_NOW)
         # 冰山→TWAP 等量少片（降级口径）；量比→VWAP 量能权重
         assert seen == ["twap", "vwap"]
 
