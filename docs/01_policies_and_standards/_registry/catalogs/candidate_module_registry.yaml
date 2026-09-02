@@ -6871,13 +6871,14 @@ entries:
     B 管线兜底（生成后 ruff 六码 --fix 逐文件），C 防回潮门禁
     （gate-codegen-idempotent 已注册 pre-commit）。生成器输出与 ruff 修复批
     结构性冲突已消除，重跑 diff=零。format 大爆炸与本项无冲突，仍按原计划择窗。
-  status: candidate
+  status: promoted
+  promoted_to: 'ruff format 全量一次性成型落地（2026-09-02 冻结窗口 freeze-gw 会话，578 文件 12 批 commits 69069b9a..91f4c676，ruff format --check 存量清零 7577/7577）'
   priority: P3
   source: '循环审计 R1 杠杆#4（2026-08-19 AI-00 登记）'
   created: '2026-08-19'
-  last_updated: '2026-08-19'
-  last_reviewed_at: '2026-08-30'
-  review_note: '2026-08-30 候选核销批（greatwall_20260830）复核=维持 candidate：前置=无并发施工的规划冻结窗口（当前存在并发会话，不满足）；零语义变更，不阻断功能，择窗执行即可。'
+  last_updated: '2026-09-02'
+  last_reviewed_at: '2026-09-02'
+  last_review_outcome: '2026-09-02 冻结窗口（freeze-gw 会话）执行完毕：ruff format . 578 文件重排/6999 未动，零语义变更；两轮全量回归（81 批×2 + 超时批 240 文件单文件两轮 + 27 红文件 HEAD 基线对照）实证零 format 诱发红——18 遗留红基线同红、3 reconcile 赛跑沉降后转绿、5 超时批内红基线同红、4 慢性挂死基线实证（存量债清单见结案报告 docs/_working/reports/2026-09-02-freeze-window-completion-report.md）；后续新文件 format 由 ruff-format 门禁增量守住。'
 
 # --- CAND-GOVTEST-003: ALGO_FLOW 标记 2186 模块批量补登（drafter 分批+抽查） ---
 - id: CAND-GOVTEST-003
