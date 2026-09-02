@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L08-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """服务总闸——启动项注册表（Owner 2026-09-02 裁定：桌面 Dashboard 承担启动编排，本模块=唯一真源）
 * 目录：16 个启动项（服务域/数据域/交易域/基础设施/守护域），大白话说明随目录走
 * 状态：psutil 进程扫描 + tmp/*.heartbeat 心跳 freshness + 端口探测 + schtasks 计划任务（60s 缓存）
@@ -97,6 +99,9 @@ SERVICE_CATALOG: list[dict[str, Any]] = [
     {"id": "postgres", "group": "infra", "tier": "external", "name": "PostgreSQL 治理库",
      "desc": "项目地图/依赖图的老家（depgraph 唯一真源）——挂了整个 AI 治理链瞎眼",
      "detect": {"type": "env_tcp", "env": ".env.postgres", "host_key": "POSTGRES_HOST", "port_key": "POSTGRES_PORT"}},
+    {"id": "cold_archive", "group": "infra", "tier": "external", "name": "E 盘冷存储",
+     "desc": "老分区数据搬进 parquet 的冷备仓（E:\\zephyr_cold_archive，111 亿行的老窝的后悔药）——库炸了靠它重演历史",
+     "detect": {"type": "cold_archive", "dir": "E:\\zephyr_cold_archive", "manifest": "archive_manifest.jsonl"}},
     {"id": "rsshub", "group": "infra", "tier": "external", "name": "RSSHub 新闻源",
      "desc": "新闻/舆情抓取的输送管道（pm2 托管）——情绪分析和新闻页的口粮，开机自启",
      "detect": {"type": "port", "port": 1200}},
@@ -350,6 +355,49 @@ def _file_fresh(dirpath: str) -> tuple[str, str]:
         return "gray", "桥目录不可达：" + str(e)[:60]
 
 
+_COLD_CACHE: dict[str, tuple[float, dict[str, Any]]] = {}   # 冷备统计缓存（rglob 2000+ 文件 ~数百 ms，5min 复用）
+
+
+def _cold_archive(dirpath: str, manifest_name: str) -> tuple[str, str]:
+    """冷备仓探测 → (light, detail)。在位=green；manifest/目录丢失=red（灾备事故）。
+    归档节奏未知（可能分区满才触发），归档停滞天数只如实展示不判灯。"""
+    now = time.time()
+    hit = _COLD_CACHE.get(dirpath)
+    if hit and now - hit[0] < 300:
+        return hit[1]["light"], hit[1]["detail"]
+    result: dict[str, Any]
+    try:
+        manifest = Path(dirpath) / manifest_name
+        if not manifest.exists():
+            result = {"light": "red", "detail": "归档清单丢失（灾备事故）：" + manifest_name}
+        else:
+            last_archived = ""
+            with manifest.open("r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if line:
+                        try:
+                            last_archived = json.loads(line).get("archived_at") or last_archived
+                        except json.JSONDecodeError:
+                            continue
+            s = 0
+            n = 0
+            for p in Path(dirpath).rglob("*"):
+                if p.is_file():
+                    n += 1
+                    s += p.stat().st_size
+            days = ""
+            if last_archived:
+                age_d = round((now - datetime.fromisoformat(last_archived).timestamp()) / 86400)
+                days = f" · 最新归档 {age_d} 天前"
+            result = {"light": "green",
+                      "detail": f"在位 {n} 个文件 / {s/1073741824:.1f} GB{days}"}
+    except Exception as e:  # noqa: BLE001 — 冷备不可达=事故
+        result = {"light": "red", "detail": "冷备不可达：" + str(e)[:60]}
+    _COLD_CACHE[dirpath] = (now, result)
+    return result["light"], result["detail"]
+
+
 def _env_tcp_alive(env_file: str, host_key: str, port_key: str) -> tuple[bool, str]:
     """通用 .env 真源 TCP 探活（#ARCH-CH-017 同源精神：读配置禁硬编码 IP）。"""
     try:
@@ -469,6 +517,10 @@ def get_services_status() -> dict[str, Any]:
                 st["light"] = "green"; st["detail"] = msg
             else:
                 st["light"] = "red"; st["detail"] = "断连：" + msg
+        elif det["type"] == "cold_archive":
+            light, msg = _cold_archive(det["dir"], det["manifest"])
+            st["light"] = light
+            st["detail"] = msg
         elif det["type"] == "ch":
             alive, msg = _ch_alive()
             if alive:
