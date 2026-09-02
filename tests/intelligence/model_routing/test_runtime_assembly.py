@@ -545,9 +545,7 @@ class TestTaskGateShadow:
         assert not log.exists()  # 不落影子日志
 
     def test_default_hook_is_hard_gate(self):
-        hook = ra.task_gate_dispatch_hook(
-            gate=self._FixedGate(allowed=False), scheduler=self._RecordingScheduler()
-        )
+        hook = ra.task_gate_dispatch_hook(gate=self._FixedGate(allowed=False), scheduler=self._RecordingScheduler())
         assert hook(MODEL, "code_fix")[0] is False  # 缺省 shadow=False 零行为变化
 
     def test_shadow_enabled_env_parsing(self, monkeypatch):

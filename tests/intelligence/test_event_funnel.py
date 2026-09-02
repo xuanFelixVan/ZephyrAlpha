@@ -214,9 +214,7 @@ class TestNoiseBand:
 
     def test_boundary_exactly_minus_noise_threshold_excluded(self):
         # 恰好 -0.2 利空剔除：policy 0.8 × (-1) × 0.25 = -0.2
-        result = run_event_funnel(
-            [_cand("600519", _event("600519", class_="policy", direction=-1.0, sentiment=0.25))]
-        )
+        result = run_event_funnel([_cand("600519", _event("600519", class_="policy", direction=-1.0, sentiment=0.25))])
         assert result.excluded == {"600519": "event:negative_score"}
 
 
@@ -257,10 +255,7 @@ class TestDegradation:
 
 class TestCapacityAndErrors:
     def test_capacity_truncation(self):
-        candidates = [
-            _cand(f"S{i:03d}", _event(f"S{i:03d}", sentiment=min(1.0, 0.3 + i * 0.01)))
-            for i in range(40)
-        ]
+        candidates = [_cand(f"S{i:03d}", _event(f"S{i:03d}", sentiment=min(1.0, 0.3 + i * 0.01))) for i in range(40)]
         result = run_event_funnel(candidates)
         assert result.truncated is True
         assert len(result.kept) == 30

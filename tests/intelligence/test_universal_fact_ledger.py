@@ -41,18 +41,21 @@ def _ledger() -> UniversalFactLedger:
 
 
 def _numeric(entity: str = "600519.SH", attr: str = "收盘价", value=1700.0, ts=_T0) -> FactRecord:
-    return FactRecord(entity=entity, attribute=attr, value=value, timestamp=ts,
-                      source="行情快照", fact_type=FactType.NUMERIC)
+    return FactRecord(
+        entity=entity, attribute=attr, value=value, timestamp=ts, source="行情快照", fact_type=FactType.NUMERIC
+    )
 
 
 def _enum(entity: str = "600519.SH", attr: str = "所属行业", value: str = "白酒") -> FactRecord:
-    return FactRecord(entity=entity, attribute=attr, value=value, timestamp=_T0,
-                      source="分类表", fact_type=FactType.ENUM)
+    return FactRecord(
+        entity=entity, attribute=attr, value=value, timestamp=_T0, source="分类表", fact_type=FactType.ENUM
+    )
 
 
 def _relation(entity: str = "600519.SH", attr: str = "上游", value: str = "高粱种植") -> FactRecord:
-    return FactRecord(entity=entity, attribute=attr, value=value, timestamp=_T0,
-                      source="产业链", fact_type=FactType.RELATION)
+    return FactRecord(
+        entity=entity, attribute=attr, value=value, timestamp=_T0, source="产业链", fact_type=FactType.RELATION
+    )
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -70,8 +73,9 @@ class TestAppend:
 
     def test_confidence_hard_constraint(self) -> None:
         ledger = _ledger()
-        bad = FactRecord(entity="e", attribute="a", value=1.0, timestamp=_T0,
-                         source="s", fact_type=FactType.NUMERIC, confidence=0.9)
+        bad = FactRecord(
+            entity="e", attribute="a", value=1.0, timestamp=_T0, source="s", fact_type=FactType.NUMERIC, confidence=0.9
+        )
         with pytest.raises(FactLedgerError):
             ledger.append(bad)
 
@@ -82,13 +86,13 @@ class TestAppend:
         with pytest.raises(FactLedgerError):
             ledger.append(_numeric(attr=""))
         with pytest.raises(FactLedgerError):
-            ledger.append(FactRecord(entity="e", attribute="a", value=1.0, timestamp=_T0,
-                                     source="", fact_type=FactType.NUMERIC))
+            ledger.append(
+                FactRecord(entity="e", attribute="a", value=1.0, timestamp=_T0, source="", fact_type=FactType.NUMERIC)
+            )
 
     def test_invalid_type_raises(self) -> None:
         ledger = _ledger()
-        bad = FactRecord(entity="e", attribute="a", value="v", timestamp=_T0,
-                         source="s", fact_type="text")  # type: ignore[arg-type]
+        bad = FactRecord(entity="e", attribute="a", value="v", timestamp=_T0, source="s", fact_type="text")  # type: ignore[arg-type]
         with pytest.raises(FactLedgerError):
             ledger.append(bad)
 
@@ -102,8 +106,7 @@ class TestAppend:
 
     def test_enum_value_must_be_str(self) -> None:
         ledger = _ledger()
-        bad = FactRecord(entity="e", attribute="a", value=123, timestamp=_T0,
-                         source="s", fact_type=FactType.ENUM)
+        bad = FactRecord(entity="e", attribute="a", value=123, timestamp=_T0, source="s", fact_type=FactType.ENUM)
         with pytest.raises(FactLedgerError):
             ledger.append(bad)
 
@@ -188,11 +191,13 @@ class TestDoubleLock:
 
     def test_fix_and_resubmit_accepted(self) -> None:
         g = self._grounded()
-        bad = g.validate(entities=["600519.SH"],
-                         numeric_claims=[NumericClaim(entity="600519.SH", attribute="收盘价", value=1.0)])
+        bad = g.validate(
+            entities=["600519.SH"], numeric_claims=[NumericClaim(entity="600519.SH", attribute="收盘价", value=1.0)]
+        )
         assert bad.accepted is False
-        fixed = g.validate(entities=["600519.SH"],
-                           numeric_claims=[NumericClaim(entity="600519.SH", attribute="收盘价", value=1700.0)])
+        fixed = g.validate(
+            entities=["600519.SH"], numeric_claims=[NumericClaim(entity="600519.SH", attribute="收盘价", value=1700.0)]
+        )
         assert fixed.accepted is True  # 修正后重提通过
 
     def test_standard_strength_historical_match(self) -> None:

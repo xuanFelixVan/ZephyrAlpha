@@ -120,11 +120,13 @@ class TestCollectUsage:
 
 class TestCostCalculator:
     def test_report_values(self) -> None:
-        calc = _calc({
-            StorageLayer.HOT: TB_BYTES,        # 1 TB × 300 = 300
-            StorageLayer.WARM: 2 * TB_BYTES,   # 2 TB × 100 = 200
-            StorageLayer.COLD: TB_BYTES // 2,  # 0.5 TB × 30 = 15
-        })
+        calc = _calc(
+            {
+                StorageLayer.HOT: TB_BYTES,  # 1 TB × 300 = 300
+                StorageLayer.WARM: 2 * TB_BYTES,  # 2 TB × 100 = 200
+                StorageLayer.COLD: TB_BYTES // 2,  # 0.5 TB × 30 = 15
+            }
+        )
         report = calc.cost_calculator()
         assert report["layers"]["hot"]["monthly_cost"] == pytest.approx(300.0)
         assert report["layers"]["warm"]["monthly_cost"] == pytest.approx(200.0)

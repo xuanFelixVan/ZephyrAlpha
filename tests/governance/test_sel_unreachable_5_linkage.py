@@ -186,8 +186,7 @@ class TestDataflowChain:
         """
         with db_conn.cursor() as cur:
             cur.execute(
-                "SELECT build_status, design_maturity FROM nodes "
-                "WHERE blueprint_id = %s",
+                "SELECT build_status, design_maturity FROM nodes WHERE blueprint_id = %s",
                 (module_id,),
             )
             rows = cur.fetchall()
@@ -196,6 +195,4 @@ class TestDataflowChain:
         assert build_status in ("planned", "generated", "testing", "stable", "production"), (
             f"{step_id}({module_id}): build_status={build_status} 非法"
         )
-        assert maturity in ("design", "production"), (
-            f"{step_id}({module_id}): maturity={maturity} 非法"
-        )
+        assert maturity in ("design", "production"), f"{step_id}({module_id}): maturity={maturity} 非法"

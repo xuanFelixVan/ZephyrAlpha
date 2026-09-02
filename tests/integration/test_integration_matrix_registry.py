@@ -50,9 +50,7 @@ def _seed_basic(reg: IntegrationMatrixRegistry) -> None:
 class TestRegister:
     def test_register_ok(self) -> None:
         reg = _registry()
-        entry = reg.register(
-            "tushare", "daily_bars", ProtocolKind.REST, IsolationPolicy.NETWORK
-        )
+        entry = reg.register("tushare", "daily_bars", ProtocolKind.REST, IsolationPolicy.NETWORK)
         assert entry.system == "tushare"
         assert entry.protocol is ProtocolKind.REST
         assert entry.isolation is IsolationPolicy.NETWORK
@@ -108,12 +106,14 @@ class TestRegister:
 class TestIsolationRule:
     def test_rule_ok(self) -> None:
         reg = _registry()
-        entry = reg.register_rule({
-            "system": "tushare",
-            "interaction": "daily_bars",
-            "protocol": "rest",
-            "isolation": "network",
-        })
+        entry = reg.register_rule(
+            {
+                "system": "tushare",
+                "interaction": "daily_bars",
+                "protocol": "rest",
+                "isolation": "network",
+            }
+        )
         assert entry.protocol is ProtocolKind.REST
         assert entry.isolation is IsolationPolicy.NETWORK
 
@@ -125,51 +125,61 @@ class TestIsolationRule:
     def test_rule_missing_key_raises(self) -> None:
         reg = _registry()
         with pytest.raises(IntegrationMatrixError):
-            reg.register_rule({
-                "system": "tushare",
-                "interaction": "daily_bars",
-                "protocol": "rest",
-            })  # 缺 isolation
+            reg.register_rule(
+                {
+                    "system": "tushare",
+                    "interaction": "daily_bars",
+                    "protocol": "rest",
+                }
+            )  # 缺 isolation
 
     def test_rule_empty_value_raises(self) -> None:
         reg = _registry()
         with pytest.raises(IntegrationMatrixError):
-            reg.register_rule({
-                "system": "",
-                "interaction": "daily_bars",
-                "protocol": "rest",
-                "isolation": "network",
-            })
+            reg.register_rule(
+                {
+                    "system": "",
+                    "interaction": "daily_bars",
+                    "protocol": "rest",
+                    "isolation": "network",
+                }
+            )
 
     def test_rule_bad_protocol_vocab_raises(self) -> None:
         reg = _registry()
         with pytest.raises(IntegrationMatrixError):
-            reg.register_rule({
-                "system": "tushare",
-                "interaction": "daily_bars",
-                "protocol": "carrier-pigeon",
-                "isolation": "network",
-            })
+            reg.register_rule(
+                {
+                    "system": "tushare",
+                    "interaction": "daily_bars",
+                    "protocol": "carrier-pigeon",
+                    "isolation": "network",
+                }
+            )
 
     def test_rule_bad_isolation_vocab_raises(self) -> None:
         reg = _registry()
         with pytest.raises(IntegrationMatrixError):
-            reg.register_rule({
-                "system": "tushare",
-                "interaction": "daily_bars",
-                "protocol": "rest",
-                "isolation": "vibe",
-            })
+            reg.register_rule(
+                {
+                    "system": "tushare",
+                    "interaction": "daily_bars",
+                    "protocol": "rest",
+                    "isolation": "vibe",
+                }
+            )
 
     def test_rule_non_string_value_raises(self) -> None:
         reg = _registry()
         with pytest.raises(IntegrationMatrixError):
-            reg.register_rule({
-                "system": "tushare",
-                "interaction": "daily_bars",
-                "protocol": 42,
-                "isolation": "network",
-            })
+            reg.register_rule(
+                {
+                    "system": "tushare",
+                    "interaction": "daily_bars",
+                    "protocol": 42,
+                    "isolation": "network",
+                }
+            )
 
 
 # ──────────────────────────────────────────────────────────────────────────────

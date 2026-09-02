@@ -79,7 +79,9 @@ class TestParse4663:
 
     def test_design_memos_prefix(self) -> None:
         rec = parse_4663_inserts(
-            _inserts("D:\\ZephyrAlpha\\docs\\02_enterprise_architecture\\07_trading_decision_architecture\\design_memos\\94_x.md"),
+            _inserts(
+                "D:\\ZephyrAlpha\\docs\\02_enterprise_architecture\\07_trading_decision_architecture\\design_memos\\94_x.md"
+            ),
             _ROOT,
         )
         assert rec is not None and rec["path"].startswith("docs/02_enterprise_architecture")

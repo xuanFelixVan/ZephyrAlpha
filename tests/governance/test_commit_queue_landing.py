@@ -135,12 +135,17 @@ class _StubGateway:
         self.events.append(("release", (session_id, list(files))))
 
     def commit(self, session_id: str, files: list[str], message: str, allow_non_worktree: bool = False) -> CommitResult:
-        self.events.append(("commit", {
-            "session_id": session_id,
-            "files": list(files),
-            "message": message,
-            "allow_non_worktree": allow_non_worktree,
-        }))
+        self.events.append(
+            (
+                "commit",
+                {
+                    "session_id": session_id,
+                    "files": list(files),
+                    "message": message,
+                    "allow_non_worktree": allow_non_worktree,
+                },
+            )
+        )
         for f in files:
             _git(self._wt, "add", "-A", "--", f)  # -A 兼容 delete action（staging 删除）
         _git(self._wt, "commit", "--no-verify", "-qm", message)
@@ -165,9 +170,7 @@ def _make_landing(repo: Path, qroot: Path) -> tuple[cql.WorktreeLanding, _StubGa
 
 
 class TestWorktreeLandingSuccess:
-    def test_enqueue_drain_lands_real_commit_with_queue_marker(
-        self, tmp_repo: Path, queue_root: Path
-    ) -> None:
+    def test_enqueue_drain_lands_real_commit_with_queue_marker(self, tmp_repo: Path, queue_root: Path) -> None:
         landing, stub = _make_landing(tmp_repo, queue_root)
         sid = "sess-land-a"
         content = "hello 落盘\n".encode()
@@ -184,8 +187,12 @@ class TestWorktreeLandingSuccess:
         assert call["session_id"] == sid
         assert marker in call["message"], f"commit message 缺 [GW:{{sid}}:{{qid}}] 标记: {call['message']!r}"
         assert call["message"].startswith("feat: landing 成功路径"), "原 message 在前、标记追加在后"
-        assert call["allow_non_worktree"] is True, "落盘经 allow_non_worktree 逃生参数（.runtime 路径不命中 worktree 判定）"
-        assert call["files"] == [str(landing.worktree_path / "docs" / "landed.txt")], "pathspec 限定本项文件（零搭便车）"
+        assert call["allow_non_worktree"] is True, (
+            "落盘经 allow_non_worktree 逃生参数（.runtime 路径不命中 worktree 判定）"
+        )
+        assert call["files"] == [str(landing.worktree_path / "docs" / "landed.txt")], (
+            "pathspec 限定本项文件（零搭便车）"
+        )
 
         # claim → commit → release 顺序（CLAIM-REQUIRED 协议接线）
         kinds = [kind for kind, _ in stub.events]
@@ -232,9 +239,7 @@ class TestWorktreeLandingSuccess:
 
 
 class TestWorktreeLandingIdempotent:
-    def test_replay_done_item_short_circuits_via_is_ancestor(
-        self, tmp_repo: Path, queue_root: Path
-    ) -> None:
+    def test_replay_done_item_short_circuits_via_is_ancestor(self, tmp_repo: Path, queue_root: Path) -> None:
         """短路径①：重放项带 landed_id 且已在 dev 历史（is-ancestor）→ 复用不双落。"""
         landing, stub = _make_landing(tmp_repo, queue_root)
         item = cq.enqueue_item("sess-idem-a", "feat: 幂等", [("docs/idem.txt", b"v1\n")], queue_root=queue_root)
@@ -254,9 +259,7 @@ class TestWorktreeLandingIdempotent:
         done_item = json.loads(done_path.read_text(encoding="utf-8"))
         assert done_item["landed_id"] == first_sha, "复用已落 commit sha"
 
-    def test_replay_without_landed_id_short_circuits_via_marker_grep(
-        self, tmp_repo: Path, queue_root: Path
-    ) -> None:
+    def test_replay_without_landed_id_short_circuits_via_marker_grep(self, tmp_repo: Path, queue_root: Path) -> None:
         """短路径②：landed_id 缺失（done 记录丢失形态）但标记在史 → grep 命中复用。"""
         landing, stub = _make_landing(tmp_repo, queue_root)
         item = cq.enqueue_item("sess-idem-b", "feat: 幂等2", [("docs/idem2.txt", b"v2\n")], queue_root=queue_root)
@@ -287,9 +290,7 @@ class TestWorktreeLandingIdempotent:
 
 
 class TestWorktreeLandingConflict:
-    def test_base_head_conflict_goes_dead_and_preserves_theirs(
-        self, tmp_repo: Path, queue_root: Path
-    ) -> None:
+    def test_base_head_conflict_goes_dead_and_preserves_theirs(self, tmp_repo: Path, queue_root: Path) -> None:
         landing, stub = _make_landing(tmp_repo, queue_root)
         base = _git_text(tmp_repo, "rev-parse", "refs/heads/dev")
         item = cq.enqueue_item(
@@ -315,9 +316,7 @@ class TestWorktreeLandingConflict:
         assert stub.commit_calls() == [], "冲突在落盘前判定——gateway 零调用"
         assert _git_bytes(tmp_repo, "show", "dev:docs/a.txt") == b"theirs\n", "他人推进内容不被静默覆盖"
 
-    def test_disjoint_advance_does_not_conflict(
-        self, tmp_repo: Path, queue_root: Path
-    ) -> None:
+    def test_disjoint_advance_does_not_conflict(self, tmp_repo: Path, queue_root: Path) -> None:
         """对照：base_head 后 dev 推进但不触及本项路径 → 正常落盘（逐文件快进判定）。"""
         landing, stub = _make_landing(tmp_repo, queue_root)
         base = _git_text(tmp_repo, "rev-parse", "refs/heads/dev")
@@ -388,9 +387,7 @@ class TestCommitAutoFlagGating:
         qroot = tmp_path / "cq_off"
         assert not qroot.exists() or not list((qroot / "pending").glob("q-*.json")), "flag OFF 不得产生队列项"
 
-    def test_flag_on_reroutes_to_enqueue(
-        self, tmp_repo: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_flag_on_reroutes_to_enqueue(self, tmp_repo: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """flag ON：改道 enqueue（enqueue_item 被调 + 直提路径未执行 + 自举排空尝试）。"""
         monkeypatch.setenv(cq.QUEUE_ENV_VAR, str(tmp_path / "cq_on"))
         monkeypatch.setattr(gw_mod, "_commit_queue_serializer_enabled", lambda: True)
@@ -482,9 +479,7 @@ def _audit_records(qroot: Path) -> list[dict]:
 
 
 class TestMainWorkspaceConvergence:
-    def test_clean_file_fast_forwarded_to_main_workspace(
-        self, tmp_repo: Path, queue_root: Path
-    ) -> None:
+    def test_clean_file_fast_forwarded_to_main_workspace(self, tmp_repo: Path, queue_root: Path) -> None:
         """干净文件（与旧 HEAD 逐字节一致）→ 快进写入新内容；零审计（无跳过项）。"""
         landing, _stub = _make_landing(tmp_repo, queue_root)
         new_base = "base v2 落盘\n".encode()
@@ -502,16 +497,12 @@ class TestMainWorkspaceConvergence:
         assert (tmp_repo / "docs" / "added.txt").read_bytes() == b"new file\n"
         assert _audit_records(queue_root) == [], f"干净快进不得产生审计留痕（qid={item['qid']}）"
 
-    def test_dirty_file_skipped_with_audit_and_wip_preserved(
-        self, tmp_repo: Path, queue_root: Path
-    ) -> None:
+    def test_dirty_file_skipped_with_audit_and_wip_preserved(self, tmp_repo: Path, queue_root: Path) -> None:
         """脏文件（主工作区有 WIP 修改）→ 跳过 + 审计留痕，WIP 字节零丢失。"""
         landing, _stub = _make_landing(tmp_repo, queue_root)
         wip = "本地 WIP 未提交\n".encode()
         (tmp_repo / "base.txt").write_bytes(wip)  # 队列外会话的未提交修改
-        item = cq.enqueue_item(
-            "sess-conv-b", "feat: 脏跳过", [("base.txt", b"queue content\n")], queue_root=queue_root
-        )
+        item = cq.enqueue_item("sess-conv-b", "feat: 脏跳过", [("base.txt", b"queue content\n")], queue_root=queue_root)
         stats = cq.drain_queue(queue_root, landing=landing)
         assert stats["done"] == 1, "landing 从专用 worktree 落盘，主工作区脏不阻塞"
 
@@ -521,9 +512,7 @@ class TestMainWorkspaceConvergence:
         assert len(recs) == 1 and recs[0]["action"] == "skipped_dirty"
         assert recs[0]["path"] == "base.txt" and recs[0]["qid"] == item["qid"]
 
-    def test_missing_file_skipped_with_audit(
-        self, tmp_repo: Path, queue_root: Path
-    ) -> None:
+    def test_missing_file_skipped_with_audit(self, tmp_repo: Path, queue_root: Path) -> None:
         """缺失文件（WIP 删除态）→ skipped_missing + 审计；盘上维持缺失不重建。"""
         landing, _stub = _make_landing(tmp_repo, queue_root)
         os.remove(tmp_repo / "base.txt")  # 队列外会话的未提交删除
@@ -538,9 +527,7 @@ class TestMainWorkspaceConvergence:
         assert len(recs) == 1 and recs[0]["action"] == "skipped_missing"
         assert recs[0]["path"] == "base.txt" and recs[0]["qid"] == item["qid"]
 
-    def test_untracked_wip_at_new_path_skipped_not_overwritten(
-        self, tmp_repo: Path, queue_root: Path
-    ) -> None:
+    def test_untracked_wip_at_new_path_skipped_not_overwritten(self, tmp_repo: Path, queue_root: Path) -> None:
         """untracked-WIP 补盲（红队钉）：旧树无此路径 + 盘上有未跟踪同名文件——
         git diff 对 untracked 不可见会误判「双方一致」，快进即覆写他人 WIP。
         必须按脏跳过 + 审计，WIP 字节保留。"""
@@ -560,9 +547,7 @@ class TestMainWorkspaceConvergence:
         assert len(recs) == 1 and recs[0]["action"] == "skipped_dirty"
         assert recs[0]["path"] == "docs/wip.txt"
 
-    def test_delete_action_removes_clean_file_from_main_workspace(
-        self, tmp_repo: Path, queue_root: Path
-    ) -> None:
+    def test_delete_action_removes_clean_file_from_main_workspace(self, tmp_repo: Path, queue_root: Path) -> None:
         """delete action + 工作区干净 → 收敛删除主工作区文件（dev 树与工作区同态）。"""
         landing, _stub = _make_landing(tmp_repo, queue_root)
         cq.enqueue_item(
@@ -579,9 +564,7 @@ class TestMainWorkspaceConvergence:
         assert _git(tmp_repo, "cat-file", "-e", "dev:base.txt", check=False).returncode != 0, "dev 树已删除"
         assert _audit_records(queue_root) == [], "成功删除非跳过项，零审计"
 
-    def test_delete_action_already_missing_is_noop_without_audit(
-        self, tmp_repo: Path, queue_root: Path
-    ) -> None:
+    def test_delete_action_already_missing_is_noop_without_audit(self, tmp_repo: Path, queue_root: Path) -> None:
         """delete action + 工作区已缺失（WIP 删除先行）→ already_deleted 幂等零审计。"""
         landing, _stub = _make_landing(tmp_repo, queue_root)
         os.remove(tmp_repo / "base.txt")
@@ -606,9 +589,7 @@ class TestMainWorkspaceConvergence:
         landing, _stub = _make_landing(tmp_repo, queue_root)
         orig_bytes = (tmp_repo / "base.txt").read_bytes()  # fixture text 模式写入，Windows 盘上为 CRLF
         new_base = b"base v2 after crash\n"
-        item = cq.enqueue_item(
-            "sess-conv-g", "feat: 崩溃窗口", [("base.txt", new_base)], queue_root=queue_root
-        )
+        item = cq.enqueue_item("sess-conv-g", "feat: 崩溃窗口", [("base.txt", new_base)], queue_root=queue_root)
 
         # ① 模拟 update-ref 后、收敛写入前的崩溃窗口：收敛整体失效但 landing 成功
         orig = landing._converge_main_workspace
@@ -640,6 +621,8 @@ class TestMainWorkspaceConvergence:
         stats3 = cq.drain_queue(queue_root, landing=landing)
         assert stats3["done"] == 1
         assert _audit_records(queue_root) == [], "already_synced 幂等，零审计零副作用"
+
+
 # ---------------------------------------------------------------------------
 # 2026-08-29 主仓打穿事故回归：专用 worktree .git 链接丢失 → fail-closed
 # ---------------------------------------------------------------------------

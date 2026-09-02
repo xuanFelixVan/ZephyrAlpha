@@ -56,9 +56,7 @@ def _news_df(rows: list[tuple[str, str, str]]) -> pd.DataFrame:
 
 
 def _collect_mock(df: pd.DataFrame):
-    return patch(
-        "zephyr.intelligence.nightly_sentiment_window.collect_news", return_value=df
-    )
+    return patch("zephyr.intelligence.nightly_sentiment_window.collect_news", return_value=df)
 
 
 # ============================================================================
@@ -166,9 +164,7 @@ class TestLinkageStats:
     """注入 linker 后的关联覆盖统计。"""
 
     def test_linked_and_market_counts(self) -> None:
-        linker = NewsSymbolLinker(
-            [("600519", "贵州茅台"), ("600001", "平安科技"), ("300001", "平安科技")]
-        )
+        linker = NewsSymbolLinker([("600519", "贵州茅台"), ("600001", "平安科技"), ("300001", "平安科技")])
         df = _news_df(
             [
                 ("n1", "2026-08-18 20:00", "贵州茅台业绩大增"),  # 关联 1
@@ -363,7 +359,9 @@ class TestAnalyzerPersistHook:
         )
         captured: list = []
         with patch("zephyr.intelligence.news_sentiment_analyzer.collect_news", return_value=news_df):
-            with patch("zephyr.data.ch_writer.write_result", side_effect=lambda f, columns=None: captured.append(f) or True):
+            with patch(
+                "zephyr.data.ch_writer.write_result", side_effect=lambda f, columns=None: captured.append(f) or True
+            ):
                 scored, windows, events = analyzer.analyze_date_range("2026-08-18", "2026-08-18", persist=True)
         assert len(windows) == 1
         assert len(captured) == 1

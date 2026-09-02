@@ -362,7 +362,6 @@ class TestPythonAPI:
         _enforce_pytest_never_delete_protected("rmtree", ".runtime/tmp/pytest_x/y", ".runtime/tmp/pytest_x/y")
 
 
-
 class TestPrimitiveDetection:
     """原语识别正确性。"""
 

@@ -96,8 +96,8 @@ class TestTopicNamespace:
     def test_all_legal_prefixes(self) -> None:
         bus = _bus()
         for topic, path in [
-            ("strategic.risk", "intra_layer"),     # 战略 Agent 发战略 topic → 层内
-            ("tactical.signal", "cross_layer"),    # 跨层 → 网关
+            ("strategic.risk", "intra_layer"),  # 战略 Agent 发战略 topic → 层内
+            ("tactical.signal", "cross_layer"),  # 跨层 → 网关
             ("execution.order", "cross_layer"),
         ]:
             assert bus.publish("risk_manager", topic, {}) == path

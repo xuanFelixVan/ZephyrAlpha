@@ -138,8 +138,8 @@ class TestColoring:
 
     def test_boundary_values(self) -> None:
         viz = _viz()
-        viz.register_node("a", NodeKind.PROCESS, heartbeat_at=_at(30))   # 恰 yellow 阈 → green
-        viz.register_node("b", NodeKind.PROCESS, heartbeat_at=_at(90))   # 恰 red 阈 → yellow
+        viz.register_node("a", NodeKind.PROCESS, heartbeat_at=_at(30))  # 恰 yellow 阈 → green
+        viz.register_node("b", NodeKind.PROCESS, heartbeat_at=_at(90))  # 恰 red 阈 → yellow
         viz.refresh_status()
         snap = {n["node_id"]: n["status"] for n in viz.snapshot()["nodes"]}
         assert snap == {"a": "green", "b": "yellow"}

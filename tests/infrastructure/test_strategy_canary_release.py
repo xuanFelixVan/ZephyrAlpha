@@ -86,9 +86,7 @@ class TestAdvance:
     def test_failing_dimension_auto_rollback(self) -> None:
         rel, cfg = self._running()
         metrics = _pass_metrics(cfg)
-        metrics[ValidationDimension.ERROR_RATE] = (
-            cfg.validation_thresholds[ValidationDimension.ERROR_RATE] + 1.0
-        )
+        metrics[ValidationDimension.ERROR_RATE] = cfg.validation_thresholds[ValidationDimension.ERROR_RATE] + 1.0
         st = rel.advance("strat_alpha", metrics, now_utc=_NOW)
         assert st.status == CanaryStatus.ROLLED_BACK
         assert st.current_ratio == pytest.approx(0.0)
@@ -139,14 +137,17 @@ class TestConfig:
         assert set(cfg.validation_thresholds) == set(_ALL_DIMS)
 
     def test_from_dict(self) -> None:
-        cfg = config_from_dict("strat_beta", {
-            "stages": [
-                {"name": "s1", "min_ratio": 0.02, "max_ratio": 0.05},
-                {"name": "s2", "min_ratio": 0.3, "max_ratio": 0.5},
-                {"name": "s3", "min_ratio": 1.0, "max_ratio": 1.0},
-            ],
-            "validation_thresholds": {d.value: 1.0 for d in _ALL_DIMS},
-        })
+        cfg = config_from_dict(
+            "strat_beta",
+            {
+                "stages": [
+                    {"name": "s1", "min_ratio": 0.02, "max_ratio": 0.05},
+                    {"name": "s2", "min_ratio": 0.3, "max_ratio": 0.5},
+                    {"name": "s3", "min_ratio": 1.0, "max_ratio": 1.0},
+                ],
+                "validation_thresholds": {d.value: 1.0 for d in _ALL_DIMS},
+            },
+        )
         assert cfg.strategy_id == "strat_beta"
         assert cfg.stages[0].min_ratio == pytest.approx(0.02)
 

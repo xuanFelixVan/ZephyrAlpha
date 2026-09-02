@@ -64,34 +64,26 @@ class TestResourceExclusivity:
 
 class TestCheckBudget:
     def test_within_budget(self):
-        verdict = check_budget(
-            {"tick_to_risk": 1.0, "risk_eval": 3.0, "order_build_submit": 5.0}
-        )
+        verdict = check_budget({"tick_to_risk": 1.0, "risk_eval": 3.0, "order_build_submit": 5.0})
         assert verdict.within_budget is True
         assert verdict.breached_stages == ()
         assert verdict.action == "none"
         assert verdict.total_ms == 9.0
 
     def test_exactly_at_budget_is_within(self):
-        verdict = check_budget(
-            {"tick_to_risk": 2.0, "risk_eval": 3.0, "order_build_submit": 5.0}
-        )
+        verdict = check_budget({"tick_to_risk": 2.0, "risk_eval": 3.0, "order_build_submit": 5.0})
         assert verdict.within_budget is True
         assert verdict.total_ms == 10.0
 
     def test_stage_breach_triggers_circuit_alert(self):
-        verdict = check_budget(
-            {"tick_to_risk": 3.0, "risk_eval": 3.0, "order_build_submit": 5.0}
-        )
+        verdict = check_budget({"tick_to_risk": 3.0, "risk_eval": 3.0, "order_build_submit": 5.0})
         assert verdict.within_budget is False
         assert verdict.breached_stages == ("tick_to_risk",)
         assert verdict.action == "circuit_alert"
 
     def test_total_breach_without_stage_breach_impossible_shape(self):
         # 每段恰好达标=总和 10ms 达标；总和超限必伴随至少一段超限（Fail-Closed 判定不缺项）
-        verdict = check_budget(
-            {"tick_to_risk": 2.5, "risk_eval": 2.5, "order_build_submit": 5.5}
-        )
+        verdict = check_budget({"tick_to_risk": 2.5, "risk_eval": 2.5, "order_build_submit": 5.5})
         assert verdict.within_budget is False
         assert set(verdict.breached_stages) == {"tick_to_risk", "order_build_submit"}
         assert verdict.total_ms == 10.5

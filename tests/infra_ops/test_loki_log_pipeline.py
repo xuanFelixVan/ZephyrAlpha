@@ -110,9 +110,7 @@ class TestBuildEntry:
         def _mask(payload: dict) -> dict:
             return {k: ("***" if k == "secret" else v) for k, v in payload.items()}
 
-        entry = _pipe(sanitizer=_mask).build_entry(
-            LogCategory.ANOMALY_EVENT, {}, {"secret": "token-1", "ok": 1}
-        )
+        entry = _pipe(sanitizer=_mask).build_entry(LogCategory.ANOMALY_EVENT, {}, {"secret": "token-1", "ok": 1})
         assert entry["payload"] == {"secret": "***", "ok": 1}
 
     def test_explicit_ts(self) -> None:
@@ -217,9 +215,7 @@ class TestRetention:
 
     def test_entries_for_export(self) -> None:
         p = _pipe()
-        old = p.build_entry(
-            LogCategory.AGENT_DECISION, {}, {}, ts=_T0 - datetime.timedelta(days=45)
-        )
+        old = p.build_entry(LogCategory.AGENT_DECISION, {}, {}, ts=_T0 - datetime.timedelta(days=45))
         new = _entry(p)
         assert p.entries_for_export([old, new]) == [old]
 

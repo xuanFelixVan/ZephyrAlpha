@@ -76,8 +76,7 @@ def _responder(
         clock=(clock or _Clock()),
         rules=rules,
         escalation_sink=(
-            (lambda inc, reason: escalations.append((inc.incident_id, reason)))
-            if escalations is not None else None
+            (lambda inc, reason: escalations.append((inc.incident_id, reason))) if escalations is not None else None
         ),
     )
 
@@ -242,10 +241,12 @@ class TestRespond:
             calls["n"] += 1
             return False
 
-        r = _responder(rules={
-            IncidentSeverity.P0: EscalationRule(3, 60.0),
-            IncidentSeverity.P2: EscalationRule(1, 60.0),
-        })
+        r = _responder(
+            rules={
+                IncidentSeverity.P0: EscalationRule(3, 60.0),
+                IncidentSeverity.P2: EscalationRule(1, 60.0),
+            }
+        )
         r.register_policy("x", _always_fail)
         rec_p0 = r.respond(_incident("INC-P0", IncidentSeverity.P0), "x")
         rec_p1 = r.respond(_incident("INC-P1", IncidentSeverity.P1), "x")  # 默认规则

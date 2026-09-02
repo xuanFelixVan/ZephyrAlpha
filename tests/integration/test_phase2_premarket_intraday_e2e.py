@@ -148,8 +148,11 @@ def test_chain_a_intraday_sentiment_to_boundary_revision(tmp_path):
             timestamp=datetime(2026, 8, 21, 14, 0),
             breadth=MarketBreadthData(advancing_count=800, declining_count=4100, flat_count=100, total_count=5000),
             limit_data=LimitUpDownData(
-                limit_up_count=2, limit_down_count=45, near_limit_up_count=3,
-                sealed_limit_up_count=2, attempted_limit_up_count=4,
+                limit_up_count=2,
+                limit_down_count=45,
+                near_limit_up_count=3,
+                sealed_limit_up_count=2,
+                attempted_limit_up_count=4,
             ),
             index_performance=IndexPerformanceData(index_name="上证指数", index_change_pct=-1.8),
             time_series=ts,
@@ -163,14 +166,24 @@ def test_chain_a_intraday_sentiment_to_boundary_revision(tmp_path):
     store = InMemoryJsonStateStore()
     db = tmp_path / "gov_e2e_a.db"
     rev1 = evaluate_boundary_revision(
-        _DATE_A, "14:00", sentiment=sentiment, state_store=store, eval_time="14:00", log_db_path=db,
+        _DATE_A,
+        "14:00",
+        sentiment=sentiment,
+        state_store=store,
+        eval_time="14:00",
+        log_db_path=db,
     )
     assert rev1.revision_applied is False
     assert TRIGGER_SENTIMENT_BREADTH in rev1.pending_triggers
     assert rev1.debounce_proof[TRIGGER_SENTIMENT_BREADTH]["confirmed"] is False
 
     rev2 = evaluate_boundary_revision(
-        _DATE_A, "14:45", sentiment=sentiment, state_store=store, eval_time="14:45", log_db_path=db,
+        _DATE_A,
+        "14:45",
+        sentiment=sentiment,
+        state_store=store,
+        eval_time="14:45",
+        log_db_path=db,
     )
     assert rev2.revision_applied is True
     assert rev2.direction == "DOWNGRADE"
@@ -214,10 +227,14 @@ def _z_series_tsv(latest: float, hist_lo: float, hist_hi: float, n: int = 20) ->
 
 def _ch_b_overnight():
     """隔夜修正 mock CH：外盘双序列暴跌 + 资金面同向确认 + 日历空表 fail-open。"""
-    us_index = _tsv([
-        (_T1, "SPX", 6240.0), (_T2, "SPX", 6500.0),  # ret_SPX=-4%
-        (_T1, "IXIC", 20370.0), (_T2, "IXIC", 21000.0),  # ret_NDX=-3%
-    ])
+    us_index = _tsv(
+        [
+            (_T1, "SPX", 6240.0),
+            (_T2, "SPX", 6500.0),  # ret_SPX=-4%
+            (_T1, "IXIC", 20370.0),
+            (_T2, "IXIC", 21000.0),  # ret_NDX=-3%
+        ]
+    )
     margin = _z_series_tsv(10.0, 100.0, 120.0)  # z=-10（与 gap 同向）
     mf = _z_series_tsv(0.1, 1.0, 1.2)  # z=-10
     bt = _z_series_tsv(-0.05, 0.01, -0.01)  # z=-5
@@ -240,13 +257,18 @@ def _ch_b_overnight():
 
 def _ch_b_auction():
     """竞价 mock CH：低开 -2.5% + 放量 1.6× + 撤单比 0.04（真实低开确认）。"""
-    snapshot = _tsv([
-        ("600000.SH", "600000.SH", 9.75, 10.0, 1000, 97500),
-        ("000001.SZ", "000001.SZ", 19.5, 20.0, 600, 58500),
-    ])
+    snapshot = _tsv(
+        [
+            ("600000.SH", "600000.SH", 9.75, 10.0, 1000, 97500),
+            ("000001.SZ", "000001.SZ", 19.5, 20.0, 600, 58500),
+        ]
+    )
     history = _tsv(
-        [(d, sym, 500.0) for d in ("2026-08-21", "2026-08-20", "2026-08-19", "2026-08-18", "2026-08-17")
-         for sym in ("600000.SH", "000001.SZ")]
+        [
+            (d, sym, 500.0)
+            for d in ("2026-08-21", "2026-08-20", "2026-08-19", "2026-08-18", "2026-08-17")
+            for sym in ("600000.SH", "000001.SZ")
+        ]
     )
     series = _tsv([("600000.SH", 5000, 4800, 3, 2), ("000001.SZ", 3000, 2900, 3, 2)])
     limit_up = _tsv([("600000.SH",)])
@@ -279,14 +301,28 @@ def _ch_b_llm():
                 close, high, low, amt = 1000.0, 1010.0, 990.0, 2000.0
             index_rows.append((sym, name, d, close, high, low, close, amt, 100))
     sector_kline = _tsv(
-        [(c, _T2, c2) for c, (c2, _c1) in {
-            "880002": (1000.0, 1010.0), "880003": (1000.0, 950.0), "880004": (1000.0, 1030.0),
-            "880005": (1000.0, 980.0), "880006": (1000.0, 1005.0), "880007": (1000.0, 1020.0),
-        }.items()]
-        + [(c, _T1, c1) for c, (_c2, c1) in {
-            "880002": (1000.0, 1010.0), "880003": (1000.0, 950.0), "880004": (1000.0, 1030.0),
-            "880005": (1000.0, 980.0), "880006": (1000.0, 1005.0), "880007": (1000.0, 1020.0),
-        }.items()]
+        [
+            (c, _T2, c2)
+            for c, (c2, _c1) in {
+                "880002": (1000.0, 1010.0),
+                "880003": (1000.0, 950.0),
+                "880004": (1000.0, 1030.0),
+                "880005": (1000.0, 980.0),
+                "880006": (1000.0, 1005.0),
+                "880007": (1000.0, 1020.0),
+            }.items()
+        ]
+        + [
+            (c, _T1, c1)
+            for c, (_c2, c1) in {
+                "880002": (1000.0, 1010.0),
+                "880003": (1000.0, 950.0),
+                "880004": (1000.0, 1030.0),
+                "880005": (1000.0, 980.0),
+                "880006": (1000.0, 1005.0),
+                "880007": (1000.0, 1020.0),
+            }.items()
+        ]
     )
     data = {
         "prev_dates": _tsv([(_T1,), (_T2,)]),
@@ -366,23 +402,35 @@ def _sentiment_injection(ts: datetime) -> MarketSentimentResult:
 def _futures_injection(ts: str) -> FuturesBasisSnapshot:
     def _sym(product: str, rate: float) -> FuturesBasisSymbol:
         return FuturesBasisSymbol(
-            product=product, spot_name="现货", basis_rate=rate, basis_vel_30m=-0.0005,
-            vel_source="intraday_30m", discount_alert=False, confirm_flag=True, signal_weight=1.0,
-            futures_price=3900.0, spot_price=3908.0, futures_leg="futures_kline_qmt",
-            spot_leg="index_quote_intraday", sigma_20d=0.01, position_surge_pct=None,
-            sensitivity="注解", degraded=False,
+            product=product,
+            spot_name="现货",
+            basis_rate=rate,
+            basis_vel_30m=-0.0005,
+            vel_source="intraday_30m",
+            discount_alert=False,
+            confirm_flag=True,
+            signal_weight=1.0,
+            futures_price=3900.0,
+            spot_price=3908.0,
+            futures_leg="futures_kline_qmt",
+            spot_leg="index_quote_intraday",
+            sigma_20d=0.01,
+            position_surge_pct=None,
+            sensitivity="注解",
+            degraded=False,
         )
 
-    return FuturesBasisSnapshot(
-        ts=ts, trade_date=_T1, per_symbol={"IF": _sym("IF", -0.002), "IM": _sym("IM", -0.008)}
-    )
+    return FuturesBasisSnapshot(ts=ts, trade_date=_T1, per_symbol={"IF": _sym("IF", -0.002), "IM": _sym("IM", -0.008)})
 
 
 def _premarket_injections(sentiment_ts: datetime) -> PremarketInjections:
     return PremarketInjections(
         sentiment_result=_sentiment_injection(sentiment_ts),
         sector_divergence=SectorDivergenceResult(
-            date=_T1, rotation_state="HEALTHY_MAINLINE", siphon_z=0.8, rotation_velocity=3.2,
+            date=_T1,
+            rotation_state="HEALTHY_MAINLINE",
+            siphon_z=0.8,
+            rotation_velocity=3.2,
             velocity_percentile=0.4,
         ),
         futures_snapshot=_futures_injection(f"{_T1} 15:00:00"),
@@ -429,8 +477,14 @@ def test_chain_b_premarket_full_chain(tmp_path):
 
     # ── 段 2：三情景+竞价验证（MOD-PLAN-005，revision 跨模块注入）──
     boundary = TomorrowBoundary(
-        symbol="600000.SH", box_upper=11.0, box_lower=9.5, max_add_position=0.30,
-        no_add_price=10.8, must_exit_price=11.0, breakout_confirm="放量站稳10分钟", computed_at=None,
+        symbol="600000.SH",
+        box_upper=11.0,
+        box_lower=9.5,
+        max_add_position=0.30,
+        no_add_price=10.8,
+        must_exit_price=11.0,
+        breakout_confirm="放量站稳10分钟",
+        computed_at=None,
     )
     plan = compute_scenario_plan(_DATE_B, ch_client=_ch_b_auction(), revision=rev, boundary=boundary)
     assert plan.trace["channels"]["overnight_revision"] == "injected"
@@ -509,9 +563,7 @@ def test_chain_b_premarket_full_chain(tmp_path):
     assert result2.status == STATUS_SUCCESS and result2.row_id == result.row_id
     conn = sqlite3.connect(str(db))
     try:
-        n = conn.execute(
-            "SELECT count(*) FROM llm_daily_analysis WHERE trade_date = ?", (_DATE_B,)
-        ).fetchone()[0]
+        n = conn.execute("SELECT count(*) FROM llm_daily_analysis WHERE trade_date = ?", (_DATE_B,)).fetchone()[0]
     finally:
         conn.close()
     assert n == 1
@@ -586,13 +638,23 @@ def test_chain_c_futures_basis_to_downgrade(tmp_path):
     store = InMemoryJsonStateStore()
     db = tmp_path / "gov_e2e_c.db"
     rev1 = evaluate_boundary_revision(
-        _DATE_C, "14:00", futures_basis=snap1, state_store=store, eval_time="14:00", log_db_path=db,
+        _DATE_C,
+        "14:00",
+        futures_basis=snap1,
+        state_store=store,
+        eval_time="14:00",
+        log_db_path=db,
     )
     assert rev1.revision_applied is False
     assert TRIGGER_IM_BASIS_DISCOUNT in rev1.pending_triggers  # 首现登记，防抖未满
 
     rev2 = evaluate_boundary_revision(
-        _DATE_C, "14:45", futures_basis=snap2, state_store=store, eval_time="14:45", log_db_path=db,
+        _DATE_C,
+        "14:45",
+        futures_basis=snap2,
+        state_store=store,
+        eval_time="14:45",
+        log_db_path=db,
     )
     assert rev2.revision_applied is True
     assert rev2.direction == "DOWNGRADE" and rev2.revised_tier == "CONSERVATIVE"
@@ -653,9 +715,7 @@ _SECTOR_CLOSES = {
     "880507.SH": _closes_shuffle(-0.003, 6, False),
     "880508.SH": _closes_shuffle(-0.004, 7, False),
 }
-_SECTOR_AMOUNTS = {
-    code: [10.0 + ((i + si) % 3) for i in range(_N_D)] for si, code in enumerate([_MKT] + _S880)
-}
+_SECTOR_AMOUNTS = {code: [10.0 + ((i + si) % 3) for i in range(_N_D)] for si, code in enumerate([_MKT] + _S880)}
 
 # 个股宇宙（板块归属 / 趋势起点 / 日步长 / 末日涨幅% / 末尾连板封板天数 / 当日成交额）
 # 注：成交额与板块 K 线 amount 同量级（~10）——881xxx 合成板块成交额=成分合计，
@@ -727,9 +787,36 @@ class _SectorWorldCH:
             ("STK_A1.SH", _DAYS_D[-1], "涨停"),
         ]
         self._snapshot = [
-            ("880501.SH", _SECTOR_CLOSES["880501.SH"][-1], _SECTOR_CLOSES["880501.SH"][-2], 500.0, 20.0, 11.0, 9.0, _END_D),
-            ("880502.SH", _SECTOR_CLOSES["880502.SH"][-1], _SECTOR_CLOSES["880502.SH"][-2], 490.0, 30.0, 15.0, 15.0, _END_D),
-            ("880503.SH", _SECTOR_CLOSES["880503.SH"][-1], _SECTOR_CLOSES["880503.SH"][-2], 480.0, 10.0, 6.0, 4.0, _END_D),
+            (
+                "880501.SH",
+                _SECTOR_CLOSES["880501.SH"][-1],
+                _SECTOR_CLOSES["880501.SH"][-2],
+                500.0,
+                20.0,
+                11.0,
+                9.0,
+                _END_D,
+            ),
+            (
+                "880502.SH",
+                _SECTOR_CLOSES["880502.SH"][-1],
+                _SECTOR_CLOSES["880502.SH"][-2],
+                490.0,
+                30.0,
+                15.0,
+                15.0,
+                _END_D,
+            ),
+            (
+                "880503.SH",
+                _SECTOR_CLOSES["880503.SH"][-1],
+                _SECTOR_CLOSES["880503.SH"][-2],
+                480.0,
+                10.0,
+                6.0,
+                4.0,
+                _END_D,
+            ),
         ]
         self._breadth = [(_DAYS_D[-2], 40, 100), (_DAYS_D[-1], 60, 100)]
 
@@ -980,9 +1067,7 @@ def test_chain_f_breadth_collect_to_loop(tmp_path):
     assert result.sector_board is not None and result.sector_board.n_sectors == 1
     assert result.prediction_log_id is not None and result.prediction_log_id > 0
 
-    rows = query_predictions(
-        trade_date="2026-08-21", module="zephyr.data.intraday_sentiment_loop", db_path=str(db)
-    )
+    rows = query_predictions(trade_date="2026-08-21", module="zephyr.data.intraday_sentiment_loop", db_path=str(db))
     assert len(rows) == 1
     assert rows[0]["prediction_type"] == "sentiment_score"
     payload = json.loads(rows[0]["payload_json"])

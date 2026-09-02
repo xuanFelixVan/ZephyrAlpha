@@ -166,9 +166,7 @@ class TestThreeRoleFlow:
 
     def test_synthetic_success_e2e(self):
         task = TaskSpec(task_id="task-factor-hyp", description="写一篇因子假设")
-        trajectory, report, record = run_three_role_flow(
-            task, SyntheticActor(), RubricEvaluator(), L1SelfReflection()
-        )
+        trajectory, report, record = run_three_role_flow(task, SyntheticActor(), RubricEvaluator(), L1SelfReflection())
         # Actor 轨迹
         assert trajectory.task_id == task.task_id
         assert trajectory.succeeded is True
@@ -188,9 +186,7 @@ class TestThreeRoleFlow:
             description="写一篇因子假设",
             params={"inject_failure": "数据缺失"},
         )
-        trajectory, report, record = run_three_role_flow(
-            task, SyntheticActor(), RubricEvaluator(), L1SelfReflection()
-        )
+        trajectory, report, record = run_three_role_flow(task, SyntheticActor(), RubricEvaluator(), L1SelfReflection())
         assert trajectory.succeeded is False
         assert report.defects  # 缺陷清单非空
         assert record.outcome == "failure"
@@ -235,9 +231,7 @@ class TestL1Reflector:
         reflector = L1Reflector(rules=custom)
         trajectory = Trajectory(
             task_id="task-hallu",
-            steps=[
-                TrajectoryStep(step_index=0, action="撰写", observation="文中虚构引用三处")
-            ],
+            steps=[TrajectoryStep(step_index=0, action="撰写", observation="文中虚构引用三处")],
             final_output="",
             succeeded=False,
             error="审校驳回: 虚构引用",
@@ -250,9 +244,7 @@ class TestL1Reflector:
             L1Reflector(rules={})
 
     def test_success_trajectory_record(self):
-        trajectory = SyntheticActor().run(
-            TaskSpec(task_id="task-ok", description="写一篇因子假设")
-        )
+        trajectory = SyntheticActor().run(TaskSpec(task_id="task-ok", description="写一篇因子假设"))
         record = L1Reflector().reflect(trajectory)
         assert record.outcome == "success"
         assert record.failure_category == ""
@@ -319,16 +311,12 @@ class TestStoreAndBatch:
         ):
             payload = {
                 "task_id": f"task-{idx}",
-                "steps": [
-                    {"action": "执行", "observation": error or "执行完成, 产出齐整"}
-                ],
+                "steps": [{"action": "执行", "observation": error or "执行完成, 产出齐整"}],
                 "final_output": "产出" if succeeded else "",
                 "succeeded": succeeded,
                 "error": error,
             }
-            (traj_dir / f"traj-{idx}.json").write_text(
-                json.dumps(payload, ensure_ascii=False), encoding="utf-8"
-            )
+            (traj_dir / f"traj-{idx}.json").write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
         (traj_dir / "bad.json").write_text("{not json", encoding="utf-8")  # 坏文件跳过
 
         store = ReflectionStore(root=tmp_path / "reflections")

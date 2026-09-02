@@ -43,11 +43,14 @@ class TestRegister:
         with pytest.raises(LocalModelAlreadyRegisteredError):
             pool.register_model(_spec())
 
-    @pytest.mark.parametrize("bad", [
-        {"name": ""},
-        {"vram_gb": -1},
-        {"role": "bad"},
-    ])
+    @pytest.mark.parametrize(
+        "bad",
+        [
+            {"name": ""},
+            {"vram_gb": -1},
+            {"role": "bad"},
+        ],
+    )
     def test_invalid_spec(self, bad: dict) -> None:
         base = {"name": "qwen", "quant": "awq", "vram_gb": 4.0, "role": "primary"}
         base.update(bad)
@@ -77,6 +80,7 @@ class TestLoad:
     def test_gpu_provider_fallback(self) -> None:
         def bad() -> dict:
             raise RuntimeError("boom")
+
         pool = LocalLlmPool(gpu_stats_provider=bad)
         pool.register_model(_spec(vram=1.0))
         dec = pool.request_load("qwen", "intraday")
@@ -115,6 +119,7 @@ class TestHealth:
     def test_profile_sink_error_not_blocking(self) -> None:
         def bad(model: str, data: dict) -> None:
             raise RuntimeError("boom")
+
         pool = LocalLlmPool(profile_sink=bad)
         pool.register_model(_spec())
         pool.record_call_result("qwen", True, 50)

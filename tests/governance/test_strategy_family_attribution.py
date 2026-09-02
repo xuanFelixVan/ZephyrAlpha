@@ -26,8 +26,20 @@ _REGISTRY = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "ca
 #: 2026-08-31 起扩展 PS-VOC-TAX-001 other 6 类——GP1 人评真值修正（ARCH-301）允许策略条目
 #: 承载 other 类真值（如 STR-MOMTREND-021=risk_rule，见 knowledge_taxonomy_vocabulary.yaml anchors）。
 _KNOWN_CLASSES = frozenset(
-    {"daban", "multifactor", "event_driven", "value_reversal", "momentum_trend", "sector_rotation",
-     "risk_rule", "execution_algo", "data_asset", "technical_indicator", "tool", "knowledge_only"}
+    {
+        "daban",
+        "multifactor",
+        "event_driven",
+        "value_reversal",
+        "momentum_trend",
+        "sector_rotation",
+        "risk_rule",
+        "execution_algo",
+        "data_asset",
+        "technical_indicator",
+        "tool",
+        "knowledge_only",
+    }
 )
 
 #: strategy_id CLASS 段 → strategy_class 映射（族归属一致性）

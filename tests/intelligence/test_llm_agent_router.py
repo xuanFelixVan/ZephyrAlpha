@@ -85,6 +85,7 @@ class TestRoute:
     def test_audit_sink_error_not_blocking(self) -> None:
         def bad(audit: Any) -> None:
             raise RuntimeError("boom")
+
         router = LlmAgentRouter(_config(), audit_sink=bad)
         dec = router.route(RouteRequest(task_type="summarize", candidates=["local_qwen"]))
         assert dec.task_type == "summarize"
@@ -92,6 +93,7 @@ class TestRoute:
     def test_decision_engine_exception(self) -> None:
         def bad(req: RouteRequest) -> dict:
             raise RuntimeError("boom")
+
         router = LlmAgentRouter(_config(), decision_engine=bad)
         dec = router.route(RouteRequest(task_type="summarize", candidates=["api_ds"]))
         assert dec.selected_model is None
@@ -127,9 +129,7 @@ class TestTaskGateDispatch:
         )
 
     def test_default_no_gate_zero_change(self) -> None:
-        router = LlmAgentRouter(
-            _config(), decision_engine=lambda req: {"model": "m1", "provider": "ollama"}
-        )
+        router = LlmAgentRouter(_config(), decision_engine=lambda req: {"model": "m1", "provider": "ollama"})
         dec = router.route(RouteRequest(task_type="code_fix", candidates=["m1"], period="post_close"))
         assert dec.selected_model == "m1"
         assert not any("task_gate" in r for r in dec.reasons)
@@ -141,9 +141,7 @@ class TestTaskGateDispatch:
             calls.append((model_id, capability))
             return (True, "ok")
 
-        dec = self._router(gate).route(
-            RouteRequest(task_type="code_fix", candidates=["m1"], period="post_close")
-        )
+        dec = self._router(gate).route(RouteRequest(task_type="code_fix", candidates=["m1"], period="post_close"))
         assert dec.selected_model == "m1"
         assert calls == [("m1", "code_fix")]
 
@@ -151,17 +149,13 @@ class TestTaskGateDispatch:
         def gate(model_id: str, capability: str) -> tuple:
             return (False, "low_accuracy: x") if model_id == "m1" else (True, "ok")
 
-        dec = self._router(gate).route(
-            RouteRequest(task_type="code_fix", candidates=["m1", "m2"], period="post_close")
-        )
+        dec = self._router(gate).route(RouteRequest(task_type="code_fix", candidates=["m1", "m2"], period="post_close"))
         assert dec.selected_model == "m2"  # 回退过门候选
         assert any("task_gate 拦截(m1)" in r for r in dec.reasons)
 
     def test_gate_deny_all_returns_blocked_marker(self) -> None:
         router = self._router(lambda m, c: (False, "no_passport"))
-        dec = router.route(
-            RouteRequest(task_type="code_fix", candidates=["m1", "m2"], period="post_close")
-        )
+        dec = router.route(RouteRequest(task_type="code_fix", candidates=["m1", "m2"], period="post_close"))
         assert dec.selected_model is None  # 阻断标记：无过门候选
         assert any("task_gate 阻断" in r for r in dec.reasons)
 
@@ -169,9 +163,7 @@ class TestTaskGateDispatch:
         def bad(model_id: str, capability: str) -> tuple:
             raise RuntimeError("gate down")
 
-        dec = self._router(bad).route(
-            RouteRequest(task_type="code_fix", candidates=["m1"], period="post_close")
-        )
+        dec = self._router(bad).route(RouteRequest(task_type="code_fix", candidates=["m1"], period="post_close"))
         assert dec.selected_model is None  # 钩子异常 fail-closed 按拦截处理，不抛出
         assert any("task_gate 异常" in r for r in dec.reasons)
 

@@ -243,5 +243,7 @@ class TestCostLimitDegrade:
 class TestNoSecrets:
     def test_spec_has_no_secret_fields(self) -> None:
         fields = {f.name for f in dataclasses.fields(ApiProviderSpec)}
-        leaked = {f for f in fields if any(k in f.lower() for k in ("key", "secret", "token_pwd", "password", "credential"))}
+        leaked = {
+            f for f in fields if any(k in f.lower() for k in ("key", "secret", "token_pwd", "password", "credential"))
+        }
         assert leaked == set()

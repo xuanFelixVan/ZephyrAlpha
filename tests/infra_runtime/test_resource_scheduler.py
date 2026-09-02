@@ -104,32 +104,38 @@ class TestInit:
 
     def test_invalid_quota_fields_raise(self) -> None:
         with pytest.raises(ResourceSchedulerError):
-            ResourceScheduler(quotas={
-                ResourcePlane.HOT: PlaneQuota(
-                    plane=ResourcePlane.HOT,
-                    cpu_cores=frozenset(),
-                    mem_budget_bytes=_GIB,
-                    qps_limit=1.0,
-                )
-            })
+            ResourceScheduler(
+                quotas={
+                    ResourcePlane.HOT: PlaneQuota(
+                        plane=ResourcePlane.HOT,
+                        cpu_cores=frozenset(),
+                        mem_budget_bytes=_GIB,
+                        qps_limit=1.0,
+                    )
+                }
+            )
         with pytest.raises(ResourceSchedulerError):
-            ResourceScheduler(quotas={
-                ResourcePlane.HOT: PlaneQuota(
-                    plane=ResourcePlane.HOT,
-                    cpu_cores=frozenset({0}),
-                    mem_budget_bytes=0,
-                    qps_limit=1.0,
-                )
-            })
+            ResourceScheduler(
+                quotas={
+                    ResourcePlane.HOT: PlaneQuota(
+                        plane=ResourcePlane.HOT,
+                        cpu_cores=frozenset({0}),
+                        mem_budget_bytes=0,
+                        qps_limit=1.0,
+                    )
+                }
+            )
         with pytest.raises(ResourceSchedulerError):
-            ResourceScheduler(quotas={
-                ResourcePlane.HOT: PlaneQuota(
-                    plane=ResourcePlane.HOT,
-                    cpu_cores=frozenset({0}),
-                    mem_budget_bytes=_GIB,
-                    qps_limit=0.0,
-                )
-            })
+            ResourceScheduler(
+                quotas={
+                    ResourcePlane.HOT: PlaneQuota(
+                        plane=ResourcePlane.HOT,
+                        cpu_cores=frozenset({0}),
+                        mem_budget_bytes=_GIB,
+                        qps_limit=0.0,
+                    )
+                }
+            )
 
 
 # ──────────────────────────────────────────────────────────────────────────────

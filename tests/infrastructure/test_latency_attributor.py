@@ -47,21 +47,15 @@ class TestAttribute:
         assert report.shares[0].share == pytest.approx(0.75)
 
     def test_shares_sorted_desc(self) -> None:
-        report = LatencyAttributor().attribute(
-            "tr-1", _spans(("a", 10.0), ("b", 50.0), ("c", 40.0))
-        )
+        report = LatencyAttributor().attribute("tr-1", _spans(("a", 10.0), ("b", 50.0), ("c", 40.0)))
         assert [s.stage for s in report.shares] == ["b", "c", "a"]
 
     def test_top_stage_is_max_contributor(self) -> None:
-        report = LatencyAttributor().attribute(
-            "tr-1", _spans(("tick", 5.0), ("order", 80.0), ("signal", 15.0))
-        )
+        report = LatencyAttributor().attribute("tr-1", _spans(("tick", 5.0), ("order", 80.0), ("signal", 15.0)))
         assert report.top_stage == "order"
 
     def test_tie_break_by_stage_name(self) -> None:
-        report = LatencyAttributor().attribute(
-            "tr-1", _spans(("b", 10.0), ("a", 10.0))
-        )
+        report = LatencyAttributor().attribute("tr-1", _spans(("b", 10.0), ("a", 10.0)))
         assert [s.stage for s in report.shares] == ["a", "b"]  # 确定性决胜
 
     def test_empty_trace_id_raises(self) -> None:
@@ -134,8 +128,8 @@ class TestWeeklyReport:
             attr.attribute(f"tr-{i}", _spans(("signal", d), ("tick", 1.0)))
         rep = attr.weekly_report()
         assert rep["signal"]["count"] == 4.0
-        assert rep["signal"]["p50"] == 20.0   # 最近秩 ceil(0.5*4)=2
-        assert rep["signal"]["p95"] == 40.0   # 最近秩 ceil(0.95*4)=4
+        assert rep["signal"]["p50"] == 20.0  # 最近秩 ceil(0.5*4)=2
+        assert rep["signal"]["p95"] == 40.0  # 最近秩 ceil(0.95*4)=4
         assert rep["signal"]["max"] == 40.0
 
     def test_weekly_multi_stage_sorted(self) -> None:

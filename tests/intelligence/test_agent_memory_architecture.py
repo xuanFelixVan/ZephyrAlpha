@@ -30,7 +30,8 @@ def _policy(eviction: str = "lru", max_entries: int = 2, ttl: int = 10) -> Memor
 
 def _make_arch(policies: dict | None = None, backends: dict | None = None) -> AgentMemoryArchitecture:
     return AgentMemoryArchitecture(
-        policies=policies or {"working": _policy(), "episodic": _policy(), "semantic": _policy(), "procedural": _policy()},
+        policies=policies
+        or {"working": _policy(), "episodic": _policy(), "semantic": _policy(), "procedural": _policy()},
         backends=backends or {layer: _FakeBackend() for layer in ("working", "episodic", "semantic", "procedural")},
     )
 
@@ -54,11 +55,14 @@ class TestMemoryPolicy:
         p = _policy()
         assert p.eviction == "lru"
 
-    @pytest.mark.parametrize("bad", [
-        {"ttl_seconds": 0},
-        {"max_entries": 0},
-        {"eviction": "bad"},
-    ])
+    @pytest.mark.parametrize(
+        "bad",
+        [
+            {"ttl_seconds": 0},
+            {"max_entries": 0},
+            {"eviction": "bad"},
+        ],
+    )
     def test_invalid(self, bad: dict) -> None:
         base = {"ttl_seconds": 10, "max_entries": 2, "eviction": "lru"}
         base.update(bad)
@@ -165,6 +169,7 @@ class TestForget:
         arch = _make_arch(policies={"working": _policy(ttl=1)})
         arch.store(arch.encode("i1", "working", "c1"))
         import time
+
         time.sleep(1.1)
         ev = arch.forget("working")
         assert len(ev.evicted_ids) == 1

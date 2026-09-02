@@ -96,9 +96,7 @@ class TestCollect:
         assert m.last_metrics is got
 
     def test_probe_missing_fail_closed(self) -> None:
-        m = WalCheckpointMonitor(
-            warn_threshold_bytes=_WARN, critical_threshold_bytes=_CRIT, clock=lambda: _T0
-        )
+        m = WalCheckpointMonitor(warn_threshold_bytes=_WARN, critical_threshold_bytes=_CRIT, clock=lambda: _T0)
         with pytest.raises(WalMonitorError):
             m.collect()
 
@@ -243,8 +241,8 @@ class TestRealSqliteWal:
             wal_file = tmp_path / "s.db-wal"
             size = wal_file.stat().st_size if wal_file.exists() else 0
             m = WalCheckpointMonitor(
-                warn_threshold_bytes=10 ** 9,
-                critical_threshold_bytes=10 ** 10,
+                warn_threshold_bytes=10**9,
+                critical_threshold_bytes=10**10,
                 metrics_probe=lambda: _metrics(wal_bytes=size),
                 clock=lambda: _T0,
             )

@@ -104,8 +104,11 @@ class TestDetect:
     def test_detect_empty_title_raises(self) -> None:
         agg = _agg()
         event = DetectedEvent(
-            incident_id="INC-1", severity=IncidentSeverity.P1,
-            title="", source="s", occurred_at=_T0,
+            incident_id="INC-1",
+            severity=IncidentSeverity.P1,
+            title="",
+            source="s",
+            occurred_at=_T0,
         )
         with pytest.raises(OpsIncidentError):
             agg.detect(event)
@@ -113,8 +116,11 @@ class TestDetect:
     def test_detect_empty_source_raises(self) -> None:
         agg = _agg()
         event = DetectedEvent(
-            incident_id="INC-1", severity=IncidentSeverity.P1,
-            title="t", source="", occurred_at=_T0,
+            incident_id="INC-1",
+            severity=IncidentSeverity.P1,
+            title="t",
+            source="",
+            occurred_at=_T0,
         )
         with pytest.raises(OpsIncidentError):
             agg.detect(event)
@@ -122,8 +128,11 @@ class TestDetect:
     def test_detect_invalid_severity_raises(self) -> None:
         agg = _agg()
         event = DetectedEvent(
-            incident_id="INC-1", severity="P9",  # type: ignore[arg-type]
-            title="t", source="s", occurred_at=_T0,
+            incident_id="INC-1",
+            severity="P9",  # type: ignore[arg-type]
+            title="t",
+            source="s",
+            occurred_at=_T0,
         )
         with pytest.raises(OpsIncidentError):
             agg.detect(event)
@@ -154,9 +163,16 @@ class TestStateMachine:
         _opened(agg)
         assert agg.acknowledge("INC-1").status is IncidentStatus.ACK
         assert agg.start_mitigation("INC-1").status is IncidentStatus.MITIGATING
-        assert agg.resolve(ResolvedEvent(
-            incident_id="INC-1", resolution="扩容撮合线程池", occurred_at=_T1,
-        )).status is IncidentStatus.RESOLVED
+        assert (
+            agg.resolve(
+                ResolvedEvent(
+                    incident_id="INC-1",
+                    resolution="扩容撮合线程池",
+                    occurred_at=_T1,
+                )
+            ).status
+            is IncidentStatus.RESOLVED
+        )
         assert agg.close_postmortem("INC-1").status is IncidentStatus.POSTMORTEM
 
     def test_skip_transition_raises(self) -> None:
@@ -170,9 +186,13 @@ class TestStateMachine:
         _opened(agg)
         agg.acknowledge("INC-1")
         with pytest.raises(OpsIncidentError):
-            agg.resolve(ResolvedEvent(
-                incident_id="INC-1", resolution="r", occurred_at=_T1,
-            ))  # ack → resolved 越步
+            agg.resolve(
+                ResolvedEvent(
+                    incident_id="INC-1",
+                    resolution="r",
+                    occurred_at=_T1,
+                )
+            )  # ack → resolved 越步
 
     def test_terminal_blocks_transition(self) -> None:
         agg = _agg()
@@ -213,7 +233,9 @@ class TestStateMachine:
         agg.acknowledge("INC-1")
         agg.start_mitigation("INC-1")
         assert [s.status for s in store] == [
-            IncidentStatus.OPEN, IncidentStatus.ACK, IncidentStatus.MITIGATING,
+            IncidentStatus.OPEN,
+            IncidentStatus.ACK,
+            IncidentStatus.MITIGATING,
         ]
 
 
@@ -243,67 +265,85 @@ class TestEscalate:
         agg = _agg()
         _opened(agg)
         with pytest.raises(OpsIncidentError):
-            agg.escalate(EscalatedEvent(
-                incident_id="INC-1",
-                from_severity=IncidentSeverity.P1,
-                to_severity=IncidentSeverity.P2,  # 降级非法
-                reason="r", occurred_at=_T1,
-            ))
+            agg.escalate(
+                EscalatedEvent(
+                    incident_id="INC-1",
+                    from_severity=IncidentSeverity.P1,
+                    to_severity=IncidentSeverity.P2,  # 降级非法
+                    reason="r",
+                    occurred_at=_T1,
+                )
+            )
 
     def test_escalate_same_level_raises(self) -> None:
         agg = _agg()
         _opened(agg)
         with pytest.raises(OpsIncidentError):
-            agg.escalate(EscalatedEvent(
-                incident_id="INC-1",
-                from_severity=IncidentSeverity.P1,
-                to_severity=IncidentSeverity.P1,
-                reason="r", occurred_at=_T1,
-            ))
+            agg.escalate(
+                EscalatedEvent(
+                    incident_id="INC-1",
+                    from_severity=IncidentSeverity.P1,
+                    to_severity=IncidentSeverity.P1,
+                    reason="r",
+                    occurred_at=_T1,
+                )
+            )
 
     def test_escalate_from_mismatch_raises(self) -> None:
         agg = _agg()
         agg.detect(_detected(severity=IncidentSeverity.P2))
         with pytest.raises(OpsIncidentError):
-            agg.escalate(EscalatedEvent(
-                incident_id="INC-1",
-                from_severity=IncidentSeverity.P1,  # 声明与当前不符
-                to_severity=IncidentSeverity.P0,
-                reason="r", occurred_at=_T1,
-            ))
+            agg.escalate(
+                EscalatedEvent(
+                    incident_id="INC-1",
+                    from_severity=IncidentSeverity.P1,  # 声明与当前不符
+                    to_severity=IncidentSeverity.P0,
+                    reason="r",
+                    occurred_at=_T1,
+                )
+            )
 
     def test_escalate_terminal_raises(self) -> None:
         agg = _agg()
         _mitigating(agg)
         agg.resolve(ResolvedEvent(incident_id="INC-1", resolution="r", occurred_at=_T1))
         with pytest.raises(OpsIncidentError):
-            agg.escalate(EscalatedEvent(
-                incident_id="INC-1",
-                from_severity=IncidentSeverity.P1,
-                to_severity=IncidentSeverity.P0,
-                reason="r", occurred_at=_T1,
-            ))
+            agg.escalate(
+                EscalatedEvent(
+                    incident_id="INC-1",
+                    from_severity=IncidentSeverity.P1,
+                    to_severity=IncidentSeverity.P0,
+                    reason="r",
+                    occurred_at=_T1,
+                )
+            )
 
     def test_escalate_unknown_raises(self) -> None:
         agg = _agg()
         with pytest.raises(OpsIncidentError):
-            agg.escalate(EscalatedEvent(
-                incident_id="ghost",
-                from_severity=IncidentSeverity.P1,
-                to_severity=IncidentSeverity.P0,
-                reason="r", occurred_at=_T1,
-            ))
+            agg.escalate(
+                EscalatedEvent(
+                    incident_id="ghost",
+                    from_severity=IncidentSeverity.P1,
+                    to_severity=IncidentSeverity.P0,
+                    reason="r",
+                    occurred_at=_T1,
+                )
+            )
 
     def test_escalate_empty_reason_raises(self) -> None:
         agg = _agg()
         _opened(agg)
         with pytest.raises(OpsIncidentError):
-            agg.escalate(EscalatedEvent(
-                incident_id="INC-1",
-                from_severity=IncidentSeverity.P1,
-                to_severity=IncidentSeverity.P0,
-                reason="", occurred_at=_T1,
-            ))
+            agg.escalate(
+                EscalatedEvent(
+                    incident_id="INC-1",
+                    from_severity=IncidentSeverity.P1,
+                    to_severity=IncidentSeverity.P0,
+                    reason="",
+                    occurred_at=_T1,
+                )
+            )
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -314,14 +354,24 @@ class TestEscalate:
 class TestQuery:
     def test_list_sorted_by_detected_at_then_id(self) -> None:
         agg = _agg()
-        agg.detect(DetectedEvent(
-            incident_id="INC-2", severity=IncidentSeverity.P1,
-            title="t", source="s", occurred_at=_T0,
-        ))
-        agg.detect(DetectedEvent(
-            incident_id="INC-1", severity=IncidentSeverity.P1,
-            title="t", source="s", occurred_at=_T0,
-        ))
+        agg.detect(
+            DetectedEvent(
+                incident_id="INC-2",
+                severity=IncidentSeverity.P1,
+                title="t",
+                source="s",
+                occurred_at=_T0,
+            )
+        )
+        agg.detect(
+            DetectedEvent(
+                incident_id="INC-1",
+                severity=IncidentSeverity.P1,
+                title="t",
+                source="s",
+                occurred_at=_T0,
+            )
+        )
         assert [i.incident_id for i in agg.list_incidents()] == ["INC-1", "INC-2"]
 
     def test_list_filter_by_status(self) -> None:
@@ -348,12 +398,15 @@ class TestQuery:
             _opened(agg, "INC-1")
             _opened(agg, "INC-2")
             agg.acknowledge("INC-1")
-            agg.escalate(EscalatedEvent(
-                incident_id="INC-2",
-                from_severity=IncidentSeverity.P1,
-                to_severity=IncidentSeverity.P0,
-                reason="r", occurred_at=_T1,
-            ))
+            agg.escalate(
+                EscalatedEvent(
+                    incident_id="INC-2",
+                    from_severity=IncidentSeverity.P1,
+                    to_severity=IncidentSeverity.P0,
+                    reason="r",
+                    occurred_at=_T1,
+                )
+            )
             return agg.list_incidents()
 
         assert _run() == _run()

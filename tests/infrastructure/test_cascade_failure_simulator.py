@@ -82,10 +82,15 @@ class TestScenarioValidation:
 
     def test_duplicate_step_id_raises(self) -> None:
         with pytest.raises(CascadeSimError):
-            _sim().run(FailureScenario("sc-1", (
-                SimStep("s1", FailureKind.GPU_FAILURE, "gpu0"),
-                SimStep("s1", FailureKind.REDIS_OUTAGE, "redis"),
-            )))
+            _sim().run(
+                FailureScenario(
+                    "sc-1",
+                    (
+                        SimStep("s1", FailureKind.GPU_FAILURE, "gpu0"),
+                        SimStep("s1", FailureKind.REDIS_OUTAGE, "redis"),
+                    ),
+                )
+            )
 
     def test_empty_step_id_raises(self) -> None:
         with pytest.raises(CascadeSimError):

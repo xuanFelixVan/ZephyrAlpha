@@ -156,16 +156,19 @@ class TestRunBatch:
             ext.run_batch()
         assert ext.source_status("a") is SourceStatus.FAILED  # 坏输出不入库
 
-    @pytest.mark.parametrize("bad_item", [
-        {"content": "c", "confidence": 0.9},                    # 缺 title
-        {"title": "", "content": "c", "confidence": 0.9},       # 空 title
-        {"title": "t", "confidence": 0.9},                      # 缺 content
-        {"title": "t", "content": "c"},                         # 缺 confidence
-        {"title": "t", "content": "c", "confidence": "高"},      # 非数值
-        {"title": "t", "content": "c", "confidence": 1.2},      # 越界
-        {"title": "t", "content": "c", "confidence": True},     # bool 拒绝
-        {"title": "t", "content": "c", "confidence": 0.9, "tags": "非法"},  # tags 非列表
-    ])
+    @pytest.mark.parametrize(
+        "bad_item",
+        [
+            {"content": "c", "confidence": 0.9},  # 缺 title
+            {"title": "", "content": "c", "confidence": 0.9},  # 空 title
+            {"title": "t", "confidence": 0.9},  # 缺 content
+            {"title": "t", "content": "c"},  # 缺 confidence
+            {"title": "t", "content": "c", "confidence": "高"},  # 非数值
+            {"title": "t", "content": "c", "confidence": 1.2},  # 越界
+            {"title": "t", "content": "c", "confidence": True},  # bool 拒绝
+            {"title": "t", "content": "c", "confidence": 0.9, "tags": "非法"},  # tags 非列表
+        ],
+    )
     def test_llm_bad_item_schema_fail_closed(self, bad_item) -> None:
         ext = _ext([], llm=lambda s: {"items": [bad_item]})
         ext.register_source(SourceType.RESEARCH_NOTE, "a", "x")
@@ -192,9 +195,14 @@ class TestRunBatch:
 
     def test_threshold_boundary(self) -> None:
         written: list = []
-        ext = _ext(written, llm=lambda s: {"items": [
-            {"title": "恰达阈值", "content": "c", "confidence": 0.7},
-        ]})
+        ext = _ext(
+            written,
+            llm=lambda s: {
+                "items": [
+                    {"title": "恰达阈值", "content": "c", "confidence": 0.7},
+                ]
+            },
+        )
         ext.register_source(SourceType.RESEARCH_NOTE, "a", "x")
         ext.run_batch()
         assert len(written) == 1  # 0.7 不低于阈值 → 直写
@@ -234,9 +242,9 @@ class TestReviewQueue:
             ext.resolve_review("ghost#K9999", approve=True)
 
     def test_pending_review_sorted(self) -> None:
-        ext = _ext([], llm=lambda s: {"items": [
-            {"title": f"项{i}", "content": "c", "confidence": 0.1} for i in range(3)
-        ]})
+        ext = _ext(
+            [], llm=lambda s: {"items": [{"title": f"项{i}", "content": "c", "confidence": 0.1} for i in range(3)]}
+        )
         ext.register_source(SourceType.RESEARCH_NOTE, "a", "x")
         ext.run_batch()
         keys = [item.item_key for item in ext.pending_review()]

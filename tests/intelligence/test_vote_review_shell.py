@@ -115,8 +115,11 @@ def test_tie_no_consensus(tmp_path):
     inbox = _write_inbox(
         tmp_path,
         {"cand-a": "A"},
-        [_ballot("s1", {"cand-a": "approve"}), _ballot("s2", {"cand-a": "reject"}),
-         _ballot("s3", {"cand-a": "abstain"})],
+        [
+            _ballot("s1", {"cand-a": "approve"}),
+            _ballot("s2", {"cand-a": "reject"}),
+            _ballot("s3", {"cand-a": "abstain"}),
+        ],
     )
     report = run_review(inbox, tmp_path / "report.json")
 

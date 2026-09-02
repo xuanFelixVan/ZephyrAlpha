@@ -298,9 +298,7 @@ class TestCrashRecoveryWorktreeLayer:
         直接 MarkDone 不重跑 commit——dev 上同 qid 仅 1 个 commit。
         """
         landing = cql.WorktreeLanding(repo_root=tmp_repo, queue_root=queue_root)
-        item = cq.enqueue_item(
-            sessions[0], "crash after advance", [("docs/c1.txt", b"c1\n")], queue_root=queue_root
-        )
+        item = cq.enqueue_item(sessions[0], "crash after advance", [("docs/c1.txt", b"c1\n")], queue_root=queue_root)
         orig_advance = landing._advance_dev
 
         def killer_advance(old_sha: str, new_sha: str) -> None:
@@ -359,12 +357,13 @@ class TestDeadLetterAttribution:
     ) -> None:
         base = _git_text(tmp_repo, "rev-parse", "refs/heads/dev")
         item1 = cq.enqueue_item(
-            sessions[0], "conflicting", [("docs/a.txt", b"mine\n")], queue_root=queue_root,
+            sessions[0],
+            "conflicting",
+            [("docs/a.txt", b"mine\n")],
+            queue_root=queue_root,
             options=cq.EnqueueOptions(base_head=base),
         )
-        item2 = cq.enqueue_item(
-            sessions[1], "disjoint", [("docs/b.txt", b"other\n")], queue_root=queue_root
-        )
+        item2 = cq.enqueue_item(sessions[1], "disjoint", [("docs/b.txt", b"other\n")], queue_root=queue_root)
         # 入队后 dev 被直提推进且触及同路径（flag OFF 期第二写入者形态模拟）
         (tmp_repo / "docs").mkdir(exist_ok=True)
         (tmp_repo / "docs" / "a.txt").write_bytes(b"theirs\n")  # write_bytes 防 Windows 文本模式 \r\n 转换
@@ -403,7 +402,10 @@ class TestDeadLetterAttribution:
         assert _git_bytes(tmp_repo, "show", "dev:docs/doomed.txt") == b"gone\n"
 
         item = cq.enqueue_item(
-            sessions[0], "remove doomed", [], queue_root=queue_root,
+            sessions[0],
+            "remove doomed",
+            [],
+            queue_root=queue_root,
             options=cq.EnqueueOptions(deletes=["docs/doomed.txt"]),
         )
         assert item["files"][0]["action"] == "delete"
@@ -443,12 +445,16 @@ class TestGuardCompatibility:
         _git(wt, "add", "docs/evil.txt")
         tree = _git_text(wt, "write-tree")
         head = _git_text(repo, "rev-parse", "refs/heads/dev")
-        bad = subprocess.run(
-            ["git", "commit-tree", tree, "-p", head, "-m", "no marker plumbing bypass"],
-            cwd=str(wt),
-            capture_output=True,
-            check=True,
-        ).stdout.decode().strip()
+        bad = (
+            subprocess.run(
+                ["git", "commit-tree", tree, "-p", head, "-m", "no marker plumbing bypass"],
+                cwd=str(wt),
+                capture_output=True,
+                check=True,
+            )
+            .stdout.decode()
+            .strip()
+        )
         r = _git(repo, "update-ref", "refs/heads/dev", bad, head, check=False)
         assert r.returncode != 0, "无标记 plumbing 更新 MUST 被 REFERENCE-TRANSACTION-GUARD 阻断"
         assert b"REFERENCE-TRANSACTION-GUARD" in r.stderr + r.stdout
@@ -632,9 +638,7 @@ class TestCommitAutoReroute:
             (tmp_path / "cq_off" / "pending").glob("q-*.json")
         ), "flag OFF 不得产生队列项"
 
-    def test_flag_on_reroutes_to_enqueue(
-        self, tmp_repo: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_flag_on_reroutes_to_enqueue(self, tmp_repo: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """flag ON：_commit_auto 改道 enqueue（快照入袋即返回），不真实落盘（drain 被 mock）。"""
         qroot = tmp_path / "cq_on"
         monkeypatch.setenv(cq.QUEUE_ENV_VAR, str(qroot))

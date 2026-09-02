@@ -85,18 +85,14 @@ class TestMetrics:
         triad.inc_counter("orders_total")
         triad.inc_counter("orders_total", 2)
         assert triad.render_prometheus() == (
-            "# HELP orders_total 订单总数\n"
-            "# TYPE orders_total counter\n"
-            "orders_total 3\n"
+            "# HELP orders_total 订单总数\n# TYPE orders_total counter\norders_total 3\n"
         )
 
     def test_gauge_set_and_render(self) -> None:
         triad = _triad()
         triad.register_gauge("queue_depth")
         triad.set_gauge("queue_depth", 4.5)
-        assert triad.render_prometheus() == (
-            "# TYPE queue_depth gauge\nqueue_depth 4.5\n"
-        )
+        assert triad.render_prometheus() == ("# TYPE queue_depth gauge\nqueue_depth 4.5\n")
 
     def test_render_sorted_by_name(self) -> None:
         triad = _triad()

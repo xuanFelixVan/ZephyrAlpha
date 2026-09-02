@@ -101,9 +101,7 @@ class TestSchema:
             FailurePatternEntry(**_entry_kwargs(source_reflection_ids=()))
 
     def test_manual_seed_allows_empty_reflection_ids(self):
-        entry = FailurePatternEntry(
-            **_entry_kwargs(source=SOURCE_MANUAL_SEED, source_reflection_ids=())
-        )
+        entry = FailurePatternEntry(**_entry_kwargs(source=SOURCE_MANUAL_SEED, source_reflection_ids=()))
         assert entry.source == SOURCE_MANUAL_SEED
 
     def test_invalid_source_rejected(self):
@@ -150,9 +148,7 @@ class TestEdit:
 
     def test_edit_updates_fields(self, store):
         store.add(FailurePatternEntry(**_entry_kwargs()))
-        edited = store.edit(
-            "fp-001", avoidance_advice="改为先跑数据契约校验", editor="Owner"
-        )
+        edited = store.edit("fp-001", avoidance_advice="改为先跑数据契约校验", editor="Owner")
         assert edited.avoidance_advice == "改为先跑数据契约校验"
         assert edited.source == SOURCE_MANUAL_EDIT
         assert edited.updated_at != edited.created_at or edited.updated_at

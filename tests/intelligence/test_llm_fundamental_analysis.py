@@ -51,7 +51,9 @@ class TestParseAgentOutput:
 
     @pytest.mark.parametrize("bad", ["not_json", json.dumps({"direction": "up"})])
     def test_fail_closed(self, bad: str) -> None:
-        fa = LlmFundamentalAnalysis(agents={"report": lambda p, m: bad, "news": lambda p, m: _fake_agent("bullish", 0.8)})
+        fa = LlmFundamentalAnalysis(
+            agents={"report": lambda p, m: bad, "news": lambda p, m: _fake_agent("bullish", 0.8)}
+        )
         with pytest.raises(FundamentalAnalysisError):
             fa.analyze(FundamentalInputBundle(symbol="000001", financial_report="r", news_policy="n"), "local")
 
@@ -110,6 +112,7 @@ class TestAnalyze:
     def test_audit_sink_error_not_blocking(self) -> None:
         def bad_sink(record: dict) -> None:
             raise RuntimeError("boom")
+
         fa = LlmFundamentalAnalysis(agents=_make_agents(), audit_sink=bad_sink)
         res = fa.analyze(FundamentalInputBundle(symbol="000001", financial_report="r", news_policy="n"), "local")
         assert "sink_errors" in res.audit_record

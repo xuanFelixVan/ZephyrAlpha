@@ -34,12 +34,8 @@ _REGISTRY = {
 
 _SOURCES = {
     "src/zephyr/shared/util.py": "import datetime\n",
-    "src/zephyr/domain/svc.py": (
-        "import zephyr.shared.util\nfrom zephyr.shared import util\n"
-    ),
-    "src/zephyr/app/main.py": (
-        "import zephyr.domain.svc\nfrom . import sibling\n"
-    ),
+    "src/zephyr/domain/svc.py": ("import zephyr.shared.util\nfrom zephyr.shared import util\n"),
+    "src/zephyr/app/main.py": ("import zephyr.domain.svc\nfrom . import sibling\n"),
     "src/zephyr/app/sibling.py": "from zephyr.domain import svc\n",
 }
 
@@ -167,9 +163,11 @@ class TestLayer:
         assert engine.layer_violations() == []
 
     def test_upward_import_violation(self) -> None:
-        engine = _scanned(sources={
-            "src/zephyr/shared/util.py": "import zephyr.app.main\n",
-        })
+        engine = _scanned(
+            sources={
+                "src/zephyr/shared/util.py": "import zephyr.app.main\n",
+            }
+        )
         violations = engine.layer_violations()
         assert len(violations) == 1
         v = violations[0]
@@ -179,9 +177,11 @@ class TestLayer:
         assert "越层" in v.reason
 
     def test_unregistered_endpoint_ignored(self) -> None:
-        engine = _scanned(sources={
-            "src/zephyr/shared/util.py": "import requests\n",
-        })
+        engine = _scanned(
+            sources={
+                "src/zephyr/shared/util.py": "import requests\n",
+            }
+        )
         assert engine.layer_violations() == []
         assert engine.find_cycles() == []
 
@@ -236,24 +236,33 @@ class TestCycles:
         assert engine.find_cycles() == []
 
     def test_simple_two_node_cycle(self) -> None:
-        engine = _scanned(sources={
-            "src/zephyr/app/a.py": "import zephyr.app.b\n",
-            "src/zephyr/app/b.py": "import zephyr.app.a\n",
-        })
+        engine = _scanned(
+            sources={
+                "src/zephyr/app/a.py": "import zephyr.app.b\n",
+                "src/zephyr/app/b.py": "import zephyr.app.a\n",
+            }
+        )
         cycles = engine.find_cycles()
         assert cycles == [("zephyr.app.a", "zephyr.app.b")]
 
     def test_three_node_cycle_normalized(self) -> None:
-        engine = _scanned(sources={
-            "src/zephyr/app/c.py": "import zephyr.app.a\n",
-            "src/zephyr/app/a.py": "import zephyr.app.b\n",
-            "src/zephyr/app/b.py": "import zephyr.app.c\n",
-        })
+        engine = _scanned(
+            sources={
+                "src/zephyr/app/c.py": "import zephyr.app.a\n",
+                "src/zephyr/app/a.py": "import zephyr.app.b\n",
+                "src/zephyr/app/b.py": "import zephyr.app.c\n",
+            }
+        )
         cycles = engine.find_cycles()
         assert cycles == [("zephyr.app.a", "zephyr.app.b", "zephyr.app.c")]
         # 确定性：同输入重扫必同输出
-        assert _scanned(sources={
-            "src/zephyr/app/c.py": "import zephyr.app.a\n",
-            "src/zephyr/app/a.py": "import zephyr.app.b\n",
-            "src/zephyr/app/b.py": "import zephyr.app.c\n",
-        }).find_cycles() == cycles
+        assert (
+            _scanned(
+                sources={
+                    "src/zephyr/app/c.py": "import zephyr.app.a\n",
+                    "src/zephyr/app/a.py": "import zephyr.app.b\n",
+                    "src/zephyr/app/b.py": "import zephyr.app.c\n",
+                }
+            ).find_cycles()
+            == cycles
+        )

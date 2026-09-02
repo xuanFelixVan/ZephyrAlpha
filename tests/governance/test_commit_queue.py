@@ -160,7 +160,9 @@ class TestConcurrentEnqueue:
             for i in indices:
                 try:
                     # 每会话不同文件——本用例不触发 compaction（compaction 专项见下）
-                    item = _enqueue(queue_root, sid, f"msg {sid} #{i}", [(f"docs/f{i:03d}.txt", f"content-{i}".encode())])
+                    item = _enqueue(
+                        queue_root, sid, f"msg {sid} #{i}", [(f"docs/f{i:03d}.txt", f"content-{i}".encode())]
+                    )
                     with lock:
                         qids.append(item["qid"])
                 except BaseException as exc:  # noqa: BLE001 - 测试收集一切异常
@@ -214,12 +216,8 @@ class _SimulatedCrash(BaseException):
 
 
 class TestCrashRecovery:
-    def test_crash_mid_drain_then_idempotent_resume(
-        self, queue_root: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
-        qids = [
-            _enqueue(queue_root, "AI-C1", f"m{i}", [(f"f{i}.txt", f"v{i}".encode())])["qid"] for i in range(5)
-        ]
+    def test_crash_mid_drain_then_idempotent_resume(self, queue_root: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        qids = [_enqueue(queue_root, "AI-C1", f"m{i}", [(f"f{i}.txt", f"v{i}".encode())])["qid"] for i in range(5)]
         landing_calls: list[str] = []
 
         def killer(item: dict, root: Path) -> cq.LandingResult:
@@ -428,9 +426,7 @@ class TestDeadLetterTaskBoardLinkage:
         assert tb.main(["create", "--title", title, "--session", "AI-TEST"]) == 0
         conn = sqlite3.connect(os.environ["ZEPHYR_TASK_BOARD_DB"])
         try:
-            row = conn.execute(
-                "SELECT task_id FROM tasks ORDER BY created_at DESC, rowid DESC LIMIT 1"
-            ).fetchone()
+            row = conn.execute("SELECT task_id FROM tasks ORDER BY created_at DESC, rowid DESC LIMIT 1").fetchone()
         finally:
             conn.close()
         return row[0]
@@ -497,7 +493,9 @@ class TestDeadLetterTaskBoardLinkage:
         assert stats["dead"] == 1
         assert not board_db.exists()
 
-    def test_board_unreachable_does_not_block_drain(self, queue_root: Path, monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    def test_board_unreachable_does_not_block_drain(
+        self, queue_root: Path, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    ) -> None:
         """板路径不可写（父路径是文件）→ 联动异常吞掉，drain 不阻断。"""
         blocker = tmp_path / "blocker"
         blocker.write_text("x", encoding="utf-8")
@@ -600,8 +598,11 @@ class TestCascadeStale:
     def test_depends_on_hit_marked_stale_then_cleared_and_landed(self, queue_root: Path) -> None:
         ix = _enqueue(queue_root, "AI-X", "mx", [("x.txt", b"x")])
         iy = cq.enqueue_item(
-            "AI-Y", "my", [("y.txt", b"y")],
-            queue_root=queue_root, options=cq.EnqueueOptions(depends_on=[ix["qid"]]),
+            "AI-Y",
+            "my",
+            [("y.txt", b"y")],
+            queue_root=queue_root,
+            options=cq.EnqueueOptions(depends_on=[ix["qid"]]),
         )
         stats = cq.drain_queue(queue_root)
         assert stats["done"] == 2 and stats["dead"] == 0
@@ -615,12 +616,15 @@ class TestCascadeStale:
 
     def test_base_head_equality_marked_stale(self, queue_root: Path) -> None:
         """base_head 经由 X（同基底入队）的后续项标 stale；不同基底不标。"""
-        ix = cq.enqueue_item("AI-X", "mx", [("x.txt", b"x")], queue_root=queue_root,
-                             options=cq.EnqueueOptions(base_head="sha-base"))
-        iy = cq.enqueue_item("AI-Y", "my", [("y.txt", b"y")], queue_root=queue_root,
-                             options=cq.EnqueueOptions(base_head="sha-base"))
-        iz = cq.enqueue_item("AI-Z", "mz", [("z.txt", b"z")], queue_root=queue_root,
-                             options=cq.EnqueueOptions(base_head="sha-other"))
+        ix = cq.enqueue_item(
+            "AI-X", "mx", [("x.txt", b"x")], queue_root=queue_root, options=cq.EnqueueOptions(base_head="sha-base")
+        )
+        iy = cq.enqueue_item(
+            "AI-Y", "my", [("y.txt", b"y")], queue_root=queue_root, options=cq.EnqueueOptions(base_head="sha-base")
+        )
+        iz = cq.enqueue_item(
+            "AI-Z", "mz", [("z.txt", b"z")], queue_root=queue_root, options=cq.EnqueueOptions(base_head="sha-other")
+        )
         stats = cq.drain_queue(queue_root)
         assert stats["cascade_marked"] == 1
         done_y = json.loads((queue_root / "done" / f"{iy['qid']}.json").read_text(encoding="utf-8"))
@@ -640,8 +644,11 @@ class TestCascadeStale:
         """stale 项基底重校验不一致 → 降死信候选（dead_reason=cascade_stale），不消耗 landing。"""
         ix = _enqueue(queue_root, "AI-X", "mx", [("x.txt", b"x")])
         iy = cq.enqueue_item(
-            "AI-Y", "my", [("y.txt", b"y")],
-            queue_root=queue_root, options=cq.EnqueueOptions(depends_on=[ix["qid"]]),
+            "AI-Y",
+            "my",
+            [("y.txt", b"y")],
+            queue_root=queue_root,
+            options=cq.EnqueueOptions(depends_on=[ix["qid"]]),
         )
         _inject_base_blob(queue_root, iy["qid"], "y.txt", "blob-old")
         landed: list[str] = []
@@ -662,8 +669,11 @@ class TestCascadeStale:
         """stale 项基底重校验逐文件一致 → 清标放行走正常 landing。"""
         ix = _enqueue(queue_root, "AI-X", "mx", [("x.txt", b"x")])
         iy = cq.enqueue_item(
-            "AI-Y", "my", [("y.txt", b"y")],
-            queue_root=queue_root, options=cq.EnqueueOptions(depends_on=[ix["qid"]]),
+            "AI-Y",
+            "my",
+            [("y.txt", b"y")],
+            queue_root=queue_root,
+            options=cq.EnqueueOptions(depends_on=[ix["qid"]]),
         )
         _inject_base_blob(queue_root, iy["qid"], "y.txt", "blob-y")
         stats = cq.drain_queue(queue_root, head_reader=lambda path: "blob-y")
@@ -674,8 +684,11 @@ class TestCascadeStale:
         """base_blob 非空而 head_reader 缺失 → fail-closed 降死信候选（无法确认仍适用）。"""
         ix = _enqueue(queue_root, "AI-X", "mx", [("x.txt", b"x")])
         iy = cq.enqueue_item(
-            "AI-Y", "my", [("y.txt", b"y")],
-            queue_root=queue_root, options=cq.EnqueueOptions(depends_on=[ix["qid"]]),
+            "AI-Y",
+            "my",
+            [("y.txt", b"y")],
+            queue_root=queue_root,
+            options=cq.EnqueueOptions(depends_on=[ix["qid"]]),
         )
         _inject_base_blob(queue_root, iy["qid"], "y.txt", "blob-y")
         stats = cq.drain_queue(queue_root)  # head_reader=None
@@ -689,8 +702,11 @@ class TestCascadeStale:
         """级联标记落盘留痕：max_items=1 仅处理 X，Y 留 pending 且盘上带 stale 标。"""
         ix = _enqueue(queue_root, "AI-X", "mx", [("x.txt", b"x")])
         iy = cq.enqueue_item(
-            "AI-Y", "my", [("y.txt", b"y")],
-            queue_root=queue_root, options=cq.EnqueueOptions(depends_on=[ix["qid"]]),
+            "AI-Y",
+            "my",
+            [("y.txt", b"y")],
+            queue_root=queue_root,
+            options=cq.EnqueueOptions(depends_on=[ix["qid"]]),
         )
         stats = cq.drain_queue(queue_root, max_items=1)
         assert stats["done"] == 1 and stats["cascade_marked"] == 1
@@ -773,7 +789,10 @@ class TestRequeue:
     def test_requeue_delete_entry_passthrough(self, queue_root: Path, tmp_path: Path) -> None:
         """action=delete 条目走 deletes 通道（无 blob，不读工作区）。"""
         item = cq.enqueue_item(
-            "AI-R", "m-del", [], queue_root=queue_root,
+            "AI-R",
+            "m-del",
+            [],
+            queue_root=queue_root,
             options=cq.EnqueueOptions(deletes=["gone.txt"]),
         )
         cq.drain_queue(queue_root, landing=lambda i, r: cq.LandingResult(ok=False, reason="boom"))
@@ -783,7 +802,9 @@ class TestRequeue:
         assert new_item["files"][0]["action"] == "delete"
         assert new_item["files"][0]["blob_sha256"] is None
 
-    def test_requeue_taskboard_annotation(self, queue_root: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    def test_requeue_taskboard_annotation(
+        self, queue_root: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         """task_board 死信标签同步标注 requeued（标签不解除，死信事实留痕）。"""
         db = tmp_path / "task_board.db"
         monkeypatch.setenv("ZEPHYR_TASK_BOARD_DB", str(db))
@@ -800,9 +821,7 @@ class TestRequeue:
         result = cq.requeue_dead_item(old["qid"], queue_root=queue_root, worktree_root=wt)
         conn = sqlite3.connect(str(db))
         try:
-            metadata = json.loads(
-                conn.execute("SELECT metadata_json FROM tasks WHERE task_id=?", (tid,)).fetchone()[0]
-            )
+            metadata = json.loads(conn.execute("SELECT metadata_json FROM tasks WHERE task_id=?", (tid,)).fetchone()[0])
             ev = conn.execute(
                 "SELECT actor, payload_json FROM task_events WHERE task_id=? AND event_type='requeued'", (tid,)
             ).fetchone()
@@ -823,17 +842,29 @@ class TestRequeue:
         wt = tmp_path / "wt"
         wt.mkdir()
         (wt / "a.txt").write_bytes(b"v2")
-        rc = cq.main([
-            "--queue-root", str(queue_root),
-            "requeue", old["qid"], "--worktree-root", str(wt), "--no-bootstrap",
-        ])
+        rc = cq.main(
+            [
+                "--queue-root",
+                str(queue_root),
+                "requeue",
+                old["qid"],
+                "--worktree-root",
+                str(wt),
+                "--no-bootstrap",
+            ]
+        )
         assert rc == 0
         assert "REQUEUED" in capsys.readouterr().out
         # CLI 错误路径：非死信 qid → exit 1（ERROR 非静默）
-        rc = cq.main([
-            "--queue-root", str(queue_root),
-            "requeue", "q-20260829-AI-X-0001", "--no-bootstrap",
-        ])
+        rc = cq.main(
+            [
+                "--queue-root",
+                str(queue_root),
+                "requeue",
+                "q-20260829-AI-X-0001",
+                "--no-bootstrap",
+            ]
+        )
         assert rc == 1
         assert "ERROR" in capsys.readouterr().err
 
@@ -870,9 +901,11 @@ class TestDoneTtlCleanup:
         _enqueue(queue_root, "AI-T2", "m2", [("b.txt", b"2")])
         cq.drain_queue(
             queue_root,
-            landing=lambda i, r: cq.LandingResult(ok=False, reason="boom")
-            if any(f["path"] == "b.txt" for f in i["files"])
-            else cq.LandingResult(ok=True),
+            landing=lambda i, r: (
+                cq.LandingResult(ok=False, reason="boom")
+                if any(f["path"] == "b.txt" for f in i["files"])
+                else cq.LandingResult(ok=True)
+            ),
         )
         _age_done_item(queue_root, i1["qid"], days=30)
         dead_path = next((queue_root / "dead").glob("q-*.json"))

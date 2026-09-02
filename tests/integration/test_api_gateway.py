@@ -41,11 +41,7 @@ def _gateway(
 ) -> ApiGateway:
     return ApiGateway(
         clock=lambda: _T0,
-        authenticator=(
-            (lambda token, req: token == "valid-token")
-            if authenticator == "default"
-            else authenticator
-        ),
+        authenticator=((lambda token, req: token == "valid-token") if authenticator == "default" else authenticator),
         limiter=limiter,
         breaker=breaker,
         audit_sink=(lambda r: audits.append(r)) if audits is not None else None,
@@ -202,9 +198,7 @@ class TestHandle:
     def test_handler_exception_500_no_leak(self) -> None:
         audits: list[AccessAudit] = []
         gw = _gateway(audits)
-        gw.register_route(
-            "GET", "/boom", lambda p: (_ for _ in ()).throw(ValueError("内部细节"))
-        )
+        gw.register_route("GET", "/boom", lambda p: (_ for _ in ()).throw(ValueError("内部细节")))
         resp = gw.handle(_request(path="/boom"))
         assert resp.status_code == 500
         assert resp.body == {"error": "handler_error"}  # 不泄漏内部异常

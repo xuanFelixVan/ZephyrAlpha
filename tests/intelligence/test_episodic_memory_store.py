@@ -41,7 +41,15 @@ class TestSchema:
 
     @pytest.mark.parametrize("field", ["task_input", "action", "result"])
     def test_fail_closed(self, field: str) -> None:
-        base = {"record_id": "r1", "task_input": "i", "action": "a", "result": "r", "reflection": "x", "created_at": 0.0, "last_accessed_at": 0.0}
+        base = {
+            "record_id": "r1",
+            "task_input": "i",
+            "action": "a",
+            "result": "r",
+            "reflection": "x",
+            "created_at": 0.0,
+            "last_accessed_at": 0.0,
+        }
         base[field] = ""
         with pytest.raises(InvalidTrajectoryError):
             EpisodicMemoryStore().store(TrajectoryRecord(**base))
@@ -60,6 +68,7 @@ class TestStoreSinks:
     def test_hash_sink_error_not_blocking(self) -> None:
         def bad(rec: TrajectoryRecord) -> None:
             raise RuntimeError("boom")
+
         s = EpisodicMemoryStore(hash_sink=bad)
         s.store(_rec("r1"))
         assert s.stats()["total"] == 1
@@ -93,6 +102,7 @@ class TestRetrieve:
                 (_rec("r1"), 0.5),
                 (_rec("r2"), 0.9),
             ]
+
         s = EpisodicMemoryStore(search=fake_search)
         hits = s.retrieve_similar([0.1], 2)
         assert hits[0].record.record_id == "r2"

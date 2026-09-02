@@ -60,8 +60,12 @@ def _asset(
         asset_type=asset_type,
         name=asset_id,
         owner=owner,
-        metadata=metadata if metadata is not None else {
-            "description": "d", "version": "v1", "environment": "prod",
+        metadata=metadata
+        if metadata is not None
+        else {
+            "description": "d",
+            "version": "v1",
+            "environment": "prod",
         },
         dependencies=dependencies,
         refreshed_at=refreshed_at,
@@ -88,9 +92,13 @@ class TestRegister:
         inv = _inv()
         a = _asset()
         bad = Asset(
-            asset_id=a.asset_id, asset_type=a.asset_type, name="",
-            owner=a.owner, metadata=a.metadata,
-            dependencies=a.dependencies, refreshed_at=a.refreshed_at,
+            asset_id=a.asset_id,
+            asset_type=a.asset_type,
+            name="",
+            owner=a.owner,
+            metadata=a.metadata,
+            dependencies=a.dependencies,
+            refreshed_at=a.refreshed_at,
         )
         with pytest.raises(AssetInventoryError):
             inv.register(bad)
@@ -99,9 +107,13 @@ class TestRegister:
         inv = _inv()
         a = _asset()
         bad = Asset(
-            asset_id=a.asset_id, asset_type="vm",  # type: ignore[arg-type]
-            name=a.name, owner=a.owner, metadata=a.metadata,
-            dependencies=a.dependencies, refreshed_at=a.refreshed_at,
+            asset_id=a.asset_id,
+            asset_type="vm",  # type: ignore[arg-type]
+            name=a.name,
+            owner=a.owner,
+            metadata=a.metadata,
+            dependencies=a.dependencies,
+            refreshed_at=a.refreshed_at,
         )
         with pytest.raises(AssetInventoryError):
             inv.register(bad)

@@ -64,11 +64,7 @@ def _req(**overrides) -> ReflectionRequest:
 def _read_jsonl(path: Path) -> list[dict]:
     if not path.exists():
         return []
-    return [
-        json.loads(line)
-        for line in path.read_text(encoding="utf-8").splitlines()
-        if line.strip()
-    ]
+    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
 class TestL1ForceRules:
@@ -169,9 +165,7 @@ class TestLayerFrequency:
         assert RULE_LAYER_STRATEGIC_ALWAYS in decision.matched_rules
 
     def test_l2_accumulated_count(self, gate):
-        decision = gate.decide(
-            _req(layer="tactical", requested_level="L2", similar_task_count=5)
-        )
+        decision = gate.decide(_req(layer="tactical", requested_level="L2", similar_task_count=5))
         assert decision.allowed is True
         assert RULE_L2_ACCUMULATED in decision.matched_rules
         assert "L2" in decision.granted_levels
@@ -211,9 +205,7 @@ class TestMaxRounds:
         assert decision.denied_by == DENIED_MAX_ROUNDS
 
     def test_max_rounds_configurable(self, tmp_path):
-        gate = ReflCtrlGate(
-            config=ReflCtrlConfig(max_rounds_per_task=5), stats_root=tmp_path
-        )
+        gate = ReflCtrlGate(config=ReflCtrlConfig(max_rounds_per_task=5), stats_root=tmp_path)
         decision = gate.decide(_req(risk_vetoed=True, reflection_round=3))
         assert decision.allowed is True
 
@@ -222,9 +214,7 @@ class TestConfigurability:
     """规则可配置：注入阈值覆盖生效."""
 
     def test_custom_deviation_threshold(self, tmp_path):
-        gate = ReflCtrlGate(
-            config=ReflCtrlConfig(deviation_force_pct=50.0), stats_root=tmp_path
-        )
+        gate = ReflCtrlGate(config=ReflCtrlConfig(deviation_force_pct=50.0), stats_root=tmp_path)
         decision = gate.decide(_req(deviation_pct=25.0))
         assert decision.allowed is False
         decision = gate.decide(_req(deviation_pct=55.0))

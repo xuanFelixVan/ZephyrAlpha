@@ -131,10 +131,12 @@ class TestL1CapabilityGate:
     def test_tampered_passport_rejected(self, policy_path):
         orch = _orch(
             policy_path,
-            passport_loader=_passport_loader({
-                MODEL_A: TamperError("签名验证失败"),
-                MODEL_B: _passport([CAP]),
-            }),
+            passport_loader=_passport_loader(
+                {
+                    MODEL_A: TamperError("签名验证失败"),
+                    MODEL_B: _passport([CAP]),
+                }
+            ),
         )
         d = orch.route(TASK, [MODEL_A, MODEL_B])
         assert d.model_key != MODEL_A  # 伪造/篡改护照 -> 验签失败被拒，不进入 L2
@@ -143,10 +145,12 @@ class TestL1CapabilityGate:
     def test_required_not_met_excluded_from_l2(self, policy_path):
         orch = _orch(
             policy_path,
-            passport_loader=_passport_loader({
-                MODEL_A: _passport(["naming_suggest"]),  # safe 交集不含 required
-                MODEL_B: _passport([CAP]),
-            }),
+            passport_loader=_passport_loader(
+                {
+                    MODEL_A: _passport(["naming_suggest"]),  # safe 交集不含 required
+                    MODEL_B: _passport([CAP]),
+                }
+            ),
         )
         d = orch.route(TASK, [MODEL_A, MODEL_B], required_capabilities=[CAP])
         assert d.model_key == MODEL_B
@@ -162,12 +166,14 @@ class TestL1CapabilityGate:
 
 class TestL2FusionRanking:
     def test_fused_ranking_matches_manual_recompute(self, policy_path):
-        learner = _FakeLearner({
-            TASK: {
-                MODEL_A: {"sample_count": 5, "composite_score": 0.6},
-                MODEL_B: {"sample_count": 4, "composite_score": 0.9},
+        learner = _FakeLearner(
+            {
+                TASK: {
+                    MODEL_A: {"sample_count": 5, "composite_score": 0.6},
+                    MODEL_B: {"sample_count": 4, "composite_score": 0.9},
+                }
             }
-        })
+        )
         matcher = _FakeMatcher({MODEL_A: 0.8, MODEL_B: 0.4})
         orch = _orch(policy_path, learner=learner, job_matcher=matcher)
         d = orch.route(TASK, [MODEL_B, MODEL_A])  # 入序打乱，证明排序生效
@@ -178,12 +184,14 @@ class TestL2FusionRanking:
         assert "l2:fused" in d.reason
 
     def test_fused_ranking_flips_when_scores_flip(self, policy_path):
-        learner = _FakeLearner({
-            TASK: {
-                MODEL_A: {"sample_count": 5, "composite_score": 0.6},
-                MODEL_B: {"sample_count": 4, "composite_score": 0.9},
+        learner = _FakeLearner(
+            {
+                TASK: {
+                    MODEL_A: {"sample_count": 5, "composite_score": 0.6},
+                    MODEL_B: {"sample_count": 4, "composite_score": 0.9},
+                }
             }
-        })
+        )
         matcher = _FakeMatcher({MODEL_A: 0.4, MODEL_B: 0.8})
         orch = _orch(policy_path, learner=learner, job_matcher=matcher)
         d = orch.route(TASK, [MODEL_A, MODEL_B])
@@ -215,9 +223,17 @@ class TestL3CostRouting:
         assert d.tier == ModelTier.STANDARD.value
         payload = d.to_dict()
         assert set(payload) >= {
-            "task_type", "model_key", "provider", "tier", "reason",
-            "estimated_cost_per_1k", "performance_score", "source",
-            "risk_locked", "degraded_stages", "alerts",
+            "task_type",
+            "model_key",
+            "provider",
+            "tier",
+            "reason",
+            "estimated_cost_per_1k",
+            "performance_score",
+            "source",
+            "risk_locked",
+            "degraded_stages",
+            "alerts",
         }
 
 
@@ -278,10 +294,12 @@ class TestRoutingTableAndPeriod:
     def test_trading_period_restricts_general_task_to_local(self, policy_path):
         orch = _orch(
             policy_path,
-            passport_loader=_passport_loader({
-                MODEL_A: _passport(["paper_reading"]),
-                "deepseek:pro": None,  # API 候选无护照 -> L1 排除
-            }),
+            passport_loader=_passport_loader(
+                {
+                    MODEL_A: _passport(["paper_reading"]),
+                    "deepseek:pro": None,  # API 候选无护照 -> L1 排除
+                }
+            ),
         )
         # paper_reading preferred=api 但 kind=general，盘中受限 -> 本地only
         d = orch.route("paper_reading", [MODEL_A, "deepseek:pro"], period="trading")

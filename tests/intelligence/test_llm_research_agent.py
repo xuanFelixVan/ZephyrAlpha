@@ -69,7 +69,7 @@ def _agent(
 ) -> LlmResearchAgent:
     return LlmResearchAgent(
         tools=tools if tools is not None else _tools(),
-        planner=lambda task: (steps if steps is not None else [_step()]),
+        planner=lambda task: steps if steps is not None else [_step()],
         thinker=thinker,
         reflector=reflector,
         fact_checker=fact_checker,

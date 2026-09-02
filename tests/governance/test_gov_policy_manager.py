@@ -212,8 +212,7 @@ class TestPersistence:
         mgr.update_policy("GOV-RISK-001", "v2")
         mgr.transition("GOV-RISK-001", PolicyState.ACTIVE)
         rows = conn.execute(
-            "SELECT policy_id, version, content, state, updated_at "
-            "FROM gov_policies ORDER BY version"
+            "SELECT policy_id, version, content, state, updated_at FROM gov_policies ORDER BY version"
         ).fetchall()
         assert [(r[0], r[1], r[2], r[3]) for r in rows] == [
             ("GOV-RISK-001", 1, "v1", "draft"),
@@ -251,9 +250,6 @@ class TestPersistence:
             mgr.create_policy("GOV-A-001", "a")
             mgr.update_policy("GOV-A-001", "a2")
             mgr.transition("GOV-A-001", PolicyState.ACTIVE)
-            return [
-                (r.policy_id, r.version, r.content, r.state, r.updated_at)
-                for r in mgr.history("GOV-A-001")
-            ]
+            return [(r.policy_id, r.version, r.content, r.state, r.updated_at) for r in mgr.history("GOV-A-001")]
 
         assert _run() == _run()

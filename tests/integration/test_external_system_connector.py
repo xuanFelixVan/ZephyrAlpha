@@ -106,9 +106,7 @@ class TestRegistry:
     def test_empty_operations_raises(self) -> None:
         reg = ExternalSystemConnector()
         with pytest.raises(ExternalConnectorError):
-            reg.register("x-01", ConnectorCapability(
-                kind=ConnectorKind.ALT_DATA, operations=frozenset(), vendor="v"
-            ))
+            reg.register("x-01", ConnectorCapability(kind=ConnectorKind.ALT_DATA, operations=frozenset(), vendor="v"))
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -224,15 +222,14 @@ class TestBreakerAndCallable:
         clock = _FakeClock()
         reg = ExternalSystemConnector(
             clock=clock,
-            health_probe=lambda cid: (
-                HealthStatus.UNHEALTHY if cid == "bad-01" else HealthStatus.HEALTHY
-            ),
+            health_probe=lambda cid: HealthStatus.UNHEALTHY if cid == "bad-01" else HealthStatus.HEALTHY,
         )
         reg.register("b-02", _cap(ConnectorKind.MARKET_DATA, "fetch_daily_kline"))
         reg.register("a-01", _cap(ConnectorKind.MARKET_DATA, "fetch_daily_kline"))
         reg.register("bad-01", _cap(ConnectorKind.MARKET_DATA, "fetch_daily_kline"))
         reg.register(
-            "t-01", _cap(ConnectorKind.TRADING, "place_order"),
+            "t-01",
+            _cap(ConnectorKind.TRADING, "place_order"),
             quota=QuotaPolicy(rate_per_sec=1),
         )
         reg.acquire("t-01")

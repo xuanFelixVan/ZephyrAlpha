@@ -70,9 +70,7 @@ class TestBuildPackage:
         assert path.is_file()
         payload = json.loads(path.read_text(encoding="utf-8"))
         assert payload["exp_id"] == "exp-001"
-        assert payload["sha256"] == manifest_digest(
-            PackageManifest(exp_id="exp-001", created_at=_T0, **_KW)
-        )
+        assert payload["sha256"] == manifest_digest(PackageManifest(exp_id="exp-001", created_at=_T0, **_KW))
 
     def test_digest_deterministic_same_input(self, tmp_path) -> None:
         p1 = _packager(tmp_path / "a")
@@ -102,9 +100,7 @@ class TestBuildPackage:
 
     def test_build_empty_snapshot_ref_raises(self, tmp_path) -> None:
         with pytest.raises(ReproPackagerError):
-            _packager(tmp_path).build_package(
-                "exp-001", **{**_KW, "data_snapshot_ref": ""}
-            )
+            _packager(tmp_path).build_package("exp-001", **{**_KW, "data_snapshot_ref": ""})
 
     def test_build_empty_dep_lock_raises(self, tmp_path) -> None:
         with pytest.raises(ReproPackagerError):
@@ -116,9 +112,7 @@ class TestBuildPackage:
 
     def test_build_unserializable_params_raises(self, tmp_path) -> None:
         with pytest.raises(ReproPackagerError):
-            _packager(tmp_path).build_package(
-                "exp-001", **{**_KW, "params": {"bad": object()}}
-            )
+            _packager(tmp_path).build_package("exp-001", **{**_KW, "params": {"bad": object()}})
 
     def test_default_root(self) -> None:
         pkg = ReproducibilityPackager(clock=lambda: _T0)

@@ -214,7 +214,9 @@ class TestDeadLetterTagging:
 
     def test_tag_owner_override_and_metadata_merge(self, board: Path) -> None:
         tid = _create("keep-meta", metadata='{"type":"dead_letter","note":"原 metadata 保留"}')
-        rc = tb.main(["deadletter", tid, "--session", "sess-x", "--qid", "q-0002", "--reason", "GATE-FAIL", "--owner", "sess-y"])
+        rc = tb.main(
+            ["deadletter", tid, "--session", "sess-x", "--qid", "q-0002", "--reason", "GATE-FAIL", "--owner", "sess-y"]
+        )
         assert rc == 0
         meta = self._meta(board, tid)
         assert meta["deadletter"]["owner"] == "sess-y"

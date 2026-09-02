@@ -130,9 +130,7 @@ class TestChannels:
 
     def test_cold_to_warm_poll_interval_must_be_30s(self) -> None:
         with pytest.raises(ColdPlaneError):
-            _isolator().open_channel(
-                "config:runtime", Plane.COLD, Plane.WARM, poll_interval_s=10.0
-            )
+            _isolator().open_channel("config:runtime", Plane.COLD, Plane.WARM, poll_interval_s=10.0)
 
     def test_cold_to_hot_direct_rejected_with_alert(self) -> None:
         alerts: list[ColdPlaneViolation] = []

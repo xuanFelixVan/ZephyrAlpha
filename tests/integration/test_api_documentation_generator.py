@@ -112,29 +112,41 @@ class TestRegisterRoute:
     def test_invalid_field_type_raises(self) -> None:
         gen = _gen()
         with pytest.raises(ApiDocError):
-            gen.register_route(RouteSpec(
-                method="GET", path="/x", operation_id="op_x",
-                response_fields=(FieldSpec(name="bad", type="tuple"),),
-            ))
+            gen.register_route(
+                RouteSpec(
+                    method="GET",
+                    path="/x",
+                    operation_id="op_x",
+                    response_fields=(FieldSpec(name="bad", type="tuple"),),
+                )
+            )
 
     def test_duplicate_field_name_raises(self) -> None:
         gen = _gen()
         with pytest.raises(ApiDocError):
-            gen.register_route(RouteSpec(
-                method="GET", path="/x", operation_id="op_x",
-                response_fields=(
-                    FieldSpec(name="a", type="string"),
-                    FieldSpec(name="a", type="integer"),
-                ),
-            ))
+            gen.register_route(
+                RouteSpec(
+                    method="GET",
+                    path="/x",
+                    operation_id="op_x",
+                    response_fields=(
+                        FieldSpec(name="a", type="string"),
+                        FieldSpec(name="a", type="integer"),
+                    ),
+                )
+            )
 
     def test_empty_field_name_raises(self) -> None:
         gen = _gen()
         with pytest.raises(ApiDocError):
-            gen.register_route(RouteSpec(
-                method="GET", path="/x", operation_id="op_x",
-                response_fields=(FieldSpec(name="", type="string"),),
-            ))
+            gen.register_route(
+                RouteSpec(
+                    method="GET",
+                    path="/x",
+                    operation_id="op_x",
+                    response_fields=(FieldSpec(name="", type="string"),),
+                )
+            )
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -157,9 +169,7 @@ class TestGenerate:
         gen = _gen()
         gen.register_route(_route())
         doc = gen.generate_openapi()
-        schema = doc["paths"]["/api/v1/position"]["get"]["responses"]["200"][
-            "content"
-        ]["application/json"]["schema"]
+        schema = doc["paths"]["/api/v1/position"]["get"]["responses"]["200"]["content"]["application/json"]["schema"]
         assert schema["properties"] == {
             "note": {"type": "string"},
             "qty": {"type": "integer"},
@@ -202,7 +212,9 @@ class TestGenerate:
         gen.register_route(_route(path="/a", operation_id="op_a", method="POST"))
         gen.register_route(_route(path="/a", operation_id="op_a2", method="GET"))
         assert [(r.path, r.method) for r in gen.routes()] == [
-            ("/a", "GET"), ("/a", "POST"), ("/z", "GET"),
+            ("/a", "GET"),
+            ("/a", "POST"),
+            ("/z", "GET"),
         ]
 
 
@@ -285,10 +297,14 @@ class TestDrift:
         gen.register_route(_route())
         baseline = gen.generate_openapi()
         gen2 = _gen(alerts, threshold=0.1)
-        gen2.register_route(RouteSpec(
-            method="GET", path="/api/v1/position", operation_id="get_position",
-            response_fields=(FieldSpec(name="symbol", type="string"),),
-        ))
+        gen2.register_route(
+            RouteSpec(
+                method="GET",
+                path="/api/v1/position",
+                operation_id="get_position",
+                response_fields=(FieldSpec(name="symbol", type="string"),),
+            )
+        )
         report = gen2.diff_against_baseline(baseline)
         assert report.changed == ("GET /api/v1/position",)
         assert report.exceeded is True
@@ -307,7 +323,9 @@ class TestDrift:
             raise RuntimeError("boom")
 
         gen = ApiDocumentationGenerator(
-            clock=lambda: _T0, alert_sink=_bad_sink, drift_threshold=0.1,
+            clock=lambda: _T0,
+            alert_sink=_bad_sink,
+            drift_threshold=0.1,
         )
         gen.register_route(_route())
         report = gen.diff_against_baseline({"paths": {}})
