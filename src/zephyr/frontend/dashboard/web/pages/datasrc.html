@@ -8,11 +8,9 @@
     </div>
     <div class="row c2" style="margin-top:14px">
       <div class="card">
-        <h3>SLA burn-rate <span class="badge b-na">演示数据</span> <span class="dim">错误预算燃烧曲线（quality_sla_breach_predictor prod）——30 日 SLA 落盘接入 I-2，先看实探结果灯</span></h3>
-        <div class="bar-row"><span>miniQMT</span><div class="bar"><i class="g" style="width:12%"></i></div><span>healthy 12%</span></div>
-        <div class="bar-row"><span>akshare</span><div class="bar"><i class="g" style="width:28%"></i></div><span>healthy 28%</span></div>
-        <div class="bar-row"><span>新闻聚合</span><div class="bar"><i class="y" style="width:61%"></i></div><span>watch 61%（08-28 重建后观察期）</span></div>
-        <div class="note">burn-rate 四级：healthy→watch→degrading→exhausted；超过 watch 提前 24h 告警并建议处置窗口</div>
+        <h3>30 日可用率实测 <span class="badge b-pass">真源</span> <span class="dim">全部健康探针日志重建（8/4 起每个检查日全源实测）——样本=检查日（scheduler 启动时跑一轮）</span></h3>
+        <div id="ds-sla"><div class="dim" style="padding:6px 0">加载中…</div></div>
+        <div class="note">阈值：<span class="up">≥90% 绿</span> / 70-90% 黄 / &lt;70% 红；样本仅 27 个检查日（探针随 scheduler 启动触发），升级为连续 SLA 判定需探针高频落盘（I-2）</div>
       </div>
       <div class="card">
         <h3>告警流水 <span class="badge b-pass">真源</span> <span class="dim">alerter 真实失败汇总（data/failures/*.json 最新 8 条）——ERROR/CRITICAL 已触达飞书</span></h3>

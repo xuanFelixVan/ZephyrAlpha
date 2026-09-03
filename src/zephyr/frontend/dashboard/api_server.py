@@ -948,7 +948,29 @@ def sources_status() -> dict[str, Any]:
                 })
             except Exception:  # noqa: BLE001 — 脏告警文件跳过
                 continue
-    return {"ok": True, "sources": sources, "failures": failures,
+
+    # ── 30 日可用率实测（真源=全部健康探针日志；sla_tracker 是纯内存引擎无落盘，从探针史重建）──
+    per_source: dict[str, dict[str, int]] = {}
+    for lf in health_logs:
+        seen: dict[str, str] = {}
+        try:
+            for line in lf.read_text(encoding="utf-8", errors="ignore").splitlines():
+                mm = _re.match(r"  ([✓✗⚠])\s+(\S+)\s+(\S+)\s", line)
+                if mm:
+                    seen[mm.group(2)] = mm.group(1)   # 同文件同源取最后状态
+        except OSError:
+            continue
+        for name, mark in seen.items():
+            d2 = per_source.setdefault(name, {"ok": 0, "total": 0})
+            d2["total"] += 1
+            if mark == "✓":
+                d2["ok"] += 1
+    sla = [
+        {"name": n, "ok": v["ok"], "total": v["total"],
+         "avail": round(v["ok"] / v["total"] * 100, 1) if v["total"] else 0.0}
+        for n, v in sorted(per_source.items(), key=lambda kv: -(kv[1]["ok"] / kv[1]["total"] if kv[1]["total"] else 0))
+    ]
+    return {"ok": True, "sources": sources, "failures": failures, "sla": sla,
             "checked_at": checked_at, "ok_n": ok_n, "bad_n": bad_n,
             "generated_at": datetime.now().isoformat(" ", "seconds")}
 

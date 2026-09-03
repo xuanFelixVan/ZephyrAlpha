@@ -14,6 +14,7 @@ function dsLoad() {
     DS_ST = st;
     dsRenderKpi();
     dsRenderTable();
+    dsRenderSla();
     dsRenderAlerts();
   }).catch(function (e) {
     var k = document.getElementById('ds-kpi');
@@ -54,6 +55,18 @@ function dsRenderTable() {
       + '<td style="font-size:11px;color:var(--dim)">' + (s.detail || '—') + '</td></tr>';
   });
   box.innerHTML = h + '</table>';
+}
+
+function dsRenderSla() {
+  var st = DS_ST; var box = document.getElementById('ds-sla'); if (!box || !st) return;
+  var sla = st.sla || [];
+  if (!sla.length) { box.innerHTML = '<div class="dim" style="padding:6px 0">无健康探针历史（logs/source_health_*.log 空）</div>'; return; }
+  box.innerHTML = sla.map(function (s) {
+    var cls = s.avail >= 90 ? 'g' : (s.avail >= 70 ? 'y' : 'r');
+    return '<div class="bar-row"><span>' + s.name + '</span>'
+      + '<div class="bar"><i class="' + cls + '" style="width:' + s.avail + '%"></i></div>'
+      + '<span style="min-width:150px;text-align:right"><b>' + s.avail + '%</b> <span class="dim">(' + s.ok + '/' + s.total + ' 检查日)</span></span></div>';
+  }).join('');
 }
 
 function dsRenderAlerts() {
