@@ -59,10 +59,15 @@ description: >-
 #   status=retired 单独标注用途禁消费方引用；survivorship_free=unknown/pit_available=null 为 E14 占位（schema v2.1 头注释既定治理——
 #   占位禁止视为已填写，回填随条目内容校正专项）；存量修正：DS-094 dividend produced_by_source SRC-AKSHARE-001→SRC-QMT-001
 #   （tasks.yaml dividend_incremental 主源 miniqmt 实证）。真源闭环：download-status 中文名改读本 registry（读失败回退码内 _TABLE_ZH）。
+# v1.4.1 changelog(2026-09-03): 存量缺口补齐——DS-104 news_data produced_by_source=null→SRC-RSS-001
+#   （tasks.yaml 首任务 news_data_incremental 主源 rss，对齐 download-status 页面"首任务为准"口径）、
+#   DS-105 ipo_calendar produced_by_source=null→SRC-AKSHARE-001（JOB-086/akshare_provider code_symbol/evidence 三重实证）；
+#   两条目 produced_by_source 起扩展字段仍为老式残缺（schema v2.1 头注释占位治理，全字段回填随条目内容校正专项）；
+#   同步 updated_at（含 v1.4.0 DS-094 源修正漏同步）。
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.4.0
+version: 1.4.1
 created: '2026-08-13'
 last_updated: '2026-09-03'
 related_arch: '#ARCH-BREG-001'
@@ -3996,7 +4001,7 @@ datasets:
   status: candidate
   version: 1.0.0
   created_at: '2026-08-14'
-  updated_at: '2026-08-14'
+  updated_at: '2026-09-03'
   owner: MOD-GOVERNANCE
   produced_by_source: SRC-QMT-001
   survivorship_free: true
@@ -4370,8 +4375,9 @@ datasets:
   status: production
   version: 1.0.0
   created_at: '2026-08-17'
-  updated_at: '2026-08-17'
+  updated_at: '2026-09-03'
   owner: MOD-L00-004
+  produced_by_source: SRC-AKSHARE-001
   entry_role: "reference"
   applies_to: ["stock", "market"]
   tags: ["数据", "事件"]
@@ -4436,8 +4442,9 @@ datasets:
   status: production
   version: 1.0.0
   created_at: '2026-08-16'
-  updated_at: '2026-08-16'
+  updated_at: '2026-09-03'
   owner: MOD-L00-004
+  produced_by_source: SRC-RSS-001
 
 # 92号清单 §8.4 / 44号备忘 §4 M3-②（2026-08-22）：tracker #138 闭环——夜间新闻情绪窗口落库（DS-104 同族）
 - dataset_id: DS-107
