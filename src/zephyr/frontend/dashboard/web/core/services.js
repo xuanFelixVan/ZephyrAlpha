@@ -13,6 +13,7 @@ function svcLoad() {
   ZK.api.fetchServicesStatus().then(function (st) {
     if (!st || !st.ok) throw new Error(st && st.error || 'bad payload');
     SVC_ST = st;
+    ZK.api.swrSave('zk_svc_v1', st);   /* SWR：新数据落缓存供下次刷新秒出 */
     svcRenderMaster();
     svcRenderGroups();
   }).catch(function (e) {
@@ -25,6 +26,15 @@ function svcLoad() {
   });
 }
 function svcBoot() {
+  /* SWR（2026-09-03）：刷新先渲染上次数据（总闸区右下角标「缓存·上次 HH:MM」），后台拉新到达自动覆盖 */
+  if (ZK.api) ZK.api.swrLoad('zk_svc_v1', function (st, ts) {
+    SVC_ST = st;
+    svcRenderMaster();
+    svcRenderGroups();
+    var m = document.getElementById('svc-master');
+    if (m) m.innerHTML += '<div class="dim" style="font-size:10px;text-align:right;margin-top:4px">缓存 · 上次 '
+      + ts.toTimeString().slice(0, 5) + '，正在拉取最新…</div>';
+  });
   svcLoad();
   if (!SVC_TIMER) SVC_TIMER = setInterval(svcLoad, 10000);   /* 10s 轮询——心跳 15s 一跳，10s 采样不失真 */
 }

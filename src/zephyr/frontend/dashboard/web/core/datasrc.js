@@ -12,6 +12,7 @@ function dsLoad() {
   ZK.api.fetchSourcesStatus().then(function (st) {
     if (!st || !st.ok) throw new Error(st && st.error || 'bad payload');
     DS_ST = st;
+    ZK.api.swrSave('zk_ds_v1', st);   /* SWR：新数据落缓存供下次刷新秒出 */
     dsRenderKpi();
     dsRenderTable();
     dsRenderSla();
@@ -25,6 +26,17 @@ function dsLoad() {
   });
 }
 function dsBoot() {
+  /* SWR（2026-09-03）：刷新先渲染上次数据（KPI 区尾标「缓存·上次 HH:MM」），后台拉新到达自动覆盖 */
+  if (ZK.api) ZK.api.swrLoad('zk_ds_v1', function (st, ts) {
+    DS_ST = st;
+    dsRenderKpi();
+    dsRenderTable();
+    dsRenderSla();
+    dsRenderAlerts();
+    var k = document.getElementById('ds-kpi');
+    if (k) k.innerHTML += '<div class="card metric"><div class="l">缓存</div><div class="v" style="font-size:14px">上次 '
+      + ts.toTimeString().slice(0, 5) + '</div><div class="s">正在拉取最新…</div></div>';
+  });
   dsLoad();
   if (!DS_TIMER) DS_TIMER = setInterval(dsLoad, 30000);   /* 健康探针结果低频变化，30s 轮询足够 */
 }

@@ -574,12 +574,34 @@ def strategies() -> dict[str, Any]:
         return {"ok": False, "error": str(exc)[:200], "data": []}
 
 
+_BT_LIST_CACHE: dict[str, Any] = {"sig": "", "data": None, "ts": 0.0}   # 回测列表缓存（目录指纹未变=毫秒回包）
+
+
+def _bt_dir_sig() -> str:
+    """产物目录指纹：文件名+mtime 列表 hash——新产物落盘/重跑即失效（AI 施工完成马上可见）。"""
+    if not _BT_ARTIFACTS_DIR.exists():
+        return ""
+    items = []
+    for f in _BT_ARTIFACTS_DIR.glob("bt-*.json"):
+        try:
+            items.append(f"{f.name}:{f.stat().st_mtime_ns}")
+        except OSError:
+            continue
+    return "|".join(sorted(items))
+
+
 @app.get("/api/backtest-list")
 def backtest_list(strategy_id: str = Query("", description="可选策略过滤")) -> dict[str, Any]:
-    """回测产物列表（backtest 页）：扫 artifacts 目录，created_at 降序。"""
+    """回测产物列表（backtest 页）：扫 artifacts 目录，created_at 降序。
+    目录指纹缓存（2026-09-03）：全量读 34+ 大 JSON 仅为取 metrics，实测 3.6s 冷盘 10s+；
+    指纹（文件名+mtime_ns）未变直接回缓存，新产物落盘指纹即变——刷新毫秒级。"""
     try:
         if not _BT_ARTIFACTS_DIR.exists():
             return {"ok": True, "count": 0, "data": []}
+        sig = _bt_dir_sig()
+        cached = _BT_LIST_CACHE["data"]
+        if not strategy_id and cached is not None and sig == _BT_LIST_CACHE["sig"]:
+            return cached   # 无过滤 + 指纹一致 → 缓存直出（strategy_id 过滤走全量，低频路径）
         out: list[dict[str, Any]] = []
         for f in _BT_ARTIFACTS_DIR.glob("bt-*.json"):
             try:
@@ -607,7 +629,10 @@ def backtest_list(strategy_id: str = Query("", description="可选策略过滤")
             except Exception:  # noqa: BLE001 — 单件损坏不拖垮整列表
                 continue
         out.sort(key=lambda x: x.get("created_at") or "", reverse=True)
-        return {"ok": True, "count": len(out), "data": out}
+        result = {"ok": True, "count": len(out), "data": out}
+        if not strategy_id:
+            _BT_LIST_CACHE.update(sig=sig, data=result, ts=time.time())
+        return result
     except Exception as exc:
         return {"ok": False, "error": str(exc)[:200], "data": []}
 

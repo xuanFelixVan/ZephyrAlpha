@@ -15,6 +15,7 @@ function dlLoad() {
   ZK.api.fetchDownloadStatus().then(function (st) {
     if (!st || !st.ok) throw new Error(st && st.error || 'bad payload');
     DL_ST = st;
+    ZK.api.swrSave('zk_dl_v1', st);   /* SWR：新数据落缓存供下次刷新秒出 */
     dlRenderKpi();
     dlRender();
   }).catch(function (e) {
@@ -26,6 +27,15 @@ function dlLoad() {
   });
 }
 function dlBoot() {
+  /* SWR（2026-09-03）：刷新先渲染上次数据（KPI 区尾标「缓存·上次 HH:MM」），后台拉新到达自动覆盖 */
+  if (ZK.api) ZK.api.swrLoad('zk_dl_v1', function (st, ts) {
+    DL_ST = st;
+    dlRenderKpi();
+    dlRender();
+    var k = document.getElementById('dl-kpi');
+    if (k) k.innerHTML += '<div class="card metric"><div class="l">缓存</div><div class="v" style="font-size:14px">上次 '
+      + ts.toTimeString().slice(0, 5) + '</div><div class="s">正在拉取最新…</div></div>';
+  });
   dlLoad();
   if (!DL_TIMER) DL_TIMER = setInterval(dlLoad, 30000);
 }

@@ -168,6 +168,7 @@ function btLoadDetail(runId){
   BT_STATE.run=runId;
   api.fetchBacktestDetail(runId).then(function(r){
     if(!r||!r.ok||!r.data){btSetMode('断线');return;}
+    ZK.api.swrSave('zk_btd_v1',{run_id:runId,data:r.data});   /* SWR：详情落缓存（含曲线+metrics+trade_log，刷新秒出三图） */
     var B=btFromArtifact(r.data);
     if(!B){btSetMode('断线','产物无时序');btCharts();return;}
     btCharts(B);
@@ -231,16 +232,38 @@ function btRenderRunList(list){
   }
 }
 function btBoot(){
+  /* SWR（2026-09-03 Owner「刷新立即出画面」）：先渲染上次缓存（策略宫格+Run 列表+绩效三图），
+   * 后台拉新到达自动覆盖——刷新零等待；新产物落盘时后端指纹缓存失效，列表即含新产物 */
+  var api0=btApi();
+  if(api0){
+    api0.swrLoad('zk_btgrid_v1',function(c){
+      if(c.meta)BT_STRATEGY_META=c.meta;
+      if(c.grid&&c.grid.length){BT_GRID_DATA=c.grid;btRenderStratGrid();}
+    });
+    api0.swrLoad('zk_bt_v1',function(r){
+      btRenderRunList(r.data||[]);
+      var first=(r.data||[]).filter(function(x){return x.has_detail;})[0]||((r.data||[])[0]);
+      if(!first)return;
+      api0.swrLoad('zk_btd_v1',function(d){
+        if(d.run_id===first.run_id){   /* 缓存详情与列表默认项一致→三图/KPI/明细秒出 */
+          BT_STATE.run=d.run_id;
+          var B=btFromArtifact(d.data);
+          if(B){btCharts(B);btFillKpi(d.data.metrics||{});btFillTradeLog(d.data.trade_log||[]);btSetMode('真源',d.run_id);}
+        }
+      });
+    });
+  }
   btLoadStratGrid();
   btrSyncDateInputs();
   var api=btApi(); if(!api){btSetMode('未启动');return;}
   api.fetchBacktestList().then(function(r){
     if(!r||!r.ok){btSetMode('未启动');return;}
+    ZK.api.swrSave('zk_bt_v1',r);
     btRenderRunList(r.data||[]);
     btRenderProfile();   /* 启动链接回（btLoadStrategies 退役后原经由其触发——2026-09-03 档案卡「一直加载中」根因） */
-    /* 默认选最新有明细的产物 */
+    /* 默认选最新有明细的产物（SWR 已渲染同一 run 时跳过重复加载） */
     var first=(r.data||[]).filter(function(x){return x.has_detail;})[0]||((r.data||[])[0]);
-    if(first)btLoadDetail(first.run_id); else btSetMode('真源','无产物');
+    if(first){if(BT_STATE.run!==first.run_id)btLoadDetail(first.run_id);} else btSetMode('真源','无产物');
   }).catch(function(){btSetMode('未启动');});
 }
 /* btrRun 转真：POST /api/backtest-run → 轮询状态 → 完成后刷新列表+载入新产物
@@ -305,6 +328,7 @@ function btLoadStratGrid(){
         };
       });
       btRenderStratGrid();
+      ZK.api.swrSave('zk_btgrid_v1',{meta:BT_STRATEGY_META,grid:BT_GRID_DATA});   /* SWR：宫格落缓存供下次刷新秒出 */
     });
   }).catch(function(){});
 }
