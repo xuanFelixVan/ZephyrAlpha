@@ -403,6 +403,13 @@ data/sft/
 # Runtime cache (walk_cache.json 400MB+, regenerate on demand)
 data/cache/
 
+# Runtime telemetry tracked-debt untrack (CAND-GATEMECH-009, #ARCH-308 B2 2026-09-03):
+# 运行时追加型遥测退库——写入方持续在盘追加，仅解除 git 跟踪消除漂移噪音
+data/compliance_log/compliance_log.jsonl
+data/metrics/kill_switch_probes.jsonl
+data/databases/governance_metadata/red_blue_report.json
+data/budget/shutdown_snapshot.json
+
 # Red-blue adversarial test runtime (trigger_queue/bypass_logs/scheduler_state)
 data/red_blue/
 

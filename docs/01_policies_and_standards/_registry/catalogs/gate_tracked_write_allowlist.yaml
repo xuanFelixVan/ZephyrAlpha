@@ -3,7 +3,7 @@ doc_type: register
 title: GATE-TRACKED-DRIFT 运行期 tracked 写入归因白名单（唯一真源 SSoT）
 status: active
 created: '2026-09-02'
-last_updated: '2026-09-02'
+last_updated: '2026-09-03'
 owner: freeze-gw（CAND-GATEMECH-004 冻结窗口专项）
 policy: >-
   gate 链执行窗口（GitCommitGateway._check_gates_with_drift_watch 指纹前后比对）内
@@ -54,24 +54,9 @@ entries:
   class: B
   writer: sync_panorama_module.py / make_blueprint_frontmatter_reconciler 等五图派生链
   note: 模块文档 AUTO/frontmatter 派生段（真源=depgraph PG；手写叙事段在 gate 窗口外由施工会话提交）
-  # ── C 类：运行时遥测写 tracked（存量债，待 CAND-GATEMECH-009 迁移）──
-- path: data/cache/decision_audit_chain.ndjson
-  class: C
-  writer: 决策审计链运行时追加
-  note: 2026-09-02 漂移快照实证 ×4
-- path: data/compliance_log/compliance_log.jsonl
-  class: C
-  writer: src/zephyr/compliance/compliance_log.py
-  note: 2026-09-02 漂移快照实证 ×3
-- path: data/metrics/kill_switch_probes.jsonl
-  class: C
-  writer: src/zephyr/infrastructure/kill_switch_sim.py（METRICS_DIR）
-  note: 2026-09-02 漂移快照实证 ×2
-- path: data/databases/governance_metadata/red_blue_report.json
-  class: C
-  writer: 红蓝对抗报告生成（governance_metadata）
-  note: 2026-09-02 漂移快照实证 ×2
-- path: data/budget/shutdown_snapshot.json
-  class: C
-  writer: src/zephyr/governance/ops_governance/budget_engine.py
-  note: 预算关停快照运行时写
+  # ── C 类：运行时遥测写 tracked（存量债，CAND-GATEMECH-009）──
+  # 2026-09-03 #ARCH-308 B2 退库：原 5 条 C 类条目（decision_audit_chain.ndjson /
+  # compliance_log.jsonl / kill_switch_probes.jsonl / red_blue_report.json /
+  # shutdown_snapshot.json）已 git rm --cached + .gitignore 登记，写入方继续在盘
+  # 追加但不再入 git 跟踪面——白名单 C 类条目数即燃尽指标，当前=0。
+  # 新增"运行期写 tracked"的写入方仍 MUST 登记本表（C 类）或改走 .runtime/。

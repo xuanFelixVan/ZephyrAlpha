@@ -21283,3 +21283,31 @@ entries:
   status: resolved
   created: '2026-08-31'
   last_updated: '2026-08-31'
+- issue_id: '#ARCH-308'
+  title: 裁定——工作区孤儿 WIP 治本三件套（判读器/死会话清扫/派生自动收敛 + 遥测退库）
+  severity: P2
+  category: 治理流程
+  adjudication: >-
+    2026-09-03 Owner 当案裁定（对话授权"全套 A+B+C"）。病根：①死会话遗留（暂存区陈旧快照/
+    claim 残留/文件锁）无清扫机制；②后台派生缓存再生无独立提交闭环（只能等"有人 commit"搭车，
+    无人值守时无限期躺脏）；③运行时遥测 5 件写 tracked 区（CAND-GATEMECH-009 存量债）；
+    ④新 AI 会话见工作区脏无判读规则 → 肉眼误报"孤儿 WIP"（2026-09-03 晨 200+ 文件实证）并诱发
+    危险清理冲动。治本三件套（A 源头纠正/B 管道兜底/C 准入预防）：A1 死会话清扫器进 drift
+    watchdog daemon 全量周期（卸 staged 陈旧快照——工作树内容永不销毁；删 claim 快照——
+    _adopted.jsonl 审计证据永不删；释放文件锁；注册表 reap 不越权）；A2 派生自动收敛（仅限
+    零活跃会话 + gate_tracked_write_allowlist B 类 + 连续 2 周期 work_hash 稳定 + 非保护路径，
+    走 gateway._commit_auto 无递归，失败 3 次放弃回落告警路径）；B1 工作区脏文件判读器
+    classify_workspace_wip.py（四分类+处置建议，AGENTS.md RULE-WORKSPACE-WIP 指定入口）；
+    B2 C 类遥测 5 件退库（git rm --cached + .gitignore，白名单 C 类燃尽归零）；C1 AGENTS.md
+    判读铁律（见脏必跑判读器，B 类派生同步≠孤儿 WIP 禁报警禁擅动）。
+  impact:
+    - 'src/zephyr/gov_enforcement/rule_bridge/worktree_drift_watchdog.py（_sweep_dead_sessions/_auto_commit_derived + daemon 挂接）'
+    - 'scripts/governance/classify_workspace_wip.py（B1 判读器）'
+    - 'tests/governance/rule_bridge/test_worktree_drift_watchdog.py（A1/A2 七测）'
+    - 'tests/scripts/test_classify_workspace_wip.py（B1 七测）'
+    - '.gitignore（B2 遥测退库 4 条）+ gate_tracked_write_allowlist.yaml（C 类清零）'
+    - 'AGENTS.md（RULE-WORKSPACE-WIP 判读铁律）'
+  fix_phase: 已落地（2026-09-03，34 测全绿）
+  status: decided
+  created: '2026-09-03'
+  last_updated: '2026-09-03'

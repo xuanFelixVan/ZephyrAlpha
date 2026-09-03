@@ -7148,9 +7148,9 @@ entries:
   priority: P3
   source: 'CAND-GATEMECH-004 冻结窗口拆分残余（2026-09-02 freeze-gw 登记）'
   created: '2026-09-02'
-  last_updated: '2026-09-02'
-  last_reviewed_at: '2026-09-02'
-  review_note: '2026-09-02 登记：迁移需逐文件评估读方兼容，未在本窗施工；白名单 C 类条目即待办清单。'
+  last_updated: '2026-09-03'
+  last_reviewed_at: '2026-09-03'
+  review_note: '2026-09-02 登记：迁移需逐文件评估读方兼容，未在本窗施工；白名单 C 类条目即待办清单。2026-09-03 进展（#ARCH-308 B2，Owner 当案授权）：5 件遥测全部走方案②退库（git rm --cached + .gitignore 4 条新增 + data/cache/ 既有规则），写入方在盘继续追加、不再入 git 跟踪面；gate_tracked_write_allowlist.yaml C 类条目清零（燃尽指标归零）。残余：.gitignore 裸词模式锚定族未动，待后续裁定。'
 
 # ============================================================
 # AI-NIGHT-001 阶段3 未来工程-大型登记批（2026-08-20，tracker #223 承接）
