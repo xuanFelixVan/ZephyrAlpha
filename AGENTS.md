@@ -320,6 +320,18 @@
 6. **禁止用 $HOME/$PID/$TRUE 等 PowerShell 只读自动变量名作变量名**（Codex `$home` 事故教训）。
 7. **wrapper 状态自查**：wrapper 未安装时上述命令在 shell 层无拦截（ops_guard 仍在网关/工具层拦删除原语）——新会话可用 `Get-Command git` 自查（显示 `Function` 即已安装）；未安装报告用户跑 `powershell -File scripts/install_git_safety_wrapper.ps1`。
 
+## RULE-WORKSPACE-WIP：工作区脏文件判读铁律（2026-09-03 #ARCH-308）
+
+> **背景**：2026-09-03 晨实证——新 AI 会话见 `git status` 200+ 脏文件，肉眼无法区分"后台派生缓存再生/死会话陈旧回退/运行时遥测/在途施工"，误报"孤儿 WIP"并诱发危险清理冲动（同类事故：08-31 worktree .py 批量删除）。根因是四类性质完全不同的脏文件在肉眼看来一模一样。治本：判读器 + watchdog 自动收敛 + 本铁律。
+
+**所有 AI session MUST 遵守**：
+
+1. **见工作区脏 MUST 先跑判读器**：`python scripts/governance/classify_workspace_wip.py`（[`classify_workspace_wip.py`](file:///d:/ZephyrAlpha/scripts/governance/classify_workspace_wip.py)，#ARCH-308 B1）——四分类报告+每类处置建议；禁止肉眼猜测后报警或擅动。
+2. **派生同步≠孤儿 WIP**：判读为 `derived_sync`（B 类白名单派生缓存）/`auto_sync`（GATE-WORKSPACE-HYGIENE 还原对象）的文件——**禁止报警式汇报、禁止擅自恢复/提交/清理**。无人值守时由 drift watchdog 派生自动收敛（#ARCH-308 A2）或随下次提交吸收；有会话在飞时归该会话处置。
+3. **活跃 WIP 勿动**：`active_wip`（活跃会话 claim）是他人/本会话在途工作——不碰、不报、等其自结。
+4. **陈旧回退走清扫通道**：`stale_rollback`（mtime<HEAD，死会话遗留）——watchdog 死会话清扫（#ARCH-308 A1）自动卸载 staged；人工处置须 lock+审计，**禁裸 git checkout --**（衔接 RULE-GIT-SAFE）。
+5. **只有三类值得汇报**：`stale_rollback`（清扫未覆盖的）/`fresh_change`（归属不明的）/`untracked_new`（判读归属的）——判读器结论行"需人工关注 N 件"即汇报清单，其余一律不进汇报。
+
 ## 1. 项目概述
 
 ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**——负责三层运行时编排、节律调度、健康监控、审计日志、工作编排、自动接入。
