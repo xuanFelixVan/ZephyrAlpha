@@ -547,12 +547,14 @@ def strategies() -> dict[str, Any]:
         sys.path.insert(0, str(_REPO / "src"))
         from zephyr.governance.strategies.strategy_base import StrategyRegistry, autodiscover_strategies
 
-        if not StrategyRegistry.list_all():
-            # 冷启（服务被并行会话周期性重启）：先读磁盘快照毫秒级秒回，后台预热线程完成后下次请求即全量
+        if not _BT_WARM_DONE.is_set():
+            # 冷启（服务被并行会话周期性重启）：先读磁盘快照毫秒级秒回，后台预热完成前不下水
             snap = _load_strategy_snapshot()
             if snap:
                 return {"ok": True, "count": len(snap), "data": snap, "stale": True}
-            autodiscover_strategies("zephyr.pf_core")  # 无快照兜底：同步导入（~8s）
+            _BT_WARM_DONE.wait(timeout=12)   # 无快照：等预热（复用后台 import，比请求线程再 import 一次省）
+            if not _BT_WARM_DONE.is_set():
+                autodiscover_strategies("zephyr.pf_core")   # 预热线程卡死兜底：请求线程同步导入
         data = _strategy_rows()
         _save_strategy_snapshot(data)   # 每次全量构建后刷快照（下次冷启秒回）
         return {"ok": True, "count": len(data), "data": data}
@@ -685,6 +687,7 @@ _BT_RUN_LOCK = threading.Lock()
 
 
 _BT_STRAT_SNAPSHOT = _REPO / "data" / "runtime" / "strategy_registry_snapshot.json"
+_BT_WARM_DONE = threading.Event()   # 预热完成标志：置位前请求走快照/等待（registry 半成品竞态防线）
 
 
 def _strategy_rows() -> list[dict[str, Any]]:
