@@ -50,13 +50,13 @@ function svcRenderMaster() {
     h += '<div style="display:flex;gap:18px;flex-wrap:wrap;margin-top:10px;font-size:11px;color:var(--dim)">'
       + svcWater('本机 CPU', st.host.cpu, '%')
       + svcWater('本机内存', st.host.mem, '%', st.host.mem_used_gb + ' / ' + st.host.mem_total_gb + ' GB');
-    (st.host.disks || []).forEach(function (d) {
-      h += svcWater(d.label, d.pct, '%', '余 ' + d.free_gb + ' GB');
-    });
-    if (st.host.gpu) {   /* GPU 杆（RTX 3090 实测可用；无卡/无驱动自动隐藏） */
+    if (st.host.gpu) {   /* GPU 杆（RTX 3090 实测可用；无卡/无驱动自动隐藏）——Owner 裁定顺序：性能三件套(CPU/内存/GPU) → 四盘 → 数据库 */
       var g = st.host.gpu;
       h += svcWater('GPU × ' + g.gpus, g.util, '%', '显存 ' + g.mem_used_gb + ' / ' + g.mem_total_gb + ' GB');
     }
+    (st.host.disks || []).forEach(function (d) {
+      h += svcWater(d.label, d.pct, '%', '余 ' + d.free_gb + ' GB');
+    });
     if (st.host.ch) {   /* CH 库内余量杆（Owner 裁定上提总闸区：和四盘并排一眼扫完；杆画已用率） */
       var c = st.host.ch;
       h += svcWater('数据库余量', Math.round(100 - c.free_gb / c.total_gb * 100), '%', '余 ' + c.free_gb + ' GB');
