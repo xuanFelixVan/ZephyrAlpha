@@ -113,7 +113,7 @@ SERVICE_CATALOG: list[dict[str, Any]] = [
      "detect": {"type": "port", "port": 1200}},
     # ── 守护域（保命进程，禁操作）──
     {"id": "drift_watchdog", "group": "guard", "tier": "guard", "name": "漂移看门狗",
-     "desc": "仓库保安：盯着代码文件有没有被偷偷改动，异常就快照存证+报警——保命进程不许关",
+     "desc": "仓库保安+清道夫：盯文件被偷偷改动（存证+报警）、清死会话遗留、夜间派生缓存自动归档——保命进程不许关",
      "detect": {"type": "proc", "pattern": r"worktree_drift_watchdog"}},
     {"id": "deadman", "group": "guard", "tier": "guard", "name": "死人开关",
      "desc": "最后的哨兵：核心服务心跳停超 10 分钟，自动给你飞书发警报（计划任务每 5 分钟查一次）",
