@@ -21307,7 +21307,7 @@ entries:
     - 'tests/scripts/test_classify_workspace_wip.py（B1 七测）'
     - '.gitignore（B2 遥测退库 4 条）+ gate_tracked_write_allowlist.yaml（C 类清零）'
     - 'AGENTS.md（RULE-WORKSPACE-WIP 判读铁律）'
-  fix_phase: 已落地（2026-09-03，34 测全绿）
+  fix_phase: '已落地（2026-09-03，38 测全绿）→ 红蓝对抗加固（同日，6 路红队 53 测实锤 6 漏洞全修复：R3.4b re-claim 竞态/R1.1 state.tmp 并发/R1.2 重复提交/R4.5 断电幂等/R5.2 审计行丢失+R5.5 类型混淆/R2.4 fnmatch 跨段越界；91 过 1 xfail，commit ddd4c408）'
   status: decided
   created: '2026-09-03'
   last_updated: '2026-09-03'
