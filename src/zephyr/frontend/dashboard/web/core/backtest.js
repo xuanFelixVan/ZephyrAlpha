@@ -167,7 +167,11 @@ function btLoadDetail(runId){
   var api=btApi(); if(!api){btSetMode('断线');return;}
   BT_STATE.run=runId;
   api.fetchBacktestDetail(runId).then(function(r){
-    if(!r||!r.ok||!r.data){btSetMode('断线');return;}
+    if(!r||!r.ok||!r.data){
+      /* 网络/服务重启窗口失败 → 3s 后重试一次（API 服务被并行会话周期性重启，撞窗即白屏，2026-09-04 实证）；数据异常不重试 */
+      if(!retry){setTimeout(function(){btLoadDetail(runId,1);},3000);return;}
+      btSetMode('断线');return;
+    }
     ZK.api.swrSave('zk_btd_v1',{run_id:runId,data:r.data});   /* SWR：详情落缓存（含曲线+metrics+trade_log，刷新秒出三图） */
     var B=btFromArtifact(r.data);
     if(!B){btSetMode('断线','产物无时序');btCharts();return;}
@@ -181,8 +185,12 @@ function btLoadDetail(runId){
       sub.textContent+=' · 展示抽稀 '+B.n+'/'+tp.equity+' 点（产物文件全量）';
     }
     btSetMode('真源',runId);
+    BT_NET_RETRY.detail=0;
     btRenderRunList();   /* 下拉收起态标签刷新为当前 run */
-  }).catch(function(){btCharts();btSetMode('断线');});
+  }).catch(function(){
+    if(!retry){setTimeout(function(){btLoadDetail(runId,1);},3000);return;}
+    btCharts();btSetMode('断线');
+  });
 }
 /* Tab5 交易明细表填真源 trade_log（API 已倒序最新在前，前端 cap 200） */
 function btFillTradeLog(log){
@@ -255,16 +263,28 @@ function btBoot(){
   }
   btLoadStratGrid();
   btrSyncDateInputs();
+  btListReload();
+}
+/* 产物列表加载+自愈重试（btBoot 与重试共用；撞 API 服务重启窗 3s 后重拉，最多 3 次） */
+function btListReload(){
   var api=btApi(); if(!api){btSetMode('未启动');return;}
   api.fetchBacktestList().then(function(r){
-    if(!r||!r.ok){btSetMode('未启动');return;}
+    if(!r||!r.ok){
+      if(BT_NET_RETRY.boot<3){BT_NET_RETRY.boot++;setTimeout(btListReload,3000);}
+      else btSetMode('未启动');
+      return;
+    }
+    BT_NET_RETRY.boot=0;
     ZK.api.swrSave('zk_bt_v1',r);
     btRenderRunList(r.data||[]);
     btRenderProfile();   /* 启动链接回（btLoadStrategies 退役后原经由其触发——2026-09-03 档案卡「一直加载中」根因） */
     /* 默认选最新有明细的产物（SWR 已渲染同一 run 时跳过重复加载） */
     var first=(r.data||[]).filter(function(x){return x.has_detail;})[0]||((r.data||[])[0]);
     if(first){if(BT_STATE.run!==first.run_id)btLoadDetail(first.run_id);} else btSetMode('真源','无产物');
-  }).catch(function(){btSetMode('未启动');});
+  }).catch(function(){
+    if(BT_NET_RETRY.boot<3){BT_NET_RETRY.boot++;setTimeout(btListReload,3000);}
+    else btSetMode('断线');
+  });
 }
 /* btrRun 转真：POST /api/backtest-run → 轮询状态 → 完成后刷新列表+载入新产物
  * 参数源=配置条（BTR_CFG）：策略=左屏看板选中（BTR_CFG.strategies[0]）、时间段（快速下拉
@@ -311,7 +331,11 @@ function btGridSel(sid){
 function btLoadStratGrid(){
   var api=btApi(); if(!api)return;
   api.fetchJson('/api/strategies',20000).then(function(sr){   /* 20s：首次调用触发策略链 autodiscover import（~8s），5s 默认必超时（2026-09-01 AbortError 实证） */
-    if(!sr||!sr.ok||!sr.data)return;
+    if(!sr||!sr.ok||!sr.data){
+      if(BT_NET_RETRY.grid<3){BT_NET_RETRY.grid++;setTimeout(btLoadStratGrid,3000);}   /* 撞服务重启窗 → 自愈重试 */
+      return;
+    }
+    BT_NET_RETRY.grid=0;
     BT_STRATEGY_META={};
     sr.data.forEach(function(s){ BT_STRATEGY_META[s.id]={name:s.name||'',note:s.note||'',tick_only:!!s.tick_only}; });
     return api.fetchBacktestList().then(function(br){
