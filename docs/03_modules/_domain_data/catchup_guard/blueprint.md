@@ -5,13 +5,13 @@ doc_type: blueprint
 status: active
 layer: L2_domain
 date: "2026-09-03"
-version: "0.1.0"
+version: "0.1.1"
 last_updated: "2026-09-03"
 language: zh
 ttl: permanent
-responsibility_domain: D_DATA
+responsibility_domain: 
 design_maturity: production
-build_status: testing
+build_status: stable
 description: 数据源集成器补盲区——任务档期 vs 打卡记录对账 + 空表兜底 + 自动补跑（L10.7 catchup_guard）
 ---
 
@@ -63,7 +63,7 @@ run_catchup_guard(scheduler) -> dict
 #        "deferred": [...], "skipped_running": [...], "cap_deferred": [...]}
 ```
 
-调度接线：`scheduler._run_special_schedule` 增加 `catchup_guard` 分支；schedule.yaml 注册 `catchup_guard: cron "30 3 * * *"`。**不进** TRADING_DAY_GUARDED_SCHEDULES（守卫须在非交易日也能跑，per-task 交易日晚点在模块内处理）。
+调度接线：`scheduler._run_special_schedule` 增加 `catchup_guard` 分支；schedule.yaml 注册 `catchup_guard: cron "30 5 * * *"`（每日含周末）。**05:30 而非 03:30**：周一凌晨已堆 L10(02:00 heavy)+L8(03:00 heavy) 两件重活，03:30 正落 L8 运行窗口内（源配额竞争），05:30 错峰、RUNNING 跳过仅作兜底。**不进** TRADING_DAY_GUARDED_SCHEDULES（守卫须在非交易日也能跑，per-task 交易日晚点在模块内处理）。
 
 手动入口（前端二期接线）：`python -c "from zephyr.data import get_integrator; from zephyr.data.catchup_guard import run_catchup_guard; print(run_catchup_guard(get_integrator()))"` 或 CLI `python -m zephyr.data run` 单任务补跑。
 
@@ -85,3 +85,65 @@ tests/zephyr/data/test_catchup_guard.py：档期判定 5 桶、空表兜底、tr
 - 不做超长期历史缺口（known_data_gaps.yaml 职责）
 - 不做快照累积类历史回补（源上无历史，物理不可回补；本模块补跑 overdue 快照任务仅止损当日）
 - 前端按钮二期（本模块先提供可编程接口）
+
+### §0.6 五图对齐视图
+
+<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
+
+> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
+> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-L00-021`
+
+#### 全景位置
+
+| 图 | 位置 | 状态 | 链接 |
+|----|------|------|------|
+| 依赖图 (depgraph) | `blueprint_id=MOD-L00-021` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-L00-021` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
+| 蓝图 (blueprint) | 本文件 | active | — |
+
+#### 四核心字段
+
+| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
+|------|-------------------|--------------------------|:-------:|
+| module_id | MOD-L00-021 | MOD-L00-021 | ✅ |
+| domain_id | N/A | N/A | ✅ |
+| build_status | stable | stable | ✅ |
+| file_count | 2 文件 | N/A | — |
+
+> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
+
+---
+
+## 7. 已实现代码完整路径索引
+
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 7.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/data/catchup_guard.py` | ✅ 已实现 | |
+
+### 7.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/zephyr/data/test_catchup_guard.py` | ✅ 已实现 | |
+
+### 7.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §7（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下

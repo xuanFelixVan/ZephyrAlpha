@@ -3,7 +3,7 @@
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] zephyr.data.backfill_checker(_load_tasks_yaml); zephyr.data.progress_store; zephyr.data.calendar; zephyr.data.alerter; zephyr.data.ch_reader
 # [CONSUMERS] zephyr.data.scheduler(_run_special_schedule catchup_guard 分支); 前端缺口对账卡片(二期)
-# [STARTUP] imported（由 data scheduler 03:30 cron 经 _run_special_schedule 调度；不进 TRADING_DAY_GUARDED_SCHEDULES）
+# [STARTUP] imported（由 data scheduler 05:30 cron 经 _run_special_schedule 调度；05:30 错峰周一凌晨 L10(02:00)/L8(03:00) heavy 窗口；不进 TRADING_DAY_GUARDED_SCHEDULES）
 # [MATURITY] testing
 # [INVARIANTS] 只做"档期 vs 打卡"对账不做行数检测(L10/L10.5职责); 单实例锁防重入; 单批补跑≤15顺延收敛; trading_day_only任务非交易日顺延不判缺; RUNNING任务跳过防撞车; 补跑经 scheduler.run_task 幂等(ReplacingMergeTree)
 # [MODIFY-GUARD] docs/03_modules/_domain_data/catchup_guard/blueprint.md

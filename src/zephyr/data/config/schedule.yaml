@@ -126,15 +126,17 @@ schedules:
     executor: default
     description: "每日完整性巡检层——动态发现全表检测当日数据是否达标，不达标告警"
 
-  # L10.7 调度对账补跑层：03:30 每日（含周末；#ARCH-DATA-CATCHUP-001, 2026-09-03）
+  # L10.7 调度对账补跑层：05:30 每日（含周末；#ARCH-DATA-CATCHUP-001, 2026-09-03）
   # 治本：monthly_static(月初09:00) 等 cron 错过无补跑——9/1 调度器 10:37 才被守护拉起，
   #   整月静态表批次错过空缺 32 小时（sector_list/index_list/hk_stock_list 等 8 表）。
   # 与 L10/L10.5 分工：本层按"任务档期 vs progress_store 打卡记录"对账（月度/周度/日频
   #   overdue + 静态表空表兜底），L10/L10.5 按"表内行数缺口"检测，L11 只告警不补跑。
+  # 05:30 而非 03:30：周一凌晨已堆 L10(02:00 heavy)+L8(03:00 heavy) 两件重活，
+  #   03:30 正落 L8 运行窗口内（源配额竞争）；05:30 错峰，RUNNING 跳过仅作兜底。
   # 不进 TRADING_DAY_GUARDED_SCHEDULES：守卫本身须非交易日可跑；miniqmt 任务的
   #   trading_day_only 晚点在 catchup_guard 模块内逐任务处理。
   catchup_guard:
-    cron: "30 3 * * *"
+    cron: "30 5 * * *"
     executor: default
     description: "调度对账补跑层——检测错过档期的任务并自动补跑（月度/周度/日频 overdue + 空表兜底）"
 

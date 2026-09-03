@@ -546,7 +546,7 @@ QMT callback 线程 ──put_nowait──→ queue.Queue ──批量出队(500
 
 **对账口径**：monthly_static=本月无 SUCCESS；weekend_*=近 7 天无 SUCCESS；daily_*=last SUCCESS<最近已收盘交易日；intraday_*/pre_market/auction_highfreq=同 daily 口径；event_driven/news_slow（7×24）=last SUCCESS<昨日。**空表兜底**：monthly_static/weekend_calibration 任务对应表 count()=0 无条件 overdue（治"打过卡但数据丢了"，如 8/10 schema 重建清空 sector_list）。**约束**：trading_day_only 任务非交易日顺延；RUNNING 跳过防撞车；单批补跑 ≤15（月度>周度>日频优先），超出顺延次日收敛；单实例锁（PID 活性探活用 psutil——Windows 禁 os.kill(pid,0)，语义是 TerminateProcess）。
 
-**调度**：schedule.yaml `catchup_guard: cron "30 3 * * *"`（每日含周末；不进 TRADING_DAY_GUARDED_SCHEDULES，守卫须非交易日可跑）；`_run_special_schedule` 分支接线。**首次实测**（2026-09-03）：抓出 39 个 overdue（含 manual 补跑未覆盖的 stock_list_refresh 8/13 / sector_constituent_refresh 8/1 / lof_list_refresh 8/15 等 10+ 月度任务），15 个补跑 14 成功，空表兜底命中 suspend/etf_benchmark。
+**调度**：schedule.yaml `catchup_guard: cron "30 5 * * *"`（每日含周末；05:30 错峰周一凌晨 L10(02:00)/L8(03:00) heavy 窗口，03:30 会正落 L8 运行期致源配额竞争）；`_run_special_schedule` 分支接线。**首次实测**（2026-09-03）：抓出 39 个 overdue（含 manual 补跑未覆盖的 stock_list_refresh 8/13 / sector_constituent_refresh 8/1 / lof_list_refresh 8/15 等 10+ 月度任务），15 个补跑 14 成功，空表兜底命中 suspend/etf_benchmark。
 
 ### 8.4 跨源验证（cross_source_validator.py）
 
