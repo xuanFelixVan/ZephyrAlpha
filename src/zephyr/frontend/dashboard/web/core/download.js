@@ -64,26 +64,32 @@ function dlRender() {
       return '<span class="acct-mi' + (d === DL_DB ? ' on' : '') + '" data-v="' + d + '" onclick="dlPickDb(\'' + d + '\',event)">' + (d === DL_DB ? '✓ ' : '') + d + '</span>';
     }).join('');
   }
-  var h = '<table><tr><th style="width:76px">下载状态</th><th>数据（中文/表名）</th><th style="width:110px">数据源</th>'
-    + '<th style="width:150px">数据时间段</th><th style="width:110px">下载速率</th><th style="width:60px">质量</th>'
-    + '<th style="width:120px">VPN</th><th style="width:80px">行数</th></tr>';
+  var h = '<table><tr><th>数据（中文/表名）</th><th style="width:96px">下载状态</th><th style="width:96px">速率·质量</th>'
+    + '<th style="width:84px">今日新增</th><th style="width:120px">下次下载</th><th style="width:150px">数据时间段</th>'
+    + '<th style="width:100px">数据源</th><th style="width:110px">VPN</th><th style="width:70px">行数</th><th style="width:130px">关联告警</th></tr>';
   rows.forEach(function (t) {
     var stt = DL_STATE[t.state] || ['w', t.state];
-    var rate = t.state === 'downloading' ? '<b>' + t.rate + '</b> 行/s' : '—';
+    var rate = t.state === 'downloading' ? '<b>' + t.rate + '</b> 行/s · ' + t.quality : '—';
     var vpn = t.vpn_need === '需'
-      ? '<span class="' + (vpn ? 'up' : 'down') + '">' + (vpn ? '需 VPN·已开 ✓' : '需 VPN·未开 ✗') + '</span>'
+      ? '<span class="' + (vpn ? 'up' : 'down') + '">' + (vpn ? '需·已开 ✓' : '需·未开 ✗') + '</span>'
       : t.vpn_need === '禁'
         ? '<span class="dim">禁 VPN</span>'
         : '<span class="dim">—</span>';
-    h += '<tr><td><span class="dot ' + stt[0] + '"></span>' + stt[1] + '</td>'
+    var fail = t.fail_cnt
+      ? '<span class="down">' + t.fail_cnt + ' 条</span><br><span class="dim" style="font-size:10px">' + t.fail_last + '</span>'
+      : '<span class="dim">—</span>';
+    h += '<tr>'
       + '<td><b>' + (t.name_zh || t.table) + '</b>' + (t.name_zh ? ' <span class="dim" style="font-size:10px">' + t.table + '</span>' : '')
       + (t.schedule_zh ? '<br><span class="dim" style="font-size:10px">⏰ ' + t.schedule_zh + '</span>' : '') + '</td>'
-      + '<td style="font-size:11px">' + t.source + (t.vpn_note ? '<br><span class="dim" style="font-size:10px">' + t.vpn_note + '</span>' : '') + '</td>'
-      + '<td style="font-size:11px">' + t.period + '</td>'
+      + '<td><span class="dot ' + stt[0] + '"></span>' + stt[1] + '</td>'
       + '<td style="font-size:11px">' + rate + '</td>'
-      + '<td style="font-size:11px">' + t.quality + '</td>'
+      + '<td style="font-size:11px">' + (t.today_rows ? '<b class="up">' + (t.today_rows >= 1e4 ? (t.today_rows / 1e4).toFixed(1) + ' 万' : t.today_rows.toLocaleString()) + '</b>' : '—') + '</td>'
+      + '<td style="font-size:11px">' + (t.next_dl || '<span class="dim">—</span>') + '</td>'
+      + '<td style="font-size:11px">' + t.period + '</td>'
+      + '<td style="font-size:11px">' + t.source + '</td>'
       + '<td style="font-size:11px">' + vpn + '</td>'
-      + '<td style="font-size:11px">' + (t.rows >= 1e8 ? (t.rows / 1e8).toFixed(1) + ' 亿' : t.rows >= 1e4 ? (t.rows / 1e4).toFixed(1) + ' 万' : t.rows.toLocaleString()) + '</td></tr>';
+      + '<td style="font-size:11px">' + (t.rows >= 1e8 ? (t.rows / 1e8).toFixed(1) + ' 亿' : t.rows >= 1e4 ? (t.rows / 1e4).toFixed(1) + ' 万' : t.rows.toLocaleString()) + '</td>'
+      + '<td style="font-size:11px">' + fail + '</td></tr>';
   });
   box.innerHTML = h + '</table><div class="dim" style="font-size:11px;padding:6px 2px">' + rows.length + ' / ' + st.tables.length + ' 张表</div>';
 }

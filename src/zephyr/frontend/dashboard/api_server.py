@@ -1207,29 +1207,31 @@ def download_status() -> dict[str, Any]:
     tasks_meta = _load_tasks_meta()
     vpn = _vpn_on()
 
-    # 近 15 分钟 INSERT 速率真源（query_log 逐条 → python 端提取目标表聚合；窗口行数有限不贵）
+    # 近 15 分钟 INSERT 速率 + 今日新增（SQL 端 arrayJoin 提取目标表聚合——1.8 万行逐行拖 python 太重）
     # 注意：INSERT 的写入行数在 written_rows（rows 列=读取数恒 0，本机实证）
     ins: dict[str, dict[str, Any]] = {}
     today_rows: dict[str, int] = {}
-    try:
-        for qtext, nrows, _evt in _ch_exec(_SQL_INSERT_15M):
-            mm = _re.search(r"INSERT\s+INTO\s+[\w`]*[.\w`]*\.?([\w`]+)", str(qtext), _re.I)
-            if not mm:
-                continue
-            tbl = mm.group(1).strip("`").lower()
-            agg = ins.setdefault(tbl, {"rows": 0, "cnt": 0})
-            agg["rows"] += int(nrows or 0)
-            agg["cnt"] += 1
-        # 今日新增行数（今日 00:00 起 INSERT 聚合）
-        for qtext, nrows in _ch_exec(
-            "SELECT query, written_rows FROM system.query_log "
-            "WHERE type='QueryFinish' AND query LIKE 'INSERT%' AND event_time >= today()"):
-            mm = _re.search(r"INSERT\s+INTO\s+[\w`]*[.\w`]*\.?([\w`]+)", str(qtext), _re.I)
-            if mm:
-                today_rows[mm.group(1).strip("`").lower()] = today_rows.get(mm.group(1).strip("`").lower(), 0) + int(nrows or 0)
-    except Exception:  # noqa: BLE001 — 速率真源失败降级为无实时态
-        ins = {}
-        today_rows = {}
+
+    def _agg_inserts(sql: str) -> dict[str, int]:
+        out: dict[str, int] = {}
+        try:
+            for target, w in _ch_exec(sql):
+                tbl = str(target).split(".")[-1].strip("`").lower()
+                out[tbl] = out.get(tbl, 0) + int(w or 0)
+        except Exception as e:  # noqa: BLE001 — 速率真源失败降级（页面显示空，不炸端点）
+            _ = e
+        return out
+
+    ins = {t.split(".")[-1].strip("`").lower(): w for t, w in _agg_inserts(
+        "SELECT arrayJoin(extractAll(query, 'INSERT INTO [^ (]+')) AS target, "
+        "sum(written_rows) AS w FROM system.query_log "
+        "WHERE type='QueryFinish' AND positionCaseInsensitive(query, 'insert into') > 0 "
+        "AND event_time > now()-900 GROUP BY target").items()}
+    today_rows = {t.split(".")[-1].strip("`").lower(): w for t, w in _agg_inserts(
+        "SELECT arrayJoin(extractAll(query, 'INSERT INTO [^ (]+')) AS target, "
+        "sum(written_rows) AS w FROM system.query_log "
+        "WHERE type='QueryFinish' AND positionCaseInsensitive(query, 'insert into') > 0 "
+        "AND event_time >= today() GROUP BY target").items()}
 
     # 失败关联真源：failures/*.json 按 task_id/表名片段匹配到表（最近 50 条告警参与匹配）
     fail_dir = _REPO / "data" / "failures"
@@ -1264,7 +1266,7 @@ def download_status() -> dict[str, Any]:
         # 实时下载态：近 15 分钟有该表 INSERT → 绿"正在下载"；速率=rows/900s
         rt = ins.get(tbl_s)
         if rt:
-            rate = round(rt["rows"] / 900.0, 1)
+            rate = round(rt / 900.0, 1)   # rt=近 15 分钟写入行数（int）
             state, dl_now = "downloading", dl_now + 1
             quality = "快" if rate > 100 else ("正常" if rate >= 1 else "零星")
         elif light == "red":
