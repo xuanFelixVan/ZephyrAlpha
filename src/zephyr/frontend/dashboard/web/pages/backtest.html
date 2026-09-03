@@ -2,9 +2,9 @@
     <h2 class="page-title">回测结果 <span class="badge b-na" id="bt-src-badge">● 未启动</span></h2>
     <div class="page-sub">研究组 · BTRUN 真源（data/backtest_artifacts/ 产物，时序强制落盘 #BT-PIPELINE-001）· 双栏式：左屏=策略档案+该策略历史回测，右屏=回测配置+结果三视图（JoinQuant 布局参考，Owner 2026-09-03）</div>
 
-    <div style="display:flex;gap:12px;align-items:flex-start">
-      <!-- ═══════════ 左屏：策略选择 → 档案 → 该策略历史回测 ═══════════ -->
-      <div style="flex:0 0 400px;min-width:360px;max-width:440px">
+    <div style="display:flex;gap:12px;align-items:flex-start;max-width:1760px;margin:0 auto">
+      <!-- ═══════════ 左屏：策略选择 → 档案 → 该策略历史回测（与右屏等宽，Owner 2026-09-03） ═══════════ -->
+      <div style="flex:1 1 0;min-width:0">
         <!-- 策略看板（/api/strategies 真源；点选=选中策略，联动档案/历史/发起回测） -->
         <div class="sec-title" style="margin-top:0">策略看板 <span class="dim">注册表真源 · 点击选中策略</span></div>
         <div id="bt-strat-grid" style="margin-bottom:10px"></div>
@@ -23,8 +23,8 @@
         </div>
       </div>
 
-      <!-- ═══════════ 右屏：回测配置 + 结果三视图 ═══════════ -->
-      <div style="flex:1;min-width:0">
+      <!-- ═══════════ 右屏：回测配置 + 结果三视图（与左屏等宽） ═══════════ -->
+      <div style="flex:1 1 0;min-width:0">
         <!-- 新建回测配置条（真源：POST /api/backtest-run → BTRUN 引擎后台执行；策略=左屏选中） -->
         <div class="card" id="btr-card" style="margin-bottom:14px">
           <h3>新建回测 <span class="dim">New Backtest</span> <span class="badge b-pass">真源</span> <span class="dim">策略=左屏选中 · 标的池=茅台/五粮液/平安/招行/平安银行 5 只（自选池接入待 I-2）</span></h3>
@@ -114,7 +114,7 @@
         <div class="subpage active" id="bt-overview">
           <div class="chart-box">
             <div class="chart-title">收益图 Performance Chart</div>
-            <svg class="spark" id="bt-eq" viewBox="0 0 1100 400" preserveAspectRatio="none" style="background:#000000;border-radius:4px"></svg>
+            <svg class="spark" id="bt-eq" viewBox="0 0 1100 400" preserveAspectRatio="none" style="background:#000000;border-radius:4px;height:260px"></svg>
             <div class="lv" style="justify-content:center">
               <span style="color:var(--blue)">— 策略收益 Strategy +124.82%</span>
               <span style="color:var(--purple)">— 沪深300 Benchmark -23.65%</span>
@@ -124,7 +124,7 @@
 
           <div class="chart-box">
             <div class="chart-title">回撤图 Drawdown Chart</div>
-            <svg class="spark" id="bt-dd" viewBox="0 0 1100 300" preserveAspectRatio="none" style="background:#000000;border-radius:4px"></svg>
+            <svg class="spark" id="bt-dd" viewBox="0 0 1100 300" preserveAspectRatio="none" style="background:#000000;border-radius:4px;height:180px"></svg>
             <div class="lv" style="justify-content:center">
               <span style="color:var(--down)">▼ 策略回撤 Strategy DD -15.84%</span>
               <span style="color:var(--purple)">▼ 沪深300回撤 Benchmark DD -38.20%</span>
@@ -133,7 +133,7 @@
 
           <div class="chart-box">
             <div class="chart-title">日收益率 Daily Returns</div>
-            <svg class="spark" id="bt-dr" viewBox="0 0 1100 300" preserveAspectRatio="none" style="background:#000000;border-radius:4px"></svg>
+            <svg class="spark" id="bt-dr" viewBox="0 0 1100 300" preserveAspectRatio="none" style="background:#000000;border-radius:4px;height:180px"></svg>
             <div class="lv" style="justify-content:center">
               <span style="color:var(--up)">■ 策略日收益（正）</span>
               <span style="color:var(--down)">■ 策略日收益（负）</span>
@@ -161,7 +161,7 @@
         <div class="subpage" id="bt-holding">
           <div class="chart-box">
             <div class="chart-title">仓位资金分布图 Position Value Distribution</div>
-            <svg class="spark" viewBox="0 0 1100 400" preserveAspectRatio="none" style="background:#000000;border-radius:4px">
+            <svg class="spark" viewBox="0 0 1100 400" preserveAspectRatio="none" style="background:#000000;border-radius:4px;height:260px">
               <g stroke="#555" stroke-width="0.3" opacity="0.5">
                 <line x1="0" y1="100" x2="1100" y2="100"/><line x1="0" y1="200" x2="1100" y2="200"/><line x1="0" y1="300" x2="1100" y2="300"/>
               </g>
