@@ -75,14 +75,25 @@ def _ch() -> Client:
             user=cfg.get("reader_user") or cfg.get("user", "default"),
             password=cfg.get("reader_password") or cfg.get("password", ""),
             database=cfg.get("database", "c1_market"),
+            connect_timeout=3,        # 2026-09-03 实证：无超时 Client 在半开连接上永久挂死
+            send_receive_timeout=15,  # 单查询上限，超时异常触发 _ch_exec 弃连自愈
         )
     return _client
 
 
 def _ch_exec(sql: str, params: dict | None = None) -> list:
-    """带锁执行（2026-09-01 实证：stockq 多组件并发取数触发 Simultaneous queries on single connection）。"""
-    with _ch_lock:
+    """带锁执行（2026-09-01 实证：stockq 多组件并发取数触发 Simultaneous queries on single connection）。
+    2026-09-03 加固：半开连接挂死曾耗尽线程池致整机假死——查询异常即弃连重建，锁获取限时防队列堆积。"""
+    global _client
+    if not _ch_lock.acquire(timeout=30):
+        raise RuntimeError("CH 通道忙（30s 未获锁，疑似上游查询挂死）")
+    try:
         return _ch().execute(sql, params or {})
+    except Exception:
+        _client = None   # 连接疑似坏态：弃置，下一位调用者重建自愈
+        raise
+    finally:
+        _ch_lock.release()
 
 
 # QMT 文件桥（实盘）：miniQMT 通道 2026-09-18 券商关停，实盘数据一律走文件桥（Owner 2026-09-01 裁定）
