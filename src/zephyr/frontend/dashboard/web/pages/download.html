@@ -6,14 +6,15 @@
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
         <h3 style="margin:0">表级下载实况 <span class="dim">灯=最新数据龄 vs 表名启发预期周期（日频 3-4 天/周频 12 天/月频 45 天）</span></h3>
         <span style="margin-left:auto;display:flex;gap:6px;align-items:center">
+          <span class="btn" onclick="dlToggleIssue(this)" title="只显示滞后和疑似断更的表">只看问题表</span>
           <span class="sel" id="dl-db-sel" style="position:relative;cursor:pointer" onclick="dlDropTgl(event)"><span id="dl-db-t">全部库</span> ▾
             <span class="acct-menu" id="dl-db-menu"></span>
           </span>
-          <input id="dl-q" placeholder="搜表名…" oninput="dlRender()" style="background:var(--input);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;padding:3px 8px;width:140px">
+          <input id="dl-q" placeholder="搜中文/表名…" oninput="dlRender()" style="background:var(--input);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;padding:3px 8px;width:140px">
         </span>
       </div>
       <div id="dl-table"></div>
-      <div class="note">断更判定口径：数据龄超预期周期 3 倍=红（可能断更）；1-3 倍=黄（观察）。元数据小表（无分区）灰灯不算异常。频率启发自表名，个别表预期不准属正常——以「最新数据日」列为准人工判读</div>
+      <div class="note">列说明：<b>下载状态</b>=近 15 分钟有无写入（query_log 真源，绿=正在下载）· <b>速率</b>=近 15 分钟平均写入行/s，质量分快(&gt;100)/正常(1-100)/零星(&lt;1) · <b>VPN</b>=源的网络属性（海外源"需"开、国内源"禁"开——挂代理反而连不上），右上 KPI 有 VPN 通道总开关灯 · 断更判定=数据龄超预期周期 3 倍；元数据小表灰灯不算异常</div>
     </div>
   </section>
 

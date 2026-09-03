@@ -26,6 +26,7 @@
 from __future__ import annotations
 
 import sys
+import socket
 import threading
 import time
 import csv
@@ -977,9 +978,14 @@ def sources_status() -> dict[str, Any]:
 
 # ── 数据下载监管真源（Owner 2026-09-03：表级下载实况——146 表新鲜度一页看全）────
 _SQL_TABLE_FRESH = (
-    "SELECT database, table, count() AS parts, sum(rows) AS rows, max(partition) AS latest "
+    "SELECT database, table, count() AS parts, sum(rows) AS rows, "
+    "min(partition) AS earliest, max(partition) AS latest "
     "FROM system.parts WHERE active AND database IN ('c0_meta','c1_market','c3_fundamental') "
     "GROUP BY database, table ORDER BY database, table"
+)
+_SQL_INSERT_15M = (
+    "SELECT query, rows, event_time FROM system.query_log "
+    "WHERE type='QueryFinish' AND query LIKE 'INSERT%' AND event_time > now()-900"
 )
 
 _DL_FREQ_HINT = (   # 表名 → 预期更新周期（天）启发；无命中默认 45（月级）
@@ -988,6 +994,106 @@ _DL_FREQ_HINT = (   # 表名 → 预期更新周期（天）启发；无命中�
     (("weekly",), 12),
     (("monthly",), 45),
 )
+
+# 表中文名（数据资产登记：大白话中文名——Owner 要求"所有数据一定要有中文"；未登记回退表名）
+_TABLE_ZH = {
+    "a50_futures_daily": "A50 期货日线", "adj_factor": "复权因子", "auction_book": "集合竞价盘口",
+    "auction_snapshot": "集合竞价快照", "block_trade": "大宗交易", "block_trade_detail": "大宗交易明细",
+    "calendar_event": "宏观事件日历", "concept_board": "概念板块", "concept_board_constituent": "概念板块成分",
+    "concept_sector": "概念行业", "convertible_bond_iv": "可转债隐波", "convertible_bond_list": "可转债清单",
+    "cross_validation_log": "交叉验证日志", "daily_valuation": "每日估值", "dragon_tiger": "龙虎榜",
+    "dragon_tiger_seat": "龙虎榜席位", "etf_list": "ETF 清单", "etf_nav": "ETF 净值",
+    "futures_kline_qmt": "期货 K 线（QMT）", "futures_position": "期货持仓", "futures_term_structure": "期货期限结构",
+    "hk_connect_flow": "港股通资金流", "hk_kline": "港股 K 线", "hk_stock_list": "港股清单",
+    "hk_trade_calendar": "港股交易日历", "hog_futures_core": "生猪期货核心", "hog_province_spot": "生猪省现货",
+    "hog_spot_index": "生猪现货指数", "index_constituent": "指数成分", "index_list": "指数清单",
+    "index_quote": "指数行情", "index_valuation_daily": "指数每日估值", "index_weight": "指数权重",
+    "industry_class": "行业分类", "ipo_calendar": "IPO 日历", "kline_15min": "15 分钟 K 线",
+    "kline_1min": "1 分钟 K 线", "kline_30min": "30 分钟 K 线", "kline_5min": "5 分钟 K 线",
+    "kline_60min": "60 分钟 K 线", "kline_cb": "可转债 K 线", "kline_daily": "日 K 线",
+    "kline_daily_bak_256": "日 K 备份（256）", "kline_daily_hfq": "日 K 后复权", "kline_etf_15min": "ETF 15 分 K",
+    "kline_etf_1min": "ETF 1 分 K", "kline_etf_30min": "ETF 30 分 K", "kline_etf_5min": "ETF 5 分 K",
+    "kline_etf_60min": "ETF 60 分 K", "kline_etf_daily": "ETF 日 K", "kline_futures": "期货 K 线",
+    "kline_global": "全球 K 线", "kline_hk_daily": "港股日 K", "kline_index": "指数日 K",
+    "kline_lof_15min": "LOF 15 分 K", "kline_lof_1min": "LOF 1 分 K", "kline_lof_30min": "LOF 30 分 K",
+    "kline_lof_5min": "LOF 5 分 K", "kline_lof_60min": "LOF 60 分 K", "kline_monthly": "月 K",
+    "kline_monthly_hfq": "月 K 后复权", "kline_sector": "板块 K 线", "kline_sector_880": "板块 K 线（880）",
+    "kline_sector_intraday": "板块盘中 K", "kline_us_daily": "美股日 K", "kline_weekly": "周 K",
+    "kline_weekly_hfq": "周 K 后复权", "limit_up_down": "涨跌停明细", "lof_list": "LOF 清单",
+    "macro_data": "宏观数据", "margin_trading": "两融数据", "market_breadth_snapshot": "市场宽度快照",
+    "market_signal_history": "量化信号历史", "money_flow": "资金流", "news_sentiment_window": "新闻情绪窗口",
+    "northbound_hold_snapshot": "北向持仓快照", "option_greeks": "期权希腊字母", "option_iv_surface": "期权波面",
+    "option_kline": "期权 K 线", "realtime_snapshot": "实时快照", "sector_constituent": "行业成分",
+    "sector_list": "板块清单", "sector_meta": "板块元数据", "sector_snapshot": "板块快照",
+    "st_stock_list": "ST 股清单", "stk_limit": "涨跌停价", "stock_basic": "股票基础信息",
+    "stock_hot_rank": "个股人气榜", "stock_indicator": "个股指标", "stock_list": "股票清单",
+    "technical_indicator": "技术指标", "tick_data": "Tick 逐笔", "trade_calendar": "交易日历",
+    "us_futures_intraday": "美股期货盘中", "us_index": "美股指数", "weather_data": "天气数据",
+    "analyst_forecast": "分析师预测", "audit_opinion": "审计意见", "balance_sheet": "资产负债表",
+    "cashflow_statement": "现金流量表", "disclosure_plan": "披露计划", "dividend": "分红送配",
+    "earnings_forecast": "业绩预测", "equity_pledge_detail": "股权质押明细", "equity_pledge_summary": "股权质押汇总",
+    "express_report": "业绩快报", "financial_indicator": "财务指标", "income_statement": "利润表",
+    "industry_class_suppl": "行业分类补充", "main_business": "主营业务", "news_data": "新闻数据",
+    "repurchase": "回购", "restricted_shares": "限售解禁", "rights_issue": "配股",
+    "share_change": "股本变动", "share_unlock": "限售解禁日历", "shareholder_count": "股东人数",
+    "top10_circulating_shareholders": "十大流通股东", "top10_shareholders": "十大股东",
+    "fetch_perf": "抓取性能记录",
+}
+
+# 源 → VPN 属性（真源=源的网络属性登记：海外源需要 VPN；国内源禁 VPN——走代理反而连不上）
+_SOURCE_VPN = {
+    "miniqmt": ("禁", "国内券商通道，挂代理会断"), "tdx": ("禁", "国内行情通道"),
+    "tickflow": ("禁", "国内行情通道"), "baostock": ("禁", "国内通道"),
+    "akshare": ("禁", "国内接口为主（子接口偶有海外）"), "cls": ("禁", "国内电报"),
+    "eastmoney_news": ("禁", "国内接口"), "tqcenter": ("禁", "国内通道"),
+    "rss": ("禁", "国内源为主"), "fred": ("需", "美联储海外接口"),
+    "okx": ("需", "海外交易所"), "us": ("需", "美股海外数据"),
+}
+
+_SCHEDULE_ZH = {
+    "daily_kline": "盘后日K（16:30）", "daily_capital": "盘后资金", "daily_event": "盘后事件",
+    "weekend_financial": "周末财务", "monthly_static": "月初静态", "intraday_minute": "盘中分钟",
+    "intraday_realtime": "盘中实时", "intraday_tick": "盘中 tick",
+}
+
+
+def _load_tasks_meta() -> dict[str, dict[str, str]]:
+    """tasks.yaml → {全表名: {source, schedule_zh, task_id}}（首任务为准；读取失败回退空）。"""
+    import yaml
+    try:
+        p = _REPO / "src" / "zephyr" / "data" / "config" / "tasks.yaml"
+        data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+        meta: dict[str, dict[str, str]] = {}
+        for t in data.get("tasks") or []:
+            tbl = str(t.get("table") or "")
+            if tbl and tbl not in meta:
+                meta[tbl] = {
+                    "source": str(t.get("source") or "?"),
+                    "schedule_zh": _SCHEDULE_ZH.get(t.get("schedule"), str(t.get("schedule") or "")),
+                    "task_id": str(t.get("task_id") or ""),
+                }
+        return meta
+    except Exception:  # noqa: BLE001 — 配置读失败回退无映射
+        return {}
+
+
+def _vpn_on() -> bool:
+    """VPN 当前是否开启（sing-box 常用本地端口探测）。"""
+    for port in (10813, 10808, 7890):
+        try:
+            with socket.create_connection(("127.0.0.1", port), timeout=0.4):
+                return True
+        except OSError:
+            continue
+    return False
+
+
+def _partition_range(earliest: str, latest: str) -> tuple[str, str]:
+    """min/max partition 字符串 → 可读时间段；返回 (start_zh, end_zh)。真源=CH min/max partition。"""
+    import re as _re
+
+    fmt = lambda s: (lambda d: d[:4] + "-" + d[4:6] + ("-" + d[6:8] if len(d) >= 8 else ""))("".join(_re.findall(r"\d", s or ""))[:8])
+    return fmt(earliest), fmt(latest)
 
 
 def _dl_light(latest: str, table: str) -> tuple[str, int | None]:
@@ -1020,20 +1126,64 @@ def _dl_light(latest: str, table: str) -> tuple[str, int | None]:
 
 @app.get("/api/download-status")
 def download_status() -> dict[str, Any]:
-    """表级下载实况：146 表最新分区/行数/新鲜度四态灯（断更监管真源=CH system.parts）。"""
+    """表级下载实况：146 表时间段/源/实时速率/VPN 联动（断更监管真源=CH system.parts+query_log）。"""
+    import re as _re
+
     rows = _ch_exec(_SQL_TABLE_FRESH)
+    tasks_meta = _load_tasks_meta()
+    vpn = _vpn_on()
+
+    # 近 15 分钟 INSERT 速率真源（query_log 逐条 → python 端提取目标表聚合；窗口行数有限不贵）
+    ins: dict[str, dict[str, Any]] = {}
+    try:
+        for qtext, nrows, _evt in _ch_exec(_SQL_INSERT_15M):
+            mm = _re.search(r"INSERT\s+INTO\s+[\w`]*[.\w`]*\.?([\w`]+)", str(qtext), _re.I)
+            if not mm:
+                continue
+            tbl = mm.group(1).strip("`").lower()
+            agg = ins.setdefault(tbl, {"rows": 0, "cnt": 0})
+            agg["rows"] += int(nrows or 0)
+            agg["cnt"] += 1
+    except Exception:  # noqa: BLE001 — 速率真源失败降级为无实时态
+        ins = {}
+
     tables: list[dict[str, Any]] = []
     cnt = {"green": 0, "yellow": 0, "red": 0, "gray": 0}
-    for db, tbl, parts, nrows, latest in rows:
+    dl_now = 0
+    for db, tbl, parts, nrows, earliest, latest in rows:
+        tbl_s, db_s = str(tbl), str(db)
+        full = f"{db_s}.{tbl_s}"
         latest_s = str(latest) if latest else ""
-        light, days = _dl_light(latest_s, str(tbl))
+        light, days = _dl_light(latest_s, tbl_s)
         cnt[light] += 1
+        meta = tasks_meta.get(full) or tasks_meta.get(tbl_s) or {}
+        src = meta.get("source", "—")
+        vpn_need, vpn_note = _SOURCE_VPN.get(src, ("—", ""))
+        start_zh, end_zh = _partition_range(str(earliest) if earliest else "", str(latest) if latest else "")
+        # 实时下载态：近 15 分钟有该表 INSERT → 绿"正在下载"；速率=rows/900s
+        rt = ins.get(tbl_s)
+        if rt:
+            rate = round(rt["rows"] / 900.0, 1)
+            state, dl_now = "downloading", dl_now + 1
+            quality = "快" if rate > 100 else ("正常" if rate >= 1 else "零星")
+        elif light == "red":
+            state, rate, quality = "stalled", 0, "已断更"
+        elif light == "yellow":
+            state, rate, quality = "lagging", 0, "滞后"
+        else:
+            state, rate, quality = ("idle", 0, "今日已完成" if light == "green" else "待机")
         tables.append({
-            "db": db, "table": tbl, "parts": int(parts),
-            "rows": int(nrows) if nrows else 0,
+            "db": db_s, "table": tbl_s,
+            "name_zh": _TABLE_ZH.get(tbl_s, ""),
+            "parts": int(parts), "rows": int(nrows) if nrows else 0,
             "latest": latest_s[:40], "light": light, "days": days,
+            "source": src, "schedule_zh": meta.get("schedule_zh", ""),
+            "period": (f"{start_zh} ~ {end_zh}" if start_zh else "—"),
+            "state": state, "rate": rate, "quality": quality,
+            "vpn_need": vpn_need, "vpn_note": vpn_note,
         })
-    return {"ok": True, "tables": tables, "counts": cnt,
+    return {"ok": True, "tables": tables, "counts": cnt, "vpn_on": vpn,
+            "dl_now": dl_now,
             "generated_at": datetime.now().isoformat(" ", "seconds")}
 
 
