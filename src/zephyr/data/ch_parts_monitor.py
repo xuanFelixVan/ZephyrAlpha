@@ -137,8 +137,12 @@ def _load_parts_threshold(registry_path: Path | None = None) -> int:
 DEFAULT_PARTS_THRESHOLD: Final[int] = _load_parts_threshold()
 
 # NO-BARE-SQL gate 豁免：_SQL_* 前缀常量（同 scheduler._SQL_FIND_PART 既有约定）
+# 2026-09-03 口径修正（Owner 拍板）：原"按表 total parts>100"对月分区宽表天然误报
+# （历史跨 20 年=250+ 月分区×每区 2-8 parts=500-600 总数，单分区实际仅 2-8）。
+# 改为按 (db, table, partition) 聚合、取每表最大单分区 parts 判定——单分区碎裂才是真爆炸信号。
 _SQL_ACTIVE_PARTS = (
-    "SELECT database, table, count() AS parts FROM system.parts WHERE active = 1 GROUP BY database, table"
+    "SELECT database, table, partition, count() AS parts "
+    "FROM system.parts WHERE active = 1 GROUP BY database, table, partition"
 )
 
 
@@ -149,15 +153,15 @@ def _default_query(sql: str, timeout: int) -> str:
     return ch_reader.query(sql, timeout=timeout)
 
 
-def parse_parts_tsv(tsv: str) -> list[tuple[str, str, int]]:
-    """解析 system.parts 查询 TSV 为 (database, table, parts) 列表（坏行容错跳过）。"""
-    rows: list[tuple[str, str, int]] = []
+def parse_parts_tsv(tsv: str) -> list[tuple[str, str, str, int]]:
+    """解析 system.parts 分区级 TSV 为 (database, table, partition, parts) 列表（坏行容错跳过）。"""
+    rows: list[tuple[str, str, str, int]] = []
     for line in (tsv or "").splitlines():
         fields = line.split("\t")
-        if len(fields) < 3:
+        if len(fields) < 4:
             continue
         try:
-            rows.append((fields[0], fields[1], int(fields[2])))
+            rows.append((fields[0], fields[1], fields[2], int(fields[3])))
         except ValueError:
             log.warning("parts TSV 坏行跳过: %s", line[:120])
     return rows
@@ -169,15 +173,16 @@ def check_parts_threshold(
     query_fn: Callable[[str, int], str] | None = None,
     timeout: int = 15,
 ) -> list[dict]:
-    """探测单表 active parts 超阈值违规清单。
+    """探测「单分区 active parts」超阈值违规清单（2026-09-03 口径：按分区判定）。
 
     Args:
-        threshold: parts 告警阈值（默认 100，64号 Q8 裁定）。
+        threshold: 单分区 parts 告警阈值（registry THD-HEALTH-005，2026-09-03 Owner 拍板 30）。
         query_fn: 查询函数注入点（测试用）；None 走 ch_reader。
         timeout: CH 查询超时秒数。
 
     Returns:
-        违规列表 [{"database", "table", "parts"}]，按 parts 降序；空列表=健康或查询失败。
+        违规列表 [{"database", "table", "partition", "parts"}]（parts=该分区碎片段数），
+        按 parts 降序；空列表=健康或查询失败。
     """
     q = query_fn or _default_query
     try:
@@ -186,7 +191,9 @@ def check_parts_threshold(
         log.warning("system.parts 查询异常: %s", e)
         return []
     violations = [
-        {"database": db, "table": tbl, "parts": parts} for db, tbl, parts in parse_parts_tsv(tsv) if parts > threshold
+        {"database": db, "table": tbl, "partition": part, "parts": parts}
+        for db, tbl, part, parts in parse_parts_tsv(tsv)
+        if parts > threshold
     ]
     violations.sort(key=lambda v: v["parts"], reverse=True)
     return violations
@@ -224,8 +231,8 @@ def check_and_alert(
         alerter.notify(
             task_id="ch_data_parts_explosion",
             error=(
-                f"{len(violations)} 张表 active data parts 超阈值 {threshold}"
-                f"（最高 {top['database']}.{top['table']}={top['parts']}），"
+                f"{len(violations)} 个分区 active parts 超阈值 {threshold}"
+                f"（最高 {top['database']}.{top['table']} 分区 {top['partition']}={top['parts']}），"
                 "防 parts 爆炸致 CH merge 满载崩溃（2026-07-09 事故教训），"
                 "请检查写入攒批（BufferedWriter）与表引擎配置"
             ),

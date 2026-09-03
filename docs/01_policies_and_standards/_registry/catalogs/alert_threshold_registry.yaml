@@ -177,11 +177,13 @@ thresholds:
     last_verified: '2026-08-17'
 
   - threshold_id: "THD-HEALTH-005"
+    # 2026-09-03 v1.4.0：口径修正（Owner 拍板）——月分区宽表按表 total parts 天然超限（250+ 分区×2-8 parts），
+    # 改按单分区判定；值 100→30。同日 top5 表 OPTIMIZE FINAL 清碎屑。
     name: "ClickHouse Parts Explosion"
-    name_zh: "CH 单表 data parts 爆炸阈值"
+    name_zh: "CH 单分区 data parts 碎裂阈值"
     category: health
-    metric_zh: "单表 active data parts 计数（system.parts 按表聚合）"
-    value: 100
+    metric_zh: "单分区 active parts 计数（system.parts 按表内分区聚合取超限分区，2026-09-03 口径修正）"
+    value: 30
     unit: count
     comparator: gt
     severity_action: "ALERT-CH-001 critical 告警（fle/dashboard/escalation 通知，CLI 巡检退出码 1）"
@@ -190,8 +192,8 @@ thresholds:
     status: active
     doc_ref: "64_data_source_download_spec.md §16.2 Q8"
     tags: [ClickHouse, parts, 数据健康, 告警]
-    evidence: "防 2026-07-09 parts 爆炸致 CH merge 满载崩溃事故重演（kline_1min 1039 parts）；check_parts_threshold 严格 > 阈值判定；2026-08-28 由码内硬编码改统读"
-    last_verified: '2026-08-28'
+    evidence: "防 2026-07-09 parts 爆炸致 CH merge 满载崩溃事故重演（kline_1min 1039 parts）；check_parts_threshold 严格 > 阈值判定；2026-08-28 由码内硬编码改统读；2026-09-03 口径修正（月分区宽表按表聚合天然超限误报，改单分区判定）+同日 top5 表 OPTIMIZE FINAL 清碎屑"
+    last_verified: '2026-09-03'
 
   # ============================================================
   # GPU（显存硬边界，system_charter §2 / 55 号 §3.1A）— 1 条
