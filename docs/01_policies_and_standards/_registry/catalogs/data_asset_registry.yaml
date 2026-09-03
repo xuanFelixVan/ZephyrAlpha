@@ -64,12 +64,17 @@ description: >-
 #   DS-105 ipo_calendar produced_by_source=null→SRC-AKSHARE-001（JOB-086/akshare_provider code_symbol/evidence 三重实证）；
 #   两条目 produced_by_source 起扩展字段仍为老式残缺（schema v2.1 头注释占位治理，全字段回填随条目内容校正专项）；
 #   同步 updated_at（含 v1.4.0 DS-094 源修正漏同步）。
+# v1.4.2 changelog(2026-09-04): DS-104/105 扩展字段校正专项（v1.4.1 备注遗留项收口）——DS-104 补 14 字段
+#   （survivorship_free/pit_available=true：新闻流 append-only 全市场覆盖无股票池筛选、news_id 锚定 SCD 时序天然时点化，
+#   与同族 DS-107 同口径；entry_role/applies_to/tags/algorithm_status 按事件族惯例；code_symbol=news_collector.py::collect_news
+#   实证锚）；DS-105 补 7 字段（E14 相关 survivorship_free/pit_available=true：ReplacingMergeTree ORDER BY (trade_date,symbol)
+#   键含日期历史快照保留可 PIT，DDL schemas/categories/market_ipo_calendar.py 实证）；全部字段证据驱动，无编造值。
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.4.1
+version: 1.4.2
 created: '2026-08-13'
-last_updated: '2026-09-03'
+last_updated: '2026-09-04'
 related_arch: '#ARCH-BREG-001'
 unique_key:
   sources: [source_id]
@@ -4375,9 +4380,16 @@ datasets:
   status: production
   version: 1.0.0
   created_at: '2026-08-17'
-  updated_at: '2026-09-03'
+  updated_at: '2026-09-04'
   owner: MOD-L00-004
   produced_by_source: SRC-AKSHARE-001
+  survivorship_free: true
+  pit_available: true
+  earnings_lag_days: null
+  llm_training_cutoff: N/A
+  lookahead_test_method: N/A
+  label_delay_days: null
+  drift_detector: none
   entry_role: "reference"
   applies_to: ["stock", "market"]
   tags: ["数据", "事件"]
@@ -4442,9 +4454,23 @@ datasets:
   status: production
   version: 1.0.0
   created_at: '2026-08-16'
-  updated_at: '2026-09-03'
+  updated_at: '2026-09-04'
   owner: MOD-L00-004
   produced_by_source: SRC-RSS-001
+  survivorship_free: true
+  pit_available: true
+  earnings_lag_days: null
+  llm_training_cutoff: N/A
+  lookahead_test_method: N/A
+  label_delay_days: null
+  drift_detector: none
+  entry_role: "reference"
+  applies_to: ["stock", "market"]
+  tags: ["数据", "事件"]
+  algorithm_status: "not_applicable"
+  evidence: "2026-09-04 字段校正专项：扩展字段按事件族既有口径回填（survivorship_free=true 新闻流全市场 append-only 不按股票池筛选；pit_available=true news_id 锚定 SCD 时序天然时点化，与同族 DS-107 同口径）；源关联 SRC-RSS-001=tasks.yaml 首任务口径（cls/eastmoney/rss 多源同表，format_summary 已载）；写入锚 news_collector.collect_news"
+  code_symbol: src/zephyr/data/news_collector.py::collect_news
+  code_fingerprint: null
 
 # 92号清单 §8.4 / 44号备忘 §4 M3-②（2026-08-22）：tracker #138 闭环——夜间新闻情绪窗口落库（DS-104 同族）
 - dataset_id: DS-107
