@@ -109,7 +109,14 @@ function svcRenderGroups() {
         + '<td><b>' + s.name + '</b><br><span class="badge ' + (s.tier === 'guard' ? 'b-warn' : s.tier === 'confirm' ? 'b-na' : s.tier === 'free' ? 'b-pass' : 'b-na') + '" style="font-size:9px">' + s.tier_label + '</span></td>'
         + '<td style="font-size:11px;color:var(--dim)">' + s.desc + '</td>'
         + '<td style="font-size:11px">' + res + '</td>'
-        + '<td style="font-size:11px">' + svcDotTxt(s.light) + ' · <span class="dim">' + (s.detail || '') + '</span></td>'
+        + '<td style="font-size:11px">' + svcDotTxt(s.light) + ' · <span class="dim">' + (s.detail || '') + '</span>';
+      if (s.ch_space) {   /* CH 库内余量可视化：杆画已用率（100-余%），余量数字醒目——Owner 口径"库里剩多少要一眼看到" */
+        var used = Math.round(100 - s.ch_space.free_gb / s.ch_space.total_gb * 100);
+        h += '<div style="display:flex;align-items:center;gap:8px;margin-top:4px">'
+          + '<div class="bar" style="flex:1"><i style="width:' + used + '%"></i></div>'
+          + '<b style="color:' + (s.ch_space.free_gb < 100 ? 'var(--up)' : 'var(--text)') + '">余 ' + s.ch_space.free_gb + ' GB</b></div>';
+      }
+      h += '</td>'
         + '<td>' + btn + '</td>'
         + '</tr>';
     });

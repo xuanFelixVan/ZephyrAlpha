@@ -506,8 +506,8 @@ def _env_tcp_alive(env_file: str, host_key: str, port_key: str) -> tuple[bool, s
         return False, str(e)[:80]
 
 
-def _ch_space() -> str:
-    """CH 库内空间实况（system.disks）——Owner 口径：任务 Ready≠磁盘真况，库里的数才是数。"""
+def _ch_space() -> dict[str, float] | None:
+    """CH 库内空间实况（system.disks）——Owner 口径：宿主盘水位≠库内真况，库里的数才是数。"""
     try:
         sys.path.insert(0, str(_REPO / "src"))
         from zephyr.data import ch_reader
@@ -517,10 +517,10 @@ def _ch_space() -> str:
             "FROM system.disks WHERE name='default'")
         parts = rows.strip().split("\t")
         if len(parts) >= 3:
-            return f"库内余 {parts[2]} GB / 总 {parts[1]} GB"
+            return {"total_gb": float(parts[1]), "free_gb": float(parts[2])}
     except Exception:  # noqa: BLE001 — 空间查询失败不影响探活灯
         pass
-    return ""
+    return None
 
 
 def _gpu_stats() -> dict[str, Any] | None:
@@ -654,7 +654,8 @@ def get_services_status() -> dict[str, Any]:
                 st["light"] = "green"; st["detail"] = msg
                 space = _ch_space()
                 if space:
-                    st["detail"] = msg + " · " + space
+                    st["ch_space"] = space
+                    st["detail"] = msg + f" · 库内余 {space['free_gb']} GB / 总 {space['total_gb']} GB"
             else:
                 st["light"] = "red"; st["detail"] = "数据库断连：" + msg
         # 缺省灯语义：external 灰=未启动（等 Owner，正常）；可控制灰=未启动；guard 灰=异常（该活着）
