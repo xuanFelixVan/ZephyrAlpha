@@ -394,8 +394,22 @@ def _task_info(task: str) -> dict[str, str] | None:
     return info
 
 
-def _file_fresh(dirpath: str) -> tuple[str, str]:
+# 目录新鲜度缓存（rglob/os.walk 全盘扫每 10s 一次太重：冷实测 8.5s 会撞前端 8s 超时 → 60s 复用）
+_DIRFRESH_CACHE: dict[str, tuple[float, tuple[str, str]]] = {}
+
+
+def _file_fresh(dirpath: str, ttl: float = 60.0) -> tuple[str, str]:
     """目录最新文件 mtime 新鲜度（QMT 文件桥用）→ (light, detail)。"""
+    now = time.time()
+    hit = _DIRFRESH_CACHE.get(dirpath)
+    if hit and now - hit[0] < ttl:
+        return hit[1]
+    r = _file_fresh_scan(dirpath)
+    _DIRFRESH_CACHE[dirpath] = (now, r)
+    return r
+
+
+def _file_fresh_scan(dirpath: str) -> tuple[str, str]:
     try:
         latest = 0.0
         n = 0
@@ -462,6 +476,16 @@ def _cold_archive(dirpath: str, manifest_name: str) -> tuple[str, str]:
 
 def _daily_fresh(dirpath: str) -> tuple[str, str]:
     """日频备份产物目录探测 → (light, detail)。<36h 绿（每日 06:00 允许一天）/ <8d 黄 / 更久红。"""
+    now = time.time()
+    hit = _DIRFRESH_CACHE.get(dirpath)
+    if hit and now - hit[0] < 60.0:
+        return hit[1]
+    r = _daily_fresh_scan(dirpath)
+    _DIRFRESH_CACHE[dirpath] = (now, r)
+    return r
+
+
+def _daily_fresh_scan(dirpath: str) -> tuple[str, str]:
     try:
         if not Path(dirpath).exists():
             return "red", "备份产物目录不存在（灾备事故）"
