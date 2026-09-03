@@ -691,6 +691,9 @@ def get_services_status() -> dict[str, Any]:
         gpu = _gpu_stats()
         if gpu:
             host["gpu"] = gpu
+        ch_item = next((s for s in out if s["id"] == "clickhouse"), None)
+        if ch_item and ch_item.get("ch_space"):
+            host["ch"] = ch_item["ch_space"]   # 总闸区水位条消费（库内余量和四盘并排）
     except Exception:  # noqa: BLE001
         pass
 
