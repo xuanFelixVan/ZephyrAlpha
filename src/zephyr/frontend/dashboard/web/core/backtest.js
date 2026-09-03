@@ -237,6 +237,7 @@ function btBoot(){
   api.fetchBacktestList().then(function(r){
     if(!r||!r.ok){btSetMode('未启动');return;}
     btRenderRunList(r.data||[]);
+    btRenderProfile();   /* 启动链接回（btLoadStrategies 退役后原经由其触发——2026-09-03 档案卡「一直加载中」根因） */
     /* 默认选最新有明细的产物 */
     var first=(r.data||[]).filter(function(x){return x.has_detail;})[0]||((r.data||[])[0]);
     if(first)btLoadDetail(first.run_id); else btSetMode('真源','无产物');
@@ -344,36 +345,30 @@ function btRenderProfile(){
   if(!box)return;
   var sid=BTR_CFG.strategies[0];
   var p=BT_PROFILE[sid];
-  if(!p){box.innerHTML='<div class="dim">「'+sid+'」档案待补（策略注册表登记后补全说明）</div>';return;}
-  var api=btApi();
-  var perfHtml='<span class="dim">暂无回测产物——右上方「发起回测」跑一次即有实绩</span>';
-  if(api){
-    api.fetchBacktestList().then(function(r){
-      if(r&&r.ok){
-        var mine=(r.data||[]).filter(function(x){return x.strategy_id===sid;});
-        if(mine.length){
-          var b=mine[0];   /* created_at 降序=最新 */
-          var pct=function(v){return v!=null?((v>=0?'+':'')+(v*100).toFixed(2)+'%'):'--';};
-          perfHtml='最新回测 <b>'+b.run_id+'</b>（'+(b.created_at||'').slice(0,10)+'）：'
-            +'收益 <b class="'+(b.total_return>=0?'up':'down')+'">'+pct(b.total_return)+'</b>'
-            +' · 夏普 <b>'+(b.sharpe_ratio!=null?b.sharpe_ratio.toFixed(2):'--')+'</b>'
-            +' · 回撤 <b class="down">'+pct(-(b.max_drawdown||0))+'</b>'
-            +' · 成交 <b>'+b.trades_count+'</b> 笔 · <span class="dim">该策略共 '+mine.length+' 次回测（产物条点选切换）</span>';
-        }
-      }
-      fill(perfHtml);
-    }).catch(function(){fill(perfHtml);});
-  } else { fill(perfHtml); }
-  function fill(ph){
-    box.innerHTML='<table>'
-      +'<tr><th style="width:88px">策略说明</th><td>'+p.desc+'</td></tr>'
-      +'<tr><th>信号源</th><td>'+p.signal+'</td></tr>'
-      +'<tr><th>最新实绩</th><td>'+ph+'</td></tr>'
-      +'<tr><th>适用环境</th><td>'+p.env+'</td></tr>'
-      +'<tr><th>风险提示</th><td class="down">'+p.risk+'</td></tr>'
-      +'<tr><th>离场说明</th><td>'+p.exit+'</td></tr>'
-      +'</table>';
+  if(!p){box.innerHTML='<div class="dim">「'+btDispName(sid)+'」档案待补（策略注册表登记后补全说明）</div>';return;}
+  /* 实绩=BT_RUNS 缓存同步渲染（btBoot 已预取；修复 2026-09-03「一直加载中」：原启动链
+   * btLoadStrategies→btStrategyLabel→btRenderProfile 随策略下拉退役断链，且异步 fill 悬挂无兜底） */
+  var mine=BT_RUNS.filter(function(x){return x.strategy_id===sid;});
+  var perfHtml;
+  if(mine.length){
+    var b=mine[0];   /* created_at 降序=最新 */
+    var pct=function(v){return v!=null?((v>=0?'+':'')+(v*100).toFixed(2)+'%'):'--';};
+    perfHtml='最新回测 <b>'+b.run_id+'</b>（'+(b.created_at||'').slice(0,10)+'）：'
+      +'收益 <b class="'+(b.total_return>=0?'up':'down')+'">'+pct(b.total_return)+'</b>'
+      +' · 夏普 <b>'+(b.sharpe_ratio!=null?b.sharpe_ratio.toFixed(2):'--')+'</b>'
+      +' · 回撤 <b class="down">'+pct(-(b.max_drawdown||0))+'</b>'
+      +' · 成交 <b>'+b.trades_count+'</b> 笔 · <span class="dim">该策略共 '+mine.length+' 次回测（左屏下拉切换）</span>';
+  }else{
+    perfHtml='<span class="dim">暂无回测产物——右上方「发起回测」跑一次即有实绩</span>';
   }
+  box.innerHTML='<table>'
+    +'<tr><th style="width:88px">策略说明</th><td>'+p.desc+'</td></tr>'
+    +'<tr><th>信号源</th><td>'+p.signal+'</td></tr>'
+    +'<tr><th>最新实绩</th><td>'+perfHtml+'</td></tr>'
+    +'<tr><th>适用环境</th><td>'+p.env+'</td></tr>'
+    +'<tr><th>风险提示</th><td class="down">'+p.risk+'</td></tr>'
+    +'<tr><th>离场说明</th><td>'+p.exit+'</td></tr>'
+    +'</table>';
 }
 function btrDropTgl(e){
   e.stopPropagation();
@@ -466,9 +461,13 @@ function btrRun(){
           var runsTxt=runs.map(function(rid){return '<b>'+rid+'</b>';}).join('、');
           st.innerHTML='✅ 完成——产物 '+runsTxt+'（'+(s.mode==='tick'?'Tick 完全仿真':'向量化')+'，净值 '+s.equity_points+' 点 / 成交 '+s.trades+' 笔），已自动载入';
           btrBusy=false;
-          api.fetchBacktestList().then(function(r2){if(r2&&r2.ok){btRenderRunList(r2.data||[]);}});
+          api.fetchBacktestList().then(function(r2){
+            if(r2&&r2.ok){
+              btRenderRunList(r2.data||[]);
+              btRenderProfile();   /* 档案实绩刷新（BT_RUNS 更新后再渲染，保最新） */
+            }
+          });
           btLoadStratGrid();   /* 宫格实绩刷新 */
-          btRenderProfile();   /* 档案实绩刷新 */
           if(runs.length)btLoadDetail(runs[0]);
           var k=document.getElementById('bt-kpi'); if(k&&k.scrollIntoView)k.scrollIntoView({behavior:'smooth',block:'start'});
         }else if(s&&s.status==='failed'){
