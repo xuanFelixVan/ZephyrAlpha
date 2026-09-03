@@ -343,6 +343,54 @@ class TestInprocessEnforcement:
 
 
 # ---------------------------------------------------------------------------
+# 3b-2. 审计写盘重入哨兵（2026-09-04 死循环治本回归钉）
+# ---------------------------------------------------------------------------
+@pytest.mark.usefixtures("_restore_primitives")
+class TestAuditReentrantSentinel:
+    """ops_guard_delete.jsonl 达 50MB 轮转阈值后，审计落盘自身触发的
+    rename/unlink 重入 judge 必须豁免——否则 rotate 的 rename 停在 judge
+    永不执行，当前段永不缩小，无限递归（worker ba386d47/ef8eafd5e 双卡死
+    100% CPU 2h+ 实证，py-spy 栈：judge→audit→_rotate→rename→judge…）。
+    真实环成立前提：rotate 的段移位 rename 在 file_ops 声明内（GATE-RUNTIME-
+    CLEANUP 声明 .runtime/** 清理）——本用例同构复现。"""
+
+    def test_audit_rotate_reentrant_no_deadloop(self, tmp_path, monkeypatch):
+        import zephyr.shared.io.audit_jsonl_writer as writer_mod
+
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setattr(ops_guard_mod, "_PROJECT_ROOT_CACHE", tmp_path)
+        install_inprocess_enforcement()
+
+        calls = {"n": 0}
+
+        def fake_append(audit_dir, filename, record, **kw):
+            calls["n"] += 1
+            assert calls["n"] < 50, "哨兵失效：审计轮转 rename 重入 judge 死循环"
+            audit_dir.mkdir(parents=True, exist_ok=True)
+            cur = audit_dir / filename
+            old = audit_dir / f"{filename}.0"
+            old.write_text("old", encoding="utf-8")
+            old.rename(cur)  # ← 模拟 _rotate 段移位：重入 _wrapped_rename→judge（复现环）
+            cur.write_text(json.dumps(record, ensure_ascii=False) + "\n", encoding="utf-8")
+            return True
+
+        monkeypatch.setattr(writer_mod, "append_audit_jsonl", fake_append)
+
+        verdict = ops_guard_mod.DeleteVerdict(
+            allowed=True,
+            reason="test",
+            primitive="inprocess_delete",
+            targets=["docs/x.md"],
+            is_recursive=False,
+            is_protected_zone=True,  # 敏感区 allow=全量落盘路径（早退分支不触发的入口）
+        )
+        ops_guard_mod.audit_delete("inprocess_allow", "delete('docs/x.md')", verdict)
+
+        assert calls["n"] == 1, f"重入应被哨兵豁免（恰好 1 次落盘），实得 {calls['n']}"
+        assert ops_guard_mod.get_audit_stats().get("audit_reentrant_skip", 0) >= 1, "重入豁免未计数"
+
+
+# ---------------------------------------------------------------------------
 # 3c. audit-only 观测模式（CAND-GOVSEC-001 ② 推广配套，2026-08-23）
 # ---------------------------------------------------------------------------
 @pytest.mark.usefixtures("_restore_primitives")

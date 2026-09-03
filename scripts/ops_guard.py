@@ -349,6 +349,7 @@ def audit_delete(
         "targets_hash": _targets_hash(verdict.targets),
         "pid": os.getpid(),
     }
+    _token = _AUDIT_REENTRANT.set(True)  # 写盘窗口：rotate 的 rename/unlink 重入 judge 直接放行
     try:
         from zephyr.shared.io.audit_jsonl_writer import append_audit_jsonl
 
@@ -356,6 +357,8 @@ def audit_delete(
             _AUDIT_STATS["audit_failed"] += 1  # T2③ 覆盖率指标：落盘失败=覆盖率缺口
     except Exception:  # noqa: BLE001 — 审计不阻断（含写入助手不可导入降级）
         _AUDIT_STATS["audit_failed"] += 1
+    finally:
+        _AUDIT_REENTRANT.reset(_token)
 
 
 # ============================================================================
@@ -1098,7 +1101,18 @@ _AUDIT_STATS: dict[str, int] = {
     "audit_failed": 0,
     "would_block": 0,
     "allow_skipped": 0,  # 批5c 分级落盘：非敏感区 allow 只计数不落盘
+    "audit_reentrant_skip": 0,  # 审计写盘窗口重入豁免计数（rotate rename/unlink 不自审）
 }
+
+#: 审计写盘重入哨兵（2026-09-04 死循环治本）：audit_delete 落盘窗口内置位。
+#: 病根实证（worker ba386d47/ef8eafd5e 各 100% CPU 2h+，py-spy 栈实锤）：
+#: ops_guard_delete.jsonl 达 50MB 后，业务 rename → judge → audit_delete → append
+#: 触发 _rotate → _rotate 的 rename 停在 judge 前置判定永不真正执行 → 当前段
+#: 永不缩小 → 每层审计再触发 rotate → 无限递归。审计基础设施自身的段移位
+#: （gate_audit/ops_guard_delete.jsonl.N 的 rename/unlink）不属业务删除，不再判定。
+_AUDIT_REENTRANT: contextvars.ContextVar[bool] = contextvars.ContextVar(
+    "ops_guard_audit_reentrant", default=False
+)
 
 
 def get_audit_stats() -> dict[str, int]:
@@ -1220,6 +1234,12 @@ def _inprocess_judge(op: str, path: object, *, recursive: bool) -> None:
     - 上下文外（worker/进程内裸调用）→ 保护区内目标（含单文件）未授权即拦；
       白名单/其他区域放行+审计
     """
+    if _AUDIT_REENTRANT.get():
+        # 审计写盘窗口重入（audit→_rotate 的 rename/unlink→judge）：直接放行不再
+        # 判定/审计——否则 rotate 的 rename 停在本 judge 永不执行，当前段永不缩小，
+        # 无限递归（2026-09-04 worker 双卡死实证，本文件 _AUDIT_REENTRANT 注释）。
+        _AUDIT_STATS["audit_reentrant_skip"] += 1
+        return
     if _BULK_APPROVED.get():
         return
     _AUDIT_STATS["judge_calls"] += 1
