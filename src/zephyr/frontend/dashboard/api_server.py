@@ -975,6 +975,68 @@ def sources_status() -> dict[str, Any]:
             "generated_at": datetime.now().isoformat(" ", "seconds")}
 
 
+# ── 数据下载监管真源（Owner 2026-09-03：表级下载实况——146 表新鲜度一页看全）────
+_SQL_TABLE_FRESH = (
+    "SELECT database, table, count() AS parts, sum(rows) AS rows, max(partition) AS latest "
+    "FROM system.parts WHERE active AND database IN ('c0_meta','c1_market','c3_fundamental') "
+    "GROUP BY database, table ORDER BY database, table"
+)
+
+_DL_FREQ_HINT = (   # 表名 → 预期更新周期（天）启发；无命中默认 45（月级）
+    (("1min", "5min", "15min", "30min", "60min"), 3),
+    (("daily", "_quote", "snapshot", "tick_data", "signal_history", "intraday"), 4),
+    (("weekly",), 12),
+    (("monthly",), 45),
+)
+
+
+def _dl_light(latest: str, table: str) -> tuple[str, int | None]:
+    """按最新 partition 推算数据龄（天）→ 四态灯（启发式预期周期）。"""
+    import datetime as _dt
+    import re as _re
+
+    if not latest or "tuple" in latest:
+        return "gray", None
+    digits = "".join(_re.findall(r"\d", latest))
+    today = _dt.date.today()
+    try:
+        if len(digits) >= 8:
+            d = _dt.date(int(digits[:4]), int(digits[4:6]), int(digits[6:8]))
+        elif len(digits) >= 6:
+            d = _dt.date(int(digits[:4]), int(digits[4:6]), 1)
+        else:
+            return "gray", None
+    except ValueError:
+        return "gray", None
+    days = (today - d).days
+    tl = table.lower()
+    exp = next((v for keys, v in _DL_FREQ_HINT if any(k in tl for k in keys)), 45)
+    if days <= exp:
+        return "green", days
+    if days <= exp * 3:
+        return "yellow", days
+    return "red", days
+
+
+@app.get("/api/download-status")
+def download_status() -> dict[str, Any]:
+    """表级下载实况：146 表最新分区/行数/新鲜度四态灯（断更监管真源=CH system.parts）。"""
+    rows = _ch_exec(_SQL_TABLE_FRESH)
+    tables: list[dict[str, Any]] = []
+    cnt = {"green": 0, "yellow": 0, "red": 0, "gray": 0}
+    for db, tbl, parts, nrows, latest in rows:
+        latest_s = str(latest) if latest else ""
+        light, days = _dl_light(latest_s, str(tbl))
+        cnt[light] += 1
+        tables.append({
+            "db": db, "table": tbl, "parts": int(parts),
+            "rows": int(nrows) if nrows else 0,
+            "latest": latest_s[:40], "light": light, "days": days,
+        })
+    return {"ok": True, "tables": tables, "counts": cnt,
+            "generated_at": datetime.now().isoformat(" ", "seconds")}
+
+
 def main() -> None:
     import uvicorn
 

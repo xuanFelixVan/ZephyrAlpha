@@ -73,6 +73,9 @@ ZK.api = (function(){
     },
     fetchSourcesStatus: function(){   /* 数据源监管真源（健康探针日志解析+alerter 告警流水） */
       return fetchJson('/api/sources-status', 8000);
+    },
+    fetchDownloadStatus: function(){   /* 数据下载监管真源（146 表最新分区/行数/新鲜度） */
+      return fetchJson('/api/download-status', 10000);
     }
   };
 })();
