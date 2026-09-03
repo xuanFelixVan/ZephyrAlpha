@@ -55,7 +55,7 @@ function svcRenderMaster() {
     });
     if (st.host.gpu) {   /* GPU 杆（RTX 3090 实测可用；无卡/无驱动自动隐藏） */
       var g = st.host.gpu;
-      h += svcWater('GPU × ' + g.gpus, g.util, '%', '显存 ' + g.mem_used_gb + ' / ' + g.mem_total_gb + ' GB', g.mem_pct);
+      h += svcWater('GPU × ' + g.gpus, g.util, '%', '显存 ' + g.mem_used_gb + ' / ' + g.mem_total_gb + ' GB');
     }
     h += '</div>';
   }
@@ -70,12 +70,11 @@ function svcRenderMaster() {
   }
   m.innerHTML = h + '</div>';
 }
-function svcWater(label, pct, unit, sub, barPct) {
-  var p = barPct != null ? barPct : pct;   /* GPU：杆画显存占用，数字显示算力利用率 */
+function svcWater(label, pct, unit, sub) {
   var warn = pct >= 90 ? ' style="color:var(--up)"' : (pct >= 75 ? ' style="color:var(--yellow)"' : '');
   return '<div style="min-width:180px;flex:1"><div style="display:flex;justify-content:space-between">'
     + '<span>' + label + (sub ? ' <span style="font-size:10px">(' + sub + ')</span>' : '') + '</span><b' + warn + '>' + pct + unit + '</b></div>'
-    + '<div class="bar" style="margin-top:3px"><i style="width:' + Math.min(100, p) + '%"></i></div></div>';
+    + '<div class="bar" style="margin-top:3px"><i style="width:' + Math.min(100, pct) + '%"></i></div></div>';
 }
 
 /* ── 分组列表：每行=四态灯+名称大白话+级别徽标+CPU/内存+detail+开关 ── */
