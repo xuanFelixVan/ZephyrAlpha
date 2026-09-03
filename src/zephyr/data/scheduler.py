@@ -314,6 +314,12 @@ def _run_special_schedule(
 
         result = run_daily_check(scheduler)
         return {"integrity_check_daily": result.get("success", False)}
+    # L10.7 调度对账补跑层：任务档期对账 + 空表兜底 + 自动补跑（#ARCH-DATA-CATCHUP-001）
+    if schedule_name == "catchup_guard":
+        from zephyr.data.catchup_guard import run_catchup_guard
+
+        result = run_catchup_guard(scheduler)
+        return {"catchup_guard": result.get("success", False)}
     return None
 
 

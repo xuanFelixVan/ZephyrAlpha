@@ -540,6 +540,14 @@ QMT callback 线程 ──put_nowait──→ queue.Queue ──批量出队(500
 
 **补下载执行**（`run_weekend_backfill()`）：动态发现所有表 → 获取过去7天交易日 → 逐表检测缺失日期 → tick_data 用专门 `backfill_tick_data()`（分时段+批量写入）→ 其他表用 `scheduler.run_task(task_id)` 重跑。
 
+### 8.3b 调度对账补跑器（catchup_guard.py · L10.7，#ARCH-DATA-CATCHUP-001）
+
+**真源**：`src/zephyr/data/catchup_guard.py`（MOD-L00-021，蓝图 `docs/03_modules/_domain_data/catchup_guard/blueprint.md`）。**职责**：按"任务档期 vs progress_store 打卡记录"对账，补 L10/L10.5 的四类结构性盲区——①静态表被行数扫描主动跳过（threshold=0）；②只看数据缺口不看任务档期；③7 天窗口外的 last_key 中段缺口；④守卫自身被宕机跳过后无补触发。**事故根因**（2026-09-01）：调度器 10:37 才被守护拉起，月初 09:00 monthly_static 整批错过，8 张静态表空缺 32 小时。
+
+**对账口径**：monthly_static=本月无 SUCCESS；weekend_*=近 7 天无 SUCCESS；daily_*=last SUCCESS<最近已收盘交易日；intraday_*/pre_market/auction_highfreq=同 daily 口径；event_driven/news_slow（7×24）=last SUCCESS<昨日。**空表兜底**：monthly_static/weekend_calibration 任务对应表 count()=0 无条件 overdue（治"打过卡但数据丢了"，如 8/10 schema 重建清空 sector_list）。**约束**：trading_day_only 任务非交易日顺延；RUNNING 跳过防撞车；单批补跑 ≤15（月度>周度>日频优先），超出顺延次日收敛；单实例锁（PID 活性探活用 psutil——Windows 禁 os.kill(pid,0)，语义是 TerminateProcess）。
+
+**调度**：schedule.yaml `catchup_guard: cron "30 3 * * *"`（每日含周末；不进 TRADING_DAY_GUARDED_SCHEDULES，守卫须非交易日可跑）；`_run_special_schedule` 分支接线。**首次实测**（2026-09-03）：抓出 39 个 overdue（含 manual 补跑未覆盖的 stock_list_refresh 8/13 / sector_constituent_refresh 8/1 / lof_list_refresh 8/15 等 10+ 月度任务），15 个补跑 14 成功，空表兜底命中 suspend/etf_benchmark。
+
 ### 8.4 跨源验证（cross_source_validator.py）
 
 **实际范围**（2026-08-12 代码实证）：**tick 数据专属**的主备源内容级校验器（P1-4），非通用跨源框架——硬编码校验 `tick_data` 表 `data_source IN ('miniqmt','tdx_backup')` 最近 N 分钟（默认 5）数据，按 symbol 比对主备源最新 price（阈值 0.1% 判 fail）/volume（5% 判 warn）及缺失标的，结果写 `c1_market.cross_validation_log` 表。

@@ -21311,3 +21311,38 @@ entries:
   status: decided
   created: '2026-09-03'
   last_updated: '2026-09-03'
+
+- issue_id: '#ARCH-DATA-CATCHUP-001'
+  title: 调度对账补跑器（L10.7 catchup_guard）——cron 错过无补跑致静态表整批空缺 + 空表无兜底
+  severity: P1高
+  category: data_architecture
+  adjudication: |
+    问题背景（2026-09-01 事故）：
+    调度器宕机至 10:37 才被守护拉起，月初 09:00 的 monthly_static cron 整批错过，
+    sector_list/index_list/hk_stock_list/index_weight/convertible_bond_list/
+    etf_benchmark/concept_sector 等 8 张静态表空缺 32 小时无人发现；同期 8/27~9/2
+    多表漏采（调度器 8/31-9/1 反复重启）。既有 L10/L10.5 按"表内行数缺口"检测，
+    存在四类结构性盲区：①静态表被 threshold=0 主动跳过；②只看数据缺口不看任务
+    档期；③7 天窗口外 last_key 已推进的中段缺口；④守卫自身被宕机跳过无补触发。
+
+    裁定（治本方案）：
+    (1) 新增 catchup_guard.py（MOD-L00-021，L10.7 时段 03:30 每日含周末）：
+        任务档期 vs progress_store 打卡记录对账——monthly=本月无 SUCCESS /
+        weekly=近 7 天无 SUCCESS / daily+intraday=last SUCCESS<最近已收盘交易日 /
+        7×24=last SUCCESS<昨日；
+    (2) 空表兜底：monthly_static/weekend_calibration 表 count()=0 无条件 overdue
+        （治"打过卡但数据丢了"，如 8/10 schema 重建清空 sector_list）；
+    (3) 约束：trading_day_only 非交易日顺延；RUNNING 跳过防撞车；单批补跑 ≤15
+        按月度>周度>日频优先、超出顺延次日收敛；单实例锁（psutil 探活）；
+    (4) 接线：schedule.yaml catchup_guard 时段 + scheduler._run_special_schedule
+        分支；不进 TRADING_DAY_GUARDED_SCHEDULES（守卫须非交易日可跑）。
+  impact:
+    - 'src/zephyr/data/catchup_guard.py（新增，对账+补跑+锁）'
+    - 'src/zephyr/data/scheduler.py（_run_special_schedule catchup_guard 分支）'
+    - 'src/zephyr/data/config/schedule.yaml（L10.7 时段 03:30）'
+    - 'tests/zephyr/data/test_catchup_guard.py（14 测全绿）'
+    - 'docs/03_modules/_domain_data/catchup_guard/blueprint.md（蓝图）'
+  fix_phase: '已落地（2026-09-03，14 测全绿 + 实环境首跑抓出 39 个 overdue 含 manual 补跑未覆盖的 10+ 月度任务，15 补跑 14 成功）'
+  status: decided
+  created: '2026-09-03'
+  last_updated: '2026-09-03'

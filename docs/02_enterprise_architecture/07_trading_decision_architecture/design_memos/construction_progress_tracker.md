@@ -189,6 +189,7 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 4 | 17 号文档路径引用/BOM/换行符补检（merge 后由统筹执行） | AI-STD-001 | ✅ 已闭环（补检全部 PASS：BOM 无/换行符统一 LF/frontmatter 完整/相对链接 0 断链） | ✅ |
 | 5 | AGENTS.md 业务资产速查更新（17 号定稿 + 12 注册表建成后） | AI-STD-001 | ✅ 已闭环（2026-08-13，commit f15de056，Owner 批准 [ARCH-APPROVAL] 落地，12 注册表速查全量更新） | ✅ |
 | 103 | tests/git test_git_command_timeout_handled 环境敏感失败（#103） | AI-TEST-001 | mock 目标误打在死钩子 _run_git（Stage 4 公共化后零生产调用的向后兼容 wrapper）→commit 真实执行成功返回 OK→断言确定性失败（与机器快慢无关）。治本：mock 改打真实入口 run_git，选择性注入仅 git commit 抛 TimeoutExpired，其余命令（add/rev-parse/stash 等）走真实调用。修复 commit 07bbc4856d4e，tests/git 154 passed + 1 xpassed 全绿 | ✅ |
+| 104 | catchup_guard（MOD-L00-021）depgraph 设计边未登记：design 节点已建（node_id=11411222，apply_depgraph --add-design-node --granularity file），但依赖边（→scheduler/backfill_checker/progress_store/alerter/calendar）因工具链无 node_id 反查通道（--query-production exit 2 / extract_depgraph --paths 与 --modules 均不暴露 node_id / pg_backup JSON 非全量）暂缺 | data-backfill-0903 | 待办：给 apply_depgraph/extract 工具补 path→node_id 查询 op，或提供 blueprint_id 反查；补齐后 `--add-design-edge 11411222 <dep_node_id>` 逐条登记 | ⏳ |
 
 ### P1 · 治理登记缺口/一致性问题
 
