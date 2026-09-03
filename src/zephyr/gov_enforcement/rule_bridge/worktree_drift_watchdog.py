@@ -5,7 +5,7 @@
 # [CONSUMERS] git_commit_gateway (_register_default_reconcilers: make_worktree_drift_watchdog_reconciler); CLI python -m ... [--once|--daemon|--status]
 # [STARTUP] manual / post-commit reconciler ensure-daemon
 # [MATURITY] production
-# [INVARIANTS] 锚主仓工作区（anchor_main_root）；只告警不阻断（fail-open 不干扰主流程）；快照先于告警；审计写 .runtime/（永不回 tracked 区）；同签名告警去重；漂移消解自动写 clean 自愈消音；#ARCH-264：critical_warn 唯一写者=daemon（网关即时扫 observe-only）；热文件 10s 快扫+interval 全量双频节拍；quarantine 30 天 retention 自管+带外删除 tamper 审计；#ARCH-304：恰好 1 个活跃注册会话→auto-claim 替代告警（归属无歧义），0/>1 会话或 claim 失败→维持原处置（fail-closed 不放松）；#ARCH-308 A1：死会话清扫只卸 staged/删 claim 快照/释放锁（工作树内容永不销毁，注册表 reap 不越权，_adopted.jsonl 审计证据永不删）；#ARCH-308 A2：派生自动收敛仅限零活跃会话+B类白名单+连续2周期稳定+非保护路径，走 _commit_auto（无递归）
+# [INVARIANTS] 锚主仓工作区（anchor_main_root）；只告警不阻断（fail-open 不干扰主流程）；快照先于告警；审计写 .runtime/（永不回 tracked 区）；同签名告警去重；漂移消解自动写 clean 自愈消音；#ARCH-264：critical_warn 唯一写者=daemon（网关即时扫 observe-only）；热文件 10s 快扫+interval 全量双频节拍；quarantine 30 天 retention 自管+带外删除 tamper 审计；#ARCH-304：恰好 1 个活跃注册会话→auto-claim 替代告警（归属无歧义），0/>1 会话或 claim 失败→维持原处置（fail-closed 不放松）；#ARCH-308 A1：死会话清扫只卸 staged/删 claim 快照/释放锁（工作树内容永不销毁——git reset HEAD 仅动 index；注册表 reap 不越权，_adopted.jsonl 审计证据永不删；PID 存活会话即使心跳超时判死也不清扫——保守双检防误判在飞会话；index.lock 在飞本轮缩手）；#ARCH-308 A2：派生自动收敛仅限零在场会话（list_active ∪ raw PID 存活双检）+B类白名单+连续2周期稳定+非保护路径+index.lock 空闲，走 _commit_auto（无递归）
 # [MODIFY-GUARD] scan_once 判定逻辑（claimed/grace/dedup/auto_claim/alert 分流 + observe-only 观察员模式 + hot_only 快扫过滤）；快照目录格式 .runtime/quarantine/drift_<ts>/；_sweep_quarantine 只清理 drift_<ts> 规范命名目录
 # [STABILITY] evolving
 # [SAFETY] M
@@ -510,11 +510,47 @@ def _match_allowlist(rel: str, exact: set[str], patterns: list[str]) -> bool:
     return r in exact or any(fnmatch.fnmatch(r, p) for p in patterns)
 
 
+def _live_pid_sessions(raw: dict) -> set[str]:
+    """#ARCH-308 A1 加固：raw 注册表中 PID 仍存活的 sid 集（保守在场判定）。
+
+    list_active 的判死含"PID 活但心跳超 1h"档（长时间不 claim 新文件的深度施工
+    会话会被判死）——本函数把这类会话重新视为"在场"：清扫/自动收敛对它们一律
+    缩手（fail-safe）。只有 PID 确已死亡（或无 PID 且超时）的会话才可被处置。
+    PID 探测失败按"在场"处理（宁可漏扫不可误扫——误扫虽零内容丢失但制造摩擦）。
+    """
+    from zephyr.shared.infra.process_pool import is_pid_alive  # noqa: PLC0415
+
+    alive: set[str] = set()
+    for sid, info in raw.items():
+        pid = int(info.get("pid") or 0)
+        if pid <= 0:
+            continue
+        try:
+            if is_pid_alive(pid):
+                alive.add(sid)
+        except Exception:  # noqa: BLE001 — 探测异常按在场（保守）
+            alive.add(sid)
+    return alive
+
+
+def _index_locked(root: Path) -> bool:
+    """index.lock 存在=有 git 写入在飞（网关 commit/add/stash 等）——本轮缩手。"""
+    rc, out = _git(root, ["rev-parse", "--git-path", "index.lock"])
+    if rc != 0 or not out.strip():
+        return False
+    p = Path(out.strip())
+    if not p.is_absolute():
+        p = root / p
+    return p.exists()
+
+
 def _sweep_dead_sessions(root: Path) -> dict:
     """#ARCH-308 A1：死会话残留清扫（staged 卸载 + claim 快照删除 + 文件锁释放）。
 
     判定与 SessionRegistry.list_active 同口径（PID 死/心跳超时=死）——raw 注册表
-    里存在但不在 active 集的 sid 即死会话。三动作：
+    里存在但不在 active 集的 sid 即死会话。**加固（2026-09-03 用户误删事故史质询）**：
+    PID 仍存活的会话（心跳滞后但进程在飞的深度施工会话）一律不清扫；index.lock
+    在飞时本轮整体跳过。三动作：
       ① 卸载死会话 claim 且当前仍 staged 的文件（git reset HEAD --，工作树内容
          保留——只清 index 里的陈旧快照，不销毁任何内容；被活跃会话 re-claim 的
          文件跳过；merge 存续期整体跳过）
@@ -542,6 +578,15 @@ def _sweep_dead_sessions(root: Path) -> dict:
         return summary
     dead = [sid for sid in raw if sid not in active and sid != _AUTO_DERIVED_SESSION]
     if not dead:
+        return summary
+    # 加固①：PID 存活的"判死"会话（心跳滞后）不清扫——内容虽零丢失风险，
+    # 但卸暂存/删快照/释放锁会给在飞会话制造提交摩擦，宁可漏扫不可误扫。
+    live_pids = _live_pid_sessions(raw)
+    dead = [sid for sid in dead if sid not in live_pids]
+    if not dead:
+        return summary
+    # 加固②：有 git 写入在飞（网关 commit/stash 窗口）本轮缩手，下轮再试
+    if _index_locked(root):
         return summary
 
     state = _load_state(root)
@@ -655,21 +700,38 @@ def _auto_commit_derived(root: Path) -> dict:
     commit"搭车入库，无人值守时无限期躺脏（2026-09-03 实证：07:18 提交后再生，
     09:59 才被人工收编，期间任何 AI 会话见之即误报孤儿 WIP）。
 
-    安全边界（四重）：
+    安全边界（五重）：
       ① 零活跃会话才运行——有会话在飞时不劫持在途施工（蓝图等 B 类含手写段，
-        会话施工期归会话自己提交）
+        会话施工期归会话自己提交）。**加固（2026-09-03）**：在场判定并集
+        list_active + raw 注册表 PID 存活集（心跳滞后但进程在飞的深度施工会话
+        同样视为在场——宁可漏提交不可劫持他人半成品）；合成会话
+        _AUTO_DERIVED_SESSION 不算在场（防自锁死循环）
       ② 只动白名单 B 类（class=B 派生缓存）；claim 归属任何活跃会话的文件跳过
       ③ 连续 _DERIVED_STABLE_SCANS 个全量周期 work_hash 不变才提交（写入方
         已收笔，防半成品落库）
       ④ 保护路径（AGENTS.md/.gitignore/architecture_model/rules 等）跳过留人工
+      ⑤ index.lock 在飞（网关 commit/stash 窗口）本轮整体缩手
     提交通道：gateway._commit_auto（reconciler auto-commit 唯一入口同款，
     含 DIRECTORY-CONTRACT/TTL-METADATA/FILE-PLACEMENT 三 gate，无 post-commit
     递归）。失败累计 _DERIVED_MAX_FAILS 次后放弃该文件（回落告警路径，不硬磕）。
     """
     summary = {"committed": 0, "skipped_protected": 0, "failed": 0, "candidates": 0, "stable": 0}
     sessions, claimed = _active_sessions_and_claims(root)
-    if sessions:
+    # 加固①：在场判定补 PID 存活双检——raw 注册表里 PID 还活着的会话（心跳滞后
+    # 被 list_active 判死的深度施工会话）同样算"有人在场"，A2 缩手。
+    raw_path = root / ".runtime" / "session_registry.json"
+    if raw_path.exists():
+        try:
+            raw = json.loads(raw_path.read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001 — 注册表损坏=无法核实无人在场，本轮缩手
+            return summary
+    else:
+        raw = {}
+    present = (set(sessions) | _live_pid_sessions(raw)) - {_AUTO_DERIVED_SESSION}
+    if present:
         return summary  # ①有人在场：收敛归人类会话
+    if _index_locked(root):
+        return summary  # ⑤git 写入在飞：本轮缩手
     exact, patterns = _load_allowlist_b_class(root)
     if not exact and not patterns:
         return summary  # 白名单不可读=自动提交面关闭（fail-closed）

@@ -534,6 +534,61 @@ def test_sweep_dead_sessions_keeps_claimed_by_active(git_repo: Path) -> None:
     assert summary["unstaged"] == 0, summary  # 被活跃会话持有 → 跳过卸载
 
 
+def test_sweep_spares_live_pid_stale_heartbeat(git_repo: Path) -> None:
+    """#ARCH-308 A1 加固：PID 存活但心跳超时被判死的会话——不清扫（深度施工保护）。
+
+    场景：长时间不 claim 新文件的会话（list_active 判死）但进程还在写代码——
+    清扫会给它制造提交摩擦。无论该会话是否已被既有 reap 物理删除（两种时序都
+    合法），断言口径一致：零清扫动作 + claim 快照保留 + staged 不被动。
+    """
+    import os
+
+    from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+    SessionRegistry(git_repo).register("sess-slow-worker", pid=os.getpid())
+    reg_path = git_repo / ".runtime" / "session_registry.json"
+    data = json.loads(reg_path.read_text(encoding="utf-8"))
+    data["sess-slow-worker"]["last_heartbeat"] -= 7200  # 心跳拨回 2h 前 → 功能判死
+    reg_path.write_text(json.dumps(data), encoding="utf-8")
+    snap_dir = git_repo / ".runtime" / "claim_snapshots"
+    snap_dir.mkdir(parents=True, exist_ok=True)
+    snap = snap_dir / "sess-slow-worker.json"
+    snap.write_text(json.dumps({"files": ["hot.txt"]}), encoding="utf-8")
+    (git_repo / "hot.txt").write_text("slow-wip\n", encoding="utf-8")
+    _git(git_repo, "add", "hot.txt")
+    summary = wd._sweep_dead_sessions(git_repo)
+    assert summary["dead_sessions"] == 0, summary
+    # claim 快照保留或随 reap 消失均可——但绝不能是"被 A1 主动清除"路径
+    if snap.exists():
+        # 条目仍在 raw（未被 reap）：A1 因 PID 存活缩手，快照必须原样保留
+        assert snap.read_text(encoding="utf-8") == json.dumps({"files": ["hot.txt"]})
+    # staged 不被动（无论 reap 时序）
+    r = subprocess.run(
+        ["git", "diff", "--cached", "--quiet"],
+        cwd=str(git_repo),
+        capture_output=True,
+        text=True,
+    )
+    assert r.returncode != 0
+
+
+def test_sweep_skips_when_index_locked(git_repo: Path) -> None:
+    """#ARCH-308 A1 加固：index.lock 在飞（网关 commit 窗口）——本轮整体缩手。"""
+    _register_dead_session(git_repo, "sess-dead", ["hot.txt"])
+    (git_repo / "hot.txt").write_text("stale\n", encoding="utf-8")
+    _git(git_repo, "add", "hot.txt")
+    lock = git_repo / ".git" / "index.lock"
+    lock.write_text("", encoding="utf-8")  # 模拟在飞 git 写入
+    try:
+        summary = wd._sweep_dead_sessions(git_repo)
+        assert summary["dead_sessions"] == 0, summary
+    finally:
+        lock.unlink()
+    # 锁消解后下轮可正常清扫
+    summary2 = wd._sweep_dead_sessions(git_repo)
+    assert summary2["dead_sessions"] == 1, summary2
+
+
 # ── #ARCH-308 A2：派生自动收敛 ────────────────────────────────────────────────
 
 
@@ -634,3 +689,42 @@ def test_auto_commit_derived_gives_up_after_max_fails(git_repo: Path, monkeypatc
         (git_repo / ".runtime" / "drift_watchdog" / "state.json").read_text(encoding="utf-8")
     )
     assert state.get("derived_candidates") == {}
+
+
+def test_auto_commit_derived_spares_live_pid_session(git_repo: Path, monkeypatch) -> None:
+    """#ARCH-308 A2 加固：PID 存活但心跳超时（list_active 判死）的会话在场——不劫持其施工。
+
+    深度施工会话长时间不 claim 新文件会被 list_active 判死；加固后 A2 以 raw 注册表
+    PID 存活双检视为"在场"，缩手不提交（宁可漏收敛不可提交他人半成品）。
+    """
+    import os
+
+    from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+    monkeypatch.setattr(wd, "_load_allowlist_b_class", lambda root: ({"hot.txt"}, []))
+    monkeypatch.setattr(
+        wd, "_active_sessions_and_claims", lambda root: ([], {})  # list_active 视角：无人
+    )
+    SessionRegistry(git_repo).register("sess-slow-worker", pid=os.getpid())
+    reg_path = git_repo / ".runtime" / "session_registry.json"
+    data = json.loads(reg_path.read_text(encoding="utf-8"))
+    data["sess-slow-worker"]["last_heartbeat"] -= 7200  # 心跳超时 → list_active 判死
+    reg_path.write_text(json.dumps(data), encoding="utf-8")
+    (git_repo / "hot.txt").write_text("worker-wip\n", encoding="utf-8")
+    s1 = wd._auto_commit_derived(git_repo)
+    s2 = wd._auto_commit_derived(git_repo)  # 两周期稳定窗也过——但 PID 在场必须缩手
+    assert s1["committed"] == 0 and s2["committed"] == 0, (s1, s2)
+
+
+def test_auto_commit_derived_skips_when_index_locked(git_repo: Path, monkeypatch) -> None:
+    """#ARCH-308 A2 加固：index.lock 在飞（网关 commit 窗口）——本轮缩手。"""
+    monkeypatch.setattr(wd, "_load_allowlist_b_class", lambda root: ({"hot.txt"}, []))
+    (git_repo / "hot.txt").write_text("regen\n", encoding="utf-8")
+    wd._auto_commit_derived(git_repo)  # 登记候选（无锁窗口）
+    lock = git_repo / ".git" / "index.lock"
+    lock.write_text("", encoding="utf-8")
+    try:
+        s = wd._auto_commit_derived(git_repo)  # 稳定窗到达但锁在飞
+        assert s["committed"] == 0 and s["stable"] == 0, s
+    finally:
+        lock.unlink()
