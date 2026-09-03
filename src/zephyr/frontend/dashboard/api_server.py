@@ -548,29 +548,18 @@ def strategies() -> dict[str, Any]:
         from zephyr.governance.strategies.strategy_base import StrategyRegistry, autodiscover_strategies
 
         if not StrategyRegistry.list_all():
-            autodiscover_strategies("zephyr.pf_core")  # 幂等（含 strategies/ 子包）；预热后此行为空操作
-        data = []
-        for sid in sorted(StrategyRegistry.list_all().keys() or []):
-            cls = StrategyRegistry.list_all()[sid]
-            m = _strategy_meta_of(cls)
-            # name=StrategyMeta.name 真源（各策略已注册中文名，Owner 2026-09-03：中文在前英文在后由前端渲染）
-            data.append({"id": sid, "name": (m.name if m and getattr(m, "name", "") else sid), "note": _BT_STRATEGY_NOTES.get(sid, ""), "tick_only": False})
-        # tick 策略族（TickStrategyBase 注册表，仅 tick 模式可跑）
-        try:
-            from zephyr.pf_core.strategy_engine.tick_strategy_base import TickStrategyBase, autodiscover_tick_strategies
-
-            autodiscover_tick_strategies("zephyr.pf_core")
-            tick_reg = getattr(TickStrategyBase, "_registry", {}) or {}
-            for sid in sorted(tick_reg.keys()):
-                cls = tick_reg[sid]
-                m = _strategy_meta_of(cls)
-                data.append(
-                    {"id": sid, "name": (m.name if m and getattr(m, "name", "") else sid), "note": _BT_STRATEGY_NOTES.get(sid, "tick 策略"), "tick_only": True}
-                )
-        except Exception:  # noqa: BLE001 — tick 注册表不可用时仅返回日频
-            pass
+            # 冷启（服务被并行会话周期性重启）：先读磁盘快照毫秒级秒回，后台预热线程完成后下次请求即全量
+            snap = _load_strategy_snapshot()
+            if snap:
+                return {"ok": True, "count": len(snap), "data": snap, "stale": True}
+            autodiscover_strategies("zephyr.pf_core")  # 无快照兜底：同步导入（~8s）
+        data = _strategy_rows()
+        _save_strategy_snapshot(data)   # 每次全量构建后刷快照（下次冷启秒回）
         return {"ok": True, "count": len(data), "data": data}
     except Exception as exc:
+        snap = _load_strategy_snapshot()   # 异常兜底也走快照（快照可用即不空手）
+        if snap:
+            return {"ok": True, "count": len(snap), "data": snap, "stale": True}
         return {"ok": False, "error": str(exc)[:200], "data": []}
 
 
@@ -695,13 +684,68 @@ _BT_RUN_STATE: dict[str, dict[str, Any]] = {}
 _BT_RUN_LOCK = threading.Lock()
 
 
+_BT_STRAT_SNAPSHOT = _REPO / "data" / "runtime" / "strategy_registry_snapshot.json"
+
+
+def _strategy_rows() -> list[dict[str, Any]]:
+    """从两个注册表构建策略行（name=StrategyMeta.name 中文真源；Owner 2026-09-03）。"""
+    from zephyr.governance.strategies.strategy_base import StrategyRegistry
+
+    rows: list[dict[str, Any]] = []
+    for sid in sorted(StrategyRegistry.list_all().keys() or []):
+        cls = StrategyRegistry.list_all()[sid]
+        m = _strategy_meta_of(cls)
+        rows.append(
+            {"id": sid, "name": (m.name if m and getattr(m, "name", "") else sid), "note": _BT_STRATEGY_NOTES.get(sid, ""), "tick_only": False}
+        )
+    try:  # tick 策略族（TickStrategyBase 注册表，仅 tick 模式可跑）
+        from zephyr.pf_core.strategy_engine.tick_strategy_base import TickStrategyBase, autodiscover_tick_strategies
+
+        autodiscover_tick_strategies("zephyr.pf_core")
+        tick_reg = getattr(TickStrategyBase, "_registry", {}) or {}
+        for sid in sorted(tick_reg.keys()):
+            cls = tick_reg[sid]
+            m = _strategy_meta_of(cls)
+            rows.append(
+                {"id": sid, "name": (m.name if m and getattr(m, "name", "") else sid), "note": _BT_STRATEGY_NOTES.get(sid, "tick 策略"), "tick_only": True}
+            )
+    except Exception:  # noqa: BLE001 — tick 注册表不可用时仅返回日频
+        pass
+    return rows
+
+
+def _save_strategy_snapshot(rows: list[dict[str, Any]]) -> None:
+    """策略行落盘快照——服务冷启（被并行会话周期性重启）时 /api/strategies 免等 ~8s autodiscover，毫秒级秒回。"""
+    try:
+        _BT_STRAT_SNAPSHOT.parent.mkdir(parents=True, exist_ok=True)
+        _BT_STRAT_SNAPSHOT.write_text(
+            json.dumps({"saved_at": datetime.now().isoformat(timespec="seconds"), "data": rows}, ensure_ascii=False),
+            encoding="utf-8",
+        )
+    except Exception:  # noqa: BLE001 — 快照失败不影响主流程
+        pass
+
+
+def _load_strategy_snapshot() -> list[dict[str, Any]] | None:
+    try:
+        if not _BT_STRAT_SNAPSHOT.exists():
+            return None
+        snap = json.loads(_BT_STRAT_SNAPSHOT.read_text(encoding="utf-8"))
+        return snap.get("data") or None
+    except Exception:  # noqa: BLE001
+        return None
+
+
 def _warm_strategy_registry() -> None:
-    """启动预热：import 策略链（autodiscover）——/api/strategies 首请求即热（~8s 冷启治本）。"""
+    """启动预热：import 策略链（autodiscover）——完成后刷新磁盘快照（冷启秒回数据源）。"""
     try:
         sys.path.insert(0, str(_REPO / "src"))
         from zephyr.governance.strategies.strategy_base import autodiscover_strategies
 
         autodiscover_strategies("zephyr.pf_core")
+        rows = _strategy_rows()
+        if rows:
+            _save_strategy_snapshot(rows)
     except Exception:  # noqa: BLE001 — 预热失败不炸服务，首请求再试
         pass
 
