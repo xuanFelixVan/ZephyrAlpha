@@ -184,7 +184,7 @@ function btLoadDetail(runId){
 }
 /* Tab5 交易明细表填真源 trade_log（API 已倒序最新在前，前端 cap 200） */
 function btFillTradeLog(log){
-  var tab=document.querySelector('#bt-signal table');
+  var tab=document.querySelector('#bt-tradelog');
   if(!tab)return;
   if(!log.length)return;
   var h='<tr><th>时间 Time</th><th>代码 Symbol</th><th>方向 Side</th><th>价格 Price</th><th>数量 Qty</th><th>金额 Amount</th><th>手续费 Fee</th></tr>';
@@ -194,22 +194,25 @@ function btFillTradeLog(log){
   });
   tab.innerHTML=h;
 }
-/* 产物选择条（插在策略头下方）：列出 artifacts，点选即切详情 */
+/* 产物列表（左屏「该策略历史回测 Runs」Owner 2026-09-03 迁入左栏）：缓存全量+按选中策略过滤，点选右屏载入详情 */
+var BT_RUNS=[];
 function btRenderRunList(list){
+  if(list)BT_RUNS=list;
   var strip=document.getElementById('bt-run-strip');
   if(!strip)return;
-  if(!list.length){strip.innerHTML='<span class="dim" style="font-size:12px">无回测产物（data/backtest_artifacts/ 空）——点上方「发起回测」跑第一个</span>';return;}
+  var sid=BTR_CFG.strategies[0];
+  var mine=BT_RUNS.filter(function(x){return !sid||x.strategy_id===sid;});
+  if(!mine.length){strip.innerHTML='<span class="dim" style="font-size:12px">该策略暂无回测产物——右上方「发起回测」跑一次即有</span>';return;}
   var h='';
-  list.forEach(function(it){
+  mine.forEach(function(it){
     var ret=it.total_return!=null?(it.total_return*100).toFixed(1)+'%':'--';
     var cls=it.run_id===BT_STATE.run?'rsec-item on':'rsec-item';
     h+='<span class="'+cls+'" onclick="btLoadDetail(\''+it.run_id+'\')" title="'+it.created_at+' 等值点'+(it.equity_points||0)+'">'
-      +it.run_id.replace('bt-','')+' · '+(it.strategy_id||'')+' · <b class="'+(it.total_return>=0?'up':'down')+'">'+ret+'</b></span>';
+      +it.run_id.replace('bt-','')+' · <b class="'+(it.total_return>=0?'up':'down')+'">'+ret+'</b> · <span class="dim">'+(it.created_at||'').slice(0,10)+'</span></span>';
   });
   strip.innerHTML=h;
 }
 function btBoot(){
-  btLoadStrategies();
   btLoadStratGrid();
   btrSyncDateInputs();
   var api=btApi(); if(!api){btSetMode('未启动');return;}
@@ -222,41 +225,15 @@ function btBoot(){
   }).catch(function(){btSetMode('未启动');});
 }
 /* btrRun 转真：POST /api/backtest-run → 轮询状态 → 完成后刷新列表+载入新产物
- * 参数源=配置条（BTR_CFG）：策略多选（/api/strategies 动态拉取）、时间段（快速下拉
+ * 参数源=配置条（BTR_CFG）：策略=左屏看板选中（BTR_CFG.strategies[0]）、时间段（快速下拉
  * 或自定义 date input）、初始资金、撮合模式（vectorized/tick 完全仿真）。 */
 var BTR_CFG={strategies:['topn-momentum'],period:'m6',customStart:null,customEnd:null,capital:1000000,mode:'vectorized'};
-/* 策略库动态拉取（StrategyRegistry+TickStrategyRegistry 真源），重建多选菜单 */
-var BT_STRATEGY_META={};   /* id → {note, tick_only}（/api/strategies 缓存） */
-function btLoadStrategies(){
-  var api=btApi(); if(!api) return;
-  api.fetchJson('/api/strategies',20000).then(function(r){   /* 20s：首次调用触发策略链 autodiscover import（~8s），5s 默认必超时 */
-    if(!r||!r.ok||!r.data||!r.data.length) return;
-    var menu=document.getElementById('btr-strategy-menu'); if(!menu) return;
-    BT_STRATEGY_META={};
-    r.data.forEach(function(s){ BT_STRATEGY_META[s.id]={note:s.note||'',tick_only:!!s.tick_only}; });
-    var have={};
-    r.data.forEach(function(s){ have[s.id]=true; });
-    var ids=[]; r.data.forEach(function(s){ if(ids.indexOf(s.id)<0)ids.push(s.id); });
-    BTR_CFG.strategies.forEach(function(sid){ if(!have[sid]&&ids.indexOf(sid)<0)ids.push(sid); });
-    var h='';
-    ids.forEach(function(sid){
-      var on=BTR_CFG.strategies.indexOf(sid)>=0;
-      var meta=BT_STRATEGY_META[sid]||{};
-      var note=meta.note?(' <span class="dim" style="font-weight:400;font-size:10px">'+meta.note+'</span>'):'';
-      h+='<span class="acct-mi'+(on?' on':'')+'" data-v="'+sid+'" onclick="btrPick(\'strategy\',\''+sid+'\',event)">'+(on?'✓ ':'')+sid+note+'</span>';
-    });
-    menu.innerHTML=h;
-    btStrategyLabel();
-  }).catch(function(){});
-}
-function btStrategyLabel(){
-  var t=document.getElementById('btr-strategy-t'); if(!t)return;
-  t.textContent=BTR_CFG.strategies.length===1?BTR_CFG.strategies[0]:(BTR_CFG.strategies.length+' 个策略');
-  btRenderProfile();   /* 选中变化 → 档案联动（Owner 2026-09-01：选哪个策略显示哪个档案） */
-}
-/* ── 策略看板宫格（Owner 2026-09-01：原策略档案页宫格并入+转真源）──
+/* 策略元数据缓存（id → {note,tick_only}）——btLoadStratGrid 拉 /api/strategies 时填充；
+ * 原策略多选下拉已随 Owner 2026-09-03 双栏改版退役（策略选择=左屏看板点选），btLoadStrategies/btStrategyLabel 一并删除 */
+var BT_STRATEGY_META={};
+/* ── 策略看板（左屏，Owner 2026-09-03 双栏改版：紧凑竖排列表）──
  * 数据=/api/strategies（注册表）× /api/backtest-list（各策略最新实绩）；点选=选中该策略
- * （联动档案卡+下拉+发起回测默认策略）。原策略页演示三卡（虚构名）已弃。 */
+ * （联动档案卡+该策略历史 Runs+发起回测默认策略；tick_only 自动切 Tick 模式）。 */
 var BT_GRID_DATA=[];   /* [{id,note,tick_only,perf:{ret,sharpe,dd,runs,run_id,mode}}] */
 function btRenderStratGrid(){
   var grid=document.getElementById('bt-strat-grid');
@@ -266,36 +243,35 @@ function btRenderStratGrid(){
     var on=BTR_CFG.strategies.indexOf(s.id)>=0;
     var p=s.perf;
     var perfHtml=p
-      ? '收益 <b class="'+(p.ret>=0?'up':'down')+'">'+(p.ret>=0?'+':'')+(p.ret*100).toFixed(1)+'%</b> · 夏普 <b>'+(p.sharpe!=null?p.sharpe.toFixed(2):'--')+'</b><br>回撤 <b class="down">-'+(p.dd*100).toFixed(1)+'%</b> · 回测 <b>'+p.runs+'</b> 次'
-      : '<span class="dim">暂无回测产物</span>';
-    var badge=s.tick_only?'<span class="badge b-warn" style="margin-top:6px">Tick 专用</span>'
-      :(p?'<span class="badge b-pass" style="margin-top:6px">有实绩</span>':'<span class="badge b-na" style="margin-top:6px">未回测</span>');
-    h+='<div class="card factor-card'+(on?' active':'')+'" onclick="btGridSel(\''+s.id+'\')" title="'+(s.note||'')+'">'
-      +'<div style="font-weight:600">'+s.id+'</div>'
-      +'<div class="kv-mini" style="margin-top:6px">'+perfHtml+'</div>'+badge+'</div>';
+      ? '收益 <b class="'+(p.ret>=0?'up':'down')+'">'+(p.ret>=0?'+':'')+(p.ret*100).toFixed(1)+'%</b> · 夏普 <b>'+(p.sharpe!=null?p.sharpe.toFixed(2):'--')+'</b> · 回撤 <b class="down">-'+(p.dd*100).toFixed(1)+'%</b> · 回测 <b>'+p.runs+'</b> 次'
+      : '<span class="dim">暂无回测产物——右上方「发起回测」跑一次即有</span>';
+    var badge=s.tick_only?'<span class="badge b-warn">Tick 专用</span>'
+      :(p?'<span class="badge b-pass">有实绩</span>':'<span class="badge b-na">未回测</span>');
+    h+='<div class="card factor-card'+(on?' active':'')+'" style="padding:8px 12px;margin-bottom:6px" onclick="btGridSel(\''+s.id+'\')" title="'+(s.note||'')+'">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b style="font-size:12px">'+s.id+'</b>'+badge+'</div>'
+      +'<div class="kv-mini" style="margin-top:4px;font-size:11px">'+perfHtml+'</div>'
+      +(s.note?'<div class="dim" style="font-size:10px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+s.note+'</div>':'')
+      +'</div>';
   });
   grid.innerHTML=h;
 }
 function btGridSel(sid){
-  /* 宫格点选：选中策略（唯一）——联动档案/下拉标签/发起回测 */
+  /* 左屏点选：选中策略（唯一）——联动档案/历史 Runs/发起回测 */
   BTR_CFG.strategies=[sid];
-  var t=document.getElementById('btr-strategy-t');
-  if(t)t.textContent=sid;
-  document.querySelectorAll('#btr-strategy-menu .acct-mi').forEach(function(mi){
-    var on=mi.getAttribute('data-v')===sid;
-    mi.classList.toggle('on',on);
-    var noteEl=mi.querySelector('.dim');
-    var noteTxt=noteEl?noteEl.textContent:'';
-    mi.textContent=(on?'✓ ':'')+sid+(noteTxt?' ':'');
-    if(noteTxt){var ne=document.createElement('span');ne.className='dim';ne.style.cssText='font-weight:400;font-size:10px';ne.textContent=noteTxt;mi.appendChild(ne);}
-  });
+  var meta=BT_STRATEGY_META[sid]||{};
+  if(meta.tick_only&&BTR_CFG.mode!=='tick'){
+    btrPick('mode','tick',null);   /* tick_only 策略自动切 Tick 模式（做T策略只在 tick 引擎可跑） */
+  }
   btRenderStratGrid();
+  btRenderRunList();
   btRenderProfile();
 }
 function btLoadStratGrid(){
   var api=btApi(); if(!api)return;
   api.fetchJson('/api/strategies',20000).then(function(sr){   /* 20s：首次调用触发策略链 autodiscover import（~8s），5s 默认必超时（2026-09-01 AbortError 实证） */
     if(!sr||!sr.ok||!sr.data)return;
+    BT_STRATEGY_META={};
+    sr.data.forEach(function(s){ BT_STRATEGY_META[s.id]={note:s.note||'',tick_only:!!s.tick_only}; });
     return api.fetchBacktestList().then(function(br){
       var bySid={};
       (br&&br.data||[]).forEach(function(x){
@@ -352,7 +328,7 @@ function btRenderProfile(){
   var p=BT_PROFILE[sid];
   if(!p){box.innerHTML='<div class="dim">「'+sid+'」档案待补（策略注册表登记后补全说明）</div>';return;}
   var api=btApi();
-  var perfHtml='<span class="dim">暂无回测产物——点上方「发起回测」跑一次即有实绩</span>';
+  var perfHtml='<span class="dim">暂无回测产物——右上方「发起回测」跑一次即有实绩</span>';
   if(api){
     api.fetchBacktestList().then(function(r){
       if(r&&r.ok){
@@ -394,29 +370,7 @@ document.addEventListener('click',function(e){
 function btrPick(kind,v,e){
   if(e&&e.stopPropagation)e.stopPropagation();
   var label=e?e.target.textContent.replace(/^✓ /,'').split('（')[0].trim():v;
-  if(kind==='strategy'){
-    /* 多选 toggle：点选/取消，至少保留 1 个；菜单保持展开继续多选（点外部才关闭） */
-    var i=BTR_CFG.strategies.indexOf(v);
-    if(i>=0){ if(BTR_CFG.strategies.length>1)BTR_CFG.strategies.splice(i,1); }
-    else BTR_CFG.strategies.push(v);
-    var mi=e?e.target.closest('.acct-mi'):null;
-    if(mi){
-      var nowOn=BTR_CFG.strategies.indexOf(v)>=0;
-      mi.classList.toggle('on',nowOn);
-      /* 重写文本保 note 子元素 */
-      var noteEl=mi.querySelector('.dim');
-      var noteTxt=noteEl?noteEl.textContent:'';
-      mi.textContent=(nowOn?'✓ ':'')+v+(noteTxt?' ':'');
-      if(noteTxt){var ne2=document.createElement('span');ne2.className='dim';ne2.style.cssText='font-weight:400;font-size:10px';ne2.textContent=noteTxt;mi.appendChild(ne2);}
-    }
-    /* tick_only 策略自动切 Tick 模式（做T策略只在 tick 引擎可跑） */
-    var meta=BT_STRATEGY_META[v]||{};
-    if(BTR_CFG.strategies.indexOf(v)>=0&&meta.tick_only&&BTR_CFG.mode!=='tick'){
-      btrPick('mode','tick',null);
-    }
-    btStrategyLabel();
-    return;   /* 不关闭菜单——继续多选 */
-  }
+  /* strategy 分支已随 Owner 2026-09-03 双栏改版删除——策略选择=左屏看板点选（btGridSel） */
   if(kind==='period'){BTR_CFG.period=v;BTR_CFG.customStart=null;BTR_CFG.customEnd=null;document.getElementById('btr-period-t').textContent=label;}
   if(kind==='capital'){BTR_CFG.capital=parseInt(v,10);document.getElementById('btr-capital-t').textContent=label;}
   if(kind==='mode'){
