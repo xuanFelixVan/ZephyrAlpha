@@ -146,10 +146,28 @@ def _load_allowlist(root: Path, allowlist_path: Path | None = None) -> tuple[set
         return set(), [], set(), []
 
 
-def _match(rel: str, exact: set[str], patterns: list[str]) -> bool:
+def _match_pattern(rel: str, pattern: str) -> bool:
+    """gitignore 语义段级 glob（VULN-R24 治本）：`*` 不跨 `/`，`**` 跨段，
+    逐段 fnmatchcase 大小写敏感。与 watchdog `_match_allowlist` 同款语义。"""
     import fnmatch  # noqa: PLC0415
 
-    return rel in exact or any(fnmatch.fnmatch(rel, p) for p in patterns)
+    rel_segs = rel.split("/")
+    pat_segs = pattern.split("/")
+
+    def _rec(rs: list[str], ps: list[str]) -> bool:
+        if not ps:
+            return not rs
+        if ps[0] == "**":
+            return any(_rec(rs[i:], ps[1:]) for i in range(len(rs) + 1))
+        if not rs:
+            return False
+        return fnmatch.fnmatchcase(rs[0], ps[0]) and _rec(rs[1:], ps[1:])
+
+    return _rec(rel_segs, pat_segs)
+
+
+def _match(rel: str, exact: set[str], patterns: list[str]) -> bool:
+    return rel in exact or any(_match_pattern(rel, p) for p in patterns)
 
 
 def _active_sessions_and_claims(root: Path) -> tuple[list[str], dict[str, str]]:

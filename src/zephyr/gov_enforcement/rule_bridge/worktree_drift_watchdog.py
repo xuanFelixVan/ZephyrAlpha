@@ -139,6 +139,7 @@ import logging
 import os
 import signal
 import sys
+import threading
 import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -329,27 +330,52 @@ def _state_path(root: Path) -> Path:
 
 
 def _load_state(root: Path) -> dict:
+    """加载 daemon 状态（损坏/类型错乱回全新基线——R5.5 红队治本：合法 JSON 但
+    结构错误（如 files=str）也必须回退，防 AttributeError/TypeError 崩溃）。"""
     try:
-        return json.loads(_state_path(root).read_text(encoding="utf-8"))
+        data = json.loads(_state_path(root).read_text(encoding="utf-8"))
     except Exception:  # noqa: BLE001 — 首跑/损坏回全新基线
         return {"files": {}, "alerted": {}}
+    if not isinstance(data, dict):
+        return {"files": {}, "alerted": {}}
+    # 结构校验：已知 dict 型键类型不符即重置该键（setdefault 不纠已有错型值）
+    for key in ("files", "alerted", "dead_swept", "derived_candidates"):
+        if key in data and not isinstance(data[key], dict):
+            data[key] = {}
+    if "known_quarantine" in data and not isinstance(data["known_quarantine"], list):
+        data["known_quarantine"] = []
+    return data
+
+
+_STATE_IO_LOCK = threading.Lock()  # state/audit 落盘串行化（R1.1/R5.2 红队治本）
+_SWEEP_LOCK = threading.Lock()  # 清扫/收敛进程内互斥（R1.1/R1.2 红队治本：幂等判定
+# 是 read-modify-write，无锁时并发线程可同时通过判定→重复 git reset/重复 _commit_auto。
+# daemon 常态单线程无开销；并发测试/CLI 与 daemon 撞车时保证全局恰好一次）
 
 
 def _save_state(root: Path, state: dict) -> None:
+    """原子写状态（tmp+os.replace）。R1.1 红队治本：固定 tmp 名在并发下 Windows
+    WinError 32（rename 被占用句柄拒绝）——改 per-pid+per-thread tmp 名，对齐
+    SessionRegistry._save 的 AI-NORTH-001 实证修复；并加进程内锁串行化。"""
     p = _state_path(root)
     p.parent.mkdir(parents=True, exist_ok=True)
-    tmp = p.with_suffix(".tmp")
-    tmp.write_text(json.dumps(state, ensure_ascii=False, indent=1), encoding="utf-8")
-    os.replace(tmp, p)  # 原子写，防半状态
+    tmp = p.with_name(f"{p.stem}.{os.getpid()}.{threading.get_ident()}.tmp")
+    payload = json.dumps(state, ensure_ascii=False, indent=1)
+    with _STATE_IO_LOCK:
+        tmp.write_text(payload, encoding="utf-8")
+        os.replace(tmp, p)  # 原子写，防半状态
 
 
 def _audit(root: Path, record: dict) -> None:
-    """归因审计（P0-2）：.runtime/audit/worktree_drift_watchdog.jsonl，永不回 tracked 区。"""
+    """归因审计（P0-2）：.runtime/audit/worktree_drift_watchdog.jsonl，永不回 tracked 区。
+    R5.2 红队治本：并发 append 行丢失——进程内锁串行化（跨进程追加由 OS 保证）。"""
     try:
         d = root / _AUDIT_DIR
         d.mkdir(parents=True, exist_ok=True)
-        with open(d / "worktree_drift_watchdog.jsonl", "a", encoding="utf-8") as fh:
-            fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+        line = json.dumps(record, ensure_ascii=False) + "\n"
+        with _STATE_IO_LOCK:
+            with open(d / "worktree_drift_watchdog.jsonl", "a", encoding="utf-8") as fh:
+                fh.write(line)
     except OSError as e:
         logger.warning("drift watchdog audit append failed: %s", e)
 
@@ -502,12 +528,33 @@ def _load_allowlist_b_class(root: Path) -> tuple[set[str], list[str]]:
     return exact, patterns
 
 
-def _match_allowlist(rel: str, exact: set[str], patterns: list[str]) -> bool:
-    """B 类白名单命中判定（精确路径 + fnmatch 模式，路径 \\→/ 归一）。"""
+def _match_pattern(rel: str, pattern: str) -> bool:
+    """gitignore 语义段级 glob（VULN-R24 治本，2026-09-03 红队实锤）：
+    `*` 只匹配单路径段（不跨 `/`），`**` 跨任意段；逐段 fnmatchcase（大小写敏感，
+    与 exact 集合成员判定口径一致——消除 fnmatch 在 Windows 经 normcase 转小写
+    造成的 exact/pattern 大小写语义不一致）。
+    """
     import fnmatch  # noqa: PLC0415
 
+    rel_segs = rel.split("/")
+    pat_segs = pattern.split("/")
+
+    def _rec(rs: list[str], ps: list[str]) -> bool:
+        if not ps:
+            return not rs
+        if ps[0] == "**":
+            return any(_rec(rs[i:], ps[1:]) for i in range(len(rs) + 1))
+        if not rs:
+            return False
+        return fnmatch.fnmatchcase(rs[0], ps[0]) and _rec(rs[1:], ps[1:])
+
+    return _rec(rel_segs, pat_segs)
+
+
+def _match_allowlist(rel: str, exact: set[str], patterns: list[str]) -> bool:
+    """B 类白名单命中判定（精确路径 + 段级 glob 模式，路径 \\→/ 归一）。"""
     r = rel.replace("\\", "/")
-    return r in exact or any(fnmatch.fnmatch(r, p) for p in patterns)
+    return r in exact or any(_match_pattern(r, p) for p in patterns)
 
 
 def _live_pid_sessions(raw: dict) -> set[str]:
@@ -545,6 +592,12 @@ def _index_locked(root: Path) -> bool:
 
 
 def _sweep_dead_sessions(root: Path) -> dict:
+    """#ARCH-308 A1 入口（进程内互斥包装，R1.1 红队治本）。"""
+    with _SWEEP_LOCK:
+        return _sweep_dead_sessions_impl(root)
+
+
+def _sweep_dead_sessions_impl(root: Path) -> dict:
     """#ARCH-308 A1：死会话残留清扫（staged 卸载 + claim 快照删除 + 文件锁释放）。
 
     判定与 SessionRegistry.list_active 同口径（PID 死/心跳超时=死）——raw 注册表
@@ -630,6 +683,13 @@ def _sweep_dead_sessions(root: Path) -> dict:
                 claimed_files = []
         to_unstage = [f for f in claimed_files if f in staged and f not in active_claims]
         if to_unstage and not merge_in_progress:
+            # R3.4b 治本（2026-09-03 红队实锤）：reset 前即时重查活跃 claim——
+            # 一次性快照（L601）到 reset 之间存在新会话 re-claim 同文件的毫秒级
+            # 竞态窗口，过期快照会把刚被 re-claim 的文件误卸 staged（零内容丢失
+            # 但制造提交摩擦）。重查成本≈一次 claim_snapshots 目录扫描，可忽略。
+            _, fresh_claims = _active_sessions_and_claims(root)
+            to_unstage = [f for f in to_unstage if f not in fresh_claims]
+        if to_unstage and not merge_in_progress:
             rc2, _ = _git(root, ["reset", "HEAD", "--", *to_unstage])
             if rc2 == 0:
                 summary["unstaged"] += len(to_unstage)
@@ -639,9 +699,12 @@ def _sweep_dead_sessions(root: Path) -> dict:
                 summary["snapshots_removed"] += 1
             except OSError:
                 pass
+        # R4.5 红队治本（断电耐久）：幂等记录先于后续易抛步骤（锁释放等外部调用）
+        # 落盘——清扫循环中途断电/异常时，已完成的 sid 不会在下轮被重复处置。
+        swept[sid] = now_utc().timestamp()
+        _save_state(root, state)
         if _release_session_locks(root, sid):
             summary["locks_released"] += 1
-        swept[sid] = now_utc().timestamp()
         _audit(
             root,
             {
@@ -694,6 +757,12 @@ def _release_session_locks(root: Path, sid: str) -> bool:
 
 
 def _auto_commit_derived(root: Path) -> dict:
+    """#ARCH-308 A2 入口（进程内互斥包装，R1.2 红队治本）。"""
+    with _SWEEP_LOCK:
+        return _auto_commit_derived_impl(root)
+
+
+def _auto_commit_derived_impl(root: Path) -> dict:
     """#ARCH-308 A2：B 类派生缓存稳定漂移自动收敛提交（无活跃会话场景专属）。
 
     治本"派生再生无独立提交闭环"——后台 reconciler 再生的派生缓存原本只能等"有人
@@ -740,6 +809,9 @@ def _auto_commit_derived(root: Path) -> dict:
 
     state = _load_state(root)
     candidates: dict = state.setdefault("derived_candidates", {})
+    # R1.2 红队治本（重复提交）：已提交内容的 hash 记忆——同一文件同一内容只提交
+    # 一次，无论后续多少轮看到它仍脏（如 commit 成功但脏状态未清/并发调用交错）。
+    committed_map: dict = state.setdefault("derived_committed", {})
     for rel in list(candidates):  # 已不脏/不再命中的候选清理
         if rel not in set(b_files):
             del candidates[rel]
@@ -748,6 +820,9 @@ def _auto_commit_derived(root: Path) -> dict:
         wh = _work_hash(root, rel)
         if not wh:
             continue
+        if committed_map.get(rel) == wh:
+            candidates.pop(rel, None)
+            continue  # 同内容已提交过——绝不重复提交
         prev = candidates.get(rel)
         if prev and prev.get("hash") == wh:
             prev["stable"] = int(prev.get("stable", 1)) + 1
@@ -792,7 +867,12 @@ def _auto_commit_derived(root: Path) -> dict:
             status_name = getattr(status, "name", str(status))
             if status_name == "OK":
                 for rel in stable:
+                    committed_map[rel] = _work_hash(root, rel) or committed_map.get(rel, "")
                     candidates.pop(rel, None)
+                # 容量封顶防状态膨胀（FIFO 语义：超界清最旧一半）
+                if len(committed_map) > 200:
+                    for k in list(committed_map)[: len(committed_map) - 100]:
+                        del committed_map[k]
                 summary["committed"] = len(stable)
                 _audit(
                     root,
