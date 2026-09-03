@@ -337,10 +337,18 @@ def _do_start(item: dict[str, Any]) -> str:
     if task:
         try:
             subprocess.run(["schtasks", "/change", "/tn", task, "/enable"],
-                           capture_output=True, text=True, timeout=5)
+                           capture_output=True, timeout=5)
             _SCHTASKS_CACHE.pop(task, None)   # 清缓存，状态页立即反映 Ready（否则 60s 内仍显 Disabled 灰）
         except Exception:  # noqa: BLE001 — enable 失败不阻断手动拉起
             pass
+        # 带 watchdog 任务的服必须走任务通道拉起（2026-09-03 实证：直接 spawn ps1 的 guard
+        # 随宿主终端死，schtasks /run 脱离作业对象才存活——start_scheduler.ps1 头部明文纪律）
+        try:
+            subprocess.run(["schtasks", "/run", "/tn", task],
+                           capture_output=True, timeout=5)
+            return "task run: " + task
+        except Exception as e:  # noqa: BLE001 — /run 失败回退直接 spawn
+            return f"task run failed ({e}); fallback spawn"
     log = (_TMP / f"svc_{item['id']}.log").open("ab")
     exe = cmd[0]
     if exe == "python":   # 用 api_server 同一解释器，防 PATH 漂移
@@ -366,10 +374,25 @@ def _ch_alive() -> tuple[bool, str]:
         return False, str(e)[:80]
 
 
+def _run_decoded(cmd: list[str], timeout: int = 5) -> subprocess.CompletedProcess:
+    """子进程取输出——bytes 模式 + 显式 GBK 解码（治本 2026-09-03 实证）。
+
+    病根：API 被 AI 会话拉起时环境带 PYTHONUTF8=1 → text=True 用 UTF-8 解码，
+    而 schtasks/nvidia-smi 等 Windows 命令输出 GBK → 读线程 UnicodeDecodeError
+    → CPython subprocess L1646 `stdout[0] if stdout else None` 静默变 None
+    （曾误判为「Hidden 进程无 console」怪癖，实为编码）。bytes+显式解码对
+    图标拉起（GBK 环境）/AI 拉起（UTF-8 环境）两种上下文都稳。"""
+    r = subprocess.run(cmd, capture_output=True, timeout=timeout)
+    r.stdout = (r.stdout or b"").decode("gbk", errors="replace")
+    r.stderr = (r.stderr or b"").decode("gbk", errors="replace")
+    return r
+
+
 def _task_info(task: str) -> dict[str, str] | None:
     """schtasks 信息（Ready/Running/Disabled + 下次触发）——60s 缓存防拖慢轮询。
     CSV /nh 实测 3 列：TaskName,NextRunTime,Status（无 /v 无 HostName；重复注册的任务
-    会输出多行——deadman 实证两行，取首行）。"""
+    会输出多行——deadman 实证两行，取首行）。中文系统状态列输出本地化文本
+    （就绪/正在运行/已禁用），判定须中英双语映射（2026-09-03 实证）。"""
     now = time.time()
     hit = _SCHTASKS_CACHE.get(task)
     if hit and now - hit[0] < 60:
@@ -377,14 +400,15 @@ def _task_info(task: str) -> dict[str, str] | None:
     info: dict[str, str] | None = None
     reason = ""
     try:
-        r = subprocess.run(["schtasks", "/query", "/tn", task, "/fo", "CSV", "/nh"],
-                           capture_output=True, text=True, timeout=5)
-        # 防御：无 console 的 Hidden 进程里实测 r.stdout 可能为 None（Owner 环境实证），必须 or ""
+        r = _run_decoded(["schtasks", "/query", "/tn", task, "/fo", "CSV", "/nh"])
         out = (r.stdout or "").strip()
         first = out.splitlines()[0] if r.returncode == 0 and out else ""
         parts = [p.strip().strip('"') for p in first.split(",")]
         if len(parts) >= 3:
-            info = {"next_run": parts[1], "status": parts[2]}
+            status = parts[2]
+            # 中文系统 schtasks 状态列输出本地化文本——归一化成英文，消费方只认 Ready/Running/Disabled
+            status = {"就绪": "Ready", "正在运行": "Running", "已禁用": "Disabled"}.get(status, status)
+            info = {"next_run": parts[1], "status": status}
         else:
             reason = f"rc={r.returncode} out={(r.stdout or '')[:60]!r} err={(r.stderr or '')[:60]!r}"
     except Exception as e:  # noqa: BLE001
@@ -554,10 +578,9 @@ def _gpu_stats() -> dict[str, Any] | None:
         return hit[1]
     stats: dict[str, Any] | None = None
     try:
-        r = subprocess.run(
+        r = _run_decoded(
             ["nvidia-smi", "--query-gpu=utilization.gpu,memory.used,memory.total",
-             "--format=csv,noheader,nounits"],
-            capture_output=True, text=True, timeout=4)
+             "--format=csv,noheader,nounits"], timeout=4)
         if r.returncode == 0 and r.stdout.strip():
             utils, used, total = [], 0.0, 0.0
             for line in r.stdout.strip().splitlines():

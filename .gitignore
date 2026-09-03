@@ -286,7 +286,7 @@ docs/_working/analysis/
 # CloneGuard 配置文件（Phase A，#ARCH-FORCE-MERGE-DEDUP-001）
 !clone_guard.yml
 !echo-guard.yml
-# --- 合法根目录（git tracked，12 项）---
+# --- 合法根目录（git tracked，13 项）---
 !.github/
 !.trae/
 !architecture_model/
@@ -299,6 +299,11 @@ docs/_working/analysis/
 !src/
 !tests/
 !tmp/
+# Electron 桌面壳（L42 既有意图：源码+package.json 入库，node_modules/锁文件除外——2026-09-03 补登记）
+!tools/
+!tools/desktop/
+!tools/desktop/main.js
+!tools/desktop/package.json
 
 # Depgraph dirty flag (runtime state file written by depgraph writers to signal
 # reconciler that DB was modified outside apply_depgraph.py; regenerable runtime
