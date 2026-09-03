@@ -5903,6 +5903,10 @@ var SQ_EVENTS=[
  {dt:'10-31',tt:'三季报披露截止',ic:'📑',pub:'—',exp:'—',prev:'—',imp:'个股分化',sec:'业绩兑现行情，警惕商誉/减值雷',ana:'三季报窗口=业绩验证期：白酒看渠道回款、新能源看排产、半导体看产能利用率。对当前标的：关注毛利率与现金流两个先行指标。'}
 ];
 var sqCur='600519',sqListMode='fav',sqTf='日';
+/* 刷新原地续看（2026-09-03 Owner 诉求）：上次浏览的股票/周期/列表模式持久化——刷新不再回默认 600519 */
+try{ var _sqs=JSON.parse(localStorage.getItem('zk-sq-state')||'null'); if(_sqs){ if(_sqs.sym)sqCur=_sqs.sym; if(_sqs.tf)sqTf=_sqs.tf; if(_sqs.mode)sqListMode=_sqs.mode; } }catch(e){}
+function sqStateSave(){ try{ localStorage.setItem('zk-sq-state',JSON.stringify({sym:sqCur,tf:sqTf,mode:sqListMode})); }catch(e){} }
+sqStateSave();
 var sqFav; try{ sqFav=JSON.parse(localStorage.getItem('zk-sq-fav')||'null')||['600519','300750','688981']; }catch(e){ sqFav=['600519','300750','688981']; }
 function sqPoolFind(sym){ for(var i=0;i<SQ_POOL.length;i++) if(SQ_POOL[i].sym===sym) return SQ_POOL[i]; return null; }
 var sqDraw={mode:null,items:[],pend:null};   /* v4.3 KLineChart overlay 接管后废弃，保留空对象防误引用 */
@@ -6006,12 +6010,32 @@ function sqInit(){
           return (Date.now()-last <= (freshnessMs[tp]||freshnessMs.day)) ? '真源' : '延迟';
         };
         var finish=function(bars,mode){ if(done) return; done=true; klpDataMode=mode; sqRenderHead(); params.callback(bars); };
-        if(window.ZK && ZK.api){
+        /* SWR（2026-09-03 刷新秒出）：缓存直出不依赖 ZK.api（冷加载 hash 直入时 api.js 可能未就位——
+         * 2026-09-03 浏览器实测：竞态下原逻辑永久落演示分支，K 线刷新后是假数据且不被网络覆盖） */
+        try{
+          var klCached=JSON.parse(localStorage.getItem('zk-kl-last')||'null');
+          if(klCached && klCached.sym===sqCur && klCached.tf===sqTf && klCached.bars && klCached.bars.length) finish(klCached.bars, modeOf(klCached.bars));
+        }catch(e){}
+        var klNet=function(){   /* 网络取数：api.js 未就位返回 false 由外层重试；到货后缓存已渲染则 applyNewData 全量覆盖 */
+          if(!(window.ZK && ZK.api)) return false;
           ZK.api.fetchKline(sqCur,sqTf).then(function(r){
-            if(r && r.ok && r.bars && r.bars.length){ finish(r.bars, modeOf(r.bars)); } else { finish(klpBars(),'断线'); }
-          }).catch(function(){ finish(klpBars(),'断线'); });
+            if(r && r.ok && r.bars && r.bars.length){
+              try{ localStorage.setItem('zk-kl-last',JSON.stringify({sym:sqCur,tf:sqTf,bars:r.bars})); }catch(e){}
+              if(done){ klpDataMode=modeOf(r.bars); sqRenderHead(); if(klpChart)klpChart.applyNewData(r.bars); }
+              else finish(r.bars, modeOf(r.bars));
+            } else { if(!done) finish(klpBars(),'断线'); }
+          }).catch(function(){ if(!done) finish(klpBars(),'断线'); });
+          return true;
+        };
+        if(klNet()){
           setTimeout(function(){ finish(klpBars(),'断线'); },6000);   /* 兜底防悬挂 */
-        } else { finish(klpBars(),'未启动'); }
+        } else {
+          var klTries=0;   /* api.js 加载竞态：250ms 轮询至多 10s，就位即取真源（期间缓存/演示已先行渲染） */
+          var klWait=setInterval(function(){
+            klTries++;
+            if(klNet()||klTries>40){ clearInterval(klWait); if(klTries>40&&!done) finish(klpBars(),'未启动'); }
+          },250);
+        }
       }
       else{ params.callback([]); }
     }
@@ -6091,11 +6115,13 @@ function sqInit(){
 }
 function sqSel(sym){
   sqCur=sym;
+  sqStateSave();
   sqRenderList(); sqRenderHead(); sqRenderInfo();
   if(klpChart){ klpChart.setSymbol({ticker:sym,pricePrecision:2,volumePrecision:0}); klpRefreshMarks(); }   /* v10：setSymbol 自动经 dataLoader 重取数，标注层随后重算 */
 }
 function sqTfSet(tf,elm){
   sqTf=tf;
+  sqStateSave();
   document.querySelectorAll('#sq-head .sq-tfs .tab').forEach(function(t){t.classList.remove('on');});
   if(elm)elm.classList.add('on');
   if(!klpChart) return;
@@ -6582,6 +6608,7 @@ function klpIndReset(){
 }
 function sqListTab(m){
   sqListMode=m;
+  sqStateSave();
   document.getElementById('sq-tab-fav').classList.toggle('on',m==='fav');
   document.getElementById('sq-tab-hold').classList.toggle('on',m==='hold');
   sqRenderList();

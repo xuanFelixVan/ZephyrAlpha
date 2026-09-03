@@ -54,7 +54,12 @@
       var sym = (typeof sqCur !== 'undefined') ? String(sqCur).split('.')[0] : null;
       if(!sym || !(window.ZK && ZK.api && ZK.api.fetchSignals)){ box.innerHTML = sec('未启动'); return; }
       box.innerHTML = sec('加载中…');
-      ZK.api.fetchSignals([sym]).then(function(r){
+      function sec(lab, cls, tip){
+        return '<div class="sq-sec"><span>量化分析</span>'
+          + '<span class="sq-qa-mode '+(cls||'m-na')+'" title="'+(tip||'DS-12 四态：绿=双源新鲜(factor≤4天/strategy≤7天) / 黄=单源过期 / 红=断线 / 灰=未启动或未覆盖')+'">'+(lab||'未启动')+'</span></div>';
+      }
+      /* apply(r)=真源渲染（r=完整响应）；SWR（2026-09-03 刷新秒出）：缓存直出，新鲜度按 trade_date 重判 */
+      var apply = function(r){
         if(!r || !r.ok){ box.innerHTML = sec('断线', 'm-err', 'API 不可达——本块无演示兜底（真实数据纪律）'); return; }
         var fs = null, sw = null;
         (r.data||[]).forEach(function(s){
@@ -88,13 +93,12 @@
         else if(fAge>FACTOR_FRESH_DAYS || sAge>STRATEGY_FRESH_DAYS){ cls='m-warn'; lab='延迟'; }
         box.innerHTML = sec(lab, cls, tip) + h
           + '<div class="note">两列互补：因子分高≠系统持有（top_n/风控可拦截）；策略持有≠因子强（组合约束）。DEC-INV-002：信号仅供参考不触发下单</div>';
-      }).catch(function(){
-        box.innerHTML = sec('断线','m-err','API 不可达——本块无演示兜底');
-      });
-      function sec(lab, cls, tip){
-        return '<div class="sq-sec"><span>量化分析</span>'
-          + '<span class="sq-qa-mode '+(cls||'m-na')+'" title="'+(tip||'DS-12 四态：绿=双源新鲜(factor≤4天/strategy≤7天) / 黄=单源过期 / 红=断线 / 灰=未启动或未覆盖')+'">'+(lab||'未启动')+'</span></div>';
-      }
+      };
+      ZK.api.swr('zk-sig_' + sym, function(){
+        return ZK.api.fetchSignals([sym]).then(function(r){ return (r && r.ok) ? r : null; });
+      }, apply).then(function(got){
+        if(got == null) apply(null);   /* 无缓存且拉取失败 → 断线明示 */
+      }).catch(function(){ apply(null); });
     },
     destroy: function(){}
   };

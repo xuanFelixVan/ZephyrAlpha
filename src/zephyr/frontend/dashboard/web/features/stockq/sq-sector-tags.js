@@ -56,15 +56,16 @@
 
       var self = this;
       if(window.ZK && ZK.api && ZK.api.fetchStockHeader && sym){
-        ZK.api.fetchStockHeader(sym).then(function(r){
-          if(!(r && r.ok && r.data)) return;
-          var v = r.data;
+        /* SWR（2026-09-03 刷新秒出）：缓存直出（与 stock-header/key-data 共享 zk-sqh_<sym>） */
+        ZK.api.swr('zk-sqh_' + sym, function(){
+          return ZK.api.fetchStockHeader(sym).then(function(r){ return (r && r.ok && r.data) ? r.data : null; });
+        }, function(v){
           var tags = [];
           if(v.industry) tags.push(v.industry);
           if(v.board && tags.indexOf(v.board) < 0) tags.push(v.board);
           if(!tags.length) tags.push('行业未分类');
           box.innerHTML = self._tagsHtml(tags, '真源');
-        }).catch(function(){ /* 静默：演示回退已标"断线" */ });
+        });
       }
     },
 

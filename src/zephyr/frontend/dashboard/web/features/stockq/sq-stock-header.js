@@ -104,11 +104,14 @@
 
       this._renderAll(p, null, mode);
 
+      /* SWR（2026-09-03 刷新秒出）：缓存直出（与 key-data/sector-tags 共享 zk-sqh_<sym> 真源缓存） */
       var self = this;
       if(window.ZK && ZK.api && ZK.api.fetchStockHeader){
-        ZK.api.fetchStockHeader(symbol).then(function(r){
-          if(r && r.ok && r.data){ self._updateTitle(r.data); }
-        }).catch(function(){ /* 静默：状态灯已标示断线/演示 */ });
+        ZK.api.swr('zk-sqh_' + symbol, function(){
+          return ZK.api.fetchStockHeader(symbol).then(function(r){ return (r && r.ok && r.data) ? r.data : null; });
+        }, function(v){
+          self._updateTitle(v);
+        });
       }
     },
 

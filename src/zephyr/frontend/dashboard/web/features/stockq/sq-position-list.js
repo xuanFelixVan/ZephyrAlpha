@@ -133,9 +133,22 @@
     _fetch: function(){
       if(!(window.ZK && ZK.api && ZK.api.fetchPosition)) return;
       var self = this;
+      /* SWR（2026-09-03 刷新秒出）：上次持仓+涨跌全量态缓存直出，新鲜度按 mtime 重判（诚实标注） */
+      try{
+        var c = JSON.parse(localStorage.getItem('zk-sq-pos') || 'null');
+        if(c && c.last && c.last.data && c.last.data.length){
+          self._mtime = c.mtime || null;
+          self._account = c.account || null;
+          self._last = c.last;
+          self._quotes = c.quotes || {};
+          var ageMs = self._mtime ? (Date.now() - new Date(self._mtime).getTime()) : Infinity;
+          self._mode = ageMs < FRESH_SEC * 1000 ? '真源' : '延迟';
+          if(self._visible()) self.render(self._last);
+        }
+      }catch(e){}
       ZK.api.fetchPosition().then(function(r){
         if(r && r.ok){
-          self._mode = (r.file_age_seconds !== undefined && r.file_age_seconds < 3600) ? '真源' : '延迟';
+          self._mode = (r.file_age_seconds !== undefined && r.file_age_seconds < FRESH_SEC) ? '真源' : '延迟';
           self._mtime = r.file_mtime || null;
           self._account = r.account || null;
           self._last = r;
@@ -166,11 +179,23 @@
         if(r && r.ok && r.data){
           r.data.forEach(function(q){ self._quotes[q.symbol] = q; });
         }
+        self._saveCache();
         if(self._visible()) self.render(self._last);
       }).catch(function(){
         self._quotes = {};
+        self._saveCache();
         if(self._visible()) self.render(self._last);
       });
+    },
+
+    /* SWR 落盘：全量态（模式/账户/持仓/涨跌）——下次刷新秒出 */
+    _saveCache: function(){
+      try{
+        localStorage.setItem('zk-sq-pos', JSON.stringify({
+          mode: this._mode, mtime: this._mtime, account: this._account,
+          last: this._last, quotes: this._quotes
+        }));
+      }catch(e){}
     },
 
     destroy: function(){

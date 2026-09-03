@@ -66,11 +66,12 @@
           + '<div class="sq-intro">关键数据待接入（真源 /api/stock-header：kline_daily + daily_valuation）</div>';
       }
 
-      var self = this;
+      /* SWR（2026-09-03 刷新秒出）：缓存直出（与 stock-header/sector-tags 共享 zk-sqh_<sym>） */
       if(window.ZK && ZK.api && ZK.api.fetchStockHeader && sym){
-        ZK.api.fetchStockHeader(sym).then(function(r){
-          if(!(r && r.ok && r.data)) return;   /* 失败保持演示回退，状态灯已标"断线·演示" */
-          var v = r.data;
+        var self = this;
+        ZK.api.swr('zk-sqh_' + sym, function(){
+          return ZK.api.fetchStockHeader(sym).then(function(r){ return (r && r.ok && r.data) ? r.data : null; });
+        }, function(v){
           var f2 = function(x){ return (x === null || x === undefined) ? '--' : Number(x).toFixed(2); };
           var amp = (v.preclose > 0 && v.high !== null && v.low !== null)
             ? ((v.high - v.low) / v.preclose * 100).toFixed(2) + '%' : '--';
@@ -88,7 +89,7 @@
             ['振幅', amp]
           ];
           box.innerHTML = self._kvHtml(rows, fresh(v.trade_date) ? '真源' : '延迟');
-        }).catch(function(){ /* 静默：演示回退已标"断线·演示" */ });
+        });
       }
     },
 

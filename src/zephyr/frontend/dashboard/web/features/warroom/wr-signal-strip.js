@@ -42,9 +42,12 @@
 
   function fetchAll(){
     if(!(window.ZK && ZK.api && ZK.api.fetchSignalsOverview)){ return; }
-    ZK.api.fetchSignalsOverview().then(render).catch(function(){
+    /* SWR（2026-09-03 刷新秒出）：信号总览缓存直出（截至日在表内可见，诚实标注） */
+    ZK.api.swr('zk-wrsig', function(){
+      return ZK.api.fetchSignalsOverview().then(function(r){ return (r && r.ok && r.data && r.data.length) ? r : null; });
+    }, render).catch(function(){
       var box = document.getElementById('wr-signal-body');
-      if(box) box.innerHTML = '<div class="dim" style="padding:8px 0">API 断线——本卡无演示兜底（真源纪律）</div>';
+      if(box && !box.innerHTML) box.innerHTML = '<div class="dim" style="padding:8px 0">API 断线——本卡无演示兜底（真源纪律）</div>';
     });
   }
 

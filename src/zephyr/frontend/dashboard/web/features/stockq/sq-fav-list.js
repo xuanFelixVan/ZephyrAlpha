@@ -91,7 +91,9 @@
         + '<span class="fav" onclick="event.stopPropagation();sqFavRm(\'' + sym + '\')" title="移出自选">✕</span></div>';
     },
 
-    render: function(d){
+    /* _paint=纯 DOM 渲染；render=paint+取数（init/切 tab 用）——拆分防 render↔fetch 循环
+     * （原结构 render 末尾调 _fetch、fetch 回调又调 render=网络速度忙轮询，2026-09-03 顺带修掉，刷新节奏回归 30s 轮询设计） */
+    _paint: function(){
       if(!this._visible()) return;
       var box = document.getElementById('sq-list');
       if(!box) return;
@@ -100,6 +102,10 @@
       var self = this;
       syms.forEach(function(sym){ h += self._rowHtml(sym); });
       box.innerHTML = h || (this._statusHtml(this._mode) + '<div class="sq-intro">清单为空，搜索名称/代码加入自选</div>');
+    },
+
+    render: function(d){
+      this._paint();
       this._fetch();
     },
 
@@ -107,23 +113,20 @@
       var syms = (typeof sqFav !== 'undefined') ? sqFav : [];
       if(!syms.length || !(window.ZK && ZK.api && ZK.api.fetchQuote)) return;
       var self = this;
-      ZK.api.fetchQuote(syms).then(function(r){
-        if(r && r.ok && r.data){
-          var stale = false;
-          self._quotes = {};
-          r.data.forEach(function(q){
-            self._quotes[q.symbol] = q;
-            if(!fresh(q.trade_date)) stale = true;
-          });
-          self._mode = stale ? '延迟' : '真源';
-        } else {
-          self._mode = '断线';   /* ok:false（CH 异常等）→ 断线，保留演示价 */
-        }
-        if(self._visible()) self.render();
-      }).catch(function(){
-        self._mode = '断线';
-        if(self._visible()) self.render();
-      });
+      /* SWR（2026-09-03 刷新秒出）：缓存直出（新鲜度按缓存内 trade_date 重新判定，诚实标注） */
+      var apply = function(quotes){
+        var stale = false;
+        self._quotes = {};
+        quotes.forEach(function(q){
+          self._quotes[q.symbol] = q;
+          if(!fresh(q.trade_date)) stale = true;
+        });
+        self._mode = stale ? '延迟' : '真源';
+        self._paint();
+      };
+      ZK.api.swr('zk-sq-quote', function(){
+        return ZK.api.fetchQuote(syms).then(function(r){ return (r && r.ok && r.data && r.data.length) ? r.data : null; });
+      }, apply);
     },
 
     destroy: function(){

@@ -46,12 +46,14 @@
       if(!(window.ZK && ZK.api && ZK.api.fetchEvents)) return;
       var self = this;
       clearTimeout(this._retryT);
-      ZK.api.fetchEvents().then(function(r){
-        if(!(r && r.ok && r.data)){
-          self._scheduleRetry();   /* 失败重试（自愈）：一次性拉取撞上 API 重启会永久回退演示——2026-09-01 实证 */
-          return;
-        }
-        self._mkt = r.data.map(function(e){
+      var retry = function(){   /* 失败自愈（2026-09-01 实证：一次性拉取撞上 API 重启会永久回退演示） */
+        self._retryT = setTimeout(function(){ self.fetch(); }, 15000);
+      };
+      /* SWR（2026-09-03 刷新秒出）：事件日历缓存直出（日历类低频数据），网络到后覆盖重绘时间轴 */
+      ZK.api.swr('zk-evt', function(){
+        return ZK.api.fetchEvents().then(function(r){ return (r && r.ok && r.data) ? r.data : null; });
+      }, function(data){
+        self._mkt = data.map(function(e){
           return {
             dt: e.date.slice(5),          /* '2026-09-21' → '09-21'（klpFindBar 口径） */
             dateISO: e.date,
@@ -65,20 +67,12 @@
             src: 'calendar_event 真源'
           };
         });
-        /* 数据更新后触发时间轴重绘（历史图标挂 K 线柱 + 未来簇挂右端） */
         if(typeof klpTimelineRender === 'function' && document.getElementById('klp-evtrow')){
           klpTimelineRender();
         }
-      }).catch(function(){
-        self._scheduleRetry();
-      });
-    },
-
-    /* 失败自愈：15s 后重试，直到取到真源（拉取是页面级一次性资源，不涉及高频） */
-    _scheduleRetry: function(){
-      var self = this;
-      clearTimeout(this._retryT);
-      this._retryT = setTimeout(function(){ self.fetch(); }, 15000);
+      }).then(function(d){
+        if(d == null) retry();   /* 拉取失败/空 → 15s 重试（成功不重试，页面级一次性资源） */
+      }).catch(retry);
     },
 
     render: function(d){ /* 数据组件：render 由 fetch 驱动，无独立 DOM */ },

@@ -121,13 +121,21 @@
   function fetchAll(){
     var a = api();
     if(!a){ render(null, null); return; }
+    /* SWR（2026-09-03 刷新秒出）：持仓×信号成对缓存直出（信号新鲜度按 trade_date 重判，诚实标注）；
+     * 网络失败不覆盖缓存画面（保留最后已知态防闪烁，60s 轮询自愈），仅无缓存时才显断线 */
+    var shownFromCache = false;
+    try{
+      var c = JSON.parse(localStorage.getItem('zk-possig') || 'null');
+      if(c && c.pos && c.sigs){ render(c.pos, c.sigs); shownFromCache = true; }
+    }catch(e){}
     a.fetchPosition().then(function(pos){
-      if(!pos || !pos.ok){ render(pos, null); return; }
+      if(!pos || !pos.ok){ if(!shownFromCache) render(pos, null); return; }
       var codes = pos.data.map(function(p){ return p.symbol; }).join(',');
       return a.fetchJson('/api/signals?symbols='+encodeURIComponent(codes)).then(function(sigs){
+        try{ localStorage.setItem('zk-possig', JSON.stringify({ pos: pos, sigs: sigs })); }catch(e){}
         render(pos, sigs);
       });
-    }).catch(function(){ render(null, null); });
+    }).catch(function(){ if(!shownFromCache) render(null, null); });
   }
 
   var mod = {

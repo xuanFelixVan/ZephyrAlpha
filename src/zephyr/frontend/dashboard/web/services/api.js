@@ -88,6 +88,21 @@ ZK.api = (function(){
     },
     swrSave: function(key, data){
       try{ localStorage.setItem(key, JSON.stringify({ ts: Date.now(), data: data })); }catch(e){}
+    },
+    /* 通用 SWR（stale-while-revalidate）：先渲染缓存（isCache=true 供调用方标注）→ 后台拉新落缓存并覆盖。
+     * 各数据页统一接法：ZK.api.swr('key', fetcher, renderFn)；fetcher 失败/空数据不落缓存。 */
+    swr: function(key, fetcher, renderFn){
+      try{
+        var c = JSON.parse(localStorage.getItem(key) || 'null');
+        if(c && c.data != null) renderFn(c.data, new Date(c.ts), true);
+      }catch(e){}
+      return Promise.resolve().then(fetcher).then(function(d){
+        if(d != null){
+          try{ localStorage.setItem(key, JSON.stringify({ ts: Date.now(), data: d })); }catch(e){}
+          renderFn(d, new Date(), false);
+        }
+        return d;
+      });
     }
   };
 })();

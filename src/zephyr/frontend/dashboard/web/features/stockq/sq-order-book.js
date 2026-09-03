@@ -85,14 +85,14 @@
 
       var self = this;
       if(window.ZK && ZK.api && ZK.api.fetchOrderbook){
-        ZK.api.fetchOrderbook(sym).then(function(r){
-          if(!(r && r.ok && r.data)) return;   /* 未订阅/失败：保持回退（演示标的）或占位 */
-          var v = r.data;
-          if(!v.bids || !v.bids.length || !v.asks || !v.asks.length) return;
+        /* SWR（2026-09-03 刷新秒出）：缓存直出（新鲜度按 timetag 重判） */
+        ZK.api.swr('zk-ob_' + sym, function(){
+          return ZK.api.fetchOrderbook(sym).then(function(r){ return (r && r.ok && r.data && r.data.bids && r.data.bids.length && r.data.asks && r.data.asks.length) ? r.data : null; });
+        }, function(v){
           var today = new Date().toISOString().slice(0, 10);
           var mode = (v.timetag || '').slice(0, 10) === today ? '真源' : '延迟';
           box.innerHTML = self._bookHtml(v.asks, v.bids, mode, v.timetag);
-        }).catch(function(){ /* 静默：演示回退已标注 */ });
+        });
       }
     },
 
