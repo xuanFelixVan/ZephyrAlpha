@@ -70,6 +70,9 @@ ZK.api = (function(){
     },
     postServicesControl: function(id, action, confirm){   /* 服务启停（分级闸门在服务端，confirm=二次确认） */
       return fetchJson('/api/services-control', 10000, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id:id, action:action, confirm:!!confirm})});
+    },
+    fetchSourcesStatus: function(){   /* 数据源监管真源（健康探针日志解析+alerter 告警流水） */
+      return fetchJson('/api/sources-status', 8000);
     }
   };
 })();

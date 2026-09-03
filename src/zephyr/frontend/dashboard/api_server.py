@@ -890,6 +890,69 @@ def services_control(body: dict[str, Any]) -> dict[str, Any]:
     return control_service(sid, action, confirm=bool(body.get("confirm")))
 
 
+# ── 数据源监管真源（Owner 2026-09-03：datasrc 页全部接通）─────────────────
+# 真源：logs/source_health_YYYYMMDD.log（scheduler 启动时全源实探）+ data/failures/*.json（alerter 真实告警）
+_SOURCE_CAPS = {
+    "miniqmt": "行情/五档/委托", "tdx": "行情（通达信）", "tickflow": "行情 tick 流",
+    "baostock": "行情备源", "akshare": "日频/财务/股东", "tushare": "日频/基本面",
+    "rss": "新闻聚合", "cls": "财联社新闻电报", "eastmoney_news": "东财新闻",
+    "tqcenter": "行情（同花顺 TQ）",
+}
+
+
+@app.get("/api/sources-status")
+def sources_status() -> dict[str, Any]:
+    """数据源监管真源：最新健康探针日志解析 + alerter 真实告警流水 + KPI 聚合。"""
+    import re as _re
+
+    logs_dir = _REPO / "logs"
+    health_logs = sorted(logs_dir.glob("source_health_*.log"))
+    sources: list[dict[str, Any]] = []
+    checked_at = ""
+    ok_n = bad_n = 0
+    if health_logs:
+        text = health_logs[-1].read_text(encoding="utf-8", errors="ignore")
+        m = _re.search(r"时间: (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})", text)
+        checked_at = m.group(1) if m else ""
+        for line in text.splitlines():
+            # 两种行格式：healthy 带 "(行数, 耗时)"；connect_fail 直接跟说明文字（无括号）
+            mm = _re.match(r"  ([✓✗⚠])\s+(\S+)\s+(\S+)\s*(.*)", line)
+            if not mm:
+                continue
+            mark, name, status, rest = mm.groups()
+            light = {"✓": "green", "✗": "red", "⚠": "yellow"}.get(mark, "gray")
+            if status == "test_fail":   # 环境/连接问题（如 QMT 没开）——黄灯不吓人
+                light = "yellow"
+            if light == "green":
+                ok_n += 1
+            else:
+                bad_n += 1
+            sources.append({
+                "name": name, "caps": _SOURCE_CAPS.get(name, "—"),
+                "light": light, "status": status,
+                "detail": rest.strip(),
+            })
+    # 退役源（真源=历史裁定事实：iFind 配额耗尽 08-14 退役）
+    sources.append({"name": "iFind", "caps": "宏观 EDB", "light": "gray",
+                    "status": "退役", "detail": "配额耗尽 08-14 退役"})
+    failures: list[dict[str, Any]] = []
+    fail_dir = _REPO / "data" / "failures"
+    if fail_dir.exists():
+        for f in sorted(fail_dir.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True)[:8]:
+            try:
+                d = json.loads(f.read_text(encoding="utf-8"))
+                failures.append({
+                    "ts": (d.get("timestamp") or f.stem)[:19].replace("T", " "),
+                    "task_id": d.get("task_id", "?"), "source": d.get("source", "?"),
+                    "level": d.get("level", "?"), "error": str(d.get("error", ""))[:120],
+                })
+            except Exception:  # noqa: BLE001 — 脏告警文件跳过
+                continue
+    return {"ok": True, "sources": sources, "failures": failures,
+            "checked_at": checked_at, "ok_n": ok_n, "bad_n": bad_n,
+            "generated_at": datetime.now().isoformat(" ", "seconds")}
+
+
 def main() -> None:
     import uvicorn
 
