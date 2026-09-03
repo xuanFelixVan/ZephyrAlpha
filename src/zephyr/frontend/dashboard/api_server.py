@@ -527,7 +527,10 @@ def strategies() -> dict[str, Any]:
             autodiscover_strategies("zephyr.pf_core")  # 幂等（含 strategies/ 子包）；预热后此行为空操作
         data = []
         for sid in sorted(StrategyRegistry.list_all().keys() or []):
-            data.append({"id": sid, "name": sid, "note": _BT_STRATEGY_NOTES.get(sid, ""), "tick_only": False})
+            cls = StrategyRegistry.list_all()[sid]
+            m = cls.meta() if hasattr(cls, "meta") else getattr(cls, "_meta", None)
+            # name=StrategyMeta.name 真源（各策略已注册中文名，Owner 2026-09-03：中文在前英文在后由前端渲染）
+            data.append({"id": sid, "name": (m.name if m and getattr(m, "name", "") else sid), "note": _BT_STRATEGY_NOTES.get(sid, ""), "tick_only": False})
         # tick 策略族（TickStrategyBase 注册表，仅 tick 模式可跑）
         try:
             from zephyr.pf_core.strategy_engine.tick_strategy_base import TickStrategyBase, autodiscover_tick_strategies
@@ -535,8 +538,10 @@ def strategies() -> dict[str, Any]:
             autodiscover_tick_strategies("zephyr.pf_core")
             tick_reg = getattr(TickStrategyBase, "_registry", {}) or {}
             for sid in sorted(tick_reg.keys()):
+                cls = tick_reg[sid]
+                m = cls.meta() if hasattr(cls, "meta") else getattr(cls, "_meta", None)
                 data.append(
-                    {"id": sid, "name": sid, "note": _BT_STRATEGY_NOTES.get(sid, "tick 策略"), "tick_only": True}
+                    {"id": sid, "name": (m.name if m and getattr(m, "name", "") else sid), "note": _BT_STRATEGY_NOTES.get(sid, "tick 策略"), "tick_only": True}
                 )
         except Exception:  # noqa: BLE001 — tick 注册表不可用时仅返回日频
             pass
@@ -984,7 +989,7 @@ _SQL_TABLE_FRESH = (
     "GROUP BY database, table ORDER BY database, table"
 )
 _SQL_INSERT_15M = (
-    "SELECT query, rows, event_time FROM system.query_log "
+    "SELECT query, written_rows, event_time FROM system.query_log "
     "WHERE type='QueryFinish' AND query LIKE 'INSERT%' AND event_time > now()-900"
 )
 
@@ -1048,17 +1053,85 @@ _SOURCE_VPN = {
     "eastmoney_news": ("禁", "国内接口"), "tqcenter": ("禁", "国内通道"),
     "rss": ("禁", "国内源为主"), "fred": ("需", "美联储海外接口"),
     "okx": ("需", "海外交易所"), "us": ("需", "美股海外数据"),
+    "eia": ("需", "美国能源署海外接口"), "qweather": ("禁", "和风天气国内接口"),
+    "internal": ("—", "内部计算产物，不走网络"), "backfill": ("—", "内部回填"),
 }
 
 _SCHEDULE_ZH = {
-    "daily_kline": "盘后日K（16:30）", "daily_capital": "盘后资金", "daily_event": "盘后事件",
+    "daily_kline": "盘后日K（16:30）", "daily_capital": "盘后资金（18:00）", "daily_event": "盘后事件（19:00）",
     "weekend_financial": "周末财务", "monthly_static": "月初静态", "intraday_minute": "盘中分钟",
-    "intraday_realtime": "盘中实时", "intraday_tick": "盘中 tick",
+    "intraday_realtime": "盘中实时", "intraday_tick": "盘中 tick", "nightly_financial": "夜间财务（22:00）",
+    "weekend_calibration": "周末校准（周六 03:00）", "weekend_backfill": "周末补漏（周日 02:00）",
+    "daily_backfill": "每日补漏（17:00）", "news_slow": "慢速新闻（约 2h/轮）", "pre_market": "盘前（08:30）",
+    "auction_highfreq": "集合竞价（09:15 起）", "intraday_sector": "盘中板块", "event_driven": "事件驱动（3min 轮询）",
+    "integrity_check": "完整性巡检（23:00）", "catchup_guard": "错过补跑（03:30）",
+}
+
+# 时段 → cron（真源=schedule.yaml；下次调度计算用）
+_SCHEDULE_CRON = {
+    "pre_market": "30 8 * * 0-4", "intraday_realtime": "*/5 9-15 * * 0-4",
+    "intraday_minute": "*/5 9-15 * * 0-4", "intraday_sector": "*/5 9-15 * * 0-4",
+    "event_driven": "*/3 * * * *", "news_slow": "*/30 * * * *",
+    "daily_kline": "30 16 * * 0-4", "daily_capital": "00 18 * * 0-4", "daily_event": "00 19 * * 0-4",
+    "nightly_financial": "00 22 * * 0-4", "weekend_calibration": "00 3 * * 0",
+    "monthly_static": "00 9 1 * *", "weekend_backfill": "00 2 * * 0", "daily_backfill": "00 17 * * 0-4",
+    "integrity_check": "00 23 * * 0-4", "catchup_guard": "30 3 * * *",
+    "auction_highfreq": "*/10 9-15 * * 0-4",
 }
 
 
+def _next_cron_run(expr: str) -> str:
+    """简化 5 段 cron 下次运行计算（支持 */n、数字、范围、*；够 schedule.yaml 全部 14 时段）。"""
+    import datetime as _dt
+
+    fields = expr.split()
+    if len(fields) != 5:
+        return ""
+    min_f, hour_f, dom_f, mon_f, dow_f = fields
+
+    def field_match(val: int, lo: int, hi: int, expr_f: str) -> bool:
+        if expr_f == "*":
+            return lo <= val <= hi
+        if expr_f.startswith("*/"):
+            try:
+                step = int(expr_f[2:])
+                return val % step == lo % step if step else False
+            except ValueError:
+                return False
+        for part in expr_f.split(","):
+            if "-" in part:
+                a, b = part.split("-")
+                if int(a) <= val <= int(b):
+                    return True
+            elif part.isdigit() and int(part) == val:
+                return True
+        return False
+
+    base = _dt.datetime.now().replace(second=0, microsecond=0)
+    for offset in range(1, 8 * 24 * 60):   # 最多向后扫 8 天
+        t = base + _dt.timedelta(minutes=offset)
+        # cron dow: 0=周日（项目用 0-4=周日~周四 交易周口径）
+        if not field_match(t.minute, 0, 59, min_f):
+            continue
+        if not field_match(t.hour, 0, 23, hour_f):
+            continue
+        if dom_f != "*" and not field_match(t.day, 1, 31, dom_f):
+            continue
+        if mon_f != "*" and not field_match(t.month, 1, 12, mon_f):
+            continue
+        if dow_f != "*" and not field_match((t.weekday() + 1) % 7, 0, 6, dow_f):
+            continue
+        delta = t - base
+        if delta.total_seconds() < 3600:
+            return f"{(t-base).seconds//60} 分钟后（{t.strftime('%H:%M')}）"
+        if delta.days >= 1:
+            return f"{delta.days} 天后（{t.strftime('%m-%d %H:%M')}）"
+        return f"{delta.seconds//3600} 小时后（{t.strftime('%H:%M')}）"
+    return ""
+
+
 def _load_tasks_meta() -> dict[str, dict[str, str]]:
-    """tasks.yaml → {全表名: {source, schedule_zh, task_id}}（首任务为准；读取失败回退空）。"""
+    """tasks.yaml → {全表名: {source, schedule, schedule_zh, task_id}}（首任务为准；读取失败回退空）。"""
     import yaml
     try:
         p = _REPO / "src" / "zephyr" / "data" / "config" / "tasks.yaml"
@@ -1069,6 +1142,7 @@ def _load_tasks_meta() -> dict[str, dict[str, str]]:
             if tbl and tbl not in meta:
                 meta[tbl] = {
                     "source": str(t.get("source") or "?"),
+                    "schedule": str(t.get("schedule") or ""),
                     "schedule_zh": _SCHEDULE_ZH.get(t.get("schedule"), str(t.get("schedule") or "")),
                     "task_id": str(t.get("task_id") or ""),
                 }
@@ -1134,7 +1208,9 @@ def download_status() -> dict[str, Any]:
     vpn = _vpn_on()
 
     # 近 15 分钟 INSERT 速率真源（query_log 逐条 → python 端提取目标表聚合；窗口行数有限不贵）
+    # 注意：INSERT 的写入行数在 written_rows（rows 列=读取数恒 0，本机实证）
     ins: dict[str, dict[str, Any]] = {}
+    today_rows: dict[str, int] = {}
     try:
         for qtext, nrows, _evt in _ch_exec(_SQL_INSERT_15M):
             mm = _re.search(r"INSERT\s+INTO\s+[\w`]*[.\w`]*\.?([\w`]+)", str(qtext), _re.I)
@@ -1144,8 +1220,33 @@ def download_status() -> dict[str, Any]:
             agg = ins.setdefault(tbl, {"rows": 0, "cnt": 0})
             agg["rows"] += int(nrows or 0)
             agg["cnt"] += 1
+        # 今日新增行数（今日 00:00 起 INSERT 聚合）
+        for qtext, nrows in _ch_exec(
+            "SELECT query, written_rows FROM system.query_log "
+            "WHERE type='QueryFinish' AND query LIKE 'INSERT%' AND event_time >= today()"):
+            mm = _re.search(r"INSERT\s+INTO\s+[\w`]*[.\w`]*\.?([\w`]+)", str(qtext), _re.I)
+            if mm:
+                today_rows[mm.group(1).strip("`").lower()] = today_rows.get(mm.group(1).strip("`").lower(), 0) + int(nrows or 0)
     except Exception:  # noqa: BLE001 — 速率真源失败降级为无实时态
         ins = {}
+        today_rows = {}
+
+    # 失败关联真源：failures/*.json 按 task_id/表名片段匹配到表（最近 50 条告警参与匹配）
+    fail_dir = _REPO / "data" / "failures"
+    table_fails: dict[str, dict[str, Any]] = {}
+    fail_files = sorted(fail_dir.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True)[:50] if fail_dir.exists() else []
+    all_fails: list[dict[str, Any]] = []
+    for f in fail_files:
+        try:
+            d = json.loads(f.read_text(encoding="utf-8"))
+            all_fails.append({
+                "task_id": str(d.get("task_id", "")), "source": str(d.get("source", "")),
+                "level": str(d.get("level", "")), "error": str(d.get("error", "")),
+                "ts": (d.get("timestamp") or f.stem)[:19].replace("T", " "),
+                "tables": [str(v.get("table", "")) for v in (d.get("extra") or {}).get("violations", []) if isinstance(v, dict)],
+            })
+        except Exception:  # noqa: BLE001
+            continue
 
     tables: list[dict[str, Any]] = []
     cnt = {"green": 0, "yellow": 0, "red": 0, "gray": 0}
@@ -1181,7 +1282,19 @@ def download_status() -> dict[str, Any]:
             "period": (f"{start_zh} ~ {end_zh}" if start_zh else "—"),
             "state": state, "rate": rate, "quality": quality,
             "vpn_need": vpn_need, "vpn_note": vpn_note,
+            "today_rows": today_rows.get(tbl_s, 0),
+            "next_dl": _next_cron_run(_SCHEDULE_CRON.get(meta.get("schedule", ""), "")) if meta.get("schedule") else "",
+            "fail_cnt": 0, "fail_last": "",
         })
+    # 失败关联回填：violations 表名 / task_id 片段匹配到表行
+    for t in tables:
+        tname = t["table"]
+        hits = [a for a in all_fails
+                if tname in a["tables"] or tname in a["task_id"].lower()
+                or (a["source"] not in ("clickhouse", "internal") and a["source"] == t["source"] and a["level"] in ("ERROR", "CRITICAL"))]
+        if hits:
+            t["fail_cnt"] = len(hits)
+            t["fail_last"] = f"{hits[0]['level']} {hits[0]['ts'][5:16]} {hits[0]['task_id'][:24]}"
     return {"ok": True, "tables": tables, "counts": cnt, "vpn_on": vpn,
             "dl_now": dl_now,
             "generated_at": datetime.now().isoformat(" ", "seconds")}

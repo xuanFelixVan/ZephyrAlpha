@@ -154,7 +154,7 @@ function btFillKpi(m){
     vs[5].textContent=(m.trades_count!=null?m.trades_count+' 笔':'--');
   }
   var sh=document.querySelector('#p-backtest .strategy-head .name');
-  if(sh)sh.textContent='📊 '+(m.strategy_id||'')+' · '+BT_STATE.run;
+  if(sh)sh.textContent='📊 '+btDispName(m.strategy_id||'')+' · '+BT_STATE.run;
   var sub=document.querySelector('#p-backtest .strategy-head .sub');
   if(sub)sub.textContent='回测绩效分析 Backtest Performance Analysis | 真源 '+BT_STATE.run+'（'+(m.start_date||'').slice(0,10)+' ~ '+(m.end_date||'').slice(0,10)+'）';
   var ps=document.querySelectorAll('#p-backtest .param-strip span b');
@@ -180,6 +180,7 @@ function btLoadDetail(runId){
       sub.textContent+=' · 展示抽稀 '+B.n+'/'+tp.equity+' 点（产物文件全量）';
     }
     btSetMode('真源',runId);
+    btRenderRunList();   /* 下拉收起态标签刷新为当前 run */
   }).catch(function(){btCharts();btSetMode('断线');});
 }
 /* Tab5 交易明细表填真源 trade_log（API 已倒序最新在前，前端 cap 200） */
@@ -194,23 +195,40 @@ function btFillTradeLog(log){
   });
   tab.innerHTML=h;
 }
-/* 产物列表（左屏「该策略历史回测 Runs」Owner 2026-09-03 迁入左栏）：缓存全量+按选中策略过滤，点选右屏载入详情 */
+/* 该策略历史回测 Runs（左屏下拉式，Owner 2026-09-03：不再平铺——收起显示当前 run 摘要，展开列出全部供选） */
 var BT_RUNS=[];
+function btRunDropTgl(e){
+  e.stopPropagation();
+  var m=document.getElementById('bt-run-menu');
+  if(m)m.classList.toggle('open');
+}
+function btRunPick(rid,e){
+  if(e&&e.stopPropagation)e.stopPropagation();
+  var m=document.getElementById('bt-run-menu');if(m)m.classList.remove('open');
+  btLoadDetail(rid);
+}
 function btRenderRunList(list){
   if(list)BT_RUNS=list;
-  var strip=document.getElementById('bt-run-strip');
-  if(!strip)return;
+  var menu=document.getElementById('bt-run-menu'),label=document.getElementById('bt-run-t');
+  if(!menu||!label)return;
   var sid=BTR_CFG.strategies[0];
   var mine=BT_RUNS.filter(function(x){return !sid||x.strategy_id===sid;});
-  if(!mine.length){strip.innerHTML='<span class="dim" style="font-size:12px">该策略暂无回测产物——右上方「发起回测」跑一次即有</span>';return;}
+  if(!mine.length){menu.innerHTML='';label.innerHTML='<span class="dim">该策略暂无回测产物——右上方「发起回测」跑一次即有</span>';return;}
   var h='';
   mine.forEach(function(it){
     var ret=it.total_return!=null?(it.total_return*100).toFixed(1)+'%':'--';
-    var cls=it.run_id===BT_STATE.run?'rsec-item on':'rsec-item';
-    h+='<span class="'+cls+'" onclick="btLoadDetail(\''+it.run_id+'\')" title="'+it.created_at+' 等值点'+(it.equity_points||0)+'">'
-      +it.run_id.replace('bt-','')+' · <b class="'+(it.total_return>=0?'up':'down')+'">'+ret+'</b> · <span class="dim">'+(it.created_at||'').slice(0,10)+'</span></span>';
+    var on=it.run_id===BT_STATE.run;
+    h+='<span class="acct-mi'+(on?' on':'')+'" data-v="'+it.run_id+'" onclick="btRunPick(\''+it.run_id+'\',event)">'+(on?'✓ ':'')+it.run_id.replace('bt-','')+' · <b class="'+(it.total_return>=0?'up':'down')+'">'+ret+'</b> · <span class="dim">'+(it.created_at||'').slice(0,10)+'</span></span>';
   });
-  strip.innerHTML=h;
+  menu.innerHTML=h;
+  /* 收起态标签=当前载入 run 摘要；未载入则提示 N 次 */
+  var cur=null;mine.forEach(function(it){if(it.run_id===BT_STATE.run)cur=it;});
+  if(cur){
+    var ret2=cur.total_return!=null?(cur.total_return*100).toFixed(1)+'%':'--';
+    label.innerHTML='<b>'+cur.run_id.replace('bt-','')+'</b> · <b class="'+(cur.total_return>=0?'up':'down')+'">'+ret2+'</b> · <span class="dim">'+(cur.created_at||'').slice(0,10)+' · 共 '+mine.length+' 次 ▾</span>';
+  }else{
+    label.innerHTML='<span class="dim">该策略共 '+mine.length+' 次回测，点开选择 ▾</span>';
+  }
 }
 function btBoot(){
   btLoadStratGrid();
@@ -248,7 +266,7 @@ function btRenderStratGrid(){
     var badge=s.tick_only?'<span class="badge b-warn">Tick 专用</span>'
       :(p?'<span class="badge b-pass">有实绩</span>':'<span class="badge b-na">未回测</span>');
     h+='<div class="card factor-card'+(on?' active':'')+'" style="padding:8px 12px;margin-bottom:6px" onclick="btGridSel(\''+s.id+'\')" title="'+(s.note||'')+'">'
-      +'<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b style="font-size:12px">'+s.id+'</b>'+badge+'</div>'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b style="font-size:12px">'+btDispName(s.id)+'</b>'+badge+'</div>'
       +'<div class="kv-mini" style="margin-top:4px;font-size:11px">'+perfHtml+'</div>'
       +(s.note?'<div class="dim" style="font-size:10px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+s.note+'</div>':'')
       +'</div>';
@@ -271,7 +289,7 @@ function btLoadStratGrid(){
   api.fetchJson('/api/strategies',20000).then(function(sr){   /* 20s：首次调用触发策略链 autodiscover import（~8s），5s 默认必超时（2026-09-01 AbortError 实证） */
     if(!sr||!sr.ok||!sr.data)return;
     BT_STRATEGY_META={};
-    sr.data.forEach(function(s){ BT_STRATEGY_META[s.id]={note:s.note||'',tick_only:!!s.tick_only}; });
+    sr.data.forEach(function(s){ BT_STRATEGY_META[s.id]={name:s.name||'',note:s.note||'',tick_only:!!s.tick_only}; });
     return api.fetchBacktestList().then(function(br){
       var bySid={};
       (br&&br.data||[]).forEach(function(x){

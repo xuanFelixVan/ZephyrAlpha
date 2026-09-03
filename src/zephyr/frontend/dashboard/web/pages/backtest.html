@@ -16,10 +16,13 @@
           <div class="note">上线纪律（宪章 §4.2 B-007）：回测通过 → QMT 模拟盘 → 实盘小资金 → 实盘部署，每阶段人工审批；禁过拟合参数生效实盘</div>
         </div>
 
-        <!-- 该策略历史回测产物（按左屏选中策略过滤，点选右屏载入详情） -->
+        <!-- 该策略历史回测产物（按左屏选中策略过滤；下拉选择载入右屏详情，Owner 2026-09-03 不再平铺） -->
         <div class="card" id="bt-run-strip-card" style="padding:8px 12px">
-          <div style="font-size:12px;color:var(--faint);margin-bottom:6px">该策略历史回测 Runs <span class="dim">（点选载入右屏详情）</span></div>
-          <div id="bt-run-strip" style="display:flex;flex-direction:column;gap:6px"></div>
+          <div style="font-size:12px;color:var(--faint);margin-bottom:6px">该策略历史回测 Runs <span class="dim">（下拉选择载入右屏详情）</span></div>
+          <span class="sel" id="bt-run-sel" style="position:relative;cursor:pointer;display:block" onclick="btRunDropTgl(event)">
+            <span id="bt-run-t"><span class="dim">加载中…</span></span>
+            <span class="acct-menu" id="bt-run-menu" style="right:0;left:0"></span>
+          </span>
         </div>
       </div>
 
