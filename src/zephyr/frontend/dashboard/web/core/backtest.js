@@ -290,9 +290,16 @@ function btListReload(){
  * 参数源=配置条（BTR_CFG）：策略=左屏看板选中（BTR_CFG.strategies[0]）、时间段（快速下拉
  * 或自定义 date input）、初始资金、撮合模式（vectorized/tick 完全仿真）。 */
 var BTR_CFG={strategies:['topn-momentum'],period:'m6',customStart:null,customEnd:null,capital:1000000,mode:'vectorized'};
-/* 策略元数据缓存（id → {note,tick_only}）——btLoadStratGrid 拉 /api/strategies 时填充；
+/* 策略元数据缓存（id → {name,note,tick_only}）——btLoadStratGrid 拉 /api/strategies 时填充；
  * 原策略多选下拉已随 Owner 2026-09-03 双栏改版退役（策略选择=左屏看板点选），btLoadStrategies/btStrategyLabel 一并删除 */
 var BT_STRATEGY_META={};
+/* 中文名显示（Owner 2026-09-03：中文在前英文在后）：meta 有中文 name 则「中文名 · sid」，否则回退 sid。
+ * ⚠ 2026-09-04 实证教训：本函数定义曾被并发会话旧缓冲回写冲掉（只剩 3 处调用）→ 渲染链
+ * ReferenceError 被空 catch 吞 → 看板空白+「断线」误标，浏览器代理 console 实锤定位。 */
+function btDispName(sid){
+  var m=BT_STRATEGY_META[sid]||{};
+  return (m.name&&m.name!==sid)?(m.name+' · '+sid):sid;
+}
 /* ── 策略看板（左屏，Owner 2026-09-03 双栏改版：紧凑竖排列表）──
  * 数据=/api/strategies（注册表）× /api/backtest-list（各策略最新实绩）；点选=选中该策略
  * （联动档案卡+该策略历史 Runs+发起回测默认策略；tick_only 自动切 Tick 模式）。 */
