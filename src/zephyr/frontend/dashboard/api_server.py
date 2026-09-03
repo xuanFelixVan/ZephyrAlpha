@@ -512,6 +512,19 @@ _BT_STRATEGY_NOTES = {
 }
 
 
+def _strategy_meta_of(cls: Any) -> Any:
+    """安全取策略 meta：子类可能以 `meta = StrategyMeta(...)` 类属性遮蔽基类 meta() classmethod
+    （实证 2026-09-03：cls.meta() → 'StrategyMeta' object is not callable）——callable 才调用。"""
+    m = getattr(cls, "_meta", None)
+    if m is not None:
+        return m
+    mf = getattr(cls, "meta", None)
+    try:
+        return mf() if callable(mf) else mf
+    except Exception:  # noqa: BLE001 — meta 异常按缺失处理，返回 sid 回退
+        return None
+
+
 @app.get("/api/strategies")
 def strategies() -> dict[str, Any]:
     """策略库列表（backtest 页策略多选下拉）：StrategyRegistry + TickStrategyRegistry 真源。
@@ -528,7 +541,7 @@ def strategies() -> dict[str, Any]:
         data = []
         for sid in sorted(StrategyRegistry.list_all().keys() or []):
             cls = StrategyRegistry.list_all()[sid]
-            m = cls.meta() if hasattr(cls, "meta") else getattr(cls, "_meta", None)
+            m = _strategy_meta_of(cls)
             # name=StrategyMeta.name 真源（各策略已注册中文名，Owner 2026-09-03：中文在前英文在后由前端渲染）
             data.append({"id": sid, "name": (m.name if m and getattr(m, "name", "") else sid), "note": _BT_STRATEGY_NOTES.get(sid, ""), "tick_only": False})
         # tick 策略族（TickStrategyBase 注册表，仅 tick 模式可跑）
@@ -539,7 +552,7 @@ def strategies() -> dict[str, Any]:
             tick_reg = getattr(TickStrategyBase, "_registry", {}) or {}
             for sid in sorted(tick_reg.keys()):
                 cls = tick_reg[sid]
-                m = cls.meta() if hasattr(cls, "meta") else getattr(cls, "_meta", None)
+                m = _strategy_meta_of(cls)
                 data.append(
                     {"id": sid, "name": (m.name if m and getattr(m, "name", "") else sid), "note": _BT_STRATEGY_NOTES.get(sid, "tick 策略"), "tick_only": True}
                 )

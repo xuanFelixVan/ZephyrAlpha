@@ -50,8 +50,8 @@ ZK.api = (function(){
     fetchBacktestList: function(){   /* 回测产物列表（backtest 页真源；34+ 产物逐个读 JSON，冷盘 5s 不够） */
       return fetchJson('/api/backtest-list', 15000);
     },
-    fetchBacktestDetail: function(runId){   /* 回测产物详情（绩效三图/明细） */
-      return fetchJson('/api/backtest-detail?run_id='+encodeURIComponent(runId), 10000);
+    fetchBacktestDetail: function(runId){   /* 回测产物详情（绩效三图/明细）；20s：tick 产物 127 万点冷盘读取 10s 必超时→误标「断线」（2026-09-03 实证） */
+      return fetchJson('/api/backtest-detail?run_id='+encodeURIComponent(runId), 20000);
     },
     postBacktestRun: function(body){   /* 页面发起回测（POST，BTRUN 引擎后台执行） */
       return fetchJson('/api/backtest-run', 15000, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
