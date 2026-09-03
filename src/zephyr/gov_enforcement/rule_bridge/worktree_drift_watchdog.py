@@ -5,7 +5,7 @@
 # [CONSUMERS] git_commit_gateway (_register_default_reconcilers: make_worktree_drift_watchdog_reconciler); CLI python -m ... [--once|--daemon|--status]
 # [STARTUP] manual / post-commit reconciler ensure-daemon
 # [MATURITY] production
-# [INVARIANTS] 锚主仓工作区（anchor_main_root）；只告警不阻断（fail-open 不干扰主流程）；快照先于告警；审计写 .runtime/（永不回 tracked 区）；同签名告警去重；漂移消解自动写 clean 自愈消音；#ARCH-264：critical_warn 唯一写者=daemon（网关即时扫 observe-only）；热文件 10s 快扫+interval 全量双频节拍；quarantine 30 天 retention 自管+带外删除 tamper 审计；#ARCH-304：恰好 1 个活跃注册会话→auto-claim 替代告警（归属无歧义），0/>1 会话或 claim 失败→维持原处置（fail-closed 不放松）
+# [INVARIANTS] 锚主仓工作区（anchor_main_root）；只告警不阻断（fail-open 不干扰主流程）；快照先于告警；审计写 .runtime/（永不回 tracked 区）；同签名告警去重；漂移消解自动写 clean 自愈消音；#ARCH-264：critical_warn 唯一写者=daemon（网关即时扫 observe-only）；热文件 10s 快扫+interval 全量双频节拍；quarantine 30 天 retention 自管+带外删除 tamper 审计；#ARCH-304：恰好 1 个活跃注册会话→auto-claim 替代告警（归属无歧义），0/>1 会话或 claim 失败→维持原处置（fail-closed 不放松）；#ARCH-308 A1：死会话清扫只卸 staged/删 claim 快照/释放锁（工作树内容永不销毁，注册表 reap 不越权，_adopted.jsonl 审计证据永不删）；#ARCH-308 A2：派生自动收敛仅限零活跃会话+B类白名单+连续2周期稳定+非保护路径，走 _commit_auto（无递归）
 # [MODIFY-GUARD] scan_once 判定逻辑（claimed/grace/dedup/auto_claim/alert 分流 + observe-only 观察员模式 + hot_only 快扫过滤）；快照目录格式 .runtime/quarantine/drift_<ts>/；_sweep_quarantine 只清理 drift_<ts> 规范命名目录
 # [STABILITY] evolving
 # [SAFETY] M
@@ -160,6 +160,16 @@ _QUARANTINE_DIR = ".runtime/quarantine"
 _QUARANTINE_RETENTION_DAYS = 30  # 快照保留天数（#ARCH-264 O4：watchdog 自管 retention）
 _DESIGN_MEMO_PREFIX = "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/"
 _KNOWN_QUARANTINE_CAP = 500  # known_quarantine 登记上限（防状态文件膨胀）
+
+# ── #ARCH-308 工作区孤儿 WIP 治本（2026-09-03 Owner 当案授权"全套 A+B+C"）──────
+_TRACKED_WRITE_ALLOWLIST_REL = (
+    "docs/01_policies_and_standards/_registry/catalogs/gate_tracked_write_allowlist.yaml"
+)
+_AUTO_DERIVED_SESSION = "auto-derived-sync"  # A2 合成会话标识（GW 标记自证来源）
+_DERIVED_STABLE_SCANS = 2  # A2：连续 N 个全量周期 work_hash 不变才视为"写入完成"
+_DERIVED_MAX_FAILS = 3  # A2：同一文件自动提交失败 N 次后放弃（回落告警路径）
+_DEAD_SWEPT_RETENTION_DAYS = 7  # A1：已清扫 sid 记录保留天数（防重复清扫+防状态膨胀）
+_allowlist_cache: dict = {}  # {root_str: (mtime, exact_set, patterns_list)}——B 类白名单缓存
 
 
 # ── git 原语（全部经 run_subprocess_hidden，禁裸 subprocess 直调）────────────────
@@ -447,6 +457,313 @@ def _maybe_sweep_quarantine(root: Path) -> None:
     _save_state(root, state)
     if swept["removed"]:
         _lifecycle_log(root, "quarantine_swept", swept)
+
+
+# ── #ARCH-308 A1/A2：死会话清扫 + 派生自动收敛（2026-09-03）──────────────────
+# 治本动机：死会话遗留（暂存区快照/claim 残留/文件锁）与派生再生无独立提交闭环，
+# 使工作区长期脏 → 每个新 AI 会话都误报"孤儿 WIP"并诱发危险清理（2026-09-03
+# 200+ 文件实证）。A1 清死会话残留，A2 让 B 类派生缓存在无人值守时自动入库。
+
+
+def _load_allowlist_b_class(root: Path) -> tuple[set[str], list[str]]:
+    """加载 GATE-TRACKED-DRIFT 白名单 **B 类**（派生缓存再生）条目。
+
+    与网关 `_load_tracked_write_allowlist`（全类归因）不同——本函数只取 class=B，
+    供 A2 判定"可自动收敛提交"的安全边界（C 类遥测/A 类 gate 内写不入自动提交面）。
+    mtime 缓存（daemon 每周期调用，白名单变更次周期生效）；缺表/解析失败返回空
+    （fail-closed：无白名单=不自动提交任何东西）。
+    """
+    path = root / _TRACKED_WRITE_ALLOWLIST_REL
+    try:
+        mtime = path.stat().st_mtime
+    except OSError:
+        _allowlist_cache.pop(str(root), None)
+        return set(), []
+    cached = _allowlist_cache.get(str(root))
+    if cached and cached[0] == mtime:
+        return cached[1], cached[2]
+    exact: set[str] = set()
+    patterns: list[str] = []
+    try:
+        import yaml  # noqa: PLC0415
+
+        data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+        for entry in data.get("entries", []) or []:
+            if str(entry.get("class", "")).strip().upper() != "B":
+                continue
+            if entry.get("path"):
+                exact.add(str(entry["path"]).replace("\\", "/"))
+            elif entry.get("pattern"):
+                patterns.append(str(entry["pattern"]))
+    except Exception as e:  # noqa: BLE001 — 白名单不可读=自动提交面关闭
+        logger.warning("allowlist B-class load failed: %s", e)
+        exact, patterns = set(), []
+    _allowlist_cache[str(root)] = (mtime, exact, patterns)
+    return exact, patterns
+
+
+def _match_allowlist(rel: str, exact: set[str], patterns: list[str]) -> bool:
+    """B 类白名单命中判定（精确路径 + fnmatch 模式，路径 \\→/ 归一）。"""
+    import fnmatch  # noqa: PLC0415
+
+    r = rel.replace("\\", "/")
+    return r in exact or any(fnmatch.fnmatch(r, p) for p in patterns)
+
+
+def _sweep_dead_sessions(root: Path) -> dict:
+    """#ARCH-308 A1：死会话残留清扫（staged 卸载 + claim 快照删除 + 文件锁释放）。
+
+    判定与 SessionRegistry.list_active 同口径（PID 死/心跳超时=死）——raw 注册表
+    里存在但不在 active 集的 sid 即死会话。三动作：
+      ① 卸载死会话 claim 且当前仍 staged 的文件（git reset HEAD --，工作树内容
+         保留——只清 index 里的陈旧快照，不销毁任何内容；被活跃会话 re-claim 的
+         文件跳过；merge 存续期整体跳过）
+      ② 删除 .runtime/claim_snapshots/<sid>.json（运营态残留；<sid>_adopted.jsonl
+         是审计证据，永不删）
+      ③ 释放该会话文件锁（lock_files release-all；锁自带 PID 死 stale 自愈，本步
+         是 registry 卫生）
+    幂等：state.dead_swept 记录已清扫 sid（重复调用零动作），超 7 天的记录清理。
+    注册表条目本身不动——list_active 的 900s reap 是既有生命周期真源，不越权。
+    """
+    summary = {"dead_sessions": 0, "unstaged": 0, "snapshots_removed": 0, "locks_released": 0}
+    try:
+        from zephyr.security.access_control.session_concurrency import (  # noqa: PLC0415
+            SessionRegistry,
+        )
+
+        active = {s.session_id for s in SessionRegistry(root).list_active()}
+    except Exception as e:  # noqa: BLE001 — registry 故障本轮跳过
+        logger.debug("dead sweep: registry query failed: %s", e)
+        return summary
+    raw_path = root / ".runtime" / "session_registry.json"
+    try:
+        raw = json.loads(raw_path.read_text(encoding="utf-8")) if raw_path.exists() else {}
+    except Exception:  # noqa: BLE001 — 注册表损坏不猜
+        return summary
+    dead = [sid for sid in raw if sid not in active and sid != _AUTO_DERIVED_SESSION]
+    if not dead:
+        return summary
+
+    state = _load_state(root)
+    swept: dict = state.setdefault("dead_swept", {})
+    # 已清扫 sid 跳过 + 超 7 天记录清理
+    cutoff = now_utc().timestamp() - _DEAD_SWEPT_RETENTION_DAYS * 86400
+    for sid in list(swept):
+        if swept[sid] < cutoff:
+            del swept[sid]
+    dead = [sid for sid in dead if sid not in swept]
+
+    _, active_claims = _active_sessions_and_claims(root)
+    rc, out = _git(root, ["diff", "--cached", "--name-only"])
+    staged = {ln.strip().strip('"') for ln in out.splitlines() if ln.strip()} if rc == 0 else set()
+    # merge 存续期不动 index（B5 同款判据）
+    merge_in_progress = False
+    rc, mh_rel = _git(root, ["rev-parse", "--git-path", "MERGE_HEAD"])
+    if rc == 0 and mh_rel.strip():
+        mh_path = Path(mh_rel.strip())
+        if not mh_path.is_absolute():
+            mh_path = root / mh_path
+        merge_in_progress = mh_path.exists()
+
+    snap_dir = root / ".runtime" / "claim_snapshots"
+    for sid in dead:
+        summary["dead_sessions"] += 1
+        # 死会话 claim 文件清单（快照删除前先读，供 staged 归因）
+        claimed_files: list[str] = []
+        snap = snap_dir / f"{sid}.json"
+        if snap.exists():
+            try:
+                data = json.loads(snap.read_text(encoding="utf-8"))
+                files = data.get("files")
+                if files is None:
+                    files = [
+                        os.path.relpath(str(k), str(root)).replace(os.sep, "/")
+                        for k in data.get("snapshots", {})
+                    ]
+                claimed_files = [str(f).replace("\\", "/") for f in files]
+            except Exception:  # noqa: BLE001 — 快照损坏按空 claim 处置
+                claimed_files = []
+        to_unstage = [f for f in claimed_files if f in staged and f not in active_claims]
+        if to_unstage and not merge_in_progress:
+            rc2, _ = _git(root, ["reset", "HEAD", "--", *to_unstage])
+            if rc2 == 0:
+                summary["unstaged"] += len(to_unstage)
+        if snap.exists():
+            try:
+                snap.unlink()
+                summary["snapshots_removed"] += 1
+            except OSError:
+                pass
+        if _release_session_locks(root, sid):
+            summary["locks_released"] += 1
+        swept[sid] = now_utc().timestamp()
+        _audit(
+            root,
+            {
+                "ts": _now_iso(),
+                "session": sid,
+                "verdict": "dead_session_swept",
+                "unstaged": to_unstage,
+                "snapshot_removed": snap.exists() is False,
+            },
+        )
+    if summary["dead_sessions"]:
+        _save_state(root, state)
+        _log_results(
+            root,
+            "clean",
+            (
+                f"死会话清扫（#ARCH-308 A1）: {summary['dead_sessions']} 会话——"
+                f"卸载 staged {summary['unstaged']} 件 / 删 claim 快照 {summary['snapshots_removed']} / "
+                f"释放锁 {summary['locks_released']}（注册表 reap 归既有生命周期管）"
+            ),
+        )
+    return summary
+
+
+def _release_session_locks(root: Path, sid: str) -> bool:
+    """释放指定会话持有的全部文件锁（lock_files release-all，双通道）。"""
+    try:
+        from scripts.lock_files import cmd_release_all  # noqa: PLC0415 — scripts 是包
+
+        return cmd_release_all(sid) == 0
+    except Exception:  # noqa: BLE001 — import 失败回退 subprocess
+        try:
+            import sys as _sys  # noqa: PLC0415
+
+            from zephyr.shared.infra.process_pool import (  # noqa: PLC0415
+                run_subprocess_hidden,
+            )
+
+            r = run_subprocess_hidden(
+                [_sys.executable, str(root / "scripts" / "lock_files.py"), "release-all", sid],
+                cwd=str(root),
+                capture_output=True,
+                text=True,
+                timeout=30,
+            )
+            return r.returncode == 0
+        except Exception as e:  # noqa: BLE001 — 锁释放失败不影响其余清扫动作
+            logger.debug("lock release-all failed for %s: %s", sid, e)
+            return False
+
+
+def _auto_commit_derived(root: Path) -> dict:
+    """#ARCH-308 A2：B 类派生缓存稳定漂移自动收敛提交（无活跃会话场景专属）。
+
+    治本"派生再生无独立提交闭环"——后台 reconciler 再生的派生缓存原本只能等"有人
+    commit"搭车入库，无人值守时无限期躺脏（2026-09-03 实证：07:18 提交后再生，
+    09:59 才被人工收编，期间任何 AI 会话见之即误报孤儿 WIP）。
+
+    安全边界（四重）：
+      ① 零活跃会话才运行——有会话在飞时不劫持在途施工（蓝图等 B 类含手写段，
+        会话施工期归会话自己提交）
+      ② 只动白名单 B 类（class=B 派生缓存）；claim 归属任何活跃会话的文件跳过
+      ③ 连续 _DERIVED_STABLE_SCANS 个全量周期 work_hash 不变才提交（写入方
+        已收笔，防半成品落库）
+      ④ 保护路径（AGENTS.md/.gitignore/architecture_model/rules 等）跳过留人工
+    提交通道：gateway._commit_auto（reconciler auto-commit 唯一入口同款，
+    含 DIRECTORY-CONTRACT/TTL-METADATA/FILE-PLACEMENT 三 gate，无 post-commit
+    递归）。失败累计 _DERIVED_MAX_FAILS 次后放弃该文件（回落告警路径，不硬磕）。
+    """
+    summary = {"committed": 0, "skipped_protected": 0, "failed": 0, "candidates": 0, "stable": 0}
+    sessions, claimed = _active_sessions_and_claims(root)
+    if sessions:
+        return summary  # ①有人在场：收敛归人类会话
+    exact, patterns = _load_allowlist_b_class(root)
+    if not exact and not patterns:
+        return summary  # 白名单不可读=自动提交面关闭（fail-closed）
+    dirty = [rel for rel in _dirty_tracked(root) if rel not in claimed]
+    b_files = [rel for rel in dirty if _match_allowlist(rel, exact, patterns)]
+
+    state = _load_state(root)
+    candidates: dict = state.setdefault("derived_candidates", {})
+    for rel in list(candidates):  # 已不脏/不再命中的候选清理
+        if rel not in set(b_files):
+            del candidates[rel]
+    stable: list[str] = []
+    for rel in b_files:
+        wh = _work_hash(root, rel)
+        if not wh:
+            continue
+        prev = candidates.get(rel)
+        if prev and prev.get("hash") == wh:
+            prev["stable"] = int(prev.get("stable", 1)) + 1
+            if prev["stable"] >= _DERIVED_STABLE_SCANS:
+                stable.append(rel)
+        else:
+            candidates[rel] = {"hash": wh, "stable": 1, "fails": 0}
+    summary["candidates"] = len(candidates)
+    summary["stable"] = len(stable)
+    if not stable:
+        _save_state(root, state)
+        return summary
+
+    # ④ 保护路径跳过（留人工审批通道，自动提交永不碰）
+    try:
+        from zephyr.gov_enforcement.commit_gates.protected_paths_gate import (  # noqa: PLC0415
+            find_protected_hits,
+        )
+
+        protected = {p for p, _ in find_protected_hits(stable)}
+    except Exception as e:  # noqa: BLE001 — 判定失败=全部当保护处理（fail-closed）
+        logger.warning("protected-paths check failed, skip auto-commit: %s", e)
+        protected = set(stable)
+    skipped_protected = [rel for rel in stable if rel in protected]
+    stable = [rel for rel in stable if rel not in protected]
+    summary["skipped_protected"] = len(skipped_protected)
+
+    if stable:
+        try:
+            from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (  # noqa: PLC0415
+                GitCommitGateway,
+            )
+
+            gateway = GitCommitGateway(project_root=root)
+            abs_files = [str(root / rel) for rel in stable]
+            msg = (
+                f"chore(derived): watchdog 派生缓存自动收敛——B类白名单稳定漂移 {len(stable)} 件"
+                f"（零活跃会话，#ARCH-308 A2）"
+            )
+            result = gateway._commit_auto(_AUTO_DERIVED_SESSION, abs_files, msg)
+            status = getattr(result, "status", None)
+            status_name = getattr(status, "name", str(status))
+            if status_name == "OK":
+                for rel in stable:
+                    candidates.pop(rel, None)
+                summary["committed"] = len(stable)
+                _audit(
+                    root,
+                    {
+                        "ts": _now_iso(),
+                        "verdict": "derived_auto_committed",
+                        "files": stable,
+                        "commit": getattr(result, "commit_hash", ""),
+                    },
+                )
+                _log_results(root, "clean", f"派生自动收敛（#ARCH-308 A2）: 提交 {len(stable)} 件 B 类稳定漂移")
+            elif status_name == "NOTHING_TO_COMMIT":
+                for rel in stable:
+                    candidates.pop(rel, None)  # 他人/他进程已提交吸收
+            else:
+                summary["failed"] = len(stable)
+                for rel in stable:
+                    c = candidates.get(rel)
+                    if c is not None:
+                        c["fails"] = int(c.get("fails", 0)) + 1
+                        if c["fails"] >= _DERIVED_MAX_FAILS:
+                            candidates.pop(rel, None)  # 放弃，回落告警路径
+                _log_results(
+                    root,
+                    "critical_warn",
+                    f"派生自动收敛失败（#ARCH-308 A2）: {len(stable)} 件 status={status_name}，"
+                    f"连续失败 {_DERIVED_MAX_FAILS} 次后放弃",
+                )
+        except Exception as e:  # noqa: BLE001 — 提交异常不拖垮 daemon
+            summary["failed"] = len(stable)
+            logger.warning("derived auto-commit error: %s", e)
+    _save_state(root, state)
+    return summary
 
 
 # ── 扫描主逻辑 ────────────────────────────────────────────────────────────────
@@ -770,7 +1087,7 @@ def run_daemon(project_root: str | Path, interval: int = _SCAN_INTERVAL) -> int:
     idle_since = now_utc().timestamp()
     # O3-P0（#ARCH-264）：热文件 10s 快扫 + interval 全量扫描双频节拍。
     # 快扫只过 DEFAULT_HOT_FILES ∪ design_memos/（秒级覆写压进可观测窗）；
-    # 全量周期照旧并顺带日级 retention 清扫（O4）。
+    # 全量周期照旧并顺带日级 retention 清扫（O4）+ 死会话清扫/派生自动收敛（#ARCH-308）。
     hot_interval = max(1, min(interval, _HOT_SCAN_INTERVAL))
     full_every = max(1, interval // hot_interval)
     tick = 0
@@ -780,6 +1097,8 @@ def run_daemon(project_root: str | Path, interval: int = _SCAN_INTERVAL) -> int:
             if tick % full_every == 0:
                 summary = scan_once(root)
                 _maybe_sweep_quarantine(root)
+                _sweep_dead_sessions(root)  # #ARCH-308 A1：死会话残留清扫
+                _auto_commit_derived(root)  # #ARCH-308 A2：B 类派生稳定漂移自动收敛
             else:
                 summary = scan_once(root, hot_only=True)
             sessions, _ = _active_sessions_and_claims(root)
@@ -901,7 +1220,12 @@ if __name__ == "__main__":  # pragma: no cover
         sys.exit(_status(_root))
     if args.daemon:
         sys.exit(run_daemon(_root, args.interval))
-    # 默认 --once
+    # 默认 --once：单周期扫描 + 死会话清扫 + 派生自动收敛（#ARCH-308；候选稳定性
+    # 跨调用累计于 state，重复 --once 可达成稳定窗）
     _summary = scan_once(_root)
+    _sweep = _sweep_dead_sessions(_root)
+    _derived = _auto_commit_derived(_root)
+    _summary["dead_swept"] = _sweep
+    _summary["derived_auto"] = _derived
     print(json.dumps(_summary, ensure_ascii=False))
     sys.exit(1 if _summary.get("alerted") else 0)

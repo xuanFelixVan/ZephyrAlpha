@@ -450,3 +450,187 @@ def test_claimed_gateway_snapshot_format_exempt(git_repo: Path) -> None:
     (git_repo / "hot.txt").write_text("v2-claimed-wip\n", encoding="utf-8")
     s = wd.scan_once(git_repo, grace_seconds=0)
     assert s["claimed"] == 1 and s["alerted"] == 0 and s["auto_claimed"] == 0, s
+
+
+# ── #ARCH-308 A1：死会话清扫 ──────────────────────────────────────────────────
+
+
+def _register_dead_session(repo: Path, sid: str, files: list[str]) -> Path:
+    """注册 PID 已死的会话 + 写其 claim 快照（files 列表格式）。"""
+    from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+    SessionRegistry(repo).register(sid, pid=4_000_001)  # 不存在的 PID → 功能性死亡
+    snap = repo / ".runtime" / "claim_snapshots" / f"{sid}.json"
+    snap.parent.mkdir(parents=True, exist_ok=True)
+    snap.write_text(json.dumps({"files": files}), encoding="utf-8")
+    return snap
+
+
+def test_sweep_dead_sessions_unstages_and_removes_snapshot(git_repo: Path) -> None:
+    """#ARCH-308 A1：死会话 staged 残留被卸载（工作树内容保留）+ claim 快照删除。"""
+    snap = _register_dead_session(git_repo, "sess-dead", ["hot.txt"])
+    # 模拟死会话崩溃遗留：staged 陈旧内容
+    (git_repo / "hot.txt").write_text("stale-staged\n", encoding="utf-8")
+    _git(git_repo, "add", "hot.txt")
+    summary = wd._sweep_dead_sessions(git_repo)
+    assert summary["dead_sessions"] == 1, summary
+    assert summary["unstaged"] == 1, summary
+    assert not snap.exists()
+    # index 回到 HEAD（staged 残留清零），工作树内容未被销毁
+    r = subprocess.run(
+        ["git", "diff", "--cached", "--quiet"],
+        cwd=str(git_repo),
+        capture_output=True,
+        text=True,
+    )
+    assert r.returncode == 0
+    assert (git_repo / "hot.txt").read_text(encoding="utf-8") == "stale-staged\n"
+    # 审计留痕
+    assert any(a.get("verdict") == "dead_session_swept" for a in _read_audit(git_repo))
+    # 幂等：重复清扫零动作
+    s2 = wd._sweep_dead_sessions(git_repo)
+    assert s2["dead_sessions"] == 0, s2
+
+
+def test_sweep_dead_sessions_skips_active(git_repo: Path) -> None:
+    """#ARCH-308 A1 安全闸：活跃会话（PID 存活）永不被清扫。"""
+    import os
+
+    from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+    SessionRegistry(git_repo).register("sess-alive", pid=os.getpid())
+    snap_dir = git_repo / ".runtime" / "claim_snapshots"
+    snap_dir.mkdir(parents=True, exist_ok=True)
+    (snap_dir / "sess-alive.json").write_text(json.dumps({"files": ["hot.txt"]}), encoding="utf-8")
+    (git_repo / "hot.txt").write_text("wip\n", encoding="utf-8")
+    _git(git_repo, "add", "hot.txt")
+    summary = wd._sweep_dead_sessions(git_repo)
+    assert summary["dead_sessions"] == 0, summary
+    assert (snap_dir / "sess-alive.json").exists()
+    # staged 不被动
+    r = subprocess.run(
+        ["git", "diff", "--cached", "--quiet"],
+        cwd=str(git_repo),
+        capture_output=True,
+        text=True,
+    )
+    assert r.returncode != 0
+
+
+def test_sweep_dead_sessions_keeps_claimed_by_active(git_repo: Path) -> None:
+    """#ARCH-308 A1：死会话快照里被活跃会话 re-claim 的文件不卸载。"""
+    import os
+
+    from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+    SessionRegistry(git_repo).register("sess-alive", pid=os.getpid())
+    _register_dead_session(git_repo, "sess-dead", ["hot.txt"])
+    alive_snap = git_repo / ".runtime" / "claim_snapshots" / "sess-alive.json"
+    alive_snap.write_text(json.dumps({"files": ["hot.txt"]}), encoding="utf-8")
+    (git_repo / "hot.txt").write_text("shared\n", encoding="utf-8")
+    _git(git_repo, "add", "hot.txt")
+    summary = wd._sweep_dead_sessions(git_repo)
+    assert summary["dead_sessions"] == 1
+    assert summary["unstaged"] == 0, summary  # 被活跃会话持有 → 跳过卸载
+
+
+# ── #ARCH-308 A2：派生自动收敛 ────────────────────────────────────────────────
+
+
+class _FakeCommitResult:
+    def __init__(self, status: str = "OK", commit_hash: str = "abc123") -> None:
+        self.status = status
+        self.commit_hash = commit_hash
+
+
+def test_auto_commit_derived_commits_stable_b_class(git_repo: Path, monkeypatch) -> None:
+    """#ARCH-308 A2：零会话 + B 类 + 连续 2 周期稳定 → _commit_auto 提交。"""
+    monkeypatch.setattr(wd, "_load_allowlist_b_class", lambda root: ({"hot.txt"}, []))
+    calls: list[tuple] = []
+
+    class _FakeGW:
+        def __init__(self, project_root=None, registry=None):  # noqa: ANN001
+            pass
+
+        def _commit_auto(self, sid, files, msg):  # noqa: ANN001
+            calls.append((sid, list(files), msg))
+            return _FakeCommitResult()
+
+    monkeypatch.setattr(
+        "zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway", _FakeGW
+    )
+    (git_repo / "hot.txt").write_text("regen-v2\n", encoding="utf-8")
+    s1 = wd._auto_commit_derived(git_repo)
+    assert s1["committed"] == 0 and s1["candidates"] == 1, s1  # 首周期只登记候选
+    s2 = wd._auto_commit_derived(git_repo)
+    assert s2["committed"] == 1, s2  # 次周期 hash 稳定 → 提交
+    assert calls and calls[0][0] == wd._AUTO_DERIVED_SESSION
+    assert calls[0][1] == [str(git_repo / "hot.txt")]
+    # 提交成功后候选清空
+    state = json.loads(
+        (git_repo / ".runtime" / "drift_watchdog" / "state.json").read_text(encoding="utf-8")
+    )
+    assert state.get("derived_candidates") == {}
+
+
+def test_auto_commit_derived_skips_when_session_active(git_repo: Path, monkeypatch) -> None:
+    """#ARCH-308 A2 安全闸①：有活跃会话在场 → 不劫持在途施工。"""
+    import os
+
+    from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+    monkeypatch.setattr(wd, "_load_allowlist_b_class", lambda root: ({"hot.txt"}, []))
+    SessionRegistry(git_repo).register("sess-alive", pid=os.getpid())
+    (git_repo / "hot.txt").write_text("wip\n", encoding="utf-8")
+    s = wd._auto_commit_derived(git_repo)
+    assert s["committed"] == 0 and s["candidates"] == 0, s
+
+
+def test_auto_commit_derived_skips_protected_paths(git_repo: Path, monkeypatch) -> None:
+    """#ARCH-308 A2 安全闸④：保护路径（AGENTS.md 等）跳过留人工。"""
+    (git_repo / "AGENTS.md").write_text("rules-v1\n", encoding="utf-8")
+    _git(git_repo, "add", "AGENTS.md")
+    _git(
+        git_repo,
+        "-c",
+        "user.email=t@t",
+        "-c",
+        "user.name=t",
+        "-c",
+        "core.autocrlf=false",
+        "commit",
+        "-q",
+        "-m",
+        "add agents",
+    )
+    monkeypatch.setattr(wd, "_load_allowlist_b_class", lambda root: ({"AGENTS.md"}, []))
+    (git_repo / "AGENTS.md").write_text("rules-v2\n", encoding="utf-8")
+    wd._auto_commit_derived(git_repo)  # 第一周期登记
+    s = wd._auto_commit_derived(git_repo)  # 第二周期稳定但保护路径
+    assert s["committed"] == 0 and s["skipped_protected"] == 1, s
+
+
+def test_auto_commit_derived_gives_up_after_max_fails(git_repo: Path, monkeypatch) -> None:
+    """#ARCH-308 A2：连续失败达上限后放弃该候选（回落告警路径，不硬磕）。"""
+    monkeypatch.setattr(wd, "_load_allowlist_b_class", lambda root: ({"hot.txt"}, []))
+
+    class _FailGW:
+        def __init__(self, project_root=None, registry=None):  # noqa: ANN001
+            pass
+
+        def _commit_auto(self, sid, files, msg):  # noqa: ANN001
+            return _FakeCommitResult(status="GATE_FAILED")
+
+    monkeypatch.setattr(
+        "zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway", _FailGW
+    )
+    (git_repo / "hot.txt").write_text("regen-v2\n", encoding="utf-8")
+    wd._auto_commit_derived(git_repo)  # 登记候选
+    for _ in range(wd._DERIVED_MAX_FAILS):
+        s = wd._auto_commit_derived(git_repo)
+        assert s["failed"] == 1, s
+    # 达上限后候选被放弃
+    state = json.loads(
+        (git_repo / ".runtime" / "drift_watchdog" / "state.json").read_text(encoding="utf-8")
+    )
+    assert state.get("derived_candidates") == {}

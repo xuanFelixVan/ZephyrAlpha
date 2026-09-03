@@ -1,17 +1,17 @@
-# 自动生成于 2026-09-03T00:31:42Z
+# 自动生成于 2026-09-03T02:34:23Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-09-03T00:31:42Z'
+generated_at: '2026-09-03T02:34:23Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 415
-with_manifest: 408
+total_scripts: 416
+with_manifest: 409
 missing_manifest: 7
 categories:
   governance:_sync: 4
   governance:_tasks: 3
-  governance: 45
+  governance: 46
   governance:d10_performance: 1
   governance:d11_compliance: 24
   governance:d12_ai_hallucination: 4
@@ -302,6 +302,22 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: classify_workspace_wip.py
+  owner: governance
+  dimensions:
+  - D1
+  - D5
+  priority: P1
+  timeout_seconds: 30
+  args: []
+  warn_only: true
+  description: '工作区脏文件判读器（#ARCH-308 B1）——git status 脏文件四分类 （活跃WIP/派生同步/运行时遥测/待人工判读）+每类处置建议。
+    AGENTS.md RULE-WORKSPACE-WIP 铁律指定入口：AI 见工作区脏 MUST 先跑本工具， 禁止肉眼猜测"孤儿WIP"后报警或擅动。
+
+    '
+  tags:
+  - Critical
+  - Quick
 - name: collect_write_audit_4663.py
   owner: governance
   dimensions: []
