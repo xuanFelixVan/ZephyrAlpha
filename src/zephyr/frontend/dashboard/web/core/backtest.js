@@ -111,6 +111,10 @@ function btCharts(B){
  * BT_STATE.mode，var 提升不等于赋值（2026-09-01 实证：顺序颠倒→TypeError→顶层中断→
  * 发起回测炸 "Cannot set properties of undefined (setting 'taskId')"）。 */
 var BT_STATE={mode:'未启动',run:null,taskId:null,timer:null};
+/* 自愈重试计数（API 服务被并行会话周期性重启，撞不可用窗的链路 3s 后重试，防"一次失败永远空白"）。
+ * ⚠ 2026-09-04 实证教训：定义曾被并发旧缓冲回写冲掉（6 处调用尚存）→ btLoadStratGrid/btListReload
+ * 双路径 ReferenceError 被空 catch 吞 → 看板 0 卡片+档案永久「加载中」（浏览器代理 console 实锤）。 */
+var BT_NET_RETRY={grid:0,boot:0,detail:0};
 function btApi(){return (window.ZK&&ZK.api)?ZK.api:null;}
 btCharts();
 function btSetMode(m,extra){
@@ -163,7 +167,7 @@ function btFillKpi(m){
     ps[4].textContent=(m.trades_count!=null?m.trades_count:'--');
   }
 }
-function btLoadDetail(runId){
+function btLoadDetail(runId,retry){
   var api=btApi(); if(!api){btSetMode('断线');return;}
   BT_STATE.run=runId;
   api.fetchBacktestDetail(runId).then(function(r){
