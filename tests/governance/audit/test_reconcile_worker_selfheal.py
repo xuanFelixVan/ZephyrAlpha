@@ -220,6 +220,81 @@ class TestWriteBootSuccessClean:
 
 
 # ---------------------------------------------------------------------------
+# TestGateHeartbeatTimer（2026-09-04 gate 内定时心跳，STALE 误判治本）
+# ---------------------------------------------------------------------------
+
+
+class TestGateHeartbeatTimer:
+    """reconcile_for 心跳升级验证：执行前一次 + 执行期间每 interval 一次。
+
+    病根（commit 64e5e023 实测 worker 全程 1181s 逼近 STALE 阈值 1800s）：
+    原心跳只在 gate 间刷新，长 gate（Runtime-Cleanup batch 清理数分钟）执行期
+    心跳停滞 → sweep 误判 live-timeout。定时线程使全部 reconciler 执行期
+    心跳持续推进。"""
+
+    @staticmethod
+    def _make_registry_with(gate_id: str, reconcile_fn):
+        from zephyr.governance.audit.reconciliation_registry import (
+            ReconcilerSpec,
+            ReconciliationRegistry,
+        )
+
+        registry = ReconciliationRegistry()
+        registry.register(
+            ReconcilerSpec(
+                gate_id=gate_id,
+                trigger=lambda f: True,
+                reconcile=reconcile_fn,
+                priority=100,
+                file_ops=frozenset({"none"}),
+            )
+        )
+        return registry
+
+    def test_long_gate_heartbeat_refreshed_during_execution(self):
+        """长 gate（sleep 1s > 3×interval 0.2s）：执行期间心跳持续刷新 ≥3 次。"""
+        import time as _time
+
+        from zephyr.governance.audit.reconciliation_registry import ReconcileResult
+
+        def _slow_reconcile(files, sid):
+            _time.sleep(1.0)
+            return ReconcileResult(action="clean", detail="ok")
+
+        registry = self._make_registry_with("TEST-HB-SLOW", _slow_reconcile)
+        beats: list[str] = []
+        results = registry.reconcile_for(
+            ["x.py"], "sess-hb", heartbeat=beats.append, heartbeat_interval_s=0.2
+        )
+        assert results[0].action == "clean"
+        assert len(beats) >= 4, f"执行前 1 次 + 执行期 ≥3 次，实得 {len(beats)}"
+        assert all(b == "TEST-HB-SLOW" for b in beats)
+
+    def test_fast_gate_heartbeat_once(self):
+        """快 gate（interval 5s 内完成）：仅执行前 1 次，无周期刷新。"""
+        from zephyr.governance.audit.reconciliation_registry import ReconcileResult
+
+        registry = self._make_registry_with(
+            "TEST-HB-FAST", lambda f, s: ReconcileResult(action="clean", detail="ok")
+        )
+        beats: list[str] = []
+        registry.reconcile_for(
+            ["x.py"], "sess-hb2", heartbeat=beats.append, heartbeat_interval_s=5.0
+        )
+        assert beats == ["TEST-HB-FAST"]
+
+    def test_no_heartbeat_no_thread_backcompat(self):
+        """heartbeat=None（同步路径/旧调用）：不启线程，行为不变。"""
+        from zephyr.governance.audit.reconciliation_registry import ReconcileResult
+
+        registry = self._make_registry_with(
+            "TEST-HB-NONE", lambda f, s: ReconcileResult(action="clean", detail="ok")
+        )
+        results = registry.reconcile_for(["x.py"], "sess-hb3")
+        assert results[0].action == "clean"
+
+
+# ---------------------------------------------------------------------------
 # TestRunWorkerSelfHealIntegration
 # ---------------------------------------------------------------------------
 

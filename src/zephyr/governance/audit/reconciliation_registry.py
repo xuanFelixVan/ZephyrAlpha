@@ -183,6 +183,7 @@ from __future__ import annotations
 
 import logging
 import subprocess
+import threading
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable
@@ -697,6 +698,7 @@ class ReconciliationRegistry:
         session_id: str,
         commit_message: str = "",
         heartbeat: Callable[[str], None] | None = None,
+        heartbeat_interval_s: float = 120.0,
     ) -> list[ReconcileResult]:
         """遍历注册的 reconciler，trigger 命中即执行，返回结果列表。
 
@@ -744,12 +746,36 @@ class ReconciliationRegistry:
 
                 # #ARCH-RECONCILE-WORKER-HEARTBEAT-001 治本（2026-08-01）：
                 # 执行前刷新心跳（best-effort，失败不阻断）。
+                # 2026-09-04 gate 内定时心跳（STALE 误判治本，commit 64e5e023 实测
+                # worker 全程 1181s 已逼近 _STALE_THRESHOLD_SECONDS=1800s）：原心跳
+                # 只在 gate 间刷新，长 gate（GATE-RUNTIME-CLEANUP batch 清理数分钟）
+                # 执行期心跳停滞会被 sweep 误判 live-timeout。升级为「执行前一次 +
+                # 执行期间每 heartbeat_interval_s 一次」后台 daemon 线程——一处改动
+                # 惠及全部 reconciler，不动任何 spec 签名；heartbeat=None（同步
+                # 路径）不启线程零影响。
+                _hb_stop: threading.Event | None = None
+                _hb_thread: threading.Thread | None = None
                 if heartbeat is not None:
                     try:
                         heartbeat(spec.gate_id)
-
                     except Exception:  # noqa: BLE001 — 心跳失败不影响 reconciler 主流程
                         pass
+                    _hb_stop = threading.Event()
+
+                    def _hb_loop(
+                        stop: threading.Event,
+                        _hb: Callable[[str], None] = heartbeat,
+                        _gate: str = spec.gate_id,
+                        _interval: float = heartbeat_interval_s,
+                    ) -> None:
+                        while not stop.wait(_interval):
+                            try:
+                                _hb(_gate)
+                            except Exception:  # noqa: BLE001 — best-effort
+                                pass
+
+                    _hb_thread = threading.Thread(target=_hb_loop, args=(_hb_stop,), daemon=True)
+                    _hb_thread.start()
 
                 # Phase 3.4 断点6 治本：检测 reconciler arity，3-arg 传 commit_message
 
@@ -779,6 +805,9 @@ class ReconciliationRegistry:
                         result = spec.reconcile(committed_files, session_id)
 
                 finally:
+                    if _hb_thread is not None and _hb_stop is not None:
+                        _hb_stop.set()   # 先停心跳线程再退出（gate 结束）
+                        _hb_thread.join(timeout=2.0)
                     if _rc_token is not None and _reset_rc_ctx is not None:
                         try:
                             _reset_rc_ctx(_rc_token)
