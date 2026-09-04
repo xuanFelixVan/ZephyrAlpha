@@ -11,6 +11,8 @@
 pydantic>=2.0.0,<3.0.0
 pyyaml>=6.0,<7.0
 pandas>=2.0.0,<3.0.0
+# ML-ARCH-001 裁定显式化（2026-08-24 Owner 裁定）：与 SSoT pyproject.toml 对齐（AI-01 审计补漏）
+scikit-learn>=1.5.0,<2.0.0
 psutil>=5.9.0,<7.0
 chromadb>=0.4.24,<1.0.0
 mcp>=1.0.0,<2.0.0
@@ -33,6 +35,8 @@ hvplot>=0.10.0,<1.0.0
 plotly_resampler>=0.9.0,<1.0.0
 # 5.30.4 修复：python-dotenv 被 __init__.py 引用但未声明（幽灵依赖）
 python-dotenv>=1.0.0,<2.0.0
+# AI-R2 红队：Windows 无系统 IANA 库——与 SSoT pyproject.toml 对齐（AI-01 审计补漏）
+tzdata>=2024.1
 # MOD-L00-004 数据源集成器：APScheduler 调度器 + SQLAlchemy JobStore
 apscheduler>=3.10.0,<4.0.0
 sqlalchemy>=2.0.0,<3.0.0

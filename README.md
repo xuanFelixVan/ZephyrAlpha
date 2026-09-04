@@ -55,7 +55,7 @@ python scripts/construction/demo_e2e_pipeline.py
 | 文档与规则元数据（SSoT） | [rule_catalog_registry.yaml](docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml) |
 | 登记表总索引 | [registry_of_registries.yaml](docs/registry_of_registries.yaml) |
 | 架构概览 | `docs/02_enterprise_architecture/00_overview_entry/navigation_index.md`（派生产物不入库——`python scripts/serve_docs.py` 按需生成） |
-| 知识库 | `docs/08_knowledge/`（规划落盘区——ke-*.md 知识条目沉淀后生成，当前无条目；命名契约见 g4_activate/g5_extract 规则） |
+| 知识库 | `docs/08_knowledge/`（规划落盘区——ke-*.md 知识条目沉淀后生成，当前无条目，目录在首批条目落盘时创建；命名契约见 g4_activate/g5_extract 规则） |
 
 ## 技术栈
 
