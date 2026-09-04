@@ -2,7 +2,7 @@
 # [MODULE] zephyr.factor.analysis.correlation_drift_monitor
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] numpy; pandas
-# [CONSUMERS] G07 上线后相关性漂移持续监控（复用 deadman/reconciler 监控风格, 函数级）
+# [CONSUMERS] zephyr.pf_core.strategy_correlation_pipeline（import 消费方，2026-09-05 AI-08 审计补头）；G07 上线后相关性漂移持续监控（历史首批语义消费方, 复用 deadman/reconciler 监控风格, 函数级）
 # [STARTUP] imported
 # [MATURITY] testing
 # [INVARIANTS] 纯函数无IO; CUSUM只检上行漂移(S⁺单边); σ=0降级不告警; PSI分箱基于基线分位
