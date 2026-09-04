@@ -1,3 +1,6 @@
+# [MODULE] zephyr.infrastructure.core
+# [DOMAIN] D_INFRA_RUNTIME
+# [BLUEPRINT] N/A (namespace placeholder -- no dedicated blueprint)
 # [TTL] permanent
 # D_INFRA_RUNTIME/core sub-package
 

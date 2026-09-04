@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] TelemetryWriteError 磁盘满/DB 锁超时; ValueError 参数非法
-# [TESTS] scripts/connect/tele_fle.py --trigger
+# [TESTS] N/A (dead anchor scripts/connect/tele_fle.py removed AI-14 2026-09-05)
 # [A_module] module_id=MOD-INF-015 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """

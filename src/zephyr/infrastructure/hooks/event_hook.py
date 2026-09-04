@@ -2,7 +2,7 @@
 # [MODULE] zephyr.infrastructure.hooks.event_hook
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.hooks.__init__
-# [CONSUMERS]
+# [CONSUMERS] N/A (zero production importers; live hook_registry = zephyr.governance.ops_governance.event_hook via governance sys.modules shim -- duplicate-implementation retirement candidate, AI-14 audit 2026-09-05)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none

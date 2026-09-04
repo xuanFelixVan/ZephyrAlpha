@@ -8,7 +8,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] yaml.YAMLError; OSError; ValueError
-# [TESTS] tests/system-telemetry/test_schema.py
+# [TESTS] N/A
 # [TTL] permanent
 """
 SchemaSubsystem — Schema 版本管理与兼容性校验（MOD-INF-015 §5.1 · schema）.

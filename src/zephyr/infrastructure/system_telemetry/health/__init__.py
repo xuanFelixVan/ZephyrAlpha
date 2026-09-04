@@ -8,7 +8,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] ValueError; RuntimeError
-# [TESTS] tests/system-telemetry/test_health.py
+# [TESTS] N/A
 # [TTL] permanent
 """
 health subsystem — 模块健康注册与 LifecycleManager 对接.

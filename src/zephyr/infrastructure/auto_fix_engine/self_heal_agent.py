@@ -11,7 +11,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] SelfHealMaxRoundsError;SelfHealCircuitOpenError
-# [TESTS] tests/auto-fix-engine/test_self_heal_agent.py
+# [TESTS] tests/self_check/test_self_heal_agent.py
 # [A_module] module_id=MOD-INF-031 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

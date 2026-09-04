@@ -11,7 +11,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ValueError; RuntimeError
-# [TESTS] tests/system-telemetry/test_contract_metrics.py
+# [TESTS] tests/observability/test_contract_metrics_telemetry.py
 # [A_module] module_id=MOD-INF-015 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
@@ -292,25 +292,25 @@ CT_TEL_SLA: dict[str, dict] = {
         "name": "TelemetryMetrics",
         "sla_p99_us": 1_000_000,
         "description": "指标采集延迟<1s",
-        "physical_path": "src/zephyr/infra_ops/observability/contract_metrics.py",
+        "physical_path": "src/zephyr/infrastructure/system_telemetry/contract_metrics.py",
     },
     "CT-TEL-002": {
         "name": "TelemetryLogs",
         "sla_p99_us": 5_000_000,
         "description": "日志持久化延迟<5s",
-        "physical_path": "src/zephyr/system-telemetry/logs/structured_sink.py",
+        "physical_path": "src/zephyr/infrastructure/system_telemetry/logs/structured_sink.py",
     },
     "CT-TEL-003": {
         "name": "TelemetryTraces",
         "sla_p99_us": 2_000_000,
         "description": "链路追踪采样率可配置",
-        "physical_path": "src/zephyr/infra_ops/observability/span_stub.py",
+        "physical_path": "src/zephyr/infrastructure/system_telemetry/traces/span_stub.py",
     },
     "CT-TEL-004": {
         "name": "TelemetryHealth",
         "sla_p99_us": 30_000_000,
         "description": "健康检查心跳间隔30s",
-        "physical_path": "src/zephyr/infra_ops/observability/health_probes.py",
+        "physical_path": "src/zephyr/infrastructure/system_telemetry/health_probes.py",
     },
 }
 

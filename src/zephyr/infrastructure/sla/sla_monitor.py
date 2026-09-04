@@ -2,7 +2,7 @@
 # [MODULE] zephyr.infrastructure.sla.sla_monitor
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.shared.io.paths; zephyr.shared.event_bus
-# [CONSUMERS]
+# [CONSUMERS] zephyr.trading.boot_hooks (P1-10 boot wiring)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none
@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS]
+# [TESTS] tests/infrastructure/test_sla_monitor.py
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

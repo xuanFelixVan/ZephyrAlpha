@@ -8,7 +8,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] RuntimeError
-# [TESTS] tests/system-telemetry/test_profiles.py
+# [TESTS] N/A
 # [TTL] permanent
 """
 ProfileSubsystem — 系统资源画像（MOD-INF-015 §6 · profiles）.

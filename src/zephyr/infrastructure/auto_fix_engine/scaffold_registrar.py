@@ -11,7 +11,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ScaffoldRegistrationError
-# [TESTS] tests/auto-fix-engine/test_scaffold_registrar.py
+# [TESTS] tests/llm_security/test_scaffold_registrar.py
 # [A_module] module_id=MOD-INF-031 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

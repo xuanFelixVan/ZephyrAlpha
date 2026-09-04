@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md
 # [MODULE] zephyr.infrastructure.file_watcher
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.shared.blueprint_decomposer; zephyr.shared.__init__
-# [CONSUMERS] auto_runtime_core.py; blueprint_decomposer.py
+# [DEPENDENCIES] zephyr.shared.blueprint_tools.blueprint_decomposer; zephyr.shared.event_bus; zephyr.shared.io.paths; zephyr.shared.protocols.registry
+# [CONSUMERS] zephyr.trading.auto_runtime_core; zephyr.gov_enforcement.behavioral_admission.mcp_result_push
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 轮询间隔>=10s; 哈希比对用MD5; 变更事件必须包含path+event_type+timestamp

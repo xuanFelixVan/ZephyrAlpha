@@ -2,7 +2,7 @@
 # [MODULE] zephyr.infrastructure.capacity_assurance.token_budget
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.capacity_assurance.__init__
-# [CONSUMERS] zephyr.autonomy_core.*; zephyr.governance.context_governance.*; zephyr.orchestrator.*; zephyr.governance.audit_orchestration.*
+# [CONSUMERS] zephyr.autonomy_core.context.context_assembler; zephyr.autonomy_core.context.context_budget; zephyr.autonomy_core.context.context_budget_tracker
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none

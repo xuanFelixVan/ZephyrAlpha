@@ -2,7 +2,7 @@
 # [MODULE] zephyr.infrastructure.database_service
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.governance.__init__, zephyr.shared.database.database_crud_mixin, zephyr.data.ch_config
-# [CONSUMERS]
+# [CONSUMERS] zephyr.governance (persistence/gov core); zephyr.infrastructure (redis_config/h1_redis_hot/asset_inventory); scripts/database
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS]
@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS]
+# [TESTS] tests/db/test_db_auto_ops.py
 # [A_module] module_id=MOD-INF-002 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """

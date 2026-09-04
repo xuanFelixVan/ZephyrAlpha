@@ -3,12 +3,12 @@
 # [MODULE] zephyr.infrastructure.system_telemetry.alerts
 # [INVARIANTS] INFO<WARNING<ERROR<CRITICAL severity order; rules loaded from config/alert_rules.yaml; fail-safe on missing config
 # [MODIFY-GUARD] facade.py; schema.py; config/alert_rules.yaml
-# [CONSUMERS] zephyr.security.access_control; zephyr.security.budget_enforcement
+# [CONSUMERS] facade.py (same-package facade); tests/infrastructure/test_telemetry_facade.py
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] yaml.YAMLError; OSError; RuntimeError
-# [TESTS] tests/system-telemetry/test_alerts.py
+# [TESTS] N/A
 # [TTL] permanent
 """
 AlertSubsystem — 告警规则评估引擎（MOD-INF-015 §9 · alerts）.

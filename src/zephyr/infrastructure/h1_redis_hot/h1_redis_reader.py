@@ -2,7 +2,7 @@
 # [MODULE] zephyr.infrastructure.h1_redis_hot.h1_redis_reader
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.h1_redis_hot.h1_redis_schema
-# [CONSUMERS] zephyr.signal; zephyr.risk; zephyr.position; zephyr.decision_engine
+# [CONSUMERS] zephyr.infrastructure.h1_redis_hot.h1_integration
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 读取延迟<5ms; Key 通过 h1_redis_schema 构造; 失败抛 H1RedisUnavailable(降级信号)

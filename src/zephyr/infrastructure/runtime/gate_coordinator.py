@@ -2,7 +2,7 @@
 # [MODULE] zephyr.infrastructure.runtime.gate_coordinator
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.runtime.__init__
-# [CONSUMERS] zephyr.infrastructure.rollback.rollback_engine; zephyr.trading.boot_hooks
+# [CONSUMERS] zephyr.trading.boot_hooks
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] freeze -> thaw 原子配对; 空操作不报错
@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS] scripts/connect/rbk_gate.py --trigger
+# [TESTS] N/A
 # [A_module] module_id=MOD-INF-002 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """

@@ -8,7 +8,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ProfilerError;EvaluationError
-# [TESTS] tests/test_model_profiler/
+# [TESTS] N/A
 # [TTL] permanent
 
 """

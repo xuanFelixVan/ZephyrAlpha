@@ -11,7 +11,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ValueError; OSError; RuntimeError
-# [TESTS] tests/system-telemetry/test_facade.py
+# [TESTS] tests/observability/test_facade.py
 # [A_module] module_id=MOD-INF-015 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: Telemetry后台调度循环属遥测内维（心跳/flush/TTL清理）——

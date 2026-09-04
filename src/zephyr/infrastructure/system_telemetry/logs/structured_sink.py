@@ -1,9 +1,8 @@
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md | 蓝图特有§A
-# noqa: m10-time-trigger  M10豁免: threading.Timer 仅出现在类型注解（_flush_timer: threading.Timer | None），非实际时间触发创建；[STARTUP] imported 被调用方导入非常驻服务
 # [MODULE] zephyr.infrastructure.system_telemetry.logs.structured_sink
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.__init__
-# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
+# [CONSUMERS] zephyr.infrastructure.system_telemetry.ai_behavior.event_sink; zephyr.infrastructure.system_telemetry.logs
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] MUST使用shared.logging的TraceContext禁止定义第二个;PII自动脱敏;RULE-ONE原子写入
@@ -12,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 写入失败->stderr->内存缓冲(1000条)->丢弃+告警;单Consumer线程串行化
-# [TESTS] tests/infrastructure/
+# [TESTS] tests/observability/test_structured_sink.py
 # [A_module] module_id=MOD-INF-015 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
@@ -128,7 +127,6 @@ _logger = logging.getLogger(__name__)
 # 生产无 configure() 调用方，默认值即生产路径。
 _DEFAULT_LOG_DIR: Path = REPO_ROOT / "data" / "telemetry" / "prod" / "logs"
 _BUFFER_MAX: int = 500
-_FLUSH_INTERVAL_SECONDS: float = 5.0
 _MAX_FILE_BYTES: int = 10 * 1024 * 1024
 
 _log_buffer: deque[dict[str, Any]] = deque()
@@ -137,7 +135,6 @@ log_buffer = _log_buffer  # public alias（Stage 4 公共化）
 _buffer_lock: threading.Lock = threading.Lock()
 buffer_lock = _buffer_lock  # public alias（Stage 4 公共化）
 
-_flush_timer: threading.Timer | None = None
 
 
 def configure(
