@@ -1,10 +1,22 @@
-# [BLUEPRINT] MOD-BT-001 | (auto-injected by S4 reconciler) | §
+# [BLUEPRINT] MOD-BT-001 | docs/03_modules/_domain_backtest/blueprint.md
+# [MODULE] zephyr.backtest.core.preflight_checker
+# [DOMAIN] D_BACKTEST
+# [DEPENDENCIES]
+# [CONSUMERS] 调用方显式接线预留（重评条件触发前不接线回测引擎）; tests/backtest/test_preflight_checker.py
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] fail-visible不静默（违规全部进violations）; DQ未注入=skipped标记（防无检查假通过）; 违规前缀单真源ERR_PREFLIGHT_VIOLATION=ZA-BT-0036
+# [MODIFY-GUARD] none
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] PreflightReport(passed/violations/skipped)——无异常类，违规经ZA-BT-0036前缀承载
+# [TESTS] tests/backtest/test_preflight_checker.py
 # [TTL] permanent
 # [ALGO_FLOW] 目的: 回测启动前数据质量前置检查（15号 memo BM-BT-02-D，函数级 MVP，绑定入口由调用方注入）
 # [ALGO_FLOW] 输入: symbols/start/end + 可选 DQ 检查函数表（默认空集，纯结构检查）
 # [ALGO_FLOW] 输出: PreflightReport(passed/violations/skipped)，fail-visible 不静默
 # [ALGO_FLOW] 不变量: 无数据注入时保守通过结构检查并标 skipped；任何 DQ 违规→passed=False
-# [TTL] permanent
 """
 回测前置检查器（15_data_feature_layer_spec BM-BT-02-D，函数级落地）。
 

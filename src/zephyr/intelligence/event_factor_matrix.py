@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INT-EVENT-FACTOR | docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/26_event_driven_strategy_detail.md | §2.4
 # [MODULE] zephyr.intelligence.event_factor_matrix
 # [DOMAIN] D_INTELLIGENCE
-# [DEPENDENCIES] pandas
+# [DEPENDENCIES] pandas; zephyr.shared.foundation.errors
 # [CONSUMERS] 事件驱动 sleeve（六因子矩阵数值项，event_impact_score = w1·ORJ_z + w2·dReport_z + w3·Jump_on_PEAD_z + w4·overnight_trend_z 的因子输入；权重待 G10 校准）
 # [STARTUP] imported
 # [MATURITY] design

@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] MatchingError
-# [TESTS]
+# [TESTS] tests/backtest/test_matching_engine.py
 # [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """回测撮合引擎模块（v1.1.0 重构：委托 MatchingLogic 保证回测=实盘一致性）

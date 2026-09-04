@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INT-AISA | docs/03_modules/_domain_intelligence/news_sentiment_analyzer/blueprint.md | §
 # [MODULE] zephyr.intelligence.news_sentiment_analyzer
 # [DOMAIN] D_INTELLIGENCE
-# [DEPENDENCIES] pandas; zephyr.data.news_collector; zephyr.nlp.nlp_inference; zephyr.data.ch_writer（persist_windows 钩子惰性导入，默认关）
+# [DEPENDENCIES] pandas; zephyr.data.news_collector; zephyr.nlp.nlp_inference; zephyr.data.ch_writer（persist_windows 钩子惰性导入，默认关）; zephyr.data.provider_base; zephyr.shared.foundation.errors
 # [CONSUMERS] MOD-SIG-002(信号生成器, 消费 SentimentEvent); zephyr.intelligence.nightly_sentiment_window(92号 §8.4 M3-② 夜间聚合)
 # [STARTUP] imported
 # [MATURITY] design

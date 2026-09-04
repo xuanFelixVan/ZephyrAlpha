@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-NLP-DUALTAG-001 | 待统筹登记（blueprint 未建，真源=缺口总账 GAP-F-21 行 + GAP-F-D1 核查）
 # [MODULE] zephyr.nlp.news_dual_tagger
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] c3_fundamental.news_data（只读）; c3_fundamental.analyst_forecast（只读，GAP-F-D1 已核：53,918行/2,519标的/2026-07-22~08-21）; event_calendar_registry（事件类型关键词，注入位）
+# [DEPENDENCIES] c3_fundamental.news_data（只读）; c3_fundamental.analyst_forecast（只读，GAP-F-D1 已核：53,918行/2,519标的/2026-07-22~08-21）; event_calendar_registry（事件类型关键词，注入位）; zephyr.data.ch_writer
 # [CONSUMERS] （候选：新闻页双标签列、45号 W1 事件条联动）
 # [STARTUP] imported
 # [MATURITY] testing

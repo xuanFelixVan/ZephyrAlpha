@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-BT-001 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] zephyr.backtest.implementations.shrinkage_engine
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.core.engine_base
+# [DEPENDENCIES] zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.core.engine_base; zephyr.shared.foundation.errors
 # [CONSUMERS] zephyr.backtest.regime_validation.c1_comparator
 # [STARTUP] imported
 # [MATURITY] production

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | §3
 # [MODULE] zephyr.intelligence.model_profiling.exam_orchestrator
 # [DOMAIN] D_INTELLIGENCE
-# [DEPENDENCIES] zephyr.intelligence.model_profiling.capability_passport; zephyr.intelligence.model_profiling.exam_test_cases
+# [DEPENDENCIES] zephyr.intelligence.model_profiling.capability_passport; zephyr.intelligence.model_profiling.exam_test_cases; zephyr.intelligence.model_profiling.exam_checks; zephyr.intelligence.model_profiling.exam_executor; zephyr.intelligence.model_profiling.exam_judge; zephyr.intelligence.model_profiling.exam_rubric; zephyr.intelligence.model_profiling.job_matcher; zephyr.intelligence.model_profiling.provider_data
 # [CONSUMERS] MOD-INF-034
 # [STARTUP] imported
 # [MATURITY] production

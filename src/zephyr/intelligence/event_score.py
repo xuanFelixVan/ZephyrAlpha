@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INT-EVENT-SCORE | docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/26_event_driven_strategy_detail.md | §2.5
 # [MODULE] zephyr.intelligence.event_score
 # [DOMAIN] D_INTELLIGENCE
-# [DEPENDENCIES] pandas; zephyr.data.calendar; zephyr.data.ch_reader（默认量能 provider，lazy）; zephyr.data.table_registry（lazy）
+# [DEPENDENCIES] pandas; zephyr.data.calendar; zephyr.data.ch_reader（默认量能 provider，lazy）; zephyr.data.table_registry（lazy）; zephyr.shared.foundation.errors
 # [CONSUMERS] 事件驱动 sleeve（首批策略C，选股漏斗 BM-SEL-19 第四层输入，待开通降级不阻塞）
 # [STARTUP] imported
 # [MATURITY] design

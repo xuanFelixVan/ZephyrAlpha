@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-BT-001 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] zephyr.backtest.core.engine_base
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES]
+# [DEPENDENCIES]zephyr.shared.contracts.core.trace_context
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS]
+# [TESTS] tests/backtest/test_engine_base.py
 # [TTL] permanent
 """
 L_BACKTEST — Backtest Engine Layer

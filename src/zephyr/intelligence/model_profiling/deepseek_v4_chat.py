@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | §3
 # [MODULE] zephyr.intelligence.model_profiling.deepseek_v4_chat
 # [DOMAIN] D_INTELLIGENCE
-# [DEPENDENCIES]
+# [DEPENDENCIES]zephyr.shared.foundation.constants; zephyr.shared.security.secrets
 # [CONSUMERS] MOD-INF-034
 # [STARTUP] imported
 # [MATURITY] production

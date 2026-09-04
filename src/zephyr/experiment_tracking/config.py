@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-OBS-001 | docs/03_modules/_domain_infrastructure_operations/blueprint_experiment_tracking.md
 # [MODULE] zephyr.experiment_tracking.config
 # [DOMAIN] D_INFRA_TELEMETRY
-# [DEPENDENCIES] stdlib
+# [DEPENDENCIES] stdlib; zephyr.shared.io.paths
 # [CONSUMERS] zephyr.experiment_tracking.experiment_tracker ; zephyr.experiment_tracking.query
 # [STARTUP] imported
 # [MATURITY] production

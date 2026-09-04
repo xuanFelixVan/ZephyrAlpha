@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INT-EVENT-ANOMALY | docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/26_event_driven_strategy_detail.md | §2.5
 # [MODULE] zephyr.intelligence.event_anomaly_detector
 # [DOMAIN] D_INTELLIGENCE
-# [DEPENDENCIES] numpy
+# [DEPENDENCIES] numpy; zephyr.shared.foundation.errors
 # [CONSUMERS] 事件驱动 sleeve（异动事件源→事件分类/评分，26 号 §2.2 异动行）
 # [STARTUP] imported
 # [MATURITY] design

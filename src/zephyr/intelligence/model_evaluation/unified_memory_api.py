@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-036 | docs/03_modules/_cross_layer/model-capability-exam/blueprint.md
 # [MODULE] zephyr.intelligence.model_evaluation.unified_memory_api
 # [DOMAIN] D_INTELLIGENCE
-# [DEPENDENCIES] zephyr.governance.__init__; zephyr.shared.security.capability
+# [DEPENDENCIES] zephyr.governance.__init__; zephyr.shared.security.capability; zephyr.integration.vector_memory.vms_memory_backend; zephyr.intelligence.model_evaluation._memory_backend
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production

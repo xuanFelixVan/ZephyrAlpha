@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-ML_SERVE | (pending)
 # [MODULE] zephyr.ml_serve.core
 # [DOMAIN] D_ML_SERVE
-# [DEPENDENCIES]
+# [DEPENDENCIES]zephyr.ml_serve.core.model_drift_monitor
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] design

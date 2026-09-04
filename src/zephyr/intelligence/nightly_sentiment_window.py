@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INT-NEWS-NIGHT | 待统筹登记（92号清单 §8.4 M3-② / tracker #138）
 # [MODULE] zephyr.intelligence.nightly_sentiment_window
 # [DOMAIN] D_INTELLIGENCE
-# [DEPENDENCIES] pandas; zephyr.data.news_collector; zephyr.data.ch_writer（persist 时）; zephyr.intelligence.news_sentiment_analyzer; zephyr.intelligence.news_symbol_linker（可选注入）
+# [DEPENDENCIES] pandas; zephyr.data.news_collector; zephyr.data.ch_writer（persist 时）; zephyr.intelligence.news_sentiment_analyzer; zephyr.intelligence.news_symbol_linker（可选注入）; zephyr.data.provider_base; zephyr.shared.foundation.errors
 # [CONSUMERS] 夜间批/盘前流程调用方（92号 §8.4③）；MOD-PLAN-004 overnight_boundary_reviser 消费接线待统筹裁定（本模块输出契约预留 plan004_input 对接字段，MOD-PLAN-004 零改动）
 # [STARTUP] imported
 # [MATURITY] testing
