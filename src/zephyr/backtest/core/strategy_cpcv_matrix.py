@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] StrategyCPCVError(未登记错误码-申请中)
+# [ERROR_CONTRACT] StrategyCPCVError(ZA-BT-0037)
 # [TESTS] tests/backtest/test_strategy_cpcv_matrix.py
 # [A_module] module_id=MOD-BT-028 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
