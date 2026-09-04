@@ -2,7 +2,7 @@
 # [MODULE] zephyr.signal_ashare.market_sentiment_analyzer
 # [DOMAIN] D_ASHARE_SIGNAL
 # [DEPENDENCIES] zephyr.shared.contracts.synthesized_signal（信号契约形态预留，无 import）
-# [CONSUMERS] zephyr.signal_ashare.youzi_relay_emotion_engine; zephyr.signal_ashare.dual_engine_fusion_decision_engine（经 2026-09-05 AI-08 审计实证未接线——接线待排期）
+# [CONSUMERS] zephyr.signal_ashare.youzi_relay_emotion_engine（经 2026-09-05 AI-08 审计实证未接线——接线待排期）; zephyr.signal_ashare.dual_engine_fusion_decision_engine（同左，接线待排期）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] overall_sentiment_score in [0, 100]; all sub-scores in [0, 100];

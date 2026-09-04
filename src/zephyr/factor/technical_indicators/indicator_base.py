@@ -2,7 +2,7 @@
 # [MODULE] zephyr.factor.technical_indicators.indicator_base
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] pandas(pip); numpy(pip)
-# [CONSUMERS] zephyr.factor.technical_indicators.{trend,momentum,volatility,volume,reversal}; zephyr.data.implementations.internal_compute_provider
+# [CONSUMERS] zephyr.factor.technical_indicators.{trend,momentum,volatility,volume,reversal}; zephyr.data.implementations.internal_compute_provider（动态接线：L545/L1113 延迟导入本模块符号+注册表消费）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 技术指标基类 compute→DataFrame 多列输出（区别于 FactorBase 单 Series）；纯自实现无第三方 TA 库依赖

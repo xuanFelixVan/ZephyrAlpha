@@ -2,7 +2,7 @@
 # [MODULE] zephyr.signal_ashare.war_pool_generator
 # [DOMAIN] D_ASHARE_SIGNAL
 # [DEPENDENCIES] zephyr.signal_ashare.mainline_probability（MOD-SIG-064 复用）; zephyr.signal_ashare.mainline_candidates（MOD-SIG-061 复用）; zephyr.signal_ashare.sector_leader（MOD-SIG-062 复用）
-# [CONSUMERS] 作战室 W1 今日作战池条（2~3 票，池外不碰）; zephyr.plan_engine.sit_out_list（MOD-PLAN-014 池外规则真源）
+# [CONSUMERS] 作战室 W1 今日作战池条（2~3 票，池外不碰）; zephyr.plan_engine.sit_out_list（MOD-PLAN-014 池外规则真源、消费方 [DEPENDENCIES] 互认，无 import——接线待排期）
 # [STARTUP] imported
 # [MATURITY] testing
 # [INVARIANTS] 交集纪律：主线候选板块龙头（结构腿）×个股催化剂（催化腿）交集才入池，池外不碰；空交集→空池+注解不强行出池；主线概率缺维（None）按中性 50 参与合成不拉低；出池 ≤ pool_target（默认 3）；无主线混沌/064 降级→空池；观测层消费不接交易；frozen dataclass asdict JSON 可序列化
