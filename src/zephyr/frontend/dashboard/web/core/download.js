@@ -6,6 +6,34 @@ var DL_DB = "全部库";
 var DL_ONLY_ISSUE = false;
 var DL_ORDER = { red: 0, yellow: 1, green: 2, gray: 3 };
 var DL_STATE = { downloading: ["g", "正在下载"], idle: ["g", "正常"], lagging: ["y", "滞后"], stalled: ["r", "疑似断更"] };
+/* Excel 式表头排序（Owner 2026-09-04）：点表头升序、同列再点切降序，来回切换；换列重置升序；箭头指示当前方向 */
+var DL_SORT = { key: null, dir: 1 };
+var DL_COLS = {
+  name:   { label: "数据（中文/表名）", w: 0,   str: 1, get: function (t) { return (t.name_zh || "\uFF3F" + t.table) + "\u0001" + t.table; } },
+  state:  { label: "下载状态", w: 96,  num: 1, get: function (t) { return { downloading: 1, lagging: 2, stalled: 3, idle: 4 }[t.state] || 9; } },
+  rate:   { label: "速率·质量", w: 96,  num: 1, get: function (t) { return t.rate || 0; } },
+  today:  { label: "今日新增", w: 84,  num: 1, get: function (t) { return t.today_rows || 0; } },
+  next:   { label: "下次下载", w: 120, str: 1, get: function (t) { return t.next_dl || "\uFF5E"; } },
+  period: { label: "数据时间段", w: 150, str: 1, get: function (t) { return t.latest || ""; } },
+  source: { label: "数据源", w: 100, str: 1, get: function (t) { return t.source || ""; } },
+  vpn:    { label: "VPN", w: 110, str: 1, get: function (t) { return t.vpn_need || "\uFF5E"; } },
+  rows:   { label: "行数", w: 70,  num: 1, get: function (t) { return t.rows || 0; } },
+  fail:   { label: "关联告警", w: 130, num: 1, get: function (t) { return t.fail_cnt || 0; } }
+};
+function dlSortBy(key) {
+  if (DL_SORT.key === key) DL_SORT.dir = -DL_SORT.dir;   /* 同列二连点：升↔降 */
+  else { DL_SORT.key = key; DL_SORT.dir = 1; }           /* 换列：回到升序（Excel 惯例） */
+  dlRender();
+}
+function dlTh(key) {
+  var c = DL_COLS[key];
+  var on = DL_SORT.key === key;
+  var arrow = on ? '<span style="color:#3D8BFF">' + (DL_SORT.dir === 1 ? "▲" : "▼") + "</span>" : "";
+  return "<th" + (c.w ? ' style="width:' + c.w + 'px"' : "")
+    + ' onclick="dlSortBy(\'' + key + '\')" title="点击排序 · 再点同列切换升/降"'
+    + '><span style="cursor:pointer;-webkit-user-select:none;user-select:none"' + (on ? ";color:var(--text)" : "") + ">"
+    + c.label + (arrow ? " " + arrow : "") + "</span></th>";
+}
 
 function dlDot(l) { return { green: 'g', yellow: 'y', red: 'r', gray: 'w' }[l] || 'w'; }
 function dlDotTxt(l) { return { green: '正常', yellow: '滞后', red: '疑似断更', gray: '无分区' }[l] || l; }
@@ -63,6 +91,11 @@ function dlRender() {
     return !q || t.table.toLowerCase().indexOf(q.toLowerCase()) >= 0
       || (t.name_zh && t.name_zh.indexOf(q) >= 0);
   }).sort(function (a, b) {
+    if (DL_SORT.key) {   /* Excel 式：点了表头按该列排 */
+      var c = DL_COLS[DL_SORT.key];
+      var x = c.get(a), y = c.get(b);
+      return (c.num ? x - y : String(x).localeCompare(String(y), "zh-CN")) * DL_SORT.dir;
+    }
     return DL_ORDER[a.light] - DL_ORDER[b.light] || a.db.localeCompare(b.db) || a.table.localeCompare(b.table);
   });
   var dbs = {};
@@ -74,9 +107,7 @@ function dlRender() {
       return '<span class="acct-mi' + (d === DL_DB ? ' on' : '') + '" data-v="' + d + '" onclick="dlPickDb(\'' + d + '\',event)">' + (d === DL_DB ? '✓ ' : '') + d + '</span>';
     }).join('');
   }
-  var h = '<table><tr><th>数据（中文/表名）</th><th style="width:96px">下载状态</th><th style="width:96px">速率·质量</th>'
-    + '<th style="width:84px">今日新增</th><th style="width:120px">下次下载</th><th style="width:150px">数据时间段</th>'
-    + '<th style="width:100px">数据源</th><th style="width:110px">VPN</th><th style="width:70px">行数</th><th style="width:130px">关联告警</th></tr>';
+  var h = "<table><tr>" + Object.keys(DL_COLS).map(dlTh).join("") + "</tr>";
   rows.forEach(function (t) {
     var stt = DL_STATE[t.state] || ['w', t.state];
     var rate = t.state === 'downloading' ? '<b>' + t.rate + '</b> 行/s · ' + t.quality : '—';
