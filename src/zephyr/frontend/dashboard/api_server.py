@@ -1079,10 +1079,20 @@ def sources_status() -> dict[str, Any]:
 
 # ── 数据下载监管真源（Owner 2026-09-03：表级下载实况——146 表新鲜度一页看全）────
 _SQL_TABLE_FRESH = (
-    "SELECT database, table, count() AS parts, sum(rows) AS rows, "
+    # 三库全表全集（含空表——子查询聚合+LEFT JOIN 保证 0 parts 表也出现，灰灯"未启动"DS-12）；
+    # 注意：CH LEFT JOIN 未命中填类型默认值（非 NULL），故用子查询预聚合——未匹配自然
+    # 得 parts=0/空串，禁改回"LEFT JOIN system.parts + count(p.name)"（默认行会被计数成 1）。
+    # 表状态真源=system.tables+parts，禁再回退到 parts-only 口径（16 张空表曾整页隐身）。
+    "SELECT t.database, t.name, p.parts, p.rows_, p.earliest, p.latest "
+    "FROM system.tables t "
+    "LEFT JOIN ("
+    "SELECT database, table, count() AS parts, sum(rows) AS rows_, "
     "min(partition) AS earliest, max(partition) AS latest "
     "FROM system.parts WHERE active AND database IN ('c0_meta','c1_market','c3_fundamental') "
-    "GROUP BY database, table ORDER BY database, table"
+    "GROUP BY database, table"
+    ") p ON p.database = t.database AND p.table = t.name "
+    "WHERE t.database IN ('c0_meta','c1_market','c3_fundamental') AND t.engine NOT LIKE '%%View%%' "
+    "ORDER BY t.database, t.name"
 )
 _SQL_INSERT_15M = (
     "SELECT query, written_rows, event_time FROM system.query_log "
@@ -1139,6 +1149,15 @@ _TABLE_ZH = {
     "share_change": "股本变动", "share_unlock": "限售解禁日历", "shareholder_count": "股东人数",
     "top10_circulating_shareholders": "十大流通股东", "top10_shareholders": "十大股东",
     "fetch_perf": "抓取性能记录",
+    # 2026-09-03 对账补齐（此前 18 张表页面显示裸表名）：无管道预留表/空表/归档快照
+    "account_nav_daily": "账户净值日频", "daban_board_event": "打板事件", "edb_data": "宏观 EDB（已退役）",
+    "etf_benchmark": "ETF 基准指数", "execution_report": "执行回报", "index_adjustment": "指数调整",
+    "ipo_schedule": "IPO 排期", "l2_tick": "Level-2 逐笔", "limit_up_pool": "涨停池",
+    "margin_target_adjustment": "两融标的调整", "market_index_meta": "市场指数元数据",
+    "msci_adjustment": "MSCI 调样", "reconciliation_differences": "对账差异",
+    "sector_fund_flow": "板块资金流", "stock_valuation": "个股估值（预留）", "suspend": "停牌清单",
+    "news_data_corrupt_20260828": "新闻数据（08-28 损坏快照·归档）",
+    "news_data_pre_tz2_20260828": "新闻数据（08-28 迁移前快照·归档）",
 }
 
 # 源 → VPN 属性（真源=源的网络属性登记：海外源需要 VPN；国内源禁 VPN——走代理反而连不上）
@@ -1157,23 +1176,34 @@ _SCHEDULE_ZH = {
     "daily_kline": "盘后日K（16:30）", "daily_capital": "盘后资金（18:00）", "daily_event": "盘后事件（19:00）",
     "weekend_financial": "周末财务", "monthly_static": "月初静态", "intraday_minute": "盘中分钟",
     "intraday_realtime": "盘中实时", "intraday_tick": "盘中 tick", "nightly_financial": "夜间财务（22:00）",
-    "weekend_calibration": "周末校准（周六 03:00）", "weekend_backfill": "周末补漏（周日 02:00）",
+    "weekend_calibration": "周末后校准（周一 03:00）", "weekend_backfill": "周末补漏（周一 02:00）",
     "daily_backfill": "每日补漏（17:00）", "news_slow": "慢速新闻（约 2h/轮）", "pre_market": "盘前（08:30）",
     "auction_highfreq": "集合竞价（09:15 起）", "intraday_sector": "盘中板块", "event_driven": "事件驱动（3min 轮询）",
-    "integrity_check": "完整性巡检（23:00）", "catchup_guard": "错过补跑（03:30）",
+    "integrity_check": "完整性巡检（23:00）", "catchup_guard": "错过补跑（05:30）",
 }
 
-# 时段 → cron（真源=schedule.yaml；下次调度计算用）
-_SCHEDULE_CRON = {
-    "pre_market": "30 8 * * 0-4", "intraday_realtime": "*/5 9-15 * * 0-4",
-    "intraday_minute": "*/5 9-15 * * 0-4", "intraday_sector": "*/5 9-15 * * 0-4",
-    "event_driven": "*/3 * * * *", "news_slow": "*/30 * * * *",
-    "daily_kline": "30 16 * * 0-4", "daily_capital": "00 18 * * 0-4", "daily_event": "00 19 * * 0-4",
-    "nightly_financial": "00 22 * * 0-4", "weekend_calibration": "00 3 * * 0",
-    "monthly_static": "00 9 1 * *", "weekend_backfill": "00 2 * * 0", "daily_backfill": "00 17 * * 0-4",
-    "integrity_check": "00 23 * * 0-4", "catchup_guard": "30 3 * * *",
-    "auction_highfreq": "*/10 9-15 * * 0-4",
-}
+# 时段 → cron（真源=schedule.yaml 动态加载，禁硬编码副本——2026-09-03 对账实证：
+# 硬编码 catchup_guard 03:30 vs 真源 05:30 漂移 2 小时；6 段 cron（含秒）剥离秒位兼容 5 段计算）
+def _load_schedule_crons() -> dict[str, str]:
+    """schedule.yaml → {时段: 5段cron}；6 段（含秒）剥离秒位；读取失败返回空（下次调度显示空，不炸端点）。"""
+    import yaml
+
+    path = _REPO / "src" / "zephyr" / "data" / "config" / "schedule.yaml"
+    try:
+        data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+        out: dict[str, str] = {}
+        for name, cfg in (data.get("schedules") or {}).items():
+            expr = str((cfg or {}).get("cron", "")).strip()
+            if not expr:
+                continue
+            fields = expr.split()
+            out[name] = " ".join(fields[-5:]) if len(fields) == 6 else expr
+        return out
+    except Exception:  # noqa: BLE001 — 真源读取失败降级空表，端点不炸
+        return {}
+
+
+_SCHEDULE_CRON = _load_schedule_crons()
 
 
 def _next_cron_run(expr: str) -> str:
@@ -1296,7 +1326,8 @@ def _dl_light(latest: str, table: str) -> tuple[str, int | None]:
 
 @app.get("/api/download-status")
 def download_status() -> dict[str, Any]:
-    """表级下载实况：146 表时间段/源/实时速率/VPN 联动（断更监管真源=CH system.parts+query_log）。"""
+    """表级下载实况：三库全表（含空表灰灯）时间段/源/实时速率/VPN 联动——
+    表状态真源=CH system.tables+parts；任务属性真源=tasks.yaml；时段真源=schedule.yaml 动态加载。"""
     import re as _re
 
     rows = _ch_exec(_SQL_TABLE_FRESH)
@@ -1370,7 +1401,10 @@ def download_status() -> dict[str, Any]:
         elif light == "yellow":
             state, rate, quality = "lagging", 0, "滞后"
         else:
-            state, rate, quality = ("idle", 0, "今日已完成" if light == "green" else "待机")
+            state, rate, quality = (
+                ("未启动", 0, "空表待管道") if light == "gray" and not nrows
+                else ("今日已完成", 0, "今日已完成") if light == "green" else ("待机", 0, "待机")
+            )
         tables.append({
             "db": db_s, "table": tbl_s,
             "name_zh": _TABLE_ZH.get(tbl_s, ""),
