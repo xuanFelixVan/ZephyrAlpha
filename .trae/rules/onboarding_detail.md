@@ -130,7 +130,7 @@ STEP 3: 复用决策（四选一）:
 
 **复用证据**: 因"已有覆盖"放弃新建时，写 `[REUSE-DECISION] 放弃新建 <X>，因为已有 <Y> 覆盖了 <Z>`。
 
-**后果量化**: 项目已有 483 脚本 + 43 门禁 + 4,639 模块 + 10 MCP 服务器。不搜索就新建 = 在 483 个脚本里造第 484 个重复。
+**后果量化**: 项目已有 755 脚本 + 86 门禁 + 7,106 模块 + 12 MCP 服务器。不搜索就新建 = 在 755 个脚本里造第 756 个重复。
 
 #### 4.1 生成器发现专项（RULE-EIGHT 生成器扩展条款）
 
@@ -702,7 +702,7 @@ STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() 
 | Session 状态机（5状态/7转换） | [`session-state-runbook.md`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/operational/vibe_coding/vibe-coding-session-state-runbook.md)（待创建） | ~800 |
 | 会话门禁检查清单（12项） | [`gate-runbook.md`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/operational/vibe_coding/vibe-coding-gate-runbook.md)（待创建） | ~600 |
 | AI 事故响应手册（P0/P1/P2） | [`incident-runbook.md`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/operational/vibe_coding/ai-incident-and-emergency-runbook.md)（待创建） | ~1500 |
-| Vibe Coding 操作入口 | [`vibe_coding/index.md`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/operational/vibe_coding/index.md) | ~300 |
+| Vibe Coding 操作入口 | [`vibe_coding/index.md`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/operational/vibe_coding/index.md)（待创建） | ~300 |
 | 术语表 | `docs/01_policies_and_standards/_registry/vocabularies/glossary.yaml`（待创建） | ~1000 |
 | 规则体系总索引 | `docs/01_policies_and_standards/index.md` | ~500 |
 | **AI 压缩工作流标准** | [`trae_030_doc_numbering_metadata.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml) | ~800 |

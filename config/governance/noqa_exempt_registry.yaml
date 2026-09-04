@@ -72,9 +72,9 @@ exemptions:
     category: business_subset
     reason: 'SSoT 动态加载，非硬编码'
   - file: scripts/governance/apply_depgraph.py
-    line: 1082
+    line: 1081
     category: arch_concept
-    reason: 'build_status 6态（B-007 P0 +production，2026-08-26 行号 910→1082 跟进），非 module_lifecycle_status'
+    reason: 'build_status 6态（B-007 P0 +production，2026-08-26 行号 910→1082 跟进、2026-09-05 复检 1082→1081 跟进），非 module_lifecycle_status'
   - file: scripts/governance/apply_depgraph.py
     line: 1380
     category: business_subset
@@ -378,7 +378,7 @@ exemptions:
     # reason 与代码行内注释逐字一致（reason fallback 漂移免疫关键——旧值与代码理由完全不同致 fallback 失效）
     reason: 'Win32 API 常量名为平台既定术语非治理词表违规'
   - file: scripts/governance/meta/backup_runtime_state.py
-    line: 207
+    line: 220  # 行号自 L207 漂移更新（2026-09-05 AI-AUDIT02-001 复检跟进）
     category: arch_concept
     reason: 'Windows API 常量 PROCESS_QUERY_LIMITED_INFORMATION，非阈值变量'
 
