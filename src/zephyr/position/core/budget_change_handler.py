@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] BudgetChangeError(ZA-POS-0040); StateRecoveryError(ZA-POS-0044); RebalanceTimeoutError(ZA-POS-0042,设计内非致命仅作Tier3触发条件不落异常)
+# [ERROR_CONTRACT] BudgetChangeError(ZA-POS-0040); StateRecoveryError(ZA-POS-0044)；Tier2 convergence_window 超时与 firm 风险违例=Tier3 触发条件（设计内非致命，非异常类，无错误码；2026-09-05 AI-AUDIT10 对齐实物，原 RebalanceTimeoutError(ZA-POS-0042) 为幻影声明）
 # [TESTS] tests/position/test_budget_change_handler.py
 # [A_module] module_id=MOD-POS-022 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent

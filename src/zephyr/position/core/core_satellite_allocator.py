@@ -144,7 +144,7 @@ logger = logging.getLogger(__name__)
 class CoreSatelliteError(ZephyrBaseError):
     """核心-卫星仓位管理输入非法或约束越界。"""
 
-    error_code = "ZA-POS-0027"  # 待登记, 建议 ZA-POS-0025
+    error_code = "ZA-POS-0027"  # 已登记 error_code_registry.yaml（AI-AUDIT10-001 复核 2026-09-05，原"待登记,建议 ZA-POS-0025"死注释漂移删除）
 
 
 # ──────────────────────────────────────────────────────────────────────────────
