@@ -34,7 +34,7 @@ entry_conditions:
   severity: error
   on_failure: flag
   verifiable: true
-  verification_method: python tests/test_g_trae_010.py
+  verification_method: python tests/trae_rules/test_g_trae_010.py
   rule_ids:
   - TRAE-010
   anti_pattern:
@@ -51,7 +51,7 @@ entry_conditions:
   severity: error
   on_failure: flag
   verifiable: true
-  verification_method: python tests/test_g_trae_010.py
+  verification_method: python tests/trae_rules/test_g_trae_010.py
   rule_ids:
   - TRAE-010
   anti_pattern:
@@ -66,7 +66,7 @@ entry_conditions:
   severity: error
   on_failure: flag
   verifiable: true
-  verification_method: python tests/test_g_trae_010.py
+  verification_method: python tests/trae_rules/test_g_trae_010.py
   rule_ids:
   - TRAE-010
   anti_pattern:
@@ -81,7 +81,7 @@ entry_conditions:
   severity: error
   on_failure: flag
   verifiable: true
-  verification_method: python tests/test_g_trae_010.py
+  verification_method: python tests/trae_rules/test_g_trae_010.py
   rule_ids:
   - TRAE-010
   anti_pattern:
@@ -96,7 +96,7 @@ entry_conditions:
   severity: error
   on_failure: flag
   verifiable: true
-  verification_method: python tests/test_g_trae_010.py
+  verification_method: python tests/trae_rules/test_g_trae_010.py
   rule_ids:
   - TRAE-010
   anti_pattern:

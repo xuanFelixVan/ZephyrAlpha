@@ -34,7 +34,7 @@ entry_conditions:
   severity: error
   on_failure: reject
   verifiable: true
-  verification_method: python tests/test_g_trae_006.py
+  verification_method: python tests/trae_rules/test_g_trae_006.py
   rule_ids:
   - TRAE-006
   anti_pattern:
