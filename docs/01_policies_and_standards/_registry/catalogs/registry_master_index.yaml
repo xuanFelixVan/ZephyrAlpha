@@ -1,8 +1,8 @@
-# 自动生成于 2026-09-04T17:15:54Z
+# 自动生成于 2026-09-04T20:48:56Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-09-04T17:15:54Z'
+generated_at: '2026-09-04T20:48:56Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
 total_registries: 46
@@ -325,7 +325,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 228
+  entry_count: 229
   status: active
 - registry_id: REG-RULING-001
   name: 裁定中央登记表
