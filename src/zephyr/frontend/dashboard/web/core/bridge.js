@@ -4,9 +4,9 @@
 var BR_ST = null;
 var BR_TIMER = null;
 
-/* 盘中实测基线（93 号备忘 §12.6，2026-09-04 三方对比 5 次取中位） */
+/* 盘中实测基线（93 号备忘 §12.6，2026-09-04 三方对比 5 次取中位——历史实测，不受当前桥状态影响） */
 var BR_SPEED_BASE = [
-  { item: '下单端到端（指令→柜台受理）', http: '32ms', mini: '41ms', note: 'HTTP 已追平基线（0.78×）' },
+  { item: '下单端到端（指令→柜台受理）', http: '32ms（5 次中位，1 次超时毛刺）', mini: '41ms', note: '同档位：追平基线，消除迁移性能顾虑（非反超）' },
   { item: '撤单指令', http: '亚秒（直投）', mini: '41ms', note: 'HTTP 撤单同通道直投' },
   { item: '行情快照滞后', http: '3-6s（v17 线程）', mini: '1.2-3.2s', note: '数据源同为 3s 快照，桥开销 +2-4s' },
   { item: '成交回报感知', http: '秒级（deals_events）', mini: '回调即时', note: '轮询模型，盯盘够用' },
@@ -63,10 +63,10 @@ function brRenderKpi() {
 function brRenderSpeed() {
   var st = BR_ST; var box = document.getElementById('br-speed'); if (!box || !st) return;
   var alive = st.http && st.http.alive;
-  var h = '<table><tr><th>指标</th><th style="width:170px">QMT HTTP 桥</th><th style="width:170px">miniQMT（基线）</th><th>说明</th></tr>';
+  var h = '<table><tr><th>指标</th><th style="width:190px">QMT HTTP 桥<span class="dim" style="font-weight:400;font-size:10px">（盘中实测基线）</span></th><th style="width:170px">miniQMT<span class="dim" style="font-weight:400;font-size:10px">（基线）</span></th><th>说明</th></tr>';
   BR_SPEED_BASE.forEach(function (r) {
     h += '<tr><td><b>' + r.item + '</b></td>'
-      + '<td class="' + (alive ? 'up' : '') + '" style="font-weight:600">' + (alive ? r.http : r.http + '（桥离线）') + '</td>'
+      + '<td class="up" style="font-weight:600">' + r.http + '</td>'
       + '<td style="color:var(--dim)">' + r.mini + '</td>'
       + '<td style="font-size:11px;color:var(--dim)">' + r.note + '</td></tr>';
   });
