@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §3.1
 # [MODULE] zephyr.trading.verdict_engine
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES] zephyr.gov_audit.models
-# [CONSUMERS] MOD-INF-027(audit-orchestrator);MOD-INF-031(auto-fix-engine);zephyr.trading.admission_controller
+# [DEPENDENCIES] (none — stdlib + pydantic only)
+# [CONSUMERS] zephyr.trading.gpu_consensus_scheduler; zephyr.trading.protection_index; tests/governance/audit/test_verdict_engine.py; tests/trading/test_gpu_consensus_scheduler.py; tests/trading/test_protection_index.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] VerdictLevel三态判定不可扩展；GraduatedLevel升级矩阵由protection_level+gate+violations联合决定

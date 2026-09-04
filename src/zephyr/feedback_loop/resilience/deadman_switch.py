@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.feedback_loop.resilience.deadman_switch
 # [DOMAIN] D_FEEDBACK_LOOP
-# [DEPENDENCIES]
-# [CONSUMERS]
+# [DEPENDENCIES] (none — stdlib only)
+# [CONSUMERS] zephyr.data.tick_subscriber; zephyr.ex_core.live_strategy_adapter; zephyr.risk.core.emergency_stop_confirmation; zephyr.frontend.dashboard.services_registry
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none
@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS]
+# [TESTS] tests/feedback/test_deadman_switch.py
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

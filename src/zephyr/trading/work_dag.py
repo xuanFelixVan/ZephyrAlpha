@@ -2,7 +2,7 @@
 # [MODULE] zephyr.trading.work_dag
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.shared.schema.schemas
-# [CONSUMERS]
+# [CONSUMERS] zephyr.trading.auto_runtime_core; zephyr.trading.work_orchestrator; zephyr.plan_engine.premarket_workflow
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none

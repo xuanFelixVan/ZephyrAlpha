@@ -2,7 +2,7 @@
 # [MODULE] zephyr.trading.finalizer
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.trading.__init__
-# [CONSUMERS]
+# [CONSUMERS] zephyr.trading.boot_hooks
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none

@@ -50,6 +50,7 @@ JSONL 持久化 + 线程安全。
 """
 
 import json
+import logging
 import threading
 from datetime import datetime
 from pathlib import Path
@@ -57,8 +58,11 @@ from pathlib import Path
 from pydantic import BaseModel, Field
 
 from zephyr.shared.io.serialization import filter_dataclass_fields
+
 from zephyr.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.utils.time_utils import now_utc
+
+logger = logging.getLogger(__name__)
 
 
 class NightShiftEntry(BaseModel):
@@ -124,7 +128,8 @@ class NightShiftQueue:
                     entry = NightShiftEntry(**filter_dataclass_fields(NightShiftEntry, data))
                     if entry.human_decision is None:
                         results.append(entry)
-                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                    logger.warning("night_shift_queue.pending: skip malformed line: %s", e)
                     continue
         return results
 
@@ -169,7 +174,8 @@ class NightShiftQueue:
                     total += 1
                     if data.get("human_decision") is not None:
                         resolved += 1
-                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                    logger.warning("night_shift_queue.stats: skip malformed line: %s", e)
                     continue
         return {"total": total, "pending": total - resolved, "resolved": resolved}
 

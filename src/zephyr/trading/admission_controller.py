@@ -2,7 +2,7 @@
 # [MODULE] zephyr.trading.admission_controller
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.__init__
-# [CONSUMERS] zephyr.trading.verdict_engine;MOD-INF-027(audit-orchestrator)
+# [CONSUMERS] zephyr.integration.behavioral_admission.admission_response; tests/trading/test_admission_controller.py; tests/trading/test_admission_response.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] TokenBucket全局桶50/s burst=100不可绕过；熔断器failure_threshold触发后所有请求CIRCUIT_OPEN
