@@ -67,6 +67,8 @@ window.ZK_BUILD='20260904-33';
   }).then(function(){
     return loadJs('core/backtest.js');
   }).then(function(){
+    return loadJs('features/backtest/bt-battle-stage.js');   /* 策略所处环节（作战地图阶段树真源 /api/battle-map-flow，Owner 2026-09-04 一期） */
+  }).then(function(){
     return loadJs('core/services.js');   /* 服务总闸页（启动编排：17 启动项四态灯+分级开关，真源 /api/services-status） */
   }).then(function(){
     return loadJs('core/datasrc.js');   /* 数据源监管页（源清单健康探针真源+alerter 告警流水，真源 /api/sources-status） */
