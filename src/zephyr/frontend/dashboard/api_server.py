@@ -1433,6 +1433,91 @@ def download_status() -> dict[str, Any]:
             "generated_at": datetime.now().isoformat(" ", "seconds")}
 
 
+# ── 交易通道监控（Owner 2026-09-04：HTTP 桥独立监护页——量化系统主动脉）──────
+# 真源：HTTP 桥 GET /health（EXEC v16.4 沙箱内 18901）+ 实测下单延迟（HTTP vs miniqmt 探针）
+# + 桥文件族活性（orders/ack/quote/Stock CSV）+ 柜台挂单/成交 CSV 回报
+
+
+def _bridge_http_health() -> dict[str, Any]:
+    """探活沙箱 EXEC HTTP 桥（18901）：连接+GET /health 计数器。"""
+    import socket as _sock
+
+    t0 = time.time()
+    try:
+        with _sock.create_connection(("127.0.0.1", 18901), timeout=2.0) as s:
+            s.sendall(b"GET /health HTTP/1.0\r\n\r\n")
+            buf = b""
+            while b"\r\n\r\n" not in buf:
+                c = s.recv(4096)
+                if not c:
+                    return {"alive": False, "detail": "连接后静默关闭", "ms": round((time.time() - t0) * 1000)}
+                buf += c
+            body = buf.decode("utf-8", "ignore").split("\r\n\r\n", 1)[-1]
+            stats: dict[str, str] = {}
+            for kv in body.split():
+                if "=" in kv:
+                    k, v = kv.split("=", 1)
+                    stats[k] = v
+            return {"alive": True, "detail": body, "stats": stats,
+                    "ms": round((time.time() - t0) * 1000)}
+    except OSError as e:
+        return {"alive": False, "detail": str(e)[:60], "ms": round((time.time() - t0) * 1000)}
+
+
+def _bridge_file_fresh() -> list[dict[str, Any]]:
+    """桥文件族活性（orders/ack/quote/deals_events + Stock 族 CSV）。"""
+    checks = [
+        ("指令文件", "E:\\qmt_bridge_sim\\orders_sim.csv"),
+        ("回执文件", "E:\\qmt_bridge_sim\\ack_sim.csv"),
+        ("行情流", "E:\\qmt_bridge_sim\\quote.csv"),
+        ("成交事件", "E:\\ZephyrAlpha\\deals_events.txt"),
+        ("持仓导出", "E:\\qmt_bridge_sim\\Stock\\PositionStatics.csv"),
+        ("成交导出", "E:\\qmt_bridge_sim\\Stock\\Deal.csv"),
+    ]
+    out = []
+    for name, path in checks:
+        p = Path(path)
+        if not p.exists():
+            out.append({"name": name, "light": "red", "detail": "文件不存在"})
+            continue
+        age_s = time.time() - p.stat().st_mtime
+        if age_s < 60:
+            light, detail = "green", f"{round(age_s)}s 前更新"
+        elif age_s < 3600:
+            light, detail = "yellow", f"{round(age_s/60)} 分钟前"
+        else:
+            light, detail = "gray", f"{round(age_s/3600)} 小时前"
+        out.append({"name": name, "light": light, "detail": detail})
+    return out
+
+
+@app.get("/api/bridge-status")
+def bridge_status() -> dict[str, Any]:
+    """交易通道监控真源：HTTP 桥全环节健康 + 双通道延迟对比 + miniqmt 退役倒计时。"""
+    http = _bridge_http_health()
+    files = _bridge_file_fresh()
+    # miniqmt 存活（9/16 退役倒计时——退役前它是对比基线）
+    import socket as _sock
+
+    mini_alive = False
+    try:
+        # xtdata 快照通道（58610 由 QMT 客户端起）非严格判定，用进程特征兜底
+        import subprocess as _sp
+
+        r = _sp.run(["tasklist", "/FI", "IMAGENAME eq XtMiniQmt.exe"], capture_output=True, text=True, timeout=5)
+        mini_alive = "XtMiniQmt.exe" in (r.stdout or "")
+    except Exception:  # noqa: BLE001
+        mini_alive = False
+    return {
+        "ok": True,
+        "http": http,
+        "files": files,
+        "mini_alive": mini_alive,
+        "retire_date": "2026-09-16",
+        "generated_at": datetime.now().isoformat(" ", "seconds"),
+    }
+
+
 def main() -> None:
     import uvicorn
 

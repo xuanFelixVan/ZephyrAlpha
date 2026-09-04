@@ -1,9 +1,9 @@
 /* R22 拆分版加载器：fetch 41 页面片段注入 main → 顺序加载 core/app1~4.js → backtest.js（保持原单文件执行时序；backtest.js 依赖 app1 全局工具故最后）
  * 版本戳 ZK_BUILD：loader.js 经 ?v=Date.now() 破缓存加载，必为最新——页头品牌行若缺"b<版本>"即浏览器在跑旧代码（"改了看不到"类问题一键定位，2026-09-01 实证：⚑12 不显示=浏览器残留 2.5h 前旧 JS） */
-window.ZK_BUILD='20260904-31';
+window.ZK_BUILD='20260904-32';
 (function(){try{var el=document.querySelector('.tb-brand small');if(el&&(' '+el.textContent+' ').indexOf('b'+window.ZK_BUILD)<0)el.textContent+=' · b'+window.ZK_BUILD;}catch(e){}})();
 (function(){
-  var PAGES = ["home", "overview", "warroom", "live", "sector", "sentiment", "news", "policy", "overseas", "t0", "review", "index", "position", "backtest", "experiment", "task", "fitness", "govana", "modledger", "sysstatus", "services", "pano", "projmap", "macro", "chainmap", "strategy", "factor", "stock", "screener", "calendar", "reglib", "datainfo", "stockq", "cryptomarket", "cryptopos", "cryptostrat", "cryptobt", "cryptoinfo", "design", "modlib", "rating", "datasrc", "download", "models", "aichat", "aitask"];
+  var PAGES = ["home", "overview", "warroom", "live", "sector", "sentiment", "news", "policy", "overseas", "t0", "review", "index", "position", "backtest", "experiment", "task", "fitness", "govana", "modledger", "sysstatus", "services", "pano", "projmap", "macro", "chainmap", "strategy", "factor", "stock", "screener", "calendar", "reglib", "datainfo", "stockq", "cryptomarket", "cryptopos", "cryptostrat", "cryptobt", "cryptoinfo", "design", "modlib", "rating", "datasrc", "download", "bridge", "models", "aichat", "aitask"];
   var main = document.getElementById('main-root');
   function loadJs(src){
     return new Promise(function(res, rej){
@@ -72,6 +72,8 @@ window.ZK_BUILD='20260904-31';
     return loadJs('core/datasrc.js');   /* 数据源监管页（源清单健康探针真源+alerter 告警流水，真源 /api/sources-status） */
   }).then(function(){
     return loadJs('core/download.js');   /* 数据下载监管页（表级下载实况 146 表新鲜度四态灯，真源 /api/download-status） */
+  }).then(function(){
+    return loadJs('core/bridge.js');   /* 交易通道监控页（HTTP 桥全环节健康+速度 vs miniqmt 对比，真源 /api/bridge-status） */
   }).then(function(){
     return loadJs('core/home.js');   /* 首页三件套（结论墙/布局引擎/AI 对话框）——最后加载，依赖全部页面片段已在 DOM */
   }).then(function(){

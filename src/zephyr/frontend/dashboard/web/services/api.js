@@ -77,6 +77,9 @@ ZK.api = (function(){
     fetchDownloadStatus: function(){   /* 数据下载监管真源（146 表最新分区/行数/新鲜度） */
       return fetchJson('/api/download-status', 10000);
     },
+    fetchBridgeStatus: function(){   /* 交易通道监控真源（HTTP 桥探活+桥文件族活性+miniqmt 存活） */
+      return fetchJson('/api/bridge-status', 10000);
+    },
     /* ── SWR 缓存（stale-while-revalidate，2026-09-03 Owner「刷新立即出画面」诉求）──
      * 刷新后先渲染 localStorage 里上次响应（毫秒级，数据自带时间戳可见新鲜度），后台拉新到达后覆盖。
      * 演示诚实纪律：缓存态渲染时由调用方标注"上次更新 HH:MM"，新数据到达后消失。 */

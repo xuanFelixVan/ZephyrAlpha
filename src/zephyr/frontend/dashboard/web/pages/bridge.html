@@ -1,0 +1,28 @@
+<section class="page" id="p-bridge">
+    <h2 class="page-title">交易通道监控 <span class="badge b-pass">真源</span> <span class="badge b-warn" id="br-countdown"></span></h2>
+    <div class="page-sub">执行组 · <b>量化系统主动脉</b>——miniQMT 2026-09-16 退役，QMT HTTP 桥（EXEC v16.4 沙箱内 18901）接班。本页专职监控：下单速度（HTTP 桥 vs miniQMT 并排对比）+ 全环节健康四态灯</div>
+
+    <!-- 总览卡（JS 渲染） -->
+    <div class="row c5" id="br-kpi"></div>
+
+    <!-- 速度对比表：HTTP 桥 vs miniQMT 双列（JS 渲染） -->
+    <div class="card" style="margin-top:14px">
+      <h3>速度对比 <span class="dim">HTTP 桥 vs miniQMT——盘中实测锚点（93 号备忘 §12.6）+ 探活实测；有对比才知道桥是否正常</span></h3>
+      <div id="br-speed"></div>
+    </div>
+
+    <!-- 全环节健康（JS 渲染） -->
+    <div class="row c2" style="margin-top:14px">
+      <div class="card">
+        <h3>桥环节健康 <span class="dim">下单链路：HTTP 桥 → 沙箱 EXEC → 柜台 → 回执</span></h3>
+        <div id="br-http"></div>
+      </div>
+      <div class="card">
+        <h3>桥文件族活性 <span class="dim">指令/回执/行情/成交/持仓——数据通道的血条</span></h3>
+        <div id="br-files"></div>
+      </div>
+    </div>
+
+    <div class="note">监控口径：HTTP 桥探活=GET /health（2s 超时，回设计数器 tick/http_ok/thread_ok）；速度基线=2026-09-04 盘中三方实测（HTTP 32ms / miniQMT 41ms / 文件兜底 5.7s 中位）；行情=v17 线程 200ms 轮询。miniQMT 退役后其列转为历史基线（灰显）。交易时段外（午休/收盘）线程冻结属正常——HTTP 探活降级黄灯不告警</div>
+  </section>
+
