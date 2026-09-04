@@ -2,8 +2,9 @@
 # [MODULE] zephyr.governance.agent-spec
 # [DOMAIN] D_GOVERNANCE
 # [A_module] module_id=MOD-INF-019 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TESTS] none
 # [TTL] permanent
-# Phase 1 gate marker (kebab-case dir). Implementation in zephyr.governance.context_governance.agent_spec.
+# Phase 1 gate marker (kebab-case dir). Implementation in zephyr.governance.agent_spec.
 
 """agent-spec — Phase 1 gate marker 包（kebab-case 目录）。
 
@@ -17,7 +18,7 @@
 # - id: A1
 #   name_zh: 阶段标记声明
 #   name_en: phase1_marker_declare
-#   intro: 仅声明 AGENT_SPEC_PHASE1_MARKER；实现在 context_governance.agent_spec
+#   intro: 仅声明 AGENT_SPEC_PHASE1_MARKER；实现在 agent_spec (zephyr.governance.agent_spec)
 # 层: 输出
 # - id: O1
 #   name_zh: 阶段门标记

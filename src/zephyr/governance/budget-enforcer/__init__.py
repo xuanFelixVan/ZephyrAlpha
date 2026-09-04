@@ -2,6 +2,7 @@
 # [MODULE] zephyr.governance.budget-enforcer
 # [DOMAIN] D_GOV_OPS_RESILIENCE
 # [A_module] module_id=MOD-INF-024 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TESTS] none
 # [TTL] permanent
 # Phase 1 gate marker (kebab-case dir). Implementation in zephyr.governance.financial_governance.budget_enforcement.
 

@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-TASK_SYSTEM | (auto-injected by S4 reconciler) | §
+# [TESTS] none
 # [TTL] permanent
 # [A_module] module_id=MOD-GOV-architecture_governance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """

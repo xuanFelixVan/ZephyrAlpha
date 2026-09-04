@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §registry
 # [MODULE] zephyr.governance.capability_lookup
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.shared.infra.process_pool (run_subprocess_hidden); zephyr.shared.io.paths (MAIN_REPO_ROOT, REPO_ROOT)
 # [CONSUMERS] AI sessions (查询能力真源); GitCommitGateway (check_ssot_conflicts, check_capability_duplicates); scaffold (find_files_by_module_path); check_ssot_gate (check_ssot_conflicts, check_capability_duplicates)
 # [STARTUP] manual
 # [MATURITY] production

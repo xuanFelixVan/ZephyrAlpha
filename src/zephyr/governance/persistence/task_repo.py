@@ -10,8 +10,8 @@
 # [STABILITY] frozen
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ValueError on template validation failure; GateViolationError on invalid state transitions; StaleClaimError on timeout recovery
-# [TESTS] tests/test_mcp_task_claim.py; tests/test_boot_hooks_unlock.py
+# [ERROR_CONTRACT] ValueError on template validation failure; GateViolationError (zephyr.gov_enforcement.rule_enforcement.gate_types) on invalid state transitions
+# [TESTS] tests/trading/unit/test_task_repo_unit.py; tests/db/test_task_repo_db.py
 # [A_module] module_id=MOD-TASK_SYSTEM | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

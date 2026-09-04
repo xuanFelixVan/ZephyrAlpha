@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError if D-DATA modules unavailable; KeyError if registry key invalid
-# [TESTS] tests/test_shared_core.py
+# [TESTS] none
 # [A_module] module_id=MOD-INF-024 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

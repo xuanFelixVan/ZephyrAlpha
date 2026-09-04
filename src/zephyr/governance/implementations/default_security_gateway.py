@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.implementations.default_security_gateway
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.security_governance.default_security_gateway
-# [CONSUMERS]
+# [CONSUMERS] zephyr.governance.implementations.__init__ (re-export); tests/phase/test_phase_c_import_chain.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none

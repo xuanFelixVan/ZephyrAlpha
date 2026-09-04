@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] CH不可达->RuntimeError; 无数据->返回空DataFrame(调用方跳过该标的)
-# [TESTS] scripts/run_backtest.py --strategy topn-momentum --mode tick（端到端）
+# [TESTS] none
 # [A_module] module_id=MOD-BT-CHTP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """

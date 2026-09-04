@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] execute() 透传 psycopg2.Error 给调用方；close() 永不抛异常
-# [TESTS] tests/test_depgraph_db.py（间接 via DepgraphReader）
+# [TESTS] tests/governance/depgraph/test_depgraph_db.py (indirect via DepgraphReader)
 # [TTL] permanent
 """
 

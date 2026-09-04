@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] raises RuntimeError on schema mismatch; OperationalError on DDL errors
-# [TESTS] tests/test_dataflowgraph_schema.py
+# [TESTS] none
 # [A_module] module_id=SH-DB-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-051

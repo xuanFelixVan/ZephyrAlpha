@@ -1,5 +1,6 @@
 # [BLUEPRINT] MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.persistence
+# [TESTS] none
 # [TTL] permanent
 # zephyr.governance.persistence 包
 #
