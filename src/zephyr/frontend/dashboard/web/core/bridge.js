@@ -44,11 +44,18 @@ function brRenderKpi() {
   var st = BR_ST; var k = document.getElementById('br-kpi'); if (!k || !st) return;
   var h = st.http || {};
   var alive = h.alive;
-  // 倒计时
+  // 倒计时（天/小时双粒度：>1 天显示 N 天，<1 天显示 N 小时——退役当天可见最后冲刺）
   var cd = document.getElementById('br-countdown');
   if (cd) {
-    var days = Math.ceil((new Date(st.retire_date) - new Date()) / 86400000);
-    cd.textContent = 'miniQMT 退役倒计时 ' + Math.max(0, days) + ' 天';
+    var end = new Date(st.retire_date + 'T23:59:59');
+    var diffMs = end - new Date();
+    if (diffMs <= 0) {
+      cd.textContent = 'miniQMT 已退役（' + st.retire_date + '）';
+    } else {
+      var days = Math.floor(diffMs / 86400000);
+      var hours = Math.floor((diffMs % 86400000) / 3600000);
+      cd.textContent = 'miniQMT 退役倒计时 ' + (days > 0 ? days + ' 天' + (hours > 0 ? ' ' + hours + ' 小时' : '') : hours + ' 小时');
+    }
   }
   var httpOk = h.stats ? (parseInt(h.stats.http_ok || '0', 10) + parseInt(h.stats.thread_ok || '0', 10)) : 0;
   var badFiles = (st.files || []).filter(function (f) { return f.light === 'red'; }).length;

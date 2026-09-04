@@ -1513,7 +1513,7 @@ def bridge_status() -> dict[str, Any]:
         "http": http,
         "files": files,
         "mini_alive": mini_alive,
-        "retire_date": "2026-09-16",
+        "retire_date": "2026-09-18",
         "generated_at": datetime.now().isoformat(" ", "seconds"),
     }
 
