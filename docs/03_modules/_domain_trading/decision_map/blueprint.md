@@ -106,7 +106,7 @@ tests/trading/test_decision_map.py：正常加载/schema 错误/三类引用缺�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-TRADING-015 | MOD-TRADING-015 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | testing | testing | ✅ |
+| build_status | production | production | ✅ |
 | file_count | 1 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
