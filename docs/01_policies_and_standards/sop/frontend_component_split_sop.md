@@ -7,12 +7,13 @@ title: 前端组件拆分与数据接通 SOP（stockq 页实证）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.1.0"
-date: 2026-09-01
+version: "1.2.0"
+date: 2026-09-04
 topic: frontend_component_split_sop
 scope: frontend
 depends_on:
   - trae_086_frontend_module_construction
+  - construction_workflow_sop
 related_issues: []
 related_modules:
   - src/zephyr/frontend/dashboard/api_server.py
@@ -26,7 +27,8 @@ related_modules:
 > **来源**：2026-09-01 stockq 页 sq-stock-header / sq-search-box 拆分实证；v1.1.0 增量合并当日全量实证（QMT 文件桥真源 / 事件行 / Electron 桌面壳 / 首页纯视频 / 浏览器缓存排查法）。
 > **核心原则**：单一功能 = 单一组件 = 积木（TRAE-086）。
 > **目标**：拆件 → 登记 → 接数据 → 验收 → 提交，四件套闭环。
-> **v1.1.0 变更**：①"改了不显示"排查流程（版本戳 ZK_BUILD）②QMT 文件桥数据源变体（GBK/列序/四态灯）③媒体素材纪律（派生图/视频）④Electron 壳段落扩写（主题切换/首页纯视频）⑤组件状态表更新。
+> **上游入口（Owner 2026-09-04 接线）**：本 SOP 由 [construction_workflow_sop.md](construction_workflow_sop.md) **Step 3.5 拆件判定**触发——后端盘点先行产出数据源清单（拆件第一判据=数据源边界，盘点是拆件的输入）；判定"有得拆"→ 走本 SOP 8 步闭环，"没得拆"→ 回总 SOP Step 4 直接施工。本 SOP Step 3（API 接口）= 后端盘点"没有→先建后端"分支的落地动作。
+> **v1.2.0 变更**：接入总施工流程——上游入口声明 + Step 1 补后端盘点输入要求。
 
 ---
 
@@ -90,6 +92,8 @@ related_modules:
 ## 三、施工流程（8 步闭环）
 
 ### Step 1：拆分清单规划（_working 临时文档）
+
+**前置输入**：总 SOP Step 3.5 后端盘点的数据源清单（每区块的数据源结论：有且唯一/有重复/没有）——拆件第一判据=数据源边界，没有盘点就没有拆件依据；清单中"没有"端点的区块，其落地=本 SOP Step 3（API 接口）。
 
 - 在 `docs/_working/` 建拆分清单（task_bound，不入持久记忆）
 - 列出所有组件：名称/文件/功能语义/数据源/交互行为/验收单

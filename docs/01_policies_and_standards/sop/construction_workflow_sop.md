@@ -7,7 +7,7 @@ title: 07 域施工流程标准作业规程（SOP）——端到端 15 步施工
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.5.1"
+version: "1.5.2"
 date: 2026-08-12
 topic: construction_workflow_sop
 scope: global
@@ -123,7 +123,7 @@ python scripts/ide_health_service.py --start
 # - .trae/rules/project_rules.md（L0 硬规则，FIRST-READ 6 步）
 # - 本 SOP（construction_workflow_sop.md）
 # - alignment_checklist.md（全项目对齐清单——六图+注册表+代码文档三层对齐规则，新 AI 必知）
-# - 涉前端施工加读：docs/03_modules/_domain_frontend/frontend_handbook/（避坑事实库）+ trae_086_frontend_module_construction.yaml（拆件铁律）
+# - 涉前端施工加读：docs/03_modules/_domain_frontend/frontend_handbook/（避坑事实库）+ trae_086_frontend_module_construction.yaml（拆件铁律）+ sop/frontend_component_split_sop.md（拆件操作闭环——Step 3.5 判定"有得拆"时的施工路径真源）
 
 # 3. Session Continuity 恢复
 python scripts/lock_files.py status
@@ -295,13 +295,14 @@ python scripts/governance/d5_architecture/generators/align_all.py
 
 ---
 
-### Step 3.5 · 后端盘点（前端施工前置，Owner 2026-09-04 立规，TRAE-086 §truth_source_wiring）
+### Step 3.5 · 后端盘点与拆件判定（前端施工前置，Owner 2026-09-04 立规，TRAE-086 §truth_source_wiring + §split_judgment）
 
 **何时触发**：前端页面新建/改造/加数据区块（UI 动了数据面的每一刀）
 **前置条件**：Step 1 文档审查完成
-**操作摘要**：取数清单 → 后端三查 → 三分支决策 → 接线验收
+**操作摘要**：取数清单 → 后端三查 → 三分支决策 → 拆件判定 → 接线验收
 **引用真源**：
-- [trae_086_frontend_module_construction.yaml](../rules/trae_086_frontend_module_construction.yaml) §truth_source_wiring（铁律全文）
+- [trae_086_frontend_module_construction.yaml](../rules/trae_086_frontend_module_construction.yaml) §truth_source_wiring（铁律全文）+ §split_judgment（拆件判据）
+- [frontend_component_split_sop.md](frontend_component_split_sop.md)（拆件操作闭环——"有得拆"分支的施工路径真源）
 - [data_asset_registry.yaml](../_registry/catalogs/data_asset_registry.yaml)（数据资产登记，查"后端有没有"第二查）
 - FRONTEND-TRUTH-SOURCE gate（commit 阶段 warn 兜底，审计 .runtime/gate_audit/frontend_truth_source.jsonl）
 
@@ -312,10 +313,13 @@ python scripts/governance/d5_architecture/generators/align_all.py
    - 有且唯一 → `services/api.js` 加 fetch 助手，页面只消费
    - 有重复 → **先治后端**：裁定唯一真源、废弃其余，再接（禁止前端"挑一个好用的接着用"）
    - 没有 → **先建后端**：立项加端点（真源走 registry 登记），端点验收后前端才接线；此前最多画占位骨架，**禁止造数据顶上**
-4. **接线验收**：页面真源徽章亮 + 端点实测返回；演示回退（若有）必须标"断线·演示"（演示诚实纪律，15s 自动重试至真源）
-**通过判据**：每条数据需求都有唯一后端真源且前端已接线
-**不通过处置**：发现重复真源 → 先治理合并；后端缺失 → 立项建端点，禁止前端自建数据
-**产出物**：盘点结论留痕（进设计备忘或验收单 ACC-*.yaml）
+4. **拆件判定**（后端盘点先行供输入——拆件第一判据=数据源边界，没有数据源清单就没法判）：按 TRAE-086 §split_judgment 四判据逐区块过（数据源边界/单一功能/经典五信号/反向不拆）：
+   - **有得拆** → 转入 [frontend_component_split_sop.md](frontend_component_split_sop.md) 8 步拆件闭环施工（其 Step 3 API 接口=本步"没有→先建后端"分支的落地），拆完回本 SOP Step 4 续行
+   - **没得拆** → 直接进 Step 4 施工编码
+5. **接线验收**：页面真源徽章亮 + 端点实测返回；演示回退（若有）必须标"断线·演示"（演示诚实纪律，15s 自动重试至真源）
+**通过判据**：每条数据需求都有唯一后端真源且前端已接线 + 拆件判定结论留痕（拆/不拆+判据）
+**不通过处置**：发现重复真源 → 先治理合并；后端缺失 → 立项建端点，禁止前端自建数据；该拆不拆 → 回拆件闭环
+**产出物**：盘点结论+拆件判定留痕（进设计备忘或验收单 ACC-*.yaml）
 
 ### Step 4 · 施工编码
 
@@ -749,7 +753,7 @@ python scripts/session_worktree.py cleanup <sid>
 | 10 | Step 9 文件完整性确认（无回退/无清理/无丢失） | ☐ |
 | 11 | Step 10 GitCommitGateway 落地（commit hash 已生成） | ☐ |
 | 12 | Step 11+12 临时文件清理 + worktree 合并完成（或暂保留逃生通道） | ☐ |
-| 13 | **Step 3.5 后端盘点完成（前端任务必做）**：每条数据需求有唯一后端真源且前端已接线；有重复真源先治后端；缺端点先建后端；演示回退（若有）已标"断线·演示"（TRAE-086 §truth_source_wiring + FRONTEND-TRUTH-SOURCE gate） | ☐ |
+| 13 | **Step 3.5 后端盘点与拆件判定完成（前端任务必做）**：每条数据需求有唯一后端真源且前端已接线；有重复真源先治后端；缺端点先建后端；拆件判定结论已留痕（有得拆→拆件 SOP 8 步闭环施工，没得拆→直接施工）；演示回退（若有）已标"断线·演示"（TRAE-086 §truth_source_wiring + §split_judgment + FRONTEND-TRUTH-SOURCE gate） | ☐ |
 
 ## 5. 边界与不做
 
@@ -790,6 +794,7 @@ python scripts/session_worktree.py cleanup <sid>
 | 2026-08-13 | 1.4.0 | **搬迁**：从 design_memos/02_construction_workflow_sop.md 迁至 docs/01_policies_and_standards/sop/construction_workflow_sop.md | 用户裁定：design_memos 是施工图纸临时区（施工完毕后清理），SOP 是永久规则，生命周期不匹配。迁入规则管理区新建 sop/ 专区；doc_type architecture_view→policy（rule_form: procedural + verifiability: manual，01 目录契约合规）；去编号改名；全部相对链接按新基址重写 |
 | 2026-08-31 | 1.5.0 | **对齐体系升级**：Step 0 必看文件清单新增 alignment_checklist.md；Step 3 从"五图对齐"升级为"六图对齐"（新增 frontend_map 前端全景图，待建）；Step 4/8 检查清单同步升级；新增注册表对齐要求 | 项目对齐体系片段化，缺前端全景图和注册表统一对齐规则；新 AI 进项目不知道要对齐什么。配合《全项目对齐清单》（alignment_checklist.md）落地三层对齐体系（六图+40+注册表+代码文档） |
 | 2026-09-04 | 1.5.1 | 新增 Step 3.5 后端盘点（前端施工前置）+ Checklist 第 13 项 | Owner 2026-09-04 裁定"前端不许自建数据世界"（TRAE-086 v1.2.0 §truth_source_wiring 配套）：执行前端任务前 MUST 后端盘点四步（取数清单→后端三查→三分支决策→接线验收），FRONTEND-TRUTH-SOURCE gate warn 兜底；红蓝对抗 9 手法实测（4 击穿已修+2 接受风险文档化） |
+| 2026-09-04 | 1.5.2 | Step 3.5 升级"后端盘点与拆件判定"——拆件 SOP 正式接入总流程 | Owner 追问"拆件判定在哪一步"发现两 SOP 断链：Step 0 必看清单+Step 3.5 补 frontend_component_split_sop.md 引用；新增执行要点 4 拆件判定（盘点先行供输入——拆件第一判据=数据源边界；有得拆→拆件 8 步闭环，没得拆→直接施工）；Checklist 13 同步 |
 
 ## 附录 A：长清单审查全文（用户提供的 12 节审查清单）
 
