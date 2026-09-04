@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md
 # [MODULE] zephyr.autonomy_core.context.context_pipeline
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES] zephyr.autonomy_core.__init__; zephyr.shared.schema.schemas
+# [DEPENDENCIES] zephyr.autonomy_core.__init__; zephyr.shared.schema.schemas; zephyr.infrastructure.capacity_assurance.token_budget; zephyr.shared.blueprint_tools.architecture_context_loader
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production

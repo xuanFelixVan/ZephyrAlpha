@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.autonomy_core.drift_semantic_reviewer; zephyr.integration.local_model.embedding_router（仅 CLI 实跑懒加载）; zephyr.intelligence.reflexion.batch_runner（is_intraday 盘中守卫口径复用，CLI 懒加载）
 # [CONSUMERS] tests/autonomy/test_embedding_provider_adapter.py；手动 CLI（python -m zephyr.autonomy_core.embedding_provider_adapter）
 # [STARTUP] manual（批量档 CLI/调度手动触发；适配器类本体 imported，可被外部跑批编排注入）
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 适配器仅转发嵌入调用不自带模型/网络/GPU; 批量 CLI 盘中零调用（工作日 09:30-15:00 CST 拒跑，复用 reflexion is_intraday 口径）; 复核产出=报告人审（status=pending_human_review，不自动处置）; 错误消息禁含 session_id
 # [MODIFY-GUARD] Owner approval required; 集合/阈值口径变更须同步 15号文 §4.2 S1.3
 # [STABILITY] evolving

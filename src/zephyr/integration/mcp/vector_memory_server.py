@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md | §
 # [MODULE] zephyr.integration.mcp.vector_memory_server
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.integration.mcp._base_server; zephyr.integration.vector_memory.collection_manager; zephyr.integration.vector_memory.in_process_vector_memory
+# [DEPENDENCIES] zephyr.integration.mcp._base_server; zephyr.integration.vector_memory.collection_manager; zephyr.integration.vector_memory.in_process_vector_memory; zephyr.shared.protocols.ports
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production

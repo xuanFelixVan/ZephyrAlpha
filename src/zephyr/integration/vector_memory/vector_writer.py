@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain_knowledge/vector_memory/blueprint.md | CT-CE-VMS-001
 # [MODULE] zephyr.integration.vector_memory.vector_writer
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS] zephyr.autonomy_core.task_context_builder
+# [DEPENDENCIES]
+# [CONSUMERS] zephyr.orchestrator.execution.context_bridge
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] context构建完成后MUST调用vectorize_and_store; VMS不可用时不阻塞主流程; 写入计数精确

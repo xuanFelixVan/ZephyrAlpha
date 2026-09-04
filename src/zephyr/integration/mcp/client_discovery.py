@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.integration.mcp(tool_contracts.yaml); (lazy) zephyr.infrastructure.system_telemetry.facade(MetricsFacade); zephyr.shared.io.paths(REPO_ROOT)
 # [CONSUMERS] tests/infrastructure/test_mcp_client_discovery.py
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 传输层仅 localhost HTTP+SSE(STDIO/非 localhost/非 http(s) 一律 fail-closed 拒收); 发现即校验——未知工具默认拒绝(即使名字像只读),safety_level M/H 必须契约命中才放行; 工具注册执行 MCP-Scan 剥离指令性语言; diff 结果必 emit 遥测; 漂移消除自动清状态
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.lifecycle_governance.ai_behavior_baseline（S1.1 基线口径复用，BM-RC-04-F）
 # [CONSUMERS] tests/autonomy_core/test_agentic_drift_guard.py；S0.2 gate 链路（内联挂点预留）
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 纯函数核无副作用（check_operation_chain/evaluate_dual_dimension 不触 IO）; 小样本不判（窗口 <min_ops 不熵判）; DETECTED 必 blocked+P0 告警事件; 落盘 IO 失败不阻断判定; 错误/原因消息禁含 session_id
 # [MODIFY-GUARD] Owner approval required; 参数口径变更须同步 RBAC 蓝图决策 D-018-21 与 15号文 §4.2
 # [STABILITY] evolving

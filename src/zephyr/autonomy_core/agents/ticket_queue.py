@@ -4,7 +4,7 @@
 # [DEPENDENCIES] stdlib ; zephyr.autonomy_core.agents._run_store（信封 schema_version/human_gated 纪律复用）
 # [CONSUMERS] tests/autonomy/test_agent_ticket_queue.py ; 四类 Agent 薄入口 CLI ; 人调度多会话（61号文 §3.6）
 # [STARTUP] manual
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 四态落盘 pending/claimed/done/dead（.runtime/agent_runs/_queue/）；认领=O_EXCL 原子创建（多会话抢单先到先得，不双领）；工单携带 61号文 §3.6 交接三件套（design_memo 引用+depgraph path+占用者 owner）；done/dead 越 owner 拒操作；recover 须显式给判据（fail-closed 防误全量重派）；信封 100% human_gated
 # [MODIFY-GUARD] Owner approval required; 变更须同步 14号文 §4-S1.2 验收口径
 # [STABILITY] evolving

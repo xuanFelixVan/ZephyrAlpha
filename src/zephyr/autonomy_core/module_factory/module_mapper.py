@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.autonomy_core.module_factory.knowledge_classifier（ClassificationResult/KnowledgeItem 类型）；zephyr.integration.llm_runtime_gateway（仅消费既有 infer 签名，不改其源文件）；zephyr.shared.io.paths(REPO_ROOT SSoT)；pyyaml（注册表 YAML 只读加载）；sqlite3 FTS5（进程内 :memory: 检索索引）
 # [CONSUMERS] 模块工厂流水线人工编排（Phase 1 手动触发；产出 ModuleSpec 供人审台）
 # [STARTUP] manual
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 产出=建议草稿，100% human_gated；注册表 YAML 一律只读（不写不改）；embedding 通道不可用时降级 FTS5-only 并在产出中显式标注；裁决理由全留痕（人审可读）；四选一裁决之外不产隐式第五态（fail-closed=verdict:error）
 # [MODIFY-GUARD] 变更须同步 13号文 §3.3
 # [STABILITY] evolving

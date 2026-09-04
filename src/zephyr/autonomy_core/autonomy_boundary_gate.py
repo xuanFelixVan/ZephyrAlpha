@@ -4,7 +4,7 @@
 # [DEPENDENCIES] pyyaml; zephyr.autonomy_core.agentic_drift_guard（S1.2 内联漂移检查，默认启用可关）
 # [CONSUMERS] tests/autonomy/test_autonomy_boundary_gate.py; tests/autonomy/test_autonomy_gate_drift_hook.py
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] fail-closed(注册表不可读/目标未登记/内部异常 => 永不放行); 每次判定必留痕(.runtime/audit jsonl); 判定以 GOV-AI-001 注册表为唯一真源(文件头 [AI_AUTONOMY] 锚定仅为投影提示); S1.2 漂移内联挂接 drift_check_enabled=False 时零行为变化; 漂移检查仅作用于带 session_id 的留痕判定（内存滑窗增量，禁全量读 jsonl）; 漂移挂点自身异常不阻断原判定
 # [MODIFY-GUARD] Owner approval required; 变更须同步 15号文 §4.1 S0.2 验收口径
 # [STABILITY] evolving

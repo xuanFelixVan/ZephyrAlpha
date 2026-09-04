@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.foundation.errors
 # [CONSUMERS] 运行时装配批（C-021/C-014 实时输入装配 / 风控校验链 / MOD-EX-062 执行策略选择）
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] advise 纯函数无IO; ctx/配置非法 Fail-Closed; 建议永远 requires_risk_check=True 且无下单语义; 非 HOLD 必发风控前置信号并双审计; 回调/sink 异常不阻断判定
 # [MODIFY-GUARD] docs/03_modules/_domain_autonomy_core/timing_analyst_agent/blueprint.md
 # [STABILITY] evolving

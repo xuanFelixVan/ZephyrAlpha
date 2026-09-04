@@ -4,14 +4,14 @@
 # [DEPENDENCIES] zephyr.shared.utils.time_utils
 # [CONSUMERS] zephyr.frontend.dashboard.app_panel
 # [STARTUP] imported
-# [MATURITY] draft
+# [MATURITY] production
 # [INVARIANTS] fail-closed(assembly未注入/异常→空态); 阈值不前端化(只读level+detail)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS] tests/frontend/dashboard/components/test_qmt_bridge_health.py
+# [TESTS] tests/frontend/test_qmt_bridge_health.py
 # [A_module] module_id=MOD-L28-QMTBH | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """qmt_bridge_health · QMT 文件桥健康监控面板组件（蓝图 v0.1.0）

@@ -1,10 +1,10 @@
 # [BLUEPRINT] MOD-EXE-AGENTS | docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/14_execution_layer.md | §4-S1.1
 # [MODULE] zephyr.autonomy_core.agents._s11_wiring
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES] zephyr.autonomy_core.agents._run_store ; zephyr.intelligence.model_routing.cascade_orchestrator（11号文，只消费 route 签名）; zephyr.autonomy_core.module_factory.knowledge_classifier + module_mapper（13号文，只消费）; zephyr.intelligence.reflexion.reflctrl_gate + roles + reflection_schema（12号文，只消费）
+# [DEPENDENCIES] zephyr.autonomy_core.agents._run_store; zephyr.autonomy_core.module_factory.knowledge_classifier + module_mapper（13号文，只消费）; zephyr.intelligence.reflexion.reflctrl_gate + roles + reflection_schema（12号文，只消费）; zephyr.governance.intelligence_governance.model_router; zephyr.intelligence.reflexion.reflection_schema; zephyr.intelligence.reflexion.roles
 # [CONSUMERS] zephyr.autonomy_core.agents.algorithm_agent_entry ; self_iteration_agent_entry（懒加载薄委派）; tests/autonomy/test_execution_layer_s11_wiring.py
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 只做消费与串联（11/12/13号文模块源文件零改动）；全部真源经注入缝传入（默认 None 由入口走既有行为，reflection_review 无既有行为故默认缝=真闸门+合成三角色+真 ReflectionStore 落 runtime 下）；产出 100% human_gated 落盘；工单载荷非法 fail-closed 产 error 留痕不抛
 # [MODIFY-GUARD] Owner approval required; 变更须同步 14号文 §4-S1.1 验收口径
 # [STABILITY] evolving

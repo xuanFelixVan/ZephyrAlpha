@@ -1,10 +1,10 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain_frontend/blueprint.md
 # [MODULE] zephyr.frontend.services.dashboard_feeds
 # [DOMAIN] D_FRONTEND
-# [DEPENDENCIES] zephyr.pf_core（相关性口径）; zephyr.signal_ashare.intraday_buy_sell_point_analyzer; zephyr.position.core.t1_sellable/position_state_machine/drawdown_controller/calendar_position_constraint; zephyr.risk.core.stress_test_engine/liquidity_monitor/tail_risk_monitor; zephyr.shared.foundation.errors; numpy; pandas
+# [DEPENDENCIES] zephyr.signal_ashare.intraday_buy_sell_point_analyzer; zephyr.position.core.t1_sellable/position_state_machine/drawdown_controller/calendar_position_constraint; zephyr.risk.core.stress_test_engine/liquidity_monitor/tail_risk_monitor; zephyr.shared.foundation.errors; numpy; pandas; zephyr.position.core.calendar_position_constraint; zephyr.position.core.drawdown_controller; zephyr.position.core.position_state_machine; zephyr.risk.core.liquidity_monitor; zephyr.risk.core.tail_risk_monitor
 # [CONSUMERS] 前端 dashboard 各页（作战室 W5/持仓监控/T分析/盘后复盘/盘中实时风控区）
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 结论级输出（全部返回 JSON 可序列化 dict）; 数据源依赖注入（禁真连 DB）; 输入非法 fail-closed 抛 DashboardFeedInputError 或透传 prod ValueError; 只读查询无任何写副作用
 # [MODIFY-GUARD] 反向账 C 类通道（BFE-01/25/26/27/28/30/31/32 + GAP-F-04）——本层只做 prod 引擎结果的查询整形，禁止内嵌业务算法
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.foundation.errors
 # [CONSUMERS] 运行时装配批（C-028 输出批量装配 / 漏斗权重真实调整 / SIGQC 指标对接）
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] assess 纯函数无IO; snapshot/配置非法 Fail-Closed; 输出仅到漏斗建议层（FORWARD/DOWNWEIGHT/HOLD_BACK）绝无下单语义; 非 PROMOTE 必落降级建议审计; sink 异常不阻断判定
 # [MODIFY-GUARD] docs/03_modules/_domain_autonomy_core/signal_analyst_agent/blueprint.md
 # [STABILITY] evolving

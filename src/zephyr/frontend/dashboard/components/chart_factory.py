@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain_frontend/blueprint.md
 # [MODULE] zephyr.frontend.dashboard.components.chart_factory
 # [DOMAIN] D_FRONTEND
-# [DEPENDENCIES] holoviews; plotly; plotly_resampler; panel
+# [DEPENDENCIES] holoviews; plotly; plotly_resampler; panel; zephyr.shared.io.serialization
 # [CONSUMERS] zephyr.frontend.dashboard.components.backtest_results; tick_replay; order_book; position_monitor; trade_panel
 # [STARTUP] imported
 # [MATURITY] production

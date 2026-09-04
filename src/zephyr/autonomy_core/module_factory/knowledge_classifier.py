@@ -83,7 +83,7 @@ _log = logging.getLogger(__name__)
 CLASSIFIER_TASK_TYPE: Final[str] = "module_factory_classify"
 
 # ── 受控词表（62号文 S2/S3 裁定 + catalogs 落盘 registry 头部注释为真源，本模块为运行时镜像）──
-FACTOR_CLASSES: Final[tuple[str, ...]] = (
+FACTOR_CLASSES: Final[tuple[str, ...]] = (  # noqa: gate-vocab 类集合真源=62号文S2/S3裁定，本常量为运行时镜像；pydantic Literal 静态校验必须静态定义
     "value",
     "quality",
     "momentum",
@@ -95,7 +95,7 @@ FACTOR_CLASSES: Final[tuple[str, ...]] = (
     "technical",
     "sentiment",
 )
-STRATEGY_CLASSES: Final[tuple[str, ...]] = (
+STRATEGY_CLASSES: Final[tuple[str, ...]] = (  # noqa: gate-vocab 类集合真源=62号文S2/S3裁定，本常量为运行时镜像；pydantic Literal 静态校验必须静态定义
     "daban",
     "multifactor",
     "event_driven",
@@ -103,7 +103,7 @@ STRATEGY_CLASSES: Final[tuple[str, ...]] = (
     "momentum_trend",
     "sector_rotation",
 )
-OTHER_SUBTYPES: Final[tuple[str, ...]] = (
+OTHER_SUBTYPES: Final[tuple[str, ...]] = (  # noqa: gate-vocab 类集合真源=62号文S2/S3裁定，本常量为运行时镜像；pydantic Literal 静态校验必须静态定义
     "risk_rule",
     "execution_algo",
     "data_asset",

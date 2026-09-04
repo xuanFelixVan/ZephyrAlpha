@@ -1,10 +1,10 @@
 # [BLUEPRINT] MOD-FACTORY-001/MOD-FACTORY-002 | docs/03_modules/_domain_autonomy_core/knowledge_classifier/blueprint.md + docs/03_modules/_domain_autonomy_core/module_mapper/blueprint.md | §
 # [MODULE] zephyr.autonomy_core.module_factory
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES] zephyr.integration.llm_runtime_gateway（仅消费既有 infer 签名）；pyyaml；sqlite3 FTS5
+# [DEPENDENCIES] 
 # [CONSUMERS] 模块工厂流水线人工编排（Phase 1 手动触发）
 # [STARTUP] manual
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 包导出=纯模块名条目（无导入无初始化逻辑，同 autonomy_core 根包 ARCH-033 约定）；子模块产出 100% human_gated，不写注册表 YAML
 # [MODIFY-GUARD] 变更须同步 13号文 §3.2/§3.3
 # [STABILITY] evolving

@@ -1,10 +1,10 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain_frontend/blueprint.md
 # [MODULE] zephyr.frontend.dashboard.api_server
 # [DOMAIN] D_FRONTEND
-# [DEPENDENCIES] zephyr.data.ch_config; clickhouse_driver; fastapi; uvicorn
+# [DEPENDENCIES] zephyr.data.ch_config; clickhouse_driver; fastapi; uvicorn; zephyr.governance.persistence.battle_map_reader; zephyr.governance.strategies.strategy_base; zephyr.pf_core.strategy_engine.tick_strategy_base
 # [CONSUMERS] 前端 dashboard（web/services/api.js）
-# [STARTUP] python -m zephyr.frontend.dashboard.api_server（或 uvicorn 直跑）
-# [MATURITY] testing
+# [STARTUP] manual（python -m zephyr.frontend.dashboard.api_server 或 uvicorn 直跑；面板服务控制台可一键重启）
+# [MATURITY] production
 # [INVARIANTS] 只读服务（禁任何写副作用）; 非法输入 fail-closed 返回 ok:false; Decimal/Date 一律转 JSON 可序列化
 # [STABILITY] evolving
 # [SAFETY] L

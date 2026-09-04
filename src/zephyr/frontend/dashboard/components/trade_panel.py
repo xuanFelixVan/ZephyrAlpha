@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain_frontend/blueprint.md
 # [MODULE] zephyr.frontend.dashboard.components.trade_panel
 # [DOMAIN] D_FRONTEND
-# [DEPENDENCIES] zephyr.frontend.dashboard.components.chart_factory; zephyr.ex_core.adapters.miniqmt_broker; zephyr.trading.trading_contracts.execution.order
+# [DEPENDENCIES] zephyr.frontend.dashboard.components.chart_factory; zephyr.trading.trading_contracts.execution.order; zephyr.shared.utils.time_utils
 # [CONSUMERS] zephyr.frontend.dashboard.app
 # [STARTUP] manual
 # [MATURITY] production

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md
 # [MODULE] zephyr.integration.shared.events.dlq_bridge
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.shared.events.dlq
+# [DEPENDENCIES] zephyr.shared.events.dlq; zephyr.shared.infra.observer
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production

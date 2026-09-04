@@ -2,7 +2,7 @@
 # [MODULE] zephyr.integration.vector_memory.context_ingest
 # [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.vector_memory.in_memory_fake_vms
-# [CONSUMERS] zephyr.autonomy_core.vector_writer
+# [CONSUMERS] zephyr.integration.vector_memory.vector_writer
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 批量写入ContextBlock records; VMS不可用时使用in-memory fallback; 写入计数精确

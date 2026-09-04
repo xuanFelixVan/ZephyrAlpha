@@ -1,10 +1,10 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain_frontend/blueprint.md
 # [MODULE] zephyr.frontend.dashboard.components.warroom
 # [DOMAIN] D_FRONTEND
-# [DEPENDENCIES] zephyr.reporting.prediction_log_writer(query_predictions); zephyr.signal_ashare.next_day_8state_forecast(惰性); zephyr.regime.index_regime_panel(惰性); zephyr.plan_engine.scenario_playbook(惰性)
+# [DEPENDENCIES] zephyr.reporting.prediction_log_writer(query_predictions); zephyr.signal_ashare.next_day_8state_forecast(惰性); zephyr.regime.index_regime_panel(惰性); zephyr.plan_engine.scenario_playbook(惰性); zephyr.plan_engine.sit_out_list; zephyr.shared.io.paths; zephyr.shared.io.sqlite_factory
 # [CONSUMERS] zephyr.frontend.dashboard.app_panel
 # [STARTUP] imported
-# [MATURITY] draft
+# [MATURITY] production
 # [INVARIANTS] 只读消费已落盘/可查询产物，前端零业务重算; 全部取数通道 fail-open（异常→该区"待数据/待接入"负反馈，不炸页面）; 未接入功能一律标注"待接入/待 P2/P3"（G4 反误导）; 90号§7铁律——只展示概率分布，不出点位/方向预测
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

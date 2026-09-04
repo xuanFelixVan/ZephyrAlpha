@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md
 # [MODULE] zephyr.autonomy_core.context.context_injector
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES] zephyr.shared.schema.schemas; zephyr.autonomy_core.__init__; zephyr.security.llm_defense.llm_security.gateway; zephyr.autonomy_core.context.vector_bridge
+# [DEPENDENCIES] zephyr.shared.schema.schemas; zephyr.autonomy_core.__init__; zephyr.security.llm_defense.llm_security.gateway; zephyr.autonomy_core.context.vector_bridge; zephyr.infrastructure.capacity_assurance.token_budget; zephyr.intelligence.model_evaluation.unified_memory_api; zephyr.shared.utils.async_utils
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production

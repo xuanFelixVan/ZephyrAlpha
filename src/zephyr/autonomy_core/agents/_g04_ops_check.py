@@ -4,7 +4,7 @@
 # [DEPENDENCIES] pyyaml ; zephyr.autonomy_core.agents._run_store ; zephyr.autonomy_core.agents.business_agent_entry（ADVICE_ONLY_DISCLAIMER 沿用）
 # [CONSUMERS] zephyr.autonomy_core.agents.business_agent_entry（懒加载薄委派）; tests/autonomy/test_business_g04_ops_check.py
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 注册表/catalogs 一律只读（不写不改）；组件在位性=只读文件存在性检查（20号文 §2.7 设施盘点清单+2026-08-21 sleeve 落码回填）；产出仅建议语义（ADVICE_ONLY_DISCLAIMER 沿用），100% human_gated 落盘；不写注册表本体
 # [MODIFY-GUARD] Owner approval required; 变更须同步 14号文 §4-S1.3 验收口径
 # [STABILITY] evolving
@@ -80,7 +80,7 @@ from zephyr.autonomy_core.agents.business_agent_entry import ADVICE_ONLY_DISCLAI
 
 _REPO_ROOT: Final[Path] = Path(__file__).resolve().parents[4]
 BLUEPRINT_REF: Final[str] = "20_first_batch_strategies.md §2.2-2.4/§2.7"
-G04_STRATEGY_CLASSES: Final[tuple[str, ...]] = ("daban", "multifactor", "event_driven")
+G04_STRATEGY_CLASSES: Final[tuple[str, ...]] = ("daban", "multifactor", "event_driven")  # noqa: gate-vocab 业务子集=20号文首批三策略核对范围，非词表全集校验
 G04_STRATEGY_NAMES: Final[dict[str, str]] = {
     "daban": "打板",
     "multifactor": "多因子",

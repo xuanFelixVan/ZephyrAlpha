@@ -2,7 +2,7 @@
 # [MODULE] zephyr.integration.ports
 # [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.__init__
-# [CONSUMERS] zephyr.integration.pipeline_orchestrator;zephyr.infrastructure.pipeline.layer_router
+# [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] Ports define structural interfaces only; no concrete implementations; no imports from zephyr.infrastructure.a2a_protocol.governance
@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS] tests/test_pipeline_ports.py
+# [TESTS]
 # [A_module] module_id=MOD-INF-009 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-042 | docs/03_modules/_domain_integration/blueprint.md | §3.1
 # [MODULE] zephyr.integration.local_model.ollama_embedding
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES]
+# [DEPENDENCIES] zephyr.shared.foundation.constants
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production

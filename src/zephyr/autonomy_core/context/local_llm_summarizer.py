@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.autonomy_core.context.integrity_check; zephyr.integration.llm_runtime_gateway（懒加载，函数体内 import）
 # [CONSUMERS] zephyr.autonomy_core.context.context_assembler（opt-in 注入）
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 摘要不过 integrity 校验不替换原文（verify_summary_integrity False -> 返回空串，由 DocCompressor 降级 rule_based）; 任一 slot 摘要失败整体降级（防漏段静默丢信息）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

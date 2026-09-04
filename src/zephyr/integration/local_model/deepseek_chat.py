@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-042 | docs/03_modules/_domain_integration/blueprint.md | §3.1
 # [MODULE] zephyr.integration.local_model.deepseek_chat
 # [DOMAIN]
-# [DEPENDENCIES] zephyr.integration.local_model.lsg_gate
+# [DEPENDENCIES] zephyr.integration.local_model.lsg_gate; zephyr.governance.ops_governance.budget_engine; zephyr.shared.foundation.constants; zephyr.shared.io.paths; zephyr.shared.security.secrets
 # [CONSUMERS] auto_runtime_core.py; local_model_scheduler.py
 # [STARTUP] imported
 # [MATURITY] production
@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] API失败时抛RuntimeError;JSON解析失败返回空dict;LSG 判决 BLOCK/DENY 时抛 LSGBlockedError(RuntimeError)
-# [TESTS] tests/test_integration/test_deepseek_chat.py
+# [TESTS] tests/automation/test_auto_runtime_core.py; tests/model/test_local_model_lsg_gate.py（间接覆盖）
 # [A_module] module_id=MOD-INF-042 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

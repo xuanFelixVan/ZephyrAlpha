@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.foundation.errors
 # [CONSUMERS] 运行时装配批（7类检测源事件接入 / process_supervisor 修复执行体 / 健康度回读装配 / D_GOV_AUDIT 运维审计落账）
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] evaluate/evaluate_post_repair 判定纯函数无IO; 运维事件与卡配置非法 Fail-Closed; B-014/015/016 禁区硬编码（交易时段命中必 ESCALATE_HUMAN，卡级别不可抬升绕过）; 不可逆策略或无 restore 快照必人工（TNR）; 策略分级超卡分级必人工; 修复/回滚仅产信号（执行委托 process_supervisor 等存量）; 回调/sink 异常不阻断判定; 决策与执行双审计记录
 # [MODIFY-GUARD] docs/03_modules/_domain_autonomy_core/ai_ops_autonomy_card/blueprint.md
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.frontend.interface_base; zephyr.frontend.implementations.default_notification_manager
 # [CONSUMERS] MOD-L08-001(register_channel 生产接线位: email/wechat 渠道) ; MOD-RPT-030(告警聚合派发通道) ; 运维自治(告警通知)
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] SMTP/webhook 调用走注入位(smtp_send/http_post 可调用),未注入=未接线态 __call__ 返回 False 记 WARNING(fail-visible 不抛,本批禁真实发送); 凭据经 EmailChannelConfig/WeChatChannelConfig 注入(Owner 窗口),码内零密钥零真实端点; sender 协议对齐 MOD-L08-001(True/None=已受理,False=显式失败,传输异常内化为 False 不外抛); 配置非法 fail-closed(InvalidNotificationError); frozen dataclass,payload asdict JSON 可序列化
 # [MODIFY-GUARD] docs/03_modules/_domain_frontend/blueprint.md
 # [STABILITY] testing

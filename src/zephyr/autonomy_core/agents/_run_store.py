@@ -4,7 +4,7 @@
 # [DEPENDENCIES] stdlib
 # [CONSUMERS] zephyr.autonomy_core.agents.governance_agent_entry ; business_agent_entry ; algorithm_agent_entry ; self_iteration_agent_entry
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 产出 100% 落盘且带 ai_autonomy=human_gated 标记；落盘 IO 失败只告警不阻断入口返回（审计缺口如实记 status=audit_failed）
 # [MODIFY-GUARD] Owner approval required; 变更须同步 14号文 §4 Phase 0 验收口径
 # [STABILITY] evolving

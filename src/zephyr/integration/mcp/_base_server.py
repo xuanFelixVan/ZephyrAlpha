@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md | §
 # [MODULE] zephyr.integration.mcp._base_server
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.integration.mcp.error_codes; zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.integration.mcp.error_codes; zephyr.governance.__init__; zephyr.shared.utils.async_utils
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production

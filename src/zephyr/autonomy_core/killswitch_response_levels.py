@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.autonomy_core.kill_switch_orchestrator
 # [CONSUMERS] tests/autonomy_core/test_killswitch_response_levels.py
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 策略层不持有开关状态(全经 MOD-AU-002 编排器公开 API 消费,其源文件零改动); 三级复位须 approver 非空(Owner 批准,15号文 §4.1 S0.3),approver 为空拒绝且状态零改变; level_3 系统级全局熔断+交易级联动(传播未覆盖交易域时策略层显式兜底拉 trading 域),收敛状态一致无「只停次要回路」
 # [MODIFY-GUARD] Owner approval required; 变更须同步 16号文 §3.4 映射口径与 §3.13 术语裁定(Q7)
 # [STABILITY] evolving

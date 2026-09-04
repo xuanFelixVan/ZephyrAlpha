@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md | §automation
 # [MODULE] zephyr.autonomy_core.context.context_pipeline_auto
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES]
-# [CONSUMERS] zephyr.trading.boot_hooks; tests/test_context_pipeline_auto
+# [DEPENDENCIES] zephyr.infrastructure.capacity_assurance.kill_switch; zephyr.shared.event_bus
+# [CONSUMERS] zephyr.autonomy_core.context.__init__; zephyr.infrastructure.capacity_assurance.kill_switch; tests/context/test_context_pipeline_auto.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] auto_start is idempotent; KillSwitch fuse ON blocks auto_run; timeout triggers auto_shutdown; auto_shutdown is idempotent
