@@ -47295,6 +47295,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "检查前端全景图登记表写得对不对：编号有没有重复、数据来源有没有按格式填、对应的代码文件是否真实存在，有问题就报出来阻止提交。"
+- module_path: src/zephyr/gov_enforcement/commit_gates/frontend_map_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "前端全景图对齐门禁"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "提交代码时自动检查前端全景图登记表：编号不能重复、每个功能点必须写清数据从哪来、格式要标准，有错就拦下不让提交。"
 
 battle_map_steps:
 - step_id: BM-BUY-04

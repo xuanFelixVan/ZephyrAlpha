@@ -4893,6 +4893,10 @@ capabilities:
   - DabanTimingDecision
   - DynamicCapacityCalculator
 creation_tokens:
+- file: src/zephyr/gov_enforcement/commit_gates/frontend_map_gate.py
+  token: auto-frontend-map-gate-20260904
+  created_by: solo-20260904-truth-source
+  capability: frontend_map_alignment
 - file: scripts/governance/d5_architecture/generators/check_frontend_map.py
   token: auto-frontend-map-check-20260904
   created_by: solo-20260904-truth-source
