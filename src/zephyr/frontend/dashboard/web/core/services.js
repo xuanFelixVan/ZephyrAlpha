@@ -1,6 +1,6 @@
 /* ── 服务总闸页（Owner 2026-09-02 裁定：启动编排统一上桌面——总电箱）──
  * 真源=GET /api/services-status（services_registry.SERVICE_CATALOG 16 启动项，psutil+心跳+端口探测）
- * 控制=POST /api/services-control（分级闸门：free 直执行 / confirm 二次确认 / guard·external·self 只读）
+ * 控制=POST /api/services-control（分级闸门：free 直执行 / confirm 二次确认 / guard·external 只读 / self 宿主——唯一合法动作=重启）
  * 总闸=拉起型（一键拉起标准套装，幂等跳过已运行的），不设一键全停 */
 var SVC_ST = null;          /* 最近一次 /api/services-status 快照 */
 var SVC_TIMER = null;
@@ -113,11 +113,17 @@ function svcRenderGroups() {
         ? 'CPU <b>' + (s.cpu != null ? s.cpu : 0) + '%</b> · 内存 <b>' + s.mem + '</b> MB'
         : '<span class="dim">—</span>';
       var off = s.light === 'gray';
-      var btn = locked
-        ? '<span class="dim" title="' + s.tier_label + '">🔒 只读</span>'
-        : (off
-          ? '<span class="btn" style="font-size:11px;padding:2px 10px" onclick="svcCtl(\'' + s.id + '\',\'start\')">▶ 启动</span>'
-          : '<span class="btn" style="font-size:11px;padding:2px 10px" onclick="svcCtl(\'' + s.id + '\',\'stop\')">■ 停止</span>');
+      var btn;
+      if (s.id === 'api_server' && s.light === 'green') {
+        /* 宿主唯一合法动作=重启（改完代码生效用）；停止仍禁——页面本身是它服务的 */
+        btn = '<span class="btn" style="font-size:11px;padding:2px 10px" title="重启面板 API：页面断开约 20~40 秒后自动恢复" onclick="svcCtl(\'api_server\',\'restart\')">↻ 重启</span>';
+      } else if (locked) {
+        btn = '<span class="dim" title="' + s.tier_label + '">🔒 只读</span>';
+      } else if (off) {
+        btn = '<span class="btn" style="font-size:11px;padding:2px 10px" onclick="svcCtl(\'' + s.id + '\',\'start\')">▶ 启动</span>';
+      } else {
+        btn = '<span class="btn" style="font-size:11px;padding:2px 10px" onclick="svcCtl(\'' + s.id + '\',\'stop\')">■ 停止</span>';
+      }
       h += '<tr>'
         + '<td><span class="dot ' + svcDot(s.light) + '" title="' + svcDotTxt(s.light) + '"></span></td>'
         + '<td><b>' + s.name + '</b><br><span class="badge ' + (s.tier === 'guard' ? 'b-warn' : s.tier === 'confirm' ? 'b-na' : s.tier === 'free' ? 'b-pass' : 'b-na') + '" style="font-size:9px">' + s.tier_label + '</span></td>'
@@ -142,11 +148,15 @@ function svcRenderGroups() {
 /* ── 控制：confirm 级走二次确认；guard/external 后端闸门拒绝（前端按钮已置灰兜底）── */
 function svcCtl(id, action, _unused) {
   ZK.api.postServicesControl(id, action).then(function (r) {
-    if (r && r.ok) { svcLoad(); return; }
+    if (r && r.ok) {
+      if (id === 'api_server' && action === 'restart') { svcWaitRestart(); return; }
+      svcLoad(); return;
+    }
     if (r && r.need_confirm) {
       if (window.confirm(r.error)) {
         ZK.api.postServicesControl(id, action, true).then(function (r2) {
           if (!r2 || !r2.ok) alert('操作失败：' + (r2 && r2.error || '?'));
+          if (r2 && r2.restarting) { svcWaitRestart(); return; }
           svcLoad();
         }).catch(function (e) { alert('请求失败：' + e); });
       }
@@ -154,6 +164,23 @@ function svcCtl(id, action, _unused) {
     }
     alert('操作被拒：' + (r && r.error || '?'));
   }).catch(function (e) { alert('请求失败：' + e); });
+}
+
+/* ── 重启面板 API 后的恢复轮询：探 /api/health，活了整页刷新（app:// 静态直读，刷新即新前后端）── */
+function svcWaitRestart() {
+  var n = 0;
+  alert('重启已排队：API 约 3 秒后断开，20~40 秒内自动拉起，页面将在恢复后自动刷新');
+  var t = setInterval(function () {
+    n++;
+    ZK.api.fetchJson('/api/health', 2000).then(function () {
+      clearInterval(t);
+      location.reload();
+    }).catch(function () { });
+    if (n > 40) {   /* 60 秒未恢复=代理失败，给出排查现场 */
+      clearInterval(t);
+      alert('60 秒未恢复——重启代理可能失败。排查：data/runtime/api_server_desktop.log 末尾');
+    }
+  }, 1500);
 }
 
 /* ── 一键全部关闭：停掉所有「有开关」的运行中服务（free+confirm；guard/external/self 天生无开关不受影响）──

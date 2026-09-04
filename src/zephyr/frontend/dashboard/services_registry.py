@@ -31,7 +31,7 @@ _LOG = _TMP / "services_control_log.jsonl"
 SERVICE_CATALOG: list[dict[str, Any]] = [
     # ── 服务域（本仓库可自由开关）──
     {"id": "api_server", "group": "services", "tier": "self", "name": "面板 API 服务",
-     "desc": "本页的宿主：桌面面板所有数据的总后厨（端口 8890），它活着这页才活着",
+     "desc": "本页的宿主：桌面面板所有数据的总后厨（端口 8890）——不能停（停了页面就死），可一键重启（改完代码生效用）",
      "detect": {"type": "self"}},
     {"id": "panel", "group": "services", "tier": "free", "name": "Panel 治理大屏",
      "desc": "旧版治理大屏（10-Tab 治理+交易+回测，端口 5006）——和新桌面面板并存，用不用随你",
@@ -171,7 +171,7 @@ _GROUP_META = {
 }
 
 _TIER_LABEL = {"free": "可自由开关", "confirm": "需二次确认", "guard": "保命·禁操作",
-               "external": "外部程序·只读", "self": "本页宿主"}
+               "external": "外部程序·只读", "self": "本页宿主·可重启"}
 
 _SCHTASKS_CACHE: dict[str, tuple[float, str]] = {}   # task_name → (ts, status)
 _GPU_CACHE: dict[str, tuple[float, Any]] = {}        # gpu 查询缓存（nvidia-smi 子进程 ~150ms，15s 复用）
@@ -749,11 +749,28 @@ def get_services_status() -> dict[str, Any]:
 
 
 def control_service(sid: str, action: str, confirm: bool = False) -> dict[str, Any]:
-    """启停控制（POST /api/services-control）。分级闸门+审计落盘。"""
+    """启停控制（POST /api/services-control）。分级闸门+审计落盘。
+
+    restart 动作仅 self 级（api_server）支持——宿主不能停但可重启（分离代理模式：
+    响应先回前端，代理 3 秒后杀旧进程→等端口释放→按原命令拉起）。
+    """
     item = next((x for x in SERVICE_CATALOG if x["id"] == sid), None)
     if not item:
         return {"ok": False, "error": f"unknown service: {sid}"}
     tier = item["tier"]
+    if action == "restart":
+        if tier != "self":
+            return {"ok": False, "error": f"「{item['name']}」不支持重启（restart 仅本页宿主）——请走 停止/启动"}
+        if not confirm:
+            return {"ok": False, "need_confirm": True,
+                    "error": "重启面板 API 服务？页面将断开约 20~40 秒后自动恢复，进行中的请求会中断"}
+        try:
+            msg = _do_restart_self(item)
+            result = {"ok": True, "id": sid, "action": "restart", "msg": msg, "restarting": True}
+        except Exception as e:  # noqa: BLE001 — 控制失败必须回显
+            result = {"ok": False, "id": sid, "action": "restart", "error": str(e)}
+        _audit(sid, item["name"], "restart", result)
+        return result
     if tier in ("guard", "external", "self"):
         return {"ok": False, "error": f"「{item['name']}」是{_TIER_LABEL[tier]}，不允许在此{'停止' if action == 'stop' else '操作'}"}
     if action == "stop" and tier == "confirm" and not confirm:
@@ -766,15 +783,67 @@ def control_service(sid: str, action: str, confirm: bool = False) -> dict[str, A
         result = {"ok": True, "id": sid, "action": action, "msg": msg}
     except Exception as e:  # noqa: BLE001 — 控制失败必须回显
         result = {"ok": False, "id": sid, "action": action, "error": str(e)}
+    _audit(sid, item["name"], action, result)
+    return result
+
+
+def _audit(sid: str, name: str, action: str, result: dict[str, Any]) -> None:
+    """控制动作审计落盘 tmp/services_control_log.jsonl（谁几点动了什么，可查）。"""
     try:
         with _LOG.open("a", encoding="utf-8") as f:
             f.write(json.dumps({"ts": datetime.now().isoformat(" ", "seconds"),
-                                "id": sid, "name": item["name"], "action": action,
-                                "ok": result["ok"], "msg": result.get("msg") or result.get("error", "")},
+                                "id": sid, "name": name, "action": action,
+                                "ok": result.get("ok", False),
+                                "msg": result.get("msg") or result.get("error", "")},
                                ensure_ascii=False) + "\n")
     except OSError:
         pass
-    return result
+
+
+# 分离重启代理源码（-c 内联执行；数字旗标=DETACHED_PROCESS|CREATE_NEW_PROCESS_GROUP，
+# 内联串里不可引用本模块常量故用字面量。链路：等 3 秒（HTTP 响应先达前端）→ 杀旧
+# 进程树（psutil 失败回退 taskkill）→ 等端口释放（≤10 秒）→ 按原命令重拉并写桌面壳
+# 同一日志（data/runtime/api_server_desktop.log，现场唯一）。
+_RESTARTER_SRC = (
+    "import os,sys,time,subprocess\n"
+    "pid,port,repo,logp=int(sys.argv[1]),int(sys.argv[2]),sys.argv[3],sys.argv[4]\n"
+    "time.sleep(3)\n"
+    "try:\n"
+    "    import psutil\n"
+    "    pr=psutil.Process(pid)\n"
+    "    [c.kill() for c in pr.children(recursive=True)]\n"
+    "    pr.kill()\n"
+    "except Exception:\n"
+    "    os.system('taskkill /PID %d /T /F >nul 2>&1' % pid)\n"
+    "time.sleep(1)\n"
+    "import socket\n"
+    "for _ in range(10):\n"
+    "    s=socket.socket(); busy=s.connect_ex(('127.0.0.1',port))==0; s.close()\n"
+    "    if not busy: break\n"
+    "    time.sleep(1)\n"
+    "lf=open(logp,'ab')\n"
+    "lf.write(('\\n===== restart spawn %s =====\\n'%time.strftime('%Y-%m-%d %H:%M:%S')).encode())\n"
+    "subprocess.Popen([sys.executable,'-m','zephyr.frontend.dashboard.api_server'],"
+    "cwd=repo,stdout=lf,stderr=lf,creationflags=0x00000008|0x00000200)\n"
+    "lf.write(b'[restarter] respawn issued\\n'); lf.close()\n"
+)
+
+
+def _do_restart_self(item: dict[str, Any]) -> str:
+    """宿主自重启：起分离代理后立即返回（HTTP 响应先达前端，宿主随后被代理杀掉重拉）。
+
+    端口真源=8890（tools/desktop/main.js API_HEALTH 同一口径）；日志=桌面壳同一文件，
+    重启现场不分裂。代理与壳的 apiProc 脱钩：壳退出时 killApi 杀的是已死引用，
+    代理拉起的新实例存活到下一次壳启动时被 ensureApi 复用。
+    """
+    logp = _REPO / "data" / "runtime" / "api_server_desktop.log"
+    logp.parent.mkdir(parents=True, exist_ok=True)
+    cmd = [sys.executable, "-c", _RESTARTER_SRC,
+           str(os.getpid()), "8890", str(_REPO), str(logp)]
+    subprocess.Popen(cmd, cwd=str(_REPO),
+                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                     creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP)  # noqa: S603 — 内联白名单源码
+    return "重启代理已排定：3 秒后断开，约 20~40 秒内自动拉起（端口 8890）"
 
 
 def get_control_log(tail: int = 8) -> list[dict[str, Any]]:

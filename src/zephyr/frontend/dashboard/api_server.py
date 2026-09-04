@@ -978,17 +978,18 @@ def services_status() -> dict[str, Any]:
 
 @app.post("/api/services-control")
 def services_control(body: dict[str, Any]) -> dict[str, Any]:
-    """服务启停控制：body={id, action: start|stop, confirm?: bool}。
+    """服务启停控制：body={id, action: start|stop|restart, confirm?: bool}。
 
     分级闸门：confirm 级未带 confirm=true 返回 need_confirm（前端弹确认框）；
-    guard/external/self 级一律拒绝（保命进程/外部程序/宿主不许在此操作）。
+    guard/external/self 级一律拒绝（保命进程/外部程序/宿主不许在此操作）——
+    唯一例外：self 级（api_server）支持 restart（分离代理自重启，二次确认）。
     """
     from zephyr.frontend.dashboard.services_registry import control_service
 
     sid = str(body.get("id", "")).strip()
     action = str(body.get("action", "")).strip()
-    if action not in ("start", "stop"):
-        return {"ok": False, "error": "action must be start|stop"}
+    if action not in ("start", "stop", "restart"):
+        return {"ok": False, "error": "action must be start|stop|restart"}
     return control_service(sid, action, confirm=bool(body.get("confirm")))
 
 
