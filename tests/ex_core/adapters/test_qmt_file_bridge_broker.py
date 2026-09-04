@@ -207,6 +207,60 @@ class TestQmtFileBridgeBroker:
         broker.disconnect()
 
 
+class TestHttpFastPath:
+    """HTTP 桥快路径测试（93 号备忘 §12：HTTP 主通道+文件桥降级）"""
+
+    @pytest.fixture
+    def temp_bridge_dir(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            yield Path(tmpdir)
+
+    @pytest.fixture
+    def broker(self, temp_bridge_dir):
+        config = QmtFileBridgeBroker.ENV_CONFIG["sim"].copy()
+        config["bridge_dir"] = str(temp_bridge_dir)
+        config["orders_file"] = str(temp_bridge_dir / "orders_sim.csv")
+        config["ack_file"] = str(temp_bridge_dir / "ack_sim.csv")
+        config["stock_dir"] = str(temp_bridge_dir / "Stock")
+        with patch.object(QmtFileBridgeBroker, "ENV_CONFIG", {"sim": config}):
+            b = QmtFileBridgeBroker(env="sim", http_port=18999)  # 无监听的端口
+            b.connect()
+            yield b
+            b.disconnect()
+
+    @staticmethod
+    def _make_order(oid: str) -> Order:
+        return Order(
+            order_id=oid,
+            idempotency_key=oid,
+            symbol="510300.SH",
+            side=OrderSide.BUY,
+            order_type=OrderType.LIMIT,
+            quantity=Decimal("100"),
+            limit_price=Decimal("4.50"),
+            strategy_id="test",
+        )
+
+    def test_http_success_skips_file(self, broker, temp_bridge_dir):
+        """HTTP 受理（200）时不写指令文件（快路径独占）"""
+        with patch.object(broker, "_http_post_order", return_value=True):
+            broker.submit_order(self._make_order("HP-001"))
+        content = (temp_bridge_dir / "orders_sim.csv").read_text(encoding="ascii")
+        assert "HP-001" not in content
+        assert broker.query_order("HP-001").status == OrderStatus.SUBMITTED
+
+    def test_http_fail_degrades_to_file(self, broker, temp_bridge_dir):
+        """HTTP 失败自动降级写指令文件（fail-open 兜底）"""
+        with patch.object(broker, "_http_post_order", return_value=False):
+            broker.submit_order(self._make_order("HP-002"))
+        content = (temp_bridge_dir / "orders_sim.csv").read_text(encoding="ascii")
+        assert "HP-002,order,510300.SH,buy,100,limit,4.5" in content
+
+    def test_http_down_by_default(self, broker):
+        """端口无监听时 _http_post_order 返回 False（连接拒绝路径）"""
+        assert broker._http_post_order("X,order,510300.SH,buy,100,limit,4.00") is False
+
+
 class TestFileBridgeInstruction:
     """指令数据结构测试"""
 

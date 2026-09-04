@@ -5,8 +5,8 @@ title: 大QMT文件桥双向通道操作手册（miniQMT 替代方案）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.4.0"
-date: 2026-08-26
+version: "1.6.0"
+date: 2026-09-04
 topic: qmt_file_bridge
 scope: 07_trading_decision_architecture
 ---
@@ -355,7 +355,58 @@ bid1..bid5, ask1..ask5, bidVol1..bidVol5, askVol1..askVol5, timetag
 
 **裁定**：迪雅数据与新浪 Level-2 均降级为**纯备胎**——QMT 反向行情桥免费且更快（tick 级 vs 3 秒轮询），迪雅仅在"QMT 行情政策收紧/沙箱禁读行情"时启用（届时注册 5 天免费试用拿 apiToken，按 §11.3 同接口实现 DiyadataQuoteProvider：REST 轮询 + 本地缓存 + 调用预算守卫，工作量小，不在当前施工）；新浪仅在需要 10 档/逐笔且接受灰色风险时考虑。**Level-2 合规正解仍是等客户经理确认券商侧权限**（随 QMT 终端走，合规且稳定）。
 
-## 12. 修订记录
+## 12. HTTP 桥（2026-09-04 落地，执行通道提速至 miniqmt 水平）
+
+### 12.1 定位与成果
+
+EXEC v16.4 在 QMT 沙箱内起本地 HTTP server（127.0.0.1:18901），项目侧 `POST /order` 直接触发 `passorder`——消除「写文件→轮询→分笔节律」整层。**盘中三方实测（2026-09-04 11:30，5 次取中位）**：
+
+| 通道 | 中位延迟 | 备注 |
+|---|---|---|
+| **HTTP 桥 v16.4** | **32ms** | 4/5 次 31-32ms 极稳；1 次超时（见 13.5 已知毛刺） |
+| miniqmt 直连（退役基线） | 41ms | xtquant 本地 API |
+| 文件桥（v14 路径，兜底） | 5.7s | tick 节律+5s 卡死检测 |
+| 文件桥（v14 原版） | 562-887ms | 消费竞争前实测 |
+
+**结论：HTTP 桥 0.78× 基线，已追平/反超 miniqmt。文件桥保留为降级兜底（不依赖线程，handlebar 驱动）。**
+
+### 12.2 架构（三层容错）
+
+```
+主通道：HTTP 127.0.0.1:18901（线程+handlebar 双驱动非阻塞泵）
+  ├─ GET /health → 存活+计数器（tick/http_ok/thread_ok 实况）
+  └─ POST /order → CSV 协议行（同 v14 行格式）直投 passorder
+兜底1：文件桥 orders_sim.csv（handlebar 路径，裸行滞留 >5s 强制接管）
+兜底2：卡死检测（线程活着但冻结的场景）
+观测：deals_events.txt 亚秒成交事件（DEAL_CSV_CHANGED 时间戳）
+```
+
+关键工程结论（两天攻坚的实证）：
+1. **QMT 沙箱内后台线程可以跑 socket server + passorder**（架构可行性实锤）
+2. **收盘后线程被冻结**（主线程无分笔时不调度）——HTTP 泵必须双驱动（线程 50ms + handlebar 每 tick 泵 4 发）
+3. **策略图表品种必须是 ETF（510300）不能用指数（000300）**——指数无分笔推送，handlebar 永不触发（2026-09-04 11:15 实证）
+4. v16.1-3 三连 bug 的教训：`_mark_sending` 传整行而非 oid → 裸行永远进不了下单流程（症状：TICKS 正常但订单零消费）
+
+### 12.3 策略文件（E:\qmt_bridge_sim\）
+
+- `ZEPHYR_EXEC_v16.txt`（v16.4，含 HTTP 桥+三层容错+诊断打印）——QMT 端粘贴运行
+- `ZEPHYR_QUOTE_v17.txt`（行情桥线程版，200ms 轮询+timetag 去重+订阅热更新）
+- `quote_symbols.txt`——订阅列表（一行一 symbol，改文件即生效，无需重载策略）
+
+### 12.4 迁移施工（repo 内，走 construction_workflow_sop）
+
+**施工项**：`qmt_file_bridge_broker.py` 增加 HTTP 主通道（submit_order 先 POST /order，200/超时/连接拒绝→自动降级写文件），get_health 接总闸监控。
+**验收锚点**：下单中位 ≤100ms（HTTP 主），降级路径单笔可用（文件兜底），10 连发无丢单。
+
+### 12.5 已知毛刺与防御
+
+| 毛刺 | 防御 |
+|---|---|
+| HTTP 偶发丢请求（1/5 超时无 ack） | 客户端 8s 无回执→重写文件桥通道（降级即恢复） |
+| deals_events.txt 文件锁冲突 | 读侧用 tail 方式，不用 ReadAllText |
+| 双客户端重复加载 HTTP 桥（端口抢 bind） | 只在单客户端挂载 EXEC 策略；/health 探测异常即排查 |
+
+## 13. 修订记录
 
 | 版本 | 日期 | 内容 |
 |---|---|---|
@@ -365,3 +416,4 @@ bid1..bid5, ask1..ask5, bidVol1..bidVol5, askVol1..askVol5, timetag
 | 1.3.0 | 2026-08-26 | **盘中验证收官**：实证#12-14（下单/撤单全通，cancel 签名命中，userOrderId 进柜台"投资备注"字段）；排障表补 isLastBar 防回放保护与影子实例两条（全案最大根因）；§10.1 验证清单 4/5 项打勾通过，文件桥正式确立为替代主通道；下一步进入连接器蓝图阶段 |
 | 1.4.0 | 2026-08-26 | **tick 级通道验证与 v14 执行器定型**：实证#15-20（分笔线 1~2 秒触发、v7→v14 七轮幂等攻防、两阶段文件状态机唯一正解、柜台挂单上限暴露、自愈重试确认、实盘终端全链路一致、撤单 -54 误判根因）；排障表补 tick 重复发射/#SENDING 卡死/撤单过渡态三条；§10.1 验证清单 5/5 项全部通过；施工清单第 1 项标记完成 |
 | 1.5.0 | 2026-08-26 | **反向行情桥 v15 落地**：QMT 沙箱 5 档行情 → quote.csv 实现（含实盘/sim 双环境策略文件）；项目侧 `QmtFileBridgeQuoteProvider` 实现（尾读窗口、残行回退、新鲜度闸门、PriceProvider 兼容），13/13 单测通过；Playbook 新增 §11 完整反向行情桥章节；§11.6 迪雅数据网调结论（纯备胎，REST 非 WebSocket，额度测算完成） |
+| 1.6.0 | 2026-09-04 | **HTTP 桥落地（§12）**：EXEC v16.4 沙箱内 HTTP server（127.0.0.1:18901）实测中位 32ms 追平 miniqmt（41ms 基线）；三层容错架构（HTTP 主+文件兜底+卡死检测）；v16.1-4 四轮 bug 攻防实录（import thread/time 作用域/_mark_sending 传参/品种分笔推送）；v17 行情线程版+订阅热更新 |

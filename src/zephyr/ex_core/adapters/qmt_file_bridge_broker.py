@@ -18,13 +18,16 @@
 
 职责:
   - 实现 BrokerInterface 异步文件语义版本
-  - 通过指令CSV文件与沙箱内哑执行器(v14)双向通信
+  - HTTP 桥快路径（93 号备忘 §12）：submit_order 先 POST /order 直投沙箱 EXEC v16.4
+    （实测中位 32ms ≈ miniqmt），失败自动降级文件桥（fail-open）
+  - 通过指令CSV文件与沙箱内哑执行器(v14/v16)双向通信
   - submit_order 写入指令文件返回本地 order_id，broker_order_id 异步回填
   - 3秒轮询官方导出 CSV，同步柜台状态/成交/持仓
   - 双实例物理隔离：env="real"(实盘) / env="sim"(模拟)
 
 约束:
-  - 无实时连接，纯文件轮询
+  - HTTP 快路径 fail-open：连接拒绝/超时/非 200 一律降级文件桥（不抛异常不阻断）
+  - 无实时连接，纯文件轮询（HTTP 路径只投单不读回报，回报统一走 ack 文件+柜台镜像）
   - 无实时盘口，预校验降级为无盘口模式
   - 算法单排队在 LocalOrderQueue，本类只负责单笔下发的文件写入
   - 柜台全量镜像由 CounterStateMirror 承担（单一职责，本类委托）
@@ -36,6 +39,7 @@ from __future__ import annotations
 
 import csv
 import logging
+import socket
 import threading
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -349,6 +353,7 @@ class QmtFileBridgeBroker(BrokerInterface):
         env: str = "sim",
         sync_interval: float = 3.0,
         max_retry: int = 3,
+        http_port: int = 18901,
     ):
         """初始化 QMT 文件桥 Broker
 
@@ -356,6 +361,7 @@ class QmtFileBridgeBroker(BrokerInterface):
             env: 环境标识 "real"(实盘) 或 "sim"(模拟)
             sync_interval: 柜台同步轮询间隔（秒），默认 3 秒
             max_retry: #SENDING 超时重试最大次数，默认 3 次
+            http_port: HTTP 桥快路径端口（93 号备忘 §12），默认 18901
         """
         if env not in self.ENV_CONFIG:
             raise QmtFileBridgeError(f"非法环境标识: {env}，必须是 'real' 或 'sim'")
@@ -376,6 +382,9 @@ class QmtFileBridgeBroker(BrokerInterface):
         self._idempotency_map: dict[str, str] = {}  # idempotency_key -> order_id
         self._connected = False
         self._lock = threading.Lock()
+
+        # HTTP 桥快路径（93 号备忘 §12：EXEC v16.4 沙箱内 18901；None=禁用纯文件模式）
+        self._http_port = http_port
 
         # 同步线程
         self._sync_thread: threading.Thread | None = None
@@ -594,11 +603,43 @@ class QmtFileBridgeBroker(BrokerInterface):
     # ── 内部：指令文件 ──
 
     def _append_instruction(self, inst: FileBridgeInstruction) -> None:
-        """追加指令行（原子语义：整行一次写入）"""
+        """追加指令行（原子语义：整行一次写入）。
+        HTTP 快路径（93 号备忘 §12）：先 POST /order 直投沙箱 EXEC v16.4（实测中位 32ms），
+        任何失败（连接拒绝/超时/非 200）fail-open 降级写文件桥（handlebar 兜底，实测中位 5.7s）。
+        ack 回执统一走 ack 文件（EXEC 两条路径都写 ack），HTTP 成功时文件桥的 #SENDING
+        状态机不介入（订单从未入文件），由柜台镜像同步推进状态。"""
         line = f"{inst.order_id},{inst.action},{inst.symbol},{inst.side},{inst.qty},{inst.pricetype},{inst.price}\n"
+        if self._http_post_order(line):
+            return
         with self._lock:
             with open(self._orders_file, "a", encoding="ascii", newline="") as f:
                 f.write(line)
+
+    def _http_post_order(self, line: str) -> bool:
+        """HTTP 桥快路径：POST /order 到沙箱 EXEC 策略（127.0.0.1:18901）。
+        Returns:
+            True=HTTP 受理（不必等 ack，柜台镜像 3s 轮询推进状态）
+            False=任何失败（降级文件桥由调用方处理）
+        """
+        body = line.strip()
+        req = (
+            f"POST /order HTTP/1.1\r\nHost: 127.0.0.1\r\n"
+            f"Content-Type: text/plain\r\nContent-Length: {len(body.encode('ascii'))}\r\n"
+            f"Connection: close\r\n\r\n{body}"
+        ).encode("ascii")
+        try:
+            with socket.create_connection(("127.0.0.1", self._http_port), timeout=2.0) as s:
+                s.sendall(req)
+                resp = b""
+                while b"\r\n\r\n" not in resp:
+                    chunk = s.recv(4096)
+                    if not chunk:
+                        return False   # 对端关闭未回包（毛刺，降级）
+                    resp += chunk
+                status = resp.split(b" ", 2)[1]
+                return status == b"200"
+        except OSError:
+            return False   # 连接拒绝/超时（EXEC 未运行或收盘冻结）
 
     # ── 内部：同步线程 ──
 
