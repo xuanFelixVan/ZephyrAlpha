@@ -13,8 +13,8 @@ ttl: task_bound
 
 - 模式裁定：**MODE-B 直接全自动闭环**（探测：无活跃在途 session（heartbeat≥5d）+ 主仓 29 孤儿文件裁定基线收编后干净）
 - 波次：6 批（4+4+4+4+4+1）修复波，MODE-B 无只审波
-- 进度：波次 1（AI-01~04）已回收，四域均"通过"（各连续 2 轮零问题），总控抽验 8/8 相符
-- 总问题数 / 已修复数：波次 1 合计发现 31 项 → 修复 26 项（另 5 项跨域移交/待 Owner），作废重派 0
+- 进度：波次 1（AI-01~04）+ 波次 2（AI-05~08）已回收，八域均"通过"（各连续 2 轮零问题），总控抽验 16/16 相符
+- 总问题数 / 已修复数：波次 1 发现 31→修复 26（另 5 跨域移交/待 Owner）；波次 2 发现 65→修复 60（另 5 跨域移交/待 Owner）；作废重派 0
 
 # 二、每域详细汇报 ×21
 
@@ -53,16 +53,36 @@ ttl: task_bound
 - 遗留 3（跨域手术，附五信号证据）：market_data vendor/connector/failover/autoload 零生产装配集群；redundant_source/recovery.py+sqlite_fallback.py 僵尸；data_governance/security/alt_data 33 模块"运行时装配批"君子协定失效。总控抽验：base.py [CONSUMERS] 行实测已删 D_EX_SOR（残留仅审计注记）——**相符**。
 
 ## AI-05 执行模拟域
-（待回收）
+- worktree：D:\ZephyrAlpha\.worktrees\AI-AUDIT05-001；commit 87717defdb（36 文件 +78/−53）
+- 轮次：R1 全量（134 py）发现 22 类→修复 36 文件→复检 0→R2 独立复检（1593 passed）新增 0。连续 2 轮零问题。
+- 修复：①okx_broker Lock→RLock（同线程自死锁探针实证 hung>5s→NO DEADLOCK）②trading_session reset_daily_circuit_breaker 零接线→start() 接线③participation_rate 默认 0.10→0.05（§10.1 硬上限）④miniqmt 死常量/假注释/心跳僵尸（touch_tick 接线接口）⑤测试 daemon 泄漏补 patch⑥表头对齐 34+5 文件（死依赖 16 删/漏头 40 补/CONSUMERS 虚假 5 修）。
+- 自主裁定：3 处 except pass 判控制流合法；duck-typed 注入不声明；ALGO_FLOW 行号过期不修；price_cage board 观察不修。
+- 共享收口上交：①broker_interface.py [DEPENDENCIES] 漂移（trading 域，转 AI-06 复审轮）②trading_session threading.Timer 周期调仓（3.2 禁）涉 start_paper_session+测试锁定，待 Owner③GW 缺陷①②再实证（FORCE_DELETE 清残锁 PID 41764 已验死）。
+- 遗留 0；抽验：RLock L152 / participation_rate=0.05 L141——**相符**。
 
 ## AI-06 交易域
-（待回收）
+- worktree：D:\ZephyrAlpha\.worktrees\AI-AUDIT06-001；commit 8b590b5670（18 文件 44+/24−）
+- 轮次：轮1 发现 18→修复 18→复检漏网 1+竞态丢失 3→补修→轮2/轮3 复检零（AST 扫 BOM=0/语法错=0，305 passed）。连续 2 轮零问题。
+- 修复：①16 处表头叙事失实（admission_controller/verdict_engine/ports/conductor/autopilot/staging_area/gpu_monitor/finalizer/stop_gate/task_gate/work_dag/deadman_switch/gpu_consensus_scheduler 等，全仓 import 反查实证）②6 处静默吞异常补 logger.warning。
+- 自主裁定：ports/gpu_consensus_scheduler 不删（退役牵动蓝图共享面，登记候选交 Owner）；scheduler 宽捕获保留（telemetry 控制流）；42 处窄捕获可接受；时间触发逐处核豁免。
+- 共享收口上交：①failover_coordinator integration 域②conductor/autopilot 旁路 _conn.execute 根因=governance TaskRepository 缺 batch_id API③ports.py 退役流转（MOD-INF-035）④gpu_consensus_scheduler 僵尸候选（MOD-INF-033）⑤GW 锁缺陷复合实证。
+- 线索答复：ex_sor 四域零命中 N/A；failover_coordinator 属 integration；_g04_ops_check 属 autonomy_core。遗留 0；抽验：admission_controller/verdict_engine 表头实测——**相符**。
 
 ## AI-07 回测研究ML域
-（待回收）
+- worktree：D:\ZephyrAlpha\.worktrees\AI-AUDIT07-001；commits a49e1f6c38 + 75c11892de（51 文件）
+- 轮次：R1 发现 9 类→修复 50 文件→复检 1 新变体→修复→R2/R3 复检零（214 跟踪文件全量）。连续 2 轮零问题。
+- 修复：①总控线索①闭环（qnn/patchtst 死注释删）②model_version_registry 过期占位叙事更新③40 文件 [DEPENDENCIES] 漏头 58 token 机械填充④9 文件 [TESTS] 回填⑤preflight_checker A_full 表头补全+双 TTL 收敛⑥strategy_cpcv_matrix ERROR_CONTRACT 对齐 ZA-BT-0037。pytest 124+16 passed。
+- 自主裁定：[DEPENDENCIES] 真源约定=「直接 import+注入式/文档化上游」超集（26 处注解式保留防新漂移）；17 处静默异常定性合规；ZA-MLT-0003 三文件共用非重号；EXP-WALKFWD-001 running 合规；MATURITY=design 语义冲突 22 文件→待 Owner。
+- 共享收口上交（均 Owner 门）：①model_registry.yaml 缺 ML-QNN2S-001（human_gated，草案已备）②26 异常类"未登记-申请中"系统性缺口（FAC/MLS 前缀未分配）③nan_processor.py 僵尸 salvage（Owner 裁定已实质 supersede）④MATURITY design 22 文件⑤battle_map PLAN 域漂移/孤儿环节+anchor 615 D_AUDITTEST 污染疑点转派。
+- 转派：core_satellite_allocator.py:147 死注释（position 域）。遗留 0；抽验：qnn"待登记"=0 / ZA-BT-0037 双点实证——**相符**。
 
 ## AI-08 因子信号域
-（待回收）
+- worktree：D:\ZephyrAlpha\.worktrees\AI-AUDIT08-001；commits 3799c0ed54 / 7027ce13de / 5cba5f4039 / 660be70b43
+- 轮次：R1 发现 16→修复 11 文件→R2 发现 6→修复 6→R3 机扫 27 文件漂移→修复→R4 复检 0→R5 终版 7 缺口→修复 8 文件→R6/R7 复检 0。连续 2 轮零问题（终轮 3812 passed）。
+- 修复：①signal_ashare/__init__ 表头中部归顶部+悬空锚定落位+双 docstring 收口②~30 文件 CONSUMERS 诚实化（0 引用改"暂无消费方——接线待排期"；真实消费方补齐）③数据字段级/契约级/鸭型注解④technical_indicators 6 件动态接线留痕⑤docstring 叙事修正。
+- 自主裁定：HC-10 PIT 警告误报；FCT-CRYPTO 四段式合规；IND-COMP-001 设计态合规；占位错误码双侧一致声明合规；零消费方三模块退役候选留 Owner；9 周期规范代码级合规。
+- 共享收口上交：①depgraph 重建 MOD-SIG-021→MOD-SIGNAL_ASHARE②error_code_registry ~44 占位码登记申请③technical_indicator_registry 计数漂移（250/41）④_domain_signal/blueprint.md DegradationMonitorBase 锚定弱⑤plan_engine/sit_out_list.py war_pool_generator 未接线转派。
+- 线索答复：regime_detector/chip_distribution_engine 实测位于 src/zephyr/regime 与 src/zephyr/gov_drift，非本域（附形态说明转派）；vocab WARN 本域 0 命中。遗留 0；抽验：signal_ashare 表头顶部 8 行/correlation_preprocessing CONSUMERS 实测——**相符**。
 
 ## AI-09 风控合规安全域
 （待回收）
@@ -122,9 +142,13 @@ ttl: task_bound
 - →AI-06：ex_sor 对 market_data failover/connectors 接线宣称失实（AI-04 表头实证）；integration/failover_coordinator.py:29 注释提及 failover.manager 未 import。
 - →AI-07：qnn_two_stage.py L132 / patchtst_density_encoder.py L122 死注释"待登记"（实际已用已登记码 ZA-MLT-0012/0013）。
 - →AI-08：regime_detector.py 5 异常类声明 ZA-REGIME-0001~0005/0050~0052 类内无 error_code；chip_distribution_engine.py 头注 [ERROR_CONTRACT] 无异常类。
-- →AI-10：core_satellite_allocator.py L147 死注释"待登记"（实际已用 ZA-POS-0027）。
+- →AI-10：core_satellite_allocator.py L147 死注释"待登记"（AI-02 报 ZA-POS-0027 / AI-07 报 ZA-POS-0025，以实测为准）。
 - →AI-20：G1 gateway 锁 P0 根修；script_manifest/rule_index 生成器 now() 非幂等 churn；scripts 侧 vocab WARN 8 条。
-- →AI-14/15/16：src 侧 vocab WARN 8 条（knowledge_classifier×3、_g04_ops_check、dashboard api_server/alert_center、reflctrl_gate×2、process_reaper）按域认领。
+- →AI-14/15/16：src 侧 vocab WARN 8 条（knowledge_classifier×3、_g04_ops_check、dashboard api_server/alert_center、reflctrl_gate×2、process_reaper）按域认领。AI-06 复核：_g04_ops_check 属 autonomy_core。
+- →AI-09：regime_detector.py（src/zephyr/regime/）异常类错误码在 docstring、类内无 error_code 属性，与头注 [ERROR_CONTRACT] 漂移疑点（AI-02 S4+AI-08 形态确认），若属你域实证核处。
+- →AI-11：chip_distribution_engine.py（src/zephyr/gov_drift/）头注 [ERROR_CONTRACT] 声明但无异常类（AI-02 S4+AI-08 确认位置）；AI-06 移交：TaskRepository 缺 batch_id 公开 API（conductor/autopilot 旁路 _conn.execute 根因）。
+- →AI-12：battle_map 线索（AI-07 移交）：域漂移 3（MOD-PLAN-001/002/003）、缺失叙事 3、孤儿环节 3（BM-BUY-05/14、BM-SIM-08）、anchor 615 MOD-PLAN-001 depgraph 域含 D_AUDITTEST 污染疑点；ports.py 退役流转（MOD-INF-035）与 gpu_consensus_scheduler 僵尸候选（MOD-INF-033）登记流转。
+- →AI-06（复审轮）：broker_interface.py（trading_contracts）[DEPENDENCIES] 声明 trading_contracts.execution.* 实际 import zephyr.shared.contracts.*（AI-05 波次2 移交，AI-06 已闭环未覆盖）。
 
 # 四、全局验证结果
 
@@ -140,6 +164,12 @@ ttl: task_bound
 2. AI-04 三项 salvage（market_data 零生产装配集群 / redundant_source recovery+sqlite_fallback 僵尸 / 33 模块"运行时装配批"君子协定失效）：均需共享登记表+depgraph+多测试文件跨域手术，且涉机制去留（装配批、RecoveryManager 进程内轮询守护结构性违规）——表头已修真防误信，批量退役待 Owner。
 3. registry_consistency_contract REG-002 蓝图登记真源收编（AI-02）：物理蓝图存在但无 registry 载体，涉 docs 域与 ROOR 同步机制。
 4. EX/XS 错误码格式归一（既有豁免延续，AI-02 复核确认维持不越权）。
+5. trading_session threading.Timer 周期调仓（3.2 禁时间触发，AI-05）：删除涉 scripts/start_paper_session.py interval=60 装配+测试行为锁定，事件驱动替代源需接线设计——待 Owner。
+6. MATURITY=design 语义冲突 22 文件（AI-07）：design 实码 145-788 行，被用作"能力已实现待接线"，翻转将联动蓝图/翻译注册表/作战地图三共享面——待 Owner。
+7. AI-07 Owner 门三项：model_registry.yaml 缺 ML-QNN2S-001 条目（草案已备）；26 异常类"未登记-申请中"系统性缺口（FAC/MLS 前缀未分配）；nan_processor.py 僵尸 salvage（Owner 裁定已实质 supersede）。
+8. AI-06 退役候选：ports.py 退役流转（MOD-INF-035）、gpu_consensus_scheduler 僵尸候选（MOD-INF-033）。
+9. AI-08 退役候选：multifactor_crowding_monitor / multifactor_decay_lifecycle / simple_factor_attribution 零消费方模块；error_code_registry ~44 占位码批量登记申请（沿 2026-08-30 先例）。
+10. AI-02 S1 内 REG-002 同 3；AGENTS.md 是否需补"模板 11"等入口（AI-02 S5，可选项）。
 
 # 七、浅审与存疑标记清单
 
