@@ -1,0 +1,324 @@
+# [A_config] module_id=MOD-TRADING-015 | layer=config | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# ============================================================================
+# 交易决策地图真源（Trading Decision Map SSOT）— schema v1.0
+# 设计真源: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/69_trading_decision_map.md
+# 蓝图: docs/03_modules/_domain_trading/decision_map/blueprint.md
+# 裁定: Owner 2026-09-04 D1-D6（讨论备忘录 docs/_working/2026-09-04-trading-decision-map-discussion.md）
+#
+# 真源边界（INV-1 铁律）: 本文件只定义「决策链环节骨架+策略挂载+状态矩阵」，
+#   策略/因子/数据/模块四层一律按稳定标识符引用既有真源，禁止复制条目内容:
+#   - strategy_ref → 代码 StrategyMeta 注册表（8 实盘策略，kebab-case id，真源=pf_core/strategies/*.py）
+#     或 strategy_registry.yaml（REG-STR-001，STR-* 粒度规则条目）
+#   - factor_refs  → factor_registry.yaml（REG-FCT-001，FCT-*）
+#   - data_refs    → data_asset_registry.yaml（REG-DATAFLOW-001，DS-*）
+#   - module_ref   → depgraph（MOD-*，可空=null=缺口节点，warning 级）
+# 置信度语义（D5）: verified=回测归因支撑（必带 evidence）/ proposed=主观假设待验证 / untested=未填
+# 血肉填充约定: 骨架先行（本文件），格子内容以 proposed 逐步添加，禁止把 proposed 冒充 verified
+# ============================================================================
+
+schema_version: '1.0'
+map_id: TDMAP-001
+name_zh: 交易决策地图
+markets: [cn_a, crypto]          # 同 schema 两实例（D2.5）；crypto V0 为骨架空壳
+
+nodes:
+  # ── 建仓流 entry_flow（cn_a，内嵌 Owner 主观漏斗 L1-L4）──────────────────
+  - node_id: TDM-E-L1
+    name_zh: 大盘总闸
+    market: cn_a
+    flow: entry_flow
+    layer: L1
+    node_type: gate
+    point: 盘前
+    decision_question: 今天下不下单/给多少总仓位
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    strategy_mounts: []
+
+  # L1 四路传感器阵列（D6：指数↔情绪双向、短线情绪领先）
+  - node_id: TDM-E-L1-S1
+    name_zh: 大盘指数传感器
+    market: cn_a
+    flow: entry_flow
+    layer: L1
+    node_type: sensor
+    point: 盘前
+    decision_question: 指数趋势/位置如何（数据面）
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L1-S2
+    name_zh: 市场内部结构传感器
+    market: cn_a
+    flow: entry_flow
+    layer: L1
+    node_type: sensor
+    point: 盘中
+    decision_question: 涨停/跌停/炸板/连板梯队显示的参与度如何（广度面）
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L1-S3
+    name_zh: 赚钱效应传感器
+    market: cn_a
+    flow: entry_flow
+    layer: L1
+    node_type: sensor
+    point: 盘前
+    decision_question: 昨日涨停溢价/晋级率显示的投机情绪如何（结果面，短线领先）
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L1-S4
+    name_zh: 波动率传感器
+    market: cn_a
+    flow: entry_flow
+    layer: L1
+    node_type: sensor
+    point: 盘前
+    decision_question: 市场波动状态是否允许正常仓位（可选通道）
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L1-AGG
+    name_zh: 市场状态判定
+    market: cn_a
+    flow: entry_flow
+    layer: L1
+    node_type: aggregation
+    point: 盘前
+    decision_question: 综合四路传感器判定市场状态，输出预算/机会窗口/状态标签
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L2
+    name_zh: 板块选择
+    market: cn_a
+    flow: entry_flow
+    layer: L2
+    node_type: stage
+    point: 盘前
+    decision_question: 今天打哪个板块/赛道
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L3
+    name_zh: 个股选择
+    market: cn_a
+    flow: entry_flow
+    layer: L3
+    node_type: stage
+    point: 盘前
+    decision_question: 板块里选哪只票
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    strategy_mounts:
+      - {strategy_ref: daban-sleeve,      confidence: proposed, evidence: null}
+      - {strategy_ref: multifactor-sleeve, confidence: proposed, evidence: null}
+      - {strategy_ref: eventdriven-sleeve, confidence: proposed, evidence: null}
+      - {strategy_ref: topn-momentum,      confidence: proposed, evidence: null}
+      - {strategy_ref: default-equity,     confidence: proposed, evidence: null}
+
+  - node_id: TDM-E-L4
+    name_zh: 买卖点与执行
+    market: cn_a
+    flow: entry_flow
+    layer: L4
+    node_type: stage
+    point: 盘中
+    decision_question: 何时进场/怎么下单
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    strategy_mounts:
+      - {strategy_ref: daban-sleeve, confidence: proposed, evidence: null}
+
+  # ── 持仓流 position_flow（cn_a）──────────────────────────────────────────
+  - node_id: TDM-P-P1
+    name_zh: 持仓体检
+    market: cn_a
+    flow: position_flow
+    layer: P1
+    node_type: stage
+    point: 盘前
+    decision_question: 每只持仓的现状/逻辑是否仍在
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    strategy_mounts: []
+
+  - node_id: TDM-P-P2
+    name_zh: 做T与加减仓
+    market: cn_a
+    flow: position_flow
+    layer: P2
+    node_type: stage
+    point: 盘中
+    decision_question: 今日持仓怎么做T/要不要加减仓
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    strategy_mounts:
+      - {strategy_ref: intraday-surge-fall, confidence: proposed, evidence: null}
+      - {strategy_ref: orderbook-imbalance, confidence: proposed, evidence: null}
+      - {strategy_ref: vwap-reversion,      confidence: proposed, evidence: null}
+
+  - node_id: TDM-P-P3
+    name_zh: 加仓决策
+    market: cn_a
+    flow: position_flow
+    layer: P3
+    node_type: stage
+    point: 盘中
+    decision_question: 浮盈仓要不要加/什么时候加
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    strategy_mounts: []
+
+  # ── 离场流 exit_flow（cn_a）──────────────────────────────────────────────
+  - node_id: TDM-X-S1
+    name_zh: 卖出信号收集评分
+    market: cn_a
+    flow: exit_flow
+    layer: S1
+    node_type: stage
+    point: 持续
+    decision_question: 哪些卖出信号触发了/强度如何
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    strategy_mounts: []
+
+  - node_id: TDM-X-S2
+    name_zh: 离场执行
+    market: cn_a
+    flow: exit_flow
+    layer: S2
+    node_type: stage
+    point: 盘中
+    decision_question: 怎么卖（一次性/分批/竞价/尾盘）
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    strategy_mounts: []
+
+  # ── 风控横切（非第四条流，任何环节可触发）────────────────────────────────
+  - node_id: TDM-X-R1
+    name_zh: 应急保命
+    market: cn_a
+    flow: exit_flow
+    layer: X1
+    node_type: cross_cutting
+    point: 持续
+    decision_question: 暴跌/流动性危机是否触发无条件降仓
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    strategy_mounts: []
+
+  # ── 币圈实例（骨架空壳，L2 弱化为赛道层）─────────────────────────────────
+  - node_id: TDM-C-L1
+    name_zh: 币圈大盘总闸
+    market: crypto
+    flow: entry_flow
+    layer: L1
+    node_type: gate
+    point: 持续
+    decision_question: BTC 趋势/山寨季状态允许什么仓位
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    strategy_mounts: []
+
+  - node_id: TDM-C-L2
+    name_zh: 赛道选择
+    market: crypto
+    flow: entry_flow
+    layer: L2
+    node_type: stage
+    point: 持续
+    decision_question: 哪条赛道在轮动（A股板块层的币圈弱化版）
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    strategy_mounts: []
+
+  - node_id: TDM-C-L3
+    name_zh: 币对选择
+    market: crypto
+    flow: entry_flow
+    layer: L3
+    node_type: stage
+    point: 持续
+    decision_question: 赛道里选哪个币
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    strategy_mounts: []
+
+  - node_id: TDM-C-L4
+    name_zh: 币圈买卖点
+    market: crypto
+    flow: entry_flow
+    layer: L4
+    node_type: stage
+    point: 持续
+    decision_question: 何时进出（7x24 无 T+1 约束）
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    strategy_mounts: []
+
+edges:
+  # 传感器 → 聚合（feed）
+  - {from_node: TDM-E-L1-S1, to_node: TDM-E-L1-AGG, edge_type: feed}
+  - {from_node: TDM-E-L1-S2, to_node: TDM-E-L1-AGG, edge_type: feed}
+  - {from_node: TDM-E-L1-S3, to_node: TDM-E-L1-AGG, edge_type: feed}
+  - {from_node: TDM-E-L1-S4, to_node: TDM-E-L1-AGG, edge_type: feed}
+  # 指数→情绪 因果边（D6：双向互动、短线情绪领先——以 feedback 表达互动性）
+  - {from_node: TDM-E-L1-S1, to_node: TDM-E-L1-S3, edge_type: feedback}
+  # 漏斗主链（sequence，受上一步约束）
+  - {from_node: TDM-E-L1-AGG, to_node: TDM-E-L1, edge_type: sequence}
+  - {from_node: TDM-E-L1, to_node: TDM-E-L2, edge_type: sequence}
+  - {from_node: TDM-E-L2, to_node: TDM-E-L3, edge_type: sequence}
+  - {from_node: TDM-E-L3, to_node: TDM-E-L4, edge_type: sequence}
+  # L1 广播到持仓/离场（大盘转弱→风险处置/警戒）
+  - {from_node: TDM-E-L1-AGG, to_node: TDM-P-P1, edge_type: broadcast}
+  - {from_node: TDM-E-L1-AGG, to_node: TDM-X-S1, edge_type: broadcast}
+  # 持仓流
+  - {from_node: TDM-P-P1, to_node: TDM-P-P2, edge_type: sequence}
+  - {from_node: TDM-P-P2, to_node: TDM-P-P3, edge_type: sequence}
+  # 持仓→离场（做T卖出即离场决策输入）
+  - {from_node: TDM-P-P2, to_node: TDM-X-S1, edge_type: sequence}
+  - {from_node: TDM-X-S1, to_node: TDM-X-S2, edge_type: sequence}
+  # 应急保命横切（示意主边：触发即接管离场）
+  - {from_node: TDM-X-R1, to_node: TDM-X-S2, edge_type: broadcast}
+  # 币圈链
+  - {from_node: TDM-C-L1, to_node: TDM-C-L2, edge_type: sequence}
+  - {from_node: TDM-C-L2, to_node: TDM-C-L3, edge_type: sequence}
+  - {from_node: TDM-C-L3, to_node: TDM-C-L4, edge_type: sequence}
+
+state_matrix:
+  # 列轴 V0 占位（强势/震荡/弱势）；情绪周期细化（启动/发酵/高潮/分歧/退潮/冰点）留血肉阶段
+  states: [强势, 震荡, 弱势]
+  cells:
+    - {node_id: TDM-E-L1, state: 强势, mounted: [], confidence: proposed}
+    - {node_id: TDM-E-L1, state: 震荡, mounted: [], confidence: proposed}
+    - {node_id: TDM-E-L1, state: 弱势, mounted: [], confidence: proposed}
+    - {node_id: TDM-E-L4, state: 强势, mounted: [daban-sleeve], confidence: proposed}
+    - {node_id: TDM-P-P2, state: 震荡, mounted: [intraday-surge-fall, orderbook-imbalance, vwap-reversion], confidence: proposed}

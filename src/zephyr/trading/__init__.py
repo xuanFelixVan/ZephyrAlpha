@@ -94,3 +94,15 @@ __all__.append("EodProcessor")
 __all__.append("ManualInstructionChannel")
 
 __all__.append("SettlementRecordAggregate")
+
+from zephyr.trading.decision_map import (
+    DecisionMap,
+    DecisionMapSchemaError,
+    load_decision_map,
+    validate_decision_map,
+)
+
+__all__.append("DecisionMap")
+__all__.append("DecisionMapSchemaError")
+__all__.append("load_decision_map")
+__all__.append("validate_decision_map")

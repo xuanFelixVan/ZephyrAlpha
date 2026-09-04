@@ -1,0 +1,200 @@
+---
+ttl: permanent
+doc_type: architecture_view
+title: 交易决策地图（Trading Decision Map）——决策内容索引层设计备忘
+owner: ZephyrAlpha-Owner
+language: zh
+status: active
+version: "1.0.0"
+date: 2026-09-04
+topic: trading_decision_map
+scope: 07_trading_decision_architecture
+parent: "[讨论备忘录](../../../_working/2026-09-04-trading-decision-map-discussion.md)（D1-D6 裁定+27 项论断交叉验证报告）"
+related_modules:
+  - src/zephyr/trading/decision_map.py
+  - config/trading_decision_map.yaml
+  - docs/03_modules/_domain_trading/decision_map/blueprint.md
+related_issues:
+  - "#ARCH-TRADING-DECISION-MAP-001（待登记：V0 施工完成后补登）"
+---
+
+# 交易决策地图（Trading Decision Map）——决策内容索引层设计备忘
+
+## 1. 背景
+
+### 1.1 项目处境与核心问题
+
+项目已有 6 类全景图（depgraph/dataflowgraph/decisiongraph/battle_map/frontend_map/路径树）回答"**系统怎么运转**"（工程视图），但缺一个总口子回答"**钱怎么赚**"（决策内容视图）——什么市场情况、在决策链哪个环节、用哪个策略/因子、靠哪些数据、由哪段代码实现。
+
+Owner（主观交易员）的实盘决策是一条分层漏斗：**看大盘（下不下单）→ 看板块（开哪个板块）→ 看个股（选哪只票）→ 看买卖点（何时进出）**。现有 8 个策略（打板/默认多头/事件驱动/多因子/TopN动量/30秒冲高回落做T/盘口失衡反转做T/VWAP回归做T）各对应漏斗不同环节，但没有一张图把它们串起来。
+
+### 1.2 行业验证锚点（详见讨论备忘录 §12，27 项论断 24 项验证通过）
+
+- **漏斗=机构决策流程通用标准**：Fisher Investments 官网直接画成漏斗；宏利基金五段式（MVPS 资产配置→行业研究→股票选择→组合构建执行→评估风控）与 Owner 主观流程逐段对应
+- **生命周期=机构交易管理通用标准**：Financial Edge 交易生命周期四段，"持续持仓与风险管理"为正式阶段
+- **三流骨架=两者复合**：漏斗管决策（建仓流内部解剖）+ 生命周期管持仓（持仓/离场流）+ 风控横切
+- **L1 大盘层=传感器阵列**：WSC regime 三支柱（趋势+广度+情绪）；A股情绪周期量化门槛体系（涨停数/炸板率/连板梯队）；养家心法"赚钱效应＞指数"
+- **图谱单真源+多视图投影**：VESA 论文（arXiv 2410.22846）/ Nextspace 本体架构
+- **状态→策略矩阵**：SignalPilot Strategy Selection by Regime；假设治理阶梯（quantoptimus 80 thesis→6 阶段管线→7 部署）
+
+### 1.3 约束条件
+
+- 真源唯一铁律：地图不得复制 battle_map/strategy_registry/factor_registry/data_asset_registry 的内容，只做**引用**
+- 8 个策略的"策略所处环节"已由 StrategyMeta 透传（回测页在用），地图引用不重建
+- 市场分片三层隔离铁律：A股/币圈同 schema 不同实例
+- V0 不涉前端（Owner 2026-09-04 指令）：只做后端真源+加载/校验模块
+
+## 2. 决策
+
+### 2.1 定位（D1，Owner 拍板）
+
+**独立新地图**——项目第 7 张地图性质的**决策内容索引层**：
+
+| 层 | 真源（全部已存在） | 地图角色 |
+|---|---|---|
+| 环节 | 本地图 YAML（决策链骨架是新增内容） | 定义 |
+| 策略 | strategy_registry.yaml（REG-STR-001，STR-*） | 引用 |
+| 因子 | factor_registry.yaml（REG-FCT-001，FCT-*） | 引用 |
+| 数据 | data_asset_registry.yaml（REG-DATAFLOW-001，DS-*） | 引用 |
+| 模块 | depgraph（MOD-*）+ blueprint.md | 引用 |
+
+地图自身**不复制任何内容**：环节骨架（决策链结构与规则）是本地图唯一新增的真源；其余四层全部按稳定标识符（STR-*/FCT-*/DS-*/MOD-*）引用，缺口检测=引用存在性校验。
+
+### 2.2 骨架（D3，Owner 拍板）
+
+**三流骨架，建仓流内嵌 Owner 漏斗**（机构通用用法实证）：
+
+```
+【建仓流 entry_flow】
+  L1 大盘总闸（双通道→四路传感器阵列）→ L2 板块 → L3 个股 → L4 买卖点/执行
+【持仓流 position_flow】
+  P1 持仓体检 → P2 做T/加减仓（三个做T策略挂载点） → P3 加仓决策
+【离场流 exit_flow】
+  S1 卖出信号收集评分 → S2 离场执行
+【风控横切 risk_cross】 暴跌/流动性危机可在任何流任何环节触发（非第四条流）
+```
+
+L1 结构（D4/D6，Owner 裁定+行业修正）：**四路同层级传感器阵列**——①大盘指数 ②市场内部结构（涨停/跌停/炸板/连板梯队=广度）③赚钱效应（昨日涨停溢价/晋级率=投机情绪）④波动率（可选）→ 汇聚「市场状态判定」→ 三输出（预算/机会窗口/状态标签）。指数↔情绪双向边、短线情绪领先。
+
+### 2.3 存储与视图（§8.2 结论，行业验证）
+
+**存储=图谱（节点+边），展示=投影**。漏斗、环节×状态矩阵、三流泳道都是同一张图的不同视图；新想法=加节点/边，不动骨架。
+
+### 2.4 状态矩阵与置信度（D5，Owner 拍板）
+
+环节×市场状态矩阵，每格标注置信度：`verified`（回测归因支撑）/ `proposed`（主观假设待验证）/ `untested`（未填）。骨架先行，血肉（格子内容）以 proposed 逐步添加。行业模板：thesis 库→分级验证管线（quantoptimus/quantest）。
+
+### 2.5 双市场（Q3 倾向，结构先行）
+
+同一套 schema 两棵市场实例子图（market: cn_a | crypto）。币圈 V0 为骨架空壳（L2 弱化为赛道层），内容随币圈策略库成长。
+
+### 2.6 V0 范围（D2，Owner 拍板 + Owner 2026-09-04 指令）
+
+**后端骨架，不涉前端**：
+
+| 交付物 | 路径 | 内容 |
+|---|---|---|
+| YAML 真源 | `config/trading_decision_map.yaml` | 三流环节骨架+8 策略归位+L1 传感器+状态矩阵骨架（proposed 占位）+币圈空壳 |
+| 加载/校验模块 | `src/zephyr/trading/decision_map.py` | dataclasses + load_decision_map() + validate_decision_map()（引用存在性校验→GapReport） |
+| 单元测试 | `tests/trading/test_decision_map.py` | 加载/校验/缺口检测全路径 |
+
+**V0 明确不做**：API 端点（V1）、前端视图（V1）、入 DB（V2，Q8 待定）、动态状态判别（V2）、ClickHouse/depgraph 实时缺口检查（V1）。
+
+## 3. 考虑过的替代方案与拒绝理由
+
+| 方案 | 拒绝理由 |
+|---|---|
+| 并入作战地图（环节上加决策规则字段） | 工程/决策双真相混杂导致作战地图臃肿；两图对齐 key 不同（step_id vs 决策链），硬并违背单一职责 |
+| 纯漏斗四层骨架 | 装不下 3 个做T策略（持仓流）与卖出（离场流）；漏斗只是建仓流内部解剖 |
+| 真源直接入 DB 三表（battle_map 同款） | V0 轻量优先（Owner 倾向 Q8）；YAML 有文件可审可 diff，等实盘调度器消费决策规则时再入 DB |
+| 校验器直连 ClickHouse/depgraph 查实时存在性 | V0 引入 DB 依赖违反 MVP；V0 用三注册表 YAML 做存在性检查（离线可测），实时四态灯留 V1 |
+
+## 4. 施工算法
+
+> **✅ 已施工**（2026-09-04，V0 后端骨架；MOD-TRADING-015）：config/trading_decision_map.yaml（19 节点/19 边/矩阵骨架/双市场）+ src/zephyr/trading/decision_map.py（load/validate R1-R8，含 15 字段头+ALGO_FLOW）+ tests/trading/test_decision_map.py（19 用例，循环验收连续 2 轮 0 错误）+ docs/03_modules/_domain_trading/decision_map/blueprint.md。depgraph 设计态 node_id=11576295（planned）。
+
+### 4.1 YAML schema（config/trading_decision_map.yaml）
+
+```yaml
+schema_version: '1.0'
+map_id: TDMAP-001
+nodes:                       # 决策链节点（环节/传感器/状态判定）
+  - node_id: TDM-L1          # 命名 TDM-{FLOW}{LAYER} 或 TDM-{FLOW}-{NN}
+    name_zh: 大盘总闸
+    market: cn_a             # cn_a | crypto
+    flow: entry_flow         # entry_flow | position_flow | exit_flow
+    layer: L1                # 层内序（L1-L4 / P1-P3 / S1-S2 / X1 横切）
+    node_type: gate          # gate | stage | sensor | aggregation | cross_cutting
+    point: 盘前              # 盘前 | 盘中 | 盘后 | 持续（时点属性）
+    decision_question: 今天下不下单/给多少仓位   # 决策问题一句话
+    factor_refs: []          # 引用 REG-FCT-001 的 FCT-*
+    data_refs: []            # 引用 REG-DATAFLOW-001 的 DS-*
+    module_ref: null         # 引用 depgraph MOD-*（可空=缺口，V0 允许 null）
+    strategy_mounts:         # 本环节挂载的策略
+      - strategy_ref: STR-DABAN-001   # 引用 REG-STR-001
+        confidence: proposed            # verified | proposed | untested
+        evidence: null                  # verified 时必填（回测 run 标识）
+edges:                       # 决策依赖边（有依赖的地图才能推理）
+  - from_node: TDM-L1
+    to_node: TDM-L2
+    edge_type: sequence       # sequence | broadcast | feedback
+state_matrix:                # 环节×市场状态（骨架，格子 proposed 占位）
+  states: [强势, 震荡, 弱势]  # V0 列轴占位；情绪周期细化留血肉阶段
+  cells:
+    - node_id: TDM-L4
+      state: 强势
+      mounted: [STR-DABAN-001]
+      confidence: proposed
+markets: [cn_a, crypto]      # 同 schema 两实例
+```
+
+### 4.2 接口签名（src/zephyr/trading/decision_map.py）
+
+```python
+@dataclass(frozen=True)
+class DecisionMapNode: ...     # node_id/name_zh/market/flow/layer/node_type/point/
+                               # decision_question/factor_refs/data_refs/module_ref/strategy_mounts
+@dataclass(frozen=True)
+class StrategyMount: ...       # strategy_ref/confidence/evidence
+@dataclass(frozen=True)
+class DecisionMapEdge: ...     # from_node/to_node/edge_type
+@dataclass(frozen=True)
+class GapReportItem: ...       # level(error|warning)/code/node_id/detail
+@dataclass(frozen=True)
+class DecisionMap: ...         # nodes/edges/state_matrix/markets
+
+def load_decision_map(path: Path) -> DecisionMap:
+    """加载 YAML 真源 → 不可变 dataclass；schema 结构错误抛 DecisionMapSchemaError"""
+
+def validate_decision_map(dm: DecisionMap, registry_dir: Path) -> tuple[bool, list[GapReportItem]]:
+    """引用存在性校验（V0 全部离线 YAML）：
+    R1 节点结构（必填/枚举：market/flow/layer/node_type/point）
+    R2 边端点存在性 + edge_type 枚举
+    R3 strategy_ref 存在性（strategy_registry.yaml entries[].strategy_id）
+    R4 factor_refs 存在性（factor_registry.yaml entries[].factor_id）
+    R5 data_refs 存在性（data_asset_registry.yaml datasets[].dataset_id）
+    R6 strategy_mounts.confidence 枚举 + verified 必带 evidence
+    R7 state_matrix.cells 引用环节存在性 + mounted 策略存在性
+    R8 边无环（sequence 边成环=骨架错误）
+    返回 (all_errors_zero, GapReport 列表)；module_ref=null 记 warning（V0 允许，缺口可视化输入）"""
+```
+
+### 4.3 状态机与启动方式
+
+- **无运行时状态**：纯函数库（load→validate→report），无常驻进程、无事件订阅——启动方式 N/A（B 类新建功能，非 C 类常驻系统；A.1.4-1.6 声明 N/A）
+- 消费方（V1 API 端点/前端）调用本模块，本模块不反向依赖任何运行时组件
+
+### 4.4 测试算法（tests/trading/test_decision_map.py）
+
+1. 正常加载：构造合法 YAML → load 成功 + 字段逐项断言
+2. schema 错误：缺必填/非法枚举 → DecisionMapSchemaError
+3. 引用缺口：strategy_ref 指向不存在的 STR-ID → GapReport error R3
+4. module_ref 缺失 → warning（非 error）
+5. 边成环 → error R8
+6. verified 无 evidence → error R6
+7. **真源自检**：加载仓库内真实 config/trading_decision_map.yaml → validate 全绿（防真源漂移的回归锚）
+
+## 5. 演进方向（V1+，不在本备忘施工范围）
+
+- V1：api_server 增加只读端点（GET /api/decision_map）→ 前端泳道图/矩阵视图；module_ref 缺口接 depgraph 实时校验；数据四态灯接 ClickHouse
+- V2：整装回测（方案 YAML=各层激活规则+策略清单+资金比例，拼装回测=已验证业界做法）；情绪状态动态判别器接入矩阵列轴；真源迁移 DB（若实盘调度器消费）

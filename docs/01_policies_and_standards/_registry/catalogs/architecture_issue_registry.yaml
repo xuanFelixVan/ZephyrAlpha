@@ -21346,3 +21346,12 @@ entries:
   status: decided
   created: '2026-09-03'
   last_updated: '2026-09-03'
+
+- issue_id: '#ARCH-TRADING-DECISION-MAP-001'
+  title: 交易决策地图（决策内容索引层，项目第 7 张地图性质）V0 落地登记——三流骨架+状态矩阵+引用校验
+  severity: P2中
+  adjudication: 'Owner 2026-09-04 D1-D6 裁定（讨论备忘录 docs/_working/2026-09-04-trading-decision-map-discussion.md，27 项论断全网交叉验证 24 项通过）：独立新地图管"决策规则+策略挂载"，与作战地图（工程视图）锚点互链不建第二真源。三流骨架=建仓流 L1-L4（内嵌 Owner 主观漏斗，机构通用用法实证：Fisher 漏斗+Financial Edge 生命周期+宏利五段式）+持仓流 P1-P3+离场流 S1-S2+风控横切；L1=四路传感器阵列（指数/内部结构/赚钱效应/波动率，D6 行业查证修正：指数↔情绪双向边短线情绪领先）；环节×状态矩阵带置信度分级 verified/proposed/untested（D5，行业模板=thesis 库分级验证管线）；双市场同 schema 两实例。真源引用不复制：策略=代码 StrategyMeta 8 实盘策略 id/因子=REG-FCT-001/数据=REG-DATAFLOW-001/模块=depgraph。V0 已施工（MOD-TRADING-015：config/trading_decision_map.yaml+src/zephyr/trading/decision_map.py R1-R8 校验+tests 19 用例循环验收连续 2 轮 0 错误+depgraph production）。'
+  fix_phase: 'V1=api_server 只读端点+前端泳道/矩阵视图+depgraph/ClickHouse 实时缺口检查（module_ref 红节点点亮）；V2=整装回测（方案 YAML=各层激活规则+策略清单+资金比例，拼装回测业界已验证）+情绪动态判别器接入矩阵列轴+真源迁 DB（若实盘调度器消费）。详见 69 号设计备忘录 §5。'
+  status: decided
+  created: '2026-09-04'
+  last_updated: '2026-09-04'

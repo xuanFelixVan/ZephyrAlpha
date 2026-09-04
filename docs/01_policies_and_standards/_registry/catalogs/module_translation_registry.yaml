@@ -47302,6 +47302,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "提交代码时自动检查前端全景图登记表：编号不能重复、每个功能点必须写清数据从哪来、格式要标准，有错就拦下不让提交。"
+- module_path: src/zephyr/trading/decision_map.py
+  domain_id: D_TRADING
+  name_zh: "交易决策地图"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "加载并校验交易决策地图YAML真源：把决策链环节、策略挂载、因子/数据/模块引用读成结构化对象，并检查引用是否存在（缺口即红节点）"
 
 battle_map_steps:
 - step_id: BM-BUY-04

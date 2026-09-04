@@ -4892,7 +4892,51 @@ capabilities:
   - DabanExecutionAlgorithm
   - DabanTimingDecision
   - DynamicCapacityCalculator
+- capability_id: trading_decision_map
+  aliases:
+  - TradingDecisionMap
+  - decision_map
+  - 交易决策地图
+  description: 交易决策地图（MOD-TRADING-015，第 7 张地图性质的决策内容索引层）。加载并校验
+    config/trading_decision_map.yaml（三流骨架：建仓 L1-L4 内嵌漏斗+持仓 P1-P3+离场 S1-S2+风控横切；
+    L1 四路传感器阵列；环节×状态矩阵带置信度分级；双市场同 schema）。策略/因子/数据引用按稳定
+    标识符指向既有注册表（REG-STR-001/REG-FCT-001/REG-DATAFLOW-001 + 代码 StrategyMeta），
+    R1-R8 引用存在性校验产出 GapReport（缺口=地图红节点）。设计真源 docs/02_enterprise_architecture/
+    07_trading_decision_architecture/design_memos/69_trading_decision_map.md。
+    canonical = src/zephyr/trading/decision_map.py（auto 派生：basename 匹配 capability_id）。
+  integrity_anchors:
+  - load_decision_map
+  - validate_decision_map
+  - DecisionMapSchemaError
 creation_tokens:
+- file: src/zephyr/trading/decision_map.py
+  token: auto-trading-decision-map-20260904
+  created_by: solo-20260904-decision-map
+  capability: trading_decision_map
+- file: tests/trading/test_decision_map.py
+  token: auto-trading-decision-map-20260904-test
+  created_by: solo-20260904-decision-map
+  capability: trading_decision_map_test
+- file: config/trading_decision_map.yaml
+  token: auto-trading-decision-map-20260904-config
+  created_by: solo-20260904-decision-map
+  capability: trading_decision_map
+- file: docs/03_modules/_domain_trading/decision_map/blueprint.md
+  token: auto-trading-decision-map-20260904-bp
+  created_by: solo-20260904-decision-map
+  capability: trading_decision_map
+- file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/69_trading_decision_map.md
+  token: auto-trading-decision-map-20260904-memo
+  created_by: solo-20260904-decision-map
+  capability: trading_decision_map
+- file: docs/_working/2026-09-04-trading-decision-map-discussion.md
+  token: auto-trading-decision-map-20260904-discussion
+  created_by: solo-20260904-decision-map
+  capability: trading_decision_map
+- file: docs/_working/audit/architecture-reviews/2026-09-04-trading-decision-map-v0.md
+  token: auto-trading-decision-map-20260904-review
+  created_by: solo-20260904-decision-map
+  capability: trading_decision_map
 - file: src/zephyr/gov_enforcement/commit_gates/frontend_map_gate.py
   token: auto-frontend-map-gate-20260904
   created_by: solo-20260904-truth-source
