@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md
 # [MODULE] zephyr.shared.utils.db_utils
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.io.sqlite_factory; zephyr.governance.persistence.sqlite_schema(init_db)

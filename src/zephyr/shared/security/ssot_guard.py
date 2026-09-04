@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.security.ssot_guard
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.foundation.errors
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/security/test_ssot_guard_unit.py; tests/llm_security/test_security_ssot_guard.py; scripts/governance/generators/generate_gate_registry.py(gate映射); scripts/governance/d5_architecture/syncers/sync_blueprint_code_index.py; zephyr.shared.security.__init__(导出)
 # [STARTUP] manual
 # [MATURITY] production
 # [INVARIANTS] none

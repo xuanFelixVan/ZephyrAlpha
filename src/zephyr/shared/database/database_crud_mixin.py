@@ -32,17 +32,6 @@ P-PLAN 专项工程：抽取两个 DatabaseService 类（governance/persistence 
         def get_depgraph_conn(self, read_only=False): ...
         # CRUD 方法自动从 mixin 继承
 
-[BLUEPRINT] SH-DB-001 | src/zephyr/shared/database/database_crud_mixin.py
-[MODULE] zephyr.shared.database.database_crud_mixin
-[DOMAIN] D_SHARED
-[INVARIANTS] 宿主类MUST提供get_governance_conn/read_only和get_depgraph_conn/read_only
-[MODIFY-GUARD] 修改需同步更新唯一真源 zephyr.infrastructure.database_service（governance/persistence 版已收敛为 re-export）
-[CONSUMERS] src/zephyr/governance/persistence/database_service.py; src/zephyr/infrastructure/database_service.py
-[STABILITY] stable
-[SAFETY] L
-[AI_AUTONOMY] ai_modifiable
-[ERROR_CONTRACT] ConnectionError; ValueError
-[TESTS] tests/test_db_auto_ops.py
 
 # [ALGO_FLOW]
 # 层: 输入

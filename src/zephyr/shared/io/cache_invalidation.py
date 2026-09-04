@@ -121,7 +121,7 @@ class CacheInvalidationManager:
                     invalidated_at=entry.get("invalidated_at", ""),
                 )
         except (json.JSONDecodeError, OSError):
-            pass
+            pass  # 持久化读取为 best-effort（缓存元数据缺失时按空状态重建，不阻断失效主流程）
 
     def _persist(self) -> None:
         """持久化版本数据到 JSON 文件."""
@@ -132,4 +132,4 @@ class CacheInvalidationManager:
             self._persistence_path.parent.mkdir(parents=True, exist_ok=True)
             self._persistence_path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
         except OSError:
-            pass
+            pass  # 持久化写入失败不阻断内存态失效（下次失效周期重写，与 L109 回调豁免同语义）
