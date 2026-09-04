@@ -44,14 +44,14 @@ features:
     page: stockq
     module_id: sq-position-list
     file: features/stockq/sq-position-list.js
-    backend_ref: "api:/api/position（E:\qmt_bridge\Stock 文件桥）"
+    backend_ref: "api:/api/position（E:/qmt_bridge/Stock 文件桥）"
     status: active
   - id: F-STOCKQ-ORDER-BOOK
     name: 五档挂单（QMT 文件桥真源）
     page: stockq
     module_id: sq-order-book
     file: features/stockq/sq-order-book.js
-    backend_ref: "api:/api/orderbook（E:\qmt_bridge\quote.csv 文件桥）"
+    backend_ref: "api:/api/orderbook（E:/qmt_bridge/quote.csv 文件桥）"
     status: active
   - id: F-STOCKQ-EVENT-ROW
     name: 事件时间行（calendar_event 宏观真源）
