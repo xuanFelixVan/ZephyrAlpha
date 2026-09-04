@@ -7,7 +7,7 @@ title: 07 域施工流程标准作业规程（SOP）——端到端 15 步施工
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.5.2"
+version: "1.5.4"
 date: 2026-08-12
 topic: construction_workflow_sop
 scope: global
@@ -278,10 +278,8 @@ python scripts/governance/sync_panorama_module.py --all
 # 2. align 验证五图对齐（统一入口）
 python scripts/governance/d5_architecture/generators/align_all.py
 
-# 3. 第六图 frontend_map：涉前端施工时人工核对（自动门禁待建）
-#    ①新功能点必须在 web/frontend_map.yaml 登记（features 登记时同步）
-#    ②backend_ref 必须类型化挂载（module:/registry:/table:/api:/none:），禁止悬空
-#    ③与 features/manifest.yaml 一致（同功能点 id/file 双向可查）
+# 3. 第六图 frontend_map 校验（2026-09-04 落地校验器；涉前端施工时必跑）
+python scripts/governance/d5_architecture/generators/check_frontend_map.py
 ```
 
 **六图定义**：
@@ -803,6 +801,7 @@ python scripts/session_worktree.py cleanup <sid>
 | 2026-09-04 | 1.5.1 | 新增 Step 3.5 后端盘点（前端施工前置）+ Checklist 第 13 项 | Owner 2026-09-04 裁定"前端不许自建数据世界"（TRAE-086 v1.2.0 §truth_source_wiring 配套）：执行前端任务前 MUST 后端盘点四步（取数清单→后端三查→三分支决策→接线验收），FRONTEND-TRUTH-SOURCE gate warn 兜底；红蓝对抗 9 手法实测（4 击穿已修+2 接受风险文档化） |
 | 2026-09-04 | 1.5.2 | Step 3.5 升级"后端盘点与拆件判定"——拆件 SOP 正式接入总流程 | Owner 追问"拆件判定在哪一步"发现两 SOP 断链：Step 0 必看清单+Step 3.5 补 frontend_component_split_sop.md 引用；新增执行要点 4 拆件判定（盘点先行供输入——拆件第一判据=数据源边界；有得拆→拆件 8 步闭环，没得拆→直接施工）；Checklist 13 同步 |
 | 2026-09-04 | 1.5.3 | Step 3 正文"五图"→"六图"（frontend_map 已建未入正文）+ Step 3.5 补前端一查 | Owner 追问发现 frontend_map.yaml 已建（2026-09-01）但 Step 3 正文仍是五图对齐——正文与 Checklist"六图通过"自相矛盾；Step 3 标题/定义/对齐 key/通过判据/处置全量六图化（frontend_map=git YAML 真源+feature_id 对齐 key+人工核对，自动门禁待建）；Step 3.5 三查扩"三查+前端一查"（frontend_map 查重：同功能点已存在=复用/扩展，禁重复造轮子） |
+| 2026-09-04 | 1.5.4 | Step 3 frontend_map 校验器落地——人工核对升级脚本校验 | Owner 裁定双真源合并+补登专项：check_frontend_map.py 落地（R0 重复/R1 类型化/R2 manifest 双向/R3 file 存在，auto 条目宽严分级）；frontend_map v2.0.0 唯一真源+302 功能点/44 页（详见 alignment_checklist v1.2.0）；Step 3 命令块同步 |
 
 ## 附录 A：长清单审查全文（用户提供的 12 节审查清单）
 

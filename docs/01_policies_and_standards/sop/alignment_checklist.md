@@ -69,12 +69,12 @@ related_modules:
 | **decisiongraph**（决策流全景图） | PostgreSQL 3 表 | module_id | decision_layer 必须与代码实际决策路径一致 | commit 前 / sync 时 | sync_panorama_module.py（单向派生） | 派生失败→阻断 |
 | **blueprint.md**（蓝图） | MD frontmatter | module_id | frontmatter 4 字段（module_id/responsibility_domain/design_maturity/build_status）必须与 depgraph 一致 | commit 前 / sync 时 | sync_panorama_module.py（单向派生） | frontmatter 漂移→warn |
 | **battle_map**（作战地图） | PostgreSQL 3 表（battle_map_steps/anchors/edges） | step_id | BM-XXX 环节必须与前四图双向校验 | commit 前 / 改动涉及 BM 环节时 | [generate_battle_map_diagram.py](../../../scripts/governance/d5_architecture/generators/generate_battle_map_diagram.py) | ghost_anchors>0→阻断 |
-| **frontend_map**（前端全景图，已建 2026-09-01） | `src/zephyr/frontend/dashboard/web/frontend_map.yaml`（git YAML 真源） | feature_id（F-页面-名） | 前端功能必须挂 backend_ref 到模块注册表（类型化：module:/registry:/table:/api:/none:）；模块必须声明 has_frontend；与 features/manifest.yaml 双向一致 | commit 前 / 新前端功能上线时 | 人工核对（施工 SOP Step 3 第 3 步；自动门禁待建，扩展 panorama_alignment_gate） | frontend_ref 空→阻断（门禁建成前 Step 10 提交时人工确认） |
+| **frontend_map**（前端全景图，已建 2026-09-01；v2.0.0 双真源合并+302 功能点补登） | `src/zephyr/frontend/dashboard/web/frontend_map.yaml`（git YAML 真源） | feature_id（F-页面-名） | 前端功能必须挂 backend_ref 到模块注册表（类型化：module:/registry:/table:/api:/none:）；模块必须声明 has_frontend；与 features/manifest.yaml 双向一致 | commit 前 / 新前端功能上线时 | [check_frontend_map.py](../../../scripts/governance/d5_architecture/generators/check_frontend_map.py) 校验器 + scan_frontend_pages.py 半自动补登（自动 commit gate 待建） | frontend_ref 空→阻断（校验器 exit 1；commit gate 建成后自动） |
 
 **六图统一验证命令**：
 ```powershell
 python scripts/governance/d5_architecture/generators/align_all.py  # 五图对齐（现有）
-# frontend_map 对齐：暂人工核对（施工 SOP Step 3 第 3 步三条）；自动门禁待建（扩展 align_all 或 panorama_alignment_gate）
+python scripts/governance/d5_architecture/generators/check_frontend_map.py  # 第六图 frontend_map 校验（2026-09-04 落地，fail>0=exit 1）
 ```
 
 **硬阻断条件**：domain_mismatches>0 / ghost_anchors>0 / frontend_ref 悬空（自动门禁建成后；建成前人工确认）
@@ -199,3 +199,4 @@ python scripts/governance/d5_architecture/generators/align_all.py  # 五图对�
 |---|---|---|---|
 | 2026-08-31 | 1.0.0 | 初稿：三层对齐体系（六图+注册表+代码文档）+ 对齐时机矩阵 + 新 AI 必读清单 | 项目对齐体系片段化，缺统一清单；新 AI 进项目不知道要对齐什么；前端全景图（frontend_map）待建需预留对齐规则 |
 | 2026-09-04 | 1.1.0 | frontend_map 状态修正：待建→已建（2026-09-01 实建 web/frontend_map.yaml，stockq 功能点已登记）+ 真源路径修正（原写的 architecture_model/frontend/ 为失效路径）+ 对齐工具改"人工核对（施工 SOP Step 3）+自动门禁待建" | Owner 巡检发现清单状态漂移：frontend_map.yaml 已实建 4 天，清单仍标"待建"且真源路径失效——对齐清单自身先对齐（§5 文档→代码规则自证） |
+| 2026-09-04 | 1.2.0 | frontend_map 双真源合并落地（Owner 裁定：web 版唯一真源）+ 全景图补登专项 + 对齐校验器 | ①architecture_model/frontend/ 版（74KB/17 功能点/三级）降级废弃，superseded_by 指向 web 版；②web 版 v2.0.0：迁移 21 条真增量（2 条语义重复合并）+scan_frontend_pages 改造指向 web 版半自动补登 38 页→302 功能点/44 页全类型化零重复；③gap_views 脚本改读 web 版+悬空判定升级五前缀；④新建 check_frontend_map.py 校验器（R0 id 重复/R1 类型化/R2 manifest 双向/R3 file 存在，auto 条目宽严分级）——对齐工具"待建"项部分落地 |

@@ -1,8 +1,9 @@
 module_id: CFG-FRONTEND-MAP
-version: 1.0.0
+version: 2.0.0
 doc_type: register
 ttl: permanent
-description: 前端全景图（第六全景图）——页面→模块→功能点三级索引 + 前后端统一对账。前五图管'后端有什么、怎么连、为什么'，本图管'用户看见什么、点哪触发什么、数据从哪来'。
+superseded_by: "src/zephyr/frontend/dashboard/web/frontend_map.yaml"
+description: "★已废弃（Owner 2026-09-04 裁定：frontend_map 双真源合并，web/frontend_map.yaml 为唯一真源）——本文件降级为历史派生副本，禁手改禁消费；新消费方一律读 web/frontend_map.yaml（扁平 features 契约，backend_ref 五前缀类型化）。原描述：前端全景图（第六全景图）——页面→模块→功能点三级索引 + 前后端统一对账。前五图管'后端有什么、怎么连、为什么'，本图管'用户看见什么、点哪触发什么、数据从哪来'。"
 tech_stack:
   chart_engine: KLineChart v10.0.3（vendor 本地库，无 CDN 依赖）
   layout_engine: Dockview（vendor 本地库）+ dockpilot.js（自研布局管理）

@@ -2,9 +2,10 @@
 # [TTL] permanent
 """前端缺口视图派生器（四件套 4c）——两本缺口总账的机器派生替代。
 
-真源：architecture_model/frontend/frontend_map.yaml（前端侧清单）+ depgraph nodes 前端覆盖三字段（模块侧）。
+真源：src/zephyr/frontend/dashboard/web/frontend_map.yaml（★唯一真源，Owner 2026-09-04 裁定；扁平 features 契约）
+     + depgraph nodes 前端覆盖三字段（模块侧）。旧 architecture_model/frontend/ 副本已废弃勿读。
 派生规则（四件套草案 §4.3）：
-  - 前端有后端没有 = frontend_map 功能点 backend_ref 空/悬空
+  - 前端有后端没有 = frontend_map 功能点 backend_ref 悬空（非类型化五前缀）
   - 后端有前端没有 = nodes.has_frontend='yes'/'planned' 但 frontend_ref 空或指向不存在的功能点
   - 对账异常       = has_frontend='no' 但 no_frontend_reason 空（"事出有因"必填）
 输出：docs/_working/2026-08-31-frontend-gap-views-derived.md（派生物，禁手改； ttl=task_bound）
@@ -24,24 +25,25 @@ sys.path.insert(0, str(REPO / "src"))
 
 from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 
-FRONTEND_MAP = REPO / "architecture_model/frontend/frontend_map.yaml"
+FRONTEND_MAP = REPO / "src/zephyr/frontend/dashboard/web/frontend_map.yaml"  # ★唯一真源
 OUT = REPO / "docs/_working/2026-08-31-frontend-gap-views-derived.md"
+
+_REF_TYPE_RE_PREFIXES = ("module:", "registry:", "table:", "api:", "none:")
 
 
 def load_frontend_features() -> dict[str, dict]:
-    """frontend_map.yaml → {feature_id: {page, name, backend_ref, status}}。"""
+    """frontend_map.yaml（扁平 features 契约）→ {feature_id: {page, name, backend_ref, status}}。"""
     data = yaml.safe_load(FRONTEND_MAP.read_text(encoding="utf-8"))
     features: dict[str, dict] = {}
-    for page in data.get("pages", []):
-        pid = page["id"]
-        for mod in page.get("modules", []):
-            for feat in mod.get("features", []):
-                features[feat["id"]] = {
-                    "page": pid,
-                    "name": feat.get("name", ""),
-                    "backend_ref": feat.get("backend_ref") or [],
-                    "status": feat.get("status", ""),
-                }
+    for feat in data.get("features", []):
+        ref = feat.get("backend_ref") or ""
+        ref = ref if isinstance(ref, str) else " ".join(str(r) for r in ref)
+        features[feat["id"]] = {
+            "page": feat.get("page", ""),
+            "name": feat.get("name", ""),
+            "backend_ref": ref,
+            "status": feat.get("status", ""),
+        }
     return features
 
 
@@ -59,8 +61,12 @@ def main() -> int:
         conn.close()
     modules = [dict(r) for r in rows]
 
-    # 派生：前端有后端没有
-    gap_a = [(fid, f) for fid, f in features.items() if not f["backend_ref"]]
+    # 派生：前端有后端没有（backend_ref 空 或 非类型化五前缀=悬空，Owner 2026-09-04 口径）
+    gap_a = [
+        (fid, f)
+        for fid, f in features.items()
+        if not f["backend_ref"] or not str(f["backend_ref"]).startswith(_REF_TYPE_RE_PREFIXES)
+    ]
     # 派生：后端有前端没有（声明有/计划有前端，但 frontend_ref 空或指向不存在功能点）
     gap_b = []
     dangling = []
