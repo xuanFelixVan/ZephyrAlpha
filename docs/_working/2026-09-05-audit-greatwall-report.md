@@ -13,8 +13,9 @@ ttl: task_bound
 
 - 模式裁定：**MODE-B 直接全自动闭环**（探测：无活跃在途 session（heartbeat≥5d）+ 主仓 29 孤儿文件裁定基线收编后干净）
 - 波次：6 批（4+4+4+4+4+1）修复波，MODE-B 无只审波
-- 进度：波次 1（AI-01~04）+ 波次 2（AI-05~08）已回收，八域均"通过"（各连续 2 轮零问题），总控抽验 16/16 相符
-- 总问题数 / 已修复数：波次 1 发现 31→修复 26（另 5 跨域移交/待 Owner）；波次 2 发现 65→修复 60（另 5 跨域移交/待 Owner）；作废重派 0
+- 进度：波次 1~3（AI-01~12）已回收，十二域均"通过"（各连续 2 轮零问题），总控抽验 24/24 相符
+- 总问题数 / 已修复数：波次 1 发现 31→修复 26；波次 2 发现 65→修复 60；波次 3 发现 33→修复 27（另 6 跨域移交/待 Owner）；作废重派 0
+- 总控备查：主仓出现后台 reconciler 全仓蓝图 §0.6 派生写波（~210 脏文件），归 G4 统一吸收，不干扰派单
 
 # 二、每域详细汇报 ×21
 
@@ -85,16 +86,36 @@ ttl: task_bound
 - 线索答复：regime_detector/chip_distribution_engine 实测位于 src/zephyr/regime 与 src/zephyr/gov_drift，非本域（附形态说明转派）；vocab WARN 本域 0 命中。遗留 0；抽验：signal_ashare 表头顶部 8 行/correlation_preprocessing CONSUMERS 实测——**相符**。
 
 ## AI-09 风控合规安全域
-（待回收）
+- worktree：D:\ZephyrAlpha\.worktrees\AI-AUDIT09-001；commit c999e6f00b（9 文件 62+/18−）
+- 轮次：R1 发现 9→修复 9→R2/R3 复检零（351 文件全量；171+35+6 tests 绿）。连续 2 轮零问题。
+- 修复：①总控线索①实证成立——regime_detector.py 五异常类补 error_code 属性（L488-512，先例双写惯例）②error_code_registry 补登 ZA-REGIME-0001~0005（580 条目，GATE-ERRCODE 6 passed）③chip_distribution_engine 头注诚实化（纯降级不抛错，0050~0052 降级路径实证）④regime_detector 蓝图 §5 叙事对齐（git 取证 ZA-SIG 类从未实现，7 维为真）⑤chip 蓝图 §5/§8 对齐⑥shared/contracts/risk/__init__ 六符号懒加载死路径修正（Test-Path=False→trading_contracts 实路径，运行时断言 is True）⑦risk_limits 链 [CONSUMERS] 补全。
+- 自主裁定：三零抛出类保留补齐（契约在先，删除属契约收缩需 Owner）；0050~0052 维持不登记（方向 B 活定义点要求）；死路径直接修（--allow-multi-domain 留痕）；RiskLimits 双 codegen 拓扑→Owner（G2）。
+- 共享收口上交：G1 ashare_stop_loss_engine 僵尸 salvage（MOD-RK-09，表头谎报 production）；G2 RiskLimits 双真源收敛；G3 vocab WARN 14 条全在域外；G6 43 处空 [CONSUMERS] 建议专项。
+- 遗留：强遗留 0（G1/G2 待 Owner）；抽验：error_code 属性 5 处/risk shim 映射实测——**相符**。
 
 ## AI-10 组合持仓域
-（待回收）
+- worktree：D:\ZephyrAlpha\.worktrees\AI-AUDIT10-001；commits 3fda4096（D_POSITION）+ cc4a39b3（D_PF_ALLOC）
+- 轮次：R1 发现 11→修复 5→复检 0→R2 全量复检 0（150 py；GATE-ERRCODE 6 passed×2，150 tests 绿）。连续 2 轮零问题。
+- 修复：①总控线索①实证（ZA-POS-0027 已登记，采信 AI-02 口径）死注释删除+留痕②regime_meta_allocator 幻影 ShrinkageDisabled(ZA-PA-0008) 表头改述真实契约③budget_change_handler 幻影 RebalanceTimeoutError(ZA-POS-0042) 同④⑤两蓝图 §5/§6 落码对齐注记+叙事修正+frontmatter 流转。
+- 自主裁定：蓝图"落码对齐"而非补码（补写未用异常类=制造死代码）；提交按域拆分而非 multi-domain；[no-lookup:auto-fix] 白名单合法；僵尸/悬锚不蛮干；后台再生成脏状态不缠斗转收口。
+- 共享收口上交：①error_code_registry 预留码登记/关闭裁定（ZA-PA-0008~0010/0013、ZA-POS-0041~0043）②worktree ~195 后台派生写处置（cherry-pick+abort 或主仓 regen 吸收）③blueprint_registry.yaml 未 git 跟踪（实测确认）④ROOR L552 "strategy 146" vs 实测 149 漂移。
+- 遗留 2（待 Owner）：10 个 sell_decision [BLUEPRINT] 悬空锚定；position_reconciler 表头语义双关（Phase 5 规划位）。抽验：L147 已登记留痕/0042 修正注记实测——**相符**。
 
-## AI-11 治理-规则+安全韧性
-（待回收）
+## AI-11 治理-规则+安全韧性域
+- worktree：D:\ZephyrAlpha\.worktrees\AI-AUDIT11-001；commit 98a856099c
+- 轮次：R1 发现 4→修复 3（1 项建议级裁定不改码）→R2 全量复检 0（387 文件；101 gates 注册 0 失败，20 tests passed）。连续 2 轮零问题。
+- 修复：①48 个 g_trae_*.yaml verification_method 测试路径漂移 202 处（tests/test_g_trae_NNN.py→tests/trae_rules/，悬空复检 0）②g_trae_059 simulation 虚假声明改 supported:false③rule_watcher.py [CONSUMERS]/[TESTS] 真源失实对齐。
+- 自主裁定：errcode_consistency_gate vocab WARN=误报（SSoT 路径常量）；rule_watcher 退役登记不蛮干（depgraph MOD-GOV-019 主仓收口）；session_claim 废弃函数保留；CAPABILITY-LOOKUP 补真实 lookup 落审计不走逃生；60 处 except pass 逐个分诊全合规。
+- 共享收口上交：①rule_watcher.py（MOD-GOV-019）退役决策（governance_core_blueprint.md §0.1 file_count 287 vs 14 自失配）②verify_header_completeness.py 存量 800 文件缺表头（scripts 域转派 AI-20）③gateway 根修补充证据（L459-471 批5b 硬拦 vs L310 锁自清+异常遮蔽吞 commit detail）。
+- 遗留 1：rule_watcher 退役待主仓收口。抽验：提交 stat/48 文件实证——**相符**。
 
-## AI-12 治理-审计+语义行为
-（待回收）
+## AI-12 治理-审计+语义行为域
+- worktree：D:\ZephyrAlpha\.worktrees\AI-AUDIT12-001；commits 2b0610aa3f（139 文件）+ 55bc347af3（蓝图勘误）
+- 轮次：R1 发现 9→修复 9→R2 复检 0 新增（717+25+167+3510 tests；13 failed 实证为 .worktrees 环境条件性——纯净兄弟 worktree 复现同签名，主仓 38/38 全过）。连续 2 轮零问题。
+- 修复：①semantic_audit 双真源簇降级 re-export shim（gov_audit 为唯一实现真源，符号面超集保留，激活态 17+22 名全取到）②audit_admission_controller 幽灵路径生产缺陷（→zephyr.security.semantic_auditor 不存在→健康检查恒 False/准入恒拒绝，实测复现后改 zephyr.governance.semantic_audit，5/5 True）③cold_start.py BootstrapCache 僵尸 salvage（解除登记+safe_rmtree+蓝图标注）④域内 [TESTS] 断锚 145 处+[BLUEPRINT]/kebab 断链 78 处收口⑤audit_trail/semantic_audit 蓝图叙事双侧勘误⑥writer._load_state 静默 JSONDecodeError 补 warning⑦消费链反查排除误杀（drift_bridge importlib 接线/merkle_hourly 活体）。
+- 自主裁定：shim 方向（git 取证双份同生+符号面超集+真实消费方）；kebab 目录保留（有意命名）；orchestrator.py 不删（架构级裁定待 Owner）；worktree 激活态验证纪律（未激活轮结果作废重跑）。
+- 共享收口上交：①blueprint_registry MOD-INF-020/028 派生重同步②module_translation_registry cold_start 条目核查+depgraph 重扫③AI-07 battle_map 线索 N/A 本域（真源在主仓 PG battle_map_reader，转总控）④AI-06 ports/gpu_consensus_scheduler N/A 本域。
+- 遗留 1（待 Owner）：governance/semantic_audit/orchestrator.py 组合根零消费方（接线 or 退役）。抽验：cold_start 不存在/L96 幽灵路径修复实测——**相符**。避让：worktree 17 个他域/后台派生写未纳入未回退。
 
 ## AI-13 治理-其余
 （待回收）
@@ -149,6 +170,10 @@ ttl: task_bound
 - →AI-11：chip_distribution_engine.py（src/zephyr/gov_drift/）头注 [ERROR_CONTRACT] 声明但无异常类（AI-02 S4+AI-08 确认位置）；AI-06 移交：TaskRepository 缺 batch_id 公开 API（conductor/autopilot 旁路 _conn.execute 根因）。
 - →AI-12：battle_map 线索（AI-07 移交）：域漂移 3（MOD-PLAN-001/002/003）、缺失叙事 3、孤儿环节 3（BM-BUY-05/14、BM-SIM-08）、anchor 615 MOD-PLAN-001 depgraph 域含 D_AUDITTEST 污染疑点；ports.py 退役流转（MOD-INF-035）与 gpu_consensus_scheduler 僵尸候选（MOD-INF-033）登记流转。
 - →AI-06（复审轮）：broker_interface.py（trading_contracts）[DEPENDENCIES] 声明 trading_contracts.execution.* 实际 import zephyr.shared.contracts.*（AI-05 波次2 移交，AI-06 已闭环未覆盖）。
+- →AI-13/14：src 侧 vocab WARN（AI-09 复测 14 条：autonomy_core knowledge_classifier×3/_g04_ops_check、frontend api_server/alert_center、reflctrl_gate×2、process_reaper、scripts 侧若干）按域认领；AI-11 裁定 errcode_consistency_gate 1 条为误报不改。
+- →AI-14/15：TaskRepository（src/zephyr/governance/persistence/task_repo.py）缺 batch_id 公开 API（AI-06 移交，AI-11 确认 persistence 域）——若属你域请评估补 API 治本（旁路收敛由 AI-06 复审轮执行）。
+- →AI-20（补充）：AI-11 移交 verify_header_completeness.py 存量 800 文件缺表头字段；gateway 根修证据补：git_commit.py L459-471 批5b 硬拦 vs git_commit_gateway.py L310 锁自清冲突+异常遮蔽吞 commit result detail。
+- 总控备查（AI-10 实证）：blueprint_registry.yaml 未 git 跟踪；ROOR L552 "strategy 146" vs 实测 149——共享收口阶段核实登记。
 
 # 四、全局验证结果
 
@@ -170,6 +195,10 @@ ttl: task_bound
 8. AI-06 退役候选：ports.py 退役流转（MOD-INF-035）、gpu_consensus_scheduler 僵尸候选（MOD-INF-033）。
 9. AI-08 退役候选：multifactor_crowding_monitor / multifactor_decay_lifecycle / simple_factor_attribution 零消费方模块；error_code_registry ~44 占位码批量登记申请（沿 2026-08-30 先例）。
 10. AI-02 S1 内 REG-002 同 3；AGENTS.md 是否需补"模板 11"等入口（AI-02 S5，可选项）。
+11. AI-09：G1 ashare_stop_loss_engine 僵尸 salvage（MOD-RK-09，全仓零 import+表头谎报）；G2 RiskLimits 双 codegen 真源拓扑收敛（涉 5 域 16+ 文件）。
+12. AI-10：10 个 sell_decision 文件 [BLUEPRINT] 悬空锚定（治本需蓝图粒度裁定+blueprint_registry 登记口径+全景同步机具）；position_reconciler（MOD-INF-022）表头语义双关登记口径。
+13. AI-12：governance/semantic_audit/orchestrator.py（17KB 9 阶段管道组合根）零消费方——接线（补 CLI/事件触发）或随蓝图修订退役。
+14. AI-11：rule_watcher.py（MOD-GOV-019）退役决策（depgraph 主仓节点+蓝图锚定收口）。
 
 # 七、浅审与存疑标记清单
 
