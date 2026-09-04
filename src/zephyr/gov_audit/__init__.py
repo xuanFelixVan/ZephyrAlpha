@@ -8,7 +8,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] AdmissionResult.allowed=False on any check failure
-# [TESTS] tests/audit-orchestrator/
+# [TESTS] tests/governance/audit/
 # [TTL] permanent
 
 # ============================================================================
@@ -40,7 +40,7 @@
 #
 # 功能名单体（40文件，各自独立职责，不强制前缀）：
 #   orchestrator(compat层,MOD-INF-020) models contracts indexer writer query
-#   cli pipeline_runner replay_engine cold_start genesis retention log_rotation
+#   cli pipeline_runner replay_engine genesis retention log_rotation
 #   evidence_pack integrity integrity_verifier merkle_hourly(根canonical)
 #   anomaly event_store action_history agent_signer api_lifecycle
 #   changelog_manager code_archaeology compliance_map corporate_actions
@@ -109,7 +109,6 @@ import importlib
 _LAZY_IMPORTS = {
     "AnomalyDetector": ("zephyr.gov_audit.anomaly", "AnomalyDetector"),
     "OrchestratorBridge": ("zephyr.gov_audit.bridge", "OrchestratorBridge"),
-    "BootstrapCache": ("zephyr.gov_audit.cold_start", "BootstrapCache"),
     "AuditDiscoverer": ("zephyr.gov_audit.contracts", "AuditDiscoverer"),
     "ContractViolationError": ("zephyr.gov_audit.contracts", "ContractViolationError"),
     "IntegrityChecker": ("zephyr.gov_audit.contracts", "IntegrityChecker"),
@@ -199,5 +198,4 @@ __all__ = [
     "PipelineRunner",
     "Priority",
     "Severity",
-    "cold_start",
 ]

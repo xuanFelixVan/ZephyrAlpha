@@ -11,7 +11,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] DriftError;BaselineError
-# [TESTS] tests/behavioral-auditor/
+# [TESTS] tests/audit/
 # [A_module] module_id=MOD-INF-023 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

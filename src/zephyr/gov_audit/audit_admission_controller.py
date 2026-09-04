@@ -11,7 +11,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] AdmissionResult.allowed=False on any check failure; ImportError->module marked unavailable
-# [TESTS] tests/audit-orchestrator/
+# [TESTS] none
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
@@ -90,7 +90,10 @@ class AdmissionResult(BaseModel):
 class AuditAdmissionController:
     _MODULE_MAP: dict[str, str] = {
         "audit-trail": "zephyr.gov_audit",
-        "semantic-auditor": "zephyr.security.semantic_auditor",
+        # 治本（AI-AUDIT12 幽灵路径修复，2026-09-05）：原指向 zephyr.security.semantic_auditor
+        # （不存在，实测 import 恒失败）→ semantic-auditor 健康检查恒 False →
+        # check_admission 恒拒绝。真源为 MOD-INF-028 实际磁盘路径 zephyr.governance.semantic_audit。
+        "semantic-auditor": "zephyr.governance.semantic_audit",
         "orphan-judge": "zephyr.security.access_control.orphan_judge",
         "red-blue-validator": "zephyr.security.adversarial_validation",
         "behavioral-auditor": "zephyr.gov_drift",

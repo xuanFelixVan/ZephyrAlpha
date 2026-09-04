@@ -24,7 +24,7 @@
 
 # [ERROR_CONTRACT] 违反契约抛ContractViolationError
 
-# [TESTS] tests/audit-orchestrator/test_contracts.py
+# [TESTS] none
 
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=frozen | safety=H | ai_autonomy=immutable_core
 

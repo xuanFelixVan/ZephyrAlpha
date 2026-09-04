@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] parse() never raises; individual line parse failures are silently skipped
-# [TESTS] tests/test_audit_full_pipeline_e2e.py
+# [TESTS] tests/audit/test_audit_full_pipeline_e2e.py
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

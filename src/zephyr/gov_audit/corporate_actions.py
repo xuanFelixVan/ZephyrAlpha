@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain-governance/audit-trail/blueprint.md
+# [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md
 # [MODULE] zephyr.gov_audit.corporate_actions
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES]
@@ -6,12 +6,12 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 不可变审计记录;密码学完整性;只追加
-# [MODIFY-GUARD] docs/03_modules/_domain-governance/audit-trail/blueprint.md;src/zephyr/audit-trail/__init__.py
+# [MODIFY-GUARD] docs/03_modules/_domain_governance/audit_trail/blueprint.md;src/zephyr/governance/audit-trail/__init__.py
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] IntegrityError;WriteError
-# [TESTS] tests/test_audit_trail/
+# [TESTS] tests/governance/audit/
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

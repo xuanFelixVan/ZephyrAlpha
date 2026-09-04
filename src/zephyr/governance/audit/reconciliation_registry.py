@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_RECONCILIATION_REGISTRY | .trae/documents/systemic_drift_root_cure_continuation_plan.md | §4 P2-T1
+# [BLUEPRINT] MOD-GOV_RECONCILIATION_REGISTRY | (auto-injected by S4 reconciler) | §
 
 # [MODULE] zephyr.governance.audit.reconciliation_registry
 
@@ -24,7 +24,7 @@
 
 # [ERROR_CONTRACT] reconcile_for 永不抛异常——单个 reconciler 异常降级为 ReconcileResult(action="warn")
 
-# [TESTS] tests/test_reconciliation_registry.py (P3-T1)
+# [TESTS] tests/governance/audit/
 
 # [A_module] module_id=MOD-GOV_RECONCILIATION_REGISTRY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 

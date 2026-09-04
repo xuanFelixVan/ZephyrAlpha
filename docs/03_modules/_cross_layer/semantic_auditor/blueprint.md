@@ -127,12 +127,12 @@ SemanticAuditor 是 ZephyrAlpha 的纯语义审计引擎——它解决"规则�
 | 1 | `__init__.py` | §3.1 | 包初始化+公共API导出 | 已实现 | |
 | 2 | `__main__.py` | §10 | CLI 入口 `python -m zephyr.semantic_auditor` | 已实现 | |
 | 3 | `cli.py` | §10 | CLI 命令实现(scan/check/health) | 已实现 | |
-| 4 | `spec_auditor.py` | §3.1 | 规格审计(挂靠自 MOD-INF-020) | 已实现 | |
-| 5 | `compliance_map.py` | §3.1 | 合规映射(挂靠自 MOD-INF-020) | 已实现 | |
-| 6 | `supply_chain.py` | §3.1 | 供应链检查(挂靠自 MOD-INF-020) | 已实现 | |
-| 7 | `feedback_self_audit.py` | §3.1 | 反馈自审计(挂靠自 MOD-INF-020) | 已实现 | |
-| 8 | `kb_gate.py` | §3.1 | 知识库门禁(挂靠自 MOD-INF-020) | 已实现 | |
-| 9 | `privacy.py` | §3.1 | 隐私检查(挂靠自 MOD-INF-020) | 已实现 | |
+| 4 | `spec_auditor.py` | §3.1 | 规格审计(挂靠自 MOD-INF-020；AI-AUDIT12 收敛为 re-export shim，唯一实现真源=src/zephyr/gov_audit/spec_auditor.py) | 已实现(shim) | |
+| 5 | `compliance_map.py` | §3.1 | 合规映射(挂靠自 MOD-INF-020；AI-AUDIT12 收敛为 re-export shim，唯一实现真源=src/zephyr/gov_audit/compliance_map.py) | 已实现(shim) | |
+| 6 | `supply_chain.py` | §3.1 | 供应链检查(挂靠自 MOD-INF-020) | 不存在（从未落盘于本包，唯一实现真源=src/zephyr/gov_audit/supply_chain.py；AI-AUDIT12 勘误） | |
+| 7 | `feedback_self_audit.py` | §3.1 | 反馈自审计(挂靠自 MOD-INF-020；AI-AUDIT12 收敛为 re-export shim，唯一实现真源=src/zephyr/gov_audit/feedback_self_audit.py) | 已实现(shim) | |
+| 8 | `kb_gate.py` | §3.1 | 知识库门禁(挂靠自 MOD-INF-020；AI-AUDIT12 收敛为 re-export shim，唯一实现真源=src/zephyr/gov_audit/kb_gate.py) | 已实现(shim) | |
+| 9 | `privacy.py` | §3.1 | 隐私检查(挂靠自 MOD-INF-020；AI-AUDIT12 收敛为 re-export shim，唯一实现真源=src/zephyr/gov_audit/privacy.py) | 已实现(shim) | |
 | 10 | `self_healer.py` | §3.1 Stage 7 | 自愈闭环(修复→自测→回滚) | 已实现 | |
 | 11 | `models.py` | §4.2 | Pydantic 数据模型(SemanticAuditReport等) | 已实现 | |
 | 12 | `reference_extractor.py` | §3.1 Stage 1 | 9种引用维度提取 | 已实现 | |

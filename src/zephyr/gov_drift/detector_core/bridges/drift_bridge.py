@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] handler swallows all exceptions and logs; never raises during event dispatch
-# [TESTS] tests/test_drift_bridge.py
+# [TESTS] tests/drift/test_drift_bridge.py
 # [A_module] module_id=MOD-INF-023 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """

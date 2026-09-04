@@ -1,45 +1,51 @@
-# [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md
+# [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic_auditor/blueprint.md | §0.1
 # [MODULE] zephyr.governance.semantic_audit.spec_auditor
 # [DOMAIN] D_GOV_AUDIT
-# [DEPENDENCIES] zephyr.governance.semantic_audit.__init__
-# [CONSUMERS] 见蓝图 §4 接口契约
+# [DEPENDENCIES] zephyr.gov_audit.spec_auditor
+# [CONSUMERS] zephyr.governance.semantic_audit.__init__(lazy re-export)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 蓝图 §4 文件清单与代码双向对齐
-# [MODIFY-GUARD] semantic-auditor/blueprint.md; semantic-auditor/__init__.py __all__
+# [INVARIANTS] re-export shim; canonical implementation at zephyr.gov_audit.spec_auditor (MOD-INF-020); record_agent_spec is duck-typed (works with autonomy_core.skill_rbac_registry.AgentCapability per G-CT-007)
+# [MODIFY-GUARD] semantic_auditor/blueprint.md; semantic_auditor/__init__.py __all__
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] SemanticAuditError
-# [TESTS] tests/semantic-auditor/
+# [ERROR_CONTRACT] ImportError if gov_audit.spec_auditor unavailable
+# [TESTS] tests/semantic_auditor/test_semantic_auditor.py
 # [A_module] module_id=MOD-INF-028 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-
 """
-[BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md
+spec_auditor — re-export shim for zephyr.gov_audit.spec_auditor (MOD-INF-020 canonical).
 
-G-CT-007 — Audit.record_agent_spec() 记录 Agent Spec 注册与变更.
+治本（AI-AUDIT12 双真源收敛，2026-09-05）：本文件与 zephyr.gov_audit/spec_auditor.py
+的 record_agent_spec 函数体逐字相同（仅 AgentCapability 类型注解导入源不同：
+agent_spec.registry vs autonomy_core.skill_rbac_registry）。函数为 duck-typed
+（仅访问 agent_id/capabilities/claimed_capabilities/model_provider/version 属性），
+对两类 capability 对象运行时行为完全一致。收敛裁定：gov_audit 版为唯一实现真源；
+本文件降级为 re-export shim（red_blue_validator 既有范式），G-CT-007 对
+skill_rbac_registry capability 对象的兼容性不变。
+蓝图 §0.1 本行标注"挂靠自 MOD-INF-020"，本收敛使物理事实与蓝图声明一致。
 
 # [ALGO_FLOW]
 # 层: 输入
 # - id: I1
-#   name: capability 参数
-#   fields: 参数 capability，类型注解 AgentCapability
-#   code: spec_auditor.py 顶层公共函数形参（AST 提取）
+#   name: gov_audit.spec_auditor 公共符号
+#   fields: record_agent_spec
+#   code: zephyr.gov_audit.spec_auditor
 # 层: 算法
 # - id: A1
-#   name_zh: ① record_agent_spec
-#   name_en: record_agent_spec
-#   intro: record_agent_spec(capability) 源码 L60-L70
-#   desc: 源码 L60-L70
-#   inputs: capability
-#   outputs: dict[str, Any]
+#   name_zh: ① 符号转发
+#   name_en: re-export
+#   intro: 原样转发 record_agent_spec，保证本模块导入路径兼容
+#   desc: 单条 from-import + __all__，无自有逻辑
+#   inputs: I1
+#   outputs: record_agent_spec
+#   invariant: re-export shim，不包含任何自有实现
 # 层: 输出
 # - id: O1
-#   name_zh: dict[str, Any]
-#   name_en: dict[str, Any]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 见蓝图 §4 接口契约
+#   name_zh: Agent Spec 审计记录函数
+#   name_en: record_agent_spec
+#   downstream: zephyr.governance.semantic_audit.__init__
 # [/ALGO_FLOW]
 #
 # 边:
@@ -47,24 +53,9 @@ G-CT-007 — Audit.record_agent_spec() 记录 Agent Spec 注册与变更.
 # A1 --> O1
 """
 
-from __future__ import annotations
+from zephyr.gov_audit.spec_auditor import AgentCapability, record_agent_spec  # noqa: F401
 
-import importlib
-from datetime import UTC, datetime
-from typing import Any
-
-_mod = importlib.import_module("zephyr.autonomy_core.skill_rbac_registry")
-AgentCapability = _mod.AgentCapability
-
-
-def record_agent_spec(capability: AgentCapability) -> dict[str, Any]:
-    caps = getattr(capability, "capabilities", getattr(capability, "claimed_capabilities", []))
-
-    return {
-        "event_type": "AGENT_SPEC_REGISTERED",
-        "agent_id": capability.agent_id,
-        "claimed_capabilities": caps,
-        "model_provider": getattr(capability, "model_provider", "unknown"),
-        "version": getattr(capability, "version", "0.0.0"),
-        "timestamp": datetime.now(UTC).isoformat(),
-    }
+__all__ = [
+    "AgentCapability",
+    "record_agent_spec",
+]

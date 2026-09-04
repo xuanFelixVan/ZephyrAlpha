@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 查询失败返回空结果而非抛异常
-# [TESTS] tests/audit-orchestrator/test_query.py
+# [TESTS] tests/governance/audit/test_query.py
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """

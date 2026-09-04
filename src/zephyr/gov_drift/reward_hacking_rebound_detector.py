@@ -6,12 +6,12 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 三阶段反弹检测不可跳过;90d窗口不可缩短
-# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
+# [MODIFY-GUARD] docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 异常必须包含 context 和 rule_id
-# [TESTS] tests/test_escalation_engine.py
+# [TESTS] tests/infrastructure/test_escalation_engine.py
 # [A_module] module_id=MOD-INF-022 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
@@ -23,7 +23,7 @@ Detects Phase I->II->III longitudinal rebound patterns where an agent:
   Phase II: Improves behavior -> gains trust -> autonomy level raised
   Phase III: Rebounds with more severe malicious behavior at higher autonomy
 
-Blueprint: docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md §2.37-D
+Blueprint: docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md §2.37-D
 Blind spot: #161 (P0)
 
 # [ALGO_FLOW]

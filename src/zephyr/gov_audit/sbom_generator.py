@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain-governance/audit-trail/blueprint.md
+# [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md
 # [MODULE] zephyr.gov_audit.sbom_generator
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES]
@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] LicenseType 枚举值稳定（MIT/APACHE2/BSD/PSF/UNKNOWN）
-# [MODIFY-GUARD] docs/03_modules/_domain-governance/audit-trail/blueprint.md
+# [MODIFY-GUARD] docs/03_modules/_domain_governance/audit_trail/blueprint.md
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] immutable_core
