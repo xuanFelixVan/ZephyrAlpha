@@ -178,7 +178,7 @@ python scripts/governance/d5_architecture/generators/align_all.py  # 五图对�
 
 1. **本清单**（alignment_checklist.md）——知道要对齐哪些东西
 2. **[construction_workflow_sop](construction_workflow_sop.md)**——知道什么时候对齐、怎么对齐
-3. **[frontend_handbook](../../../docs/03_modules/_domain_frontend/frontend_handbook/)**（如涉及前端，待建）——知道前端怎么做
+3. **[frontend_handbook](../../../docs/03_modules/_domain_frontend/frontend_handbook/)**（如涉及前端，2026-09-01 已建）——知道前端怎么做
 
 **冷启动验证**：读完后必须能回答"六图是哪六张、注册表分几类、代码文档测试怎么对齐"——答不出=没读懂，重读。
 
