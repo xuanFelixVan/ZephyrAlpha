@@ -5,7 +5,7 @@ title: "Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁�
 doc_type: blueprint
 template_for: blueprint
 status: Draft
-version: "0.8.18"
+version: "0.8.20"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -61,7 +61,7 @@ build_status: generated
 
 本蓝图描述 Gate Engine——ZephyrAlpha 的门禁引擎。它解决了任务执行和知识生命周期关键决策点的合规判定问题。核心职责包括：G0-G7 八门禁覆盖任务全生命周期、G1-G5 KMS 决策门覆盖知识生命周期、熔断器阻断异常传播、法证审计完整性。当前规模 ~268 脚本/51 模块，目标容量 10000 脚本/1500 模块/100 AI 并发。上游依赖脚本系统(MOD-INF-005)提供 exit code，下游被 Orchestrator(MOD-TASK_SYSTEM)消费判定结果。
 
-> module_id: MOD-GATE_ENGINE | version: 0.8.18 | status: Draft | layer: cross_layer
+> module_id: MOD-GATE_ENGINE | version: 0.8.20 | status: Draft | layer: cross_layer
 > actual_disk_path: src/zephyr/gov_enforcement/rule_enforcement/ + src/zephyr/feedback_loop/gates/ | generation: 1 | construction_progress: partially_implemented
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
 > - 蓝图+施工图模板：blueprint-template.md
@@ -242,6 +242,7 @@ build_status: generated
 | `commit_gates/reconciler_file_ops_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
 | `commit_gates/registry_code_anchor_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
 | `commit_gates/errcode_consistency_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
+| `commit_gates/hot_file_base_freshness_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
 
 ### §0.2 对齐验证矩阵
 
@@ -296,7 +297,7 @@ build_status: generated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-GATE_ENGINE` 的 307 个 file 节点 | production | `extract_depgraph.py --modules MOD-GATE_ENGINE` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-GATE_ENGINE` 的 309 个 file 节点 | production | `extract_depgraph.py --modules MOD-GATE_ENGINE` |
 | 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Draft | — |
@@ -308,7 +309,7 @@ build_status: generated
 | module_id | MOD-GATE_ENGINE | MOD-GATE_ENGINE | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 307 文件 | 28 文件（§0.1） | ❌ |
+| file_count | 309 文件 | 28 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1476,6 +1477,8 @@ STEP 3: 拆分后验证
 | `src/zephyr/gov_enforcement/commit_gates/depgraph_write_path_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/derivation_annotation_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/folder_capacity_hard_limit_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/frontend_map_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/frontend_truth_source_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/git_call_budget_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/noqa_validation_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/pure_shim_gate.py` | ✅ 已实现 | |

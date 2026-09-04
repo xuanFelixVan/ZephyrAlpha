@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-GOV_COMMIT_GATE_REGISTRY | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [MODULE] tests.governance.rule_bridge.test_worktree_drift_watchdog_redteam_edge
 # [DOMAIN] D_GOV_ENFORCEMENT
 # [MATURITY] production

@@ -3,7 +3,7 @@ doc_type: register
 ttl: permanent
 title: 规则AI感知索引（trae 规则→operations/gate_ids 映射）
 status: active
-generated_at: '2026-09-03T03:39:38Z'
+generated_at: '2026-09-04T17:19:57Z'
 generated_by: scripts/governance/generators/generate_rule_ai_perception_index.py
 maintenance: auto
 source: docs/01_policies_and_standards/rules/trae_*.yaml
@@ -2269,7 +2269,7 @@ rules:
   paired_gate_id: null
   rule_file: docs/01_policies_and_standards/rules/trae_085_stale_base_overwrite.yaml
 - rule_id: TRAE-086
-  title: 前端功能模块施工铁律（拆件判据+命名+目录归属+四件套闭环）
+  title: 前端功能模块施工铁律（拆件判据+后端盘点真源接通+命名+目录归属+四件套闭环）
   module_id: TRAE-086
   scope: frontend_construction
   domain: TRAE

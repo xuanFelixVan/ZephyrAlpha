@@ -3,8 +3,8 @@
 #
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
-generated_at: '2026-09-02'
-total_scripts: 753
+generated_at: '2026-09-04'
+total_scripts: 755
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -1041,6 +1041,14 @@ scripts:
 - name: governance/check_wiring_orphan.py
   path: governance/check_wiring_orphan.py
   description: 职责：扫描 wiring_registry.yaml，检出「登记超期未接线」模块，防架上当品烂尾。
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/classify_workspace_wip.py
+  path: governance/classify_workspace_wip.py
+  description: classify_workspace_wip.py — 工作区脏文件判读器（#ARCH-308 B1，2026-09-03）。
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2422,6 +2430,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/d5_architecture/generators/check_frontend_map.py
+  path: governance/d5_architecture/generators/check_frontend_map.py
+  description: 校验三规则（对齐清单 §3 frontend_map 行）：
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/d5_architecture/generators/domain_name_mapping.py
   path: governance/d5_architecture/generators/domain_name_mapping.py
   description: 功能域中文名称映射表 / Functional Domain Chinese Name Mapping
@@ -2576,7 +2592,7 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/generators/generate_frontend_gap_views.py
   path: governance/d5_architecture/generators/generate_frontend_gap_views.py
-  description: 真源：architecture_model/frontend/frontend_map.yaml（前端侧清单）+ depgraph nodes 前端覆盖三字段（模块侧）。
+  description: 真源：src/zephyr/frontend/dashboard/web/frontend_map.yaml（★唯一真源，Owner 2026-09-04 裁定；扁平 features 契约）
   domain: governance
   execution_plane: warm-path
   status: registered
