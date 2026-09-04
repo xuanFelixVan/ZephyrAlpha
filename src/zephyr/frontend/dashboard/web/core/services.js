@@ -55,6 +55,7 @@ function svcRenderMaster() {
     + '<span style="font-size:12px"><span class="dot w"></span>未启动 <b>' + st.counts.gray + '</b></span>'
     + '<span class="btn primary" style="margin-left:auto" onclick="svcBootAll()">⚡ 一键拉起标准套装</span>'
     + '<span class="btn" style="color:var(--up)" onclick="svcShutdownAll()">⏻ 一键全部关闭</span>'
+    + '<span class="btn" title="重启面板 API：页面断开约 20~40 秒后自动恢复（改完代码生效用）" onclick="svcCtl(\'api_server\',\'restart\')">↻ 重启面板 API</span>'
     + '</div>';
   if (st.host && st.host.mem_total_gb) {
     h += '<div style="display:flex;gap:18px;flex-wrap:wrap;margin-top:10px;font-size:11px;color:var(--dim)">'
