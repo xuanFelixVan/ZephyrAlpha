@@ -139,6 +139,7 @@ class EventDrivenSleeveStrategy(StrategyBase):
         factor_dependencies=[],
         tags=["event_driven", "sleeve", "event_score", "anomaly_confirm", "a_share"],
         supported_markets=["a_share"],
+        battle_map_ref="BM-SEL-02",   # 作战地图：选股·因子计算与信号生成（事件评分→信号）
     )
 
     _URGENCY = URGENCY_NEXT_OPEN

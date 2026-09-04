@@ -118,6 +118,7 @@ class MultifactorSleeveStrategy(StrategyBase):
         factor_dependencies=[],
         tags=["multifactor", "sleeve", "cross_section", "ic_weighted", "a_share"],
         supported_markets=["a_share"],
+        battle_map_ref="BM-SEL-02-L",   # 作战地图：选股·信号聚合器架构（多因子 IC 加权合成）
     )
 
     _URGENCY = URGENCY_GRADUAL

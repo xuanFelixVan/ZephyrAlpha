@@ -5,15 +5,25 @@
     <div style="display:flex;gap:12px;align-items:flex-start">
       <!-- ═══════════ 左屏：策略选择 → 档案 → 该策略历史回测（与右屏等宽，Owner 2026-09-03） ═══════════ -->
       <div style="flex:1 1 0;min-width:0">
-        <!-- 策略看板（/api/strategies 真源；点选=选中策略，联动档案/历史/发起回测） -->
-        <div class="sec-title" style="margin-top:0">策略看板 <span class="dim">注册表真源 · 点击选中策略</span></div>
-        <div id="bt-strat-grid" style="margin-bottom:10px"></div>
+        <!-- 策略看板（/api/strategies 真源；下拉选择策略，Owner 2026-09-04 一期不再平铺 8 卡） -->
+        <div class="sec-title" style="margin-top:0">策略看板 <span class="dim">注册表真源 · 下拉选择策略</span></div>
+        <span class="sel" id="bt-strat-sel" style="position:relative;cursor:pointer;display:block;margin-bottom:10px" onclick="btStratDropTgl(event)">
+          <span id="bt-strat-t"><span class="dim">加载中…</span></span>
+          <span class="acct-menu" id="bt-strat-menu" style="right:0;left:0"></span>
+        </span>
 
         <!-- 策略档案卡（Owner 2026-09-01 裁定：说明=注册表口径，绩效=该策略最新回测产物真源） -->
         <div class="card" id="bt-profile-card" style="margin-bottom:10px">
           <h3>策略档案 <span class="dim">Strategy Profile</span> <span class="badge b-pass">真源</span></h3>
           <div id="bt-profile-body"><div class="dim" style="padding:8px 0">加载中…</div></div>
           <div class="note">上线纪律（宪章 §4.2 B-007）：回测通过 → QMT 模拟盘 → 实盘小资金 → 实盘部署，每阶段人工审批；禁过拟合参数生效实盘</div>
+        </div>
+
+        <!-- 策略所处环节（bt-battle-stage 组件：作战地图 11 阶段流程条+环节定位+可回测撮合模式；真源 /api/battle-map-flow） -->
+        <div class="card" id="bt-battle-stage-card" style="margin-bottom:10px">
+          <h3>策略所处环节 <span class="dim">Battle Map Stage</span> <span class="badge b-pass">真源</span> <span class="dim">作战地图 340 环节（battle_map_steps 表）· 随选中策略联动</span></h3>
+          <div id="bt-battle-stage-body"><div class="dim" style="padding:6px 0">加载中…</div></div>
+          <div class="note">交易策略地图：策略归属声明=StrategyMeta.battle_map_ref（策略类真源）；环节树=battle_map_steps（作战地图治理真源）；地图改动前端自动跟随</div>
         </div>
 
         <!-- 该策略历史回测产物（按左屏选中策略过滤；下拉选择载入右屏详情，Owner 2026-09-03 不再平铺） -->

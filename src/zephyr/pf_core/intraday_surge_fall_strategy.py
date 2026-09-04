@@ -152,6 +152,7 @@ class IntradaySurgeFallStrategy(TickStrategyBase):
         ),
         author="zephyr-agent",
         tags=["intraday", "t_plus_0", "surge_fall", "a_share", "path_b"],
+        battle_map_ref="BM-EXE-02",   # 作战地图：执行·交易执行（日内做T/分时图交易）
     )
 
     def __init__(

@@ -101,6 +101,10 @@ class StrategyMeta:
     author: str = "agent"
     tags: list[str] = field(default_factory=list)
     supported_markets: list[str] = field(default_factory=list)
+    # 作战地图环节归属（Owner 2026-09-04 一期批准）：策略所处环节 step_id 真源声明——
+    # 声明在策略类（同中文名机制，前端只映射不自造）；空=未定位（前端显示"待定位"）。
+    # 可回测撮合模式不设字段：由 tick_only 推导（tick_only→tick，否则 vectorized+minute）。
+    battle_map_ref: str | None = None
 
 
 class StrategyBase(abc.ABC):

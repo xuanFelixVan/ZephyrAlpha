@@ -1,0 +1,34 @@
+# --- 治理锚定 ---
+# doc_type: register | 功能验收单（冻结"什么样子算对"）
+# ttl: permanent
+# 修订权限：Owner 专有（AI 可提议不可自改已冻结条项）
+# --- 治理锚定结束 ---
+
+feature_id: F-BACKTEST-BATTLE-STAGE
+feature_name: 策略所处环节（作战地图阶段树+环节定位+撮合模式）
+frozen_at: 2026-09-04
+frozen_by: ZephyrAlpha-Owner
+revision: 1
+revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
+
+items:
+  - { id: 1, text: "11 作战阶段横向流程条渲染（研究孵化→模型训练→回测验证→模拟验证→选股→买入流程→卖出流程→持仓管理→风控→执行→对账），每阶段显示环节总数", check: 目检 }
+  - { id: 2, text: "选中策略的 battle_map_ref 命中环节时：所属阶段卡片白边高亮+蓝底", check: 目检 }
+  - { id: 3, text: "环节定位详情行：step_id 徽章+环节中文名+所属阶段+运营态/设计态徽章", check: 目检 }
+  - { id: 4, text: "battle_map_ref 为空时显示「待定位」徽章+提示文案（不造数据）", check: 目检 }
+  - { id: 5, text: "可回测撮合模式徽章：日频策略=日频向量化+分钟级（绿）；tick 策略=Tick 完全仿真（黄）", check: 目检 }
+  - { id: 6, text: "切换策略（btStratPick）后环节定位与撮合模式自动刷新", check: 机断 }
+  - { id: 7, text: "数据源 /api/battle-map-flow（battle_map_steps 表 340 环节真源），失败时红灯提示+15s 自动重试，禁止演示数据顶替", check: 机断 }
+  - { id: 8, text: "样式自注入（style#bt-battle-stage-style），不污染全局 main.css", check: 机断 }
+  - { id: 9, text: "策略看板为下拉选择（收起=当前策略名+最新实绩摘要；展开=8 策略项：中文名+实绩摘要，tick 策略项带 Tick 徽章；当前项 ✓），点外部收起", check: 目检 }
+
+execution:
+  trigger: "任何涉及本功能的 UI 改动 commit 前"
+  flow: "起本地服务 → 截图 → 逐条对 → 全绿才走 GitCommitGateway"
+  baseline_screenshot: "acceptance/screenshots/F-BACKTEST-BATTLE-STAGE-baseline.png"
+
+关联:
+  handbook: []
+  frontend_map: F-BACKTEST-BATTLE-STAGE
+  code_ref: "src/zephyr/frontend/dashboard/web/features/backtest/bt-battle-stage.js"
+  backend_ref: "api:/api/battle-map-flow + api:/api/strategies(battle_map_ref/modes)"

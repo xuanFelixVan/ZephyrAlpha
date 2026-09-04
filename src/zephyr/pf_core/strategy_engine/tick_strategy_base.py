@@ -99,6 +99,9 @@ class TickStrategyMeta:
     description: str = ""
     author: str = "agent"
     tags: list[str] = field(default_factory=list)
+    # 作战地图环节归属（Owner 2026-09-04 一期批准，与 StrategyMeta.battle_map_ref 同口径）：
+    # 策略所处环节 step_id 真源声明；空=未定位。撮合模式不做字段（tick 策略恒 tick）。
+    battle_map_ref: str | None = None
 
 
 @dataclass(frozen=True)

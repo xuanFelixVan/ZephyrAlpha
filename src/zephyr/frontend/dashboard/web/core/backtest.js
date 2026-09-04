@@ -304,29 +304,45 @@ function btDispName(sid){
   var m=BT_STRATEGY_META[sid]||{};
   return (m.name&&m.name!==sid)?(m.name+' · '+sid):sid;
 }
-/* ── 策略看板（左屏，Owner 2026-09-03 双栏改版：紧凑竖排列表）──
- * 数据=/api/strategies（注册表）× /api/backtest-list（各策略最新实绩）；点选=选中该策略
- * （联动档案卡+该策略历史 Runs+发起回测默认策略；tick_only 自动切 Tick 模式）。 */
-var BT_GRID_DATA=[];   /* [{id,note,tick_only,perf:{ret,sharpe,dd,runs,run_id,mode}}] */
+/* ── 策略看板（左屏，Owner 2026-09-04 一期：改下拉选择——不再平铺 8 卡）──
+ * 数据=/api/strategies（注册表）× /api/backtest-list（各策略最新实绩）；下拉选中=选中该策略
+ * （联动档案卡+该策略历史 Runs+策略所处环节+发起回测默认策略；tick_only 自动切 Tick 模式）。 */
+var BT_GRID_DATA=[];   /* [{id,note,tick_only,modes,battle_map_ref,perf:{ret,sharpe,dd,runs,run_id,mode}}] */
+function btStratDropTgl(e){
+  e.stopPropagation();
+  var m=document.getElementById('bt-strat-menu');
+  if(m)m.classList.toggle('open');
+}
+function btStratPick(sid,e){
+  if(e&&e.stopPropagation)e.stopPropagation();
+  var m=document.getElementById('bt-strat-menu');if(m)m.classList.remove('open');
+  btGridSel(sid);
+}
 function btRenderStratGrid(){
-  var grid=document.getElementById('bt-strat-grid');
-  if(!grid||!BT_GRID_DATA.length)return;
+  var menu=document.getElementById('bt-strat-menu'),label=document.getElementById('bt-strat-t');
+  if(!menu||!label||!BT_GRID_DATA.length)return;
   var h='';
   BT_GRID_DATA.forEach(function(s){
     var on=BTR_CFG.strategies.indexOf(s.id)>=0;
     var p=s.perf;
     var perfHtml=p
-      ? '收益 <b class="'+(p.ret>=0?'up':'down')+'">'+(p.ret>=0?'+':'')+(p.ret*100).toFixed(1)+'%</b> · 夏普 <b>'+(p.sharpe!=null?p.sharpe.toFixed(2):'--')+'</b> · 回撤 <b class="down">-'+(p.dd*100).toFixed(1)+'%</b> · 回测 <b>'+p.runs+'</b> 次'
-      : '<span class="dim">暂无回测产物——右上方「发起回测」跑一次即有</span>';
-    var badge=s.tick_only?'<span class="badge b-warn">Tick 专用</span>'
-      :(p?'<span class="badge b-pass">有实绩</span>':'<span class="badge b-na">未回测</span>');
-    h+='<div class="card factor-card'+(on?' active':'')+'" style="padding:8px 12px;margin-bottom:6px" onclick="btGridSel(\''+s.id+'\')" title="'+(s.note||'')+'">'
-      +'<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b style="font-size:12px">'+btDispName(s.id)+'</b>'+badge+'</div>'
-      +'<div class="kv-mini" style="margin-top:4px;font-size:11px">'+perfHtml+'</div>'
-      +(s.note?'<div class="dim" style="font-size:10px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+s.note+'</div>':'')
-      +'</div>';
+      ? '收益 <b class="'+(p.ret>=0?'up':'down')+'">'+(p.ret>=0?'+':'')+(p.ret*100).toFixed(1)+'%</b> · 夏普 <b>'+(p.sharpe!=null?p.sharpe.toFixed(2):'--')+'</b> · 回测 <b>'+p.runs+'</b> 次'
+      : '<span class="dim">暂无回测产物</span>';
+    h+='<span class="acct-mi'+(on?' on':'')+'" data-v="'+s.id+'" onclick="btStratPick(\''+s.id+'\',event)">'
+      +(on?'✓ ':'')+btDispName(s.id)
+      +(s.tick_only?' <span class="badge b-warn">Tick</span>':'')
+      +'<br><span class="dim" style="font-size:10px">'+perfHtml+'</span></span>';
   });
-  grid.innerHTML=h;
+  menu.innerHTML=h;
+  /* 收起态标签=当前选中策略名+最新实绩摘要 */
+  var cur=null;BT_GRID_DATA.forEach(function(s){if(BTR_CFG.strategies.indexOf(s.id)>=0)cur=s;});
+  if(cur){
+    var p=cur.perf;
+    var perfTxt=p?('收益 <b class="'+(p.ret>=0?'up':'down')+'">'+(p.ret>=0?'+':'')+(p.ret*100).toFixed(1)+'%</b> · 回测 '+p.runs+' 次'):'未回测';
+    label.innerHTML='<b>'+btDispName(cur.id)+'</b> · '+perfTxt+' ▾';
+  }else{
+    label.innerHTML='<span class="dim">共 '+BT_GRID_DATA.length+' 个策略，点开选择 ▾</span>';
+  }
 }
 function btGridSel(sid){
   /* 左屏点选：选中策略（唯一）——联动档案/历史 Runs/发起回测 */
@@ -338,6 +354,7 @@ function btGridSel(sid){
   btRenderStratGrid();
   btRenderRunList();
   btRenderProfile();
+  btRenderStage();   /* 策略所处环节联动刷新 */
 }
 function btLoadStratGrid(){
   var api=btApi(); if(!api)return;
@@ -348,7 +365,7 @@ function btLoadStratGrid(){
     }
     BT_NET_RETRY.grid=0;
     BT_STRATEGY_META={};
-    sr.data.forEach(function(s){ BT_STRATEGY_META[s.id]={name:s.name||'',note:s.note||'',tick_only:!!s.tick_only}; });
+    sr.data.forEach(function(s){ BT_STRATEGY_META[s.id]={name:s.name||'',note:s.note||'',tick_only:!!s.tick_only,battle_map_ref:s.battle_map_ref||null,modes:s.modes||null}; });
     return api.fetchBacktestList().then(function(br){
       var bySid={};
       (br&&br.data||[]).forEach(function(x){
@@ -358,11 +375,12 @@ function btLoadStratGrid(){
         var latest=bySid[s.id];
         var runs=(br&&br.data||[]).filter(function(x){return x.strategy_id===s.id;}).length;
         return {
-          id:s.id,note:s.note,tick_only:!!s.tick_only,
+          id:s.id,note:s.note,tick_only:!!s.tick_only,battle_map_ref:s.battle_map_ref||null,modes:s.modes||null,
           perf:latest?{ret:latest.total_return,sharpe:latest.sharpe_ratio,dd:latest.max_drawdown,runs:runs,run_id:latest.run_id}:null
         };
       });
       btRenderStratGrid();
+      btRenderStage();   /* 策略所处环节联动刷新（features/backtest/bt-battle-stage） */
       ZK.api.swrSave('zk_btgrid_v1',{meta:BT_STRATEGY_META,grid:BT_GRID_DATA});   /* SWR：宫格落缓存供下次刷新秒出 */
     });
   }).catch(function(){});
@@ -438,6 +456,16 @@ document.addEventListener('click',function(e){
   document.querySelectorAll('#btr-card .acct-menu.open').forEach(function(m){
     if(!m.parentNode.contains(e.target))m.classList.remove('open');
   });
+  var rm=document.getElementById('bt-run-menu');   /* 历史 Runs 下拉外部关闭 */
+  if(rm&&rm.classList.contains('open')){
+    var rsel=document.getElementById('bt-run-sel');
+    if(rsel&&!rsel.contains(e.target))rm.classList.remove('open');
+  }
+  var sm=document.getElementById('bt-strat-menu');   /* 策略看板下拉外部关闭 */
+  if(sm&&sm.classList.contains('open')){
+    var ssel=document.getElementById('bt-strat-sel');
+    if(ssel&&!ssel.contains(e.target))sm.classList.remove('open');
+  }
 });
 function btrPick(kind,v,e){
   if(e&&e.stopPropagation)e.stopPropagation();

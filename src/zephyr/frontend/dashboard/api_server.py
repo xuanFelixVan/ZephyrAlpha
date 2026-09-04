@@ -566,6 +566,53 @@ def strategies() -> dict[str, Any]:
 
 
 _BT_LIST_CACHE: dict[str, Any] = {"sig": "", "data": None, "ts": 0.0}   # 回测列表缓存（目录指纹未变=毫秒回包）
+_BMF_CACHE: dict[str, Any] = {"data": None, "ts": 0.0}   # 作战地图阶段树缓存（10 分钟 TTL）
+
+
+@app.get("/api/battle-map-flow")
+def battle_map_flow() -> dict[str, Any]:
+    """作战地图阶段树（策略所处环节模块真源，Owner 2026-09-04 一期）。
+
+    数据源：battle_map_steps 表（zephyr.governance.persistence.battle_map_reader.BattleMapReader，
+    production 只读读取器）——前端零硬编码，地图改动自动跟随。
+    返回：11 阶段骨架（flow_stage+中文名）× 各阶段环节精简列表（step_id/step_name/design_maturity）。
+    """
+    cached = _BMF_CACHE["data"]
+    if cached and (time.time() - _BMF_CACHE["ts"]) < 600:
+        return {"ok": True, "count": cached["count"], "data": cached["data"]}
+    try:
+        sys.path.insert(0, str(_REPO / "src"))
+        from zephyr.governance.persistence.battle_map_reader import BattleMapReader
+
+        with BattleMapReader() as reader:
+            steps = reader.get_all_steps()
+        stage_zh = {
+            "research_incubation": "研究孵化",
+            "model_training": "模型训练",
+            "backtest_validation": "回测验证",
+            "simulation_validation": "模拟验证",
+            "stock_selection": "选股",
+            "buy_flow": "买入流程",
+            "sell_flow": "卖出流程",
+            "position_management": "持仓管理",
+            "risk_control": "风控",
+            "execution": "执行",
+            "reconciliation": "对账",
+        }
+        stages: dict[str, list[dict[str, Any]]] = {}
+        for s in steps:
+            stages.setdefault(s["flow_stage"], []).append(
+                {"step_id": s["step_id"], "step_name": s["step_name"], "maturity": s.get("design_maturity", "")}
+            )
+        data = [
+            {"flow_stage": k, "name_zh": stage_zh.get(k, k), "steps": stages[k]}
+            for k in sorted(stages.keys(), key=lambda x: list(stage_zh.keys()).index(x) if x in stage_zh else 99)
+        ]
+        _BMF_CACHE["data"] = {"count": len(data), "data": data}
+        _BMF_CACHE["ts"] = time.time()
+        return {"ok": True, "count": len(data), "data": data}
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)[:200], "data": []}
 
 
 def _bt_dir_sig() -> str:
@@ -691,15 +738,26 @@ _BT_WARM_DONE = threading.Event()   # 预热完成标志：置位前请求走快
 
 
 def _strategy_rows() -> list[dict[str, Any]]:
-    """从两个注册表构建策略行（name=StrategyMeta.name 中文真源；Owner 2026-09-03）。"""
+    """从两个注册表构建策略行（name=StrategyMeta.name 中文真源；battle_map_ref=作战地图环节归属声明真源）。"""
     from zephyr.governance.strategies.strategy_base import StrategyRegistry
+
+    def _modes(tick_only: bool) -> list[str]:
+        """可回测撮合模式（tick_only 推导，不设 meta 字段——Owner 2026-09-04 一期裁定）。"""
+        return ["tick"] if tick_only else ["vectorized", "minute"]
 
     rows: list[dict[str, Any]] = []
     for sid in sorted(StrategyRegistry.list_all().keys() or []):
         cls = StrategyRegistry.list_all()[sid]
         m = _strategy_meta_of(cls)
         rows.append(
-            {"id": sid, "name": (m.name if m and getattr(m, "name", "") else sid), "note": _BT_STRATEGY_NOTES.get(sid, ""), "tick_only": False}
+            {
+                "id": sid,
+                "name": (m.name if m and getattr(m, "name", "") else sid),
+                "note": _BT_STRATEGY_NOTES.get(sid, ""),
+                "tick_only": False,
+                "battle_map_ref": (m.battle_map_ref if m and getattr(m, "battle_map_ref", None) else None),
+                "modes": _modes(False),
+            }
         )
     try:  # tick 策略族（TickStrategyBase 注册表，仅 tick 模式可跑）
         from zephyr.pf_core.strategy_engine.tick_strategy_base import TickStrategyBase, autodiscover_tick_strategies
@@ -710,7 +768,14 @@ def _strategy_rows() -> list[dict[str, Any]]:
             cls = tick_reg[sid]
             m = _strategy_meta_of(cls)
             rows.append(
-                {"id": sid, "name": (m.name if m and getattr(m, "name", "") else sid), "note": _BT_STRATEGY_NOTES.get(sid, "tick 策略"), "tick_only": True}
+                {
+                    "id": sid,
+                    "name": (m.name if m and getattr(m, "name", "") else sid),
+                    "note": _BT_STRATEGY_NOTES.get(sid, "tick 策略"),
+                    "tick_only": True,
+                    "battle_map_ref": (m.battle_map_ref if m and getattr(m, "battle_map_ref", None) else None),
+                    "modes": _modes(True),
+                }
             )
     except Exception:  # noqa: BLE001 — tick 注册表不可用时仅返回日频
         pass
@@ -734,7 +799,11 @@ def _load_strategy_snapshot() -> list[dict[str, Any]] | None:
         if not _BT_STRAT_SNAPSHOT.exists():
             return None
         snap = json.loads(_BT_STRAT_SNAPSHOT.read_text(encoding="utf-8"))
-        return snap.get("data") or None
+        rows = snap.get("data") or None
+        # schema 版本检查：缺新字段（modes）=改造前旧快照 → 弃用走预热全量（防旧 schema 冒充真源，2026-09-04 实证）
+        if rows and isinstance(rows[0], dict) and "modes" not in rows[0]:
+            return None
+        return rows
     except Exception:  # noqa: BLE001
         return None
 

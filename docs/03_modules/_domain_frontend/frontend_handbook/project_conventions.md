@@ -150,6 +150,18 @@ scope: frontend
 
 ---
 
+# FEH-PC-012｜registerFeature 只登记不初始化——组件自举三事必须文件顶层做
+- 触发词：features 组件 / 样式没生效 / init 没人调 / registerFeature / 组件白板
+- 想做什么：按拆件 SOP 写 features/<page>/<name>.js 功能模块
+- 内置能否：ZK.registerFeature（core/event_bus.js）只做登记（ZK.features[id]=def），**绝不调用 init()**——app1.js 仅对 sq-* 系列显式调 init，其余页面组件无人调
+- 坑：①把样式注入（injectStyles）放 init() 里 → 无人调 init → 样式永不注入 → 流程条/高亮全裸奔（DOM 数据全对但视觉无样式，ACC 验收才暴露）②首渲染依赖 init 或宿主 → 兜底路径漏样式必现白板
+- 正确做法：组件文件 IIFE 顶层直接做三件事——injectStyles()（加载即注入）、竞态兜底渲染（检查宿主变量+容器存在则主动 render()）、宿主联动入口（window.<hostFn>=function(){ZK.features[id].render()}）；init() 只留 chart 挂载等真正需要宿主参数的逻辑
+- 代码锚点：features/backtest/bt-battle-stage.js（实证修复）· core/event_bus.js ZK.registerFeature
+- 关联：FEH-LOAD-002 加载链竞态 · frontend_component_split_sop §Step2 模板注释（"竞态兜底"行）
+- 来源：2026-09-04 回测页策略所处环节模块 ACC 验收实证
+
+---
+
 ## 修订记录
 
 | 日期 | 版本 | 改动 | 为什么改 |

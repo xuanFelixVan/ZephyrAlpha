@@ -160,6 +160,7 @@ class DabanSleeveStrategy(StrategyBase):
         factor_dependencies=[],
         tags=["daban", "sleeve", "dual_engine_fusion", "a_share", "limit_up"],
         supported_markets=["a_share"],
+        battle_map_ref="BM-SEL-23-C",   # 作战地图：选股·情绪周期策略映射（production，涨停板情绪周期）
     )
 
     _URGENCY = URGENCY_IMMEDIATE

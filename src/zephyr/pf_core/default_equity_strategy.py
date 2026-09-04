@@ -117,6 +117,7 @@ class DefaultEquityStrategy(StrategyBase):
         author="zephyr-agent",
         factor_dependencies=["momentum", "value", "quality", "low_vol"],
         tags=["equity", "long_only", "a_share"],
+        battle_map_ref="BM-SEL-02-K",   # 作战地图：选股·多策略投票与加权（等权基准配置）
     )
 
     def __init__(

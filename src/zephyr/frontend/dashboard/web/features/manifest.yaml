@@ -136,3 +136,15 @@ modules:
     acceptance: ACC-F-WR-SIGNAL-STRIP
     handbook: []
     status: active
+  - id: bt-battle-stage
+    name: 策略所处环节（作战地图阶段树+环节定位+撮合模式）
+    file: features/backtest/bt-battle-stage.js
+    page: backtest
+    init: "init(chart, ctx)"
+    destroy: "destroy()"
+    depends: [ZK.api, BTR_CFG, BT_STRATEGY_META]   # /api/battle-map-flow（battle_map_steps 表真源）+ /api/strategies battle_map_ref/modes 透传；失败 15s 重试不造数据
+    toggle: none
+    styles: self-injected
+    acceptance: ACC-F-BACKTEST-BATTLE-STAGE
+    handbook: [FEH-PC-012]   # registerFeature 只登记不初始化——组件自举三事文件顶层做
+    status: active

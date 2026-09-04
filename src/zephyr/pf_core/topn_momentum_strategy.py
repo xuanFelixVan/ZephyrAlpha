@@ -109,6 +109,7 @@ class TopNMomentumStrategy(StrategyBase):
         factor_dependencies=["momentum_20d"],
         tags=["momentum", "topn", "equal_weight", "a_share", "mvp"],
         supported_markets=["a_share"],
+        battle_map_ref="BM-SEL-02",   # 作战地图：选股·因子计算与信号生成（截面动量打分）
     )
 
     def generate_target_weights(
