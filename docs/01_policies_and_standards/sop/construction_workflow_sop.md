@@ -63,7 +63,7 @@ related_modules:
 |---|---|---|
 | [trae_035_task_construction_verification.yaml](../rules/trae_035_task_construction_verification.yaml) | 搬家规则/前置检查/循环验收/全景图对齐/门禁命令 | ❌ 缺文档审查+长清单审查+施工完毕文档更新+worktree 合并+只清理自己 |
 | [trae_056_module_creation_workflow.yaml](../rules/trae_056_module_creation_workflow.yaml) | 模块创建 10 phase 完整工作流（冷启动→搜索→设计态→准入→蓝图→文件→路径→文件头→启动→注册表→三方对齐） | ❌ 仅"新建模块"流程，不含文档审查/测试/commit/清理/merge |
-| [trae_080_panorama_alignment.yaml](../rules/trae_080_panorama_alignment.yaml) | 五图对齐铁律（设计态先行+派生+对齐验证） | ❌ 仅五图对齐环节 |
+| [trae_080_panorama_alignment.yaml](../rules/trae_080_panorama_alignment.yaml) | 五图对齐铁律（设计态先行+派生+对齐验证） | ❌ 仅五图对齐环节（第六图 frontend_map 对齐规则在 alignment_checklist §3） |
 | [AI_review_instructions.md](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/AI_review_instructions.md) | 文档审查指令集 | ❌ 只是审查指令，不是端到端施工流程 |
 | [65_git_safety_governance.md](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md) | git 安全防护层 | ❌ 只管 git 安全 |
 | [66_commit_queue_serialization.md](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/66_commit_queue_serialization.md) | 多 AI 并发提交队列 | ❌ 只管提交期串行化 |
@@ -263,12 +263,12 @@ python scripts/governance/apply_depgraph.py --add-edge ...
 
 ---
 
-### Step 3 · 五图对齐（设计态对齐验证）
+### Step 3 · 六图对齐（五图自动 + frontend_map 人工核对）
 
 **何时触发**：Step 2 完成
 **前置条件**：depgraph planned 节点已登记
-**操作摘要**：sync_panorama_module 派生其余三图 + align_all 验证五图对齐
-**引用真源**：[trae_080_panorama_alignment.yaml](../rules/trae_080_panorama_alignment.yaml) §panorama_alignment
+**操作摘要**：sync_panorama_module 派生其余三图 + align_all 验证五图对齐 + frontend_map 人工核对（涉前端施工时）
+**引用真源**：[trae_080_panorama_alignment.yaml](../rules/trae_080_panorama_alignment.yaml) §panorama_alignment + [alignment_checklist.md](alignment_checklist.md) §3（六图对齐规则真源）
 **执行命令**：
 
 ```powershell
@@ -277,20 +277,26 @@ python scripts/governance/sync_panorama_module.py --all
 
 # 2. align 验证五图对齐（统一入口）
 python scripts/governance/d5_architecture/generators/align_all.py
+
+# 3. 第六图 frontend_map：涉前端施工时人工核对（自动门禁待建）
+#    ①新功能点必须在 web/frontend_map.yaml 登记（features 登记时同步）
+#    ②backend_ref 必须类型化挂载（module:/registry:/table:/api:/none:），禁止悬空
+#    ③与 features/manifest.yaml 一致（同功能点 id/file 双向可查）
 ```
 
-**五图定义**：
+**六图定义**：
 1. **depgraph**（真源 PostgreSQL，工具 apply_depgraph.py）
 2. **dataflowgraph**（真源 PostgreSQL 3 表，工具 apply_dataflowgraph.py）
 3. **decisiongraph**（真源 PostgreSQL 3 表，工具 apply_decisiongraph.py）
 4. **blueprint.md**（真源 MD frontmatter，sync_panorama_module 单向派生 4 字段）
 5. **battle_map**（真源 PostgreSQL 3 表 battle_map_steps/anchors/edges，工具 apply_battle_map.py）
+6. **frontend_map**（真源 `web/frontend_map.yaml` git YAML，2026-09-01 已建；对齐 key=feature_id；自动门禁待建，暂人工核对）
 
-**对齐 key**：前四图以 module_id 为对齐 key / 第五图 battle_map 以 step_id 为对齐 key（通过 battle_map_anchors 双向校验）
-**通过判据**：module_id 轴四类问题（孤儿/状态漂移/域不一致/设计态孤立）为 0 或已知可接受 + step_id 轴 BM-INV-001~007 为 0 或 warn-only
-**硬阻断**：domain_mismatches>0 / ghost_anchors>0 直接阻断
-**不通过处置**：domain 不一致 → 回 Step 2 修正 / 孤儿或状态漂移 → 重跑 sync + align
-**产出物**：align_all 通过报告
+**对齐 key**：前四图以 module_id 为对齐 key / 第五图 battle_map 以 step_id 为对齐 key（通过 battle_map_anchors 双向校验）/ 第六图 frontend_map 以 feature_id 为对齐 key
+**通过判据**：module_id 轴四类问题（孤儿/状态漂移/域不一致/设计态孤立）为 0 或已知可接受 + step_id 轴 BM-INV-001~007 为 0 或 warn-only + frontend_map 功能点 backend_ref 全类型化挂载、与 manifest 无漂移（涉前端时）
+**硬阻断**：domain_mismatches>0 / ghost_anchors>0 直接阻断；frontend_ref 悬空=阻断（门禁建成后自动，建成前 Step 10 提交时人工确认）
+**不通过处置**：domain 不一致 → 回 Step 2 修正 / 孤儿或状态漂移 → 重跑 sync + align / frontend_ref 悬空 → 挂载 backend_ref 或声明 none+理由
+**产出物**：align_all 通过报告（+ 涉前端时 frontend_map 核对结论）
 **禁止**：手编派生三图的设计态行（会被下次 sync 覆盖且制造全景分裂）
 
 ---
@@ -299,16 +305,17 @@ python scripts/governance/d5_architecture/generators/align_all.py
 
 **何时触发**：前端页面新建/改造/加数据区块（UI 动了数据面的每一刀）
 **前置条件**：Step 1 文档审查完成
-**操作摘要**：取数清单 → 后端三查 → 三分支决策 → 拆件判定 → 接线验收
+**操作摘要**：取数清单 → 后端三查+前端一查 → 三分支决策 → 拆件判定 → 接线验收
 **引用真源**：
 - [trae_086_frontend_module_construction.yaml](../rules/trae_086_frontend_module_construction.yaml) §truth_source_wiring（铁律全文）+ §split_judgment（拆件判据）
 - [frontend_component_split_sop.md](frontend_component_split_sop.md)（拆件操作闭环——"有得拆"分支的施工路径真源）
 - [data_asset_registry.yaml](../_registry/catalogs/data_asset_registry.yaml)（数据资产登记，查"后端有没有"第二查）
+- [alignment_checklist.md](alignment_checklist.md) §3（frontend_map 前端全景图——查"前端有没有重复造轮子"）
 - FRONTEND-TRUTH-SOURCE gate（commit 阶段 warn 兜底，审计 .runtime/gate_audit/frontend_truth_source.jsonl）
 
 **执行要点**：
 1. **取数清单**：列出页面需要的全部数据（字段/粒度/刷新节奏）；页面加新区块=重新走本步
-2. **后端三查**（每条数据需求逐项过）：①`api_server.py` 现有 `/api/` 端点 ②`data_asset_registry.yaml` 数据资产登记 ③其他服务端点 + depgraph 同功能模块 → 结论三选一：**有且唯一 / 有重复 / 没有**
+2. **后端三查+前端一查**（每条数据需求逐项过）：①`api_server.py` 现有 `/api/` 端点 ②`data_asset_registry.yaml` 数据资产登记 ③其他服务端点 + depgraph 同功能模块 ④`web/frontend_map.yaml` 前端全景图查重（同/近功能点已存在=**复用或扩展**该组件，禁止重复造轮子）→ 后端结论三选一：**有且唯一 / 有重复 / 没有**
 3. **三分支决策**：
    - 有且唯一 → `services/api.js` 加 fetch 助手，页面只消费
    - 有重复 → **先治后端**：裁定唯一真源、废弃其余，再接（禁止前端"挑一个好用的接着用"）
@@ -795,6 +802,7 @@ python scripts/session_worktree.py cleanup <sid>
 | 2026-08-31 | 1.5.0 | **对齐体系升级**：Step 0 必看文件清单新增 alignment_checklist.md；Step 3 从"五图对齐"升级为"六图对齐"（新增 frontend_map 前端全景图，待建）；Step 4/8 检查清单同步升级；新增注册表对齐要求 | 项目对齐体系片段化，缺前端全景图和注册表统一对齐规则；新 AI 进项目不知道要对齐什么。配合《全项目对齐清单》（alignment_checklist.md）落地三层对齐体系（六图+40+注册表+代码文档） |
 | 2026-09-04 | 1.5.1 | 新增 Step 3.5 后端盘点（前端施工前置）+ Checklist 第 13 项 | Owner 2026-09-04 裁定"前端不许自建数据世界"（TRAE-086 v1.2.0 §truth_source_wiring 配套）：执行前端任务前 MUST 后端盘点四步（取数清单→后端三查→三分支决策→接线验收），FRONTEND-TRUTH-SOURCE gate warn 兜底；红蓝对抗 9 手法实测（4 击穿已修+2 接受风险文档化） |
 | 2026-09-04 | 1.5.2 | Step 3.5 升级"后端盘点与拆件判定"——拆件 SOP 正式接入总流程 | Owner 追问"拆件判定在哪一步"发现两 SOP 断链：Step 0 必看清单+Step 3.5 补 frontend_component_split_sop.md 引用；新增执行要点 4 拆件判定（盘点先行供输入——拆件第一判据=数据源边界；有得拆→拆件 8 步闭环，没得拆→直接施工）；Checklist 13 同步 |
+| 2026-09-04 | 1.5.3 | Step 3 正文"五图"→"六图"（frontend_map 已建未入正文）+ Step 3.5 补前端一查 | Owner 追问发现 frontend_map.yaml 已建（2026-09-01）但 Step 3 正文仍是五图对齐——正文与 Checklist"六图通过"自相矛盾；Step 3 标题/定义/对齐 key/通过判据/处置全量六图化（frontend_map=git YAML 真源+feature_id 对齐 key+人工核对，自动门禁待建）；Step 3.5 三查扩"三查+前端一查"（frontend_map 查重：同功能点已存在=复用/扩展，禁重复造轮子） |
 
 ## 附录 A：长清单审查全文（用户提供的 12 节审查清单）
 

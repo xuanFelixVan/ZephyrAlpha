@@ -29,6 +29,7 @@ related_modules:
 > **目标**：拆件 → 登记 → 接数据 → 验收 → 提交，四件套闭环。
 > **上游入口（Owner 2026-09-04 接线）**：本 SOP 由 [construction_workflow_sop.md](construction_workflow_sop.md) **Step 3.5 拆件判定**触发——后端盘点先行产出数据源清单（拆件第一判据=数据源边界，盘点是拆件的输入）；判定"有得拆"→ 走本 SOP 8 步闭环，"没得拆"→ 回总 SOP Step 4 直接施工。本 SOP Step 3（API 接口）= 后端盘点"没有→先建后端"分支的落地动作。
 > **v1.2.0 变更**：接入总施工流程——上游入口声明 + Step 1 补后端盘点输入要求。
+> **v1.3.0 变更**：接入对齐体系——必读清单加 alignment_checklist.md（frontend_map 对齐规则真源）+ Step 7 全景图登记挂对齐规则（backend_ref 类型化禁悬空/feature_id 对齐 key/与 manifest 双向一致）。
 
 ---
 
@@ -40,7 +41,8 @@ related_modules:
 |---|---|---|---|
 | 1 | `AGENTS.md` | 「新 AI 必读三件套」+ RULE-WORKTREE + 提交规范 | 项目总纲，知道规矩再动手 |
 | 2 | `docs/01_policies_and_standards/rules/trae_086_frontend_module_construction.yaml` | 拆件判据 + 命名规则 + 目录归属 + 四件套闭环 | **本 SOP 的上位规则**，拆件铁律真源 |
-| 3 | `docs/01_policies_and_standards/sop/construction_workflow_sop.md` | Step 0 必看清单 + 施工流程 15 步 | 知道自己在哪一步 |
+| 3 | `docs/01_policies_and_standards/sop/construction_workflow_sop.md` | Step 0 必看清单 + 施工流程 15 步（Step 3.5 后端盘点与拆件判定=本 SOP 的上游触发点） | 知道自己在哪一步 |
+| 3.5 | `docs/01_policies_and_standards/sop/alignment_checklist.md` | §3 frontend_map 对齐规则（backend_ref 类型化契约）+ §4 注册表对齐统一原则 | 四件套登记的对齐规则真源，登记不符=对齐事故 |
 | 4 | `src/zephyr/frontend/dashboard/web/frontend_map.yaml` | 现有功能点清单（page → module_id → file → backend_ref） | 避免重复造轮子，看已有组件 |
 | 5 | `src/zephyr/frontend/dashboard/web/features/manifest.yaml` | 模块注册表（id/name/file/page/depends/acceptance） | 新组件必须登记 |
 | 6 | `src/zephyr/frontend/dashboard/web/core/loader.js` | 加载链顺序（app1→event_bus→api→features→app2） | 新组件挂接到正确位置 |
@@ -265,7 +267,7 @@ function sqRender<Name>(){
 | 文件 | 路径 | 内容 |
 |---|---|---|
 | manifest | `web/features/manifest.yaml` | 模块 id/name/file/page/depends/acceptance |
-| 全景图 | `web/frontend_map.yaml` | 功能点 id/name/page/module_id/file/backend_ref/status |
+| 全景图 | `web/frontend_map.yaml` | 功能点 id/name/page/module_id/file/backend_ref/status（对齐规则真源=alignment_checklist §3：backend_ref 类型化 module:/registry:/table:/api:/none: 禁悬空；对齐 key=feature_id；与 manifest 双向一致） |
 | 验收单 | `docs/03_modules/_domain_frontend/acceptance/ACC-F-<PAGE>-<NAME>.yaml` | 9 条验收项（目检+机断） |
 | 手册 | `frontend_handbook/project_conventions.md` | 踩坑记录（试了两次以上才解决的必入册） |
 
