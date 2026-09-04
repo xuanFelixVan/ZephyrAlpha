@@ -53,7 +53,8 @@ def _check_feature(f: dict, mf_ids: set, warns: list, fails: list) -> None:
         warns.append(f"R3 {fid}: file 失联 {fp}")
 
 
-def main() -> int:
+def run_checks() -> tuple[list[str], list[str], int]:
+    """执行三规则校验（供 align_all 六图入口复用）→ (fails, warns, 总功能点数)。"""
     data = yaml.safe_load(MAP_FILE.read_text(encoding="utf-8"))
     feats = data.get("features", [])
     manifest = yaml.safe_load(MANIFEST.read_text(encoding="utf-8"))
@@ -69,8 +70,13 @@ def main() -> int:
 
     for f in feats:
         _check_feature(f, mf_ids, warns, fails)
+    return fails, warns, len(feats)
 
-    print(f"frontend_map 校验: {len(feats)} 功能点")
+
+def main() -> int:
+    fails, warns, total = run_checks()
+
+    print(f"frontend_map 校验: {total} 功能点")
     for w in warns:
         print(f"WARN: {w}")
     for x in fails:

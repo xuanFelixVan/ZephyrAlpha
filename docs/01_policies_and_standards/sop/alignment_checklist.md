@@ -71,10 +71,10 @@ related_modules:
 | **battle_map**（作战地图） | PostgreSQL 3 表（battle_map_steps/anchors/edges） | step_id | BM-XXX 环节必须与前四图双向校验 | commit 前 / 改动涉及 BM 环节时 | [generate_battle_map_diagram.py](../../../scripts/governance/d5_architecture/generators/generate_battle_map_diagram.py) | ghost_anchors>0→阻断 |
 | **frontend_map**（前端全景图，已建 2026-09-01；v2.0.0 双真源合并+302 功能点补登） | `src/zephyr/frontend/dashboard/web/frontend_map.yaml`（git YAML 真源） | feature_id（F-页面-名） | 前端功能必须挂 backend_ref 到模块注册表（类型化：module:/registry:/table:/api:/none:）；模块必须声明 has_frontend；与 features/manifest.yaml 双向一致 | commit 前 / 新前端功能上线时 | [check_frontend_map.py](../../../scripts/governance/d5_architecture/generators/check_frontend_map.py) 校验器 + scan_frontend_pages.py 半自动补登（自动 commit gate 待建） | frontend_ref 空→阻断（校验器 exit 1；commit gate 建成后自动） |
 
-**六图统一验证命令**：
+**六图统一验证命令（2026-09-04 六图升级：单命令跑全）**：
 ```powershell
-python scripts/governance/d5_architecture/generators/align_all.py  # 五图对齐（现有）
-python scripts/governance/d5_architecture/generators/check_frontend_map.py  # 第六图 frontend_map 校验（2026-09-04 落地，fail>0=exit 1）
+python scripts/governance/d5_architecture/generators/align_all.py  # 六图对齐统一入口（图 1-5 自动 + 图 6 frontend_map 校验内嵌，fail>0=exit 1）
+python scripts/governance/d5_architecture/generators/check_frontend_map.py  # 图 6 单独跑（快速诊断用）
 ```
 
 **硬阻断条件**：domain_mismatches>0 / ghost_anchors>0 / frontend_ref 悬空（自动门禁建成后；建成前人工确认）

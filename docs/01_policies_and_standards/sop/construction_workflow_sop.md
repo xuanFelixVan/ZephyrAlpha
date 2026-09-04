@@ -275,11 +275,8 @@ python scripts/governance/apply_depgraph.py --add-edge ...
 # 1. sync 派生其余三图（apply_depgraph 执行后默认自动触发，也可手动）
 python scripts/governance/sync_panorama_module.py --all
 
-# 2. align 验证五图对齐（统一入口）
+# 2. align 六图对齐统一入口（图 1-5 自动 + 图 6 frontend_map 校验内嵌，2026-09-04 六图升级）
 python scripts/governance/d5_architecture/generators/align_all.py
-
-# 3. 第六图 frontend_map 校验（2026-09-04 落地校验器；涉前端施工时必跑）
-python scripts/governance/d5_architecture/generators/check_frontend_map.py
 ```
 
 **六图定义**：
