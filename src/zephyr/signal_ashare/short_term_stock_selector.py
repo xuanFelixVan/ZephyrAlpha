@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-SIG-023 | docs/03_modules/_domain_signal/blueprint.md
 # [MODULE] zephyr.signal_ashare.short_term_stock_selector
 # [DOMAIN] D_ASHARE_SIGNAL
-# [DEPENDENCIES] zephyr.signal_ashare.institutional_behavior_analyzer; zephyr.signal_ashare.capital_flow_pattern_analyzer
+# [DEPENDENCIES] zephyr.signal_ashare.institutional_behavior_analyzer; zephyr.signal_ashare.capital_flow_pattern_analyzer（D-SIGNAL-22 数据字段级消费，无 import 依赖）
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production

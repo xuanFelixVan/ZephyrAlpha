@@ -2,7 +2,7 @@
 # [MODULE] zephyr.factor.intraday_snapshot_factors
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] zephyr.factor.factor_base
-# [CONSUMERS] zephyr.factor.core.intraday_factor_loop; zephyr.runtime.intraday_main
+# [CONSUMERS] zephyr.factor.core.intraday_factor_loop（经 2026-09-05 AI-08 审计实证未接线——接线待排期）; zephyr.runtime.intraday_main（import 消费实证）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 横截面因子——仅依赖当前 tick 快照(close/volume/amount)，无历史序列需求; 盘中3秒周期可重算; volume=0 时回退 close 避免除零

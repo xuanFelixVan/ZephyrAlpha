@@ -2,7 +2,7 @@
 # [MODULE] zephyr.factor.governance.abs001_gate
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] zephyr.factor.core.evaluation.backtest; zephyr.factor.governance
-# [CONSUMERS] zephyr.factor.governance.six_step_flow; zephyr.factor.governance.engine
+# [CONSUMERS] zephyr.factor.governance.six_step_flow; zephyr.factor.governance.engine（engine 半经 2026-09-05 AI-08 审计实证未接线——接线待排期）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 4条全过才放行; 阈值从_config.yaml读取不硬编码

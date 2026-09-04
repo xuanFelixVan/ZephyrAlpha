@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L02_GOV | docs/03_modules/_domain_factor/blueprint.md | §D-FACTOR-GOV
 # [MODULE] zephyr.factor.governance
 # [DOMAIN] D_FACTOR
-# [DEPENDENCIES] zephyr.shared.lifecycle.state_machine; zephyr.gov_enforcement.rule_bridge.commit_gate_registry
+# [DEPENDENCIES] zephyr.shared.lifecycle.state_machine; zephyr.gov_enforcement.rule_bridge.commit_gate_registry（门禁接线真源引用，无 import——由 gov_enforcement 侧反向接线）
 # [STARTUP] imported
 # [MATURITY] production
 # [A_module] module_id=MOD-L02_GOV | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable

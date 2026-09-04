@@ -2,7 +2,7 @@
 # [MODULE] zephyr.signal_ashare.causal_inference_engine
 # [DOMAIN] D_ASHARE_SIGNAL
 # [DEPENDENCIES] numpy
-# [CONSUMERS] zephyr.signal_ashare.causal_factor_validator; zephyr.signal_ashare.event_driven_screener（传导链风险数值消费）
+# [CONSUMERS] zephyr.signal_ashare.causal_factor_validator; zephyr.signal_ashare.event_driven_screener（传导链风险数值消费，消费方 [DEPENDENCIES] 互认解耦设计，无 import 依赖）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 传导图边权 ∈ (0,1]；影响传播随深度单调衰减；lead-lag 判定只读历史序列无未来函数；纯函数无副作用

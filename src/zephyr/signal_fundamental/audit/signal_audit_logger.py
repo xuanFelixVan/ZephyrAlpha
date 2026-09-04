@@ -2,7 +2,7 @@
 # [MODULE] zephyr.signal_fundamental.audit.signal_audit_logger
 # [DOMAIN] D_FUNDAMENTAL_SIGNAL
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.signal_ashare.* (all signal modules)
+# [CONSUMERS] zephyr.signal_ashare.* (all signal modules)——候选消费方声明（经 2026-09-05 AI-08 审计实证未接线——接线待排期）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] WORM: append-only; records immutable after write; entry_id monotonically increasing

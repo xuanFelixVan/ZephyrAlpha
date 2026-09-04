@@ -2,7 +2,7 @@
 # [MODULE] zephyr.signal_ashare.coarse_screening_funnel
 # [DOMAIN] D_ASHARE_SIGNAL
 # [DEPENDENCIES] none
-# [CONSUMERS] zephyr.signal_ashare.fine_scoring_engine
+# [CONSUMERS] zephyr.signal_ashare.fine_scoring_engine（经 2026-09-05 AI-08 审计实证未接线——接线待排期）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 五维均为布尔/门槛式初筛（非评分）；kept ⊆ 输入；容量截断按 liquidity_score 降序；纯函数无副作用

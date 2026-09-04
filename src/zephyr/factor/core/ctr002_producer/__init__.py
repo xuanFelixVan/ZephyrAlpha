@@ -2,7 +2,7 @@
 # [MODULE] zephyr.factor.core.ctr002_producer
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] zephyr.shared.contracts.factor_signal
-# [CONSUMERS] zephyr.signal_fundamental.pipeline
+# [CONSUMERS] zephyr.signal_fundamental.pipeline（契约级消费 CTR-002 产物，无 import 依赖——经 2026-09-05 AI-08 审计实证）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] INV-004: PIT铁律——as_of_date必须对齐因子计算的数据截面日期
