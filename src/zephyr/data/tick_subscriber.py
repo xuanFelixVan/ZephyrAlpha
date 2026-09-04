@@ -5,7 +5,7 @@
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] QMT callback 线程只做 queue.put_nowait（最小开销）; flush 线程批量出队(500条)构造单个 FetchResult 交给 WalWriter; WalWriter 先落盘段文件再异步 drain 到 CH（P0-1 主动WAL）; 无锁计数(CPython GIL 保证 int += 1 统计精度足够); queue.Queue 解耦线程安全; P1-5 metrics 埋点覆盖 received/written/dropped/queue_size; 分阶段延迟度量走 CAND-OBS-001 契约 StageTimer（tick_subscriber_{on_tick,queue_wait,convert,wal_add}_duration_seconds，对齐契约 §3.2 L00 四段）; #ARCH-DATA-017 裁定B/C/E: 业务心跳JSON(tick_subscriber_biz.heartbeat)+tick-biz-watchdog线程盘中无tick周期重订阅+日志落盘RotatingFileHandler(tick_subscriber_run.log)
+# [INVARIANTS] QMT callback 线程只做 queue.put_nowait（最小开销）; flush 线程批量出队(500条)构造单个 FetchResult 交给 WalWriter; WalWriter 先落盘段文件再异步 drain 到 CH（P0-1 主动WAL）; 无锁计数(CPython GIL 保证 int += 1 统计精度足够); queue.Queue 解耦线程安全; P1-5 metrics 埋点覆盖 received/written/dropped/queue_size; 分阶段延迟度量走 CAND-OBS-001 契约 StageTimer（tick_subscriber_{on_tick,queue_wait,convert,wal_add}_duration_seconds，对齐契约 §3.2 L00 四段）; #ARCH-DATA-017 裁定B/C/E: 业务心跳JSON(tick_subscriber_biz.heartbeat)+tick-biz-watchdog线程盘中无tick周期重订阅+日志落盘RotatingFileHandler(tick_subscriber_run.log); P0-1桥模式(93号备忘§14): BridgeTickSource尾读沙箱ticks.csv(字节offset增量+残行回退+新鲜度闸门+timetag去重)→_on_backup_tick(source=qmt_bridge)→下游queue/WAL/CH零改动, start_bridge跳过xtdata链, 看门狗桥模式分支只保心跳无重订阅语义
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -91,6 +91,7 @@ queue.Queue，后台 flush 线程批量出队转14字段 tuple，WalWriter 先�
 
 from __future__ import annotations
 
+import argparse
 import json
 import logging
 import os
@@ -329,6 +330,7 @@ class TickSubscriber:
         self._writer = None  # WalWriter，在 start() 中初始化
         self._flush_thread: threading.Thread | None = None
         self._running = False
+        self._bridge_mode = False  # P0-1 桥模式（93 号备忘 §14）：数据入口=桥文件尾读
         # P0-2: 无锁计数（CPython GIL 保证 int += 1 统计精度足够，消除锁竞争）
         self._received = 0
         self._written = 0
@@ -407,15 +409,16 @@ class TickSubscriber:
         # CAND-OBS-001: Stage on_tick 收尾——observe tick_subscriber_on_tick_duration_seconds
         self._stage_timer.end("on_tick")
 
-    def _on_backup_tick(self, symbol: str, tick: dict) -> None:
-        """备源 tick 回调——TDX BackupTickPoller 调用（P1-3）。
+    def _on_backup_tick(self, symbol: str, tick: dict, source: str = "tdx_backup") -> None:
+        """备源 tick 回调——TDX BackupTickPoller / 桥模式 BridgeTickSource 调用（P1-3/P0-1）。
 
         将备源 tick 喂入同一队列，通过 tick["_data_source"] 标记来源，
-        _drain_batch 中 tick_to_row 据此设置 data_source="tdx_backup"。
+        _drain_batch 中 tick_to_row 据此设置 data_source
+        （tdx_backup 备源 / qmt_bridge 桥模式，93 号备忘 §14）。
         """
         if not self._running:
             return
-        tick["_data_source"] = "tdx_backup"
+        tick["_data_source"] = source
         try:
             self._tick_queue.put_nowait((symbol, tick))
             self._received += 1
@@ -763,6 +766,7 @@ class TickSubscriber:
         payload = {
             "ts": datetime.now().isoformat(timespec="seconds"),
             "pid": os.getpid(),
+            "mode": "bridge" if self._bridge_mode else "xtdata",  # P0-1 数据入口标识（deadman/guard 可见）
             "started_ts": (
                 datetime.fromtimestamp(self._started_ts).isoformat(timespec="seconds") if self._started_ts else None
             ),
@@ -800,6 +804,12 @@ class TickSubscriber:
         """
         while self._running:
             self._write_biz_heartbeat()
+            if self._bridge_mode:
+                # P0-1 桥模式（93 号备忘 §14）：无 xtdata 订阅可重——数据入口是
+                # 桥文件尾读（自恢复，文件重建自动归零重读），新鲜度异常由
+                # BridgeTickSource 新鲜度闸门留痕，看门狗只保心跳续写
+                time.sleep(_BIZ_WATCHDOG_LOOP_S)
+                continue
             if self._is_market_open_now():
                 if not self._symbols_resolved:
                     self._retry_empty_universe()
@@ -1132,6 +1142,48 @@ class TickSubscriber:
         log.info("TickSubscriber 启动完成: 订阅 %d 只标的", len(self._subscribed))
         return True
 
+    def start_bridge(self) -> bool:
+        """P0-1 桥模式启动（93 号备忘 §14）——共享下游链初始化，跳过 xtdata 订阅链。
+
+        与 start() 的差异：不导入 xtquant、不探活/不订阅/不预热等待——数据入口
+        由 BridgeTickSource 尾读沙箱桥文件提供。WAL/flush/业务心跳/看门狗/metrics
+        全部照常启动（下游零改动复用），看门狗走桥模式分支（无重订阅语义，
+        见 _biz_watchdog_loop）。交易日判定走日历包降级链（xtdata 缺失场景，
+        94号 §4.1 注入式改造的既定降级终点）。
+        """
+        self._bridge_mode = True
+        self._started_ts = time.time()
+        self._refresh_trading_day_flag()  # _xtdata=None → 日历包降级（心跳 is_trading_day 照常）
+        self._write_biz_heartbeat()  # 启动即写首帧（消除启动窗口 deadman 误报，同 start）
+
+        from zephyr.data.wal_writer import WalWriter
+
+        self._writer = WalWriter(
+            _TBL_TICK_DATA,
+            segment_max_rows=self._batch_rows,
+            segment_max_seconds=self._batch_seconds,
+        )
+        self._writer.start()  # 启动 drain 线程
+
+        start_metrics_server()
+
+        if self._heartbeat is not None:
+            self._heartbeat.start()
+
+        self._running = True
+
+        self._flush_thread = threading.Thread(target=self._flush_loop, daemon=True, name="tick-flush")
+        self._flush_thread.start()
+
+        self._biz_thread = threading.Thread(
+            target=self._biz_watchdog_loop,
+            daemon=True,
+            name="tick-biz-watchdog",
+        )
+        self._biz_thread.start()
+        log.info("TickSubscriber 桥模式下游链就绪: WAL/flush/看门狗（数据入口=桥文件尾读）")
+        return True
+
     def stop(self) -> None:
         """停止订阅服务。"""
         self._running = False
@@ -1280,13 +1332,250 @@ class TickSubscriber:
         """公共 API：批量出队（Stage 4 公共化别名）。"""
         return self._drain_batch(max_n=max_n, timeout=timeout)
 
-    def on_backup_tick(self, symbol: str, tick: dict) -> None:
-        """公共 API：备源 tick 回调（Stage 4 公共化别名）。"""
-        return self._on_backup_tick(symbol, tick)
+    def on_backup_tick(self, symbol: str, tick: dict, source: str = "tdx_backup") -> None:
+        """公共 API：备源 tick 回调（Stage 4 公共化别名，P0-1 增 source 参数）。"""
+        return self._on_backup_tick(symbol, tick, source=source)
+
+
+class BridgeTickSource:
+    """P0-1 桥模式数据源（93 号备忘 §14）——尾读 QMT 沙箱 TICKDUMP v18 桥文件。
+
+    数据流：E:\\qmt_bridge_sim\\ticks.csv（沙箱全市场快照 dump，ASCII 追加写）
+    尾读 → 解析为 xtdata 等价 tick dict → sub._on_backup_tick(source="qmt_bridge")
+    入队 → 既有 queue→WAL→CH 链路零改动复用。
+
+    三件套（复用 qmt_file_bridge_quote.py 已验证模式）：
+      - 尾读：offset 增量读，不重读全文件（支撑 ~500MB/日 dump）
+      - 残行回退：行尾无 \\n 的撕裂半行留到下一轮（写侧 append 中途读到）
+      - 新鲜度闸门：盘中 mtime 超阈值 → 周期性 WARNING（沙箱策略停摆可见）
+
+    防御层：
+      - 跨天重置：沙箱每日 09:15 重建文件（size < offset）→ offset 归零从头读
+      - timetag 去重：沙箱策略重启会丢 last_tt 状态重 dump 全量快照——桥侧
+        按 (symbol, timetag) 二次去重，挡住重启重放（§14.4 实施清单第 3 项）
+      - 表头/畸形行跳过：字段数≠9 或数值解析失败即丢弃该行
+    """
+
+    ENV_CONFIG: Final[dict[str, str]] = {
+        "real": r"E:\qmt_bridge\ticks.csv",
+        "sim": r"E:\qmt_bridge_sim\ticks.csv",
+    }
+
+    # 沙箱全市场一轮 ~2.4s（27 批×(拉取+0.05s)+主间隔 1s）；0.5s 轮询延迟可忽略
+    _POLL_INTERVAL_S = 0.5
+    _STALE_WARN_S = 60.0  # 盘中桥文件超 60s 无新增告警（预留午间等短暂停）
+
+    def __init__(self, sub: TickSubscriber, env: str = "sim", bridge_file: str | Path | None = None):
+        """初始化桥数据源。
+
+        Args:
+            sub: 已构造未启动的 TickSubscriber（start() 内部走 start_bridge）
+            env: 环境标识 "real"(实盘) / "sim"(模拟)，默认 sim
+            bridge_file: 桥文件路径覆盖（默认按 env 取 ENV_CONFIG）
+        """
+        if env not in self.ENV_CONFIG:
+            raise ValueError(f"非法环境标识: {env}，必须是 'real' 或 'sim'")
+        self._sub = sub
+        self._env = env
+        self._path = Path(bridge_file) if bridge_file else Path(self.ENV_CONFIG[env])
+        self._offset = 0
+        self._last_timetag: dict[str, str] = {}  # 桥侧去重（沙箱重启重 dump 防御）
+        self._running = False
+        self._thread: threading.Thread | None = None
+        self._last_stale_warn_ts = 0.0
+
+    @property
+    def bridge_file(self) -> Path:
+        """只读：桥文件路径。"""
+        return self._path
+
+    def start(self) -> bool:
+        """启动桥数据源：校验桥文件可读 → 下游链初始化 → 尾读线程。
+
+        Returns:
+            False=桥文件不存在（QMT 沙箱 TICKDUMP v18 未启动）或下游链初始化失败。
+        """
+        if not self._path.exists():
+            log.error(
+                "桥文件不存在: %s（QMT 沙箱 TICKDUMP v18 策略未启动？93 号备忘 §14）",
+                self._path,
+            )
+            return False
+        if not self._sub.start_bridge():
+            return False
+        self._running = True
+        self._thread = threading.Thread(target=self._read_loop, daemon=True, name="tick-bridge-read")
+        self._thread.start()
+        return True
+
+    def stop(self) -> None:
+        """停止尾读线程（下游链由 TickSubscriber.stop() 收尾）。"""
+        self._running = False
+        if self._thread:
+            self._thread.join(timeout=5)
+
+    def _read_loop(self) -> None:
+        """尾读线程主循环——周期增量读桥文件，异常不退出（沙箱写侧抖动容忍）。"""
+        while self._running:
+            try:
+                self._poll_once()
+            except Exception as e:  # noqa: BLE001 — 读侧异常不退出线程（下轮重试）
+                log.error("桥文件读取异常: %s", e, exc_info=True)
+            time.sleep(self._POLL_INTERVAL_S)
+        log.info("桥尾读线程结束: offset=%d", self._offset)
+
+    def _poll_once(self) -> int:
+        """单轮尾读：offset 增量读 + 残行回退 + 解析 + timetag 去重 + 入队。
+
+        Returns:
+            本轮入队 tick 数。
+        """
+        try:
+            st = self._path.stat()
+        except OSError:
+            return 0
+        size = st.st_size
+        if size < self._offset:
+            # 文件被重建（沙箱每日 09:15 重置）→ offset 归零从头读
+            log.info(
+                "桥文件重建检测（size %d < offset %d），offset 归零重读",
+                size,
+                self._offset,
+            )
+            self._offset = 0
+        self._warn_stale_if_needed(st)
+        if size == self._offset:
+            return 0
+
+        # 二进制尾读：offset 按字节推进（ASCII 文件字节==字符，无编码漂移）
+        with open(self._path, "rb") as f:
+            f.seek(self._offset)
+            chunk = f.read()
+        if not chunk.endswith(b"\n"):
+            # 残行回退：行尾无换行 = 写侧 append 中途的撕裂半行，留到下一轮
+            cut = chunk.rfind(b"\n")
+            chunk = chunk[: cut + 1] if cut >= 0 else b""
+            if not chunk:
+                return 0
+        self._offset += len(chunk)
+
+        text = chunk.decode("ascii", errors="replace")
+        n = 0
+        for line in text.splitlines():
+            parsed = self._parse_line(line)
+            if parsed is None:
+                continue
+            symbol, timetag, tick = parsed
+            if self._last_timetag.get(symbol) == timetag:
+                continue  # 桥侧 timetag 去重（沙箱重启重 dump 防御）
+            self._last_timetag[symbol] = timetag
+            self._sub._on_backup_tick(symbol, tick, source="qmt_bridge")
+            n += 1
+        return n
+
+    def _parse_line(self, line: str) -> tuple[str, str, dict] | None:
+        """解析桥文件单行 → (symbol, timetag, xtdata 等价 tick dict)。
+
+        行格式（沙箱 TICKDUMP v18）：
+            symbol,lastPrice,volume,amount,bid1,ask1,bidVol1,askVol1,timetag
+        timetag: QMT get_full_tick 时间戳字符串（yyyyMMddHHmmss[mmm]）。
+
+        Returns:
+            None=表头/畸形行/时间戳非法（跳过该行）。
+        """
+        parts = line.strip().split(",")
+        if len(parts) != 9:
+            return None
+        symbol = parts[0]
+        if not symbol or symbol == "symbol" or "." not in symbol:
+            return None  # 表头行 / 非 QMT 代码格式
+        try:
+            last_price = float(parts[1])
+            volume = int(parts[2])
+            amount = float(parts[3])
+            bid1 = float(parts[4])
+            ask1 = float(parts[5])
+            bid_vol1 = int(parts[6])
+            ask_vol1 = int(parts[7])
+        except ValueError:
+            return None
+        timetag = parts[8]
+        ms = self._timetag_to_epoch_ms(timetag)
+        if ms is None:
+            return None
+        # 构造 xtdata 等价 tick dict（tick_to_row 直接可转 15 字段行）
+        tick = {
+            "time": ms,
+            "lastPrice": last_price,
+            "volume": volume,
+            "amount": amount,
+            "bidPrice": [bid1],
+            "askPrice": [ask1],
+            "bidVol": [bid_vol1],
+            "askVol": [ask_vol1],
+        }
+        return symbol, timetag, tick
+
+    @staticmethod
+    def _timetag_to_epoch_ms(timetag: str) -> int | None:
+        """QMT timetag 字符串 → epoch 毫秒。
+
+        Args:
+            timetag: "yyyyMMddHHmmss"（14位）或含毫秒（17位，截断到秒——
+                tick_data 表 timestamp 字段本身为秒精度）
+
+        Returns:
+            epoch 毫秒；None=格式非法。本地时区解释（QMT 时间=北京时间，
+            与 tick_to_row 的 fromtimestamp 本地往返一致）。
+        """
+        s = timetag.strip()
+        if len(s) < 14 or not s[:14].isdigit():
+            return None
+        try:
+            dt = datetime.strptime(s[:14], "%Y%m%d%H%M%S")
+        except ValueError:
+            return None
+        return int(dt.timestamp() * 1000)
+
+    def _warn_stale_if_needed(self, st) -> None:
+        """新鲜度闸门：盘中桥文件超阈值未更新 → 周期性 WARNING 留痕。
+
+        沙箱全市场一轮 ~2.4s，超 60s 无新增即异常（策略停摆/线程冻结）。
+        告警限频：同阈值周期只告一次，避免日志风暴。
+        """
+        if not self._sub._is_market_open_now():
+            return
+        now = time.time()
+        age = now - st.st_mtime
+        if age > self._STALE_WARN_S and now - self._last_stale_warn_ts > self._STALE_WARN_S:
+            self._last_stale_warn_ts = now
+            log.warning(
+                "桥文件新鲜度闸门: %.0fs 无新增（阈值 %.0fs，沙箱 TICKDUMP 停摆或冻结？）",
+                age,
+                self._STALE_WARN_S,
+            )
 
 
 def main() -> int:
-    """常驻进程入口——启动 TickSubscriber 并阻塞直到 Ctrl+C。"""
+    """常驻进程入口——启动 TickSubscriber 并阻塞直到 Ctrl+C。
+
+    P0-1 桥模式（93 号备忘 §14）：--bridge 时数据入口从 xtdata 订阅换成
+    QMT 沙箱 TICKDUMP v18 桥文件（E:\\qmt_bridge_sim\\ticks.csv）尾读，
+    下游 queue/WAL/CH 零改动复用。miniQMT 退役日切换用。"""
+    parser = argparse.ArgumentParser(description="QMT 实时 Tick 订阅服务")
+    parser.add_argument(
+        "--bridge",
+        action="store_true",
+        help="桥模式：从 QMT 沙箱 tick 桥文件读取（miniqmt 退役后备源，93 号备忘 §14）",
+    )
+    parser.add_argument(
+        "--bridge-env",
+        choices=["sim", "real"],
+        default="sim",
+        help="桥模式环境分区（默认 sim：E:\\qmt_bridge_sim\\ticks.csv；real：E:\\qmt_bridge\\ticks.csv）",
+    )
+    args = parser.parse_args()
+
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
@@ -1310,7 +1599,16 @@ def main() -> int:
     log.info("=== TickSubscriber 启动 ===")
 
     sub = TickSubscriber()
-    if not sub.start():
+    bridge: BridgeTickSource | None = None
+    if args.bridge:
+        # P0-1 桥模式：入口换成 BridgeTickSource（文件尾读→_on_backup_tick 入队），
+        # 跳过 xtdata 订阅链（探活/订阅/预热均不需要；下游 WAL/CH 由 start_bridge 复用）
+        bridge = BridgeTickSource(sub, env=args.bridge_env)
+        if not bridge.start():
+            log.error("桥模式启动失败（ticks.csv 不可读），退出")
+            return 1
+        log.info("=== TickSubscriber 桥模式启动（数据源=%s）===", bridge.bridge_file)
+    elif not sub.start():
         log.error("启动失败，退出")
         return 1
 
@@ -1330,6 +1628,8 @@ def main() -> int:
     except KeyboardInterrupt:
         log.info("收到退出信号")
     finally:
+        if bridge is not None:
+            bridge.stop()  # P0-1：先停桥尾读线程（停新数据入队），再收尾下游链
         sub.stop()
         log.info("=== TickSubscriber 已退出 ===")
     return 0

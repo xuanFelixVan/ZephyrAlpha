@@ -24,7 +24,12 @@ import psutil
 import pytest
 
 import zephyr.data.tick_subscriber as ts_module
-from zephyr.data.tick_subscriber import TickSubscriber, infer_market_type, tick_to_row
+from zephyr.data.tick_subscriber import (
+    BridgeTickSource,
+    TickSubscriber,
+    infer_market_type,
+    tick_to_row,
+)
 
 
 def _conn(status, lip, lport, rip, rport, pid):
@@ -427,6 +432,7 @@ class TestMain:
 
         monkeypatch.setattr("time.sleep", fake_sleep)
         monkeypatch.setattr(ts_module, "TickSubscriber", lambda *a, **kw: sub_instance)
+        monkeypatch.setattr(sys, "argv", ["tick_subscriber"])  # main() argparse 隔离（P0-1 引入 --bridge）
 
         exit_code = ts_module.main()
         assert exit_code == 0
@@ -440,6 +446,7 @@ class TestMain:
         sub_instance.start.return_value = False
 
         monkeypatch.setattr(ts_module, "TickSubscriber", lambda *a, **kw: sub_instance)
+        monkeypatch.setattr(sys, "argv", ["tick_subscriber"])  # main() argparse 隔离（P0-1 引入 --bridge）
 
         exit_code = ts_module.main()
         assert exit_code == 1
@@ -748,9 +755,11 @@ class TestQmtInstanceGuard:
 # 3b7eae39f8 commit 自报的 16 项 python 单测为临时探针未入库，本批为持久化版本。
 
 # 业务心跳 JSON 契约字段（deadman_switch.ps1 / start_tick_subscriber.ps1 消费面）
+# P0-1 增 mode（bridge/xtdata 数据入口标识，93 号备忘 §14；消费方按字段名取值，增量安全）
 _BIZ_HB_CONTRACT_KEYS = {
     "ts",
     "pid",
+    "mode",
     "started_ts",
     "last_tick_ts",
     "last_tick_age_s",
@@ -1117,6 +1126,7 @@ class TestMainRunLog:
         sub_instance = MagicMock()
         sub_instance.start.return_value = False
         monkeypatch.setattr(ts_module, "TickSubscriber", lambda *a, **kw: sub_instance)
+        monkeypatch.setattr(sys, "argv", ["tick_subscriber"])  # main() argparse 隔离（P0-1 引入 --bridge）
         root = logging.getLogger()
         before = list(root.handlers)
         old_level = root.level
@@ -1306,3 +1316,143 @@ class TestIntradayLinkIntegration:
         finally:
             sub.stop()
         assert fake_xt.unsub_calls >= 1
+
+
+# ── P0-1 桥模式（93 号备忘 §14.4 实施清单第 3 项）：解析/去重/心跳降级三用例 ──
+
+
+class TestBridgeTickSource:
+    """BridgeTickSource——沙箱 ticks.csv 尾读→xtdata 等价 tick dict→下游零改动链。"""
+
+    def _make_bridge(self, tmp_path):
+        sub = _make_sub()
+        path = tmp_path / "ticks.csv"
+        return sub, BridgeTickSource(sub, bridge_file=path), path
+
+    def test_bridge_file_parsing(self, tmp_path):
+        """桥文件解析：CSV 行→xtdata 等价 tick dict→tick_to_row 15 字段（data_source=qmt_bridge）。"""
+        sub, bridge, path = self._make_bridge(tmp_path)
+        path.write_text(
+            "symbol,lastPrice,volume,amount,bid1,ask1,bidVol1,askVol1,timetag\n"
+            "000001.SZ,10.500,1000,10500.00,10.490,10.510,500,300,20260904100003\n"
+            "bad,row\n"  # 字段数不足 → 跳过
+            "600000.SH,notafloat,1,1,1,1,1,1,20260904100003\n"  # 数值非法 → 跳过
+            "600519.SH,1700.000,200,340000.00,1699.000,1701.000,10,20,20260904100003000\n",  # 17位timetag
+            encoding="ascii",
+        )
+        n = bridge._poll_once()
+        assert n == 2  # 表头 + 2 畸形行被跳过，2 条有效行入队
+
+        sym1, tick1 = sub.tick_queue.get_nowait()
+        assert sym1 == "000001.SZ"
+        expected_ms = int(datetime(2026, 9, 4, 10, 0, 3).timestamp() * 1000)
+        assert tick1["time"] == expected_ms
+        assert tick1["lastPrice"] == 10.5
+        assert tick1["volume"] == 1000
+        assert tick1["amount"] == 10500.0
+        assert tick1["bidPrice"] == [10.49]
+        assert tick1["askPrice"] == [10.51]
+        assert tick1["bidVol"] == [500]
+        assert tick1["askVol"] == [300]
+        assert tick1["_data_source"] == "qmt_bridge"
+
+        # tick_to_row 等价转换：15 字段、data_source 透传、字段位置正确
+        # （模拟 _drain_batch 的取参方式：pop _data_source 传入）
+        row = tick_to_row(sym1, tick1, data_source=tick1.pop("_data_source", "miniqmt"))
+        assert row is not None
+        assert len(row) == 15
+        assert row[3] == "000001"  # symbol
+        assert row[4] == "stock"  # market_type
+        assert row[9] == "qmt_bridge"  # data_source
+        assert row[10] == Decimal("10.49")  # bid_price
+        assert row[11] == Decimal("10.51")  # ask_price
+
+        # 17 位 timetag（含毫秒）截断到秒——与 14 位同时刻等价
+        sym2, tick2 = sub.tick_queue.get_nowait()
+        assert sym2 == "600519.SH"
+        assert tick2["time"] == expected_ms
+
+    def test_timetag_dedupe_and_tail_recovery(self, tmp_path):
+        """timetag 去重（沙箱重启重 dump 防御）+ 残行回退 + 文件重建 offset 归零。"""
+        sub, bridge, path = self._make_bridge(tmp_path)
+        with open(path, "a", encoding="ascii") as f:
+            f.write("000001.SZ,10.5,100,1050.00,10.49,10.51,5,3,20260904100003\n")
+        assert bridge._poll_once() == 1
+
+        # 同 (symbol, timetag) 重放 → 桥侧去重不入队
+        with open(path, "a", encoding="ascii") as f:
+            f.write("000001.SZ,10.5,100,1050.00,10.49,10.51,5,3,20260904100003\n")
+        assert bridge._poll_once() == 0
+
+        # timetag 变化 → 新 tick 入队
+        with open(path, "a", encoding="ascii") as f:
+            f.write("000001.SZ,10.6,200,2112.00,10.59,10.61,6,4,20260904100006\n")
+        assert bridge._poll_once() == 1
+
+        # 残行回退：append 中途的撕裂半行留到下一轮（offset 不推进半行）
+        with open(path, "a", encoding="ascii") as f:
+            f.write("600000.SH,8.8,50,440.00,8.79,8.8")
+        assert bridge._poll_once() == 0
+        with open(path, "a", encoding="ascii") as f:
+            f.write("1,5,2,20260904100009\n")  # 补全 ask1 尾数+后3字段（撕裂点在字段中间）
+        assert bridge._poll_once() == 1
+        # 排空队列断言全历史：poll1 入 000001(tt03)、poll3 入 000001(tt06)、
+        # 残行补全入 600000(tt09)——去重与残行回退的联合效果
+        drained = []
+        while not sub.tick_queue.empty():
+            drained.append(sub.tick_queue.get_nowait())
+        assert [s for s, _ in drained] == ["000001.SZ", "000001.SZ", "600000.SH"]
+
+        # 文件重建（沙箱每日 09:15 重置）：size < offset → offset 归零重读（同 timetag 去重，仅新行入队）
+        path.write_text(
+            "symbol,lastPrice,volume,amount,bid1,ask1,bidVol1,askVol1,timetag\n"
+            "000001.SZ,10.6,200,2112.00,10.59,10.61,6,4,20260904100006\n"  # 最近 timetag → 去重
+            "000001.SZ,10.7,300,3210.00,10.69,10.71,7,5,20260904100012\n",  # 新 timetag → 入队
+            encoding="ascii",
+        )
+        assert bridge._poll_once() == 1
+
+    def test_start_bridge_heartbeat_degradation(self, tmp_path, monkeypatch):
+        """心跳降级：无 xtdata 环境 start_bridge——交易日判定走日历包降级心跳照写
+        （mode=bridge），看门狗不触发 xtdata 重订阅链。"""
+        hb = tmp_path / "tick_subscriber_biz.heartbeat"
+        monkeypatch.setattr(ts_module, "_BIZ_HEARTBEAT_PATH", hb)
+        monkeypatch.setattr(ts_module, "_BIZ_WATCHDOG_LOOP_S", 0.05)
+        monkeypatch.setattr(ts_module, "start_metrics_server", lambda *a, **kw: None)
+        fake_writer = MagicMock()
+        fake_writer.add.return_value = True
+        monkeypatch.setitem(
+            sys.modules,
+            "zephyr.data.wal_writer",
+            SimpleNamespace(WalWriter=lambda *a, **kw: fake_writer),
+        )
+
+        sub = ts_module.TickSubscriber()
+
+        # 桥模式看门狗不得走 xtdata 链（走到即失败——桥模式无订阅可重）
+        def _no_universe():
+            raise AssertionError("bridge watchdog must not resolve universe")
+
+        def _no_resub(syms):
+            raise AssertionError("bridge watchdog must not resubscribe")
+
+        monkeypatch.setattr(sub, "_get_all_symbols", _no_universe)
+        monkeypatch.setattr(sub, "_subscribe_all_symbols", _no_resub)
+
+        assert sub.start_bridge() is True
+        try:
+            time.sleep(0.3)  # 看门狗跑若干轮（0.05s 间隔）——无断言异常即通过
+            payload = json.loads(hb.read_text(encoding="utf-8"))
+            assert payload["mode"] == "bridge"
+            assert payload["is_trading_day"] in (True, False)  # 日历包降级仍可判定
+            assert payload["subscribed"] == 0
+            assert set(payload) == _BIZ_HB_CONTRACT_KEYS
+
+            # 桥 tick 入队 → 心跳业务字段增长（received/last_tick_ts，业务活性可见）
+            sub.on_backup_tick("000001.SZ", {"time": 1788502803000, "lastPrice": 10.5}, source="qmt_bridge")
+            time.sleep(0.2)
+            payload = json.loads(hb.read_text(encoding="utf-8"))
+            assert payload["received"] == 1
+            assert payload["last_tick_ts"] is not None
+        finally:
+            sub.stop()

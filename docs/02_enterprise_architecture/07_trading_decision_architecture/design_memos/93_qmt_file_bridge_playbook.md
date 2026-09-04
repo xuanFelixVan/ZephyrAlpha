@@ -5,7 +5,7 @@ title: 大QMT文件桥双向通道操作手册（miniQMT 替代方案）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.6.0"
+version: "1.8.2"
 date: 2026-09-04
 topic: qmt_file_bridge
 scope: 07_trading_decision_architecture
@@ -511,10 +511,10 @@ QMT 沙箱（QUOTE v18 策略）                    本地 tick_subscriber（桥
 
 ### 14.4 实施清单
 
-1. 沙箱侧 `ZEPHYR_TICKDUMP_v18.txt`（分批全市场轮询+追加写+timetag 去重+轮内批间隔限速）
-2. 项目侧 tick_subscriber.py 加 `BridgeTickSource`（尾读+残行回退+新鲜度闸门，复用 qmt_file_bridge_quote 三件套）+ `--bridge` 模式接线
-3. 单测：桥文件解析/timetag 去重/心跳降级三用例
-4. 实测验收：盘中对拍（桥模式 vs miniqmt 现模式同时跑 30 分钟，行数/字段/延迟对比报告）
+1. ✅ 沙箱侧 `ZEPHYR_TICKDUMP_v18.txt`（分批全市场轮询+追加写+timetag 去重+轮内批间隔限速，落位 `E:\qmt_bridge_sim\`）
+2. ✅ 项目侧 tick_subscriber.py 加 `BridgeTickSource`（尾读+残行回退+新鲜度闸门，复用 qmt_file_bridge_quote 三件套；另加桥侧 timetag 二次去重——沙箱策略重启丢 last_tt 状态重 dump 的防御）+ `--bridge`/`--bridge-env` 模式接线 + `TickSubscriber.start_bridge()`（共享下游链初始化：WAL/flush/看门狗/心跳/metrics，跳过 xtdata 探活订阅链；看门狗桥模式分支只保心跳无重订阅语义；心跳 JSON 增 `mode` 字段，deadman 消费面按字段名取值增量安全）
+3. ✅ 单测：桥文件解析/timetag 去重（含残行回退+文件重建 offset 归零）/心跳降级三用例——90/90 两轮通过（含 TestMain argv 隔离修复）
+4. ⬜ 实测验收：盘中对拍（桥模式 vs miniqmt 现模式同时跑 30 分钟，行数/字段/延迟对比报告）——沙箱 v18 策略需 QMT 模拟终端模型交易启动后进行
 
 ### 14.5 风险与边界
 
@@ -537,3 +537,4 @@ QMT 沙箱（QUOTE v18 策略）                    本地 tick_subscriber（桥
 | 1.7.0 | 2026-09-04 | **§13 合规情报与长期路线图**：监管定性（8/28 外接新规，个人不在接入名单）；全库依赖审计（25 文件，P0-1 tick_subscriber=最大缺口）；三层长期预案（L1 桥主用/L2 文件兜底/L3 大脑搬家降级备胎+月度演练纪律+两条保通路）；社区生态参照（开源桥全依赖 xtquant 同死，我们路线更前瞻；EasyXT 自动登录不采纳） |
 | 1.8.0 | 2026-09-04 | **§14 P0-1 Tick 桥扩容设计**：沙箱全市场 dump（v18 分批轮询）+项目侧 BridgeTickSource 桥模式（下游 queue/WAL/CH 零改动复用）；快照轮询 vs 推送订阅语义等价论证；实施清单+风险边界（500MB/日轮转） |
 | 1.8.1 | 2026-09-04 | **§13.3 预案补全（Owner 质询两轮）**：L4 GUI 自动化终极防线入表（EasyTrader 思路，封它=封人用，只做预案不写代码）；L3 触发技术背景落盘（四法封堵零难度=业务选择非技术限制，演练=对口子关闭的对冲）；修订记录排序修正 |
+| 1.8.2 | 2026-09-04 | **§14 P0-1 落地（代码施工完成）**：沙箱 v18 策略落位 E:\qmt_bridge_sim\；项目侧 BridgeTickSource（尾读三件套+timetag 二次去重+文件重建自愈）+ start_bridge 共享下游链 + --bridge/--bridge-env 接线 + 心跳 mode 字段；单测 90/90 两轮通过；待盘中对拍验收（清单第 4 项） |
