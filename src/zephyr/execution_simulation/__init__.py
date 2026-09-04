@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-EXEC_SIM | docs/03_modules/_domain_execution_sim/almgren_chriss_impact_model/blueprint.md
 # [MODULE] zephyr.execution_simulation
 # [DOMAIN] D_EXEC_SIM
-# [DEPENDENCIES] 无（守卫式 import 聚合子模块；子模块全注入）
+# [DEPENDENCIES] 无（守卫式 import 聚合子模块；子模块全注入）; zephyr.execution_simulation.almgren_chriss_impact_model
 # [CONSUMERS] 运行时装配批（执行仿真/回测冲击成本真源装配）
 # [STARTUP] imported
 # [MATURITY] design

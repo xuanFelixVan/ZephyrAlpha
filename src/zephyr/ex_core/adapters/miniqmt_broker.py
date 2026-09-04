@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.adapters.miniqmt_broker
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.trading.trading_contracts.broker_interface; zephyr.backtest.core.matching_logic; zephyr.data.implementations.miniqmt_provider; zephyr.ex_core.board_lot; zephyr.ex_core.price_cage
-# [CONSUMERS] zephyr.frontend.dashboard.components.trade_panel; zephyr.frontend.dashboard.components.position_monitor
+# [DEPENDENCIES] zephyr.trading.trading_contracts.broker_interface; zephyr.backtest.core.matching_logic; zephyr.ex_core.board_lot; zephyr.ex_core.price_cage; zephyr.shared.utils.time_utils; zephyr.trading.trading_contracts.execution.fill; zephyr.trading.trading_contracts.execution.order; zephyr.trading.trading_contracts.execution.position
+# [CONSUMERS] zephyr.trading.recon_runner; zephyr.ex_core.adapters（包导出）
 # [STARTUP] manual
 # [MATURITY] production
 # [INVARIANTS] xttrader非线程安全(加锁); T+1锁定(查持仓available_quantity); 涨跌停限制; 板块差异化整手(board_lot真源); 价格笼子夹边不废单(price_cage真源); 幂等(INV-007); 回测=实盘一致性(MatchingLogic共享, submit_order内置预校验)
@@ -252,7 +252,6 @@ class MiniQmtBroker(BrokerInterface):
 
     # A股约束常量
     T_PLUS = 1
-    MIN_ORDER_QTY = 100  # 主板最小申报单位（板块差异化真源=board_lot.get_board_lot_rule）
     PRICE_TICK = Decimal("0.01")
     PRICE_LIMIT_PCT = Decimal("0.10")  # 主板/ST ±10%（板块差异化幅度见 _BOARD_PRICE_LIMIT_PCT）
     ASSET_CLASSES = ["stock", "etf", "convertible_bond"]
@@ -1007,19 +1006,18 @@ class MiniQmtBroker(BrokerInterface):
             return False
 
     def _resubscribe_quotes(self) -> None:
-        """重连后重建所有行情订阅（GAP-002 Step 2）。
+        """重连后行情重建通知（GAP-002 Step 2）。
 
-        断线后 xtdata 订阅全部失效，必须对 _subscribed_symbols 中的每个标的
-        重新 subscribe_quote，否则策略收不到行情推送（"假活"——连接在但不推数据）。
+        现状（2026-09-05 审计订正）：broker 自身不持有行情订阅（行情归 D_DATA
+        MiniQmtQuoteProvider），_subscribed_symbols 预留集合当前无人写入——
+        本方法仅记录待重建标的数，真正的订阅重建由 Step 4
+        _notify_reconnect_complete() 触发 _reconnect_callbacks 回调链，
+        由上层（注册 resubscribe 回调的 quote_provider 侧）承接。
         """
         if not self._subscribed_symbols:
             _logger.debug("无已订阅标的，跳过行情重订阅")
             return
         _logger.info("行情重订阅: %d 个标的", len(self._subscribed_symbols))
-        # 实际 subscribe_quote 调用由上层 D_DATA 的 MiniQmtQuoteProvider 承接，
-        # 此处通过 reconnect_callbacks 通知上层重建订阅（broker 不直接管行情订阅，
-        # 但须触发上层动作——通过 _reconnect_callbacks 回调链）
-        # 回调链中应包含上层 quote_provider 的 resubscribe 方法
 
     def _sync_order_state_on_reconnect(self) -> None:
         """重连后全量同步订单状态（GAP-002 Step 3）。
@@ -1116,8 +1114,25 @@ class MiniQmtBroker(BrokerInterface):
                 with self._lock:
                     self._reconnect()
 
+    def touch_tick(self) -> None:
+        """行情活性通知（心跳假死检测的 tick 源接线接口）。
+
+        上层行情通道（D_DATA MiniQmtQuoteProvider / tick_subscriber）收到
+        任意 Tick 推送时 MUST 调用本方法刷新 _last_tick_ts；否则心跳线程
+        启动后必在 _heartbeat_timeout 秒后误判假死并触发重连。
+        （2026-09-05 审计：start_heartbeat 生产零调用+tick 源未接线，
+        启用心跳前必须先接本接口——2.4A 僵尸信号④显式化）
+        """
+        import time
+
+        self._last_tick_ts = time.monotonic()  # noqa: m46-time — 心跳用 monotonic 不是 wall clock
+
     def start_heartbeat(self) -> None:
-        """启动假死心跳检测线程（GAP-012）。"""
+        """启动假死心跳检测线程（GAP-012）。
+
+        前置条件：上层行情通道必须已接线 touch_tick()（收到 Tick 即刷新），
+        否则 30 秒后必然误判假死触发无意义重连。
+        """
         if self._heartbeat_thread and self._heartbeat_thread.is_alive():
             return
         self._heartbeat_stop.clear()

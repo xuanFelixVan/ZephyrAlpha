@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-EX-001 | docs/03_modules/_domain_execution_core/fill_handler/blueprint.md
 # [MODULE] zephyr.ex_core.fill_handler
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.shared.contracts.fill; zephyr.shared.contracts.order; zephyr.shared.contracts.enums.order_enums; zephyr.shared.state_store
+# [DEPENDENCIES] zephyr.shared.contracts.fill; zephyr.shared.contracts.order; zephyr.shared.contracts.enums.order_enums; zephyr.shared.state_store; zephyr.shared.foundation.errors
 # [CONSUMERS] D_EX_CORE域内模块 ; Fill Processor (D-EX-CORE-08, 阶段2)
 # [STARTUP] imported
 # [MATURITY] production

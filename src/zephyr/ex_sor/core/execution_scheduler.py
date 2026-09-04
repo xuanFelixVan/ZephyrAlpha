@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-XS-004 | docs/03_modules/_domain_ex_sor/execution_scheduler/blueprint.md
 # [MODULE] zephyr.ex_sor.core.execution_scheduler
 # [DOMAIN] D_EX_SOR
-# [DEPENDENCIES] zephyr.shared.contracts.order; zephyr.shared.foundation.errors; zephyr.ex_sor.core.algo_trading_engine
+# [DEPENDENCIES] zephyr.shared.foundation.errors; zephyr.ex_sor.core.algo_trading_engine
 # [CONSUMERS] MOD-XS-001(Optimal Order Router,路由子订单); MOD-XS-002(Broker Adapter,提交子订单); D-EX-CORE(OMS,调度进度查询)
 # [STARTUP] manual
 # [MATURITY] production

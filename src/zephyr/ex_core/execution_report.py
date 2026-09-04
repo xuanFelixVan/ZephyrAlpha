@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.execution_report
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.shared.contracts.execution_report(CTR-P1-007); zephyr.ex_core.execution_engine(ExecutionEngineRunRecord); zephyr.shared.contracts.order; zephyr.shared.foundation.errors
+# [DEPENDENCIES] zephyr.shared.contracts.execution_report(CTR-P1-007); zephyr.ex_core.execution_engine(ExecutionEngineRunRecord); zephyr.shared.contracts.order; zephyr.shared.foundation.errors; zephyr.shared.contracts.enums.order_enums
 # [CONSUMERS] D_REPORTING(TCA/归因数据流上游, BM-REC-02-B); 调用方(执行完成事件驱动产出)
 # [STARTUP] imported
 # [MATURITY] evolving

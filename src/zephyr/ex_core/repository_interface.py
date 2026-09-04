@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-EX-050 | docs/03_modules/_domain_execution_core/repository_interface/blueprint.md
 # [MODULE] zephyr.ex_core.repository_interface
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.shared.contracts.order; zephyr.shared.contracts.position; zephyr.shared.contracts.enums.order_enums
+# [DEPENDENCIES] zephyr.shared.contracts.order; zephyr.shared.contracts.position; zephyr.shared.contracts.enums.order_enums; zephyr.shared.foundation.errors
 # [CONSUMERS] D_EX_CORE域内模块 ; OrderManager (阶段2集成) ; PositionTracker (阶段2集成)
 # [STARTUP] imported
 # [MATURITY] production

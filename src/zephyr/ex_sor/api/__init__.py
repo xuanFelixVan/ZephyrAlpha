@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-EX_SOR | (pending)
 # [MODULE] zephyr.ex_sor.api
 # [DOMAIN] D_EX_SOR
-# [DEPENDENCIES]
+# [DEPENDENCIES] zephyr.ex_sor.api.api_rate_limiter; zephyr.ex_sor.api.broker_api_connector
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-EX-024 | docs/03_modules/MOD-EX-024/
 # [MODULE] zephyr.ex_core.pre_execution_checker
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.risk.core.risk_data_pipeline; zephyr.risk.core.risk_veto_engine; zephyr.shared.contracts.enums.order_enums; zephyr.shared.foundation.errors; zephyr.data.calendar
+# [DEPENDENCIES] zephyr.risk.core.risk_data_pipeline; zephyr.risk.core.risk_veto_engine; zephyr.data.calendar; zephyr.data.trading_calendar
 # [CONSUMERS] MOD-L06-001(TradingSession._validate_and_submit 前置硬拦) ; MOD-EX-007(Execution Risk Gate)
 # [STARTUP] imported
 # [MATURITY] production

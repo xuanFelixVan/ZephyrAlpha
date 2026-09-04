@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-EX-049 | docs/03_modules/_domain_execution_core/aggregate_root_manager/blueprint.md
 # [MODULE] zephyr.ex_core.aggregate_root_manager
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.ex_core.fill_handler; zephyr.ex_core.position_tracker.tracker; zephyr.ex_core.repository_interface; zephyr.shared.contracts.order; zephyr.shared.contracts.fill; zephyr.shared.contracts.position
+# [DEPENDENCIES] zephyr.ex_core.fill_handler; zephyr.ex_core.position_tracker.tracker; zephyr.ex_core.repository_interface; zephyr.shared.contracts.order; zephyr.shared.contracts.fill; zephyr.shared.contracts.position; zephyr.shared.contracts.enums.order_enums; zephyr.shared.foundation.errors
 # [CONSUMERS] D_EX_CORE域内模块 ; Saga编排器 (阶段2集成)
 # [STARTUP] imported
 # [MATURITY] production

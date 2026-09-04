@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-XS-001 | docs/03_modules/_domain_ex_sor/optimal_order_router/blueprint.md
 # [MODULE] zephyr.ex_sor.core.optimal_order_router
 # [DOMAIN] D_EX_SOR
-# [DEPENDENCIES] zephyr.shared.contracts.order; zephyr.shared.foundation.errors; zephyr.ex_sor.core.broker_adapter_manager; zephyr.ex_sor.api.broker_api_connector
+# [DEPENDENCIES] zephyr.shared.contracts.order; zephyr.shared.foundation.errors; zephyr.ex_sor.core.broker_adapter_manager; zephyr.ex_sor.api.broker_api_connector; zephyr.ex_sor.api.api_rate_limiter
 # [CONSUMERS] MOD-EX-CORE(OMS,订单路由入口) ; MOD-XS-004(Execution Scheduler,调度后路由)
 # [STARTUP] manual
 # [MATURITY] production

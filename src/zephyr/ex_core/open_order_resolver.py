@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.open_order_resolver
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] stdlib; zephyr.ex_core.order_manager; zephyr.shared.contracts.order; zephyr.shared.contracts.enums.order_enums
+# [DEPENDENCIES] stdlib; zephyr.shared.contracts.order; zephyr.shared.contracts.enums.order_enums
 # [CONSUMERS] ex_core.trading_session
 # [STARTUP] imported
 # [MATURITY] production

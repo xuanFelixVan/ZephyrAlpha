@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-EX_SOR | (pending)
 # [MODULE] zephyr.ex_sor.core
 # [DOMAIN] D_EX_SOR
-# [DEPENDENCIES]
+# [DEPENDENCIES] zephyr.ex_sor.core.broker_adapter_manager; zephyr.ex_sor.core.optimal_order_router; zephyr.ex_sor.core.rl_exec_boundary; zephyr.ex_sor.core.rl_exec_contract; zephyr.ex_sor.core.rl_exec_env; zephyr.ex_sor.core.sor_agent
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production

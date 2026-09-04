@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-EX_SOR | (pending)
 # [MODULE] zephyr.ex_sor.services
 # [DOMAIN] D_EX_SOR
-# [DEPENDENCIES]
+# [DEPENDENCIES] zephyr.ex_sor.services.execution_quality_scorer; zephyr.ex_sor.services.slippage_analyzer; zephyr.ex_sor.services.transaction_cost_optimizer
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production

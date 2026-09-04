@@ -113,11 +113,16 @@ class TestOkxBrokerSignature:
 
 
 class TestOkxBrokerIdempotency:
+    @patch.object(OkxBroker, "_confirm_receipt")
     @patch.object(OkxBroker, "_request")
-    def test_duplicate_idempotency_key_returns_existing(self, mock_request):
+    def test_duplicate_idempotency_key_returns_existing(self, mock_request, mock_receipt):
         broker = OkxBroker()
         broker._connected = True
         broker._session = MagicMock()
+        # submit_order 会启动 _confirm_receipt 后台 daemon 线程；本测试只验证幂等映射，
+        # 必须禁用真实后台线程——否则线程在测试结束（patch 解除）后醒来走真
+        # _request/_sign，_secret_key=None 抛 AttributeError，污染下一个测试
+        # （2026-09-05 AI-AUDIT05：okx RLock 死锁修复后线程真正跑通，暴露此泄漏）
 
         # 第一次下单
         mock_request.return_value = {"code": "0", "data": [{"ordId": "12345"}]}

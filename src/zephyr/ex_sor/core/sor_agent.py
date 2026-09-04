@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-XS-015 | docs/03_modules/_domain_ex_sor/sor_agent/blueprint.md
 # [MODULE] zephyr.ex_sor.core.sor_agent
 # [DOMAIN] D_EX_SOR
-# [DEPENDENCIES] 标准库; zephyr.ex_core.order_splitter(惰性, 默认拆单委托可注入替代)
+# [DEPENDENCIES]标准库; zephyr.ex_core.order_splitter(惰性, 默认拆单委托可注入替代); zephyr.shared.contracts.enums.order_enums
 # [CONSUMERS] 运行时装配批（MOD-XS-001 路由算法委托 / EX-CORE Pre-Trade 风控链 / broker_api_connector 券商通道执行 / D_FEEDBACK_LOOP 滑点反馈回路）
 # [STARTUP] imported
 # [MATURITY] production

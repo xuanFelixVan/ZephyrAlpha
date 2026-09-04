@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-EX_SOR_EXT-001 | docs/03_modules/_domain_ex_sor/slippage_analyzer/blueprint.md
 # [MODULE] zephyr.ex_sor.services.slippage_analyzer
 # [DOMAIN] D_EX_SOR
-# [DEPENDENCIES] zephyr.shared.contracts.order; zephyr.shared.contracts.enums.order_enums; zephyr.shared.foundation.errors
+# [DEPENDENCIES] zephyr.shared.contracts.enums.order_enums; zephyr.shared.foundation.errors
 # [CONSUMERS] MOD-EX_SOR_EXT-002(ExecutionQualityScorer, 消费 SlippageResult); MOD-EX-CORE(执行质量报告)
 # [STARTUP] manual
 # [MATURITY] production

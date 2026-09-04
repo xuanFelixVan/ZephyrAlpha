@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint_qmt_file_bridge.md
 # [MODULE] zephyr.ex_core.qmt_trading_session
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.ex_core.adapters.qmt_file_bridge_integration; zephyr.ex_core.order_manager; zephyr.governance.strategies.strategy_base
-# [CONSUMERS] scripts.construction.test_qmt_file_bridge_full; scripts.start_paper_session
+# [DEPENDENCIES] zephyr.ex_core.adapters.qmt_file_bridge_integration; zephyr.ex_core.order_manager; zephyr.governance.strategies.strategy_base; zephyr.shared.contracts.position
+# [CONSUMERS] scripts.construction.test_qmt_file_bridge_full; tests/ex_core/test_qmt_trading_session.py
 # [STARTUP] manual
 # [MATURITY] draft
 # [INVARIANTS] env 校验先行(ValueError); start 才连接; 策略层只面对 Session 不面对 Broker

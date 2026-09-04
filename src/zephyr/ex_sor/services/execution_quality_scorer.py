@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-EX_SOR_EXT-002 | docs/03_modules/_domain_ex_sor/execution_quality_scorer/blueprint.md
 # [MODULE] zephyr.ex_sor.services.execution_quality_scorer
 # [DOMAIN] D_EX_SOR
-# [DEPENDENCIES] zephyr.shared.contracts.enums.order_enums; zephyr.shared.foundation.errors; zephyr.ex_sor.services.slippage_analyzer; zephyr.ex_sor.services.transaction_cost_optimizer
+# [DEPENDENCIES] zephyr.shared.contracts.enums.order_enums; zephyr.shared.foundation.errors
 # [CONSUMERS] MOD-EX-CORE(执行质量报告); MOD-XS-011(算法选择器反馈环)
 # [STARTUP] manual
 # [MATURITY] production

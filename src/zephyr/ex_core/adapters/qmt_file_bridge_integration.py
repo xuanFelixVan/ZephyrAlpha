@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint_qmt_file_bridge.md
 # [MODULE] zephyr.ex_core.adapters.qmt_file_bridge_integration
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.ex_core.adapters.qmt_file_bridge_broker; zephyr.ex_core.local_order_queue; zephyr.ex_core.order_manager
+# [DEPENDENCIES] zephyr.ex_core.adapters.qmt_file_bridge_broker; zephyr.ex_core.local_order_queue; zephyr.ex_core.order_manager; zephyr.ex_core.adapters.qmt_file_bridge_quote
 # [CONSUMERS] zephyr.ex_core.qmt_trading_session; scripts.construction.test_qmt_file_bridge_e2e
 # [STARTUP] manual
 # [MATURITY] draft
