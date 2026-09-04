@@ -2,7 +2,7 @@
 # [MODULE] zephyr.factor.analysis.ic_ir_calc
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] zephyr.factor.core.evaluation.backtest; zephyr.factor.core.evaluation.metrics
-# [CONSUMERS] zephyr.factor.analysis.ic_ir_evaluator; zephyr.factor.analysis.multifactor_synthesis
+# [CONSUMERS] （暂无 import 消费方，2026-09-05 AI-08 审计实证；ic_ir_evaluator 为语义后继（docstring 记述差异）、multifactor_synthesis 仅 [DEPENDENCIES] 声明未 import、factor_factory 为注入点复用叙事——接线待排期）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] INV-004: PIT铁律——所有 IC/IR 计算仅使用同期因子值与已实现前向收益

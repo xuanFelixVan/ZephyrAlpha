@@ -2,7 +2,7 @@
 # [MODULE] zephyr.factor.analysis.correlation_preprocessing
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] numpy; pandas
-# [CONSUMERS] zephyr.factor.analysis.correlation_block_bootstrap; zephyr.factor.analysis.correlation_sentiment_stratifier; zephyr.pf_alloc.core.strategy_correlation_gate(上游生产者)
+# [CONSUMERS] zephyr.pf_core.strategy_correlation_pipeline（唯一 import 消费方，2026-09-05 AI-08 审计实证）；correlation_block_bootstrap/correlation_neff 仅错误消息语义引用对齐前置（非 import）；原声明 correlation_sentiment_stratifier 与 zephyr.pf_alloc.core.strategy_correlation_gate 经全仓 grep 实证 0 引用已删除
 # [STARTUP] imported
 # [MATURITY] testing
 # [INVARIANTS] 纯函数无IO; 对数收益率统一口径; 交易日对齐只交集禁前向填充; 异常值只标注不剔除

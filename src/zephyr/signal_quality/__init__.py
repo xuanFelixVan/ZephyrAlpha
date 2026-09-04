@@ -11,6 +11,8 @@ D_SIGQC — Signal Quality Domain
 
 子模块:
   degradation_monitor_base — 信号质量降级监视器抽象基类（OCP D_SIGQC-DEG）
+  degradation_detector — 多维滑窗基线对比降级检测器（MOD-SIGQC-001，包级导出）
+  signal_dedup / signal_degradation_monitor / signal_explainability_guarantor / signal_quality_benchmark — 域内待装配模块（各自独立蓝图 MOD-SIGQC-003~006）
 
 # [ALGO_FLOW]
 # 层: 输入

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.factor.analysis.correlation_sentiment_stratifier
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] pandas(仅消费 BM-SEL-23-B 输出, 不 import market_sentiment_analyzer 内部)
-# [CONSUMERS] G07 策略相关性验证报告（分层 5×5×5 矩阵）
+# [CONSUMERS] zephyr.pf_core.strategy_correlation_pipeline（分层矩阵消费，2026-09-05 AI-08 审计实证补头）；G07 策略相关性验证报告（历史首批语义消费方）
 # [STARTUP] imported
 # [MATURITY] testing
 # [INVARIANTS] 纯函数无IO; 置信度<0.60->默认保守(冰点)兜底并留痕; 阶段样本<30标不足; 灰度权重行和=1

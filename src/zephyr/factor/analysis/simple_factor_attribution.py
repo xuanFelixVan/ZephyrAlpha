@@ -2,7 +2,7 @@
 # [MODULE] zephyr.factor.analysis.simple_factor_attribution
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] pandas
-# [CONSUMERS] decay_monitor(低贡献因子联动衰减复检)
+# [CONSUMERS] （暂无 import 消费方；原声明 decay_monitor 低贡献因子联动衰减复检经 2026-09-05 AI-08 审计全仓 grep 实证 0 引用——接线待排期）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] INV-004: PIT铁律——暴露与因子收益同期对齐; 残差=总PnL-因子归因和(不强制为零)
