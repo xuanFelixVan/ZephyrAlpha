@@ -1,12 +1,12 @@
-# 自动生成于 2026-09-04T17:19:18Z
+# 自动生成于 2026-09-04T18:08:39Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-09-04T17:19:18Z'
+generated_at: '2026-09-04T18:08:39Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 417
-with_manifest: 409
+total_scripts: 415
+with_manifest: 407
 missing_manifest: 8
 categories:
   governance:_sync: 4
@@ -17,9 +17,9 @@ categories:
   governance:d12_ai_hallucination: 4
   governance:d1_structure: 25
   governance:d2_links: 2
-  governance:d3_metadata: 26
+  governance:d3_metadata: 25
   governance:d4_paths: 4
-  governance:d5_architecture: 117
+  governance:d5_architecture: 116
   governance:d6_security: 15
   governance:d7_code: 41
   governance:d8_doc_sync: 14
@@ -1298,17 +1298,6 @@ scripts:
   tags:
   - Disruptive
   - Quick
-- name: d3_metadata/migrate_illegal_doctype.py
-  owner: governance:d3_metadata
-  dimensions:
-  - D3
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: 批量迁移非法 doc_type 值（doc_type 存量治理 Stage 2.2）
-  tags:
-  - Quick
 - name: d3_metadata/validate_architecture.py
   owner: governance:d3_metadata
   dimensions:
@@ -1940,17 +1929,6 @@ scripts:
     | §7'
   tags:
   - Quick
-- name: d5_architecture/dm200912_query_domains.py
-  owner: governance:d5_architecture
-  dimensions:
-  - D5
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: 'DM-200912 Phase4-A: 查询 depgraph (PostgreSQL) 域+模块统计，输出 JSON 供视图重写使用'
-  tags:
-  - Critical
 - name: d5_architecture/dm200916_write_direct.py
   owner: governance:d5_architecture
   dimensions:
@@ -3048,7 +3026,8 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: retire_tmp_artifacts — tmp/ + logs/ 退役区 TTL 执行器（AI-03 审计 P2/P3 治本）
+  description: retire_tmp_artifacts — tmp/ + logs/ + data/failures/ 退役区 TTL 执行器（AI-03
+    审计 P2/P3 治本）
   tags:
   - Critical
   - Security

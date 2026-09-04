@@ -5,7 +5,7 @@
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 默认 dry-run（--apply 才删除）；保留 .gitkeep/*.lock/活跃运行日志；清理四类目标：tmp/根层 + pg_backups/depgraph_*(排除受保护前缀) + logs/顶层(backup_report_*.json+*.log) + tmp/子目录(data_gap_check/startup_backup_* 过期)；不删 runtime_backups/pg_backups/.jsonl
+# [INVARIANTS] 默认 dry-run（--apply 才删除）；保留 .gitkeep/*.lock/活跃运行日志；清理五类目标：tmp/根层 + pg_backups/depgraph_*(排除受保护前缀) + logs/顶层(backup_report_*.json+*.log) + tmp/子目录(data_gap_check/startup_backup_* 过期) + data/failures/*.json(mtime 过期, alerter 告警记录有界保留)；不删 runtime_backups/pg_backups/.jsonl
 # [MODIFY-GUARD]
 # [STABILITY] evolving
 # [SAFETY] M
@@ -32,7 +32,7 @@ retire_tmp_artifacts — tmp/ + logs/ 退役区 TTL 执行器（AI-03 审计 P2/
   - tmp/ 子目录内容（runtime_backups/ 由 backup_runtime_state.py max_backups 自管理不动；
     data_gap_check/ + startup_backup_*/ 由 --subdir-days 整目录过期清理，AI-03 S1 治本）
 
-清理目标（四类）：
+清理目标（五类）：
   1. tmp/ 根层任务产物（.py/.txt/.md/.json/.html/.js/.csv），mtime > --tmp-days（默认 7）
   2. tmp/pg_backups/depgraph_*.json，保留最新 --pg-keep 个（默认 10），删余；
      排除受保护人工备份（depgraph_pre_*/depgraph_pinned_*，AI-03 S3）
@@ -40,6 +40,9 @@ retire_tmp_artifacts — tmp/ + logs/ 退役区 TTL 执行器（AI-03 审计 P2/
      不动子目录（auto_fix/mcp_audit 等审计目录）与 .jsonl（追加型审计流，由产生方管理）
   4. tmp/ 子目录（data_gap_check/ + startup_backup_*/），整目录最新 mtime > --subdir-days
      （默认 14）；runtime_backups/ 由 backup_runtime_state.py 自管理不动（AI-03 S1）
+  5. data/failures/*.json（alerter 告警失败记录，dashboard 仅消费最近 50 条，
+     AI-03 审计 2026-09-05 治本：无界增长 ~10K 文件/月 → mtime > --failures-days
+     （默认 90）有界保留；写方 src/zephyr/data/alerter.py 无自清理机制）
 
 用法：
   python scripts/governance/d6_security/retire_tmp_artifacts.py            # dry-run，列出待删
@@ -49,7 +52,7 @@ retire_tmp_artifacts — tmp/ + logs/ 退役区 TTL 执行器（AI-03 审计 P2/
 
 __manifest__ = """
 args: []
-description: retire_tmp_artifacts — tmp/ + logs/ 退役区 TTL 执行器（AI-03 审计 P2/P3 治本）
+description: retire_tmp_artifacts — tmp/ + logs/ + data/failures/ 退役区 TTL 执行器（AI-03 审计 P2/P3 治本）
 dimensions:
 - D6
 priority: P2
@@ -82,6 +85,7 @@ ensure_utf8_stdout()
 TMP_DIR = REPO_ROOT / "tmp"
 PG_BACKUPS_DIR = TMP_DIR / "pg_backups"
 LOGS_DIR = REPO_ROOT / "logs"
+FAILURES_DIR = REPO_ROOT / "data" / "failures"
 
 # 保留：活跃运行日志前缀（产生方自行轮转，不由本脚本清理）
 _ACTIVE_PREFIXES = ("scheduler", "tick_subscriber")
@@ -227,13 +231,42 @@ def collect_logs_stale(logs_days: int) -> list[Path]:
     return stale
 
 
-def _gather(tmp_days: int, pg_keep: int, logs_days: int, subdir_days: int) -> dict[str, list[Path]]:
+def collect_failures_stale(failures_days: int) -> list[Path]:
+    """data/failures/*.json 过期清理（AI-03 审计 2026-09-05 治本）。
+
+    病根：alerter 每次告警写 {date}_{task_id}.json，无任何保留机制，
+    实测 ~10K 文件/月无界增长（2026-09-05 实测 11496 文件）；dashboard
+    api_server 仅消费"最近 50 条"参与失败关联，超龄记录无消费方。
+
+    边界（防误删）：
+      - 仅 *.json（alerter 写入格式）；.gitkeep 等占位不动
+      - 不递归子目录（alerter 平铺写入）
+      - mtime > failures_days 才清理（默认 90 天，留足事件取证窗口）
+    """
+    cutoff = time.time() - failures_days * 86400
+    stale: list[Path] = []
+    if not FAILURES_DIR.is_dir():
+        return stale
+    for p in FAILURES_DIR.iterdir():
+        if not p.is_file() or p.suffix != ".json":
+            continue
+        try:
+            mtime = p.stat().st_mtime
+        except OSError:
+            continue
+        if mtime < cutoff:
+            stale.append(p)
+    return stale
+
+
+def _gather(tmp_days: int, pg_keep: int, logs_days: int, subdir_days: int, failures_days: int) -> dict[str, list[Path]]:
     """_gather implementation."""
     return {
         "tmp_root": collect_tmp_root_stale(tmp_days),
         "pg_backups": collect_pg_backups_excess(pg_keep),
         "logs_stale": collect_logs_stale(logs_days),
         "tmp_subdir": collect_tmp_subdir_stale(subdir_days),
+        "failures_stale": collect_failures_stale(failures_days),
     }
 
 
@@ -282,9 +315,15 @@ def main() -> int:
         default=_TMP_SUBDIR_DAYS_DEFAULT,
         help="tmp/ 子目录(data_gap_check/startup_backup_*)整体过期天数（AI-03 S1，默认 14）",
     )
+    parser.add_argument(
+        "--failures-days",
+        type=int,
+        default=90,
+        help="data/failures/*.json(alerter 告警记录) 保留天数（AI-03 审计 2026-09-05，默认 90）",
+    )
     args = parser.parse_args()
 
-    plan = _gather(args.tmp_days, args.pg_keep, args.logs_days, args.subdir_days)
+    plan = _gather(args.tmp_days, args.pg_keep, args.logs_days, args.subdir_days, args.failures_days)
     grand_count = sum(len(v) for v in plan.values())
     grand_bytes = sum(_total_size(v) for v in plan.values())
 
@@ -292,7 +331,7 @@ def main() -> int:
     print(f"=== retire_tmp_artifacts [{mode}] ===")
     print(
         f"阈值: tmp_root>{args.tmp_days}d | pg_backups keep {args.pg_keep} | "
-        f"logs_stale>{args.logs_days}d | tmp_subdir>{args.subdir_days}d"
+        f"logs_stale>{args.logs_days}d | tmp_subdir>{args.subdir_days}d | failures_stale>{args.failures_days}d"
     )
     for label, paths in plan.items():
         sz = _total_size(paths)

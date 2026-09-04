@@ -414,8 +414,8 @@ def load_vocabulary_deprecated_map(
 ) -> dict[str, str | None]:
     """从 vocabulary YAML 加载废弃值->迁移目标映射（SSoT 唯一真源）。
 
-    收拢 check_frontmatter_metadata._load_deprecated_values 和
-    migrate_illegal_doctype._load_deprecated_map 的重复逻辑。
+    收拢 check_frontmatter_metadata._load_deprecated_values 与
+    doc_type 一次性迁移脚本（已退役入 git 历史）的重复逻辑。
 
     Args:
         vocab_file: YAML 文件名或绝对路径

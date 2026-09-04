@@ -11006,13 +11006,6 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：验证模型能力考试的正确性，出问题尽早发现。
-- module_path: scripts/governance/d5_architecture/dm200912_query_domains.py
-  domain_id: ''
-  name_zh: 查询 depgraph
-  name_en: Dm200912 Query Domains
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 治理·D5 架构的dm200912 查询域：把dm200912 查询域的逻辑集中在一处，治理·D5 架构别处直接拿来用，避免重复造轮子。
 - module_path: src/zephyr/governance/ops_governance/interrupt_handler.py
   domain_id: D_GOV_OPS_RESILIENCE
   name_zh: 只读：signal
@@ -23443,13 +23436,6 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：把意图 accuracy 单元跑一遍，确认这块逻辑没毛病。
-- module_path: scripts/governance/d3_metadata/migrate_illegal_doctype.py
-  domain_id: D_GOV_SCRIPTS
-  name_zh: 批量迁移非法 doc_type 值
-  name_en: Migrate Illegal Doctype
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 治理·D3 元数据的illegal doctype急救包：illegal doctype挂了或跑偏了，它来修或回退，让治理·D3 元数据少停工。
 - module_path: src/zephyr/sell_decision/core/stop_hunting_protector.py
   domain_id: D_SELL_DECISION
   name_zh: 止损位偏移方向
