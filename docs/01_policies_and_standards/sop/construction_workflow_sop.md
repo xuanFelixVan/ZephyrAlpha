@@ -7,7 +7,7 @@ title: 07 域施工流程标准作业规程（SOP）——端到端 15 步施工
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.4.0"
+version: "1.5.1"
 date: 2026-08-12
 topic: construction_workflow_sop
 scope: global
@@ -733,7 +733,7 @@ python scripts/session_worktree.py cleanup <sid>
 
 ## 4. 关键检查清单（Checklist）
 
-施工闭环 12 项 Yes/No 检查，全部 Yes 才算施工闭环：
+施工闭环 13 项 Yes/No 检查，全部 Yes 才算施工闭环：
 
 | # | 检查项 | Yes/No |
 |---|---|---|
@@ -749,6 +749,7 @@ python scripts/session_worktree.py cleanup <sid>
 | 10 | Step 9 文件完整性确认（无回退/无清理/无丢失） | ☐ |
 | 11 | Step 10 GitCommitGateway 落地（commit hash 已生成） | ☐ |
 | 12 | Step 11+12 临时文件清理 + worktree 合并完成（或暂保留逃生通道） | ☐ |
+| 13 | **Step 3.5 后端盘点完成（前端任务必做）**：每条数据需求有唯一后端真源且前端已接线；有重复真源先治后端；缺端点先建后端；演示回退（若有）已标"断线·演示"（TRAE-086 §truth_source_wiring + FRONTEND-TRUTH-SOURCE gate） | ☐ |
 
 ## 5. 边界与不做
 
@@ -788,6 +789,7 @@ python scripts/session_worktree.py cleanup <sid>
 | 2026-08-13 | 1.3.0 | 附录 A 升级：新增 A.13 五图对齐验证 + A.14 代码质量专项 | 用户提出审查清单老化。对比 trae_081 的 54 维度发现附录 A 12 节未覆盖五图对齐验证和代码质量具体检查点。新增 A.13（五图对齐 7 项，引用 trae_080）+ A.14（代码质量 10 项，从 54 维度选取最关键的 10 个）。附录 A 从 12 节升级到 14 节 |
 | 2026-08-13 | 1.4.0 | **搬迁**：从 design_memos/02_construction_workflow_sop.md 迁至 docs/01_policies_and_standards/sop/construction_workflow_sop.md | 用户裁定：design_memos 是施工图纸临时区（施工完毕后清理），SOP 是永久规则，生命周期不匹配。迁入规则管理区新建 sop/ 专区；doc_type architecture_view→policy（rule_form: procedural + verifiability: manual，01 目录契约合规）；去编号改名；全部相对链接按新基址重写 |
 | 2026-08-31 | 1.5.0 | **对齐体系升级**：Step 0 必看文件清单新增 alignment_checklist.md；Step 3 从"五图对齐"升级为"六图对齐"（新增 frontend_map 前端全景图，待建）；Step 4/8 检查清单同步升级；新增注册表对齐要求 | 项目对齐体系片段化，缺前端全景图和注册表统一对齐规则；新 AI 进项目不知道要对齐什么。配合《全项目对齐清单》（alignment_checklist.md）落地三层对齐体系（六图+40+注册表+代码文档） |
+| 2026-09-04 | 1.5.1 | 新增 Step 3.5 后端盘点（前端施工前置）+ Checklist 第 13 项 | Owner 2026-09-04 裁定"前端不许自建数据世界"（TRAE-086 v1.2.0 §truth_source_wiring 配套）：执行前端任务前 MUST 后端盘点四步（取数清单→后端三查→三分支决策→接线验收），FRONTEND-TRUTH-SOURCE gate warn 兜底；红蓝对抗 9 手法实测（4 击穿已修+2 接受风险文档化） |
 
 ## 附录 A：长清单审查全文（用户提供的 12 节审查清单）
 

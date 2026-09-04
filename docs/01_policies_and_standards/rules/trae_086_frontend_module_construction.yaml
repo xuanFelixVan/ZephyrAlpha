@@ -79,7 +79,7 @@ sections:
       pass: 断连诚实降级，真源永远先于展示
       fail: 演示转常态 → 假数据冒充真源 → 监控全盲
     - type: constraint
-      check: 门禁配套——FRONTEND-TRUTH-SOURCE gate（priority=136，warn 起步）扫描改动 JS：内联数据数组（连续≥6 对象行/DEMO 型数组声明）与零接线（无 ZK.api/fetch 引用）→ warn + 审计 .runtime/gate_audit/frontend_truth_source.jsonl；误报回评，误报率收敛后 _HARD_BLOCK=True 升硬
+      check: 门禁配套——FRONTEND-TRUTH-SOURCE gate（priority=136，warn 起步）扫描改动 JS/HTML：内联数据数组（连续≥6 对象行（花括号配平含一层嵌套）/单行密集数组/多行键值块/DEMO 型数组声明）与零接线（.js 无 ZK.api/fetch 引用）→ warn + 审计 .runtime/gate_audit/frontend_truth_source.jsonl；误报回评，误报率收敛后 _HARD_BLOCK=True 升硬；红蓝对抗 9 手法实测（R1-R4 击穿已修复锁死，R5 widgets 伪装/R9 vendor 藏匿=接受风险靠目录契约+评审兜底）
       pass: 违规在 commit 阶段可见可审计
       fail: 无门禁 → 规则依赖自觉，并发 session 漏读即漂移
   naming:

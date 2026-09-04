@@ -41,8 +41,8 @@ if str(_PROJECT_ROOT) not in sys.path:
 import zephyr.gov_enforcement.commit_gates.frontend_truth_source_gate as g  # noqa: E402
 from zephyr.gov_enforcement.commit_gates.frontend_truth_source_gate import (  # noqa: E402
     _DEMO_ARRAY_RE,
-    _OBJ_ROW_RE,
     _is_eligible,
+    _is_obj_row,
     _scan_inline_data_rows,
     _scan_zero_wiring,
     make_frontend_truth_source_gate,
@@ -114,7 +114,7 @@ class TestEligibleFilter:
         (_WEB + "vendor/echarts.min.js", False),    # 第三方豁免
         (_WEB + "mocks/seed.js", False),            # 演示隔离区豁免
         ("src/zephyr/frontend/dashboard/api_server.py", False),  # 非 web/ .js
-        (_WEB + "pages/download.html", False),      # 非 .js
+        (_WEB + "pages/download.html", True),       # HTML 纳入 Check A（红队 R4 加固）
     ])
     def test_eligible(self, path, expected):
         assert _is_eligible(path) is expected
@@ -122,11 +122,13 @@ class TestEligibleFilter:
 
 class TestInlineDataRowHeuristic:
     def test_obj_row_regex(self):
-        assert _OBJ_ROW_RE.match('  { id: 1, name: "x" },')
-        assert _OBJ_ROW_RE.match('{a:1}')                          # 末行无逗号也命中
-        assert not _OBJ_ROW_RE.match('{a:1}]')                     # 行尾带 ] 非独立对象行
-        assert not _OBJ_ROW_RE.match("  h += '<td>' + t.name + '</td>';")
-        assert not _OBJ_ROW_RE.match("  name:   { label: 'x' },")   # 键开头非对象行
+        assert _is_obj_row('  { id: 1, name: "x" },')
+        assert _is_obj_row('{a:1}')                          # 末行无逗号也命中
+        assert _is_obj_row('  { id: 1, cfg: { up: 1 } },')   # 一层嵌套（红队 R3 加固）
+        assert not _is_obj_row('{a:1}]')                     # 行尾带 ] 非独立对象行
+        assert not _is_obj_row("  h += '<td>' + t.name + '</td>';")
+        assert not _is_obj_row("  name:   { label: 'x' },")  # 键开头非对象行
+        assert not _is_obj_row('  { id: 1, name: "x"')       # 未闭合
 
     def test_run_of_six_hits(self):
         lines = [(i + 1, _obj_row(i)) for i in range(6)]

@@ -141,25 +141,42 @@ _EXEMPT_EXACT: Final = {
 _EXEMPT_BASE_RE = re.compile(r"^(app\d+|theme)\.js$")      # 宿主大文件/主题
 _EXEMPT_DIR_RE = re.compile(r"/(widgets|vendor|mocks)/")   # 纯UI件/第三方/演示隔离区
 
-# ── Check A：内联数据数组启发式 ──
-_OBJ_ROW_RE = re.compile(r"^\s*\{[^{}]*\}\s*,?\s*$")        # 对象字面量行：  { id: 1, name: "x" },
+# ── Check A：内联数据数组启发式（红队 R1-R4 加固：密集行/嵌套行/键值块/HTML 内联）──
 _OBJ_ROW_RUN = 6                                            # 连续 ≥6 行判定为数据表形状
 _DEMO_ARRAY_RE = re.compile(
     r"^\s*(?:var|let|const)\s+\w*(?:DEMO|MOCK|FAKE|SAMPLE)\w*\s*=\s*\[", re.IGNORECASE)
+_DENSE_RE = re.compile(r"\}\s*,\s*\{")                      # R1：单行密集 `},{` 计数
+_DENSE_MIN = 4                                              # 单行 ≥4 处 `},{` = 密集数据行
+_ARRAY_START_RE = re.compile(r"[:=]\s*\[\s*$")              # R2：数组起始行（var x = [）
+_ARRAY_END_RE = re.compile(r"^\s*\][;,)]?\s*$")             # R2：数组结束行
+_KV_RE = re.compile(r"^\s*[\w$'\"]+\s*:\s*")                # R2：键值行（id: 1,）
+_KV_BLOCK_MIN = 6                                           # 块内 ≥6 键值行 = 多行数据块
+
+
+def _is_obj_row(line: str) -> bool:
+    """对象字面量行判定（红队 R3 加固：花括号配平替代 [^{}]*，兼容一层嵌套）。"""
+    s = line.strip()
+    if not s.startswith("{"):
+        return False
+    if not (s.endswith("}") or s.endswith("},")):
+        return False
+    return s.count("{") >= 1 and s.count("{") == s.count("}")
 
 # ── Check B：后端接线指纹（services/api.js 通道）──
 _WIRING_RE = re.compile(r"ZK\.api|fetch\(")
 
 
 def _is_eligible(path: str) -> bool:
-    """目录契约过滤：web/ 下 .js 且非豁免（core/features 参检）。"""
+    """目录契约过滤：web/ 下 .js（全检）或 .html（仅 Check A，红队 R4 加固）且非豁免。"""
     p = path.replace("\\", "/")
-    if not p.startswith(_WEB_DIR) or not p.endswith(".js"):
+    if not p.startswith(_WEB_DIR):
+        return False
+    if not (p.endswith(".js") or p.endswith(".html")):
         return False
     if p in _EXEMPT_EXACT:
         return False
     base = p.rsplit("/", 1)[-1]
-    if _EXEMPT_BASE_RE.match(base):
+    if base.endswith(".js") and _EXEMPT_BASE_RE.match(base):
         return False
     if _EXEMPT_DIR_RE.search("/" + p):
         return False
@@ -181,12 +198,24 @@ def _collect_eligible_js_files(gateway) -> list[str] | None:
 
 
 def _scan_inline_data_rows(added_lines: list[tuple[int, str]]) -> list[str]:
-    """Check A：连续对象行 ≥6 / DEMO 型数组声明 → findings（只看 added 行，不追溯存量）。"""
+    """Check A：行级（对象行 run/密集行/DEMO 声明）+ 块级（键值块状态机）启发式 → findings。
+
+    只看 added 行，不追溯存量。红队 R1-R3 加固：_is_obj_row 配平（嵌套行）、
+    _DENSE_RE（单行密集）、键值块状态机（多行拆分对象）。
+    """
     findings: list[str] = []
     run = 0
     start = 0
+    in_block = False
+    block_start = 0
+    block_kv = 0
     for line_no, content in added_lines:
-        if _OBJ_ROW_RE.match(content):
+        # R1：单行密集数据数组（var t=[{a:1},{b:2},...] 一行塞完）
+        dense = len(_DENSE_RE.findall(content))
+        if dense >= _DENSE_MIN:
+            findings.append(f"L{line_no}: 单行密集数据数组（{{...}}×{dense}）——疑似自建数据")
+        # 行级对象行 run（R3 加固：_is_obj_row 花括号配平兼容嵌套）
+        if _is_obj_row(content):
             if run == 0:
                 start = line_no
             run += 1
@@ -194,10 +223,24 @@ def _scan_inline_data_rows(added_lines: list[tuple[int, str]]) -> list[str]:
             if run >= _OBJ_ROW_RUN:
                 findings.append(f"连续 {run} 行对象字面量（L{start} 起）——疑似自建数据数组")
             run = 0
+        # R2：键值块状态机（var rows = [ ...键值行... ]）
+        if not in_block and _ARRAY_START_RE.search(content):
+            in_block = True
+            block_start = line_no
+            block_kv = 0
+        elif in_block:
+            if _ARRAY_END_RE.match(content):
+                if block_kv >= _KV_BLOCK_MIN:
+                    findings.append(f"L{block_start} 起：多行键值数据块（{block_kv} 个键值行）——疑似自建数据数组")
+                in_block = False
+            elif _KV_RE.match(content):
+                block_kv += 1
         if _DEMO_ARRAY_RE.match(content):
             findings.append(f"L{line_no}: {content.strip()[:80]}——DEMO/MOCK 型数组声明")
     if run >= _OBJ_ROW_RUN:
         findings.append(f"连续 {run} 行对象字面量（L{start} 起）——疑似自建数据数组")
+    if in_block and block_kv >= _KV_BLOCK_MIN:
+        findings.append(f"L{block_start} 起：多行键值数据块（{block_kv} 个键值行）——疑似自建数据数组")
     return findings
 
 
@@ -246,10 +289,11 @@ def make_frontend_truth_source_gate() -> GateSpec:
                 added = []
             hits = _scan_inline_data_rows(added)
 
-            # Check B：零后端接线（文件级属性，core/features 目录契约）
-            zero = _scan_zero_wiring(_read_staged_file(gateway, js_file))
-            if zero:
-                hits.append(zero)
+            # Check B：零后端接线（文件级属性，仅 .js——HTML 片段无独立接线语义）
+            if js_file.endswith(".js"):
+                zero = _scan_zero_wiring(_read_staged_file(gateway, js_file))
+                if zero:
+                    hits.append(zero)
 
             if hits:
                 findings[js_file] = hits
