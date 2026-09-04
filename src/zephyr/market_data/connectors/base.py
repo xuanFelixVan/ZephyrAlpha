@@ -2,7 +2,7 @@
 # [MODULE] zephyr.market_data.connectors.base
 # [DOMAIN] D_MKT_DATA
 # [DEPENDENCIES] zephyr.market_data.vendor_base; zephyr.shared.contracts.market_data; zephyr.shared.foundation.errors
-# [CONSUMERS] zephyr.market_data.connectors.manager; D_EX_SOR
+# [CONSUMERS] zephyr.market_data.connectors.manager; tests/market_data/connectors/test_connector_base.py（2026-09-05 AI-04 审计实证：D_EX_SOR 声明删除——ex_sor 全域无 import）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] ConnectionState/ConnectorConfig/TickData frozen或Enum; MarketDataConnector为ABC; 状态转换+订阅注册表加Lock; callback异常隔离
@@ -45,7 +45,7 @@ D_MKT_DATA — Connector Base (行情数据连接器基类)
 #   name_zh: 模块公共 API 面（5 定义）
 #   name_en: public defs
 #   intro: MarketDataConnector
-#   downstream: zephyr.market_data.connectors.manager; D_EX_SOR
+#   downstream: zephyr.market_data.connectors.manager; tests/market_data/connectors/test_connector_base.py（D_EX_SOR 装配待排期）
 # [/ALGO_FLOW]
 #
 # 边:

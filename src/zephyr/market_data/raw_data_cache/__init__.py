@@ -2,9 +2,9 @@
 # [MODULE] zephyr.market_data.raw_data_cache
 # [DOMAIN] D_MKT_DATA
 # [DEPENDENCIES] zephyr.shared.foundation.errors
-# [CONSUMERS] zephyr.market_data.normalized_market_data_producer
+# [CONSUMERS] tests/market_data/raw_data_cache/test_raw_data_cache.py（2026-09-05 AI-04 审计实证：normalized_market_data_producer 未 import 本包，生产装配待排期）
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] testing
 # [INVARIANTS] CacheEntry/CacheConfig/CacheKey/CacheStats frozen不可变; 读写加threading.Lock; LRU+TTL双重淘汰; content_hash写入时计算
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

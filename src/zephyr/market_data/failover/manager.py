@@ -2,9 +2,9 @@
 # [MODULE] zephyr.market_data.failover.manager
 # [DOMAIN] D_MKT_DATA
 # [DEPENDENCIES] zephyr.market_data.vendor_registry; zephyr.market_data.vendor_base; zephyr.shared.foundation.errors
-# [CONSUMERS] D_EX_SOR
+# [CONSUMERS] tests/market_data/failover/test_failover_manager.py（2026-09-05 AI-04 审计实证：D_EX_SOR 接线未落地——ex_sor 全域无 import，integration/failover_coordinator 仅注释提及）
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] testing
 # [INVARIANTS] FailoverEvent/FailoverConfig frozen; FailoverPolicy/FailoverReason Enum; _active_vendor_id/_history加Lock; 切换原子(先确认目标可用); 同vendor不切自身
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
