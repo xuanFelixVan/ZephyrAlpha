@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] AllocationError(ZA-PA-0007); ShrinkageDisabled(ZA-PA-0008)
+# [ERROR_CONTRACT] AllocationError(ZA-PA-0007)；蓝图预留 InvalidPerformanceScoreError/AllocationNormalizationError/ShrinkageCalculationError(ZA-PA-0008~0010)未落码未登记（2026-09-05 AI-AUDIT10 对齐实物，原 ShrinkageDisabled 为幻影声明）
 # [TESTS] tests/pf_alloc/test_regime_meta_allocator.py
 # [A_module] module_id=MOD-PA-007 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
