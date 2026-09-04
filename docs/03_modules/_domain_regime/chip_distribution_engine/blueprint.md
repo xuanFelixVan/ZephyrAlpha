@@ -249,9 +249,13 @@ distribution_migration = sum(age_layers["long"][24:32]) - sum(age_layers["long"]
 
 ## 5. 错误契约
 
-- `ChipDistributionError` (ZA-REGIME-0050): OHLCV数据缺失/NaN
-- `VWAPCalculationError` (ZA-REGIME-0051): amount/volume 为0或负值
-- `GridMappingError` (ZA-REGIME-0052): 250日参考区间为0（停牌股）
+降级契约（不抛异常，无异常类；场景码场景与处理定义见 §8）：
+- ZA-REGIME-0050: OHLCV 数据缺失/NaN → 返回均匀分布（32网格各1/32），标记 degraded
+- ZA-REGIME-0051: VWAP 计算异常（amount/volume=0）→ 用 (open+high+low+close)/4 代替 VWAP
+- ZA-REGIME-0052: 250日参考区间为0（停牌/单价位）→ 降级为均匀分布兜底
+- ZA-REGIME-0053: money_flow 表缺失 → 跳过投资者类型分层，仅输出 total + age_layers
+
+> 2026-09-05 叙事对齐（AI-AUDIT09-001）：原 §5 声明三个异常类（ChipDistributionError/VWAPCalculationError/GridMappingError）为设计稿遗留，实现为纯降级不抛错（以实现为真源更新本节，与 §8 对齐）。
 
 ## 6. 测试规划
 

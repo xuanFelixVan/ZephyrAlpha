@@ -485,21 +485,31 @@ class RegimeSnapshot:
 class RegimeFeatureError(ZephyrBaseError):
     """ZA-REGIME-0001: RegimeFeatures 格式非法/缺失必需字段。"""
 
+    error_code = "ZA-REGIME-0001"
+
 
 class HMMFittingError(ZephyrBaseError):
     """ZA-REGIME-0002: HMM 拟合失败（特征缺失/NaN/不收敛/hmmlearn 不可用）。"""
+
+    error_code = "ZA-REGIME-0002"
 
 
 class ShrinkageComputationError(ZephyrBaseError):
     """ZA-REGIME-0003: ConfidenceSignal/RiskSignal 计算异常。"""
 
+    error_code = "ZA-REGIME-0003"
+
 
 class OverlayRuleError(ZephyrBaseError):
     """ZA-REGIME-0004: 覆盖层规则计算异常（评分维度缺失/阈值非法）。"""
 
+    error_code = "ZA-REGIME-0004"
+
 
 class ProbabilityNormalizationError(ZephyrBaseError):
     """ZA-REGIME-0005: 7 维归一化失败（Σ≠1 / 含 NaN）。"""
+
+    error_code = "ZA-REGIME-0005"
 
 
 class RegimeDetector:

@@ -267,11 +267,13 @@ else:
 
 ## 5. 错误契约
 
-- `HMMFittingError` (ZA-SIG-0001): HMM 拟合失败（特征缺失/NaN/不收敛）
-- `InvalidFeatureError` (ZA-SIG-0002): RegimeFeatures 格式非法/缺失必需字段
-- `OverlayRuleError` (ZA-SIG-0003): 覆盖层规则计算异常（评分维度缺失/阈值非法）
-- `ShrinkageCalculationError` (ZA-SIG-0004): ConfidenceSignal/RiskSignal 计算异常
-- `ProbabilityNormalizationError` (ZA-SIG-0005): 12 维归一化失败（Σ≠1 / 含 NaN）
+- `RegimeFeatureError` (ZA-REGIME-0001): RegimeFeatures 格式非法/缺失必需字段（契约码；当前实现对应路径由降级策略 §7.4 覆盖，无抛出点）
+- `HMMFittingError` (ZA-REGIME-0002): HMM 拟合失败（特征缺失/NaN/不收敛/hmmlearn 不可用）
+- `ShrinkageComputationError` (ZA-REGIME-0003): ConfidenceSignal/RiskSignal 计算异常（契约码；实现 clamp 降级覆盖，无抛出点）
+- `OverlayRuleError` (ZA-REGIME-0004): 覆盖层规则计算异常（评分维度缺失/阈值非法）
+- `ProbabilityNormalizationError` (ZA-REGIME-0005): 7 维归一化失败（Σ≠1 / 含 NaN；契约码，实现全零回退均匀分布，无抛出点）
+
+> 2026-09-05 叙事对齐（AI-AUDIT09-001）：原 §5 声明 ZA-SIG-0001~0005 / InvalidFeatureError / ShrinkageCalculationError / "12 维" 为降态施工前遗留设计稿，与实现（ZA-REGIME-0001~0005、现类名、7 维）漂移，以实现为真源更新本节。
 
 ## 6. 测试规划
 

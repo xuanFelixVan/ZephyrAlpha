@@ -44,12 +44,12 @@ __all__ = [
 from . import compliance_rule, risk_dashboard_snapshot, risk_limits, risk_metrics, risk_validator_protocol
 
 _TRADING_SYMBOLS = {
-    "RiskLimits": "zephyr.execution_core.trading.trading_contracts.risk.risk_limits",
-    "RiskDashboardSnapshot": "zephyr.execution_core.trading.trading_contracts.risk.risk_dashboard_snapshot",
-    "RiskMetricsReport": "zephyr.execution_core.trading.trading_contracts.risk.risk_metrics",
-    "ComplianceRule": "zephyr.execution_core.trading.trading_contracts.risk.compliance_rule",
-    "RiskValidatorProtocol": "zephyr.execution_core.trading.trading_contracts.risk.risk_validator_protocol",
-    "ViolationDetail": "zephyr.execution_core.trading.trading_contracts.risk.risk_validator_protocol",
+    "RiskLimits": "zephyr.trading.trading_contracts.risk.risk_limits",
+    "RiskDashboardSnapshot": "zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot",
+    "RiskMetricsReport": "zephyr.trading.trading_contracts.risk.risk_metrics",
+    "ComplianceRule": "zephyr.trading.trading_contracts.risk.compliance_rule",
+    "RiskValidatorProtocol": "zephyr.trading.trading_contracts.risk.risk_validator_protocol",
+    "ViolationDetail": "zephyr.trading.trading_contracts.risk.risk_validator_protocol",
 }
 
 

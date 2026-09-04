@@ -996,6 +996,34 @@ error_codes:
   module: zephyr.position.core.calendar_position_constraint
   file: src/zephyr/position/core/calendar_position_constraint.py
   introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-REGIME-0001
+  class: RegimeFeatureError
+  module: zephyr.regime.core.regime_detector
+  file: src/zephyr/regime/core/regime_detector.py
+  description: RegimeFeatures 格式非法/缺失必需字段（头注 [ERROR_CONTRACT] 契约码；当前实现对应路径由降级策略 blueprint §7.4 覆盖，无抛出点）
+  introduced: '2026-09-05: AI-AUDIT09-001 机械补登（声明契约码登记既有事实，登记不改代码行为，#ARCH-ERRCODE-001 纪律）'
+- code: ZA-REGIME-0002
+  class: HMMFittingError
+  module: zephyr.regime.core.regime_detector
+  file: src/zephyr/regime/core/regime_detector.py
+  introduced: '2026-09-05: AI-AUDIT09-001 机械补登（声明契约码登记既有事实，登记不改代码行为，#ARCH-ERRCODE-001 纪律）'
+- code: ZA-REGIME-0003
+  class: ShrinkageComputationError
+  module: zephyr.regime.core.regime_detector
+  file: src/zephyr/regime/core/regime_detector.py
+  description: ConfidenceSignal/RiskSignal 计算异常（头注 [ERROR_CONTRACT] 契约码；当前实现 clamp 降级覆盖，无抛出点）
+  introduced: '2026-09-05: AI-AUDIT09-001 机械补登（声明契约码登记既有事实，登记不改代码行为，#ARCH-ERRCODE-001 纪律）'
+- code: ZA-REGIME-0004
+  class: OverlayRuleError
+  module: zephyr.regime.core.regime_detector
+  file: src/zephyr/regime/core/regime_detector.py
+  introduced: '2026-09-05: AI-AUDIT09-001 机械补登（声明契约码登记既有事实，登记不改代码行为，#ARCH-ERRCODE-001 纪律）'
+- code: ZA-REGIME-0005
+  class: ProbabilityNormalizationError
+  module: zephyr.regime.core.regime_detector
+  file: src/zephyr/regime/core/regime_detector.py
+  description: 7 维归一化失败（Σ≠1 / 含 NaN）（头注 [ERROR_CONTRACT] 契约码；当前实现全零回退均匀分布覆盖，无抛出点）
+  introduced: '2026-09-05: AI-AUDIT09-001 机械补登（声明契约码登记既有事实，登记不改代码行为，#ARCH-ERRCODE-001 纪律）'
 - code: ZA-REGIME-0010
   class: RegimeFeatureError
   module: zephyr.regime.regime_feature_builder
