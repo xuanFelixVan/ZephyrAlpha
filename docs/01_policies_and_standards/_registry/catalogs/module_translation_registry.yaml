@@ -47281,6 +47281,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "扫描测试文件的import语句，凡是引用了真源模块里不存在符号的超前孤儿测试一律报出，防止测试引用空气"
+- module_path: src/zephyr/gov_enforcement/commit_gates/frontend_truth_source_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "前端真源接通门禁"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "检查前端代码有没有偷偷自建假数据或者根本没连后端，有问题就报警提醒（先只提醒不拦截），防止页面显示假数据。"
 
 battle_map_steps:
 - step_id: BM-BUY-04

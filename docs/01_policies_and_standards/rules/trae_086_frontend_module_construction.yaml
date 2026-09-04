@@ -1,6 +1,6 @@
 rule_id: TRAE-086
-title: 前端功能模块施工铁律（拆件判据+命名+目录归属+四件套闭环）
-version: '1.1.0'
+title: 前端功能模块施工铁律（拆件判据+后端盘点真源接通+命名+目录归属+四件套闭环）
+version: '1.2.0'
 layer: L1_foundation
 module_id: TRAE-086
 depends_on:
@@ -27,7 +27,7 @@ severity: critical
 scope: frontend_construction
 domain: TRAE
 enforcement:
-  paired_gate_id: FRONTEND-SMOKE  # 前端冒烟测试门禁（tests/frontend/test_dashboard_smoke.py）
+  paired_gate_id: FRONTEND-TRUTH-SOURCE  # 前端真源接通门禁（in-process priority=136，warn 起步）；UI 冒烟回归=pytest tests/frontend/test_dashboard_smoke.py（§closure_alignment，非注册 gate 不入本字段）
 triggers:
 - operation: file_create
 - operation: file_write
@@ -56,6 +56,32 @@ sections:
       check: 反向不拆判据——①一次性初始化逻辑 ②与宿主强耦合无独立边界 ③纯页面布局结构（HTML 骨架）④纯工具函数（进 core/）
       pass: 留在宿主/页面片段/core
       fail: 为拆而拆 → 散件过度碎片化 → 跳转成本反超集成成本
+  truth_source_wiring:
+    section_type: constraint
+    title: 后端盘点与真源接通铁律（Owner 2026-09-04 裁定：前端不许自建数据世界）
+    original_rules:
+    - Owner 2026-09-04 立规（前后端真源接通，治前端幻觉/漂移，借并发施工契机）
+    conditions:
+    - type: trigger
+      check: 任何页面新建/改造/加数据区块前（UI 动了数据面的每一刀）
+      pass: 先走后端盘点四步——①取数清单（字段/粒度/刷新节奏）②后端三查 ③三分支决策 ④接线验收
+      fail: 先写页面后找数据 → AI 顺手造演示数组顶上 → 前后端双真源与口径漂移
+    - type: constraint
+      check: '后端三查（每条数据需求逐项过，结论三选一：有且唯一/有重复/没有）：①api_server.py 现有 /api/ 端点 ②data_asset_registry.yaml 数据资产登记（真不真在登记层查）③其他服务端点 + depgraph 同功能模块'
+      pass: 盘点结论留痕（进设计备忘或验收单 ACC-*.yaml）
+      fail: 不查就造 → 重复真源与前端硬编码双事故（download-status 中文名双真源实证）
+    - type: constraint
+      check: 三分支决策——有且唯一：services/api.js 加 fetch 助手接，页面只消费；有重复：先治后端（裁定唯一真源、废弃其余）再接，禁止前端"挑一个好用的接着用"；没有：先建后端端点（真源走 registry 登记），前端最多画占位骨架不造数据
+      pass: 前端一切取数来自后端端点，真源先于展示
+      fail: 前端自建数据世界 → 后端怎么改前端都不动 → 幻觉固化
+    - type: constraint
+      check: 演示数据边界（演示诚实纪律收紧口径）——演示数据只许作为取数失败的回退态，必须红灯/灰灯明示"断线·演示"，新组件 15s 自动重试直至真源；禁止以演示数据作为页面初始/常态数据源；纯 UI 布局占位（无数据语义）不受限
+      pass: 断连诚实降级，真源永远先于展示
+      fail: 演示转常态 → 假数据冒充真源 → 监控全盲
+    - type: constraint
+      check: 门禁配套——FRONTEND-TRUTH-SOURCE gate（priority=136，warn 起步）扫描改动 JS：内联数据数组（连续≥6 对象行/DEMO 型数组声明）与零接线（无 ZK.api/fetch 引用）→ warn + 审计 .runtime/gate_audit/frontend_truth_source.jsonl；误报回评，误报率收敛后 _HARD_BLOCK=True 升硬
+      pass: 违规在 commit 阶段可见可审计
+      fail: 无门禁 → 规则依赖自觉，并发 session 漏读即漂移
   naming:
     section_type: constraint
     title: 命名规则——ID 与文件名一眼定位
@@ -104,3 +130,4 @@ notes: |
   来源：2026-08-31 四件套战役（K 线页+模块化实证）——成本线七返工/图标消失/app1.js 六千行大杂烩三大事故族治本。
   实证锚点：features/cost-line.js（拆件试点，验收六条全绿）+ FEH-KLC-005（init 竞态）+ FEH-LOAD-002（同文件串行编辑）。
   禁区：pages/index.html（A股-技术分析页，Owner 自行重新设计，任何人不碰）。
+  v1.2.0（2026-09-04）：+§truth_source_wiring 后端盘点与真源接通铁律（Owner 2026-09-04 裁定：前端不许自建数据世界——施工前后端盘点四步+演示诚实纪律收紧+FRONTEND-TRUTH-SOURCE gate warn 起步配套；治并发 AI 施工前端幻觉/双真源漂移，实证=download-status 中文名双真源事故）。

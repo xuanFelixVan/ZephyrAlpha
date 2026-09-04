@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-09-02T09:16:50Z'
+generated_at: '2026-09-04T09:37:22Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 154
+total_gates: 155
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -917,6 +917,15 @@ gates:
   entry: in-process (GitCommitGateway)
   description: Forged GW Marker 前置检测门禁（FORGED-GW-MARKER，#ARCH-PREVENTABILITY-LAYER-001
     Phase 2）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: FRONTEND-TRUTH-SOURCE
+  name: 'FRONTEND-TRUTH-SOURCE: FRONTEND-TRUTH-SOURCE（CommitGate, priority=136）'
+  entry: in-process (GitCommitGateway)
+  description: FRONTEND-TRUTH-SOURCE
   files_trigger: ''
   always_run: false
   category: commit_gate

@@ -83,6 +83,9 @@ from zephyr.gov_enforcement.commit_gates.blueprint_node_id_hardcode_gate import 
 from zephyr.gov_enforcement.commit_gates.commit_scope_gate import (  # noqa: F401  # COMMIT-SCOPE 跨域混合提交治本（13a5e1d512 事故）
     make_commit_scope_gate as _make_commit_scope_gate,
 )
+from zephyr.gov_enforcement.commit_gates.frontend_truth_source_gate import (  # noqa: F401  # FRONTEND-TRUTH-SOURCE 前端真源接通铁律配套（TRAE-086 v1.2.0 §truth_source_wiring，Owner 2026-09-04 裁定）
+    make_frontend_truth_source_gate as _make_frontend_truth_source_gate,
+)
 from zephyr.gov_enforcement.commit_gates.reconciler_file_ops_gate import (  # noqa: F401  # RECONCILER-FILE-OPS 裸删除原语静态扫描（#ARCH-RECONCILER-AUTO-DELETE-GOV-001 T1③）
     make_reconciler_file_ops_gate as _make_reconciler_file_ops_gate,
 )

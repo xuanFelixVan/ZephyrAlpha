@@ -4893,6 +4893,10 @@ capabilities:
   - DabanTimingDecision
   - DynamicCapacityCalculator
 creation_tokens:
+- file: src/zephyr/gov_enforcement/commit_gates/frontend_truth_source_gate.py
+  token: auto-frontend-truth-source-20260904
+  created_by: solo-20260902-services-gate
+  capability: frontend_truth_source
 - file: docs/01_policies_and_standards/_registry/catalogs/gate_tracked_write_allowlist.yaml
   token: gatemech004-tracked-write-allowlist-20260902
   created_by: freeze-gw

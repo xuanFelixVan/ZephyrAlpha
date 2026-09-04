@@ -295,6 +295,28 @@ python scripts/governance/d5_architecture/generators/align_all.py
 
 ---
 
+### Step 3.5 · 后端盘点（前端施工前置，Owner 2026-09-04 立规，TRAE-086 §truth_source_wiring）
+
+**何时触发**：前端页面新建/改造/加数据区块（UI 动了数据面的每一刀）
+**前置条件**：Step 1 文档审查完成
+**操作摘要**：取数清单 → 后端三查 → 三分支决策 → 接线验收
+**引用真源**：
+- [trae_086_frontend_module_construction.yaml](../rules/trae_086_frontend_module_construction.yaml) §truth_source_wiring（铁律全文）
+- [data_asset_registry.yaml](../_registry/catalogs/data_asset_registry.yaml)（数据资产登记，查"后端有没有"第二查）
+- FRONTEND-TRUTH-SOURCE gate（commit 阶段 warn 兜底，审计 .runtime/gate_audit/frontend_truth_source.jsonl）
+
+**执行要点**：
+1. **取数清单**：列出页面需要的全部数据（字段/粒度/刷新节奏）；页面加新区块=重新走本步
+2. **后端三查**（每条数据需求逐项过）：①`api_server.py` 现有 `/api/` 端点 ②`data_asset_registry.yaml` 数据资产登记 ③其他服务端点 + depgraph 同功能模块 → 结论三选一：**有且唯一 / 有重复 / 没有**
+3. **三分支决策**：
+   - 有且唯一 → `services/api.js` 加 fetch 助手，页面只消费
+   - 有重复 → **先治后端**：裁定唯一真源、废弃其余，再接（禁止前端"挑一个好用的接着用"）
+   - 没有 → **先建后端**：立项加端点（真源走 registry 登记），端点验收后前端才接线；此前最多画占位骨架，**禁止造数据顶上**
+4. **接线验收**：页面真源徽章亮 + 端点实测返回；演示回退（若有）必须标"断线·演示"（演示诚实纪律，15s 自动重试至真源）
+**通过判据**：每条数据需求都有唯一后端真源且前端已接线
+**不通过处置**：发现重复真源 → 先治理合并；后端缺失 → 立项建端点，禁止前端自建数据
+**产出物**：盘点结论留痕（进设计备忘或验收单 ACC-*.yaml）
+
 ### Step 4 · 施工编码
 
 **何时触发**：Step 3 五图对齐通过
