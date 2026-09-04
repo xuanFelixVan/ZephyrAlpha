@@ -676,6 +676,23 @@
   data_source: [akshare]
   blueprint: null
 
+# --- 美股期货盘中快照（92号 §7.2：A50 夜盘 gap_adj 校准用数）---
+- category_id: market_us_futures_intraday
+  name: "美股期货盘中快照（akshare 实时采集，5分钟粒度）"
+  engine: clickhouse
+  database: c1_market
+  table: us_futures_intraday
+  schema_file: schemas/categories/market_us_futures_intraday.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 5分钟
+  data_source: [akshare]
+  blueprint: null
+
 # --- 期货数据 ---
 # 注意：kline_futures（期货K线，311万行）与 futures_kline_qmt（QMT期货K线，1170行）功能重叠
 #   kline_futures 是主表（2010-2026完整历史）
@@ -1132,6 +1149,23 @@
   data_source: [tqcenter]
   blueprint: null
 
+# --- 市场宽度分钟快照（miniqmt 源，涨跌家数/涨跌停等宽度指标，分钟粒度）---
+- category_id: market_breadth_snapshot
+  name: "市场宽度分钟快照（涨跌家数/涨跌停统计，分钟粒度）"
+  engine: clickhouse
+  database: c1_market
+  table: market_breadth_snapshot
+  schema_file: schemas/categories/market_breadth_snapshot.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 分钟
+  data_source: [miniqmt]
+  blueprint: null
+
 - category_id: market_industry_class
   name: "上市公司行业分类（申万/证监会行业分类）"
   engine: clickhouse
@@ -1557,6 +1591,23 @@
   enabled: true
   hard_constraint: null
   calc_mode: preload
+  frequency: 日频
+  data_source: [internal]
+  blueprint: null
+
+# --- 自算技术指标（internal 读 CH 日K本地计算，40 指标/58 输出列）---
+- category_id: market_technical_indicator
+  name: "A股技术指标日线（internal 本地计算 40 指标/58 输出列，16号 catalog §6）"
+  engine: clickhouse
+  database: c1_market
+  table: technical_indicator
+  schema_file: schemas/categories/market_technical_indicator.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: eager
   frequency: 日频
   data_source: [internal]
   blueprint: null
