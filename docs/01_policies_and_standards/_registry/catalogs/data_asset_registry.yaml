@@ -80,7 +80,11 @@ unique_key:
   sources: [source_id]
   datasets: [dataset_id]
   jobs: [job_id]
-entry_counts: {sources: 15, datasets: 220, jobs: 88}  # 2026-09-03 物理表补登工程实测（v1.4.0：DS-109~DS-220 补登 112 张 CH 物理表，CH 对齐率 10/122→122/122）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）
+entry_counts: {sources: 15, datasets: 221, jobs: 88}  # 2026-09-04 v1.5.0：DS-221 自算衍生指数日K（kline_index_calc，全A等权 EQW_ALLA 立项）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）
+
+# v1.5.0 changelog(2026-09-04): 全A等权立项——DS-221 自算衍生指数日K c1_market.kline_index_calc（datasets 220→221）。
+#   首条 EQW_ALLA：internal 复权收益等权平均链乘，基期 2019-01-03=1000（2018 及以前 kline_daily 仅 237 只样本，
+#   幸存者偏差禁用于等权口径）；n_stocks<1000 防御日 ret 按零、点位延续；与官方指数真源 kline_index 分表（责任唯一）。
 
 source_schema:
   source_id: str               # SRC-{PROVIDER}-{NNN}
@@ -9016,6 +9020,46 @@ datasets:
   algorithm_status: not_applicable
   evidence: ""
   code_symbol: null
+  code_fingerprint: null
+- dataset_id: DS-221
+  entity_name: c1_market.kline_index_calc
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: clickhouse_table
+  produced_by_job: kline_index_calc_refresh
+  consumed_by_jobs: []
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 自算衍生指数日K（源 internal｜任务 kline_index_calc_refresh｜时段 daily_kline）；CH 实况 1861 行（1 parts，分区 2019-01 ~ 2026-09，2026-09-04 system.parts）；首条 EQW_ALLA 全A等权：个股复权收益 close×adj/lag-1 → 日等权平均 → 基期 2019-01-03=1000 链乘，n_stocks<1000 防御日 ret 按零、点位延续（2026-08-26 kline_daily 断档实证）
+  valid_since: "2019-01-03"
+  module_id: MOD-L00-004
+  design_maturity: testing
+  name: c1_market.kline_index_calc
+  name_zh: 自算衍生指数日K
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-04"
+  updated_at: "2026-09-04"
+  owner: MOD-L00-004
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: partial
+  pit_available: null
+  earnings_lag_days: null
+  llm_training_cutoff: N/A
+  lookahead_test_method: N/A
+  label_delay_days: null
+  drift_detector: none
+  entry_role: reference
+  applies_to:
+  - market
+  tags:
+  - 数据
+  - 指数
+  - 衍生计算
+  algorithm_status: not_applicable
+  evidence: "2026-09-04 立项实证：kline_daily 2018 及以前仅 237 只样本覆盖（幸存者偏差禁用于等权口径），2019-01-02 起全量 3771+；回填 1861 交易日 2019-01-03~2026-09-03，独立 SQL 直算近 3 日对拍逐位一致；与官方指数真源 kline_index 分表（责任唯一）"
+  code_symbol: "src/zephyr/data/implementations/index_eqw_compute.py::IndexEqwComputeProvider"
   code_fingerprint: null
 jobs:
 - job_id: JOB-001

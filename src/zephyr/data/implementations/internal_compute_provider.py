@@ -126,6 +126,7 @@ _INTERNAL_COMPUTE_CAPABILITIES = frozenset(
         "calendar_event",
         "hk_trade_calendar",
         "index_valuation_daily",  # S2 估值路A（2026-08-29）：委托 IndexValuationComputeProvider
+        "kline_index_calc",  # 自算指数（2026-09-04）：全A等权 EQW_ALLA，委托 IndexEqwComputeProvider
     }
 )
 
@@ -390,6 +391,8 @@ class InternalComputeProvider(IngestProviderBase):
             CapabilityContract("hk_trade_calendar", expected_market="hk", expected_variety="calendar"),
             # S2 估值路A（2026-08-29）：指数估值 CAPE/分位/ERP 内部计算，symbols=null=默认核心指数
             CapabilityContract("index_valuation_daily", supports_symbols_null=True),
+            # 自算指数（2026-09-04）：全A等权等衍生指标，symbols=null=注册表全量（_EQW_INDEXES）
+            CapabilityContract("kline_index_calc", supports_symbols_null=True),
         ],
         known_issues=[],
     )
@@ -451,7 +454,27 @@ class InternalComputeProvider(IngestProviderBase):
         if payload.table == "c1_market.index_valuation_daily":
             yield from self._fetch_index_valuation_daily(payload, policy)
             return
+        if payload.table == "c1_market.kline_index_calc":
+            yield from self._fetch_kline_index_calc(payload, policy)
+            return
         yield from self._fetch_technical_indicator(payload)
+
+    def _fetch_kline_index_calc(self, payload: FetchPayload, policy) -> Iterator[FetchResult]:
+        """自算指数路由分支（kline_index_calc capability 的命名约定实现）。
+
+        委托 IndexEqwComputeProvider（读 kline_daily 全量→等权复权收益链乘
+        →全量重算幂等输出，基期 2005-01-04=1000）。
+        """
+        from zephyr.data.implementations.index_eqw_compute import (
+            IndexEqwComputeProvider,
+        )
+
+        provider = IndexEqwComputeProvider()
+        provider.connect()
+        try:
+            yield from provider.fetch(payload, policy)
+        finally:
+            provider.disconnect()
 
     def _fetch_index_valuation_daily(self, payload: FetchPayload, policy) -> Iterator[FetchResult]:
         """指数估值路由分支（index_valuation_daily capability 的命名约定实现）。

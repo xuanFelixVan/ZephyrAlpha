@@ -2417,6 +2417,21 @@ tasks:
   - source: internal
     capability: index_valuation_daily
 
+# ============== 自算衍生指数（Owner 2026-09-04 立项 MVP：全A等权 EQW_ALLA）==============
+- task_id: kline_index_calc_refresh
+  table: c1_market.kline_index_calc
+  source: internal  # 本地计算（读 CH kline_daily，不从外部API拉取）
+  schedule: daily_kline
+  incremental: false    # 恒全量重算幂等（~5300 行秒级，provider 忽略 start；ReplacingMergeTree 去重）
+  date_col: trade_date
+  dependencies: ["kline_daily_incremental"]    # DAG: 日K线落库后重算等权指数
+  capability: kline_index_calc
+  symbols:
+  fallback_sources: []    # internal 计算源天然无副源
+  extra:
+    description: "自算指数日K全量重算（首条 EQW_ALLA 全A等权：个股复权收益 close×adj/lag-1 → 日等权平均 → 基期 2019-01-03=1000 链乘；2018 及以前 kline_daily 仅 237 只样本覆盖不满足等权口径，故基期取全量覆盖起点）"
+    trading_day_only: true    # 依赖当日日K已落库，非交易日无新K线跳过
+
 # ============== A22：期指 tick + A50 日频历史（44号备忘 §9.6 通道1 / §9.8 通道2，2026-08-29）==============
 - task_id: futures_tick_intraday
   table: c1_market.tick_data

@@ -561,6 +561,25 @@
   data_source: [miniqmt, akshare]
   blueprint: null
 
+# --- 自算衍生指数 ---
+# kline_index_calc 是本地自算衍生指数专用表（EQW_* 系列），与官方指数真源 kline_index
+# 分表隔离（真源唯一/责任唯一：外部官方指数 vs 内部衍生计算，口径可演进、防互相污染）
+- category_id: market_kline_index_calc
+  name: "自算衍生指数日K（首条 EQW_ALLA 全A等权：复权收益等权平均链乘，基期 2019-01-03=1000）"
+  engine: clickhouse
+  database: c1_market
+  table: kline_index_calc
+  schema_file: schemas/categories/market_kline_index_calc.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: eager
+  frequency: 日频
+  data_source: [internal]
+  blueprint: null
+
 - category_id: market_index_list
   name: "指数列表（732个指数代码及基础信息，base_date=1970-01-01表示基准日期缺失）"
   engine: clickhouse
