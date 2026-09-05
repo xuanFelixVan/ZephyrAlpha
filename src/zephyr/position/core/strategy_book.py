@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] StrategySelectionError(ZA-POS-0020); BudgetExceededError(ZA-POS-0021); RebalanceRefusedError(ZA-POS-0022)
+# [ERROR_CONTRACT] 专用异常类未落位（现实现 ValueError 兜底）；StrategySelectionError/BudgetExceededError/RebalanceRefusedError 设计预留（蓝图 §5 双层陈述）——ZA-POS-0020/0021/0022 已被 correlation_regime_monitor/position_risk_budget_allocator/cross_strategy_position_merger 注册占用，落位需 Owner 重分配号段（2026-09-05 AI-00 审计按实现为真源修正）
 # [TESTS] tests/position/test_strategy_book.py
 # [A_module] module_id=MOD-POS-020 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent

@@ -30,7 +30,7 @@ F5EventSubscriber — F5 事件启动机制 (MOD-INF-022 §3).
 4. A2A Protocol 事件驱动响应: 冲突事件触发仲裁
 
 用法:
-    from zephyr.governance.f5_event_subscriber import F5EventSubscriber
+    from zephyr.governance.resilience_governance.f5_event_subscriber import F5EventSubscriber
     subscriber = F5EventSubscriber()
     subscriber.bind_components(escalation_engine, delegation_engine,
                                 deadlock_detector, arbitrator)

@@ -5,7 +5,7 @@ collection_name: 规则注册表集 / Rule Registry Collection
 collection_path: src/zephyr/governance/
 owner_module: MOD-GOVERNANCE
 node_type: rule_registry_collection
-total_registered: 245
+total_registered: 267
 items:
 - file: config/ai_capability_matrix.yaml
   name: ai_capability_matrix.yaml
@@ -349,6 +349,102 @@ items:
   status: active
 - file: docs/01_policies_and_standards/rules/trae_062_ssot_classification.yaml
   name: trae_062_ssot_classification.yaml
+  node_type: config
+  status: active
+- file: docs/01_policies_and_standards/rules/trae_063_data_ops_discipline.yaml
+  name: trae_063_data_ops_discipline.yaml
+  node_type: config
+  status: active
+- file: docs/01_policies_and_standards/rules/trae_064_git_call_budget.yaml
+  name: trae_064_git_call_budget.yaml
+  node_type: config
+  status: active
+- file: docs/01_policies_and_standards/rules/trae_065_capability_lookup_required.yaml
+  name: trae_065_capability_lookup_required.yaml
+  node_type: config
+  status: active
+- file: docs/01_policies_and_standards/rules/trae_066_rule_seventeen_runcommand_purity.yaml
+  name: trae_066_rule_seventeen_runcommand_purity.yaml
+  node_type: config
+  status: active
+- file: docs/01_policies_and_standards/rules/trae_067_window_flash_discipline.yaml
+  name: trae_067_window_flash_discipline.yaml
+  node_type: config
+  status: active
+- file: docs/01_policies_and_standards/rules/trae_068_preventability_layer.yaml
+  name: trae_068_preventability_layer.yaml
+  node_type: config
+  status: active
+- file: docs/01_policies_and_standards/rules/trae_069_commit_gateway_abuse_thresholds.yaml
+  name: trae_069_commit_gateway_abuse_thresholds.yaml
+  node_type: config
+  status: active
+- file: docs/01_policies_and_standards/rules/trae_070_temporary_file_placement.yaml
+  name: trae_070_temporary_file_placement.yaml
+  node_type: config
+  status: active
+- file: docs/01_policies_and_standards/rules/trae_071_temporary_file_lifecycle.yaml
+  name: trae_071_temporary_file_lifecycle.yaml
+  node_type: config
+  status: active
+- file: docs/01_policies_and_standards/rules/trae_072_cross_commit_atomicity.yaml
+  name: trae_072_cross_commit_atomicity.yaml
+  node_type: config
+  status: active
+- file: docs/01_policies_and_standards/rules/trae_073_precommit_offline_discipline.yaml
+  name: trae_073_precommit_offline_discipline.yaml
+  node_type: config
+  status: active
+- file: docs/01_policies_and_standards/rules/trae_074_worktree_base_freshness.yaml
+  name: trae_074_worktree_base_freshness.yaml
+  node_type: config
+  status: active
+- file: docs/01_policies_and_standards/rules/trae_075_stash_lifecycle.yaml
+  name: trae_075_stash_lifecycle.yaml
+  node_type: config
+  status: active
+- file: docs/01_policies_and_standards/rules/trae_076_worktree_commit_persistence.yaml
+  name: trae_076_worktree_commit_persistence.yaml
+  node_type: config
+  status: active
+- file: docs/01_policies_and_standards/rules/trae_077_capability_lookup_scene_classify.yaml
+  name: trae_077_capability_lookup_scene_classify.yaml
+  node_type: config
+  status: active
+- file: docs/01_policies_and_standards/rules/trae_078_force_merge_safety.yaml
+  name: trae_078_force_merge_safety.yaml
+  node_type: config
+  status: active
+- file: docs/01_policies_and_standards/rules/trae_079_commit_serialization.yaml
+  name: trae_079_commit_serialization.yaml
+  node_type: config
+  status: active
+- file: docs/01_policies_and_standards/rules/trae_080_panorama_alignment.yaml
+  name: trae_080_panorama_alignment.yaml
+  node_type: config
+  status: active
+- file: docs/01_policies_and_standards/rules/trae_081_audit_dimensions_framework.yaml
+  name: trae_081_audit_dimensions_framework.yaml
+  node_type: config
+  status: active
+- file: docs/01_policies_and_standards/rules/trae_082_symbol_convention.yaml
+  name: trae_082_symbol_convention.yaml
+  node_type: config
+  status: active
+- file: docs/01_policies_and_standards/rules/trae_083_design_intent_source_discipline.yaml
+  name: trae_083_design_intent_source_discipline.yaml
+  node_type: config
+  status: active
+- file: docs/01_policies_and_standards/rules/trae_084_precommit_incremental_discipline.yaml
+  name: trae_084_precommit_incremental_discipline.yaml
+  node_type: config
+  status: active
+- file: docs/01_policies_and_standards/rules/trae_085_stale_base_overwrite.yaml
+  name: trae_085_stale_base_overwrite.yaml
+  node_type: config
+  status: active
+- file: docs/01_policies_and_standards/rules/trae_086_frontend_module_construction.yaml
+  name: trae_086_frontend_module_construction.yaml
   node_type: config
   status: active
 - file: docs/03_modules/_domain_infrastructure_operations/agent_to_agent_protocol/arbitration_rules.yaml

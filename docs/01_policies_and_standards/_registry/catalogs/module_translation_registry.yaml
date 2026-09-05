@@ -42941,13 +42941,6 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: '验收三件事：失败反思记录能自动生成条目入库读回（成功记录拒收）；任务文案检索 命中条目且注入载荷带来源反思编号；人工编辑接口可用——不署名不让改、改完留痕 可停用；缺字段、多字段、空模式、重复编号一律拒收。'
-- module_path: src/zephyr/integration/mcp/client_discovery.py
-  domain_id: D_INTEGRATION
-  name_zh: MCP客户端动态发现与契约漂移对账
-  name_en: ''
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: ''
 - module_path: src/zephyr/data/ch_parts_monitor.py
   domain_id: D_DATA
   name_zh: CH 数据分片爆炸监控器
@@ -56656,13 +56649,13 @@ algo_submodules:
   name_en: risk.core.__init__
   plain_zh: 从4个子模块导入9个公开符号并用__all__固定对外API面
 - module_path: src/zephyr/risk/core/liquidity_monitor.py
-  module_id: MOD-RK-08
+  module_id: MOD-RK-048
   node_id: A1
   name_zh: ① 流动性综合评估
   name_en: LiquidityMonitor.assess
   plain_zh: Amihud超阈值或成交量萎缩即判非流动性恶化
 - module_path: src/zephyr/risk/core/liquidity_monitor.py
-  module_id: MOD-RK-08
+  module_id: MOD-RK-048
   node_id: A2
   name_zh: ② 风控检查结果转换
   name_en: to_risk_check_result

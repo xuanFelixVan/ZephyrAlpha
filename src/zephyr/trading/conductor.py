@@ -170,13 +170,10 @@ class Conductor:
             空列表 = 无可做任务。
         """
         try:
-            rows = self.repo._conn.execute(
-                "SELECT DISTINCT COALESCE(batch_id, '') FROM tasks WHERE status='IN_PROGRESS' AND is_deleted=0"
-            ).fetchall()
-            for row in rows:
-                bid = row[0] if row[0] else "__no_batch__"
-                if bid != "__no_batch__":
-                    self.repo.recover_stale_claims(bid)
+            # 2026-09-05 AI-06 复审轮接线收敛：旁路 repo._conn.execute → 公开 API
+            # get_distinct_batch_ids（AI-13 落地，语义等价：IN_PROGRESS+未软删+非空 batch_id 去重）
+            for bid in self.repo.get_distinct_batch_ids(TaskStatus.IN_PROGRESS):
+                self.repo.recover_stale_claims(bid)
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("Conductor: recover_stale_claims failed: %s", exc, exc_info=True)
 

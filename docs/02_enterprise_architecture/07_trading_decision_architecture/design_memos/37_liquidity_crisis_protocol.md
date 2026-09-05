@@ -154,15 +154,15 @@ def bid_ask_spread(bid_price: float, ask_price: float) -> float | None:
 |---|---|---|---|
 | BM-RC-06-A | 五大信号扫描 | §3.1 决策① 盘内流动性危机检测（MOD-RK-10 五信号扫描+三级警报） | production 已建 |
 
-### 3.2 决策②：日频结构性流动性监控——复用 MOD-RK-08 LiquidityMonitor
+### 3.2 决策②：日频结构性流动性监控——复用 MOD-RK-048 LiquidityMonitor
 
-**决策**：复用已实现的 [LiquidityMonitor](file:///d:/ZephyrAlpha/src/zephyr/risk/core/liquidity_monitor.py)（MOD-RK-08，production）的 Amihud 非流动性指标 + 成交量萎缩比率，作为日频结构性流动性恶化监控。
+**决策**：复用已实现的 [LiquidityMonitor](file:///d:/ZephyrAlpha/src/zephyr/risk/core/liquidity_monitor.py)（MOD-RK-048，production）的 Amihud 非流动性指标 + 成交量萎缩比率，作为日频结构性流动性恶化监控。
 
 **已实现能力**（代码已实现）：
 - `compute_amihud(closes, volumes)`：Amihud ILLIQ = |r_d| / V_d 的 N 日均值（r_d=日收益率，V_d=日成交额），ILLIQ 越高越不流动
-- `compute_volume_shrinkage(volumes)` + `assess(symbol, ohlcv, bid_ask_spread)`：V_ratio = V_t / MA(V, N)（<1=萎缩，<0.5 判定萎缩）；is_illiquid = Amihud 超阈值(1e-8) OR 成交量萎缩(<0.5)；`bid_ask_spread` 为可选外部输入（MOD-RK-08 不自行计算）；纯机制零参数，阈值/窗口为 C 类参数可在构造时覆盖
+- `compute_volume_shrinkage(volumes)` + `assess(symbol, ohlcv, bid_ask_spread)`：V_ratio = V_t / MA(V, N)（<1=萎缩，<0.5 判定萎缩）；is_illiquid = Amihud 超阈值(1e-8) OR 成交量萎缩(<0.5)；`bid_ask_spread` 为可选外部输入（MOD-RK-048 不自行计算）；纯机制零参数，阈值/窗口为 C 类参数可在构造时覆盖
 
-**与 MOD-RK-10 的互补关系**：MOD-RK-10 管盘内紧急（卖压+价差扩大），MOD-RK-08 管日频趋势（Amihud+成交量萎缩）——时间尺度互补不重叠。**为何需要日频层**：盘内检测只能抓"正在发生的危机"，日频监控提前发现"流动性正在恶化"的趋势，给策略层调整持仓的时间窗口（逐步减仓流动性变差的票，而非等危机爆发才被动停开仓）。
+**与 MOD-RK-10 的互补关系**：MOD-RK-10 管盘内紧急（卖压+价差扩大），MOD-RK-048 管日频趋势（Amihud+成交量萎缩）——时间尺度互补不重叠。**为何需要日频层**：盘内检测只能抓"正在发生的危机"，日频监控提前发现"流动性正在恶化"的趋势，给策略层调整持仓的时间窗口（逐步减仓流动性变差的票，而非等危机爆发才被动停开仓）。
 
 ### 3.2a IPO 流动性抽离预警（v1.0.15 新增——前瞻性流动性监控）
 
@@ -645,7 +645,7 @@ def intraday_liquidity_loop(market_data_snapshot, position_state, recovery_state
                 notify_recovery_complete(recovery_state.level, target_level=recovered)
     
     # ── 日频结构性监控（§3.2）异步——盘后批量，不在盘中循环 ──
-    # Amihud illiquidity + volume shrinkage 由 MOD-RK-08 LiquidityMonitor 日度执行
+    # Amihud illiquidity + volume shrinkage 由 MOD-RK-048 LiquidityMonitor 日度执行
     
     return LiquidityLoopResult(
         limit_status=limit_status,
@@ -690,7 +690,7 @@ def intraday_liquidity_loop(market_data_snapshot, position_state, recovery_state
 - **拒绝理由（MVP）**：相对阈值需维护"N 日均价差"基准，每只票"正常 spread"不同（大盘股 0.01% vs 小盘股 0.3%），基准维护复杂；代码用绝对 0.5%（A 股正常票 0.01-0.05%，0.5% 已是 10-50 倍，与"5x"量级吻合，简单且误报低）。**重评条件**：实盘运行后若绝对阈值误报多（小盘股日常 spread 接近 0.5%），再上推相对阈值。
 
 ### 4.5 盘口深度实时监控 —— 拒绝（MVP 延后）
-- **拒绝理由**：盘口深度（多档挂单量）需实时 Level-2 数据 + 深度衰减建模，是机构级基础设施；个人小资金订单 <1% ADV，深度对自身交易无意义（自己不消耗深度）；MOD-RK-08 Amihud（日频）+ MOD-RK-10 spread（盘内）已覆盖核心问题；依赖 depth 的复合评分（如 Polymarket 2026-06 Liquidity Score = (depth × volume)/(spread + ε)）一并暂缓。**重评条件**：AUM 增长到自身订单 >5% ADV 时。
+- **拒绝理由**：盘口深度（多档挂单量）需实时 Level-2 数据 + 深度衰减建模，是机构级基础设施；个人小资金订单 <1% ADV，深度对自身交易无意义（自己不消耗深度）；MOD-RK-048 Amihud（日频）+ MOD-RK-10 spread（盘内）已覆盖核心问题；依赖 depth 的复合评分（如 Polymarket 2026-06 Liquidity Score = (depth × volume)/(spread + ε)）一并暂缓。**重评条件**：AUM 增长到自身订单 >5% ADV 时。
 
 ### 4.6 VPIN 订单流毒性检测 —— 拒绝（过度工程）
 - **拒绝理由**：VPIN 需 tick 级交易数据 + 时间桶成交量分类，是机构级闪崩预警指标（theplugg 2026-07 将其与 OBI、Depth-to-Volatility Decay 并列闪崩三大指标）；个人小资金不做市、不受 toxic flow 直接伤害；MOD-RK-10 卖压+spread 双条件已捕获 VPIN 试图检测的同类信号（流动性枯竭+单向压力）。**重评条件**：策略扩展到做市/提供流动性场景时。
@@ -705,14 +705,14 @@ def intraday_liquidity_loop(market_data_snapshot, position_state, recovery_state
 
 ### 5.1 系统上限
 - **盘内检测**：MOD-RK-10 LIQUIDITY_CRISIS 信号（卖压 ≥0.65 AND spread ≥0.5%），双条件 AND
-- **日频监控**：MOD-RK-08 Amihud ILLIQ（阈值 1e-8）+ 成交量萎缩（阈值 0.5，窗口 20 日）
+- **日频监控**：MOD-RK-048 Amihud ILLIQ（阈值 1e-8）+ 成交量萎缩（阈值 0.5，窗口 20 日）
 - **三级警报**：LEVEL_1 停开仓 / LEVEL_2 降仓 30% / LEVEL_3 清仓 + Kill Switch
 - **情绪断路器**：情绪指数 ≥0.85 → 强制升级 LEVEL_3
 - **Kill Switch 联动**：仅 LEVEL_3（≥3 信号）联动，流动性危机单独不 Kill Switch
 - **涨跌停处理**：spread 监控失效，跌停时 spread 置大值 1.0 触发 LIQUIDITY_CRISIS（卖压≈1.0 + spread=1.0 满足 AND），涨跌停状态检测接管（40_execution_broker 决策⑥⑭⑮）
 
 ### 5.2 演进路径
-- **第一阶段（MVP，已实现）**：MOD-RK-10 绝对阈值（spread 0.5% + 卖压 0.65）+ MOD-RK-08 Amihud 日频。两级流动性监控 production
+- **第一阶段（MVP，已实现）**：MOD-RK-10 绝对阈值（spread 0.5% + 卖压 0.65）+ MOD-RK-048 Amihud 日频。两级流动性监控 production
 - **Phase 1.5（首批策略 track record 1-3 个月）**：① 阈值实盘校准（用实盘 spread/卖压分布回归拟合，替代经验默认值）② 相对 spread 阈值（spread / N 日均价差 > 5x，若绝对阈值误报多）③ 流动性指标接入策略层（流动性恶化的票降权或剔除）④ **双阈值方案**（2026-08 microstructure 实践）：spread > 3x N 日均值 = 早期预警（策略层降权），spread > 5x = 危机确认（触发 LEVEL_1）——3x 介于"正常"与"5x 危机"之间，能自适应不同流动性票（大盘股 0.05% 日常→0.15% 预警；小盘股 0.3% 日常→0.9% 预警）⑤ **OFI 动态维度**（§3.1.1 储备）：sell_pressure（静态存量）+ OFI（动态变化趋势）双维度 ⑥ **Hawkes 自激励前置预警**（§3.7.1 储备）：若阈值触发滞后，上推 Hawkes 强度作为前置预警层 ⑦ **Amihud 预测方法学**（§3.7.12 储备：阈值校准时用"动态面板 + 三特征（成交活跃度 + 滞后 Amihud + 市场不确定性）"轻量方案替代重 ML 栈——[SSRN 7125463](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7125463) 实证动态面板不输 XGBoost/SVR，流动性高持续意味着静态阈值短期不失效）
 - **第二阶段（AUM 增长或策略需要）**：
   - 盘口深度监控（Level-2 多档数据 + 深度衰减建模）+ Bouchaud Propagator（冲击时间衰减结构，与 40_execution_broker 滑点模型协同）+ 流动性综合评分 Liquidity Score = (depth × volume)/(spread + ε)（depth/volume/spread 三者的复合归一化指标）
@@ -732,7 +732,7 @@ def intraday_liquidity_loop(market_data_snapshot, position_state, recovery_state
 |---|---|---|
 | 盘口深度实时监控 | 需 Level-2 多档数据 + 深度衰减建模，机构级基础设施 | AUM 增长到自身订单 >5% ADV |
 | 相对 spread 阈值（5x 正常） | MVP 绝对 0.5% 已与"5x"量级吻合；相对阈值需维护 N 日均价差基准 | 实盘运行后绝对阈值误报多时 |
-| 流动性指标接入策略层 | MOD-RK-08 is_illiquid 当前只产告警，未反馈到策略选股/权重 | Phase 1.5，策略层需要流动性过滤时 |
+| 流动性指标接入策略层 | MOD-RK-048 is_illiquid 当前只产告警，未反馈到策略选股/权重 | Phase 1.5，策略层需要流动性过滤时 |
 | 阈值实盘校准 | spread 0.5% / 卖压 0.65 / Amihud 1e-8 均为经验默认值 | 累积 3 个月实盘数据后回归拟合 |
 | 恢复阈值实盘校准（v1.0.3 新增） | spread 半阈值 0.25% / sell_pressure 0.50 / 最短持续 10-15-30 分钟均为经验初始值 | 累积 3 个月恢复事件数据后评估 thrashing 率 |
 | OFI 动态维度（v1.0.3 新增） | sell_pressure（静态）已够 MVP；OFI（动态）需盘口队列变化追踪 | Phase 1.5，静态阈值触发滞后时 |
@@ -752,7 +752,7 @@ def intraday_liquidity_loop(market_data_snapshot, position_state, recovery_state
 
 - [x] ① 买卖价差监控（>正常 5x 触发）→ **决策①**：复用 MOD-RK-10 LIQUIDITY_CRISIS，spread 作为输入参数，阈值 0.5% 绝对（与"5x"量级吻合），双条件 AND（卖压 + spread）
 - [x] ② 流动性危机→立即停止开仓仅允许平仓 → **决策③**：对齐 §2.5.5 + MOD-RK-10 LEVEL_1（新开仓 0%，现有持仓不强制减，允许策略主动平仓但不强制）
-- [x] ③ 流动性指标定义（换手率/成交额/盘口深度）→ **决策②**：日频用 Amihud ILLIQ（|r_d|/V_d）+ 成交量萎缩比率（MOD-RK-08）；盘内用卖压 + spread（MOD-RK-10）；盘口深度暂缓（Phase 2）
+- [x] ③ 流动性指标定义（换手率/成交额/盘口深度）→ **决策②**：日频用 Amihud ILLIQ（|r_d|/V_d）+ 成交量萎缩比率（MOD-RK-048）；盘内用卖压 + spread（MOD-RK-10）；盘口深度暂缓（Phase 2）
 - [x] ④ 与 Kill Switch 的关系 → **决策④**：流动性危机单独 = LEVEL_1 停开仓（不 Kill Switch）；≥3 信号 = LEVEL_3 清仓 + Kill Switch。比 §2.5.5 更精细，不违反 spec
 - [x] ⑤ A 股涨跌停流动性失效处理 → **决策⑤**：涨跌停时 spread 监控失效（盘口单价位），涨跌停状态检测接管（§3.5.1 形式化检测算法），由 40_execution_broker 决策⑥⑭⑮处理；持仓票跌停 = 流动性危机子类
 - [x] ⑥ 危机恢复算法（v1.0.3 新增）→ **决策⑥**：滞后-恢复双阈值（hysteresis）+ CUSUM 式持续时间门控，恢复条件 = 半阈值 + 持续 N=5 分钟 + 最短持续时间门控（LEVEL_1 10min/LEVEL_2 15min/LEVEL_3 30min）
@@ -782,7 +782,7 @@ def intraday_liquidity_loop(market_data_snapshot, position_state, recovery_state
 | 模块 | blueprint_id | path | 域 |
 |---|---|---|---|
 | AshareSystemicRiskDetector | MOD-RK-10 | `src/zephyr/risk/core/ashare_systemic_risk_detector.py` | D_RISK |
-| LiquidityMonitor | MOD-RK-08 | `src/zephyr/risk/core/liquidity_monitor.py` | D_RISK |
+| LiquidityMonitor | MOD-RK-048 | `src/zephyr/risk/core/liquidity_monitor.py` | D_RISK |
 | Kill Switch（BM-RC-03） | MOD-RK-17 | `src/zephyr/risk/stop_loss.py` | D_RISK |
 
 ### 8.4 外部参考
@@ -800,12 +800,13 @@ def intraday_liquidity_loop(market_data_snapshot, position_state, recovery_state
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
 | 2026-08-09 | 0.1.0 | 骨架创建 | 由 00_index G18 讨论要点占位，待讨论填空 |
-| 2026-08-10 | 1.0.0 / 1.0.1 | 骨架→active，5 项讨论要点定型 + G16 对齐解决 | 复用 MOD-RK-10 双条件 AND + MOD-RK-08 Amihud 日频；响应=LEVEL_1 停开仓仅平仓；危机单独不 Kill Switch，≥3 信号联动；涨跌停由执行层处理；§2.5.5"5x"与代码"0.5% 绝对"量级吻合对齐；tick 级/盘口深度监控判定过度工程暂缓。35号同步升 active v1.0.0，§3.5 双向引用建立，更新 4 处过时"骨架态"描述（§1/§3.4/§6/§8.1） |
+| 2026-08-10 | 1.0.0 / 1.0.1 | 骨架→active，5 项讨论要点定型 + G16 对齐解决 | 复用 MOD-RK-10 双条件 AND + MOD-RK-048 Amihud 日频；响应=LEVEL_1 停开仓仅平仓；危机单独不 Kill Switch，≥3 信号联动；涨跌停由执行层处理；§2.5.5"5x"与代码"0.5% 绝对"量级吻合对齐；tick 级/盘口深度监控判定过度工程暂缓。35号同步升 active v1.0.0，§3.5 双向引用建立，更新 4 处过时"骨架态"描述（§1/§3.4/§6/§8.1） |
 | 2026-08-10 | 1.0.2 | 算法断裂修复 + 逃生执行器补全 + 2026-08 实证对齐 | ① 跌停时 spread 置 1.0 使 AND 可满足（原置 None 信号无法触发）② §3.3 补 build_escape_directive 指令结构+守卫+RK-17 消费者 ③ §8.4 补 Beelaa/theplugg/LobeHub/Polymarket 实证 ④ §4.6 拒绝 VPIN + §4.5 Liquidity Score 暂缓 + §5.2 双阈值方案 |
 | 2026-08-10 | 1.0.3 | 施工流程算法补全 + 选项外更好算法评估 | ① §3.6 危机恢复 hysteresis + check_recovery（10/15/30 分钟门控）② §3.1.1 sell_pressure OBI 反转公式 ③ §3.1.2 Quoted Spread 公式 ④ §3.5.1 涨跌停五状态检测 ⑤ §3.7 Hawkes（Phase 1.5）/VPIN（维持拒绝）/Crumbling（Phase 2）评估 ⑥ §5.2/§6/§7/§8.4 同步 |
 | 2026-08-10 | 1.0.4 / 1.0.5 | §3.8 施工流程总览 + §2.4 指数熔断澄清 | 四阶段编排（涨跌停检测→危机检测→响应执行→恢复判定）+ 与 35号 §3.13/36号 §3.12 三循环对齐 + T+1 影响，编排关键=涨跌停检测须先于危机检测（spread 失效须置 1.0）；A 股指数熔断 2016-01-07 暂停（磁吸效应废止），本协议"熔断"指策略级 Kill Switch 非市场级 |
 | 2026-08-10 | 1.0.6 – 1.0.14 | §3.7.x 前沿评估 9 批次登记 + §2.4/§4.7/§5.2/§6 同步 | 1.0.6 §3.7.4 SaR（arXiv:2603.09164，SaR/ESaR/TSaR+HHI η≈1.5）+ arXiv:2608.03616 级联两类型；1.0.7 §3.7.5 Latent build-up（arXiv:2604.20949，正 lead-time +18.6 timesteps/+38 秒，优于 CUSUM/BOCPD/HMM）；1.0.8 §3.7.1 Hawkes 更新（arXiv:2512.08000 A 股实证+图熵领先 7-12 天+2026-07 危机验证 CSI300 -5.81%/科创50 -17.46%）；1.0.9 §2.4 LAN 通道关闭交叉引用（≥2ms，TWAP 5%→3-4%，spread 0.5% 三月重校，三方对齐）；1.0.10 §3.7.6/§3.7.7/§3.7.8 + §4.7（ExsdHawkes KKT 分离 / Liquidation Cascade 三因子 λ≈0.1-0.2 / Multiplex Network Hawkes / Karimi 联合边界凸性 B_surrogate=w₁λ+w₂d+w₃λd）；1.0.11 §3.7.7.1/§3.7.9/§3.7.10（39 配置无事件不变量+taker 方差压缩 p≈5×10⁻⁶ / Weng Johnson S_U 消牛熊偏差 / Zhou 平方根冲击操纵周期必要条件 Hopf 分岔）；1.0.12 Residual Supply（arXiv:2605.30672 premium 翻倍，65bp/月 217bp/6 月）；1.0.13 §3.7.11/§3.7.12/§3.7.13（LRISK 提前两季度 / 动态面板不输 ML / AdjPIN PSOS 与 OBI 正交）；1.0.14 §3.7.14/§3.7.15（Kyle λ̂=Cov(ΔP,OF)/Var(OF) / Çetin 大单≠信息 Student-t ν>2）——均 Phase 1.5-3 储备/远期非施工缺失 |
 | 2026-08-10 | 1.0.15 / 1.0.16 | §3.2a IPO 流动性抽离预警 + §3.6 check_recovery 签名修复 | 长鑫科技 688825 募资 579-666 亿缺口发现；drain_ratio=未来5日募资/20日均成交额，4 级→position_cap_adjustment，与 26号 §2.5a 联动（事前预警 vs §3.2 事后检测正交）；check_recovery 定义与 §3.8 调用点统一为参数化阈值签名（消除两处真相源），修 `if recovered:` 真值检查 bug（target_level=0 被跳过）→ `is not None` |
+| 2026-09-05 | 1.0.17 | MOD-RK-08→MOD-RK-048 指代改号（AI-00 长城审计） | 全文 12 处 `MOD-RK-08`（LiquidityMonitor 语境）改 `MOD-RK-048`——liquidity_monitor 与 risk_budget_allocator 撞号经 AI-AUDIT18-001 git 取证裁定（risk_budget=2026-08-02 先用者保留 MOD-RK-08；liquidity_monitor 改号 MOD-RK-048），本文档指代同步；对 32/25 号 memo 中 MOD-RK-08（risk_budget 正宗语境）无影响 |
 | 2026-08-12 | 1.0.17 / 1.0.18 | 作战地图全覆盖补丁 BM-RC-12-B / BM-RC-12 闭合 + BM-RC-06-A 锚定 | §3.7.16 跨市场传导登记远期+激活条件（管道不存在无承载，MVP 布尔级由 36号 §3.5.2 CONTAGION→BS005 承载；退化=全市场同向下跌最坏假设），父环节 BM-RC-12 闭合；§3.1 末尾补 BM-RC-06-A 映射块，环节级可追溯；frontmatter date→2026-08-12 |
 | 2026-08-13 | 1.1.0 | 施工落地 + 施工审查修复 3 处文档缺陷 | AI-LIQ-001：新建 MOD-RK-21 liquidity_crisis_manager 承载六算法（§3.1.1/§3.1.2/§3.5.1/§3.6/§3.8/§3.2a，检测委托 MOD-RK-10，阈值从 detector.config 读取），54 测试全绿；修 §3.1.1 公式代数错误（ΣVolAsk/(ΣVolBid+ΣVolAsk)）+ §3.8 涨跌停 spread 矛盾（LIMIT_DOWN→1.0/LIMIT_UP→None）+ §3.2a 数据源虚标（akshare 无 ipo capability→§6 待裁定）；commit d53693a1/16a089c8/db695f9d |
 | 2026-08-14 | 1.1.1 | 压缩精简 | 已施工内容折叠，零信息丢失审查通过（AI-DOCS-001） |

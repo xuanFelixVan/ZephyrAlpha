@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] AggregationError(ZA-POS-0021); ConstraintViolationError(ZA-POS-0023)
+# [ERROR_CONTRACT] 专用异常类未落位（现实现 ValueError 兜底）；AggregationError/ConstraintViolationError 设计预留——ZA-POS-0021/0023 已被 position_risk_budget_allocator/intraday_position_constraint 注册占用，落位需 Owner 重分配号段（2026-09-05 AI-00 审计按实现为真源修正，与蓝图双层陈述对齐）
 # [TESTS] tests/position/test_firm_risk_aggregator.py
 # [A_module] module_id=MOD-POS-021 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent

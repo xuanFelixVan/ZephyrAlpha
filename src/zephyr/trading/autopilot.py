@@ -106,10 +106,10 @@ class AutoPilot:
         Returns:
             {batch_id: [TaskCard, ...]} —— 空字典表示无事可做
         """
-        rows = self.repo._conn.execute(
-            "SELECT task_id, COALESCE(batch_id, '__no_batch__') as bid FROM tasks WHERE status='READY' AND is_deleted=0"
-        ).fetchall()
-        task_batch_map: dict[str, str] = {r["task_id"]: r["bid"] for r in rows}
+        # 2026-09-05 AI-06 复审轮接线收敛：旁路 repo._conn.execute → 公开 API
+        # get_task_batch_ids（AI-13 落地，语义等价：READY+未软删+非空 batch_id 映射；
+        # 空批次任务经下方 .get 默认哨兵 "__no_batch__" 兜底，行为不变）
+        task_batch_map: dict[str, str] = self.repo.get_task_batch_ids(TaskStatus.READY)
 
         tasks = self.repo.list_by_status(TaskStatus.READY)
         grouped: dict[str, list[TaskCard]] = {}
@@ -157,10 +157,9 @@ class AutoPilot:
         pending_tasks = self.repo.list_by_status(TaskStatus.PENDING)
         actionable = ready_tasks + pending_tasks
         if actionable:
-            rows = self.repo._conn.execute(
-                "SELECT task_id, COALESCE(batch_id, '-') as bid FROM tasks WHERE status='READY' AND is_deleted=0"
-            ).fetchall()
-            batch_map: dict[str, str] = {r["task_id"]: r["bid"] for r in rows}
+            # 2026-09-05 AI-06 复审轮接线收敛：旁路 → get_task_batch_ids
+            # （展示哨兵 '-' 经 .get 默认值兜底，与原 COALESCE(batch_id,'-') 行为一致）
+            batch_map: dict[str, str] = self.repo.get_task_batch_ids(TaskStatus.READY)
 
             lines.append("")
             lines.append(f"  待办任务 ({len(actionable)} 个):")

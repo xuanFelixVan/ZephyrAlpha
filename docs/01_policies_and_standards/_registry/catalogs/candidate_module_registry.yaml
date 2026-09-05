@@ -303,7 +303,7 @@ entries:
   alternatives: "靠 RK-05 VaR 压力测试 + 人工判断。代价:极端行情响应慢"
   tags: ["过度工程", "P1规划", "A股特色", "尾部风险", "待需求驱动"]
   search_terms: ["black swan", "黑天鹅", "extreme event", "tail risk pattern"]
-  related_candidates: ["CAND-RSK-012", "CAND-RSK-015"]
+  related_candidates: ["CAND-RSK-015"]
   enables: ["CAND-RSK-020"]
   blocked_by: []
   next_review_date: '2027-01-31'
@@ -20202,8 +20202,8 @@ entries:
   original_id: RR-RATING-001
   source_section: ''
 
-# --- CAND-GOVTEST-004: 存量遗留红 24 测试文件 + 4 慢性挂死测试专项（冻结窗口实证非 format 诱发） ---
-- id: CAND-GOVTEST-004
+# --- CAND-GOVTEST-006: 存量遗留红 24 测试文件 + 4 慢性挂死测试专项（冻结窗口实证非 format 诱发；2026-09-05 AI-00 审计重编号——原占用 CAND-GOVTEST-004 与 commit queue MVP 条目（2026-08-20 先用者）撞号，沿 MOD-RK-048 先例改号） ---
+- id: CAND-GOVTEST-006
   name: 存量遗留红测试 24 文件 + 慢性挂死 4 文件专项清偿
   aliases:
   - 遗留红专项
