@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
+# [TESTS] tests/signal_ashare/test_futures_basis_monitor.py; tests/signal_ashare/test_lhb_premium_analyzer.py; tests/signal_ashare/test_mainline_probability.py; tests/signal_ashare/test_market_sentiment_analyzer.py; tests/signal_ashare/test_option_sentiment.py  # 2026-09-05 STEWARD B20 重锚：AI-00 修复脚本 src. 前缀 bug 漏网（AST/patch 直查 7 个测试）
 # 在 depgraph 撞号（跨域同 ID 双文件），2026-08-17 审计治本修正为 MOD-SIGNAL_ASHARE，
 # 与本包 6 个子包 __init__ 的既有约定一致。
 # 2026-09-05 AI-08 审计：表头自文件中部（工具不可见，致 depgraph 仍按旧 MOD-SIG-021 归属本文件）

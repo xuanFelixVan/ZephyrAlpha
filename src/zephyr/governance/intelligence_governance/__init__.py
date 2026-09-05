@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-GOVERNANCE | (auto-injected by S4 reconciler) | §
-# [TESTS] none
+# [TESTS] tests/governance/test_intelligence_governance_facade.py  # 2026-09-05 STEWARD B20 重锚：AI-00 修复脚本 src. 前缀 bug 漏网（AST/patch 直查 1 个测试）
 # [TTL] permanent
 # [A_module] module_id=MOD-GOV-intelligence_governance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent

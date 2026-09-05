@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] TestCaseError
-# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
+# [TESTS] tests/f_lifecycle/test_f10_red_blue.py; tests/model/test_exam_orchestrator.py; tests/model/test_exam_test_cases.py  # 2026-09-05 STEWARD B20 重锚：AI-00 修复脚本 src. 前缀 bug 漏网（AST/patch 直查 3 个测试）
 # [A_module] module_id=MOD-INF-034 | layer=module | stability=stable | safety=L | ai_autonomy=human_gated
 # [TTL] permanent
 

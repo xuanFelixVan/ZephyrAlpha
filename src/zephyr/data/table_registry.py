@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] yaml 文件不存在->log warning+返回空注册表(开发环境友好); table() 查不到 category_id->raise KeyError(fail-closed,禁止凭记忆编表名)
-# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
+# [TESTS] tests/governance/commit_gates/test_table_name_registry_gate.py  # 2026-09-05 STEWARD B20 重锚：AI-00 修复脚本 src. 前缀 bug 漏网（AST/patch 直查 1 个测试）
 # [A_module] module_id=MOD-GOV-table_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """

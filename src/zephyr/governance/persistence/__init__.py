@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.persistence
-# [TESTS] none
+# [TESTS] tests/context/test_intent_parser_unit.py; tests/io/test_verify_schema_health.py  # 2026-09-05 STEWARD B20 重锚：AI-00 修复脚本 src. 前缀 bug 漏网（AST/patch 直查 2 个测试）
 # [TTL] permanent
 # zephyr.governance.persistence 包
 #

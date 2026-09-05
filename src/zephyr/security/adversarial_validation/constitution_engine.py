@@ -11,7 +11,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] RegistryWriteError on failed atomic write; DuplicateArticleError on same derived_from
-# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
+# [TESTS] tests/safety/test_constitution_engine.py  # 2026-09-05 STEWARD B20 重锚：AI-00 修复脚本 src. 前缀 bug 漏网（AST/patch 直查 1 个测试）
 # [A_module] module_id=MOD-INF-030 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

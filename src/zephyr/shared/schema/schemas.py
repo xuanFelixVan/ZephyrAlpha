@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] ImportError on missing sub-module
-# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
+# [TESTS] tests/gate/test_gate_types.py; tests/governance/integration/test_schema_schemas.py; tests/infrastructure/test_core_models.py; tests/trading/unit/test_schemas_unit.py; tests/utils/test_schemas_shared.py  # 2026-09-05 STEWARD B20 重锚：AI-00 修复脚本 src. 前缀 bug 漏网（AST/patch 直查 7 个测试）
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """

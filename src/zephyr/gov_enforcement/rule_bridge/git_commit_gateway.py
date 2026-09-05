@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] GatewayError on lock timeout；CommitResult.status 暴露结果
-# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
+# [TESTS] tests/agent_rbac/test_session_aware_stash_red_blue.py; tests/git/test_git_commit_concurrent.py; tests/git/test_git_commit_extreme.py; tests/git/test_git_commit_gateway.py; tests/governance/audit/test_capability_lookup_health_reconciler.py  # 2026-09-05 STEWARD B20 重锚：AI-00 修复脚本 src. 前缀 bug 漏网（AST/patch 直查 17 个测试）
 # [A_module] module_id=MOD-INF-035 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: while True+time.sleep是_GlobalCommitLock文件锁等待循环，非周期触发

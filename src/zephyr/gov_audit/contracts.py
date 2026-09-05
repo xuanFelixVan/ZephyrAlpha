@@ -24,7 +24,7 @@
 
 # [ERROR_CONTRACT] 违反契约抛ContractViolationError
 
-# [TESTS] none
+# [TESTS] tests/audit/test_audit_contracts.py; tests/audit/test_audit_integration_fracture.py; tests/bridges/test_bridges_contracts.py; tests/governance/audit/test_cycle_dependency_audit_isolation.py; tests/governance/audit/test_p0_i2_construction_order.py  # 2026-09-05 STEWARD B20 重锚：AI-00 修复脚本 src. 前缀 bug 漏网（AST/patch 直查 6 个测试）
 
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=frozen | safety=H | ai_autonomy=immutable_core
 

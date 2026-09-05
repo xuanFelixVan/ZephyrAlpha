@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance
 # [DOMAIN] D_GOVERNANCE
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TESTS] none
+# [TESTS] tests/gov_code_dedup/test_self_scan_integrity.py; tests/governance/code_quality/test_code_dedup_engine_red_team.py; tests/governance/commit_gates/test_ssot_redefinition_gate.py; tests/governance/governance_e2e/test_gov_5system_integration.py; tests/governance/governance_misc/test_governance_result_types.py  # 2026-09-05 STEWARD B20 重锚：AI-00 修复脚本 src. 前缀 bug 漏网（AST/patch 直查 5 个测试）
 # [TTL] permanent
 """
 Agent 治理八件套 · Governance Domain — DOM-GOV-001 v0.2.0

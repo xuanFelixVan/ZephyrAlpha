@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] SessionRegistry 读写失败不抛异常（返回空/False）；detect_mtime_conflict 文件不存在返回 False
-# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
+# [TESTS] tests/agent_rbac/test_session_aware_stash_red_blue.py; tests/governance/audit/test_reconcile_async.py; tests/governance/commit_gates/test_import_integrity_gate.py; tests/governance/rule_bridge/test_claim_files_for_edit.py; tests/governance/rule_bridge/test_heartbeat_daemon.py  # 2026-09-05 STEWARD B20 重锚：AI-00 修复脚本 src. 前缀 bug 漏网（AST/patch 直查 15 个测试）
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """

@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] N/A
-# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
+# [TESTS] tests/db/test_task_repo_db.py; tests/governance/integration/test_autopilot.py; tests/governance/persistence/test_task_repo_batch_api.py; tests/llm_security/test_db.py; tests/task/test_task_types.py  # 2026-09-05 STEWARD B20 重锚：AI-00 修复脚本 src. 前缀 bug 漏网（AST/patch 直查 9 个测试）
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """

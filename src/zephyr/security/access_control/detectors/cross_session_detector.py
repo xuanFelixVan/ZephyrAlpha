@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] sign_token/verify_token never raise; verify_token returns {"valid": False, "reason": ...} on invalid input
-# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
+# [TESTS] tests/agent_rbac/test_adversarial_agent_rbac.py; tests/agent_rbac/test_enhanced_security.py; tests/agent_rbac/test_redteam_adversarial.py; tests/cross/test_cross_session_detector.py  # 2026-09-05 STEWARD B20 重锚：AI-00 修复脚本 src. 前缀 bug 漏网（AST/patch 直查 4 个测试）
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """

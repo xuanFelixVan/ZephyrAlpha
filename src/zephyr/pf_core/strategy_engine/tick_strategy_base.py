@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] on_tick 抛异常时 EDE 捕获并跳过该 tick（不中断回测）
-# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
+# [TESTS] tests/pf_core/test_intraday_surge_fall_strategy.py; tests/pf_core/test_orderbook_imbalance_strategy.py; tests/pf_core/test_t_rules_config.py; tests/pf_core/test_vwap_reversion_strategy.py  # 2026-09-05 STEWARD B20 重锚：AI-00 修复脚本 src. 前缀 bug 漏网（AST/patch 直查 4 个测试）
 # [A_module] module_id=MOD-L05-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """

@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] ValueError on invalid execution model string
-# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
+# [TESTS] tests/automation/test_auto_split.py; tests/blueprint/test_blueprint_decomposer.py; tests/governance/integration/test_autopilot.py; tests/governance/shared/test_boot_hooks_unlock.py; tests/llm_security/test_db.py  # 2026-09-05 STEWARD B20 重锚：AI-00 修复脚本 src. 前缀 bug 漏网（AST/patch 直查 5 个测试）
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

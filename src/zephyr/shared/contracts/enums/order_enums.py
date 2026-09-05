@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
+# [TESTS] tests/compliance/test_manipulation_realtime_monitor.py; tests/compliance/test_runtime_wiring.py; tests/ex_core/adapters/test_okx_broker.py; tests/ex_core/test_aggregate_root_manager.py; tests/ex_core/test_async_fill_dispatcher.py  # 2026-09-05 STEWARD B20 重锚：AI-00 修复脚本 src. 前缀 bug 漏网（AST/patch 直查 42 个测试）
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """

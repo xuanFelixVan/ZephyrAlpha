@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] returns BootResult; logs error on failure; never raises during boot; run_health_checks returns dict
-# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
+# [TESTS] tests/f_lifecycle/test_f5_auto_shutdown.py; tests/f_lifecycle/test_f5_auto_startup.py; tests/f_lifecycle/test_f5_e2e_lifecycle.py; tests/f_lifecycle/test_f5_event_startup.py  # 2026-09-05 STEWARD B20 重锚：AI-00 修复脚本 src. 前缀 bug 漏网（AST/patch 直查 4 个测试）
 # [A_module] module_id=MOD-INF-022 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
