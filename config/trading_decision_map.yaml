@@ -37,6 +37,9 @@ nodes:
     strategy_mounts: []
 
   # L1 四路传感器阵列（D6：指数↔情绪双向、短线情绪领先）
+  # 因子层缺口说明：情绪类因子在 REG-FCT-001 仅到 family 级（family_id=sentiment），
+  #   尚无 FCT-* 级条目（涨停家数/炸板率/晋级率等）——factor_refs 留空=地图缺口节点，
+  #   补登因子后回填引用（缺口检测语义）
   - node_id: TDM-E-L1-S1
     name_zh: 大盘指数传感器
     market: cn_a
@@ -46,7 +49,7 @@ nodes:
     point: 盘前
     decision_question: 指数趋势/位置如何（数据面）
     factor_refs: []
-    data_refs: []
+    data_refs: [DS-150]
     module_ref: null
     strategy_mounts: []
 
@@ -59,7 +62,7 @@ nodes:
     point: 盘中
     decision_question: 涨停/跌停/炸板/连板梯队显示的参与度如何（广度面）
     factor_refs: []
-    data_refs: []
+    data_refs: [DS-082]
     module_ref: null
     strategy_mounts: []
 
@@ -72,7 +75,7 @@ nodes:
     point: 盘前
     decision_question: 昨日涨停溢价/晋级率显示的投机情绪如何（结果面，短线领先）
     factor_refs: []
-    data_refs: []
+    data_refs: [DS-082, DS-107]
     module_ref: null
     strategy_mounts: []
 
@@ -83,9 +86,9 @@ nodes:
     layer: L1
     node_type: sensor
     point: 盘前
-    decision_question: 市场波动状态是否允许正常仓位（可选通道）
+    decision_question: 市场波动状态是否允许正常仓位（可选通道；中国VIX表未登记=数据缺口）
     factor_refs: []
-    data_refs: []
+    data_refs: [DS-150]
     module_ref: null
     strategy_mounts: []
 
@@ -96,9 +99,13 @@ nodes:
     layer: L1
     node_type: aggregation
     point: 盘前
-    decision_question: 综合四路传感器判定市场状态，输出预算/机会窗口/状态标签
+    # 灰度判定（Owner 裁定：软分档非硬阈值）+ 冲突仲裁三规则（v1.2 定稿，依据见 69 号备忘录 §2.7）
+    decision_question: >-
+      综合四路传感器输出状态分布（灰度隶属度非单一标签，六段列轴）；
+      按历史可靠度加权合成（C3 归因反馈逐月调权，初始等权）；
+      冲突度=分布熵，熵高→输出分裂市标记+自动降档（机构规则：降仓不选边）+提示 Owner 人工接管（conformal 弃权）
     factor_refs: []
-    data_refs: []
+    data_refs: [DS-098]
     module_ref: null
     strategy_mounts: []
 
@@ -360,14 +367,42 @@ edges:
   - {from_node: TDM-C-L3, to_node: TDM-C-L4, edge_type: sequence}
 
 state_matrix:
-  # 列轴 V0 占位（强势/震荡/弱势）；情绪周期细化（启动/发酵/高潮/分歧/退潮/冰点）留血肉阶段
-  states: [强势, 震荡, 弱势]
+  # 列轴六段定稿（v1.2，Owner 裁定"机构命名+修复期独立成段"）
+  # 命名=Wyckoff 阶段论+行为金融标准术语（机构通用），MarketTriage 六态同构验证：
+  #   capitulation 恐慌投降(冰点) / accumulation 吸筹修复(修复期·震荡筹码交换) /
+  #   ignition 点火启动 / expansion 发酵扩散 / euphoria 亢奋高潮 / distribution 派发退潮
+  # 灰度语义：社区阈值（涨停60/120家、炸板率35%、晋级率60% 等）= 隶属度0.5锚点，
+  #   非硬边界；实际判定=因子滚动分位→加权合成→状态分布（主状态+灰度），见 TDM-E-L1-AGG
+  states: [capitulation, accumulation, ignition, expansion, euphoria, distribution]
   cells:
-    - {node_id: TDM-E-L1, state: 强势, mounted: [], confidence: proposed}
-    - {node_id: TDM-E-L1, state: 震荡, mounted: [], confidence: proposed}
-    - {node_id: TDM-E-L1, state: 弱势, mounted: [], confidence: proposed}
-    - {node_id: TDM-E-L4, state: 强势, mounted: [daban-sleeve], confidence: proposed}
-    - {node_id: TDM-P-P2, state: 震荡, mounted: [intraday-surge-fall, orderbook-imbalance, vwap-reversion], confidence: proposed}
+    # L1 总闸：六段各输出预算/姿态细则（格子内容待填，proposed）
+    - {node_id: TDM-E-L1, state: capitulation, mounted: [], confidence: proposed}
+    - {node_id: TDM-E-L1, state: accumulation, mounted: [], confidence: proposed}
+    - {node_id: TDM-E-L1, state: ignition, mounted: [], confidence: proposed}
+    - {node_id: TDM-E-L1, state: expansion, mounted: [], confidence: proposed}
+    - {node_id: TDM-E-L1, state: euphoria, mounted: [], confidence: proposed}
+    - {node_id: TDM-E-L1, state: distribution, mounted: [], confidence: proposed}
+    # L4 买卖点：打板只进点火确认后的三档（发酵=1进2主战场，高潮=警惕高开不追，退潮/冰点/修复不进）
+    - {node_id: TDM-E-L4, state: ignition, mounted: [daban-sleeve], confidence: proposed}
+    - {node_id: TDM-E-L4, state: expansion, mounted: [daban-sleeve], confidence: proposed}
+    - {node_id: TDM-E-L4, state: euphoria, mounted: [daban-sleeve], confidence: proposed}
+    - {node_id: TDM-E-L4, state: capitulation, mounted: [], confidence: proposed}
+    - {node_id: TDM-E-L4, state: accumulation, mounted: [], confidence: proposed}
+    - {node_id: TDM-E-L4, state: distribution, mounted: [], confidence: proposed}
+    # P2 做T：修复期（震荡筹码交换）为主战场 + 发酵期次之；高潮/退潮/冰点不做
+    - {node_id: TDM-P-P2, state: accumulation, mounted: [intraday-surge-fall, orderbook-imbalance, vwap-reversion], confidence: proposed}
+    - {node_id: TDM-P-P2, state: expansion, mounted: [intraday-surge-fall, orderbook-imbalance, vwap-reversion], confidence: proposed}
+    - {node_id: TDM-P-P2, state: capitulation, mounted: [], confidence: proposed}
+    - {node_id: TDM-P-P2, state: ignition, mounted: [], confidence: proposed}
+    - {node_id: TDM-P-P2, state: euphoria, mounted: [], confidence: proposed}
+    - {node_id: TDM-P-P2, state: distribution, mounted: [], confidence: proposed}
+    # C1 组合预算：六段预算切分细则待填（sleeve 权重随段位再平衡）
+    - {node_id: TDM-F-C1, state: capitulation, mounted: [], confidence: proposed}
+    - {node_id: TDM-F-C1, state: accumulation, mounted: [], confidence: proposed}
+    - {node_id: TDM-F-C1, state: ignition, mounted: [], confidence: proposed}
+    - {node_id: TDM-F-C1, state: expansion, mounted: [], confidence: proposed}
+    - {node_id: TDM-F-C1, state: euphoria, mounted: [], confidence: proposed}
+    - {node_id: TDM-F-C1, state: distribution, mounted: [], confidence: proposed}
 
 portfolio_plan:
   # 整装仿真组合方案（v1.1 新增，Owner 终极定位：地图=整装仿真系统的蓝图）
@@ -378,12 +413,12 @@ portfolio_plan:
   sleeves:
     - {strategy_ref: default-equity,     weight: 0.20, activation_state: null}   # 默认多头=底仓
     - {strategy_ref: multifactor-sleeve, weight: 0.20, activation_state: null}
-    - {strategy_ref: daban-sleeve,       weight: 0.15, activation_state: 强势}   # 打板只进攻击档
+    - {strategy_ref: daban-sleeve,       weight: 0.15, activation_state: [ignition, expansion, euphoria]}   # 打板=点火确认后三档
     - {strategy_ref: eventdriven-sleeve, weight: 0.10, activation_state: null}
     - {strategy_ref: topn-momentum,      weight: 0.10, activation_state: null}
-    - {strategy_ref: intraday-surge-fall, weight: 0.10, activation_state: 震荡}  # 做T=持仓流震荡档
-    - {strategy_ref: orderbook-imbalance, weight: 0.075, activation_state: 震荡}
-    - {strategy_ref: vwap-reversion,      weight: 0.075, activation_state: 震荡}
+    - {strategy_ref: intraday-surge-fall, weight: 0.10, activation_state: [accumulation, expansion]}  # 做T=修复期主战场+发酵期
+    - {strategy_ref: orderbook-imbalance, weight: 0.075, activation_state: [accumulation, expansion]}
+    - {strategy_ref: vwap-reversion,      weight: 0.075, activation_state: [accumulation, expansion]}
   aggregator:                        # 组合聚合规则（C2，proposed 占位）
     max_total_position: 1.0
     max_single_sleeve: 0.25

@@ -5,7 +5,7 @@ title: 交易决策地图（Trading Decision Map）——决策内容索引层�
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.1.0"
+version: "1.2.0"
 date: 2026-09-04
 topic: trading_decision_map
 scope: 07_trading_decision_architecture
@@ -99,6 +99,27 @@ L1 结构（D4/D6，Owner 裁定+行业修正）：**四路同层级传感器阵
 | 单元测试 | `tests/trading/test_decision_map.py` | 加载/校验/缺口检测全路径 |
 
 **V0 明确不做**：API 端点（V1）、前端视图（V1）、入 DB（V2，Q8 待定）、动态状态判别（V2）、ClickHouse/depgraph 实时缺口检查（V1）。
+
+### 2.7 列轴定稿与灰度判定（v1.2.0，Owner 2026-09-05 裁定）
+
+**列轴六段（Owner 实战 6 段+机构命名）**：`capitulation 恐慌投降（冰点）→ accumulation 吸筹修复（修复期·震荡筹码交换）→ ignition 点火启动 → expansion 发酵扩散 → euphoria 亢奋高潮 → distribution 派发退潮`。
+命名=Wyckoff 阶段论+行为金融标准术语；**MarketTriage 六态 regime 仪表盘**（2026-03，366 资产实盘）同构验证——其原话"三四态模型错过过渡带，而过渡带正是钱被赚走和亏掉的地方"，修复期独立成段获机构实证支持。
+
+**灰度判定（Owner 裁定"软分档非硬阈值"）**：三层架构，业界标准=CNN Fear & Greed 家族连续分位法——
+1. 因子层：每因子 0-100 滚动分位得分（连续滑动，非二值化）
+2. 合成层：得分×历史可靠度权重 → 总分/状态分布（如"高潮 0.55/发酵 0.30/修复 0.15"）
+3. 分档层：六段隶属度锚点=社区公开阈值（涨停 60/120 家、炸板率 35%、晋级率 60%，隶属度 0.5 交叉点），过渡带内多段共享隶属度
+
+**冲突仲裁三规则（L1-AGG，Q9 收口）**：
+1. 多数表决基准（国泰海通涨停板情绪择时模型：因子阈值信号多数表决）
+2. **历史可靠度加权**——四路传感器按各自历史判准率动态加权（C3 归因反馈闭环兼任传感器可靠度养成器，与 arXiv 2608.13108 historical-experience weighting 同构）
+3. **冲突度=状态分布熵**：熵高→输出"分裂市"标记+自动降档（机构规则"降仓不选边"落地）+提示 Owner 人工接管（conformal 弃权思想，arXiv 2607.27143）
+
+**算法可插拔分层**（列轴词汇固定，分类器进化不返工）：V1=规则打分器（雪球阈值+国泰海通表决）→ V1.5=分位打分合成（灵犀指数法）→ V2=GMM/Wasserstein HMM（arXiv 2603.04441，2026-02 最先进可解释 regime 模型）。
+
+**传感器数据引用定稿**：S1 指数→DS-150（日K）；S2 内部结构→DS-082（涨跌停价，涨停/跌停/炸板统计地基）；S3 赚钱效应→DS-082+DS-107（新闻情绪窗）；S4 波动率→DS-150（VIX 表未登记=数据缺口）；AGG→DS-098（两融杠杆环境）。因子层缺口：情绪类因子在 REG-FCT-001 仅 family 级（sentiment），FCT-* 级条目未建——factor_refs 留空=缺口节点，补登后回填。
+
+**矩阵格定稿（24 格，全 proposed）**：L1×6（预算细则待填）+ L4×6（daban 仅 ignition/expansion/euphoria）+ P2×6（三做T 仅 accumulation/expansion）+ C1×6（预算切分待填）。PP-001 sleeves activation_state 升级为多状态列表（daban 3 段/做T 2 段，校验器 R12 同步支持 str|tuple）。
 
 ## 3. 考虑过的替代方案与拒绝理由
 

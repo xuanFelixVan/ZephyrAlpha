@@ -169,7 +169,8 @@ class Sleeve:
 
     strategy_ref: str
     weight: float
-    activation_state: str | None = None  # null=全状态激活；否则须在 state_matrix.states 内
+    # v1.2：null=全状态激活；str=单状态；tuple=多状态（六段列轴下打板跨 3 段/做T跨 2 段）
+    activation_state: str | tuple[str, ...] | None = None
 
 
 @dataclass(frozen=True)
@@ -287,7 +288,12 @@ def load_decision_map(path: Path) -> DecisionMap:
             Sleeve(
                 strategy_ref=str(s["strategy_ref"]),
                 weight=float(s["weight"]),
-                activation_state=s.get("activation_state"),
+                # v1.2：list→tuple（frozen dataclass 可哈希），str 原样
+                activation_state=(
+                    tuple(str(x) for x in s["activation_state"])
+                    if isinstance(s.get("activation_state"), list)
+                    else s.get("activation_state")
+                ),
             )
             for s in pp.get("sleeves", []) or []
         )
@@ -493,13 +499,21 @@ def validate_decision_map(
                 if not (0 < s.weight <= 1.0):
                     add("error", "R12", plan.plan_id, f"sleeve {s.strategy_ref} weight 越界: {s.weight}")
                 weight_sum += s.weight
-                if s.activation_state is not None and s.activation_state not in dm.state_matrix.states:
-                    add(
-                        "error",
-                        "R12",
-                        plan.plan_id,
-                        f"sleeve {s.strategy_ref} activation_state 不在列轴: {s.activation_state}",
+                # v1.2：activation_state 支持 str 或 tuple[str, ...]（多状态激活）
+                if s.activation_state is not None:
+                    states_required = (
+                        (s.activation_state,)
+                        if isinstance(s.activation_state, str)
+                        else tuple(s.activation_state)
                     )
+                    for st in states_required:
+                        if st not in dm.state_matrix.states:
+                            add(
+                                "error",
+                                "R12",
+                                plan.plan_id,
+                                f"sleeve {s.strategy_ref} activation_state 不在列轴: {st}",
+                            )
             if weight_sum > 1.0 + 1e-9:
                 add("error", "R12", plan.plan_id, f"sleeve 权重总和 {weight_sum:.4f} > 1.0")
         if plan.confidence not in _CONFIDENCE:
