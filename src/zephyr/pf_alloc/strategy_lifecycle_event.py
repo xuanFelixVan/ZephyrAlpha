@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/contracts_blueprint.md
 # [MODULE] zephyr.pf_alloc.strategy_lifecycle_event
 # [DOMAIN] D_PF_ALLOC
 # [DEPENDENCIES] zephyr.shared.contracts.strategy_lifecycle_event

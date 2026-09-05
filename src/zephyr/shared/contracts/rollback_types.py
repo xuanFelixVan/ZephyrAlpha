@@ -16,7 +16,7 @@
 # [TTL] permanent
 
 """
-[BLUEPRINT] MOD-INF-016-CONTRACTS | 03_modules/_cross_layer/shared-core/contracts_blueprint.md
+[BLUEPRINT] MOD-INF-016-CONTRACTS | 03_modules/_cross_layer/shared_core/contracts_blueprint.md
 
 G-CT-003 — RollbackResult Pydantic V2 BaseModel 回滚结果数据结构.
 Canonical home for rollback result types.
