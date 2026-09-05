@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.gov_enforcement.commit_gates.arch_reference_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._reference_helpers (get_head_content, scan_file_violations, load_head_registered_nums, collect_new_refs_by_file, check_atomicity); zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
+# [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._reference_helpers (get_head_content, scan_file_violations, load_head_registered_nums, collect_new_refs_by_file, check_atomicity); zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
@@ -107,10 +107,7 @@ from zephyr.gov_enforcement.commit_gates._reference_helpers import (
     load_head_registered_nums,
     scan_file_violations,
 )
-from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (
-    GateSpec,
-    is_test_exempt,
-)
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
 logger = logging.getLogger(__name__)
 
