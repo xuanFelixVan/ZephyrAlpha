@@ -17,7 +17,7 @@ ZephyrAlpha 是 **100% AI 开发** 项目。AI 每次会话都是"冷启动"，�
 
 ---
 
-## 1. 密钥文件分布（6 个文件，74 个 KEY）
+## 1. 密钥文件分布（8 个服务文件；KEY 数以 config/secret_registry.yaml 实测为准）
 
 ```
 ZephyrAlpha/
@@ -31,19 +31,25 @@ ZephyrAlpha/
     ├── .env.redis                ← Redis 凭证（因子缓存）
     ├── .env.qmt                  ← QMT 量化交易终端
     ├── .env.ch_backup            ← ClickHouse 备份凭证（Hyper-V VM）
+    ├── .env.cryptoquant          ← CryptoQuant 链上指标凭证（AI-01 补登 2026-09-05，registry since 2026-08-28）
+    ├── .env.glassnode            ← Glassnode 链上指标凭证（AI-01 补登 2026-09-05，registry since 2026-08-28）
     └── secret_registry.yaml      ← 结构化密钥声明注册表
 ```
 
 ### 文件分工逻辑
 
-| 文件 | 用途 | KEY 数 | 加载方式 | 读取接口 |
-|---|---|---|---|---|
-| `.env` | 第三方 API token、运行时密钥 | 38 | `zephyr/__init__.py` **自动加载**到 `os.environ` | `get_required_secret("KEY")` |
-| `config/.env.postgres` | PostgreSQL 凭证 | 9 | **手动加载** | `get_service_secret("KEY", "postgres")` |
-| `config/.env.clickhouse` | ClickHouse 凭证 | 10 | **手动加载** | `get_service_secret("KEY", "clickhouse")` |
-| `config/.env.redis` | Redis 凭证 | 7 | **手动加载** | `get_service_secret("KEY", "redis")` |
-| `config/.env.qmt` | QMT 交易终端 | 4 | **手动加载** | `get_service_secret("KEY", "qmt")` |
-| `config/.env.ch_backup` | CH 备份凭证 | 6 | **手动加载** | `get_service_secret("KEY", "ch_backup")` |
+| 文件 | 用途 | 加载方式 | 读取接口 |
+|---|---|---|---|
+| `.env` | 第三方 API token、运行时密钥 | `zephyr/__init__.py` **自动加载**到 `os.environ` | `get_required_secret("KEY")` |
+| `config/.env.postgres` | PostgreSQL 凭证 | **手动加载** | `get_service_secret("KEY", "postgres")` |
+| `config/.env.clickhouse` | ClickHouse 凭证 | **手动加载** | `get_service_secret("KEY", "clickhouse")` |
+| `config/.env.redis` | Redis 凭证 | **手动加载** | `get_service_secret("KEY", "redis")` |
+| `config/.env.qmt` | QMT 交易终端 | **手动加载** | `get_service_secret("KEY", "qmt")` |
+| `config/.env.ch_backup` | CH 备份凭证 | **手动加载** | `get_service_secret("KEY", "ch_backup")` |
+| `config/.env.cryptoquant` | CryptoQuant 链上指标凭证（未配置时 onchain_provider 走 mock 序列） | **手动加载** | `get_service_secret("KEY", "cryptoquant")` |
+| `config/.env.glassnode` | Glassnode 链上指标凭证（未配置时 onchain_provider 走 mock 序列） | **手动加载** | `get_service_secret("KEY", "glassnode")` |
+
+> **KEY 数真源唯一（AI-01 审计治本 2026-09-05）**：各文件 KEY 数一律以 [`config/secret_registry.yaml`](config/secret_registry.yaml) 实测为准（2026-09-05 实测：8 文件共 100 KEY，其中 `.env`=62）。本表不再手写计数——手写计数=第二真源必漂移（实证：本文档原载"6 文件/74 KEY/.env=38"，与 registry 实测 100/62 漂移）。
 
 > **注**：`get_service_secret()`（裁定 S-2，Phase 2-S2 已落地）按服务名便捷读取基础设施凭证，底层等价 `get_secret_from_file("KEY", "config/.env.{service}")`。
 
@@ -158,6 +164,8 @@ echo "NEW_API_KEY=" >> .env.example
     since: "2026-08-04"
 ```
 
+> 注（AI-01 审计 2026-09-05）：新增**服务级 .env 文件**（新 service）时，MUST 在 Step 3 同步本文档 §1 文件分布表补行（无门禁强制，靠流程纪律）；KEY 计数一律不手写，以 registry 实测为准。
+
 ---
 
 ## 4. 密钥安全规范（TRAE-031 SEC-001~006 摘要）
@@ -242,3 +250,4 @@ echo "NEW_API_KEY=" >> .env.example
 |---|---|---|
 | 2026-08-04 | 1.0.0 | 初始版本（裁定 S-1 Phase 1 施工）|
 | 2026-08-04 | 1.1.0 | 同步 Phase 2-S2/S3/Phase 3 落地状态：§2.1 决策树清理 Phase 临时表述；§2.3 补全三道 gate（NO-BARE-GETENV diff-aware + SECRET-REGISTRY-CONSISTENCY + NO-SECRET-HARDCODE）；§6 标注 9 处存量违规已整改完成 |
+| 2026-09-05 | 1.2.0 | AI-01 审计治本：§1 手写 KEY 计数删除（第二真源漂移实证 74→100），KEY 数改为指向 secret_registry.yaml 实测；补 cryptoquant/glassnode 两服务文件（2026-08-28 已登记 registry）；§3 补新服务文件文档同步纪律 |

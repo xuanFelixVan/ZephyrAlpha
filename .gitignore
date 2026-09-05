@@ -440,6 +440,11 @@ config/.env.qmt
 # H1 Redis 业务热缓存凭据 (INFRA-DB-007, MOD-H1_REDIS_HOT)
 # Contains connection credentials; never commit to repository
 config/.env.redis
+# AI-01 审计收口（2026-09-05）：通配覆盖全部服务凭证文件，杜绝枚举式遗漏复发
+# （实证缺口：config/.env.cryptoquant / config/.env.glassnode 已于 2026-08-28 登记
+#  secret_registry.yaml 但无 ignore 规则，文件落盘即有误入库泄露面；
+#  亦覆盖 config/.env.postgres.test 测试配置。当前无 tracked config/.env* 文件，规则安全）
+config/.env.*
 # Backup runtime state (MOD-INF-043; pure runtime artifact — a tracked state file
 # gets reset by concurrent worktree merges -> 8h interval check fails -> backup storm)
 data/databases/backup_state.json

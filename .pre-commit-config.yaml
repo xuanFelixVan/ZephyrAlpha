@@ -633,7 +633,7 @@ repos:
         always_run: false
         files: "^docs/03_modules/.*blueprint\\.md$"
         stages: [manual]
-        description: "全库 SSoT 唯一真源一致性校验（P0 无效layer/重复module_id/死链/命名冲突硬阻断），GOV-DOC-001 §4.2 强制执行层"
+        description: "蓝图物理位置与归属链校验（AI-01 审计修正 description 失真 2026-09-05）——P0-1 belongs_to 缺失 / P0-2 cross_layer 物理错位 / P0-3 layer 与目录前缀不匹配 / P0-4 金字塔缺腰(域覆盖度) / P0-5 废弃 layer 格式，PS-STD-005 §4+§6 强制执行层"
 
       # ── GATE-SCRIPT-Q: 脚本质量合并门禁（原 GATE-SQ + GATE-DD07 二合一）──
       # 合并说明：2 个 scripts/governance 质量门禁合并为单 hook，run_gate_chain 顺序执行：
@@ -830,9 +830,6 @@ repos:
         description: "post-commit 检测批次触碰 rules/contracts → 自动执行重钉链（失败回滚派生产物），warn-only 不阻断 commit 后流程"
 
       # ── GATE-C1 已删除（脚本 validate_ssot_status.py 已归档至 scripts/_archive/，status 校验由 validate_ssot.py 覆盖）──
-
-      # ── GATE-C2: 契约-代码双写漂移阻断（盲点 C2 修复）──
-      # 对标：盲点 C2 — AI 改 YAML 忘 codegen → 契约与代码漂移 → 硬阻断
 
       # ── GATE-MCP: MCP Tool Contract 一致性校验（mod_inf_013 §9 R3）──
       # 检测 tool_contracts.yaml ↔ 代码 register_tool 声明不一致

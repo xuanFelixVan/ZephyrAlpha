@@ -86,7 +86,9 @@ _tmp_*.py
 *.key
 *.pem
 *.cert
-config/.env.postgres
+# AI-01 审计收口（2026-09-05）：config/.env.* 全部服务凭证文件禁入 build context
+# （原仅排除 .env.postgres，clickhouse/redis/qmt/ch_backup/cryptoquant/glassnode 可入上下文）
+config/.env.*
 
 # === AI 草稿与工作目录 ===
 .aidrafts/
