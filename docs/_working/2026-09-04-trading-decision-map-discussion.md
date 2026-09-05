@@ -382,4 +382,15 @@ Owner 要求：将"①大盘指数 ②市场情绪双传感器+指数→情绪�
 
 ---
 
+## 16. 第九轮讨论：E-L2 板块层启动+节点规范+实盘治理阶梯（2026-09-06）
+
+**E-L2 Step 1 盘点**（SOP Step 1 首次执行）：22 号板块轮动 spec v1.9.7（active 公式级定稿，对标 11 家 2026 机构研报）=吸收对象；sector_analyzer（MOD-SIG-026 production）=引用；BM-SEL-08/09/22/25=锚点；板块数据层（880xxx 日K/sector_meta 1080 行；concept_sector 0 行缺口）=引用；22 号定位裁定"板块=选股输入特征非独立层"与地图 E-L2 独立节点需语义精确化（注意力分配 vs 打分维度）。
+
+**三项裁定**：
+- **D16 节点规范 v1.3+合并政策（追认）**：地图=唯一动作流程真源（"这个项目怎么交易的就看这张图"），同等职责文档一律吸收；节点七要素（名称/决策问题/判据/动作/算法引用/优先级/置信度）+五联锚（strategy/factor/data/algo/module）；algo_refs 指向算法库条目（REG-IND-001 IND-* / REG-EXA-001 EXA-*，条目自身索引代码）非文档，公式细节走 doc_ref；父子只写 parent_node，上下游用 edges，rank 字段删除（树位置自动推导）。
+- **D17 字段审计 v1.4**：四路查证（DMN 国际标准/交易计划模板/2025-26 agent 规划论文 VMAO·PseudoAct·SkillReranker/项目注册表）收敛 4 新字段：activation 时效窗（找回 D3 丢失的时点属性）/invalidation 失效条件/ai_autonomy/fallback；success_criteria 与 output_ref 判定不加（与 action 重叠）。
+- **D18 实盘治理阶梯（Owner 终裁，硬约束修订）**：原"AI 禁止无人工审批实盘操作"演进为五档治理阶梯 shadow→paper→pilot→daily_review→auto；换档=唯一人工审批点（Owner dated 裁定，AI 不可自动升档，熔断只降不升）；档内单笔执行不设审批；kill switch 全局常驻（X-R1 承载）；初始档 paper。机构依据：MiFID II RTS 6 Art.5(2)（部署授权）/Art.14(2)（kill switch 强制）/量化社区 staged rollout（promote 需 sign-off）；SEC 15c3-5 事前自动控制（非逐单人工审批）。**落地**：宪章 B-007 改写+约束六熔断落点微调+layering SOP v1.2.0（§2.2.1）+项目记忆同步。
+
+---
+
 *本文件为讨论备忘录，讨论收敛并裁定后，正式设计应迁入 architecture_model 或相应设计目录，本文件届时归档。*
