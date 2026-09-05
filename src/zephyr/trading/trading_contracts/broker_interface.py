@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.trading.trading_contracts.broker_interface
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES] zephyr.trading.trading_contracts.execution.fill; zephyr.trading.trading_contracts.execution.order; zephyr.trading.trading_contracts.execution.position
-# [CONSUMERS]
+# [DEPENDENCIES] zephyr.shared.contracts.fill; zephyr.shared.contracts.order; zephyr.shared.contracts.position
+# [CONSUMERS] zephyr.ex_core.order_execution_saga; zephyr.ex_core.order_manager; zephyr.ex_core.risk_layer_orchestrator; zephyr.ex_core.trading_session; zephyr.ex_core.adapters.miniqmt_broker; zephyr.ex_core.adapters.okx_broker; zephyr.ex_core.adapters.qmt_file_bridge_broker; zephyr.ex_core.adapters; zephyr.governance.adapters.simulation_broker; zephyr.governance.adapters
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none
