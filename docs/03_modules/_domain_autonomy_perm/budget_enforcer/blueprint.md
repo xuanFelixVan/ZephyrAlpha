@@ -45,8 +45,8 @@ consumer_registry:
     consumers: ["MOD-CONTEXT_ENGINE Context Engine", "MOD-TASK_SYSTEM Task System", "MOD-INF-015 System Telemetry"]
   - tier: "optional"
     consumers: ["MOD-RESOURCE_OPTIMIZATION_ENGINE Resource Optimization", "MOD-INF-034 Model Capability Exam"]
-actual_disk_path: "src/zephyr/governance/budget_engine.py"
-last_updated: "2026-05-18"
+actual_disk_path: "src/zephyr/governance/ops_governance/budget_engine.py"
+last_updated: "2026-09-05"
 last_verified: "2026-05-18"
 generation: 3
 stability: evolving

@@ -3,7 +3,7 @@ module_id: MOD-POS-021
 title: "Firm层风险聚合器蓝图 — 求和+硬上限裁剪+冲突净额（A模型·组合汇总层）"
 doc_type: blueprint
 status: Active
-version: "0.1.5"
+version: "0.1.6"
 design_maturity: production
 build_status: production
 ttl: permanent
@@ -201,10 +201,12 @@ if net_weight ≤ 0: 标记为清仓/减仓（target_weight=0 或负值转卖出
 
 ## 5. 错误契约
 
-- `AggregationError`: 聚合计算异常（TargetPortfolio 列表为空、strategy_id 重复、权重非法（负值/NaN）、冲突标的净额计算矛盾）
-- `ConstraintViolationError`: 裁剪后仍超限（不变量被破坏，需告警——理论上不应发生，因裁剪只减不增）
+> **实现现状（2026-09-05 AI-AUDIT18-001 实证）**：实现 src/zephyr/position/core/firm_risk_aggregator.py 的 [ERROR_CONTRACT] 以码号预留（ZA-POS-0021/0023），**尚未定义独立异常类**，校验路径未接线。
 
-> 注：两异常类名与实现 [ERROR_CONTRACT] 对齐；其错误码在 error_code_registry.yaml 的独立登记需求已登记共享收口清单（ZA-POS-0021/0023 号段冲突待裁定）。
+- `ZA-POS-0021`（预留）: 聚合计算异常——TargetPortfolio 列表为空、strategy_id 重复、权重非法（负值/NaN）、冲突标的净额计算矛盾
+- `ZA-POS-0023`（预留）: 裁剪后仍超限（不变量被破坏，需告警——理论上不应发生，因裁剪只减不增）
+
+> 注：ZA-POS-0021/0023 号段在 error_code_registry.yaml 现登记为 correlation_regime_monitor/position_sizing_engine 家族，归属裁定与专用异常类补登需求已登记共享收口清单。
 
 ## 6. 测试规划
 
