@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_enforcement 内部模块
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 包仅聚合 rule_* 引擎实现（rule_engine/rule_canary_manager/rule_debt_auditor/rule_shadow_runner/rule_watcher）
+# [INVARIANTS] 包仅聚合 rule_* 引擎实现（rule_engine/rule_canary_manager/rule_debt_auditor/rule_shadow_runner）
 # [MODIFY-GUARD] blueprint.md; _registry.yaml
 # [STABILITY] stable
 # [SAFETY] L
@@ -24,7 +24,7 @@ rule_engine package — 规则引擎模块集合（ARCH-042 阶段1 拆分产物
 # 层: 输入
 # - id: I1
 #   name: rule_* 引擎子模块
-#   fields: rule_engine / rule_canary_manager / rule_debt_auditor / rule_shadow_runner / rule_watcher 五个实现文件
+#   fields: rule_engine / rule_canary_manager / rule_debt_auditor / rule_shadow_runner 四个实现文件
 #   code: __all__ L22
 # 层: 算法
 # - id: A1
@@ -47,4 +47,4 @@ rule_engine package — 规则引擎模块集合（ARCH-042 阶段1 拆分产物
 # A1 --> O1
 """
 
-__all__: list[str] = ["rule_canary_manager", "rule_debt_auditor", "rule_engine", "rule_shadow_runner", "rule_watcher"]
+__all__: list[str] = ["rule_canary_manager", "rule_debt_auditor", "rule_engine", "rule_shadow_runner"]

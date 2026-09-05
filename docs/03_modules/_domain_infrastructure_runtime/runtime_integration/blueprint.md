@@ -197,7 +197,7 @@ design_maturity: production
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-002` 的 82 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-002` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -2013,8 +2013,6 @@ STEP 3: 拆分后验证
 | `src/zephyr/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/config/app_config.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/database_service.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/hooks/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/infrastructure/hooks/event_hook.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/runtime/gate_coordinator.py` | ✅ 已实现 | |
 | `src/zephyr/orchestrator/core/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/orchestrator/core/task_queue.py` | ✅ 已实现 | |

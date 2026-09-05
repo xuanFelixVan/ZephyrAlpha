@@ -8593,6 +8593,18 @@ creation_tokens:
   token: auto-business-agent-entry-20260822
   created_by: AI-P3-W4-14
   capability: execution_layer_agents
+- file: src/zephyr/autonomy_core/agents/_registration_status.py
+  token: auto-business-agent-registration-status-20260905
+  created_by: AI-GW-B16-20260905
+  capability: execution_layer_agents
+- file: src/zephyr/autonomy_core/agents/_algorithm_experiment.py
+  token: auto-algorithm-agent-experiment-20260905
+  created_by: AI-GW-B16-20260905
+  capability: execution_layer_agents
+- file: src/zephyr/autonomy_core/agents/_self_iteration_review.py
+  token: auto-self-iteration-agent-review-20260905
+  created_by: AI-GW-B16-20260905
+  capability: execution_layer_agents
 - file: src/zephyr/autonomy_core/agents/algorithm_agent_entry.py
   token: auto-algorithm-agent-entry-20260822
   created_by: AI-P3-W4-14

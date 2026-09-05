@@ -4115,13 +4115,6 @@ ownership:
     existence: 'generated'
     ownership_judgment: '本模块'
 
-  - path: 'src/zephyr/gov_enforcement/rule_enforcement/rule_engine/rule_watcher.py'
-    owner_blueprint: 'MOD-GOV-019'
-    claim_type: 'depgraph_node'
-    declared_in: ''
-    existence: 'generated'
-    ownership_judgment: '本模块'
-
   - path: 'src/zephyr/gov_enforcement/rule_enforcement/rule_engine/__init__.py'
     owner_blueprint: 'MOD-RULE_ENGINE'
     claim_type: 'depgraph_node'
@@ -4854,20 +4847,6 @@ ownership:
     owner_blueprint: 'MOD-INF-016'
     claim_type: 'depgraph_node'
     declared_in: 'docs/03_modules/_cross_layer/shared_core/blueprint.md'
-    existence: 'generated'
-    ownership_judgment: '本模块'
-
-  - path: 'src/zephyr/infrastructure/hooks/__init__.py'
-    owner_blueprint: 'MOD-INF-002'
-    claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md'
-    existence: 'generated'
-    ownership_judgment: '本模块'
-
-  - path: 'src/zephyr/infrastructure/hooks/event_hook.py'
-    owner_blueprint: 'MOD-INF-002'
-    claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md'
     existence: 'generated'
     ownership_judgment: '本模块'
 

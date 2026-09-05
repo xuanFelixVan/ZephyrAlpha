@@ -185,7 +185,6 @@ __all__ = [
     "rule_debt_auditor",
     "rule_engine",
     "rule_shadow_runner",
-    "rule_watcher",
     "slo_contract",
 ]
 
