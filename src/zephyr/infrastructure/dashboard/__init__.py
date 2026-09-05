@@ -1,6 +1,6 @@
 # [MODULE] zephyr.infrastructure.dashboard
 # [DOMAIN] D_INFRA_RUNTIME
-# [BLUEPRINT] N/A (namespace placeholder -- no dedicated blueprint)
+# [BLUEPRINT] MOD-L08-001 (namespace placeholder -- no dedicated blueprint)
 # [A_module] module_id=MOD-INF-dashboard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """
 

@@ -1,6 +1,6 @@
 # [MODULE] zephyr.infrastructure.hooks
 # [DOMAIN] D_INFRA_RUNTIME
-# [BLUEPRINT] N/A (retirement candidate package -- zero production importers, AI-14 audit 2026-09-05)
+# [BLUEPRINT] MOD-INF-002 (retirement candidate package -- zero production importers, AI-14 audit 2026-09-05)
 # [A_module] module_id=MOD-INF-hooks | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md | §
 # [TTL] permanent
