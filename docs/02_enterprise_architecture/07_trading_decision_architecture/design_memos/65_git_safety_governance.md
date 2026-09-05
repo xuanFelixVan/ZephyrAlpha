@@ -48,7 +48,7 @@ related_modules:
 
 > 本备忘是 2026-08-11 灾难事件（AI 执行 `git clean -fd` 物理删除多个 untracked 文件）后的**根因分析 + 调研报告 + 裁定 + 治本施工方案**。
 > **开发平台约束**：本项目 100% 围绕 **Trae IDE（编译器）** 开发——AI session 经 RunCommand（PowerShell 5.1）执行命令，Trae 不支持 PreToolUse hooks，AI 规则经 `.trae/rules/` 注入。所有防护层围绕此约束设计。
-> 性质：**决策备忘 + 施工计划**混合体。管理规范见 [01_design_memo_management_spec](01_design_memo_management_spec.md)；关联 [60_cross_cutting_cleanup](60_cross_cutting_cleanup.md)｜[61_lifecycle_multi_ai](61_lifecycle_multi_ai.md)。
+> 性质：**决策备忘 + 施工计划**混合体。管理规范见 [01_design_memo_management_spec](01_design_memo_management_spec.md)；关联 [60_cross_cutting_cleanup](../../../_archive/60_cross_cutting_cleanup.md)｜[61_lifecycle_multi_ai](61_lifecycle_multi_ai.md)。
 >
 > **⚠️ v2.0.0 精简裁定（2026-08-12）**：v1.x 膨胀到 36 施工项 / 19 层防御 / 293KB，根因是把"AI 误操作"误判为"AI 恶意攻击"（adversarial）——单人单账户 AI 协作中 AI 是协作者不是攻击者。v2.0.0 将 adversarial 防御层全部 deprecated，施工范围收敛到 ~12 项 / 5-6 层防御。详见 §6.2 + §9 + §13。
 >
@@ -66,7 +66,7 @@ related_modules:
 | 状态 | active v2.4.0（2026-08-14 深夜治理批：①**wrapper 已激活**——$PROFILE 单一 dot-source 真源（旧 v2.1.0 内联 block 已清除，备份 .runtime 外 TEMP），全新会话实证 git=Function/clean -fd BLOCKED/status 透传/审计 JSONL 双记录/Session ID 注入；②**Phase 2 项 8 lock_files TTL+§7.28 Mutex 落地**——Windows 全局命名 Mutex（5s 超时+WAIT_ABANDONED+超时回滚锁目录）+tmp/flush/fsync/replace 原子写+`acquire --ttl`（默认 1800s 真源不变）+expires_at 双写+`list --session` 凑齐五命令，9 新测试+10 回归全绿；③**66 号裁定 7 plumbing 扩展落地**——wrapper git() 拦 read-tree/update-index/write-tree/hash-object+ZEPHYR_SERIALIZER_MODE=1 白名单（45/45），git_guard.py 前置硬阻断+审计（16/16）；④**#56 闭环**——sweep force-clean 接四证语义审计（证2 由证4 quarantine ref 前置补偿、证3 AUTO=72h 窗软批准）、CLI create spawn heartbeat daemon+abort 对称 teardown，顺手治本 3 bug（register pid=0 逻辑 session/abort 分支名提取顺序/refs/heads 前缀）。**新边界发现：Trae AI RunCommand 终端不加载 $PROFILE，wrapper 仅覆盖人工交互终端——AI 通道防护依赖 git_guard 直接调用层+hook 层+规则层**（登记 tracker #58）。66 号 commit_queue 本体仍待排期） |
 | 实际施工范围 | §13 路线图 8 施工项 / 2 Phase / ~11 天（v2.1.0 裁定） |
 | 开发平台 | **Trae IDE（编译器）**——100% 围绕 Trae 开发，不支持 PreToolUse hooks，PowerShell 5.1 终端 |
-| 上游 | [01_design_memo_management_spec](01_design_memo_management_spec.md)｜[60_cross_cutting_cleanup](60_cross_cutting_cleanup.md) |
+| 上游 | [01_design_memo_management_spec](01_design_memo_management_spec.md)｜[60_cross_cutting_cleanup](../../../_archive/60_cross_cutting_cleanup.md) |
 | 下游 | 所有 AI session（安全规则约束）｜scripts/git_guard.py、lock_files.py、session_worktree.py｜AGENTS.md + .trae/rules/（永久规则）｜$PROFILE（PowerShell wrapper，**已激活**——限人工交互终端，AI RunCommand 通道不加载 profile，见 tracker #58） |
 
 ## 2. 背景

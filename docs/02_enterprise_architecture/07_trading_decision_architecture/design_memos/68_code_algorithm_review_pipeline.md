@@ -230,7 +230,7 @@ scope: 07_trading_decision_architecture
 - 硬边界与交叉验证约束：[system_charter.md §2](../../04_architecture_principles_decisions/system_charter.md)
 - 运行时监控基建（运行情况审查的数据源）：[55_monitoring_review.md](55_monitoring_review.md)
 - 多 AI 施工分工与生命周期：[61_lifecycle_multi_ai.md](61_lifecycle_multi_ai.md)
-- 文档层审查体系（平行体系，审 why 层）：[AI_review_instructions.md](AI_review_instructions.md)
+- 文档层审查体系（平行体系，审 why 层）：[AI_review_instructions.md](../../../_archive/AI_review_instructions.md)
 - 调度与遗留项登记：[construction_progress_tracker.md](construction_progress_tracker.md) 第五节（批次规划）/第六节（遗留项登记表）
 - 提交串行化基建：[66_commit_queue_serialization.md](66_commit_queue_serialization.md)；文件锁 scripts/lock_files.py；worktree 隔离 scripts/session_worktree.py；提交通道 scripts/git_commit.py（GitCommitGateway）
 - 候选库登记（P2 观察项去向）：candidate_module_registry.yaml（CAND 编号纪律见 project 治理规则）

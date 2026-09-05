@@ -35,9 +35,9 @@ scope: 07_trading_decision_architecture
 |---|---|
 | 主题组 | G08 打板策略细节 |
 | 所属 | 作战地图 05（BM-SEL-25 打板 sleeve） |
-| 依赖 | G04（[20_first_batch_strategies](20_first_batch_strategies.md) §2.2 打板 sleeve）、G05（信号工坊）、G21（[28_sentiment_cycle_trading](28_sentiment_cycle_trading.md) 情绪周期）、G22（40_execution_broker 执行层） |
+| 依赖 | G04（[20_first_batch_strategies](../../../_archive/20_first_batch_strategies.md) §2.2 打板 sleeve）、G05（信号工坊）、G21（[28_sentiment_cycle_trading](28_sentiment_cycle_trading.md) 情绪周期）、G22（40_execution_broker 执行层） |
 | 对标 | 雪球炸板率统计 2026-07 / 华安证券涨停板 Alpha 2026-03 / caifuhao 连板复盘 2026-08 / IG507 涨停统计分析 2026-08 / legulegu 首封时间线性映射 2026-07 |
-| 正交 | ✅ 与 regime 正交（[28 §3.4](28_sentiment_cycle_trading.md) 与 regime 的正交性 + [20 §2.2](20_first_batch_strategies.md) 打板 sleeve 表）：打板读情绪周期不读 regime，情绪周期=sleeve 内 alpha 择时，regime=市场级风险节流，两者正交 |
+| 正交 | ✅ 与 regime 正交（[28 §3.4](28_sentiment_cycle_trading.md) 与 regime 的正交性 + [20 §2.2](../../../_archive/20_first_batch_strategies.md) 打板 sleeve 表）：打板读情绪周期不读 regime，情绪周期=sleeve 内 alpha 择时，regime=市场级风险节流，两者正交 |
 | 优先级 | P1（高换手、小容量、高频 alpha） |
 | 状态 | active 1.10.6（8 项讨论要点已对齐 §3.1-§3.8 + 12 项施工算法 §3.13/§3.14 覆盖信号→定位→入场→封板→出场→风控→容量全流程 + 设施盘点 §1.1 + Phase 5 ML 增强栈 §5.2——逐项明细见文首块引用与 §9 修订记录） |
 
@@ -818,7 +818,7 @@ class DynamicCapacityCalculator:
 ## 8. 引用
 
 - [00_index_trading_decision](00_index_trading_decision.md) §3 G08
-- [20_first_batch_strategies](20_first_batch_strategies.md) §2.2 打板 sleeve
+- [20_first_batch_strategies](../../../_archive/20_first_batch_strategies.md) §2.2 打板 sleeve
 - [28_sentiment_cycle_trading](28_sentiment_cycle_trading.md) §3.1-3.4/§5.2/§6
 - [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §2.4/§2.5/§6.3/§7.3
 - [40_execution_broker](40_execution_broker.md) §决策⑫（v2.6.0）

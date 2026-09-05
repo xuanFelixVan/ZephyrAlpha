@@ -38,7 +38,7 @@ related_modules:
 > **性质**：编排层，**只串联流程+引用真源规则，不重复规则内容**。每一步明确"何时触发 / 做什么 / 怎么做 / 产出什么 / 不通过怎么办"。
 > **适用范围**：仅 07 域施工（regime/选股/仓位/风控/买卖/执行/对账/治理）。数据层/基础设施/治理脚本走全局规则。
 > **管理规范**：[01_design_memo_management_spec](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/01_design_memo_management_spec.md)。
-> **关联**：[AI_review_instructions](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/AI_review_instructions.md)（文档审查指令集，Step 1 真源）｜ [60_cross_cutting_cleanup](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/60_cross_cutting_cleanup.md)｜ [65_git_safety_governance](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md)｜ [66_commit_queue_serialization](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/66_commit_queue_serialization.md)
+> **关联**：[AI_review_instructions](../../_archive/AI_review_instructions.md)（文档审查指令集，Step 1 真源）｜ [60_cross_cutting_cleanup](../../_archive/60_cross_cutting_cleanup.md)｜ [65_git_safety_governance](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md)｜ [66_commit_queue_serialization](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/66_commit_queue_serialization.md)
 
 ## 1. 主题组信息
 
@@ -64,7 +64,7 @@ related_modules:
 | [trae_035_task_construction_verification.yaml](../rules/trae_035_task_construction_verification.yaml) | 搬家规则/前置检查/循环验收/全景图对齐/门禁命令 | ❌ 缺文档审查+长清单审查+施工完毕文档更新+worktree 合并+只清理自己 |
 | [trae_056_module_creation_workflow.yaml](../rules/trae_056_module_creation_workflow.yaml) | 模块创建 10 phase 完整工作流（冷启动→搜索→设计态→准入→蓝图→文件→路径→文件头→启动→注册表→三方对齐） | ❌ 仅"新建模块"流程，不含文档审查/测试/commit/清理/merge |
 | [trae_080_panorama_alignment.yaml](../rules/trae_080_panorama_alignment.yaml) | 五图对齐铁律（设计态先行+派生+对齐验证） | ❌ 仅五图对齐环节（第六图 frontend_map 对齐规则在 alignment_checklist §3） |
-| [AI_review_instructions.md](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/AI_review_instructions.md) | 文档审查指令集 | ❌ 只是审查指令，不是端到端施工流程 |
+| [AI_review_instructions.md](../../_archive/AI_review_instructions.md) | 文档审查指令集 | ❌ 只是审查指令，不是端到端施工流程 |
 | [65_git_safety_governance.md](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md) | git 安全防护层 | ❌ 只管 git 安全 |
 | [66_commit_queue_serialization.md](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/66_commit_queue_serialization.md) | 多 AI 并发提交队列 | ❌ 只管提交期串行化 |
 | [01_design_memo_management_spec.md](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/01_design_memo_management_spec.md) | 设计备忘三层分治原则 | ❌ 是文档管理规范，不是施工流程 |
@@ -172,7 +172,7 @@ python scripts/lock_files.py status
 **何时触发**：施工 AI 接到施工任务后第一步
 **前置条件**：Step 0 完成 / 待施工文档 frontmatter status=active（draft 文档先回讨论环节补齐）
 **操作摘要**：按 AI_review_instructions 12 节指令审查文档完整性 / 施工算法成熟度 / 四图对齐情况
-**引用真源**：[AI_review_instructions.md](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/AI_review_instructions.md)（审查指令集真源，不重复内容）
+**引用真源**：[AI_review_instructions.md](../../_archive/AI_review_instructions.md)（审查指令集真源，不重复内容）
 **执行要点**：
 1. 按改动分类（A/B/C/D/E）跳过不适用的审查条款
 2. 逐节核查：工作完成性 / 责任唯一 / 向内收 / 文件夹容量 / AI 可发现性 / 红蓝对抗 / 命名路径 / 影响同步 / 版本控制 / 文件元数据 / depgraph 登记审查结论与零问题闭环

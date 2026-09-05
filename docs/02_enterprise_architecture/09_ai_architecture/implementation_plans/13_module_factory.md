@@ -29,7 +29,7 @@ scope: 09_ai_architecture
 
 > 本文定位：模块工厂（Module Factory）的施工——知识采集→分类→映射→代码生成→验证→入库的完整流水线。
 > 与其他文件的分工：结构设计见 [00_index.md](00_index.md)，落地性分析见 [01_external_benchmark_analysis.md](01_external_benchmark_analysis.md) §5。
-> 本文只写 why（决策推理）与 how（施工步骤）；实现细节（代码级）由 blueprint/代码维护。入库 schema 的真源在交易决策侧 [62_business_registry_construction.md](../../07_trading_decision_architecture/design_memos/62_business_registry_construction.md)，本文只引用不复制。
+> 本文只写 why（决策推理）与 how（施工步骤）；实现细节（代码级）由 blueprint/代码维护。入库 schema 的真源在交易决策侧 [62_business_registry_construction.md](../../../_archive/62_business_registry_construction.md)，本文只引用不复制。
 
 ---
 
@@ -54,7 +54,7 @@ scope: 09_ai_architecture
 
 | 环节 | 当前实现状态 | 实测证据 |
 |------|------------|---------|
-| 知识采集 | **手动模式已有完整先例**：潘潘课程 546 条因子/策略条目经 29 号文抽取流程入库（人工喂料 + LLM 辅助抽取）；自动化采集（论文/开源/社区爬虫）未建 | [29_factor_strategy_extraction.md](../../07_trading_decision_architecture/design_memos/29_factor_strategy_extraction.md)（371KB，落盘存在）；factor_registry.yaml 头部注释载明"潘潘课程 546 条因子/策略条目入库前，库结构先支持多维适用性标注" |
+| 知识采集 | **手动模式已有完整先例**：潘潘课程 546 条因子/策略条目经 29 号文抽取流程入库（人工喂料 + LLM 辅助抽取）；自动化采集（论文/开源/社区爬虫）未建 | [29_factor_strategy_extraction.md](../../../_archive/29_factor_strategy_extraction.md)（371KB，落盘存在）；factor_registry.yaml 头部注释载明"潘潘课程 546 条因子/策略条目入库前，库结构先支持多维适用性标注" |
 | 知识分类 | **分类词表已定稿**（factor 10 类 / strategy 6 类，62 号裁定 S2/S3），注册表 schema v2.0 已内建多维适用性标注字段（timeframe/regime/direction/entry_role/tags）；独立自动分类器未建 | 62 号 §6.1.1/§6.1.2；catalogs/factor_registry.yaml 头部 schema v2.0 注释 |
 | 知识→模块映射 | **核心独创环节，未建**。但锚点已预留：factor_registry schema v1.19.0 的 `schema_plan` 字段（{event, context, qualities, direction, output} 语义抽象层，对标 AlphaSchema），LLM 挖掘因子 MUST 填 | 62 号 §6.1.1 schema `schema_plan` 字段注释 |
 | 代码生成 | **通用层面已是项目范式**（约束六：代码 100% AI 生成 + 交叉验证 + 依赖锁定）；但"从知识条目定向生成因子/策略模块"的受控生成通道未建。schema 已预留 `llm_safety_stack` 五字段（ast_validation/dsl_constrained/complexity_control/dual_channel_rag/family_aware_selection），discovery_agent≠human 时 MUST 声明 | 62 号 §6.1.1 schema `llm_safety_stack`/`discovery_agent` 字段 |

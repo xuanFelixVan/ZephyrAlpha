@@ -35,7 +35,7 @@ scope: 07_trading_decision_architecture
 |---|---|
 | 主题组 | G09 多因子策略细节 |
 | 所属 | 作战地图 05（BM-SEL-02 因子计算/注册表/IC-IR/衰减/合成/治理） |
-| 依赖 | G04（[20_first_batch_strategies](20_first_batch_strategies.md) §2.3 多因子 sleeve）、G05（信号工坊）、G01（[15_data_feature_layer_spec](15_data_feature_layer_spec.md) 因子工程总纲，status: draft） |
+| 依赖 | G04（[20_first_batch_strategies](../../../_archive/20_first_batch_strategies.md) §2.3 多因子 sleeve）、G05（信号工坊）、G01（[15_data_feature_layer_spec](15_data_feature_layer_spec.md) 因子工程总纲，status: draft） |
 | 对标 | WorldQuant Alpha 工厂 / Numerai 多因子 / 华泰金工多因子 / BigQuant ICIR 加权合成（2026-07） |
 | 正交 | ✅ 与 regime 正交（[28 §3.4]）：多因子不读情绪周期，不读 regime，纯横截面选股 |
 | 优先级 | P2（承载主力资金的低频基石） |
@@ -145,7 +145,7 @@ ZephyrAlpha 是个人 + 100% AI 开发的 A 股量化交易系统。首手 3 策
 >
 > **BM-SEL-02-M 因果因子验证层（DoWhy/DML）处置裁定（v1.13.2 补）**：
 > - **定位**：BM-SEL-02-M（L1，MOD-SIG-054 `causal_factor_validator.py` planned）——新因子入库前+盘前全量评估时做因果验证，区分相关因子 vs 因果因子→因果因子加权提升。
-> - **裁定**：**登记远期 Phase 4，当前不施工**。关键消歧——#ARCH-OE-009 裁剪的是 **BM-MT-04 因子发现与因果发现（PC/LiNGAM/时滞因果图）**（模型训练域），**本环节（BM-SEL-02-M，选股域因子入库前 DoWhy/DML 因果验证）未被裁剪**，两者域不同、工具链不同。与 [11_regime_backtest_validation_plan](11_regime_backtest_validation_plan.md) §0.6.10 发现 2（Bloomberg Causal-TS 库评估）呼应——因果工具链登记远期。
+> - **裁定**：**登记远期 Phase 4，当前不施工**。关键消歧——#ARCH-OE-009 裁剪的是 **BM-MT-04 因子发现与因果发现（PC/LiNGAM/时滞因果图）**（模型训练域），**本环节（BM-SEL-02-M，选股域因子入库前 DoWhy/DML 因果验证）未被裁剪**，两者域不同、工具链不同。与 [11_regime_backtest_validation_plan](../../../_archive/11_regime_backtest_validation_plan.md) §0.6.10 发现 2（Bloomberg Causal-TS 库评估）呼应——因果工具链登记远期。
 > - **契约（远期登记）**：候选因子+L2-D 预计算因果图→DoWhy/DML 因果验证→因果因子加权→因子池；降级=因果图未就绪→仅统计评估（IC/IR）——**现状即降级态**。
 > - **重评条件（激活门槛）**：因子库出现**伪相关惨案 ≥1 例**（入库因子被实证实为伪相关/数据挖掘产物并造成实亏）→ 激活施工评估。
 
@@ -226,7 +226,7 @@ ZephyrAlpha 是个人 + 100% AI 开发的 A 股量化交易系统。首手 3 策
 
 ### 3.6 讨论要点⑥：多因子×事件驱动相关性
 
-**裁定**：多因子与事件驱动 sleeve 正交设计（不读情绪/不读 regime），相关性由 PerformanceScore 后验捕获。G07 相关性验证施工前必做（[23_strategy_correlation_validation](23_strategy_correlation_validation.md) §3.1，v1.13.0 校正错链——此前误引 [28 §3.5]），若相关性 >0.6 需重新审视策略组合（战略级阈值；运营级门禁 0.85/0.90 由 MOD-PA-004 执行，见 23 号 §2.3 分层）。
+**裁定**：多因子与事件驱动 sleeve 正交设计（不读情绪/不读 regime），相关性由 PerformanceScore 后验捕获。G07 相关性验证施工前必做（[23_strategy_correlation_validation](../../../_archive/23_strategy_correlation_validation.md) §3.1，v1.13.0 校正错链——此前误引 [28 §3.5]），若相关性 >0.6 需重新审视策略组合（战略级阈值；运营级门禁 0.85/0.90 由 MOD-PA-004 执行，见 23 号 §2.3 分层）。
 
 ### 3.7 施工算法 8 项缺失补全（v1.12.5+v1.12.6+v1.12.7 新增，第四+五+六轮施工算法深度审查）
 
@@ -516,8 +516,8 @@ ZephyrAlpha 是个人 + 100% AI 开发的 A 股量化交易系统。首手 3 策
 ## 7. 引用
 
 - [00_index_trading_decision](00_index_trading_decision.md) §3 G09
-- [20_first_batch_strategies](20_first_batch_strategies.md) §2.3 多因子 sleeve 定义
-- [23_strategy_correlation_validation](23_strategy_correlation_validation.md) §2.3/§3.1 G07 相关性验证（战略级 >0.6 vs 运营级门禁 0.85/0.90 分层，v1.13.0 补链）
+- [20_first_batch_strategies](../../../_archive/20_first_batch_strategies.md) §2.3 多因子 sleeve 定义
+- [23_strategy_correlation_validation](../../../_archive/23_strategy_correlation_validation.md) §2.3/§3.1 G07 相关性验证（战略级 >0.6 vs 运营级门禁 0.85/0.90 分层，v1.13.0 补链）
 - [28_sentiment_cycle_trading](28_sentiment_cycle_trading.md) §3.4 多因子与 regime 正交边界
 - [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §2.4/§2.5/§6.4
 - [15_data_feature_layer_spec](15_data_feature_layer_spec.md)（G01 因子工程总纲）

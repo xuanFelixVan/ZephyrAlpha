@@ -20,7 +20,7 @@ scope: 07_trading_decision_architecture
 > **未做事项及原因**：
 > - `cold_start_ratio` 参数未落码（§6.7 施工指导要求 RegimeMetaAllocator.allocate() 增加该参数+StrategyBook 冷启动状态机）——全 src 零命中；首批策略未上线，冷启动场景尚不存在，属"等触发"设计内延期（未来工程-小型，随首批策略上线装配）。
 > - score→weight 显式转换函数未形式化（§2.2 契约③）——按文档裁定"随 `select_stocks` 抽象接口留给策略子类，待首批策略施工时形式化"，属设计内延期（未来工程-小型）。
-> - §6.2 策略间相关性验证（correlation drop rule）未施工——承载文档为 [23 号](23_strategy_correlation_validation.md)，依赖首批策略回测/实盘 PnL，属"等数据"（未来工程-小型）。
+> - §6.2 策略间相关性验证（correlation drop rule）未施工——承载文档为 [23 号](../../../_archive/23_strategy_correlation_validation.md)，依赖首批策略回测/实盘 PnL，属"等数据"（未来工程-小型）。
 > - §6.9 并存旧体系退役裁定（MOD-PA-003/PA-002/PA-004/pf_core 5 示例策略）——文档明示"需人裁定，本备忘不擅自定"，等 Owner 裁决。
 > - Bayesian Kelly/Conformal Kelly/Water-Filling/no-trade 半带/MPC/Relaxed Risk Parity——文档已裁 Phase 2/3 远期候选并给重评条件，非施工缺口。
 > - ~~§2.4 施工状态注记"481 行"漂移~~ ✅ 本次复核补正（遗留 #36 实证项）：实测 548 行，已就地更正。
@@ -41,7 +41,7 @@ scope: 07_trading_decision_architecture
 - 个人 + 100% AI 开发，迭代速度极快（3-4 个月达到当前规模）
 - 部署目标：A 股个人账户（miniQMT 通道），非机构体量
 - 多策略并发需求：5 个候选策略（价值反转 / 动量趋势 / 事件驱动 / 打板 / 多因子）
-  > **候选清单更新（2026-08-10，[20 §2.1](20_first_batch_strategies.md) 裁定）**：主升龙头并入打板策略内部（BM-SEL-25-C-1 是打板双引擎融合最强决策输出，独立成策略会 alpha 重叠），多因子作为承载主资金的压舱石 sleeve 新增。原"主升龙头"删除。
+  > **候选清单更新（2026-08-10，[20 §2.1](../../../_archive/20_first_batch_strategies.md) 裁定）**：主升龙头并入打板策略内部（BM-SEL-25-C-1 是打板双引擎融合最强决策输出，独立成策略会 alpha 重叠），多因子作为承载主资金的压舱石 sleeve 新增。原"主升龙头"删除。
 - 当前处于施工前阶段，架构一旦落地难以回改，故施工前定上限
 
 ### 1.2 核心问题
@@ -232,7 +232,7 @@ scope: 07_trading_decision_architecture
 - 每级是独立事件，可 log 可复盘
 - 三级升级而非直接强砍：尊重策略自主权（决定砍哪个）+ 避免随机时刻强制卖出的高成本
 
-> **施工状态（2026-08-10 核对源码）**：✅ `budget_change_handler.py`（MOD-POS-022）**已施工 production**——`TierLevel` 枚举 + `FreezeNewPositions`/`RebalanceRequest`/`ForcedTrim` 三指令 dataclass + `TierState` 状态机 + `handle_budget_change`/`check_convergence` 及三级指令生成方法全部实现（548 行，0 处 NotImplementedError；2026-08-19 复核实测，原注"481 行"为 2026-08-10 旧值）。`convergence_windows` 默认值已按 [20 §6.4](20_first_batch_strategies.md) 预置（打板 2 天 / 多因子 4 天 / 事件驱动 3 天）。**为何三级而非直接强砍**：直接强砍=随机时刻卖出高成本+剥夺策略归因；三级让策略在窗口内自选砍哪个（保留归因），超时 firm 层 dumb-but-safe 兜底（保生存）。依赖 StrategyBook 的 `rebalance_to_budget` 接口（已 production）。⚠️ **33 号骨架化（2026-08-12 核对）**：33 号在 2026-08-11 git 灾难中内容丢失回退至骨架 v0.1.0，G14 设计真源待重建；当前三级升级接口契约以 `budget_change_handler.py` 头部 docstring（INVARIANTS/TierLevel/收敛检测三条件）为临时真源，重建登记 §6.8。
+> **施工状态（2026-08-10 核对源码）**：✅ `budget_change_handler.py`（MOD-POS-022）**已施工 production**——`TierLevel` 枚举 + `FreezeNewPositions`/`RebalanceRequest`/`ForcedTrim` 三指令 dataclass + `TierState` 状态机 + `handle_budget_change`/`check_convergence` 及三级指令生成方法全部实现（548 行，0 处 NotImplementedError；2026-08-19 复核实测，原注"481 行"为 2026-08-10 旧值）。`convergence_windows` 默认值已按 [20 §6.4](../../../_archive/20_first_batch_strategies.md) 预置（打板 2 天 / 多因子 4 天 / 事件驱动 3 天）。**为何三级而非直接强砍**：直接强砍=随机时刻卖出高成本+剥夺策略归因；三级让策略在窗口内自选砍哪个（保留归因），超时 firm 层 dumb-but-safe 兜底（保生存）。依赖 StrategyBook 的 `rebalance_to_budget` 接口（已 production）。⚠️ **33 号骨架化（2026-08-12 核对）**：33 号在 2026-08-11 git 灾难中内容丢失回退至骨架 v0.1.0，G14 设计真源待重建；当前三级升级接口契约以 `budget_change_handler.py` 头部 docstring（INVARIANTS/TierLevel/收敛检测三条件）为临时真源，重建登记 §6.8。
 >
 > **Tier 2→Tier 3 收敛检测算法（2026-08-10 补充）**：`check_convergence()` 须定义"策略是否在窗口内收敛"的判定标准。算法：
 >
@@ -245,7 +245,7 @@ scope: 07_trading_decision_architecture
 > 超时触发 Tier 3：convergence_window 内未满足收敛条件 → ForcedTrim 按比例强裁
 > ```
 >
-> **为何 ε_pos=5%**：A 股 T+1 无法当日即时调仓，5% 容差给 1-2 日自然调仓空间（打板高换手 1-2 天自然收敛，[20 §6.4](20_first_batch_strategies.md)）。太小（1%）→ Tier 3 频繁误触发；太大（15%）→ budget 下调形同虚设。5% 是"T+1 自然收敛"与"budget 约束有效"的平衡点，待实盘校准。
+> **为何 ε_pos=5%**：A 股 T+1 无法当日即时调仓，5% 容差给 1-2 日自然调仓空间（打板高换手 1-2 天自然收敛，[20 §6.4](../../../_archive/20_first_batch_strategies.md)）。太小（1%）→ Tier 3 频繁误触发；太大（15%）→ budget 下调形同虚设。5% 是"T+1 自然收敛"与"budget 约束有效"的平衡点，待实盘校准。
 >
 > **选项外更优算法：最优 no-trade 半带公式（2026-08-10 算法审查补充）**：固定 ε_pos=5% 是经验值，无理论根基。stockalpha.ai 2026-02 给出基于布朗运动首达时间的闭式解——
 >
@@ -419,7 +419,7 @@ scope: 07_trading_decision_architecture
 ### 4.2 演进路径
 - **第一阶段（立即施工）**：纯 A，各策略等额或先验比例资金分配，固定不变。FirmRiskAggregator 只做求和+裁剪。
 - **第二阶段（各策略有 3-6 个月实盘 PnL 后）**：上加 RegimeMetaAllocator，按风险调整后收益（IR/Sharpe）动态调资金占比。
-  > **前置进展（2026-08-10）**：[11 C1 验证](11_regime_backtest_validation_plan.md) 已通过（commit 852457e9，Shrinkage 节流有效），[34](34_regime_meta_allocator.md) 框架已 active v1.0.0。第二阶段上线门槛仅剩"首批策略 PnL 就绪（PerformanceScore 输入）+ 四档阈值 D1 敏感性校准"。过渡期可用 `Base × Shrinkage`（PerformanceScore=1.0 中性）先跑。
+  > **前置进展（2026-08-10）**：[11 C1 验证](../../../_archive/11_regime_backtest_validation_plan.md) 已通过（commit 852457e9，Shrinkage 节流有效），[34](34_regime_meta_allocator.md) 框架已 active v1.0.0。第二阶段上线门槛仅剩"首批策略 PnL 就绪（PerformanceScore 输入）+ 四档阈值 D1 敏感性校准"。过渡期可用 `Base × Shrinkage`（PerformanceScore=1.0 中性）先跑。
 - **远期（可选，非当前 scope）**：Relaxed Risk Parity——从三因子乘法升级到松弛风险预算。
   > **2026 新实证**（出处见 §7.4）：[ericxuzhesheng/Relaxed-Risk-Parity-Research](https://github.com/ericxuzhesheng/Relaxed-Risk-Parity-Research)（2026-08-07 更新，410 commits）——松弛风险预算 + 凸自适应重构 + CVaR 约束 + Turnover penalty。是"三因子乘法（当前）→ MVO（已否决）"的中间态：比三因子乘法精细（考虑策略间协方差结构），比 MVO 稳定（不直接反转协方差矩阵）。
   >
@@ -432,7 +432,7 @@ scope: 07_trading_decision_architecture
   > **为何远期而非第二阶段**：① 需多变量 HMM 多期均值/协方差预测（[10号](10_regime_detector_spec.md) 当前 4 态 HMM 仅做 regime 识别）；② 连续优化器引入协方差估计（§3.1 否决 MVO 的理由），需先验证 HMM 预测稳定性；③ 离散硬阈值 + Shrinkage 已满足当前需求。**重评条件**：[10号] 升级到多期预测 + 首批策略 PnL 验证四级阈值有效性后，评估 MPC 连续化演进。
 
 ### 4.3 为何这是上限而非妥协
-- Model A **不是** Citadel pod 式，是 **Morwane 式"统一风险框架（firm 求和+裁剪+Kelly）+ 独立 alpha sleeve + regime 风险节流"**（2026-08-10 [20 §1.4/§5 待裁定-2](20_first_batch_strategies.md) 裁定修正误标）。Citadel pod = 几十个互不相关独立 PM + 被动风险聚合 + PM 间不共享不协同；Model A = 统一 firm 层 + 统一 StrategyBook 接口 + 统一信号工厂（G05）+ 少而精（3-5 个）差异化 sleeve——与 charter §3 约束二"统一框架派"一致。
+- Model A **不是** Citadel pod 式，是 **Morwane 式"统一风险框架（firm 求和+裁剪+Kelly）+ 独立 alpha sleeve + regime 风险节流"**（2026-08-10 [20 §1.4/§5 待裁定-2](../../../_archive/20_first_batch_strategies.md) 裁定修正误标）。Citadel pod = 几十个互不相关独立 PM + 被动风险聚合 + PM 间不共享不协同；Model A = 统一 firm 层 + 统一 StrategyBook 接口 + 统一信号工厂（G05）+ 少而精（3-5 个）差异化 sleeve——与 charter §3 约束二"统一框架派"一致。
   > **2026 实证支撑**（完整出处见 §7.4）：resonanzcapital 2026-04 区分 systematic multi-strategy（统一风险框架）vs discretionary pod（各自为政），Model A 属前者；Trium Capital 2026-06 区分 pod 平台（风险主导+止损即砍仓）与传统多策略（止损是 review 信号），Model A 属后者谱系；algoalpha 2026-06 个人可借鉴 pod 的**过程**（先定风险再定仓位）非规模；RMATS（arXiv:2605.25311）独立 Risk Agent（CVaR+压力测试+断路器）印证 FirmRiskAggregator"风险从 alpha 解耦为独立层"——MaxDD 9.62% < MVO 15.49%；个人项目不采用多 agent 递归协调（§5 暂缓项），A 模型用更简方式（firm 求和+裁剪+硬阈值）实现同等风险解耦。
 - 5 个策略的 MVO 收益 < 5 个策略独立加总收益，因为协方差估计误差 > MVO 理论增益
 - 真正的上限 = 在 A 框架内把每个 StrategyBook 做到极致，而不是在 firm 层堆优化器
@@ -442,7 +442,7 @@ scope: 07_trading_decision_architecture
 
 > 以下项目暂不施工，**非永久禁止**。待项目演进到一定程度，部分项可能自然不再成立，部分项可能重新需要。届时回看本节，重新裁定。每项附"重评条件"——满足时可重新讨论。
 >
-> **v1.4.0 处置说明**：[20 §5](20_first_batch_strategies.md) 登记的 4 项相关待裁定已处置（详见修订记录 1.4.0：pod 误标 ✅/候选清单同步 ✅/情绪周期边界 ✅/charter 措辞 ⏳ 属 04 域）。下方 6 项为本备忘原生暂缓项，状态未变。
+> **v1.4.0 处置说明**：[20 §5](../../../_archive/20_first_batch_strategies.md) 登记的 4 项相关待裁定已处置（详见修订记录 1.4.0：pod 误标 ✅/候选清单同步 ✅/情绪周期边界 ✅/charter 措辞 ⏳ 属 04 域）。下方 6 项为本备忘原生暂缓项，状态未变。
 
 | 暂缓项 | 暂缓理由 | 重评条件 |
 |---|---|---|
@@ -473,7 +473,7 @@ scope: 07_trading_decision_architecture
 >     # 持续超限→保留高Sharpe，drop低Sharpe
 > ```
 >
-> **A 股适配**：① 阈值 0.70→0.60（A 股情绪退潮期相关性飙升，[28 §3.5](28_sentiment_cycle_trading.md) bayes-group March Shock 尾部相关性案例，0.70 太松）；② 按情绪周期分层看（冰点/退潮期相关性天然高，不触发 drop，而是触发"退潮期空仓"纪律）；③ drop 不是永久退役，而是"暂停部署+归因复查"（相关性回落 <0.5 后可恢复）。**与上文">0.6 需重新审视"的关系**：0.6 是"审视"阈值（施工前必做验证），0.6-0.7 是"监控+归因"区间，>0.7 持续 30 天是"暂停部署"阈值——形成三级响应。详见 [23 策略相关性验证](23_strategy_correlation_validation.md)。
+> **A 股适配**：① 阈值 0.70→0.60（A 股情绪退潮期相关性飙升，[28 §3.5](28_sentiment_cycle_trading.md) bayes-group March Shock 尾部相关性案例，0.70 太松）；② 按情绪周期分层看（冰点/退潮期相关性天然高，不触发 drop，而是触发"退潮期空仓"纪律）；③ drop 不是永久退役，而是"暂停部署+归因复查"（相关性回落 <0.5 后可恢复）。**与上文">0.6 需重新审视"的关系**：0.6 是"审视"阈值（施工前必做验证），0.6-0.7 是"监控+归因"区间，>0.7 持续 30 天是"暂停部署"阈值——形成三级响应。详见 [23 策略相关性验证](../../../_archive/23_strategy_correlation_validation.md)。
 
 ### 6.3 情绪周期定位器准确率（施工前必做）
 BM-SEL-23-B 情绪周期 4+1 阶段定位器的历史准确率需评估。错判代价大（主升判成冰点→该进攻时防守），且 RegimeMetaAllocator 依赖此信号。需有"置信度<60%→默认保守"的兜底。
@@ -712,7 +712,7 @@ OOS 2013-2026（扣除 2bps/turnover）：
 | 2026-08-09 | 1.3.1 | 文件名 design_memo_001_multi_strategy_concurrency.md → 30_multi_strategy_concurrency.md（段位编号制），内容不变 | 文档体系重排，新旧名对照见 00_index_trading_decision §10 |
 | 2026-08-09 | 1.3.2 | §1 管理规范链接 `design_memo_management_spec.md`→`01_design_memo_management_spec.md` | 改名工程遗留断链修复（全量断链扫描发现） |
 | 2026-08-09 | 1.3.3 | 文档头统一：frontmatter 补 title/owner/language，H1 去"设计备忘·"前缀与 title 对齐；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾），规范真源 01_design_memo_management_spec §4.2 |
-| 2026-08-10 | 1.4.0 | 落实 [20 §5](20_first_batch_strategies.md) 待裁定-2/3 + why 补全 + 过度工程审查：① §4.3 pod 误标修正（Model A = Morwane 式统一风险框架，非 Citadel pod，附 resonanzcapital/Trium/algoalpha 2026 实证）；② §1.1 5 候选清单同步（主升龙头并入打板，多因子新增）；③ §1.3 情绪周期隐形驱动补 bayes-group March Shock 实证 + 交叉引用 28；④ §2.2/§2.4/§2.5 已施工部分 why 补全（核对源码：三模块骨架 design，回撤 Protocol 已 production）；⑤ §2.5.6 过度工程审查（Kill Switch/四级回撤保留为真红线，VaR 5 级+7 黑天鹅降级为监控层）；⑥ §2.5 口径漂移标注（四级回撤 vs 源码 5 级 VaR+7 黑天鹅）；⑦ §5 v1.4.0 处置说明；⑧ §7.4 补 2026 多策略架构实证 4 项；⑨ §2.2/§4.2 同步 [34](34_regime_meta_allocator.md) v1.0.0 并发升级（C1 验证已通过 commit 852457e9，框架 active；标注 12 态设计 vs 4 态已验证实现口径） | 20 §5 待裁定处置 + 源码施工状态核对 + 2026 行业实证补充；与 28 情绪周期×交易决策 active 1.0.0 同步定型；34 号同期升级 active，本版同步引用 |
+| 2026-08-10 | 1.4.0 | 落实 [20 §5](../../../_archive/20_first_batch_strategies.md) 待裁定-2/3 + why 补全 + 过度工程审查：① §4.3 pod 误标修正（Model A = Morwane 式统一风险框架，非 Citadel pod，附 resonanzcapital/Trium/algoalpha 2026 实证）；② §1.1 5 候选清单同步（主升龙头并入打板，多因子新增）；③ §1.3 情绪周期隐形驱动补 bayes-group March Shock 实证 + 交叉引用 28；④ §2.2/§2.4/§2.5 已施工部分 why 补全（核对源码：三模块骨架 design，回撤 Protocol 已 production）；⑤ §2.5.6 过度工程审查（Kill Switch/四级回撤保留为真红线，VaR 5 级+7 黑天鹅降级为监控层）；⑥ §2.5 口径漂移标注（四级回撤 vs 源码 5 级 VaR+7 黑天鹅）；⑦ §5 v1.4.0 处置说明；⑧ §7.4 补 2026 多策略架构实证 4 项；⑨ §2.2/§4.2 同步 [34](34_regime_meta_allocator.md) v1.0.0 并发升级（C1 验证已通过 commit 852457e9，框架 active；标注 12 态设计 vs 4 态已验证实现口径） | 20 §5 待裁定处置 + 源码施工状态核对 + 2026 行业实证补充；与 28 情绪周期×交易决策 active 1.0.0 同步定型；34 号同期升级 active，本版同步引用 |
 | 2026-08-10 | 1.5.0 | 施工算法完整性审查 + 2026 算法实证补充：① §2.1 补 Fractional Kelly 比例（25-50%，三源共识 tradingengineeringlab/metatronics/astuteinvestorscalculus）；② §2.3 补叠加超限裁剪算法（裁定 pro-rata 按比例缩放，否决优先级裁剪，A 哲学延伸）；③ §2.4 补 Tier 2→Tier 3 收敛检测算法（ε_pos=5%+ε_days=1+无新违例，A 股 T+1 适配）；④ §2.5.1 补回撤恢复不对称数学（Recovery=D/(1-D)，25%需+33%恢复，支撑阈值合理性）；⑤ §4.2 补远期演进选项 Relaxed Risk Parity（ericxuzhesheng 2026-08-07，三因子→MVO 中间态）；⑥ §7.4 补 6 条 2026 仓位/风控算法实证（Fractional Kelly 共识/回撤恢复数学/Relaxed Risk Parity/HRP 12 算法对比/Bayesian uncertainty regime） | 施工环节流程算法缺失补全 + 2026 年 8 月最新研究实践算法搜索；与 28 号 v1.1.0 同步（28 补情绪周期迟滞/灰度/连板冰点，30 补 Kelly/裁剪/收敛/回撤数学/Relaxed RP） |
 | 2026-08-10 | 1.6.0 | 选项外更优算法 + 2026-08 最新研究 + 口径修正：① §2.1 补 Bayesian Kelly Criterion（Sukhov 2026-06，f*=(p̄−(1−p̄)/b)·n_eff/(n_eff+κ) 样本自适应收缩，作为固定 Fractional Kelly 的 Phase 2 演进）；② §2.2 修正 PerformanceScore 口径 Sharpe→Sortino（对齐 34 号真源）；③ §2.3 补 Clipped Water-Filling（arXiv:2603.26893/15963 2026-03，minimax 最优，作为 pro-rata 的 Phase 2 候选，附 A 哲学一致性分析）；④ §2.4 补最优 no-trade 半带公式 b*=[3cσ²/(2λ)]^(1/3)（stockalpha 2026-02，布朗运动首达时间闭式解，TE·√3 反推）；⑤ §2.5.7 新增回撤度量补充与 EVT 尾部层（CDaR 离线度量 + POT-GPD/autoencoder 数据驱动黑天鹅补充 + Kill Switch SEC 标准印证）；⑥ §7.4 补 7 条 2026-08 算法实证 | 全网搜索 2026-08-08 最新研究，发现 3 个选项外更优算法（Bayesian Kelly/Water-Filling/no-trade 带宽）+ 2 个度量补充（CDaR/EVT）；修正 Sharpe→Sortino 口径漂移；与 28 号 v1.2.0 同步（28 补计数式迟滞/BOCPD，30 补 Bayesian Kelly/Water-Filling/no-trade/CDaR/EVT） |
 | 2026-08-10 | 1.7.0 | 2026-08 最新研究整合 + 施工算法缺失审查：① §2.3 补多策略组合预期 Sharpe 基准（vzeman/trading-autoresearch 2026-05，cross-sectional momentum net Sharpe ~0.65，volatility-scaled 翻倍，综合 ~40 篇一手来源）；② §4.2 远期演进补 MPC 多期预测（Nystrup-Boyd 2019 Annals of OR，HMM 多期预测+回撤驱动风险厌恶，与 Model A 回撤节流同源，列为远期选项 B）；③ §4.3 补 RMATS 独立 Risk Agent 印证（arXiv:2605.25311 2026-05 APAM，MaxDD 9.62%<MVO 15.49%，独立 Risk Agent CVaR+stress test+circuit breaker 验证 FirmRiskAggregator 分层设计正确性；个人项目不采用多 agent 递归协调但取其风险解耦架构）；④ §6.7 新增策略级冷启动执行比例待定问题（施工算法缺失——§2.2 仅提 Base_i 未定义初始执行比例，行业标准 quanthedgeai 2026-07 research→paper→half-sized→full 三段式，初拟 ×30%→×60%→×100%）；⑤ §7.4 补 4 条 2026 实证（vzeman/Nystrup-Boyd/RMATS/quanthedgeai） | 全网搜索 2026-08 最新研究，发现 3 项需整合（RMATS 独立 Risk Agent 印证/Systematic Equity Sharpe 基准/MPC Boyd 远期演进）+ 1 项施工算法缺失（策略级冷启动执行比例）。个人项目不采用 RMATS 多 agent 递归协调（§5 暂缓——AI 写 AI 失控风险+投入产出比低），但取其"独立 Risk Agent"架构印证 Model A FirmRiskAggregator 分层设计正确性 |

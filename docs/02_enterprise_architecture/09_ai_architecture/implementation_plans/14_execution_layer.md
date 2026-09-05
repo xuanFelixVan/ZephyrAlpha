@@ -46,7 +46,7 @@ scope: 09_ai_architecture
 
 - **能力组件大量已建且 production**：`orchestrator/agent_orchestrator.py`（MOD-INF-039，多角色 Agent 路由+工具链编排+健康监控，纯内存可注入）、`governance/intelligence_governance/` 24 功能模块+1 __init__=25 个 .py（含 delegation_engine / model_router / agent_debate / self_benchmark / self_test 等）、`autonomy_core/`（spec_engine MOD-INF-019 蓝图→Skill 升级引擎、phase_planner、self_evolution_fidelity_gate、trigger_router、skills/ 58 个技能模块，2026-08-17 实测）、`feedback_loop/`（actors/multi_agent_orchestrator、gates/、verifiers/ 评估验证件）、`security/access_control/`（kill_switch.py VR-009 自治熔断器、guards/、detectors/）。
 - **四类 Agent 的角色化入口未建**：现有组件按技术域组织（D_ORCHESTRATOR / D_FEEDBACK_LOOP / governance / autonomy_core），没有"治理 Agent / 业务 Agent / 算法 Agent / 自我迭代 Agent"四种角色入口；AI 会话施工时直接面对数十个模块，职责边界靠人肉把握，与 00_index §1 的四类 Agent 图景存在落差。
-- **交易决策侧业务载体已就绪**（只读引用）：[20_first_batch_strategies](../../07_trading_decision_architecture/design_memos/20_first_batch_strategies.md)（G04，active v1.3.2，首批 3 策略=打板/多因子/事件驱动）、[30_multi_strategy_concurrency](../../07_trading_decision_architecture/design_memos/30_multi_strategy_concurrency.md)（G12，active v2.6.1，Model A 独立账本+firm 风险聚合）、[62_business_registry_construction](../../07_trading_decision_architecture/design_memos/62_business_registry_construction.md)（active v1.36.1，18/18 业务注册表已建成，factor_id 140 条 / strategy_id 146 条，2026-08-17 复审实测）。
+- **交易决策侧业务载体已就绪**（只读引用）：[20_first_batch_strategies](../../../_archive/20_first_batch_strategies.md)（G04，active v1.3.2，首批 3 策略=打板/多因子/事件驱动）、[30_multi_strategy_concurrency](../../07_trading_decision_architecture/design_memos/30_multi_strategy_concurrency.md)（G12，active v2.6.1，Model A 独立账本+firm 风险聚合）、[62_business_registry_construction](../../../_archive/62_business_registry_construction.md)（active v1.36.1，18/18 业务注册表已建成，factor_id 140 条 / strategy_id 146 条，2026-08-17 复审实测）。
 - **自我进化层接口复审（2026-08-17）**：[11](11_evidence_skill_router.md)/[12](12_reflexion_multi_agent.md)/[13](13_module_factory.md) 号文均已填充 v0.2.0。复审结论=本文 Phase 0 假设锚点**近似非等同**：①模型路由锚点 intelligence_governance/model_router.py（production）与 11 号文模型路由正式接口的逐字段映射待核对；②"自反闭环=feedback_loop actors+verifiers 现有闭环"实测不存在——feedback_loop/evolution/self_reflection.py 为 30 行运维诊断桩（12 号文 §2.1 实测：自反 Agent 近乎全空白），真正组件是 12 号文新建 MOD-REFLEXION_AGENT（落点 src/zephyr/intelligence/reflexion/，planned）；③模块生成锚点 autonomy_core/spec_engine.py 是蓝图→Skill 升级引擎（MOD-INF-019），13 号文模块工厂是新建四模块流水线（分类器/映射引擎/生成器/编排器），二者非同物——Phase 1 改接 13 号文正式接口。核对清单见 §6 Q3。
 
 ### 2.2 核心问题
@@ -57,7 +57,7 @@ scope: 09_ai_architecture
 
 ### 2.3 约束条件
 
-- **system_charter §2 硬边界**（见 [system_charter.md](../04_architecture_principles_decisions/system_charter.md) §2）：①人力=1 人全栈+AI 协作者，代码 100% AI 生成；②硬件=单机 PC（i7-12700KF / RTX 3090 24GB / 64GB RAM），无集群/K8s；③资金与接口=miniQMT 10 笔/秒、Tick=3 秒；④交易规则=T+1、涨跌停、融券受限；⑤运维=单机无热备，交易时段 RTO<5 分钟；⑥范式=AI 生成代码需交叉验证+依赖锁定+自治熔断（置信度低→降级"仅建议"）。
+- **system_charter §2 硬边界**（见 [system_charter.md](../../04_architecture_principles_decisions/system_charter.md) §2）：①人力=1 人全栈+AI 协作者，代码 100% AI 生成；②硬件=单机 PC（i7-12700KF / RTX 3090 24GB / 64GB RAM），无集群/K8s；③资金与接口=miniQMT 10 笔/秒、Tick=3 秒；④交易规则=T+1、涨跌停、融券受限；⑤运维=单机无热备，交易时段 RTO<5 分钟；⑥范式=AI 生成代码需交叉验证+依赖锁定+自治熔断（置信度低→降级"仅建议"）。
 - **61 号备忘裁定**：不做多 Agent 运行时编排系统；AI 间不直接通信，所有交接落盘可追溯（design_memo + depgraph path + 占用表）。
 - **30 号文 §5 暂缓项**：LLM 多 Agent 辩论 / R&D-Agent 自进化策略搜索暂缓（远期候选，Phase 5+ 重评）。
 - **依赖未就绪**：自我进化层（11/12/13 号文）施工完成前，算法 Agent 与自我迭代 Agent 只能做 Phase 0 手动形态。
@@ -70,7 +70,7 @@ scope: 09_ai_architecture
 |---|---|---|---|
 | Agent 编排 | `src/zephyr/orchestrator/agent_orchestrator.py` | MOD-INF-039，多角色 Agent 路由+工具链编排+健康监控，纯内存可注入，不读写 TaskCard.status | production |
 | Agent 健康 | `src/zephyr/orchestrator/agent_health_monitor.py` | Agent 健康监控 | production |
-| 治理能力包 | `src/zephyr/governance/intelligence_governance/`（24 功能模块+1 __init__=25 个 .py） | delegation_engine / delegation_manager / model_router / provider_failover / agent_debate / cross_agent_conflict_detector / multi_model_consensus / self_benchmark / self_test / self_validator / ai_self_diagnosis / autonomy_dashboard / continuous_trust / aisg_sandbox / memory_provider / meta_confidence / confidence_estimator / subagent_hook_propagator 等；整合方案由 [05 号文](05_intelligence_governance_consolidation.md)负责 | production（包级），整合待 05 号文 |
+| 治理能力包 | `src/zephyr/governance/intelligence_governance/`（24 功能模块+1 __init__=25 个 .py） | delegation_engine / delegation_manager / model_router / provider_failover / agent_debate / cross_agent_conflict_detector / multi_model_consensus / self_benchmark / self_test / self_validator / ai_self_diagnosis / autonomy_dashboard / continuous_trust / aisg_sandbox / memory_provider / meta_confidence / confidence_estimator / subagent_hook_propagator 等；整合方案由 [05 号文](../../../_archive/05_intelligence_governance_consolidation.md)负责 | production（包级），整合待 05 号文 |
 | Agent Spec | `src/zephyr/autonomy_core/spec_engine.py` | MOD-INF-019，蓝图→Skill 升级引擎（discover→generate→validate→register 四阶段） | production（蓝图登记） |
 | 自我进化保真 | `src/zephyr/autonomy_core/self_evolution_fidelity_gate.py` | EchoTrap/RAGEN 自进化保真度门控 | production（蓝图登记） |
 | 任务/相位路由 | `src/zephyr/autonomy_core/trigger_router.py`、`src/zephyr/autonomy_core/phase_planner.py` | MOD-INF-019 配套：任务路由表+相位计划 | production（蓝图登记） |

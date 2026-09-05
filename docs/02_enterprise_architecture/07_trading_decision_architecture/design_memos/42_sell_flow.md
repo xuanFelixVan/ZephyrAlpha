@@ -668,7 +668,7 @@ class TradeLevelCircuitBreaker:
   | Page-Hinkley | 累积偏离运行均值的偏差 | 自适应均值；无 μ₀ 假设 | 对缓慢漂移敏感度低 | 备选（μ₀ 难定时） |
   | Bayesian 变点 | 后验 P(changepoint) | 概率输出；可量化不确定性 | 需指定先验；实现复杂 | 与 CUSUM 叠加验证 |
   | 滚动 Sharpe | 滑窗 Sharpe 比率 | 直觉；行业通用 | 滞后大（6+ 月）；窗口选择敏感 | 基线（不推荐单独用） |
-- **A 股适配**：衰减主因=crowding（策略拥挤度上升）+ regime 切换（[10](10_regime_detector_spec.md)）+ 监管变化（如 2026-04 程序化新规）。μ₀ 取 OOS walkforward 验证期均值（[11 C1 验证](11_regime_backtest_validation_plan.md)），不用全回测均值（含待检测衰减期）；k=0.5σ/h=4σ 为 balanced 设置，首批策略实盘 6+ 月后按误报率校准。
+- **A 股适配**：衰减主因=crowding（策略拥挤度上升）+ regime 切换（[10](10_regime_detector_spec.md)）+ 监管变化（如 2026-04 程序化新规）。μ₀ 取 OOS walkforward 验证期均值（[11 C1 验证](../../../_archive/11_regime_backtest_validation_plan.md)），不用全回测均值（含待检测衰减期）；k=0.5σ/h=4σ 为 balanced 设置，首批策略实盘 6+ 月后按误报率校准。
 - **与 BM-SELL-03 收集评分的关系**：CUSUM 是 sleeve 级 meta 信号（非单仓位信号），不注入 BM-SELL-03（那会混淆"仓位该不该卖"与"策略该不该停"）；告警走 [30 §2.5](30_multi_strategy_concurrency.md) PerformanceScore → RegimeMetaAllocator budget 下调路径，是 sleeve 级降仓而非仓位级卖出。
 
 ### 5.3 为何这是上限而非妥协

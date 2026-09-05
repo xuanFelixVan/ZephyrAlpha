@@ -6,7 +6,7 @@ module_id: ""
 blueprint_id: ""
 version: "1.0.0"
 created: "2026-06-30"
-updated: "2026-08-17"
+updated: "2026-09-05"
 ttl: "permanent"
 ---
 
@@ -104,6 +104,8 @@ ttl: "permanent"
 | [trae_082_symbol_convention.yaml](trae_082_symbol_convention.yaml) | YAML | |
 | [trae_083_design_intent_source_discipline.yaml](trae_083_design_intent_source_discipline.yaml) | YAML | |
 | [trae_084_precommit_incremental_discipline.yaml](trae_084_precommit_incremental_discipline.yaml) | YAML | |
+| [trae_085_stale_base_overwrite.yaml](trae_085_stale_base_overwrite.yaml) | YAML | |
+| [trae_086_frontend_module_construction.yaml](trae_086_frontend_module_construction.yaml) | YAML | |
 
 ## 导航
 

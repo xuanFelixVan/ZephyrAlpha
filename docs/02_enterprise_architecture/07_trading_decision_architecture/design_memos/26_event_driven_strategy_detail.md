@@ -26,14 +26,14 @@ scope: 07_trading_decision_architecture
 > "BM-SEL-19 漏斗零命中"已施工闭环：`intelligence/event_funnel.py`（MOD-INT_EVENT_FUNNEL，§2.5 事件→选股映射落码）——候选池生成（精筛∪事件触发，`build_candidate_pool`）→ 过滤（复用 `compute_event_score` 全族评分：利空剔除/极端反应>3%/条件PDF下降>15%/传导链>0.7；|score|<0.2 噪声不动作）→ 评分降序 → ~50→~30 容量截断（`run_event_funnel`）；无事件数据源 `skipped` 直通不阻塞。评分真源唯一在 event_score（不重复造公式）；与 21 号侧 `signal_ashare/event_driven_screener.py`（MOD-SIG-049，EventImpactRecord 契约）平行承载 BM-SEL-19 两视角。测试 `tests/intelligence/test_event_funnel.py` 33 用例全绿；depgraph 设计态 node_id=10919338（planned，只登记不流转）。遗留：sleeve 策略接线（当前 event_driven_sleeve_strategy 自承载逐标的评分过滤，漏斗层经 TYPE_CHECKING 声明待接线）。
 
 # 事件驱动策略细节
-> 本备忘定义首批 3 策略之一——事件驱动 sleeve（[20_first_batch_strategies §2.4](20_first_batch_strategies.md) 策略C）的 alpha 信号来源、事件源、事件分类、冲击衰减曲线、事件→选股映射、换手率与多源情绪接入。性质：永久态讨论记录。管理规范见 [01_design_memo_management_spec.md](01_design_memo_management_spec.md)；路线图定位见 [00_index_trading_decision](00_index_trading_decision.md) G10（L1·Alpha 选股层，P2）。
+> 本备忘定义首批 3 策略之一——事件驱动 sleeve（[20_first_batch_strategies §2.4](../../../_archive/20_first_batch_strategies.md) 策略C）的 alpha 信号来源、事件源、事件分类、冲击衰减曲线、事件→选股映射、换手率与多源情绪接入。性质：永久态讨论记录。管理规范见 [01_design_memo_management_spec.md](01_design_memo_management_spec.md)；路线图定位见 [00_index_trading_decision](00_index_trading_decision.md) G10（L1·Alpha 选股层，P2）。
 ## 1. 背景
 ### 1.1 项目处境
-- 个人 + 100% AI 开发的 A 股量化系统（miniQMT 通道，T+1 结算，不能做空，涨跌停限制）；事件驱动为首批 3 sleeve 之一（[20 §2.4](20_first_batch_strategies.md) 策略C），定位"中换手、中容量、离散事件冲击"；多策略并发架构 Model A 定稿（[30](30_multi_strategy_concurrency.md)），regime 只做 Shrinkage 风险节流不参与选股（[10](10_regime_detector_spec.md)）
+- 个人 + 100% AI 开发的 A 股量化系统（miniQMT 通道，T+1 结算，不能做空，涨跌停限制）；事件驱动为首批 3 sleeve 之一（[20 §2.4](../../../_archive/20_first_batch_strategies.md) 策略C），定位"中换手、中容量、离散事件冲击"；多策略并发架构 Model A 定稿（[30](30_multi_strategy_concurrency.md)），regime 只做 Shrinkage 风险节流不参与选股（[10](10_regime_detector_spec.md)）
 - 事件类基础设施已大量存在（§1.4）：多源新闻采集、`news_collector`、NLP 情感管道（[#ARCH-NLP-PIPELINE-001](../../../01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml) 在建）、`corporate_action_processor`。关键不是"造轮子"，而是"把已有基础设施接成事件→选股→持仓的 alpha 链"
 - **A 股 2026-08 市场背景**：08-07 深调后十大券商共识"超跌反弹仍有演绎空间，8 月中下旬中报密集期是检验窗口"（[澎湃 2026-08-10](https://m.thepaper.cn/newsDetail_forward_33750320)）。含义：①中报密集期=业绩类事件高发窗口；②超跌反弹阶段事件利好催化易触发反弹延续；③科技拥挤度未回落，事件利空仍需警惕——支撑 §2.4 极端反应反转修正与 §2.5 EMERGENCY 协同
 ### 1.2 核心问题
-alpha 来自离散事件冲击，需对齐 G10 六要点：①事件源 ②事件分类 ③冲击衰减曲线 ④信号→选股映射 ⑤换手率 ⑥多源情绪接入。核心张力：A 股信息扩散慢、情绪驱动强、T+1 不能日内翻转；事件驱动与打板同受情绪周期隐形驱动（[30 §1.3](30_multi_strategy_concurrency.md)），相关性可能高于直觉——[G07](23_strategy_correlation_validation.md) 施工前必测。
+alpha 来自离散事件冲击，需对齐 G10 六要点：①事件源 ②事件分类 ③冲击衰减曲线 ④信号→选股映射 ⑤换手率 ⑥多源情绪接入。核心张力：A 股信息扩散慢、情绪驱动强、T+1 不能日内翻转；事件驱动与打板同受情绪周期隐形驱动（[30 §1.3](30_multi_strategy_concurrency.md)），相关性可能高于直觉——[G07](../../../_archive/23_strategy_correlation_validation.md) 施工前必测。
 ### 1.3 约束条件
 - 不能做空 → 利空事件信号只能"剔除/回避"，alpha 集中在事件利好方向的多头
 - **T+1 事件→交易时序显式映射**（v1.9.0 收拢单点声明）：①盘后事件（T 日 15:00 后披露）→ T+1 日开盘才能行动（ORJ 即此窗口第一反应）→ 买入仓最早 T+2 可卖；②盘中事件 → 当日可买但**不可卖**——`should_exit` 的 `holding_days >= 1`（EXTREME_REACTION 线）已隐含此约束；③`holding_days` 计数：买入当日=0（不可卖），次日=1（可卖起点）；④盘后事件 rising 可捕捉窗口实为 day 1-5（day 0 收盘才知情），半衰期折损一日已含于 §2.4 各事件类 rising 半衰期，不另调
@@ -53,16 +53,16 @@ alpha 来自离散事件冲击，需对齐 G10 六要点：①事件源 ②事�
 
 **盘点结论**：四类事件源（公告/新闻/龙虎榜/异动）数据链路全部 production；唯一未落盘为 `sentiment_aggregator.py`——§2.7 已裁定 sentiment_score 作事件方向触发而非截面排序，单条 `nlp_inference.py` 输出可降级承载，不阻塞 MVP。真正待新建的 sleeve 内部组件仅两项：异动识别器（§2.5）与事件影响评分（§2.5 首版公式）。
 ## 2. 决策：事件驱动 sleeve 定义
-> 本节是对 [20_first_batch_strategies §2.4](20_first_batch_strategies.md) 策略C"事件驱动"的细化展开，逐项对齐 G10 六个讨论要点。
+> 本节是对 [20_first_batch_strategies §2.4](../../../_archive/20_first_batch_strategies.md) 策略C"事件驱动"的细化展开，逐项对齐 G10 六个讨论要点。
 ### 2.1 策略定位（继承 20 号，不重复裁定）
 | 维度 | 定义 | 出处 |
 |---|---|---|
-| alpha 信号来源 | 离散事件冲击 | [20 §2.4](20_first_batch_strategies.md) |
-| 换手率特征 | 中。convergence_window = 2-3 天 | [20 §2.4](20_first_batch_strategies.md) / [30 §6.4](30_multi_strategy_concurrency.md) |
-| 容量上限 | 中等（介于打板小与多因子大之间） | [20 §2.4](20_first_batch_strategies.md) |
-| 选股池范围 | 事件触发标的（非固定池，动态生成） | [20 §2.4](20_first_batch_strategies.md) |
-| 持仓周期 | 2-10 天（视事件类型与冲击衰减曲线） | [20 §2.4](20_first_batch_strategies.md) |
-| 与 regime 关系 | 选股**不读** regime 输出，只收 budget 数字；事件冲击衰减速度 regime-dependent，作为 sleeve 内部参数由 PerformanceScore 后验捕获 | [20 §2.4](20_first_batch_strategies.md) |
+| alpha 信号来源 | 离散事件冲击 | [20 §2.4](../../../_archive/20_first_batch_strategies.md) |
+| 换手率特征 | 中。convergence_window = 2-3 天 | [20 §2.4](../../../_archive/20_first_batch_strategies.md) / [30 §6.4](30_multi_strategy_concurrency.md) |
+| 容量上限 | 中等（介于打板小与多因子大之间） | [20 §2.4](../../../_archive/20_first_batch_strategies.md) |
+| 选股池范围 | 事件触发标的（非固定池，动态生成） | [20 §2.4](../../../_archive/20_first_batch_strategies.md) |
+| 持仓周期 | 2-10 天（视事件类型与冲击衰减曲线） | [20 §2.4](../../../_archive/20_first_batch_strategies.md) |
+| 与 regime 关系 | 选股**不读** regime 输出，只收 budget 数字；事件冲击衰减速度 regime-dependent，作为 sleeve 内部参数由 PerformanceScore 后验捕获 | [20 §2.4](../../../_archive/20_first_batch_strategies.md) |
 ### 2.2 事件源（讨论要点①）
 > 裁定：**复用已建多源事件基础设施，不新建数据源**。四类事件源对应已有生产态模块。
 
@@ -89,7 +89,7 @@ alpha 来自离散事件冲击，需对齐 G10 六要点：①事件源 ②事�
 ### 2.4 事件冲击衰减曲线（讨论要点③）
 > 裁定：**首版用经验衰减曲线（按事件类×衰减阶段）；Hawkes 自激发建模登记为暂缓前沿**。衰减速度 regime-dependent，作 sleeve 内部参数后验捕获。
 
-**实证依据**（[20 §2.4](20_first_batch_strategies.md) 已引）：rising phase（day 0-5）风险调整收益上升、RVR 较 decay phase 高 9.5x，decay phase（day 6-15）冲击衰减收益回归（[Beyond the Event Horizon 2025](https://www.preprints.org/manuscript/202506.0079)）；情绪 IC 衰减 regime-dependent——危机期集中短-中 horizon、宏观不确定期扩散窗口延长（[Yukka 2026-05](https://cdn.prod.website-files.com/66b4f3430903efa023fe741b/69fdded32f3d7e02f17ff3f8_Sentiment%20Decay%20&%20Source%20Selection%20in%20Global%20Equity%20Markets%20-%20White%20Paper.pdf)）。
+**实证依据**（[20 §2.4](../../../_archive/20_first_batch_strategies.md) 已引）：rising phase（day 0-5）风险调整收益上升、RVR 较 decay phase 高 9.5x，decay phase（day 6-15）冲击衰减收益回归（[Beyond the Event Horizon 2025](https://www.preprints.org/manuscript/202506.0079)）；情绪 IC 衰减 regime-dependent——危机期集中短-中 horizon、宏观不确定期扩散窗口延长（[Yukka 2026-05](https://cdn.prod.website-files.com/66b4f3430903efa023fe741b/69fdded32f3d7e02f17ff3f8_Sentiment%20Decay%20&%20Source%20Selection%20in%20Global%20Equity%20Markets%20-%20White%20Paper.pdf)）。
 
 **首版衰减模型**：按事件类预设经验半衰期，rising phase 持有、decay phase 兜底退出：
 
@@ -138,7 +138,7 @@ CVD 转正因为买方主动成交量超过卖方=聪明资金低位接货；三
 
 **PEAD.txt 文本惊喜（2026 关键发现）**：[费城联储 PEAD.txt 论文（Meursault et al.）](https://marketmaker.cc/en/blog/post/llm-alpha-mining-earnings-calls/)构建纯文本 SUE（SUE.txt，不用数值盈余数据）——文本漂移**是经典数值 PEAD 的 2 倍**，数值 PEAD 已近消失而文本漂移仍显著。**结论**：NLP 文本信号比数值惊喜更有 alpha 价值（支撑 §2.7 NLP 复用裁定）。
 
-> **事件驱动六因子矩阵（v1.5.0，交叉引用 [20 §2.4 v1.4.4](20_first_batch_strategies.md)）**：
+> **事件驱动六因子矩阵（v1.5.0，交叉引用 [20 §2.4 v1.4.4](../../../_archive/20_first_batch_strategies.md)）**：
 >
 > | 因子 | 定义 | 实证 | 维度 | 当前状态 |
 > |---|---|---|---|---|
@@ -313,7 +313,7 @@ def event_score_triple_factor(event):
     return combined
 ```
 **三因子 vs 双因子裁定**：v1.2.0 双因子保留为**降级默认**（一致预期时序不可得时）；v1.3.0 三因子为**主选**（万得/同花顺时序可得时）。ORJ 仅需 OHLC 无额外数据依赖；预期差依赖一致预期时序（已订阅）。**升级路径不变**：NLP 管道就绪后 SUE→PEAD.txt 文本惊喜。
-> **六因子矩阵交叉引用**：完整六因子矩阵（ORJ/PEAD Inversion/SUE+EAR/dReport/Jump on PEAD/隔夜趋势/AStockEvent Feed）、协同关系、施工优先级与 §2.4 PEAD 衰退根因协同，见 §2.4"事件驱动六因子矩阵"块（v1.5.0，对齐 [20 §2.4 v1.4.4](20_first_batch_strategies.md)），本处不重复登记。
+> **六因子矩阵交叉引用**：完整六因子矩阵（ORJ/PEAD Inversion/SUE+EAR/dReport/Jump on PEAD/隔夜趋势/AStockEvent Feed）、协同关系、施工优先级与 §2.4 PEAD 衰退根因协同，见 §2.4"事件驱动六因子矩阵"块（v1.5.0，对齐 [20 §2.4 v1.4.4](../../../_archive/20_first_batch_strategies.md)），本处不重复登记。
 
 - **BM-SEL-11 知识图谱增强（待就绪）**：复用 [BM-SEL-11](../battle_map/battle_map_05_stock_selection.md)（design）传导链+因子区分。就绪后可升级为 [LLM 增强动态金融知识图谱（arXiv 2607.10932, 2026-07）](https://arxiv.org/pdf/2607.10932)——CIS/PIS 因子 rank IC 与 long-short Sharpe 优于纯情绪/直接事件信号（Fama-MacBeth t-stat ≈ 3.7），为 BM-SEL-11 的 2026 对标方向
 - **BM-SEL-19 开通条件**：事件数据源 + 知识图谱 + NLP 就绪。**未开通则跳过本层，第三层（精筛）直接进第五层**——降级不阻塞
@@ -579,9 +579,9 @@ A 股不能做空，利空事件（业绩暴雷/ST）只能"剔除已有持仓/�
 - **第三阶段（前沿增强，暂缓）**：Hawkes / Janus-Q 细分类（§5 待裁定-1/2）
 ### 4.3 为何这是上限而非妥协
 - 事件源四类已覆盖 A 股主要事件维度，多于四类稀释 NLP 标注带宽；复用而非自建——sleeve 边界清晰（事件→候选→评分→注入漏斗），不向数据源层与漏斗层蔓延
-- 与打板相关性风险是真实约束——若 G07 实测相关性 >0.6，需重审 sleeve 组合（[20 §2.5](20_first_batch_strategies.md)）
+- 与打板相关性风险是真实约束——若 G07 实测相关性 >0.6，需重审 sleeve 组合（[20 §2.5](../../../_archive/20_first_batch_strategies.md)）
 
-> **过度工程审查回执（v1.9.2，判定基准=[system_charter §2](../04_architecture_principles_decisions/system_charter.md)）**：✅ 已施工审查通过——①多源 news_data 不过重（三源为 production 存量设施，RavenPack 实证跨源集成 IR 0.48→0.81，多源是 alpha 来源；反向边界：再新增社交源微博/雪球/股吧属过重不扩源）；②Hawkes 当前形态不过重（经验衰减承载 sleeve 层，Hawkes 留 firm 层风控；首版引入 sleeve alpha 层则过重，自 v1.0.0 起拒绝持续成立）；③Janus-Q/CNN 视觉/LLM 动态图谱/Data Funnel 全部显式暂缓/远期，按"远期工程不算过度工程"规则保留。
+> **过度工程审查回执（v1.9.2，判定基准=[system_charter §2](../../04_architecture_principles_decisions/system_charter.md)）**：✅ 已施工审查通过——①多源 news_data 不过重（三源为 production 存量设施，RavenPack 实证跨源集成 IR 0.48→0.81，多源是 alpha 来源；反向边界：再新增社交源微博/雪球/股吧属过重不扩源）；②Hawkes 当前形态不过重（经验衰减承载 sleeve 层，Hawkes 留 firm 层风控；首版引入 sleeve alpha 层则过重，自 v1.0.0 起拒绝持续成立）；③Janus-Q/CNN 视觉/LLM 动态图谱/Data Funnel 全部显式暂缓/远期，按"远期工程不算过度工程"规则保留。
 ## 5. 待裁定（暂缓）
 > 以下项目暂不施工，非永久禁止。随项目演进重新裁定。
 
@@ -598,21 +598,21 @@ A 股不能做空，利空事件（业绩暴雷/ST）只能"剔除已有持仓/�
 ## 6. 待定问题
 | 开放问题 | 出处 | 决策状态 |
 |---|---|---|
-| 事件驱动与打板相关性实测（施工前必做） | [20 §2.5](20_first_batch_strategies.md) / [30 §6.2](30_multi_strategy_concurrency.md) / [G07](23_strategy_correlation_validation.md) | 待 G07 执行；若 >0.6 需重审 sleeve 组合 |
+| 事件驱动与打板相关性实测（施工前必做） | [20 §2.5](../../../_archive/20_first_batch_strategies.md) / [30 §6.2](30_multi_strategy_concurrency.md) / [G07](../../../_archive/23_strategy_correlation_validation.md) | 待 G07 执行；若 >0.6 需重审 sleeve 组合 |
 | NLP 管道 scope 扩展（regime S2 `bad_news_flat` → 事件类型分类+情绪方向+关联股票） | 本讨论 §2.7 | 待 #ARCH-NLP-PIPELINE-001 Phase 1 完成后评估；若需扩展可登记新 ARCH |
 | CAND-AISA-001 四问评估（自建 AI 舆情模块 vs 依赖 TRAPE AI 运行时） | 候选库 CAND-AISA-001 | 待 [G28](61_lifecycle_multi_ai.md) 统一裁定 |
 | BM-SEL-19 开通条件就绪时序（事件数据源+知识图谱+NLP） | 漏斗 6 件套③（[battle_map_05](../battle_map/battle_map_05_stock_selection.md)） | 待 #ARCH-NLP-PIPELINE-001 + [G06 知识图谱/因果推演](22_sector_rotation_spec.md)（BM-SEL-11）就绪 |
-| 事件驱动容量精确测算 | [20 §2.4](20_first_batch_strategies.md) | 待 G23 回测后校准 |
+| 事件驱动容量精确测算 | [20 §2.4](../../../_archive/20_first_batch_strategies.md) | 待 G23 回测后校准 |
 | convergence_window 实盘校准（事件 2-3 天） | [30 §6.4](30_multi_strategy_concurrency.md) / [G14](33_budget_change_handler.md) | 待首批策略实盘后校准 |
 | 事件驱动六因子矩阵权重校准（dReport/Jump on PEAD/隔夜趋势接入） | §2.4 | 待 G10 校准，dReport 与 Jump on PEAD 优先级最高（有 10 年/5 日实证） |
 | 龙虎榜 2026 机构信号失效校准参数实盘复核 | §2.2/§2.5（v1.8.0 与 24 号 v1.8.2 同步） | 待首批策略实盘 3-6 月后用本项目持仓数据重新校准——机构净买入佐证降权系数/净买率 12% 硬阈值/量化席位双阈值，与 23-A 校准口径一致 |
-| **20 号 §2.4 事件分类表述同步（四类→六类）** | 本备忘 §2.3 v1.6.0 已升级为六类（+IPO/再融资+地缘/宏观），但 [20 §2.4](20_first_batch_strategies.md) 仍写四类——跨文档版本漂移（v1.9.0 审查发现） | 待 20 号 owner 下次修订时同步为"六类（业绩/并购/政策/突发/IPO/地缘，详见 26 号 §2.3）"。按审查约束不越界改 20 号，登记于此 |
+| **20 号 §2.4 事件分类表述同步（四类→六类）** | 本备忘 §2.3 v1.6.0 已升级为六类（+IPO/再融资+地缘/宏观），但 [20 §2.4](../../../_archive/20_first_batch_strategies.md) 仍写四类——跨文档版本漂移（v1.9.0 审查发现） | 待 20 号 owner 下次修订时同步为"六类（业绩/并购/政策/突发/IPO/地缘，详见 26 号 §2.3）"。按审查约束不越界改 20 号，登记于此 |
 | **`sentiment_aggregator.py` 落盘时序** | §1.4 盘点：`src/zephyr/nlp/` 当前仅 `nlp_inference.py` + `__init__.py` | 待 #ARCH-NLP-PIPELINE-001 Phase 1 完成；就绪前 sentiment_score 用单条推理输出降级（§2.7 已裁定非截面排序用途，不阻塞） |
 | **30 号 §2.4 引 "[20 §6.4]" 为失效锚点** | v1.9.2 第 6 轮一致性审查发现：[30_multi_strategy_concurrency §2.4](30_multi_strategy_concurrency.md) L227 引"打板高换手 1-2 天自然收敛，[20 §6.4]"，但 20 号无 §6.4 节（convergence_window 真源在 20 号 §2.2-2.4 各节"换手率特征"行 + 30 号 §6.4 自身） | 待 30 号 owner 修正锚点（建议改引 20 号 §2.2 或自引 §6.4）。按审查约束不越界改 30 号，登记于此 |
 ## 7. 引用
 ### 7.1 相关设计备忘
-- [20_first_batch_strategies.md](20_first_batch_strategies.md) §2.4（事件驱动 sleeve 定义，上游裁定）/ [00_index_trading_decision.md](00_index_trading_decision.md) §3 G10（路线图）
-- [30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md)（Model A 总纲）/ [23_strategy_correlation_validation.md](23_strategy_correlation_validation.md)（G07 相关性验证，施工前必做）
+- [20_first_batch_strategies.md](../../../_archive/20_first_batch_strategies.md) §2.4（事件驱动 sleeve 定义，上游裁定）/ [00_index_trading_decision.md](00_index_trading_decision.md) §3 G10（路线图）
+- [30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md)（Model A 总纲）/ [23_strategy_correlation_validation.md](../../../_archive/23_strategy_correlation_validation.md)（G07 相关性验证，施工前必做）
 - [22_sector_rotation_spec.md](22_sector_rotation_spec.md)（G06 板块轮动，事件传导链映射）/ [33_budget_change_handler.md](33_budget_change_handler.md)（G14 三级升级，convergence_window）
 - [36_var_es_monitoring.md](36_var_es_monitoring.md) / [37_liquidity_crisis_protocol.md](37_liquidity_crisis_protocol.md)（G17/G18 风控，Hawkes branching ratio 监控候选消费者）/ [61_lifecycle_multi_ai.md](61_lifecycle_multi_ai.md)（G28，CAND-AISA-001 归属）
 ### 7.2 相关作战地图

@@ -21,7 +21,7 @@ scope: 07_trading_decision_architecture
 
 # 第二批次策略·价值反转与动量趋势（暂缓）
 
-> **性质**：骨架文档（G11，暂缓）。保持 draft——本主题组暂缓讨论，首批 3 策略（[20_first_batch_strategies](20_first_batch_strategies.md)）上线跑出 3 个月 track record 后再启动。本文仅登记暂缓理由、预研方向与相关性预判，**不含任何已定决策、不允许施工**。
+> **性质**：骨架文档（G11，暂缓）。保持 draft——本主题组暂缓讨论，首批 3 策略（[20_first_batch_strategies](../../../_archive/20_first_batch_strategies.md)）上线跑出 3 个月 track record 后再启动。本文仅登记暂缓理由、预研方向与相关性预判，**不含任何已定决策、不允许施工**。
 > **历史说明**：00_index 标本文"draft v0.4.0"，磁盘仅存 v0.1.0 骨架——中间版曾丢失，本版重建为 0.2.0。
 
 ## 1. 主题组信息
@@ -76,9 +76,9 @@ scope: 07_trading_decision_architecture
 
 - [00_index_trading_decision](00_index_trading_decision.md) §3 G11
 - [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §1.1（5 候选策略清单）
-- [20_first_batch_strategies](20_first_batch_strategies.md) §3.2 / §3.4 / §4.2（暂缓裁定 + 演进路径）
+- [20_first_batch_strategies](../../../_archive/20_first_batch_strategies.md) §3.2 / §3.4 / §4.2（暂缓裁定 + 演进路径）
 - [15_data_feature_layer_spec](15_data_feature_layer_spec.md)（特征仓库——预研依赖）
-- [52_backtest_framework_docking](52_backtest_framework_docking.md)（相关性实测的回测框架）
+- [52_backtest_framework_docking](../../../_archive/52_backtest_framework_docking.md)（相关性实测的回测框架）
 
 ## 7. 修订记录
 

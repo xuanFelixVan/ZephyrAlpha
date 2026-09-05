@@ -47,7 +47,7 @@ scope: 07_trading_decision_architecture
 ## 2. 现状盘点
 
 - 域级全景真源：PostgreSQL depgraph + `docs/02_enterprise_architecture/02_domain_architecture_docs/domain_index.md`（30 域 + 30×30 依赖矩阵 + 价值链主线 DAT→FAC→SIG→PC→PA→SELL→POS→XC→RPT）；原 `docs/_working/依赖图/00-总览与索引.md` 已于 2026-08-28 退役归档至 `docs/_archive/依赖图/00-总览与索引.md`。
-- A股侧已落地的可复用资产：技术指标体系（[16_technical_indicator_build_plan](16_technical_indicator_build_plan.md)，9 周期 OHLCV）、多策略并发架构（[30_multi_strategy_concurrency](30_multi_strategy_concurrency.md)，独立账本+firm 聚合）、风控三模块 production（drawdown/var/kill_switch）、执行对接范式（[40_execution_broker](40_execution_broker.md)）、18 业务注册表机制（[62_business_registry_construction](62_business_registry_construction.md)）。
+- A股侧已落地的可复用资产：技术指标体系（[16_technical_indicator_build_plan](../../../_archive/16_technical_indicator_build_plan.md)，9 周期 OHLCV）、多策略并发架构（[30_multi_strategy_concurrency](30_multi_strategy_concurrency.md)，独立账本+firm 聚合）、风控三模块 production（drawdown/var/kill_switch）、执行对接范式（[40_execution_broker](40_execution_broker.md)）、18 业务注册表机制（[62_business_registry_construction](../../../_archive/62_business_registry_construction.md)）。
 - 候选库查重：2026-08-26 对 candidate_module_registry.yaml 全量检索"数字货币/加密货币/crypto/BTC/永续/资金费/CCXT/币安"零命中——无重复登记风险，CRYPTO 族为全新前缀。
 - 代码侧盘点（2026-08-26 循环审查 R1）：src/zephyr 无 crypto/交易所行情 WS 客户端/CCXT 任何痕迹（仅前端组件与协议层 6 处 websocket 字样，非行情接入）——CAND-CRYPTO-002/005 属全新建设，条目 q1 证据成立；日历消费点预侦察 25 文件命中（scheduler/multi_timeframe_fusion/auto_backfiller/backfill_checker/calendar_position_constraint/三 provider/plan_engine 等），W0 派单消费点盘点的初始清单。
 
@@ -280,11 +280,11 @@ Phase 2  CAND-CRYPTO-003/004/008        ← 永续合约 + 链上增强
 ## 10. 引用
 
 - 依赖图 00-总览与索引（30 域全景与依赖矩阵）——已退役归档：`docs/_archive/依赖图/00-总览与索引.md`；现行真源 = PostgreSQL depgraph + `docs/02_enterprise_architecture/02_domain_architecture_docs/domain_index.md`
-- [16_technical_indicator_build_plan](16_technical_indicator_build_plan.md)（技术指标体系，OHLCV 资产无关依据）
+- [16_technical_indicator_build_plan](../../../_archive/16_technical_indicator_build_plan.md)（技术指标体系，OHLCV 资产无关依据）
 - [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md)（独立账本体系——多市场扩展的账本基础）
 - [40_execution_broker](40_execution_broker.md)（执行对接范式：回执确认/疑似丢单重试等教训沿用）
-- [52_backtest_framework_docking](52_backtest_framework_docking.md) / [53_simulation_live_path](53_simulation_live_path.md)（回测/模拟/实盘路径，币版沿用）
-- [62_business_registry_construction](62_business_registry_construction.md)（18 业务注册表机制，币版实例登记入口）
+- [52_backtest_framework_docking](../../../_archive/52_backtest_framework_docking.md) / [53_simulation_live_path](53_simulation_live_path.md)（回测/模拟/实盘路径，币版沿用）
+- [62_business_registry_construction](../../../_archive/62_business_registry_construction.md)（18 业务注册表机制，币版实例登记入口）
 - candidate_module_registry.yaml：CAND-CRYPTO-001~010（新建构件登记真源）
 - `docs/_working/低学历勇闯量化/`（外部实战参考材料，§7.1~7.4 设计要点真源：第三篇网络坑 7 图 / PM 回测上篇 13 页 / 回测中篇 25 页）
 - 2026-08-26 行业调查（币圈必备数据维度，§5 候选 010 与 003/004 扩充的实证来源）：alternative.me 恐惧贪婪指数六因子口径 / CoinGlass 衍生品聚合（资金费率/OI/多空比/清算热图）/ 资金流三网关实践（交易所储备、稳定币、鲸鱼地址，CryptoQuant/Glassnode/Nansen 工具体系）

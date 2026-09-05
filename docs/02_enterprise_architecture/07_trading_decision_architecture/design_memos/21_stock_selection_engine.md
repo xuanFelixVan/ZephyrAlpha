@@ -29,7 +29,7 @@ scope: 07_trading_decision_architecture
 > 性质：永久态讨论记录，可随项目演进而修订。
 > 管理规范见 [01_design_memo_management_spec.md](01_design_memo_management_spec.md)。
 > 路线图定位见 [00_index_trading_decision](00_index_trading_decision.md) G05（L1·Alpha 选股层，P1）。
-> 前置依赖：[20_first_batch_strategies](20_first_batch_strategies.md) v1.5.10（首批 3 策略定义已定稿）。
+> 前置依赖：[20_first_batch_strategies](../../../_archive/20_first_batch_strategies.md) v1.5.10（首批 3 策略定义已定稿）。
 
 ## 1. 主题组信息
 
@@ -37,18 +37,18 @@ scope: 07_trading_decision_architecture
 |---|---|
 | 主题组 | G05 选股引擎架构 |
 | 所属 | 作战地图 05（[battle_map_05_stock_selection](../battle_map/battle_map_05_stock_selection.md)） |
-| 依赖 | G04（策略定义，[20_first_batch_strategies](20_first_batch_strategies.md) v1.5.10 已定稿） |
+| 依赖 | G04（策略定义，[20_first_batch_strategies](../../../_archive/20_first_batch_strategies.md) v1.5.10 已定稿） |
 | 对标 | WorldQuant Alpha 工厂分层 / qstobody 多引擎 / Medallion Architecture |
-| 正交性 | ✅ 与 regime 正交（选股不读 regime 输出，[20 §1.4](20_first_batch_strategies.md)） |
+| 正交性 | ✅ 与 regime 正交（选股不读 regime 输出，[20 §1.4](../../../_archive/20_first_batch_strategies.md)） |
 | 优先级 | P1 |
 | 状态 | ✅ 已定稿 v1.1.21 |
 
 ## 2. 背景
 
 ### 2.1 项目处境
-- 个人 + 100% AI 开发的 A 股量化系统（miniQMT，T+1，不能做空）—— [20 §1.1](20_first_batch_strategies.md)
-- 多策略并发架构已定稿为 Model A（独立账本 + firm 聚合 + regime 风险节流），首批 3 策略 = 打板 + 多因子 + 事件驱动（[20 §2](20_first_batch_strategies.md)）
-- 三策略的 alpha 信号源链已不同程度施工（[20 §2.2-2.4 施工回填](20_first_batch_strategies.md)）：打板链 4 模块全 production/stable、因子工厂治理层全 production/stable、事件链仅数据底座
+- 个人 + 100% AI 开发的 A 股量化系统（miniQMT，T+1，不能做空）—— [20 §1.1](../../../_archive/20_first_batch_strategies.md)
+- 多策略并发架构已定稿为 Model A（独立账本 + firm 聚合 + regime 风险节流），首批 3 策略 = 打板 + 多因子 + 事件驱动（[20 §2](../../../_archive/20_first_batch_strategies.md)）
+- 三策略的 alpha 信号源链已不同程度施工（[20 §2.2-2.4 施工回填](../../../_archive/20_first_batch_strategies.md)）：打板链 4 模块全 production/stable、因子工厂治理层全 production/stable、事件链仅数据底座
 - 选股阶段作战地图（[battle_map_05](../battle_map/battle_map_05_stock_selection.md)）已有 BM-SEL-01~27 共 27 环节，分属 L0/L1/L2-C 三层，混合 production/design 态
 - **缺口的 why**：30_multi_strategy_concurrency 锁了"组合层"why，20_first_batch_strategies 锁了"3 策略是什么"why，但"选股引擎如何分层、双引擎融合落在哪、pipeline 标准接口长什么样、如何对接 StrategyBook"的 why 层此前空白（骨架）
 
@@ -59,11 +59,11 @@ scope: 07_trading_decision_architecture
 4. 候选池从全市场如何收敛到可交易标的？生成→过滤→排序→输出的漏斗如何设计？
 
 ### 2.3 约束条件
-- charter §3 约束四三维度解耦：选股（what）× 组合权重（how much）× 执行（how）独立优化——选股引擎**只产出 target_portfolio 候选与信号**，不越界到仓位与执行（[20 §1.4](20_first_batch_strategies.md)）
+- charter §3 约束四三维度解耦：选股（what）× 组合权重（how much）× 执行（how）独立优化——选股引擎**只产出 target_portfolio 候选与信号**，不越界到仓位与执行（[20 §1.4](../../../_archive/20_first_batch_strategies.md)）
 - charter §3 约束五少而精：个人系统分层不能过重，L0→L1→L2-C 三层须论证必要性（见 §5 过度工程审查）
 - T+1 结算：选股信号盘后/盘中产出，次日开盘执行，pipeline 须容忍"信号产出→执行"跨日时滞
 - A 股不能做空：选股只产多头候选，不产空头信号
-- 与 regime 正交：选股不读 regime 输出，只收 budget 数字（[20 §1.4](20_first_batch_strategies.md)）
+- 与 regime 正交：选股不读 regime 输出，只收 budget 数字（[20 §1.4](../../../_archive/20_first_batch_strategies.md)）
 
 ## 3. 决策：L0→L1→L2-C 三层选股引擎架构
 
@@ -115,7 +115,7 @@ scope: 07_trading_decision_architecture
 
 ### 3.2 决策①：双引擎融合定位 = 打板策略内部融合，非跨策略层
 
-> 对齐 [00_index G05 讨论要点①](00_index_trading_decision.md) / [30 §7.3](30_multi_strategy_concurrency.md) / [20 §2.2](20_first_batch_strategies.md)
+> 对齐 [00_index G05 讨论要点①](00_index_trading_decision.md) / [30 §7.3](30_multi_strategy_concurrency.md) / [20 §2.2](../../../_archive/20_first_batch_strategies.md)
 
 **裁定**：双引擎融合（BM-SEL-25，MOD-SIG-035 `dual_engine_fusion_decision_engine.py`）是**打板策略 sleeve 内部**的融合，**不是**跨策略层的统一融合器。
 
@@ -138,13 +138,13 @@ scope: 07_trading_decision_architecture
 
 **L1 因子工厂层**（production）：
 - 触发：盘前全量 + 盘中增量双模计算
-- 因子治理：池容量 n_max=64（活跃 60+休眠 4）、入池 min_ic_to_enter=0.02、IC 末位淘汰、生命周期 8 状态机（[20 §2.3 施工回填](20_first_batch_strategies.md)）
+- 因子治理：池容量 n_max=64（活跃 60+休眠 4）、入池 min_ic_to_enter=0.02、IC 末位淘汰、生命周期 8 状态机（[20 §2.3 施工回填](../../../_archive/20_first_batch_strategies.md)）
 - 分布特征工程：滞后项/交互项/滚动统计量/签名方法 Signature，喂密度预测模型
 - 降级：因子层全失效→硬编码均线规则
 
 > **L1 因子配比与衰减监控施工补全（v1.1.0 补，施工环节算法补全）**：
 >
-> **① 因子配比——人工为主 + 衍生为辅**：[私募札记 因子重本源 2026](http://m.toutiao.com/group/7669707690368565795/) 保守型量化投研框架实证——因子挖掘长期维持 **85%-90% 人工挖掘 + 10%-15% 衍生补充** 固定配比，人工因子逻辑清晰、行情失效时可快速定位归因；衍生因子执行月度复盘，收益衰减直接替换下线。因子权重分层：**75% 高频量价因子**（捕捉短期资金交易行为）+ **15% 基本面因子**（排雷规避基本面恶化）+ **10% 另类情绪因子**（辅助补充）。**对本项目 L1 的施工启示**：[20 §2.3](20_first_batch_strategies.md) "少而精 8-15 个因子"应进一步明确配比——建议人工因子为主（逻辑可解释、失效可归因），LLM/RL 衍生因子为辅（[20 §6 待定问题"LLM alpha 挖掘闭环"](20_first_batch_strategies.md) 产出的因子进衍生池，月度复盘替换），与 8 状态生命周期治理（research→...→retired）天然契合。[华泰证券金工 2026-08-02](https://m.hibor.com.cn/wap_detail.aspx?id=5dc71a9949bce52f3398c30caaf270dd) 机构级实证：**全频段融合因子**（量价+基本面+另类多频段融合）TOP 层年化超额 27.37%、5 日 RankIC 均值 11.2%，AI 中证 1000 指增年化超额 20.33%、IR 3.10——印证 L1 因子工厂层"全频段融合"是机构级 alpha 主源（非单一频段）。
+> **① 因子配比——人工为主 + 衍生为辅**：[私募札记 因子重本源 2026](http://m.toutiao.com/group/7669707690368565795/) 保守型量化投研框架实证——因子挖掘长期维持 **85%-90% 人工挖掘 + 10%-15% 衍生补充** 固定配比，人工因子逻辑清晰、行情失效时可快速定位归因；衍生因子执行月度复盘，收益衰减直接替换下线。因子权重分层：**75% 高频量价因子**（捕捉短期资金交易行为）+ **15% 基本面因子**（排雷规避基本面恶化）+ **10% 另类情绪因子**（辅助补充）。**对本项目 L1 的施工启示**：[20 §2.3](../../../_archive/20_first_batch_strategies.md) "少而精 8-15 个因子"应进一步明确配比——建议人工因子为主（逻辑可解释、失效可归因），LLM/RL 衍生因子为辅（[20 §6 待定问题"LLM alpha 挖掘闭环"](../../../_archive/20_first_batch_strategies.md) 产出的因子进衍生池，月度复盘替换），与 8 状态生命周期治理（research→...→retired）天然契合。[华泰证券金工 2026-08-02](https://m.hibor.com.cn/wap_detail.aspx?id=5dc71a9949bce52f3398c30caaf270dd) 机构级实证：**全频段融合因子**（量价+基本面+另类多频段融合）TOP 层年化超额 27.37%、5 日 RankIC 均值 11.2%，AI 中证 1000 指增年化超额 20.33%、IR 3.10——印证 L1 因子工厂层"全频段融合"是机构级 alpha 主源（非单一频段）。
 >
 > **② IC 衰减四参数监控框架**：当前 `ic_decay.py`（MOD-L02-004）已实现 IC 衰减曲线 + 半衰期计算，[CSDN 2026-07-11](https://blog.csdn.net/wencaitouzi/article/details/148829424) / [gs-quant IC 衰减曲线](https://blog.csdn.net/gitblog_00055/article/details/151774547) 给出完整四参数框架应作为 L1 衰减监控的标准指标：
 > - **初始 IC 值**（IC at lag=1）：衡量因子短期预测能力
@@ -152,31 +152,31 @@ scope: 07_trading_decision_architecture
 > - **衰减斜率**（曲线平均下降速率）：衡量衰减速度
 > - **长期 IC 均值**（如 60 日平均 IC）：衡量因子长期有效性
 >
-> 四参数联动判据：半衰期<10 天 → 缩短调仓周期（动态持仓周期 `min(half_life, 5)`，夏普 1.2→1.8 实证）；初始 IC>0.05 但长期 IC 均值<0.02 → 因子拥挤告警（[20 §2.3 microalphas](20_first_batch_strategies.md) arbitrage/crowding 机制）；衰减斜率突变（CUSUM >2σ）→ 进入观察态。此四参数框架是对 [20 §2.3](20_first_batch_strategies.md) 因子衰减监控的 L1 层落地细化。
+> 四参数联动判据：半衰期<10 天 → 缩短调仓周期（动态持仓周期 `min(half_life, 5)`，夏普 1.2→1.8 实证）；初始 IC>0.05 但长期 IC 均值<0.02 → 因子拥挤告警（[20 §2.3 microalphas](../../../_archive/20_first_batch_strategies.md) arbitrage/crowding 机制）；衰减斜率突变（CUSUM >2σ）→ 进入观察态。此四参数框架是对 [20 §2.3](../../../_archive/20_first_batch_strategies.md) 因子衰减监控的 L1 层落地细化。
 
 > **盘中增量双模计算触发条件与 Signature 方法（v1.1.1 补，施工环节算法补全）**：
 >
-> **① 盘中增量双模计算触发条件**：当前 §3.3 只写"盘前全量 + 盘中增量双模计算"，未明确增量触发条件。触发判据：① 因子新鲜度衰减——因子 `current_ic < initial_ic * 0.7`（[CSDN 2026-07-11](https://blog.csdn.net/wencaitouzi/article/details/148829424) 新鲜度监控阈值）时触发盘中增量重算；② 价格冲击——标的日内涨幅 >3% 或成交量 >5 日均值 2 倍时触发该标的因子增量重算；③ 事件触发——事件源（[20 §2.4](20_first_batch_strategies.md) 事件源）发布事件时触发相关标的因子增量重算。增量计算只重算受影响标的（非全市场），算力节省 80%+。
+> **① 盘中增量双模计算触发条件**：当前 §3.3 只写"盘前全量 + 盘中增量双模计算"，未明确增量触发条件。触发判据：① 因子新鲜度衰减——因子 `current_ic < initial_ic * 0.7`（[CSDN 2026-07-11](https://blog.csdn.net/wencaitouzi/article/details/148829424) 新鲜度监控阈值）时触发盘中增量重算；② 价格冲击——标的日内涨幅 >3% 或成交量 >5 日均值 2 倍时触发该标的因子增量重算；③ 事件触发——事件源（[20 §2.4](../../../_archive/20_first_batch_strategies.md) 事件源）发布事件时触发相关标的因子增量重算。增量计算只重算受影响标的（非全市场），算力节省 80%+。
 >
 > **② Signature 签名方法解释**：当前 §3.3 写"分布特征工程：滞后项/交互项/滚动统计量/签名方法 Signature，喂密度预测模型"但未解释 Signature 是什么。**Signature 方法** = 路径签名（Path Signature），源自粗路径理论（rough path theory）——将时间序列路径编码为不变量序列（签名变换），捕捉路径的几何特征（水平/面积/体积等），不依赖时间对齐。金融应用：将价格/成交量路径转为签名特征向量，喂密度预测模型（[91_density_prediction](91_density_prediction.md)）预测次日 8 态走势。优势：① 可变长路径编码为定长向量；② 捕捉高阶交互（传统滞后项只捕一阶）；③ 对时间扭曲鲁棒。工程实现参考 `signatory` 库（PyTorch 签名计算）。
 >
-> **③ 25 号多因子细节算法交叉引用**：[25_multifactor_strategy_detail](25_multifactor_strategy_detail.md) v1.9.0 已登记四项选项之外更好算法（IC 半衰期加权/GAN_GRU/Bayesian 变点/Bootstrap CI），与本备忘 §3.3 L1 因子工厂层的演进路径闭合——详见 [20 §2.3 25 号交叉引用](20_first_batch_strategies.md)。L1 因子工厂层的 production 基线（因子池 n_max=64 + 8 状态生命周期 + IC 衰减四参数监控）已施工，远期演进（Hubble AST 沙箱 + AlphaEvolve MAP Elites，见 [20 §2.4 LLM alpha 挖掘新框架](20_first_batch_strategies.md)）登记为 §6 待裁定-7。
+> **③ 25 号多因子细节算法交叉引用**：[25_multifactor_strategy_detail](25_multifactor_strategy_detail.md) v1.9.0 已登记四项选项之外更好算法（IC 半衰期加权/GAN_GRU/Bayesian 变点/Bootstrap CI），与本备忘 §3.3 L1 因子工厂层的演进路径闭合——详见 [20 §2.3 25 号交叉引用](../../../_archive/20_first_batch_strategies.md)。L1 因子工厂层的 production 基线（因子池 n_max=64 + 8 状态生命周期 + IC 衰减四参数监控）已施工，远期演进（Hubble AST 沙箱 + AlphaEvolve MAP Elites，见 [20 §2.4 LLM alpha 挖掘新框架](../../../_archive/20_first_batch_strategies.md)）登记为 §6 待裁定-7。
 
 > **④ 2026-08 LLM alpha 挖掘新框架（v1.1.4 补，选项之外更好算法——当前 §6 待裁定-7 仅引 Hubble/AlphaEvolve/XAlpha，缺 2026-08 新出的 AlphaMemo/FactorMiner/MAGE/AlphaAgent 四框架）**：
 >
 > **AlphaMemo SSPM（结构化搜索过程记忆）**（[arXiv 2606.20625, 2026-05-26](https://arxiv.org/pdf/2606.20625)）：不只记忆最终因子或完整轨迹，而是记录 **edit motif 级别**的可复用证据（哪些编辑模式在特定父因子上下文下有效/失败）；从 AST 差异提取 edit motifs；置信度门控残差记忆（在 search-ledger 先验之上）；**非对称否决控制**（高置信负模式可否决，正模式仅软提升）；CSI 500 和 S&P 500 验证。**对 L1 因子工厂的启示**：AlphaMemo 是 XAlpha 记忆层的精细化升级——XAlpha 的 A/B/C 三层分类（OHLCV 资格/机制家族/研究原型）是粗粒度记忆，AlphaMemo 的 edit motif 级记忆可复用"哪些因子编辑操作（如加滞后项/取对数/交互项）在何种上下文下有效"，比 XAlpha 更精细。与 [CogAlpha](https://arxiv.org/html/2511.18850v4) 多 agent 质量检查互补——AlphaMemo 提供"失败模式记忆"，CogAlpha 提供"质量校验"。
 >
-> **FactorMiner Ralph Loop（retrieve-generate-evaluate-distill）**（[ICLR 2026](https://openreview.net/pdf?id=TTsecyqrW3)）：Ralph Loop 范式 + 模块化 Skill 架构（封装 IC 筛选/相关性检查/去重/全验证为可执行工具）+ 结构化经验记忆（成功模式 + **禁区**——与现有库高互相关的因子家族）；**全局因子库视角**：候选因子如何补充现有库而非孤立优化。**对 L1 因子工厂的启示**：FactorMiner 的"禁区"概念与本项目 [factor_pool_manager.py](20_first_batch_strategies.md)（MOD-L02-018）IC 末位淘汰 + n_max=64 容量上限天然契合——新因子入池前检查与现有 64 因子的相关性，高相关的因子家族进"禁区"不入池。这是对当前 IC 末位淘汰的**入池前预防**（当前是入池后 IC 衰减才淘汰，FactorMiner 是入池前相关性检查拦截）。
+> **FactorMiner Ralph Loop（retrieve-generate-evaluate-distill）**（[ICLR 2026](https://openreview.net/pdf?id=TTsecyqrW3)）：Ralph Loop 范式 + 模块化 Skill 架构（封装 IC 筛选/相关性检查/去重/全验证为可执行工具）+ 结构化经验记忆（成功模式 + **禁区**——与现有库高互相关的因子家族）；**全局因子库视角**：候选因子如何补充现有库而非孤立优化。**对 L1 因子工厂的启示**：FactorMiner 的"禁区"概念与本项目 [factor_pool_manager.py](../../../_archive/20_first_batch_strategies.md)（MOD-L02-018）IC 末位淘汰 + n_max=64 容量上限天然契合——新因子入池前检查与现有 64 因子的相关性，高相关的因子家族进"禁区"不入池。这是对当前 IC 末位淘汰的**入池前预防**（当前是入池后 IC 衰减才淘汰，FactorMiner 是入池前相关性检查拦截）。
 >
 > **MAGE（MAP-Elites for Alpha Generation）**（[GitHub 2026-04-30](https://github.com/joconno2/MAGE)）：MAP-Elites 质量-多样性进化算法应用于 Alpha 生成——2D 行为网格（turnover × market correlation），每格保留该行为 profile 下最优 alpha；RL 奖励含个体 alpha 质量+"synergy"项鼓励生成集多样性；AlphaGen 在 S&P 500 Sharpe 3.96，CSI300 0.76。**对 L1 因子工厂的启示**：MAGE 是 AlphaEvolve MAP Elites 的金融场景聚焦版——AlphaEvolve 的行为维度是通用 metric，MAGE 明确用 turnover × market correlation 两维（低换手×低相关=最优区）。与本项目 charter 约束五"少而精+差异性"对齐——MAGE 的 2D 网格可直接映射为因子的"换手率×相关性"筛选器。
 >
-> **AlphaAgent 三大正则化**（[arXiv 2502.16789, KDD 2025](https://arxiv.org/pdf/2502.16789)）：**(i) 原创性强化**（基于 AST 相似度对现有 alpha 库，抗 alpha decay）、**(ii) 假设-因子对齐**（LLM 评估市场假设与生成因子的语义一致性，防"幸运因子"）、**(iii) 复杂度控制**（AST 结构约束防过拟合）；CSI 500 和 S&P 500 四年验证抗 decay 能力。**对 L1 因子工厂的启示**：AlphaAgent 三大正则化是残差代数（[20 §2.4 arXiv 2608.07349](20_first_batch_strategies.md)）思路的工程化升级——残差代数在合成层保持表示身份，AlphaAgent 在生成层就约束原创性/对齐/复杂度。与 [Beyond Prompting](https://arxiv.org/html/2603.14288v1) 经济正则化"幸运因子"过滤器互补。
+> **AlphaAgent 三大正则化**（[arXiv 2502.16789, KDD 2025](https://arxiv.org/pdf/2502.16789)）：**(i) 原创性强化**（基于 AST 相似度对现有 alpha 库，抗 alpha decay）、**(ii) 假设-因子对齐**（LLM 评估市场假设与生成因子的语义一致性，防"幸运因子"）、**(iii) 复杂度控制**（AST 结构约束防过拟合）；CSI 500 和 S&P 500 四年验证抗 decay 能力。**对 L1 因子工厂的启示**：AlphaAgent 三大正则化是残差代数（[20 §2.4 arXiv 2608.07349](../../../_archive/20_first_batch_strategies.md)）思路的工程化升级——残差代数在合成层保持表示身份，AlphaAgent 在生成层就约束原创性/对齐/复杂度。与 [Beyond Prompting](https://arxiv.org/html/2603.14288v1) 经济正则化"幸运因子"过滤器互补。
 >
 > **AlphaSAGE 结构感知因子生成**（[arXiv 2509.25055v3, 2026-05-19](https://arxiv.org/pdf/2509.25055v3)）：RGCN（Relational Graph Convolutional Network）结构编码器捕捉因子 AST 的数学结构 + GFlowNet 生成策略（从空 AST 逐步施加 action 生成完整因子）+ 多维度奖励函数（`reward = r_ic + 0.2·r_sa + 0.3·r_nov`，IC 收益 + 结构对齐 + 新颖性）。**对 L1 因子工厂的启示**：AlphaSAGE 是 MAGE 的结构感知升级——MAGE 用 turnover×correlation 2D 行为网格做多样性，AlphaSAGE 用 RGCN 做 **AST 结构嵌入**多样性。两者互补：FactorMiner 禁区当前基于 IC 相关性检查（数值相关），AlphaSAGE 的 RGCN 编码器可补**结构相关**检查（两个因子 IC 不同但 AST 结构相似=同一思路换皮，应进禁区）。与 [CogAlpha](https://arxiv.org/html/2511.18850v4) 多 agent 质量检查互补——AlphaSAGE 在生成层约束结构多样性，CogAlpha 在校验层约束代码质量。
 >
-> **结论**：§6 待裁定-7 LLM alpha 挖掘闭环的工程路径=八框架完整工具链（Hubble/AlphaEvolve/XAlpha/AlphaMemo/FactorMiner/MAGE/AlphaAgent/AlphaSAGE，逐框架分析与链接见上文④各块及 §8.5）。本项目远期演进应采 Hubble 架构为骨架（AST 沙箱确保可执行），FactorMiner 禁区机制接入 [factor_pool_manager.py](20_first_batch_strategies.md) 入池前相关性检查（IC 相关 + AlphaSAGE RGCN 结构相关双层），AlphaMemo edit motif 记忆接入因子治理层经验累积。详见 [20 §2.4 LLM alpha 挖掘新框架](20_first_batch_strategies.md)。
+> **结论**：§6 待裁定-7 LLM alpha 挖掘闭环的工程路径=八框架完整工具链（Hubble/AlphaEvolve/XAlpha/AlphaMemo/FactorMiner/MAGE/AlphaAgent/AlphaSAGE，逐框架分析与链接见上文④各块及 §8.5）。本项目远期演进应采 Hubble 架构为骨架（AST 沙箱确保可执行），FactorMiner 禁区机制接入 [factor_pool_manager.py](../../../_archive/20_first_batch_strategies.md) 入池前相关性检查（IC 相关 + AlphaSAGE RGCN 结构相关双层），AlphaMemo edit motif 记忆接入因子治理层经验累积。详见 [20 §2.4 LLM alpha 挖掘新框架](../../../_archive/20_first_batch_strategies.md)。
 >
-> **⑤ L1 深度学习 baseline 候选：Cross-Sectional LSTM（v1.1.6 补，施工环节算法补全——当前 §3.3 L1 因子工厂是"人工因子 + IC 评估 + 8 状态治理"纯线性框架，缺非线性深度学习预测 baseline 作为远期对照）**：[Cross-Sectional Heterogeneity LSTM arXiv 2608.05755 2026-08-07](https://arxiv.org/html/2608.05755v1)（Julius Döbelt）——在标准 LSTM 上加 **learnable sector embeddings**（捕获截面异质性，A 股行业轮动适配）+ 宏观金融协变量 + label smoothing/dropout/gradient clipping 正则。S&P 500 日频方向预测实证：超越 basic LSTM / Random Forest / buy-and-hold，预测信号由**短期反转因子 + 行业动量因子**驱动（与 A 股已知有效因子一致），可解释性通过潜空间可视化分析模型如何区分行业。**对 L1 因子工厂的启示**：当前 L1 是纯线性 IC 加权合成（[MOD-L03-001 signal_synthesizer](20_first_batch_strategies.md)），Cross-Sectional LSTM 可作 **Phase 3+ 非线性预测 baseline**——sector embedding 直接适配 A 股行业轮动（与 L2-C 板块轮动 G06 协同），短期反转+行业动量双因子结构与 [20 §2.3](20_first_batch_strategies.md) 因子族对齐。**过度工程审查**：LSTM 非线性预测属远期增强（当前 L1 production 线性框架已够 MVP），不纳入首批施工——登记为 §6 待裁定-9，G09 远期评估深度学习 baseline 接入 L1（须因子工厂治理层稳定运行 6+ 月后）。
+> **⑤ L1 深度学习 baseline 候选：Cross-Sectional LSTM（v1.1.6 补，施工环节算法补全——当前 §3.3 L1 因子工厂是"人工因子 + IC 评估 + 8 状态治理"纯线性框架，缺非线性深度学习预测 baseline 作为远期对照）**：[Cross-Sectional Heterogeneity LSTM arXiv 2608.05755 2026-08-07](https://arxiv.org/html/2608.05755v1)（Julius Döbelt）——在标准 LSTM 上加 **learnable sector embeddings**（捕获截面异质性，A 股行业轮动适配）+ 宏观金融协变量 + label smoothing/dropout/gradient clipping 正则。S&P 500 日频方向预测实证：超越 basic LSTM / Random Forest / buy-and-hold，预测信号由**短期反转因子 + 行业动量因子**驱动（与 A 股已知有效因子一致），可解释性通过潜空间可视化分析模型如何区分行业。**对 L1 因子工厂的启示**：当前 L1 是纯线性 IC 加权合成（[MOD-L03-001 signal_synthesizer](../../../_archive/20_first_batch_strategies.md)），Cross-Sectional LSTM 可作 **Phase 3+ 非线性预测 baseline**——sector embedding 直接适配 A 股行业轮动（与 L2-C 板块轮动 G06 协同），短期反转+行业动量双因子结构与 [20 §2.3](../../../_archive/20_first_batch_strategies.md) 因子族对齐。**过度工程审查**：LSTM 非线性预测属远期增强（当前 L1 production 线性框架已够 MVP），不纳入首批施工——登记为 §6 待裁定-9，G09 远期评估深度学习 baseline 接入 L1（须因子工厂治理层稳定运行 6+ 月后）。
 
 **L2-C A股特色信号层**（混合 production/design）：
 - **打板链**（🟦 production）：游资接力情绪（MOD-SIG-033，6 因子+情绪周期 4+1 阶段）→ 量化短线强度（MOD-SIG-034，6 维 A~E 评级）→ 双引擎融合（MOD-SIG-035，自适应权重+6 类决策）
@@ -211,12 +211,12 @@ scope: 07_trading_decision_architecture
 
 **裁定**：量化短线强度评级（MOD-SIG-034 `quant_short_term_strength_engine.py`，production/stable）是**打板 sleeve 双引擎融合的量化引擎输入**，6 维 0-100 分（价格动量 20/行业强度 15/相对强度 20/资金 15/技术 20/风险 10）+ A~E 五级评级 + 6 类输出。
 
-**why 独立评级而非直接用游资情绪**：游资情绪引擎（MOD-SIG-033）捕捉"人"的接力情绪，但对量化砸板（2026 年量化成游资最大对手盘，[20 §2.2 2026 市场语境](20_first_batch_strategies.md)）不敏感；量化强度评级用价格动量/资金/技术等客观维度补盲，两引擎融合权重由情绪周期阶段自适应（冰点时量化 70%、主升时游资 70%）——单一引擎都有盲区，融合是打板 alpha 的核心。
+**why 独立评级而非直接用游资情绪**：游资情绪引擎（MOD-SIG-033）捕捉"人"的接力情绪，但对量化砸板（2026 年量化成游资最大对手盘，[20 §2.2 2026 市场语境](../../../_archive/20_first_batch_strategies.md)）不敏感；量化强度评级用价格动量/资金/技术等客观维度补盲，两引擎融合权重由情绪周期阶段自适应（冰点时量化 70%、主升时游资 70%）——单一引擎都有盲区，融合是打板 alpha 的核心。
 
 **边界**：量化强度评级**仅服务打板 sleeve**，多因子 sleeve 用横截面因子打分（不共用此评级），事件 sleeve 用事件冲击信号。三 sleeve 的"强度"概念各自定义，不在选股层强行统一。
 
 > **6 维权重校准方法（v1.1.2 补，施工环节算法补全）**：当前 6 维权重（价格动量 20/行业强度 15/相对强度 20/资金 15/技术 20/风险 10）是经验设定，未说明校准方法。校准路径两条：
-> - **路径 A·IC 加权**（与 [20 §2.3](20_first_batch_strategies.md) 因子工厂 IC 加权合成对齐）：将 6 维各视为子因子，计算各自滚动 60 日 RankIC，按 `weight_i = IC_i / Σ|IC_j|` 归一化为权重——IC 高的维度自动获得更高权重，IC 衰减的维度自动降权。优势：与因子工厂治理层（MOD-L02-018）的 IC 末位淘汰逻辑一致，校准自动化。
+> - **路径 A·IC 加权**（与 [20 §2.3](../../../_archive/20_first_batch_strategies.md) 因子工厂 IC 加权合成对齐）：将 6 维各视为子因子，计算各自滚动 60 日 RankIC，按 `weight_i = IC_i / Σ|IC_j|` 归一化为权重——IC 高的维度自动获得更高权重，IC 衰减的维度自动降权。优势：与因子工厂治理层（MOD-L02-018）的 IC 末位淘汰逻辑一致，校准自动化。
 > - **路径 B·SHAP 归因**（机器学习反推）：用 LightGBM 训练"6 维→次日收益"模型，SHAP 值反推各维度贡献度作为权重。优势：捕捉非线性交互（IC 加权只捕线性），劣势：需离线训练+定期重训。
 > - **重校准频率**：月度（与 §3.3 IC 衰减四参数半衰期监控对齐），CUSUM >2σ 触发即时重校准。
 > - **MVP 优先**：首版用经验权重（当前 20/15/20/15/20/10）+ 路径 A（IC 加权）作为 Phase 2 演进，路径 B（SHAP）为远期。登记为 §6 待裁定-8。
@@ -264,7 +264,7 @@ scope: 07_trading_decision_architecture
 >
 > urgency 由 sleeve 根据信号强度与持仓周期自决，convergence_window 在 StrategyBook（[30 §2.2](30_multi_strategy_concurrency.md) MOD-POS-020）持有并触发 BudgetChangeHandler（MOD-POS-022）三级升级。
 
-**why 统一接口**：3 sleeve 异构（信号源/频率/周期全不同，[20 §2.5 差异化矩阵](20_first_batch_strategies.md)），但须对接同一 firm 层（MOD-POS-021）——统一接口是 Model A"统一 firm 风险框架 + 差异化 sleeve"（[20 §1.4](20_first_batch_strategies.md)）的工程落地。差异化在接口实现内部，统一在接口签名。
+**why 统一接口**：3 sleeve 异构（信号源/频率/周期全不同，[20 §2.5 差异化矩阵](../../../_archive/20_first_batch_strategies.md)），但须对接同一 firm 层（MOD-POS-021）——统一接口是 Model A"统一 firm 风险框架 + 差异化 sleeve"（[20 §1.4](../../../_archive/20_first_batch_strategies.md)）的工程落地。差异化在接口实现内部，统一在接口签名。
 
 ### 3.6 决策⑤：候选池生成→过滤→排序→输出（漏斗模型）
 
@@ -275,8 +275,8 @@ scope: 07_trading_decision_architecture
 | 阶段 | 打板 sleeve | 多因子 sleeve | 事件 sleeve |
 |---|---|---|---|
 | **① 候选池生成** | 全市场涨停标的 + 连板梯队（L0 涨停数据） | 全市场沪深 A 股（L1 universe） | 事件触发标的动态生成（L0 新闻/公告） |
-| **② 过滤** | 排除 ST/*ST/退市风险/流动性失效；流通市值 10-50 亿黄金区间（[20 §2.2](20_first_batch_strategies.md)） | 排除 ST/*ST/次新(<60天)/日均成交额低于阈值 | 排除 ST/流动性失效；事件置信度低于阈值过滤 |
-| **③ 排序** | 双引擎融合评分（MOD-SIG-035，6 类决策优先级） | 横截面因子打分（IC 加权/正交化，G09） | 事件冲击评分 × 衰减曲线阶段（[20 §2.4](20_first_batch_strategies.md)） |
+| **② 过滤** | 排除 ST/*ST/退市风险/流动性失效；流通市值 10-50 亿黄金区间（[20 §2.2](../../../_archive/20_first_batch_strategies.md)） | 排除 ST/*ST/次新(<60天)/日均成交额低于阈值 | 排除 ST/流动性失效；事件置信度低于阈值过滤 |
+| **③ 排序** | 双引擎融合评分（MOD-SIG-035，6 类决策优先级） | 横截面因子打分（IC 加权/正交化，G09） | 事件冲击评分 × 衰减曲线阶段（[20 §2.4](../../../_archive/20_first_batch_strategies.md)） |
 | **④ 输出** | target_portfolio（urgency=immediate/next_open，T+1 次日卖） | target_portfolio（urgency=gradual，3-5 天收敛） | target_portfolio（urgency=next_open，2-3 天收敛） |
 
 **漏斗容量**（[battle_map_05](../battle_map/battle_map_05_stock_selection.md)）：全市场 ~5000 → L1 因子过滤 ~1200 → L2-C 精筛 300 → sleeve 排序输出 50 → firm 层裁剪后实仓（受 budget 约束）。
@@ -307,7 +307,7 @@ scope: 07_trading_decision_architecture
 
 > **漏斗③排序优先级算法（v1.1.2 补，施工环节算法补全）**：漏斗"③ 排序"对打板 sleeve 写"双引擎融合评分（MOD-SIG-035，6 类决策优先级）"但未展开优先级排序算法，此处补全：
 >
-> **打板 sleeve 6 类决策优先级**（[20 §2.2 施工回填](20_first_batch_strategies.md) MOD-SIG-035 `dual_engine_fusion_decision_engine.py` 6 类输出）：
+> **打板 sleeve 6 类决策优先级**（[20 §2.2 施工回填](../../../_archive/20_first_batch_strategies.md) MOD-SIG-035 `dual_engine_fusion_decision_engine.py` 6 类输出）：
 >
 > | 优先级 | 决策类 | 含义 | 排序权重 |
 > |---|---|---|---|
@@ -318,10 +318,10 @@ scope: 07_trading_decision_architecture
 > | P4 | 伪强 | 量化诱导假强势（须警惕量化砸板） | 0.30 |
 > | P5 | 地天反包 | 地天板反包，极端反转 | 0.20 |
 >
-> **排序算法**：`final_score = fusion_score × priority_weight`，按 final_score 降序排列，受 budget 约束裁剪至 Top-N（打板 sleeve N≤10 受容量硬约束）。同类内按融合评分降序。**与连板/趋势切换协同**（[20 §2.2 v1.4.1 初拟算法](20_first_batch_strategies.md)）：连板模式下 P0-P1 优先级提升（连板接力信号权重 0.8），趋势模式下 P3-P4 优先级提升（趋势龙低吸+断板反包信号权重 0.8）。
+> **排序算法**：`final_score = fusion_score × priority_weight`，按 final_score 降序排列，受 budget 约束裁剪至 Top-N（打板 sleeve N≤10 受容量硬约束）。同类内按融合评分降序。**与连板/趋势切换协同**（[20 §2.2 v1.4.1 初拟算法](../../../_archive/20_first_batch_strategies.md)）：连板模式下 P0-P1 优先级提升（连板接力信号权重 0.8），趋势模式下 P3-P4 优先级提升（趋势龙低吸+断板反包信号权重 0.8）。
 >
 > **多因子 sleeve 排序**：横截面因子打分降序（IC 加权/正交化，[25_multifactor_strategy_detail](25_multifactor_strategy_detail.md) G09），Top-N 受 budget 约束。
-> **事件 sleeve 排序**：`final_score = event_impact_score × decay_phase_factor`，事件冲击评分 × 衰减曲线阶段因子（rising phase day 0-5 factor=1.0→decay phase day 6-15 factor=0.3），降序排列。PEAD Inversion 修正：极端反应（|ORJ|>3%）事件降权（[20 §2.4 ORJ 算法骨架](20_first_batch_strategies.md)）。
+> **事件 sleeve 排序**：`final_score = event_impact_score × decay_phase_factor`，事件冲击评分 × 衰减曲线阶段因子（rising phase day 0-5 factor=1.0→decay phase day 6-15 factor=0.3），降序排列。PEAD Inversion 修正：极端反应（|ORJ|>3%）事件降权（[20 §2.4 ORJ 算法骨架](../../../_archive/20_first_batch_strategies.md)）。
 
 ### 3.7 决策⑥：与 StrategyBook 对接契约
 
@@ -334,14 +334,14 @@ scope: 07_trading_decision_architecture
 | target_portfolio | 产出（what） | 持有 + 粗仓位（how much 初拟） | 选股不越界到精仓位（Kelly 在 firm 层，[31_position_sizing](31_position_sizing.md)） |
 | convergence_window | 不涉及 | 持有 + 按换手率设（打板 1-2/多因子 3-5/事件 2-3 天） | 选股产 urgency，收敛窗口在仓位层 |
 | budget | 只收数字 | 持有 + 触发 rebalance | budget 来源在 RegimeMetaAllocator（G15，第二阶段） |
-| PnL 归因 | 产出 signals 留痕 | 独立 PnL 归因 | sleeve 独立账本（[20 §4.1](20_first_batch_strategies.md)） |
+| PnL 归因 | 产出 signals 留痕 | 独立 PnL 归因 | sleeve 独立账本（[20 §4.1](../../../_archive/20_first_batch_strategies.md)） |
 
 **why sleeve 不持精仓位**：charter 约束四三维度解耦——选股（what）与仓位（how much）独立优化，sleeve 只产"买什么+粗权重"，精仓位（Kelly/risk parity）在 firm 层统一裁决（[31_position_sizing §1](31_position_sizing.md)）。若 sleeve 自持精仓位会与 firm 层冲突，破坏 Model A 统一风险框架。
 
 ## 4. 考虑过的替代方案
 
 ### 4.1 双引擎融合作为跨策略层统一融合器 —— 拒绝
-- **拒绝理由**：游资/量化双引擎都是短线盘中信号，服务打板 sleeve。把双引擎抬到跨策略层会强行统一打板（盘中实时）、多因子（盘后日频）、事件（不定期）三种异构信号，违反 charter 约束五（[20 §1.4](20_first_batch_strategies.md)）。跨策略统一在 firm 层做风险聚合（求和+裁剪），不在选股层做信号融合
+- **拒绝理由**：游资/量化双引擎都是短线盘中信号，服务打板 sleeve。把双引擎抬到跨策略层会强行统一打板（盘中实时）、多因子（盘后日频）、事件（不定期）三种异构信号，违反 charter 约束五（[20 §1.4](../../../_archive/20_first_batch_strategies.md)）。跨策略统一在 firm 层做风险聚合（求和+裁剪），不在选股层做信号融合
 - **处置**：双引擎融合定位为打板 sleeve 内部（§3.2）
 
 ### 4.2 L0→L1→L2-C→L3 四层（拆"组合信号层"） —— 拒绝
@@ -349,7 +349,7 @@ scope: 07_trading_decision_architecture
 - **处置**：三层 L0→L1→L2-C（§3.1），组合信号在 firm 层
 
 ### 4.3 三 sleeve 共用单一选股 pipeline —— 拒绝
-- **拒绝理由**：三 sleeve 信号源/频率/周期全不同（[20 §2.5](20_first_batch_strategies.md)），共用单一 pipeline 会丢失差异化。正确做法是统一**接口**（§3.5）+ 差异化**实现**（各 sleeve 内部漏斗不同，§3.6）
+- **拒绝理由**：三 sleeve 信号源/频率/周期全不同（[20 §2.5](../../../_archive/20_first_batch_strategies.md)），共用单一 pipeline 会丢失差异化。正确做法是统一**接口**（§3.5）+ 差异化**实现**（各 sleeve 内部漏斗不同，§3.6）
 - **处置**：统一接口签名，差异化内部实现
 
 ### 4.4 全量逐个评分（不漏斗） —— 拒绝
@@ -365,12 +365,12 @@ scope: 07_trading_decision_architecture
 
 ### 5.2 演进路径
 - **第一阶段（当前）**：打板链全 production（L2-C 打板链闭环）、因子工厂治理层全 production（L1 闭环）、事件链仅数据底座（L0 news_collector design）。三 sleeve 载体（StrategyBook 实例化）均未注册，属 G08/G09/G10 细节
-- **第二阶段**：补事件链 NLP 管道（[ARCH-NLP-PIPELINE-001](../../05_architecture_issue_registry/architecture_issue_registry.yaml)）→ 事件 sleeve 信号链闭环
+- **第二阶段**：补事件链 NLP 管道（[ARCH-NLP-PIPELINE-001](../../../01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml)）→ 事件 sleeve 信号链闭环
 - **第三阶段**：补板块轮动（G06）、Survival/密度预测（远期，[91_density_prediction](91_density_prediction.md)）→ L2-C 全闭环
 
 ### 5.3 为何这是上限
 - 三层是"通用地基 + 本土特色"的最低完整切分，多于三层越界组合层（§4.2）
-- 三 sleeve 覆盖高/低/中换手率 + 小/大/中容量 + 情绪/横截面/事件三类 alpha（[20 §4.3](20_first_batch_strategies.md)），选股引擎承载这三类已完整
+- 三 sleeve 覆盖高/低/中换手率 + 小/大/中容量 + 情绪/横截面/事件三类 alpha（[20 §4.3](../../../_archive/20_first_batch_strategies.md)），选股引擎承载这三类已完整
 - 个人系统算力/带宽有限，三层 + 三 sleeve 是少而精的平衡点（charter 约束五）
 
 ### 5.4 过度工程审查：L0→L1→L2-C 三层是否过重
@@ -397,7 +397,7 @@ scope: 07_trading_decision_architecture
 
 | 暂缓项 | 暂缓理由 | 重评条件 | 责任方 |
 |---|---|---|---|
-| 1. 事件链 NLP 管道接入 | 事件 sleeve 信号链未闭环（仅 news_collector 数据底座），NLP/事件分类/映射/衰减全链路待建 | [ARCH-NLP-PIPELINE-001](../../05_architecture_issue_registry/architecture_issue_registry.yaml) Phase 1 落地 | G10 |
+| 1. 事件链 NLP 管道接入 | 事件 sleeve 信号链未闭环（仅 news_collector 数据底座），NLP/事件分类/映射/衰减全链路待建 | [ARCH-NLP-PIPELINE-001](../../../01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml) Phase 1 落地 | G10 |
 | 2. 板块轮动 L2-C 全闭环 | 3×3×3 立方体 + 回踩质量 A/B/C 等级属 design 态，BM-SEL-08/09 proposed | G06 板块轮动 spec 定型 | G06 |
 | 3. Survival/密度预测 | 止盈止损时间预测、T+1 次日 8 态属远期愿景 | 密度预测模型验证通过 | [91_density_prediction](91_density_prediction.md) |
 | 4. 三 sleeve StrategyBook 实例化 | 打板/多因子/事件 sleeve 载体均未注册（当前仅 DefaultEquityStrategy） | G08/G09/G10 细节讨论定型 | G08/G09/G10 |
@@ -415,7 +415,7 @@ scope: 07_trading_decision_architecture
 ## 8. 引用
 
 ### 8.1 相关设计备忘
-- [20_first_batch_strategies.md](20_first_batch_strategies.md) v1.5.10（G04 首批 3 策略定义，前置依赖，§2.2-2.4 施工回填为本备忘信号源依据）⚠️ v1.1.19 注记：20 号 git HEAD frontmatter 当前显示 v1.2.4（并发会话回退/重写中间态，2026-08-12），本引用维持 v1.5.10 待 20 号稳定后核对
+- [20_first_batch_strategies.md](../../../_archive/20_first_batch_strategies.md) v1.5.10（G04 首批 3 策略定义，前置依赖，§2.2-2.4 施工回填为本备忘信号源依据）⚠️ v1.1.19 注记：20 号 git HEAD frontmatter 当前显示 v1.2.4（并发会话回退/重写中间态，2026-08-12），本引用维持 v1.5.10 待 20 号稳定后核对
 - [30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md) v2.5.0（多策略并发架构总纲，§2.2 StrategyBook/firm 层、§7.3 双引擎融合定位）
 - [31_position_sizing.md](31_position_sizing.md) v1.23.0（仓位算法 spec，§3.7 精仓位边界依据）
 - [00_index_trading_decision.md](00_index_trading_decision.md) §3 G05（讨论要点来源）

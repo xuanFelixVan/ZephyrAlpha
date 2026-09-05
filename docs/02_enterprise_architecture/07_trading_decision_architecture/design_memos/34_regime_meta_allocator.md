@@ -32,7 +32,7 @@ scope: 07_trading_decision_architecture
 |---|---|
 | 主题组 | G15 RegimeMetaAllocator 参数 |
 | 所属 | 作战地图 08 + [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §2.2 |
-| 依赖 | ✅ [11_regime_backtest_validation_plan](11_regime_backtest_validation_plan.md) C1 验证已通过（commit 852457e9，四项全通过）；⚠️ G04 PerformanceScore 需首批策略 PnL（未就绪） |
+| 依赖 | ✅ [11_regime_backtest_validation_plan](../../../_archive/11_regime_backtest_validation_plan.md) C1 验证已通过（commit 852457e9，四项全通过）；⚠️ G04 PerformanceScore 需首批策略 PnL（未就绪） |
 | 对标 | Morwane risk-throttle / RegimeScore 移除裁定（[30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §2.2） |
 | 正交性 | ⚠️ 本身是 regime 节流的消费者；C1 已通过，参数待策略 track record 后校准 |
 | 优先级 | P3（第二阶段，等策略 track record） |
@@ -43,7 +43,7 @@ scope: 07_trading_decision_architecture
 ### 2.1 项目处境
 
 - A 模型（[30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §2.1）已裁定：3-5 个 StrategyBook 独立账本 + firm 层求和裁剪 + **可选 RegimeMetaAllocator 动态 budget**
-- regime 检测器（[10_regime_detector_spec](10_regime_detector_spec.md)）已实现并验证：4 态 HMM + D-SIGNAL-68 overlay + Shrinkage 二维公式。**C1 验证已通过**（[11_regime_backtest_validation_plan](11_regime_backtest_validation_plan.md) §0.5.4，2026-08-08）：Shrinkage 节流有效（MaxDD 改善 +7.36pp，Calmar +27%），核心假设成立
+- regime 检测器（[10_regime_detector_spec](10_regime_detector_spec.md)）已实现并验证：4 态 HMM + D-SIGNAL-68 overlay + Shrinkage 二维公式。**C1 验证已通过**（[11_regime_backtest_validation_plan](../../../_archive/11_regime_backtest_validation_plan.md) §0.5.4，2026-08-08）：Shrinkage 节流有效（MaxDD 改善 +7.36pp，Calmar +27%），核心假设成立
 
 ### 2.2 核心问题
 
@@ -59,8 +59,8 @@ regime 信号如何用于多策略资金分配？两种用法有根本差异：
 ### 2.3 约束条件
 
 - **A 股不能做空** → 对冲式优化失效；**策略 PnL 未就绪** → PerformanceScore 无法计算，当前只能用 Base 先验（等权 1/N）
-- **C1 已通过但参数阈值待校准** → 四档阈值（60/80/95%）的 D1 ±20% 敏感性网格未跑（[11号](11_regime_backtest_validation_plan.md) §0.5.7）
-- **实际 4 态非 12 态**（[11号](11_regime_backtest_validation_plan.md) §0.5.2）：r1 低波 27.6% / r2 中波 37.4% / r3 牛市 14.9% / r4 熊市 20.2%——**无 <1% 稀有态**，稀有态机制在 4 态下基本不触发
+- **C1 已通过但参数阈值待校准** → 四档阈值（60/80/95%）的 D1 ±20% 敏感性网格未跑（[11号](../../../_archive/11_regime_backtest_validation_plan.md) §0.5.7）
+- **实际 4 态非 12 态**（[11号](../../../_archive/11_regime_backtest_validation_plan.md) §0.5.2）：r1 低波 27.6% / r2 中波 37.4% / r3 牛市 14.9% / r4 熊市 20.2%——**无 <1% 稀有态**，稀有态机制在 4 态下基本不触发
 
 ## 3. 决策：三因子乘法分配（Base × PerformanceScore × Shrinkage）
 
@@ -166,7 +166,7 @@ Sortino 公式 `Sortino = (R_p − MAR) / σ_d` 中的 **MAR（Minimum Acceptabl
 | **firm 层（[31号](31_position_sizing.md) §2.4.3）** | `MARKET_REGIME_CAPS[CRISIS] = 0.05` | **⑩ CRISIS 特殊态**（D-SIGNAL-68 overlay 触发的系统性危机，非 4 态 HMM 之一） | 5% | **硬上限**（firm 层 FirmRiskAggregator 强制裁剪，不可突破） |
 
 **关键区分**：
-1. **r4 熊市 ≠ ⑩ CRISIS**：r4 是 4 态 HMM 的常规熊市态（占样本 20.2%，[11号](11_regime_backtest_validation_plan.md) §0.5.2）；⑩ CRISIS 是 D-SIGNAL-68 overlay 触发的**特殊危机态**（如 2015 股灾/2024-02 雪球敲入），频率远低于 r4。9% floor 管 r4，5% cap 管 ⑩
+1. **r4 熊市 ≠ ⑩ CRISIS**：r4 是 4 态 HMM 的常规熊市态（占样本 20.2%，[11号](../../../_archive/11_regime_backtest_validation_plan.md) §0.5.2）；⑩ CRISIS 是 D-SIGNAL-68 overlay 触发的**特殊危机态**（如 2015 股灾/2024-02 雪球敲入），频率远低于 r4。9% floor 管 r4，5% cap 管 ⑩
 2. **floor 是目标下限非硬约束**：9% floor 意味着 meta 层在 r4 熊市**输出目标 ≥9%**，但策略实际暴露可低于目标（未部署完/止损离场）。floor 防"meta 层把目标压到 0 导致策略无 budget 可用"，不强制策略必须持有 9%
 3. **cap 是硬上限**：5% crisis cap 是 firm 层 FirmRiskAggregator 的**强制裁剪**——当 ⑩ CRISIS 触发时，无论 meta 层 effective_budget 目标多少，firm 层总仓位 ≤5%
 4. **当 r4 熊市 + ⑩ CRISIS 同时触发**：⑩ CRISIS overlay 优先级高于 r4 HMM 基态（[10号](10_regime_detector_spec.md) D-SIGNAL-68 overlay 设计），此时 firm 层 5% cap 为 binding constraint，meta 层 9% floor **自动悬空**。CRISIS 态下 `global_shrinkage` 不受 0.09 floor 约束（可降至 0.05 对齐 crisis cap），由 firm 层硬裁剪兜底
@@ -176,7 +176,7 @@ Sortino 公式 `Sortino = (R_p − MAR) / σ_d` 中的 **MAR（Minimum Acceptabl
 ##### 其他设计要点（保留）
 
 - **为什么 60 日**：覆盖 ~3 个月，足以过滤单月噪声，又不至于太滞后（A 股情绪周期 2-3 个月）；**为什么 [0.5, 1.5] 而非 [0, 2]**：防极端——差策略不至于被归零（floor 5% 防饿死），好策略不至于被无限放大（cap 40% 防集中）
-- **后验捕获 regime 亲和性**：momentum 在趋势态表现好→滚动 Sortino 上升→有机获得更多 budget，无需 regime 前瞻下注（[30号](30_multi_strategy_concurrency.md) §2.2 裁定）；**walk-forward 天然无前视**：60 日滚动窗口只用过去数据，与 [11号](11_regime_backtest_validation_plan.md) C1 验证的 walk-forward 协议一致
+- **后验捕获 regime 亲和性**：momentum 在趋势态表现好→滚动 Sortino 上升→有机获得更多 budget，无需 regime 前瞻下注（[30号](30_multi_strategy_concurrency.md) §2.2 裁定）；**walk-forward 天然无前视**：60 日滚动窗口只用过去数据，与 [11号](../../../_archive/11_regime_backtest_validation_plan.md) C1 验证的 walk-forward 协议一致
 - **冷启动过渡**：策略上线 0-60 日内 PerformanceScore 无法算完整 60 日 Sortino → 过渡期用已有天数算部分 Sortino（≥30 日起算，见下方样本量要求），不足 30 日则 PerformanceScore=1.0 中性（同 §3.2.1 冷启动逻辑）
 - **⚠️ Sortino 样本量要求**：Sortino 的下行偏差只统计 `R_daily < R_target` 的日子，A 股 60 交易日中下跌日约 40% ≈ 24 日。ecassets 2026-05 / foliolab 2026 警告：**下行样本不足时 Sortino 系统性偏高（inflated values）**，高估策略表现。防护四件套：
   1. **最小 downside 样本门槛**：downside 观测数 <15 时 PerformanceScore 强制 =1.0 中性（不参与 Sortino 映射）——A 股约需 38 交易日（15÷0.4）积累足够 downside 样本，冷启动过渡门槛据此从 20 日上调到 30 日（留余量）
@@ -223,8 +223,8 @@ Shrinkage = ConfidenceSignal × RiskSignal
 
 **RiskSignal**（[10号](10_regime_detector_spec.md) §5.3.3）：`clamp[0.30, RiskBase × 共振惩罚 + 机会恢复, 1.00]`，13 参数（realized_vol 分位/量价时空/跨市场相关性/虹吸态/技术背离/新闻情绪/筹码结构等），#1 门控（危机期 #1<1.0 才激活附加参数）。
 
-- **C1 验证已通过**（[11号](11_regime_backtest_validation_plan.md) §0.5.4）：Shrinkage 开 vs 关，Sharpe 0.3678→0.3474（不显著伤害 ✅）/ MaxDD 0.2221→0.1485（改善 +0.0736 ✅）/ Calmar 0.2918→0.3694（+27% ✅）/ Turnover 2.27→2.55（≤2×✅）
-- **shrinkage_enabled 开关**：代码已有，C1 验证一票否决机制——若 Shrinkage 无效则 `shrinkage_enabled=False`，`global_shrinkage=1.0` 回退等权。**待校准**：四档阈值 60/80/95% 的 D1 ±20% 敏感性网格未跑（[11号](11_regime_backtest_validation_plan.md) §0.5.7），当前值是 [30号](30_multi_strategy_concurrency.md) §2.2 启发式设定
+- **C1 验证已通过**（[11号](../../../_archive/11_regime_backtest_validation_plan.md) §0.5.4）：Shrinkage 开 vs 关，Sharpe 0.3678→0.3474（不显著伤害 ✅）/ MaxDD 0.2221→0.1485（改善 +0.0736 ✅）/ Calmar 0.2918→0.3694（+27% ✅）/ Turnover 2.27→2.55（≤2×✅）
+- **shrinkage_enabled 开关**：代码已有，C1 验证一票否决机制——若 Shrinkage 无效则 `shrinkage_enabled=False`，`global_shrinkage=1.0` 回退等权。**待校准**：四档阈值 60/80/95% 的 D1 ±20% 敏感性网格未跑（[11号](../../../_archive/11_regime_backtest_validation_plan.md) §0.5.7），当前值是 [30号](30_multi_strategy_concurrency.md) §2.2 启发式设定
 - **60% 阈值的外部印证**：1uptick 2026-06 机构方案明确"when no single regime probability exceeds **60%**—automatically reduce position sizes by 30-50%"——与我们 max(P)<60%→强收缩的阈值**完全一致**，60% 是行业共识的"regime 不确定"临界点。**我们 0.3 更激进的理由**：1uptick 减的是"position sizes"（可日内调整），我们 0.3 减的是"global_shrinkage"（总暴露）——A 股 T+1 不能日内快速止损，不确定时需更保守的预防性收缩；且实际 Shrinkage = 0.3 × RiskSignal（不确定时也 <1.0），叠加后更保守
 - **Shrinkage 更新频率**：ConfidenceSignal 随 regime 检测日频更新（HMM 日频推理，[10号](10_regime_detector_spec.md)）；RiskSignal 13 参数中 realized_vol/量价等日频、新闻情绪盘内更新。global_shrinkage 日频重算，盘中 regime 突变（如 D-SIGNAL-68 overlay 触发）可盘中重算
 - **Quarter Kelly 与 Shrinkage 节流的同构印证**：pooyagolchian 2026-04《Portfolio Risk Management》实证 fractional Kelly 的风险预算折扣收益（2026 年真实数据）——
@@ -259,11 +259,11 @@ Shrinkage = ConfidenceSignal × RiskSignal
 **决策**：按态频率差异化收缩（[30号](30_multi_strategy_concurrency.md) §2.2）：常见态 >5% 轻收缩 / 中等态 1-5% 中度收缩 / 稀有态 <1% 重收缩——稀有态检测置信度天然低。
 
 - **4 态下的实际情况**：r1=27.6% / r2=37.4% / r3=14.9% / r4=20.2%——**全部是常见态（>5%），无 <1% 稀有态**。**结论**：稀有态机制在当前 4 态下基本不触发，是为原 12 态设计的向前兼容机制
-- **保留理由**：若未来基于证据加态（如 [11号](11_regime_backtest_validation_plan.md) §0.6.9 层次 HMM 升级路径），稀有态机制自动生效，无需重写。**不是过度工程**：该机制是 Shrinkage 计算内的一个条件分支，代码量极轻，保留无成本
+- **保留理由**：若未来基于证据加态（如 [11号](../../../_archive/11_regime_backtest_validation_plan.md) §0.6.9 层次 HMM 升级路径），稀有态机制自动生效，无需重写。**不是过度工程**：该机制是 Shrinkage 计算内的一个条件分支，代码量极轻，保留无成本
 
 ##### 12 态→4 态退化映射
 
-> **问题背景**：Shrinkage 的 ConfidenceSignal 四档、稀有态差异化收缩最初按"12 态 regime"设计；但 [11号](11_regime_backtest_validation_plan.md) §0.5.2 C1 验证实测 HMM 按 BIC/AIC 信息准则选优后**稳定收敛到 4 态**，原 12 态的多数子态未被区分。必须明确 4 态如何吸收原 12 态语义，否则"按态收缩"会因态数不匹配而悬空。
+> **问题背景**：Shrinkage 的 ConfidenceSignal 四档、稀有态差异化收缩最初按"12 态 regime"设计；但 [11号](../../../_archive/11_regime_backtest_validation_plan.md) §0.5.2 C1 验证实测 HMM 按 BIC/AIC 信息准则选优后**稳定收敛到 4 态**，原 12 态的多数子态未被区分。必须明确 4 态如何吸收原 12 态语义，否则"按态收缩"会因态数不匹配而悬空。
 
 **退化映射的 why（设计原则，非精确查表）**：
 
@@ -271,7 +271,7 @@ Shrinkage = ConfidenceSignal × RiskSignal
 |---|---|---|
 | **按波动族合并** | 原设计的高/中/低波动子态 → 合并到 r1（低波）/r2（中波） | 波动是 regime 检测的一阶特征，细分子态在日频上不可靠区分（A 股情绪周期 2-3 个月，子态持续时间 <1 个月易被噪声淹没） |
 | **按趋势方向合并** | 原设计的上涨/下跌主趋势 → 合并到 r3（牛市）/r4（熊市） | 趋势方向是 regime 的二阶特征，4 态已覆盖"牛/熊/低波/中波"四象限，进一步细分对 Shrinkage 收缩系数的差异化无统计意义 |
-| **稀有态机制冻结** | 原 12 态中 <1% 的"危机闪崩态"等 → 当前 4 态无对应（全部 >5%），稀有态分支**不激活但不删除** | 冻结而非删除是为层次 HMM 加态（[11号](11_regime_backtest_validation_plan.md) §0.6.9）时自动复用；删除则未来加态需重写 Shrinkage 查表逻辑 |
+| **稀有态机制冻结** | 原 12 态中 <1% 的"危机闪崩态"等 → 当前 4 态无对应（全部 >5%），稀有态分支**不激活但不删除** | 冻结而非删除是为层次 HMM 加态（[11号](../../../_archive/11_regime_backtest_validation_plan.md) §0.6.9）时自动复用；删除则未来加态需重写 Shrinkage 查表逻辑 |
 
 **当前实现行为**：4 态全部走"常见态 >5% 轻收缩"分支，稀有态分支死代码（保留但不执行）。ConfidenceSignal 四档阈值（60/80/95%）作用于 max(P），与态数无关——**退化不影响 ConfidenceSignal 计算**，只影响"按态频率差异化收缩"这一子分支。**施工注记**：12 态→4 态的**精确状态 ID 映射表**归 [10号](10_regime_detector_spec.md) regime 检测器文档定义（那里管 HMM 状态语义），本备忘只管"Shrinkage 如何消费 4 态输出"；精确查表待 [10号] 校准（见 §6 待裁定）。
 
@@ -283,7 +283,7 @@ Shrinkage = ConfidenceSignal × RiskSignal
 |---|---|---|
 | C1 验证（Shrinkage 有效性） | ✅ 已通过（commit 852457e9） | 核心假设成立，Shrinkage 节流有效 |
 | 首批策略 PnL（PerformanceScore 输入） | ❌ 未就绪 | 策略未实盘，无 60 日 Sortino |
-| 四档阈值 D1 敏感性校准 | ❌ 未跑 | [11号](11_regime_backtest_validation_plan.md) §0.5.7 待完成项 |
+| 四档阈值 D1 敏感性校准 | ❌ 未跑 | [11号](../../../_archive/11_regime_backtest_validation_plan.md) §0.5.7 待完成项 |
 
 - **第一阶段（当前）**：纯 A 模型，各策略等权或先验比例 budget 固定不变，FirmRiskAggregator 只做求和+裁剪（[30号](30_multi_strategy_concurrency.md) §4.2）；**第二阶段（策略 3-6 个月 PnL 后）**：上加 RegimeMetaAllocator，按 PerformanceScore 动态调占比 + Shrinkage 节流
 - **过渡方案**：在 PnL 积累期内，可用 `Base × Shrinkage`（PerformanceScore=1.0 中性）先跑——regime 节流已验证有效，只是没有后验分配
@@ -361,7 +361,7 @@ RegimeMetaAllocator(本模块, MOD-PA-007)
 | **测试套件** | [test_regime_meta_allocator.py](../../../../tests/pf_alloc/test_regime_meta_allocator.py) | ✅ **已重建**（2026-08-15，AI-REGIME-001，两轮 55/55 全绿） | 原 55 用例 2026-08-11 git 灾难丢失（从未提交、`git clean -fd` 删除、不可恢复）；按 §3.4 伪代码 16 条施工要点 + 代码本体回建，组织保持原结构 8 类 55 用例（TestConfidenceSignal 8 / TestRiskSignal 4 / TestShrinkage 7 / TestNormalizeAndClip 8 / TestRawAllocation 3 / TestAllocate 9 / TestComputePerformanceScore 8 / TestEdgeCases 8），重建后立即提交 git 闭环 |
 | **错误契约** | AllocationError（ZA-PA-0007）/ ShrinkageDisabled（ZA-PA-0008） | ⚠️ AllocationError 已定义；ShrinkageDisabled 仅头部声明预留（代码未实例化，2026-08-15 蓝图同步漂移取证） | `shrinkage_enabled=False` 时 `global_shrinkage=1.0` 回退等权不抛错（C1 一票否决机制） |
 | **上游·regime 检测器** | [regime_detector.py](../../../../src/zephyr/regime/core/regime_detector.py)（MOD-REGIME-001）+ [risk_signal_builder.py](../../../../src/zephyr/regime/risk_signal_builder.py) | ✅ 已施工（commit 191a17432f） | 产出 7 维概率（4 HMM 基态 + 3 overlay 特殊态）+ RiskSignal 13 参数 |
-| **上游·C1 验证资产** | `logs/c1_repro/c1_repro_report.md` + `c1_metrics.json` | ✅ 已产出（commit 852457e9） | C1 四项全通过：Sharpe 0.3678→0.3474 / MaxDD 0.2221→0.1485 / Calmar +27% / Turnover ≤2×（[11号](11_regime_backtest_validation_plan.md) §0.5.4） |
+| **上游·C1 验证资产** | `logs/c1_repro/c1_repro_report.md` + `c1_metrics.json` | ✅ 已产出（commit 852457e9） | C1 四项全通过：Sharpe 0.3678→0.3474 / MaxDD 0.2221→0.1485 / Calmar +27% / Turnover ≤2×（[11号](../../../_archive/11_regime_backtest_validation_plan.md) §0.5.4） |
 | **下游·StrategyBook** | [strategy_book.py](../../../../src/zephyr/position/core/strategy_book.py)（MOD-POS-020） | ✅ production（70 测试，[30号](30_multi_strategy_concurrency.md) §2.2） | 消费 BudgetAllocation |
 | **下游·FirmRiskAggregator** | [firm_risk_aggregator.py](../../../../src/zephyr/position/core/firm_risk_aggregator.py)（MOD-POS-021） | ✅ production（54 测试） | firm 层求和裁剪；⑩CRISIS 5% 硬 cap 兜底（[31号](31_position_sizing.md) §2.4.3） |
 | **下游·BudgetChangeHandler** | [budget_change_handler.py](../../../../src/zephyr/position/core/budget_change_handler.py)（MOD-POS-022） | ✅ production（47 测试）；✅ 设计文档 33号 已重建（active v1.0.0，2026-08-12 commit 6a4f5392，含 §3.2 三级升级 + §3.3 防抖双层 + §3.7 已施工设施盘点） | 收 BudgetChanged 事件，三级升级落地 |
@@ -410,7 +410,7 @@ RegimeMetaAllocator(本模块, MOD-PA-007)
 
 - **第一阶段（当前）**：纯 A 模型，等权/先验固定 budget，FirmRiskAggregator 求和裁剪
 - **第二阶段（策略 3-6 个月 PnL 后）**：上加 RegimeMetaAllocator，PerformanceScore 动态调占比 + Shrinkage 节流
-- **远期（可选）**：状态条件协方差 RARP（[11号](11_regime_backtest_validation_plan.md) §0.6.7 华安证券 RARP）——从"缩放 budget"升级到"按状态重估风险结构"。但本项目定位是"风险节流器"（防御性），RARP 是组合优化器（进攻性），当前不在 scope
+- **远期（可选）**：状态条件协方差 RARP（[11号](../../../_archive/11_regime_backtest_validation_plan.md) §0.6.7 华安证券 RARP）——从"缩放 budget"升级到"按状态重估风险结构"。但本项目定位是"风险节流器"（防御性），RARP 是组合优化器（进攻性），当前不在 scope
 - **远期（可选）·MPC 多期预测路径**：Nystrup/Boyd/Lindström/Madsen《Multi-period portfolio selection with drawdown control》（Annals of Operations Research 2019）——Model Predictive Control 动态优化，基于多变量 HMM 的多期收益均值/协方差预测，**根据已实现回撤调整风险厌恶系数**（realized drawdown → γ 动态）。核心机制：每个时点求解开环约束优化，只执行首步控制动作，新观测到达后重算（receding horizon）。实证：以小或无 mean-variance 效率牺牲控制回撤。
 
   | 维度 | 当前 Shrinkage（MVP） | MPC 多期预测（远期） |
@@ -430,7 +430,7 @@ RegimeMetaAllocator(本模块, MOD-PA-007)
   | regime 持续性 | HMM 转移概率隐式决定（无显式约束） | **显式 jump penalty λ 控制转换频率**——λ 越大 regime 越持久，直接对抗 HMM 高频抖动 |
   | 特征集 | 收益+波动统计量（HMM 输入） | DD_10 + Sortino_20 + Sortino_60（**与我们 PerformanceScore 的 Sortino 同源**——JM 直接消费 Sortino 特征做 regime 推断） |
   | 协方差需求 | 无（Shrinkage 只用 max(P) + RiskSignal） | 无（JM 仅用单资产收益衍生特征，不估协方差） |
-  | 状态数 | 4 态（BIC 选优，[11号](11_regime_backtest_validation_plan.md) §0.5.2） | 2 态（Bull/Bear，JM 原始）/ 3 态（Cortese-Kolm-Lindström 2026 信息准则选优 MSCI）/ 4 态（Snow-Ouyang 2026 stress-aware） |
+  | 状态数 | 4 态（BIC 选优，[11号](../../../_archive/11_regime_backtest_validation_plan.md) §0.5.2） | 2 态（Bull/Bear，JM 原始）/ 3 态（Cortese-Kolm-Lindström 2026 信息准则选优 MSCI）/ 4 态（Snow-Ouyang 2026 stress-aware） |
   | 复杂度 | HMM EM 训练 + 前向推理 | 动态规划 + 坐标下降（O(T·K)，T=样本长度，K=状态数） |
   | 为什么不进 MVP | C1 已证明 HMM 4 态 Shrinkage 有效（MaxDD 改善 7.36pp） | JM 需重写 regime 检测器（[10号](10_regime_detector_spec.md)），C1 验证基于 HMM 须重跑 |
 
@@ -548,7 +548,7 @@ RegimeMetaAllocator(本模块, MOD-PA-007)
 |---|---|---|
 | Base_i 人工先验权重 | 首批策略未确定（[30号](30_multi_strategy_concurrency.md) §6.1 待确认 3 策略） | 首批策略上线 |
 | PerformanceScore 指标选型（Sortino primary / Sharpe 对照）+ 映射区间 [0.5,1.5] + 60 日窗口 + Rf 取值 + MAR=Rf 选型 + downside 样本量门槛 + **60 日 vs 36 个月机构标准差距** + 加权方式（等权 vs EMA） | 无策略 PnL 验证；Sortino vs Sharpe 实测 gap 待复核；60 日 downside 样本 ~24 日，样本量充足性待实测（ecassets/foliolab 警告小样本 inflated values 风险）；**60 日远低于 Sortino 36 个月机构标准（forex-basics/financefriend24 2026），估计误差大于机构级，需实盘校准触发条件判定是否上调窗口到 90/120 日**；MAR=Rf 选型已定（§3.2.2），target/0% 排除；EMA 列远期候选，需 walk-forward CV 验证半衰期无前视 | 首批策略 3-6 个月 PnL + PerformanceScore 月度变动 >0.3 频繁 / Sortino 月度排名波动大 / gap 监控频繁触发 / 发现"近强远弱"alpha 衰减特征则评估 EMA 升级 |
-| ConfidenceSignal 四档阈值 60/80/95% | D1 ±20% 敏感性网格未跑（[11号](11_regime_backtest_validation_plan.md) §0.5.7） | D1 验证完成 |
+| ConfidenceSignal 四档阈值 60/80/95% | D1 ±20% 敏感性网格未跑（[11号](../../../_archive/11_regime_backtest_validation_plan.md) §0.5.7） | D1 验证完成 |
 | floor 5% / cap 40% 精确值 | 策略数未定（3 策略 vs 5 策略 cap 不同） | 首批策略数确定 |
 | 稀有态机制在 4 态下的触发 | 当前 4 态全 >5%，机制不触发；待未来加态生效 | 基于证据加态（如层次 HMM） |
 | **12 态→4 态退化映射精确查表** | §3.2.5 已定退化原则（按波动族/趋势方向合并 + 稀有态冻结），但精确状态 ID 映射表归 [10号](10_regime_detector_spec.md) regime 检测器文档定义，未校准 | [10号] regime 检测器 HMM 状态语义校准完成 |
@@ -558,7 +558,7 @@ RegimeMetaAllocator(本模块, MOD-PA-007)
 | **HMM→JM/SJM 替换（换检测器，远期）** | §5.2 远期候选——Statistical Jump Model（Shu-Yu-Mulvey 2024）显式 jump penalty 增强 regime 持续性，全面优于 HMM；中金 CICC 2026-06 A 股实证 MaxDD -7.07%→-3.23%。需重写 [10号](10_regime_detector_spec.md) regime 检测器 + C1 验证重跑 | 首批策略实盘后若 HMM 状态抖动问题持续（即便加了最小持续期约束）则评估升级到 JM |
 | **Sticky HMM Dirichlet 先验（不换架构，最低侵入性）** | 机制/出处见 §5.2 第十六条远期候选——Bayesian sticky 转移先验 `π_k ~ Dir(α+κ·e_k)`，κ 控制自转移持续性；实现侵入性极低（转移矩阵加 1 行先验），统计上最规范，归 [10号](10_regime_detector_spec.md) regime 检测器实现 | HMM 实盘后若发现状态高频抖动，Sticky HMM 是比 JM 更轻量的第一升级路径（不换检测器只加先验） |
 | **5 态结构（4 稳态 + 1 过渡态）** | 机制/出处见 §5.2 A 股本土对标——中邮证券 2026-07 LSTM-GHMM 5 态（1 过渡态 + 4 稳态），状态切换经过渡态完成减少稳态间直接跳跃；2026 K 型分化下适应性偏弱。归 [10号](10_regime_detector_spec.md) regime 检测器实现 | HMM 实盘后若发现稳态间直接跳跃导致 PerformanceScore 跳变则评估加过渡态 |
-| **3 态 vs 4 态 ablation** | CSDN 2026-05 A 股 HMM 实战指出"A 股 60%+ 时间震荡，3 态是过拟合与表达力的折中（2 态太粗、4 态过拟合）"——直接质疑 4 态选择。[11号](11_regime_backtest_validation_plan.md) C1 验证 BIC 选优稳定收敛到 4 态，但未做 3 态样本外稳定性对比 | 首批策略 A 股数据上对比 3 态 vs 4 态样本外稳定性；若 3 态显著更稳则降级 |
+| **3 态 vs 4 态 ablation** | CSDN 2026-05 A 股 HMM 实战指出"A 股 60%+ 时间震荡，3 态是过拟合与表达力的折中（2 态太粗、4 态过拟合）"——直接质疑 4 态选择。[11号](../../../_archive/11_regime_backtest_validation_plan.md) C1 验证 BIC 选优稳定收敛到 4 态，但未做 3 态样本外稳定性对比 | 首批策略 A 股数据上对比 3 态 vs 4 态样本外稳定性；若 3 态显著更稳则降级 |
 | **Hybrid HMM Poisson jump-duration（换检测器，参数估计更简）** | 机制/出处见 §5.2 第十七条远期候选——Laplace 分位数状态划分 + Poisson jump-duration 强制尾部态驻留 + **直接转移计数绕过 Baum-Welch EM**；比 JM 实现更轻（无动态规划），比当前 HMM 参数估计更简（无 EM 迭代）。归 [10号](10_regime_detector_spec.md) regime 检测器实现 | HMM 实盘后若发现状态抖动 + Baum-Welch EM 重训练耗时成为双重瓶颈，则评估 Hybrid HMM Poisson（同时解决持续性和计算成本）；需先校验 Laplace 分位数与 A 股 4 态语义对应关系 |
 | **3 态 sweet spot 佐证** | kooexperience 2026-03 HMM 教程实证"stock returns naturally cluster into roughly three volatility regimes—two feels too coarse, four or more starts overfitting noise, three is the sweet spot"——与 CSDN 2026-05 A 股实证同向质疑 4 态。但 [11号] C1 BIC 选优稳定收敛到 4 态（非过拟合），且 4 态有语义基础（r1-r4），待 ablation 定论 | 同 3 态 vs 4 态 ablation 条件 |
 | ~~测试套件重建（P0 缺口）~~ **✅ 已解决（2026-08-15）** | ~~55 用例丢失待重建~~ → **已重建闭环**：AI-REGIME-001 按 §3.4 伪代码 16 条施工要点 + 代码本体（water-filling 投影/CRISIS floor 降级/gap 两级阈值）回建 [test_regime_meta_allocator.py](../../../../tests/pf_alloc/test_regime_meta_allocator.py) 55 用例（8 类组织保持原结构），两轮 55/55 全绿；重建后立即 git 提交闭环（git 灾难教训：未提交=无保护，已执行） | ✅ 已解决（2026-08-15，用户裁定 AI-REGIME-001 施工） |
@@ -589,7 +589,7 @@ RegimeMetaAllocator(本模块, MOD-PA-007)
 
 - [00_index_trading_decision](00_index_trading_decision.md) §3 G15
 - [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §2.2（分配公式 + RegimeScore 移除裁定）/ §4.2（第二阶段演进路径）
-- [11_regime_backtest_validation_plan](11_regime_backtest_validation_plan.md)（C1 验证，§0.5.4 四项全通过；§0.5.7 待完成项 D1）
+- [11_regime_backtest_validation_plan](../../../_archive/11_regime_backtest_validation_plan.md)（C1 验证，§0.5.4 四项全通过；§0.5.7 待完成项 D1）
 - [10_regime_detector_spec](10_regime_detector_spec.md) §5（Shrinkage 产出方，§5.1 四档 + §5.2.2 二维公式 + §5.3.3 RiskSignal 聚合）
 - [31_position_sizing](31_position_sizing.md)（G12，单策略仓位算法）
 - [32_firm_risk_aggregator](32_firm_risk_aggregator.md)（G13，firm 层求和裁剪）

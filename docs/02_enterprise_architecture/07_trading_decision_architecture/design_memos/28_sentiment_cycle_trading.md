@@ -42,7 +42,7 @@ scope: 07_trading_decision_architecture
 ### 2.1 项目处境
 
 - A 股是散户主导的情绪市场（散户成交占比长期超 60%），短期走势由情绪驱动，中期看情绪与基本面共振，长期才回归价值（xueqiu 2026-06）。情绪波动领先基本面，是短线策略的核心"势"
-- 多策略并发架构已定稿为 Model A（[30_multi_strategy_concurrency](30_multi_strategy_concurrency.md)）：独立账本 + firm 风险聚合 + regime 风险节流。首批 3 策略（打板/多因子/事件驱动）已定义（[20_first_batch_strategies](20_first_batch_strategies.md)）
+- 多策略并发架构已定稿为 Model A（[30_multi_strategy_concurrency](30_multi_strategy_concurrency.md)）：独立账本 + firm 风险聚合 + regime 风险节流。首批 3 策略（打板/多因子/事件驱动）已定义（[20_first_batch_strategies](../../../_archive/20_first_batch_strategies.md)）
 - 情绪周期探测器 BM-SEL-23-B 已 🟦 production，下游被 BM-SEL-25 双引擎融合消费；regime 检测器由另一 AI 负责（[10_regime_detector_spec](10_regime_detector_spec.md) C-prime 方案：BM-SEL-03-B 升级为 12 态本体，BM-SEL-23-B 降级为情绪轴软输入）
 - 2026 打板生态剧变：炸板率从 2023 年 40% 飙升到 68%，打板次日溢价从 4.2% 降至 1.7%；连板高度下降、趋势龙重要性上升；2026-04 程序化交易新规监控多账户联动（[24_daban_strategy_detail](24_daban_strategy_detail.md) §2.2）
 
@@ -50,7 +50,7 @@ scope: 07_trading_decision_architecture
 
 1. **五阶段如何精确定义**：游资圈有多种命名（启动/发酵/高潮/分歧/退潮 vs 冰点/反核/主升/疯狂/退潮），需统一为标准五阶段及各阶段可观测特征指标，避免"模糊感觉"驱动决策
 2. **定位器如何算法化**：BM-SEL-23-B 是 production 资产但准确率待评估（[30_multi_strategy_concurrency §6.3](30_multi_strategy_concurrency.md)），错判代价大（主升判成冰点→该进攻时防守），需"置信度<60%→默认保守"兜底
-3. **与 regime 12 态如何分工**：两者都沾"情绪"，[20_first_batch_strategies §5 待裁定-4](20_first_batch_strategies.md) 明确"需 G21 澄清边界"——本讨论裁定
+3. **与 regime 12 态如何分工**：两者都沾"情绪"，[20_first_batch_strategies §5 待裁定-4](../../../_archive/20_first_batch_strategies.md) 明确"需 G21 澄清边界"——本讨论裁定
 4. **各策略在不同情绪阶段如何部署**：打板主升/疯狂重仓，多因子冰点/反核布局，事件驱动跨阶段——需算法化 position_scale/throttle_factor/allow_new_open/策略亲和性
 5. **作为"隐形驱动"如何验证**：[30_multi_strategy_concurrency §1.3](30_multi_strategy_concurrency.md) 明确"情绪周期是所有短周期策略的共同隐形驱动→策略间相关性可能高于直觉"，需定义验证方法（分层后相关性是否显著下降）
 
@@ -59,8 +59,8 @@ scope: 07_trading_decision_architecture
 - **A 股 T+1**：当日买入次日才能卖出，情绪周期定位必须盘前/盘中可观测，不能依赖事后数据
 - **涨跌停板**：涨停封板时买不进，情绪极端期（疯狂/退潮）流动性失效
 - **打板容量极小**：单票几万~几十万，情绪周期驱动的打板 sleeve 必须小账本独立运行
-- **情绪周期是隐形驱动**：所有短周期策略共享同一情绪 beta，[20_first_batch_strategies §2.5](20_first_batch_strategies.md) 已预警"打板与事件驱动相关性可能高于直觉"——G07 施工前必测项
-- **与 regime 正交**：[20_first_batch_strategies §1.4](20_first_batch_strategies.md) 对齐 charter §3 约束三"策略选股不读 regime 输出"——情绪周期是 sleeve 内 alpha 择时信号，不破坏 regime 风险节流的正交
+- **情绪周期是隐形驱动**：所有短周期策略共享同一情绪 beta，[20_first_batch_strategies §2.5](../../../_archive/20_first_batch_strategies.md) 已预警"打板与事件驱动相关性可能高于直觉"——G07 施工前必测项
+- **与 regime 正交**：[20_first_batch_strategies §1.4](../../../_archive/20_first_batch_strategies.md) 对齐 charter §3 约束三"策略选股不读 regime 输出"——情绪周期是 sleeve 内 alpha 择时信号，不破坏 regime 风险节流的正交
 - **production 资产不可动**：BM-SEL-23-B 已 production 且有下游依赖（BM-SEL-25 双引擎融合），输出契约变更须谨慎
 
 ## 3. 决策
@@ -83,7 +83,7 @@ regime 协同层: 情绪周期软影响 12 态概率（映射表）→ regime �
 **核心定位（与 regime 分工裁定）**：
 - **情绪周期 = sleeve 内 alpha 择时信号**：回答"现在该买卖什么"——打板在主升/疯狂期重仓连板梯队，多因子在冰点/反核期布局低位横截面
 - **regime 12 态 = 市场级风险节流**：回答"现在该多谨慎"——通过 Shrinkage 收缩总暴露，不参与选股
-- **两者正交**：情绪周期管"方向/标的"，regime 管"力度/谨慎度"；时间尺度不同（情绪短 1-2 周，regime 中 1-3 月）；不破坏 [20_first_batch_strategies §1.4](20_first_batch_strategies.md) charter §3 约束三"策略选股不读 regime 输出"
+- **两者正交**：情绪周期管"方向/标的"，regime 管"力度/谨慎度"；时间尺度不同（情绪短 1-2 周，regime 中 1-3 月）；不破坏 [20_first_batch_strategies §1.4](../../../_archive/20_first_batch_strategies.md) charter §3 约束三"策略选股不读 regime 输出"
 
 ### 3.2 五阶段情绪周期定义
 
@@ -604,7 +604,7 @@ def apply_phase_discipline(
 
 ### 3.5 情绪周期与 regime 12 态的映射关系（分工裁定）
 
-> **本节是 [20_first_batch_strategies §5 待裁定-4](20_first_batch_strategies.md) 的落地**：澄清情绪周期与 regime 12 态的分工边界。
+> **本节是 [20_first_batch_strategies §5 待裁定-4](../../../_archive/20_first_batch_strategies.md) 的落地**：澄清情绪周期与 regime 12 态的分工边界。
 
 #### 3.5.1 分工裁定（正交）
 
@@ -616,7 +616,7 @@ def apply_phase_discipline(
 | **视角** | 微观（题材/连板/游资） | 宏观（趋势×波动率×危机） |
 | **消费者** | sleeve 选股/择时（决定买卖什么） | RegimeMetaAllocator Shrinkage（决定总暴露） |
 | **输出** | 5 维灰度概率 P(冰点)...P(退潮) | 12 维灰度概率 P(r1)...P(r12) |
-| **正交保证** | 策略选股**不读** regime 输出（[20_first_batch_strategies §1.4](20_first_batch_strategies.md)） | regime **不参与**选股（[30_multi_strategy_concurrency §2.2](30_multi_strategy_concurrency.md)） |
+| **正交保证** | 策略选股**不读** regime 输出（[20_first_batch_strategies §1.4](../../../_archive/20_first_batch_strategies.md)） | regime **不参与**选股（[30_multi_strategy_concurrency §2.2](30_multi_strategy_concurrency.md)） |
 
 #### 3.5.2 映射表（情绪周期软影响 12 态概率）
 
@@ -669,7 +669,7 @@ def apply_sentiment_soft_influence(
 #### 3.5.3 关键纪律
 
 - **情绪周期不直接被 Shrinkage 消费**（[10_regime §2.5.1](10_regime_detector_spec.md)）：Shrinkage = ConfidenceSignal × RiskSignal，ConfidenceSignal 来自 12 态 max(P)，情绪周期只软调 12 态概率分布
-- **策略选股不读 regime 输出**（[20_first_batch_strategies §1.4](20_first_batch_strategies.md) charter §3 约束三）：情绪周期是 sleeve 内信号，与 regime 输出正交
+- **策略选股不读 regime 输出**（[20_first_batch_strategies §1.4](../../../_archive/20_first_batch_strategies.md) charter §3 约束三）：情绪周期是 sleeve 内信号，与 regime 输出正交
 - **两者时间尺度不同**（[10_regime §3.3](10_regime_detector_spec.md)）：情绪周期更细（短周期 1-2 周），12 态更粗（中周期 1-3 月），不矛盾可共存
 
 #### 3.5.4 软影响算法 + 有效组合（增补）
@@ -821,7 +821,7 @@ def get_effective_combinations(
 
 ### 3.6 各策略在不同情绪阶段的部署策略
 
-> **本节是 [20_first_batch_strategies §2.5](20_first_batch_strategies.md) 差异化矩阵的补充**：定义各策略在五阶段的具体部署。
+> **本节是 [20_first_batch_strategies §2.5](../../../_archive/20_first_batch_strategies.md) 差异化矩阵的补充**：定义各策略在五阶段的具体部署。
 
 | 策略 | 冰点 | 反核 | 主升 | 疯狂 | 退潮 |
 |---|---|---|---|---|---|
@@ -832,7 +832,7 @@ def get_effective_combinations(
 **部署原则**：
 - **打板是情绪周期的纯多头**：只在主升/疯狂重仓，冰点/退潮空仓。打板 80% 时间应在发酵+疯狂前半，20% 在反核试错，退潮期应"看不见人"（55188 2026-07）
 - **多因子是情绪周期的逆向者**：冰点/反核期布局（估值低位），疯狂/退潮期减仓（估值高位）。与打板形成天然对冲，是相关性低的基础
-- **事件驱动跨阶段**：事件冲击本身与情绪周期弱相关，但衰减速度是 regime-dependent 的（[20_first_batch_strategies §2.4](20_first_batch_strategies.md) Yukka 2026），rising phase 在主升期最强
+- **事件驱动跨阶段**：事件冲击本身与情绪周期弱相关，但衰减速度是 regime-dependent 的（[20_first_batch_strategies §2.4](../../../_archive/20_first_batch_strategies.md) Yukka 2026），rising phase 在主升期最强
 
 #### 3.6.1 策略部署算法（增补）
 
@@ -1298,7 +1298,7 @@ def get_strategy_deployment_by_phase(
 
 ### 5.2 为何这是上限而非妥协
 
-- 五阶段是游资圈 10+ 年实战提炼的最小完备集，再多是过拟合温床（[20_first_batch_strategies §4.3](20_first_batch_strategies.md) charter §3 约束五少而精）
+- 五阶段是游资圈 10+ 年实战提炼的最小完备集，再多是过拟合温床（[20_first_batch_strategies §4.3](../../../_archive/20_first_batch_strategies.md) charter §3 约束五少而精）
 - 定位器 ≤10 维输入是 production 实时性与过拟合风险的平衡（[10_regime §2.2.2 实证 6](10_regime_detector_spec.md)：特征>模型，但特征过多也过拟合）
 - 兜底 0.2 是"宁保守不激进"原则的工程化（错判代价不对称：主升判成冰点=机会成本，冰点判成主升=主动亏损）
 
@@ -1322,7 +1322,7 @@ def get_strategy_deployment_by_phase(
 ### 8.1 相关设计备忘
 - [00_index_trading_decision](00_index_trading_decision.md) §3 G21
 - [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §1.3 / §6.2 / §6.3（隐形驱动+相关性验证+定位器准确率）
-- [20_first_batch_strategies](20_first_batch_strategies.md) §2.2（打板依赖情绪周期4+1）+ §2.5（差异化矩阵）+ §5 待裁定-4（边界澄清）
+- [20_first_batch_strategies](../../../_archive/20_first_batch_strategies.md) §2.2（打板依赖情绪周期4+1）+ §2.5（差异化矩阵）+ §5 待裁定-4（边界澄清）
 - [10_regime_detector_spec](10_regime_detector_spec.md) §2.5（探测器分工）+ §2.5.4（软影响三阶段）+ §3.3（映射表）+ §6.6
 - [24_daban_strategy_detail](24_daban_strategy_detail.md) §3.2（情绪周期定位）+ §3.10（打板熔断）
 - [34_regime_meta_allocator](34_regime_meta_allocator.md) §3（Shrinkage 风险节流）+ RegimeTag 12 态枚举（§3.5.4 SENTIMENT_REGIME_MAPPING / §3.9 协同工作流引用）

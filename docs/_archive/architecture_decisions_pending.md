@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: ARCH-ARC-001
 title: "待定架构决策文档"
 doc_type: register
