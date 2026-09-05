@@ -11,7 +11,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] EscalationError;TimeoutError
-# [TESTS] tests/test_escalation_engine/
+# [TESTS] tests/decision/test_decision_fatigue_cli.py
 # [A_module] module_id=MOD-INF-022 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

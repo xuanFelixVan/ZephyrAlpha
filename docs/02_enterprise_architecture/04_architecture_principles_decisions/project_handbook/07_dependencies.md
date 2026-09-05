@@ -65,7 +65,7 @@ governance/ (桥接层, G-CT-001~008 契约)
 | `event` | 3 |
 | **合计 / Total** | **20277** |
 
-**跨域边 / Cross-domain edges：9016** 条（两端节点 domain_id 不同的依赖边）。
+**跨域边 / Cross-domain edges：9003** 条（两端节点 domain_id 不同的依赖边）。
 <!-- AUTO-END:edge_stats -->
 
 > 节点/域总数见 [01_overview.md](01_overview.md) 的 `dependency_stats` AUTO 块。

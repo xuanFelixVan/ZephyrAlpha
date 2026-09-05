@@ -359,6 +359,8 @@ git show d3a50b35 --stat     # AI-03 merge（末域）
 
 ## B 类·缺陷未修复——总管复查修复队列（每项含证据与建议方案）
 
+> **状态更新（2026-09-05 补录后二次收尾，commit d53580c766）**：B2（旁路收敛 3 处）/B18（ROOR 35 表计数回填+3 路径修正+BP auto+MOD-ALPHA retired）/B19（CAND 撞号→006+悬挂引用+空条目删除+MOD-RK-08→048+trae_063~086 补 24 条 86/86+两文件 ERROR_CONTRACT 码号错位修正）/B23（docstring 死链）/B20 子项（resilience+security 24 处幽灵测试路径修复，GHOST=0）/B24（测试放宽 dad7b9e36d 已记录待复核）**已全部由总控 Flash 补做完毕**——下表 B2/B18/B19/B23 及 B20 的 26 处子项、B24 标记为 ✅已完成，余项（B1/B3/B4/B5/B6/B7/B8/B9/B10/B11/B12/B13/B14/B15/B16/B17 号段分配/B20 语义裁定与缺口建设/B21/B22）确属 Owner 裁定/强模型/跨域手术级，移交总管。全部修复验证：pytest 184+20 passed、py_compile 全过、YAML 解析全过、DM_GATE True。
+
 | # | 缺陷 | 位置 | 证据要点 | 建议方案 | 出处 |
 |---|---|---|---|---|---|
 | B1 | **batch_id 生产写入方全仓缺失**→claim_next 按 batch_id 过滤恒 None、AutoPilot.run_cycle 恒走 __no_batch__ 兜底（2.4A 静默失效） | src/zephyr/trading + orchestrator 域 | AI-13-002：SQL_INSERT_TASKS/_serialize 均不含列，"SET batch_id" 仅存于测试 | 接线设计（写入方补齐）后启用新只读 API（59c661b5） | §6#15 |
