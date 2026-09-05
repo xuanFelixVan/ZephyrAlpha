@@ -191,7 +191,7 @@ D_BACKTEST域代码唯一存放于 `src/zephyr/backtest/`。禁止在research/�
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-BT-001` 的 64 个 file 节点 | production | `extract_depgraph.py --modules MOD-BT-001` |
-| 数据流图 (dataflow) | 5 个 Dataset / 5 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 5 个 Dataset / 6 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
