@@ -114,7 +114,8 @@ class TestParseArgs:
         assert args.strategy == ""
         assert args.dry_run is False
         assert args.universe == ""
-        assert args.interval == 300
+        # --interval 已删除（B4 治本 2026-09-05：Timer 周期调仓退役）
+        assert not hasattr(args, "interval")
         assert args.close_time == "15:05"
         assert args.poll == 30
         assert args.max_single == pytest.approx(0.01)
@@ -131,11 +132,12 @@ class TestParseArgs:
 
 class TestAssembleSession:
     def test_default_keepalive_safe(self):
-        """默认=纯保活安全态：空 universe + interval=0 + 策略恒空权重。"""
+        """默认=纯保活安全态：空 universe + 无定时器字段 + 策略恒空权重。"""
         args = sps.parse_args([])
         session = sps.assemble_session(args, _MockBroker())
         assert session._config.universe == []
-        assert session._config.rebalance_interval_seconds == 0
+        # B4 治本：rebalance_interval_seconds 字段已删除（无时间触发）
+        assert not hasattr(session._config, "rebalance_interval_seconds")
         assert session._config.strategy_id == "paper-keepalive"
         assert session._strategy.generate_target_weights([], {}, {}) == {}
 
@@ -146,15 +148,13 @@ class TestAssembleSession:
                 "topn-momentum",
                 "--universe",
                 "600000.SH,000001.SZ",
-                "--interval",
-                "60",
                 "--max-single",
                 "0.02",
             ]
         )
         session = sps.assemble_session(args, _MockBroker())
         assert session._config.universe == ["600000.SH", "000001.SZ"]
-        assert session._config.rebalance_interval_seconds == 60
+        assert not hasattr(session._config, "rebalance_interval_seconds")
         assert session._config.strategy_id == "topn-momentum"
         assert session._config.strategy_constraints == {"top_n": 2, "max_single": 0.02}
         assert session._config.risk_limits.max_single_position == pytest.approx(0.02)

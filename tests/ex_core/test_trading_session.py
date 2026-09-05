@@ -434,6 +434,83 @@ def test_stop_cancels_pending_orders() -> None:
 
 
 # ---------------------------------------------------------------------
+# 事件驱动调仓（B4 治本 2026-09-05：替代已删除的 threading.Timer 周期调仓）
+# ---------------------------------------------------------------------
+
+
+class TestEventDrivenRebalance:
+    def test_topic_replaces_timer(self) -> None:
+        """B4 核心断言：模块暴露事件 topic + 订阅函数；Timer 调仓机制已删除。"""
+        import zephyr.ex_core.trading_session as ts_mod
+
+        assert ts_mod.TOPIC_REBALANCE_REQUESTED == "ex_core.rebalance.requested"
+        assert callable(ts_mod.subscribe_eventbus)
+        # Timer 机制删除实证：无 _schedule_next/_scheduled_rebalance，config 无 interval 字段
+        assert not hasattr(ts_mod.TradingSession, "_schedule_next")
+        assert not hasattr(ts_mod.TradingSession, "_scheduled_rebalance")
+        assert not hasattr(ts_mod.TradingSessionConfig(universe=[]), "rebalance_interval_seconds")
+
+    def test_event_dispatches_to_running_session(self) -> None:
+        """rebalance.requested 事件 → 活跃 session 执行调仓（手动等价路径）。"""
+        import zephyr.ex_core.trading_session as ts_mod
+
+        broker = MagicMock()
+        broker.get_positions.return_value = _make_position(cash=Decimal("1000000"))
+        session = _make_session(
+            broker=broker,
+            strategy=_strategy_returning({"600519.SH": 0.10}),
+            price_provider=make_mock_price_provider({"600519.SH": Decimal("100")}),
+            config=TradingSessionConfig(universe=["600519.SH"], broker_id="test_broker"),
+        )
+        session.start()
+        try:
+            submitted_before = len(session._submitted_orders)
+            ts_mod._on_rebalance_requested({"reason": "test"})
+            assert len(session._submitted_orders) == submitted_before + 1
+        finally:
+            session.stop()
+
+    def test_event_ignored_for_stopped_session(self) -> None:
+        """stop() 后 session 已摘除注册表——事件不再触达（无泄漏调仓）。"""
+        import zephyr.ex_core.trading_session as ts_mod
+
+        broker = MagicMock()
+        broker.get_positions.return_value = _make_position(cash=Decimal("1000000"))
+        session = _make_session(
+            broker=broker,
+            strategy=_strategy_returning({"600519.SH": 0.10}),
+            price_provider=make_mock_price_provider({"600519.SH": Decimal("100")}),
+            config=TradingSessionConfig(universe=["600519.SH"], broker_id="test_broker"),
+        )
+        session.start()
+        session.stop()
+        submitted_before = len(session._submitted_orders)
+        ts_mod._on_rebalance_requested({"reason": "test"})
+        assert len(session._submitted_orders) == submitted_before
+
+    def test_bus_end_to_end(self) -> None:
+        """总线端到端：bus.emit(topic) → 订阅回调派发（订阅幂等）。"""
+        import zephyr.ex_core.trading_session as ts_mod
+        from zephyr.shared.event_bus import bus
+
+        calls: list[object] = []
+        original = ts_mod._on_rebalance_requested
+
+        def _spy(event):
+            calls.append(event)
+
+        ts_mod._on_rebalance_requested = _spy
+        try:
+            ts_mod.subscribe_eventbus()
+            ts_mod.subscribe_eventbus()  # 幂等：重复订阅不重复挂载
+            bus.emit(ts_mod.TOPIC_REBALANCE_REQUESTED, {"reason": "e2e"})
+            assert len(calls) >= 1
+            assert calls[-1].payload.get("reason") == "e2e"
+        finally:
+            ts_mod._on_rebalance_requested = original
+
+
+# ---------------------------------------------------------------------
 # 三态一致性测试
 # ---------------------------------------------------------------------
 

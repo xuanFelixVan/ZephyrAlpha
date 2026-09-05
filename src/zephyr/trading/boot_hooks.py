@@ -253,6 +253,7 @@ def _subscribe_eventbus_consumers() -> None:
         ("F6 drift_bridge", "zephyr.gov_drift.detector_core.bridges.drift_bridge"),
         ("auto_task_generator", "zephyr.trading.auto_task_generator"),
         ("premarket_checker", "zephyr.ex_core.premarket_checker"),
+        ("trading_session", "zephyr.ex_core.trading_session"),
     ]
 
     succeeded = 0

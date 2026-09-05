@@ -56,7 +56,8 @@
 - ``--service``：常驻服务模式——LiveStrategyAdapter 监督 slot（异常隔离/退避重启
   熔断/biz 心跳）；--poll 在本模式不适用（监督节奏=adapter 心跳 15s）。
 - ``--universe a.SH,b.SZ``：--strategy 模式的标的池（逗号分隔）。
-- ``--interval N``：--strategy 模式自动调仓间隔秒（默认 300）。
+- ``--interval N``：已删除（B4 治本 2026-09-05：threading.Timer 周期调仓违反
+  trae_060 §3 禁时间触发；调仓触发源=ex_core.rebalance.requested 事件）。
 - ``--close-time HH:MM``：保活截止时点（默认 15:05，收盘后 5 分钟收尾缓冲）。
 - ``--poll N``：保活轮询秒（默认 30，仅过渡形态保活循环）。
 - ``--max-single X``：--strategy 模式单标的权重上限（默认 0.01=1%，冒烟口径）。
@@ -155,7 +156,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--universe", default="", help="标的池，逗号分隔（如 600000.SH,000001.SZ）；--strategy 模式必填"
     )
-    parser.add_argument("--interval", type=int, default=300, help="--strategy 模式自动调仓间隔秒（默认 300）")
+    # --interval 已删除（B4 治本 2026-09-05：Timer 周期调仓违反禁时间触发；
+    # 调仓触发源=ex_core.rebalance.requested 事件）
     parser.add_argument("--close-time", default="15:05", help="保活截止时点 HH:MM（默认 15:05 北京时区）")
     parser.add_argument("--poll", type=int, default=30, help="保活轮询秒（默认 30）")
     parser.add_argument("--max-single", type=float, default=0.01, help="--strategy 模式单标的权重上限（默认 0.01）")
@@ -276,10 +278,13 @@ def _make_xtdata_price_provider() -> Callable[[list[str]], dict[str, Decimal]]:
 def assemble_session(args: argparse.Namespace, broker: object) -> TradingSession:
     """装配 TradingSession（57 号文 §2 过渡形态编排）。
 
-    默认（--strategy 空）：_KeepAliveStrategy + 空 universe + interval=0
+    默认（--strategy 空）：_KeepAliveStrategy + 空 universe
     → start() 仅连接+注册成交回调，永不自动 rebalance（纯保活安全默认）。
-    --strategy topn-momentum：mock 信号 + --universe + interval 自动调仓
-    （彩排口径——LiveStrategyAdapter 真信号源未施工，启动时大字告警）。
+    --strategy topn-momentum：mock 信号 + --universe，启动后一次初始调仓 +
+    事件驱动调仓（ex_core.rebalance.requested；彩排口径——LiveStrategyAdapter
+    真信号源未施工，启动时大字告警）。
+    B4 治本（2026-09-05）：原 --interval（threading.Timer 周期调仓）已删除——
+    违反 trae_060 §3 禁时间触发；触发源改为事件（未来真信号源 emit）。
     """
     order_manager = OrderManager()
     order_manager.register_broker(_BROKER_ID, broker)
@@ -291,7 +296,6 @@ def assemble_session(args: argparse.Namespace, broker: object) -> TradingSession
         universe: list[str] = []
         signal_provider = make_mock_signal_provider({})
         price_provider = make_mock_price_provider({})
-        interval = 0  # 纯保活：永不自动调仓（安全默认）
         strategy_id = "paper-keepalive"
         constraints: dict[str, Any] = {"top_n": 0, "max_single": 0.0}
     elif args.strategy == _STRATEGY_TOPN_MOMENTUM:
@@ -304,7 +308,6 @@ def assemble_session(args: argparse.Namespace, broker: object) -> TradingSession
         # 真信号源=construction_backlog B4 待施工，57 号文 GAP-2 原文登记）
         signal_provider = make_mock_signal_provider({s: 1.0 for s in universe})
         price_provider = _make_xtdata_price_provider()
-        interval = args.interval
         strategy_id = args.strategy
         constraints = {"top_n": len(universe), "max_single": args.max_single}
     else:
@@ -314,7 +317,6 @@ def assemble_session(args: argparse.Namespace, broker: object) -> TradingSession
         universe=universe,
         broker_id=_BROKER_ID,
         strategy_id=strategy_id,
-        rebalance_interval_seconds=interval,
         strategy_constraints=constraints,
         risk_limits=RiskLimits(
             as_of_date=now,
@@ -350,7 +352,7 @@ def assemble_adapter(
     tracker #273）。仅承载模拟盘会话（assemble_session 口径连 QMT 模拟账户）。
 
     Args:
-        args: CLI 参数（strategy/universe/interval 等透传 session 装配）。
+        args: CLI 参数（strategy/universe 等透传 session 装配）。
         broker: 已连接的模拟盘 broker（main 已 connect 探活）。
         session_factory: 会话装配器（测试注入 mock；None=assemble_session）。
         now_fn: 当前时间（测试注入假钟；None=adapter 默认北京时区现在）。
@@ -481,6 +483,17 @@ def main(
         print(f"[ERROR] session.start() 失败（{type(exc).__name__}: {exc}）")
         broker.disconnect()
         return 1
+
+    # ── 初始调仓（B4 治本 2026-09-05：启动事件触发一次，替代原 Timer 首轮）──
+    # --strategy 模式彩排口径：启动即建仓一次；后续调仓由
+    # ex_core.rebalance.requested 事件驱动（真信号源施工后 emit）。
+    if args.strategy != "":
+        try:
+            from zephyr.shared.event_bus import bus
+
+            bus.emit("ex_core.rebalance.requested", {"reason": "session_start", "strategy": args.strategy})
+        except Exception:  # noqa: BLE001
+            _logger.warning("初始调仓事件发布失败（总线不可用），跳过", exc_info=True)
 
     # ── 有界保活循环（PERM-TRIGGER 合规：while now<收盘时点，非 while True）──
     print(f"[INFO] 会话已启动，保活至 {close_ts.isoformat()}（Ctrl+C 优雅停止，stop 自动撤未成交单）")

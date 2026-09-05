@@ -21,7 +21,9 @@
   1. 只编排不重造——复用 OrderManager / BrokerInterface / risk_validator / StrategyBase
   2. 权重驱动——策略返回 dict[str, float] 目标权重，TradingSession 计算 delta 生成订单
   3. broker 注入——切换 broker（SimulationBroker/MiniQmtBroker）即可在回测/模拟/实盘间切换
-  4. 可手动可自动——rebalance() 可手动调用，也可由内置定时器自动触发
+  4. 可手动可事件驱动——rebalance() 可手动调用，也可由 ex_core.rebalance.requested
+     事件触发（B4 治本 2026-09-05：原内置 threading.Timer 周期调仓违反 trae_060 §3
+     禁时间触发已删除；订阅经 boot_hooks 模块级 subscribe_eventbus 注册）
 
 三态一致性：同一 TradingSession 切换 SimulationBroker / MiniQmtBroker，调仓逻辑一致。
 
@@ -164,18 +166,20 @@ class TradingSessionConfig:
         universe: 标的池，如 ["600000.SH", "000001.SZ", ...]
         broker_id: OrderManager 中注册的 broker_id
         strategy_id: 策略标识（写入 Order.strategy_id）
-        rebalance_interval_seconds: 自动调仓间隔秒数（0=仅手动）
         strategy_constraints: 传给 strategy.generate_target_weights 的约束
         min_order_qty: 最小下单股数（兜底默认 100；板块差异化申报单位真源=
             ex_core.board_lot，_compute_order_deltas 按板块规则取整，科创板 200 股起）
         round_lot: 整手数（兜底默认 100；同上，板块差异化以 board_lot 为准）
         risk_limits: 风控限额
+
+    注：原 rebalance_interval_seconds（threading.Timer 周期调仓）已删除——
+    违反 trae_060 §3 禁时间触发（B4 治本 2026-09-05）；调仓触发源改为
+    ex_core.rebalance.requested 事件（见文件尾事件驱动节）+ 手动 rebalance()。
     """
 
     universe: list[str]
     broker_id: str = "miniqmt"
     strategy_id: str = "trading_session"
-    rebalance_interval_seconds: int = 0
     strategy_constraints: dict[str, Any] = field(default_factory=_default_constraints)
     min_order_qty: int = 100
     round_lot: int = 100
@@ -258,7 +262,6 @@ class TradingSession:
         # 组合级风控层（None=未接线不评估，AI-RWIRE-001 接线批 #ARCH-100）
         self._risk_layer = risk_layer
         self._lock = threading.Lock()
-        self._timer: threading.Timer | None = None
         self._running = False
         self._fills: list[Fill] = []
         self._submitted_orders: list[Order] = []
@@ -272,10 +275,14 @@ class TradingSession:
     # ------------------------------------------------------------------
 
     def start(self) -> None:
-        """连接 broker + 注册 fill 回调 + 启动定时器（如果 interval > 0）。
+        """连接 broker + 注册 fill 回调 + 挂载事件驱动调仓 receptacle。
 
         风控层注入时（#ARCH-100）：先执行启动恢复（以券商持仓为准重建账本，
         重建完成前 Fail-Closed 禁止下单）→ 盘前首次风险评估 → 启动盘中定时对账。
+
+        B4 治本（2026-09-05）：原 threading.Timer 周期调仓已删除（trae_060 §3
+        禁时间触发）；本实例挂入模块级活跃注册表，由 ex_core.rebalance.requested
+        事件派发调仓（订阅经 boot_hooks 模块级 subscribe_eventbus 统一注册）。
         """
         if self._running:
             _logger.warning("TradingSession already running")
@@ -298,20 +305,18 @@ class TradingSession:
                 self._evaluate_risk_layer()
             self._risk_layer.start_reconcile_loop()
         self._running = True
+        _register_active_session(self)
         _logger.info(
-            "TradingSession started: broker=%s universe=%d interval=%ds",
+            "TradingSession started: broker=%s universe=%d（事件驱动调仓: %s）",
             self._config.broker_id,
             len(self._config.universe),
-            self._config.rebalance_interval_seconds,
+            TOPIC_REBALANCE_REQUESTED,
         )
-        self._schedule_next()
 
     def stop(self) -> None:
-        """撤所有未成交单 + 停定时器 + 断开 broker。"""
+        """撤所有未成交单 + 摘除事件挂载 + 断开 broker。"""
         self._running = False
-        if self._timer:
-            self._timer.cancel()
-            self._timer = None
+        _unregister_active_session(self)
         if self._risk_layer is not None:
             self._risk_layer.stop_reconcile_loop()
         self._cancel_pending_orders()
@@ -917,32 +922,6 @@ class TradingSession:
             "universe_size": len(self._config.universe),
         }
 
-    # ------------------------------------------------------------------
-    # 定时器
-    # ------------------------------------------------------------------
-
-    def _schedule_next(self) -> None:
-        """调度下一次自动调仓（interval > 0 时）。"""
-        if not self._running or self._config.rebalance_interval_seconds <= 0:
-            return
-        self._timer = threading.Timer(
-            self._config.rebalance_interval_seconds,
-            self._scheduled_rebalance,
-        )
-        self._timer.daemon = True
-        self._timer.start()
-
-    def _scheduled_rebalance(self) -> None:
-        """定时器回调——执行调仓后重新调度。"""
-        if not self._running:
-            return
-        try:
-            with self._lock:
-                self._do_rebalance()
-        except Exception:
-            _logger.exception("scheduled rebalance failed")
-        self._schedule_next()
-
     def _cancel_pending_orders(self) -> None:
         """撤销所有活跃订单。"""
         for order in self._submitted_orders:
@@ -953,6 +932,68 @@ class TradingSession:
                     _logger.exception("failed to cancel order %s", order.order_id)
 
 
+# ── 事件驱动调仓 receptacle（B4 治本 2026-09-05，替代已删除的 threading.Timer）──
+# 模式：premarket_checker 先例（MOD-EX-063）——模块级 subscribe_eventbus() 幂等
+# 订阅 + boot_hooks 统一调用 + 实例经 start/stop 生命周期挂载/摘除活跃注册表。
+# 未来真实信号源（construction_backlog B4 施工后）emit 本 topic 即触发全量调仓循环。
+
+TOPIC_REBALANCE_REQUESTED: Final[str] = "ex_core.rebalance.requested"
+
+_active_sessions: "list[TradingSession]" = []
+_active_sessions_lock = threading.Lock()
+_subscribed = False
+
+
+def _register_active_session(session: "TradingSession") -> None:
+    with _active_sessions_lock:
+        if session not in _active_sessions:
+            _active_sessions.append(session)
+
+
+def _unregister_active_session(session: "TradingSession") -> None:
+    with _active_sessions_lock:
+        if session in _active_sessions:
+            _active_sessions.remove(session)
+
+
+def _on_rebalance_requested(event: object) -> None:
+    """ex_core.rebalance.requested 事件回调——派发到全部运行中 session。
+
+    调仓异常按 session 隔离（单 session 失败不影响其他 session）；rebalance()
+    自带锁与 Fail-Closed 风控闸门。payload 预留（reason/requested_by 等，可不传）。
+    """
+    with _active_sessions_lock:
+        sessions = list(_active_sessions)
+    if not sessions:
+        _logger.debug("rebalance.requested：无运行中 session，忽略")
+        return
+    for session in sessions:
+        if not session._running:
+            continue
+        try:
+            session.rebalance()
+        except Exception:
+            _logger.exception("event-driven rebalance failed: %s", session._config.broker_id)
+
+
+def subscribe_eventbus() -> None:
+    """订阅 ex_core.rebalance.requested（幂等；boot_hooks 统一调用）。
+
+    Backpressure 总线不可用时静默跳过（与 autopilot/premarket_checker 同款容错）。
+    """
+    global _subscribed
+    if _subscribed:
+        return
+    try:
+        from zephyr.shared.event_bus import bus
+
+        bus.subscribe(TOPIC_REBALANCE_REQUESTED, _on_rebalance_requested)
+        _subscribed = True
+        _logger.info("TradingSession 事件驱动调仓已订阅: %s", TOPIC_REBALANCE_REQUESTED)
+    except Exception:
+        _logger.warning("TradingSession 事件订阅失败（总线不可用），调仓仅手动可用", exc_info=True)
+
+
 __all__: Final = [
     "TradingSession",
     "TradingSessionConfig",
@@ -961,4 +1002,6 @@ __all__: Final = [
     "ComplianceMarketContext",
     "DisciplineCtxProvider",
     "ComplianceCtxProvider",
+    "TOPIC_REBALANCE_REQUESTED",
+    "subscribe_eventbus",
 ]

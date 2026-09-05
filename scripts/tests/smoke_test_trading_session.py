@@ -137,7 +137,7 @@ def main() -> int:
         universe=universe,
         broker_id="miniqmt",
         strategy_id="smoke_test",
-        rebalance_interval_seconds=0,  # 仅手动
+        # B4 治本（2026-09-05）：rebalance_interval_seconds 已删除（Timer 周期调仓退役）
         strategy_constraints={"top_n": 2, "max_single": 0.01},  # 1% 仓位
         risk_limits=RiskLimits(
             as_of_date=now,
