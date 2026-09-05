@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L11-001 | docs/03_modules/_domain_machine_learning_train/blueprint.md | §Phase4
 # [MODULE] zephyr.ml_train.implementations.sentiment_sft_trainer
 # [DOMAIN] D_ML_TRAIN
-# [DEPENDENCIES] zephyr.ml_train.trainer_base; peft; trl; transformers; torch; datasets; sklearn.metrics
+# [DEPENDENCIES] zephyr.ml_train.trainer_base; peft; trl; transformers; torch; datasets; sklearn.metrics; zephyr.nlp.nlp_inference
 # [CONSUMERS] scripts/ml/run_sft_train.py; P1-E3 NLP 管道 Phase 4
 # [STARTUP] imported
 # [MATURITY] design

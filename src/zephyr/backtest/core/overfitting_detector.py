@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] OverfittingError
-# [TESTS]
+# [TESTS] tests/backtest/test_overfitting_detector.py
 # [TTL] permanent
 # [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 """

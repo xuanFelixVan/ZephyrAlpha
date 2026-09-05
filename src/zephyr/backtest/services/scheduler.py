@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-BT-017 | docs/03_modules/_domain_backtest/blueprint.md | §D-BACKTEST BT-17
 # [MODULE] zephyr.backtest.services.scheduler
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] zephyr.backtest.core.engine_base
+# [DEPENDENCIES] zephyr.backtest.core.engine_base; zephyr.backtest.implementations.vectorized_engine
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production

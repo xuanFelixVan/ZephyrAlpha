@@ -119,7 +119,7 @@ __all__: Final[list[str]] = [
 class PatchtstEncoderError(Exception):
     """PatchTST 编码器训练/转换失败。"""
 
-    error_code = "ZA-MLT-0013"  # 待登记, 建议 ZA-MLT-0004
+    error_code = "ZA-MLT-0013"
 
 
 @dataclass(frozen=True)

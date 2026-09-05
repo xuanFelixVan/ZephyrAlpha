@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-054 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | §4 Phase 1（06号文 P1-1~P1-4 触发式考试调度器）
 # [MODULE] zephyr.intelligence.model_profiling.exam_trigger_scheduler
 # [DOMAIN] D_INTELLIGENCE
-# [DEPENDENCIES] zephyr.intelligence.model_profiling.capability_passport(CapabilityPassport/QuickProfile/QUICK_PROFILES_DIR); zephyr.intelligence.model_profiling.model_discovery(ModelDiscovery); zephyr.intelligence.reflexion.batch_runner(is_intraday 仅 CLI 懒加载盘中守卫)
+# [DEPENDENCIES] zephyr.intelligence.model_profiling.capability_passport(CapabilityPassport/QuickProfile/QUICK_PROFILES_DIR); zephyr.intelligence.model_profiling.model_discovery(ModelDiscovery); zephyr.intelligence.reflexion.batch_runner(is_intraday 仅 CLI 懒加载盘中守卫); zephyr.integration.local_model.ollama_chat; zephyr.intelligence.model_profiling.exam_orchestrator
 # [CONSUMERS] zephyr.intelligence.model_routing.runtime_assembly（task_gate_dispatch_hook 经 check_and_record 接 dispatch 硬门，opt-in 默认不启用）；CLI 入口 python -m zephyr.intelligence.model_profiling.exam_trigger_scheduler scan-new-models [--dry-run]（盘中守卫拒跑真实模式）；ModelDiscovery 定时扫描注册待统筹（config/tasks.yaml 未动）
 # [STARTUP] imported
 # [MATURITY] production

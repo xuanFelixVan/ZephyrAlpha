@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-OBS-001 | docs/03_modules/_domain_infrastructure_operations/blueprint_experiment_tracking.md | §M4
 # [MODULE] zephyr.experiment_tracking.adapters.strategy_runner_adapter
 # [DOMAIN] D_INFRA_TELEMETRY
-# [DEPENDENCIES] zephyr.experiment_tracking.experiment_tracker (get_tracker); typing.TYPE_CHECKING (pf_core 类型仅静态检查，运行时鸭子类型——破 pf_core↔experiment_tracking 循环)
+# [DEPENDENCIES] zephyr.experiment_tracking.experiment_tracker (get_tracker); typing.TYPE_CHECKING (pf_core 类型仅静态检查，运行时鸭子类型——破 pf_core↔experiment_tracking 循环); zephyr.backtest.core.engine_base; zephyr.pf_core.strategy_engine.strategy_runner
 # [CONSUMERS] StrategyRunner 全链路回测入口（track 时 lazy import 调用）
 # [STARTUP] imported
 # [MATURITY] production

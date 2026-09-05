@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-BT-001 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] zephyr.backtest.regime_validation.c1_runner
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] zephyr.backtest.regime_validation.c1_comparator; zephyr.backtest.regime_validation.shrinkage_provider; zephyr.backtest.implementations.shrinkage_engine; zephyr.backtest.implementations.vectorized_engine; zephyr.pf_core.strategy_engine.strategy_runner; zephyr.experiment_tracking.adapters.c1_adapter (lazy: track=True only)
+# [DEPENDENCIES] zephyr.backtest.regime_validation.c1_comparator; zephyr.backtest.regime_validation.shrinkage_provider; zephyr.backtest.implementations.shrinkage_engine; zephyr.backtest.implementations.vectorized_engine; zephyr.pf_core.strategy_engine.strategy_runner; zephyr.experiment_tracking.adapters.c1_adapter (lazy: track=True only); zephyr.backtest.core.engine_base; zephyr.shared.foundation.errors
 # [CONSUMERS] 11_regime_backtest_validation_plan Phase 1 验证执行 ; scripts/regime/run_c1.py
 # [STARTUP] imported
 # [MATURITY] production

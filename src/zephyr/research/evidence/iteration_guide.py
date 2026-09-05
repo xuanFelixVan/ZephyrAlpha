@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-EVIDENCE_CHAIN | 待统筹登记（18号清单 §6 波4-11 / 11号文 §4.2 Phase 0 / apply_depgraph 设计态登记建议见 .runtime/p3_fragments/w4_11.md）
 # [MODULE] zephyr.research.evidence.iteration_guide
 # [DOMAIN] D_KNOWLEDGE  # 2026-08-22 统筹裁定：D_RESEARCH 不在 depgraph domains 表，归属 D_KNOWLEDGE（知识管理——假设/证据=知识资产）
-# [DEPENDENCIES] zephyr.shared.foundation.errors; zephyr.shared.io.paths; zephyr.research.evidence.evidence_chain; pyyaml
+# [DEPENDENCIES] zephyr.shared.foundation.errors; zephyr.shared.io.paths; zephyr.research.evidence.evidence_chain; pyyaml; zephyr.research.evidence.hypothesis_registry
 # [CONSUMERS] zephyr.research.evidence.batch_entry; tests/research/test_evidence_phase0.py
 # [STARTUP] imported
 # [MATURITY] testing

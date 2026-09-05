@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | §3
 # [MODULE] zephyr.intelligence.model_profiling.profiler
 # [DOMAIN] D_INTELLIGENCE
-# [DEPENDENCIES] zephyr.intelligence.model_profiling.benchmark_suite; zephyr.intelligence.model_profiling.model_discovery
+# [DEPENDENCIES] zephyr.intelligence.model_profiling.benchmark_suite; zephyr.intelligence.model_profiling.model_discovery; zephyr.shared.foundation.constants; zephyr.shared.utils.time_utils
 # [CONSUMERS] MOD-INF-009;MOD-INF-036
 # [STARTUP] imported
 # [MATURITY] production

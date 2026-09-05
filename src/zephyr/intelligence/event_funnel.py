@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INT_EVENT_FUNNEL | docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/26_event_driven_strategy_detail.md | §2.5
 # [MODULE] zephyr.intelligence.event_funnel
 # [DOMAIN] D_INTELLIGENCE
-# [DEPENDENCIES] zephyr.intelligence.event_score（MOD-INT-EVENT-SCORE 评分全族，不重复造评分）
+# [DEPENDENCIES] zephyr.intelligence.event_score（MOD-INT-EVENT-SCORE 评分全族，不重复造评分）; zephyr.shared.foundation.errors
 # [CONSUMERS] 事件驱动 sleeve（event_driven_sleeve_strategy 选股收敛上游，BM-SEL-19 第四层事件侧编排，待接线——本包 strategies 装配层接线前经 TYPE_CHECKING 声明可发现性）
 # [STARTUP] imported
 # [MATURITY] design

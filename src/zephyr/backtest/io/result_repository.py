@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-BT-001 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] zephyr.backtest.io.result_repository
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] zephyr.backtest.io.backtest_result_sink
+# [DEPENDENCIES] zephyr.backtest.io.backtest_result_sink; zephyr.shared.io.paths; zephyr.shared.utils.time_utils
 # [CONSUMERS] zephyr.frontend.dashboard.components.backtest_results; zephyr.frontend.dashboard.components.tick_replay
 # [STARTUP] manual
 # [MATURITY] production

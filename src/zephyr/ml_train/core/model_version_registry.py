@@ -94,9 +94,9 @@ __all__: Final = [
 class ModelVersionRegistryError(ZephyrBaseError):
     """模型版本注册表操作非法（Fail-Closed）。
 
-    错误码占位：ZA-MLT-0014（待主代理统一登记转正，
-    建议号段 ZA-MLT-0012；P1W20 建议的 ZA-MLT-0003/0004 与在案码冲突，
-    以主代理对账为准）。
+    错误码 ZA-MLT-0014 已登记（error_code_registry.yaml v3.1.0，归属本模块）。
+    历史留痕：P1W20 曾建议占用 ZA-MLT-0003/0004，与在案码冲突弃用，
+    以登记表分配的 ZA-MLT-0014 为最终定稿。
     """
 
     error_code = "ZA-MLT-0014"

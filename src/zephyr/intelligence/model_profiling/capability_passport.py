@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | §3
 # [MODULE] zephyr.intelligence.model_profiling.capability_passport
 # [DOMAIN] D_INTELLIGENCE
-# [DEPENDENCIES]
+# [DEPENDENCIES]zephyr.shared.io.paths; zephyr.shared.io.serialization; zephyr.shared.security.secrets
 # [CONSUMERS] MOD-INF-034;MOD-INF-009
 # [STARTUP] imported
 # [MATURITY] production

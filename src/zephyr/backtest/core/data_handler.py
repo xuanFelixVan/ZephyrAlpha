@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-BT-001 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] zephyr.backtest.core.data_handler
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] zephyr.infrastructure.database_service; zephyr.governance.data_governance.miniqmt_provider; zephyr.data.pit_query; zephyr.data.ch_reader
+# [DEPENDENCIES] zephyr.infrastructure.database_service; zephyr.governance.data_governance.miniqmt_provider; zephyr.data.pit_query; zephyr.data.ch_reader; zephyr.backtest.core.pit_manager
 # [CONSUMERS] zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.implementations.event_driven_engine
 # [STARTUP] imported
 # [MATURITY] production

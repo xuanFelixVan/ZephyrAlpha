@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-OBS-001 | docs/03_modules/_domain_infrastructure_operations/blueprint_experiment_tracking.md | §M1-3
 # [MODULE] zephyr.experiment_tracking.adapters.c1_adapter
 # [DOMAIN] D_INFRA_TELEMETRY
-# [DEPENDENCIES] zephyr.experiment_tracking.experiment_tracker (get_tracker); typing.TYPE_CHECKING (C1 类型仅静态检查，运行时鸭子类型——破 backtest↔experiment_tracking 循环)
+# [DEPENDENCIES] zephyr.experiment_tracking.experiment_tracker (get_tracker); typing.TYPE_CHECKING (C1 类型仅静态检查，运行时鸭子类型——破 backtest↔experiment_tracking 循环); zephyr.backtest.regime_validation.c1_comparator
 # [CONSUMERS] zephyr.backtest.regime_validation.c1_runner (track=True 时 lazy import 调用)
 # [STARTUP] imported
 # [MATURITY] production

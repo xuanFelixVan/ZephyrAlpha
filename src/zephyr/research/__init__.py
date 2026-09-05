@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L09-001 | 待统筹登记（研究创新核心包）
 # [MODULE] zephyr.research
 # [DOMAIN] D_RESEARCH
-# [DEPENDENCIES] zephyr.research.evidence（子包，首个真实实现 2026-08-22 落地）
+# [DEPENDENCIES] zephyr.research.evidence（子包，首个真实实现 2026-08-22 落地）; zephyr.research.sell_news_event_study
 # [CONSUMERS] 手动 CLI/调度挂点（zephyr.research.evidence.batch_entry）；tests/research/test_evidence_phase0.py
 # [STARTUP] imported
 # [MATURITY] testing

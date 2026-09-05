@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | §3
 # [MODULE] zephyr.intelligence.model_profiling.case_assembler
 # [DOMAIN] D_INTELLIGENCE
-# [DEPENDENCIES]
+# [DEPENDENCIES]zephyr.shared.io.paths
 # [CONSUMERS] zephyr.intelligence.model_profiling.exam_test_cases
 # [STARTUP] imported
 # [MATURITY] production

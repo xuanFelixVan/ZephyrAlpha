@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INT-NEWS-LINK | 待统筹登记（92号清单 §8.4 M3-② / tracker #139）
 # [MODULE] zephyr.intelligence.news_symbol_linker
 # [DOMAIN] D_INTELLIGENCE
-# [DEPENDENCIES] zephyr.data.ch_reader（默认 CH 读取通道）; zephyr.data.table_registry（表名解析，fail-open 降级）
+# [DEPENDENCIES] zephyr.data.ch_reader（默认 CH 读取通道）; zephyr.data.table_registry（表名解析，fail-open 降级）; zephyr.shared.foundation.errors
 # [CONSUMERS] zephyr.intelligence.nightly_sentiment_window（夜间情绪聚合标的关联）；MOD-SIG-002 信号生成器（后续波次，tracker #139 CTR-INT-AISA 契约对齐候选）
 # [STARTUP] imported
 # [MATURITY] testing

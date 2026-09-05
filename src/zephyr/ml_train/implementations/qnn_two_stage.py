@@ -129,7 +129,7 @@ __all__: Final[list[str]] = [
 class TwoStageQnnError(Exception):
     """两阶段 QNN 训练/预测失败。"""
 
-    error_code = "ZA-MLT-0012"  # 待登记, 建议 ZA-MLT-0003
+    error_code = "ZA-MLT-0012"
 
 
 @dataclass(frozen=True)

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-OBS-001 | docs/03_modules/_domain_infrastructure_operations/blueprint_experiment_tracking.md | §M4
 # [MODULE] zephyr.experiment_tracking.adapters.regime_adapter
 # [DOMAIN] D_INFRA_TELEMETRY
-# [DEPENDENCIES] zephyr.experiment_tracking.experiment_tracker (get_tracker); typing.TYPE_CHECKING (regime 类型仅静态检查，运行时鸭子类型——破 regime↔experiment_tracking 循环)
+# [DEPENDENCIES] zephyr.experiment_tracking.experiment_tracker (get_tracker); typing.TYPE_CHECKING (regime 类型仅静态检查，运行时鸭子类型——破 regime↔experiment_tracking 循环); zephyr.regime.core.regime_detector
 # [CONSUMERS] regime 验证/运行入口（track 时 lazy import 调用）
 # [STARTUP] imported
 # [MATURITY] production
