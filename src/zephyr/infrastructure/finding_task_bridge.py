@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md
 # [MODULE] zephyr.infrastructure.finding_task_bridge
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.shared.__init__; zephyr.shared.schema.schemas
+# [DEPENDENCIES] zephyr.shared.__init__; zephyr.shared.schema.schemas; zephyr.governance.persistence.task_repo
 # [CONSUMERS] scripts/governance/run_all.py (bridge_findings_to_tasks)
 # [STARTUP] imported
 # [MATURITY] production
@@ -242,6 +242,11 @@ class FindingTaskBridge:
         """
         ns = namespace or self._default_namespace
         result = BridgeResult(findings_processed=len(findings))
+        # 批次创建语义（B1 治本 2026-09-05）：同一次桥接的全部任务卡共享一个
+        # finding 批次——AutoPilot/Conductor 按 batch 认领的前提。
+        from zephyr.governance.persistence.task_repo import new_batch_id
+
+        batch_id = new_batch_id("finding")
 
         for finding in findings:
             if not self._should_bridge(finding):
@@ -250,7 +255,12 @@ class FindingTaskBridge:
             try:
                 task = self._finding_to_taskcard(finding, ns, phase)
                 if not self._dry_run:
-                    self._repo.create(task)
+                    # B1 治本（2026-09-05）：无依赖 finding 卡直达 READY（合法路径
+                    # WAITING→READY），归属 finding 批次可被 AutoPilot/Conductor 认领。
+                    if task.depends_on:
+                        self._repo.create(task, batch_id=batch_id)
+                    else:
+                        self._repo.create_and_ready(task, batch_id=batch_id)
                     result.tasks_created += 1
                     result.task_ids.append(task.task_id)
                     if ns.value not in result.namespaces_used:

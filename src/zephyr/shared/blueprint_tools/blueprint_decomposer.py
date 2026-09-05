@@ -1,7 +1,7 @@
 # [BLUEPRINT] SH-MAIN-001 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md
 # [MODULE] zephyr.shared.blueprint_tools.blueprint_decomposer
 # [DOMAIN] D_SHARED
-# [DEPENDENCIES] zephyr.shared.models; zephyr.shared.schema.task_types; zephyr.shared.__init__; zephyr.shared.schema.severity_types
+# [DEPENDENCIES] zephyr.shared.models; zephyr.shared.schema.task_types; zephyr.shared.__init__; zephyr.shared.schema.severity_types; zephyr.governance.persistence.task_repo
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -114,6 +114,7 @@ from pathlib import Path
 
 import yaml
 
+from zephyr.governance.persistence.task_repo import new_batch_id
 from zephyr.shared.foundation.models import (
     DecompositionResult,
     GateLevel,
@@ -615,9 +616,19 @@ class BlueprintDecomposer:
     def _write_tasks(self, result: DecompositionResult) -> None:
         if self.task_repo:
             failed_ids: list[str] = []
+            # 批次创建语义（B1 治本 2026-09-05）：同一次拆解的全部任务卡共享一个
+            # decomp 批次——AutoPilot/Conductor 按 batch 认领的前提（无批次不可认领）。
+            batch_id = new_batch_id("decomp")
+            logger.info("BlueprintDecomposer: 拆解批次 %s（%d 张卡）", batch_id, len(result.tasks))
             for task in result.tasks:
                 try:
-                    self.task_repo.create(task)
+                    if not task.depends_on:
+                        # B1 治本（2026-09-05）：无依赖卡直达 READY（合法路径 WAITING→READY；
+                        # 原 PENDING→transition(READY) 非法被宽捕获吞掉，任务永远停 PENDING）
+                        self.task_repo.create_and_ready(task, batch_id=batch_id)
+                        task.status = TaskStatus.READY
+                    else:
+                        self.task_repo.create(task, batch_id=batch_id)
                 except ValueError as e:
                     logger.error(f"task_repo.create 粒度/模板校验失败: {task.task_id} — {e}")
                     failed_ids.append(task.task_id)
@@ -628,12 +639,6 @@ class BlueprintDecomposer:
                     failed_ids.append(task.task_id)
                     result.warnings.append(f"TaskCard {task.task_id} 入库失败: {e}")
                     continue
-                if not task.depends_on:
-                    try:
-                        self.task_repo.transition(task.task_id, TaskStatus.READY)
-                        task.status = TaskStatus.READY
-                    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                        logger.warning(f"PENDING->READY 转换失败: {task.task_id} — {e}", exc_info=True)
             if failed_ids:
                 logger.warning(f"共 {len(failed_ids)} 张卡入库失败: {failed_ids}")
 

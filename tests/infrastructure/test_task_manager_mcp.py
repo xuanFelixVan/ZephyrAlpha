@@ -62,7 +62,9 @@ async def test_create_and_get_task_roundtrip(tm: TaskManagerMCP) -> None:
     got = await tm.mcp.call_tool("task_manager.get_task", {"task_id": tid})
     body = json.loads(got[0].text)
     assert body["task_id"] == tid
-    assert body["status"] == "PENDING"
+    # B1 治本（2026-09-05）：MCP 无依赖建卡直达 READY（合法路径 WAITING→READY，
+    # 归属 mcp 批次可被 AutoPilot/Conductor 认领）；原 PENDING 停滞=不可认领
+    assert body["status"] == "READY"
 
 
 @pytest.mark.asyncio

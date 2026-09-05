@@ -221,6 +221,18 @@ class AutoPilot:
         claimed: list[TaskCard] = []
         batch_ids = sorted(bid for bid in grouped if bid != "__no_batch__")
 
+        if not batch_ids:
+            # B1 治本（2026-09-05）：全量无批次=不可认领（claim_next 按 batch 过滤），
+            # 与"被其他 session 抢先"是两种不同情形，此前共用同一条误导性日志。
+            no_batch_count = len(grouped.get("__no_batch__", []))
+            logger.warning(
+                "AutoPilot: %d 个 READY 任务均未分配批次（batch_id 空，不可认领）——"
+                "生产建卡入口已接线批次分配；存量无批次任务请用 "
+                "TaskRepository.assign_batch 补录",
+                no_batch_count,
+            )
+            return []
+
         for bid in batch_ids:
             if len(claimed) >= max_tasks:
                 break

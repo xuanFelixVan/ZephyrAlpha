@@ -214,7 +214,13 @@ def _create_repair_task(
         from zephyr.governance.persistence.task_repo import TaskRepository
 
         repo = TaskRepository()
-    return repo.create(task, allow_direct_create=True)
+    # 批次创建语义（B1 治本 2026-09-05）：告警任务归属 alert 批次（单卡批次）+直达
+    # READY（合法路径 WAITING→READY）——无批次/非 READY 任务不可被 AutoPilot 认领。
+    from zephyr.governance.persistence.task_repo import new_batch_id
+
+    return repo.create_and_ready(
+        task, allow_direct_create=True, batch_id=new_batch_id("alert")
+    )
 
 
 def handle_alert(event: object) -> object | None:

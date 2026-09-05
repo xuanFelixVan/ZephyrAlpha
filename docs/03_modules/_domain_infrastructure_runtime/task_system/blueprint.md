@@ -1038,17 +1038,45 @@ class TaskLifecycleManager:
 
 | 方法 | 签名 | 说明 |
 |------|------|------|
-| `create` | `(task: Task, *, files: list[dict] /| None = None) -> TaskCard` | 创建任务+文件映射 |
+| `create` | `(task: Task, *, files=None, allow_direct_create=False, batch_id: str /| None = None) -> TaskCard` | 创建任务+文件映射+批次归属（B1 治本 2026-09-05） |
+| `create_and_ready` | `(task, *, files=None, allow_direct_create=False, batch_id=None) -> Task` | 无依赖任务建卡直达 READY（合法路径 WAITING→READY；有 depends_on 拒绝） |
 | `transition` | `(task_id, to_status, gate_check=True) -> TransitionResult` | 状态转换+门禁 |
 | `claim_next` | `(batch_id, worker_id) -> TaskCard /| None` | 原子认领+自动阻塞下游(blocked_by) |
 | `recover_stale_claims` | `(batch_id, timeout_minutes=30) -> int` | 超时回收+自动解除下游阻塞 |
 | `batch_progress` | `(batch_id) -> dict[str, int]` | 批量进度聚合 |
+| `assign_batch` | `(task_ids: list[str], batch_id: str) -> int` | 存量任务批次补录/重组（B1 治本） |
+| `get_task_batch_id` | `(task_id) -> str /| None` | 读单任务批次（表内部列） |
+| `get_distinct_batch_ids` | `(status) -> list[str]` | 按状态枚举批次（AI-13-002） |
+| `get_task_batch_ids` | `(status) -> dict[str, str]` | 按状态映射 {task_id: batch_id}（AI-13-002） |
 
 #### §16.7.4 BatchOrchestrator 使用模式
 
 > B-20 铁律：已实现代码不在蓝图中重复。完整使用示例见 `src/zephyr/orchestration/runtime_core/orchestrator/batch_orchestrator.py`。
 
 `from zephyr.orchestrator.batch_orchestrator import BatchOrchestrator` → `claim_next()` / `mark_done()` / `mark_failed()` 循环。
+
+#### §16.7.5 批次创建语义（B1 治本，2026-09-05 补定义）
+
+> 原缺口：本蓝图只定义批次的读取/认领/回收/进度语义，未定义 batch_id 由谁写入——
+> 生产零写入方导致 claim_next 恒 None、AutoPilot 恒走 `__no_batch__` 兜底（静默失效，
+> 长城审计 B1）。以下为批次写入的唯一合法通道（公共 API，禁裸 SQL）：
+
+- **语义**：batch_id = 创建批次（cohort）标识——同一创建事件产生的相关任务共享一个批次；
+  无批次任务不可被 AutoPilot/Conductor 认领（claim_next 按 batch 过滤，测试锁定语义）。
+- **命名约定**（真源 `task_repo.new_batch_id`）：`{origin}-{yyyymmdd}-{rand6}`，
+  origin ∈ {decomp, mcp, finding, alert, split, ...}（小写来源词）。
+- **生产写入方**（五入口，全部已接线）：
+  | 入口 | origin | 形态 |
+  |------|--------|------|
+  | BlueprintDecomposer._write_tasks | decomp | 同一次拆解全部卡共享 |
+  | MCP task_manager._persist（create 分支） | mcp | 单卡批次（或调用方显式归批） |
+  | FindingTaskBridge.bridge | finding | 同一次桥接共享 |
+  | alert_handler（FLE 告警建卡） | alert | 单卡批次 |
+  | TaskRepository.auto_split_task | split | 子卡继承父卡批次；父无批次则新 split 批次 |
+- **快捷通道**：无依赖任务统一走 `create_and_ready`（建卡+直达 READY，合法路径
+  WAITING→READY；PENDING→READY 非法——历史调用方裸 SQL 绕过点已收口）；有依赖
+  任务走 `create` 停 PENDING/WAITING，由 lifecycle_governance.transition 依赖解析推进。
+- **存量补录**：历史无批次任务用 `assign_batch(task_ids, batch_id)` 补录后方可认领。
 
 ### §16.8 施工参考卡
 

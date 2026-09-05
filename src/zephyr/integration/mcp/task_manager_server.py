@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md | §
 # [MODULE] zephyr.integration.mcp.task_manager_server
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.gov_enforcement.rule_enforcement.task_types; zephyr.shared.schema.severity_types; zephyr.shared.schema.schemas; zephyr.governance.architecture_governance.path_resolver; zephyr.shared.blueprint_tools.blueprint_decomposer; zephyr.shared.foundation.models; zephyr.shared.io.paths; zephyr.shared.utils.time_utils
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_enforcement.task_types; zephyr.shared.schema.severity_types; zephyr.shared.schema.schemas; zephyr.governance.architecture_governance.path_resolver; zephyr.shared.blueprint_tools.blueprint_decomposer; zephyr.shared.foundation.models; zephyr.shared.io.paths; zephyr.shared.utils.time_utils; zephyr.governance.persistence.task_repo
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
@@ -411,7 +411,7 @@ class TaskManagerMCP:
         self._global_seq += 1
         return self._global_seq
 
-    def _persist(self, tc: TaskCard) -> None:
+    def _persist(self, tc: TaskCard, batch_id: str | None = None) -> None:
         if self.task_repo is None:
             raise RuntimeError(
                 "MCP _persist 失败: task_repo 未注入，数据将丢失。请确保 TaskManagerMCP(task_repo=...) 正确初始化。"
@@ -423,7 +423,18 @@ class TaskManagerMCP:
                 existing.updated_at = tc.updated_at
                 self.task_repo.update(existing)
             else:
-                self.task_repo.create(tc)
+                # 批次创建语义（B1 治本 2026-09-05）：MCP 建卡默认归属 mcp 批次
+                # （调用方可传显式 batch_id 归入既有批次）——无批次任务不可被
+                # AutoPilot/Conductor 认领。更新分支不动既有批次。
+                # 无依赖卡直达 READY（合法路径 WAITING→READY）。
+                from zephyr.governance.persistence.task_repo import new_batch_id
+
+                if tc.depends_on:
+                    self.task_repo.create(tc, batch_id=batch_id or new_batch_id("mcp"))
+                else:
+                    self.task_repo.create_and_ready(
+                        tc, batch_id=batch_id or new_batch_id("mcp")
+                    )
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             raise RuntimeError(f"MCP _persist 失败: {type(exc).__name__}: {exc}") from exc
 

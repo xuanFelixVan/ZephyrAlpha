@@ -289,7 +289,10 @@ class TestDecomposeBlueprint:
             result = decomposer.decompose_blueprint(bp_path, namespace="ADR")
             assert result.total_tasks == 1
             assert result.tasks[0].task_id == "KBG-42"
-            mock_repo.create.assert_called_once()
+            # B1 治本（2026-09-05）：无依赖卡走 create_and_ready（批次+直达 READY）
+            mock_repo.create_and_ready.assert_called_once()
+            kwargs = mock_repo.create_and_ready.call_args.kwargs
+            assert kwargs.get("batch_id", "").startswith("decomp-")
 
     def test_default_namespace_cp(self):
         with tempfile.TemporaryDirectory() as tmpdir:

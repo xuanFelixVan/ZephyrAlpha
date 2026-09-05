@@ -166,12 +166,14 @@ class TestFindingTaskBridge:
         ]
         result = bridge.bridge(findings)
         assert result.tasks_created == 1
-        mock_repo.create.assert_called_once()
+        # B1 治本（2026-09-05）：无依赖卡走 create_and_ready（批次+直达 READY）
+        mock_repo.create_and_ready.assert_called_once()
+        mock_repo.create.assert_not_called()
 
     def test_bridge_handles_repo_error(self):
         mock_repo = MagicMock()
         mock_repo.next_seq.return_value = 1
-        mock_repo.create.side_effect = RuntimeError("DB error")
+        mock_repo.create_and_ready.side_effect = RuntimeError("DB error")
         bridge = FindingTaskBridge(task_repo=mock_repo, dry_run=False)
         findings = [
             AuditFinding(

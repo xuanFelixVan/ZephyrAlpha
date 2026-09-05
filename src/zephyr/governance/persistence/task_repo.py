@@ -262,7 +262,7 @@ SQL_INSERT_TASKS_COUNT = """
                     rejection_cooldown_until, block_sessions_count,
                     post_sync_standard, post_sync_specific, depgraph_nodes,
                     root_cause_analysis, pipeline_task_type, target_layer,
-                    estimated_complexity
+                    estimated_complexity, batch_id
                 ) VALUES (
                     :task_id, :namespace, :seq, :title, :status, :priority, :phase,
                     :execution_model, :model_rationale, :fallback_model,
@@ -283,7 +283,7 @@ SQL_INSERT_TASKS_COUNT = """
                     :rejection_cooldown_until, :block_sessions_count,
                     :post_sync_standard, :post_sync_specific, :depgraph_nodes,
                     :root_cause_analysis, :pipeline_task_type, :target_layer,
-                    :estimated_complexity
+                    :estimated_complexity, :batch_id
                 )
                 """
 SQL_UPDATE_TASKS_BY_ID = "UPDATE tasks SET {set_clause} WHERE task_id = ?"
@@ -330,7 +330,7 @@ SQL_INSERT_TASKS_ACTIVE_COUNT = """
                     rejection_cooldown_until, block_sessions_count,
                     post_sync_standard, post_sync_specific, depgraph_nodes,
                     root_cause_analysis, pipeline_task_type, target_layer,
-                    estimated_complexity
+                    estimated_complexity, batch_id
                 ) VALUES (
                     :task_id, :namespace, :seq, :title, :status, :priority, :phase,
                     :execution_model, :model_rationale, :fallback_model,
@@ -351,7 +351,7 @@ SQL_INSERT_TASKS_ACTIVE_COUNT = """
                     :rejection_cooldown_until, :block_sessions_count,
                     :post_sync_standard, :post_sync_specific, :depgraph_nodes,
                     :root_cause_analysis, :pipeline_task_type, :target_layer,
-                    :estimated_complexity
+                    :estimated_complexity, :batch_id
                 )
                 ON CONFLICT(task_id) DO UPDATE SET
                     namespace = excluded.namespace,
@@ -902,16 +902,35 @@ _DATETIME_NULLABLE_COLUMNS = frozenset({"ready_at", "completed_at", "deleted_at"
 _DATETIME_REQUIRED_COLUMNS = frozenset({"created_at", "updated_at"})
 
 
-def _serialize_for_db(task: TaskCard) -> dict:
+def new_batch_id(origin: str) -> str:
+    """生成批次标识（batch_id 命名约定唯一真源，MOD-INF-016 批次创建语义）。
+
+    格式 ``{origin}-{yyyymmdd}-{rand6}``：origin=创建来源（decomp/mcp/finding/alert/split
+    等小写词）；rand6=uuid4 前 6 hex 防碰撞。人类可 grep、按日聚合、全局唯一。
+
+    背景（B1 治本，2026-09-05）：tasks.batch_id 原为"表内部列"且生产零写入方，
+    claim_next 按 batch 过滤恒 None、AutoPilot 恒走 __no_batch__ 兜底（静默失效）。
+    本函数 + create/upsert 的 batch_id 参数 + assign_batch 构成批次写入公共 API。
+    """
+    from uuid import uuid4
+
+    safe_origin = "".join(c if c.isalnum() else "-" for c in origin.strip().lower()) or "task"
+    return f"{safe_origin}-{datetime.now(_UTC):%Y%m%d}-{uuid4().hex[:6]}"
+
+
+def _serialize_for_db(task: TaskCard, batch_id: str | None = None) -> dict:
     """将 TaskCard 序列化为 DB 写入参数，强制所有 JSON/datetime 字段为标准格式。
 
     这是写入的唯一入口——所有 INSERT/UPDATE 必须经过此函数，
     确保数据库中不再出现非标准格式（空字符串、JS格式、裸字符串等）。
+
+    batch_id: 批次标识（tasks 表内部列，TaskCard 不承载；None=无批次）。
     """
     import json as _json
 
     params: dict = {
         "task_id": task.task_id,
+        "batch_id": batch_id,
         "namespace": task.namespace.value,
         "seq": task.seq,
         "title": task.title,
@@ -1738,7 +1757,12 @@ class TaskRepository:
                 )
 
     def create(
-        self, task: Task, *, files: list[dict[str, str]] | None = None, allow_direct_create: bool = False
+        self,
+        task: Task,
+        *,
+        files: list[dict[str, str]] | None = None,
+        allow_direct_create: bool = False,
+        batch_id: str | None = None,
     ) -> TaskCard:
         """
         插入新任务。task_id 已存在时抛 sqlite3.IntegrityError。
@@ -1753,6 +1777,10 @@ class TaskRepository:
             非蓝图任务建卡入口：Bug修复/架构债务/代码扫描/重构任务等无蓝图来源的任务。
             RULE-ZERO-TASK（v2.0+）：建卡触发=用户主动 OR 八指标阈值触发。
             蓝图拆解是建卡来源之一，非唯一路径。默认 False（蓝图任务走 BlueprintDecomposer）。
+        batch_id : str | None
+            批次标识（MOD-INF-016 批次创建语义，B1 治本 2026-09-05）。
+            生产建卡入口应传 new_batch_id(<origin>) 使任务可被 AutoPilot/Conductor
+            按 batch 认领（无批次任务不可认领）。None=无批次（历史兼容）。
 
         返回
         ----
@@ -1811,7 +1839,7 @@ class TaskRepository:
                     raise GateViolationError(gate_result)
             conn.execute(
                 SQL_INSERT_TASKS_COUNT,
-                _serialize_for_db(task),
+                _serialize_for_db(task, batch_id=batch_id),
             )
             if files:
                 for f in files:
@@ -1830,6 +1858,36 @@ class TaskRepository:
         if row is None:
             raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert->if/raise
         return _row_to_taskcard(row)
+
+    def create_and_ready(
+        self,
+        task: Task,
+        *,
+        files: list[dict[str, str]] | None = None,
+        allow_direct_create: bool = False,
+        batch_id: str | None = None,
+    ) -> Task:
+        """建卡并直达 READY（无依赖任务快捷通道，B1 治本 2026-09-05）。
+
+        状态机合法路径 WAITING→READY（PENDING→READY 非法——历史调用方只能裸 SQL
+        绕过设 READY，如 tests/governance/integration/test_autopilot.py:100）。
+        有 depends_on 的任务不适用（依赖解析由 lifecycle_governance.transition
+        在子任务完成时推进 BLOCKED/WAITING/PENDING→READY）。
+
+        与 create() 的 batch_id 语义一致：生产入口应传 new_batch_id(<origin>)。
+        """
+        if task.depends_on:
+            raise ValueError(
+                "create_and_ready 仅适用无依赖任务；有依赖任务走 create() + 依赖解析器"
+                f"（{task.task_id} depends_on={task.depends_on}）"
+            )
+        task.status = TaskStatus.WAITING
+        self.create(task, files=files, allow_direct_create=allow_direct_create, batch_id=batch_id)
+        return self.transition(
+            task.task_id,
+            TaskStatus.READY,
+            note="create_and_ready: 无依赖任务直达（B1 批次接线）",
+        )
 
     # ------------------------------------------------------------------
     # READ
@@ -3439,17 +3497,21 @@ class TaskRepository:
     # UPSERT（scaffold 批量补录）
     # ------------------------------------------------------------------
 
-    def upsert(self, task: Task, *, files: list[dict[str, str]] | None = None) -> Task:
+    def upsert(
+        self, task: Task, *, files: list[dict[str, str]] | None = None, batch_id: str | None = None
+    ) -> Task:
         """
         ON CONFLICT DO UPDATE 语义：task_id 已存在则更新（保留 created_at），否则新建。
 
         用于 scaffold 任务补录（T-1-06）。
+
+        batch_id: 仅新建时写入（冲突更新不覆盖既有批次，MOD-INF-016 B1 治本）。
         """
         now = now_iso()
         with self._write_tx() as conn:
             conn.execute(
                 SQL_INSERT_TASKS_ACTIVE_COUNT,
-                _serialize_for_db(task),
+                _serialize_for_db(task, batch_id=batch_id),
             )
             if files:
                 conn.execute(SQL_DELETE_TASK_FILES_BY_ID, (task.task_id,))
@@ -3556,6 +3618,45 @@ class TaskRepository:
         cursor = self._conn.execute(SQL_SELECT_TASK_BATCH_IDS_BY_STATUS, (status.value,))
         return {r["task_id"]: r["batch_id"] for r in cursor.fetchall()}
 
+    def assign_batch(self, task_ids: list[str], batch_id: str) -> int:
+        """将既有任务批量归属到指定批次（批次写入公共 API，MOD-INF-016 B1 治本 2026-09-05）。
+
+        用途：存量无批次任务补录（否则不可被 AutoPilot/Conductor 认领）、
+        跨入口重组批次。测试/运维此前只能裸 SQL 写 batch_id
+        （test_f3_extreme L195 注释"公共写 API 不覆盖 batch_id 赋值场景"），本 API 收口。
+
+        Args:
+            task_ids: 目标任务 ID 列表。
+            batch_id: 批次标识（非空；命名约定见 new_batch_id）。
+
+        Returns:
+            实际更新行数（不存在/已软删的 task_id 不计入）。
+        """
+        if not batch_id or not batch_id.strip():
+            raise ValueError("assign_batch: batch_id 不能为空")
+        if not task_ids:
+            return 0
+        updated = 0
+        now = now_iso()
+        with self._write_tx() as conn:
+            for tid in task_ids:
+                cur = conn.execute(
+                    "UPDATE tasks SET batch_id = ?, updated_at = ? WHERE task_id = ? AND is_deleted = 0",
+                    (batch_id, now, tid),
+                )
+                updated += cur.rowcount
+        return updated
+
+    def get_task_batch_id(self, task_id: str) -> str | None:
+        """读取单个任务的 batch_id（表内部列，TaskCard 不承载；无批次返回 None）。"""
+        row = self._conn.execute(
+            "SELECT batch_id FROM tasks WHERE task_id = ? AND is_deleted = 0", (task_id,)
+        ).fetchone()
+        if row is None:
+            return None
+        bid = row["batch_id"]
+        return bid if bid else None
+
     # ------------------------------------------------------------------
     # 自动拆分（GOV-TASK-001 §6.5）
     # ------------------------------------------------------------------
@@ -3612,8 +3713,15 @@ class TaskRepository:
         if not sub_tasks:
             return []
 
+        # 批次继承（B1 治本 2026-09-05）：子卡继承父卡批次；父卡无批次（Task 对象入参
+        # 或存量行）时生成 split 批次，保证子卡可被 AutoPilot/Conductor 认领。
+        parent_batch: str | None = None
+        if isinstance(task_id_or_task, str):
+            parent_batch = self.get_task_batch_id(task_id)
+        child_batch = parent_batch or new_batch_id("split")
+
         created: list[TaskCard] = []
-        if not self._create_sub_cards(sub_tasks, created):
+        if not self._create_sub_cards(sub_tasks, created, batch_id=child_batch):
             return []
 
         for i in range(1, len(created)):
@@ -3642,10 +3750,12 @@ class TaskRepository:
         self,
         sub_tasks: list[Task],
         created: list[TaskCard],
+        *,
+        batch_id: str | None = None,
     ) -> bool:
         for sub_task in sub_tasks:
             try:
-                card = self.create(sub_task, allow_direct_create=True)
+                card = self.create(sub_task, allow_direct_create=True, batch_id=batch_id)
                 created.append(card)
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.exception("auto_split: 创建子卡 %s 失败", sub_task.task_id, exc_info=True)
