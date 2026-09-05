@@ -21355,3 +21355,14 @@ entries:
   status: decided
   created: '2026-09-04'
   last_updated: '2026-09-04'
+
+- issue_id: '#ARCH-BACKUP-PS-SMOKE'
+  title: backup PS 脚本冒烟测试 ARCH 引用补登（AI-19 审计发现，2026-09-05 长城审计共享收口③）
+  severity: P3低
+  adjudication: 'AI-00 总控收口裁定：tests/scripts/backup/test_backup_ps_scripts.py L2 表头自创建起在用 #ARCH-BACKUP-PS-SMOKE 引用但 registry 从未登记（AI-19 实测 197 唯一 ARCH 引用 vs 741 条注册表对账发现）。补登既有事实零行为变更（#ARCH-ERRCODE-001 机械补登同型先例）。引用方=测试文件表头，描述其验证的备份冒烟机制。'
+  impact:
+    - 'tests/scripts/backup/test_backup_ps_scripts.py（L2 表头引用方，零改动）'
+  fix_phase: '登记即闭环（无代码/门禁改动）'
+  status: decided
+  created: '2026-09-05'
+  last_updated: '2026-09-05'

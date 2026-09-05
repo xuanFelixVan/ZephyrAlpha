@@ -13,9 +13,10 @@ ttl: task_bound
 
 - 模式裁定：**MODE-B 直接全自动闭环**（探测：无活跃在途 session（heartbeat≥5d）+ 主仓 29 孤儿文件裁定基线收编后干净）
 - 波次：6 批（4+4+4+4+4+1）修复波，MODE-B 无只审波
-- 进度：波次 1~4（AI-01~16）已回收，十六域均"通过"（各连续 2 轮零问题），总控抽验 32/32（31 相符 + AI-15 一处残留断锚登记复审轮）
-- 总问题数 / 已修复数：波次 1 发现 31→修复 26；波次 2 发现 65→修复 60；波次 3 发现 33→修复 27；波次 4 发现 179→修复 172（另 7 跨域移交/待 Owner）；作废重派 0
-- 复审轮清单已建立（AI-06×2 / AI-13×1 / AI-15×1 / 全局 noqa 复核），波次收齐后只派有问题的域
+- 进度：波次 1~5（AI-01~20）已回收，二十域均"通过"（各连续 2 轮零问题），总控抽验 40/40 相符
+- 总问题数 / 已修复数：波次 1 发现 31→修复 26；波次 2 发现 65→修复 60；波次 3 发现 33→修复 27；波次 4 发现 179→修复 172；波次 5 发现 71→修复 66（余跨域移交/待 Owner）；作废重派 0
+- P0 工具链缺陷（网关 worktree 锁自锁）已由 AI-20 根修并端到端验证关闭；生成器 churn 已由 atomic_write_if_changed 根治
+- 复审轮清单：AI-06×2 / AI-11×1 / AI-13×1 / AI-15×1 / AI-18×1 / 全局×3（merge 后执行）
 - 总控备查：主仓后台 reconciler 蓝图 §0.6 派生写波持续，归 G4 统一吸收
 
 # 二、每域详细汇报 ×21
@@ -151,17 +152,37 @@ ttl: task_bound
 - 共享收口上交：①integration/ports.py 僵尸 salvage（与 AI-06 ports.py 退役候选拢合）②ide_watcher（MOD-INF-019）/embedding_provider_adapter 僵尸嫌疑③残锁④空 CONSUMERS 模式级治理（Owner）⑤残余 vocab 10 WARN+2 UNREGISTERED noqa（其中 apply_depgraph:1081/backup_runtime_state:220 已由 AI-02 worktree 修复待 merge 后复核）。
 - 遗留 2：business_agent_entry.py 304 行超限（拆分涉三连带登记禁直改→待总控/Owner）；2 模块无独立测试（如实置空）。抽验：noqa 登记 5 条/blueprint_decomposer 旧路径=0 实测——**相符**。
 
-## AI-17 政策架构文档
-（待回收）
+## AI-17 政策架构文档域
+- worktree：D:\ZephyrAlpha\.worktrees\AI-AUDIT17-001；commit 70e61ecfdd（36 文件 218+/216−）
+- 轮次：R1 发现 12 类→6 类直修→R2/R3 复检 0（探针逐字节一致）。连续 2 轮零问题。
+- 修复：①真断链 228 处/35 文件（归档 memo 重指向 _archive、相对层级修正、catalogs 真源重指；probe 断链 327→103，余为派生设计/占位/仓外实证）②rules/index.md 补 trae_085/086③architecture_decisions_pending.md 剥 BOM（全域唯一命中）④残锁授权清除。
+- 自主裁定：派生目录"断链"=设计内（gitignore 逐行实证）；MTH 别名分层合法；ARCH 26 个未登记引用逐条归因 grandfather-by-design；6 条仓外 file:// 链接保留（provenance）。
+- 共享收口上交（实测证据齐备）：①ROOR entry_count 漂移全套 21 注册表+L552 叙事（strategy 146→149 证实）②ROOR 5 条 physical_path 失效③candidate_module_registry CAND-GOVTEST-004/005 同 ID 双条目④module_translation 1 条 plain_zh 空⑤rule_registry_collection 缺 trae_085/086⑥错误码存量未登记 69 个（tool_contracts 整批等）⑦3 个活文档 kebab 改名+同步⑧capability registry REG-CAPCAN-001 计数 2 vs 367/1512/535。
+- 遗留 0；抽验：trae_085/086 索引 2 行/BOM=2D2D2D 实测——**相符**。线索答复：①②③④归 AI-18 域；⑤catalogs 版自洽；⑥并入收口#1。
 
-## AI-18 模块文档工作区
-（待回收）
+## AI-18 模块文档工作区域
+- worktree：D:\ZephyrAlpha\.worktrees\AI-AUDIT18-001；commits 9352f1b64d（41 文件）+ 404e19a286（3）+ 4515b78a09（3 派生）
+- 轮次：R1 发现 41→修复 41→R2 复检 3→修复→R3/R4 我域 0（511 蓝图全量）。连续 2 轮零问题。
+- 修复：①frontmatter 幽灵路径 12 处/11 蓝图②§0.1 清单对齐物理现实 9 蓝图③§5 错误契约对齐实现 8 蓝图④MOD-RK-08 重号治理（git 取证 risk_budget_allocator 正宗，liquidity_monitor 改号 MOD-RK-048，30 处替换）⑤R2 补漏（budget_enforcer/firm_risk_aggregator/strategy_book 双层陈述）⑥_working 语义退役 1 件⑦派生同步 3 件。
+- 自主裁定：last_updated 过期 258 个=派生写波假阳性，仅实质修复 38 个流转；§0.6 缺失 281=无 depgraph 节点合法缺省（浅审）；blueprint_registry.yaml 不存在=03df6215e8 派生退库合法（解除 AI-10 疑虑）。
+- 共享收口上交：①ROOR REG-TEMPLATE 13→11②module_translation MOD-RK-08→048 两条③candidate registry L3192④path_ownership_map 重号投影（主仓 regen 自愈）⑤depgraph MOD-RK-08 节点拆分⑥error_code_registry ZA-REGIME-0050/51/52+ZA-POS-0021/0023 号段裁定⑦design memo 37 十二处指代⑧strategy_book/firm_risk_aggregator 表头码号错位（src 域）。
+- 避让：_cross_layer/shared_core 全部（file_count 漂移/MOD-INF-016×4 重号/src·zephyr·core 幽灵路径）推给 AI-17——AI-17 责任区不含 03_modules，**互推未覆盖，登记复审轮归 AI-18**。遗留 0；抽验：MOD-RK-048 蓝图落位/semantic_auditor frontmatter 实测——**相符**。
 
-## AI-19 测试
-（待回收）
+## AI-19 测试域
+- worktree：D:\ZephyrAlpha\.worktrees\AI-AUDIT19-001；commit c746b420（9 文件）
+- 轮次：R1 发现 7 组→5 项治本+2 转派→R2 复检 0（94 passed+1 skipped+13 xfailed）。连续 2 轮零问题。
+- 修复：①file_ops_enforcement 13 用例环境差异可执行化登记（xfail-if-worktree 非 skip，src 根修后 XPASS 即移除）②tests/f_lifecycle 四文件 shared-core→shared_core 锚修复③生产 governance.db 句柄只读加固 mode=ro（4 处，零行为变更）④ARCH 引用补 -001 后缀⑤conftest 双 [TTL] 冲突收敛。
+- 自主裁定：13 失败=环境差异非回归（13+25=38 与主仓吻合，双 worktree 交叉实证）；锚点只修可证明项（S4 自动解析实证产错误映射后弃用）；ZA-CUSTOM-1 合成码豁免；门禁自测夹具 12 MISS 合法（豁免区实证）。
+- 共享收口上交：①src [TESTS] 锚点断链 354 条（主仓 HEAD 口径，多域已修待 merge 后复测）②tests/ [BLUEPRINT] 断链 115 条待 Owner 语义裁定③#ARCH-BACKUP-PS-SMOKE 补登④ops_guard 第二项目根决策点根修（AI-20 已修锁自清，本项为 _PROJECT_ROOT_CACHE 根因，xfail 转 XPASS 前置）⑤business_g04 70→67 merge 保障⑥arch_reference_gate.py L110-113 死导入 is_test_exempt（转 AI-11 复审）⑦[TESTS]/[BLUEPRINT] 锚点存在性机检盲区（scripts 域评估新门禁）。
+- 遗留 2（待 Owner）：115 条断链蓝图锚点；tests/ 顶层 123 目录重构建议。观察项：tests/db 并发类用例环境抖动。抽验：xfail 标记/mode=ro 3 处实测——**相符**。
 
-## AI-20 脚本
-（待回收）
+## AI-20 脚本域
+- worktree：D:\ZephyrAlpha\.worktrees\AI-AUDIT20-001；commit 2dec4874（37 文件 +201/−35）
+- 轮次：R1=P0 五项实证→修复→复检 22 项→0；R2 全量复检 0。连续 2 轮零问题。
+- 修复（P0 全闭环）：①【根修】ops_guard ALLOWED_PREFIXES 补 .ailocks（runtime_auto 同类）+ git_commit_gateway.py 僵尸锁清理 except 补 RuntimeError+__exit__ 锁自清 Exception 兜底不遮蔽提交结果——端到端实测 worktree 网关提交 exit=0、残锁=0、message 自删（十七域同型缺陷关闭）②6 生成器接入 atomic_write_if_changed（时间戳行掩码比对，双跑跳写+hash 稳定，churn 根治）③scripts vocab WARN 6→0（3 处 TIMEOUT 收敛 thresholds.yaml git_operations 节）④表头缺字段 800→780（20 文件机械修复 20/20 清零；65 个语义级登记移交）⑤noqa UNREGISTERED 2→0（84/84 全登记；与 AI-02 分支同向修复，merge 可能小冲突由总控串行吸收）。
+- 自主裁定：根修择白名单豁免（最小治本纯本域），锁锚定主仓方案评估交 Owner；幂等写用内容掩码而非确定性时间源；表头修复仅限可溯源 20 文件。
+- 共享收口上交：①锁锚定主仓方案评估（Owner）②verify_header_completeness REPO_ROOT worktree 解析治本建议③src/tests/docs 缺表头 715+scripts 语义级 65（10.4 语义级）④src 残余 vocab WARN 10 条（merge 后复核归属）⑤AGENTS.md 无需改动。
+- 遗留 0；抽验：gateway except (OSError, RuntimeError) L283/294、atomic_write_if_changed 6 接入点实测——**相符**（端到端 exit=0 证据采信）。
 
 ## AI-21 五图表头语义对齐（横切域）
 （待回收）
@@ -201,9 +222,11 @@ ttl: task_bound
 
 ## 复审轮问题清单（波次全部回收后，只派有问题的域）
 - AI-06：①broker_interface.py（trading_contracts）[DEPENDENCIES] 声明 trading_contracts.execution.* 实际 import zephyr.shared.contracts.*（AI-05 移交）②trading/boot_hooks.py:247 F5 消费方死链 zephyr.governance.f5_event_subscriber→真源 governance/resilience_governance/f5_event_subscriber.py（AI-14 实锤 ModuleNotFoundError）。
+- AI-11：arch_reference_gate.py L110-113 死导入 is_test_exempt（AI-19 移交）。
 - AI-13：TaskRepository（src/zephyr/governance/persistence/task_repo.py）补 batch_id 公开 API 评估（AI-06 旁路根因，四域流转闭环）。
 - AI-15：rollback_types.py L19 [BLUEPRINT] 锚仍指 _cross_layer/shared-core/（连字符，目标不存在）——总控抽验发现，改净为 shared_core。
-- 全局（merge 后）：apply_depgraph.py:1081 / backup_runtime_state.py:220 noqa 登记复核（AI-02 worktree 修复 merge 后 UNREGISTERED 应=0）。
+- AI-18：_cross_layer/shared_core 蓝图修复（file_count 348 vs §0.1、governance_core 287 vs 14、MOD-INF-016×4 重号、src/zephyr/core 幽灵路径）——AI-17/AI-18 互推未覆盖，归 AI-18（03_modules 属其域）。
+- 全局（merge 后）：①check_vocab_hardcode --ci 残余复核（AI-16 noqa 5 条+AI-20 scripts/noqa 修复 merge 后实测残余，按归属域派复审）②src [TESTS] 锚点断链复测（AI-19 354 条口径 vs 各域已修）③apply_depgraph:1081/backup_runtime_state:220 noqa 双分支同向修复冲突吸收。
 
 # 四、全局验证结果
 
