@@ -2,7 +2,7 @@
 # [MODULE] zephyr.infrastructure.system_telemetry._budget_telemetry_bridge
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.system_telemetry.__init__
-# [CONSUMERS] zephyr.infrastructure.budget_enforcement.budget_engine
+# [CONSUMERS] zephyr.governance.ops_governance.budget_engine (importlib); system_telemetry/auto_bootstrap.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] callback must be set before first use; getter returns None if unset
@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] None return when unset
-# [TESTS] tests/system-telemetry/test_budget_telemetry_bridge.py
+# [TESTS] N/A
 # [A_module] module_id=MOD-INF-015 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

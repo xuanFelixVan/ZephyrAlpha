@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-001 | docs/03_modules/_domain-infra_ops/capacity-assurance/blueprint.md
+# [BLUEPRINT] MOD-INF-001 | docs/03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md
 # [MODULE] zephyr.infrastructure.capacity_assurance.contracts.batch2_governance
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.infrastructure.capacity_assurance.contracts.__init__

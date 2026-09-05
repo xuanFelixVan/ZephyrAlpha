@@ -11,7 +11,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DriftFixError
-# [TESTS] tests/auto-fix-engine/test_drift_fixer.py
+# [TESTS] tests/drift/test_drift_fixer.py
 # [A_module] module_id=MOD-INF-031 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

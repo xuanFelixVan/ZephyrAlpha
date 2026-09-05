@@ -6,7 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [INVARIANTS] fail-closed on write; test_mode=True silences all outbound; shutdown() reverses init order
 # [MODIFY-GUARD] facade.py; auto_bootstrap.py; health/; alerts/; profiles/; schema/
-# [CONSUMERS] zephyr.__init__; zephyr.security.access_control; zephyr.security.budget_enforcement
+# [CONSUMERS] zephyr.feedback_loop.db_writer; zephyr.feedback_loop.scheduler; zephyr.infrastructure.asset_inventory.telemetry; zephyr.integration.mcp.client_discovery; zephyr.integration.mcp.telemetry_server; zephyr.trading.boot_hooks
 # [ERROR_CONTRACT] ValueError; OSError; RuntimeError
 # [TESTS] tests/infrastructure/test_telemetry_facade.py; tests/infrastructure/test_auto_telemetry_bootstrap.py
 # [TTL] permanent

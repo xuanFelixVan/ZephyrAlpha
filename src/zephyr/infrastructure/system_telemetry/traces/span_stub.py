@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 采样决策由TraceSampler控制;span结束自动flush到logs
-# [TESTS] tests/infrastructure/
+# [TESTS] tests/infrastructure/test_span_stub.py
 # [A_module] module_id=MOD-INF-015 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

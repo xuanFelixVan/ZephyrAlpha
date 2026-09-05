@@ -2,7 +2,7 @@
 # [MODULE] zephyr.infrastructure.h1_redis_hot.h1_redis_writer
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.h1_redis_hot.h1_redis_schema
-# [CONSUMERS] zephyr.factor.engine; zephyr.data.ch_writer
+# [CONSUMERS] zephyr.infrastructure.h1_redis_hot.h1_integration
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] PIPELINE 批量写入; Key 通过 h1_redis_schema 构造; 因子值 float→str 序列化

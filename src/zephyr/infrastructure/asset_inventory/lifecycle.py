@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-026 | docs/03_modules/_domain-infra_ops/asset-inventory/blueprint.md
+# [BLUEPRINT] MOD-INF-026 | docs/03_modules/_domain_infrastructure/asset_inventory/blueprint.md
 # [MODULE] zephyr.infrastructure.asset_inventory.lifecycle
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.gov_audit.writer

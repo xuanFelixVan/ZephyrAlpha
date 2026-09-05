@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] returns BootResult; logs error on failure; never raises during boot
-# [TESTS] tests/adversarial/test_rollback_boot_integration.py
+# [TESTS] N/A
 # [A_module] module_id=MOD-INF-021 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """

@@ -11,7 +11,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] HealthCheckError
-# [TESTS] tests/auto-fix-engine/test_fix_health_check.py
+# [TESTS] tests/fix/test_fix_health_check.py
 # [A_module] module_id=MOD-INF-031 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

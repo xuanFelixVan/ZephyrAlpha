@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md
+# [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain_governance/governance_automation/blueprint.md
 # [MODULE] zephyr.infrastructure.script_system.finding
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.shared.schema.schemas

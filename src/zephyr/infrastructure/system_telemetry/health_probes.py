@@ -11,7 +11,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] ValueError; RuntimeError
-# [TESTS] tests/system-telemetry/test_health_probes.py
+# [TESTS] tests/observability/test_health_probes_root.py
 # [A_module] module_id=MOD-INF-015 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

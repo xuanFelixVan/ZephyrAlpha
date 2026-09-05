@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] zephyr.infrastructure.pipeline.ct_pipe_routing
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.shared.models; zephyr.infrastructure.__init__; zephyr.shared.schema.schemas
+# [DEPENDENCIES] zephyr.shared.foundation.models; zephyr.shared.io.yaml_utils; zephyr.shared.schema.schemas
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production

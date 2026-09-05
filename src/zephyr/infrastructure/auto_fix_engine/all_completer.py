@@ -11,7 +11,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AllCompletionError
-# [TESTS] tests/auto-fix-engine/test_all_completer.py
+# [TESTS] tests/fix/test_all_completer.py
 # [A_module] module_id=MOD-INF-031 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

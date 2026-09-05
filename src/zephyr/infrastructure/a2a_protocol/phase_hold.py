@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 异常必须包含 agent_id 和 protocol_layer
-# [TESTS] tests/test_a2a_protocol.py
+# [TESTS] tests/a2a/
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

@@ -30,7 +30,7 @@ ZephyrAlpha 容量保障体系 (Capacity Assurance) — MOD-INF-001 · 基础设
 
 Version: 2.6.0
 Module ID: MOD-INF-001
-Source: docs/03_modules/_domain-infra_ops/capacity-assurance/blueprint.md
+Source: docs/03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md
 
 # [ALGO_FLOW]
 # 层: 输入

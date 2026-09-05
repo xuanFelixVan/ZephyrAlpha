@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-003 | docs/03_modules/_domain_infrastructure/runtime_integration/blueprint.md | §ARCH-GIT-CALL-BUDGET
+# [BLUEPRINT] MOD-INF-003 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md | §ARCH-GIT-CALL-BUDGET
 # [MODULE] zephyr.infrastructure.git_batcher
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] stdlib (subprocess, tarfile, io, pathlib, logging, typing)

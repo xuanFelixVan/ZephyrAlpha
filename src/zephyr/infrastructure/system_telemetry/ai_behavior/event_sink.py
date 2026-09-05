@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] FeatureFlag OFF->noop;ring buffer满->丢弃最旧
-# [TESTS] tests/infrastructure/
+# [TESTS] tests/event/test_event_sink.py
 # [A_module] module_id=MOD-INF-015 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.infrastructure.h1_redis_hot.h1_cqrs_projectors
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.h1_redis_hot.h1_redis_schema
-# [CONSUMERS] zephyr.trading; zephyr.signal; zephyr.risk
+# [CONSUMERS] N/A (zero production importers -- retirement candidate, AI-14 audit 2026-09-05)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 事件→Redis 物化视图投影; Key 通过 h1_redis_schema 构造; 幂等(idempotency_key 去重)
@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] redis.RedisError(投影失败)->log+不阻断事件流; ProjectorError(致命错误)
-# [TESTS] tests/zephyr/infrastructure/h1_redis_hot/test_h1_cqrs_projectors.py
+# [TESTS] N/A
 # [A_module] module_id=MOD-H1_REDIS_HOT | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # M03豁免: AI趋同演化,非复制粘贴（项目内部标注，非 ruff code）

@@ -9,7 +9,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError on missing sub-module
-# [TESTS] tests/auto-fix-engine/
+# [TESTS] tests/fix/
 # [TTL] permanent
 """
 

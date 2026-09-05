@@ -2,7 +2,7 @@
 # [MODULE] zephyr.infrastructure.h1_redis_hot.h1_integration
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.h1_redis_hot.h1_redis_writer; zephyr.infrastructure.h1_redis_hot.h1_redis_reader
-# [CONSUMERS] zephyr.factor.core.dag_manager.executor; zephyr.signal_fundamental; zephyr.risk
+# [CONSUMERS] zephyr.factor.core.intraday_factor_loop
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] dag_report_to_cross_section 仅提取 success=True 的因子; H1 写入失败不阻断因子管道(降级日志); 回调接口与 DagExecutor 解耦

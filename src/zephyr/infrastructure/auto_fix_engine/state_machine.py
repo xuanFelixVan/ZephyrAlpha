@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §3
 # [MODULE] zephyr.infrastructure.auto_fix_engine.state_machine
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.shared.state_machine
+# [DEPENDENCIES] zephyr.gov_drift.drift_models
 # [CONSUMERS] engine.py;fix_reliability.py;fix_health_check.py
 # [STARTUP] imported
 # [MATURITY] production
@@ -11,7 +11,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] InvalidFixTransitionError
-# [TESTS] tests/auto-fix-engine/test_state_machine.py
+# [TESTS] tests/audit/test_state_machine.py
 # [A_module] module_id=MOD-INF-031 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

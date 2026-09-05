@@ -2,7 +2,7 @@
 # [MODULE] zephyr.infrastructure.h1_redis_hot
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.database_service; zephyr.infrastructure.redis_config
-# [CONSUMERS] zephyr.factor; zephyr.signal; zephyr.risk; zephyr.position; zephyr.trading
+# [CONSUMERS] zephyr.factor.core.intraday_factor_loop
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 所有 Key 通过 h1_redis_schema 构造函数生成; Writer 用 PIPELINE 批量写; Reader <5ms; Projector 事件驱动

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.infrastructure.script_system.gate_bridge
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.script_system.__init__
-# [CONSUMERS] zephyr.orchestrator.script_runner; AutoRuntime Core post-scan phase
+# [CONSUMERS] zephyr.orchestrator.execution.script_runner; AutoRuntime Core post-scan phase
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 12维->gate_id 映射; 维度聚合后批量提交; gate不可用时仅日志不阻塞
@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] GateEngine不可用返回degraded不阻塞; 空findings返回空
-# [TESTS] scripts/connect/script_gate.py --trigger
+# [TESTS] N/A (dead anchor scripts/connect/script_gate.py removed AI-14 2026-09-05)
 # [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """

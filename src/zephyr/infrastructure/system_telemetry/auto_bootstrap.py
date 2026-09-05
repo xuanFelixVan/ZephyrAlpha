@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md | §3
 # [MODULE] zephyr.infrastructure.system_telemetry.auto_bootstrap
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.shared.session_continuity; zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.shared.session.session_continuity; zephyr.governance.ops_governance.phase_manager; zephyr.shared.io.serialization
 # [CONSUMERS] zephyr.trading; zephyr.autonomy_core
 # [STARTUP] imported
 # [MATURITY] production
@@ -11,7 +11,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError; RuntimeError
-# [TESTS] tests/system-telemetry/test_auto_bootstrap.py
+# [TESTS] tests/infrastructure/test_auto_telemetry_bootstrap.py
 # [A_module] module_id=MOD-INF-015 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

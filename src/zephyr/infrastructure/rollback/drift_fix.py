@@ -2,7 +2,7 @@
 # [MODULE] zephyr.infrastructure.rollback.drift_fix
 # [DOMAIN] D_INFRA_RECOVERY
 # [DEPENDENCIES] zephyr.gov_drift.events
-# [CONSUMERS] rollback_executor;auto_rollback_trigger;tests/drift/test_drift_fix
+# [CONSUMERS] rollback_executor;auto_rollback_trigger;tests/drift/test_drift_fix.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 漂移修复必须验证; ARCH-034 P3 SRC-038 合并后唯一 canonical 真源
@@ -37,7 +37,7 @@
 #   name_zh: 模块公共 API 面（1 定义）
 #   name_en: public defs
 #   intro: DriftFixHandler
-#   downstream: rollback_executor;auto_rollback_trigger;tests/drift/test_drift_fix
+#   downstream: rollback_executor;auto_rollback_trigger;tests/drift/test_drift_fix.py
 # [/ALGO_FLOW]
 #
 # 边:

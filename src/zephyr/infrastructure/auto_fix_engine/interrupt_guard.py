@@ -11,7 +11,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] InterruptGuardError
-# [TESTS] tests/auto-fix-engine/test_interrupt_guard.py
+# [TESTS] tests/llm_security/test_interrupt_guard.py
 # [A_module] module_id=MOD-INF-031 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

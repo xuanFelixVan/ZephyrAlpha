@@ -11,7 +11,8 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS] scripts/connect/health_check.py --trigger
+# [TESTS] N/A (dead anchor scripts/connect/health_check.py removed; no direct test -- coverage debt registered AI-14 2026-09-05)
+# class-name-alias: 本模块 HealthAggregator=全系统健康检查聚合（MOD-INF-035，主动轮询 11 系统），区别于 system_telemetry/health_aggregator.py 的 HealthAggregator=事件驱动健康快照（MOD-INF-015 家族，EventBus 订阅）。职责正交，非重复实现。
 # [A_module] module_id=MOD-INF-035 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
