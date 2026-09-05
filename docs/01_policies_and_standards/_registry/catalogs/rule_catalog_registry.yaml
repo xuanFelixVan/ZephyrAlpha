@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-09-05T11:25:00Z'
+generated_at: '2026-09-05T13:19:36Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 229
+total_files: 230
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -1877,6 +1877,21 @@ files:
   version: 1.0.1
   rule_form: procedural
   scope: global
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/trading_decision_map_layering_sop.md
+  module_id: ''
+  title: 交易决策地图逐层讨论 SOP——防撞车·防越级·防枝末先行
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: 07_trading_decision_architecture
   stability: ''
   layer: ''
   superseded_by: ''
@@ -3764,7 +3779,7 @@ files:
   title: startup 受控词表
   doc_type: vocabulary
   status: active
-  version: 1.0.0
+  version: 1.1.0
   rule_form: ''
   scope: ''
   stability: ''
