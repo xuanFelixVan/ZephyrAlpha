@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/rollback
 title: "Rollback System 蓝图 — Git-native回滚+自动触发+运维治理持续性"
 doc_type: blueprint
 status: Active
-version: 9.0.8
+version: 9.0.9
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: execution
@@ -16,7 +16,7 @@ valid_from: "2026-05-05"
 date: "2026-05-05"
 ttl: permanent
 actual_disk_path: "src/zephyr/infrastructure/rollback/"
-last_updated: "2026-05-15"
+last_updated: "2026-09-05"
 last_verified: "2026-05-15"
 generation: 7
 rule_form: structural
@@ -145,7 +145,7 @@ build_status: production
 | 31 | external_merkle_proof.py | §3.1 | 外部可验证证明 | 已实现 | |
 | 32 | submodule_sync.py | §3.1 | Submodule 同步回滚 | 已实现 | |
 | 33 | forensic.py | §3.1 | 取证副本隔离 | 已实现 | |
-| 34 | continuous_trust.py | §3.1 | 持续完整性证明链 | 已实现 | |
+| 34 | continuous_trust.py | §3.1 | 持续完整性证明链 | 已迁移 | ARCH-039 P1→governance/intelligence_governance |
 | 35 | contract.py | §3.1 | rollback_policy_engine | 已实现 | |
 | 36 | contracts.py | §3.1 | CT-RBK-GATE-001 契约 | 已实现 | |
 | 37 | right_to_be_forgotten.py | §3.1 | GDPR 遗忘权检查 | 已实现 | |
@@ -168,10 +168,10 @@ build_status: production
 | 54 | autonomy_dashboard.py | §3.1 | 自治级别仪表盘 | 已迁移 | ARCH-039 P1→governance/intelligence_governance |
 | 55 | budget_tracker.py | §3.1 | Token/Cost/Time 预算追踪 | 已实现 | |
 | 56 | drift_fix.py | §3.1 | 漂移修复执行器 | 已实现 | |
-| 57 | result_types.py | §3.1 | 回滚结果类型定义 | 已实现 | |
+| 57 | result_types.py | §3.1 | 回滚结果类型定义 | 已迁移 | ARCH-039 P1→governance/escalation |
 | 58 | auditor.py | §3.2 | 回滚审计事件处理 | 已实现 | |
 | 59 | rollback_integration.py | §3.2 | 回滚集成协调 | 已实现 | |
-| 60 | _manifest_.py | — | 模块清单 | 已实现 | |
+| 60 | _manifest.py | — | 模块清单 | 已实现 | |
 | 61 | __init__.py | — | 包初始化 | 已实现 | |
 
 > **ARCH-039 P1 迁移注**（2026-07-04）：以下 19 个非回滚文件已迁移到正确功能域，不再属于 MOD-INF-021：

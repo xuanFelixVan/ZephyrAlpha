@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-RK-047 | docs/03_modules/_domain_risk/liquidity_crisis_scenarios/blueprint.md
 # [MODULE] zephyr.risk.core.liquidity_crisis_scenarios
 # [DOMAIN] D_RISK
-# [DEPENDENCIES] zephyr.risk.core.stress_test_engine(MOD-RK-12,StressScenario契约); zephyr.risk.core.ashare_systemic_risk_detector(MOD-RK-10,检测阈值口径); zephyr.risk.core.liquidity_monitor(MOD-RK-08,压力退出天数); zephyr.shared.foundation.errors
+# [DEPENDENCIES] zephyr.risk.core.stress_test_engine(MOD-RK-12,StressScenario契约); zephyr.risk.core.ashare_systemic_risk_detector(MOD-RK-10,检测阈值口径); zephyr.risk.core.liquidity_monitor(MOD-RK-048,压力退出天数); zephyr.shared.foundation.errors
 # [CONSUMERS] MOD-RK-12(StressTestEngine,run_hypothetical情景消费); 运行时装配批(流动性危机压测编排)
 # [STARTUP] imported
 # [MATURITY] testing
@@ -30,7 +30,7 @@ LiquidityCrisisScenarios — 流动性危机情景族（MOD-RK-047，CAND-RSK-02
   4. 全员出逃极端情形（bank-run）：ADV 跌至地板比，三族冲击取最劣合成
 
 检测口径复用 MOD-RK-21/MOD-RK-10（价差阈值 0.005 从 AshareSystemicRiskConfig
-读取，不另立第二真相源）；退出天数复用 MOD-RK-08 compute_stress_exit_days
+读取，不另立第二真相源）；退出天数复用 MOD-RK-048 compute_stress_exit_days
 （90号 §8 裁定①：ADV×0.3 压力折扣 ×10% 参与率）。
 
 查重分工：stress_test_engine=通用 shock 叠加引擎（本族=流动性危机情景生产者，
@@ -288,7 +288,7 @@ def _estimate_slippage(
     adv_value: float,
     cfg: LiquidityCrisisScenarioConfig,
 ) -> ExitSlippageEstimate:
-    """单持仓出场滑点：exit_days 复用 MOD-RK-08 压力退出天数，滑点=半价差×√天数封顶 1.0。"""
+    """单持仓出场滑点：exit_days 复用 MOD-RK-048 压力退出天数，滑点=半价差×√天数封顶 1.0。"""
     sellable = not (position.is_limit_down or position.is_suspended)
     half_spread = _crisis_half_spread(cfg)
     if not sellable:

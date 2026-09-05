@@ -1,10 +1,10 @@
 ---
 module_id: MOD-L09-001
-submodule_path: src/zephyr/intelligence/research
+submodule_path: src/zephyr/backtest
 title: "Research Innovation Core 蓝图+施工图 — 研究创新层"
 doc_type: blueprint
 status: Active
-version: "2.1.3"
+version: "2.1.4"
 layer: L2_domain
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -12,8 +12,8 @@ language: zh
 created_by: human_plus_agent
 date: "2026-05-05"
 ttl: permanent
-actual_disk_path: "src/zephyr/research/"  # ARCH-MIGRATION-CLOSE(2026-07-16): 空壳目录。实际实现已迁移至 src/zephyr/backtest/（core/engine_base.py + implementations/vectorized_engine.py），见 §0.1 与 §16.7 迁移说明
-last_updated: "2026-05-15"
+actual_disk_path: "src/zephyr/backtest/"  # ARCH-MIGRATION-CLOSE(2026-07-16): 空壳目录。实际实现已迁移至 src/zephyr/backtest/（core/engine_base.py + implementations/vectorized_engine.py），见 §0.1 与 §16.7 迁移说明
+last_updated: "2026-09-05"
 last_verified: "2026-05-15"
 generation: 2
 functional_domain: research

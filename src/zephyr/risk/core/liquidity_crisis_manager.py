@@ -20,7 +20,7 @@
 Liquidity Crisis Manager — 流动性危机管理器 (MOD-RK-21)
 
 37号设计备忘（37_liquidity_crisis_protocol v1.0.18）的施工落地模块。承载 memo 已定义
-但未落码的 6 项算法，与 MOD-RK-10/MOD-RK-08 互补不重复：
+但未落码的 6 项算法，与 MOD-RK-10/MOD-RK-048 互补不重复：
 
     1. §3.1.1 sell_pressure：OBI 反转卖盘压力（盘口卖方主导程度，范围 [0,1]）
     2. §3.1.2 bid_ask_spread：Quoted Spread 买卖价差（(ask-bid)/mid）

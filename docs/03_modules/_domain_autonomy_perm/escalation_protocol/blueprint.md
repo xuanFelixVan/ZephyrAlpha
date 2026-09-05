@@ -1,10 +1,10 @@
 ---
 module_id: MOD-INF-022
-submodule_path: src/zephyr/governance/escalation_engine.py
+submodule_path: src/zephyr/governance/escalation
 title: Escalation Protocol 蓝图
 doc_type: blueprint
 status: Active
-version: "2.1.7"
+version: "2.1.8"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -13,7 +13,7 @@ created_by: human_plus_agent
 date: "2026-05-14"
 ttl: permanent
 actual_disk_path: "src/zephyr/governance/"
-last_updated: "2026-06-23"
+last_updated: "2026-09-05"
 last_verified: "2026-06-23"
 generation: 3
 functional_domain: safety_escalation

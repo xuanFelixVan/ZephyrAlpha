@@ -3,7 +3,7 @@ module_id: MOD-POS-020
 title: "独立策略账本蓝图 — 选股+粗仓位+独立风控+budget适配（A模型分层·方案A）"
 doc_type: blueprint
 status: Active
-version: "0.1.4"
+version: "0.1.7"
 design_maturity: production
 build_status: production
 ttl: permanent
@@ -13,7 +13,7 @@ functional_domain: position
 owner: ZephyrAlpha-Owner
 created_by: agent
 date: "2026-08-06"
-last_updated: "2026-08-06"
+last_updated: "2026-09-05"
 priority: P0
 blueprint_level: module
 responsibility_domain: 
@@ -186,11 +186,12 @@ def rebalance_to_budget(self, new_budget: float) -> TargetPortfolio:
 
 ## 5. 错误契约
 
-- `InvalidBudgetError` (ZA-POS-0020): budget 越界（<0 或 >1）、budget 突变超 floor/cap 范围
-- `StrategyDrawdownKillError` (ZA-POS-0021): 触发 Level 4 Kill Switch，策略强制隔离
-- `RebalanceTimeoutError` (ZA-POS-0022): Tier 2 convergence_window 超时，升级 Tier 3
-- `AlphaSignalError` (ZA-POS-0023): 选股信号异常（空候选 / 信号强度非法）
-- `SizingError` (ZA-POS-0024): 粗仓位计算异常（risk_parity 波动率为零 / custom 逻辑异常）
+> **实现现状（2026-09-05 AI-AUDIT18-001 实证）**：实现 src/zephyr/position/core/strategy_book.py 当前以 `ValueError` 表达输入校验失败（budget 越界、top_n 非法、评分越契约区间、sizing_method 禁用等）；[ERROR_CONTRACT] 所列专用异常类**尚未定义**。
+
+- 输入校验（现状）: `ValueError`——budget<0、top_n 非正、未知 score→weight method、评分越出契约区间、A 模型禁用 Kelly/MVO
+- 专用异常（预留契约）: StrategySelectionError（选股信号异常）/ BudgetExceededError（budget 越界+Level 4 Kill 隔离）/ RebalanceRefusedError（Tier 2 超时升级 Tier 3）——类定义待施工
+
+> 注：实现表头所引 ZA-POS-0020/0021/0022 号段与 error_code_registry.yaml 现登记条目（correlation_regime_monitor/position_risk_budget_allocator/cross_strategy_position_merger）冲突，错误码归属裁定需求已登记共享收口清单。
 
 ## 6. 测试规划
 

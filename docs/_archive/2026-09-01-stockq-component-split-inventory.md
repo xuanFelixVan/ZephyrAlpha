@@ -1,5 +1,5 @@
 ---
-ttl: task_bound
+ttl: permanent  # 2026-09-05 AI-AUDIT18-001: 退役归档入 permanent zone（DCR-003），任务由 v2 清单承接
 ---
 
 > **文档性质**：stockq 页组件拆分清单（Owner 审前稿）。审完定稿后：组件按清单拆分 → manifest 登记 → 数据逐项接通。

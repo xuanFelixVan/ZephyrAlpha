@@ -3,7 +3,7 @@ module_id: MOD-PF-001
 title: "策略引擎蓝图 — 生命周期状态机 + 四维决策 + OCP-002 扩展"
 doc_type: blueprint
 status: Active
-version: "0.1.5"
+version: "0.1.7"
 ttl: permanent
 layer: L02_portfolio_core
 layer_name: portfolio_core
@@ -11,7 +11,7 @@ functional_domain: portfolio_core
 owner: ZephyrAlpha-Owner
 created_by: agent
 date: "2026-08-02"
-last_updated: "2026-08-02"
+last_updated: "2026-09-05"
 priority: P0
 blueprint_level: module
 responsibility_domain: 
@@ -92,8 +92,8 @@ registered → testing → active → deprecated
 ## 5. 错误契约
 
 - `StrategyNotFoundError`: 策略未注册或处于 deprecated 状态
-- `StrategyVersionConflict`: 多版本同时 active
-- `ColdStartBreachError`: 冷启动权重超限
+- `StrategyLifecycleError`: 生命周期状态转换非法（非法迁移/重复激活）
+- `ColdStartViolationError`: 冷启动权重超限
 
 ## 6. 测试
 

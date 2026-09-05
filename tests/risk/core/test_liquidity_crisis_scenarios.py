@@ -17,7 +17,7 @@
 """MOD-RK-047 流动性危机情景族单元测试（CAND-RSK-022）。
 
 覆盖：三维情景族（市场枯竭/持仓封死/融资断裂）+ 全员出逃极端情形 +
-出场滑点评估（exit_days 复用 MOD-RK-08 口径）+ StressTestEngine 消费集成 +
+出场滑点评估（exit_days 复用 MOD-RK-048 口径）+ StressTestEngine 消费集成 +
 边界（空持仓/负值/非法配置/地板截断）。全程内存构造，无 DB。
 """
 

@@ -1,11 +1,11 @@
 ---
 module_id: MOD-INF-035
-submodule_path: src/zephyr/trading/autopilot
+submodule_path: src/zephyr/trading/autopilot.py
 title: "AutoRuntime Core 蓝图 — 系统大脑·三层运行时运营中心"
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "6.0.9"
+version: "6.0.10"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -18,8 +18,7 @@ actual_disk_path: "src/zephyr/trading/"
 belongs_to: "SYS-MASTER-001"
 generation: 2
 functional_domain: operations
-summary: "系统大脑：三层运行时编排+MAPE-K调和循环+节律调度+健康监控+工作编排+自动接入"
-last_updated: "2026-08-04"
+last_updated: "2026-09-05"
 last_verified: "2026-05-13"
 parent_module: ""
 rule_form: structural

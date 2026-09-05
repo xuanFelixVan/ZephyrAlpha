@@ -3,7 +3,7 @@ module_id: MOD-PF-003
 title: "再平衡调度器蓝图 — 四触发源 + 成本收益判定"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.5"
 ttl: permanent
 layer: L02_portfolio_core
 layer_name: portfolio_core
@@ -11,7 +11,7 @@ functional_domain: portfolio_core
 owner: ZephyrAlpha-Owner
 created_by: agent
 date: "2026-08-02"
-last_updated: "2026-08-02"
+last_updated: "2026-09-05"
 priority: P0
 blueprint_level: module
 responsibility_domain: 
@@ -91,8 +91,8 @@ else:
 
 ## 5. 错误契约
 
-- `RebalanceCostEstimationError`: 成本估算失败(降级为保守高估)
-- `DriftMonitorUnavailable`: drift 数据缺失(降级为日历触发)
+- `InvalidRebalanceInputError`: 输入非法（当前持仓/目标组合/成本参数校验失败）
+- 降级路径（行为约定，非异常类）：成本估算失败→采用保守高估；drift 数据缺失→降级为日历触发
 
 ## 6. 测试
 

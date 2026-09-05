@@ -1,11 +1,11 @@
 ---
 
 module_id: MOD-INF-017
-submodule_path: src/zephyr/governance/code_dedup_engine
+submodule_path: src/zephyr/gov_code_quality/code_dedup
 title: "Code Dedup Engine 蓝图 — 代码去重·爆炸半径防护·原子修复"
 doc_type: blueprint
 status: Active
-version: 0.15.7
+version: 0.15.8
 layer: L0_infrastructure
 layer_note: "跨层模块——代码在基础设施域，但与治理域交互（Gate Engine+AiAuditLogger）"
 layer_name: infrastructure
@@ -17,8 +17,8 @@ created_by: AI
 date: "2026-05-05"
 valid_from: "2026-05-05"
 ttl: permanent
-actual_disk_path: "src/zephyr/governance/code_dedup/"
-last_updated: "2026-05-14"
+actual_disk_path: "src/zephyr/gov_code_quality/code_dedup/"
+last_updated: "2026-09-05"
 last_verified: "2026-05-14"
 generation: 3
 belongs_to: "MOD-GOVERNANCE"

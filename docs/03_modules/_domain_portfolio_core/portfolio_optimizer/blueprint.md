@@ -3,7 +3,7 @@ module_id: MOD-PF-002
 title: "组合优化器蓝图 — 风险预算为主 + 均值方差备选 + Kelly 截断"
 doc_type: blueprint
 status: Active
-version: "0.1.4"
+version: "0.1.6"
 ttl: permanent
 layer: L02_portfolio_core
 layer_name: portfolio_core
@@ -11,7 +11,7 @@ functional_domain: portfolio_core
 owner: ZephyrAlpha-Owner
 created_by: agent
 date: "2026-08-02"
-last_updated: "2026-08-02"
+last_updated: "2026-09-05"
 priority: P0
 blueprint_level: module
 responsibility_domain: 
@@ -87,9 +87,8 @@ build_status: generated
 
 ## 5. 错误契约
 
-- `OptimizationFailureError`: 所有方法均失败(降级为等权)
-- `KellyOverflowError`: Kelly 截断后仍超限(进一步缩放)
-- `DriftCalculationError`: current_weights 缺失
+- `OptimizationError`: 优化失败——所有方法均失败后降级为等权；Kelly 截断后仍超限的进一步缩放失败亦归入此异常
+- `InvalidOptimizationInputError`: current_weights 缺失等输入非法
 
 ## 6. 测试
 

@@ -15,7 +15,7 @@
 # [TTL] permanent
 
 # [ALGO_FLOW]
-# I1: LiquidityWatchInput 序列(标的级 Amihud/萎缩/非流动标记, 上游 MOD-RK-08 产出)
+# I1: LiquidityWatchInput 序列(标的级 Amihud/萎缩/非流动标记, 上游 MOD-RK-048 产出)
 # I2: 相关性收益矩阵 {symbol: returns}(可空)
 # I3: RiskWatchConfig(非流动占比黄/红阈 + 相关性 regime 阈值)
 # A1: 流动性分级(illiquid_ratio≥红阈→red告警; ≥黄阈→yellow告警)
@@ -36,7 +36,7 @@
 Adaptive Risk Monitor — 流动性+相关性体制监控层 (MOD-RK-29, C-004 ②监控层 MVP)
 
 C-004 自适应风控三层体系（预判+监控+熔断）的监控层能力底座：盘中聚合流动性风险
-（非流动标的占比分级，指标由 MOD-RK-08 LiquidityMonitor 产出）与相关性体制
+（非流动标的占比分级，指标由 MOD-RK-048 LiquidityMonitor 产出）与相关性体制
 （MOD-POS-012 三档 regime），产出风险仪表盘快照与告警数据（级别语义对齐
 MOD-RK-06 AlertGenerator.AlertLevel；发送接线由编排层完成，本模块不触达通道）。
 
@@ -150,7 +150,7 @@ class RiskWatchConfig:
 
 @dataclass(frozen=True)
 class LiquidityWatchInput:
-    """标的级流动性指标输入（上游 MOD-RK-08 LiquidityMonitor 产出的最小契约）。"""
+    """标的级流动性指标输入（上游 MOD-RK-048 LiquidityMonitor 产出的最小契约）。"""
 
     symbol: str
     amihud_illiq: float  # Amihud 非流动性指标（≥0）

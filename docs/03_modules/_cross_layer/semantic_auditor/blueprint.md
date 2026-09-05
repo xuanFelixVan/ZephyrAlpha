@@ -1,10 +1,10 @@
 ---
 module_id: MOD-INF-028
-submodule_path: src/zephyr/governance/semantic_auditor
+submodule_path: src/zephyr/governance/semantic_audit
 title: "Semantic Auditor 蓝图 — 语义审计器·规则文档LLM桥接"
 doc_type: blueprint
 status: Active
-version: "6.1.6"
+version: "6.1.7"
 layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
@@ -20,9 +20,9 @@ parent_module: ""
 codification_level: L1
 codification_at: "2026-05-14"
 last_verified: "2026-05-14"
-last_updated: "2026-05-14"
+last_updated: "2026-09-05"
 generation: 5
-actual_disk_path: 'D:\ZephyrAlpha\src\zephyr\governance\semantic_auditor\'
+actual_disk_path: 'src/zephyr/governance/semantic_audit/'
 rule_form: structural
 scope: global
 stability: evolving

@@ -3,7 +3,7 @@ module_id: MOD-RESOURCE_OPTIMIZATION_ENGINE
 title: "资源优化引擎蓝图"
 doc_type: blueprint
 status: Active
-version: "5.4.4"
+version: "5.4.5"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -13,13 +13,13 @@ date: "2026-05-08"
 ttl: permanent
 actual_disk_path: "src/zephyr/trading/"
 belongs_to: "MOD-MASTER_BLUEPRINT"
-submodule_path: src/zephyr/runtime/
+submodule_path: src/zephyr/trading
 summary: "MAPE-K 驱动的资源优化引擎：进程池化、I/O缓存、智能调度、GPU监控、IDE幽灵窗口检测、自愈闭环"
 tags: [resource-optimization, mape-k, process-pool, io-cache, lazy-loading, self-healing, backpressure, circuit-breaker, gpu-monitoring, ide-health]
 priority: P1
 runtime_plane: warm
 codification_level: L2
-last_updated: "2026-05-22"
+last_updated: "2026-09-05"
 last_verified: "2026-05-22"
 codification_at: "2026-05-15"
 generation: 2
@@ -76,19 +76,19 @@ build_status: deprecated
 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） |
 |---|--------|------------|------|:---:|-------------------|
-| 1 | resource_optimization_engine.py | §4/§12 | MAPE-K 主引擎 | 已实现 | — |
-| 2 | resource_optimization_models.py | §4.2 | 数据模型 | 已实现 | — |
-| 3 | daemon_registry.py | §4 | 守护线程注册表 | 已实现 | — |
-| 4 | io_cache.py | §4 | I/O 缓存层 | 已实现 | — |
-| 5 | streaming_reader.py | §4 | 流式读取 | 已实现 | — |
-| 6 | process_pool.py | §4 | 进程池管理 | 已实现 | — |
-| 7 | lazy_loader.py | §4 | 懒加载器 | 已实现 | — |
-| 8 | resource_optimization.yaml | §18 | 配置文件 | 已实现 | — |
+| 1 | resource_optimization.py | §4/§12 | MAPE-K 主引擎（原设计名 resource_optimization_engine.py，落位时合并为单文件） | 已实现 | — |
+| 2 | shared/lifecycle/resource_optimization_models.py | §4.2 | 数据模型 | 已实现 | — |
+| 3 | shared/lifecycle/daemon_registry.py | §4 | 守护线程注册表 | 已实现 | — |
+| 4 | shared/io/io_cache.py | §4 | I/O 缓存层 | 已实现 | — |
+| 5 | shared/io/streaming_reader.py | §4 | 流式读取 | 已实现 | — |
+| 6 | shared/infra/process_pool.py | §4 | 进程池管理 | 已实现 | — |
+| 7 | shared/lifecycle/lazy_loader.py | §4 | 懒加载器 | 已实现 | — |
+| 8 | config/resource_optimization.yaml | §18 | 配置文件 | 已实现 | — |
 | 9 | gpu_monitor.py | §1.2-G9 | GPU 状态采集（nvidia-smi） | 已实现 | — |
 | 10 | ~~ide_health_daemon.py~~（2026-08-28 删除） | §1.2-G10 | 已并入 process_reaper.py（旧常驻守护模式违反 boot C1/C3，实证失效） | 已删除 | — |
 | 11 | ~~ide_health_service.py~~（2026-08-28 删除） | §new-IDE | 同上，one-shot 模式取代常驻守护 | 已删除 | — |
 | 11+ | process_reaper.py | §new-IDE | 残留进程清理器（one-shot，Task Scheduler 每 10min 直跑脚本；python 进程判定矩阵 + Trae 幽灵进程拓扑判据 + 3 轮确认状态机 + kill 前复查 + 轻导入隔离 + drift 指标） | 已实现 | — |
-| 12 | zombie_scanner.py | §new-IDE | 僵尸 Python 进程四级分类检测器（SUSPICIOUS/ABNORMAL/DANGEROUS auto-kill + 模式计数） | 已实现 | — |
+| 12 | ~~zombie_scanner.py~~（独立文件未落位） | §new-IDE | 僵尸进程四级分类检测能力已并入 process_reaper.py（Trae 幽灵进程拓扑判据）与 resource_optimization.py | 已合并 | — |
 | 13 | speed_baseline_checker.py | §new-IDE | 脚本运行速度基线检测器（读取 script_manifest timeout 基线，对比活跃进程运行时，四级分类 SLOW/VERY_SLOW/CRITICAL_SLOW） | 已实现 | — |
 
 ### §0.2 对齐验证矩阵

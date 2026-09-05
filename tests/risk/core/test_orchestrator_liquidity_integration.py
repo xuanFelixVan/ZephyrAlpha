@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-RK-08 | docs/03_modules/_domain_risk/liquidity_monitor/blueprint.md | §test
+# [BLUEPRINT] MOD-RK-048 | docs/03_modules/_domain_risk/liquidity_monitor/blueprint.md | §test
 # [MODULE] tests.risk.core.test_orchestrator_liquidity_integration
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.risk.implementations.default_risk_manager_orchestrator; zephyr.risk.core.liquidity_monitor; zephyr.risk.core.alert_generator
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] test_orchestrator_liquidity_integration.py
-# [A_test] module_id: MOD-RK-08 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-RK-048 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """G2-S6 集成测试: 流动性监控 → 编排器 → 告警管道（G1↔G2 端到端）.
 

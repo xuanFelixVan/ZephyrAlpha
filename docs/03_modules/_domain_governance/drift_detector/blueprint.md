@@ -3,7 +3,7 @@ module_id: MOD-INF-023
 title: "Drift Detector 蓝图 — 39检测器漂移检测引擎与10状态漂移生命周期"
 doc_type: blueprint
 status: Active
-version: "3.1.8"
+version: "3.1.9"
 layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
@@ -15,13 +15,13 @@ valid_from: 2026-05-05
 submodule_path: src/zephyr/gov_drift/
 date: "2026-05-05"
 ttl: permanent
-actual_disk_path: "src/zephyr/gov_drift/; src/zephyr/governance/drift_detector_core/"
+actual_disk_path: "src/zephyr/gov_drift/"
 belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""
 codification_level: L1
 codification_at: "2026-05-13"
 last_verified: "2026-05-14"
-last_updated: "2026-05-15"
+last_updated: "2026-09-05"
 generation: 4
 rule_form: structural
 scope: global
@@ -157,13 +157,13 @@ design_maturity: production
 | 37 | gate_persistence.py | §12 | 门禁持久化 | 已实现 | |
 | 38 | headless_scanner.py | §3 | Headless 扫描器 | 已实现 | |
 | 39 | cross_module_score.py | §3 | 跨模块健康度评分 | 已实现 | |
-| 40 | integration_test_runner.py | §3 6.27 | 集成测试运行器 | 已实现 | |
+| 40 | integration_test_runner.py | §3 6.27 | 集成测试运行器 | 已迁移 | →gov_enforcement/rule_enforcement |
 | 41 | self_test_verifier.py | §9 | 自测验证器 | 已实现 | |
 | 42 | drift_hotfix_bypass.py | §3 2.12 | 热修复绕过 | 已实现 | |
 | 43 | scan_mutex.py | §3 2.15 | 扫描互斥锁 | 已实现 | |
 | 44 | suppression_learner.py | §3 2.14 | 假阳性学习 | 已实现 | |
 | 45 | ai_construction_detectors.py | §3 6.6 | AI 施工检测器 | 已实现 | |
-| 46 | drift_cron_scheduler.py | §3 | 定时扫描调度 | 已实现 | |
+| 46 | drift_cron_scheduler.py | §3 | 定时扫描调度 | 已删除（调度由事件触发/编排层承接，定时器模式退役） | |
 | 47 | drift_infrastructure.py | §3 | 基础设施工具 | 已实现 | |
 | 48 | drift_result_types.py | §4 | 结果类型定义 | 已实现 | |
 | 49 | drift_training.py | §3 6.12 | 漂移训练数据闭环 | 已实现 | |

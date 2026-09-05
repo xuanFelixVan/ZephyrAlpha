@@ -34,7 +34,7 @@ responsibility_domain:
 ## 1. 定位
 
 C-004 自适应风控三层体系的**②监控层能力底座**：盘中聚合两路风险体征——
-- 流动性风险：非流动标的占比分级（复用 MOD-RK-08 LiquidityMonitor 产出的指标）
+- 流动性风险：非流动标的占比分级（复用 MOD-RK-048 LiquidityMonitor 产出的指标）
 - 相关性体制：组合平均成对相关三档 regime（复用 MOD-POS-012 assess_correlation_regime）
 
 产出**风险仪表盘快照**（RiskWatchSnapshot，供 CTR-P1-008 风险仪表盘消费）+
@@ -65,7 +65,7 @@ C-004 自适应风控三层体系的**②监控层能力底座**：盘中聚合�
 
 | 依赖 | 模块 | 类型 |
 |------|------|------|
-| 流动性指标源 | MOD-RK-08 liquidity_monitor | import_depends（契约对齐） |
+| 流动性指标源 | MOD-RK-048 liquidity_monitor | import_depends（契约对齐） |
 | 相关性体制 | MOD-POS-012 correlation_regime_monitor | import_depends |
 | 告警级别语义 | MOD-RK-06 alert_generator | import_depends（AlertLevel 对齐） |
 

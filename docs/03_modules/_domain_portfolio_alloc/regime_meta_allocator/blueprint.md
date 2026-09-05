@@ -3,7 +3,7 @@ module_id: MOD-PA-007
 title: "Regime元分配器蓝图 — Shrinkage风险节流+PerformanceScore后验分配（A模型·meta层）"
 doc_type: blueprint
 status: Active
-version: "0.1.6"
+version: "0.1.8"
 design_maturity: production
 build_status: production
 ttl: permanent
@@ -13,7 +13,7 @@ functional_domain: pf_alloc
 owner: ZephyrAlpha-Owner
 created_by: agent
 date: "2026-08-06"
-last_updated: "2026-08-06"
+last_updated: "2026-09-05"
 priority: P0
 blueprint_level: module
 responsibility_domain: 
@@ -254,10 +254,8 @@ allocation_i = allocation_i / Σ(clamped_allocation)         # 二次归一化
 
 ## 5. 错误契约
 
-- `InvalidRegimeInputError` (ZA-PA-0007): 灰度概率 Σ≠1、含负值/NaN、维度≠12
-- `InvalidPerformanceScoreError` (ZA-PA-0008): PerformanceScore 越界 [0.5,1.5]、策略 ID 不匹配
-- `AllocationNormalizationError` (ZA-PA-0009): 归一化失败（raw 全零 / 二次归一化不收敛）
-- `ShrinkageCalculationError` (ZA-PA-0010): ConfidenceSignal/RiskSignal 计算异常
+- `AllocationError` (ZA-PA-0007): 预算分配计算异常（灰度概率 Σ≠1、含负值/NaN、维度≠12 或归一化失败）
+- `ShrinkageDisabled` (ZA-PA-0008): Shrinkage 关闭（shrinkage_enabled=False），按契约输出 1.0
 
 > **落码对齐（2026-09-05 AI-AUDIT10-001）**：实现收敛为单异常类 `AllocationError`（ZA-PA-0007，已登记）；上列 ZA-PA-0008/0009/0010 三类未落码未登记（GATE-ERRCODE 6 passed 实证代码↔注册表闭合）。本节保留设计预留语义，落码细化或关闭预留由 Owner 裁定。
 

@@ -228,7 +228,7 @@ class SystemicRiskAlertStateMachine:
             cvar_pct: CVaR/ES 占 NAV 比例（同口径）
             daily_pnl_pct: 当日盈亏比例（负=亏）
             prev_day_pnl_pct: 前一日盈亏比例（连续 2 日亏判定）
-            liquidity_crisis: 流动性危机标记（上游 MOD-RK-08/21 口径）
+            liquidity_crisis: 流动性危机标记（上游 MOD-RK-048/21 口径）
 
         Returns:
             SystemicRiskAssessment（取最严级 + 指令 + 全量触发理由）
