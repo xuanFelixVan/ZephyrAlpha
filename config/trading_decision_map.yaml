@@ -247,7 +247,16 @@ nodes:
     layer: C1
     node_type: gate
     point: 盘前
-    decision_question: 总仓位怎么切给各策略 sleeve（Millennium pod 模型单体版）
+    # 预算=灰度区间带（v1.2.1 Owner 裁定：仓位非定值，状态分布带内连续插值）
+    # 六段预算带（机构+A股多源收敛，全 proposed）：capitulation 0-10%（只试错）/
+    #   accumulation 20-30%（试错+底仓）/ ignition 30-50% / expansion 50-70%（verified 后
+    #   earned-position 上探 70-80%）/ euphoria ≤30%（只卖不买）/ distribution 0%（空仓）
+    # 横切：过渡带（最大隶属度<60%）预算×0.5-0.7；尾部预备金 10-15% 永不投出；
+    #   小资金容量优势允许高集中度（earned 单票集中，游资路径），风险百分比制资金无关
+    decision_question: >-
+      总仓位怎么切给各策略 sleeve（Millennium pod 模型单体版）；
+      六段预算带见上注释，带内实际仓位=状态分布加权插值（灰度非查表）；
+      过渡带降仓×0.5-0.7 + 尾部预备金 10-15% 恒定预留
     factor_refs: []
     data_refs: []
     module_ref: null
@@ -396,7 +405,7 @@ state_matrix:
     - {node_id: TDM-P-P2, state: ignition, mounted: [], confidence: proposed}
     - {node_id: TDM-P-P2, state: euphoria, mounted: [], confidence: proposed}
     - {node_id: TDM-P-P2, state: distribution, mounted: [], confidence: proposed}
-    # C1 组合预算：六段预算切分细则待填（sleeve 权重随段位再平衡）
+    # C1 组合预算：六段预算带（灰度区间，数值见 TDM-F-C1 节点注释），带内连续插值非查表
     - {node_id: TDM-F-C1, state: capitulation, mounted: [], confidence: proposed}
     - {node_id: TDM-F-C1, state: accumulation, mounted: [], confidence: proposed}
     - {node_id: TDM-F-C1, state: ignition, mounted: [], confidence: proposed}
