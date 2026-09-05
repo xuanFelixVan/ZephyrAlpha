@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_enforcement.rule_enforcement.rule_engine.rule_watcher
 # [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES]
-# [CONSUMERS] cold_start sequence; AI sessions; governance pipeline
+# [CONSUMERS] （零生产消费方——2026-09-05 AI-AUDIT11-001 全仓反查实证：src/scripts/tests 无任何 import 或 subprocess 调用，仅 rule_engine/__init__.py 与 rule_enforcement/__init__.py 再导出；退役评估登记 AI-AUDIT11-001 遗留项，depgraph MOD-GOV-019 收口归总控）
 # [STARTUP] manual
 # [MATURITY] production
 # [INVARIANTS] YAML files are content SSoT; mtime-based change detection; sync direction YAML->DB
@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] Returns empty list on missing dir; never raises for missing files; logs errors via logging
-# [TESTS] tests/test_rule_watcher.py
+# [TESTS] —（声明的 tests/test_rule_watcher.py 不存在，AI-AUDIT11-001 实测；无独立测试，--once 模式可 CLI 手动验证）
 # [A_module] module_id=MOD-GOV-019 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m02-manual  M02豁免: 规则文件watchdog常驻服务(python -m zephyr.gov_enforcement.rule_enforcement.rule_engine.rule_watcher),CLI触发启动,启动后自动轮询;非reconciler无需事件触发

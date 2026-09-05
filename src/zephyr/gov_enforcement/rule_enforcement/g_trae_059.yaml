@@ -86,8 +86,11 @@ failure_actions:
   reject: 拒绝——返回错误，对象停留在当前状态
   flag: 标记——通过但附加warning flag
 simulation:
-  supported: true
-  mock_input: tests/fixtures/g_trae_059_mock.yaml
+  # 治本(AI-AUDIT11-001 2026-09-05): supported=true 为虚假声明——原声明的 mock
+  # fixture 文件从未创建（全仓实测不存在），且本 gate 依赖真实 PG depgraph
+  # （db_state_check），无法用静态 mock 模拟。
+  # 真实验证入口=entry_conditions.verification_method（check_schema_version_writes.py）。
+  supported: false
   expected_output: passed=True when no violations found and DB version matches
   rollback_on_failure: true
 upgrade_triggers:
@@ -99,6 +102,10 @@ change_log:
   date: '2026-06-24'
   author: DM-202949
   change: 初始创建 — _schema_version 写入保护 + 版本一致性 gate
+- version: 0.1.1
+  date: '2026-09-05'
+  author: AI-AUDIT11-001
+  change: 表头治理 — verification_method 测试路径修正至 tests/trae_rules/；simulation.supported 改 false（声明的 mock fixture 不存在，虚假声明治本）
 phase: PHASE_0_SKELETON
 auto: true
 on_failure: reject
