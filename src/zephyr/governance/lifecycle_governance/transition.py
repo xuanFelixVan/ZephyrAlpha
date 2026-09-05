@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] InvalidTransitionError;DependencyError
+# [ERROR_CONTRACT] InvalidTransitionError (zephyr.governance.persistence.base_repo)
 # [TESTS] tests/db/
 # [A_module] module_id=MOD-TASK_SYSTEM | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent

@@ -10,8 +10,8 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] AutoRunnerError on failure; RuntimeError on resource leak
-# [TESTS] tests/test_auto_runner.py
+# [ERROR_CONTRACT] RuntimeError on resource leak
+# [TESTS] tests/f_lifecycle/test_f18_automation.py; tests/f_lifecycle/test_f18_redblue.py
 # [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 连接失败抛 RuntimeError; 查询失败抛 psycopg2.Error
-# [TESTS] tests/test_battle_map_reader.py
+# [TESTS] tests/governance/test_battle_map_execution_flow.py; tests/governance/test_battle_map_research_incubation.py; tests/governance/test_battle_map_simulation_validation.py
 # [TTL] permanent
 """
 battle_map_reader.py — 作战地图数据库只读查询工具模块

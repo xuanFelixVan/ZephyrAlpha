@@ -10,7 +10,7 @@
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] TaskNotFoundError;InvalidTransitionError;DuplicateTaskError;DatabaseError;QueryError;DependencyError
+# [ERROR_CONTRACT] TaskNotFoundError; InvalidTransitionError; DatabaseError (sqlite3 driver)
 # [TESTS] tests/db/
 # [A_module] module_id=MOD-TASK_SYSTEM | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent

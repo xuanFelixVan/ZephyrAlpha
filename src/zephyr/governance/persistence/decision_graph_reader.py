@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 连接失败抛 RuntimeError; 查询失败抛 psycopg2.Error
-# [TESTS] tests/test_decision_graph_reader.py
+# [TESTS] tests/governance/test_decision_graph_reader.py
 # [A_module] module_id=SH-DB-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """

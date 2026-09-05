@@ -10,8 +10,8 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] BudgetExceededError;CostLimitError
-# [TESTS] tests/test_budget_enforcer/
+# [ERROR_CONTRACT] none (no custom exceptions)
+# [TESTS] tests/governance/budget/test_cost_router.py
 # [A_module] module_id=MOD-INF-024 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

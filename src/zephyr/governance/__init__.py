@@ -1,6 +1,8 @@
 # [BLUEPRINT] MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance
 # [DOMAIN] D_GOVERNANCE
+# [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TESTS] none
 # [TTL] permanent
 """
 Agent 治理八件套 · Governance Domain — DOM-GOV-001 v0.2.0

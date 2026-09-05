@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 异常必须包含 budget_context 和 operation_id
-# [TESTS] tests/test_budget_enforcer.py
+# [TESTS] tests/budget/test_budget_enforcer_rbac_bridge.py
 # [A_module] module_id=MOD-INF-024 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] raises RuntimeError on connection failure; OperationalError on DDL errors
-# [TESTS] tests/test_battlemap_schema.py
+# [TESTS] tests/governance/test_sel_unreachable_5_linkage.py
 # [TTL] permanent
 
 """

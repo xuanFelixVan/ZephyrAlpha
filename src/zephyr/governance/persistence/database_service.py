@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 透传 zephyr.infrastructure.database_service.DatabaseService 的错误契约
-# [TESTS] tests/test_db_auto_ops.py::test_database_service_init
+# [TESTS] tests/db/test_db_auto_ops.py; tests/governance/data_layer/test_database_service.py
 # [TTL] permanent
 """
 DatabaseService 真源收敛（AI-14 审计 P1 修复）

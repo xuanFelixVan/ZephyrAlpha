@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-GOVERNANCE | (auto-injected by S4 reconciler) | §
+# [TESTS] none
 # [TTL] permanent
 # [A_module] module_id=MOD-GOV_DATA_GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 

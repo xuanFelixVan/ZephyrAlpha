@@ -2,6 +2,7 @@
 # [MODULE] zephyr.governance.a2a
 # [DOMAIN] D_GOVERNANCE
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TESTS] none
 # [TTL] permanent
 # Phase 1 gate marker（a2a 为 trae_028 grandfathered 缩写目录，非 kebab-case）。Implementation in zephyr.infrastructure.a2a_protocol.
 

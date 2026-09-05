@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §8
 # [MODULE] zephyr.governance.evidence_pack
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES]
+# [DEPENDENCIES] zephyr.shared.io.serialization (dumps)
 # [CONSUMERS] zephyr.gov_audit.evidence_pack (re-export); zephyr.gov_audit.__init__ (lazy facade)
 # [STARTUP] imported
 # [MATURITY] production

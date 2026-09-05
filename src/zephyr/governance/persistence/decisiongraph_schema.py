@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] raises RuntimeError on connection failure; OperationalError on DDL errors
-# [TESTS] tests/test_decisiongraph_schema.py
+# [TESTS] tests/governance/persistence/test_decisiongraph_schema_domain_id.py; tests/backtest/test_backtest_decisiongraph_adapter.py
 # [A_module] module_id=SH-DB-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

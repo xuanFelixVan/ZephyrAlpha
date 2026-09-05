@@ -10,8 +10,8 @@
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] EscalationError;TimeoutError
-# [TESTS] tests/test_escalation_engine/
+# [ERROR_CONTRACT] TimeoutError
+# [TESTS] tests/governance/resilience/test_spof_checker.py
 # [A_module] module_id=MOD-INF-022 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

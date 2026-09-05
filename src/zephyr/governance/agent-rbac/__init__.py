@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-GOV_AGENT_RBAC | (auto-injected by S4 reconciler) | §
+# [TESTS] none
 # [TTL] permanent
 """
 

@@ -10,8 +10,8 @@
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] RiskValidationBridgeError on adapter failure
-# [TESTS] tests/ex_core/test_execution_engine_unit.py
+# [ERROR_CONTRACT] none (no custom exceptions; adapter errors propagate as-is)
+# [TESTS] tests/ex_core/test_order_execution_saga.py; tests/ex_core/test_trading_session.py
 # [A_module] module_id=MOD-L06-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

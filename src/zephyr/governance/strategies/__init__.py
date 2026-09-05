@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-L05-001 | (auto-injected by S4 reconciler) | §
+# [TESTS] none
 # [TTL] permanent
 # [A_module] module_id=MOD-PRT-strategies | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """
