@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
-# [MODULE] zephyr.gov_drift.bridges.drift_bridge
+# [MODULE] zephyr.gov_drift.detector_core.bridges.drift_bridge
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.shared.event_bus; zephyr.gov_drift.drift_engine
 # [CONSUMERS] zephyr.trading.boot_hooks
@@ -26,7 +26,7 @@ DriftBridge — 漂移检测器事件桥接 (MOD-INF-023).
   3. task_completed 事件到达时记录日志（用于漂移趋势分析）
 
 用法:
-    from zephyr.gov_drift.bridges.drift_bridge import (
+    from zephyr.gov_drift.detector_core.bridges.drift_bridge import (
         subscribe_eventbus,
     )
     subscribe_eventbus()  # 在 boot_hooks 中统一调用

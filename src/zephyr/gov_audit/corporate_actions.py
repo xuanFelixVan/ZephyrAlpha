@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain-governance/audit-trail/blueprint.md
+# [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md
 # [MODULE] zephyr.gov_audit.corporate_actions
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES]

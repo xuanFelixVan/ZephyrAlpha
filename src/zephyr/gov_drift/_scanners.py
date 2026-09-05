@@ -8,7 +8,7 @@
 #   gitignore_auditor/benchmark_integrity/code_review_ai
 # 完整模块清单见 __init__.py 顶部"模块地图"
 # ============================================================================
-# [BLUEPRINT] MOD-INF-011 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
+# [BLUEPRINT] MOD-INF-011 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md
 # [MODULE] zephyr.gov_drift._scanners
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.gov_drift.incremental_scanner; zephyr.gov_drift.headless_scanner; zephyr.gov_drift.file_attr_checker; zephyr.gov_drift.gitignore_auditor; zephyr.gov_drift.symlink_checker; zephyr.gov_drift.naming_magic_checker; zephyr.gov_drift.test_fixture_checker; zephyr.gov_drift.python_compat; zephyr.gov_drift.orphan_scanner; zephyr.gov_drift.scan_mutex

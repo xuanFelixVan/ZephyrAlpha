@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md
 # [MODULE] zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine
 # [DOMAIN] D_GOV_RULE
 # [DEPENDENCIES] zephyr.shared.utils.db_utils; zephyr.gov_enforcement.rule_enforcement.gate_types; zephyr.gov_enforcement.rule_enforcement.risk_ssot; zephyr.gov_enforcement.rule_enforcement.task_types; zephyr.shared.io.io_cache; zephyr.shared.blueprint_code_auditor; zephyr.shared.code_economy_analyzer; zephyr.shared.combinatorial_gate; zephyr.shared.core_integrity_guard; zephyr.shared.slo_review_assistant; zephyr.gov_enforcement.rule_enforcement.circuit_breaker; zephyr.gov_drift.drift_infrastructure; zephyr.gov_enforcement.rule_enforcement.invariants.en_001_circular_dependency; zephyr.gov_enforcement.rule_enforcement.invariants.en_002_enforcement_validator; zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility; zephyr.gov_enforcement.rule_enforcement.invariants.zero_residue_check; zephyr.shared.contracts.protocols; zephyr.governance.__init__

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md
 # [MODULE] zephyr.feedback_loop.diagnosers.diagnosis.vertical_self_assessment
 # [DOMAIN] D_FBL_DIAGNOSERS
 # [DEPENDENCIES] zephyr.feedback_loop.diagnosers.__init__

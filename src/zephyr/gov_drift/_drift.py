@@ -5,7 +5,7 @@
 # 归属规则：drift_*/contract_drift_detector/cascade_detector/baseline_poisoning_guard
 # 完整模块清单见 __init__.py 顶部"模块地图"
 # ============================================================================
-# [BLUEPRINT] MOD-INF-011 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
+# [BLUEPRINT] MOD-INF-011 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md
 # [MODULE] zephyr.gov_drift._drift
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.gov_drift.contract_drift_detector; zephyr.gov_drift.drift_result_types; zephyr.gov_drift.drift_training; zephyr.gov_drift.drift_infrastructure; zephyr.gov_drift.drift_hotfix_bypass; zephyr.gov_drift.cascade_detector; zephyr.gov_drift.baseline_poisoning_guard

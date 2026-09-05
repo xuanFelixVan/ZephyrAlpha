@@ -48292,6 +48292,19 @@ battle_map_steps:
     t_trade_coordinator(planned)；⑥降级：底仓不足/流动性不足/风控减仓/庄家出货弃庄→做T信号直接丢弃。
 
     '
+- step_id: BM-BUY-05
+  flow_stage: buy_flow
+  name_zh: 编号退役占位（历史断档，禁止复用）
+  name_en: Retired Number Placeholder (Historical Gap, Do Not Reuse)
+  plain_zh: 历史编号断档保留的占位环节，不承载任何作战语义，该编号禁止复用。
+  mechanism_zh: '退役占位环节：早期作战地图规划分配的环节编号，后因环节取消而退役。为防编号复用引发语义混淆，保留占位记录并显式标注 deprecated。
+
+    占位环节不挂锚点、不接流转边、不参与运行时（AI-AUDIT21 2026-09-05 补叙事：BM-INV-003 缺失叙事治本，叙事与 deprecated 占位语义一致）。
+
+    '
+  indicators_zh: '①触发：无（退役占位，不参与运行时）；②消费：无；③参数：design_maturity=deprecated；④数据流：无；⑤代码映射：无（占位环节无承载模块）；⑥降级：禁止复用编号，新环节一律启用新编号。
+
+    '
 - step_id: BM-BUY-06
   flow_stage: buy_flow
   name_zh: 外部指令盯盘
@@ -49916,6 +49929,28 @@ battle_map_steps:
     📌 概念覆盖清单（草稿H3逐字登记）：§17.13 D-RISK 风控域缺失模块
 
     '
+- step_id: BM-SIM-08
+  flow_stage: simulation_validation
+  name_zh: Paper Matching 涨跌停排队引擎
+  name_en: Paper Matching Limit Board Queue Engine
+  plain_zh: 模拟盘撮合时复现A股涨跌停规则——涨停只排队买单、跌停只排队卖单、市价触板转限价排队，并估算封板成交概率，消除"模拟通过但实盘被拒"的伪通过。
+  mechanism_zh: '53号 memo §3.2 撮合 Step②+公式②，SHADOW 阶段前置。显式复现 A 股涨跌停硬约束：
+
+    涨停板仅撮合 bid 队列（买单按时间优先 FIFO 排队）、跌停板仅撮合 ask 队列；
+
+    触及涨跌停的市价单转为限价单排队；封板成交概率 P(fill)≈min(1, counter_volume/(queue_ahead+order_size))；
+
+    封板时同向单排队时间优先 FIFO，逆向单封板价即成交。
+
+    函数级 MVP：正常板态(NORMAL)撮合委托既有链路，本环节只承载封板排队语义；
+
+    输入注入式（封单量/对手盘流量由调用方供给），不连接外部行情。
+
+    '
+  indicators_zh: '①触发：模拟盘撮合进入封板态（最新价触达昨收×(1±limit_pct)，0.01 元最小价位取整）；②消费：订单流(side/qty/price/order_type)+最新价/昨收/涨跌停幅度+封单量/对手盘流量；③参数：涨跌停幅度 limit_pct、P(fill)=min(1,counter_volume/(queue_ahead+order_size))；④数据流：BM-SIM-02→BM-SIM-08→BM-SIM-06（输出 OrderRoutingResult: FILLED/QUEUED/CONVERTED_QUEUED+队列快照+成交概率）；⑤代码映射：MOD-SIM-025
+    / src/zephyr/simulation/limit_board_queue.py；⑥降级：数量整手校验归 OrderManager，本环节不重建完整撮合引擎。
+
+    '
 - step_id: BM-RC-01
   flow_stage: risk_control
   name_zh: 风控策略与限额管理
@@ -51086,6 +51121,19 @@ battle_map_steps:
   mechanism_zh: EU AI Act合规扩展。针对欧盟AI法规的额外要求：AI系统风险分类、透明度义务、人类监督要求、高风险AI系统特殊义务等。
   indicators_zh: ①触发：EU AI Act合规要求/跨境AI业务；②消费：AI系统清单+EU AI Act法规+风险分级标准；③参数：新增功能二元裁定、EU AI Act合规架构增强、AI系统风险分级；④数据流：AI系统→风险分级→合规裁定→监管报告→功能限制/放行；⑤代码映射：待开发（planned，D_COMPLIANCE域）；⑥降级：EU
     AI Act未就绪→限制跨境AI功能(合规优先)。；📌 概念覆盖清单（草稿H3逐字登记）：§29.25 EU AI Act合规架构增强（→A6合规架构🔒）
+- step_id: BM-BUY-14
+  flow_stage: buy_flow
+  name_zh: 编号退役占位（历史断档，禁止复用）
+  name_en: Retired Number Placeholder (Historical Gap, Do Not Reuse)
+  plain_zh: 历史编号断档保留的占位环节，不承载任何作战语义，该编号禁止复用。
+  mechanism_zh: '退役占位环节：早期作战地图规划分配的环节编号，后因环节取消而退役。为防编号复用引发语义混淆，保留占位记录并显式标注 deprecated。
+
+    占位环节不挂锚点、不接流转边、不参与运行时（AI-AUDIT21 2026-09-05 补叙事：BM-INV-003 缺失叙事治本，叙事与 deprecated 占位语义一致）。
+
+    '
+  indicators_zh: '①触发：无（退役占位，不参与运行时）；②消费：无；③参数：design_maturity=deprecated；④数据流：无；⑤代码映射：无（占位环节无承载模块）；⑥降级：禁止复用编号，新环节一律启用新编号。
+
+    '
 - step_id: BM-BUY-15
   flow_stage: buy_flow
   name_zh: 交易合规检测

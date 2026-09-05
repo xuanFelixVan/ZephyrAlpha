@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md
 # [MODULE] zephyr.feedback_loop.verifiers.action_explainability
 # [DOMAIN] D_FBL_VERIFICATION
 # [DEPENDENCIES]

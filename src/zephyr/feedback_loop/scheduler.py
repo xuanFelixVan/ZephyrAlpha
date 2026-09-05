@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md
 # [MODULE] zephyr.feedback_loop.scheduler
 # [DOMAIN] D_FEEDBACK_LOOP
 # [DEPENDENCIES] zephyr.feedback_loop.__init__; zephyr.governance.integrity; zephyr.gov_drift.drift_engine; zephyr.infrastructure.auto_fix_engine.__init__; zephyr.infrastructure.__init__; zephyr.shared.event_bus; zephyr.autonomy_core.__init__; zephyr.governance.__init__

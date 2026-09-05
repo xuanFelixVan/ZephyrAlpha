@@ -6,7 +6,7 @@
 #   handoff_manager/resource_guard
 # 完整模块清单见 __init__.py 顶部"模块地图"
 # ============================================================================
-# [BLUEPRINT] MOD-INF-011 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
+# [BLUEPRINT] MOD-INF-011 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md
 # [MODULE] zephyr.gov_drift._infrastructure
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.gov_drift.absence_manager; zephyr.gov_drift.ai_context_injector; zephyr.gov_drift.alert_router; zephyr.gov_drift.baseline_manager; zephyr.gov_drift.canary_controller; zephyr.gov_drift.cold_start; zephyr.gov_drift.config_consistency; zephyr.gov_drift.dashboard; zephyr.gov_drift.gate_persistence; zephyr.gov_drift.handoff_manager; zephyr.gov_drift.resource_guard

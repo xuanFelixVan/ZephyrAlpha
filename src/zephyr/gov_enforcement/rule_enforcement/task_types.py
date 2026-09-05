@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md
 # [MODULE] zephyr.gov_enforcement.rule_enforcement.task_types
 # [DOMAIN] D_GOV_RULE
 # [DEPENDENCIES] zephyr.shared.schema.base_config; zephyr.shared.schema.severity_types; zephyr.shared.schema.execution_model

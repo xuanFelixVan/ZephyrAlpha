@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md
+# [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic_auditor/blueprint.md
 # [MODULE] zephyr.governance.semantic_audit.privacy
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.semantic_audit.__init__

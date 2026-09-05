@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-INF-036 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-036 | docs/03_modules/_cross_layer/model-capability-exam/blueprint.md
+# [BLUEPRINT] MOD-INF-036 | docs/03_modules/_cross_layer/model_capability_exam/blueprint.md
 # [MODULE] zephyr.intelligence.model_evaluation
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval

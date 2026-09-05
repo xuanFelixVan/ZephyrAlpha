@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md
 # [MODULE] zephyr.gov_enforcement.rule_enforcement.drift_detector
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.shared.contracts.protocols; zephyr.gov_drift.drift_hotfix_bypass; zephyr.gov_drift.drift_engine; zephyr.gov_drift.cascade_detector; zephyr.gov_drift.reconciler; zephyr.governance.__init__; zephyr.gov_drift.events

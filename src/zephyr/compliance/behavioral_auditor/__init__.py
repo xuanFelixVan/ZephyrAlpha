@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-INF-033 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
+# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md
 # [MODULE] zephyr.compliance.behavioral_auditor
 # [DOMAIN] D_COMPLIANCE
 # [TTL] permanent

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md
 # [MODULE] zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_integrity_guard
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]

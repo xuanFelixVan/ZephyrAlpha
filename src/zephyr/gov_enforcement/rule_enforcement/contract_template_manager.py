@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md
 # [MODULE] zephyr.gov_enforcement.rule_enforcement.contract_template_manager
 # [DOMAIN] D_GOV_RULE
 # [DEPENDENCIES] zephyr.shared.schema.schemas

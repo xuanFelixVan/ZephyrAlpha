@@ -107,6 +107,7 @@ flow_stage_allowed_domains:
       - D_PF_CORE              # 组合核心（仓位调整涉及组合）
       - D_PF_ALLOC             # 组合分配
       - D_RISK                 # 风控（仓位受风控约束）
+      - D_PLAN                 # 明日预案引擎（2026-09-05 AI-AUDIT21 补入：明日边界/加仓上限/盘前约束/尾盘加减仓决策均属仓位管理语义，MOD-PLAN-001/002/003 primary 锚点域漂移治本）
     forbidden_rationale:
       D_SELL_DECISION: "卖出决策属卖出阶段"
       D_EX_CORE: "执行核心属执行阶段"

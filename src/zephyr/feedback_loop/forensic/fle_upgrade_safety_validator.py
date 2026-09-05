@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md
 # [MODULE] zephyr.feedback_loop.forensic.fle_upgrade_safety_validator
 # [DOMAIN] D_FEEDBACK_LOOP
 # [DEPENDENCIES]
