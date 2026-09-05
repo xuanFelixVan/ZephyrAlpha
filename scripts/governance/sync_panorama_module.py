@@ -150,6 +150,7 @@ def _open_sync_conns() -> dict:
 
 
 def _close_sync_conns(conns: dict) -> None:
+    """_close_sync_conns implementation."""
     for c in conns.values():
         try:
             c.close()
@@ -164,6 +165,7 @@ def _values_unchanged(existing: dict, module: dict) -> bool:
     """
 
     def _n(v):
+        """_n implementation."""
         return None if v in ("", None) else v
 
     return (

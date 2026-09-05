@@ -121,6 +121,7 @@ KNOWN_DEVIATIONS: Final[dict[tuple[str, str], str]] = {
 
 
 def _finding(check: str, subject: str, detail: str) -> dict[str, str]:
+    """_finding implementation."""
     return {"check": check, "subject": subject, "detail": detail}
 
 
@@ -278,6 +279,7 @@ def classify_findings(
 
 
 def _load_a_models() -> dict[str, Any]:
+    """_load_a_models implementation."""
     src = str(REPO_ROOT / "src")
     if src not in sys.path:
         sys.path.insert(0, src)
@@ -287,6 +289,7 @@ def _load_a_models() -> dict[str, Any]:
 
 
 def _load_yaml(path: Path) -> dict[str, Any]:
+    """_load_yaml implementation."""
     import yaml
 
     data = yaml.safe_load(path.read_text(encoding="utf-8"))
@@ -296,11 +299,13 @@ def _load_yaml(path: Path) -> dict[str, Any]:
 
 
 def _load_b_pricing() -> dict[str, Any]:
+    """_load_b_pricing implementation."""
     raw = _load_yaml(B_PRICING_PATH)
     return {k: v for k, v in raw.items() if k != "module_id" and isinstance(v, dict)}
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="LLM 模型注册三向对账（10号文 §4 Phase 3.1）")
     parser.parse_args(argv)
 

@@ -209,6 +209,7 @@ def check_test_file(test_file: Path, repo_root: Path) -> list[OrphanSymbol]:
 
 
 def _iter_test_files(repo_root: Path) -> list[Path]:
+    """_iter_test_files implementation."""
     tests_dir = repo_root / "tests"
     if not tests_dir.is_dir():
         return []

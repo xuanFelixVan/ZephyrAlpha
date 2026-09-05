@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-09-03T03:39:30Z'
+generated_at: '2026-09-05T01:22:26Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 228
+total_files: 229
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -1762,10 +1762,10 @@ files:
   section_count: 1
 - path: docs/01_policies_and_standards/rules/trae_086_frontend_module_construction.yaml
   module_id: TRAE-086
-  title: 前端功能模块施工铁律（拆件判据+命名+目录归属+四件套闭环）
+  title: 前端功能模块施工铁律（拆件判据+后端盘点真源接通+命名+目录归属+四件套闭环）
   doc_type: ''
   status: ''
-  version: 1.1.0
+  version: 1.2.0
   rule_form: ''
   scope: frontend_construction
   stability: evolving
@@ -1778,7 +1778,7 @@ files:
   - 前端拆件铁律
   - 模块契约
   - DS-11
-  section_count: 5
+  section_count: 6
 - path: docs/01_policies_and_standards/sop/2026-08-22-emergency-runbook.md
   module_id: ''
   title: 保命轨 D-L1~D-L3 人工 Runbook
@@ -1799,7 +1799,7 @@ files:
   title: 全项目对齐清单——六图+注册表+代码文档三层对齐规则
   doc_type: policy
   status: active
-  version: 1.0.0
+  version: 1.1.0
   rule_form: checklist
   scope: global
   stability: ''
@@ -1814,7 +1814,7 @@ files:
   title: 07 域施工流程标准作业规程（SOP）——端到端 15 步施工闭环
   doc_type: policy
   status: active
-  version: 1.4.0
+  version: 1.5.4
   rule_form: procedural
   scope: global
   stability: ''
@@ -1844,7 +1844,7 @@ files:
   title: 前端组件拆分与数据接通 SOP（stockq 页实证）
   doc_type: policy
   status: active
-  version: 1.1.0
+  version: 1.2.0
   rule_form: procedural
   scope: frontend
   stability: ''
@@ -2279,7 +2279,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.3.4
+  version: 1.4.2
   rule_form: ''
   scope: ''
   stability: ''
@@ -2532,6 +2532,21 @@ files:
 - path: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
   module_id: PS-REG-014
   title: GATE 门禁登记表
+  doc_type: register
+  status: active
+  version: ''
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/gate_tracked_write_allowlist.yaml
+  module_id: ''
+  title: GATE-TRACKED-DRIFT 运行期 tracked 写入归因白名单（唯一真源 SSoT）
   doc_type: register
   status: active
   version: ''

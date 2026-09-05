@@ -105,6 +105,7 @@ def check(registry: Path, days: int, today: str | None) -> tuple[list[str], list
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="装配超期门禁（wiring orphan gate）")
     parser.add_argument("--registry", type=Path, default=DEFAULT_REGISTRY)
     parser.add_argument("--days", type=int, default=90, help="超期阈值（默认 90 天）")

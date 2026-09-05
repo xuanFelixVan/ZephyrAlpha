@@ -155,6 +155,7 @@ def _match_pattern(rel: str, pattern: str) -> bool:
     pat_segs = pattern.split("/")
 
     def _rec(rs: list[str], ps: list[str]) -> bool:
+        """_rec implementation."""
         if not ps:
             return not rs
         if ps[0] == "**":
@@ -167,6 +168,7 @@ def _match_pattern(rel: str, pattern: str) -> bool:
 
 
 def _match(rel: str, exact: set[str], patterns: list[str]) -> bool:
+    """_match implementation."""
     return rel in exact or any(_match_pattern(rel, p) for p in patterns)
 
 
@@ -278,6 +280,7 @@ def classify(root: Path, allowlist_path: Path | None = None) -> dict:
 
 
 def _render_human(result: dict, display_cap: int = 20) -> None:
+    """_render_human implementation."""
     print("== 工作区脏文件判读报告（classify_workspace_wip，#ARCH-308 B1）==")
     print(
         f"基线: HEAD {result['head']} | 活跃会话: {len(result['active_sessions'])}"
@@ -297,6 +300,7 @@ def _render_human(result: dict, display_cap: int = 20) -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="工作区脏文件判读器（#ARCH-308 B1）")
     parser.add_argument("--root", default=".", help="仓库根（默认 cwd）")
     parser.add_argument("--allowlist", default=None, help="白名单路径覆盖（测试用）")

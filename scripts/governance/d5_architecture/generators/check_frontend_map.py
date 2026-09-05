@@ -74,6 +74,7 @@ def run_checks() -> tuple[list[str], list[str], int]:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     fails, warns, total = run_checks()
 
     print(f"frontend_map 校验: {total} 功能点")

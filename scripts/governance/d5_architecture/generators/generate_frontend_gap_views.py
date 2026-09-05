@@ -48,6 +48,7 @@ def load_frontend_features() -> dict[str, dict]:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     features = load_frontend_features()
 
     conn = get_depgraph_pg_connection(autocommit=True)

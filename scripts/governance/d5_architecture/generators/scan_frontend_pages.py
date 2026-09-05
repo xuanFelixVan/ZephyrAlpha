@@ -40,6 +40,7 @@ API_RE = re.compile(r"/api/[a-z0-9\-]+")
 
 
 def clean(text: str) -> str:
+    """clean implementation."""
     text = BADGE_RE.sub("", text)
     text = DIM_RE.sub("", text)
     text = TAG_RE.sub("", text)
@@ -91,6 +92,7 @@ def scan_page(path: Path) -> dict:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     ap = argparse.ArgumentParser()
     ap.add_argument("--apply", action="store_true", help="实际写入 frontend_map.yaml（默认 dry-run）")
     args = ap.parse_args()

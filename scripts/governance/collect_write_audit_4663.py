@@ -73,6 +73,7 @@ _ACCESS_DELETE_BITS = 0x10000 | 0x100000  # DELETE | WRITE_DAC 族粗判（Delet
 
 
 def _load_watermark(root: Path) -> int:
+    """_load_watermark implementation."""
     try:
         return int(json.loads((root / _STATE_FILE).read_text(encoding="utf-8")).get("last_record_number", 0))
     except (OSError, json.JSONDecodeError, ValueError):
@@ -80,6 +81,7 @@ def _load_watermark(root: Path) -> int:
 
 
 def _save_watermark(root: Path, record_number: int) -> None:
+    """_save_watermark implementation."""
     try:
         p = root / _STATE_FILE
         p.parent.mkdir(parents=True, exist_ok=True)
@@ -200,6 +202,7 @@ def collect(root: Path, max_events: int = 1000) -> dict[str, int]:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="WriteAudit SACL 4663 精确归因采集器（#ARCH-279 裁定B3）")
     parser.add_argument("--max", type=int, default=1000, dest="max_events", help="本次最大读取事件数")
     parser.add_argument("--root", default=str(_REPO_ROOT), help="仓库根路径")

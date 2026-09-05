@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-08-22T19:15:42.974189+00:00",
-  "records_analyzed": 3,
+  "timestamp": "2026-09-04T22:51:05.838001+00:00",
+  "records_analyzed": 4,
   "metrics": {
     "availability": {
       "value": 0.0,
@@ -11,12 +11,12 @@
     "mttr": {
       "critical_hours": 0.0,
       "target_critical": 24,
-      "high_hours": "N/A",
+      "high_hours": 0.0,
       "target_high": 168,
       "status": "PASS"
     },
     "coverage": {
-      "total_scans": 3,
+      "total_scans": 4,
       "status": "PASS"
     },
     "false_positive_rate": {
@@ -30,12 +30,12 @@
       "status": "FAIL"
     },
     "summary": {
-      "total_scans": 3,
-      "total_failures": 3,
-      "avg_duration_s": 17.8,
-      "total_findings": 24,
-      "total_critical": 18,
-      "total_high": 0
+      "total_scans": 4,
+      "total_failures": 4,
+      "avg_duration_s": 118.8,
+      "total_findings": 531,
+      "total_critical": 63,
+      "total_high": 432
     }
   },
   "violations": [

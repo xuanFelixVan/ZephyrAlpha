@@ -102,6 +102,7 @@ class RitualResult:
 
     @property
     def ok(self) -> bool:
+        """ok implementation."""
         return all(rc == 0 for _, rc in self.steps)
 
 
