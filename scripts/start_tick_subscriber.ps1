@@ -1,6 +1,9 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] scripts.start_tick_subscriber
 # [DOMAIN] D_DATA
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
 # [TTL] permanent
 # start_tick_subscriber.ps1 - TickSubscriber guard process (auto-restart on crash)
 #

@@ -65,8 +65,14 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
+_GOV_DIR = str(Path(__file__).resolve().parents[1])
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from _shared.thresholds import get as _get_threshold  # noqa: E402  治本(AI-20 P0③ 2026-09-05): 阈值SSoT
+
 _ALLOWLIST_REL = "docs/01_policies_and_standards/_registry/catalogs/gate_tracked_write_allowlist.yaml"
-_GIT_TIMEOUT = 15
+_GIT_TIMEOUT = _get_threshold("git_operations.classify_workspace_timeout_seconds", 15)  # 治本(AI-20 P0③): 从SSoT读取
 
 # 分类常量（顺序即判读优先级）
 CAT_ACTIVE_WIP = "active_wip"          # 活跃会话 claim 的在途施工
@@ -134,7 +140,7 @@ def _load_allowlist(root: Path, allowlist_path: Path | None = None) -> tuple[set
         data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
         for entry in data.get("entries", []) or []:
             cls = str(entry.get("class", "")).strip().upper()
-            if cls not in ("B", "C"):
+            if cls not in ("B", "C"):  # noqa: gate-vocab  业务子集过滤：allowlist 仅收 B/C 类条目，非 governance_family 全集校验
                 continue
             if entry.get("path"):
                 target = b_exact if cls == "B" else c_exact

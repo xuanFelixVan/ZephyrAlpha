@@ -1,6 +1,9 @@
 # [BLUEPRINT] MOD-GOV_DRIFT_WATCHDOG | scripts/register_drift_watchdog_task.ps1 | #99-2
 # [MODULE] scripts.register_drift_watchdog_task
 # [DOMAIN] D_GOV_ENFORCEMENT
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
 # [TTL] permanent
 # register_drift_watchdog_task.ps1 - Register the worktree_drift_watchdog Task Scheduler task
 # (#99-2 root fix: RestartOnFailure backoff)

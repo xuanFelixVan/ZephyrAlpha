@@ -54,7 +54,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import EXIT_FINDINGS, REPO_ROOT
-from _shared.file_utils import atomic_write  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
+from _shared.file_utils import atomic_write_if_changed  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT；P0② 幂等写（AI-20 2026-09-05）
 
 from zephyr.governance.rule_patterns import MODULE_ID_RE  # noqa: E402  # SSoT 治本 2026-07-02 (ARCH-033 Phase 7)
 
@@ -334,8 +334,9 @@ def cmd_write() -> None:
     """cmd_write implementation."""
     content = generate_yaml()
     OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
-    atomic_write(OUTPUT_FILE, content)
-    print(f"[OK] Written to {OUTPUT_FILE}")
+    written = atomic_write_if_changed(OUTPUT_FILE, content, volatile_line_pattern=r"^\s*generated_at: .*$")
+    skip_note = "" if written else " (unchanged, skipped — P0② idempotent)"
+    print(f"[OK] Written to {OUTPUT_FILE}{skip_note}")
 
 
 def cmd_check() -> None:

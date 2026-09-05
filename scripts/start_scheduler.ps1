@@ -1,6 +1,9 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] scripts.start_scheduler
 # [DOMAIN] D_DATA
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
 # [TTL] permanent
 # start_scheduler.ps1 - IntegratorScheduler guard process (auto-restart on crash)
 #

@@ -31,6 +31,7 @@ graceful 变体 atomic_write_safe() 供防御性调用方使用——
 
 from __future__ import annotations
 
+import re as _re
 import sys as _sys
 from pathlib import Path
 
@@ -67,3 +68,40 @@ def atomic_write_safe(
         return True
     except (AtomicWriteError, OSError):
         return False
+
+
+def atomic_write_if_changed(
+    filepath: Path | str,
+    content: str,
+    *,
+    encoding: str = "utf-8",
+    volatile_line_pattern: str | None = None,
+) -> bool:
+    """幂等写：内容未变则跳写（P0② 生成器时间戳非幂等治本，AI-20 2026-09-05）。
+
+    病根：生成器（generate_script_manifest / generate_gate_registry /
+    generate_path_ownership_map / generate_registry_master_index /
+    generate_rule_ai_perception_index 等）以 ``datetime.now()`` 生成
+    generated_at 且无条件落盘 → 每波 reconciler 对未变更产物反复产生
+    mtime/git diff churn（AI-03 移交实证）。
+
+    契约：先与磁盘现内容比对，一致则跳写返回 False；不一致才 atomic_write
+    并返回 True（True=本次实际落盘）。``volatile_line_pattern``（MULTILINE
+    正则）命中行在双侧比对前剥离——时间戳行不参与相等性判定，故 only-
+    timestamp-diff 时不写（产物 generated_at 语义收敛为「最近一次产物内容
+    实际再生时间」），内容真变时才连同新时间戳落盘。读取失败按需写入兜底
+    （走 atomic_write_safe 的 graceful 契约）。
+    """
+    try:
+        existing = Path(filepath).read_text(encoding=encoding)
+        new_cmp: str = content
+        old_cmp: str = existing
+        if volatile_line_pattern:
+            rx = _re.compile(volatile_line_pattern, _re.MULTILINE)
+            new_cmp = rx.sub("", new_cmp)
+            old_cmp = rx.sub("", old_cmp)
+        if new_cmp == old_cmp:
+            return False
+    except (OSError, UnicodeDecodeError):
+        pass
+    return atomic_write_safe(filepath, content, encoding=encoding)

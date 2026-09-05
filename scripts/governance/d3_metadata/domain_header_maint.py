@@ -7,6 +7,7 @@
 # [MATURITY] production
 # [INVARIANTS] 只读扫描+校验（scan/verify 不修改文件）；clean-lock 仅清理已确认死亡的孤儿锁（PID 不存活）；--force 强制清理需人工确认
 # [MODIFY-GUARD]
+# [ERROR_CONTRACT] exit 0=scan/verify 完成; exit 1=发现问题; exit 2=脚本异常
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

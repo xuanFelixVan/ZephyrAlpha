@@ -60,11 +60,12 @@ from pathlib import Path
 from typing import Final
 
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
+from _shared.thresholds import get as _get_threshold  # 治本(AI-20 P0③ 2026-09-05): 阈值SSoT
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 __all__: Final = ["StepResult", "aggregate_exit_code", "main"]
 
-_GIT_SNAPSHOT_TIMEOUT = 15
+_GIT_SNAPSHOT_TIMEOUT = _get_threshold("git_operations.gate_chain_snapshot_timeout_seconds", 15)  # 治本(AI-20 P0③): 从SSoT读取
 
 
 @dataclass

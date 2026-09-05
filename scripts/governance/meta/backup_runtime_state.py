@@ -217,7 +217,7 @@ def _is_pid_alive(pid: int) -> bool:
         try:
             import ctypes
 
-            PROCESS_QUERY_LIMITED_INFORMATION = 0x1000  # noqa: gate-vocab
+            PROCESS_QUERY_LIMITED_INFORMATION = 0x1000  # noqa: gate-vocab  Windows API 常量 PROCESS_QUERY_LIMITED_INFORMATION，非阈值变量
             kernel32 = ctypes.windll.kernel32
             handle = kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
             if handle:

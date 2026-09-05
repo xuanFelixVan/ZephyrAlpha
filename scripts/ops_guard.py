@@ -113,6 +113,15 @@ ALLOWED_PREFIXES: tuple[str, ...] = (
     # skill_cache_provider 正常缓存清理不应被拦（批5a，观测期 350 条 would_block
     # 误报族②：测试/运行时删缓存 json 撞保护区）。
     "_skill_cache",
+    # P0①（2026-09-05 AI-20，十七域同型实证）：gateway 自家串行锁
+    # .ailocks/git_commit_global.lock 在 worktree 内解析为
+    # .worktrees/<sid>/.ailocks/... 命中上方 .worktrees 保护区，in-process 补丁
+    # 拦截 _GlobalCommitLock 锁自清 os.remove（git_commit_gateway.py __exit__）→
+    # DeleteBlockedError(RuntimeError) 逃逸 except OSError → 提交结果被遮蔽+残锁。
+    # .ailocks 与 .aidrafts 同类运行时锁目录（.gitignore L127 + trae_001
+    # runtime_auto 一致归类），锁自清/僵尸锁清理属 gateway 自有运行时状态管理，
+    # 非业务删除——白名单豁免（两代锁目录路径约定漂移的收口）。
+    ".ailocks",
 )
 
 # 会话 ID 环境变量（与 git_guard.py 对齐）

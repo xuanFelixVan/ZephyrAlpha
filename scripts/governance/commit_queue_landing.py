@@ -102,6 +102,10 @@ import tempfile
 import time
 from pathlib import Path
 
+from scripts.governance._shared.thresholds import get as _get_threshold  # 治本(AI-20 P0③ 2026-09-05): 阈值SSoT
+
+from scripts.governance._shared.thresholds import get as _get_threshold  # 治本(AI-20 P0③ 2026-09-05): 阈值SSoT
+
 import scripts.commit_queue as cq
 
 logger = logging.getLogger(__name__)
@@ -112,7 +116,7 @@ logger = logging.getLogger(__name__)
 _SERIALIZER_BRANCH = "serializer/commit-queue"  # 专用 worktree 检出的分支（随每项 reset 到 dev）
 _WORKTREE_DIR_NAME = "worktree"  # <queue_root>/worktree——任务口径专用目录（08 号文 §4.2 步骤 3）
 _MAX_CAS_RETRIES = 3  # dev CAS 冲突重试上限（66 号 §8：重放产生同内容 commit，CAS 保护不分叉）
-_GIT_TIMEOUT_SECONDS = 120  # 与 worktree_pool.run_git 同款
+_GIT_TIMEOUT_SECONDS = _get_threshold("git_operations.commit_queue_git_timeout_seconds", 120)  # 治本(AI-20 P0③): 从SSoT读取；与 worktree_pool.run_git 同款
 _MAIN_WS_SYNC_AUDIT_NAME = (
     "main_workspace_sync.jsonl"  # <queue_root>/ 下——主工作区收敛跳过/异常留痕（66 号 §9.7 受控放松 2026-08-23）
 )

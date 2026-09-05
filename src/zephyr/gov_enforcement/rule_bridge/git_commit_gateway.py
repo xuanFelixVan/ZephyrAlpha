@@ -280,20 +280,30 @@ class _GlobalCommitLock:
                         )
                         try:
                             os.remove(self._lock_file)
-                        except OSError:
+                        except (OSError, RuntimeError):
+                            # P0①（AI-20 2026-09-05）：宿主进程可能装 ops_guard
+                            # in-process 补丁——删除被拦抛 DeleteBlockedError
+                            # (RuntimeError)，except OSError 接不住会逃逸出
+                            # __enter__ 中断 commit；残锁清理失败降级为继续
+                            # 等待/TTL 兜底，不中断主链路。
                             pass
                         continue
                     if time.time() - acquired_at > _LOCK_TTL_SECONDS:
                         try:
                             os.remove(self._lock_file)
-                        except OSError:
+                        except (OSError, RuntimeError):
+                            # P0①（AI-20 2026-09-05）：宿主进程可能装 ops_guard
+                            # in-process 补丁——删除被拦抛 DeleteBlockedError
+                            # (RuntimeError)，except OSError 接不住会逃逸出
+                            # __enter__ 中断 commit；残锁清理失败降级为继续
+                            # 等待/TTL 兜底，不中断主链路。
                             pass
                         continue
                 except (OSError, ValueError, TypeError):
                     logger.warning("_GlobalCommitLock: 锁文件损坏，清理后重试: %s", self._lock_file)
                     try:
                         os.remove(self._lock_file)
-                    except OSError:
+                    except (OSError, RuntimeError):
                         pass
                     continue
                 if time.monotonic() >= deadline:
@@ -308,8 +318,12 @@ class _GlobalCommitLock:
         if self._acquired:
             try:
                 os.remove(self._lock_file)
-            except OSError:
-                pass
+            except Exception:  # noqa: BLE001 — P0①（AI-20 2026-09-05）锁自清失败
+                # 绝不遮蔽提交结果：宿主 ops_guard in-process 补丁可能抛
+                # DeleteBlockedError(RuntimeError)，except OSError 接不住导致
+                # 提交成功却以异常收场（exit=1+残锁）。降级=残锁留给下次获取
+                # 的僵尸 PID 检测/TTL 兜底，提交结果原样返回。
+                logger.warning("_GlobalCommitLock: 锁自清失败（残锁由僵尸检测/TTL 兜底）: %s", self._lock_file, exc_info=True)
             self._acquired = False
         return False
 

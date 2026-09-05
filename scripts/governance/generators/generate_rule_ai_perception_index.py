@@ -164,7 +164,9 @@ def write() -> Path:
     """生成并写入索引文件，返回输出路径。"""
     content = generate()
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT_PATH.write_text(content, encoding="utf-8")
+    # P0②（AI-20 2026-09-05）：幂等写——内容未变跳写（时间戳行不参与比对），
+    # 消除 generated_at 每波 reconciler churn（原 OUTPUT_PATH.write_text 无条件落盘）。
+    atomic_write_if_changed(OUTPUT_PATH, content, volatile_line_pattern=r"^generated_at: .*$")
     return OUTPUT_PATH
 
 

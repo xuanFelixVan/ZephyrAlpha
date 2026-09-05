@@ -11,6 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] CH不可达->打印错误+退出码2; 引擎不匹配->列出差异+退出码1; 全部匹配->退出码0
+# [TESTS] none
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: 部署脚本与 schema 文件 DDL 内容相同但用途不同(apply vs SSoT)
 """ClickHouse c1_market 建表 DDL 部署 + 引擎验证脚本（Phase F）。

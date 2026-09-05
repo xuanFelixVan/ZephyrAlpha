@@ -1,6 +1,9 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/boot_autostart_architecture.md
 # [MODULE] scripts.deadman_switch
 # [DOMAIN] D_DATA
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
 # [TTL] permanent
 # deadman_switch.ps1 - Dead-man switch: independent heartbeat staleness monitor (#ARCH-BOOT-002 E)
 #

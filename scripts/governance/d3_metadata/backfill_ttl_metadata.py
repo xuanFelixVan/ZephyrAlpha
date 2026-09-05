@@ -7,6 +7,7 @@
 # noqa: m11-perm-manual-legitimate  M11豁免: #73 已注册事件+日频双自动触发，manual 入口仅用于人工确认后的 ttl 纠偏写入（对标 apply_depgraph.py CLI 写入工具豁免先例）
 # [MATURITY] production
 # [INVARIANTS] 按 ttl_vocabulary.yaml decision_tree 二元判定 ttl 值；6 格式统一回填（.md/.py/.sh/.ps1/.mmd/.yaml/.json）；只回填有头部但无 ttl 的文件；原子写入
+# [MODIFY-GUARD]
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
