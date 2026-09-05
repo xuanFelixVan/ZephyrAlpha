@@ -5,7 +5,7 @@ submodule_path: src/zephyr/compliance/behavioral_auditor
 title: "Behavioral Auditor 蓝图 — 行为审计器·AI行为边界监控"
 doc_type: blueprint
 status: Draft
-version: "3.3.4"
+version: "3.3.5"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -79,7 +79,7 @@ build_status: planned
 > **什么时候建**: 当 AuditTrail 事件积累 ≥1000 条且 ≥14 天，或 Owner 要求主动行为监控时。基线数据由 Audit Trail 自动积累，达到门槛后自动触发。
 > **自动化宿主**: FLE `_periodic_checks()` → `_behavioral_audit_check()` + CircadianScheduler `hour=6` → `_behavioral_baseline_update()`
 
-> module_id: MOD-INF-033 | version: 3.3.4 | status: draft | layer: cross_layer
+> module_id: MOD-INF-033 | version: 3.3.5 | status: draft | layer: cross_layer
 > actual_disk_path: src/zephyr/behavioral_audit/ | generation: 3 | construction_progress: partially_implemented
 
 ## 概述
@@ -1357,7 +1357,6 @@ STEP 3: 拆分后验证
 |---------|:---:|------|
 | `src/zephyr/compliance/behavioral_auditor/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/behavioral_admission/admission_controller.py` | ✅ 已实现 | |
-| `src/zephyr/trading/gpu_consensus_scheduler.py` | ✅ 已实现 | 2026-09-06 双实现合并：MOD-INF-033 唯一实现，原 behavioral_admission 副本已删除并入（zephyr.trading.gpu_consensus_scheduler） |
 | `src/zephyr/gov_enforcement/behavioral_admission/protection_index.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/behavioral_admission/verdict_engine.py` | ✅ 已实现 | |
 
@@ -1426,7 +1425,7 @@ STEP 3: 拆分后验证
 | `tests/self_check/test_self_test_verifier.py` | ✅ 已实现 | |
 | `tests/trading/test_admission_controller.py` | ✅ 已实现 | |
 | `tests/trading/test_behavioral_admission.py` | ✅ 已实现 | |
-| `tests/trading/test_gpu_consensus_scheduler.py` | ✅ 已实现 | 2026-09-06 双实现合并：被测实现为 zephyr.trading.gpu_consensus_scheduler（MOD-INF-033 唯一实现） |
+| `tests/trading/test_gpu_consensus_scheduler.py` | ✅ 已实现 | |
 | `tests/trading/test_protection_index.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南

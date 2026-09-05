@@ -3,7 +3,7 @@ module_id: MOD-BT-026
 title: "指标NaN处理器蓝图 — 智能填充+清洗"
 doc_type: blueprint
 status: retired
-version: "0.1.3"
+version: "0.1.4"
 design_maturity: deprecated
 build_status: retired
 ttl: permanent
@@ -84,11 +84,11 @@ responsibility_domain:
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 8.1 测试文件
+### 8.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/backtest/test_nan_processor.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 8.5 路径索引使用指南
 
