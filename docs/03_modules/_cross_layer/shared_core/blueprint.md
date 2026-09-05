@@ -144,10 +144,9 @@ build_status: generated
 | module_id | MOD-INF-016 | MOD-INF-016 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 348 文件 | 280 .py（src/zephyr/shared/ 实测 2026-09-05；§0.1 为职责摘要行，完整清单 SSoT=extract_depgraph） | ❌ |
+| file_count | 348 文件 | 14 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
-> **2026-09-05 AI-18 复审轮注记**：depgraph 348 节点为 a5c1a81787（core/ 删除并入 shared/）重构前快照，主仓重建 depgraph 后自愈——已记入共享收口清单。
 
 ---
 

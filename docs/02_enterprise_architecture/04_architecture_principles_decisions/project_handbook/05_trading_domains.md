@@ -66,14 +66,14 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 | 域 ID | 域名 | 层 | 节点数 |
 |-------|------|----|-------|
 | `D_GOVERNANCE` | 生命周期管理 | L2_domain | 764 |
-| `D_GOV_SCRIPTS` | 脚本治理 | L2_domain | 545 |
+| `D_GOV_SCRIPTS` | 脚本治理 | L2_domain | 546 |
 | `D_AUDITTEST` | 审计测试套件 | L2_domain | 507 |
 | `D_AUTONOMY_CORE` | 自治核心 | L1_foundation | 507 |
-| `D_INFRA_RUNTIME` | 运行时集成 | L0_infrastructure | 468 |
+| `D_INFRA_RUNTIME` | 运行时集成 | L0_infrastructure | 463 |
 | `D_DATA` | 数据接入层 | L1_foundation | 403 |
-| `D_SHARED` | 共享服务 | L0_infrastructure | 393 |
+| `D_SHARED` | 共享服务 | L0_infrastructure | 396 |
 | `D_GOV_AUDIT` | 审计追踪 | L2_domain | 390 |
-| `D_GOV_CODE_QUALITY` | 代码质量治理 | L1_foundation | 245 |
+| `D_GOV_CODE_QUALITY` | 代码质量治理 | L1_foundation | 248 |
 | `D_FEEDBACK_LOOP` | 反馈循环引擎 | L1_foundation | 242 |
 | `D_SECURITY` | 对抗验证 | L1_foundation | 237 |
 | `D_GOV_ENFORCEMENT` | 规则执行 | L2_domain | 204 |
@@ -106,7 +106,6 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 | `D_POSITION` | 仓位管理 | L2_domain | 40 |
 | `D_GOV_RULE` | 规则治理 | L2_domain | 38 |
 | `D_ALT_DATA` | 另类数据 | L1_foundation | 34 |
-| `D_FUNDAMENTAL_SIGNAL` | 基本面信号 | L2_domain | 33 |
 | `D_DATA_ENG` | 数据工程 | L1_foundation | 32 |
 | `D_MKT_DATA` | 行情数据 | L1_foundation | 32 |
 | `D_PLAN` | 预案引擎 | L2_domain | 31 |
@@ -117,10 +116,12 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 | `D_DATA_GOV` | 数据治理 | L1_foundation | 26 |
 | `D_EX_SOR` | 执行路由 | L2_domain | 22 |
 | `D_KNOWLEDGE` | 知识管理 | L2_domain | 22 |
-| `D_META_SCRIPTS` | 元治理脚本 | L2_domain | 21 |
+| `D_META_SCRIPTS` | 元治理脚本 | L2_domain | 20 |
 | `D_PF_ALLOC` | 组合分配 | L2_domain | 20 |
-| `D_OPS` | 反馈循环 | L1_foundation | 17 |
+| `D_FUNDAMENTAL_SIGNAL` | 基本面信号 | L2_domain | 19 |
 | `D_GOV_REPAIR` | 治理修复 | L2_domain | 16 |
+| `D_OPS` | 反馈循环 | L1_foundation | 14 |
+| `D_SIGLEGACY` | 信号遗留设计态 | L2_domain | 14 |
 | `D_SIGQC` | 信号质量控制 | L2_domain | 13 |
 | `D_INFRA_OPS` | 基础设施运维 | L0_infrastructure | 12 |
 | `D_ML_SERVE` | 推理 | L2_domain | 11 |
@@ -138,7 +139,6 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 | `D_CODE_SCRIPTS` | 代码质量脚本 | L2_domain | 1 |
 | `D_SEC_SCRIPTS` | 安全治理脚本 | L2_domain | 1 |
 | `D_STRUCT_SCRIPTS` | 结构治理脚本 | L2_domain | 1 |
-| `D_SIGLEGACY` | 信号遗留设计态 | L2_domain | 0 |
 
 **合计 74 个域**
 <!-- AUTO-END:domain_list -->

@@ -269,7 +269,7 @@ design_maturity: production
 | module_id | MOD-L03-001 | MOD-L03-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | production | production | ✅ |
-| file_count | 20 文件 | 15 文件（§0.1） | ❌ |
+| file_count | 20 文件 | 17 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
