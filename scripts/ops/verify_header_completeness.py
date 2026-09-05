@@ -227,6 +227,10 @@ def main() -> int:
     print("=" * 70)
     print("HEADER COMPLETENESS VERIFICATION (6 formats: A_full/A_test/E_shell/B_yaml/C_json)")
     print("=" * 70)
+    # B22④ 治本（2026-09-05，长城审计 B22②）：REPO_ROOT 经 .pth 硬锚主仓——worktree
+    # 内直跑本脚本会静默校验主仓旧态而非 worktree 改动（假阴性）。显式回显判定根，
+    # 错树可观测；worktree 会话需先设 ZEPHYR_WORKTREE_ROOT 环境变量
+    print(f"REPO_ROOT (resolved):    {REPO_ROOT}")
     print(f"Files scanned:           {stats.files_scanned}")
     print(f"  By format:             {dict(stats.format_counts)}")
     print(f"Files complete (all req): {stats.files_complete}")

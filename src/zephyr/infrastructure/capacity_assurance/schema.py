@@ -83,10 +83,13 @@ PRAGMA 基线：
 """
 
 import hashlib
+import logging
 import os
 import sqlite3
 
 from zephyr.shared.io.sqlite_factory import get_db_connection
+
+logger = logging.getLogger(__name__)
 
 # 5.66.2 修复：表名白名单，防止 f-string 拼接表名的 SQL 注入风险
 _ALLOWED_TABLES = frozenset(
@@ -321,8 +324,11 @@ CREATE INDEX IF NOT EXISTS idx_cmh_slo_hour ON capacity_metrics_hourly(slo_id, h
                     result["hash_chain_valid"] = False
                     result["hash_chain_errors"].append(f"id={rec_id}: prev_hash={prev_hash}, expected={expected_prev}")
                 expected_prev = curr_hash
-        except sqlite3.OperationalError:
-            pass
+        except sqlite3.OperationalError as e:
+            # B5 定点治本（2026-09-05，长城审计 B5 抽样③）：原 bare pass 使 hash-chain
+            # 校验在 DB 异常时静默"通过"（fail-open）；同函数表存在性检查有记录（L307-309），
+            # 处置不一致。治本：记录告警保持降级语义（不抛错）但不再无痕。
+            logger.warning("ai_provenance hash-chain 校验查询失败（结果保持默认值）: %s", e)
 
         # TTL check
         try:

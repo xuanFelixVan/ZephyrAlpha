@@ -176,6 +176,12 @@ def _get_project_root() -> Path:
     """获取 git 仓库根目录（run_subprocess_hidden 统一入口，trae_067 合规）。
 
     进程内缓存（in-process 补丁的逐文件判定路径不可承受 subprocess 开销）。
+
+    B22 治本（2026-09-05，长城审计 B22①/AI-19 红队根因）：worktree 段剥离收敛到
+    此单一决策点——worktree/.aidrafts 进程内 git rev-parse 返回会话 worktree 根，
+    填充缓存时一次性剥离会话段归一到主仓根；_resolve_to_repo_rel 不再二次派生
+    （外部 monkeypatch 的 _PROJECT_ROOT_CACHE 即为权威根，测试可控性恢复，
+    13 个 xfail 环境差异用例的根因消除）。
     """
     global _PROJECT_ROOT_CACHE
     if _PROJECT_ROOT_CACHE is not None:
@@ -189,9 +195,15 @@ def _get_project_root() -> Path:
             text=True,
             check=True,
         )
-        _PROJECT_ROOT_CACHE = Path(result.stdout.strip())
+        root = Path(result.stdout.strip())
     except Exception:
-        _PROJECT_ROOT_CACHE = Path.cwd()
+        root = Path.cwd()
+    norm = str(root).replace("\\", "/")
+    for marker in ("/.worktrees/", "/.aidrafts/"):
+        if marker in norm:
+            root = Path(norm[: norm.index(marker)])
+            break
+    _PROJECT_ROOT_CACHE = root
     return _PROJECT_ROOT_CACHE
 
 
@@ -252,13 +264,10 @@ def _resolve_to_repo_rel(target: str, cwd: str | Path | None = None) -> str:
 
     root = _get_project_root()
     root_norm = _normalize_path(str(root)).lower()
-    # 主仓根：worktree 进程内 git rev-parse 返回 worktree 根，
-    # 剥离 .worktrees/<session> 或 .aidrafts/<session> 回主仓
+    # B22 治本（2026-09-05）：worktree 段剥离已收敛到 _get_project_root 缓存填充时
+    # （单一决策点）；此处以缓存根为权威，不再二次派生主仓根——外部 monkeypatch
+    # 的 _PROJECT_ROOT_CACHE 即测试所控的判定根。
     main_norm = root_norm
-    for marker in ("/.worktrees/", "/.aidrafts/"):
-        if marker in main_norm:
-            main_norm = main_norm[: main_norm.index(marker)]
-            break
 
     target_lower = target.lower()
 

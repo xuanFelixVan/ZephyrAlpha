@@ -195,7 +195,10 @@ def __getattr__(name):
     if name in _SUBMODULES:
         import importlib
 
-        mod = importlib.import_module(f"zephyr.data_governance.asset_inventory.{name}")
+        # B12 定点治本（2026-09-05，长城审计 B12 取证附带发现）：原路径
+        # zephyr.data_governance.asset_inventory 不存在（Test-Path=False，复制残留），
+        # 子模块属性访问必 ModuleNotFoundError——改指本包真实路径
+        mod = importlib.import_module(f"zephyr.infrastructure.asset_inventory.{name}")
         globals()[name] = mod
         return mod
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

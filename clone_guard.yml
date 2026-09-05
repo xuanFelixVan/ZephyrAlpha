@@ -34,7 +34,12 @@ pre_commit:
     ast_grep:
       enabled: true         # Phase B——结构化规则检测（no-bare-except 等）
     redup:
-      enabled: true         # Phase B——语义克隆 T3/T4 检测（L1 changed-only 增量模式）
+      # B22② 治本（2026-09-05，长城审计 B22⑤ redup 降级待查结案）：本机未安装
+      # redup CLI（Get-Command 实测），enabled:true 期间每次检测恒降级
+      # （redup_adapter L137-140 which=None→debug 级静默跳过，gw_*.log 多处
+      # "引擎 ['redup'] 降级"实证）——配置声明与实现脱节。诚实化：显式禁用；
+      # 安装 CLI 后翻回 true 即恢复 T3/T4 语义克隆检测（echo_guard+ast_grep 不受影响）
+      enabled: false
       min_sim: 0.85         # §3.3 最小相似度阈值
       max_groups: 0         # 0=不限重复组数
       mode: changed-only    # L1 增量模式（L2 审计改 semantic）
