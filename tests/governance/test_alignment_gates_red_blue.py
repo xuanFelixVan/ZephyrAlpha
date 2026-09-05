@@ -440,3 +440,91 @@ class TestV11PortfolioFlow:
         }
         errors = self._validate(self._payload_with_plan(plan))
         assert any("R12" in e and "重复" in e for e in errors)
+
+
+class TestR11DataExistence:
+    """R11 数据实存性四态（DS-12：绿/黄/红/灰）+ fail-open（v1.2 收编恢复，2026-09-05）。"""
+
+    DS_ID = "DS-001"
+    ENTITY = "market_data.tick"
+
+    @staticmethod
+    def _payload_with_data_ref() -> dict:
+        node = {
+            "node_id": "TDM-T-1",
+            "name_zh": "测试",
+            "market": "cn_a",
+            "flow": "entry_flow",
+            "layer": "L9",
+            "node_type": "stage",
+            "point": "盘前",
+            "decision_question": "测试",
+            "factor_refs": [],
+            "data_refs": [TestR11DataExistence.DS_ID],
+            "module_ref": None,
+            "strategy_mounts": [],
+        }
+        return {
+            "schema_version": "1.1",
+            "map_id": "TDMAP-R11",
+            "markets": ["cn_a"],
+            "nodes": [node],
+            "edges": [],
+            "state_matrix": {"states": ["强势"], "cells": []},
+        }
+
+    def _run(self, monkeypatch: pytest.MonkeyPatch, tsv: str) -> list[str]:
+        import tempfile
+
+        import check_decision_map as cdm
+
+        monkeypatch.setattr(cdm, "_query_data_freshness", lambda db, table: tsv)
+        with tempfile.NamedTemporaryFile("w", suffix=".yaml", delete=False, encoding="utf-8") as f:
+            yaml.safe_dump(self._payload_with_data_ref(), f, allow_unicode=True)
+            tmp = Path(f.name)
+        try:
+            _, warns, _ = cdm.run_checks(map_path=tmp)
+        finally:
+            tmp.unlink()
+        return [w for w in warns if w.startswith("R11")]
+
+    @pytest.mark.parametrize(
+        ("offset_days", "rows", "expected_state"),
+        [
+            pytest.param(0, 12345, "正常", id="green-today"),
+            pytest.param(2, 12345, "延迟", id="yellow-2d"),
+            pytest.param(35, 12345, "疑似断更", id="red-old"),
+            pytest.param(0, 0, "未启动", id="gray-empty"),
+        ],
+    )
+    def test_four_states(
+        self, monkeypatch: pytest.MonkeyPatch, offset_days: int, rows: int, expected_state: str
+    ) -> None:
+        from datetime import date, timedelta
+
+        d = (date.today() - timedelta(days=offset_days)).isoformat()
+        warns = self._run(monkeypatch, f"{d}\t{rows}\n")
+        assert any(f"四态={expected_state}" in w for w in warns), warns
+
+    def test_ch_down_fail_open_single_warn(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """CH 不可达 → 整体跳过（单条 warn），不崩溃不阻断。"""
+        warns = self._run(monkeypatch, "")  # ch_writer 失败返回空串
+        assert any("ClickHouse 不可达" in w for w in warns)
+        assert len(warns) == 1
+
+    def test_r11_never_blocks(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """红态（最坏）也只进 warns 不进 fails——DECISION-MAP gate 放行。"""
+        import tempfile
+
+        import check_decision_map as cdm
+
+        monkeypatch.setattr(cdm, "_query_data_freshness", lambda db, table: "2020-01-01\t1\n")
+        with tempfile.NamedTemporaryFile("w", suffix=".yaml", delete=False, encoding="utf-8") as f:
+            yaml.safe_dump(self._payload_with_data_ref(), f, allow_unicode=True)
+            tmp = Path(f.name)
+        try:
+            fails, warns, _ = cdm.run_checks(map_path=tmp)
+        finally:
+            tmp.unlink()
+        assert fails == []
+        assert any("疑似断更" in w for w in warns)

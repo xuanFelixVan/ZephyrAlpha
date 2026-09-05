@@ -84,6 +84,11 @@ _PF_CORE_DIR = _REPO_ROOT / "src" / "zephyr" / "pf_core"
 
 # SQL 常量（NO-BARE-SQL 豁免命名约定 _SQL_*，先例=rename_depgraph_sync_gate）
 _SQL_CHECK_MODULE_EXISTS = "SELECT 1 FROM nodes WHERE module_id = %s LIMIT 1"
+# 数据实存性（R11）：active parts 的最新写入日期与总行数（真源=system.parts，数据监管页同款）
+_SQL_DATA_FRESHNESS = (
+    "SELECT max(modification_date), sum(rows) FROM system.parts "
+    "WHERE active AND database = '{db}' AND table = '{table}'"
+)
 
 
 def collect_strategy_ids_via_ast(pf_core_dir: Path = _PF_CORE_DIR) -> frozenset[str]:
@@ -101,9 +106,12 @@ def collect_strategy_ids_via_ast(pf_core_dir: Path = _PF_CORE_DIR) -> frozenset[
             except (SyntaxError, UnicodeDecodeError, OSError):
                 continue
             for node in ast.walk(tree):
-                if isinstance(node, ast.keyword) and node.arg == "strategy_id" and isinstance(
-                    node.value, ast.Constant
-                ) and isinstance(node.value.value, str):
+                if (
+                    isinstance(node, ast.keyword)
+                    and node.arg == "strategy_id"
+                    and isinstance(node.value, ast.Constant)
+                    and isinstance(node.value.value, str)
+                ):
                     ids.add(node.value.value)
     except OSError:
         return frozenset()
@@ -140,9 +148,93 @@ def run_checks(
         missing = [m for m in module_refs if not _module_exists_in_depgraph(m)]
         fails.extend(f"R9 [map] module_ref 在 depgraph 不存在: {m}" for m in missing)
 
+    # R11: data_refs → CH 表实存性+新鲜度四态（warn 级，N2 数据节点红绿灯）
+    try:
+        warns.extend(_check_data_existence(dm, rd))
+    except Exception as e:  # noqa: BLE001 — R11 是增强检查，异常不阻断主校验
+        warns.append(f"R11 [map] 数据实存性检查异常（跳过）: {e}")
+
     if not ok:
         pass  # ok 语义=fails 为空，已由分级表达
     return fails, warns, len(dm.nodes)
+
+
+def _query_data_freshness(db: str, table: str) -> str:
+    """查 system.parts 最新写入日期与行数（复用 ch_writer 单例与 TCP/HTTP 降级链；失败返回空串）。"""
+    from zephyr.data.ch_writer import query as ch_query
+
+    return ch_query(_SQL_DATA_FRESHNESS.format(db=db, table=table))
+
+
+def _classify_freshness(fresh_date: str, total_rows: int) -> str:
+    """四态分类（DS-12 语义：绿=正常/黄=延迟/红=断更/灰=未启动）。"""
+    from datetime import date, timedelta
+
+    today = date.today()
+    if total_rows == 0:
+        return "gray"
+    if fresh_date >= today.isoformat():
+        return "green"
+    if fresh_date >= (today - timedelta(days=3)).isoformat():
+        return "yellow"
+    return "red"
+
+
+def _evaluate_ref(ds: str, entity: str) -> tuple[str | None, bool]:
+    """单条 DS 引用求值 → (warn|None, ch_down)。ch_down=True 表示 CH 不可达。"""
+    if not entity or "." not in entity:
+        return (f"R11 [{ds}] 无法解析 CH 表映射（entity_name={entity or '缺失'}）", False)
+    db, table = entity.split(".", 1)
+    raw = _query_data_freshness(db, table)
+    if not raw or "\t" not in raw:
+        return ("R11 [map] ClickHouse 不可达，数据实存性检查跳过（fail-open）", True)
+    date_str, _, rows_str = raw.strip().partition("\t")
+    try:
+        rows = int(float(rows_str)) if rows_str not in ("", "\\N") else 0
+    except ValueError:
+        rows = 0
+    state = _classify_freshness(date_str.strip(), rows)
+    state_zh = {"green": "正常", "yellow": "延迟", "red": "疑似断更", "gray": "未启动"}[state]
+    return (f"R11 [{ds}] {db}.{table} 四态={state_zh}（最新写入 {date_str}，{rows} 行）", False)
+
+
+def _load_entity_map(registry_dir: Path) -> dict[str, str]:
+    """DS-* → CH 表映射（data_asset_registry datasets[].entity_name）。"""
+    import yaml as _yaml
+
+    reg = _yaml.safe_load((registry_dir / "data_asset_registry.yaml").read_text(encoding="utf-8")) or {}
+    return {
+        str(e.get("dataset_id")): str(e.get("entity_name") or "")
+        for e in (reg.get("datasets") or [])
+        if isinstance(e, dict) and e.get("dataset_id")
+    }
+
+
+def _check_data_existence(dm, registry_dir: Path) -> list[str]:
+    """R11：data_refs → DS-* → CH 表实存性+新鲜度 → 四态 warn（N2 需求数据节点红绿灯）。
+
+    warn 级不阻断（数据是运行时状态，commit 时新鲜≠明天新鲜——行业标准=freshness SLI
+    做运行时检查不做 CI 门禁）。CH 不可达=整体跳过（fail-open 单条 warn）。
+    """
+    refs: list[str] = []
+    for n in dm.nodes:
+        refs.extend(n.data_refs)
+    if not refs:
+        return []
+
+    entity_by_id = _load_entity_map(registry_dir)
+    warns: list[str] = []
+    ch_down_notified = False
+    for ds in dict.fromkeys(refs):  # 去重保序
+        warn, ch_down = _evaluate_ref(ds, entity_by_id.get(ds, ""))
+        if ch_down:
+            if not ch_down_notified:
+                warns.append(warn)
+                ch_down_notified = True
+            continue
+        if warn:
+            warns.append(warn)
+    return warns
 
 
 def _module_exists_in_depgraph(module_id: str) -> bool:
