@@ -1,4 +1,10 @@
 # [BLUEPRINT] MOD-INF-044 | docs/03_modules/_cross_layer/shared_core/dashboard_blueprint.md
+# [MODULE] zephyr.shared.observability.dashboard.dashboard_templates
+# [DOMAIN] D_SHARED
+# [DEPENDENCIES] none (stdlib only)
+# [CONSUMERS] zephyr.shared.observability.dashboard.__init__(aggregate re-export); tests/zephyr/shared/observability/test_dashboard.py
+# [STARTUP] imported
+# [MATURITY] production
 # [A_module] module_id=MOD-INF-044 | layer=module | stability=evolving | safety=L
 # [TTL] permanent
 """

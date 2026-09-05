@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md
 # [MODULE] zephyr.shared.events.hook_dispatcher
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.event_bus

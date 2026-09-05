@@ -33,7 +33,7 @@ from zephyr.shared.infra.process_lifecycle_gateway import ProcessLifecycleGatewa
 
 from . import cache
 
-# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md
 # [TTL] permanent
 """shared.infra — auto-generated package init."""
 

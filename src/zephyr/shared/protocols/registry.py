@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHARED-001 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
+# [BLUEPRINT] MOD-SHARED-001 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md
 # [MODULE] zephyr.shared.protocols.registry
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.__init__
