@@ -3,27 +3,29 @@ ttl: permanent
 doc_type: policy
 rule_form: checklist
 verifiability: manual
-title: 全项目对齐清单——六图+注册表+代码文档三层对齐规则
+title: 全项目对齐清单——全图全库+代码文档三层对齐规则
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.1.0"
-date: 2026-09-04
+version: "1.3.0"
+date: 2026-09-05
 topic: full_project_alignment_checklist
 scope: global
 depends_on:
   - construction_workflow_sop
   - document_review_and_optimization_sop
   - trae_080_panorama_alignment
-related_issues: []
+related_issues:
+  - "#ARCH-ALIGN-NAMING-001（全图全库对齐简称，计数无关命名裁定）"
 related_modules:
   - scripts/governance/d5_architecture/generators/align_all.py
   - scripts/governance/d5_architecture/generators/align_panoramas.py
   - src/zephyr/gov_enforcement/commit_gates/panorama_alignment_gate.py
 ---
 
-# 全项目对齐清单——六图+注册表+代码文档三层对齐规则
+# 全项目对齐清单——全图全库+代码文档三层对齐规则
 
+> **简称：全图全库对齐**（Owner 2026-09-05 裁定 #ARCH-ALIGN-NAMING-001——计数无关命名：本体系历经五图→六图→七图三次改名，每次都迫使文档返工；本名不随全景图/注册表数量增长腐化。口语"跑一下全图全库对齐"=`python scripts/governance/d5_architecture/generators/align_all.py`。当前实际数量：全景图 7 张+注册表 49 个，见 §3/§4）
 > 本清单是 **全项目对齐** 的**资产清单层真源**，列出"要对齐哪些东西、每个东西的对齐规则、用什么工具、不一致怎么办"。
 > **性质**：清单层，只列对齐对象+规则+工具+处置，不编排流程。流程见 [construction_workflow_sop](construction_workflow_sop.md)（施工 SOP，管"什么时候对齐、怎么对齐"）。
 > **适用范围**：**全项目所有模块/前端/文档/注册表**，不限于 07 域。新 AI 进项目必读。
@@ -54,13 +56,13 @@ related_modules:
 
 ### 2.2 本清单的解法
 
-- **三层分类**：六图（第一层）+ 注册表（第二层）+ 代码文档（第三层），每层列出全量对象+对齐规则
+- **三层分类**：全图（第一层，现 7 张）+ 注册表（第二层）+ 代码文档（第三层），每层列出全量对象+对齐规则
 - **每个对象四要素**：对齐对象（和什么对齐）/ 对齐时机（什么时候检查）/ 对齐工具（用什么脚本/门禁）/ 失败处置（不一致怎么办）
 - **新 AI 入口**：本文档列入 [construction_workflow_sop](construction_workflow_sop.md) Step 0 必看文件清单，新 AI 冷启动时强制加载
 
-## 3. 第一层：六图对齐
+## 3. 第一层：全景图对齐（七图，全图全库对齐之"图"）
 
-> 六图=五图（depgraph/dataflowgraph/decisiongraph/blueprint/battle_map）+ frontend_map（前端全景图，2026-09-01 已建：web/frontend_map.yaml，stockq 功能点已登记；自动门禁待建，暂人工核对）
+> 七图=六图（depgraph/dataflowgraph/decisiongraph/blueprint/battle_map/frontend_map）+ trading_decision_map（交易决策地图，2026-09-05 七图升级：config/trading_decision_map.yaml，MOD-TRADING-015）
 
 | 图名 | 真源 | 对齐 key | 对齐规则 | 对齐时机 | 对齐工具 | 失败处置 |
 |---|---|---|---|---|---|---|
@@ -70,11 +72,13 @@ related_modules:
 | **blueprint.md**（蓝图） | MD frontmatter | module_id | frontmatter 4 字段（module_id/responsibility_domain/design_maturity/build_status）必须与 depgraph 一致 | commit 前 / sync 时 | sync_panorama_module.py（单向派生） | frontmatter 漂移→warn |
 | **battle_map**（作战地图） | PostgreSQL 3 表（battle_map_steps/anchors/edges） | step_id | BM-XXX 环节必须与前四图双向校验 | commit 前 / 改动涉及 BM 环节时 | [generate_battle_map_diagram.py](../../../scripts/governance/d5_architecture/generators/generate_battle_map_diagram.py) | ghost_anchors>0→阻断 |
 | **frontend_map**（前端全景图，已建 2026-09-01；v2.0.0 双真源合并+302 功能点补登） | `src/zephyr/frontend/dashboard/web/frontend_map.yaml`（git YAML 真源） | feature_id（F-页面-名） | 前端功能必须挂 backend_ref 到模块注册表（类型化：module:/registry:/table:/api:/none:）；模块必须声明 has_frontend；与 features/manifest.yaml 双向一致 | commit 前 / 新前端功能上线时 | [check_frontend_map.py](../../../scripts/governance/d5_architecture/generators/check_frontend_map.py) 校验器 + **FRONTEND-MAP gate（commit 自动阻断，priority=137）** + scan_frontend_pages.py 半自动补登 | frontend_ref 空→阻断（commit gate 已闭环 2026-09-04） |
+| **trading_decision_map**（交易决策地图，2026-09-05 七图升级） | `config/trading_decision_map.yaml`（git YAML 真源） | node_id（TDM-*） | R1-R12 引用校验（策略挂载/因子/数据/module_ref 断链=error 阻断；数据实存性四态=warn）+R8 sequence 成环检测 | commit 前（恒跑 gate）/ align_all 第 7 项 | [check_decision_map.py](../../../scripts/governance/d5_architecture/generators/check_decision_map.py) 校验器 + **DECISION-MAP gate（commit 自动阻断，priority=138）**（校验单一真源=zephyr.trading.decision_map.validate_decision_map） | R1-R8/R10/R12 error>0→阻断；module_ref 缺失→warn（红节点占位） |
 
-**六图统一验证命令（2026-09-04 六图升级：单命令跑全）**：
+**七图统一验证命令（2026-09-05 七图升级：单命令跑全）**：
 ```powershell
-python scripts/governance/d5_architecture/generators/align_all.py  # 六图对齐统一入口（图 1-5 自动 + 图 6 frontend_map 校验内嵌，fail>0=exit 1）
+python scripts/governance/d5_architecture/generators/align_all.py  # 全图对齐统一入口（图 1-5 自动 + 图 6 frontend_map + 图 7 trading_decision_map 校验内嵌，fail>0=exit 1）
 python scripts/governance/d5_architecture/generators/check_frontend_map.py  # 图 6 单独跑（快速诊断用）
+python scripts/governance/d5_architecture/generators/check_decision_map.py  # 图 7 单独跑（快速诊断用）
 ```
 
 **硬阻断条件**：domain_mismatches>0 / ghost_anchors>0 / frontend_ref 悬空（自动门禁建成后；建成前人工确认）
@@ -85,14 +89,16 @@ python scripts/governance/d5_architecture/generators/check_frontend_map.py  # �
 
 ### 4.1 业务资产库（6 个）
 
+> 2026-09-05 G1 落地（#ARCH-BUSINESS-REG-GATE-001）：六库对齐工具从"门禁（待建）"转正式——**BUSINESS-REGISTRY gate（priority=139）**：条目 id 唯一+module_id 非空 MOD-* 格式（确定性硬）+depgraph 存在性（PG fail-open）；基线 735 条目 module_id 填充率 100% 实证
+
 | 注册表 | 对齐对象 | 对齐规则 | 对齐时机 | 对齐工具 |
 |---|---|---|---|---|
-| **factor_registry**（因子库） | depgraph / blueprint | 因子模块必须登记 depgraph + 蓝图 frontmatter 一致 | 新因子注册时 | 门禁（待建） |
-| **strategy_registry**（策略库） | depgraph / blueprint / battle_map | 策略模块必须登记 depgraph + 挂 BM-XXX 环节 | 新策略注册时 | 门禁（待建） |
-| **technical_indicator_registry**（技术指标库） | depgraph / blueprint | 指标模块必须登记 depgraph | 新指标注册时 | 门禁（待建） |
-| **chart_pattern_registry**（图形形态库） | depgraph / blueprint | 形态识别模块必须登记 depgraph | 新形态注册时 | 门禁（待建） |
-| **portfolio_model_registry**（组合模型库） | depgraph / blueprint | 组合模型必须登记 depgraph | 新模型注册时 | 门禁（待建） |
-| **risk_limit_registry**（风险限额库） | depgraph / blueprint / config | 限额配置必须与风控模块一致 | 限额变更时 | 门禁（待建） |
+| **factor_registry**（因子库） | depgraph / blueprint | 因子模块必须登记 depgraph + 蓝图 frontmatter 一致 | 新因子注册时 | BUSINESS-REGISTRY gate（2026-09-05 转正式） |
+| **strategy_registry**（策略库） | depgraph / blueprint / battle_map | 策略模块必须登记 depgraph + 挂 BM-XXX 环节 | 新策略注册时 | BUSINESS-REGISTRY gate（2026-09-05 转正式；BM 锚点对 production 模块强制、design/planned warn） |
+| **technical_indicator_registry**（技术指标库） | depgraph / blueprint | 指标模块必须登记 depgraph | 新指标注册时 | BUSINESS-REGISTRY gate（2026-09-05 转正式） |
+| **chart_pattern_registry**（图形形态库） | depgraph / blueprint | 形态识别模块必须登记 depgraph | 新形态注册时 | BUSINESS-REGISTRY gate（2026-09-05 转正式） |
+| **portfolio_model_registry**（组合模型库） | depgraph / blueprint | 组合模型必须登记 depgraph | 新模型注册时 | BUSINESS-REGISTRY gate（2026-09-05 转正式） |
+| **risk_limit_registry**（风险限额库） | depgraph / blueprint / config | 限额配置必须与风控模块一致 | 限额变更时 | BUSINESS-REGISTRY gate（2026-09-05 转正式） |
 
 ### 4.2 治理库（4 个）
 
@@ -200,3 +206,4 @@ python scripts/governance/d5_architecture/generators/check_frontend_map.py  # �
 | 2026-08-31 | 1.0.0 | 初稿：三层对齐体系（六图+注册表+代码文档）+ 对齐时机矩阵 + 新 AI 必读清单 | 项目对齐体系片段化，缺统一清单；新 AI 进项目不知道要对齐什么；前端全景图（frontend_map）待建需预留对齐规则 |
 | 2026-09-04 | 1.1.0 | frontend_map 状态修正：待建→已建（2026-09-01 实建 web/frontend_map.yaml，stockq 功能点已登记）+ 真源路径修正（原写的 architecture_model/frontend/ 为失效路径）+ 对齐工具改"人工核对（施工 SOP Step 3）+自动门禁待建" | Owner 巡检发现清单状态漂移：frontend_map.yaml 已实建 4 天，清单仍标"待建"且真源路径失效——对齐清单自身先对齐（§5 文档→代码规则自证） |
 | 2026-09-04 | 1.2.0 | frontend_map 双真源合并落地（Owner 裁定：web 版唯一真源）+ 全景图补登专项 + 对齐校验器 | ①architecture_model/frontend/ 版（74KB/17 功能点/三级）降级废弃，superseded_by 指向 web 版；②web 版 v2.0.0：迁移 21 条真增量（2 条语义重复合并）+scan_frontend_pages 改造指向 web 版半自动补登 38 页→302 功能点/44 页全类型化零重复；③gap_views 脚本改读 web 版+悬空判定升级五前缀；④新建 check_frontend_map.py 校验器（R0 id 重复/R1 类型化/R2 manifest 双向/R3 file 存在，auto 条目宽严分级）——对齐工具"待建"项部分落地 |
+| 2026-09-05 | 1.3.0 | **"全图全库对齐"简称裁定（#ARCH-ALIGN-NAMING-001）+ 第七图 trading_decision_map 入表 + §4.1 业务库门禁转正式** | ①计数无关命名（五图→六图→七图三次改名腐化史）；②§3 新增图 7 行（R1-R12 校验+DECISION-MAP gate 138+check_decision_map 校验器）+验证命令块更新；③§4.1 六库对齐工具"门禁（待建）"→BUSINESS-REGISTRY gate(139) 转正式（G1 落地，基线 735 条目 100% 实证）——配合 #ARCH-DECISION-MAP-GATE-001/#ARCH-BUSINESS-REG-GATE-001/#ARCH-BATTLE-MAP-HARD-001 三裁定 |

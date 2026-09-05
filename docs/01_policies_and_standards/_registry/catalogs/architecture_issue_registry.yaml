@@ -21391,3 +21391,12 @@ entries:
   status: decided
   created: '2026-09-05'
   last_updated: '2026-09-05'
+
+- issue_id: '#ARCH-ALIGN-NAMING-001'
+  title: 对齐体系简称裁定"全图全库对齐"——计数无关命名（七图+49 注册表，治理真源=alignment_checklist v1.3.0）
+  severity: P3低
+  adjudication: 'Owner 2026-09-05 裁定：对齐体系简称定为"全图全库对齐"（All-Panorama All-Registry Alignment）。理由=计数无关命名：本体系历经五图→六图→七图三次改名，每次迫使 SOP/AGENTS.md/checklist 多文档返工（SOP v1.5.0-1.5.4 四版），计数命名随资产增长必然腐化。同批落地：①alignment_checklist v1.3.0（第七图 trading_decision_map 入表+§4.1 六库门禁"待建"转正式 BUSINESS-REGISTRY gate）②SOP v1.5.5（Step 3 七图化）③AGENTS.md 必读三件套行同步。口语"跑一下全图全库对齐"=python scripts/governance/d5_architecture/generators/align_all.py。'
+  fix_phase: '已落地（2026-09-05：alignment_checklist v1.3.0 + construction_workflow_sop v1.5.5 + AGENTS.md 三件套行 + 本登记）'
+  status: decided
+  created: '2026-09-05'
+  last_updated: '2026-09-05'

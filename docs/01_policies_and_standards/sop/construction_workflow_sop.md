@@ -7,8 +7,8 @@ title: 07 域施工流程标准作业规程（SOP）——端到端 15 步施工
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.5.4"
-date: 2026-08-12
+version: "1.5.5"
+date: 2026-09-05
 topic: construction_workflow_sop
 scope: global
 depends_on:
@@ -263,7 +263,7 @@ python scripts/governance/apply_depgraph.py --add-edge ...
 
 ---
 
-### Step 3 · 六图对齐（五图自动 + frontend_map 人工核对）
+### Step 3 · 全图全库对齐（七图自动：align_all 单命令；简称裁定 #ARCH-ALIGN-NAMING-001）
 
 **何时触发**：Step 2 完成
 **前置条件**：depgraph planned 节点已登记
@@ -279,15 +279,16 @@ python scripts/governance/sync_panorama_module.py --all
 python scripts/governance/d5_architecture/generators/align_all.py
 ```
 
-**六图定义**：
+**七图定义**（简称"全图全库对齐"=#ARCH-ALIGN-NAMING-001）：
 1. **depgraph**（真源 PostgreSQL，工具 apply_depgraph.py）
 2. **dataflowgraph**（真源 PostgreSQL 3 表，工具 apply_dataflowgraph.py）
 3. **decisiongraph**（真源 PostgreSQL 3 表，工具 apply_decisiongraph.py）
 4. **blueprint.md**（真源 MD frontmatter，sync_panorama_module 单向派生 4 字段）
 5. **battle_map**（真源 PostgreSQL 3 表 battle_map_steps/anchors/edges，工具 apply_battle_map.py）
-6. **frontend_map**（真源 `web/frontend_map.yaml` git YAML，2026-09-01 已建；对齐 key=feature_id；自动门禁待建，暂人工核对）
+6. **frontend_map**（真源 `web/frontend_map.yaml` git YAML，2026-09-01 已建；对齐 key=feature_id；FRONTEND-MAP gate 137）
+7. **trading_decision_map**（真源 `config/trading_decision_map.yaml` git YAML，2026-09-05 七图升级；对齐 key=TDM-node_id；R1-R12 校验+DECISION-MAP gate 138 恒跑）
 
-**对齐 key**：前四图以 module_id 为对齐 key / 第五图 battle_map 以 step_id 为对齐 key（通过 battle_map_anchors 双向校验）/ 第六图 frontend_map 以 feature_id 为对齐 key
+**对齐 key**：前四图以 module_id 为对齐 key / 第五图 battle_map 以 step_id 为对齐 key（通过 battle_map_anchors 双向校验）/ 第六图 frontend_map 以 feature_id 为对齐 key / 第七图 trading_decision_map 以 node_id 为对齐 key
 **通过判据**：module_id 轴四类问题（孤儿/状态漂移/域不一致/设计态孤立）为 0 或已知可接受 + step_id 轴 BM-INV-001~007 为 0 或 warn-only + frontend_map 功能点 backend_ref 全类型化挂载、与 manifest 无漂移（涉前端时）
 **硬阻断**：domain_mismatches>0 / ghost_anchors>0 直接阻断；frontend_ref 悬空=阻断（门禁建成后自动，建成前 Step 10 提交时人工确认）
 **不通过处置**：domain 不一致 → 回 Step 2 修正 / 孤儿或状态漂移 → 重跑 sync + align / frontend_ref 悬空 → 挂载 backend_ref 或声明 none+理由
@@ -799,6 +800,7 @@ python scripts/session_worktree.py cleanup <sid>
 | 2026-09-04 | 1.5.2 | Step 3.5 升级"后端盘点与拆件判定"——拆件 SOP 正式接入总流程 | Owner 追问"拆件判定在哪一步"发现两 SOP 断链：Step 0 必看清单+Step 3.5 补 frontend_component_split_sop.md 引用；新增执行要点 4 拆件判定（盘点先行供输入——拆件第一判据=数据源边界；有得拆→拆件 8 步闭环，没得拆→直接施工）；Checklist 13 同步 |
 | 2026-09-04 | 1.5.3 | Step 3 正文"五图"→"六图"（frontend_map 已建未入正文）+ Step 3.5 补前端一查 | Owner 追问发现 frontend_map.yaml 已建（2026-09-01）但 Step 3 正文仍是五图对齐——正文与 Checklist"六图通过"自相矛盾；Step 3 标题/定义/对齐 key/通过判据/处置全量六图化（frontend_map=git YAML 真源+feature_id 对齐 key+人工核对，自动门禁待建）；Step 3.5 三查扩"三查+前端一查"（frontend_map 查重：同功能点已存在=复用/扩展，禁重复造轮子） |
 | 2026-09-04 | 1.5.4 | Step 3 frontend_map 校验器落地——人工核对升级脚本校验 | Owner 裁定双真源合并+补登专项：check_frontend_map.py 落地（R0 重复/R1 类型化/R2 manifest 双向/R3 file 存在，auto 条目宽严分级）；frontend_map v2.0.0 唯一真源+302 功能点/44 页（详见 alignment_checklist v1.2.0）；Step 3 命令块同步 |
+| 2026-09-05 | 1.5.5 | **"全图全库对齐"简称裁定（#ARCH-ALIGN-NAMING-001）+ Step 3 七图化**：计数无关命名（五图→六图→七图三次改名腐化史）；Step 3 定义表新增图 7 trading_decision_map（TDM-node_id 轴+DECISION-MAP gate 138）；配合 alignment_checklist v1.3.0 | Owner 2026-09-05 裁定；七图对齐 exit 0 实证 |
 
 ## 附录 A：长清单审查全文（用户提供的 12 节审查清单）
 
