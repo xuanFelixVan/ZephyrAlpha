@@ -3,7 +3,7 @@ module_id: MOD-INF-023
 title: "Drift Detector 蓝图 — 39检测器漂移检测引擎与10状态漂移生命周期"
 doc_type: blueprint
 status: Active
-version: "3.1.9"
+version: "3.1.10"
 layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
@@ -1311,7 +1311,6 @@ detector_dimensions:
 | `src/zephyr/gov_drift/reconciler.py` | ✅ 已实现 | |
 | `src/zephyr/gov_drift/runbook_generator.py` | ✅ 已实现 | |
 | `src/zephyr/gov_drift/state_machine.py` | ✅ 已实现 | |
-| `src/zephyr/governance/drift-detector/__init__.py` | ⚠️ 骨架 | |
 
 ### 1.2 测试文件
 
