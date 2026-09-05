@@ -34,10 +34,10 @@
 
 | 资产 | 数量 | 发现入口 |
 |------|:---:|------|
-| 模块 | 4,639 | `python scripts/governance/extract_depgraph.py --summary` |
-| 脚本 | 483 | `scripts/script-manifest.yaml` |
-| 门禁 | 43 | `src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml` |
-| 蓝图 / 模板 | 60 / 13 | `docs/03_modules/blueprint_registry.yaml` / `template_registry.yaml` |
+| 模块 | 7,106 | `python scripts/governance/extract_depgraph.py --summary` |
+| 脚本 | 755 | `scripts/script-manifest.yaml` |
+| 门禁 | 86 | `src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml` |
+| 蓝图 / 模板 | 物理蓝图实测 / 11 | `docs/03_modules/**/blueprint.md` / `docs/03_modules/template_registry.yaml` |
 | Agent Skill | 22 | `data/capability_cards/` (skill_*.yaml) |
 
 ### ⚠️ 真源文件（SSoT）— 任何 AI 进项目 MUST 先知道
@@ -50,7 +50,7 @@
 
 **绝对禁止**：引用 `project-entity-depgraph-v3-domain-draft.yaml`/`target_path_tree.yaml`/`archive/` 下归档文件/`project-path-tree.yaml`/`functional_domain_registry.yaml` 作为真源（均已被合并或为派生物）。
 
-> 创建任何新功能前，MUST 先搜索 483 脚本 + 4,639 模块中是否已有覆盖。不搜索 = 违规。
+> 创建任何新功能前，MUST 先搜索 755 脚本 + 7,106 模块中是否已有覆盖。不搜索 = 违规。
 
 ---
 

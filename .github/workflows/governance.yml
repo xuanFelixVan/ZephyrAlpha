@@ -298,7 +298,7 @@ jobs:
       - name: Phase Manager State Check
         run: |
           python -c "
-          from zephyr.governance.phase_manager import PHASE_SEQUENCE, ConstructionPhase
+          from zephyr.governance.ops_governance.phase_manager import PHASE_SEQUENCE, ConstructionPhase
           p0 = PHASE_SEQUENCE[ConstructionPhase.PHASE_0_SKELETON]
           p1 = PHASE_SEQUENCE[ConstructionPhase.PHASE_1_FUNCTIONAL]
           p2 = PHASE_SEQUENCE[ConstructionPhase.PHASE_2_E2E]
