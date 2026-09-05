@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] ZA-REGIME-0050/0051/0052
+# [ERROR_CONTRACT] 降级场景码 ZA-REGIME-0050/0051/0052（blueprint §8）——全部降级不抛错，无异常类
 # [TESTS] tests/regime/test_chip_distribution_engine.py
 # [A_module] module_id=MOD-REGIME-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.risk.implementations.default_stop_loss_engine
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.risk.risk_manager_base
-# [CONSUMERS]
+# [CONSUMERS] zephyr.risk.implementations.default_risk_manager_orchestrator(DefaultStopLossEngine 默认实例化)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 多头-only契约(position_qty<=0抛ValueError); trailing高水位按symbol隔离

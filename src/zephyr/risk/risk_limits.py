@@ -2,7 +2,7 @@
 # [MODULE] zephyr.risk.risk_limits
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.shared.contracts.risk_limits
-# [CONSUMERS]
+# [CONSUMERS] zephyr.risk.implementations.default_risk_limits_calculator(DefaultRiskLimitsCalculator 唯一实现)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none

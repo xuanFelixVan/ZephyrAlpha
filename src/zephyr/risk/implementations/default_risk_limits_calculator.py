@@ -2,7 +2,7 @@
 # [MODULE] zephyr.risk.implementations.default_risk_limits_calculator
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.risk.risk_limits; zephyr.risk.risk_manager（RiskLimits 真源=zephyr.shared.contracts.risk_limits，CTR-003 codegen）
-# [CONSUMERS]
+# [CONSUMERS] zephyr.risk.implementations.default_risk_manager_orchestrator(DefaultRiskManagerOrchestrator 默认实例化)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none
