@@ -23655,11 +23655,11 @@ entries:
   plain_zh: 测试：检查决策审计器在各种情况下表现对不对，守住质量关。
 - module_path: src/zephyr/trading/trading_contracts/risk/risk_limits.py
   domain_id: D_TRADING
-  name_zh: 风险Limits
-  name_en: Risk Limits
+  name_zh: 风险Limits转发垫片
+  name_en: Risk Limits Re-export Shim
   desc_zh: ''
   desc_en: ''
-  plain_zh: 交易运营的风险限制定义：把风险限制的数据结构和约定写在一处，大家按同一套约定用，避免各写各的对不上。
+  plain_zh: 风险限制的转发垫片：真源在共享契约层（CTR-003 登记的 shared/contracts/risk_limits.py），这里只保留原导入路径的兼容转发（B3 治本 2026-09-05 双真源收敛），不再有自己的实现。
 - module_path: src/zephyr/shared/schema/base_config.py
   domain_id: D_SHARED
   name_zh: 基础配置

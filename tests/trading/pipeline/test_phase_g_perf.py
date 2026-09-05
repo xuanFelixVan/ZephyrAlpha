@@ -694,23 +694,39 @@ class TestPhaseGFullPipelineThroughput:
                 syn = aggregator.aggregate([fs_mom, fs_val], "600519", str(uuid.uuid4()))
 
                 strategy.update_signals({"600519": syn.signal_value})
-                orders = strategy.generate_target_weights()
+                weights = strategy.generate_target_weights()
 
-                for order in orders:
+                # 接口对齐：generate_target_weights 返回权重面板 dict[str, float]
+                # （权重面板契约，见 DefaultEquityStrategy.generate_target_weights 签名），
+                # 订单由权重构造后提交（对齐本文件 test_l06_order_execution_latency 的
+                # Order 构造模式）；原 for order in orders: order.symbol 系旧接口残留
+                submitted: list[Order] = []
+                for sym, weight in weights.items():
                     violations = validator.validate_order(
-                        symbol=order.symbol,
-                        target_weight=0.05,
+                        symbol=sym,
+                        target_weight=weight,
                         current_holdings={},
                         limits=RiskLimits(
                             as_of_date=datetime.now(UTC), idempotency_key="perf-batch", max_single_position=0.10
                         ),
                     )
                     assert len(violations) == 0
-                    broker.submit_order(order)
+                    if weight > 0:
+                        order = Order(
+                            order_id=f"ord-e2e-{uuid.uuid4().hex[:8]}",
+                            symbol=sym,
+                            strategy_id="perf-e2e",
+                            side=OrderSide.BUY,
+                            order_type=OrderType.MARKET,
+                            quantity=Decimal(str(round(float(weight) * 100, 4))) or Decimal("1"),
+                            idempotency_key=str(uuid.uuid4()),
+                        )
+                        broker.submit_order(order)
+                        submitted.append(order)
 
                 fills = broker.get_fills()
                 for fill in fills.values():
-                    matching = next((o for o in orders if o.order_id == fill.order_id), None)
+                    matching = next((o for o in submitted if o.order_id == fill.order_id), None)
                     if matching:
                         tca.analyze(fill, matching, str(uuid.uuid4()))
 

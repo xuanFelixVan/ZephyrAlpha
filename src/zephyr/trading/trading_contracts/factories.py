@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-TRADING-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.trading.trading_contracts.factories
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES] zephyr.trading.trading_contracts.execution.order; zephyr.shared.contracts.factor_signal; zephyr.shared.contracts.synthesized_signal; zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot; zephyr.trading.trading_contracts.risk.risk_limits; zephyr.trading.trading_contracts.risk.risk_metrics; zephyr.shared.contracts.core.factories
+# [DEPENDENCIES] zephyr.trading.trading_contracts.execution.order; zephyr.shared.contracts.factor_signal; zephyr.shared.contracts.synthesized_signal; zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot; zephyr.shared.contracts.risk_limits(CTR-003 真源); zephyr.trading.trading_contracts.risk.risk_metrics; zephyr.shared.contracts.core.factories
 # [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] production
@@ -115,7 +115,7 @@ from zephyr.shared.contracts.factor_signal import FactorSignal
 from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
 from zephyr.trading.trading_contracts.execution.order import Order, OrderSide, OrderType
 from zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot import RiskDashboardSnapshot
-from zephyr.trading.trading_contracts.risk.risk_limits import RiskLimits
+from zephyr.shared.contracts.risk_limits import RiskLimits  # B3 治本：CTR-003 登记真源（原 trading_contracts 副本已降级 shim）
 from zephyr.trading.trading_contracts.risk.risk_metrics import RiskMetricsReport
 
 _P = TypeVar("_P")

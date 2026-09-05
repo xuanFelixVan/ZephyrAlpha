@@ -90,9 +90,12 @@ class TestRegisterBootHooks:
         event.task_id = "t2"
         cb(event)
 
-    def test_ide_health_daemon_registration_attempted(self):
+    def test_ide_health_daemon_not_registered_after_retirement(self):
+        """ide_health_daemon 已于 2026-08-28 僵尸系统根治中退役（OS 托管 process_reaper
+        替代进程内常驻守护，2.4A 五信号实证）——boot_hooks 不得再尝试注册。"""
         mock_registry = MagicMock()
         with patch(_HOOK_REGISTRY_PATH, mock_registry), patch(_TASK_REPO_PATH, create=True):
-            with patch("zephyr.trading.ide_health_daemon.register_daemon", create=True) as mock_daemon:
-                register_boot_hooks()
-                mock_daemon.assert_called_once()
+            register_boot_hooks()
+        for call in mock_registry.register.call_args_list:
+            name = call.kwargs.get("name") or (call.args[2] if len(call.args) > 2 else None)
+            assert name != "ide_health_daemon"

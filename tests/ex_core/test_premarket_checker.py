@@ -26,7 +26,7 @@ from zephyr.ex_core.premarket_checker import (  # noqa: E402
     PremarketChecker,
     PremarketReport,
 )
-from zephyr.trading.trading_contracts.risk.risk_limits import RiskLimits  # noqa: E402
+from zephyr.shared.contracts.risk_limits import RiskLimits  # noqa: E402  # B3 治本：CTR-003 真源
 
 _TRADING_DATE = date(2026, 8, 25)
 _NOW = datetime(2026, 8, 25, 0, 50, tzinfo=UTC)

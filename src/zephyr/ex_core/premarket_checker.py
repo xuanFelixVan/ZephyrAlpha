@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-EX-063 | docs/03_modules/_domain_execution_core/premarket_checker/blueprint.md
 # [MODULE] zephyr.ex_core.premarket_checker
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.trading.trading_contracts.risk.risk_limits(MOD-INF-016); zephyr.data.quality_gate(MOD-L00-004); zephyr.shared.event_bus(MOD-INF-016)
+# [DEPENDENCIES] zephyr.shared.contracts.risk_limits(MOD-INF-016 CTR-003 真源); zephyr.data.quality_gate(MOD-L00-004); zephyr.shared.event_bus(MOD-INF-016)
 # [CONSUMERS] boot_hooks(MOD-INF-035, _subscribe_eventbus_consumers 消费方注册)
 # [STARTUP] imported
 # [MATURITY] design
@@ -107,7 +107,7 @@ from typing import Final
 
 from zephyr.data.quality_gate import QualityReport
 from zephyr.shared.event_bus import bus
-from zephyr.trading.trading_contracts.risk.risk_limits import RiskLimits
+from zephyr.shared.contracts.risk_limits import RiskLimits  # B3 治本：CTR-003 登记真源（原 trading_contracts 副本已降级 shim）
 
 _logger = logging.getLogger(__name__)
 
