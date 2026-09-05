@@ -40,7 +40,7 @@ def test_cross_db_domain_consistency(governance_db_path: Path):
     print("\n[TEST] 跨库 domain_id 一致性验证")
 
     # 从 governance.db domains 表获取所有 domain_id（P3-1后 tasks.domain_id 已删除）
-    gov_conn = sqlite3.connect(governance_db_path)
+    gov_conn = sqlite3.connect(f"file:{governance_db_path.as_posix()}?mode=ro", uri=True)  # 只读句柄：测试隔离加固，禁写生产库
     gov_cursor = gov_conn.cursor()
     gov_cursor.execute("SELECT domain_id FROM domains")
     gov_domains = {row[0] for row in gov_cursor.fetchall()}
@@ -116,7 +116,7 @@ def test_schema_version_consistency(governance_db_path: Path):
     versions = {}
 
     # governance.db
-    gov_conn = sqlite3.connect(governance_db_path)
+    gov_conn = sqlite3.connect(f"file:{governance_db_path.as_posix()}?mode=ro", uri=True)  # 只读句柄：测试隔离加固，禁写生产库
     gov_cursor = gov_conn.cursor()
     try:
         gov_cursor.execute("SELECT version, applied_at FROM _schema_version ORDER BY applied_at DESC LIMIT 1")
@@ -153,7 +153,7 @@ def test_data_integrity(governance_db_path: Path):
     print("\n[TEST] 双库数据完整性验证")
 
     # governance.db - 检查表是否存在（数据迁移是独立任务）
-    gov_conn = sqlite3.connect(governance_db_path)
+    gov_conn = sqlite3.connect(f"file:{governance_db_path.as_posix()}?mode=ro", uri=True)  # 只读句柄：测试隔离加固，禁写生产库
     gov_cursor = gov_conn.cursor()
     gov_cursor.execute("SELECT COUNT(*) FROM tasks")
     task_count = gov_cursor.fetchone()[0]
