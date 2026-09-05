@@ -1,11 +1,11 @@
 ---
 module_id: MOD-GATE_ENGINE
-submodule_path: src/zephyr/feedback_loop/gates
+submodule_path: src/zephyr/gov_enforcement/rule_enforcement
 title: "Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁域熔断器"
 doc_type: blueprint
 template_for: blueprint
 status: Draft
-version: "0.8.20"
+version: "0.8.21"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -17,7 +17,7 @@ ttl: permanent
 actual_disk_path: "src/zephyr/gov_enforcement/rule_enforcement/ + src/zephyr/feedback_loop/gates/ + src/zephyr/gov_enforcement/commit_gates/"
 belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: "MOD-MASTER_BLUEPRINT"
-last_updated: "2026-05-18"
+last_updated: "2026-09-05"
 last_verified: "2026-05-14"
 generation: 1
 functional_domain: governance
@@ -102,11 +102,11 @@ build_status: generated
 | 11 | gate_integrity_guard.py | §3.1 | 门禁引擎完整性守卫——启动前自检SHA-256+信任根验证 | 已实现 | | 本模块 |
 | 12 | audit_chain_verifier.py | §3.1 | 审计链验证工具——独立重放+哈希链完整性校验 | 已实现 | | 本模块 |
 | 13 | ai_capability_guard.py | §3.1 | AI能力边界守卫——task操作在能力矩阵内（真源 config/ai_capability_matrix.yaml，2026-07-17 AI-02 审计 P2-2 治本） | 已实现 | | 本模块 |
-| 14 | kms/ g1~g5.yaml (5个) | §A.2 | KMS入库/分拣/评估/激活/提取门禁配置 | 已实现 | | 本模块 |
+| 14 | g1_ingest.yaml ~ g5_extract.yaml (5个，平铺于 rule_enforcement/) | §A.2 | KMS入库/分拣/评估/激活/提取门禁配置 | 已实现 | | 本模块 |
 | 15 | g6-blueprint-compliance.yaml | §A.1 | G6蓝图读取合规门禁 | 已实现 | | 本模块 |
 | 16 | g6-ctr-compliance.yaml | §A.1 | G6 CTR合规门禁 | 已实现 | | 本模块 |
-| 17 | g7d_depth_compliance.yaml | §A.1 | G7D深度合规——形式+实质双重验证 | 未实现 | | 本模块 |
-| 18 | g7c_cross_gate_consistency.yaml | §A.1 | G7C跨门禁时序一致性 | 未实现 | | 本模块 |
+| 17 | g7d_depth_compliance.yaml | §A.1 | G7D深度合规——形式+实质双重验证 | 已实现 | | 本模块 |
+| 18 | g7c_cross_gate_consistency.yaml | §A.1 | G7C跨门禁时序一致性 | 已实现 | | 本模块 |
 | 19 | task/ g0-entry.yaml + g7-orc-gate_engine.yaml | §A.1 | G0准入+G7 Orc门禁 | 已实现 | | 本模块 |
 | 20 | admission/ mad_001~004.yaml | §A.1 | MAD-001~004模块准入门禁 | 已实现 | | 本模块 |
 | 21 | invariants/ en_001~003.yaml (3个) | §3.3 | EN-001循环依赖/EN-002执行模式/EN-003契约兼容 | 已实现 | | 本模块 |

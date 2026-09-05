@@ -4,7 +4,7 @@ submodule_path: src/zephyr/factor
 title: "Alpha Factor Core 蓝图+施工图 — 因子工厂·C-027管理+C-009执行双角色"
 doc_type: blueprint
 status: Active
-version: "4.0.12"
+version: "4.0.13"
 layer: L2_domain
 layer_name: alpha_factor
 functional_domain: intelligence
@@ -21,7 +21,7 @@ parent_module: ""
 codification_level: L1
 codification_at: "2026-07-05"
 last_verified: "2026-07-05"
-last_updated: "2026-07-05"
+last_updated: "2026-09-05"
 generation: 3
 rule_form: structural
 scope: module
@@ -263,7 +263,7 @@ build_status: production
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 |
 |---|--------|------------|------|:---:|
 | 1 | factor_base.py | §3.1/§4.1 | FactorBase OCP扩展点+FactorMeta+FactorRegistry+autodiscover_factors | 已实现 |
-| 2 | base.py | §3.1 | 旧版FactorBase（已被factor_base.py取代） | 已实现(待废弃) |
+| 2 | base.py | §3.1 | 旧版FactorBase（已被factor_base.py取代） | 已删除（旧实现物理清除，factor_base.py 为唯一实现） |
 | 3 | momentum_factor.py | §3.1 | Momentum20d动量因子实现 | 已实现 |
 | 4 | value_factor.py | §3.1 | ValueFactor估值因子实现 | 已实现 |
 | 5 | alpha_signal_pipeline.py | §3.1/§16.3 | 因子管线（D-FACTOR-04 Pipeline骨架） | 已实现 |

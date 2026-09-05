@@ -3498,7 +3498,7 @@ var CAL_FEED={
     description:'股指期权交割日（每月第四个周三）前后窗口：仓位上限 ×0.9', affected_symbols:'ALL'}],
   constraint_count:1
 };
-/* BFE-30：query_liquidity_status → LiquidityMonitor（MOD-RK-08，Amihud+成交量萎缩） */
+/* BFE-30：query_liquidity_status → LiquidityMonitor（MOD-RK-048，Amihud+成交量萎缩） */
 var LIQ_FEED={
   rows:[
     {symbol:'600519.SH', amihud_illiq:2.1e-9, volume_shrinkage_ratio:1.05, is_illiquid:false},

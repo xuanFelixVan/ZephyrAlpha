@@ -1,10 +1,10 @@
 ---
 module_id: MOD-L03-001
-submodule_path: src/zephyr/signal
+submodule_path: src/zephyr/signal_fundamental/ + src/zephyr/signal_ashare/ + src/zephyr/signal_quality/
 title: "Signal Generation Core 蓝图+施工图 — 信号工厂·策略生命周期管理"
 doc_type: blueprint
 status: Active
-version: "3.0.7"
+version: "3.0.8"
 layer: L2_domain
 layer_name: signal_generation
 functional_domain: research
@@ -16,7 +16,7 @@ date: "2026-05-05"
 valid_from: "2026-05-12"
 ttl: permanent
 actual_disk_path: "src/zephyr/signal_ashare/ + src/zephyr/signal_fundamental/ + src/zephyr/signal_quality/"
-last_updated: "2026-07-05"
+last_updated: "2026-09-05"
 last_verified: "2026-07-05"
 generation: 3
 belongs_to: ""

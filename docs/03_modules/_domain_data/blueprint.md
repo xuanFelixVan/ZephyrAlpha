@@ -4,7 +4,7 @@ submodule_path: src/zephyr/data
 title: "Data Source Core 蓝图+施工图 — 数据接入层"
 doc_type: blueprint
 status: Active
-version: "4.0.8"
+version: "4.0.9"
 layer: L2_domain
 layer_name: data_source
 functional_domain: data
@@ -21,7 +21,7 @@ parent_module: ""
 codification_level: L1
 codification_at: "2026-05-15"
 last_verified: "2026-05-15"
-last_updated: "2026-07-04"
+last_updated: "2026-09-05"
 generation: 4
 rule_form: structural
 scope: module
@@ -125,8 +125,8 @@ design_maturity: production
 | 1 | provider_base.py | §3.1 | QuoteProviderBase OCP扩展点 + QuoteProviderMeta | 已实现 |
 | 2 | quality_gate.py | §3.1 | DataQualityGate抽象 + QualityReport + QualityFailureReason + RecoveryHint | 已实现 |
 | 3 | implementations/akshare_provider.py | §3.1 | AkShare数据源实现 | 已实现 |
-| 4 | implementations/default_quality_gate.py | §3.1 | 默认质量校验实现(5项规则) | 已实现 |
-| 5 | implementations/memory_provider.py | §3.1 | 内存合成数据源(测试/离线) | 已实现 |
+| 4 | implementations/default_quality_gate.py | §3.1 | 默认质量校验实现(5项规则) | 已删除（逻辑并入 quality_gate.py 顶层实现） |
+| 5 | implementations/memory_provider.py | §3.1 | 内存合成数据源(测试/离线) | 已删除（测试/离线数据源由 provider 注册机制承接） |
 | 6 | implementations/miniqmt_provider.py | §16.7.1 | MiniQMT实盘行情(Tick+5档盘口) | 待施工 |
 
 ### §0.2 对齐验证矩阵

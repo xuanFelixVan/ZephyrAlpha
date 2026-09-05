@@ -3,7 +3,7 @@ module_id: MOD-REGIME-005
 title: "筹码分布引擎蓝图 — 华泰2026前沿VWAP三角分布+筹码龄分层+32相对网格（regime特征管道#12/#5/S2底部筹码数据源）"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.5"
 design_maturity: production
 build_status: production
 ttl: permanent
@@ -13,7 +13,7 @@ functional_domain: regime
 owner: ZephyrAlpha-Owner
 created_by: agent
 date: "2026-08-06"
-last_updated: "2026-08-06"
+last_updated: "2026-09-05"
 priority: P1
 blueprint_level: module
 responsibility_domain: 
@@ -249,9 +249,11 @@ distribution_migration = sum(age_layers["long"][24:32]) - sum(age_layers["long"]
 
 ## 5. 错误契约
 
-- `ChipDistributionError` (ZA-REGIME-0050): OHLCV数据缺失/NaN
-- `VWAPCalculationError` (ZA-REGIME-0051): amount/volume 为0或负值
-- `GridMappingError` (ZA-REGIME-0052): 250日参考区间为0（停牌股）
+- `ZA-REGIME-0050`: OHLCV数据缺失/NaN
+- `ZA-REGIME-0051`: amount/volume 为0或负值
+- `ZA-REGIME-0052`: 250日参考区间为0（停牌股）
+
+> 注：实现（src/zephyr/regime/features/chip_distribution_engine.py）[ERROR_CONTRACT] 以码号声明（ZA-REGIME-0050/0051/0052），未定义独立异常类；上述三码在 error_code_registry.yaml 的补登需求已登记共享收口清单。
 
 ## 6. 测试规划
 

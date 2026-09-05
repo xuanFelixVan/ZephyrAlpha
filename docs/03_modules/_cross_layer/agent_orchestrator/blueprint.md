@@ -5,7 +5,7 @@ title: "Agent Orchestrator 蓝图 — Agent 全生命周期编排引擎"
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "1.0.7"
+version: "1.0.8"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -20,7 +20,7 @@ generation: 1
 functional_domain: operations
 responsibility_domain: 
 summary: "Agent 全生命周期编排：任务队列、Agent调度、沙箱执行、幻觉检测、滚动升级、状态同步、故障恢复、会话管理。遥测跨层支撑层·Vibe Coding 2.0 五大核心服务之一。"
-last_updated: "2026-05-19"
+last_updated: "2026-09-05"
 last_verified: "2026-05-19"
 parent_module: "MOD-INF-035"
 rule_form: structural
@@ -85,8 +85,8 @@ build_status: production
 | 4 | wave_generator.py | §3.1 | 批次生成器 | 已实现 |
 | 5 | phase_executor.py | §3.1 | Phase 执行器 | 已实现 |
 | 6 | batch_orchestrator.py | §3.1 | 批量任务编排 | 已实现 |
-| 7 | session_manager.py | §3.1 | 会话管理器 | 已实现 |
-| 8 | session_handoff.py | §3.1 | 会话交接 | 已实现 |
+| 7 | session_manager.py | §3.1 | 会话管理器（SessionManager 5态状态机，MOD-INF-039） | 已删除（#ARCH-WORKTREE-LIFECYCLE-001 死代码退役，迁移至 rule_bridge.worktree_lifecycle.WorktreeLifecycle） |
+| 8 | session_handoff.py | §3.1 | 会话交接 | 已删除（SessionManager 退役连带） |
 | 9 | session_conflict.py | §3.1 | 会话冲突解决 | 已实现 |
 | 10 | state_synchronizer.py | §3.1 | 状态同步器 | 已实现 |
 | 11 | state_propagation.py | §3.1 | 状态传播 | 已实现 |
@@ -109,7 +109,7 @@ build_status: production
 | 28 | config_manager.py | §3.1 | 配置管理器 | 已删除（ARCH-038 P1 空壳退役） |
 | 29 | contract_registry.py | §3.1 | 契约注册表 | 已实现 |
 | 30 | contract_router.py | §3.1 | 契约路由器 | 已实现 |
-| 31 | backup_manager.py | §3.1 | 备份管理器 | 已实现 |
+| 31 | backup_manager.py | §3.1 | 备份管理器 | 已删除（功能并入治理备份链路，物理文件未落位） |
 | 32 | data_lifecycle.py | §3.1 | 数据生命周期管理 | 已实现 |
 | 33 | housekeeping.py | §3.1 | 日常清理 | 已实现 |
 | 34 | startup_sequencer.py | §3.1 | 启动序列器 | 已实现 |
@@ -123,11 +123,11 @@ build_status: production
 | 42 | chaos_engine.py | §3.1 | 混沌工程引擎 | 已实现 |
 | 43 | benchmark_runner.py | §3.1 | 基准测试运行器 | 已实现 |
 | 44 | blueprint_scorer.py | §3.1 | 蓝图评分 | 已实现 |
-| 45 | blueprint_health.py | §3.1 | 蓝图健康检查 | 已实现 |
+| 45 | blueprint_health.py | §3.1 | 蓝图健康检查 | 已删除（功能由 drift 监测域承接） |
 | 46 | blind_spot_closure.py | §3.1 | 盲点闭合 | 已实现 |
 | 47 | construction_guide.py | §3.1 | 施工指导 | 已实现 |
 | 48 | design_decisions.py | §3.1 | 设计决策记录 | 已实现 |
-| 49 | feature_flag.py | §3.1 | 特性开关 | 已实现 |
+| 49 | feature_flag.py | §3.1 | 特性开关 | 已删除（生产实现未落位，仅存测试） |
 | 50 | finding_bridge.py | §3.1 | 发现桥接 | 已实现 |
 | 51 | incident_postmortem.py | §3.1 | 事故复盘 | 已实现 |
 | 52 | ke_quality.py | §3.1 | 知识条目质量 | 已实现 |
@@ -145,10 +145,10 @@ build_status: production
 | 64 | resilience/failure_matcher.py | §3.1 (resilience) | 弹性故障匹配 | 已实现 |
 | 65 | resilience/hallucination_detector.py | §3.1 (resilience) | 弹性幻觉检测 | 已实现 |
 | 66 | resilience/rollback_manager.py | §3.1 (resilience) | 弹性回滚管理 | 已实现 |
-| 67 | state/agent_health_monitor.py | §3.1 (state) | 状态-健康监控 | 已实现 |
-| 68 | state/file_task_mapper.py | §3.1 (state) | 状态-文件任务映射 | 已实现 |
-| 69 | state/session_manager.py | §3.1 (state) | 状态-会话管理 | 已实现 |
-| 70 | state/state_synchronizer.py | §3.1 (state) | 状态-同步 | 已实现 |
+| 67 | agent_health_monitor.py | §3.1 (state) | 状态-健康监控 | 已实现 |
+| 68 | file_task_mapper.py | §3.1 (state) | 状态-文件任务映射 | 已实现 |
+| 69 | state/session_manager.py | §3.1 (state) | 状态-会话管理 | 已删除（state/ 子目录未落位，随 SessionManager 退役） |
+| 70 | lifecycle/state_synchronizer.py | §3.1 (state) | 状态-同步 | 已实现 |
 | 71 | __init__.py | — | 包初始化 | 已实现 |
 
 ### §0.2 对齐验证矩阵

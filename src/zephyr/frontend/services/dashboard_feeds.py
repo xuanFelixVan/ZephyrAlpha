@@ -28,7 +28,7 @@
 | query_position_state_snapshot | BFE-25 | PositionStateMachine（MOD-POS-002） | 持仓页状态列 |
 | query_drawdown_throttle | BFE-26 | DrawdownController（MOD-POS-008） | 风控实时扩展 |
 | query_calendar_position_constraints | BFE-27 | CalendarPositionConstraint（MOD-POS-017） | 作战室 W5 |
-| query_liquidity_status | BFE-30 | LiquidityMonitor（MOD-RK-08） | 风控实时一行 |
+| query_liquidity_status | BFE-30 | LiquidityMonitor（MOD-RK-048） | 风控实时一行 |
 | query_tail_risk_status | BFE-31 | TailRiskMonitor（MOD-RK-15） | 风控实时一行 |
 
 纪律：本层零业务算法——相关性聚类仅为"高相关合并计 1 笔风险"的展示口径聚合

@@ -1,10 +1,10 @@
 ---
 module_id: SH-DB-001
-submodule_path: src/zephyr/infrastructure/db
+submodule_path: src/zephyr/governance/persistence
 title: "Database 集成蓝图 — 2库职责划分(SQLite治理+PG架构) + 三层冷热架构定位"
 doc_type: blueprint
 status: Active
-version: "4.3.8"
+version: "4.3.9"
 layer: L1_foundation
 blueprint_level: domain
 owner: ZephyrAlpha-Owner
@@ -13,7 +13,7 @@ language: zh
 created_by: AI-session-20260519-001
 date: "2026-07-07"
 valid_from: "2026-05-19"
-last_updated: "2026-07-07"
+last_updated: "2026-09-05"
 ttl: permanent
 rule_form: structural
 belongs_to: "MOD-MASTER_BLUEPRINT"

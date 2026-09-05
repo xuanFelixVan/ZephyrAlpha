@@ -5,7 +5,7 @@ submodule_path: src/zephyr/shared
 title: "State Machine Engine 蓝图 — 通用状态机引擎·全项目状态机实例治理"
 doc_type: blueprint
 status: Draft
-version: "0.1.5"
+version: "0.1.6"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: internal
@@ -13,8 +13,8 @@ language: zh
 created_by: human_plus_agent
 date: "2026-05-16"
 ttl: permanent
-actual_disk_path: src/zephyr/shared/state_machine.py
-last_updated: "2026-05-16"
+actual_disk_path: src/zephyr/shared/lifecycle/state_machine.py
+last_updated: "2026-09-05"
 last_verified: "2026-05-16"
 generation: 1
 functional_domain: infra

@@ -1,10 +1,10 @@
 ---
 module_id: MOD-INF-037
-submodule_path: src/zephyr/governance/registry_governance
+submodule_path: src/zephyr/infrastructure/registry_governance.py
 title: "注册表治理"
 doc_type: blueprint
 status: Draft
-version: "0.2.6"
+version: "0.2.7"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: internal
@@ -13,7 +13,7 @@ created_by: human_plus_agent
 date: "2026-05-16"
 ttl: permanent
 actual_disk_path: "src/zephyr/infrastructure/registry_governance.py"
-last_updated: "2026-05-16"
+last_updated: "2026-09-05"
 last_verified: "2026-05-16"
 generation: 1
 functional_domain: governance

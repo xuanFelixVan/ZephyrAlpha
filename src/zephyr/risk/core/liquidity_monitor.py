@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-RK-08 | docs/03_modules/_domain_risk/liquidity_monitor/blueprint.md
+# [BLUEPRINT] MOD-RK-048 | docs/03_modules/_domain_risk/liquidity_monitor/blueprint.md
 # [MODULE] zephyr.risk.core.liquidity_monitor
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.risk.risk_manager_base; pandas; numpy
@@ -12,12 +12,12 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] InvalidLiquidityInputError
 # [TESTS] tests/risk/core/test_liquidity_monitor.py
-# [A_module] module_id=MOD-RK-08 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-RK-048 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """
 
-D_RISK — Liquidity Monitor (MOD-RK-08)
+D_RISK — Liquidity Monitor (MOD-RK-048)
 
 流动性监控器——计算 Amihud 非流动性指标 + 成交量萎缩比率，产出
 LiquidityMetrics。属 A 类基础设施（纯机制零参数）。
@@ -40,7 +40,7 @@ CTR 契约:
   消费者 — OHLCV 标准化行情数据 (CTR-006)
   生产者 — LiquidityMetrics (CTR-P1-018)
 
-SSoT: depgraph MOD-RK-08 | blueprint.md §3 核心规则
+SSoT: depgraph MOD-RK-048 | blueprint.md §3 核心规则
 
 # [ALGO_FLOW]
 # 层: 输入

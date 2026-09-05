@@ -4,7 +4,7 @@ submodule_path: src/zephyr/compliance
 title: "Compliance Core 蓝图+施工图 — 合规引擎"
 doc_type: blueprint
 status: Active
-version: "2.1.8"
+version: "2.1.9"
 layer: L1_foundation
 layer_name: compliance
 functional_domain: compliance
@@ -21,7 +21,7 @@ parent_module: ""
 codification_level: L1
 codification_at: "2026-05-14"
 last_verified: "2026-05-15"
-last_updated: "2026-05-15"
+last_updated: "2026-09-05"
 generation: 2
 rule_form: structural
 scope: module
@@ -95,10 +95,10 @@ build_status: generated
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因 |
 |---|--------|------------|------|:---:|--------|
 | 1 | __init__.py | §3.1 | 包导出 | 已实现 | — |
-| 2 | security_gateway_base.py | §3.1 | SecurityGateway抽象 + AuditAction + AuditDecision | 已实现 | — |
-| 3 | compliance_manager.py | §3.1 | ComplianceManagerBase + ComplianceRule | 已实现 | — |
-| 4 | aisg_sandbox.py | §3.1 | AISGSandbox模式匹配测试器 | 已实现 | — |
-| 5 | artifact_scanner.py | §3.1 | ArtifactScanner + ArtifactFinding + ScanReport | 已实现 | — |
+| 2 | security_gateway_base.py | §3.1 | SecurityGateway抽象 + AuditAction + AuditDecision | 已迁移 | ARCH 迁移→governance/security_governance |
+| 3 | compliance_manager.py | §3.1 | ComplianceManagerBase + ComplianceRule | 已迁移 | 迁移→governance/compliance_gate_a6 |
+| 4 | aisg_sandbox.py | §3.1 | AISGSandbox模式匹配测试器 | 已迁移 | 迁移→governance/intelligence_governance |
+| 5 | artifact_scanner.py | §3.1 | ArtifactScanner + ArtifactFinding + ScanReport | 已迁移 | 迁移→gov_drift |
 | 6 | default_security_gateway.py | §3.1 | DefaultSecurityGateway导出兼容层 | 已废弃 | — |
 | 7 | implementations/__init__.py | §3.1 | 子包导出 | 已实现 | — |
 | 8 | implementations/default_security_gateway.py | §3.1 | DefaultSecurityGateway实际实现 | 未实现（文件不存在） | — |

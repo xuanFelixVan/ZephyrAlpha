@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-RK-08 | docs/03_modules/_domain_risk/liquidity_monitor/blueprint.md | §test
+# [BLUEPRINT] MOD-RK-048 | docs/03_modules/_domain_risk/liquidity_monitor/blueprint.md | §test
 # [MODULE] tests.risk.core.test_liquidity_monitor
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.risk.core.liquidity_monitor; pandas; numpy
@@ -12,9 +12,9 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] test_liquidity_monitor.py
-# [A_test] module_id: MOD-RK-08 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-RK-048 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
-"""MOD-RK-08 Liquidity Monitor 单元测试.
+"""MOD-RK-048 Liquidity Monitor 单元测试.
 
 覆盖: Amihud计算正确性(手工验证)/成交量萎缩/综合判定/
 批量评估/数据不足/零成交额/RiskCheckResult转换/不可变性.

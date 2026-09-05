@@ -3,7 +3,7 @@ module_id: MOD-REGIME-001
 title: "Regime检测器蓝图 — 12态灰度概率+8转换评分+Shrinkage产出（系统最上游·可验证接口）"
 doc_type: blueprint
 status: Active
-version: "0.1.26"
+version: "0.1.28"
 design_maturity: production
 build_status: generated
 ttl: permanent
@@ -13,7 +13,7 @@ functional_domain: regime
 owner: ZephyrAlpha-Owner
 created_by: agent
 date: "2026-08-06"
-last_updated: "2026-08-06"
+last_updated: "2026-09-05"
 priority: P0
 blueprint_level: module
 responsibility_domain: 
@@ -267,11 +267,11 @@ else:
 
 ## 5. 错误契约
 
-- `HMMFittingError` (ZA-SIG-0001): HMM 拟合失败（特征缺失/NaN/不收敛）
-- `InvalidFeatureError` (ZA-SIG-0002): RegimeFeatures 格式非法/缺失必需字段
-- `OverlayRuleError` (ZA-SIG-0003): 覆盖层规则计算异常（评分维度缺失/阈值非法）
-- `ShrinkageCalculationError` (ZA-SIG-0004): ConfidenceSignal/RiskSignal 计算异常
-- `ProbabilityNormalizationError` (ZA-SIG-0005): 12 维归一化失败（Σ≠1 / 含 NaN）
+- `RegimeFeatureError` (ZA-REGIME-0001): RegimeFeatures 格式非法/缺失必需字段
+- `HMMFittingError` (ZA-REGIME-0002): HMM 拟合失败（特征缺失/NaN/不收敛）
+- `ShrinkageComputationError` (ZA-REGIME-0003): ConfidenceSignal/RiskSignal 计算异常
+- `OverlayRuleError` (ZA-REGIME-0004): 覆盖层规则计算异常（评分维度缺失/阈值非法）
+- `ProbabilityNormalizationError` (ZA-REGIME-0005): 12 维归一化失败（Σ≠1 / 含 NaN）
 
 ## 6. 测试规划
 
