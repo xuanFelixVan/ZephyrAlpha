@@ -16,7 +16,7 @@ valid_from: "2026-05-03"
 ttl: permanent
 actual_disk_path: "src/zephyr/shared/"
 belongs_to: "MOD-MASTER_BLUEPRINT"
-summary: "跨层共享基础设施，115+已跟踪文件，Shared 59 + Core 60 .py + ProcessLifecycleGateway (已实现) + F20 监控系统恢复(16文件: health/longevity/metrics/observability/quality/sla/contracts) + F21 自动化集成(EventBus合并+自动启动+事件订阅+分钟级监控+Finalizer自动关闭)"
+summary: "跨层共享基础设施，src/zephyr/shared/ 实测 280 .py（2026-09-05）；原 src/zephyr/core/ 64 .py 已于 a5c1a81787 删除并入 + ProcessLifecycleGateway (已实现) + F20 监控系统恢复(16文件: health/longevity/metrics/observability/quality/sla/contracts) + F21 自动化集成(EventBus合并+自动启动+事件订阅+分钟级监控+Finalizer自动关闭)"
 tags: [shared, core, cross-layer, contracts, ssot-guard, event-bus, blueprint-decomposer, infrastructure, v0.20.0, f21-automation]
 priority: P0
 runtime_plane: hot
@@ -46,7 +46,7 @@ build_status: generated
 # Shared Core 蓝图 — 跨层共享基础设施：事件总线/配置/缓存/限流/契约
 
 > module_id: MOD-INF-016 | version: 0.18.0 | status: Active | layer: cross_layer
-> actual_disk_path: src/zephyr/shared/ + src/zephyr/core/ | generation: 2 | construction_progress: completed
+> actual_disk_path: src/zephyr/shared/（原 src/zephyr/core/ 已于 a5c1a81787 删除并入） | generation: 2 | construction_progress: completed
 >
 > **SSoT 声明**: Shared canon SSoT 为 [b_shared.yaml](file:///D:/ZephyrAlpha/architecture_model/layers/b_shared.yaml)；Core canon SSoT 为 [b_core.yaml](file:///D:/ZephyrAlpha/architecture_model/layers/b_core.yaml)。Shared + Core 合并为单一蓝图（均为跨层基础设施，体积较小）。
 
@@ -56,7 +56,7 @@ build_status: generated
 
 ## 概述
 
-本蓝图描述 Shared Core——ZephyrAlpha 跨层共享基础设施层，为所有模块提供 EventBus、配置中心、缓存层、限流器、幂等守卫、契约总线等 18 项基础组件。通过 daemon_registry 统一管理守护线程生命周期。当前 115+ 文件覆盖 shared/ 和 core/ 两目录，目标支撑 1,500 模块规模。被 AutoRuntime Core（MOD-INF-035）和资源优化引擎（MOD-RESOURCE_OPTIMIZATION_ENGINE）等上游消费。
+本蓝图描述 Shared Core——ZephyrAlpha 跨层共享基础设施层，为所有模块提供 EventBus、配置中心、缓存层、限流器、幂等守卫、契约总线等 18 项基础组件。通过 daemon_registry 统一管理守护线程生命周期。当前 src/zephyr/shared/ 实测 280 .py（2026-09-05，含原 core/ 并入文件——src/zephyr/core/ 已删除 a5c1a81787），目标支撑 1,500 模块规模。被 AutoRuntime Core（MOD-INF-035）和资源优化引擎（MOD-RESOURCE_OPTIMIZATION_ENGINE）等上游消费。
 
 > **标准锚点**：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint_construction_template.md) | [压缩工作流标准](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml) | code-construction-standards.md §7
 
@@ -85,19 +85,19 @@ build_status: generated
 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） |
 |---|--------|------------|------|:---:|-------------------|
-| 1 | (215 files) | §2 | 跨层共享基础设施 | 已实现 | |
-| 2 | core/ (60 files) | §3 | 核心模块 | 已实现 | |
+| 1 | shared/ 全域 280 .py（实测 2026-09-05） | §2 | 跨层共享基础设施 | 已实现 | |
+| 2 | 原 core/（64 .py，git 实测 a5c1a81787 删除） | §3 | 核心模块 | 已废弃 | 目录已删除，文件并入 shared/ 等域 |
 | 3 | infra/process_lifecycle_gateway.py | §2.10 | 进程生命周期统一入口网关 | 已实现 | |
-| 4 | health.py + healthcheck_service.py | §2.7 | 健康监控服务(F20恢复) | 已实现 | |
-| 5 | longevity_monitor.py | §2.7 | 长寿监控(F20恢复) | 已实现 | |
-| 6 | metrics.py | §2.8 | 指标收集(F20恢复) | 已实现 | |
-| 7 | health_discovery.py + tracing.py + cli_summary.py | §2.7 | 可观测性辅助(F20恢复,原observability_02/归位shared/根) | 已实现 | |
+| 4 | lifecycle/health.py + lifecycle/healthcheck_service.py | §2.7 | 健康监控服务(F20恢复) | 已实现 | |
+| 5 | lifecycle/longevity_monitor.py | §2.7 | 长寿监控(F20恢复) | 已实现 | |
+| 6 | 原 shared/metrics.py | §2.8 | 指标收集(F20恢复) | 已废弃 | 文件已删除（a5c1a81787），现役 metrics 实现归各业务域 |
+| 7 | lifecycle/health_discovery.py + observability/tracing.py + utils/cli_summary.py | §2.7 | 可观测性辅助(F20恢复,归位shared/子目录) | 已实现 | |
 | 8 | (原shared_services/observability_02/ 已删除-stale路径) | §2.7 | — | 已废弃 | |
-| 9 | quality/quality_monitor.py | §2.7 | 质量监控代理(F20恢复) | 已实现 | |
-| 10 | sla/sla_monitor.py | §2.7 | SLA监控代理(F20恢复) | 已实现 | |
+| 9 | infrastructure/quality/quality_monitor.py | §2.7 | 质量监控代理(F20恢复) | 已废弃 | 迁至 src/zephyr/infrastructure/quality/（归属基础设施域） |
+| 10 | infrastructure/sla/sla_monitor.py | §2.7 | SLA监控代理(F20恢复) | 已废弃 | 迁至 src/zephyr/infrastructure/sla/（归属基础设施域） |
 | 11 | maintenance/autonomy_monitor.py | §2.7 | 自治监控(F20恢复) | 已实现 | |
 | 12 | contracts/telemetry_emitter.py | §2.1 | 遥测契约(CTR-P1-013 codegen) | 已实现 | |
-| 13 | contracts/market/factor_monitor_report.py | §2.1 | 因子监控报告契约(F20恢复) | 已实现 | |
+| 13 | contracts/factor_monitor_report.py | §2.1 | 因子监控报告契约(F20恢复) | 已实现 | |
 | 14 | contracts/risk/ (risk_dashboard_snapshot/risk_metrics) | §2.1 | 风险监控契约(F20恢复) | 已实现 | |
 
 ### §0.2 对齐验证矩阵
@@ -106,7 +106,7 @@ build_status: generated
 
 | 验证项 | 验证方法 | 结果 |
 |--------|---------|:---:|
-| construction_progress = completed → 代码文件清单100%存在 | `ls src/zephyr/shared/ src/zephyr/core/` | ☐ |
+| construction_progress = completed → 代码文件清单100%存在 | `ls src/zephyr/shared/`（原 core/ 已删除并入） | ☐ |
 | 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" *.py` | ☐ |
 | actual_disk_path 与 §11 产出物路径一致 | 路径核对 | ☐ |
 
@@ -144,9 +144,10 @@ build_status: generated
 | module_id | MOD-INF-016 | MOD-INF-016 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 348 文件 | 14 文件（§0.1） | ❌ |
+| file_count | 348 文件 | 280 .py（src/zephyr/shared/ 实测 2026-09-05；§0.1 为职责摘要行，完整清单 SSoT=extract_depgraph） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
+> **2026-09-05 AI-18 复审轮注记**：depgraph 348 节点为 a5c1a81787（core/ 删除并入 shared/）重构前快照，主仓重建 depgraph 后自愈——已记入共享收口清单。
 
 ---
 
@@ -155,8 +156,8 @@ build_status: generated
 | 属性 | 值 |
 |------|-----|
 | module_id | MOD-INF-016 |
-| 涵盖 | Shared (`src/zephyr/shared/`) + Core (`src/zephyr/core/`) |
-| 文件数 | Shared 49 文件(Phase 0-10 已审计) + 10 early-bird(Phase 11-14) + Core 2 文件 = 61 已跟踪文件（另有 ~43 orphan 待分类） |
+| 涵盖 | Shared (`src/zephyr/shared/`，含原 Core 并入文件——`src/zephyr/core/` 已删除 a5c1a81787) |
+| 文件数 | 实测 280 .py（2026-09-05，src/zephyr/shared/ 全域，含原 core/ 并入文件） |
 | 核心职责 | 提供所有系统共用的数据模型、基础设施、工具函数 |
 
 ### 运行场景约束
@@ -190,11 +191,11 @@ build_status: generated
 
 ### 2.1 shared-contracts（跨层数据契约）
 
-> → 详见 **MOD-013** `contracts_blueprint.md`（跨层数据契约 SSoT——11 子域 64 文件，含 instrument/money/timestamp/runtime_plane_tag 等）
+> → 详见 **MOD-INF-016** `contracts_blueprint.md`（跨层数据契约 SSoT——11 子域 64 文件，含 instrument/money/timestamp/runtime_plane_tag 等）
 
 ### 2.2 shared-infra（共享基础设施）
 
-> → 详见 **MOD-015** `shared_infra_blueprint.md`（跨层共享基础设施——14 子目录 ~115 文件，含 schemas/ssot_guard/observer/capability/paths/logging/health 等）
+> → 详见 **MOD-INF-016** `shared_infra_blueprint.md`（跨层共享基础设施——14 子目录 ~115 文件，含 schemas/ssot_guard/observer/capability/paths/logging/health 等）
 
 ### 2.3 shared-errors（统一错误层次）
 
@@ -202,44 +203,44 @@ build_status: generated
 > 与 contracts/errors/ 的区别：contracts/errors/ 是 dataclass 值对象（跨层结构化错误传递），
 > 本子模块是 Python Exception 继承树（throw/catch 统一入口）。
 
-> → 详见 **MOD-015** `shared_infra_blueprint.md`（shared/errors.py — ZephyrBaseError + 12 子类错误层次）
+> → 详见 **MOD-INF-016** `shared_infra_blueprint.md`（shared/errors.py — ZephyrBaseError + 12 子类错误层次）
 
 ### 2.4 shared-constants（集中 re-export）
 
 > **修复散落枚举问题**——此前 AI 需要到 instrument.py / order.py / observer.py / schemas.py 四处找枚举。
 
-> → 详见 **MOD-015** `shared_infra_blueprint.md`（shared/constants.py — 共享枚举集中 re-export）
+> → 详见 **MOD-INF-016** `shared_infra_blueprint.md`（shared/constants.py — 共享枚举集中 re-export）
 
 ### 2.5 shared-events（事件体 Schema）
 
 > **修复 B6/B10 盲点**——observer.py 的 emit() 接受裸 dict，消费者不知道 payload 结构。
 
-> → 详见 **MOD-015** `shared_infra_blueprint.md`（shared/events/event_schemas.py — 事件体 Schema）
+> → 详见 **MOD-INF-016** `shared_infra_blueprint.md`（shared/events/event_schemas.py — 事件体 Schema）
 
 ### 2.6 shared-resilience（韧性基座）
 
 > **盲点 B6/B9/B15 修复**——统一重试/熔断/降级策略，零依赖基类。
 > 与 gates/circuit_breaker.py 互补——本模块纯内存，gates 版 SQLite 持久化 + 门禁集成。
 
-> → 详见 **MOD-015** `shared_infra_blueprint.md`（shared/resilience/ — retry/circuit_breaker/fallback 韧性基座）
+> → 详见 **MOD-INF-016** `shared_infra_blueprint.md`（shared/resilience/ — retry/circuit_breaker/fallback 韧性基座）
 
 ### 2.7 shared-lifecycle（模块生命周期）
 
 > **盲点 B8 修复**——统一模块初始化/启动/关闭/健康检查契约。
 
-> → 详见 **MOD-015** `shared_infra_blueprint.md`（shared/lifecycle/hooks.py — 模块生命周期钩子）
+> → 详见 **MOD-INF-016** `shared_infra_blueprint.md`（shared/lifecycle/hooks.py — 模块生命周期钩子）
 
 ### 2.8 shared-feature-flags（功能开关）
 
 > **盲点 B7/B10 修复**——100% AI 施工下的 AI 行为开关，配置驱动。
 
-> → 详见 **MOD-015** `shared_infra_blueprint.md`（shared/flags.py — FeatureFlag 功能开关系统）
+> → 详见 **MOD-INF-016** `shared_infra_blueprint.md`（shared/flags.py — FeatureFlag 功能开关系统）
 
 ### 2.9 shared-utilities（通用工具层）
 
 > **盲点 #5/#14/#15/#3 修复**——类型安全 + diff/patch + 安全I/O + 配置加载四大缺口。
 
-> → 详见 **MOD-015** `shared_infra_blueprint.md`（shared/utils/ — types/diff_utils/file_utils/config 通用工具层）
+> → 详见 **MOD-INF-016** `shared_infra_blueprint.md`（shared/utils/ — types/diff_utils/file_utils/config 通用工具层）
 
 ### 2.10 shared-process-lifecycle（进程生命周期网关）
 
@@ -247,7 +248,7 @@ build_status: generated
 > 设计根因: 裸 Popen/Process 绕过 MCPProcessPool 导致进程泄漏。
 > 依赖图: DEP-GRAPH-process-lifecycle-001
 
-> → 详见 **MOD-015** `shared_infra_blueprint.md`（shared/infra/process_lifecycle_gateway.py + gates 门禁 — 进程生命周期网关）
+> → 详见 **MOD-INF-016** `shared_infra_blueprint.md`（shared/infra/process_lifecycle_gateway.py + gates 门禁 — 进程生命周期网关）
 
 **ProcessPool 增强** (modify existing `process_pool.py`):
 
@@ -309,14 +310,15 @@ build_status: generated
 
 ---
 
-## 3. Core 模块（16 子目录, 60 文件）
+## 3. Core 模块（原 16 子目录, 64 .py——已并入）
 
-> actual_disk_path: `src/zephyr/core/`（60 个 .py 文件：7 根目录 + 53 子目录）
-> construction_progress: 60/60 文件已落盘（根目录 7 文件 phase_0_14_complete，子目录 36 功能文件 early-bird，16 __init__.py 自动生成）
+> ⚠️ **2026-09-05 实测注记**：`src/zephyr/core/` 已于 a5c1a81787（2026-06-21 架构债务清理）整体删除（git 实测删除 64 个 .py），文件并入 `src/zephyr/shared/` 子目录（blueprint_decomposer→shared/blueprint_tools、session_continuity→shared/session、daemon_registry/lazy_loader/healthcheck_service→shared/lifecycle、event_reactor/hook_dispatcher→shared/events、execution_tuner/prompt_version_manager→shared/adaptation、saga_compensator→shared/compensation、dependency_graph→shared/dependency 等）及 `src/zephyr/infrastructure/` 等域（task_lifecycle_manager/scope_guard→infrastructure/lifecycle、quality_monitor→infrastructure/quality、sla_monitor→infrastructure/sla、circuit_breaker/context_guard→infrastructure/reliability 等）。以下为历史结构记录。
+> historical actual_disk_path: `src/zephyr/core/`（删除前 64 个 .py 文件：根目录 + 子目录）
+> historical construction_progress: 64/64 文件曾落盘（已随目录删除并入各域）
 
 ### 3.1 core/ 文件蓝图归属表
 
-> → 详见 **MOD-014** `governance_core_blueprint.md`（core/ 16 子目录 60 文件——blueprint_decomposer/models/context_engine/event_bus/lifecycle 等）
+> → 详见 **MOD-INF-016** `governance_core_blueprint.md`（原 core/ 16 子目录 64 .py 已删除并入——blueprint_decomposer/models/event_bus/lifecycle 等）
 
 ---
 
@@ -554,7 +556,7 @@ build_status: generated
 |----------|---------------|------|
 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared_core\blueprint.md` | 本文件 |
 | Shared 代码 | `D:\ZephyrAlpha\src\zephyr\shared\` | 跨层共享模型/工具 |
-| Core 代码 | `D:\ZephyrAlpha\src\zephyr\core\` | 核心基础设施 |
+| Core 代码 | `D:\ZephyrAlpha\src\zephyr\shared\`（原 `D:\ZephyrAlpha\src\zephyr\core\` 已删除 a5c1a81787 并入） | 核心基础设施 |
 | 测试代码 | `D:\ZephyrAlpha\tests\unit\test_shared.py` + `test_core.py` | 单元测试 |
 | 契约基础框架 | `D:\ZephyrAlpha\src\zephyr\shared\contracts\core\base_event.py` + `enforcer.py` + `factories.py` + `registry.py` + `system_configuration.py` | 契约基类/执行器/工厂/注册表/系统配置（5个核心契约，★标记于§5.1a-core） |
 | 外部集成契约 | `D:\ZephyrAlpha\src\zephyr\shared\contracts\external\ext_001.py` ~ `ext_004.py` | 4个外部系统集成契约（★标记于§5.1a） |
@@ -1250,7 +1252,7 @@ STEP 3: 拆分后验证
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
 | 1 | shared/ | `D:\ZephyrAlpha\src\zephyr\shared\` | 修改/扩展 | 容量升级 + 新增模块 |
-| 2 | core/ | `D:\ZephyrAlpha\src\zephyr\core\` | 修改/扩展 | 容量升级 + 新增模块 |
+| 2 | 原 core/ | `D:\ZephyrAlpha\src\zephyr\shared\`（原 `D:\ZephyrAlpha\src\zephyr\core\` 已删除并入，a5c1a81787） | 已并入 | — |
 | 3 | shared/infra/process_lifecycle_gateway.py | `D:\ZephyrAlpha\src\zephyr\shared\infra\process_lifecycle_gateway.py` | 新增 | ProcessLifecycleGateway 统一入口 |
 | 4 | gates/invariants/en_process_lifecycle_gateway.py | `D:\ZephyrAlpha\src\zephyr\gates\invariants\en_process_lifecycle_gateway.py` | 新增 | 进程创建入口校验门禁 |
 | 5 | 测试 | `D:\ZephyrAlpha\tests\` | 新增 | 对应新模块的单元测试 |

@@ -1,6 +1,6 @@
 ---
 module_id: MOD-C1-MARKETCH
-submodule_path: data/databases/c1_market_clickhouse
+submodule_path: schemas/categories/
 title: "C1 market_clickhouse 行情仓库施工蓝图"
 doc_type: blueprint
 status: Active
@@ -16,7 +16,7 @@ valid_from: "2026-07-01"
 date: "2026-07-01"
 ttl: permanent
 construction_progress: partially_implemented
-actual_disk_path: "data/databases/c1_market_clickhouse/"
+actual_disk_path: "schemas/categories/ (8 个 DDL-as-Code 已建；规划目录 data/databases/c1_market_clickhouse/ 未创建——见 §0.1 注记)"
 belongs_to: "ARCH-BIZDB-001"
 parent_module: "ARCH-BIZDB-001"
 codification_level: L1
@@ -89,6 +89,8 @@ C1 market_clickhouse 是业务数据库仓库层的**行情仓库**，存储 L1 
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
 
 > **完整文件清单 SSoT**：`python scripts/governance/extract_depgraph.py --modules C1-MARKET-CH`
+
+> **2026-09-05 AI-18 复审轮实测注记**：本表 `schemas/categories/market_*.py` 实际落盘于**仓根 `D:\ZephyrAlpha\schemas\categories\`**（#ARCH-SSOT-REFERENCE-INTEGRITY-001 登记的 schemas/ 目录），8 个文件全部实测存在（market_tick/market_kline_daily/market_auction/market_index/market_option_iv/market_futures_position/market_futures_term/market_cb_iv）——原 `actual_disk_path: data/databases/c1_market_clickhouse/` 规划目录从未创建；`business_data_categories.yaml` 全仓未检出（属 §16 待产出物）。c1_market_writer/reader/loader/apply_schema.py 4 文件待建属实。
 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 |
 |---|--------|------------|------|:---:|

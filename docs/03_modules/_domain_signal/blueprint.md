@@ -210,7 +210,7 @@ design_maturity: production
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 |
 |---|--------|------------|------|:---:|
 | 1 | `signal_fundamental/__init__.py` | §3.1 | 基础信号域包入口+re-export | 已实现 |
-| 2 | `signal_fundamental/gen/aggregator_base.py` | §3.1 | SignalAggregatorBase + CapitalAllocatorBase + DegradationMonitorBase | 已实现 |
+| 2 | `signal_fundamental/gen/aggregator_base.py` | §3.1 | SignalAggregatorBase + CapitalAllocatorBase（DegradationMonitorBase 已迁出至 signal_quality/，见 #16/#17） | 已实现 |
 | 3 | `signal_fundamental/gen/implementations/default_signal_aggregator.py` | §3.1 | DefaultSignalAggregator | 已实现 |
 | 4 | `signal_fundamental/capital/capital_allocator.py` | §3.1 | CapitalAllocatorBase 兼容导出（re-export only） | 已实现 |
 | 5 | `signal_fundamental/capital/default_capital_allocator.py` | §3.1 | DefaultCapitalAllocator + AllocationMethod | 已实现 |
@@ -222,8 +222,10 @@ design_maturity: production
 | 11 | `signal_fundamental/strategy/implementations/default_capital_allocator.py` | §3.1 | 策略层默认资金分配实现 | 已实现 |
 | 12 | `signal_ashare/__init__.py` | §3.1 | A股信号子域包入口（占位） | 占位 |
 | 13 | `signal_ashare/{core,api,services,models,infrastructure,_extensions}/__init__.py` | — | A股信号子域占位子包（6个） | 占位 |
-| 14 | `signal_quality/__init__.py` | §3.1 | 信号质量子域包入口（占位） | 占位 |
+| 14 | `signal_quality/__init__.py` | §3.1 | 信号质量域包入口（D_SIGQC；导出 DegradationMonitorBase——MOD-SIGQC-001） | 已实现 |
 | 15 | `signal_quality/{core,api,services,models,infrastructure,_extensions}/__init__.py` | — | 信号质量子域占位子包（6个） | 占位 |
+| 16 | `signal_quality/degradation_monitor_base.py` | §3.1 | DegradationMonitorBase ABC（OCP 扩展点 D_SIGQC-DEG；[BLUEPRINT] MOD-SIGQC-001，2026-09-05 锚定补全——AI-08 移交项） | 已实现 |
+| 17 | `signal_quality/degradation_detector.py` | §3.1 | 多维滑窗基线对比降级检测器（MOD-SIGQC-001，包级导出） | 已实现 |
 
 > **注**：v2.2.0中§0.1声明的7个文件路径（`src/zephyr/signal/`）与实际代码路径（`src/zephyr/signal_fundamental/`）不一致，v3.0.0已修正。完整文件清单SSoT：`python scripts/governance/extract_depgraph.py --modules MOD-L03-001`
 
@@ -375,7 +377,7 @@ D_FACTOR Alpha Factor 层产出因子信号后，需要标准化聚合、合成�
 |---|:----:|------|------|--------|
 | 1 | ✅ 包含 | 信号聚合 | SignalAggregatorBase + DefaultSignalAggregator | 本模块 |
 | 2 | ✅ 包含 | 资金分配 | CapitalAllocatorBase + DefaultCapitalAllocator | 本模块 |
-| 3 | ✅ 包含 | 降级监控 | DegradationMonitorBase（在 aggregator_base.py） | 本模块 |
+| 3 | ✅ 包含 | 降级监控 | DegradationMonitorBase（在 signal_quality/degradation_monitor_base.py，[BLUEPRINT] MOD-SIGQC-001） | 本模块 |
 | 4 | ✅ 包含 | 信号合成 | SignalSynthesizerBase（在 signal_synthesizer.py） | 本模块 |
 | 5 | ✅ 包含 | 信号质量度量 | CTR-008 SignalQualityMetrics（规划） | 本模块 |
 | 6 | ❌ 排除 | 因子计算 | → D_FACTOR Alpha Factor | MOD-L02-001 |
