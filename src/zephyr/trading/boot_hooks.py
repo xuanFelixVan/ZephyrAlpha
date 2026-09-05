@@ -244,7 +244,7 @@ def _subscribe_eventbus_consumers() -> None:
 
     consumers = [
         ("F4 budget_engine", "zephyr.governance.ops_governance.budget_engine"),
-        ("F5 f5_event_subscriber", "zephyr.governance.f5_event_subscriber"),
+        ("F5 f5_event_subscriber", "zephyr.governance.resilience_governance.f5_event_subscriber"),
         ("F9 rollback_boot_integration", "zephyr.infrastructure.rollback.rollback_boot_integration"),
         ("F14 pipeline_orchestrator", "zephyr.integration.pipeline_orchestrator"),
         ("F15 auto_fix_engine.event_hooks", "zephyr.infrastructure.auto_fix_engine.event_hooks"),
