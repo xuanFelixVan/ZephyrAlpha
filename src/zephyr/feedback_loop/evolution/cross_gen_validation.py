@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md
 # [MODULE] zephyr.feedback_loop.evolution.cross_gen_validation
 # [DOMAIN] D_FEEDBACK_LOOP
 # [DEPENDENCIES]

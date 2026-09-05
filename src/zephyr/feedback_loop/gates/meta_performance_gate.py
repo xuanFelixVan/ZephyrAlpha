@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md
 # [MODULE] zephyr.feedback_loop.gates.meta_performance_gate
 # [DOMAIN] D_FBL_VERIFICATION
 # [DEPENDENCIES] zephyr.feedback_loop.gates.__init__

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
+# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md
 # noqa: m07-orphan  M07豁免: 被 resilience/__init__.py 的 `from . import failure_matcher` 相对导入引用，非真孤儿（M07检测器不识别相对导入）
 # [MODULE] zephyr.orchestrator.resilience.failure_matcher
 # [DOMAIN] D_ORCHESTRATOR

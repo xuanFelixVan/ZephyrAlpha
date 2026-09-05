@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
+# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md
 # [MODULE] zephyr.orchestrator.agent_orchestrator
 # [DOMAIN] D_ORCHESTRATOR
 # [DEPENDENCIES] zephyr.security.llm_defense.llm_security.input_sanitizer; zephyr.shared.schema.schemas; zephyr.shared.utils.time_utils; zephyr.autonomy_core.token_budget; zephyr.shared.contracts.security.__init__; zephyr.security.llm_defense.llm_security.gateway

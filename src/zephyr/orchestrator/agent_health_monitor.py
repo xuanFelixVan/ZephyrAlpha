@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
+# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md
 # [MODULE] zephyr.orchestrator.agent_health_monitor
 # [DOMAIN] D_ORCHESTRATOR
 # [DEPENDENCIES] zephyr.trading.__init__; zephyr.shared.schema.schemas; zephyr.shared.utils.time_utils

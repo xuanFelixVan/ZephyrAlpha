@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
+# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md
 # [MODULE] zephyr.orchestrator.hallucination_detector
 # [DOMAIN] D_ORCHESTRATOR
 # [DEPENDENCIES] zephyr.shared.schema.schemas; zephyr.shared.utils.time_utils

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md
 # [MODULE] zephyr.feedback_loop.scheduler
 # [DOMAIN] D_FEEDBACK_LOOP
 # [DEPENDENCIES] zephyr.feedback_loop.__init__; zephyr.governance.integrity; zephyr.gov_drift.drift_engine; zephyr.infrastructure.auto_fix_engine.__init__; zephyr.infrastructure.__init__; zephyr.shared.event_bus; zephyr.autonomy_core.__init__; zephyr.governance.__init__
@@ -102,20 +102,20 @@ from zephyr.feedback_loop.collectors.metrics_collector import (
     MetricsCollector,
     MetricSnapshot,
 )
-from zephyr.feedback_loop.detectors.agent_trajectory_anomaly_detector import TrajectoryEvent
-from zephyr.feedback_loop.detectors.dependency_freshness_monitor import DependencyFreshnessMonitor
-from zephyr.feedback_loop.detectors.recursive_diagnosis_trust_evaluator import RecursiveDiagnosisTrustEvaluator
-from zephyr.feedback_loop.detectors.self_diagnosis_data_leak_detector import SelfDiagnosisDataLeakDetector
-from zephyr.feedback_loop.detectors.silent_corruption_detector import SilentCorruptionDetector
-from zephyr.feedback_loop.detectors.temporal_coherence_of_self_model import TemporalCoherenceOfSelfModel
-from zephyr.feedback_loop.diagnosers.adaptive_param_tuning import AdaptiveParamTuning
-from zephyr.feedback_loop.diagnosers.human_anomaly_flood_detector import HumanAnomalyFloodDetector
-from zephyr.feedback_loop.diagnosers.model_version_semantic_drift import ModelVersionSemanticDrift
-from zephyr.feedback_loop.diagnosers.nonstationary_effectiveness import NonstationaryEffectiveness
-from zephyr.feedback_loop.diagnosers.recovery_time_stats import RecoveryTimeStats
-from zephyr.feedback_loop.diagnosers.regime_gain_scheduling import RegimeGainScheduling
-from zephyr.feedback_loop.diagnosers.self_bottleneck_detector import PipelineStage
-from zephyr.feedback_loop.diagnosers.timezone_semantic_reasoner import TimezoneSemanticReasoner
+from zephyr.feedback_loop.detectors.correlation.agent_trajectory_anomaly_detector import TrajectoryEvent
+from zephyr.feedback_loop.detectors.correlation.dependency_freshness_monitor import DependencyFreshnessMonitor
+from zephyr.feedback_loop.detectors.guard.recursive_diagnosis_trust_evaluator import RecursiveDiagnosisTrustEvaluator
+from zephyr.feedback_loop.detectors.guard.self_diagnosis_data_leak_detector import SelfDiagnosisDataLeakDetector
+from zephyr.feedback_loop.detectors.anomaly.silent_corruption_detector import SilentCorruptionDetector
+from zephyr.feedback_loop.detectors.guard.temporal_coherence_of_self_model import TemporalCoherenceOfSelfModel
+from zephyr.feedback_loop.diagnosers.cognitive.adaptive_param_tuning import AdaptiveParamTuning
+from zephyr.feedback_loop.diagnosers.reliability.human_anomaly_flood_detector import HumanAnomalyFloodDetector
+from zephyr.feedback_loop.diagnosers.reliability.model_version_semantic_drift import ModelVersionSemanticDrift
+from zephyr.feedback_loop.diagnosers.diagnosis.nonstationary_effectiveness import NonstationaryEffectiveness
+from zephyr.feedback_loop.diagnosers.reliability.recovery_time_stats import RecoveryTimeStats
+from zephyr.feedback_loop.diagnosers.reliability.regime_gain_scheduling import RegimeGainScheduling
+from zephyr.feedback_loop.diagnosers.health.self_bottleneck_detector import PipelineStage
+from zephyr.feedback_loop.diagnosers.reliability.timezone_semantic_reasoner import TimezoneSemanticReasoner
 from zephyr.feedback_loop.scheduler_act import ActPhaseHandler
 from zephyr.feedback_loop.scheduler_collect_detect import CollectDetectHandler
 from zephyr.feedback_loop.scheduler_health import HealthReporter

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md
 # [MODULE] zephyr.feedback_loop.scheduler_safety
 # [DOMAIN] D_FEEDBACK_LOOP
 # [DEPENDENCIES] zephyr.feedback_loop.__init__
@@ -49,8 +49,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable
 
-from zephyr.feedback_loop.diagnosers.numerical_stability_guard import NumericalStabilityGuard
-from zephyr.feedback_loop.diagnosers.temporal_integrity_guard import TemporalIntegrityGuard
+from zephyr.feedback_loop.diagnosers.reliability.numerical_stability_guard import NumericalStabilityGuard
+from zephyr.feedback_loop.diagnosers.reliability.temporal_integrity_guard import TemporalIntegrityGuard
 from zephyr.feedback_loop.forensic.boot_integrity_attestation import BootIntegrityAttestation
 from zephyr.feedback_loop.gates.deployment_suppression import DeploymentSuppression
 from zephyr.feedback_loop.resilience.config_hot_reload_guard import ConfigHotReloadGuard

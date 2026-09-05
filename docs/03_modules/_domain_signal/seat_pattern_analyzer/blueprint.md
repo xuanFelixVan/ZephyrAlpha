@@ -4,6 +4,7 @@ belongs_to: MOD-L03-001
 title: "Seat Pattern Analyzer 蓝图+施工图 — 龙虎榜席位形态分析（谁在买）"
 doc_type: blueprint
 status: Draft
+design_maturity: production
 version: "0.1.3"
 layer: L2_domain
 functional_domain: ashare_signal

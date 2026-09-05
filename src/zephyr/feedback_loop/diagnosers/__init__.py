@@ -1,6 +1,6 @@
 # [DOMAIN] D_FBL_DIAGNOSERS
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md
 # [MODULE] zephyr.feedback_loop.diagnosers
 # [INVARIANTS] __all__列表不变(公开叶子API不变); 旧路径diagnosers.<leaf>保持可导入(兼容垫片)
 # [MODIFY-GUARD] 新增子模块须同步更新对应子包的_SUBMODULES和本文件__all__

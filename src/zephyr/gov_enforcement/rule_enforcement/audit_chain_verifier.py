@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md
 # [MODULE] zephyr.gov_enforcement.rule_enforcement.audit_chain_verifier
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_enforcement.gate_context; zephyr.gov_audit.writer

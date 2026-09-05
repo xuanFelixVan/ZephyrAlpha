@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-RULE_ENGINE | docs/03_modules/_cross_layer/rule-engine/blueprint.md
-# [MODULE] zephyr.gov_enforcement.rule_enforcement.rule_engine.__init__
+# [MODULE] zephyr.gov_enforcement.rule_enforcement.rule_engine
 # [DOMAIN] D_GOV_RULE
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.gov_enforcement.rule_enforcement 内部模块

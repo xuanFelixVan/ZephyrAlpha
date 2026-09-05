@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
+# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md
 # [MODULE] zephyr.orchestrator.execution.batch_orchestrator
 # [DOMAIN] D_ORCHESTRATOR
 # [DEPENDENCIES] zephyr.shared.contracts.orchestration_protocol; zephyr.shared.contracts.task_repository_protocol; zephyr.shared.models

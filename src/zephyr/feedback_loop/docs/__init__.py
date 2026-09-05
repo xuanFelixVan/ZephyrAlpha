@@ -1,6 +1,6 @@
 # [DOMAIN] D_FEEDBACK_LOOP
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md
 # [MODULE] zephyr.feedback_loop.docs
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval

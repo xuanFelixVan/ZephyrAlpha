@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md
-# [MODULE] zephyr.infrastructuredantic_v2_migrator
+# [MODULE] zephyr.infrastructure.pydantic_v2_migrator
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS]

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md
 # [MODULE] zephyr.gov_enforcement.rule_enforcement.capability_checker
 # [DOMAIN] D_GOV_RULE
 # [DEPENDENCIES] zephyr.gov_audit.bridge; zephyr.gov_enforcement.rule_enforcement.cbac_matrix

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md
 # [MODULE] zephyr.feedback_loop.scheduler_act
 # [DOMAIN] D_FEEDBACK_LOOP
 # [DEPENDENCIES] zephyr.feedback_loop.__init__; zephyr.governance.__init__; zephyr.shared.event_bus
@@ -58,14 +58,14 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
 
 from zephyr.feedback_loop.actors.action_selector import ActionSelector
-from zephyr.feedback_loop.detectors.action_efficacy_decay_detector import ActionEfficacyDecayDetector
-from zephyr.feedback_loop.detectors.action_interaction_detector import ActionInteractionDetector
-from zephyr.feedback_loop.detectors.guard_oscillation_detector import GuardOscillationDetector
-from zephyr.feedback_loop.detectors.placebo_action_detector import PlaceboActionDetector
-from zephyr.feedback_loop.diagnosers.action_composition_health_monitor import ActionCompositionHealthMonitor
-from zephyr.feedback_loop.diagnosers.context_window_pressure_manager import ContextWindowPressureManager
-from zephyr.feedback_loop.diagnosers.self_bottleneck_detector import PipelineStage, SelfBottleneckDetector
-from zephyr.feedback_loop.diagnosers.toil_quantification import ToilQuantification
+from zephyr.feedback_loop.detectors.correlation.action_efficacy_decay_detector import ActionEfficacyDecayDetector
+from zephyr.feedback_loop.detectors.correlation.action_interaction_detector import ActionInteractionDetector
+from zephyr.feedback_loop.detectors.guard.guard_oscillation_detector import GuardOscillationDetector
+from zephyr.feedback_loop.detectors.guard.placebo_action_detector import PlaceboActionDetector
+from zephyr.feedback_loop.diagnosers.health.action_composition_health_monitor import ActionCompositionHealthMonitor
+from zephyr.feedback_loop.diagnosers.reliability.context_window_pressure_manager import ContextWindowPressureManager
+from zephyr.feedback_loop.diagnosers.health.self_bottleneck_detector import PipelineStage, SelfBottleneckDetector
+from zephyr.feedback_loop.diagnosers.reliability.toil_quantification import ToilQuantification
 from zephyr.feedback_loop.evolution.self_modification_rate_limiter import SelfModificationRateLimiter
 from zephyr.feedback_loop.resilience.graceful_degradation_planner import GracefulDegradationPlanner
 from zephyr.feedback_loop.resilience.oscillation_damping import OscillationDamping

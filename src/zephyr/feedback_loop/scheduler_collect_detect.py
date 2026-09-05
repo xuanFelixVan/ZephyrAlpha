@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md
 # [MODULE] zephyr.feedback_loop.scheduler_collect_detect
 # [DOMAIN] D_FEEDBACK_LOOP
 # [DEPENDENCIES] zephyr.feedback_loop.__init__
@@ -50,23 +50,23 @@ from dataclasses import dataclass, field
 
 from zephyr.feedback_loop.collectors.feedback_collector import FeedbackCollector
 from zephyr.feedback_loop.collectors.metrics_collector import MetricsCollector, MetricSnapshot
-from zephyr.feedback_loop.detectors.agent_trajectory_anomaly_detector import (
+from zephyr.feedback_loop.detectors.correlation.agent_trajectory_anomaly_detector import (
     AgentTrajectoryAnomalyDetector,
     TrajectoryEvent,
 )
-from zephyr.feedback_loop.detectors.anomaly_detector import AnomalyDetector
-from zephyr.feedback_loop.detectors.flapping_detector import AlertState, FlappingDetector
-from zephyr.feedback_loop.detectors.guard_oscillation_detector import GuardOscillationDetector
-from zephyr.feedback_loop.detectors.heisenbug_detector import HeisenbugDetector
-from zephyr.feedback_loop.detectors.intermittent_failure_pattern import IntermittentFailurePattern
-from zephyr.feedback_loop.detectors.metric_cardinality_guard import MetricCardinalityGuard
-from zephyr.feedback_loop.diagnosers.cold_start_conservative_mode import ColdStartConservativeMode
-from zephyr.feedback_loop.diagnosers.diagnosis_engine import DiagnosisEngine
-from zephyr.feedback_loop.diagnosers.feedback_delay_compensator import FeedbackDelayCompensator
-from zephyr.feedback_loop.diagnosers.guard_self_consistency_auditor import GuardSelfConsistencyAuditor
-from zephyr.feedback_loop.diagnosers.numerical_stability_guard import NumericalStabilityGuard
-from zephyr.feedback_loop.diagnosers.self_bottleneck_detector import PipelineStage, SelfBottleneckDetector
-from zephyr.feedback_loop.diagnosers.statistical_hygiene_auditor import StatisticalHygieneAuditor
+from zephyr.feedback_loop.detectors.anomaly.anomaly_detector import AnomalyDetector
+from zephyr.feedback_loop.detectors.anomaly.flapping_detector import AlertState, FlappingDetector
+from zephyr.feedback_loop.detectors.guard.guard_oscillation_detector import GuardOscillationDetector
+from zephyr.feedback_loop.detectors.anomaly.heisenbug_detector import HeisenbugDetector
+from zephyr.feedback_loop.detectors.anomaly.intermittent_failure_pattern import IntermittentFailurePattern
+from zephyr.feedback_loop.detectors.reliability.metric_cardinality_guard import MetricCardinalityGuard
+from zephyr.feedback_loop.diagnosers.reliability.cold_start_conservative_mode import ColdStartConservativeMode
+from zephyr.feedback_loop.diagnosers.diagnosis.diagnosis_engine import DiagnosisEngine
+from zephyr.feedback_loop.diagnosers.reliability.feedback_delay_compensator import FeedbackDelayCompensator
+from zephyr.feedback_loop.diagnosers.reliability.guard_self_consistency_auditor import GuardSelfConsistencyAuditor
+from zephyr.feedback_loop.diagnosers.reliability.numerical_stability_guard import NumericalStabilityGuard
+from zephyr.feedback_loop.diagnosers.health.self_bottleneck_detector import PipelineStage, SelfBottleneckDetector
+from zephyr.feedback_loop.diagnosers.diagnosis.statistical_hygiene_auditor import StatisticalHygieneAuditor
 
 logger = logging.getLogger(__name__)
 
