@@ -4,7 +4,7 @@ submodule_path: src/zephyr/shared
 title: "Shared+Core 蓝图"
 doc_type: blueprint
 status: Active
-version: "0.19.21"
+version: "0.19.22"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -133,7 +133,7 @@ build_status: generated
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-016` 的 348 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-016` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -435,7 +435,6 @@ build_status: generated
 | `src/zephyr/shared/contracts/risk/risk_limits.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/risk/risk_validator_protocol.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/risk_dashboard_snapshot.py` | ✅ 已实现 | |
-| `src/zephyr/shared/contracts/risk_limits.py` | ✅ 已实现 | CTR-003 登记真源（cross_layer_contracts.yaml physical_path + freeze_manifest + G6-C03 三处同向）；B3 治本 2026-09-05 后 trading_contracts 副本与 risk/ 子包 shim 均转发至此 |
 | `src/zephyr/shared/contracts/risk_metrics.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/security/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/skill_protocol.py` | ✅ 已实现 | |
