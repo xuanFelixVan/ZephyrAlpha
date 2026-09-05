@@ -22,7 +22,7 @@ responsibility_domain:
 # MOD-PA-007 RegimeMetaAllocator — Regime元分配器 蓝图
 
 > **module_id**: MOD-PA-007 | **域**: D_PF_ALLOC | **层**: L02 组合分配
-> **优先级**: P0 | **成熟度**: design | **建设标记**: 🟡 待施工（第二阶段上，30_multi_strategy_concurrency §4.2）
+> **优先级**: P0 | **成熟度**: production | **建设标记**: ✅ 已施工（Phase 1 已落码；2026-09-05 AI-AUDIT10-001 对齐实物，原"🟡 待施工"过期叙事修正）
 > **SSoT**: depgraph MOD-PA-007 | **设计真源**: [30_multi_strategy_concurrency.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/30_multi_strategy_concurrency.md) §2.2（RegimeMetaAllocator + 分配公式 + 置信度映射 + 稀有态处理）
 > **Shrinkage 真源**: [10_regime_detector_spec.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/10_regime_detector_spec.md) §5（Shrinkage = ConfidenceSignal × RiskSignal，二维公式 + 13 参数阈值 + 聚合公式）
 > **开源实证**: [Morwane/multi-strategy-alpha-book](https://github.com/Morwane/multi-strategy-alpha-book) — regime 做 risk-throttle Sharpe +1.43 / MaxDD −10.3%，regime 做 alpha-timing Sharpe +0.87（降）
@@ -259,6 +259,8 @@ allocation_i = allocation_i / Σ(clamped_allocation)         # 二次归一化
 - `AllocationNormalizationError` (ZA-PA-0009): 归一化失败（raw 全零 / 二次归一化不收敛）
 - `ShrinkageCalculationError` (ZA-PA-0010): ConfidenceSignal/RiskSignal 计算异常
 
+> **落码对齐（2026-09-05 AI-AUDIT10-001）**：实现收敛为单异常类 `AllocationError`（ZA-PA-0007，已登记）；上列 ZA-PA-0008/0009/0010 三类未落码未登记（GATE-ERRCODE 6 passed 实证代码↔注册表闭合）。本节保留设计预留语义，落码细化或关闭预留由 Owner 裁定。
+
 ## 6. 测试规划
 
 ### Phase 1 测试 (~20)
@@ -374,7 +376,7 @@ allocation_i = allocation_i / Σ(clamped_allocation)         # 二次归一化
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-PA-007` 的 5 个 file 节点 | production | `extract_depgraph.py --modules MOD-PA-007` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 

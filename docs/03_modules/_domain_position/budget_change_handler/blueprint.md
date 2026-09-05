@@ -22,7 +22,7 @@ responsibility_domain:
 # MOD-POS-022 BudgetChangeHandler — Budget变动处理器 蓝图
 
 > **module_id**: MOD-POS-022 | **域**: D_POSITION | **层**: L03 仓位管理
-> **优先级**: P0 | **成熟度**: design | **建设标记**: 🟡 待施工
+> **优先级**: P0 | **成熟度**: production | **建设标记**: ✅ 已施工（2026-09-05 AI-AUDIT10-001 对齐实物，原"🟡 待施工"过期叙事修正）
 > **SSoT**: depgraph MOD-POS-022 | **设计真源**: [30_multi_strategy_concurrency.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/30_multi_strategy_concurrency.md) §2.4（权重变动操作流程·三级升级）
 > **上游触发**: [RegimeMetaAllocator blueprint](../../_domain_portfolio_alloc/regime_meta_allocator/blueprint.md) MOD-PA-007 §2.2 BudgetChanged 事件 (E-PA-07)
 > **执行目标**: [StrategyBook blueprint](../strategy_book/blueprint.md) MOD-POS-020 §3.3 rebalance_to_budget 接口
@@ -272,6 +272,8 @@ if delta ≥ 0 (budget 上调):
 - `ForcedTrimError` (ZA-POS-0043): Tier 3 强裁失败（PositionSnapshot 缺失 / cut_ratio 计算异常 / 执行层拒绝）
 - `StateRecoveryError` (ZA-POS-0044): 跨日恢复状态机异常（持久化数据损坏 / 状态不一致）
 
+> **落码对齐（2026-09-05 AI-AUDIT10-001）**：已落码 `BudgetChangeError`(ZA-POS-0040)/`StateRecoveryError`(ZA-POS-0044)；`FreezeFailedError`(ZA-POS-0041)/`ForcedTrimError`(ZA-POS-0043) 未落码未登记；`RebalanceTimeoutError`(ZA-POS-0042) 按实现裁定不落异常类——Tier2 convergence_window 超时与 firm 风险违例直接作为 Tier3 触发条件（ForcedTrim.reason 承载，非致命）。预留码登记/关闭由 Owner 裁定。
+
 ## 7. 测试规划
 
 ### Phase 1 测试 (~28)
@@ -377,7 +379,7 @@ if delta ≥ 0 (budget 上调):
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-POS-022` 的 1 个 file 节点 | production | `extract_depgraph.py --modules MOD-POS-022` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
