@@ -190,6 +190,7 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 5 | AGENTS.md 业务资产速查更新（17 号定稿 + 12 注册表建成后） | AI-STD-001 | ✅ 已闭环（2026-08-13，commit f15de056，Owner 批准 [ARCH-APPROVAL] 落地，12 注册表速查全量更新） | ✅ |
 | 103 | tests/git test_git_command_timeout_handled 环境敏感失败（#103） | AI-TEST-001 | mock 目标误打在死钩子 _run_git（Stage 4 公共化后零生产调用的向后兼容 wrapper）→commit 真实执行成功返回 OK→断言确定性失败（与机器快慢无关）。治本：mock 改打真实入口 run_git，选择性注入仅 git commit 抛 TimeoutExpired，其余命令（add/rev-parse/stash 等）走真实调用。修复 commit 07bbc4856d4e，tests/git 154 passed + 1 xpassed 全绿 | ✅ |
 | 104 | catchup_guard（MOD-L00-021）depgraph 设计边未登记：design 节点已建（node_id=11411222，apply_depgraph --add-design-node --granularity file），但依赖边（→scheduler/backfill_checker/progress_store/alerter/calendar）因工具链无 node_id 反查通道（--query-production exit 2 / extract_depgraph --paths 与 --modules 均不暴露 node_id / pg_backup JSON 非全量）暂缺 | data-backfill-0903 | 待办：给 apply_depgraph/extract 工具补 path→node_id 查询 op，或提供 blueprint_id 反查；补齐后 `--add-design-edge 11411222 <dep_node_id>` 逐条登记 | ⏳ |
+| 105 | 【G4 清淤波次】全景对齐软问题 529 warn 存量（孤儿环节 acknowledged 18/孤儿模块违规 457+acknowledged 23/状态漂移 1/设计态孤立等+frontend_map warn 7） | 对齐硬化专项 2026-09-05（#ARCH-BATTLE-MAP-HARD-001） | 非建造项=治理清淤波次：①457 孤儿模块=血肉填充 campaign 主体（新策略/因子入库时顺带挂 BM 锚点，BUSINESS-REGISTRY gate 已强制 module_id 但 BM 锚点仍靠自觉→候选：G1 门禁二期加 BM 锚点检查）②其余 warn 择期由 68 号审查流水线批量承载；**清淤期间新增违规仍会被 GATE-BATTLE-MAP-ALIGNMENT 硬拦截（三类已升硬）**，存量不阻断 | ⏳ 治理波次（68 号流水线择期） |
 
 ### P1 · 治理登记缺口/一致性问题
 

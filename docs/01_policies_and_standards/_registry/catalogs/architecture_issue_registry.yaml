@@ -21366,3 +21366,28 @@ entries:
   status: decided
   created: '2026-09-05'
   last_updated: '2026-09-05'
+
+- issue_id: '#ARCH-DECISION-MAP-GATE-001'
+  title: 交易决策地图对齐闭环——七图对齐第7项+DECISION-MAP commit gate（血肉填充前强制门禁）
+  severity: P1高
+  adjudication: 'Owner 2026-09-05 裁定"全部建造+极限红蓝对抗，血肉填充前最重要一步"。交易决策地图（MOD-TRADING-015）真源为引用型图谱，血肉填充阶段（矩阵格子/策略挂载/因子引用逐格添加）产生大量新引用，无 commit 门禁则引用断链静默累积，V1 前端接入即整页幻觉。建造：①check_decision_map.py（七图第7项校验器，R1-R8 error 分级+AST 扫描 pf_core 策略 id 字面量，校验单一真源=zephyr.trading.decision_map.validate_decision_map）接入 align_all.py；②DECISION-MAP gate（priority=138，恒跑，镜像 FRONTEND-MAP 确定性硬门禁模式）。'
+  fix_phase: '已落地（2026-09-05：check_decision_map.py + decision_map_gate.py + align_all 七图升级 + in_process_gate_registry/gate_registry/capability/翻译真源/depgraph 五处登记）'
+  status: decided
+  created: '2026-09-05'
+  last_updated: '2026-09-05'
+- issue_id: '#ARCH-BUSINESS-REG-GATE-001'
+  title: 业务资产库入库门禁——6 库 module_id 强制（alignment_checklist §4.1 待建转正式）
+  severity: P1高
+  adjudication: 'alignment_checklist §4.1 六个业务资产库对齐工具全部标"门禁（待建）"=血肉填充期批量入库无强制挂 depgraph。基线实证 module_id 填充率 100%（strategy 149/149、factor 161/161、indicator 41/41、chart_pattern/portfolio_model/risk_limit 空库）→ 硬门禁基线安全。建造 BUSINESS-REGISTRY gate（priority=139，文件触发整库校验）：id 唯一+module_id 非空 MOD-* 格式（确定性硬）+depgraph 存在性（PG fail-open，对标 NEW-FILE-DEPGRAPH gate 惯例）。'
+  fix_phase: '已落地（2026-09-05：business_registry_gate.py + in_process_gate_registry/gate_registry/capability/翻译真源/depgraph 登记；总门禁 101→104）'
+  status: decided
+  created: '2026-09-05'
+  last_updated: '2026-09-05'
+- issue_id: '#ARCH-BATTLE-MAP-HARD-001'
+  title: 作战地图对齐硬化——BM-INV-001/002/003 三类升硬（G3 驱零后）+ G4 清淤波次登记
+  severity: P2中
+  adjudication: '作战地图七类检查此前全 warn-only。G3 驱零实证（2026-09-05）：违规孤儿环节 3→0（BM-BUY-05/14 deprecated 退役占位+BM-SIM-08 design 待实现→acknowledged 登记）；缺失叙事 3→0（翻译真源补 3 条）；域漂移 3→0（D_PLAN 补入 position_management allowed）。三类确定性检查（ghost/orphan_steps/missing_narratives）升硬=GATE-BATTLE-MAP-ALIGNMENT gate（priority=833，BM 相关文件触发，fail-open）；domain_drifts/悬空边/父子嵌套/孤儿模块（457）保持 warn。G4=527 warn 清淤为治理波次非建造项，登记 construction_progress_tracker，由 68 号审查流水线择期承载。'
+  fix_phase: '已落地（2026-09-05：battle_map_alignment_gate.py + battle_map_domain_policy.yaml 豁免/域策略 + 翻译真源补叙 + 门禁登记）；G4 清淤=待排期治理波次'
+  status: decided
+  created: '2026-09-05'
+  last_updated: '2026-09-05'

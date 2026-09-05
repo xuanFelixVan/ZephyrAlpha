@@ -89,6 +89,15 @@ from zephyr.gov_enforcement.commit_gates.frontend_truth_source_gate import (  # 
 from zephyr.gov_enforcement.commit_gates.frontend_map_gate import (  # noqa: F401  # FRONTEND-MAP 前端全景图对齐阻断门禁（六图对齐 commit 链闭环，Owner 2026-09-04 裁定）
     make_frontend_map_gate as _make_frontend_map_gate,
 )
+from zephyr.gov_enforcement.commit_gates.decision_map_gate import (  # noqa: F401  # DECISION-MAP 交易决策地图对齐阻断门禁（七图对齐第7项，#ARCH-DECISION-MAP-GATE-001 2026-09-05）
+    make_decision_map_gate as _make_decision_map_gate,
+)
+from zephyr.gov_enforcement.commit_gates.business_registry_gate import (  # noqa: F401  # BUSINESS-REGISTRY 业务资产库入库门禁（#ARCH-BUSINESS-REG-GATE-001 2026-09-05，alignment_checklist §4.1 待建转正式）
+    make_business_registry_gate as _make_business_registry_gate,
+)
+from zephyr.gov_enforcement.commit_gates.battle_map_alignment_gate import (  # noqa: F401  # GATE-BATTLE-MAP-ALIGNMENT 作战地图对齐硬化门禁（#ARCH-BATTLE-MAP-HARD-001 2026-09-05，三类升硬）
+    make_battle_map_alignment_gate as _make_battle_map_alignment_gate,
+)
 from zephyr.gov_enforcement.commit_gates.reconciler_file_ops_gate import (  # noqa: F401  # RECONCILER-FILE-OPS 裸删除原语静态扫描（#ARCH-RECONCILER-AUTO-DELETE-GOV-001 T1③）
     make_reconciler_file_ops_gate as _make_reconciler_file_ops_gate,
 )

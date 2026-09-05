@@ -4908,7 +4908,67 @@ capabilities:
   - load_decision_map
   - validate_decision_map
   - DecisionMapSchemaError
+- capability_id: decision_map_alignment
+  aliases:
+  - DecisionMapAlignment
+  - check_decision_map
+  - 交易决策地图对齐
+  description: 第七图（交易决策地图）对齐校验器（#ARCH-DECISION-MAP-GATE-001，2026-09-05 七图升级）。
+    run_checks() → (fails, warns, total)：R1-R8 error 级=硬阻断，warning 级=红节点占位。
+    known_strategy_ids=AST 扫描 pf_core 全部 strategy_id 字面量（离线免重依赖）。
+    消费方=align_all.py 第 7 项 + DECISION-MAP gate（priority=138，恒跑）。
+    校验规则单一真源=zephyr.trading.decision_map.validate_decision_map（本文件只封装分级，禁复制）。
+    canonical = scripts/governance/d5_architecture/generators/check_decision_map.py（auto 派生）。
+  integrity_anchors:
+  - run_checks
+  - collect_strategy_ids_via_ast
+- capability_id: business_registry_gate
+  aliases:
+  - BusinessRegistryGate
+  - BUSINESS-REGISTRY
+  - 业务库入库门禁
+  description: 业务资产库入库门禁（#ARCH-BUSINESS-REG-GATE-001，2026-09-05，alignment_checklist §4.1
+    "待建"转正式）。6 库（策略/因子/指标/形态/组合/限额）staged 变更时：条目 id 唯一+module_id
+    非空 MOD-* 格式（确定性硬）+depgraph 存在性（PG fail-open）。基线 module_id 填充率 100% 实证
+    （149+161+41+3 空库）。GateSpec(gate_id="BUSINESS-REGISTRY", priority=139)。
+    canonical = src/zephyr/gov_enforcement/commit_gates/business_registry_gate.py（auto 派生）。
+  integrity_anchors:
+  - validate_registry_file
+  - REGISTRY_SPECS
+- capability_id: battle_map_alignment_gate
+  aliases:
+  - BattleMapAlignmentGate
+  - GATE-BATTLE-MAP-ALIGNMENT
+  - 作战地图硬化门禁
+  description: 作战地图对齐硬化门禁（#ARCH-BATTLE-MAP-HARD-001，2026-09-05 G3 驱零后升硬）。
+    BM 相关文件触发时跑 align_battle_map 七类检查：ghost_anchors/违规孤儿环节/缺失叙事
+    三类=硬阻断（基线 0 实证：acknowledged 18 环节已排除）；域漂移/悬空边/父子嵌套/孤儿模块
+    （457）保持 warn=G4 清淤 campaign。纯判定 evaluate_battle_map_report 可单测。
+    GateSpec(gate_id="GATE-BATTLE-MAP-ALIGNMENT", priority=833)。
+    canonical = src/zephyr/gov_enforcement/commit_gates/battle_map_alignment_gate.py（auto 派生）。
+  integrity_anchors:
+  - evaluate_battle_map_report
 creation_tokens:
+- file: src/zephyr/gov_enforcement/commit_gates/decision_map_gate.py
+  token: auto-decision-map-gate-20260905
+  created_by: solo-20260905-alignment-hardening
+  capability: decision_map_alignment
+- file: src/zephyr/gov_enforcement/commit_gates/business_registry_gate.py
+  token: auto-business-registry-gate-20260905
+  created_by: solo-20260905-alignment-hardening
+  capability: business_registry_gate
+- file: src/zephyr/gov_enforcement/commit_gates/battle_map_alignment_gate.py
+  token: auto-battle-map-gate-20260905
+  created_by: solo-20260905-alignment-hardening
+  capability: battle_map_alignment_gate
+- file: scripts/governance/d5_architecture/generators/check_decision_map.py
+  token: auto-decision-map-aligner-20260905
+  created_by: solo-20260905-alignment-hardening
+  capability: decision_map_alignment
+- file: tests/governance/test_alignment_gates_red_blue.py
+  token: auto-alignment-red-blue-20260905
+  created_by: solo-20260905-alignment-hardening
+  capability: alignment_gates_red_blue_test
 - file: src/zephyr/trading/decision_map.py
   token: auto-trading-decision-map-20260904
   created_by: solo-20260904-decision-map

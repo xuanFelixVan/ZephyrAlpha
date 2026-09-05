@@ -96,6 +96,8 @@ from align_panoramas import (  # noqa: E402  # noqa: import-integrity  sys.path 
 
 # 第六图 frontend_map 校验器（2026-09-04 六图对齐升级，同目录）
 from check_frontend_map import run_checks as run_frontend_map_checks  # noqa: E402
+# 第七图 trading_decision_map 校验器（2026-09-05 七图升级 #ARCH-DECISION-MAP-GATE-001，同目录）
+from check_decision_map import run_checks as run_decision_map_checks  # noqa: E402
 from align_panoramas import (  # noqa: E402  # noqa: import-integrity  sys.path 动态加载的本地模块
     run_alignment as run_panorama_alignment,
 )
@@ -113,14 +115,19 @@ def _build_overview(
     fm_fails: list[str],
     fm_warns: list[str],
     fm_total: int,
+    dm_fails: list[str] | None = None,
+    dm_warns: list[str] | None = None,
+    dm_total: int = 0,
 ) -> str:
-    """构建六图对齐总览 Markdown（2026-09-04 六图升级：+frontend_map）。"""
+    """构建七图对齐总览 Markdown（2026-09-05 七图升级：+trading_decision_map）。"""
+    dm_fails = dm_fails or []
+    dm_warns = dm_warns or []
     lines: list[str] = []
-    lines.append("# 六图对齐总览 (Six-Panorama Alignment Overview)")
+    lines.append("# 七图对齐总览 (Seven-Panorama Alignment Overview)")
     lines.append("")
     lines.append(f"> 生成时间: {generated_at}")
-    lines.append("> 对齐轴: module_id（图 1-4）+ step_id（图 5）+ feature_id（图 6）")
-    lines.append("> 六图: depgraph / dataflowgraph / decisiongraph / blueprint.md / battle_map / frontend_map")
+    lines.append("> 对齐轴: module_id（图 1-4）+ step_id（图 5）+ feature_id（图 6）+ node_id（图 7 TDM-*）")
+    lines.append("> 七图: depgraph / dataflowgraph / decisiongraph / blueprint.md / battle_map / frontend_map / trading_decision_map")
     lines.append("")
 
     # === 图 1-4：全景对齐（module_id 轴）===
@@ -186,17 +193,26 @@ def _build_overview(
     lines.append(f"- R2 manifest 双向 / R3 file 失联 warn: {len(fm_warns)}")
     lines.append("")
 
-    # === 汇总裁定 ===
-    lines.append("## 四、汇总裁定")
+    # === 图 7：trading_decision_map 对齐（node_id 轴，2026-09-05 七图升级）===
+    lines.append("## 四、trading_decision_map 对齐（node_id 轴，图 7）")
+    lines.append("")
+    lines.append(f"- 决策链节点总数: {dm_total}")
+    lines.append(f"- R1-R8 error 级缺口: {len(dm_fails)}")
+    lines.append(f"- warning 级（module_ref 红节点占位等）: {len(dm_warns)}")
     lines.append("")
 
-    hard_issues = len(pano.domain_mismatches) + len(bm.ghost_anchors) + len(fm_fails)
+    # === 汇总裁定 ===
+    lines.append("## 五、汇总裁定")
+    lines.append("")
+
+    hard_issues = len(pano.domain_mismatches) + len(bm.ghost_anchors) + len(fm_fails) + len(dm_fails)
     soft_issues = (
         pano.issues_total
         - len(pano.domain_mismatches)
         + bm.issues_total
         - len(bm.ghost_anchors)
         + len(fm_warns)
+        + len(dm_warns)
     )
 
     if hard_issues > 0:
@@ -204,8 +220,11 @@ def _build_overview(
         lines.append(f"   - 全景域不一致: {len(pano.domain_mismatches)}")
         lines.append(f"   - 作战地图幽灵锚点: {len(bm.ghost_anchors)}")
         lines.append(f"   - frontend_map fail: {len(fm_fails)}")
+        lines.append(f"   - trading_decision_map error: {len(dm_fails)}")
     else:
-        lines.append("✅ **硬问题清零**: domain_mismatches=0, ghost_anchors=0, frontend_map fail=0")
+        lines.append(
+            "✅ **硬问题清零**: domain_mismatches=0, ghost_anchors=0, frontend_map fail=0, decision_map error=0"
+        )
 
     if soft_issues > 0:
         lines.append(f"⚠️ **软问题**: {soft_issues} 个 warn 级问题（君子协定，不阻断施工）")
@@ -303,7 +322,22 @@ def main() -> int:
     for x in fm_fails:
         print(f"    FAIL: {x}")
 
-    hard_issues = len(pano.domain_mismatches) + len(bm.ghost_anchors) + len(fm_fails)
+    # --- 图 7：trading_decision_map 对齐（node_id 轴，2026-09-05 七图升级）---
+    print()
+    print("[4/4] 第七图 trading_decision_map 对齐（node_id 轴，2026-09-05 七图升级）...")
+    try:
+        dm_fails, dm_warns, dm_total = run_decision_map_checks()
+    except Exception as e:  # noqa: BLE001
+        print(f"  ERROR: {e}", file=sys.stderr)
+        return EXIT_ERROR
+    print(f"  OK: 决策链节点={dm_total}（R1-R8 引用校验）")
+    print(f"  问题: error={len(dm_fails)}, warn={len(dm_warns)}")
+    for x in dm_fails:
+        print(f"    FAIL: {x}")
+
+    hard_issues = (
+        len(pano.domain_mismatches) + len(bm.ghost_anchors) + len(fm_fails) + len(dm_fails)
+    )
     print()
     print("-" * 60)
     if hard_issues > 0:
@@ -311,11 +345,14 @@ def main() -> int:
             f"❌ 硬阻断: {hard_issues} 个硬问题"
             f"（域不一致={len(pano.domain_mismatches)}, "
             f"幽灵锚点={len(bm.ghost_anchors)}, "
-            f"frontend_map fail={len(fm_fails)}）"
+            f"frontend_map fail={len(fm_fails)}, "
+            f"decision_map error={len(dm_fails)}）"
         )
         print("   须修复后才能施工！")
     else:
-        print("✅ 硬问题清零: domain_mismatches=0, ghost_anchors=0, frontend_map fail=0")
+        print(
+            "✅ 硬问题清零: domain_mismatches=0, ghost_anchors=0, frontend_map fail=0, decision_map error=0"
+        )
 
     soft_issues = (
         pano.issues_total
@@ -323,6 +360,7 @@ def main() -> int:
         + bm.issues_total
         - len(bm.ghost_anchors)
         + len(fm_warns)
+        + len(dm_warns)
     )
     if soft_issues > 0:
         print(f"⚠️ 软问题: {soft_issues} 个 warn 级问题（君子协定，不阻断）")
@@ -334,7 +372,9 @@ def main() -> int:
         from datetime import datetime, timezone
 
         generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
-        overview = _build_overview(pano, bm, generated_at, fm_fails, fm_warns, fm_total)
+        overview = _build_overview(
+            pano, bm, generated_at, fm_fails, fm_warns, fm_total, dm_fails, dm_warns, dm_total
+        )
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(overview, encoding="utf-8")
         print()

@@ -107,6 +107,7 @@ flow_stage_allowed_domains:
       - D_PF_CORE              # 组合核心（仓位调整涉及组合）
       - D_PF_ALLOC             # 组合分配
       - D_RISK                 # 风控（仓位受风控约束）
+      - D_PLAN                 # 预案引擎（BM-PLAN-01~03 明日预案生成挂 position_management，2026-09-05 G3 驱零补录 #ARCH-BATTLE-MAP-HARD-001）
     forbidden_rationale:
       D_SELL_DECISION: "卖出决策属卖出阶段"
       D_EX_CORE: "执行核心属执行阶段"
@@ -416,3 +417,13 @@ acknowledged_orphans:
       reason: "子环节无锚点但父环节有锚点，决策通过父环节承载（子环节是细化分解）"
       review_frequency: "quarterly"
       promotion_criteria: "子环节获得独立 depgraph 模块后补挂锚点并移出；或父环节锚点移除时升级为 high risk"
+
+    # 退役/待实现组（3个，2026-09-05 G3 硬门禁前置驱零：#ARCH-BATTLE-MAP-HARD-001）
+    - risk_level: low
+      step_ids:
+        - BM-BUY-05       # buy_flow: 编号退役占位（design_maturity=deprecated，历史断档禁止复用）
+        - BM-BUY-14       # buy_flow: 编号退役占位（design_maturity=deprecated，历史断档禁止复用）
+        - BM-SIM-08       # simulation_validation: Paper Matching 涨跌停排队引擎（design 待实现，code_mapping=待新建）
+      reason: "前两者=deprecated 编号退役占位（无业务语义，永久无锚点属预期）；BM-SIM-08=design 态待实现（53号文档 §3.2 步骤②）"
+      review_frequency: "quarterly"
+      promotion_criteria: "BM-SIM-08：matching_engine.py 排队逻辑落地后挂锚点移出；BM-BUY-05/14：deprecated 占位不移出（无 promotion 路径）"

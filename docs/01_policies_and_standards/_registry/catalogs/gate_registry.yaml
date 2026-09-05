@@ -931,6 +931,33 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
+- gate_id: DECISION-MAP
+  name: 'DECISION-MAP: 交易决策地图对齐阻断门禁（DECISION-MAP，七图对齐第7项）（CommitGate, priority=138）'
+  entry: in-process (GitCommitGateway)
+  description: 交易决策地图 R1-R8 引用校验硬阻断（#ARCH-DECISION-MAP-GATE-001，2026-09-05）
+  files_trigger: ''
+  always_run: true
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: BUSINESS-REGISTRY
+  name: 'BUSINESS-REGISTRY: 业务资产库入库门禁（BUSINESS-REGISTRY，6库 module_id 强制）（CommitGate, priority=139）'
+  entry: in-process (GitCommitGateway)
+  description: 业务库（策略/因子/指标/形态/组合/限额）条目 id 唯一+module_id 强制+depgraph 存在性（#ARCH-BUSINESS-REG-GATE-001，2026-09-05，alignment_checklist §4.1 待建转正式）
+  files_trigger: 'strategy_registry.yaml;factor_registry.yaml;technical_indicator_registry.yaml;chart_pattern_registry.yaml;portfolio_model_registry.yaml;risk_limit_registry.yaml'
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: GATE-BATTLE-MAP-ALIGNMENT
+  name: 'GATE-BATTLE-MAP-ALIGNMENT: 作战地图对齐硬化门禁（ghost/orphan_steps/missing_narratives 三类硬）（CommitGate, priority=833）'
+  entry: in-process (GitCommitGateway)
+  description: 作战地图 BM-INV-001/002/003 升硬（#ARCH-BATTLE-MAP-HARD-001，2026-09-05 G3 驱零后；BM 相关文件触发；域漂移/悬空边/父子/孤儿模块保持 warn）
+  files_trigger: 'module_translation_registry.yaml;battle_map_domain_policy.yaml;align_battle_map.py;apply_battle_map.py;generate_battle_map_diagram.py;**/battle_map/**'
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
 - gate_id: FRONTEND-TRUTH-SOURCE
   name: 'FRONTEND-TRUTH-SOURCE: FRONTEND-TRUTH-SOURCE（CommitGate, priority=136）'
   entry: in-process (GitCommitGateway)

@@ -37,7 +37,7 @@ entry_schema:
   register_line: integer (informational) — 原 git_commit_gateway.py 中的注册行号（迁移参考）
   enabled: boolean (required, default true) — 是否启用（false 则 auto_registrar 跳过）
   priority: integer (informational) — gate 优先级（从 GateSpec 读取，YAML 不覆盖）
-total_gates: 101  # 2026-08-17 AI-AUDIT11 实测修正 93→97；2026-08-21 AI-RESIDUAL-001 +GATE-ERRCODE-CONSISTENCY；2026-08-23 +HOT-FILE-BASE-FRESHNESS；2026-09-04 +FRONTEND-TRUTH-SOURCE（136）+FRONTEND-MAP（137，六图对齐 commit 链闭环）
+total_gates: 104  # 2026-08-17 AI-AUDIT11 实测修正 93→97；2026-08-21 AI-RESIDUAL-001 +GATE-ERRCODE-CONSISTENCY；2026-08-23 +HOT-FILE-BASE-FRESHNESS；2026-09-04 +FRONTEND-TRUTH-SOURCE（136）+FRONTEND-MAP（137，六图对齐 commit 链闭环）；2026-09-05 +DECISION-MAP（138）+BUSINESS-REGISTRY（139）+GATE-BATTLE-MAP-ALIGNMENT（833，七图对齐+业务库入库+作战地图硬化）
 gates:
 # --- 88 个 in-process gate（82 个从 git_commit_gateway.py L407-484 提取 + GATE-PRECOMMIT-OFFLINE，2026-07-21；+TRANSLATION-COVERAGE 2026-08-02；+PROTECTED-PATHS 2026-08-03 #ARCH-MODEL-LIFECYCLE-001 P1；+DERIVED-FILE-DELETION-PROTECTION 2026-08-03 #ARCH-BP-REGISTRY-DELETION-001 P1；+BLUEPRINT-NODE-ID-HARDCODE 2026-08-04 文档引用铁律 in-process 补齐；+WORKTREE-REQUIRED 2026-08-04 #ARCH-WORKTREE-GATE-001；+TEST-RESIDUE-SSOT 2026-08-04 #ARCH-TEST-RESIDUE-CLEANUP-001 防复发）---
 - gate_id: HELD-OVERLAP
@@ -690,4 +690,22 @@ gates:
   factory_function: make_frontend_map_gate
   source: in_process
   register_line: 0  # priority=137；2026-09-04 前端全景图对齐阻断门禁（六图对齐 commit 链闭环，Owner 裁定：确定性校验硬阻断——R0 id 重复/R1 backend_ref 悬空；校验逻辑单一真源=check_frontend_map.py 动态复用）
+  enabled: true
+- gate_id: DECISION-MAP
+  module_path: zephyr.gov_enforcement.commit_gates.decision_map_gate
+  factory_function: make_decision_map_gate
+  source: in_process
+  register_line: 0  # priority=138；2026-09-05 交易决策地图对齐阻断门禁（七图对齐 commit 链闭环，#ARCH-DECISION-MAP-GATE-001：R1-R8 error 级阻断；校验逻辑单一真源=check_decision_map.py→zephyr.trading.decision_map 动态复用）
+  enabled: true
+- gate_id: BUSINESS-REGISTRY
+  module_path: zephyr.gov_enforcement.commit_gates.business_registry_gate
+  factory_function: make_business_registry_gate
+  source: in_process
+  register_line: 0  # priority=139；2026-09-05 业务资产库入库门禁（#ARCH-BUSINESS-REG-GATE-001：6 库条目 id 唯一+module_id 强制+depgraph 存在性 fail-open；alignment_checklist §4.1"待建"转正式）
+  enabled: true
+- gate_id: GATE-BATTLE-MAP-ALIGNMENT
+  module_path: zephyr.gov_enforcement.commit_gates.battle_map_alignment_gate
+  factory_function: make_battle_map_alignment_gate
+  source: in_process
+  register_line: 0  # priority=833；2026-09-05 作战地图对齐硬化门禁（#ARCH-BATTLE-MAP-HARD-001：ghost/orphan_steps/missing_narratives 三类硬，BM 相关文件触发，fail-open；基线 0 实证 2026-09-05 G3 驱零）
   enabled: true
