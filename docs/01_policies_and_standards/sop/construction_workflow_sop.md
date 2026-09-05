@@ -184,6 +184,7 @@ python scripts/lock_files.py status
 **不通过处置**：发现 GAP → 回讨论备忘补齐施工算法/接口签名/状态机 → 重新审查（禁止边审边改，按"先报告→再修复→再自检"分轮处理）
 **产出物**：审查结论（对话内）+ GAP 清单（如需回补则登记在 design_memo 或新建 ARCH 条目）
 **交易决策地图逐层讨论任务加读**（2026-09-05 v1.5.5）：地图血肉填充的每层讨论（板块层/个股层/买卖点层/持仓流/离场流/组合流/币圈）MUST 先过 [trading_decision_map_layering_sop.md](trading_decision_map_layering_sop.md) 四道前置检查（①已有资产盘点五选一处置 ②四路外部调研 ③上层完整性检查 ④枝干分级检查）——检查通过后的落盘与提交回归本 SOP Step 2-12 标准施工闭环。防撞车/防越级/防枝末先行（事故案例：情绪六段 vs 已有情绪周期五态词汇撞车）。
+**地图定位声明**（layering SOP §2，2026-09-05 Owner 裁定）：交易决策地图=**唯一动作流程真源**（"这个项目怎么交易的就看这张图"）——同等职责文档一律按第一性原理判定后吸收进节点；节点规范 v1.3 七要素+五联锚（strategy_refs/factor_refs/data_refs/algo_refs/module_id+module_ref），algo_refs 指向算法库条目（REG-IND-001 IND-* / REG-EXA-001 EXA-*，条目自身索引代码）而非文档，公式细节走 doc_ref 指向算法附件。
 
 ---
 
