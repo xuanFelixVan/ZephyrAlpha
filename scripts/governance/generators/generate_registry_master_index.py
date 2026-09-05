@@ -41,7 +41,7 @@ import yaml
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from _shared.constants import EXIT_FINDINGS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
-from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
+from _shared.file_utils import atomic_write_if_changed  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT；P0② 幂等写（AI-20 2026-09-05）
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.registry_entry_count import count_primary_registry_entries
 from _shared.yaml_utils import load_yaml
@@ -249,8 +249,11 @@ def main() -> None:
         "# 手工编辑无效——修改请通过各登记表的 frontmatter\n\n"
         + yaml.dump(result, allow_unicode=True, default_flow_style=False, sort_keys=False)
     )
-    atomic_write_safe(args.output, content)
-    print(f"已生成 {result['total_registries']} 张登记表索引 → {args.output}")
+    written = atomic_write_if_changed(
+        args.output, content, volatile_line_pattern=r"^# 自动生成于 .*$|^generated_at: .*$"
+    )
+    skip_note = "" if written else "（内容未变，跳写——P0② 幂等）"
+    print(f"已生成 {result['total_registries']} 张登记表索引 → {args.output}{skip_note}")
 
 
 if __name__ == "__main__":

@@ -1,6 +1,9 @@
 # [BLUEPRINT] MOD-L00-004 | scripts.register_aux_tasks
 # [MODULE] scripts.register_aux_tasks
 # [DOMAIN] D_DATA
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
 # [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # register_aux_tasks.ps1 - Register Windows Task Scheduler tasks for RSSHub + Trae cache cleanup

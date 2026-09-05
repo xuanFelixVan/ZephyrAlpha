@@ -1,6 +1,9 @@
 # [BLUEPRINT] MOD-L00-004 | scripts/register_guard_tasks.ps1
 # [MODULE] scripts.register_guard_tasks
 # [DOMAIN] D_DATA
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
 # [TTL] permanent
 # register_guard_tasks.ps1 - Register Windows Task Scheduler WATCHDOG tasks for ZephyrAlpha data services
 #

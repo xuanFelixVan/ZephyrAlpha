@@ -43,7 +43,7 @@ import yaml
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from _shared.constants import EXIT_FINDINGS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
-from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
+from _shared.file_utils import atomic_write_if_changed  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT；P0② 幂等写（AI-20 2026-09-05）
 from _shared.yaml_utils import load_yaml
 
 __manifest__ = """
@@ -271,8 +271,9 @@ def main() -> None:
         content = "---\n" + yaml.dump(output, allow_unicode=True, default_flow_style=False, sort_keys=False) + "---\n"
     else:
         content = yaml.dump(output, allow_unicode=True, default_flow_style=False, sort_keys=False)
-    atomic_write_safe(args.output, content)
-    print(f"已生成 {output['total_gates']} 条门禁 → {args.output}")
+    written = atomic_write_if_changed(args.output, content, volatile_line_pattern=r"^generated_at: .*$")
+    skip_note = "" if written else "（内容未变，跳写——P0② 幂等）"
+    print(f"已生成 {output['total_gates']} 条门禁 → {args.output}{skip_note}")
 
 
 if __name__ == "__main__":

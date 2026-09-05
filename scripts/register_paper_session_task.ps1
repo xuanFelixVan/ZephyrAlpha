@@ -1,6 +1,9 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] scripts.register_paper_session_task
 # [DOMAIN] D_EX_CORE
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
 # [A_module] module_id=MOD-SCRIPT-register_paper_session_task | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # register_paper_session_task.ps1 - Register the ZephyrAlpha_PaperSession Task Scheduler task

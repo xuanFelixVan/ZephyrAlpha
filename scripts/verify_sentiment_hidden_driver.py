@@ -116,7 +116,7 @@ def _synthetic_dataset(n_days: int, seed: int) -> tuple[dict[str, list[float]], 
 
 
 def _load_csv(path: Path) -> tuple[dict[str, list[float]], list[float], list[SentimentPhase]]:
-    strategies = ("daban", "multifactor", "event_driven")
+    strategies = ("daban", "multifactor", "event_driven")  # noqa: gate-vocab  业务数据 schema（CSV 列名），非 knowledge_taxonomy 词表校验
     returns: dict[str, list[float]] = {s: [] for s in strategies}
     intensity: list[float] = []
     phases: list[SentimentPhase] = []

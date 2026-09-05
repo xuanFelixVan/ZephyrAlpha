@@ -264,3 +264,14 @@ directory_scalability:
   # 目录直接子项总数（含文件+子目录，防止单目录膨胀）
   dir_children_warn: 100
   dir_children_error: 500
+
+# ═══════════════════════════════════════════════════════════════════
+# 十一、git 操作超时阈值（AI-20 P0③ 2026-09-05：消除脚本侧硬编码 TIMEOUT）
+# ═══════════════════════════════════════════════════════════════════
+git_operations:
+  # classify_workspace_wip.py git status 快照超时（原 _GIT_TIMEOUT=15 硬编码）
+  classify_workspace_timeout_seconds: 15
+  # run_gate_chain.py 门禁链 git status 副作用快照超时（原 _GIT_SNAPSHOT_TIMEOUT=15）
+  gate_chain_snapshot_timeout_seconds: 15
+  # commit_queue_landing.py 队列落盘 git 操作超时（原 _GIT_TIMEOUT_SECONDS=120，与 worktree_pool.run_git 同款）
+  commit_queue_git_timeout_seconds: 120

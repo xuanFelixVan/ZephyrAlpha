@@ -1,6 +1,9 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] scripts.start_paper_session_daily
 # [DOMAIN] D_EX_CORE
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
 # [A_module] module_id=MOD-SCRIPT-start_paper_session_daily | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # start_paper_session_daily.ps1 - ZephyrAlpha_PaperSession wrapper

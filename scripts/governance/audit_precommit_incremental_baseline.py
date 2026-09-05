@@ -6,6 +6,7 @@
 # [STARTUP] manual
 # [MATURITY] production
 # [INVARIANTS] 只读审计——不修改任何文件，只生成基线报告
+# [MODIFY-GUARD]
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

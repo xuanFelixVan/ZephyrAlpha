@@ -1,6 +1,9 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] scripts.start_trading
 # [DOMAIN] D_INFRA_RUNTIME
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
 # [TTL] permanent
 # start_trading.ps1 - AutoRuntime Core (trading main process) guard (auto-restart on crash)
 #

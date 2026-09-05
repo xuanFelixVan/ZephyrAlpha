@@ -1,6 +1,9 @@
 # [BLUEPRINT] MOD-RESOURCE_OPTIMIZATION_ENGINE | docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md
 # [MODULE] scripts.register_process_reaper_task
 # [DOMAIN] D_INFRA_RUNTIME
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
 # [A_module] module_id=MOD-RESOURCE_OPTIMIZATION_ENGINE | layer=script | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # register_process_reaper_task.ps1 - Register the ProcessReaper Task Scheduler task

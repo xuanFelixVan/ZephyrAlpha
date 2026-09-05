@@ -13,6 +13,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=success; exit 1=error; exit 2=internal error
+# [TESTS] tests/governance/rule_bridge/test_session_worktree*.py; tests/scripts/test_session_worktree_env.py
 # [TTL] permanent
 # noqa: m11-perm-manual-legitimate  M11豁免: AI会话按需调用的CLI worktree协调工具，人工触发非常驻服务/非cron/非daemon
 """

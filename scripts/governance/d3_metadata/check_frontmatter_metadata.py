@@ -11,6 +11,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 从 ttl_vocabulary.yaml + doc_type_vocabulary.yaml 动态加载合法值；ttl 始终 hard block（全格式：.md/.py/.sh/.ps1/.mmd/.yaml/.json，有头部则校验）；doc_type 仅对 .md 校验（其他格式无 doc_type 字段），默认 warn-only，--strict-doctype 或 ZEPHYR_DOCTYPE_STRICT=1 升级 hard block；zone-aware fail-open（治本 #ARCH-TTL-FAILOPEN-001）：permanent/temporary zone .md 无 frontmatter → HARD BLOCK；temporary/archive_zone .md 有 frontmatter → 跳过 doc_type 校验（不可能三角解耦 + #ARCH-TTL-EXEMPT-DECOUPLE 归档区解耦）；neutral/exempt/archive_zone 无 frontmatter → PASS；--all-files 强制全量扫描（忽略传入的文件参数）；--ci 参数接受但当前等同于默认（全量校验）
+# [MODIFY-GUARD]
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

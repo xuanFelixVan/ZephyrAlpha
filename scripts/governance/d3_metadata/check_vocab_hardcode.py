@@ -6,6 +6,7 @@
 # [STARTUP] manual
 # [MATURITY] production
 # [INVARIANTS] AST 扫描检测词表合法值硬编码（变量名匹配 + 值匹配）+ load_vocabulary_values 引用 yaml 存在性 + [STARTUP] 标记值合法性校验；warn-only 起步(exit 0)；DDL 例外白名单；_archive 排除；# noqa: gate-vocab 内联豁免 + noqa 审计输出（治本 2026-06-30，超基线 WARN 不阻断）；检测6：生成器数据库名硬编码（红攻1治本，仅 generators/ 范围，排除 docstring + _common.py）；检测7：commit_gates 测试目录名硬编码（红攻发现2治本，仅 commit_gates/ 范围，排除 docstring，真源 commit_gate_registry.is_test_exempt）；检测8：阈值变量硬编码（ARCH-036 P3-A5，仅 scripts/governance/ 范围，匹配 *THRESHOLD/*DEADLINE/*TIMEOUT/*QUARANTINE/*LIMIT 变量名赋值为数值字面量/数值集合，真源 thresholds.yaml + _get_threshold()，src/zephyr/ 不接入因依赖方向错误）；盲区1治本（2026-07-17）：dict 字面量检测（ast.Dict key 提取 + dict() 调用 + set({...}) 递归）；盲区2治本：检测9 if 语句 ast.Compare 字面量集合（in/not in，min_values=2）；盲区3治本：单字符词表值加载（H/M/L 等，len>=1，原 >=2 漏检 safety_level）；盲区4治本：检测10 return 语句字面量集合（min_values=2）；盲区5治本：_match_vocab_values 全子集阈值（hit_count==len(str_values) 且 ≥ min_values=2，检测4/9/10 共用）替代原 min(3,total)且≥2——覆盖 2 值子集（如 ("draft","active") 2/3 status），单值子集不报（误报率过高）
+# [MODIFY-GUARD]
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

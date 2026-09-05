@@ -1,6 +1,9 @@
 # [BLUEPRINT] MOD-INF-055 | docs/03_modules/MOD-INF-055/
 # [MODULE] scripts.register_pattern_mining_task
 # [DOMAIN] D_SECURITY
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
 # [A_module] module_id=MOD-INF-055 | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # register_pattern_mining_task.ps1 - Register the ZephyrAlpha_PatternMining Task Scheduler task

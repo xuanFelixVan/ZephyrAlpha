@@ -7,6 +7,7 @@
 # [STARTUP] event_driven
 # [MATURITY] production
 # [INVARIANTS] 真源为 directory_contract.yaml（DCR-001/005/006/007 目录维度 + allowed_doc_types）；doc_type_vocabulary.yaml 仅用于 doc_type 合法性验证（GATE-15 主责）；DCR-001~007 已启用（DCR-002 废弃 P3）；只读校验不修改文件
+# [MODIFY-GUARD]
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
