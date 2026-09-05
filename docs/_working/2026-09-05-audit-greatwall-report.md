@@ -13,11 +13,11 @@ ttl: task_bound
 
 - 模式裁定：**MODE-B 直接全自动闭环**（探测：无活跃在途 session（heartbeat≥5d）+ 主仓 29 孤儿文件裁定基线收编后干净）
 - 波次：6 批（4+4+4+4+4+1）修复波，MODE-B 无只审波
-- 进度：波次 1~5（AI-01~20）已回收，二十域均"通过"（各连续 2 轮零问题），总控抽验 40/40 相符
-- 总问题数 / 已修复数：波次 1 发现 31→修复 26；波次 2 发现 65→修复 60；波次 3 发现 33→修复 27；波次 4 发现 179→修复 172；波次 5 发现 71→修复 66（余跨域移交/待 Owner）；作废重派 0
+- 进度：**波次 1~6（AI-01~21）全部回收，二十一域均"通过"（各连续 2 轮零问题），总控抽验 42/42（41 相符+AI-15 一处残留登记复审轮）**
+- 总问题数 / 已修复数：波次 1 发现 31→修复 26；波次 2 发现 65→修复 60；波次 3 发现 33→修复 27；波次 4 发现 179→修复 172；波次 5 发现 71→修复 66；波次 6（AI-21）发现 1156→修复 538+618 登记台账（跨域/内容建设类）；作废重派 0
 - P0 工具链缺陷（网关 worktree 锁自锁）已由 AI-20 根修并端到端验证关闭；生成器 churn 已由 atomic_write_if_changed 根治
 - 复审轮清单：AI-06×2 / AI-11×1 / AI-13×1 / AI-15×1 / AI-18×1 / 全局×3（merge 后执行）
-- 总控备查：主仓后台 reconciler 蓝图 §0.6 派生写波持续，归 G4 统一吸收
+- 下一阶段：主仓 reconciler 派生波收编→21 worktree 串行 merge→G4 主仓派生再生→共享收口→复审轮→全局复审
 
 # 二、每域详细汇报 ×21
 
@@ -185,7 +185,14 @@ ttl: task_bound
 - 遗留 0；抽验：gateway except (OSError, RuntimeError) L283/294、atomic_write_if_changed 6 接入点实测——**相符**（端到端 exit=0 证据采信）。
 
 ## AI-21 五图表头语义对齐（横切域）
-（待回收）
+- worktree：D:\ZephyrAlpha\.worktrees\AI-AUDIT21-001；commits 441852d976（542 文件）+ 0d8d374693（6 文件派生刷新）
+- 轮次：第1轮发现 6 类 1156 项→修复 538 项（532 文件表头+3 死包删除+3 治理真源）→618 项登记台账；第2/3轮复检逐类完全一致（STABLE×5），module_mismatch 6→0。连续 2 轮零问题。align_all EXIT=0 基线。
+- 修复：①[BLUEPRINT] 连字符路径漂移 531 文件（仅目标下划线蓝图实测存在才改）②结构性死代码双包并存：governance/{agent-spec,budget-enforcer,drift-detector} 连字符包语法级不可 import 零消费者→safe_rmtree 删 3 包③[MODULE] 漂移 3 处④risk_validator 自相矛盾 safety 对齐⑤BM-INV-004 域漂移×3：battle_map_domain_policy.yaml position_management.allowed 补 D_PLAN（三蓝图叙事与代码职责核对属实）⑥BM-INV-003 缺失叙事×3：module_translation_registry 补 BM-SIM-08+BM-BUY-05/14 退役占位⑦panorama MOD-SIG-056 补 design_maturity。
+- 自主裁定：tests_missing stem 匹配误修复 184 文件→当轮自查回滚 182（错误声明比失联危害更大）；frontend_map 7×R2 warn=pending 计划条目非漂移（机检规则取向待 Owner）；deps_contradiction 7 项=门面语义误报不修；[TESTS] 失联 352 不批量修（模板族复制漂移，自动化制造错误声明）；blueprint_missing 138/断裂 114=蓝图建设缺口非路径错（回含标准修正为 module_id 或 stem 任一）。
+- 共享收口上交：①BM-SIM-08 挂锚点（apply_battle_map --add-anchor，主仓 DB）②测试节点 blueprint_id 污染（depgraph 重建清除）③蓝图建设缺口 252 项④[TESTS] 失联 352 专项⑤encoding_gate 批量化（逐文件 spawn×542=25+min）⑥D_PLAN/D_AUDITTEST 域归类 Owner 复审⑦worktree 10 文件 reconciler 在途写波 merge 吸收。
+- 遗留：见收口 1-7（跨域/主仓共享/内容建设类）；文件层零遗留。**全篇浅审-待强模型复核**。
+- 总控抽验：agent-spec 死包不存在/agent_spec 存在、D_PLAN L110 政策登记、残留连字符均为运行时取值非锚点——**相符**。
+- 生成器保真度抽查×3（battle_map/dataflow/decision）无"撒谎"证据——浅审。
 
 # 三、共享收口执行记录
 
