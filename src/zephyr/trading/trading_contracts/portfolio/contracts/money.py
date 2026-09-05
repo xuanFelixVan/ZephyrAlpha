@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-L00-001 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
+# [BLUEPRINT] MOD-L00-001 | docs/03_modules/_cross_layer/shared_core/contracts_blueprint.md
 # [MODULE] zephyr.trading.trading_contracts.portfolio.contracts.money
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.shared.contracts.portfolio.money
