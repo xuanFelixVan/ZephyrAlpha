@@ -2,9 +2,9 @@
 # [MODULE] zephyr.market_data.autoload
 # [DOMAIN] D_MKT_DATA
 # [DEPENDENCIES] zephyr.market_data.vendor_registry; zephyr.market_data.vendor_base; zephyr.shared.foundation.errors
-# [CONSUMERS] zephyr.market_data
+# [CONSUMERS] tests/market_data/test_autoload.py（2026-09-05 AI-04 审计实证：zephyr.market_data 包入口实际未 import 本模块，生产装配待排期）
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] testing
 # [INVARIANTS] VendorConfig/AutoloadResult frozen不可变; load()不抛异常(单个失败记录到errors); vendor_factory为Callable[[VendorConfig],MarketDataVendor]; 纯加载层不含具体vendor实现
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
@@ -65,7 +65,7 @@ D_MKT_DATA — Autoload (自动加载器)
 #   name_en: AutoloadResult
 #   intro: registered_count/default_vendor_id/errors 三元组汇报加载成败
 #   invariant: frozen 不可变；errors 含全部失败 vendor_id
-#   downstream: zephyr.market_data 包入口 MOD-MKT_DATA（#[CONSUMERS] 头）
+#   downstream: tests/market_data/test_autoload.py（包入口装配待排期）
 # [/ALGO_FLOW]
 #
 # 边:
