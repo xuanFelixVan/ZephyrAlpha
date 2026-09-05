@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] tqcenter初始化失败->RuntimeError; 单批下载失败->log+继续(不中断); ClickHouse写入失败->log+继续
-# [TESTS] tests/zephyr/data/test_sector_kline_downloader.py
+# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
 # [TTL] task_bound
 """
 880xxx 板块指数K线下载器——盘后从 tqcenter 下载日K/分钟K写入 ClickHouse。

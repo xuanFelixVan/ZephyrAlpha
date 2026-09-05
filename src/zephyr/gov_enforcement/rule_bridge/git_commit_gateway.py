@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] GatewayError on lock timeout；CommitResult.status 暴露结果
-# [TESTS] tests/test_git_commit_gateway.py
+# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
 # [A_module] module_id=MOD-INF-035 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: while True+time.sleep是_GlobalCommitLock文件锁等待循环，非周期触发

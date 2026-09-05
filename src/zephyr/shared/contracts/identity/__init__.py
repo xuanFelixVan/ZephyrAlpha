@@ -8,7 +8,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT]
-# [TESTS] tests/test_agent_rbac.py
+# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
 # [TTL] permanent
 
 """

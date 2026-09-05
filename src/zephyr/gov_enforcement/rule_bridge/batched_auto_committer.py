@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] flush 失败返回 CommitResult(COMMIT_FAILED) 不抛异常；buffer 累积无上限（reconciler 数量有限，25 个 spec 最多 25 次 buffer）
-# [TESTS] tests/governance/rule_bridge/test_batched_auto_committer.py
+# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
 # [A_module] module_id=MOD-GOV_BATCHED_AUTO_COMMITTER | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """

@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] WorktreeError on worktree 创建/删除/merge 失败；get_current_worktree 返回 None 表示不在任何 session worktree 内
-# [TESTS] tests/test_worktree_manager.py
+# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
 # [A_module] module_id=MOD-GOV_WORKTREE_MANAGER | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: while True+time.sleep是worktree锁等待循环，非周期触发

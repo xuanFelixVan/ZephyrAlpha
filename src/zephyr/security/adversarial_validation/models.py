@@ -11,7 +11,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] Pydantic ValidationError on malformed scenarios; ValueError on invalid tier/severity
-# [TESTS] tests/red_blue/test_models.py
+# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
 # [A_module] module_id=MOD-INF-030 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

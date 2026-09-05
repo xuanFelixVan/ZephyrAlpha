@@ -29,14 +29,14 @@ Phase C 具体实现包。
 #   name_zh: ① 包公共面再导出
 #   name_en: __init__ re-export
 #   intro: 再导出 DefaultSecurityGateway, default_experiment_pipeline, default_security_gatew…
-#   desc: __init__ import L48；__all__ 3 项（AST 事实）
+#   desc: __init__ import L48；__all__ 2 项（AST 事实；default_experiment_pipeline 已退役 2026-09-05）
 #   inputs: I1
 #   outputs: __all__ 公共符号表
 # 层: 输出
 # - id: O1
-#   name_zh: 公共 API 面（3 符号）
+#   name_zh: 公共 API 面（2 符号）
 #   name_en: __all__
-#   intro: DefaultSecurityGateway, default_experiment_pipeline, default_security_gateway
+#   intro: DefaultSecurityGateway, default_security_gateway
 #   downstream: 见模块头 [CONSUMERS]
 # [/ALGO_FLOW]
 #
@@ -49,6 +49,7 @@ from zephyr.governance.implementations.default_security_gateway import DefaultSe
 
 __all__ = [
     "DefaultSecurityGateway",
-    "default_experiment_pipeline",
     "default_security_gateway",
 ]
+# 2026-09-05 AI-00 审计：default_experiment_pipeline 治理版僵尸副本已退役（零 import 消费，
+# 活体=src/zephyr/simulation/implementations/default_experiment_pipeline.py），沿 AI-AUDIT13-001 salvage 裁定

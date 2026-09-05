@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] sys.exit with ExitCode enum values only
-# [TESTS] tests/test_code_dedup_engine.py
+# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
 # [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m11-perm-manual-legitimate  M11豁免: pre-commit GATE-DEDUP 事件触发（verify_dedup.py→cli verify 链路在案），非人工 manual

@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] Phase2RunnerError(ZA-REGIME-0022)
-# [TESTS] tests/regime/phase2/test_phase2_runner.py
+# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
 # [TTL] permanent
 # [ARCH-REF] #12_regime_phase2_validation §4 #12_regime_phase2_validation §6
 """

@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] Returns empty list on missing dir; never raises for missing files; logs errors via logging
-# [TESTS] —（声明的 tests/test_rule_watcher.py 不存在，AI-AUDIT11-001 实测；无独立测试，--once 模式可 CLI 手动验证）
+# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
 # [A_module] module_id=MOD-GOV-019 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m02-manual  M02豁免: 规则文件watchdog常驻服务(python -m zephyr.gov_enforcement.rule_enforcement.rule_engine.rule_watcher),CLI触发启动,启动后自动轮询;非reconciler无需事件触发

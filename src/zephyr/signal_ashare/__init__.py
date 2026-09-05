@@ -11,8 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS]
-# 原 module_id=MOD-INF-038 与 shared/lifecycle/state_machine.py（MOD-INF-038 状态机引擎）
+# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
 # 在 depgraph 撞号（跨域同 ID 双文件），2026-08-17 审计治本修正为 MOD-SIGNAL_ASHARE，
 # 与本包 6 个子包 __init__ 的既有约定一致。
 # 2026-09-05 AI-08 审计：表头自文件中部（工具不可见，致 depgraph 仍按旧 MOD-SIG-021 归属本文件）

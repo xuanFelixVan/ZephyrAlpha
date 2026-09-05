@@ -7313,13 +7313,6 @@ entries:
   desc_zh: 'Strategy Scoper — v0.6.0 策略范围隔离器: SIG/Strat/Capital多层策略隔离。'
   desc_en: ''
   plain_zh: 'Strategy Scoper — v0.6.0 策略范围隔离器: SIG/Strat/Capital多层策略隔离。'
-- module_path: src/zephyr/governance/implementations/default_experiment_pipeline.py
-  domain_id: D_GOVERNANCE
-  name_zh: 默认实验管线
-  name_en: default_experiment_pipeline
-  desc_zh: 实验管线具体实现。实现 ExperimentPipelineBase (OCP 实验-EXP)。
-  desc_en: ''
-  plain_zh: implementations 包入口，整合implementations相关子模块导出
 - module_path: src/zephyr/governance/implementations/default_security_gateway.py
   domain_id: D_GOVERNANCE
   name_zh: 默认安全网关

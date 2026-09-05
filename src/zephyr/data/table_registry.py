@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] yaml 文件不存在->log warning+返回空注册表(开发环境友好); table() 查不到 category_id->raise KeyError(fail-closed,禁止凭记忆编表名)
-# [TESTS] tests/zephyr/data/test_table_registry.py
+# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
 # [A_module] module_id=MOD-GOV-table_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """

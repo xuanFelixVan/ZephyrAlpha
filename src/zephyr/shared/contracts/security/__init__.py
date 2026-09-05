@@ -8,7 +8,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] none
-# [TESTS] tests/test_shared_contracts_security.py
+# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
 # [TTL] permanent
 
 """

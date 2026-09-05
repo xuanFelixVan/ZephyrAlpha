@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] TestCaseError
-# [TESTS] tests/test_exam_test_cases.py
+# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
 # [A_module] module_id=MOD-INF-034 | layer=module | stability=stable | safety=L | ai_autonomy=human_gated
 # [TTL] permanent
 

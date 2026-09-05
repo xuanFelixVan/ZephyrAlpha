@@ -8,7 +8,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [CONSUMERS] zephyr.integration.agent_communication; zephyr.infrastructure.a2a_protocol
 # [ERROR_CONTRACT] import errors only — no runtime exceptions from Protocol definitions
-# [TESTS] tests/test_shared_protocols.py
+# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
 # [TTL] permanent
 
 """

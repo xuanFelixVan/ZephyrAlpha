@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] 异常必须包含 budget_context 和 operation_id
-# [TESTS] tests/test_budget_enforcer.py
+# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

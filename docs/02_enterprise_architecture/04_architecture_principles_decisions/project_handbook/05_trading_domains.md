@@ -65,7 +65,7 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 
 | 域 ID | 域名 | 层 | 节点数 |
 |-------|------|----|-------|
-| `D_GOVERNANCE` | 生命周期管理 | L2_domain | 764 |
+| `D_GOVERNANCE` | 生命周期管理 | L2_domain | 763 |
 | `D_GOV_SCRIPTS` | 脚本治理 | L2_domain | 545 |
 | `D_AUDITTEST` | 审计测试套件 | L2_domain | 507 |
 | `D_AUTONOMY_CORE` | 自治核心 | L1_foundation | 507 |
@@ -90,11 +90,11 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 | `D_ORCHESTRATOR` | 代理编排器 | L1_foundation | 97 |
 | `D_INTEGRATION` | 管线路由 | L1_foundation | 92 |
 | `D_BACKTEST` | 回测 | L2_domain | 86 |
+| `D_INFRASTRUCTURE` | 跨层契约基础设施 | L0_infrastructure | 84 |
 | `D_SECURITY_LLM` | LLM防御 | L1_foundation | 79 |
 | `D_FBL_DIAGNOSERS` | 反馈诊断器 | L1_foundation | 76 |
 | `D_GOV_DRIFT` | 漂移检测 | L2_domain | 76 |
 | `D_FRONTEND` | 前端 | L2_domain | 74 |
-| `D_INFRASTRUCTURE` | 跨层契约基础设施 | L0_infrastructure | 71 |
 | `D_FBL_VERIFICATION` | 反馈验证 | L1_foundation | 67 |
 | `D_FBL_DETECTORS` | 反馈检测器 | L1_foundation | 66 |
 | `D_REGIME` | 市场状态 | L2_domain | 64 |
@@ -106,6 +106,7 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 | `D_POSITION` | 仓位管理 | L2_domain | 40 |
 | `D_GOV_RULE` | 规则治理 | L2_domain | 38 |
 | `D_ALT_DATA` | 另类数据 | L1_foundation | 34 |
+| `D_FUNDAMENTAL_SIGNAL` | 基本面信号 | L2_domain | 33 |
 | `D_DATA_ENG` | 数据工程 | L1_foundation | 32 |
 | `D_MKT_DATA` | 行情数据 | L1_foundation | 32 |
 | `D_PLAN` | 预案引擎 | L2_domain | 31 |
@@ -118,11 +119,8 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 | `D_KNOWLEDGE` | 知识管理 | L2_domain | 22 |
 | `D_META_SCRIPTS` | 元治理脚本 | L2_domain | 21 |
 | `D_PF_ALLOC` | 组合分配 | L2_domain | 20 |
-| `D_FUNDAMENTAL_SIGNAL` | 基本面信号 | L2_domain | 19 |
 | `D_GOV_REPAIR` | 治理修复 | L2_domain | 16 |
-| `D_CONTRACTS` | 共享契约 | L0_infrastructure | 15 |
 | `D_OPS` | 反馈循环 | L1_foundation | 14 |
-| `D_SIGLEGACY` | 信号遗留设计态 | L2_domain | 14 |
 | `D_SIGQC` | 信号质量控制 | L2_domain | 13 |
 | `D_INFRA_OPS` | 基础设施运维 | L0_infrastructure | 12 |
 | `D_ML_SERVE` | 推理 | L2_domain | 11 |
@@ -134,11 +132,13 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 | `D_INTEGRATION_GATEWAY` | 集成网关 | L1_foundation | 4 |
 | `D_ARCH_GUARD` | 架构守护脚本 | L2_domain | 3 |
 | `D_COMPLIANCE_SCRIPTS` | 合规治理脚本 | L2_domain | 3 |
+| `D_CONTRACTS` | 共享契约 | L0_infrastructure | 2 |
 | `D_DATA_SCRIPTS` | 数据治理脚本 | L2_domain | 2 |
 | `D_RESEARCH` | 研究域 | — | 2 |
 | `D_CODE_SCRIPTS` | 代码质量脚本 | L2_domain | 1 |
 | `D_SEC_SCRIPTS` | 安全治理脚本 | L2_domain | 1 |
 | `D_STRUCT_SCRIPTS` | 结构治理脚本 | L2_domain | 1 |
+| `D_SIGLEGACY` | 信号遗留设计态 | L2_domain | 0 |
 
 **合计 74 个域**
 <!-- AUTO-END:domain_list -->

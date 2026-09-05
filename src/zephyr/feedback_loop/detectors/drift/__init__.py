@@ -46,7 +46,7 @@ from zephyr.feedback_loop.detectors.drift.distribution_drift_monitor import Dist
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
-# [TESTS] tests/test_feedback_loop_imports.py
+# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [GOV-DOC-018] 子包drift: 概念/配置/分布漂移族（DW-244分类，原_drift.py聚合迁移而来）

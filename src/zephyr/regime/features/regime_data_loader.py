@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 查询失败->log warning+返回None(调用方按0.0/1.0降级); 表未注册->KeyError(fail-closed)
-# [TESTS] tests/regime/test_regime_data_loader.py
+# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
 # [A_module] module_id=MOD-REGIME-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #10_regime_detector_spec §5.3 #MOD-REGIME-002 #Phase2c

@@ -11,7 +11,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] StrategyError on invalid strategy usage
-# [TESTS] tests/test_adversarial_strategies.py
+# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

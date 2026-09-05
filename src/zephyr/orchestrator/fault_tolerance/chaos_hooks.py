@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] ChaosHookError on hook execution failure
-# [TESTS] tests/test_chaos_hooks.py
+# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
 # [A_module] module_id=MOD-INF-039 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

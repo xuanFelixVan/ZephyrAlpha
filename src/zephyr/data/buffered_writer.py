@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] add失败->返回False; flush失败->返回False+log(ch_writer.write_tsv内部处理); 空缓冲区flush->返回True
-# [TESTS] tests/zephyr/data/test_buffered_writer.py
+# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
 # [A_module] module_id=MOD-GOV-buffered_writer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """

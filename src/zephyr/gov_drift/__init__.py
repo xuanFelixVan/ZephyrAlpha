@@ -99,7 +99,7 @@ from __future__ import annotations
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
-# [TESTS] tests/test_behavioral_auditor_imports.py
+# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
 
 _SYMBOL_SOURCE = {
     "AIConstructionDetectors": "_analysis",

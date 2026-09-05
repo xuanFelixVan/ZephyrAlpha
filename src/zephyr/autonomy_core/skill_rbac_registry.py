@@ -11,7 +11,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] module import failures degrade gracefully with _AVAILABLE flags; registry load failure returns empty dict
-# [TESTS] tests/agent-spec/test_registry.py
+# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
 # [A_module] module_id=MOD-INF-019 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
