@@ -179,8 +179,8 @@ def test_wal_mode(governance_db_path: Path):
     """蓝方：验证 WAL 模式启用（E2E 只读，验证生产 governance.db 配置）"""
     print("\n[TEST] WAL 模式验证")
 
-    # governance.db 仍使用 SQLite，检查 WAL
-    conn = sqlite3.connect(governance_db_path)
+    # governance.db 仍使用 SQLite，检查 WAL（只读句柄：测试隔离加固，禁写生产库）
+    conn = sqlite3.connect(f"file:{governance_db_path.as_posix()}?mode=ro", uri=True)
     cursor = conn.execute("PRAGMA journal_mode")
     mode = cursor.fetchone()[0]
     conn.close()
