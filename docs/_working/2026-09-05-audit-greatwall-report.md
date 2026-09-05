@@ -332,3 +332,64 @@ git show 87717defdb --stat   # AI-05
 git show 72ec55e1 --stat     # AI-21 merge
 git show d3a50b35 --stat     # AI-03 merge（末域）
 ```
+
+# 九、损坏与缺陷总清单（总管复查修复台账，2026-09-05 补录）
+
+> **补录原因**：Owner 指令要求"所有函数损坏等一切损坏必须全部入册供总管复查修复"。本节将散落在 §2/§3 的全部损坏/缺陷按三类汇总编号，**总管逐项复查时以本节为唯一索引**（每项标注出处章节与责任域）。
+
+## A 类·代码级损坏——已修复完毕（总管只需复核 commit）
+
+| # | 损坏 | 修复 commit |
+|---|---|---|
+| A1 | echo-guard.yml YAML 解析断裂（非法转义）+acknowledge/prune 白名单机制整体失效 | a467a16552 |
+| A2 | okx_broker.py 非重入 Lock 同线程自死锁（探针实证 hung>5s） | 87717defdb |
+| A3 | audit_admission_controller 幽灵路径→健康检查恒 False/准入恒拒绝（实测复现） | 2b0610aa3f |
+| A4 | shared/contracts/risk 六符号懒加载映射死路径（懒加载必炸 ModuleNotFoundError，实测复现） | c999e6f00b+2f0ba2949a |
+| A5 | trading/boot_hooks.py F5 订阅死链（F5 事件订阅自重构后从未生效，静默失效实证） | f3b9c84904 |
+| A6 | feedback_loop scheduler 族 56 条悬空 import（模块迁移未回改，import 即崩；实测映射唯一无歧义后修复） | 72ec55e1 |
+| A7 | decision_map.py MatrixCell 未定义×2+_LAYER_PREFIX_BY_FLOW 缺 Final（solo 残写不完整，门禁拦截后总控补全） | d3a50b35 |
+| A8 | generate_rule_ai_perception_index.py 漏 import atomic_write_if_changed（AI-20 幂等化接线漏配） | b9aab615 |
+| A9 | governance.yml phase_manager import 旧路径 ImportError（CI 步骤必炸） | 7cc8e4c238 |
+| A10 | unified-asset-index.yaml 损坏态（total_assets 9321，worktree 残缺上下文扫描产物）→主仓全量再生 31847/Health B 76.1 | 73dbf90f |
+| A11 | regime_detector.py 五异常类无 error_code 属性+ZA-REGIME-0001~0005 未登记 | c999e6f00b |
+| A12 | trading_session reset_daily_circuit_breaker 零接线（跨日残留计数误触发 50 笔/日熔断） | 87717defdb |
+| A13 | semantic_audit 双真源簇（代码体逐字相同双份同生）降级 shim 单真源化 | 2b0610aa3f |
+| A14 | 3 个连字符死包（governance/{agent-spec,budget-enforcer,drift-detector}，语法级不可 import）safe_rmtree | 72ec55e1 |
+| A15 | 56+ 处幻影异常类/幽灵测试路径/幻影消费方/幽灵模块声明（AI-06/13/14/16/18 各域，实测零定义/零存在后修正） | 各域 commit（见 §2） |
+
+## B 类·缺陷未修复——总管复查修复队列（每项含证据与建议方案）
+
+| # | 缺陷 | 位置 | 证据要点 | 建议方案 | 出处 |
+|---|---|---|---|---|---|
+| B1 | **batch_id 生产写入方全仓缺失**→claim_next 按 batch_id 过滤恒 None、AutoPilot.run_cycle 恒走 __no_batch__ 兜底（2.4A 静默失效） | src/zephyr/trading + orchestrator 域 | AI-13-002：SQL_INSERT_TASKS/_serialize 均不含列，"SET batch_id" 仅存于测试 | 接线设计（写入方补齐）后启用新只读 API（59c661b5） | §6#15 |
+| B2 | conductor.py:173/autopilot.py:109,160 旁路 repo._conn.execute 直连 SQL | src/zephyr/trading | AI-06 复审项③：公开 API 已落地（get_distinct_batch_ids/get_task_batch_ids @task_repo L3534/3547）但旁路收敛未执行 | 按已落地 API 收敛旁路（AI-06 下一轮） | §6#15 关联 |
+| B3 | RiskLimits 双 codegen 真源拓扑 | src/zephyr/shared/contracts/risk_limits.py vs trading_contracts 副本 | AI-09：契约登记真源 15 消费方 vs 副本 1 消费方，收敛涉 5 域 16+ 文件 | 以 CTR-003 登记真源为准收敛 | §6#11 |
+| B4 | trading_session threading.Timer 周期调仓（3.2 禁时间触发） | src/zephyr/trading/trading_session.py + scripts/start_paper_session.py interval=60 | AI-05：删除涉装配模式+测试行为锁定 | 事件驱动替代源接线设计 | §6#5 |
+| B5 | silent except 122 处/64 文件 | src/zephyr/infrastructure/ | AI-14：5.135治标 noqa 308 处既有惯例 vs 批量 logger 化冲突 | Owner 裁定是否专项治理 | §2 AI-14 遗留 |
+| B6 | 退役候选三件：event_store.py（零生产消费+3 测试迁移）/hooks 包（sys.modules shim）/h1_cqrs_projectors.py | src/zephyr/infrastructure/ | AI-14：表头已留痕"退役候选" | 删除+蓝图 §0.1 同步 | §2 AI-14 遗留 |
+| B7 | semantic_audit/orchestrator.py 组合根（17KB 9 阶段）零消费方 | src/zephyr/governance/semantic_audit/ | AI-12：run_semantic_audit.py 入口脚本不存在 | 接线（CLI/事件触发）或随蓝图修订退役 | §6#13 |
+| B8 | rule_watcher.py 僵尸（2.4A 五信号中 4） | src/zephyr/gov_enforcement/rule_bridge/ | AI-11：零消费方+声明测试不存在+蓝图锚不存在 | depgraph MOD-GOV-019 主仓退役收口 | §6#14 |
+| B9 | ashare_stop_loss_engine 僵尸（零 import+头注谎报 production） | src/zephyr/risk/core/ | AI-09 G1：RK-09→RK-04 接线在代码中不存在 | salvage 联动 module_translation_registry/depgraph | §6#11 |
+| B10 | market_data vendor/connector/failover/autoload 零生产装配集群 | src/zephyr/market_data/ | AI-04：五信号①③④⑤全中 | 批量 salvage（涉 3 登记表+depgraph） | §6#2 |
+| B11 | redundant_source/recovery.py+sqlite_fallback.py 僵尸（RecoveryManager 为进程内轮询守护，结构性不可接线） | src/zephyr/data/redundant_source/ | AI-04：能力已被 ch_writer LOCAL_DURABLE+wal_writer 覆盖 | 同上 | §6#2 |
+| B12 | "运行时装配批"君子协定失效 33 模块（MATURITY=production 失实） | data_governance/data_security/alt_data | AI-04：全仓唯一含装配批字样文件即模块自身 | Owner 裁定机制去留后批量 salvage | §6#2 |
+| B13 | nan_processor.py 僵尸（BFILL/LINEAR 策略与 Owner 前视偏差裁定冲突） | src/zephyr/backtest/ | AI-07：五信号①+15 号规格 L112 supersede | 联动 4 登记表 salvage | §6#7 |
+| B14 | 零消费方模块退役候选：ports.py（AI-06，MOD-INF-035）/gpu_consensus_scheduler（MOD-INF-033）/integration/ports.py+ide_watcher（MOD-INF-019）+embedding_provider_adapter（AI-16）/multifactor_crowding_monitor 等三模块（AI-08）/api_client.py 248 行（AI-15） | 各域 | 各域五信号实证，表头已诚实化 | Owner 逐个裁定退役/接线 | §6#8/9/13 |
+| B15 | default_experiment_pipeline.py 僵尸重复实现（活体在 simulation 域） | src/zephyr/governance/implementations/ | AI-13：全仓 grep 仅自身头注 | 删+同步 module_translation L7316+MOD-L13-001 蓝图锚 | §2 AI-13 收口 |
+| B16 | business_agent_entry.py 304 行>200 上限（预存测试失败） | src/zephyr/autonomy_core/ | AI-16：拆分涉 8.5 三连带登记 | 拆 _registration_status.py+三登记 | §6#18 |
+| B17 | 错误码缺口四族：①ZA-PA-0008~0010/0013、ZA-POS-0041~0043 预留码登记/关闭裁定 ②26 异常类"未登记-申请中"（FAC/MLS 前缀未分配）③存量未登记 69 个（tool_contracts 整批 ZA-GOV/GT/GW/RD/ROE/BPS 等）④~44 占位码转正（AI-08）+ZA-REGIME-0050~0052 场景码家（蓝图 §8）+ZA-POS-0021/0023 号段冲突 | architecture_model/contracts/error_code_registry.yaml | AI-07/08/10/17/18 各自全仓扫描对账 | Owner 批量分配+registry 补登（沿 2026-08-30 先例） | §6#7/9 + §2 AI-17 |
+| B18 | ROOR 漂移全套：21 注册表 entry_count 失实（strategy 146→149、error_code 212→575、rule_catalog 153→228 等）+L552 叙事+5 条 physical_path 失效+capability registry 计数 2 vs 367/1512/535 | docs/registry_of_registries.yaml | AI-17：逐表精确实测（共享热点未直改） | 批量修正或改自动派生 | §2 AI-17 |
+| B19 | 登记表杂项：CAND-GOVTEST-004/005 同 ID 双条目+R12 related 悬挂、module_translation 1 条 plain_zh 空+MOD-RK-08→048 两条、rule_registry_collection 缺 trae_085/086、design memo 37 十二处旧指代、strategy_book/firm_risk_aggregator 表头码号错位、candidate/factor/wiring_registry salvage 条目（AI-04 B13 关联） | docs/01_policies_and_standards/_registry/catalogs/ 等 | AI-17/18/03 各自实测 | 总控串行批量修正 | §2 AI-17/18/03 收口 |
+| B20 | 表头/锚点失联债：src [TESTS] 断链（AI-19 实测 354，merge 后待复测）/tests [BLUEPRINT] 断链 115 条需逐模块语义裁定/shared 13 处无真实蓝图断锚/resilience+security_governance 26 处幽灵测试路径/蓝图建设缺口 252 项/空 [CONSUMERS] 1302 文件模式级/verify_header_completeness 缺表头 715+65 语义级 | 全仓 | AI-15/19/11/16/21/20 | 蓝图建设专项+域分派+HEADER-ANCHOR 门禁（§6#16）落地后防复发 | §3 待 Owner 排期 |
+| B21 | 依赖镜像无门禁（requirements.txt↔pyproject 漂移曾实锤 2 包缺失） | 根目录 | AI-01：人工实测才发现 | SECRET-REGISTRY 式拦截门禁权衡（D1 预算） | §3 G6 |
+| B22 | 工具链边角：①ops_guard 第二项目根决策点（_PROJECT_ROOT_CACHE，13 xfail 转 XPASS 前置）②verify_header_completeness REPO_ROOT worktree 解析③encoding_gate 逐文件 spawn×542=25+min 应批量化④锁锚定主仓方案评估⑤script_manifest 时间戳非幂等已修但 redup 引擎降级待查 | scripts/ | AI-19/20/21/11 | AI-20 后续排期 | §2 AI-20 收口 |
+| B23 | f5_event_subscriber.py:33 docstring 死链旧路径（仅注释非真实 import） | src/zephyr/governance/resilience_governance/ | AI-06 复审收口 1 | 文档修正（一行） | §2 AI-06-002 收口 |
+| B24 | 业务注册表入库门禁测试基线：dead-entry 清理后 18→17 断言已由自治 session 放宽（dad7b9e36d），总管复核其放宽理由与 B19 关联 | tests/governance/ | 提交 dad7b9e36d | 复核放宽是否掩盖真回归 | 本节新增 |
+
+## C 类·台账债（君子协定，不构成损坏但需排期）
+
+- 蓝图建设缺口 252 项（138 缺蓝图+114 聚合未收录）＋[TESTS] 失联 352 项（AI-21/AI-19 台账）
+- 618 项登记台账全文见 AI-21 提交 441852d976 message 与 §2 AI-21 小节
+- 各域"建议级"裁定不改码项（AI-05 ALGO_FLOW 行号/AI-06 scheduler 宽捕获/AI-11 errcode vocab 误报/AI-13 已留痕 shim 等）
+
+**总管复查指令**：按 B 类编号逐项取证→修复→复检→Gateway 提交；A 类抽验 commit 即可；C 类排期。全部项的原始证据链在 §2 对应域小节与各域 commit message。
