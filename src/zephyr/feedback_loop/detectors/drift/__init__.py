@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-FBL-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # NOTE(P1W24 并行协调): scaffold 注册器 eager import bug 第八次复发（斜杠变种
 # `zephyr.feedback_loop/detectors/drift.distribution_drift_monitor`），按可逆模式归一
 # 为点号合法 import 并将模块名入列 _SUBMODULES/__all__（与 #ARCH-228/235/238/242/246/250 同族）。

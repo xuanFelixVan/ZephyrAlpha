@@ -359,7 +359,7 @@ git show d3a50b35 --stat     # AI-03 merge（末域）
 
 ## B 类·缺陷未修复——总管复查修复队列（每项含证据与建议方案）
 
-> **状态更新二（2026-09-05 终检，commit 待填）**：应 Owner"能做则做"指令补做——①B20 复测：src [TESTS] 断链 354→165（域修复落地）→**157 处修复**（2 处 import 级映射+155 处诚实置 none 并附判定口径注释；复检 dangling=1 为格式边角）；155 中 120 个存在字符串级引用（可能含 importlib 接线测试），清单已落盘 .runtime/tmp/none_tests_string_refs.json 供总管语义裁定 ②B15 default_experiment_pipeline 治理版僵尸 salvage 完成闭环（git rm+__init__ 再导出收缩+docstring 同步+module_translation 删条目，simulation 活体保留）——**salvage 模板已验证** ③B3 复查修正：实为 4 副本×2 生成器拓扑（shared 扁平 codegen/shared risk 子目录/trading 版/risk 版），维持移交强模型 ④B22 四项为安全门禁组件（ops_guard 根决策点/encoding_gate/REPO_ROOT/redup），改错=全局门禁失效，留强模型。**B9/B8/B6/B13 四个退役 salvage 为 Flash 可执行机械活（runbook=B15 模板：零消费复确认→git rm→module_translation 删条目→蓝图标注→battle_map/depgraph），每项约 30 分钟，移交总管执行。**
+> **状态更新三（2026-09-05 终检二次，Owner 追问"能做则做"后深查）**：对 B9/B8/B6/B13 四个"退役 salvage"逐个深查登记面后**推翻上轮"Flash 可执行机械活"的定性**——①B9 ashare_stop_loss_engine 的 module_translation 登记面含作战地图环节 **BM-RC-05-A**（"六种 A 股特色止损模式"= Owner 交易方法论载体，降级说明自认"引擎未就绪→仅通用止损"），退役引擎=放弃该交易能力规划，属交易语义裁定非机械操作（这正是 AI-09 原判"登记不蛮干"的深层原因，上轮我仅记录表层理由）；②B8 rule_watcher 蓝图锚/governance_core 收口、B13 nan_processor 前视偏差裁定（Owner 15 号规格）与 data_asset/dataflow/battle_map BM-BT-03 四面联动、B6 event_store 的 MOD-INF-002 复用规划——同样各有规划/语义载体。**定性原则修正：纯重复实现（B15 型，删副本零能力损失）=Flash 可做；承载 Owner 交易方法论或架构规划的零消费模块（B9/B8/B13/B6 型，删=放弃能力规划）=Owner 裁定**。B15 已完成（模板仍有效，供 Owner 裁定退役后照做）。Flash 可做项至此**全部完成**。
 
 | # | 缺陷 | 位置 | 证据要点 | 建议方案 | 出处 |
 |---|---|---|---|---|---|
