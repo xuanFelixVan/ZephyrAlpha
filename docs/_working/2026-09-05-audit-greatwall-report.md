@@ -17,7 +17,11 @@ ttl: task_bound
 - 总问题数 / 已修复数：波次 1 发现 31→修复 26；波次 2 发现 65→修复 60；波次 3 发现 33→修复 27；波次 4 发现 179→修复 172；波次 5 发现 71→修复 66；波次 6（AI-21）发现 1156→修复 538+618 登记台账（跨域/内容建设类）；作废重派 0
 - P0 工具链缺陷（网关 worktree 锁自锁）已由 AI-20 根修并端到端验证关闭；生成器 churn 已由 atomic_write_if_changed 根治
 - 复审轮清单：AI-06×2 / AI-11×1 / AI-13×1 / AI-15×1 / AI-18×1 / 全局×3（merge 后执行）
-- 下一阶段：主仓 reconciler 派生波收编→21 worktree 串行 merge→G4 主仓派生再生→共享收口→复审轮→全局复审
+- **复审轮批次 1 已回收（AI-06/11/13/15 均"通过"）**：AI-06-002 f3b9c84904（broker_interface 表头+boot_hooks F5 死链救活——F5 订阅自重构后从未生效实证）；AI-11-002 d02d3944（死导入删除；49 文件 204 条 verification 路径 0 悬空）；AI-13-002 59c661b53a（task_repo batch_id API 2 方法+3 [TESTS] 修复；**新发现：batch_id 生产写入方全仓缺失→claim_next 恒 None/AutoPilot 恒走兜底=2.4A 静默失效嫌疑，待 Owner**）；AI-15-002 aaa9fa253d（rollback_types L19 修复；**新发现：22 文件跨域连字符锚残留**——trading_contracts 20+compliance_rule+strategy_lifecycle_event）
+- AI-13/06 复审连带：旁路收敛条件已成立（API 已落地），AI-06 下一轮执行 conductor/autopilot 收敛
+- 总控抽验复审轮 4/4 相符（boot_hooks L247 新路径/is_test_exempt=0/两 API 存在/rollback 连字符=0）
+- 下一阶段：~~主仓 reconciler 派生波收编→21 worktree 串行 merge~~ → **merge 进度：AI-01~12、14~20 已 merge 落地（AI-10/AI-18/AI-20 冲突经总控裁定解决：派生文件取主仓权威版、noqa 登记表取 AI-20 超集、AI-20 漏 import 当场补修）**；⚠️ **AI-21/AI-03 merge 挂起**——活跃自治 session solo-20260905-alignment-hardening（pid 18660）在途施工并持有 13 文件 claims（对齐门禁+battle_map_domain_policy/gate_registry/module_translation_registry/architecture_issue_registry 等），与两分支内容重叠，按 2.7 避让等待其完成
+- 共享收口进度：G2/G3 待 merge 完成后执行；ARCH-BACKUP-PS-SMOKE 已补登（cbede831）；echo-guard.yml 存量克隆豁免 8 对登记（0b702bae merge 解堵，dedup 专项留 Owner）
 
 # 二、每域详细汇报 ×21
 
