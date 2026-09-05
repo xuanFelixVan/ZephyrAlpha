@@ -7,7 +7,7 @@ title: 交易决策地图逐层讨论 SOP——防撞车·防越级·防枝末�
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.1.0"
+version: "1.2.0"
 date: 2026-09-05
 topic: trading_decision_map_layering_sop
 scope: 07_trading_decision_architecture
@@ -47,7 +47,7 @@ related_issues:
 | 依赖全景图 | depgraph | 模块号与模块关系 | module_id: MOD-* |
 | 实现代码 | src/zephyr | 落码状态 | module_ref: 代码路径（空=缺口红节点） |
 
-### 2.2 节点规范 v1.3（七要素 + 五联锚）
+### 2.2 节点规范 v1.5（七要素 + 五联锚 + 四执行治理字段）
 
 ```yaml
 - node_id: TDM-E-L2-01            # 层码-环节-序号（天然带层级）
@@ -61,11 +61,27 @@ related_issues:
   action: 输出强度前20→入候选池   # ⑤动作/输出
   algo_refs: [IND-*/EXA-*]        # ⑥算法库引用（条目自带代码索引；空=缺口）
   doc_ref: "docs/…/22_sector_rotation_spec.md#§3.1"  # ⑦算法附件（公式细节）
+  activation: intraday            # 【v1.4】时效窗：premarket/intraday/postmarket/weekly/on_demand
+  invalidation: null              # 【v1.4】失效条件：什么情况下本判断作废（打板类必填，如炸板）
+  ai_autonomy: auto               # 【v1.5】治理档位（见 2.2.1）
+  fallback: null                  # 【v1.4】降级路径：数据缺/模块挂时的替代动作（可空）
   module_id: MOD-SIG-026          # 五联锚：全景图模块号
   module_ref: src/zephyr/...      # 五联锚：实现代码（空=红节点）
   conflict_priority: null         # 兄弟节点并发时优先级
   confidence: proposed            # verified/proposed/untested（R6 强制）
 ```
+
+#### 2.2.1 ai_autonomy 实盘治理阶梯（2026-09-06 D18，宪章 B-007 同源）
+
+| 档位 | 语义 | 换档要求 |
+|---|---|---|
+| shadow | 影子并行，不下真单，日志对比 | 初始可设 |
+| paper | 模拟盘自动跑（**项目初始档**） | 初始档 |
+| pilot | 小资金实盘自动跑 | Owner dated 裁定 |
+| daily_review | 每日交易方案人工过目，单笔自动执行 | Owner dated 裁定 |
+| auto | 全自动 | Owner dated 裁定（永久豁免） |
+
+**铁律**：①实盘执行节点必带本字段，非实盘节点恒 auto；②换档是唯一人工审批点，档内单笔执行不设审批；③`autonomy_log` 记录晋级/降级（D-NN 编号+日期），AI 不可自动升档（熔断可自动降档）；④kill switch 全局常驻（X-R1 应急保命承载），任何档位不可移除。机构依据：MiFID II RTS 6 Art.5(2) 部署授权 / Art.14(2) kill switch 强制 / 量化社区 staged rollout（shadow→paper→pilot→full，promote 需 sign-off）。
 
 **上下游不设字段**：流转依赖用地图已有 edges（from_node/to_node）表达，与父子关系分离。
 **枝干分级不设字段**：主干/树枝/枝末由树位置自动推导（第一层=主干；有子=树枝；叶=枝末），SOP 枝末先行检查用推导值。
@@ -172,4 +188,5 @@ L1 大盘总闸 ✅（六段+灰度+仲裁+预算带，D7-D13）
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
 | 2026-09-05 | 1.0.0 | 初稿落盘 | 情绪六段撞车事故（vs 10 号 spec 五态）根因固化：已有资产盘点先行+四路调研+上层完整性+枝干分级三道前置检查 |
-| 2026-09-05 | 1.1.0 | 新增 §2 定位声明+节点规范 v1.3+合并政策；Step 1 处置五选一改（引用→吸收）；Step 6 按五联锚更新；§4 层位表 E-L2 置🔶 | Owner 裁定：地图=唯一动作流程真源（同等职责文档一律合并）；节点七要素+五联锚（algo_refs 指向算法库条目 IND-*/EXA-*，条目自身索引代码，非指向文档）；父子只写 parent_node、上下游用 edges、枝干分级自动推导（删 rank 字段） |
+| 2026-09-05 | 1.1.0 | 新增 §2 定位声明+节点规范 v1.3+合并政策；Step 1 处置五选一改（引用→吸收）；Step 6 按五联锚更新；§4 层位表 E-L2 置🔶 | Owner 裁定：地图=唯一动作流程真源（同等职责文档一律合并）；节点七要素+五联锚（algo_refs 指向算法库条目 IND-*/EXA-*，条目自身索引代码，非指向文档）；父子只写 parent_node、上下游用 edges、枝干分级自动推导（删 rank 字段）【裁定号 D16 追认】 |
+| 2026-09-06 | 1.2.0 | 节点规范 v1.3→v1.5：新增 activation/invalidation/fallback（v1.4 字段审计）+ai_autonomy 五档治理阶梯及 §2.2.1 铁律 | 【D17】字段完备性审计（DMN/交易计划模板/2025-26 agent 规划论文/项目注册表四路）收敛 4 字段；【D18】Owner 终裁：实盘审批制演进为治理阶梯制（宪章 B-007 同步改写），初始档 paper，kill switch 常驻，换档=唯一人工审批点 |
