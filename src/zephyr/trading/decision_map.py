@@ -77,19 +77,28 @@ __all__: Final = [
     "DecisionMapEdge",
     "TdmMatrixCell",
     "StateMatrix",
+    "Sleeve",
+    "PortfolioPlan",
     "GapReportItem",
     "DecisionMap",
     "load_decision_map",
     "validate_decision_map",
 ]
 
-# ── 枚举常量（schema v1.0 词表）──────────────────────────────────────────────
+# ── 枚举常量（schema v1.1 词表）──────────────────────────────────────────────
 _MARKETS = frozenset({"cn_a", "crypto"})
-_FLOWS = frozenset({"entry_flow", "position_flow", "exit_flow"})
+_FLOWS = frozenset({"entry_flow", "position_flow", "exit_flow", "portfolio_flow"})
 _NODE_TYPES = frozenset({"gate", "stage", "sensor", "aggregation", "cross_cutting"})
 _POINTS = frozenset({"盘前", "盘中", "盘后", "持续"})
 _EDGE_TYPES = frozenset({"feed", "sequence", "broadcast", "feedback"})
 _CONFIDENCE = frozenset({"verified", "proposed", "untested"})
+_SCHEMA_VERSIONS = frozenset({"1.0", "1.1"})
+_LAYER_PREFIX_BY_FLOW: Final = {
+    "entry_flow": "L",
+    "position_flow": "P",
+    "exit_flow": "S",  # X 前缀（风控横切）单独放行
+    "portfolio_flow": "C",
+}
 
 _REG_STRATEGY = "strategy_registry.yaml"
 _REG_FACTOR = "factor_registry.yaml"
@@ -155,8 +164,31 @@ class StateMatrix:
 
 
 @dataclass(frozen=True)
+class Sleeve:
+    """整装组合的单策略仓位（v1.1：拼装回测的可执行单元）。"""
+
+    strategy_ref: str
+    weight: float
+    activation_state: str | None = None  # null=全状态激活；否则须在 state_matrix.states 内
+
+
+@dataclass(frozen=True)
+class PortfolioPlan:
+    """整装仿真组合方案（v1.1：地图=整装仿真系统蓝图的可执行实例）。
+
+    拼装回测引擎直接消费：多回测按权重合成整装净值（业界已验证）。
+    """
+
+    plan_id: str
+    name_zh: str
+    confidence: str
+    sleeves: tuple[Sleeve, ...]
+    aggregator: dict  # max_total_position/max_single_sleeve/correlation_cap 等（proposed 占位）
+
+
+@dataclass(frozen=True)
 class DecisionMap:
-    """交易决策地图（图谱存储：节点+边；视图=投影）。"""
+    """交易决策地图（图谱存储：节点+边；视图=投影；v1.1+整装方案层）。"""
 
     map_id: str
     schema_version: str
@@ -164,6 +196,7 @@ class DecisionMap:
     nodes: tuple[DecisionMapNode, ...]
     edges: tuple[DecisionMapEdge, ...]
     state_matrix: StateMatrix
+    portfolio_plan: PortfolioPlan | None = None  # v1.1：None=schema v1.0 无整装层
 
 
 @dataclass(frozen=True)
@@ -226,7 +259,7 @@ def load_decision_map(path: Path) -> DecisionMap:
     _require(isinstance(raw, dict), "地图真源顶层必须是映射")
     for key in ("schema_version", "map_id", "markets", "nodes", "edges", "state_matrix"):
         _require(key in raw, f"地图真源缺顶层字段 {key}")
-    _require(str(raw["schema_version"]) == "1.0", "schema_version 必须为 1.0")
+    _require(str(raw["schema_version"]) in _SCHEMA_VERSIONS, "schema_version 必须为 1.0 或 1.1")
 
     nodes = tuple(_parse_node(n) for n in raw["nodes"])
     _require(len({n.node_id for n in nodes}) == len(nodes), "node_id 重复")
@@ -245,6 +278,26 @@ def load_decision_map(path: Path) -> DecisionMap:
         for c in sm.get("cells", []) or []
     )
     matrix = StateMatrix(states=tuple(str(s) for s in sm.get("states", []) or []), cells=cells)
+
+    plan: PortfolioPlan | None = None
+    if raw.get("portfolio_plan") is not None:
+        pp = raw["portfolio_plan"]
+        _require("plan_id" in pp, "portfolio_plan 缺 plan_id")
+        sleeves = tuple(
+            Sleeve(
+                strategy_ref=str(s["strategy_ref"]),
+                weight=float(s["weight"]),
+                activation_state=s.get("activation_state"),
+            )
+            for s in pp.get("sleeves", []) or []
+        )
+        plan = PortfolioPlan(
+            plan_id=str(pp["plan_id"]),
+            name_zh=str(pp.get("name_zh", "")),
+            confidence=str(pp.get("confidence", "proposed")),
+            sleeves=sleeves,
+            aggregator=dict(pp.get("aggregator", {}) or {}),
+        )
     return DecisionMap(
         map_id=str(raw["map_id"]),
         schema_version=str(raw["schema_version"]),
@@ -252,6 +305,7 @@ def load_decision_map(path: Path) -> DecisionMap:
         nodes=nodes,
         edges=edges,
         state_matrix=matrix,
+        portfolio_plan=plan,
     )
 
 
@@ -305,12 +359,11 @@ def _validate_node_refs(
         add("error", "R1", n.node_id, f"node_type 非法: {n.node_type}")
     if n.point not in _POINTS:
         add("error", "R1", n.node_id, f"point 非法: {n.point}")
-    # layer 前缀与 flow 一致性（二元：entry→L*/position→P*/exit→S*|X*；防复制粘贴错档）
-    prefix_ok = {
-        "entry_flow": n.layer.startswith("L"),
-        "position_flow": n.layer.startswith("P"),
-        "exit_flow": n.layer.startswith(("S", "X")),
-    }.get(n.flow, False)
+    # layer 前缀与 flow 一致性（二元：entry→L*/position→P*/exit→S*|X*/portfolio→C*；防复制粘贴错档）
+    if n.flow == "exit_flow":
+        prefix_ok = n.layer.startswith(("S", "X"))
+    else:
+        prefix_ok = n.layer.startswith(_LAYER_PREFIX_BY_FLOW.get(n.flow, "\0"))
     if not prefix_ok:
         add("error", "R1", n.node_id, f"layer 前缀与 flow 不一致: flow={n.flow} layer={n.layer}")
     # 缺口可视化：module_ref 缺失=warning（N2 需求：缺的东西自动浮出）
@@ -360,7 +413,7 @@ def _validate_edge(e: DecisionMapEdge, by_id: dict[str, DecisionMapNode], add) -
 
 
 def _validate_matrix_cell(
-    c: MatrixCell,
+    c: TdmMatrixCell,
     dm: DecisionMap,
     add,
     strat_ids: frozenset[str],
@@ -421,5 +474,37 @@ def validate_decision_map(
     for m in dm.markets:
         if m not in node_markets:
             add("error", "R10", dm.nodes[0].node_id if dm.nodes else "", f"声明市场 {m} 无任何节点")
+
+    # R12 整装方案（v1.1）：sleeve 引用存在性+权重范围+和≤1+activation_state 在列轴+置信度
+    if dm.portfolio_plan is not None:
+        plan = dm.portfolio_plan
+        if plan.sleeves:
+            weight_sum = 0.0
+            seen_refs: set[str] = set()
+            for s in plan.sleeves:
+                known = s.strategy_ref in strat_ids or (
+                    bool(known_strategy_ids) and s.strategy_ref in known_strategy_ids
+                )
+                if not known:
+                    add("error", "R12", plan.plan_id, f"sleeve strategy_ref 不存在: {s.strategy_ref}")
+                if s.strategy_ref in seen_refs:
+                    add("error", "R12", plan.plan_id, f"sleeve 重复: {s.strategy_ref}")
+                seen_refs.add(s.strategy_ref)
+                if not (0 < s.weight <= 1.0):
+                    add("error", "R12", plan.plan_id, f"sleeve {s.strategy_ref} weight 越界: {s.weight}")
+                weight_sum += s.weight
+                if s.activation_state is not None and s.activation_state not in dm.state_matrix.states:
+                    add(
+                        "error",
+                        "R12",
+                        plan.plan_id,
+                        f"sleeve {s.strategy_ref} activation_state 不在列轴: {s.activation_state}",
+                    )
+            if weight_sum > 1.0 + 1e-9:
+                add("error", "R12", plan.plan_id, f"sleeve 权重总和 {weight_sum:.4f} > 1.0")
+        if plan.confidence not in _CONFIDENCE:
+            add("error", "R12", plan.plan_id, f"plan confidence 非法: {plan.confidence}")
+        elif plan.confidence == "verified" and not plan.sleeves:
+            add("error", "R12", plan.plan_id, "plan 标 verified 但无任何 sleeve 归因支撑")
 
     return (not any(i.level == "error" for i in issues), issues)

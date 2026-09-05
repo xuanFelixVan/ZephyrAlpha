@@ -583,10 +583,6 @@ items:
   name: generate_rule_catalog.py
   node_type: script
   status: active
-- file: scripts/governance/d3_metadata/migrate_illegal_doctype.py
-  name: migrate_illegal_doctype.py
-  node_type: script
-  status: active
 - file: scripts/governance/d3_metadata/validate_architecture.py
   name: validate_architecture.py
   node_type: script
@@ -765,10 +761,6 @@ items:
   status: active
 - file: scripts/governance/d5_architecture/diagnose_depgraph.py
   name: diagnose_depgraph.py
-  node_type: script
-  status: active
-- file: scripts/governance/d5_architecture/dm200912_query_domains.py
-  name: dm200912_query_domains.py
   node_type: script
   status: active
 - file: scripts/governance/d5_architecture/dm200916_write_direct.py

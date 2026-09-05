@@ -5,7 +5,7 @@ title: 交易决策地图（Trading Decision Map）——决策内容索引层�
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.0"
+version: "1.1.0"
 date: 2026-09-04
 topic: trading_decision_map
 scope: 07_trading_decision_architecture
@@ -196,5 +196,7 @@ def validate_decision_map(dm: DecisionMap, registry_dir: Path) -> tuple[bool, li
 
 ## 5. 演进方向（V1+，不在本备忘施工范围）
 
-- V1：api_server 增加只读端点（GET /api/decision_map）→ 前端泳道图/矩阵视图；module_ref 缺口接 depgraph 实时校验；数据四态灯接 ClickHouse
-- V2：整装回测（方案 YAML=各层激活规则+策略清单+资金比例，拼装回测=已验证业界做法）；情绪状态动态判别器接入矩阵列轴；真源迁移 DB（若实盘调度器消费）
+> **v1.1.0 升级（2026-09-05，Owner 终极定位拍板）**：地图终极定位=**整装仿真策略组合的蓝图**（追溯是手段不是目的）。三流→四流：新增**组合资金流 portfolio_flow**（TDM-F-C1 预算切分→C2 组合聚合→C3 绩效归因反馈，C3→L1-AGG feedback 闭环=系统自我进化的图上表达，Millennium pod 模型单体版）；新增**portfolio_plan 整装方案层**（PP-001：8 sleeve 权重全 proposed+聚合规则——拼装回测引擎直接消费，业界已验证多回测加权合成）。schema v1.0→v1.1；校验器 R12（sleeve 引用/权重和≤1/activation_state 在列轴/重复/plan 置信度）。**一份图谱三种用法**：改=填血肉（门禁守）、查=索引（稳定标识符）、跑=整装回测（方案层）。V1 排期重排：**整装拼装回测提前于前端视图**。
+
+- V1：api_server 增加只读端点（GET /api/decision_map）→ 前端泳道图/矩阵视图；module_ref 缺口接 depgraph 实时校验；数据四态灯接 ClickHouse；**整装拼装回测（组合方案→多回测加权合成整装净值）**
+- V2：情绪状态动态判别器接入矩阵列轴；真源迁移 DB（若实盘调度器消费）

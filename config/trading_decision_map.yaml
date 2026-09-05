@@ -16,7 +16,7 @@
 # 血肉填充约定: 骨架先行（本文件），格子内容以 proposed 逐步添加，禁止把 proposed 冒充 verified
 # ============================================================================
 
-schema_version: '1.0'
+schema_version: '1.1'
 map_id: TDMAP-001
 name_zh: 交易决策地图
 markets: [cn_a, crypto]          # 同 schema 两实例（D2.5）；crypto V0 为骨架空壳
@@ -231,6 +231,47 @@ nodes:
     module_ref: null
     strategy_mounts: []
 
+  # ── 组合资金流 portfolio_flow（cn_a，v1.1 新增：整装仿真系统核心骨架）────
+  # 地图终极定位（Owner 2026-09-05 拍板）：整装仿真策略组合的蓝图——本流=资金切分→组合聚合→归因反馈闭环
+  - node_id: TDM-F-C1
+    name_zh: 预算切分
+    market: cn_a
+    flow: portfolio_flow
+    layer: C1
+    node_type: gate
+    point: 盘前
+    decision_question: 总仓位怎么切给各策略 sleeve（Millennium pod 模型单体版）
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    strategy_mounts: []
+
+  - node_id: TDM-F-C2
+    name_zh: 组合聚合
+    market: cn_a
+    flow: portfolio_flow
+    layer: C2
+    node_type: aggregation
+    point: 持续
+    decision_question: 各 sleeve 的信号/持仓怎么聚合成组合（相关性/总仓位约束/风控叠加）
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    strategy_mounts: []
+
+  - node_id: TDM-F-C3
+    name_zh: 绩效归因反馈
+    market: cn_a
+    flow: portfolio_flow
+    layer: C3
+    node_type: stage
+    point: 盘后
+    decision_question: 哪个 sleeve 赚/亏 → 预算倾斜与矩阵格 verified 升级（系统自我进化闭环）
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    strategy_mounts: []
+
   # ── 币圈实例（骨架空壳，L2 弱化为赛道层）─────────────────────────────────
   - node_id: TDM-C-L1
     name_zh: 币圈大盘总闸
@@ -300,6 +341,11 @@ edges:
   # L1 广播到持仓/离场（大盘转弱→风险处置/警戒）
   - {from_node: TDM-E-L1-AGG, to_node: TDM-P-P1, edge_type: broadcast}
   - {from_node: TDM-E-L1-AGG, to_node: TDM-X-S1, edge_type: broadcast}
+  # 组合资金流闭环（v1.1：预算→聚合→归因→反馈回大盘闸=系统自我进化闭环）
+  - {from_node: TDM-E-L1-AGG, to_node: TDM-F-C1, edge_type: broadcast}   # L1 预算输出喂资金切分
+  - {from_node: TDM-F-C1, to_node: TDM-F-C2, edge_type: sequence}
+  - {from_node: TDM-F-C2, to_node: TDM-F-C3, edge_type: sequence}
+  - {from_node: TDM-F-C3, to_node: TDM-E-L1-AGG, edge_type: feedback}    # 归因反馈回状态判定（闭环）
   # 持仓流
   - {from_node: TDM-P-P1, to_node: TDM-P-P2, edge_type: sequence}
   - {from_node: TDM-P-P2, to_node: TDM-P-P3, edge_type: sequence}
@@ -322,3 +368,23 @@ state_matrix:
     - {node_id: TDM-E-L1, state: 弱势, mounted: [], confidence: proposed}
     - {node_id: TDM-E-L4, state: 强势, mounted: [daban-sleeve], confidence: proposed}
     - {node_id: TDM-P-P2, state: 震荡, mounted: [intraday-surge-fall, orderbook-imbalance, vwap-reversion], confidence: proposed}
+
+portfolio_plan:
+  # 整装仿真组合方案（v1.1 新增，Owner 终极定位：地图=整装仿真系统的蓝图）
+  # 本段=组合资金流 C1/C2 的可执行实例：拼装回测引擎直接消费（多回测加权合成，业界已验证）
+  plan_id: PP-001
+  name_zh: 整装仿真组合 V0
+  confidence: proposed              # 整个方案的权重分配=主观假设，待拼装回测归因后逐 sleeve 升级
+  sleeves:
+    - {strategy_ref: default-equity,     weight: 0.20, activation_state: null}   # 默认多头=底仓
+    - {strategy_ref: multifactor-sleeve, weight: 0.20, activation_state: null}
+    - {strategy_ref: daban-sleeve,       weight: 0.15, activation_state: 强势}   # 打板只进攻击档
+    - {strategy_ref: eventdriven-sleeve, weight: 0.10, activation_state: null}
+    - {strategy_ref: topn-momentum,      weight: 0.10, activation_state: null}
+    - {strategy_ref: intraday-surge-fall, weight: 0.10, activation_state: 震荡}  # 做T=持仓流震荡档
+    - {strategy_ref: orderbook-imbalance, weight: 0.075, activation_state: 震荡}
+    - {strategy_ref: vwap-reversion,      weight: 0.075, activation_state: 震荡}
+  aggregator:                        # 组合聚合规则（C2，proposed 占位）
+    max_total_position: 1.0
+    max_single_sleeve: 0.25
+    correlation_cap: 0.7

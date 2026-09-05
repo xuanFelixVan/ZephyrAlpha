@@ -337,3 +337,106 @@ class TestBlueFailOpenAndTrigger:
             gateway=None, files=["docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml"]
         )
         assert passed is True  # PG 不可达=子检查跳过（fail-open），格式校验通过即放行
+
+
+class TestV11PortfolioFlow:
+    """v1.1 组合资金流+整装方案层（Owner 终极定位：地图=整装仿真系统蓝图）。"""
+
+    def _payload_with_plan(self, plan: dict) -> dict:
+        node = {
+            "node_id": "TDM-F-C1",
+            "name_zh": "预算切分",
+            "market": "cn_a",
+            "flow": "portfolio_flow",
+            "layer": "C1",
+            "node_type": "gate",
+            "point": "盘前",
+            "decision_question": "测试",
+            "factor_refs": [],
+            "data_refs": [],
+            "module_ref": None,
+            "strategy_mounts": [],
+        }
+        return {
+            "schema_version": "1.1",
+            "map_id": "TDMAP-V11",
+            "markets": ["cn_a"],
+            "nodes": [node],
+            "edges": [],
+            "state_matrix": {"states": ["强势", "震荡"], "cells": []},
+            "portfolio_plan": plan,
+        }
+
+    def _validate(self, payload: dict) -> list[str]:
+        import tempfile
+
+        from zephyr.trading.decision_map import load_decision_map, validate_decision_map
+
+        with tempfile.NamedTemporaryFile("w", suffix=".yaml", delete=False, encoding="utf-8") as f:
+            yaml.safe_dump(payload, f, allow_unicode=True)
+            tmp = Path(f.name)
+        try:
+            dm = load_decision_map(tmp)
+        finally:
+            tmp.unlink()
+        _, issues = validate_decision_map(
+            dm, _REPO / "docs" / "01_policies_and_standards" / "_registry" / "catalogs", None
+        )
+        return [f"{i.code} [{i.node_id}] {i.detail}" for i in issues if i.level == "error"]
+
+    def test_repo_plan_loads_with_sleeves(self) -> None:
+        from zephyr.trading.decision_map import load_decision_map
+
+        dm = load_decision_map(_REPO / "config" / "trading_decision_map.yaml")
+        assert dm.schema_version == "1.1"
+        assert dm.portfolio_plan is not None
+        assert len(dm.portfolio_plan.sleeves) == 8
+        assert abs(sum(s.weight for s in dm.portfolio_plan.sleeves) - 1.0) < 1e-9
+        assert dm.portfolio_plan.confidence == "proposed"
+        c_nodes = [n for n in dm.nodes if n.flow == "portfolio_flow"]
+        assert len(c_nodes) == 3 and all(n.layer.startswith("C") for n in c_nodes)
+        assert any(
+            e.from_node == "TDM-F-C3" and e.to_node == "TDM-E-L1-AGG" and e.edge_type == "feedback" for e in dm.edges
+        )
+
+    def test_r12_weight_sum_over_blocked(self) -> None:
+        plan = {
+            "plan_id": "PP-R12",
+            "confidence": "proposed",
+            "sleeves": [
+                {"strategy_ref": "daban-sleeve", "weight": 0.7, "activation_state": None},
+                {"strategy_ref": "topn-momentum", "weight": 0.7, "activation_state": None},
+            ],
+        }
+        errors = self._validate(self._payload_with_plan(plan))
+        assert any("R12" in e and "> 1.0" in e for e in errors)
+
+    def test_r12_unknown_sleeve_strategy_blocked(self) -> None:
+        plan = {
+            "plan_id": "PP-R12",
+            "confidence": "proposed",
+            "sleeves": [{"strategy_ref": "ghost-sleeve", "weight": 0.5, "activation_state": None}],
+        }
+        errors = self._validate(self._payload_with_plan(plan))
+        assert any("R12" in e and "ghost-sleeve" in e for e in errors)
+
+    def test_r12_bad_activation_state_blocked(self) -> None:
+        plan = {
+            "plan_id": "PP-R12",
+            "confidence": "proposed",
+            "sleeves": [{"strategy_ref": "daban-sleeve", "weight": 0.5, "activation_state": "冰雪季"}],
+        }
+        errors = self._validate(self._payload_with_plan(plan))
+        assert any("R12" in e and "不在列轴" in e for e in errors)
+
+    def test_r12_duplicate_sleeve_blocked(self) -> None:
+        plan = {
+            "plan_id": "PP-R12",
+            "confidence": "proposed",
+            "sleeves": [
+                {"strategy_ref": "daban-sleeve", "weight": 0.3, "activation_state": None},
+                {"strategy_ref": "daban-sleeve", "weight": 0.3, "activation_state": None},
+            ],
+        }
+        errors = self._validate(self._payload_with_plan(plan))
+        assert any("R12" in e and "重复" in e for e in errors)
