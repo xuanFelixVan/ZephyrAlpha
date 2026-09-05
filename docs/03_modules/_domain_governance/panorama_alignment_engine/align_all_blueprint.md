@@ -9,7 +9,7 @@ ttl: permanent
 layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
-design_maturity: production
+design_maturity: design
 build_status: production
 arch_ref: "#ARCH-ALIGN-UNIFIED-001"
 last_updated: "2026-08-08"

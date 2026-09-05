@@ -50,7 +50,7 @@ ssot_claims:
   - {claim: "法证审计协议SSoT", scope: "module"}
   - {claim: "自指硬化协议SSoT", scope: "module"}
 responsibility_domain: 
-design_maturity: production
+design_maturity: design
 build_status: generated
 ---
 
