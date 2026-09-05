@@ -89,6 +89,8 @@ registries:
     title: "模块登记表"
     path: "docs/03_modules/module-registry.yaml"
     version: "3.1.0"
+    status: retired
+    retired_note: "2026-09-05 AI-00 长城审计 G2 收口：该文件 git 历史从未落盘（幽灵登记），模块登记真源=depgraph（PG）+module_translation_registry.yaml；跨表一致性规则对本表降级为跳过（校验器 fail-open），真源收编待 Owner 裁定"
     description: "全部域的模块生命周期登记（蓝图→施工→交付三阶段）"
     ssoT_for:
       - "module_id"
@@ -106,6 +108,8 @@ registries:
     title: "蓝图登记表"
     path: "docs/03_modules/blueprint_registry.yaml"
     version: "1.0.0"
+    status: derived
+    derived_note: "2026-09-05 AI-00 长城审计 G2 收口：03df6215e8 派生退库（gitignored），由 sync_registry_from_blueprints.py 运行时再生；文件缺失时跨表一致性规则对本表降级为跳过（校验器 fail-open）"
     description: "蓝图维度的深度评估（施工进度%、完整度%、代际、标的价值）"
     ssoT_for:
       - "completeness_pct"

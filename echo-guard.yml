@@ -376,3 +376,11 @@ acknowledged:
     verdict: dismissed
     stable_key: "src\\zephyr\\pf_core\\core\\exposure_manager.py:_require_finite||src\\zephyr\\risk\\manipulation_avoidance_detector.py:_finite"
     note: "2026-09-05 ai-audit00：存量克隆（_require_finite/_finite 卫语句模板跨域，非本次引入），dedup 专项待 Owner，dismissed 解审计 merge 阻塞"
+  - id: "scripts\\governance\\d6_security\\retire_tmp_artifacts.py:_fmt_size:00000000||src\\zephyr\\clone_guard\\engines\\vendetect_adapter.py:_severity_for:00000000"
+    verdict: dismissed
+    stable_key: "scripts\\governance\\d6_security\\retire_tmp_artifacts.py:_fmt_size||src\\zephyr\\clone_guard\\engines\\vendetect_adapter.py:_severity_for"
+    note: "2026-09-05 ai-audit00：存量分级阶梯模板克隆（AI-03 审计触碰文件暴露，非本次引入），dedup 专项待 Owner，dismissed 解审计 merge 阻塞"
+  - id: "scripts\\governance\\d6_security\\retire_tmp_artifacts.py:_fmt_size:00000000||src\\zephyr\\gov_audit\\bridges\\audit_trust_bridge.py:classify_tier:00000000"
+    verdict: dismissed
+    stable_key: "scripts\\governance\\d6_security\\retire_tmp_artifacts.py:_fmt_size||src\\zephyr\\gov_audit\\bridges\\audit_trust_bridge.py:classify_tier"
+    note: "2026-09-05 ai-audit00：存量分级阶梯模板克隆（AI-03 审计触碰文件暴露，非本次引入），dedup 专项待 Owner，dismissed 解审计 merge 阻塞"

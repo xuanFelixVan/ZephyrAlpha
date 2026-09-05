@@ -132,30 +132,42 @@ def collect_module_ids(ror: dict, rule: dict) -> set:
             for s2 in rule.get("sources", []):
                 if "registry" in s2:
                     reg_info2 = next((r for r in ror["registries"] if r["id"] == s2["registry"]), None)
-                    if reg_info2:
-                        reg_path2 = REPO_ROOT / reg_info2["path"]
-                        if reg_path2.exists():
-                            reg_data2 = load_yaml(reg_path2)
-                            prefix2 = s2["yaml_path"].split("[]")[0]
-                            items2 = reg_data2.get(prefix2, [])
-                            if isinstance(items2, list):
-                                for item in items2:
-                                    mid = item.get("module_id")
-                                    if mid:
-                                        module_ids_from_registry.add(mid)
+                    if not reg_info2:
+                        continue
+                    # 2026-09-05 AI-00 G2 收口：retired/derived 登记表 fail-open 跳过
+                    # （对齐下方/本函数既有 exists() 姿态；此前本分支无防护致 FileNotFoundError 崩溃）
+                    if reg_info2.get("status") in ("retired", "derived"):
+                        continue
+                    reg_path2 = REPO_ROOT / reg_info2["path"]
+                    if not reg_path2.exists():
+                        continue
+                    reg_data2 = load_yaml(reg_path2)
+                    prefix2 = s2["yaml_path"].split("[]")[0]
+                    items2 = reg_data2.get(prefix2, [])
+                    if isinstance(items2, list):
+                        for item in items2:
+                            mid = item.get("module_id")
+                            if mid:
+                                module_ids_from_registry.add(mid)
             if not module_ids_from_registry:
                 for s2 in rule.get("sources", []):
                     if "registry" in s2:
                         reg_info2 = next((r for r in ror["registries"] if r["id"] == s2["registry"]), None)
-                        if reg_info2:
-                            reg_data2 = load_yaml(REPO_ROOT / reg_info2["path"])
-                            prefix2 = s2["yaml_path"].split("[]")[0]
-                            items2 = reg_data2.get(prefix2, [])
-                            if isinstance(items2, list):
-                                for item in items2:
-                                    mid = item.get("module_id")
-                                    if mid:
-                                        module_ids.add(mid)
+                        if not reg_info2:
+                            continue
+                        if reg_info2.get("status") in ("retired", "derived"):
+                            continue
+                        reg_path2 = REPO_ROOT / reg_info2["path"]
+                        if not reg_path2.exists():
+                            continue
+                        reg_data2 = load_yaml(reg_path2)
+                        prefix2 = s2["yaml_path"].split("[]")[0]
+                        items2 = reg_data2.get(prefix2, [])
+                        if isinstance(items2, list):
+                            for item in items2:
+                                mid = item.get("module_id")
+                                if mid:
+                                    module_ids.add(mid)
             else:
                 module_ids |= module_ids_from_registry
     return module_ids
