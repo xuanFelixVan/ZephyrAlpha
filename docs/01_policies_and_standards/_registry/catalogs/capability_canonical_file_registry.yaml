@@ -4997,6 +4997,10 @@ creation_tokens:
   token: auto-trading-decision-map-20260904-review
   created_by: solo-20260904-decision-map
   capability: trading_decision_map
+- file: docs/01_policies_and_standards/sop/trading_decision_map_layering_sop.md
+  token: auto-trading-decision-map-20260905-layering-sop
+  created_by: solo-20260905-decision-map-v12
+  capability: trading_decision_map
 - file: src/zephyr/gov_enforcement/commit_gates/frontend_map_gate.py
   token: auto-frontend-map-gate-20260904
   created_by: solo-20260904-truth-source

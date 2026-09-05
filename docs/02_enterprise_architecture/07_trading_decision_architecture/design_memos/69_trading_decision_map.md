@@ -5,7 +5,7 @@ title: 交易决策地图（Trading Decision Map）——决策内容索引层�
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.2.1"
+version: "1.2.2"
 date: 2026-09-04
 topic: trading_decision_map
 scope: 07_trading_decision_architecture
@@ -137,6 +137,26 @@ L1 结构（D4/D6，Owner 裁定+行业修正）：**四路同层级传感器阵
 **资金体量讨论结论**：风险承担以百分比计=资金无关（Owner 判断正确，Kelly 无账户大小变量）；可实现仓位受四通道影响——容量约束（**小资金打板容量无限=对机构的合法结构性优势，游资成长路径本质**）、生存数学（资金无关）、执行心理（随纪律退化）、负债端约束（机构专属）。故"单票≤6%"是大资金的容量公式，小资金 earned 单票集中合法；expansion 段高仓位由 verified 归因挣得。
 
 **PP-001 权重校准管线**（不拍数字，机构标准）：等权起步→V1.5 逆波动率调整→V2 半 Kelly（f=0.25×f*，防高估）+HRP 聚类→拼装回测归因→C3 反馈逐月调权。现有主观先验权重保留为 proposed，由归因逐月替换（breakingalpha：等权 vs 科学分配风险调整差 15-40%/年）。
+
+### 2.9 真源对齐裁定：B 方案（六段定稿）+ 已有资产引用（v1.2.2，Owner 2026-09-05 裁定）
+
+**背景撞车**：v1.2.0 新造的情绪六段与项目已有资产撞车——Owner 全项目搜索指令暴露三套既有状态体系：
+1. **D_REGIME 宏观 12 态系统【已实现】**：10 号设计备忘录（真源 D-SIGNAL-04），3×3 趋势×波动率网格→施工降维 **4 态 HMM（r1 低波震荡/r2 中波震荡/r3 牛市/r4 熊市）+3 overlay（CRISIS/RECOVERY/BREAKOUT）=7 维概率分布**（RegimeSnapshot frozen 契约），回测验证 runner 已建（backtest/regime_validation/）
+2. **情绪周期 4+1 阶段**（冰点/反核/主升/疯狂/退潮）：10 号 spec §3.3，已含与 12 态的映射表，原文"情绪周期更细（1-2 周），12 态更粗（1-3 月），不同时间尺度不矛盾可共存"
+3. **作战预案引擎**（D_PLAN/BM-PLAN-01-C）：当日微观推演（今天冲高回落怎么应对）
+
+**时间粒度三层定位（Owner 粒度直觉获实证）**：段状态（周/日线，1-3 月）=12 态系统；情绪相位（1-2 周）=六段轴；当日预案=预案引擎（地图只挂引用）。
+
+**A vs B 第一性原理裁定 → B**：判据="一个状态唯一对应一组动作"（列轴的目的）。五态的"反核"复合两组互斥动作（accumulation 建底仓不确认 20-30% vs ignition 确认加仓 30-50%）——违反一态一动作原则，灰度插值无法区分执行哪套；六段拆开后每段动作唯一。机构实证（MarketTriage 过渡带独立成段）+Owner 实战（六段带修复期）+灰度软分类化解多状态边界成本。**宏观 12 态轴零改动**（B 只定稿情绪相位轴词汇，10 号 spec §3.3 映射表增补六段列=增补非推翻）。
+
+**六段↔五态映射**：冰点→capitulation / **反核→accumulation+ignition（拆分）** / 主升→expansion / 疯狂→euphoria / 退潮→distribution。
+
+**已有资产引用挂载**：
+- TDM-E-L1（总闸）+ TDM-E-L1-AGG：`module_ref: src/zephyr/regime/core/regime_detector.py`（D_REGIME，消费 RegimeSnapshot 7 维概率=宏观谨慎度，总闸不自算宏观态）
+- 当日预案：作战预案引擎（D_PLAN）管辖，地图只挂引用
+- AGG 双轴合成定稿：RegimeSnapshot 概率（谨慎度→预算带）× 情绪六段分布（机会→策略路由）× 仲裁三规则
+
+**SOP 沉淀**：本轮撞车教训固化为《交易决策地图逐层讨论 SOP》（docs/01_policies_and_standards/sop/trading_decision_map_layering_sop.md）——已有资产清单先行+四路外部调研+上层完整性检查+枝干分级检查。
 
 **传感器数据引用定稿**：S1 指数→DS-150（日K）；S2 内部结构→DS-082（涨跌停价，涨停/跌停/炸板统计地基）；S3 赚钱效应→DS-082+DS-107（新闻情绪窗）；S4 波动率→DS-150（VIX 表未登记=数据缺口）；AGG→DS-098（两融杠杆环境）。因子层缺口：情绪类因子在 REG-FCT-001 仅 family 级（sentiment），FCT-* 级条目未建——factor_refs 留空=缺口节点，补登后回填。
 
