@@ -1206,9 +1206,9 @@ fallback_sources 中 35 处引用无 Provider 实现的 source（§9.1 死 fallb
 - [00_index_trading_decision.md](00_index_trading_decision.md)——总索引与路线图
 - [01_design_memo_management_spec.md](01_design_memo_management_spec.md)——设计备忘管理规范（§4.4 spec 类结构原则）
 - [15_data_feature_layer_spec.md](15_data_feature_layer_spec.md)——G01 数据与特征层规范（互补：15 号偏"数据进来后怎么用"，本文偏"数据怎么进来"）
-- [17_special_trading_days_data_assets.md](17_special_trading_days_data_assets.md)——特殊交易日数据资产（ARCH-SPECIAL-DAYS 未登记编号）
-- [18_cold_archive_build_plan.md](18_cold_archive_build_plan.md)——冷归档施工计划（数据保留 Cold 层）
-- [19_northbound_hold_snapshot.md](19_northbound_hold_snapshot.md)——北向季度快照 fetcher（日频断档替代）
+- [17_special_trading_days_data_assets.md](../../../_archive/17_special_trading_days_data_assets.md)——特殊交易日数据资产（ARCH-SPECIAL-DAYS 未登记编号）
+- [18_cold_archive_build_plan.md](../../../_archive/18_cold_archive_build_plan.md)——冷归档施工计划（数据保留 Cold 层）
+- [19_northbound_hold_snapshot.md](../../../_archive/19_northbound_hold_snapshot.md)——北向季度快照 fetcher（日频断档替代）
 - [63_data_utilization_audit.md](63_data_utilization_audit.md)——数据利用审计（配套：63 号审"用得怎么样"，本文审"下得怎么样"）
 
 ### 17.2 模块蓝图（what 层真源）

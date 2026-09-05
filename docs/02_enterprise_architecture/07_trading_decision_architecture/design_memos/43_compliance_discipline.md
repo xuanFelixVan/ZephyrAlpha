@@ -43,7 +43,7 @@ scope: 07_trading_decision_architecture
 | 撤单率 ≤15%、价格笼子、资金预校验 | [40_execution_broker](40_execution_broker.md)（CancelRateGuard / price_cage 已 production） | 引用其产出作合规检测结果，不重复定义 |
 | 2026 程序化新规限频（≤15 笔/秒内部安全垫）与令牌桶 | [24_daban_strategy_detail](24_daban_strategy_detail.md) §3.7（ProgramTradingComplianceGuard） | 引用其限频基线，本篇补操纵检测与报告义务 |
 | 四项严禁的"命名 + Hard Block/Warning 定位"、限价锚定与追高拦截协同 | [41_buy_flow](41_buy_flow.md) §2.3/§3.1/§3.4/§3.5 | 本篇补检测阈值、算法与 Kill Switch 轻量版联动 |
-| 数据资产登记（data_asset_registry） | [62_business_registry_construction](62_business_registry_construction.md)（REG-DATAFLOW-001） | 本篇的授权条款登记表作为其 compliance 字段的展开真源 |
+| 数据资产登记（data_asset_registry） | [62_business_registry_construction](../../../_archive/62_business_registry_construction.md)（REG-DATAFLOW-001） | 本篇的授权条款登记表作为其 compliance 字段的展开真源 |
 | charter 红线治理（56 条硬边界砍到 10 条真红线） | [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §5 | 那是**系统生存红线**（Fail-Closed 风控阈值）；本篇 BM-BUY-12 是**功能建设权裁定**（能不能建），两者不同物，§6 消歧 |
 | 内幕交易隔离墙 / AML / KYC | BM-BUY-11 已 deprecated | 本篇不建设（个人自有资金，无客户资产与多团队隔离场景） |
 
@@ -173,7 +173,7 @@ class DisciplineGuard:  # D-COMPLIANCE-23 组件 B，嵌入 C-004 风控引擎
 
 ### 5.3 契约 / 参数 / 接口
 
-**① 数据源授权条款登记表**（作为 [62 号](62_business_registry_construction.md) `catalogs/data_asset_registry.yaml`（REG-DATAFLOW-001）compliance 字段的展开真源，每个数据源 entry 必填）：
+**① 数据源授权条款登记表**（作为 [62 号](../../../_archive/62_business_registry_construction.md) `catalogs/data_asset_registry.yaml`（REG-DATAFLOW-001）compliance 字段的展开真源，每个数据源 entry 必填）：
 
 ```yaml
 # data_asset_registry.yaml 每个 source entry 的 compliance 段
@@ -373,4 +373,4 @@ compliance:
 
 ---
 
-**关联文档指针**：[41_buy_flow](41_buy_flow.md)（四项严禁命名与拦截定位、限价锚定协同）｜[40_execution_broker](40_execution_broker.md)（撤单率/价格笼子/Pre-Trade 拦截链）｜[24_daban_strategy_detail](24_daban_strategy_detail.md) §3.7（程序化新规限频与令牌桶）｜[62_business_registry_construction](62_business_registry_construction.md)（data_asset_registry 登记容器）｜[30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §5（charter 红线治理，与本篇 §6 消歧）
+**关联文档指针**：[41_buy_flow](41_buy_flow.md)（四项严禁命名与拦截定位、限价锚定协同）｜[40_execution_broker](40_execution_broker.md)（撤单率/价格笼子/Pre-Trade 拦截链）｜[24_daban_strategy_detail](24_daban_strategy_detail.md) §3.7（程序化新规限频与令牌桶）｜[62_business_registry_construction](../../../_archive/62_business_registry_construction.md)（data_asset_registry 登记容器）｜[30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §5（charter 红线治理，与本篇 §6 消歧）

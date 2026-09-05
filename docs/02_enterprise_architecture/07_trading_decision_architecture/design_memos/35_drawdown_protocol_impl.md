@@ -1147,7 +1147,7 @@ def graduation_criteria_met(strategy_pnls, expected_phases):
 | 量化私募回撤教训 | 本项目对应设计 | 支撑强度 |
 |---|---|---|
 | 风格暴露集中→回撤源（根因①） | [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §2.5 firm 层硬上限裁剪 + [31_position_sizing](31_position_sizing.md) §2.4 单票 8%/行业上限/总仓位裁剪 | ★★★ 强——百亿量化因风格集中回撤 20%+，项目 firm 层硬上限是直接防御 |
-| 低相关策略同向波动→分散失效（根因②） | §3.16 回撤归因（avg_corr>0.7=系统性）+ [23_strategy_correlation_validation](23_strategy_correlation_validation.md) 策略相关性监控 | ★★★ 强——"分散效果减弱"正是 §3.16 要检测的场景；[Aldridge & Krawciw crowding model](https://arxiv.org/abs/2608.02311) 两 agent 收敛相关暴露时 joint drawdown probability 从 **39.2% 升至 79.3%**（§4.28） |
+| 低相关策略同向波动→分散失效（根因②） | §3.16 回撤归因（avg_corr>0.7=系统性）+ [23_strategy_correlation_validation](../../../_archive/23_strategy_correlation_validation.md) 策略相关性监控 | ★★★ 强——"分散效果减弱"正是 §3.16 要检测的场景；[Aldridge & Krawciw crowding model](https://arxiv.org/abs/2608.02311) 两 agent 收敛相关暴露时 joint drawdown probability 从 **39.2% 升至 79.3%**（§4.28） |
 | 止损集中释放→踩踏放大（根因③） | §3.20 hysteresis min_hold 5/10/20 交易日 + §3.5.1 Kill Switch 分批拆单（15 笔/秒）+ [42_sell_flow](42_sell_flow.md) §3.8 跌停板排队优先级 | ★★☆ 中——个人系统 min_hold + 分批拆单降低自身踩踏风险 |
 | 端到端 AI 逆向承接深套（根因④） | §3.5 Kill Switch **不可覆盖**（`requires_manual_reset`）+ [30 §2.5.5](30_multi_strategy_concurrency.md) 回撤>25% 清仓+强制休息 5 天+人工 review | ★★★ 强——Kill Switch 不可覆盖正是防"模型自作主张深套" |
 | 回撤 20%+ 成行业常态 | §2.5.1 四级阈值 8/15/20/25%（外层生存边界）+ 代码 5/10/15%（内层早预警） | ★★★ 强——百亿量化 7 月回撤 20%+ 是常态，Level 3（20%）停仓 / Level 4（25%）清仓是生存底线 |

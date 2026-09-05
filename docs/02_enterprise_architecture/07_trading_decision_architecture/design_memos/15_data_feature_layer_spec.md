@@ -174,7 +174,7 @@ why "保留不丢弃"：坏行也是证据——丢弃会让缺口不可见，qu
 
 - [00_index_trading_decision](00_index_trading_decision.md) §3 G01
 - [64_data_source_download_spec](64_data_source_download_spec.md)（边界：64=怎么进来，本文=进来后怎么用）
-- [62_business_registry_construction](62_business_registry_construction.md)（factor_registry/data_asset_registry 载体）
+- [62_business_registry_construction](../../../_archive/62_business_registry_construction.md)（factor_registry/data_asset_registry 载体）
 - 域文档：11_d_data / 12_d_data_eng / 23_d_mkt_data / 46_d_factor（模块清单权威来源）
 - 代码：`schemas/categories/`（103 表）、`src/zephyr/data/tick_subscriber.py`、`src/zephyr/backtest/core/pit_manager.py`、`src/zephyr/data/pit_query.py`、`src/zephyr/factor/`（governance/analysis/core）
 - battle_map_01_research_incubation / battle_map_02_model_training（状态快照）

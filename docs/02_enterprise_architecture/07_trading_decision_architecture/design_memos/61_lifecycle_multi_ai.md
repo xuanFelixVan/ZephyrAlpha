@@ -72,7 +72,7 @@ scope: 07_trading_decision_architecture
 | 回测门控 + 偏差监控 | `src/zephyr/backtest/core/decision_gate.py` | ✅ production | §3.4 回测阶段准入门禁（IS→WFA→OOS + 参数悬崖检测 + `monitor_backtest_live_deviation` warn>30%/retire>50%） |
 | rolling DSR | `src/zephyr/simulation/deflated_sharpe_calculator.py`（MOD-SIM-024） | ✅ production | §3.3 漂移 vs 过拟合鉴别（DSR 排除过拟合）+ §3.4 过拟合检测维度 |
 | 前瞻偏差检测 | `src/zephyr/simulation/look_ahead_bias_detector.py`（MOD-SIM-022） | ✅ production | §3.2 PIT 铁律 + §3.4 回测可信硬底线的检测层 |
-| 实验追踪 | `src/zephyr/experiment_tracking/`（config/models/query）+ [50_backtest_observability_workplan](50_backtest_observability_workplan.md)（draft v1.0.2，MLflow 体系调研已定） | 代码已有，体系 draft | §3.2 第 3 条可复现性（四要素记录）+ §3.3 Champion-Challenger 的 MLflow alias 生命周期（@champion/@challenger/@archived） |
+| 实验追踪 | `src/zephyr/experiment_tracking/`（config/models/query）+ [50_backtest_observability_workplan](../../../_archive/50_backtest_observability_workplan.md)（draft v1.0.2，MLflow 体系调研已定） | 代码已有，体系 draft | §3.2 第 3 条可复现性（四要素记录）+ §3.3 Champion-Challenger 的 MLflow alias 生命周期（@champion/@challenger/@archived） |
 | 系统级生命周期管理器 | `src/zephyr/trading/lifecycle_manager.py`（BootReport/ShutdownReport） | ✅ production | ⚠️是**系统启动/关闭**生命周期（进程级），**非策略生命周期**——与 D-SIGNAL-14 7 状态无对应关系，勿混淆 |
 | D-SIGNAL-14 策略状态机 | [battle_map_12](../battle_map/battle_map_12_cross_cutting.md) 横切条目（研发/测试/灰度/生产/观察/废弃/归档） | 设计态（无独立代码） | §3.1 状态机映射真源；个人项目用 design_memo status + depgraph build_status 双字段替代（§4.3） |
 | depgraph 治理脚本 | `scripts/governance/apply_depgraph.py` / `sync_panorama_module.py` / `d5_architecture/generators/align_panoramas.py` | ✅ production（含 commit gate：depgraph_pre_registration_gate / depgraph_freshness_gate / panorama_alignment_gate 等） | §3.8 模块创建 4 步的执行工具链 |
@@ -115,7 +115,7 @@ scope: 07_trading_decision_architecture
 3. **可复现性**（BM-RES-02）：超参 + 数据版本 + 代码 commit + 随机种子四要素完整记录，是一键复现的硬门禁
 4. **模块工厂**（BM-RES-10）：研究发现映射到现有模块（复用），找不到则标准 4 步创建（创建→注册→接入→验证），不手动搬代码
 
-> **策略规格产出物**（§3.1 ①孵化阶段退出条件"策略规格产出"的承接）：以 [20_first_batch_strategies](20_first_batch_strategies.md)（G04，active）为首批范式——sleeve 定位 / 容量测算 / 持仓周期 / 风控参数四要素齐备才算"规格产出"，方可进入 ② 训练阶段。
+> **策略规格产出物**（§3.1 ①孵化阶段退出条件"策略规格产出"的承接）：以 [20_first_batch_strategies](../../../_archive/20_first_batch_strategies.md)（G04，active）为首批范式——sleeve 定位 / 容量测算 / 持仓周期 / 风控参数四要素齐备才算"规格产出"，方可进入 ② 训练阶段。
 
 **当前状态**：BM-RES-01（数据特征存储）已运营态；BM-RES-02/06/07 设计态待施工；BM-RES-03/04/05/08/09/10/11 缺失态（无锚点，BM-INV-001 违例）。
 
@@ -134,7 +134,7 @@ scope: 07_trading_decision_architecture
 
 **BM-RES-06-A LLM 研究助手**（design）：Phase 5+ 重评条件本节"LLM 驱动 alpha 挖掘远期候选"已写明（因子库扩张 + LLM 能力成熟后评估，§2.3"不做 agent 编排系统"约束），确认无需动作。
 
-**BM-RES-07-A 策略进化与因子挖掘**（design）：当前承载 = 人工 + §3.2 第 2 条假设状态机 + [62_business_registry_construction](62_business_registry_construction.md) §4.12 ADAPT_STRATEGY 衰减后适应算法（归因回流→权重调整→升级方案需审批）；FactorMiner Experience Memory 与 AlphaMemo APV 为 Phase 3 轻量契合点（可脱离 LLM 独立实现，<100 行，见本节远期候选登记）；LLM 化（CogAlpha/Hubble 式自主挖掘）为 Phase 5+ 远期候选，与 §2.3 约束一致不立即施工。
+**BM-RES-07-A 策略进化与因子挖掘**（design）：当前承载 = 人工 + §3.2 第 2 条假设状态机 + [62_business_registry_construction](../../../_archive/62_business_registry_construction.md) §4.12 ADAPT_STRATEGY 衰减后适应算法（归因回流→权重调整→升级方案需审批）；FactorMiner Experience Memory 与 AlphaMemo APV 为 Phase 3 轻量契合点（可脱离 LLM 独立实现，<100 行，见本节远期候选登记）；LLM 化（CogAlpha/Hubble 式自主挖掘）为 Phase 5+ 远期候选，与 §2.3 约束一致不立即施工。
 
 **LLM 驱动 alpha 挖掘远期候选**（00_index G28 讨论要点回填）：本项目 100% AI 开发模式天然契合"量化行业从因子竞争转向智能体竞争"趋势，但当前手动因子研究足够，以下 LLM 驱动自动化方案记为远期候选（Phase 5+），待因子库扩张 + LLM 能力成熟后评估。**评估优先级**：AlphaSchema > FactorMiner > AlphaMemo > Hubble > AlphaCrafter > XALPHA > EFS。
 
@@ -394,10 +394,10 @@ scope: 07_trading_decision_architecture
 
 **模型训练两环节裁定**：
 
-1. **BM-MT-01-B AI 辅助代码生成与分析师 Agent 反馈**（battle_map 标 production，实际仅 AST 沙箱落地）→ **登记裁定：生成-反馈闭环并入 §3.2 远期候选**。定位：ModuleRequirementSpec→LLM 生成→Critic 审查→反馈收敛→AST 沙箱→人工审核注册。裁定：Generator/Critic/Judge 生成-反馈闭环 + 分析师 Agent 与 §2.3"不做 agent 编排系统"约束冲突，并入 §3.2 LLM 驱动 alpha 挖掘远期候选（Hubble/EvoQuant 已登记同类范式，Phase 5+ 重评）；**安全栈已落地**——[62_business_registry_construction](62_business_registry_construction.md) §4.34② factor_registry schema `llm_safety_stack` 5 字段（ast_validation/dsl_constrained/complexity_control/dual_channel_rag/family_aware_selection）已承载 Hubble AST 验证沙箱契约，Phase 2+ 启用 LLM 因子生成时 MUST 声明全 true。同时登记**battle_map 成熟度标注倒挂真源修正建议**：BM-MT-01-B 标 production 但 `ml_train/ai_operator/` 仅 AST 沙箱部分落地、生成-反馈闭环未施工，成熟度应 production→design，写入 §7.5 由 battle_map owner 会话裁决。
+1. **BM-MT-01-B AI 辅助代码生成与分析师 Agent 反馈**（battle_map 标 production，实际仅 AST 沙箱落地）→ **登记裁定：生成-反馈闭环并入 §3.2 远期候选**。定位：ModuleRequirementSpec→LLM 生成→Critic 审查→反馈收敛→AST 沙箱→人工审核注册。裁定：Generator/Critic/Judge 生成-反馈闭环 + 分析师 Agent 与 §2.3"不做 agent 编排系统"约束冲突，并入 §3.2 LLM 驱动 alpha 挖掘远期候选（Hubble/EvoQuant 已登记同类范式，Phase 5+ 重评）；**安全栈已落地**——[62_business_registry_construction](../../../_archive/62_business_registry_construction.md) §4.34② factor_registry schema `llm_safety_stack` 5 字段（ast_validation/dsl_constrained/complexity_control/dual_channel_rag/family_aware_selection）已承载 Hubble AST 验证沙箱契约，Phase 2+ 启用 LLM 因子生成时 MUST 声明全 true。同时登记**battle_map 成熟度标注倒挂真源修正建议**：BM-MT-01-B 标 production 但 `ml_train/ai_operator/` 仅 AST 沙箱部分落地、生成-反馈闭环未施工，成熟度应 production→design，写入 §7.5 由 battle_map owner 会话裁决。
 2. **BM-MT-01-C 策略数字孪生**（design）→ **裁定不做镜像副本**。裁定：不建策略行为镜像副本——"策略健康评估+衰减预警"诉求已由 §3.9 退役 8 维量化阈值 + §3.3 Drift Observatory 五类漂移四层架构完整承载，镜像副本属重复建设且单机维护实时镜像仿真成本高。**与 #ARCH-OE-010 边界消歧**：#ARCH-OE-010 裁的是 SIM 域数字孪生 + 世界模型 DreamerV3（市场仿真侧，BM-SIM-05 已降级），本环节是策略行为镜像，两者正交——本裁定不触碰 SIM 域既有裁定。重评条件：策略数 >10 且 8 维阈值+Drift Observatory 出现系统性误报/漏报时。
 ### 3.4 回测阶段（BM-BT）规范
-承接 [battle_map_03_backtest_validation](../battle_map/battle_map_03_backtest_validation.md)（BM-BT-01~07 环节视图）+ [52_backtest_framework_docking](52_backtest_framework_docking.md)（⚠️G23 设计备忘 draft v0.1.0 骨架待讨论——回测门控 why 层未定稿；IS→WFA→OOS 门控当前真源为代码 `src/zephyr/backtest/core/decision_gate.py`）。本节锁定生命周期视角的回测准入门禁与退出条件。
+承接 [battle_map_03_backtest_validation](../battle_map/battle_map_03_backtest_validation.md)（BM-BT-01~07 环节视图）+ [52_backtest_framework_docking](../../../_archive/52_backtest_framework_docking.md)（⚠️G23 设计备忘 draft v0.1.0 骨架待讨论——回测门控 why 层未定稿；IS→WFA→OOS 门控当前真源为代码 `src/zephyr/backtest/core/decision_gate.py`）。本节锁定生命周期视角的回测准入门禁与退出条件。
 
 **核心纪律**：
 1. **IS→WFA→OOS 三段式门控**（battle_map_03 BM-BT-01~07 + 代码 `decision_gate.py`）：In-Sample 训练 → Walk-Forward Analysis 滚动验证 → Out-of-Sample 样本外验证，三段全过才准入模拟阶段。**WFA 是核心**——固定参数 IS 训练 + 滚动窗口 OOS 验证，模拟"参数不知道未来"的真实场景，防止参数过拟合。
@@ -616,10 +616,10 @@ BM-MT-01-B（AI 辅助代码生成与分析师 Agent 反馈）在 battle_map_02 
 - [00_index_trading_decision.md](00_index_trading_decision.md) §3 G28 / §5（三轨道）/ §7（多 AI 分工）/ §8（命名规范）
 - [01_design_memo_management_spec.md](01_design_memo_management_spec.md) §2.2（三层协作流程）/ §4（命名与结构）/ §4.4（文档种类适配）
 - [30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md) §5（暂缓项：多 Agent / 数字孪生）/ §2.5（Drawdown Protocol 退役相邻）
-- [52_backtest_framework_docking.md](52_backtest_framework_docking.md)（③ 回测阶段，⚠️draft v0.1.0 骨架待讨论——G23 why 层未定稿；回测门控当前真源为代码 `src/zephyr/backtest/core/decision_gate.py` + [battle_map_03](../battle_map/battle_map_03_backtest_validation.md)）
+- [52_backtest_framework_docking.md](../../../_archive/52_backtest_framework_docking.md)（③ 回测阶段，⚠️draft v0.1.0 骨架待讨论——G23 why 层未定稿；回测门控当前真源为代码 `src/zephyr/backtest/core/decision_gate.py` + [battle_map_03](../battle_map/battle_map_03_backtest_validation.md)）
 - [53_simulation_live_path.md](53_simulation_live_path.md)（④ 模拟与实盘验证路径，active）
 - [55_monitoring_review.md](55_monitoring_review.md)（⑥ 退役标准运营侧承接，⚠️draft v0.1.0 骨架待讨论——G26 监控告警 why 层未定稿；退役量化标准当前由本备忘 §3.9 承载；§3.6 运行时风险治理小节 AI 行为异常告警通道亦待其定型承接）
-- [62_business_registry_construction.md](62_business_registry_construction.md) §4.12（ADAPT_STRATEGY 衰减后适应——BM-RES-07-A 当前承载之一）/ §4.34②（factor_registry `llm_safety_stack` 5 字段——BM-MT-01-B 安全栈已落地契约）
+- [62_business_registry_construction.md](../../../_archive/62_business_registry_construction.md) §4.12（ADAPT_STRATEGY 衰减后适应——BM-RES-07-A 当前承载之一）/ §4.34②（factor_registry `llm_safety_stack` 5 字段——BM-MT-01-B 安全栈已落地契约）
 - [64_data_source_download_spec.md](64_data_source_download_spec.md) §6.4（APScheduler + task_queue DAG 调度基座——BM-RES-04 研究工作流编排复用真源）
 - [65_git_safety_governance.md](65_git_safety_governance.md) §9（不引入沙箱/容器裁定——BM-RES-01-C 研究数据沙箱否定式裁定呼应）
 - [90_methodology_open_questions.md](90_methodology_open_questions.md) / [91_density_prediction.md](91_density_prediction.md)（BM-RES-06-B 论文追踪 interim 载体——18 轮 arXiv 人工文献整合实践）

@@ -136,7 +136,7 @@ scope: 07_trading_decision_architecture
 #### 3.1.1 闭环反馈补述：模型层反馈（BM-REC-03-C，design）
 
 - **定位**：L5 闭环优化反馈层的模型层反馈（BM-REC-03 子环节，父 BM-REC-03）；触发=复盘报告就绪；消费 BM-REC-03-B 信号反馈 + BM-REC-02-D 复盘报告；数据流：复盘报告→漂移检测→模型重训练信号→C-003 回测门禁→BM-SEL-02（反向闭环）。参数口径：`drift_threshold = PSI>0.2`、`retrain_gate = C-003 回测门禁`；代码映射 C-007 模型层反馈（未完整实现）+ C-003 回测门禁。
-- **裁定**：①**漂移检测与分级重训练复用 [61_lifecycle_multi_ai](61_lifecycle_multi_ai.md) §3.3**——多方法 Drift Observatory（PSI 只抓边际特征漂移，须组合多变量联合分布/概念漂移检测）+ 重训练触发分级逻辑（定时盘后增量保底 / 性能触发分级响应，不直接跳重训练），本环节不另造漂移检测器。②**门禁衔接裁定：模型重训练信号必须过 C-003 回测门禁（DecisionGate IS→WFA→OOS）后才允许回 BM-SEL-02 重新选股上线**——重训练≠可直接上线，新模型与策略新参数同级对待。理由：漂移触发的重训练若绕过回测门禁直接上线，等于把"检测到漂移"误当"修复已完成"——重训练产物本身可能引入新过拟合，必须经 IS→WFA→OOS 门控验证（门禁当前真源为代码 `backtest/core/decision_gate.py`；[52_backtest_framework_docking](52_backtest_framework_docking.md) ⚠️骨架 draft 待讨论，定型后回填 why 层衔接）。③**降级**：漂移检测不可用→人工评估模型质量（环节定义原口径）。
+- **裁定**：①**漂移检测与分级重训练复用 [61_lifecycle_multi_ai](61_lifecycle_multi_ai.md) §3.3**——多方法 Drift Observatory（PSI 只抓边际特征漂移，须组合多变量联合分布/概念漂移检测）+ 重训练触发分级逻辑（定时盘后增量保底 / 性能触发分级响应，不直接跳重训练），本环节不另造漂移检测器。②**门禁衔接裁定：模型重训练信号必须过 C-003 回测门禁（DecisionGate IS→WFA→OOS）后才允许回 BM-SEL-02 重新选股上线**——重训练≠可直接上线，新模型与策略新参数同级对待。理由：漂移触发的重训练若绕过回测门禁直接上线，等于把"检测到漂移"误当"修复已完成"——重训练产物本身可能引入新过拟合，必须经 IS→WFA→OOS 门控验证（门禁当前真源为代码 `backtest/core/decision_gate.py`；[52_backtest_framework_docking](../../../_archive/52_backtest_framework_docking.md) ⚠️骨架 draft 待讨论，定型后回填 why 层衔接）。③**降级**：漂移检测不可用→人工评估模型质量（环节定义原口径）。
 - **契约/参数/接口**：重训练信号 `{model_id, drift_evidence: {psi, cusum_alarm, ...}, retrain_scope}` → DecisionGate 评审 → 通过后经 [61 号](61_lifecycle_multi_ai.md) §3.3 Champion-Challenger 晋升通道（mSPRT + 95/5 流量切分）回 BM-SEL-02；未过门禁→信号驳回并留痕复盘报告。重评条件：61 号 §3.3 设计规范伪代码施工落地（当前代码待施工）+ 52 号骨架定型后，补双向小节号对齐。
 
 ### 3.2 决策①：PnL 归因——Brinson 3 因子为主，Barra 拒绝
@@ -2685,8 +2685,8 @@ def calc_strategy_risk_attribution(strategy_returns: dict[str, np.ndarray],
 - [53_simulation_live_path](53_simulation_live_path.md)（G24，模拟实盘路径；SHADOW/GRAY_RAMP 阶段实盘成交供本备忘对账归因；§3.5 执行对账门禁阈值衔接本备忘 SettlementReconciliation）
 - [55_monitoring_review](55_monitoring_review.md)（G26，active v1.0.2（2026-08-15），下游复盘消费归因结果；本备忘 §3.9/§3.10/§5 的 55 号引用已按其 v1.0.2 实际结构对齐，并发施工残余风险见 §7 开放问题）
 - [31_position_sizing](31_position_sizing.md) §2.3.4（sizing_basis 归因维度，§3.8 对接）
-- [50_backtest_observability_workplan](50_backtest_observability_workplan.md)（回测可观测性，归因回测验证）
-- [62_business_registry_construction](62_business_registry_construction.md)（v1.15.0 新增：§7.2 experiment_registry.attribution_result 字段登记约定——归因执行逻辑以本备忘为真源，62 号仅登记结果；data_asset_registry 待施工，对账/归因数据资产登记缺口见 §7 开放问题）
+- [50_backtest_observability_workplan](../../../_archive/50_backtest_observability_workplan.md)（回测可观测性，归因回测验证）
+- [62_business_registry_construction](../../../_archive/62_business_registry_construction.md)（v1.15.0 新增：§7.2 experiment_registry.attribution_result 字段登记约定——归因执行逻辑以本备忘为真源，62 号仅登记结果；data_asset_registry 待施工，对账/归因数据资产登记缺口见 §7 开放问题）
 - [00_index_trading_decision](00_index_trading_decision.md) §3 G25 主题组定义
 - [01_design_memo_management_spec](01_design_memo_management_spec.md) §4.3 设计备忘推荐章节结构
 

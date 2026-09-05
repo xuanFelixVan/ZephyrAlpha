@@ -157,7 +157,7 @@ scope: 07_trading_decision_architecture
 #### G03 regime 回测验证方案 ✅已定稿
 | 项 | 内容 |
 |---|---|
-| 产出物 | [11_regime_backtest_validation_plan](11_regime_backtest_validation_plan.md) v1.5.2 |
+| 产出物 | [11_regime_backtest_validation_plan](../../../_archive/11_regime_backtest_validation_plan.md) v1.5.2 |
 | 状态 | ✅ 已定稿 v1.5.2；Phase 0-2 完成（C1 四项全通过），Phase 3-4 部分（D1 敏感性网格未跑），Phase 5 未启动 |
 
 ---
@@ -591,7 +591,7 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 
 ### 三条轨道的交汇点
 - **G04 产出后**：轨道 B 的 G12 接口对齐、轨道 C 的 G23 策略载体就绪
-- **C1 已通过**（2026-08-08，commit 852457e9）：G15 剩余门槛 = 首批策略 3-6 月实盘 PnL + D1 敏感性网格（[11号](11_regime_backtest_validation_plan.md) §0.5.7）
+- **C1 已通过**（2026-08-08，commit 852457e9）：G15 剩余门槛 = 首批策略 3-6 月实盘 PnL + D1 敏感性网格（[11号](../../../_archive/11_regime_backtest_validation_plan.md) §0.5.7）
 - **G08/G09/G10 产出后**：G27 冲突矩阵清理（架构全定型）
 
 ## 6. 与 regime 施工的正交性说明

@@ -40,7 +40,7 @@ depends_on:
 
 > 本备忘是业务数据库 103 张数据表在 design_memos 文档与 src/zephyr/ 代码层的**引用审查底稿 + 文档覆盖缺口清单 + 归档决策**。
 > 性质：**审查清单 + 施工计划混合文档**，承载现状盘点、覆盖率缺口归因、分批补文档方案，供后续 AI/人逐张表补文档或归档使用。
-> 管理规范见 [01_design_memo_management_spec](01_design_memo_management_spec.md)；与 [62_business_registry_construction](62_business_registry_construction.md) 配对——62 号建 12 业务注册表的 schema，63 号盘点 103 张表的**实际利用率与文档覆盖缺口**。
+> 管理规范见 [01_design_memo_management_spec](01_design_memo_management_spec.md)；与 [62_business_registry_construction](../../../_archive/62_business_registry_construction.md) 配对——62 号建 12 业务注册表的 schema，63 号盘点 103 张表的**实际利用率与文档覆盖缺口**。
 > 关联：[15_data_feature_layer_spec](15_data_feature_layer_spec.md)（数据/因子工程总纲）｜ [16_technical_indicator_catalog](16_technical_indicator_catalog.md)（技术指标目录）｜ [26_event_driven_strategy_detail](26_event_driven_strategy_detail.md)（事件驱动数据消费方）
 
 ## 1. 主题组信息
@@ -51,7 +51,7 @@ depends_on:
 | 创建 | 2026-08-10 |
 | 优先级 | P2（v2.1.0 实测：数据利用率 99.0% 健康；真问题是**消费层文档覆盖** 37/103=35.9% < 80% 行业基准——规划层 17/64 号已覆盖 53 张，但策略/风控消费文档未跟进） |
 | 状态 | 审查完成（v2.1.0 全量重扫核验：表数 102→103、文档 42→47 篇、真闲置 3→1 张、新增"代码零引用但规划已登记"6 张类别、§5/§6 全部数字以 git 提交态实测重算；v0.1.0-v2.0.0 各版本算法补强演进见 §11 修订记录），待补文档施工 |
-| 上游 | [62_business_registry_construction](62_business_registry_construction.md)（12 注册表 schema 已定稿） |
+| 上游 | [62_business_registry_construction](../../../_archive/62_business_registry_construction.md)（12 注册表 schema 已定稿） |
 | 下游 | [15_data_feature_layer_spec](15_data_feature_layer_spec.md) / [26_event_driven_strategy_detail](26_event_driven_strategy_detail.md) / [37_liquidity_crisis_protocol](37_liquidity_crisis_protocol.md) 等数据消费方 |
 
 ## 2. 背景与问题诊断
@@ -59,14 +59,14 @@ depends_on:
 ### 2.1 项目处境
 
 - 业务数据库已建成 [schemas/categories/](../../../../schemas/categories/) 下 **103 张表**的 DDL（market/fundamental/macro/cross 四大类前缀），覆盖 A 股/港股/美股/期货/期权/可转债/生猪期货/宏观经济等全品类（v2.1.0 核验：`market_stock_valuation.py` 于 2026-08-11 commit 81c7687540 新增，102→103）
-- design_memos 下 47 篇编号文档（不含 [AI_review_instructions.md](AI_review_instructions.md) 辅助文件；受扫 46 篇=47 篇-本备忘自引）共约 5.24M 字符，承载交易决策架构 why 层
-- [62_business_registry_construction](62_business_registry_construction.md) 已定稿 12 个业务注册表 schema（P0 完成 universe/benchmark/cost_model 三件套，P1 待施工 9 件套）
+- design_memos 下 47 篇编号文档（不含 [AI_review_instructions.md](../../../_archive/AI_review_instructions.md) 辅助文件；受扫 46 篇=47 篇-本备忘自引）共约 5.24M 字符，承载交易决策架构 why 层
+- [62_business_registry_construction](../../../_archive/62_business_registry_construction.md) 已定稿 12 个业务注册表 schema（P0 完成 universe/benchmark/cost_model 三件套，P1 待施工 9 件套）
 - 62 号 line 1715 记录 [dataflow_graph_registry.yaml](../../../01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml) 已有 DS-001~076 共 76 条数据源登记（待 S6 改名为 data_asset_registry.yaml）
 - **但** 62 号解决的是"注册表 schema"，未盘点"现有 103 张表实际有多少被 design_memos + 代码层引用"——数据利用率与文档覆盖盲区
 
 ### 2.2 核心问题（v2.1.0 全量重扫核验修正）
 
-> **"103 张表里 102 张被代码或文档引用（利用率 99.0%），真闲置仅 1 张（`index_meta`）。文档覆盖呈三层结构：消费层（策略/风控文档显式描述用法）仅 37 张（35.9%）< 80% 行业基准——这是真问题；规划层（[17_special_trading_days_data_assets](17_special_trading_days_data_assets.md)/[64_data_source_download_spec](64_data_source_download_spec.md) 资产清单与下载规范提及）53 张；零覆盖 13 张。另有 6 张表 DDL 已建+规划已登记但代码/config/tasks 全零引用（采集未施工、消费未落地）。"**
+> **"103 张表里 102 张被代码或文档引用（利用率 99.0%），真闲置仅 1 张（`index_meta`）。文档覆盖呈三层结构：消费层（策略/风控文档显式描述用法）仅 37 张（35.9%）< 80% 行业基准——这是真问题；规划层（[17_special_trading_days_data_assets](../../../_archive/17_special_trading_days_data_assets.md)/[64_data_source_download_spec](64_data_source_download_spec.md) 资产清单与下载规范提及）53 张；零覆盖 13 张。另有 6 张表 DDL 已建+规划已登记但代码/config/tasks 全零引用（采集未施工、消费未落地）。"**
 
 v0.1.0 曾误判"43 张闲置"，v0.2.0 补代码层扫描修正为"3 张真闲置+61 张文档缺口"。v2.1.0（2026-08-12）以 git 提交态全量重扫，三层校验数字再次修正：
 
@@ -122,7 +122,7 @@ v0.1.0 曾误判"43 张闲置"，v0.2.0 补代码层扫描修正为"3 张真闲�
 | 数据源登记注册表 | [dataflow_graph_registry.yaml](../../../01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml) | ✅ 76 条 DS-001~076 | data_asset_registry.yaml 待 S6 改名（62 号 P1-B），v2.1.0 核验 6 张代码零引用表**未登记**在内 |
 | 数据采集 Provider 层 | `src/zephyr/data/implementations/` 15 个 provider | ✅ production | akshare/baostock/cls/eastmoney_news/eia/fred/ifind/internal_compute/miniqmt/qweather/rss/tdx/tickflow/tqcenter/tushare——**无逐表 *_ingestion.py 脚本**，采集由 provider + 配置驱动 |
 | 调度配置 | `src/zephyr/data/config/tasks.yaml` | ✅ 存在 | §7.5 归档指引中的路径以此为准（非仓库根目录） |
-| 规划层数据资产文档 | [17_special_trading_days_data_assets](17_special_trading_days_data_assets.md) / [64_data_source_download_spec](64_data_source_download_spec.md) | ✅ 已提交 | 53 张表的规划层覆盖来源（资产清单+下载规范），64 号与本文互补声明见各自头部 |
+| 规划层数据资产文档 | [17_special_trading_days_data_assets](../../../_archive/17_special_trading_days_data_assets.md) / [64_data_source_download_spec](64_data_source_download_spec.md) | ✅ 已提交 | 53 张表的规划层覆盖来源（资产清单+下载规范），64 号与本文互补声明见各自头部 |
 | 红利税节点 VIEW | ClickHouse `c1_market.dividend_tax_node` | ✅ DB 层派生 VIEW | 从 rights_issue 实时派生（见 project_memory），DDL 文件已入 git，无 Python 代码引用属正常（VIEW 在 SQL 层消费） |
 | 00 号占用表登记 | [00_index_trading_decision](00_index_trading_decision.md) line 71 | ✅ 已登记 | 但版本字符串停留在 "draft v0.9.0" 未同步（§10 Q5 跟踪） |
 
@@ -344,7 +344,7 @@ Detective 扫描（每周 cron 触发）：
 |---|---|---|---|---|
 | stock_indicator | 12 | 2 | 个股指标（技术/估值衍生） | [15_data_feature_layer_spec](15_data_feature_layer_spec.md) |
 | hk_kline | 10 | 2 | 港股 K 线（与 kline_hk_daily 并存，口径待厘清） | 批次 D 记录 |
-| cross_validation_log | 7 | 1 | 交叉验证日志（回测/校准派生） | [52_backtest_framework_docking](52_backtest_framework_docking.md) |
+| cross_validation_log | 7 | 1 | 交叉验证日志（回测/校准派生） | [52_backtest_framework_docking](../../../_archive/52_backtest_framework_docking.md) |
 | cb_iv | 7 | 1 | 可转债 IV | [26_event_driven_strategy_detail](26_event_driven_strategy_detail.md) |
 | kline_etf_15min / kline_etf_5min | 6+6 | 2+2 | ETF 分钟 K（路由映射级引用） | 16 号指标 machinery 配套 |
 | kline_lof_15min / 30min / 5min / 60min | 各 6 | 各 2 | LOF 分钟 K（路由映射级引用；90 号 §18 LOF=P0） | 16 号指标 machinery 配套 |
@@ -629,9 +629,9 @@ v2.1.0 实测（§5.1 三层口径）：消费层缺口 = 103 - 37 消费层已�
 | industry_class_suppl | 22 | [15_data_feature_layer_spec](15_data_feature_layer_spec.md) 行业分类补充 |
 | concept_board / concept_board_constituent | 10+3 | [26_event_driven_strategy_detail](26_event_driven_strategy_detail.md) 概念分类 |
 | auction_book | 9 | 配合 block_trade_detail |
-| index_list / market_index | 8+11 | [62_business_registry_construction](62_business_registry_construction.md) 注册表登记 |
-| etf_list / lof_list | 15+18 | [62_business_registry_construction](62_business_registry_construction.md) universe 扩展 |
-| index_weight | 12 | [62_business_registry_construction](62_business_registry_construction.md) benchmark 扩展 |
+| index_list / market_index | 8+11 | [62_business_registry_construction](../../../_archive/62_business_registry_construction.md) 注册表登记 |
+| etf_list / lof_list | 15+18 | [62_business_registry_construction](../../../_archive/62_business_registry_construction.md) universe 扩展 |
+| index_weight | 12 | [62_business_registry_construction](../../../_archive/62_business_registry_construction.md) benchmark 扩展 |
 
 #### 批次 D：跨市场/分钟级/衍生品（业务边界待定，暂只记录代码用法）
 
@@ -645,7 +645,7 @@ v2.1.0 实测（§5.1 三层口径）：消费层缺口 = 103 - 37 消费层已�
 | kline_etf_1min/5min/15min | 各 5 | ETF 分钟级——日内套利需高频基础设施 |
 | kline_etf_daily | 2 | ETF 日线 |
 | kline_cb / kline_sector_intraday | 7+1 | 可转债 K 线 / 板块日内 |
-| kline_weekly_hfq / kline_monthly_hfq | 7+7 | 后复权周/月线——**与 [16_technical_indicator_build_plan](16_technical_indicator_build_plan.md) §3.2 三级时间框架栈定义不一致**（16 号用未复权 kline_weekly/kline_monthly），见 §10 Q3 |
+| kline_weekly_hfq / kline_monthly_hfq | 7+7 | 后复权周/月线——**与 [16_technical_indicator_build_plan](../../../_archive/16_technical_indicator_build_plan.md) §3.2 三级时间框架栈定义不一致**（16 号用未复权 kline_weekly/kline_monthly），见 §10 Q3 |
 | option_kline | 29 | 期权 K 线 |
 | realtime_snapshot | 25 | 实时快照 |
 | hog_futures_core / hog_province_spot / hog_spot_index | 7+8+7 | 生猪期货——代码有引用但 90 号 §18 未列入覆盖范围，需核实代码是否为采集模板继承 |
@@ -1240,11 +1240,11 @@ hog_futures_core,D,Deferred,-,-,-,-,Q4生猪归档已建议
 - 批次 D 各表在对应消费方文档补"代码已用、业务边界待定"标注——**不强制接入，只记录现状**；分钟级 K 线按 §5.3 决议由 16 号 machinery 统一承载
 - 1 张真闲置表 `index_meta`（§6.1）按 §10 Q1 决策：归档则标 `status: retired`，补建则登记到 62 号 universe/benchmark
 - 6 张 §6.1b 代码零引用表按 §10 Q8 决策：标 `status: dormant` 待启用，或补采集施工后转 §6.2 队列
-- **后复权周/月线**（`kline_weekly_hfq` / `kline_monthly_hfq`）矛盾处理见 §10 Q3——代码已有 7 次引用，需核实代码是否实际切换为 hfq 版本，若是则反向修正 [16_technical_indicator_build_plan](16_technical_indicator_build_plan.md) §3.2
+- **后复权周/月线**（`kline_weekly_hfq` / `kline_monthly_hfq`）矛盾处理见 §10 Q3——代码已有 7 次引用，需核实代码是否实际切换为 hfq 版本，若是则反向修正 [16_technical_indicator_build_plan](../../../_archive/16_technical_indicator_build_plan.md) §3.2
 
 ### 7.4 data_asset_registry 对接
 
-[62_business_registry_construction](62_business_registry_construction.md) line 1715 记录 [dataflow_graph_registry.yaml](../../../01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml) 已有 DS-001~076 共 76 条数据源登记。本审查不另起"首批 66 张"清单（v0.1.0 的"66 张"与现有 76 条矛盾）——**直接以现有 76 条为 base，按本审查 §6 缺口清单补齐剩余 27 张**（103 - 76 = 27，v2.1.0 实测——含 6 张 §6.1b dormant 表以 `status: dormant` 登记，v2.1.0 核验该 6 张当前未在 76 条内），待 S6 改名同步为 data_asset_registry.yaml。
+[62_business_registry_construction](../../../_archive/62_business_registry_construction.md) line 1715 记录 [dataflow_graph_registry.yaml](../../../01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml) 已有 DS-001~076 共 76 条数据源登记。本审查不另起"首批 66 张"清单（v0.1.0 的"66 张"与现有 76 条矛盾）——**直接以现有 76 条为 base，按本审查 §6 缺口清单补齐剩余 27 张**（103 - 76 = 27，v2.1.0 实测——含 6 张 §6.1b dormant 表以 `status: dormant` 登记，v2.1.0 核验该 6 张当前未在 76 条内），待 S6 改名同步为 data_asset_registry.yaml。
 
 ### 7.5 归档操作位置指引（v0.5.0 新增）
 
@@ -1289,7 +1289,7 @@ hog_futures_core,D,Deferred,-,-,-,-,Q4生猪归档已建议
 
 ## 8. 与 12 注册表的关联
 
-[62_business_registry_construction](62_business_registry_construction.md) 定稿的 12 个业务注册表中，与本审查直接相关：
+[62_business_registry_construction](../../../_archive/62_business_registry_construction.md) 定稿的 12 个业务注册表中，与本审查直接相关：
 
 | 注册表 | 关联表 | 状态 | 本审查发现 |
 |---|---|---|---|
@@ -1371,7 +1371,7 @@ hog_futures_core,D,Deferred,-,-,-,-,Q4生猪归档已建议
 |---|---|---|---|
 | Q1 | 1 张真闲置表 `index_meta` 的生命周期裁定（§6.1，v2.1.0 从 3 张收敛）？ | 默认建议 DEPRECATED 观察期——v0.2.0"补建激活"前提（index_constituent 需 meta 配合）已弱化：index_constituent 规划层已覆盖且 index_meta 五源全零。若 62 号 universe/benchmark 施工需要 meta 字段则转 ACTIVE 补建，否则 1 季度无认领 → SUNSET → REMOVED（§7.5 归档路径） | 人 |
 | Q8（v2.1.0 新增） | 6 张 §6.1b"代码零引用但规划已登记"表的处置？（dividend_tax_node/index_adjustment/ipo_schedule/margin_target_adjustment/msci_adjustment/stock_valuation） | 默认建议：dividend_tax_node 免归档（DB 派生 VIEW 零成本，标 dormant）；其余 5 张标 `status: dormant` 保留 DDL，待对应消费方启用（26 号事件驱动/15 号估值）时补采集——不删表不补采集，注册表登记即可 | 人 |
-| Q3 | 后复权周/月线（`kline_weekly_hfq` / `kline_monthly_hfq`）代码已有 7 次引用，但 [16_technical_indicator_build_plan](16_technical_indicator_build_plan.md) §3.2 三级时间框架栈用未复权 `kline_weekly`/`kline_monthly`——是否统一？ | 先用 §3.5 Confidence 自动判定核实代码 7 次引用性质：若优先级 1（SQL/数据加载，confidence=1.0）则活跃消费，反向修正 16 号改用 hfq；若优先级 2（import 注册，confidence=0.5）则模板继承，清理代码引用 + 16 号维持现状 | 人（需代码核实） |
+| Q3 | 后复权周/月线（`kline_weekly_hfq` / `kline_monthly_hfq`）代码已有 7 次引用，但 [16_technical_indicator_build_plan](../../../_archive/16_technical_indicator_build_plan.md) §3.2 三级时间框架栈用未复权 `kline_weekly`/`kline_monthly`——是否统一？ | 先用 §3.5 Confidence 自动判定核实代码 7 次引用性质：若优先级 1（SQL/数据加载，confidence=1.0）则活跃消费，反向修正 16 号改用 hfq；若优先级 2（import 注册，confidence=0.5）则模板继承，清理代码引用 + 16 号维持现状 | 人（需代码核实） |
 | Q4 | 本审查是否登记 ARCH 条目到 [architecture_issue_registry.yaml](../../../01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml)？ | 拟登记条目（编号待裁定后按治理段分配，本文不引用未登记编号）：消费层文档覆盖 35.9% < 80% 基准的治理议题 | 人 |
 | Q5 | 是否在 [00_index_trading_decision.md](00_index_trading_decision.md) §7.3 占用表登记 63 号文档？ | ✅ 已登记（v2.1.0 核验 line 71）——但版本字符串停留在 "draft v0.9.0" 且 00 号目录计数（42 篇）落后于实际（47 篇），需 00 号维护方同步（不越界改 00 号，记录待办） | 人（00 号维护方） |
 | Q6 | 是否将文档覆盖率纳入 pre-commit warn？（v0.3.0 新增） | 建议纳入——封装 §3.2 扫描为 `scripts/audit_data_utilization.ps1`，pre-commit 调用后若覆盖率 < 80% 则 warn（不阻断）。符合 [CI 文档覆盖率门禁](https://codex.danielvaughan.com/2026/05/16/codex-cli-automated-code-documentation-generation-docstrings-jsdoc-sphinx-ci-pipelines/)（2026-05）实践但降级为 warn 适配个人项目 | 人 |
@@ -1391,7 +1391,7 @@ hog_futures_core,D,Deferred,-,-,-,-,Q4生猪归档已建议
 
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
-| 2026-08-10 | 0.1.0 | 初稿 | 业务数据库 101 张表 vs design_memos 42 篇文档引用审查完成，识别 43 张闲置表分 P0-P4 五档，制定三波分批接入施工计划。与 [62_business_registry_construction](62_business_registry_construction.md) 配对，为 P1-B `data_asset_registry` 施工提供首批 66 张表登记清单 |
+| 2026-08-10 | 0.1.0 | 初稿 | 业务数据库 101 张表 vs design_memos 42 篇文档引用审查完成，识别 43 张闲置表分 P0-P4 五档，制定三波分批接入施工计划。与 [62_business_registry_construction](../../../_archive/62_business_registry_construction.md) 配对，为 P1-B `data_asset_registry` 施工提供首批 66 张表登记清单 |
 | 2026-08-10 | 0.2.0 | 大改：补代码层第三层扫描 | **核心修正**：v0.1.0 仅扫 design_memos 误判"43 张闲置"。v0.2.0 新增 src/zephyr/ 代码层扫描后发现：(1) 表数 102 非 101（§4 合计算术错误修正）；(2) 真实利用率 97.1%（99/102）非 57.4%；(3) 真闲置仅 3 张（dividend_tax_node/index_meta/msci_adjustment）非 43 张；(4) ~41-61 张为"文档覆盖缺口"（代码在用但文档未覆盖，英文上界 61/含中文别名下界 ~41）；(5) P0 9 张表全部 CODE_ONLY 非闲置；(6) P4 生猪 3 张代码有 7-8 次引用非"完全不涉及"；(7) 热度前 15 数字全部修正；(8) data_asset_registry"首批 66 张"与 dataflow_graph_registry 现有 76 条矛盾，改为"以现有 76 条为 base 补 26 张"；(9) 三波施工从"接入闲置表"改为"补文档覆盖"；(10) §10 开放问题从 8 项精简为 5 项（业务边界项回归 90 号 §18 裁定）。维持 draft（需大改） |
 | 2026-08-10 | 0.3.0 | 流程与算法增强：补评分模型+验收闭环+生命周期 | (1) §3.4 新增 extract/trace 循环（[OpenSpec #739 2026-02](https://github.com/Fission-AI/OpenSpec/discussions/739)）+ CI 门禁 warn + 文档腐烂三分类；(2) §6.0 新增 Impact-Effort 优先级评分公式（[codedebtcost 2026-03](https://codedebtcost.com/prioritize)），W2=5.0 体现风险优先；(3) §6.1 引入 4 阶段生命周期 ACTIVE→DEPRECATED→SUNSET→REMOVED + 数据弃用 7 步流程；(4) §7.0 新增验收闭环（机器可查单表验收标准 + 覆盖率目标轨迹 37.3%→46%→70%→97%）；(5) §9 补 3 项；(6) §10 补 Q6。维持 draft |
 | 2026-08-10 | 0.4.0 | 算法精度增强：RICE 置信度+语义抽检+权重校准 | (1) §6.0 升级为 RICE 变体 `(impact×confidence)/effort`（[bixtech.ai 2026-04](https://bixtech.ai/how-to-prioritize-data-projects-with-limited-resources-without-slowing-the-business-down/)），Confidence 因子（1.0/0.8/0.5）——`hog_futures_core` 置信度 0.5 从批次 B 降到 D 验证降权效果；(2) §6.0 权重校准循环（[sigos.io 2026-06](https://www.sigos.io/blog/weighted-scoring-model)）；(3) §7.0 验收标准升级 3 层（L1/L2/L3），L3 语义抽检参考 [DocPrism ISSTA 2026](https://arxiv.org/pdf/2511.00215)（11% 代码-文档对语义不一致）；(4) §3.3 补 2 项审查局限。维持 draft |

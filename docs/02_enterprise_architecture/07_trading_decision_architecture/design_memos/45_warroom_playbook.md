@@ -21,7 +21,7 @@ related_issues:
 > **最终成果**：设计定稿 v1.0.0 + 后端管线 testing 态落地。
 > **未做+原因**：①**Panel 前端「作战室」页未落地**（app_panel.py 现有 11 Tab 无作战室）——最大前端缺口，归前端批排期；②缺口⑥~⑩（9 格概率模型/批量边界/辩论实例化/相关性前端消费/禁做清单）按本文 P1-P3 分期待 CAND 评审后施工。
 
-> **性质**：施工总案——把 2026-08-22 Owner 裁定的新增「作战室」页（前端改版 L15）的完整内容固化：第一性原理、机构实践对标、页面区块规格、数据契约映射、缺口分期、验收标准。与 [44_premarket_intraday_decision_upgrade](44_premarket_intraday_decision_upgrade.md)（MOD-PLAN 系列 why 层）互相引用：44 号文管"预案怎么算"，本文管"预案怎么呈现、怎么验证、怎么补齐到机构级完整度"。
+> **性质**：施工总案——把 2026-08-22 Owner 裁定的新增「作战室」页（前端改版 L15）的完整内容固化：第一性原理、机构实践对标、页面区块规格、数据契约映射、缺口分期、验收标准。与 [44_premarket_intraday_decision_upgrade](../../../_archive/44_premarket_intraday_decision_upgrade.md)（MOD-PLAN 系列 why 层）互相引用：44 号文管"预案怎么算"，本文管"预案怎么呈现、怎么验证、怎么补齐到机构级完整度"。
 > **状态**：active v1.0.0——页面形态 Owner 已定稿（2026-08-22）；HTML 原型已落（`_working/2026-08-20-dashboard-mockup.html` 作战室页，14 项浏览器自检全绿）；后端缺口⑥~⑩走 CAND 评审后施工。
 > **本文不做什么**：不推翻 90 号 §7"BM-SEL-04 次日 8 态预测暂缓"裁定（9 格概率分布列为缺口⑥，不抢建）；不新建方向点预测模型（坚守"只画栏杆不算命"哲学）；不产生第二真源。
 
@@ -150,7 +150,7 @@ related_issues:
 
 ## 11. 引用
 
-- [44_premarket_intraday_decision_upgrade](44_premarket_intraday_decision_upgrade.md)（MOD-PLAN 系列 why 层；§9.11 竞价三细节；§9.5/§9.6 档位映射）
+- [44_premarket_intraday_decision_upgrade](../../../_archive/44_premarket_intraday_decision_upgrade.md)（MOD-PLAN 系列 why 层；§9.11 竞价三细节；§9.5/§9.6 档位映射）
 - [41_buy_flow](41_buy_flow.md)（明日预案双层架构）｜[90_methodology_open_questions](90_methodology_open_questions.md) §7（BM-SEL-04 暂缓裁定）｜[30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §2.2（firm 硬约束）
-- 前端改版设计文档 L15（[2026-08-20-frontend-dashboard-redesign](2026-08-20-frontend-dashboard-redesign.md)，2026-08-28 已正式迁入本目录）
+- 前端改版设计文档 L15（[2026-08-20-frontend-dashboard-redesign](../../../_archive/2026-08-20-frontend-dashboard-redesign.md)，2026-08-28 已正式迁入本目录）
 - 机构调研来源见 §3.4（2026-08-22 实证检索）

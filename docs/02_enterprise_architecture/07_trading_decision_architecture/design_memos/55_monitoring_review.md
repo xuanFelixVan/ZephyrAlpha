@@ -105,7 +105,7 @@ scope: 07_trading_decision_architecture
 
   | 支柱 | 复用资产 | 防什么 |
   |---|---|---|
-  | ①上线前验证 | [23_strategy_correlation_validation](23_strategy_correlation_validation.md) §3.3 过拟合检测引擎（参数稳定指数/PBO/CSCV） | 上线即过拟合 |
+  | ①上线前验证 | [23_strategy_correlation_validation](../../../_archive/23_strategy_correlation_validation.md) §3.3 过拟合检测引擎（参数稳定指数/PBO/CSCV） | 上线即过拟合 |
   | ②持续监控 | 23 号 §5.4 上线后漂移监控（CUSUM on rolling correlation + PSI 持续追踪）+ 本备忘 §3.4 实盘 vs 回测偏离度量 | 上线后漂移到过拟合 |
   | ③结果校准审计 | [36_var_es_monitoring](36_var_es_monitoring.md) §3.10 校准/重构/恢复子流程（Christoffersen 回测验证 + RECALIBRATE/REBUILD 动作链） | VaR 模型侧校准证据 |
 
@@ -123,7 +123,7 @@ scope: 07_trading_decision_architecture
 
 ### 3.3 决策二：告警阈值统编为注册表，阈值不集中即不可审计
 
-**已施工**（2026-08-15 AI-MON-001，#ARCH-MON-001）：[alert_threshold_registry.yaml](../../01_policies_and_standards/_registry/catalogs/alert_threshold_registry.yaml)（REG-ATH-001，11 类 35 条全代码锚点实证，ROOR 已登记）。
+**已施工**（2026-08-15 AI-MON-001，#ARCH-MON-001）：[alert_threshold_registry.yaml](../../../01_policies_and_standards/_registry/catalogs/alert_threshold_registry.yaml)（REG-ATH-001，11 类 35 条全代码锚点实证，ROOR 已登记）。
 
 现状：阈值散落各模块（drawdown 5/10/15%、health 内存 70/80/90%、PLV ±1%……）。决策：建**告警阈值注册表**（YAML，随 12 业务注册表体系登记），各模块从注册表读阈值而非各自硬编码。why：个人系统唯一的"风控评审"就是复盘时看阈值清单——散落等于不可评审。Email/WeChat sender 当前 no-op 占位，待首批上线前注入实现（登记 §7）。
 
@@ -131,7 +131,7 @@ scope: 07_trading_decision_architecture
 
 ### 3.4 决策三（新设计）：策略偏离监控 = 实盘 vs 回测净值偏离度持续度量
 
-**已施工**（2026-08-15 AI-MON-001）：`src/zephyr/risk/core/strategy_deviation_monitor.py`（MOD-RK-23，blueprint [_domain_risk/strategy_deviation_monitor](../../03_modules/_domain_risk/strategy_deviation_monitor/blueprint.md)，测试 44 项三件套全绿）。§7② 口径待裁定项落地=**两口径皆备**（累计收益相对偏差定 action / 日收益相关标注供周报复盘）。
+**已施工**（2026-08-15 AI-MON-001）：`src/zephyr/risk/core/strategy_deviation_monitor.py`（MOD-RK-23，blueprint [_domain_risk/strategy_deviation_monitor](../../../03_modules/_domain_risk/strategy_deviation_monitor/blueprint.md)，测试 44 项三件套全绿）。§7② 口径待裁定项落地=**两口径皆备**（累计收益相对偏差定 action / 日收益相关标注供周报复盘）。
 
 已有零件（PLV 规约、position_drift_monitor 仓位内部漂移、daily_auditor 归因偏差）都不是"实盘 vs 回测"主线。决策：新建轻量偏离度量——每日收盘后计算实盘净值 vs 同期回测净值的两口径偏差（累计收益差 / 日收益相关），复用 decision_gate.monitor_backtest_live_deviation 的阈值体系（>30% 告警 / >50% 退役评估）；历史回测 run 由 experiment_tracking（50 号）供给基准。2026 年实证佐证该阈值区间：零售统计实盘低于回测 50% 即需结构性诊断（traderssecondbrain 2026-05），正常磨损为 10-20%。施工口径：事件去抖（仅级别变化发射）+ 样本不足只登记不判定 + 基准供给桥失败降级 None 不阻断；日收益相关下限 0.5 占位标 pending_adjudication（THD-DEVIATION-003，待首批上线数据回归校准）。
 
@@ -148,7 +148,7 @@ scope: 07_trading_decision_architecture
 
 ### 3.6 决策五（新设计）：复盘编排器 + 复盘模板，频率裁剪为"日自动/周人工/月轻量"
 
-**已施工**（2026-08-15 AI-MON-001）：`src/zephyr/reporting/review_orchestrator.py`（MOD-RPT-009，blueprint [_domain_reporting/review_orchestrator](../../03_modules/_domain_reporting/review_orchestrator/blueprint.md)）。日/周/月三频串联 + ReportPublisher 归档（日报 RISK 源 / 周报·月报 TRADING_REVIEW 源）；四段式周报模板结构固化为 WEEKLY_REVIEW_SECTIONS 常量 + 人工维护模板资产 [weekly_review_template.md](../../03_modules/_domain_reporting/review_orchestrator/weekly_review_template.md)（§6 暂缓项口径：先人工维护，跑 12 期后再固化模板引擎）；事件驱动零定时器（run_daily/run_weekly/run_monthly 由日终/周末/月末事件触发）。
+**已施工**（2026-08-15 AI-MON-001）：`src/zephyr/reporting/review_orchestrator.py`（MOD-RPT-009，blueprint [_domain_reporting/review_orchestrator](../../../03_modules/_domain_reporting/review_orchestrator/blueprint.md)）。日/周/月三频串联 + ReportPublisher 归档（日报 RISK 源 / 周报·月报 TRADING_REVIEW 源）；四段式周报模板结构固化为 WEEKLY_REVIEW_SECTIONS 常量 + 人工维护模板资产 [weekly_review_template.md](../../../03_modules/_domain_reporting/review_orchestrator/weekly_review_template.md)（§6 暂缓项口径：先人工维护，跑 12 期后再固化模板引擎）；事件驱动零定时器（run_daily/run_weekly/run_monthly 由日终/周末/月末事件触发）。
 
 三频复盘对个人过重的担心，用**自动化分层**化解而非砍频率：
 - **日复盘 = 机器自动**——DailyAuditor 日终五件套 + DailyRiskSummary，人只看 FAIL 项（告警驱动）；
@@ -201,7 +201,7 @@ scope: 07_trading_decision_architecture
 
 - [00_index_trading_decision](00_index_trading_decision.md) §3 G26
 - [54_reconciliation_attribution](54_reconciliation_attribution.md)（G25 依赖：对账归因链路）
-- [50_backtest_observability_workplan](50_backtest_observability_workplan.md)（回测侧划界："实时监控是另一工程"=本文）
+- [50_backtest_observability_workplan](../../../_archive/50_backtest_observability_workplan.md)（回测侧划界："实时监控是另一工程"=本文）
 - 07_d_infra_telemetry（可观测性域：experiment_tracking 定位——只管回测版本化，不做实时监控）
 - 代码：trading/health_monitor.py、risk/core/alert_generator.py、risk/core/daily_auditor.py、reporting/risk_report_engine.py、reporting/report_publisher.py
 

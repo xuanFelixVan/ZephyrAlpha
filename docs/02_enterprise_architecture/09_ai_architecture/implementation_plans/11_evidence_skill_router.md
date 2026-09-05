@@ -78,7 +78,7 @@ scope: 09_ai_architecture
 | 代码模块 | `src/zephyr/intelligence/model_profiling/task_model_learner.py` | 任务×模型增量学习引擎：composite_score=速度0.40+质量0.35+一致性0.25；样本≥3 用实测、<3 用 benchmark 兜底、=0 用静态映射 | production |
 | 代码模块 | `src/zephyr/intelligence/model_profiling/pipeline_routing/`（6 个文件） | task_model_learner/benchmark_suite/profiler/results_writer/cli 的并行变体副本，与上级目录版本并存且内容有差异（实测 fc 比对），MODIFY-GUARD=none | production（归属待裁定，见 §6 Q5） |
 | 代码模块 | `src/zephyr/governance/intelligence_governance/model_router.py` | ModelRouter（MOD-INF-024）：ModelTier×TaskComplexity 映射 + performance-aware 权重（成本0.50/速度0.35/质量0.15）+ RoutingDecision（reason/估成本/requires_owner）+ 黑名单 + benchmark profiles；MODIFY-GUARD 禁结构变更 | production |
-| 代码模块 | `src/zephyr/governance/intelligence_governance/` 其余 23 个功能模块文件 | 全包实测规模：24 功能模块 + 1 个 `__init__.py` = 25 个 .py（含上行 model_router.py）；delegation_engine / multi_model_consensus / provider_failover / confidence_estimator / meta_confidence / mvep_orchestrator 等（整合归属 [05_intelligence_governance_consolidation.md](05_intelligence_governance_consolidation.md)） | production |
+| 代码模块 | `src/zephyr/governance/intelligence_governance/` 其余 23 个功能模块文件 | 全包实测规模：24 功能模块 + 1 个 `__init__.py` = 25 个 .py（含上行 model_router.py）；delegation_engine / multi_model_consensus / provider_failover / confidence_estimator / meta_confidence / mvep_orchestrator 等（整合归属 [05_intelligence_governance_consolidation.md](../../../_archive/05_intelligence_governance_consolidation.md)） | production |
 | 代码模块 | `src/zephyr/intelligence/model_drift_detector.py` | 模型漂移检测，可支撑路由的模型健康信号 | production |
 | 代码模块 | `src/zephyr/integration/local_model/embedding_router.py` | EmbeddingRouter（MOD-INF-042）双嵌入维度路由（BGE-M3 1024d/bge-small 按 collection 分派+降级链）——**向量路由，非 LLM 任务路由**，注意区分防混淆 | production |
 | 配置/数据 | `data/brain/passports/` | 实测 7 份能力护照 JSON（deepseek-v4 系列 4 份、qwen2.5-coder 14b、qwen3-coder 30b、qwen3 8b） | production |
@@ -308,7 +308,7 @@ scope: 09_ai_architecture
 - 接口假设（13 号文当前为骨架 v0.1.0，见 §6 Q2）：技能库存"怎么做"（可复用的做法/流程/代码模式），模块工厂管"创建什么"（新模块的生成与试运行）；模块工厂施工新模块时检索技能库匹配可复用技能，技能命中即注入施工上下文（ICL 范式，§2.3）；技能库不为模块工厂单独建索引，复用 `skill_discovery`/语义检索既有设施。
 - 职责边界：技能库不做模块创建决策，模块工厂不做技能疗效评估（疗效归本文 §4.5 P3-3）。
 
-**与 [05_intelligence_governance_consolidation.md](05_intelligence_governance_consolidation.md) 的关系**：`intelligence_governance/model_router.py`（MOD-INF-024）等 24 个功能模块（全包实测 25 个 .py 文件，另含 1 个 `__init__.py`）的整合归属由 05 号文裁定（其当前为骨架 v0.1.0，见 §6 Q4）；本文级联编排对 MOD-INF-024 只消费不改结构，若 05 号文裁定其迁移/改名，本文同步修订引用。
+**与 [05_intelligence_governance_consolidation.md](../../../_archive/05_intelligence_governance_consolidation.md) 的关系**：`intelligence_governance/model_router.py`（MOD-INF-024）等 24 个功能模块（全包实测 25 个 .py 文件，另含 1 个 `__init__.py`）的整合归属由 05 号文裁定（其当前为骨架 v0.1.0，见 §6 Q4）；本文级联编排对 MOD-INF-024 只消费不改结构，若 05 号文裁定其迁移/改名，本文同步修订引用。
 
 **与交易决策侧的关系**：只读不改。回测验证门（P2-3）消费 backtest 域设施，发现需同步改的记 §6 待用户裁定；三组件均不进下单热路径。§3.5 引用的 GP-001~008 规则真源在交易决策侧硬边界，本文只读引用。
 
@@ -347,7 +347,7 @@ scope: 09_ai_architecture
 | Q1 | 证据关联、技能库、模型路由的施工顺序？ | 待裁定 | §2.2 分析建议"证据关联→模型路由编排→技能库自动生成→闭环"（证据最轻零依赖、路由基座最全、技能自动生成最重且依赖证据输入）；§4 已按此排 Phase，若裁定不同则重排 |
 | Q2 | 技能库与模块工厂的关系？ | 待裁定 | 技能库存"怎么做"，模块工厂管"创建什么"；§4.6 已写接口假设（工厂检索技能库复用技能、技能库不做创建决策），[13_module_factory.md](13_module_factory.md) 当前为骨架 v0.1.0，其填充后若为冲突定义以 13 号文为真源修订本文 |
 | Q3 | 与 06 号文的护照→路由接口对齐？ | 部分对齐，余项待裁定 | 06 号文已填充 v0.2.0；字段接口复审"部分成立"——safe_capabilities/depth.f1/cost_score 与实测护照结构一致、TaskGate 前置语义两文一致（§4.6）；L1 能力门与 TaskGate 的双门控歧义已在 §3.3 显式消除；剩余待裁定：护照更新频率、cost_score 在路由决策中的权重口径（06 P3-3 待施工，落地后以 06 为真源修订本文） |
-| Q4 | 与 05 号文 intelligence_governance 整合的组件边界？ | 待裁定 | model_router.py（MOD-INF-024）归属/演进由 [05_intelligence_governance_consolidation.md](05_intelligence_governance_consolidation.md)（当前骨架 v0.1.0）裁定；本文只消费不改结构，若 05 裁定迁移/改名，本文同步修订引用 |
+| Q4 | 与 05 号文 intelligence_governance 整合的组件边界？ | 待裁定 | model_router.py（MOD-INF-024）归属/演进由 [05_intelligence_governance_consolidation.md](../../../_archive/05_intelligence_governance_consolidation.md)（当前骨架 v0.1.0）裁定；本文只消费不改结构，若 05 裁定迁移/改名，本文同步修订引用 |
 | Q5 | `model_profiling/pipeline_routing/` 并行副本如何处置？ | 待裁定 | 实测与上级目录 6 个同名文件并存且内容有差异（fc 比对非逐字节相同），MODIFY-GUARD=none；去重合并还是保留为独立流水线变体，需用户裁定 |
 | Q6 | 表格型 Q-learning 路由排序实验是否启用？ | 待裁定 | 本文设计默认静态规则为硬门、Q-learning 默认关闭（§3.3）；"Q-learning 是否替换静态路由"的上层取舍真源在 [01_external_benchmark_analysis.md](01_external_benchmark_analysis.md) §6 Q3（同为待裁定），两处联动裁定 |
 | Q7 | 策略代码生成/因子推导的路由首选口径？ | 待裁定 | 草稿两源口径不同：Agent架构 §8.2.1 标"高复杂度→API LLM"，集成架构 §1.3.2 标"本地 LLM 首选、显存>80%/OOM 降级 DeepSeek"；本文 §4.3 附表 A 按成本硬约束采"本地优先"口径，若裁定 API 优先则改路由配置（配置项，不改代码） |

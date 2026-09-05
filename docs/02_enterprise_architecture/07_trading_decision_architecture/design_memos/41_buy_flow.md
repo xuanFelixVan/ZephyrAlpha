@@ -175,7 +175,7 @@ def compute_batch_split(confidence_score_c031, strategy_type, sector_quality=Non
                 "adjusted_confidence": adjusted_confidence}
 ```
 
-> **MVP 阈值待 G04 校准**：上表阈值（打板 0.75/多因子 0.65/事件 0.70）为初始值，待 [20_first_batch_strategies](20_first_batch_strategies.md) 策略类型定稿后按策略回测校准。
+> **MVP 阈值待 G04 校准**：上表阈值（打板 0.75/多因子 0.65/事件 0.70）为初始值，待 [20_first_batch_strategies](../../../_archive/20_first_batch_strategies.md) 策略类型定稿后按策略回测校准。
 
 #### 3.2.2 放行下一批的 2/3 条件（MVP 简单信号，A/B/C 为增强）
 
@@ -409,7 +409,7 @@ def rank_buy_orders(target_holdings, confidence_scores, liquidity_scores):
 
 ### 3.9 ⑧ 条件触发执行队列（扳机清单）—— 买入/卖出/执行/风控触发器统一注册
 
-> **裁定**：买入侧（41）、卖出侧（[42](42_sell_flow.md)）、执行侧（[40](40_execution_broker.md)）、风控侧（[35](35_drawdown_protocol_impl.md)/[36](36_var_es_monitoring.md)/[37](37_liquidity_crisis_protocol.md)）的各类条件触发器统一注册到**扳机清单（TriggerList）**，由执行编排层（[60_cross_cutting_cleanup](60_cross_cutting_cleanup.md) 进程内事件总线承载）统一监控与派发。本节定义扳机清单的注册格式与优先级，**非新建模块**——各触发器的判定逻辑仍在各自 spec 内，扳机清单只做注册、优先级排序与派发。
+> **裁定**：买入侧（41）、卖出侧（[42](42_sell_flow.md)）、执行侧（[40](40_execution_broker.md)）、风控侧（[35](35_drawdown_protocol_impl.md)/[36](36_var_es_monitoring.md)/[37](37_liquidity_crisis_protocol.md)）的各类条件触发器统一注册到**扳机清单（TriggerList）**，由执行编排层（[60_cross_cutting_cleanup](../../../_archive/60_cross_cutting_cleanup.md) 进程内事件总线承载）统一监控与派发。本节定义扳机清单的注册格式与优先级，**非新建模块**——各触发器的判定逻辑仍在各自 spec 内，扳机清单只做注册、优先级排序与派发。
 
 **为何需要扳机清单**：buy_flow §3.2-§3.3 有分批放行/突破失败触发器，[42_sell_flow](42_sell_flow.md) §3.3-§3.10 有止损/止盈/破位/熔断触发器，[40_execution_broker](40_execution_broker.md) 有订单状态/Make-or-Take/撤单率触发器，[35-37](35_drawdown_protocol_impl.md) 有回撤/VaR/流动性触发器。若各模块独立轮询自己的触发器，存在**冲突无人仲裁**（如确认仓放行 vs 回撤 Level2 暂停同时触发）和**重复检测**（突破失败在 41§3.3 和 42§3.6 都判定）。扳机清单统一注册后，按优先级仲裁冲突、消除重复。
 
@@ -455,7 +455,7 @@ class TriggerEntry:
 
 **去重规则**：突破失败检测（41§3.3 `detect_breakout_failure`）的判定结果同时驱动 41 的"暂停确认仓"和 42 的"止损评估"。扳机清单注册时**共享同一个 condition 函数**，派发时按 trigger_id 分发到各自 action，避免重复计算。
 
-**与三维度解耦的关系**：扳机清单是**编排层**（orchestration），不改变选股（what）/仓位（how much）/执行（how）的解耦——各触发器的判定逻辑和 action 仍在各自 spec 域内，扳机清单只做注册、优先级仲裁与派发。与 [60号进程内事件总线](60_cross_cutting_cleanup.md) 的关系：扳机清单是事件总线的**条件触发订阅模式**——condition 满足时发事件，action 订阅者响应。
+**与三维度解耦的关系**：扳机清单是**编排层**（orchestration），不改变选股（what）/仓位（how much）/执行（how）的解耦——各触发器的判定逻辑和 action 仍在各自 spec 域内，扳机清单只做注册、优先级仲裁与派发。与 [60号进程内事件总线](../../../_archive/60_cross_cutting_cleanup.md) 的关系：扳机清单是事件总线的**条件触发订阅模式**——condition 满足时发事件，action 订阅者响应。
 
 > **过度工程审查**：扳机清单是设计模式非新模块——MVP 阶段各触发器已在各自 spec 定义，扳机清单只做注册表与优先级仲裁，不引入新算法/meta 参数。若各模块触发器数量<10 且无冲突场景（单标的单策略 MVP），可降级为各模块独立轮询，扳机清单作为文档参考不强制实现。Phase 2 多策略并发后冲突场景增多时再强制启用。
 

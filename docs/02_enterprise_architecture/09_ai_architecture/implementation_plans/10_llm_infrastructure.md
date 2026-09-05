@@ -55,7 +55,7 @@ LLM 调用能力在项目中**并非空白，而是"两套平行体系 + 若干�
 - **MCP 工具调用已具规模**：`src/zephyr/integration/mcp/` 下 11 个 server 实现文件 + `tool_contracts.yaml`（10 个 server 契约）+ `config/mcp.json`（12 个 server 注册 + 1 个 gateway），但**注册是静态的**——新增工具需改 YAML/JSON 配置，尚未实现运行时动态发现。
 - **推理优化未施工**：全仓 Grep `llama.cpp|llama_cpp|GPTQ` 在 `src/` 下零命中；[00_index.md](00_index.md) §1 提到的「llama.cpp+GPTQ INT4 显存 14→4GB」目前只是设计表述，无代码。
 - **模型注册三处分裂**：运行时 `src/zephyr/orchestrator/governance/model_registry.py`（MOD-INF-039，6 模型常量 dict）、治理登记 `docs/01_policies_and_standards/_registry/catalogs/model_registry.yaml`（REG-ML-001，8 条目，ML 训练产物 SSoT）、网关内嵌 `ProviderConfig`（llm_gateway.py `_build_providers()`）——同一模型的事实分散在三处，无对账机制。
-- **MLflow 已裁定退役**：51 号备忘（[51_panel_experiment_history_mlflow_retirement.md](../../07_trading_decision_architecture/design_memos/51_panel_experiment_history_mlflow_retirement.md)）v1.2.13 记录 2026-08-16 完成 MLflow 全量卸载（代码删除 + `pip uninstall mlflow 3.15.1`），根因是过度工程（外部 UI 违反「集成到现有 frontend」偏好、全量包对个人项目过重）。00_index §1「模型注册(MLflow)」表述已过期。
+- **MLflow 已裁定退役**：51 号备忘（[51_panel_experiment_history_mlflow_retirement.md](../../../_archive/51_panel_experiment_history_mlflow_retirement.md)）v1.2.13 记录 2026-08-16 完成 MLflow 全量卸载（代码删除 + `pip uninstall mlflow 3.15.1`），根因是过度工程（外部 UI 违反「集成到现有 frontend」偏好、全量包对个人项目过重）。00_index §1「模型注册(MLflow)」表述已过期。
 
 ### 2.2 核心问题
 

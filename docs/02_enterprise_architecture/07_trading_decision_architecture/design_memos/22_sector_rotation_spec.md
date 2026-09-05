@@ -47,7 +47,7 @@ scope: 07_trading_decision_architecture
 
 ### 2.1 项目处境
 - 个人 + 100% AI 开发的 A 股量化系统（miniQMT 通道，T+1 结算，不能做空）
-- 板块在架构中是**选股的输入特征**，不是独立决策层——G04（[20_first_batch_strategies](20_first_batch_strategies.md)）三策略"与 regime 关系"行（§2.2/§2.3/§2.4）均裁定选股**不读** regime 输出、只收 budget 数字；板块信号作为选股打分维度的消费关系落在选股漏斗（BM-SEL-17 初筛消费板块强度）与 G04 §7.2 作战地图登记（BM-SEL-08/09 为"G06 板块轮动输入"）。⚠️ 注意：20 号 §2.5 差异化矩阵 8 行维度中无"板块信号"行，板块消费关系真实出处是 §2.2-2.4 各节 + §7.2，已登记 §7 待定问题（20 号 §2.5 矩阵补板块维度行，不越界改）
+- 板块在架构中是**选股的输入特征**，不是独立决策层——G04（[20_first_batch_strategies](../../../_archive/20_first_batch_strategies.md)）三策略"与 regime 关系"行（§2.2/§2.3/§2.4）均裁定选股**不读** regime 输出、只收 budget 数字；板块信号作为选股打分维度的消费关系落在选股漏斗（BM-SEL-17 初筛消费板块强度）与 G04 §7.2 作战地图登记（BM-SEL-08/09 为"G06 板块轮动输入"）。⚠️ 注意：20 号 §2.5 差异化矩阵 8 行维度中无"板块信号"行，板块消费关系真实出处是 §2.2-2.4 各节 + §7.2，已登记 §7 待定问题（20 号 §2.5 矩阵补板块维度行，不越界改）
 - **板块数据采集与基础分析已 production**（非空白起步，逐项真源见 §2.5 已施工设施盘点）：
   - `sector_snapshot_collector`（production，[11_d_data](../../02_domain_architecture_docs/11_d_data.md)）：tqcenter → ClickHouse `sector_snapshot` 表，混合模式（推送 99 只 + 全量轮询 30 秒），schema 真源 18 个采集字段（22 列含审计列，[market_sector_snapshot.py](../../../../schemas/categories/market_sector_snapshot.py) DDL-as-Code）。**实测 2026-07-22：582 只 = 454 个 880xxx + 128 个 881xxx**（非设计估算 584）
   - `sector_ranking_engine`（production，[11_d_data](../../02_domain_architecture_docs/11_d_data.md)）：5 因子复合排名动态选 99 只推送池，基准 880001.SH（上证指数）
@@ -77,7 +77,7 @@ scope: 07_trading_decision_architecture
   - [国泰海通 2026-08](https://m.weibo.cn/detail/5330754731250030)：7 月 28 日-8 月 7 日**周度行业排名变化均值 12.75，超历史 75 分位 11.75**，"典型的'电风扇'式再平衡"，"本轮科技反弹或为拥挤出清后的超跌修复，而非新一轮单边主升"
   - [川观新闻 2026-08-11 盘面](https://cbgc.scol.com.cn/news/7840749)：沪指终结六连阳跌 0.82% 报 3934 点、缩量 2.34 万亿，机器人/MLCC/算力租赁/创新药"一个接一个，但都没有持续性"——电风扇行情进行时实盘证据
   - [财信证券行业轮动周报 2026-08-10](https://m.toutiao.com/group/7672560316760490502/)（数据截至 08-07）：高拥挤区电子/食品饮料；快速升温区建筑材料/医药生物/传媒/计算机等 10 行业；Beta/Alpha 区间划分（12 行业 Beta 共振 / 18 行业 Alpha 分化）——与 §3.1⑨ 5 状态分类（高拥挤≈DISTRIBUTION_RISK/CONSENSUS_CLIMAX 视角）同向，"Alpha 区间=行业内部分化"支持 §3.1⑦ 龙头识别在分化行情中的权重溢价
-- **"电风扇"速度计已升级为独立因子（v1.9.8 补，2026-08-21）**——本节与 §2.3 的两条量化口径（周度行业排名变化均值 12.75>历史 75 分位 / Top3 次日重合率 14.8%）此前仅为约束与印证，已在 [44_premarket_intraday_decision_upgrade](44_premarket_intraday_decision_upgrade.md) **M1-⑩/§9.13 落为独立因子设计**：`rotation_velocity`（周度行业排名变化均值，>75 分位=电风扇行情）+ `top3_overlap`（Top3 板块次日重合率，<20%=一日游生态）+ `lead_streak<2` 无主线判定 → 大盘"混沌/下跌中继"注解 → M2 边界降档（§9.5 已挂降档触发：虹吸 z>1.5σ 且速度计>75 分位共振）。本 spec §2.3/§2.4 为其设计真源锚点；FCT-sentiment 条目登记随 44 号 Phase 2 走 62 号 ROOR 流程，本文不直接写注册表
+- **"电风扇"速度计已升级为独立因子（v1.9.8 补，2026-08-21）**——本节与 §2.3 的两条量化口径（周度行业排名变化均值 12.75>历史 75 分位 / Top3 次日重合率 14.8%）此前仅为约束与印证，已在 [44_premarket_intraday_decision_upgrade](../../../_archive/44_premarket_intraday_decision_upgrade.md) **M1-⑩/§9.13 落为独立因子设计**：`rotation_velocity`（周度行业排名变化均值，>75 分位=电风扇行情）+ `top3_overlap`（Top3 板块次日重合率，<20%=一日游生态）+ `lead_streak<2` 无主线判定 → 大盘"混沌/下跌中继"注解 → M2 边界降档（§9.5 已挂降档触发：虹吸 z>1.5σ 且速度计>75 分位共振）。本 spec §2.3/§2.4 为其设计真源锚点；FCT-sentiment 条目登记随 44 号 Phase 2 走 62 号 ROOR 流程，本文不直接写注册表
 
 ### 2.5 已施工设施盘点（通用规则 #11，2026-08-12 代码侧/schema 真源审计）
 
@@ -675,7 +675,7 @@ sector_snapshot_collector (production) ──880xxx快照──┐
 ## 8. 引用
 
 ### 8.1 相关设计备忘
-- [20_first_batch_strategies.md](20_first_batch_strategies.md) §2.5 差异化矩阵（G04，三策略均消费板块信号）、§7.4 下游交接（G06 是 G08/G09/G10 前置）
+- [20_first_batch_strategies.md](../../../_archive/20_first_batch_strategies.md) §2.5 差异化矩阵（G04，三策略均消费板块信号）、§7.4 下游交接（G06 是 G08/G09/G10 前置）
 - [21_stock_selection_engine.md](21_stock_selection_engine.md) G05 选股引擎（§3.1⑦ 板块→个股传导映射的消费方、§3.1⑩ 三级放行门槛的准入 gate 执行层、§3.1⑪ 水温响应的 signal_weight 注入点）——本 spec 声明板块信号方向与算法，G05 定义个股打分漏斗与具体加权方式
 - [25_multifactor_strategy_detail.md](25_multifactor_strategy_detail.md) G09 多因子策略（§3.1⑩ "个股强度"= G05/G09 多因子综合分 0-1 归一化的来源；拥挤度因子与 §3.1⑤ 虹吸态 HHI / §3.1⑨ 5 状态 hhi_top5 概念同源但粒度不同——G09 拥挤度是因子级截面打分，本 spec HHI 是板块结构级集中度）——v1.6.0 新增引用，明确板块信号与多因子打分的边界
 - [30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md) §1.3 情绪周期隐形驱动（虹吸态依据）、§2.2 firm 层不读板块（正交边界）

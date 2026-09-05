@@ -81,9 +81,9 @@ scope: 09_ai_architecture
 | [00_index.md](00_index.md) | 0.7.2 | draft | ——（索引类，§5 解锁点已定义） |
 | [01_external_benchmark_analysis.md](01_external_benchmark_analysis.md) | 0.6.0 | draft | ——（信息库类） |
 | [02_design_asset_inventory.md](02_design_asset_inventory.md) | 0.5.1 | draft | ——（盘点类） |
-| [03_domain_boundary_definition.md](03_domain_boundary_definition.md) | 0.2.1 | draft（待 Owner 裁定后升 active） | 裁定类：完成路径 + A/B/C 三分支 |
+| [03_domain_boundary_definition.md](../../../_archive/03_domain_boundary_definition.md) | 0.2.1 | draft（待 Owner 裁定后升 active） | 裁定类：完成路径 + A/B/C 三分支 |
 | [04_autoruntime_core_build.md](04_autoruntime_core_build.md) | 0.2.2 | draft | Phase 0 T0 → Phase 1~3 T1/T2/T3 拐点（触发式） |
-| [05_intelligence_governance_consolidation.md](05_intelligence_governance_consolidation.md) | 0.2.1 | active | Phase 0 已完成；Phase 1 待裁定；Phase 2 依赖 14 号 |
+| [05_intelligence_governance_consolidation.md](../../../_archive/05_intelligence_governance_consolidation.md) | 0.2.1 | active | Phase 0 已完成；Phase 1 待裁定；Phase 2 依赖 14 号 |
 | [06_model_profiling_pipeline.md](06_model_profiling_pipeline.md) | 0.3.0 | draft | Phase 0 手动跑通 → Phase 1 触发式闭环 → Phase 2 路由集成 → Phase 3 成本感知 |
 | [07_context_engine_build.md](07_context_engine_build.md) | 0.3.0 | draft | Phase 0 对齐收口 → Phase 1 补缺 → Phase 2 集成接线 → Phase 3 远期 |
 | [08_multi_ai_concurrency_governance.md](08_multi_ai_concurrency_governance.md) | 0.2.2 | draft | Phase 0 提交队列 MVP → Phase 1 队列联动 → Phase 2 优化可观测 |
