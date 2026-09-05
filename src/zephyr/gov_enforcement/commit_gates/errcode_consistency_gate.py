@@ -54,7 +54,7 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["make_errcode_consistency_gate"]
 
-_SSDOT_TEST_REL = "tests/governance/test_error_code_consistency.py"
+_SSDOT_TEST_REL = "tests/governance/test_error_code_consistency.py"  # noqa: gate-vocab SSoT 测试模块路径常量（按路径 importlib 加载判定逻辑，非测试目录归属判定；is_test_exempt 不适用本场景）
 _REGISTRY_REL = "architecture_model/contracts/error_code_registry.yaml"
 _CODE_NUM_RE = re.compile(r"^ZA-([A-Z0-9]+)-(\d+)$")
 

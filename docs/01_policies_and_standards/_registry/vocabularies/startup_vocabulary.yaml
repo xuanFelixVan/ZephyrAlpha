@@ -13,24 +13,29 @@
 # 版本：1.0.0
 # 创建日期：2026-06-29
 #
-# 本词表定义 startup 字段的所有合法值（4 种）。
+# 本词表定义 startup 字段的所有合法值（5 种）。
 # 原先内联在 trae_047 §gov_eng_002_enum_definitions STARTUP-ENUM，已迁出为独立词表。
 # 校验器从本文件动态加载合法值。
 #
-# 禁止值：scheduled（定时调度）——见 trae_060 §3 事件驱动全自动原则
+# 禁止值：scheduled（进程内定时调度）——见 trae_060 §3 事件驱动全自动原则
 # 设计依据：强制 AI 声明文件触发方式；scheduled 禁止使用因进程内定时触发
 #           等于要人指令触发未达自动（见 trae_060 §3）
+# v1.1.0（2026-09-05 总管裁定）：增设 scheduled_task（OS 托管计划任务）——
+#           依据 trae_060 L132 先例（CI schedule 属 CI 层批量兜底、非进程内 Timer、允许）：
+#           Windows Task Scheduler 等 OS 级调度器托管的 one-shot 守护执行同属进程外托管层级；
+#           对齐 Owner 2026-08-28 批准的 process_reaper 根治版设计（OS 托管 one-shot 优于进程内常驻）。
+#           边界：仅限守护类 one-shot（执行完即退出）；进程内 Timer/轮询守护仍禁。
 
 schema_version: "1.0.0"
 doc_type: vocabulary
 module_id: PS-VOC-029
-version: "1.0.0"
+version: "1.1.0"
 title: "startup 受控词表"
 status: active
 ttl: permanent
 owner: ZephyrAlpha-Owner
 vocabulary_name: startup
-total_values: 4
+total_values: 5
 depends_on:
   - target: trae_047_engineering_file_header.yaml
     at: "§gov_eng_002_enum_definitions STARTUP-ENUM（原内联定义，已迁出）"
@@ -55,6 +60,10 @@ values:
   - value: imported
     definition: "被动导入——不主动启动，被其他模块导入使用"
     ai_keywords: ["导入", "imported", "被动", "不主动启动"]
+
+  - value: scheduled_task
+    definition: "OS 托管计划任务——Windows Task Scheduler / CI schedule 等 OS 级调度器托管的 one-shot 守护执行（进程外托管层级，非进程内 Timer；仅限守护类：执行完即退出、不常驻）"
+    ai_keywords: ["计划任务", "scheduled_task", "Task Scheduler", "OS 托管", "one-shot 守护"]
 
 deprecated_values:
   - value: scheduled

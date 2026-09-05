@@ -100,8 +100,8 @@ DENIED_MAX_ROUNDS: Final[str] = "DENIED-MAX-ROUNDS"
 DENIED_EXCELLENT_STREAK: Final[str] = "DENIED-EXCELLENT-STREAK"
 DENIED_NORMAL_STREAK: Final[str] = "DENIED-NORMAL-STREAK"
 
-VALID_LAYERS: Final[frozenset[str]] = frozenset({"execution", "tactical", "strategic"})
-VALID_LEVELS: Final[frozenset[str]] = frozenset({"L1", "L2", "L3"})
+VALID_LAYERS: Final[frozenset[str]] = frozenset({"execution", "tactical", "strategic"})  # noqa: gate-vocab 反思控制决策粒度层（执行/战术/战略），非 layer_vocabulary 架构分层域（L0~L3+cross_layer），无适用词表真源
+VALID_LEVELS: Final[frozenset[str]] = frozenset({"L1", "L2", "L3"})  # noqa: gate-vocab 反思介入级别（12号文 §3.4），levels_vocabulary.yaml 不存在，无适用词表真源
 
 _DECISIONS_FILE: Final[str] = "reflctrl_decisions.jsonl"
 _TOKEN_STATS_FILE: Final[str] = "reflctrl_token_stats.jsonl"

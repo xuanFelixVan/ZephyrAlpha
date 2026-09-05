@@ -390,5 +390,37 @@ exemptions:
     line: 119
     category: business_subset
     reason: '业务数据 schema（CSV 列名），非 knowledge_taxonomy 词表校验'
+  - file: src/zephyr/frontend/dashboard/components/alert_center.py
+    line: 55
+    category: no_vocab_source
+    reason: '告警生命周期状态为告警域本地常量（无 alert-status 词表；status_vocabulary 为文档状态域）'
+  - file: src/zephyr/autonomy_core/module_factory/knowledge_classifier.py
+    line: 86
+    category: business_subset
+    reason: '类集合真源=62号文S2/S3裁定，本常量为运行时镜像；pydantic Literal 静态校验必须静态定义'
+  - file: src/zephyr/autonomy_core/module_factory/knowledge_classifier.py
+    line: 98
+    category: business_subset
+    reason: '类集合真源=62号文S2/S3裁定，本常量为运行时镜像；pydantic Literal 静态校验必须静态定义'
+  - file: src/zephyr/autonomy_core/module_factory/knowledge_classifier.py
+    line: 106
+    category: business_subset
+    reason: '类集合真源=62号文S2/S3裁定，本常量为运行时镜像；pydantic Literal 静态校验必须静态定义'
+  - file: src/zephyr/autonomy_core/agents/_g04_ops_check.py
+    line: 83
+    category: business_subset
+    reason: '业务子集=20号文首批三策略核对范围，非词表全集校验'
+  - file: src/zephyr/gov_enforcement/commit_gates/errcode_consistency_gate.py
+    line: 57
+    category: no_vocab_source
+    reason: 'SSoT 测试模块路径常量（按路径 importlib 加载判定逻辑，非测试目录归属判定；is_test_exempt 不适用本场景）'
+  - file: src/zephyr/intelligence/reflexion/reflctrl_gate.py
+    line: 103
+    category: no_vocab_source
+    reason: '反思控制决策粒度层（执行/战术/战略），非 layer_vocabulary 架构分层域（L0~L3+cross_layer），无适用词表真源'
+  - file: src/zephyr/intelligence/reflexion/reflctrl_gate.py
+    line: 104
+    category: no_vocab_source
+    reason: '反思介入级别（12号文 §3.4），levels_vocabulary.yaml 不存在，无适用词表真源'
 
-# Statistics: total=84, by_category={'business_subset': 45, 'arch_concept': 9, 'threshold_var': 15, 'no_vocab_source': 14, 'test_fixture': 1}
+# Statistics: total=92, by_category={'business_subset': 49, 'arch_concept': 9, 'threshold_var': 15, 'no_vocab_source': 18, 'test_fixture': 1}
