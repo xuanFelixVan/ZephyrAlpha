@@ -65,7 +65,7 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 
 | 域 ID | 域名 | 层 | 节点数 |
 |-------|------|----|-------|
-| `D_GOVERNANCE` | 生命周期管理 | L2_domain | 764 |
+| `D_GOVERNANCE` | 生命周期管理 | L2_domain | 763 |
 | `D_GOV_SCRIPTS` | 脚本治理 | L2_domain | 544 |
 | `D_AUDITTEST` | 审计测试套件 | L2_domain | 507 |
 | `D_AUTONOMY_CORE` | 自治核心 | L1_foundation | 507 |
@@ -84,15 +84,15 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 | `D_RISK` | 风控 | L2_domain | 143 |
 | `D_INFRA_A2A` | A2A通信 | L0_infrastructure | 135 |
 | `D_GOV_DOCS` | 架构文档治理 | L2_domain | 118 |
-| `D_GOV_OPS_RESILIENCE` | 运维弹性治理 | L1_foundation | 117 |
+| `D_GOV_OPS_RESILIENCE` | 运维弹性治理 | L1_foundation | 116 |
 | `D_EX_CORE` | 执行核心 | L2_domain | 114 |
 | `D_INFRA_RECOVERY` | 回滚恢复 | L0_infrastructure | 100 |
 | `D_ORCHESTRATOR` | 代理编排器 | L1_foundation | 97 |
 | `D_INTEGRATION` | 管线路由 | L1_foundation | 92 |
 | `D_BACKTEST` | 回测 | L2_domain | 86 |
 | `D_SECURITY_LLM` | LLM防御 | L1_foundation | 79 |
-| `D_GOV_DRIFT` | 漂移检测 | L2_domain | 77 |
 | `D_FBL_DIAGNOSERS` | 反馈诊断器 | L1_foundation | 76 |
+| `D_GOV_DRIFT` | 漂移检测 | L2_domain | 76 |
 | `D_FRONTEND` | 前端 | L2_domain | 74 |
 | `D_INFRASTRUCTURE` | 跨层契约基础设施 | L0_infrastructure | 71 |
 | `D_FBL_VERIFICATION` | 反馈验证 | L1_foundation | 67 |
