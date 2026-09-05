@@ -2,7 +2,7 @@
 # [MODULE] zephyr.trading.ports
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.trading.__init__
-# [CONSUMERS] zephyr.trading.auto_runtime_core;zephyr.trading.work_orchestrator
+# [CONSUMERS] (none — 2026-09-05 AI-06 audit: zero production imports repo-wide, zero tests; retirement candidate, see MOD-INF-035 blueprint owner review)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] Ports define structural interfaces only; no concrete implementations; no imports from zephyr.infrastructure.pipeline
@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS] tests/test_runtime_ports.py
+# [TESTS] (none — declared tests/test_runtime_ports.py does not exist)
 # [A_module] module_id=MOD-INF-035 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

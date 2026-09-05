@@ -50,6 +50,7 @@ ARCH-032 迁移创建 feedback_loop/ 包后未删除旧 feedback_loop.py 文件�
 # A1 --> O1
 """
 
+import logging
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -58,8 +59,11 @@ import yaml
 from pydantic import BaseModel, Field
 
 from zephyr.shared.io.serialization import filter_dataclass_fields
+
 from zephyr.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.utils.time_utils import now_utc
+
+logger = logging.getLogger(__name__)
 
 __all__ = [
     "EvolutionProposal",
@@ -121,6 +125,7 @@ class FeedbackLoop:
             try:
                 data = yaml.safe_load(path.read_text(encoding="utf-8"))
                 results.append(EvolutionProposal(**filter_dataclass_fields(EvolutionProposal, data)))
-            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                logger.warning("feedback_loop.review_proposals: skip unreadable proposal %s: %s", path, e)
                 continue
         return results

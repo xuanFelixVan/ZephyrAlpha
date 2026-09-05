@@ -69,6 +69,7 @@ WorkOrchestrator — 工作编排子系统
 借鉴: Airflow DAG + Temporal Workflow + K8s Job
 """
 
+import logging
 import threading
 import uuid
 from datetime import datetime
@@ -81,6 +82,8 @@ from zephyr.shared.io.serialization import filter_dataclass_fields
 from zephyr.shared.utils.time_utils import now_utc
 from zephyr.trading.capability_registry import CapabilityRegistry
 from zephyr.trading.work_dag import WorkDAG, WorkItem
+
+logger = logging.getLogger(__name__)
 
 
 class WorkOrchestrator:
@@ -165,7 +168,8 @@ class WorkOrchestrator:
                 with self._lock:
                     self._dags[dag.dag_id] = dag
                 count += 1
-            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                logger.warning("work_orchestrator.load_dags: skip unreadable dag %s: %s", path, e)
                 continue
         return count
 

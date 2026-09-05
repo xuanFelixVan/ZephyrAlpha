@@ -196,7 +196,8 @@ class AutoTaskGenerator:
                         break
                     self._file_queue.append(fp)
                     self._processed.add(fp_hash)
-            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                _log.warning("auto_task_generator._scan_sources: skip unreadable source glob %s: %s", glob_pattern, e)
                 continue
 
         _log.debug(

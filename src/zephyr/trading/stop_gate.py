@@ -2,7 +2,7 @@
 # [MODULE] zephyr.trading.stop_gate
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.trading.__init__
-# [CONSUMERS]
+# [CONSUMERS] zephyr.trading.auto_runtime_core; zephyr.trading.lifecycle_manager
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none

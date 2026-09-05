@@ -2,7 +2,7 @@
 # [MODULE] zephyr.trading.staging_area
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.trading.__init__
-# [CONSUMERS] zephyr.integration.mcp.task_manager_server; scripts/lock_files.py
+# [CONSUMERS] scripts/governance/repair/concurrent_write_test.py; tests/trading/test_staging_area.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] draft files live under .aidrafts/; commit is atomic via os.replace; conflict detection via mtime+hash; cross-process lock via _CrossProcessLock (os.open O_CREAT|O_EXCL in .ailocks/); _COMMIT_LOCK (threading.Lock) 仅作进程内线程安全辅助锁，跨进程互斥由 _CrossProcessLock 负责
@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] StagingError on all failures; CONFLICT raised when file modified by another session
-# [TESTS] tests/test_staging_area.py
+# [TESTS] tests/trading/test_staging_area.py
 # [A_module] module_id=MOD-INF-035 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: _CrossProcessLock.__enter__的while True+time.sleep是跨进程文件锁获取等待循环,非周期触发(与_GlobalCommitLock同类)

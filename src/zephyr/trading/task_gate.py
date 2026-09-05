@@ -2,7 +2,7 @@
 # [MODULE] zephyr.trading.task_gate
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.intelligence.model_profiling.capability_passport
-# [CONSUMERS]
+# [CONSUMERS] zephyr.intelligence.model_routing.runtime_assembly
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] pending_review

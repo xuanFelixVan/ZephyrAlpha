@@ -53,6 +53,7 @@ CapabilityRegistry — 能力注册中心
 # A1 --> O1
 """
 
+import logging
 import threading
 import time
 from collections.abc import Callable, Iterator
@@ -64,6 +65,8 @@ import yaml
 
 from zephyr.shared.io.serialization import filter_dataclass_fields
 from zephyr.trading.capability_card import CapabilityCard
+
+logger = logging.getLogger(__name__)
 
 
 class _ReadWriteLock:
@@ -251,6 +254,7 @@ class CapabilityRegistry:
                         self._cards[card.capability_id] = card
                         self._cache_version += 1
                 count += 1
-            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                logger.warning("capability_registry.load_from_dir: skip unreadable card %s: %s", path, e)
                 continue
         return count

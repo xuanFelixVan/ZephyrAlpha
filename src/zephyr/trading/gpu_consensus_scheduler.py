@@ -2,7 +2,7 @@
 # [MODULE] zephyr.trading.gpu_consensus_scheduler
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.__init__
-# [CONSUMERS] zephyr.trading.verdict_engine;MOD-INF-027(audit-orchestrator)
+# [CONSUMERS] (none in production — 2026-09-05 AI-06 audit: zero production imports repo-wide; consumed only by tests/trading/test_gpu_consensus_scheduler.py; zombie-system candidate, see MOD-INF-033 blueprint owner review)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 2/2共识必须两个模型都返回一致verdict才PASS；P0_ANCHOR优先级最高不可被抢占

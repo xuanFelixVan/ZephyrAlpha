@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] Returns None when no tasks available; logs warnings on DB connection issues
-# [TESTS] tests/test_autopilot.py
+# [TESTS] tests/governance/integration/test_autopilot.py
 # [A_module] module_id=MOD-ORC-autopilot | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
