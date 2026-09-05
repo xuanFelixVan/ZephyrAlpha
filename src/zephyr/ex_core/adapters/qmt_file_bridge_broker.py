@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint_qmt_file_bridge.md
 # [MODULE] zephyr.ex_core.adapters.qmt_file_bridge_broker
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.trading.trading_contracts.broker_interface; zephyr.ex_core.board_lot; zephyr.ex_core.price_cage; zephyr.shared.contracts.order; zephyr.shared.contracts.position
+# [DEPENDENCIES] zephyr.trading.trading_contracts.broker_interface; zephyr.ex_core.board_lot; zephyr.ex_core.price_cage; zephyr.shared.contracts.order; zephyr.shared.contracts.position; zephyr.shared.contracts.fill; zephyr.shared.utils.time_utils
 # [CONSUMERS] zephyr.ex_core.order_manager
 # [STARTUP] manual
 # [MATURITY] draft

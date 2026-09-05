@@ -2,7 +2,7 @@
 # [MODULE] zephyr.ex_core.board_lot
 # [DOMAIN] D_EX_CORE
 # [DEPENDENCIES] stdlib
-# [CONSUMERS] ex_core.trading_session ; ex_core.adapters.miniqmt_broker
+# [CONSUMERS] ex_core.trading_session ; ex_core.adapters.miniqmt_broker ; ex_core.adapters.qmt_file_bridge_broker ; ex_core.corporate_action_adjuster ; ex_core.order_splitter ; ex_core.price_cage ; ex_core.pricing_policy ; ex_core.rules.ashare ; ex_sor.core.rl_exec_boundary
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 买入数量按板块差异化向下取整;零股(<min_unit)卖出必须一次性申报

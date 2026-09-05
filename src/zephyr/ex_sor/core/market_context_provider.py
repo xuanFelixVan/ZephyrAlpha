@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-XS-006 | docs/03_modules/_domain_ex_sor/market_context_provider/blueprint.md
 # [MODULE] zephyr.ex_sor.core.market_context_provider
 # [DOMAIN] D_EX_SOR
-# [DEPENDENCIES] zephyr.ex_sor.core.algo_trading_engine; zephyr.infrastructure.h1_redis_hot.h1_redis_schema; zephyr.market_data.normalized_market_data_producer.producer; zephyr.shared.contracts.market_data
+# [DEPENDENCIES] zephyr.ex_sor.core.algo_trading_engine; zephyr.infrastructure.h1_redis_hot.h1_redis_schema; zephyr.market_data.normalized_market_data_producer.producer; zephyr.shared.contracts.market_data; zephyr.infrastructure.database_service
 # [CONSUMERS] MOD-L06-001(D_EXECUTION_CORE ExecutionEngine,注入构造 MarketContext 供 generate_plan)
 # [STARTUP] manual
 # [MATURITY] production

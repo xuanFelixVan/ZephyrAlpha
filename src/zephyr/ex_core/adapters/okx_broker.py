@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.adapters.okx_broker
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.trading.trading_contracts.broker_interface; zephyr.shared.security.secrets; zephyr.ex_core.rules; zephyr.data.calendar
+# [DEPENDENCIES] zephyr.trading.trading_contracts.broker_interface; zephyr.shared.security.secrets; zephyr.ex_core.rules; zephyr.data.calendar; zephyr.shared.contracts.enums.order_enums; zephyr.shared.contracts.fill; zephyr.shared.contracts.order; zephyr.shared.contracts.position
 # [CONSUMERS] zephyr.ex_core.order_manager; zephyr.ex_core.trading_session
 # [STARTUP] manual
 # [MATURITY] testing
@@ -147,8 +147,9 @@ class OkxBroker(BrokerInterface):
         self._connected = False
         self._session: requests.Session | None = None
 
-        # 线程安全锁
-        self._lock = threading.Lock()
+        # 线程安全锁（RLock：公开方法持锁后调用 _request/_sign 等内部方法，
+        # 内部再次加锁——非重入 Lock 会同线程自死锁（2026-09-05 AI-AUDIT05 探针实证））
+        self._lock = threading.RLock()
 
         # 幂等去重：idempotency_key -> broker_order_id
         self._idempotency_map: dict[str, str] = {}

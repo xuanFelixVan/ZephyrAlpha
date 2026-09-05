@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-EX-056 | docs/03_modules/_domain_execution_core/position_reconciler/blueprint.md
 # [MODULE] zephyr.ex_core.position_reconciler
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.shared.contracts.position; zephyr.ex_core.position_tracker.tracker
+# [DEPENDENCIES] zephyr.shared.contracts.position
 # [CONSUMERS] zephyr.ex_core.trading_session; zephyr.governance.adapters.simulation_broker
 # [STARTUP] imported
 # [MATURITY] production

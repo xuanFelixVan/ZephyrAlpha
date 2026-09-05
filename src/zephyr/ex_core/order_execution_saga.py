@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-EX-057 | docs/03_modules/_domain_execution_core/order_execution_saga/blueprint.md
 # [MODULE] zephyr.ex_core.order_execution_saga
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.ex_core.order_manager; zephyr.ex_core.position_tracker.tracker; zephyr.ex_core.audit_journal.auditor; zephyr.ex_core.rejection_action_handler; zephyr.governance.adapters.risk_validation_bridge; zephyr.shared.contracts.order; zephyr.shared.contracts.fill; zephyr.shared.contracts.enums.order_enums; zephyr.shared.contracts.risk_limits
+# [DEPENDENCIES] zephyr.ex_core.order_manager; zephyr.ex_core.position_tracker.tracker; zephyr.ex_core.audit_journal.auditor; zephyr.ex_core.rejection_action_handler; zephyr.governance.adapters.risk_validation_bridge; zephyr.shared.contracts.order; zephyr.shared.contracts.fill; zephyr.shared.contracts.enums.order_enums; zephyr.shared.contracts.risk_limits; zephyr.trading.trading_contracts.broker_interface
 # [CONSUMERS] D-PORTFOLIO(TradingSession可调用); D-EX-CORE(ExecutionEngine可调用)
 # [STARTUP] imported
 # [MATURITY] production

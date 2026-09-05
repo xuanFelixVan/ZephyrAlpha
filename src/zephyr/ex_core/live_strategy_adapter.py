@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.live_strategy_adapter
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] stdlib；zephyr.ex_core.trading_session（TradingSession 生命周期契约：start/stop/get_session_report）
+# [DEPENDENCIES] stdlib；zephyr.ex_core.trading_session（TradingSession 生命周期契约：start/stop/get_session_report）; zephyr.ex_core.trading_session
 # [CONSUMERS] 57 号文 GAP-2 常驻服务化——CLI 接线已落（scripts/start_paper_session.py --service：assemble_session 包 slot 常驻运行）；挂计划任务/调度=Owner 窗口
 # [STARTUP] imported
 # [MATURITY] testing

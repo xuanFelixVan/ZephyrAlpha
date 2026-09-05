@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.risk_layer_orchestrator
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.position.core.drawdown_controller; zephyr.risk.core.drawdown_tracker; zephyr.risk.core.var_calculator; zephyr.risk.core.tail_risk_monitor; zephyr.risk.core.ashare_systemic_risk_detector; zephyr.risk.core.liquidity_crisis_manager; zephyr.risk.stop_loss; zephyr.ex_core.position_reconciler; zephyr.ex_core.position_tracker.tracker; zephyr.trading.trading_contracts.broker_interface; zephyr.shared.contracts.order; zephyr.shared.contracts.enums.order_enums; zephyr.governance.lifecycle_governance.rollback_state_machine
+# [DEPENDENCIES] zephyr.position.core.drawdown_controller; zephyr.risk.core.drawdown_tracker; zephyr.risk.core.var_calculator; zephyr.risk.core.tail_risk_monitor; zephyr.risk.core.ashare_systemic_risk_detector; zephyr.risk.core.liquidity_crisis_manager; zephyr.risk.stop_loss; zephyr.ex_core.position_reconciler; zephyr.ex_core.position_tracker.tracker; zephyr.trading.trading_contracts.broker_interface; zephyr.shared.contracts.order; zephyr.shared.contracts.enums.order_enums; zephyr.governance.lifecycle_governance.rollback_state_machine; zephyr.risk.core.fhs_engine; zephyr.risk.core.var_breach_state_machine; zephyr.shared.state_store
 # [CONSUMERS] zephyr.ex_core.trading_session
 # [STARTUP] imported
 # [MATURITY] production

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-XS-008 | docs/03_modules/_domain_ex_sor/rl_execution_training_env/blueprint.md
 # [MODULE] zephyr.ex_sor.core.rl_exec_boundary
 # [DOMAIN] D_EX_SOR
-# [DEPENDENCIES] zephyr.ex_sor.core.rl_exec_contract ; zephyr.ex_core.board_lot ; zephyr.ex_core.price_cage ; zephyr.backtest.core.matching_logic ; stdlib
+# [DEPENDENCIES] zephyr.ex_sor.core.rl_exec_contract; zephyr.ex_core.board_lot; zephyr.ex_core.price_cage; zephyr.backtest.core.matching_logic; stdlib; zephyr.ex_sor.core.rl_exec_env
 # [CONSUMERS] zephyr.ex_sor.core.rl_exec_env
 # [STARTUP] manual
 # [MATURITY] design

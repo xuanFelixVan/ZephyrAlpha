@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.price_cage
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.ex_core.board_lot ; stdlib
-# [CONSUMERS] ex_core.adapters.miniqmt_broker ; ex_core.trading_session
+# [DEPENDENCIES] zephyr.ex_core.board_lot; stdlib; zephyr.shared.contracts.enums.order_enums
+# [CONSUMERS] ex_core.adapters.miniqmt_broker ; ex_core.adapters.qmt_file_bridge_broker ; ex_core.pricing_policy ; ex_sor.core.rl_exec_boundary
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 买入基准价=卖一(ask1)/卖出基准价=买一(bid1); 回退链 ask1|bid1→last→prev_close; 板块差异化幅度; 超限夹到边界(不废单)

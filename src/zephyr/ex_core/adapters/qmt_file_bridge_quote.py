@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint_qmt_file_bridge.md
 # [MODULE] zephyr.ex_core.adapters.qmt_file_bridge_quote
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.ex_core.signal_providers
+# [DEPENDENCIES] zephyr.shared.utils.time_utils
 # [CONSUMERS] zephyr.ex_core.trading_session; scripts.start_paper_session
 # [STARTUP] manual
 # [MATURITY] draft

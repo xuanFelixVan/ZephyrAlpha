@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.order_manager
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.trading.trading_contracts.broker_interface; zephyr.trading.trading_contracts.execution.fill; zephyr.trading.trading_contracts.execution.order; zephyr.ex_core.cancel_rate_guard; zephyr.compliance.compliance_report_registry; zephyr.compliance.manipulation_realtime_monitor(TYPE_CHECKING 预接线)
+# [DEPENDENCIES] zephyr.trading.trading_contracts.broker_interface; zephyr.ex_core.cancel_rate_guard; zephyr.compliance.compliance_report_registry; zephyr.compliance.manipulation_realtime_monitor(TYPE_CHECKING 预接线); zephyr.shared.contracts.enums.order_enums; zephyr.shared.contracts.fill; zephyr.shared.contracts.order; zephyr.shared.foundation.errors
 # [CONSUMERS] zephyr.compliance.manipulation_realtime_monitor(订单事件/fill 回调消费+is_frozen 闸抛转)
 # [STARTUP] imported
 # [MATURITY] production

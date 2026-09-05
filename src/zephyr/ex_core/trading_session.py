@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.trading_session
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.ex_core.order_manager; zephyr.ex_core.cancel_rate_guard; zephyr.ex_core.risk_layer_orchestrator; zephyr.ex_core.board_lot; zephyr.trading.trading_contracts.broker_interface; zephyr.governance.strategies.strategy_base; zephyr.governance.adapters.risk_validation_bridge; zephyr.shared.contracts.order; zephyr.shared.contracts.position; zephyr.shared.contracts.risk_limits; zephyr.shared.contracts.fill; zephyr.compliance.discipline_must_do_checker; zephyr.compliance.discipline_prohibition_checker; zephyr.compliance.trading_compliance_detector
+# [DEPENDENCIES] zephyr.ex_core.order_manager; zephyr.ex_core.cancel_rate_guard; zephyr.ex_core.risk_layer_orchestrator; zephyr.ex_core.board_lot; zephyr.trading.trading_contracts.broker_interface; zephyr.governance.strategies.strategy_base; zephyr.governance.adapters.risk_validation_bridge; zephyr.shared.contracts.order; zephyr.shared.contracts.position; zephyr.shared.contracts.risk_limits; zephyr.shared.contracts.fill; zephyr.compliance.discipline_must_do_checker; zephyr.compliance.discipline_prohibition_checker; zephyr.compliance.trading_compliance_detector; zephyr.shared.contracts.enums.order_enums
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -280,6 +280,10 @@ class TradingSession:
         if self._running:
             _logger.warning("TradingSession already running")
             return
+        # 订单层熔断当日计数与 session 内存态同生命周期：start 时重置
+        # （原依赖"每个交易日开始手动调用 reset_daily_circuit_breaker"的君子协定
+        # 全仓零生产接线，跨日残留计数会误触发全账户 50 笔/日熔断——2.4A 信号③治本）
+        self.reset_daily_circuit_breaker()
         self._broker.connect()
         self._broker.register_fill_callback(self._on_fill)
         if self._risk_layer is not None:

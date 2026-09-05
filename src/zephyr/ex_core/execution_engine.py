@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.execution_engine
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.ex_core.order_manager; zephyr.governance.adapters.risk_validation_bridge; zephyr.trading.trading_contracts.execution.order; zephyr.ex_sor.core.algo_trading_engine; zephyr.ex_sor.core.market_context_provider; zephyr.shared.contracts.enums.order_enums
-# [CONSUMERS]
+# [DEPENDENCIES] zephyr.ex_core.order_manager; zephyr.governance.adapters.risk_validation_bridge; zephyr.ex_sor.core.algo_trading_engine; zephyr.ex_sor.core.market_context_provider; zephyr.shared.contracts.enums.order_enums; zephyr.shared.contracts.order; zephyr.shared.contracts.risk_limits
+# [CONSUMERS] ex_core.execution_report; tests/ex_core/test_execution_engine_unit.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none
@@ -138,7 +138,7 @@ class ExecutionConfig:
     twap_window_minutes: int = 30
     twap_slices: int = 10
     max_slippage_bps: Decimal = Decimal("5")
-    participation_rate: float = 0.10
+    participation_rate: float = 0.05  # §10.1 硬上限 5%（默认即合规；_build_algo_params 仍有钳制兜底）
     min_order_qty: Decimal = Decimal("100")
     round_lot: int = 100
 
@@ -382,7 +382,7 @@ class ExecutionEngine:
     def _build_algo_params(self, sor_algo_type: object) -> object:
         """从 ExecutionConfig 构造 AlgoParams (懒加载 ex_sor 类型)。
 
-        - participation_rate 钳制到 §10.1 上限 5% (config 默认 0.10 超限)
+        - participation_rate 钳制到 §10.1 上限 5% (config 默认 0.05 已合规, 钳制兜底显式传入超限值)
         - ICEBERG 用 min_order_qty 作为 display_quantity (AlgoParams 强制要求)
         """
         from zephyr.ex_sor.core.algo_trading_engine import (

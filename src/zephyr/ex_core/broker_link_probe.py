@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L06-002 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.broker_link_probe
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] stdlib
+# [DEPENDENCIES] stdlib; zephyr.shared.foundation.errors
 # [CONSUMERS] 55_monitoring_review §3.2 系统健康总览看板; 调用方(健康巡检事件驱动)
 # [STARTUP] imported
 # [MATURITY] evolving
