@@ -181,6 +181,7 @@ python scripts/lock_files.py status
 **通过判据**：AI_review 12 节全部 PASS / 已知 GAP 已记录在 design_memo 或 ARCH 条目
 **不通过处置**：发现 GAP → 回讨论备忘补齐施工算法/接口签名/状态机 → 重新审查（禁止边审边改，按"先报告→再修复→再自检"分轮处理）
 **产出物**：审查结论（对话内）+ GAP 清单（如需回补则登记在 design_memo 或新建 ARCH 条目）
+**交易决策地图逐层讨论任务加读**（2026-09-05 v1.5.5）：地图血肉填充的每层讨论（板块层/个股层/买卖点层/持仓流/离场流/组合流/币圈）MUST 先过 [trading_decision_map_layering_sop.md](trading_decision_map_layering_sop.md) 四道前置检查（①已有资产盘点五选一处置 ②四路外部调研 ③上层完整性检查 ④枝干分级检查）——检查通过后的落盘与提交回归本 SOP Step 2-12 标准施工闭环。防撞车/防越级/防枝末先行（事故案例：情绪六段 vs 已有情绪周期五态词汇撞车）。
 
 ---
 
@@ -800,6 +801,7 @@ python scripts/session_worktree.py cleanup <sid>
 | 2026-09-04 | 1.5.2 | Step 3.5 升级"后端盘点与拆件判定"——拆件 SOP 正式接入总流程 | Owner 追问"拆件判定在哪一步"发现两 SOP 断链：Step 0 必看清单+Step 3.5 补 frontend_component_split_sop.md 引用；新增执行要点 4 拆件判定（盘点先行供输入——拆件第一判据=数据源边界；有得拆→拆件 8 步闭环，没得拆→直接施工）；Checklist 13 同步 |
 | 2026-09-04 | 1.5.3 | Step 3 正文"五图"→"六图"（frontend_map 已建未入正文）+ Step 3.5 补前端一查 | Owner 追问发现 frontend_map.yaml 已建（2026-09-01）但 Step 3 正文仍是五图对齐——正文与 Checklist"六图通过"自相矛盾；Step 3 标题/定义/对齐 key/通过判据/处置全量六图化（frontend_map=git YAML 真源+feature_id 对齐 key+人工核对，自动门禁待建）；Step 3.5 三查扩"三查+前端一查"（frontend_map 查重：同功能点已存在=复用/扩展，禁重复造轮子） |
 | 2026-09-04 | 1.5.4 | Step 3 frontend_map 校验器落地——人工核对升级脚本校验 | Owner 裁定双真源合并+补登专项：check_frontend_map.py 落地（R0 重复/R1 类型化/R2 manifest 双向/R3 file 存在，auto 条目宽严分级）；frontend_map v2.0.0 唯一真源+302 功能点/44 页（详见 alignment_checklist v1.2.0）；Step 3 命令块同步 |
+| 2026-09-05 | 1.5.5 | Step 1 新增"交易决策地图逐层讨论任务加读" | Owner 指令（情绪六段撞车事故后）：地图血肉填充每层讨论 MUST 先过 trading_decision_map_layering_sop.md 四道前置检查（已有资产盘点/四路调研/上层完整性/枝干分级），检查通过回归本 SOP 标准闭环——两 SOP 上下游衔接（讨论层闸→施工层闭环） |
 | 2026-09-05 | 1.5.5 | **"全图全库对齐"简称裁定（#ARCH-ALIGN-NAMING-001）+ Step 3 七图化**：计数无关命名（五图→六图→七图三次改名腐化史）；Step 3 定义表新增图 7 trading_decision_map（TDM-node_id 轴+DECISION-MAP gate 138）；配合 alignment_checklist v1.3.0 | Owner 2026-09-05 裁定；七图对齐 exit 0 实证 |
 
 ## 附录 A：长清单审查全文（用户提供的 12 节审查清单）
