@@ -11,7 +11,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 打包失败返回None
-# [TESTS] tests/audit-orchestrator/test_evidence_pack.py
+# [TESTS] tests/governance/audit/test_evidence_pack.py (经 zephyr.gov_audit.evidence_pack re-export 覆盖真源)
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """

@@ -11,7 +11,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 校验失败返回pass=False
-# [TESTS] tests/audit-orchestrator/test_integrity.py
+# [TESTS] tests/governance/audit/test_integrity_root.py (覆盖 IntegrityVerifier 真源链路，本文件惰性转引经其回归)
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """

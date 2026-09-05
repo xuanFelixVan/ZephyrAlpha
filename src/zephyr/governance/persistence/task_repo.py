@@ -515,6 +515,14 @@ SQL_SELECT_TASKS_ACTIVE_COUNT_BY_BATCH_GROUPED = """SELECT status, COUNT(*) AS c
                    FROM tasks
                    WHERE batch_id = :batch_id AND is_deleted = 0
                    GROUP BY status"""
+SQL_SELECT_DISTINCT_BATCH_IDS_BY_STATUS = (
+    "SELECT DISTINCT batch_id FROM tasks"
+    " WHERE status = ? AND batch_id IS NOT NULL AND batch_id != '' AND is_deleted = 0"
+)
+SQL_SELECT_TASK_BATCH_IDS_BY_STATUS = (
+    "SELECT task_id, batch_id FROM tasks"
+    " WHERE status = ? AND batch_id IS NOT NULL AND batch_id != '' AND is_deleted = 0"
+)
 SQL_SELECT_TASKS_BY_ID_3 = "SELECT task_id FROM tasks WHERE task_id=?"
 
 __all__ = [
@@ -3522,6 +3530,31 @@ class TaskRepository:
                 result[s] = r["cnt"]
             result["TOTAL"] += r["cnt"]
         return result
+
+    def get_distinct_batch_ids(self, status: TaskStatus | str) -> list[str]:
+        """返回指定状态的活跃（未软删）任务中非空 batch_id 的去重列表。
+
+        batch_id 是 tasks 表内部列（_row_to_taskcard 会剥离，TaskCard 不承载），
+        批量编排类读取方（Conductor.plan_cycle 回收超时认领前枚举 IN_PROGRESS 批次）
+        需经此公开 API 读取，禁止再走 ``repo._conn.execute`` 旁路 SQL（AI-06 接线收敛）。
+        NULL 与空串 batch_id（无批次任务）不入返回值。
+        """
+        if isinstance(status, str):
+            status = TaskStatus(status)
+        cursor = self._conn.execute(SQL_SELECT_DISTINCT_BATCH_IDS_BY_STATUS, (status.value,))
+        return [r["batch_id"] for r in cursor.fetchall()]
+
+    def get_task_batch_ids(self, status: TaskStatus | str) -> dict[str, str]:
+        """返回指定状态的活跃（未软删）任务的 {task_id: batch_id} 映射。
+
+        仅含 batch_id 非空的任务；无批次任务不在映射中，调用方自行提供默认哨兵值
+        （AutoPilot.scan 按 batch_id 分组 READY 任务 / status_report 展示批次列）。
+        公开替代 ``repo._conn.execute`` 旁路 SQL（AI-06 接线收敛）。
+        """
+        if isinstance(status, str):
+            status = TaskStatus(status)
+        cursor = self._conn.execute(SQL_SELECT_TASK_BATCH_IDS_BY_STATUS, (status.value,))
+        return {r["task_id"]: r["batch_id"] for r in cursor.fetchall()}
 
     # ------------------------------------------------------------------
     # 自动拆分（GOV-TASK-001 §6.5）
