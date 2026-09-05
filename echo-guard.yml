@@ -344,3 +344,35 @@ acknowledged:
     verdict: dismissed
     stable_key: "src\\zephyr\\autonomy_core\\context\\context_outcome_tracker.py:links||src\\zephyr\\governance\\intelligence_governance\\provider_failover.py:healthy"
     note: "2026-08-31 ai-19596：琐碎访问器/单例模板存量雷同（links vs healthy），合并且抽象=过度设计，dismissed 解 S4 批量提交阻塞"
+  - id: "src\\zephyr\\frontend\\services\\dashboard_feeds.py:_throttle_gear:00000000||src\\zephyr\\gov_code_quality\\code_dedup\\extraction_safety.py:_classify_verdict:00000000"
+    verdict: dismissed
+    stable_key: "src\\zephyr\\frontend\\services\\dashboard_feeds.py:_throttle_gear||src\\zephyr\\gov_code_quality\\code_dedup\\extraction_safety.py:_classify_verdict"
+    note: "2026-09-05 ai-audit00：存量克隆（审计 merge 全文件扫描发现，非本次引入），跨域 dedup 专项待 Owner（#ARCH-FORCE-MERGE-DEDUP-001 后续），dismissed 解审计 merge 阻塞"
+  - id: "src\\zephyr\\frontend\\services\\dashboard_feeds.py:_throttle_gear:00000000||src\\zephyr\\gov_code_quality\\code_dedup\\health_monitor.py:_classify_dimension:00000000"
+    verdict: dismissed
+    stable_key: "src\\zephyr\\frontend\\services\\dashboard_feeds.py:_throttle_gear||src\\zephyr\\gov_code_quality\\code_dedup\\health_monitor.py:_classify_dimension"
+    note: "2026-09-05 ai-audit00：存量克隆（审计 merge 全文件扫描发现，非本次引入），跨域 dedup 专项待 Owner（#ARCH-FORCE-MERGE-DEDUP-001 后续），dismissed 解审计 merge 阻塞"
+  - id: "src\\zephyr\\pf_core\\core\\exposure_manager.py:_require_finite:00000000||src\\zephyr\\pf_core\\core\\funnel_portfolio_adjudicator.py:_require_finite:00000000"
+    verdict: dismissed
+    stable_key: "src\\zephyr\\pf_core\\core\\exposure_manager.py:_require_finite||src\\zephyr\\pf_core\\core\\funnel_portfolio_adjudicator.py:_require_finite"
+    note: "2026-09-05 ai-audit00：存量克隆（_require_finite 卫语句模板 3+ 副本，审计 merge 扫描发现非本次引入），dedup 专项待 Owner，dismissed 解审计 merge 阻塞"
+  - id: "src\\zephyr\\pf_core\\core\\exposure_manager.py:_require_finite:00000000||src\\zephyr\\pf_core\\core\\strategy_capacity_estimator.py:_require_finite:00000000"
+    verdict: dismissed
+    stable_key: "src\\zephyr\\pf_core\\core\\exposure_manager.py:_require_finite||src\\zephyr\\pf_core\\core\\strategy_capacity_estimator.py:_require_finite"
+    note: "2026-09-05 ai-audit00：存量克隆（_require_finite 卫语句模板，非本次引入），dedup 专项待 Owner，dismissed 解审计 merge 阻塞"
+  - id: "src\\zephyr\\pf_core\\core\\exposure_manager.py:_require_finite:00000000||src\\zephyr\\pf_core\\core\\strategy_factory.py:_require_finite:00000000"
+    verdict: dismissed
+    stable_key: "src\\zephyr\\pf_core\\core\\exposure_manager.py:_require_finite||src\\zephyr\\pf_core\\core\\strategy_factory.py:_require_finite"
+    note: "2026-09-05 ai-audit00：存量克隆（_require_finite 卫语句模板，非本次引入），dedup 专项待 Owner，dismissed 解审计 merge 阻塞"
+  - id: "src\\zephyr\\pf_core\\core\\exposure_manager.py:_require_finite:00000000||src\\zephyr\\risk\\core\\factor_exposure_manager.py:_require_finite:00000000"
+    verdict: dismissed
+    stable_key: "src\\zephyr\\pf_core\\core\\exposure_manager.py:_require_finite||src\\zephyr\\risk\\core\\factor_exposure_manager.py:_require_finite"
+    note: "2026-09-05 ai-audit00：存量克隆（_require_finite 卫语句模板跨域，非本次引入），dedup 专项待 Owner，dismissed 解审计 merge 阻塞"
+  - id: "src\\zephyr\\pf_core\\core\\exposure_manager.py:_require_finite:00000000||src\\zephyr\\risk\\core\\systemic_risk_alert_state_machine.py:_require_finite:00000000"
+    verdict: dismissed
+    stable_key: "src\\zephyr\\pf_core\\core\\exposure_manager.py:_require_finite||src\\zephyr\\risk\\core\\systemic_risk_alert_state_machine.py:_require_finite"
+    note: "2026-09-05 ai-audit00：存量克隆（_require_finite 卫语句模板跨域，非本次引入），dedup 专项待 Owner，dismissed 解审计 merge 阻塞"
+  - id: "src\\zephyr\\pf_core\\core\\exposure_manager.py:_require_finite:00000000||src\\zephyr\\risk\\manipulation_avoidance_detector.py:_finite:00000000"
+    verdict: dismissed
+    stable_key: "src\\zephyr\\pf_core\\core\\exposure_manager.py:_require_finite||src\\zephyr\\risk\\manipulation_avoidance_detector.py:_finite"
+    note: "2026-09-05 ai-audit00：存量克隆（_require_finite/_finite 卫语句模板跨域，非本次引入），dedup 专项待 Owner，dismissed 解审计 merge 阻塞"

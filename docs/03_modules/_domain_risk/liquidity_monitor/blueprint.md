@@ -98,11 +98,12 @@ is_illiquid = (amihud_illiq > amihud_threshold) OR (volume_shrinkage_ratio < vol
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 8.1 源码文件
+### 8.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `tests/risk/core/test_liquidity_monitor.py` | ✅ 已实现 | |
+| `tests/risk/core/test_orchestrator_liquidity_integration.py` | ✅ 已实现 | |
 
 ### 8.5 路径索引使用指南
 
@@ -118,4 +119,29 @@ is_illiquid = (amihud_illiq > amihud_threshold) OR (volume_shrinkage_ratio < vol
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
 
+### §0.6 五图对齐视图
 
+<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
+
+> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
+> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-RK-048`
+
+#### 全景位置
+
+| 图 | 位置 | 状态 | 链接 |
+|----|------|------|------|
+| 依赖图 (depgraph) | `blueprint_id=MOD-RK-048` 的 3 个 file 节点 | production | `extract_depgraph.py --modules MOD-RK-048` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
+| 蓝图 (blueprint) | 本文件 | Draft | — |
+
+#### 四核心字段
+
+| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
+|------|-------------------|--------------------------|:-------:|
+| module_id | MOD-RK-048 | MOD-RK-048 | ✅ |
+| domain_id | N/A | N/A | ✅ |
+| build_status | production | production | ✅ |
+| file_count | 3 文件 | N/A | — |
+
+> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
