@@ -2,7 +2,7 @@
 # [MODULE] zephyr.factor.technical_indicators.volume
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] zephyr.factor.technical_indicators.indicator_base; pandas(pip); numpy(pip)
-# [CONSUMERS] zephyr.data.implementations.internal_compute_provider; sleeve alpha 择时
+# [CONSUMERS] zephyr.data.implementations.internal_compute_provider（包级 autodiscover 动态接线：internal_compute_provider L545/L1113 延迟导入本包+注册表消费）; sleeve alpha 择时
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 成交量类指标 7 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出

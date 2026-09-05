@@ -2,7 +2,7 @@
 # [MODULE] zephyr.signal_ashare.conditional_density_predictor
 # [DOMAIN] D_ASHARE_SIGNAL
 # [DEPENDENCIES] numpy
-# [CONSUMERS] zephyr.signal_ashare.fine_scoring_engine（密度要素摘要）; zephyr.signal_ashare.conformal_predictor（PDF 分位数输入）
+# [CONSUMERS] zephyr.signal_ashare.fine_scoring_engine（密度要素摘要，消费实证）; zephyr.signal_ashare.conformal_predictor（PDF 分位数输入）（经 2026-09-05 AI-08 审计实证未接线——接线待排期）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 分位数网格单调不减；VaR/CVaR 为负值口径（亏损为负）；条件桶样本不足 → 回退全样本 degraded=True；仅用传入历史序列无未来函数

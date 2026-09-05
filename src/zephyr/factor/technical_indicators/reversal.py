@@ -2,7 +2,7 @@
 # [MODULE] zephyr.factor.technical_indicators.reversal
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] zephyr.factor.technical_indicators.indicator_base; zephyr.factor.technical_indicators.trend; zephyr.factor.technical_indicators.momentum; zephyr.factor.technical_indicators.volatility; pandas(pip); numpy(pip)
-# [CONSUMERS] zephyr.data.implementations.internal_compute_provider; sleeve alpha 择时
+# [CONSUMERS] zephyr.data.implementations.internal_compute_provider（包级 autodiscover 动态接线：internal_compute_provider L545/L1113 延迟导入本包+注册表消费）; sleeve alpha 择时
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 反转类指标 5 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出（信号列 0/1/-1）

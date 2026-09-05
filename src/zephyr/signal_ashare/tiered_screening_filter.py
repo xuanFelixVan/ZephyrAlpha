@@ -2,7 +2,7 @@
 # [MODULE] zephyr.signal_ashare.tiered_screening_filter
 # [DOMAIN] D_ASHARE_SIGNAL
 # [DEPENDENCIES] zephyr.signal_ashare.selection_funnel_skeleton（MOD-SIG-086 共享骨架）
-# [CONSUMERS] zephyr.signal_ashare.coarse_screening_funnel; zephyr.signal_ashare.screening_funnel_report
+# [CONSUMERS] zephyr.signal_ashare.coarse_screening_funnel（经 2026-09-05 AI-08 审计实证未接线——接线待排期）; zephyr.signal_ashare.screening_funnel_report（消费实证）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 只排除不评分；kept ∩ excluded = ∅；降级路径仅做物理排除；纯函数无副作用

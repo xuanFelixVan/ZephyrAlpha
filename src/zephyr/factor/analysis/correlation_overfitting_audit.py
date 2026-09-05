@@ -2,7 +2,7 @@
 # [MODULE] zephyr.factor.analysis.correlation_overfitting_audit
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] numpy(仅slope); DSR由调用方经 zephyr.simulation.deflated_sharpe_calculator 预算后传入(解耦跨域依赖)
-# [CONSUMERS] G07 策略相关性验证报告（过拟合检测矩阵）
+# [CONSUMERS] zephyr.pf_core.strategy_correlation_pipeline（import 消费方，2026-09-05 AI-08 审计补头）；G07 策略相关性验证报告（历史首批语义消费方，过拟合检测矩阵）
 # [STARTUP] imported
 # [MATURITY] testing
 # [INVARIANTS] 纯函数无IO; 任一硬指标fail即LIKELY_OVERFIT(保守); 外部deflated-alpha vendor不引入

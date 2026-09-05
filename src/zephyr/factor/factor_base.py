@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L02-001 | docs/03_modules/_domain_factor/blueprint.md
 # [MODULE] zephyr.factor.factor_base
 # [DOMAIN] D_FACTOR
-# [DEPENDENCIES] zephyr.shared.contracts.errors.factor_computation_error
+# [DEPENDENCIES] zephyr.shared.contracts.errors.factor_computation_error（CTR-ERR-002 契约锚点，本文件无 import——由因子实现层抛出）
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production

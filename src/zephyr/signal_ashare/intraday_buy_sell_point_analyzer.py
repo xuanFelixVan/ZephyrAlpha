@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-SIG-024 | docs/03_modules/_domain_signal/blueprint.md
 # [MODULE] zephyr.signal_ashare.intraday_buy_sell_point_analyzer
 # [DOMAIN] D_ASHARE_SIGNAL
-# [DEPENDENCIES] zephyr.signal_ashare.institutional_behavior_analyzer; zephyr.signal_ashare.capital_flow_pattern_analyzer
+# [DEPENDENCIES] zephyr.signal_ashare.institutional_behavior_analyzer; zephyr.signal_ashare.capital_flow_pattern_analyzer（D-SIGNAL-22 数据字段级消费，无 import 依赖）
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.signal_ashare.sector_analyzer
 # [DOMAIN] D_ASHARE_SIGNAL
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.signal_ashare.quant_short_term_strength_engine
+# [CONSUMERS] zephyr.signal_ashare.quant_short_term_strength_engine（经 2026-09-05 AI-08 审计实证未接线——接线待排期）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] strength_score in [0, 100]; all sub-scores in [0, 100]

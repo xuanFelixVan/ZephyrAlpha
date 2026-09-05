@@ -2,7 +2,7 @@
 # [MODULE] zephyr.signal_ashare.market_breadth_history_store
 # [DOMAIN] D_ASHARE_SIGNAL
 # [DEPENDENCIES] zephyr.data.table_registry（表名解析，market_breadth_snapshot 未登记时 fallback 硬编码）; zephyr.data.ch_reader（默认 CH 读取通道）; pandas/numpy
-# [CONSUMERS] zephyr.signal_ashare.similar_day_inference（history_store 生产注入）
+# [CONSUMERS] zephyr.signal_ashare.similar_day_inference（history_store 生产注入）（经 2026-09-05 AI-08 审计实证未接线——接线待排期）
 # [STARTUP] imported
 # [MATURITY] testing
 # [INVARIANTS] 只读 market_breadth_snapshot（及 index_price 等价列）；fail-open（CH 异常/无数据 → 空列表）；30 时点重采样网格（09:30→15:00，含午休连续时钟轴）；HistoryRecord 适配 similar_day_inference 输入契约

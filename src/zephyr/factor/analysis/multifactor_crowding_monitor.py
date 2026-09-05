@@ -2,7 +2,7 @@
 # [MODULE] zephyr.factor.analysis.multifactor_crowding_monitor
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] pandas; numpy
-# [CONSUMERS] multifactor_decay_lifecycle(CUSUM联动); multifactor_pit_backtest
+# [CONSUMERS] （暂无 import 消费方；原声明 multifactor_decay_lifecycle/multifactor_pit_backtest 经 2026-09-05 AI-08 审计全仓 grep 实证 0 引用——退役候选待 Owner 裁定）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] INV-004: PIT铁律——三代理仅用决策日及之前数据; 与IC衰减正交可同时触发

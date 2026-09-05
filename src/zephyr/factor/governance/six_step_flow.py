@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L02-016 | docs/03_modules/_domain_factor/blueprint.md | §D-FACTOR-GOV-04
 # [MODULE] zephyr.factor.governance.six_step_flow
 # [DOMAIN] D_FACTOR
-# [DEPENDENCIES] zephyr.factor.governance.lifecycle_state_machine; zephyr.factor.governance.abs001_gate; zephyr.factor.governance.grayscale_rollout
+# [DEPENDENCIES] zephyr.factor.governance.lifecycle_state_machine; zephyr.factor.governance.abs001_gate; zephyr.factor.governance.grayscale_rollout（灰度阶段语义关联，无 import——接线由治理引擎编排）
 # [CONSUMERS] zephyr.factor.governance.engine
 # [STARTUP] imported
 # [MATURITY] production

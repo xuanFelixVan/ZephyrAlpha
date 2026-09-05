@@ -2,7 +2,7 @@
 # [MODULE] zephyr.factor.governance.factor_pool_manager
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] zephyr.factor.governance
-# [CONSUMERS] zephyr.factor.governance.engine
+# [CONSUMERS] zephyr.factor.governance.engine（经 2026-09-05 AI-08 审计实证未接线——接线待排期）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 活跃池不超active_capacity; 核心因子不参与末位淘汰; 全池不超n_max

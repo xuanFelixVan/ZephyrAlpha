@@ -2,7 +2,7 @@
 # [MODULE] zephyr.factor.analysis.correlation_block_bootstrap
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] numpy; pandas
-# [CONSUMERS] G07 策略相关性验证报告（施工前一次性）
+# [CONSUMERS] zephyr.pf_core.strategy_correlation_pipeline（import 消费方，2026-09-05 AI-08 审计补头）；G07 策略相关性验证报告（历史首批语义消费方，施工前一次性）
 # [STARTUP] imported
 # [MATURITY] testing
 # [INVARIANTS] 纯函数无IO; 多元同步行重采样(同一时间block对所有策略); 块长几何分布环绕索引; 禁止各列独立重采样(破坏同期相关)

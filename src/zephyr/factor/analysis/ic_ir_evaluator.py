@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L02-003 | docs/03_modules/_domain_factor/blueprint.md | §D-FACTOR-ANA-02
 # [MODULE] zephyr.factor.analysis.ic_ir_evaluator
 # [DOMAIN] D_FACTOR
-# [DEPENDENCIES] zephyr.factor.core.evaluation.backtest; zephyr.factor.core.evaluation.metrics
+# [DEPENDENCIES] zephyr.factor.core.evaluation.backtest（metrics 半经 2026-09-05 AI-08 审计实证未 import，死依赖半已删）
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production

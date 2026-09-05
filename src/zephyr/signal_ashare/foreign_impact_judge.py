@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-SIG-038 | docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/90_methodology_open_questions.md §22.3（supplement：GAP-F-24 通道映射规则层，CAND-RSK-021 语义）
 # [MODULE] zephyr.signal_ashare.foreign_impact_judge
 # [DOMAIN] D_ASHARE_SIGNAL
-# [DEPENDENCIES] zephyr.data.foreign_market_coverage（FOREIGN_WATCHLIST/覆盖门控消费，MOD-DAT-foreign_coverage）; c1_market.us_index（只读，三大美股指数日频变动）
+# [DEPENDENCIES] zephyr.data.foreign_market_coverage（FOREIGN_WATCHLIST/覆盖门控消费，MOD-DAT-foreign_coverage；ForeignCoverageReport 鸭型契约无 import，见 L191）; c1_market.us_index（只读，三大美股指数日频变动）
 # [CONSUMERS] （候选：外盘页 12 迷你卡对A股利好/利空标签 + 6 通道整体分析表 + 综合判定）
 # [STARTUP] imported
 # [MATURITY] testing

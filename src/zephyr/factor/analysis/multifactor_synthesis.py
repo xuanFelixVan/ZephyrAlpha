@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L02-011 | docs/03_modules/_domain_factor/blueprint.md | §D-FACTOR-ANA-10
 # [MODULE] zephyr.factor.analysis.multifactor_synthesis
 # [DOMAIN] D_FACTOR
-# [DEPENDENCIES] zephyr.factor.analysis.ic_ir_calc
+# [DEPENDENCIES] 无 zephyr import（原声明 ic_ir_calc 经 2026-09-05 AI-08 审计实证未 import，死依赖声明已删）
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production

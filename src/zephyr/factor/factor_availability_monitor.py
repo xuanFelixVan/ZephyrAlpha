@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L02-001 | docs/03_modules/_domain_factor/blueprint.md
 # [MODULE] zephyr.factor.factor_availability_monitor
 # [DOMAIN] D_FACTOR
-# [DEPENDENCIES] pandas; zephyr.factor.factor_base(FactorRegistry); zephyr.shared.contracts.factor_signal(CTR-002); zephyr.shared.alerts.alert_manager(惰性,告警路由); zephyr.signal_quality.degradation_monitor_base(D_SIGQC降级语义)
+# [DEPENDENCIES] pandas; zephyr.factor.factor_base(FactorRegistry); zephyr.shared.contracts.factor_signal(CTR-002); zephyr.shared.alerts.alert_manager(惰性,告警路由); zephyr.signal_quality.degradation_monitor_base(D_SIGQC降级语义对齐，无 import)
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production

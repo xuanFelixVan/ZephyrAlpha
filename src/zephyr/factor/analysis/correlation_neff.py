@@ -2,7 +2,7 @@
 # [MODULE] zephyr.factor.analysis.correlation_neff
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] numpy; pandas
-# [CONSUMERS] G07 策略相关性验证报告（组合层有效下注数）
+# [CONSUMERS] zephyr.pf_core.strategy_correlation_pipeline（import 消费方，2026-09-05 AI-08 审计补头）；G07 策略相关性验证报告（历史首批语义消费方，组合层有效下注数）
 # [STARTUP] imported
 # [MATURITY] testing
 # [INVARIANTS] 纯函数无IO; 收缩矩阵对称半正定; alpha∈[0,1]; Neff=(Σλ)²/Σλ²∈[1,N]

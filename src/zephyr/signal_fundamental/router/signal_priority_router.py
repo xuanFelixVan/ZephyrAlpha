@@ -2,7 +2,7 @@
 # [MODULE] zephyr.signal_fundamental.router.signal_priority_router
 # [DOMAIN] D_FUNDAMENTAL_SIGNAL
 # [DEPENDENCIES] none
-# [CONSUMERS] zephyr.signal_fundamental.router.signal_conflict_resolver
+# [CONSUMERS] zephyr.signal_fundamental.router.signal_conflict_resolver（经 2026-09-05 AI-08 审计实证未接线——接线待排期）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 排序确定性（同分按 created_seq 升序 FIFO）；风险类恒先于机会类（同置信度口径）；纯函数无副作用

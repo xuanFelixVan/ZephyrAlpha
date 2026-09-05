@@ -2,7 +2,7 @@
 # [MODULE] zephyr.factor.analysis.multifactor_tradability_mask
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] pandas; numpy
-# [CONSUMERS] ic_ir_calc/multifactor_synthesis(IC计算前置门控)
+# [CONSUMERS] （暂无 import 消费方；原声明 ic_ir_calc/multifactor_synthesis IC计算前置门控经 2026-09-05 AI-08 审计全仓 grep 实证 0 引用——接线待排期）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] INV-004: PIT铁律——mask仅用t日及之前可观测状态(停牌/涨跌停/成交额); 仅在可交易池内计算IC

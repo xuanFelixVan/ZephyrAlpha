@@ -2,7 +2,7 @@
 # [MODULE] zephyr.factor.core.ctr001_consumer.converter
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] zephyr.shared.contracts.market_data
-# [CONSUMERS] zephyr.factor.factor_base
+# [CONSUMERS] zephyr.factor.factor_base（契约级消费 CTR-001 数据形态，无 import 依赖——经 2026-09-05 AI-08 审计实证）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] INV-004: PIT铁律——仅使用timestamp做截面对齐，禁止使用ingested_at(可能引入未来函数)

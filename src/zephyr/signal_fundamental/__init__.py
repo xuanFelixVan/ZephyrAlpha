@@ -23,7 +23,7 @@ Signal域统一包。聚合信号生成、策略、合成、组合、资本配�
   synth/     — 信号合成 (SignalSynthesizerBase)
   combiner/  — 信号合成组合器 (SynthesizedSignal)
   capital/   — 多策略资本配置 (CapitalAllocationResult, DefaultCapitalAllocator)
-  pipeline/  — Alpha信号管线 (AlphaSignalPipeline)
+  pipeline.py — Alpha信号管线 (AlphaSignalPipeline)
 
 # [ALGO_FLOW]
 # 层: 输入

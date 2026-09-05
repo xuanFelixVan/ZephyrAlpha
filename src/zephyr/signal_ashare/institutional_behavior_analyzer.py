@@ -2,7 +2,7 @@
 # [MODULE] zephyr.signal_ashare.institutional_behavior_analyzer
 # [DOMAIN] D_ASHARE_SIGNAL
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.signal_ashare.short_term_stock_selector
+# [CONSUMERS] zephyr.signal_ashare.short_term_stock_selector（D-SIGNAL-22 数据字段级消费，消费方 [DEPENDENCIES] 互认，无 import 依赖）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 6阶段状态机不可跳跃(建仓→洗盘→试盘→再洗盘→拉升→出货); 降级路径必须有日志
