@@ -83,6 +83,7 @@ related_modules:
 |---|---|---|
 | Step 0 Session 冷启动 | trae_056 phase_0 / trae_048 | 不重复，引用 |
 | Step 1 文档审查 | AI_review_instructions | 不重复，引用 |
+| Step 1 前置·地图逐层讨论闸（涉地图任务） | trading_decision_map_layering_sop | 不重复，引用（四道前置检查：已有资产盘点/四路调研/上层完整性/枝干分级） |
 | Step 1.5 创建前搜索 | trae_056 phase_1 / trae_002 | 不重复，引用 |
 | Step 1.8 架构评审门控 | trae_036 gov_arch_002 | 不重复，引用 |
 | Step 2 全景图登记 | trae_080 / trae_056 phase_2 / trae_032 | 不重复，引用 |
@@ -124,6 +125,7 @@ python scripts/ide_health_service.py --start
 # - 本 SOP（construction_workflow_sop.md）
 # - alignment_checklist.md（全项目对齐清单——六图+注册表+代码文档三层对齐规则，新 AI 必知）
 # - 涉前端施工加读：docs/03_modules/_domain_frontend/frontend_handbook/（避坑事实库）+ trae_086_frontend_module_construction.yaml（拆件铁律）+ sop/frontend_component_split_sop.md（拆件操作闭环——Step 3.5 判定"有得拆"时的施工路径真源）
+# - 交易决策地图逐层讨论/血肉填充任务加读：sop/trading_decision_map_layering_sop.md（防撞车·防越级·防枝末先行——六步流程+层位状态表，每层讨论 MUST 先过四道前置检查：已有资产盘点五选一处置/四路外部调研/上层完整性/枝干分级）
 
 # 3. Session Continuity 恢复
 python scripts/lock_files.py status
@@ -801,7 +803,7 @@ python scripts/session_worktree.py cleanup <sid>
 | 2026-09-04 | 1.5.2 | Step 3.5 升级"后端盘点与拆件判定"——拆件 SOP 正式接入总流程 | Owner 追问"拆件判定在哪一步"发现两 SOP 断链：Step 0 必看清单+Step 3.5 补 frontend_component_split_sop.md 引用；新增执行要点 4 拆件判定（盘点先行供输入——拆件第一判据=数据源边界；有得拆→拆件 8 步闭环，没得拆→直接施工）；Checklist 13 同步 |
 | 2026-09-04 | 1.5.3 | Step 3 正文"五图"→"六图"（frontend_map 已建未入正文）+ Step 3.5 补前端一查 | Owner 追问发现 frontend_map.yaml 已建（2026-09-01）但 Step 3 正文仍是五图对齐——正文与 Checklist"六图通过"自相矛盾；Step 3 标题/定义/对齐 key/通过判据/处置全量六图化（frontend_map=git YAML 真源+feature_id 对齐 key+人工核对，自动门禁待建）；Step 3.5 三查扩"三查+前端一查"（frontend_map 查重：同功能点已存在=复用/扩展，禁重复造轮子） |
 | 2026-09-04 | 1.5.4 | Step 3 frontend_map 校验器落地——人工核对升级脚本校验 | Owner 裁定双真源合并+补登专项：check_frontend_map.py 落地（R0 重复/R1 类型化/R2 manifest 双向/R3 file 存在，auto 条目宽严分级）；frontend_map v2.0.0 唯一真源+302 功能点/44 页（详见 alignment_checklist v1.2.0）；Step 3 命令块同步 |
-| 2026-09-05 | 1.5.5 | Step 1 新增"交易决策地图逐层讨论任务加读" | Owner 指令（情绪六段撞车事故后）：地图血肉填充每层讨论 MUST 先过 trading_decision_map_layering_sop.md 四道前置检查（已有资产盘点/四路调研/上层完整性/枝干分级），检查通过回归本 SOP 标准闭环——两 SOP 上下游衔接（讨论层闸→施工层闭环） |
+| 2026-09-05 | 1.5.5 | Step 1 新增"交易决策地图逐层讨论任务加读"+Step 0 必读清单/§2.3 关系矩阵同步挂接（三挂接点） | Owner 指令（情绪六段撞车事故后）：地图血肉填充每层讨论 MUST 先过 trading_decision_map_layering_sop.md 四道前置检查（已有资产盘点/四路调研/上层完整性/枝干分级），检查通过回归本 SOP 标准闭环——两 SOP 上下游衔接（讨论层闸→施工层闭环） |
 | 2026-09-05 | 1.5.5 | **"全图全库对齐"简称裁定（#ARCH-ALIGN-NAMING-001）+ Step 3 七图化**：计数无关命名（五图→六图→七图三次改名腐化史）；Step 3 定义表新增图 7 trading_decision_map（TDM-node_id 轴+DECISION-MAP gate 138）；配合 alignment_checklist v1.3.0 | Owner 2026-09-05 裁定；七图对齐 exit 0 实证 |
 
 ## 附录 A：长清单审查全文（用户提供的 12 节审查清单）
