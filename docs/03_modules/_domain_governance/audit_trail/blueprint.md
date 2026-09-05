@@ -4,7 +4,7 @@ submodule_path: src/zephyr/gov_audit
 title: "Audit Trail 蓝图 — 不可变动作审计与密码学完整性保证"
 doc_type: blueprint
 status: Active
-version: "2.1.7"
+version: "2.1.8"
 generation: 9
 layer: L0_infrastructure
 layer_name: infrastructure
@@ -63,7 +63,7 @@ design_maturity: production
 build_status: generated
 ---
 
-> module_id: MOD-INF-020 | version: 2.1.7 | status: active | domain: infra_ops
+> module_id: MOD-INF-020 | version: 2.1.8 | status: active | domain: infra_ops
 > actual_disk_path: src/zephyr/audit-trail/ (352 .py files) | generation: 9 | construction_progress: partially_implemented
 
 # Audit Trail 蓝图 — 不可变动作审计与密码学完整性保证
@@ -112,17 +112,17 @@ build_status: generated
 | 11 | `trust_engine.py` | §3 蓝图特有 | 渐进信任引擎 | 已实现 | — |
 | 12 | `delegation_auditor.py` | §3 蓝图特有 | 委托链审计器 | 已实现 | — |
 | 13 | `evidence_pack.py` | §3 蓝图特有 | 监管证据包导出 | 已实现 | — |
-| 14 | `compliance_map.py` | §3 蓝图特有 | 合规框架映射 | 已迁移→semantic_auditor | 重复 |
-| 15 | `supply_chain.py` | §3 蓝图特有 | 供应链审计 | 已迁移→semantic_auditor | 重复 |
-| 16 | `privacy.py` | §3 蓝图特有 | 隐私脱敏 | 已实现 | — |
+| 14 | `compliance_map.py` | §3 蓝图特有 | 合规框架映射 | 已实现（唯一实现真源；semantic_audit 侧为 re-export shim，AI-AUDIT12 收敛） | — |
+| 15 | `supply_chain.py` | §3 蓝图特有 | 供应链审计 | 已实现（唯一实现真源；semantic_audit 无副本，原"已迁移"叙事系笔误，AI-AUDIT12 勘误） | — |
+| 16 | `privacy.py` | §3 蓝图特有 | 隐私脱敏 | 已实现（唯一实现真源；semantic_audit 侧为 re-export shim，AI-AUDIT12 收敛） | — |
 | 17 | `retention.py` | §3 蓝图特有 | 保留期执行 | 已实现 | — |
-| 18 | `cold_start.py` | §3 蓝图特有 | Cold Start 历史回溯 | 已实现 | — |
+| 18 | `cold_start.py` | §3 蓝图特有 | Cold Start 历史回溯 | 已退役（2026-09-05 AI-AUDIT12 僵尸 salvage：全仓 grep 零真实消费方实证，仅存本包惰性登记自引；按 2.4A 流程解除登记+删除） | — |
 | 19 | `genesis.py` | §3 蓝图特有 | Genesis 信任锚初始化 | 已实现 | — |
 | 20 | `replay_engine.py` | §3 蓝图特有 | 确定性重放引擎 | 已实现 | — |
 | 21 | `external_tool_audit.py` | §3 蓝图特有 | 外部工具调用链审计 | 已实现 | — |
-| 22 | `kb_gate.py` | §3 蓝图特有 | KB 投毒防护门禁 | 已迁移→semantic_auditor | 重复 |
+| 22 | `kb_gate.py` | §3 蓝图特有 | KB 投毒防护门禁 | 已实现（唯一实现真源；semantic_audit 侧为 re-export shim，AI-AUDIT12 收敛） | — |
 | 23 | `feedback_policy.py` | §3 蓝图特有 | 三角闭环反馈 | 已实现 | — |
-| 24 | `feedback_self_audit.py` | §3 蓝图特有 | 反馈自指循环检测 | 已实现 | — |
+| 24 | `feedback_self_audit.py` | §3 蓝图特有 | 反馈自指循环检测 | 已实现（唯一实现真源；semantic_audit 侧为 re-export shim，AI-AUDIT12 收敛） | — |
 | 25 | `feedback_bridge.py` | §12 | 反馈桥接 | 已实现 | — |
 | 26 | `drift_bridge.py` | §12 | 漂移桥接 | 已实现 | — |
 | 27 | `delegation_bridge.py` | §12 | 委托桥接 | 已实现 | — |
@@ -1712,7 +1712,6 @@ class LamportClockV2:
 | `src/zephyr/gov_audit/bridges/audit_anomaly.py` | ✅ 已实现 | |
 | `src/zephyr/gov_audit/bridges/audit_contracts.py` | ✅ 已实现 | |
 | `src/zephyr/gov_audit/bridges/audit_drift_bridge.py` | ✅ 已实现 | |
-| `src/zephyr/gov_audit/cold_start.py` | ✅ 已实现 | |
 | `src/zephyr/gov_audit/delegation_bridge.py` | ✅ 已实现 | |
 | `src/zephyr/gov_audit/finding_ingest.py` | ✅ 已实现 | |
 | `src/zephyr/gov_audit/finding_model.py` | ✅ 已实现 | |

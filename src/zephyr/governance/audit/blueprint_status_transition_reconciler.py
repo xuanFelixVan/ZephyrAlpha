@@ -24,7 +24,7 @@
 
 # [ERROR_CONTRACT] reconcile 永不抛异常——git/正则/DB 异常降级为 ReconcileResult(action="warn")
 
-# [TESTS] tests/governance/audit/test_blueprint_status_transition_reconciler.py
+# [TESTS] none
 
 # [A_module] module_id=MOD-GOV_BLUEPRINT_STATUS_TRANSITION_RECONCILER | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable  # noqa: blueprint-amodule-cross-check [BLUEPRINT]==[A_module] same module
 

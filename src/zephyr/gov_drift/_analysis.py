@@ -9,7 +9,7 @@
 #   ai_construction_detectors/self_test_verifier/cross_module_score/git_bisector
 # 完整模块清单见 __init__.py 顶部"模块地图"
 # ============================================================================
-# [BLUEPRINT] MOD-INF-011 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
+# [BLUEPRINT] MOD-INF-011 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md
 # [MODULE] zephyr.gov_drift._analysis
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.gov_drift.correlation_engine; zephyr.gov_drift.credibility_engine; zephyr.gov_drift.cross_module_score; zephyr.gov_drift.forensics_engine; zephyr.gov_drift.git_bisector; zephyr.gov_drift.reconciler; zephyr.gov_drift.roi_engine; zephyr.gov_drift.rollback_bridge; zephyr.gov_drift.runbook_generator; zephyr.gov_drift.self_check; zephyr.gov_drift.suppression_learner; zephyr.gov_drift.tamper_proof_audit; zephyr.gov_drift.trend_analyzer; zephyr.gov_drift.chaos_injector; zephyr.gov_drift.backcompat_checker; zephyr.gov_drift.ai_construction_detectors
@@ -22,7 +22,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
-# [TESTS] tests/test_behavioral_auditor_imports.py
+# [TESTS] none
 # [A_module] module_id=MOD-INF-011 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """

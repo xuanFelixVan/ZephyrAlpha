@@ -11,7 +11,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 重放失败返回mismatch
-# [TESTS] tests/audit-orchestrator/test_replay_engine.py
+# [TESTS] tests/governance/audit/test_replay_engine.py
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """

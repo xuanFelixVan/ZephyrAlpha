@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 监控失败返回空指标
-# [TESTS] tests/audit-orchestrator/test_self_monitor.py
+# [TESTS] tests/self_check/test_self_monitor.py
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """

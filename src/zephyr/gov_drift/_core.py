@@ -9,7 +9,7 @@
 #   performance_baseline/regime_detector/drift_engine/drift_models
 # 完整模块清单见 __init__.py 顶部"模块地图"
 # ============================================================================
-# [BLUEPRINT] MOD-INF-011 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
+# [BLUEPRINT] MOD-INF-011 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md
 # [MODULE] zephyr.gov_drift._core
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.gov_drift.drift_engine; zephyr.gov_drift.drift_models; zephyr.gov_drift.events; zephyr.gov_drift.state_machine; zephyr.gov_drift.detector_dispatcher
@@ -22,7 +22,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
-# [TESTS] tests/test_behavioral_auditor_imports.py
+# [TESTS] none
 # [A_module] module_id=MOD-INF-011 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # ARCH-034 P3: ConfigConflict canonical 真源为 config_consistency（drift_models 存根已删除）

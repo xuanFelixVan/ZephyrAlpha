@@ -1,235 +1,66 @@
-# [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md
+# [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic_auditor/blueprint.md | §0.1
 # [MODULE] zephyr.governance.semantic_audit.kb_gate
 # [DOMAIN] D_GOV_AUDIT
-# [DEPENDENCIES] zephyr.gov_audit.models
-# [CONSUMERS] 见蓝图 §4 接口契约
+# [DEPENDENCIES] zephyr.gov_audit.kb_gate
+# [CONSUMERS] zephyr.gov_audit.cli; zephyr.governance.semantic_audit.__init__(lazy re-export)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 蓝图 §4 文件清单与代码双向对齐
-# [MODIFY-GUARD] semantic-auditor/blueprint.md; semantic-auditor/__init__.py __all__
+# [INVARIANTS] re-export shim; canonical implementation at zephyr.gov_audit.kb_gate (MOD-INF-020); no own logic
+# [MODIFY-GUARD] semantic_auditor/blueprint.md; semantic_auditor/__init__.py __all__
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] SemanticAuditError
-# [TESTS] tests/semantic-auditor/
+# [ERROR_CONTRACT] ImportError if gov_audit.kb_gate unavailable
+# [TESTS] tests/semantic_auditor/test_semantic_auditor.py
 # [A_module] module_id=MOD-INF-028 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-
 """
-[BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md
+kb_gate — re-export shim for zephyr.gov_audit.kb_gate (MOD-INF-020 canonical).
 
-audit-trail.kb_gate — MOD-INF-020 · KB 审计门控
-
-=================================================
-
-蓝图 D-020-28 · KB 投毒检测 + 写入来源验证
-
-特性
-
-----
-
-  - KB 投毒检测: 检测知识库写入中的投毒尝试
-
-  - 写入来源验证: 验证 KB 写入操作的来源可信度
-
-  - 异常模式识别: 识别可疑的 KB 修改模式
+治本（AI-AUDIT12 双真源收敛，2026-09-05）：本文件与 zephyr.gov_audit/kb_gate.py
+自 587b569942 起为同一功能的逐字双份承载（KB 投毒检测+写入来源验证），违反真源唯一。
+收敛裁定：gov_audit 版（MOD-INF-020 audit_trail 蓝图）为唯一实现真源（其符号面为
+超集且拥有全部外部消费方）；本文件降级为 re-export shim，与 red_blue_validator、
+governance/audit-trail/contracts.py 既有 shim 范式一致。蓝图 §0.1 本行标注
+"挂靠自 MOD-INF-020"，本收敛使物理事实与蓝图声明一致。
 
 # [ALGO_FLOW]
 # 层: 输入
 # - id: I1
-#   name: min_trust_score 参数
-#   fields: 参数 min_trust_score（无注解）
-#   code: kb_gate.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: max_writes_per_hour 参数
-#   fields: 参数 max_writes_per_hour（无注解）
-#   code: kb_gate.py 顶层公共函数形参（AST 提取）
+#   name: gov_audit.kb_gate 公共符号
+#   fields: KBAuditGate/KBWriteCheckResult/PoisoningScanResult
+#   code: zephyr.gov_audit.kb_gate
 # 层: 算法
 # - id: A1
-#   name_zh: ① KBAuditGate
-#   name_en: KBAuditGate
-#   intro: class KBAuditGate 源码 L118-L235
-#   desc: 公共方法（定义序）: check_write, scan_for_poisoning；源码 L118-L235
-#   inputs: min_trust_score max_writes_per_hour
-#   outputs: 返回值
-#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+#   name_zh: ① 符号转发
+#   name_en: re-export
+#   intro: 原样转发 3 个公共符号，保证本模块导入路径兼容
+#   desc: 单条 from-import + __all__，无自有逻辑
+#   inputs: I1
+#   outputs: 3 个公共符号
+#   invariant: re-export shim，不包含任何自有实现
 # 层: 输出
 # - id: O1
-#   name_zh: 模块公共 API 面（3 定义）
-#   name_en: public defs
-#   intro: KBAuditGate
-#   downstream: 见蓝图 §4 接口契约
+#   name_zh: KB 审计门控公共符号
+#   name_en: public symbols
+#   downstream: zephyr.gov_audit.cli; zephyr.governance.semantic_audit.__init__
 # [/ALGO_FLOW]
 #
 # 边:
 # I1 --> A1
-# I2 --> A1
 # A1 --> O1
 """
 
-from __future__ import annotations
+from zephyr.gov_audit.kb_gate import (  # noqa: F401
+    KBAuditGate,
+    KBWriteCheckResult,
+    POISONING_INDICATORS,
+    PoisoningScanResult,
+)
 
-import hashlib
-import logging
-import re
-from datetime import UTC, datetime
-from typing import Any
-
-from pydantic import BaseModel, ConfigDict, Field
-
-from zephyr.governance.rule_patterns import POISONING_INDICATORS  # SSoT (ARCH-033 Phase 7 修正: 合并进 rule_patterns)
-
-_logger = logging.getLogger(__name__)
-
-
-# _POISONING_INDICATORS 已迁移到 zephyr.governance.rule_patterns（ARCH-033 Phase 7 修正: 合并进 rule_patterns）
-
-
-class KBWriteCheckResult(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    allowed: bool = True
-
-    agent_id: str = ""
-
-    trust_score: float = 0.0
-
-    reasons: list[str] = Field(default_factory=list)
-
-    risk_score: float = 0.0
-
-    checked_at: str = ""
-
-
-class PoisoningScanResult(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    is_poisoned: bool = False
-
-    indicators_found: list[str] = Field(default_factory=list)
-
-    risk_score: float = 0.0
-
-    content_hash: str = ""
-
-    scanned_at: str = ""
-
-
-class KBAuditGate:
-    def __init__(
-        self,
-        min_trust_score: float = 0.3,
-        max_writes_per_hour: int = 50,
-    ) -> None:
-        self._min_trust_score = min_trust_score
-
-        self._max_writes_per_hour = max_writes_per_hour
-
-        self._write_timestamps: dict[str, list[str]] = {}
-
-    def check_write(
-        self,
-        agent_id: str,
-        content: str,
-        trust_score: float = 0.5,
-        metadata: dict[str, Any] | None = None,
-    ) -> KBWriteCheckResult:
-        reasons: list[str] = []
-
-        risk_score = 0.0
-
-        if trust_score < self._min_trust_score:
-            reasons.append(f"Trust score {trust_score:.2f} below minimum {self._min_trust_score:.2f}")
-
-            risk_score += 0.4
-
-        recent_writes = self._count_recent_writes(agent_id)
-
-        if recent_writes >= self._max_writes_per_hour:
-            reasons.append(f"Write rate {recent_writes}/hr exceeds limit {self._max_writes_per_hour}/hr")
-
-            risk_score += 0.3
-
-        poisoning_scan = self.scan_for_poisoning(content)
-
-        if poisoning_scan.is_poisoned:
-            reasons.append(f"Poisoning indicators detected: {', '.join(poisoning_scan.indicators_found)}")
-
-            risk_score += 0.5
-
-        if metadata and metadata.get("source") == "external_untrusted":
-            reasons.append("Write from untrusted external source")
-
-            risk_score += 0.2
-
-        allowed = len(reasons) == 0 and risk_score < 0.5
-
-        now = datetime.now(UTC).isoformat()
-
-        if allowed:
-            self._record_write(agent_id, now)
-
-        result = KBWriteCheckResult(
-            allowed=allowed,
-            agent_id=agent_id,
-            trust_score=trust_score,
-            reasons=reasons,
-            risk_score=round(min(1.0, risk_score), 4),
-            checked_at=now,
-        )
-
-        if not allowed:
-            _logger.warning("KBAuditGate: write blocked for %s: %s", agent_id, reasons)
-
-        return result
-
-    def scan_for_poisoning(self, content: str) -> PoisoningScanResult:
-        indicators: list[str] = []
-
-        for pattern in POISONING_INDICATORS:
-            matches = pattern.findall(content)
-
-            if matches:
-                indicators.append(pattern.pattern[:80])
-
-        content_hash = hashlib.sha256(content.encode("utf-8")).hexdigest()
-
-        risk_score = min(1.0, len(indicators) * 0.3)
-
-        return PoisoningScanResult(
-            is_poisoned=len(indicators) > 0,
-            indicators_found=indicators,
-            risk_score=round(risk_score, 4),
-            content_hash=content_hash,
-            scanned_at=datetime.now(UTC).isoformat(),
-        )
-
-    def _count_recent_writes(self, agent_id: str) -> int:
-        now = datetime.now(UTC)
-
-        timestamps = self._write_timestamps.get(agent_id, [])
-
-        recent = []
-
-        for ts in timestamps:
-            try:
-                dt = datetime.fromisoformat(ts)
-
-                if dt.tzinfo is None:
-                    dt = dt.replace(tzinfo=UTC)
-
-                if (now - dt).total_seconds() < 3600:
-                    recent.append(ts)
-
-            except (ValueError, TypeError):
-                continue
-
-        self._write_timestamps[agent_id] = recent
-
-        return len(recent)
-
-    def _record_write(self, agent_id: str, timestamp: str) -> None:
-        if agent_id not in self._write_timestamps:
-            self._write_timestamps[agent_id] = []
-
-        self._write_timestamps[agent_id].append(timestamp)
+__all__ = [
+    "KBAuditGate",
+    "KBWriteCheckResult",
+    "POISONING_INDICATORS",
+    "PoisoningScanResult",
+]

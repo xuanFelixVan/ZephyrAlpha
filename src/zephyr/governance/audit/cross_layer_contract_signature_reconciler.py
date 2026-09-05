@@ -24,7 +24,7 @@
 
 # [ERROR_CONTRACT] reconcile 永不抛异常——git/AST/DB 异常降级为 ReconcileResult(action="warn")
 
-# [TESTS] tests/governance/audit/test_cross_layer_contract_signature_reconciler.py
+# [TESTS] none
 
 # [A_module] module_id=MOD-GOV_CROSS_LAYER_CONTRACT_SIGNATURE_RECONCILER | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable  # noqa: blueprint-amodule-cross-check [BLUEPRINT]==[A_module] same module
 

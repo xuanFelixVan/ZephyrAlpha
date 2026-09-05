@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] RuntimeError on submit after shutdown; PoolStats always returns current snapshot
-# [TESTS] tests/audit-orchestrator/
+# [TESTS] none
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

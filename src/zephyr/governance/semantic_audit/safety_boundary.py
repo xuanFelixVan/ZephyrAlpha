@@ -11,7 +11,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 配置加载失败时默认 HOLD 所有 TriggerResult
-# [TESTS] tests/semantic-auditor/test_safety_boundary.py
+# [TESTS] none
 # [A_module] module_id=MOD-INF-028 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

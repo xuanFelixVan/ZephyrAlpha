@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 蓝图不存在时返回空 AlignmentReport（aligned=0, zombie=0, orphan=0）
-# [TESTS] tests/semantic-auditor/test_alignment_engine.py
+# [TESTS] none
 # [A_module] module_id=MOD-INF-028 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

@@ -11,7 +11,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 写入失败抛IOError
-# [TESTS] tests/audit-orchestrator/test_writer.py
+# [TESTS] tests/governance/audit/test_writer.py
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
@@ -330,8 +330,16 @@ class AuditWriter:
                         eh = entry.get("entry_hash")
                         if eh:
                             last_hash = eh
-                    except json.JSONDecodeError:
-                        pass
+                    except json.JSONDecodeError as exc:
+                        # 治本（AI-AUDIT12 3.5⑥ 错误处理一致性）：跳过坏行不静默——
+                        # 审计日志出现不可解析行本身是完整性信号，必须留痕告警
+                        # （verify_chain 侧会复检并报告；此处仅为链恢复可观测性）。
+                        logger.warning(
+                            "AuditWriter._load_state: skipping unparseable line #%d in %s: %s",
+                            count,
+                            self._event_log_path,
+                            exc,
+                        )
             self.event_count = count
             self._last_hash = last_hash
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch

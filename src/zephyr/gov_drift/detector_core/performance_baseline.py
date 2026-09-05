@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain-governance/drift-detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.detector_core.performance_baseline
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
@@ -6,12 +6,12 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] Git-native漂移检测;自动对账;漂移预算
-# [MODIFY-GUARD] docs/03_modules/_domain-governance/drift-detector/blueprint.md;src/zephyr/behavioral-auditor/__init__.py
+# [MODIFY-GUARD] docs/03_modules/_domain_governance/drift_detector/blueprint.md;src/zephyr/governance/drift-detector/__init__.py
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DriftError;BaselineError
-# [TESTS] tests/test_behavioral_auditor/
+# [TESTS] tests/audit/
 # [A_module] module_id=MOD-INF-023 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

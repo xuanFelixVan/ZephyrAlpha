@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] git 异常/超时/非零 rc 降级为 None（fail-open 不阻断调用方 reconciler）
-# [TESTS] tests/governance/audit/test_git_helpers.py
+# [TESTS] none
 # [A_module] module_id=MOD-GOV_GIT_HELPERS | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """

@@ -11,7 +11,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 桥接失败返回空事件列表
-# [TESTS] tests/audit-orchestrator/test_delegation_bridge.py
+# [TESTS] tests/governance/audit/test_delegation_bridge.py
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

@@ -24,7 +24,7 @@
 
 # [ERROR_CONTRACT] 桥接失败返回None或空结果
 
-# [TESTS] tests/audit-orchestrator/test_bridge.py
+# [TESTS] tests/governance/audit/test_bridge.py
 
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
