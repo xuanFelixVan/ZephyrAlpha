@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md
 # [MODULE] zephyr.integration.mcp.governance_server
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.integration.mcp._base_server; zephyr.shared.contracts.identity.agent_identity; zephyr.security.access_control.guards.permission_guard; zephyr.shared.contracts.skill_protocol; zephyr.gov_audit.writer; zephyr.infrastructure.__init__; zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.integration.mcp._base_server; zephyr.shared.contracts.identity.agent_identity; zephyr.security.access_control.guards.permission_guard; zephyr.shared.contracts.skill_protocol; zephyr.gov_audit.writer; zephyr.infrastructure.__init__; zephyr.governance.__init__; zephyr.gov_drift.cold_start; zephyr.gov_drift.drift_engine; zephyr.gov_drift.drift_infrastructure; zephyr.gov_drift.drift_models; zephyr.shared.infra.process_pool; zephyr.shared.io.paths; zephyr.shared.utils.async_utils
 # [CONSUMERS] zephyr.integration.mcp.gateway_server; zephyr.integration.mcp.__init__
 # [STARTUP] manual
 # [MATURITY] production

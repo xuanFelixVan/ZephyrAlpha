@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md
 # [MODULE] zephyr.autonomy_core.context.checkpoint_manager
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES] zephyr.autonomy_core.__init__
+# [DEPENDENCIES] zephyr.autonomy_core.__init__; zephyr.shared.io.serialization
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.foundation.errors
 # [CONSUMERS] MOD-INF-035(capability_card 规则集宿点) ; MOD-SEC-EVENTBUS(DENY 安全事件)
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] check 纯内存无IO同输入必同输出; 黑名单恒优先于白名单; 未登记agent fail-closed DENY; DENY经event_sink写安全事件且sink异常不阻断; 规则集frozen
 # [MODIFY-GUARD] docs/03_modules/_domain_autonomy_core/per_agent_gate/blueprint.md
 # [STABILITY] evolving

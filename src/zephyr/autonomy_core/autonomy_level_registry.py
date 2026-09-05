@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.foundation.errors
 # [CONSUMERS] MOD-AU-001(autonomy_boundary_gate 运行时按级别拦截) ; MOD-AU-002(kill_switch_orchestrator 越级熔断信号)
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] check_action 纯内存无IO同输入必同输出; 区上限不可被声明抬升(human_gated→L2/immutable_core→L0); 未登记角色 fail-closed 按 L0 兜底; immutable_core 越级 execute 必产 kill_switch_triggered 信号
 # [MODIFY-GUARD] docs/03_modules/_domain_autonomy_core/autonomy_level_registry/blueprint.md
 # [STABILITY] evolving

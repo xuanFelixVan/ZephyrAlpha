@@ -4,7 +4,7 @@
 # [DEPENDENCIES] pyyaml ; zephyr.autonomy_core.agents._run_store ; zephyr.autonomy_core.agents._g04_ops_check（§4-S1.3 薄委派，懒加载）
 # [CONSUMERS] tests/autonomy/test_execution_layer_agent_entries.py ; tests/autonomy/test_business_g04_ops_check.py ; 人手动触发（CLI）
 # [STARTUP] manual
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 纯组装薄入口（注册表只读，真源=62号文 18 业务注册表）；产出 100% 落盘且标"仅建议"+human_gated；零交易执行路径——本模块不 import 任何下单/执行域包（zephyr.ex_core/ex_sor/trading），测试断言此不变量；S1.3 g04_strategy_ops_check=20号文三策略注册表+组件在位核对（仅建议语义）
 # [MODIFY-GUARD] Owner approval required; 变更须同步 14号文 §4 S0.3/S1.3 验收口径
 # [STABILITY] evolving

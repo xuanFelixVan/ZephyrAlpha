@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md | §
 # [MODULE] zephyr.integration.mcp.task_manager_server
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.shared.blueprint_decomposer; zephyr.shared.models; zephyr.gov_enforcement.rule_enforcement.task_types; zephyr.shared.schema.severity_types; zephyr.shared.schema.schemas; zephyr.governance.architecture_governance.path_resolver
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_enforcement.task_types; zephyr.shared.schema.severity_types; zephyr.shared.schema.schemas; zephyr.governance.architecture_governance.path_resolver; zephyr.shared.blueprint_tools.blueprint_decomposer; zephyr.shared.foundation.models; zephyr.shared.io.paths; zephyr.shared.utils.time_utils
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production

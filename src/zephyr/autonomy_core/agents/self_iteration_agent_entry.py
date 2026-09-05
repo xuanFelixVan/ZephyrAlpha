@@ -4,7 +4,7 @@
 # [DEPENDENCIES] stdlib ; zephyr.autonomy_core.agents._run_store ; zephyr.autonomy_core.agents._s11_wiring（§4-S1.1 反思接线薄委派，懒加载）
 # [CONSUMERS] tests/autonomy/test_execution_layer_agent_entries.py ; tests/autonomy/test_execution_layer_s11_wiring.py ; 人手动触发（CLI）
 # [STARTUP] manual
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 只读形态：仅消费落盘证据（读白名单=.runtime/logs/docs 内文件），不写 src/ 不写注册表；零代码自改路径（不 import 执行/编辑链模块，测试断言此不变量）；建议工单 100% human_gated 标记（Phase 2 前一律人审）；S1.1 reflection_review=12号文频率闸门先行（拒则 denied 留痕不反思），放行才走三角色/L1 反思
 # [MODIFY-GUARD] Owner approval required; 变更须同步 14号文 §4 S0.5/S1.1 验收口径
 # [STABILITY] evolving

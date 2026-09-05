@@ -4,7 +4,7 @@
 # [DEPENDENCIES] 无仓内硬依赖（嵌入模型经 EmbeddingProvider 协议注入，禁真调模型）
 # [CONSUMERS] tests/autonomy_core/test_drift_semantic_reviewer.py；外部跑批编排（日/周频调度）
 # [STARTUP] event_driven
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 嵌入模型仅经注入接口调用（本模块永不自调真实模型/网络/GPU）; 复核产出=报告人审（status=pending_human_review，不自动处置）; 跑批避开交易时段与 GPU 高峰（约束二，由外部编排保证）; 错误消息禁含 session_id
 # [MODIFY-GUARD] Owner approval required; 阈值口径变更须同步 15号文 §4.2 S1.3 与 Q2 关联记录
 # [STABILITY] evolving

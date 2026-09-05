@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-051 | 待统筹登记（10号文 §4 Phase 0/1.1 + 18号清单 §5 波2 E1 裁定 llm_runtime_gateway MVP）
 # [MODULE] zephyr.integration.llm_runtime_gateway
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.integration.local_model.deepseek_chat; zephyr.integration.local_model.ollama_chat; zephyr.integration.local_model.lsg_gate; zephyr.shared.foundation.constants; zephyr.shared.io.paths(DB_PATH SSoT); zephyr.shared.io.sqlite_factory(get_db_connection); zephyr.shared.security.secrets(get_required_secret); zephyr.governance.ops_governance.budget_engine(pre_flight_check); zephyr.governance.ops_governance.budget_models(GateResult/GateDecision/BudgetLevel/ModelTier); zephyr.governance.intelligence_governance.model_router(ModelRouter perf-aware)
+# [DEPENDENCIES] zephyr.integration.local_model.deepseek_chat; zephyr.integration.local_model.ollama_chat; zephyr.integration.local_model.lsg_gate; zephyr.shared.io.paths(DB_PATH SSoT); zephyr.shared.io.sqlite_factory(get_db_connection); zephyr.shared.security.secrets(get_required_secret); zephyr.governance.ops_governance.budget_engine(pre_flight_check); zephyr.governance.ops_governance.budget_models(GateResult/GateDecision/BudgetLevel/ModelTier); zephyr.governance.intelligence_governance.model_router(ModelRouter perf-aware)
 # [CONSUMERS] 波5 统筹接线（44号 M3-⑨ MOD-PLAN-007 客户端注入）
 # [STARTUP] imported
 # [MATURITY] production

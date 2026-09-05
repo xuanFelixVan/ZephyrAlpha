@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-042 | docs/03_modules/_domain_integration/blueprint.md | §3.1
 # [MODULE] zephyr.integration.local_model.ollama_chat
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.governance.__init__; zephyr.integration.local_model.lsg_gate
+# [DEPENDENCIES] zephyr.governance.__init__; zephyr.integration.local_model.lsg_gate; zephyr.shared.foundation.constants
 # [CONSUMERS] auto_runtime_core.py; local_model_scheduler.py; vector_memory_server.py
 # [STARTUP] imported
 # [MATURITY] production

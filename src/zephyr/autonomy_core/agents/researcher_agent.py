@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.foundation.errors
 # [CONSUMERS] 运行时装配批（C-027 工厂实验产出接入 / C-003 回测门禁指标装配 / 人工门禁链 / 报告入库持久化）
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] evaluate/draft_report 纯函数无IO; 假设/指标/配置非法 Fail-Closed; 报告永远 requires_human_gate=True; 门禁触发仅 ACCEPT 且经 human_gate_trigger 回调（不直接入库）; 回调/sink 异常不阻断判定; 评估与门禁信号双审计记录
 # [MODIFY-GUARD] docs/03_modules/_domain_autonomy_core/researcher_agent/blueprint.md
 # [STABILITY] evolving

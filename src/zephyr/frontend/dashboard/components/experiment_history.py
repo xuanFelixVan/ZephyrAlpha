@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain_frontend/blueprint.md
 # [MODULE] zephyr.frontend.dashboard.components.experiment_history
 # [DOMAIN] D_FRONTEND
-# [DEPENDENCIES] panel ; plotly ; pandas ; zephyr.experiment_tracking.query ; zephyr.frontend.dashboard.components.backtest_performance(调色板常量)
+# [DEPENDENCIES] panel; plotly; pandas; zephyr.experiment_tracking.query; zephyr.frontend.dashboard.components.backtest_performance(调色板常量); zephyr.experiment_tracking.config; zephyr.experiment_tracking.models
 # [CONSUMERS] zephyr.frontend.dashboard.app_panel
 # [STARTUP] imported
 # [MATURITY] production
@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] fetch/render 失败→空状态 payload（alert 文案），不抛
-# [TESTS] tests/frontend/dashboard/components/test_experiment_history.py
+# [TESTS] tests/experiment_tracking/test_experiment_history.py
 # [A_module] module_id=MOD-L08-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-OBS-EXP-TRACK-001

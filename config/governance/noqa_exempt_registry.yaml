@@ -381,5 +381,25 @@ exemptions:
     line: 220  # 行号自 L207 漂移更新（2026-09-05 AI-AUDIT02-001 复检跟进）
     category: arch_concept
     reason: 'Windows API 常量 PROCESS_QUERY_LIMITED_INFORMATION，非阈值变量'
+  - file: src/zephyr/frontend/dashboard/components/alert_center.py
+    line: 55
+    category: no_vocab_source
+    reason: '告警生命周期状态为告警域本地常量（无 alert-status 词表；status_vocabulary 为文档状态域）'
+  - file: src/zephyr/autonomy_core/module_factory/knowledge_classifier.py
+    line: 86
+    category: business_subset
+    reason: '类集合真源=62号文S2/S3裁定，本常量为运行时镜像；pydantic Literal 静态校验必须静态定义'
+  - file: src/zephyr/autonomy_core/module_factory/knowledge_classifier.py
+    line: 98
+    category: business_subset
+    reason: '类集合真源=62号文S2/S3裁定，本常量为运行时镜像；pydantic Literal 静态校验必须静态定义'
+  - file: src/zephyr/autonomy_core/module_factory/knowledge_classifier.py
+    line: 106
+    category: business_subset
+    reason: '类集合真源=62号文S2/S3裁定，本常量为运行时镜像；pydantic Literal 静态校验必须静态定义'
+  - file: src/zephyr/autonomy_core/agents/_g04_ops_check.py
+    line: 83
+    category: business_subset
+    reason: '业务子集=20号文首批三策略核对范围，非词表全集校验'
 
-# Statistics: total=82, by_category={'business_subset': 43, 'arch_concept': 9, 'threshold_var': 15, 'no_vocab_source': 14, 'test_fixture': 1}
+# Statistics: total=87, by_category={'business_subset': 47, 'arch_concept': 9, 'threshold_var': 15, 'no_vocab_source': 15, 'test_fixture': 1}

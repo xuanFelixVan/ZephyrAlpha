@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.foundation.errors
 # [CONSUMERS] 运行时装配批（决策流接入 / 风控执行闸阻断执行体 / D_GOV_AUDIT 决策溯源落账）
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] meter/admit 判定纯函数无IO; 决策记录与阈值非法 Fail-Closed; 非AI决策恒 ALLOW; AI占比严格大于 max_ai_share 且样本达标才 BLOCK_NEW_AI; 阻断仅产 block_trigger 信号（执行委托风控/执行闸，本模块不直接阻断下单）; 回调/sink 异常不阻断判定; 计量快照与阻断信号双审计记录
 # [MODIFY-GUARD] docs/03_modules/_domain_autonomy_core/non_ai_boundary_guard/blueprint.md
 # [STABILITY] evolving

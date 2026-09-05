@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-052 | docs/03_modules/_domain_integration/lsg_gate/blueprint.md | §
 # [MODULE] zephyr.integration.local_model.lsg_gate
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.security.llm_defense.llm_security.gateway; zephyr.shared.contracts.security.security_decision; zephyr.shared.utils.async_utils
+# [DEPENDENCIES] zephyr.security.llm_defense.llm_security.gateway; zephyr.shared.contracts.security.security_decision; zephyr.shared.utils.async_utils; zephyr.security.llm_defense.llm_security.layers.l6_observability
 # [CONSUMERS] ollama_chat.py; deepseek_chat.py; local_model_scheduler.py; embedding_router.py; tests.model.test_local_model_lsg_gate
 # [STARTUP] imported
 # [MATURITY] production

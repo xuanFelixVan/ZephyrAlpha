@@ -1,10 +1,10 @@
 # [BLUEPRINT] MOD-EXE-ALGO-001 | docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/14_execution_layer.md | §3.3/§4-S0.4/§4-S1.1
 # [MODULE] zephyr.autonomy_core.agents.algorithm_agent_entry
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES] zephyr.autonomy_core.agents._run_store ; zephyr.experiment_tracking.query ; zephyr.trading.gpu_monitor ; zephyr.autonomy_core.agents._s11_wiring（§4-S1.1 可选接线，懒加载）
+# [DEPENDENCIES] zephyr.autonomy_core.agents._run_store; zephyr.experiment_tracking.query; zephyr.trading.gpu_monitor; zephyr.autonomy_core.agents._s11_wiring（§4-S1.1 可选接线，懒加载）; zephyr.experiment_tracking.config
 # [CONSUMERS] tests/autonomy/test_execution_layer_agent_entries.py ; tests/autonomy/test_execution_layer_s11_wiring.py ; 人手动触发（CLI）
 # [STARTUP] manual
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 实验登记先于执行（无 pending 登记片段不进入执行步，steps 顺序留痕）；单卡显存占用 >=90% 拒启动算法任务（约束二硬上限）；Phase 0 不新起训练/评估进程，执行步只读既有实验记录；不写注册表本体（REG-EXP-001 登记交统筹）；S1.1 注入缝（cascade_router/module_mapper）默认 None 零行为变化
 # [MODIFY-GUARD] Owner approval required; 变更须同步 14号文 §4 S0.4/S1.1 验收口径
 # [STABILITY] evolving

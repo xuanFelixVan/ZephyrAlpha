@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.autonomy_core.autonomy_boundary_gate ; zephyr.autonomy_core.agents._run_store
 # [CONSUMERS] tests/autonomy/test_execution_layer_agent_entries.py ; 人手动触发（CLI）
 # [STARTUP] manual
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 纯组装薄入口（零新业务逻辑：gate 判定复用 MOD-AU-001）；产出 100% 落盘 .runtime/agent_runs/governance/ 且标 human_gated；不修改规则本体（规则修订走治理流程 human_gated）
 # [MODIFY-GUARD] Owner approval required; 变更须同步 14号文 §4 S0.2 验收口径
 # [STABILITY] evolving

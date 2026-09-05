@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain_frontend/blueprint.md
 # [MODULE] zephyr.frontend.dashboard.app
 # [DOMAIN] D_FRONTEND
-# [DEPENDENCIES] zephyr.frontend.dashboard.components; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.governance.persistence.sqlite_schema
+# [DEPENDENCIES] zephyr.frontend.dashboard.components
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production

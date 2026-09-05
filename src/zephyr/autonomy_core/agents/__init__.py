@@ -4,7 +4,7 @@
 # [DEPENDENCIES] stdlib
 # [CONSUMERS] tests/autonomy/test_execution_layer_agent_entries.py
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 包级零 eager 子模块加载；四类入口均为手动触发薄入口（14号文 §3.0 role façade），非常驻进程/无消息总线/无调度器（61号文 §4.1 裁定边界）
 # [MODIFY-GUARD] Owner approval required; 变更须同步 14号文 §4 Phase 0 验收口径
 # [STABILITY] evolving

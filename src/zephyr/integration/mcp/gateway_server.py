@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md | §
 # [MODULE] zephyr.integration.mcp.gateway_server
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.integration.mcp._base_server; zephyr.integration.mcp.error_codes; zephyr.integration.mcp.audit_logger; zephyr.integration.mcp.rate_limiter; zephyr.security.llm_defense.llm_security.gateway; zephyr.security.llm_defense.llm_security.protocol; zephyr.integration.mcp.gate_engine_server; zephyr.integration.mcp.doc_guard_server; zephyr.integration.mcp.sentinel_server; zephyr.integration.mcp.blueprint_search_server; zephyr.integration.mcp.task_manager_server; zephyr.integration.mcp.governance_server; zephyr.integration.mcp.telemetry_server; zephyr.integration.mcp.vector_memory_server
+# [DEPENDENCIES] zephyr.integration.mcp._base_server; zephyr.integration.mcp.error_codes; zephyr.integration.mcp.audit_logger; zephyr.integration.mcp.rate_limiter; zephyr.security.llm_defense.llm_security.gateway; zephyr.security.llm_defense.llm_security.protocol; zephyr.integration.mcp.gate_engine_server; zephyr.integration.mcp.doc_guard_server; zephyr.integration.mcp.sentinel_server; zephyr.integration.mcp.blueprint_search_server; zephyr.integration.mcp.task_manager_server; zephyr.integration.mcp.governance_server; zephyr.integration.mcp.telemetry_server; zephyr.integration.mcp.vector_memory_server; zephyr.shared.utils.async_utils
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production

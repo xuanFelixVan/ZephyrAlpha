@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain_knowledge/vector_memory/blueprint.md | §
 # [MODULE] zephyr.integration.vector_memory.sqlite_metadata_store
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.integration.vector_memory.collection_manager
+# [DEPENDENCIES] zephyr.integration.vector_memory.collection_manager; zephyr.shared.io.sqlite_factory
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production

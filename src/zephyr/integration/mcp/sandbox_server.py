@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md | §
 # [MODULE] zephyr.integration.mcp.sandbox_server
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.integration.mcp._base_server
+# [DEPENDENCIES] zephyr.integration.mcp._base_server; zephyr.shared.infra.process_pool
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production

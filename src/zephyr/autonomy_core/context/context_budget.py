@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md | §3-§8
 # [MODULE] zephyr.autonomy_core.context.context_budget
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES] zephyr.autonomy_core.__init__
+# [DEPENDENCIES] zephyr.autonomy_core.__init__; zephyr.infrastructure.capacity_assurance.token_budget
 # [CONSUMERS] blueprint.md §0; zephyr.autonomy_core 内部模块; zephyr.orchestrator
 # [STARTUP] imported
 # [MATURITY] production

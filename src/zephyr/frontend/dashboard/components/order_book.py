@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain_frontend/blueprint.md
 # [MODULE] zephyr.frontend.dashboard.components.order_book
 # [DOMAIN] D_FRONTEND
-# [DEPENDENCIES] zephyr.frontend.dashboard.components.chart_factory; zephyr.governance.data_governance.miniqmt_provider
+# [DEPENDENCIES] zephyr.frontend.dashboard.components.chart_factory
 # [CONSUMERS] zephyr.frontend.dashboard.app
 # [STARTUP] imported
 # [MATURITY] production

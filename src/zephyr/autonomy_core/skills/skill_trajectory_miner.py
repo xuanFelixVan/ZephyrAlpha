@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.foundation.errors; zephyr.shared.io.file_utils; zephyr.shared.io.paths
 # [CONSUMERS] tests/skill/test_skill_trajectory_miner.py
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] 空输入优雅降级（empty_input，不抛异常不落盘）；仅 status ∈ {supported, verified, completed} 的记录入矿；草稿一律 unverified_draft 态且只落 output_dir（默认 .runtime/skill_drafts/），禁写生产 skills/ 目录与 skill-registry.yaml；候选草稿与退役指纹相似度 >0.90 拒绝生成并记录拒绝理由；退役指纹库/假设落盘损坏 fail-fast 不静默兜底；落盘原子写（tmp+os.replace）
 # [MODIFY-GUARD] tests/skill/test_skill_trajectory_miner.py
 # [STABILITY] evolving

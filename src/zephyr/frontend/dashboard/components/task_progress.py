@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain_frontend/blueprint.md
 # [MODULE] zephyr.frontend.dashboard.components.task_progress
 # [DOMAIN] D_FRONTEND
-# [DEPENDENCIES]
+# [DEPENDENCIES] zephyr.shared.foundation.constants
 # [CONSUMERS] zephyr.frontend.dashboard.app_panel
 # [STARTUP] imported
 # [MATURITY] production

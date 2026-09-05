@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain_frontend/blueprint.md
 # [MODULE] zephyr.frontend.dashboard.components.tick_replay
 # [DOMAIN] D_FRONTEND
-# [DEPENDENCIES] zephyr.frontend.dashboard.components.chart_factory; zephyr.backtest.core.tick_replay
+# [DEPENDENCIES] zephyr.frontend.dashboard.components.chart_factory
 # [CONSUMERS] zephyr.frontend.dashboard.app
 # [STARTUP] imported
 # [MATURITY] production

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.foundation.errors
 # [CONSUMERS] MOD-INF-016(trading_kill_switch 确定性执行体) ; 运行时装配批（状态轮询/审计持久化）
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] assess/review 纯函数无IO; 触发仅当硬越限且kill_switch未激活(确定性校验路径); 建议与执行双审计记录; 回调/sink异常不阻断判定; 状态非法→InvalidRiskEngineStateError(Fail-Closed)
 # [MODIFY-GUARD] docs/03_modules/_domain_autonomy_core/risk_manager_agent/blueprint.md
 # [STABILITY] evolving

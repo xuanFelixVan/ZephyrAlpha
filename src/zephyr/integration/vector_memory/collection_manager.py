@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain_knowledge/vector_memory/blueprint.md | §
 # [MODULE] zephyr.integration.vector_memory.collection_manager
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.shared.schema.schemas
+# [DEPENDENCIES] zephyr.shared.schema.schemas; zephyr.shared.io.paths
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production

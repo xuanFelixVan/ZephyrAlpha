@@ -52,7 +52,7 @@ __all__: Final = [
 ]
 
 VALID_SEVERITIES: Final[frozenset[str]] = frozenset({"AL-P1", "AL-P2", "AL-P3", "AL-P4"})
-VALID_STATUSES: Final[frozenset[str]] = frozenset({"active", "acknowledged", "resolved", "silenced"})
+VALID_STATUSES: Final[frozenset[str]] = frozenset({"active", "acknowledged", "resolved", "silenced"})  # noqa: gate-vocab 告警生命周期状态为告警域本地常量（无 alert-status 词表；status_vocabulary 为文档状态域）
 _SEVERITY_ORDER: Final[tuple[str, ...]] = ("AL-P1", "AL-P2", "AL-P3", "AL-P4")
 
 

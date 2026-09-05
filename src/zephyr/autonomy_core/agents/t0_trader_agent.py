@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.foundation.errors
 # [CONSUMERS] 运行时装配批（做T 信号实时接入 / t1_sellable 可卖装配 / 风控校验链 / C-012 管线）
 # [STARTUP] imported
-# [MATURITY] testing
+# [MATURITY] production
 # [INVARIANTS] decide 纯函数无IO; ctx/配置非法 Fail-Closed; 底仓不变硬约束（卖出腿≤可卖，截断留痕）; 建议永远 requires_risk_check=True 且无下单语义（执行委托 C-012 管线）; EXECUTE 必发风控前置+执行外发并双审计; 回调/sink 异常不阻断判定
 # [MODIFY-GUARD] docs/03_modules/_domain_autonomy_core/t0_trader_agent/blueprint.md
 # [STABILITY] evolving

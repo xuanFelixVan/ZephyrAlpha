@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 空结果+error字段（YAML缺失/解析失败）
-# [TESTS] tests/test_rule_discovery_server.py
+# [TESTS]
 # [A_module] module_id=MOD-INF-014 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: 无时间触发

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md | §
 # [MODULE] zephyr.integration.mcp.sentinel_server
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.integration.mcp._base_server; zephyr.autonomy_core.__init__
+# [DEPENDENCIES] zephyr.integration.mcp._base_server; zephyr.governance.persistence.intent_keyword_mapper
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
