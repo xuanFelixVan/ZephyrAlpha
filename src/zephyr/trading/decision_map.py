@@ -231,9 +231,7 @@ def load_decision_map(path: Path) -> DecisionMap:
     nodes = tuple(_parse_node(n) for n in raw["nodes"])
     _require(len({n.node_id for n in nodes}) == len(nodes), "node_id 重复")
     edges = tuple(
-        DecisionMapEdge(
-            from_node=str(e["from_node"]), to_node=str(e["to_node"]), edge_type=str(e["edge_type"])
-        )
+        DecisionMapEdge(from_node=str(e["from_node"]), to_node=str(e["to_node"]), edge_type=str(e["edge_type"]))
         for e in raw["edges"]
     )
     sm = raw["state_matrix"]
@@ -298,7 +296,7 @@ def _validate_node_refs(
     dataset_ids: frozenset[str],
     known_strategy_ids: frozenset[str] | None,
 ) -> None:
-    """R1 枚举 + R3/R4/R5 引用 + R6 置信度 + module_ref 缺口 warning。"""
+    """R1 枚举+layer 前缀 + R3/R4/R5 引用 + R6 置信度 + module_ref 缺口 warning。"""
     if n.market not in _MARKETS:
         add("error", "R1", n.node_id, f"market 非法: {n.market}")
     if n.flow not in _FLOWS:
@@ -307,6 +305,14 @@ def _validate_node_refs(
         add("error", "R1", n.node_id, f"node_type 非法: {n.node_type}")
     if n.point not in _POINTS:
         add("error", "R1", n.node_id, f"point 非法: {n.point}")
+    # layer 前缀与 flow 一致性（二元：entry→L*/position→P*/exit→S*|X*；防复制粘贴错档）
+    prefix_ok = {
+        "entry_flow": n.layer.startswith("L"),
+        "position_flow": n.layer.startswith("P"),
+        "exit_flow": n.layer.startswith(("S", "X")),
+    }.get(n.flow, False)
+    if not prefix_ok:
+        add("error", "R1", n.node_id, f"layer 前缀与 flow 不一致: flow={n.flow} layer={n.layer}")
     # 缺口可视化：module_ref 缺失=warning（N2 需求：缺的东西自动浮出）
     if not n.module_ref:
         add("warning", "R1", n.node_id, "module_ref 缺失（环节无对应实现模块=红节点占位）")
@@ -354,14 +360,15 @@ def _validate_edge(e: DecisionMapEdge, by_id: dict[str, DecisionMapNode], add) -
 
 
 def _validate_matrix_cell(
-    c: TdmMatrixCell,
+    c: MatrixCell,
     dm: DecisionMap,
     add,
     strat_ids: frozenset[str],
     known_strategy_ids: frozenset[str] | None,
 ) -> None:
-    """R7 矩阵格引用环节/策略存在性 + state 在列轴 + confidence 枚举。"""
-    if c.node_id not in {n.node_id for n in dm.nodes}:
+    """R7 矩阵格：引用环节/策略存在性 + state 在列轴 + confidence 枚举 + mounted ⊆ 节点挂载。"""
+    node = {n.node_id: n for n in dm.nodes}.get(c.node_id)
+    if node is None:
         add("error", "R7", c.node_id, "矩阵格引用环节不存在")
     if c.state not in dm.state_matrix.states:
         add("error", "R7", c.node_id, f"矩阵格 state 不在列轴: {c.state}")
@@ -369,6 +376,14 @@ def _validate_matrix_cell(
         known = s in strat_ids or (bool(known_strategy_ids) and s in known_strategy_ids)
         if not known:
             add("error", "R7", c.node_id, f"矩阵格 mounted 策略不存在: {s}")
+        # mounted ⊆ 该环节 strategy_mounts（状态激活的必须是环节可挂载的子集，防两处漂移）
+        if node is not None and s not in {m.strategy_ref for m in node.strategy_mounts}:
+            add(
+                "error",
+                "R7",
+                c.node_id,
+                f"矩阵格 mounted {s} 不在该环节 strategy_mounts 中（先挂环节再进矩阵）",
+            )
     if c.confidence not in _CONFIDENCE:
         add("error", "R7", c.node_id, f"矩阵格 confidence 非法: {c.confidence}")
 
@@ -392,11 +407,19 @@ def validate_decision_map(
 
     for n in dm.nodes:
         _validate_node_refs(n, add, strat_ids, factor_ids, dataset_ids, known_strategy_ids)
+        # R10 市场实例一致性：节点的 market 必须在顶层 markets 声明内
+        if n.market not in dm.markets:
+            add("error", "R10", n.node_id, f"market {n.market} 不在顶层 markets 声明 {list(dm.markets)} 中")
     for e in dm.edges:
         _validate_edge(e, by_id, add)
     for c in dm.state_matrix.cells:
         _validate_matrix_cell(c, dm, add, strat_ids, known_strategy_ids)
     for path_desc in _collect_sequence_cycle(dm):
         add("error", "R8", dm.nodes[0].node_id if dm.nodes else "", f"sequence 边成环: {path_desc}")
+    # R10b 每个声明市场必须有 ≥1 节点（防市场实例空壳漂移——空壳也按同 schema 长骨架）
+    node_markets = {n.market for n in dm.nodes}
+    for m in dm.markets:
+        if m not in node_markets:
+            add("error", "R10", dm.nodes[0].node_id if dm.nodes else "", f"声明市场 {m} 无任何节点")
 
     return (not any(i.level == "error" for i in issues), issues)

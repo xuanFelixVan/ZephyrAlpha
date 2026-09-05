@@ -105,6 +105,8 @@ _CATALOGS_DIR = _REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" 
 
 # SQL 常量（NO-BARE-SQL 豁免命名约定 _SQL_*，先例=rename_depgraph_sync_gate._SQL_CHECK_FILE_PATH）
 _SQL_CHECK_MODULE_ID = "SELECT 1 FROM nodes WHERE module_id = %s LIMIT 1"
+_SQL_GET_BUILD_STATUS = "SELECT build_status FROM nodes WHERE module_id = %s LIMIT 1"
+_SQL_CHECK_BM_ANCHOR = "SELECT 1 FROM battle_map_anchors WHERE target_graph = 'depgraph' AND target_id = %s LIMIT 1"
 
 
 @dataclass(frozen=True)
@@ -159,21 +161,52 @@ def validate_registry_file(path: Path, spec: RegistrySpec) -> list[str]:
     return fails
 
 
-def _module_exists_in_depgraph(module_id: str) -> bool:
-    """depgraph 只读存在性查询（fail-open：异常时返回 True=跳过子检查）。"""
+def _added_entry_ids(rel_path: str, id_key: str) -> list[str]:
+    """从 staged diff 提取本次新增条目的 id（G1 二期 diff-scoped：只管新条目，存量不追溯）。
+
+    git 不可用/无 diff → 返回空列表（fail-open）。
+    """
+    import re
+    import subprocess
+
+    try:
+        out = subprocess.run(
+            ["git", "diff", "--cached", "--", rel_path.replace("\\", "/")],
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=True,
+        ).stdout
+    except Exception:  # noqa: BLE001 — diff 不可得=fail-open
+        return []
+    pat = re.compile(r"^\+\s*-\s*" + re.escape(id_key) + r":\s*\"?([A-Za-z0-9][A-Za-z0-9_-]*)")
+    return [m.group(1) for line in out.splitlines() for m in [pat.match(line)] if m]
+
+
+def _query_one(query: str, param: str) -> tuple[bool, str | None]:
+    """PG 单值查询（fail-open：异常返回 (True, None)=跳过子检查）。返回 (skip, value)。"""
     try:
         from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 
         conn = get_depgraph_pg_connection()
         try:
             with conn.cursor() as cur:
-                cur.execute(_SQL_CHECK_MODULE_ID, (module_id,))
-                return cur.fetchone() is not None
+                cur.execute(query, (param,))
+                row = cur.fetchone()
         finally:
             conn.close()
+        return False, (row[0] if row else None)
     except Exception as e:  # noqa: BLE001 — DB 不可用=fail-open（对标 NEW-FILE-DEPGRAPH gate）
-        logger.warning("BUSINESS-REGISTRY gate: depgraph 查询失败，跳过存在性子检查（fail-open）: %s", e)
+        logger.warning("BUSINESS-REGISTRY gate: PG 查询失败，跳过子检查（fail-open）: %s", e)
+        return True, None
+
+
+def _module_exists_in_depgraph(module_id: str) -> bool:
+    """depgraph 只读存在性查询（fail-open：异常时返回 True=跳过子检查）。"""
+    skip, row = _query_one(_SQL_CHECK_MODULE_ID, module_id)
+    if skip:
         return True
+    return row is not None
 
 
 def make_business_registry_gate() -> GateSpec:
@@ -214,6 +247,45 @@ def make_business_registry_gate() -> GateSpec:
                 all_fails.extend(f"【{spec.display}】module_id 在 depgraph 不存在: {m}" for m in missing)
             except Exception as e:  # noqa: BLE001 — 存在性子检查失败不阻断（格式校验已覆盖）
                 logger.warning("BUSINESS-REGISTRY gate: depgraph 子检查跳过: %s", e)
+
+            # G1 二期：新增条目 BM 锚点强制（diff-scoped，存量 457 孤儿不追溯——G4 清淤承载）
+            # 规则：新增条目的 module 若 build_status=production → 必须已有 battle_map 锚点（硬）；
+            #       design/planned → warn（待实现，锚点随后补）；PG 不可达 → 跳过（fail-open）
+            rel = f"docs/01_policies_and_standards/_registry/catalogs/{spec.filename}"
+            added_ids = _added_entry_ids(rel, spec.id_key)
+            if added_ids:
+                try:
+                    entries_by_id = {
+                        str(e.get(spec.id_key)): e
+                        for e in (yaml.safe_load(path.read_text(encoding="utf-8")) or {}).get(spec.section) or []
+                        if isinstance(e, dict) and e.get(spec.id_key)
+                    }
+                except Exception:  # noqa: BLE001 — 整库校验已覆盖解析错误
+                    entries_by_id = {}
+                for eid in added_ids:
+                    mid = entries_by_id.get(eid, {}).get("module_id")
+                    if not mid:
+                        continue  # 缺 module_id 已被整库校验硬拦
+                    skip_status, build_status = _query_one(_SQL_GET_BUILD_STATUS, str(mid))
+                    if skip_status:
+                        continue  # fail-open
+                    skip_anchor, anchor_row = _query_one(_SQL_CHECK_BM_ANCHOR, str(mid))
+                    if skip_anchor:
+                        continue  # fail-open
+                    if anchor_row is not None:
+                        continue  # 已有锚点
+                    if build_status == "production":
+                        all_fails.append(
+                            f"【{spec.display}】新增条目 {eid} 的模块 {mid} 为 production 态但无 battle_map 锚点"
+                            "（G1 二期：已实现模块必须挂作战环节，apply_battle_map 补锚点）"
+                        )
+                    else:
+                        logger.info(
+                            "BUSINESS-REGISTRY gate: 新增条目 %s 模块 %s 为 %s 态无锚点（warn，待实现）",
+                            eid,
+                            mid,
+                            build_status,
+                        )
 
         if not all_fails:
             return True, ""

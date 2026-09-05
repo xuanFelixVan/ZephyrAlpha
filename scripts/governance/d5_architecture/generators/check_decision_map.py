@@ -82,6 +82,9 @@ _MAP_PATH = _REPO_ROOT / "config" / "trading_decision_map.yaml"
 _REGISTRY_DIR = _REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
 _PF_CORE_DIR = _REPO_ROOT / "src" / "zephyr" / "pf_core"
 
+# SQL 常量（NO-BARE-SQL 豁免命名约定 _SQL_*，先例=rename_depgraph_sync_gate）
+_SQL_CHECK_MODULE_EXISTS = "SELECT 1 FROM nodes WHERE module_id = %s LIMIT 1"
+
 
 def collect_strategy_ids_via_ast(pf_core_dir: Path = _PF_CORE_DIR) -> frozenset[str]:
     """AST 扫描 pf_core 下全部 strategy_id="..." 字面量（代码 StrategyMeta 真源）。
@@ -113,8 +116,11 @@ def run_checks(
 ) -> tuple[list[str], list[str], int]:
     """第七图校验入口：error 级=fails（硬阻断），warning 级=warns。
 
+    R9（module_ref→depgraph 存在性）在本层实现——PG 只读 fail-open：
+    DB 不可达时跳过该子检查（决策地图纯离线校验 R1-R8/R10 已在 zephyr 层完成）。
+
     Returns:
-        (fails, warns, total)——total=地图节点数。异常向上抛（gate fail-closed）。
+        (fails, warns, total)——total=地图节点数。YAML 异常向上抛（gate fail-closed）。
     """
     from zephyr.trading.decision_map import load_decision_map, validate_decision_map
 
@@ -127,6 +133,29 @@ def run_checks(
 
     fails = [f"{i.code} [{i.node_id}] {i.detail}" for i in issues if i.level == "error"]
     warns = [f"{i.code} [{i.node_id}] {i.detail}" for i in issues if i.level == "warning"]
+
+    # R9: 已填 module_ref 的节点必须真实存在于 depgraph（PG fail-open）
+    module_refs = sorted({n.module_ref for n in dm.nodes if n.module_ref})
+    if module_refs:
+        missing = [m for m in module_refs if not _module_exists_in_depgraph(m)]
+        fails.extend(f"R9 [map] module_ref 在 depgraph 不存在: {m}" for m in missing)
+
     if not ok:
         pass  # ok 语义=fails 为空，已由分级表达
     return fails, warns, len(dm.nodes)
+
+
+def _module_exists_in_depgraph(module_id: str) -> bool:
+    """depgraph 只读存在性查询（fail-open：异常返回 True=跳过子检查，对标 BUSINESS-REGISTRY gate）。"""
+    try:
+        from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+
+        conn = get_depgraph_pg_connection()
+        try:
+            with conn.cursor() as cur:
+                cur.execute(_SQL_CHECK_MODULE_EXISTS, (module_id,))
+                return cur.fetchone() is not None
+        finally:
+            conn.close()
+    except Exception:  # noqa: BLE001 — DB 不可用=fail-open（warn 交给调用方日志）
+        return True
