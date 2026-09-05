@@ -5,7 +5,7 @@ title: "Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁�
 doc_type: blueprint
 template_for: blueprint
 status: Draft
-version: "0.8.21"
+version: "0.8.22"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -1472,8 +1472,11 @@ STEP 3: 拆分后验证
 | `src/zephyr/feedback_loop/gates/_safety_gates.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/gates/_security_gates.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/behavioral_admission/gate_event_adapter.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/battle_map_alignment_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/blueprint_format_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/business_registry_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/ch_final_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/decision_map_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/depgraph_write_path_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/derivation_annotation_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/folder_capacity_hard_limit_gate.py` | ✅ 已实现 | |

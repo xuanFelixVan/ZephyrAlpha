@@ -14,9 +14,9 @@ last_updated: "2026-05-18"
 valid_from: "2026-05-18"
 ttl: permanent
 construction_progress: completed
-actual_disk_path: "src/zephyr/core/"
+actual_disk_path: "src/zephyr/shared/ (原 src/zephyr/core/ 64 .py 已于 a5c1a81787 删除并入——见 §0 注记)"
 belongs_to: "MOD-INF-016"
-summary: "治理核心模块 — 16 子目录 64 文件，从 MOD-INF-016 拆分"
+summary: "治理核心模块 — 原 src/zephyr/core/ 16 子目录 64 .py（a5c1a81787 于 2026-06-21 删除，并入 src/zephyr/shared/ 与 src/zephyr/infrastructure/ 等域），从 MOD-INF-016 拆分；本蓝图保留拆分结构历史记录"
 tags: [core, governance, session-continuity, blueprint-decomposer, event-bus, lifecycle]
 priority: P0
 codification_level: L2
@@ -27,7 +27,7 @@ scope: global
 stability: evolving
 verifiability: hybrid
 depends_on:
-  - {target: "MOD-INF-016-CONTRACTS", at: "全篇", why: "Contracts — core/models.py 继承 shared/schemas.py"}
+  - {target: "MOD-INF-016-CONTRACTS", at: "全篇", why: "Contracts — 原 core/models.py 继承 shared/schemas.py（2026-09-05 注：Task SSoT 已迁 task_types，shared/foundation/models.py 为再导出 shim，shared/schema/schemas.py 为现址）"}
   - {target: "MOD-INF-016-SHARED", at: "全篇", why: "Shared Infra — core/ 消费 event_bus/lifecycle/observer 等共享组件"}
 responsibility_domain: 
 design_maturity: production
@@ -36,8 +36,8 @@ build_status: generated
 
 # Governance Core 蓝图 — 治理核心模块
 
-> module_id: MOD-014 | version: 0.1.0 | status: Active | layer: cross_layer
-> actual_disk_path: src/zephyr/core/ | generation: 1 | construction_progress: completed
+> module_id: MOD-INF-016 | version: 0.1.0 | status: Active | layer: cross_layer
+> actual_disk_path: src/zephyr/shared/（原 src/zephyr/core/ 已删除 a5c1a81787 并入——见 §0 注记） | generation: 1 | construction_progress: completed
 > parent: MOD-INF-016 (拆分自 Shared+Core 蓝图，AD-002 触发条件达成)
 
 **核心职责**: AI 治理核心——蓝图分解、会话连续性、任务生命周期管理、事件总线、影响分析、知识图谱接口、自适应调优、可靠性保障。
@@ -45,6 +45,8 @@ build_status: generated
 **负向责任**: 不涉及数据契约定义（→ MOD-INF-016-CONTRACTS）/ 不涉及通用基础设施（→ MOD-INF-016-SHARED）。
 
 ## §0 代码文件清单
+
+> ⚠️ **2026-09-05 AI-18 复审轮实测注记**：本表所述 `src/zephyr/core/` 目录已整体删除（a5c1a81787，2026-06-21 架构债务清理，git 实测删除 64 个 .py）。抽样 32 个关键文件实测去向：17 个迁入 `src/zephyr/shared/` 子目录（blueprint_decomposer→shared/blueprint_tools、session_continuity→shared/session、daemon_registry/lazy_loader/healthcheck_service→shared/lifecycle、event_reactor/hook_dispatcher→shared/events、execution_tuner/prompt_version_manager→shared/adaptation、saga_compensator→shared/compensation、dependency_graph→shared/dependency、event_bus→shared/event_bus.py、autonomy_monitor/dogfooding→shared/maintenance、diff_planner/retry_handler→shared/reliability、session_boundary→shared/session）；14 个迁入 `src/zephyr/infrastructure/` 子目录（task_lifecycle_manager/scope_guard→infrastructure/lifecycle、impact_propagator/llm_impact_analyzer→infrastructure/impact、blueprint_code_sync→infrastructure/、event_store→infrastructure/events、cost_tracker→infrastructure/、trace_decorator→infrastructure/observability、quality_monitor→infrastructure/quality、task_queue/task_scheduler→infrastructure/queue、circuit_breaker/context_guard→infrastructure/reliability、sla_monitor→infrastructure/sla）；其余散布 governance/gov_audit/orchestrator/feedback_loop/data 各域（同名多址者以所属域蓝图为准）。resource_optimization_engine.py 全仓同名检索未检出（resource_optimization_models.py 在 shared/lifecycle/）。下表保留为删除前结构记录。
 
 | # | 子目录 | 文件数 | 关键文件 |
 |---|--------|:---:|------|
@@ -65,7 +67,7 @@ build_status: generated
 | 15 | sla/ | 2 | `sla_monitor` |
 | 16 | sync/ | 2 | `blueprint_code_sync` |
 
-**总计**: 60 个 .py 文件
+**总计**: 64 个 .py 文件（2026-09-05 git 实测 a5c1a81787 删除数；原表自记 60 系口径偏差）
 
 ### §0.6 五图对齐视图
 
@@ -90,9 +92,10 @@ build_status: generated
 | module_id | MOD-INF-016 | MOD-INF-016 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | planned | planned | ✅ |
-| file_count | 287 文件 | 14 文件（§0.1） | ❌ |
+| file_count | 287 文件 | 0 .py（原 scope src/zephyr/core/ 已删除，64 .py 历史清单见 §0 注记） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
+> **2026-09-05 AI-18 复审轮注记**：depgraph 287 节点为 a5c1a81787（core/ 删除并入）重构前快照，主仓重建 depgraph 后自愈——已记入共享收口清单。
 
 ---
 
