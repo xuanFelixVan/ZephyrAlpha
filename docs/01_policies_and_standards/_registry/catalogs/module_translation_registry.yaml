@@ -1723,13 +1723,6 @@ entries:
   desc_zh: decay监控，回测的监控器，持续监视某项指标，异常时上报。
   desc_en: ''
   plain_zh: decay监控，回测的监控器，持续监视某项指标，异常时上报。
-- module_path: src/zephyr/backtest/services/nan_processor.py
-  domain_id: D_BACKTEST
-  name_zh: nan处理器
-  name_en: nan_processor
-  desc_zh: nan处理器，服务的处理器，处理加工数据。
-  desc_en: ''
-  plain_zh: nan处理器，服务的处理器，处理加工数据。
 - module_path: src/zephyr/backtest/services/param_analyzer.py
   domain_id: D_BACKTEST
   name_zh: 参数优化结果分析器
@@ -20774,13 +20767,6 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：脚本导入完整性门禁这块逻辑要经得起考验，有毛病立刻报出来。
-- module_path: src/zephyr/gov_enforcement/behavioral_admission/gpu_consensus_scheduler.py
-  domain_id: D_GOV_ENFORCEMENT
-  name_zh: GPUConsensus调度器
-  name_en: Gpu Consensus Scheduler
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 治理门禁·行为准入的GPU 共识管理器：统一负责GPU 共识的安排和收尾，治理门禁·行为准入别处要用都通过它，避免各管一段乱套。
 - module_path: tests/market_data/connectors/test_connector_base.py
   domain_id: D_MKT_DATA
   name_zh: MOD-MKT-003 Connector Base 单元测试.
@@ -28904,13 +28890,6 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 前端的默认 notification管家：默认 notification的大事小情都归它管，前端各模块找它对接，省得各自为政。
-- module_path: tests/backtest/test_nan_processor.py
-  domain_id: D_BACKTEST
-  name_zh: Nan处理器测试
-  name_en: Test Nan Processor
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 测试：验证nan 处理器的正确性，出问题尽早发现。
 - module_path: src/zephyr/integration/mcp/__init__.py
   domain_id: ''
   name_zh: 包入口
@@ -49547,13 +49526,11 @@ battle_map_steps:
   flow_stage: backtest_validation
   name_zh: 指标NaN处理器
   name_en: Metrics NaN Processor
-  plain_zh: 算指标时的"清洁工"——智能填充和清洗NaN值，防止指标计算崩溃。
-  mechanism_zh: 'BM-BT-03 子环节（depth=1, design）。BT-26 services/nan_processor.py（planned, 源自SIM-55）提供指标计算NaN处理器：智能填充+清洗。
-
-    v2.0 备忘模块，按需开发。
+  plain_zh: 已退役环节：NaN 语义由 FactorSignal 契约承载，独立处理器不再保留。
+  mechanism_zh: '已退役（2026-09-06 Owner 裁定）：NaN 语义由 FactorSignal 契约承载（15号文 L112——ffill 默认/禁 bfill-linear-mean 前视偏差/预热剔除）；重评条件=消费方要求差异化填充策略时重建。
 
     '
-  indicators_zh: '①触发：指标计算遇到NaN时；②消费：原始指标计算结果；③参数：NaN填充策略（前值/均值/插值）；④数据流：指标计算→NaN检测→填充/清洗→清洁指标；⑤代码：BT-26 services/nan_processor.py（planned）；⑥降级：处理器不可用→跳过NaN(指标可能异常)。
+  indicators_zh: '①触发：无（已退役，不参与运行时）；②消费：无；③参数：design_maturity=deprecated；④数据流：无（NaN 语义由 FactorSignal 契约承载）；⑤代码映射：无（原 BT-26 services/nan_processor.py 已于 2026-09-06 Owner 裁定退役，MOD-BT-026 锚点已移除）；⑥降级：重评条件成立时按新设计重建并挂新锚点。
 
     '
 - step_id: BM-BT-05-D
@@ -54031,30 +54008,6 @@ algo_submodules:
   name_zh: ④ 诊断报告聚合
   name_en: diagnose(聚合段)
   plain_zh: 汇总全部异常，无ERROR级则诊断通过
-- module_path: src/zephyr/backtest/services/nan_processor.py
-  module_id: MOD-BT-026
-  node_id: A1
-  name_zh: ① 全NaN行列清洗
-  name_en: process(全空清洗段)
-  plain_zh: 整行整列全是NaN的直接删掉
-- module_path: src/zephyr/backtest/services/nan_processor.py
-  module_id: MOD-BT-026
-  node_id: A2
-  name_zh: ② 高NaN比例行列删除
-  name_en: process(比例清洗段)
-  plain_zh: NaN占比超过50%的行或列按比例删掉
-- module_path: src/zephyr/backtest/services/nan_processor.py
-  module_id: MOD-BT-026
-  node_id: A3
-  name_zh: ③ 6策略NaN填充
-  name_en: _fill
-  plain_zh: 前向/后向/均值/中位数/线性插值/填零六种策略挑一种补洞
-- module_path: src/zephyr/backtest/services/nan_processor.py
-  module_id: MOD-BT-026
-  node_id: A4
-  name_zh: ④ 处理报告生成
-  name_en: process(报告段)
-  plain_zh: 数清填了多少删了多少还剩多少NaN出报告
 - module_path: src/zephyr/backtest/services/decay_monitor.py
   module_id: MOD-BT-018
   node_id: A1

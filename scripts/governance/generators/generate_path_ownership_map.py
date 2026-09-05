@@ -76,7 +76,11 @@ SECTION_01_MARKER = "### §0.1"
 SECTION_02_MARKER = "### §0.2"
 SSOT_CLAIMS_RE = re.compile(r"^ssot_claims:\s*$", re.MULTILINE)
 SSOT_CLAIM_ENTRY_RE = re.compile(
-    r"-\s*claim:\s*['\"]?([^'\"]+)['\"]?\s*\n\s*scope:\s*['\"]?([^'\"]+)['\"]?",
+    # 2026-09-06 根修：原 ([^'\"]+) 不排除换行——未加引号的 scope 值（如 scope: layer）
+    # 会贪婪吞掉后续 frontmatter 行+正文直到下一个引号，产出的 scope 含 "---" 文档
+    # 分隔符，写入单引号 YAML 标量后 path_ownership_map 必解析失败（L52117 损坏根因，
+    # 每次再生复现）。排除 \n 后单行捕获即正确终止。
+    r"-\s*claim:\s*['\"]?([^'\"\n]+)['\"]?\s*\n\s*scope:\s*['\"]?([^'\"\n]+)['\"]?",
     re.MULTILINE,
 )
 

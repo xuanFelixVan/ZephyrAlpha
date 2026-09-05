@@ -5,7 +5,7 @@
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] none
+# [INVARIANTS] 接线门槛备注（2026-09-06 Owner 裁定）：暂不接线不删除——触发条件=AI 自治完全上线且 AI 自治接管 AGENTS.md 升级时接线；届时触发机制改文件变更事件（原 CircadianScheduler hour=2 调度规划已随 trae_060 §3 废止，规划载体失效）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L

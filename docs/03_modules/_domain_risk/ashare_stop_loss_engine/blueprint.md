@@ -24,6 +24,7 @@ build_status: production
 > **module_id**: MOD-RK-09 | **域**: D_RISK | **层**: L02 盘中实时监控
 > **优先级**: P0 | **成熟度**: production | **对标能力**: C-004●
 > **SSoT**: depgraph MOD-RK-09 | **设计真源**: D:\临时工作区\依赖图\11-D-RISK-风控域.md §1.2 RK-09, §6 决策记录(亏损限额三级), §1.4 INV-003
+> **接线里程碑（2026-09-06 Owner 裁定）**: 代码已建成（689 行，六种模式+三级限额全真实现，38 测试全绿），零生产消费。下游接线（MOD-RK-03 实时告警 / MOD-RK-04 止损执行消费 StopLossSignal）随装配门禁（wiring_registry Layer-2 需求驱动）排期——禁止无限期悬置，接线时点由 Owner 排期。
 
 ## 1. 定位
 

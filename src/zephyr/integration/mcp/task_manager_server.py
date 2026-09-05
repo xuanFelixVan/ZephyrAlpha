@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md | §
 # [MODULE] zephyr.integration.mcp.task_manager_server
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.gov_enforcement.rule_enforcement.task_types; zephyr.shared.schema.severity_types; zephyr.shared.schema.schemas; zephyr.governance.architecture_governance.path_resolver; zephyr.shared.blueprint_tools.blueprint_decomposer; zephyr.shared.foundation.models; zephyr.shared.io.paths; zephyr.shared.utils.time_utils; zephyr.governance.persistence.task_repo
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_enforcement.task_types; zephyr.shared.schema.severity_types; zephyr.shared.schema.schemas; zephyr.governance.architecture_governance.path_resolver; zephyr.shared.blueprint_tools.blueprint_decomposer; zephyr.shared.foundation.models; zephyr.shared.io.paths; zephyr.shared.utils.time_utils; zephyr.governance.persistence.task_repo; zephyr.integration.mcp._base_server
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
+# [ERROR_CONTRACT] ZA-TSK-0001(任务不存在)/ZA-TSK-0002(无效状态转换)/ZA-TSK-0003(task_id 唯一约束冲突)——MCPError 带码抛出（tool_contracts.yaml 对齐，2026-09-06 补抛）
 # [TESTS]
 # [A_module] module_id=MOD-INF-013 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -28,6 +28,7 @@ from __future__ import annotations
 import json
 import logging
 import re
+import sqlite3
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -35,6 +36,8 @@ from mcp.server import FastMCP
 
 # 5.152 #24 sanctioned: integration 为组合层，允许依赖全部层（gov_enforcement.L2 任务类型）。
 from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace, normalize_execution_model
+from zephyr.governance.persistence.task_repo import InvalidTransitionError, TaskNotFoundError
+from zephyr.integration.mcp._base_server import MCPError
 from zephyr.shared.blueprint_tools.blueprint_decomposer import BlueprintDecomposer
 from zephyr.shared.foundation.models import (
     DecompositionResult,
@@ -272,7 +275,8 @@ class TaskManagerMCP:
             mgr._rbac_guard("get_task", task_id)
             tc = mgr._load(task_id)
             if tc is None:
-                raise ValueError("Task 不存在")
+                # 2026-09-06 补抛（tool_contracts.yaml 对齐）：ZA-TSK-0001 task not found
+                raise MCPError(-32602, f"Task 不存在: {task_id}", error_code="ZA-TSK-0001")
             return mgr._to_response(tc)
 
         @mcp.tool(name="task_manager.list_tasks")
@@ -306,9 +310,21 @@ class TaskManagerMCP:
 
             new_st = getattr(TaskStatus, new_status.upper(), None)
             if new_st is None:
-                raise ValueError(f"无效状态: {new_status}，合法值: {[s.name for s in TaskStatus]}")
+                # 2026-09-06 补抛（tool_contracts.yaml 对齐）：ZA-TSK-0002 invalid transition
+                raise MCPError(
+                    -32602,
+                    f"无效状态: {new_status}，合法值: {[s.name for s in TaskStatus]}",
+                    error_code="ZA-TSK-0002",
+                )
 
-            updated = mgr.task_repo.transition(task_id, new_st)
+            try:
+                updated = mgr.task_repo.transition(task_id, new_st)
+            except TaskNotFoundError as exc:
+                # ZA-TSK-0001 task not found（原裸透传被 _base_server 吞成 internal error）
+                raise MCPError(-32602, str(exc), error_code="ZA-TSK-0001") from exc
+            except (InvalidTransitionError, ValueError) as exc:
+                # ZA-TSK-0002 invalid status transition（同上）
+                raise MCPError(-32602, str(exc), error_code="ZA-TSK-0002") from exc
             if mgr.docs_dir:
                 mgr._sync_md(updated)
             return mgr._to_response(updated)
@@ -435,6 +451,14 @@ class TaskManagerMCP:
                     self.task_repo.create_and_ready(
                         tc, batch_id=batch_id or new_batch_id("mcp")
                     )
+        except sqlite3.IntegrityError as exc:
+            # 2026-09-06 补抛（tool_contracts.yaml 对齐）：ZA-TSK-0003 file_path/task_id
+            # 唯一约束冲突（create 的 task_id 已存在即 sqlite3.IntegrityError）
+            raise MCPError(
+                -32602,
+                f"MCP _persist 失败: 唯一约束冲突（task_id 已存在）: {exc}",
+                error_code="ZA-TSK-0003",
+            ) from exc
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             raise RuntimeError(f"MCP _persist 失败: {type(exc).__name__}: {exc}") from exc
 

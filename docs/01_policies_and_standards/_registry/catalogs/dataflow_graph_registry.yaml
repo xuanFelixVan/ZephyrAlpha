@@ -783,21 +783,6 @@ datasets:
   module_id: 'MOD-BT-018'
   design_maturity: design
 
-- dataset_id: DS-050
-  entity_name: backtest.nan_processor_result
-  entity_type: dataset
-  scope: backtest_internal
-  contract_ref: null
-  physical_type: src/zephyr/backtest/services/nan_processor.py
-  produced_by_job: JOB-049
-  consumed_by_jobs: []
-  domain_id: D_BACKTEST
-  pit_policy: strict
-  format_summary: 清洗后数据（NaN值处理/插值/标记）
-  valid_since: '2020-01-01'
-  module_id: 'MOD-BT-026'
-  design_maturity: design
-
 - dataset_id: DS-051
   entity_name: backtest.param_analyzer_result
   entity_type: dataset
@@ -1946,22 +1931,6 @@ jobs:
   pit_relevance: strict
   description: 策略衰减监控（消费回测结果，产出分析/报告）
   module_id: 'MOD-BT-018'
-  design_maturity: design
-
-- job_id: JOB-049
-  job_name: backtest.nan_processor
-  entity_type: job
-  scope: backtest_internal
-  source_code_ref: src/zephyr/backtest/services/nan_processor.py
-  trigger_type: manual
-  run_context: backtest_tick
-  inputs:
-  - DS-010
-  outputs:
-  - DS-050
-  pit_relevance: strict
-  description: NaN数据处理（消费回测结果，产出分析/报告）
-  module_id: 'MOD-BT-026'
   design_maturity: design
 
 - job_id: JOB-050

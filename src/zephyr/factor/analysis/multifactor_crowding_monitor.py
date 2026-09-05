@@ -2,7 +2,7 @@
 # [MODULE] zephyr.factor.analysis.multifactor_crowding_monitor
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] pandas; numpy
-# [CONSUMERS] （暂无 import 消费方；原声明 multifactor_decay_lifecycle/multifactor_pit_backtest 经 2026-09-05 AI-08 审计全仓 grep 实证 0 引用——退役候选待 Owner 裁定）
+# [CONSUMERS] （暂无 import 消费方；原声明 multifactor_decay_lifecycle/multifactor_pit_backtest 经 2026-09-05 AI-08 审计全仓 grep 实证 0 引用——退役候选）。门槛备注（2026-09-06 Owner 裁定）：退役候选暂留不删——battle_map 锚 MOD-L02-009 真源为 decay_monitor.py（模块 ID 与文件错位），待作战地图锚核实改挂后 salvage
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] INV-004: PIT铁律——三代理仅用决策日及之前数据; 与IC衰减正交可同时触发

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.factor.analysis.multifactor_decay_lifecycle
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] 无 zephyr import（纯状态机核；原声明 decay_monitor 半衰期对接经 2026-09-05 AI-08 审计实证未接线）
-# [CONSUMERS] （暂无 import 消费方；原声明 factor_pool_manager(decay_state字段)/multifactor_pit_backtest 经 2026-09-05 AI-08 审计全仓 grep 实证 0 引用——退役候选待 Owner 裁定）
+# [CONSUMERS] （暂无 import 消费方；原声明 factor_pool_manager(decay_state字段)/multifactor_pit_backtest 经 2026-09-05 AI-08 审计全仓 grep 实证 0 引用——退役候选）。门槛备注（2026-09-06 Owner 裁定）：退役候选暂留不删——battle_map 锚 MOD-L02-009 真源为 decay_monitor.py（模块 ID 与文件错位），待作战地图锚核实改挂后 salvage
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] INV-004: PIT铁律——状态转移仅基于已实现IC/半衰期; DORMANT不参与合成; RETIRED完全退出

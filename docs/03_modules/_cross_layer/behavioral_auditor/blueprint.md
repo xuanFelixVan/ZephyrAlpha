@@ -210,7 +210,7 @@ BehavioralAuditor 是 AI 行为边界审计引擎——解决"AI 做了不该做
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-033` 的 73 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-033` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-033` 的 72 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-033` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Draft | — |
@@ -222,7 +222,7 @@ BehavioralAuditor 是 AI 行为边界审计引擎——解决"AI 做了不该做
 | module_id | MOD-INF-033 | MOD-INF-033 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | planned | planned | ✅ |
-| file_count | 73 文件 | 59 文件（§0.1） | ❌ |
+| file_count | 72 文件 | 59 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -813,7 +813,7 @@ class EvidenceChain(BaseModel):
 |--------|---------|---------|----------|:---:|
 | BehavioralAuditorAdmissionController | GAP-001 | admission_controller.py | Phase 1 | 待施工 |
 | CT-BEH-DB-001 v2 | GAP-002 | — (契约文档) | Phase 1 | 待施工 |
-| GPUConsensusScheduler | GAP-003 | gpu_consensus_scheduler.py | Phase 2 | 待施工 |
+| GPUConsensusScheduler | GAP-003 | src/zephyr/trading/gpu_consensus_scheduler.py（2026-09-06 双实现合并，MOD-INF-033 唯一实现） | Phase 2 | 待施工 |
 | ProtectionIndex | GAP-005 | protection_index.py | Phase 2 | 待施工 |
 | SessionLifecycleManager | GAP-006 | session_lifecycle.py | Phase 3 | 待施工 |
 
@@ -1357,7 +1357,7 @@ STEP 3: 拆分后验证
 |---------|:---:|------|
 | `src/zephyr/compliance/behavioral_auditor/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/behavioral_admission/admission_controller.py` | ✅ 已实现 | |
-| `src/zephyr/gov_enforcement/behavioral_admission/gpu_consensus_scheduler.py` | ✅ 已实现 | |
+| `src/zephyr/trading/gpu_consensus_scheduler.py` | ✅ 已实现 | 2026-09-06 双实现合并：MOD-INF-033 唯一实现，原 behavioral_admission 副本已删除并入（zephyr.trading.gpu_consensus_scheduler） |
 | `src/zephyr/gov_enforcement/behavioral_admission/protection_index.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/behavioral_admission/verdict_engine.py` | ✅ 已实现 | |
 
@@ -1426,7 +1426,7 @@ STEP 3: 拆分后验证
 | `tests/self_check/test_self_test_verifier.py` | ✅ 已实现 | |
 | `tests/trading/test_admission_controller.py` | ✅ 已实现 | |
 | `tests/trading/test_behavioral_admission.py` | ✅ 已实现 | |
-| `tests/trading/test_gpu_consensus_scheduler.py` | ✅ 已实现 | |
+| `tests/trading/test_gpu_consensus_scheduler.py` | ✅ 已实现 | 2026-09-06 双实现合并：被测实现为 zephyr.trading.gpu_consensus_scheduler（MOD-INF-033 唯一实现） |
 | `tests/trading/test_protection_index.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南

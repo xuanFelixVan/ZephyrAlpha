@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] InvalidMaxDdInputError(未登记错误码-申请中 ZA-PA-0013)
+# [ERROR_CONTRACT] InvalidMaxDdInputError(ZA-PA-0013 已登记转正 2026-09-06)
 # [TESTS] tests/pf_alloc/test_maxdd_limit_allocator.py
 # [A_module] module_id=MOD-PA-013 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -88,9 +88,10 @@ logger = logging.getLogger(__name__)
 class InvalidMaxDdInputError(ZephyrBaseError):
     """MaxDdLimit 分配输入非法（未知策略/缺失回撤/非法预算，Fail-Closed）。
 
-    错误码 ZA-PA-0013 未登记（申请中，W3 fragment 补登草稿）——类属性暂不声明，
-    治理闭环后回补（对齐 MOD-INF-063 先例）。
+    错误码 ZA-PA-0013 已登记转正（2026-09-06 Owner 批准，预留码申请在案）。
     """
+
+    error_code = "ZA-PA-0013"
 
 
 class DdLimitAction(str, Enum):

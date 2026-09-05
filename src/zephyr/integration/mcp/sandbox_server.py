@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
+# [ERROR_CONTRACT] ZA-SBX-0001(不支持语言)/ZA-SBX-0003(代码超限)——MCPError 带码抛出（tool_contracts.yaml 对齐，2026-09-06 补抛）；超时=结果 dict 语义（stderr 带 timed_out 信息，fail-soft 设计保持，ZA-SBX-0002 契约声明不落 raise）
 # [TESTS]
 # [A_module] module_id=MOD-INF-013 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -94,10 +94,10 @@ class SandboxServer(BaseMCPServer):
         timeout: float = DEFAULT_TIMEOUT,
     ) -> dict[str, Any]:
         if len(code.encode("utf-8")) > MAX_CODE_BYTES:
-            raise MCPError(-32602, f"code exceeds max size of {MAX_CODE_BYTES} bytes")
+            raise MCPError(-32602, f"code exceeds max size of {MAX_CODE_BYTES} bytes", error_code="ZA-SBX-0003")
 
         if language not in SUPPORTED_LANGUAGES:
-            raise MCPError(-32602, f"unsupported language: {language!r}")
+            raise MCPError(-32602, f"unsupported language: {language!r}", error_code="ZA-SBX-0001")
 
         with tempfile.NamedTemporaryFile(
             mode="w",
@@ -117,7 +117,7 @@ class SandboxServer(BaseMCPServer):
             elif language == "bash":
                 cmd = ["bash", tmp_path]
             else:
-                raise MCPError(-32602, f"unsupported language: {language!r}")
+                raise MCPError(-32602, f"unsupported language: {language!r}", error_code="ZA-SBX-0001")
 
             result = run_subprocess_hidden(
                 cmd,

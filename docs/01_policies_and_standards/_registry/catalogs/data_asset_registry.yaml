@@ -603,7 +603,7 @@ sources:
     license_type: internal
     latency_profile: null
     colocation_eligible: false
-    provides_datasets: [DS-003, DS-004, DS-005, DS-006, DS-007, DS-008, DS-009, DS-010, DS-011, DS-012, DS-013, DS-014, DS-015, DS-016, DS-017, DS-018, DS-019, DS-020, DS-021, DS-022, DS-023, DS-024, DS-025, DS-026, DS-027, DS-028, DS-029, DS-030, DS-031, DS-032, DS-033, DS-034, DS-035, DS-036, DS-037, DS-038, DS-039, DS-040, DS-041, DS-042, DS-043, DS-044, DS-045, DS-046, DS-047, DS-048, DS-049, DS-050, DS-051, DS-052, DS-053, DS-054, DS-055, DS-056, DS-057, DS-058, DS-059, DS-060, DS-061, DS-062, DS-063, DS-064, DS-065, DS-066, DS-067, DS-068, DS-069, DS-070, DS-071, DS-072, DS-073, DS-074, DS-075, DS-076]
+    provides_datasets: [DS-003, DS-004, DS-005, DS-006, DS-007, DS-008, DS-009, DS-010, DS-011, DS-012, DS-013, DS-014, DS-015, DS-016, DS-017, DS-018, DS-019, DS-020, DS-021, DS-022, DS-023, DS-024, DS-025, DS-026, DS-027, DS-028, DS-029, DS-030, DS-031, DS-032, DS-033, DS-034, DS-035, DS-036, DS-037, DS-038, DS-039, DS-040, DS-041, DS-042, DS-043, DS-044, DS-045, DS-046, DS-047, DS-048, DS-049, DS-051, DS-052, DS-053, DS-054, DS-055, DS-056, DS-057, DS-058, DS-059, DS-060, DS-061, DS-062, DS-063, DS-064, DS-065, DS-066, DS-067, DS-068, DS-069, DS-070, DS-071, DS-072, DS-073, DS-074, DS-075, DS-076]
     env_config: 无
     module_id: MOD-L00-004
     doc_ref: 64_data_source_download_spec.md §4.1/§5.3/§5.4
@@ -2371,42 +2371,6 @@ datasets:
   created_at: '2026-08-13'
   updated_at: '2026-08-13'
   owner: MOD-BT-018
-  produced_by_source: SRC-INTERNAL-001
-  survivorship_free: null
-  pit_available: null
-  earnings_lag_days: null
-  llm_training_cutoff: N/A
-  lookahead_test_method: N/A
-  label_delay_days: null
-  drift_detector: none
-  entry_role: "reference"
-  applies_to: []
-  tags: ["数据"]
-  algorithm_status: "not_applicable"
-  evidence: ""
-  code_symbol: null
-  code_fingerprint: null
-- dataset_id: DS-050
-  entity_name: backtest.nan_processor_result
-  entity_type: dataset
-  scope: backtest_internal
-  contract_ref: null
-  physical_type: src/zephyr/backtest/services/nan_processor.py
-  produced_by_job: JOB-049
-  consumed_by_jobs: []
-  domain_id: D_BACKTEST
-  pit_policy: strict
-  format_summary: 清洗后数据（NaN值处理/插值/标记）
-  valid_since: '2020-01-01'
-  module_id: MOD-BT-026
-  design_maturity: design
-  name: backtest.nan_processor_result
-  name_zh: 清洗后数据
-  status: candidate
-  version: 1.0.0
-  created_at: '2026-08-13'
-  updated_at: '2026-08-13'
-  owner: MOD-BT-026
   produced_by_source: SRC-INTERNAL-001
   survivorship_free: null
   pit_available: null
@@ -10450,35 +10414,6 @@ jobs:
   created_at: '2026-08-13'
   updated_at: '2026-08-13'
   owner: MOD-BT-018
-  entry_role: "reference"
-  applies_to: []
-  tags: ["数据"]
-  algorithm_status: "not_applicable"
-  evidence: ""
-  code_symbol: null
-  code_fingerprint: null
-- job_id: JOB-049
-  job_name: backtest.nan_processor
-  entity_type: job
-  scope: backtest_internal
-  source_code_ref: src/zephyr/backtest/services/nan_processor.py
-  trigger_type: manual
-  run_context: backtest_tick
-  inputs:
-  - DS-010
-  outputs:
-  - DS-050
-  pit_relevance: strict
-  description: NaN数据处理（消费回测结果，产出分析/报告）
-  module_id: MOD-BT-026
-  design_maturity: design
-  name: backtest.nan_processor
-  name_zh: NaN数据处理
-  status: candidate
-  version: 1.0.0
-  created_at: '2026-08-13'
-  updated_at: '2026-08-13'
-  owner: MOD-BT-026
   entry_role: "reference"
   applies_to: []
   tags: ["数据"]

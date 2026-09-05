@@ -294,17 +294,6 @@ CATEGORY_B = [
         "gate_reason": "受限：涉及实盘安全，需D-EX-CORE执行域就绪",
         "description_cn": "将通过验证的回测策略一键部署到实盘环境(参数迁移+风控配置+监控初始化)",
     },
-    {
-        "path": "src/zephyr/backtest/services/nan_processor.py",
-        "exists": False,
-        "blueprint_id": "MOD-BT-026",
-        "domain_id": "D_BACKTEST",
-        "granularity": "module",
-        "module_name_cn": "指标计算NaN处理器",
-        "can_build": 1,
-        "gate_reason": "暂缓：P2优先级，当前数据缺失率低",
-        "description_cn": "智能处理指标计算中的NaN值(前向填充/插值/剔除)，避免NaN传播导致绩效指标失真",
-    },
     # D-FACTOR-10 换手率分析器 (1项)
     {
         "path": "src/zephyr/factor/analysis/turnover_analyzer/",

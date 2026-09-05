@@ -6,6 +6,13 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 2/2共识必须两个模型都返回一致verdict才PASS；P0_ANCHOR优先级最高不可被抢占
+# [MERGE] 2026-09-06 GPU 双实现合并（Owner 裁定：真源重复→合并）：本文件为 MOD-INF-033 唯一实现，
+#   副本 src/zephyr/gov_enforcement/behavioral_admission/gpu_consensus_scheduler.py 已删除。
+#   双方修复全保留——trading 版独有：环境变量配置模型名（GPU_LOCAL_MODEL/GPU_API_PRIMARY_MODEL/GPU_API_SECONDARY_MODEL）、
+#   置信度常量提取（5.137.2）、asyncio.Lock 替代协程内 threading.Lock（5.142.5/5.111.3）、get_metrics 锁嵌套修复（5.111.2）、
+#   Stage4 公共属性（gpu_status/local_model/queue/determine_route/parse_model_response）、local_model 笔误修复（5.150.9）、
+#   Semaphore 并发上限（5.67.2）、CancelledError 传播（5.112.2）；
+#   移植自 behavioral_admission 版：_call_api_sync 2xx 范围判定（5.56.1）、_parse_model_response raw_decode 防多段 JSON（5.147.10）。
 # [MODIFY-GUARD] docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md;src/zephyr/behavioral-admission/__init__.py
 # [STABILITY] evolving
 # [SAFETY] H
@@ -14,7 +21,6 @@
 # [TESTS] tests/trading/test_gpu_consensus_scheduler.py  # 2026-09-05 STEWARD B20 重锚：AI-00 修复脚本 src. 前缀 bug 漏网（AST/patch 直查 1 个测试）
 # [A_module] module_id=MOD-INF-033 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 
 """
 
@@ -553,7 +559,9 @@ class GPUConsensusScheduler:
                 },
                 timeout=self._api_timeout_s,
             )
-            if resp.status_code == HTTPStatus.OK:
+            # 5.56.1 修复：原仅接受 200，将 201/202/204 等 2xx 成功响应误判为失败。
+            # 改为范围判定，与 HTTP 语义一致。（合并自 behavioral_admission 版，修复 5.56.1，2026-09-06 GPU 双实现合并）
+            if 200 <= resp.status_code < 300:
                 resp_body = resp.json()
                 text = resp_body.get("response", "")
                 return self._parse_model_response(text, model_id)
@@ -614,10 +622,14 @@ class GPUConsensusScheduler:
         reasoning = ""
 
         try:
+            # 5.147.10 修复: 原 text.find("{") + text.rfind("}") 启发式提取,
+            # 若文本含多段 JSON 或花括号, text[start:end] 可能横跨非 JSON 内容。
+            # 改用 json.JSONDecoder().raw_decode 增量解析, 从首个 { 开始尝试解析完整 JSON 对象
+            # （合并自 behavioral_admission 版，修复 5.147.10，2026-09-06 GPU 双实现合并）
             start = text.find("{")
-            end = text.rfind("}") + 1
-            if start >= 0 and end > start:
-                parsed = _json.loads(text[start:end])
+            if start >= 0:
+                decoder = _json.JSONDecoder()
+                parsed, _ = decoder.raw_decode(text[start:])
                 v = parsed.get("verdict", "PASS")
                 try:
                     verdict = VerdictLevel(v)

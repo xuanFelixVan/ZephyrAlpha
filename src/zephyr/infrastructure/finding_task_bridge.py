@@ -380,8 +380,18 @@ def bridge_findings_to_tasks(
     namespace: TaskNamespace | None = None,
     dry_run: bool = False,
 ) -> BridgeResult:
-    """便捷函数：从 Finding 列表到数据库持久化的全链路桥接。"""
-    repo = ServiceRegistry.get("task_repo")
+    """便捷函数：从 Finding 列表到数据库持久化的全链路桥接。
+
+    task_repo 未注册时自建（db_path）——修复 e2e 顺序依赖缺陷（2026-09-06：
+    原实现直接 ServiceRegistry.get，隔离运行时 KeyError "task_repo not registered"，
+    依赖其他测试先行注册才通过，a5c1a81787 2026-06-21 引入）。
+    """
+    try:
+        repo = ServiceRegistry.get("task_repo")
+    except KeyError:
+        from zephyr.governance.persistence.task_repo import TaskRepository
+
+        repo = TaskRepository(db_path=db_path)
     try:
         bridge = FindingTaskBridge(
             task_repo=repo,

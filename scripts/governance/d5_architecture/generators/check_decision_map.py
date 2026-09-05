@@ -84,9 +84,12 @@ _PF_CORE_DIR = _REPO_ROOT / "src" / "zephyr" / "pf_core"
 
 # SQL 常量（NO-BARE-SQL 豁免命名约定 _SQL_*，先例=rename_depgraph_sync_gate）
 _SQL_CHECK_MODULE_EXISTS = "SELECT 1 FROM nodes WHERE module_id = %s LIMIT 1"
-# 数据实存性（R11）：active parts 的最新写入日期与总行数（真源=system.parts，数据监管页同款）
+# 数据实存性（R11）：active parts 的最新写入日期与总行数（真源=system.parts）
+# 2026-09-06 修复：CH 26.x 列名为 modification_time（原 modification_date 报 Code 47
+# UNKNOWN_IDENTIFIER→HTTP 映射 404，TCP+HTTP 双失败被误判"CH 不可达"）；toDate() 统一
+# TCP(datetime)/HTTP(TSV) 两路径返回格式为 YYYY-MM-DD（与 _classify_freshness 比较口径一致）
 _SQL_DATA_FRESHNESS = (
-    "SELECT max(modification_date), sum(rows) FROM system.parts "
+    "SELECT max(toDate(modification_time)), sum(rows) FROM system.parts "
     "WHERE active AND database = '{db}' AND table = '{table}'"
 )
 

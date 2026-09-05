@@ -58,6 +58,8 @@ domain_prefixes:
   XS: D_EX_SOR
   OBS: D_GOVERNANCE
   SIG: D_ASHARE_SIGNAL
+  TSK: D_GOVERNANCE
+  SBX: D_INTEGRATION
 # ============================================================
 # 段位规划
 # ============================================================
@@ -226,6 +228,7 @@ error_codes:
   module: zephyr.backtest.services.nan_processor
   file: src/zephyr/backtest/services/nan_processor.py
   introduced: '2026-08-17: AI-AUDIT07 补登'
+  deprecated: '2026-09-06: B13 退役 salvage（Owner 裁定）——nan_processor.py 整模块退役（15号文 L112 前视偏差禁令，NaN 语义由 FactorSignal 契约承载），本码无存活定义点'
 - code: ZA-BT-0038
   class: DecisionGateError
   module: zephyr.backtest.core.decision_gate
@@ -851,6 +854,37 @@ error_codes:
   module: zephyr.pf_alloc.core.regime_meta_allocator
   file: src/zephyr/pf_alloc/core/regime_meta_allocator.py
   introduced: '2026-08-18: AI-ERR-001 补登（#ARCH-ERRCODE-001 全域收口）'
+- code: ZA-PA-0013
+  class: InvalidMaxDdInputError
+  module: zephyr.pf_alloc.core.maxdd_limit_allocator
+  file: src/zephyr/pf_alloc/core/maxdd_limit_allocator.py
+  introduced: '2026-09-06: Owner 批准转正——预留码申请在案（W3 fragment 草稿），类已存在仅缺登记与类属性'
+# --- 2026-09-06 tool_contracts 错误码补抛批（总管示范件：TSK/SBX 五码，MCPError 带码活定义点）---
+- code: ZA-TSK-0001
+  class: MCPError
+  module: zephyr.integration.mcp.task_manager_server
+  file: src/zephyr/integration/mcp/task_manager_server.py
+  introduced: '2026-09-06: tool_contracts.yaml 契约码补抛（Owner 批准）——get_task 任务不存在/update_task_status TaskNotFoundError 带码 re-raise'
+- code: ZA-TSK-0002
+  class: MCPError
+  module: zephyr.integration.mcp.task_manager_server
+  file: src/zephyr/integration/mcp/task_manager_server.py
+  introduced: '2026-09-06: tool_contracts.yaml 契约码补抛（Owner 批准）——无效状态名/InvalidTransitionError 带码 re-raise'
+- code: ZA-TSK-0003
+  class: MCPError
+  module: zephyr.integration.mcp.task_manager_server
+  file: src/zephyr/integration/mcp/task_manager_server.py
+  introduced: '2026-09-06: tool_contracts.yaml 契约码补抛（Owner 批准）——_persist sqlite3.IntegrityError（task_id 已存在）带码 re-raise'
+- code: ZA-SBX-0001
+  class: MCPError
+  module: zephyr.integration.mcp.sandbox_server
+  file: src/zephyr/integration/mcp/sandbox_server.py
+  introduced: '2026-09-06: tool_contracts.yaml 契约码补抛（Owner 批准）——不支持语言（既有 raise 补 error_code 参数）'
+- code: ZA-SBX-0003
+  class: MCPError
+  module: zephyr.integration.mcp.sandbox_server
+  file: src/zephyr/integration/mcp/sandbox_server.py
+  introduced: '2026-09-06: tool_contracts.yaml 契约码补抛（Owner 批准）——代码超限（既有 raise 补 error_code 参数）'
 - code: ZA-PF-0011
   class: StrategyLifecycleError
   module: zephyr.pf_core.core.strategy_engine

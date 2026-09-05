@@ -30,10 +30,6 @@
 #   name: gate_event_adapter 子模块符号 1个
 #   fields: GateEventAdapter
 #   code: zephyr.gov_enforcement.behavioral_admission.gate_event_adapter
-# - id: I5
-#   name: gpu_consensus_scheduler 子模块符号 3个
-#   fields: ConsensusPriority / ConsensusRoute / GPUConsensusScheduler
-#   code: zephyr.gov_enforcement.behavioral_admission.gpu_consensus_scheduler
 # - id: I6
 #   name: mcp_result_push 子模块符号 4个
 #   fields: CallbackConnectionError / PushError / PushStatus / ResultPushManager
@@ -63,14 +59,14 @@
 #   name_zh: ① 包级聚合再导出
 #   name_en: zephyr.gov_enforcement.behavioral_admission.__init__
 #   intro: Existing governance/behavioral-admission imports
-#   desc: MOD-GOV_BEHAVIORAL_ADMISSION 包入口，包级聚合再导出并声明 __all__（45项）
-#   inputs: I1 I2 I3 I4 I5 I6 I7 I8 I9 I10 I11
+#   desc: MOD-GOV_BEHAVIORAL_ADMISSION 包入口，包级聚合再导出并声明 __all__（41项）
+#   inputs: I1 I2 I3 I4 I6 I7 I8 I9 I10 I11
 #   outputs: zephyr.gov_enforcement.behavioral_admission 包级公共命名空间
-#   invariant: 包级导出以 __all__ 声明为准（45项）
+#   invariant: 包级导出以 __all__ 声明为准（41项）
 # 层: 输出
 # - id: O1
 #   name_zh: zephyr.gov_enforcement.behavioral_admission 包公共 API
-#   name_en: __all__ 45项
+#   name_en: __all__ 41项
 #   intro: Existing governance/behavioral-admission imports——对外统一出口
 #   downstream: 见蓝图头 [CONSUMERS] 声明
 # [/ALGO_FLOW]
@@ -79,7 +75,6 @@
 # I2 --> A1
 # I3 --> A1
 # I4 --> A1
-# I5 --> A1
 # I6 --> A1
 # I7 --> A1
 # I8 --> A1
@@ -101,11 +96,6 @@ from zephyr.gov_enforcement.behavioral_admission.admission_response import (
 )
 from zephyr.gov_enforcement.behavioral_admission.code_review_ai import ReviewLevel
 from zephyr.gov_enforcement.behavioral_admission.gate_event_adapter import GateEventAdapter
-from zephyr.gov_enforcement.behavioral_admission.gpu_consensus_scheduler import (
-    ConsensusPriority,
-    ConsensusRoute,
-    GPUConsensusScheduler,
-)
 from zephyr.gov_enforcement.behavioral_admission.mcp_result_push import (
     CallbackConnectionError,
     PushError,
@@ -155,9 +145,6 @@ __all__ = [
     "AdmissionResponseBuilder",
     "AdmissionResponseStatus",
     "CallbackConnectionError",
-    "ConsensusPriority",
-    "ConsensusRoute",
-    "GPUConsensusScheduler",
     "GraduatedLevel",
     "HookResult",
     "HookStrategy",
@@ -184,7 +171,6 @@ __all__ = [
     "enforce",
     "enforce_all",
     "format_hook",
-    "gpu_consensus_scheduler",
     "lint_hook",
     "list_rules_by_level",
     "mcp_result_push",

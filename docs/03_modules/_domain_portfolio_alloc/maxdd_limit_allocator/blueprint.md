@@ -60,7 +60,7 @@ MOD-PA-003 组合级 MaxDD>15% 全线减 50% 一刀切），**按各策略 MaxDD
    全员暂停 → 权重全零 + all_suspended=True（零除防护）。
 3. Fail-Closed：未知策略/缺失当前回撤/负回撤/非法预算 → InvalidMaxDdInputError
    （当前回撤是风控关键输入，缺失不默认 0）。
-4. 错误码 ZA-PA-0013 未登记（申请中，W3 fragment 补登草稿，治理闭环后回补类属性）。
+4. 错误码 ZA-PA-0013 已登记转正（2026-09-06 Owner 批准，类属性+注册表条目落地）。
 
 ## 4. 依赖
 

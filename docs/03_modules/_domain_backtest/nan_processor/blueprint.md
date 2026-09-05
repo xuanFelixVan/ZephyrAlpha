@@ -2,10 +2,10 @@
 module_id: MOD-BT-026
 title: "指标NaN处理器蓝图 — 智能填充+清洗"
 doc_type: blueprint
-status: Active
+status: retired
 version: "0.1.3"
-design_maturity: production
-build_status: production
+design_maturity: deprecated
+build_status: retired
 ttl: permanent
 layer: L_BACKTEST
 layer_name: backtest
@@ -13,13 +13,20 @@ functional_domain: backtest
 owner: ZephyrAlpha-Owner
 created_by: agent
 date: "2026-08-02"
-last_updated: "2026-08-02"
+last_updated: "2026-09-06"
 priority: P1
 blueprint_level: module
 responsibility_domain: 
 ---
 
 # MOD-BT-026 NaN Processor — 指标NaN处理器 蓝图
+
+> **⚠️ 已退役（2026-09-06 Owner 裁定，B13 退役 salvage）**
+>
+> - **裁定依据**：模块 6 种填充策略中 3 种（bfill/linear/mean）违反 15 号文 L112 前视偏差禁令（PIT 铁律）；合法语义（ffill 默认/预热剔除）已由 FactorSignal 契约承载，零生产消费方。
+> - **15 号文指针**：docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/15_data_feature_layer_spec.md L112（FactorSignal NaN 填充裁定）。
+> - **重评条件**：消费方要求差异化填充策略时重建（15 号文自带重评条件）。
+> - 实现与测试（src/zephyr/backtest/services/nan_processor.py、tests/backtest/test_nan_processor.py）已删除；本蓝图保留为设计真源。
 
 > **module_id**: MOD-BT-026 | **域**: D_BACKTEST | **层**: L_BACKTEST
 > **优先级**: P1 | **成熟度**: L1 → production | **建设标记**: ✅可建
@@ -69,35 +76,6 @@ responsibility_domain:
 
 - pandas, numpy
 - zephyr.shared.foundation.errors
-
-### §0.6 五图对齐视图
-
-<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
-
-> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
-> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-BT-026`
-
-#### 全景位置
-
-| 图 | 位置 | 状态 | 链接 |
-|----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-BT-026` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-BT-026` |
-| 数据流图 (dataflow) | 1 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
-| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
-| 蓝图 (blueprint) | 本文件 | Active | — |
-
-#### 四核心字段
-
-| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
-|------|-------------------|--------------------------|:-------:|
-| module_id | MOD-BT-026 | MOD-BT-026 | ✅ |
-| domain_id | N/A | N/A | ✅ |
-| build_status | production | production | ✅ |
-| file_count | 2 文件 | N/A | — |
-
-> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
-
----
 
 ## 8. 已实现代码完整路径索引
 
