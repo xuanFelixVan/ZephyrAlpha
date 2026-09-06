@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] OutboundSanitizeError(占位 ZA-SEC-UNREGISTERED-OUTBOUND-SANITIZER)——未知类别/空白名单/空payload/剥离后无白名单字段/非法正则时抛
+# [ERROR_CONTRACT] OutboundSanitizeError(ZA-SEC-0001)——未知类别/空白名单/空payload/剥离后无白名单字段/非法正则时抛
 # [TESTS] tests/security/test_outbound_data_sanitizer.py
 # [A_module] module_id=MOD-SEC-024 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -88,8 +88,10 @@ __all__: Final = [
 class OutboundSanitizeError(Exception):
     """外发脱敏拦截输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-SEC-UNREGISTERED-OUTBOUND-SANITIZER。
+    错误码 ZA-SEC-0001 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-SEC-0001"
 
 
 class PayloadCategory(str, Enum):

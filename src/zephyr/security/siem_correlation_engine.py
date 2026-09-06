@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] SiemError(占位 ZA-SEC-UNREGISTERED-SIEM)——空规则集/规则字段非法/重复rule_id/事件字段非法时抛
+# [ERROR_CONTRACT] SiemError(ZA-SEC-0002)——空规则集/规则字段非法/重复rule_id/事件字段非法时抛
 # [TESTS] tests/security/test_siem_correlation_engine.py
 # [A_module] module_id=MOD-SEC-025 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -92,8 +92,10 @@ __all__: Final = [
 class SiemError(Exception):
     """SIEM 关联引擎输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-SEC-UNREGISTERED-SIEM。
+    错误码 ZA-SEC-0002 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-SEC-0002"
 
 
 class Severity(str, Enum):

@@ -60,6 +60,7 @@ domain_prefixes:
   SIG: D_ASHARE_SIGNAL
   TSK: D_GOVERNANCE
   SBX: D_INTEGRATION
+  SEC: D_SECURITY
   ORCH: D_ORCHESTRATOR
   OPS: D_OPS
   MLS: D_ML_SERVE
@@ -3721,6 +3722,23 @@ error_codes:
   module: zephyr.reporting.trading_review_engine
   file: src/zephyr/reporting/trading_review_engine.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-RPT-UNREGISTERED-TRADING-REVIEW 转正'
+
+# --- 2026-09-06 占位码转正批 SEC（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-SEC-0001
+  class: OutboundSanitizeError
+  module: zephyr.security.outbound_data_sanitizer
+  file: src/zephyr/security/outbound_data_sanitizer.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SEC-UNREGISTERED-OUTBOUND-SANITIZER 转正'
+- code: ZA-SEC-0002
+  class: SiemError
+  module: zephyr.security.siem_correlation_engine
+  file: src/zephyr/security/siem_correlation_engine.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SEC-UNREGISTERED-SIEM 转正'
+- code: ZA-SEC-0003
+  class: SupplyChainSecError
+  module: zephyr.security.supply_chain_security_scanner
+  file: src/zephyr/security/supply_chain_security_scanner.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SEC-UNREGISTERED-SUPPLY-CHAIN-SEC 转正'
 
 known_duplicates: []
 # ============================================================
