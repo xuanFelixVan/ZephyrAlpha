@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ThreeWayReconError(占位 ZA-TR-UNREGISTERED-THREE-WAY-RECON)——空流水号/空标的/负值/重复流水/重复引用/非法容差/重复 recon_id/未知台账项/非法跟进迁移时抛
+# [ERROR_CONTRACT] ThreeWayReconError(ZA-TR-0034)——空流水号/空标的/负值/重复流水/重复引用/非法容差/重复 recon_id/未知台账项/非法跟进迁移时抛
 # [TESTS] tests/trading/test_three_way_reconciliation.py
 # [A_module] module_id=MOD-TRADING-013 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -98,8 +98,10 @@ __all__: Final = [
 class ThreeWayReconError(Exception):
     """三向对账输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-TR-UNREGISTERED-THREE-WAY-RECON。
+    错误码 ZA-TR-0034 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-TR-0034"
 
 
 class AnomalyClass(str, Enum):

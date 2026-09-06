@@ -3917,6 +3917,18 @@ error_codes:
   file: src/zephyr/simulation/overfitting_protection_gate.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SIM-UNREGISTERED-OVERFITTING-GATE 转正'
 
+# --- 2026-09-06 占位码转正批 TR（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-TR-0033
+  class: ReferenceDataError
+  module: zephyr.trading.reference_data_manager
+  file: src/zephyr/trading/reference_data_manager.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-TR-UNREGISTERED-REFERENCE-DATA 转正'
+- code: ZA-TR-0034
+  class: ThreeWayReconError
+  module: zephyr.trading.three_way_reconciliation
+  file: src/zephyr/trading/three_way_reconciliation.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-TR-UNREGISTERED-THREE-WAY-RECON 转正'
+
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）

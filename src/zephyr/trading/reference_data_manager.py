@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ReferenceDataError(占位 ZA-TR-UNREGISTERED-REFERENCE-DATA)——连接缺失/空代码名称行业/非法涨跌停/快照内重复代码/空快照/未知代码查询/非法日历输入时抛
+# [ERROR_CONTRACT] ReferenceDataError(ZA-TR-0033)——连接缺失/空代码名称行业/非法涨跌停/快照内重复代码/空快照/未知代码查询/非法日历输入时抛
 # [TESTS] tests/trading/test_reference_data_manager.py
 # [A_module] module_id=MOD-TRADING-014 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -118,8 +118,10 @@ _COLUMNS: Final = "code, name, industry, limit_up_pct, limit_down_pct, is_st, is
 class ReferenceDataError(Exception):
     """证券主数据输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-TR-UNREGISTERED-REFERENCE-DATA。
+    错误码 ZA-TR-0033 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-TR-0033"
 
 
 @dataclass(frozen=True)
