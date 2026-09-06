@@ -5,7 +5,7 @@ title: 交易决策地图（Trading Decision Map）——决策内容索引层�
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.2.2"
+version: "1.3.0"
 date: 2026-09-04
 topic: trading_decision_map
 scope: 07_trading_decision_architecture
@@ -161,6 +161,16 @@ L1 结构（D4/D6，Owner 裁定+行业修正）：**四路同层级传感器阵
 **传感器数据引用定稿**：S1 指数→DS-150（日K）；S2 内部结构→DS-082（涨跌停价，涨停/跌停/炸板统计地基）；S3 赚钱效应→DS-082+DS-107（新闻情绪窗）；S4 波动率→DS-150（VIX 表未登记=数据缺口）；AGG→DS-098（两融杠杆环境）。因子层缺口：情绪类因子在 REG-FCT-001 仅 family 级（sentiment），FCT-* 级条目未建——factor_refs 留空=缺口节点，补登后回填。
 
 **矩阵格定稿（24 格，全 proposed）**：L1×6（预算细则待填）+ L4×6（daban 仅 ignition/expansion/euphoria）+ P2×6（三做T 仅 accumulation/expansion）+ C1×6（预算切分待填）。PP-001 sleeves activation_state 升级为多状态列表（daban 3 段/做T 2 段，校验器 R12 同步支持 str|tuple）。
+
+### 2.10 E-L2 板块层血肉 v1.3（D19，Owner 2026-09-06 裁定）
+
+**吸收 22 号 spec v1.9.7**（SOP Step 1 盘点后按"同等职责文档合并"政策吸收）：E-L2 展开为 **7 树枝 15 子节点**（v1.5 节点规范全字段：七要素+五联锚+activation/invalidation/ai_autonomy/fallback），全部 ai_autonomy=auto（信号生产节点）。
+
+**树枝清单**：01 强度综合（结构强度 evaluate_strength/动量排名 ranking_engine/q3q5q20/资金流聚合/watch_score 注入）→ 02 轮动序列（RRG 四象限+单板块预警）→ 03 调整周期（扩散指标进度）→ 04 板块级状态（5 分类+虹吸态）→ 05 水温响应（**挂起**）→ 06 个股传导（三级门槛→龙头识别→强度加权）→ 07 回踩质量（A/B/C 判定）。
+
+**模块锚定**：production=MOD-SIG-026（analyzer+sector_breadth+sector_momentum）/MOD-L00-004（ranking+快照）；planned=MOD-SIG-040（调整周期）；**8 个红节点**（RRG/5分类/虹吸/门槛/龙头/传导/水温×2/回踩）module_ref=null=缺口显性化。数据锚：DS-059 快照/DS-170 板块日K/DS-181 money_flow/DS-186 成分股/DS-188 元数据。策略锚：STR-DABAN-003（强度数量档）→01-1、STR-DABAN-002（资金三日规则）→01-4（R3 校验；回归锚从相等改子集断言——8 实盘策略全覆盖不锁相等）。
+
+**三裁定**：①**双通道输出**：Top 候选池+强度分→TDM-E-L3（机器）+ 盘后板块轮动简报→Owner 注意力（人工，锚 BM-SEL-25-C-3）②**只标记不排期**：8 红节点=缺口语义，施工排期归 22 号自身，地图不越权催期 ③**水温接口挂起**：树枝05（05-1/05-2）待 L1 温度计时间周期定稿——Owner 指出三尺度错配（宏观 12 态=月级/情绪六段=周级/22 号水温 5 档=日级），回炉 L1 层先定大盘温度计时间周期，再回 E-L2 收口（§3.1⑪ 5 档响应菜单保留，判定权归 L1）。
 
 ## 3. 考虑过的替代方案与拒绝理由
 
