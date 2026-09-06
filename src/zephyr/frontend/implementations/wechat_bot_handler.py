@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] WeChatBotError(占位 ZA-FE-UNREGISTERED-WECHAT-BOT)——消息schema非法/白名单空/鉴权器未注入/确认超时参数非法/数据源返回非法时抛
+# [ERROR_CONTRACT] WeChatBotError(ZA-FE-0012)——消息schema非法/白名单空/鉴权器未注入/确认超时参数非法/数据源返回非法时抛
 # [TESTS] tests/frontend/test_wechat_bot_handler.py
 # [A_module] module_id=MOD-FE-013 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -59,8 +59,10 @@ _SIDES: Final[dict[str, "OrderSide"]] = {}
 class WeChatBotError(Exception):
     """企业微信回调输入/配置非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-FE-UNREGISTERED-WECHAT-BOT。
+    错误码 ZA-FE-0012 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-FE-0012"
 
 
 class Command(str, Enum):

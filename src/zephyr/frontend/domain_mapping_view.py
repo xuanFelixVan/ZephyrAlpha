@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] DomainMappingError(占位 ZA-FE-UNREGISTERED-DOMAIN-MAPPING)——空快照/空实体/未知实体/空域名/冲突重复登记时抛
+# [ERROR_CONTRACT] DomainMappingError(ZA-FE-0008)——空快照/空实体/未知实体/空域名/冲突重复登记时抛
 # [TESTS] tests/frontend/test_domain_mapping_view.py
 # [A_module] module_id=MOD-FE-006 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -50,8 +50,10 @@ __all__: Final = [
 class DomainMappingError(Exception):
     """域映射视图输入非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-FE-UNREGISTERED-DOMAIN-MAPPING。
+    错误码 ZA-FE-0008 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-FE-0008"
 
 
 @dataclass(frozen=True)

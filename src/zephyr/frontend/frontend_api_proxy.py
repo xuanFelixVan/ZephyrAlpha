@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] FrontendProxyError(占位 ZA-FE-UNREGISTERED-FRONTEND-PROXY)——空路由表/非法前缀/上游未注册/校验器未注入/非法方法/非法路径/空token/限流参数非法时抛
+# [ERROR_CONTRACT] FrontendProxyError(ZA-FE-0009)——空路由表/非法前缀/上游未注册/校验器未注入/非法方法/非法路径/空token/限流参数非法时抛
 # [TESTS] tests/frontend/test_frontend_api_proxy.py
 # [A_module] module_id=MOD-FE-011 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -51,8 +51,10 @@ _METHODS: Final[frozenset[str]] = frozenset({"GET", "POST"})
 class FrontendProxyError(Exception):
     """代理配置/请求非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-FE-UNREGISTERED-FRONTEND-PROXY。
+    错误码 ZA-FE-0009 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-FE-0009"
 
 
 @dataclass(frozen=True)

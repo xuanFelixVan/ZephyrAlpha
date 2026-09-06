@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ComplianceDashboardError(占位 ZA-FE-UNREGISTERED-COMPLIANCE-DASHBOARD)——数据源未注入/记录类型非法/字段非法/趋势指标未知/窗口天数越界/趋势值类型非法时抛
+# [ERROR_CONTRACT] ComplianceDashboardError(ZA-FE-0006)——数据源未注入/记录类型非法/字段非法/趋势指标未知/窗口天数越界/趋势值类型非法时抛
 # [TESTS] tests/frontend/test_compliance_dashboard.py
 # [A_module] module_id=MOD-FE-010 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -64,8 +64,10 @@ _ANOMALY_RANK: Final[dict["AnomalySeverity", int]] = {}
 class ComplianceDashboardError(Exception):
     """合规仪表盘数据源/参数非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-FE-UNREGISTERED-COMPLIANCE-DASHBOARD。
+    错误码 ZA-FE-0006 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-FE-0006"
 
 
 class AnomalySeverity(str, Enum):

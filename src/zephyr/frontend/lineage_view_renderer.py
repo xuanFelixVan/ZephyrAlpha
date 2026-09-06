@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] LineageViewError(占位 ZA-FE-UNREGISTERED-LINEAGE-VIEW)——空实体集/空id/重复实体/未知边端点/自环/环/未知查询实体/非法hops/空变更集/未知变更实体时抛
+# [ERROR_CONTRACT] LineageViewError(ZA-FE-0013)——空实体集/空id/重复实体/未知边端点/自环/环/未知查询实体/非法hops/空变更集/未知变更实体时抛
 # [TESTS] tests/frontend/test_lineage_view_renderer.py
 # [A_module] module_id=MOD-FE-008 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -51,8 +51,10 @@ __all__: Final = [
 class LineageViewError(Exception):
     """血缘视图输入非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-FE-UNREGISTERED-LINEAGE-VIEW。
+    错误码 ZA-FE-0013 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-FE-0013"
 
 
 #: 影响着色词表（前端色板键）

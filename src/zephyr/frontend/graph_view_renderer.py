@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] GraphViewError(占位 ZA-FE-UNREGISTERED-GRAPH-VIEW)——空节点集/空id/重复节点/非法状态/未知边端点/自环/环/非法间距/未知钻取节点/非法hops时抛
+# [ERROR_CONTRACT] GraphViewError(ZA-FE-0010)——空节点集/空id/重复节点/非法状态/未知边端点/自环/环/非法间距/未知钻取节点/非法hops时抛
 # [TESTS] tests/frontend/test_graph_view_renderer.py
 # [A_module] module_id=MOD-FE-005 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -54,8 +54,10 @@ __all__: Final = [
 class GraphViewError(Exception):
     """依赖图视图输入非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-FE-UNREGISTERED-GRAPH-VIEW。
+    错误码 ZA-FE-0010 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-FE-0010"
 
 
 class NodeStatus(str, Enum):

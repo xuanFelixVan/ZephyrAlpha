@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ValueStreamError(占位 ZA-FE-UNREGISTERED-VALUE-STREAM)——空归属表/空模块id/非法段/未知边端点/自环/同段或逆流边/未知查询模块时抛
+# [ERROR_CONTRACT] ValueStreamError(ZA-FE-0016)——空归属表/空模块id/非法段/未知边端点/自环/同段或逆流边/未知查询模块时抛
 # [TESTS] tests/frontend/test_value_stream_view.py
 # [A_module] module_id=MOD-FE-007 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -48,8 +48,10 @@ __all__: Final = [
 class ValueStreamError(Exception):
     """价值流视图输入非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-FE-UNREGISTERED-VALUE-STREAM。
+    错误码 ZA-FE-0016 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-FE-0016"
 
 
 class StreamStage(str, Enum):

@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] AlertCenterInputError(占位 ZA-FE-UNREGISTERED-ALERT-CENTER)——severity/status 非法/时间倒挂/记录类型错误时抛
+# [ERROR_CONTRACT] AlertCenterInputError(ZA-FE-0007)——severity/status 非法/时间倒挂/记录类型错误时抛
 # [TESTS] tests/frontend/test_alert_center.py
 # [A_module] module_id=MOD-FE-003 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -59,8 +59,10 @@ _SEVERITY_ORDER: Final[tuple[str, ...]] = ("AL-P1", "AL-P2", "AL-P3", "AL-P4")
 class AlertCenterInputError(Exception):
     """告警中心输入非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-FE-UNREGISTERED-ALERT-CENTER。
+    错误码 ZA-FE-0007 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-FE-0007"
 
 
 @dataclass(frozen=True)

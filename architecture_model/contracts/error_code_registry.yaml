@@ -3184,6 +3184,63 @@ error_codes:
   file: src/zephyr/feedback_loop/skill_library.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FBL-UNREGISTERED-SKILL-LIBRARY 转正'
 
+# --- 2026-09-06 占位码转正批 FE（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-FE-0006
+  class: ComplianceDashboardError
+  module: zephyr.frontend.compliance_dashboard
+  file: src/zephyr/frontend/compliance_dashboard.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FE-UNREGISTERED-COMPLIANCE-DASHBOARD 转正'
+- code: ZA-FE-0007
+  class: AlertCenterInputError
+  module: zephyr.frontend.dashboard.components.alert_center
+  file: src/zephyr/frontend/dashboard/components/alert_center.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FE-UNREGISTERED-ALERT-CENTER 转正'
+- code: ZA-FE-0008
+  class: DomainMappingError
+  module: zephyr.frontend.domain_mapping_view
+  file: src/zephyr/frontend/domain_mapping_view.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FE-UNREGISTERED-DOMAIN-MAPPING 转正'
+- code: ZA-FE-0009
+  class: FrontendProxyError
+  module: zephyr.frontend.frontend_api_proxy
+  file: src/zephyr/frontend/frontend_api_proxy.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FE-UNREGISTERED-FRONTEND-PROXY 转正'
+- code: ZA-FE-0010
+  class: GraphViewError
+  module: zephyr.frontend.graph_view_renderer
+  file: src/zephyr/frontend/graph_view_renderer.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FE-UNREGISTERED-GRAPH-VIEW 转正'
+- code: ZA-FE-0011
+  class: FeishuBotError
+  module: zephyr.frontend.implementations.feishu_bot_sender
+  file: src/zephyr/frontend/implementations/feishu_bot_sender.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FE-UNREGISTERED-FEISHU-BOT 转正'
+- code: ZA-FE-0012
+  class: WeChatBotError
+  module: zephyr.frontend.implementations.wechat_bot_handler
+  file: src/zephyr/frontend/implementations/wechat_bot_handler.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FE-UNREGISTERED-WECHAT-BOT 转正'
+- code: ZA-FE-0013
+  class: LineageViewError
+  module: zephyr.frontend.lineage_view_renderer
+  file: src/zephyr/frontend/lineage_view_renderer.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FE-UNREGISTERED-LINEAGE-VIEW 转正'
+- code: ZA-FE-0014
+  class: NotificationRouterError
+  module: zephyr.frontend.notification_router
+  file: src/zephyr/frontend/notification_router.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FE-UNREGISTERED-NOTIFICATION-ROUTER 转正'
+- code: ZA-FE-0015
+  class: TraceViewError
+  module: zephyr.frontend.trace_waterfall_view
+  file: src/zephyr/frontend/trace_waterfall_view.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FE-UNREGISTERED-TRACE-VIEW 转正'
+- code: ZA-FE-0016
+  class: ValueStreamError
+  module: zephyr.frontend.value_stream_view
+  file: src/zephyr/frontend/value_stream_view.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FE-UNREGISTERED-VALUE-STREAM 转正'
+
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）

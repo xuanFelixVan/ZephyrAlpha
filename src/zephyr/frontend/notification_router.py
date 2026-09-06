@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] NotificationRouterError(占位 ZA-FE-UNREGISTERED-NOTIFICATION-ROUTER)——非法严重级/通道/明文密钥引用/空通知字段/未知通知ack/非法静默窗/非法ack超时时抛
+# [ERROR_CONTRACT] NotificationRouterError(ZA-FE-0014)——非法严重级/通道/明文密钥引用/空通知字段/未知通知ack/非法静默窗/非法ack超时时抛
 # [TESTS] tests/frontend/test_notification_router.py
 # [A_module] module_id=MOD-FE-004 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -61,8 +61,10 @@ _SEVERITY_RANK: Final[dict["Severity", int]] = {}
 class NotificationRouterError(Exception):
     """通知路由输入/配置非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-FE-UNREGISTERED-NOTIFICATION-ROUTER。
+    错误码 ZA-FE-0014 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-FE-0014"
 
 
 class Severity(str, Enum):

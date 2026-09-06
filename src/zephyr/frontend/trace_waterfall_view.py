@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] TraceViewError(占位 ZA-FE-UNREGISTERED-TRACE-VIEW)——store缺失/非法采样率/非法阈值/空trace_id/未知trace/span类型或字段非法/父引用缺失/父链成环时抛
+# [ERROR_CONTRACT] TraceViewError(ZA-FE-0015)——store缺失/非法采样率/非法阈值/空trace_id/未知trace/span类型或字段非法/父引用缺失/父链成环时抛
 # [TESTS] tests/frontend/test_trace_waterfall_view.py
 # [A_module] module_id=MOD-FE-009 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -53,8 +53,10 @@ __all__: Final = [
 class TraceViewError(Exception):
     """Trace 瀑布视图输入非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-FE-UNREGISTERED-TRACE-VIEW。
+    错误码 ZA-FE-0015 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-FE-0015"
 
 
 class TraceChainView(str, Enum):
