@@ -43,7 +43,6 @@ warn_only: false
 
 import argparse
 import re
-import subprocess
 import sys
 from pathlib import Path
 
@@ -57,8 +56,6 @@ if _GOV_DIR not in sys.path:
 from _shared.constants import REPO_ROOT  # noqa: E402
 
 _PROJECT_ROOT = REPO_ROOT
-_SCRIPTS_DIR = _PROJECT_ROOT / "scripts"
-_LOCK_SCRIPT = _SCRIPTS_DIR / "lock_files.py"
 
 _ILLEGAL_ROOT_PATTERNS = [
     r"^_temp",
@@ -73,17 +70,26 @@ _ILLEGAL_ROOT_PATTERNS = [
 
 
 def _check_lock(file_path: str) -> tuple[bool, str]:
-    """_check_lock implementation."""
-    result = subprocess.run(
-        [sys.executable, str(_LOCK_SCRIPT), "check", file_path],
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-        timeout=10,
-        cwd=str(_PROJECT_ROOT),
-    )
-    output = result.stdout.strip()
+    """进程内 lock 检查（B22③ 批量化 2026-09-06：原每文件 spawn 一次 python lock_files.py check）。
+
+    复用 lock_files.cmd_check 的同一判定语义（FREE/LOCKED 前缀 + 死锁自动清理副作用），
+    进程内调用省去每文件 ~1s 的 Python 冷启动开销；输出捕获判定与旧 subprocess 路径一致。
+    """
+    import contextlib
+    import io
+
+    scripts_dir = str(_PROJECT_ROOT / "scripts")
+    if scripts_dir not in sys.path:
+        sys.path.insert(0, scripts_dir)
+    import lock_files
+
+    buf = io.StringIO()
+    try:
+        with contextlib.redirect_stdout(buf):
+            lock_files.cmd_check(file_path)
+    except Exception as e:  # noqa: BLE001 — lock 检查异常降级 WARN（fail-open，对标原 timeout 行为）
+        return True, f"LOCK_CHECK_WARN: in-process check failed ({e})"
+    output = buf.getvalue().strip()
     if "FREE" in output:
         return True, "OK"
     if "LOCKED" in output:
@@ -290,63 +296,86 @@ def _check_encoding_safety(file_path: str) -> tuple[bool, str]:
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
-        description="AI 写入前强制门禁——不通过则拒绝写入",
+        description="AI 写入前强制门禁——不通过则拒绝写入（支持多文件批量）",
     )
-    parser.add_argument("file_path", help="要写入的文件路径（相对或绝对）")
+    parser.add_argument(
+        "file_path",
+        nargs="?",
+        default=None,
+        help="要写入的文件路径（相对或绝对；单文件旧调用方式保持兼容）",
+    )
+    parser.add_argument(
+        "--file-path",
+        dest="file_paths",
+        action="append",
+        nargs="+",
+        default=[],
+        help="批量模式：要检查的文件路径，可重复（--file-path a.py --file-path b.py）或空格多值",
+    )
     parser.add_argument("--create", action="store_true", help="是否创建新文件")
     parser.add_argument("--json", action="store_true", help="JSON 格式输出")
     parser.add_argument("--session", default="", help="AI session 标识（启用 session overlap 检测；未提供则跳过）")
     args = parser.parse_args()
 
-    checks: list[dict] = []
+    # 批量收集：位置参数（旧单文件）+ --file-path 多值
+    files: list[str] = []
+    if args.file_path:
+        files.append(args.file_path)
+    for group in args.file_paths:
+        files.extend(group)
+    if not files:
+        parser.error("至少提供一个文件路径（位置参数或 --file-path）")
+        return 2
 
-    ok, msg = _check_phase_health()
-    checks.append({"check": "phase_health", "pass": ok, "message": msg})
+    all_results: list[dict] = []
+    for target in files:
+        checks: list[dict] = []
 
-    ok, msg = _check_lock(args.file_path)
-    checks.append({"check": "lock_protocol", "pass": ok, "message": msg})
+        ok, msg = _check_phase_health()
+        checks.append({"check": "phase_health", "pass": ok, "message": msg})
 
-    ok, msg = _check_root_pollution(args.file_path)
-    checks.append({"check": "root_pollution", "pass": ok, "message": msg})
+        ok, msg = _check_lock(target)
+        checks.append({"check": "lock_protocol", "pass": ok, "message": msg})
 
-    ok, msg = _check_registered(args.file_path, args.create)
-    checks.append({"check": "registration", "pass": ok, "message": msg})
+        ok, msg = _check_root_pollution(target)
+        checks.append({"check": "root_pollution", "pass": ok, "message": msg})
 
-    ok, msg = _check_encoding_safety(args.file_path)
-    checks.append({"check": "encoding_safety", "pass": ok, "message": msg})
+        ok, msg = _check_registered(target, args.create)
+        checks.append({"check": "registration", "pass": ok, "message": msg})
 
-    ok, msg = _check_session_overlap(args.file_path, args.session)
-    checks.append({"check": "session_overlap", "pass": ok, "message": msg})
+        ok, msg = _check_encoding_safety(target)
+        checks.append({"check": "encoding_safety", "pass": ok, "message": msg})
 
-    blocked = [c for c in checks if not c["pass"]]
+        ok, msg = _check_session_overlap(target, args.session)
+        checks.append({"check": "session_overlap", "pass": ok, "message": msg})
+
+        blocked = [c for c in checks if not c["pass"]]
+        all_results.append({"file": target, "checks": checks, "allowed": len(blocked) == 0})
+
+        if not args.json:
+            for c in checks:
+                icon = "  PASS" if c["pass"] else "  BLOCK"
+                print(f"{icon}  [{target}] {c['check']}: {c['message']}")
+            if blocked:
+                print(f"\n  BLOCKED ({len(blocked)}/{len(checks)} checks failed) — {target}")
+                print("  Action required: 修复以上 BLOCK 项后重试")
+            else:
+                print(f"\n  ALL CLEAR ({len(checks)}/{len(checks)}) — 允许写入 {target}")
+
+    total_blocked = [r for r in all_results if not r["allowed"]]
 
     if args.json:
         import json
 
-        print(
-            json.dumps(
-                {
-                    "allowed": len(blocked) == 0,
-                    "checks": checks,
-                    "file": args.file_path,
-                },
-                ensure_ascii=False,
-                indent=2,
-            )
-        )
-    else:
-        for c in checks:
-            icon = "  PASS" if c["pass"] else "  BLOCK"
-            print(f"{icon}  {c['check']}: {c['message']}")
+        payload = {"allowed": len(total_blocked) == 0, "results": all_results}
+        if len(all_results) == 1:
+            # 单文件旧 JSON 结构兼容（file/checks 顶层字段）
+            payload.update(all_results[0])
+        print(json.dumps(payload, ensure_ascii=False, indent=2))
+    elif len(all_results) > 1:
+        print(f"\n批处理完成: {len(all_results) - len(total_blocked)}/{len(all_results)} 文件通过")
 
-        if blocked:
-            print(f"\n  BLOCKED ({len(blocked)}/{len(checks)} checks failed)")
-            print(f"  File: {args.file_path}")
-            print("  Action required: 修复以上 BLOCK 项后重试")
-        else:
-            print(f"\n  ALL CLEAR ({len(checks)}/{len(checks)}) — 允许写入 {args.file_path}")
-
-    return 0 if len(blocked) == 0 else 1
+    return 0 if len(total_blocked) == 0 else 1
 
 
 if __name__ == "__main__":
