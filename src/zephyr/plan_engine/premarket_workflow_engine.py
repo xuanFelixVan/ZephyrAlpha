@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] PremarketWorkflowError(占位 ZA-PLAN-UNREGISTERED-PREMARKET-WORKFLOW)——handler词表非法/空trading_date/等待中并发启动/无等待点确认/产出类型非法时抛
+# [ERROR_CONTRACT] PremarketWorkflowError(ZA-PLAN-0009)——handler词表非法/空trading_date/等待中并发启动/无等待点确认/产出类型非法时抛
 # [TESTS] tests/plan_engine/test_premarket_workflow_engine.py
 # [A_module] module_id=MOD-PLAN-023 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -98,8 +98,10 @@ _SKIP_DETAIL: Final = "前序失败阻断跳过"
 class PremarketWorkflowError(Exception):
     """盘前工作流引擎输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-PLAN-UNREGISTERED-PREMARKET-WORKFLOW。
+    错误码 ZA-PLAN-0009 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-PLAN-0009"
 
 
 class WorkflowStepId(str, Enum):

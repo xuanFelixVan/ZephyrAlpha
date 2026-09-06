@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] PlanDeviationError(占位 ZA-PLAN-UNREGISTERED-PLAN-DEVIATION)——空标的/空信号/非Decimal/σ非正/阈值非法/仓位比越界时抛
+# [ERROR_CONTRACT] PlanDeviationError(ZA-PLAN-0008)——空标的/空信号/非Decimal/σ非正/阈值非法/仓位比越界时抛
 # [TESTS] tests/plan_engine/test_plan_deviation_monitor.py
 # [A_module] module_id=MOD-PLAN-022 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -104,8 +104,10 @@ ACTION_CORRECT: Final = "correct_to_plan"
 class PlanDeviationError(Exception):
     """计划偏差监控输入/配置非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-PLAN-UNREGISTERED-PLAN-DEVIATION。
+    错误码 ZA-PLAN-0008 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-PLAN-0008"
 
 
 class DeviationKind(str, Enum):
