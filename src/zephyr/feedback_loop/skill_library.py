@@ -83,6 +83,8 @@ class SkillLibraryError(Exception):
     错误码 ZA-FBL-0004 已登记转正（2026-09-06 Owner 批准批）。
     """
 
+    error_code = "ZA-FBL-0008"
+
     error_code = "ZA-FBL-0004"
 
 
