@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] EvidenceChainError(占位 ZA-CMP-UNREGISTERED-EVIDENCE-CHAIN)——空snapshot_id/非法载荷/重复采集器/链校验失败时抛
+# [ERROR_CONTRACT] EvidenceChainError(ZA-CMP-0017)——空snapshot_id/非法载荷/重复采集器/链校验失败时抛
 # [TESTS] tests/compliance/test_evidence_chain_generator.py
 # [A_module] module_id=MOD-CMP-013 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -92,8 +92,10 @@ GENESIS_HASH: Final[str] = "0" * 64
 class EvidenceChainError(Exception):
     """证据链输入/链完整性非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-CMP-UNREGISTERED-EVIDENCE-CHAIN。
+    错误码 ZA-CMP-0017 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-CMP-0017"
 
 
 @dataclass(frozen=True)

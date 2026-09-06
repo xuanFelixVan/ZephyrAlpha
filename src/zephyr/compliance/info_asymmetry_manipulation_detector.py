@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] InfoAsymmetryError(占位 ZA-CMP-UNREGISTERED-INFO-ASYMMETRY)——空symbol/未登记披露/样本不足/基准方差为零/特征越界时抛
+# [ERROR_CONTRACT] InfoAsymmetryError(ZA-CMP-0018)——空symbol/未登记披露/样本不足/基准方差为零/特征越界时抛
 # [TESTS] tests/compliance/test_info_asymmetry_manipulation_detector.py
 # [A_module] module_id=MOD-CMP-014 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -92,8 +92,10 @@ __all__: Final = [
 class InfoAsymmetryError(Exception):
     """信息不对称/操纵检测输入非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-CMP-UNREGISTERED-INFO-ASYMMETRY。
+    错误码 ZA-CMP-0018 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-CMP-0018"
 
 
 class ManipulationMode(str, Enum):

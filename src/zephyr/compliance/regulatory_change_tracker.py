@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] RegulatoryTrackerError(占位 ZA-CMP-UNREGISTERED-REGULATORY-TRACKER)——源/抽取器缺失/公告非法/抽取结构非法/未知任务/重复确认时抛
+# [ERROR_CONTRACT] RegulatoryTrackerError(ZA-CMP-0019)——源/抽取器缺失/公告非法/抽取结构非法/未知任务/重复确认时抛
 # [TESTS] tests/compliance/test_regulatory_change_tracker.py
 # [A_module] module_id=MOD-CMP-017 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -103,8 +103,10 @@ __all__: Final = [
 class RegulatoryTrackerError(Exception):
     """监管变更追踪输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-CMP-UNREGISTERED-REGULATORY-TRACKER。
+    错误码 ZA-CMP-0019 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-CMP-0019"
 
 
 class ChangeType(str, Enum):

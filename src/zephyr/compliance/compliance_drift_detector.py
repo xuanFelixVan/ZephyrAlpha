@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ComplianceDriftError(占位 ZA-CMP-UNREGISTERED-COMPLIANCE-DRIFT)——基线未登记/空基线/运行时快照非法/交易时段运行时抛
+# [ERROR_CONTRACT] ComplianceDriftError(ZA-CMP-0015)——基线未登记/空基线/运行时快照非法/交易时段运行时抛
 # [TESTS] tests/compliance/test_compliance_drift_detector.py
 # [A_module] module_id=MOD-CMP-016 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -104,8 +104,10 @@ __all__: Final = [
 class ComplianceDriftError(Exception):
     """合规漂移检测输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-CMP-UNREGISTERED-COMPLIANCE-DRIFT。
+    错误码 ZA-CMP-0015 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-CMP-0015"
 
 
 class AlertLevel(str, Enum):

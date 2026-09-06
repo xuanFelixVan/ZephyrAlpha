@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] CompliancePolicyError(占位 ZA-CMP-UNREGISTERED-COMPLIANCE-POLICY)——schema非法/条件语法非法/未知变更/重复审批/回放不通过/交易时段热加载时抛
+# [ERROR_CONTRACT] CompliancePolicyError(ZA-CMP-0016)——schema非法/条件语法非法/未知变更/重复审批/回放不通过/交易时段热加载时抛
 # [TESTS] tests/compliance/test_compliance_policy_engine.py
 # [A_module] module_id=MOD-CMP-015 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -102,8 +102,10 @@ __all__: Final = [
 class CompliancePolicyError(Exception):
     """合规策略输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-CMP-UNREGISTERED-COMPLIANCE-POLICY。
+    错误码 ZA-CMP-0016 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-CMP-0016"
 
 
 class PolicyAction(str, Enum):
