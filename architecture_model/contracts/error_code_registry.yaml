@@ -3705,6 +3705,23 @@ error_codes:
   file: src/zephyr/risk/var_query_builder.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-RK-UNREGISTERED-VAR-QUERY 转正'
 
+# --- 2026-09-06 占位码转正批 RPT（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-RPT-0035
+  class: DecisionTraceError
+  module: zephyr.reporting.decision_trace_chain
+  file: src/zephyr/reporting/decision_trace_chain.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-RPT-UNREGISTERED-DECISION-TRACE 转正'
+- code: ZA-RPT-0036
+  class: ExplainabilityError
+  module: zephyr.reporting.strategy_explainability_reporter
+  file: src/zephyr/reporting/strategy_explainability_reporter.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-RPT-UNREGISTERED-EXPLAINABILITY 转正'
+- code: ZA-RPT-0037
+  class: TradingReviewError
+  module: zephyr.reporting.trading_review_engine
+  file: src/zephyr/reporting/trading_review_engine.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-RPT-UNREGISTERED-TRADING-REVIEW 转正'
+
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）

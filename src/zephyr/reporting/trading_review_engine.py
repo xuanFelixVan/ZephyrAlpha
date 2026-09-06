@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] TradingReviewError(占位 ZA-RPT-UNREGISTERED-TRADING-REVIEW)——阈值表缺模式/负阈值/检测数据未注入/非法指标/未知报告或版本时抛
+# [ERROR_CONTRACT] TradingReviewError(ZA-RPT-0037)——阈值表缺模式/负阈值/检测数据未注入/非法指标/未知报告或版本时抛
 # [TESTS] tests/reporting/test_trading_review_engine.py
 # [A_module] module_id=MOD-RPT-034 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -89,8 +89,10 @@ __all__: Final = [
 class TradingReviewError(Exception):
     """交易审查输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-RPT-UNREGISTERED-TRADING-REVIEW。
+    错误码 ZA-RPT-0037 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-RPT-0037"
 
 
 class ReviewPattern(str, Enum):

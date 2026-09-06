@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ExplainabilityError(占位 ZA-RPT-UNREGISTERED-EXPLAINABILITY)——空strategy_id/非法门控阈值/覆盖度越界/双解释器缺失且无规则兜底/未知报告查询时抛
+# [ERROR_CONTRACT] ExplainabilityError(ZA-RPT-0036)——空strategy_id/非法门控阈值/覆盖度越界/双解释器缺失且无规则兜底/未知报告查询时抛
 # [TESTS] tests/reporting/test_strategy_explainability_reporter.py
 # [A_module] module_id=MOD-RPT-035 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -95,8 +95,10 @@ __all__: Final = [
 class ExplainabilityError(Exception):
     """可解释性报告输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-RPT-UNREGISTERED-EXPLAINABILITY。
+    错误码 ZA-RPT-0036 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-RPT-0036"
 
 
 class AttributionMethod(str, Enum):

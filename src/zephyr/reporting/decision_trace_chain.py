@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] DecisionTraceError(占位 ZA-RPT-UNREGISTERED-DECISION-TRACE)——空decision_id/非法段/未知decision_id反查/贡献度或置信度映射未注入/分位数越界/存储异常时抛
+# [ERROR_CONTRACT] DecisionTraceError(ZA-RPT-0035)——空decision_id/非法段/未知decision_id反查/贡献度或置信度映射未注入/分位数越界/存储异常时抛
 # [TESTS] tests/reporting/test_decision_trace_chain.py
 # [A_module] module_id=MOD-RPT-033 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -93,8 +93,10 @@ __all__: Final = [
 class DecisionTraceError(Exception):
     """决策溯源链输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-RPT-UNREGISTERED-DECISION-TRACE。
+    错误码 ZA-RPT-0035 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-RPT-0035"
 
 
 class TraceSegment(str, Enum):
