@@ -60,6 +60,7 @@ domain_prefixes:
   SIG: D_ASHARE_SIGNAL
   TSK: D_GOVERNANCE
   SBX: D_INTEGRATION
+  OPS: D_OPS
   MLS: D_ML_SERVE
   KNW: D_KNOWLEDGE
   INF: D_INFRASTRUCTURE
@@ -3593,6 +3594,23 @@ error_codes:
   module: zephyr.ml_train.research_data_sandbox
   file: src/zephyr/ml_train/research_data_sandbox.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-MLT-UNREGISTERED-RESEARCH-SANDBOX 转正'
+
+# --- 2026-09-06 占位码转正批 OPS（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-OPS-0001
+  class: AssetInventoryError
+  module: zephyr.infrastructure.system_telemetry.asset_inventory
+  file: src/zephyr/infrastructure/system_telemetry/asset_inventory.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-OPS-UNREGISTERED-ASSET-INVENTORY 转正'
+- code: ZA-OPS-0002
+  class: IncidentResponderError
+  module: zephyr.infrastructure.system_telemetry.incident_responder
+  file: src/zephyr/infrastructure/system_telemetry/incident_responder.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-OPS-UNREGISTERED-INCIDENT-RESPONDER 转正'
+- code: ZA-OPS-0003
+  class: OpsIncidentError
+  module: zephyr.infrastructure.system_telemetry.ops_incident_aggregate
+  file: src/zephyr/infrastructure/system_telemetry/ops_incident_aggregate.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-OPS-UNREGISTERED-OPS-INCIDENT 转正'
 
 known_duplicates: []
 # ============================================================

@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] OpsIncidentError(占位 ZA-OPS-UNREGISTERED-OPS-INCIDENT)——空id/空标题/非法分级/重复检测/未知incident/非法状态迁移/非法升级时抛
+# [ERROR_CONTRACT] OpsIncidentError(ZA-OPS-0003)——空id/空标题/非法分级/重复检测/未知incident/非法状态迁移/非法升级时抛
 # [TESTS] tests/infrastructure/system_telemetry/test_ops_incident_aggregate.py
 # [A_module] module_id=MOD-OPS-001 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -96,8 +96,10 @@ _TRANSITIONS: Final[dict[IncidentStatus, IncidentStatus]] = {}
 class OpsIncidentError(Exception):
     """运维事件聚合输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-OPS-UNREGISTERED-OPS-INCIDENT。
+    错误码 ZA-OPS-0003 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-OPS-0003"
 
 
 class IncidentSeverity(str, Enum):

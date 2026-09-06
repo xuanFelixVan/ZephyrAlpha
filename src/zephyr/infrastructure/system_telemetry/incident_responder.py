@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] IncidentResponderError(占位 ZA-OPS-UNREGISTERED-INCIDENT-RESPONDER)——非法分级/空事件类型/非可调用handler/未注册事件类型/非法规则/非法incident时抛
+# [ERROR_CONTRACT] IncidentResponderError(ZA-OPS-0002)——非法分级/空事件类型/非可调用handler/未注册事件类型/非法规则/非法incident时抛
 # [TESTS] tests/infrastructure/system_telemetry/test_incident_responder.py
 # [A_module] module_id=MOD-OPS-002 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -97,8 +97,10 @@ __all__: Final = [
 class IncidentResponderError(Exception):
     """事件响应器输入/规则非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-OPS-UNREGISTERED-INCIDENT-RESPONDER。
+    错误码 ZA-OPS-0002 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-OPS-0002"
 
 
 class RemediationOutcome(str, Enum):
