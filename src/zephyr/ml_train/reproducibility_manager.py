@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ReproducibilityError(占位 ZA-MLT-UNREGISTERED-REPRODUCIBILITY)——采集器未注入/快照载荷非法/种子非法/重复登记/结果缺失/未知运行时抛
+# [ERROR_CONTRACT] ReproducibilityError(ZA-MLT-0022)——采集器未注入/快照载荷非法/种子非法/重复登记/结果缺失/未知运行时抛
 # [TESTS] tests/ml_train/test_reproducibility_manager.py
 # [A_module] module_id=MOD-ML-020 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -95,8 +95,10 @@ _MISSING: Final = "<MISSING>"
 class ReproducibilityError(Exception):
     """可复现性管理输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-MLT-UNREGISTERED-REPRODUCIBILITY。
+    错误码 ZA-MLT-0022 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-MLT-0022"
 
 
 @dataclass(frozen=True)

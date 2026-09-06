@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] DecisionTreeArchError(占位 ZA-MLT-UNREGISTERED-DECISION-TREE-ARCH)——空训练集/特征键集不齐/未训练预测/空特征/钩子异常/解释器输出非法时抛
+# [ERROR_CONTRACT] DecisionTreeArchError(ZA-MLT-0018)——空训练集/特征键集不齐/未训练预测/空特征/钩子异常/解释器输出非法时抛
 # [TESTS] tests/ml_train/test_decision_tree_decision_architecture.py
 # [A_module] module_id=MOD-ML-016 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -102,8 +102,10 @@ RL_PPO_OFFLINE_ONLY: Final[str] = (
 class DecisionTreeArchError(Exception):
     """决策树架构输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-MLT-UNREGISTERED-DECISION-TREE-ARCH。
+    错误码 ZA-MLT-0018 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-MLT-0018"
 
 
 @dataclass(frozen=True)

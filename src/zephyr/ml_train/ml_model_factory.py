@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] MlModelFactoryError(占位 ZA-MLT-UNREGISTERED-MODEL-FACTORY)——空名称/重复注册/未知模型/非法状态迁移/门禁未注入或不过/scheduler缺失时抛
+# [ERROR_CONTRACT] MlModelFactoryError(ZA-MLT-0021)——空名称/重复注册/未知模型/非法状态迁移/门禁未注入或不过/scheduler缺失时抛
 # [TESTS] tests/ml_train/test_ml_model_factory.py
 # [A_module] module_id=MOD-ML-013 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -97,8 +97,10 @@ _ROLLBACK: Final[dict[ModelStage, ModelStage]] = {}
 class MlModelFactoryError(Exception):
     """模型工厂输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-MLT-UNREGISTERED-MODEL-FACTORY。
+    错误码 ZA-MLT-0021 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-MLT-0021"
 
 
 class ModelStage(str, Enum):

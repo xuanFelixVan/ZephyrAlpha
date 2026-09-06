@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] AssetVersionError(占位 ZA-MLT-UNREGISTERED-ASSET-VERSION)——非法类别/非法 SemVer/重复版本/非法指标/未知版本/复用项目不符时抛
+# [ERROR_CONTRACT] AssetVersionError(ZA-MLT-0023)——非法类别/非法 SemVer/重复版本/非法指标/未知版本/复用项目不符时抛
 # [TESTS] tests/ml_train/test_research_asset_versioning.py
 # [A_module] module_id=MOD-ML-022 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -97,8 +97,10 @@ _SEMVER_RE: Final = re.compile(r"(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)")
 class AssetVersionError(Exception):
     """研究资产版本化输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-MLT-UNREGISTERED-ASSET-VERSION。
+    错误码 ZA-MLT-0023 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-MLT-0023"
 
 
 class AssetKind(str, Enum):

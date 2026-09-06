@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] KanHeadError(占位 ZA-MLT-UNREGISTERED-KAN-HEAD)——阶数>4/栅格非法/分位数越界/输入维度不符/未训练预测/验证报告缺失或未过时抛
+# [ERROR_CONTRACT] KanHeadError(ZA-MLT-0019)——阶数>4/栅格非法/分位数越界/输入维度不符/未训练预测/验证报告缺失或未过时抛
 # [TESTS] tests/ml_train/implementations/test_kan_density_head.py
 # [A_module] module_id=MOD-ML-017 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -92,8 +92,10 @@ MAX_SPLINE_ORDER: Final[int] = 4
 class KanHeadError(Exception):
     """KAN 密度头输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-MLT-UNREGISTERED-KAN-HEAD。
+    错误码 ZA-MLT-0019 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-MLT-0019"
 
 
 @dataclass(frozen=True)

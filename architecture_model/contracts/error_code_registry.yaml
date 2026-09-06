@@ -3542,6 +3542,58 @@ error_codes:
   file: src/zephyr/ml_serve/model_compression_accelerator.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-MLS-UNREGISTERED-MODEL-COMPRESSION 转正'
 
+# --- 2026-09-06 占位码转正批 MLT（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-MLT-0016
+  class: ContinualLearnError
+  module: zephyr.ml_train.continual_learning_antiforget
+  file: src/zephyr/ml_train/continual_learning_antiforget.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-MLT-UNREGISTERED-CONTINUAL-LEARN 转正'
+- code: ZA-MLT-0017
+  class: DecisionAnnotationError
+  module: zephyr.ml_train.decision_annotation_dataset
+  file: src/zephyr/ml_train/decision_annotation_dataset.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-MLT-UNREGISTERED-DECISION-ANNOTATION 转正'
+- code: ZA-MLT-0018
+  class: DecisionTreeArchError
+  module: zephyr.ml_train.decision_tree_decision_architecture
+  file: src/zephyr/ml_train/decision_tree_decision_architecture.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-MLT-UNREGISTERED-DECISION-TREE-ARCH 转正'
+- code: ZA-MLT-0019
+  class: KanHeadError
+  module: zephyr.ml_train.implementations.kan_density_head
+  file: src/zephyr/ml_train/implementations/kan_density_head.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-MLT-UNREGISTERED-KAN-HEAD 转正'
+- code: ZA-MLT-0020
+  class: TsAugmentError
+  module: zephyr.ml_train.implementations.ts_augmentation
+  file: src/zephyr/ml_train/implementations/ts_augmentation.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-MLT-UNREGISTERED-TS-AUGMENT 转正'
+- code: ZA-MLT-0021
+  class: MlModelFactoryError
+  module: zephyr.ml_train.ml_model_factory
+  file: src/zephyr/ml_train/ml_model_factory.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-MLT-UNREGISTERED-MODEL-FACTORY 转正'
+- code: ZA-MLT-0022
+  class: ReproducibilityError
+  module: zephyr.ml_train.reproducibility_manager
+  file: src/zephyr/ml_train/reproducibility_manager.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-MLT-UNREGISTERED-REPRODUCIBILITY 转正'
+- code: ZA-MLT-0023
+  class: AssetVersionError
+  module: zephyr.ml_train.research_asset_versioning
+  file: src/zephyr/ml_train/research_asset_versioning.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-MLT-UNREGISTERED-ASSET-VERSION 转正'
+- code: ZA-MLT-0024
+  class: ResearchDataError
+  module: zephyr.ml_train.research_data_manager
+  file: src/zephyr/ml_train/research_data_manager.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-MLT-UNREGISTERED-RESEARCH-DATA 转正'
+- code: ZA-MLT-0025
+  class: ResearchSandboxError
+  module: zephyr.ml_train.research_data_sandbox
+  file: src/zephyr/ml_train/research_data_sandbox.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-MLT-UNREGISTERED-RESEARCH-SANDBOX 转正'
+
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）

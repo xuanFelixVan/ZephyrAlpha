@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] TsAugmentError(占位 ZA-MLT-UNREGISTERED-TS-AUGMENT)——序列过短/参数越界/拼接点非切换点/质量门未注入或不过/混入超30%时抛
+# [ERROR_CONTRACT] TsAugmentError(ZA-MLT-0020)——序列过短/参数越界/拼接点非切换点/质量门未注入或不过/混入超30%时抛
 # [TESTS] tests/ml_train/implementations/test_ts_augmentation.py
 # [A_module] module_id=MOD-ML-015 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -106,8 +106,10 @@ _SCALE_HIGH: Final[float] = 1.5
 class TsAugmentError(Exception):
     """时序增强输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-MLT-UNREGISTERED-TS-AUGMENT。
+    错误码 ZA-MLT-0020 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-MLT-0020"
 
 
 @dataclass(frozen=True)

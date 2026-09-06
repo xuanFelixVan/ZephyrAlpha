@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] DecisionAnnotationError(占位 ZA-MLT-UNREGISTERED-DECISION-ANNOTATION)——连接未注入/字段缺失/词表外情绪/重复 decision_id/未知决策/重复回填/版本冲突时抛
+# [ERROR_CONTRACT] DecisionAnnotationError(ZA-MLT-0017)——连接未注入/字段缺失/词表外情绪/重复 decision_id/未知决策/重复回填/版本冲突时抛
 # [TESTS] tests/ml_train/test_decision_annotation_dataset.py
 # [A_module] module_id=MOD-ML-014 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -97,8 +97,10 @@ EMOTION_TAGS: Final[frozenset[str]] = frozenset(
 class DecisionAnnotationError(Exception):
     """决策标注输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-MLT-UNREGISTERED-DECISION-ANNOTATION。
+    错误码 ZA-MLT-0017 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-MLT-0017"
 
 
 @dataclass(frozen=True)

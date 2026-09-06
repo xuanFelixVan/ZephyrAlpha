@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ContinualLearnError(占位 ZA-MLT-UNREGISTERED-CONTINUAL-LEARN)——fisher 未注入/非法参数/回放超限/未知快照/验证缺项/回滚无快照时抛
+# [ERROR_CONTRACT] ContinualLearnError(ZA-MLT-0016)——fisher 未注入/非法参数/回放超限/未知快照/验证缺项/回滚无快照时抛
 # [TESTS] tests/ml_train/test_continual_learning_antiforget.py
 # [A_module] module_id=MOD-ML-018 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -96,8 +96,10 @@ DEFAULT_MAX_DROP_RATIO: Final = 0.05
 class ContinualLearnError(Exception):
     """持续学习抗遗忘输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-MLT-UNREGISTERED-CONTINUAL-LEARN。
+    错误码 ZA-MLT-0016 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-MLT-0016"
 
 
 @dataclass(frozen=True)

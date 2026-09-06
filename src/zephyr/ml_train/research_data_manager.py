@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ResearchDataError(占位 ZA-MLT-UNREGISTERED-RESEARCH-DATA)——空 dataset_id/空 manifest/评分越界或低于门禁/未知数据集或版本/保留策略未声明时抛
+# [ERROR_CONTRACT] ResearchDataError(ZA-MLT-0024)——空 dataset_id/空 manifest/评分越界或低于门禁/未知数据集或版本/保留策略未声明时抛
 # [TESTS] tests/ml_train/test_research_data_manager.py
 # [A_module] module_id=MOD-ML-019 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -91,8 +91,10 @@ __all__: Final = [
 class ResearchDataError(Exception):
     """研究数据管理输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-MLT-UNREGISTERED-RESEARCH-DATA。
+    错误码 ZA-MLT-0024 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-MLT-0024"
 
 
 @dataclass(frozen=True)
