@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] AgentCoordinationError(占位 ZA-ORCH-UNREGISTERED-AGENT-COORDINATION)——空卡片库/重复卡片/未知能力/未知agent/空topic/非法仲裁模式/投票非法/共识或网关未注入时抛
+# [ERROR_CONTRACT] AgentCoordinationError(ZA-ORCH-0001)——空卡片库/重复卡片/未知能力/未知agent/空topic/非法仲裁模式/投票非法/共识或网关未注入时抛
 # [TESTS] tests/orchestrator/test_agent_coordination_skill.py
 # [A_module] module_id=MOD-ORCH-004 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -97,8 +97,10 @@ __all__: Final = [
 class AgentCoordinationError(Exception):
     """Agent 协调输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-ORCH-UNREGISTERED-AGENT-COORDINATION。
+    错误码 ZA-ORCH-0001 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-ORCH-0001"
 
 
 class ArbitrationMode(str, Enum):

@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] GlobalStateError(占位 ZA-ORCH-UNREGISTERED-GLOBAL-STATE)——未知域/空采集器/重复注册/无快照可查询时抛
+# [ERROR_CONTRACT] GlobalStateError(ZA-ORCH-0002)——未知域/空采集器/重复注册/无快照可查询时抛
 # [TESTS] tests/orchestrator/test_global_state_aggregator.py
 # [A_module] module_id=MOD-ORCH-002 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -90,8 +90,10 @@ __all__: Final = [
 class GlobalStateError(Exception):
     """全局状态聚合输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-ORCH-UNREGISTERED-GLOBAL-STATE。
+    错误码 ZA-ORCH-0002 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-ORCH-0002"
 
 
 class StateDomain(str, Enum):

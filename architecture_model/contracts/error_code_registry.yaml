@@ -60,6 +60,7 @@ domain_prefixes:
   SIG: D_ASHARE_SIGNAL
   TSK: D_GOVERNANCE
   SBX: D_INTEGRATION
+  ORCH: D_ORCHESTRATOR
   OPS: D_OPS
   MLS: D_ML_SERVE
   KNW: D_KNOWLEDGE
@@ -3611,6 +3612,28 @@ error_codes:
   module: zephyr.infrastructure.system_telemetry.ops_incident_aggregate
   file: src/zephyr/infrastructure/system_telemetry/ops_incident_aggregate.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-OPS-UNREGISTERED-OPS-INCIDENT 转正'
+
+# --- 2026-09-06 占位码转正批 ORCH（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-ORCH-0001
+  class: AgentCoordinationError
+  module: zephyr.orchestrator.agent_coordination_skill
+  file: src/zephyr/orchestrator/agent_coordination_skill.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-ORCH-UNREGISTERED-AGENT-COORDINATION 转正'
+- code: ZA-ORCH-0002
+  class: GlobalStateError
+  module: zephyr.orchestrator.global_state_aggregator
+  file: src/zephyr/orchestrator/global_state_aggregator.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-ORCH-UNREGISTERED-GLOBAL-STATE 转正'
+- code: ZA-ORCH-0003
+  class: CommandChainError
+  module: zephyr.orchestrator.layered_command_chain
+  file: src/zephyr/orchestrator/layered_command_chain.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-ORCH-UNREGISTERED-COMMAND-CHAIN 转正'
+- code: ZA-ORCH-0004
+  class: TaskOrchestrationError
+  module: zephyr.orchestrator.task_orchestration_skill
+  file: src/zephyr/orchestrator/task_orchestration_skill.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-ORCH-UNREGISTERED-TASK-ORCHESTRATION 转正'
 
 known_duplicates: []
 # ============================================================

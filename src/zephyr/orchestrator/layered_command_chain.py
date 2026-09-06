@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] CommandChainError(占位 ZA-ORCH-UNREGISTERED-COMMAND-CHAIN)——未知agent/越层注册/空packet_id/网关缺失/未知packet/非法状态迁移时抛
+# [ERROR_CONTRACT] CommandChainError(ZA-ORCH-0003)——未知agent/越层注册/空packet_id/网关缺失/未知packet/非法状态迁移时抛
 # [TESTS] tests/orchestrator/test_layered_command_chain.py
 # [A_module] module_id=MOD-ORCH-001 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -101,8 +101,10 @@ _LAYER_RANK: Final[dict[ChainLayer, int]] = {}
 class CommandChainError(Exception):
     """指挥链协议输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-ORCH-UNREGISTERED-COMMAND-CHAIN。
+    错误码 ZA-ORCH-0003 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-ORCH-0003"
 
 
 class ChainLayer(str, Enum):
