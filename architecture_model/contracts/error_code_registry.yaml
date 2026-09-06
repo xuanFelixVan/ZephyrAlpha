@@ -3139,64 +3139,7 @@ error_codes:
   file: src/zephyr/feedback_loop/skill_library.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FBL-UNREGISTERED-SKILL-LIBRARY 转正'
 
-# --- 2026-09-06 占位码转正批 FAC（Owner 批准 B17-②，取号=段内 max+1 顺延）---
-- code: ZA-FAC-0008
-  class: SignatureError
-  module: zephyr.factor.signature_feature_extractor
-  file: src/zephyr/factor/signature_feature_extractor.py
-  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FAC-UNREGISTERED-SIGNATURE 转正'
-- code: ZA-FAC-0009
-  class: AutoFeatureError
-  module: zephyr.research.auto_feature_discoverer
-  file: src/zephyr/research/auto_feature_discoverer.py
-  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FAC-UNREGISTERED-AUTO-FEATURE 转正'
-- code: ZA-FAC-0010
-  class: CoEvaluatorError
-  module: zephyr.research.factor_model_co_evaluator
-  file: src/zephyr/research/factor_model_co_evaluator.py
-  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FAC-UNREGISTERED-CO-EVALUATOR 转正'
-- code: ZA-FAC-0011
-  class: FactorVoteError
-  module: zephyr.research.factor_vote_mining
-  file: src/zephyr/research/factor_vote_mining.py
-  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FAC-UNREGISTERED-FACTOR-VOTE 转正'
-- code: ZA-FAC-0012
-  class: GpDiscoveryError
-  module: zephyr.research.gp_strategy_discovery
-  file: src/zephyr/research/gp_strategy_discovery.py
-  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FAC-UNREGISTERED-GP-DISCOVERY 转正'
-- code: ZA-FAC-0013
-  class: LlmEvolutionError
-  module: zephyr.research.llm_evolutionary_search
-  file: src/zephyr/research/llm_evolutionary_search.py
-  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FAC-UNREGISTERED-LLM-EVOLUTION 转正'
-- code: ZA-FAC-0014
-  class: StrategyUpgradeError
-  module: zephyr.research.strategy_iteration_upgrader
-  file: src/zephyr/research/strategy_iteration_upgrader.py
-  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FAC-UNREGISTERED-STRATEGY-UPGRADE 转正'
 
-# --- 2026-09-06 占位码转正批 FBL（Owner 批准 B17-②，取号=段内 max+1 顺延）---
-- code: ZA-FBL-0005
-  class: DistributionDriftError
-  module: zephyr.feedback_loop.detectors.drift.distribution_drift_monitor
-  file: src/zephyr/feedback_loop/detectors/drift/distribution_drift_monitor.py
-  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FBL-UNREGISTERED-DRIFT-MONITOR 转正'
-- code: ZA-FBL-0006
-  class: MetaHarnessError
-  module: zephyr.feedback_loop.meta_harness_optimizer
-  file: src/zephyr/feedback_loop/meta_harness_optimizer.py
-  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FBL-UNREGISTERED-META-HARNESS 转正'
-- code: ZA-FBL-0007
-  class: ModuleMatcherError
-  module: zephyr.feedback_loop.module_matcher
-  file: src/zephyr/feedback_loop/module_matcher.py
-  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FBL-UNREGISTERED-MODULE-MATCHER 转正'
-- code: ZA-FBL-0008
-  class: SkillLibraryError
-  module: zephyr.feedback_loop.skill_library
-  file: src/zephyr/feedback_loop/skill_library.py
-  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FBL-UNREGISTERED-SKILL-LIBRARY 转正'
 
 # --- 2026-09-06 占位码转正批 FE（Owner 批准 B17-②，取号=段内 max+1 顺延）---
 - code: ZA-FE-0006

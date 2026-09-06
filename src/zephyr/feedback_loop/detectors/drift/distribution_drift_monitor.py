@@ -123,7 +123,6 @@ class DistributionDriftError(Exception):
     错误码 ZA-FBL-0001 已登记转正（2026-09-06 Owner 批准批）。
     """
 
-    error_code = "ZA-FBL-0005"
 
     error_code = "ZA-FBL-0001"
 

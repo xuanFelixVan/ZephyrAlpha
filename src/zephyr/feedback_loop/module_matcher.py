@@ -95,7 +95,6 @@ class ModuleMatcherError(Exception):
     错误码 ZA-FBL-0003 已登记转正（2026-09-06 Owner 批准批）。
     """
 
-    error_code = "ZA-FBL-0007"
 
     error_code = "ZA-FBL-0003"
 

@@ -106,7 +106,6 @@ class StrategyUpgradeError(Exception):
     错误码 ZA-FAC-0007 已登记转正（2026-09-06 Owner 批准批）。
     """
 
-    error_code = "ZA-FAC-0014"
 
     error_code = "ZA-FAC-0007"
 

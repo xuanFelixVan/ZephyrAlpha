@@ -94,7 +94,6 @@ class CoEvaluatorError(Exception):
     错误码 ZA-FAC-0003 已登记转正（2026-09-06 Owner 批准批）。
     """
 
-    error_code = "ZA-FAC-0010"
 
     error_code = "ZA-FAC-0003"
 

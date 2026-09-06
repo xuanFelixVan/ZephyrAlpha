@@ -111,7 +111,6 @@ class GpDiscoveryError(Exception):
     错误码 ZA-FAC-0005 已登记转正（2026-09-06 Owner 批准批）。
     """
 
-    error_code = "ZA-FAC-0012"
 
     error_code = "ZA-FAC-0005"
 

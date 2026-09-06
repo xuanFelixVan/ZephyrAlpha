@@ -105,7 +105,6 @@ class FactorVoteError(Exception):
     错误码 ZA-FAC-0004 已登记转正（2026-09-06 Owner 批准批）。
     """
 
-    error_code = "ZA-FAC-0011"
 
     error_code = "ZA-FAC-0004"
 
