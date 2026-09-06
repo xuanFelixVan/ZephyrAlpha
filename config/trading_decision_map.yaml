@@ -1037,6 +1037,51 @@ nodes:
     fallback: null
     strategy_mounts: []
 
+  # ── D29 补缺：漏斗是"日算"的，池是"持久"的——L3 缺池生命周期与可交易性预检 ──
+  # 09 股票池分层维护（业界三层就绪度池：Tier1 活跃 5-10/Tier2 培育 10-20/Tier3 雷达 20-50；
+  #   每日升降级+陈旧剔除；与 03 双池正交——双池按风格、Tier 按就绪度）；STR-MULTIFACTOR-033 上挂
+  - node_id: TDM-E-L3-09
+    name_zh: 股票池分层维护
+    market: cn_a
+    flow: entry_flow
+    layer: L3
+    node_type: aggregation
+    point: 盘后
+    decision_question: 漏斗日产出怎么更新持久池（Tier 升降级+陈旧剔除）
+    parent_node: TDM-E-L3
+    factor_refs: []
+    data_refs: [DS-150]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml#STR-MULTIFACTOR-033"
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts:
+      - {strategy_ref: STR-MULTIFACTOR-033, confidence: proposed, evidence: null}
+
+  # 10 可交易性预检（A股刚需：停牌/一字板/价格笼子±2%/权限门槛/异常交易监控——预案给一字板票=白写）
+  - node_id: TDM-E-L3-10
+    name_zh: 可交易性预检
+    market: cn_a
+    flow: entry_flow
+    layer: L3
+    node_type: stage
+    point: 盘前
+    decision_question: 候选池里谁今天实际买不进（停牌/一字板/笼子/权限）
+    parent_node: TDM-E-L3
+    factor_refs: []
+    data_refs: [DS-082, DS-150]
+    module_ref: null
+    algo_refs: []
+    doc_ref: null
+    activation: premarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: 预检数据缺→标记未预检（执行层兜底拦截）
+    strategy_mounts: []
+
   - node_id: TDM-E-L4
     name_zh: 买卖点与执行
     market: cn_a
@@ -1286,7 +1331,9 @@ edges:
   - {from_node: TDM-E-L3-07-1, to_node: TDM-E-L3-08, edge_type: feed}
   - {from_node: TDM-E-L3-07-2, to_node: TDM-E-L3-08, edge_type: feed}
   - {from_node: TDM-E-L3-07-3, to_node: TDM-E-L3-08, edge_type: feed}
-  - {from_node: TDM-E-L3-08, to_node: TDM-E-L4, edge_type: feed}
+  - {from_node: TDM-E-L3-08, to_node: TDM-E-L3-09, edge_type: feed}
+  - {from_node: TDM-E-L3-09, to_node: TDM-E-L3-10, edge_type: feed}
+  - {from_node: TDM-E-L3-10, to_node: TDM-E-L4, edge_type: feed}
   - {from_node: TDM-E-L2-05-1, to_node: TDM-E-L3-06, edge_type: feed}
   - {from_node: TDM-E-L2-06-2, to_node: TDM-E-L3-07-1, edge_type: feed}
   - {from_node: TDM-E-L2-06-3, to_node: TDM-E-L3-02, edge_type: feed}
