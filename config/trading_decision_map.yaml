@@ -1626,6 +1626,7 @@ nodes:
     decision_question: 暴跌/流动性危机是否触发无条件降仓
     factor_refs: []
     risk_limit_refs: [RLM-KILLSW-003, RLM-KILLSW-005, RLM-KILL-SWITCH-004, RLM-KILL-SWITCH-005]
+    threshold_refs: [THD-DRAWDOWN-001, THD-DRAWDOWN-002, THD-DRAWDOWN-003]
     data_refs: []
     module_ref: null
     strategy_mounts: []
@@ -1663,6 +1664,7 @@ nodes:
     factor_refs: []
     data_refs: []
     module_ref: null
+    portfolio_model_refs: [PFM-HEU-002, PFM-RB-001, PFM-HEUR-009]
     strategy_mounts: []
 
   - node_id: TDM-F-C3
@@ -1676,6 +1678,8 @@ nodes:
     factor_refs: []
     data_refs: []
     module_ref: null
+    benchmark_refs: [BMK-INDEX-003, BMK-ABSOLUTE-001]
+    threshold_refs: [THD-RETIRE-001, THD-RETIRE-002, THD-RETIRE-003]
     strategy_mounts: []
 
   # ── 币圈实例（骨架空壳，L2 弱化为赛道层）─────────────────────────────────

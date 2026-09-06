@@ -6,7 +6,7 @@
 # [STARTUP] imported（纯函数库，无常驻进程/无事件订阅）
 # [MATURITY] production
 # [INVARIANTS] INV-1 地图YAML不复制注册表条目只持稳定标识符引用; INV-2 load产出全frozen dataclass; INV-3 validate纯函数无副作用; INV-4 error=0才可被下游消费; INV-5 module_ref=null记warning不记error（V0缺口可视化输入）
-# [MODIFY-GUARD] schema_version 变更必须同步升级 dataclasses+校验规则+测试（R1-R33）
+# [MODIFY-GUARD] schema_version 变更必须同步升级 dataclasses+校验规则+测试（R1-R36）
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -41,8 +41,8 @@
 # - id: A2
 #   name_zh: ② 校验（validate_decision_map）
 #   name_en: validate_decision_map
-#   intro: 引用存在性+治理门禁 R1-R33 → (ok, GapReport)；缺口即地图红节点语义
-#   desc: R1 节点枚举; R2 边端点+类型+无环; R3 策略引用（STR-* 查 REG-STR-001，其余查 known_strategy_ids）; R4 因子引用 REG-FCT-001; R5 数据引用 REG-DATAFLOW-001 datasets; R6 置信度枚举+verified必带evidence; R7 矩阵格引用存在性; R8 sequence 边成环检测; R10 市场实例一致性; R12 整装方案; R13 算法引用（IND/EXA）; R14 doc_ref 存在+路径穿越拒绝; R15 治理字段枚举+新节点必填; R16 父子完整+树深≤4+树宽预警; R17 粒度（问题≤100字+禁模糊词）+容量（挂载≤8/因子≤12/数据≤8/算法≤8）; R18 name_zh 唯一; R19 module_ref 存在; R20 node_id 骨架; R21 MOD-* 交叉锚（格式+depgraph 缓存对账+欠账 warning）; R22 矩阵覆盖 warning; R23 流预算 warning（>80）; R24 因子欠账 warning; R25 空转叶子 warning; R26-R33 八库交叉轴（形态/席位/宏观/周期/宇宙/成本/事件/风险限额，表驱动 _XREF_SPECS）; R98 空地图; R99 注册表真源缺失; module_ref=null 记 warning
+#   intro: 引用存在性+治理门禁 R1-R36 → (ok, GapReport)；缺口即地图红节点语义
+#   desc: R1 节点枚举; R2 边端点+类型+无环; R3 策略引用（STR-* 查 REG-STR-001，其余查 known_strategy_ids）; R4 因子引用 REG-FCT-001; R5 数据引用 REG-DATAFLOW-001 datasets; R6 置信度枚举+verified必带evidence; R7 矩阵格引用存在性; R8 sequence 边成环检测; R10 市场实例一致性; R12 整装方案; R13 算法引用（IND/EXA）; R14 doc_ref 存在+路径穿越拒绝; R15 治理字段枚举+新节点必填; R16 父子完整+树深≤4+树宽预警; R17 粒度（问题≤100字+禁模糊词）+容量（挂载≤8/因子≤12/数据≤8/算法≤8+各交叉轴上限）; R18 name_zh 唯一; R19 module_ref 存在; R20 node_id 骨架; R21 MOD-* 交叉锚（格式+depgraph 缓存对账+欠账 warning）; R22 矩阵覆盖 warning; R23 流预算 warning（>80）; R24 因子欠账 warning; R25 空转叶子 warning; R26-R36 11 库交叉轴（形态/席位/宏观/周期/宇宙/成本/事件/风险限额/组合模型/基准/告警阈值，表驱动 _XREF_SPECS）; R98 空地图; R99 注册表真源缺失; module_ref=null 记 warning
 #   inputs: DecisionMap I2 I3
 #   outputs: (bool, list[GapReportItem])
 # 层: 输出
@@ -137,6 +137,9 @@ _XREF_SPECS: Final = (
     ("cost_model_refs", "cost_model_registry.yaml", "cost_models", "cost_model_id", "R31", "成本模型库 CST"),
     ("event_refs", "event_calendar_registry.yaml", "event_types", "event_type_id", "R32", "事件日历库 EVT"),
     ("risk_limit_refs", "risk_limit_registry.yaml", "risk_limits", "risk_limit_id", "R33", "风险限额库 RLM"),
+    ("portfolio_model_refs", "portfolio_model_registry.yaml", "portfolio_models", "model_id", "R34", "组合模型库 PFM"),
+    ("benchmark_refs", "benchmark_registry.yaml", "benchmarks", "benchmark_id", "R35", "基准库 BMK"),
+    ("threshold_refs", "alert_threshold_registry.yaml", "thresholds", "threshold_id", "R36", "告警阈值库 THD"),
 )
 _XREF_MAX: Final = {  # 各轴容量上限（D33 同款：超出=粒度过粗强制拆节点）
     "pattern_refs": 12,
@@ -147,6 +150,9 @@ _XREF_MAX: Final = {  # 各轴容量上限（D33 同款：超出=粒度过粗强
     "cost_model_refs": 4,
     "event_refs": 8,
     "risk_limit_refs": 12,
+    "portfolio_model_refs": 4,
+    "benchmark_refs": 4,
+    "threshold_refs": 8,
 }
 
 
@@ -189,7 +195,7 @@ class DecisionMapNode:
     doc_ref: str | None = None
     # v1.6（D34 交叉索引）：MOD-* 交叉锚——对齐五图体系（depgraph 以 module_id 为对齐 key）
     module_id: str | None = None
-    # v1.7（D36 全库交叉轴）：八业务库引用（PAT/SEAT/MAC/CYC/UNI/CST/EVT/RLM；表驱动见 _XREF_SPECS）
+    # v1.7（D36/D37 全库交叉轴）：11 业务库引用（PAT/SEAT/MAC/CYC/UNI/CST/EVT/RLM/PFM/BMK/THD；表驱动见 _XREF_SPECS）
     pattern_refs: tuple[str, ...] = ()
     seat_refs: tuple[str, ...] = ()
     macro_refs: tuple[str, ...] = ()
@@ -198,6 +204,9 @@ class DecisionMapNode:
     cost_model_refs: tuple[str, ...] = ()
     event_refs: tuple[str, ...] = ()
     risk_limit_refs: tuple[str, ...] = ()
+    portfolio_model_refs: tuple[str, ...] = ()
+    benchmark_refs: tuple[str, ...] = ()
+    threshold_refs: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -322,7 +331,7 @@ def _parse_node(raw: dict) -> DecisionMapNode:
         algo_refs=tuple(str(x) for x in raw.get("algo_refs", []) or []),
         doc_ref=(str(raw["doc_ref"]) if raw.get("doc_ref") else None),
         module_id=(str(raw["module_id"]) if raw.get("module_id") else None),
-        # v1.7 八库交叉轴（表驱动字段，全部可选默认空）
+        # v1.7 11 库交叉轴（表驱动字段，全部可选默认空）
         **{field: tuple(str(x) for x in raw.get(field, []) or []) for field, *_ in _XREF_SPECS},
     )
 

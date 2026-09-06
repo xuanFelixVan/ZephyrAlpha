@@ -292,8 +292,32 @@ class TestXrefAxes:
         assert ok is False
         assert any(i.code == "R33" for i in issues)
 
+    def test_r34_portfolio_model_ref(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"][0]["portfolio_model_refs"] = ["PFM-NO-SUCH-001"]
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        assert any(i.code == "R34" for i in issues)
+
+    def test_r35_benchmark_ref(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"][0]["benchmark_refs"] = ["BMK-NO-SUCH-001"]
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        assert any(i.code == "R35" for i in issues)
+
+    def test_r36_threshold_ref(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"][0]["threshold_refs"] = ["THD-NO-SUCH-001"]
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        assert any(i.code == "R36" for i in issues)
+
     def test_all_axes_valid_ok(self, tmp_path: Path) -> None:
-        """八轴全挂真实条目 → error=0。"""
+        """11 轴全挂真实条目 → error=0。"""
         payload = _minimal_payload()
         payload["nodes"][0].update(
             {
@@ -305,12 +329,17 @@ class TestXrefAxes:
                 "cost_model_refs": ["CST-ASTOCK-001"],
                 "event_refs": ["EVT-EARN-001"],
                 "risk_limit_refs": ["RLM-DRAWDOWN-001"],
+                "portfolio_model_refs": ["PFM-RB-001"],
+                "benchmark_refs": ["BMK-INDEX-003"],
+                "threshold_refs": ["THD-RETIRE-001"],
             }
         )
         dm = load_decision_map(_write_map(tmp_path, payload))
         ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
         assert ok is True
-        assert not any(i.code in {"R26", "R27", "R28", "R29", "R30", "R31", "R32", "R33"} for i in issues)
+        assert not any(
+            i.code in {f"R{n}" for n in range(26, 37)} for i in issues
+        )
 
 
 # ── A3 D32/D33 门禁包 R13-R19 ────────────────────────────────────────────────

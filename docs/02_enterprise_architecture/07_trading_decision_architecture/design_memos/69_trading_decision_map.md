@@ -5,7 +5,7 @@ title: 交易决策地图（Trading Decision Map）——决策内容索引层�
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.6.0"
+version: "2.7.0"
 date: 2026-09-04
 topic: trading_decision_map
 scope: 07_trading_decision_architecture
@@ -395,6 +395,22 @@ E-L2 收口：**10 树枝 19 节点**。
 **对抗武器 G 类 5 用例**：G1 串轴伪装（FCT 塞 pattern_refs→R26 拦）/G2 八库注册表缺失→R99/G3-G4 容量 13>12、5>4 超限/G5 轴内重复引用放行（防过度设计误杀）；对抗回归锚升级为八轴挂载不得静默消失（防 YAML 误删后测试仍绿）。主套件 +10 用例（R26-R33 正反+八轴全绿）。84 测试全绿。
 
 **交叉索引链路全景（v1.7 后）**：`TDM 节点 → EXA/IND（算法）→ FCT（因子）→ STR（策略）→ PAT/SEAT/MAC/CYC/UNI/CST/EVT/RLM（八库）→ MOD-*（模块总线）→ 五图体系`——13 个业务库+5 张图全部从最细节点点对点可达。
+
+### 2.24 全库满贯（D37，Owner 2026-09-07 裁定"要挂"——三档剩余全部转正）
+
+**Owner 裁定**：§2.23 分批挂载方案中第二档 3 库（组合模型/基准/告警阈值）立即全部转正——16/16 业务库满贯打通，不留"等流开发"欠账。表驱动架构下新增 3 轴仅加 3 行轴定义+3 行容量（R34 组合模型 PFM 上限 4/R35 基准 BMK 上限 4/R36 告警阈值 THD 上限 8），R99 注册表缺失检查扩展至 16 文件。
+
+**真源挂载（3 轴 8 处引用）**：
+
+| 节点 | 轴 | 挂载 |
+|---|---|---|
+| TDM-F-C2 组合聚合 | portfolio_model | 打分加权/风险平价/核心-卫星（3） |
+| TDM-F-C3 绩效归因反馈 | benchmark+threshold | 中证全指+绝对收益零基准（2）+滚动跑输/Sharpe 退役/回撤漂移倍数（3） |
+| TDM-X-R1 应急保命 | threshold | 回撤预警/严重/紧急三级（3） |
+
+**验收**：主套件 R34-R36 正反例+11 轴全绿用例（87 全绿）；对抗回归锚扩展三轴挂载不得静默消失。
+
+**满贯后交叉索引全景（v1.7 完全体）**：`TDM 节点 → EXA/IND → FCT → STR → PAT/SEAT/MAC/CYC/UNI/CST/EVT/RLM/PFM/BMK/THD（11 库交叉轴）+ DS → MOD-* 总线 → 五图体系`——**16/16 业务库全部点对点可达**，7 张图中 6 张活跃图互通（frontend_map 草案期待转正挂 module 轴）。
 
 ## 3. 考虑过的替代方案与拒绝理由
 

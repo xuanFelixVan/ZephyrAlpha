@@ -500,3 +500,7 @@ class TestWarningSemantics:
         assert node_by_id["TDM-E-L4-09"].cost_model_refs, "成本模型轴挂载消失"
         assert node_by_id["TDM-E-L1-S0"].event_refs, "事件轴挂载消失"
         assert node_by_id["TDM-X-R1"].risk_limit_refs, "风险限额轴挂载消失"
+        # D37 满贯三轴（组合模型/基准/告警阈值）挂载不得静默消失
+        assert node_by_id["TDM-F-C2"].portfolio_model_refs, "组合模型轴挂载消失"
+        assert node_by_id["TDM-F-C3"].benchmark_refs, "基准轴挂载消失"
+        assert node_by_id["TDM-F-C3"].threshold_refs, "告警阈值轴挂载消失（C3 退役判据）"
