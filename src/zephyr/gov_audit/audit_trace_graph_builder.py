@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] AuditTraceError(占位 ZA-GOVA-UNREGISTERED-AUDIT-TRACE)——空node_id/非法段/重复节点/未知节点/自环/越段或逆向边时抛
+# [ERROR_CONTRACT] AuditTraceError(ZA-GOVA-0001)——空node_id/非法段/重复节点/未知节点/自环/越段或逆向边时抛
 # [TESTS] tests/gov_audit/test_audit_trace_graph_builder.py
 # [A_module] module_id=MOD-GOV-053 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -82,8 +82,10 @@ _SEGMENT_RANK: Final[dict[TraceSegment, int]] = {}
 class AuditTraceError(Exception):
     """审计追踪图输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-GOVA-UNREGISTERED-AUDIT-TRACE。
+    错误码 ZA-GOVA-0001 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-GOVA-0001"
 
 
 class TraceSegment(str, Enum):

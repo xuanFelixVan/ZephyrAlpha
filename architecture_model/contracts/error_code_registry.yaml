@@ -60,6 +60,7 @@ domain_prefixes:
   SIG: D_ASHARE_SIGNAL
   TSK: D_GOVERNANCE
   SBX: D_INTEGRATION
+  GOVA: D_GOV_AUDIT
   GOV: D_GOVERNANCE
   FBL: D_FEEDBACK_LOOP
   FAC: D_FACTOR
@@ -3253,6 +3254,13 @@ error_codes:
   module: zephyr.governance.gov_policy_manager
   file: src/zephyr/governance/gov_policy_manager.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-GOV-UNREGISTERED-GOV-POLICY 转正'
+
+# --- 2026-09-06 占位码转正批 GOVA（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-GOVA-0001
+  class: AuditTraceError
+  module: zephyr.gov_audit.audit_trace_graph_builder
+  file: src/zephyr/gov_audit/audit_trace_graph_builder.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-GOVA-UNREGISTERED-AUDIT-TRACE 转正'
 
 known_duplicates: []
 # ============================================================
